@@ -38,7 +38,7 @@ export default function usePendingServiceRequest(
 
     return serviceRequestEntries
       .map(([requestId, serviceRequest]) =>
-        toPrimitiveServiceRequest(requestId[0], serviceRequest.unwrap()),
+        toPrimitiveServiceRequest(requestId, serviceRequest.unwrap()),
       )
       .filter((serviceRequest) =>
         serviceRequest.operatorsWithApprovalState.some(

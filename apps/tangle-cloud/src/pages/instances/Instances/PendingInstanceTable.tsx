@@ -1,4 +1,4 @@
-import { Children, useMemo, type FC } from 'react';
+import { Children, useMemo, type FC, useState } from 'react';
 import {
   AccessorKeyColumnDef,
   createColumnHelper,
@@ -14,6 +14,7 @@ import {
   DropdownButton,
   EMPTY_VALUE_PLACEHOLDER,
   IconWithTooltip,
+  Modal,
   shortenString,
   Typography,
 } from '@tangle-network/ui-components';
@@ -22,32 +23,61 @@ import { TangleCloudTable } from '../../../components/tangleCloudTable/TangleClo
 import { ChevronDown } from '@tangle-network/icons';
 import TableCellWrapper from '@tangle-network/tangle-shared-ui/components/tables/TableCellWrapper';
 import { MonitoringServiceRequest } from '@tangle-network/tangle-shared-ui/data/blueprints/utils/type';
-import { PendingInstanceTabProps } from './type';
 import useNetworkStore from '@tangle-network/tangle-shared-ui/context/useNetworkStore';
 import { DropdownMenuItem } from '@radix-ui/react-dropdown-menu';
 import { NestedOperatorCell } from '../../../components/NestedOperatorCell';
 import addCommasToNumber from '@tangle-network/ui-components/utils/addCommasToNumber';
 import LsTokenIcon from '@tangle-network/tangle-shared-ui/components/LsTokenIcon';
 import useAssetsMetadata from '@tangle-network/tangle-shared-ui/hooks/useAssetsMetadata';
-
+import RejectConfirmationModel from './UpdateBlueprintModel/RejectConfirmationModal';
+import ApproveConfirmationModel from './UpdateBlueprintModel/ApproveConfirmationModal';
+import useServiceApi from '../../../data/blueprints/useServiceApi';
+import { ApprovalConfirmationFormFields } from '../../../types/approvalConfirmationForm';
+import usePendingServiceRequest from '@tangle-network/tangle-shared-ui/data/blueprints/usePendingServiceRequest';
+import useSubstrateAddress from '@tangle-network/tangle-shared-ui/hooks/useSubstrateAddress';
+import useIdentities from '@tangle-network/tangle-shared-ui/hooks/useIdentities';
+import useRoleStore from '../../../stores/roleStore';
 const columnHelper = createColumnHelper<MonitoringServiceRequest>();
 
-export const PendingInstanceTable: FC<PendingInstanceTabProps> = ({
-  data,
-  isLoading,
-  error,
-  isOperator,
-  operatorIdentityMap,
-}) => {
+export const PendingInstanceTable: FC = () => {
+  const isOperator = useRoleStore.getState().isOperator();
+  const operatorAccountAddress = useSubstrateAddress();
+  const [isRejectConfirmationModalOpen, setIsRejectConfirmationModalOpen] =
+    useState(false);
+  const [isApproveConfirmationModalOpen, setIsApproveConfirmationModalOpen] =
+    useState(false);
+  const [selectedRequest, setSelectedRequest] =
+    useState<MonitoringServiceRequest | null>(null);
+
+  const {
+    blueprints: pendingBlueprints,
+    error,
+    isLoading,
+  } = usePendingServiceRequest(operatorAccountAddress);
+
+  const { result: operatorIdentityMap } = useIdentities(
+    useMemo(() => {
+      const operatorMap = pendingBlueprints.flatMap((blueprint) => {
+        const approvedOperators = blueprint.approvedOperators ?? [];
+        const pendingOperators = blueprint.pendingOperators ?? [];
+        return [...approvedOperators, ...pendingOperators];
+      });
+      const operatorSet = new Set(operatorMap);
+      return Array.from(operatorSet);
+    }, [pendingBlueprints]),
+  );
+
+  const serviceApi = useServiceApi();
+
   const network = useNetworkStore((store) => store.network);
 
-  const isEmpty = data.length === 0;
+  const isEmpty = pendingBlueprints.length === 0;
 
   const assetIds = useMemo(() => {
-    return data.flatMap((instance) =>
+    return pendingBlueprints.flatMap((instance) =>
       instance.securityRequirements.map((requirement) => requirement.asset),
     );
-  }, [data]);
+  }, [pendingBlueprints]);
 
   const { result: assets } = useAssetsMetadata(assetIds);
 
@@ -212,10 +242,24 @@ export const PendingInstanceTable: FC<PendingInstanceTabProps> = ({
             return (
               <TableCellWrapper removeRightBorder>
                 <div className="flex gap-2">
-                  <Button variant="utility" className="uppercase body4">
+                  <Button
+                    variant="utility"
+                    className="uppercase body4"
+                    onClick={() => {
+                      setIsApproveConfirmationModalOpen(true);
+                      setSelectedRequest(props.row.original);
+                    }}
+                  >
                     Approve
                   </Button>
-                  <Button variant="utility" className="uppercase body4">
+                  <Button
+                    variant="utility"
+                    className="uppercase body4"
+                    onClick={() => {
+                      setIsRejectConfirmationModalOpen(true);
+                      setSelectedRequest(props.row.original);
+                    }}
+                  >
                     Reject
                   </Button>
                 </div>
@@ -312,7 +356,7 @@ export const PendingInstanceTable: FC<PendingInstanceTabProps> = ({
   }, [isOperator]);
 
   const table = useReactTable({
-    data,
+    data: pendingBlueprints,
     columns,
     getCoreRowModel: getCoreRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
@@ -321,17 +365,66 @@ export const PendingInstanceTable: FC<PendingInstanceTabProps> = ({
     enableSortingRemoval: false,
   });
 
+  const onCloseBlueprintRejectModal = () => {
+    setIsRejectConfirmationModalOpen(false);
+    setSelectedRequest(null);
+  };
+
+  const onConfirmReject = async (): Promise<boolean> => {
+    if (!selectedRequest || !serviceApi) return false;
+
+    return serviceApi.rejectServiceRequest(selectedRequest.requestId);
+  };
+
+  const onCloseBlueprintApproveModal = () => {
+    setIsApproveConfirmationModalOpen(false);
+    setSelectedRequest(null);
+  };
+
+  const onConfirmApprove = async (
+    data: ApprovalConfirmationFormFields,
+  ): Promise<boolean> => {
+    if (!selectedRequest || !serviceApi) return false;
+
+    return serviceApi.approveServiceRequest(
+      data.requestId,
+      data.securityCommitment,
+    );
+  };
+
   return (
-    <TangleCloudTable<MonitoringServiceRequest>
-      title={pluralize('Running Instance', !isEmpty)}
-      data={data}
-      error={error}
-      isLoading={isLoading}
-      tableProps={table}
-      tableConfig={{
-        tableClassName: 'min-w-[1000px]',
-      }}
-    />
+    <>
+      <TangleCloudTable<MonitoringServiceRequest>
+        title={pluralize('Running Instance', !isEmpty)}
+        data={pendingBlueprints}
+        error={error}
+        isLoading={isLoading}
+        tableProps={table}
+        tableConfig={{
+          tableClassName: 'min-w-[1000px]',
+        }}
+      />
+      <Modal
+        open={isRejectConfirmationModalOpen}
+        onOpenChange={setIsRejectConfirmationModalOpen}
+      >
+        <RejectConfirmationModel
+          onClose={onCloseBlueprintRejectModal}
+          onConfirm={onConfirmReject}
+          selectedRequest={selectedRequest}
+        />
+      </Modal>
+      <Modal
+        open={isApproveConfirmationModalOpen}
+        onOpenChange={setIsApproveConfirmationModalOpen}
+      >
+        <ApproveConfirmationModel
+          onClose={onCloseBlueprintApproveModal}
+          onConfirm={onConfirmApprove}
+          selectedRequest={selectedRequest}
+        />
+      </Modal>
+    </>
   );
 };
 

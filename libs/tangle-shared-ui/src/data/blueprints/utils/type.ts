@@ -23,6 +23,7 @@ export interface MonitoringBlueprint extends OperatorBlueprint {
     instanceCount?: number;
     operatorsCount?: number;
     tvl?: number;
+    restakersCount?: number;
   };
   services: Array<
     OperatorBlueprint['services'][number] & {

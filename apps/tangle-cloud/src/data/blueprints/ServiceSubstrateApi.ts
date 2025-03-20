@@ -24,14 +24,14 @@ class ServiceSubstrateApi extends BaseSubstrateApi {
   async rejectServiceRequest(requestId: number) {
     const extrinsic = this.api.tx.services.reject(requestId);
 
-    await this.submitTx(TxName.REJECT_SERVICE_REQUEST, extrinsic);
+    return this.submitTx(TxName.REJECT_SERVICE_REQUEST, extrinsic);
   }
 
-  approveServiceRequest(
+  async approveServiceRequest(
     requestId: number,
     operatorCommitments: {
       assetId: RestakeAssetId;
-      exposurePercent: number;
+      exposurePercent: number | string;
     }[],
   ) {
     const securityCommitments = operatorCommitments.map((commitment) => ({

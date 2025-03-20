@@ -22,7 +22,6 @@ const InstancesTabIcon: ReactElement[] = [
 
 export const InstancesTabs: FC<InstancesTabsProps> = ({
   runningInstances,
-  pendingInstances,
   stoppedInstances,
 }) => {
   const [selectedTab, setSelectedTab] = useState(
@@ -49,7 +48,7 @@ export const InstancesTabs: FC<InstancesTabsProps> = ({
         value={InstancesTab.PENDING_INSTANCES}
         className="flex justify-center mx-auto"
       >
-        <PendingInstanceTable {...pendingInstances} />
+        <PendingInstanceTable />
       </TabContent>
 
       <TabContent

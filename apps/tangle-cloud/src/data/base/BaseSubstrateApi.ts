@@ -25,7 +25,10 @@ class BaseSubstrateApi {
     this.api.setSigner(signer);
   }
 
-  protected handleStatusUpdate = (txName: TxName) => {
+  protected handleStatusUpdate = (
+    txName: TxName,
+    resolve: (value: boolean) => void,
+  ) => {
     return (status: ISubmittableResult) => {
       // If the component is unmounted, or the transaction
       // has not yet been included in a block, ignore the
@@ -40,8 +43,10 @@ class BaseSubstrateApi {
 
       if (error === null) {
         this.onSuccess(txHash, blockHash, txName);
+        resolve(true);
       } else {
         this.onFailure(txName, error);
+        resolve(false);
       }
     };
   };
@@ -49,12 +54,16 @@ class BaseSubstrateApi {
   protected async submitTx(
     txName: TxName,
     extrinsic: SubmittableExtrinsic<'promise', ISubmittableResult>,
-  ): Promise<void> {
-    await extrinsic.signAndSend(
-      this.activeAccount,
-      { signer: this.signer, nonce: -1 },
-      this.handleStatusUpdate(txName),
-    );
+  ): Promise<boolean> {
+    // make the function synchronously
+    const thatHandleStatusUpdate = this.handleStatusUpdate;
+    return new Promise((resolve) => {
+      extrinsic.signAndSend(
+        this.activeAccount,
+        { signer: this.signer, nonce: -1 },
+        thatHandleStatusUpdate(txName, resolve),
+      );
+    });
   }
 }
 
