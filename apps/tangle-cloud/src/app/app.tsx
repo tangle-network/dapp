@@ -9,6 +9,7 @@ import Providers from './providers';
 import { PagePath } from '../types';
 import RegistrationReview from '../pages/registrationReview/page';
 import RegistrationLayout from '../pages/registrationReview/layout';
+import DeployPage from '../pages/deploy';
 
 function App() {
   return (
@@ -21,7 +22,6 @@ function App() {
             element={<Navigate to={PagePath.INSTANCES} replace />}
           />
 
-          {/* Instances routes */}
           <Route
             path={PagePath.INSTANCES}
             element={
@@ -31,7 +31,6 @@ function App() {
             }
           />
 
-          {/* Blueprints routes */}
           <Route path={PagePath.BLUEPRINTS}>
             <Route
               path={PagePath.BLUEPRINTS}
@@ -47,6 +46,15 @@ function App() {
               element={
                 <BlueprintsLayout>
                   <BlueprintDetailsPage />
+                </BlueprintsLayout>
+              }
+            />
+
+            <Route
+              path={PagePath.BLUEPRINTS_DEPLOY}
+              element={
+                <BlueprintsLayout>
+                  <DeployPage />
                 </BlueprintsLayout>
               }
             />

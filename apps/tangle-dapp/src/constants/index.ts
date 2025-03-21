@@ -81,8 +81,6 @@ export enum TxName {
   RESTAKE_NATIVE_UNSTAKE = 'restake undelegate native',
   RESTAKE_NATIVE_UNSTAKE_EXECUTE = 'restake execute undelegate native',
   RESTAKE_NATIVE_UNSTAKE_CANCEL = 'restake cancel undelegate native',
-  SERVICES_APPROVE = 'approve service request',
-  SERVICES_REJECT = 'reject service request',
 }
 
 export const PAYMENT_DESTINATION_OPTIONS: StakingRewardsDestinationDisplayText[] =
