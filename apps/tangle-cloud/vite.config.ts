@@ -48,6 +48,13 @@ export default defineConfig({
       transformMixedEsModules: true,
     },
   },
+  optimizeDeps: {
+    esbuildOptions: {
+      define: {
+        global: 'globalThis',
+      },
+    },
+  },
   test: {
     watch: false,
     globals: true,

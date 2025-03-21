@@ -50,11 +50,16 @@ export type OperatorMap = {
   readonly [accountAddress: SubstrateAddress]: OperatorMetadata;
 };
 
-export type RestakeAssetMetadata = Readonly<{
-  assetId: RestakeAssetId;
+export type PrimitiveAssetMetadata = { 
   name: string;
   symbol: string;
   decimals: number;
+  deposit: string;
+  isFrozen: boolean;
+}
+
+export type RestakeAssetMetadata = PrimitiveAssetMetadata & Readonly<{
+  assetId: RestakeAssetId;
   vaultId: number | null;
   priceInUsd: number | null;
   details?: PalletAssetsAssetDetails;

@@ -5,20 +5,20 @@ import {
   ModalContent,
   ModalFooter,
   ModalHeader,
+  Typography,
 } from '@tangle-network/ui-components';
 import BlueprintItem from '@tangle-network/tangle-shared-ui/components/blueprints/BlueprintGallery/BlueprintItem';
 import { ApprovalConfirmationFormFields } from '../../../../types/approvalConfirmationForm';
 import { useForm } from 'react-hook-form';
-import { Children, useRef } from 'react';
-import { RestakeAssetId } from '@tangle-network/tangle-shared-ui/types';
+import { Children, useMemo } from 'react';
+import { PrimitiveAssetMetadata } from '@tangle-network/tangle-shared-ui/types/restake'
 import { AssetCommitmentFormItem } from './AssetCommitmentFormItem';
-import { PalletAssetsAssetMetadata } from '@polkadot/types/lookup';
 
 type ApproveConfirmationModelProps = {
   onClose: () => void;
   onConfirm: (data: ApprovalConfirmationFormFields) => Promise<boolean>;
   selectedRequest: MonitoringServiceRequest | null;
-  assetsMetadata: Map<string, PalletAssetsAssetMetadata | null>;
+  assetsMetadata: Map<string, PrimitiveAssetMetadata | null>;
 };
 
 function ApproveConfirmationModel({
@@ -27,7 +27,15 @@ function ApproveConfirmationModel({
   selectedRequest,
   assetsMetadata,
 }: ApproveConfirmationModelProps) {
-  const formRef = useRef<HTMLFormElement>(null);
+  const securityCommitmentDefaultFormValue = useMemo(() => {
+    if (!selectedRequest?.securityRequirements?.length) return [];
+
+    return Array.from({ length: selectedRequest.securityRequirements.length ?? 0 }, (_, index) => ({
+      assetId: selectedRequest.securityRequirements[index].asset,
+      exposurePercent: selectedRequest.securityRequirements[index].minExposurePercent.toString(),
+    }))
+  }, [selectedRequest?.securityRequirements]);
+
   const {
     setValue,
     handleSubmit,
@@ -36,14 +44,9 @@ function ApproveConfirmationModel({
     formState: { errors, isValid, isSubmitting },
   } = useForm<ApprovalConfirmationFormFields>({
     mode: 'onChange',
-    defaultValues: {
-      requestId: selectedRequest?.requestId,
-      securityCommitment: [
-        {
-          assetId: '',
-          exposurePercent: '',
-        },
-      ],
+    values: {
+      requestId: selectedRequest?.requestId ?? 0,
+      securityCommitment: securityCommitmentDefaultFormValue,
     },
     resolver: (values) => {
       const errors: any = {};
@@ -117,17 +120,10 @@ function ApproveConfirmationModel({
     },
   });
 
-  const securityCommitment = watch('securityCommitment');
-
   const onCancel = () => {
     reset({
       requestId: selectedRequest?.requestId,
-      securityCommitment: [
-        {
-          assetId: '',
-          exposurePercent: '',
-        },
-      ],
+      securityCommitment: securityCommitmentDefaultFormValue,
     });
     onClose();
   };
@@ -138,12 +134,7 @@ function ApproveConfirmationModel({
 
     reset({
       requestId: selectedRequest?.requestId,
-      securityCommitment: [
-        {
-          assetId: '',
-          exposurePercent: '',
-        },
-      ],
+      securityCommitment: [],
     });
     onClose();
   };
@@ -183,33 +174,23 @@ function ApproveConfirmationModel({
         />
 
         <form
-          ref={formRef}
           onSubmit={handleSubmit(onSubmit)}
           className="mt-4 space-y-4"
         >
+          <Typography variant="h4" className='text-center mb-3'>Security Commitments</Typography>
           {Children.toArray(
-            securityCommitment.map((_, index) => (
+            securityCommitmentDefaultFormValue.map(({ assetId }, index) => {
+              const assetMetadata = assetsMetadata.get(assetId);
+              const exposurePercentFormValue = watch(
+                `securityCommitment.${index}.exposurePercent`,
+              );
+
+              return (
               <AssetCommitmentFormItem
                 index={index}
-                assetId={watch(`securityCommitment.${index}.assetId`)}
-                assetMetadata={assetsMetadata}
-                assetOptions={selectedRequest?.securityRequirements}
-                onChangeAssetId={(value) => {
-                  setValue(
-                    `securityCommitment.${index}.assetId`,
-                    value as RestakeAssetId,
-                    {
-                      shouldValidate: true,
-                      shouldDirty: true,
-                    },
-                  );
-                }}
-                assetErrorMsg={
-                  errors.securityCommitment?.[index]?.assetId?.message
-                }
-                exposurePercent={watch(
-                  `securityCommitment.${index}.exposurePercent`,
-                )}
+                assetId={assetId}
+                assetMetadata={assetMetadata}
+                exposurePercent={exposurePercentFormValue}
                 onChangeExposurePercent={(value) => {
                   setValue(
                     `securityCommitment.${index}.exposurePercent`,
@@ -223,25 +204,12 @@ function ApproveConfirmationModel({
                 exposurePercentErrorMsg={
                   errors.securityCommitment?.[index]?.exposurePercent?.message
                 }
+                minExposurePercent={selectedRequest?.securityRequirements?.[index]?.minExposurePercent.toString()}
+                maxExposurePercent={selectedRequest?.securityRequirements?.[index]?.maxExposurePercent.toString()}
               />
-            )),
+            )
+          }),
           )}
-
-          {selectedRequest?.securityRequirements?.length &&
-            selectedRequest?.securityRequirements?.length > 1 && (
-              <Button
-                variant="secondary"
-                onClick={() => {
-                  const currentCommitments = watch('securityCommitment');
-                  setValue('securityCommitment', [
-                    ...currentCommitments,
-                    { assetId: '' as RestakeAssetId, exposurePercent: '' },
-                  ]);
-                }}
-              >
-                Add Asset
-              </Button>
-            )}
         </form>
       </ModalBody>
       <ModalFooter className="flex justify-end">

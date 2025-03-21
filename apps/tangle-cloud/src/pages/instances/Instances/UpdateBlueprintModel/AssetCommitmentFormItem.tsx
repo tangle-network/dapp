@@ -1,69 +1,58 @@
 import { RestakeAssetId } from '@tangle-network/tangle-shared-ui/types';
-import { IconButton, Input, Label } from '@tangle-network/ui-components';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@tangle-network/ui-components/components/select';
+import { Input, Typography } from '@tangle-network/ui-components';
 import ErrorMessage from '../../../../components/ErrorMessage';
-import { Children, FC } from 'react';
-import { CloseCircleLineIcon } from '@tangle-network/icons';
-import { MonitoringServiceRequest } from '@tangle-network/tangle-shared-ui/data/blueprints/utils/type';
-import { PalletAssetsAssetMetadata } from '@polkadot/types/lookup';
+import { FC } from 'react';
+import { PrimitiveAssetMetadata } from '@tangle-network/tangle-shared-ui/types/restake';
+import LsTokenIcon from '@tangle-network/tangle-shared-ui/components/LsTokenIcon';
 
 type AssetCommitmentFormItemProps = {
   index: number;
   assetId?: RestakeAssetId;
-  assetOptions?: MonitoringServiceRequest['securityRequirements'];
-  onChangeAssetId: (value: RestakeAssetId) => void;
-  assetErrorMsg?: string;
   exposurePercent?: string;
   onChangeExposurePercent: (value: string) => void;
   exposurePercentErrorMsg?: string;
-  assetMetadata?: Map<string, PalletAssetsAssetMetadata | null>;
+  assetMetadata?: PrimitiveAssetMetadata | null;
+  minExposurePercent?: string;
+  maxExposurePercent?: string;
 };
 
 export const AssetCommitmentFormItem: FC<AssetCommitmentFormItemProps> = ({
   index,
   assetId,
-  assetOptions,
-  onChangeAssetId,
-  assetErrorMsg,
   exposurePercent,
   onChangeExposurePercent,
   exposurePercentErrorMsg,
   assetMetadata,
+  minExposurePercent,
+  maxExposurePercent,
 }) => {
+
   return (
     <div className="flex flex-wrap gap-4">
-      <div className="space-y-2 w-6/12">
-        <Label>Select Asset</Label>
-        <Select value={assetId || ''} onValueChange={onChangeAssetId}>
-          <SelectTrigger className="h-10">
-            <SelectValue placeholder="Select Asset" />
-          </SelectTrigger>
+      <div className="space-y-2 w-3/12">
+        <Input
+          id={`securityCommitment.${index}.assetId`}
+          isControlled
+          value={assetId ?? ''}
+          className='hidden'
+          isDisabled
+        />
+        <div className="flex items-center gap-2">
+          <LsTokenIcon
+            name={assetMetadata?.name ?? ''}
+            hasRainbowBorder
+            size="lg"
+          />
 
-          <SelectContent>
-            {Children.toArray(
-              assetOptions?.map((option) => {
-                return (
-                  <SelectItem value={option.asset}>
-                    {assetMetadata?.get(option.asset)?.name || option.asset}
-                  </SelectItem>
-                );
-              }) ?? [],
-            )}
-          </SelectContent>
-        </Select>
-        {assetErrorMsg && <ErrorMessage>{assetErrorMsg}</ErrorMessage>}
+          <Typography variant="h5" className="whitespace-nowrap">
+            {assetMetadata?.name ?? ''}
+          </Typography>
+        </div>
       </div>
 
-      <div className="space-y-2 w-4/12">
-        <Label>Exposure percentage</Label>
+      <div className="space-y-2 w-8/12">
         <Input
-          id="exposurePercent"
+          id={`securityCommitment.${index}.exposurePercent`}
           isControlled
           rightIcon={<>%</>}
           value={exposurePercent ?? ''}
@@ -72,26 +61,16 @@ export const AssetCommitmentFormItem: FC<AssetCommitmentFormItemProps> = ({
           onChange={onChangeExposurePercent}
           type="number"
           autoComplete="off"
+          min={minExposurePercent || 0}
+          max={maxExposurePercent || 100}
         />
+        <Typography variant="para2" className="text-mono-80 dark:text-mono-120">
+          Min exposure: {minExposurePercent} ~ Max exposure: {maxExposurePercent}
+        </Typography>
         {exposurePercentErrorMsg && (
           <ErrorMessage>{exposurePercentErrorMsg}</ErrorMessage>
         )}
       </div>
-
-      {index > 0 && (
-        <div className="col-span-1 self-center pb-1 w-1/12">
-          <Label className="invisible">Remove</Label>
-
-          <IconButton
-            onClick={() => {
-              console.log('remove asset');
-            }}
-            tooltip="Remove asset"
-          >
-            <CloseCircleLineIcon size="lg" />
-          </IconButton>
-        </div>
-      )}
     </div>
   );
 };

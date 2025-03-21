@@ -37,6 +37,7 @@ import usePendingServiceRequest from '@tangle-network/tangle-shared-ui/data/blue
 import useSubstrateAddress from '@tangle-network/tangle-shared-ui/hooks/useSubstrateAddress';
 import useIdentities from '@tangle-network/tangle-shared-ui/hooks/useIdentities';
 import useRoleStore from '../../../stores/roleStore';
+
 const columnHelper = createColumnHelper<MonitoringServiceRequest>();
 
 export const PendingInstanceTable: FC = () => {
@@ -165,6 +166,7 @@ export const PendingInstanceTable: FC = () => {
                         const assetMetadata = assetsMetadata?.get(
                           requirement.asset,
                         );
+
                         return (
                           <div className="flex items-center gap-2">
                             <LsTokenIcon
@@ -175,7 +177,7 @@ export const PendingInstanceTable: FC = () => {
                               variant="para1"
                               className="whitespace-nowrap"
                             >
-                              {assetMetadata?.name} is required to spend
+                              {assetMetadata?.name?.toString() ?? ''} is required to spend
                             </Typography>
                             <Typography
                               variant="para1"
@@ -355,7 +357,7 @@ export const PendingInstanceTable: FC = () => {
     }
 
     return baseColumns;
-  }, [isOperator]);
+  }, [isOperator, assetsMetadata]);
 
   const table = useReactTable({
     data: pendingBlueprints,

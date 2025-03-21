@@ -2,13 +2,13 @@ import { SubstrateAddress } from '@tangle-network/ui-components/types/address';
 import { Signer } from '@polkadot/types/types';
 import { ApiPromise } from '@polkadot/api';
 import { RestakeAssetId } from '@tangle-network/tangle-shared-ui/types';
-import { BN } from '@polkadot/util';
 import { isEvmAddress } from '@tangle-network/ui-components';
 import { TxName } from '../../constants';
 import BaseSubstrateApi, {
   TxFailureCallback,
   TxSuccessCallback,
 } from '../base/BaseSubstrateApi';
+import { BN } from '@polkadot/util';
 
 class ServiceSubstrateApi extends BaseSubstrateApi {
   constructor(
@@ -36,10 +36,14 @@ class ServiceSubstrateApi extends BaseSubstrateApi {
   ) {
     const securityCommitments = operatorCommitments.map((commitment) => ({
       assetId: isEvmAddress(commitment.assetId)
-        ? { Erc20: commitment.assetId }
+        ? { Erc20: new BN(commitment.assetId) }
         : { Custom: new BN(commitment.assetId) },
       exposurePercent: commitment.exposurePercent,
     }));
+
+    console.log('submitted security commitments');
+    console.log(securityCommitments);
+    
 
     const extrinsic = this.api.tx.services.approve(
       requestId,
