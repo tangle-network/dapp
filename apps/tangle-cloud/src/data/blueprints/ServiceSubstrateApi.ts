@@ -35,7 +35,7 @@ class ServiceSubstrateApi extends BaseSubstrateApi {
     }[],
   ) {
     const securityCommitments = operatorCommitments.map((commitment) => ({
-      assetId: isEvmAddress(commitment.assetId)
+      asset: isEvmAddress(commitment.assetId)
         ? { Erc20: new BN(commitment.assetId) }
         : { Custom: new BN(commitment.assetId) },
       exposurePercent: commitment.exposurePercent,
