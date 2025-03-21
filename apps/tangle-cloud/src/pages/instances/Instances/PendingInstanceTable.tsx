@@ -177,7 +177,8 @@ export const PendingInstanceTable: FC = () => {
                               variant="para1"
                               className="whitespace-nowrap"
                             >
-                              {assetMetadata?.name?.toString() ?? ''} is required to spend
+                              {assetMetadata?.name?.toString() ?? ''} is
+                              required to spend
                             </Typography>
                             <Typography
                               variant="para1"

@@ -43,7 +43,6 @@ class ServiceSubstrateApi extends BaseSubstrateApi {
 
     console.log('submitted security commitments');
     console.log(securityCommitments);
-    
 
     const extrinsic = this.api.tx.services.approve(
       requestId,

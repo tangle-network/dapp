@@ -11,7 +11,7 @@ import BlueprintItem from '@tangle-network/tangle-shared-ui/components/blueprint
 import { ApprovalConfirmationFormFields } from '../../../../types/approvalConfirmationForm';
 import { useForm } from 'react-hook-form';
 import { Children, useMemo } from 'react';
-import { PrimitiveAssetMetadata } from '@tangle-network/tangle-shared-ui/types/restake'
+import { PrimitiveAssetMetadata } from '@tangle-network/tangle-shared-ui/types/restake';
 import { AssetCommitmentFormItem } from './AssetCommitmentFormItem';
 
 type ApproveConfirmationModelProps = {
@@ -30,10 +30,16 @@ function ApproveConfirmationModel({
   const securityCommitmentDefaultFormValue = useMemo(() => {
     if (!selectedRequest?.securityRequirements?.length) return [];
 
-    return Array.from({ length: selectedRequest.securityRequirements.length ?? 0 }, (_, index) => ({
-      assetId: selectedRequest.securityRequirements[index].asset,
-      exposurePercent: selectedRequest.securityRequirements[index].minExposurePercent.toString(),
-    }))
+    return Array.from(
+      { length: selectedRequest.securityRequirements.length ?? 0 },
+      (_, index) => ({
+        assetId: selectedRequest.securityRequirements[index].asset,
+        exposurePercent:
+          selectedRequest.securityRequirements[
+            index
+          ].minExposurePercent.toString(),
+      }),
+    );
   }, [selectedRequest?.securityRequirements]);
 
   const {
@@ -173,11 +179,10 @@ function ApproveConfirmationModel({
           author={selectedRequest?.blueprintData?.metadata.author ?? ''}
         />
 
-        <form
-          onSubmit={handleSubmit(onSubmit)}
-          className="mt-4 space-y-4"
-        >
-          <Typography variant="h4" className='text-center mb-3'>Security Commitments</Typography>
+        <form onSubmit={handleSubmit(onSubmit)} className="mt-4 space-y-4">
+          <Typography variant="h4" className="text-center mb-3">
+            Security Commitments
+          </Typography>
           {Children.toArray(
             securityCommitmentDefaultFormValue.map(({ assetId }, index) => {
               const assetMetadata = assetsMetadata.get(assetId);
@@ -186,29 +191,33 @@ function ApproveConfirmationModel({
               );
 
               return (
-              <AssetCommitmentFormItem
-                index={index}
-                assetId={assetId}
-                assetMetadata={assetMetadata}
-                exposurePercent={exposurePercentFormValue}
-                onChangeExposurePercent={(value) => {
-                  setValue(
-                    `securityCommitment.${index}.exposurePercent`,
-                    value,
-                    {
-                      shouldValidate: true,
-                      shouldDirty: true,
-                    },
-                  );
-                }}
-                exposurePercentErrorMsg={
-                  errors.securityCommitment?.[index]?.exposurePercent?.message
-                }
-                minExposurePercent={selectedRequest?.securityRequirements?.[index]?.minExposurePercent.toString()}
-                maxExposurePercent={selectedRequest?.securityRequirements?.[index]?.maxExposurePercent.toString()}
-              />
-            )
-          }),
+                <AssetCommitmentFormItem
+                  index={index}
+                  assetId={assetId}
+                  assetMetadata={assetMetadata}
+                  exposurePercent={exposurePercentFormValue}
+                  onChangeExposurePercent={(value) => {
+                    setValue(
+                      `securityCommitment.${index}.exposurePercent`,
+                      value,
+                      {
+                        shouldValidate: true,
+                        shouldDirty: true,
+                      },
+                    );
+                  }}
+                  exposurePercentErrorMsg={
+                    errors.securityCommitment?.[index]?.exposurePercent?.message
+                  }
+                  minExposurePercent={selectedRequest?.securityRequirements?.[
+                    index
+                  ]?.minExposurePercent.toString()}
+                  maxExposurePercent={selectedRequest?.securityRequirements?.[
+                    index
+                  ]?.maxExposurePercent.toString()}
+                />
+              );
+            }),
           )}
         </form>
       </ModalBody>

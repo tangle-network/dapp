@@ -13,14 +13,14 @@ const useAssetsMetadata = (
     } else {
       return [singleOrMultipleAssetIds];
     }
-  }, [singleOrMultipleAssetIds]) ;
+  }, [singleOrMultipleAssetIds]);
 
   const { result, ...other } = useApiRx(
     useCallback(
       (api) => api.query.assets.metadata.multi(addresses),
       [addresses],
     ),
-  );  
+  );
 
   const assetsMetadata = useMemo(() => {
     if (result === null) {
@@ -32,7 +32,10 @@ const useAssetsMetadata = (
         return [addresses[index], null] as const;
       }
 
-      return [addresses[index], metadataResult.toHuman() as PrimitiveAssetMetadata] as const;
+      return [
+        addresses[index],
+        metadataResult.toHuman() as PrimitiveAssetMetadata,
+      ] as const;
     });
   }, [addresses, result]);
 

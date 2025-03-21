@@ -26,7 +26,6 @@ export const AssetCommitmentFormItem: FC<AssetCommitmentFormItemProps> = ({
   minExposurePercent,
   maxExposurePercent,
 }) => {
-
   return (
     <div className="flex flex-wrap gap-4">
       <div className="space-y-2 w-3/12">
@@ -34,7 +33,7 @@ export const AssetCommitmentFormItem: FC<AssetCommitmentFormItemProps> = ({
           id={`securityCommitment.${index}.assetId`}
           isControlled
           value={assetId ?? ''}
-          className='hidden'
+          className="hidden"
           isDisabled
         />
         <div className="flex items-center gap-2">
@@ -65,7 +64,8 @@ export const AssetCommitmentFormItem: FC<AssetCommitmentFormItemProps> = ({
           max={maxExposurePercent || 100}
         />
         <Typography variant="para2" className="text-mono-80 dark:text-mono-120">
-          Min exposure: {minExposurePercent} ~ Max exposure: {maxExposurePercent}
+          Min exposure: {minExposurePercent} ~ Max exposure:{' '}
+          {maxExposurePercent}
         </Typography>
         {exposurePercentErrorMsg && (
           <ErrorMessage>{exposurePercentErrorMsg}</ErrorMessage>

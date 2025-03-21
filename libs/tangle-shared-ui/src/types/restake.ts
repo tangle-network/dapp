@@ -50,29 +50,30 @@ export type OperatorMap = {
   readonly [accountAddress: SubstrateAddress]: OperatorMetadata;
 };
 
-export type PrimitiveAssetMetadata = { 
+export type PrimitiveAssetMetadata = {
   name: string;
   symbol: string;
   decimals: number;
-  deposit: string;
-  isFrozen: boolean;
-}
+  deposit?: string;
+  isFrozen?: boolean;
+};
 
-export type RestakeAssetMetadata = PrimitiveAssetMetadata & Readonly<{
-  assetId: RestakeAssetId;
-  vaultId: number | null;
-  priceInUsd: number | null;
-  details?: PalletAssetsAssetDetails;
+export type RestakeAssetMetadata = PrimitiveAssetMetadata &
+  Readonly<{
+    assetId: RestakeAssetId;
+    vaultId: number | null;
+    priceInUsd: number | null;
+    details?: PalletAssetsAssetDetails;
 
-  /**
-   * The status of the asset.
-   *
-   * @field Live - The asset is live and can be staked.
-   * @field Frozen - The asset is frozen and cannot be staked.
-   * @field Destroying - The asset is being destroyed and cannot be staked.
-   */
-  status?: PalletAssetsAssetStatus['type'];
-}>;
+    /**
+     * The status of the asset.
+     *
+     * @field Live - The asset is live and can be staked.
+     * @field Frozen - The asset is frozen and cannot be staked.
+     * @field Destroying - The asset is being destroyed and cannot be staked.
+     */
+    status?: PalletAssetsAssetStatus['type'];
+  }>;
 
 export type DelegatorWithdrawRequest = {
   readonly assetId: RestakeAssetId;
