@@ -32,7 +32,7 @@ import useAssetsMetadata from '@tangle-network/tangle-shared-ui/hooks/useAssetsM
 import RejectConfirmationModel from './UpdateBlueprintModel/RejectConfirmationModal';
 import ApproveConfirmationModel from './UpdateBlueprintModel/ApproveConfirmationModal';
 import useServiceApi from '../../../data/blueprints/useServiceApi';
-import { ApprovalConfirmationFormFields } from '../../../types/approvalConfirmationForm';
+import { ApprovalConfirmationFormFields } from '../../../types';
 import usePendingServiceRequest from '@tangle-network/tangle-shared-ui/data/blueprints/usePendingServiceRequest';
 import useSubstrateAddress from '@tangle-network/tangle-shared-ui/hooks/useSubstrateAddress';
 import useIdentities from '@tangle-network/tangle-shared-ui/hooks/useIdentities';
@@ -143,7 +143,7 @@ export const PendingInstanceTable: FC = () => {
                         );
                         return (
                           <div className="flex items-center gap-2">
-                           <LsTokenIcon
+                            <LsTokenIcon
                               name={assetMetadata?.name ?? 'TNT'}
                               hasRainbowBorder
                               size="lg"
@@ -250,7 +250,7 @@ export const PendingInstanceTable: FC = () => {
                 <div className="flex gap-2">
                   <Button
                     variant="utility"
-                    size='sm'
+                    size="sm"
                     onClick={() => {
                       setIsApproveConfirmationModalOpen(true);
                       setSelectedRequest(props.row.original);
@@ -260,7 +260,7 @@ export const PendingInstanceTable: FC = () => {
                   </Button>
                   <Button
                     variant="utility"
-                    size='sm'
+                    size="sm"
                     onClick={() => {
                       setIsRejectConfirmationModalOpen(true);
                       setSelectedRequest(props.row.original);
@@ -387,13 +387,12 @@ export const PendingInstanceTable: FC = () => {
     setSelectedRequest(null);
   }, [setIsApproveConfirmationModalOpen, setSelectedRequest]);
 
-  const onConfirmApprove = useCallback(async (
-    data: ApprovalConfirmationFormFields,
-  ): Promise<boolean> => {
-    if (!selectedRequest || !serviceApi) return false;
-  
-    return serviceApi.approveServiceRequest(
-      data.requestId,
+  const onConfirmApprove = useCallback(
+    async (data: ApprovalConfirmationFormFields): Promise<boolean> => {
+      if (!selectedRequest || !serviceApi) return false;
+
+      return serviceApi.approveServiceRequest(
+        data.requestId,
         data.securityCommitment,
       );
     },

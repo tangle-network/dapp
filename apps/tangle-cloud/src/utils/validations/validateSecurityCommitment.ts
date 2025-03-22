@@ -1,12 +1,14 @@
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-nocheck
 
-import { type FieldErrors } from "react-hook-form";
-import { SecurityCommitment, SecurityRequirement } from "../../types";
+import { type FieldErrors } from 'react-hook-form';
+import { SecurityCommitment, SecurityRequirement } from '../../types';
 
-export const validateSecurityCommitments = <T extends { securityCommitment: SecurityCommitment[] }>(
+export const validateSecurityCommitments = <
+  T extends { securityCommitment: SecurityCommitment[] },
+>(
   securityCommitment: SecurityCommitment[],
-  securityRequirements: SecurityRequirement[]
+  securityRequirements: SecurityRequirement[],
 ): FieldErrors<T> => {
   const errors: FieldErrors<T> = {};
 
@@ -38,10 +40,7 @@ export const validateSecurityCommitments = <T extends { securityCommitment: Secu
           type: 'required',
           message: 'Exposure percentage is required',
         };
-      } else if (
-        isNaN(exposurePercent) ||
-        !Number.isInteger(exposurePercent)
-      ) {
+      } else if (isNaN(exposurePercent) || !Number.isInteger(exposurePercent)) {
         if (!errors.securityCommitment) errors.securityCommitment = [];
         if (!errors.securityCommitment[index])
           errors.securityCommitment[index] = {};

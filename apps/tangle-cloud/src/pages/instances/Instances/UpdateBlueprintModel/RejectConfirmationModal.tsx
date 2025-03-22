@@ -75,7 +75,7 @@ function RejectConfirmationModal({
           description="Are you sure you want to reject this service request?"
         />
       </ModalBody>
-      <ModalFooterActions 
+      <ModalFooterActions
         isConfirmDisabled={isSubmitting}
         isProcessing={isSubmitting}
         confirmButtonText="Reject"

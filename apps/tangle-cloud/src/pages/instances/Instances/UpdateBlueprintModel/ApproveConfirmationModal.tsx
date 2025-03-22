@@ -54,7 +54,11 @@ function ApproveConfirmationModal({
       securityCommitment: securityCommitmentDefaultFormValue,
     },
     resolver: (values) => {
-      const errors = validateSecurityCommitments<ApprovalConfirmationFormFields>(values.securityCommitment, selectedRequest?.securityRequirements ?? []);
+      const errors =
+        validateSecurityCommitments<ApprovalConfirmationFormFields>(
+          values.securityCommitment,
+          selectedRequest?.securityRequirements ?? [],
+        );
 
       return {
         values,
@@ -63,9 +67,10 @@ function ApproveConfirmationModal({
     },
   });
 
-  const onSubmit = useCallback(async (data: ApprovalConfirmationFormFields) => {
-    const isSuccess = await onConfirm(data);
-    if (!isSuccess) return;
+  const onSubmit = useCallback(
+    async (data: ApprovalConfirmationFormFields) => {
+      const isSuccess = await onConfirm(data);
+      if (!isSuccess) return;
 
       onClose();
     },
@@ -148,7 +153,7 @@ function ApproveConfirmationModal({
           )}
         </form>
       </ModalBody>
-      <ModalFooterActions 
+      <ModalFooterActions
         isConfirmDisabled={!isValid || isSubmitting}
         isProcessing={isSubmitting}
         confirmButtonText="Approve"
