@@ -5,7 +5,7 @@ import convertAddressToBytes32 from '@tangle-network/ui-components/utils/convert
 import { useCallback } from 'react';
 
 import { TxName } from '../../constants';
-import { PrecompileAddress } from '../../constants/evmPrecompiles';
+import { PrecompileAddress } from '@tangle-network/tangle-shared-ui/constants/evmPrecompiles';
 import useAgnosticTx from '../../hooks/useAgnosticTx';
 import { AbiBatchCall, EvmTxFactory } from '../../hooks/useEvmPrecompileCall';
 import { SubstrateTxFactory } from '../../hooks/useSubstrateTx';
@@ -15,8 +15,8 @@ import createEvmBatchCall from '../../utils/staking/createEvmBatchCall';
 import getEvmPayeeValue from '../../utils/staking/getEvmPayeeValue';
 import getSubstratePayeeValue from '../../utils/staking/getSubstratePayeeValue';
 import { NominationOptionsContext } from './useSetupNominatorTx';
-import BATCH_PRECOMPILE_ABI from '../../abi/batch';
-import STAKING_PRECOMPILE_ABI from '../../abi/staking';
+import BATCH_PRECOMPILE_ABI from '@tangle-network/tangle-shared-ui/abi/batch';
+import STAKING_PRECOMPILE_ABI from '@tangle-network/tangle-shared-ui/abi/staking';
 import enumValueToNumber from '../../utils/enumValueToNumber';
 
 export type Context = Partial<NominationOptionsContext> & {

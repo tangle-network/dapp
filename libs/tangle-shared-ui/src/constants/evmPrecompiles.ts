@@ -14,6 +14,7 @@ import VESTING_PRECOMPILE_ABI from '../abi/vesting';
 import BATCH_PRECOMPILE_ABI from '../abi/batch';
 import BALANCES_ERC20_PRECOMPILE_ABI from '../abi/balancesErc20';
 import LST_PRECOMPILE_ABI from '../abi/lst';
+import SERVICES_PRECOMPILE_ABI from '../abi/services';
 import { assertEvmAddress } from '@tangle-network/ui-components';
 
 export enum Precompile {
@@ -23,6 +24,7 @@ export enum Precompile {
   BALANCES_ERC20,
   LST,
   RESTAKING,
+  SERVICES,
 }
 
 /**
@@ -98,6 +100,7 @@ export enum PrecompileAddress {
   RESTAKING = '0x0000000000000000000000000000000000000822',
   REWARDS = '0x0000000000000000000000000000000000000825',
   CALL_PERMIT = '0x0000000000000000000000000000000000000805',
+  SERVICES = '0x0000000000000000000000000000000000000900',
 }
 
 export const ZERO_ADDRESS = assertEvmAddress(
@@ -120,6 +123,8 @@ export const getPrecompileAddress = (
       return PrecompileAddress.LST;
     case Precompile.RESTAKING:
       return PrecompileAddress.RESTAKING;
+    case Precompile.SERVICES:
+      return PrecompileAddress.SERVICES;
   }
 };
 
@@ -137,5 +142,7 @@ export const getPrecompileAbi = (precompile: Precompile): AbiFunction[] => {
       return LST_PRECOMPILE_ABI;
     case Precompile.RESTAKING:
       return RESTAKING_PRECOMPILE_ABI;
+    case Precompile.SERVICES:
+      return SERVICES_PRECOMPILE_ABI;
   }
 };

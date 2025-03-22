@@ -7,7 +7,7 @@ import { useCallback, useState } from 'react';
 import {
   ExtractAbiFunctionNames,
   PrecompileAddress,
-} from '../constants/evmPrecompiles';
+} from '@tangle-network/tangle-shared-ui/constants/evmPrecompiles';
 import useEvmAddress20 from './useEvmAddress';
 import { PrecompileCall } from './useEvmPrecompileCall';
 import { AbiFunction } from 'viem';

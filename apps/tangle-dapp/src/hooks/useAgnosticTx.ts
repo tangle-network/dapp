@@ -9,7 +9,7 @@ import { TxName } from '../constants';
 import {
   ExtractAbiFunctionNames,
   PrecompileAddress,
-} from '../constants/evmPrecompiles';
+} from '@tangle-network/tangle-shared-ui/constants/evmPrecompiles';
 import { GetSuccessMessageFn } from '../types';
 import useEvmPrecompileCall, {
   EvmTxFactory,

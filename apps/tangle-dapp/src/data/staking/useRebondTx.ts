@@ -2,13 +2,13 @@ import { BN } from '@polkadot/util';
 import { useCallback } from 'react';
 
 import { TxName } from '../../constants';
-import { PrecompileAddress } from '../../constants/evmPrecompiles';
+import { PrecompileAddress } from '@tangle-network/tangle-shared-ui/constants/evmPrecompiles';
 import useAgnosticTx from '../../hooks/useAgnosticTx';
 import { EvmTxFactory } from '../../hooks/useEvmPrecompileCall';
 import useFormatNativeTokenAmount from '../../hooks/useFormatNativeTokenAmount';
 import { SubstrateTxFactory } from '../../hooks/useSubstrateTx';
 import { GetSuccessMessageFn } from '../../types';
-import STAKING_PRECOMPILE_ABI from '../../abi/staking';
+import STAKING_PRECOMPILE_ABI from '@tangle-network/tangle-shared-ui/abi/staking';
 
 type RebondTxContext = {
   amount: BN;

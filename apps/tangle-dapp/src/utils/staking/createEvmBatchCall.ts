@@ -4,7 +4,7 @@ import {
   ExtractAbiFunctionNames,
   FindAbiArgsOf,
   PrecompileAddress,
-} from '../../constants/evmPrecompiles';
+} from '@tangle-network/tangle-shared-ui/constants/evmPrecompiles';
 import { AbiBatchCall } from '../../hooks/useEvmPrecompileCall';
 import { assertEvmAddress } from '@tangle-network/ui-components';
 
