@@ -7,6 +7,7 @@ import {
 } from '@polkadot/types/lookup';
 import { SubstrateAddress } from '@tangle-network/ui-components/types/address';
 import { RestakeAssetId } from '../../../types';
+import { StorageKey, u64 } from '@polkadot/types';
 
 export function toPrimitiveService({
   id,
@@ -35,7 +36,7 @@ export function toPrimitiveService({
 }
 
 export function toPrimitiveServiceRequest(
-  requestId: number,
+  requestId: StorageKey<[u64]>,
   {
     blueprint,
     owner,
@@ -48,7 +49,7 @@ export function toPrimitiveServiceRequest(
   }: TanglePrimitivesServicesServiceServiceRequest,
 ) {
   return {
-    requestId,
+    requestId: requestId.args[0].toNumber(),
     blueprint: blueprint.toNumber(),
     owner: assertSubstrateAddress(owner.toString()),
     securityRequirements: toPrimitiveSecurityRequirements(securityRequirements),

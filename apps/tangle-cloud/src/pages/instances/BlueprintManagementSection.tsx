@@ -2,18 +2,12 @@ import { RegisteredBlueprintsTabs } from './RegisteredBlueprints';
 import { InstancesTabs } from './Instances';
 import useMonitoringBlueprints from '@tangle-network/tangle-shared-ui/data/blueprints/useMonitoringBlueprints';
 import { FC, useMemo } from 'react';
-import useIdentities from '@tangle-network/tangle-shared-ui/hooks/useIdentities';
 import useSubstrateAddress from '@tangle-network/tangle-shared-ui/hooks/useSubstrateAddress';
-import usePendingServiceRequest from '@tangle-network/tangle-shared-ui/data/blueprints/usePendingServiceRequest';
+import useRoleStore from '../../stores/roleStore';
 
-type BlueprintManagementSectionProps = {
-  isOperator: boolean;
-};
-export const BlueprintManagementSection: FC<
-  BlueprintManagementSectionProps
-> = ({ isOperator }) => {
+export const BlueprintManagementSection: FC = () => {
+  const isOperator = useRoleStore.getState().isOperator();
   const operatorAccountAddress = useSubstrateAddress();
-
   const {
     isLoading,
     blueprints: registeredBlueprints,
@@ -26,22 +20,6 @@ export const BlueprintManagementSection: FC<
     }
     return registeredBlueprints.flatMap((blueprint) => blueprint.services);
   }, [registeredBlueprints]);
-
-  const { blueprints: pendingBlueprints } = usePendingServiceRequest(
-    operatorAccountAddress,
-  );
-
-  const { result: operatorIdentityMap } = useIdentities(
-    useMemo(() => {
-      const operatorMap = pendingBlueprints.flatMap((blueprint) => {
-        const approvedOperators = blueprint.approvedOperators ?? [];
-        const pendingOperators = blueprint.pendingOperators ?? [];
-        return [...approvedOperators, ...pendingOperators];
-      });
-      const operatorSet = new Set(operatorMap);
-      return Array.from(operatorSet);
-    }, [pendingBlueprints]),
-  );
 
   return (
     <>
@@ -58,13 +36,7 @@ export const BlueprintManagementSection: FC<
           isLoading,
           error,
         }}
-        pendingInstances={{
-          data: pendingBlueprints,
-          isLoading,
-          error,
-          isOperator,
-          operatorIdentityMap,
-        }}
+        // TODO: Implement stopped instances
         stoppedInstances={{
           data: [],
           isLoading,

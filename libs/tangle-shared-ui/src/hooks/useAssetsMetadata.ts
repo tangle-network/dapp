@@ -1,19 +1,19 @@
 import useApiRx from './useApiRx';
 import { useCallback, useMemo } from 'react';
 import { RestakeAssetId } from '../types';
-
+import { PrimitiveAssetMetadata } from '../types/restake';
 type useAssetsMetadataProps = RestakeAssetId | RestakeAssetId[];
 
 const useAssetsMetadata = (
   singleOrMultipleAssetIds: useAssetsMetadataProps,
 ) => {
-  let addresses: string[];
-
-  if (Array.isArray(singleOrMultipleAssetIds)) {
-    addresses = singleOrMultipleAssetIds;
-  } else {
-    addresses = [singleOrMultipleAssetIds];
-  }
+  const addresses = useMemo(() => {
+    if (Array.isArray(singleOrMultipleAssetIds)) {
+      return Array.from(new Set(singleOrMultipleAssetIds));
+    } else {
+      return [singleOrMultipleAssetIds];
+    }
+  }, [singleOrMultipleAssetIds]);
 
   const { result, ...other } = useApiRx(
     useCallback(
@@ -32,7 +32,10 @@ const useAssetsMetadata = (
         return [addresses[index], null] as const;
       }
 
-      return [addresses[index], metadataResult] as const;
+      return [
+        addresses[index],
+        metadataResult.toHuman() as PrimitiveAssetMetadata,
+      ] as const;
     });
   }, [addresses, result]);
 

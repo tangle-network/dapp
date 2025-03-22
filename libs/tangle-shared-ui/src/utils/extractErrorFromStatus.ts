@@ -1,5 +1,5 @@
 import { ISubmittableResult } from '@polkadot/types/types';
-import ensureError from '@tangle-network/tangle-shared-ui/utils/ensureError';
+import ensureError from '../utils/ensureError';
 
 function extractErrorFromTxStatus(status: ISubmittableResult): Error | null {
   if (

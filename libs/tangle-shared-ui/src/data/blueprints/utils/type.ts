@@ -23,6 +23,7 @@ export interface MonitoringBlueprint extends OperatorBlueprint {
     instanceCount?: number;
     operatorsCount?: number;
     tvl?: number;
+    restakersCount?: number;
   };
   services: Array<
     OperatorBlueprint['services'][number] & {
@@ -44,6 +45,7 @@ export type MonitoringServiceRequest = ReturnType<
 > & {
   requestCreatedAtBlock?: number;
   blueprintData?: MonitoringBlueprint['blueprint'];
+  pricing?: number;
 
   // deployer role
   pendingOperators?: SubstrateAddress[];

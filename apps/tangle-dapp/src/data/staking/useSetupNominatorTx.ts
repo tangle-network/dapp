@@ -10,7 +10,7 @@ import { EvmTxFactory } from '../../hooks/useEvmPrecompileCall';
 import useFormatNativeTokenAmount from '../../hooks/useFormatNativeTokenAmount';
 import { SubstrateTxFactory } from '../../hooks/useSubstrateTx';
 import { GetSuccessMessageFn, StakingRewardsDestination } from '../../types';
-import optimizeTxBatch from '../../utils/optimizeTxBatch';
+import optimizeTxBatch from '@tangle-network/tangle-shared-ui/utils/optimizeTxBatch';
 import createEvmBatchCallArgs from '../../utils/staking/createEvmBatchCallArgs';
 import createEvmBatchCall from '../../utils/staking/createEvmBatchCall';
 import getEvmPayeeValue from '../../utils/staking/getEvmPayeeValue';

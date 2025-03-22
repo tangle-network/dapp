@@ -5,7 +5,7 @@ import useAgnosticTx from '../../hooks/useAgnosticTx';
 import { EvmTxFactory } from '../../hooks/useEvmPrecompileCall';
 import { SubstrateTxFactory } from '../../hooks/useSubstrateTx';
 import { GetSuccessMessageFn } from '../../types';
-import optimizeTxBatch from '../../utils/optimizeTxBatch';
+import optimizeTxBatch from '@tangle-network/tangle-shared-ui/utils/optimizeTxBatch';
 import createEvmBatchCallArgs from '../../utils/staking/createEvmBatchCallArgs';
 import createEvmBatchCall from '../../utils/staking/createEvmBatchCall';
 import BATCH_PRECOMPILE_ABI from '../../abi/batch';

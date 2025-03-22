@@ -11,7 +11,7 @@ import { convertAddressToBytes32 } from '@tangle-network/ui-components';
 import BATCH_PRECOMPILE_ABI from '../../abi/batch';
 import createEvmBatchCall from '../../utils/staking/createEvmBatchCall';
 import createEvmBatchCallArgs from '../../utils/staking/createEvmBatchCallArgs';
-import optimizeTxBatch from '../../utils/optimizeTxBatch';
+import optimizeTxBatch from '@tangle-network/tangle-shared-ui/utils/optimizeTxBatch';
 
 type Context = SubstrateAddress[];
 
