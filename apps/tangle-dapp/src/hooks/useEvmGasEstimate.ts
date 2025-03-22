@@ -5,7 +5,7 @@ import useViemPublicClient from '@tangle-network/tangle-shared-ui/hooks/useViemP
 import {
   ExtractAbiFunctionNames,
   PrecompileAddress,
-} from '../constants/evmPrecompiles';
+} from '@tangle-network/tangle-shared-ui/constants/evmPrecompiles';
 import { PrecompileCall } from './useEvmPrecompileCall';
 
 /**

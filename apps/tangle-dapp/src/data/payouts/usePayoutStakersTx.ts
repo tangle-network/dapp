@@ -1,6 +1,6 @@
 import { useCallback } from 'react';
 import { TxName } from '../../constants';
-import { PrecompileAddress } from '../../constants/evmPrecompiles';
+import { PrecompileAddress } from '@tangle-network/tangle-shared-ui/constants/evmPrecompiles';
 import useAgnosticTx from '../../hooks/useAgnosticTx';
 import { EvmTxFactory } from '../../hooks/useEvmPrecompileCall';
 import { SubstrateTxFactory } from '../../hooks/useSubstrateTx';
@@ -8,8 +8,8 @@ import { GetSuccessMessageFn } from '../../types';
 import optimizeTxBatch from '@tangle-network/tangle-shared-ui/utils/optimizeTxBatch';
 import createEvmBatchCallArgs from '../../utils/staking/createEvmBatchCallArgs';
 import createEvmBatchCall from '../../utils/staking/createEvmBatchCall';
-import BATCH_PRECOMPILE_ABI from '../../abi/batch';
-import STAKING_PRECOMPILE_ABI from '../../abi/staking';
+import BATCH_PRECOMPILE_ABI from '@tangle-network/tangle-shared-ui/abi/batch';
+import STAKING_PRECOMPILE_ABI from '@tangle-network/tangle-shared-ui/abi/staking';
 import convertAddressToBytes32 from '@tangle-network/ui-components/utils/convertAddressToBytes32';
 import { toSubstrateAddress } from '@tangle-network/ui-components';
 import { shortenString } from '@tangle-network/ui-components';

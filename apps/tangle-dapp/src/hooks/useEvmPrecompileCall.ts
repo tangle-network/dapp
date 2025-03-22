@@ -14,7 +14,7 @@ import {
   ExtractAbiFunctionNames,
   FindAbiArgsOf,
   PrecompileAddress,
-} from '../constants/evmPrecompiles';
+} from '@tangle-network/tangle-shared-ui/constants/evmPrecompiles';
 import useEvmAddress20 from './useEvmAddress';
 import { TxStatus } from './useSubstrateTx';
 import { EvmAddress } from '@tangle-network/ui-components/types/address';

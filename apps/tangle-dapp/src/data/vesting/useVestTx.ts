@@ -1,9 +1,9 @@
 import { useCallback } from 'react';
 
 import { TxName } from '../../constants';
-import { PrecompileAddress } from '../../constants/evmPrecompiles';
+import { PrecompileAddress } from '@tangle-network/tangle-shared-ui/constants/evmPrecompiles';
 import useAgnosticTx from '../../hooks/useAgnosticTx';
-import VESTING_PRECOMPILE_ABI from '../../abi/vesting';
+import VESTING_PRECOMPILE_ABI from '@tangle-network/tangle-shared-ui/abi/vesting';
 
 /**
  * Performs the `vesting.vest` extrinsic call.

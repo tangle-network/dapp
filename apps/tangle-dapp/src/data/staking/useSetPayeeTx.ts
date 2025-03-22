@@ -1,14 +1,14 @@
 import { useCallback } from 'react';
 
 import { TxName } from '../../constants';
-import { PrecompileAddress } from '../../constants/evmPrecompiles';
+import { PrecompileAddress } from '@tangle-network/tangle-shared-ui/constants/evmPrecompiles';
 import useAgnosticTx from '../../hooks/useAgnosticTx';
 import { EvmTxFactory } from '../../hooks/useEvmPrecompileCall';
 import { SubstrateTxFactory } from '../../hooks/useSubstrateTx';
 import { StakingRewardsDestination } from '../../types';
 import getEvmPayeeValue from '../../utils/staking/getEvmPayeeValue';
 import getSubstratePayeeValue from '../../utils/staking/getSubstratePayeeValue';
-import STAKING_PRECOMPILE_ABI from '../../abi/staking';
+import STAKING_PRECOMPILE_ABI from '@tangle-network/tangle-shared-ui/abi/staking';
 import enumValueToNumber from '../../utils/enumValueToNumber';
 
 type Context = {

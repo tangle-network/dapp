@@ -1,7 +1,7 @@
 import useAgnosticAccountInfo from '@tangle-network/tangle-shared-ui/hooks/useAgnosticAccountInfo';
 import { useReadContract } from 'wagmi';
-import CALL_PERMIT_PRECOMPILE_ABI from '../abi/callPermit';
-import { PrecompileAddress } from '../constants/evmPrecompiles';
+import CALL_PERMIT_PRECOMPILE_ABI from '@tangle-network/tangle-shared-ui/abi/callPermit';
+import { PrecompileAddress } from '@tangle-network/tangle-shared-ui/constants/evmPrecompiles';
 
 const useEvmCallPermitNonce = () => {
   const { evmAddress } = useAgnosticAccountInfo();

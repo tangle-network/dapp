@@ -11,14 +11,14 @@ import { shortenString } from '@tangle-network/ui-components/utils/shortenString
 import { useCallback } from 'react';
 
 import { TxName } from '../../constants';
-import { PrecompileAddress } from '../../constants/evmPrecompiles';
+import { PrecompileAddress } from '@tangle-network/tangle-shared-ui/constants/evmPrecompiles';
 import useAgnosticTx from '../../hooks/useAgnosticTx';
 import { PrecompileCall, EvmTxFactory } from '../../hooks/useEvmPrecompileCall';
 import useEvmPrecompileFeeFetcher from '../../hooks/useEvmPrecompileFee';
 import useFormatNativeTokenAmount from '../../hooks/useFormatNativeTokenAmount';
 import { SubstrateTxFactory } from '../../hooks/useSubstrateTx';
 import { GetSuccessMessageFn } from '../../types';
-import BALANCES_ERC20_PRECOMPILE_ABI from '../../abi/balancesErc20';
+import BALANCES_ERC20_PRECOMPILE_ABI from '@tangle-network/tangle-shared-ui/abi/balancesErc20';
 
 type Context = {
   recipientAddress: SubstrateAddress | EvmAddress;
