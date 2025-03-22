@@ -1,4 +1,4 @@
-import { Children, useMemo, type FC, useState } from 'react';
+import { Children, useMemo, type FC, useState, useCallback } from 'react';
 import {
   AccessorKeyColumnDef,
   createColumnHelper,
@@ -138,14 +138,14 @@ export const PendingInstanceTable: FC = () => {
                   icon={Children.toArray(
                     props.row.original.securityRequirements.map(
                       (requirement) => {
+                        const assetMetadata = assetsMetadata?.get(
+                          requirement.asset,
+                        );
                         return (
                           <div className="flex items-center gap-2">
-                            <LsTokenIcon
-                              name={
-                                assetsMetadata
-                                  ?.get(requirement.asset)
-                                  ?.symbol?.toString() ?? ''
-                              }
+                           <LsTokenIcon
+                              name={assetMetadata?.name ?? 'TNT'}
+                              hasRainbowBorder
                               size="lg"
                             />
                             <Typography
@@ -170,14 +170,15 @@ export const PendingInstanceTable: FC = () => {
                         return (
                           <div className="flex items-center gap-2">
                             <LsTokenIcon
-                              name={assetMetadata?.symbol?.toString() ?? ''}
+                              name={assetMetadata?.name ?? 'TNT'}
+                              hasRainbowBorder
                               size="lg"
                             />
                             <Typography
                               variant="para1"
                               className="whitespace-nowrap"
                             >
-                              {assetMetadata?.name?.toString() ?? ''} is
+                              {assetMetadata?.name?.toString() ?? 'TNT'} is
                               required to spend
                             </Typography>
                             <Typography
@@ -249,7 +250,7 @@ export const PendingInstanceTable: FC = () => {
                 <div className="flex gap-2">
                   <Button
                     variant="utility"
-                    className="uppercase body4"
+                    size='sm'
                     onClick={() => {
                       setIsApproveConfirmationModalOpen(true);
                       setSelectedRequest(props.row.original);
@@ -259,7 +260,7 @@ export const PendingInstanceTable: FC = () => {
                   </Button>
                   <Button
                     variant="utility"
-                    className="uppercase body4"
+                    size='sm'
                     onClick={() => {
                       setIsRejectConfirmationModalOpen(true);
                       setSelectedRequest(props.row.original);
@@ -358,7 +359,7 @@ export const PendingInstanceTable: FC = () => {
     }
 
     return baseColumns;
-  }, [isOperator, assetsMetadata]);
+  }, [isOperator, assetsMetadata, operatorIdentityMap]);
 
   const table = useReactTable({
     data: pendingBlueprints,
@@ -370,32 +371,34 @@ export const PendingInstanceTable: FC = () => {
     enableSortingRemoval: false,
   });
 
-  const onCloseBlueprintRejectModal = () => {
+  const onCloseBlueprintRejectModal = useCallback(() => {
     setIsRejectConfirmationModalOpen(false);
     setSelectedRequest(null);
-  };
+  }, [setIsRejectConfirmationModalOpen, setSelectedRequest]);
 
-  const onConfirmReject = async (): Promise<boolean> => {
+  const onConfirmReject = useCallback(async (): Promise<boolean> => {
     if (!selectedRequest || !serviceApi) return false;
 
     return serviceApi.rejectServiceRequest(selectedRequest.requestId);
-  };
+  }, [selectedRequest, serviceApi]);
 
-  const onCloseBlueprintApproveModal = () => {
+  const onCloseBlueprintApproveModal = useCallback(() => {
     setIsApproveConfirmationModalOpen(false);
     setSelectedRequest(null);
-  };
+  }, [setIsApproveConfirmationModalOpen, setSelectedRequest]);
 
-  const onConfirmApprove = async (
+  const onConfirmApprove = useCallback(async (
     data: ApprovalConfirmationFormFields,
   ): Promise<boolean> => {
     if (!selectedRequest || !serviceApi) return false;
-
+  
     return serviceApi.approveServiceRequest(
       data.requestId,
-      data.securityCommitment,
-    );
-  };
+        data.securityCommitment,
+      );
+    },
+    [selectedRequest, serviceApi],
+  );
 
   return (
     <>

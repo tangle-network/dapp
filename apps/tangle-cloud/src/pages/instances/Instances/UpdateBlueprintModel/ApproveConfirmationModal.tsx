@@ -1,32 +1,32 @@
 import { MonitoringServiceRequest } from '@tangle-network/tangle-shared-ui/data/blueprints/utils/type';
 import {
-  Button,
   ModalBody,
   ModalContent,
-  ModalFooter,
+  ModalFooterActions,
   ModalHeader,
   Typography,
 } from '@tangle-network/ui-components';
 import BlueprintItem from '@tangle-network/tangle-shared-ui/components/blueprints/BlueprintGallery/BlueprintItem';
-import { ApprovalConfirmationFormFields } from '../../../../types/approvalConfirmationForm';
+import { ApprovalConfirmationFormFields } from '../../../../types';
 import { useForm } from 'react-hook-form';
-import { Children, useMemo } from 'react';
+import { Children, useCallback, useMemo } from 'react';
 import { PrimitiveAssetMetadata } from '@tangle-network/tangle-shared-ui/types/restake';
 import { AssetCommitmentFormItem } from './AssetCommitmentFormItem';
+import { validateSecurityCommitments } from '../../../../utils/validations/validateSecurityCommitment';
 
-type ApproveConfirmationModelProps = {
+type ApproveConfirmationModalProps = {
   onClose: () => void;
   onConfirm: (data: ApprovalConfirmationFormFields) => Promise<boolean>;
   selectedRequest: MonitoringServiceRequest | null;
   assetsMetadata: Map<string, PrimitiveAssetMetadata | null>;
 };
 
-function ApproveConfirmationModel({
+function ApproveConfirmationModal({
   onClose,
   onConfirm,
   selectedRequest,
   assetsMetadata,
-}: ApproveConfirmationModelProps) {
+}: ApproveConfirmationModalProps) {
   const securityCommitmentDefaultFormValue = useMemo(() => {
     if (!selectedRequest?.securityRequirements?.length) return [];
 
@@ -46,7 +46,6 @@ function ApproveConfirmationModel({
     setValue,
     handleSubmit,
     watch,
-    reset,
     formState: { errors, isValid, isSubmitting },
   } = useForm<ApprovalConfirmationFormFields>({
     mode: 'onChange',
@@ -55,69 +54,7 @@ function ApproveConfirmationModel({
       securityCommitment: securityCommitmentDefaultFormValue,
     },
     resolver: (values) => {
-      const errors: any = {};
-
-      // Validate each security commitment
-      values.securityCommitment?.forEach((commitment, index) => {
-        if (!commitment.assetId) {
-          if (!errors.securityCommitment) errors.securityCommitment = [];
-          if (!errors.securityCommitment[index])
-            errors.securityCommitment[index] = {};
-          errors.securityCommitment[index].assetId = {
-            type: 'required',
-            message: 'Asset is required',
-          };
-        }
-
-        const selectedAsset = selectedRequest?.securityRequirements?.find(
-          (requirement) => requirement.asset === commitment.assetId,
-        );
-        const minExposurePercent = selectedAsset?.minExposurePercent || 1;
-        const maxExposurePercent = selectedAsset?.maxExposurePercent || 100;
-
-        if (commitment.exposurePercent !== undefined) {
-          const exposurePercent = Number(commitment.exposurePercent);
-
-          if (!commitment.exposurePercent) {
-            if (!errors.securityCommitment) errors.securityCommitment = [];
-            if (!errors.securityCommitment[index])
-              errors.securityCommitment[index] = {};
-            errors.securityCommitment[index].exposurePercent = {
-              type: 'required',
-              message: 'Exposure percentage is required',
-            };
-          } else if (
-            isNaN(exposurePercent) ||
-            !Number.isInteger(exposurePercent)
-          ) {
-            if (!errors.securityCommitment) errors.securityCommitment = [];
-            if (!errors.securityCommitment[index])
-              errors.securityCommitment[index] = {};
-            errors.securityCommitment[index].exposurePercent = {
-              type: 'integer',
-              message: 'Exposure percentage must be an integer',
-            };
-          } else if (exposurePercent < minExposurePercent) {
-            if (!errors.securityCommitment) errors.securityCommitment = [];
-            if (!errors.securityCommitment[index])
-              errors.securityCommitment[index] = {};
-            errors.securityCommitment[index].exposurePercent = {
-              type: 'min',
-              message: `Exposure percentage must be at least ${minExposurePercent}`,
-            };
-          } else if (exposurePercent > maxExposurePercent) {
-            if (!errors.securityCommitment) errors.securityCommitment = [];
-            if (!errors.securityCommitment[index])
-              errors.securityCommitment[index] = {};
-            errors.securityCommitment[index].exposurePercent = {
-              type: 'max',
-              message: `Exposure percentage must be less than or equal to ${maxExposurePercent}`,
-            };
-          }
-        }
-      });
-
-      values.requestId = selectedRequest?.requestId as number;
+      const errors = validateSecurityCommitments<ApprovalConfirmationFormFields>(values.securityCommitment, selectedRequest?.securityRequirements ?? []);
 
       return {
         values,
@@ -126,24 +63,14 @@ function ApproveConfirmationModel({
     },
   });
 
-  const onCancel = () => {
-    reset({
-      requestId: selectedRequest?.requestId,
-      securityCommitment: securityCommitmentDefaultFormValue,
-    });
-    onClose();
-  };
-
-  const onSubmit = async (data: ApprovalConfirmationFormFields) => {
+  const onSubmit = useCallback(async (data: ApprovalConfirmationFormFields) => {
     const isSuccess = await onConfirm(data);
     if (!isSuccess) return;
 
-    reset({
-      requestId: selectedRequest?.requestId,
-      securityCommitment: [],
-    });
-    onClose();
-  };
+      onClose();
+    },
+    [onClose, onConfirm],
+  );
 
   return (
     <ModalContent
@@ -221,20 +148,15 @@ function ApproveConfirmationModel({
           )}
         </form>
       </ModalBody>
-      <ModalFooter className="flex justify-end">
-        <Button variant="secondary" onClick={onCancel}>
-          Cancel
-        </Button>
-        <Button
-          variant="primary"
-          onClick={handleSubmit(onSubmit)}
-          isDisabled={!isValid || isSubmitting}
-        >
-          Approve
-        </Button>
-      </ModalFooter>
+      <ModalFooterActions 
+        isConfirmDisabled={!isValid || isSubmitting}
+        isProcessing={isSubmitting}
+        confirmButtonText="Approve"
+        onConfirm={handleSubmit(onSubmit)}
+        hasCloseButton
+      />
     </ModalContent>
   );
 }
 
-export default ApproveConfirmationModel;
+export default ApproveConfirmationModal;

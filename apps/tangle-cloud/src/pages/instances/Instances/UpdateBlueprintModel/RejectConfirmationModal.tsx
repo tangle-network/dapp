@@ -1,32 +1,32 @@
 import {
   Alert,
-  Button,
   ModalBody,
   ModalContent,
-  ModalFooter,
+  ModalFooterActions,
   ModalHeader,
 } from '@tangle-network/ui-components';
 import { MonitoringServiceRequest } from '@tangle-network/tangle-shared-ui/data/blueprints/utils/type';
 import BlueprintItem from '@tangle-network/tangle-shared-ui/components/blueprints/BlueprintGallery/BlueprintItem';
 import { useState } from 'react';
-type RejectConfirmationModelProps = {
+
+type RejectConfirmationModalProps = {
   onClose: () => void;
   onConfirm: () => Promise<boolean>;
   selectedRequest: MonitoringServiceRequest | null;
 };
 
-function RejectConfirmationModel({
+function RejectConfirmationModal({
   onClose,
   onConfirm,
   selectedRequest,
-}: RejectConfirmationModelProps) {
+}: RejectConfirmationModalProps) {
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const onSubmit = async () => {
     setIsSubmitting(true);
     const isSuccess = await onConfirm();
-    if (!isSuccess) return;
     setIsSubmitting(false);
+    if (!isSuccess) return;
     onClose();
   };
 
@@ -72,19 +72,18 @@ function RejectConfirmationModel({
         <Alert
           className="mt-4"
           type="error"
-          description="Are you sure you want to reject this blueprint?"
+          description="Are you sure you want to reject this service request?"
         />
       </ModalBody>
-      <ModalFooter className="flex justify-end">
-        <Button variant="secondary" onClick={onClose}>
-          Cancel
-        </Button>
-        <Button variant="primary" onClick={onSubmit} isDisabled={isSubmitting}>
-          Reject
-        </Button>
-      </ModalFooter>
+      <ModalFooterActions 
+        isConfirmDisabled={isSubmitting}
+        isProcessing={isSubmitting}
+        confirmButtonText="Reject"
+        onConfirm={onSubmit}
+        hasCloseButton
+      />
     </ModalContent>
   );
 }
 
-export default RejectConfirmationModel;
+export default RejectConfirmationModal;
