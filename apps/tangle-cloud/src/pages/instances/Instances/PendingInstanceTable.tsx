@@ -1,4 +1,4 @@
-import { Children, useMemo, type FC, useState, useCallback } from 'react';
+import { useMemo, type FC, useState, useCallback } from 'react';
 import {
   AccessorKeyColumnDef,
   createColumnHelper,
@@ -13,7 +13,7 @@ import {
   DropdownBody,
   DropdownButton,
   EMPTY_VALUE_PLACEHOLDER,
-  IconWithTooltip,
+  getRoundedAmountString,
   Modal,
   shortenString,
   Typography,
@@ -27,7 +27,6 @@ import useNetworkStore from '@tangle-network/tangle-shared-ui/context/useNetwork
 import { DropdownMenuItem } from '@radix-ui/react-dropdown-menu';
 import { NestedOperatorCell } from '../../../components/NestedOperatorCell';
 import addCommasToNumber from '@tangle-network/ui-components/utils/addCommasToNumber';
-import LsTokenIcon from '@tangle-network/tangle-shared-ui/components/LsTokenIcon';
 import useAssetsMetadata from '@tangle-network/tangle-shared-ui/hooks/useAssetsMetadata';
 import RejectConfirmationModel from './UpdateBlueprintModel/RejectConfirmationModal';
 import ApproveConfirmationModel from './UpdateBlueprintModel/ApproveConfirmationModal';
@@ -123,77 +122,14 @@ export const PendingInstanceTable: FC = () => {
 
     if (isOperator) {
       baseColumns.push(
-        columnHelper.accessor('securityRequirements', {
+        columnHelper.accessor('pricing', {
           header: () => 'Pricing',
           cell: (props) => {
             return (
               <TableCellWrapper>
-                <IconWithTooltip
-                  overrideTooltipTriggerProps={{
-                    className: 'flex flex-col gap-2',
-                  }}
-                  overrideTooltipBodyProps={{
-                    className: 'max-w-fit',
-                  }}
-                  icon={Children.toArray(
-                    props.row.original.securityRequirements.map(
-                      (requirement) => {
-                        const assetMetadata = assetsMetadata?.get(
-                          requirement.asset,
-                        );
-                        return (
-                          <div className="flex items-center gap-2">
-                            <LsTokenIcon
-                              name={assetMetadata?.name ?? 'TNT'}
-                              hasRainbowBorder
-                              size="lg"
-                            />
-                            <Typography
-                              variant="para1"
-                              className="whitespace-nowrap"
-                            >
-                              {requirement.minExposurePercent}% -{' '}
-                              {requirement.maxExposurePercent}%
-                            </Typography>
-                          </div>
-                        );
-                      },
-                    ),
-                  )}
-                  content={Children.toArray(
-                    props.row.original.securityRequirements.map(
-                      (requirement) => {
-                        const assetMetadata = assetsMetadata?.get(
-                          requirement.asset,
-                        );
-
-                        return (
-                          <div className="flex items-center gap-2">
-                            <LsTokenIcon
-                              name={assetMetadata?.name ?? 'TNT'}
-                              hasRainbowBorder
-                              size="lg"
-                            />
-                            <Typography
-                              variant="para1"
-                              className="whitespace-nowrap"
-                            >
-                              {assetMetadata?.name?.toString() ?? 'TNT'} is
-                              required to spend
-                            </Typography>
-                            <Typography
-                              variant="para1"
-                              className="whitespace-nowrap"
-                            >
-                              {requirement.minExposurePercent}% -{' '}
-                              {requirement.maxExposurePercent}%
-                            </Typography>
-                          </div>
-                        );
-                      },
-                    ),
-                  )}
-                />
+                {props.row.original.pricing
+                  ? `$${getRoundedAmountString(props.row.original.pricing)}`
+                  : EMPTY_VALUE_PLACEHOLDER}
               </TableCellWrapper>
             );
           },

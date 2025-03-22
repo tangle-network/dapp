@@ -45,6 +45,7 @@ export type MonitoringServiceRequest = ReturnType<
 > & {
   requestCreatedAtBlock?: number;
   blueprintData?: MonitoringBlueprint['blueprint'];
+  pricing?: number;
 
   // deployer role
   pendingOperators?: SubstrateAddress[];

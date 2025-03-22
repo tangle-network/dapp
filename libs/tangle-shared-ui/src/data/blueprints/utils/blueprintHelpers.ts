@@ -295,6 +295,8 @@ export function createPendingServiceRequests(
   return pendingServiceRequests.map((pendingServiceRequest, idx) => {
     return {
       ...pendingServiceRequest,
+      // TODO: sum asset price
+      pricing: Math.round(Math.random() * 10000),
       blueprintData: {
         ...blueprints[idx],
       },
