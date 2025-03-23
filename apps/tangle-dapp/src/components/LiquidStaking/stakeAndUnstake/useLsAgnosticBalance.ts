@@ -2,7 +2,7 @@ import { BN } from '@polkadot/util';
 import { EMPTY_VALUE_PLACEHOLDER } from '@tangle-network/ui-components/constants';
 import { useEffect, useState } from 'react';
 
-import useBalances from '../../../data/balances/useBalances';
+import useBalances from '@tangle-network/tangle-shared-ui/hooks/useBalances';
 import useLsPoolBalance from '../../../data/liquidStaking/tangle/useLsPoolBalance';
 import useIsAccountConnected from '../../../hooks/useIsAccountConnected';
 

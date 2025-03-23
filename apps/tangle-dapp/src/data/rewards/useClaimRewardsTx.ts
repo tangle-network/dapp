@@ -8,12 +8,13 @@ import BATCH_PRECOMPILE_ABI from '@tangle-network/tangle-shared-ui/abi/batch';
 import REWARDS_PRECOMPILE_ABI from '@tangle-network/tangle-shared-ui/abi/rewards';
 import { TxName } from '../../constants';
 import { PrecompileAddress } from '@tangle-network/tangle-shared-ui/constants/evmPrecompiles';
-import useAgnosticTx from '../../hooks/useAgnosticTx';
-import { EvmTxFactory } from '../../hooks/useEvmPrecompileCall';
-import { SubstrateTxFactory } from '../../hooks/useSubstrateTx';
+import useAgnosticTx from '@tangle-network/tangle-shared-ui/hooks/useAgnosticTx';
+import { EvmTxFactory } from '@tangle-network/tangle-shared-ui/hooks/useEvmPrecompileCall';
+import { SubstrateTxFactory } from '@tangle-network/tangle-shared-ui/hooks/useSubstrateTx';
 import createEvmBatchCall from '../../utils/staking/createEvmBatchCall';
 import createEvmBatchCallArgs from '../../utils/staking/createEvmBatchCallArgs';
 import optimizeTxBatch from '@tangle-network/tangle-shared-ui/utils/optimizeTxBatch';
+import { SUCCESS_MESSAGES } from '../../hooks/useTxNotification';
 
 type Context = {
   assetIds: RestakeAssetId[];
@@ -73,6 +74,7 @@ const useClaimRewardsTx = () => {
     precompileAddress: PrecompileAddress.BATCH,
     evmTxFactory,
     substrateTxFactory,
+    successMessageByTxName: SUCCESS_MESSAGES,
   });
 };
 

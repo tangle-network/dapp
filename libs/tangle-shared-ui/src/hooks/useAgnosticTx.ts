@@ -1,16 +1,15 @@
 import { assert } from '@polkadot/util';
 import { useCallback, useEffect, useState } from 'react';
 
-import useNetworkStore from '@tangle-network/tangle-shared-ui/context/useNetworkStore';
-import useActiveAccountAddress from '@tangle-network/tangle-shared-ui/hooks/useActiveAccountAddress';
-import useAgnosticAccountInfo from '@tangle-network/tangle-shared-ui/hooks/useAgnosticAccountInfo';
+import useNetworkStore from '../context/useNetworkStore';
+import useActiveAccountAddress from './useActiveAccountAddress';
+import useAgnosticAccountInfo from './useAgnosticAccountInfo';
 import { AbiFunction } from 'viem';
-import { TxName } from '../constants';
 import {
   ExtractAbiFunctionNames,
   PrecompileAddress,
-} from '@tangle-network/tangle-shared-ui/constants/evmPrecompiles';
-import { GetSuccessMessageFn } from '../types';
+} from '../constants/evmPrecompiles';
+import type { GetSuccessMessageFn, BaseTxName } from '../types';
 import useEvmPrecompileCall, {
   EvmTxFactory,
   PrecompileCall,
@@ -22,6 +21,7 @@ export type AgnosticTxOptions<
   Abi extends AbiFunction[],
   FunctionName extends ExtractAbiFunctionNames<Abi>,
   Context,
+  TxName extends BaseTxName,
 > = {
   abi: Abi;
   precompileAddress: PrecompileAddress;
@@ -49,6 +49,13 @@ export type AgnosticTxOptions<
   name: TxName;
 
   /**
+   * A map of transaction names to success messages.
+   *
+   * This is used to display a success message on the toast notification.
+   */
+  successMessageByTxName: Record<TxName, string>;
+
+  /**
    * A function that returns a success message to display
    * when the transaction is successful.
    *
@@ -69,6 +76,7 @@ function useAgnosticTx<
   Abi extends AbiFunction[],
   FunctionName extends ExtractAbiFunctionNames<Abi>,
   Context = void,
+  TxName extends BaseTxName = BaseTxName,
 >({
   abi,
   precompileAddress,
@@ -76,8 +84,9 @@ function useAgnosticTx<
   substrateTxFactory,
   name,
   getSuccessMessage,
+  successMessageByTxName,
   isEvmTxRelayerSubsidized = false,
-}: AgnosticTxOptions<Abi, FunctionName, Context>) {
+}: AgnosticTxOptions<Abi, FunctionName, Context, TxName>) {
   const [agnosticStatus, setAgnosticStatus] = useState(
     TxStatus.NOT_YET_INITIATED,
   );
@@ -108,7 +117,8 @@ function useAgnosticTx<
     successMessage: evmSuccessMessage,
   } = useEvmPrecompileCall(abi, precompileAddress, evmTxFactory);
 
-  const { notifyProcessing, notifySuccess, notifyError } = useTxNotification();
+  const { notifyProcessing, notifySuccess, notifyError } =
+    useTxNotification<TxName>(successMessageByTxName);
 
   const execute = useCallback(
     async (context: Context) => {

@@ -34,7 +34,7 @@ import { AssetConfig, AssetList } from '../../../components/Lists/AssetList';
 import { ChainList } from '../../../components/Lists/ChainList';
 import { AddressType } from '../../../constants';
 import useBridgeStore from '../context/useBridgeStore';
-import useBalances from '../../../data/balances/useBalances';
+import useBalances from '@tangle-network/tangle-shared-ui/hooks/useBalances';
 import { useEvmBalances } from '../hooks/useEvmBalances';
 import { useHyperlaneQuote } from '../hooks/useHyperlaneQuote';
 import useIsNativeToken from '../hooks/useIsNativeToken';

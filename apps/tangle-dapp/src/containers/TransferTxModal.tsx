@@ -20,10 +20,10 @@ import { isHex } from 'viem';
 
 import AddressInput from '../components/AddressInput';
 import AmountInput from '../components/AmountInput';
-import useBalances from '../data/balances/useBalances';
+import useBalances from '@tangle-network/tangle-shared-ui/hooks/useBalances';
 import useExistentialDeposit from '../data/balances/useExistentialDeposit';
 import useTransferTx from '../data/balances/useTransferTx';
-import { TxStatus } from '../hooks/useSubstrateTx';
+import { TxStatus } from '@tangle-network/tangle-shared-ui/hooks/useSubstrateTx';
 import formatTangleBalance from '../utils/formatTangleBalance';
 import { AddressType } from '../constants';
 import useActiveAccountAddress from '@tangle-network/tangle-shared-ui/hooks/useActiveAccountAddress';

@@ -6,7 +6,7 @@ import {
   SubstrateAddress,
 } from '@tangle-network/ui-components/types/address';
 import { create } from 'zustand';
-import { TxName } from '../constants';
+import { BaseTxName } from '../types';
 
 type HistoryTxStatus = 'pending' | 'inblock' | 'finalized' | 'failed';
 
@@ -17,7 +17,7 @@ export type HistoryTxDetail =
   | SubstrateAddress
   | BN;
 
-export type HistoryTx = {
+export type HistoryTx<TxName extends BaseTxName = BaseTxName> = {
   name: TxName;
   hash: HexString;
   origin: SubstrateAddress | EvmAddress;

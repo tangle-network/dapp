@@ -3,12 +3,10 @@ import { Button, Typography } from '@tangle-network/ui-components';
 import capitalize from 'lodash/capitalize';
 import { useSnackbar } from 'notistack';
 import { useCallback } from 'react';
-
 import useAgnosticAccountInfo from './useAgnosticAccountInfo';
+import { type BaseTxName } from '../types';
 
 const SUCCESS_TIMEOUT = 10_000;
-
-type BaseTxName = string | number;
 
 const makeKey = <TxName extends BaseTxName>(
   txName: TxName,

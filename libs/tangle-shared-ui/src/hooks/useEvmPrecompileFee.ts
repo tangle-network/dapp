@@ -7,11 +7,11 @@ import { useCallback, useState } from 'react';
 import {
   ExtractAbiFunctionNames,
   PrecompileAddress,
-} from '@tangle-network/tangle-shared-ui/constants/evmPrecompiles';
+} from '../constants/evmPrecompiles';
 import useEvmAddress20 from './useEvmAddress';
 import { PrecompileCall } from './useEvmPrecompileCall';
 import { AbiFunction } from 'viem';
-import useViemPublicClient from '@tangle-network/tangle-shared-ui/hooks/useViemPublicClient';
+import useViemPublicClient from './useViemPublicClient';
 
 export type QueryStatus = 'idle' | 'loading' | 'success' | 'error';
 

@@ -13,8 +13,8 @@ import { Hash } from 'viem';
 import getWagmiConfig from '@tangle-network/dapp-config/wagmi-config';
 import { TxName } from '../../constants';
 import useAgnosticAccountInfo from '@tangle-network/tangle-shared-ui/hooks/useAgnosticAccountInfo';
-import useEvmTxRelayer from '../../hooks/useEvmTxRelayer';
-import useIsEvmTxRelayerCandidate from '../../hooks/useIsEvmTxRelayerCandidate';
+import useEvmTxRelayer from '@tangle-network/tangle-shared-ui/hooks/useEvmTxRelayer';
+import useIsEvmTxRelayerCandidate from '@tangle-network/tangle-shared-ui/hooks/useIsEvmTxRelayerCandidate';
 import useNetworkStore from '@tangle-network/tangle-shared-ui/context/useNetworkStore';
 
 const useRestakeApi = () => {

@@ -1,5 +1,5 @@
 import { EvmAddress } from '@tangle-network/ui-components/types/address';
-import { AbiBatchCall } from '../../hooks/useEvmPrecompileCall';
+import { AbiBatchCall } from '@tangle-network/tangle-shared-ui/hooks/useEvmPrecompileCall';
 import { Hex } from 'viem';
 
 type AbiBatchCallArgs = [EvmAddress[], bigint[], Hex[], bigint[]];

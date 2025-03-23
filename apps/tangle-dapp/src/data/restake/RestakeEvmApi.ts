@@ -36,7 +36,7 @@ import { TxName } from '../../constants';
 import {
   EvmTxRelaySuccessResult,
   isEvmTxRelayerEligible,
-} from '../../hooks/useEvmTxRelayer';
+} from '@tangle-network/tangle-shared-ui/hooks/useEvmTxRelayer';
 
 type RelayEvmTxFn =
   | (<

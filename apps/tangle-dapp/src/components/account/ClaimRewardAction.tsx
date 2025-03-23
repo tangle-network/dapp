@@ -5,7 +5,7 @@ import { RestakeAssetId } from '@tangle-network/tangle-shared-ui/types';
 import { useCallback, useMemo } from 'react';
 import { twMerge } from 'tailwind-merge';
 import useClaimRewardsTx from '../../data/rewards/useClaimRewardsTx';
-import { TxStatus } from '../../hooks/useSubstrateTx';
+import { TxStatus } from '@tangle-network/tangle-shared-ui/hooks/useSubstrateTx';
 import ActionItem from './ActionItem';
 
 type Props = {

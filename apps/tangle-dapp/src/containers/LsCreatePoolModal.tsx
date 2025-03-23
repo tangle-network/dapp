@@ -16,9 +16,9 @@ import AddressInput from '../components/AddressInput';
 import AmountInput from '../components/AmountInput';
 import LsProtocolChip from '../components/LiquidStaking/LsProtocolChip';
 import TextInput from '../components/TextInput';
-import useBalances from '../data/balances/useBalances';
+import useBalances from '@tangle-network/tangle-shared-ui/hooks/useBalances';
 import useLsCreatePoolTx from '../data/liquidStaking/tangle/useLsCreatePoolTx';
-import { TxStatus } from '../hooks/useSubstrateTx';
+import { TxStatus } from '@tangle-network/tangle-shared-ui/hooks/useSubstrateTx';
 import { AddressType, ERROR_NOT_ENOUGH_BALANCE } from '../constants';
 
 export type LsCreatePoolModalProps = {

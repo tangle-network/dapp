@@ -1,6 +1,6 @@
 import { HexString } from '@polkadot/util/types';
 import { PromiseOrT } from '@tangle-network/abstract-api-provider';
-import ensureError from '@tangle-network/tangle-shared-ui/utils/ensureError';
+import ensureError from '../utils/ensureError';
 import { useCallback, useState } from 'react';
 import type { AbiFunction, Hex } from 'viem';
 import {
@@ -14,7 +14,7 @@ import {
   ExtractAbiFunctionNames,
   FindAbiArgsOf,
   PrecompileAddress,
-} from '@tangle-network/tangle-shared-ui/constants/evmPrecompiles';
+} from '../constants/evmPrecompiles';
 import useEvmAddress20 from './useEvmAddress';
 import { TxStatus } from './useSubstrateTx';
 import { EvmAddress } from '@tangle-network/ui-components/types/address';

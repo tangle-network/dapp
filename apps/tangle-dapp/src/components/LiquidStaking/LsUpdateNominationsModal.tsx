@@ -7,7 +7,7 @@ import {
 } from '@tangle-network/ui-components';
 import { FC, useCallback, useEffect, useState } from 'react';
 
-import { TxStatus } from '../../hooks/useSubstrateTx';
+import { TxStatus } from '@tangle-network/tangle-shared-ui/hooks/useSubstrateTx';
 import { SubstrateAddress } from '@tangle-network/ui-components/types/address';
 import useLsPoolUpdateNominationsTx from '../../data/liquidStaking/tangle/useLsPoolUpdateNominationsTx';
 import SelectValidators from '../../containers/UpdateNominationsTxContainer/SelectValidators';
