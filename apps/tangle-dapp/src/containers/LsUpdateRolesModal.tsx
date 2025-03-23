@@ -13,7 +13,7 @@ import { FC, useCallback, useEffect, useState } from 'react';
 import useSubstrateAddress from '@tangle-network/tangle-shared-ui/hooks/useSubstrateAddress';
 import AddressInput from '../components/AddressInput';
 import useLsUpdateRolesTx from '../data/liquidStaking/tangle/useLsUpdateRolesTx';
-import { TxStatus } from '../hooks/useSubstrateTx';
+import { TxStatus } from '@tangle-network/tangle-shared-ui/hooks/useSubstrateTx';
 import { AddressType } from '../constants';
 
 export type LsUpdateRolesModalProps = {

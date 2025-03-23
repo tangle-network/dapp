@@ -11,7 +11,7 @@ import {
 } from '@tangle-network/tangle-shared-ui/types';
 import ensureError from '@tangle-network/tangle-shared-ui/utils/ensureError';
 import { EvmAddress } from '@tangle-network/ui-components/types/address';
-import useEvmAddress20 from '../../../hooks/useEvmAddress';
+import useEvmAddress20 from '@tangle-network/tangle-shared-ui/hooks/useEvmAddress';
 import { isSolanaAddress } from '@tangle-network/ui-components';
 import assert from 'assert';
 import { BRIDGE_TOKENS } from '@tangle-network/tangle-shared-ui/constants/bridge';

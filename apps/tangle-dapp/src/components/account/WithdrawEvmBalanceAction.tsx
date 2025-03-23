@@ -7,7 +7,7 @@ import { FC, useCallback, useMemo } from 'react';
 
 import useEvmBalanceWithdrawTx from '../../data/balances/useEvmBalanceWithdrawTx';
 import usePendingEvmBalance from '../../data/balances/usePendingEvmBalance';
-import { TxStatus } from '../../hooks/useSubstrateTx';
+import { TxStatus } from '@tangle-network/tangle-shared-ui/hooks/useSubstrateTx';
 import formatTangleBalance from '../../utils/formatTangleBalance';
 import ActionItem from './ActionItem';
 import useAgnosticAccountInfo from '@tangle-network/tangle-shared-ui/hooks/useAgnosticAccountInfo';

@@ -2,24 +2,23 @@ import { ApiPromise } from '@polkadot/api';
 import { SubmittableExtrinsic } from '@polkadot/api/types';
 import { ISubmittableResult } from '@polkadot/types/types';
 import { PromiseOrT } from '@tangle-network/abstract-api-provider';
-import useNetworkStore from '@tangle-network/tangle-shared-ui/context/useNetworkStore';
-import useActiveAccountAddress from '@tangle-network/tangle-shared-ui/hooks/useActiveAccountAddress';
-import useAgnosticAccountInfo from '@tangle-network/tangle-shared-ui/hooks/useAgnosticAccountInfo';
-import useSubstrateAddress from '@tangle-network/tangle-shared-ui/hooks/useSubstrateAddress';
-import useSubstrateInjectedExtension from '@tangle-network/tangle-shared-ui/hooks/useSubstrateInjectedExtension';
-import ensureError from '@tangle-network/tangle-shared-ui/utils/ensureError';
-import { getApiPromise } from '@tangle-network/tangle-shared-ui/utils/polkadot/api';
+import useNetworkStore from '../context/useNetworkStore';
+import useActiveAccountAddress from './useActiveAccountAddress';
+import useAgnosticAccountInfo from './useAgnosticAccountInfo';
+import useSubstrateAddress from './useSubstrateAddress';
+import useSubstrateInjectedExtension from './useSubstrateInjectedExtension';
+import ensureError from '../utils/ensureError';
+import { getApiPromise } from '../utils/polkadot/api';
 import useIsMountedRef from '@tangle-network/ui-components/hooks/useIsMountedRef';
 import type { SubstrateAddress } from '@tangle-network/ui-components/types/address';
 import assert from 'assert';
 import { useCallback, useEffect, useState } from 'react';
 import { Hash } from 'viem';
-import { TxName } from '../constants';
 import useTxHistoryStore, {
   HistoryTxDetail,
 } from '../context/useTxHistoryStore';
-import { GetSuccessMessageFn } from '../types';
-import extractErrorFromTxStatus from '@tangle-network/tangle-shared-ui/utils/extractErrorFromStatus';
+import type { GetSuccessMessageFn, BaseTxName } from '../types';
+import extractErrorFromTxStatus from '../utils/extractErrorFromStatus';
 import useTxNotification from './useTxNotification';
 
 export enum TxStatus {
@@ -35,7 +34,7 @@ export type SubstrateTxFactory<Context = void> = (
   context: Context,
 ) => PromiseOrT<SubmittableExtrinsic<'promise', ISubmittableResult> | null>;
 
-type Options<Context = void> = {
+type Options<Context = void, TxName extends BaseTxName = BaseTxName> = {
   name: TxName;
   factory: SubstrateTxFactory<Context>;
   getDetails?: (context: Context) => Map<string, HistoryTxDetail>;
@@ -235,14 +234,19 @@ const useSubstrateTx = <Context = void>({
 export default useSubstrateTx;
 
 // TODO: Merge this with `useSubstrateTx`.
-export function useSubstrateTxWithNotification<Context = void>(
+export function useSubstrateTxWithNotification<
+  Context = void,
+  TxName extends BaseTxName = BaseTxName,
+>(
   txName: TxName,
   factory: SubstrateTxFactory<Context>,
+  successMessageByTxName: Record<TxName, string>,
   getSuccessMessage?: GetSuccessMessageFn<Context>,
   overrideRpcEndpoint?: string,
 ) {
   const activeAccountAddress = useActiveAccountAddress();
-  const { notifyProcessing, notifySuccess, notifyError } = useTxNotification();
+  const { notifyProcessing, notifySuccess, notifyError } =
+    useTxNotification<TxName>(successMessageByTxName);
 
   const createExplorerTxUrl = useNetworkStore(
     (store) => store.network.createExplorerTxUrl,

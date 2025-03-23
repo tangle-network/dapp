@@ -6,7 +6,8 @@ import { TxName } from '../../../constants';
 import {
   SubstrateTxFactory,
   useSubstrateTxWithNotification,
-} from '../../../hooks/useSubstrateTx';
+} from '@tangle-network/tangle-shared-ui/hooks/useSubstrateTx';
+import { SUCCESS_MESSAGES } from '../../../hooks/useTxNotification';
 
 export type LsPoolSetCommissionTxContext = {
   poolId: number;
@@ -38,6 +39,7 @@ const useLsSetCommissionTx = () => {
   return useSubstrateTxWithNotification(
     TxName.LST_UPDATE_COMMISSION,
     substrateTxFactory,
+    SUCCESS_MESSAGES,
   );
 };
 

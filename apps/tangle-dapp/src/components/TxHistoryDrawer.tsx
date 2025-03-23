@@ -32,7 +32,9 @@ import { formatDistanceToNow } from 'date-fns';
 import { capitalize } from 'lodash';
 import { useCallback, useMemo } from 'react';
 import { twMerge } from 'tailwind-merge';
-import useTxHistoryStore, { HistoryTx } from '../context/useTxHistoryStore';
+import useTxHistoryStore, {
+  HistoryTx,
+} from '@tangle-network/tangle-shared-ui/context/useTxHistoryStore';
 import ExternalLink from './ExternalLink';
 
 const TxHistoryDrawer = () => {

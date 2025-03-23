@@ -1,4 +1,4 @@
-import useActiveAccountAddress from '@tangle-network/tangle-shared-ui/hooks/useActiveAccountAddress';
+import useActiveAccountAddress from './useActiveAccountAddress';
 import { isEvmAddress, toEvmAddress } from '@tangle-network/ui-components';
 import { EvmAddress } from '@tangle-network/ui-components/types/address';
 import { useMemo } from 'react';

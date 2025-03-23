@@ -12,17 +12,17 @@ import {
   FindAbiArgsOf,
   PrecompileAddress,
   ZERO_ADDRESS,
-} from '@tangle-network/tangle-shared-ui/constants/evmPrecompiles';
+} from '../constants/evmPrecompiles';
 import { EvmAddress } from '@tangle-network/ui-components/types/address';
 import { assertEvmAddress } from '@tangle-network/ui-components';
 import assert from 'assert';
 import useViemWalletClient, {
   WalletClientTransport,
 } from './useViemWalletClient';
-import useAgnosticAccountInfo from '@tangle-network/tangle-shared-ui/hooks/useAgnosticAccountInfo';
-import useNetworkStore from '@tangle-network/tangle-shared-ui/context/useNetworkStore';
-import ensureError from '@tangle-network/tangle-shared-ui/utils/ensureError';
-import RESTAKING_PRECOMPILE_ABI from '@tangle-network/tangle-shared-ui/abi/restaking';
+import useAgnosticAccountInfo from './useAgnosticAccountInfo';
+import useNetworkStore from '../context/useNetworkStore';
+import ensureError from '../utils/ensureError';
+import RESTAKING_PRECOMPILE_ABI from '../abi/restaking';
 import useEvmGasEstimate from './useEvmGasEstimate';
 import useEvmCallPermitNonce from './useEvmCallPermitNonce';
 

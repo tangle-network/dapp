@@ -1,5 +1,5 @@
-import useNetworkStore from '@tangle-network/tangle-shared-ui/context/useNetworkStore';
-import useBalances from '../data/balances/useBalances';
+import useNetworkStore from '../context/useNetworkStore';
+import useBalances from './useBalances';
 
 const useIsEvmTxRelayerCandidate = (): boolean | null => {
   const { free } = useBalances();

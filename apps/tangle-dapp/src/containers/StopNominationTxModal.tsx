@@ -12,7 +12,7 @@ import { type FC, useCallback } from 'react';
 
 import useChillTx from '../data/staking/useChillTx';
 import useIsNominating from '../hooks/useIsNominating';
-import { TxStatus } from '../hooks/useSubstrateTx';
+import { TxStatus } from '@tangle-network/tangle-shared-ui/hooks/useSubstrateTx';
 
 type Props = {
   isModalOpen: boolean;

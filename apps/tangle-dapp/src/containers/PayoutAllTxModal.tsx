@@ -1,6 +1,6 @@
 import { useWebContext } from '@tangle-network/api-provider-environment';
 import { useClaimedEras } from '../hooks/useClaimedEras';
-import { TxStatus } from '../hooks/useSubstrateTx';
+import { TxStatus } from '@tangle-network/tangle-shared-ui/hooks/useSubstrateTx';
 import useNetworkStore from '@tangle-network/tangle-shared-ui/context/useNetworkStore';
 import {
   InputField,

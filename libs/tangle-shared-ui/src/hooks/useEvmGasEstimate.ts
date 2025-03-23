@@ -1,11 +1,11 @@
 import { useCallback } from 'react';
 import { AbiFunction } from 'viem';
-import useAgnosticAccountInfo from '@tangle-network/tangle-shared-ui/hooks/useAgnosticAccountInfo';
-import useViemPublicClient from '@tangle-network/tangle-shared-ui/hooks/useViemPublicClient';
+import useAgnosticAccountInfo from './useAgnosticAccountInfo';
+import useViemPublicClient from './useViemPublicClient';
 import {
   ExtractAbiFunctionNames,
   PrecompileAddress,
-} from '@tangle-network/tangle-shared-ui/constants/evmPrecompiles';
+} from '../constants/evmPrecompiles';
 import { PrecompileCall } from './useEvmPrecompileCall';
 
 /**

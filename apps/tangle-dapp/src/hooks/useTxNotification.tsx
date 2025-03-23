@@ -1,7 +1,7 @@
 import { TxName } from '../constants';
 import useSharedTxNotification from '@tangle-network/tangle-shared-ui/hooks/useTxNotification';
 
-const SUCCESS_MESSAGES: Record<TxName, string> = {
+export const SUCCESS_MESSAGES: Record<TxName, string> = {
   [TxName.BOND]: 'Bonded tokens into staking',
   [TxName.BOND_EXTRA]: 'Added more tokens to existing stake',
   [TxName.UNBOND]: 'Unbonded tokens from staking',

@@ -10,7 +10,7 @@ import {
 import { FC, useCallback, useEffect, useState } from 'react';
 
 import useLsSetCommissionTx from '../../data/liquidStaking/tangle/useLsSetCommissionTx';
-import { TxStatus } from '../../hooks/useSubstrateTx';
+import { TxStatus } from '@tangle-network/tangle-shared-ui/hooks/useSubstrateTx';
 import AddressInput from '../AddressInput';
 import PercentageInput from '../PercentageInput';
 import { AddressType } from '../../constants';

@@ -3,10 +3,11 @@ import { useCallback } from 'react';
 
 import { TxName } from '../../../constants';
 import { PrecompileAddress } from '@tangle-network/tangle-shared-ui/constants/evmPrecompiles';
-import useAgnosticTx from '../../../hooks/useAgnosticTx';
-import { EvmTxFactory } from '../../../hooks/useEvmPrecompileCall';
-import { SubstrateTxFactory } from '../../../hooks/useSubstrateTx';
+import useAgnosticTx from '@tangle-network/tangle-shared-ui/hooks/useAgnosticTx';
+import { EvmTxFactory } from '@tangle-network/tangle-shared-ui/hooks/useEvmPrecompileCall';
+import { SubstrateTxFactory } from '@tangle-network/tangle-shared-ui/hooks/useSubstrateTx';
 import LST_PRECOMPILE_ABI from '@tangle-network/tangle-shared-ui/abi/lst';
+import { SUCCESS_MESSAGES } from '../../../hooks/useTxNotification';
 
 type Context = {
   poolId: number;
@@ -35,6 +36,7 @@ const useLsPoolJoinTx = () => {
     precompileAddress: PrecompileAddress.LST,
     evmTxFactory,
     substrateTxFactory,
+    successMessageByTxName: SUCCESS_MESSAGES,
   });
 };
 

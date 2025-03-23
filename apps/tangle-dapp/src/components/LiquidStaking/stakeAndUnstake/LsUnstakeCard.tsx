@@ -13,7 +13,7 @@ import useLsExchangeRate from '../../../data/liquidStaking/useLsExchangeRate';
 import useLsMyPools from '../../../data/liquidStaking/useLsMyPools';
 import { useLsStore } from '../../../data/liquidStaking/useLsStore';
 import useIsAccountConnected from '../../../hooks/useIsAccountConnected';
-import { TxStatus } from '../../../hooks/useSubstrateTx';
+import { TxStatus } from '@tangle-network/tangle-shared-ui/hooks/useSubstrateTx';
 import ExchangeRateDetailItem from './ExchangeRateDetailItem';
 import LsAgnosticBalance from './LsAgnosticBalance';
 import LsInput from './LsInput';
