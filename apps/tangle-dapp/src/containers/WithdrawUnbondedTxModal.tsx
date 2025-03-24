@@ -14,7 +14,7 @@ import { BondedTokensBalanceInfo } from '../components/BondedTokensBalanceInfo';
 import useUnbondedAmount from '../data/nomination/useUnbondedAmount';
 import useUnbondingAmount from '../data/nomination/useUnbondingAmount';
 import useWithdrawUnbondedTx from '../data/staking/useWithdrawUnbondedTx';
-import { TxStatus } from '../hooks/useSubstrateTx';
+import { TxStatus } from '@tangle-network/tangle-shared-ui/hooks/useSubstrateTx';
 import RebondTxModal from './RebondTxModal';
 
 type Props = {

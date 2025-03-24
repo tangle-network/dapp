@@ -17,7 +17,7 @@ import {
 import { type FC, useCallback, useMemo, useState } from 'react';
 import { Link } from 'react-router';
 
-import useBalances from '../data/balances/useBalances';
+import useBalances from '@tangle-network/tangle-shared-ui/hooks/useBalances';
 import useTotalPayoutRewards from '../data/nomination/useTotalPayoutRewards';
 import useIsBondedOrNominating from '../data/staking/useIsBondedOrNominating';
 import useStakingLedger from '../data/staking/useStakingLedger';

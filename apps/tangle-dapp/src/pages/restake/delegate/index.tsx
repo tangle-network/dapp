@@ -50,7 +50,7 @@ import useRestakeAssets from '@tangle-network/tangle-shared-ui/data/restake/useR
 import { NATIVE_ASSET_ID } from '@tangle-network/tangle-shared-ui/constants/restaking';
 import useNetworkStore from '@tangle-network/tangle-shared-ui/context/useNetworkStore';
 import useNativeRestakeTx from '../../../data/restake/useNativeRestakeTx';
-import { TxStatus } from '../../../hooks/useSubstrateTx';
+import { TxStatus } from '@tangle-network/tangle-shared-ui/hooks/useSubstrateTx';
 import useNativeRestakeAssetBalance from '../../../data/restake/useNativeRestakeAssetBalance';
 
 type RestakeOperator = {

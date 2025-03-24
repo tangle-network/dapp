@@ -1,12 +1,10 @@
 import { BN } from '@polkadot/util';
-import useApiRx, {
-  ObservableFactory,
-} from '@tangle-network/tangle-shared-ui/hooks/useApiRx';
-import useSubstrateAddress from '@tangle-network/tangle-shared-ui/hooks/useSubstrateAddress';
+import useApiRx, { ObservableFactory } from './useApiRx';
+import useSubstrateAddress from './useSubstrateAddress';
 import { useCallback } from 'react';
 import { map } from 'rxjs/operators';
 
-import { calculateTransferableBalance } from '../../utils/polkadot/balance';
+import { calculateTransferableBalance } from '../utils/polkadot/balance';
 
 export type AccountBalances = {
   /**

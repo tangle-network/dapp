@@ -3,10 +3,10 @@ import useNetworkStore from '@tangle-network/tangle-shared-ui/context/useNetwork
 import { FC, useState } from 'react';
 
 import TransferTxModal from '../../containers/TransferTxModal';
-import useBalances from '../../data/balances/useBalances';
+import useBalances from '@tangle-network/tangle-shared-ui/hooks/useBalances';
 import useVestingInfo from '../../data/vesting/useVestingInfo';
 import useVestTx from '../../data/vesting/useVestTx';
-import { TxStatus } from '../../hooks/useSubstrateTx';
+import { TxStatus } from '@tangle-network/tangle-shared-ui/hooks/useSubstrateTx';
 import formatTangleBalance from '../../utils/formatTangleBalance';
 import ActionItem from './ActionItem';
 import WithdrawEvmBalanceAction from './WithdrawEvmBalanceAction';

@@ -1,5 +1,5 @@
 import { useCallback } from 'react';
-import useSubstrateTx from '../../hooks/useSubstrateTx';
+import useSubstrateTx from '@tangle-network/tangle-shared-ui/hooks/useSubstrateTx';
 import { TxName } from '../../constants';
 
 /**

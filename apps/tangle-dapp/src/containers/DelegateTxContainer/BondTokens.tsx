@@ -13,7 +13,7 @@ import {
   STAKING_PAYEE_TEXT_TO_VALUE_MAP,
   STAKING_PAYEE_VALUE_TO_TEXT_MAP,
 } from '../../constants';
-import useBalances from '../../data/balances/useBalances';
+import useBalances from '@tangle-network/tangle-shared-ui/hooks/useBalances';
 import useActiveAccountAddress from '@tangle-network/tangle-shared-ui/hooks/useActiveAccountAddress';
 import { StakingRewardsDestinationDisplayText } from '../../types/index';
 import { BondTokensProps } from './types';

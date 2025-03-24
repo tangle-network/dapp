@@ -1,9 +1,9 @@
 import { useCallback } from 'react';
 import { TxName } from '../../constants';
 import { PrecompileAddress } from '@tangle-network/tangle-shared-ui/constants/evmPrecompiles';
-import useAgnosticTx from '../../hooks/useAgnosticTx';
-import { EvmTxFactory } from '../../hooks/useEvmPrecompileCall';
-import { SubstrateTxFactory } from '../../hooks/useSubstrateTx';
+import useAgnosticTx from '@tangle-network/tangle-shared-ui/hooks/useAgnosticTx';
+import { EvmTxFactory } from '@tangle-network/tangle-shared-ui/hooks/useEvmPrecompileCall';
+import { SubstrateTxFactory } from '@tangle-network/tangle-shared-ui/hooks/useSubstrateTx';
 import { GetSuccessMessageFn } from '../../types';
 import optimizeTxBatch from '@tangle-network/tangle-shared-ui/utils/optimizeTxBatch';
 import createEvmBatchCallArgs from '../../utils/staking/createEvmBatchCallArgs';
@@ -14,6 +14,7 @@ import convertAddressToBytes32 from '@tangle-network/ui-components/utils/convert
 import { toSubstrateAddress } from '@tangle-network/ui-components';
 import { shortenString } from '@tangle-network/ui-components';
 import pluralize from '@tangle-network/ui-components/utils/pluralize';
+import { SUCCESS_MESSAGES } from '../../hooks/useTxNotification';
 
 export const MAX_PAYOUTS_BATCH_SIZE = 20;
 
@@ -103,6 +104,7 @@ const usePayoutStakersTx = () => {
     precompileAddress: PrecompileAddress.BATCH,
     evmTxFactory,
     substrateTxFactory,
+    successMessageByTxName: SUCCESS_MESSAGES,
     getSuccessMessage,
   });
 };

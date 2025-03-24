@@ -22,7 +22,7 @@ import useSetupNominatorTx from '../../data/staking/useSetupNominatorTx';
 import useUpdateNominatorTx from '../../data/staking/useUpdateNominatorTx';
 import useActiveAccountAddress from '@tangle-network/tangle-shared-ui/hooks/useActiveAccountAddress';
 import useMaxNominationQuota from '../../hooks/useMaxNominationQuota';
-import { TxStatus } from '../../hooks/useSubstrateTx';
+import { TxStatus } from '@tangle-network/tangle-shared-ui/hooks/useSubstrateTx';
 import { StakingRewardsDestination } from '../../types';
 import SelectValidators from '../UpdateNominationsTxContainer/SelectValidators';
 import BondTokens from './BondTokens';

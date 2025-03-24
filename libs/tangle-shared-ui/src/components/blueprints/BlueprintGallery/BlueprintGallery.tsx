@@ -29,24 +29,22 @@ const BlueprintGallery: FC<BlueprintGalleryProps> = ({
   rowSelection,
   onRowSelectionChange,
 }) => {
-  const [filteredCategory, setFilteredCategory] = useState<
-    'View All' | (string & {})
-  >('View All');
+  const [filteredCategory] = useState<'View All' | (string & {})>('View All');
 
   const isEmpty = blueprints.length === 0;
 
-  const categories = useMemo(
-    () =>
-      Array.from(
-        blueprints.reduce((acc, { category }) => {
-          if (category) {
-            acc.add(category);
-          }
-          return acc;
-        }, new Set<string>()),
-      ),
-    [blueprints],
-  );
+  // const categories = useMemo(
+  //   () =>
+  //     Array.from(
+  //       blueprints.reduce((acc, { category }) => {
+  //         if (category) {
+  //           acc.add(category);
+  //         }
+  //         return acc;
+  //       }, new Set<string>()),
+  //     ),
+  //   [blueprints],
+  // );
 
   // const categoryItems = useMemo(
   //   () => [

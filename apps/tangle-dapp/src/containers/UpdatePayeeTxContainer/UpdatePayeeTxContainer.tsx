@@ -11,7 +11,7 @@ import { type FC, useCallback, useState } from 'react';
 import { PAYMENT_DESTINATION_OPTIONS } from '../../constants';
 import useStakingRewardsDestination from '../../data/nomination/useStakingRewardsDestination';
 import useSetPayeeTx from '../../data/staking/useSetPayeeTx';
-import { TxStatus } from '../../hooks/useSubstrateTx';
+import { TxStatus } from '@tangle-network/tangle-shared-ui/hooks/useSubstrateTx';
 import { StakingRewardsDestination } from '../../types';
 import { UpdatePayeeTxContainerProps } from './types';
 import UpdatePayee from './UpdatePayee';

@@ -1,6 +1,6 @@
 import { notificationApi } from '@tangle-network/ui-components';
 
-import { TxStatus } from '../hooks/useSubstrateTx';
+import { TxStatus } from '@tangle-network/tangle-shared-ui/hooks/useSubstrateTx';
 
 const prepareTxNotification = (
   status: TxStatus,

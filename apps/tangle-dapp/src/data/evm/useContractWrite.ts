@@ -23,7 +23,7 @@ import { useConnectorClient } from 'wagmi';
 
 import { TxName } from '../../constants';
 import { IS_PRODUCTION_ENV } from '../../constants/env';
-import useEvmAddress20 from '../../hooks/useEvmAddress';
+import useEvmAddress20 from '@tangle-network/tangle-shared-ui/hooks/useEvmAddress';
 import useTxNotification from '../../hooks/useTxNotification';
 import { type NotificationSteps } from '@tangle-network/tangle-shared-ui/hooks/useTxNotification';
 
