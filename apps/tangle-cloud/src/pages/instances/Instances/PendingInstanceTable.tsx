@@ -30,12 +30,13 @@ import addCommasToNumber from '@tangle-network/ui-components/utils/addCommasToNu
 import useAssetsMetadata from '@tangle-network/tangle-shared-ui/hooks/useAssetsMetadata';
 import RejectConfirmationModel from './UpdateBlueprintModel/RejectConfirmationModal';
 import ApproveConfirmationModel from './UpdateBlueprintModel/ApproveConfirmationModal';
-import useServiceApi from '../../../data/blueprints/useServiceApi';
 import { ApprovalConfirmationFormFields } from '../../../types';
 import usePendingServiceRequest from '@tangle-network/tangle-shared-ui/data/blueprints/usePendingServiceRequest';
 import useSubstrateAddress from '@tangle-network/tangle-shared-ui/hooks/useSubstrateAddress';
 import useIdentities from '@tangle-network/tangle-shared-ui/hooks/useIdentities';
 import useRoleStore from '../../../stores/roleStore';
+import useServicesRejectTx from '../../../data/services/useServicesRejectTx';
+import useServicesApproveTx from '../../../data/services/useServicesApproveTx';
 
 const columnHelper = createColumnHelper<MonitoringServiceRequest>();
 
@@ -67,7 +68,14 @@ export const PendingInstanceTable: FC = () => {
     }, [pendingBlueprints]),
   );
 
-  const serviceApi = useServiceApi();
+  const {
+    execute: rejectServiceRequest,
+    status: rejectStatus,
+  } = useServicesRejectTx();
+  const {
+    execute: approveServiceRequest,
+    status: approveStatus,
+  } = useServicesApproveTx();
 
   const network = useNetworkStore((store) => store.network);
 
@@ -312,11 +320,13 @@ export const PendingInstanceTable: FC = () => {
     setSelectedRequest(null);
   }, [setIsRejectConfirmationModalOpen, setSelectedRequest]);
 
-  const onConfirmReject = useCallback(async (): Promise<boolean> => {
-    if (!selectedRequest || !serviceApi) return false;
+  const onConfirmReject = useCallback(async () => {
+    if (!selectedRequest || !rejectServiceRequest) return;
 
-    return serviceApi.rejectServiceRequest(selectedRequest.requestId);
-  }, [selectedRequest, serviceApi]);
+    await rejectServiceRequest({
+      requestId: selectedRequest.requestId,
+    });
+  }, [selectedRequest, rejectServiceRequest]);
 
   const onCloseBlueprintApproveModal = useCallback(() => {
     setIsApproveConfirmationModalOpen(false);
@@ -324,15 +334,12 @@ export const PendingInstanceTable: FC = () => {
   }, [setIsApproveConfirmationModalOpen, setSelectedRequest]);
 
   const onConfirmApprove = useCallback(
-    async (data: ApprovalConfirmationFormFields): Promise<boolean> => {
-      if (!selectedRequest || !serviceApi) return false;
+    async (data: ApprovalConfirmationFormFields) => {
+      if (!selectedRequest || !approveServiceRequest) return;
 
-      return serviceApi.approveServiceRequest(
-        data.requestId,
-        data.securityCommitment,
-      );
+      await approveServiceRequest(data);
     },
-    [selectedRequest, serviceApi],
+    [selectedRequest, approveServiceRequest],
   );
 
   return (
@@ -355,6 +362,7 @@ export const PendingInstanceTable: FC = () => {
           onClose={onCloseBlueprintRejectModal}
           onConfirm={onConfirmReject}
           selectedRequest={selectedRequest}
+          status={rejectStatus}
         />
       </Modal>
       <Modal
@@ -364,6 +372,7 @@ export const PendingInstanceTable: FC = () => {
         <ApproveConfirmationModel
           onClose={onCloseBlueprintApproveModal}
           onConfirm={onConfirmApprove}
+          status={approveStatus}
           selectedRequest={selectedRequest}
           assetsMetadata={assetsMetadata}
         />
