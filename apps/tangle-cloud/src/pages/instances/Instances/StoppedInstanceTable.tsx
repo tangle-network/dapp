@@ -41,7 +41,7 @@ export const StoppedInstanceTable: FC<StoppedInstanceTabProps> = ({
         enableSorting: false,
         cell: (props) => {
           return (
-            <TableCellWrapper className='p-0 min-h-fit'>
+            <TableCellWrapper className="p-0 min-h-fit">
               <div className="flex items-center gap-2 w-full">
                 {props.row.original.blueprintData?.metadata?.logo ? (
                   <Avatar
@@ -106,7 +106,7 @@ export const StoppedInstanceTable: FC<StoppedInstanceTabProps> = ({
         header: () => 'Earned',
         cell: (props) => {
           return (
-            <TableCellWrapper className='p-0 min-h-fit'>
+            <TableCellWrapper className="p-0 min-h-fit">
               {props.row.original.earned
                 ? `$${getRoundedAmountString(props.row.original.earned)}`
                 : EMPTY_VALUE_PLACEHOLDER}
@@ -135,7 +135,7 @@ export const StoppedInstanceTable: FC<StoppedInstanceTabProps> = ({
           const colors = [...activeColors, ...inactiveColors];
 
           return (
-            <TableCellWrapper className='p-0 min-h-fit'>
+            <TableCellWrapper className="p-0 min-h-fit">
               <EnergyChipStack
                 colors={colors as EnergyChipColors[]}
                 label={`${props.row.original.uptime || EMPTY_VALUE_PLACEHOLDER}%`}
@@ -148,7 +148,7 @@ export const StoppedInstanceTable: FC<StoppedInstanceTabProps> = ({
         header: () => 'Last Active',
         cell: (props) => {
           return (
-            <TableCellWrapper className='p-0 min-h-fit'>
+            <TableCellWrapper className="p-0 min-h-fit">
               <Typography variant="body1" fw="normal">
                 {props.row.original.lastActive
                   ? format(props.row.original.lastActive, 'yy/MM/dd HH:mm')
@@ -162,7 +162,7 @@ export const StoppedInstanceTable: FC<StoppedInstanceTabProps> = ({
         header: () => '',
         cell: (props) => {
           return (
-            <TableCellWrapper removeRightBorder className='p-0 min-h-fit'>
+            <TableCellWrapper removeRightBorder className="p-0 min-h-fit">
               <Link
                 to={PagePath.BLUEPRINTS_DETAILS.replace(
                   ':id',

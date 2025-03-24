@@ -68,14 +68,10 @@ export const PendingInstanceTable: FC = () => {
     }, [pendingBlueprints]),
   );
 
-  const {
-    execute: rejectServiceRequest,
-    status: rejectStatus,
-  } = useServicesRejectTx();
-  const {
-    execute: approveServiceRequest,
-    status: approveStatus,
-  } = useServicesApproveTx();
+  const { execute: rejectServiceRequest, status: rejectStatus } =
+    useServicesRejectTx();
+  const { execute: approveServiceRequest, status: approveStatus } =
+    useServicesApproveTx();
 
   const network = useNetworkStore((store) => store.network);
 
@@ -96,7 +92,7 @@ export const PendingInstanceTable: FC = () => {
         enableSorting: false,
         cell: (props) => {
           return (
-            <TableCellWrapper className='p-0 min-h-fit'>
+            <TableCellWrapper className="p-0 min-h-fit">
               <div className="flex items-center gap-2 overflow-hidden">
                 {props.row.original.blueprintData?.metadata?.logo ? (
                   <Avatar
@@ -134,7 +130,7 @@ export const PendingInstanceTable: FC = () => {
           header: () => 'Pricing',
           cell: (props) => {
             return (
-              <TableCellWrapper className='p-0 min-h-fit'>
+              <TableCellWrapper className="p-0 min-h-fit">
                 {props.row.original.pricing
                   ? `$${getRoundedAmountString(props.row.original.pricing)}`
                   : EMPTY_VALUE_PLACEHOLDER}
@@ -149,7 +145,7 @@ export const PendingInstanceTable: FC = () => {
             const ownerUrl = network.createExplorerAccountUrl(owner);
 
             return (
-              <TableCellWrapper className='p-0 min-h-fit'>
+              <TableCellWrapper className="p-0 min-h-fit">
                 {!ownerUrl ? (
                   EMPTY_VALUE_PLACEHOLDER
                 ) : (
@@ -180,7 +176,7 @@ export const PendingInstanceTable: FC = () => {
           header: () => 'Duration',
           cell: (props) => {
             return (
-              <TableCellWrapper className='p-0 min-h-fit'>
+              <TableCellWrapper className="p-0 min-h-fit">
                 {addCommasToNumber(props.row.original.ttl)} blocks
               </TableCellWrapper>
             );
@@ -190,7 +186,7 @@ export const PendingInstanceTable: FC = () => {
           header: () => '',
           cell: (props) => {
             return (
-              <TableCellWrapper removeRightBorder className='p-0 min-h-fit'>
+              <TableCellWrapper removeRightBorder className="p-0 min-h-fit">
                 <div className="flex gap-2">
                   <Button
                     variant="utility"
@@ -224,7 +220,7 @@ export const PendingInstanceTable: FC = () => {
           header: 'Approved Operators',
           cell: (props) => {
             return (
-              <TableCellWrapper className='p-0 min-h-fit'>
+              <TableCellWrapper className="p-0 min-h-fit">
                 <NestedOperatorCell
                   operators={props.row.original.approvedOperators}
                   operatorIdentityMap={operatorIdentityMap}
@@ -237,7 +233,7 @@ export const PendingInstanceTable: FC = () => {
           header: 'Pending Operators',
           cell: (props) => {
             return (
-              <TableCellWrapper className='p-0 min-h-fit'>
+              <TableCellWrapper className="p-0 min-h-fit">
                 <NestedOperatorCell
                   operators={props.row.original.pendingOperators}
                   operatorIdentityMap={operatorIdentityMap}
@@ -250,7 +246,7 @@ export const PendingInstanceTable: FC = () => {
           header: 'Created At',
           cell: (props) => {
             return (
-              <TableCellWrapper className='p-0 min-h-fit'>
+              <TableCellWrapper className="p-0 min-h-fit">
                 {props.row.original.requestCreatedAtBlock ? (
                   <>
                     Block{' '}
@@ -269,7 +265,7 @@ export const PendingInstanceTable: FC = () => {
           header: '',
           cell: (props) => {
             return (
-              <TableCellWrapper removeRightBorder className='p-0 min-h-fit'>
+              <TableCellWrapper removeRightBorder className="p-0 min-h-fit">
                 <Dropdown>
                   <DropdownButton
                     isFullWidth

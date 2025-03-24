@@ -72,7 +72,6 @@ function ApproveConfirmationModal({
     },
   });
 
-
   useEffect(() => {
     if (status === TxStatus.COMPLETE) {
       onClose();
@@ -86,10 +85,12 @@ function ApproveConfirmationModal({
       title={`Service Request #${selectedRequest?.requestId}`}
       description="Are you sure you want to approve this blueprint?"
     >
-      <ModalHeader onClose={onClose}>Service Request #{selectedRequest?.requestId}</ModalHeader>
+      <ModalHeader onClose={onClose}>
+        Service Request #{selectedRequest?.requestId}
+      </ModalHeader>
 
       <ModalBody>
-        <div className='mt-52'>
+        <div className="mt-52">
           <BlueprintItem
             imgUrl={selectedRequest?.blueprintData?.metadata.logo ?? ''}
             renderImage={(imageUrl) => {

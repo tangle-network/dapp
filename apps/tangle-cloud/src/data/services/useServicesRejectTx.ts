@@ -15,11 +15,7 @@ type Context = {
 
 const useServicesRejectTx = () => {
   // @dev Services precompile does not have the `reject` function
-  const evmTxFactory: EvmTxFactory<
-    any,
-    any,
-    Context
-  > = useCallback(
+  const evmTxFactory: EvmTxFactory<any, any, Context> = useCallback(
     (_context) => ({
       functionName: 'reject',
       arguments: [],
@@ -29,9 +25,7 @@ const useServicesRejectTx = () => {
 
   const substrateTxFactory: SubstrateTxFactory<Context> = useCallback(
     (api, _activeSubstrateAddress, context) =>
-      api.tx.services.reject(
-        new BN(context.requestId),
-      ),
+      api.tx.services.reject(new BN(context.requestId)),
     [],
   );
 
@@ -41,7 +35,7 @@ const useServicesRejectTx = () => {
     precompileAddress: PrecompileAddress.SERVICES,
     evmTxFactory,
     substrateTxFactory,
-    successMessageByTxName: SUCCESS_MESSAGES
+    successMessageByTxName: SUCCESS_MESSAGES,
   });
 };
 
