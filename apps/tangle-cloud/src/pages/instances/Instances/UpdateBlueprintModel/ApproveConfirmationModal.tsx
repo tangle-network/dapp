@@ -85,7 +85,9 @@ function ApproveConfirmationModal({
       title={`Service Request #${selectedRequest?.requestId}`}
       description="Are you sure you want to approve this blueprint?"
     >
-      <ModalHeader onClose={onClose}>Service Request #{selectedRequest?.requestId}</ModalHeader>
+      <ModalHeader onClose={onClose}>
+        Service Request #{selectedRequest?.requestId}
+      </ModalHeader>
 
       <ModalBody>
         <BlueprintItem

@@ -68,14 +68,10 @@ export const PendingInstanceTable: FC = () => {
     }, [pendingBlueprints]),
   );
 
-  const {
-    execute: rejectServiceRequest,
-    status: rejectStatus,
-  } = useServicesRejectTx();
-  const {
-    execute: approveServiceRequest,
-    status: approveStatus,
-  } = useServicesApproveTx();
+  const { execute: rejectServiceRequest, status: rejectStatus } =
+    useServicesRejectTx();
+  const { execute: approveServiceRequest, status: approveStatus } =
+    useServicesApproveTx();
 
   const network = useNetworkStore((store) => store.network);
 

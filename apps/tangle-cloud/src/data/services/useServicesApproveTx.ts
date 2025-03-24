@@ -15,11 +15,7 @@ type Context = ApprovalConfirmationFormFields;
 
 const useServicesApproveTx = () => {
   // @dev Services precompile does not have the `approve` function
-  const evmTxFactory: EvmTxFactory<
-    any,
-    any,
-    Context
-  > = useCallback(
+  const evmTxFactory: EvmTxFactory<any, any, Context> = useCallback(
     (_context) => ({
       functionName: 'approve',
       arguments: [],
@@ -29,17 +25,16 @@ const useServicesApproveTx = () => {
 
   const substrateTxFactory: SubstrateTxFactory<Context> = useCallback(
     (api, _activeSubstrateAddress, context) => {
-      const securityCommitments = context.securityCommitment.map((commitment) => ({
-        asset: isEvmAddress(commitment.assetId)
-          ? { Erc20: new BN(commitment.assetId) }
-          : { Custom: new BN(commitment.assetId) },
-        exposurePercent: commitment.exposurePercent,
-      }));
-
-      return api.tx.services.approve(
-        context.requestId,
-        securityCommitments,
+      const securityCommitments = context.securityCommitment.map(
+        (commitment) => ({
+          asset: isEvmAddress(commitment.assetId)
+            ? { Erc20: new BN(commitment.assetId) }
+            : { Custom: new BN(commitment.assetId) },
+          exposurePercent: commitment.exposurePercent,
+        }),
       );
+
+      return api.tx.services.approve(context.requestId, securityCommitments);
     },
     [],
   );
@@ -50,7 +45,7 @@ const useServicesApproveTx = () => {
     precompileAddress: PrecompileAddress.SERVICES,
     evmTxFactory,
     substrateTxFactory,
-    successMessageByTxName: SUCCESS_MESSAGES
+    successMessageByTxName: SUCCESS_MESSAGES,
   });
 };
 
