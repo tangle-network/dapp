@@ -30,12 +30,13 @@ import addCommasToNumber from '@tangle-network/ui-components/utils/addCommasToNu
 import useAssetsMetadata from '@tangle-network/tangle-shared-ui/hooks/useAssetsMetadata';
 import RejectConfirmationModel from './UpdateBlueprintModel/RejectConfirmationModal';
 import ApproveConfirmationModel from './UpdateBlueprintModel/ApproveConfirmationModal';
-import useServiceApi from '../../../data/blueprints/useServiceApi';
 import { ApprovalConfirmationFormFields } from '../../../types';
 import usePendingServiceRequest from '@tangle-network/tangle-shared-ui/data/blueprints/usePendingServiceRequest';
 import useSubstrateAddress from '@tangle-network/tangle-shared-ui/hooks/useSubstrateAddress';
 import useIdentities from '@tangle-network/tangle-shared-ui/hooks/useIdentities';
 import useRoleStore from '../../../stores/roleStore';
+import useServicesRejectTx from '../../../data/services/useServicesRejectTx';
+import useServicesApproveTx from '../../../data/services/useServicesApproveTx';
 
 const columnHelper = createColumnHelper<MonitoringServiceRequest>();
 
@@ -67,7 +68,14 @@ export const PendingInstanceTable: FC = () => {
     }, [pendingBlueprints]),
   );
 
-  const serviceApi = useServiceApi();
+  const {
+    execute: rejectServiceRequest,
+    status: rejectStatus,
+  } = useServicesRejectTx();
+  const {
+    execute: approveServiceRequest,
+    status: approveStatus,
+  } = useServicesApproveTx();
 
   const network = useNetworkStore((store) => store.network);
 
@@ -88,7 +96,7 @@ export const PendingInstanceTable: FC = () => {
         enableSorting: false,
         cell: (props) => {
           return (
-            <TableCellWrapper>
+            <TableCellWrapper className='p-0 min-h-fit'>
               <div className="flex items-center gap-2 overflow-hidden">
                 {props.row.original.blueprintData?.metadata?.logo ? (
                   <Avatar
@@ -126,7 +134,7 @@ export const PendingInstanceTable: FC = () => {
           header: () => 'Pricing',
           cell: (props) => {
             return (
-              <TableCellWrapper>
+              <TableCellWrapper className='p-0 min-h-fit'>
                 {props.row.original.pricing
                   ? `$${getRoundedAmountString(props.row.original.pricing)}`
                   : EMPTY_VALUE_PLACEHOLDER}
@@ -141,7 +149,7 @@ export const PendingInstanceTable: FC = () => {
             const ownerUrl = network.createExplorerAccountUrl(owner);
 
             return (
-              <TableCellWrapper>
+              <TableCellWrapper className='p-0 min-h-fit'>
                 {!ownerUrl ? (
                   EMPTY_VALUE_PLACEHOLDER
                 ) : (
@@ -172,7 +180,7 @@ export const PendingInstanceTable: FC = () => {
           header: () => 'Duration',
           cell: (props) => {
             return (
-              <TableCellWrapper>
+              <TableCellWrapper className='p-0 min-h-fit'>
                 {addCommasToNumber(props.row.original.ttl)} blocks
               </TableCellWrapper>
             );
@@ -182,7 +190,7 @@ export const PendingInstanceTable: FC = () => {
           header: () => '',
           cell: (props) => {
             return (
-              <TableCellWrapper removeRightBorder>
+              <TableCellWrapper removeRightBorder className='p-0 min-h-fit'>
                 <div className="flex gap-2">
                   <Button
                     variant="utility"
@@ -216,7 +224,7 @@ export const PendingInstanceTable: FC = () => {
           header: 'Approved Operators',
           cell: (props) => {
             return (
-              <TableCellWrapper>
+              <TableCellWrapper className='p-0 min-h-fit'>
                 <NestedOperatorCell
                   operators={props.row.original.approvedOperators}
                   operatorIdentityMap={operatorIdentityMap}
@@ -229,7 +237,7 @@ export const PendingInstanceTable: FC = () => {
           header: 'Pending Operators',
           cell: (props) => {
             return (
-              <TableCellWrapper>
+              <TableCellWrapper className='p-0 min-h-fit'>
                 <NestedOperatorCell
                   operators={props.row.original.pendingOperators}
                   operatorIdentityMap={operatorIdentityMap}
@@ -242,7 +250,7 @@ export const PendingInstanceTable: FC = () => {
           header: 'Created At',
           cell: (props) => {
             return (
-              <TableCellWrapper>
+              <TableCellWrapper className='p-0 min-h-fit'>
                 {props.row.original.requestCreatedAtBlock ? (
                   <>
                     Block{' '}
@@ -261,7 +269,7 @@ export const PendingInstanceTable: FC = () => {
           header: '',
           cell: (props) => {
             return (
-              <TableCellWrapper removeRightBorder>
+              <TableCellWrapper removeRightBorder className='p-0 min-h-fit'>
                 <Dropdown>
                   <DropdownButton
                     isFullWidth
@@ -312,11 +320,13 @@ export const PendingInstanceTable: FC = () => {
     setSelectedRequest(null);
   }, [setIsRejectConfirmationModalOpen, setSelectedRequest]);
 
-  const onConfirmReject = useCallback(async (): Promise<boolean> => {
-    if (!selectedRequest || !serviceApi) return false;
+  const onConfirmReject = useCallback(async () => {
+    if (!selectedRequest || !rejectServiceRequest) return;
 
-    return serviceApi.rejectServiceRequest(selectedRequest.requestId);
-  }, [selectedRequest, serviceApi]);
+    await rejectServiceRequest({
+      requestId: selectedRequest.requestId,
+    });
+  }, [selectedRequest, rejectServiceRequest]);
 
   const onCloseBlueprintApproveModal = useCallback(() => {
     setIsApproveConfirmationModalOpen(false);
@@ -324,15 +334,12 @@ export const PendingInstanceTable: FC = () => {
   }, [setIsApproveConfirmationModalOpen, setSelectedRequest]);
 
   const onConfirmApprove = useCallback(
-    async (data: ApprovalConfirmationFormFields): Promise<boolean> => {
-      if (!selectedRequest || !serviceApi) return false;
+    async (data: ApprovalConfirmationFormFields) => {
+      if (!selectedRequest || !approveServiceRequest) return;
 
-      return serviceApi.approveServiceRequest(
-        data.requestId,
-        data.securityCommitment,
-      );
+      await approveServiceRequest(data);
     },
-    [selectedRequest, serviceApi],
+    [selectedRequest, approveServiceRequest],
   );
 
   return (
@@ -355,6 +362,7 @@ export const PendingInstanceTable: FC = () => {
           onClose={onCloseBlueprintRejectModal}
           onConfirm={onConfirmReject}
           selectedRequest={selectedRequest}
+          status={rejectStatus}
         />
       </Modal>
       <Modal
@@ -366,6 +374,7 @@ export const PendingInstanceTable: FC = () => {
           onConfirm={onConfirmApprove}
           selectedRequest={selectedRequest}
           assetsMetadata={assetsMetadata}
+          status={approveStatus}
         />
       </Modal>
     </>

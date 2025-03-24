@@ -9,16 +9,18 @@ import {
 import BlueprintItem from '@tangle-network/tangle-shared-ui/components/blueprints/BlueprintGallery/BlueprintItem';
 import { ApprovalConfirmationFormFields } from '../../../../types';
 import { useForm } from 'react-hook-form';
-import { Children, useCallback, useMemo } from 'react';
+import { Children, useMemo, useEffect } from 'react';
 import { PrimitiveAssetMetadata } from '@tangle-network/tangle-shared-ui/types/restake';
 import { AssetCommitmentFormItem } from './AssetCommitmentFormItem';
 import { validateSecurityCommitments } from '../../../../utils/validations/validateSecurityCommitment';
+import { TxStatus } from '@tangle-network/tangle-shared-ui/hooks/useSubstrateTx';
 
 type ApproveConfirmationModalProps = {
   onClose: () => void;
-  onConfirm: (data: ApprovalConfirmationFormFields) => Promise<boolean>;
+  onConfirm: (data: ApprovalConfirmationFormFields) => Promise<void>;
   selectedRequest: MonitoringServiceRequest | null;
   assetsMetadata: Map<string, PrimitiveAssetMetadata | null>;
+  status: TxStatus;
 };
 
 function ApproveConfirmationModal({
@@ -26,7 +28,10 @@ function ApproveConfirmationModal({
   onConfirm,
   selectedRequest,
   assetsMetadata,
+  status,
 }: ApproveConfirmationModalProps) {
+  const isSubmitting = status === TxStatus.PROCESSING;
+
   const securityCommitmentDefaultFormValue = useMemo(() => {
     if (!selectedRequest?.securityRequirements?.length) return [];
 
@@ -46,7 +51,7 @@ function ApproveConfirmationModal({
     setValue,
     handleSubmit,
     watch,
-    formState: { errors, isValid, isSubmitting },
+    formState: { errors, isValid },
   } = useForm<ApprovalConfirmationFormFields>({
     mode: 'onChange',
     values: {
@@ -67,15 +72,12 @@ function ApproveConfirmationModal({
     },
   });
 
-  const onSubmit = useCallback(
-    async (data: ApprovalConfirmationFormFields) => {
-      const isSuccess = await onConfirm(data);
-      if (!isSuccess) return;
 
+  useEffect(() => {
+    if (status === TxStatus.COMPLETE) {
       onClose();
-    },
-    [onClose, onConfirm],
-  );
+    }
+  }, [status, onClose]);
 
   return (
     <ModalContent
@@ -84,34 +86,36 @@ function ApproveConfirmationModal({
       title={`Service Request #${selectedRequest?.requestId}`}
       description="Are you sure you want to approve this blueprint?"
     >
-      <ModalHeader>Service Request #{selectedRequest?.requestId}</ModalHeader>
+      <ModalHeader onClose={onClose}>Service Request #{selectedRequest?.requestId}</ModalHeader>
 
       <ModalBody>
-        <BlueprintItem
-          imgUrl={selectedRequest?.blueprintData?.metadata.logo ?? ''}
-          renderImage={(imageUrl) => {
-            return (
-              <img
-                src={imageUrl}
-                alt={selectedRequest?.blueprintData?.metadata.name ?? ''}
-                className="flex-shrink-0 bg-center rounded-full"
-              />
-            );
-          }}
-          id={selectedRequest?.blueprintData?.metadata.name ?? ''}
-          name={selectedRequest?.blueprintData?.metadata.name ?? ''}
-          restakersCount={selectedRequest?.blueprintData?.restakersCount ?? 0}
-          operatorsCount={selectedRequest?.blueprintData?.operatorsCount ?? 0}
-          tvl={selectedRequest?.blueprintData?.tvl?.toString() ?? '0'}
-          isBoosted={false}
-          category={selectedRequest?.blueprintData?.metadata.category ?? ''}
-          description={
-            selectedRequest?.blueprintData?.metadata.description ?? ''
-          }
-          author={selectedRequest?.blueprintData?.metadata.author ?? ''}
-        />
+        <div className='mt-52'>
+          <BlueprintItem
+            imgUrl={selectedRequest?.blueprintData?.metadata.logo ?? ''}
+            renderImage={(imageUrl) => {
+              return (
+                <img
+                  src={imageUrl}
+                  alt={selectedRequest?.blueprintData?.metadata.name ?? ''}
+                  className="flex-shrink-0 bg-center rounded-full"
+                />
+              );
+            }}
+            id={selectedRequest?.blueprintData?.metadata.name ?? ''}
+            name={selectedRequest?.blueprintData?.metadata.name ?? ''}
+            restakersCount={selectedRequest?.blueprintData?.restakersCount ?? 0}
+            operatorsCount={selectedRequest?.blueprintData?.operatorsCount ?? 0}
+            tvl={selectedRequest?.blueprintData?.tvl?.toString() ?? '0'}
+            isBoosted={false}
+            category={selectedRequest?.blueprintData?.metadata.category ?? ''}
+            description={
+              selectedRequest?.blueprintData?.metadata.description ?? ''
+            }
+            author={selectedRequest?.blueprintData?.metadata.author ?? ''}
+          />
+        </div>
 
-        <form onSubmit={handleSubmit(onSubmit)} className="mt-4 space-y-4">
+        <form onSubmit={handleSubmit(onConfirm)} className="mt-4 space-y-4">
           <Typography variant="h4" className="text-center mb-3">
             Security Commitments
           </Typography>
@@ -157,7 +161,7 @@ function ApproveConfirmationModal({
         isConfirmDisabled={!isValid || isSubmitting}
         isProcessing={isSubmitting}
         confirmButtonText="Approve"
-        onConfirm={handleSubmit(onSubmit)}
+        onConfirm={handleSubmit(onConfirm)}
         hasCloseButton
       />
     </ModalContent>

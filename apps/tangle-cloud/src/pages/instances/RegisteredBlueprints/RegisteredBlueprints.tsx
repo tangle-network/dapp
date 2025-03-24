@@ -41,7 +41,7 @@ export const RegisteredBlueprints: FC<RegisteredBlueprintsTableProps> = ({
         header: () => 'Blueprint',
         cell: (props) => {
           return (
-            <TableCellWrapper>
+            <TableCellWrapper className='p-0 min-h-fit'>
               <div className="flex items-center gap-2 overflow-hidden">
                 {props.row.original.blueprint.metadata.logo ? (
                   <Avatar
@@ -96,7 +96,7 @@ export const RegisteredBlueprints: FC<RegisteredBlueprintsTableProps> = ({
           const colors = [...activeColors, ...inactiveColors];
 
           return (
-            <TableCellWrapper>
+            <TableCellWrapper className='p-0 min-h-fit'>
               <EnergyChipStack
                 colors={colors as EnergyChipColors[]}
                 label={`${props.row.original.blueprint.uptime || EMPTY_VALUE_PLACEHOLDER}%`}
@@ -109,7 +109,7 @@ export const RegisteredBlueprints: FC<RegisteredBlueprintsTableProps> = ({
         header: () => 'Instances',
         cell: (props) => {
           return (
-            <TableCellWrapper>
+            <TableCellWrapper className='p-0 min-h-fit'>
               <Typography variant="body1" fw="normal">
                 {props.row.original.blueprint.instanceCount?.toLocaleString() ??
                   EMPTY_VALUE_PLACEHOLDER}
@@ -122,7 +122,7 @@ export const RegisteredBlueprints: FC<RegisteredBlueprintsTableProps> = ({
         header: () => 'Operators',
         cell: (props) => {
           return (
-            <TableCellWrapper>
+            <TableCellWrapper className='p-0 min-h-fit'>
               {props.row.original.blueprint.operatorsCount?.toLocaleString() ??
                 EMPTY_VALUE_PLACEHOLDER}
             </TableCellWrapper>
@@ -133,7 +133,7 @@ export const RegisteredBlueprints: FC<RegisteredBlueprintsTableProps> = ({
         header: () => 'TVL',
         cell: (props) => {
           return (
-            <TableCellWrapper>
+            <TableCellWrapper className='p-0 min-h-fit'>
               {props.row.original.blueprint.tvl
                 ? getTVLToDisplay(props.row.original.blueprint.tvl)
                 : EMPTY_VALUE_PLACEHOLDER}
@@ -145,7 +145,7 @@ export const RegisteredBlueprints: FC<RegisteredBlueprintsTableProps> = ({
         header: () => '',
         cell: (props) => {
           return (
-            <TableCellWrapper removeRightBorder>
+            <TableCellWrapper removeRightBorder className='p-0 min-h-fit'>
               <Link
                 to={PagePath.BLUEPRINTS_DETAILS.replace(
                   ':id',

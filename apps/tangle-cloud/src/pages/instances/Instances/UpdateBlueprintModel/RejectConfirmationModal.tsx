@@ -7,28 +7,29 @@ import {
 } from '@tangle-network/ui-components';
 import { MonitoringServiceRequest } from '@tangle-network/tangle-shared-ui/data/blueprints/utils/type';
 import BlueprintItem from '@tangle-network/tangle-shared-ui/components/blueprints/BlueprintGallery/BlueprintItem';
-import { useState } from 'react';
+import { TxStatus } from '@tangle-network/tangle-shared-ui/hooks/useSubstrateTx';
+import { useEffect } from 'react';
 
 type RejectConfirmationModalProps = {
   onClose: () => void;
-  onConfirm: () => Promise<boolean>;
+  onConfirm: () => Promise<void>;
   selectedRequest: MonitoringServiceRequest | null;
+  status: TxStatus;
 };
 
 function RejectConfirmationModal({
   onClose,
   onConfirm,
   selectedRequest,
+  status,
 }: RejectConfirmationModalProps) {
-  const [isSubmitting, setIsSubmitting] = useState(false);
+  const isSubmitting = status === TxStatus.PROCESSING;
 
-  const onSubmit = async () => {
-    setIsSubmitting(true);
-    const isSuccess = await onConfirm();
-    setIsSubmitting(false);
-    if (!isSuccess) return;
-    onClose();
-  };
+  useEffect(() => {
+    if (status === TxStatus.COMPLETE) {
+      onClose();
+    }
+  }, [status, onClose]);
 
   return (
     <ModalContent
@@ -79,7 +80,7 @@ function RejectConfirmationModal({
         isConfirmDisabled={isSubmitting}
         isProcessing={isSubmitting}
         confirmButtonText="Reject"
-        onConfirm={onSubmit}
+        onConfirm={onConfirm}
         hasCloseButton
       />
     </ModalContent>
