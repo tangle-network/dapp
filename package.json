@@ -101,14 +101,12 @@
     "zustand": "^4.5.5"
   },
   "devDependencies": {
-    "@0no-co/graphqlsp": "^1.12.16",
     "@chromatic-com/storybook": "^3.2.5",
     "@commitlint/cli": "^19.6.1",
     "@commitlint/config-conventional": "^19.6.0",
     "@eslint/eslintrc": "^2.1.4",
     "@eslint/js": "~8.57.1",
     "@graphql-codegen/cli": "^5.0.3",
-    "@graphql-codegen/schema-ast": "^4.1.0",
     "@nx/eslint": "20.4.6",
     "@nx/eslint-plugin": "20.4.6",
     "@nx/jest": "20.4.6",
