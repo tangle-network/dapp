@@ -32,7 +32,7 @@ const RewardsAndPoints = () => {
   const {
     data: points,
     error: pointsError,
-    isLoading: isPointsLoading,
+    isPending: isPointsLoading,
   } = useActivePoints();
 
   const claimableAssets = useMemo(() => {
@@ -114,9 +114,9 @@ const RewardsAndPoints = () => {
             className="text-mono-140 dark:text-mono-40"
             component="span"
           >
-            {points?.account?.totalPoints === undefined
+            {points === undefined
               ? EMPTY_VALUE_PLACEHOLDER
-              : addCommasToNumber(points.account.totalPoints)}
+              : addCommasToNumber(points)}
           </Typography>
 
           <Typography

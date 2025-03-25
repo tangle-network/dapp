@@ -1,10 +1,9 @@
-import useSubstrateAddress from '@tangle-network/tangle-shared-ui/hooks/useSubstrateAddress';
-import ensureError from '@tangle-network/tangle-shared-ui/utils/ensureError';
-import { useMemo } from 'react';
-import useSWR from 'swr';
-import { SWRKey } from '../../constants/swr';
 import { graphql } from '@tangle-network/tangle-shared-ui/graphql';
+import useSubstrateAddress from '@tangle-network/tangle-shared-ui/hooks/useSubstrateAddress';
 import { executeGraphQL } from '@tangle-network/tangle-shared-ui/utils/executeGraphQL';
+import { useQuery } from '@tanstack/react-query';
+import { useMemo } from 'react';
+import { ReactQueryKey } from '../../constants/reactQuery';
 
 const GetAccountPointsQueryDocument = graphql(/* GraphQL */ `
   query GetAccountPoints($account: String!) {
@@ -15,13 +14,13 @@ const GetAccountPointsQueryDocument = graphql(/* GraphQL */ `
   }
 `);
 
-const fetcher = async ([, activeAccount]: [string, string | null]) => {
+const fetcher = async (activeAccount: string | null) => {
   if (activeAccount === null) {
     return;
   }
 
   const result = await executeGraphQL(GetAccountPointsQueryDocument, {
-    account: activeAccount,
+    account: activeAccount.toLowerCase(),
   });
 
   return result.data;
@@ -30,22 +29,23 @@ const fetcher = async ([, activeAccount]: [string, string | null]) => {
 export default function useActivePoints() {
   const activeAccount = useSubstrateAddress(false);
 
-  const {
-    data = null,
-    isLoading,
-    error: anyError,
-  } = useSWR([SWRKey.GetAccountPoints, activeAccount], fetcher, {
-    shouldRetryOnError: false,
-    refreshInterval: 5000,
+  const { data: accountPointsResponse, ...rest } = useQuery({
+    queryKey: [ReactQueryKey.GetAccountPoints, activeAccount],
+    queryFn: () => fetcher(activeAccount),
+    enabled: activeAccount !== null,
+    retry: 10,
+    refetchInterval: 6000,
   });
 
-  const error = useMemo(() => {
-    if (anyError) {
-      return ensureError(anyError);
+  const data = useMemo(() => {
+    const points = accountPointsResponse?.account?.totalPoints;
+
+    if (!points) {
+      return;
     }
 
-    return null;
-  }, [anyError]);
+    return points;
+  }, [accountPointsResponse]);
 
-  return { data, isLoading, error };
+  return { data, ...rest };
 }
