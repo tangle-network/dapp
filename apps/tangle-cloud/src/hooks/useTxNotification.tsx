@@ -1,7 +1,7 @@
 import { TxName } from '../constants';
 import useSharedTxNotification from '@tangle-network/tangle-shared-ui/hooks/useTxNotification';
 
-const SUCCESS_MESSAGES: Record<TxName, string> = {
+export const SUCCESS_MESSAGES: Record<TxName, string> = {
   [TxName.REJECT_SERVICE_REQUEST]: 'Service request rejected',
   [TxName.APPROVE_SERVICE_REQUEST]: 'Service request approved',
 };

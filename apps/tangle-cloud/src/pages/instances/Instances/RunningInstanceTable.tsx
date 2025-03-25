@@ -44,7 +44,7 @@ export const RunningInstanceTable: FC<RunningInstanceTabProps> = ({
         enableSorting: false,
         cell: (props) => {
           return (
-            <TableCellWrapper>
+            <TableCellWrapper className="p-0 min-h-fit">
               <div className="flex items-center gap-2 w-11/12">
                 {props.row.original.blueprintData?.metadata?.logo ? (
                   <Avatar
@@ -128,7 +128,7 @@ export const RunningInstanceTable: FC<RunningInstanceTabProps> = ({
           }
 
           return (
-            <TableCellWrapper>
+            <TableCellWrapper className="p-0 min-h-fit">
               <CircularProgress
                 progress={progress}
                 size="md"
@@ -142,7 +142,7 @@ export const RunningInstanceTable: FC<RunningInstanceTabProps> = ({
         header: () => 'Earned',
         cell: (props) => {
           return (
-            <TableCellWrapper>
+            <TableCellWrapper className="p-0 min-h-fit">
               {props.row.original.earned
                 ? `$${getRoundedAmountString(props.row.original.earned)}`
                 : EMPTY_VALUE_PLACEHOLDER}
@@ -171,7 +171,7 @@ export const RunningInstanceTable: FC<RunningInstanceTabProps> = ({
           const colors = [...activeColors, ...inactiveColors];
 
           return (
-            <TableCellWrapper>
+            <TableCellWrapper className="p-0 min-h-fit">
               <EnergyChipStack
                 colors={colors as EnergyChipColors[]}
                 label={`${props.row.original.uptime || EMPTY_VALUE_PLACEHOLDER}%`}
@@ -184,7 +184,7 @@ export const RunningInstanceTable: FC<RunningInstanceTabProps> = ({
         header: () => 'Last Active',
         cell: (props) => {
           return (
-            <TableCellWrapper>
+            <TableCellWrapper className="p-0 min-h-fit">
               <Typography variant="body1" fw="normal">
                 {props.row.original.lastActive
                   ? format(props.row.original.lastActive, 'yy/MM/dd HH:mm')
@@ -198,7 +198,7 @@ export const RunningInstanceTable: FC<RunningInstanceTabProps> = ({
         header: () => '',
         cell: (props) => {
           return (
-            <TableCellWrapper removeRightBorder>
+            <TableCellWrapper removeRightBorder className="p-0 min-h-fit">
               <Link
                 to={PagePath.BLUEPRINTS_DETAILS.replace(
                   ':id',

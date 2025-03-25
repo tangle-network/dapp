@@ -14,6 +14,7 @@ export const ModalBody: FC<ModalBodyProps> = ({ children, className }) => {
     <div
       className={twMerge(
         'flex flex-col items-stretch justify-center gap-5 p-9',
+        'max-h-[calc(100vh-66px-8rem)] overflow-y-scroll',
         isMobile && 'max-h-[calc(100vh-66px-8rem)] overflow-y-scroll',
         className,
       )}
