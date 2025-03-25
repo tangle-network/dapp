@@ -26,7 +26,7 @@ const fetcher = async (activeAccount: string | null) => {
   return result.data;
 };
 
-export default function useActivePoints() {
+export default function useActiveAccountPoints() {
   const activeAccount = useSubstrateAddress(false);
 
   const { data: accountPointsResponse, ...rest } = useQuery({

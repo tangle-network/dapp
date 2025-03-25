@@ -4,17 +4,16 @@ import useSubstrateAddress from '@tangle-network/tangle-shared-ui/hooks/useSubst
 import { RestakeAssetId } from '@tangle-network/tangle-shared-ui/types';
 import createAssetIdEnum from '@tangle-network/tangle-shared-ui/utils/createAssetIdEnum';
 import createRestakeAssetId from '@tangle-network/tangle-shared-ui/utils/createRestakeAssetId';
-import ensureError from '@tangle-network/tangle-shared-ui/utils/ensureError';
 import { SubstrateAddress } from '@tangle-network/ui-components/types/address';
 import JSONParseBigInt from '@tangle-network/ui-components/utils/JSONParseBigInt';
 import JSONStringifyBigInt from '@tangle-network/ui-components/utils/JSONStringifyBigInt';
-import { useCallback, useMemo } from 'react';
-import useSWR from 'swr';
+import { queryOptions, useQuery } from '@tanstack/react-query';
+import { useMemo } from 'react';
 import { z } from 'zod';
+import { ReactQueryKey } from '../../constants/reactQuery';
 import useActiveDelegation from '../restake/useActiveDelegation';
-import { SWRKey } from './../../constants/swr';
 
-export default function useAccountRewardInfo() {
+export default function useActiveAccountReward() {
   const activeSubstrateAddress = useSubstrateAddress(false);
   const activeDelegation = useActiveDelegation();
 
@@ -46,32 +45,17 @@ export default function useAccountRewardInfo() {
       .toArray();
   }, [activeDelegation]);
 
-  const {
-    data,
-    isLoading,
-    error: swrError,
-    mutate,
-  } = useSWR(
-    [
-      SWRKey.GetAccountRewards,
-      overrideRpcEndpoint,
-      activeSubstrateAddress,
-      assetIds,
-    ],
-    fetcher,
-    {
-      shouldRetryOnError: false,
-      refreshInterval: 5000,
-    },
+  const { data: rewardsResponse, ...rest } = useQuery(
+    getQueryOptions(overrideRpcEndpoint, activeSubstrateAddress, assetIds),
   );
 
-  const result = useMemo(() => {
-    if (!data) {
-      return null;
+  const data = useMemo(() => {
+    if (!rewardsResponse) {
+      return;
     }
 
     return assetIds.reduce((acc, current, idx) => {
-      const resp = data[idx];
+      const resp = rewardsResponse[idx];
 
       if ('error' in resp) {
         return acc;
@@ -81,26 +65,32 @@ export default function useAccountRewardInfo() {
 
       return acc;
     }, new Map<RestakeAssetId, bigint>());
-  }, [assetIds, data]);
-
-  const error = useMemo(() => {
-    if (swrError) {
-      return ensureError(swrError);
-    }
-
-    return null;
-  }, [swrError]);
-
-  const refetch = useCallback(() => {
-    mutate();
-  }, [mutate]);
+  }, [assetIds, rewardsResponse]);
 
   return {
-    result,
-    refetch,
-    isLoading,
-    error,
+    data,
+    ...rest,
   };
+}
+
+export function getQueryOptions(
+  overrideRpcEndpoint: string,
+  activeSubstrateAddress: SubstrateAddress | null,
+  assetIds: RestakeAssetId[],
+) {
+  return queryOptions({
+    queryKey: [
+      ReactQueryKey.GetAccountRewards,
+      overrideRpcEndpoint,
+      activeSubstrateAddress,
+      assetIds,
+    ],
+    queryFn: () =>
+      fetcher(overrideRpcEndpoint, activeSubstrateAddress, assetIds),
+    enabled: activeSubstrateAddress !== null && assetIds.length > 0,
+    retry: 10,
+    refetchInterval: 6000,
+  });
 }
 
 const responseSchema = z.union([
@@ -120,12 +110,11 @@ const responseSchema = z.union([
   }),
 ]);
 
-async function fetcher([, rpcEndpoint, activeAddress, assetIds]: [
-  SWRKey,
-  string,
-  SubstrateAddress | null,
-  RestakeAssetId[],
-]) {
+async function fetcher(
+  rpcEndpoint: string,
+  activeAddress: SubstrateAddress | null,
+  assetIds: RestakeAssetId[],
+) {
   if (activeAddress === null || assetIds.length === 0) {
     return null;
   }
