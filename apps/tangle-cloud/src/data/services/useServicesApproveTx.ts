@@ -3,7 +3,10 @@ import { BN } from '@polkadot/util';
 import { useCallback } from 'react';
 
 import { TxName } from '../../constants';
-import { SubstrateTxFactory, useSubstrateTxWithNotification } from '@tangle-network/tangle-shared-ui/hooks/useSubstrateTx';
+import {
+  SubstrateTxFactory,
+  useSubstrateTxWithNotification,
+} from '@tangle-network/tangle-shared-ui/hooks/useSubstrateTx';
 import { ApprovalConfirmationFormFields } from '../../types';
 import { isEvmAddress } from '@tangle-network/ui-components';
 
