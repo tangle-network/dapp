@@ -37,12 +37,11 @@ const BadgeWithTooltip: FC<Props> = ({ badge, emoji }) => {
       <TooltipTrigger asChild>
         <div
           className={cx(
-            'size-8 aspect-square rounded-full',
+            'size-6 aspect-square rounded-full cursor-pointer',
             'flex items-center justify-center',
-            'cursor-pointer bg-mono-60 dark:bg-mono-120',
           )}
         >
-          <Typography variant="h5">{emoji}</Typography>
+          <Typography variant="body1">{emoji}</Typography>
         </div>
       </TooltipTrigger>
 

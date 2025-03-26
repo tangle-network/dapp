@@ -104,7 +104,7 @@ export const Navbar = () => {
           );
         })}
 
-        <li>
+        <li className="hidden sm:block">
           <Button
             href={TANGLE_TESTNET_NATIVE_EXPLORER_URL}
             target="blank"
