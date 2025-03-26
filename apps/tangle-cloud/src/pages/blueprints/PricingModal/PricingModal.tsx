@@ -113,44 +113,49 @@ export default function PricingModal({
           value={pricingType}
           onValueChange={(type: string) => setPricingType(type as PricingType)}
         >
-          <TabsListWithAnimation className="dark:bg-mono-200 max-w-[408px] mb-6">
-            <TabsTriggerWithAnimation
-              hideSeparator
-              value={PricingType.GLOBAL}
-              isActive={pricingType === PricingType.GLOBAL}
-            >
-              Global Pricing
-            </TabsTriggerWithAnimation>
+          {
+            blueprints.length > 1 && (
+              <TabsListWithAnimation className="dark:bg-mono-200 max-w-[408px] mb-6">
+                <TabsTriggerWithAnimation
+                  hideSeparator
+                  value={PricingType.GLOBAL}
+                  isActive={pricingType === PricingType.GLOBAL}
+                >
+                  Global Pricing
+                </TabsTriggerWithAnimation>
+                <TabsTriggerWithAnimation
+                  hideSeparator
+                  value={PricingType.INDIVIDUAL}
+                  isActive={pricingType === PricingType.INDIVIDUAL}
+                >
+                  Individual Pricing
+                </TabsTriggerWithAnimation>
+              </TabsListWithAnimation>
+            )
+          }
+          {
+            blueprints.length && (
+              <TabsContent value={PricingType.GLOBAL}>
+                <Form {...globalPricingForm}>
+                  <form
+                    onSubmit={globalPricingForm.handleSubmit(
+                      onGlobalPricingFormSubmit,
+                    )}
+                    className="space-y-3 sm:space-y-4"
+                  >
+                    <GlobalPricingFields formControl={globalPricingForm.control} />
 
-            <TabsTriggerWithAnimation
-              hideSeparator
-              value={PricingType.INDIVIDUAL}
-              isActive={pricingType === PricingType.INDIVIDUAL}
-            >
-              Individual Pricing
-            </TabsTriggerWithAnimation>
-          </TabsListWithAnimation>
+                    <Alert
+                      type="info"
+                      title="Once you set your pricing, it will automatically apply across every Blueprint you register for. Note that pricing updates will only affect future deployments, not currently active instances."
+                    />
 
-          <TabsContent value={PricingType.GLOBAL}>
-            <Form {...globalPricingForm}>
-              <form
-                onSubmit={globalPricingForm.handleSubmit(
-                  onGlobalPricingFormSubmit,
-                )}
-                className="space-y-3 sm:space-y-4"
-              >
-                <GlobalPricingFields formControl={globalPricingForm.control} />
-
-                <Alert
-                  type="info"
-                  title="Once you set your pricing, it will automatically apply across every Blueprint you register for. Note that pricing updates will only affect future deployments, not currently active instances."
-                />
-
-                <FormActions />
-              </form>
-            </Form>
-          </TabsContent>
-
+                    <FormActions />
+                  </form>
+                </Form>
+              </TabsContent>
+            )
+          }
           <TabsContent value={PricingType.INDIVIDUAL}>
             <Form {...individualPricingFormSchema}>
               <form

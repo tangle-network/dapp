@@ -7,6 +7,8 @@ import InstancesLayout from '../pages/instances/layout';
 import InstancesPage from '../pages/instances/page';
 import Providers from './providers';
 import { PagePath } from '../types';
+import RegistrationReview from '../pages/registrationReview/page';
+import RegistrationLayout from '../pages/registrationReview/layout';
 
 function App() {
   return (
@@ -42,9 +44,23 @@ function App() {
 
             <Route
               path={PagePath.BLUEPRINTS_DETAILS}
-              element={<BlueprintDetailsPage />}
+              element={
+                <BlueprintsLayout>
+                  <BlueprintDetailsPage />
+                </BlueprintsLayout>
+              }
             />
           </Route>
+
+
+          <Route
+              path={PagePath.BLUEPRINTS_REGISTRATION_REVIEW}
+              element={
+                <RegistrationLayout>
+                  <RegistrationReview />
+                </RegistrationLayout>
+              }
+            />
         </Routes>
       </Layout>
     </Providers>

@@ -1,16 +1,11 @@
-import { decodeAddress } from '@polkadot/util-crypto';
 import { DropdownMenuTrigger } from '@radix-ui/react-dropdown-menu';
 import { TxEvent } from '@tangle-network/abstract-api-provider';
-import { useActiveAccount } from '@tangle-network/api-provider-environment/hooks/useActiveAccount';
 import { useActiveChain } from '@tangle-network/api-provider-environment/hooks/useActiveChain';
 import { Spinner } from '@tangle-network/icons';
 import { ThreeDotsVerticalIcon } from '@tangle-network/icons/ThreeDotsVerticalIcon';
 import useNetworkStore from '@tangle-network/tangle-shared-ui/context/useNetworkStore';
 import { Blueprint } from '@tangle-network/tangle-shared-ui/types/blueprint';
-import {
-  isSubstrateAddress,
-  useUIContext,
-} from '@tangle-network/ui-components';
+import { useUIContext } from '@tangle-network/ui-components';
 import {
   Accordion,
   AccordionButtonBase,
@@ -24,39 +19,41 @@ import {
   DropdownBody,
   DropdownMenuItem,
 } from '@tangle-network/ui-components/components/Dropdown';
-import { Label } from '@tangle-network/ui-components/components/Label';
-import { TextField } from '@tangle-network/ui-components/components/TextField';
 import { Typography } from '@tangle-network/ui-components/typography/Typography';
 import { useCallback, useMemo, useState } from 'react';
-import useServicesTransactions from '../../../hooks/useServicesTransactions';
-import { PricingFormResult, PricingType } from '../PricingModal/types';
-import ParamsForm from './ParamsForm';
+import { PricingFormResult, PricingType } from '../blueprints/PricingModal/types';
+import ParamsForm from './RegistrationForm/ParamsForm';
+import { SessionStorageKey } from '../../constants';
+import { useNavigate } from 'react-router';
+import { PagePath } from '../../types';
+import useServiceRegisterTx from '../../data/services/useServiceRegisterTx';
+import { toTanglePrimitiveEcdsaKey } from '../../utils';
+import useSubstrateAddress from '@tangle-network/tangle-shared-ui/hooks/useSubstrateAddress';
 
-type Props = {
-  selectedBlueprints: Blueprint[];
-  pricingSettings: PricingFormResult | null;
-  onClose: () => void;
-};
+export default function RegistrationReview() {
+  const navigate = useNavigate();
 
-export default function RegistrationReview({
-  selectedBlueprints: blueprints,
-  pricingSettings,
-  onClose,
-}: Props) {
-  const [amount, setAmount] = useState('');
+  const { pricingSettings, blueprints } = useMemo(() => {
+    const { pricingSettings, selectedBlueprints } = JSON.parse(sessionStorage.getItem(SessionStorageKey.BLUEPRINT_REGISTRATION_PARAMS) || '{}') as { pricingSettings: PricingFormResult, selectedBlueprints: Blueprint[] };
+    return { pricingSettings, blueprints: selectedBlueprints };
+  }, [sessionStorage]);
+
+  const [amount, setAmount] = useState<Record<string, any>>({});
 
   const { network } = useNetworkStore();
 
   const { notificationApi } = useUIContext();
 
-  const { register } = useServicesTransactions();
+  // const { register } = useServicesTransactions();
+
+  const { execute: registerTx, status: registerTxStatus } = useServiceRegisterTx();
 
   const [accordionState, setAccordionState] = useState<string>('');
   const [registrationParams, setRegistrationParams] = useState<
     Record<string, any>
   >({});
 
-  const [activeAccount] = useActiveAccount();
+  const activeAccount = useSubstrateAddress();
   const [activeChain] = useActiveChain();
 
   const isValidParams = useMemo(() => {
@@ -71,20 +68,9 @@ export default function RegistrationReview({
   }, [blueprints, registrationParams]);
 
   const isValidAmount = useMemo(() => {
-    if (!amount) {
-      return false;
-    }
-
-    return Number(amount) > 0;
-  }, [amount]);
-
-  const isValidAddress = useMemo(() => {
-    if (!activeAccount) {
-      return false;
-    }
-
-    return isSubstrateAddress(activeAccount.address);
-  }, [activeAccount]);
+    const amountValues = Object.values(amount);
+    return amountValues.every((amount) => Number(amount) > 0) && amountValues.length === blueprints.length;
+  }, [amount, blueprints]);
 
   const createNotificationHandler = useCallback(
     (prefix: string) => {
@@ -119,10 +105,19 @@ export default function RegistrationReview({
     [notificationApi],
   );
 
-  const handleRegister = async () => {
-    if (!activeAccount || !pricingSettings) {
+  const onClose = () => {
+    sessionStorage.removeItem(SessionStorageKey.BLUEPRINT_REGISTRATION_PARAMS);
+    navigate(PagePath.BLUEPRINTS);
+  };
+
+  console.log('registerTxStatus', registerTxStatus);  
+
+  const handleRegister = useCallback(async () => {
+    if (!activeAccount || !pricingSettings || !registerTx) {
       return;
     }
+    console.log("empty");
+    
 
     const preferences = blueprints.map(({ id }) => {
       const blueprintPriceSettings =
@@ -131,7 +126,7 @@ export default function RegistrationReview({
           : pricingSettings.values[id];
 
       return {
-        key: decodeAddress(activeAccount.address),
+        key: toTanglePrimitiveEcdsaKey(activeAccount),
         priceTargets: {
           cpu: Number(blueprintPriceSettings.cpuPrice),
           mem: Number(blueprintPriceSettings.memPrice),
@@ -140,21 +135,28 @@ export default function RegistrationReview({
           storageNvme: Number(blueprintPriceSettings.nvmeStoragePrice),
         },
       };
+    }) as any;
+
+    registerTx({
+      blueprintIds: blueprints.map((blueprint) => blueprint.id),
+      preferences,
+      registrationArgs: blueprints.map(({ id }) => registrationParams[id]),
+      amounts: blueprints.map(({ id }) => amount[id]),
     });
 
-    await register(
-      {
-        blueprintIds: blueprints.map((blueprint) => blueprint.id),
-        preferences,
-        registrationArgs: blueprints.map(({ id }) => registrationParams[id]),
-        amount: blueprints.map(({ id }) => amount),
-      },
-      {
-        onPreRegister: createNotificationHandler('PreRegister'),
-        onRegister: createNotificationHandler('Register'),
-      },
-    );
-  };
+    // await register(
+    //   {
+    //     blueprintIds: blueprints.map((blueprint) => blueprint.id),
+    //     preferences,
+    //     registrationArgs: blueprints.map(({ id }) => registrationParams[id]),
+    //     amounts: blueprints.map(({ id }) => amount[id]),
+    //   },
+    //   {
+    //     onPreRegister: createNotificationHandler('PreRegister'),
+    //     onRegister: createNotificationHandler('Register'),
+    //   },
+    // );
+  }, [activeAccount, pricingSettings, registerTx]);
 
   return (
     <div>
@@ -233,10 +235,16 @@ export default function RegistrationReview({
               <AccordionContent>
                 <ParamsForm
                   params={blueprint.registrationParams}
-                  onSave={(params) => {
+                  amount={amount[blueprint.id]}
+                  tokenSymbol={network.tokenSymbol}
+                  onSave={(params, amount) => {
                     setRegistrationParams((prev) => ({
                       ...prev,
                       [blueprint.id]: params,
+                    }));
+                    setAmount((prev) => ({
+                      ...prev,
+                      [blueprint.id]: amount,
                     }));
                     setAccordionState('');
                   }}
@@ -245,20 +253,6 @@ export default function RegistrationReview({
             </AccordionItem>
           ))}
         </Accordion>
-
-        <div className="space-y-2">
-          <Label>Enter the value of {network.tokenSymbol} to register</Label>
-
-          <TextField.Root className="mt-4">
-            <TextField.Input
-              placeholder="0.00"
-              type="number"
-              inputMode="numeric"
-              value={amount}
-              onChange={(e) => setAmount(e.target.value)}
-            />
-          </TextField.Root>
-        </div>
 
         <div className="grid gap-4 sm:grid-cols-2">
           <Button isFullWidth variant="secondary" onClick={onClose}>
@@ -270,7 +264,6 @@ export default function RegistrationReview({
             isDisabled={
               !isValidParams ||
               !isValidAmount ||
-              !isValidAddress ||
               !pricingSettings ||
               !activeChain
             }

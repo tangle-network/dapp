@@ -8,6 +8,8 @@ export enum PagePath {
 
   BLUEPRINTS = '/blueprints',
   BLUEPRINTS_DETAILS = '/blueprints/:id',
+  BLUEPRINTS_DEPLOY = '/blueprints/:id/deploy',
+  BLUEPRINTS_REGISTRATION_REVIEW = '/registration-review',
 
   OPERATORS = '/operators',
 }
@@ -31,4 +33,50 @@ export type SecurityRequirement = {
   asset: RestakeAssetId;
   minExposurePercent: number;
   maxExposurePercent: number;
+};
+
+export type RegisterServiceFormFields = {
+  blueprintIds: Array<number | string>;
+  preferences: {
+    key: Uint8Array; // 65 bytes
+    priceTargets: {
+      cpu: number;
+      mem: number;
+      storageHdd: number;
+      storageSsd: number;
+      storageNvme: number;
+    };
+  }[];
+  registrationArgs:  ({
+      Optional: any;
+    } | {
+        Bool: any;
+    } | {
+        Uint8: any;
+    } | {
+        Int8: any;
+    } | {
+        Uint16: any;
+    } | {
+        Int16: any;
+    } | {
+        Uint32: any;
+    } | {
+        Int32: any;
+    } | {
+        Uint64: any;
+    } | {
+        Int64: any;
+    } | {
+        String: any;
+    } | {
+        Array: any;
+    } | {
+        List: any;
+    } | {
+        Struct: any;
+    } | {
+        AccountId: any;
+    })[][];
+  amounts: number[];
 };
