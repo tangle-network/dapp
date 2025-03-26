@@ -36,9 +36,10 @@ import {
   useReactTable,
 } from '@tanstack/react-table';
 import { useEffect, useMemo, useState } from 'react';
-import BadgesCell from '../components/RankingTable/BadgesCell';
-import HeaderCell from '../components/RankingTable/HeaderCell';
-import { BadgeEnum } from '../types/BadgeEnum';
+import { BadgeEnum, BadgesCell } from '../components/tables/BadgesCell';
+import HeaderCell from '../components/tables/HeaderCell';
+import { formatTimeAgo } from '../utils/formatTimeAgo';
+import IndexingProgressCard from '../components/IndexingProgressCard';
 
 // Define types for our data
 interface PointsBreakdown {
@@ -225,28 +226,6 @@ const TrendIndicator = ({ value }: { value: number }) => {
   }
 
   return <div>{value}</div>;
-};
-
-const formatTimeAgo = (date: Date) => {
-  const now = new Date();
-  const diffInSeconds = Math.floor((now.getTime() - date.getTime()) / 1000);
-
-  if (diffInSeconds < 60) return `${diffInSeconds} seconds ago`;
-
-  const diffInMinutes = Math.floor(diffInSeconds / 60);
-  if (diffInMinutes < 60) return `${diffInMinutes} minutes ago`;
-
-  const diffInHours = Math.floor(diffInMinutes / 60);
-  if (diffInHours < 24) return `${diffInHours} hours ago`;
-
-  const diffInDays = Math.floor(diffInHours / 24);
-  if (diffInDays < 30) return `${diffInDays} days ago`;
-
-  const diffInMonths = Math.floor(diffInDays / 30);
-  if (diffInMonths < 12) return `${diffInMonths} months ago`;
-
-  const diffInYears = Math.floor(diffInMonths / 12);
-  return `${diffInYears} years ago`;
 };
 
 const MiniSparkline = ({ data }: { data: number[] }) => {
@@ -593,35 +572,7 @@ export default function IndexPage() {
         </Typography>
       </div>
 
-      <Card className="p-4">
-        <div className="flex flex-col space-y-2">
-          <div className="flex justify-between items-center">
-            <Typography variant="body1" className="font-medium">
-              Server Indexing Progress
-            </Typography>
-            <Typography
-              variant="body2"
-              className="text-mono-100 dark:text-mono-120"
-            >
-              Last updated:{' '}
-              {formatTimeAgo(new Date(Date.now() - 1000 * 60 * 5))}
-            </Typography>
-          </div>
-          <div className="space-y-1">
-            <div className="flex justify-between items-center text-sm">
-              <span>Syncing blocks...</span>
-              <span>87%</span>
-            </div>
-            <Progress value={87} className="h-2" />
-          </div>
-          <Typography
-            variant="body2"
-            className="text-mono-100 dark:text-mono-120"
-          >
-            Indexing block 12,458,932 of 14,321,654
-          </Typography>
-        </div>
-      </Card>
+      <IndexingProgressCard />
 
       <Card className="overflow-hidden space-y-6">
         <div className="grid grid-cols-1 md:grid-cols-2 items-center justify-between gap-4">

@@ -61,3 +61,5 @@ export const DEFAULT_FLAGS_WAITING = {
   withController: true,
   withPrefs: true,
 } as const satisfies StakingQueryFlags;
+
+export const BLOCK_TIME_MS = 6000;
