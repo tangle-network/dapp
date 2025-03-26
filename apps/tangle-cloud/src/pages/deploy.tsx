@@ -17,7 +17,7 @@ const DeployPage: FC = () => {
         </Typography>
       </InfoSidebar>
 
-      <div className="w-full p-8">
+      <div className="w-full pl-8">
         <InstanceHeader title="DFNS CGGMP21" creator="Tangle Network" />
       </div>
     </div>

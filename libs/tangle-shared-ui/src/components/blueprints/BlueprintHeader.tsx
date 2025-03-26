@@ -1,7 +1,7 @@
 import { ArrowRight, GithubFill } from '@tangle-network/icons';
 import Button from '@tangle-network/ui-components/components/buttons/Button';
 import { SocialChip } from '@tangle-network/ui-components/components/SocialChip';
-import { EMPTY_VALUE_PLACEHOLDER } from '@tangle-network/ui-components/constants';
+import { BLUEPRINTS_DEPLOY_URL, EMPTY_VALUE_PLACEHOLDER } from '@tangle-network/ui-components/constants';
 import { Typography } from '@tangle-network/ui-components/typography/Typography';
 import { ComponentProps, FC } from 'react';
 import { twMerge } from 'tailwind-merge';
@@ -103,6 +103,7 @@ const BlueprintHeader: FC<BlueprintHeaderProps> = ({
               <Button
                 rightIcon={<ArrowRight size="lg" className="!fill-mono-0" />}
                 {...actionProps}
+                href={BLUEPRINTS_DEPLOY_URL.replace(':id', blueprint.id)}
               />
             </div>
           </div>
