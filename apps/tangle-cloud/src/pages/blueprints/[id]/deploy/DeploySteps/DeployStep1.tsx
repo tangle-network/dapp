@@ -1,12 +1,10 @@
-import { Label, Input } from "@tangle-network/ui-components"
-import InstanceHeader from "../../../../../components/InstanceHeader"
-import ErrorMessage from "../../../../../components/ErrorMessage"
-import { FC } from "react"
-import { DeployStep1Props } from "./type"
+import { Label, Input } from '@tangle-network/ui-components';
+import InstanceHeader from '../../../../../components/InstanceHeader';
+import ErrorMessage from '../../../../../components/ErrorMessage';
+import { FC } from 'react';
+import { DeployStep1Props } from './type';
 
-export const DeployStep1: FC<DeployStep1Props> = ({
-  errors
-}) => {
+export const DeployStep1: FC<DeployStep1Props> = ({ errors }) => {
   const labelClassName = 'text-mono-200 dark:text-mono-0';
 
   return (
@@ -61,5 +59,5 @@ export const DeployStep1: FC<DeployStep1Props> = ({
         </div>
       </div>
     </div>
-  )
-}
+  );
+};

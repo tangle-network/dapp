@@ -22,14 +22,13 @@ const DeployPage: FC = () => {
       <InfoSidebar>
         <Typography variant="h5">Instance Settings</Typography>
 
-        <Typography variant="body1" className='!text-mono-100'>
+        <Typography variant="body1" className="text-mono-120 dark:text-mono-100">
           Register to run Blueprints and start earning as you secure and execute
           service instances.
         </Typography>
       </InfoSidebar>
 
-      <StepComponent errors={{}}/>
-      
+      <StepComponent errors={{}} />
     </div>
   );
 };
