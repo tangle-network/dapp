@@ -9,7 +9,7 @@ import Providers from './providers';
 import { PagePath } from '../types';
 import RegistrationReview from '../pages/registrationReview/page';
 import RegistrationLayout from '../pages/registrationReview/layout';
-import DeployPage from '../pages/deploy';
+import DeployPage from '../pages/blueprints/[id]/deploy/page';
 
 function App() {
   return (
