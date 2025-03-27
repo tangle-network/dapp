@@ -1,7 +1,7 @@
 import { AwardIcon } from '@tangle-network/icons';
 import { Typography } from '@tangle-network/ui-components';
-import IndexingProgressCard from '../components/IndexingProgressCard';
-import { LeaderboardTable } from '../components/LeaderboardTable';
+import { IndexingProgressCard } from '../features/indexingProgress';
+import { LeaderboardTable } from '../features/leaderboard';
 
 export default function IndexPage() {
   return (

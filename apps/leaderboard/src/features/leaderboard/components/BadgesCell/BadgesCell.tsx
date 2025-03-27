@@ -9,7 +9,7 @@ import type { FC } from 'react';
 import { Typography } from '@tangle-network/ui-components/typography/Typography';
 import { BADGE_ICON_RECORD, BadgeEnum } from './badges';
 
-const BadgesCell: FC<{ badges: BadgeEnum[] }> = ({ badges }) => {
+export const BadgesCell: FC<{ badges: BadgeEnum[] }> = ({ badges }) => {
   return (
     <div className="flex flex-wrap gap-[2px]">
       {badges.length === 0 ? (
@@ -26,8 +26,6 @@ const BadgesCell: FC<{ badges: BadgeEnum[] }> = ({ badges }) => {
     </div>
   );
 };
-
-export default BadgesCell;
 
 type Props = {
   badge: string;

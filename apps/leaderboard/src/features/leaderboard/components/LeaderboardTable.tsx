@@ -1,5 +1,3 @@
-import cx from 'classnames';
-import TableStatus from '@tangle-network/tangle-shared-ui/components/tables/TableStatus';
 import { CircleIcon, CrossCircledIcon } from '@radix-ui/react-icons';
 import { BLOCK_TIME_MS, ZERO_BIG_INT } from '@tangle-network/dapp-config';
 import {
@@ -11,6 +9,8 @@ import {
   WavesLadderIcon,
 } from '@tangle-network/icons';
 import { Search } from '@tangle-network/icons/Search';
+import TableStatus from '@tangle-network/tangle-shared-ui/components/tables/TableStatus';
+import { AccountsOrderBy } from '@tangle-network/tangle-shared-ui/graphql/graphql';
 import {
   Input,
   KeyValueWithButton,
@@ -33,15 +33,15 @@ import {
   SortingState,
   useReactTable,
 } from '@tanstack/react-table';
+import cx from 'classnames';
 import { ComponentProps, useCallback, useMemo, useState } from 'react';
-import { useLatestFinalizedBlock } from '../../queries/latestFinalizedBlock';
-import { useLeaderboard } from '../../queries/leaderboard';
-import { formatTimeAgo } from '../../utils/formatTimeAgo';
-import { BadgeEnum, BadgesCell } from './BadgesCell';
-import HeaderCell from './HeaderCell';
-import { Account, PointsHistory, TestnetTaskCompletion } from './types';
 import { twMerge } from 'tailwind-merge';
-import { AccountsOrderBy } from '@tangle-network/tangle-shared-ui/graphql/graphql';
+import { useLatestFinalizedBlock } from '../../../queries';
+import { formatTimeAgo } from '../../../utils';
+import { useLeaderboard } from '../queries';
+import { Account, PointsHistory, TestnetTaskCompletion } from '../types';
+import { BadgeEnum, BadgesCell } from './BadgesCell';
+import { HeaderCell } from './HeaderCell';
 
 const ONE_DAY_IN_MS = 24 * 60 * 60 * 1000;
 const BLOCK_COUNT_IN_ONE_DAY = Math.floor(ONE_DAY_IN_MS / BLOCK_TIME_MS);

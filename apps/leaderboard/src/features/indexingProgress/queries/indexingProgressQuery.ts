@@ -2,10 +2,7 @@ import { BLOCK_TIME_MS } from '@tangle-network/dapp-config/constants/tangle';
 import { graphql } from '@tangle-network/tangle-shared-ui/graphql';
 import { executeGraphQL } from '@tangle-network/tangle-shared-ui/utils/executeGraphQL';
 import { useQuery } from '@tanstack/react-query';
-
-export enum ReactQueryKey {
-  IndexingProgress = 'IndexingProgress',
-}
+import { INDEXING_PROGRESS_QUERY_KEY } from '../../../constants/query';
 
 const IndexingProgressQueryDocument = graphql(/* GraphQL */ `
   query IndexingProgress {
@@ -25,7 +22,7 @@ const fetcher = async () => {
 
 export function useIndexingProgress() {
   return useQuery({
-    queryKey: [ReactQueryKey.IndexingProgress],
+    queryKey: [INDEXING_PROGRESS_QUERY_KEY],
     queryFn: fetcher,
     refetchInterval: BLOCK_TIME_MS,
     placeholderData: (prev) => prev,

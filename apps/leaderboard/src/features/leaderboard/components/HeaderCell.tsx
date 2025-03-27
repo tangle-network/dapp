@@ -1,7 +1,7 @@
 import { Typography } from '@tangle-network/ui-components/typography/Typography';
 import type { FC } from 'react';
 
-const HeaderCell: FC<{ title: string; className?: string }> = ({
+export const HeaderCell: FC<{ title: string; className?: string }> = ({
   title,
   className,
 }) => {
@@ -11,5 +11,3 @@ const HeaderCell: FC<{ title: string; className?: string }> = ({
     </Typography>
   );
 };
-
-export default HeaderCell;

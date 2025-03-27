@@ -1,18 +1,18 @@
-import { Card } from '@tangle-network/ui-components/components/Card';
-import { Progress } from '@tangle-network/ui-components/components/Progress';
-import { Typography } from '@tangle-network/ui-components/typography/Typography';
-import { useIndexingProgress } from '../queries/indexingProgress';
-import { formatTimeAgo } from '../utils/formatTimeAgo';
+import { CrossCircledIcon } from '@radix-ui/react-icons';
+import { CheckboxCircleLine } from '@tangle-network/icons';
 import {
   EMPTY_VALUE_PLACEHOLDER,
   SkeletonLoader,
 } from '@tangle-network/ui-components';
+import { Card } from '@tangle-network/ui-components/components/Card';
+import { Progress } from '@tangle-network/ui-components/components/Progress';
+import { Typography } from '@tangle-network/ui-components/typography/Typography';
 import { useMemo } from 'react';
-import { CheckboxCircleLine } from '@tangle-network/icons';
-import { CrossCircledIcon } from '@radix-ui/react-icons';
 import { twMerge } from 'tailwind-merge';
+import { formatTimeAgo } from '../../../utils/formatTimeAgo';
+import { useIndexingProgress } from '../queries';
 
-const IndexingProgressCard = () => {
+export const IndexingProgressCard = () => {
   const { data, error, isPending } = useIndexingProgress();
 
   const targetBlock =
@@ -123,5 +123,3 @@ const IndexingProgressCard = () => {
     </Card>
   );
 };
-
-export default IndexingProgressCard;

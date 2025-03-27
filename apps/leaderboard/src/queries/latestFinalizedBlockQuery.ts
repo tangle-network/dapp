@@ -6,10 +6,7 @@ import {
 } from '@tangle-network/dapp-config';
 import { getApiPromise } from '@tangle-network/tangle-shared-ui/utils/polkadot/api';
 import { useQuery } from '@tanstack/react-query';
-
-export enum ReactQueryKey {
-  LatestFinalizedBlock = 'LatestFinalizedBlock',
-}
+import { LATEST_FINALIZED_BLOCK_QUERY_KEY } from '../constants/query';
 
 type Network = 'all' | 'mainnet' | 'testnet';
 
@@ -91,7 +88,7 @@ export function useLatestFinalizedBlock<TNetwork extends Network>(
   network: TNetwork,
 ) {
   return useQuery({
-    queryKey: [ReactQueryKey.LatestFinalizedBlock, network],
+    queryKey: [LATEST_FINALIZED_BLOCK_QUERY_KEY, network],
     queryFn: () => fetcher(network),
     staleTime: Infinity,
   });
