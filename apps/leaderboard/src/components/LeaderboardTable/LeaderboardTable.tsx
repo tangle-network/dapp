@@ -1,3 +1,4 @@
+import cx from 'classnames';
 import TableStatus from '@tangle-network/tangle-shared-ui/components/tables/TableStatus';
 import { CircleIcon, CrossCircledIcon } from '@radix-ui/react-icons';
 import { BLOCK_TIME_MS, ZERO_BIG_INT } from '@tangle-network/dapp-config';
@@ -625,7 +626,7 @@ export const LeaderboardTable = () => {
   );
 
   return (
-    <Card className="overflow-hidden space-y-6">
+    <Card className="space-y-6">
       <div className="grid grid-cols-1 items-center justify-between gap-4">
         {/* <TabsRoot
               className="max-w-xs flex-auto"
@@ -725,6 +726,13 @@ export const LeaderboardTable = () => {
             isPaginated
             totalRecords={leaderboardData?.totalCount}
             getExpandedRowContent={getExpandedRowContent}
+            className="overflow-visible"
+            tableWrapperClassName="overflow-visible"
+            thClassName={cx(
+              'sticky top-0 z-10 first:rounded-tl-lg last:rounded-tr-lg',
+              'shadow-mono-40 dark:shadow-mono-140',
+              'backdrop-blur-sm !bg-opacity-50 [box-shadow:_inset_0_-1px_var(--tw-shadow-color)]',
+            )}
             expandedRowClassName={twMerge(
               'peer-[&[data-expanded="true"]:hover]:bg-mono-20',
               'peer-[&[data-expanded="true"]:hover]:dark:bg-mono-170',
