@@ -728,6 +728,7 @@ export const LeaderboardTable = () => {
             getExpandedRowContent={getExpandedRowContent}
             className="overflow-visible"
             tableWrapperClassName="overflow-visible"
+            trClassName="cursor-pointer"
             thClassName={cx(
               'sticky top-0 z-10 first:rounded-tl-lg last:rounded-tr-lg',
               'shadow-mono-40 dark:shadow-mono-140',
@@ -861,7 +862,7 @@ const getExpandedContent = (
   const { testnetTaskCompletion } = account;
 
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 p-4">
+    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 px-4 pb-4">
       <Card className="bg-mono-40/50 dark:bg-mono-200 space-y-4">
         <Section title="Account Details">
           <DetailRow
