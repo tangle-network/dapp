@@ -36,6 +36,7 @@ import { formatTimeAgo } from '../../utils/formatTimeAgo';
 import { BadgeEnum, BadgesCell } from './BadgesCell';
 import HeaderCell from './HeaderCell';
 import { Account, PointsHistory, TestnetTaskCompletion } from './types';
+import { twMerge } from 'tailwind-merge';
 
 const ONE_DAY_IN_MS = 24 * 60 * 60 * 1000;
 const BLOCK_COUNT_IN_ONE_DAY = Math.floor(ONE_DAY_IN_MS / BLOCK_TIME_MS);
@@ -660,6 +661,10 @@ export const LeaderboardTable = () => {
             isPaginated
             totalRecords={leaderboardData?.totalCount}
             getExpandedRowContent={getExpandedRowContent}
+            expandedRowClassName={twMerge(
+              'peer-[&[data-expanded="true"]:hover]:bg-mono-20',
+              'peer-[&[data-expanded="true"]:hover]:dark:bg-mono-170',
+            )}
             onRowClick={(row) => {
               table.resetExpanded();
               table.setExpanded({ [row.id]: !row.getIsExpanded() });
