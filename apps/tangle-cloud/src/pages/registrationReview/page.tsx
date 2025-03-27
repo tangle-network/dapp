@@ -247,7 +247,8 @@ export default function RegistrationReview() {
               !isValidParams ||
               !isValidAmount ||
               !pricingSettings ||
-              !activeChain
+              !activeChain ||
+              registerTxStatus === TxStatus.PROCESSING
             }
             onClick={handleRegister}
           >

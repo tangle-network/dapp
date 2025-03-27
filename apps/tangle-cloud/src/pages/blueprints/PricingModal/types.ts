@@ -8,7 +8,7 @@ export enum PricingType {
 const getPriceSchema = (priceType: string) =>
   z
     .string()
-    .or(z.number())
+    .or(z.number().int().positive())
     .transform((value, context) => {
       if (value === '') {
         context.addIssue({
@@ -21,7 +21,7 @@ const getPriceSchema = (priceType: string) =>
 
       const parsed = Number(value);
 
-      if (isNaN(parsed)) {
+      if (isNaN(parsed) || !Number.isInteger(parsed)) {
         context.addIssue({
           code: z.ZodIssueCode.custom,
           message: `${priceType} price is invalid`,
