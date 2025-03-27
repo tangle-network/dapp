@@ -12,13 +12,17 @@ import { BADGE_ICON_RECORD, BadgeEnum } from './badges';
 const BadgesCell: FC<{ badges: BadgeEnum[] }> = ({ badges }) => {
   return (
     <div className="flex flex-wrap gap-[2px]">
-      {badges.map((badge, idx) => (
-        <BadgeWithTooltip
-          key={`${idx}-${badge.toString()}`}
-          emoji={BADGE_ICON_RECORD[badge]}
-          badge={badge.toString()}
-        />
-      ))}
+      {badges.length === 0 ? (
+        <Typography variant="body1">No badges</Typography>
+      ) : (
+        badges.map((badge, idx) => (
+          <BadgeWithTooltip
+            key={`${idx}-${badge.toString()}`}
+            emoji={BADGE_ICON_RECORD[badge]}
+            badge={badge.toString()}
+          />
+        ))
+      )}
     </div>
   );
 };

@@ -20,18 +20,13 @@ const IndexingProgressQueryDocument = graphql(/* GraphQL */ `
 
 const fetcher = async () => {
   const result = await executeGraphQL(IndexingProgressQueryDocument);
-  return result.data;
+  return result.data._metadata;
 };
 
 export function useIndexingProgress() {
-  const { data, ...rest } = useQuery({
+  return useQuery({
     queryKey: [ReactQueryKey.IndexingProgress],
     queryFn: fetcher,
     refetchInterval: BLOCK_TIME_MS,
   });
-
-  return {
-    data: data?._metadata,
-    ...rest,
-  };
 }

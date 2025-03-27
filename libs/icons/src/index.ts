@@ -21,6 +21,7 @@ export * from './BankLine';
 export * from './BellIcon';
 export { default as BillFillIcon } from './BillFillIcon';
 export * from './BlockIcon';
+export * from './BookLockIcon';
 export * from './BookOpenLineIcon';
 export { default as BoxLine } from './BoxLine';
 export { default as BranchesIcon } from './BranchesIcon';
@@ -158,6 +159,7 @@ export { default as WalletIcon } from './WalletIcon';
 export { default as WalletLineIcon } from './WalletLineIcon';
 export { default as WalletPayIcon } from './WalletPayIcon';
 export * from './WaterDropletIcon';
+export * from './WavesLadderIcon';
 export { default as WebbLogoIcon } from './WebbLogoIcon';
 export * from './YouTubeFill';
 
