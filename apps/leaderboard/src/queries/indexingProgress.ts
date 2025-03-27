@@ -28,5 +28,6 @@ export function useIndexingProgress() {
     queryKey: [ReactQueryKey.IndexingProgress],
     queryFn: fetcher,
     refetchInterval: BLOCK_TIME_MS,
+    placeholderData: (prev) => prev,
   });
 }

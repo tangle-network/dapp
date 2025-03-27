@@ -1,4 +1,5 @@
-import { CircleIcon } from '@radix-ui/react-icons';
+import TableStatus from '@tangle-network/tangle-shared-ui/components/tables/TableStatus';
+import { CircleIcon, CrossCircledIcon } from '@radix-ui/react-icons';
 import { BLOCK_TIME_MS, ZERO_BIG_INT } from '@tangle-network/dapp-config';
 import {
   ArrowDownIcon,
@@ -18,6 +19,7 @@ import {
   Tooltip,
   TooltipBody,
   TooltipTrigger,
+  toSubstrateAddress,
   Typography,
 } from '@tangle-network/ui-components';
 import { Card } from '@tangle-network/ui-components/components/Card';
@@ -30,7 +32,7 @@ import {
   SortingState,
   useReactTable,
 } from '@tanstack/react-table';
-import { useCallback, useMemo, useState } from 'react';
+import { ComponentProps, useCallback, useMemo, useState } from 'react';
 import { useLatestFinalizedBlock } from '../../queries/latestFinalizedBlock';
 import { useLeaderboard } from '../../queries/leaderboard';
 import { formatTimeAgo } from '../../utils/formatTimeAgo';
@@ -284,7 +286,7 @@ export const LeaderboardTable = () => {
 
   const [pagination, setPagination] = useState<PaginationState>({
     pageIndex: 0,
-    pageSize: 20,
+    pageSize: 15,
   });
 
   const [sorting, setSorting] = useState<SortingState>([
@@ -336,15 +338,30 @@ export const LeaderboardTable = () => {
       .filter((sort) => sort !== null);
   }, [sorting]);
 
+  const accountQuery = useMemo(() => {
+    if (!searchQuery) {
+      return undefined;
+    }
+
+    try {
+      const substrateAddress = toSubstrateAddress(searchQuery);
+
+      return substrateAddress;
+    } catch {
+      return searchQuery;
+    }
+  }, [searchQuery]);
+
   const {
     data: leaderboardData,
-    isPending,
     error,
+    isPending,
   } = useLeaderboard(
     pagination.pageSize,
     pagination.pageIndex * pagination.pageSize,
     blockNumberSevenDaysAgo,
     accountsOrderBy,
+    accountQuery,
   );
 
   const columns = useMemo(
@@ -608,30 +625,8 @@ export const LeaderboardTable = () => {
 
   return (
     <Card className="overflow-hidden space-y-6">
-      {isPending ? (
-        <div className="flex items-center justify-center h-64">
-          <Spinner size="2xl" />
-        </div>
-      ) : error && data.length === 0 ? (
-        <div className="flex flex-col items-center justify-center h-64 space-y-4">
-          <Typography variant="h3" className="text-red-500">
-            Error Loading Leaderboard
-          </Typography>
-          <Typography variant="body1" className="text-gray-500">
-            {error.message ||
-              'Failed to load leaderboard data. Please try again later.'}
-          </Typography>
-        </div>
-      ) : data.length === 0 ? (
-        <div className="flex flex-col items-center justify-center h-64 space-y-4">
-          <Typography variant="h3" className="text-red-500">
-            No data found
-          </Typography>
-        </div>
-      ) : (
-        <>
-          <div className="grid grid-cols-1 items-center justify-between gap-4">
-            {/* <TabsRoot
+      <div className="grid grid-cols-1 items-center justify-between gap-4">
+        {/* <TabsRoot
               className="max-w-xs flex-auto"
               value={networkTab}
               onValueChange={(tab) =>
@@ -676,21 +671,21 @@ export const LeaderboardTable = () => {
               </TabsListWithAnimation>
             </TabsRoot> */}
 
-            <div className="flex items-center justify-end gap-2">
-              <Input
-                className="grow max-w-xs"
-                debounceTime={300}
-                isControlled
-                value={searchQuery}
-                onChange={setSearchQuery}
-                leftIcon={<Search />}
-                id="search"
-                placeholder="Search"
-                size="md"
-                inputClassName="py-1"
-              />
+        <div className="flex items-center justify-end gap-2">
+          <Input
+            className="grow max-w-xs"
+            debounceTime={300}
+            isControlled
+            value={searchQuery}
+            onChange={setSearchQuery}
+            leftIcon={<Search />}
+            id="search"
+            placeholder="Search by address (Substrate or EVM)"
+            size="md"
+            inputClassName="py-1"
+          />
 
-              {/* <Button
+          {/* <Button
                 leftIcon={
                   <FilterIcon2 className="fill-current dark:fill-current" />
                 }
@@ -699,9 +694,31 @@ export const LeaderboardTable = () => {
               >
                 Filter
               </Button> */}
-            </div>
-          </div>
+        </div>
+      </div>
 
+      {isPending && data.length === 0 ? (
+        <TableStatus
+          className="min-h-80"
+          icon={<Spinner size="2xl" />}
+          title="Loading..."
+          description="Loading leaderboard data..."
+        />
+      ) : error && data.length === 0 ? (
+        <TableStatus
+          className="min-h-80"
+          icon={<CrossCircledIcon className="fill-red-500" />}
+          title="Error loading leaderboard data"
+          description="Please try again later."
+        />
+      ) : data.length === 0 ? (
+        <TableStatus
+          className="min-h-80"
+          title="No data found"
+          description="No data found for the given query"
+        />
+      ) : (
+        <div className="relative">
           <Table
             tableProps={table}
             isPaginated
@@ -716,11 +733,48 @@ export const LeaderboardTable = () => {
               table.setExpanded({ [row.id]: !row.getIsExpanded() });
             }}
           />
-        </>
+
+          {isPending ? (
+            <Overlay>
+              <Spinner size="2xl" />
+            </Overlay>
+          ) : error ? (
+            <Overlay className="flex flex-col gap-6 justify-center">
+              <CrossCircledIcon className="stroke-red-500 size-12" />
+
+              <div className="space-y-2">
+                <Typography variant="h4" component="h3">
+                  Error while fetching leaderboard data
+                </Typography>
+
+                <Typography variant="body1" component="p">
+                  Error name: {error.name}
+                </Typography>
+
+                <Typography variant="body1" component="p">
+                  Error message: {error.message}
+                </Typography>
+              </div>
+            </Overlay>
+          ) : null}
+        </div>
       )}
     </Card>
   );
 };
+
+function Overlay(props: ComponentProps<'div'>) {
+  return (
+    <div
+      {...props}
+      className={twMerge(
+        'absolute inset-0 flex items-center justify-center rounded-lg',
+        'bg-mono-40/50 dark:bg-mono-200/50',
+        props.className,
+      )}
+    />
+  );
+}
 
 function formatDisplayBlockNumber(
   blockNumber: number,

@@ -22,12 +22,15 @@ const LeaderboardQueryDocument = graphql(/* GraphQL */ `
     $blockNumberSevenDaysAgo: Int!
     $accountsOrderBy: [AccountsOrderBy!]
     $teamAccounts: [String!]!
+    $accountIdQuery: String
   ) {
     accounts(
       first: $first
       offset: $offset
       orderBy: $accountsOrderBy
-      filter: { id: { notIn: $teamAccounts } }
+      filter: {
+        id: { notIn: $teamAccounts, includesInsensitive: $accountIdQuery }
+      }
     ) {
       nodes {
         id
@@ -78,6 +81,7 @@ const LeaderboardQueryDocument = graphql(/* GraphQL */ `
             blockNumber: { greaterThanOrEqualTo: $blockNumberSevenDaysAgo }
           }
         ) {
+          totalCount
           nodes {
             blockNumber
             totalPoints
@@ -96,6 +100,7 @@ const fetcher = async (
   offset: number,
   blockNumberSevenDaysAgo: number,
   accountsOrderBy: AccountsOrderBy[],
+  accountIdQuery?: string,
 ) => {
   const result = await executeGraphQL(LeaderboardQueryDocument, {
     first,
@@ -103,6 +108,7 @@ const fetcher = async (
     blockNumberSevenDaysAgo,
     accountsOrderBy,
     teamAccounts: TEAM_ACCOUNTS.map((account) => account.toLowerCase()),
+    accountIdQuery,
   });
   return result.data.accounts;
 };
@@ -112,6 +118,7 @@ export function useLeaderboard(
   offset: number,
   blockNumberSevenDaysAgo: number,
   accountsOrderBy: AccountsOrderBy[],
+  accountIdQuery?: string,
 ) {
   return useQuery({
     queryKey: [
@@ -120,9 +127,17 @@ export function useLeaderboard(
       offset,
       blockNumberSevenDaysAgo,
       accountsOrderBy,
+      accountIdQuery,
     ],
     queryFn: () =>
-      fetcher(first, offset, blockNumberSevenDaysAgo, accountsOrderBy),
+      fetcher(
+        first,
+        offset,
+        blockNumberSevenDaysAgo,
+        accountsOrderBy,
+        accountIdQuery,
+      ),
     enabled: first > 0 && offset >= 0 && blockNumberSevenDaysAgo > 0,
+    placeholderData: (prev) => prev,
   });
 }
