@@ -356,6 +356,7 @@ export const LeaderboardTable = () => {
     data: leaderboardData,
     error,
     isPending,
+    isFetching,
   } = useLeaderboard(
     pagination.pageSize,
     pagination.pageIndex * pagination.pageSize,
@@ -697,7 +698,7 @@ export const LeaderboardTable = () => {
         </div>
       </div>
 
-      {isPending && data.length === 0 ? (
+      {isPending ? (
         <TableStatus
           className="min-h-80"
           icon={<Spinner size="2xl" />}
@@ -734,7 +735,7 @@ export const LeaderboardTable = () => {
             }}
           />
 
-          {isPending ? (
+          {isFetching ? (
             <Overlay>
               <Spinner size="2xl" />
             </Overlay>
