@@ -11,13 +11,20 @@ type ParamsFormProps = {
   // TODO: Determine the type of the form values
   onSave: (values: Record<string, any>, amount: string) => void;
   tokenSymbol: string;
-  amount: string;
+  amountValue: string;
+  paramsValue: Record<string, any>;
 };
 
-const ParamsForm = ({ params, onSave, tokenSymbol, amount }: ParamsFormProps) => {
+const ParamsForm = ({ 
+  params,
+  onSave,
+  tokenSymbol,
+  amountValue,
+  paramsValue,
+}: ParamsFormProps) => {
   // TODO: Determine the type of the form values
-  const [formValues, setFormValues] = useState<Record<string, any>>({});
-  const [formAmount, setFormAmount] = useState<string>(amount);
+  const [formValues, setFormValues] = useState<Record<string, any>>(paramsValue);
+  const [formAmount, setFormAmount] = useState<string>(amountValue);
 
   // TODO: Validate the form values
   // this is just a simple validation for now
@@ -49,6 +56,7 @@ const ParamsForm = ({ params, onSave, tokenSymbol, amount }: ParamsFormProps) =>
               id={idx.toString()}
               value={formValues[idx]}
               onValueChange={handleValueChange}
+              tabIndex={idx + 1}
             />
           );
         })}
@@ -66,6 +74,7 @@ const ParamsForm = ({ params, onSave, tokenSymbol, amount }: ParamsFormProps) =>
                   setFormAmount(e.target.value);
                 }}
                 min={0}
+                tabIndex={params.length + 1}
               />
             </TextField.Root>
         </div>

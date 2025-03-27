@@ -4,6 +4,7 @@ import useSharedTxNotification from '@tangle-network/tangle-shared-ui/hooks/useT
 export const SUCCESS_MESSAGES: Record<TxName, string> = {
   [TxName.REJECT_SERVICE_REQUEST]: 'Service request rejected',
   [TxName.APPROVE_SERVICE_REQUEST]: 'Service request approved',
+  [TxName.REGISTER_BLUEPRINT]: 'Blueprint registered',
 };
 
 const useTxNotification = () => {

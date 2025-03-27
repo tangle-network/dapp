@@ -80,7 +80,7 @@ export default function IndividualPricingField({
 
               <AccordionContent className="p-0 mt-4">
                 <InputsWrapper>
-                  {inputs.map((input) => (
+                  {inputs.map((input, idx) => (
                     <FormField
                       key={input.name}
                       control={formControl}
@@ -92,6 +92,7 @@ export default function IndividualPricingField({
                             label={input.label}
                             description={input.description}
                             placeholder={input.placeholder}
+                            tabIndex={idx + 1}
                           />
                         );
                       }}

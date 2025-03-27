@@ -47,36 +47,6 @@ export type RegisterServiceFormFields = {
       storageNvme: number;
     };
   }[];
-  registrationArgs:  ({
-      Optional: any;
-    } | {
-        Bool: any;
-    } | {
-        Uint8: any;
-    } | {
-        Int8: any;
-    } | {
-        Uint16: any;
-    } | {
-        Int16: any;
-    } | {
-        Uint32: any;
-    } | {
-        Int32: any;
-    } | {
-        Uint64: any;
-    } | {
-        Int64: any;
-    } | {
-        String: any;
-    } | {
-        Array: any;
-    } | {
-        List: any;
-    } | {
-        Struct: any;
-    } | {
-        AccountId: any;
-    })[][];
+  registrationArgs:  Array<any[]>;
   amounts: number[];
 };

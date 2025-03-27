@@ -17,6 +17,7 @@ export interface FieldTypeInputProps {
   // TODO: Determine the type of value here
   value?: any;
   onValueChange?: (id: string, newValue: any) => void;
+  tabIndex?: number;
 }
 
 const isOptional = (
@@ -72,6 +73,7 @@ const FieldTypeInput: React.FC<FieldTypeInputProps> = ({
   id,
   value,
   onValueChange,
+  tabIndex,
 }) => {
   // If the field type is Void, set the value to 'Void'
   useEffect(() => {
@@ -88,7 +90,7 @@ const FieldTypeInput: React.FC<FieldTypeInputProps> = ({
             <Label>{label}</Label>
 
             <TextField.Root>
-              <TextField.Input value="Void" readOnly type="text" />
+              <TextField.Input tabIndex={tabIndex} value="Void" readOnly type="text" />
             </TextField.Root>
           </div>
         );
@@ -105,7 +107,7 @@ const FieldTypeInput: React.FC<FieldTypeInputProps> = ({
                   : undefined
               }
             >
-              <SelectTrigger>
+              <SelectTrigger tabIndex={tabIndex}>
                 <SelectValue placeholder={`Select True or False`} />
               </SelectTrigger>
 
@@ -124,6 +126,7 @@ const FieldTypeInput: React.FC<FieldTypeInputProps> = ({
 
               <TextField.Root>
                 <TextField.Input
+                  tabIndex={tabIndex}
                   type="number"
                   inputMode="numeric"
                   placeholder={fieldType}
@@ -144,6 +147,7 @@ const FieldTypeInput: React.FC<FieldTypeInputProps> = ({
 
               <TextField.Root>
                 <TextField.Input
+                  tabIndex={tabIndex}
                   type="text"
                   inputMode="text"
                   placeholder={fieldType}
@@ -169,6 +173,7 @@ const FieldTypeInput: React.FC<FieldTypeInputProps> = ({
           fieldType={fieldType.Optional}
           value={value?.Optional}
           onValueChange={onValueChange}
+          tabIndex={tabIndex}
         />
       </div>
     );
@@ -188,6 +193,7 @@ const FieldTypeInput: React.FC<FieldTypeInputProps> = ({
               id={`${id}.Array[${index}]`}
               value={value?.Array?.[index]}
               onValueChange={onValueChange}
+              tabIndex={tabIndex}
             />
           ))}
         </div>
@@ -203,6 +209,7 @@ const FieldTypeInput: React.FC<FieldTypeInputProps> = ({
           value={value?.List}
           onValueChange={onValueChange}
           fieldType={fieldType.List}
+          tabIndex={tabIndex}
         />
       </div>
     );
@@ -223,6 +230,7 @@ const FieldTypeInput: React.FC<FieldTypeInputProps> = ({
                 id={`${id}.Struct.${idx}`}
                 value={value?.Struct?.[id]?.[idx]}
                 onValueChange={onValueChange}
+                tabIndex={tabIndex}
               />
             </div>
           ))}

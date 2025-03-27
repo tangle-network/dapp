@@ -54,7 +54,7 @@ const Page = () => {
       pricingSettings: result,
       selectedBlueprints: selectedBlueprints,
     }));
-    navigate(`${PagePath.BLUEPRINTS_REGISTRATION_REVIEW}`);
+    navigate(PagePath.BLUEPRINTS_REGISTRATION_REVIEW);
   }, [selectedBlueprints]);
 
   return (

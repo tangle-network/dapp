@@ -22,17 +22,21 @@ const useServiceRegisterTx = () => {
         api.registry.chainDecimals.length > 0
           ? api.registry.chainDecimals[0]
           : TANGLE_TOKEN_DECIMALS;
-          
-      return api.tx.utility.batch(
-        blueprintIds.map((blueprintId, idx) => {
-          return api.tx.services.register(
-            blueprintId,
-            preferences[idx],
-            registrationArgs[idx],
-            parseUnits(amounts[idx].toString(), decimals),
-          );
-        }),
-      );
+        
+      const registerTx = blueprintIds.map((blueprintId, idx) => {
+        return api.tx.services.register(
+          blueprintId,
+          preferences[idx],
+          registrationArgs[idx],
+          parseUnits(amounts[idx].toString(), decimals),
+        );
+      });
+
+      if (registerTx.length > 1) {
+        return api.tx.utility.batch(registerTx);
+      }
+
+      return registerTx[0];
     },
     [],
   );

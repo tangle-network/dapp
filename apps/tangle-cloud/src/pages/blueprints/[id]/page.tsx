@@ -12,7 +12,8 @@ import { PagePath, TangleDAppPagePath } from '../../../types';
 import useRoleStore from '../../../stores/roleStore';
 import PricingModal from '../PricingModal';
 import { Modal } from '@tangle-network/ui-components';
-import { PricingType } from '../PricingModal/types';
+import { PricingFormResult } from '../PricingModal/types';
+import { SessionStorageKey } from '../../../constants';
 
 const RestakeOperatorAction = ({
   children,
@@ -54,6 +55,16 @@ const Page = () => {
     return null;
   }
 
+
+  const handlePricingFormSubmit = (formResult: PricingFormResult) => {
+    sessionStorage.setItem(SessionStorageKey.BLUEPRINT_REGISTRATION_PARAMS, JSON.stringify({
+      pricingSettings: formResult,
+      selectedBlueprints: [result.details],
+    }));
+    navigate(PagePath.BLUEPRINTS_REGISTRATION_REVIEW);
+  };
+
+
   return (
     <div className="space-y-10">
       <BlueprintHeader
@@ -62,7 +73,7 @@ const Page = () => {
           children: isOperator ? 'Register' : 'Deploy',
           onClick: () => {
             if (isOperator) {
-              setIsPricingModalOpen(true);
+              setIsPricingModalOpen(true)
             } else {
               navigate(PagePath.BLUEPRINTS_DEPLOY.replace(':id', id ?? ''));
             }
@@ -85,13 +96,7 @@ const Page = () => {
         <PricingModal
           onOpenChange={setIsPricingModalOpen}
           blueprints={[result.details]}
-          onSubmit={({ type, values }) => {
-            if (type === PricingType.GLOBAL) {
-              // batch tx
-            } else {
-              // register tx
-            }
-          }}
+          onSubmit={handlePricingFormSubmit}
         />
       </Modal>
     </div>
