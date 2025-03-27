@@ -1,16 +1,17 @@
+import { CircleIcon } from '@radix-ui/react-icons';
 import { BLOCK_TIME_MS, ZERO_BIG_INT } from '@tangle-network/dapp-config';
 import {
   ArrowDownIcon,
   BookLockIcon,
-  CheckSquareIcon,
-  FileTextIcon,
-  WavesLadderIcon,
+  CheckboxCircleFill,
   Spinner,
   UsersIcon,
+  WavesLadderIcon,
 } from '@tangle-network/icons';
 import { Search } from '@tangle-network/icons/Search';
 import {
   Input,
+  KeyValueWithButton,
   Progress,
   Table,
   toBigInt,
@@ -18,18 +19,14 @@ import {
   TooltipBody,
   TooltipTrigger,
   Typography,
-  ValidatorIdentity,
 } from '@tangle-network/ui-components';
 import { Card } from '@tangle-network/ui-components/components/Card';
-import { SubstrateAddress } from '@tangle-network/ui-components/types/address';
 import {
   createColumnHelper,
   ExpandedState,
   getCoreRowModel,
-  getSortedRowModel,
   PaginationState,
   Row,
-  SortingState,
   useReactTable,
 } from '@tanstack/react-table';
 import { useCallback, useMemo, useState } from 'react';
@@ -168,24 +165,23 @@ const getColumns = (
   COLUMN_HELPER.accessor('id', {
     header: () => <HeaderCell title="Account" />,
     cell: (props) => {
-      const address = props.getValue() as SubstrateAddress;
+      const address = props.getValue();
 
       return (
-        <ValidatorIdentity
-          avatarSize="md"
-          address={address}
-          accountExplorerUrl="https://tangle.tools"
-          subContent={
-            <div className="text-xs text-gray-500 dark:text-gray-400">
-              Created{' '}
-              {formatDisplayBlockNumber(
-                props.row.original.createdAt,
-                latestBlockNumber,
-                latestBlockTimestamp,
-              )}
-            </div>
-          }
-        />
+        <div className="space-y-2">
+          <KeyValueWithButton size="sm" keyValue={address} />
+          <Typography
+            variant="body2"
+            className="text-gray-500 dark:text-gray-400"
+          >
+            Created{' '}
+            {formatDisplayBlockNumber(
+              props.row.original.createdAt,
+              latestBlockNumber,
+              latestBlockTimestamp,
+            )}
+          </Typography>
+        </div>
       );
     },
   }),
@@ -698,7 +694,7 @@ const getExpandedContent = (
   latestBlockTimestamp?: Date | null,
 ) => {
   const account = row.original;
-  const address = account.id as SubstrateAddress;
+  const address = account.id;
 
   // Helper function to render a detail row with label and value
   const DetailRow = ({
@@ -722,10 +718,12 @@ const getExpandedContent = (
     completed?: boolean;
     label: string;
   }) => (
-    <div className="flex items-center">
-      <div
-        className={`w-3 h-3 rounded-full mr-2 ${completed ? 'bg-green-500' : 'bg-gray-300'}`}
-      ></div>
+    <div className="flex items-center gap-1 [&>svg]:flex-initial">
+      {completed ? (
+        <CheckboxCircleFill className="fill-green-500 dark:fill-green-400" />
+      ) : (
+        <CircleIcon />
+      )}
       <span>{label}</span>
     </div>
   );
@@ -754,7 +752,7 @@ const getExpandedContent = (
         <Section title="Account Details">
           <DetailRow
             label="Account ID"
-            value={<ValidatorIdentity showAddressInTooltip address={address} />}
+            value={<KeyValueWithButton size="sm" keyValue={address} />}
           />
           <DetailRow
             label="Created"
