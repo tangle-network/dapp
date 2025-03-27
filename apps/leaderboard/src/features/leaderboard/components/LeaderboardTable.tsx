@@ -1,9 +1,7 @@
-import { CircleIcon, CrossCircledIcon } from '@radix-ui/react-icons';
-import { BLOCK_TIME_MS, ZERO_BIG_INT } from '@tangle-network/dapp-config';
+import { CrossCircledIcon } from '@radix-ui/react-icons';
+import { ZERO_BIG_INT } from '@tangle-network/dapp-config';
 import {
-  ArrowDownIcon,
   BookLockIcon,
-  CheckboxCircleFill,
   Spinner,
   UsersIcon,
   WavesLadderIcon,
@@ -14,7 +12,6 @@ import { AccountsOrderBy } from '@tangle-network/tangle-shared-ui/graphql/graphq
 import {
   Input,
   KeyValueWithButton,
-  Progress,
   Table,
   toBigInt,
   Tooltip,
@@ -34,133 +31,19 @@ import {
   useReactTable,
 } from '@tanstack/react-table';
 import cx from 'classnames';
-import { ComponentProps, useCallback, useMemo, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { twMerge } from 'tailwind-merge';
 import { useLatestFinalizedBlock } from '../../../queries';
-import { formatTimeAgo } from '../../../utils';
+import { BadgeEnum, BLOCK_COUNT_IN_SEVEN_DAYS } from '../constants';
 import { useLeaderboard } from '../queries';
 import { Account, PointsHistory, TestnetTaskCompletion } from '../types';
-import { BadgeEnum, BadgesCell } from './BadgesCell';
+import { BadgesCell } from './BadgesCell';
 import { HeaderCell } from './HeaderCell';
-
-const ONE_DAY_IN_MS = 24 * 60 * 60 * 1000;
-const BLOCK_COUNT_IN_ONE_DAY = Math.floor(ONE_DAY_IN_MS / BLOCK_TIME_MS);
-const BLOCK_COUNT_IN_SEVEN_DAYS = BLOCK_COUNT_IN_ONE_DAY * 7;
-
-const TrendIndicator = ({
-  pointsHistory,
-}: {
-  pointsHistory: Account['pointsHistory'];
-}) => {
-  if (pointsHistory.length === 0) {
-    return <div>0</div>;
-  }
-
-  const diff =
-    pointsHistory[pointsHistory.length - 1].points - pointsHistory[0].points;
-
-  const direction = diff > 0 ? 'up' : diff < 0 ? 'down' : 'neutral';
-  const value = pointsHistory[pointsHistory.length - 1].points.toLocaleString();
-
-  if (direction === 'up') {
-    return (
-      <Typography variant="body1" className="flex items-center gap-1">
-        {value}{' '}
-        <ArrowDownIcon
-          size="lg"
-          className="fill-green-600 dark:fill-green-400 -rotate-[135deg]"
-        />
-      </Typography>
-    );
-  } else if (direction === 'down') {
-    return (
-      <Typography variant="body1" className="flex items-center gap-1">
-        {value}{' '}
-        <ArrowDownIcon
-          size="lg"
-          className="fill-red-600 dark:fill-red-400 -rotate-45"
-        />
-      </Typography>
-    );
-  }
-
-  return <div>{value}</div>;
-};
-
-const MiniSparkline = ({
-  pointsHistory,
-  latestBlockNumber,
-}: {
-  pointsHistory: Account['pointsHistory'];
-  latestBlockNumber?: number | null;
-}) => {
-  if (pointsHistory.length === 0) {
-    return <div>No data</div>;
-  }
-
-  // Cumulate points for each day
-  const cumulatedPoints = !latestBlockNumber
-    ? pointsHistory.map((snapshot) => snapshot.points)
-    : pointsHistory
-        .reduce(
-          (acc, snapshot) => {
-            // Calculate which day this block belongs to (0-6, where 0 is today)
-            const blocksAgo = latestBlockNumber - snapshot.blockNumber;
-            const day = Math.floor(blocksAgo / BLOCK_COUNT_IN_ONE_DAY);
-
-            // Only process blocks within the last 7 days
-            if (day >= 0 && day < 7) {
-              acc[day] = acc[day] + snapshot.points;
-            } else {
-              console.error('Block number out of range', snapshot);
-            }
-
-            return acc;
-          },
-          Array.from({ length: 7 }, () => ZERO_BIG_INT),
-        )
-        .slice()
-        .reverse();
-
-  const max = cumulatedPoints.reduce((acc, curr) => {
-    if (curr > acc) {
-      return curr;
-    }
-
-    return acc;
-  }, cumulatedPoints[0]);
-
-  const min = cumulatedPoints.reduce((acc, curr) => {
-    if (curr < acc) {
-      return curr;
-    }
-
-    return acc;
-  }, cumulatedPoints[0]);
-
-  const range = max - min || BigInt(1);
-
-  return (
-    <div className="flex items-end h-8 space-x-[2px]">
-      {cumulatedPoints.map((value, index) => {
-        const height =
-          ((value - min) * BigInt(100) * BigInt(10_000)) /
-          range /
-          BigInt(10_000);
-
-        const maxHeight = height < BigInt(10) ? BigInt(10) : height;
-
-        return (
-          <div
-            key={index}
-            className="w-1 bg-blue-500 dark:bg-blue-600"
-            style={{ height: `${maxHeight}%` }}
-          />
-        );
-      })}
-    </div>
-  );
-};
+import { formatDisplayBlockNumber } from '../utils/formatDisplayBlockNumber';
+import { TrendIndicator } from './TrendIndicator';
+import { MiniSparkline } from './MiniSparkline';
+import { ExpandedInfo } from './ExpandedInfo';
+import { Overlay } from './Overlay';
 
 const COLUMN_ID = {
   ACCOUNT: 'account',
@@ -613,10 +496,12 @@ export const LeaderboardTable = () => {
 
   const getExpandedRowContent = useCallback(
     (row: Row<Account>) => {
-      return getExpandedContent(
-        row,
-        latestBlock?.testnetBlock.blockNumber,
-        latestBlock?.testnetBlock.timestamp,
+      return (
+        <ExpandedInfo
+          row={row}
+          latestBlockNumber={latestBlock?.testnetBlock.blockNumber}
+          latestBlockTimestamp={latestBlock?.testnetBlock.timestamp}
+        />
       );
     },
     [
@@ -770,199 +655,5 @@ export const LeaderboardTable = () => {
         </div>
       )}
     </Card>
-  );
-};
-
-function Overlay(props: ComponentProps<'div'>) {
-  return (
-    <div
-      {...props}
-      className={twMerge(
-        'absolute inset-0 flex items-center justify-center rounded-lg',
-        'bg-mono-40/50 dark:bg-mono-200/50',
-        props.className,
-      )}
-    />
-  );
-}
-
-function formatDisplayBlockNumber(
-  blockNumber: number,
-  latestBlockNumber?: number | null,
-  latestBlockTimestamp?: Date | null,
-) {
-  if (latestBlockNumber && latestBlockTimestamp) {
-    const date = new Date(
-      latestBlockTimestamp.getTime() +
-        (blockNumber - latestBlockNumber) * BLOCK_TIME_MS,
-    );
-
-    return formatTimeAgo(date);
-  }
-
-  return `Block: #${blockNumber}`;
-}
-
-const getExpandedContent = (
-  row: Row<Account>,
-  latestBlockNumber?: number | null,
-  latestBlockTimestamp?: Date | null,
-) => {
-  const account = row.original;
-  const address = account.id;
-
-  // Helper function to render a detail row with label and value
-  const DetailRow = ({
-    label,
-    value,
-  }: {
-    label: string;
-    value: React.ReactNode;
-  }) => (
-    <div className="flex justify-between">
-      <span>{label}:</span>
-      <span>{value}</span>
-    </div>
-  );
-
-  // Helper function to render task completion indicator
-  const TaskIndicator = ({
-    completed,
-    label,
-  }: {
-    completed?: boolean;
-    label: string;
-  }) => (
-    <div className="flex items-center gap-1 [&>svg]:flex-initial">
-      {completed ? (
-        <CheckboxCircleFill className="fill-green-500 dark:fill-green-400" />
-      ) : (
-        <CircleIcon />
-      )}
-      <span>{label}</span>
-    </div>
-  );
-
-  // Helper function to create a section with title and content
-  const Section = ({
-    title,
-    children,
-  }: {
-    title: string;
-    children: React.ReactNode;
-  }) => (
-    <div className="space-y-2">
-      <Typography variant="h4" component="h3">
-        {title}
-      </Typography>
-      <div className="space-y-2">{children}</div>
-    </div>
-  );
-
-  const { testnetTaskCompletion } = account;
-
-  return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 px-4 pb-4">
-      <Card className="bg-mono-40/50 dark:bg-mono-200 space-y-4">
-        <Section title="Account Details">
-          <DetailRow
-            label="Account ID"
-            value={<KeyValueWithButton size="sm" keyValue={address} />}
-          />
-          <DetailRow
-            label="Created"
-            value={formatDisplayBlockNumber(
-              account.createdAt,
-              latestBlockNumber,
-              latestBlockTimestamp,
-            )}
-          />
-          <DetailRow
-            label="Last Updated"
-            value={formatDisplayBlockNumber(
-              account.lastUpdatedAt,
-              latestBlockNumber,
-              latestBlockTimestamp,
-            )}
-          />
-        </Section>
-
-        <Section title="Activity Details">
-          <DetailRow label="Deposits" value={account.activity.depositCount} />
-          <DetailRow
-            label="Delegations"
-            value={account.activity.delegationCount}
-          />
-          <DetailRow
-            label="Liquid Staking Pools"
-            value={account.activity.liquidStakingPoolCount}
-          />
-          <DetailRow label="Services" value={account.activity.serviceCount} />
-        </Section>
-      </Card>
-
-      <Card className="bg-mono-40/50 dark:bg-mono-200 space-y-4">
-        <Section title="Points Breakdown">
-          <DetailRow
-            label="Mainnet Points"
-            value={account.pointsBreakdown.mainnet.toLocaleString()}
-          />
-          <DetailRow
-            label="Testnet Points"
-            value={account.pointsBreakdown.testnet.toLocaleString()}
-          />
-          <DetailRow
-            label="Last 7 Days"
-            value={account.pointsBreakdown.lastSevenDays.toLocaleString()}
-          />
-        </Section>
-
-        <div className="space-y-2">
-          <Typography variant="h4" component="h3">
-            Testnet Task Completion
-          </Typography>
-          <div className="space-y-3">
-            <div>
-              <Progress
-                value={testnetTaskCompletion?.completionPercentage ?? null}
-                className="h-2 mb-2"
-              />
-              <div className="text-sm text-right">
-                {testnetTaskCompletion
-                  ? Math.round(testnetTaskCompletion.completionPercentage)
-                  : 0}
-                % Complete
-              </div>
-            </div>
-            <div className="grid grid-cols-2 gap-2 text-sm">
-              <TaskIndicator
-                completed={testnetTaskCompletion?.depositedThreeAssets}
-                label="Deposited 3+ Assets"
-              />
-              <TaskIndicator
-                completed={testnetTaskCompletion?.delegatedAssets}
-                label="Delegated Assets"
-              />
-              <TaskIndicator
-                completed={testnetTaskCompletion?.liquidStaked}
-                label="Liquid Staked"
-              />
-              <TaskIndicator
-                completed={testnetTaskCompletion?.nominated}
-                label="Nominated"
-              />
-              <TaskIndicator
-                completed={testnetTaskCompletion?.nativeRestaked}
-                label="Native Restaked"
-              />
-              <TaskIndicator
-                completed={testnetTaskCompletion?.bonus}
-                label="Bonus Points"
-              />
-            </div>
-          </div>
-        </div>
-      </Card>
-    </div>
   );
 };

@@ -1,3 +1,5 @@
+import { BLOCK_TIME_MS } from '@tangle-network/dapp-config';
+
 export enum BadgeEnum {
   VALIDATOR = 'VALIDATOR',
   RESTAKE_DEPOSITOR = 'RESTAKE_DEPOSITOR',
@@ -21,3 +23,9 @@ export const BADGE_ICON_RECORD = {
   [BadgeEnum.SERVICE_PROVIDER]: '💻',
   [BadgeEnum.JOB_CALLER]: '💼',
 } as const satisfies Record<BadgeEnum, string>;
+
+export const ONE_DAY_IN_MS = 24 * 60 * 60 * 1000;
+
+export const BLOCK_COUNT_IN_ONE_DAY = Math.floor(ONE_DAY_IN_MS / BLOCK_TIME_MS);
+
+export const BLOCK_COUNT_IN_SEVEN_DAYS = BLOCK_COUNT_IN_ONE_DAY * 7;

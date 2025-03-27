@@ -7,7 +7,7 @@ import {
 } from '@tangle-network/ui-components/components/Tooltip';
 import type { FC } from 'react';
 import { Typography } from '@tangle-network/ui-components/typography/Typography';
-import { BADGE_ICON_RECORD, BadgeEnum } from './badges';
+import { BADGE_ICON_RECORD, BadgeEnum } from '../constants';
 
 export const BadgesCell: FC<{ badges: BadgeEnum[] }> = ({ badges }) => {
   return (

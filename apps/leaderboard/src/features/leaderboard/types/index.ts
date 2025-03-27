@@ -1,4 +1,4 @@
-import { BadgeEnum } from '../components';
+import { BadgeEnum } from '../constants';
 
 export interface PointsBreakdown {
   mainnet: bigint;
