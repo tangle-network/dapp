@@ -297,7 +297,7 @@ export const LeaderboardTable = () => {
     error,
   } = useLeaderboard(
     pagination.pageSize,
-    pagination.pageIndex,
+    pagination.pageIndex * pagination.pageSize,
     blockNumberSevenDaysAgo,
   );
 
