@@ -95,12 +95,13 @@ const fetcher = async (
   first: number,
   offset: number,
   blockNumberSevenDaysAgo: number,
+  accountsOrderBy: AccountsOrderBy[],
 ) => {
   const result = await executeGraphQL(LeaderboardQueryDocument, {
     first,
     offset,
     blockNumberSevenDaysAgo,
-    accountsOrderBy: [AccountsOrderBy.TotalPointsDesc],
+    accountsOrderBy,
     teamAccounts: TEAM_ACCOUNTS.map((account) => account.toLowerCase()),
   });
   return result.data.accounts;
@@ -110,6 +111,7 @@ export function useLeaderboard(
   first: number,
   offset: number,
   blockNumberSevenDaysAgo: number,
+  accountsOrderBy: AccountsOrderBy[],
 ) {
   return useQuery({
     queryKey: [
@@ -117,8 +119,10 @@ export function useLeaderboard(
       first,
       offset,
       blockNumberSevenDaysAgo,
+      accountsOrderBy,
     ],
-    queryFn: () => fetcher(first, offset, blockNumberSevenDaysAgo),
+    queryFn: () =>
+      fetcher(first, offset, blockNumberSevenDaysAgo, accountsOrderBy),
     enabled: first > 0 && offset >= 0 && blockNumberSevenDaysAgo > 0,
   });
 }

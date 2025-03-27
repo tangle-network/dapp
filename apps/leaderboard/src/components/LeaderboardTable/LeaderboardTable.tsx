@@ -27,6 +27,7 @@ import {
   getCoreRowModel,
   PaginationState,
   Row,
+  SortingState,
   useReactTable,
 } from '@tanstack/react-table';
 import { useCallback, useMemo, useState } from 'react';
@@ -37,6 +38,7 @@ import { BadgeEnum, BadgesCell } from './BadgesCell';
 import HeaderCell from './HeaderCell';
 import { Account, PointsHistory, TestnetTaskCompletion } from './types';
 import { twMerge } from 'tailwind-merge';
+import { AccountsOrderBy } from '@tangle-network/tangle-shared-ui/graphql/graphql';
 
 const ONE_DAY_IN_MS = 24 * 60 * 60 * 1000;
 const BLOCK_COUNT_IN_ONE_DAY = Math.floor(ONE_DAY_IN_MS / BLOCK_TIME_MS);
@@ -157,6 +159,15 @@ const MiniSparkline = ({
   );
 };
 
+const COLUMN_ID = {
+  ACCOUNT: 'account',
+  BADGES: 'badges',
+  TOTAL_POINTS: 'totalPoints',
+  ACTIVITY: 'activity',
+  TRENDING: 'trending',
+  POINTS_HISTORY: 'pointsHistory',
+} as const;
+
 const COLUMN_HELPER = createColumnHelper<Account>();
 
 const getColumns = (
@@ -164,6 +175,7 @@ const getColumns = (
   latestBlockTimestamp?: Date | null,
 ) => [
   COLUMN_HELPER.accessor('id', {
+    id: COLUMN_ID.ACCOUNT,
     header: () => <HeaderCell title="Account" />,
     cell: (props) => {
       const address = props.getValue();
@@ -187,10 +199,13 @@ const getColumns = (
     },
   }),
   COLUMN_HELPER.accessor('badges', {
+    id: COLUMN_ID.BADGES,
+    enableSorting: false,
     header: () => <HeaderCell title="Badges" />,
     cell: (props) => <BadgesCell badges={props.getValue()} />,
   }),
   COLUMN_HELPER.accessor('totalPoints', {
+    id: COLUMN_ID.TOTAL_POINTS,
     header: () => <HeaderCell title="Total Points" />,
     cell: ({ row }) => (
       <Tooltip>
@@ -211,6 +226,8 @@ const getColumns = (
     ),
   }),
   COLUMN_HELPER.accessor('activity', {
+    id: COLUMN_ID.ACTIVITY,
+    enableSorting: false,
     header: () => <HeaderCell title="Activity" />,
     cell: ({ row }) => (
       <div className="flex flex-col">
@@ -241,13 +258,16 @@ const getColumns = (
     ),
   }),
   COLUMN_HELPER.display({
-    id: 'Trending',
+    id: COLUMN_ID.TRENDING,
+    enableSorting: false,
     header: () => <HeaderCell title="7-Day Points" />,
     cell: ({ row }) => {
       return <TrendIndicator pointsHistory={row.original.pointsHistory} />;
     },
   }),
   COLUMN_HELPER.accessor('pointsHistory', {
+    id: COLUMN_ID.POINTS_HISTORY,
+    enableSorting: false,
     header: () => <HeaderCell title="Points Trend" />,
     cell: ({ row }) => (
       <MiniSparkline
@@ -267,7 +287,12 @@ export const LeaderboardTable = () => {
     pageSize: 20,
   });
 
-  // const [sorting, setSorting] = useState<SortingState>([]);
+  const [sorting, setSorting] = useState<SortingState>([
+    {
+      id: COLUMN_ID.TOTAL_POINTS,
+      desc: true,
+    },
+  ]);
 
   // TODO: Add network tabs when we support both mainnet and testnet
   /* const [networkTab, setNetworkTab] = useState<'all' | 'mainnet' | 'testnet'>(
@@ -291,6 +316,26 @@ export const LeaderboardTable = () => {
     return result < 0 ? 1 : result;
   }, [isLatestBlockPending, latestBlockError, latestBlock?.testnetBlock]);
 
+  const accountsOrderBy = useMemo<AccountsOrderBy[]>(() => {
+    return sorting
+      .map((sort) => {
+        switch (sort.id) {
+          case COLUMN_ID.TOTAL_POINTS:
+            return sort.desc
+              ? AccountsOrderBy.TotalPointsDesc
+              : AccountsOrderBy.TotalPointsAsc;
+
+          case COLUMN_ID.ACCOUNT:
+            return sort.desc ? AccountsOrderBy.IdDesc : AccountsOrderBy.IdAsc;
+
+          default:
+            console.error('Invalid sort', sort);
+            return null;
+        }
+      })
+      .filter((sort) => sort !== null);
+  }, [sorting]);
+
   const {
     data: leaderboardData,
     isPending,
@@ -299,6 +344,7 @@ export const LeaderboardTable = () => {
     pagination.pageSize,
     pagination.pageIndex * pagination.pageSize,
     blockNumberSevenDaysAgo,
+    accountsOrderBy,
   );
 
   const columns = useMemo(
@@ -532,17 +578,17 @@ export const LeaderboardTable = () => {
     data,
     columns,
     manualPagination: true,
+    manualSorting: true,
     state: {
-      // sorting,
+      sorting,
       expanded,
       pagination,
     },
     rowCount: leaderboardData?.totalCount,
-    // onSortingChange: setSorting,
-    onExpandedChange: setExpanded,
+    onSortingChange: setSorting,
     onPaginationChange: setPagination,
     getCoreRowModel: getCoreRowModel(),
-    // getSortedRowModel: getSortedRowModel(),
+    onExpandedChange: setExpanded,
     getRowCanExpand: () => true,
   });
 
