@@ -47,6 +47,6 @@ export type RegisterServiceFormFields = {
       storageNvme: number;
     };
   }[];
-  registrationArgs:  Array<any[]>;
+  registrationArgs: Array<any[]>;
   amounts: number[];
 };

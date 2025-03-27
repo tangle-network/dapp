@@ -55,15 +55,16 @@ const Page = () => {
     return null;
   }
 
-
   const handlePricingFormSubmit = (formResult: PricingFormResult) => {
-    sessionStorage.setItem(SessionStorageKey.BLUEPRINT_REGISTRATION_PARAMS, JSON.stringify({
-      pricingSettings: formResult,
-      selectedBlueprints: [result.details],
-    }));
+    sessionStorage.setItem(
+      SessionStorageKey.BLUEPRINT_REGISTRATION_PARAMS,
+      JSON.stringify({
+        pricingSettings: formResult,
+        selectedBlueprints: [result.details],
+      }),
+    );
     navigate(PagePath.BLUEPRINTS_REGISTRATION_REVIEW);
   };
-
 
   return (
     <div className="space-y-10">
@@ -73,7 +74,7 @@ const Page = () => {
           children: isOperator ? 'Register' : 'Deploy',
           onClick: () => {
             if (isOperator) {
-              setIsPricingModalOpen(true)
+              setIsPricingModalOpen(true);
             } else {
               navigate(PagePath.BLUEPRINTS_DEPLOY.replace(':id', id ?? ''));
             }

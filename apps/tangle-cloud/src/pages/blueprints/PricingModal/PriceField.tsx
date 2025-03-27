@@ -32,7 +32,7 @@ const PriceField = <
   description,
   placeholder = '0.00',
   tabIndex,
-}: PriceFieldProps<TFieldValues, TName>) => {  
+}: PriceFieldProps<TFieldValues, TName>) => {
   return (
     <FormItem className="space-y-1">
       <FormLabel>{label}</FormLabel>

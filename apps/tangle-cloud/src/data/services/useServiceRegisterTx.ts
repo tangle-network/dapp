@@ -22,7 +22,7 @@ const useServiceRegisterTx = () => {
         api.registry.chainDecimals.length > 0
           ? api.registry.chainDecimals[0]
           : TANGLE_TOKEN_DECIMALS;
-        
+
       const registerTx = blueprintIds.map((blueprintId, idx) => {
         return api.tx.services.register(
           blueprintId,

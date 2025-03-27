@@ -13,7 +13,10 @@ interface BlueprintHeaderProps {
   actionProps?: ComponentProps<typeof Button>;
 }
 
-const BlueprintHeader: FC<BlueprintHeaderProps> = ({ blueprint, actionProps }) => {
+const BlueprintHeader: FC<BlueprintHeaderProps> = ({
+  blueprint,
+  actionProps,
+}) => {
   const {
     isBoosted,
     imgUrl,

@@ -49,13 +49,19 @@ const Page = () => {
 
   const size = Object.keys(selectedBlueprints).length;
 
-  const handlePricingFormSubmit = useCallback((result: PricingFormResult) => {
-    sessionStorage.setItem(SessionStorageKey.BLUEPRINT_REGISTRATION_PARAMS, JSON.stringify({
-      pricingSettings: result,
-      selectedBlueprints: selectedBlueprints,
-    }));
-    navigate(PagePath.BLUEPRINTS_REGISTRATION_REVIEW);
-  }, [selectedBlueprints]);
+  const handlePricingFormSubmit = useCallback(
+    (result: PricingFormResult) => {
+      sessionStorage.setItem(
+        SessionStorageKey.BLUEPRINT_REGISTRATION_PARAMS,
+        JSON.stringify({
+          pricingSettings: result,
+          selectedBlueprints: selectedBlueprints,
+        }),
+      );
+      navigate(PagePath.BLUEPRINTS_REGISTRATION_REVIEW);
+    },
+    [selectedBlueprints],
+  );
 
   return (
     <div className="space-y-5">

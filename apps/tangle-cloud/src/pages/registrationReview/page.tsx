@@ -18,7 +18,10 @@ import {
 } from '@tangle-network/ui-components/components/Dropdown';
 import { Typography } from '@tangle-network/ui-components/typography/Typography';
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import { PricingFormResult, PricingType } from '../blueprints/PricingModal/types';
+import {
+  PricingFormResult,
+  PricingType,
+} from '../blueprints/PricingModal/types';
 import ParamsForm from './RegistrationForm/ParamsForm';
 import { SessionStorageKey } from '../../constants';
 import { useNavigate } from 'react-router';
@@ -32,11 +35,14 @@ export default function RegistrationReview() {
   const navigate = useNavigate();
 
   const { pricingSettings, blueprints } = useMemo(() => {
-    const data = JSON.parse(sessionStorage.getItem(SessionStorageKey.BLUEPRINT_REGISTRATION_PARAMS) || '{}');
+    const data = JSON.parse(
+      sessionStorage.getItem(SessionStorageKey.BLUEPRINT_REGISTRATION_PARAMS) ||
+        '{}',
+    );
     if (data && 'pricingSettings' in data && 'selectedBlueprints' in data) {
-      return { 
+      return {
         pricingSettings: data.pricingSettings as PricingFormResult,
-        blueprints: data.selectedBlueprints as Blueprint[]
+        blueprints: data.selectedBlueprints as Blueprint[],
       };
     }
     return { pricingSettings: null, blueprints: [] };
@@ -46,7 +52,8 @@ export default function RegistrationReview() {
 
   const { network } = useNetworkStore();
 
-  const { execute: registerTx, status: registerTxStatus } = useServiceRegisterTx();
+  const { execute: registerTx, status: registerTxStatus } =
+    useServiceRegisterTx();
 
   const [accordionState, setAccordionState] = useState<string>('');
   const [registrationParams, setRegistrationParams] = useState<
@@ -69,17 +76,20 @@ export default function RegistrationReview() {
 
   const isValidAmount = useMemo(() => {
     const amountValues = Object.values(amount);
-    return amountValues.every((amount) => Number(amount) > 0) && amountValues.length === blueprints.length;
+    return (
+      amountValues.every((amount) => Number(amount) > 0) &&
+      amountValues.length === blueprints.length
+    );
   }, [amount, blueprints]);
 
-  
-  useEffect(() =>{ 
+  useEffect(() => {
     if (registerTxStatus === TxStatus.COMPLETE) {
-      sessionStorage.removeItem(SessionStorageKey.BLUEPRINT_REGISTRATION_PARAMS);
+      sessionStorage.removeItem(
+        SessionStorageKey.BLUEPRINT_REGISTRATION_PARAMS,
+      );
       navigate(PagePath.BLUEPRINTS);
-    } 
-  }, [registerTxStatus, navigate])
-
+    }
+  }, [registerTxStatus, navigate]);
 
   const onClose = () => {
     sessionStorage.removeItem(SessionStorageKey.BLUEPRINT_REGISTRATION_PARAMS);
@@ -112,14 +122,19 @@ export default function RegistrationReview() {
     registerTx({
       blueprintIds: blueprints.map((blueprint) => blueprint.id),
       preferences,
-      registrationArgs: blueprints.map(({ id: blueprintId, registrationParams: blueprintRegistrationParams }) => {
-        const params = registrationParams[blueprintId];
-        return blueprintRegistrationParams.map((_, index) => {
-          return {
-            [blueprintRegistrationParams[index] as any]: params[index],
-          };
-        });
-      }),
+      registrationArgs: blueprints.map(
+        ({
+          id: blueprintId,
+          registrationParams: blueprintRegistrationParams,
+        }) => {
+          const params = registrationParams[blueprintId];
+          return blueprintRegistrationParams.map((_, index) => {
+            return {
+              [blueprintRegistrationParams[index] as any]: params[index],
+            };
+          });
+        },
+      ),
       amounts: blueprints.map(({ id }) => amount[id]),
     });
   }, [activeAccount, pricingSettings, registrationParams, registerTx]);

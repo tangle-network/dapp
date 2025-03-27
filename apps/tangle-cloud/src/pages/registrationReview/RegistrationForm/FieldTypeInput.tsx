@@ -90,7 +90,12 @@ const FieldTypeInput: React.FC<FieldTypeInputProps> = ({
             <Label>{label}</Label>
 
             <TextField.Root>
-              <TextField.Input tabIndex={tabIndex} value="Void" readOnly type="text" />
+              <TextField.Input
+                tabIndex={tabIndex}
+                value="Void"
+                readOnly
+                type="text"
+              />
             </TextField.Root>
           </div>
         );
