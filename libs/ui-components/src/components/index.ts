@@ -15,7 +15,6 @@ export * from './Card';
 export * from './CardTable';
 export * from './ChainChip';
 export { default as ChainsRing } from './ChainsRing';
-export * from './ChartContainer';
 export * from './CheckBox';
 export * from './CheckBoxMenu';
 export * from './Chip';

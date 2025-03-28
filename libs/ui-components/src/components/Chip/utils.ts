@@ -37,7 +37,7 @@ const CLASS_NAMES: ChipClassNames = {
     selected: 'border-solid border-2 border-mono-120 dark:border-mono-80',
   },
   'dark-grey': {
-    active: 'bg-mono-100 dark:bg-mono-140 !text-mono-0',
+    active: 'bg-mono-80 dark:bg-mono-140 text-mono-0 text-mono-200',
     disabled: '!opacity-50',
     selected: 'border-solid border-2 border-mono-120 dark:border-mono-80',
   },
