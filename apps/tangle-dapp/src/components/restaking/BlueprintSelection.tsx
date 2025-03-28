@@ -4,14 +4,17 @@ import { FC, useCallback, useState } from 'react';
 import BlueprintItemIcon from './BlueprintItemIcon';
 import SelectBlueprintsModal from '../../containers/restaking/SelectBlueprintsModal';
 import { Blueprint } from '@tangle-network/tangle-shared-ui/types/blueprint';
+import { SubstrateAddress } from '@tangle-network/ui-components/types/address';
+import { twMerge } from 'tailwind-merge';
 
 type BlueprintId = Blueprint['id'];
 
 type Props = {
+  operatorAddress?: SubstrateAddress;
   setSelection: (selected: BlueprintId[]) => void;
 };
 
-const BlueprintSelection: FC<Props> = ({ setSelection }) => {
+const BlueprintSelection: FC<Props> = ({ operatorAddress, setSelection }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const [localSelection, setLocalSelection] = useState<Blueprint[] | null>(
@@ -37,7 +40,11 @@ const BlueprintSelection: FC<Props> = ({ setSelection }) => {
     <>
       <div
         onClick={() => setIsModalOpen(true)}
-        className="flex justify-between items-center rounded-xl py-2.5 px-4 bg-mono-20 dark:bg-mono-180 cursor-pointer hover:bg-mono-30 dark:hover:bg-mono-170"
+        className={twMerge(
+          'flex justify-between items-center rounded-xl py-2.5 px-4 bg-mono-20 dark:bg-mono-180',
+          operatorAddress !== undefined &&
+            'cursor-pointer hover:bg-mono-30 dark:hover:bg-mono-170',
+        )}
       >
         <div className="flex items-center gap-1">
           <ShieldKeyholeFillIcon className="dark:fill-purple-50" />
@@ -64,7 +71,11 @@ const BlueprintSelection: FC<Props> = ({ setSelection }) => {
         )}
       </div>
 
-      <SelectBlueprintsModal isOpen={isModalOpen} setIsOpen={setIsModalOpen} />
+      <SelectBlueprintsModal
+        operatorAddress={operatorAddress}
+        isOpen={isModalOpen}
+        setIsOpen={setIsModalOpen}
+      />
     </>
   );
 };

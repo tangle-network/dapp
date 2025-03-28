@@ -71,6 +71,8 @@ const RestakeDelegateForm: FC = () => {
     mode: 'onBlur',
   });
 
+  const selectedOperatorAddress = watch('operatorAccountId');
+
   const [operatorParam, setOperatorParam] = useQueryState(
     QueryParamKey.RESTAKE_OPERATOR,
   );
@@ -327,7 +329,10 @@ const RestakeDelegateForm: FC = () => {
                 watch={watch}
               />
 
-              <BlueprintSelection setSelection={() => void 0} />
+              <BlueprintSelection
+                operatorAddress={selectedOperatorAddress}
+                setSelection={() => void 0}
+              />
             </div>
 
             <div className="flex flex-col justify-between gap-4 grow">
