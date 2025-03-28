@@ -9,7 +9,7 @@ import { Typography } from '@tangle-network/ui-components/typography/Typography'
 import { PropsWithChildren, useState } from 'react';
 import { Link, useParams, useNavigate } from 'react-router-dom';
 import { PagePath, TangleDAppPagePath } from '../../../types';
-import useRoleStore from '../../../stores/roleStore';
+import useRoleStore, { Role } from '../../../stores/roleStore';
 import PricingModal from '../PricingModal';
 import { Modal } from '@tangle-network/ui-components';
 import { PricingFormResult } from '../PricingModal/types';
@@ -33,7 +33,7 @@ const Page = () => {
   const navigate = useNavigate();
   const { id } = useParams();
   const { result, isLoading, error } = useBlueprintDetails(id);
-  const isOperator = useRoleStore.getState().isOperator();
+  const isOperator = useRoleStore().role === Role.OPERATOR;
   const [isPricingModalOpen, setIsPricingModalOpen] = useState(false);
 
   if (isLoading) {
@@ -72,7 +72,8 @@ const Page = () => {
         blueprint={result.details}
         actionProps={{
           children: isOperator ? 'Register' : 'Deploy',
-          onClick: () => {
+          onClick: (e) => {
+            e.preventDefault();            
             if (isOperator) {
               setIsPricingModalOpen(true);
             } else {

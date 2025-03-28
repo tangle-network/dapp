@@ -305,9 +305,3 @@ export const SIDEBAR_OPEN_KEY = 'isSidebarOpen';
 export const EMPTY_VALUE_PLACEHOLDER = '—';
 
 export const TANGLE_CLOUD_URL = 'https://cloud.tangle.tools';
-
-// @dev see {PagePath} in `apps/tangle-cloud/src/types/index.ts`
-export const BLUEPRINTS_DEPLOY_URL = new URL(
-  '/blueprints/:id/deploy',
-  TANGLE_CLOUD_URL,
-).toString();

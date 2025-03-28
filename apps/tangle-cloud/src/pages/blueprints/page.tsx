@@ -38,9 +38,10 @@ const Page = () => {
   const { role } = useRoleStore();
   const [rowSelection, setRowSelection] = useState<RowSelectionState>({});
   const [isPricingModalOpen, setIsPricingModalOpen] = useState(false);
-  const [isReviewOpen, setIsReviewOpen] = useState(false);
   // TODO: filter by role and operator/deployer only
   const { blueprints, isLoading, error } = useBlueprintListing();
+
+  const isOperator = useMemo(() => role === Role.OPERATOR, [role]);
 
   const selectedBlueprints = useMemo(() => {
     return Object.keys(rowSelection)
@@ -78,8 +79,8 @@ const Page = () => {
         blueprints={blueprints}
         isLoading={isLoading}
         error={error}
-        rowSelection={rowSelection}
-        onRowSelectionChange={setRowSelection}
+        rowSelection={isOperator ? rowSelection : undefined}
+        onRowSelectionChange={isOperator ? setRowSelection : undefined}
       />
 
       <Modal open={isPricingModalOpen} onOpenChange={setIsPricingModalOpen}>

@@ -2,11 +2,11 @@ import { AccountStatsCard } from './AccountStatsCard';
 import { InstructionCard } from './InstructionCard';
 import { TotalValueLockedTabs } from './TotalValueLocked';
 import { BlueprintManagementSection } from './BlueprintManagementSection';
-import useRoleStore from '../../stores/roleStore';
+import useRoleStore, { Role } from '../../stores/roleStore';
 import cx from 'classnames';
 
 const Page = () => {
-  const isOperator = useRoleStore.getState().isOperator();
+  const isOperator = useRoleStore().role === Role.OPERATOR;
 
   return (
     <>

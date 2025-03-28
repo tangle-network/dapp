@@ -34,14 +34,14 @@ import { ApprovalConfirmationFormFields } from '../../../types';
 import usePendingServiceRequest from '@tangle-network/tangle-shared-ui/data/blueprints/usePendingServiceRequest';
 import useSubstrateAddress from '@tangle-network/tangle-shared-ui/hooks/useSubstrateAddress';
 import useIdentities from '@tangle-network/tangle-shared-ui/hooks/useIdentities';
-import useRoleStore from '../../../stores/roleStore';
+import useRoleStore, { Role } from '../../../stores/roleStore';
 import useServicesRejectTx from '../../../data/services/useServicesRejectTx';
 import useServicesApproveTx from '../../../data/services/useServicesApproveTx';
 
 const columnHelper = createColumnHelper<MonitoringServiceRequest>();
 
 export const PendingInstanceTable: FC = () => {
-  const isOperator = useRoleStore.getState().isOperator();
+  const isOperator = useRoleStore().role === Role.OPERATOR;
   const operatorAccountAddress = useSubstrateAddress();
   const [isRejectConfirmationModalOpen, setIsRejectConfirmationModalOpen] =
     useState(false);

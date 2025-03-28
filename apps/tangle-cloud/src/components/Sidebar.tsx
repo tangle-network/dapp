@@ -28,6 +28,8 @@ import { useLocation } from 'react-router';
 import useRoleStore, { Role, ROLE_ICON_MAP } from '../stores/roleStore';
 import { PagePath } from '../types';
 import { ChevronRight, HomeFillIcon } from '@tangle-network/icons';
+import { twMerge } from 'tailwind-merge';
+import cx from 'classnames';
 
 type Props = {
   isExpandedByDefault?: boolean;
@@ -81,7 +83,6 @@ const ActionButton: FC<{ isExpanded: boolean }> = ({ isExpanded }) => {
   return (
     <Dropdown>
       <DropdownButton
-        isFullWidth
         size="md"
         icon={ROLE_ICON_MAP[role]({ size: 'lg' })}
         iconClassName="text-mono-0"
@@ -89,7 +90,13 @@ const ActionButton: FC<{ isExpanded: boolean }> = ({ isExpanded }) => {
         label={isExpanded ? capitalizedRole : ''}
         labelClassName="text-mono-0"
         arrowElement={<ChevronRight className="fill-mono-0" />}
-        className="w-full px-4 py-4 !rounded-full normal-case border-none !bg-purple-50 justify-center font-bold text-mono-0"
+        className={twMerge(
+          'px-3 py-3 !rounded-full normal-case border-none !bg-purple-50 justify-center font-bold text-mono-0',
+          cx({
+            'w-full': isExpanded,
+            'min-w-fit': !isExpanded,
+          }),
+        )}
       />
 
       <DropdownBody className="ml-2" side="right" align="center">
