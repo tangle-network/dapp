@@ -1,15 +1,25 @@
-import { Label, Input, IconButton, Button } from '@tangle-network/ui-components';
+import {
+  Label,
+  Input,
+  IconButton,
+  Button,
+} from '@tangle-network/ui-components';
 import InstanceHeader from '../../../../../components/InstanceHeader';
 import ErrorMessage from '../../../../../components/ErrorMessage';
 import { Children, FC } from 'react';
 import { DeployStep1Props } from './type';
 import { TrashIcon } from '@radix-ui/react-icons';
 import { BLUEPRINT_DEPLOY_STEPS } from '../../../../../utils/validations/deployBlueprint';
-import { SubstrateAddress, EvmAddress } from '@tangle-network/ui-components/types/address';
-export const DeployStep1: FC<DeployStep1Props> = ({ 
+import {
+  SubstrateAddress,
+  EvmAddress,
+} from '@tangle-network/ui-components/types/address';
+
+export const DeployStep1: FC<DeployStep1Props> = ({
   errors: globalErrors,
   setValue,
   watch,
+  blueprint,
 }) => {
   const labelClassName = 'text-mono-200 dark:text-mono-0';
 
@@ -38,12 +48,13 @@ export const DeployStep1: FC<DeployStep1Props> = ({
     setValue(`${stepKey}.instanceDuration`, parseInt(value));
   };
 
-  console.log(errors);
-  
-
   return (
     <div className="w-full pl-8">
-      <InstanceHeader title="DFNS CGGMP21" creator="Tangle Network" />
+      <InstanceHeader
+        title={blueprint?.name || ''}
+        creator={blueprint?.author || ''}
+        githubPath={blueprint?.githubUrl || ''}
+      />
 
       <div className="mt-8 grid grid-cols-2 gap-8">
         <div>
@@ -81,41 +92,50 @@ export const DeployStep1: FC<DeployStep1Props> = ({
         </div>
       </div>
 
-      <div className='mt-8 space-y-4'>
+      <div className="mt-8 space-y-4">
         <Label className={labelClassName}>Permitted Callers:</Label>
         {errors?.['permittedCallers'] && (
           <ErrorMessage>{errors['permittedCallers'].message}</ErrorMessage>
         )}
-        {Children.toArray(permittedCallers.map((caller, index) => (
-          <div className='pl-4'>
-            <Label className={labelClassName}>Permitted Caller {index + 1}:</Label>
-            <div className='flex gap-2'>
-              <Input
-                id={`permittedCallers-${index}`}
-                value={caller}
-                isControlled
-                onChange={(nextValue) => handleCallerChange(index, nextValue)}
-                className='flex-grow'
-                inputClassName="placeholder:text-mono-80 dark:placeholder:text-mono-120 h-10 w-full"
-                placeholder="Enter permitted caller"
-                autoComplete="off"
-              />
-              <IconButton
-                onClick={() => handleRemoveCaller(index)}
-                className="flex-shrink-0"
-              >
-                <TrashIcon className='h-5 w-5' />
-              </IconButton>
+        {Children.toArray(
+          permittedCallers.map((caller, index) => (
+            <div className="pl-4">
+              <Label className={labelClassName}>
+                Permitted Caller {index + 1}:
+              </Label>
+              <div className="flex gap-2">
+                <Input
+                  id={`permittedCallers-${index}`}
+                  value={caller}
+                  isControlled
+                  onChange={(nextValue) => handleCallerChange(index, nextValue)}
+                  className="flex-grow"
+                  inputClassName="placeholder:text-mono-80 dark:placeholder:text-mono-120 h-10 w-full"
+                  placeholder="Enter permitted caller"
+                  autoComplete="off"
+                />
+                <IconButton
+                  onClick={() => handleRemoveCaller(index)}
+                  className="flex-shrink-0"
+                >
+                  <TrashIcon className="h-5 w-5" />
+                </IconButton>
+              </div>
+              {errors?.['permittedCallers']?.[index] && (
+                <ErrorMessage>
+                  {errors['permittedCallers'][index].message}
+                </ErrorMessage>
+              )}
             </div>
-            {errors?.['permittedCallers']?.[index] && (
-              <ErrorMessage>{errors['permittedCallers'][index].message}</ErrorMessage>
-            )}
-          </div>
-        )))}
-        
+          )),
+        )}
+
         <Button
           onClick={() => {
-            setValue(`${stepKey}.permittedCallers`, [...permittedCallers, '' as SubstrateAddress | EvmAddress]);
+            setValue(`${stepKey}.permittedCallers`, [
+              ...permittedCallers,
+              '' as SubstrateAddress | EvmAddress,
+            ]);
           }}
           className="mt-4"
         >
