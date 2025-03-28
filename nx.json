@@ -103,7 +103,12 @@
     }
   },
   "release": {
-    "projects": ["apps/tangle-dapp", "libs/ui-components"],
+    "projects": [
+      "apps/leaderboard",
+      "apps/tangle-cloud",
+      "apps/tangle-dapp",
+      "libs/ui-components"
+    ],
     "projectsRelationship": "independent",
     "changelog": {
       "projectChangelogs": true
