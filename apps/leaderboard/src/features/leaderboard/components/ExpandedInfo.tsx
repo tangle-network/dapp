@@ -3,7 +3,6 @@ import { CheckboxCircleFill } from '@tangle-network/icons';
 import {
   Card,
   KeyValueWithButton,
-  Progress,
   Typography,
 } from '@tangle-network/ui-components';
 import { Row } from '@tanstack/react-table';
@@ -66,7 +65,7 @@ export const ExpandedInfo: React.FC<ExpandedInfoProps> = ({
     children: React.ReactNode;
   }) => (
     <div className="space-y-2">
-      <Typography variant="h4" component="h3">
+      <Typography variant="h5" component="h3" className="font-semibold">
         {title}
       </Typography>
       <div className="space-y-2">{children}</div>
@@ -77,7 +76,7 @@ export const ExpandedInfo: React.FC<ExpandedInfoProps> = ({
 
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 px-4 pb-4">
-      <Card className="bg-mono-40/50 dark:bg-mono-200 space-y-4">
+      <Card className="bg-mono-40/80 dark:bg-mono-0/5 space-y-4 border-0">
         <Section title="Account Details">
           <DetailRow
             label="Account ID"
@@ -101,21 +100,6 @@ export const ExpandedInfo: React.FC<ExpandedInfoProps> = ({
           />
         </Section>
 
-        <Section title="Activity Details">
-          <DetailRow label="Deposits" value={account.activity.depositCount} />
-          <DetailRow
-            label="Delegations"
-            value={account.activity.delegationCount}
-          />
-          <DetailRow
-            label="Liquid Staking Pools"
-            value={account.activity.liquidStakingPoolCount}
-          />
-          <DetailRow label="Services" value={account.activity.serviceCount} />
-        </Section>
-      </Card>
-
-      <Card className="bg-mono-40/50 dark:bg-mono-200 space-y-4">
         <Section title="Points Breakdown">
           <DetailRow
             label="Mainnet Points"
@@ -130,44 +114,48 @@ export const ExpandedInfo: React.FC<ExpandedInfoProps> = ({
             value={account.pointsBreakdown.lastSevenDays.toLocaleString()}
           />
         </Section>
+      </Card>
+
+      <Card className="bg-mono-40/80 dark:bg-mono-0/5 space-y-4 border-0">
+        <Section title="Activity Details">
+          <DetailRow label="Deposits" value={account.activity.depositCount} />
+          <DetailRow
+            label="Delegations"
+            value={account.activity.delegationCount}
+          />
+          <DetailRow
+            label="Liquid Staking Pools"
+            value={account.activity.liquidStakingPoolCount}
+          />
+          <DetailRow label="Services" value={account.activity.serviceCount} />
+        </Section>
 
         <div className="space-y-2">
-          <Typography variant="h4" component="h3">
+          <Typography variant="h5" component="h3" className="font-semibold">
             Testnet Task Completion
           </Typography>
+
           <div className="space-y-3">
-            <div>
-              <Progress
-                value={testnetTaskCompletion?.completionPercentage ?? null}
-                className="h-2 mb-2"
-              />
-              <div className="text-sm text-right">
-                {testnetTaskCompletion
-                  ? Math.round(testnetTaskCompletion.completionPercentage)
-                  : 0}
-                % Complete
-              </div>
-            </div>
             <div className="grid grid-cols-2 gap-2 text-sm">
               <TaskIndicator
                 completed={testnetTaskCompletion?.depositedThreeAssets}
-                label="Deposited 3+ Assets"
+                label="Deposit 3+ Assets"
               />
               <TaskIndicator
                 completed={testnetTaskCompletion?.delegatedAssets}
-                label="Delegated Assets"
+                label="Delegation"
               />
               <TaskIndicator
                 completed={testnetTaskCompletion?.liquidStaked}
-                label="Liquid Staked"
+                label="Liquid Stake"
               />
               <TaskIndicator
                 completed={testnetTaskCompletion?.nominated}
-                label="Nominated"
+                label="Nomination"
               />
               <TaskIndicator
                 completed={testnetTaskCompletion?.nativeRestaked}
-                label="Native Restaked"
+                label="Native Restake"
               />
               <TaskIndicator
                 completed={testnetTaskCompletion?.bonus}

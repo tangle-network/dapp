@@ -16,7 +16,10 @@ import {
   DropdownBody,
   DropdownMenuItem,
 } from '@tangle-network/ui-components/components/Dropdown';
-import { TANGLE_MKT_URL } from '@tangle-network/ui-components/constants';
+import {
+  TANGLE_DAPP_URL,
+  TANGLE_MKT_URL,
+} from '@tangle-network/ui-components/constants';
 import { Typography } from '@tangle-network/ui-components/typography/Typography';
 import cx from 'classnames';
 import type { ComponentProps } from 'react';
@@ -47,70 +50,13 @@ export const Navbar = () => {
   return (
     <nav>
       <ul className="flex items-center gap-2">
-        {navItems.map((item, idx) => {
-          if (isNavItem(item)) {
-            return (
-              <li
-                className="hidden lg:block px-6 py-2 rounded-[50px] hover:bg-mono-20 dark:hover:bg-mono-180"
-                key={idx}
-              >
-                <Link {...item}>
-                  <Typography
-                    className="capitalize"
-                    variant="body1"
-                    component="span"
-                  >
-                    {item.children}
-                  </Typography>
-                </Link>
-              </li>
-            );
-          }
-
-          const label = Object.keys(item)[0];
-          const props = Object.values(item)[0];
-
-          return (
-            <li className="hidden lg:block" key={idx}>
-              <Dropdown>
-                <DropdownBasicButton className="flex items-center space-x-2 group">
-                  <Typography className="capitalize" variant="body1">
-                    {label}
-                  </Typography>
-
-                  <ChevronDown className="mx-2 transition-transform duration-300 ease-in-out group-radix-state-open:-rotate-180" />
-                </DropdownBasicButton>
-
-                <DropdownBody
-                  isPortal={false}
-                  className="p-4 mt-4 space-y-4 w-[374px]"
-                  size="sm"
-                  align="start"
-                >
-                  {props.map((subItem, idx) => (
-                    <DropdownMenuItem
-                      key={`${subItem.children.toString()}-${idx}`}
-                      className="px-4 py-2 rounded-lg"
-                      rightIcon={
-                        <ArrowRight className="!fill-current" size="lg" />
-                      }
-                    >
-                      <Link {...subItem}>{subItem.children}</Link>
-                    </DropdownMenuItem>
-                  ))}
-                </DropdownBody>
-              </Dropdown>
-            </li>
-          );
-        })}
-
         <li className="hidden sm:block">
           <Button
-            href={TANGLE_TESTNET_NATIVE_EXPLORER_URL}
+            href={TANGLE_DAPP_URL}
             target="blank"
             className="px-5 border lg:py-4"
           >
-            Explore Testnet
+            Launch dApp
           </Button>
         </li>
 

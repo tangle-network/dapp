@@ -10,6 +10,7 @@ export enum BadgeEnum {
   BLUEPRINT_OWNER = 'BLUEPRINT_OWNER',
   SERVICE_PROVIDER = 'SERVICE_PROVIDER',
   JOB_CALLER = 'JOB_CALLER',
+  NOMINATOR = 'NOMINATOR',
 }
 
 export const BADGE_ICON_RECORD = {
@@ -22,6 +23,7 @@ export const BADGE_ICON_RECORD = {
   [BadgeEnum.BLUEPRINT_OWNER]: '🏗️',
   [BadgeEnum.SERVICE_PROVIDER]: '💻',
   [BadgeEnum.JOB_CALLER]: '💼',
+  [BadgeEnum.NOMINATOR]: '🗳️',
 } as const satisfies Record<BadgeEnum, string>;
 
 export const ONE_DAY_IN_MS = 24 * 60 * 60 * 1000;

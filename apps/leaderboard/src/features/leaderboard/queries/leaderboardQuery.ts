@@ -1,5 +1,4 @@
 import { graphql } from '@tangle-network/tangle-shared-ui/graphql';
-import { AccountsOrderBy } from '@tangle-network/tangle-shared-ui/graphql/graphql';
 import { executeGraphQL } from '@tangle-network/tangle-shared-ui/utils/executeGraphQL';
 import { useQuery } from '@tanstack/react-query';
 import { LEADERBOARD_QUERY_KEY } from '../../../constants/query';
@@ -17,14 +16,13 @@ const LeaderboardQueryDocument = graphql(/* GraphQL */ `
     $first: Int!
     $offset: Int!
     $blockNumberSevenDaysAgo: Int!
-    $accountsOrderBy: [AccountsOrderBy!]
     $teamAccounts: [String!]!
     $accountIdQuery: String
   ) {
     accounts(
       first: $first
       offset: $offset
-      orderBy: $accountsOrderBy
+      orderBy: [TOTAL_POINTS_DESC]
       filter: {
         id: { notIn: $teamAccounts, includesInsensitive: $accountIdQuery }
       }
@@ -96,14 +94,12 @@ const fetcher = async (
   first: number,
   offset: number,
   blockNumberSevenDaysAgo: number,
-  accountsOrderBy: AccountsOrderBy[],
   accountIdQuery?: string,
 ) => {
   const result = await executeGraphQL(LeaderboardQueryDocument, {
     first,
     offset,
     blockNumberSevenDaysAgo,
-    accountsOrderBy,
     teamAccounts: TEAM_ACCOUNTS.map((account) => account.toLowerCase()),
     accountIdQuery,
   });
@@ -114,7 +110,6 @@ export function useLeaderboard(
   first: number,
   offset: number,
   blockNumberSevenDaysAgo: number,
-  accountsOrderBy: AccountsOrderBy[],
   accountIdQuery?: string,
 ) {
   return useQuery({
@@ -123,17 +118,10 @@ export function useLeaderboard(
       first,
       offset,
       blockNumberSevenDaysAgo,
-      accountsOrderBy,
       accountIdQuery,
     ],
     queryFn: () =>
-      fetcher(
-        first,
-        offset,
-        blockNumberSevenDaysAgo,
-        accountsOrderBy,
-        accountIdQuery,
-      ),
+      fetcher(first, offset, blockNumberSevenDaysAgo, accountIdQuery),
     enabled: first > 0 && offset >= 0 && blockNumberSevenDaysAgo > 0,
     placeholderData: (prev) => prev,
   });

@@ -1,1 +1,1 @@
-export * from './IndexingProgressCard';
+export * from './SyncProgressIndicator';

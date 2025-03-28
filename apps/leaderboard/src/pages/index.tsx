@@ -1,30 +1,33 @@
-import { AwardIcon } from '@tangle-network/icons';
-import { Typography } from '@tangle-network/ui-components';
-import { IndexingProgressCard } from '../features/indexingProgress';
+import { Button, Typography } from '@tangle-network/ui-components';
 import { LeaderboardTable } from '../features/leaderboard';
 
 export default function IndexPage() {
   return (
     <div className="container mx-auto space-y-6">
-      <div className="max-w-xl">
+      <div className="max-w-2xl">
         <Typography
           variant="h3"
           component="h1"
           className="font-semibold antialiased flex items-center gap-1"
         >
-          <AwardIcon width={28} height={28} />
-          Account Leaderboard
+          Season 1 Leaderboard
         </Typography>
-        <Typography
-          variant="body1"
-          className="text-mono-100 dark:text-mono-120"
-        >
-          Tangle leaderboard ranks contributors based on points earned from
-          network activities like staking, nominating, and running services.
+        <Typography variant="body1" className="!text-mono-120">
+          Tangle leaderboard ranks contributors based on experience points (XP)
+          earned from network activities like staking, nominating, and running
+          services.{' '}
+          <Button
+            className="inline-flex"
+            target="_blank"
+            href="https://docs.tangle.tools/network/points-mechanics"
+            rel="noopener noreferrer"
+            variant="link"
+            size="sm"
+          >
+            (Learn How)
+          </Button>
         </Typography>
       </div>
-
-      <IndexingProgressCard />
 
       <LeaderboardTable />
     </div>

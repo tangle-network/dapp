@@ -32,6 +32,7 @@ export interface PointsHistory {
 
 export interface Account {
   id: string;
+  rank: number;
   totalPoints: bigint;
   pointsBreakdown: PointsBreakdown;
   badges: BadgeEnum[];
