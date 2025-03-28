@@ -1,7 +1,7 @@
 import { ChevronDown, ShieldKeyholeFillIcon } from '@tangle-network/icons';
 import { InfoIconWithTooltip, Typography } from '@tangle-network/ui-components';
 import { FC, useCallback, useState } from 'react';
-import BlueprintItemIcon from './BlueprintItemIcon';
+import BlueprintLogo from './BlueprintLogo';
 import SelectBlueprintsModal from '../../containers/restaking/SelectBlueprintsModal';
 import { Blueprint } from '@tangle-network/tangle-shared-ui/types/blueprint';
 import { SubstrateAddress } from '@tangle-network/ui-components/types/address';
@@ -61,10 +61,11 @@ const BlueprintSelection: FC<Props> = ({ operatorAddress, setSelection }) => {
         ) : (
           <div>
             {localSelection.map((blueprint) => (
-              <BlueprintItemIcon
+              <BlueprintLogo
                 key={blueprint.id}
                 name={blueprint.name}
                 url={blueprint.imgUrl ?? undefined}
+                size="sm"
               />
             ))}
           </div>
@@ -72,6 +73,7 @@ const BlueprintSelection: FC<Props> = ({ operatorAddress, setSelection }) => {
       </div>
 
       <SelectBlueprintsModal
+        setSelection={handleSelection}
         operatorAddress={operatorAddress}
         isOpen={isModalOpen}
         setIsOpen={setIsModalOpen}

@@ -1,6 +1,7 @@
-import { useCallback, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import {
   Button,
+  Input,
   ListStatus,
   Modal,
   ModalBody,
@@ -11,23 +12,59 @@ import {
 import useOperatorBlueprints from '@tangle-network/tangle-shared-ui/data/blueprints/useOperatorBlueprints';
 import { SubstrateAddress } from '@tangle-network/ui-components/types/address';
 import BlueprintGridItem from '../../components/restaking/BlueprintGridItem';
+import { Search } from '@tangle-network/icons';
+import { OperatorBlueprint } from '@tangle-network/tangle-shared-ui/data/blueprints/utils/type';
+import filterBy from '../../utils/filterBy';
 
 type Props = {
   operatorAddress?: SubstrateAddress;
   isOpen: boolean;
   setIsOpen: (isOpen: boolean) => void;
+  setSelection: (selected: number[]) => void;
 };
 
 const SelectBlueprintsModal = ({
   operatorAddress,
   isOpen,
   setIsOpen,
+  setSelection,
 }: Props) => {
-  const { blueprints } = useOperatorBlueprints(operatorAddress);
-  const [selection, setSelection] = useState<number[]>([]);
+  const [searchQuery, setSearchQuery] = useState<string>('');
+  // const { blueprints } = useOperatorBlueprints(operatorAddress);
+  const blueprints = useMemo<OperatorBlueprint[]>(
+    () => [
+      {
+        blueprintId: 1,
+        blueprint: {
+          metadata: { name: 'Test', author: 'Test' } as any,
+        } as any,
+      } as any,
+    ],
+    [],
+  );
+
+  const [localSelection, setLocalSelection] = useState<number[]>([]);
+
+  const filteredBlueprints = useMemo(() => {
+    if (searchQuery === '') {
+      return blueprints;
+    }
+
+    return blueprints.filter((blueprint) => {
+      return filterBy(searchQuery, [
+        blueprint.blueprint.metadata.name,
+        blueprint.blueprint.metadata.author,
+        blueprint.blueprint.metadata.description,
+        blueprint.blueprint.metadata.category,
+      ]);
+    });
+  }, [blueprints, searchQuery]);
 
   const handleSelect = useCallback((blueprintId: number) => {
-    setSelection((prev) => {
+    setLocalSelection((prev) => {
+      // Toggle the selection of the blueprint.
+      // If the blueprint is already selected, unselect it.
+      // Otherwise, select it.
       return prev.includes(blueprintId)
         ? prev.filter((id) => id !== blueprintId)
         : [...prev, blueprintId];
@@ -38,12 +75,12 @@ const SelectBlueprintsModal = ({
     // If all blueprints are selected, unselect all.
     // Otherwise, select all.
     const newSelection =
-      selection.length === blueprints.length
+      localSelection.length === blueprints.length
         ? []
         : blueprints.map((blueprint) => blueprint.blueprintId);
 
-    setSelection(newSelection);
-  }, [blueprints, selection.length]);
+    setLocalSelection(newSelection);
+  }, [blueprints, localSelection.length]);
 
   const handleConfirm = useCallback(() => {
     setIsOpen(false);
@@ -54,17 +91,34 @@ const SelectBlueprintsModal = ({
     return;
   }
 
+  const isEmpty = blueprints.length === 0;
+
   return (
     <Modal open={isOpen} onOpenChange={setIsOpen}>
       <ModalContent size="lg">
         <ModalHeader>Select Blueprint(s)</ModalHeader>
 
+        {!isEmpty && (
+          <div className="pt-4 px-4 pb-4 md:px-9">
+            <Input
+              id="restake-select-blueprints-search"
+              isControlled
+              rightIcon={<Search className="mr-2" />}
+              placeholder="Search blueprints by name or author"
+              value={searchQuery}
+              onChange={setSearchQuery}
+              inputClassName="placeholder:text-mono-80 dark:placeholder:text-mono-120"
+            />
+          </div>
+        )}
+
         <ModalBody className="gap-4">
-          {blueprints.length > 0 ? (
+          {!isEmpty ? (
             <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
-              {blueprints.map((blueprint) => (
+              {filteredBlueprints.map((blueprint) => (
                 <BlueprintGridItem
                   key={blueprint.blueprintId}
+                  isSelected={localSelection.includes(blueprint.blueprintId)}
                   onClick={() => handleSelect(blueprint.blueprintId)}
                   blueprint={blueprint}
                 />
@@ -84,11 +138,12 @@ const SelectBlueprintsModal = ({
             isFullWidth
             variant="secondary"
             // Disable if there are no blueprints available.
-            isDisabled={blueprints.length === 0}
+            isDisabled={isEmpty}
             className="hidden sm:flex"
             onClick={handleSelectAll}
           >
-            {selection.length === blueprints.length || selection.length !== 0
+            {blueprints.length === 0 ||
+            localSelection.length !== blueprints.length
               ? 'Select'
               : 'Unselect'}{' '}
             All

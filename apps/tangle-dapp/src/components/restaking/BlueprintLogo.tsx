@@ -3,14 +3,15 @@ import { FC } from 'react';
 type Props = {
   name: string;
   url?: string;
+  size: 'sm' | 'lg';
 };
 
-const BlueprintItemIcon: FC<Props> = ({ name, url }) => {
+const BlueprintLogo: FC<Props> = ({ name, url, size }) => {
   return (
     <div className="rounded-full border border-gray-300 dark:border-mono-120">
-      <img src={url} alt={`${name}'s icon`} />
+      <img src={url} alt={`${name}'s logo`} />
     </div>
   );
 };
 
-export default BlueprintItemIcon;
+export default BlueprintLogo;
