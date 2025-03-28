@@ -144,6 +144,8 @@ export { default as TimerLine } from './TimerLine';
 export * from './TokenIcon';
 export { default as TokenSwapFill } from './TokenSwapFill';
 export { default as TokenSwapLineIcon } from './TokenSwapLineIcon';
+export * from './TriangleDownIcon';
+export * from './TriangleUpIcon';
 export * from './TwitterFill';
 export * from './UndoIcon';
 export * from './UploadCloudIcon';

@@ -1,6 +1,8 @@
-import { ArrowDownIcon } from '@tangle-network/icons';
+import { TriangleDownIcon, TriangleUpIcon } from '@tangle-network/icons';
 import { Typography } from '@tangle-network/ui-components/typography/Typography';
 import { Account } from '../types';
+
+const ICON_SIZE = 10;
 
 export const TrendIndicator = ({
   pointsHistory,
@@ -8,7 +10,7 @@ export const TrendIndicator = ({
   pointsHistory: Account['pointsHistory'];
 }) => {
   if (pointsHistory.length === 0) {
-    return <div>0</div>;
+    return <Typography variant="body1">0</Typography>;
   }
 
   const diff =
@@ -19,25 +21,35 @@ export const TrendIndicator = ({
 
   if (direction === 'up') {
     return (
-      <Typography variant="body1" className="flex items-center gap-1">
-        {value}{' '}
-        <ArrowDownIcon
-          size="lg"
-          className="fill-green-600 dark:fill-green-400 -rotate-[135deg]"
+      <Typography
+        variant="body1"
+        className="flex items-center gap-1 text-green-600 dark:text-green-400"
+      >
+        <TriangleUpIcon
+          width={ICON_SIZE}
+          height={ICON_SIZE}
+          style={{ minWidth: ICON_SIZE, minHeight: ICON_SIZE }}
+          className="!fill-current"
         />
+        {value}{' '}
       </Typography>
     );
   } else if (direction === 'down') {
     return (
-      <Typography variant="body1" className="flex items-center gap-1">
-        {value}{' '}
-        <ArrowDownIcon
-          size="lg"
-          className="fill-red-600 dark:fill-red-400 -rotate-45"
+      <Typography
+        variant="body1"
+        className="flex items-center gap-1 text-red-600 dark:text-red-400"
+      >
+        <TriangleDownIcon
+          width={ICON_SIZE}
+          height={ICON_SIZE}
+          style={{ minWidth: ICON_SIZE, minHeight: ICON_SIZE }}
+          className="!fill-current"
         />
+        {value}{' '}
       </Typography>
     );
   }
 
-  return <div>{value}</div>;
+  return <Typography variant="body1">{value}</Typography>;
 };

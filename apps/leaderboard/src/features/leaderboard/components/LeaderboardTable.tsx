@@ -35,10 +35,10 @@ import { formatDisplayBlockNumber } from '../utils/formatDisplayBlockNumber';
 import { BadgesCell } from './BadgesCell';
 import { ExpandedInfo } from './ExpandedInfo';
 import { HeaderCell } from './HeaderCell';
-import { MiniSparkline } from './MiniSparkline';
 import { Overlay } from './Overlay';
 import { FirstPlaceIcon, SecondPlaceIcon, ThirdPlaceIcon } from './RankIcon';
 import { TrendIndicator } from './TrendIndicator';
+import { MiniSparkline } from './MiniSparkline';
 
 const COLUMN_ID = {
   RANK: 'RANK',
@@ -46,7 +46,6 @@ const COLUMN_ID = {
   BADGES: 'badges',
   TOTAL_POINTS: 'totalPoints',
   ACTIVITY: 'activity',
-  TRENDING: 'trending',
   POINTS_HISTORY: 'pointsHistory',
 } as const;
 
@@ -150,21 +149,20 @@ const getColumns = (
     ),
   }),
   COLUMN_HELPER.display({
-    id: COLUMN_ID.TRENDING,
+    id: COLUMN_ID.POINTS_HISTORY,
     header: () => <HeaderCell title="7-Day Points" />,
     cell: ({ row }) => {
-      return <TrendIndicator pointsHistory={row.original.pointsHistory} />;
+      return (
+        <div className="flex items-baseline gap-4">
+          <TrendIndicator pointsHistory={row.original.pointsHistory} />
+
+          <MiniSparkline
+            pointsHistory={row.original.pointsHistory}
+            latestBlockNumber={latestBlockNumber}
+          />
+        </div>
+      );
     },
-  }),
-  COLUMN_HELPER.accessor('pointsHistory', {
-    id: COLUMN_ID.POINTS_HISTORY,
-    header: () => <HeaderCell title="Points Trend" />,
-    cell: ({ row }) => (
-      <MiniSparkline
-        pointsHistory={row.original.pointsHistory}
-        latestBlockNumber={latestBlockNumber}
-      />
-    ),
   }),
 ];
 

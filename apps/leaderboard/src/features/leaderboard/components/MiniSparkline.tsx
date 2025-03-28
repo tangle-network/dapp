@@ -9,13 +9,9 @@ export const MiniSparkline = ({
   pointsHistory: Account['pointsHistory'];
   latestBlockNumber?: number | null;
 }) => {
-  if (pointsHistory.length === 0) {
-    return <div>No data</div>;
-  }
-
   // Cumulate points for each day
   const cumulatedPoints = !latestBlockNumber
-    ? pointsHistory.map((snapshot) => snapshot.points)
+    ? Array.from({ length: 7 }, () => ZERO_BIG_INT)
     : pointsHistory
         .reduce(
           (acc, snapshot) => {
