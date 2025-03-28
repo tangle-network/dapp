@@ -73,7 +73,7 @@ const Page = () => {
         actionProps={{
           children: isOperator ? 'Register' : 'Deploy',
           onClick: (e) => {
-            e.preventDefault();            
+            e.preventDefault();
             if (isOperator) {
               setIsPricingModalOpen(true);
             } else {
