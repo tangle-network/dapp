@@ -9,5 +9,8 @@ export type ValidatorIdentityProps = {
   displayCharacterCount?: number;
   avatarSize?: AvatarProps['size'];
   textVariant?: TypographyProps['variant'];
+  textWeight?: TypographyProps['fw'];
+  textClassName?: string;
   showAddressInTooltip?: boolean;
+  subContent?: React.ReactNode;
 };

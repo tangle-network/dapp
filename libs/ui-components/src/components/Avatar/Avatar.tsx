@@ -58,6 +58,9 @@ export const Avatar: React.FC<AvatarProps> = ({
 
   const avatar = (
     <AvatarPrimitive.Root
+      onClick={(event) => {
+        event.stopPropagation();
+      }}
       className={twMerge(
         'inline-flex items-center justify-center align-middle overflow-hidden rounded-full border box-border',
         sizeClassName,
@@ -105,7 +108,9 @@ export const Avatar: React.FC<AvatarProps> = ({
 
   return tooltip !== undefined ? (
     <Tooltip>
-      <TooltipTrigger>{avatar}</TooltipTrigger>
+      <TooltipTrigger onClick={(event) => event.stopPropagation()}>
+        {avatar}
+      </TooltipTrigger>
 
       <TooltipBody>{tooltip}</TooltipBody>
     </Tooltip>

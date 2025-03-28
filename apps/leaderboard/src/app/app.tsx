@@ -1,9 +1,12 @@
+import { TANGLE_MKT_URL, TangleLogo } from '@tangle-network/ui-components';
 import { Footer } from '@tangle-network/ui-components/components/Footer';
-import { Route, Routes } from 'react-router-dom';
-import Header from '../components/Header';
+import { ComponentProps } from 'react';
+import { Link, Route, Routes } from 'react-router';
+import { twMerge } from 'tailwind-merge';
 import IndexPage from '../pages/index';
-import Providers from './providers';
 import NotFoundPage from '../pages/notFound';
+import { Navbar } from './Navbar';
+import Providers from './providers';
 
 export function App() {
   return (
@@ -24,3 +27,17 @@ export function App() {
   );
 }
 export default App;
+
+const Header = ({ className, ...props }: ComponentProps<'header'>) => {
+  return (
+    <header {...props} className={twMerge('py-6', className)}>
+      <div className="flex items-center justify-between">
+        <Link to={TANGLE_MKT_URL}>
+          <TangleLogo />
+        </Link>
+
+        <Navbar />
+      </div>
+    </header>
+  );
+};

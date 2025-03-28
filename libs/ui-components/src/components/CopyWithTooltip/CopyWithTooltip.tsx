@@ -1,14 +1,15 @@
 'use client';
 
+import { CheckLineIcon } from '@tangle-network/icons';
 import { FileCopyLine } from '@tangle-network/icons/FileCopyLine';
 import { useCallback, useState } from 'react';
 import { twMerge } from 'tailwind-merge';
 import { useCopyable } from '../../hooks';
+import { EventFor } from '../../types';
 import { Typography } from '../../typography/Typography';
 import { Tooltip, TooltipBody, TooltipTrigger } from '../Tooltip';
 import { Button } from '../buttons';
 import { CopyWithTooltipProps, CopyWithTooltipUIProps } from './types';
-import { CheckLineIcon } from '@tangle-network/icons';
 
 /**
  * The `CopyWithTooltip` component
@@ -68,14 +69,18 @@ const CopyWithTooltipUI: React.FC<CopyWithTooltipUIProps> = ({
     />
   );
 
-  const handleClick = useCallback(() => {
-    // Don't re-trigger the copy action if the text is already copied.
-    if (isCopied) {
-      return;
-    }
+  const handleClick = useCallback(
+    (event: EventFor<'button', 'onClick'>) => {
+      event.stopPropagation();
+      // Don't re-trigger the copy action if the text is already copied.
+      if (isCopied) {
+        return;
+      }
 
-    onClick();
-  }, [isCopied, onClick]);
+      onClick();
+    },
+    [isCopied, onClick],
+  );
 
   return (
     <Tooltip isOpen={isTooltipOpen && !isCopied}>

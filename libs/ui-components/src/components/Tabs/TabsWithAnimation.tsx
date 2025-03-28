@@ -1,9 +1,10 @@
 'use client';
 
 import * as Tabs from '@radix-ui/react-tabs';
+import { motion } from 'framer-motion';
 import { ComponentProps, forwardRef } from 'react';
 import { twMerge } from 'tailwind-merge';
-import { motion } from 'framer-motion';
+import { TypographyVariant } from '../../typography/types';
 
 export const TabsListWithAnimation = forwardRef<
   HTMLDivElement,
@@ -24,45 +25,62 @@ export const TabsListWithAnimation = forwardRef<
 type TabsTriggerWithAnimationProps = ComponentProps<typeof Tabs.Trigger> & {
   isActive: boolean;
   hideSeparator?: boolean;
+  labelVariant?: TypographyVariant;
+  labelClassName?: string;
 };
 
 export const TabsTriggerWithAnimation = forwardRef<
   HTMLButtonElement,
   TabsTriggerWithAnimationProps
->(({ className, hideSeparator, children, isActive, ...props }, ref) => {
-  return (
-    <Tabs.Trigger
-      {...props}
-      className={twMerge(
-        'relative flex-1 min-h-[45px] border-x border-transparent',
-        "after:content-[''] after:w-[1px] after:h-7",
-        'after:absolute after:-right-[1.5px] after:top-1/2 after:-translate-y-1/2',
-        'after:bg-mono-60 dark:after:bg-mono-170',
-        'last:after:hidden',
-        (isActive || hideSeparator) && 'after:hidden',
-        className,
-      )}
-      ref={ref}
-    >
-      {isActive && (
-        <motion.span
-          layoutId="bubble"
-          className="absolute inset-0 rounded-lg bg-mono-0 dark:bg-blue-120"
-          transition={{ type: 'spring', bounce: 0.2, duration: 0.6 }}
-        />
-      )}
-
-      <span
+>(
+  (
+    {
+      className,
+      hideSeparator,
+      children,
+      isActive,
+      labelVariant = 'body1',
+      labelClassName,
+      ...props
+    },
+    ref,
+  ) => {
+    return (
+      <Tabs.Trigger
+        {...props}
         className={twMerge(
-          'absolute inset-0 body1 p-2 text-center',
-          isActive && 'font-bold',
-          isActive
-            ? 'text-mono-200 dark:text-blue-50'
-            : 'text-mono-120 dark:text-mono-80',
+          'relative flex-1 min-h-[45px] border-x border-transparent',
+          "after:content-[''] after:w-[1px] after:h-7",
+          'after:absolute after:-right-[1.5px] after:top-1/2 after:-translate-y-1/2',
+          'after:bg-mono-60 dark:after:bg-mono-170',
+          'last:after:hidden',
+          (isActive || hideSeparator) && 'after:hidden',
+          className,
         )}
+        ref={ref}
       >
-        {children}
-      </span>
-    </Tabs.Trigger>
-  );
-});
+        {isActive && (
+          <motion.span
+            layoutId="bubble"
+            className="absolute inset-0 rounded-lg bg-mono-0 dark:bg-blue-120"
+            transition={{ type: 'spring', bounce: 0.2, duration: 0.6 }}
+          />
+        )}
+
+        <span
+          className={twMerge(
+            'absolute inset-0 p-2 text-center',
+            labelVariant,
+            isActive && 'font-bold',
+            isActive
+              ? 'text-mono-200 dark:text-blue-50'
+              : 'text-mono-120 dark:text-mono-80',
+            labelClassName,
+          )}
+        >
+          {children}
+        </span>
+      </Tabs.Trigger>
+    );
+  },
+);

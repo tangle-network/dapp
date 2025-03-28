@@ -1,14 +1,8 @@
 import { CrossCircledIcon } from '@radix-ui/react-icons';
 import { ZERO_BIG_INT } from '@tangle-network/dapp-config';
-import {
-  BookLockIcon,
-  Spinner,
-  UsersIcon,
-  WavesLadderIcon,
-} from '@tangle-network/icons';
+import { Spinner } from '@tangle-network/icons';
 import { Search } from '@tangle-network/icons/Search';
 import TableStatus from '@tangle-network/tangle-shared-ui/components/tables/TableStatus';
-import { AccountsOrderBy } from '@tangle-network/tangle-shared-ui/graphql/graphql';
 import {
   Input,
   KeyValueWithButton,
@@ -27,39 +21,62 @@ import {
   getCoreRowModel,
   PaginationState,
   Row,
-  SortingState,
   useReactTable,
 } from '@tanstack/react-table';
 import cx from 'classnames';
 import { useCallback, useMemo, useState } from 'react';
 import { twMerge } from 'tailwind-merge';
 import { useLatestFinalizedBlock } from '../../../queries';
+import { SyncProgressIndicator } from '../../indexingProgress';
 import { BadgeEnum, BLOCK_COUNT_IN_SEVEN_DAYS } from '../constants';
 import { useLeaderboard } from '../queries';
 import { Account, PointsHistory, TestnetTaskCompletion } from '../types';
-import { BadgesCell } from './BadgesCell';
-import { HeaderCell } from './HeaderCell';
 import { formatDisplayBlockNumber } from '../utils/formatDisplayBlockNumber';
+import { BadgesCell } from './BadgesCell';
+import { ExpandedInfo } from './ExpandedInfo';
+import { HeaderCell } from './HeaderCell';
+import { Overlay } from './Overlay';
+import { FirstPlaceIcon, SecondPlaceIcon, ThirdPlaceIcon } from './RankIcon';
 import { TrendIndicator } from './TrendIndicator';
 import { MiniSparkline } from './MiniSparkline';
-import { ExpandedInfo } from './ExpandedInfo';
-import { Overlay } from './Overlay';
 
 const COLUMN_ID = {
+  RANK: 'RANK',
   ACCOUNT: 'account',
   BADGES: 'badges',
   TOTAL_POINTS: 'totalPoints',
   ACTIVITY: 'activity',
-  TRENDING: 'trending',
   POINTS_HISTORY: 'pointsHistory',
 } as const;
 
 const COLUMN_HELPER = createColumnHelper<Account>();
 
+const RankIcon = ({ rank }: { rank: number }) => {
+  switch (rank) {
+    case 1:
+      return <FirstPlaceIcon size="lg" />;
+    case 2:
+      return <SecondPlaceIcon size="lg" />;
+    case 3:
+      return <ThirdPlaceIcon size="lg" />;
+    default:
+      return <span className="inline-block px-1.5">{rank}</span>;
+  }
+};
+
 const getColumns = (
   latestBlockNumber?: number | null,
   latestBlockTimestamp?: Date | null,
 ) => [
+  COLUMN_HELPER.accessor('rank', {
+    id: COLUMN_ID.RANK,
+    header: () => <HeaderCell title="Rank" />,
+    cell: (props) => {
+      const rank = props.getValue();
+
+      return <RankIcon rank={rank} />;
+    },
+  }),
   COLUMN_HELPER.accessor('id', {
     id: COLUMN_ID.ACCOUNT,
     header: () => <HeaderCell title="Account" />,
@@ -86,7 +103,6 @@ const getColumns = (
   }),
   COLUMN_HELPER.accessor('badges', {
     id: COLUMN_ID.BADGES,
-    enableSorting: false,
     header: () => <HeaderCell title="Badges" />,
     cell: (props) => <BadgesCell badges={props.getValue()} />,
   }),
@@ -113,7 +129,6 @@ const getColumns = (
   }),
   COLUMN_HELPER.accessor('activity', {
     id: COLUMN_ID.ACTIVITY,
-    enableSorting: false,
     header: () => <HeaderCell title="Activity" />,
     cell: ({ row }) => (
       <div className="flex flex-col">
@@ -121,7 +136,6 @@ const getColumns = (
           variant="body1"
           className="flex items-center gap-1 [&>svg]:flex-initial"
         >
-          <BookLockIcon />
           {row.original.activity.depositCount} deposits
         </Typography>
 
@@ -129,38 +143,26 @@ const getColumns = (
           variant="body1"
           className="flex items-center gap-1 [&>svg]:flex-initial"
         >
-          <UsersIcon />
           {row.original.activity.delegationCount} delegations
-        </Typography>
-
-        <Typography
-          variant="body1"
-          className="flex items-center gap-1 [&>svg]:flex-initial"
-        >
-          <WavesLadderIcon />
-          {row.original.activity.liquidStakingPoolCount} lst pools
         </Typography>
       </div>
     ),
   }),
   COLUMN_HELPER.display({
-    id: COLUMN_ID.TRENDING,
-    enableSorting: false,
+    id: COLUMN_ID.POINTS_HISTORY,
     header: () => <HeaderCell title="7-Day Points" />,
     cell: ({ row }) => {
-      return <TrendIndicator pointsHistory={row.original.pointsHistory} />;
+      return (
+        <div className="flex items-baseline gap-4">
+          <TrendIndicator pointsHistory={row.original.pointsHistory} />
+
+          <MiniSparkline
+            pointsHistory={row.original.pointsHistory}
+            latestBlockNumber={latestBlockNumber}
+          />
+        </div>
+      );
     },
-  }),
-  COLUMN_HELPER.accessor('pointsHistory', {
-    id: COLUMN_ID.POINTS_HISTORY,
-    enableSorting: false,
-    header: () => <HeaderCell title="Points Trend" />,
-    cell: ({ row }) => (
-      <MiniSparkline
-        pointsHistory={row.original.pointsHistory}
-        latestBlockNumber={latestBlockNumber}
-      />
-    ),
   }),
 ];
 
@@ -172,13 +174,6 @@ export const LeaderboardTable = () => {
     pageIndex: 0,
     pageSize: 15,
   });
-
-  const [sorting, setSorting] = useState<SortingState>([
-    {
-      id: COLUMN_ID.TOTAL_POINTS,
-      desc: true,
-    },
-  ]);
 
   // TODO: Add network tabs when we support both mainnet and testnet
   /* const [networkTab, setNetworkTab] = useState<'all' | 'mainnet' | 'testnet'>(
@@ -201,26 +196,6 @@ export const LeaderboardTable = () => {
 
     return result < 0 ? 1 : result;
   }, [isLatestBlockPending, latestBlockError, latestBlock?.testnetBlock]);
-
-  const accountsOrderBy = useMemo<AccountsOrderBy[]>(() => {
-    return sorting
-      .map((sort) => {
-        switch (sort.id) {
-          case COLUMN_ID.TOTAL_POINTS:
-            return sort.desc
-              ? AccountsOrderBy.TotalPointsDesc
-              : AccountsOrderBy.TotalPointsAsc;
-
-          case COLUMN_ID.ACCOUNT:
-            return sort.desc ? AccountsOrderBy.IdDesc : AccountsOrderBy.IdAsc;
-
-          default:
-            console.error('Invalid sort', sort);
-            return null;
-        }
-      })
-      .filter((sort) => sort !== null);
-  }, [sorting]);
 
   const accountQuery = useMemo(() => {
     if (!searchQuery) {
@@ -245,7 +220,6 @@ export const LeaderboardTable = () => {
     pagination.pageSize,
     pagination.pageIndex * pagination.pageSize,
     blockNumberSevenDaysAgo,
-    accountsOrderBy,
     accountQuery,
   );
 
@@ -267,7 +241,7 @@ export const LeaderboardTable = () => {
     }
 
     return leaderboardData.nodes
-      .map((record) => {
+      .map((record, index) => {
         if (!record) {
           return null;
         }
@@ -374,6 +348,16 @@ export const LeaderboardTable = () => {
           badges.push(BadgeEnum.JOB_CALLER);
         }
 
+        const isNominator =
+          Boolean(
+            record.testnetTaskCompletions.nodes.find(
+              (node) => node?.hasNominated,
+            ),
+          ) ?? false;
+        if (isNominator) {
+          badges.push(BadgeEnum.NOMINATOR);
+        }
+
         const depositCount = record.delegators?.nodes.reduce((acc, node) => {
           if (!node) {
             return acc;
@@ -409,6 +393,7 @@ export const LeaderboardTable = () => {
 
         return {
           id: record.id,
+          rank: pagination.pageIndex * pagination.pageSize + index + 1,
           totalPoints: totalPointsResult.result,
           pointsBreakdown: {
             mainnet: totalMainnetPointsResult.result,
@@ -474,20 +459,18 @@ export const LeaderboardTable = () => {
         } satisfies Account;
       })
       .filter((record) => record !== null);
-  }, [leaderboardData]);
+  }, [leaderboardData?.nodes, pagination.pageIndex, pagination.pageSize]);
 
   const table = useReactTable({
     data,
     columns,
     manualPagination: true,
-    manualSorting: true,
+    enableSorting: false,
     state: {
-      sorting,
       expanded,
       pagination,
     },
     rowCount: leaderboardData?.totalCount,
-    onSortingChange: setSorting,
     onPaginationChange: setPagination,
     getCoreRowModel: getCoreRowModel(),
     onExpandedChange: setExpanded,
@@ -511,8 +494,8 @@ export const LeaderboardTable = () => {
   );
 
   return (
-    <Card className="space-y-6">
-      <div className="grid grid-cols-1 items-center justify-between gap-4">
+    <Card className="space-y-6 !bg-transparent !border-transparent p-0">
+      <div className="flex items-center justify-between gap-4">
         {/* <TabsRoot
               className="max-w-xs flex-auto"
               value={networkTab}
@@ -558,7 +541,9 @@ export const LeaderboardTable = () => {
               </TabsListWithAnimation>
             </TabsRoot> */}
 
-        <div className="flex items-center justify-end gap-2">
+        <SyncProgressIndicator />
+
+        <div className="flex items-center justify-end gap-2 grow">
           <Input
             className="grow max-w-xs"
             debounceTime={300}
@@ -611,17 +596,18 @@ export const LeaderboardTable = () => {
             isPaginated
             totalRecords={leaderboardData?.totalCount}
             getExpandedRowContent={getExpandedRowContent}
-            className="overflow-visible"
-            tableWrapperClassName="overflow-visible"
-            trClassName="cursor-pointer"
-            thClassName={cx(
-              'sticky top-0 z-10 first:rounded-tl-lg last:rounded-tr-lg',
-              'shadow-mono-40 dark:shadow-mono-140',
-              'backdrop-blur-sm !bg-opacity-50 [box-shadow:_inset_0_-1px_var(--tw-shadow-color)]',
+            className={cx('dark:border-mono-180')}
+            thClassName={cx('dark:border-mono-180')}
+            paginationClassName="dark:border-mono-180"
+            trClassName="cursor-pointer dark:hover:bg-mono-190"
+            tdClassName={cx(
+              'group-hover/tr:bg-mono-20 dark:group-hover/tr:bg-mono-190',
+              'dark:bg-mono-200 dark:border-mono-180',
             )}
             expandedRowClassName={twMerge(
+              'dark:bg-mono-200',
               'peer-[&[data-expanded="true"]:hover]:bg-mono-20',
-              'peer-[&[data-expanded="true"]:hover]:dark:bg-mono-170',
+              'peer-[&[data-expanded="true"]:hover]:dark:bg-mono-190',
             )}
             onRowClick={(row) => {
               table.resetExpanded();
