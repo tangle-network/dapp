@@ -393,7 +393,7 @@ export const LeaderboardTable = () => {
 
         return {
           id: record.id,
-          rank: index + 1,
+          rank: pagination.pageIndex * pagination.pageSize + index + 1,
           totalPoints: totalPointsResult.result,
           pointsBreakdown: {
             mainnet: totalMainnetPointsResult.result,
@@ -459,7 +459,7 @@ export const LeaderboardTable = () => {
         } satisfies Account;
       })
       .filter((record) => record !== null);
-  }, [leaderboardData]);
+  }, [leaderboardData?.nodes, pagination.pageIndex, pagination.pageSize]);
 
   const table = useReactTable({
     data,
