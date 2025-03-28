@@ -22,8 +22,7 @@ const RestakePage: FC = () => {
   // If provided, make sure that the action parameter is valid.
   if (action !== undefined && !isEnumValue(action, RestakeAction)) {
     return <NotFoundPage />;
-  }
-  if (action === undefined) {
+  } else if (action === undefined) {
     return <Navigate to={PagePath.RESTAKE_DEPOSIT} />;
   }
 

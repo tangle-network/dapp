@@ -52,6 +52,7 @@ import useNetworkStore from '@tangle-network/tangle-shared-ui/context/useNetwork
 import useNativeRestakeTx from '../../../data/restake/useNativeRestakeTx';
 import { TxStatus } from '@tangle-network/tangle-shared-ui/hooks/useSubstrateTx';
 import useNativeRestakeAssetBalance from '../../../data/restake/useNativeRestakeAssetBalance';
+import BlueprintSelection from '../../../components/restaking/BlueprintSelection';
 
 type RestakeOperator = {
   accountId: SubstrateAddress;
@@ -314,16 +315,20 @@ const RestakeDelegateForm: FC = () => {
 
       <Card withShadow tightPadding>
         <Form onSubmit={handleSubmit(onSubmit)}>
-          <div className="flex flex-col h-full space-y-4 grow">
-            <RestakeDelegateInput
-              amountError={errors.amount?.message}
-              delegatorInfo={delegatorInfo}
-              openAssetModal={openAssetModal}
-              openOperatorModal={openOperatorModal}
-              register={register}
-              setValue={setValue}
-              watch={watch}
-            />
+          <div className="flex flex-col h-full gap-4 grow">
+            <div className="flex flex-col">
+              <RestakeDelegateInput
+                amountError={errors.amount?.message}
+                delegatorInfo={delegatorInfo}
+                openAssetModal={openAssetModal}
+                openOperatorModal={openOperatorModal}
+                register={register}
+                setValue={setValue}
+                watch={watch}
+              />
+
+              <BlueprintSelection setSelection={() => void 0} />
+            </div>
 
             <div className="flex flex-col justify-between gap-4 grow">
               <Details />
