@@ -108,7 +108,7 @@ export default function PricingModal({
       </ModalHeader>
 
       <ModalBody className="p-0">
-        <TabsRoot
+      <TabsRoot
           className="pt-4 px-9"
           value={pricingType}
           onValueChange={(type: string) => setPricingType(type as PricingType)}
@@ -165,7 +165,6 @@ export default function PricingModal({
                 <IndividualPricingField
                   blueprints={blueprints}
                   formControl={individualPricingFormSchema.control}
-                  watch={individualPricingFormSchema.watch}
                 />
 
                 <FormActions />
