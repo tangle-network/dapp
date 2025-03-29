@@ -32,7 +32,12 @@ export default function IndividualPricingField({
                   className="flex-shrink-0 bg-center rounded-full"
                 />
               )}
-              <Typography variant="h4">{blueprint.name}</Typography>
+              <Typography
+                className="text-ellipsis overflow-hidden"
+                variant="h4"
+              >
+                {blueprint.name}
+              </Typography>
             </div>
 
             <div className="p-0 mt-4">
