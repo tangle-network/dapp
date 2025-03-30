@@ -122,7 +122,7 @@ const DeployPage: FC = () => {
             rightIcon={<ArrowRightIcon width={24} height={24} />}
             onClick={onNextStep}
           >
-            Register
+            Next
           </Button>
         </div>
       </div>
