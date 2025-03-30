@@ -61,6 +61,7 @@ export const DeployStep1: FC<DeployStep1Props> = ({
           <Label className={labelClassName}>Instance Name:</Label>
           <Input
             id="instanceName"
+            autoFocus
             isControlled
             inputClassName="placeholder:text-mono-80 dark:placeholder:text-mono-120 h-10"
             placeholder="Enter instance name"
