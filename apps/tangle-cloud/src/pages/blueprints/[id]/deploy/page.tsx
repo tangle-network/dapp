@@ -1,10 +1,8 @@
 import { createElement, FC, useMemo, useState } from 'react';
-import InfoSidebar from '../../../../components/InfoSidebar';
 import {
   Button,
   ErrorFallback,
   SkeletonLoader,
-  Typography,
 } from '@tangle-network/ui-components';
 import { DeployStep1 } from './DeploySteps/DeployStep1';
 import { useForm } from 'react-hook-form';
@@ -18,10 +16,11 @@ import { twMerge } from 'tailwind-merge';
 import { ArrowRightIcon } from '@radix-ui/react-icons';
 import { useParams } from 'react-router';
 import useBlueprintDetails from '@tangle-network/tangle-shared-ui/data/restake/useBlueprintDetails';
+import { DeployStep2 } from './DeploySteps/DeployStep2';
 
 const DeployPage: FC = () => {
   const { id } = useParams();
-  const [step, setStep] = useState(0);
+  const [step, setStep] = useState(1);
   const {
     result: blueprintResult,
     isLoading: isBlueprintLoading,
@@ -51,6 +50,10 @@ const DeployPage: FC = () => {
         component: DeployStep1,
         props: commonProps,
       },
+      {
+        component: DeployStep2,
+        props: commonProps,
+      },
     ],
     [errors, setValue, watch, blueprintResult?.details],
   );
@@ -68,15 +71,7 @@ const DeployPage: FC = () => {
 
   if (isBlueprintLoading) {
     return (
-      <div className="space-y-5">
-        <SkeletonLoader className="min-h-64" />
-
-        <Typography variant="h4" fw="bold">
-          Blueprint details
-        </Typography>
-
-        <SkeletonLoader className="min-h-52" />
-      </div>
+      <SkeletonLoader className="min-h-64" />
     );
   } else if (blueprintError) {
     return <ErrorFallback title={blueprintError.name} />;
@@ -87,23 +82,7 @@ const DeployPage: FC = () => {
 
   return (
     <>
-      <div className="flex flex-1 min-h-0">
-        <div className="flex w-full">
-          <InfoSidebar>
-            <Typography variant="h5">Instance Settings</Typography>
-
-            <Typography
-              variant="body1"
-              className="text-mono-120 dark:text-mono-100"
-            >
-              Register to run Blueprints and start earning as you secure and
-              execute service instances.
-            </Typography>
-          </InfoSidebar>
-
-          <div className="flex flex-col flex-1">{StepComponent}</div>
-        </div>
-      </div>
+      {StepComponent}
 
       <div className="absolute w-[calc(100%-5rem)]">
         <div
