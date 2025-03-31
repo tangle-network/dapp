@@ -12878,12 +12878,21 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@storybook/preview-api@npm:8.6.3, @storybook/preview-api@npm:^8.6.3":
+"@storybook/preview-api@npm:8.6.3":
   version: 8.6.3
   resolution: "@storybook/preview-api@npm:8.6.3"
   peerDependencies:
     storybook: ^8.2.0 || ^8.3.0-0 || ^8.4.0-0 || ^8.5.0-0 || ^8.6.0-0
   checksum: 10c0/9e4d19d414fe6e9f987812bfe6e3ecec12645df8319f7cc7efab5f86adc166123d1067e90a8428e0041b47e36d8568682085b1090f2a430c69259b7205b10073
+  languageName: node
+  linkType: hard
+
+"@storybook/preview-api@npm:^8.6.3":
+  version: 8.6.11
+  resolution: "@storybook/preview-api@npm:8.6.11"
+  peerDependencies:
+    storybook: ^8.2.0 || ^8.3.0-0 || ^8.4.0-0 || ^8.5.0-0 || ^8.6.0-0
+  checksum: 10c0/f6e9fde1eb65337ed3edd2cd23bd9affa56dc4807efff6f13bbe62e00e2698327c5697b96119a743cd386c76e29b7945e89cf67cda0f69da69f0dc944bd79697
   languageName: node
   linkType: hard
 
