@@ -12761,11 +12761,11 @@ __metadata:
   linkType: hard
 
 "@storybook/channels@npm:^8.6.3":
-  version: 8.6.3
-  resolution: "@storybook/channels@npm:8.6.3"
+  version: 8.6.11
+  resolution: "@storybook/channels@npm:8.6.11"
   peerDependencies:
     storybook: ^8.2.0 || ^8.3.0-0 || ^8.4.0-0 || ^8.5.0-0 || ^8.6.0-0
-  checksum: 10c0/aa20b25bec7bb1ef346a4128fb8bf9f38578bd666f3dd6624a51bf2c9f56a88b1f3c71aa9f580b72b2ead9d0414424f043f69c7045cc6221ac08c3ee130b752f
+  checksum: 10c0/591325500a327d4cd2892831b1376bc93a95c8ad78cbcdd1e8f788616c41d520a575f0effcf7259e278d9cdc21e4964cae639033a426f7b2e9ae4a4148fb4ba6
   languageName: node
   linkType: hard
 
