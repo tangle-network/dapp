@@ -9,7 +9,7 @@ export type BaseDeployStepProps = {
   setValue: UseFormSetValue<DeployBlueprintSchema>;
   watch: UseFormWatch<DeployBlueprintSchema>;
   blueprint?: Blueprint;
-}
+};
 
 export type DeployStep1Props = BaseDeployStepProps;
 

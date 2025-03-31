@@ -70,15 +70,13 @@ const DeployPage: FC = () => {
   };
 
   if (isBlueprintLoading) {
-    return (
-      <SkeletonLoader className="min-h-64" />
-    );
+    return <SkeletonLoader className="min-h-64" />;
   } else if (blueprintError) {
     return <ErrorFallback title={blueprintError.name} />;
   } else if (blueprintResult === null) {
     // TODO: Show 404 page
     return null;
-  }  
+  }
 
   return (
     <>

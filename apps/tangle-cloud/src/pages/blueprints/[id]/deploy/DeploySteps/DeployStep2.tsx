@@ -16,7 +16,15 @@ import { FC, useEffect, useMemo, useState } from 'react';
 import { DeployStep2Props, SelectOperatorsTable } from './type';
 import { BLUEPRINT_DEPLOY_STEPS } from '../../../../../utils/validations/deployBlueprint';
 import useRestakeOperatorMap from '@tangle-network/tangle-shared-ui/data/restake/useRestakeOperatorMap';
-import { createColumnHelper, useReactTable, getCoreRowModel, getSortedRowModel, getPaginationRowModel, getFilteredRowModel, RowSelectionState } from '@tanstack/react-table';
+import {
+  createColumnHelper,
+  useReactTable,
+  getCoreRowModel,
+  getSortedRowModel,
+  getPaginationRowModel,
+  getFilteredRowModel,
+  RowSelectionState,
+} from '@tanstack/react-table';
 import { sortByAddressOrIdentity } from '@tangle-network/tangle-shared-ui/components/tables/utils';
 import TableCellWrapper from '@tangle-network/tangle-shared-ui/components/tables/TableCellWrapper';
 import { TableVariant } from '@tangle-network/ui-components/components/Table/types';
@@ -46,52 +54,50 @@ export const DeployStep2: FC<DeployStep2Props> = ({
     [operatorMap],
   );
 
-  const { result: operatorServicesMap } = useOperatorsServices(operatorAddresses);
+  const { result: operatorServicesMap } =
+    useOperatorsServices(operatorAddresses);
   const { result: identities } = useIdentities(operatorAddresses);
   const { assets } = useRestakeAssets();
 
   const activeNetwork = useNetworkStore().network;
 
-  const operators = useMemo<SelectOperatorsTable[]>(
-    () => {
-      return Object.entries(operatorMap).map(
-        ([addressString, { delegations, restakersCount }]) => {
-          const address = assertSubstrateAddress(addressString);
+  const operators = useMemo<SelectOperatorsTable[]>(() => {
+    return Object.entries(operatorMap).map(
+      ([addressString, { delegations, restakersCount }]) => {
+        const address = assertSubstrateAddress(addressString);
 
-          return {
-            address,
-            identityName: identities.get(address)?.name ?? undefined,
-            restakersCount,
-            vaultTokensInUsd: delegations.reduce((acc, curr) => {
-              const asset = assets?.get(curr.assetId);
-              if (!asset) {
-                return acc;
-              }
-              const parsed = safeFormatUnits(curr.amount, asset.metadata.decimals);
+        return {
+          address,
+          identityName: identities.get(address)?.name ?? undefined,
+          restakersCount,
+          vaultTokensInUsd: delegations.reduce((acc, curr) => {
+            const asset = assets?.get(curr.assetId);
+            if (!asset) {
+              return acc;
+            }
+            const parsed = safeFormatUnits(
+              curr.amount,
+              asset.metadata.decimals,
+            );
 
-              if (parsed.success === false) {
-                return acc;
-              }
-              const currPrice = Number(parsed.value) * (asset.metadata.priceInUsd ?? 0);
-              return acc + currPrice;
-            }, 0),
-            vaultTokens: assets === null
+            if (parsed.success === false) {
+              return acc;
+            }
+            const currPrice =
+              Number(parsed.value) * (asset.metadata.priceInUsd ?? 0);
+            return acc + currPrice;
+          }, 0),
+          vaultTokens:
+            assets === null
               ? []
               : delegationsToVaultTokens(delegations, assets),
-            instanceCount: operatorServicesMap.get(address)?.length ?? 0,
-            // TODO: using graphql with im online pallet to get uptime of operator
-            uptime: Math.round(Math.random() * 100),
-          }
-        },
-      );
-    },
-    [
-      operatorServicesMap,
-      operatorMap,
-      identities,
-      assets,
-    ],
-  );
+          instanceCount: operatorServicesMap.get(address)?.length ?? 0,
+          // TODO: using graphql with im online pallet to get uptime of operator
+          uptime: Math.round(Math.random() * 100),
+        };
+      },
+    );
+  }, [operatorServicesMap, operatorMap, identities, assets]);
 
   const stepKey = BLUEPRINT_DEPLOY_STEPS[1];
   const errors = globalErrors?.[stepKey];
@@ -101,13 +107,10 @@ export const DeployStep2: FC<DeployStep2Props> = ({
       header: () => 'Identity',
       sortingFn: sortByAddressOrIdentity<SelectOperatorsTable>(),
       cell: (props) => {
-        const {
-          address,
-          identityName: identity,
-        } = props.row.original;
-  
+        const { address, identityName: identity } = props.row.original;
+
         const accountUrl = activeNetwork.createExplorerAccountUrl(address);
-  
+
         return (
           <TableCellWrapper className="pl-3 min-h-fit">
             <div className="flex items-center flex-1 gap-2 pr-3">
@@ -117,24 +120,26 @@ export const DeployStep2: FC<DeployStep2Props> = ({
                 isChecked={props.row.getIsSelected()}
                 onChange={props.row.getToggleSelectedHandler()}
               />
-  
+
               <Avatar
                 sourceVariant="address"
                 value={address}
                 theme="substrate"
                 size="md"
               />
-  
-              <div className='flex items-center'>
-                <Button variant='link' href='#'>
+
+              <div className="flex items-center">
+                <Button variant="link" href="#">
                   {identity ? identity : shortenString(address)}
                 </Button>
-                <KeyValueWithButton keyValue={""} size="sm" />
-                {
-                  accountUrl && (
-                    <ExternalLinkIcon className='ml-1' href={accountUrl} target='_blank'/>
-                  )
-                }
+                <KeyValueWithButton keyValue={''} size="sm" />
+                {accountUrl && (
+                  <ExternalLinkIcon
+                    className="ml-1"
+                    href={accountUrl}
+                    target="_blank"
+                  />
+                )}
               </div>
             </div>
           </TableCellWrapper>
@@ -147,7 +152,9 @@ export const DeployStep2: FC<DeployStep2Props> = ({
       cell: (props) => {
         return (
           <TableCellWrapper className="pl-3 min-h-fit">
-            <Typography variant="body1">{props.row.original.instanceCount}</Typography>
+            <Typography variant="body1">
+              {props.row.original.instanceCount}
+            </Typography>
           </TableCellWrapper>
         );
       },
@@ -157,7 +164,9 @@ export const DeployStep2: FC<DeployStep2Props> = ({
       cell: (props) => {
         return (
           <TableCellWrapper className="pl-3 min-h-fit">
-            <Typography variant="body1">{props.row.original.restakersCount}</Typography>
+            <Typography variant="body1">
+              {props.row.original.restakersCount}
+            </Typography>
           </TableCellWrapper>
         );
       },
@@ -170,10 +179,9 @@ export const DeployStep2: FC<DeployStep2Props> = ({
         const numberOfActiveChips = !props.row.original.uptime
           ? 0
           : Math.round(
-              (props.row.original.uptime * DEFAULT_STACK) /
-                DEFAULT_PERCENTAGE,
+              (props.row.original.uptime * DEFAULT_STACK) / DEFAULT_PERCENTAGE,
             );
-  
+
         const activeColors = Array.from({ length: numberOfActiveChips }).fill(
           EnergyChipColors.GREEN,
         );
@@ -181,7 +189,7 @@ export const DeployStep2: FC<DeployStep2Props> = ({
           length: DEFAULT_STACK - numberOfActiveChips,
         }).fill(EnergyChipColors.GREY);
         const colors = [...activeColors, ...inactiveColors];
-  
+
         return (
           <TableCellWrapper className="pl-3 min-h-fit">
             <EnergyChipStack
@@ -197,28 +205,26 @@ export const DeployStep2: FC<DeployStep2Props> = ({
       cell: (props) => {
         const tokensList = props.row.original.vaultTokens ?? [];
         return (
-          <TableCellWrapper removeRightBorder className='pl-3 min-h-fit'>
-              {tokensList.length > 0 ? (
-                <div className='flex gap-2 items-center'>
-                  <Typography variant="body1">
-                    {
-                      props.row.original.vaultTokensInUsd ? 
-                        `$${props.row.original.vaultTokensInUsd}` :
-                        EMPTY_VALUE_PLACEHOLDER
-                    }
-                  </Typography>
-                  <VaultsDropdown vaultTokens={tokensList} />
-                </div>
-              ) : (
-                <Typography variant="body1">No vaults</Typography>
-              )} 
+          <TableCellWrapper removeRightBorder className="pl-3 min-h-fit">
+            {tokensList.length > 0 ? (
+              <div className="flex gap-2 items-center">
+                <Typography variant="body1">
+                  {props.row.original.vaultTokensInUsd
+                    ? `$${props.row.original.vaultTokensInUsd}`
+                    : EMPTY_VALUE_PLACEHOLDER}
+                </Typography>
+                <VaultsDropdown vaultTokens={tokensList} />
+              </div>
+            ) : (
+              <Typography variant="body1">No vaults</Typography>
+            )}
           </TableCellWrapper>
         );
       },
       sortingFn: (rowA, rowB) => {
         const aVaultTokens = rowA.original.vaultTokensInUsd ?? 0;
         const bVaultTokens = rowB.original.vaultTokensInUsd ?? 0;
-  
+
         return aVaultTokens - bVaultTokens;
       },
     }),
@@ -256,13 +262,20 @@ export const DeployStep2: FC<DeployStep2Props> = ({
 
   useEffect(() => {
     setValue(`${stepKey}.operators`, Object.keys(rowSelection));
-  }, [rowSelection])
+  }, [rowSelection]);
 
   return (
     <div className="w-full">
       <Typography variant="h4">Choose Operators</Typography>
 
-      <Typography variant="body1" fw="normal" className='mt-4 mb-6 !text-mono-100'>After submitting request, operators will need to approve it before the instance deployment begins.</Typography>
+      <Typography
+        variant="body1"
+        fw="normal"
+        className="mt-4 mb-6 !text-mono-100"
+      >
+        After submitting request, operators will need to approve it before the
+        instance deployment begins.
+      </Typography>
 
       <Table
         variant={TableVariant.GLASS_OUTER}
@@ -271,13 +284,9 @@ export const DeployStep2: FC<DeployStep2Props> = ({
         trClassName={'group overflow-hidden'}
       />
 
-      {
-        errors?.operators && (
-          <ErrorMessage>
-            {errors.operators.message}
-          </ErrorMessage>
-        )
-      }
+      {errors?.operators && (
+        <ErrorMessage>{errors.operators.message}</ErrorMessage>
+      )}
     </div>
   );
 };

@@ -8,9 +8,10 @@ import { SubstrateAddress } from '@tangle-network/ui-components/types/address';
 import { assertSubstrateAddress } from '@tangle-network/ui-components';
 
 const useOperatorsServices = (operatorAccounts?: SubstrateAddress[]) => {
-  const operatorSet = useMemo(() =>
-    operatorAccounts ? new Set(operatorAccounts) : null
-  , [operatorAccounts]);
+  const operatorSet = useMemo(
+    () => (operatorAccounts ? new Set(operatorAccounts) : null),
+    [operatorAccounts],
+  );
 
   const { result, ...rest } = useApiRx(
     useCallback(
@@ -21,40 +22,47 @@ const useOperatorsServices = (operatorAccounts?: SubstrateAddress[]) => {
 
         if (!operatorSet) return of(new Map());
 
-        return apiRx.query.services.instances.entries()
-          .pipe(
-            map((servicesVec) => {
-              const servicesMap = new Map<SubstrateAddress, OperatorBlueprint['services']>();
+        return apiRx.query.services.instances.entries().pipe(
+          map((servicesVec) => {
+            const servicesMap = new Map<
+              SubstrateAddress,
+              OperatorBlueprint['services']
+            >();
 
-              operatorSet.forEach(operator => {
-                servicesMap.set(assertSubstrateAddress(operator), []);
-              });
-              
-              servicesVec.forEach(([_, value]) => {
-                if (!value.isSome) return;
-                
-                const primitiveService = toPrimitiveService(value.unwrap());
-                
-                primitiveService.operatorSecurityCommitments.forEach(({ operator }) => {
+            operatorSet.forEach((operator) => {
+              servicesMap.set(assertSubstrateAddress(operator), []);
+            });
+
+            servicesVec.forEach(([_, value]) => {
+              if (!value.isSome) return;
+
+              const primitiveService = toPrimitiveService(value.unwrap());
+
+              primitiveService.operatorSecurityCommitments.forEach(
+                ({ operator }) => {
                   if (operatorSet.has(operator)) {
                     servicesMap.get(operator)?.push(primitiveService);
                   }
-                });
-              });
+                },
+              );
+            });
 
-              for (const [operator, services] of servicesMap) {
-                if (services.length === 0) {
-                  servicesMap.delete(operator);
-                }
+            for (const [operator, services] of servicesMap) {
+              if (services.length === 0) {
+                servicesMap.delete(operator);
               }
+            }
 
-              return servicesMap;
-            }),
-            catchError((error) => {
-              console.error('Error querying services with blueprints by operator:', error);
-              return of(new Map());
-            }),
-          );
+            return servicesMap;
+          }),
+          catchError((error) => {
+            console.error(
+              'Error querying services with blueprints by operator:',
+              error,
+            );
+            return of(new Map());
+          }),
+        );
       },
       [operatorSet],
     ),

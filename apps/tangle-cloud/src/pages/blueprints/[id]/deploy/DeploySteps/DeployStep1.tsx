@@ -50,14 +50,13 @@ export const DeployStep1: FC<DeployStep1Props> = ({
   };
 
   return (
-    <div className='flex'>
+    <div className="flex">
       <div>
-        <InstructionSideCard 
+        <InstructionSideCard
           title="Instance Settings"
           description="Register to run Blueprints and start earning as you secure and execute service instances."
         />
       </div>
-      
 
       <div className="w-full pl-8">
         <InstanceHeader
@@ -119,7 +118,9 @@ export const DeployStep1: FC<DeployStep1Props> = ({
                     id={`permittedCallers-${index}`}
                     value={caller}
                     isControlled
-                    onChange={(nextValue) => handleCallerChange(index, nextValue)}
+                    onChange={(nextValue) =>
+                      handleCallerChange(index, nextValue)
+                    }
                     className="flex-grow"
                     inputClassName="placeholder:text-mono-80 dark:placeholder:text-mono-120 h-10 w-full"
                     placeholder="Enter permitted caller"
