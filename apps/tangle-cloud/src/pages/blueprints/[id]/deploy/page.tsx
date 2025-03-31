@@ -20,7 +20,7 @@ import { DeployStep2 } from './DeploySteps/DeployStep2';
 
 const DeployPage: FC = () => {
   const { id } = useParams();
-  const [step, setStep] = useState(1);
+  const [step, setStep] = useState(0);
   const {
     result: blueprintResult,
     isLoading: isBlueprintLoading,
@@ -78,7 +78,7 @@ const DeployPage: FC = () => {
   } else if (blueprintResult === null) {
     // TODO: Show 404 page
     return null;
-  }
+  }  
 
   return (
     <>
