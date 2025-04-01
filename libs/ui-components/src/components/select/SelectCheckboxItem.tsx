@@ -1,21 +1,10 @@
 import * as SelectPrimitive from '@radix-ui/react-select';
-import { FC, useState } from 'react';
+import { FC } from 'react';
 import { twMerge } from 'tailwind-merge';
-import { Label } from '../Label';
-import { Input, InputProps } from '../Input';
+import type { CheckBoxProps } from '../CheckBox/types';
+import { CheckBox } from '../CheckBox';
 
-const SelectCheckboxItem: FC<
-  {
-    label?: React.ReactNode;
-  } & InputProps
-> = ({ label, ...inputProps }) => {
-  const [selected, setSelected] = useState<string[]>([]);
-
-  const onChange = (value: string) => {
-    setSelected((prev) => [...prev, value]);
-    inputProps.onChange?.(value);
-  };
-
+const SelectCheckboxItem: FC<CheckBoxProps> = ({ children, ...checkboxProps }) => {
   return (
     <div
       className={twMerge(
@@ -25,19 +14,12 @@ const SelectCheckboxItem: FC<
         'data-[disabled]:pointer-events-none data-[disabled]:opacity-50',
       )}
     >
-      <Input
-        type="checkbox"
-        {...inputProps}
-        checked={selected.includes(inputProps.value || '')}
-        onChange={onChange}
-        inputClassName={twMerge(
-          'w-4 h-4 rounded-sm !p-0 !border-mono-80 dark:!border-mono-120',
-          inputProps.className,
-        )}
-      />
-      <Label className="w-full" htmlFor={inputProps.id}>
-        {label}
-      </Label>
+      <CheckBox
+        wrapperClassName='w-full flex items-center gap-2'
+        {...checkboxProps}
+      >
+        {children}
+      </CheckBox>
     </div>
   );
 };

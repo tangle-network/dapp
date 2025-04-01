@@ -11,8 +11,10 @@ import {
   Button,
   ExternalLinkIcon,
   assertSubstrateAddress,
+  Input,
+  fuzzyFilter,
 } from '@tangle-network/ui-components';
-import { FC, useEffect, useMemo, useState } from 'react';
+import { FC, useEffect, useMemo, useState, Children } from 'react';
 import { DeployStep2Props, SelectOperatorsTable } from './type';
 import { BLUEPRINT_DEPLOY_STEPS } from '../../../../../utils/validations/deployBlueprint';
 import useRestakeOperatorMap from '@tangle-network/tangle-shared-ui/data/restake/useRestakeOperatorMap';
@@ -36,14 +38,28 @@ import safeFormatUnits from '@tangle-network/tangle-shared-ui/utils/safeFormatUn
 import useOperatorsServices from '@tangle-network/tangle-shared-ui/data/blueprints/useOperatorsServices';
 import delegationsToVaultTokens from '@tangle-network/tangle-shared-ui/utils/restake/delegationsToVaultTokens';
 import VaultsDropdown from '@tangle-network/tangle-shared-ui/components/tables/Operators/VaultsDropdown';
+import {
+  Select,
+  SelectContent,
+  SelectCheckboxItem,
+  SelectTrigger,
+  SelectValue,
+} from '@tangle-network/ui-components/components/select';
+import { Search } from '@tangle-network/icons';
+import LsTokenIcon from '@tangle-network/tangle-shared-ui/components/LsTokenIcon';
+import { RestakeAsset } from '@tangle-network/tangle-shared-ui/types/restake';
 
 const COLUMN_HELPER = createColumnHelper<SelectOperatorsTable>();
+
+const MAX_ASSET_TO_SHOW = 3;
 
 export const DeployStep2: FC<DeployStep2Props> = ({
   errors: globalErrors,
   setValue,
 }) => {
   const [rowSelection, setRowSelection] = useState<RowSelectionState>({});
+  const [selectedAssets, setSelectedAssets] = useState<RestakeAsset[]>([]);
+  const [searchQuery, setSearchQuery] = useState('');
 
   const { operatorMap } = useRestakeOperatorMap();
   const operatorAddresses = useMemo(
@@ -229,8 +245,19 @@ export const DeployStep2: FC<DeployStep2Props> = ({
       },
     }),
   ];
+  const tableData = useMemo(() => {
+    if (selectedAssets.length === 0) return operators;
+
+    const selectedSymbols = new Set(selectedAssets.map(asset => asset.metadata.symbol));
+    
+    return operators.filter((operator) => 
+      operator.vaultTokens?.some(vaultToken => 
+        selectedSymbols.has(vaultToken.symbol)
+      )
+    );
+  }, [selectedAssets, operators]);
   const table = useReactTable({
-    data: operators,
+    data: tableData,
     columns,
     getCoreRowModel: getCoreRowModel(),
     getSortedRowModel: getSortedRowModel(),
@@ -254,7 +281,17 @@ export const DeployStep2: FC<DeployStep2Props> = ({
     },
     state: {
       rowSelection,
+      columnFilters: [
+        {
+          id: 'address',
+          value: searchQuery,
+        },
+      ],
     },
+    filterFns: {
+      fuzzy: fuzzyFilter,
+    },
+    globalFilterFn: fuzzyFilter,
     getRowId: (row) => row.address,
     autoResetPageIndex: false,
     enableSortingRemoval: false,
@@ -277,6 +314,81 @@ export const DeployStep2: FC<DeployStep2Props> = ({
         instance deployment begins.
       </Typography>
 
+      <div className="flex justify-between mb-3">
+        <div className="w-1/4">
+          <Select>
+            <SelectTrigger>
+              <SelectValue
+                placeholder={
+                  selectedAssets.length > 0
+                  ? (
+                    <div className="flex items-center gap-2">
+                      <div className='flex items-center'>
+                        {Children.toArray(selectedAssets.slice(0, MAX_ASSET_TO_SHOW).map((asset) => (
+                            <div>
+                              <LsTokenIcon
+                                name={asset.metadata.name ?? "TNT"}
+                                size="md"
+                              />
+                            </div>
+                        )))}
+                        {selectedAssets.length > MAX_ASSET_TO_SHOW && (
+                          <Typography variant="body1" className='ml-1'>..</Typography>
+                        )}
+                      </div>
+                      <Typography variant="body1">{selectedAssets.length} asset(s) selected</Typography>
+                    </div>
+                  ) : `Filter by asset(s)`
+                } 
+              />
+            </SelectTrigger>
+
+            <SelectContent>
+              {Children.toArray(
+                Array.from(assets?.values() ?? []).map((asset) => (
+                  <SelectCheckboxItem
+                  onChange={(e) => {
+                    if (e.target.checked) {
+                      setSelectedAssets([...selectedAssets, asset]);
+                    } else {
+                      setSelectedAssets(selectedAssets.filter(asset => asset.id !== asset.id));
+                    }
+                  }}
+                  id={asset.id}
+                  isChecked={selectedAssets.some(selectedAsset => selectedAsset.id === asset.id)}
+                  spacingClassName="ml-0"
+                >
+                  <div className="flex items-center gap-2">
+                    <LsTokenIcon
+                      name={asset.metadata.name ?? "TNT"}
+                      size="md"
+                      
+                    />
+                  <Typography variant="body1">
+                      {asset.metadata.name ?? "TNT"}
+                    </Typography>
+                  </div>
+                </SelectCheckboxItem>
+                ))
+              )}
+            </SelectContent>
+          </Select>
+        </div>
+
+        <div className="w-1/4">
+          <Input
+            debounceTime={300}
+            isControlled
+            leftIcon={<Search />}
+            id="search"
+            placeholder="Search operator"
+            size="md"
+            value={searchQuery}
+            onChange={setSearchQuery}
+            inputClassName="py-1"
+          />
+        </div>
+      </div>
       <Table
         variant={TableVariant.GLASS_OUTER}
         isPaginated
