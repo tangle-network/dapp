@@ -4,6 +4,7 @@ import * as Dialog from '@radix-ui/react-dialog';
 import { forwardRef } from 'react';
 import { twMerge } from 'tailwind-merge';
 import { ModalContentProps } from './types';
+import useIsBreakpoint from '../../hooks/useIsBreakpoint';
 
 const getTailwindSizeClass = (size: ModalContentProps['size']) => {
   switch (size) {
@@ -28,6 +29,8 @@ export const ModalContent = forwardRef<HTMLDivElement, ModalContentProps>(
     },
     ref,
   ) => {
+    const isMobile = useIsBreakpoint('md', true);
+
     return (
       <Dialog.Portal>
         <Dialog.Overlay
@@ -58,6 +61,8 @@ export const ModalContent = forwardRef<HTMLDivElement, ModalContentProps>(
             'data-[state=open]:slide-in-from-bottom-full md:data-[state=open]:fade-in-0 md:data-[state=open]:zoom-in-0',
             'data-[state=closed]:slide-out-to-bottom-full md:data-[state=closed]:fade-out-0 md:data-[state=closed]:zoom-out-0',
             'max-md:bottom-0 max-md:rounded-b-none md:top-1/2 md:-translate-y-1/2',
+            'max-h-[calc(100vh-66px-8rem)] overflow-y-scroll',
+            isMobile && 'max-h-[calc(100vh-66px-8rem)] overflow-y-scroll',
             getTailwindSizeClass(size),
             className,
             'max-sm:max-w-full',

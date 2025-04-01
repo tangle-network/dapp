@@ -66,6 +66,17 @@ const Page = () => {
     navigate(PagePath.BLUEPRINTS_REGISTRATION_REVIEW);
   };
 
+  const handlePricingFormSubmit = (formResult: PricingFormResult) => {
+    sessionStorage.setItem(
+      SessionStorageKey.BLUEPRINT_REGISTRATION_PARAMS,
+      JSON.stringify({
+        pricingSettings: formResult,
+        selectedBlueprints: [result.details],
+      }),
+    );
+    navigate(PagePath.BLUEPRINTS_REGISTRATION_REVIEW);
+  };
+
   return (
     <div className="space-y-10">
       <BlueprintHeader

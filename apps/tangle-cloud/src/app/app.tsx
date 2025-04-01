@@ -68,6 +68,15 @@ function App() {
               </RegistrationLayout>
             }
           />
+
+          <Route
+            path={PagePath.BLUEPRINTS_REGISTRATION_REVIEW}
+            element={
+              <RegistrationLayout>
+                <RegistrationReview />
+              </RegistrationLayout>
+            }
+          />
         </Routes>
       </Layout>
     </Providers>
