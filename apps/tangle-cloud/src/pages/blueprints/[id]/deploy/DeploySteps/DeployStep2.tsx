@@ -248,12 +248,14 @@ export const DeployStep2: FC<DeployStep2Props> = ({
   const tableData = useMemo(() => {
     if (selectedAssets.length === 0) return operators;
 
-    const selectedSymbols = new Set(selectedAssets.map(asset => asset.metadata.symbol));
-    
-    return operators.filter((operator) => 
-      operator.vaultTokens?.some(vaultToken => 
-        selectedSymbols.has(vaultToken.symbol)
-      )
+    const selectedSymbols = new Set(
+      selectedAssets.map((asset) => asset.metadata.symbol),
+    );
+
+    return operators.filter((operator) =>
+      operator.vaultTokens?.some((vaultToken) =>
+        selectedSymbols.has(vaultToken.symbol),
+      ),
     );
   }, [selectedAssets, operators]);
   const table = useReactTable({
@@ -320,26 +322,35 @@ export const DeployStep2: FC<DeployStep2Props> = ({
             <SelectTrigger>
               <SelectValue
                 placeholder={
-                  selectedAssets.length > 0
-                  ? (
+                  selectedAssets.length > 0 ? (
                     <div className="flex items-center gap-2">
-                      <div className='flex items-center'>
-                        {Children.toArray(selectedAssets.slice(0, MAX_ASSET_TO_SHOW).map((asset) => (
-                            <div>
-                              <LsTokenIcon
-                                name={asset.metadata.name ?? "TNT"}
-                                size="md"
-                              />
-                            </div>
-                        )))}
+                      <div className="flex items-center">
+                        {Children.toArray(
+                          selectedAssets
+                            .slice(0, MAX_ASSET_TO_SHOW)
+                            .map((asset) => (
+                              <div>
+                                <LsTokenIcon
+                                  name={asset.metadata.name ?? 'TNT'}
+                                  size="md"
+                                />
+                              </div>
+                            )),
+                        )}
                         {selectedAssets.length > MAX_ASSET_TO_SHOW && (
-                          <Typography variant="body1" className='ml-1'>..</Typography>
+                          <Typography variant="body1" className="ml-1">
+                            ..
+                          </Typography>
                         )}
                       </div>
-                      <Typography variant="body1">{selectedAssets.length} asset(s) selected</Typography>
+                      <Typography variant="body1">
+                        {selectedAssets.length} asset(s) selected
+                      </Typography>
                     </div>
-                  ) : `Filter by asset(s)`
-                } 
+                  ) : (
+                    `Filter by asset(s)`
+                  )
+                }
               />
             </SelectTrigger>
 
@@ -347,29 +358,34 @@ export const DeployStep2: FC<DeployStep2Props> = ({
               {Children.toArray(
                 Array.from(assets?.values() ?? []).map((asset) => (
                   <SelectCheckboxItem
-                  onChange={(e) => {
-                    if (e.target.checked) {
-                      setSelectedAssets([...selectedAssets, asset]);
-                    } else {
-                      setSelectedAssets(selectedAssets.filter(asset => asset.id !== asset.id));
-                    }
-                  }}
-                  id={asset.id}
-                  isChecked={selectedAssets.some(selectedAsset => selectedAsset.id === asset.id)}
-                  spacingClassName="ml-0"
-                >
-                  <div className="flex items-center gap-2">
-                    <LsTokenIcon
-                      name={asset.metadata.name ?? "TNT"}
-                      size="md"
-                      
-                    />
-                  <Typography variant="body1">
-                      {asset.metadata.name ?? "TNT"}
-                    </Typography>
-                  </div>
-                </SelectCheckboxItem>
-                ))
+                    onChange={(e) => {
+                      if (e.target.checked) {
+                        setSelectedAssets([...selectedAssets, asset]);
+                      } else {
+                        setSelectedAssets(
+                          selectedAssets.filter(
+                            (asset) => asset.id !== asset.id,
+                          ),
+                        );
+                      }
+                    }}
+                    id={asset.id}
+                    isChecked={selectedAssets.some(
+                      (selectedAsset) => selectedAsset.id === asset.id,
+                    )}
+                    spacingClassName="ml-0"
+                  >
+                    <div className="flex items-center gap-2">
+                      <LsTokenIcon
+                        name={asset.metadata.name ?? 'TNT'}
+                        size="md"
+                      />
+                      <Typography variant="body1">
+                        {asset.metadata.name ?? 'TNT'}
+                      </Typography>
+                    </div>
+                  </SelectCheckboxItem>
+                )),
               )}
             </SelectContent>
           </Select>

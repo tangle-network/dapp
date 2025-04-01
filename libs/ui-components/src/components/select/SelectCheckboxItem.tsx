@@ -4,7 +4,10 @@ import { twMerge } from 'tailwind-merge';
 import type { CheckBoxProps } from '../CheckBox/types';
 import { CheckBox } from '../CheckBox';
 
-const SelectCheckboxItem: FC<CheckBoxProps> = ({ children, ...checkboxProps }) => {
+const SelectCheckboxItem: FC<CheckBoxProps> = ({
+  children,
+  ...checkboxProps
+}) => {
   return (
     <div
       className={twMerge(
@@ -15,7 +18,7 @@ const SelectCheckboxItem: FC<CheckBoxProps> = ({ children, ...checkboxProps }) =
       )}
     >
       <CheckBox
-        wrapperClassName='w-full flex items-center gap-2'
+        wrapperClassName="w-full flex items-center gap-2"
         {...checkboxProps}
       >
         {children}

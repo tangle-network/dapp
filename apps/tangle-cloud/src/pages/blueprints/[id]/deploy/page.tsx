@@ -17,6 +17,7 @@ import { ArrowRightIcon } from '@radix-ui/react-icons';
 import { useParams } from 'react-router';
 import useBlueprintDetails from '@tangle-network/tangle-shared-ui/data/restake/useBlueprintDetails';
 import { DeployStep2 } from './DeploySteps/DeployStep2';
+import { ArrowLeft } from '@tangle-network/icons';
 
 const DeployPage: FC = () => {
   const { id } = useParams();
@@ -86,12 +87,15 @@ const DeployPage: FC = () => {
         <div
           className={twMerge(
             'p-6 rounded-xl mt-4',
-            'flex items-center justify-end',
+            'flex items-center justify-end gap-5',
             "bg-[url('/static/assets/blueprints/selected-blueprint-panel.png')]",
           )}
         >
-          {step > 1 && (
-            <Button rightIcon={<ArrowRightIcon width={24} height={24} />}>
+          {step > 0 && (
+            <Button
+              variant="secondary"
+              leftIcon={<ArrowLeft width={24} height={24} />}
+            >
               Back
             </Button>
           )}
