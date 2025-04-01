@@ -49,4 +49,3 @@ export type RegisterServiceFormFields = {
   registrationArgs: Array<PrimitiveField[]>;
   amounts: number[];
 };
-

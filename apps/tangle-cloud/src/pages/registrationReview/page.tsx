@@ -127,7 +127,7 @@ export default function RegistrationReview() {
           id: blueprintId,
           registrationParams: blueprintRegistrationParams,
         }) => {
-          const params = registrationParams[blueprintId];          
+          const params = registrationParams[blueprintId];
           return blueprintRegistrationParams.map((param, index) => {
             return {
               [param as string]: params[index],
@@ -160,79 +160,81 @@ export default function RegistrationReview() {
           value={accordionState}
           onValueChange={setAccordionState}
         >
-          {Children.toArray(blueprints.map((blueprint) => (
-            <AccordionItem
-              className="p-6 border-2 border-mono-80 dark:border-mono-160"
-              value={blueprint.id}
-            >
-              <AccordionButtonBase asChild>
-                <div className="flex w-full gap-1">
-                  {blueprint.imgUrl && (
-                    <img
-                      src={blueprint.imgUrl}
-                      width={48}
-                      height={48}
-                      alt={blueprint.name}
-                      className="flex-shrink-0 bg-center rounded-full"
-                    />
-                  )}
+          {Children.toArray(
+            blueprints.map((blueprint) => (
+              <AccordionItem
+                className="p-6 border-2 border-mono-80 dark:border-mono-160"
+                value={blueprint.id}
+              >
+                <AccordionButtonBase asChild>
+                  <div className="flex w-full gap-1">
+                    {blueprint.imgUrl && (
+                      <img
+                        src={blueprint.imgUrl}
+                        width={48}
+                        height={48}
+                        alt={blueprint.name}
+                        className="flex-shrink-0 bg-center rounded-full"
+                      />
+                    )}
 
-                  <div className="space-y-1 grow">
-                    <Typography variant="body1" fw="bold">
-                      {blueprint.name}
-                    </Typography>
+                    <div className="space-y-1 grow">
+                      <Typography variant="body1" fw="bold">
+                        {blueprint.name}
+                      </Typography>
 
-                    <Typography
-                      variant="body3"
-                      className="text-mono-120 dark:text-mono-100"
-                    >
-                      {blueprint.author}
-                    </Typography>
+                      <Typography
+                        variant="body3"
+                        className="text-mono-120 dark:text-mono-100"
+                      >
+                        {blueprint.author}
+                      </Typography>
+                    </div>
+
+                    <div className="flex items-center gap-2">
+                      <Dropdown>
+                        <DropdownMenuTrigger asChild>
+                          <IconButton
+                            onClick={(event) => event.stopPropagation()}
+                          >
+                            <ThreeDotsVerticalIcon />
+                          </IconButton>
+                        </DropdownMenuTrigger>
+
+                        <DropdownBody size="sm">
+                          <DropdownMenuItem
+                            onClick={(event) => event.stopPropagation()}
+                          >
+                            Remove
+                          </DropdownMenuItem>
+                        </DropdownBody>
+                      </Dropdown>
+                    </div>
                   </div>
+                </AccordionButtonBase>
 
-                  <div className="flex items-center gap-2">
-                    <Dropdown>
-                      <DropdownMenuTrigger asChild>
-                        <IconButton
-                          onClick={(event) => event.stopPropagation()}
-                        >
-                          <ThreeDotsVerticalIcon />
-                        </IconButton>
-                      </DropdownMenuTrigger>
-
-                      <DropdownBody size="sm">
-                        <DropdownMenuItem
-                          onClick={(event) => event.stopPropagation()}
-                        >
-                          Remove
-                        </DropdownMenuItem>
-                      </DropdownBody>
-                    </Dropdown>
-                  </div>
-                </div>
-              </AccordionButtonBase>
-
-              <AccordionContent>
-                <ParamsForm
-                  params={[...blueprint.registrationParams, 'Bool']}
-                  tokenSymbol={network.tokenSymbol}
-                  amountValue={amount[blueprint.id] ?? ''}
-                  paramsValue={registrationParams[blueprint.id] ?? {}}
-                  onSave={(params, amount) => {
-                    setRegistrationParams((prev) => ({
-                      ...prev,
-                      [blueprint.id]: params,
-                    }));
-                    setAmount((prev) => ({
-                      ...prev,
-                      [blueprint.id]: amount,
-                    }));
-                    setAccordionState('');
-                  }}
-                />
-              </AccordionContent>
-            </AccordionItem>
-          )))}
+                <AccordionContent>
+                  <ParamsForm
+                    params={[...blueprint.registrationParams, 'Bool']}
+                    tokenSymbol={network.tokenSymbol}
+                    amountValue={amount[blueprint.id] ?? ''}
+                    paramsValue={registrationParams[blueprint.id] ?? {}}
+                    onSave={(params, amount) => {
+                      setRegistrationParams((prev) => ({
+                        ...prev,
+                        [blueprint.id]: params,
+                      }));
+                      setAmount((prev) => ({
+                        ...prev,
+                        [blueprint.id]: amount,
+                      }));
+                      setAccordionState('');
+                    }}
+                  />
+                </AccordionContent>
+              </AccordionItem>
+            )),
+          )}
         </Accordion>
 
         <div className="grid gap-4 sm:grid-cols-2">

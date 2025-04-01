@@ -38,7 +38,7 @@ const Page = () => {
   const { role } = useRoleStore();
   const [rowSelection, setRowSelection] = useState<RowSelectionState>({});
   const [isPricingModalOpen, setIsPricingModalOpen] = useState(false);
-  const { blueprints, isLoading, error } = useBlueprintListing();  
+  const { blueprints, isLoading, error } = useBlueprintListing();
 
   const isOperator = useMemo(() => role === Role.OPERATOR, [role]);
 
@@ -63,7 +63,7 @@ const Page = () => {
       navigate(PagePath.BLUEPRINTS_REGISTRATION_REVIEW);
     },
     [selectedBlueprints],
-  );  
+  );
 
   return (
     <div className="space-y-5">

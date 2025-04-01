@@ -19,7 +19,7 @@ const toPrimitiveDataType = (fieldData: PrimitiveField[]): PrimitiveField[] => {
 
     switch (key) {
       case 'Bool':
-        return [key, value === "true"];
+        return [key, value === 'true'];
       // TODO: Handle other types
       default:
         return [key, value];
@@ -27,7 +27,7 @@ const toPrimitiveDataType = (fieldData: PrimitiveField[]): PrimitiveField[] => {
   });
 
   return Object.fromEntries(data);
-}
+};
 
 const useServiceRegisterTx = () => {
   const substrateTxFactory: SubstrateTxFactory<Context> = useCallback(

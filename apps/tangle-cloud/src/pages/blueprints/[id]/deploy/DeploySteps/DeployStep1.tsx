@@ -23,26 +23,41 @@ export const DeployStep1: FC<DeployStep1Props> = ({
   const values = watch(stepKey);
 
   const errors = globalErrors?.[stepKey];
-  const permittedCallers = useMemo(() => values?.permittedCallers || [], [values]);
+  const permittedCallers = useMemo(
+    () => values?.permittedCallers || [],
+    [values],
+  );
 
-  const handleCallerChange = useCallback((index: number, value: string) => {
-    const newCallers = [...permittedCallers];
-    newCallers[index] = value;
-    setValue(`${stepKey}.permittedCallers`, newCallers);
-  }, [permittedCallers, setValue, stepKey]);
+  const handleCallerChange = useCallback(
+    (index: number, value: string) => {
+      const newCallers = [...permittedCallers];
+      newCallers[index] = value;
+      setValue(`${stepKey}.permittedCallers`, newCallers);
+    },
+    [permittedCallers, setValue, stepKey],
+  );
 
-  const handleRemoveCaller = useCallback((index: number) => {
-    const newCallers = permittedCallers.filter((_, idx) => idx !== index);
-    setValue(`${stepKey}.permittedCallers`, newCallers);
-  }, [permittedCallers, setValue, stepKey]);
+  const handleRemoveCaller = useCallback(
+    (index: number) => {
+      const newCallers = permittedCallers.filter((_, idx) => idx !== index);
+      setValue(`${stepKey}.permittedCallers`, newCallers);
+    },
+    [permittedCallers, setValue, stepKey],
+  );
 
-  const handleInstanceNameChange = useCallback((value: string) => {
-    setValue(`${stepKey}.instanceName`, value);
-  }, [setValue, stepKey]);
+  const handleInstanceNameChange = useCallback(
+    (value: string) => {
+      setValue(`${stepKey}.instanceName`, value);
+    },
+    [setValue, stepKey],
+  );
 
-  const handleInstanceDurationChange = useCallback((value: string) => {
-    setValue(`${stepKey}.instanceDuration`, parseInt(value));
-  }, [setValue, stepKey]);
+  const handleInstanceDurationChange = useCallback(
+    (value: string) => {
+      setValue(`${stepKey}.instanceDuration`, parseInt(value));
+    },
+    [setValue, stepKey],
+  );
 
   return (
     <div className="w-full pl-8">
@@ -129,10 +144,7 @@ export const DeployStep1: FC<DeployStep1Props> = ({
 
         <Button
           onClick={() => {
-            setValue(`${stepKey}.permittedCallers`, [
-              ...permittedCallers,
-              '',
-            ]);
+            setValue(`${stepKey}.permittedCallers`, [...permittedCallers, '']);
           }}
           className="mt-4"
         >
