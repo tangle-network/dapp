@@ -9,8 +9,25 @@ import {
 import { RegisterServiceFormFields } from '../../types';
 import { TANGLE_TOKEN_DECIMALS } from '@tangle-network/dapp-config';
 import { parseUnits } from 'viem';
+import { PrimitiveField } from '@tangle-network/tangle-shared-ui/types/blueprint';
 
 type Context = RegisterServiceFormFields;
+
+const toPrimitiveDataType = (fieldData: PrimitiveField[]): PrimitiveField[] => {
+  const data = fieldData.map((field) => {
+    const [key, value] = Object.entries(field)[0];
+
+    switch (key) {
+      case 'Bool':
+        return [key, value === "true"];
+      // TODO: Handle other types
+      default:
+        return [key, value];
+    }
+  });
+
+  return Object.fromEntries(data);
+}
 
 const useServiceRegisterTx = () => {
   const substrateTxFactory: SubstrateTxFactory<Context> = useCallback(
@@ -27,7 +44,7 @@ const useServiceRegisterTx = () => {
         return api.tx.services.register(
           blueprintId,
           preferences[idx],
-          registrationArgs[idx],
+          toPrimitiveDataType(registrationArgs[idx]),
           parseUnits(amounts[idx].toString(), decimals),
         );
       });

@@ -6,14 +6,10 @@ import {
 } from '@tangle-network/ui-components';
 import InstanceHeader from '../../../../../components/InstanceHeader';
 import ErrorMessage from '../../../../../components/ErrorMessage';
-import { Children, FC } from 'react';
+import { Children, FC, useMemo, useCallback } from 'react';
 import { DeployStep1Props } from './type';
 import { TrashIcon } from '@radix-ui/react-icons';
 import { BLUEPRINT_DEPLOY_STEPS } from '../../../../../utils/validations/deployBlueprint';
-import {
-  SubstrateAddress,
-  EvmAddress,
-} from '@tangle-network/ui-components/types/address';
 
 export const DeployStep1: FC<DeployStep1Props> = ({
   errors: globalErrors,
@@ -27,26 +23,26 @@ export const DeployStep1: FC<DeployStep1Props> = ({
   const values = watch(stepKey);
 
   const errors = globalErrors?.[stepKey];
-  const permittedCallers = values?.permittedCallers || [];
+  const permittedCallers = useMemo(() => values?.permittedCallers || [], [values]);
 
-  const handleCallerChange = (index: number, value: string) => {
+  const handleCallerChange = useCallback((index: number, value: string) => {
     const newCallers = [...permittedCallers];
-    newCallers[index] = value as SubstrateAddress | EvmAddress;
+    newCallers[index] = value;
     setValue(`${stepKey}.permittedCallers`, newCallers);
-  };
+  }, [permittedCallers, setValue, stepKey]);
 
-  const handleRemoveCaller = (index: number) => {
+  const handleRemoveCaller = useCallback((index: number) => {
     const newCallers = permittedCallers.filter((_, idx) => idx !== index);
     setValue(`${stepKey}.permittedCallers`, newCallers);
-  };
+  }, [permittedCallers, setValue, stepKey]);
 
-  const handleInstanceNameChange = (value: string) => {
+  const handleInstanceNameChange = useCallback((value: string) => {
     setValue(`${stepKey}.instanceName`, value);
-  };
+  }, [setValue, stepKey]);
 
-  const handleInstanceDurationChange = (value: string) => {
+  const handleInstanceDurationChange = useCallback((value: string) => {
     setValue(`${stepKey}.instanceDuration`, parseInt(value));
-  };
+  }, [setValue, stepKey]);
 
   return (
     <div className="w-full pl-8">
@@ -135,7 +131,7 @@ export const DeployStep1: FC<DeployStep1Props> = ({
           onClick={() => {
             setValue(`${stepKey}.permittedCallers`, [
               ...permittedCallers,
-              '' as SubstrateAddress | EvmAddress,
+              '',
             ]);
           }}
           className="mt-4"

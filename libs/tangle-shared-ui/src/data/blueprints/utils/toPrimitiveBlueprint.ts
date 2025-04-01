@@ -220,7 +220,7 @@ export function toPrimitiveOperatingSystem(os: OperatingSystem) {
 
 export function toPrimitiveFieldType(
   fieldType: TanglePrimitivesServicesFieldFieldType,
-): PrimitiveFieldType {
+): PrimitiveFieldType {  
   switch (fieldType.type) {
     case 'Optional':
       return {

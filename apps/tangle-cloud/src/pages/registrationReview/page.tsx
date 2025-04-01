@@ -17,7 +17,7 @@ import {
   DropdownMenuItem,
 } from '@tangle-network/ui-components/components/Dropdown';
 import { Typography } from '@tangle-network/ui-components/typography/Typography';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { Children, useCallback, useEffect, useMemo, useState } from 'react';
 import {
   PricingFormResult,
   PricingType,
@@ -25,7 +25,7 @@ import {
 import ParamsForm from './RegistrationForm/ParamsForm';
 import { SessionStorageKey } from '../../constants';
 import { useNavigate } from 'react-router';
-import { PagePath } from '../../types';
+import { PagePath, RegisterServiceFormFields } from '../../types';
 import useServiceRegisterTx from '../../data/services/useServiceRegisterTx';
 import { toTanglePrimitiveEcdsaKey } from '../../utils';
 import useSubstrateAddress from '@tangle-network/tangle-shared-ui/hooks/useSubstrateAddress';
@@ -127,14 +127,14 @@ export default function RegistrationReview() {
           id: blueprintId,
           registrationParams: blueprintRegistrationParams,
         }) => {
-          const params = registrationParams[blueprintId];
-          return blueprintRegistrationParams.map((_, index) => {
+          const params = registrationParams[blueprintId];          
+          return blueprintRegistrationParams.map((param, index) => {
             return {
-              [blueprintRegistrationParams[index] as any]: params[index],
+              [param as string]: params[index],
             };
           });
         },
-      ),
+      ) as RegisterServiceFormFields['registrationArgs'],
       amounts: blueprints.map(({ id }) => amount[id]),
     });
   }, [activeAccount, pricingSettings, registrationParams, registerTx]);
@@ -160,10 +160,9 @@ export default function RegistrationReview() {
           value={accordionState}
           onValueChange={setAccordionState}
         >
-          {blueprints.map((blueprint) => (
+          {Children.toArray(blueprints.map((blueprint) => (
             <AccordionItem
               className="p-6 border-2 border-mono-80 dark:border-mono-160"
-              key={blueprint.id}
               value={blueprint.id}
             >
               <AccordionButtonBase asChild>
@@ -215,7 +214,7 @@ export default function RegistrationReview() {
 
               <AccordionContent>
                 <ParamsForm
-                  params={blueprint.registrationParams}
+                  params={[...blueprint.registrationParams, 'Bool']}
                   tokenSymbol={network.tokenSymbol}
                   amountValue={amount[blueprint.id] ?? ''}
                   paramsValue={registrationParams[blueprint.id] ?? {}}
@@ -233,7 +232,7 @@ export default function RegistrationReview() {
                 />
               </AccordionContent>
             </AccordionItem>
-          ))}
+          )))}
         </Accordion>
 
         <div className="grid gap-4 sm:grid-cols-2">

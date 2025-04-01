@@ -117,8 +117,8 @@ const FieldTypeInput: React.FC<FieldTypeInputProps> = ({
               </SelectTrigger>
 
               <SelectContent>
-                <SelectItem value="True">True</SelectItem>
-                <SelectItem value="False">False</SelectItem>
+                <SelectItem value={"true"}>True</SelectItem>
+                <SelectItem value={"false"}>False</SelectItem>
               </SelectContent>
             </Select>
           </div>
