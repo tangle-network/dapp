@@ -32,7 +32,7 @@ const isArray = (
 
 const isList = (
   type: PrimitiveFieldType,
-): type is { List: PrimitiveFieldType[] } =>
+): type is { List: PrimitiveFieldType } =>
   typeof type === 'object' && 'List' in type;
 
 const isStruct = (

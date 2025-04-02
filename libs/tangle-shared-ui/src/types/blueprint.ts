@@ -3,7 +3,7 @@ import { TanglePrimitivesServicesFieldFieldType } from '@polkadot/types/lookup';
 export type PrimitiveFieldType =
   | { Optional: PrimitiveFieldType }
   | { Array: [number, PrimitiveFieldType] }
-  | { List: PrimitiveFieldType[] }
+  | { List: PrimitiveFieldType }
   | { Struct: PrimitiveFieldType[] }
   | Exclude<
       TanglePrimitivesServicesFieldFieldType['type'],
