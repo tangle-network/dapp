@@ -4,6 +4,7 @@ import { Search } from '@tangle-network/icons/Search';
 import TableStatus from '@tangle-network/tangle-shared-ui/components/tables/TableStatus';
 import {
   Input,
+  isSubstrateAddress,
   KeyValueWithButton,
   Table,
   Tooltip,
@@ -11,6 +12,7 @@ import {
   TooltipTrigger,
   toSubstrateAddress,
   Typography,
+  ValidatorIdentity,
 } from '@tangle-network/ui-components';
 import { Card } from '@tangle-network/ui-components/components/Card';
 import {
@@ -78,6 +80,26 @@ const COLUMNS = [
     header: () => <HeaderCell title="Account" />,
     cell: (props) => {
       const address = props.getValue();
+
+      if (isSubstrateAddress(address)) {
+        return (
+          <ValidatorIdentity
+            address={address}
+            subContent={
+              <Typography
+                variant="body2"
+                className="text-gray-500 dark:text-gray-400"
+              >
+                Created{' '}
+                {formatDisplayBlockNumber(
+                  props.row.original.createdAt,
+                  props.row.original.createdAtTimestamp,
+                )}
+              </Typography>
+            }
+          />
+        );
+      }
 
       return (
         <div className="space-y-2">

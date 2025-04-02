@@ -2,8 +2,10 @@ import { CircleIcon } from '@radix-ui/react-icons';
 import { CheckboxCircleFill } from '@tangle-network/icons';
 import {
   Card,
+  isSubstrateAddress,
   KeyValueWithButton,
   Typography,
+  ValidatorIdentity,
 } from '@tangle-network/ui-components';
 import { Row } from '@tanstack/react-table';
 import React from 'react';
@@ -74,7 +76,13 @@ export const ExpandedInfo: React.FC<ExpandedInfoProps> = ({ row }) => {
         <Section title="Account Details">
           <DetailRow
             label="Account ID"
-            value={<KeyValueWithButton size="sm" keyValue={address} />}
+            value={
+              isSubstrateAddress(address) ? (
+                <ValidatorIdentity address={address} />
+              ) : (
+                <KeyValueWithButton size="sm" keyValue={address} />
+              )
+            }
           />
           <DetailRow
             label="Created"
