@@ -24,13 +24,15 @@ import {
   useReactTable,
 } from '@tanstack/react-table';
 import cx from 'classnames';
-import { useCallback, useMemo, useState } from 'react';
+import find from 'lodash/find';
+import findLast from 'lodash/findLast';
+import { useMemo, useState } from 'react';
 import { twMerge } from 'tailwind-merge';
 import { useLatestFinalizedBlock } from '../../../queries';
 import { SyncProgressIndicator } from '../../indexingProgress';
 import { BadgeEnum, BLOCK_COUNT_IN_SEVEN_DAYS } from '../constants';
 import { useLeaderboard } from '../queries';
-import { Account, PointsHistory, TestnetTaskCompletion } from '../types';
+import { Account, TestnetTaskCompletion } from '../types';
 import { formatDisplayBlockNumber } from '../utils/formatDisplayBlockNumber';
 import { BadgesCell } from './BadgesCell';
 import { ExpandedInfo } from './ExpandedInfo';
@@ -64,7 +66,7 @@ const RankIcon = ({ rank }: { rank: number }) => {
   }
 };
 
-const getColumns = (latestBlockNumber?: number | null) => [
+const COLUMNS = [
   COLUMN_HELPER.accessor('rank', {
     id: COLUMN_ID.RANK,
     header: () => <HeaderCell title="Rank" />,
@@ -152,10 +154,7 @@ const getColumns = (latestBlockNumber?: number | null) => [
         <div className="flex items-baseline gap-4">
           <TrendIndicator pointsHistory={row.original.pointsHistory} />
 
-          <MiniSparkline
-            pointsHistory={row.original.pointsHistory}
-            latestBlockNumber={latestBlockNumber}
-          />
+          <MiniSparkline pointsHistory={row.original.pointsHistory} />
         </div>
       );
     },
@@ -222,11 +221,6 @@ export const LeaderboardTable = () => {
     accountQuery,
   );
 
-  const columns = useMemo(
-    () => getColumns(latestBlock?.testnetBlock),
-    [latestBlock?.testnetBlock],
-  );
-
   const data = useMemo<Account[]>(() => {
     if (!leaderboardData?.nodes) {
       return [] as Account[];
@@ -265,23 +259,45 @@ export const LeaderboardTable = () => {
           return null;
         }
 
-        const lastSevenDays = record.snapshots.nodes.reduce((acc, snapshot) => {
-          if (!snapshot) {
-            return acc;
+        const firstSnapshot = find(record.snapshots.nodes, (snapshot) => {
+          return snapshot !== null;
+        });
+
+        const lastSnapshot = findLast(record.snapshots.nodes, (snapshot) => {
+          return snapshot !== null;
+        });
+
+        const lastSevenDays = (() => {
+          if (!firstSnapshot || !lastSnapshot) {
+            return ZERO_BIG_INT;
           }
 
-          const snapshotPointsResult = toBigInt(snapshot.totalPoints);
+          const firstSnapshotTotalPointsResult = toBigInt(
+            firstSnapshot.totalPoints,
+          );
 
-          if (snapshotPointsResult.error !== null) {
+          const lastSnapshotTotalPointsResult = toBigInt(
+            lastSnapshot.totalPoints,
+          );
+
+          if (
+            firstSnapshotTotalPointsResult.error !== null ||
+            lastSnapshotTotalPointsResult.error !== null
+          ) {
             console.error(
               'Failed to convert snapshot.totalPoints to bigint',
-              snapshot,
+              firstSnapshot,
+              lastSnapshot,
             );
-            return acc;
+
+            return ZERO_BIG_INT;
           }
 
-          return acc + snapshotPointsResult.result;
-        }, ZERO_BIG_INT);
+          return (
+            lastSnapshotTotalPointsResult.result -
+            firstSnapshotTotalPointsResult.result
+          );
+        })();
 
         const badges: BadgeEnum[] = [];
 
@@ -340,12 +356,12 @@ export const LeaderboardTable = () => {
           badges.push(BadgeEnum.JOB_CALLER);
         }
 
-        const isNominator =
-          Boolean(
-            record.testnetTaskCompletions.nodes.find(
-              (node) => node?.hasNominated,
-            ),
-          ) ?? false;
+        const isValidator = record.isValidator ?? false;
+        if (isValidator) {
+          badges.push(BadgeEnum.VALIDATOR);
+        }
+
+        const isNominator = record.isNominator ?? false;
         if (isNominator) {
           badges.push(BadgeEnum.NOMINATOR);
         }
@@ -431,21 +447,7 @@ export const LeaderboardTable = () => {
                 points: snapshotPointsResult.result,
               };
             })
-            .filter((item) => item !== null)
-            .sort((a, b) => a.blockNumber - b.blockNumber)
-            // Cumulate points for each day
-            .reduce((acc, item, index) => {
-              if (index === 0) {
-                return [item];
-              }
-
-              const previousItem = acc[acc.length - 1];
-
-              return [
-                ...acc,
-                { ...item, points: previousItem.points + item.points },
-              ];
-            }, [] as PointsHistory[]),
+            .filter((item) => item !== null),
           createdAt: record.createdAt,
           createdAtTimestamp: record.createdAtTimestamp,
           lastUpdatedAt: record.lastUpdatedAt,
@@ -457,7 +459,7 @@ export const LeaderboardTable = () => {
 
   const table = useReactTable({
     data,
-    columns,
+    columns: COLUMNS,
     manualPagination: true,
     enableSorting: false,
     state: {

@@ -32,6 +32,8 @@ const LeaderboardQueryDocument = graphql(/* GraphQL */ `
         totalPoints
         totalMainnetPoints
         totalTestnetPoints
+        isValidator
+        isNominator
         delegators(first: 1) {
           nodes {
             deposits {
@@ -71,7 +73,7 @@ const LeaderboardQueryDocument = graphql(/* GraphQL */ `
           }
         }
         snapshots(
-          orderBy: BLOCK_NUMBER_DESC
+          orderBy: BLOCK_NUMBER_ASC
           filter: {
             blockNumber: { greaterThanOrEqualTo: $blockNumberSevenDaysAgo }
           }
