@@ -43,7 +43,8 @@ export const MiniSparkline = ({
       },
       Array.from({ length: 7 }, () => ZERO_BIG_INT),
     )
-    .slice();
+    .slice()
+    .reverse();
 
   const max = cumulatedPoints.reduce((acc, curr) => {
     if (curr > acc) {
