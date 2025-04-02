@@ -1,7 +1,7 @@
 import type { PrimitiveFieldType } from '@tangle-network/tangle-shared-ui/types/blueprint';
 import Button from '@tangle-network/ui-components/components/buttons/Button';
 import set from 'lodash/set';
-import { useCallback, useState } from 'react';
+import { Children, useCallback, useState } from 'react';
 import FieldTypeInput from './FieldTypeInput';
 import { Label } from '@tangle-network/ui-components/components/Label';
 import { TextField } from '@tangle-network/ui-components';
@@ -49,10 +49,9 @@ const ParamsForm = ({
   return (
     <div>
       <div className="grid gap-4 p-0 mt-3 sm:grid-cols-2 mb-5">
-        {params.map((param, idx) => {
+        {Children.toArray(params.map((param, idx) => {          
           return (
             <FieldTypeInput
-              key={`ParamsForm-${idx}`}
               label={`Param ${idx + 1}`}
               fieldType={param}
               id={idx.toString()}
@@ -61,7 +60,7 @@ const ParamsForm = ({
               tabIndex={idx + 1}
             />
           );
-        })}
+        }))}
 
         <div className="space-y-2">
           <Label>Enter the value of {tokenSymbol} to register</Label>

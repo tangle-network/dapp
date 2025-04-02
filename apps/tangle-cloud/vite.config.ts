@@ -54,6 +54,12 @@ export default defineConfig({
         global: 'globalThis',
       },
     },
+    /**
+     * Always got error "The file does not exist 
+     * at "../tangle_network/dapp/node_modules/.vite/apps/tangle-cloud/deps/chunk-GNT2ENND.js?v=ed64ff7e" which is in the optimize deps directory.
+     * The dependency might be incompatible with the dep optimizer. Try adding it to `optimizeDeps.exclude`."
+     */
+    exclude: ['node_modules/.vite/apps/tangle-cloud/deps']
   },
   test: {
     watch: false,
