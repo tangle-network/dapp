@@ -1,4 +1,9 @@
+import {
+  Evaluate,
+  SafeNestedType,
+} from '@tangle-network/dapp-types/utils/types';
 import { graphql } from '@tangle-network/tangle-shared-ui/graphql';
+import { LeaderboardTableDocumentQuery } from '@tangle-network/tangle-shared-ui/graphql/graphql';
 import { executeGraphQL } from '@tangle-network/tangle-shared-ui/utils/executeGraphQL';
 import { useQuery } from '@tanstack/react-query';
 import { LEADERBOARD_QUERY_KEY } from '../../../constants/query';
@@ -10,6 +15,10 @@ export const TEAM_ACCOUNTS = [
   '5FjXDSpyiLbST4PpYzX399vymhHYhxKCP8BNhLBEmLfrUYNv',
   '5Dqf9U5dgQ9GLqdfaxXGjpZf9af1sCV8UrnpRgqJPbe3wCwX',
 ] as const;
+
+export type LeaderboardAccountNodeType = Evaluate<
+  SafeNestedType<LeaderboardTableDocumentQuery, ['accounts', 'nodes', number]>
+>;
 
 const LeaderboardQueryDocument = graphql(/* GraphQL */ `
   query LeaderboardTableDocument(

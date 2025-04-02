@@ -1,5 +1,4 @@
 import { CrossCircledIcon } from '@radix-ui/react-icons';
-import { ZERO_BIG_INT } from '@tangle-network/dapp-config';
 import { Spinner } from '@tangle-network/icons';
 import { Search } from '@tangle-network/icons/Search';
 import TableStatus from '@tangle-network/tangle-shared-ui/components/tables/TableStatus';
@@ -7,7 +6,6 @@ import {
   Input,
   KeyValueWithButton,
   Table,
-  toBigInt,
   Tooltip,
   TooltipBody,
   TooltipTrigger,
@@ -24,16 +22,15 @@ import {
   useReactTable,
 } from '@tanstack/react-table';
 import cx from 'classnames';
-import find from 'lodash/find';
-import findLast from 'lodash/findLast';
 import { useMemo, useState } from 'react';
 import { twMerge } from 'tailwind-merge';
 import { useLatestFinalizedBlock } from '../../../queries';
 import { SyncProgressIndicator } from '../../indexingProgress';
-import { BadgeEnum, BLOCK_COUNT_IN_SEVEN_DAYS } from '../constants';
+import { BLOCK_COUNT_IN_SEVEN_DAYS } from '../constants';
 import { useLeaderboard } from '../queries';
-import { Account, TestnetTaskCompletion } from '../types';
+import { Account } from '../types';
 import { formatDisplayBlockNumber } from '../utils/formatDisplayBlockNumber';
+import { processLeaderboardRecord } from '../utils/processLeaderboardRecord';
 import { BadgesCell } from './BadgesCell';
 import { ExpandedInfo } from './ExpandedInfo';
 import { HeaderCell } from './HeaderCell';
@@ -227,233 +224,14 @@ export const LeaderboardTable = () => {
     }
 
     return leaderboardData.nodes
-      .map((record, index) => {
-        if (!record) {
-          return null;
-        }
-
-        const totalPointsResult = toBigInt(record.totalPoints);
-
-        if (totalPointsResult.error !== null) {
-          console.error('Failed to convert totalPoints to bigint', record);
-          return null;
-        }
-
-        const totalMainnetPointsResult = toBigInt(record.totalMainnetPoints);
-
-        if (totalMainnetPointsResult.error !== null) {
-          console.error(
-            'Failed to convert totalMainnetPoints to bigint',
-            record,
-          );
-          return null;
-        }
-
-        const totalTestnetPointsResult = toBigInt(record.totalTestnetPoints);
-
-        if (totalTestnetPointsResult.error !== null) {
-          console.error(
-            'Failed to convert totalTestnetPoints to bigint',
-            record,
-          );
-          return null;
-        }
-
-        const firstSnapshot = find(record.snapshots.nodes, (snapshot) => {
-          return snapshot !== null;
-        });
-
-        const lastSnapshot = findLast(record.snapshots.nodes, (snapshot) => {
-          return snapshot !== null;
-        });
-
-        const lastSevenDays = (() => {
-          if (!firstSnapshot || !lastSnapshot) {
-            return ZERO_BIG_INT;
-          }
-
-          const firstSnapshotTotalPointsResult = toBigInt(
-            firstSnapshot.totalPoints,
-          );
-
-          const lastSnapshotTotalPointsResult = toBigInt(
-            lastSnapshot.totalPoints,
-          );
-
-          if (
-            firstSnapshotTotalPointsResult.error !== null ||
-            lastSnapshotTotalPointsResult.error !== null
-          ) {
-            console.error(
-              'Failed to convert snapshot.totalPoints to bigint',
-              firstSnapshot,
-              lastSnapshot,
-            );
-
-            return ZERO_BIG_INT;
-          }
-
-          return (
-            lastSnapshotTotalPointsResult.result -
-            firstSnapshotTotalPointsResult.result
-          );
-        })();
-
-        const badges: BadgeEnum[] = [];
-
-        const hasDeposited = record.delegators?.nodes.find(
-          (node) => node?.deposits.totalCount && node.deposits.totalCount > 0,
-        );
-
-        if (hasDeposited) {
-          badges.push(BadgeEnum.RESTAKE_DEPOSITOR);
-        }
-
-        const hasDelegated = record.delegators?.nodes.find(
-          (node) =>
-            node?.delegations.totalCount && node.delegations.totalCount > 0,
-        );
-
-        if (hasDelegated) {
-          badges.push(BadgeEnum.RESTAKE_DELEGATOR);
-        }
-
-        const hasLiquidStaked = record.lstPoolMembers.totalCount > 0;
-        if (hasLiquidStaked) {
-          badges.push(BadgeEnum.LIQUID_STAKER);
-        }
-
-        const hasNativeRestaked = record.delegators?.nodes.find(
-          (node) =>
-            node?.delegations.nodes &&
-            node.delegations.nodes.find(
-              (delegation) =>
-                delegation?.assetId && delegation.assetId === `${ZERO_BIG_INT}`,
-            ),
-        );
-
-        if (hasNativeRestaked) {
-          badges.push(BadgeEnum.NATIVE_RESTAKER);
-        }
-
-        const isOperator = record.operators.totalCount > 0;
-        if (isOperator) {
-          badges.push(BadgeEnum.OPERATOR);
-        }
-
-        const isBlueprintOwner = record.blueprints.totalCount > 0;
-        if (isBlueprintOwner) {
-          badges.push(BadgeEnum.BLUEPRINT_OWNER);
-        }
-
-        const isServiceProvider = record.services.totalCount > 0;
-        if (isServiceProvider) {
-          badges.push(BadgeEnum.SERVICE_PROVIDER);
-        }
-
-        const isJobCaller = record.jobCalls.totalCount > 0;
-        if (isJobCaller) {
-          badges.push(BadgeEnum.JOB_CALLER);
-        }
-
-        const isValidator = record.isValidator ?? false;
-        if (isValidator) {
-          badges.push(BadgeEnum.VALIDATOR);
-        }
-
-        const isNominator = record.isNominator ?? false;
-        if (isNominator) {
-          badges.push(BadgeEnum.NOMINATOR);
-        }
-
-        const depositCount = record.delegators?.nodes.reduce((acc, node) => {
-          if (!node) {
-            return acc;
-          }
-
-          return acc + node.deposits.totalCount;
-        }, 0);
-
-        const delegationCount = record.delegators?.nodes.reduce((acc, node) => {
-          if (!node) {
-            return acc;
-          }
-
-          return acc + node.delegations.totalCount;
-        }, 0);
-
-        const testnetTask = record.testnetTaskCompletions.nodes.find(
-          (node) => node !== null,
-        );
-
-        const testnetTaskCompletion:
-          | Omit<TestnetTaskCompletion, 'completionPercentage'>
-          | undefined = testnetTask
-          ? {
-              depositedThreeAssets: !!testnetTask.hasDepositedThreeAssets,
-              delegatedAssets: !!testnetTask.hasDelegatedAssets,
-              liquidStaked: !!testnetTask.hasLiquidStaked,
-              nominated: !!testnetTask.hasNominated,
-              nativeRestaked: !!testnetTask.hasNativeRestaked,
-              bonus: !!testnetTask.hasBonusPoints,
-            }
-          : undefined;
-
-        return {
-          id: record.id,
-          rank: pagination.pageIndex * pagination.pageSize + index + 1,
-          totalPoints: totalPointsResult.result,
-          pointsBreakdown: {
-            mainnet: totalMainnetPointsResult.result,
-            testnet: totalTestnetPointsResult.result,
-            lastSevenDays,
-          },
-          badges,
-          activity: {
-            blueprintCount: record.blueprints.totalCount,
-            depositCount,
-            delegationCount,
-            liquidStakingPoolCount: record.lstPoolMembers.totalCount,
-            serviceCount: record.services.totalCount,
-            jobCallCount: record.jobCalls.totalCount,
-          },
-          testnetTaskCompletion: testnetTaskCompletion
-            ? {
-                ...testnetTaskCompletion,
-                completionPercentage:
-                  (Object.values(testnetTaskCompletion).filter(Boolean).length /
-                    Object.keys(testnetTaskCompletion).length) *
-                  100,
-              }
-            : undefined,
-          pointsHistory: record.snapshots.nodes
-            .map((snapshot) => {
-              if (!snapshot) {
-                return null;
-              }
-
-              const snapshotPointsResult = toBigInt(snapshot.totalPoints);
-
-              if (snapshotPointsResult.error !== null) {
-                console.error(
-                  'Failed to convert snapshot.totalPoints to bigint',
-                  snapshot,
-                );
-                return null;
-              }
-
-              return {
-                blockNumber: snapshot.blockNumber,
-                points: snapshotPointsResult.result,
-              };
-            })
-            .filter((item) => item !== null),
-          createdAt: record.createdAt,
-          createdAtTimestamp: record.createdAtTimestamp,
-          lastUpdatedAt: record.lastUpdatedAt,
-          lastUpdatedAtTimestamp: record.lastUpdatedAtTimestamp,
-        } satisfies Account;
-      })
+      .map((record, index) =>
+        processLeaderboardRecord(
+          record,
+          index,
+          pagination.pageIndex,
+          pagination.pageSize,
+        ),
+      )
       .filter((record) => record !== null);
   }, [leaderboardData?.nodes, pagination.pageIndex, pagination.pageSize]);
 
