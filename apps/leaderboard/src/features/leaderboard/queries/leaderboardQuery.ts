@@ -8,7 +8,7 @@ import { executeGraphQL } from '@tangle-network/tangle-shared-ui/utils/executeGr
 import { useQuery } from '@tanstack/react-query';
 import { LEADERBOARD_QUERY_KEY } from '../../../constants/query';
 
-export const TEAM_ACCOUNTS = [
+const TEAM_ACCOUNTS = [
   '5CJFrNyjRahyb7kcn8HH3LPJRaZf2aq6jguk5kx5V5Aa6rXh',
   '5H9Ahg236YVtzKnsPp5kokY8qswWNoY65dWrjS3znxVwkaue',
   '5E4ixheSH99qbZxXYSLt242bc933rYJ3XrXFt34d2ViVkFZY',
@@ -113,7 +113,7 @@ const fetcher = async (
     first,
     offset,
     blockNumberSevenDaysAgo,
-    teamAccounts: [],
+    teamAccounts: TEAM_ACCOUNTS.slice(),
     accountIdQuery,
   });
   return result.data.accounts;
