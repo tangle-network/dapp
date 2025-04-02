@@ -2,6 +2,7 @@ import { CrossCircledIcon } from '@radix-ui/react-icons';
 import { Spinner } from '@tangle-network/icons';
 import { Search } from '@tangle-network/icons/Search';
 import TableStatus from '@tangle-network/tangle-shared-ui/components/tables/TableStatus';
+import { NetworkType } from '@tangle-network/tangle-shared-ui/graphql/graphql';
 import {
   Input,
   isSubstrateAddress,
@@ -30,6 +31,7 @@ import { useLatestFinalizedBlock } from '../../../queries';
 import { SyncProgressIndicator } from '../../indexingProgress';
 import { BLOCK_COUNT_IN_SEVEN_DAYS } from '../constants';
 import { useLeaderboard } from '../queries';
+import { useAccountIdentities } from '../queries/accountIdentitiesQuery';
 import { Account } from '../types';
 import { createAccountExplorerUrl } from '../utils/createAccountExplorerUrl';
 import { formatDisplayBlockNumber } from '../utils/formatDisplayBlockNumber';
@@ -82,11 +84,13 @@ const COLUMNS = [
     cell: (props) => {
       const address = props.getValue();
       const accountNetwork = props.row.original.network;
+      const identity = props.row.original.identity;
 
       if (isSubstrateAddress(address)) {
         return (
           <ValidatorIdentity
             address={address}
+            identityName={identity?.name}
             accountExplorerUrl={createAccountExplorerUrl(
               address,
               accountNetwork,
@@ -200,16 +204,15 @@ export const LeaderboardTable = () => {
   });
 
   // TODO: Add network tabs when we support both mainnet and testnet
-  /* const [networkTab, setNetworkTab] = useState<'all' | 'mainnet' | 'testnet'>(
-    'all',
-  ); */
+  const [networkTab] = useState<NetworkType.Testnet>(NetworkType.Testnet);
 
   const {
     data: latestBlock,
     isPending: isLatestBlockPending,
     error: latestBlockError,
-  } = useLatestFinalizedBlock('testnet');
+  } = useLatestFinalizedBlock(networkTab);
 
+  // TODO: Figure out how to handle this for both mainnet and testnet
   const blockNumberSevenDaysAgo = useMemo(() => {
     if (isLatestBlockPending || latestBlockError) {
       return -1;
@@ -246,6 +249,19 @@ export const LeaderboardTable = () => {
     accountQuery,
   );
 
+  const { data: accountIdentities } = useAccountIdentities(
+    useMemo(
+      () =>
+        leaderboardData?.nodes
+          .filter((node) => node !== undefined && node !== null)
+          .map((node) => ({
+            id: node.id,
+            network: networkTab,
+          })) ?? [],
+      [leaderboardData?.nodes, networkTab],
+    ),
+  );
+
   const data = useMemo<Account[]>(() => {
     if (!leaderboardData?.nodes) {
       return [] as Account[];
@@ -258,10 +274,16 @@ export const LeaderboardTable = () => {
           index,
           pagination.pageIndex,
           pagination.pageSize,
+          record ? accountIdentities?.get(record.id) : null,
         ),
       )
       .filter((record) => record !== null);
-  }, [leaderboardData?.nodes, pagination.pageIndex, pagination.pageSize]);
+  }, [
+    leaderboardData?.nodes,
+    pagination.pageIndex,
+    pagination.pageSize,
+    accountIdentities,
+  ]);
 
   const table = useReactTable({
     data,

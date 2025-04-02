@@ -1,12 +1,9 @@
-import {
-  TANGLE_MAINNET_WS_RPC_ENDPOINT,
-  TANGLE_TESTNET_WS_RPC_ENDPOINT,
-} from '@tangle-network/dapp-config';
+import { NetworkType } from '@tangle-network/tangle-shared-ui/graphql/graphql';
 import { getApiPromise } from '@tangle-network/tangle-shared-ui/utils/polkadot/api';
 import { useQuery } from '@tanstack/react-query';
 import { LATEST_FINALIZED_BLOCK_QUERY_KEY } from '../constants/query';
-
-type Network = 'all' | 'mainnet' | 'testnet';
+import { Network } from '../types';
+import { getRpcEndpoint } from '../utils/getRpcEndpoint';
 
 type UseLatestFinalizedBlockResult<TNetwork extends Network> =
   TNetwork extends 'all'
@@ -14,12 +11,12 @@ type UseLatestFinalizedBlockResult<TNetwork extends Network> =
         mainnetBlock: number;
         testnetBlock: number;
       }
-    : TNetwork extends 'testnet'
+    : TNetwork extends NetworkType.Testnet
       ? {
           mainnetBlock: never;
           testnetBlock: number;
         }
-      : TNetwork extends 'mainnet'
+      : TNetwork extends NetworkType.Mainnet
         ? {
             mainnetBlock: number;
             testnetBlock: never;
@@ -29,10 +26,7 @@ type UseLatestFinalizedBlockResult<TNetwork extends Network> =
 const fetcher = async <TNetwork extends Network>(
   network: TNetwork,
 ): Promise<UseLatestFinalizedBlockResult<TNetwork>> => {
-  const testnetRpc =
-    network === 'testnet' ? TANGLE_TESTNET_WS_RPC_ENDPOINT : undefined;
-  const mainnetRpc =
-    network === 'mainnet' ? TANGLE_MAINNET_WS_RPC_ENDPOINT : undefined;
+  const { testnetRpc, mainnetRpc } = getRpcEndpoint(network);
 
   const getBlockNumber = async (rpc: string) => {
     const api = await getApiPromise(rpc);

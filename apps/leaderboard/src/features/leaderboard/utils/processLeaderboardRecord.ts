@@ -1,11 +1,12 @@
 import { ZERO_BIG_INT } from '@tangle-network/dapp-config/constants';
+import { NetworkType } from '@tangle-network/tangle-shared-ui/graphql/graphql';
+import type { IdentityType } from '@tangle-network/tangle-shared-ui/utils/polkadot/identity';
 import { toBigInt } from '@tangle-network/ui-components';
 import find from 'lodash/find';
 import findLast from 'lodash/findLast';
 import { BadgeEnum } from '../constants';
 import type { LeaderboardAccountNodeType } from '../queries';
 import { Account, TestnetTaskCompletion } from '../types';
-import { NetworkType } from '@tangle-network/tangle-shared-ui/graphql/graphql';
 
 const calculateLastSevenDaysPoints = (record: LeaderboardAccountNodeType) => {
   const firstSnapshot = find(record.snapshots.nodes, (snapshot) => {
@@ -199,6 +200,7 @@ export const processLeaderboardRecord = (
   index: number,
   pageIndex: number,
   pageSize: number,
+  identity: IdentityType | null | undefined,
 ): Account | null => {
   if (!record) {
     return null;
@@ -248,6 +250,7 @@ export const processLeaderboardRecord = (
     createdAtTimestamp: record.createdAtTimestamp,
     lastUpdatedAt: record.lastUpdatedAt,
     lastUpdatedAtTimestamp: record.lastUpdatedAtTimestamp,
+    identity,
     // TODO: This should fetch from the API once the server supports multi-chain
     network: NetworkType.Testnet,
   } satisfies Account;
