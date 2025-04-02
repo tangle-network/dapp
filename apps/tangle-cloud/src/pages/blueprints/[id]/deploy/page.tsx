@@ -70,6 +70,12 @@ const DeployPage: FC = () => {
     }
   };
 
+  const onBackStep = () => {
+    if (step > 0) {
+      setStep(step - 1);
+    }
+  };
+
   if (isBlueprintLoading) {
     return <SkeletonLoader className="min-h-64" />;
   } else if (blueprintError) {
@@ -94,6 +100,7 @@ const DeployPage: FC = () => {
           {step > 0 && (
             <Button
               variant="secondary"
+              onClick={onBackStep}
               leftIcon={<ArrowLeft width={24} height={24} />}
             >
               Back

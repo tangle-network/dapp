@@ -1,14 +1,12 @@
 import {
   Typography,
   Avatar,
-  shortenString,
   KeyValueWithButton,
   Table,
   EnergyChipColors,
   EnergyChipStack,
   EMPTY_VALUE_PLACEHOLDER,
   CheckBox,
-  Button,
   ExternalLinkIcon,
   assertSubstrateAddress,
   Input,
@@ -47,7 +45,6 @@ import {
 } from '@tangle-network/ui-components/components/select';
 import { Search } from '@tangle-network/icons';
 import LsTokenIcon from '@tangle-network/tangle-shared-ui/components/LsTokenIcon';
-import { RestakeAsset } from '@tangle-network/tangle-shared-ui/types/restake';
 
 const COLUMN_HELPER = createColumnHelper<SelectOperatorsTable>();
 
@@ -56,9 +53,9 @@ const MAX_ASSET_TO_SHOW = 3;
 export const DeployStep2: FC<DeployStep2Props> = ({
   errors: globalErrors,
   setValue,
+  watch,
 }) => {
   const [rowSelection, setRowSelection] = useState<RowSelectionState>({});
-  const [selectedAssets, setSelectedAssets] = useState<RestakeAsset[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
 
   const { operatorMap } = useRestakeOperatorMap();
@@ -118,6 +115,16 @@ export const DeployStep2: FC<DeployStep2Props> = ({
   const stepKey = BLUEPRINT_DEPLOY_STEPS[1];
   const errors = globalErrors?.[stepKey];
 
+  const selectedAssets = useMemo(() => {
+    if (!assets || !watch(`${stepKey}.assets`)) {
+      return [];
+    }
+
+    return Array.from(assets.values()).filter((asset) =>
+      watch(`${stepKey}.assets`).includes(asset.id),
+    );
+  }, [watch(`${stepKey}.assets`), assets]);
+
   const columns = [
     COLUMN_HELPER.accessor('address', {
       header: () => 'Identity',
@@ -145,10 +152,7 @@ export const DeployStep2: FC<DeployStep2Props> = ({
               />
 
               <div className="flex items-center">
-                <Button variant="link" href="#">
-                  {identity ? identity : shortenString(address)}
-                </Button>
-                <KeyValueWithButton keyValue={''} size="sm" />
+                <KeyValueWithButton keyValue={identity ? identity : address} size="sm" />
                 {accountUrl && (
                   <ExternalLinkIcon
                     className="ml-1"
@@ -359,12 +363,17 @@ export const DeployStep2: FC<DeployStep2Props> = ({
                 Array.from(assets?.values() ?? []).map((asset) => (
                   <SelectCheckboxItem
                     onChange={(e) => {
+                      const prevValue = watch(`${stepKey}.assets`) ?? [];
+                      
                       if (e.target.checked) {
-                        setSelectedAssets([...selectedAssets, asset]);
+                        setValue(`${stepKey}.assets`, [
+                          ...prevValue,
+                          asset.id,
+                        ]);
                       } else {
-                        setSelectedAssets(
-                          selectedAssets.filter(
-                            (asset) => asset.id !== asset.id,
+                        setValue(`${stepKey}.assets`,
+                          prevValue.filter(
+                            (assetId) => assetId !== asset.id,
                           ),
                         );
                       }
@@ -389,6 +398,10 @@ export const DeployStep2: FC<DeployStep2Props> = ({
               )}
             </SelectContent>
           </Select>
+
+          {globalErrors?.[stepKey]?.assets && (
+            <ErrorMessage>{globalErrors[stepKey].assets.message}</ErrorMessage>
+          )}
         </div>
 
         <div className="w-1/4">
