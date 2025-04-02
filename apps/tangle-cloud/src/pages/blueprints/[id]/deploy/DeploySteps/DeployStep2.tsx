@@ -152,7 +152,10 @@ export const DeployStep2: FC<DeployStep2Props> = ({
               />
 
               <div className="flex items-center">
-                <KeyValueWithButton keyValue={identity ? identity : address} size="sm" />
+                <KeyValueWithButton
+                  keyValue={identity ? identity : address}
+                  size="sm"
+                />
                 {accountUrl && (
                   <ExternalLinkIcon
                     className="ml-1"
@@ -364,17 +367,13 @@ export const DeployStep2: FC<DeployStep2Props> = ({
                   <SelectCheckboxItem
                     onChange={(e) => {
                       const prevValue = watch(`${stepKey}.assets`) ?? [];
-                      
+
                       if (e.target.checked) {
-                        setValue(`${stepKey}.assets`, [
-                          ...prevValue,
-                          asset.id,
-                        ]);
+                        setValue(`${stepKey}.assets`, [...prevValue, asset.id]);
                       } else {
-                        setValue(`${stepKey}.assets`,
-                          prevValue.filter(
-                            (assetId) => assetId !== asset.id,
-                          ),
+                        setValue(
+                          `${stepKey}.assets`,
+                          prevValue.filter((assetId) => assetId !== asset.id),
                         );
                       }
                     }}
