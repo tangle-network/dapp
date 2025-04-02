@@ -6,9 +6,14 @@ import useBlueprintDetails from '@tangle-network/tangle-shared-ui/data/restake/u
 import { ErrorFallback } from '@tangle-network/ui-components/components/ErrorFallback';
 import SkeletonLoader from '@tangle-network/ui-components/components/SkeletonLoader';
 import { Typography } from '@tangle-network/ui-components/typography/Typography';
-import { PropsWithChildren } from 'react';
-import { Link, useParams } from 'react-router';
-import { TangleDAppPagePath } from '../../../types';
+import { PropsWithChildren, useState } from 'react';
+import { Link, useParams, useNavigate } from 'react-router-dom';
+import { PagePath, TangleDAppPagePath } from '../../../types';
+import useRoleStore from '../../../stores/roleStore';
+import PricingModal from '../PricingModal';
+import { Modal } from '@tangle-network/ui-components';
+import { PricingFormResult } from '../PricingModal/types';
+import { SessionStorageKey } from '../../../constants';
 
 const RestakeOperatorAction = ({
   children,
@@ -25,8 +30,11 @@ const RestakeOperatorAction = ({
 };
 
 const Page = () => {
+  const navigate = useNavigate();
   const { id } = useParams();
   const { result, isLoading, error } = useBlueprintDetails(id);
+  const isOperator = useRoleStore.getState().isOperator();
+  const [isPricingModalOpen, setIsPricingModalOpen] = useState(false);
 
   if (isLoading) {
     return (
@@ -47,9 +55,32 @@ const Page = () => {
     return null;
   }
 
+  const handlePricingFormSubmit = (formResult: PricingFormResult) => {
+    sessionStorage.setItem(
+      SessionStorageKey.BLUEPRINT_REGISTRATION_PARAMS,
+      JSON.stringify({
+        pricingSettings: formResult,
+        selectedBlueprints: [result.details],
+      }),
+    );
+    navigate(PagePath.BLUEPRINTS_REGISTRATION_REVIEW);
+  };
+
   return (
     <div className="space-y-10">
-      <BlueprintHeader blueprint={result.details} />
+      <BlueprintHeader
+        blueprint={result.details}
+        actionProps={{
+          children: isOperator ? 'Register' : 'Deploy',
+          onClick: () => {
+            if (isOperator) {
+              setIsPricingModalOpen(true);
+            } else {
+              navigate(PagePath.BLUEPRINTS_DEPLOY.replace(':id', id ?? ''));
+            }
+          },
+        }}
+      />
 
       <div className="space-y-5">
         <Typography variant="h4" fw="bold">
@@ -61,6 +92,14 @@ const Page = () => {
           data={result.operators}
         />
       </div>
+
+      <Modal open={isPricingModalOpen} onOpenChange={setIsPricingModalOpen}>
+        <PricingModal
+          onOpenChange={setIsPricingModalOpen}
+          blueprints={[result.details]}
+          onSubmit={handlePricingFormSubmit}
+        />
+      </Modal>
     </div>
   );
 };

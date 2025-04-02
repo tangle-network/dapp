@@ -5,19 +5,23 @@ import convertAddressToBytes32 from '@tangle-network/ui-components/utils/convert
 import { useCallback } from 'react';
 
 import { TxName } from '../../constants';
-import { PrecompileAddress } from '../../constants/evmPrecompiles';
-import useAgnosticTx from '../../hooks/useAgnosticTx';
-import { AbiBatchCall, EvmTxFactory } from '../../hooks/useEvmPrecompileCall';
-import { SubstrateTxFactory } from '../../hooks/useSubstrateTx';
-import optimizeTxBatch from '../../utils/optimizeTxBatch';
+import { PrecompileAddress } from '@tangle-network/tangle-shared-ui/constants/evmPrecompiles';
+import useAgnosticTx from '@tangle-network/tangle-shared-ui/hooks/useAgnosticTx';
+import {
+  AbiBatchCall,
+  EvmTxFactory,
+} from '@tangle-network/tangle-shared-ui/hooks/useEvmPrecompileCall';
+import { SubstrateTxFactory } from '@tangle-network/tangle-shared-ui/hooks/useSubstrateTx';
+import optimizeTxBatch from '@tangle-network/tangle-shared-ui/utils/optimizeTxBatch';
 import createEvmBatchCallArgs from '../../utils/staking/createEvmBatchCallArgs';
 import createEvmBatchCall from '../../utils/staking/createEvmBatchCall';
 import getEvmPayeeValue from '../../utils/staking/getEvmPayeeValue';
 import getSubstratePayeeValue from '../../utils/staking/getSubstratePayeeValue';
 import { NominationOptionsContext } from './useSetupNominatorTx';
-import BATCH_PRECOMPILE_ABI from '../../abi/batch';
-import STAKING_PRECOMPILE_ABI from '../../abi/staking';
+import BATCH_PRECOMPILE_ABI from '@tangle-network/tangle-shared-ui/abi/batch';
+import STAKING_PRECOMPILE_ABI from '@tangle-network/tangle-shared-ui/abi/staking';
 import enumValueToNumber from '../../utils/enumValueToNumber';
+import { SUCCESS_MESSAGES } from '../../hooks/useTxNotification';
 
 export type Context = Partial<NominationOptionsContext> & {
   nominees: Set<SubstrateAddress>;
@@ -126,6 +130,7 @@ const useUpdateNominatorTx = () => {
     precompileAddress: PrecompileAddress.BATCH,
     substrateTxFactory,
     evmTxFactory,
+    successMessageByTxName: SUCCESS_MESSAGES,
   });
 };
 

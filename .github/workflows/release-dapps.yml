@@ -1,0 +1,96 @@
+name: 'Release dApps 🚀'
+
+on:
+  push:
+    branches:
+      - master
+
+    paths-ignore:
+      - '.github/workflows/**'
+
+  workflow_dispatch:
+
+jobs:
+  pre-ci:
+    runs-on: ubuntu-latest
+    timeout-minutes: 1
+    steps:
+      - name: 'Block Concurrent Executions'
+        uses: softprops/turnstyle@v1
+        with:
+          poll-interval-seconds: 10
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  build-publish:
+    name: Build and Publish
+    needs: pre-ci
+    runs-on: ubuntu-latest
+
+    if: ( !startsWith(github.event.head_commit.message, '[SKIP CI]') &&
+      startsWith(github.event.head_commit.message, '[RELEASE]') &&
+      github.repository == 'tangle-network/dapp' )
+
+    steps:
+      #Check out
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Enable corepack
+        run: |
+          corepack enable
+
+      - name: Setup Node.js environment
+        uses: actions/setup-node@v4.3.0
+        with:
+          node-version: '>=18.12.x'
+          cache: yarn
+
+      #Identify changes
+      - uses: marceloprado/has-changed-path@v1
+        id: changed-leaderboard
+        with:
+          paths: apps/leaderboard/CHANGELOG.md
+
+      - uses: marceloprado/has-changed-path@v1
+        id: changed-tangle-dapp
+        with:
+          paths: apps/tangle-dapp/CHANGELOG.md
+
+      - uses: marceloprado/has-changed-path@v1
+        id: changed-tangle-cloud
+        with:
+          paths: apps/tangle-cloud/CHANGELOG.md
+
+      - name: Install deps
+        run: yarn install
+
+      - name: build
+        # Fix: JavaScript heap out of memory
+        # https://github.com/actions/runner-images/issues/70#issuecomment-1191708172
+        env:
+          NODE_OPTIONS: '--max_old_space_size=4096'
+        run: yarn run build
+
+      # Create github release
+      - name: Release Leaderboard
+        if: steps.changed-leaderboard.outputs.changed == 'true'
+        uses: ./.github/actions/create-dapp-release
+        with:
+          package-path: apps/leaderboard
+          repo-token: ${{ secrets.REPO_TOKEN }}
+
+      - name: Release Tangle dApp
+        if: steps.changed-tangle-dapp.outputs.changed == 'true'
+        uses: ./.github/actions/create-dapp-release
+        with:
+          package-path: apps/tangle-dapp
+          repo-token: ${{ secrets.REPO_TOKEN }}
+
+      - name: Release Tangle Cloud
+        if: steps.changed-tangle-cloud.outputs.changed == 'true'
+        uses: ./.github/actions/create-dapp-release
+        with:
+          package-path: apps/tangle-cloud
+          repo-token: ${{ secrets.REPO_TOKEN }}

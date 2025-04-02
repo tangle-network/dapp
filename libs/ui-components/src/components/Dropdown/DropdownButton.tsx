@@ -18,6 +18,8 @@ export const DropdownButton = forwardRef<
     {
       className,
       icon,
+      iconClassName,
+      labelClassName,
       label,
       size,
       isFullWidth,
@@ -56,13 +58,18 @@ export const DropdownButton = forwardRef<
           ref={ref}
         >
           <div className="flex items-center max-w-full gap-2 overflow-x-hidden">
-            {icon && <span className="text-inherit">{icon}</span>}
+            {icon && (
+              <span className={twMerge('text-inherit', iconClassName)}>
+                {icon}
+              </span>
+            )}
 
             {typeof label === 'string' ? (
               <span
-                className={cx(
+                className={twMerge(
                   'text-inherit',
                   size === 'md' ? 'body1' : 'body2',
+                  labelClassName,
                 )}
               >
                 {label}

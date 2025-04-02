@@ -4,7 +4,6 @@ import { FC } from 'react';
 import { twMerge } from 'tailwind-merge';
 
 import useLsActivePool from '../../../data/liquidStaking/useLsActivePool';
-import { useLsStore } from '../../../data/liquidStaking/useLsStore';
 import LstIcon from '../LstIcon';
 
 export type SelectedPoolIndicatorProps = {
@@ -12,7 +11,6 @@ export type SelectedPoolIndicatorProps = {
 };
 
 const SelectedPoolIndicator: FC<SelectedPoolIndicatorProps> = ({ onClick }) => {
-  const { lsProtocolId } = useLsStore();
   const activePool = useLsActivePool();
 
   return (
@@ -26,9 +24,7 @@ const SelectedPoolIndicator: FC<SelectedPoolIndicatorProps> = ({ onClick }) => {
           'cursor-pointer hover:bg-mono-60 hover:dark:bg-mono-160',
       )}
     >
-      {activePool !== null && (
-        <LstIcon lsProtocolId={lsProtocolId} iconUrl={activePool.iconUrl} />
-      )}
+      {activePool !== null && <LstIcon iconUrl={activePool.iconUrl} />}
 
       <Typography variant="h5" fw="bold" className="whitespace-nowrap">
         {activePool?.name === undefined ? (

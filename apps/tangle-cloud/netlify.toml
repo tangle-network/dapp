@@ -1,0 +1,9 @@
+[build]
+  publish = "dist/apps/tangle-cloud"
+  command = "yarn nx build tangle-cloud"
+
+  # If the branch is not master, continue the build process
+  # If the branch is master, check if the project's CHANGELOG.md file has changed
+  # If the CHANGELOG.md file has changed, continue the build process,
+  # Otherwise, stop the build process
+  ignore = "[ \"$BRANCH\" != \"master\" ] && exit 1 || git diff --quiet $CACHED_COMMIT_REF $COMMIT_REF -- apps/tangle-cloud/CHANGELOG.md && exit 0 || exit 1"

@@ -13,10 +13,10 @@ import {
 import { OPERATOR_JOIN_DOCS_LINK } from '@tangle-network/ui-components/constants/tangleDocs';
 import { FC, useCallback, useEffect, useMemo, useState } from 'react';
 import AmountInput from '../../components/AmountInput';
-import useBalances from '../../data/balances/useBalances';
+import useBalances from '@tangle-network/tangle-shared-ui/hooks/useBalances';
 import useJoinOperatorsTx from '../../data/restake/useJoinOperatorsTx';
 import useApi from '../../hooks/useApi';
-import { TxStatus } from '../../hooks/useSubstrateTx';
+import { TxStatus } from '@tangle-network/tangle-shared-ui/hooks/useSubstrateTx';
 
 type Props = {
   setIsOpen: (isOpen: boolean) => void;

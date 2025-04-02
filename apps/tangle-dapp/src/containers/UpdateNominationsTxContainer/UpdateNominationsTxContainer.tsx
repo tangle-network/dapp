@@ -19,7 +19,7 @@ import {
 
 import useNominateTx from '../../data/staking/useNominateTx';
 import useMaxNominationQuota from '../../hooks/useMaxNominationQuota';
-import { TxStatus } from '../../hooks/useSubstrateTx';
+import { TxStatus } from '@tangle-network/tangle-shared-ui/hooks/useSubstrateTx';
 import SelectValidators from './SelectValidators';
 
 export type UpdateNominationsTxContainerProps = {

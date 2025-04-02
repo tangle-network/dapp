@@ -151,7 +151,7 @@ module.exports = [
     ignores: ['**/.netlify/'],
   },
   {
-    files: ['**/eslint.config.cjs'],
+    files: ['**/tailwind.config.ts'],
     rules: {
       '@nx/enforce-module-boundaries': 'off',
     },

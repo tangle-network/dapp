@@ -4,16 +4,19 @@ import {
 } from '@tangle-network/tangle-shared-ui/data/blueprints/utils/type';
 
 export interface InstancesTabProps {
-  data: MonitoringBlueprint['services'];
   isLoading: boolean;
   error: Error | null;
-  isOperator?: boolean;
 }
 
+export interface RunningInstanceTabProps extends InstancesTabProps {
+  data: MonitoringBlueprint['services'];
+}
+
+export type StoppedInstanceTabProps = RunningInstanceTabProps;
+
 export interface InstancesTabsProps {
-  runningInstances: InstancesTabProps;
-  pendingInstances: InstancesTabProps;
-  stoppedInstances: InstancesTabProps;
+  runningInstances: RunningInstanceTabProps;
+  stoppedInstances: StoppedInstanceTabProps;
 }
 
 export interface Instance {

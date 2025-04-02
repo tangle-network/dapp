@@ -1,6 +1,9 @@
 import { SubstrateAddress } from '@tangle-network/ui-components/types/address';
 import { toPrimitiveBlueprint } from './toPrimitiveBlueprint';
-import toPrimitiveService from './toPrimitiveService';
+import {
+  toPrimitiveService,
+  toPrimitiveServiceRequest,
+} from './toPrimitiveService';
 
 export enum InstanceStatus {
   RUNNING = 'Running',
@@ -17,26 +20,39 @@ export interface OperatorBlueprint {
 export interface MonitoringBlueprint extends OperatorBlueprint {
   blueprint: OperatorBlueprint['blueprint'] & {
     uptime?: number;
-    pricing?: number;
-    pricingUnit?: string;
     instanceCount?: number;
     operatorsCount?: number;
     tvl?: number;
+    restakersCount?: number;
   };
   services: Array<
     OperatorBlueprint['services'][number] & {
       earned?: number;
       uptime?: number;
       lastActive?: Date;
-      instanceId?: string;
+      externalInstanceId?: string;
       earnedInUsd?: number;
-      imgUrl?: string;
-      status?: InstanceStatus;
       blueprintData?: MonitoringBlueprint['blueprint'];
       createdAtBlock?: number;
       pendingOperators?: SubstrateAddress[];
-      operatorIdentityMap?: Map<SubstrateAddress, string>;
-      operators?: SubstrateAddress[];
+      approvedOperators?: SubstrateAddress[];
     }
   >;
+}
+
+export type MonitoringServiceRequest = ReturnType<
+  typeof toPrimitiveServiceRequest
+> & {
+  requestCreatedAtBlock?: number;
+  blueprintData?: MonitoringBlueprint['blueprint'];
+  pricing?: number;
+
+  // deployer role
+  pendingOperators?: SubstrateAddress[];
+  approvedOperators?: SubstrateAddress[];
+};
+
+export interface ServiceInstance {
+  instanceId: number;
+  serviceInstance?: ReturnType<typeof toPrimitiveService>;
 }

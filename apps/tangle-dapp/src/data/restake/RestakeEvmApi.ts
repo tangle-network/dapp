@@ -18,25 +18,25 @@ import {
 } from 'wagmi/actions';
 import { Config } from 'wagmi';
 import ensureError from '@tangle-network/tangle-shared-ui/utils/ensureError';
-import RESTAKING_PRECOMPILE_ABI from '../../abi/restaking';
+import RESTAKING_PRECOMPILE_ABI from '@tangle-network/tangle-shared-ui/abi/restaking';
 import {
   ExtractAbiFunctionNames,
   FindAbiArgsOf,
   PrecompileAddress,
   ZERO_ADDRESS,
-} from '../../constants/evmPrecompiles';
+} from '@tangle-network/tangle-shared-ui/constants/evmPrecompiles';
 import {
   convertAddressToBytes32,
   isEvmAddress,
 } from '@tangle-network/ui-components';
 import createEvmBatchCall from '../../utils/staking/createEvmBatchCall';
-import BATCH_PRECOMPILE_ABI from '../../abi/batch';
+import BATCH_PRECOMPILE_ABI from '@tangle-network/tangle-shared-ui/abi/batch';
 import createEvmBatchCallArgs from '../../utils/staking/createEvmBatchCallArgs';
 import { TxName } from '../../constants';
 import {
   EvmTxRelaySuccessResult,
   isEvmTxRelayerEligible,
-} from '../../hooks/useEvmTxRelayer';
+} from '@tangle-network/tangle-shared-ui/hooks/useEvmTxRelayer';
 
 type RelayEvmTxFn =
   | (<

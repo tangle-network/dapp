@@ -14,9 +14,9 @@ import { FC, useCallback, useMemo, useState } from 'react';
 import { twMerge } from 'tailwind-merge';
 
 import useLsActivePoolDisplayName from '../../../data/liquidStaking/useLsActivePoolDisplayName';
-import { useLsStore } from '../../../data/liquidStaking/useLsStore';
-import getLsProtocolDef from '../../../utils/liquidStaking/getLsProtocolDef';
 import useLsAgnosticBalance from './useLsAgnosticBalance';
+import { TANGLE_TOKEN_DECIMALS } from '@tangle-network/dapp-config';
+import useNetworkStore from '@tangle-network/tangle-shared-ui/context/useNetworkStore';
 
 export type LsAgnosticBalanceProps = {
   isNative?: boolean;
@@ -33,9 +33,11 @@ const LsAgnosticBalance: FC<LsAgnosticBalanceProps> = ({
 }) => {
   const [isHovering, setIsHovering] = useState(false);
   const balance = useLsAgnosticBalance(isNative);
-  const { lsProtocolId } = useLsStore();
   const { displayName: lsActivePoolDisplayName } = useLsActivePoolDisplayName();
-  const protocol = getLsProtocolDef(lsProtocolId);
+
+  const networkTokenSymbol = useNetworkStore(
+    (store) => store.network2?.tokenSymbol,
+  );
 
   const formattedBalance = useMemo(() => {
     // No account is active; display a placeholder instead of a loading state.
@@ -49,22 +51,16 @@ const LsAgnosticBalance: FC<LsAgnosticBalanceProps> = ({
 
     const formattedBalance = formatDisplayAmount(
       balance,
-      protocol.decimals,
+      TANGLE_TOKEN_DECIMALS,
       AmountFormatStyle.SHORT,
     );
 
     const unit = isNative
-      ? protocol.token
+      ? (networkTokenSymbol ?? EMPTY_VALUE_PLACEHOLDER)
       : (lsActivePoolDisplayName?.toUpperCase() ?? EMPTY_VALUE_PLACEHOLDER);
 
     return `${formattedBalance} ${unit}`.trim();
-  }, [
-    balance,
-    protocol.decimals,
-    protocol.token,
-    isNative,
-    lsActivePoolDisplayName,
-  ]);
+  }, [balance, isNative, lsActivePoolDisplayName, networkTokenSymbol]);
 
   const isClickable =
     onlyShowTooltipWhenBalanceIsSet &&

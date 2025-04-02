@@ -12,7 +12,6 @@ import {
   SubtractCircleLineIcon,
 } from '@tangle-network/icons';
 import TableStatus from '@tangle-network/tangle-shared-ui/components/tables/TableStatus';
-import { LsProtocolId } from '@tangle-network/tangle-shared-ui/types/liquidStaking';
 import {
   ActionsDropdown,
   AmountFormatStyle,
@@ -38,17 +37,17 @@ import LsUpdateRolesModal from '../../containers/LsUpdateRolesModal';
 import useLsSetStakingIntent from '../../data/liquidStaking/useLsSetStakingIntent';
 import { useLsStore } from '../../data/liquidStaking/useLsStore';
 import useIsAccountConnected from '../../hooks/useIsAccountConnected';
-import getLsProtocolDef from '../../utils/liquidStaking/getLsProtocolDef';
-import tryEncodeAddressWithPrefix from '../../utils/liquidStaking/tryEncodeAddressWithPrefix';
 import BlueIconButton from '../BlueIconButton';
 import PercentageCell from '../tableCells/PercentageCell';
 import TokenAmountCell from '../tableCells/TokenAmountCell';
 import LstIcon from './LstIcon';
 import UpdateCommissionModal from './UpdateCommissionModal';
+import { TANGLE_TOKEN_DECIMALS } from '@tangle-network/dapp-config';
+import LsSetPoolStateModal from './LsSetPoolStateModal';
+import LsUpdateNominationsModal from './LsUpdateNominationsModal';
 
 export interface LsMyPoolRow extends LsPool {
   myStake: BN;
-  lsProtocolId: LsProtocolId;
   isRoot: boolean;
   isNominator: boolean;
   isBouncer: boolean;
@@ -70,7 +69,12 @@ const LsMyPoolsTable: FC<LsMyPoolsTableProps> = ({ pools, isShown }) => {
 
   const [isUpdateCommissionModalOpen, setIsUpdateCommissionModalOpen] =
     useState(false);
+
+  const [isUpdateNominationsModalOpen, setIsUpdateNominationsModalOpen] =
+    useState(false);
+
   const [isUpdateRolesModalOpen, setIsUpdateRolesModalOpen] = useState(false);
+  const [isSetStateModalOpen, setIsSetStateModalOpen] = useState(false);
 
   const [{ pageIndex, pageSize }, setPagination] = useState({
     pageIndex: 0,
@@ -91,10 +95,7 @@ const LsMyPoolsTable: FC<LsMyPoolsTableProps> = ({ pools, isShown }) => {
         header: () => 'ID',
         cell: (props) => (
           <div className="flex gap-2 items-center justify-start">
-            <LstIcon
-              lsProtocolId={props.row.original.protocolId}
-              iconUrl={props.row.original.iconUrl}
-            />
+            <LstIcon iconUrl={props.row.original.iconUrl} />
 
             <Typography
               variant="body2"
@@ -128,12 +129,7 @@ const LsMyPoolsTable: FC<LsMyPoolsTableProps> = ({ pools, isShown }) => {
                 />
               </TooltipTrigger>
 
-              <TooltipBody className="max-w-none">
-                {tryEncodeAddressWithPrefix(
-                  ownerAddress,
-                  props.row.original.protocolId,
-                )}
-              </TooltipBody>
+              <TooltipBody className="max-w-none">{ownerAddress}</TooltipBody>
             </Tooltip>
           );
         },
@@ -156,10 +152,7 @@ const LsMyPoolsTable: FC<LsMyPoolsTableProps> = ({ pools, isShown }) => {
                   </TooltipTrigger>
 
                   <TooltipBody className="max-w-none">
-                    {tryEncodeAddressWithPrefix(
-                      substrateAddress,
-                      props.row.original.protocolId,
-                    )}
+                    {substrateAddress}
                   </TooltipBody>
                 </Tooltip>
               ))}
@@ -168,31 +161,23 @@ const LsMyPoolsTable: FC<LsMyPoolsTableProps> = ({ pools, isShown }) => {
       }),
       COLUMN_HELPER.accessor('totalStaked', {
         header: () => 'Total Staked (TVL)',
-        cell: (props) => {
-          const lsProtocol = getLsProtocolDef(props.row.original.protocolId);
-
-          return (
-            <TokenAmountCell
-              amount={props.getValue()}
-              decimals={lsProtocol.decimals}
-              formatStyle={AmountFormatStyle.SI}
-            />
-          );
-        },
+        cell: (props) => (
+          <TokenAmountCell
+            amount={props.getValue()}
+            decimals={TANGLE_TOKEN_DECIMALS}
+            formatStyle={AmountFormatStyle.SI}
+          />
+        ),
       }),
       COLUMN_HELPER.accessor('myStake', {
         header: () => 'My Stake',
-        cell: (props) => {
-          const lsProtocol = getLsProtocolDef(props.row.original.protocolId);
-
-          return (
-            <TokenAmountCell
-              amount={props.getValue()}
-              decimals={lsProtocol.decimals}
-              formatStyle={AmountFormatStyle.SHORT}
-            />
-          );
-        },
+        cell: (props) => (
+          <TokenAmountCell
+            amount={props.getValue()}
+            decimals={TANGLE_TOKEN_DECIMALS}
+            formatStyle={AmountFormatStyle.SHORT}
+          />
+        ),
       }),
       COLUMN_HELPER.accessor('commissionFractional', {
         header: () => 'Commission',
@@ -211,14 +196,11 @@ const LsMyPoolsTable: FC<LsMyPoolsTableProps> = ({ pools, isShown }) => {
           if (props.row.original.isNominator) {
             actionItems.push({
               label: 'Update Nominations',
-              // TODO: Implement onClick handler.
-              onClick: () => void 0,
+              onClick: () => {
+                setSelectedPoolId(props.row.original.id);
+                setIsUpdateNominationsModalOpen(true);
+              },
             });
-          }
-
-          // Bouncer can close or open entry into the pool.
-          if (props.row.original.isBouncer) {
-            // TODO: Bouncer options.
           }
 
           // Root can update the commission and roles.
@@ -236,6 +218,17 @@ const LsMyPoolsTable: FC<LsMyPoolsTableProps> = ({ pools, isShown }) => {
               onClick: () => {
                 setSelectedPoolId(props.row.original.id);
                 setIsUpdateRolesModalOpen(true);
+              },
+            });
+          }
+
+          // Bouncer can close or open entry into the pool.
+          if (props.row.original.isBouncer) {
+            actionItems.push({
+              label: 'Set State',
+              onClick: () => {
+                setSelectedPoolId(props.row.original.id);
+                setIsSetStateModalOpen(true);
               },
             });
           }
@@ -260,13 +253,15 @@ const LsMyPoolsTable: FC<LsMyPoolsTableProps> = ({ pools, isShown }) => {
           const isStakeActionDisabled =
             lsPoolId === props.row.original.id && isStaking;
 
+          const isPoolDestroying = props.row.original.state === 'Destroying';
+
           return (
             <div className="flex justify-end gap-1">
               {/**
                * Show management actions if the active user has any role in
                * the pool.
                */}
-              {hasAnyRole && (
+              {hasAnyRole && !isPoolDestroying && (
                 <ActionsDropdown
                   buttonText="Manage"
                   actionItems={actionItems}
@@ -281,9 +276,13 @@ const LsMyPoolsTable: FC<LsMyPoolsTableProps> = ({ pools, isShown }) => {
               />
 
               <BlueIconButton
-                isDisabled={isStakeActionDisabled}
+                isDisabled={isStakeActionDisabled || isPoolDestroying}
                 onClick={() => setLsStakingIntent(props.row.original.id, true)}
-                tooltip="Increase Stake"
+                tooltip={
+                  isPoolDestroying
+                    ? 'Pool is being destroyed; cannot increase stake.'
+                    : 'Increase Stake'
+                }
                 Icon={AddCircleLineIcon}
               />
             </div>
@@ -329,7 +328,7 @@ const LsMyPoolsTable: FC<LsMyPoolsTableProps> = ({ pools, isShown }) => {
     }
   }, [isUpdateCommissionModalOpen, isUpdateRolesModalOpen]);
 
-  // TODO: Missing error and loading state. Should ideally abstract all these states into an abstract Table component, since it's getting reused in multiple places.
+  // TODO: Missing error and loading state.
   if (!isAccountConnected) {
     return (
       <TableStatus
@@ -372,6 +371,18 @@ const LsMyPoolsTable: FC<LsMyPoolsTableProps> = ({ pools, isShown }) => {
         currentCommissionFractional={selectedPoolCommission}
         isOpen={isUpdateCommissionModalOpen}
         setIsOpen={setIsUpdateCommissionModalOpen}
+      />
+
+      <LsSetPoolStateModal
+        poolId={selectedPoolId}
+        isOpen={isSetStateModalOpen}
+        setIsOpen={setIsSetStateModalOpen}
+      />
+
+      <LsUpdateNominationsModal
+        poolId={selectedPoolId}
+        isOpen={isUpdateNominationsModalOpen}
+        setIsOpen={setIsUpdateNominationsModalOpen}
       />
     </>
   );

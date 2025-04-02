@@ -2,21 +2,34 @@ import { useObservable, useObservableState } from 'observable-hooks';
 import { of, switchMap } from 'rxjs';
 import { RestakeAssetMap, OperatorMap } from '../../types/restake';
 import safeFormatUnits from '../../utils/safeFormatUnits';
+import { SubstrateAddress } from '@tangle-network/ui-components/types/address';
+import { RestakeAssetId } from '../../types';
+import { assertSubstrateAddress } from '@tangle-network/ui-components/utils';
 
-const calculateTVL = (operatorMap: OperatorMap, assetMap: RestakeAssetMap) => {
+export type OperatorTVLType = {
+  operatorTVLByAsset: Map<SubstrateAddress, Map<RestakeAssetId, number>>;
+  operatorTVL: Map<SubstrateAddress, number>;
+  vaultTVL: Map<RestakeAssetId, number>;
+};
+
+const calculateTVL = (
+  operatorMap: OperatorMap,
+  assetMap: RestakeAssetMap,
+): OperatorTVLType => {
   return Object.entries(operatorMap).reduce(
-    (acc, [operatorId, operatorData]) => {
-      const operatorTVL = operatorData.delegations.reduce((sum, delegation) => {
-        const asset = assetMap.get(delegation.assetId);
+    (acc: OperatorTVLType, [operatorId_, operatorData]) => {
+      const operatorId = assertSubstrateAddress(operatorId_);
 
+      operatorData.delegations.forEach((delegation) => {
+        const asset = assetMap.get(delegation.assetId);
         if (asset === undefined) {
-          return sum;
+          return;
         }
 
         const assetPrice = asset.metadata.priceInUsd ?? null;
 
         if (typeof assetPrice !== 'number') {
-          return sum;
+          return;
         }
 
         const result = safeFormatUnits(
@@ -25,32 +38,43 @@ const calculateTVL = (operatorMap: OperatorMap, assetMap: RestakeAssetMap) => {
         );
 
         if (!result.success) {
-          return sum;
+          return;
         }
 
-        const amount = Number(result.value);
+        const amount = Number(result.value) * assetPrice;
 
-        // Calculate operator TVL.
-        sum += amount * assetPrice;
-
-        // Calculate vault TVL.
-        const vaultId = asset.metadata.vaultId;
-
-        if (vaultId !== null) {
-          acc.vaultTVL[vaultId] =
-            (acc.vaultTVL[vaultId] || 0) + amount * assetPrice;
+        if (!acc.operatorTVLByAsset.has(operatorId)) {
+          acc.operatorTVLByAsset.set(operatorId, new Map());
         }
 
-        return sum;
-      }, 0);
+        acc.operatorTVLByAsset
+          .get(operatorId)
+          ?.set(
+            delegation.assetId,
+            (acc.operatorTVLByAsset.get(operatorId)?.get(delegation.assetId) ||
+              0) + amount,
+          );
 
-      acc.operatorTVL[operatorId] = operatorTVL;
+        acc.vaultTVL.set(
+          delegation.assetId,
+          (acc.vaultTVL.get(delegation.assetId) || 0) + amount,
+        );
+
+        acc.operatorTVL.set(
+          operatorId,
+          (acc.operatorTVL.get(operatorId) || 0) + amount,
+        );
+
+        return;
+      });
+
       return acc;
     },
     {
-      operatorTVL: {} as Record<string, number>,
-      vaultTVL: {} as Record<string, number>,
-    },
+      operatorTVLByAsset: new Map(),
+      vaultTVL: new Map(),
+      operatorTVL: new Map(),
+    } satisfies OperatorTVLType,
   );
 };
 
@@ -62,22 +86,32 @@ export const useOperatorTVL = (
     (input$) =>
       input$.pipe(
         switchMap(([operatorMap, assetMap]) => {
-          type Result = Record<string, number>;
-
           if (assetMap === null) {
-            return of({
-              operatorTVL: {} satisfies Result as Result,
-              vaultTVL: {} satisfies Result as Result,
+            return of<OperatorTVLType>({
+              operatorTVLByAsset: new Map(),
+              vaultTVL: new Map(),
+              operatorTVL: new Map(),
             });
           }
 
-          const { operatorTVL, vaultTVL } = calculateTVL(operatorMap, assetMap);
+          const { operatorTVLByAsset, operatorTVL, vaultTVL } = calculateTVL(
+            operatorMap,
+            assetMap,
+          );
 
-          return of({ operatorTVL, vaultTVL });
+          return of<OperatorTVLType>({
+            operatorTVLByAsset,
+            operatorTVL,
+            vaultTVL,
+          });
         }),
       ),
     [operatorMap, assetMap],
   );
 
-  return useObservableState(tvl$, { operatorTVL: {}, vaultTVL: {} });
+  return useObservableState<OperatorTVLType>(tvl$, {
+    operatorTVLByAsset: new Map(),
+    operatorTVL: new Map(),
+    vaultTVL: new Map(),
+  });
 };

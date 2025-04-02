@@ -1,4 +1,4 @@
-import { useMemo, type FC } from 'react';
+import { useMemo, type FC, useState, useCallback } from 'react';
 import {
   AccessorKeyColumnDef,
   createColumnHelper,
@@ -14,100 +14,109 @@ import {
   DropdownButton,
   EMPTY_VALUE_PLACEHOLDER,
   getRoundedAmountString,
-  isEvmAddress,
+  Modal,
   shortenString,
-  toSubstrateAddress,
   Typography,
 } from '@tangle-network/ui-components';
 import pluralize from '@tangle-network/ui-components/utils/pluralize';
 import { TangleCloudTable } from '../../../components/tangleCloudTable/TangleCloudTable';
-import { ChevronDown, ChevronRight } from '@tangle-network/icons';
+import { ChevronDown } from '@tangle-network/icons';
 import TableCellWrapper from '@tangle-network/tangle-shared-ui/components/tables/TableCellWrapper';
-import { Link } from 'react-router';
-import { MonitoringBlueprint } from '@tangle-network/tangle-shared-ui/data/blueprints/utils/type';
-import { InstancesTabProps } from './type';
+import { MonitoringServiceRequest } from '@tangle-network/tangle-shared-ui/data/blueprints/utils/type';
 import useNetworkStore from '@tangle-network/tangle-shared-ui/context/useNetworkStore';
 import { DropdownMenuItem } from '@radix-ui/react-dropdown-menu';
 import { NestedOperatorCell } from '../../../components/NestedOperatorCell';
 import addCommasToNumber from '@tangle-network/ui-components/utils/addCommasToNumber';
+import useAssetsMetadata from '@tangle-network/tangle-shared-ui/hooks/useAssetsMetadata';
+import RejectConfirmationModel from './UpdateBlueprintModel/RejectConfirmationModal';
+import ApproveConfirmationModel from './UpdateBlueprintModel/ApproveConfirmationModal';
+import { ApprovalConfirmationFormFields } from '../../../types';
+import usePendingServiceRequest from '@tangle-network/tangle-shared-ui/data/blueprints/usePendingServiceRequest';
+import useSubstrateAddress from '@tangle-network/tangle-shared-ui/hooks/useSubstrateAddress';
+import useIdentities from '@tangle-network/tangle-shared-ui/hooks/useIdentities';
+import useRoleStore from '../../../stores/roleStore';
+import useServicesRejectTx from '../../../data/services/useServicesRejectTx';
+import useServicesApproveTx from '../../../data/services/useServicesApproveTx';
 
-type MonitoringBlueprintServiceItem = MonitoringBlueprint['services'][number];
+const columnHelper = createColumnHelper<MonitoringServiceRequest>();
 
-const columnHelper = createColumnHelper<MonitoringBlueprintServiceItem>();
+export const PendingInstanceTable: FC = () => {
+  const isOperator = useRoleStore.getState().isOperator();
+  const operatorAccountAddress = useSubstrateAddress();
+  const [isRejectConfirmationModalOpen, setIsRejectConfirmationModalOpen] =
+    useState(false);
+  const [isApproveConfirmationModalOpen, setIsApproveConfirmationModalOpen] =
+    useState(false);
+  const [selectedRequest, setSelectedRequest] =
+    useState<MonitoringServiceRequest | null>(null);
 
-export const PendingInstanceTable: FC<InstancesTabProps> = ({
-  data,
-  isLoading,
-  error,
-  isOperator,
-}) => {
+  const {
+    blueprints: pendingBlueprints,
+    error,
+    isLoading,
+  } = usePendingServiceRequest(operatorAccountAddress);
+
+  const { result: operatorIdentityMap } = useIdentities(
+    useMemo(() => {
+      const operatorMap = pendingBlueprints.flatMap((blueprint) => {
+        const approvedOperators = blueprint.approvedOperators ?? [];
+        const pendingOperators = blueprint.pendingOperators ?? [];
+        return [...approvedOperators, ...pendingOperators];
+      });
+      const operatorSet = new Set(operatorMap);
+      return Array.from(operatorSet);
+    }, [pendingBlueprints]),
+  );
+
+  const { execute: rejectServiceRequest, status: rejectStatus } =
+    useServicesRejectTx();
+  const { execute: approveServiceRequest, status: approveStatus } =
+    useServicesApproveTx();
+
   const network = useNetworkStore((store) => store.network);
 
-  const isEmpty = data.length === 0;
+  const isEmpty = pendingBlueprints.length === 0;
+
+  const assetIds = useMemo(() => {
+    return pendingBlueprints.flatMap((instance) =>
+      instance.securityRequirements.map((requirement) => requirement.asset),
+    );
+  }, [pendingBlueprints]);
+
+  const { result: assetsMetadata } = useAssetsMetadata(assetIds);
 
   const columns = useMemo(() => {
-    const baseColumns: AccessorKeyColumnDef<
-      MonitoringBlueprintServiceItem,
-      any
-    >[] = [
-      columnHelper.accessor('id', {
-        header: () => 'Blueprint > Instance',
+    const baseColumns: AccessorKeyColumnDef<MonitoringServiceRequest, any>[] = [
+      columnHelper.accessor('blueprint', {
+        header: () => 'Blueprint',
         enableSorting: false,
         cell: (props) => {
           return (
-            <TableCellWrapper>
-              <div className="flex items-center gap-2 w-full">
-                {props.row.original.imgUrl ? (
+            <TableCellWrapper className="p-0 min-h-fit">
+              <div className="flex items-center gap-2 overflow-hidden">
+                {props.row.original.blueprintData?.metadata?.logo ? (
                   <Avatar
                     size="lg"
                     className="min-w-12"
-                    src={props.row.original.imgUrl}
-                    alt={props.row.original.id.toString()}
+                    src={props.row.original.blueprintData?.metadata.logo}
+                    alt={props.row.original.blueprintData?.metadata?.name}
                     sourceVariant="uri"
                   />
                 ) : (
                   <Avatar
                     size="lg"
                     className="min-w-12"
-                    value={props.row.original.instanceId?.substring(0, 2)}
+                    value={props.row.original.blueprintData?.metadata?.name}
                     theme="substrate"
                   />
                 )}
-                <div className="w-4/12">
-                  <Typography
-                    variant="body1"
-                    fw="bold"
-                    className="!text-blue-50 text-ellipsis whitespace-nowrap overflow-hidden"
-                  >
-                    {props.row.original.blueprintData?.metadata?.author || ''}
-                  </Typography>
-                  <Typography
-                    variant="body2"
-                    fw="normal"
-                    className="!text-mono-100 text-ellipsis whitespace-nowrap overflow-hidden"
-                  >
-                    {props.row.original.blueprintData?.metadata?.name || ''}
-                  </Typography>
-                </div>
-                <div>
-                  <ChevronRight className="w-6 h-6" />
-                </div>
-                <div className="w-4/12">
-                  <Typography
-                    variant="body1"
-                    fw="bold"
-                    className="!text-blue-50 text-ellipsis whitespace-nowrap overflow-hidden"
-                  >
-                    {props.row.original.id || ''}
-                  </Typography>
-                  <Typography
-                    variant="body2"
-                    fw="normal"
-                    className="!text-mono-100 text-ellipsis whitespace-nowrap overflow-hidden"
-                  >
-                    {props.row.original.instanceId || ''}
-                  </Typography>
-                </div>
+                <Typography
+                  variant="body1"
+                  fw="bold"
+                  className="!text-blue-50 text-ellipsis whitespace-nowrap overflow-hidden"
+                >
+                  {props.row.original.blueprintData?.metadata?.name}
+                </Typography>
               </div>
             </TableCellWrapper>
           );
@@ -117,60 +126,86 @@ export const PendingInstanceTable: FC<InstancesTabProps> = ({
 
     if (isOperator) {
       baseColumns.push(
-        columnHelper.accessor('blueprintData.pricing', {
+        columnHelper.accessor('pricing', {
           header: () => 'Pricing',
           cell: (props) => {
             return (
-              <TableCellWrapper>
-                {props.row.original.blueprintData?.pricing
-                  ? `$${getRoundedAmountString(props.row.original.blueprintData.pricing)}`
-                  : EMPTY_VALUE_PLACEHOLDER}
-                &nbsp;/&nbsp;
-                {props.row.original.blueprintData?.pricingUnit
-                  ? props.row.original.blueprintData.pricingUnit
+              <TableCellWrapper className="p-0 min-h-fit">
+                {props.row.original.pricing
+                  ? `$${getRoundedAmountString(props.row.original.pricing)}`
                   : EMPTY_VALUE_PLACEHOLDER}
               </TableCellWrapper>
             );
           },
         }),
-        columnHelper.accessor('ownerAccount', {
+        columnHelper.accessor('owner', {
           header: () => 'Deployer',
           cell: (props) => {
+            const owner = props.row.original.owner;
+            const ownerUrl = network.createExplorerAccountUrl(owner);
+
             return (
-              <TableCellWrapper>
-                {!props.row.original.ownerAccount ? (
+              <TableCellWrapper className="p-0 min-h-fit">
+                {!ownerUrl ? (
                   EMPTY_VALUE_PLACEHOLDER
                 ) : (
-                  <Link
-                    to={
-                      network.createExplorerAccountUrl(
-                        isEvmAddress(props.row.original.ownerAccount)
-                          ? props.row.original.ownerAccount
-                          : toSubstrateAddress(props.row.original.ownerAccount),
-                      ) ?? ''
-                    }
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    <Button variant="link" className="uppercase body4">
-                      {shortenString(props.row.original.ownerAccount)}
+                  <>
+                    <Avatar
+                      sourceVariant="address"
+                      value={owner.toString()}
+                      theme="substrate"
+                      size="md"
+                    />
+                    <Button
+                      variant="link"
+                      className="uppercase body4"
+                      href={ownerUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      {operatorIdentityMap?.get(owner)?.name ??
+                        shortenString(owner)}
                     </Button>
-                  </Link>
+                  </>
                 )}
               </TableCellWrapper>
             );
           },
         }),
-        columnHelper.accessor('id', {
+        columnHelper.accessor('ttl', {
+          header: () => 'Duration',
+          cell: (props) => {
+            return (
+              <TableCellWrapper className="p-0 min-h-fit">
+                {addCommasToNumber(props.row.original.ttl)} blocks
+              </TableCellWrapper>
+            );
+          },
+        }),
+        columnHelper.accessor('requestId', {
           header: () => '',
           cell: (props) => {
             return (
-              <TableCellWrapper removeRightBorder className="max-w-24">
+              <TableCellWrapper removeRightBorder className="p-0 min-h-fit">
                 <div className="flex gap-2">
-                  <Button variant="utility" className="uppercase body4">
+                  <Button
+                    variant="utility"
+                    size="sm"
+                    onClick={() => {
+                      setIsApproveConfirmationModalOpen(true);
+                      setSelectedRequest(props.row.original);
+                    }}
+                  >
                     Approve
                   </Button>
-                  <Button variant="utility" className="uppercase body4">
+                  <Button
+                    variant="utility"
+                    size="sm"
+                    onClick={() => {
+                      setIsRejectConfirmationModalOpen(true);
+                      setSelectedRequest(props.row.original);
+                    }}
+                  >
                     Reject
                   </Button>
                 </div>
@@ -181,16 +216,14 @@ export const PendingInstanceTable: FC<InstancesTabProps> = ({
       );
     } else {
       baseColumns.push(
-        columnHelper.accessor('operators', {
+        columnHelper.accessor('approvedOperators', {
           header: 'Approved Operators',
           cell: (props) => {
             return (
-              <TableCellWrapper>
+              <TableCellWrapper className="p-0 min-h-fit">
                 <NestedOperatorCell
-                  operators={props.row.original.operators}
-                  operatorIdentityMap={
-                    props.row.original.operatorIdentityMap || new Map([])
-                  }
+                  operators={props.row.original.approvedOperators}
+                  operatorIdentityMap={operatorIdentityMap}
                 />
               </TableCellWrapper>
             );
@@ -200,23 +233,26 @@ export const PendingInstanceTable: FC<InstancesTabProps> = ({
           header: 'Pending Operators',
           cell: (props) => {
             return (
-              <TableCellWrapper>
+              <TableCellWrapper className="p-0 min-h-fit">
                 <NestedOperatorCell
                   operators={props.row.original.pendingOperators}
-                  operatorIdentityMap={props.row.original.operatorIdentityMap}
+                  operatorIdentityMap={operatorIdentityMap}
                 />
               </TableCellWrapper>
             );
           },
         }),
-        columnHelper.accessor('createdAtBlock', {
+        columnHelper.accessor('requestCreatedAtBlock', {
           header: 'Created At',
           cell: (props) => {
             return (
-              <TableCellWrapper>
-                {props.row.original.createdAtBlock ? (
+              <TableCellWrapper className="p-0 min-h-fit">
+                {props.row.original.requestCreatedAtBlock ? (
                   <>
-                    Block {addCommasToNumber(props.row.original.createdAtBlock)}
+                    Block{' '}
+                    {addCommasToNumber(
+                      props.row.original.requestCreatedAtBlock,
+                    )}
                   </>
                 ) : (
                   EMPTY_VALUE_PLACEHOLDER
@@ -225,11 +261,11 @@ export const PendingInstanceTable: FC<InstancesTabProps> = ({
             );
           },
         }),
-        columnHelper.accessor('id', {
+        columnHelper.accessor('requestId', {
           header: '',
           cell: (props) => {
             return (
-              <TableCellWrapper removeRightBorder>
+              <TableCellWrapper removeRightBorder className="p-0 min-h-fit">
                 <Dropdown>
                   <DropdownButton
                     isFullWidth
@@ -263,29 +299,81 @@ export const PendingInstanceTable: FC<InstancesTabProps> = ({
     }
 
     return baseColumns;
-  }, [isOperator]);
+  }, [isOperator, assetsMetadata, operatorIdentityMap]);
 
   const table = useReactTable({
-    data,
+    data: pendingBlueprints,
     columns,
     getCoreRowModel: getCoreRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
-    getRowId: (row) => row.id.toString(),
+    getRowId: (row) => `PendingServiceRequest-${row.blueprint.toString()}`,
     autoResetPageIndex: false,
     enableSortingRemoval: false,
   });
 
+  const onCloseBlueprintRejectModal = useCallback(() => {
+    setIsRejectConfirmationModalOpen(false);
+    setSelectedRequest(null);
+  }, [setIsRejectConfirmationModalOpen, setSelectedRequest]);
+
+  const onConfirmReject = useCallback(async () => {
+    if (!selectedRequest || !rejectServiceRequest) return;
+
+    await rejectServiceRequest({
+      requestId: selectedRequest.requestId,
+    });
+  }, [selectedRequest, rejectServiceRequest]);
+
+  const onCloseBlueprintApproveModal = useCallback(() => {
+    setIsApproveConfirmationModalOpen(false);
+    setSelectedRequest(null);
+  }, [setIsApproveConfirmationModalOpen, setSelectedRequest]);
+
+  const onConfirmApprove = useCallback(
+    async (data: ApprovalConfirmationFormFields) => {
+      if (!selectedRequest || !approveServiceRequest) return;
+
+      await approveServiceRequest(data);
+    },
+    [selectedRequest, approveServiceRequest],
+  );
+
   return (
-    <TangleCloudTable<MonitoringBlueprintServiceItem>
-      title={pluralize('Running Instance', !isEmpty)}
-      data={data}
-      error={error}
-      isLoading={isLoading}
-      tableProps={table}
-      tableConfig={{
-        tableClassName: 'min-w-[1000px]',
-      }}
-    />
+    <>
+      <TangleCloudTable<MonitoringServiceRequest>
+        title={pluralize('Running Instance', !isEmpty)}
+        data={pendingBlueprints}
+        error={error}
+        isLoading={isLoading}
+        tableProps={table}
+        tableConfig={{
+          tableClassName: 'min-w-[1000px]',
+        }}
+      />
+      <Modal
+        open={isRejectConfirmationModalOpen}
+        onOpenChange={setIsRejectConfirmationModalOpen}
+      >
+        <RejectConfirmationModel
+          onClose={onCloseBlueprintRejectModal}
+          onConfirm={onConfirmReject}
+          selectedRequest={selectedRequest}
+          status={rejectStatus}
+        />
+      </Modal>
+      <Modal
+        open={isApproveConfirmationModalOpen}
+        onOpenChange={setIsApproveConfirmationModalOpen}
+      >
+        <ApproveConfirmationModel
+          onClose={onCloseBlueprintApproveModal}
+          onConfirm={onConfirmApprove}
+          selectedRequest={selectedRequest}
+          assetsMetadata={assetsMetadata}
+          status={approveStatus}
+        />
+      </Modal>
+    </>
   );
 };
 

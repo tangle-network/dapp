@@ -24,6 +24,8 @@ import { extractOperatorData } from '../blueprints/utils/blueprintHelpers';
 import { toPrimitiveBlueprint } from '../blueprints/utils/toPrimitiveBlueprint';
 import useRestakeAssets from './useRestakeAssets';
 import useRestakeOperatorMap from './useRestakeOperatorMap';
+import { ServiceInstance } from '../blueprints/utils/type';
+import { toPrimitiveService } from '../blueprints/utils/toPrimitiveService';
 
 const useBlueprintDetails = (id?: string) => {
   const rpcEndpoint = useNetworkStore((store) => store.network.wsRpcEndpoint);
@@ -32,10 +34,8 @@ const useBlueprintDetails = (id?: string) => {
   const { delegatorInfo } = useRestakeDelegatorInfo();
   const activeSubstrateAddress = useSubstrateAddress(false);
 
-  const { operatorTVL, operatorConcentration } = useRestakeTVL(
-    operatorMap,
-    delegatorInfo,
-  );
+  const { operatorTVL, operatorConcentration, operatorTVLByAsset } =
+    useRestakeTVL(operatorMap, delegatorInfo);
 
   return useApiRx(
     useCallback(
@@ -52,78 +52,126 @@ const useBlueprintDetails = (id?: string) => {
 
         const blueprintDetails$ = api.query.services.blueprints(id);
 
+        const runningInstanceEntries$ = api.query.services.instances.entries();
+
         const operatorEntries$ =
           api.query.services.operators.entries<
             Option<TanglePrimitivesServicesTypesOperatorPreferences>
           >();
 
-        return combineLatest([blueprintDetails$, operatorEntries$]).pipe(
-          switchMap(async ([blueprintDetails, operatorEntries]) => {
-            if (blueprintDetails.isNone) {
-              return null;
-            }
+        return combineLatest([
+          blueprintDetails$,
+          runningInstanceEntries$,
+          operatorEntries$,
+        ]).pipe(
+          switchMap(
+            async ([
+              blueprintDetails,
+              runningInstanceEntries,
+              operatorEntries,
+            ]) => {
+              if (blueprintDetails.isNone) {
+                return null;
+              }
 
-            const idNumber = Number(id);
-            const [ownerAccount, serviceBlueprint] = blueprintDetails.unwrap();
-            const owner = ownerAccount.toString();
+              const idNumber = Number(id);
+              const [ownerAccount, serviceBlueprint] =
+                blueprintDetails.unwrap();
+              const owner = ownerAccount.toString();
 
-            const { metadata, registrationParams } =
-              toPrimitiveBlueprint(serviceBlueprint);
+              const { metadata, registrationParams } =
+                toPrimitiveBlueprint(serviceBlueprint);
 
-            const {
-              blueprintOperatorMap,
-              blueprintRestakersMap,
-              blueprintTVLMap,
-            } = extractOperatorData(operatorEntries, operatorMap, operatorTVL);
+              const runningInstancesMap = new Map<number, ServiceInstance[]>();
 
-            const info = await getAccountInfo(rpcEndpoint, owner);
-            const operatorsSet = blueprintOperatorMap.get(idNumber);
+              for (const [
+                instanceId,
+                mayBeServiceInstance,
+              ] of runningInstanceEntries) {
+                const serviceInstanceId = instanceId.args[0].toNumber();
 
-            const details: Blueprint = {
-              id,
-              name: metadata.name,
-              description: metadata.description,
-              author: metadata.author ?? owner,
-              imgUrl: metadata.logo,
-              category: metadata.category,
-              restakersCount: blueprintRestakersMap.get(idNumber)?.size ?? null,
-              operatorsCount: operatorsSet?.size ?? null,
-              tvl: (() => {
-                const blueprintTVL = blueprintTVLMap.get(idNumber);
-
-                if (blueprintTVL === undefined) {
-                  return null;
+                if (mayBeServiceInstance.isNone) {
+                  continue;
                 }
 
-                return `$${blueprintTVL.toLocaleString()}`;
-              })(),
-              githubUrl: metadata.codeRepository,
-              websiteUrl: metadata.website,
-              twitterUrl: info?.twitter ?? null,
-              email: info?.email ?? null,
-              registrationParams,
-              // TODO: Determine `isBoosted` value.
-              isBoosted: false,
-            };
+                const instanceData = toPrimitiveService(
+                  mayBeServiceInstance.unwrap(),
+                );
 
-            const operators =
-              operatorsSet !== undefined && assets !== null
-                ? await getBlueprintOperators(
-                    rpcEndpoint,
-                    assets,
-                    operatorsSet,
-                    operatorMap,
-                    operatorTVL,
-                    operatorConcentration,
-                    activeSubstrateAddress,
-                  )
-                : [];
+                if (instanceData.blueprint !== idNumber) {
+                  continue;
+                }
 
-            return {
-              details,
-              operators,
-            };
-          }),
+                runningInstancesMap.set(instanceData.blueprint, [
+                  ...(runningInstancesMap.get(instanceData.blueprint) ?? []),
+                  {
+                    instanceId: serviceInstanceId,
+                    serviceInstance: instanceData,
+                  },
+                ]);
+              }
+
+              const {
+                blueprintOperatorMap,
+                blueprintRestakersMap,
+                blueprintTVLMap,
+              } = extractOperatorData(
+                operatorEntries,
+                operatorMap,
+                operatorTVLByAsset,
+                runningInstancesMap,
+              );
+
+              const info = await getAccountInfo(rpcEndpoint, owner);
+              const operatorsSet = blueprintOperatorMap.get(idNumber);
+
+              const details: Blueprint = {
+                id,
+                name: metadata.name,
+                description: metadata.description,
+                author: metadata.author ?? owner,
+                imgUrl: metadata.logo,
+                category: metadata.category,
+                restakersCount:
+                  blueprintRestakersMap.get(idNumber)?.size ?? null,
+                operatorsCount: operatorsSet?.size ?? null,
+                tvl: (() => {
+                  const blueprintTVL = blueprintTVLMap.get(idNumber);
+
+                  if (blueprintTVL === undefined) {
+                    return null;
+                  }
+
+                  return `$${blueprintTVL.toLocaleString()}`;
+                })(),
+                githubUrl: metadata.codeRepository,
+                websiteUrl: metadata.website,
+                twitterUrl: info?.twitter ?? null,
+                email: info?.email ?? null,
+                registrationParams,
+                // TODO: Determine `isBoosted` value.
+                isBoosted: false,
+              };
+
+              const operators =
+                operatorsSet !== undefined && assets !== null
+                  ? await getBlueprintOperators(
+                      rpcEndpoint,
+                      assets,
+                      operatorsSet,
+                      operatorMap,
+                      operatorTVL,
+                      operatorConcentration,
+                      activeSubstrateAddress,
+                    )
+                  : [];
+
+              return {
+                details,
+                operators,
+              };
+            },
+          ),
         );
       },
       [
@@ -134,6 +182,7 @@ const useBlueprintDetails = (id?: string) => {
         assets,
         operatorConcentration,
         activeSubstrateAddress,
+        operatorTVLByAsset,
       ],
     ),
   );
@@ -144,8 +193,8 @@ async function getBlueprintOperators(
   assetMap: RestakeAssetMap,
   operatorAccountSet: Set<SubstrateAddress>,
   operatorMap: OperatorMap,
-  operatorTVL: Record<string, number>,
-  operatorConcentration: Record<string, number | null>,
+  operatorTVL: Map<SubstrateAddress, number>,
+  operatorConcentration: Map<SubstrateAddress, number | null>,
   activeSubstrateAddress: SubstrateAddress | null,
 ) {
   const operatorAccountArr = Array.from(operatorAccountSet);
@@ -157,8 +206,8 @@ async function getBlueprintOperators(
 
   return operatorAccountArr.map((address, idx) => {
     const info = accountInfoArr[idx];
-    const concentrationPercentage = operatorConcentration[address] ?? null;
-    const tvlInUsd = operatorTVL[address] ?? null;
+    const concentrationPercentage = operatorConcentration.get(address) ?? null;
+    const tvlInUsd = operatorTVL.get(address) ?? null;
     const delegations = operatorMap[address].delegations ?? [];
     const selfBondedAmount = operatorMap[address]?.stake ?? ZERO_BIG_INT;
 

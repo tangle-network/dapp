@@ -84,10 +84,12 @@ const ActionButton: FC<{ isExpanded: boolean }> = ({ isExpanded }) => {
         isFullWidth
         size="md"
         icon={ROLE_ICON_MAP[role]({ size: 'lg' })}
+        iconClassName="text-mono-0"
         isHideArrowIcon={!isExpanded}
         label={isExpanded ? capitalizedRole : ''}
-        arrowElement={<ChevronRight />}
-        className="w-full px-4 py-4 !rounded-full normal-case border-none !bg-purple-50 justify-center font-bold"
+        labelClassName="text-mono-0"
+        arrowElement={<ChevronRight className="fill-mono-0" />}
+        className="w-full px-4 py-4 !rounded-full normal-case border-none !bg-purple-50 justify-center font-bold text-mono-0"
       />
 
       <DropdownBody className="ml-2" side="right" align="center">

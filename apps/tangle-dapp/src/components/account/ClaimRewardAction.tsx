@@ -1,22 +1,22 @@
 import Spinner from '@tangle-network/icons/Spinner';
 import { IconBase } from '@tangle-network/icons/types';
 import VipDiamondLine from '@tangle-network/icons/VipDiamondLine';
+import { TxStatus } from '@tangle-network/tangle-shared-ui/hooks/useSubstrateTx';
 import { RestakeAssetId } from '@tangle-network/tangle-shared-ui/types';
 import { useCallback, useMemo } from 'react';
 import { twMerge } from 'tailwind-merge';
 import useClaimRewardsTx from '../../data/rewards/useClaimRewardsTx';
-import { TxStatus } from '../../hooks/useSubstrateTx';
 import ActionItem from './ActionItem';
 
-type Props = {
+type Props<RefetchArgs, Result> = {
   claimableAssets: Map<RestakeAssetId, bigint>;
-  onPostClaim?: () => Promise<void> | void;
+  refetchReward: (...args: RefetchArgs[]) => Promise<Result>;
 };
 
-export default function ClaimRewardAction({
+export default function ClaimRewardAction<RefetchArgs, Result>({
   claimableAssets,
-  onPostClaim,
-}: Props) {
+  refetchReward,
+}: Props<RefetchArgs, Result>) {
   const { execute, status } = useClaimRewardsTx();
 
   const handleClick = useCallback(async () => {
@@ -26,8 +26,8 @@ export default function ClaimRewardAction({
 
     await execute({ assetIds: Array.from(claimableAssets.keys()) });
 
-    onPostClaim?.();
-  }, [claimableAssets, execute, onPostClaim]);
+    await refetchReward();
+  }, [claimableAssets, execute, refetchReward]);
 
   const isLoading = useMemo(() => status === TxStatus.PROCESSING, [status]);
 

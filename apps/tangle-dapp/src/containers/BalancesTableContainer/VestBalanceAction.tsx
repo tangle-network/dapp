@@ -3,7 +3,7 @@ import { FC } from 'react';
 
 import useVestingInfo from '../../data/vesting/useVestingInfo';
 import useVestTx from '../../data/vesting/useVestTx';
-import { TxStatus } from '../../hooks/useSubstrateTx';
+import { TxStatus } from '@tangle-network/tangle-shared-ui/hooks/useSubstrateTx';
 import BalanceAction from './BalanceAction';
 
 const VestBalanceAction: FC = () => {

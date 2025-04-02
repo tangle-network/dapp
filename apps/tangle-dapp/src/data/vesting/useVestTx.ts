@@ -1,9 +1,10 @@
 import { useCallback } from 'react';
 
 import { TxName } from '../../constants';
-import { PrecompileAddress } from '../../constants/evmPrecompiles';
-import useAgnosticTx from '../../hooks/useAgnosticTx';
-import VESTING_PRECOMPILE_ABI from '../../abi/vesting';
+import { PrecompileAddress } from '@tangle-network/tangle-shared-ui/constants/evmPrecompiles';
+import useAgnosticTx from '@tangle-network/tangle-shared-ui/hooks/useAgnosticTx';
+import VESTING_PRECOMPILE_ABI from '@tangle-network/tangle-shared-ui/abi/vesting';
+import { SUCCESS_MESSAGES } from '../../hooks/useTxNotification';
 
 /**
  * Performs the `vesting.vest` extrinsic call.
@@ -21,6 +22,7 @@ const useVestTx = () => {
     precompileAddress: PrecompileAddress.VESTING,
     evmTxFactory: { functionName: 'vest', arguments: [] },
     substrateTxFactory: useCallback((api) => api.tx.vesting.vest(), []),
+    successMessageByTxName: SUCCESS_MESSAGES,
   });
 };
 

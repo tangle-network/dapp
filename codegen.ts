@@ -7,22 +7,17 @@ const VITE_GRAPHQL_ENDPOINT =
 
 const config: CodegenConfig = {
   schema: VITE_GRAPHQL_ENDPOINT,
-  documents: ['apps/tangle-dapp/src/**/*.ts', 'apps/tangle-dapp/src/**/*.tsx'],
+  documents: ['apps/*/src/**/*.ts', 'apps/*/src/**/*.tsx'],
   ignoreNoDocuments: true,
   generates: {
-    'apps/tangle-dapp/src/graphql/': {
+    'libs/tangle-shared-ui/src/graphql/': {
       preset: 'client',
       config: {
         documentMode: 'string',
         scalars: {
           BigFloat: 'string',
+          Date: 'string',
         },
-      },
-    },
-    'apps/tangle-dapp/schema.graphql': {
-      plugins: ['schema-ast'],
-      config: {
-        includeDirectives: true,
       },
     },
   },

@@ -2,13 +2,14 @@ import { BN } from '@polkadot/util';
 import { useCallback } from 'react';
 
 import { TxName } from '../../constants';
-import { PrecompileAddress } from '../../constants/evmPrecompiles';
-import useAgnosticTx from '../../hooks/useAgnosticTx';
-import { EvmTxFactory } from '../../hooks/useEvmPrecompileCall';
+import { PrecompileAddress } from '@tangle-network/tangle-shared-ui/constants/evmPrecompiles';
+import useAgnosticTx from '@tangle-network/tangle-shared-ui/hooks/useAgnosticTx';
+import { EvmTxFactory } from '@tangle-network/tangle-shared-ui/hooks/useEvmPrecompileCall';
 import useFormatNativeTokenAmount from '../../hooks/useFormatNativeTokenAmount';
-import { SubstrateTxFactory } from '../../hooks/useSubstrateTx';
+import { SubstrateTxFactory } from '@tangle-network/tangle-shared-ui/hooks/useSubstrateTx';
 import { GetSuccessMessageFn } from '../../types';
-import STAKING_PRECOMPILE_ABI from '../../abi/staking';
+import STAKING_PRECOMPILE_ABI from '@tangle-network/tangle-shared-ui/abi/staking';
+import { SUCCESS_MESSAGES } from '../../hooks/useTxNotification';
 
 type Context = {
   amount: BN;
@@ -52,6 +53,7 @@ const useBondExtraTx = () => {
     evmTxFactory,
     substrateTxFactory,
     getSuccessMessage,
+    successMessageByTxName: SUCCESS_MESSAGES,
   });
 };
 

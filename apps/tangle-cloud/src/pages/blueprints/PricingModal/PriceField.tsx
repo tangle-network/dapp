@@ -20,6 +20,7 @@ type PriceFieldProps<
   label: string;
   description: string;
   placeholder?: string;
+  tabIndex?: number;
 };
 
 const PriceField = <
@@ -30,6 +31,7 @@ const PriceField = <
   label,
   description,
   placeholder = '0.00',
+  tabIndex,
 }: PriceFieldProps<TFieldValues, TName>) => {
   return (
     <FormItem className="space-y-1">
@@ -44,6 +46,7 @@ const PriceField = <
             {...field}
             value={field.value ?? ''}
             isDisabled={field.disabled}
+            tabIndex={tabIndex}
           />
         </TextField.Root>
       </FormControl>

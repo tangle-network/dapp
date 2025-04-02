@@ -5,10 +5,7 @@
     "build": {
       "dependsOn": ["^build"],
       "inputs": ["production", "^production"],
-      "outputs": [
-        "{workspaceRoot}/dist/apps/tangle-dapp",
-        "{workspaceRoot}/dist/apps/testnet-leaderboard"
-      ],
+      "outputs": ["{workspaceRoot}/dist"],
       "cache": true
     },
     "build-storybook": {
@@ -56,6 +53,11 @@
       "cache": true,
       "dependsOn": ["^build"],
       "inputs": ["production", "^production"]
+    },
+    "nx-release-publish": {
+      "options": {
+        "packageRoot": "dist/libs/{projectName}"
+      }
     }
   },
   "namedInputs": {
@@ -101,7 +103,12 @@
     }
   },
   "release": {
-    "projects": ["apps/tangle-dapp"],
+    "projects": [
+      "apps/leaderboard",
+      "apps/tangle-cloud",
+      "apps/tangle-dapp",
+      "libs/ui-components"
+    ],
     "projectsRelationship": "independent",
     "changelog": {
       "projectChangelogs": true

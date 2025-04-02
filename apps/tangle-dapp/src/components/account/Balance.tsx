@@ -6,7 +6,7 @@ import { FC, useMemo, useState } from 'react';
 import { LockFillIcon } from '@tangle-network/icons';
 import LockedBalanceDetailsModal from '../../containers/LockedBalanceDetailsModal';
 import useBalanceLocks from '../../data/balances/useBalanceLocks';
-import useBalances from '../../data/balances/useBalances';
+import useBalances from '@tangle-network/tangle-shared-ui/hooks/useBalances';
 import formatTangleBalance from '../../utils/formatTangleBalance';
 import Actions from './Actions';
 

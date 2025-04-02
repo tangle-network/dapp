@@ -2,15 +2,16 @@ import { BN } from '@polkadot/util';
 import { useCallback } from 'react';
 
 import { TxName } from '../../constants';
-import { PrecompileAddress } from '../../constants/evmPrecompiles';
-import useAgnosticTx from '../../hooks/useAgnosticTx';
-import { EvmTxFactory } from '../../hooks/useEvmPrecompileCall';
+import { PrecompileAddress } from '@tangle-network/tangle-shared-ui/constants/evmPrecompiles';
+import useAgnosticTx from '@tangle-network/tangle-shared-ui/hooks/useAgnosticTx';
+import { EvmTxFactory } from '@tangle-network/tangle-shared-ui/hooks/useEvmPrecompileCall';
 import useFormatNativeTokenAmount from '../../hooks/useFormatNativeTokenAmount';
-import { SubstrateTxFactory } from '../../hooks/useSubstrateTx';
+import { SubstrateTxFactory } from '@tangle-network/tangle-shared-ui/hooks/useSubstrateTx';
 import { GetSuccessMessageFn } from '../../types';
-import RESTAKING_PRECOMPILE_ABI from '../../abi/restaking';
+import RESTAKING_PRECOMPILE_ABI from '@tangle-network/tangle-shared-ui/abi/restaking';
 import { SubstrateAddress } from '@tangle-network/ui-components/types/address';
 import { convertAddressToBytes32 } from '@tangle-network/ui-components';
+import { SUCCESS_MESSAGES } from '../../hooks/useTxNotification';
 
 type Context = {
   amount: BN;
@@ -61,6 +62,7 @@ const useNativeRestakeTx = () => {
     substrateTxFactory,
     getSuccessMessage,
     isEvmTxRelayerSubsidized: true,
+    successMessageByTxName: SUCCESS_MESSAGES,
   });
 };
 

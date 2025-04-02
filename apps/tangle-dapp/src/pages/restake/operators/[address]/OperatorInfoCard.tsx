@@ -9,7 +9,11 @@ import type {
 } from '@tangle-network/tangle-shared-ui/types/restake';
 import getTVLToDisplay from '@tangle-network/tangle-shared-ui/utils/getTVLToDisplay';
 import { getAccountInfo } from '@tangle-network/tangle-shared-ui/utils/polkadot/identity';
-import { Card, CardVariant } from '@tangle-network/ui-components';
+import {
+  assertSubstrateAddress,
+  Card,
+  CardVariant,
+} from '@tangle-network/ui-components';
 import { Chip } from '@tangle-network/ui-components/components/Chip';
 import InfoIconWithTooltip from '@tangle-network/ui-components/components/IconWithTooltip/InfoIconWithTooltip';
 import { KeyValueWithButton } from '@tangle-network/ui-components/components/KeyValueWithButton';
@@ -23,13 +27,13 @@ import { twMerge } from 'tailwind-merge';
 
 import AvatarWithText from '../../../../components/AvatarWithText';
 import ValidatorSocials from '../../../../components/ValidatorSocials';
-
+import { OperatorTVLType } from '@tangle-network/tangle-shared-ui/data/restake/useOperatorTVL';
 interface Props extends Partial<ComponentProps<typeof Card>> {
   operatorAddress: string;
   operatorData: OperatorMetadata | undefined;
   operatorMap: OperatorMap;
   delegatorInfo: DelegatorInfo | null;
-  operatorTVL: Record<string, number>;
+  operatorTVL: OperatorTVLType['operatorTVL'];
 }
 
 const OperatorInfoCard: FC<Props> = ({
@@ -42,6 +46,7 @@ const OperatorInfoCard: FC<Props> = ({
   ...props
 }) => {
   const rpcEndpoint = useNetworkStore((store) => store.network.wsRpcEndpoint);
+  const operatorAccountId = assertSubstrateAddress(operatorAddress);
 
   const isRestaked = useMemo<boolean>(() => {
     if (delegatorInfo === null) {
@@ -56,8 +61,8 @@ const OperatorInfoCard: FC<Props> = ({
   }, [delegatorInfo, operatorAddress]);
 
   const totalRestaked = useMemo(
-    () => getTVLToDisplay(operatorTVL[operatorAddress]),
-    [operatorAddress, operatorTVL],
+    () => getTVLToDisplay(operatorTVL.get(operatorAccountId)),
+    [operatorAccountId, operatorTVL],
   );
 
   const restakersCount = useMemo(

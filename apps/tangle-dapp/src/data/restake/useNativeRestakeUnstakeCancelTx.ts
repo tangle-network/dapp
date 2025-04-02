@@ -1,18 +1,18 @@
 import { useCallback } from 'react';
 
 import { TxName } from '../../constants';
-import { PrecompileAddress } from '../../constants/evmPrecompiles';
-import useAgnosticTx from '../../hooks/useAgnosticTx';
-import { EvmTxFactory } from '../../hooks/useEvmPrecompileCall';
-import { SubstrateTxFactory } from '../../hooks/useSubstrateTx';
-import RESTAKING_PRECOMPILE_ABI from '../../abi/restaking';
+import { PrecompileAddress } from '@tangle-network/tangle-shared-ui/constants/evmPrecompiles';
+import useAgnosticTx from '@tangle-network/tangle-shared-ui/hooks/useAgnosticTx';
+import { EvmTxFactory } from '@tangle-network/tangle-shared-ui/hooks/useEvmPrecompileCall';
+import { SubstrateTxFactory } from '@tangle-network/tangle-shared-ui/hooks/useSubstrateTx';
+import RESTAKING_PRECOMPILE_ABI from '@tangle-network/tangle-shared-ui/abi/restaking';
 import { SubstrateAddress } from '@tangle-network/ui-components/types/address';
 import { convertAddressToBytes32 } from '@tangle-network/ui-components';
-import BATCH_PRECOMPILE_ABI from '../../abi/batch';
+import BATCH_PRECOMPILE_ABI from '@tangle-network/tangle-shared-ui/abi/batch';
 import createEvmBatchCall from '../../utils/staking/createEvmBatchCall';
 import createEvmBatchCallArgs from '../../utils/staking/createEvmBatchCallArgs';
-import optimizeTxBatch from '../../utils/optimizeTxBatch';
-
+import optimizeTxBatch from '@tangle-network/tangle-shared-ui/utils/optimizeTxBatch';
+import { SUCCESS_MESSAGES } from '../../hooks/useTxNotification';
 type Context = SubstrateAddress[];
 
 const useNativeRestakeUnstakeCancelTx = () => {
@@ -55,6 +55,7 @@ const useNativeRestakeUnstakeCancelTx = () => {
     precompileAddress: PrecompileAddress.BATCH,
     evmTxFactory,
     substrateTxFactory,
+    successMessageByTxName: SUCCESS_MESSAGES,
   });
 };
 

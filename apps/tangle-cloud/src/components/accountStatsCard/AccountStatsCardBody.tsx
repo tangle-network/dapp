@@ -52,7 +52,7 @@ export const AccountStatsCardBody: FC<AccountStatsCardBodyProps> = ({
 
       <Socials
         iconPlacement="end"
-        iconClassName="text-mono-100 hover:text-mono-200 dark:hover:text-mono-40 dark:bg-mono-0/[20%] rounded-2xl py-1 px-2"
+        iconClassName="text-mono-0 dark:text-mono-100 bg-mono-100 dark:bg-mono-0/[20%] rounded-2xl py-1 px-2"
         className="justify-start items-start flex-wrap space-x-0 gap-2 "
         innerIconClassName="!w-1 !h-1 !fill-mono-0"
         socialConfigs={socialLinks}

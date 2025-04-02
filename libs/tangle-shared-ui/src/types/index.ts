@@ -126,3 +126,42 @@ export type BridgeChainBalances = Partial<
 export type RestakeAssetId = `${bigint}` | EvmAddress;
 
 export type TangleAssetId = { Custom: u128 } | { Erc20: EvmAddress };
+
+export interface GraphQLPagination {
+  first: number;
+  offset: number;
+}
+
+export type BaseTxName = string;
+
+export type GetSuccessMessageFn<Context> = (context: Context) => string;
+
+/**
+ * Transaction states for payout processing
+ */
+export enum PayoutTxState {
+  /**
+   * Transaction is not active
+   */
+  IDLE = 'idle',
+  /**
+   * Transaction is being executed
+   */
+  PROCESSING = 'processing',
+  /**
+   * Waiting for confirmation
+   */
+  WAITING = 'waiting',
+  /**
+   * Current chunk succeeded
+   */
+  SUCCESS = 'success',
+  /**
+   * Transaction error
+   */
+  ERROR = 'error',
+  /**
+   * All chunks completed
+   */
+  COMPLETED = 'completed',
+}

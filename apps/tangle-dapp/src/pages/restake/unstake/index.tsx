@@ -28,7 +28,7 @@ import { SUPPORTED_RESTAKE_DEPOSIT_TYPED_CHAIN_IDS } from '../../../constants/re
 import SelectOperatorModal from '../../../containers/restaking/SelectOperatorModal';
 import UnstakeRequestTable from '../../../containers/restaking/UnstakeRequestTable';
 import useRestakeApi from '../../../data/restake/useRestakeApi';
-import useIdentities from '../../../data/useIdentities';
+import useIdentities from '@tangle-network/tangle-shared-ui/hooks/useIdentities';
 import useActiveTypedChainId from '../../../hooks/useActiveTypedChainId';
 import type { UnstakeFormFields } from '../../../types/restake';
 import decimalsToStep from '../../../utils/decimalsToStep';
@@ -44,7 +44,7 @@ import Details from './Details';
 import useRestakeAssets from '@tangle-network/tangle-shared-ui/data/restake/useRestakeAssets';
 import useNativeRestakeUnstakeTx from '../../../data/restake/useNativeRestakeUnstakeTx';
 import { NATIVE_ASSET_ID } from '@tangle-network/tangle-shared-ui/constants/restaking';
-import { TxStatus } from '../../../hooks/useSubstrateTx';
+import { TxStatus } from '@tangle-network/tangle-shared-ui/hooks/useSubstrateTx';
 
 const RestakeUnstakeForm: FC = () => {
   const [isUnstakeRequestTableOpen, setIsUnstakeRequestTableOpen] =
@@ -275,8 +275,9 @@ const RestakeUnstakeForm: FC = () => {
                             <AvatarWithText
                               accountAddress={selectedOperatorAccountId}
                               identityName={
-                                operatorIdentities?.[selectedOperatorAccountId]
-                                  ?.name
+                                operatorIdentities.get(
+                                  selectedOperatorAccountId,
+                                )?.name
                               }
                               overrideTypographyProps={{ variant: 'h5' }}
                             />
@@ -415,7 +416,7 @@ export default RestakeUnstakeForm;
 
 type Props = {
   unstakeRequests: DelegatorUnstakeRequest[];
-  operatorIdentities: Record<string, IdentityType | null>;
+  operatorIdentities: Map<string, IdentityType | null>;
   onClose: () => void;
   className?: string;
 };

@@ -68,6 +68,7 @@ build/
 docs-build/
 # Build files for mac
 .DS_Store
+._*
 
 # nx-repo compiled output
 dist
@@ -97,7 +98,6 @@ tmp
 vite.config.*.timestamp*
 
 # Generated graphql files
-apps/tangle-dapp/src/graphql/
-apps/tangle-dapp/schema.graphql
+libs/tangle-shared-ui/src/graphql/
 
 vitest.config.*.timestamp*

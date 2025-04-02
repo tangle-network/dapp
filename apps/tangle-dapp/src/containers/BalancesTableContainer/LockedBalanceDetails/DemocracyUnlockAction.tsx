@@ -3,7 +3,7 @@ import { FC } from 'react';
 
 import useDemocracy from '../../../data/democracy/useDemocracy';
 import useDemocracyUnlockTx from '../../../data/democracy/useDemocracyUnlockTx';
-import { TxStatus } from '../../../hooks/useSubstrateTx';
+import { TxStatus } from '@tangle-network/tangle-shared-ui/hooks/useSubstrateTx';
 import BalanceAction from '../BalanceAction';
 
 const DemocracyUnlockAction: FC = () => {

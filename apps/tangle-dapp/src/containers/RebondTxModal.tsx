@@ -15,7 +15,7 @@ import AmountInput from '../components/AmountInput';
 import useUnbondedAmount from '../data/nomination/useUnbondedAmount';
 import useUnbondingAmount from '../data/nomination/useUnbondingAmount';
 import useRebondTx from '../data/staking/useRebondTx';
-import { TxStatus } from '../hooks/useSubstrateTx';
+import { TxStatus } from '@tangle-network/tangle-shared-ui/hooks/useSubstrateTx';
 
 type Props = {
   isModalOpen: boolean;

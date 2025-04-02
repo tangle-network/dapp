@@ -22,19 +22,21 @@ import {
 } from 'react';
 import { LinkProps } from 'react-router';
 import { RestakeOperatorWrapper } from '../../components/tables/RestakeActionWrappers';
-import useIdentities from '../../data/useIdentities';
+import useIdentities from '@tangle-network/tangle-shared-ui/hooks/useIdentities';
 import useIsAccountConnected from '../../hooks/useIsAccountConnected';
 import JoinOperatorsModal from './JoinOperatorsModal';
 import useRestakeAssets from '@tangle-network/tangle-shared-ui/data/restake/useRestakeAssets';
+import { OperatorConcentration } from '@tangle-network/tangle-shared-ui/data/restake/useOperatorConcentration';
+import { OperatorTVLType } from '@tangle-network/tangle-shared-ui/data/restake/useOperatorTVL';
 
 type OperatorUI = NonNullable<
   ComponentProps<typeof OperatorsTableUI>['data']
 >[number];
 
 type Props = {
-  operatorConcentration?: Record<string, number | null>;
+  operatorConcentration?: OperatorConcentration;
   operatorMap: OperatorMap;
-  operatorTVL?: Record<string, number>;
+  operatorTVL?: OperatorTVLType['operatorTVL'];
   onRestakeClicked?: LinkProps['onClick'];
 };
 
@@ -54,7 +56,13 @@ const OperatorsTable: FC<Props> = ({
   const { assets } = useRestakeAssets();
 
   const { result: identities } = useIdentities(
-    useMemo(() => Object.keys(operatorMap), [operatorMap]),
+    useMemo(
+      () =>
+        Object.keys(operatorMap).map((address) =>
+          assertSubstrateAddress(address),
+        ),
+      [operatorMap],
+    ),
   );
 
   const operators = useMemo(
@@ -62,10 +70,10 @@ const OperatorsTable: FC<Props> = ({
       Object.entries(operatorMap).map<OperatorUI>(
         ([addressString, { delegations, restakersCount, stake }]) => {
           const address = assertSubstrateAddress(addressString);
-          const tvlInUsd = operatorTVL?.[address] ?? null;
+          const tvlInUsd = operatorTVL?.get(address) ?? null;
 
           const concentrationPercentage =
-            operatorConcentration?.[address] ?? null;
+            operatorConcentration?.get(address) ?? null;
 
           const isDelegated =
             activeSubstrateAddress !== null &&
@@ -77,7 +85,7 @@ const OperatorsTable: FC<Props> = ({
           return {
             address,
             concentrationPercentage,
-            identityName: identities[address]?.name ?? undefined,
+            identityName: identities.get(address)?.name ?? undefined,
             restakersCount,
             tvlInUsd,
             vaultTokens:

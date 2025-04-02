@@ -4,11 +4,12 @@ import convertAddressToBytes32 from '@tangle-network/ui-components/utils/convert
 import { useCallback } from 'react';
 
 import { TxName } from '../../constants';
-import { PrecompileAddress } from '../../constants/evmPrecompiles';
-import useAgnosticTx from '../../hooks/useAgnosticTx';
-import { EvmTxFactory } from '../../hooks/useEvmPrecompileCall';
-import { SubstrateTxFactory } from '../../hooks/useSubstrateTx';
-import STAKING_PRECOMPILE_ABI from '../../abi/staking';
+import { PrecompileAddress } from '@tangle-network/tangle-shared-ui/constants/evmPrecompiles';
+import useAgnosticTx from '@tangle-network/tangle-shared-ui/hooks/useAgnosticTx';
+import { EvmTxFactory } from '@tangle-network/tangle-shared-ui/hooks/useEvmPrecompileCall';
+import { SubstrateTxFactory } from '@tangle-network/tangle-shared-ui/hooks/useSubstrateTx';
+import STAKING_PRECOMPILE_ABI from '@tangle-network/tangle-shared-ui/abi/staking';
+import { SUCCESS_MESSAGES } from '../../hooks/useTxNotification';
 
 type Context = {
   validatorAddresses: AnyAddress[];
@@ -54,6 +55,7 @@ const useNominateTx = () => {
     precompileAddress: PrecompileAddress.STAKING,
     evmTxFactory,
     substrateTxFactory,
+    successMessageByTxName: SUCCESS_MESSAGES,
   });
 };
 

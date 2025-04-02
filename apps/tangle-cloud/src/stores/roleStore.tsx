@@ -29,13 +29,18 @@ export const ROLE_ICON_MAP = {
 export interface RoleState {
   role: Role;
   setRole: (role: Role) => void;
+  isOperator: () => boolean;
 }
 
 const useRoleStore = create<RoleState>()(
   persist(
     (set) => ({
-      role: Role.DEPLOYER,
+      role: Role.OPERATOR,
       setRole: (role) => set(() => ({ role })),
+      isOperator: (): boolean => {
+        const { role } = useRoleStore.getState();
+        return role === Role.OPERATOR;
+      },
     }),
     {
       name: 'role',

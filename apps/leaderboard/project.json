@@ -1,0 +1,31 @@
+{
+  "name": "leaderboard",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "apps/leaderboard/src",
+  "projectType": "application",
+  "tags": [],
+  "// targets": "to see all targets run: nx show project leaderboard --web",
+  "targets": {
+    "build": {
+      "dependsOn": ["typecheck"]
+    },
+    "serve": {
+      "dependsOn": ["codegen"]
+    },
+    "test": {
+      "dependsOn": ["codegen"]
+    },
+    "lint": {
+      "dependsOn": ["codegen"]
+    },
+    "codegen": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "yarn check:codegen"
+      }
+    },
+    "typecheck": {
+      "dependsOn": ["codegen"]
+    }
+  }
+}

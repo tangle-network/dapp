@@ -26,7 +26,7 @@ import { FC, useCallback, useEffect, useMemo } from 'react';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import LogoListItem from '../../../components/Lists/LogoListItem';
 import OperatorListItem from '../../../components/Lists/OperatorListItem';
-import useIdentities from '../../../data/useIdentities';
+import useIdentities from '@tangle-network/tangle-shared-ui/hooks/useIdentities';
 import useActiveTypedChainId from '../../../hooks/useActiveTypedChainId';
 import useQueryState from '../../../hooks/useQueryState';
 import { QueryParamKey } from '../../../types';
@@ -50,7 +50,7 @@ import useRestakeAssets from '@tangle-network/tangle-shared-ui/data/restake/useR
 import { NATIVE_ASSET_ID } from '@tangle-network/tangle-shared-ui/constants/restaking';
 import useNetworkStore from '@tangle-network/tangle-shared-ui/context/useNetworkStore';
 import useNativeRestakeTx from '../../../data/restake/useNativeRestakeTx';
-import { TxStatus } from '../../../hooks/useSubstrateTx';
+import { TxStatus } from '@tangle-network/tangle-shared-ui/hooks/useSubstrateTx';
 import useNativeRestakeAssetBalance from '../../../data/restake/useNativeRestakeAssetBalance';
 
 type RestakeOperator = {
@@ -97,7 +97,13 @@ const RestakeDelegateForm: FC = () => {
   const { operatorMap } = useRestakeOperatorMap();
 
   const { result: operatorIdentities } = useIdentities(
-    useMemo(() => Object.keys(operatorMap), [operatorMap]),
+    useMemo(
+      () =>
+        Object.keys(operatorMap).map((address) =>
+          assertSubstrateAddress(address),
+        ),
+      [operatorMap],
+    ),
   );
 
   const switchChain = useSwitchChain();
@@ -286,7 +292,9 @@ const RestakeDelegateForm: FC = () => {
         .filter(([, metadata]) => metadata.status === 'Active')
         .map(([accountId]) => ({
           accountId: assertSubstrateAddress(accountId),
-          identityName: operatorIdentities?.[accountId]?.name ?? undefined,
+          identityName:
+            operatorIdentities.get(assertSubstrateAddress(accountId))?.name ??
+            undefined,
           isActive: true,
         }))
     );

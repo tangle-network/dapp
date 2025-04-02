@@ -28,6 +28,7 @@ export { default as populateDocsUrl } from './populateDocsUrl';
 export * from './range';
 export * from './shortenHex';
 export * from './shortenString';
+export * from './toBigInt';
 export * from './toEvmAddress';
 export { default as toFixed } from './toFixed';
 export * from './toSubstrateAddress';

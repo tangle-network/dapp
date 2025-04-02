@@ -1,57 +1,44 @@
 import { RegisteredBlueprintsTabs } from './RegisteredBlueprints';
 import { InstancesTabs } from './Instances';
-import useActiveAccountAddress from '@tangle-network/tangle-shared-ui/hooks/useActiveAccountAddress';
-// TODO
-// import useOperatorBlueprints from '@tangle-network/tangle-shared-ui/data/blueprints/useOperatorBlueprints';
-import useFakeMonitoringBlueprints from '@tangle-network/tangle-shared-ui/data/blueprints/useFakeMonitoringBlueprints';
-import { InstanceStatus } from '@tangle-network/tangle-shared-ui/data/blueprints/utils/type';
+import useMonitoringBlueprints from '@tangle-network/tangle-shared-ui/data/blueprints/useMonitoringBlueprints';
 import { FC, useMemo } from 'react';
+import useSubstrateAddress from '@tangle-network/tangle-shared-ui/hooks/useSubstrateAddress';
+import useRoleStore from '../../stores/roleStore';
 
-type BlueprintManagementSectionProps = {
-  isOperator: boolean;
-};
-export const BlueprintManagementSection: FC<
-  BlueprintManagementSectionProps
-> = ({ isOperator }) => {
-  const walletAddr = useActiveAccountAddress();
-  // TODO
-  // const { isLoading, blueprints, error } = useOperatorBlueprints(walletAddr?.toString());
-  const { blueprints, isLoading, error } = useFakeMonitoringBlueprints(
-    walletAddr?.toString(),
-  );
-  const services = useMemo(() => {
-    return blueprints.flatMap((blueprint) => blueprint.services);
-  }, [blueprints]);
+export const BlueprintManagementSection: FC = () => {
+  const isOperator = useRoleStore.getState().isOperator();
+  const operatorAccountAddress = useSubstrateAddress();
+  const {
+    isLoading,
+    blueprints: registeredBlueprints,
+    error,
+  } = useMonitoringBlueprints(operatorAccountAddress);
+
+  const runningInstances = useMemo(() => {
+    if (registeredBlueprints.length === 0) {
+      return [];
+    }
+    return registeredBlueprints.flatMap((blueprint) => blueprint.services);
+  }, [registeredBlueprints]);
 
   return (
     <>
       {isOperator && (
         <RegisteredBlueprintsTabs
-          blueprints={blueprints}
+          blueprints={registeredBlueprints}
           isLoading={isLoading}
           error={error}
         />
       )}
       <InstancesTabs
         runningInstances={{
-          data: services.filter(
-            (service) => service.status === InstanceStatus.RUNNING,
-          ),
+          data: runningInstances,
           isLoading,
           error,
         }}
-        pendingInstances={{
-          data: services.filter(
-            (service) => service.status === InstanceStatus.PENDING,
-          ),
-          isLoading,
-          error,
-          isOperator,
-        }}
+        // TODO: Implement stopped instances
         stoppedInstances={{
-          data: services.filter(
-            (service) => service.status === InstanceStatus.STOPPED,
-          ),
+          data: [],
           isLoading,
           error,
         }}

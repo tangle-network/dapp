@@ -2,12 +2,11 @@ import { AccountStatsCard } from './AccountStatsCard';
 import { InstructionCard } from './InstructionCard';
 import { TotalValueLockedTabs } from './TotalValueLocked';
 import { BlueprintManagementSection } from './BlueprintManagementSection';
-import useRoleStore, { Role } from '../../stores/roleStore';
+import useRoleStore from '../../stores/roleStore';
 import cx from 'classnames';
 
 const Page = () => {
-  const { role } = useRoleStore();
-  const isOperator = role === Role.OPERATOR;
+  const isOperator = useRoleStore.getState().isOperator();
 
   return (
     <>
@@ -21,7 +20,7 @@ const Page = () => {
           }}
         />
       </div>
-      <BlueprintManagementSection isOperator={isOperator} />
+      <BlueprintManagementSection />
       {isOperator && <TotalValueLockedTabs />}
     </>
   );

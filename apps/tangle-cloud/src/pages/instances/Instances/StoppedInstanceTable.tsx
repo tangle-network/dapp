@@ -19,7 +19,7 @@ import { TangleCloudTable } from '../../../components/tangleCloudTable/TangleClo
 import { format } from 'date-fns';
 import { ChevronRight } from '@tangle-network/icons';
 import TableCellWrapper from '@tangle-network/tangle-shared-ui/components/tables/TableCellWrapper';
-import { InstancesTabProps } from './type';
+import { StoppedInstanceTabProps } from './type';
 import { MonitoringBlueprint } from '@tangle-network/tangle-shared-ui/data/blueprints/utils/type';
 import { PagePath } from '../../../types';
 import { Link } from 'react-router';
@@ -27,7 +27,7 @@ import { Link } from 'react-router';
 const columnHelper =
   createColumnHelper<MonitoringBlueprint['services'][number]>();
 
-export const StoppedInstanceTable: FC<InstancesTabProps> = ({
+export const StoppedInstanceTable: FC<StoppedInstanceTabProps> = ({
   data,
   isLoading,
   error,
@@ -41,13 +41,13 @@ export const StoppedInstanceTable: FC<InstancesTabProps> = ({
         enableSorting: false,
         cell: (props) => {
           return (
-            <TableCellWrapper>
+            <TableCellWrapper className="p-0 min-h-fit">
               <div className="flex items-center gap-2 w-full">
-                {props.row.original.imgUrl ? (
+                {props.row.original.blueprintData?.metadata?.logo ? (
                   <Avatar
                     size="lg"
                     className="min-w-12"
-                    src={props.row.original.imgUrl}
+                    src={props.row.original.blueprintData.metadata?.logo}
                     alt={props.row.original.id.toString()}
                     sourceVariant="uri"
                   />
@@ -55,7 +55,7 @@ export const StoppedInstanceTable: FC<InstancesTabProps> = ({
                   <Avatar
                     size="lg"
                     className="min-w-12"
-                    value={props.row.original.instanceId?.substring(0, 2)}
+                    value={props.row.original.id.toString()}
                     theme="substrate"
                   />
                 )}
@@ -84,14 +84,17 @@ export const StoppedInstanceTable: FC<InstancesTabProps> = ({
                     fw="bold"
                     className="!text-blue-50 text-ellipsis whitespace-nowrap overflow-hidden"
                   >
-                    {props.row.original.id || ''}
+                    {props.row.original.id
+                      ? `Instance-${props.row.original.id}`
+                      : EMPTY_VALUE_PLACEHOLDER}
                   </Typography>
                   <Typography
                     variant="body2"
                     fw="normal"
                     className="!text-mono-100 text-ellipsis whitespace-nowrap overflow-hidden"
                   >
-                    {props.row.original.instanceId || ''}
+                    {props.row.original.externalInstanceId ||
+                      EMPTY_VALUE_PLACEHOLDER}
                   </Typography>
                 </div>
               </div>
@@ -103,7 +106,7 @@ export const StoppedInstanceTable: FC<InstancesTabProps> = ({
         header: () => 'Earned',
         cell: (props) => {
           return (
-            <TableCellWrapper>
+            <TableCellWrapper className="p-0 min-h-fit">
               {props.row.original.earned
                 ? `$${getRoundedAmountString(props.row.original.earned)}`
                 : EMPTY_VALUE_PLACEHOLDER}
@@ -132,7 +135,7 @@ export const StoppedInstanceTable: FC<InstancesTabProps> = ({
           const colors = [...activeColors, ...inactiveColors];
 
           return (
-            <TableCellWrapper>
+            <TableCellWrapper className="p-0 min-h-fit">
               <EnergyChipStack
                 colors={colors as EnergyChipColors[]}
                 label={`${props.row.original.uptime || EMPTY_VALUE_PLACEHOLDER}%`}
@@ -145,7 +148,7 @@ export const StoppedInstanceTable: FC<InstancesTabProps> = ({
         header: () => 'Last Active',
         cell: (props) => {
           return (
-            <TableCellWrapper>
+            <TableCellWrapper className="p-0 min-h-fit">
               <Typography variant="body1" fw="normal">
                 {props.row.original.lastActive
                   ? format(props.row.original.lastActive, 'yy/MM/dd HH:mm')
@@ -159,7 +162,7 @@ export const StoppedInstanceTable: FC<InstancesTabProps> = ({
         header: () => '',
         cell: (props) => {
           return (
-            <TableCellWrapper removeRightBorder>
+            <TableCellWrapper removeRightBorder className="p-0 min-h-fit">
               <Link
                 to={PagePath.BLUEPRINTS_DETAILS.replace(
                   ':id',

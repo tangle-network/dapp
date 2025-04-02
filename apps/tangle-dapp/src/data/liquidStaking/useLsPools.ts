@@ -10,7 +10,8 @@ import useLsPoolCompoundApys from './apy/useLsPoolCompoundApys';
 import useLsBondedPools from './useLsBondedPools';
 import useAssetAccounts from './useAssetAccounts';
 import useLsPoolNominations from './useLsPoolNominations';
-import { useLsStore } from './useLsStore';
+import { toSubstrateAddress } from '@tangle-network/ui-components';
+import useNetworkStore from '@tangle-network/tangle-shared-ui/context/useNetworkStore';
 
 const useLsPools = (): Map<number, LsPool> | null | Error => {
   const networkFeatures = useNetworkFeatures();
@@ -18,7 +19,7 @@ const useLsPools = (): Map<number, LsPool> | null | Error => {
   const bondedPools = useLsBondedPools();
   const poolMembers = useAssetAccounts();
   const compoundApys = useLsPoolCompoundApys();
-  const { lsProtocolId } = useLsStore();
+  const ss58Prefix = useNetworkStore((store) => store.network2?.ss58Prefix);
 
   const isSupported = networkFeatures.includes(NetworkFeature.LsPools);
 
@@ -49,13 +50,12 @@ const useLsPools = (): Map<number, LsPool> | null | Error => {
         ? undefined
         : assertSubstrateAddress(tanglePool.roles.bouncer.unwrap().toString());
 
-      const memberBalances = poolMembers.filter(([id]) => {
-        return id === poolId;
-      });
+      const memberBalances = poolMembers.filter(([id]) => id === poolId);
 
-      const totalStaked = memberBalances.reduce((acc, [, , account]) => {
-        return acc.add(account.balance.toBn());
-      }, BN_ZERO);
+      const totalStaked = memberBalances.reduce(
+        (acc, [, , account]) => acc.add(account.balance.toBn()),
+        BN_ZERO,
+      );
 
       const commissionFractional = tanglePool.commission.current.isNone
         ? undefined
@@ -70,7 +70,12 @@ const useLsPools = (): Map<number, LsPool> | null | Error => {
 
       const membersKeyValuePairs = poolMembers
         .filter(([memberPoolId]) => memberPoolId === poolId)
-        .map(([, address, account]) => [address, account] as const);
+        .map(
+          ([, address, account]) =>
+            // Encode addresses with the active network's SS58 prefix to prevent
+            // address comparison bugs.
+            [toSubstrateAddress(address, ss58Prefix), account] as const,
+        );
 
       const membersMap = new Map(membersKeyValuePairs);
 
@@ -85,17 +90,27 @@ const useLsPools = (): Map<number, LsPool> | null | Error => {
       const pool: LsPool = {
         id: poolId,
         name,
-        ownerAddress,
-        nominatorAddress,
-        bouncerAddress,
         commissionFractional,
         validators,
         totalStaked,
         apyPercentage,
         members: membersMap,
-        // TODO: Ensure that this also works for the Restaking Parachain, once it's implemented.
-        protocolId: lsProtocolId,
-        iconUrl,
+        iconUrl: iconUrl?.trim() === '' ? undefined : iconUrl,
+        state: tanglePool.state.type,
+        // Encode addresses with the active network's SS58 prefix to prevent
+        // address comparison bugs.
+        ownerAddress:
+          ownerAddress === undefined
+            ? undefined
+            : toSubstrateAddress(ownerAddress, ss58Prefix),
+        nominatorAddress:
+          nominatorAddress === undefined
+            ? undefined
+            : toSubstrateAddress(nominatorAddress, ss58Prefix),
+        bouncerAddress:
+          bouncerAddress === undefined
+            ? undefined
+            : toSubstrateAddress(bouncerAddress, ss58Prefix),
       };
 
       return [poolId, pool] as const;
@@ -108,7 +123,7 @@ const useLsPools = (): Map<number, LsPool> | null | Error => {
     compoundApys,
     poolMembers,
     isSupported,
-    lsProtocolId,
+    ss58Prefix,
   ]);
 
   // In case that the user connects to testnet or mainnet, but the network

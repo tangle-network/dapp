@@ -103,6 +103,7 @@ const UpdateMetadataButton: FC = () => {
       specVersion: api.runtimeVersion.specVersion.toNumber(),
       icon: 'substrate',
       ss58Format: network.ss58Prefix,
+      // TODO: Properly obtain this information from the runtime.
       types: {},
       chain: api.runtimeChain.toString(),
     };

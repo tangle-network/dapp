@@ -54,7 +54,9 @@ export function useDynamicSVGImport(
 
       try {
         const mod = await getIcon(type, processingName);
-        const Icon = mod.default;
+        const Icon = mod.default as unknown as React.FC<
+          React.SVGProps<SVGElement>
+        >;
 
         // Only update state if this is still the current name
         if (processingName === currentNameRef.current) {
@@ -69,7 +71,9 @@ export function useDynamicSVGImport(
           (err as any).message.includes('Unknown variable dynamic import')
         ) {
           const mod = await getDefaultIcon(type);
-          const Icon = mod.default;
+          const Icon = mod.default as unknown as React.FC<
+            React.SVGProps<SVGElement>
+          >;
 
           if (isCurrentNameMatch) {
             setImportedIcon(<Icon />);
