@@ -31,6 +31,7 @@ import { SyncProgressIndicator } from '../../indexingProgress';
 import { BLOCK_COUNT_IN_SEVEN_DAYS } from '../constants';
 import { useLeaderboard } from '../queries';
 import { Account } from '../types';
+import { createAccountExplorerUrl } from '../utils/createAccountExplorerUrl';
 import { formatDisplayBlockNumber } from '../utils/formatDisplayBlockNumber';
 import { processLeaderboardRecord } from '../utils/processLeaderboardRecord';
 import { BadgesCell } from './BadgesCell';
@@ -80,11 +81,16 @@ const COLUMNS = [
     header: () => <HeaderCell title="Account" />,
     cell: (props) => {
       const address = props.getValue();
+      const accountNetwork = props.row.original.network;
 
       if (isSubstrateAddress(address)) {
         return (
           <ValidatorIdentity
             address={address}
+            accountExplorerUrl={createAccountExplorerUrl(
+              address,
+              accountNetwork,
+            )}
             subContent={
               <Typography
                 variant="body2"

@@ -5,6 +5,7 @@ import findLast from 'lodash/findLast';
 import { BadgeEnum } from '../constants';
 import type { LeaderboardAccountNodeType } from '../queries';
 import { Account, TestnetTaskCompletion } from '../types';
+import { NetworkType } from '@tangle-network/tangle-shared-ui/graphql/graphql';
 
 const calculateLastSevenDaysPoints = (record: LeaderboardAccountNodeType) => {
   const firstSnapshot = find(record.snapshots.nodes, (snapshot) => {
@@ -247,5 +248,7 @@ export const processLeaderboardRecord = (
     createdAtTimestamp: record.createdAtTimestamp,
     lastUpdatedAt: record.lastUpdatedAt,
     lastUpdatedAtTimestamp: record.lastUpdatedAtTimestamp,
+    // TODO: This should fetch from the API once the server supports multi-chain
+    network: NetworkType.Testnet,
   } satisfies Account;
 };

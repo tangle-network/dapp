@@ -10,6 +10,7 @@ import {
 import { Row } from '@tanstack/react-table';
 import React from 'react';
 import { Account } from '../types';
+import { createAccountExplorerUrl } from '../utils/createAccountExplorerUrl';
 import { formatDisplayBlockNumber } from '../utils/formatDisplayBlockNumber';
 
 interface ExpandedInfoProps {
@@ -19,6 +20,7 @@ interface ExpandedInfoProps {
 export const ExpandedInfo: React.FC<ExpandedInfoProps> = ({ row }) => {
   const account = row.original;
   const address = account.id;
+  const accountNetwork = account.network;
 
   // Helper function to render a detail row with label and value
   const DetailRow = ({
@@ -78,7 +80,13 @@ export const ExpandedInfo: React.FC<ExpandedInfoProps> = ({ row }) => {
             label="Account ID"
             value={
               isSubstrateAddress(address) ? (
-                <ValidatorIdentity address={address} />
+                <ValidatorIdentity
+                  address={address}
+                  accountExplorerUrl={createAccountExplorerUrl(
+                    address,
+                    accountNetwork,
+                  )}
+                />
               ) : (
                 <KeyValueWithButton size="sm" keyValue={address} />
               )

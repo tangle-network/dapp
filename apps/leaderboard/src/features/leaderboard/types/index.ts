@@ -1,3 +1,4 @@
+import { NetworkType } from '@tangle-network/tangle-shared-ui/graphql/graphql';
 import { BadgeEnum } from '../constants';
 
 export interface PointsBreakdown {
@@ -43,4 +44,5 @@ export interface Account {
   createdAtTimestamp: Date | null | undefined;
   lastUpdatedAt: number;
   lastUpdatedAtTimestamp: Date | null | undefined;
+  network: NetworkType;
 }
