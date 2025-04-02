@@ -20,7 +20,9 @@ import ParamsForm from './RegistrationForm/ParamsForm';
 import { SessionStorageKey } from '../../constants';
 import { useNavigate } from 'react-router';
 import { PagePath } from '../../types';
-import useServiceRegisterTx, { toPrimitiveDataType } from '../../data/services/useServiceRegisterTx';
+import useServiceRegisterTx, {
+  toPrimitiveDataType,
+} from '../../data/services/useServiceRegisterTx';
 import { toTanglePrimitiveEcdsaKey } from '../../utils';
 import useSubstrateAddress from '@tangle-network/tangle-shared-ui/hooks/useSubstrateAddress';
 import { TxStatus } from '@tangle-network/tangle-shared-ui/hooks/useSubstrateTx';
@@ -115,7 +117,8 @@ export default function RegistrationReview() {
     registerTx({
       blueprintIds: blueprints.map((blueprint) => blueprint.id),
       preferences,
-      registrationArgs: blueprints.map(({
+      registrationArgs: blueprints.map(
+        ({
           id: blueprintId,
           registrationParams: blueprintRegistrationParams,
         }) => {
@@ -144,70 +147,66 @@ export default function RegistrationReview() {
       <div className="space-y-4">
         {Children.toArray(
           blueprints.map((blueprint) => (
-            <div
-              className="p-6 border-2 border-mono-80 dark:border-mono-160"
-            >
-                <div className="flex w-full gap-1">
-                  {blueprint.imgUrl && (
-                    <img
-                      src={blueprint.imgUrl}
-                      width={48}
-                      height={48}
-                      alt={blueprint.name}
-                      className="flex-shrink-0 bg-center rounded-full"
-                    />
-                  )}
+            <div className="p-6 border-2 border-mono-80 dark:border-mono-160">
+              <div className="flex w-full gap-1">
+                {blueprint.imgUrl && (
+                  <img
+                    src={blueprint.imgUrl}
+                    width={48}
+                    height={48}
+                    alt={blueprint.name}
+                    className="flex-shrink-0 bg-center rounded-full"
+                  />
+                )}
 
-                  <div className="space-y-1 grow">
-                    <Typography variant="body1" fw="bold">
-                      {blueprint.name}
-                    </Typography>
+                <div className="space-y-1 grow">
+                  <Typography variant="body1" fw="bold">
+                    {blueprint.name}
+                  </Typography>
 
-                    <Typography
-                      variant="body3"
-                      className="text-mono-120 dark:text-mono-100"
-                    >
-                      {blueprint.author}
-                    </Typography>
-                  </div>
-
-                  <div className="flex items-center gap-2">
-                    <Dropdown>
-                      <DropdownMenuTrigger asChild>
-                        <IconButton
-                          onClick={(event) => event.stopPropagation()}
-                        >
-                          <ThreeDotsVerticalIcon />
-                        </IconButton>
-                      </DropdownMenuTrigger>
-
-                      <DropdownBody size="sm">
-                        <DropdownMenuItem
-                          onClick={(event) => event.stopPropagation()}
-                        >
-                          Remove
-                        </DropdownMenuItem>
-                      </DropdownBody>
-                    </Dropdown>
-                  </div>
+                  <Typography
+                    variant="body3"
+                    className="text-mono-120 dark:text-mono-100"
+                  >
+                    {blueprint.author}
+                  </Typography>
                 </div>
 
-                <ParamsForm
-                  params={blueprint.registrationParams}
-                  tokenSymbol={network.tokenSymbol}
-                  amountValue={amount[blueprint.id] ?? ''}
-                  paramsValue={registrationParams[blueprint.id] ?? {}}
-                  onSave={(params, amount) => {
-                    setRegistrationParams((prev) => ({
-                      ...prev,
-                      [blueprint.id]: params,
-                    }));
-                    setAmount((prev) => ({
-                      ...prev,
-                      [blueprint.id]: amount,
-                    }));
-                  }}
-                />
+                <div className="flex items-center gap-2">
+                  <Dropdown>
+                    <DropdownMenuTrigger asChild>
+                      <IconButton onClick={(event) => event.stopPropagation()}>
+                        <ThreeDotsVerticalIcon />
+                      </IconButton>
+                    </DropdownMenuTrigger>
+
+                    <DropdownBody size="sm">
+                      <DropdownMenuItem
+                        onClick={(event) => event.stopPropagation()}
+                      >
+                        Remove
+                      </DropdownMenuItem>
+                    </DropdownBody>
+                  </Dropdown>
+                </div>
+              </div>
+
+              <ParamsForm
+                params={blueprint.registrationParams}
+                tokenSymbol={network.tokenSymbol}
+                amountValue={amount[blueprint.id] ?? ''}
+                paramsValue={registrationParams[blueprint.id] ?? {}}
+                onSave={(params, amount) => {
+                  setRegistrationParams((prev) => ({
+                    ...prev,
+                    [blueprint.id]: params,
+                  }));
+                  setAmount((prev) => ({
+                    ...prev,
+                    [blueprint.id]: amount,
+                  }));
+                }}
+              />
             </div>
           )),
         )}

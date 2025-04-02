@@ -112,7 +112,7 @@ const FieldTypeInput: React.FC<FieldTypeInputProps> = ({
                   : undefined
               }
             >
-              <SelectTrigger tabIndex={tabIndex} className='max-w-md'>
+              <SelectTrigger tabIndex={tabIndex} className="max-w-md">
                 <SelectValue placeholder={`Select True or False`} />
               </SelectTrigger>
 
@@ -127,7 +127,9 @@ const FieldTypeInput: React.FC<FieldTypeInputProps> = ({
         if (isNumberType(fieldType)) {
           return (
             <div>
-              <Label>{label} ({fieldType})</Label>
+              <Label>
+                {label} ({fieldType})
+              </Label>
 
               <TextField.Root>
                 <TextField.Input
@@ -148,7 +150,9 @@ const FieldTypeInput: React.FC<FieldTypeInputProps> = ({
         } else if (isTextType(fieldType)) {
           return (
             <div>
-              <Label>{label} ({fieldType})</Label>
+              <Label>
+                {label} ({fieldType})
+              </Label>
 
               <TextField.Root>
                 <TextField.Input

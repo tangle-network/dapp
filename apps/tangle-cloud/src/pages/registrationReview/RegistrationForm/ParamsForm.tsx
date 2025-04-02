@@ -49,18 +49,20 @@ const ParamsForm = ({
   return (
     <div>
       <div className="grid gap-4 p-0 mt-3 sm:grid-cols-2 mb-5">
-        {Children.toArray(params.map((param, idx) => {          
-          return (
-            <FieldTypeInput
-              label={`Param ${idx + 1}`}
-              fieldType={param}
-              id={idx.toString()}
-              value={formValues[idx]}
-              onValueChange={handleValueChange}
-              tabIndex={idx + 1}
-            />
-          );
-        }))}
+        {Children.toArray(
+          params.map((param, idx) => {
+            return (
+              <FieldTypeInput
+                label={`Param ${idx + 1}`}
+                fieldType={param}
+                id={idx.toString()}
+                value={formValues[idx]}
+                onValueChange={handleValueChange}
+                tabIndex={idx + 1}
+              />
+            );
+          }),
+        )}
 
         <div className="space-y-2">
           <Label>Enter the value of {tokenSymbol} to register</Label>
