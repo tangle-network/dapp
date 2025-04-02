@@ -40,5 +40,7 @@ export interface Account {
   testnetTaskCompletion?: TestnetTaskCompletion;
   pointsHistory: PointsHistory[];
   createdAt: number;
+  createdAtTimestamp: Date | null | undefined;
   lastUpdatedAt: number;
+  lastUpdatedAtTimestamp: Date | null | undefined;
 }

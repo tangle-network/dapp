@@ -83,7 +83,9 @@ const LeaderboardQueryDocument = graphql(/* GraphQL */ `
           }
         }
         createdAt
-        lastUpdateAt
+        createdAtTimestamp
+        lastUpdatedAt
+        lastUpdatedAtTimestamp
       }
       totalCount
     }
@@ -100,7 +102,7 @@ const fetcher = async (
     first,
     offset,
     blockNumberSevenDaysAgo,
-    teamAccounts: TEAM_ACCOUNTS.map((account) => account.toLowerCase()),
+    teamAccounts: [],
     accountIdQuery,
   });
   return result.data.accounts;

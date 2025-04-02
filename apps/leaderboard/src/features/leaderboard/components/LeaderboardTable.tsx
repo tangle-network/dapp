@@ -35,10 +35,10 @@ import { formatDisplayBlockNumber } from '../utils/formatDisplayBlockNumber';
 import { BadgesCell } from './BadgesCell';
 import { ExpandedInfo } from './ExpandedInfo';
 import { HeaderCell } from './HeaderCell';
+import { MiniSparkline } from './MiniSparkline';
 import { Overlay } from './Overlay';
 import { FirstPlaceIcon, SecondPlaceIcon, ThirdPlaceIcon } from './RankIcon';
 import { TrendIndicator } from './TrendIndicator';
-import { MiniSparkline } from './MiniSparkline';
 
 const COLUMN_ID = {
   RANK: 'RANK',
@@ -64,10 +64,7 @@ const RankIcon = ({ rank }: { rank: number }) => {
   }
 };
 
-const getColumns = (
-  latestBlockNumber?: number | null,
-  latestBlockTimestamp?: Date | null,
-) => [
+const getColumns = (latestBlockNumber?: number | null) => [
   COLUMN_HELPER.accessor('rank', {
     id: COLUMN_ID.RANK,
     header: () => <HeaderCell title="Rank" />,
@@ -93,8 +90,7 @@ const getColumns = (
             Created{' '}
             {formatDisplayBlockNumber(
               props.row.original.createdAt,
-              latestBlockNumber,
-              latestBlockTimestamp,
+              props.row.original.createdAtTimestamp,
             )}
           </Typography>
         </div>
@@ -166,6 +162,10 @@ const getColumns = (
   }),
 ];
 
+const getExpandedRowContent = (row: Row<Account>) => {
+  return <ExpandedInfo row={row} />;
+};
+
 export const LeaderboardTable = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [expanded, setExpanded] = useState<ExpandedState>({});
@@ -191,8 +191,7 @@ export const LeaderboardTable = () => {
       return -1;
     }
 
-    const result =
-      latestBlock.testnetBlock.blockNumber - BLOCK_COUNT_IN_SEVEN_DAYS;
+    const result = latestBlock.testnetBlock - BLOCK_COUNT_IN_SEVEN_DAYS;
 
     return result < 0 ? 1 : result;
   }, [isLatestBlockPending, latestBlockError, latestBlock?.testnetBlock]);
@@ -224,15 +223,8 @@ export const LeaderboardTable = () => {
   );
 
   const columns = useMemo(
-    () =>
-      getColumns(
-        latestBlock?.testnetBlock.blockNumber,
-        latestBlock?.testnetBlock.timestamp,
-      ),
-    [
-      latestBlock?.testnetBlock.blockNumber,
-      latestBlock?.testnetBlock.timestamp,
-    ],
+    () => getColumns(latestBlock?.testnetBlock),
+    [latestBlock?.testnetBlock],
   );
 
   const data = useMemo<Account[]>(() => {
@@ -455,7 +447,9 @@ export const LeaderboardTable = () => {
               ];
             }, [] as PointsHistory[]),
           createdAt: record.createdAt,
-          lastUpdatedAt: record.lastUpdateAt,
+          createdAtTimestamp: record.createdAtTimestamp,
+          lastUpdatedAt: record.lastUpdatedAt,
+          lastUpdatedAtTimestamp: record.lastUpdatedAtTimestamp,
         } satisfies Account;
       })
       .filter((record) => record !== null);
@@ -476,22 +470,6 @@ export const LeaderboardTable = () => {
     onExpandedChange: setExpanded,
     getRowCanExpand: () => true,
   });
-
-  const getExpandedRowContent = useCallback(
-    (row: Row<Account>) => {
-      return (
-        <ExpandedInfo
-          row={row}
-          latestBlockNumber={latestBlock?.testnetBlock.blockNumber}
-          latestBlockTimestamp={latestBlock?.testnetBlock.timestamp}
-        />
-      );
-    },
-    [
-      latestBlock?.testnetBlock.blockNumber,
-      latestBlock?.testnetBlock.timestamp,
-    ],
-  );
 
   return (
     <Card className="space-y-6 !bg-transparent !border-transparent p-0">

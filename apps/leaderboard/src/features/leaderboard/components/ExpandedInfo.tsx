@@ -12,15 +12,9 @@ import { formatDisplayBlockNumber } from '../utils/formatDisplayBlockNumber';
 
 interface ExpandedInfoProps {
   row: Row<Account>;
-  latestBlockNumber?: number | null;
-  latestBlockTimestamp?: Date | null;
 }
 
-export const ExpandedInfo: React.FC<ExpandedInfoProps> = ({
-  row,
-  latestBlockNumber,
-  latestBlockTimestamp,
-}) => {
+export const ExpandedInfo: React.FC<ExpandedInfoProps> = ({ row }) => {
   const account = row.original;
   const address = account.id;
 
@@ -86,16 +80,14 @@ export const ExpandedInfo: React.FC<ExpandedInfoProps> = ({
             label="Created"
             value={formatDisplayBlockNumber(
               account.createdAt,
-              latestBlockNumber,
-              latestBlockTimestamp,
+              account.createdAtTimestamp,
             )}
           />
           <DetailRow
             label="Last Updated"
             value={formatDisplayBlockNumber(
               account.lastUpdatedAt,
-              latestBlockNumber,
-              latestBlockTimestamp,
+              account.lastUpdatedAtTimestamp,
             )}
           />
         </Section>
