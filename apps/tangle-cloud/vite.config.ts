@@ -54,6 +54,7 @@ export default defineConfig({
         global: 'globalThis',
       },
     },
+    exclude: ['node_modules/.vite/apps/tangle-cloud/deps']
   },
   test: {
     watch: false,

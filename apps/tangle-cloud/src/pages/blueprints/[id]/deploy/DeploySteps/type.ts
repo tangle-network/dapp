@@ -11,9 +11,9 @@ export type BaseDeployStepProps = {
   blueprint?: Blueprint;
 };
 
-export type DeployStep1Props = BaseDeployStepProps;
+export type BasicInformationStepProps = BaseDeployStepProps;
 
-export type DeployStep2Props = BaseDeployStepProps;
+export type SelectOperatorsStepProps = BaseDeployStepProps;
 
 export type SelectOperatorsTable = {
   address: SubstrateAddress;

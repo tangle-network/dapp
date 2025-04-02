@@ -4,7 +4,7 @@ import {
   ErrorFallback,
   SkeletonLoader,
 } from '@tangle-network/ui-components';
-import { DeployStep1 } from './DeploySteps/DeployStep1';
+import { BasicInformationStep } from './DeploySteps/BasicInformationStep';
 import { useForm } from 'react-hook-form';
 import {
   BLUEPRINT_DEPLOY_STEPS,
@@ -16,7 +16,7 @@ import { twMerge } from 'tailwind-merge';
 import { ArrowRightIcon } from '@radix-ui/react-icons';
 import { useParams } from 'react-router';
 import useBlueprintDetails from '@tangle-network/tangle-shared-ui/data/restake/useBlueprintDetails';
-import { DeployStep2 } from './DeploySteps/DeployStep2';
+import { SelectOperatorsStep } from './DeploySteps/OperatorSelectionStep';
 import { ArrowLeft } from '@tangle-network/icons';
 
 const DeployPage: FC = () => {
@@ -48,11 +48,11 @@ const DeployPage: FC = () => {
   const steps = useMemo(
     () => [
       {
-        component: DeployStep1,
+        component: BasicInformationStep,
         props: commonProps,
       },
       {
-        component: DeployStep2,
+        component: SelectOperatorsStep,
         props: commonProps,
       },
     ],

@@ -13,7 +13,7 @@ import {
   fuzzyFilter,
 } from '@tangle-network/ui-components';
 import { FC, useEffect, useMemo, useState, Children } from 'react';
-import { DeployStep2Props, SelectOperatorsTable } from './type';
+import { SelectOperatorsStepProps, SelectOperatorsTable } from './type';
 import { BLUEPRINT_DEPLOY_STEPS } from '../../../../../utils/validations/deployBlueprint';
 import useRestakeOperatorMap from '@tangle-network/tangle-shared-ui/data/restake/useRestakeOperatorMap';
 import {
@@ -50,7 +50,7 @@ const COLUMN_HELPER = createColumnHelper<SelectOperatorsTable>();
 
 const MAX_ASSET_TO_SHOW = 3;
 
-export const DeployStep2: FC<DeployStep2Props> = ({
+export const SelectOperatorsStep: FC<SelectOperatorsStepProps> = ({
   errors: globalErrors,
   setValue,
   watch,
@@ -366,15 +366,16 @@ export const DeployStep2: FC<DeployStep2Props> = ({
                 Array.from(assets?.values() ?? []).map((asset) => (
                   <SelectCheckboxItem
                     onChange={(e) => {
-                      const prevValue = watch(`${stepKey}.assets`) ?? [];
+                      let prevValue = watch(`${stepKey}.assets`) ?? [];
 
                       if (e.target.checked) {
-                        setValue(`${stepKey}.assets`, [...prevValue, asset.id]);
+                        prevValue = [...prevValue, asset.id];
+                        setValue(`${stepKey}.assets`, prevValue);
                       } else {
-                        setValue(
-                          `${stepKey}.assets`,
-                          prevValue.filter((assetId) => assetId !== asset.id),
+                        prevValue = prevValue.filter(
+                          (assetId) => assetId !== asset.id,
                         );
+                        setValue(`${stepKey}.assets`, prevValue);
                       }
                     }}
                     id={asset.id}

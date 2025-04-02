@@ -7,7 +7,7 @@ import {
 import InstanceHeader from '../../../../../components/InstanceHeader';
 import ErrorMessage from '../../../../../components/ErrorMessage';
 import { Children, FC } from 'react';
-import { DeployStep1Props } from './type';
+import { BasicInformationStepProps } from './type';
 import { TrashIcon } from '@radix-ui/react-icons';
 import { BLUEPRINT_DEPLOY_STEPS } from '../../../../../utils/validations/deployBlueprint';
 import {
@@ -16,7 +16,7 @@ import {
 } from '@tangle-network/ui-components/types/address';
 import { InstructionSideCard } from './InstructionSideCard';
 
-export const DeployStep1: FC<DeployStep1Props> = ({
+export const BasicInformationStep: FC<BasicInformationStepProps> = ({
   errors: globalErrors,
   setValue,
   watch,
