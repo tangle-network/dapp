@@ -1,4 +1,4 @@
-import { createElement, FC, useMemo, useState } from 'react';
+import { createElement, FC, useMemo, useState, useCallback } from 'react';
 import {
   Button,
   ErrorFallback,
@@ -61,20 +61,20 @@ const DeployPage: FC = () => {
 
   const StepComponent = createElement(steps[step].component, steps[step].props);
 
-  const onNextStep = async () => {
+  const onNextStep = useCallback(async () => {
     const values = BLUEPRINT_DEPLOY_STEPS[step];
     const isStepValid = await trigger(values);
 
     if (isStepValid && step < BLUEPRINT_DEPLOY_STEPS.length - 1) {
       setStep(step + 1);
     }
-  };
+  }, [step, trigger]);
 
-  const onBackStep = () => {
+  const onBackStep = useCallback(() => {
     if (step > 0) {
       setStep(step - 1);
     }
-  };
+  }, [step]);
 
   if (isBlueprintLoading) {
     return <SkeletonLoader className="min-h-64" />;
