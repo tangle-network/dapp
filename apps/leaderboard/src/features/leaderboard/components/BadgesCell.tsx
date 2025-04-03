@@ -1,17 +1,16 @@
-import capitalize from 'lodash/capitalize';
-import cx from 'classnames';
 import {
   Tooltip,
   TooltipBody,
   TooltipTrigger,
 } from '@tangle-network/ui-components/components/Tooltip';
-import type { FC } from 'react';
 import { Typography } from '@tangle-network/ui-components/typography/Typography';
+import capitalize from 'lodash/capitalize';
+import type { FC } from 'react';
 import { BADGE_ICON_RECORD, BadgeEnum } from '../constants';
 
 export const BadgesCell: FC<{ badges: BadgeEnum[] }> = ({ badges }) => {
   return (
-    <div className="flex flex-wrap gap-[2px]">
+    <div className="flex items-center gap-0.5">
       {badges.length === 0 ? (
         <Typography variant="body1">No badges</Typography>
       ) : (
@@ -35,15 +34,8 @@ type Props = {
 const BadgeWithTooltip: FC<Props> = ({ badge, emoji }) => {
   return (
     <Tooltip>
-      <TooltipTrigger asChild>
-        <div
-          className={cx(
-            'size-6 aspect-square rounded-full cursor-pointer',
-            'flex items-center justify-center',
-          )}
-        >
-          <Typography variant="body1">{emoji}</Typography>
-        </div>
+      <TooltipTrigger className="size-6 aspect-square flex-initial">
+        {emoji}
       </TooltipTrigger>
 
       <TooltipBody>{badge.split('_').map(capitalize).join(' ')}</TooltipBody>

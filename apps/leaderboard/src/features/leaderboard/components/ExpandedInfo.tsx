@@ -2,27 +2,25 @@ import { CircleIcon } from '@radix-ui/react-icons';
 import { CheckboxCircleFill } from '@tangle-network/icons';
 import {
   Card,
+  isSubstrateAddress,
   KeyValueWithButton,
   Typography,
+  ValidatorIdentity,
 } from '@tangle-network/ui-components';
 import { Row } from '@tanstack/react-table';
 import React from 'react';
 import { Account } from '../types';
+import { createAccountExplorerUrl } from '../utils/createAccountExplorerUrl';
 import { formatDisplayBlockNumber } from '../utils/formatDisplayBlockNumber';
 
 interface ExpandedInfoProps {
   row: Row<Account>;
-  latestBlockNumber?: number | null;
-  latestBlockTimestamp?: Date | null;
 }
 
-export const ExpandedInfo: React.FC<ExpandedInfoProps> = ({
-  row,
-  latestBlockNumber,
-  latestBlockTimestamp,
-}) => {
+export const ExpandedInfo: React.FC<ExpandedInfoProps> = ({ row }) => {
   const account = row.original;
   const address = account.id;
+  const accountNetwork = account.network;
 
   // Helper function to render a detail row with label and value
   const DetailRow = ({
@@ -80,22 +78,32 @@ export const ExpandedInfo: React.FC<ExpandedInfoProps> = ({
         <Section title="Account Details">
           <DetailRow
             label="Account ID"
-            value={<KeyValueWithButton size="sm" keyValue={address} />}
+            value={
+              isSubstrateAddress(address) ? (
+                <ValidatorIdentity
+                  address={address}
+                  accountExplorerUrl={createAccountExplorerUrl(
+                    address,
+                    accountNetwork,
+                  )}
+                />
+              ) : (
+                <KeyValueWithButton size="sm" keyValue={address} />
+              )
+            }
           />
           <DetailRow
             label="Created"
             value={formatDisplayBlockNumber(
               account.createdAt,
-              latestBlockNumber,
-              latestBlockTimestamp,
+              account.createdAtTimestamp,
             )}
           />
           <DetailRow
             label="Last Updated"
             value={formatDisplayBlockNumber(
               account.lastUpdatedAt,
-              latestBlockNumber,
-              latestBlockTimestamp,
+              account.lastUpdatedAtTimestamp,
             )}
           />
         </Section>
