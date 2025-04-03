@@ -116,7 +116,6 @@ export const SelectOperatorsStep: FC<SelectOperatorsStepProps> = ({
   const stepKey = BLUEPRINT_DEPLOY_STEPS[1];
   const errors = globalErrors?.[stepKey];
 
-  // @ts-expect-error Type instantiation is excessively deep and possibly infinite.
   const selectedAssets = watch(`${stepKey}.assets`) ?? [];
 
   const columns = [

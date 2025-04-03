@@ -1,4 +1,3 @@
-import { RestakeAsset } from '@tangle-network/tangle-shared-ui/types/restake';
 import assertRestakeAssetId from '@tangle-network/tangle-shared-ui/utils/assertRestakeAssetId';
 import {
   isEvmAddress,
@@ -13,26 +12,34 @@ export const BLUEPRINT_DEPLOY_STEPS = [
   'step4',
 ] as const;
 
-const restakeAssetSchema = z.custom<RestakeAsset>(
-  (val) => {
-    if (typeof val !== 'object' || val === null) return false;
-
-    // Check for required properties
-    if (!('id' in val) || !('metadata' in val)) return false;
-
+export const restakeAssetSchema = z.object({
+  id: z.string().transform((value, ctx) => {
     try {
-      assertRestakeAssetId(val.id);
+      assertRestakeAssetId(value);
     } catch (error: unknown) {
-      console.error(`Asset id ${val.id} is invalid: ${error}`);
-      return false;
+      console.error(`Asset id ${value} is invalid: ${error}`);
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: 'Invalid RestakeAssetId',
+      });
+
+      return z.NEVER;
     }
 
-    return true;
-  },
-  {
-    message: 'Invalid RestakeAsset format',
-  },
-);
+    return value;
+  }),
+  metadata: z.object({
+    assetId: z.string(),
+    vaultId: z.number().nullable().optional(),
+    priceInUsd: z.number().nullable().optional(),
+    details: z.any().optional(),
+    name: z.string(),
+    symbol: z.string(),
+    decimals: z.number(),
+    deposit: z.string().optional(),
+    isFrozen: z.boolean().optional(),
+  }),
+});
 
 export const deployBlueprintSchema = z.object({
   [BLUEPRINT_DEPLOY_STEPS[0]]: z.object({

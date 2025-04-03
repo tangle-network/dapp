@@ -4,7 +4,6 @@ import {
   ErrorFallback,
   SkeletonLoader,
 } from '@tangle-network/ui-components';
-import { BasicInformationStep } from './DeploySteps/BasicInformationStep';
 import { useForm } from 'react-hook-form';
 import {
   BLUEPRINT_DEPLOY_STEPS,
@@ -18,6 +17,7 @@ import { useParams } from 'react-router';
 import useBlueprintDetails from '@tangle-network/tangle-shared-ui/data/restake/useBlueprintDetails';
 import { ArrowLeft } from '@tangle-network/icons';
 import { SelectOperatorsStep } from './DeploySteps/OperatorSelectionStep';
+import { BasicInformationStep } from './DeploySteps/BasicInformationStep';
 
 const DeployPage: FC = () => {
   const { id } = useParams();
