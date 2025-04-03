@@ -95,14 +95,18 @@ export const MobileSidebar = forwardRef<HTMLDivElement, MobileSidebarProps>(
                 />
               </div>
 
-              <SideBarFooter
-                name={footer.name}
-                Icon={footer.Icon}
-                isInternal={footer.isInternal}
-                href={footer.href}
-                isExpanded
-                className="gap-2 p-2"
-              />
+              <div className="space-y-5">
+                {isOpen && footer.extraContent}
+
+                <SideBarFooter
+                  name={footer.name}
+                  Icon={footer.Icon}
+                  isInternal={footer.isInternal}
+                  href={footer.href}
+                  isExpanded
+                  className="gap-2 p-2"
+                />
+              </div>
             </Dialog.Content>
           </Dialog.Portal>
         </Dialog.Root>
