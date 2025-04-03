@@ -2,7 +2,6 @@ import { FC } from 'react';
 import CardWithTangleLogo from '../CardWithTangleLogo';
 import AccountAddress from './AccountAddress';
 import Balance from './Balance';
-import AccountPoints from './AccountPoints';
 
 const AccountSummaryCard: FC<{ className?: string }> = ({ className }) => {
   return (
@@ -13,8 +12,6 @@ const AccountSummaryCard: FC<{ className?: string }> = ({ className }) => {
         </header>
 
         <Balance />
-
-        <AccountPoints />
       </div>
     </CardWithTangleLogo>
   );
