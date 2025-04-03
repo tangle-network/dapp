@@ -1,18 +1,11 @@
 import { formatDistanceToNow } from 'date-fns';
-import { BLOCK_TIME_MS } from '@tangle-network/dapp-config';
 
 export const formatDisplayBlockNumber = (
   blockNumber: number,
-  latestBlockNumber?: number | null,
-  latestBlockTimestamp?: Date | null,
+  blockTimestamp: Date | null | undefined,
 ) => {
-  if (latestBlockNumber && latestBlockTimestamp) {
-    const date = new Date(
-      latestBlockTimestamp.getTime() +
-        (blockNumber - latestBlockNumber) * BLOCK_TIME_MS,
-    );
-
-    return formatDistanceToNow(date, { addSuffix: true });
+  if (blockTimestamp) {
+    return formatDistanceToNow(blockTimestamp, { addSuffix: true });
   }
 
   return `Block: #${blockNumber}`;

@@ -1,18 +1,19 @@
 import { CrossCircledIcon } from '@radix-ui/react-icons';
-import { ZERO_BIG_INT } from '@tangle-network/dapp-config';
 import { Spinner } from '@tangle-network/icons';
 import { Search } from '@tangle-network/icons/Search';
 import TableStatus from '@tangle-network/tangle-shared-ui/components/tables/TableStatus';
+import { NetworkType } from '@tangle-network/tangle-shared-ui/graphql/graphql';
 import {
   Input,
+  isSubstrateAddress,
   KeyValueWithButton,
   Table,
-  toBigInt,
   Tooltip,
   TooltipBody,
   TooltipTrigger,
   toSubstrateAddress,
   Typography,
+  ValidatorIdentity,
 } from '@tangle-network/ui-components';
 import { Card } from '@tangle-network/ui-components/components/Card';
 import {
@@ -24,21 +25,24 @@ import {
   useReactTable,
 } from '@tanstack/react-table';
 import cx from 'classnames';
-import { useCallback, useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
 import { twMerge } from 'tailwind-merge';
 import { useLatestFinalizedBlock } from '../../../queries';
 import { SyncProgressIndicator } from '../../indexingProgress';
-import { BadgeEnum, BLOCK_COUNT_IN_SEVEN_DAYS } from '../constants';
+import { BLOCK_COUNT_IN_SEVEN_DAYS } from '../constants';
 import { useLeaderboard } from '../queries';
-import { Account, PointsHistory, TestnetTaskCompletion } from '../types';
+import { useAccountIdentities } from '../queries/accountIdentitiesQuery';
+import { Account } from '../types';
+import { createAccountExplorerUrl } from '../utils/createAccountExplorerUrl';
 import { formatDisplayBlockNumber } from '../utils/formatDisplayBlockNumber';
+import { processLeaderboardRecord } from '../utils/processLeaderboardRecord';
 import { BadgesCell } from './BadgesCell';
 import { ExpandedInfo } from './ExpandedInfo';
 import { HeaderCell } from './HeaderCell';
+import { MiniSparkline } from './MiniSparkline';
 import { Overlay } from './Overlay';
 import { FirstPlaceIcon, SecondPlaceIcon, ThirdPlaceIcon } from './RankIcon';
 import { TrendIndicator } from './TrendIndicator';
-import { MiniSparkline } from './MiniSparkline';
 
 const COLUMN_ID = {
   RANK: 'RANK',
@@ -64,10 +68,7 @@ const RankIcon = ({ rank }: { rank: number }) => {
   }
 };
 
-const getColumns = (
-  latestBlockNumber?: number | null,
-  latestBlockTimestamp?: Date | null,
-) => [
+const COLUMNS = [
   COLUMN_HELPER.accessor('rank', {
     id: COLUMN_ID.RANK,
     header: () => <HeaderCell title="Rank" />,
@@ -82,6 +83,33 @@ const getColumns = (
     header: () => <HeaderCell title="Account" />,
     cell: (props) => {
       const address = props.getValue();
+      const accountNetwork = props.row.original.network;
+      const identity = props.row.original.identity;
+
+      if (isSubstrateAddress(address)) {
+        return (
+          <ValidatorIdentity
+            address={address}
+            identityName={identity?.name}
+            accountExplorerUrl={createAccountExplorerUrl(
+              address,
+              accountNetwork,
+            )}
+            subContent={
+              <Typography
+                variant="body2"
+                className="text-gray-500 dark:text-gray-400"
+              >
+                Created{' '}
+                {formatDisplayBlockNumber(
+                  props.row.original.createdAt,
+                  props.row.original.createdAtTimestamp,
+                )}
+              </Typography>
+            }
+          />
+        );
+      }
 
       return (
         <div className="space-y-2">
@@ -93,8 +121,7 @@ const getColumns = (
             Created{' '}
             {formatDisplayBlockNumber(
               props.row.original.createdAt,
-              latestBlockNumber,
-              latestBlockTimestamp,
+              props.row.original.createdAtTimestamp,
             )}
           </Typography>
         </div>
@@ -156,15 +183,16 @@ const getColumns = (
         <div className="flex items-baseline gap-4">
           <TrendIndicator pointsHistory={row.original.pointsHistory} />
 
-          <MiniSparkline
-            pointsHistory={row.original.pointsHistory}
-            latestBlockNumber={latestBlockNumber}
-          />
+          <MiniSparkline pointsHistory={row.original.pointsHistory} />
         </div>
       );
     },
   }),
 ];
+
+const getExpandedRowContent = (row: Row<Account>) => {
+  return <ExpandedInfo row={row} />;
+};
 
 export const LeaderboardTable = () => {
   const [searchQuery, setSearchQuery] = useState('');
@@ -176,23 +204,21 @@ export const LeaderboardTable = () => {
   });
 
   // TODO: Add network tabs when we support both mainnet and testnet
-  /* const [networkTab, setNetworkTab] = useState<'all' | 'mainnet' | 'testnet'>(
-    'all',
-  ); */
+  const [networkTab] = useState<NetworkType.Testnet>(NetworkType.Testnet);
 
   const {
     data: latestBlock,
     isPending: isLatestBlockPending,
     error: latestBlockError,
-  } = useLatestFinalizedBlock('testnet');
+  } = useLatestFinalizedBlock(networkTab);
 
+  // TODO: Figure out how to handle this for both mainnet and testnet
   const blockNumberSevenDaysAgo = useMemo(() => {
     if (isLatestBlockPending || latestBlockError) {
       return -1;
     }
 
-    const result =
-      latestBlock.testnetBlock.blockNumber - BLOCK_COUNT_IN_SEVEN_DAYS;
+    const result = latestBlock.testnetBlock - BLOCK_COUNT_IN_SEVEN_DAYS;
 
     return result < 0 ? 1 : result;
   }, [isLatestBlockPending, latestBlockError, latestBlock?.testnetBlock]);
@@ -223,16 +249,17 @@ export const LeaderboardTable = () => {
     accountQuery,
   );
 
-  const columns = useMemo(
-    () =>
-      getColumns(
-        latestBlock?.testnetBlock.blockNumber,
-        latestBlock?.testnetBlock.timestamp,
-      ),
-    [
-      latestBlock?.testnetBlock.blockNumber,
-      latestBlock?.testnetBlock.timestamp,
-    ],
+  const { data: accountIdentities } = useAccountIdentities(
+    useMemo(
+      () =>
+        leaderboardData?.nodes
+          .filter((node) => node !== undefined && node !== null)
+          .map((node) => ({
+            id: node.id,
+            network: networkTab,
+          })) ?? [],
+      [leaderboardData?.nodes, networkTab],
+    ),
   );
 
   const data = useMemo<Account[]>(() => {
@@ -241,229 +268,26 @@ export const LeaderboardTable = () => {
     }
 
     return leaderboardData.nodes
-      .map((record, index) => {
-        if (!record) {
-          return null;
-        }
-
-        const totalPointsResult = toBigInt(record.totalPoints);
-
-        if (totalPointsResult.error !== null) {
-          console.error('Failed to convert totalPoints to bigint', record);
-          return null;
-        }
-
-        const totalMainnetPointsResult = toBigInt(record.totalMainnetPoints);
-
-        if (totalMainnetPointsResult.error !== null) {
-          console.error(
-            'Failed to convert totalMainnetPoints to bigint',
-            record,
-          );
-          return null;
-        }
-
-        const totalTestnetPointsResult = toBigInt(record.totalTestnetPoints);
-
-        if (totalTestnetPointsResult.error !== null) {
-          console.error(
-            'Failed to convert totalTestnetPoints to bigint',
-            record,
-          );
-          return null;
-        }
-
-        const lastSevenDays = record.snapshots.nodes.reduce((acc, snapshot) => {
-          if (!snapshot) {
-            return acc;
-          }
-
-          const snapshotPointsResult = toBigInt(snapshot.totalPoints);
-
-          if (snapshotPointsResult.error !== null) {
-            console.error(
-              'Failed to convert snapshot.totalPoints to bigint',
-              snapshot,
-            );
-            return acc;
-          }
-
-          return acc + snapshotPointsResult.result;
-        }, ZERO_BIG_INT);
-
-        const badges: BadgeEnum[] = [];
-
-        const hasDeposited = record.delegators?.nodes.find(
-          (node) => node?.deposits.totalCount && node.deposits.totalCount > 0,
-        );
-
-        if (hasDeposited) {
-          badges.push(BadgeEnum.RESTAKE_DEPOSITOR);
-        }
-
-        const hasDelegated = record.delegators?.nodes.find(
-          (node) =>
-            node?.delegations.totalCount && node.delegations.totalCount > 0,
-        );
-
-        if (hasDelegated) {
-          badges.push(BadgeEnum.RESTAKE_DELEGATOR);
-        }
-
-        const hasLiquidStaked = record.lstPoolMembers.totalCount > 0;
-        if (hasLiquidStaked) {
-          badges.push(BadgeEnum.LIQUID_STAKER);
-        }
-
-        const hasNativeRestaked = record.delegators?.nodes.find(
-          (node) =>
-            node?.delegations.nodes &&
-            node.delegations.nodes.find(
-              (delegation) =>
-                delegation?.assetId && delegation.assetId === `${ZERO_BIG_INT}`,
-            ),
-        );
-
-        if (hasNativeRestaked) {
-          badges.push(BadgeEnum.NATIVE_RESTAKER);
-        }
-
-        const isOperator = record.operators.totalCount > 0;
-        if (isOperator) {
-          badges.push(BadgeEnum.OPERATOR);
-        }
-
-        const isBlueprintOwner = record.blueprints.totalCount > 0;
-        if (isBlueprintOwner) {
-          badges.push(BadgeEnum.BLUEPRINT_OWNER);
-        }
-
-        const isServiceProvider = record.services.totalCount > 0;
-        if (isServiceProvider) {
-          badges.push(BadgeEnum.SERVICE_PROVIDER);
-        }
-
-        const isJobCaller = record.jobCalls.totalCount > 0;
-        if (isJobCaller) {
-          badges.push(BadgeEnum.JOB_CALLER);
-        }
-
-        const isNominator =
-          Boolean(
-            record.testnetTaskCompletions.nodes.find(
-              (node) => node?.hasNominated,
-            ),
-          ) ?? false;
-        if (isNominator) {
-          badges.push(BadgeEnum.NOMINATOR);
-        }
-
-        const depositCount = record.delegators?.nodes.reduce((acc, node) => {
-          if (!node) {
-            return acc;
-          }
-
-          return acc + node.deposits.totalCount;
-        }, 0);
-
-        const delegationCount = record.delegators?.nodes.reduce((acc, node) => {
-          if (!node) {
-            return acc;
-          }
-
-          return acc + node.delegations.totalCount;
-        }, 0);
-
-        const testnetTask = record.testnetTaskCompletions.nodes.find(
-          (node) => node !== null,
-        );
-
-        const testnetTaskCompletion:
-          | Omit<TestnetTaskCompletion, 'completionPercentage'>
-          | undefined = testnetTask
-          ? {
-              depositedThreeAssets: !!testnetTask.hasDepositedThreeAssets,
-              delegatedAssets: !!testnetTask.hasDelegatedAssets,
-              liquidStaked: !!testnetTask.hasLiquidStaked,
-              nominated: !!testnetTask.hasNominated,
-              nativeRestaked: !!testnetTask.hasNativeRestaked,
-              bonus: !!testnetTask.hasBonusPoints,
-            }
-          : undefined;
-
-        return {
-          id: record.id,
-          rank: pagination.pageIndex * pagination.pageSize + index + 1,
-          totalPoints: totalPointsResult.result,
-          pointsBreakdown: {
-            mainnet: totalMainnetPointsResult.result,
-            testnet: totalTestnetPointsResult.result,
-            lastSevenDays,
-          },
-          badges,
-          activity: {
-            blueprintCount: record.blueprints.totalCount,
-            depositCount,
-            delegationCount,
-            liquidStakingPoolCount: record.lstPoolMembers.totalCount,
-            serviceCount: record.services.totalCount,
-            jobCallCount: record.jobCalls.totalCount,
-          },
-          testnetTaskCompletion: testnetTaskCompletion
-            ? {
-                ...testnetTaskCompletion,
-                completionPercentage:
-                  (Object.values(testnetTaskCompletion).filter(Boolean).length /
-                    Object.keys(testnetTaskCompletion).length) *
-                  100,
-              }
-            : undefined,
-          pointsHistory: record.snapshots.nodes
-            .map((snapshot) => {
-              if (!snapshot) {
-                return null;
-              }
-
-              const snapshotPointsResult = toBigInt(snapshot.totalPoints);
-
-              if (snapshotPointsResult.error !== null) {
-                console.error(
-                  'Failed to convert snapshot.totalPoints to bigint',
-                  snapshot,
-                );
-                return null;
-              }
-
-              return {
-                blockNumber: snapshot.blockNumber,
-                points: snapshotPointsResult.result,
-              };
-            })
-            .filter((item) => item !== null)
-            .sort((a, b) => a.blockNumber - b.blockNumber)
-            // Cumulate points for each day
-            .reduce((acc, item, index) => {
-              if (index === 0) {
-                return [item];
-              }
-
-              const previousItem = acc[acc.length - 1];
-
-              return [
-                ...acc,
-                { ...item, points: previousItem.points + item.points },
-              ];
-            }, [] as PointsHistory[]),
-          createdAt: record.createdAt,
-          lastUpdatedAt: record.lastUpdatedAt,
-        } satisfies Account;
-      })
+      .map((record, index) =>
+        processLeaderboardRecord(
+          record,
+          index,
+          pagination.pageIndex,
+          pagination.pageSize,
+          record ? accountIdentities?.get(record.id) : null,
+        ),
+      )
       .filter((record) => record !== null);
-  }, [leaderboardData?.nodes, pagination.pageIndex, pagination.pageSize]);
+  }, [
+    leaderboardData?.nodes,
+    pagination.pageIndex,
+    pagination.pageSize,
+    accountIdentities,
+  ]);
 
   const table = useReactTable({
     data,
-    columns,
+    columns: COLUMNS,
     manualPagination: true,
     enableSorting: false,
     state: {
@@ -476,22 +300,6 @@ export const LeaderboardTable = () => {
     onExpandedChange: setExpanded,
     getRowCanExpand: () => true,
   });
-
-  const getExpandedRowContent = useCallback(
-    (row: Row<Account>) => {
-      return (
-        <ExpandedInfo
-          row={row}
-          latestBlockNumber={latestBlock?.testnetBlock.blockNumber}
-          latestBlockTimestamp={latestBlock?.testnetBlock.timestamp}
-        />
-      );
-    },
-    [
-      latestBlock?.testnetBlock.blockNumber,
-      latestBlock?.testnetBlock.timestamp,
-    ],
-  );
 
   return (
     <Card className="space-y-6 !bg-transparent !border-transparent p-0">

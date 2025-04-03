@@ -20,7 +20,7 @@ const fetcher = async (activeAccount: string | null) => {
   }
 
   const result = await executeGraphQL(GetAccountPointsQueryDocument, {
-    account: activeAccount.toLowerCase(),
+    account: activeAccount,
   });
 
   return result.data;

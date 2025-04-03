@@ -8,9 +8,7 @@ const IndexingProgressQueryDocument = graphql(/* GraphQL */ `
   query IndexingProgress {
     _metadata {
       lastProcessedHeight
-      lastProcessedTimestamp
       targetHeight
-      indexerHealthy
     }
   }
 `);

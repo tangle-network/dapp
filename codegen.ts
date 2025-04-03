@@ -5,6 +5,8 @@ import 'dotenv/config';
 const VITE_GRAPHQL_ENDPOINT =
   process.env.VITE_GRAPHQL_ENDPOINT ?? DEFAULT_GRAPHQL_ENDPOINT;
 
+console.log('VITE_GRAPHQL_ENDPOINT', VITE_GRAPHQL_ENDPOINT);
+
 const config: CodegenConfig = {
   schema: VITE_GRAPHQL_ENDPOINT,
   documents: ['apps/*/src/**/*.ts', 'apps/*/src/**/*.tsx'],
@@ -13,10 +15,12 @@ const config: CodegenConfig = {
     'libs/tangle-shared-ui/src/graphql/': {
       preset: 'client',
       config: {
+        defaultScalarType: 'unknown',
         documentMode: 'string',
         scalars: {
           BigFloat: 'string',
-          Date: 'string',
+          Date: 'Date',
+          Datetime: 'Date',
         },
       },
     },
