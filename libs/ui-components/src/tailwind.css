@@ -33,10 +33,14 @@
     --radix-dropdown-menu-content-max-height: 320px;
 
     --tangle-shadow: 0px 8px 50px 0px rgba(0, 0, 0, 0.2);
+
+    --muted: 231 8% 46%;
   }
 
   .dark {
     --tangle-shadow: 0px 8px 50px 0px rgba(0, 0, 0, 0.1);
+
+    --muted: 231 11% 65;
   }
 }
 

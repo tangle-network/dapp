@@ -28,7 +28,6 @@ export const DropdownBody = forwardRef<HTMLDivElement, DropdownBodyProps>(
               : 'rounded-lg border',
             'border-mono-80 dark:border-mono-120',
             'bg-mono-0 dark:bg-mono-180',
-            'max-h-[var(--radix-dropdown-menu-content-max-height)]',
           ),
           className,
         )}

@@ -10,12 +10,15 @@ import JSONStringifyBigInt from '@tangle-network/ui-components/utils/JSONStringi
 import { queryOptions, useQuery } from '@tanstack/react-query';
 import { useMemo } from 'react';
 import { z } from 'zod';
-import { ReactQueryKey } from '../../constants/reactQuery';
-import useActiveDelegation from '../restake/useActiveDelegation';
+import { ReactQueryKey } from '../../../constants/reactQuery';
+import useActiveDelegation from '../../../data/restake/useActiveDelegation';
+import { LoggerService } from '@tangle-network/browser-utils';
+
+const logger = LoggerService.new('useActiveAccountReward');
 
 export default function useActiveAccountReward() {
   const activeSubstrateAddress = useSubstrateAddress(false);
-  const activeDelegation = useActiveDelegation();
+  const { result: activeDelegation } = useActiveDelegation();
 
   const { network } = useNetworkStore();
   const [activeChain] = useActiveChain();
@@ -27,10 +30,10 @@ export default function useActiveAccountReward() {
       return wsEndpoints[0];
     }
 
-    return network.archiveRpcEndpoint ?? network.wsRpcEndpoint;
+    return network?.archiveRpcEndpoint ?? network.wsRpcEndpoint;
   }, [
     activeChain?.rpcUrls.default?.webSocket,
-    network.archiveRpcEndpoint,
+    network?.archiveRpcEndpoint,
     network.wsRpcEndpoint,
   ]);
 
@@ -58,6 +61,7 @@ export default function useActiveAccountReward() {
       const resp = rewardsResponse[idx];
 
       if ('error' in resp) {
+        logger.error(`Failed to fetch rewards for asset ${current}`, resp);
         return acc;
       }
 
@@ -87,9 +91,9 @@ export function getQueryOptions(
     ],
     queryFn: () =>
       fetcher(overrideRpcEndpoint, activeSubstrateAddress, assetIds),
-    enabled: activeSubstrateAddress !== null && assetIds.length > 0,
     retry: 10,
     refetchInterval: 6000,
+    placeholderData: (prev) => prev,
   });
 }
 
