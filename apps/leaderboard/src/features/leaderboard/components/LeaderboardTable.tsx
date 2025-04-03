@@ -455,7 +455,7 @@ export const LeaderboardTable = () => {
               ];
             }, [] as PointsHistory[]),
           createdAt: record.createdAt,
-          lastUpdatedAt: record.lastUpdateAt,
+          lastUpdatedAt: record.lastUpdatedAt,
         } satisfies Account;
       })
       .filter((record) => record !== null);

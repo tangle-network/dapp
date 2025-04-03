@@ -83,7 +83,7 @@ const LeaderboardQueryDocument = graphql(/* GraphQL */ `
           }
         }
         createdAt
-        lastUpdateAt
+        lastUpdatedAt
       }
       totalCount
     }
