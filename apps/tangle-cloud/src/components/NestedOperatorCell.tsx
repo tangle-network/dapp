@@ -34,27 +34,24 @@ export const NestedOperatorCell: FC<NestedOperatorCellProps> = ({
   return (
     <Dropdown>
       <DropdownButton
-        isFullWidth
-        size="md"
-        label={
-          <div className="flex items-center gap-2">
-            {Children.toArray(
-              operators
-                .slice(0, 3)
-                .map((operator) => (
-                  <Avatar
-                    sourceVariant="address"
-                    value={operator.toString()}
-                    theme="substrate"
-                    size="md"
-                  />
-                )),
-            )}
-          </div>
-        }
         isHideArrowIcon={operators.length <= 1}
-        className="min-w-[auto] border-none !bg-transparent pl-0"
-      />
+        className="min-w-[auto] border-none !bg-transparent pl-0 w-full"
+      >
+        <div className="flex items-center gap-2">
+          {Children.toArray(
+            operators
+              .slice(0, 3)
+              .map((operator) => (
+                <Avatar
+                  sourceVariant="address"
+                  value={operator.toString()}
+                  theme="substrate"
+                  size="md"
+                />
+              )),
+          )}
+        </div>
+      </DropdownButton>
       <DropdownBody className="mt-2" side="bottom" align="center">
         {operators.length > 1 &&
           Children.toArray(

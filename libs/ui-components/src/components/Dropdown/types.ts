@@ -15,20 +15,13 @@ export interface DropdownProps extends PropsOf<'div'>, IComponentBase {
   radixRootProps?: RdxDropdownMenuProps;
 }
 
-type DropdownButtonPickedKeys = 'label' | 'icon' | 'size';
-
 /**
  * The `DropdownButton` props
  */
 export interface DropdownButtonProps
   extends PropsOf<'button'>,
     IComponentBase,
-    Pick<DropdownMenuProps, DropdownButtonPickedKeys> {
-  /**
-   * If true, the button will be rendered as a full width button
-   */
-  isFullWidth?: boolean;
-
+    Pick<DropdownMenuProps, 'icon'> {
   /**
    * If true, the dropdown arrow icon will be hidden
    */
@@ -37,11 +30,7 @@ export interface DropdownButtonProps
   /**
    * Allow to pass a custom arrow element
    */
-  arrowElement?: React.ReactNode | string;
-
-  labelClassName?: string;
-
-  iconClassName?: string;
+  arrowElement?: React.ReactElement;
 }
 
 type DropdownBodyPickedKeys = 'size';
