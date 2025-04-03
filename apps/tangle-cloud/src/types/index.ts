@@ -1,4 +1,5 @@
 import { RestakeAssetId } from '@tangle-network/tangle-shared-ui/types';
+import { PrimitiveField } from '@tangle-network/tangle-shared-ui/types/blueprint';
 import { TANGLE_DAPP_URL } from '@tangle-network/ui-components/constants';
 
 export enum PagePath {
@@ -45,6 +46,6 @@ export type RegisterServiceFormFields = {
       storageNvme: number;
     };
   }[];
-  registrationArgs: Array<any[]>;
+  registrationArgs: Array<PrimitiveField[]>;
   amounts: number[];
 };

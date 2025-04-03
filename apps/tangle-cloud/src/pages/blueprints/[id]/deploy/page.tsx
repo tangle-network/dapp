@@ -16,8 +16,8 @@ import { twMerge } from 'tailwind-merge';
 import { ArrowRightIcon } from '@radix-ui/react-icons';
 import { useParams } from 'react-router';
 import useBlueprintDetails from '@tangle-network/tangle-shared-ui/data/restake/useBlueprintDetails';
-import { SelectOperatorsStep } from './DeploySteps/OperatorSelectionStep';
 import { ArrowLeft } from '@tangle-network/icons';
+import { SelectOperatorsStep } from './DeploySteps/OperatorSelectionStep';
 
 const DeployPage: FC = () => {
   const { id } = useParams();

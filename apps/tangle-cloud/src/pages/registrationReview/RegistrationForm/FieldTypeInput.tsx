@@ -87,7 +87,7 @@ const FieldTypeInput: React.FC<FieldTypeInputProps> = ({
       case 'Void':
         return (
           <div>
-            <Label>{label}</Label>
+            <Label>{label} (Void)</Label>
 
             <TextField.Root>
               <TextField.Input
@@ -112,13 +112,13 @@ const FieldTypeInput: React.FC<FieldTypeInputProps> = ({
                   : undefined
               }
             >
-              <SelectTrigger tabIndex={tabIndex}>
+              <SelectTrigger tabIndex={tabIndex} className="max-w-md">
                 <SelectValue placeholder={`Select True or False`} />
               </SelectTrigger>
 
               <SelectContent>
-                <SelectItem value="True">True</SelectItem>
-                <SelectItem value="False">False</SelectItem>
+                <SelectItem value={'true'}>True</SelectItem>
+                <SelectItem value={'false'}>False</SelectItem>
               </SelectContent>
             </Select>
           </div>
@@ -127,7 +127,9 @@ const FieldTypeInput: React.FC<FieldTypeInputProps> = ({
         if (isNumberType(fieldType)) {
           return (
             <div>
-              <Label>{label}</Label>
+              <Label>
+                {label} ({fieldType})
+              </Label>
 
               <TextField.Root>
                 <TextField.Input
@@ -148,7 +150,9 @@ const FieldTypeInput: React.FC<FieldTypeInputProps> = ({
         } else if (isTextType(fieldType)) {
           return (
             <div>
-              <Label>{label}</Label>
+              <Label>
+                {label} ({fieldType})
+              </Label>
 
               <TextField.Root>
                 <TextField.Input
@@ -209,13 +213,14 @@ const FieldTypeInput: React.FC<FieldTypeInputProps> = ({
       <div>
         <Label>{label} (List)</Label>
 
-        <FieldTypeInput
+        {/* TODO: Question List */}
+        {/* <FieldTypeInput
           id={`${id}.List`}
           value={value?.List}
           onValueChange={onValueChange}
           fieldType={fieldType.List}
           tabIndex={tabIndex}
-        />
+        /> */}
       </div>
     );
   } else if (isStruct(fieldType)) {
@@ -233,7 +238,7 @@ const FieldTypeInput: React.FC<FieldTypeInputProps> = ({
               <FieldTypeInput
                 fieldType={fieldType}
                 id={`${id}.Struct.${idx}`}
-                value={value?.Struct?.[id]?.[idx]}
+                value={value?.Struct?.[idx]}
                 onValueChange={onValueChange}
                 tabIndex={tabIndex}
               />
