@@ -1,11 +1,17 @@
-import { Typography } from '@tangle-network/ui-components';
+import {
+  EMPTY_VALUE_PLACEHOLDER,
+  SkeletonLoader,
+  Typography,
+} from '@tangle-network/ui-components';
+import addCommasToNumber from '@tangle-network/ui-components/utils/addCommasToNumber';
 import cx from 'classnames';
 import { SVGProps } from 'react';
+import useActiveAccountPoints from '../data/useActiveAccountPoints';
 
 const LEADERBOARD_URL = 'https://leaderboard.tangle.tools';
 
 export const PointsBanner = () => {
-  const points = 100;
+  const { data, error, isPending } = useActiveAccountPoints();
 
   return (
     <div
@@ -19,9 +25,19 @@ export const PointsBanner = () => {
       <XPIcon width={36} height={36} />
 
       <div>
-        <Typography variant="body1" fw="bold" className="!text-mono-0">
-          {points}
-        </Typography>
+        {isPending && !data ? (
+          <SkeletonLoader className="h-6 w-12 mb-1" />
+        ) : error ? (
+          <Typography variant="body1" fw="bold">
+            Error: {error.message}
+          </Typography>
+        ) : (
+          <Typography variant="body1" fw="bold" className="!text-mono-0">
+            {data === undefined
+              ? EMPTY_VALUE_PLACEHOLDER
+              : addCommasToNumber(data)}
+          </Typography>
+        )}
 
         <Typography variant="body2" fw="bold" className="!text-mono-0">
           Points Earned
