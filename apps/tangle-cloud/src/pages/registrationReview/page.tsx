@@ -3,12 +3,6 @@ import { useActiveChain } from '@tangle-network/api-provider-environment/hooks/u
 import { ThreeDotsVerticalIcon } from '@tangle-network/icons/ThreeDotsVerticalIcon';
 import useNetworkStore from '@tangle-network/tangle-shared-ui/context/useNetworkStore';
 import { Blueprint } from '@tangle-network/tangle-shared-ui/types/blueprint';
-import {
-  Accordion,
-  AccordionButtonBase,
-  AccordionContent,
-  AccordionItem,
-} from '@tangle-network/ui-components/components/Accordion';
 import Button from '@tangle-network/ui-components/components/buttons/Button';
 import IconButton from '@tangle-network/ui-components/components/buttons/IconButton';
 import {
@@ -17,7 +11,7 @@ import {
   DropdownMenuItem,
 } from '@tangle-network/ui-components/components/Dropdown';
 import { Typography } from '@tangle-network/ui-components/typography/Typography';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { Children, useCallback, useEffect, useMemo, useState } from 'react';
 import {
   PricingFormResult,
   PricingType,
@@ -26,7 +20,9 @@ import ParamsForm from './RegistrationForm/ParamsForm';
 import { SessionStorageKey } from '../../constants';
 import { useNavigate } from 'react-router';
 import { PagePath } from '../../types';
-import useServiceRegisterTx from '../../data/services/useServiceRegisterTx';
+import useServiceRegisterTx, {
+  toPrimitiveDataType,
+} from '../../data/services/useServiceRegisterTx';
 import { toTanglePrimitiveEcdsaKey } from '../../utils';
 import useSubstrateAddress from '@tangle-network/tangle-shared-ui/hooks/useSubstrateAddress';
 import { TxStatus } from '@tangle-network/tangle-shared-ui/hooks/useSubstrateTx';
@@ -55,7 +51,6 @@ export default function RegistrationReview() {
   const { execute: registerTx, status: registerTxStatus } =
     useServiceRegisterTx();
 
-  const [accordionState, setAccordionState] = useState<string>('');
   const [registrationParams, setRegistrationParams] = useState<
     Record<string, any>
   >({});
@@ -127,12 +122,8 @@ export default function RegistrationReview() {
           id: blueprintId,
           registrationParams: blueprintRegistrationParams,
         }) => {
-          const params = registrationParams[blueprintId];
-          return blueprintRegistrationParams.map((_, index) => {
-            return {
-              [blueprintRegistrationParams[index] as any]: params[index],
-            };
-          });
+          const paramValues = registrationParams[blueprintId];
+          return toPrimitiveDataType(blueprintRegistrationParams, paramValues);
         },
       ),
       amounts: blueprints.map(({ id }) => amount[id]),
@@ -154,87 +145,71 @@ export default function RegistrationReview() {
       </Typography>
 
       <div className="space-y-4">
-        <Accordion
-          type="single"
-          collapsible
-          value={accordionState}
-          onValueChange={setAccordionState}
-        >
-          {blueprints.map((blueprint) => (
-            <AccordionItem
-              className="p-6 border-2 border-mono-80 dark:border-mono-160"
-              key={blueprint.id}
-              value={blueprint.id}
-            >
-              <AccordionButtonBase asChild>
-                <div className="flex w-full gap-1">
-                  {blueprint.imgUrl && (
-                    <img
-                      src={blueprint.imgUrl}
-                      width={48}
-                      height={48}
-                      alt={blueprint.name}
-                      className="flex-shrink-0 bg-center rounded-full"
-                    />
-                  )}
+        {Children.toArray(
+          blueprints.map((blueprint) => (
+            <div className="p-6 border-2 border-mono-80 dark:border-mono-160">
+              <div className="flex w-full gap-1">
+                {blueprint.imgUrl && (
+                  <img
+                    src={blueprint.imgUrl}
+                    width={48}
+                    height={48}
+                    alt={blueprint.name}
+                    className="flex-shrink-0 bg-center rounded-full"
+                  />
+                )}
 
-                  <div className="space-y-1 grow">
-                    <Typography variant="body1" fw="bold">
-                      {blueprint.name}
-                    </Typography>
+                <div className="space-y-1 grow">
+                  <Typography variant="body1" fw="bold">
+                    {blueprint.name}
+                  </Typography>
 
-                    <Typography
-                      variant="body3"
-                      className="text-mono-120 dark:text-mono-100"
-                    >
-                      {blueprint.author}
-                    </Typography>
-                  </div>
-
-                  <div className="flex items-center gap-2">
-                    <Dropdown>
-                      <DropdownMenuTrigger asChild>
-                        <IconButton
-                          onClick={(event) => event.stopPropagation()}
-                        >
-                          <ThreeDotsVerticalIcon />
-                        </IconButton>
-                      </DropdownMenuTrigger>
-
-                      <DropdownBody size="sm">
-                        <DropdownMenuItem
-                          onClick={(event) => event.stopPropagation()}
-                        >
-                          Remove
-                        </DropdownMenuItem>
-                      </DropdownBody>
-                    </Dropdown>
-                  </div>
+                  <Typography
+                    variant="body3"
+                    className="text-mono-120 dark:text-mono-100"
+                  >
+                    {blueprint.author}
+                  </Typography>
                 </div>
-              </AccordionButtonBase>
 
-              <AccordionContent>
-                <ParamsForm
-                  params={blueprint.registrationParams}
-                  tokenSymbol={network.tokenSymbol}
-                  amountValue={amount[blueprint.id] ?? ''}
-                  paramsValue={registrationParams[blueprint.id] ?? {}}
-                  onSave={(params, amount) => {
-                    setRegistrationParams((prev) => ({
-                      ...prev,
-                      [blueprint.id]: params,
-                    }));
-                    setAmount((prev) => ({
-                      ...prev,
-                      [blueprint.id]: amount,
-                    }));
-                    setAccordionState('');
-                  }}
-                />
-              </AccordionContent>
-            </AccordionItem>
-          ))}
-        </Accordion>
+                <div className="flex items-center gap-2">
+                  <Dropdown>
+                    <DropdownMenuTrigger asChild>
+                      <IconButton onClick={(event) => event.stopPropagation()}>
+                        <ThreeDotsVerticalIcon />
+                      </IconButton>
+                    </DropdownMenuTrigger>
+
+                    <DropdownBody size="sm">
+                      <DropdownMenuItem
+                        onClick={(event) => event.stopPropagation()}
+                      >
+                        Remove
+                      </DropdownMenuItem>
+                    </DropdownBody>
+                  </Dropdown>
+                </div>
+              </div>
+
+              <ParamsForm
+                params={blueprint.registrationParams}
+                tokenSymbol={network.tokenSymbol}
+                amountValue={amount[blueprint.id] ?? ''}
+                paramsValue={registrationParams[blueprint.id] ?? {}}
+                onSave={(params, amount) => {
+                  setRegistrationParams((prev) => ({
+                    ...prev,
+                    [blueprint.id]: params,
+                  }));
+                  setAmount((prev) => ({
+                    ...prev,
+                    [blueprint.id]: amount,
+                  }));
+                }}
+              />
+            </div>
+          )),
+        )}
 
         <div className="grid gap-4 sm:grid-cols-2">
           <Button isFullWidth variant="secondary" onClick={onClose}>

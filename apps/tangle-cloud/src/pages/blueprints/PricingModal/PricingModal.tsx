@@ -165,7 +165,6 @@ export default function PricingModal({
                 <IndividualPricingField
                   blueprints={blueprints}
                   formControl={individualPricingFormSchema.control}
-                  watch={individualPricingFormSchema.watch}
                 />
 
                 <FormActions />
