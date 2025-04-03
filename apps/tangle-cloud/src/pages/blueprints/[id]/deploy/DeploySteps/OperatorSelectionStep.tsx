@@ -12,7 +12,7 @@ import {
   Input,
   fuzzyFilter,
 } from '@tangle-network/ui-components';
-import { FC, useEffect, useMemo, useState, Children } from 'react';
+import { FC, useEffect, useMemo, useState, Children, useCallback } from 'react';
 import { SelectOperatorsStepProps, SelectOperatorsTable } from './type';
 import { BLUEPRINT_DEPLOY_STEPS } from '../../../../../utils/validations/deployBlueprint';
 import useRestakeOperatorMap from '@tangle-network/tangle-shared-ui/data/restake/useRestakeOperatorMap';
@@ -45,6 +45,7 @@ import {
 } from '@tangle-network/ui-components/components/select';
 import { Search } from '@tangle-network/icons';
 import LsTokenIcon from '@tangle-network/tangle-shared-ui/components/LsTokenIcon';
+import { RestakeAsset } from '@tangle-network/tangle-shared-ui/types/restake';
 
 const COLUMN_HELPER = createColumnHelper<SelectOperatorsTable>();
 
@@ -115,15 +116,8 @@ export const SelectOperatorsStep: FC<SelectOperatorsStepProps> = ({
   const stepKey = BLUEPRINT_DEPLOY_STEPS[1];
   const errors = globalErrors?.[stepKey];
 
-  const selectedAssets = useMemo(() => {
-    if (!assets || !watch(`${stepKey}.assets`)) {
-      return [];
-    }
-
-    return Array.from(assets.values()).filter((asset) =>
-      watch(`${stepKey}.assets`).includes(asset.id),
-    );
-  }, [watch(`${stepKey}.assets`), assets]);
+  // @ts-expect-error Type instantiation is excessively deep and possibly infinite.
+  const selectedAssets = watch(`${stepKey}.assets`) ?? [];
 
   const columns = [
     COLUMN_HELPER.accessor('address', {
@@ -313,6 +307,42 @@ export const SelectOperatorsStep: FC<SelectOperatorsStepProps> = ({
     setValue(`${stepKey}.operators`, Object.keys(rowSelection));
   }, [rowSelection]);
 
+  const onSelectAsset = useCallback(
+    (asset: RestakeAsset, isChecked: boolean) => {
+      // Create a new array instead of mutating the existing one
+      const newSelectedAssets = isChecked
+        ? [...selectedAssets, asset]
+        : selectedAssets.filter(
+            (selectedAsset) => selectedAsset.id !== asset.id,
+          );
+
+      if (!isChecked) {
+        // Filter operators that have the selected assets
+        const selectedOperators = operators
+          .filter((operator) =>
+            operator.vaultTokens?.some((vaultToken) =>
+              newSelectedAssets.some(
+                (selectedAsset) =>
+                  selectedAsset.metadata.symbol === vaultToken.symbol,
+              ),
+            ),
+          )
+          .map((operator) => operator.address);
+
+        // Create a single object with all operators set to false
+        const newRowSelection = selectedOperators.reduce((acc, operator) => {
+          acc[operator] = false;
+          return acc;
+        }, {} as RowSelectionState);
+
+        setRowSelection(newRowSelection);
+      }
+
+      setValue(`${stepKey}.assets`, newSelectedAssets);
+    },
+    [selectedAssets, operators, setValue, stepKey],
+  );
+
   return (
     <div className="w-full">
       <Typography variant="h4">Choose Operators</Typography>
@@ -368,19 +398,7 @@ export const SelectOperatorsStep: FC<SelectOperatorsStepProps> = ({
               {Children.toArray(
                 Array.from(assets?.values() ?? []).map((asset) => (
                   <SelectCheckboxItem
-                    onChange={(e) => {
-                      let prevValue = watch(`${stepKey}.assets`) ?? [];
-
-                      if (e.target.checked) {
-                        prevValue = [...prevValue, asset.id];
-                        setValue(`${stepKey}.assets`, prevValue);
-                      } else {
-                        prevValue = prevValue.filter(
-                          (assetId) => assetId !== asset.id,
-                        );
-                        setValue(`${stepKey}.assets`, prevValue);
-                      }
-                    }}
+                    onChange={(e) => onSelectAsset(asset, e.target.checked)}
                     id={asset.id}
                     isChecked={selectedAssets.some(
                       (selectedAsset) => selectedAsset.id === asset.id,

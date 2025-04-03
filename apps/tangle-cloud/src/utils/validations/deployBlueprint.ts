@@ -1,3 +1,4 @@
+import { RestakeAsset } from '@tangle-network/tangle-shared-ui/types/restake';
 import assertRestakeAssetId from '@tangle-network/tangle-shared-ui/utils/assertRestakeAssetId';
 import {
   isEvmAddress,
@@ -11,6 +12,27 @@ export const BLUEPRINT_DEPLOY_STEPS = [
   'step3',
   'step4',
 ] as const;
+
+const restakeAssetSchema = z.custom<RestakeAsset>(
+  (val) => {
+    if (typeof val !== 'object' || val === null) return false;
+
+    // Check for required properties
+    if (!('id' in val) || !('metadata' in val)) return false;
+
+    try {
+      assertRestakeAssetId(val.id);
+    } catch (error: unknown) {
+      console.error(`Asset id ${val.id} is invalid: ${error}`);
+      return false;
+    }
+
+    return true;
+  },
+  {
+    message: 'Invalid RestakeAsset format',
+  },
+);
 
 export const deployBlueprintSchema = z.object({
   [BLUEPRINT_DEPLOY_STEPS[0]]: z.object({
@@ -52,7 +74,7 @@ export const deployBlueprintSchema = z.object({
 
       return value;
     }),
-    assets: z.array(z.string()).transform((value, context) => {
+    assets: z.array(restakeAssetSchema).transform((value, context) => {
       if (value.length === 0) {
         context.addIssue({
           code: z.ZodIssueCode.custom,
@@ -60,19 +82,6 @@ export const deployBlueprintSchema = z.object({
         });
 
         return z.NEVER;
-      }
-
-      for (const [index, assetId] of value.entries()) {
-        try {
-          assertRestakeAssetId(assetId);
-        } catch (error: unknown) {
-          console.error(`Asset id ${assetId} is invalid: ${error}`);
-          context.addIssue({
-            path: [index],
-            code: z.ZodIssueCode.custom,
-            message: 'Invalid asset id',
-          });
-        }
       }
 
       return value;
