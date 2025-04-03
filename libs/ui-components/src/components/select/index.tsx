@@ -8,3 +8,4 @@ export { default as SelectScrollUpButton } from './SelectScrollUpButton';
 export { default as SelectSeparator } from './SelectSeparator';
 export { default as SelectTrigger } from './SelectTrigger';
 export { default as SelectValue } from './SelectValue';
+export { default as SelectCheckboxItem } from './SelectCheckboxItem';
