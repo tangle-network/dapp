@@ -32,14 +32,13 @@ const useWalletAccounts = (): WalletAccount[] => {
       } else if (isEvmAddress(account.address)) {
         address = account.address;
       } else {
-        // If SS58 prefix is defined, encode the address with the network prefix
-        // If undefined, use the original address
-        const addressToAssert =
+        // If it's a Substrate address, encode it using the active network's SS58 prefix.
+        const encodedSubstrateAddress =
           network.ss58Prefix !== undefined
             ? encodeAddress(account.address, network.ss58Prefix)
             : account.address;
 
-        address = assertSubstrateAddress(addressToAssert);
+        address = assertSubstrateAddress(encodedSubstrateAddress);
       }
 
       return {
