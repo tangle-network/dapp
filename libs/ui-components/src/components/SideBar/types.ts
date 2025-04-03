@@ -9,6 +9,7 @@ export type SideBarFooterType = {
   isInternal: boolean;
   href: string;
   Icon: (props: IconBase) => JSX.Element;
+  extraContent?: React.ReactNode;
 };
 
 export interface SideBarFooterProps extends SideBarFooterType {

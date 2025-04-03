@@ -3,7 +3,6 @@ import CardWithTangleLogo from '../CardWithTangleLogo';
 import AccountAddress from './AccountAddress';
 import Balance from './Balance';
 import AccountRewards from './AccountRewards';
-import AccountPoints from './AccountPoints';
 
 const AccountSummaryCard: FC<{ className?: string }> = ({ className }) => {
   return (
@@ -15,11 +14,7 @@ const AccountSummaryCard: FC<{ className?: string }> = ({ className }) => {
 
         <Balance />
 
-        <div className="grid grid-cols-2 gap-6">
-          <AccountRewards />
-
-          <AccountPoints />
-        </div>
+        <AccountRewards />
       </div>
     </CardWithTangleLogo>
   );
