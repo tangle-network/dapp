@@ -2,15 +2,15 @@
 
 import { useWebContext } from '@tangle-network/api-provider-environment';
 import { ChainConfig, chainsPopulated } from '@tangle-network/dapp-config';
-import { Alert, ChainIcon, ChevronDown, Spinner } from '@tangle-network/icons';
+import { Alert, ChainIcon, Spinner } from '@tangle-network/icons';
 import {
   calculateTypedChainId,
   ChainType,
 } from '@tangle-network/dapp-types/TypedChainId';
 import {
   Dropdown,
-  DropdownBasicButton,
   DropdownBody,
+  DropdownButton,
   Tooltip,
   TooltipBody,
   TooltipTrigger,
@@ -181,39 +181,31 @@ const TriggerButton: FC<TriggerButtonProps> = ({
   disableChainSelection,
 }) => {
   return (
-    <DropdownBasicButton
+    <DropdownButton
       type="button"
       disabled={isLoading || disableChainSelection}
       className={cx(
-        'flex items-center gap-2 rounded-lg p-2',
-        'bg-transparent dark:bg-transparent',
-        'hover:bg-mono-100/10 dark:hover:bg-mono-0/10',
-        'border-2 border-mono-60 dark:border-mono-140',
         disableChainSelection &&
           'cursor-not-allowed pointer-events-none select-none border-mono-60/40 dark:border-mono-140/40',
         className,
       )}
+      icon={
+        isLoading ? (
+          <Spinner size="lg" />
+        ) : (
+          <ChainIcon size="lg" className="shrink-0 grow-0" name={networkName} />
+        )
+      }
+      isHideArrowIcon={disableChainSelection}
     >
-      {isLoading ? (
-        <Spinner size="md" />
-      ) : (
-        <ChainIcon size="lg" className="shrink-0 grow-0" name={networkName} />
-      )}
-
-      <div className="flex items-center gap-1">
-        <Typography
-          variant="body1"
-          fw="bold"
-          className="hidden dark:text-mono-0 sm:block"
-        >
-          {networkName}
-        </Typography>
-
-        {!disableChainSelection && (
-          <ChevronDown size="lg" className="shrink-0 grow-0" />
-        )}
-      </div>
-    </DropdownBasicButton>
+      <Typography
+        variant="body1"
+        fw="bold"
+        className="hidden dark:text-mono-0 sm:block"
+      >
+        {networkName}
+      </Typography>
+    </DropdownButton>
   );
 };
 

@@ -25,12 +25,9 @@ export const Filter = forwardRef<HTMLDivElement, FilterProps>(
   ) => {
     return (
       <Dropdown {...props} ref={ref}>
-        <DropdownButton
-          label="Filters"
-          icon={<FilterIcon />}
-          size="sm"
-          className="font-bold"
-        />
+        <DropdownButton icon={<FilterIcon />} className="font-bold">
+          Filters
+        </DropdownButton>
 
         <DropdownBody
           className="py-2 min-w-[300px] bg-mono-0 dark:bg-mono-180"

@@ -79,11 +79,11 @@ const ClaimingAccountInput: FC<Props> = ({
         <Dropdown className="w-full">
           <DropdownButton
             disabled={isDisabled}
-            size="sm"
             className="w-full px-4 py-4 rounded-full normal-case"
             icon={<Avatar theme="substrate" value={activeAccountAddress} />}
-            label={activeAccountAddress}
-          />
+          >
+            {activeAccountAddress}
+          </DropdownButton>
 
           <AccountDropdownBody
             accountItems={accounts.map((account) => {
