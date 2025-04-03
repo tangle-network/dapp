@@ -306,6 +306,9 @@ export const SelectOperatorsStep: FC<SelectOperatorsStepProps> = ({
     enableSortingRemoval: false,
   });
 
+  /**
+   * @dev set the operators to the form value when the rowSelection changes
+   */
   useEffect(() => {
     setValue(`${stepKey}.operators`, Object.keys(rowSelection));
   }, [rowSelection]);

@@ -6,14 +6,10 @@ import {
 } from '@tangle-network/ui-components';
 import InstanceHeader from '../../../../../components/InstanceHeader';
 import ErrorMessage from '../../../../../components/ErrorMessage';
-import { Children, FC } from 'react';
+import { Children, FC, useCallback, useMemo } from 'react';
 import { BasicInformationStepProps } from './type';
 import { TrashIcon } from '@radix-ui/react-icons';
 import { BLUEPRINT_DEPLOY_STEPS } from '../../../../../utils/validations/deployBlueprint';
-import {
-  SubstrateAddress,
-  EvmAddress,
-} from '@tangle-network/ui-components/types/address';
 import { InstructionSideCard } from './InstructionSideCard';
 
 export const BasicInformationStep: FC<BasicInformationStepProps> = ({
@@ -28,26 +24,42 @@ export const BasicInformationStep: FC<BasicInformationStepProps> = ({
   const values = watch(stepKey);
 
   const errors = globalErrors?.[stepKey];
-  const permittedCallers = values?.permittedCallers || [];
 
-  const handleCallerChange = (index: number, value: string) => {
-    const newCallers = [...permittedCallers];
-    newCallers[index] = value as SubstrateAddress | EvmAddress;
-    setValue(`${stepKey}.permittedCallers`, newCallers);
-  };
+  const permittedCallers = useMemo(
+    () => values?.permittedCallers || [],
+    [values],
+  );
 
-  const handleRemoveCaller = (index: number) => {
-    const newCallers = permittedCallers.filter((_, idx) => idx !== index);
-    setValue(`${stepKey}.permittedCallers`, newCallers);
-  };
+  const handleCallerChange = useCallback(
+    (index: number, value: string) => {
+      const newCallers = [...permittedCallers];
+      newCallers[index] = value;
+      setValue(`${stepKey}.permittedCallers`, newCallers);
+    },
+    [permittedCallers, setValue, stepKey],
+  );
 
-  const handleInstanceNameChange = (value: string) => {
-    setValue(`${stepKey}.instanceName`, value);
-  };
+  const handleRemoveCaller = useCallback(
+    (index: number) => {
+      const newCallers = permittedCallers.filter((_, idx) => idx !== index);
+      setValue(`${stepKey}.permittedCallers`, newCallers);
+    },
+    [permittedCallers, setValue, stepKey],
+  );
 
-  const handleInstanceDurationChange = (value: string) => {
-    setValue(`${stepKey}.instanceDuration`, parseInt(value));
-  };
+  const handleInstanceNameChange = useCallback(
+    (value: string) => {
+      setValue(`${stepKey}.instanceName`, value);
+    },
+    [setValue, stepKey],
+  );
+
+  const handleInstanceDurationChange = useCallback(
+    (value: string) => {
+      setValue(`${stepKey}.instanceDuration`, parseInt(value));
+    },
+    [setValue, stepKey],
+  );
 
   return (
     <div className="flex">
@@ -146,7 +158,7 @@ export const BasicInformationStep: FC<BasicInformationStepProps> = ({
             onClick={() => {
               setValue(`${stepKey}.permittedCallers`, [
                 ...permittedCallers,
-                '' as SubstrateAddress | EvmAddress,
+                '',
               ]);
             }}
             className="mt-4"

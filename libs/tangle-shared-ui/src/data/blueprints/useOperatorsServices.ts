@@ -68,8 +68,12 @@ const useOperatorsServices = (operatorAccounts?: SubstrateAddress[]) => {
     ),
   );
 
+  const operatorServices = useMemo(() => {
+    return result || new Map();
+  }, [result]);
+
   return {
-    result: result || new Map(),
+    result: operatorServices,
     ...rest,
   };
 };
