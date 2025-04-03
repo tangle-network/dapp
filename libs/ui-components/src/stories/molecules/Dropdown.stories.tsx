@@ -3,9 +3,8 @@ import type { Meta, StoryObj } from '@storybook/react';
 import {
   AccountDropdownBody,
   Dropdown,
-  DropdownButton,
   DropdownBody,
-  DropdownMenu as DropdownCmp,
+  DropdownButton,
   DropdownMenuItem,
 } from '../../components/Dropdown';
 
@@ -21,7 +20,7 @@ type Story = StoryObj<typeof DropdownMenuItem>;
 export const Default: Story = {
   render: () => (
     <Dropdown className="w-full">
-      <DropdownButton size="sm" className="w-full px-4 py-4" label="Click Me" />
+      <DropdownButton className="w-full px-4 py-4">Click Me</DropdownButton>
 
       <DropdownBody className="radix-side-top:mb-2 radix-side-bottom:mt-2 w-[var(--radix-dropdown-menu-trigger-width)]">
         <ul>
@@ -34,22 +33,10 @@ export const Default: Story = {
   ),
 };
 
-export const DropdownMenu: Story = {
-  render: () => (
-    <DropdownCmp
-      className="mr-3"
-      size="sm"
-      label="Chain"
-      menuOptions={[{ value: 'Day' }, { value: 'Week' }, { value: 'Year' }]}
-      value="Ethereum"
-    />
-  ),
-};
-
 export const AccountDropdown: Story = {
   render: () => (
     <Dropdown className="w-full">
-      <DropdownButton size="sm" className="w-full px-4 py-4" label="Click Me" />
+      <DropdownButton className="w-full px-4 py-4">Click Me</DropdownButton>
 
       <AccountDropdownBody
         accountItems={[

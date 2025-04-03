@@ -10,12 +10,15 @@ import { DropdownBodyProps } from './types';
  * The style wrapper around Radix `Content` and `Portal` component, must use inside the `Dropdown` component
  */
 export const DropdownBody = forwardRef<HTMLDivElement, DropdownBodyProps>(
-  ({ children, className, size, isPortal = true, ...props }, ref) => {
+  (
+    { children, className, size, sideOffset, isPortal = true, ...props },
+    ref,
+  ) => {
     const inner = (
       <DropdownMenuPrimitive.Content
         align="end"
         {...props}
-        sideOffset={size === 'sm' ? 8 : 0}
+        sideOffset={sideOffset ?? (size === 'sm' ? 8 : 0)}
         className={twMerge(
           cx(
             'radix-side-top:animate-slide-up radix-side-bottom:animate-slide-down',
@@ -25,7 +28,6 @@ export const DropdownBody = forwardRef<HTMLDivElement, DropdownBodyProps>(
               : 'rounded-lg border',
             'border-mono-80 dark:border-mono-120',
             'bg-mono-0 dark:bg-mono-180',
-            'max-h-[var(--radix-dropdown-menu-content-max-height)]',
           ),
           className,
         )}

@@ -1,9 +1,7 @@
 'use client';
 
 import * as DropdownMenuPrimitive from '@radix-ui/react-dropdown-menu';
-import cx from 'classnames';
 import { forwardRef } from 'react';
-import { twMerge } from 'tailwind-merge';
 import { DropdownButtonProps } from './types';
 
 /**
@@ -12,13 +10,9 @@ import { DropdownButtonProps } from './types';
 export const DropdownBasicButton = forwardRef<
   HTMLButtonElement,
   DropdownButtonProps
->(({ children, className, isFullWidth, ...props }, ref) => {
+>(({ children, ...props }, ref) => {
   return (
-    <DropdownMenuPrimitive.Trigger
-      {...props}
-      className={twMerge(cx({ 'block w-full': isFullWidth }), className)}
-      ref={ref}
-    >
+    <DropdownMenuPrimitive.Trigger {...props} ref={ref}>
       {children}
     </DropdownMenuPrimitive.Trigger>
   );

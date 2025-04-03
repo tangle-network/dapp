@@ -1,3 +1,4 @@
+import { ChevronDown } from '@tangle-network/icons/ChevronDown';
 import { getFlexBasic } from '@tangle-network/icons/utils';
 import { cloneElement, forwardRef } from 'react';
 import { twMerge } from 'tailwind-merge';
@@ -9,7 +10,15 @@ import { WalletButtonProps } from './types';
 
 const WalletButton = forwardRef<HTMLButtonElement, WalletButtonProps>(
   (
-    { accountName, wallet, address, className, addressClassname, ...props },
+    {
+      accountName,
+      wallet,
+      address,
+      className,
+      addressClassname,
+      disabled,
+      ...props
+    },
     ref,
   ) => {
     return (
@@ -18,37 +27,37 @@ const WalletButton = forwardRef<HTMLButtonElement, WalletButtonProps>(
         type="button"
         ref={ref}
         className={twMerge(
-          'max-w-56 rounded-lg border-2 p-2',
+          'max-w-56 rounded-lg border-2 p-2 flex items-center gap-2',
           'bg-mono-0/10 dark:bg-mono-0/5',
           'hover:bg-mono-100/10 dark:hover:bg-mono-0/10',
           'border-2 border-mono-60 dark:border-mono-140',
           className,
         )}
       >
-        <div className="flex items-center gap-2">
-          {cloneElement(wallet.Logo, {
-            ...wallet.Logo.props,
-            className: twMerge(
-              wallet.Logo.props.className,
-              `shrink-0 grow-0 ${getFlexBasic('lg')}`,
-            ),
-          })}
+        {cloneElement(wallet.Logo, {
+          ...wallet.Logo.props,
+          className: twMerge(
+            wallet.Logo.props.className,
+            `shrink-0 grow-0 ${getFlexBasic('lg')}`,
+          ),
+        })}
 
-          <Typography
-            variant="body1"
-            fw="bold"
-            component="p"
-            className={twMerge('truncate dark:text-mono-0', addressClassname)}
-          >
-            {accountName
-              ? accountName
-              : isHex(address)
-                ? `${shortenHex(address)}`
-                : isSolanaAddress(address)
-                  ? `${shortenString(address)}`
-                  : `${shortenString(address)}`}
-          </Typography>
-        </div>
+        <Typography
+          variant="body1"
+          fw="bold"
+          component="p"
+          className={twMerge('truncate dark:text-mono-0', addressClassname)}
+        >
+          {accountName
+            ? accountName
+            : isHex(address)
+              ? `${shortenHex(address)}`
+              : isSolanaAddress(address)
+                ? `${shortenString(address)}`
+                : `${shortenString(address)}`}
+        </Typography>
+
+        {!disabled && <ChevronDown size="lg" className="shrink-0 grow-0" />}
       </button>
     );
   },

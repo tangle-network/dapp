@@ -16,12 +16,13 @@ export const ROLE_ICON_MAP = {
     <GearIcon
       width={getIconSizeInPixel(props?.size ?? 'md')}
       height={getIconSizeInPixel(props?.size ?? 'md')}
+      className={twMerge('ml-auto', props?.className)}
     />
   ),
   [Role.DEPLOYER]: (props?: IconBase) => (
     <UploadCloudIcon
       {...props}
-      className={twMerge('!fill-current', props?.className)}
+      className={twMerge('!fill-current ml-auto', props?.className)}
     />
   ),
 } as const;
