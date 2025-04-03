@@ -6,7 +6,7 @@ import {
 } from '@tangle-network/ui-components';
 import InstanceHeader from '../../../../../components/InstanceHeader';
 import ErrorMessage from '../../../../../components/ErrorMessage';
-import { Children, FC, useCallback, useMemo } from 'react';
+import { Children, FC, useCallback } from 'react';
 import { BasicInformationStepProps } from './type';
 import { TrashIcon } from '@radix-ui/react-icons';
 import { BLUEPRINT_DEPLOY_STEPS } from '../../../../../utils/validations/deployBlueprint';
@@ -25,10 +25,7 @@ export const BasicInformationStep: FC<BasicInformationStepProps> = ({
 
   const errors = globalErrors?.[stepKey];
 
-  const permittedCallers = useMemo(
-    () => values?.permittedCallers || [],
-    [values],
-  );
+  const permittedCallers = values?.permittedCallers || [];
 
   const handleCallerChange = useCallback(
     (index: number, value: string) => {
