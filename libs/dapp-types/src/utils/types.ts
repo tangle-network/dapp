@@ -88,3 +88,38 @@ export type MapKnownKeys<Obj extends Record<string, unknown>> = {
  * `Noop`: A function that does nothing.
  */
 export type Noop = () => void;
+
+/**
+ * `SafeNestedType`: A utility type that safely accesses deeply nested properties in a type.
+ * This type recursively traverses a path of property keys, handling potential null or undefined values.
+ *
+ * @description This type is particularly useful when working with complex nested objects
+ * where you need to safely access deeply nested properties without having to chain
+ * multiple NonNullable assertions.
+ *
+ * @example
+ * type User = {
+ *   profile?: {
+ *     address?: {
+ *       city?: string;
+ *     };
+ *   };
+ * };
+ *
+ * // Instead of:
+ * type City = NonNullable<NonNullable<NonNullable<User['profile']>['address']>['city']>;
+ *
+ * // You can use:
+ * type City = SafeNestedType<User, ['profile', 'address', 'city']>;
+ * // Result: string
+ */
+export type SafeNestedType<
+  T,
+  Path extends readonly (string | number)[],
+> = Path extends readonly [infer First, ...infer Rest]
+  ? First extends keyof T
+    ? Rest extends readonly (string | number)[]
+      ? SafeNestedType<NonNullable<T[First]>, Rest>
+      : never
+    : never
+  : T;

@@ -1,4 +1,6 @@
-import { BadgeEnum } from '../constants';
+import type { NetworkType } from '@tangle-network/tangle-shared-ui/graphql/graphql';
+import type { IdentityType } from '@tangle-network/tangle-shared-ui/utils/polkadot/identity';
+import type { BadgeEnum } from '../constants';
 
 export interface PointsBreakdown {
   mainnet: bigint;
@@ -40,5 +42,9 @@ export interface Account {
   testnetTaskCompletion?: TestnetTaskCompletion;
   pointsHistory: PointsHistory[];
   createdAt: number;
+  createdAtTimestamp: Date | null | undefined;
   lastUpdatedAt: number;
+  lastUpdatedAtTimestamp: Date | null | undefined;
+  identity: IdentityType | null | undefined;
+  network: NetworkType;
 }

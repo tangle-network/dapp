@@ -55,8 +55,8 @@ export const SyncProgressIndicator = () => {
           animated={!isSynced}
         />
         {isSynced
-          ? `Indexing ${lastProcessedBlock} of ${targetBlock}`
-          : 'Syncing...'}{' '}
+          ? `Synced ${lastProcessedBlock} of ${targetBlock} `
+          : `Indexing ${lastProcessedBlock} of ${targetBlock} `}
         ({progress.toFixed(2)}%)
       </>
     );

@@ -83,23 +83,25 @@ const ActionButton: FC<{ isExpanded: boolean }> = ({ isExpanded }) => {
   return (
     <Dropdown>
       <DropdownButton
-        size="md"
         icon={ROLE_ICON_MAP[role]({ size: 'lg' })}
-        iconClassName="text-mono-0"
         isHideArrowIcon={!isExpanded}
-        label={isExpanded ? capitalizedRole : ''}
-        labelClassName="text-mono-0"
-        arrowElement={<ChevronRight className="fill-mono-0" />}
+        arrowElement={<ChevronRight size="lg" />}
         className={twMerge(
-          'px-3 py-3 !rounded-full normal-case border-none !bg-purple-50 justify-center font-bold text-mono-0',
-          cx({
-            'w-full': isExpanded,
-            'min-w-fit': !isExpanded,
-          }),
+          'px-3 py-3 !rounded-full border-none',
+          '!bg-purple-50 font-bold text-mono-0',
+          'w-full',
         )}
-      />
+      >
+        <span>{isExpanded ? capitalizedRole : ''}</span>
+      </DropdownButton>
 
-      <DropdownBody className="ml-2" side="right" align="center">
+      <DropdownBody
+        isPortal={false}
+        sideOffset={8}
+        side="right"
+        className="z-[60]"
+        align="center"
+      >
         <DropdownMenuItem
           isActive={role === Role.OPERATOR}
           onClick={() => setRole(Role.OPERATOR)}

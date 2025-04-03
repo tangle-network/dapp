@@ -3,7 +3,7 @@ import useSubstrateAddress from '@tangle-network/tangle-shared-ui/hooks/useSubst
 import { executeGraphQL } from '@tangle-network/tangle-shared-ui/utils/executeGraphQL';
 import { useQuery } from '@tanstack/react-query';
 import { useMemo } from 'react';
-import { ReactQueryKey } from '../../constants/reactQuery';
+import { ReactQueryKey } from '../../../constants/reactQuery';
 
 const GetAccountPointsQueryDocument = graphql(/* GraphQL */ `
   query GetAccountPoints($account: String!) {
@@ -16,11 +16,11 @@ const GetAccountPointsQueryDocument = graphql(/* GraphQL */ `
 
 const fetcher = async (activeAccount: string | null) => {
   if (activeAccount === null) {
-    return;
+    return null;
   }
 
   const result = await executeGraphQL(GetAccountPointsQueryDocument, {
-    account: activeAccount.toLowerCase(),
+    account: activeAccount,
   });
 
   return result.data;
@@ -32,7 +32,6 @@ export default function useActiveAccountPoints() {
   const { data: accountPointsResponse, ...rest } = useQuery({
     queryKey: [ReactQueryKey.GetAccountPoints, activeAccount],
     queryFn: () => fetcher(activeAccount),
-    enabled: activeAccount !== null,
     retry: 10,
     refetchInterval: 6000,
   });

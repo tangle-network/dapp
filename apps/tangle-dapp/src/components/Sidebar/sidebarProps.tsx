@@ -21,7 +21,7 @@ import {
   TANGLE_DOCS_URL,
   TANGLE_MKT_URL,
 } from '@tangle-network/ui-components/constants';
-
+import { PointsBanner } from '../../features/points/components/PointsBanner';
 import { PagePath } from '../../types';
 
 // TODO: This entire system of handling sidebar props can be improved in a more React-compliant manner. For now, leaving as is since it is not necessary.
@@ -135,7 +135,10 @@ export default function getSidebarProps({
   return {
     ClosedLogo: SidebarTangleClosedIcon,
     Logo: TangleLogo,
-    footer: SIDEBAR_FOOTER,
+    footer: {
+      ...SIDEBAR_FOOTER,
+      extraContent: <PointsBanner />,
+    },
     items,
     logoLink: TANGLE_MKT_URL,
   } satisfies MobileSidebarProps;
