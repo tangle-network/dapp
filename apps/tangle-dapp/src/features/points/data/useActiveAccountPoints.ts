@@ -16,7 +16,7 @@ const GetAccountPointsQueryDocument = graphql(/* GraphQL */ `
 
 const fetcher = async (activeAccount: string | null) => {
   if (activeAccount === null) {
-    return;
+    return null;
   }
 
   const result = await executeGraphQL(GetAccountPointsQueryDocument, {
