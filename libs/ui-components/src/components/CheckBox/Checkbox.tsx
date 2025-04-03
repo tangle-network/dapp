@@ -71,7 +71,7 @@ export const CheckBox: FC<CheckBoxProps> = (props) => {
 
   const labelClsx = cx(
     'inline-block peer-disabled:cursor-not-allowed peer-disabled:text-mono-100',
-    'text-mono-140 dark:text-mono-20',
+    'text-mono-140 dark:text-mono-20 w-full',
     labelVariant,
     spacingClassName,
   );
@@ -86,6 +86,7 @@ export const CheckBox: FC<CheckBoxProps> = (props) => {
         labelProps?.className,
         wrapperClassName,
       )}
+      htmlFor={id}
     >
       <div className="relative group min-h-[28px] min-w-[28px]">
         <input

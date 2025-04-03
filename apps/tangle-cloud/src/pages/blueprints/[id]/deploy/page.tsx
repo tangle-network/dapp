@@ -1,12 +1,9 @@
-import { createElement, FC, useMemo, useState } from 'react';
-import InfoSidebar from '../../../../components/InfoSidebar';
+import { createElement, FC, useMemo, useState, useCallback } from 'react';
 import {
   Button,
   ErrorFallback,
   SkeletonLoader,
-  Typography,
 } from '@tangle-network/ui-components';
-import { DeployStep1 } from './DeploySteps/DeployStep1';
 import { useForm } from 'react-hook-form';
 import {
   BLUEPRINT_DEPLOY_STEPS,
@@ -18,6 +15,9 @@ import { twMerge } from 'tailwind-merge';
 import { ArrowRightIcon } from '@radix-ui/react-icons';
 import { useParams } from 'react-router';
 import useBlueprintDetails from '@tangle-network/tangle-shared-ui/data/restake/useBlueprintDetails';
+import { ArrowLeft } from '@tangle-network/icons';
+import { SelectOperatorsStep } from './DeploySteps/OperatorSelectionStep';
+import { BasicInformationStep } from './DeploySteps/BasicInformationStep';
 
 const DeployPage: FC = () => {
   const { id } = useParams();
@@ -48,7 +48,11 @@ const DeployPage: FC = () => {
   const steps = useMemo(
     () => [
       {
-        component: DeployStep1,
+        component: BasicInformationStep,
+        props: commonProps,
+      },
+      {
+        component: SelectOperatorsStep,
         props: commonProps,
       },
     ],
@@ -57,27 +61,23 @@ const DeployPage: FC = () => {
 
   const StepComponent = createElement(steps[step].component, steps[step].props);
 
-  const onNextStep = async () => {
+  const onNextStep = useCallback(async () => {
     const values = BLUEPRINT_DEPLOY_STEPS[step];
     const isStepValid = await trigger(values);
 
     if (isStepValid && step < BLUEPRINT_DEPLOY_STEPS.length - 1) {
       setStep(step + 1);
     }
-  };
+  }, [step, trigger]);
+
+  const onBackStep = useCallback(() => {
+    if (step > 0) {
+      setStep(step - 1);
+    }
+  }, [step]);
 
   if (isBlueprintLoading) {
-    return (
-      <div className="space-y-5">
-        <SkeletonLoader className="min-h-64" />
-
-        <Typography variant="h4" fw="bold">
-          Blueprint details
-        </Typography>
-
-        <SkeletonLoader className="min-h-52" />
-      </div>
-    );
+    return <SkeletonLoader className="min-h-64" />;
   } else if (blueprintError) {
     return <ErrorFallback title={blueprintError.name} />;
   } else if (blueprintResult === null) {
@@ -87,34 +87,22 @@ const DeployPage: FC = () => {
 
   return (
     <>
-      <div className="flex flex-1 min-h-0">
-        <div className="flex w-full">
-          <InfoSidebar>
-            <Typography variant="h5">Instance Settings</Typography>
-
-            <Typography
-              variant="body1"
-              className="text-mono-120 dark:text-mono-100"
-            >
-              Register to run Blueprints and start earning as you secure and
-              execute service instances.
-            </Typography>
-          </InfoSidebar>
-
-          <div className="flex flex-col flex-1">{StepComponent}</div>
-        </div>
-      </div>
+      {StepComponent}
 
       <div className="absolute w-[calc(100%-5rem)]">
         <div
           className={twMerge(
             'p-6 rounded-xl mt-4',
-            'flex items-center justify-end',
+            'flex items-center justify-end gap-5',
             "bg-[url('/static/assets/blueprints/selected-blueprint-panel.png')]",
           )}
         >
-          {step > 1 && (
-            <Button rightIcon={<ArrowRightIcon width={24} height={24} />}>
+          {step > 0 && (
+            <Button
+              variant="secondary"
+              onClick={onBackStep}
+              leftIcon={<ArrowLeft width={24} height={24} />}
+            >
               Back
             </Button>
           )}
