@@ -412,7 +412,7 @@ export const SelectOperatorsStep: FC<SelectOperatorsStepProps> = ({
             debounceTime={300}
             isControlled
             leftIcon={<Search />}
-            id="search"
+            id="deploy-operator-selection-search"
             placeholder="Search operator"
             size="md"
             value={searchQuery}
@@ -425,7 +425,7 @@ export const SelectOperatorsStep: FC<SelectOperatorsStepProps> = ({
         variant={TableVariant.GLASS_OUTER}
         isPaginated
         tableProps={table}
-        trClassName={'group overflow-hidden'}
+        trClassName="group overflow-hidden"
       />
 
       {errors?.operators && (
