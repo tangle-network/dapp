@@ -21,7 +21,7 @@
     "codegen": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "yarn check:codegen"
+        "command": "yarn run check:codegen"
       }
     },
     "typecheck": {

@@ -55,10 +55,7 @@ export const DropdownField = <Item extends ToString>({
       <Label>{title}</Label>
 
       <Dropdown className="block grow shrink basis-0">
-        <DropdownBasicButton
-          className="h-full group focus-visible:outline-none"
-          isFullWidth
-        >
+        <DropdownBasicButton className="h-full group focus-visible:outline-none w-full inline-block">
           <div className="flex items-center gap-5 justify-between w-full">
             <Typography variant="h5" fw="bold" className="text-lg">
               {getDisplayText?.(selectedItem) ?? selectedItem.toString()}
