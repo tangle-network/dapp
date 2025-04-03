@@ -40,6 +40,8 @@ const Page = () => {
   const [isPricingModalOpen, setIsPricingModalOpen] = useState(false);
   const { blueprints, isLoading, error } = useBlueprintListing();
 
+  const isOperator = useMemo(() => role === Role.OPERATOR, [role]);
+
   const selectedBlueprints = useMemo(() => {
     return Object.keys(rowSelection)
       .filter((blueprintId) => rowSelection[blueprintId])
@@ -76,8 +78,8 @@ const Page = () => {
         blueprints={blueprints}
         isLoading={isLoading}
         error={error}
-        rowSelection={rowSelection}
-        onRowSelectionChange={setRowSelection}
+        rowSelection={isOperator ? rowSelection : undefined}
+        onRowSelectionChange={isOperator ? setRowSelection : undefined}
       />
 
       <Modal open={isPricingModalOpen} onOpenChange={setIsPricingModalOpen}>

@@ -64,7 +64,7 @@ export const DropdownButton = forwardRef<
               </span>
             )}
 
-            {typeof label === 'string' ? (
+            {typeof label === 'string' && label.length > 0 && (
               <span
                 className={twMerge(
                   'text-inherit',
@@ -74,9 +74,8 @@ export const DropdownButton = forwardRef<
               >
                 {label}
               </span>
-            ) : (
-              label
             )}
+            {label && typeof label !== 'string' && label}
           </div>
 
           {!isHideArrowIcon &&

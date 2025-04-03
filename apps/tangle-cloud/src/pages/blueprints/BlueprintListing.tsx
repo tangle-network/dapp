@@ -20,8 +20,8 @@ const BlueprintItemWrapper = ({
 };
 
 type Props = {
-  rowSelection: RowSelectionState;
-  onRowSelectionChange: Dispatch<SetStateAction<RowSelectionState>>;
+  rowSelection?: RowSelectionState;
+  onRowSelectionChange?: Dispatch<SetStateAction<RowSelectionState>>;
 } & ReturnType<typeof useBlueprintListing>;
 
 const BlueprintListing: FC<Props> = ({
