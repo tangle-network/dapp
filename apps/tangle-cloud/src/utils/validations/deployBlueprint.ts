@@ -95,10 +95,10 @@ export const deployBlueprintSchema = z.object({
     }),
   }),
   [BLUEPRINT_DEPLOY_STEPS[2]]: z.object({
-    requestArgs: z.array(z.string()).min(1),
-  }),
-  [BLUEPRINT_DEPLOY_STEPS[3]]: z.object({
-    securityCommitments: z.array(z.string()).transform((value, context) => {
+    securityCommitments: z.array(z.object({
+      minExposurePercent: z.number().min(1).max(100),
+      maxExposurePercent: z.number().min(1).max(100),
+    })).transform((value, context) => {
       if (value.length === 0) {
         context.addIssue({
           code: z.ZodIssueCode.custom,
@@ -108,8 +108,26 @@ export const deployBlueprintSchema = z.object({
         return z.NEVER;
       }
 
+      for (const [index, commitment] of value.entries()) {
+        if (commitment.minExposurePercent > commitment.maxExposurePercent) {
+          context.addIssue({
+            path: [index],
+            code: z.ZodIssueCode.custom,
+            message: 'Min exposure percent cannot be greater than max exposure percent',
+          });
+
+          return z.NEVER;
+        }
+      }
+
       return value;
     }),
+    approvalModel: z.enum(['Dynamic', 'Fixed']),
+    minApproval: z.number().min(1).optional(),
+    maxApproval: z.number().min(1).optional(),
+  }),
+  [BLUEPRINT_DEPLOY_STEPS[3]]: z.object({
+    requestArgs: z.array(z.string()).min(1),
   }),
 });
 
