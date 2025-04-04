@@ -1,12 +1,14 @@
+import cx from 'classnames';
 import { StatusIndicator } from '@tangle-network/icons';
 import { IconBase } from '@tangle-network/icons/types';
 import {
+  EventFor,
   Tooltip,
   TooltipBody,
   TooltipTrigger,
   Typography,
 } from '@tangle-network/ui-components';
-import { Link } from 'react-router';
+import { Link, LinkProps } from 'react-router';
 import { ComponentProps, FC, ReactElement, useCallback } from 'react';
 import { twMerge } from 'tailwind-merge';
 
@@ -42,6 +44,17 @@ const ActionItem: FC<ActionItemProps> = ({
 
     onClick();
   }, [isDisabled, onClick]);
+
+  const handleLinkClick = useCallback(
+    (event: EventFor<'a', 'onClick'>) => {
+      if (isDisabled) {
+        event.preventDefault();
+        return;
+      }
+    },
+
+    [isDisabled],
+  );
 
   const content = (
     <div
@@ -85,7 +98,9 @@ const ActionItem: FC<ActionItemProps> = ({
 
   const withLink =
     internalHref !== undefined ? (
-      <Link to={internalHref}>{content}</Link>
+      <Link to={internalHref} onClick={handleLinkClick}>
+        {content}
+      </Link>
     ) : (
       content
     );

@@ -1,13 +1,39 @@
 <!doctype html>
 <html lang="en" class="box-border h-full p-0 m-0">
   <head>
-    <meta charset="utf-8" />
-    <title>Tangle Leaderboard</title>
     <base href="/" />
 
+    <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
+
     <link rel="icon" type="image/x-icon" href="/favicon.ico" />
     <link rel="stylesheet" href="/src/styles.css" />
+
+    <script>
+      /**
+       * This script handles the theme (dark/light mode) of the application.
+       * It checks for a stored theme preference in localStorage first.
+       * If no preference is stored, it uses the system's preferred color scheme.
+       * The theme is applied by adding or removing the 'dark' class to the HTML element.
+       */
+      (() => {
+        const classList = document.documentElement.classList;
+        const style = document.documentElement.style;
+
+        const dark = window.matchMedia('(prefers-color-scheme: dark)');
+        const storedTheme = localStorage.getItem('theme')
+          ? JSON.parse(localStorage.getItem('theme'))
+          : null;
+
+        if (storedTheme === 'dark' || (!storedTheme && dark.matches)) {
+          classList.add('dark');
+        } else {
+          classList.remove('dark');
+        }
+      })();
+    </script>
+
+    <title>Tangle Leaderboard</title>
   </head>
   <body class="box-border p-0 m-0 bg-repeat-y bg-tangle">
     <div id="root"></div>
