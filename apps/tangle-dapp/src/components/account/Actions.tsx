@@ -1,16 +1,25 @@
-import { LockUnlockLineIcon, SendPlanLineIcon } from '@tangle-network/icons';
+import {
+  CoinsLineIcon,
+  CoinsStackedLineIcon,
+  GiftLineIcon,
+  LockUnlockLineIcon,
+  SendPlanLineIcon,
+} from '@tangle-network/icons';
 import useNetworkStore from '@tangle-network/tangle-shared-ui/context/useNetworkStore';
-import { FC, useState } from 'react';
+import { FC, useMemo, useState } from 'react';
 
-import TransferTxModal from '../../containers/TransferTxModal';
+import useActiveAccountAddress from '@tangle-network/tangle-shared-ui/hooks/useActiveAccountAddress';
 import useBalances from '@tangle-network/tangle-shared-ui/hooks/useBalances';
+import { TxStatus } from '@tangle-network/tangle-shared-ui/hooks/useSubstrateTx';
+import TransferTxModal from '../../containers/TransferTxModal';
+import useAirdropEligibility from '../../data/claims/useAirdropEligibility';
+import useTotalPayoutRewards from '../../data/nomination/useTotalPayoutRewards';
 import useVestingInfo from '../../data/vesting/useVestingInfo';
 import useVestTx from '../../data/vesting/useVestTx';
-import { TxStatus } from '@tangle-network/tangle-shared-ui/hooks/useSubstrateTx';
+import { PagePath, StaticSearchQueryPath } from '../../types';
 import formatTangleBalance from '../../utils/formatTangleBalance';
 import ActionItem from './ActionItem';
 import WithdrawEvmBalanceAction from './WithdrawEvmBalanceAction';
-import useActiveAccountAddress from '@tangle-network/tangle-shared-ui/hooks/useActiveAccountAddress';
 
 const Actions: FC = () => {
   const { nativeTokenSymbol } = useNetworkStore();
@@ -18,6 +27,14 @@ const Actions: FC = () => {
   const activeAccountAddress = useActiveAccountAddress();
   const { transferable: transferableBalance } = useBalances();
   const [isTransferModalOpen, setIsTransferModalOpen] = useState(false);
+
+  const { isEligible: isAirdropEligible } = useAirdropEligibility();
+
+  const { data } = useTotalPayoutRewards();
+
+  const isPayoutsAvailable = useMemo(() => {
+    return !data.isZero();
+  }, [data]);
 
   const {
     isVesting,
@@ -31,7 +48,7 @@ const Actions: FC = () => {
       : null;
 
   return (
-    <div className="flex items-center justify-start gap-2 overflow-x-auto">
+    <div className="flex items-center justify-start gap-4 overflow-x-auto">
       <ActionItem
         Icon={SendPlanLineIcon}
         onClick={() => setIsTransferModalOpen(true)}
@@ -42,12 +59,50 @@ const Actions: FC = () => {
           transferableBalance === null ||
           transferableBalance.isZero()
         }
-        tooltip={`Send ${nativeTokenSymbol}`}
+        label="Send"
+      />
+
+      <ActionItem
+        label="Nominate"
+        internalHref={StaticSearchQueryPath.NominationsTable}
+        Icon={CoinsStackedLineIcon}
+      />
+
+      <ActionItem
+        hasNotificationDot={isPayoutsAvailable}
+        isDisabled={!isPayoutsAvailable || activeAccountAddress === null}
+        label="Payouts"
+        Icon={CoinsLineIcon}
+        internalHref={StaticSearchQueryPath.PayoutsTable}
+        tooltip={
+          isPayoutsAvailable
+            ? 'You have payouts available. Click here to visit the Payouts page.'
+            : 'No payouts available.'
+        }
+      />
+
+      <ActionItem
+        label="Claim"
+        hasNotificationDot={isAirdropEligible !== null && isAirdropEligible}
+        isDisabled={!isAirdropEligible || activeAccountAddress === null}
+        Icon={GiftLineIcon}
+        internalHref={PagePath.CLAIM_AIRDROP}
+        tooltip={
+          isAirdropEligible !== null && isAirdropEligible ? (
+            <>
+              Congratulations, you are eligible for the Tangle Network airdrop!
+              Click here to visit the <strong>Claim Airdrop</strong> page.
+            </>
+          ) : (
+            <>You are not eligible for the Tangle Network airdrop.</>
+          )
+        }
       />
 
       {/* This is a special case, so hide it for most users if they're not vesting */}
       {isVesting && (
         <ActionItem
+          label="Unlock"
           Icon={LockUnlockLineIcon}
           onClick={executeVestTx !== null ? executeVestTx : undefined}
           hasNotificationDot={hasClaimableVestingTokens}
