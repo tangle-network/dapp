@@ -18,6 +18,7 @@ import useBlueprintDetails from '@tangle-network/tangle-shared-ui/data/restake/u
 import { ArrowLeft } from '@tangle-network/icons';
 import { SelectOperatorsStep } from './DeploySteps/OperatorSelectionStep';
 import { BasicInformationStep } from './DeploySteps/BasicInformationStep';
+import { AssetConfigurationStep } from './DeploySteps/AssetConfigurationStep';
 
 const DeployPage: FC = () => {
   const { id } = useParams();
@@ -53,6 +54,10 @@ const DeployPage: FC = () => {
       },
       {
         component: SelectOperatorsStep,
+        props: commonProps,
+      },
+      {
+        component: AssetConfigurationStep,
         props: commonProps,
       },
     ],
