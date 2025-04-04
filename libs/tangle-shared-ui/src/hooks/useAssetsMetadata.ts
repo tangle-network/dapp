@@ -24,19 +24,27 @@ const useAssetsMetadata = (
       assets = [singleOrMultipleAssetIds];
     }
 
-    const { evmAssetIds, nativeAssetIds } = assets.reduce((acc, assetId) => {
-      if (isEvmAddress(assetId)) {
-        acc.evmAssetIds.push(assetId);
-      } else {
-        acc.nativeAssetIds.push(assetId);
-      }
+    const { evmAssetIds, nativeAssetIds } = assets.reduce(
+      (acc, assetId) => {
+        if (isEvmAddress(assetId)) {
+          acc.evmAssetIds.push(assetId);
+        } else {
+          acc.nativeAssetIds.push(assetId);
+        }
 
-      return acc;
-    }, { evmAssetIds: [] as EvmAddress[], nativeAssetIds: [] as RestakeAssetId[] });
+        return acc;
+      },
+      {
+        evmAssetIds: [] as EvmAddress[],
+        nativeAssetIds: [] as RestakeAssetId[],
+      },
+    );
 
-    return { evmAssetIds: Array.from(new Set(evmAssetIds)), nativeAssetIds: Array.from(new Set(nativeAssetIds)) };
+    return {
+      evmAssetIds: Array.from(new Set(evmAssetIds)),
+      nativeAssetIds: Array.from(new Set(nativeAssetIds)),
+    };
   }, [singleOrMultipleAssetIds]);
-
 
   const { result: evmAssetMetadatas, isLoading: isLoadingEvmAssetMetadatas } =
     usePromise(
@@ -50,28 +58,30 @@ const useAssetsMetadata = (
       null,
     );
 
-  const { result: nativeAssetMetadatas, isLoading: isLoadingNativeAssetMetadatas } = useApiRx(
+  const {
+    result: nativeAssetMetadatas,
+    isLoading: isLoadingNativeAssetMetadatas,
+  } = useApiRx(
     useCallback(
       (api) => {
-        return api.query.assets.metadata.multi(nativeAssetIds)
-          .pipe(
-            map((assets) => {
-              return assets.map((asset, index) => {
-                if (asset.isEmpty) {
-                  return null;
-                }
+        return api.query.assets.metadata.multi(nativeAssetIds).pipe(
+          map((assets) => {
+            return assets.map((asset, index) => {
+              if (asset.isEmpty) {
+                return null;
+              }
 
-                return {
-                  name: asset.name.toString(),
-                  symbol: asset.symbol.toString(),
-                  decimals: asset.decimals.toNumber(),
-                  deposit: asset.deposit.toString(),
-                  isFrozen: asset.isFrozen.toHuman(),
-                  assetId: nativeAssetIds[index],
-                };
-              });
-            }),
-          );
+              return {
+                name: asset.name.toString(),
+                symbol: asset.symbol.toString(),
+                decimals: asset.decimals.toNumber(),
+                deposit: asset.deposit.toString(),
+                isFrozen: asset.isFrozen.toHuman(),
+                assetId: nativeAssetIds[index],
+              };
+            });
+          }),
+        );
       },
       [nativeAssetIds],
     ),
@@ -82,7 +92,10 @@ const useAssetsMetadata = (
       return null;
     }
 
-    const assetsMetadataMap = new Map<RestakeAssetId, PrimitiveAssetMetadata | null>();
+    const assetsMetadataMap = new Map<
+      RestakeAssetId,
+      PrimitiveAssetMetadata | null
+    >();
 
     for (const asset of nativeAssetMetadatas) {
       if (asset) {
@@ -98,7 +111,10 @@ const useAssetsMetadata = (
     return assetsMetadataMap;
   }, [evmAssetMetadatas, nativeAssetMetadatas]);
 
-  return { result: assetsMetadata, isLoading: isLoadingEvmAssetMetadatas || isLoadingNativeAssetMetadatas };
+  return {
+    result: assetsMetadata,
+    isLoading: isLoadingEvmAssetMetadatas || isLoadingNativeAssetMetadatas,
+  };
 };
 
 export default useAssetsMetadata;
