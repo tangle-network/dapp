@@ -103,6 +103,7 @@ export const BasicInformationStep: FC<BasicInformationStepProps> = ({
               type="number"
               min={1}
               value={values?.instanceDuration?.toString()}
+              rightIcon={<>Block(s)</>}
               onChange={(nextValue) => handleInstanceDurationChange(nextValue)}
             />
             {errors?.['instanceDuration'] && (

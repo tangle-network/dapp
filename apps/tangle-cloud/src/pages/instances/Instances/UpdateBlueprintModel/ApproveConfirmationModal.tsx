@@ -19,7 +19,7 @@ type ApproveConfirmationModalProps = {
   onClose: () => void;
   onConfirm: (data: ApprovalConfirmationFormFields) => Promise<void>;
   selectedRequest: MonitoringServiceRequest | null;
-  assetsMetadata: Map<string, PrimitiveAssetMetadata | null>;
+  assetsMetadata?: Map<string, PrimitiveAssetMetadata | null>;
   status: TxStatus;
 };
 
@@ -90,31 +90,29 @@ function ApproveConfirmationModal({
       </ModalHeader>
 
       <ModalBody>
-        <div className="mt-52">
-          <BlueprintItem
-            imgUrl={selectedRequest?.blueprintData?.metadata.logo ?? ''}
-            renderImage={(imageUrl) => {
-              return (
-                <img
-                  src={imageUrl}
-                  alt={selectedRequest?.blueprintData?.metadata.name ?? ''}
-                  className="flex-shrink-0 bg-center rounded-full"
-                />
-              );
-            }}
-            id={selectedRequest?.blueprintData?.metadata.name ?? ''}
-            name={selectedRequest?.blueprintData?.metadata.name ?? ''}
-            restakersCount={selectedRequest?.blueprintData?.restakersCount ?? 0}
-            operatorsCount={selectedRequest?.blueprintData?.operatorsCount ?? 0}
-            tvl={selectedRequest?.blueprintData?.tvl?.toString() ?? '0'}
-            isBoosted={false}
-            category={selectedRequest?.blueprintData?.metadata.category ?? ''}
-            description={
-              selectedRequest?.blueprintData?.metadata.description ?? ''
-            }
-            author={selectedRequest?.blueprintData?.metadata.author ?? ''}
-          />
-        </div>
+        <BlueprintItem
+          imgUrl={selectedRequest?.blueprintData?.metadata.logo ?? ''}
+          renderImage={(imageUrl) => {
+            return (
+              <img
+                src={imageUrl}
+                alt={selectedRequest?.blueprintData?.metadata.name ?? ''}
+                className="flex-shrink-0 bg-center rounded-full"
+              />
+            );
+          }}
+          id={selectedRequest?.blueprintData?.metadata.name ?? ''}
+          name={selectedRequest?.blueprintData?.metadata.name ?? ''}
+          restakersCount={selectedRequest?.blueprintData?.restakersCount ?? 0}
+          operatorsCount={selectedRequest?.blueprintData?.operatorsCount ?? 0}
+          tvl={selectedRequest?.blueprintData?.tvl?.toString() ?? '0'}
+          isBoosted={false}
+          category={selectedRequest?.blueprintData?.metadata.category ?? ''}
+          description={
+            selectedRequest?.blueprintData?.metadata.description ?? ''
+          }
+          author={selectedRequest?.blueprintData?.metadata.author ?? ''}
+        />
 
         <form onSubmit={handleSubmit(onConfirm)} className="mt-4 space-y-4">
           <Typography variant="h4" className="text-center mb-3">
@@ -122,7 +120,7 @@ function ApproveConfirmationModal({
           </Typography>
           {Children.toArray(
             securityCommitmentDefaultFormValue.map(({ assetId }, index) => {
-              const assetMetadata = assetsMetadata.get(assetId);
+              const assetMetadata = assetsMetadata?.get(assetId);
               const exposurePercentFormValue = watch(
                 `securityCommitment.${index}.exposurePercent`,
               );

@@ -72,11 +72,11 @@ const useAssetsMetadata = (
               }
 
               return {
-                name: asset.name.toString(),
-                symbol: asset.symbol.toString(),
+                name: asset.name.toHuman()?.toString() ?? '',
+                symbol: asset.symbol.toHuman()?.toString() ?? '',
                 decimals: asset.decimals.toNumber(),
-                deposit: asset.deposit.toString(),
-                isFrozen: asset.isFrozen.toHuman(),
+                deposit: asset.deposit.toHuman()?.toString() ?? '',
+                isFrozen: asset.isFrozen.toHuman() ?? false,
                 assetId: nativeAssetIds[index],
               };
             });
@@ -89,7 +89,7 @@ const useAssetsMetadata = (
 
   const assetsMetadata = useMemo(() => {
     if (nativeAssetMetadatas === null || evmAssetMetadatas === null) {
-      return null;
+      return undefined;
     }
 
     const assetsMetadataMap = new Map<
