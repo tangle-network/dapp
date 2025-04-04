@@ -269,6 +269,7 @@ const RestakeDelegateForm: FC = () => {
           operatorAddress: operatorAccountId,
         });
       } else {
+        if (!restakeApi) return;
         await restakeApi.delegate(operatorAccountId, assetId, amountBn);
       }
 

@@ -32,6 +32,7 @@ const WithdrawRequestTableActions: FC<Props> = ({
     });
 
     setIsTransacting(true);
+    if (!restakeApi) return;
     await restakeApi.cancelWithdraw(requests);
     setIsTransacting(false);
   }, [isReady, selectedRequests, restakeApi]);
@@ -42,6 +43,7 @@ const WithdrawRequestTableActions: FC<Props> = ({
     }
 
     setIsTransacting(true);
+    if (!restakeApi) return;
     await restakeApi.executeWithdraw();
     setIsTransacting(false);
   }, [isReady, restakeApi]);

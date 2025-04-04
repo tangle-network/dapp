@@ -1,1 +1,1 @@
-export type WebbProviderType = 'web3' | 'polkadot';
+export type WebbProviderType = 'web3' | 'polkadot' | 'solana';

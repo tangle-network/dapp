@@ -78,5 +78,8 @@ export const makeExplorerUrl = (
 
       return new URL(path, baseUrl).toString();
     }
+
+    default:
+      return null;
   }
 };

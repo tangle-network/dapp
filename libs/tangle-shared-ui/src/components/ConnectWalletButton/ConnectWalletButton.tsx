@@ -7,12 +7,19 @@ import UpdateMetadataButton from '../UpdateMetadataButton';
 import WalletDropdown from './WalletDropdown';
 import ConnectWalletModal from './ConnectWalletModal';
 import {
+  assertSolanaAddress,
   assertSubstrateAddress,
   isEvmAddress,
+  isSolanaAddress,
   toSubstrateAddress,
 } from '@tangle-network/ui-components';
 import { calculateTypedChainId, ChainType } from '@tangle-network/dapp-types';
 import { ChainConfig } from '@tangle-network/dapp-config';
+import {
+  EvmAddress,
+  SolanaAddress,
+  SubstrateAddress,
+} from '@tangle-network/ui-components/types/address';
 
 type ConnectWalletButtonProps = {
   showChainSpecificWallets?: boolean;
@@ -36,15 +43,28 @@ const ConnectWalletButton = ({
     return undefined;
   }, [showChainSpecificWallets, preferredChain]);
 
-  const accountAddress = useMemo(() => {
+  const accountAddress = useMemo<
+    EvmAddress | SubstrateAddress | SolanaAddress | null
+  >(() => {
     if (activeAccount?.address === undefined) {
       return null;
+    }
+
+    if (isSolanaAddress(activeAccount.address)) {
+      return assertSolanaAddress(activeAccount.address);
     } else if (isEvmAddress(activeAccount.address)) {
       return activeAccount.address;
-    } else if (network.ss58Prefix === undefined) {
-      return assertSubstrateAddress(activeAccount.address);
     } else {
-      return toSubstrateAddress(activeAccount.address, network.ss58Prefix);
+      try {
+        if (network.ss58Prefix === undefined) {
+          return assertSubstrateAddress(activeAccount.address);
+        } else {
+          return toSubstrateAddress(activeAccount.address, network.ss58Prefix);
+        }
+      } catch (error) {
+        console.error('Error processing address:', error);
+        return assertSubstrateAddress(activeAccount.address);
+      }
     }
   }, [activeAccount?.address, network.ss58Prefix]);
 
