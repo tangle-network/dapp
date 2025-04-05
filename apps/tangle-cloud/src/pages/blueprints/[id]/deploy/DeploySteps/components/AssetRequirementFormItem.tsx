@@ -3,7 +3,7 @@ import { Input, Typography } from '@tangle-network/ui-components';
 import { FC } from 'react';
 import { PrimitiveAssetMetadata } from '@tangle-network/tangle-shared-ui/types/restake';
 import LsTokenIcon from '@tangle-network/tangle-shared-ui/components/LsTokenIcon';
-import ErrorMessage from '../../../../../components/ErrorMessage';
+import ErrorMessage from '../../../../../../components/ErrorMessage';
 import cx from 'classnames';
 
 type AssetRequirementFormItemProps = {
@@ -33,7 +33,7 @@ export const AssetRequirementFormItem: FC<AssetRequirementFormItemProps> = ({
 }) => {
   return (
     <div className={cx('flex flex-wrap gap-4 items-center', className)}>
-      <div className="space-y-2 w-3/12">
+      <div className="min-h-6 w-3/12">
         <Input
           id={`securityCommitment.${index}.assetId`}
           isControlled
@@ -54,7 +54,7 @@ export const AssetRequirementFormItem: FC<AssetRequirementFormItemProps> = ({
         </div>
       </div>
 
-      <div className="space-y-2 w-4/12">
+      <div className="min-h-6 w-4/12">
         <Input
           id={`securityCommitment.${index}.minExposurePercent`}
           isControlled
@@ -68,11 +68,9 @@ export const AssetRequirementFormItem: FC<AssetRequirementFormItemProps> = ({
           min={minExposurePercent || 0}
           max={maxExposurePercent || 100}
         />
-        {minExposurePercentErrorMsg && (
-          <ErrorMessage>{minExposurePercentErrorMsg}</ErrorMessage>
-        )}
+        <ErrorMessage>{minExposurePercentErrorMsg}</ErrorMessage>
       </div>
-      <div className="space-y-2 w-4/12">
+      <div className="min-h-6 w-4/12">
         <Input
           id={`securityCommitment.${index}.maxExposurePercent`}
           isControlled
@@ -86,9 +84,7 @@ export const AssetRequirementFormItem: FC<AssetRequirementFormItemProps> = ({
           min={minExposurePercent || 0}
           max={maxExposurePercent || 100}
         />
-        {maxExposurePercentErrorMsg && (
-          <ErrorMessage>{maxExposurePercentErrorMsg}</ErrorMessage>
-        )}
+        <ErrorMessage>{maxExposurePercentErrorMsg}</ErrorMessage>
       </div>
     </div>
   );

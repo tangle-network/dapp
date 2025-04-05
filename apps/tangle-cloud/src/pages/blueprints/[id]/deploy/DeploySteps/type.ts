@@ -17,7 +17,7 @@ export type SelectOperatorsStepProps = BaseDeployStepProps;
 
 export type AssetConfigurationStepProps = BaseDeployStepProps;
 
-export type SelectOperatorsTable = {
+export type OperatorSelectionTable = {
   address: SubstrateAddress;
   identityName?: string;
   vaultTokensInUsd?: number;

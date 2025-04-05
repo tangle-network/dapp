@@ -6,10 +6,10 @@ import {
 import { z } from 'zod';
 
 export const BLUEPRINT_DEPLOY_STEPS = [
-  'step1',
-  'step2',
-  'step3',
-  'step4',
+  'BasicInfo',
+  'OperatorSelection',
+  'AssetConfiguration',
+  // 'RequestArgs',
 ] as const;
 
 export const restakeAssetSchema = z.object({
@@ -128,12 +128,41 @@ export const deployBlueprintSchema = z.object({
         return value;
       }),
     approvalModel: z.enum(['Dynamic', 'Fixed']),
-    minApproval: z.number().min(1).optional(),
+    minApproval: z.number().min(1),
     maxApproval: z.number().min(1).optional(),
   }),
-  [BLUEPRINT_DEPLOY_STEPS[3]]: z.object({
-    requestArgs: z.array(z.string()).min(1),
-  }),
+  // [BLUEPRINT_DEPLOY_STEPS[3]]: z.object({
+  //   requestArgs: z.array(z.string()).min(1),
+  // }),
+}).superRefine((schema, ctx) => {
+  const operatorSelectionStep = schema[BLUEPRINT_DEPLOY_STEPS[1]];
+  const assetConfigurationStep = schema[BLUEPRINT_DEPLOY_STEPS[2]];
+
+  if (assetConfigurationStep.approvalModel === 'Dynamic') {
+    // If approval model is dynamic, `maxApproval` is required
+    if (!assetConfigurationStep.maxApproval) {
+      ctx.addIssue({
+        path: [`${BLUEPRINT_DEPLOY_STEPS[2]}.maxApproval`],
+        code: z.ZodIssueCode.custom,
+        message: 'Max approval is required for dynamic approval model',
+      });
+
+      return z.NEVER;
+    }
+
+    // `approvalThreshold` must be less than or equal to the number of operators
+    if (assetConfigurationStep.minApproval > operatorSelectionStep.operators.length) {
+      ctx.addIssue({
+        path: [`${BLUEPRINT_DEPLOY_STEPS[2]}.minApproval`],
+        code: z.ZodIssueCode.custom,
+        message: 'Min approval cannot be greater than number of operators',
+      });
+
+      return z.NEVER;
+    }
+
+    return schema;
+  }
 });
 
 export type DeployBlueprintSchema = z.infer<typeof deployBlueprintSchema>;
