@@ -17,7 +17,15 @@ const Page = () => {
   const { delegatorInfo } = useRestakeDelegatorInfo();
   const { operatorTVL } = useRestakeTVL(operatorMap, delegatorInfo);
 
-  const { isLoading, blueprints, error } = useOperatorBlueprints(address);
+  const operatorAddressParam =
+    address === undefined
+      ? undefined
+      : isSubstrateAddress(address)
+        ? address
+        : undefined;
+
+  const { isLoading, blueprints, error } =
+    useOperatorBlueprints(operatorAddressParam);
 
   const blueprintsUI = useMemo<
     ComponentProps<typeof RegisteredBlueprintsCard>['blueprints']
