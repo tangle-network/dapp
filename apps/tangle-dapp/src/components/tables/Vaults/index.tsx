@@ -37,9 +37,9 @@ import { RestakeVault } from '@tangle-network/tangle-shared-ui/utils/createVault
 
 const COLUMN_HELPER = createColumnHelper<RestakeVault>();
 
-const getColumns = (nativeTokenSymbol: string) => [
+const getColumns = (nativeTokenSymbol: string | undefined) => [
   COLUMN_HELPER.accessor('name', {
-    header: () => 'Vault',
+    header: () => <HeaderCell title="Vault" />,
     cell: (props) => (
       <TableCellWrapper className="pl-3">
         <div className="flex items-center gap-2">
@@ -56,35 +56,13 @@ const getColumns = (nativeTokenSymbol: string) => [
     sortingFn: sortByLocaleCompare((row) => row.name),
     sortDescFirst: true,
   }),
-  COLUMN_HELPER.accessor('available', {
-    sortUndefined: 'last',
-    sortingFn: sortByBnToDecimal(
-      (row) => row.available,
-      (row) => row.decimals,
-    ),
-    header: () => 'Available',
-    cell: (props) => {
-      const value = props.getValue();
-
-      const fmtAvailable =
-        value === undefined
-          ? 0
-          : formatDisplayAmount(
-              value,
-              props.row.original.decimals,
-              AmountFormatStyle.SHORT,
-            );
-
-      return <TableCellWrapper>{fmtAvailable}</TableCellWrapper>;
-    },
-  }),
   COLUMN_HELPER.accessor('totalDeposits', {
     sortUndefined: 'last',
     sortingFn: sortByBnToDecimal(
       (row) => row.totalDeposits,
       (row) => row.decimals,
     ),
-    header: () => 'Deposits',
+    header: () => <HeaderCell title="Deposited Balance" />,
     cell: (props) => {
       const value = props.getValue();
 
@@ -125,7 +103,7 @@ const getColumns = (nativeTokenSymbol: string) => [
             );
 
       return (
-        <TableCellWrapper removeRightBorder>
+        <TableCellWrapper>
           {fmtRewards} {nativeTokenSymbol}
         </TableCellWrapper>
       );
@@ -139,7 +117,7 @@ const getColumns = (nativeTokenSymbol: string) => [
     ),
     header: () => (
       <HeaderCell
-        title="TVL | Capacity"
+        title="TVL / Capacity"
         tooltip="Total value locked & deposit capacity."
       />
     ),
@@ -185,7 +163,7 @@ const getColumns = (nativeTokenSymbol: string) => [
             <Typography variant="body1" className="dark:text-mono-0">
               {fmtTvl === null
                 ? `${fmtDepositCap}`
-                : `${fmtTvl} | ${fmtDepositCap}`}
+                : `${fmtTvl}/${fmtDepositCap}`}
             </Typography>
           </div>
         </TableCellWrapper>
@@ -234,7 +212,7 @@ const VaultsTable: FC<Props> = ({
   isLoading,
 }) => {
   const nativeTokenSymbol = useNetworkStore(
-    (store) => store.network.tokenSymbol,
+    (store) => store.network2?.tokenSymbol,
   );
 
   const table = useReactTable(
