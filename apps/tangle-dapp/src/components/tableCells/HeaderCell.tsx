@@ -8,7 +8,7 @@ const HeaderCell: FC<HeaderCellProps> = ({
   title,
   tooltip,
   className,
-  titleVariant = 'body2',
+  titleVariant = 'body1',
 }) => {
   return (
     <Typography
