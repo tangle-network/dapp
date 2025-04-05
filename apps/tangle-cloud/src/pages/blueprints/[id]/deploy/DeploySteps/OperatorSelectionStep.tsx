@@ -7,9 +7,7 @@ import { FC, useEffect, useMemo, useState, Children, useCallback } from 'react';
 import { SelectOperatorsStepProps, OperatorSelectionTable } from './type';
 import { BLUEPRINT_DEPLOY_STEPS } from '../../../../../utils/validations/deployBlueprint';
 import useRestakeOperatorMap from '@tangle-network/tangle-shared-ui/data/restake/useRestakeOperatorMap';
-import {
-  RowSelectionState,
-} from '@tanstack/react-table';
+import { RowSelectionState } from '@tanstack/react-table';
 import ErrorMessage from '../../../../../components/ErrorMessage';
 import useIdentities from '@tangle-network/tangle-shared-ui/hooks/useIdentities';
 import useRestakeAssets from '@tangle-network/tangle-shared-ui/data/restake/useRestakeAssets';
@@ -36,7 +34,6 @@ export const SelectOperatorsStep: FC<SelectOperatorsStepProps> = ({
   setValue,
   watch,
 }) => {
-
   const [rowSelection, setRowSelection] = useState<RowSelectionState>(
     watch(`${stepKey}.operators`)?.reduce((acc, operator) => {
       acc[operator] = true;
@@ -101,17 +98,20 @@ export const SelectOperatorsStep: FC<SelectOperatorsStepProps> = ({
 
   const selectedAssets = watch(`${stepKey}.assets`) ?? [];
 
-  const advanceFilter = useCallback((operator: OperatorSelectionTable) => {
-    if (selectedAssets.length === 0) return true;
+  const advanceFilter = useCallback(
+    (operator: OperatorSelectionTable) => {
+      if (selectedAssets.length === 0) return true;
 
-    const selectedSymbols = new Set(
-      selectedAssets.map((asset) => asset.metadata.symbol),
-    );
+      const selectedSymbols = new Set(
+        selectedAssets.map((asset) => asset.metadata.symbol),
+      );
 
-    return !!operator.vaultTokens?.some((vaultToken) =>
-      selectedSymbols.has(vaultToken.symbol),
-    );
-  }, [selectedAssets]);
+      return !!operator.vaultTokens?.some((vaultToken) =>
+        selectedSymbols.has(vaultToken.symbol),
+      );
+    },
+    [selectedAssets],
+  );
 
   /**
    * @dev set the operators to the form value when the rowSelection changes
@@ -233,7 +233,9 @@ export const SelectOperatorsStep: FC<SelectOperatorsStepProps> = ({
             </SelectContent>
           </Select>
 
-          <ErrorMessage>{globalErrors?.[stepKey]?.assets?.message}</ErrorMessage>
+          <ErrorMessage>
+            {globalErrors?.[stepKey]?.assets?.message}
+          </ErrorMessage>
         </div>
 
         <div className="w-1/4">
@@ -252,32 +254,32 @@ export const SelectOperatorsStep: FC<SelectOperatorsStepProps> = ({
       </div>
 
       <OperatorTable
-          enableRowSelection={true}
-          onRowSelectionChange={(onChange) => {
-            setRowSelection(onChange);
-          }}
-          initialState={{
-            sorting: [
-              {
-                id: 'vaultTokensInUsd',
-                desc: true,
-              },
-              {
-                id: 'instanceCount',
-                desc: true,
-              },
-            ],
-          }}
-          state = {{
-            rowSelection,
-            columnFilters: [
-              {
-                id: 'address',
-                value: searchQuery,
-              },
-            ],
-          }}
-          advanceFilter={advanceFilter}
+        enableRowSelection={true}
+        onRowSelectionChange={(onChange) => {
+          setRowSelection(onChange);
+        }}
+        initialState={{
+          sorting: [
+            {
+              id: 'vaultTokensInUsd',
+              desc: true,
+            },
+            {
+              id: 'instanceCount',
+              desc: true,
+            },
+          ],
+        }}
+        state={{
+          rowSelection,
+          columnFilters: [
+            {
+              id: 'address',
+              value: searchQuery,
+            },
+          ],
+        }}
+        advanceFilter={advanceFilter}
       />
 
       <ErrorMessage>{errors?.operators?.message}</ErrorMessage>

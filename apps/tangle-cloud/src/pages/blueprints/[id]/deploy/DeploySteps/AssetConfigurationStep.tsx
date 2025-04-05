@@ -1,4 +1,10 @@
-import { Label, Input, Typography, Table, Divider } from '@tangle-network/ui-components';
+import {
+  Label,
+  Input,
+  Typography,
+  Table,
+  Divider,
+} from '@tangle-network/ui-components';
 import { Children, FC, useCallback, useMemo } from 'react';
 import { AssetConfigurationStepProps } from './type';
 import {
@@ -83,7 +89,6 @@ export const AssetConfigurationStep: FC<AssetConfigurationStepProps> = ({
   );
 
   console.log(globalErrors?.[stepKey]);
-  
 
   return (
     <div className="flex">
@@ -95,7 +100,9 @@ export const AssetConfigurationStep: FC<AssetConfigurationStepProps> = ({
       </div>
 
       <div className="w-full pl-8">
-        <Typography variant="h4" fw="bold">Asset Requirements</Typography>
+        <Typography variant="h4" fw="bold">
+          Asset Requirements
+        </Typography>
         <div className="mt-4">
           {Children.toArray(
             selectedAssets.map(({ id }, index) => {
@@ -149,11 +156,13 @@ export const AssetConfigurationStep: FC<AssetConfigurationStepProps> = ({
           )}
         </div>
 
-        <Divider className='my-4'/>
+        <Divider className="my-4" />
 
-        <Typography variant="h4" fw="bold">Approval Model</Typography>
+        <Typography variant="h4" fw="bold">
+          Approval Model
+        </Typography>
         <div className="mt-5 flex gap-4">
-          <div className='w-1/2'>
+          <div className="w-1/2">
             <Label className={labelClassName}>Approval Model:</Label>
             <Select value={approvalModel} onValueChange={onChangeApprovalModel}>
               <SelectTrigger>
@@ -194,7 +203,9 @@ export const AssetConfigurationStep: FC<AssetConfigurationStepProps> = ({
           <Label className={labelClassName}>Selected Operators:</Label>
           <OperatorTable
             advanceFilter={(row) => {
-              return watch(`${operatorsStepKey}.operators`).includes(row.address);
+              return watch(`${operatorsStepKey}.operators`).includes(
+                row.address,
+              );
             }}
           />
         </div>

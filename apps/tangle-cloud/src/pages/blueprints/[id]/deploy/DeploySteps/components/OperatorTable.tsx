@@ -1,29 +1,49 @@
-import useNetworkStore from "@tangle-network/tangle-shared-ui/context/useNetworkStore";
-import useOperatorsServices from "@tangle-network/tangle-shared-ui/data/blueprints/useOperatorsServices";
-import useRestakeOperatorMap from "@tangle-network/tangle-shared-ui/data/restake/useRestakeOperatorMap";
-import useIdentities from "@tangle-network/tangle-shared-ui/hooks/useIdentities";
-import { assertSubstrateAddress, Avatar, CheckBox, EMPTY_VALUE_PLACEHOLDER, EnergyChipColors, EnergyChipStack, ExternalLinkIcon, fuzzyFilter, KeyValueWithButton, Table, Typography } from "@tangle-network/ui-components";
-import { FC, useMemo } from "react";
-import { OperatorSelectionTable } from "../type";
-import safeFormatUnits from "@tangle-network/tangle-shared-ui/utils/safeFormatUnits";
-import useRestakeAssets from "@tangle-network/tangle-shared-ui/data/restake/useRestakeAssets";
-import delegationsToVaultTokens from "@tangle-network/tangle-shared-ui/utils/restake/delegationsToVaultTokens";
-import { createColumnHelper, getFilteredRowModel, getSortedRowModel, getCoreRowModel, useReactTable, getPaginationRowModel, TableOptions } from "@tanstack/react-table";
-import { sortByAddressOrIdentity } from "@tangle-network/tangle-shared-ui/components/tables/utils";
-import TableCellWrapper from "@tangle-network/tangle-shared-ui/components/tables/TableCellWrapper";
-import VaultsDropdown from "@tangle-network/tangle-shared-ui/components/tables/Operators/VaultsDropdown";
-import { TableVariant } from "@tangle-network/ui-components/components/Table/types";
+import useNetworkStore from '@tangle-network/tangle-shared-ui/context/useNetworkStore';
+import useOperatorsServices from '@tangle-network/tangle-shared-ui/data/blueprints/useOperatorsServices';
+import useRestakeOperatorMap from '@tangle-network/tangle-shared-ui/data/restake/useRestakeOperatorMap';
+import useIdentities from '@tangle-network/tangle-shared-ui/hooks/useIdentities';
+import {
+  assertSubstrateAddress,
+  Avatar,
+  CheckBox,
+  EMPTY_VALUE_PLACEHOLDER,
+  EnergyChipColors,
+  EnergyChipStack,
+  ExternalLinkIcon,
+  fuzzyFilter,
+  KeyValueWithButton,
+  Table,
+  Typography,
+} from '@tangle-network/ui-components';
+import { FC, useMemo } from 'react';
+import { OperatorSelectionTable } from '../type';
+import safeFormatUnits from '@tangle-network/tangle-shared-ui/utils/safeFormatUnits';
+import useRestakeAssets from '@tangle-network/tangle-shared-ui/data/restake/useRestakeAssets';
+import delegationsToVaultTokens from '@tangle-network/tangle-shared-ui/utils/restake/delegationsToVaultTokens';
+import {
+  createColumnHelper,
+  getFilteredRowModel,
+  getSortedRowModel,
+  getCoreRowModel,
+  useReactTable,
+  getPaginationRowModel,
+  TableOptions,
+} from '@tanstack/react-table';
+import { sortByAddressOrIdentity } from '@tangle-network/tangle-shared-ui/components/tables/utils';
+import TableCellWrapper from '@tangle-network/tangle-shared-ui/components/tables/TableCellWrapper';
+import VaultsDropdown from '@tangle-network/tangle-shared-ui/components/tables/Operators/VaultsDropdown';
+import { TableVariant } from '@tangle-network/ui-components/components/Table/types';
 
 const COLUMN_HELPER = createColumnHelper<OperatorSelectionTable>();
 
-type Props = Omit<TableOptions<OperatorSelectionTable>, 'data' | 'columns' | 'getCoreRowModel'> & {
+type Props = Omit<
+  TableOptions<OperatorSelectionTable>,
+  'data' | 'columns' | 'getCoreRowModel'
+> & {
   advanceFilter?: (row: OperatorSelectionTable) => boolean;
 };
 
-export const OperatorTable: FC<Props> = ({
-  advanceFilter,
-  ...tableProps
-}) => {
+export const OperatorTable: FC<Props> = ({ advanceFilter, ...tableProps }) => {
   const { assets } = useRestakeAssets();
   const { operatorMap } = useRestakeOperatorMap();
   const operatorAddresses = useMemo(
@@ -88,20 +108,17 @@ export const OperatorTable: FC<Props> = ({
 
         const accountUrl = activeNetwork.createExplorerAccountUrl(address);
 
-
         return (
           <TableCellWrapper className="pl-3 min-h-fit">
             <div className="flex items-center flex-1 gap-2 pr-3">
-              {
-                tableProps.enableRowSelection && (
-                  <CheckBox
-                    wrapperClassName="!block !min-h-auto cursor-pointer"
-                    className="cursor-pointer"
-                    isChecked={props.row.getIsSelected()}
-                    onChange={props.row.getToggleSelectedHandler()}
-                  />
-                )
-              }
+              {tableProps.enableRowSelection && (
+                <CheckBox
+                  wrapperClassName="!block !min-h-auto cursor-pointer"
+                  className="cursor-pointer"
+                  isChecked={props.row.getIsSelected()}
+                  onChange={props.row.getToggleSelectedHandler()}
+                />
+              )}
 
               <Avatar
                 sourceVariant="address"
@@ -243,5 +260,5 @@ export const OperatorTable: FC<Props> = ({
       tableProps={table}
       trClassName="group overflow-hidden"
     />
-  )
-}
+  );
+};
