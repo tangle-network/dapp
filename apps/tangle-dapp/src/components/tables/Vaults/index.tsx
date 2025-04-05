@@ -1,14 +1,17 @@
 import { ChevronDown } from '@tangle-network/icons/ChevronDown';
 import Spinner from '@tangle-network/icons/Spinner';
 import LsTokenIcon from '@tangle-network/tangle-shared-ui/components/LsTokenIcon';
+import HeaderCell from '@tangle-network/tangle-shared-ui/components/tables/HeaderCell';
 import TableCellWrapper from '@tangle-network/tangle-shared-ui/components/tables/TableCellWrapper';
 import TableStatus from '@tangle-network/tangle-shared-ui/components/tables/TableStatus';
 import useNetworkStore from '@tangle-network/tangle-shared-ui/context/useNetworkStore';
+import { RestakeVault } from '@tangle-network/tangle-shared-ui/utils/createVaultMap';
 import Button from '@tangle-network/ui-components/components/buttons/Button';
 import { CircularProgress } from '@tangle-network/ui-components/components/CircularProgress';
 import { Table } from '@tangle-network/ui-components/components/Table';
 import { TableVariant } from '@tangle-network/ui-components/components/Table/types';
 import { Typography } from '@tangle-network/ui-components/typography/Typography';
+import calculateBnRatio from '@tangle-network/ui-components/utils/calculateBnRatio';
 import {
   AmountFormatStyle,
   formatDisplayAmount,
@@ -29,11 +32,8 @@ import { FC, useMemo } from 'react';
 import { Link } from 'react-router';
 import { twMerge } from 'tailwind-merge';
 import { PagePath, QueryParamKey } from '../../../types';
-import calculateBnRatio from '@tangle-network/ui-components/utils/calculateBnRatio';
 import sortByLocaleCompare from '../../../utils/sortByLocaleCompare';
-import { HeaderCell } from '../../tableCells';
 import type { Props } from './types';
-import { RestakeVault } from '@tangle-network/tangle-shared-ui/utils/createVaultMap';
 
 const COLUMN_HELPER = createColumnHelper<RestakeVault>();
 

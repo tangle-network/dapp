@@ -1,3 +1,6 @@
+import HeaderCell from '@tangle-network/tangle-shared-ui/components/tables/HeaderCell';
+import TableStatus from '@tangle-network/tangle-shared-ui/components/tables/TableStatus';
+import { fuzzyFilter, Table, Typography } from '@tangle-network/ui-components';
 import {
   createColumnHelper,
   getCoreRowModel,
@@ -6,13 +9,9 @@ import {
   getSortedRowModel,
   useReactTable,
 } from '@tanstack/react-table';
-import TableStatus from '@tangle-network/tangle-shared-ui/components/tables/TableStatus';
-import { fuzzyFilter, Table, Typography } from '@tangle-network/ui-components';
 import cx from 'classnames';
 import { FC } from 'react';
-
 import ContainerSkeleton from '../../../components/skeleton/ContainerSkeleton';
-import { HeaderCell } from '../../../components/tableCells';
 import useNodeSpecifications from '../../../data/validatorDetails/useNodeSpecifications';
 import { NodeSpecification } from '../../../types';
 

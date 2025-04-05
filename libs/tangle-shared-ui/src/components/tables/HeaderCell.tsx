@@ -1,8 +1,14 @@
 import { InfoIconWithTooltip, Typography } from '@tangle-network/ui-components';
+import { TypographyVariant } from '@tangle-network/ui-components/typography/types';
 import { FC } from 'react';
 import { twMerge } from 'tailwind-merge';
 
-import { HeaderCellProps } from './types';
+export interface HeaderCellProps {
+  title: string;
+  tooltip?: string;
+  className?: string;
+  titleVariant?: TypographyVariant;
+}
 
 const HeaderCell: FC<HeaderCellProps> = ({
   title,
