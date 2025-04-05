@@ -1,3 +1,4 @@
+import HeaderCell from '@tangle-network/tangle-shared-ui/components/tables/HeaderCell';
 import { sortByAddressOrIdentity } from '@tangle-network/tangle-shared-ui/components/tables/utils';
 import useNetworkStore from '@tangle-network/tangle-shared-ui/context/useNetworkStore';
 import { Validator } from '@tangle-network/tangle-shared-ui/types';
@@ -21,7 +22,7 @@ import {
 } from '@tanstack/react-table';
 import { FC, useMemo, useState } from 'react';
 import calculateCommission from '../../utils/calculateCommission';
-import { HeaderCell, StringCell } from '../tableCells';
+import { StringCell } from '../tableCells';
 import PercentageCell from '../tableCells/PercentageCell';
 import TokenAmountCell from '../tableCells/TokenAmountCell';
 

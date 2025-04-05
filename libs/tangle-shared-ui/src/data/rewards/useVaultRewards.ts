@@ -17,14 +17,14 @@ const useVaultRewards = () => {
 
         const vaultPotAccountEntries = Array.from(vaultPotAccounts.entries());
 
-        return apiRx.query.balances.account
+        return apiRx.query.system.account
           .multi(vaultPotAccountEntries.map(([, accountId]) => accountId))
           .pipe(
-            map((balances) => {
-              return balances.reduce((acc, balance, idx) => {
+            map((accountInfoVec) => {
+              return accountInfoVec.reduce((acc, accountInfo, idx) => {
                 const [vaultId] = vaultPotAccountEntries[idx];
 
-                acc.set(vaultId, balance.free.toBn());
+                acc.set(vaultId, accountInfo.data.free.toBn());
                 return acc;
               }, new Map<number, BN>());
             }),

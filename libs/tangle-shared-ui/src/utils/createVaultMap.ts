@@ -11,7 +11,6 @@ export type RestakeVault = {
   capacity?: BN;
   reward?: BN;
   tokenCount: number;
-  available?: BN;
   totalDeposits?: BN;
   tvl?: BN;
 };
@@ -38,8 +37,6 @@ const createVaultMap = ({
       continue;
     }
 
-    const available = asset.balance;
-
     const totalDeposits =
       typeof delegatorInfo?.deposits[asset.id]?.amount === 'bigint'
         ? new BN(delegatorInfo.deposits[asset.id].amount.toString())
@@ -63,15 +60,12 @@ const createVaultMap = ({
         capacity,
         reward,
         tokenCount: 1,
-        available,
         totalDeposits,
         tvl,
       });
     }
     // Update existing vault values.
     else {
-      existingVault.available = tryAddBNs(existingVault.available, available);
-
       existingVault.totalDeposits = tryAddBNs(
         existingVault.totalDeposits,
         totalDeposits,

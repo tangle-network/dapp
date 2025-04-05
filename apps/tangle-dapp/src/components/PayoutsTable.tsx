@@ -1,9 +1,13 @@
+import { WalletPayIcon } from '@tangle-network/icons';
+import HeaderCell from '@tangle-network/tangle-shared-ui/components/tables/HeaderCell';
+import useNetworkStore from '@tangle-network/tangle-shared-ui/context/useNetworkStore';
 import { Payout } from '@tangle-network/tangle-shared-ui/types';
 import {
   AmountFormatStyle,
   Table,
   ValidatorIdentity,
 } from '@tangle-network/ui-components';
+import pluralize from '@tangle-network/ui-components/utils/pluralize';
 import {
   createColumnHelper,
   getCoreRowModel,
@@ -15,13 +19,9 @@ import {
 } from '@tanstack/react-table';
 import { useMemo, useState } from 'react';
 import { twMerge } from 'tailwind-merge';
-
-import { WalletPayIcon } from '@tangle-network/icons';
-import useNetworkStore from '@tangle-network/tangle-shared-ui/context/useNetworkStore';
-import pluralize from '@tangle-network/ui-components/utils/pluralize';
 import PayoutTxModal from '../containers/PayoutTxModal';
 import sortByBn from '../utils/sortByBn';
-import { HeaderCell, StringCell } from './tableCells';
+import { StringCell } from './tableCells';
 import TokenAmountCell from './tableCells/TokenAmountCell';
 
 const COLUMN_HELPER = createColumnHelper<Payout>();
