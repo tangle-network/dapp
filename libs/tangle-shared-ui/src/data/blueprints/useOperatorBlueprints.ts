@@ -27,7 +27,7 @@ const useOperatorBlueprints = (operatorAddress?: SubstrateAddress) => {
               return servicesWithBlueprintsVec.map(
                 ({ blueprintId, blueprint, services }) => {
                   return {
-                    blueprintId: blueprintId.toNumber(),
+                    blueprintId: blueprintId.toBigInt(),
                     blueprint: toPrimitiveBlueprint(blueprint),
                     services: services.map(toPrimitiveService),
                   };

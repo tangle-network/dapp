@@ -53,6 +53,7 @@ import useNativeRestakeTx from '../../../data/restake/useNativeRestakeTx';
 import { TxStatus } from '@tangle-network/tangle-shared-ui/hooks/useSubstrateTx';
 import useNativeRestakeAssetBalance from '../../../data/restake/useNativeRestakeAssetBalance';
 import BlueprintSelection from '../../../components/restaking/BlueprintSelection';
+import useBlueprintStore from '../../../context/useBlueprintStore';
 
 type RestakeOperator = {
   accountId: SubstrateAddress;
@@ -244,6 +245,7 @@ const RestakeDelegateForm: FC = () => {
   );
 
   const selectedAsset = useRestakeAsset(watch('assetId'));
+  const blueprintSelection = useBlueprintStore((store) => store.selection);
 
   const isReady =
     restakeApi !== null &&
@@ -270,22 +272,17 @@ const RestakeDelegateForm: FC = () => {
         await executeNativeRestake({
           amount: amountBn,
           operatorAddress: operatorAccountId,
+          blueprintSelection: blueprintSelection.map((id) => new BN(id.toString())),
         });
       } else {
-        await restakeApi.delegate(operatorAccountId, assetId, amountBn);
+        await restakeApi.delegate(operatorAccountId, assetId, amountBn, blueprintSelection.map((id) => new BN(id.toString())));
       }
 
       setValue('operatorAccountId', '', { shouldValidate: false });
       setValue('amount', '', { shouldValidate: false });
       setValue('assetId', '', { shouldValidate: false });
     },
-    [
-      executeNativeRestake,
-      isReady,
-      restakeApi,
-      selectedAsset?.metadata.decimals,
-      setValue,
-    ],
+    [blueprintSelection, executeNativeRestake, isReady, restakeApi, selectedAsset?.metadata.decimals, setValue],
   );
 
   const operators = useMemo<RestakeOperator[]>(() => {
@@ -331,7 +328,6 @@ const RestakeDelegateForm: FC = () => {
 
               <BlueprintSelection
                 operatorAddress={selectedOperatorAddress}
-                setSelection={() => void 0}
               />
             </div>
 

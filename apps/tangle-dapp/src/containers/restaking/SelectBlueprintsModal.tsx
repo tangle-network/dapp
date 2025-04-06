@@ -15,12 +15,13 @@ import BlueprintGridItem from '../../components/restaking/BlueprintGridItem';
 import { Search } from '@tangle-network/icons';
 import { OperatorBlueprint } from '@tangle-network/tangle-shared-ui/data/blueprints/utils/type';
 import filterBy from '../../utils/filterBy';
+import { Blueprint } from '@tangle-network/tangle-shared-ui/types/blueprint';
 
 type Props = {
   operatorAddress?: SubstrateAddress;
   isOpen: boolean;
   setIsOpen: (isOpen: boolean) => void;
-  setSelection: (selected: number[]) => void;
+  setSelection: (selected: Blueprint['id'][]) => void;
 };
 
 const SelectBlueprintsModal = ({
@@ -30,11 +31,14 @@ const SelectBlueprintsModal = ({
   setSelection,
 }: Props) => {
   const [searchQuery, setSearchQuery] = useState<string>('');
+
   // const { blueprints } = useOperatorBlueprints(operatorAddress);
+
+  // TODO: Mocking data.
   const blueprints = useMemo<OperatorBlueprint[]>(
     () => [
       {
-        blueprintId: 1,
+        blueprintId: BigInt(1),
         blueprint: {
           metadata: { name: 'Test', author: 'Test' } as any,
         } as any,
@@ -43,7 +47,7 @@ const SelectBlueprintsModal = ({
     [],
   );
 
-  const [localSelection, setLocalSelection] = useState<number[]>([]);
+  const [localSelection, setLocalSelection] = useState<Blueprint['id'][]>([]);
 
   const filteredBlueprints = useMemo(() => {
     if (searchQuery === '') {
@@ -60,7 +64,7 @@ const SelectBlueprintsModal = ({
     });
   }, [blueprints, searchQuery]);
 
-  const handleSelect = useCallback((blueprintId: number) => {
+  const handleSelect = useCallback((blueprintId: Blueprint['id']) => {
     setLocalSelection((prev) => {
       // Toggle the selection of the blueprint.
       // If the blueprint is already selected, unselect it.
@@ -84,7 +88,8 @@ const SelectBlueprintsModal = ({
 
   const handleConfirm = useCallback(() => {
     setIsOpen(false);
-  }, [setIsOpen]);
+    setSelection(localSelection);
+  }, [localSelection, setIsOpen, setSelection]);
 
   // Not yet ready.
   if (operatorAddress === undefined) {

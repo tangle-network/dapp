@@ -16,6 +16,7 @@ import { SUCCESS_MESSAGES } from '../../hooks/useTxNotification';
 type Context = {
   amount: BN;
   operatorAddress: SubstrateAddress;
+  blueprintSelection: BN[];
 };
 
 const useNativeRestakeTx = () => {
@@ -31,8 +32,7 @@ const useNativeRestakeTx = () => {
       arguments: [
         convertAddressToBytes32(context.operatorAddress),
         BigInt(context.amount.toString()),
-        // TODO: Blueprint selection. For now, defaulting to none.
-        [],
+        context.blueprintSelection.map((id) => BigInt(id.toString()))
       ],
     }),
     [],
@@ -43,8 +43,7 @@ const useNativeRestakeTx = () => {
       api.tx.multiAssetDelegation.delegateNomination(
         context.operatorAddress,
         context.amount,
-        // TODO: Blueprint selection. For now, defaulting to none.
-        { Fixed: [] },
+        { Fixed: context.blueprintSelection },
       ),
     [],
   );

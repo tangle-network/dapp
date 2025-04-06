@@ -1,37 +1,23 @@
 import { ChevronDown, ShieldKeyholeFillIcon } from '@tangle-network/icons';
-import { InfoIconWithTooltip, Typography } from '@tangle-network/ui-components';
+import {  Typography } from '@tangle-network/ui-components';
 import { FC, useCallback, useState } from 'react';
-import BlueprintLogo from './BlueprintLogo';
 import SelectBlueprintsModal from '../../containers/restaking/SelectBlueprintsModal';
 import { Blueprint } from '@tangle-network/tangle-shared-ui/types/blueprint';
 import { SubstrateAddress } from '@tangle-network/ui-components/types/address';
 import { twMerge } from 'tailwind-merge';
-
-type BlueprintId = Blueprint['id'];
+import useBlueprintStore from '../../context/useBlueprintStore';
 
 type Props = {
   operatorAddress?: SubstrateAddress;
-  setSelection: (selected: BlueprintId[]) => void;
 };
 
-const BlueprintSelection: FC<Props> = ({ operatorAddress, setSelection }) => {
+const BlueprintSelection: FC<Props> = ({ operatorAddress }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
-
-  const [localSelection, setLocalSelection] = useState<Blueprint[] | null>(
-    null,
-  );
+  const { selection, setSelection } = useBlueprintStore();
 
   const handleSelection = useCallback(
-    (selected: BlueprintId[]) => {
+    (selected: Blueprint['id'][]) => {
       setSelection(selected);
-
-      setLocalSelection((previous) => {
-        if (previous === null) {
-          return null;
-        }
-
-        return previous.filter((blueprint) => selected.includes(blueprint.id));
-      });
     },
     [setSelection],
   );
@@ -50,26 +36,21 @@ const BlueprintSelection: FC<Props> = ({ operatorAddress, setSelection }) => {
           <ShieldKeyholeFillIcon className="dark:fill-purple-50" />
 
           <Typography variant="body1">Selected Blueprint(s)</Typography>
-
-          <InfoIconWithTooltip content="Pending" />
         </div>
 
-        {localSelection === null ? (
-          <Typography variant="body1" className="flex items-center gap-1">
-            None <ChevronDown />{' '}
+        <div className="flex items-center gap-1">
+          {selection.length === 0 ? (
+          <Typography variant="body1">
+            None
           </Typography>
         ) : (
           <div>
-            {localSelection.map((blueprint) => (
-              <BlueprintLogo
-                key={blueprint.id}
-                name={blueprint.name}
-                url={blueprint.imgUrl ?? undefined}
-                size="sm"
-              />
-            ))}
+            {selection.length} selected
           </div>
         )}
+
+        <ChevronDown />
+        </div>
       </div>
 
       <SelectBlueprintsModal
