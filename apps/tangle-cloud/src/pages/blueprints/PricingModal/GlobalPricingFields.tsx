@@ -12,7 +12,7 @@ type Props = {
 export default function GlobalPricingFields({ formControl }: Props) {
   return (
     <InputsWrapper>
-      {inputs.map((input) => (
+      {inputs.map((input, idx) => (
         <FormField
           key={input.name}
           control={formControl}
@@ -23,6 +23,7 @@ export default function GlobalPricingFields({ formControl }: Props) {
               label={input.label}
               description={input.description}
               placeholder={input.placeholder}
+              tabIndex={idx + 1}
             />
           )}
         />

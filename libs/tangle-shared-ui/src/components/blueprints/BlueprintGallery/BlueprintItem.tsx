@@ -57,7 +57,7 @@ const BlueprintItem: FC<BlueprintItemProps> = ({
               <div className="flex items-center gap-2">
                 <div className="flex-1 min-w-0">
                   <Typography
-                    variant="h5"
+                    variant="h4"
                     className="truncate text-mono-180 dark:text-mono-20 group-hover:text-mono-200 dark:group-hover:text-mono-0"
                   >
                     {name}
@@ -79,7 +79,7 @@ const BlueprintItem: FC<BlueprintItemProps> = ({
               </div>
 
               <Typography
-                variant="body2"
+                variant="body1"
                 className="line-clamp-1 text-mono-120 dark:text-mono-100"
               >
                 {/* Author can be name or address */}

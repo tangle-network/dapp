@@ -1,9 +1,10 @@
 import ConnectWalletButton from '@tangle-network/tangle-shared-ui/components/ConnectWalletButton';
+import NetworkSelectorDropdown from '@tangle-network/tangle-shared-ui/components/NetworkSelectorDropdown';
 import { type FC } from 'react';
 import { useLocation } from 'react-router';
-import { PagePath } from '../types';
-import NetworkSelectorDropdown from '@tangle-network/tangle-shared-ui/components/NetworkSelectorDropdown';
 import useBridgeStore from '../features/bridge/context/useBridgeStore';
+import ClaimRewardsDropdown from '../features/claimRewards/components/ClaimRewardsDropdown';
+import { PagePath } from '../types';
 // import TxHistoryDrawer from '../components/TxHistoryDrawer';
 
 const TopNavigationPanel: FC = () => {
@@ -15,6 +16,8 @@ const TopNavigationPanel: FC = () => {
 
   return (
     <div className="flex items-center gap-2">
+      <ClaimRewardsDropdown />
+
       <NetworkSelectorDropdown
         disableChainSelection={isInBridgePath}
         preferredChain={isInBridgePath ? selectedSourceChain : undefined}

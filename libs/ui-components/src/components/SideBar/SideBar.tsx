@@ -136,33 +136,31 @@ export const SideBar = forwardRef<HTMLDivElement, MobileSidebarProps>(
           </div>
 
           <div className="space-y-5">
-            <div
-              className={cx(
+            {isSidebarOpen && footer.extraContent}
+
+            <Link
+              href={footer.href}
+              target="_blank"
+              className={twMerge(
                 'flex items-center gap-2',
-                isSidebarOpen ? 'justify-between' : 'justify-center',
+                isSidebarOpen ? 'justify-start' : 'justify-center',
               )}
             >
-              <Link
-                href={footer.href}
-                target="_blank"
-                className="flex items-center gap-2"
-              >
-                <footer.Icon
-                  width={24}
-                  height={24}
-                  className="cursor-pointer !fill-mono-100 dark:!fill-mono-60 group-hover:!fill-mono-200 dark:group-hover:!fill-mono-0"
-                />
+              <footer.Icon
+                width={24}
+                height={24}
+                className="cursor-pointer !fill-mono-100 dark:!fill-mono-60 group-hover:!fill-mono-200 dark:group-hover:!fill-mono-0"
+              />
 
-                {isSidebarOpen && (
-                  <Typography
-                    variant="body1"
-                    className="cursor-pointer text-mono-100 dark:text-mono-60 group-hover:text-mono-200 dark:group-hover:text-mono-0"
-                  >
-                    {footer.name}
-                  </Typography>
-                )}
-              </Link>
-            </div>
+              {isSidebarOpen && (
+                <Typography
+                  variant="body1"
+                  className="cursor-pointer text-mono-100 dark:text-mono-60 group-hover:text-mono-200 dark:group-hover:text-mono-0"
+                >
+                  {footer.name}
+                </Typography>
+              )}
+            </Link>
 
             <div
               className={cx(

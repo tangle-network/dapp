@@ -19,29 +19,23 @@ export const ValidatorIdentity = forwardRef<HTMLDivElement, Props>(
       displayCharacterCount = 6,
       avatarSize,
       textVariant = 'body1',
+      textWeight = 'normal',
+      textClassName,
       showAddressInTooltip,
+      subContent,
       className,
       ...props
     },
     ref,
   ) => {
-    return (
-      <div
-        {...props}
-        className={twMerge('flex items-center space-x-2', className)}
-        ref={ref}
-      >
-        <Avatar
-          sourceVariant="address"
-          value={address}
-          size={avatarSize}
-          theme="substrate"
-        >
-          {address}
-        </Avatar>
-
+    const mainContent = (
+      <div className="flex items-center gap-2">
         {!showAddressInTooltip ? (
-          <Typography variant={textVariant} fw="normal" className="truncate">
+          <Typography
+            variant={textVariant}
+            fw={textWeight}
+            className={twMerge('truncate', textClassName)}
+          >
             {identityName || shortenString(address, displayCharacterCount)}
           </Typography>
         ) : (
@@ -49,8 +43,8 @@ export const ValidatorIdentity = forwardRef<HTMLDivElement, Props>(
             <TooltipTrigger>
               <Typography
                 variant={textVariant}
-                fw="normal"
-                className="truncate"
+                fw={textWeight}
+                className={twMerge('truncate', textClassName)}
               >
                 {identityName || shortenString(address, displayCharacterCount)}
               </Typography>
@@ -68,9 +62,36 @@ export const ValidatorIdentity = forwardRef<HTMLDivElement, Props>(
 
         {accountExplorerUrl && (
           <ExternalLinkIcon
+            onClick={(event) => event.stopPropagation()}
             href={accountExplorerUrl}
             className="fill-mono-160 dark:fill-mono-80"
           />
+        )}
+      </div>
+    );
+
+    return (
+      <div
+        {...props}
+        className={twMerge('flex items-center gap-2', className)}
+        ref={ref}
+      >
+        <Avatar
+          sourceVariant="address"
+          value={address}
+          size={avatarSize}
+          theme="substrate"
+        >
+          {address}
+        </Avatar>
+
+        {!subContent ? (
+          mainContent
+        ) : (
+          <div className="space-y-1">
+            {mainContent}
+            {subContent}
+          </div>
         )}
       </div>
     );

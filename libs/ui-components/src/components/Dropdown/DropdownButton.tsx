@@ -2,8 +2,7 @@
 
 import * as DropdownMenuPrimitive from '@radix-ui/react-dropdown-menu';
 import { ChevronDown } from '@tangle-network/icons';
-import cx from 'classnames';
-import React, { forwardRef } from 'react';
+import { cloneElement, forwardRef } from 'react';
 import { twMerge } from 'tailwind-merge';
 import { DropdownButtonProps } from './types';
 
@@ -18,83 +17,40 @@ export const DropdownButton = forwardRef<
     {
       className,
       icon,
-      iconClassName,
-      labelClassName,
-      label,
-      size,
-      isFullWidth,
       isHideArrowIcon,
-      arrowElement = <ChevronDown />,
+      children,
+      arrowElement = (
+        <ChevronDown
+          size="lg"
+          className="transition-transform duration-300 ease-in-out enabled:group-radix-state-open:rotate-180"
+        />
+      ),
       ...props
     },
     ref,
   ) => {
-    const arrowIconDefaultClassNames =
-      'mx-2 transition-transform duration-300 ease-in-out enabled:group-radix-state-open:rotate-180';
-
     return (
-      <DropdownMenuPrimitive.Trigger asChild>
-        <button
-          {...props}
-          className={twMerge(
-            cx(
-              'border rounded-lg uppercase group',
-              'transition-none transition-[border-radius]',
-              'pl-4 py-2',
-              isFullWidth && 'inline-block w-full',
-              size === 'md' ? 'min-w-[176px]' : 'min-w-[96px]',
-              'flex items-center justify-between',
-              'bg-mono-0 dark:bg-mono-180',
-              'border-mono-80 dark:border-mono-120',
-              'text-mono-140 dark:text-mono-40',
-              'hover:enabled:border-blue-40 dark:hover:enabled:border-blue-70',
-              'enabled:radix-state-open:border-blue-40 dark:enabled:radix-state-open:border-blue-70',
-              'enabled:radix-state-open:bg-blue-0 dark:enabled:radix-state-open:bg-blue-120',
-              size !== 'sm' && 'enabled:radix-state-open:rounded-t-lg',
-              size !== 'sm' && 'enabled:radix-state-open:rounded-b-none',
-            ),
-            className,
-          )}
-          ref={ref}
-        >
-          <div className="flex items-center max-w-full gap-2 overflow-x-hidden">
-            {icon && (
-              <span className={twMerge('text-inherit', iconClassName)}>
-                {icon}
-              </span>
-            )}
+      <DropdownMenuPrimitive.Trigger
+        {...props}
+        className={twMerge(
+          'border rounded-lg p-2',
+          'flex items-center gap-2',
+          'bg-mono-0/10 dark:bg-mono-0/5',
+          'enabled:hover:bg-mono-100/10 enabled:dark:hover:bg-mono-0/10',
+          'border-2 border-mono-60 dark:border-mono-140',
+          '[&_svg]:shrink-0',
+          className,
+        )}
+        ref={ref}
+      >
+        {icon}
 
-            {typeof label === 'string' ? (
-              <span
-                className={twMerge(
-                  'text-inherit',
-                  size === 'md' ? 'body1' : 'body2',
-                  labelClassName,
-                )}
-              >
-                {label}
-              </span>
-            ) : (
-              label
-            )}
-          </div>
+        {children}
 
-          {!isHideArrowIcon &&
-            (typeof arrowElement === 'string' ? (
-              <span className={arrowIconDefaultClassNames}>{arrowElement}</span>
-            ) : React.isValidElement(arrowElement) ? (
-              React.cloneElement(arrowElement as React.ReactElement, {
-                className: twMerge(
-                  cx(
-                    arrowIconDefaultClassNames,
-                    (arrowElement as React.ReactElement).props?.className,
-                  ),
-                ),
-              })
-            ) : (
-              <div className={arrowIconDefaultClassNames}>{arrowElement}</div>
-            ))}
-        </button>
+        {!isHideArrowIcon &&
+          cloneElement(arrowElement, {
+            className: twMerge(arrowElement?.props?.className, 'ml-auto'),
+          })}
       </DropdownMenuPrimitive.Trigger>
     );
   },

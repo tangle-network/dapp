@@ -16,8 +16,9 @@ import useRoleStore, { Role } from '../../stores/roleStore';
 import BlueprintListing from './BlueprintListing';
 import PricingModal from './PricingModal';
 import { PricingFormResult } from './PricingModal/types';
-import RegistrationReview from './RegistrationReview';
-
+import { useNavigate } from 'react-router';
+import { SessionStorageKey } from '../../constants';
+import { PagePath } from '../../types';
 export const dynamic = 'force-static';
 
 const ROLE_TITLE = {
@@ -33,14 +34,13 @@ const ROLE_DESCRIPTION = {
 } satisfies Record<Role, string>;
 
 const Page = () => {
+  const navigate = useNavigate();
   const { role } = useRoleStore();
   const [rowSelection, setRowSelection] = useState<RowSelectionState>({});
   const [isPricingModalOpen, setIsPricingModalOpen] = useState(false);
-  const [isReviewOpen, setIsReviewOpen] = useState(false);
   const { blueprints, isLoading, error } = useBlueprintListing();
 
-  const [pricingSettings, setPricingSettings] =
-    useState<PricingFormResult | null>(null);
+  const isOperator = useMemo(() => role === Role.OPERATOR, [role]);
 
   const selectedBlueprints = useMemo(() => {
     return Object.keys(rowSelection)
@@ -51,24 +51,19 @@ const Page = () => {
 
   const size = Object.keys(selectedBlueprints).length;
 
-  const handlePricingFormSubmit = useCallback((result: PricingFormResult) => {
-    setPricingSettings(result);
-    setIsReviewOpen(true);
-  }, []);
-
-  const handleCloseReview = useCallback(() => {
-    setIsReviewOpen(false);
-  }, []);
-
-  if (isReviewOpen) {
-    return (
-      <RegistrationReview
-        selectedBlueprints={selectedBlueprints}
-        pricingSettings={pricingSettings}
-        onClose={handleCloseReview}
-      />
-    );
-  }
+  const handlePricingFormSubmit = useCallback(
+    (result: PricingFormResult) => {
+      sessionStorage.setItem(
+        SessionStorageKey.BLUEPRINT_REGISTRATION_PARAMS,
+        JSON.stringify({
+          pricingSettings: result,
+          selectedBlueprints: selectedBlueprints,
+        }),
+      );
+      navigate(PagePath.BLUEPRINTS_REGISTRATION_REVIEW);
+    },
+    [selectedBlueprints],
+  );
 
   return (
     <div className="space-y-5">
@@ -83,8 +78,8 @@ const Page = () => {
         blueprints={blueprints}
         isLoading={isLoading}
         error={error}
-        rowSelection={rowSelection}
-        onRowSelectionChange={setRowSelection}
+        rowSelection={isOperator ? rowSelection : undefined}
+        onRowSelectionChange={isOperator ? setRowSelection : undefined}
       />
 
       <Modal open={isPricingModalOpen} onOpenChange={setIsPricingModalOpen}>

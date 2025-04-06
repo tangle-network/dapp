@@ -28,6 +28,8 @@ import { useLocation } from 'react-router';
 import useRoleStore, { Role, ROLE_ICON_MAP } from '../stores/roleStore';
 import { PagePath } from '../types';
 import { ChevronRight, HomeFillIcon } from '@tangle-network/icons';
+import { twMerge } from 'tailwind-merge';
+import cx from 'classnames';
 
 type Props = {
   isExpandedByDefault?: boolean;
@@ -81,18 +83,25 @@ const ActionButton: FC<{ isExpanded: boolean }> = ({ isExpanded }) => {
   return (
     <Dropdown>
       <DropdownButton
-        isFullWidth
-        size="md"
         icon={ROLE_ICON_MAP[role]({ size: 'lg' })}
-        iconClassName="text-mono-0"
         isHideArrowIcon={!isExpanded}
-        label={isExpanded ? capitalizedRole : ''}
-        labelClassName="text-mono-0"
-        arrowElement={<ChevronRight className="fill-mono-0" />}
-        className="w-full px-4 py-4 !rounded-full normal-case border-none !bg-purple-50 justify-center font-bold text-mono-0"
-      />
+        arrowElement={<ChevronRight size="lg" />}
+        className={twMerge(
+          'px-3 py-3 !rounded-full border-none',
+          '!bg-purple-50 font-bold text-mono-0',
+          'w-full',
+        )}
+      >
+        <span>{isExpanded ? capitalizedRole : ''}</span>
+      </DropdownButton>
 
-      <DropdownBody className="ml-2" side="right" align="center">
+      <DropdownBody
+        isPortal={false}
+        sideOffset={8}
+        side="right"
+        className="z-[60]"
+        align="center"
+      >
         <DropdownMenuItem
           isActive={role === Role.OPERATOR}
           onClick={() => setRole(Role.OPERATOR)}
@@ -123,7 +132,6 @@ const Sidebar: FC<Props> = ({ isExpandedByDefault }) => {
         items={SIDEBAR_ITEMS}
         footer={SIDEBAR_FOOTER}
         Logo={TangleCloudLogo}
-        logoLink={pathname}
         pathnameOrHash={pathname}
         className="hidden h-screen lg:block"
         isExpandedByDefault={isExpandedByDefault}
@@ -136,7 +144,6 @@ const Sidebar: FC<Props> = ({ isExpandedByDefault }) => {
         items={SIDEBAR_ITEMS}
         footer={SIDEBAR_FOOTER}
         Logo={TangleCloudLogo}
-        logoLink={pathname}
         pathnameOrHash={pathname}
         className="fixed top-[34px] left-4 md:left-8 lg:hidden"
         ActionButton={ActionButton}

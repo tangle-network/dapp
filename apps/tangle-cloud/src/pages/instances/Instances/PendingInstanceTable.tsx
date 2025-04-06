@@ -24,7 +24,10 @@ import { ChevronDown } from '@tangle-network/icons';
 import TableCellWrapper from '@tangle-network/tangle-shared-ui/components/tables/TableCellWrapper';
 import { MonitoringServiceRequest } from '@tangle-network/tangle-shared-ui/data/blueprints/utils/type';
 import useNetworkStore from '@tangle-network/tangle-shared-ui/context/useNetworkStore';
-import { DropdownMenuItem } from '@radix-ui/react-dropdown-menu';
+import {
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@radix-ui/react-dropdown-menu';
 import { NestedOperatorCell } from '../../../components/NestedOperatorCell';
 import addCommasToNumber from '@tangle-network/ui-components/utils/addCommasToNumber';
 import useAssetsMetadata from '@tangle-network/tangle-shared-ui/hooks/useAssetsMetadata';
@@ -34,14 +37,14 @@ import { ApprovalConfirmationFormFields } from '../../../types';
 import usePendingServiceRequest from '@tangle-network/tangle-shared-ui/data/blueprints/usePendingServiceRequest';
 import useSubstrateAddress from '@tangle-network/tangle-shared-ui/hooks/useSubstrateAddress';
 import useIdentities from '@tangle-network/tangle-shared-ui/hooks/useIdentities';
-import useRoleStore from '../../../stores/roleStore';
+import useRoleStore, { Role } from '../../../stores/roleStore';
 import useServicesRejectTx from '../../../data/services/useServicesRejectTx';
 import useServicesApproveTx from '../../../data/services/useServicesApproveTx';
 
 const columnHelper = createColumnHelper<MonitoringServiceRequest>();
 
 export const PendingInstanceTable: FC = () => {
-  const isOperator = useRoleStore.getState().isOperator();
+  const isOperator = useRoleStore().role === Role.OPERATOR;
   const operatorAccountAddress = useSubstrateAddress();
   const [isRejectConfirmationModalOpen, setIsRejectConfirmationModalOpen] =
     useState(false);
@@ -267,21 +270,15 @@ export const PendingInstanceTable: FC = () => {
             return (
               <TableCellWrapper removeRightBorder className="p-0 min-h-fit">
                 <Dropdown>
-                  <DropdownButton
-                    isFullWidth
-                    size="md"
-                    label={
-                      <Button
-                        variant="utility"
-                        className="uppercase body4"
-                        rightIcon={<ChevronDown className="!fill-blue-50" />}
-                      >
-                        Update
-                      </Button>
-                    }
-                    isHideArrowIcon
-                    className="min-w-[auto] border-none !bg-transparent"
-                  />
+                  <DropdownMenuTrigger asChild>
+                    <Button
+                      variant="utility"
+                      className="uppercase body4 w-full"
+                      rightIcon={<ChevronDown className="!fill-blue-50" />}
+                    >
+                      Update
+                    </Button>
+                  </DropdownMenuTrigger>
                   <DropdownBody className="mt-2" side="bottom" align="center">
                     <DropdownMenuItem className="px-4 py-2 hover:bg-mono-170">
                       Instance Duration

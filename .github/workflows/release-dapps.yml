@@ -49,14 +49,19 @@ jobs:
 
       #Identify changes
       - uses: marceloprado/has-changed-path@v1
+        id: changed-leaderboard
+        with:
+          paths: apps/leaderboard/CHANGELOG.md
+
+      - uses: marceloprado/has-changed-path@v1
         id: changed-tangle-dapp
         with:
-          paths: apps/tangle-dapp
+          paths: apps/tangle-dapp/CHANGELOG.md
 
       - uses: marceloprado/has-changed-path@v1
         id: changed-tangle-cloud
         with:
-          paths: apps/tangle-cloud
+          paths: apps/tangle-cloud/CHANGELOG.md
 
       - name: Install deps
         run: yarn install
@@ -69,6 +74,13 @@ jobs:
         run: yarn run build
 
       # Create github release
+      - name: Release Leaderboard
+        if: steps.changed-leaderboard.outputs.changed == 'true'
+        uses: ./.github/actions/create-dapp-release
+        with:
+          package-path: apps/leaderboard
+          repo-token: ${{ secrets.REPO_TOKEN }}
+
       - name: Release Tangle dApp
         if: steps.changed-tangle-dapp.outputs.changed == 'true'
         uses: ./.github/actions/create-dapp-release

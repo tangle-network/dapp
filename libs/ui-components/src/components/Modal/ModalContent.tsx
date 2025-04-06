@@ -45,7 +45,7 @@ export const ModalContent = forwardRef<HTMLDivElement, ModalContentProps>(
           className={twMerge(
             // Prevent the focus border from showing.
             'outline-none focus:outline-none focus-visible:outline-none',
-            'fixed z-50 w-full rounded-2xl overflow-hidden',
+            'fixed z-50 w-full rounded-2xl overflow-auto',
             'border dark:border-mono-160',
             'bg-mono-0 dark:bg-mono-180',
             'left-1/2 -translate-x-1/2',
@@ -58,6 +58,8 @@ export const ModalContent = forwardRef<HTMLDivElement, ModalContentProps>(
             'data-[state=open]:slide-in-from-bottom-full md:data-[state=open]:fade-in-0 md:data-[state=open]:zoom-in-0',
             'data-[state=closed]:slide-out-to-bottom-full md:data-[state=closed]:fade-out-0 md:data-[state=closed]:zoom-out-0',
             'max-md:bottom-0 max-md:rounded-b-none md:top-1/2 md:-translate-y-1/2',
+            // 2rem is for the padding top and bottom of the modal body.
+            'max-h-[calc(100vh-2rem)]',
             getTailwindSizeClass(size),
             className,
             'max-sm:max-w-full',

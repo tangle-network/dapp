@@ -100,6 +100,8 @@ const colors = {
     120: '#422417',
     DEFAULT: '#DD4800',
   },
+
+  muted: 'hsl(var(--muted))',
 } as const satisfies ThemeConfig['colors'];
 
 const keyframes = {

@@ -3,16 +3,20 @@ import Button from '@tangle-network/ui-components/components/buttons/Button';
 import { SocialChip } from '@tangle-network/ui-components/components/SocialChip';
 import { EMPTY_VALUE_PLACEHOLDER } from '@tangle-network/ui-components/constants';
 import { Typography } from '@tangle-network/ui-components/typography/Typography';
-import { FC } from 'react';
+import { ComponentProps, FC } from 'react';
 import { twMerge } from 'tailwind-merge';
 import type { Blueprint } from '../../types/blueprint';
 import BoostedChip from './BoostedChip';
 
 interface BlueprintHeaderProps {
   blueprint: Blueprint;
+  actionProps?: ComponentProps<typeof Button>;
 }
 
-const BlueprintHeader: FC<BlueprintHeaderProps> = ({ blueprint }) => {
+const BlueprintHeader: FC<BlueprintHeaderProps> = ({
+  blueprint,
+  actionProps,
+}) => {
   const {
     isBoosted,
     imgUrl,
@@ -98,9 +102,8 @@ const BlueprintHeader: FC<BlueprintHeaderProps> = ({ blueprint }) => {
               </div>
               <Button
                 rightIcon={<ArrowRight size="lg" className="!fill-mono-0" />}
-              >
-                Deploy
-              </Button>
+                {...actionProps}
+              />
             </div>
           </div>
 
