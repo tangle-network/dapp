@@ -1,9 +1,6 @@
 import {
   Label,
   Input,
-  Typography,
-  Table,
-  Divider,
 } from '@tangle-network/ui-components';
 import { Children, FC, useCallback, useMemo } from 'react';
 import { AssetConfigurationStepProps } from './type';
@@ -30,7 +27,7 @@ export const AssetConfigurationStep: FC<AssetConfigurationStepProps> = ({
   setValue,
   watch,
 }) => {
-  const labelClassName = 'text-mono-200 dark:text-mono-0';
+  const labelClassName = 'text-mono-200 dark:text-mono-0 font-normal';
 
   const stepKey = BLUEPRINT_DEPLOY_STEPS[2];
   const operatorsStepKey = BLUEPRINT_DEPLOY_STEPS[1];
@@ -88,8 +85,6 @@ export const AssetConfigurationStep: FC<AssetConfigurationStepProps> = ({
     [stepKey, values, setValue],
   );
 
-  console.log(globalErrors?.[stepKey]);
-
   return (
     <div className="flex">
       <div>
@@ -100,10 +95,8 @@ export const AssetConfigurationStep: FC<AssetConfigurationStepProps> = ({
       </div>
 
       <div className="w-full pl-8">
-        <Typography variant="h4" fw="bold">
-          Asset Requirements
-        </Typography>
-        <div className="mt-4">
+        <Label className={labelClassName}>Asset Requirements:</Label>
+        <div className="mt-5">
           {Children.toArray(
             selectedAssets.map(({ id }, index) => {
               const assetMetadata = assetsMetadata?.get(id);
@@ -156,17 +149,12 @@ export const AssetConfigurationStep: FC<AssetConfigurationStepProps> = ({
           )}
         </div>
 
-        <Divider className="my-4" />
-
-        <Typography variant="h4" fw="bold">
-          Approval Model
-        </Typography>
         <div className="mt-5 flex gap-4">
           <div className="w-1/2">
             <Label className={labelClassName}>Approval Model:</Label>
             <Select value={approvalModel} onValueChange={onChangeApprovalModel}>
               <SelectTrigger>
-                <SelectValue placeholder="Select an approval model" />
+                <SelectValue className='text-[16px] leading-[30px]' placeholder="Select an approval model" />
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="Fixed">

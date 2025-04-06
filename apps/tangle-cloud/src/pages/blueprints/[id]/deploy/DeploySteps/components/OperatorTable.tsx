@@ -11,6 +11,7 @@ import {
   EnergyChipStack,
   ExternalLinkIcon,
   fuzzyFilter,
+  getRoundedAmountString,
   KeyValueWithButton,
   Table,
   Typography,
@@ -33,6 +34,9 @@ import { sortByAddressOrIdentity } from '@tangle-network/tangle-shared-ui/compon
 import TableCellWrapper from '@tangle-network/tangle-shared-ui/components/tables/TableCellWrapper';
 import VaultsDropdown from '@tangle-network/tangle-shared-ui/components/tables/Operators/VaultsDropdown';
 import { TableVariant } from '@tangle-network/ui-components/components/Table/types';
+import useBlueprintRegisteredOperator from '@tangle-network/tangle-shared-ui/data/blueprints/useBlueprintRegisteredOperator';
+import { useParams } from 'react-router';
+import { getOperatorPricing } from '../../../../../../utils';
 
 const COLUMN_HELPER = createColumnHelper<OperatorSelectionTable>();
 
@@ -44,15 +48,25 @@ type Props = Omit<
 };
 
 export const OperatorTable: FC<Props> = ({ advanceFilter, ...tableProps }) => {
+  const { id: _blueprintId } = useParams();
+  const blueprintId = Number(_blueprintId);
+
   const { assets } = useRestakeAssets();
-  const { operatorMap } = useRestakeOperatorMap();
+
+  const { operatorMap: restakeOperatorMap } = useRestakeOperatorMap();
+
+  const { result: _registeredOperators } = useBlueprintRegisteredOperator(blueprintId);
+  
+  const registeredOperators = useMemo(() => {
+    return new Map(_registeredOperators.map((operator) => [operator.operatorAccount, operator]));
+  }, [_registeredOperators]);
   const operatorAddresses = useMemo(
     () =>
-      Object.keys(operatorMap).map((address) =>
-        assertSubstrateAddress(address),
+      _registeredOperators.map((operator) =>
+        assertSubstrateAddress(operator.operatorAccount),
       ),
-    [operatorMap],
-  );
+    [_registeredOperators],
+  );  
 
   const { result: operatorServicesMap } =
     useOperatorsServices(operatorAddresses);
@@ -62,9 +76,16 @@ export const OperatorTable: FC<Props> = ({ advanceFilter, ...tableProps }) => {
 
   // TODO: fetch and combine with registered operators
   const operators = useMemo<OperatorSelectionTable[]>(() => {
-    return Object.entries(operatorMap).map(
+    const filteredRestakeOperators = Object.entries(restakeOperatorMap).filter(([address]) =>
+      registeredOperators.has(address),
+    );
+    return filteredRestakeOperators.map(
       ([addressString, { delegations, restakersCount }]) => {
         const address = assertSubstrateAddress(addressString);
+        const operatorPreferences = registeredOperators.get(address);
+        // @dev this case should not happen because we filter the operators in the `restakeOperatorMap`
+        if (!operatorPreferences) throw new Error('Operator not found');
+        const registeredData = operatorPreferences.preferences;
 
         return {
           address,
@@ -94,10 +115,11 @@ export const OperatorTable: FC<Props> = ({ advanceFilter, ...tableProps }) => {
           instanceCount: operatorServicesMap.get(address)?.length ?? 0,
           // TODO: using graphql with im online pallet to get uptime of operator
           uptime: Math.round(Math.random() * 100),
+          pricing: getOperatorPricing(registeredData.priceTargets),
         };
       },
     );
-  }, [operatorServicesMap, operatorMap, identities, assets]);
+  }, [operatorServicesMap, restakeOperatorMap, identities, assets]);
 
   const columns = [
     COLUMN_HELPER.accessor('address', {
@@ -145,6 +167,18 @@ export const OperatorTable: FC<Props> = ({ advanceFilter, ...tableProps }) => {
         );
       },
     }),
+    COLUMN_HELPER.accessor('pricing', {
+      header: () => 'Pricing',
+      cell: (props) => {
+        return (
+          <TableCellWrapper className="pl-3 min-h-fit">
+            <Typography variant="body1">
+              {`$${getRoundedAmountString(props.row.original.pricing)}`}
+            </Typography>
+          </TableCellWrapper>
+        );
+      },
+    }),
     COLUMN_HELPER.accessor('instanceCount', {
       header: () => 'Instance Count',
       sortingFn: sortByAddressOrIdentity<OperatorSelectionTable>(),
@@ -159,7 +193,7 @@ export const OperatorTable: FC<Props> = ({ advanceFilter, ...tableProps }) => {
       },
     }),
     COLUMN_HELPER.accessor('restakersCount', {
-      header: () => 'Restakers Count',
+      header: () => 'Restakers',
       cell: (props) => {
         return (
           <TableCellWrapper className="pl-3 min-h-fit">
@@ -200,7 +234,7 @@ export const OperatorTable: FC<Props> = ({ advanceFilter, ...tableProps }) => {
       },
     }),
     COLUMN_HELPER.accessor('vaultTokensInUsd', {
-      header: () => 'Vault TVL',
+      header: () => 'Delegated Assets',
       cell: (props) => {
         const tokensList = props.row.original.vaultTokens ?? [];
         return (

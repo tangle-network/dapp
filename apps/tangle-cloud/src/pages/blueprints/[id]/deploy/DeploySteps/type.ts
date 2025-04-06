@@ -25,4 +25,5 @@ export type OperatorSelectionTable = {
   uptime?: number;
   restakersCount?: number;
   vaultTokens?: VaultToken[];
+  pricing?: number;
 };
