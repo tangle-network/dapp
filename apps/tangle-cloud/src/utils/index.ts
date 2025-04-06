@@ -43,7 +43,9 @@ export const toTanglePrimitiveEcdsaKey = (
  *   Third-party external API pricing
  *     Phala cloud might have prices, other external services being used like AWS, GCP, etc.
  * */
-export const getOperatorPricing = (operatorPreferences: OperatorPreferences['priceTargets']) => {
+export const getOperatorPricing = (
+  operatorPreferences: OperatorPreferences['priceTargets'],
+) => {
   return Object.values(operatorPreferences).reduce((acc, curr) => {
     return acc + Number(curr);
   }, 0);

@@ -65,5 +65,5 @@ export type OperatorPreferences = {
     storageHdd: number;
     storageSsd: number;
     storageNvme: number;
-  }
+  };
 };

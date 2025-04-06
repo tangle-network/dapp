@@ -1,7 +1,4 @@
-import {
-  Label,
-  Input,
-} from '@tangle-network/ui-components';
+import { Label, Input } from '@tangle-network/ui-components';
 import { Children, FC, useCallback, useMemo } from 'react';
 import { AssetConfigurationStepProps } from './type';
 import {
@@ -154,7 +151,10 @@ export const AssetConfigurationStep: FC<AssetConfigurationStepProps> = ({
             <Label className={labelClassName}>Approval Model:</Label>
             <Select value={approvalModel} onValueChange={onChangeApprovalModel}>
               <SelectTrigger>
-                <SelectValue className='text-[16px] leading-[30px]' placeholder="Select an approval model" />
+                <SelectValue
+                  className="text-[16px] leading-[30px]"
+                  placeholder="Select an approval model"
+                />
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="Fixed">

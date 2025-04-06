@@ -55,10 +55,16 @@ export const OperatorTable: FC<Props> = ({ advanceFilter, ...tableProps }) => {
 
   const { operatorMap: restakeOperatorMap } = useRestakeOperatorMap();
 
-  const { result: _registeredOperators } = useBlueprintRegisteredOperator(blueprintId);
-  
+  const { result: _registeredOperators } =
+    useBlueprintRegisteredOperator(blueprintId);
+
   const registeredOperators = useMemo(() => {
-    return new Map(_registeredOperators.map((operator) => [operator.operatorAccount, operator]));
+    return new Map(
+      _registeredOperators.map((operator) => [
+        operator.operatorAccount,
+        operator,
+      ]),
+    );
   }, [_registeredOperators]);
   const operatorAddresses = useMemo(
     () =>
@@ -66,7 +72,7 @@ export const OperatorTable: FC<Props> = ({ advanceFilter, ...tableProps }) => {
         assertSubstrateAddress(operator.operatorAccount),
       ),
     [_registeredOperators],
-  );  
+  );
 
   const { result: operatorServicesMap } =
     useOperatorsServices(operatorAddresses);
@@ -76,8 +82,8 @@ export const OperatorTable: FC<Props> = ({ advanceFilter, ...tableProps }) => {
 
   // TODO: fetch and combine with registered operators
   const operators = useMemo<OperatorSelectionTable[]>(() => {
-    const filteredRestakeOperators = Object.entries(restakeOperatorMap).filter(([address]) =>
-      registeredOperators.has(address),
+    const filteredRestakeOperators = Object.entries(restakeOperatorMap).filter(
+      ([address]) => registeredOperators.has(address),
     );
     return filteredRestakeOperators.map(
       ([addressString, { delegations, restakersCount }]) => {
