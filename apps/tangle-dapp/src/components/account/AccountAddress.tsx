@@ -12,6 +12,7 @@ import {
   Typography,
   useHiddenValue,
 } from '@tangle-network/ui-components';
+import { isSolanaAddress } from '@tangle-network/ui-components/utils/isSolanaAddress';
 import { Avatar } from '@tangle-network/ui-components/components/Avatar';
 import { IconWithTooltip } from '@tangle-network/ui-components/components/IconWithTooltip';
 import { EMPTY_VALUE_PLACEHOLDER } from '@tangle-network/ui-components/constants';
@@ -42,6 +43,10 @@ const AccountAddress: FC = () => {
       return null;
     }
 
+    if (isSolanaAddress(activeAccountAddress)) {
+      return activeAccountAddress;
+    }
+
     return isDisplayingEvmAddress
       ? activeAccountAddress
       : toSubstrateAddress(activeAccountAddress, network.ss58Prefix);
@@ -57,18 +62,26 @@ const AccountAddress: FC = () => {
     [displayAddress, isHiddenValue],
   );
 
-  // Switch between EVM & Substrate addresses.
   const handleAddressTypeToggle = useCallback(() => {
-    setIsDisplayingEvmAddress((previous) => !previous);
-  }, [setIsDisplayingEvmAddress]);
+    if (
+      activeAccountAddress !== null &&
+      !isSolanaAddress(activeAccountAddress)
+    ) {
+      setIsDisplayingEvmAddress((previous) => !previous);
+    }
+  }, [activeAccountAddress, setIsDisplayingEvmAddress]);
 
   const iconFillColorClass = 'dark:!fill-mono-80 !fill-mono-160';
 
   const shortenFn = isHiddenValue
     ? shortenString
-    : isDisplayingEvmAddress
-      ? shortenHex
-      : shortenString;
+    : activeAccountAddress === null
+      ? shortenString
+      : isSolanaAddress(activeAccountAddress)
+        ? shortenString
+        : isDisplayingEvmAddress
+          ? shortenHex
+          : shortenString;
 
   const avatarIcon =
     activeAccountAddress === null ? (

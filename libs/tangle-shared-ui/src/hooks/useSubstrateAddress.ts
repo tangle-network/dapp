@@ -1,5 +1,6 @@
 import { useActiveAccount } from '@tangle-network/api-provider-environment/hooks/useActiveAccount';
 import { toSubstrateAddress } from '@tangle-network/ui-components/utils/toSubstrateAddress';
+import { isSolanaAddress } from '@tangle-network/ui-components/utils/isSolanaAddress';
 import { useMemo } from 'react';
 import useNetworkStore from '../context/useNetworkStore';
 import type { SubstrateAddress } from '@tangle-network/ui-components/types/address';
@@ -27,13 +28,23 @@ const useSubstrateAddress = (useSs58Prefix = true): SubstrateAddress | null => {
       return null;
     }
 
+    if (isSolanaAddress(activeAccount.address)) {
+      console.warn(
+        'Solana addresses cannot be converted to Substrate addresses',
+      );
+      return null;
+    }
+
     // Determine the prefix to use based on the useSs58Prefix parameter.
     const prefix = useSs58Prefix ? network.ss58Prefix : undefined;
 
-    // Note that this handles both EVM and Substrate addresses,
-    // so there's no need to check if the address is an EVM address
-    // or not.
-    return toSubstrateAddress(activeAccount.address, prefix);
+    try {
+      // This handles both EVM and Substrate addresses
+      return toSubstrateAddress(activeAccount.address, prefix);
+    } catch (err) {
+      console.error('Error converting address to Substrate format:', err);
+      return null;
+    }
   }, [activeAccount, network.ss58Prefix, useSs58Prefix]);
 
   return substrateAddress;

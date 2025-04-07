@@ -3,6 +3,7 @@ import assertSubstrateAddress from './assertSubstrateAddress';
 
 import { AnyAddress, SubstrateAddress } from '../types/address';
 import { isEvmAddress } from './isEvmAddress20';
+import { isSolanaAddress } from './isSolanaAddress';
 
 /**
  * Converts an EVM address to a Substrate address.
@@ -29,13 +30,24 @@ export const toSubstrateAddress = (
     // Different SS58 formats can be used for different networks,
     // which still represents the same account, but look different.
     return assertSubstrateAddress(evmToAddress(address, ss58Format));
+  } else if (isSolanaAddress(address)) {
+    throw new Error(
+      `Cannot convert Solana address ${address} to Substrate address`,
+    );
   }
   // Otherwise, it must be a Substrate address.
   else {
     // Process the address with the given SS58 format, in
     // case that the SS58 format given differs from that of the
     // address.
-    return assertSubstrateAddress(encodeAddress(address, ss58Format));
+    try {
+      return assertSubstrateAddress(encodeAddress(address, ss58Format));
+    } catch (err) {
+      console.error('Error converting to Substrate address:', err);
+      throw new Error(
+        `Invalid address format: ${address}. Not a valid Substrate address.`,
+      );
+    }
   }
 };
 

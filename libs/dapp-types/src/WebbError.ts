@@ -47,6 +47,8 @@ export enum WebbErrorCodes {
   MetaMaskExtensionNotInstalled,
   /* Rainbow extension not installed */
   RainbowExtensionNotInstalled,
+  /* Phantom extension not installed */
+  PhantomExtensionNotInstalled,
   /* Unknown wallet */
   UnknownWallet,
   /* Runtime Error on the provider */
@@ -221,6 +223,12 @@ export class WebbError extends Error {
         return {
           code,
           message: 'Rainbow extension not installed',
+        };
+
+      case WebbErrorCodes.PhantomExtensionNotInstalled:
+        return {
+          code,
+          message: 'Phantom extension not installed',
         };
 
       case WebbErrorCodes.UnknownWallet:

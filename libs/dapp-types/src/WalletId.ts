@@ -5,4 +5,5 @@ export enum WalletId {
   Rainbow,
   Talisman,
   SubWallet,
+  Phantom,
 }

@@ -12,8 +12,8 @@ export interface WalletConfig {
   name: string;
   title: string;
 
-  /** The wallet platform "EVM" or "Substrate" */
-  platform: 'EVM' | 'Substrate';
+  /** The wallet platform "EVM", "Substrate" or "Solana" */
+  platform: 'EVM' | 'Substrate' | 'Solana';
 
   /**
    * Homepage url of the wallet

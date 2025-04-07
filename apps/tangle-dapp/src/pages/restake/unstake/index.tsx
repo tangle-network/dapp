@@ -232,6 +232,7 @@ const RestakeUnstakeForm: FC = () => {
           operatorAddress: operatorAccountId,
         });
       } else {
+        if (!restakeApi) return;
         await restakeApi.undelegate(operatorAccountId, assetId, amountBn);
       }
 

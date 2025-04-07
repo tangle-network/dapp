@@ -3,6 +3,7 @@ import { PresetTypedChainId } from '@tangle-network/dapp-types';
 import { WalletId } from '@tangle-network/dapp-types/WalletId';
 import {
   MetaMaskIcon,
+  PhantomWalletIcon,
   PolkadotJsIcon,
   RainbowIcon,
   SubWalletIcon,
@@ -10,6 +11,17 @@ import {
   WalletConnectIcon,
 } from '@tangle-network/icons/wallets';
 import type { WalletConfig } from './wallet-config.interface';
+
+// Remove this!
+declare global {
+  interface Window {
+    phantom?: {
+      solana?: {
+        isPhantom?: boolean;
+      };
+    };
+  }
+}
 
 const ANY_EVM = [
   PresetTypedChainId.EthereumMainNet,
@@ -53,6 +65,12 @@ const ANY_SUBSTRATE = [
   PresetTypedChainId.RococoPhala,
 ];
 
+const ANY_SOLANA = [
+  PresetTypedChainId.SolanaMainnet,
+  PresetTypedChainId.SolanaTestnet,
+  PresetTypedChainId.SolanaDevnet,
+];
+
 const detectSubstrateWallet = (walletName: string) => {
   const extension = window.injectedWeb3?.[walletName];
   if (extension === undefined) {
@@ -64,6 +82,19 @@ const detectSubstrateWallet = (walletName: string) => {
   }
 
   return extension;
+};
+
+const detectPhantomWallet = async (): Promise<boolean> => {
+  try {
+    if ('phantom' in window) {
+      const provider = window.phantom?.solana;
+      return !!provider?.isPhantom;
+    }
+    return false;
+  } catch (error) {
+    console.error('Error detecting Phantom wallet:', error);
+    return false;
+  }
 };
 
 export const WALLET_CONFIG: Record<WalletId, WalletConfig> = {
@@ -177,6 +208,25 @@ export const WALLET_CONFIG: Record<WalletId, WalletConfig> = {
         'https://chrome.google.com/webstore/detail/subwallet-polkadot-extens/onhogfjeacnfoofkfgppdlbmlmnplgbn',
       [SupportedBrowsers.FireFox]:
         'https://addons.mozilla.org/firefox/addon/subwallet/',
+    },
+  },
+  [WalletId.Phantom]: {
+    id: WalletId.Phantom,
+    Logo: <PhantomWalletIcon />,
+    name: 'Phantom',
+    title: 'Phantom',
+    platform: 'Solana',
+    enabled: true,
+    async detect() {
+      return await detectPhantomWallet();
+    },
+    supportedChainIds: [...ANY_SOLANA],
+    homeLink: 'https://phantom.com/',
+    installLinks: {
+      [SupportedBrowsers.Chrome]:
+        'https://chromewebstore.google.com/detail/phantom/bfnaelmomeimhlpmgjnjophhpkkoljpa',
+      [SupportedBrowsers.FireFox]:
+        'https://addons.mozilla.org/en-CA/firefox/addon/phantom-app/',
     },
   },
 };
