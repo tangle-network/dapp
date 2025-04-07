@@ -315,7 +315,7 @@ const RestakeDelegateForm: FC = () => {
       <Card withShadow tightPadding>
         <Form onSubmit={handleSubmit(onSubmit)}>
           <div className="flex flex-col h-full gap-4 grow">
-            <div className="flex flex-col">
+            <div className="flex flex-col gap-2">
               <RestakeDelegateInput
                 amountError={errors.amount?.message}
                 delegatorInfo={delegatorInfo}

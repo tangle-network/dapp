@@ -49,8 +49,8 @@ export function toPrimitiveServiceRequest(
   }: TanglePrimitivesServicesServiceServiceRequest,
 ) {
   return {
-    requestId: requestId.args[0].toNumber(),
-    blueprint: blueprint.toNumber(),
+    requestId: requestId.args[0].toBigInt(),
+    blueprint: blueprint.toBigInt(),
     owner: assertSubstrateAddress(owner.toString()),
     securityRequirements: toPrimitiveSecurityRequirements(securityRequirements),
     ttl: ttl.toNumber(),
@@ -98,8 +98,11 @@ export function toPrimitiveOperatorsWithApprovalState(
             };
           });
         break;
-      default:
-        throw new Error(`Unknown approval state type: ${approvalState.type}`);
+      default: {
+        const exhaustiveCheck: never = approvalState.type;
+
+        throw new Error(`Unknown approval state type: ${exhaustiveCheck}`);
+      }
     }
 
     return result;

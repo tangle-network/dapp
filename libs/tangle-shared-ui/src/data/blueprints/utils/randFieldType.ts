@@ -1,4 +1,4 @@
-import { randNumber, randWord } from '@ngneat/falso';
+import { randNumber } from '@ngneat/falso';
 import { PrimitiveFieldType } from '../../../types/blueprint';
 
 const types = [
@@ -16,14 +16,12 @@ const types = [
   'Int32',
   'Uint64',
   'Int64',
-  'Text',
-  'Bytes',
   'String',
 ] as const;
 
 const specialTypes = ['Struct', 'List', 'Optional', 'Array'] as const;
 
-export function randFieldType(allTypes = true): PrimitiveFieldType {
+const randFieldType = (allTypes = true): PrimitiveFieldType => {
   const type = allTypes
     ? types[Math.floor(Math.random() * types.length)]
     : specialTypes[Math.floor(Math.random() * specialTypes.length)];
@@ -49,14 +47,14 @@ export function randFieldType(allTypes = true): PrimitiveFieldType {
   if (type === 'Struct') {
     return {
       Struct: [
-        randWord(),
-        Array.from({ length: randNumber({ min: 1, max: 5 }) }, () => [
-          randWord(),
-          randFieldType(),
-        ]),
+        {
+          Array: [randNumber({ min: 1, max: 5 }), randFieldType()],
+        },
       ],
     } as const;
   }
 
   return type;
-}
+};
+
+export default randFieldType;

@@ -2,7 +2,9 @@ import { Typography } from '@tangle-network/ui-components/typography/Typography'
 import type { ComponentProps, FC } from 'react';
 import { twMerge } from 'tailwind-merge';
 
-const TableCell: FC<Partial<ComponentProps<typeof Typography>>> = ({
+type Props = Partial<ComponentProps<typeof Typography>>;
+
+const TableCell: FC<Props> = ({
   className,
   children,
   variant = 'body2',

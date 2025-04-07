@@ -17,9 +17,9 @@ import useRestakeAssets from '../restake/useRestakeAssets';
 import { useOperatorTVL } from '../restake/useOperatorTVL';
 import { SubstrateAddress } from '@tangle-network/ui-components/types/address';
 
-export default function useMonitoringBlueprints(
+const useMonitoringBlueprints = (
   operatorAccountAddress?: SubstrateAddress | null,
-) {
+) => {
   const { operatorMap } = useRestakeOperatorMap();
   const { assets } = useRestakeAssets();
   const { operatorTVLByAsset } = useOperatorTVL(operatorMap, assets);
@@ -95,6 +95,7 @@ export default function useMonitoringBlueprints(
               const instanceData = toPrimitiveService(
                 mayBeServiceInstance.unwrap(),
               );
+
               runningInstancesMap.set(instanceData.blueprint, [
                 ...(runningInstancesMap.get(instanceData.blueprint) ?? []),
                 {
@@ -130,4 +131,6 @@ export default function useMonitoringBlueprints(
     blueprints: result ?? [],
     ...rest,
   };
-}
+};
+
+export default useMonitoringBlueprints;

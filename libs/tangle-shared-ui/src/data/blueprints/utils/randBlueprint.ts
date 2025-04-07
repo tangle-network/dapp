@@ -8,7 +8,7 @@ import {
   randUserName,
 } from '@ngneat/falso';
 import { Blueprint } from '../../../types/blueprint';
-import { randFieldType } from './randFieldType';
+import randFieldType from './randFieldType';
 
 const categories = [
   'Bridge',

@@ -8,17 +8,14 @@ import randBlueprint from './utils/randBlueprint';
 const generateBlueprints = () => {
   return Array.from({ length: randNumber({ min: 2, max: 10 }) }, (_, idx) =>
     randBlueprint(BigInt(idx)),
-  ).reduce(
-    (acc, blueprint) => {
-      acc.set(blueprint.id, blueprint);
+  ).reduce((acc, blueprint) => {
+    acc.set(blueprint.id, blueprint);
 
-      return acc;
-    },
-    new Map<bigint, Blueprint>(),
-  );
+    return acc;
+  }, new Map<bigint, Blueprint>());
 };
 
-export default function useFakeBlueprintListing(delayMs = 3000) {
+const useFakeBlueprintListing = (delayMs = 3000) => {
   const [data, setData] = useState<Map<bigint, Blueprint>>(new Map());
   const [isLoading, setIsLoading] = useState(true);
 
@@ -41,6 +38,8 @@ export default function useFakeBlueprintListing(delayMs = 3000) {
   return {
     blueprints: data,
     isLoading,
-    error: null as Error | null,
+    error: null satisfies Error | null,
   };
-}
+};
+
+export default useFakeBlueprintListing;

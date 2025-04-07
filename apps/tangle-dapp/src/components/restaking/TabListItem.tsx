@@ -1,23 +1,23 @@
 import type { PropsOf } from '@tangle-network/ui-components/types';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router';
-import { ComponentProps } from 'react';
+import { ComponentProps, FC } from 'react';
 import { twMerge } from 'tailwind-merge';
 
-export type TabListItemProps = PropsOf<'li'> & {
+type Props = PropsOf<'li'> & {
   isActive?: boolean;
   href?: ComponentProps<typeof Link>['to'];
   hideSeparator?: boolean;
 };
 
-export default function TabListItem({
+const TabListItem: FC<Props> = ({
   className,
   isActive,
   children,
   href,
   hideSeparator,
   ...props
-}: TabListItemProps) {
+}) => {
   const content = (
     <>
       {isActive && (
@@ -70,4 +70,6 @@ export default function TabListItem({
       )}
     </li>
   );
-}
+};
+
+export default TabListItem;

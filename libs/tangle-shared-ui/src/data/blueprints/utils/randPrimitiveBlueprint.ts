@@ -1,9 +1,9 @@
 import { randFullName } from '@ngneat/falso';
 import { toPrimitiveBlueprint } from './toPrimitiveBlueprint';
 
-function randPrimitiveBlueprint(
+const randPrimitiveBlueprint = (
   id: bigint,
-): ReturnType<typeof toPrimitiveBlueprint> {
+): ReturnType<typeof toPrimitiveBlueprint> => {
   return {
     metadata: {
       name: `Blueprint ${id.toString()}`,
@@ -32,6 +32,6 @@ function randPrimitiveBlueprint(
       ],
     },
   };
-}
+};
 
 export default randPrimitiveBlueprint;
