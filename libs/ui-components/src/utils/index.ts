@@ -24,7 +24,6 @@ export * from './isSubstrateAddress';
 export * from './isTemplateBigInt';
 export * from './isValidAddress';
 export { default as numberToString } from './numberToString';
-export { default as populateDocsUrl } from './populateDocsUrl';
 export * from './range';
 export * from './shortenHex';
 export * from './shortenString';
