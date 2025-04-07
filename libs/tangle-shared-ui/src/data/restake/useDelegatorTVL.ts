@@ -30,13 +30,14 @@ const calculateDelegatorTVL = (
     (sum, tvl) => sum + tvl,
     0,
   );
+
   return { delegatorTVL, totalDelegatorTVL };
 };
 
-export function useDelegatorTVL(
+export const useDelegatorTVL = (
   delegatorInfo: DelegatorInfo | null,
   assetMap: RestakeAssetMap | null,
-) {
+) => {
   const tvl$ = useObservable(
     (input$) =>
       input$.pipe(
@@ -52,4 +53,4 @@ export function useDelegatorTVL(
   );
 
   return useObservableState(tvl$, { delegatorTVL: {}, totalDelegatorTVL: 0 });
-}
+};

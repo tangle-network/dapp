@@ -33,14 +33,14 @@ export function extractBlueprintsData(
   ][],
 ) {
   const blueprintsMap = new Map<
-    number,
+    bigint,
     ReturnType<typeof toPrimitiveBlueprint> & { owner: string }
   >();
 
   const ownerSet = new Set<string>();
 
   for (const [key, value] of blueprintEntries) {
-    const id = key.args[0].toNumber();
+    const id = key.args[0].toBigInt();
 
     if (value.isNone) {
       continue;
@@ -64,11 +64,11 @@ export function extractOperatorData(
   ][],
   operatorMap: OperatorMap,
   operatorTVLByAsset: Map<SubstrateAddress, Map<RestakeAssetId, number>>,
-  runningInstancesMap: Map<number, ServiceInstance[]>,
+  runningInstancesMap: Map<bigint, ServiceInstance[]>,
 ) {
-  const blueprintOperatorMap = new Map<number, Set<SubstrateAddress>>();
-  const blueprintRestakersMap = new Map<number, Set<string>>();
-  const blueprintTVLMap = new Map<number, number>();
+  const blueprintOperatorMap = new Map<bigint, Set<SubstrateAddress>>();
+  const blueprintRestakersMap = new Map<bigint, Set<string>>();
+  const blueprintTVLMap = new Map<bigint, number>();
 
   for (const [key, value] of operatorEntries) {
     if (value.isNone) {
@@ -76,7 +76,7 @@ export function extractOperatorData(
     }
 
     const [blueprintIdU64, operatorAccountId32] = key.args;
-    const blueprintId = blueprintIdU64.toNumber();
+    const blueprintId = blueprintIdU64.toBigInt();
 
     const operatorAccount = assertSubstrateAddress(
       operatorAccountId32.toString(),
@@ -119,8 +119,8 @@ export function extractOperatorData(
 }
 
 function calculateBlueprintOperatorExposure(
-  runningInstancesMap: Map<number, ServiceInstance[]>,
-  blueprintId: number,
+  runningInstancesMap: Map<bigint, ServiceInstance[]>,
+  blueprintId: bigint,
   operatorTVLByAsset: Map<SubstrateAddress, Map<RestakeAssetId, number>>,
 ) {
   const PERCENT_DIVISOR = 100;
@@ -185,7 +185,7 @@ export function createBlueprintObjects(
   return Array.from(blueprintsMap.entries()).reduce(
     (acc, [blueprintId, { metadata, owner, registrationParams }]) => {
       acc[blueprintId.toString()] = {
-        id: blueprintId.toString(),
+        id: blueprintId,
         name: metadata.name,
         author: metadata.author ?? owner,
         imgUrl: metadata.logo,
@@ -229,7 +229,7 @@ export function createMonitoringBlueprint(
   operatorBlueprints: OperatorBlueprint,
   serviceInstances: ServiceInstance[],
   operatorTVLByAsset: Map<SubstrateAddress, Map<RestakeAssetId, number>>,
-  runningInstancesMap: Map<number, ServiceInstance[]>,
+  runningInstancesMap: Map<bigint, ServiceInstance[]>,
 ): MonitoringBlueprint {
   const totalOperator = operatorBlueprints.services.reduce((acc, service) => {
     return acc + service.operatorSecurityCommitments.length;
@@ -284,7 +284,7 @@ export function createMonitoringBlueprint(
   return {
     ...operatorBlueprints,
     blueprint: blueprintData,
-    services: services,
+    services,
   };
 }
 

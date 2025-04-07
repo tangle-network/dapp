@@ -27,7 +27,7 @@ import useRestakeOperatorMap from './useRestakeOperatorMap';
 import { ServiceInstance } from '../blueprints/utils/type';
 import { toPrimitiveService } from '../blueprints/utils/toPrimitiveService';
 
-const useBlueprintDetails = (id?: string) => {
+const useBlueprintDetails = (id?: bigint) => {
   const rpcEndpoint = useNetworkStore((store) => store.network.wsRpcEndpoint);
   const { assets } = useRestakeAssets();
   const { operatorMap } = useRestakeOperatorMap();
@@ -74,7 +74,6 @@ const useBlueprintDetails = (id?: string) => {
                 return null;
               }
 
-              const idNumber = Number(id);
               const [ownerAccount, serviceBlueprint] =
                 blueprintDetails.unwrap();
               const owner = ownerAccount.toString();
@@ -82,13 +81,13 @@ const useBlueprintDetails = (id?: string) => {
               const { metadata, registrationParams } =
                 toPrimitiveBlueprint(serviceBlueprint);
 
-              const runningInstancesMap = new Map<number, ServiceInstance[]>();
+              const runningInstancesMap = new Map<bigint, ServiceInstance[]>();
 
               for (const [
                 instanceId,
                 mayBeServiceInstance,
               ] of runningInstanceEntries) {
-                const serviceInstanceId = instanceId.args[0].toNumber();
+                const serviceInstanceId = instanceId.args[0].toBigInt();
 
                 if (mayBeServiceInstance.isNone) {
                   continue;
@@ -98,7 +97,7 @@ const useBlueprintDetails = (id?: string) => {
                   mayBeServiceInstance.unwrap(),
                 );
 
-                if (instanceData.blueprint !== idNumber) {
+                if (instanceData.blueprint !== id) {
                   continue;
                 }
 
@@ -123,7 +122,7 @@ const useBlueprintDetails = (id?: string) => {
               );
 
               const info = await getAccountInfo(rpcEndpoint, owner);
-              const operatorsSet = blueprintOperatorMap.get(idNumber);
+              const operatorsSet = blueprintOperatorMap.get(id);
 
               const details: Blueprint = {
                 id,
@@ -132,11 +131,10 @@ const useBlueprintDetails = (id?: string) => {
                 author: metadata.author ?? owner,
                 imgUrl: metadata.logo,
                 category: metadata.category,
-                restakersCount:
-                  blueprintRestakersMap.get(idNumber)?.size ?? null,
+                restakersCount: blueprintRestakersMap.get(id)?.size ?? null,
                 operatorsCount: operatorsSet?.size ?? null,
                 tvl: (() => {
-                  const blueprintTVL = blueprintTVLMap.get(idNumber);
+                  const blueprintTVL = blueprintTVLMap.get(id);
 
                   if (blueprintTVL === undefined) {
                     return null;

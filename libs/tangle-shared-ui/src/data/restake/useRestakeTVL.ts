@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
 import { useDelegatorTVL } from '../../data/restake/useDelegatorTVL';
-import { useOperatorConcentration } from '../../data/restake/useOperatorConcentration';
+import useOperatorConcentration from '../../data/restake/useOperatorConcentration';
 import {
   OperatorTVLType,
   useOperatorTVL,
@@ -20,6 +20,7 @@ const useRestakeTVL = (
   delegatorInfo: DelegatorInfo | null,
 ) => {
   const { assets } = useRestakeAssets();
+
   const { operatorTVL, vaultTVL, operatorTVLByAsset } = useOperatorTVL(
     operatorMap,
     assets,

@@ -33,7 +33,7 @@ const githubRepos = [
   'hyperbridge-relayer-blueprint',
 ];
 
-export default function randBlueprint(id: string) {
+export default function randBlueprint(id: bigint) {
   return {
     id,
     name: randCompanyName(),

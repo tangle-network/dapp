@@ -53,6 +53,6 @@ export type MonitoringServiceRequest = ReturnType<
 };
 
 export interface ServiceInstance {
-  instanceId: number;
+  instanceId: bigint;
   serviceInstance?: ReturnType<typeof toPrimitiveService>;
 }

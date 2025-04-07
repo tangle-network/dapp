@@ -20,8 +20,8 @@ export function toPrimitiveService({
   membershipModel,
 }: Service) {
   return {
-    id: id.toNumber(),
-    blueprint: blueprint.toNumber(),
+    id: id.toBigInt(),
+    blueprint: blueprint.toBigInt(),
     ownerAccount: assertSubstrateAddress(owner.toString()),
     operatorSecurityCommitments: toPrimitiveOperatorSecurityCommitments(
       operatorSecurityCommitments,

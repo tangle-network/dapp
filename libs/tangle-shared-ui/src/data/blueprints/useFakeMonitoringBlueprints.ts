@@ -7,17 +7,18 @@ import { toSubstrateAddress } from '@tangle-network/ui-components';
 
 const generateBlueprints = (operatorAccount: string): MonitoringBlueprint[] => {
   const operatorAccountAddress = toSubstrateAddress(operatorAccount);
+
   return Array.from({ length: 4 })
     .fill(null)
     .map((_, idx) => {
       const blueprint: MonitoringBlueprint['blueprint'] = {
-        ...randPrimitiveBlueprint(idx),
+        ...randPrimitiveBlueprint(BigInt(idx)),
         uptime: randNumber({ min: 0, max: 100 }),
         instanceCount: randNumber({ min: 0, max: 100 }),
         operatorsCount: randNumber({ min: 0, max: 100 }),
       };
       const service: MonitoringBlueprint['services'][number] = {
-        ...randPrimitiveService(idx, operatorAccountAddress),
+        ...randPrimitiveService(BigInt(idx), operatorAccountAddress),
         blueprintData: blueprint,
         uptime: randNumber({ min: 0, max: 100 }),
         earned: randNumber({ min: 0, max: 1000000 }),
@@ -39,7 +40,7 @@ const generateBlueprints = (operatorAccount: string): MonitoringBlueprint[] => {
         ],
       };
       return {
-        blueprintId: idx,
+        blueprintId: BigInt(idx),
         blueprint: blueprint,
         services: [
           {

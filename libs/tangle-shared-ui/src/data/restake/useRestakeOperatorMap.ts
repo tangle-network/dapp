@@ -12,7 +12,7 @@ import usePolkadotApi from '../../hooks/usePolkadotApi';
 import { OperatorMap, OperatorMetadata } from '../../types/restake';
 import createRestakeAssetId from '../../utils/createRestakeAssetId';
 
-type UseRestakeOperatorMapReturnType = {
+type ReturnType = {
   operatorMap: OperatorMap;
   operatorMap$: Observable<OperatorMap>;
 };
@@ -23,7 +23,7 @@ type UseRestakeOperatorMapReturnType = {
  *  - `operatorMap`: The operator map.
  *  - `operatorMap$`: The observable for the operator map.
  */
-export default function useRestakeOperatorMap(): UseRestakeOperatorMapReturnType {
+const useRestakeOperatorMap = (): ReturnType => {
   const { apiRx } = usePolkadotApi();
 
   const operatorMap$ = useMemo(() => {
@@ -70,7 +70,7 @@ export default function useRestakeOperatorMap(): UseRestakeOperatorMapReturnType
     operatorMap,
     operatorMap$,
   };
-}
+};
 
 /**
  * @internal
@@ -130,3 +130,5 @@ function toPrimitiveDelegations(
     restakersCount: restakerSet.size,
   };
 }
+
+export default useRestakeOperatorMap;

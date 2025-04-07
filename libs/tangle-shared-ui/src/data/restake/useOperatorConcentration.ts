@@ -5,10 +5,10 @@ import { of, switchMap } from 'rxjs';
 
 export type OperatorConcentration = Map<SubstrateAddress, number | null>;
 
-export function useOperatorConcentration(
+const useOperatorConcentration = (
   operatorTVL: Map<SubstrateAddress, number>,
   totalNetworkTVL: number,
-) {
+) => {
   const concentration$ = useObservable(
     (input$) =>
       input$.pipe(
@@ -35,4 +35,6 @@ export function useOperatorConcentration(
   );
 
   return useObservableState(concentration$, new Map());
-}
+};
+
+export default useOperatorConcentration;

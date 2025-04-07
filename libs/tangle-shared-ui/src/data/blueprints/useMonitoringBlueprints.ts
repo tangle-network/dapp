@@ -47,7 +47,7 @@ export default function useMonitoringBlueprints(
           map((entries) =>
             entries.map(
               (entry): ServiceInstance => ({
-                instanceId: entry[0].args[0].toNumber(),
+                instanceId: entry[0].args[0].toBigInt(),
                 serviceInstance: entry[1].isSome
                   ? toPrimitiveService(entry[1].unwrap())
                   : undefined,
@@ -62,7 +62,7 @@ export default function useMonitoringBlueprints(
             map((vec) =>
               vec.map(
                 (item): OperatorBlueprint => ({
-                  blueprintId: item.blueprintId.toNumber(),
+                  blueprintId: item.blueprintId.toBigInt(),
                   blueprint: toPrimitiveBlueprint(item.blueprint),
                   services: item.services.map(toPrimitiveService),
                 }),
@@ -80,13 +80,13 @@ export default function useMonitoringBlueprints(
         ]).pipe(
           map(([blueprints, operatorInstances, runningInstanceEntries]) => {
             // mapping from blueprint id to service instance
-            const runningInstancesMap = new Map<number, ServiceInstance[]>();
+            const runningInstancesMap = new Map<bigint, ServiceInstance[]>();
 
             for (const [
               instanceId,
               mayBeServiceInstance,
             ] of runningInstanceEntries) {
-              const serviceInstanceId = instanceId.args[0].toNumber();
+              const serviceInstanceId = instanceId.args[0].toBigInt();
 
               if (mayBeServiceInstance.isNone) {
                 continue;

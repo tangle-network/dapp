@@ -64,13 +64,13 @@ export default function useBlueprintListing() {
               );
 
               // mapping from blueprint id to service instance
-              const runningInstancesMap = new Map<number, ServiceInstance[]>();
+              const runningInstancesMap = new Map<bigint, ServiceInstance[]>();
 
               for (const [
                 instanceId,
                 mayBeServiceInstance,
               ] of runningInstanceEntries) {
-                const serviceInstanceId = instanceId.args[0].toNumber();
+                const serviceInstanceId = instanceId.args[0].toBigInt();
 
                 if (mayBeServiceInstance.isNone) {
                   continue;
