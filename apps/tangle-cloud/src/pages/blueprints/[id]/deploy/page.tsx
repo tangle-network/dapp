@@ -19,6 +19,7 @@ import { ArrowLeft } from '@tangle-network/icons';
 import { SelectOperatorsStep } from './DeploySteps/OperatorSelectionStep';
 import { BasicInformationStep } from './DeploySteps/BasicInformationStep';
 import { AssetConfigurationStep } from './DeploySteps/AssetConfigurationStep';
+import { ReviewStep } from './DeploySteps/ReviewStep';
 
 const DeployPage: FC = () => {
   const { id } = useParams();
@@ -60,11 +61,18 @@ const DeployPage: FC = () => {
         component: AssetConfigurationStep,
         props: commonProps,
       },
+      {
+        component: ReviewStep,
+        props: commonProps,
+      },
     ],
-    [errors, setValue, watch, blueprintResult?.details],
+    [commonProps],
   );
 
-  const StepComponent = createElement(steps[step].component, steps[step].props);
+  const StepComponent = useMemo(
+    () => createElement(steps[step].component, steps[step].props),
+    [steps, step]
+  );
 
   const onNextStep = useCallback(async () => {
     const values = BLUEPRINT_DEPLOY_STEPS[step];
@@ -72,6 +80,8 @@ const DeployPage: FC = () => {
 
     if (isStepValid && step < BLUEPRINT_DEPLOY_STEPS.length - 1) {
       setStep(step + 1);
+    } else if (isStepValid && step === BLUEPRINT_DEPLOY_STEPS.length - 1) {
+      // TODO: Deploy the blueprint
     }
   }, [step, trigger]);
 
@@ -115,7 +125,11 @@ const DeployPage: FC = () => {
             rightIcon={<ArrowRightIcon width={24} height={24} />}
             onClick={onNextStep}
           >
-            Next
+            {
+              step === BLUEPRINT_DEPLOY_STEPS.length - 1
+                ? 'Deploy'
+                : 'Next'
+            }
           </Button>
         </div>
       </div>

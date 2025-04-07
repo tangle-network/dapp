@@ -9,7 +9,8 @@ export const BLUEPRINT_DEPLOY_STEPS = [
   'BasicInfo',
   'OperatorSelection',
   'AssetConfiguration',
-  // 'RequestArgs',
+  // 'RequestParameters',
+  'Review',
 ] as const;
 
 export const restakeAssetSchema = z.object({
@@ -64,6 +65,17 @@ export const deployBlueprintSchema = z
               message: 'Invalid caller address',
             });
           }
+        }
+
+        // validate not duplicate caller
+        const uniqueCallers = new Set(value);
+        if (uniqueCallers.size !== value.length) {
+          context.addIssue({
+            code: z.ZodIssueCode.custom,
+            message: 'Caller addresses must be unique', 
+          });
+
+          return z.NEVER;
         }
 
         return value;
@@ -132,9 +144,24 @@ export const deployBlueprintSchema = z
       minApproval: z.number().min(1),
       maxApproval: z.number().min(1).optional(),
     }),
-    // [BLUEPRINT_DEPLOY_STEPS[3]]: z.object({
-    //   requestArgs: z.array(z.string()).min(1),
-    // }),
+    [BLUEPRINT_DEPLOY_STEPS[3]]: z.object({
+      paymentAsset: z.string().transform((value, context) => {
+        try {
+          assertRestakeAssetId(value);
+        } catch (error: unknown) {
+          console.error(`Asset id ${value} is invalid: ${error}`);
+          context.addIssue({
+            code: z.ZodIssueCode.custom,
+            message: 'Invalid payment asset',
+          });
+    
+          return z.NEVER;
+        }
+
+        return value;
+      }),
+      paymentAmount: z.number(),
+    }),
   })
   .superRefine((schema, ctx) => {
     const operatorSelectionStep = schema[BLUEPRINT_DEPLOY_STEPS[1]];

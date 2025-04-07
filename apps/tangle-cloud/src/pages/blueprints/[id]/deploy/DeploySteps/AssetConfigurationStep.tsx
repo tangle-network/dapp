@@ -1,6 +1,6 @@
 import { Label, Input } from '@tangle-network/ui-components';
 import { Children, FC, useCallback, useMemo } from 'react';
-import { AssetConfigurationStepProps } from './type';
+import { ApprovalModelLabel, AssetConfigurationStepProps } from './type';
 import {
   BLUEPRINT_DEPLOY_STEPS,
   DeployBlueprintSchema,
@@ -157,12 +157,13 @@ export const AssetConfigurationStep: FC<AssetConfigurationStepProps> = ({
                 />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="Fixed">
-                  Require all operators to approve
-                </SelectItem>
-                <SelectItem value="Dynamic">
-                  Minimum required approvals
-                </SelectItem>
+                {Children.toArray(
+                  Object.entries(ApprovalModelLabel).map(([key, label]) => (
+                    <SelectItem value={key}>
+                      {label}
+                    </SelectItem>
+                  ))
+                )}
               </SelectContent>
             </Select>
             <ErrorMessage>
@@ -191,7 +192,7 @@ export const AssetConfigurationStep: FC<AssetConfigurationStepProps> = ({
           <Label className={labelClassName}>Selected Operators:</Label>
           <OperatorTable
             advanceFilter={(row) => {
-              return watch(`${operatorsStepKey}.operators`).includes(
+              return watch(`${operatorsStepKey}.operators`)?.includes(
                 row.address,
               );
             }}

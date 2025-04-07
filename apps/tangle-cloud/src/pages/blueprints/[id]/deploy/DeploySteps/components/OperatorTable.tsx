@@ -186,7 +186,7 @@ export const OperatorTable: FC<Props> = ({ advanceFilter, ...tableProps }) => {
       },
     }),
     COLUMN_HELPER.accessor('instanceCount', {
-      header: () => 'Instance Count',
+      header: () => 'Instances',
       sortingFn: sortByAddressOrIdentity<OperatorSelectionTable>(),
       cell: (props) => {
         return (

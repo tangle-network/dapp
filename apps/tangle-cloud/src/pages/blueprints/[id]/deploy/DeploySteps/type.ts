@@ -27,3 +27,8 @@ export type OperatorSelectionTable = {
   vaultTokens?: VaultToken[];
   pricing?: number;
 };
+
+export const ApprovalModelLabel: Record<DeployBlueprintSchema['AssetConfiguration']['approvalModel'], string> = {
+  Fixed: 'Require all operators to approve',
+  Dynamic: 'Minimum required approvals',
+} as const;

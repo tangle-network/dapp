@@ -20,12 +20,11 @@ import ParamsForm from './RegistrationForm/ParamsForm';
 import { SessionStorageKey } from '../../constants';
 import { useNavigate } from 'react-router';
 import { PagePath } from '../../types';
-import useServiceRegisterTx, {
-  toPrimitiveDataType,
-} from '../../data/services/useServiceRegisterTx';
+import useServiceRegisterTx from '../../data/services/useServiceRegisterTx';
 import { toTanglePrimitiveEcdsaKey } from '../../utils';
 import useSubstrateAddress from '@tangle-network/tangle-shared-ui/hooks/useSubstrateAddress';
 import { TxStatus } from '@tangle-network/tangle-shared-ui/hooks/useSubstrateTx';
+import { toPrimitiveArgsDataType } from '../../utils';
 
 export default function RegistrationReview() {
   const navigate = useNavigate();
@@ -123,7 +122,10 @@ export default function RegistrationReview() {
           registrationParams: blueprintRegistrationParams,
         }) => {
           const paramValues = registrationParams[blueprintId];
-          return toPrimitiveDataType(blueprintRegistrationParams, paramValues);
+          return toPrimitiveArgsDataType(
+            blueprintRegistrationParams,
+            paramValues,
+          );
         },
       ),
       amounts: blueprints.map(({ id }) => amount[id]),
