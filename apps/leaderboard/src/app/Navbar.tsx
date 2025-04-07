@@ -1,7 +1,6 @@
 'use client';
 
 import { AccordionTrigger } from '@radix-ui/react-accordion';
-import { TANGLE_TESTNET_NATIVE_EXPLORER_URL } from '@tangle-network/dapp-config/constants/tangle';
 import { ArrowRight, ChevronDown, Menu } from '@tangle-network/icons';
 import { ThemeSwitcherButton } from '@tangle-network/ui-components';
 import {
@@ -20,7 +19,6 @@ import {
   TANGLE_DAPP_URL,
   TANGLE_MKT_URL,
 } from '@tangle-network/ui-components/constants';
-import { Typography } from '@tangle-network/ui-components/typography/Typography';
 import cx from 'classnames';
 import type { ComponentProps } from 'react';
 import { Link } from 'react-router';

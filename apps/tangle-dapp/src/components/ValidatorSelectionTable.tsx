@@ -1,5 +1,8 @@
 import { Search } from '@tangle-network/icons';
+import SkeletonRows from '@tangle-network/tangle-shared-ui/components/SkeletonRows';
+import HeaderCell from '@tangle-network/tangle-shared-ui/components/tables/HeaderCell';
 import { sortByAddressOrIdentity } from '@tangle-network/tangle-shared-ui/components/tables/utils';
+import { Validator } from '@tangle-network/tangle-shared-ui/types';
 import {
   AmountFormatStyle,
   Avatar,
@@ -12,8 +15,11 @@ import {
   Typography,
 } from '@tangle-network/ui-components';
 import { TableVariant } from '@tangle-network/ui-components/components/Table/types';
+import { SubstrateAddress } from '@tangle-network/ui-components/types/address';
+import addCommasToNumber from '@tangle-network/ui-components/utils/addCommasToNumber';
 import assertSubstrateAddress from '@tangle-network/ui-components/utils/assertSubstrateAddress';
 import formatPercentage from '@tangle-network/ui-components/utils/formatPercentage';
+import sortByComparable from '@tangle-network/ui-components/utils/sortByComparable';
 import {
   createColumnHelper,
   getCoreRowModel,
@@ -40,15 +46,8 @@ import {
   useRef,
   useState,
 } from 'react';
-
-import SkeletonRows from '@tangle-network/tangle-shared-ui/components/SkeletonRows';
-import { Validator } from '@tangle-network/tangle-shared-ui/types';
-import { SubstrateAddress } from '@tangle-network/ui-components/types/address';
-import addCommasToNumber from '@tangle-network/ui-components/utils/addCommasToNumber';
-import sortByComparable from '@tangle-network/ui-components/utils/sortByComparable';
 import calculateCommission from '../utils/calculateCommission';
 import filterTableRowBy from '../utils/filterTableRowBy';
-import { HeaderCell } from './tableCells';
 import TokenAmountCell from './tableCells/TokenAmountCell';
 
 type Props = {
