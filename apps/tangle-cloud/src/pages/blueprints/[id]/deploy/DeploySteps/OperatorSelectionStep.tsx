@@ -129,27 +129,26 @@ export const SelectOperatorsStep: FC<SelectOperatorsStepProps> = ({
             (selectedAsset) => selectedAsset.id !== asset.id,
           );
 
-      if (!isChecked) {
-        // Filter operators that have the selected assets
-        const selectedOperators = operators
-          .filter((operator) =>
-            operator.vaultTokens?.some((vaultToken) =>
-              newSelectedAssets.some(
-                (selectedAsset) =>
-                  selectedAsset.metadata.symbol === vaultToken.symbol,
-              ),
+
+      // Filter operators that have the selected assets
+      const selectedOperators = operators
+        .filter((operator) =>
+          operator.vaultTokens?.some((vaultToken) =>
+            newSelectedAssets.some(
+              (selectedAsset) =>
+                selectedAsset.metadata.symbol === vaultToken.symbol,
             ),
-          )
-          .map((operator) => operator.address);
+          ),
+        )
+        .map((operator) => operator.address);
 
-        // Create a single object with all operators set to false
-        const newRowSelection = selectedOperators.reduce((acc, operator) => {
-          acc[operator] = false;
-          return acc;
-        }, {} as RowSelectionState);
+      // Create a single object with all operators set to false
+      const newRowSelection = selectedOperators.reduce((acc, operator) => {
+        acc[operator] = false;
+        return acc;
+      }, {} as RowSelectionState);
 
-        setRowSelection(newRowSelection);
-      }
+      setRowSelection(newRowSelection);
 
       setValue(`${stepKey}.assets`, newSelectedAssets);
     },
