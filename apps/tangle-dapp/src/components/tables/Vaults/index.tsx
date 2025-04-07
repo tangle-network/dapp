@@ -86,8 +86,8 @@ const getColumns = (nativeTokenSymbol: string | undefined) => [
     ),
     header: () => (
       <HeaderCell
-        title="Rewards"
-        tooltip="Total annual deposit rewards per vault"
+        title="Total Vault Rewards"
+        tooltip="Total rewards for the vault, distributed to all delegators."
       />
     ),
     cell: (props) => {

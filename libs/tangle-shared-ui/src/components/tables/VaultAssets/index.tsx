@@ -47,7 +47,7 @@ const getColumns = (evmExplorerUrl?: string) => [
 
       return (
         <p className="flex items-center gap-2">
-          <TokenIcon name={props.row.original.symbol} size="lg" />
+          <TokenIcon name={props.row.original.symbol} size="xl" />
 
           <Typography
             variant="body1"
@@ -168,7 +168,7 @@ const VaultAssetsTable: FC<Props> = ({
         )}
       />
 
-      <div className="flex-initial w-1/4 aspect-square mb-3">
+      <div className="flex-initial w-1/5 aspect-square mb-3">
         <ResponsiveContainer>
           <PieChart>
             <Pie
