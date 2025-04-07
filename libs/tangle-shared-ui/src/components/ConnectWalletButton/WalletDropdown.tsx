@@ -5,7 +5,11 @@ import { Trigger as DropdownTrigger } from '@radix-ui/react-dropdown-menu';
 import { useWebContext } from '@tangle-network/api-provider-environment';
 import { useWallets } from '@tangle-network/api-provider-environment/hooks/useWallets';
 import { ManagedWallet, WalletConfig } from '@tangle-network/dapp-config';
-import { WebbError, WebbErrorCodes } from '@tangle-network/dapp-types';
+import {
+  calculateTypedChainId,
+  WebbError,
+  WebbErrorCodes,
+} from '@tangle-network/dapp-types';
 import { LoginBoxLineIcon, WalletLineIcon } from '@tangle-network/icons';
 import { WebbWeb3Provider } from '@tangle-network/web3-api-provider';
 import {
@@ -36,7 +40,7 @@ const WalletDropdown: FC<{
   accountAddress: SubstrateAddress | EvmAddress | SolanaAddress;
   wallet: WalletConfig;
 }> = ({ accountAddress, accountName, wallet }) => {
-  const { inactivateApi } = useWebContext();
+  const { inactivateApi, activeChain, activeWallet } = useWebContext();
   const { notificationApi } = useUIContext();
   const { wallets } = useWallets();
 
@@ -51,6 +55,18 @@ const WalletDropdown: FC<{
   const accountExplorerUrl = useMemo(() => {
     return createExplorerAccountUrl(accountAddress);
   }, [accountAddress, createExplorerAccountUrl]);
+
+  const isWalletCompatibleWithChain = useMemo(() => {
+    const typedChainId = activeChain
+      ? calculateTypedChainId(activeChain.chainType, activeChain.id)
+      : null;
+
+    if (!typedChainId) {
+      return false;
+    }
+
+    return activeWallet?.supportedChainIds.includes(typedChainId);
+  }, [activeWallet, activeChain]);
 
   const handleDisconnect = useCallback(async () => {
     try {
@@ -102,7 +118,7 @@ const WalletDropdown: FC<{
                   displayCharCount={5}
                 />
 
-                {accountExplorerUrl !== null && (
+                {accountExplorerUrl !== null && isWalletCompatibleWithChain && (
                   <ExternalLinkIcon href={accountExplorerUrl} size="md" />
                 )}
               </div>

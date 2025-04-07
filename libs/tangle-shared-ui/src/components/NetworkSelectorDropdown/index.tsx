@@ -65,9 +65,9 @@ const NetworkSelectionButton: FC<NetworkSelectionButtonProps> = ({
       }
 
       return (
-        network?.name ??
         activeChain?.displayName ??
         activeChain?.name ??
+        network?.name ??
         UNKNOWN_NETWORK
       );
     },

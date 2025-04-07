@@ -29,6 +29,11 @@ const ConnectWalletModal = ({
     supportedWallets,
   } = useConnectWallet();
 
+  // TODO: Remove this - temporarily removing Phantom wallet support
+  const filteredSupportedWallets = useMemo(() => {
+    return supportedWallets.filter((wallet) => wallet.name !== 'Phantom');
+  }, [supportedWallets]);
+
   const { network } = useNetworkStore();
   const { notificationApi } = useUIContext();
   const { apiConfig } = useWebContext();
@@ -49,7 +54,7 @@ const ConnectWalletModal = ({
       connectWallet={connectWallet}
       toggleModal={toggleModal}
       connectError={connectError}
-      supportedWallets={supportedWallets}
+      supportedWallets={filteredSupportedWallets}
       notificationApi={notificationApi}
       apiConfig={apiConfig}
       targetTypedChainIds={targetTypedChainIds}
