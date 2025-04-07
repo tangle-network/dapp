@@ -18,16 +18,18 @@ import assertRestakeAssetId from '@tangle-network/tangle-shared-ui/utils/assertR
 import { AssetRequirementFormItem } from './components/AssetRequirementFormItem';
 import ErrorMessage from '../../../../../components/ErrorMessage';
 import { OperatorTable } from './components/OperatorTable';
+import { useWatch } from 'react-hook-form';
 
 export const AssetConfigurationStep: FC<AssetConfigurationStepProps> = ({
   errors: globalErrors,
   setValue,
   watch,
+  control,
 }) => {
   const labelClassName = 'text-mono-200 dark:text-mono-0 font-normal';
 
-  const stepKey = BLUEPRINT_DEPLOY_STEPS[2];
-  const operatorsStepKey = BLUEPRINT_DEPLOY_STEPS[1];
+  const stepKey = BLUEPRINT_DEPLOY_STEPS.ASSET_CONFIGURATION;
+  const operatorsStepKey = BLUEPRINT_DEPLOY_STEPS.OPERATOR_SELECTION;
   const values = watch(stepKey);
 
   const errors = globalErrors?.[stepKey];
@@ -37,15 +39,18 @@ export const AssetConfigurationStep: FC<AssetConfigurationStepProps> = ({
 
   const selectedAssets = useMemo(
     () =>
-      (watch(`${BLUEPRINT_DEPLOY_STEPS[1]}.assets`) ?? []).map((asset) => ({
+      (watch(`${operatorsStepKey}.assets`) ?? []).map((asset) => ({
         ...asset,
         id: assertRestakeAssetId(asset.id),
       })),
-    [watch(`${BLUEPRINT_DEPLOY_STEPS[1]}.assets`)],
+    [watch(`${operatorsStepKey}.assets`)],
   );
 
-  const selectedOperators =
-    watch(`${BLUEPRINT_DEPLOY_STEPS[1]}.operators`) ?? [];
+  const selectedOperators = useWatch({
+    control,
+    name: `${operatorsStepKey}.operators`,
+    defaultValue: []
+  });
 
   const { result: assetsMetadata } = useAssetsMetadata(
     useMemo(() => selectedAssets.map(({ id }) => id), [selectedAssets]),
@@ -165,9 +170,13 @@ export const AssetConfigurationStep: FC<AssetConfigurationStepProps> = ({
                 </SelectItem>
               </SelectContent>
             </Select>
-            <ErrorMessage>
-              {globalErrors?.[stepKey]?.approvalModel?.message}
-            </ErrorMessage>
+            {
+              globalErrors?.[stepKey]?.approvalModel?.message && (
+                <ErrorMessage>
+                  {globalErrors?.[stepKey]?.approvalModel?.message}
+                </ErrorMessage>
+              )
+            }
           </div>
 
           {approvalModel === 'Dynamic' && (
@@ -180,9 +189,13 @@ export const AssetConfigurationStep: FC<AssetConfigurationStepProps> = ({
                 type="number"
                 id="approval-threshold"
               />
-              <ErrorMessage>
-                {globalErrors?.[stepKey]?.minApproval?.message}
-              </ErrorMessage>
+              {
+                globalErrors?.[stepKey]?.minApproval?.message && (
+                  <ErrorMessage>
+                    {globalErrors?.[stepKey]?.minApproval?.message}
+                  </ErrorMessage>
+                )
+              }
             </div>
           )}
         </div>

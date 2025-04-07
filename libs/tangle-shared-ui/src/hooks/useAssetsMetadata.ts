@@ -9,10 +9,8 @@ import usePromise from './usePromise';
 import { EvmAddress } from '@tangle-network/ui-components/types/address';
 import { map } from 'rxjs';
 
-type useAssetsMetadataProps = RestakeAssetId | RestakeAssetId[];
-
 const useAssetsMetadata = (
-  singleOrMultipleAssetIds: useAssetsMetadataProps,
+  singleOrMultipleAssetIds: RestakeAssetId | RestakeAssetId[],
 ) => {
   const viemPublicClient = useViemPublicClient();
 
@@ -35,8 +33,8 @@ const useAssetsMetadata = (
         return acc;
       },
       {
-        evmAssetIds: [] as EvmAddress[],
-        nativeAssetIds: [] as RestakeAssetId[],
+        evmAssetIds: new Array<EvmAddress>(),
+        nativeAssetIds: new Array<RestakeAssetId>(),
       },
     );
 
@@ -75,8 +73,8 @@ const useAssetsMetadata = (
                 name: asset.name.toHuman()?.toString() ?? '',
                 symbol: asset.symbol.toHuman()?.toString() ?? '',
                 decimals: asset.decimals.toNumber(),
-                deposit: asset.deposit.toHuman()?.toString() ?? '',
-                isFrozen: asset.isFrozen.toHuman() ?? false,
+                deposit: asset.deposit.toHuman()?.toString(),
+                isFrozen: asset.isFrozen.toHuman(),
                 assetId: nativeAssetIds[index],
               };
             });

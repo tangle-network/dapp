@@ -55,23 +55,23 @@ export const OperatorTable: FC<Props> = ({ advanceFilter, ...tableProps }) => {
 
   const { operatorMap: restakeOperatorMap } = useRestakeOperatorMap();
 
-  const { result: _registeredOperators } =
+  const { result: registeredOperators_ } =
     useBlueprintRegisteredOperator(blueprintId);
 
   const registeredOperators = useMemo(() => {
     return new Map(
-      _registeredOperators.map((operator) => [
+      registeredOperators_.map((operator) => [
         operator.operatorAccount,
         operator,
       ]),
     );
-  }, [_registeredOperators]);
+  }, [registeredOperators_]);
   const operatorAddresses = useMemo(
     () =>
-      _registeredOperators.map((operator) =>
+      registeredOperators_.map((operator) =>
         assertSubstrateAddress(operator.operatorAccount),
       ),
-    [_registeredOperators],
+    [registeredOperators_],
   );
 
   const { result: operatorServicesMap } =
@@ -221,18 +221,14 @@ export const OperatorTable: FC<Props> = ({ advanceFilter, ...tableProps }) => {
               (props.row.original.uptime * DEFAULT_STACK) / DEFAULT_PERCENTAGE,
             );
 
-        const activeColors = Array.from({ length: numberOfActiveChips }).fill(
-          EnergyChipColors.GREEN,
-        );
-        const inactiveColors = Array.from({
-          length: DEFAULT_STACK - numberOfActiveChips,
-        }).fill(EnergyChipColors.GREY);
+        const activeColors = Array<EnergyChipColors>(numberOfActiveChips).fill(EnergyChipColors.GREEN);
+        const inactiveColors = Array<EnergyChipColors>(DEFAULT_STACK - numberOfActiveChips).fill(EnergyChipColors.GREY);
         const colors = [...activeColors, ...inactiveColors];
 
         return (
           <TableCellWrapper className="pl-3 min-h-fit">
             <EnergyChipStack
-              colors={colors as EnergyChipColors[]}
+              colors={colors}
               label={`${props.row.original.uptime || EMPTY_VALUE_PLACEHOLDER}%`}
             />
           </TableCellWrapper>

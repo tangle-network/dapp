@@ -5,12 +5,14 @@ import {
 } from '@tangle-network/ui-components';
 import { z } from 'zod';
 
-export const BLUEPRINT_DEPLOY_STEPS = [
-  'BasicInfo',
-  'OperatorSelection',
-  'AssetConfiguration',
-  // 'RequestArgs',
-] as const;
+export const BLUEPRINT_DEPLOY_STEPS = {
+  BASIC_INFO: 'BasicInfo',
+  OPERATOR_SELECTION: 'OperatorSelection',
+  ASSET_CONFIGURATION: 'AssetConfiguration',
+  // REQUEST_ARGS: 'RequestArgs',
+} as const;
+
+export type BlueprintDeployStep = typeof BLUEPRINT_DEPLOY_STEPS[keyof typeof BLUEPRINT_DEPLOY_STEPS];
 
 export const restakeAssetSchema = z.object({
   id: z.string().transform((value, ctx) => {
@@ -43,7 +45,7 @@ export const restakeAssetSchema = z.object({
 
 export const deployBlueprintSchema = z
   .object({
-    [BLUEPRINT_DEPLOY_STEPS[0]]: z.object({
+    [BLUEPRINT_DEPLOY_STEPS.BASIC_INFO]: z.object({
       instanceName: z.string().min(1),
       instanceDuration: z.number().min(1),
       permittedCallers: z.array(z.string()).transform((value, context) => {
@@ -69,7 +71,7 @@ export const deployBlueprintSchema = z
         return value;
       }),
     }),
-    [BLUEPRINT_DEPLOY_STEPS[1]]: z.object({
+    [BLUEPRINT_DEPLOY_STEPS.OPERATOR_SELECTION]: z.object({
       operators: z.array(z.string()).transform((value, context) => {
         if (value.length === 0) {
           context.addIssue({
@@ -95,7 +97,7 @@ export const deployBlueprintSchema = z
         return value;
       }),
     }),
-    [BLUEPRINT_DEPLOY_STEPS[2]]: z.object({
+    [BLUEPRINT_DEPLOY_STEPS.ASSET_CONFIGURATION]: z.object({
       securityCommitments: z
         .array(
           z.object({
@@ -132,19 +134,19 @@ export const deployBlueprintSchema = z
       minApproval: z.number().min(1),
       maxApproval: z.number().min(1).optional(),
     }),
-    // [BLUEPRINT_DEPLOY_STEPS[3]]: z.object({
+    // [BLUEPRINT_DEPLOY_STEPS.REQUEST_ARGS]: z.object({
     //   requestArgs: z.array(z.string()).min(1),
     // }),
   })
   .superRefine((schema, ctx) => {
-    const operatorSelectionStep = schema[BLUEPRINT_DEPLOY_STEPS[1]];
-    const assetConfigurationStep = schema[BLUEPRINT_DEPLOY_STEPS[2]];
+    const operatorSelectionStep = schema[BLUEPRINT_DEPLOY_STEPS.OPERATOR_SELECTION];
+    const assetConfigurationStep = schema[BLUEPRINT_DEPLOY_STEPS.ASSET_CONFIGURATION];
 
     if (assetConfigurationStep.approvalModel === 'Dynamic') {
       // If approval model is dynamic, `maxApproval` is required
       if (!assetConfigurationStep.maxApproval) {
         ctx.addIssue({
-          path: [`${BLUEPRINT_DEPLOY_STEPS[2]}.maxApproval`],
+          path: [`${BLUEPRINT_DEPLOY_STEPS.ASSET_CONFIGURATION}.maxApproval`],
           code: z.ZodIssueCode.custom,
           message: 'Max approval is required for dynamic approval model',
         });
@@ -158,7 +160,7 @@ export const deployBlueprintSchema = z
         operatorSelectionStep.operators.length
       ) {
         ctx.addIssue({
-          path: [`${BLUEPRINT_DEPLOY_STEPS[2]}.minApproval`],
+          path: [`${BLUEPRINT_DEPLOY_STEPS.ASSET_CONFIGURATION}.minApproval`],
           code: z.ZodIssueCode.custom,
           message: 'Min approval cannot be greater than number of operators',
         });

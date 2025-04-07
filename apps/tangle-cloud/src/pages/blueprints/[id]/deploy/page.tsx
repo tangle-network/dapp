@@ -20,6 +20,8 @@ import { SelectOperatorsStep } from './DeploySteps/OperatorSelectionStep';
 import { BasicInformationStep } from './DeploySteps/BasicInformationStep';
 import { AssetConfigurationStep } from './DeploySteps/AssetConfigurationStep';
 
+const DEPLOY_STEPS = Object.values(BLUEPRINT_DEPLOY_STEPS);
+
 const DeployPage: FC = () => {
   const { id } = useParams();
   const [step, setStep] = useState(0);
@@ -30,6 +32,7 @@ const DeployPage: FC = () => {
   } = useBlueprintDetails(id);
 
   const {
+    control,
     watch,
     setValue,
     trigger,
@@ -40,6 +43,7 @@ const DeployPage: FC = () => {
   });
 
   const commonProps = {
+    control,
     errors,
     setValue,
     watch,
@@ -67,10 +71,10 @@ const DeployPage: FC = () => {
   const StepComponent = createElement(steps[step].component, steps[step].props);
 
   const onNextStep = useCallback(async () => {
-    const values = BLUEPRINT_DEPLOY_STEPS[step];
-    const isStepValid = await trigger(values);
+    const currentStepKey = DEPLOY_STEPS[step];
+    const isStepValid = await trigger(currentStepKey);
 
-    if (isStepValid && step < BLUEPRINT_DEPLOY_STEPS.length - 1) {
+    if (isStepValid && step < DEPLOY_STEPS.length - 1) {
       setStep(step + 1);
     }
   }, [step, trigger]);

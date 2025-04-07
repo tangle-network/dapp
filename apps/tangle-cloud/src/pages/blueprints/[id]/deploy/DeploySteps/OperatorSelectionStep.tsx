@@ -25,14 +25,16 @@ import { Search } from '@tangle-network/icons';
 import LsTokenIcon from '@tangle-network/tangle-shared-ui/components/LsTokenIcon';
 import { RestakeAsset } from '@tangle-network/tangle-shared-ui/types/restake';
 import { OperatorTable } from './components/OperatorTable';
+import { useWatch } from 'react-hook-form';
 
 const MAX_ASSET_TO_SHOW = 3;
-const stepKey = BLUEPRINT_DEPLOY_STEPS[1];
+const stepKey = BLUEPRINT_DEPLOY_STEPS.OPERATOR_SELECTION;
 
 export const SelectOperatorsStep: FC<SelectOperatorsStepProps> = ({
   errors: globalErrors,
   setValue,
   watch,
+  control,
 }) => {
   const [rowSelection, setRowSelection] = useState<RowSelectionState>(
     watch(`${stepKey}.operators`)?.reduce((acc, operator) => {
@@ -96,7 +98,11 @@ export const SelectOperatorsStep: FC<SelectOperatorsStepProps> = ({
 
   const errors = globalErrors?.[stepKey];
 
-  const selectedAssets = watch(`${stepKey}.assets`) ?? [];
+  const selectedAssets = useWatch({
+    control,
+    name: `${stepKey}.assets`,
+    defaultValue: [],
+  });
 
   const advanceFilter = useCallback(
     (operator: OperatorSelectionTable) => {
@@ -231,9 +237,13 @@ export const SelectOperatorsStep: FC<SelectOperatorsStepProps> = ({
             </SelectContent>
           </Select>
 
-          <ErrorMessage>
-            {globalErrors?.[stepKey]?.assets?.message}
-          </ErrorMessage>
+          {
+            globalErrors?.[stepKey]?.assets?.message && (
+              <ErrorMessage>
+                {globalErrors?.[stepKey]?.assets?.message}
+              </ErrorMessage>
+            )
+          }
         </div>
 
         <div className="w-1/4">
@@ -280,7 +290,11 @@ export const SelectOperatorsStep: FC<SelectOperatorsStepProps> = ({
         advanceFilter={advanceFilter}
       />
 
-      <ErrorMessage>{errors?.operators?.message}</ErrorMessage>
+      {
+        errors?.operators?.message && (
+          <ErrorMessage>{errors?.operators?.message}</ErrorMessage>
+        )
+      }
     </div>
   );
 };
