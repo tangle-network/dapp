@@ -5,12 +5,15 @@ import {
 } from '@tangle-network/ui-components';
 import { z } from 'zod';
 
-export const BLUEPRINT_DEPLOY_STEPS = [
-  'step1',
-  'step2',
-  'step3',
-  'step4',
-] as const;
+export const BLUEPRINT_DEPLOY_STEPS = {
+  BASIC_INFO: 'BasicInfo',
+  OPERATOR_SELECTION: 'OperatorSelection',
+  ASSET_CONFIGURATION: 'AssetConfiguration',
+  // REQUEST_ARGS: 'RequestArgs',
+} as const;
+
+export type BlueprintDeployStep =
+  (typeof BLUEPRINT_DEPLOY_STEPS)[keyof typeof BLUEPRINT_DEPLOY_STEPS];
 
 export const restakeAssetSchema = z.object({
   id: z.string().transform((value, ctx) => {
@@ -41,76 +44,135 @@ export const restakeAssetSchema = z.object({
   }),
 });
 
-export const deployBlueprintSchema = z.object({
-  [BLUEPRINT_DEPLOY_STEPS[0]]: z.object({
-    instanceName: z.string().min(1),
-    instanceDuration: z.number().min(1),
-    permittedCallers: z.array(z.string()).transform((value, context) => {
-      if (value.length === 0) {
-        context.addIssue({
-          code: z.ZodIssueCode.custom,
-          message: 'At least one caller is required',
-        });
-
-        return z.NEVER;
-      }
-
-      for (const [index, caller] of value.entries()) {
-        if (!isEvmAddress(caller) && !isSubstrateAddress(caller)) {
+export const deployBlueprintSchema = z
+  .object({
+    [BLUEPRINT_DEPLOY_STEPS.BASIC_INFO]: z.object({
+      instanceName: z.string().min(1),
+      instanceDuration: z.number().min(1),
+      permittedCallers: z.array(z.string()).transform((value, context) => {
+        if (value.length === 0) {
           context.addIssue({
-            path: [index],
             code: z.ZodIssueCode.custom,
-            message: 'Invalid caller address',
+            message: 'At least one caller is required',
           });
+
+          return z.NEVER;
         }
-      }
 
-      return value;
+        for (const [index, caller] of value.entries()) {
+          if (!isEvmAddress(caller) && !isSubstrateAddress(caller)) {
+            context.addIssue({
+              path: [index],
+              code: z.ZodIssueCode.custom,
+              message: 'Invalid caller address',
+            });
+          }
+        }
+
+        return value;
+      }),
     }),
-  }),
-  [BLUEPRINT_DEPLOY_STEPS[1]]: z.object({
-    operators: z.array(z.string()).transform((value, context) => {
-      if (value.length === 0) {
-        context.addIssue({
+    [BLUEPRINT_DEPLOY_STEPS.OPERATOR_SELECTION]: z.object({
+      operators: z.array(z.string()).transform((value, context) => {
+        if (value.length === 0) {
+          context.addIssue({
+            code: z.ZodIssueCode.custom,
+            message: 'At least one operator is required',
+          });
+
+          return z.NEVER;
+        }
+
+        return value;
+      }),
+      assets: z.array(restakeAssetSchema).transform((value, context) => {
+        if (value.length === 0) {
+          context.addIssue({
+            code: z.ZodIssueCode.custom,
+            message: 'At least one asset is required',
+          });
+
+          return z.NEVER;
+        }
+
+        return value;
+      }),
+    }),
+    [BLUEPRINT_DEPLOY_STEPS.ASSET_CONFIGURATION]: z.object({
+      securityCommitments: z
+        .array(
+          z.object({
+            minExposurePercent: z.number().min(1).max(100),
+            maxExposurePercent: z.number().min(1).max(100),
+          }),
+        )
+        .transform((value, context) => {
+          if (value.length === 0) {
+            context.addIssue({
+              code: z.ZodIssueCode.custom,
+              message: 'At least one security commitment is required',
+            });
+
+            return z.NEVER;
+          }
+
+          for (const [index, commitment] of value.entries()) {
+            if (commitment.minExposurePercent > commitment.maxExposurePercent) {
+              context.addIssue({
+                path: [index],
+                code: z.ZodIssueCode.custom,
+                message:
+                  'Min exposure percent cannot be greater than max exposure percent',
+              });
+
+              return z.NEVER;
+            }
+          }
+
+          return value;
+        }),
+      approvalModel: z.enum(['Dynamic', 'Fixed']),
+      minApproval: z.number().min(1),
+      maxApproval: z.number().min(1).optional(),
+    }),
+    // [BLUEPRINT_DEPLOY_STEPS.REQUEST_ARGS]: z.object({
+    //   requestArgs: z.array(z.string()).min(1),
+    // }),
+  })
+  .superRefine((schema, ctx) => {
+    const operatorSelectionStep =
+      schema[BLUEPRINT_DEPLOY_STEPS.OPERATOR_SELECTION];
+    const assetConfigurationStep =
+      schema[BLUEPRINT_DEPLOY_STEPS.ASSET_CONFIGURATION];
+
+    if (assetConfigurationStep.approvalModel === 'Dynamic') {
+      // If approval model is dynamic, `maxApproval` is required
+      if (!assetConfigurationStep.maxApproval) {
+        ctx.addIssue({
+          path: [`${BLUEPRINT_DEPLOY_STEPS.ASSET_CONFIGURATION}.maxApproval`],
           code: z.ZodIssueCode.custom,
-          message: 'At least one operator is required',
+          message: 'Max approval is required for dynamic approval model',
         });
 
         return z.NEVER;
       }
 
-      return value;
-    }),
-    assets: z.array(restakeAssetSchema).transform((value, context) => {
-      if (value.length === 0) {
-        context.addIssue({
+      // `approvalThreshold` must be less than or equal to the number of operators
+      if (
+        assetConfigurationStep.minApproval >
+        operatorSelectionStep.operators.length
+      ) {
+        ctx.addIssue({
+          path: [`${BLUEPRINT_DEPLOY_STEPS.ASSET_CONFIGURATION}.minApproval`],
           code: z.ZodIssueCode.custom,
-          message: 'At least one asset is required',
+          message: 'Min approval cannot be greater than number of operators',
         });
 
         return z.NEVER;
       }
 
-      return value;
-    }),
-  }),
-  [BLUEPRINT_DEPLOY_STEPS[2]]: z.object({
-    requestArgs: z.array(z.string()).min(1),
-  }),
-  [BLUEPRINT_DEPLOY_STEPS[3]]: z.object({
-    securityCommitments: z.array(z.string()).transform((value, context) => {
-      if (value.length === 0) {
-        context.addIssue({
-          code: z.ZodIssueCode.custom,
-          message: 'At least one security commitment is required',
-        });
-
-        return z.NEVER;
-      }
-
-      return value;
-    }),
-  }),
-});
+      return schema;
+    }
+  });
 
 export type DeployBlueprintSchema = z.infer<typeof deployBlueprintSchema>;

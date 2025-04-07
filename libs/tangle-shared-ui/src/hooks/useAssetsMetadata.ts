@@ -2,44 +2,117 @@ import useApiRx from './useApiRx';
 import { useCallback, useMemo } from 'react';
 import { RestakeAssetId } from '../types';
 import { PrimitiveAssetMetadata } from '../types/restake';
-type useAssetsMetadataProps = RestakeAssetId | RestakeAssetId[];
+import { isEvmAddress } from '@tangle-network/ui-components';
+import fetchErc20TokenMetadata from '../utils/fetchErc20TokenMetadata';
+import useViemPublicClient from './useViemPublicClient';
+import usePromise from './usePromise';
+import { EvmAddress } from '@tangle-network/ui-components/types/address';
+import { map } from 'rxjs';
 
 const useAssetsMetadata = (
-  singleOrMultipleAssetIds: useAssetsMetadataProps,
+  singleOrMultipleAssetIds: RestakeAssetId | RestakeAssetId[],
 ) => {
-  const addresses = useMemo(() => {
+  const viemPublicClient = useViemPublicClient();
+
+  const { evmAssetIds, nativeAssetIds } = useMemo(() => {
+    let assets: RestakeAssetId[] = [];
     if (Array.isArray(singleOrMultipleAssetIds)) {
-      return Array.from(new Set(singleOrMultipleAssetIds));
+      assets = singleOrMultipleAssetIds;
     } else {
-      return [singleOrMultipleAssetIds];
+      assets = [singleOrMultipleAssetIds];
     }
+
+    const { evmAssetIds, nativeAssetIds } = assets.reduce(
+      (acc, assetId) => {
+        if (isEvmAddress(assetId)) {
+          acc.evmAssetIds.push(assetId);
+        } else {
+          acc.nativeAssetIds.push(assetId);
+        }
+
+        return acc;
+      },
+      {
+        evmAssetIds: new Array<EvmAddress>(),
+        nativeAssetIds: new Array<RestakeAssetId>(),
+      },
+    );
+
+    return {
+      evmAssetIds: Array.from(new Set(evmAssetIds)),
+      nativeAssetIds: Array.from(new Set(nativeAssetIds)),
+    };
   }, [singleOrMultipleAssetIds]);
 
-  const { result, ...other } = useApiRx(
+  const { result: evmAssetMetadatas, isLoading: isLoadingEvmAssetMetadatas } =
+    usePromise(
+      useCallback(async () => {
+        if (evmAssetIds === null || viemPublicClient === null) {
+          return null;
+        }
+
+        return await fetchErc20TokenMetadata(viemPublicClient, evmAssetIds);
+      }, [evmAssetIds, viemPublicClient]),
+      null,
+    );
+
+  const {
+    result: nativeAssetMetadatas,
+    isLoading: isLoadingNativeAssetMetadatas,
+  } = useApiRx(
     useCallback(
-      (api) => api.query.assets.metadata.multi(addresses),
-      [addresses],
+      (api) => {
+        return api.query.assets.metadata.multi(nativeAssetIds).pipe(
+          map((assets) => {
+            return assets.map((asset, index) => {
+              if (asset.isEmpty) {
+                return null;
+              }
+
+              return {
+                name: asset.name.toHuman()?.toString() ?? '',
+                symbol: asset.symbol.toHuman()?.toString() ?? '',
+                decimals: asset.decimals.toNumber(),
+                deposit: asset.deposit.toHuman()?.toString(),
+                isFrozen: asset.isFrozen.toHuman(),
+                assetId: nativeAssetIds[index],
+              };
+            });
+          }),
+        );
+      },
+      [nativeAssetIds],
     ),
   );
 
   const assetsMetadata = useMemo(() => {
-    if (result === null) {
-      return [];
+    if (nativeAssetMetadatas === null || evmAssetMetadatas === null) {
+      return undefined;
     }
 
-    return result.map((metadataResult, index) => {
-      if (metadataResult.isEmpty) {
-        return [addresses[index], null] as const;
+    const assetsMetadataMap = new Map<
+      RestakeAssetId,
+      PrimitiveAssetMetadata | null
+    >();
+
+    for (const asset of nativeAssetMetadatas) {
+      if (asset) {
+        const { assetId, ...rest } = asset;
+        assetsMetadataMap.set(assetId, { ...rest });
       }
+    }
 
-      return [
-        addresses[index],
-        metadataResult.toHuman() as PrimitiveAssetMetadata,
-      ] as const;
-    });
-  }, [addresses, result]);
+    for (const asset of evmAssetMetadatas) {
+      assetsMetadataMap.set(asset.id, asset);
+    }
 
-  return { result: new Map(assetsMetadata), ...other };
+    return assetsMetadataMap;
+  }, [evmAssetMetadatas, nativeAssetMetadatas]);
+
+  return {
+    result: assetsMetadata,
+    isLoading: isLoadingEvmAssetMetadatas || isLoadingNativeAssetMetadatas,
+  };
 };
 
 export default useAssetsMetadata;
