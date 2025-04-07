@@ -25,24 +25,24 @@ export default function useBlueprintRegisteredOperator(blueprintId?: number) {
                   preferences: {
                     key: preferences.key,
                     priceTargets: {
-                      // @ts-expect-error Property 'cpu' does not exist on type AnyJson[]
                       cpu: formatLocaleStringToNumber(
+                        // @ts-expect-error Property 'cpu' does not exist on type AnyJson[]
                         preferences?.priceTargets?.cpu || '0',
                       ),
-                      // @ts-expect-error Property 'mem' does not exist on type AnyJson[]
                       mem: formatLocaleStringToNumber(
+                        // @ts-expect-error Property 'mem' does not exist on type AnyJson[]
                         preferences?.priceTargets?.mem || '0',
                       ),
-                      // @ts-expect-error Property 'storageHdd' does not exist on type AnyJson[]
                       storageHdd: formatLocaleStringToNumber(
+                        // @ts-expect-error Property 'storageHdd' does not exist on type AnyJson[]
                         preferences?.priceTargets?.storageHdd || '0',
                       ),
-                      // @ts-expect-error Property 'storageSsd' does not exist on type AnyJson[]
                       storageSsd: formatLocaleStringToNumber(
+                        // @ts-expect-error Property 'storageSsd' does not exist on type AnyJson[]
                         preferences?.priceTargets?.storageSsd || '0',
                       ),
-                      // @ts-expect-error Property 'storageNvme' does not exist on type AnyJson[]
                       storageNvme: formatLocaleStringToNumber(
+                        // @ts-expect-error Property 'storageNvme' does not exist on type AnyJson[]
                         preferences?.priceTargets?.storageNvme || '0',
                       ),
                     },
