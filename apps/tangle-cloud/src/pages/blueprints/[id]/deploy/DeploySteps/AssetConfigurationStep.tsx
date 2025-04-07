@@ -49,7 +49,7 @@ export const AssetConfigurationStep: FC<AssetConfigurationStepProps> = ({
   const selectedOperators = useWatch({
     control,
     name: `${operatorsStepKey}.operators`,
-    defaultValue: []
+    defaultValue: [],
   });
 
   const { result: assetsMetadata } = useAssetsMetadata(
@@ -170,13 +170,11 @@ export const AssetConfigurationStep: FC<AssetConfigurationStepProps> = ({
                 </SelectItem>
               </SelectContent>
             </Select>
-            {
-              globalErrors?.[stepKey]?.approvalModel?.message && (
-                <ErrorMessage>
-                  {globalErrors?.[stepKey]?.approvalModel?.message}
-                </ErrorMessage>
-              )
-            }
+            {globalErrors?.[stepKey]?.approvalModel?.message && (
+              <ErrorMessage>
+                {globalErrors?.[stepKey]?.approvalModel?.message}
+              </ErrorMessage>
+            )}
           </div>
 
           {approvalModel === 'Dynamic' && (
@@ -189,13 +187,11 @@ export const AssetConfigurationStep: FC<AssetConfigurationStepProps> = ({
                 type="number"
                 id="approval-threshold"
               />
-              {
-                globalErrors?.[stepKey]?.minApproval?.message && (
-                  <ErrorMessage>
-                    {globalErrors?.[stepKey]?.minApproval?.message}
-                  </ErrorMessage>
-                )
-              }
+              {globalErrors?.[stepKey]?.minApproval?.message && (
+                <ErrorMessage>
+                  {globalErrors?.[stepKey]?.minApproval?.message}
+                </ErrorMessage>
+              )}
             </div>
           )}
         </div>

@@ -33,9 +33,10 @@ export default function useBlueprintRegisteredOperator(blueprintId?: number) {
               return entries.map(([storageKey, operatorPrefs]) => {
                 const operatorAccount = storageKey.args[1].toString();
                 const preferences = operatorPrefs.unwrapOrDefault().toHuman();
-                const parsedPreferences = preferencesSchema.safeParse(preferences);
-                const priceTargets = parsedPreferences.success 
-                  ? parsedPreferences.data.priceTargets 
+                const parsedPreferences =
+                  preferencesSchema.safeParse(preferences);
+                const priceTargets = parsedPreferences.success
+                  ? parsedPreferences.data.priceTargets
                   : undefined;
                 return {
                   operatorAccount,
@@ -44,9 +45,15 @@ export default function useBlueprintRegisteredOperator(blueprintId?: number) {
                     priceTargets: {
                       cpu: formatLocaleStringToNumber(priceTargets?.cpu || '0'),
                       mem: formatLocaleStringToNumber(priceTargets?.mem || '0'),
-                      storageHdd: formatLocaleStringToNumber(priceTargets?.storageHdd || '0'),
-                      storageSsd: formatLocaleStringToNumber(priceTargets?.storageSsd || '0'),
-                      storageNvme: formatLocaleStringToNumber(priceTargets?.storageNvme || '0'),
+                      storageHdd: formatLocaleStringToNumber(
+                        priceTargets?.storageHdd || '0',
+                      ),
+                      storageSsd: formatLocaleStringToNumber(
+                        priceTargets?.storageSsd || '0',
+                      ),
+                      storageNvme: formatLocaleStringToNumber(
+                        priceTargets?.storageNvme || '0',
+                      ),
                     },
                   },
                 };

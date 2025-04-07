@@ -237,13 +237,11 @@ export const SelectOperatorsStep: FC<SelectOperatorsStepProps> = ({
             </SelectContent>
           </Select>
 
-          {
-            globalErrors?.[stepKey]?.assets?.message && (
-              <ErrorMessage>
-                {globalErrors?.[stepKey]?.assets?.message}
-              </ErrorMessage>
-            )
-          }
+          {globalErrors?.[stepKey]?.assets?.message && (
+            <ErrorMessage>
+              {globalErrors?.[stepKey]?.assets?.message}
+            </ErrorMessage>
+          )}
         </div>
 
         <div className="w-1/4">
@@ -290,11 +288,9 @@ export const SelectOperatorsStep: FC<SelectOperatorsStepProps> = ({
         advanceFilter={advanceFilter}
       />
 
-      {
-        errors?.operators?.message && (
-          <ErrorMessage>{errors?.operators?.message}</ErrorMessage>
-        )
-      }
+      {errors?.operators?.message && (
+        <ErrorMessage>{errors?.operators?.message}</ErrorMessage>
+      )}
     </div>
   );
 };

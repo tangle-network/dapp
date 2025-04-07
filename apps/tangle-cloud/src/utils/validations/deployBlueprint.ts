@@ -12,7 +12,8 @@ export const BLUEPRINT_DEPLOY_STEPS = {
   // REQUEST_ARGS: 'RequestArgs',
 } as const;
 
-export type BlueprintDeployStep = typeof BLUEPRINT_DEPLOY_STEPS[keyof typeof BLUEPRINT_DEPLOY_STEPS];
+export type BlueprintDeployStep =
+  (typeof BLUEPRINT_DEPLOY_STEPS)[keyof typeof BLUEPRINT_DEPLOY_STEPS];
 
 export const restakeAssetSchema = z.object({
   id: z.string().transform((value, ctx) => {
@@ -139,8 +140,10 @@ export const deployBlueprintSchema = z
     // }),
   })
   .superRefine((schema, ctx) => {
-    const operatorSelectionStep = schema[BLUEPRINT_DEPLOY_STEPS.OPERATOR_SELECTION];
-    const assetConfigurationStep = schema[BLUEPRINT_DEPLOY_STEPS.ASSET_CONFIGURATION];
+    const operatorSelectionStep =
+      schema[BLUEPRINT_DEPLOY_STEPS.OPERATOR_SELECTION];
+    const assetConfigurationStep =
+      schema[BLUEPRINT_DEPLOY_STEPS.ASSET_CONFIGURATION];
 
     if (assetConfigurationStep.approvalModel === 'Dynamic') {
       // If approval model is dynamic, `maxApproval` is required

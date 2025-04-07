@@ -221,8 +221,12 @@ export const OperatorTable: FC<Props> = ({ advanceFilter, ...tableProps }) => {
               (props.row.original.uptime * DEFAULT_STACK) / DEFAULT_PERCENTAGE,
             );
 
-        const activeColors = Array<EnergyChipColors>(numberOfActiveChips).fill(EnergyChipColors.GREEN);
-        const inactiveColors = Array<EnergyChipColors>(DEFAULT_STACK - numberOfActiveChips).fill(EnergyChipColors.GREY);
+        const activeColors = Array<EnergyChipColors>(numberOfActiveChips).fill(
+          EnergyChipColors.GREEN,
+        );
+        const inactiveColors = Array<EnergyChipColors>(
+          DEFAULT_STACK - numberOfActiveChips,
+        ).fill(EnergyChipColors.GREY);
         const colors = [...activeColors, ...inactiveColors];
 
         return (
