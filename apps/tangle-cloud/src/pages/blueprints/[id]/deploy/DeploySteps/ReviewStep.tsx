@@ -30,7 +30,7 @@ import {
 import LsTokenIcon from '@tangle-network/tangle-shared-ui/components/LsTokenIcon';
 import ErrorMessage from '../../../../../components/ErrorMessage';
 
-const stepKey = BLUEPRINT_DEPLOY_STEPS[3];
+const stepKey = BLUEPRINT_DEPLOY_STEPS[4];
 
 export const ReviewStep: FC<SelectOperatorsStepProps> = ({
   errors: globalErrors,

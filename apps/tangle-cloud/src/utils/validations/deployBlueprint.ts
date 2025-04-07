@@ -9,7 +9,7 @@ export const BLUEPRINT_DEPLOY_STEPS = [
   'BasicInfo',
   'OperatorSelection',
   'AssetConfiguration',
-  // 'RequestParameters',
+  'RequestParameters',
   'Review',
 ] as const;
 
@@ -145,6 +145,13 @@ export const deployBlueprintSchema = z
       maxApproval: z.number().min(1).optional(),
     }),
     [BLUEPRINT_DEPLOY_STEPS[3]]: z.object({
+      /**
+       * @dev request args are too complex to validate, so we're just going to pass it through
+       * and use {toPrimitiveArgsDataType}@link{../index.ts} to convert it to the correct type
+       */
+      requestArgs: z.array(z.any()),
+    }),
+    [BLUEPRINT_DEPLOY_STEPS[4]]: z.object({
       paymentAsset: z.string().transform((value, context) => {
         try {
           assertRestakeAssetId(value);

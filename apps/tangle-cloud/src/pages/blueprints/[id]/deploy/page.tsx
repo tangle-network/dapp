@@ -19,11 +19,12 @@ import { ArrowLeft } from '@tangle-network/icons';
 import { SelectOperatorsStep } from './DeploySteps/OperatorSelectionStep';
 import { BasicInformationStep } from './DeploySteps/BasicInformationStep';
 import { AssetConfigurationStep } from './DeploySteps/AssetConfigurationStep';
+import { RequetArgsConfigurationStep } from './DeploySteps/RequetArgsConfigurationStep';
 import { ReviewStep } from './DeploySteps/ReviewStep';
 
 const DeployPage: FC = () => {
   const { id } = useParams();
-  const [step, setStep] = useState(0);
+  const [step, setStep] = useState(4);
   const {
     result: blueprintResult,
     isLoading: isBlueprintLoading,
@@ -59,6 +60,10 @@ const DeployPage: FC = () => {
       },
       {
         component: AssetConfigurationStep,
+        props: commonProps,
+      },
+      {
+        component: RequetArgsConfigurationStep,
         props: commonProps,
       },
       {
