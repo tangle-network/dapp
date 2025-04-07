@@ -129,7 +129,6 @@ export const SelectOperatorsStep: FC<SelectOperatorsStepProps> = ({
             (selectedAsset) => selectedAsset.id !== asset.id,
           );
 
-
       // Filter operators that have the selected assets
       const selectedOperators = operators
         .filter((operator) =>
