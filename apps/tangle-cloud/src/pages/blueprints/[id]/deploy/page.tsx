@@ -71,7 +71,7 @@ const DeployPage: FC = () => {
 
   const StepComponent = useMemo(
     () => createElement(steps[step].component, steps[step].props),
-    [steps, step]
+    [steps, step],
   );
 
   const onNextStep = useCallback(async () => {
@@ -125,11 +125,7 @@ const DeployPage: FC = () => {
             rightIcon={<ArrowRightIcon width={24} height={24} />}
             onClick={onNextStep}
           >
-            {
-              step === BLUEPRINT_DEPLOY_STEPS.length - 1
-                ? 'Deploy'
-                : 'Next'
-            }
+            {step === BLUEPRINT_DEPLOY_STEPS.length - 1 ? 'Deploy' : 'Next'}
           </Button>
         </div>
       </div>

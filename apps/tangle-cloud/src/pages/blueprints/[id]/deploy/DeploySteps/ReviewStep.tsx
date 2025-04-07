@@ -1,4 +1,14 @@
-import { Avatar, Card, ExternalLinkIcon, Input, isEvmAddress, KeyValueWithButton, Label, toSubstrateAddress, Typography } from '@tangle-network/ui-components';
+import {
+  Avatar,
+  Card,
+  ExternalLinkIcon,
+  Input,
+  isEvmAddress,
+  KeyValueWithButton,
+  Label,
+  toSubstrateAddress,
+  Typography,
+} from '@tangle-network/ui-components';
 import { Children, FC, useCallback, useMemo } from 'react';
 import { ApprovalModelLabel, SelectOperatorsStepProps } from './type';
 import { InstructionSideCard } from './InstructionSideCard';
@@ -10,7 +20,13 @@ import { OperatorTable } from './components/OperatorTable';
 import { BLUEPRINT_DEPLOY_STEPS } from '../../../../../utils/validations/deployBlueprint';
 import useIdentities from '@tangle-network/tangle-shared-ui/hooks/useIdentities';
 import useNetworkStore from '@tangle-network/tangle-shared-ui/context/useNetworkStore';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@tangle-network/ui-components/components/select';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@tangle-network/ui-components/components/select';
 import LsTokenIcon from '@tangle-network/tangle-shared-ui/components/LsTokenIcon';
 import ErrorMessage from '../../../../../components/ErrorMessage';
 
@@ -41,7 +57,7 @@ export const ReviewStep: FC<SelectOperatorsStepProps> = ({
 
   const assetIds = useMemo(
     () => selectedAssets.map(({ id }) => id),
-    [selectedAssets]
+    [selectedAssets],
   );
   const { result: assetsMetadata } = useAssetsMetadata(assetIds);
 
@@ -49,31 +65,40 @@ export const ReviewStep: FC<SelectOperatorsStepProps> = ({
 
   const { result: callerIdentities } = useIdentities(
     useMemo(
-      () => basicInformationStep?.permittedCallers.map(
-        (caller) => toSubstrateAddress(caller, activeNetwork.ss58Prefix)
-      ),
-      [basicInformationStep?.permittedCallers, activeNetwork.ss58Prefix]
-    )
+      () =>
+        basicInformationStep?.permittedCallers.map((caller) =>
+          toSubstrateAddress(caller, activeNetwork.ss58Prefix),
+        ),
+      [basicInformationStep?.permittedCallers, activeNetwork.ss58Prefix],
+    ),
   );
 
   const approvalModelLabel = useMemo(() => {
     const model = assetConfigurationStep?.approvalModel;
-    return model ? ApprovalModelLabel[model as keyof typeof ApprovalModelLabel] : '';
+    return model
+      ? ApprovalModelLabel[model as keyof typeof ApprovalModelLabel]
+      : '';
   }, [assetConfigurationStep?.approvalModel]);
 
-  const onChangePaymentAsset = useCallback((nextValue: string) => {
-    setValue(stepKey, {
-      ...reviewStep,
-      paymentAsset: nextValue,
-    });
-  }, [reviewStep, setValue, stepKey]);
-  
-  const onChangePaymentAmount = useCallback((nextValue: string) => {
-    setValue(stepKey, {
-      ...reviewStep,
-      paymentAmount: Number(nextValue),
-    });
-  }, [reviewStep, setValue, stepKey]);
+  const onChangePaymentAsset = useCallback(
+    (nextValue: string) => {
+      setValue(stepKey, {
+        ...reviewStep,
+        paymentAsset: nextValue,
+      });
+    },
+    [reviewStep, setValue, stepKey],
+  );
+
+  const onChangePaymentAmount = useCallback(
+    (nextValue: string) => {
+      setValue(stepKey, {
+        ...reviewStep,
+        paymentAmount: Number(nextValue),
+      });
+    },
+    [reviewStep, setValue, stepKey],
+  );
 
   return (
     <div className="flex gap-8">
@@ -92,7 +117,10 @@ export const ReviewStep: FC<SelectOperatorsStepProps> = ({
         />
 
         <Card className="p-6">
-          <Typography variant="h5" className="text-mono-200 dark:text-mono-0 mb-4">
+          <Typography
+            variant="h5"
+            className="text-mono-200 dark:text-mono-0 mb-4"
+          >
             Basic Information
           </Typography>
           <hr className="border-mono-80 dark:border-mono-160 mb-6" />
@@ -118,45 +146,53 @@ export const ReviewStep: FC<SelectOperatorsStepProps> = ({
             <div className="space-y-3">
               {Children.toArray(
                 basicInformationStep?.permittedCallers.map((caller, index) => {
-                  const identity = callerIdentities?.get(toSubstrateAddress(caller, activeNetwork.ss58Prefix));
+                  const identity = callerIdentities?.get(
+                    toSubstrateAddress(caller, activeNetwork.ss58Prefix),
+                  );
                   const accountUrl = activeNetwork.createExplorerAccountUrl(
-                    isEvmAddress(caller) ? caller : toSubstrateAddress(caller, activeNetwork.ss58Prefix)
+                    isEvmAddress(caller)
+                      ? caller
+                      : toSubstrateAddress(caller, activeNetwork.ss58Prefix),
                   );
                   return (
-                  <div className="flex items-center gap-2">
-                   <Avatar
-                      sourceVariant="address"
-                      value={caller}
-                      theme="substrate"
-                      size="md"
-                    />
-
-                    <div className="flex items-center">
-                      <KeyValueWithButton
-                        keyValue={identity?.name ? identity.name : caller}
-                        size="sm"
+                    <div className="flex items-center gap-2">
+                      <Avatar
+                        sourceVariant="address"
+                        value={caller}
+                        theme="substrate"
+                        size="md"
                       />
-                      {accountUrl && (
-                        <ExternalLinkIcon
-                          className="ml-1"
-                          href={accountUrl}
-                          target="_blank"
+
+                      <div className="flex items-center">
+                        <KeyValueWithButton
+                          keyValue={identity?.name ? identity.name : caller}
+                          size="sm"
                         />
-                      )}
+                        {accountUrl && (
+                          <ExternalLinkIcon
+                            className="ml-1"
+                            href={accountUrl}
+                            target="_blank"
+                          />
+                        )}
+                      </div>
                     </div>
-                  </div>
-                )}),
+                  );
+                }),
               )}
             </div>
           </div>
         </Card>
 
         <Card className="p-6">
-          <Typography variant="h5" className="text-mono-200 dark:text-mono-0 mb-4">
+          <Typography
+            variant="h5"
+            className="text-mono-200 dark:text-mono-0 mb-4"
+          >
             Asset Requirements
           </Typography>
           <hr className="border-mono-80 dark:border-mono-160 mb-6" />
-          
+
           <div className="space-y-4">
             {Children.toArray(
               selectedAssets.map(({ id }, index) => {
@@ -185,7 +221,10 @@ export const ReviewStep: FC<SelectOperatorsStepProps> = ({
         </Card>
 
         <Card className="p-6">
-          <Typography variant="h5" className="text-mono-200 dark:text-mono-0 mb-4">
+          <Typography
+            variant="h5"
+            className="text-mono-200 dark:text-mono-0 mb-4"
+          >
             Approval Settings
           </Typography>
           <hr className="border-mono-80 dark:border-mono-160 mb-6" />
@@ -219,13 +258,16 @@ export const ReviewStep: FC<SelectOperatorsStepProps> = ({
         </Card>
 
         <Card className="p-6">
-          <Typography variant="h5" className="text-mono-200 dark:text-mono-0 mb-4">
+          <Typography
+            variant="h5"
+            className="text-mono-200 dark:text-mono-0 mb-4"
+          >
             Payment:
           </Typography>
           <hr className="border-mono-80 dark:border-mono-160 mb-6" />
-          
+
           <div className="flex gap-8">
-            <div className='w-1/2'>
+            <div className="w-1/2">
               <Select>
                 <SelectTrigger>
                   <SelectValue placeholder="Select Payment Asset" />
@@ -251,25 +293,21 @@ export const ReviewStep: FC<SelectOperatorsStepProps> = ({
                     )
                   } */}
                   <SelectItem value="TNT">
-                    <div className='flex gap-2 items-center'>
-                            <LsTokenIcon 
-                              name={"TNT"}
-                              size="md"
-                            />
-                            <Typography variant="body1" className={valueClassName}>
-                              TNT
-                            </Typography>
-
+                    <div className="flex gap-2 items-center">
+                      <LsTokenIcon name={'TNT'} size="md" />
+                      <Typography variant="body1" className={valueClassName}>
+                        TNT
+                      </Typography>
                     </div>
-                          </SelectItem>
+                  </SelectItem>
                 </SelectContent>
               </Select>
               <ErrorMessage>
-                {globalErrors?.[stepKey]?.paymentAsset?.message} 
+                {globalErrors?.[stepKey]?.paymentAsset?.message}
               </ErrorMessage>
             </div>
 
-            <div className='w-1/2'>
+            <div className="w-1/2">
               <Input
                 value={reviewStep?.paymentAmount?.toString()}
                 onChange={(nextValue) => onChangePaymentAmount(nextValue)}
@@ -282,9 +320,7 @@ export const ReviewStep: FC<SelectOperatorsStepProps> = ({
               </ErrorMessage>
             </div>
           </div>
-          <ErrorMessage>
-            {globalErrors?.[stepKey]?.message}
-          </ErrorMessage>
+          <ErrorMessage>{globalErrors?.[stepKey]?.message}</ErrorMessage>
         </Card>
       </div>
     </div>

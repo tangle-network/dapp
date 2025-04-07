@@ -72,7 +72,7 @@ export const deployBlueprintSchema = z
         if (uniqueCallers.size !== value.length) {
           context.addIssue({
             code: z.ZodIssueCode.custom,
-            message: 'Caller addresses must be unique', 
+            message: 'Caller addresses must be unique',
           });
 
           return z.NEVER;
@@ -154,7 +154,7 @@ export const deployBlueprintSchema = z
             code: z.ZodIssueCode.custom,
             message: 'Invalid payment asset',
           });
-    
+
           return z.NEVER;
         }
 

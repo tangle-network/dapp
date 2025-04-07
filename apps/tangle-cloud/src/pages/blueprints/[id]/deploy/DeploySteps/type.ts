@@ -28,7 +28,10 @@ export type OperatorSelectionTable = {
   pricing?: number;
 };
 
-export const ApprovalModelLabel: Record<DeployBlueprintSchema['AssetConfiguration']['approvalModel'], string> = {
+export const ApprovalModelLabel: Record<
+  DeployBlueprintSchema['AssetConfiguration']['approvalModel'],
+  string
+> = {
   Fixed: 'Require all operators to approve',
   Dynamic: 'Minimum required approvals',
 } as const;

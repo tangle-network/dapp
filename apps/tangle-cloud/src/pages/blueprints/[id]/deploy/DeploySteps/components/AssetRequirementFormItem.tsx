@@ -39,7 +39,12 @@ export const AssetRequirementFormItem: FC<
   const isViewOnly = !('onChangeMinExposurePercent' in props);
 
   return (
-    <div className={cx('flex flex-col gap-6 p-4 bg-mono-20 dark:bg-mono-160 rounded-lg', className)}>
+    <div
+      className={cx(
+        'flex flex-col gap-6 p-4 bg-mono-20 dark:bg-mono-160 rounded-lg',
+        className,
+      )}
+    >
       <div className="flex items-center gap-3">
         <LsTokenIcon
           name={assetMetadata?.name ?? 'TNT'}
@@ -50,7 +55,10 @@ export const AssetRequirementFormItem: FC<
           <Typography variant="h5" className="text-mono-200 dark:text-mono-0">
             {assetMetadata?.name ?? 'TNT'}
           </Typography>
-          <Typography variant="body3" className="text-mono-120 dark:text-mono-100">
+          <Typography
+            variant="body3"
+            className="text-mono-120 dark:text-mono-100"
+          >
             Asset ID: {assetId}
           </Typography>
         </div>
@@ -62,7 +70,10 @@ export const AssetRequirementFormItem: FC<
             {isViewOnly ? 'Minimum Exposure' : 'Set Minimum Exposure'}
           </Label>
           {isViewOnly ? (
-            <Typography variant="body1" className="text-mono-200 dark:text-mono-0">
+            <Typography
+              variant="body1"
+              className="text-mono-200 dark:text-mono-0"
+            >
               {minExposurePercent ?? '0'}%
             </Typography>
           ) : (
@@ -85,7 +96,9 @@ export const AssetRequirementFormItem: FC<
                 max={maxExposurePercent || 100}
               />
               {!isViewOnly && (
-                <ErrorMessage className="mt-1">{props.minExposurePercentErrorMsg}</ErrorMessage>
+                <ErrorMessage className="mt-1">
+                  {props.minExposurePercentErrorMsg}
+                </ErrorMessage>
               )}
             </>
           )}
@@ -96,7 +109,10 @@ export const AssetRequirementFormItem: FC<
             {isViewOnly ? 'Maximum Exposure' : 'Set Maximum Exposure'}
           </Label>
           {isViewOnly ? (
-            <Typography variant="body1" className="text-mono-200 dark:text-mono-0">
+            <Typography
+              variant="body1"
+              className="text-mono-200 dark:text-mono-0"
+            >
               {maxExposurePercent ?? '0'}%
             </Typography>
           ) : (
@@ -119,7 +135,9 @@ export const AssetRequirementFormItem: FC<
                 max={100}
               />
               {!isViewOnly && (
-                <ErrorMessage className="mt-1">{props.maxExposurePercentErrorMsg}</ErrorMessage>
+                <ErrorMessage className="mt-1">
+                  {props.maxExposurePercentErrorMsg}
+                </ErrorMessage>
               )}
             </>
           )}

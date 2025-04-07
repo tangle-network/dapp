@@ -159,10 +159,8 @@ export const AssetConfigurationStep: FC<AssetConfigurationStepProps> = ({
               <SelectContent>
                 {Children.toArray(
                   Object.entries(ApprovalModelLabel).map(([key, label]) => (
-                    <SelectItem value={key}>
-                      {label}
-                    </SelectItem>
-                  ))
+                    <SelectItem value={key}>{label}</SelectItem>
+                  )),
                 )}
               </SelectContent>
             </Select>

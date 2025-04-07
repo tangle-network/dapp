@@ -33,7 +33,7 @@ const useServiceRegisterTx = () => {
         context.BasicInfo.instanceDuration,
         [],
         [],
-      )
+      );
     },
     [],
   );
