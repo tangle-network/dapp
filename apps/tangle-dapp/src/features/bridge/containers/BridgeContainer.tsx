@@ -116,10 +116,8 @@ const BridgeContainer = () => {
   );
 
   const srcChains = useMemo(() => {
-    return network.name === 'Tangle Mainnet'
-      ? mainnetSourceChains
-      : testnetSourceChains;
-  }, [mainnetSourceChains, network.name, testnetSourceChains]);
+    return [...mainnetSourceChains, ...testnetSourceChains];
+  }, [mainnetSourceChains, testnetSourceChains]);
 
   useEffect(() => {
     if (activeChain) {
@@ -662,6 +660,7 @@ const BridgeContainer = () => {
             }}
             chainType="source"
             showSearchInput
+            groupByChainType
           />
         </ModalContent>
       </Modal>

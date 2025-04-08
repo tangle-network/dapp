@@ -56,9 +56,10 @@ const UpdateMetadataButton: FC = () => {
     if (apiPromise === null) {
       return null;
     }
-
-    // If the active wallet is an EVM wallet, we don't need to update the metadata
-    if (activeWallet?.platform === 'EVM') {
+    if (
+      activeWallet?.platform === 'EVM' ||
+      activeWallet?.platform === 'Solana'
+    ) {
       return null;
     }
 
@@ -86,7 +87,8 @@ const UpdateMetadataButton: FC = () => {
     if (
       injector === null ||
       substrateAddress === null ||
-      network.ss58Prefix === undefined
+      network.ss58Prefix === undefined ||
+      activeWallet?.platform === 'Solana'
     ) {
       return;
     }

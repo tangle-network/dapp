@@ -101,27 +101,40 @@ const useVaultTableData = ({ operatorData, delegatorInfo }: Options) => {
 
         const vaultAssets = Array.from(assets.values())
           .filter((asset) => asset.metadata.vaultId === vaultId)
-          .map(({ id: assetId, metadata: { decimals, symbol }, balance }) => {
-            const tvl = assetsTvl?.get(assetId) ?? null;
-            const available = balance ?? null;
-
-            const totalDeposits =
-              typeof delegatorInfo?.deposits[assetId]?.amount === 'bigint'
-                ? new BN(delegatorInfo.deposits[assetId].amount.toString())
-                : null;
-
-            return {
+          .map(
+            ({
               id: assetId,
-              symbol,
-              decimals,
-              tvl,
-              available,
-              totalDeposits,
-            } satisfies VaultAssetData;
-          });
+              metadata: { decimals, symbol, name },
+              balance,
+            }) => {
+              const tvl = assetsTvl?.get(assetId) ?? null;
+              const available = balance ?? null;
+
+              const totalDeposits =
+                typeof delegatorInfo?.deposits[assetId]?.amount === 'bigint'
+                  ? new BN(delegatorInfo.deposits[assetId].amount.toString())
+                  : null;
+
+              return {
+                id: assetId,
+                name,
+                symbol,
+                decimals,
+                tvl,
+                available,
+                totalDeposits,
+              } satisfies VaultAssetData;
+            },
+          );
 
         return (
-          <VaultAssetsTable isShown={row.getIsExpanded()} data={vaultAssets} />
+          <VaultAssetsTable
+            isShown={row.getIsExpanded()}
+            data={vaultAssets}
+            depositCapacity={row.original.capacity}
+            tvl={row.original.tvl}
+            decimals={row.original.decimals}
+          />
         );
       },
     }),

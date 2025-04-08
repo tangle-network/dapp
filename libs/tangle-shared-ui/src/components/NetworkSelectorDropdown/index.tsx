@@ -65,9 +65,9 @@ const NetworkSelectionButton: FC<NetworkSelectionButtonProps> = ({
       }
 
       return (
-        network?.name ??
         activeChain?.displayName ??
         activeChain?.name ??
+        network?.name ??
         UNKNOWN_NETWORK
       );
     },
@@ -78,12 +78,8 @@ const NetworkSelectionButton: FC<NetworkSelectionButtonProps> = ({
   const isWrongEvmNetwork = useMemo(() => {
     const isEvmWallet = activeWallet?.platform === 'EVM';
 
-    if (!isEvmWallet) {
+    if (!isEvmWallet || preferredChain) {
       return false;
-    }
-
-    if (preferredChain) {
-      return activeChain?.name !== preferredChain?.name;
     }
 
     return (
@@ -91,7 +87,6 @@ const NetworkSelectionButton: FC<NetworkSelectionButtonProps> = ({
     );
   }, [
     activeChain?.id,
-    activeChain?.name,
     activeWallet?.platform,
     network.evmChainId,
     preferredChain,
@@ -99,16 +94,6 @@ const NetworkSelectionButton: FC<NetworkSelectionButtonProps> = ({
 
   const switchToCorrectEvmChain = useCallback(() => {
     if (!activeWallet) {
-      return;
-    }
-
-    if (preferredChain) {
-      const typedChainId = calculateTypedChainId(
-        ChainType.EVM,
-        preferredChain.id,
-      );
-      const targetChain = chainsPopulated[typedChainId];
-      switchChain(targetChain, activeWallet);
       return;
     }
 
@@ -121,7 +106,7 @@ const NetworkSelectionButton: FC<NetworkSelectionButtonProps> = ({
     );
     const targetChain = chainsPopulated[typedChainId];
     switchChain(targetChain, activeWallet);
-  }, [activeWallet, network.evmChainId, switchChain, preferredChain]);
+  }, [activeWallet, network.evmChainId, switchChain]);
 
   return (
     <div className="flex items-center gap-1">
@@ -141,7 +126,9 @@ const NetworkSelectionButton: FC<NetworkSelectionButtonProps> = ({
             </div>
           </TooltipTrigger>
 
-          <TooltipBody>Switch to Selected EVM Network</TooltipBody>
+          <TooltipBody>
+            Switch to {preferredChain ? 'selected' : 'required'} network
+          </TooltipBody>
         </Tooltip>
       )}
 

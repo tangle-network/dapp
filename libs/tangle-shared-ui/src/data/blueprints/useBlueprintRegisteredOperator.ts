@@ -2,6 +2,19 @@ import { useCallback, useMemo } from 'react';
 import { catchError, map, of } from 'rxjs';
 import useApiRx from '../../hooks/useApiRx';
 import { TangleError, TangleErrorCode } from '../../types/error';
+import { z } from 'zod';
+
+const priceTargetsSchema = z.object({
+  cpu: z.string().default('0'),
+  mem: z.string().default('0'),
+  storageHdd: z.string().default('0'),
+  storageSsd: z.string().default('0'),
+  storageNvme: z.string().default('0'),
+});
+
+const preferencesSchema = z.object({
+  priceTargets: priceTargetsSchema.optional(),
+});
 
 export default function useBlueprintRegisteredOperator(blueprintId?: number) {
   const { result, ...rest } = useApiRx(
@@ -20,30 +33,26 @@ export default function useBlueprintRegisteredOperator(blueprintId?: number) {
               return entries.map(([storageKey, operatorPrefs]) => {
                 const operatorAccount = storageKey.args[1].toString();
                 const preferences = operatorPrefs.unwrapOrDefault().toHuman();
+                const parsedPreferences =
+                  preferencesSchema.safeParse(preferences);
+                const priceTargets = parsedPreferences.success
+                  ? parsedPreferences.data.priceTargets
+                  : undefined;
                 return {
                   operatorAccount,
                   preferences: {
                     key: preferences.key,
                     priceTargets: {
-                      cpu: formatLocaleStringToNumber(
-                        // @ts-expect-error Property 'cpu' does not exist on type AnyJson[]
-                        preferences?.priceTargets?.cpu || '0',
-                      ),
-                      mem: formatLocaleStringToNumber(
-                        // @ts-expect-error Property 'mem' does not exist on type AnyJson[]
-                        preferences?.priceTargets?.mem || '0',
-                      ),
+                      cpu: formatLocaleStringToNumber(priceTargets?.cpu || '0'),
+                      mem: formatLocaleStringToNumber(priceTargets?.mem || '0'),
                       storageHdd: formatLocaleStringToNumber(
-                        // @ts-expect-error Property 'storageHdd' does not exist on type AnyJson[]
-                        preferences?.priceTargets?.storageHdd || '0',
+                        priceTargets?.storageHdd || '0',
                       ),
                       storageSsd: formatLocaleStringToNumber(
-                        // @ts-expect-error Property 'storageSsd' does not exist on type AnyJson[]
-                        preferences?.priceTargets?.storageSsd || '0',
+                        priceTargets?.storageSsd || '0',
                       ),
                       storageNvme: formatLocaleStringToNumber(
-                        // @ts-expect-error Property 'storageNvme' does not exist on type AnyJson[]
-                        preferences?.priceTargets?.storageNvme || '0',
+                        priceTargets?.storageNvme || '0',
                       ),
                     },
                   },

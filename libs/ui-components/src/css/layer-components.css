@@ -25,27 +25,19 @@
 }
 
 .body1 {
-  font-size: 16px;
-  line-height: 24px;
-  letter-spacing: 0.01em;
+  @apply text-lg;
 }
 
 .body2 {
-  font-size: 14px;
-  line-height: 21px;
-  letter-spacing: 0.01em;
+  @apply text-base;
 }
 
 .body3 {
-  font-size: 12px;
-  line-height: 18px;
-  letter-spacing: 0.01em;
+  @apply text-sm;
 }
 
 .body4 {
-  font-size: 12px;
-  line-height: 18px;
-  letter-spacing: 0.01em;
+  @apply text-xs;
 }
 
 .mono1 {

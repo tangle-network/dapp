@@ -30,6 +30,7 @@ const DeployPage: FC = () => {
     setValue,
     control,
     formState: { errors },
+    trigger,
   } = useForm<DeployBlueprintSchema>({
     mode: 'onChange',
     resolver: zodResolver(deployBlueprintSchema),
@@ -52,7 +53,10 @@ const DeployPage: FC = () => {
     return null;
   }
 
-  const onDeployBlueprint = () => {
+  const onDeployBlueprint = async () => {
+    // pre validate the form
+    const result = await trigger();
+    console.log(result);
     console.log('deploy');
   };
 

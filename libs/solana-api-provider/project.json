@@ -1,0 +1,19 @@
+{
+  "name": "solana-api-provider",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/solana-api-provider/src",
+  "projectType": "library",
+  "tags": [],
+  "targets": {
+    "build": {
+      "executor": "@nx/js:tsc",
+      "outputs": ["{options.outputPath}"],
+      "options": {
+        "outputPath": "dist/libs/solana-api-provider",
+        "main": "libs/solana-api-provider/src/index.ts",
+        "tsConfig": "libs/solana-api-provider/tsconfig.lib.json",
+        "assets": ["libs/solana-api-provider/*.md"]
+      }
+    }
+  }
+}

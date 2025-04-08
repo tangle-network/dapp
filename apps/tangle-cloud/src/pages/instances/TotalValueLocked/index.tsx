@@ -135,7 +135,7 @@ export const TotalValueLockedTabs = () => {
                 .map(
                   ({
                     id: assetId,
-                    metadata: { decimals, symbol },
+                    metadata: { decimals, symbol, name },
                     balance,
                   }) => {
                     const tvl = assetTvl?.get(assetId) ?? null;
@@ -151,6 +151,7 @@ export const TotalValueLockedTabs = () => {
 
                     return {
                       id: assetId,
+                      name,
                       symbol,
                       decimals,
                       tvl,
@@ -164,6 +165,9 @@ export const TotalValueLockedTabs = () => {
                 <VaultAssetsTable
                   isShown={row.getIsExpanded()}
                   data={vaultAssets}
+                  depositCapacity={row.original.capacity}
+                  tvl={row.original.tvl}
+                  decimals={row.original.decimals}
                 />
               );
             },
