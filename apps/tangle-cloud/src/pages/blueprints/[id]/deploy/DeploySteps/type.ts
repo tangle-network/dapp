@@ -17,6 +17,8 @@ export type SelectOperatorsStepProps = BaseDeployStepProps;
 
 export type AssetConfigurationStepProps = BaseDeployStepProps;
 
+export type RequetArgsConfigurationStepProps = BaseDeployStepProps;
+
 export type OperatorSelectionTable = {
   address: SubstrateAddress;
   identityName?: string;
@@ -29,7 +31,7 @@ export type OperatorSelectionTable = {
 };
 
 export const ApprovalModelLabel: Record<
-  DeployBlueprintSchema['AssetConfiguration']['approvalModel'],
+  DeployBlueprintSchema['approvalModel'],
   string
 > = {
   Fixed: 'Require all operators to approve',

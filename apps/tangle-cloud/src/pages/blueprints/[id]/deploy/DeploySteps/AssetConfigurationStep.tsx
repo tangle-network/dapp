@@ -1,15 +1,10 @@
-import { Label, Input } from '@tangle-network/ui-components';
+import { Card, Typography } from '@tangle-network/ui-components';
 import { Children, FC, useCallback, useMemo } from 'react';
-import { ApprovalModelLabel, AssetConfigurationStepProps } from './type';
-import {
-  BLUEPRINT_DEPLOY_STEPS,
-  DeployBlueprintSchema,
-} from '../../../../../utils/validations/deployBlueprint';
-import { InstructionSideCard } from './InstructionSideCard';
+import { AssetConfigurationStepProps } from './type';
 import {
   Select,
+  SelectCheckboxItem,
   SelectContent,
-  SelectItem,
   SelectTrigger,
   SelectValue,
 } from '@tangle-network/ui-components/components/select';
@@ -17,91 +12,147 @@ import useAssetsMetadata from '@tangle-network/tangle-shared-ui/hooks/useAssetsM
 import assertRestakeAssetId from '@tangle-network/tangle-shared-ui/utils/assertRestakeAssetId';
 import { AssetRequirementFormItem } from './components/AssetRequirementFormItem';
 import ErrorMessage from '../../../../../components/ErrorMessage';
-import { OperatorTable } from './components/OperatorTable';
+import useRestakeAssets from '@tangle-network/tangle-shared-ui/data/restake/useRestakeAssets';
+import LsTokenIcon from '@tangle-network/tangle-shared-ui/components/LsTokenIcon';
+import { RestakeAsset } from '@tangle-network/tangle-shared-ui/types/restake';
+
+const MAX_ASSET_TO_SHOW = 3;
 
 export const AssetConfigurationStep: FC<AssetConfigurationStepProps> = ({
-  errors: globalErrors,
+  errors,
   setValue,
   watch,
 }) => {
-  const labelClassName = 'text-mono-200 dark:text-mono-0 font-normal';
+  const values = watch();
 
-  const stepKey = BLUEPRINT_DEPLOY_STEPS[2];
-  const operatorsStepKey = BLUEPRINT_DEPLOY_STEPS[1];
-  const values = watch(stepKey);
+  const { assets: assets_ } = useRestakeAssets();
 
-  const errors = globalErrors?.[stepKey];
+  const assets = useMemo(() => {
+    if (!assets_) return [];
+    return Array.from(assets_.values());
+  }, [assets_]);
 
-  const approvalModel = values?.approvalModel;
-  const minApprovalThreshold = values?.minApproval?.toString();
-
-  const selectedAssets = useMemo(
-    () =>
-      (watch(`${BLUEPRINT_DEPLOY_STEPS[1]}.assets`) ?? []).map((asset) => ({
+  const selectedAssets = useMemo(() => {
+    if (!values.assets) return [];
+    return values.assets
+      .filter((asset) => !!asset.id)
+      .map((asset) => ({
         ...asset,
         id: assertRestakeAssetId(asset.id),
-      })),
-    [watch(`${BLUEPRINT_DEPLOY_STEPS[1]}.assets`)],
-  );
-
-  const selectedOperators =
-    watch(`${BLUEPRINT_DEPLOY_STEPS[1]}.operators`) ?? [];
+      }));
+  }, [values.assets]);
 
   const { result: assetsMetadata } = useAssetsMetadata(
-    useMemo(() => selectedAssets.map(({ id }) => id), [selectedAssets]),
+    useMemo(() => {
+      if (!assets) return [];
+      return Array.from(assets.values()).map(({ id }) => id);
+    }, [assets])
   );
 
-  const onChangeApprovalModel = useCallback(
-    (value: DeployBlueprintSchema[typeof stepKey]['approvalModel']) => {
-      let changes = { ...values, approvalModel: value };
-      if (value === 'Dynamic') {
-        changes = {
-          ...changes,
-          maxApproval: selectedOperators.length,
-        };
-      } else {
-        changes = {
-          ...changes,
-          maxApproval: undefined,
-          minApproval: selectedOperators.length,
-        };
-      }
 
-      setValue(stepKey, changes);
-    },
-    [stepKey, values, setValue, selectedOperators],
-  );
+  const onSelectAsset = useCallback(
+    (asset: RestakeAsset, isChecked: boolean) => {
+      // Create a new array instead of mutating the existing one
+      const newSelectedAssets = isChecked
+        ? [...selectedAssets, asset]
+        : selectedAssets.filter(
+            (selectedAsset) => selectedAsset.id !== asset.id,
+          );
 
-  const onChangeMinApproval = useCallback(
-    (value: DeployBlueprintSchema[typeof stepKey]['minApproval']) => {
-      setValue(stepKey, {
-        ...values,
-        minApproval: value,
-      });
+      setValue(`assets`, newSelectedAssets);
     },
-    [stepKey, values, setValue],
+    [selectedAssets, setValue],
   );
 
   return (
-    <div className="flex">
-      <div>
-        <InstructionSideCard
-          title="Finalize Deployment"
-          description="After submitting request, operators will need to approve it before the instance deployment begins."
-        />
-      </div>
+    <Card className="p-6">
+        <Typography
+            variant="h5"
+            className="text-mono-200 dark:text-mono-0 mb-4"
+          >
+            Asset Requirements
+          </Typography>
+          <hr className="border-mono-80 dark:border-mono-160 mb-6" />
 
-      <div className="w-full pl-8">
-        <Label className={labelClassName}>Asset Requirements:</Label>
+
+          <Select>
+            <SelectTrigger className='w-fit'>
+              <SelectValue
+                placeholder={
+                  selectedAssets.length > 0 ? (
+                    <div className="flex items-center gap-2">
+                      <div className="flex items-center">
+                        {Children.toArray(
+                          selectedAssets
+                            .slice(0, MAX_ASSET_TO_SHOW)
+                            .map((asset) => (
+                              <div>
+                                <LsTokenIcon
+                                  name={asset.metadata.name ?? 'TNT'}
+                                  size="md"
+                                />
+                              </div>
+                            )),
+                        )}
+                        {selectedAssets.length > MAX_ASSET_TO_SHOW && (
+                          <Typography variant="body1" className="ml-1">
+                            ..
+                          </Typography>
+                        )}
+                      </div>
+                      <Typography variant="body1">
+                        {selectedAssets.length} asset(s) selected
+                      </Typography>
+                    </div>
+                  ) : (
+                    `Select delegated assets`
+                  )
+                }
+              />
+            </SelectTrigger>
+
+            <SelectContent>
+              {Children.toArray(
+                Array.from(assets?.values() ?? []).map((asset) => (
+                  <SelectCheckboxItem
+                    onChange={(e) => onSelectAsset(asset, e.target.checked)}
+                    id={asset.id}
+                    isChecked={selectedAssets.some(
+                      (selectedAsset) => selectedAsset.id === asset.id,
+                    )}
+                    spacingClassName="ml-0"
+                  >
+                    <div className="flex items-center gap-2">
+                      <LsTokenIcon
+                        name={asset.metadata.name ?? 'TNT'}
+                        size="md"
+                      />
+                      <Typography variant="body1">
+                        {asset.metadata.name ?? 'TNT'}
+                      </Typography>
+                    </div>
+                  </SelectCheckboxItem>
+                )),
+              )}
+            </SelectContent>
+          </Select>
+          {
+            errors?.assets?.message && (
+              <ErrorMessage className="mt-1">
+                {errors.assets.message}
+              </ErrorMessage>
+            )
+          }
+
         <div className="mt-5">
           {Children.toArray(
             selectedAssets.map(({ id }, index) => {
               const assetMetadata = assetsMetadata?.get(id);
               const minExposurePercentFormValue = watch(
-                `${stepKey}.securityCommitments.${index}.minExposurePercent`,
+                `securityCommitments.${index}.minExposurePercent`,
               )?.toString();
               const maxExposurePercentFormValue = watch(
-                `${stepKey}.securityCommitments.${index}.maxExposurePercent`,
+                `securityCommitments.${index}.maxExposurePercent`,
               )?.toString();
 
               return (
@@ -113,7 +164,7 @@ export const AssetConfigurationStep: FC<AssetConfigurationStepProps> = ({
                   minExposurePercent={minExposurePercentFormValue}
                   onChangeMinExposurePercent={(value) => {
                     setValue(
-                      `${stepKey}.securityCommitments.${index}.minExposurePercent`,
+                      `securityCommitments.${index}.minExposurePercent`,
                       Number(value),
                       {
                         shouldValidate: true,
@@ -128,7 +179,7 @@ export const AssetConfigurationStep: FC<AssetConfigurationStepProps> = ({
                   maxExposurePercent={maxExposurePercentFormValue}
                   onChangeMaxExposurePercent={(value) => {
                     setValue(
-                      `${stepKey}.securityCommitments.${index}.maxExposurePercent`,
+                      `securityCommitments.${index}.maxExposurePercent`,
                       Number(value),
                       {
                         shouldValidate: true,
@@ -145,58 +196,6 @@ export const AssetConfigurationStep: FC<AssetConfigurationStepProps> = ({
             }),
           )}
         </div>
-
-        <div className="mt-5 flex gap-4">
-          <div className="w-1/2">
-            <Label className={labelClassName}>Approval Model:</Label>
-            <Select value={approvalModel} onValueChange={onChangeApprovalModel}>
-              <SelectTrigger>
-                <SelectValue
-                  className="text-[16px] leading-[30px]"
-                  placeholder="Select an approval model"
-                />
-              </SelectTrigger>
-              <SelectContent>
-                {Children.toArray(
-                  Object.entries(ApprovalModelLabel).map(([key, label]) => (
-                    <SelectItem value={key}>{label}</SelectItem>
-                  )),
-                )}
-              </SelectContent>
-            </Select>
-            <ErrorMessage>
-              {globalErrors?.[stepKey]?.approvalModel?.message}
-            </ErrorMessage>
-          </div>
-
-          {approvalModel === 'Dynamic' && (
-            <div className="w-1/2">
-              <Label className={labelClassName}>Approval Threshold:</Label>
-              <Input
-                value={minApprovalThreshold}
-                onChange={(nextValue) => onChangeMinApproval(Number(nextValue))}
-                isControlled
-                type="number"
-                id="approval-threshold"
-              />
-              <ErrorMessage>
-                {globalErrors?.[stepKey]?.minApproval?.message}
-              </ErrorMessage>
-            </div>
-          )}
-        </div>
-
-        <div className="mt-5">
-          <Label className={labelClassName}>Selected Operators:</Label>
-          <OperatorTable
-            advanceFilter={(row) => {
-              return watch(`${operatorsStepKey}.operators`)?.includes(
-                row.address,
-              );
-            }}
-          />
-        </div>
-      </div>
-    </div>
+      </Card>
   );
 };
