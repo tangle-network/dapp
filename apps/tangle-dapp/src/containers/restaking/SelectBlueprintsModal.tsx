@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useState } from 'react';
+import { FC, useCallback, useMemo, useState } from 'react';
 import {
   Button,
   Input,
@@ -9,13 +9,12 @@ import {
   ModalFooter,
   ModalHeader,
 } from '@tangle-network/ui-components';
-import useOperatorBlueprints from '@tangle-network/tangle-shared-ui/data/blueprints/useOperatorBlueprints';
 import { SubstrateAddress } from '@tangle-network/ui-components/types/address';
 import BlueprintGridItem from '../../components/restaking/BlueprintGridItem';
 import { Search } from '@tangle-network/icons';
-import { OperatorBlueprint } from '@tangle-network/tangle-shared-ui/data/blueprints/utils/type';
-import filterBy from '../../utils/filterBy';
 import { Blueprint } from '@tangle-network/tangle-shared-ui/types/blueprint';
+import useOperatorBlueprints from '@tangle-network/tangle-shared-ui/data/blueprints/useOperatorBlueprints';
+import filterBy from '../../utils/filterBy';
 
 type Props = {
   operatorAddress?: SubstrateAddress;
@@ -24,28 +23,14 @@ type Props = {
   setSelection: (selected: Blueprint['id'][]) => void;
 };
 
-const SelectBlueprintsModal = ({
+const SelectBlueprintsModal: FC<Props> = ({
   operatorAddress,
   isOpen,
   setIsOpen,
   setSelection,
-}: Props) => {
+}) => {
   const [searchQuery, setSearchQuery] = useState<string>('');
-
-  // const { blueprints } = useOperatorBlueprints(operatorAddress);
-
-  // TODO: Mocking data.
-  const blueprints = useMemo<OperatorBlueprint[]>(
-    () => [
-      {
-        blueprintId: BigInt(1),
-        blueprint: {
-          metadata: { name: 'Test', author: 'Test' } as any,
-        } as any,
-      } as any,
-    ],
-    [],
-  );
+  const { blueprints } = useOperatorBlueprints(operatorAddress);
 
   const [localSelection, setLocalSelection] = useState<Blueprint['id'][]>([]);
 
@@ -103,8 +88,8 @@ const SelectBlueprintsModal = ({
       <ModalContent size="lg">
         <ModalHeader>Select Blueprint(s)</ModalHeader>
 
-        {!isEmpty && (
-          <div className="pt-4 px-4 pb-4 md:px-9">
+        <ModalBody className="gap-4">
+          {!isEmpty && (
             <Input
               id="restake-select-blueprints-search"
               isControlled
@@ -114,10 +99,8 @@ const SelectBlueprintsModal = ({
               onChange={setSearchQuery}
               inputClassName="placeholder:text-mono-80 dark:placeholder:text-mono-120"
             />
-          </div>
-        )}
+          )}
 
-        <ModalBody className="gap-4">
           {!isEmpty ? (
             <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
               {filteredBlueprints.map((blueprint) => (

@@ -50,6 +50,7 @@ const Actions: FC = () => {
   return (
     <div className="flex items-center justify-start gap-4 overflow-x-auto">
       <ActionItem
+        label="Send"
         Icon={SendPlanLineIcon}
         onClick={() => setIsTransferModalOpen(true)}
         // Disable while no account is connected, or when the active
@@ -59,7 +60,6 @@ const Actions: FC = () => {
           transferableBalance === null ||
           transferableBalance.isZero()
         }
-        label="Send"
       />
 
       <ActionItem
@@ -81,23 +81,21 @@ const Actions: FC = () => {
         }
       />
 
-      <ActionItem
-        label="Claim"
-        hasNotificationDot={isAirdropEligible !== null && isAirdropEligible}
-        isDisabled={!isAirdropEligible || activeAccountAddress === null}
-        Icon={GiftLineIcon}
-        internalHref={PagePath.CLAIM_AIRDROP}
-        tooltip={
-          isAirdropEligible !== null && isAirdropEligible ? (
+      {isAirdropEligible === null && isAirdropEligible && (
+        <ActionItem
+          label="Airdrop"
+          hasNotificationDot={isAirdropEligible !== null && isAirdropEligible}
+          isDisabled={!isAirdropEligible || activeAccountAddress === null}
+          Icon={GiftLineIcon}
+          internalHref={PagePath.CLAIM_AIRDROP}
+          tooltip={
             <>
               Congratulations, you are eligible for the Tangle Network airdrop!
               Click here to visit the <strong>Claim Airdrop</strong> page.
             </>
-          ) : (
-            <>You are not eligible for the Tangle Network airdrop.</>
-          )
-        }
-      />
+          }
+        />
+      )}
 
       {/* This is a special case, so hide it for most users if they're not vesting */}
       {isVesting && (

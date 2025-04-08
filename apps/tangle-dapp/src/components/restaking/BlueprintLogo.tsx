@@ -6,10 +6,15 @@ type Props = {
   size: 'sm' | 'lg';
 };
 
+const LOGO_SIZES = {
+  sm: 'w-5 h-5',
+  lg: 'w-10 h-10',
+} as const;
+
 const BlueprintLogo: FC<Props> = ({ name, url, size }) => {
   return (
-    <div className="rounded-full border border-gray-300 dark:border-mono-120">
-      <img src={url} alt={`${name}'s logo`} />
+    <div>
+      <img src={url} alt={`${name}'s logo`} className={LOGO_SIZES[size]} />
     </div>
   );
 };
