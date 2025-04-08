@@ -53,8 +53,8 @@ const DeployPage: FC = () => {
   }
 
   const onDeployBlueprint = () => {
-    console.log("deploy")
-  }
+    console.log('deploy');
+  };
 
   return (
     <>

@@ -37,65 +37,65 @@ export const restakeAssetSchema = z.object({
 export const deployBlueprintSchema = z
   .object({
     instanceName: z.string().min(1),
-      instanceDuration: z.number().min(1),
-      permittedCallers: z.array(z.string()).transform((value, context) => {
-        if (value.length === 0) {
+    instanceDuration: z.number().min(1),
+    permittedCallers: z.array(z.string()).transform((value, context) => {
+      if (value.length === 0) {
+        context.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: 'At least one caller is required',
+        });
+
+        return z.NEVER;
+      }
+
+      for (const [index, caller] of value.entries()) {
+        if (!isEvmAddress(caller) && !isSubstrateAddress(caller)) {
           context.addIssue({
+            path: [index],
             code: z.ZodIssueCode.custom,
-            message: 'At least one caller is required',
+            message: 'Invalid caller address',
           });
-
-          return z.NEVER;
         }
+      }
 
-        for (const [index, caller] of value.entries()) {
-          if (!isEvmAddress(caller) && !isSubstrateAddress(caller)) {
-            context.addIssue({
-              path: [index],
-              code: z.ZodIssueCode.custom,
-              message: 'Invalid caller address',
-            });
-          }
-        }
+      // validate not duplicate caller
+      const uniqueCallers = new Set(value);
+      if (uniqueCallers.size !== value.length) {
+        context.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: 'Caller addresses must be unique',
+        });
 
-        // validate not duplicate caller
-        const uniqueCallers = new Set(value);
-        if (uniqueCallers.size !== value.length) {
-          context.addIssue({
-            code: z.ZodIssueCode.custom,
-            message: 'Caller addresses must be unique',
-          });
+        return z.NEVER;
+      }
 
-          return z.NEVER;
-        }
+      return value;
+    }),
+    operators: z.array(z.string()).transform((value, context) => {
+      if (value.length === 0) {
+        context.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: 'At least one operator is required',
+        });
 
-        return value;
-      }),
-      operators: z.array(z.string()).transform((value, context) => {
-        if (value.length === 0) {
-          context.addIssue({
-            code: z.ZodIssueCode.custom,
-            message: 'At least one operator is required',
-          });
+        return z.NEVER;
+      }
 
-          return z.NEVER;
-        }
+      return value;
+    }),
+    assets: z.array(restakeAssetSchema).transform((value, context) => {
+      if (value.length === 0) {
+        context.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: 'At least one asset is required',
+        });
 
-        return value;
-      }),
-      assets: z.array(restakeAssetSchema).transform((value, context) => {
-        if (value.length === 0) {
-          context.addIssue({
-            code: z.ZodIssueCode.custom,
-            message: 'At least one asset is required',
-          });
+        return z.NEVER;
+      }
 
-          return z.NEVER;
-        }
-
-        return value;
-      }),
-      securityCommitments: z
+      return value;
+    }),
+    securityCommitments: z
       .array(
         z.object({
           minExposurePercent: z.number().min(1).max(100),
@@ -130,30 +130,29 @@ export const deployBlueprintSchema = z
     approvalModel: z.enum(['Dynamic', 'Fixed']),
     minApproval: z.number().min(1),
     maxApproval: z.number().min(1).optional(),
-      /**
-       * @dev request args are too complex to validate, so we're just going to pass it through
-       * and use {toPrimitiveArgsDataType}@link{../index.ts} to convert it to the correct type
-       */
-      requestArgs: z.array(z.any()),
-      paymentAsset: z.string().transform((value, context) => {
-        try {
-          assertRestakeAssetId(value);
-        } catch (error: unknown) {
-          console.error(`Asset id ${value} is invalid: ${error}`);
-          context.addIssue({
-            code: z.ZodIssueCode.custom,
-            message: 'Invalid payment asset',
-          });
+    /**
+     * @dev request args are too complex to validate, so we're just going to pass it through
+     * and use {toPrimitiveArgsDataType}@link{../index.ts} to convert it to the correct type
+     */
+    requestArgs: z.array(z.any()),
+    paymentAsset: z.string().transform((value, context) => {
+      try {
+        assertRestakeAssetId(value);
+      } catch (error: unknown) {
+        console.error(`Asset id ${value} is invalid: ${error}`);
+        context.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: 'Invalid payment asset',
+        });
 
-          return z.NEVER;
-        }
+        return z.NEVER;
+      }
 
-        return value;
-      }),
-      paymentAmount: z.number(),
+      return value;
+    }),
+    paymentAmount: z.number(),
   })
   .superRefine((schema, ctx) => {
-
     if (schema.approvalModel === 'Dynamic') {
       // If approval model is dynamic, `maxApproval` is required
       if (!schema.maxApproval) {
@@ -167,10 +166,7 @@ export const deployBlueprintSchema = z
       }
 
       // `approvalThreshold` must be less than or equal to the number of operators
-      if (
-        schema.minApproval >
-        schema.operators.length
-      ) {
+      if (schema.minApproval > schema.operators.length) {
         ctx.addIssue({
           path: [`minApproval`],
           code: z.ZodIssueCode.custom,

@@ -1,9 +1,9 @@
-import { FC } from 'react'
-import { BasicInformationStep } from './BasicInformationStep'
-import { BaseDeployStepProps } from './type'
-import { AssetConfigurationStep } from './AssetConfigurationStep'
-import { SelectOperatorsStep } from './OperatorSelectionStep'
-import { RequetArgsConfigurationStep } from './RequetArgsConfigurationStep'
+import { FC } from 'react';
+import { BasicInformationStep } from './BasicInformationStep';
+import { BaseDeployStepProps } from './type';
+import { AssetConfigurationStep } from './AssetConfigurationStep';
+import { SelectOperatorsStep } from './OperatorSelectionStep';
+import { RequetArgsConfigurationStep } from './RequetArgsConfigurationStep';
 
 export const Deployment: FC<BaseDeployStepProps> = (props) => {
   return (
@@ -13,5 +13,5 @@ export const Deployment: FC<BaseDeployStepProps> = (props) => {
       <RequetArgsConfigurationStep {...props} />
       <SelectOperatorsStep {...props} />
     </>
-  )
-}
+  );
+};

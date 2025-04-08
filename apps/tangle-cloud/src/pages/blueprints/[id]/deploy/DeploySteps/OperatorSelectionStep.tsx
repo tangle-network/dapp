@@ -1,11 +1,10 @@
-import {
-  Typography,
-  Input,
-  Card,
-  Label,
-} from '@tangle-network/ui-components';
+import { Typography, Input, Card, Label } from '@tangle-network/ui-components';
 import { FC, useEffect, useState, Children, useCallback } from 'react';
-import { SelectOperatorsStepProps, OperatorSelectionTable, ApprovalModelLabel } from './type';
+import {
+  SelectOperatorsStepProps,
+  OperatorSelectionTable,
+  ApprovalModelLabel,
+} from './type';
 import { RowSelectionState } from '@tanstack/react-table';
 import ErrorMessage from '../../../../../components/ErrorMessage';
 import {
@@ -83,7 +82,6 @@ export const SelectOperatorsStep: FC<SelectOperatorsStepProps> = ({
     [values, setValue],
   );
 
-
   const onChangeMinApproval = useCallback(
     (value: DeployBlueprintSchema['minApproval']) => {
       setValue(`minApproval`, value);
@@ -91,16 +89,12 @@ export const SelectOperatorsStep: FC<SelectOperatorsStepProps> = ({
     [values, setValue],
   );
 
-
   return (
     <Card className="p-6">
-   <Typography
-            variant="h5"
-            className="text-mono-200 dark:text-mono-0 mb-4"
-          >
-            Approval Settings
-          </Typography>
-          <hr className="border-mono-80 dark:border-mono-160 mb-6" />
+      <Typography variant="h5" className="text-mono-200 dark:text-mono-0 mb-4">
+        Approval Settings
+      </Typography>
+      <hr className="border-mono-80 dark:border-mono-160 mb-6" />
 
       <div className="flex justify-between mb-3">
         <div className="w-1/3">
@@ -146,57 +140,50 @@ export const SelectOperatorsStep: FC<SelectOperatorsStepProps> = ({
         }}
         advanceFilter={advanceFilter}
       />
-      {
-        errors?.operators?.message && (
-          <ErrorMessage>{errors?.operators?.message}</ErrorMessage>
-        )
-      }
+      {errors?.operators?.message && (
+        <ErrorMessage>{errors?.operators?.message}</ErrorMessage>
+      )}
 
-
-<div className="mt-5 flex gap-4">
-          <div className="w-1/2">
-            <Label className={labelClassName}>Approval Model:</Label>
-            <Select value={values.approvalModel} onValueChange={onChangeApprovalModel}>
-              <SelectTrigger>
-                <SelectValue
-                  className="text-[16px] leading-[30px]"
-                  placeholder="Select an approval model"
-                />
-              </SelectTrigger>
-              <SelectContent>
-                {Children.toArray(
-                  Object.entries(ApprovalModelLabel).map(([key, label]) => (
-                    <SelectItem value={key}>{label}</SelectItem>
-                  )),
-                )}
-              </SelectContent>
-            </Select>
-            <ErrorMessage>
-              {errors?.approvalModel?.message}
-            </ErrorMessage>
-          </div>
-
-          {values.approvalModel === 'Dynamic' && (
-            <div className="w-1/2">
-              <Label className={labelClassName}>Approval Threshold:</Label>
-              <Input
-                value={values.minApproval?.toString()}
-                onChange={(nextValue) => onChangeMinApproval(Number(nextValue))}
-                isControlled
-                type="number"
-                id="approval-threshold"
+      <div className="mt-5 flex gap-4">
+        <div className="w-1/2">
+          <Label className={labelClassName}>Approval Model:</Label>
+          <Select
+            value={values.approvalModel}
+            onValueChange={onChangeApprovalModel}
+          >
+            <SelectTrigger>
+              <SelectValue
+                className="text-[16px] leading-[30px]"
+                placeholder="Select an approval model"
               />
-              {
-                errors?.minApproval?.message && (
-                  <ErrorMessage>
-                    {errors?.minApproval?.message}
-                  </ErrorMessage>
-                )
-              }
-            </div>
-          )}
+            </SelectTrigger>
+            <SelectContent>
+              {Children.toArray(
+                Object.entries(ApprovalModelLabel).map(([key, label]) => (
+                  <SelectItem value={key}>{label}</SelectItem>
+                )),
+              )}
+            </SelectContent>
+          </Select>
+          <ErrorMessage>{errors?.approvalModel?.message}</ErrorMessage>
         </div>
 
+        {values.approvalModel === 'Dynamic' && (
+          <div className="w-1/2">
+            <Label className={labelClassName}>Approval Threshold:</Label>
+            <Input
+              value={values.minApproval?.toString()}
+              onChange={(nextValue) => onChangeMinApproval(Number(nextValue))}
+              isControlled
+              type="number"
+              id="approval-threshold"
+            />
+            {errors?.minApproval?.message && (
+              <ErrorMessage>{errors?.minApproval?.message}</ErrorMessage>
+            )}
+          </div>
+        )}
+      </div>
     </Card>
   );
 };
