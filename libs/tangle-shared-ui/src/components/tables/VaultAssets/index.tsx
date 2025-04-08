@@ -2,7 +2,6 @@ import { BN } from '@polkadot/util';
 import { makeExplorerUrl } from '@tangle-network/api-provider-environment/transaction/utils';
 import { TokenIcon } from '@tangle-network/icons';
 import {
-  Card,
   ExternalLinkIcon,
   isEvmAddress,
   Typography,
@@ -156,25 +155,39 @@ const VaultAssetsTable: FC<Props> = ({
   }, [depositCapacity, decimals]);
 
   return (
-    <div className="px-3 pb-3 items-start flex gap-4">
+    <div className="px-3 pb-3 flex gap-4">
       <Table
         variant={TableVariant.GLASS_INNER}
         tableProps={table}
         title={pluralize('asset', data.length !== 1)}
-        thClassName={cx('border-b-0')}
+        tableClassName="relative"
+        thClassName={cx(
+          'border-b-0 sticky top-0',
+          'backdrop-blur-sm shadow-2xl',
+          'first:rounded-tl-2xl last:rounded-tr-2xl',
+        )}
         className={twMerge(
           isShown ? 'animate-slide-down' : 'animate-slide-up',
-          '!bg-transparent -mt-1 flex-auto',
+          'bg-mono-40/50 dark:bg-mono-200 flex-auto px-0',
+          'overflow-x-hidden overflow-y-hidden',
+        )}
+        tableWrapperClassName={cx(
+          'overflow-y-auto h-[320px] overflow-x-hidden',
         )}
       />
 
-      <div className="flex-initial w-1/5 aspect-square mb-3">
+      <div
+        className={cx(
+          'flex-initial w-1/4 bg-mono-40/50 dark:bg-mono-200 p-3',
+          'rounded-2xl flex flex-col',
+        )}
+      >
         <ResponsiveContainer>
           <PieChart>
             <Pie
               data={chartData}
               dataKey="value"
-              innerRadius={60}
+              innerRadius={50}
               startAngle={90}
               endAngle={-270}
             />

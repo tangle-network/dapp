@@ -93,7 +93,7 @@ const LockedBalancesTable: FC = () => {
               <Typography
                 variant="body3"
                 fw="semibold"
-                className="uppercase text-purple-60 dark:text-purple-40"
+                className="uppercase text-purple-60 dark:text-purple-70"
               >
                 {getSubstrateLockIdText(props.getValue())} {index}
               </Typography>
