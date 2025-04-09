@@ -3,7 +3,6 @@ import { BN } from '@polkadot/util';
 import { isTemplateBigInt } from '@tangle-network/ui-components';
 import { EvmAddress } from '@tangle-network/ui-components/types/address';
 import { isEvmAddress } from '@tangle-network/ui-components/utils/isEvmAddress20';
-import assert from 'assert';
 import { useCallback, useMemo } from 'react';
 import { map } from 'rxjs';
 import useApiRx from '../../hooks/useApiRx';
@@ -50,7 +49,7 @@ const useRestakeAssetBalances = () => {
   const {
     data: erc20Balances,
     refetch: refetchErc20Balances,
-    isLoading: isLoadingErc20Balances,
+    isPending: isLoadingErc20Balances,
   } = useErc20Balances(evmAssetIds);
 
   const { result: assetAccounts, isLoading: isLoadingAssetAccounts } = useApiRx(
@@ -98,18 +97,18 @@ const useRestakeAssetBalances = () => {
         if (entry.status === 'success' && typeof entry.result === 'bigint') {
           const id = evmAssetIds.at(index);
 
-          assert(id !== undefined);
-
-          // TODO: Scale bigint to BN using appropriate decimals?
-          balances.set(id, new BN(entry.result.toString()));
+          if (id !== undefined) {
+            balances.set(id, new BN(entry.result.toString()));
+          }
         }
       }
     }
 
     if (assetAccounts !== null) {
       for (const { assetId, account } of assetAccounts) {
-        assert(!balances.has(assetId));
-        balances.set(assetId, account.balance.toBn());
+        if (!balances.has(assetId)) {
+          balances.set(assetId, account.balance.toBn());
+        }
       }
     }
 

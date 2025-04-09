@@ -2,13 +2,13 @@ import { Option, StorageKey, u32, Vec } from '@polkadot/types';
 import { TanglePrimitivesServicesTypesAsset } from '@polkadot/types/lookup';
 import { TANGLE_TOKEN_DECIMALS } from '@tangle-network/dapp-config';
 import { isEvmAddress } from '@tangle-network/ui-components';
+import { skipToken, useQuery } from '@tanstack/react-query';
 import assert from 'assert';
 import { useCallback, useMemo } from 'react';
 import { map } from 'rxjs';
 import { NATIVE_ASSET_ID } from '../../constants/restaking';
 import useNetworkStore from '../../context/useNetworkStore';
 import useApiRx from '../../hooks/useApiRx';
-import usePromise from '../../hooks/usePromise';
 import useViemPublicClient from '../../hooks/useViemPublicClient';
 import { RestakeAssetId } from '../../types';
 import { TangleError, TangleErrorCode } from '../../types/error';
@@ -172,20 +172,24 @@ const useRestakeAssets = () => {
     }, []),
   );
 
-  const { result: evmAssetMetadatas, isLoading: isLoadingEvmAssetMetadatas } =
-    usePromise(
-      useCallback(async () => {
-        if (evmAssetIds === null || viemPublicClient === null) {
-          return null;
-        }
-
-        return await fetchErc20TokenMetadata(viemPublicClient, evmAssetIds);
-      }, [evmAssetIds, viemPublicClient]),
-      null,
-    );
+  const { data: evmAssetMetadatas, isPending: isLoadingEvmAssetMetadatas } =
+    useQuery({
+      queryKey: [
+        'evm-asset-metadatas',
+        evmAssetIds,
+        viemPublicClient?.chain?.id,
+      ],
+      queryFn:
+        viemPublicClient && evmAssetIds
+          ? () => fetchErc20TokenMetadata(viemPublicClient, evmAssetIds)
+          : skipToken,
+      // Never stale, no need to refetch.
+      staleTime: Infinity,
+      placeholderData: (prev) => prev,
+    });
 
   const evmAssets = useMemo(() => {
-    if (evmAssetIds === null || evmAssetMetadatas === null) {
+    if (evmAssetIds === null || evmAssetMetadatas === undefined) {
       return null;
     }
 
@@ -320,13 +324,13 @@ const useRestakeAssets = () => {
     assets: assetsWithBalances,
     refetchErc20Balances: refetchErc20Balances_,
     isLoading:
-      isLoadingBalances ||
       isLoadingNativeAssetDetails ||
       isLoadingNativeAssetMetadatas ||
-      isLoadingEvmAssetMetadatas ||
       isLoadingAssetVaultIds ||
       isLoadingRewardVaults ||
-      isLoadingVaultsPotAccounts,
+      isLoadingVaultsPotAccounts ||
+      isLoadingEvmAssetMetadatas,
+    isLoadingBalances,
   };
 };
 

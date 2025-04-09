@@ -1,5 +1,6 @@
 import { PalletRewardsRewardConfigForAssetVault } from '@polkadot/types/lookup';
 import { BN } from '@polkadot/util';
+import { NetworkId } from '@tangle-network/ui-components/constants/networks';
 import { RestakeAssetId } from '../types';
 import { DelegatorInfo, RestakeAsset } from '../types/restake';
 
@@ -17,13 +18,14 @@ export type RestakeVault = {
 
 type Options = {
   assets: RestakeAsset[];
+  networkId: NetworkId | undefined;
   delegatorInfo?: DelegatorInfo | null;
   assetTvl?: Map<RestakeAssetId, BN> | null;
   rewardConfig?: Map<number, PalletRewardsRewardConfigForAssetVault> | null;
 };
 
 // TODO: Use metadata from chain.
-const VAULT_METADATA = new Map<
+const MAINNET_VAULT_METADATA = new Map<
   number,
   {
     name: string;
@@ -65,6 +67,7 @@ const createVaultMap = ({
   delegatorInfo,
   assetTvl,
   rewardConfig,
+  networkId,
 }: Options): Map<number, RestakeVault> => {
   const vaults = new Map<number, RestakeVault>();
 
@@ -86,7 +89,10 @@ const createVaultMap = ({
         ?.get(asset.metadata.vaultId)
         ?.depositCap.toBn();
 
-      const vaultMetadata = VAULT_METADATA.get(asset.metadata.vaultId);
+      const vaultMetadata =
+        networkId === NetworkId.TANGLE_MAINNET
+          ? MAINNET_VAULT_METADATA.get(asset.metadata.vaultId)
+          : null;
 
       vaults.set(asset.metadata.vaultId, {
         id: asset.metadata.vaultId,

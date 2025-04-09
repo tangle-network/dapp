@@ -12,6 +12,7 @@ import {
 import createVaultMap from '@tangle-network/tangle-shared-ui/utils/createVaultMap';
 import { ComponentProps, useMemo } from 'react';
 import VaultsTable from '../components/tables/Vaults';
+import useNetworkStore from '@tangle-network/tangle-shared-ui/context/useNetworkStore';
 
 type Options = {
   operatorData?: OperatorMetadata;
@@ -23,6 +24,7 @@ const useVaultTableData = ({ operatorData, delegatorInfo }: Options) => {
   const assetsTvl = useRestakeAssetsTvl();
   const assetTvl = useRestakeAssetsTvl();
   const { assets, isLoading: isLoadingAssets } = useRestakeAssets();
+  const networkId = useNetworkStore((store) => store.network2?.id);
 
   const vaults = useMemo(() => {
     if (assets === null) {
@@ -35,6 +37,7 @@ const useVaultTableData = ({ operatorData, delegatorInfo }: Options) => {
         rewardConfig,
         delegatorInfo,
         assetTvl,
+        networkId,
       })
         .values()
         .toArray();
@@ -59,10 +62,11 @@ const useVaultTableData = ({ operatorData, delegatorInfo }: Options) => {
       rewardConfig,
       delegatorInfo,
       assetTvl,
+      networkId,
     })
       .values()
       .toArray();
-  }, [assetTvl, assets, delegatorInfo, operatorData, rewardConfig]);
+  }, [assetTvl, assets, delegatorInfo, networkId, operatorData, rewardConfig]);
 
   const tableProps = useMemo<ComponentProps<typeof VaultsTable>['tableProps']>(
     () => ({

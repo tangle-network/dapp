@@ -1,4 +1,3 @@
-import { useWebContext } from '@tangle-network/api-provider-environment/webb-context/webb-context';
 import { EvmAddress } from '@tangle-network/ui-components/types/address';
 import { isEqual } from 'lodash';
 import { useEffect, useMemo, useRef } from 'react';
@@ -7,7 +6,6 @@ import { useReadContracts } from 'wagmi';
 import useAgnosticAccountInfo from '../../hooks/useAgnosticAccountInfo';
 
 const useErc20Balances = (assetAddressesArg: EvmAddress[]) => {
-  const { loading, isConnecting } = useWebContext();
   const { evmAddress } = useAgnosticAccountInfo();
   const assetAddressesRef = useRef(assetAddressesArg);
 
@@ -32,16 +30,18 @@ const useErc20Balances = (assetAddressesArg: EvmAddress[]) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [evmAddress, assetAddressesRef.current]);
 
-  const result = useReadContracts({
+  const { isPending, ...rest } = useReadContracts({
     contracts: contracts,
     query: {
       enabled: evmAddress !== null,
+      placeholderData: (prev) => prev,
     },
   });
 
   return {
-    ...result,
-    isLoading: loading || isConnecting || result.isLoading,
+    ...rest,
+    // If the evm address is not set, we don't want to show a loading state.
+    isPending: evmAddress === null ? false : isPending,
   };
 };
 
