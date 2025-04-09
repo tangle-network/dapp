@@ -10,7 +10,10 @@ import {
 } from '@tangle-network/ui-components/components/select';
 import ErrorMessage from '../../../../../components/ErrorMessage';
 import LsTokenIcon from '@tangle-network/tangle-shared-ui/components/LsTokenIcon';
-import { AssetSchema, mapPrimitiveAssetMetadataToAssetSchema } from '../../../../../utils/validations/deployBlueprint';
+import {
+  AssetSchema,
+  mapPrimitiveAssetMetadataToAssetSchema,
+} from '../../../../../utils/validations/deployBlueprint';
 
 export const PaymentStep: FC<PaymentStepProps> = ({
   errors,
@@ -18,13 +21,19 @@ export const PaymentStep: FC<PaymentStepProps> = ({
   watch,
   assets,
 }) => {
-  const onSelectAsset = useCallback((asset: AssetSchema) => {
-    setValue('paymentAsset', asset);
-  }, [setValue]);
+  const onSelectAsset = useCallback(
+    (asset: AssetSchema) => {
+      setValue('paymentAsset', asset);
+    },
+    [setValue],
+  );
 
-  const onChangePaymentAmount = useCallback((nextValue: string) => {
-    setValue('paymentAmount', Number(nextValue));
-  }, [setValue]);
+  const onChangePaymentAmount = useCallback(
+    (nextValue: string) => {
+      setValue('paymentAmount', Number(nextValue));
+    },
+    [setValue],
+  );
 
   return (
     <Card className="p-6">
@@ -33,23 +42,30 @@ export const PaymentStep: FC<PaymentStepProps> = ({
       </Typography>
       <hr className="border-mono-80 dark:border-mono-160 mb-6" />
 
-      <div className='flex gap-6 w-full'>
+      <div className="flex gap-6 w-full">
         <div className="space-y-2 flex-1">
-          <Typography variant="body1" className="text-mono-200 dark:text-mono-0">
+          <Typography
+            variant="body1"
+            className="text-mono-200 dark:text-mono-0"
+          >
             Select Payment Asset
           </Typography>
-          <Select onValueChange={(assetId) => {
-            const asset = assets.find((asset) => asset.id === assetId);
-            if (asset) {
-              onSelectAsset(mapPrimitiveAssetMetadataToAssetSchema(asset));
-            }
-          }}>
+          <Select
+            onValueChange={(assetId) => {
+              const asset = assets.find((asset) => asset.id === assetId);
+              if (asset) {
+                onSelectAsset(mapPrimitiveAssetMetadataToAssetSchema(asset));
+              }
+            }}
+          >
             <SelectTrigger className="w-full">
               <SelectValue
                 placeholder={
                   <div className="flex items-center gap-2">
                     <LsTokenIcon name="TNT" size="md" />
-                    <Typography variant="body1">Select payment asset</Typography>
+                    <Typography variant="body1">
+                      Select payment asset
+                    </Typography>
                   </div>
                 }
               />
@@ -58,10 +74,7 @@ export const PaymentStep: FC<PaymentStepProps> = ({
             <SelectContent>
               {Children.toArray(
                 assets.map((asset) => (
-                  <SelectItem
-                    value={asset.id ?? ''}
-                    id={asset.id}
-                  >
+                  <SelectItem value={asset.id ?? ''} id={asset.id}>
                     <div className="flex items-center gap-2">
                       <LsTokenIcon name={asset.name ?? 'TNT'} size="md" />
                       <Typography variant="body1">
@@ -69,20 +82,25 @@ export const PaymentStep: FC<PaymentStepProps> = ({
                       </Typography>
                     </div>
                   </SelectItem>
-                ))
+                )),
               )}
             </SelectContent>
           </Select>
           {errors?.paymentAsset?.message && (
-            <ErrorMessage className="mt-1">{errors.paymentAsset.message}</ErrorMessage>
+            <ErrorMessage className="mt-1">
+              {errors.paymentAsset.message}
+            </ErrorMessage>
           )}
         </div>
 
         <div className="space-y-2 flex-1">
-          <Typography variant="body1" className="text-mono-200 dark:text-mono-0">
+          <Typography
+            variant="body1"
+            className="text-mono-200 dark:text-mono-0"
+          >
             Payment Amount
           </Typography>
-          <Input 
+          <Input
             isControlled
             id="paymentAmount"
             placeholder="Enter payment amount"
@@ -92,7 +110,9 @@ export const PaymentStep: FC<PaymentStepProps> = ({
             className="w-full"
           />
           {errors?.paymentAmount?.message && (
-            <ErrorMessage className="mt-1">{errors.paymentAmount.message}</ErrorMessage>
+            <ErrorMessage className="mt-1">
+              {errors.paymentAmount.message}
+            </ErrorMessage>
           )}
         </div>
       </div>

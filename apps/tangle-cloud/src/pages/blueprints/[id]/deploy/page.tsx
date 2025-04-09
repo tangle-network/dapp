@@ -54,7 +54,6 @@ const DeployPage: FC = () => {
   }
 
   console.log(watch());
-  
 
   const onDeployBlueprint = async () => {
     // pre validate the form

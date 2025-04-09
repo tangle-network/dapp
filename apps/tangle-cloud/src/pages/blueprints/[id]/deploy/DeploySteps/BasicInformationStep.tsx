@@ -133,7 +133,7 @@ export const BasicInformationStep: FC<BasicInformationStepProps> = ({
                   <Button
                     onClick={() => handleRemoveCaller(index)}
                     className="flex-shrink-0"
-                    variant='utility'
+                    variant="utility"
                   >
                     <TrashIcon className="h-5 w-5" />
                   </Button>
@@ -148,7 +148,7 @@ export const BasicInformationStep: FC<BasicInformationStepProps> = ({
           )}
 
           <Button
-            variant='utility'
+            variant="utility"
             onClick={() => {
               setValue(`permittedCallers`, [...permittedCallers, '']);
             }}

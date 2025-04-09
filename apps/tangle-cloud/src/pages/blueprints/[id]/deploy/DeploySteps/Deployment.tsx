@@ -30,10 +30,18 @@ export const Deployment: FC<BaseDeployStepProps> = (props) => {
   return (
     <>
       <BasicInformationStep {...props} />
-      <SelectOperatorsStep {...props} assets={assets} assetsWithMetadata={assetsWithMetadata}/>
+      <SelectOperatorsStep
+        {...props}
+        assets={assets}
+        assetsWithMetadata={assetsWithMetadata}
+      />
       <AssetConfigurationStep {...props} />
       <RequestArgsConfigurationStep {...props} />
-      <PaymentStep {...props} assets={assets} assetsWithMetadata={assetsWithMetadata}/>
+      <PaymentStep
+        {...props}
+        assets={assets}
+        assetsWithMetadata={assetsWithMetadata}
+      />
     </>
   );
 };

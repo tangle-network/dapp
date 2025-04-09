@@ -27,20 +27,18 @@ export const AssetConfigurationStep: FC<AssetConfigurationStepProps> = ({
       <Typography variant="h5" className="text-mono-200 dark:text-mono-0 mb-4">
         Asset Requirements
       </Typography>
-      {
-        errors?.securityCommitments?.message && (
-          <ErrorMessage>
-            {errors?.securityCommitments?.message}
-          </ErrorMessage>
-        )
-      }
+      {errors?.securityCommitments?.message && (
+        <ErrorMessage>{errors?.securityCommitments?.message}</ErrorMessage>
+      )}
       <hr className="border-mono-80 dark:border-mono-160 mb-6" />
 
       <div className="mt-5">
         {Children.toArray(
           selectedAssets.map((asset, index) => {
-            const minExposurePercentFormValue = values.securityCommitments?.at(index)?.minExposurePercent ?? 0;
-            const maxExposurePercentFormValue = values.securityCommitments?.at(index)?.maxExposurePercent ?? 100;
+            const minExposurePercentFormValue =
+              values.securityCommitments?.at(index)?.minExposurePercent ?? 0;
+            const maxExposurePercentFormValue =
+              values.securityCommitments?.at(index)?.maxExposurePercent ?? 100;
 
             return (
               <AssetRequirementFormItem
@@ -60,7 +58,8 @@ export const AssetConfigurationStep: FC<AssetConfigurationStepProps> = ({
                   );
                 }}
                 minExposurePercentErrorMsg={
-                  errors?.securityCommitments?.[index]?.minExposurePercent?.message
+                  errors?.securityCommitments?.[index]?.minExposurePercent
+                    ?.message
                 }
                 maxExposurePercentErrorMsg={
                   errors?.securityCommitments?.[index]?.maxExposurePercent

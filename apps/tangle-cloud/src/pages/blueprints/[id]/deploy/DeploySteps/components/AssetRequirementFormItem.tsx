@@ -53,52 +53,46 @@ export const AssetRequirementFormItem: FC<
           <Typography variant="h5" className={LabelClassName}>
             {assetMetadata?.name ?? 'TNT'}
           </Typography>
-          <Typography
-            variant="body3"
-            className={LabelClassName}
-          >
+          <Typography variant="body3" className={LabelClassName}>
             Asset ID: {assetId}
           </Typography>
         </div>
       </div>
 
-        <div>
-          <Label className={LabelClassName}>
-            {isViewOnly ? 'Exposure Percentage' : 'Set Exposure Percentage'}
-          </Label>
-          {isViewOnly ? (
-            <Typography
-              variant="body1"
-              className={LabelClassName}
-            >
-              {maxExposurePercent ?? '0'}%
-            </Typography>
-          ) : (
-            <>
-              <Slider
-                hasLabel 
-                value={[minExposurePercent || 0, maxExposurePercent || 100]}
-                onChange={(value) => {                  
-                  if (!isViewOnly) {
-                    props.onChangeExposurePercent(value);
-                  }
-                }}
-              />
-              <div className='flex justify-between'>
-                {!isViewOnly && (
-                  <ErrorMessage className="mt-1">
-                    {props.minExposurePercentErrorMsg}
-                  </ErrorMessage>
-                )}
-                {!isViewOnly && (
-                  <ErrorMessage className="mt-1">
-                    {props.maxExposurePercentErrorMsg}
-                  </ErrorMessage>
-                )}
-              </div>
-            </>
-          )}
-        </div>
+      <div>
+        <Label className={LabelClassName}>
+          {isViewOnly ? 'Exposure Percentage' : 'Set Exposure Percentage'}
+        </Label>
+        {isViewOnly ? (
+          <Typography variant="body1" className={LabelClassName}>
+            {maxExposurePercent ?? '0'}%
+          </Typography>
+        ) : (
+          <>
+            <Slider
+              hasLabel
+              value={[minExposurePercent || 0, maxExposurePercent || 100]}
+              onChange={(value) => {
+                if (!isViewOnly) {
+                  props.onChangeExposurePercent(value);
+                }
+              }}
+            />
+            <div className="flex justify-between">
+              {!isViewOnly && (
+                <ErrorMessage className="mt-1">
+                  {props.minExposurePercentErrorMsg}
+                </ErrorMessage>
+              )}
+              {!isViewOnly && (
+                <ErrorMessage className="mt-1">
+                  {props.maxExposurePercentErrorMsg}
+                </ErrorMessage>
+              )}
+            </div>
+          </>
+        )}
+      </div>
     </div>
   );
 };

@@ -13,17 +13,13 @@ export const RequestArgsConfigurationStep: FC<
       <hr className="border-mono-80 dark:border-mono-160 mb-6" />
 
       <div className="flex justify-between mb-3">
-        {
-          !blueprint?.requestParams?.length ? (
-            <div>
-              <Typography variant="body1">
-                No request arguments
-              </Typography>
-            </div>
-          ) : (
-            <>TODO</>
-          )
-        }
+        {!blueprint?.requestParams?.length ? (
+          <div>
+            <Typography variant="body1">No request arguments</Typography>
+          </div>
+        ) : (
+          <>TODO</>
+        )}
       </div>
     </Card>
   );

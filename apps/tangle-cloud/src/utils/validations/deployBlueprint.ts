@@ -180,7 +180,9 @@ export const deployBlueprintSchema = z
 
 export type DeployBlueprintSchema = z.infer<typeof deployBlueprintSchema>;
 
-export const mapPrimitiveAssetMetadataToAssetSchema = (asset: PrimitiveAssetMetadata): AssetSchema => {
+export const mapPrimitiveAssetMetadataToAssetSchema = (
+  asset: PrimitiveAssetMetadata,
+): AssetSchema => {
   return {
     id: asset.id ?? '0',
     name: asset.name ?? 'TNT',

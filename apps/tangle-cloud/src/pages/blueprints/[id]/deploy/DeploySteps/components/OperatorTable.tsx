@@ -48,7 +48,12 @@ type Props = Omit<
   advanceFilter?: (row: OperatorSelectionTable) => boolean;
 };
 
-export const OperatorTable: FC<Props> = ({ assets, assetWithMetadata, advanceFilter, ...tableProps }) => {
+export const OperatorTable: FC<Props> = ({
+  assets,
+  assetWithMetadata,
+  advanceFilter,
+  ...tableProps
+}) => {
   const { id: _blueprintId } = useParams();
   const blueprintId = Number(_blueprintId);
 
@@ -101,23 +106,19 @@ export const OperatorTable: FC<Props> = ({ assets, assetWithMetadata, advanceFil
             if (!asset) {
               return acc;
             }
-            const parsed = safeFormatUnits(
-              curr.amount,
-              asset.decimals,
-            );
+            const parsed = safeFormatUnits(curr.amount, asset.decimals);
 
             if (parsed.success === false) {
               return acc;
             }
-            const currPrice =
-              Number(parsed.value) * (asset.priceInUsd ?? 0);
+            const currPrice = Number(parsed.value) * (asset.priceInUsd ?? 0);
             return acc + currPrice;
           }, 0),
           vaultTokens: [],
-            // TODO: Implement delegated tokens
-            // assets === null
-            //   ? []
-            //   : delegationsToVaultTokens(delegations, assets),
+          // TODO: Implement delegated tokens
+          // assets === null
+          //   ? []
+          //   : delegationsToVaultTokens(delegations, assets),
           instanceCount: operatorServicesMap.get(address)?.length ?? 0,
           // TODO: using graphql with im online pallet to get uptime of operator
           uptime: Math.round(Math.random() * 100),
