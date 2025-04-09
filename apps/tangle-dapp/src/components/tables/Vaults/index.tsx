@@ -37,7 +37,7 @@ import type { Props } from './types';
 
 const COLUMN_HELPER = createColumnHelper<RestakeVault>();
 
-const getColumns = (nativeTokenSymbol: string | undefined) => [
+const COLUMNS = [
   COLUMN_HELPER.accessor('name', {
     header: () => <HeaderCell title="Vault" />,
     cell: (props) => (
@@ -76,37 +76,6 @@ const getColumns = (nativeTokenSymbol: string | undefined) => [
             );
 
       return <TableCellWrapper>{fmtDeposits}</TableCellWrapper>;
-    },
-  }),
-  COLUMN_HELPER.accessor('reward', {
-    sortUndefined: 'last',
-    sortingFn: sortByBnToDecimal(
-      (row) => row.reward,
-      (row) => row.decimals,
-    ),
-    header: () => (
-      <HeaderCell
-        title="Total Vault Rewards"
-        tooltip="Total rewards for the vault, distributed to all delegators."
-      />
-    ),
-    cell: (props) => {
-      const value = props.getValue();
-
-      const fmtRewards =
-        value === undefined
-          ? 0
-          : formatDisplayAmount(
-              value,
-              props.row.original.decimals,
-              AmountFormatStyle.SHORT,
-            );
-
-      return (
-        <TableCellWrapper>
-          {fmtRewards} {nativeTokenSymbol}
-        </TableCellWrapper>
-      );
     },
   }),
   COLUMN_HELPER.accessor('tvl', {
@@ -211,16 +180,12 @@ const VaultsTable: FC<Props> = ({
   tableProps,
   isLoading,
 }) => {
-  const nativeTokenSymbol = useNetworkStore(
-    (store) => store.network2?.tokenSymbol,
-  );
-
   const table = useReactTable(
     useMemo(
       () =>
         ({
           data: data ?? [],
-          columns: getColumns(nativeTokenSymbol),
+          columns: COLUMNS,
           getCoreRowModel: getCoreRowModel(),
           getExpandedRowModel: getExpandedRowModel(),
           getSortedRowModel: getSortedRowModel(),
@@ -229,7 +194,7 @@ const VaultsTable: FC<Props> = ({
           autoResetPageIndex: false,
           enableSortingRemoval: false,
         }) satisfies TableOptions<RestakeVault>,
-      [data, nativeTokenSymbol],
+      [data],
     ),
   );
 

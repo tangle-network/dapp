@@ -9,7 +9,6 @@ export type RestakeVault = {
   representAssetSymbol: string;
   decimals: number;
   capacity?: BN;
-  reward?: BN;
   tokenCount: number;
   totalDeposits?: BN;
   tvl?: BN;
@@ -18,7 +17,6 @@ export type RestakeVault = {
 type Options = {
   assets: RestakeAsset[];
   delegatorInfo?: DelegatorInfo | null;
-  vaultsRewards?: Map<number, BN> | null;
   assetTvl?: Map<RestakeAssetId, BN> | null;
   rewardConfig?: Map<number, PalletRewardsRewardConfigForAssetVault> | null;
 };
@@ -26,7 +24,6 @@ type Options = {
 const createVaultMap = ({
   assets,
   delegatorInfo,
-  vaultsRewards,
   assetTvl,
   rewardConfig,
 }: Options): Map<number, RestakeVault> => {
@@ -50,15 +47,12 @@ const createVaultMap = ({
         ?.get(asset.metadata.vaultId)
         ?.depositCap.toBn();
 
-      const reward = vaultsRewards?.get(asset.metadata.vaultId);
-
       vaults.set(asset.metadata.vaultId, {
         id: asset.metadata.vaultId,
         name: asset.metadata.name ?? asset.metadata.symbol,
         representAssetSymbol: asset.metadata.symbol,
         decimals: asset.metadata.decimals,
         capacity,
-        reward,
         tokenCount: 1,
         totalDeposits,
         tvl,

@@ -33,7 +33,6 @@ export const TotalValueLockedTabs = () => {
   const address = useActiveAccountAddress();
   const { operatorMap } = useRestakeOperatorMap();
   const rewardConfig = useRestakeRewardConfig();
-  const { result: vaultsRewards } = useVaultRewards();
   const assetTvl = useRestakeAssetsTvl();
 
   const operatorData = useMemo(() => {
@@ -53,7 +52,6 @@ export const TotalValueLockedTabs = () => {
         assets: Array.from(assets.values()),
         rewardConfig,
         delegatorInfo,
-        vaultsRewards,
         assetTvl,
       })
         .values()
@@ -78,19 +76,11 @@ export const TotalValueLockedTabs = () => {
       assets: operatorAssets,
       rewardConfig,
       delegatorInfo,
-      vaultsRewards,
       assetTvl,
     })
       .values()
       .toArray();
-  }, [
-    assetTvl,
-    assets,
-    delegatorInfo,
-    operatorData,
-    rewardConfig,
-    vaultsRewards,
-  ]);
+  }, [assetTvl, assets, delegatorInfo, operatorData, rewardConfig]);
 
   return (
     <TableAndChartTabs

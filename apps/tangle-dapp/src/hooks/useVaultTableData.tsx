@@ -1,18 +1,17 @@
 import { BN } from '@polkadot/util';
+import VaultAssetsTable from '@tangle-network/tangle-shared-ui/components/tables/VaultAssets';
+import { VaultAssetData } from '@tangle-network/tangle-shared-ui/components/tables/VaultAssets/types';
+import useRestakeAssets from '@tangle-network/tangle-shared-ui/data/restake/useRestakeAssets';
 import useRestakeAssetsTvl from '@tangle-network/tangle-shared-ui/data/restake/useRestakeAssetsTvl';
+import useRestakeRewardConfig from '@tangle-network/tangle-shared-ui/hooks/useRestakeRewardConfig';
 import { RestakeAssetId } from '@tangle-network/tangle-shared-ui/types';
 import {
   DelegatorInfo,
   OperatorMetadata,
 } from '@tangle-network/tangle-shared-ui/types/restake';
-import { ComponentProps, useMemo } from 'react';
-import VaultAssetsTable from '@tangle-network/tangle-shared-ui/components/tables/VaultAssets';
-import { VaultAssetData } from '@tangle-network/tangle-shared-ui/components/tables/VaultAssets/types';
-import VaultsTable from '../components/tables/Vaults';
-import useRestakeRewardConfig from '@tangle-network/tangle-shared-ui/hooks/useRestakeRewardConfig';
 import createVaultMap from '@tangle-network/tangle-shared-ui/utils/createVaultMap';
-import useVaultRewards from '@tangle-network/tangle-shared-ui/data/rewards/useVaultRewards';
-import useRestakeAssets from '@tangle-network/tangle-shared-ui/data/restake/useRestakeAssets';
+import { ComponentProps, useMemo } from 'react';
+import VaultsTable from '../components/tables/Vaults';
 
 type Options = {
   operatorData?: OperatorMetadata;
@@ -24,8 +23,6 @@ const useVaultTableData = ({ operatorData, delegatorInfo }: Options) => {
   const assetsTvl = useRestakeAssetsTvl();
   const assetTvl = useRestakeAssetsTvl();
   const { assets, isLoading: isLoadingAssets } = useRestakeAssets();
-  const { result: vaultsRewards, isLoading: isLoadingVaultsRewards } =
-    useVaultRewards();
 
   const vaults = useMemo(() => {
     if (assets === null) {
@@ -37,7 +34,6 @@ const useVaultTableData = ({ operatorData, delegatorInfo }: Options) => {
         assets: Array.from(assets.values()),
         rewardConfig,
         delegatorInfo,
-        vaultsRewards,
         assetTvl,
       })
         .values()
@@ -62,19 +58,11 @@ const useVaultTableData = ({ operatorData, delegatorInfo }: Options) => {
       assets: operatorAssets,
       rewardConfig,
       delegatorInfo,
-      vaultsRewards,
       assetTvl,
     })
       .values()
       .toArray();
-  }, [
-    assetTvl,
-    assets,
-    delegatorInfo,
-    operatorData,
-    rewardConfig,
-    vaultsRewards,
-  ]);
+  }, [assetTvl, assets, delegatorInfo, operatorData, rewardConfig]);
 
   const tableProps = useMemo<ComponentProps<typeof VaultsTable>['tableProps']>(
     () => ({
@@ -144,7 +132,7 @@ const useVaultTableData = ({ operatorData, delegatorInfo }: Options) => {
   return {
     vaults,
     tableProps,
-    isLoading: isLoadingAssets || isLoadingVaultsRewards,
+    isLoading: isLoadingAssets,
   };
 };
 

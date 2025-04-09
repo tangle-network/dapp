@@ -75,27 +75,6 @@ const getColumns = (nativeTokenSymbol: string) => [
       return <TableCellWrapper>{fmtDeposits}</TableCellWrapper>;
     },
   }),
-  COLUMN_HELPER.accessor('reward', {
-    sortUndefined: 'last',
-    header: () => 'Rewards',
-    cell: (props) => {
-      const value = props.getValue();
-      const fmtRewards =
-        value === undefined
-          ? EMPTY_VALUE_PLACEHOLDER
-          : formatDisplayAmount(
-              value,
-              props.row.original.decimals,
-              AmountFormatStyle.SHORT,
-            );
-
-      return (
-        <TableCellWrapper removeRightBorder>
-          {fmtRewards} {nativeTokenSymbol}
-        </TableCellWrapper>
-      );
-    },
-  }),
   COLUMN_HELPER.accessor('tvl', {
     sortUndefined: 'last',
     header: () => 'TVL | Capacity',
