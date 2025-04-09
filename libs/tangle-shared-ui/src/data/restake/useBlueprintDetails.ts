@@ -79,7 +79,7 @@ const useBlueprintDetails = (id?: string) => {
                 blueprintDetails.unwrap();
               const owner = ownerAccount.toString();
 
-              const { metadata, registrationParams } =
+              const { metadata, registrationParams, requestParams } =
                 toPrimitiveBlueprint(serviceBlueprint);
 
               const runningInstancesMap = new Map<number, ServiceInstance[]>();
@@ -149,6 +149,7 @@ const useBlueprintDetails = (id?: string) => {
                 twitterUrl: info?.twitter ?? null,
                 email: info?.email ?? null,
                 registrationParams,
+                requestParams,
                 // TODO: Determine `isBoosted` value.
                 isBoosted: false,
               };

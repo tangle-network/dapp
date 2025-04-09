@@ -1,3 +1,4 @@
+import { PrimitiveAssetMetadata } from '@tangle-network/tangle-shared-ui/types/restake';
 import assertRestakeAssetId from '@tangle-network/tangle-shared-ui/utils/assertRestakeAssetId';
 import {
   isEvmAddress,
@@ -5,7 +6,7 @@ import {
 } from '@tangle-network/ui-components';
 import { z } from 'zod';
 
-export const restakeAssetSchema = z.object({
+export const assetSchema = z.object({
   id: z.string().transform((value, ctx) => {
     try {
       assertRestakeAssetId(value);
@@ -21,18 +22,15 @@ export const restakeAssetSchema = z.object({
 
     return value;
   }),
-  metadata: z.object({
-    assetId: z.string(),
-    vaultId: z.number().nullable().optional(),
-    priceInUsd: z.number().nullable().optional(),
-    details: z.any().optional(),
-    name: z.string(),
-    symbol: z.string(),
-    decimals: z.number(),
-    deposit: z.string().optional(),
-    isFrozen: z.boolean().optional(),
-  }),
+  name: z.string().optional(),
+  symbol: z.string().optional(),
+  decimals: z.number().optional(),
+  deposit: z.string().optional(),
+  isFrozen: z.boolean().optional(),
+  priceInUsd: z.number().nullable(),
 });
+
+export type AssetSchema = z.infer<typeof assetSchema>;
 
 export const deployBlueprintSchema = z
   .object({
@@ -83,7 +81,7 @@ export const deployBlueprintSchema = z
 
       return value;
     }),
-    assets: z.array(restakeAssetSchema).transform((value, context) => {
+    assets: z.array(assetSchema).transform((value, context) => {
       if (value.length === 0) {
         context.addIssue({
           code: z.ZodIssueCode.custom,
@@ -98,8 +96,8 @@ export const deployBlueprintSchema = z
     securityCommitments: z
       .array(
         z.object({
-          minExposurePercent: z.number().min(1).max(100),
-          maxExposurePercent: z.number().min(1).max(100),
+          minExposurePercent: z.number().min(1).max(100).default(0),
+          maxExposurePercent: z.number().min(1).max(100).default(100),
         }),
       )
       .transform((value, context) => {
@@ -134,12 +132,12 @@ export const deployBlueprintSchema = z
      * @dev request args are too complex to validate, so we're just going to pass it through
      * and use {toPrimitiveArgsDataType}@link{../index.ts} to convert it to the correct type
      */
-    requestArgs: z.array(z.any()),
-    paymentAsset: z.string().transform((value, context) => {
+    requestArgs: z.array(z.any()).min(0),
+    paymentAsset: assetSchema.transform((value, context) => {
       try {
-        assertRestakeAssetId(value);
+        assertRestakeAssetId(value.id);
       } catch (error: unknown) {
-        console.error(`Asset id ${value} is invalid: ${error}`);
+        console.error(`Asset id ${value.id} is invalid: ${error}`);
         context.addIssue({
           code: z.ZodIssueCode.custom,
           message: 'Invalid payment asset',
@@ -181,3 +179,15 @@ export const deployBlueprintSchema = z
   });
 
 export type DeployBlueprintSchema = z.infer<typeof deployBlueprintSchema>;
+
+export const mapPrimitiveAssetMetadataToAssetSchema = (asset: PrimitiveAssetMetadata): AssetSchema => {
+  return {
+    id: asset.id ?? '0',
+    name: asset.name ?? 'TNT',
+    symbol: asset.symbol ?? 'TNT',
+    decimals: asset.decimals ?? 0,
+    deposit: asset.deposit ?? '0',
+    isFrozen: asset.isFrozen ?? false,
+    priceInUsd: asset.priceInUsd ?? null,
+  };
+};

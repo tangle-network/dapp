@@ -98,12 +98,20 @@ const useAssetsMetadata = (
     for (const asset of nativeAssetMetadatas) {
       if (asset) {
         const { assetId, ...rest } = asset;
-        assetsMetadataMap.set(assetId, { ...rest });
+        assetsMetadataMap.set(assetId, { 
+          ...rest, 
+          // TODO: Implement price fetching.
+          priceInUsd: null 
+        });
       }
     }
 
     for (const asset of evmAssetMetadatas) {
-      assetsMetadataMap.set(asset.id, asset);
+      assetsMetadataMap.set(asset.id, { 
+        ...asset, 
+        // TODO: Implement price fetching.
+        priceInUsd: null
+      });
     }
 
     return assetsMetadataMap;

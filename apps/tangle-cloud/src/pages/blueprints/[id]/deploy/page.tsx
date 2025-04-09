@@ -53,10 +53,13 @@ const DeployPage: FC = () => {
     return null;
   }
 
+  console.log(watch());
+  
+
   const onDeployBlueprint = async () => {
     // pre validate the form
-    const result = await trigger();
-    console.log(result);
+    const isValid = await trigger();
+    console.log(isValid);
     console.log('deploy');
   };
 

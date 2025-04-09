@@ -1,7 +1,6 @@
 import {
   Label,
   Input,
-  IconButton,
   Button,
   Card,
   Typography,
@@ -9,8 +8,8 @@ import {
 import InstanceHeader from '../../../../../components/InstanceHeader';
 import ErrorMessage from '../../../../../components/ErrorMessage';
 import { Children, FC, useCallback } from 'react';
-import { BasicInformationStepProps } from './type';
-import { TrashIcon } from '@radix-ui/react-icons';
+import { BasicInformationStepProps, LabelClassName } from './type';
+import { TrashIcon, PlusIcon } from '@radix-ui/react-icons';
 
 export const BasicInformationStep: FC<BasicInformationStepProps> = ({
   errors,
@@ -18,8 +17,6 @@ export const BasicInformationStep: FC<BasicInformationStepProps> = ({
   watch,
   blueprint,
 }) => {
-  const labelClassName = 'text-mono-200 dark:text-mono-0 font-medium';
-
   const values = watch();
 
   const permittedCallers = values.permittedCallers || [];
@@ -73,7 +70,7 @@ export const BasicInformationStep: FC<BasicInformationStepProps> = ({
 
         <div className="grid grid-cols-2 gap-8">
           <div className="space-y-2">
-            <Label className={labelClassName}>Instance Name</Label>
+            <Label className={LabelClassName}>Instance Name</Label>
             <Input
               id="instanceName"
               autoFocus
@@ -90,7 +87,7 @@ export const BasicInformationStep: FC<BasicInformationStepProps> = ({
           </div>
 
           <div className="space-y-2">
-            <Label className={labelClassName}>Instance Duration</Label>
+            <Label className={LabelClassName}>Instance Duration</Label>
             <Input
               id="instanceDuration"
               isControlled
@@ -110,14 +107,14 @@ export const BasicInformationStep: FC<BasicInformationStepProps> = ({
         </div>
 
         <div className="mt-6 space-y-4">
-          <Label className={labelClassName}>Permitted Callers</Label>
+          <Label className={LabelClassName}>Permitted Callers</Label>
           {errors?.['permittedCallers'] && (
             <ErrorMessage>{errors['permittedCallers'].message}</ErrorMessage>
           )}
           {Children.toArray(
             permittedCallers.map((caller, index) => (
               <div className="pl-4">
-                <Label className={labelClassName}>
+                <Label className={LabelClassName}>
                   Permitted Caller {index + 1}:
                 </Label>
                 <div className="flex gap-2">
@@ -133,12 +130,13 @@ export const BasicInformationStep: FC<BasicInformationStepProps> = ({
                     placeholder="Enter permitted caller"
                     autoComplete="off"
                   />
-                  <IconButton
+                  <Button
                     onClick={() => handleRemoveCaller(index)}
                     className="flex-shrink-0"
+                    variant='utility'
                   >
                     <TrashIcon className="h-5 w-5" />
-                  </IconButton>
+                  </Button>
                 </div>
                 {errors?.['permittedCallers']?.[index] && (
                   <ErrorMessage>
@@ -150,10 +148,12 @@ export const BasicInformationStep: FC<BasicInformationStepProps> = ({
           )}
 
           <Button
+            variant='utility'
             onClick={() => {
               setValue(`permittedCallers`, [...permittedCallers, '']);
             }}
             className="mt-4"
+            leftIcon={<PlusIcon />}
           >
             Add Caller
           </Button>

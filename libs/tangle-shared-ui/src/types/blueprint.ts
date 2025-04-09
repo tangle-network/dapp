@@ -72,6 +72,7 @@ export type Blueprint = {
   name: string;
   author: string;
   registrationParams: PrimitiveFieldType[];
+  requestParams: PrimitiveFieldType[];
   imgUrl: string | null;
   category: string | null;
   description: string | null;
