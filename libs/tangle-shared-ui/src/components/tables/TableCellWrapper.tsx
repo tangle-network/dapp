@@ -28,7 +28,7 @@ const TableCellWrapper: FC<
         children
       )}
       {!removeRightBorder && (
-        <div className="w-px h-[51px] bg-mono-60 dark:bg-mono-140" />
+        <div className="w-px h-[51px] bg-mono-60 dark:bg-mono-140 ml-auto" />
       )}
     </div>
   );

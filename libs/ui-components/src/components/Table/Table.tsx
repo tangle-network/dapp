@@ -146,13 +146,13 @@ export const Table = <T extends RowData>({
 
                         {{
                           asc: (
-                            <ArrowDropUpFill
+                            <ArrowDropDownFill
                               size="lg"
                               className="fill-current dark:fill-current"
                             />
                           ),
                           desc: (
-                            <ArrowDropDownFill
+                            <ArrowDropUpFill
                               size="lg"
                               className="fill-current dark:fill-current"
                             />

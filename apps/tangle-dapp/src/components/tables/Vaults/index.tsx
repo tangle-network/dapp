@@ -4,8 +4,8 @@ import LsTokenIcon from '@tangle-network/tangle-shared-ui/components/LsTokenIcon
 import HeaderCell from '@tangle-network/tangle-shared-ui/components/tables/HeaderCell';
 import TableCellWrapper from '@tangle-network/tangle-shared-ui/components/tables/TableCellWrapper';
 import TableStatus from '@tangle-network/tangle-shared-ui/components/tables/TableStatus';
-import useNetworkStore from '@tangle-network/tangle-shared-ui/context/useNetworkStore';
 import { RestakeVault } from '@tangle-network/tangle-shared-ui/utils/createVaultMap';
+import { Avatar } from '@tangle-network/ui-components';
 import Button from '@tangle-network/ui-components/components/buttons/Button';
 import { CircularProgress } from '@tangle-network/ui-components/components/CircularProgress';
 import { Table } from '@tangle-network/ui-components/components/Table';
@@ -32,28 +32,45 @@ import { FC, useMemo } from 'react';
 import { Link } from 'react-router';
 import { twMerge } from 'tailwind-merge';
 import { PagePath, QueryParamKey } from '../../../types';
-import sortByLocaleCompare from '../../../utils/sortByLocaleCompare';
 import type { Props } from './types';
 
 const COLUMN_HELPER = createColumnHelper<RestakeVault>();
 
 const COLUMNS = [
-  COLUMN_HELPER.accessor('name', {
+  COLUMN_HELPER.accessor('id', {
     header: () => <HeaderCell title="Vault" />,
-    cell: (props) => (
-      <TableCellWrapper className="pl-3">
-        <div className="flex items-center gap-2">
-          <LsTokenIcon
-            name={props.row.original.representAssetSymbol}
-            size="lg"
-          />
-          <Typography variant="h5" className="whitespace-nowrap">
-            {props.getValue()}
-          </Typography>
-        </div>
-      </TableCellWrapper>
-    ),
-    sortingFn: sortByLocaleCompare((row) => row.name),
+    cell: (props) => {
+      return (
+        <TableCellWrapper className="pl-3 flex items-center gap-2 justify-start">
+          {props.row.original.logo ? (
+            <Avatar
+              src={props.row.original.logo}
+              sourceVariant="uri"
+              fallback={props.row.original.representAssetSymbol}
+              className="w-10 h-10"
+            />
+          ) : (
+            <LsTokenIcon
+              name={props.row.original.representAssetSymbol}
+              size="lg"
+            />
+          )}
+          <div>
+            <Typography variant="h5" className="whitespace-nowrap">
+              {props.row.original.name}
+            </Typography>
+
+            <Typography
+              variant="body3"
+              className="text-mono-120 dark:text-mono-100"
+            >
+              ID: #{props.getValue()}
+            </Typography>
+          </div>
+        </TableCellWrapper>
+      );
+    },
+    sortingFn: 'alphanumeric',
     sortDescFirst: true,
   }),
   COLUMN_HELPER.accessor('totalDeposits', {
@@ -186,6 +203,9 @@ const VaultsTable: FC<Props> = ({
         ({
           data: data ?? [],
           columns: COLUMNS,
+          initialState: {
+            sorting: [{ id: 'id', desc: false }],
+          },
           getCoreRowModel: getCoreRowModel(),
           getExpandedRowModel: getExpandedRowModel(),
           getSortedRowModel: getSortedRowModel(),
