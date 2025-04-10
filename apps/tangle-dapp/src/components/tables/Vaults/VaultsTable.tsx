@@ -5,7 +5,7 @@ import LsTokenIcon from '@tangle-network/tangle-shared-ui/components/LsTokenIcon
 import HeaderCell from '@tangle-network/tangle-shared-ui/components/tables/HeaderCell';
 import TableCellWrapper from '@tangle-network/tangle-shared-ui/components/tables/TableCellWrapper';
 import TableStatus from '@tangle-network/tangle-shared-ui/components/tables/TableStatus';
-import { RestakeVault } from '@tangle-network/tangle-shared-ui/utils/createVaultMap';
+import type { RestakeVault } from '@tangle-network/tangle-shared-ui/data/restake/useRestakeVaults';
 import {
   Avatar,
   AvatarGroup,
@@ -39,7 +39,7 @@ import { FC, useMemo } from 'react';
 import { Link } from 'react-router';
 import { twMerge } from 'tailwind-merge';
 import { PagePath, QueryParamKey } from '../../../types';
-import type { Props } from './types';
+import type { VaultsTableProps } from './types';
 
 const COLUMN_HELPER = createColumnHelper<RestakeVault>();
 
@@ -220,7 +220,7 @@ const COLUMNS = [
   }),
 ];
 
-const VaultsTable: FC<Props> = ({
+export const VaultsTable: FC<VaultsTableProps> = ({
   data,
   emptyTableProps,
   loadingTableProps,
@@ -303,5 +303,3 @@ const VaultsTable: FC<Props> = ({
     />
   );
 };
-
-export default VaultsTable;

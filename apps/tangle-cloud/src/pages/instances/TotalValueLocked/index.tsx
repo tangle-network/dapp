@@ -6,7 +6,6 @@ import { TotalValueLockedTable } from './TotalValueLockedTable';
 import useRestakeDelegatorInfo from '@tangle-network/tangle-shared-ui/data/restake/useRestakeDelegatorInfo';
 import useRestakeRewardConfig from '@tangle-network/tangle-shared-ui/hooks/useRestakeRewardConfig';
 import useRestakeAssetsTvl from '@tangle-network/tangle-shared-ui/data/restake/useRestakeAssetsTvl';
-import useVaultRewards from '@tangle-network/tangle-shared-ui/data/rewards/useVaultRewards';
 import { RestakeAssetId } from '@tangle-network/tangle-shared-ui/types';
 import useRestakeOperatorMap from '@tangle-network/tangle-shared-ui/data/restake/useRestakeOperatorMap';
 import useActiveAccountAddress from '@tangle-network/tangle-shared-ui/hooks/useActiveAccountAddress';
@@ -14,7 +13,7 @@ import { BN } from '@polkadot/util';
 import VaultAssetsTable from '@tangle-network/tangle-shared-ui/components/tables/VaultAssets';
 import { VaultAssetData } from '@tangle-network/tangle-shared-ui/components/tables/VaultAssets/types';
 import useRestakeAssets from '@tangle-network/tangle-shared-ui/data/restake/useRestakeAssets';
-import createVaultMap from '@tangle-network/tangle-shared-ui/utils/createVaultMap';
+import { createVaultMap } from '@tangle-network/tangle-shared-ui/data/restake/useRestakeVaults';
 
 enum TotalValueLockedTab {
   TVL = 'Total Value Locked',
@@ -28,7 +27,7 @@ export const TotalValueLockedTabs = () => {
   const [selectedTab, setSelectedTab] = useState(TotalValueLockedTab.TVL);
 
   const { assets } = useRestakeAssets();
-  const { delegatorInfo } = useRestakeDelegatorInfo();
+  const { result: delegatorInfo } = useRestakeDelegatorInfo();
 
   const address = useActiveAccountAddress();
   const { operatorMap } = useRestakeOperatorMap();

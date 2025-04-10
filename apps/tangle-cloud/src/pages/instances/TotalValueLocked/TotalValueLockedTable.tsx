@@ -19,7 +19,7 @@ import { TableStatusProps } from '@tangle-network/tangle-shared-ui/components/ta
 import { ChevronDown } from '@tangle-network/icons';
 import pluralize from '@tangle-network/ui-components/utils/pluralize';
 import { TangleCloudTable } from '../../../components/tangleCloudTable';
-import type { RestakeVault } from '@tangle-network/tangle-shared-ui/utils/createVaultMap';
+import type { RestakeVault } from '@tangle-network/tangle-shared-ui/data/restake/useRestakeVaults';
 import TableCellWrapper from '@tangle-network/tangle-shared-ui/components/tables/TableCellWrapper';
 import LsTokenIcon from '@tangle-network/tangle-shared-ui/components/LsTokenIcon';
 import calculateBnRatio from '@tangle-network/ui-components/utils/calculateBnRatio';
