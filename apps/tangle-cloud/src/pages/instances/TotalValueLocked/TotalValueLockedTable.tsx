@@ -200,7 +200,7 @@ export const TotalValueLockedTable: FC<Props> = ({
     getPaginationRowModel: getPaginationRowModel(),
     getExpandedRowModel: getExpandedRowModel(),
     getSortedRowModel: getSortedRowModel(),
-    getRowCanExpand: (row) => row.original.tokenCount > 0,
+    getRowCanExpand: (row) => row.original.assetMetadata.length > 0,
     autoResetPageIndex: false,
     enableSortingRemoval: false,
   });

@@ -22,7 +22,7 @@ export type RestakeVault = {
 
 type Options = {
   assets: RestakeAsset[];
-  networkId: NetworkId | undefined;
+  networkId?: NetworkId;
   delegatorInfo?: DelegatorInfo | null;
   assetTvl?: Map<RestakeAssetId, BN> | null;
   rewardConfig?: Map<number, PalletRewardsRewardConfigForAssetVault> | null;

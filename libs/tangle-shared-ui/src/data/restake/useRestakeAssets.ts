@@ -1,5 +1,3 @@
-import { Option, StorageKey, u32, Vec } from '@polkadot/types';
-import { TanglePrimitivesServicesTypesAsset } from '@polkadot/types/lookup';
 import { TANGLE_TOKEN_DECIMALS } from '@tangle-network/dapp-config';
 import { isEvmAddress } from '@tangle-network/ui-components';
 import { skipToken, useQuery } from '@tanstack/react-query';
@@ -11,33 +9,13 @@ import useNetworkStore from '../../context/useNetworkStore';
 import useApiRx from '../../hooks/useApiRx';
 import useViemPublicClient from '../../hooks/useViemPublicClient';
 import { RestakeAssetId } from '../../types';
-import { TangleError, TangleErrorCode } from '../../types/error';
 import { RestakeAsset, RestakeAssetMetadata } from '../../types/restake';
 import assertRestakeAssetId from '../../utils/assertRestakeAssetId';
 import createRestakeAssetId from '../../utils/createRestakeAssetId';
 import fetchErc20TokenMetadata from '../../utils/fetchErc20TokenMetadata';
 import useVaultsPotAccounts from '../rewards/useVaultsPotAccounts';
 import useRestakeAssetBalances from './useRestakeAssetBalances';
-
-const toPrimitiveRewardVault = (
-  entries: [
-    StorageKey<[u32]> | number,
-    Option<Vec<TanglePrimitivesServicesTypesAsset>>,
-  ][],
-): [vaultId: bigint, assetIds: RestakeAssetId[] | null][] => {
-  return entries.map(([vaultId, assets]) => {
-    const vaultIdBigInt =
-      typeof vaultId === 'number'
-        ? BigInt(vaultId)
-        : vaultId.args[0].toBigInt();
-
-    const assetIds = assets.isNone
-      ? null
-      : assets.unwrap().map(createRestakeAssetId);
-
-    return [vaultIdBigInt, assetIds] as const;
-  });
-};
+import { useVaultAssets } from './useVaultAssets';
 
 const useRestakeAssets = () => {
   const nativeTokenSymbol = useNetworkStore((store) => store.nativeTokenSymbol);
@@ -46,48 +24,25 @@ const useRestakeAssets = () => {
   const { result: vaultPotAccounts, isLoading: isLoadingVaultsPotAccounts } =
     useVaultsPotAccounts();
 
-  const { result: rewardVaults, isLoading: isLoadingRewardVaults } = useApiRx(
-    useCallback(
-      (api) => {
-        if (vaultPotAccounts === null) {
-          return new TangleError(TangleErrorCode.INVALID_PARAMS);
-        }
-
-        // Retrieve all vaults that have pot accounts.
-        const vaultIds = vaultPotAccounts.keys().toArray();
-
-        if (vaultIds.length === 0) {
-          return api.query.rewards.rewardVaults
-            .entries()
-            .pipe(map(toPrimitiveRewardVault));
-        }
-
-        return api.query.rewards.rewardVaults
-          .multi(vaultIds)
-          .pipe(
-            map((results) =>
-              toPrimitiveRewardVault(
-                results.map((result, idx) => [vaultIds[idx], result] as const),
-              ),
-            ),
-          );
-      },
-      [vaultPotAccounts],
-    ),
-  );
+  const { result: rewardVaults, isLoading: isLoadingRewardVaults } =
+    useVaultAssets(
+      useMemo(() => vaultPotAccounts?.keys().toArray(), [vaultPotAccounts]),
+    );
 
   const assetIds = useMemo(() => {
     if (rewardVaults === null) {
       return null;
     }
 
-    return rewardVaults
-      .map(([, assetIds]) => assetIds)
-      .filter(
-        (assetIds): assetIds is Exclude<typeof assetIds, null> =>
-          assetIds !== null,
-      )
-      .flat();
+    const assetIdsSet = new Set<RestakeAssetId>();
+
+    rewardVaults.forEach((vaultAssetsSet) => {
+      vaultAssetsSet.forEach((assetId) => {
+        assetIdsSet.add(assetId);
+      });
+    });
+
+    return Array.from(assetIdsSet);
   }, [rewardVaults]);
 
   const substrateAssetIds = useMemo(() => {
