@@ -30,18 +30,17 @@ const useErc20Balances = (assetAddressesArg: EvmAddress[]) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [evmAddress, assetAddressesRef.current]);
 
-  const { isPending, ...rest } = useReadContracts({
+  const { isLoading, ...rest } = useReadContracts({
     contracts: contracts,
     query: {
       enabled: evmAddress !== null,
-      placeholderData: (prev) => prev,
     },
   });
 
   return {
     ...rest,
     // If the evm address is not set, we don't want to show a loading state.
-    isPending: evmAddress === null ? false : isPending,
+    isLoading: evmAddress === null ? false : isLoading,
   };
 };
 

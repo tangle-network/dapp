@@ -49,7 +49,7 @@ const useRestakeAssetBalances = () => {
   const {
     data: erc20Balances,
     refetch: refetchErc20Balances,
-    isPending: isLoadingErc20Balances,
+    isLoading: isLoadingErc20Balances,
   } = useErc20Balances(evmAssetIds);
 
   const { result: assetAccounts, isLoading: isLoadingAssetAccounts } = useApiRx(

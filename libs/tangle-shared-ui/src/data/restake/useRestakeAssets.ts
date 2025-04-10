@@ -172,7 +172,7 @@ const useRestakeAssets = () => {
     }, []),
   );
 
-  const { data: evmAssetMetadatas, isPending: isLoadingEvmAssetMetadatas } =
+  const { data: evmAssetMetadatas, isLoading: isLoadingEvmAssetMetadatas } =
     useQuery({
       queryKey: [
         'evm-asset-metadatas',
@@ -185,7 +185,6 @@ const useRestakeAssets = () => {
           : skipToken,
       // Never stale, no need to refetch.
       staleTime: Infinity,
-      placeholderData: (prev) => prev,
     });
 
   const evmAssets = useMemo(() => {
