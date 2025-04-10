@@ -10,20 +10,27 @@ import {
 } from '@tangle-network/ui-components/components/select';
 import ErrorMessage from '../../../../../components/ErrorMessage';
 import LsTokenIcon from '@tangle-network/tangle-shared-ui/components/LsTokenIcon';
-import {
-  AssetSchema,
-  mapPrimitiveAssetMetadataToAssetSchema,
-} from '../../../../../utils/validations/deployBlueprint';
+import { RestakeAsset } from '@tangle-network/tangle-shared-ui/types/restake';
+import assertRestakeAssetId from '@tangle-network/tangle-shared-ui/utils/assertRestakeAssetId';
+import useAssets from '@tangle-network/tangle-shared-ui/hooks/useAssets';
 
 export const PaymentStep: FC<PaymentStepProps> = ({
   errors,
   setValue,
   watch,
-  assets,
 }) => {
+  const { result: assets } = useAssets();
+
   const onSelectAsset = useCallback(
-    (asset: AssetSchema) => {
-      setValue('paymentAsset', asset);
+    (asset: RestakeAsset) => {
+      setValue('paymentAsset', {
+        id: asset.id,
+        metadata: {
+          ...asset.metadata,
+          deposit: asset.metadata.deposit ?? '',
+          isFrozen: asset.metadata.isFrozen ?? false,
+        },
+      });
     },
     [setValue],
   );
@@ -52,33 +59,24 @@ export const PaymentStep: FC<PaymentStepProps> = ({
           </Typography>
           <Select
             onValueChange={(assetId) => {
-              const asset = assets.find((asset) => asset.id === assetId);
+              const asset = assets?.get(assertRestakeAssetId(assetId));
               if (asset) {
-                onSelectAsset(mapPrimitiveAssetMetadataToAssetSchema(asset));
+                onSelectAsset(asset);
               }
             }}
           >
             <SelectTrigger className="w-full">
-              <SelectValue
-                placeholder={
-                  <div className="flex items-center gap-2">
-                    <LsTokenIcon name="TNT" size="md" />
-                    <Typography variant="body1">
-                      Select payment asset
-                    </Typography>
-                  </div>
-                }
-              />
+              <SelectValue placeholder={'Select payment asset'} />
             </SelectTrigger>
 
             <SelectContent>
               {Children.toArray(
-                assets.map((asset) => (
-                  <SelectItem value={asset.id ?? ''} id={asset.id}>
+                Array.from(assets?.values() ?? []).map((asset) => (
+                  <SelectItem value={asset.id} id={asset.id}>
                     <div className="flex items-center gap-2">
-                      <LsTokenIcon name={asset.name ?? 'TNT'} size="md" />
+                      <LsTokenIcon name={asset.metadata.name ?? 'TNT'} size="md" />
                       <Typography variant="body1">
-                        {asset.name ?? 'TNT'}
+                        {asset.metadata.name ?? 'TNT'}
                       </Typography>
                     </div>
                   </SelectItem>

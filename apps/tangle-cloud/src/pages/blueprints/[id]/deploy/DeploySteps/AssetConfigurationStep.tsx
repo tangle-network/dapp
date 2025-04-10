@@ -36,7 +36,7 @@ export const AssetConfigurationStep: FC<AssetConfigurationStepProps> = ({
         {Children.toArray(
           selectedAssets.map((asset, index) => {
             const minExposurePercentFormValue =
-              values.securityCommitments?.at(index)?.minExposurePercent ?? 0;
+              values.securityCommitments?.at(index)?.minExposurePercent ?? 1;
             const maxExposurePercentFormValue =
               values.securityCommitments?.at(index)?.maxExposurePercent ?? 100;
 

@@ -15,6 +15,8 @@ import useBlueprintDetails from '@tangle-network/tangle-shared-ui/data/restake/u
 import { Deployment } from './DeploySteps/Deployment';
 import { twMerge } from 'tailwind-merge';
 import { ArrowRightIcon } from '@radix-ui/react-icons';
+import ErrorMessage from '../../../../components/ErrorMessage';
+import { z } from 'zod';
 
 const DeployPage: FC = () => {
   const { id } = useParams();
@@ -30,7 +32,8 @@ const DeployPage: FC = () => {
     setValue,
     control,
     formState: { errors },
-    trigger,
+    setError,
+    clearErrors,
   } = useForm<DeployBlueprintSchema>({
     mode: 'onChange',
     resolver: zodResolver(deployBlueprintSchema),
@@ -53,34 +56,49 @@ const DeployPage: FC = () => {
     return null;
   }
 
-  console.log(watch());
-
   const onDeployBlueprint = async () => {
-    // pre validate the form
-    const isValid = await trigger();
-    console.log(isValid);
-    console.log('deploy');
+    try {
+      const validatedData = deployBlueprintSchema.parse(watch());
+      // clear errors 
+      clearErrors();
+      console.log(validatedData);
+      console.log('deploy');
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        error.errors.forEach((err) => {
+          setError(err.path[0] as keyof DeployBlueprintSchema, {
+            type: 'manual',
+            message: err.message
+          });
+        });
+      }
+    }
   };
 
   return (
     <>
       <Deployment {...commonProps} />
 
-      <div className="">
-        <div
-          className={twMerge(
-            'p-6 rounded-xl mt-4',
-            'flex items-center justify-end gap-5',
-            "bg-[url('/static/assets/blueprints/selected-blueprint-panel.png')]",
-          )}
+      <div
+        className={twMerge(
+          'p-6 rounded-xl mt-4',
+          'flex items-center justify-end gap-5',
+          "bg-[url('/static/assets/blueprints/selected-blueprint-panel.png')]",
+        )}
+      >
+        {
+          Object.keys(errors).length > 0 && (
+            <ErrorMessage>
+              Error(s) on validation. Please check the form and try again.
+            </ErrorMessage>
+          )
+        }
+        <Button
+          rightIcon={<ArrowRightIcon width={24} height={24} />}
+          onClick={onDeployBlueprint}
         >
-          <Button
-            rightIcon={<ArrowRightIcon width={24} height={24} />}
-            onClick={onDeployBlueprint}
-          >
-            Deploy
-          </Button>
-        </div>
+          Deploy
+        </Button>
       </div>
     </>
   );

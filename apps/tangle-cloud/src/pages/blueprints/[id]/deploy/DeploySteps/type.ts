@@ -2,11 +2,7 @@ import { DeployBlueprintSchema } from '../../../../../utils/validations/deployBl
 import { FieldErrors, UseFormSetValue, UseFormWatch } from 'react-hook-form';
 import { Blueprint } from '@tangle-network/tangle-shared-ui/types/blueprint';
 import { SubstrateAddress } from '@tangle-network/ui-components/types/address';
-import {
-  RestakeAssetId,
-  VaultToken,
-} from '@tangle-network/tangle-shared-ui/types';
-import { PrimitiveAssetMetadata } from '@tangle-network/tangle-shared-ui/types/restake';
+import { VaultToken } from '@tangle-network/tangle-shared-ui/types';
 
 export const LabelClassName = 'text-mono-200 dark:text-mono-0 font-medium';
 
@@ -19,19 +15,13 @@ export type BaseDeployStepProps = {
 
 export type BasicInformationStepProps = BaseDeployStepProps;
 
-export type SelectOperatorsStepProps = BaseDeployStepProps & {
-  assets: PrimitiveAssetMetadata[];
-  assetsWithMetadata: Map<RestakeAssetId, PrimitiveAssetMetadata | null>;
-};
+export type SelectOperatorsStepProps = BaseDeployStepProps;
 
 export type AssetConfigurationStepProps = BaseDeployStepProps;
 
 export type RequestArgsConfigurationStepProps = BaseDeployStepProps;
 
-export type PaymentStepProps = BaseDeployStepProps & {
-  assets: PrimitiveAssetMetadata[];
-  assetsWithMetadata: Map<RestakeAssetId, PrimitiveAssetMetadata | null>;
-};
+export type PaymentStepProps = BaseDeployStepProps;
 
 export type OperatorSelectionTable = {
   address: SubstrateAddress;

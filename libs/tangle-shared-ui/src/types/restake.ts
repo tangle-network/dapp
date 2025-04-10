@@ -56,14 +56,13 @@ export type PrimitiveAssetMetadata = {
   decimals: number;
   deposit?: string;
   isFrozen?: boolean;
-  priceInUsd: number | null;
-  id?: RestakeAssetId;
 };
 
 export type RestakeAssetMetadata = PrimitiveAssetMetadata &
   Readonly<{
     assetId: RestakeAssetId;
     vaultId: number | null;
+    priceInUsd: number | null;
     details?: PalletAssetsAssetDetails;
 
     /**

@@ -4,9 +4,14 @@ import { catchError, map, of } from 'rxjs';
 import useAssetsMetadata from './useAssetsMetadata';
 import assertRestakeAssetId from '../utils/assertRestakeAssetId';
 import { RestakeAssetId } from '../types';
-import { PrimitiveAssetMetadata } from '../types/restake';
+import { RestakeAsset } from '../types/restake';
+import { NATIVE_ASSET_ID } from '../constants/restaking';
+import useNetworkStore from '../context/useNetworkStore';
+import { TANGLE_TOKEN_DECIMALS } from '@tangle-network/dapp-config';
 
 const useAssets = () => {
+  const { nativeTokenSymbol } = useNetworkStore();
+
   const { result: assets, isLoading: isLoadingAssets } = useApiRx(
     useCallback((api) => {
       return api.query.assets.asset.entries().pipe(
@@ -62,25 +67,45 @@ const useAssets = () => {
   const assetsWithMetadata = useMemo(() => {
     const assetsMetadataMap = new Map<
       RestakeAssetId,
-      PrimitiveAssetMetadata | null
+      RestakeAsset
     >();
 
     assetIds?.forEach((assetId) => {
       if (assetId) {
         const assetMetadata = assetsMetadata?.get(assetId);
         assetsMetadataMap.set(assetId, {
-          ...assetMetadata,
           id: assetId,
-          name: assetMetadata?.name ?? '',
-          symbol: assetMetadata?.symbol ?? '',
-          decimals: assetMetadata?.decimals ?? 0,
-          priceInUsd: assetMetadata?.priceInUsd ?? null,
+          metadata: {
+            name: assetMetadata?.name ?? '',
+            symbol: assetMetadata?.symbol ?? '',
+            decimals: assetMetadata?.decimals ?? 0,
+            deposit: assetMetadata?.deposit ?? '',
+            isFrozen: assetMetadata?.isFrozen ?? false,
+            assetId: assetId,
+            // @dev get all assets, so this is not exit
+            vaultId: null,
+            // TODO: get price in usd
+            priceInUsd: null,
+          },
         });
       }
     });
 
+    assetsMetadataMap.set(NATIVE_ASSET_ID, {
+        id: NATIVE_ASSET_ID,
+        metadata: {
+          name: nativeTokenSymbol,
+          symbol: nativeTokenSymbol,
+          decimals: TANGLE_TOKEN_DECIMALS,
+          assetId: NATIVE_ASSET_ID,
+          isFrozen: false,
+          vaultId: null,
+          priceInUsd: null,
+        }
+    } satisfies RestakeAsset)
+
     return assetsMetadataMap;
-  }, [assetsMetadata, assetIds]);
+  }, [assetsMetadata, assetIds, nativeTokenSymbol]);
 
   return {
     result: assetsWithMetadata,

@@ -1,4 +1,3 @@
-import { PrimitiveAssetMetadata } from '@tangle-network/tangle-shared-ui/types/restake';
 import assertRestakeAssetId from '@tangle-network/tangle-shared-ui/utils/assertRestakeAssetId';
 import {
   isEvmAddress,
@@ -22,12 +21,19 @@ export const assetSchema = z.object({
 
     return value;
   }),
-  name: z.string().optional(),
-  symbol: z.string().optional(),
-  decimals: z.number().optional(),
-  deposit: z.string().optional(),
-  isFrozen: z.boolean().optional(),
-  priceInUsd: z.number().nullable(),
+  metadata: z.object({
+    name: z.string(),
+    symbol: z.string(),
+    decimals: z.number(),
+    deposit: z.string().optional().default('0'),
+    isFrozen: z.boolean().optional().default(false),
+    priceInUsd: z.number().nullable().default(null),
+    assetId: z.string(),
+    vaultId: z.number().nullable().default(null),
+    status: z.enum(['Live', 'Frozen', 'Destroying']).optional(),
+    // TODO: add details
+    details: z.any().optional().default(null),
+  }),
 });
 
 export type AssetSchema = z.infer<typeof assetSchema>;
@@ -96,7 +102,7 @@ export const deployBlueprintSchema = z
     securityCommitments: z
       .array(
         z.object({
-          minExposurePercent: z.number().min(1).max(100).default(0),
+          minExposurePercent: z.number().min(1).max(100).default(1),
           maxExposurePercent: z.number().min(1).max(100).default(100),
         }),
       )
@@ -132,7 +138,7 @@ export const deployBlueprintSchema = z
      * @dev request args are too complex to validate, so we're just going to pass it through
      * and use {toPrimitiveArgsDataType}@link{../index.ts} to convert it to the correct type
      */
-    requestArgs: z.array(z.any()).min(0),
+    requestArgs: z.array(z.any()).nullable().optional(),
     paymentAsset: assetSchema.transform((value, context) => {
       try {
         assertRestakeAssetId(value.id);
@@ -148,7 +154,7 @@ export const deployBlueprintSchema = z
 
       return value;
     }),
-    paymentAmount: z.number(),
+    paymentAmount: z.number().min(1),
   })
   .superRefine((schema, ctx) => {
     if (schema.approvalModel === 'Dynamic') {
@@ -179,17 +185,3 @@ export const deployBlueprintSchema = z
   });
 
 export type DeployBlueprintSchema = z.infer<typeof deployBlueprintSchema>;
-
-export const mapPrimitiveAssetMetadataToAssetSchema = (
-  asset: PrimitiveAssetMetadata,
-): AssetSchema => {
-  return {
-    id: asset.id ?? '0',
-    name: asset.name ?? 'TNT',
-    symbol: asset.symbol ?? 'TNT',
-    decimals: asset.decimals ?? 0,
-    deposit: asset.deposit ?? '0',
-    isFrozen: asset.isFrozen ?? false,
-    priceInUsd: asset.priceInUsd ?? null,
-  };
-};

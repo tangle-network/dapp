@@ -29,11 +29,10 @@ import {
 import { Search } from '@tangle-network/icons';
 import LsTokenIcon from '@tangle-network/tangle-shared-ui/components/LsTokenIcon';
 import { OperatorTable } from './components/OperatorTable';
-import {
-  AssetSchema,
-  DeployBlueprintSchema,
-  mapPrimitiveAssetMetadataToAssetSchema,
-} from '../../../../../utils/validations/deployBlueprint';
+import { DeployBlueprintSchema } from '../../../../../utils/validations/deployBlueprint';
+import { RestakeAsset } from '@tangle-network/tangle-shared-ui/types/restake';
+import delegationsToVaultTokens from '@tangle-network/tangle-shared-ui/utils/restake/delegationsToVaultTokens';
+import useRestakeAssets from '@tangle-network/tangle-shared-ui/data/restake/useRestakeAssets';
 
 const MAX_ASSET_TO_SHOW = 3;
 
@@ -41,8 +40,6 @@ export const SelectOperatorsStep: FC<SelectOperatorsStepProps> = ({
   errors,
   setValue,
   watch,
-  assets,
-  assetsWithMetadata,
 }) => {
   const [rowSelection, setRowSelection] = useState<RowSelectionState>(
     watch(`operators`)?.reduce((acc, operator) => {
@@ -51,6 +48,8 @@ export const SelectOperatorsStep: FC<SelectOperatorsStepProps> = ({
     }, {} as RowSelectionState) || {},
   );
   const [searchQuery, setSearchQuery] = useState('');
+
+  const { assets } = useRestakeAssets();
 
   const { operatorMap } = useRestakeOperatorMap();
   const operatorAddresses = useMemo(
@@ -75,23 +74,21 @@ export const SelectOperatorsStep: FC<SelectOperatorsStepProps> = ({
           identityName: identities.get(address)?.name ?? undefined,
           restakersCount,
           vaultTokensInUsd: delegations.reduce((acc, curr) => {
-            const asset = assetsWithMetadata?.get(curr.assetId);
+            const asset = assets?.get(curr.assetId);
             if (!asset) {
               return acc;
             }
-            const parsed = safeFormatUnits(curr.amount, asset.decimals);
+            const parsed = safeFormatUnits(curr.amount, asset.metadata.decimals);
 
             if (parsed.success === false) {
               return acc;
             }
-            const currPrice = Number(parsed.value) * (asset.priceInUsd ?? 0);
+            const currPrice = Number(parsed.value) * (asset.metadata.priceInUsd ?? 0);
             return acc + currPrice;
           }, 0),
-          vaultTokens: [],
-          // TODO: Implement delegated tokens
-          // assets === null
-          //   ? []
-          //   : delegationsToVaultTokens(delegations, assets),
+          vaultTokens: assets === null
+            ? []
+            : delegationsToVaultTokens(delegations, assets),
           instanceCount: operatorServicesMap.get(address)?.length ?? 0,
           // TODO: using graphql with im online pallet to get uptime of operator
           uptime: Math.round(Math.random() * 100),
@@ -108,7 +105,7 @@ export const SelectOperatorsStep: FC<SelectOperatorsStepProps> = ({
       if (selectedAssets.length === 0) return true;
 
       const selectedSymbols = new Set(
-        selectedAssets.map((asset) => asset.symbol),
+        selectedAssets.map((asset) => asset.metadata.symbol),
       );
 
       return !!operator.vaultTokens?.some((vaultToken) =>
@@ -126,22 +123,38 @@ export const SelectOperatorsStep: FC<SelectOperatorsStepProps> = ({
   }, [rowSelection]);
 
   const onSelectAsset = useCallback(
-    (asset: AssetSchema, isChecked: boolean) => {
+    (asset: RestakeAsset, isChecked: boolean) => {
       // Create a new array instead of mutating the existing one
       const newSelectedAssets = isChecked
-        ? [...selectedAssets, asset]
+        ? [...selectedAssets, {
+          id: asset.id,
+          metadata: {
+            ...asset.metadata,
+            name: asset.metadata.name ?? '',
+            decimals: asset.metadata.decimals ?? 0,
+            deposit: asset.metadata.deposit ?? '',
+            isFrozen: asset.metadata.isFrozen ?? false,
+          }
+          },
+        ]
         : selectedAssets.filter(
             (selectedAsset) => selectedAsset.id !== asset.id,
           );
 
       setValue(`assets`, newSelectedAssets);
 
+      const securityCommitments = Array.from({ length:newSelectedAssets.length }, () => ({
+        minExposurePercent: 1,
+        maxExposurePercent: 100,
+      }));
+      setValue(`securityCommitments`, securityCommitments);
+
       // Filter operators that have the selected assets
       const selectedOperators = operators
         .filter((operator) =>
           operator.vaultTokens?.some((vaultToken) =>
             newSelectedAssets.some(
-              (selectedAsset) => selectedAsset.symbol === vaultToken.symbol,
+              (selectedAsset) => selectedAsset.metadata.symbol === vaultToken.symbol,
             ),
           ),
         )
@@ -213,7 +226,7 @@ export const SelectOperatorsStep: FC<SelectOperatorsStepProps> = ({
                             .map((asset) => (
                               <div>
                                 <LsTokenIcon
-                                  name={asset.name ?? 'TNT'}
+                                  name={asset.metadata.name ?? 'TNT'}
                                   size="md"
                                 />
                               </div>
@@ -238,11 +251,11 @@ export const SelectOperatorsStep: FC<SelectOperatorsStepProps> = ({
 
             <SelectContent>
               {Children.toArray(
-                assets.map((asset) => (
+                Array.from(assets?.values() ?? []).map((asset) => (
                   <SelectCheckboxItem
                     onChange={(e) =>
                       onSelectAsset(
-                        mapPrimitiveAssetMetadataToAssetSchema(asset),
+                        asset,
                         e.target.checked,
                       )
                     }
@@ -253,9 +266,9 @@ export const SelectOperatorsStep: FC<SelectOperatorsStepProps> = ({
                     spacingClassName="ml-0"
                   >
                     <div className="flex items-center gap-2">
-                      <LsTokenIcon name={asset.name ?? 'TNT'} size="md" />
+                      <LsTokenIcon name={asset.metadata.name ?? 'TNT'} size="md" />
                       <Typography variant="body1">
-                        {asset.name ?? 'TNT'}
+                        {asset.metadata.name ?? 'TNT'}
                       </Typography>
                     </div>
                   </SelectCheckboxItem>

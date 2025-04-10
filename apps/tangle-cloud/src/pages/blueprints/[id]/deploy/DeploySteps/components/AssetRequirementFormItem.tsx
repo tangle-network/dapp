@@ -45,13 +45,13 @@ export const AssetRequirementFormItem: FC<
     >
       <div className="flex items-center gap-3">
         <LsTokenIcon
-          name={assetMetadata?.name ?? 'TNT'}
+          name={assetMetadata?.metadata.name ?? 'TNT'}
           hasRainbowBorder
           size="lg"
         />
         <div>
           <Typography variant="h5" className={LabelClassName}>
-            {assetMetadata?.name ?? 'TNT'}
+            {assetMetadata?.metadata.name ?? 'TNT'}
           </Typography>
           <Typography variant="body3" className={LabelClassName}>
             Asset ID: {assetId}
