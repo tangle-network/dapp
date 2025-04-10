@@ -21,32 +21,28 @@ export const RequestArgsConfigurationStep: FC<
           </div>
         ) : (
           <div className="grid gap-4 p-0 mt-3 sm:grid-cols-2 mb-5">
-          {Children.toArray(
-            blueprint.requestParams.map((param, idx) => {
-              return (
-                <PrimitiveFieldTypeInput
-                  label={`Param ${idx + 1}`}
-                  fieldType={param}
-                  id={idx.toString()}
-                  value={watch(`requestArgs.${idx}`)}
-                  onValueChange={(value) => {
-                    setValue(`requestArgs.${idx}`, value);
-                  }}
-                  tabIndex={idx + 1}
-                />
-              );
-            }),
-          )}
-        </div>
+            {Children.toArray(
+              blueprint.requestParams.map((param, idx) => {
+                return (
+                  <PrimitiveFieldTypeInput
+                    label={`Param ${idx + 1}`}
+                    fieldType={param}
+                    id={idx.toString()}
+                    value={watch(`requestArgs.${idx}`)}
+                    onValueChange={(value) => {
+                      setValue(`requestArgs.${idx}`, value);
+                    }}
+                    tabIndex={idx + 1}
+                  />
+                );
+              }),
+            )}
+          </div>
         )}
       </div>
-      {
-        errors?.requestArgs && (
-          <ErrorMessage>
-            {errors.requestArgs.message}
-          </ErrorMessage>
-        )
-      }
+      {errors?.requestArgs && (
+        <ErrorMessage>{errors.requestArgs.message}</ErrorMessage>
+      )}
     </Card>
   );
 };

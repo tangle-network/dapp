@@ -59,7 +59,7 @@ const DeployPage: FC = () => {
   const onDeployBlueprint = async () => {
     try {
       const validatedData = deployBlueprintSchema.parse(watch());
-      // clear errors 
+      // clear errors
       clearErrors();
       console.log(validatedData);
       console.log('deploy');
@@ -68,7 +68,7 @@ const DeployPage: FC = () => {
         error.errors.forEach((err) => {
           setError(err.path[0] as keyof DeployBlueprintSchema, {
             type: 'manual',
-            message: err.message
+            message: err.message,
           });
         });
       }
@@ -86,13 +86,11 @@ const DeployPage: FC = () => {
           "bg-[url('/static/assets/blueprints/selected-blueprint-panel.png')]",
         )}
       >
-        {
-          Object.keys(errors).length > 0 && (
-            <ErrorMessage>
-              Error(s) on validation. Please check the form and try again.
-            </ErrorMessage>
-          )
-        }
+        {Object.keys(errors).length > 0 && (
+          <ErrorMessage>
+            Error(s) on validation. Please check the form and try again.
+          </ErrorMessage>
+        )}
         <Button
           rightIcon={<ArrowRightIcon width={24} height={24} />}
           onClick={onDeployBlueprint}

@@ -65,10 +65,7 @@ const useAssets = () => {
     useAssetsMetadata(assetIds);
 
   const assetsWithMetadata = useMemo(() => {
-    const assetsMetadataMap = new Map<
-      RestakeAssetId,
-      RestakeAsset
-    >();
+    const assetsMetadataMap = new Map<RestakeAssetId, RestakeAsset>();
 
     assetIds?.forEach((assetId) => {
       if (assetId) {
@@ -92,17 +89,17 @@ const useAssets = () => {
     });
 
     assetsMetadataMap.set(NATIVE_ASSET_ID, {
-        id: NATIVE_ASSET_ID,
-        metadata: {
-          name: nativeTokenSymbol,
-          symbol: nativeTokenSymbol,
-          decimals: TANGLE_TOKEN_DECIMALS,
-          assetId: NATIVE_ASSET_ID,
-          isFrozen: false,
-          vaultId: null,
-          priceInUsd: null,
-        }
-    } satisfies RestakeAsset)
+      id: NATIVE_ASSET_ID,
+      metadata: {
+        name: nativeTokenSymbol,
+        symbol: nativeTokenSymbol,
+        decimals: TANGLE_TOKEN_DECIMALS,
+        assetId: NATIVE_ASSET_ID,
+        isFrozen: false,
+        vaultId: null,
+        priceInUsd: null,
+      },
+    } satisfies RestakeAsset);
 
     return assetsMetadataMap;
   }, [assetsMetadata, assetIds, nativeTokenSymbol]);

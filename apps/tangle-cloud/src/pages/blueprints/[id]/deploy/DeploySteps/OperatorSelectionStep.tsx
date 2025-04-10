@@ -78,17 +78,22 @@ export const SelectOperatorsStep: FC<SelectOperatorsStepProps> = ({
             if (!asset) {
               return acc;
             }
-            const parsed = safeFormatUnits(curr.amount, asset.metadata.decimals);
+            const parsed = safeFormatUnits(
+              curr.amount,
+              asset.metadata.decimals,
+            );
 
             if (parsed.success === false) {
               return acc;
             }
-            const currPrice = Number(parsed.value) * (asset.metadata.priceInUsd ?? 0);
+            const currPrice =
+              Number(parsed.value) * (asset.metadata.priceInUsd ?? 0);
             return acc + currPrice;
           }, 0),
-          vaultTokens: assets === null
-            ? []
-            : delegationsToVaultTokens(delegations, assets),
+          vaultTokens:
+            assets === null
+              ? []
+              : delegationsToVaultTokens(delegations, assets),
           instanceCount: operatorServicesMap.get(address)?.length ?? 0,
           // TODO: using graphql with im online pallet to get uptime of operator
           uptime: Math.round(Math.random() * 100),
@@ -126,27 +131,32 @@ export const SelectOperatorsStep: FC<SelectOperatorsStepProps> = ({
     (asset: RestakeAsset, isChecked: boolean) => {
       // Create a new array instead of mutating the existing one
       const newSelectedAssets = isChecked
-        ? [...selectedAssets, {
-          id: asset.id,
-          metadata: {
-            ...asset.metadata,
-            name: asset.metadata.name ?? '',
-            decimals: asset.metadata.decimals ?? 0,
-            deposit: asset.metadata.deposit ?? '',
-            isFrozen: asset.metadata.isFrozen ?? false,
-          }
-          },
-        ]
+        ? [
+            ...selectedAssets,
+            {
+              id: asset.id,
+              metadata: {
+                ...asset.metadata,
+                name: asset.metadata.name ?? '',
+                decimals: asset.metadata.decimals ?? 0,
+                deposit: asset.metadata.deposit ?? '',
+                isFrozen: asset.metadata.isFrozen ?? false,
+              },
+            },
+          ]
         : selectedAssets.filter(
             (selectedAsset) => selectedAsset.id !== asset.id,
           );
 
       setValue(`assets`, newSelectedAssets);
 
-      const securityCommitments = Array.from({ length:newSelectedAssets.length }, () => ({
-        minExposurePercent: 1,
-        maxExposurePercent: 100,
-      }));
+      const securityCommitments = Array.from(
+        { length: newSelectedAssets.length },
+        () => ({
+          minExposurePercent: 1,
+          maxExposurePercent: 100,
+        }),
+      );
       setValue(`securityCommitments`, securityCommitments);
 
       // Filter operators that have the selected assets
@@ -154,7 +164,8 @@ export const SelectOperatorsStep: FC<SelectOperatorsStepProps> = ({
         .filter((operator) =>
           operator.vaultTokens?.some((vaultToken) =>
             newSelectedAssets.some(
-              (selectedAsset) => selectedAsset.metadata.symbol === vaultToken.symbol,
+              (selectedAsset) =>
+                selectedAsset.metadata.symbol === vaultToken.symbol,
             ),
           ),
         )
@@ -253,12 +264,7 @@ export const SelectOperatorsStep: FC<SelectOperatorsStepProps> = ({
               {Children.toArray(
                 Array.from(assets?.values() ?? []).map((asset) => (
                   <SelectCheckboxItem
-                    onChange={(e) =>
-                      onSelectAsset(
-                        asset,
-                        e.target.checked,
-                      )
-                    }
+                    onChange={(e) => onSelectAsset(asset, e.target.checked)}
                     id={asset.id}
                     isChecked={selectedAssets.some(
                       (selectedAsset) => selectedAsset.id === asset.id,
@@ -266,7 +272,10 @@ export const SelectOperatorsStep: FC<SelectOperatorsStepProps> = ({
                     spacingClassName="ml-0"
                   >
                     <div className="flex items-center gap-2">
-                      <LsTokenIcon name={asset.metadata.name ?? 'TNT'} size="md" />
+                      <LsTokenIcon
+                        name={asset.metadata.name ?? 'TNT'}
+                        size="md"
+                      />
                       <Typography variant="body1">
                         {asset.metadata.name ?? 'TNT'}
                       </Typography>

@@ -7,7 +7,6 @@ import { RequestArgsConfigurationStep } from './RequestArgsConfigurationStep';
 import { PaymentStep } from './PaymentStep';
 
 export const Deployment: FC<BaseDeployStepProps> = (props) => {
-
   return (
     <>
       <BasicInformationStep {...props} />

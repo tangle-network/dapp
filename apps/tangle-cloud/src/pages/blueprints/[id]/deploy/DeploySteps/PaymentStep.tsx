@@ -74,7 +74,10 @@ export const PaymentStep: FC<PaymentStepProps> = ({
                 Array.from(assets?.values() ?? []).map((asset) => (
                   <SelectItem value={asset.id} id={asset.id}>
                     <div className="flex items-center gap-2">
-                      <LsTokenIcon name={asset.metadata.name ?? 'TNT'} size="md" />
+                      <LsTokenIcon
+                        name={asset.metadata.name ?? 'TNT'}
+                        size="md"
+                      />
                       <Typography variant="body1">
                         {asset.metadata.name ?? 'TNT'}
                       </Typography>
