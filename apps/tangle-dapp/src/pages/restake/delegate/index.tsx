@@ -93,7 +93,7 @@ const RestakeDelegateForm: FC = () => {
 
   const { assets } = useRestakeAssets();
   const restakeApi = useRestakeApi();
-  const { delegatorInfo } = useRestakeDelegatorInfo();
+  const { result: delegatorInfo } = useRestakeDelegatorInfo();
   const { operatorMap } = useRestakeOperatorMap();
 
   const { result: operatorIdentities } = useIdentities(

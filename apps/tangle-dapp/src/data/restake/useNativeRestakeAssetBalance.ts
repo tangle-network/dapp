@@ -5,7 +5,7 @@ import { useCallback, useMemo } from 'react';
 import useStakingLedger from '../staking/useStakingLedger';
 
 const useNativeRestakeAssetBalance = (): BN | null => {
-  const { delegatorInfo } = useRestakeDelegatorInfo();
+  const { result: delegatorInfo } = useRestakeDelegatorInfo();
 
   const { result: bondedInStaking } = useStakingLedger(
     useCallback((ledger) => ledger.active.toBn(), []),
