@@ -1,11 +1,8 @@
 import { useConnectWallet } from '@tangle-network/api-provider-environment';
 import { useWebContext } from '@tangle-network/api-provider-environment/webb-context';
-import Button from '@tangle-network/ui-components/components/buttons/Button';
-import { useMemo } from 'react';
-import useNetworkStore from '../../context/useNetworkStore';
-import UpdateMetadataButton from '../UpdateMetadataButton';
-import WalletDropdown from './WalletDropdown';
-import ConnectWalletModal from './ConnectWalletModal';
+import { ChainConfig } from '@tangle-network/dapp-config';
+import { calculateTypedChainId, ChainType } from '@tangle-network/dapp-types';
+import Spinner from '@tangle-network/icons/Spinner';
 import {
   assertSolanaAddress,
   assertSubstrateAddress,
@@ -13,13 +10,17 @@ import {
   isSolanaAddress,
   toSubstrateAddress,
 } from '@tangle-network/ui-components';
-import { calculateTypedChainId, ChainType } from '@tangle-network/dapp-types';
-import { ChainConfig } from '@tangle-network/dapp-config';
+import Button from '@tangle-network/ui-components/components/buttons/Button';
 import {
   EvmAddress,
   SolanaAddress,
   SubstrateAddress,
 } from '@tangle-network/ui-components/types/address';
+import { useMemo } from 'react';
+import useNetworkStore from '../../context/useNetworkStore';
+import UpdateMetadataButton from '../UpdateMetadataButton';
+import ConnectWalletModal from './ConnectWalletModal';
+import WalletDropdown from './WalletDropdown';
 
 type ConnectWalletButtonProps = {
   showChainSpecificWallets?: boolean;
@@ -84,6 +85,7 @@ const ConnectWalletButton = ({
       {!isReady || !accountAddress ? (
         <Button
           isLoading={isConnecting || loading}
+          spinner={<Spinner size="lg" />}
           loadingText={isConnecting ? 'Connecting' : undefined}
           onClick={() => toggleModal(true, preferredChainTypedChainId)}
           className="flex items-center justify-center px-6"
