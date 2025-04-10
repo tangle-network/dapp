@@ -2,7 +2,11 @@ import { PalletRewardsRewardConfigForAssetVault } from '@polkadot/types/lookup';
 import { BN } from '@polkadot/util';
 import { NetworkId } from '@tangle-network/ui-components/constants/networks';
 import { RestakeAssetId } from '../types';
-import { DelegatorInfo, RestakeAsset } from '../types/restake';
+import {
+  DelegatorInfo,
+  RestakeAsset,
+  RestakeAssetMetadata,
+} from '../types/restake';
 
 export type RestakeVault = {
   id: number;
@@ -11,7 +15,7 @@ export type RestakeVault = {
   representAssetSymbol: string;
   decimals: number;
   capacity?: BN;
-  tokenCount: number;
+  assetMetadata: RestakeAssetMetadata[];
   totalDeposits?: BN;
   tvl?: BN;
 };
@@ -102,7 +106,7 @@ const createVaultMap = ({
         representAssetSymbol: asset.metadata.symbol,
         decimals: asset.metadata.decimals,
         capacity,
-        tokenCount: 1,
+        assetMetadata: [asset.metadata],
         totalDeposits,
         tvl,
       });
@@ -115,7 +119,7 @@ const createVaultMap = ({
       );
 
       existingVault.tvl = tryAddBNs(existingVault.tvl, tvl);
-      existingVault.tokenCount = existingVault.tokenCount + 1;
+      existingVault.assetMetadata.push(asset.metadata);
     }
   }
 

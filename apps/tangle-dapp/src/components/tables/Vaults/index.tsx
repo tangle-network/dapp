@@ -1,3 +1,4 @@
+import { TokenIcon } from '@tangle-network/icons';
 import { ChevronDown } from '@tangle-network/icons/ChevronDown';
 import Spinner from '@tangle-network/icons/Spinner';
 import LsTokenIcon from '@tangle-network/tangle-shared-ui/components/LsTokenIcon';
@@ -5,7 +6,13 @@ import HeaderCell from '@tangle-network/tangle-shared-ui/components/tables/Heade
 import TableCellWrapper from '@tangle-network/tangle-shared-ui/components/tables/TableCellWrapper';
 import TableStatus from '@tangle-network/tangle-shared-ui/components/tables/TableStatus';
 import { RestakeVault } from '@tangle-network/tangle-shared-ui/utils/createVaultMap';
-import { Avatar } from '@tangle-network/ui-components';
+import {
+  Avatar,
+  AvatarGroup,
+  Tooltip,
+  TooltipBody,
+  TooltipTrigger,
+} from '@tangle-network/ui-components';
 import Button from '@tangle-network/ui-components/components/buttons/Button';
 import { CircularProgress } from '@tangle-network/ui-components/components/CircularProgress';
 import { Table } from '@tangle-network/ui-components/components/Table';
@@ -136,7 +143,7 @@ const COLUMNS = [
           : calculateBnRatio(tvl, depositCap);
 
       return (
-        <TableCellWrapper removeRightBorder>
+        <TableCellWrapper>
           <div className="flex items-center justify-center gap-1">
             {capacityPercentage !== null && (
               <CircularProgress
@@ -152,6 +159,29 @@ const COLUMNS = [
                 : `${fmtTvl}/${fmtDepositCap}`}
             </Typography>
           </div>
+        </TableCellWrapper>
+      );
+    },
+  }),
+  COLUMN_HELPER.accessor('assetMetadata', {
+    header: () => <HeaderCell title="Assets" />,
+    cell: (props) => {
+      return (
+        <TableCellWrapper removeRightBorder>
+          <AvatarGroup className="-space-x-2 hover:space-x-1 min-w-44">
+            {props.getValue().map(({ symbol, name }, idx) => (
+              <Tooltip key={`${name}-${symbol}-${idx}`}>
+                <TooltipTrigger>
+                  <TokenIcon name={symbol} width={24} height={24} />
+                </TooltipTrigger>
+                <TooltipBody>
+                  <Typography variant="body3">
+                    {name} ({symbol})
+                  </Typography>
+                </TooltipBody>
+              </Tooltip>
+            ))}
+          </AvatarGroup>
         </TableCellWrapper>
       );
     },
@@ -210,7 +240,7 @@ const VaultsTable: FC<Props> = ({
           getExpandedRowModel: getExpandedRowModel(),
           getSortedRowModel: getSortedRowModel(),
           getPaginationRowModel: getPaginationRowModel(),
-          getRowCanExpand: (row) => row.original.tokenCount > 0,
+          getRowCanExpand: (row) => row.original.assetMetadata.length > 0,
           autoResetPageIndex: false,
           enableSortingRemoval: false,
         }) satisfies TableOptions<RestakeVault>,

@@ -42,21 +42,19 @@ export const AvatarGroup = forwardRef<HTMLDivElement, AvatarGroupProps>(
     return (
       <div
         {...props}
-        className={twMerge('flex items-center space-x-1', className)}
+        className={twMerge('flex items-center -space-x-1', className)}
         ref={ref}
       >
-        <div className="translate-x-1">
-          {children.slice(0, max).map((child, index) => {
-            return cloneElement(child, {
-              key: index,
-              ...child.props,
-              size: 'md',
-              className: 'relative mx-[-4px] last:mx-0 hover:z-10',
-            });
-          })}
-        </div>
+        {children.slice(0, max).map((child, index) => {
+          return cloneElement(child, {
+            key: index,
+            ...child.props,
+            size: 'md',
+          });
+        })}
+
         {extraAvatars > 0 && (
-          <Typography className="inline-block translate-x-1" variant="body3">
+          <Typography className="inline-block !ml-1" variant="body3">
             +{extraAvatars} other{extraAvatars > 1 && 's'}
           </Typography>
         )}
