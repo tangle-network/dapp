@@ -88,11 +88,12 @@ const VaultsHightlightCard = ({
       {sortedVaults && sortedVaults.length > 0 && (
         <motion.div
           {...props}
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
+          initial={{ opacity: 0, width: 0 }}
+          animate={{ opacity: 1, width: '100%' }}
+          exit={{ opacity: 0, width: 0 }}
+          transition={{ duration: 0.5 }}
           className={twMerge(
-            'relative overflow-hidden',
+            'relative overflow-hidden origin-right',
             'bg-cover bg-center bg-no-repeat',
             className,
           )}
