@@ -1,78 +1,152 @@
-import { BN, BN_ZERO } from '@polkadot/util';
-import useNetworkStore from '@tangle-network/tangle-shared-ui/context/useNetworkStore';
-import useRestakeAssetsTvl from '@tangle-network/tangle-shared-ui/data/restake/useRestakeAssetsTvl';
+import { RestakeVault } from '@tangle-network/tangle-shared-ui/data/restake/useRestakeVaults';
 import { useVaultAssets } from '@tangle-network/tangle-shared-ui/data/restake/useVaultAssets';
-import { isSubstrateAddress, Typography } from '@tangle-network/ui-components';
+import useApiRx from '@tangle-network/tangle-shared-ui/hooks/useApiRx';
+import { RestakeAssetId } from '@tangle-network/tangle-shared-ui/types';
+import createRestakeAssetId from '@tangle-network/tangle-shared-ui/utils/createRestakeAssetId';
+import {
+  AmountFormatStyle,
+  EMPTY_VALUE_PLACEHOLDER,
+  formatDisplayAmount,
+  isSubstrateAddress,
+  Typography,
+} from '@tangle-network/ui-components';
+import { SubstrateAddress } from '@tangle-network/ui-components/types/address';
+import addCommasToNumber from '@tangle-network/ui-components/utils/addCommasToNumber';
 import { AnimatePresence, motion } from 'framer-motion';
-import { ComponentProps, useCallback, useMemo } from 'react';
+import kebabCase from 'lodash/kebabCase';
+import {
+  ComponentProps,
+  useCallback,
+  useEffect,
+  useMemo,
+  useState,
+} from 'react';
+import { map } from 'rxjs';
 import { twMerge } from 'tailwind-merge';
 import { StatsItem } from './StatsItem';
-import useApiRx from '@tangle-network/tangle-shared-ui/hooks/useApiRx';
-import { map } from 'rxjs';
-import { RestakeAssetId } from '@tangle-network/tangle-shared-ui/types';
-import { SubstrateAddress } from '@tangle-network/ui-components/types/address';
-import createRestakeAssetId from '@tangle-network/tangle-shared-ui/utils/createRestakeAssetId';
 
-type Props = ComponentProps<typeof motion.div>;
+type Props = ComponentProps<typeof motion.div> & {
+  vaults: RestakeVault[] | null;
+  isLoading: boolean;
+};
 
-const VaultsHightlightCard = ({ className, ...props }: Props) => {
-  const network = useNetworkStore((store) => store.network2);
+const VaultsHightlightCard = ({
+  className,
+  vaults,
+  isLoading,
+  ...props
+}: Props) => {
+  // Get first 5 vaults with the highest tvl, then ID
+  const sortedVaults = useMemo(
+    () =>
+      vaults
+        ?.slice()
+        .sort((a, b) => {
+          if (a.tvl === undefined && b.tvl === undefined) {
+            return a.id - b.id;
+          }
 
-  const vaultName = 'btc';
+          if (a.tvl === undefined) {
+            return 1;
+          }
+
+          if (b.tvl === undefined) {
+            return -1;
+          }
+
+          const result = b.tvl.cmp(a.tvl);
+          if (result !== 0) {
+            return result;
+          }
+
+          return a.id - b.id;
+        })
+        .slice(0, 5) ?? null,
+    [vaults],
+  );
+
+  const [currentSlide, setCurrentSlide] = useState(0);
+
+  const {
+    result: vaultParticipants,
+    isLoading: isVaultParticipantsLoading,
+    error: vaultParticipantsError,
+  } = useVaultParticipants();
+
+  useEffect(() => {
+    if (!sortedVaults || sortedVaults.length <= 1) return;
+
+    const timer = setInterval(() => {
+      setCurrentSlide((prev) => (prev + 1) % sortedVaults.length);
+    }, 15000);
+
+    return () => clearInterval(timer);
+  }, [sortedVaults]);
 
   return (
     <AnimatePresence>
-      {network?.id === undefined && (
+      {sortedVaults && sortedVaults.length > 0 && (
         <motion.div
           {...props}
-          className={twMerge(
-            'p-6 flex flex-col gap-4',
-            'bg-cover bg-center bg-no-repeat object-fill',
-            '[background-image:linear-gradient(180deg,rgba(18,20,37,0)0%,rgba(67,62,217,0.3)27.5%)]',
-            className,
-          )}
-          style={{
-            backgroundImage: `linear-gradient(180deg, rgba(18, 20, 37, 0) 0%, rgba(67, 62, 217, 0.3) 27.5%), url('/static/assets/vaults/vault-${vaultName.toLowerCase()}.png')`,
-          }}
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
+          className={twMerge(
+            'relative overflow-hidden',
+            'bg-cover bg-center bg-no-repeat',
+            className,
+          )}
+          style={{
+            backgroundImage: `linear-gradient(180deg, rgba(18, 20, 37, 0) 0%, rgba(67, 62, 217, 0.3) 27.5%), url('/static/assets/vaults/vault-${kebabCase(sortedVaults[currentSlide]?.name || '')}.png')`,
+          }}
         >
-          <Typography
-            variant="body4"
-            fw="bold"
-            className="uppercase text-blue-60 dark:text-blue-40"
-          >
-            Featured Vault
-          </Typography>
-
-          <Typography
-            variant="h4"
-            fw="bold"
-            className="text-mono-0 dark:text-mono-0"
-          >
-            {vaultName}
-          </Typography>
-
-          <div className="mt-auto flex items-center justify-between">
-            <StatsItem
-              label="TVL"
-              result={41_100}
-              isLoading={false}
-              error={null}
-              labelClassName="text-mono-60 dark:text-mono-60"
-              valueClassName="text-mono-0 dark:text-mono-0"
-            />
-
-            <StatsItem
-              label="Participants"
-              result={563}
-              isLoading={false}
-              error={null}
-              labelClassName="text-mono-60 dark:text-mono-60"
-              valueClassName="text-mono-0 dark:text-mono-0"
-            />
+          <div className="w-full h-full overflow-hidden">
+            <div
+              className="flex w-full h-full transition-transform duration-500 ease-in-out"
+              style={{ transform: `translateX(-${currentSlide * 100}%)` }}
+            >
+              {sortedVaults.map((vault) => (
+                <div key={vault.id} className="w-full min-w-full flex-shrink-0">
+                  <VaultHighlight
+                    className="h-full"
+                    vaultName={vault.name}
+                    vaultTvl={
+                      vault.tvl
+                        ? formatDisplayAmount(
+                            vault.tvl,
+                            vault.decimals,
+                            AmountFormatStyle.EXACT,
+                          )
+                        : null
+                    }
+                    isVaultTvlLoading={isLoading}
+                    vaultParticipants={
+                      vaultParticipants?.get(vault.id)?.size ?? null
+                    }
+                    isVaultParticipantsLoading={isVaultParticipantsLoading}
+                    vaultParticipantsError={vaultParticipantsError}
+                  />
+                </div>
+              ))}
+            </div>
           </div>
+
+          {sortedVaults.length > 1 && (
+            <div className="absolute left-1/2 -translate-x-1/2 flex gap-3 bottom-5">
+              {sortedVaults.map((_, index) => (
+                <button
+                  key={index}
+                  onClick={() => setCurrentSlide(index)}
+                  className={`h-3 rounded-full transition-all ${
+                    currentSlide === index
+                      ? 'bg-mono-0 w-6'
+                      : 'bg-mono-0/70 hover:bg-mono-0/90 w-3'
+                  }`}
+                  aria-label={`Go to slide ${index + 1}`}
+                />
+              ))}
+            </div>
+          )}
         </motion.div>
       )}
     </AnimatePresence>
@@ -81,33 +155,80 @@ const VaultsHightlightCard = ({ className, ...props }: Props) => {
 
 export default VaultsHightlightCard;
 
-const useVaultHighlightInfo = () => {
-  const assetTvlMap = useRestakeAssetsTvl();
+type VaultHighlightProps = ComponentProps<'div'> & {
+  vaultName: string;
+  vaultTvl: string | null;
+  isVaultTvlLoading: boolean;
+  vaultParticipants: number | null;
+  isVaultParticipantsLoading: boolean;
+  vaultParticipantsError: Error | null;
+};
 
+const VaultHighlight = ({
+  vaultName,
+  vaultTvl,
+  isVaultTvlLoading,
+  vaultParticipants,
+  isVaultParticipantsLoading,
+  vaultParticipantsError,
+  className,
+  style,
+  ...restProps
+}: VaultHighlightProps) => {
+  return (
+    <div
+      {...restProps}
+      className={twMerge('px-6 pt-6 pb-12 flex flex-col gap-4', className)}
+    >
+      <Typography
+        variant="body4"
+        fw="bold"
+        className="uppercase text-blue-60 dark:text-blue-40"
+      >
+        Featured Vault
+      </Typography>
+
+      <Typography
+        variant="h4"
+        fw="bold"
+        className="text-mono-0 dark:text-mono-0"
+      >
+        {vaultName}
+      </Typography>
+
+      <div className="mt-auto flex items-center justify-between">
+        <StatsItem
+          label="TVL"
+          result={vaultTvl || EMPTY_VALUE_PLACEHOLDER}
+          isLoading={isVaultTvlLoading}
+          error={null}
+          labelClassName="text-mono-60 dark:text-mono-60"
+          valueClassName="text-mono-0 dark:text-mono-0"
+        />
+
+        <StatsItem
+          label="Participants"
+          result={
+            typeof vaultParticipants === 'number'
+              ? addCommasToNumber(vaultParticipants)
+              : EMPTY_VALUE_PLACEHOLDER
+          }
+          isLoading={isVaultParticipantsLoading}
+          error={vaultParticipantsError}
+          labelClassName="text-mono-60 dark:text-mono-60"
+          valueClassName="text-mono-0 dark:text-mono-0"
+        />
+      </div>
+    </div>
+  );
+};
+
+const useVaultParticipants = () => {
   const {
     result: vaultAssets,
     isLoading: isVaultAssetsLoading,
     error: vaultAssetsError,
   } = useVaultAssets();
-
-  const vaultTvl = useMemo(() => {
-    if (vaultAssets === null || assetTvlMap === null) {
-      return null;
-    }
-
-    const vaultTvlMap = new Map<number, BN>();
-
-    vaultAssets.forEach((assetSet, vaultId) => {
-      assetSet.forEach((assetId) => {
-        const assetTvl = assetTvlMap.get(assetId) ?? BN_ZERO;
-        const vaultTvl = vaultTvlMap.get(vaultId) ?? BN_ZERO;
-
-        vaultTvlMap.set(vaultId, vaultTvl.add(assetTvl));
-      });
-    });
-
-    return vaultTvlMap;
-  }, [assetTvlMap, vaultAssets]);
 
   const {
     result: assetDelegators,
@@ -121,7 +242,7 @@ const useVaultHighlightInfo = () => {
     error: assetOperatorsError,
   } = useAssetOperators();
 
-  const vaultParticipants = useMemo(() => {
+  const result = useMemo(() => {
     if (assetDelegators === null || assetOperators === null) {
       return null;
     }
@@ -158,13 +279,12 @@ const useVaultHighlightInfo = () => {
   }, [assetDelegators, assetOperators, vaultAssets]);
 
   return {
-    vaultTvl,
-    isVaultTvlLoading: isVaultAssetsLoading,
-    vaultTvlError: vaultAssetsError,
-    vaultParticipants,
-    isVaultParticipantsLoading:
-      isAssetDelegatorsLoading || isAssetOperatorsLoading,
-    vaultParticipantsError: assetDelegatorsError || assetOperatorsError,
+    result,
+    isLoading:
+      isVaultAssetsLoading ||
+      isAssetDelegatorsLoading ||
+      isAssetOperatorsLoading,
+    error: vaultAssetsError || assetDelegatorsError || assetOperatorsError,
   };
 };
 

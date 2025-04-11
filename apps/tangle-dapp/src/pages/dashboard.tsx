@@ -7,6 +7,7 @@ import { FC } from 'react';
 import AccountSummaryCard from '../components/account/AccountSummaryCard';
 import { ProtocolStatisticCard } from '../components/account/ProtocolStatisticCard';
 import { VaultsTable, useVaultsTableProps } from '../components/tables/Vaults';
+import VaultsHightlightCard from '../components/account/ProtocolStatisticCard/VaultsHightlightCard';
 
 const DashboardPage: FC = () => {
   const { assets, isLoading: isLoadingAssets } = useRestakeAssets();
@@ -32,7 +33,13 @@ const DashboardPage: FC = () => {
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
         <AccountSummaryCard className="md:max-w-none" />
 
-        <ProtocolStatisticCard />
+        <ProtocolStatisticCard>
+          <VaultsHightlightCard
+            className="grow max-w-60"
+            vaults={vaults}
+            isLoading={isLoadingAssets}
+          />
+        </ProtocolStatisticCard>
       </div>
 
       <Typography variant="h4" fw="bold">

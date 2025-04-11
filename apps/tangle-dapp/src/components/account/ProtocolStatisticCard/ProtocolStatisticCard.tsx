@@ -10,17 +10,17 @@ import {
   Typography,
 } from '@tangle-network/ui-components';
 import addCommasToNumber from '@tangle-network/ui-components/utils/addCommasToNumber';
-import { FC, useCallback } from 'react';
+import { FC, ReactNode, useCallback } from 'react';
 import { map } from 'rxjs';
 import { twMerge } from 'tailwind-merge';
-import VaultsHightlightCard from './VaultsHightlightCard';
 import { StatsItem } from './StatsItem';
 
 type Props = {
   className?: string;
+  children?: ReactNode;
 };
 
-export const ProtocolStatisticCard: FC<Props> = ({ className }) => {
+export const ProtocolStatisticCard: FC<Props> = ({ className, children }) => {
   const tvlInUsd = BN_ZERO;
   const tvlInUsdChangePercentage = 0;
   const isUp = true;
@@ -88,7 +88,7 @@ export const ProtocolStatisticCard: FC<Props> = ({ className }) => {
         </div>
       </div>
 
-      <VaultsHightlightCard className="grow max-w-60" />
+      {children}
     </Card>
   );
 };
