@@ -1,6 +1,10 @@
 import { BN } from '@polkadot/util';
 import { formatBn } from './formatBn';
 
+type FormatDisplayAmountOptions = {
+  fractionMaxLength?: number;
+};
+
 export enum AmountFormatStyle {
   /**
    * Show the entire amount with all decimal places.
@@ -37,10 +41,14 @@ export const formatDisplayAmount = (
   amount: BN,
   decimals: number,
   style: AmountFormatStyle,
+  options?: FormatDisplayAmountOptions,
 ): string => {
   return formatBn(amount, decimals, {
     includeCommas: true,
     withSi: style === AmountFormatStyle.SI ? true : undefined,
-    fractionMaxLength: style === AmountFormatStyle.SHORT ? 4 : undefined,
+    fractionMaxLength:
+      style === AmountFormatStyle.SHORT
+        ? (options?.fractionMaxLength ?? 4)
+        : options?.fractionMaxLength,
   });
 };
