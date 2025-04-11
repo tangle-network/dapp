@@ -33,7 +33,11 @@ const DashboardPage: FC = () => {
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
         <AccountSummaryCard className="md:max-w-none" />
 
-        <ProtocolStatisticCard>
+        <ProtocolStatisticCard
+          isLoadingAssets={isLoadingAssets}
+          assets={assets}
+          assetsTvl={assetsTvl}
+        >
           <VaultsHightlightCard
             className="grow max-w-60"
             vaults={vaults}

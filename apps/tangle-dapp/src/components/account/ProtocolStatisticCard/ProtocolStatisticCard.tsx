@@ -1,16 +1,23 @@
-import { BN_ZERO } from '@polkadot/util';
+import { BN } from '@polkadot/util';
 import { ArrowDownIcon, StatusIndicator } from '@tangle-network/icons';
 import useVaultsPotAccounts from '@tangle-network/tangle-shared-ui/data/rewards/useVaultsPotAccounts';
+import { useTokenPrices } from '@tangle-network/tangle-shared-ui/data/tokenPrices/useTokenPrices';
 import useApiRx from '@tangle-network/tangle-shared-ui/hooks/useApiRx';
+import { RestakeAssetId } from '@tangle-network/tangle-shared-ui/types';
+import { RestakeAsset } from '@tangle-network/tangle-shared-ui/types/restake';
+import safeFormatUnits from '@tangle-network/tangle-shared-ui/utils/safeFormatUnits';
 import {
   AmountFormatStyle,
   Card,
   CardVariant,
+  EMPTY_VALUE_PLACEHOLDER,
   formatDisplayAmount,
+  SkeletonLoader,
   Typography,
 } from '@tangle-network/ui-components';
 import addCommasToNumber from '@tangle-network/ui-components/utils/addCommasToNumber';
-import { FC, ReactNode, useCallback } from 'react';
+import Decimal from 'decimal.js';
+import { FC, ReactNode, useCallback, useMemo } from 'react';
 import { map } from 'rxjs';
 import { twMerge } from 'tailwind-merge';
 import { StatsItem } from './StatsItem';
@@ -18,11 +25,22 @@ import { StatsItem } from './StatsItem';
 type Props = {
   className?: string;
   children?: ReactNode;
+  isLoadingAssets: boolean;
+  assets: Map<RestakeAssetId, RestakeAsset> | null;
+  assetsTvl: Map<RestakeAssetId, BN> | null;
 };
 
-export const ProtocolStatisticCard: FC<Props> = ({ className, children }) => {
-  const tvlInUsd = BN_ZERO;
+export const ProtocolStatisticCard: FC<Props> = ({
+  className,
+  children,
+  assets,
+  assetsTvl,
+  isLoadingAssets,
+}) => {
+  const { data: tvlInUsd, isLoading } = useTvlInUsd(assets, assetsTvl);
+
   const tvlInUsdChangePercentage = 0;
+
   const isUp = true;
 
   return (
@@ -54,29 +72,38 @@ export const ProtocolStatisticCard: FC<Props> = ({ className, children }) => {
             Total Value Locked
           </Typography>
 
-          <div className="flex items-center gap-3 py-2">
-            <Typography variant="h2" fw="bold" className="!leading-none">
-              ${formatDisplayAmount(tvlInUsd, 1, AmountFormatStyle.SHORT)}
-            </Typography>
+          {isLoading && isLoadingAssets ? (
+            <SkeletonLoader className="h-16 w-full max-w-36" />
+          ) : (
+            <div className="flex items-center gap-3 py-2">
+              <Typography variant="h2" fw="bold" className="!leading-none">
+                $
+                {tvlInUsd !== undefined
+                  ? formatDisplayAmount(tvlInUsd, 1, AmountFormatStyle.SI, {
+                      fractionMaxLength: 2,
+                    })
+                  : EMPTY_VALUE_PLACEHOLDER}
+              </Typography>
 
-            <Typography
-              variant="body1"
-              fw="semibold"
-              className={twMerge(
-                '!leading-none flex items-center',
-                isUp
-                  ? 'text-green-50 dark:text-green-50'
-                  : 'text-red-50 dark:text-red-50',
-              )}
-            >
-              {isUp ? (
-                <ArrowDownIcon className="size-6 rotate-180 !fill-current" />
-              ) : (
-                <ArrowDownIcon className="size-6 !fill-current" />
-              )}
-              {addCommasToNumber(tvlInUsdChangePercentage.toFixed(1))}%
-            </Typography>
-          </div>
+              <Typography
+                variant="body1"
+                fw="semibold"
+                className={twMerge(
+                  '!leading-none flex items-center',
+                  isUp
+                    ? 'text-green-50 dark:text-green-50'
+                    : 'text-red-50 dark:text-red-50',
+                )}
+              >
+                {isUp ? (
+                  <ArrowDownIcon className="size-6 rotate-180 !fill-current" />
+                ) : (
+                  <ArrowDownIcon className="size-6 !fill-current" />
+                )}
+                {addCommasToNumber(tvlInUsdChangePercentage.toFixed(1))}%
+              </Typography>
+            </div>
+          )}
         </div>
 
         <div className="grid grid-cols-3 gap-6">
@@ -133,3 +160,68 @@ const VaultCountStats: FC = () => {
     />
   );
 };
+
+function useTvlInUsd(
+  assets: Map<RestakeAssetId, RestakeAsset> | null,
+  assetsTvl: Map<RestakeAssetId, BN> | null,
+) {
+  const tokenSymbols = useMemo(() => {
+    if (assets === null) {
+      return null;
+    }
+
+    const tokenSymbolSet = new Set<string>();
+
+    assets.forEach((asset) => {
+      tokenSymbolSet.add(asset.metadata.symbol);
+    });
+
+    return tokenSymbolSet;
+  }, [assets]);
+
+  const { data: tokenPriceMap, ...rest } = useTokenPrices(tokenSymbols);
+
+  const tvlInUsd = useMemo(() => {
+    if (tokenPriceMap === undefined) {
+      return;
+    }
+
+    if (assets === null || assetsTvl === null) {
+      return;
+    }
+
+    let tvlInUsd = new Decimal(0);
+
+    for (const asset of assets.values()) {
+      const { id, metadata } = asset;
+
+      const price = tokenPriceMap.get(metadata.symbol);
+      if (!price) {
+        continue;
+      }
+
+      const tvl = assetsTvl.get(id);
+      if (tvl === undefined) {
+        continue;
+      }
+
+      const fmtTvlResult = safeFormatUnits(
+        () => BigInt(tvl.toString()),
+        metadata.decimals,
+      );
+
+      if (fmtTvlResult.success === false) {
+        continue;
+      }
+
+      tvlInUsd = tvlInUsd.add(new Decimal(fmtTvlResult.value).mul(price));
+    }
+
+    return new BN(tvlInUsd.floor().toString());
+  }, [assets, assetsTvl, tokenPriceMap]);
+
+  return {
+    data: tvlInUsd,
+    ...rest,
+  };
+}
