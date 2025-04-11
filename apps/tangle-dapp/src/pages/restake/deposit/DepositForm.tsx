@@ -1,7 +1,7 @@
 import { BN, BN_ZERO } from '@polkadot/util';
-import { PresetTypedChainId } from '@tangle-network/dapp-types';
+import { ChainType, PresetTypedChainId } from '@tangle-network/dapp-types';
 import isDefined from '@tangle-network/dapp-types/utils/isDefined';
-import { TokenIcon } from '@tangle-network/icons';
+import { ArrowRightUp, TokenIcon } from '@tangle-network/icons';
 import ListModal from '@tangle-network/tangle-shared-ui/components/ListModal';
 import {
   AmountFormatStyle,
@@ -10,6 +10,7 @@ import {
   formatDisplayAmount,
   isEvmAddress,
   shortenHex,
+  Typography,
 } from '@tangle-network/ui-components';
 import { useModal } from '@tangle-network/ui-components/hooks/useModal';
 import assert from 'assert';
@@ -40,6 +41,9 @@ import Details from './Details';
 import SourceChainInput from './SourceChainInput';
 import useRestakeAssets from '@tangle-network/tangle-shared-ui/data/restake/useRestakeAssets';
 import { RestakeAsset } from '@tangle-network/tangle-shared-ui/types/restake';
+import { useActiveChain } from '@tangle-network/api-provider-environment/hooks/useActiveChain';
+import { makeExplorerUrl } from '@tangle-network/api-provider-environment/transaction/utils';
+import AssetListItem from '../../../components/Lists/AssetListItem';
 
 const getDefaultTypedChainId = (
   activeTypedChainId: number | null,
@@ -55,6 +59,7 @@ type Props = ComponentProps<'form'>;
 const DepositForm: FC<Props> = (props) => {
   const formRef = useRef<HTMLFormElement>(null);
   const activeTypedChainId = useActiveTypedChainId();
+  const activeChain = useActiveChain();
 
   const {
     register,
@@ -160,9 +165,15 @@ const DepositForm: FC<Props> = (props) => {
       return [];
     }
 
-    return Array.from(assets.values()).filter(
-      (asset) => asset.balance !== undefined && !asset.balance.isZero(),
-    );
+    return Array.from(assets.values()).sort((a, b) => {
+      const aBalance = a.balance ?? BN_ZERO;
+      const bBalance = b.balance ?? BN_ZERO;
+      return aBalance.isZero()
+        ? 1
+        : bBalance.isZero()
+          ? -1
+          : bBalance.cmp(aBalance);
+    });
   }, [assets]);
 
   const handleAssetSelection = useCallback(
@@ -259,27 +270,14 @@ const DepositForm: FC<Props> = (props) => {
             renderItem={(asset) => {
               const balance = asset.balance ?? BN_ZERO;
 
-              const fmtBalance = formatDisplayAmount(
-                balance,
-                asset.metadata.decimals,
-                AmountFormatStyle.SHORT,
-              );
-
-              const idText = isEvmAddress(asset.id)
-                ? `Address: ${shortenHex(asset.id)}`
-                : `Asset ID: ${asset.id}`;
-
               return (
-                <LogoListItem
-                  logo={<TokenIcon size="xl" name={asset.metadata.symbol} />}
-                  leftUpperContent={
-                    asset.metadata.name !== undefined
-                      ? `${asset.metadata.name} (${asset.metadata.symbol})`
-                      : asset.metadata.symbol
-                  }
-                  leftBottomContent={idText}
-                  rightBottomText="Balance"
-                  rightUpperText={`${fmtBalance} ${asset.metadata.symbol}`}
+                <AssetListItem
+                  assetId={asset.id}
+                  name={asset.metadata.name}
+                  symbol={asset.metadata.symbol}
+                  balance={balance}
+                  decimals={asset.metadata.decimals}
+                  rightBottomText="wallet balance"
                 />
               );
             }}

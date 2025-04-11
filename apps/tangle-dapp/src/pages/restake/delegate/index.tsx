@@ -4,19 +4,14 @@ import {
 } from '@tangle-network/dapp-config';
 import { calculateTypedChainId } from '@tangle-network/dapp-types/TypedChainId';
 import isDefined from '@tangle-network/dapp-types/utils/isDefined';
-import { TokenIcon } from '@tangle-network/icons';
 import ListModal from '@tangle-network/tangle-shared-ui/components/ListModal';
 import useRestakeDelegatorInfo from '@tangle-network/tangle-shared-ui/data/restake/useRestakeDelegatorInfo';
 import useRestakeOperatorMap from '@tangle-network/tangle-shared-ui/data/restake/useRestakeOperatorMap';
 import { useRpcSubscription } from '@tangle-network/tangle-shared-ui/hooks/usePolkadotApi';
 import {
-  AmountFormatStyle,
   assertSubstrateAddress,
   Card,
-  formatDisplayAmount,
-  isEvmAddress,
   isSubstrateAddress,
-  shortenHex,
 } from '@tangle-network/ui-components';
 import { Modal } from '@tangle-network/ui-components/components/Modal';
 import { useModal } from '@tangle-network/ui-components/hooks/useModal';
@@ -24,7 +19,6 @@ import { SubstrateAddress } from '@tangle-network/ui-components/types/address';
 import keys from 'lodash/keys';
 import { FC, useCallback, useEffect, useMemo } from 'react';
 import { SubmitHandler, useForm } from 'react-hook-form';
-import LogoListItem from '../../../components/Lists/LogoListItem';
 import OperatorListItem from '../../../components/Lists/OperatorListItem';
 import useIdentities from '@tangle-network/tangle-shared-ui/hooks/useIdentities';
 import useActiveTypedChainId from '../../../hooks/useActiveTypedChainId';
@@ -52,6 +46,7 @@ import useNetworkStore from '@tangle-network/tangle-shared-ui/context/useNetwork
 import useNativeRestakeTx from '../../../data/restake/useNativeRestakeTx';
 import { TxStatus } from '@tangle-network/tangle-shared-ui/hooks/useSubstrateTx';
 import useNativeRestakeAssetBalance from '../../../data/restake/useNativeRestakeAssetBalance';
+import AssetListItem from '../../../components/Lists/AssetListItem';
 
 type RestakeOperator = {
   accountId: SubstrateAddress;
@@ -349,34 +344,21 @@ const RestakeDelegateForm: FC = () => {
             descriptionWhenEmpty="Have you made a deposit on this network yet?"
             items={depositedAssets}
             searchInputId="restake-delegate-asset-search"
-            searchPlaceholder="Search for asset or enter token address"
+            searchPlaceholder="Search assets..."
             getItemKey={(item) => item.id}
             onSelect={handleAssetSelect}
             filterItem={(item, query) =>
               filterBy(query, [item.name, item.symbol, item.id])
             }
             renderItem={(asset) => {
-              const fmtBalance = formatDisplayAmount(
-                asset.balance,
-                asset.decimals,
-                AmountFormatStyle.SHORT,
-              );
-
-              const idText = isEvmAddress(asset.id)
-                ? `Address: ${shortenHex(asset.id)}`
-                : `Asset ID: ${asset.id}`;
-
               return (
-                <LogoListItem
-                  logo={<TokenIcon size="xl" name={asset.symbol} />}
-                  leftUpperContent={
-                    asset.name !== undefined
-                      ? `${asset.name} (${asset.symbol})`
-                      : asset.symbol
-                  }
-                  leftBottomContent={idText}
-                  rightUpperText={`${fmtBalance} ${asset.symbol}`}
-                  rightBottomText="Balance"
+                <AssetListItem
+                  assetId={asset.id}
+                  name={asset.name}
+                  symbol={asset.symbol}
+                  balance={asset.balance}
+                  decimals={asset.decimals}
+                  rightBottomText="deposited balance"
                 />
               );
             }}
@@ -390,7 +372,7 @@ const RestakeDelegateForm: FC = () => {
             descriptionWhenEmpty="Looks like there aren't any registered operators in this network yet. Make the leap and become the first operator!"
             items={operators}
             searchInputId="restake-delegate-operator-search"
-            searchPlaceholder="Search for an operator..."
+            searchPlaceholder="Search operators..."
             getItemKey={(item) => item.accountId}
             onSelect={handleOnSelectOperator}
             filterItem={(item, query) =>
