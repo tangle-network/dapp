@@ -1,25 +1,22 @@
 import { TANGLE_TOKEN_DECIMALS } from '@tangle-network/dapp-config';
 import { isEvmAddress } from '@tangle-network/ui-components';
-import { skipToken, useQuery } from '@tanstack/react-query';
 import assert from 'assert';
 import { useCallback, useMemo } from 'react';
 import { map } from 'rxjs';
 import { NATIVE_ASSET_ID } from '../../constants/restaking';
 import useNetworkStore from '../../context/useNetworkStore';
 import useApiRx from '../../hooks/useApiRx';
-import useViemPublicClient from '../../hooks/useViemPublicClient';
+import { useEvmAssetMetadatas } from '../../hooks/useEvmAssetMetadatas';
 import { RestakeAssetId } from '../../types';
 import { RestakeAsset, RestakeAssetMetadata } from '../../types/restake';
 import assertRestakeAssetId from '../../utils/assertRestakeAssetId';
 import createRestakeAssetId from '../../utils/createRestakeAssetId';
-import fetchErc20TokenMetadata from '../../utils/fetchErc20TokenMetadata';
 import useVaultsPotAccounts from '../rewards/useVaultsPotAccounts';
 import useRestakeAssetBalances from './useRestakeAssetBalances';
 import { useVaultAssets } from './useVaultAssets';
 
 const useRestakeAssets = () => {
   const nativeTokenSymbol = useNetworkStore((store) => store.nativeTokenSymbol);
-  const viemPublicClient = useViemPublicClient();
 
   const { result: vaultPotAccounts, isLoading: isLoadingVaultsPotAccounts } =
     useVaultsPotAccounts();
@@ -128,19 +125,7 @@ const useRestakeAssets = () => {
   );
 
   const { data: evmAssetMetadatas, isLoading: isLoadingEvmAssetMetadatas } =
-    useQuery({
-      queryKey: [
-        'evm-asset-metadatas',
-        evmAssetIds,
-        viemPublicClient?.chain?.id,
-      ],
-      queryFn:
-        viemPublicClient && evmAssetIds
-          ? () => fetchErc20TokenMetadata(viemPublicClient, evmAssetIds)
-          : skipToken,
-      // Never stale, no need to refetch.
-      staleTime: Infinity,
-    });
+    useEvmAssetMetadatas(evmAssetIds);
 
   const evmAssets = useMemo(() => {
     if (evmAssetIds === null || evmAssetMetadatas === undefined) {

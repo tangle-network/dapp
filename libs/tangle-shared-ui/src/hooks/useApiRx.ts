@@ -1,12 +1,11 @@
 'use client';
 
 import { ApiRx } from '@polkadot/api';
-import { skipToken, useQuery } from '@tanstack/react-query';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { catchError, EMPTY, Observable } from 'rxjs';
 import useNetworkStore from '../context/useNetworkStore';
 import ensureError from '../utils/ensureError';
-import { getApiRx } from '../utils/polkadot/api';
+import { useApiRxQuery } from './useApiRxQuery';
 
 export type ObservableFactory<T> = (api: ApiRx) => Observable<T> | Error | null;
 
@@ -38,10 +37,7 @@ const useApiRx = <T>(factory: ObservableFactory<T>) => {
 
   const rpcEndpoint = useNetworkStore((store) => store.network2?.wsRpcEndpoint);
 
-  const { data: apiRx = null } = useQuery({
-    queryKey: ['useApiRx', rpcEndpoint],
-    queryFn: rpcEndpoint ? () => getApiRx(rpcEndpoint) : skipToken,
-  });
+  const { data: apiRx = null } = useApiRxQuery(rpcEndpoint);
 
   const reset = useCallback(() => {
     setLoading(true);

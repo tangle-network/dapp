@@ -1,8 +1,17 @@
 import useAgnosticAccountInfo from '@tangle-network/tangle-shared-ui/hooks/useAgnosticAccountInfo';
-import usePromise from '@tangle-network/tangle-shared-ui/hooks/usePromise';
 import useViemPublicClient from '@tangle-network/tangle-shared-ui/hooks/useViemPublicClient';
 import { toEvmAddress } from '@tangle-network/ui-components';
-import { useCallback, useMemo } from 'react';
+import { EvmAddress } from '@tangle-network/ui-components/types/address';
+import { skipToken, useQuery } from '@tanstack/react-query';
+import { useMemo } from 'react';
+import { PublicClient } from 'viem';
+
+const fetchPendingEvmBalance = async <TPublicClient extends PublicClient>(
+  viemPublicClient: TPublicClient,
+  evmAddress20: EvmAddress,
+) => {
+  return viemPublicClient.getBalance({ address: evmAddress20 });
+};
 
 /**
  * See more here:
@@ -22,16 +31,13 @@ const usePendingEvmBalance = () => {
     return toEvmAddress(substrateAddress);
   }, [isEvm, substrateAddress]);
 
-  const { result: balance } = usePromise(
-    useCallback(async () => {
-      if (viemPublicClient === null || evmAddress20 === null) {
-        return null;
-      }
-
-      return viemPublicClient.getBalance({ address: evmAddress20 });
-    }, [evmAddress20, viemPublicClient]),
-    null,
-  );
+  const { data: balance } = useQuery({
+    queryKey: ['pendingEvmBalance', evmAddress20, viemPublicClient?.chain?.id],
+    queryFn:
+      viemPublicClient?.chain?.id !== undefined && evmAddress20 !== null
+        ? () => fetchPendingEvmBalance(viemPublicClient, evmAddress20)
+        : skipToken,
+  });
 
   return balance;
 };

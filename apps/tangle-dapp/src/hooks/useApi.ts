@@ -1,8 +1,7 @@
 import { ApiPromise } from '@polkadot/api';
 import useNetworkStore from '@tangle-network/tangle-shared-ui/context/useNetworkStore';
-import usePromise from '@tangle-network/tangle-shared-ui/hooks/usePromise';
+import { useApiPromiseQuery } from '@tangle-network/tangle-shared-ui/hooks/useApiPromiseQuery';
 import ensureError from '@tangle-network/tangle-shared-ui/utils/ensureError';
-import { getApiPromise } from '@tangle-network/tangle-shared-ui/utils/polkadot/api';
 import { useCallback, useEffect, useState } from 'react';
 
 export type ApiFetcher<T> = (api: ApiPromise) => Promise<T> | T;
@@ -23,22 +22,14 @@ export type ApiFetcher<T> = (api: ApiPromise) => Promise<T> | T;
 function useApi<T>(fetcher: ApiFetcher<T>, overrideRpcEndpoint?: string) {
   const [result, setResult] = useState<T | null>(null);
   const [error, setError] = useState<Error | null>(null);
-  const rpcEndpoint = useNetworkStore((store) => store.network2?.wsRpcEndpoint);
 
-  const { result: api } = usePromise<ApiPromise | null>(
-    useCallback(async () => {
-      if (overrideRpcEndpoint) {
-        return getApiPromise(overrideRpcEndpoint);
-      }
-
-      if (rpcEndpoint === undefined) {
-        return null;
-      }
-
-      return getApiPromise(rpcEndpoint);
-    }, [overrideRpcEndpoint, rpcEndpoint]),
-    null,
+  const rpcEndpointFromStore = useNetworkStore(
+    (store) => store.network2?.wsRpcEndpoint,
   );
+
+  const rpcEndpoint = overrideRpcEndpoint || rpcEndpointFromStore;
+
+  const { data: api = null } = useApiPromiseQuery(rpcEndpoint);
 
   const refetch = useCallback(async () => {
     // Api not yet ready.
