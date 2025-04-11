@@ -46,7 +46,10 @@ const WalletButton = forwardRef<HTMLButtonElement, WalletButtonProps>(
           variant="body1"
           fw="bold"
           component="p"
-          className={twMerge('truncate dark:text-mono-0', addressClassname)}
+          className={twMerge(
+            'truncate dark:text-mono-0 sr-only sm:not-sr-only',
+            addressClassname,
+          )}
         >
           {accountName
             ? accountName
