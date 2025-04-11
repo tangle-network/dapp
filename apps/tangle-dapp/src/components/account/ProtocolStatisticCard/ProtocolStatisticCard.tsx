@@ -6,6 +6,9 @@ import useApiRx from '@tangle-network/tangle-shared-ui/hooks/useApiRx';
 import { RestakeAssetId } from '@tangle-network/tangle-shared-ui/types';
 import { RestakeAsset } from '@tangle-network/tangle-shared-ui/types/restake';
 import safeFormatUnits from '@tangle-network/tangle-shared-ui/utils/safeFormatUnits';
+import useLocalStorage, {
+  LocalStorageKey,
+} from '@tangle-network/tangle-shared-ui/hooks/useLocalStorage';
 import {
   AmountFormatStyle,
   Card,
@@ -17,7 +20,14 @@ import {
 } from '@tangle-network/ui-components';
 import addCommasToNumber from '@tangle-network/ui-components/utils/addCommasToNumber';
 import Decimal from 'decimal.js';
-import { FC, ReactNode, useCallback, useMemo } from 'react';
+import {
+  FC,
+  ReactNode,
+  useCallback,
+  useEffect,
+  useMemo,
+  useState,
+} from 'react';
 import { map } from 'rxjs';
 import { twMerge } from 'tailwind-merge';
 import { StatsItem } from './StatsItem';
@@ -39,9 +49,58 @@ export const ProtocolStatisticCard: FC<Props> = ({
 }) => {
   const { data: tvlInUsd, isLoading } = useTvlInUsd(assets, assetsTvl);
 
-  const tvlInUsdChangePercentage = 0;
+  const { setWithPreviousValue: setTvlHistory, valueOpt: tvlHistoryOpt } =
+    useLocalStorage(LocalStorageKey.TVL_HISTORY);
 
-  const isUp = true;
+  const [tvlInUsdChangePercentage, setTvlInUsdChangePercentage] = useState(0);
+  const [isUp, setIsUp] = useState(true);
+
+  useEffect(() => {
+    let isMounted = true;
+
+    const cleanup = () => {
+      isMounted = false;
+    };
+
+    if (tvlInUsd === undefined) {
+      return cleanup;
+    }
+
+    const now = new Date();
+
+    const changeMetrics = calculateTvlChangeMetrics(
+      tvlInUsd,
+      now,
+      tvlHistoryOpt?.value?.tvlInUsd,
+      tvlHistoryOpt?.value?.timestamp,
+    );
+
+    if (changeMetrics === null) {
+      return cleanup;
+    }
+
+    const oneDayTimestamp = 24 * 60 * 60 * 1000;
+    const { change, lastUpdated } = changeMetrics;
+
+    if (!isMounted) {
+      return;
+    }
+
+    setTvlInUsdChangePercentage(change);
+    setIsUp(change >= 0);
+
+    // Update local storage if it's been more than 24 hours since last update
+    const needUpdate = now.getTime() - oneDayTimestamp > lastUpdated.getTime();
+    if (needUpdate && isMounted) {
+      setTvlHistory((prev) => ({
+        ...(prev?.value ?? {}),
+        tvlInUsd: tvlInUsd.toString(),
+        timestamp: now.getTime(),
+      }));
+    }
+
+    return cleanup;
+  }, [tvlInUsd, tvlHistoryOpt, setTvlHistory]);
 
   return (
     <Card
@@ -224,4 +283,35 @@ function useTvlInUsd(
     data: tvlInUsd,
     ...rest,
   };
+}
+
+function calculateTvlChangeMetrics(
+  currentTvl: BN,
+  currentDate: Date,
+  lastTvlArg: string | undefined,
+  lastUpdatedArg: number | undefined,
+) {
+  try {
+    const currentTvlDecimal = new Decimal(currentTvl.toString(10));
+
+    const lastTvl = lastTvlArg ? new Decimal(lastTvlArg) : currentTvlDecimal;
+
+    if (lastTvl.eq(0)) {
+      return null;
+    }
+
+    const lastUpdated = lastUpdatedArg ? new Date(lastUpdatedArg) : currentDate;
+
+    // Calculate percentage change
+    const change = currentTvlDecimal.sub(lastTvl).div(lastTvl).mul(100);
+
+    return {
+      change: Math.abs(change.toDP(2, Decimal.ROUND_FLOOR).toNumber()),
+      lastUpdated,
+      lastTvl,
+    };
+  } catch (error) {
+    console.error('Error calculating TVL change percentage', error);
+    return null;
+  }
 }
