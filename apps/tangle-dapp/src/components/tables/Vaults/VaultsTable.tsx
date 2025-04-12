@@ -168,7 +168,7 @@ const COLUMNS = [
     cell: (props) => {
       return (
         <TableCellWrapper removeRightBorder>
-          <AvatarGroup className="-space-x-2 hover:space-x-1 min-w-44">
+          <AvatarGroup className="space-x-1">
             {props.getValue().map(({ symbol, name }, idx) => (
               <Tooltip key={`${name}-${symbol}-${idx}`}>
                 <TooltipTrigger>
@@ -276,7 +276,7 @@ export const VaultsTable: FC<VaultsTableProps> = ({
       isPaginated
       {...tableProps}
       tableProps={table}
-      className={tableProps?.className}
+      className={twMerge('px-2', tableProps?.className)}
       tableWrapperClassName="py-2"
       tableClassName={twMerge(
         'border-collapse border-spacing-0',
