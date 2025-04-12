@@ -96,7 +96,6 @@ const useServiceRegisterTx = () => {
     async (context) => {
       const api = await getApiPromise(wsRpcEndpoint);
 
-      // TODO: encode these data
       const encodedPermittedCallers: Hash = api
         .createType(
           'Vec<AccountId>',
