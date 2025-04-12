@@ -20,7 +20,7 @@ export const RequestArgsConfigurationStep: FC<
             <Typography variant="body1">No request arguments</Typography>
           </div>
         ) : (
-          <div className="grid gap-4 p-0 mt-3 sm:grid-cols-2 mb-5">
+          <div className="grid gap-4 p-0 mt-3 sm:grid-cols-2 mb-5 w-full">
             {Children.toArray(
               blueprint.requestParams.map((param, idx) => {
                 return (

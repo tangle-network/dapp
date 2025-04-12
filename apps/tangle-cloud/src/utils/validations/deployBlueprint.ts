@@ -3,7 +3,11 @@ import {
   isEvmAddress,
   isSubstrateAddress,
 } from '@tangle-network/ui-components';
-import { z } from 'zod';
+import { z, ZodError } from 'zod';
+import { Context as ServiceRequestTxContext } from '../../data/services/useServiceRequestTx';
+import { toPrimitiveArgsDataType } from '../toPrimitiveArgsDataType';
+import { Blueprint, PrimitiveField } from '@tangle-network/tangle-shared-ui/types/blueprint';
+import { parseUnits } from 'viem';
 
 export const assetSchema = z.object({
   id: z.string().transform((value, ctx) => {
@@ -185,3 +189,51 @@ export const deployBlueprintSchema = z
   });
 
 export type DeployBlueprintSchema = z.infer<typeof deployBlueprintSchema>;
+
+export const formatServiceRegisterData = (
+  blueprintData: Blueprint,
+  data: DeployBlueprintSchema
+): ServiceRequestTxContext => {
+  let blueprintRequestArgs: PrimitiveField[] = [];
+  if (blueprintData.requestParams.length > 0) {
+    if (!data.requestArgs || blueprintData.requestParams.length !== data.requestArgs?.length) {
+      throw new ZodError([{
+        path: [`requestArgs`],
+        code: z.ZodIssueCode.custom,
+        message: 'Invalid request args',
+      }]);
+    }
+    blueprintRequestArgs = toPrimitiveArgsDataType(blueprintData.requestParams, data.requestArgs);
+  }
+
+  const paymentAmount = parseUnits(data.paymentAmount.toString(), data.paymentAsset.metadata.decimals)
+
+  return {
+    blueprintId: BigInt(blueprintData.id),
+    permittedCallers: data.permittedCallers.map((caller) => {
+      // already validated in the schema
+      if (!isEvmAddress(caller) && !isSubstrateAddress(caller)) {
+        throw new Error('Invalid caller address');
+      }
+
+      return caller;
+    }),
+    operators: data.operators.map((operator) => {
+      // already validated in the schema
+      if (!isSubstrateAddress(operator)) {
+        throw new Error('Invalid operator address');
+      }
+
+      return operator;
+    }),
+    requestArgs: blueprintRequestArgs,
+    securityRequirements: data.securityCommitments,
+    assets: data.assets.map((asset) => assertRestakeAssetId(asset.id)),
+    ttl: BigInt(data.instanceDuration),
+    paymentAsset: data.paymentAsset.id,
+    paymentValue: paymentAmount,
+    membershipModel: data.approvalModel,
+    minOperator: data.minApproval,
+    maxOperator: data.maxApproval || data.minApproval,
+  };
+};

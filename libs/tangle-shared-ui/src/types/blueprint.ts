@@ -71,6 +71,7 @@ export type Blueprint = {
   id: string;
   name: string;
   author: string;
+  deployer: string;
   registrationParams: PrimitiveFieldType[];
   requestParams: PrimitiveFieldType[];
   imgUrl: string | null;

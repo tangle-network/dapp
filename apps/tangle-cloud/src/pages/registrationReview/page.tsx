@@ -24,7 +24,7 @@ import useServiceRegisterTx from '../../data/services/useServiceRegisterTx';
 import { toTanglePrimitiveEcdsaKey } from '../../utils';
 import useSubstrateAddress from '@tangle-network/tangle-shared-ui/hooks/useSubstrateAddress';
 import { TxStatus } from '@tangle-network/tangle-shared-ui/hooks/useSubstrateTx';
-import { toPrimitiveArgsDataType } from '../../utils';
+import { toPrimitiveArgsDataType } from '../../utils/toPrimitiveArgsDataType';
 
 export default function RegistrationReview() {
   const navigate = useNavigate();

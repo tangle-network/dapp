@@ -33,6 +33,10 @@ import { DeployBlueprintSchema } from '../../../../../utils/validations/deployBl
 import { RestakeAsset } from '@tangle-network/tangle-shared-ui/types/restake';
 import delegationsToVaultTokens from '@tangle-network/tangle-shared-ui/utils/restake/delegationsToVaultTokens';
 import useRestakeAssets from '@tangle-network/tangle-shared-ui/data/restake/useRestakeAssets';
+import useBlueprintRegisteredOperator from '@tangle-network/tangle-shared-ui/data/blueprints/useBlueprintRegisteredOperator';
+import { useParams } from 'react-router';
+import { getOperatorPricing } from '../../../../../utils';
+import { NATIVE_ASSET_ID } from '@tangle-network/tangle-shared-ui/constants/restaking';
 
 const MAX_ASSET_TO_SHOW = 3;
 
@@ -40,6 +44,7 @@ export const SelectOperatorsStep: FC<SelectOperatorsStepProps> = ({
   errors,
   setValue,
   watch,
+  minimumNativeSecurityRequirement,
 }) => {
   const [rowSelection, setRowSelection] = useState<RowSelectionState>(
     watch(`operators`)?.reduce((acc, operator) => {
@@ -49,25 +54,47 @@ export const SelectOperatorsStep: FC<SelectOperatorsStepProps> = ({
   );
   const [searchQuery, setSearchQuery] = useState('');
 
+
+  const { id: _blueprintId } = useParams();
+  const blueprintId = Number(_blueprintId);
+
   const { assets } = useRestakeAssets();
 
-  const { operatorMap } = useRestakeOperatorMap();
+  const { result: registeredOperators_ } =
+    useBlueprintRegisteredOperator(blueprintId);
+  const registeredOperators = useMemo(() => {
+    return new Map(
+      registeredOperators_.map((operator) => [
+        operator.operatorAccount,
+        operator,
+      ]),
+    );
+  }, [registeredOperators_]);
   const operatorAddresses = useMemo(
     () =>
-      Object.keys(operatorMap).map((address) =>
-        assertSubstrateAddress(address),
+      registeredOperators_.map((operator) =>
+        assertSubstrateAddress(operator.operatorAccount),
       ),
-    [operatorMap],
+    [registeredOperators_],
   );
-
   const { result: operatorServicesMap } =
     useOperatorsServices(operatorAddresses);
+
   const { result: identities } = useIdentities(operatorAddresses);
 
+  const { operatorMap: restakeOperatorMap } = useRestakeOperatorMap();
+
   const operators = useMemo<OperatorSelectionTable[]>(() => {
-    return Object.entries(operatorMap).map(
+    const filteredRestakeOperators = Object.entries(restakeOperatorMap).filter(
+      ([address]) => registeredOperators.has(address),
+    );
+    return filteredRestakeOperators.map(
       ([addressString, { delegations, restakersCount }]) => {
         const address = assertSubstrateAddress(addressString);
+        const operatorPreferences = registeredOperators.get(address);
+        // @dev this case should not happen because we filter the operators in the `restakeOperatorMap`
+        if (!operatorPreferences) throw new Error('Operator not found');
+        const registeredData = operatorPreferences.preferences;
 
         return {
           address,
@@ -78,47 +105,42 @@ export const SelectOperatorsStep: FC<SelectOperatorsStepProps> = ({
             if (!asset) {
               return acc;
             }
-            const parsed = safeFormatUnits(
-              curr.amount,
-              asset.metadata.decimals,
-            );
+            const parsed = safeFormatUnits(curr.amount, asset.metadata.decimals);
 
             if (parsed.success === false) {
               return acc;
             }
-            const currPrice =
-              Number(parsed.value) * (asset.metadata.priceInUsd ?? 0);
+            const currPrice = Number(parsed.value) * (asset.metadata.priceInUsd ?? 0);
             return acc + currPrice;
           }, 0),
-          vaultTokens:
-            assets === null
-              ? []
-              : delegationsToVaultTokens(delegations, assets),
+          vaultTokens: assets === null
+            ? []
+            : delegationsToVaultTokens(delegations, assets),
           instanceCount: operatorServicesMap.get(address)?.length ?? 0,
           // TODO: using graphql with im online pallet to get uptime of operator
           uptime: Math.round(Math.random() * 100),
+          pricing: getOperatorPricing(registeredData.priceTargets),
         };
       },
     );
-  }, [operatorServicesMap, operatorMap, identities, assets]);
+  }, [operatorServicesMap, restakeOperatorMap, identities, assets]);
 
   const selectedAssets = watch(`assets`) ?? [];
   const formValues = watch();
 
-  const advanceFilter = useCallback(
-    (operator: OperatorSelectionTable) => {
-      if (selectedAssets.length === 0) return true;
+  const tableData = useMemo(() => {
+    if (selectedAssets.length === 0) return operators;
 
-      const selectedSymbols = new Set(
-        selectedAssets.map((asset) => asset.metadata.symbol),
-      );
+    const selectedSymbols = new Set(
+      selectedAssets.map((asset) => asset.metadata.symbol),
+    );
 
-      return !!operator.vaultTokens?.some((vaultToken) =>
+    return operators.filter((operator) => {
+      return operator.vaultTokens?.some((vaultToken) =>
         selectedSymbols.has(vaultToken.symbol),
       );
-    },
-    [selectedAssets],
-  );
+    });
+  }, [operators, selectedAssets]);
 
   /**
    * @dev set the operators to the form value when the rowSelection changes
@@ -150,34 +172,37 @@ export const SelectOperatorsStep: FC<SelectOperatorsStepProps> = ({
 
       setValue(`assets`, newSelectedAssets);
 
-      const securityCommitments = Array.from(
-        { length: newSelectedAssets.length },
-        () => ({
-          minExposurePercent: 1,
+      const securityCommitments = newSelectedAssets.map((asset) => {
+        const securityCommitment = {
+          asset: asset.id,
+          minExposurePercent: 0,
           maxExposurePercent: 100,
-        }),
-      );
+        }
+        if (asset.id === NATIVE_ASSET_ID) {
+          securityCommitment.minExposurePercent = minimumNativeSecurityRequirement;
+        }
+        return securityCommitment;
+      });
       setValue(`securityCommitments`, securityCommitments);
 
-      // Filter operators that have the selected assets
-      const selectedOperators = operators
-        .filter((operator) =>
-          operator.vaultTokens?.some((vaultToken) =>
-            newSelectedAssets.some(
-              (selectedAsset) =>
-                selectedAsset.metadata.symbol === vaultToken.symbol,
-            ),
-          ),
-        )
-        .map((operator) => operator.address);
+      // // Filter operators that have the selected assets
+      // const selectedOperators = tableData
+      //   .filter((operator) => rowSelection[operator.address])
+      //   .filter((operator) => operator.vaultTokens?.some((vaultToken) =>
+      //     newSelectedAssets.some(
+      //       (selectedAsset) =>
+      //         selectedAsset.metadata.symbol === vaultToken.symbol,
+      //     )),
+      //   )
+      //   .map((operator) => operator.address);
 
-      // Create a single object with all operators set to false
-      const newRowSelection = selectedOperators.reduce((acc, operator) => {
-        acc[operator] = false;
-        return acc;
-      }, {} as RowSelectionState);
+      // // Create a single object with all operators set to false
+      // const newRowSelection = selectedOperators.reduce((acc, operator) => {
+      //   acc[operator] = false;
+      //   return acc;
+      // }, {} as RowSelectionState);
 
-      setRowSelection(newRowSelection);
+      // setRowSelection(newRowSelection);
     },
     [selectedAssets, setValue],
   );
@@ -332,7 +357,7 @@ export const SelectOperatorsStep: FC<SelectOperatorsStepProps> = ({
             },
           ],
         }}
-        advanceFilter={advanceFilter}
+        tableData={tableData}
       />
 
       {errors?.operators?.message && (

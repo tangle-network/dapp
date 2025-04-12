@@ -1,5 +1,5 @@
 import { DeployBlueprintSchema } from '../../../../../utils/validations/deployBlueprint';
-import { FieldErrors, UseFormSetValue, UseFormWatch } from 'react-hook-form';
+import { FieldErrors, UseFormSetError, UseFormSetValue, UseFormWatch } from 'react-hook-form';
 import { Blueprint } from '@tangle-network/tangle-shared-ui/types/blueprint';
 import { SubstrateAddress } from '@tangle-network/ui-components/types/address';
 import { VaultToken } from '@tangle-network/tangle-shared-ui/types';
@@ -11,13 +11,18 @@ export type BaseDeployStepProps = {
   setValue: UseFormSetValue<DeployBlueprintSchema>;
   watch: UseFormWatch<DeployBlueprintSchema>;
   blueprint?: Blueprint;
+  setError: UseFormSetError<DeployBlueprintSchema>;
 };
 
 export type BasicInformationStepProps = BaseDeployStepProps;
 
-export type SelectOperatorsStepProps = BaseDeployStepProps;
+export type SelectOperatorsStepProps = BaseDeployStepProps & {
+  minimumNativeSecurityRequirement: number;
+};
 
-export type AssetConfigurationStepProps = BaseDeployStepProps;
+export type AssetConfigurationStepProps = BaseDeployStepProps & {
+  minimumNativeSecurityRequirement: number;
+};
 
 export type RequestArgsConfigurationStepProps = BaseDeployStepProps;
 

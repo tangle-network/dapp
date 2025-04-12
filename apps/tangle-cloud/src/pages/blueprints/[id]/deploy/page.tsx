@@ -8,6 +8,7 @@ import { useForm } from 'react-hook-form';
 import {
   DeployBlueprintSchema,
   deployBlueprintSchema,
+  formatServiceRegisterData,
 } from '../../../../utils/validations/deployBlueprint';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useParams } from 'react-router';
@@ -17,6 +18,8 @@ import { twMerge } from 'tailwind-merge';
 import { ArrowRightIcon } from '@radix-ui/react-icons';
 import ErrorMessage from '../../../../components/ErrorMessage';
 import { z } from 'zod';
+import useServiceRequestTx from '../../../../data/services/useServiceRequestTx';
+import { TxStatus } from '@tangle-network/tangle-shared-ui/hooks/useSubstrateTx';
 
 const DeployPage: FC = () => {
   const { id } = useParams();
@@ -26,6 +29,11 @@ const DeployPage: FC = () => {
     isLoading: isBlueprintLoading,
     error: blueprintError,
   } = useBlueprintDetails(id);
+
+  const {
+    execute: serviceRegisterTx,
+    status: serviceRegisterStatus,
+  } = useServiceRequestTx();
 
   const {
     watch,
@@ -44,6 +52,7 @@ const DeployPage: FC = () => {
     setValue,
     watch,
     control,
+    setError,
     blueprint: blueprintResult?.details,
   };
 
@@ -58,11 +67,17 @@ const DeployPage: FC = () => {
 
   const onDeployBlueprint = async () => {
     try {
-      const validatedData = deployBlueprintSchema.parse(watch());
       // clear errors
       clearErrors();
-      console.log(validatedData);
-      console.log('deploy');
+      const validatedData = deployBlueprintSchema.parse(watch());
+
+      const serviceRegisterData = formatServiceRegisterData(
+        blueprintResult.details,
+        validatedData,
+      );
+      if (serviceRegisterTx) {
+        await serviceRegisterTx(serviceRegisterData);
+      }
     } catch (error) {
       if (error instanceof z.ZodError) {
         error.errors.forEach((err) => {
@@ -94,6 +109,7 @@ const DeployPage: FC = () => {
         <Button
           rightIcon={<ArrowRightIcon width={24} height={24} />}
           onClick={onDeployBlueprint}
+          isLoading={serviceRegisterStatus === TxStatus.PROCESSING}
         >
           Deploy
         </Button>

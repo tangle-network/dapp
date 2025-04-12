@@ -150,6 +150,7 @@ const useBlueprintDetails = (id?: string) => {
                 email: info?.email ?? null,
                 registrationParams,
                 requestParams,
+                deployer: owner,
                 // TODO: Determine `isBoosted` value.
                 isBoosted: false,
               };

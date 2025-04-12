@@ -9,6 +9,8 @@ export const AssetConfigurationStep: FC<AssetConfigurationStepProps> = ({
   errors,
   setValue,
   watch,
+  setError,
+  minimumNativeSecurityRequirement,
 }) => {
   const values = watch();
 
@@ -48,13 +50,20 @@ export const AssetConfigurationStep: FC<AssetConfigurationStepProps> = ({
                 minExposurePercent={minExposurePercentFormValue}
                 maxExposurePercent={maxExposurePercentFormValue}
                 onChangeExposurePercent={(value) => {
+                  const minExposurePercent = Number(value[0]);
+                  const maxExposurePercent = Number(value[1]);
+                  if (minExposurePercent < minimumNativeSecurityRequirement) {
+                    setError(`securityCommitments.${index}.minExposurePercent`, {
+                      message: `Minimum exposure percent must be greater than or equal to ${minimumNativeSecurityRequirement}`,
+                    });
+                  }
                   setValue(
                     `securityCommitments.${index}.minExposurePercent`,
-                    Number(value[0]),
+                    minExposurePercent,
                   );
                   setValue(
                     `securityCommitments.${index}.maxExposurePercent`,
-                    Number(value[1]),
+                    maxExposurePercent,
                   );
                 }}
                 minExposurePercentErrorMsg={

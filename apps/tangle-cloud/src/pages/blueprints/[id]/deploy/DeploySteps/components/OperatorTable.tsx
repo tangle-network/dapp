@@ -1,9 +1,5 @@
 import useNetworkStore from '@tangle-network/tangle-shared-ui/context/useNetworkStore';
-import useOperatorsServices from '@tangle-network/tangle-shared-ui/data/blueprints/useOperatorsServices';
-import useRestakeOperatorMap from '@tangle-network/tangle-shared-ui/data/restake/useRestakeOperatorMap';
-import useIdentities from '@tangle-network/tangle-shared-ui/hooks/useIdentities';
 import {
-  assertSubstrateAddress,
   Avatar,
   CheckBox,
   EMPTY_VALUE_PLACEHOLDER,
@@ -16,9 +12,8 @@ import {
   Table,
   Typography,
 } from '@tangle-network/ui-components';
-import { FC, useMemo } from 'react';
+import { FC } from 'react';
 import { OperatorSelectionTable } from '../type';
-import safeFormatUnits from '@tangle-network/tangle-shared-ui/utils/safeFormatUnits';
 import {
   createColumnHelper,
   getFilteredRowModel,
@@ -32,10 +27,6 @@ import { sortByAddressOrIdentity } from '@tangle-network/tangle-shared-ui/compon
 import TableCellWrapper from '@tangle-network/tangle-shared-ui/components/tables/TableCellWrapper';
 import VaultsDropdown from '@tangle-network/tangle-shared-ui/components/tables/Operators/VaultsDropdown';
 import { TableVariant } from '@tangle-network/ui-components/components/Table/types';
-import useBlueprintRegisteredOperator from '@tangle-network/tangle-shared-ui/data/blueprints/useBlueprintRegisteredOperator';
-import { useParams } from 'react-router';
-import { getOperatorPricing } from '../../../../../../utils';
-import { PrimitiveAssetMetadata } from '@tangle-network/tangle-shared-ui/types/restake';
 
 const COLUMN_HELPER = createColumnHelper<OperatorSelectionTable>();
 
@@ -43,90 +34,14 @@ type Props = Omit<
   TableOptions<OperatorSelectionTable>,
   'data' | 'columns' | 'getCoreRowModel'
 > & {
-  assets?: PrimitiveAssetMetadata[];
-  assetWithMetadata?: Map<string, PrimitiveAssetMetadata | null>;
-  advanceFilter?: (row: OperatorSelectionTable) => boolean;
+  tableData: OperatorSelectionTable[];
 };
 
 export const OperatorTable: FC<Props> = ({
-  assets,
-  assetWithMetadata,
-  advanceFilter,
+  tableData,
   ...tableProps
 }) => {
-  const { id: _blueprintId } = useParams();
-  const blueprintId = Number(_blueprintId);
-
-  // TODO: get operator delegated assets not restake assets
-  const { operatorMap: restakeOperatorMap } = useRestakeOperatorMap();
-
-  const { result: registeredOperators_ } =
-    useBlueprintRegisteredOperator(blueprintId);
-
-  const registeredOperators = useMemo(() => {
-    return new Map(
-      registeredOperators_.map((operator) => [
-        operator.operatorAccount,
-        operator,
-      ]),
-    );
-  }, [registeredOperators_]);
-  const operatorAddresses = useMemo(
-    () =>
-      registeredOperators_.map((operator) =>
-        assertSubstrateAddress(operator.operatorAccount),
-      ),
-    [registeredOperators_],
-  );
-
-  const { result: operatorServicesMap } =
-    useOperatorsServices(operatorAddresses);
-  const { result: identities } = useIdentities(operatorAddresses);
-
   const activeNetwork = useNetworkStore().network;
-
-  const operators = useMemo<OperatorSelectionTable[]>(() => {
-    const filteredRestakeOperators = Object.entries(restakeOperatorMap).filter(
-      ([address]) => registeredOperators.has(address),
-    );
-    return filteredRestakeOperators.map(
-      ([addressString, { delegations, restakersCount }]) => {
-        const address = assertSubstrateAddress(addressString);
-        const operatorPreferences = registeredOperators.get(address);
-        // @dev this case should not happen because we filter the operators in the `restakeOperatorMap`
-        if (!operatorPreferences) throw new Error('Operator not found');
-        const registeredData = operatorPreferences.preferences;
-
-        return {
-          address,
-          identityName: identities.get(address)?.name ?? undefined,
-          restakersCount,
-          vaultTokensInUsd: delegations.reduce((acc, curr) => {
-            const asset = assetWithMetadata?.get(curr.assetId);
-            if (!asset) {
-              return acc;
-            }
-            const parsed = safeFormatUnits(curr.amount, asset.decimals);
-
-            if (parsed.success === false) {
-              return acc;
-            }
-            const currPrice = Number(parsed.value) * (asset.priceInUsd ?? 0);
-            return acc + currPrice;
-          }, 0),
-          vaultTokens: [],
-          // TODO: Implement delegated tokens
-          // assets === null
-          //   ? []
-          //   : delegationsToVaultTokens(delegations, assets),
-          instanceCount: operatorServicesMap.get(address)?.length ?? 0,
-          // TODO: using graphql with im online pallet to get uptime of operator
-          uptime: Math.round(Math.random() * 100),
-          pricing: getOperatorPricing(registeredData.priceTargets),
-        };
-      },
-    );
-  }, [operatorServicesMap, restakeOperatorMap, identities, assets]);
 
   const columns = [
     COLUMN_HELPER.accessor('address', {
@@ -269,13 +184,6 @@ export const OperatorTable: FC<Props> = ({
       },
     }),
   ];
-
-  const tableData = useMemo(() => {
-    if (advanceFilter) {
-      return operators.filter(advanceFilter);
-    }
-    return operators;
-  }, [operators, advanceFilter]);
 
   const table = useReactTable({
     getSortedRowModel: getSortedRowModel(),
