@@ -1,4 +1,4 @@
-import { FC } from 'react';
+import { FC, useEffect } from 'react';
 import {
   Button,
   ErrorFallback,
@@ -11,7 +11,7 @@ import {
   formatServiceRegisterData,
 } from '../../../../utils/validations/deployBlueprint';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useParams } from 'react-router';
+import { useNavigate, useParams } from 'react-router';
 import useBlueprintDetails from '@tangle-network/tangle-shared-ui/data/restake/useBlueprintDetails';
 import { Deployment } from './DeploySteps/Deployment';
 import { twMerge } from 'tailwind-merge';
@@ -20,9 +20,11 @@ import ErrorMessage from '../../../../components/ErrorMessage';
 import { z } from 'zod';
 import useServiceRequestTx from '../../../../data/services/useServiceRequestTx';
 import { TxStatus } from '@tangle-network/tangle-shared-ui/hooks/useSubstrateTx';
+import { PagePath } from '../../../../types';
 
 const DeployPage: FC = () => {
   const { id } = useParams();
+  const navigate = useNavigate();
 
   const {
     result: blueprintResult,
@@ -53,6 +55,12 @@ const DeployPage: FC = () => {
     setError,
     blueprint: blueprintResult?.details,
   };
+
+  useEffect(() => {
+    if (id && serviceRegisterStatus === TxStatus.COMPLETE) {
+      navigate(`${PagePath.BLUEPRINTS_DETAILS}`.replace(':id', id));
+    }
+  }, [serviceRegisterStatus, id, navigate]);
 
   if (isBlueprintLoading) {
     return <SkeletonLoader className="min-h-64" />;
