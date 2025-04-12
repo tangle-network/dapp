@@ -39,7 +39,7 @@ const DashboardPage: FC = () => {
           assetsTvl={assetsTvl}
         >
           <VaultsHightlightCard
-            className="grow max-w-60"
+            className="grow max-w-56 hidden sm:block lg:hidden xl:block"
             vaults={vaults}
             isLoading={isLoadingAssets}
           />

@@ -94,12 +94,8 @@ const VaultsHightlightCard = ({
           transition={{ duration: 0.5 }}
           className={twMerge(
             'relative overflow-hidden origin-right',
-            'bg-cover bg-center bg-no-repeat',
             className,
           )}
-          style={{
-            backgroundImage: `linear-gradient(180deg, rgba(18, 20, 37, 0) 0%, rgba(67, 62, 217, 0.3) 27.5%), url('/static/assets/vaults/vault-${kebabCase(sortedVaults[currentSlide]?.name || '')}.png')`,
-          }}
         >
           <div className="w-full h-full overflow-hidden">
             <div
@@ -107,7 +103,13 @@ const VaultsHightlightCard = ({
               style={{ transform: `translateX(-${currentSlide * 100}%)` }}
             >
               {sortedVaults.map((vault) => (
-                <div key={vault.id} className="w-full min-w-full flex-shrink-0">
+                <div
+                  key={vault.id}
+                  className="w-full min-w-full flex-shrink-0 bg-cover bg-center bg-no-repeat"
+                  style={{
+                    backgroundImage: `linear-gradient(180deg, rgba(18, 20, 37, 0) 0%, rgba(67, 62, 217, 0.3) 27.5%), url('/static/assets/vaults/vault-${kebabCase(vault.name || '')}.png')`,
+                  }}
+                >
                   <VaultHighlight
                     className="h-full"
                     vaultName={vault.name}

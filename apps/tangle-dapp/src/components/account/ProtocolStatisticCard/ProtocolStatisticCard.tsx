@@ -105,9 +105,9 @@ export const ProtocolStatisticCard: FC<Props> = ({
   return (
     <Card
       variant={CardVariant.GLASS}
-      className={twMerge(className, 'p-0 flex')}
+      className={twMerge(className, 'p-0 flex overflow-hidden')}
     >
-      <div className="p-6 space-y-5 grow">
+      <div className="p-6 grow flex flex-col gap-5">
         <div className="flex items-center gap-2">
           <StatusIndicator size={16} variant="success" />
           <Typography
@@ -165,7 +165,7 @@ export const ProtocolStatisticCard: FC<Props> = ({
           )}
         </div>
 
-        <div className="grid grid-cols-3 gap-6">
+        <div className="grid grid-cols-3 gap-6 mt-auto">
           <RestakerCountStats />
 
           <OperatorCountStats />
