@@ -54,7 +54,6 @@ export const SelectOperatorsStep: FC<SelectOperatorsStepProps> = ({
   );
   const [searchQuery, setSearchQuery] = useState('');
 
-
   const { id: _blueprintId } = useParams();
   const blueprintId = Number(_blueprintId);
 
@@ -105,17 +104,22 @@ export const SelectOperatorsStep: FC<SelectOperatorsStepProps> = ({
             if (!asset) {
               return acc;
             }
-            const parsed = safeFormatUnits(curr.amount, asset.metadata.decimals);
+            const parsed = safeFormatUnits(
+              curr.amount,
+              asset.metadata.decimals,
+            );
 
             if (parsed.success === false) {
               return acc;
             }
-            const currPrice = Number(parsed.value) * (asset.metadata.priceInUsd ?? 0);
+            const currPrice =
+              Number(parsed.value) * (asset.metadata.priceInUsd ?? 0);
             return acc + currPrice;
           }, 0),
-          vaultTokens: assets === null
-            ? []
-            : delegationsToVaultTokens(delegations, assets),
+          vaultTokens:
+            assets === null
+              ? []
+              : delegationsToVaultTokens(delegations, assets),
           instanceCount: operatorServicesMap.get(address)?.length ?? 0,
           // TODO: using graphql with im online pallet to get uptime of operator
           uptime: Math.round(Math.random() * 100),
@@ -177,9 +181,10 @@ export const SelectOperatorsStep: FC<SelectOperatorsStepProps> = ({
           asset: asset.id,
           minExposurePercent: 0,
           maxExposurePercent: 100,
-        }
+        };
         if (asset.id === NATIVE_ASSET_ID) {
-          securityCommitment.minExposurePercent = minimumNativeSecurityRequirement;
+          securityCommitment.minExposurePercent =
+            minimumNativeSecurityRequirement;
         }
         return securityCommitment;
       });

@@ -37,10 +37,7 @@ type Props = Omit<
   tableData: OperatorSelectionTable[];
 };
 
-export const OperatorTable: FC<Props> = ({
-  tableData,
-  ...tableProps
-}) => {
+export const OperatorTable: FC<Props> = ({ tableData, ...tableProps }) => {
   const activeNetwork = useNetworkStore().network;
 
   const columns = [

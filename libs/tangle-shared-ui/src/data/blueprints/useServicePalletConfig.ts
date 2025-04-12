@@ -5,18 +5,16 @@ import { of } from 'rxjs';
 
 const useServiceMinimumNativeSecurityRequirement = () => {
   const { result, ...rest } = useApiRx(
-    useCallback(
-      (apiRx) => {
-        if (
-          apiRx.consts?.services?.minimumNativeSecurityRequirement ===
-          undefined
-        )
-          return new TangleError(TangleErrorCode.FEATURE_NOT_SUPPORTED);
+    useCallback((apiRx) => {
+      if (
+        apiRx.consts?.services?.minimumNativeSecurityRequirement === undefined
+      )
+        return new TangleError(TangleErrorCode.FEATURE_NOT_SUPPORTED);
 
-        return of(apiRx.consts.services.minimumNativeSecurityRequirement.toNumber());
-      },
-      []
-    ),
+      return of(
+        apiRx.consts.services.minimumNativeSecurityRequirement.toNumber(),
+      );
+    }, []),
   );
 
   return {

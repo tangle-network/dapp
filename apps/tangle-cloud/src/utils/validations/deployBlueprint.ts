@@ -6,7 +6,10 @@ import {
 import { z, ZodError } from 'zod';
 import { Context as ServiceRequestTxContext } from '../../data/services/useServiceRequestTx';
 import { toPrimitiveArgsDataType } from '../toPrimitiveArgsDataType';
-import { Blueprint, PrimitiveField } from '@tangle-network/tangle-shared-ui/types/blueprint';
+import {
+  Blueprint,
+  PrimitiveField,
+} from '@tangle-network/tangle-shared-ui/types/blueprint';
 import { parseUnits } from 'viem';
 
 export const assetSchema = z.object({
@@ -192,21 +195,32 @@ export type DeployBlueprintSchema = z.infer<typeof deployBlueprintSchema>;
 
 export const formatServiceRegisterData = (
   blueprintData: Blueprint,
-  data: DeployBlueprintSchema
+  data: DeployBlueprintSchema,
 ): ServiceRequestTxContext => {
   let blueprintRequestArgs: PrimitiveField[] = [];
   if (blueprintData.requestParams.length > 0) {
-    if (!data.requestArgs || blueprintData.requestParams.length !== data.requestArgs?.length) {
-      throw new ZodError([{
-        path: [`requestArgs`],
-        code: z.ZodIssueCode.custom,
-        message: 'Invalid request args',
-      }]);
+    if (
+      !data.requestArgs ||
+      blueprintData.requestParams.length !== data.requestArgs?.length
+    ) {
+      throw new ZodError([
+        {
+          path: [`requestArgs`],
+          code: z.ZodIssueCode.custom,
+          message: 'Invalid request args',
+        },
+      ]);
     }
-    blueprintRequestArgs = toPrimitiveArgsDataType(blueprintData.requestParams, data.requestArgs);
+    blueprintRequestArgs = toPrimitiveArgsDataType(
+      blueprintData.requestParams,
+      data.requestArgs,
+    );
   }
 
-  const paymentAmount = parseUnits(data.paymentAmount.toString(), data.paymentAsset.metadata.decimals)
+  const paymentAmount = parseUnits(
+    data.paymentAmount.toString(),
+    data.paymentAsset.metadata.decimals,
+  );
 
   return {
     blueprintId: BigInt(blueprintData.id),

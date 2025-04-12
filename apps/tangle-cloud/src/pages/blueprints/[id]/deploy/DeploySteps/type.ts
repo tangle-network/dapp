@@ -1,5 +1,10 @@
 import { DeployBlueprintSchema } from '../../../../../utils/validations/deployBlueprint';
-import { FieldErrors, UseFormSetError, UseFormSetValue, UseFormWatch } from 'react-hook-form';
+import {
+  FieldErrors,
+  UseFormSetError,
+  UseFormSetValue,
+  UseFormWatch,
+} from 'react-hook-form';
 import { Blueprint } from '@tangle-network/tangle-shared-ui/types/blueprint';
 import { SubstrateAddress } from '@tangle-network/ui-components/types/address';
 import { VaultToken } from '@tangle-network/tangle-shared-ui/types';

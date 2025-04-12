@@ -4,17 +4,22 @@ import { SUCCESS_MESSAGES } from '../../hooks/useTxNotification';
 import { useCallback } from 'react';
 
 import { TxName } from '../../constants';
-import {
-  SubstrateTxFactory,
-} from '@tangle-network/tangle-shared-ui/hooks/useSubstrateTx';
+import { SubstrateTxFactory } from '@tangle-network/tangle-shared-ui/hooks/useSubstrateTx';
 import SERVICES_PRECOMPILE_ABI from '@tangle-network/tangle-shared-ui/abi/services';
 import { PrecompileAddress } from '@tangle-network/tangle-shared-ui/constants/evmPrecompiles';
-import { EvmAddress, SubstrateAddress } from '@tangle-network/ui-components/types/address';
+import {
+  EvmAddress,
+  SubstrateAddress,
+} from '@tangle-network/ui-components/types/address';
 import { PrimitiveField } from '@tangle-network/tangle-shared-ui/types/blueprint';
 import { RestakeAssetId } from '@tangle-network/tangle-shared-ui/types';
 import { EvmTxFactory } from '@tangle-network/tangle-shared-ui/hooks/useEvmPrecompileCall';
 import { Hash, zeroAddress } from 'viem';
-import { convertAddressToBytes32, isEvmAddress, toEvmAddress } from '@tangle-network/ui-components';
+import {
+  convertAddressToBytes32,
+  isEvmAddress,
+  toEvmAddress,
+} from '@tangle-network/ui-components';
 import { getApiPromise } from '@tangle-network/tangle-shared-ui/utils/polkadot/api';
 import useNetworkStore from '@tangle-network/tangle-shared-ui/context/useNetworkStore';
 
@@ -34,34 +39,41 @@ export type Context = {
   membershipModel: 'Fixed' | 'Dynamic';
   minOperator: number;
   maxOperator: number;
-}
+};
 
 const useServiceRegisterTx = () => {
   const wsRpcEndpoint = useNetworkStore((store) => store.network.wsRpcEndpoint);
 
   const substrateTxFactory: SubstrateTxFactory<Context> = useCallback(
     async (api, activeSubstrateAddress, context) => {
-      const membershipModel = context.membershipModel === 'Fixed' ? {
-        Fixed: {
-          minOperators: context.minOperator,
-        }
-      } : {
-        Dynamic: {
-          minOperators: context.minOperator,
-          maxOperators: context.maxOperator,
-        }
-      };
-      
+      const membershipModel =
+        context.membershipModel === 'Fixed'
+          ? {
+              Fixed: {
+                minOperators: context.minOperator,
+              },
+            }
+          : {
+              Dynamic: {
+                minOperators: context.minOperator,
+                maxOperators: context.maxOperator,
+              },
+            };
+
       const paymentAsset = createAssetIdEnum(context.paymentAsset);
 
       const assetSecurityRequirements = context.assets.map((asset, index) => ({
         asset: createAssetIdEnum(asset),
-        minExposurePercent: context.securityRequirements[index].minExposurePercent,
-        maxExposurePercent: context.securityRequirements[index].maxExposurePercent,
+        minExposurePercent:
+          context.securityRequirements[index].minExposurePercent,
+        maxExposurePercent:
+          context.securityRequirements[index].maxExposurePercent,
       }));
 
       return api.tx.services.request(
-        isEvmAddress(context.paymentAsset) ? toEvmAddress(activeSubstrateAddress) : null,
+        isEvmAddress(context.paymentAsset)
+          ? toEvmAddress(activeSubstrateAddress)
+          : null,
         context.blueprintId,
         context.permittedCallers,
         context.operators,
@@ -80,64 +92,79 @@ const useServiceRegisterTx = () => {
     typeof SERVICES_PRECOMPILE_ABI,
     'requestService',
     Context
-  > = useCallback(async (context) => {
-  
-    const api = await getApiPromise(wsRpcEndpoint);
-    
-    // TODO: encode these data  
-    const encodedPermittedCallers: Hash = api.createType(
-      'Vec<AccountId>',
-      context.permittedCallers.map(caller => {
-        if (isEvmAddress(caller)) {
-          return convertAddressToBytes32(caller);
-        } else {
-          return caller;
-        }
-      })
-    ).toHex();
+  > = useCallback(
+    async (context) => {
+      const api = await getApiPromise(wsRpcEndpoint);
 
-    const encodedAssetSecurityRequirements: Hash[] = context.assets.map((asset, index) => 
-      api.createType('AssetSecurityRequirement', {
-        asset: createAssetIdEnum(asset),
-        minExposurePercent: context.securityRequirements[index].minExposurePercent,
-        maxExposurePercent: context.securityRequirements[index].maxExposurePercent,
-      }).toHex()
-    );
+      // TODO: encode these data
+      const encodedPermittedCallers: Hash = api
+        .createType(
+          'Vec<AccountId>',
+          context.permittedCallers.map((caller) => {
+            if (isEvmAddress(caller)) {
+              return convertAddressToBytes32(caller);
+            } else {
+              return caller;
+            }
+          }),
+        )
+        .toHex();
 
-    const encodedOperators: Hash = api.createType('Vec<AccountId>', context.operators.map(operator => {
-      if (isEvmAddress(operator)) {
-        return convertAddressToBytes32(operator);
-      } else {
-        return operator;
-      }
-    })).toHex();
+      const encodedAssetSecurityRequirements: Hash[] = context.assets.map(
+        (asset, index) =>
+          api
+            .createType('AssetSecurityRequirement', {
+              asset: createAssetIdEnum(asset),
+              minExposurePercent:
+                context.securityRequirements[index].minExposurePercent,
+              maxExposurePercent:
+                context.securityRequirements[index].maxExposurePercent,
+            })
+            .toHex(),
+      );
 
-    const encodedRequestArgs: Hash = api.createType('Vec<TanglePrimitivesServicesField>', context.requestArgs).toHex();
+      const encodedOperators: Hash = api
+        .createType(
+          'Vec<AccountId>',
+          context.operators.map((operator) => {
+            if (isEvmAddress(operator)) {
+              return convertAddressToBytes32(operator);
+            } else {
+              return operator;
+            }
+          }),
+        )
+        .toHex();
 
-    const isEvmAssetPayment = isEvmAddress(context.paymentAsset);
+      const encodedRequestArgs: Hash = api
+        .createType('Vec<TanglePrimitivesServicesField>', context.requestArgs)
+        .toHex();
 
-    const [paymentAssetId, paymentTokenAddress] = isEvmAssetPayment 
-    ? [BigInt(0), toEvmAddress(context.paymentAsset)]
-    : [BigInt(context.paymentAsset), toEvmAddress(zeroAddress)];
-  
+      const isEvmAssetPayment = isEvmAddress(context.paymentAsset);
 
-    return {
-      functionName: 'requestService',
-      arguments: [
-        context.blueprintId,
-        encodedAssetSecurityRequirements,
-        encodedPermittedCallers,
-        encodedOperators,
-        encodedRequestArgs,
-        context.ttl,
-        paymentAssetId,
-        paymentTokenAddress,
-        context.paymentValue,
-        context.minOperator,
-        context.maxOperator,
-      ],
-    };
-  }, [wsRpcEndpoint])
+      const [paymentAssetId, paymentTokenAddress] = isEvmAssetPayment
+        ? [BigInt(0), toEvmAddress(context.paymentAsset)]
+        : [BigInt(context.paymentAsset), toEvmAddress(zeroAddress)];
+
+      return {
+        functionName: 'requestService',
+        arguments: [
+          context.blueprintId,
+          encodedAssetSecurityRequirements,
+          encodedPermittedCallers,
+          encodedOperators,
+          encodedRequestArgs,
+          context.ttl,
+          paymentAssetId,
+          paymentTokenAddress,
+          context.paymentValue,
+          context.minOperator,
+          context.maxOperator,
+        ],
+      };
+    },
+    [wsRpcEndpoint],
+  );
 
   return useAgnosticTx({
     name: TxName.DEPLOY_BLUEPRINT,
@@ -146,7 +173,6 @@ const useServiceRegisterTx = () => {
     evmTxFactory,
     substrateTxFactory,
     successMessageByTxName: SUCCESS_MESSAGES,
-  
   });
 };
 

@@ -30,10 +30,8 @@ const DeployPage: FC = () => {
     error: blueprintError,
   } = useBlueprintDetails(id);
 
-  const {
-    execute: serviceRegisterTx,
-    status: serviceRegisterStatus,
-  } = useServiceRequestTx();
+  const { execute: serviceRegisterTx, status: serviceRegisterStatus } =
+    useServiceRequestTx();
 
   const {
     watch,
