@@ -20,7 +20,7 @@ export const BasicInformationStep: FC<BasicInformationStepProps> = ({
 }) => {
   const labelClassName = 'text-mono-200 dark:text-mono-0';
 
-  const stepKey = BLUEPRINT_DEPLOY_STEPS[0];
+  const stepKey = BLUEPRINT_DEPLOY_STEPS.BASIC_INFO;
   const values = watch(stepKey);
 
   const errors = globalErrors?.[stepKey];
@@ -103,6 +103,7 @@ export const BasicInformationStep: FC<BasicInformationStepProps> = ({
               type="number"
               min={1}
               value={values?.instanceDuration?.toString()}
+              rightIcon={<>Block(s)</>}
               onChange={(nextValue) => handleInstanceDurationChange(nextValue)}
             />
             {errors?.['instanceDuration'] && (

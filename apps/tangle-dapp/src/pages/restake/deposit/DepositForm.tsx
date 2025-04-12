@@ -188,6 +188,7 @@ const DepositForm: FC<Props> = (props) => {
         return;
       }
 
+      if (!restakeApi) return;
       await restakeApi.deposit(asset.id, amountBn);
       setValue('amount', '', { shouldValidate: false });
       setValue('depositAssetId', '', { shouldValidate: false });

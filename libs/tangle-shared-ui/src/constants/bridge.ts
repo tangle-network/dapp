@@ -385,18 +385,6 @@ export const BRIDGE_TOKENS: Record<PresetTypedChainId, BridgeToken[]> = {
   ],
   [PresetTypedChainId.Polygon]: [
     {
-      symbol: 'CRV',
-      tokenType: 'CRV' as EVMTokenEnum,
-      bridgeType: EVMTokenBridgeEnum.Hyperlane,
-      address: assertEvmAddress('0x3DBBB4fdC5725FF780E653FfC3Af427029C259F3'),
-      abi: assertAbi(erc20Abi),
-      decimals: 18,
-      chainId: PresetTypedChainId.Polygon,
-      hyperlaneSyntheticAddress: assertEvmAddress(
-        '0xED8Ef3eF3965f64A143977eB641BA2212DCfC96e',
-      ),
-    },
-    {
       symbol: 'DAI',
       tokenType: 'DAI' as EVMTokenEnum,
       bridgeType: EVMTokenBridgeEnum.Hyperlane,
@@ -576,18 +564,6 @@ export const BRIDGE_TOKENS: Record<PresetTypedChainId, BridgeToken[]> = {
       chainId: PresetTypedChainId.Arbitrum,
       hyperlaneSyntheticAddress: assertEvmAddress(
         '0x74CBCBa1125ec200cc63efF432B462A084E557cc',
-      ),
-    },
-    {
-      symbol: 'CRV',
-      tokenType: 'CRV' as EVMTokenEnum,
-      bridgeType: EVMTokenBridgeEnum.Hyperlane,
-      address: assertEvmAddress('0x223E7B1EAd79C6603a891D9e733FD5ADD1044dd1'),
-      abi: assertAbi(erc20Abi),
-      decimals: 18,
-      chainId: PresetTypedChainId.Arbitrum,
-      hyperlaneSyntheticAddress: assertEvmAddress(
-        '0xED8Ef3eF3965f64A143977eB641BA2212DCfC96e',
       ),
     },
     {
@@ -821,18 +797,6 @@ export const BRIDGE_TOKENS: Record<PresetTypedChainId, BridgeToken[]> = {
       ),
     },
     {
-      symbol: 'CRV',
-      tokenType: 'CRV' as EVMTokenEnum,
-      bridgeType: EVMTokenBridgeEnum.Hyperlane,
-      address: assertEvmAddress('0xb0cB96127e4C4bE884F71c9CF2BbbFf897271e76'),
-      abi: assertAbi(erc20Abi),
-      decimals: 18,
-      chainId: PresetTypedChainId.Optimism,
-      hyperlaneSyntheticAddress: assertEvmAddress(
-        '0xED8Ef3eF3965f64A143977eB641BA2212DCfC96e',
-      ),
-    },
-    {
       symbol: 'DAI',
       tokenType: 'DAI' as EVMTokenEnum,
       bridgeType: EVMTokenBridgeEnum.Hyperlane,
@@ -1062,18 +1026,6 @@ export const BRIDGE_TOKENS: Record<PresetTypedChainId, BridgeToken[]> = {
       chainId: PresetTypedChainId.Base,
       hyperlaneSyntheticAddress: assertEvmAddress(
         '0x74CBCBa1125ec200cc63efF432B462A084E557cc',
-      ),
-    },
-    {
-      symbol: 'CRV',
-      tokenType: 'CRV' as EVMTokenEnum,
-      bridgeType: EVMTokenBridgeEnum.Hyperlane,
-      address: assertEvmAddress('0xAf461f35C12d207ee533191C89B476CCB1b03D60'),
-      abi: assertAbi(erc20Abi),
-      decimals: 18,
-      chainId: PresetTypedChainId.Base,
-      hyperlaneSyntheticAddress: assertEvmAddress(
-        '0xED8Ef3eF3965f64A143977eB641BA2212DCfC96e',
       ),
     },
     {
@@ -1347,9 +1299,9 @@ export const BRIDGE_CHAINS: BridgeChainsConfigType = {
     [PresetTypedChainId.BSC]: {
       supportedTokens: BRIDGE_TOKENS[PresetTypedChainId.BSC],
     },
-    [PresetTypedChainId.SolanaMainnet]: {
-      supportedTokens: BRIDGE_TOKENS[PresetTypedChainId.SolanaMainnet],
-    },
+    // [PresetTypedChainId.SolanaMainnet]: {
+    //   supportedTokens: BRIDGE_TOKENS[PresetTypedChainId.SolanaMainnet],
+    // },
     [PresetTypedChainId.EthereumMainNet]: {
       supportedTokens: BRIDGE_TOKENS[PresetTypedChainId.EthereumMainNet],
     },
@@ -1816,84 +1768,6 @@ export const HYPERLANE_WARP_ROUTE_CONFIGS: WarpCoreConfig = {
       name: 'BNB',
       standard: TokenStandard.EvmHypSynthetic,
       symbol: 'BNB',
-    },
-    {
-      addressOrDenom: '0x223E7B1EAd79C6603a891D9e733FD5ADD1044dd1',
-      chainName: 'arbitrum',
-      collateralAddressOrDenom: '0x11cDb42B0EB46D95f990BeDD4695A6e3fA034978',
-      connections: [
-        {
-          token: 'ethereum|tangle|0xED8Ef3eF3965f64A143977eB641BA2212DCfC96e',
-        },
-      ],
-      decimals: 18,
-      name: 'Curve DAO Token',
-      standard: TokenStandard.EvmHypCollateral,
-      symbol: 'CRV',
-    },
-    {
-      addressOrDenom: '0xAf461f35C12d207ee533191C89B476CCB1b03D60',
-      chainName: 'base',
-      collateralAddressOrDenom: '0x8Ee73c484A26e0A5df2Ee2a4960B789967dd0415',
-      connections: [
-        {
-          token: 'ethereum|tangle|0xED8Ef3eF3965f64A143977eB641BA2212DCfC96e',
-        },
-      ],
-      decimals: 18,
-      name: 'Curve DAO Token',
-      standard: TokenStandard.EvmHypCollateral,
-      symbol: 'CRV',
-    },
-    {
-      addressOrDenom: '0xb0cB96127e4C4bE884F71c9CF2BbbFf897271e76',
-      chainName: 'optimism',
-      collateralAddressOrDenom: '0x0994206dfE8De6Ec6920FF4D779B0d950605Fb53',
-      connections: [
-        {
-          token: 'ethereum|tangle|0xED8Ef3eF3965f64A143977eB641BA2212DCfC96e',
-        },
-      ],
-      decimals: 18,
-      name: 'Curve DAO Token',
-      standard: TokenStandard.EvmHypCollateral,
-      symbol: 'CRV',
-    },
-    {
-      addressOrDenom: '0x3DBBB4fdC5725FF780E653FfC3Af427029C259F3',
-      chainName: 'polygon',
-      collateralAddressOrDenom: '0x172370d5Cd63279eFa6d502DAB29171933a610AF',
-      connections: [
-        {
-          token: 'ethereum|tangle|0xED8Ef3eF3965f64A143977eB641BA2212DCfC96e',
-        },
-      ],
-      decimals: 18,
-      name: 'Curve DAO Token',
-      standard: TokenStandard.EvmHypCollateral,
-      symbol: 'CRV',
-    },
-    {
-      addressOrDenom: '0xED8Ef3eF3965f64A143977eB641BA2212DCfC96e',
-      chainName: 'tangle',
-      connections: [
-        {
-          token: 'ethereum|arbitrum|0x223E7B1EAd79C6603a891D9e733FD5ADD1044dd1',
-        },
-        {
-          token: 'ethereum|base|0xAf461f35C12d207ee533191C89B476CCB1b03D60',
-        },
-        {
-          token: 'ethereum|optimism|0xb0cB96127e4C4bE884F71c9CF2BbbFf897271e76',
-        },
-        {
-          token: 'ethereum|polygon|0x3DBBB4fdC5725FF780E653FfC3Af427029C259F3',
-        },
-      ],
-      decimals: 18,
-      name: 'Curve DAO Token',
-      standard: TokenStandard.EvmHypSynthetic,
-      symbol: 'CRV',
     },
     {
       addressOrDenom: '0x488A2E673B0bA9876788A7497c331EfaA14d5F81',
@@ -3928,10 +3802,6 @@ export const HYPERLANE_WARP_ROUTE_CONFIGS: WarpCoreConfig = {
 export const HYPERLANE_WARP_ROUTE_WHITELIST: Array<string> | null = [
   'AVAIL/base-tangle',
   'BNB/bsc-tangle',
-  'CRV/arbitrum-tangle',
-  'CRV/base-tangle',
-  'CRV/optimism-tangle',
-  'CRV/polygon-tangle',
   'ETH/arbitrum-tangle',
   'ETH/base-tangle',
   'ETH/optimism-tangle',

@@ -56,3 +56,14 @@ export interface ServiceInstance {
   instanceId: bigint;
   serviceInstance?: ReturnType<typeof toPrimitiveService>;
 }
+
+export type OperatorPreferences = {
+  key: string;
+  priceTargets: {
+    cpu: number;
+    mem: number;
+    storageHdd: number;
+    storageSsd: number;
+    storageNvme: number;
+  };
+};

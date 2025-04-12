@@ -24,12 +24,9 @@ export const logoConfig: Link = {
   path: '/',
 };
 
-export const BRIDGE_URL = 'https://app.webb.tools';
 export const DKG_STATS_URL = 'https://stats.tangle.tools';
-export const HUBBLE_STATS_URL = 'https://hubble-stats.webb.tools/';
 
 export const TANGLE_DAPP_URL = 'https://app.tangle.tools/';
-export const WEBB_MKT_URL = 'https://webb.tools';
 export const TESTNET_LEADERBOARD_URL = 'https://leaderboard.tangle.tools';
 
 export const TANGLE_MKT_URL = 'https://tangle.tools';
@@ -46,9 +43,6 @@ export const TANGLE_DOCS_LS_UPDATE_ROLES_URL =
 export const TANGLE_DOCS_RESTAKING_URL =
   'https://docs.tangle.tools/restake/restake-introduction';
 export const TANGLE_GITHUB_URL = 'https://github.com/tangle-network/tangle';
-
-export const WEBB_DOCS_URL = 'https://docs.webb.tools/';
-export const WEBB_BLOG_URL = 'https://blog.webb.tools';
 
 export const WEBB_WHITEPAPER_URL = 'https://eprint.iacr.org/2023/260';
 export const TANGLE_WHITEPAPER_URL =
@@ -71,9 +65,6 @@ export const GITHUB_BUG_REPORT_URL =
 // TODO: remove this, only use in the old stats dapp
 export const POLKADOT_JS_EXPLORER_URL =
   'https://polkadot.js.org/apps/?rpc=wss://testnet-rpc.tangle.tools#/explorer/query';
-
-export const FOLLOW_WEBB_TWITTER_URL =
-  'https://twitter.com/intent/follow?screen_name=webbprotocol';
 
 export const TANGLE_TWITTER_URL = 'https://twitter.com/tangle_network';
 
@@ -165,7 +156,7 @@ export const SOCIAL_URLS_RECORD = {
   telegram: 'https://t.me/tanglenet',
   discord: 'https://discord.com/invite/cv8EfJu3Tn',
   commonwealth: 'https://commonwealth.im/tangle',
-  linkedin: 'https://www.linkedin.com/company/webb-protocol',
+  linkedin: 'https://www.linkedin.com/company/tanglenetwork',
   twitter: 'https://twitter.com/tangle_network',
   github: 'https://github.com/tangle-network',
   youTube: 'https://www.youtube.com/@tanglenetwork',
@@ -218,13 +209,6 @@ export const headerNavs: Link[] = [
 ];
 
 export const footerNavs: FooterNavsType = {
-  dapp: [
-    {
-      name: 'bridge',
-      href: BRIDGE_URL,
-      ...commonExternalProps,
-    },
-  ],
   network: [
     {
       name: 'Tangle EVM Explorer',
@@ -240,7 +224,7 @@ export const footerNavs: FooterNavsType = {
   developer: [
     {
       name: 'documentation',
-      href: WEBB_DOCS_URL,
+      href: TANGLE_DOCS_URL,
       ...commonExternalProps,
     },
     {
@@ -249,20 +233,10 @@ export const footerNavs: FooterNavsType = {
       ...commonExternalProps,
     },
   ],
-  resources: [
-    {
-      name: 'community',
-      href: new URL(
-        WEBB_DOC_ROUTES_RECORD.community.route,
-        WEBB_DOCS_URL,
-      ).toString(),
-      ...commonExternalProps,
-    },
-  ],
   company: [
     {
       name: 'about us',
-      href: WEBB_MKT_URL,
+      href: TANGLE_MKT_URL,
       ...commonExternalProps,
     },
     {
@@ -276,12 +250,12 @@ export const footerNavs: FooterNavsType = {
 export const bottomLinks = [
   {
     name: 'Terms of Service',
-    href: 'https://webb.tools/terms-and-conditions',
+    href: TANGLE_TERMS_OF_SERVICE_URL,
     ...commonExternalProps,
   },
   {
     name: 'Privacy Policy',
-    href: 'https://webb.tools/privacy-policy',
+    href: TANGLE_PRIVACY_POLICY_URL,
     ...commonExternalProps,
   },
 ] as const;

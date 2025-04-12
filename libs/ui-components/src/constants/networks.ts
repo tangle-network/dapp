@@ -21,7 +21,7 @@ import {
 
 import { SUBQUERY_ENDPOINT } from './index';
 import getPolkadotJsDashboardUrl from '@tangle-network/dapp-config/utils/getPolkadotJsDashboardUrl';
-import { EvmAddress, SubstrateAddress } from '../types/address';
+import { EvmAddress, SolanaAddress, SubstrateAddress } from '../types/address';
 import { HexString } from '@polkadot/util/types';
 import { isEvmAddress } from '../utils';
 
@@ -52,7 +52,7 @@ export type Network = {
   ss58Prefix?: number;
 
   createExplorerAccountUrl: (
-    address: SubstrateAddress | EvmAddress,
+    address: SubstrateAddress | EvmAddress | SolanaAddress,
   ) => string | null;
 
   createExplorerTxUrl: (
@@ -100,9 +100,11 @@ export const TANGLE_MAINNET_NETWORK = {
   ss58Prefix: TANGLE_SS58_PREFIX,
 
   createExplorerAccountUrl: (address) => {
-    return isEvmAddress(address)
-      ? `${TANGLE_MAINNET_EVM_EXPLORER_URL}/address/${address}`
-      : `${TANGLE_MAINNET_NATIVE_EXPLORER_URL}/#/accounts/${address}`;
+    if (isEvmAddress(address)) {
+      return `${TANGLE_MAINNET_EVM_EXPLORER_URL}/address/${address}`;
+    } else {
+      return `${TANGLE_MAINNET_NATIVE_EXPLORER_URL}/#/accounts/${address}`;
+    }
   },
 
   createExplorerTxUrl: (isEvm, txHash, blockHash) => {
@@ -134,9 +136,11 @@ export const TANGLE_TESTNET_NATIVE_NETWORK = {
   evmTxRelayerEndpoint: 'https://testnet-txrelayer.tangle.tools/',
 
   createExplorerAccountUrl: (address) => {
-    return isEvmAddress(address)
-      ? `${TANGLE_TESTNET_EVM_EXPLORER_URL}/address/${address}`
-      : null;
+    if (isEvmAddress(address)) {
+      return `${TANGLE_TESTNET_EVM_EXPLORER_URL}/address/${address}`;
+    } else {
+      return null;
+    }
   },
 
   createExplorerTxUrl: (isEvm, txHash, blockHash) => {
@@ -166,7 +170,9 @@ export const TANGLE_LOCAL_DEV_NETWORK = {
   polkadotJsDashboardUrl: TANGLE_LOCAL_POLKADOT_JS_DASHBOARD_URL,
   ss58Prefix: 42,
   evmTxRelayerEndpoint: 'http://localhost:3000',
-  createExplorerAccountUrl: () => null,
+  createExplorerAccountUrl: (
+    _address: SubstrateAddress | EvmAddress | SolanaAddress,
+  ) => null,
 
   createExplorerTxUrl: (isEvm, _txHash, blockHash) => {
     if (isEvm) {
@@ -186,7 +192,9 @@ export const TANGLE_RESTAKING_PARACHAIN_LOCAL_DEV_NETWORK = {
   tokenSymbol: 'TNT',
   wsRpcEndpoint: 'ws://localhost:30337',
   polkadotJsDashboardUrl: getPolkadotJsDashboardUrl('ws://localhost:30337'),
-  createExplorerAccountUrl: () => null,
+  createExplorerAccountUrl: (
+    _address: SubstrateAddress | EvmAddress | SolanaAddress,
+  ) => null,
   createExplorerTxUrl: () => null,
 } as const satisfies Network;
 
@@ -199,7 +207,9 @@ export const TANGLE_RESTAKING_PARACHAIN_TESTNET_NETWORK = {
   polkadotJsDashboardUrl: getPolkadotJsDashboardUrl(
     'wss://testnet-parachain.tangle.tools',
   ),
-  createExplorerAccountUrl: () => null,
+  createExplorerAccountUrl: (
+    _address: SubstrateAddress | EvmAddress | SolanaAddress,
+  ) => null,
   createExplorerTxUrl: () => null,
 } as const satisfies Network;
 

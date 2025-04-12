@@ -1,0 +1,16 @@
+{
+  "name": "@tangle-network/solana-api-provider",
+  "version": "0.0.1",
+  "private": true,
+  "type": "commonjs",
+  "main": "./src/index.js",
+  "types": "./src/index.d.ts",
+  "dependencies": {
+    "@tangle-network/abstract-api-provider": "*",
+    "@solana/web3.js": "^1.91.0",
+    "@tangle-network/dapp-types": "*",
+    "@tangle-network/dapp-config": "*",
+    "rxjs": "^7.8.1",
+    "tslib": "^2.3.0"
+  }
+}

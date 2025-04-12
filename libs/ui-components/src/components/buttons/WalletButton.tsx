@@ -5,6 +5,7 @@ import { twMerge } from 'tailwind-merge';
 import { isHex } from 'viem';
 import { Typography } from '../../typography/Typography';
 import { shortenHex, shortenString } from '../../utils';
+import { isSolanaAddress } from '../../utils/isSolanaAddress';
 import { WalletButtonProps } from './types';
 
 const WalletButton = forwardRef<HTMLButtonElement, WalletButtonProps>(
@@ -45,16 +46,15 @@ const WalletButton = forwardRef<HTMLButtonElement, WalletButtonProps>(
           variant="body1"
           fw="bold"
           component="p"
-          className={twMerge(
-            'truncate dark:text-mono-0 hidden sm:block',
-            addressClassname,
-          )}
+          className={twMerge('truncate dark:text-mono-0', addressClassname)}
         >
           {accountName
             ? accountName
             : isHex(address)
               ? `${shortenHex(address)}`
-              : `${shortenString(address)}`}
+              : isSolanaAddress(address)
+                ? `${shortenString(address)}`
+                : `${shortenString(address)}`}
         </Typography>
 
         {!disabled && <ChevronDown size="lg" className="shrink-0 grow-0" />}

@@ -61,6 +61,7 @@ const UnstakeRequestTableActions: FC<Props> = ({
     setIsTransacting(true);
 
     if (nonNativeUnstakeRequests.length > 0) {
+      if (!restakeApi) return;
       await restakeApi.cancelUndelegate(nonNativeUnstakeRequests);
     }
 
@@ -98,6 +99,7 @@ const UnstakeRequestTableActions: FC<Props> = ({
     );
 
     if (hasNonNativeUnstakeRequests) {
+      if (!restakeApi) return;
       await restakeApi.executeUndelegate();
     }
 

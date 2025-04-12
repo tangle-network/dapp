@@ -275,7 +275,8 @@ const RestakeDelegateForm: FC = () => {
           blueprintSelection: blueprintSelection.map((id) => new BN(id.toString())),
         });
       } else {
-        await restakeApi.delegate(operatorAccountId, assetId, amountBn, blueprintSelection.map((id) => new BN(id.toString())));
+        if (!restakeApi) return;
+        await restakeApi.delegate(operatorAccountId, assetId, amountBn);
       }
 
       setValue('operatorAccountId', '', { shouldValidate: false });

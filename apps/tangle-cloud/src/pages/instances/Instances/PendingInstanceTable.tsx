@@ -11,7 +11,6 @@ import {
   Button,
   Dropdown,
   DropdownBody,
-  DropdownButton,
   EMPTY_VALUE_PLACEHOLDER,
   getRoundedAmountString,
   Modal,
