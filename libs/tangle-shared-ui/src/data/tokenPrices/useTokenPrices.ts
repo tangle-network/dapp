@@ -1,17 +1,34 @@
-import { skipToken, useQuery } from '@tanstack/react-query';
-import { fetchTokenPrices } from './fetchTokenPrices';
-import { z } from 'zod';
 import { useMemorizedValue } from '@tangle-network/ui-components';
+import { NetworkId } from '@tangle-network/ui-components/constants/networks';
+import { skipToken, useQuery } from '@tanstack/react-query';
+import { z } from 'zod';
+import useNetworkStore from '../../context/useNetworkStore';
+import { fetchTokenPrices } from './fetchTokenPrices';
 
 export function useTokenPrices(tokenSymbolSetArg: Set<string> | null) {
   const tokenSymbolSet = useMemorizedValue(tokenSymbolSetArg);
+  const network = useNetworkStore((store) => store.network2);
 
   return useQuery({
     queryKey: ['tokenPrices', ...(tokenSymbolSet ? tokenSymbolSet : [])],
-    queryFn: tokenSymbolSet ? () => fetcher(tokenSymbolSet) : skipToken,
+    queryFn:
+      // Only fetch token prices for TANGLE_MAINNET
+      tokenSymbolSet && network?.id === NetworkId.TANGLE_MAINNET
+        ? () => fetcher(tokenSymbolSet)
+        : skipToken,
     staleTime: CACHE_EXPIRY,
+    initialData: getInitialData(),
   });
 }
+
+const getInitialData = () => {
+  const cachedPrices = getCachedPrices();
+  return new Map(
+    Object.entries(cachedPrices).map(([symbol, { price }]) => {
+      return [symbol, price];
+    }),
+  );
+};
 
 const fetcher = async (tokenSymbols: Set<string>) => {
   // Get tokens that need to be fetched
