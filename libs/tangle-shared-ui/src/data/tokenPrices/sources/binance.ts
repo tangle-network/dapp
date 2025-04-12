@@ -80,26 +80,26 @@ class BinancePriceSource extends PriceSource<BinanceResponse> {
   }
 
   async getMultiplePrices(
-    tokenSymbols: string[],
+    tokenSymbols: Set<string>,
   ): Promise<Map<string, number | null>> {
     const results = new Map<string, number | null>();
     const validPairs = new Set<string>();
 
     // First, validate all tokens and collect valid pairs
-    for (const asset of tokenSymbols) {
+    for (const tokenSymbol of tokenSymbols) {
       try {
-        const tokenId = TokenIdSchema.parse(asset.toUpperCase());
+        const tokenId = TokenIdSchema.parse(tokenSymbol.toUpperCase());
 
         // Handle stable tokens
         if (this.isStableToken(tokenId)) {
-          results.set(asset, 1);
+          results.set(tokenSymbol, 1);
           continue;
         }
 
         // Check cache first
-        const cachedPrice = this.getCachedPrice(asset);
+        const cachedPrice = this.getCachedPrice(tokenSymbol);
         if (cachedPrice !== null) {
-          results.set(asset, cachedPrice);
+          results.set(tokenSymbol, cachedPrice);
           continue;
         }
 
@@ -107,10 +107,10 @@ class BinancePriceSource extends PriceSource<BinanceResponse> {
         if (pair) {
           validPairs.add(pair);
         } else {
-          results.set(asset, null);
+          results.set(tokenSymbol, null);
         }
       } catch {
-        results.set(asset, null);
+        results.set(tokenSymbol, null);
       }
     }
 

@@ -5,12 +5,15 @@ import { z } from 'zod';
 import useNetworkStore from '../../context/useNetworkStore';
 import { fetchTokenPrices } from './fetchTokenPrices';
 
+const CACHE_KEY = 'token-price-cache';
+const CACHE_EXPIRY = 5 * 60 * 1000; // 5 minutes
+
 export function useTokenPrices(tokenSymbolSetArg: Set<string> | null) {
   const tokenSymbolSet = useMemorizedValue(tokenSymbolSetArg);
   const network = useNetworkStore((store) => store.network2);
 
   return useQuery({
-    queryKey: ['tokenPrices', ...(tokenSymbolSet ? tokenSymbolSet : [])],
+    queryKey: ['tokenPrices', ...(tokenSymbolSet ?? []), network?.id],
     queryFn:
       // Only fetch token prices for TANGLE_MAINNET
       tokenSymbolSet && network?.id === NetworkId.TANGLE_MAINNET
@@ -74,9 +77,6 @@ const cachedTokenPriceSchema = z.object({
 const tokenPriceCacheSchema = z.record(z.string(), cachedTokenPriceSchema);
 
 type TokenPriceCache = z.infer<typeof tokenPriceCacheSchema>;
-
-const CACHE_KEY = 'token-price-cache';
-const CACHE_EXPIRY = 5 * 60 * 1000; // 5 minutes
 
 // Helper to safely access localStorage
 const getLocalStorage = () => {

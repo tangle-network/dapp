@@ -118,7 +118,10 @@ const VaultsHightlightCard = ({
                         ? formatDisplayAmount(
                             vault.tvl,
                             vault.decimals,
-                            AmountFormatStyle.EXACT,
+                            AmountFormatStyle.SI,
+                            {
+                              fractionMaxLength: 2,
+                            },
                           )
                         : null
                     }

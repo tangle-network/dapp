@@ -11,9 +11,10 @@ import {
   TANGLE_MAINNET_NETWORK,
   TANGLE_TESTNET_NATIVE_NETWORK,
 } from '@tangle-network/ui-components/constants/networks';
-import { FC, ReactNode } from 'react';
+import { FC, ReactElement, ReactNode } from 'react';
 
 import CustomRpcEndpointInput from './CustomRpcEndpointInput';
+import { GearIcon } from '@radix-ui/react-icons';
 
 export type NetworkSelectorDropdownProps = {
   selectedNetwork: Network | undefined;
@@ -70,6 +71,7 @@ export const NetworkSelectorDropdown: FC<NetworkSelectorDropdownProps> = ({
         isSwitching={switchingNetworkId === 'custom'}
         isSelected={isCustomEndpointSelected}
         name="Custom endpoint"
+        icon={<GearIcon className="size-6" />}
         tooltip="Connect to a custom network by specifying its RPC endpoint URL"
         isNotConnected={isNotConnectedToSelectedNetwork}
       />
@@ -90,6 +92,7 @@ type NetworkOptionProps = {
   isSelected: boolean;
   isSwitching: boolean;
   isNotConnected: boolean;
+  icon?: ReactElement;
   tooltip?: ReactNode;
   onSelect?: (event: Event) => void;
 };
@@ -99,6 +102,7 @@ const NetworkOption: FC<NetworkOptionProps> = ({
   isSelected,
   isSwitching,
   isNotConnected,
+  icon,
   tooltip,
   onSelect,
 }) => {
@@ -108,7 +112,7 @@ const NetworkOption: FC<NetworkOptionProps> = ({
         isSwitching ? (
           <Spinner size="lg" />
         ) : (
-          <ChainIcon size="lg" name={name} />
+          (icon ?? <ChainIcon size="lg" name={name} />)
         )
       }
       onSelect={onSelect}

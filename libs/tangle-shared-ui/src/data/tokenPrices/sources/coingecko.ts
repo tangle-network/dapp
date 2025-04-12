@@ -85,7 +85,7 @@ class CoinGeckoPriceSource extends PriceSource<CoinGeckoResponse> {
   }
 
   async getMultiplePrices(
-    tokenSymbols: string[],
+    tokenSymbols: Set<string>,
   ): Promise<Map<string, number | null>> {
     const results = new Map<string, number | null>();
     const validPairs = new Set<string>();

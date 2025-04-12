@@ -187,7 +187,6 @@ export function formatBn(
       withZero: false,
     });
 
-    // If fractionMaxLength is provided, truncate the fraction part
     if (options.fractionMaxLength === undefined) {
       return formattedValue;
     }
@@ -207,6 +206,8 @@ export function formatBn(
 
       return `${integerPart}.${truncatedFractionPart}${siPart}`;
     }
+
+    return formattedValue;
   }
 
   const chainUnitFactorBn = getChainUnitFactor(decimals);

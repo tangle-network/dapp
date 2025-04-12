@@ -26,11 +26,11 @@ export async function fetchTokenPrices(
   }
 
   // Keep track of which tokens still need prices
-  let remainingTokens = [...tokenSymbols];
+  let remainingTokens = new Set(tokenSymbols);
 
   // Try each source in sequence
   for (const source of PRICE_SOURCES) {
-    if (remainingTokens.length === 0) {
+    if (remainingTokens.size === 0) {
       break; // All tokens have prices, no need to try more sources
     }
 
@@ -39,13 +39,13 @@ export async function fetchTokenPrices(
       const sourceResults = await source.getMultiplePrices(remainingTokens);
 
       // Update results and remaining tokens
-      const newRemainingTokens: string[] = [];
+      const newRemainingTokens = new Set<string>();
       for (const token of remainingTokens) {
         const price = sourceResults.get(token) ?? null;
         if (price !== null) {
           results.set(token, price);
         } else {
-          newRemainingTokens.push(token);
+          newRemainingTokens.add(token);
         }
       }
       remainingTokens = newRemainingTokens;

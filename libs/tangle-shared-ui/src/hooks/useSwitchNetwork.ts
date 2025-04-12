@@ -84,6 +84,15 @@ const useSwitchNetwork = () => {
       if (network?.id === newNetwork.id) {
         return true;
       }
+      // Test connection to the new network.
+      else if (!(await testRpcEndpointConnection(newNetwork.wsRpcEndpoint))) {
+        notificationApi({
+          variant: 'error',
+          message: `Unable to connect to the requested network: ${newNetwork.wsRpcEndpoint}`,
+        });
+
+        return false;
+      }
 
       if (activeWallet !== undefined) {
         try {
@@ -102,15 +111,6 @@ const useSwitchNetwork = () => {
             secondaryMessage: `Error: ${ensureError(error).message}`,
           });
         }
-      }
-      // Test connection to the new network.
-      else if (!(await testRpcEndpointConnection(newNetwork.wsRpcEndpoint))) {
-        notificationApi({
-          variant: 'error',
-          message: `Unable to connect to the requested network: ${newNetwork.wsRpcEndpoint}`,
-        });
-
-        return false;
       }
 
       // Update local storage cache with the new network.

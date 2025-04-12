@@ -52,7 +52,7 @@ export abstract class PriceSource<TValue> {
   abstract getPrice(asset: string): Promise<number | null>;
 
   abstract getMultiplePrices(
-    assets: string[],
+    assets: Set<string>,
   ): Promise<Map<string, number | null>>;
 
   protected isStableToken(
