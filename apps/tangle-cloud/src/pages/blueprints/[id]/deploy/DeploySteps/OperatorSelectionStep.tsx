@@ -176,6 +176,7 @@ export const SelectOperatorsStep: FC<SelectOperatorsStepProps> = ({
 
       setValue(`assets`, newSelectedAssets);
 
+      // initialize security commitments
       const securityCommitments = newSelectedAssets.map((asset) => {
         const securityCommitment = {
           asset: asset.id,
@@ -190,14 +191,14 @@ export const SelectOperatorsStep: FC<SelectOperatorsStepProps> = ({
       });
       setValue(`securityCommitments`, securityCommitments);
 
-      // Filter operators that have the selected assets
+      // Filter operators that don't have delegated assets in the selected assets
       const selectedOperators = tableData
         .filter((operator) => rowSelection[operator.address])
         .filter((operator) =>
           operator.vaultTokens?.some((vaultToken) =>
             newSelectedAssets.some(
               (selectedAsset) =>
-                selectedAsset.metadata.symbol === vaultToken.symbol,
+                selectedAsset.metadata.symbol !== vaultToken.symbol,
             ),
           ),
         )
@@ -209,9 +210,9 @@ export const SelectOperatorsStep: FC<SelectOperatorsStepProps> = ({
         return acc;
       }, {} as RowSelectionState);
 
-      setRowSelection(newRowSelection);
+      setRowSelection((prev) => ({ ...prev, ...newRowSelection }));
     },
-    [selectedAssets, setValue],
+    [selectedAssets, setValue, tableData],
   );
 
   const onChangeApprovalModel = useCallback(
