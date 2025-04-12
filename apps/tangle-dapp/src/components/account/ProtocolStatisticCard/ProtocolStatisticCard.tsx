@@ -131,8 +131,8 @@ export const ProtocolStatisticCard: FC<Props> = ({
             Total Value Locked
           </Typography>
 
-          {isLoading && isLoadingAssets ? (
-            <SkeletonLoader className="h-16 w-full max-w-36" />
+          {isLoading || isLoadingAssets ? (
+            <SkeletonLoader className="h-14 w-full max-w-36 my-2" />
           ) : (
             <div className="flex items-center gap-3 py-2">
               <Typography variant="h2" fw="bold" className="!leading-none">
