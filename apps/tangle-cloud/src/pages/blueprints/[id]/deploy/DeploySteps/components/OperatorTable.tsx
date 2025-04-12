@@ -161,9 +161,11 @@ export const OperatorTable: FC<Props> = ({ tableData, ...tableProps }) => {
             {tokensList.length > 0 ? (
               <div className="flex gap-2 items-center">
                 <Typography variant="body1">
-                  {props.row.original.vaultTokensInUsd
-                    ? `$${props.row.original.vaultTokensInUsd}`
-                    : EMPTY_VALUE_PLACEHOLDER}
+                  {`$${
+                    props.row.original.vaultTokensInUsd
+                      ? props.row.original.vaultTokensInUsd.toLocaleString()
+                      : EMPTY_VALUE_PLACEHOLDER
+                  }`}
                 </Typography>
                 <VaultsDropdown vaultTokens={tokensList} />
               </div>

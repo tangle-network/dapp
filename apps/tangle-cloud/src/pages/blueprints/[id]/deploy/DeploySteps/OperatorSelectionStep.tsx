@@ -190,24 +190,26 @@ export const SelectOperatorsStep: FC<SelectOperatorsStepProps> = ({
       });
       setValue(`securityCommitments`, securityCommitments);
 
-      // // Filter operators that have the selected assets
-      // const selectedOperators = tableData
-      //   .filter((operator) => rowSelection[operator.address])
-      //   .filter((operator) => operator.vaultTokens?.some((vaultToken) =>
-      //     newSelectedAssets.some(
-      //       (selectedAsset) =>
-      //         selectedAsset.metadata.symbol === vaultToken.symbol,
-      //     )),
-      //   )
-      //   .map((operator) => operator.address);
+      // Filter operators that have the selected assets
+      const selectedOperators = tableData
+        .filter((operator) => rowSelection[operator.address])
+        .filter((operator) =>
+          operator.vaultTokens?.some((vaultToken) =>
+            newSelectedAssets.some(
+              (selectedAsset) =>
+                selectedAsset.metadata.symbol === vaultToken.symbol,
+            ),
+          ),
+        )
+        .map((operator) => operator.address);
 
-      // // Create a single object with all operators set to false
-      // const newRowSelection = selectedOperators.reduce((acc, operator) => {
-      //   acc[operator] = false;
-      //   return acc;
-      // }, {} as RowSelectionState);
+      // Create a single object with all operators set to false
+      const newRowSelection = selectedOperators.reduce((acc, operator) => {
+        acc[operator] = false;
+        return acc;
+      }, {} as RowSelectionState);
 
-      // setRowSelection(newRowSelection);
+      setRowSelection(newRowSelection);
     },
     [selectedAssets, setValue],
   );
