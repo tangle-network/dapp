@@ -42,7 +42,7 @@ const WithdrawEvmBalanceAction: FC = () => {
     }
 
     await execute({
-      pendingEvmBalance,
+      pendingEvmBalance: pendingEvmBalance ?? null,
       evmAddress20,
     });
   }, [execute, pendingEvmBalance, evmAddress20]);
