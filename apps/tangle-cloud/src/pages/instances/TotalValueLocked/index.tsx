@@ -127,10 +127,9 @@ export const TotalValueLockedTabs = () => {
                     metadata: { decimals, symbol, name },
                     balance,
                   }) => {
-                    const tvl = assetTvl?.get(assetId) ?? null;
                     const available = balance ?? null;
 
-                    const totalDeposits =
+                    const deposited =
                       typeof delegatorInfo?.deposits[assetId]?.amount ===
                       'bigint'
                         ? new BN(
@@ -143,9 +142,8 @@ export const TotalValueLockedTabs = () => {
                       name,
                       symbol,
                       decimals,
-                      tvl,
                       available,
-                      totalDeposits,
+                      deposited,
                     } satisfies VaultAssetData;
                   },
                 );
