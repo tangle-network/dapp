@@ -234,7 +234,10 @@ export const VaultsTable: FC<VaultsTableProps> = ({
           data: data ?? [],
           columns: COLUMNS,
           initialState: {
-            sorting: [{ id: 'id', desc: false }],
+            sorting: [
+              { id: 'totalDeposits', desc: true },
+              { id: 'id', desc: false },
+            ],
           },
           getCoreRowModel: getCoreRowModel(),
           getExpandedRowModel: getExpandedRowModel(),
@@ -243,6 +246,7 @@ export const VaultsTable: FC<VaultsTableProps> = ({
           getRowCanExpand: (row) => row.original.assetMetadata.length > 0,
           autoResetPageIndex: false,
           enableSortingRemoval: false,
+          enableMultiSort: true,
         }) satisfies TableOptions<RestakeVault>,
       [data],
     ),
