@@ -32,14 +32,14 @@ export const assetSchema = z.object({
     name: z.string(),
     symbol: z.string(),
     decimals: z.number(),
-    deposit: z.string().optional().default('0'),
-    isFrozen: z.boolean().optional().default(false),
-    priceInUsd: z.number().nullable().default(null),
+    deposit: z.string().optional(),
+    isFrozen: z.boolean().optional(),
+    priceInUsd: z.number().nullable(),
     assetId: z.string(),
-    vaultId: z.number().nullable().default(null),
+    vaultId: z.number().nullable(),
     status: z.enum(['Live', 'Frozen', 'Destroying']).optional(),
     // TODO: add details
-    details: z.any().optional().default(null),
+    details: z.any().optional(),
   }),
 });
 
@@ -186,9 +186,19 @@ export const deployBlueprintSchema = z
 
         return z.NEVER;
       }
-
-      return schema;
     }
+
+    if (schema.assets.length !== schema.securityCommitments.length) {
+      ctx.addIssue({
+        path: [`assets`],
+        code: z.ZodIssueCode.custom,
+        message: 'Assets and security commitments must have the same length',
+      });
+
+      return z.NEVER;
+    }
+
+    return schema;
   });
 
 export type DeployBlueprintSchema = z.infer<typeof deployBlueprintSchema>;

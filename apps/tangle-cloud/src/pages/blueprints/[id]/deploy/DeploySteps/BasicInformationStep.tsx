@@ -17,9 +17,9 @@ export const BasicInformationStep: FC<BasicInformationStepProps> = ({
   watch,
   blueprint,
 }) => {
-  const values = watch();
-
-  const permittedCallers = values.permittedCallers || [];
+  const permittedCallers = watch('permittedCallers');
+  const instanceName = watch('instanceName');
+  const instanceDuration = watch('instanceDuration');
 
   const handleCallerChange = useCallback(
     (index: number, value: string) => {
@@ -55,9 +55,9 @@ export const BasicInformationStep: FC<BasicInformationStepProps> = ({
   return (
     <>
       <InstanceHeader
-        title={blueprint?.name || ''}
-        creator={blueprint?.author || ''}
-        githubPath={blueprint?.githubUrl || ''}
+        title={blueprint?.name}
+        creator={blueprint?.author}
+        githubPath={blueprint?.githubUrl}
       />
       <Card className="p-6">
         <Typography
@@ -78,7 +78,7 @@ export const BasicInformationStep: FC<BasicInformationStepProps> = ({
               inputClassName="placeholder:text-mono-80 dark:placeholder:text-mono-120 h-10"
               placeholder="Enter instance name"
               autoComplete="off"
-              value={values?.instanceName}
+              value={instanceName}
               onChange={(nextValue) => handleInstanceNameChange(nextValue)}
             />
             {errors?.instanceName && (
@@ -96,7 +96,7 @@ export const BasicInformationStep: FC<BasicInformationStepProps> = ({
               autoComplete="off"
               type="number"
               min={1}
-              value={values?.instanceDuration?.toString()}
+              value={instanceDuration?.toString()}
               rightIcon={<>Block(s)</>}
               onChange={(nextValue) => handleInstanceDurationChange(nextValue)}
             />
@@ -112,7 +112,7 @@ export const BasicInformationStep: FC<BasicInformationStepProps> = ({
             <ErrorMessage>{errors['permittedCallers'].message}</ErrorMessage>
           )}
           {Children.toArray(
-            permittedCallers.map((caller, index) => (
+            permittedCallers?.map((caller, index) => (
               <div className="pl-4">
                 <Label className={LabelClassName}>
                   Permitted Caller {index + 1}:
@@ -150,7 +150,12 @@ export const BasicInformationStep: FC<BasicInformationStepProps> = ({
           <Button
             variant="utility"
             onClick={() => {
-              setValue(`permittedCallers`, [...permittedCallers, '']);
+              const newPermittedCaller = permittedCallers ?? [];
+              newPermittedCaller.push('');
+              /**
+               * @dev adding empty string to render the input field
+               */
+              setValue(`permittedCallers`, newPermittedCaller);
             }}
             className="mt-4"
             leftIcon={<PlusIcon />}

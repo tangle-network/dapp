@@ -21,10 +21,15 @@ import { z } from 'zod';
 import useServiceRequestTx from '../../../../data/services/useServiceRequestTx';
 import { TxStatus } from '@tangle-network/tangle-shared-ui/hooks/useSubstrateTx';
 import { PagePath } from '../../../../types';
+import useNetworkStore from '@tangle-network/tangle-shared-ui/context/useNetworkStore';
+import { getApiPromise } from '@tangle-network/tangle-shared-ui/utils/polkadot/api';
 
 const DeployPage: FC = () => {
   const { id } = useParams();
   const navigate = useNavigate();
+  const wsRpcEndpoint = useNetworkStore(
+    (store) => store.network2?.wsRpcEndpoint,
+  );
 
   const {
     result: blueprintResult,
@@ -73,7 +78,6 @@ const DeployPage: FC = () => {
 
   const onDeployBlueprint = async () => {
     try {
-      // clear errors
       clearErrors();
       const validatedData = deployBlueprintSchema.parse(watch());
 
@@ -81,8 +85,12 @@ const DeployPage: FC = () => {
         blueprintResult.details,
         validatedData,
       );
-      if (serviceRegisterTx) {
-        await serviceRegisterTx(serviceRegisterData);
+      if (serviceRegisterTx && wsRpcEndpoint) {
+        const apiPromise = await getApiPromise(wsRpcEndpoint);
+        await serviceRegisterTx({
+          ...serviceRegisterData,
+          apiPromise: apiPromise,
+        });
       }
     } catch (error) {
       if (error instanceof z.ZodError) {

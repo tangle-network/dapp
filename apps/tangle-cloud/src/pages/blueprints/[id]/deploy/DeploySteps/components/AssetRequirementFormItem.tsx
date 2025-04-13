@@ -34,7 +34,11 @@ export const AssetRequirementFormItem: FC<
     className,
   } = props;
 
-  const isViewOnly = !('onChangeExposurePercent' in props);
+  const isViewOnly = !(
+    ('onChangeExposurePercent' satisfies
+      | keyof AssetRequirementFormItemProps
+      | ViewOnlyAssetRequirementFormItemProps) in props
+  );
 
   return (
     <div

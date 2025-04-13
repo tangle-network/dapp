@@ -3,7 +3,7 @@ import useApiRx from '@tangle-network/tangle-shared-ui/hooks/useApiRx';
 import { FC, useCallback } from 'react';
 
 import useDemocracy from '../../../data/democracy/useDemocracy';
-import useApi from '../../../hooks/useApi';
+import useApi from '@tangle-network/tangle-shared-ui/hooks/useApi';
 import calculateTimeRemaining from '../../../utils/calculateTimeRemaining';
 import getBlockDate from '../../../utils/getBlockDate';
 import TextCell from './TextCell';

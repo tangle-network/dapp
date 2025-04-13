@@ -70,10 +70,10 @@ const useAssetsMetadata = (
               }
 
               return {
-                name: asset.name.toHuman()?.toString() ?? '',
-                symbol: asset.symbol.toHuman()?.toString() ?? '',
+                name: asset.name.toUtf8(),
+                symbol: asset.symbol.toUtf8(),
                 decimals: asset.decimals.toNumber(),
-                deposit: asset.deposit.toHuman()?.toString() ?? '',
+                deposit: asset.deposit.toBigInt().toString(),
                 isFrozen: asset.isFrozen.toHuman() ?? false,
                 assetId: nativeAssetIds[index],
               };

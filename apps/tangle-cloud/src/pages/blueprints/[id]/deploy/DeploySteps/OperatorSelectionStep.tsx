@@ -34,7 +34,6 @@ import { RestakeAsset } from '@tangle-network/tangle-shared-ui/types/restake';
 import delegationsToVaultTokens from '@tangle-network/tangle-shared-ui/utils/restake/delegationsToVaultTokens';
 import useRestakeAssets from '@tangle-network/tangle-shared-ui/data/restake/useRestakeAssets';
 import useBlueprintRegisteredOperator from '@tangle-network/tangle-shared-ui/data/blueprints/useBlueprintRegisteredOperator';
-import { useParams } from 'react-router';
 import { getOperatorPricing } from '../../../../../utils';
 import { NATIVE_ASSET_ID } from '@tangle-network/tangle-shared-ui/constants/restaking';
 
@@ -45,6 +44,7 @@ export const SelectOperatorsStep: FC<SelectOperatorsStepProps> = ({
   setValue,
   watch,
   minimumNativeSecurityRequirement,
+  blueprint,
 }) => {
   const [rowSelection, setRowSelection] = useState<RowSelectionState>(
     watch(`operators`)?.reduce((acc, operator) => {
@@ -54,8 +54,7 @@ export const SelectOperatorsStep: FC<SelectOperatorsStepProps> = ({
   );
   const [searchQuery, setSearchQuery] = useState('');
 
-  const { id: _blueprintId } = useParams();
-  const blueprintId = Number(_blueprintId);
+  const blueprintId = blueprint?.id;
 
   const { assets } = useRestakeAssets();
 
@@ -163,10 +162,10 @@ export const SelectOperatorsStep: FC<SelectOperatorsStepProps> = ({
               id: asset.id,
               metadata: {
                 ...asset.metadata,
-                name: asset.metadata.name ?? '',
-                decimals: asset.metadata.decimals ?? 0,
-                deposit: asset.metadata.deposit ?? '',
-                isFrozen: asset.metadata.isFrozen ?? false,
+                name: asset.metadata.name,
+                decimals: asset.metadata.decimals,
+                deposit: asset.metadata.deposit,
+                isFrozen: asset.metadata.isFrozen,
               },
             },
           ]

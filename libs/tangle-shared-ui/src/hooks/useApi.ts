@@ -1,8 +1,8 @@
 import { ApiPromise } from '@polkadot/api';
-import useNetworkStore from '@tangle-network/tangle-shared-ui/context/useNetworkStore';
-import usePromise from '@tangle-network/tangle-shared-ui/hooks/usePromise';
-import ensureError from '@tangle-network/tangle-shared-ui/utils/ensureError';
-import { getApiPromise } from '@tangle-network/tangle-shared-ui/utils/polkadot/api';
+import useNetworkStore from '../context/useNetworkStore';
+import usePromise from '../hooks/usePromise';
+import ensureError from '../utils/ensureError';
+import { getApiPromise } from '../utils/polkadot/api';
 import { useCallback, useEffect, useState } from 'react';
 
 export type ApiFetcher<T> = (api: ApiPromise) => Promise<T> | T;

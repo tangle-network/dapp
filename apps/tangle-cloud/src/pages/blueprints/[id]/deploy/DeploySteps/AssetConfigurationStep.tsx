@@ -12,17 +12,16 @@ export const AssetConfigurationStep: FC<AssetConfigurationStepProps> = ({
   setError,
   minimumNativeSecurityRequirement,
 }) => {
-  const values = watch();
+  const assets = watch('assets');
+  const securityCommitments = watch('securityCommitments');
 
   const selectedAssets = useMemo(() => {
-    if (!values.assets) return [];
-    return values.assets
-      .filter((asset) => !!asset.id)
-      .map((asset) => ({
-        ...asset,
-        id: assertRestakeAssetId(asset.id),
-      }));
-  }, [values.assets]);
+    if (!assets) return [];
+    return assets.map((asset) => ({
+      ...asset,
+      id: assertRestakeAssetId(asset.id),
+    }));
+  }, [assets]);
 
   return (
     <Card className="p-6">
@@ -38,9 +37,9 @@ export const AssetConfigurationStep: FC<AssetConfigurationStepProps> = ({
         {Children.toArray(
           selectedAssets.map((asset, index) => {
             const minExposurePercentFormValue =
-              values.securityCommitments?.at(index)?.minExposurePercent ?? 1;
+              securityCommitments?.at(index)?.minExposurePercent ?? 1;
             const maxExposurePercentFormValue =
-              values.securityCommitments?.at(index)?.maxExposurePercent ?? 100;
+              securityCommitments?.at(index)?.maxExposurePercent ?? 100;
 
             return (
               <AssetRequirementFormItem
