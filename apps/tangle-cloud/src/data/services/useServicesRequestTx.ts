@@ -23,7 +23,6 @@ import {
 import createMembershipModelEnum from '@tangle-network/tangle-shared-ui/utils/createMembershipModelEnum';
 import { decodeAddress } from '@polkadot/util-crypto';
 import { ApiPromise } from '@polkadot/api';
-import { compactToU8a, u8aConcatStrict, u8aToHex } from '@polkadot/util';
 
 export type Context = {
   blueprintId: bigint;
@@ -43,7 +42,7 @@ export type Context = {
   maxOperator: number;
 };
 
-const useServiceRegisterTx = () => {
+const useServicesRegisterTx = () => {
   const substrateTxFactory: SubstrateTxFactory<Context> = useCallback(
     async (api, activeSubstrateAddress, context) => {
       const membershipModel = createMembershipModelEnum({
@@ -118,12 +117,9 @@ const useServiceRegisterTx = () => {
         return decodeAddress(operator);
       }
     });
-    const encodedOperators = u8aToHex(
-      u8aConcatStrict([
-        compactToU8a(decodedOperators.length),
-        ...decodedOperators,
-      ]),
-    );
+    const encodedOperators = api
+      .createType('Vec<AccountId>', decodedOperators)
+      .toHex();
 
     const encodedRequestArgs: Hash = api
       .createType('Vec<TanglePrimitivesServicesField>', context.requestArgs)
@@ -163,4 +159,4 @@ const useServiceRegisterTx = () => {
   });
 };
 
-export default useServiceRegisterTx;
+export default useServicesRegisterTx;

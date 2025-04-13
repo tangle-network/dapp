@@ -20,7 +20,7 @@ import ParamsForm from './RegistrationForm/ParamsForm';
 import { SessionStorageKey } from '../../constants';
 import { useNavigate } from 'react-router';
 import { PagePath } from '../../types';
-import useServiceRegisterTx from '../../data/services/useServiceRegisterTx';
+import useServicesRegisterTx from '../../data/services/useServicesRegisterTx';
 import { toTanglePrimitiveEcdsaKey } from '../../utils';
 import useSubstrateAddress from '@tangle-network/tangle-shared-ui/hooks/useSubstrateAddress';
 import { TxStatus } from '@tangle-network/tangle-shared-ui/hooks/useSubstrateTx';
@@ -48,7 +48,7 @@ export default function RegistrationReview() {
   const { network } = useNetworkStore();
 
   const { execute: registerTx, status: registerTxStatus } =
-    useServiceRegisterTx();
+    useServicesRegisterTx();
 
   const [registrationParams, setRegistrationParams] = useState<
     Record<string, any>

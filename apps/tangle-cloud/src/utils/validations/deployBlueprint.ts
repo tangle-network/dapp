@@ -4,7 +4,7 @@ import {
   isSubstrateAddress,
 } from '@tangle-network/ui-components';
 import { z, ZodError } from 'zod';
-import { Context as ServiceRequestTxContext } from '../../data/services/useServiceRequestTx';
+import { Context as ServiceRequestTxContext } from '../../data/services/useServicesRequestTx';
 import { toPrimitiveArgsDataType } from '../toPrimitiveArgsDataType';
 import {
   Blueprint,

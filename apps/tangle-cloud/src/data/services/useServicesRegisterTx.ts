@@ -12,7 +12,7 @@ import { parseUnits } from 'viem';
 
 type Context = RegisterServiceFormFields;
 
-const useServiceRegisterTx = () => {
+const useServicesRegisterTx = () => {
   const substrateTxFactory: SubstrateTxFactory<Context> = useCallback(
     async (api, _activeSubstrateAddress, context) => {
       const { blueprintIds, preferences, registrationArgs, amounts } = context;
@@ -48,4 +48,4 @@ const useServiceRegisterTx = () => {
   );
 };
 
-export default useServiceRegisterTx;
+export default useServicesRegisterTx;

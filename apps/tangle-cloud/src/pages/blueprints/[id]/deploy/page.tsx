@@ -18,7 +18,7 @@ import { twMerge } from 'tailwind-merge';
 import { ArrowRightIcon } from '@radix-ui/react-icons';
 import ErrorMessage from '../../../../components/ErrorMessage';
 import { z } from 'zod';
-import useServiceRequestTx from '../../../../data/services/useServiceRequestTx';
+import useServiceRequestTx from '../../../../data/services/useServicesRequestTx';
 import { TxStatus } from '@tangle-network/tangle-shared-ui/hooks/useSubstrateTx';
 import { PagePath } from '../../../../types';
 import useNetworkStore from '@tangle-network/tangle-shared-ui/context/useNetworkStore';
