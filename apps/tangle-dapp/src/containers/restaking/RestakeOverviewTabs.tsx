@@ -110,7 +110,6 @@ const VaultTabContent = () => {
   const tableProps = useVaultsTableProps({
     delegatorDeposits: delegatorInfo?.deposits,
     assets,
-    assetsTvl,
   });
 
   return (

@@ -25,7 +25,6 @@ const DashboardPage: FC = () => {
   const tableProps = useVaultsTableProps({
     delegatorDeposits: delegatorInfo?.deposits,
     assets,
-    assetsTvl,
   });
 
   return (

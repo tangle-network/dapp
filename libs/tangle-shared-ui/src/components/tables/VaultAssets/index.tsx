@@ -8,7 +8,6 @@ import {
 } from '@tangle-network/ui-components';
 import { Table } from '@tangle-network/ui-components/components/Table';
 import { TableVariant } from '@tangle-network/ui-components/components/Table/types';
-import { EMPTY_VALUE_PLACEHOLDER } from '@tangle-network/ui-components/constants';
 import calculateBnRatio from '@tangle-network/ui-components/utils/calculateBnRatio';
 import {
   AmountFormatStyle,
@@ -65,6 +64,7 @@ const getColumns = (evmExplorerUrl?: string) => [
     header: () => <HeaderCell title="Wallet Balance" />,
     cell: (props) => {
       const value = props.getValue();
+      const tokenSymbol = props.row.original.symbol;
 
       if (BN.isBN(value)) {
         const fmtBalance = formatDisplayAmount(
@@ -73,16 +73,17 @@ const getColumns = (evmExplorerUrl?: string) => [
           AmountFormatStyle.SHORT,
         );
 
-        return `${fmtBalance} ${props.row.original.symbol}`;
+        return `${fmtBalance} ${tokenSymbol}`;
       }
 
-      return EMPTY_VALUE_PLACEHOLDER;
+      return `0 ${tokenSymbol}`;
     },
   }),
-  COLUMN_HELPER.accessor('totalDeposits', {
+  COLUMN_HELPER.accessor('deposited', {
     header: () => <HeaderCell title="Deposited Balance" />,
     cell: (props) => {
       const value = props.getValue();
+      const tokenSymbol = props.row.original.symbol;
 
       if (BN.isBN(value)) {
         return formatDisplayAmount(
@@ -92,7 +93,7 @@ const getColumns = (evmExplorerUrl?: string) => [
         );
       }
 
-      return EMPTY_VALUE_PLACEHOLDER;
+      return `0 ${tokenSymbol}`;
     },
   }),
 ];

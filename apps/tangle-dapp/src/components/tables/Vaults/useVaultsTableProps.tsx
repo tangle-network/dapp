@@ -12,14 +12,9 @@ import { VaultsTableProps } from './types';
 type Options = {
   delegatorDeposits: DelegatorInfo['deposits'] | null | undefined;
   assets: Map<RestakeAssetId, RestakeAsset> | null;
-  assetsTvl: Map<RestakeAssetId, BN> | null;
 };
 
-export const useVaultsTableProps = ({
-  delegatorDeposits,
-  assets,
-  assetsTvl,
-}: Options) => {
+export const useVaultsTableProps = ({ delegatorDeposits, assets }: Options) => {
   return useMemo<VaultsTableProps['tableProps']>(
     () => ({
       onRowClick(row, table) {
@@ -51,10 +46,9 @@ export const useVaultsTableProps = ({
               metadata: { decimals, symbol, name },
               balance,
             }) => {
-              const tvl = assetsTvl?.get(assetId) ?? null;
               const available = balance ?? null;
 
-              const totalDeposits =
+              const deposited =
                 typeof delegatorDeposits?.[assetId]?.amount === 'bigint'
                   ? new BN(delegatorDeposits[assetId].amount.toString())
                   : null;
@@ -64,9 +58,8 @@ export const useVaultsTableProps = ({
                 name,
                 symbol,
                 decimals,
-                tvl,
                 available,
-                totalDeposits,
+                deposited,
               } satisfies VaultAssetData;
             },
           );
@@ -82,6 +75,6 @@ export const useVaultsTableProps = ({
         );
       },
     }),
-    [assets, assetsTvl, delegatorDeposits],
+    [assets, delegatorDeposits],
   );
 };

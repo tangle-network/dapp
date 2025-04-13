@@ -30,7 +30,6 @@ const TVLTable: FC<Props> = ({ operatorData, delegatorInfo }) => {
   const tableProps = useVaultsTableProps({
     delegatorDeposits: delegatorInfo?.deposits,
     assets,
-    assetsTvl,
   });
 
   return (
