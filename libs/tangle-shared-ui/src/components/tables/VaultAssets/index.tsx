@@ -2,6 +2,7 @@ import { BN } from '@polkadot/util';
 import { makeExplorerUrl } from '@tangle-network/api-provider-environment/transaction/utils';
 import { TokenIcon } from '@tangle-network/icons';
 import {
+  EMPTY_VALUE_PLACEHOLDER,
   ExternalLinkIcon,
   isEvmAddress,
   Typography,
@@ -28,10 +29,11 @@ import { twMerge } from 'tailwind-merge';
 import useNetworkStore from '../../../context/useNetworkStore';
 import HeaderCell from '../HeaderCell';
 import type { Props, VaultAssetData } from './types';
+import useIsAccountConnected from '../../../hooks/useIsAccountConnected';
 
 const COLUMN_HELPER = createColumnHelper<VaultAssetData>();
 
-const getColumns = (evmExplorerUrl?: string) => [
+const getColumns = (isAccountConnected: boolean, evmExplorerUrl?: string) => [
   COLUMN_HELPER.accessor('id', {
     header: () => <HeaderCell title="Asset" />,
     cell: (props) => {
@@ -76,7 +78,7 @@ const getColumns = (evmExplorerUrl?: string) => [
         return `${fmtBalance} ${tokenSymbol}`;
       }
 
-      return `0 ${tokenSymbol}`;
+      return isAccountConnected ? `0 ${tokenSymbol}` : EMPTY_VALUE_PLACEHOLDER;
     },
   }),
   COLUMN_HELPER.accessor('deposited', {
@@ -93,7 +95,7 @@ const getColumns = (evmExplorerUrl?: string) => [
         );
       }
 
-      return `0 ${tokenSymbol}`;
+      return isAccountConnected ? `0 ${tokenSymbol}` : EMPTY_VALUE_PLACEHOLDER;
     },
   }),
 ];
@@ -109,18 +111,20 @@ const VaultAssetsTable: FC<Props> = ({
     (store) => store.network2?.evmExplorerUrl,
   );
 
+  const isAccountConnected = useIsAccountConnected();
+
   const table = useReactTable(
     useMemo(
       () =>
         ({
           data,
-          columns: getColumns(evmExplorerUrl),
+          columns: getColumns(isAccountConnected, evmExplorerUrl),
           getCoreRowModel: getCoreRowModel(),
           getSortedRowModel: getSortedRowModel(),
           autoResetPageIndex: false,
           enableSortingRemoval: false,
         }) satisfies TableOptions<VaultAssetData>,
-      [data, evmExplorerUrl],
+      [data, evmExplorerUrl, isAccountConnected],
     ),
   );
 
