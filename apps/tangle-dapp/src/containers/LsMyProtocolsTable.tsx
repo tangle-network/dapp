@@ -1,4 +1,21 @@
 import { BN } from '@polkadot/util';
+import { TANGLE_TOKEN_DECIMALS } from '@tangle-network/dapp-config';
+import { ChevronUp } from '@tangle-network/icons';
+import LsTokenIcon from '@tangle-network/tangle-shared-ui/components/LsTokenIcon';
+import TableCellWrapper from '@tangle-network/tangle-shared-ui/components/tables/TableCellWrapper';
+import TableStatus from '@tangle-network/tangle-shared-ui/components/tables/TableStatus';
+import useNetworkStore from '@tangle-network/tangle-shared-ui/context/useNetworkStore';
+import useIsAccountConnected from '@tangle-network/tangle-shared-ui/hooks/useIsAccountConnected';
+import {
+  AmountFormatStyle,
+  Button,
+  formatBn,
+  formatDisplayAmount,
+  Table,
+  Typography,
+} from '@tangle-network/ui-components';
+import { TableVariant } from '@tangle-network/ui-components/components/Table/types';
+import pluralize from '@tangle-network/ui-components/utils/pluralize';
 import {
   createColumnHelper,
   ExpandedState,
@@ -10,34 +27,16 @@ import {
   SortingState,
   useReactTable,
 } from '@tanstack/react-table';
-import { ChevronUp } from '@tangle-network/icons';
-import LsTokenIcon from '@tangle-network/tangle-shared-ui/components/LsTokenIcon';
-import TableCellWrapper from '@tangle-network/tangle-shared-ui/components/tables/TableCellWrapper';
-import {
-  AmountFormatStyle,
-  Button,
-  formatBn,
-  formatDisplayAmount,
-  Table,
-  Typography,
-} from '@tangle-network/ui-components';
-import { TableVariant } from '@tangle-network/ui-components/components/Table/types';
-import pluralize from '@tangle-network/ui-components/utils/pluralize';
 import { FC, useCallback, useMemo, useState } from 'react';
 import { twMerge } from 'tailwind-merge';
-
 import LsMyPoolsTable, {
   LsMyPoolRow,
 } from '../components/LiquidStaking/LsMyPoolsTable';
 import StatItem from '../components/StatItem';
 import { LsToken } from '../constants/liquidStaking/types';
 import useLsMyPools from '../data/liquidStaking/useLsMyPools';
-import sortByLocaleCompare from '../utils/sortByLocaleCompare';
-import useNetworkStore from '@tangle-network/tangle-shared-ui/context/useNetworkStore';
-import { TANGLE_TOKEN_DECIMALS } from '@tangle-network/dapp-config';
 import getLsProtocols from '../utils/getLsProtocols';
-import TableStatus from '@tangle-network/tangle-shared-ui/components/tables/TableStatus';
-import useIsAccountConnected from '../hooks/useIsAccountConnected';
+import sortByLocaleCompare from '../utils/sortByLocaleCompare';
 
 export type LsMyProtocolRow = {
   name: string;
