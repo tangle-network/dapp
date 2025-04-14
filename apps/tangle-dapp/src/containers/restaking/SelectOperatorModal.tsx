@@ -109,7 +109,7 @@ const SelectOperatorModal = ({
             accountAddress={operatorAccountId}
             identity={identityName ?? undefined}
             rightUpperText={`${fmtAmount} ${asset.metadata.symbol}`}
-            rightBottomText="delegated amount"
+            rightBottomText="Balance"
           />
         );
       }}

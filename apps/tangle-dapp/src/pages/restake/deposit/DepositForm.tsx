@@ -277,7 +277,7 @@ const DepositForm: FC<Props> = (props) => {
                   symbol={asset.metadata.symbol}
                   balance={balance}
                   decimals={asset.metadata.decimals}
-                  rightBottomText="wallet balance"
+                  rightBottomText="Balance"
                 />
               );
             }}

@@ -144,7 +144,7 @@ export const AssetList = ({
                   variant="body1"
                   className="block text-mono-120 dark:text-mono-100 dark:hover:text-mono-80 text-right"
                 >
-                  wallet balance
+                  Balance
                 </Typography>
               </div>
             </ListItem>

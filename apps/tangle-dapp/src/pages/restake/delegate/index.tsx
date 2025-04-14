@@ -358,7 +358,7 @@ const RestakeDelegateForm: FC = () => {
                   symbol={asset.symbol}
                   balance={asset.balance}
                   decimals={asset.decimals}
-                  rightBottomText="deposited balance"
+                  rightBottomText="Balance"
                 />
               );
             }}

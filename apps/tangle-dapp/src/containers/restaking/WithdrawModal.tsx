@@ -109,7 +109,7 @@ const WithdrawModal = ({
             symbol={asset.metadata.symbol}
             balance={new BN(amount.toString())}
             decimals={asset.metadata.decimals}
-            rightBottomText="deposited balance"
+            rightBottomText="Balance"
             // TODO: Do we need to display vault id here?
             // leftBottomContentTwo={
             //   asset.metadata.vaultId !== null
