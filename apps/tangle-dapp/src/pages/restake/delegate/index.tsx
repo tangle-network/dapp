@@ -7,7 +7,6 @@ import isDefined from '@tangle-network/dapp-types/utils/isDefined';
 import ListModal from '@tangle-network/tangle-shared-ui/components/ListModal';
 import useRestakeDelegatorInfo from '@tangle-network/tangle-shared-ui/data/restake/useRestakeDelegatorInfo';
 import useRestakeOperatorMap from '@tangle-network/tangle-shared-ui/data/restake/useRestakeOperatorMap';
-import { useRpcSubscription } from '@tangle-network/tangle-shared-ui/hooks/usePolkadotApi';
 import {
   assertSubstrateAddress,
   Card,
@@ -21,7 +20,6 @@ import { FC, useCallback, useEffect, useMemo } from 'react';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import OperatorListItem from '../../../components/Lists/OperatorListItem';
 import useIdentities from '@tangle-network/tangle-shared-ui/hooks/useIdentities';
-import useActiveTypedChainId from '../../../hooks/useActiveTypedChainId';
 import useQueryState from '../../../hooks/useQueryState';
 import { QueryParamKey } from '../../../types';
 import type { DelegationFormFields } from '../../../types/restake';
@@ -88,7 +86,7 @@ const RestakeDelegateForm: FC = () => {
 
   const { assets } = useRestakeAssets();
   const restakeApi = useRestakeApi();
-  const { delegatorInfo } = useRestakeDelegatorInfo();
+  const { result: delegatorInfo } = useRestakeDelegatorInfo();
   const { operatorMap } = useRestakeOperatorMap();
 
   const { result: operatorIdentities } = useIdentities(
@@ -102,9 +100,6 @@ const RestakeDelegateForm: FC = () => {
   );
 
   const switchChain = useSwitchChain();
-  const activeTypedChainId = useActiveTypedChainId();
-
-  useRpcSubscription(activeTypedChainId);
 
   // Set the default assetId to the first assetId in the depositedAssets.
   const defaultAssetId = useMemo(() => {

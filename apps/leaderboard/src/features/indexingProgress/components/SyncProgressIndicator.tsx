@@ -1,24 +1,26 @@
 import { CrossCircledIcon } from '@radix-ui/react-icons';
 import { StatusIndicator } from '@tangle-network/icons';
-import { Chip, EMPTY_VALUE_PLACEHOLDER } from '@tangle-network/ui-components';
+import {
+  Chip,
+  EMPTY_VALUE_PLACEHOLDER,
+  SlidingNumber,
+} from '@tangle-network/ui-components';
 import { useMemo } from 'react';
 import { useIndexingProgress } from '../queries';
 
 export const SyncProgressIndicator = () => {
   const { data, error, isPending } = useIndexingProgress();
 
-  const targetBlock =
-    data?.targetHeight?.toLocaleString() ?? EMPTY_VALUE_PLACEHOLDER;
-
-  const lastProcessedBlock =
-    data?.lastProcessedHeight?.toLocaleString() ?? EMPTY_VALUE_PLACEHOLDER;
-
   const progress = useMemo(() => {
     if (!data?.lastProcessedHeight || !data?.targetHeight) {
       return 0;
     }
 
-    return (data.lastProcessedHeight / data.targetHeight) * 100;
+    // Round to 2 decimal places
+    return (
+      Math.round((data.lastProcessedHeight / data.targetHeight) * 100 * 100) /
+      100
+    );
   }, [data?.lastProcessedHeight, data?.targetHeight]);
 
   const isSynced = useMemo(() => {
@@ -54,13 +56,42 @@ export const SyncProgressIndicator = () => {
           variant={isSynced ? 'success' : 'info'}
           animated={!isSynced}
         />
-        {isSynced
-          ? `Synced ${lastProcessedBlock} of ${targetBlock} `
-          : `Indexing ${lastProcessedBlock} of ${targetBlock} `}
-        ({progress.toFixed(2)}%)
+        <span className="flex items-center gap-1">
+          {isSynced ? 'Synced' : 'Indexing'}
+
+          <span className="inline-block">
+            {data?.lastProcessedHeight ? (
+              <SlidingNumber number={data.lastProcessedHeight} />
+            ) : (
+              EMPTY_VALUE_PLACEHOLDER
+            )}
+          </span>
+
+          <span className="inline-block">of</span>
+
+          <span className="inline-block">
+            {data?.targetHeight ? (
+              <SlidingNumber number={data.targetHeight} />
+            ) : (
+              EMPTY_VALUE_PLACEHOLDER
+            )}
+          </span>
+
+          <span className="items-center hidden sm:flex">
+            (<SlidingNumber number={progress} />
+            %)
+          </span>
+        </span>
       </>
     );
-  }, [isPending, error, isSynced, lastProcessedBlock, targetBlock, progress]);
+  }, [
+    isPending,
+    error,
+    isSynced,
+    data?.lastProcessedHeight,
+    data?.targetHeight,
+    progress,
+  ]);
 
   return (
     <Chip

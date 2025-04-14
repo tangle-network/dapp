@@ -4,11 +4,10 @@ import { EMPTY_VALUE_PLACEHOLDER } from '@tangle-network/ui-components/constants
 import { FC, useMemo, useState } from 'react';
 
 import { LockFillIcon } from '@tangle-network/icons';
+import useBalances from '@tangle-network/tangle-shared-ui/hooks/useBalances';
 import LockedBalanceDetailsModal from '../../containers/LockedBalanceDetailsModal';
 import useBalanceLocks from '../../data/balances/useBalanceLocks';
-import useBalances from '@tangle-network/tangle-shared-ui/hooks/useBalances';
 import formatTangleBalance from '../../utils/formatTangleBalance';
-import Actions from './Actions';
 
 const Balance: FC = () => {
   const { transferable, locked } = useBalances();

@@ -1,11 +1,18 @@
+import { TokenIcon } from '@tangle-network/icons';
 import { ChevronDown } from '@tangle-network/icons/ChevronDown';
 import Spinner from '@tangle-network/icons/Spinner';
 import LsTokenIcon from '@tangle-network/tangle-shared-ui/components/LsTokenIcon';
 import HeaderCell from '@tangle-network/tangle-shared-ui/components/tables/HeaderCell';
 import TableCellWrapper from '@tangle-network/tangle-shared-ui/components/tables/TableCellWrapper';
 import TableStatus from '@tangle-network/tangle-shared-ui/components/tables/TableStatus';
-import useNetworkStore from '@tangle-network/tangle-shared-ui/context/useNetworkStore';
-import { RestakeVault } from '@tangle-network/tangle-shared-ui/utils/createVaultMap';
+import type { RestakeVault } from '@tangle-network/tangle-shared-ui/data/restake/useRestakeVaults';
+import {
+  Avatar,
+  AvatarGroup,
+  Tooltip,
+  TooltipBody,
+  TooltipTrigger,
+} from '@tangle-network/ui-components';
 import Button from '@tangle-network/ui-components/components/buttons/Button';
 import { CircularProgress } from '@tangle-network/ui-components/components/CircularProgress';
 import { Table } from '@tangle-network/ui-components/components/Table';
@@ -32,28 +39,45 @@ import { FC, useMemo } from 'react';
 import { Link } from 'react-router';
 import { twMerge } from 'tailwind-merge';
 import { PagePath, QueryParamKey } from '../../../types';
-import sortByLocaleCompare from '../../../utils/sortByLocaleCompare';
-import type { Props } from './types';
+import type { VaultsTableProps } from './types';
 
 const COLUMN_HELPER = createColumnHelper<RestakeVault>();
 
-const getColumns = (nativeTokenSymbol: string | undefined) => [
-  COLUMN_HELPER.accessor('name', {
+const COLUMNS = [
+  COLUMN_HELPER.accessor('id', {
     header: () => <HeaderCell title="Vault" />,
-    cell: (props) => (
-      <TableCellWrapper className="pl-3">
-        <div className="flex items-center gap-2">
-          <LsTokenIcon
-            name={props.row.original.representAssetSymbol}
-            size="lg"
-          />
-          <Typography variant="h5" className="whitespace-nowrap">
-            {props.getValue()}
-          </Typography>
-        </div>
-      </TableCellWrapper>
-    ),
-    sortingFn: sortByLocaleCompare((row) => row.name),
+    cell: (props) => {
+      return (
+        <TableCellWrapper className="pl-3 flex items-center gap-2 justify-start">
+          {props.row.original.logo ? (
+            <Avatar
+              src={props.row.original.logo}
+              sourceVariant="uri"
+              fallback={props.row.original.representAssetSymbol}
+              className="w-10 h-10"
+            />
+          ) : (
+            <LsTokenIcon
+              name={props.row.original.representAssetSymbol}
+              size="lg"
+            />
+          )}
+          <div>
+            <Typography variant="h5" className="whitespace-nowrap">
+              {props.row.original.name}
+            </Typography>
+
+            <Typography
+              variant="body3"
+              className="text-mono-120 dark:text-mono-100"
+            >
+              ID: #{props.getValue()}
+            </Typography>
+          </div>
+        </TableCellWrapper>
+      );
+    },
+    sortingFn: 'alphanumeric',
     sortDescFirst: true,
   }),
   COLUMN_HELPER.accessor('totalDeposits', {
@@ -76,37 +100,6 @@ const getColumns = (nativeTokenSymbol: string | undefined) => [
             );
 
       return <TableCellWrapper>{fmtDeposits}</TableCellWrapper>;
-    },
-  }),
-  COLUMN_HELPER.accessor('reward', {
-    sortUndefined: 'last',
-    sortingFn: sortByBnToDecimal(
-      (row) => row.reward,
-      (row) => row.decimals,
-    ),
-    header: () => (
-      <HeaderCell
-        title="Total Vault Rewards"
-        tooltip="Total rewards for the vault, distributed to all delegators."
-      />
-    ),
-    cell: (props) => {
-      const value = props.getValue();
-
-      const fmtRewards =
-        value === undefined
-          ? 0
-          : formatDisplayAmount(
-              value,
-              props.row.original.decimals,
-              AmountFormatStyle.SHORT,
-            );
-
-      return (
-        <TableCellWrapper>
-          {fmtRewards} {nativeTokenSymbol}
-        </TableCellWrapper>
-      );
     },
   }),
   COLUMN_HELPER.accessor('tvl', {
@@ -150,7 +143,7 @@ const getColumns = (nativeTokenSymbol: string | undefined) => [
           : calculateBnRatio(tvl, depositCap);
 
       return (
-        <TableCellWrapper removeRightBorder>
+        <TableCellWrapper>
           <div className="flex items-center justify-center gap-1">
             {capacityPercentage !== null && (
               <CircularProgress
@@ -166,6 +159,29 @@ const getColumns = (nativeTokenSymbol: string | undefined) => [
                 : `${fmtTvl}/${fmtDepositCap}`}
             </Typography>
           </div>
+        </TableCellWrapper>
+      );
+    },
+  }),
+  COLUMN_HELPER.accessor('assetMetadata', {
+    header: () => <HeaderCell title="Assets" />,
+    cell: (props) => {
+      return (
+        <TableCellWrapper removeRightBorder>
+          <AvatarGroup className="space-x-1">
+            {props.getValue().map(({ symbol, name }, idx) => (
+              <Tooltip key={`${name}-${symbol}-${idx}`}>
+                <TooltipTrigger>
+                  <TokenIcon name={symbol} width={24} height={24} />
+                </TooltipTrigger>
+                <TooltipBody>
+                  <Typography variant="body3">
+                    {name} ({symbol})
+                  </Typography>
+                </TooltipBody>
+              </Tooltip>
+            ))}
+          </AvatarGroup>
         </TableCellWrapper>
       );
     },
@@ -204,32 +220,35 @@ const getColumns = (nativeTokenSymbol: string | undefined) => [
   }),
 ];
 
-const VaultsTable: FC<Props> = ({
+export const VaultsTable: FC<VaultsTableProps> = ({
   data,
   emptyTableProps,
   loadingTableProps,
   tableProps,
   isLoading,
 }) => {
-  const nativeTokenSymbol = useNetworkStore(
-    (store) => store.network2?.tokenSymbol,
-  );
-
   const table = useReactTable(
     useMemo(
       () =>
         ({
           data: data ?? [],
-          columns: getColumns(nativeTokenSymbol),
+          columns: COLUMNS,
+          initialState: {
+            sorting: [
+              { id: 'totalDeposits', desc: true },
+              { id: 'id', desc: false },
+            ],
+          },
           getCoreRowModel: getCoreRowModel(),
           getExpandedRowModel: getExpandedRowModel(),
           getSortedRowModel: getSortedRowModel(),
           getPaginationRowModel: getPaginationRowModel(),
-          getRowCanExpand: (row) => row.original.tokenCount > 0,
+          getRowCanExpand: (row) => row.original.assetMetadata.length > 0,
           autoResetPageIndex: false,
           enableSortingRemoval: false,
+          enableMultiSort: true,
         }) satisfies TableOptions<RestakeVault>,
-      [data, nativeTokenSymbol],
+      [data],
     ),
   );
 
@@ -261,7 +280,7 @@ const VaultsTable: FC<Props> = ({
       isPaginated
       {...tableProps}
       tableProps={table}
-      className={tableProps?.className}
+      className={twMerge('px-2', tableProps?.className)}
       tableWrapperClassName="py-2"
       tableClassName={twMerge(
         'border-collapse border-spacing-0',
@@ -288,5 +307,3 @@ const VaultsTable: FC<Props> = ({
     />
   );
 };
-
-export default VaultsTable;

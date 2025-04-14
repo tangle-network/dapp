@@ -2,23 +2,22 @@ import { AddLineIcon } from '@tangle-network/icons';
 import {
   Button,
   TabContent,
+  TabsList as TabsListUI,
   TabsRoot,
   TabTrigger,
   Typography,
-  TabsList as TabsListUI,
 } from '@tangle-network/ui-components';
 import { FC, useEffect, useState } from 'react';
-
+import useIsAccountConnected from '@tangle-network/tangle-shared-ui/hooks/useIsAccountConnected';
 import LsUnbondingTable from '../../components/LiquidStaking/LsUnbondingTable';
 import LsStakeCard from '../../components/LiquidStaking/stakeAndUnstake/LsStakeCard';
 import LsUnstakeCard from '../../components/LiquidStaking/stakeAndUnstake/LsUnstakeCard';
+import TabListItem from '../../components/restaking/TabListItem';
+import TabsList from '../../components/restaking/TabsList';
 import LsCreatePoolModal from '../../containers/LsCreatePoolModal';
 import LsMyProtocolsTable from '../../containers/LsMyProtocolsTable';
 import { LsAllProtocolsTable } from '../../containers/LsPoolsTable';
 import { useLsStore } from '../../data/liquidStaking/useLsStore';
-import useIsAccountConnected from '../../hooks/useIsAccountConnected';
-import TabListItem from '../../components/restaking/TabListItem';
-import TabsList from '../../components/restaking/TabsList';
 
 enum Tab {
   ALL_POOLS = 'All Pools',

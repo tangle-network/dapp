@@ -1,19 +1,15 @@
-import useApiRx from './useApiRx';
+import { isEvmAddress } from '@tangle-network/ui-components';
+import { EvmAddress } from '@tangle-network/ui-components/types/address';
 import { useCallback, useMemo } from 'react';
+import { map } from 'rxjs';
 import { RestakeAssetId } from '../types';
 import { PrimitiveAssetMetadata } from '../types/restake';
-import { isEvmAddress } from '@tangle-network/ui-components';
-import fetchErc20TokenMetadata from '../utils/fetchErc20TokenMetadata';
-import useViemPublicClient from './useViemPublicClient';
-import usePromise from './usePromise';
-import { EvmAddress } from '@tangle-network/ui-components/types/address';
-import { map } from 'rxjs';
+import useApiRx from './useApiRx';
+import { useEvmAssetMetadatas } from './useEvmAssetMetadatas';
 
 const useAssetsMetadata = (
   singleOrMultipleAssetIds: RestakeAssetId | RestakeAssetId[],
 ) => {
-  const viemPublicClient = useViemPublicClient();
-
   const { evmAssetIds, nativeAssetIds } = useMemo(() => {
     let assets: RestakeAssetId[] = [];
     if (Array.isArray(singleOrMultipleAssetIds)) {
@@ -44,17 +40,8 @@ const useAssetsMetadata = (
     };
   }, [singleOrMultipleAssetIds]);
 
-  const { result: evmAssetMetadatas, isLoading: isLoadingEvmAssetMetadatas } =
-    usePromise(
-      useCallback(async () => {
-        if (evmAssetIds === null || viemPublicClient === null) {
-          return null;
-        }
-
-        return await fetchErc20TokenMetadata(viemPublicClient, evmAssetIds);
-      }, [evmAssetIds, viemPublicClient]),
-      null,
-    );
+  const { data: evmAssetMetadatas, isLoading: isLoadingEvmAssetMetadatas } =
+    useEvmAssetMetadatas(evmAssetIds);
 
   const {
     result: nativeAssetMetadatas,
@@ -86,7 +73,7 @@ const useAssetsMetadata = (
   );
 
   const assetsMetadata = useMemo(() => {
-    if (nativeAssetMetadatas === null || evmAssetMetadatas === null) {
+    if (nativeAssetMetadatas === null || evmAssetMetadatas === undefined) {
       return undefined;
     }
 

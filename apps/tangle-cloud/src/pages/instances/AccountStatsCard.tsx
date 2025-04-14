@@ -28,7 +28,7 @@ export const AccountStatsCard: FC<AccountStatsCardProps> = (props) => {
   const accountAddress = useSubstrateAddress();
   const rpcEndpoint = useNetworkStore((store) => store.network.wsRpcEndpoint);
   const { operatorMap } = useRestakeOperatorMap();
-  const { delegatorInfo } = useRestakeDelegatorInfo();
+  const { result: delegatorInfo } = useRestakeDelegatorInfo();
   const { operatorTVL } = useRestakeTVL(operatorMap, delegatorInfo);
 
   const network = useNetworkStore((store) => store.network);

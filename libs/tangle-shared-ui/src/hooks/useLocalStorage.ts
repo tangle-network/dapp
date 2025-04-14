@@ -16,6 +16,7 @@ export enum LocalStorageKey {
   BRIDGE_DEST_TX_IDS = 'bridgeDestTxIds',
   CLAIMED_ERAS_BY_VALIDATOR = 'claimedErasByValidator',
   SHOW_TEST_NETWORKS = 'showTestNetworks',
+  TVL_HISTORY = 'tvlHistory',
 }
 
 export type SubstrateWalletsMetadataEntry = {
@@ -50,6 +51,11 @@ export type BridgeDestTxIds = Record<
   }
 >; // accountAddress -> { hyperlane: [] }
 
+export type TvlHistory = {
+  timestamp: number;
+  tvlInUsd: string;
+};
+
 /**
  * Type definition associating local storage keys with their
  * respective value types.
@@ -71,7 +77,9 @@ export type LocalStorageValueOf<T extends LocalStorageKey> =
                 ? Record<string, number[]>
                 : T extends LocalStorageKey.SHOW_TEST_NETWORKS
                   ? boolean
-                  : never;
+                  : T extends LocalStorageKey.TVL_HISTORY
+                    ? TvlHistory
+                    : never;
 
 export const getJsonFromLocalStorage = <Key extends LocalStorageKey>(
   key: Key,

@@ -6,9 +6,8 @@ export type VaultAssetData = {
   name: string;
   symbol: string;
   decimals: number;
-  tvl?: BN | null;
   available?: BN | null;
-  totalDeposits?: BN | null;
+  deposited?: BN | null;
 };
 
 export type Props = {

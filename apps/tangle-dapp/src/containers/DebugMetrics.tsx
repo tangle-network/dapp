@@ -1,12 +1,9 @@
 import { Expand } from '@tangle-network/icons';
 import useNetworkStore from '@tangle-network/tangle-shared-ui/context/useNetworkStore';
-import usePromise from '@tangle-network/tangle-shared-ui/hooks/usePromise';
-import {
-  getApiPromise,
-  getApiRx,
-} from '@tangle-network/tangle-shared-ui/utils/polkadot/api';
+import { useApiPromiseQuery } from '@tangle-network/tangle-shared-ui/hooks/useApiPromiseQuery';
+import { useApiRxQuery } from '@tangle-network/tangle-shared-ui/hooks/useApiRxQuery';
 import { SkeletonLoader, Typography } from '@tangle-network/ui-components';
-import { FC, useCallback, useEffect, useState } from 'react';
+import { FC, useEffect, useState } from 'react';
 
 /**
  * Format bytes to megabytes, rounded to two decimal places
@@ -21,17 +18,11 @@ function formatBytes(bytes: number): string {
 
 const DebugMetrics: FC = () => {
   const [isCollapsed, setIsCollapsed] = useState(true);
-  const rpcEndpoint = useNetworkStore((store) => store.network.wsRpcEndpoint);
+  const rpcEndpoint = useNetworkStore((store) => store.network2?.wsRpcEndpoint);
 
-  const { result: api } = usePromise(
-    useCallback(() => getApiPromise(rpcEndpoint), [rpcEndpoint]),
-    null,
-  );
+  const { data: api } = useApiRxQuery(rpcEndpoint);
 
-  const { result: apiRx } = usePromise(
-    useCallback(() => getApiRx(rpcEndpoint), [rpcEndpoint]),
-    null,
-  );
+  const { data: apiRx } = useApiPromiseQuery(rpcEndpoint);
 
   const isApiLoading = api === null || apiRx === null;
   const [tick, setTick] = useState(0);
