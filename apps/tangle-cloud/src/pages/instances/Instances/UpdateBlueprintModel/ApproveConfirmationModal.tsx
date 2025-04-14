@@ -52,7 +52,7 @@ function ApproveConfirmationModal({
     handleSubmit,
     watch,
     formState: { errors, isValid },
-  } = useForm<ApprovalConfirmationFormFields>({
+  } = useForm({
     mode: 'onChange',
     values: {
       requestId: selectedRequest?.requestId ?? 0,

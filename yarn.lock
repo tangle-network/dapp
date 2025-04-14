@@ -30813,7 +30813,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-hook-form@npm:^7.54.1":
+"react-hook-form@npm:^7.55.0":
   version: 7.55.0
   resolution: "react-hook-form@npm:7.55.0"
   peerDependencies:
@@ -33629,7 +33629,7 @@ __metadata:
     react-circular-progressbar: "npm:^2.1.0"
     react-dom: "npm:^18.3.1"
     react-dropzone: "npm:^14.3.5"
-    react-hook-form: "npm:^7.54.1"
+    react-hook-form: "npm:^7.55.0"
     react-is: "npm:^18.3.1"
     react-router: "npm:^7.1.5"
     react-router-dom: "npm:^7.1.5"
