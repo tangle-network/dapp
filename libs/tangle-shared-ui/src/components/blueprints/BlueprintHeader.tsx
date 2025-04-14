@@ -1,5 +1,4 @@
-import { ArrowRight, GithubFill } from '@tangle-network/icons';
-import Button from '@tangle-network/ui-components/components/buttons/Button';
+import { GithubFill } from '@tangle-network/icons';
 import { SocialChip } from '@tangle-network/ui-components/components/SocialChip';
 import { EMPTY_VALUE_PLACEHOLDER } from '@tangle-network/ui-components/constants';
 import { Typography } from '@tangle-network/ui-components/typography/Typography';
@@ -7,15 +6,22 @@ import { ComponentProps, FC } from 'react';
 import { twMerge } from 'tailwind-merge';
 import type { Blueprint } from '../../types/blueprint';
 import BoostedChip from './BoostedChip';
+import { Button } from '@tangle-network/ui-components';
 
 interface BlueprintHeaderProps {
   blueprint: Blueprint;
-  actionProps?: ComponentProps<typeof Button>;
+  enableRegister?: boolean;
+  registerBtnProps: ComponentProps<typeof Button>;
+  enableDeploy?: boolean;
+  deployBtnProps: ComponentProps<typeof Button>;
 }
 
 const BlueprintHeader: FC<BlueprintHeaderProps> = ({
   blueprint,
-  actionProps,
+  enableDeploy,
+  enableRegister,
+  registerBtnProps,
+  deployBtnProps
 }) => {
   const {
     isBoosted,
@@ -100,10 +106,24 @@ const BlueprintHeader: FC<BlueprintHeaderProps> = ({
                   {/* <ExternalLinkIcon href /> */}
                 </div>
               </div>
-              <Button
-                rightIcon={<ArrowRight size="lg" className="!fill-mono-0" />}
-                {...actionProps}
-              />
+              <div className='flex gap-2'>
+                {enableDeploy && (
+                  <Button 
+                    variant='primary'
+                    {...deployBtnProps}
+                  >
+                    Deploy
+                  </Button>
+                )}
+                {enableRegister && (
+                  <Button 
+                    variant='secondary' 
+                    {...registerBtnProps}
+                  >
+                    Register
+                  </Button>
+                )}
+              </div>
             </div>
           </div>
 
