@@ -1,17 +1,10 @@
 import { BN, BN_ZERO } from '@polkadot/util';
-import { ChainType, PresetTypedChainId } from '@tangle-network/dapp-types';
+import { PresetTypedChainId } from '@tangle-network/dapp-types';
 import isDefined from '@tangle-network/dapp-types/utils/isDefined';
-import { ArrowRightUp, TokenIcon } from '@tangle-network/icons';
 import ListModal from '@tangle-network/tangle-shared-ui/components/ListModal';
-import {
-  AmountFormatStyle,
-  Card,
-  formatBn,
-  formatDisplayAmount,
-  isEvmAddress,
-  shortenHex,
-  Typography,
-} from '@tangle-network/ui-components';
+import useRestakeAssets from '@tangle-network/tangle-shared-ui/data/restake/useRestakeAssets';
+import { RestakeAsset } from '@tangle-network/tangle-shared-ui/types/restake';
+import { Card, formatBn, isEvmAddress } from '@tangle-network/ui-components';
 import { useModal } from '@tangle-network/ui-components/hooks/useModal';
 import assert from 'assert';
 import {
@@ -23,7 +16,7 @@ import {
   useRef,
 } from 'react';
 import { type SubmitHandler, useForm } from 'react-hook-form';
-import LogoListItem from '../../../components/Lists/LogoListItem';
+import AssetListItem from '../../../components/Lists/AssetListItem';
 import StyleContainer from '../../../components/restaking/StyleContainer';
 import { SUPPORTED_RESTAKE_DEPOSIT_TYPED_CHAIN_IDS } from '../../../constants/restake';
 import useRestakeApi from '../../../data/restake/useRestakeApi';
@@ -39,11 +32,6 @@ import RestakeTabs from '../RestakeTabs';
 import ActionButton from './ActionButton';
 import Details from './Details';
 import SourceChainInput from './SourceChainInput';
-import useRestakeAssets from '@tangle-network/tangle-shared-ui/data/restake/useRestakeAssets';
-import { RestakeAsset } from '@tangle-network/tangle-shared-ui/types/restake';
-import { useActiveChain } from '@tangle-network/api-provider-environment/hooks/useActiveChain';
-import { makeExplorerUrl } from '@tangle-network/api-provider-environment/transaction/utils';
-import AssetListItem from '../../../components/Lists/AssetListItem';
 
 const getDefaultTypedChainId = (
   activeTypedChainId: number | null,
@@ -59,7 +47,6 @@ type Props = ComponentProps<'form'>;
 const DepositForm: FC<Props> = (props) => {
   const formRef = useRef<HTMLFormElement>(null);
   const activeTypedChainId = useActiveTypedChainId();
-  const activeChain = useActiveChain();
 
   const {
     register,
