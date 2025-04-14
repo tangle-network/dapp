@@ -42,7 +42,7 @@ export default function PricingModal({
     PricingType.GLOBAL,
   );
 
-  const globalPricingForm = useForm<GlobalFormSchema>({
+  const globalPricingForm = useForm({
     resolver: zodResolver(globalFormSchema),
     defaultValues: {
       cpuPrice: '',
@@ -53,7 +53,7 @@ export default function PricingModal({
     },
   });
 
-  const individualPricingFormSchema = useForm<IndividualFormSchema>({
+  const individualPricingFormSchema = useForm({
     resolver: zodResolver(individualFormSchema),
     defaultValues: blueprints.reduce((acc, current) => {
       acc[current.id] = {
