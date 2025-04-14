@@ -60,7 +60,7 @@ const useRestakeApi = () => {
 
     switch (activeWallet.platform) {
       case 'Substrate': {
-        if (injector === null) {
+        if (injector === null || apiPromise === null) {
           return null;
         }
 

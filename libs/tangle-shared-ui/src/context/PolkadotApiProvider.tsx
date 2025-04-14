@@ -4,11 +4,7 @@ import { Maybe } from '@tangle-network/dapp-types/utils/types';
 import { FC, PropsWithChildren, useMemo, useState } from 'react';
 import { useApiPromiseQuery } from '../hooks/useApiPromiseQuery';
 import { useApiRxQuery } from '../hooks/useApiRxQuery';
-import {
-  DEFAULT_API_PROMISE,
-  DEFAULT_API_RX,
-  PolkadotApiContext,
-} from './PolkadotApiContext';
+import { PolkadotApiContext } from './PolkadotApiContext';
 import useNetworkStore from './useNetworkStore';
 
 type Props = {
@@ -28,13 +24,13 @@ const PolkadotApiProvider: FC<PropsWithChildren<Props>> = ({ children }) => {
   }, [customRpc, rpcFromStore]);
 
   const {
-    data: apiPromise = DEFAULT_API_PROMISE,
+    data: apiPromise = null,
     isLoading: apiPromiseLoading,
     error: apiPromiseError,
   } = useApiPromiseQuery(rpcEndpoint);
 
   const {
-    data: apiRx = DEFAULT_API_RX,
+    data: apiRx = null,
     isLoading: apiRxLoading,
     error: apiRxError,
   } = useApiRxQuery(rpcEndpoint);

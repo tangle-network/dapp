@@ -27,7 +27,7 @@ export default function useRestakeOperatorMap(): UseRestakeOperatorMapReturnType
   const { apiRx } = usePolkadotApi();
 
   const operatorMap$ = useMemo(() => {
-    if (!isDefined(apiRx.query?.multiAssetDelegation?.operators?.entries))
+    if (!isDefined(apiRx?.query?.multiAssetDelegation?.operators?.entries))
       return of<OperatorMap>({});
 
     return apiRx.query.multiAssetDelegation.operators.entries().pipe(
@@ -62,7 +62,7 @@ export default function useRestakeOperatorMap(): UseRestakeOperatorMapReturnType
         );
       }),
     );
-  }, [apiRx.query.multiAssetDelegation?.operators]);
+  }, [apiRx?.query.multiAssetDelegation?.operators]);
 
   const operatorMap = useObservableState(operatorMap$, {});
 
