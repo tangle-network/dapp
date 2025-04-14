@@ -24,9 +24,9 @@ const getVariantContainerClass = (variant: TableVariant): string => {
 const getVariantThClass = (variant: TableVariant): string => {
   switch (variant) {
     case TableVariant.GLASS_INNER:
-      return 'py-3 !font-normal !bg-transparent border-b text-mono-120 dark:text-mono-100 border-mono-60 dark:border-mono-160';
+      return 'py-3 font-normal bg-transparent dark:bg-transparent border-b text-mono-120 dark:text-mono-100 border-mono-60 dark:border-mono-160';
     case TableVariant.GLASS_OUTER:
-      return 'py-0 !bg-transparent font-normal text-mono-120 dark:text-mono-100 border-b-0';
+      return 'py-0 bg-transparent dark:bg-transparent font-normal text-mono-120 dark:text-mono-100 border-b-0';
     case TableVariant.EMBEDDED_IN_MODAL:
       return 'z-10 py-3 sticky top-0 dark:bg-mono-170';
     case TableVariant.DEFAULT:
@@ -37,9 +37,9 @@ const getVariantThClass = (variant: TableVariant): string => {
 const getVariantTdClass = (variant: TableVariant): string => {
   switch (variant) {
     case TableVariant.GLASS_INNER:
-      return '!bg-inherit border-t-0';
+      return 'bg-inherit dark:bg-inherit border-t-0';
     case TableVariant.GLASS_OUTER:
-      return 'border-0 !p-0 first:rounded-l-xl last:rounded-r-xl overflow-hidden';
+      return 'border-0 px-0 py-0 first:rounded-l-xl last:rounded-r-xl overflow-hidden';
     case TableVariant.EMBEDDED_IN_MODAL:
       return 'py-2 dark:bg-mono-170';
     case TableVariant.DEFAULT:
@@ -139,22 +139,22 @@ export const Table = <T extends RowData>({
                     }
                   >
                     {header.isPlaceholder ? null : header.column.getCanSort() ? (
-                      <div className="!text-inherit flex items-center justify-start cursor-pointer">
+                      <div className="text-inherit dark:text-inherit flex items-center justify-start cursor-pointer">
                         {flexRender(header.column.columnDef.header, {
                           ...header.getContext(),
                         })}
 
                         {{
                           asc: (
-                            <ArrowDropUpFill
+                            <ArrowDropDownFill
                               size="lg"
-                              className="!fill-current"
+                              className="fill-current dark:fill-current"
                             />
                           ),
                           desc: (
-                            <ArrowDropDownFill
+                            <ArrowDropUpFill
                               size="lg"
-                              className="!fill-current"
+                              className="fill-current dark:fill-current"
                             />
                           ),
                         }[header.column.getIsSorted() as string] ?? null}

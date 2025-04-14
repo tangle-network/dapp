@@ -128,14 +128,25 @@ export const AssetList = ({
                 </div>
               </div>
 
-              <Typography
-                variant="body1"
-                className="cursor-default text-mono-200 dark:text-mono-0"
-              >
-                {asset.balance !== undefined && !asset.balance.isZero()
-                  ? `${formatDisplayAmount(asset.balance, asset.decimals, AmountFormatStyle.SHORT)} ${asset.symbol}`
-                  : ''}
-              </Typography>
+              <div className="flex flex-col gap-1">
+                <Typography
+                  variant="body1"
+                  className="cursor-default text-mono-200 dark:text-mono-0 text-right"
+                >
+                  {`${formatDisplayAmount(
+                    asset.balance ?? new BN(0),
+                    asset.decimals,
+                    AmountFormatStyle.SHORT,
+                  )} ${asset.symbol}`}
+                </Typography>
+
+                <Typography
+                  variant="body1"
+                  className="block text-mono-120 dark:text-mono-100 dark:hover:text-mono-80 text-right"
+                >
+                  Balance
+                </Typography>
+              </div>
             </ListItem>
           ))}
         </ul>

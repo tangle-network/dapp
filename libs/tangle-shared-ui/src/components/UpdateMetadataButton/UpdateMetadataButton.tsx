@@ -13,13 +13,13 @@ import {
 } from '@tangle-network/ui-components';
 import isEqual from 'lodash/isEqual';
 import { FC, useCallback, useMemo, useState } from 'react';
+import { useApiPromiseQuery } from '../..//hooks/useApiPromiseQuery';
 import useNetworkStore from '../../context/useNetworkStore';
 import useAgnosticAccountInfo from '../../hooks/useAgnosticAccountInfo';
 import useLocalStorage, {
   LocalStorageKey,
   SubstrateWalletsMetadataEntry,
 } from '../../hooks/useLocalStorage';
-import usePromise from '../../hooks/usePromise';
 import useSubstrateInjectedExtension from '../../hooks/useSubstrateInjectedExtension';
 import { getApiPromise } from '../../utils/polkadot/api';
 
@@ -29,14 +29,10 @@ const UpdateMetadataButton: FC = () => {
   const { substrateAddress } = useAgnosticAccountInfo();
   const [activeWallet] = useActiveWallet();
   const injector = useSubstrateInjectedExtension();
-  const { network } = useNetworkStore();
+  const network = useNetworkStore((store) => store.network2);
 
-  const { result: apiPromise } = usePromise(
-    useCallback(
-      () => getApiPromise(network.wsRpcEndpoint),
-      [network.wsRpcEndpoint],
-    ),
-    null,
+  const { data: apiPromise = null } = useApiPromiseQuery(
+    network?.wsRpcEndpoint,
   );
 
   const { setWithPreviousValue: setCache, valueOpt: cachedMetadata } =
@@ -56,10 +52,15 @@ const UpdateMetadataButton: FC = () => {
     if (apiPromise === null) {
       return null;
     }
+
     if (
       activeWallet?.platform === 'EVM' ||
       activeWallet?.platform === 'Solana'
     ) {
+      return null;
+    }
+
+    if (network === undefined) {
       return null;
     }
 
@@ -75,19 +76,13 @@ const UpdateMetadataButton: FC = () => {
       tokenSymbol: network.tokenSymbol,
       tokenDecimals: TANGLE_TOKEN_DECIMALS,
     });
-  }, [
-    activeWallet?.platform,
-    apiPromise,
-    cachedMetadata?.value,
-    network.ss58Prefix,
-    network.tokenSymbol,
-  ]);
+  }, [activeWallet?.platform, apiPromise, cachedMetadata?.value, network]);
 
   const handleClick = async () => {
     if (
       injector === null ||
       substrateAddress === null ||
-      network.ss58Prefix === undefined ||
+      network?.ss58Prefix === undefined ||
       activeWallet?.platform === 'Solana'
     ) {
       return;

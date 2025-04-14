@@ -2,8 +2,8 @@
 
 import { Maybe } from '@tangle-network/dapp-types/utils/types';
 import { FC, PropsWithChildren, useMemo, useState } from 'react';
-import useSWRImmutable from 'swr/immutable';
-import { getApiPromise, getApiRx } from '../utils/polkadot/api';
+import { useApiPromiseQuery } from '../hooks/useApiPromiseQuery';
+import { useApiRxQuery } from '../hooks/useApiRxQuery';
 import {
   DEFAULT_API_PROMISE,
   DEFAULT_API_RX,
@@ -17,7 +17,9 @@ type Props = {
 
 const PolkadotApiProvider: FC<PropsWithChildren<Props>> = ({ children }) => {
   const [customRpc, setCustomRpc] = useState<Maybe<string>>();
-  const rpcFromStore = useNetworkStore((store) => store.network.wsRpcEndpoint);
+  const rpcFromStore = useNetworkStore(
+    (store) => store.network2?.wsRpcEndpoint,
+  );
 
   const rpcEndpoint = useMemo(() => {
     if (customRpc === undefined || customRpc.length === 0) return rpcFromStore;
@@ -29,17 +31,13 @@ const PolkadotApiProvider: FC<PropsWithChildren<Props>> = ({ children }) => {
     data: apiPromise = DEFAULT_API_PROMISE,
     isLoading: apiPromiseLoading,
     error: apiPromiseError,
-  } = useSWRImmutable([rpcEndpoint, 'apiPromise'], ([endpoint]) =>
-    getApiPromise(endpoint),
-  );
+  } = useApiPromiseQuery(rpcEndpoint);
 
   const {
     data: apiRx = DEFAULT_API_RX,
     isLoading: apiRxLoading,
     error: apiRxError,
-  } = useSWRImmutable([rpcEndpoint, 'apiRx'], ([endpoint]) =>
-    getApiRx(endpoint),
-  );
+  } = useApiRxQuery(rpcEndpoint);
 
   return (
     <PolkadotApiContext.Provider

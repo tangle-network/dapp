@@ -1,6 +1,11 @@
 import { AddLineIcon } from '@tangle-network/icons';
 import OperatorsTableUI from '@tangle-network/tangle-shared-ui/components/tables/Operators';
+import { OperatorConcentration } from '@tangle-network/tangle-shared-ui/data/restake/useOperatorConcentration';
+import { OperatorTVLType } from '@tangle-network/tangle-shared-ui/data/restake/useOperatorTVL';
+import useRestakeAssets from '@tangle-network/tangle-shared-ui/data/restake/useRestakeAssets';
 import useAgnosticAccountInfo from '@tangle-network/tangle-shared-ui/hooks/useAgnosticAccountInfo';
+import useIdentities from '@tangle-network/tangle-shared-ui/hooks/useIdentities';
+import useIsAccountConnected from '@tangle-network/tangle-shared-ui/hooks/useIsAccountConnected';
 import useSubstrateAddress from '@tangle-network/tangle-shared-ui/hooks/useSubstrateAddress';
 import { RestakeOperator } from '@tangle-network/tangle-shared-ui/types';
 import type { OperatorMap } from '@tangle-network/tangle-shared-ui/types/restake';
@@ -22,12 +27,7 @@ import {
 } from 'react';
 import { LinkProps } from 'react-router';
 import { RestakeOperatorWrapper } from '../../components/tables/RestakeActionWrappers';
-import useIdentities from '@tangle-network/tangle-shared-ui/hooks/useIdentities';
-import useIsAccountConnected from '../../hooks/useIsAccountConnected';
 import JoinOperatorsModal from './JoinOperatorsModal';
-import useRestakeAssets from '@tangle-network/tangle-shared-ui/data/restake/useRestakeAssets';
-import { OperatorConcentration } from '@tangle-network/tangle-shared-ui/data/restake/useOperatorConcentration';
-import { OperatorTVLType } from '@tangle-network/tangle-shared-ui/data/restake/useOperatorTVL';
 
 type OperatorUI = NonNullable<
   ComponentProps<typeof OperatorsTableUI>['data']

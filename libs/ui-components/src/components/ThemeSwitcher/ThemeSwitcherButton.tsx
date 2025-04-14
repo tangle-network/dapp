@@ -10,9 +10,11 @@ const ThemeSwitcherButton = () => {
     const preferredTheme = isDarkMode ? 'dark' : 'light';
     switch (preferredTheme) {
       case 'dark':
-        return <SunLine size="lg" />;
+        return <SunLine size="lg" className="animate-in zoom-in spin-in-90" />;
       case 'light':
-        return <MoonLine size="lg" />;
+        return (
+          <MoonLine size="lg" className="animate-in zoom-in spin-in-[-90deg]" />
+        );
       default:
         return (
           <Half2Icon className="w-6 h-6 fill-mono-200 dark:fill-mono-40" />

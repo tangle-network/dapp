@@ -16,10 +16,9 @@ import {
 import addCommasToNumber from '@tangle-network/ui-components/utils/addCommasToNumber';
 import pluralize from '@tangle-network/ui-components/utils/pluralize';
 import { FC, useMemo, useState } from 'react';
-
 import { LsPoolUnstakeRequest } from '../../constants/liquidStaking/types';
 import useLsUnbonding from '../../data/liquidStaking/useLsUnbonding';
-import useIsAccountConnected from '../../hooks/useIsAccountConnected';
+import useIsAccountConnected from '@tangle-network/tangle-shared-ui/hooks/useIsAccountConnected';
 import ContainerSkeleton from '../skeleton/ContainerSkeleton';
 import TokenAmountCell from '../tableCells/TokenAmountCell';
 import LstIcon from './LstIcon';

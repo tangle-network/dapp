@@ -57,7 +57,12 @@ const DropdownMenuItem = forwardRef<HTMLDivElement, DropdownMenuItemProps>(
     }, [clsxProp, textTransform, disabled, isActive]);
 
     return (
-      <DropdownMenu.Item className={className} {...props} ref={ref}>
+      <DropdownMenu.Item
+        className={className}
+        {...props}
+        disabled={disabled}
+        ref={ref}
+      >
         {leftIcon && <div className="mr-2.5 shrink-0">{leftIcon}</div>}
         <span className="flex-grow text-inherit dark:text-inherit">
           {children}

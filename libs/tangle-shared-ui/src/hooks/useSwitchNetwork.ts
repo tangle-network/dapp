@@ -28,7 +28,8 @@ import { getApiPromise } from '../utils/polkadot/api';
 const useSwitchNetwork = () => {
   const { switchChain, activeWallet } = useWebContext();
   const [isCustom, setIsCustom] = useState(false);
-  const { network, setNetwork } = useNetworkStore();
+  const network = useNetworkStore((store) => store.network2);
+  const setNetwork = useNetworkStore((store) => store.setNetwork);
 
   // TODO: Should utilize the Zustand persistence middleware to cache this.
   // in instead of manually handling it here.
@@ -80,7 +81,7 @@ const useSwitchNetwork = () => {
   const switchNetwork = useCallback(
     async (newNetwork: Network, isCustom: boolean) => {
       // Already on the requested network.
-      if (network.id === newNetwork.id) {
+      if (network?.id === newNetwork.id) {
         return true;
       }
       // Test connection to the new network.
@@ -128,7 +129,7 @@ const useSwitchNetwork = () => {
     },
     [
       activeWallet,
-      network.id,
+      network?.id,
       removeCachedCustomRpcEndpoint,
       removeCachedNetworkId,
       setCachedCustomRpcEndpoint,
