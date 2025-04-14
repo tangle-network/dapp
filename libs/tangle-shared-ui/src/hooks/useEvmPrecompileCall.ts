@@ -94,11 +94,7 @@ function useEvmPrecompileCall<
           : factory;
 
       // Not yet ready.
-      if (
-        factoryResult === null ||
-        relayEvmTx === null ||
-        isEvmTxRelayerCandidate === null
-      ) {
+      if (factoryResult === null) {
         console.debug(
           'Attempted to execute EVM pre-compile call too early. Try disabling your action button until the dependencies are ready.',
         );
@@ -106,20 +102,29 @@ function useEvmPrecompileCall<
         return;
       }
 
-      // Reset state to prepare for a new transaction.
-      setError(null);
-      setTxHash(null);
-      setStatus(TxStatus.PROCESSING);
-
-      const isEligibleForEvmTxRelayer =
-        isEvmTxRelayerCandidate &&
-        isEvmTxRelayerEligible(precompileAddress, factoryResult.functionName);
+      const isEligibleForEvmTxRelayer = isEvmTxRelayerEligible(
+        precompileAddress,
+        factoryResult.functionName,
+      );
 
       // Relay the transaction if the EVM account doesn't have enough to
       // cover the transaction fees. This is like a subsidy for EVM accounts
       // without TNT. Not all precompile functions are eligible for this; only
       // those that are whitelisted by the EVM transaction relayer.
       if (isEligibleForEvmTxRelayer) {
+        if (relayEvmTx === null || isEvmTxRelayerCandidate === null) {
+          console.debug(
+            'Attempted to execute EVM pre-compile call too early: EVM transaction relayer not ready. Try disabling your action button until the dependencies are ready.',
+          );
+
+          return;
+        }
+
+        // Reset state to prepare for a new transaction.
+        setError(null);
+        setTxHash(null);
+        setStatus(TxStatus.PROCESSING);
+
         console.debug('Attempting to relay transaction for EVM account.');
 
         const result = await relayEvmTx(
@@ -141,6 +146,11 @@ function useEvmPrecompileCall<
 
         return;
       }
+
+      // Reset state to prepare for a new transaction.
+      setError(null);
+      setTxHash(null);
+      setStatus(TxStatus.PROCESSING);
 
       try {
         const { request } = await simulateContract(connectorClient, {

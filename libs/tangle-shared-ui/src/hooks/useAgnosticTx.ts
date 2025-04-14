@@ -92,6 +92,7 @@ function useAgnosticTx<
   );
 
   const activeAccountAddress = useActiveAccountAddress();
+
   const { isEvm: isEvmAccount, isSolana: isSolanaAccount } =
     useAgnosticAccountInfo();
 
