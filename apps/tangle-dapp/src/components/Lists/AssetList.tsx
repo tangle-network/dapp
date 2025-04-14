@@ -134,7 +134,7 @@ export const AssetList = ({
                   className="cursor-default text-mono-200 dark:text-mono-0 text-right"
                 >
                   {`${formatDisplayAmount(
-                    asset.balance !== undefined ? asset.balance : new BN(0),
+                    asset.balance ?? new BN(0),
                     asset.decimals,
                     AmountFormatStyle.SHORT,
                   )} ${asset.symbol}`}
