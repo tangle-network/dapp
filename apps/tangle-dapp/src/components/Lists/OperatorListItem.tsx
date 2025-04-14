@@ -29,7 +29,12 @@ const OperatorListItem: FC<Props> = ({
       logo={<Avatar size="lg" theme="substrate" value={accountAddress} />}
       leftUpperContent={leftUpperContent}
       leftBottomContent={
-        <KeyValueWithButton size="sm" keyValue={accountAddress} />
+        <KeyValueWithButton
+          size="sm"
+          keyValue={accountAddress}
+          valueFontWeight="normal"
+          valueVariant="body1"
+        />
       }
       rightUpperText={rightUpperText ?? EMPTY_VALUE_PLACEHOLDER}
       rightBottomText={rightBottomText}
