@@ -1,6 +1,5 @@
 import { useCallback, useMemo } from 'react';
 import RestakeSubstrateApi from './RestakeSubstrateApi';
-import usePolkadotApi from '@tangle-network/tangle-shared-ui/hooks/usePolkadotApi';
 import {
   assertEvmAddress,
   assertSubstrateAddress,
@@ -16,9 +15,9 @@ import useAgnosticAccountInfo from '@tangle-network/tangle-shared-ui/hooks/useAg
 import useEvmTxRelayer from '@tangle-network/tangle-shared-ui/hooks/useEvmTxRelayer';
 import useIsEvmTxRelayerCandidate from '@tangle-network/tangle-shared-ui/hooks/useIsEvmTxRelayerCandidate';
 import useNetworkStore from '@tangle-network/tangle-shared-ui/context/useNetworkStore';
+import { useApiPromiseQuery } from '@tangle-network/tangle-shared-ui/hooks/useApiPromiseQuery';
 
 const useRestakeApi = () => {
-  const { apiPromise } = usePolkadotApi();
   const { activeAccount, activeWallet } = useWebContext();
   const injector = useSubstrateInjectedExtension();
   const { notifySuccess, notifyError } = useTxNotification();
@@ -27,13 +26,19 @@ const useRestakeApi = () => {
   const isEvmTxRelayerCandidate = useIsEvmTxRelayerCandidate();
 
   const createExplorerTxUrl = useNetworkStore(
-    (store) => store.network.createExplorerTxUrl,
+    (store) => store.network2?.createExplorerTxUrl,
   );
+
+  const rpcEndpoint = useNetworkStore((store) => store.network2?.wsRpcEndpoint);
+
+  const { data: apiPromise } = useApiPromiseQuery(rpcEndpoint);
 
   const onSuccess = useCallback(
     (txHash: Hash, blockHash: Hash, txName: TxName) => {
       const explorerUrl =
-        isEvm === null ? null : createExplorerTxUrl(isEvm, txHash, blockHash);
+        isEvm === null || createExplorerTxUrl === undefined
+          ? null
+          : createExplorerTxUrl(isEvm, txHash, blockHash);
 
       notifySuccess(txName, explorerUrl);
     },
@@ -60,7 +65,7 @@ const useRestakeApi = () => {
 
     switch (activeWallet.platform) {
       case 'Substrate': {
-        if (injector === null || apiPromise === null) {
+        if (injector === null || apiPromise === undefined) {
           return null;
         }
 
