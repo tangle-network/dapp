@@ -5,6 +5,7 @@ import { useCallback } from 'react';
 import { map } from 'rxjs/operators';
 
 import { calculateTransferableBalance } from '../utils/polkadot/balance';
+import { TangleError, TangleErrorCode } from '../types/error';
 
 export type AccountBalances = {
   /**
@@ -36,7 +37,7 @@ const useBalances = () => {
   const balancesFetcher = useCallback<ObservableFactory<AccountBalances>>(
     (api) => {
       if (activeSubstrateAddress === null) {
-        return null;
+        return new TangleError(TangleErrorCode.NO_ACTIVE_ACCOUNT);
       }
 
       return api.query.system.account(activeSubstrateAddress).pipe(
