@@ -1,5 +1,4 @@
 import { SUCCESS_MESSAGES } from '../../hooks/useTxNotification';
-import { BN } from '@polkadot/util';
 import { useCallback } from 'react';
 
 import { TxName } from '../../constants';
@@ -8,7 +7,7 @@ import {
   useSubstrateTxWithNotification,
 } from '@tangle-network/tangle-shared-ui/hooks/useSubstrateTx';
 import { ApprovalConfirmationFormFields } from '../../types';
-import { isEvmAddress } from '@tangle-network/ui-components';
+import createAssetIdEnum from '@tangle-network/tangle-shared-ui/utils/createAssetIdEnum';
 
 type Context = ApprovalConfirmationFormFields;
 
@@ -17,9 +16,7 @@ const useServicesApproveTx = () => {
     (api, _activeSubstrateAddress, context) => {
       const securityCommitments = context.securityCommitment.map(
         (commitment) => ({
-          asset: isEvmAddress(commitment.assetId)
-            ? { Erc20: new BN(commitment.assetId) }
-            : { Custom: new BN(commitment.assetId) },
+          asset: createAssetIdEnum(commitment.assetId),
           exposurePercent: commitment.exposurePercent,
         }),
       );
