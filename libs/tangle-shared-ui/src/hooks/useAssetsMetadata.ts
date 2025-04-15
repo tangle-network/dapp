@@ -73,7 +73,7 @@ const useAssetsMetadata = (
   );
 
   const assetsMetadata = useMemo(() => {
-    if (nativeAssetMetadatas === null || evmAssetMetadatas === undefined) {
+    if (!nativeAssetMetadatas && !evmAssetMetadatas) {
       return undefined;
     }
 
@@ -82,15 +82,19 @@ const useAssetsMetadata = (
       PrimitiveAssetMetadata | null
     >();
 
-    for (const asset of nativeAssetMetadatas) {
-      if (asset) {
-        const { assetId, ...rest } = asset;
-        assetsMetadataMap.set(assetId, rest);
+    if (nativeAssetMetadatas) {
+      for (const asset of nativeAssetMetadatas) {
+        if (asset) {
+          const { assetId, ...rest } = asset;
+          assetsMetadataMap.set(assetId, rest);
+        }
       }
     }
 
-    for (const asset of evmAssetMetadatas) {
-      assetsMetadataMap.set(asset.id, asset);
+    if (evmAssetMetadatas) {
+      for (const asset of evmAssetMetadatas) {
+        assetsMetadataMap.set(asset.id, asset);
+      }
     }
 
     return assetsMetadataMap;
