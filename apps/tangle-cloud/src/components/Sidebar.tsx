@@ -29,7 +29,6 @@ import useRoleStore, { Role, ROLE_ICON_MAP } from '../stores/roleStore';
 import { PagePath } from '../types';
 import { ChevronRight, HomeFillIcon } from '@tangle-network/icons';
 import { twMerge } from 'tailwind-merge';
-import cx from 'classnames';
 
 type Props = {
   isExpandedByDefault?: boolean;

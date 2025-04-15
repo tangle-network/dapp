@@ -1,7 +1,7 @@
 import type { AugmentedConsts } from '@polkadot/api/types';
 import type { MapKnownKeys } from '@tangle-network/dapp-types/utils/types';
 import { useCallback, useState } from 'react';
-import useApi from '../../hooks/useApi';
+import useApi from '@tangle-network/tangle-shared-ui/hooks/useApi';
 import getModuleConstant from '../../utils/getModuleConstant';
 
 export type RestakeConsts = {

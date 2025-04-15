@@ -1,7 +1,7 @@
 import { BN_ONE } from '@polkadot/util';
 import { useCallback, useEffect, useState } from 'react';
 
-import useApi from '../../hooks/useApi';
+import useApi from '@tangle-network/tangle-shared-ui/hooks/useApi';
 
 function useExistentialDeposit() {
   // Default existential deposit is 1 unit.

@@ -213,19 +213,23 @@ const useRestakeAssets = () => {
   ]);
 
   const assetMap = useMemo(() => {
-    if (nativeAssets === null || evmAssets === null) {
+    if (nativeAssets === null && evmAssets === null) {
       return null;
     }
 
     const map = new Map<RestakeAssetId, RestakeAssetMetadata>();
 
-    for (const asset of nativeAssets) {
-      map.set(asset.assetId, asset);
+    if (nativeAssets !== null) {
+      for (const asset of nativeAssets) {
+        map.set(asset.assetId, asset);
+      }
     }
 
-    for (const asset of evmAssets) {
-      assert(!map.has(asset.assetId));
-      map.set(asset.assetId, asset);
+    if (evmAssets !== null) {
+      for (const asset of evmAssets) {
+        assert(!map.has(asset.assetId));
+        map.set(asset.assetId, asset);
+      }
     }
 
     return map;
