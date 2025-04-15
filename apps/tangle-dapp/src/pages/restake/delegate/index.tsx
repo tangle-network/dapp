@@ -1,3 +1,4 @@
+import { BN } from '@polkadot/util';
 import {
   ChainConfig,
   TANGLE_TOKEN_DECIMALS,
@@ -5,8 +6,18 @@ import {
 import { calculateTypedChainId } from '@tangle-network/dapp-types/TypedChainId';
 import isDefined from '@tangle-network/dapp-types/utils/isDefined';
 import ListModal from '@tangle-network/tangle-shared-ui/components/ListModal';
+import { NATIVE_ASSET_ID } from '@tangle-network/tangle-shared-ui/constants/restaking';
+import useNetworkStore from '@tangle-network/tangle-shared-ui/context/useNetworkStore';
 import useRestakeDelegatorInfo from '@tangle-network/tangle-shared-ui/data/restake/useRestakeDelegatorInfo';
 import useRestakeOperatorMap from '@tangle-network/tangle-shared-ui/data/restake/useRestakeOperatorMap';
+import useIdentities from '@tangle-network/tangle-shared-ui/hooks/useIdentities';
+import { TxStatus } from '@tangle-network/tangle-shared-ui/hooks/useSubstrateTx';
+import { RestakeAssetId } from '@tangle-network/tangle-shared-ui/types';
+import {
+  RestakeAsset,
+  RestakeAssetTableItem,
+} from '@tangle-network/tangle-shared-ui/types/restake';
+import assertRestakeAssetId from '@tangle-network/tangle-shared-ui/utils/assertRestakeAssetId';
 import {
   assertSubstrateAddress,
   Card,
@@ -18,33 +29,24 @@ import { SubstrateAddress } from '@tangle-network/ui-components/types/address';
 import keys from 'lodash/keys';
 import { FC, useCallback, useEffect, useMemo } from 'react';
 import { SubmitHandler, useForm } from 'react-hook-form';
+import AssetListItem from '../../../components/Lists/AssetListItem';
 import OperatorListItem from '../../../components/Lists/OperatorListItem';
-import useIdentities from '@tangle-network/tangle-shared-ui/hooks/useIdentities';
+import StyleContainer from '../../../components/restaking/StyleContainer';
+import useNativeRestakeAssetBalance from '../../../data/restake/useNativeRestakeAssetBalance';
+import useNativeRestakeTx from '../../../data/restake/useNativeRestakeTx';
+import useRestakeApi from '../../../data/restake/useRestakeApi';
 import useQueryState from '../../../hooks/useQueryState';
 import { QueryParamKey } from '../../../types';
 import type { DelegationFormFields } from '../../../types/restake';
 import filterBy from '../../../utils/filterBy';
+import parseChainUnits from '../../../utils/parseChainUnits';
 import Form from '../Form';
 import RestakeTabs from '../RestakeTabs';
-import StyleContainer from '../../../components/restaking/StyleContainer';
 import SupportedChainModal from '../SupportedChainModal';
 import useSwitchChain from '../useSwitchChain';
 import ActionButton from './ActionButton';
 import Details from './Details';
 import RestakeDelegateInput from './RestakeDelegateInput';
-import parseChainUnits from '../../../utils/parseChainUnits';
-import { BN } from '@polkadot/util';
-import useRestakeApi from '../../../data/restake/useRestakeApi';
-import assertRestakeAssetId from '@tangle-network/tangle-shared-ui/utils/assertRestakeAssetId';
-import { RestakeAssetTableItem } from '@tangle-network/tangle-shared-ui/types/restake';
-import useRestakeAsset from '../../../data/restake/useRestakeAsset';
-import useRestakeAssets from '@tangle-network/tangle-shared-ui/data/restake/useRestakeAssets';
-import { NATIVE_ASSET_ID } from '@tangle-network/tangle-shared-ui/constants/restaking';
-import useNetworkStore from '@tangle-network/tangle-shared-ui/context/useNetworkStore';
-import useNativeRestakeTx from '../../../data/restake/useNativeRestakeTx';
-import { TxStatus } from '@tangle-network/tangle-shared-ui/hooks/useSubstrateTx';
-import useNativeRestakeAssetBalance from '../../../data/restake/useNativeRestakeAssetBalance';
-import AssetListItem from '../../../components/Lists/AssetListItem';
 
 type RestakeOperator = {
   accountId: SubstrateAddress;
@@ -52,7 +54,11 @@ type RestakeOperator = {
   isActive: boolean;
 };
 
-const RestakeDelegateForm: FC = () => {
+type Props = {
+  assets: Map<RestakeAssetId, RestakeAsset> | null;
+};
+
+const RestakeDelegateForm: FC<Props> = ({ assets }) => {
   const {
     register,
     setValue: setFormValue,
@@ -84,7 +90,6 @@ const RestakeDelegateForm: FC = () => {
     register('operatorAccountId', { required: 'Operator is required' });
   }, [register]);
 
-  const { assets } = useRestakeAssets();
   const restakeApi = useRestakeApi();
   const { result: delegatorInfo } = useRestakeDelegatorInfo();
   const { result: operatorMap } = useRestakeOperatorMap();
@@ -230,7 +235,10 @@ const RestakeDelegateForm: FC = () => {
     [closeChainModal, switchChain],
   );
 
-  const selectedAsset = useRestakeAsset(watch('assetId'));
+  const selectedAsset = useMemo(() => {
+    return assets?.get(watch('assetId')) ?? null;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [watch('assetId')]);
 
   const isReady =
     restakeApi !== null &&
@@ -307,6 +315,7 @@ const RestakeDelegateForm: FC = () => {
         <Form onSubmit={handleSubmit(onSubmit)}>
           <div className="flex flex-col h-full space-y-4 grow">
             <RestakeDelegateInput
+              assets={assets}
               amountError={errors.amount?.message}
               delegatorInfo={delegatorInfo}
               openAssetModal={openAssetModal}
