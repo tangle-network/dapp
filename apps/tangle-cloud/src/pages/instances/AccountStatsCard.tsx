@@ -27,7 +27,7 @@ import useSubstrateAddress from '@tangle-network/tangle-shared-ui/hooks/useSubst
 export const AccountStatsCard: FC<AccountStatsCardProps> = (props) => {
   const accountAddress = useSubstrateAddress();
   const rpcEndpoint = useNetworkStore((store) => store.network.wsRpcEndpoint);
-  const { operatorMap } = useRestakeOperatorMap();
+  const { result: operatorMap } = useRestakeOperatorMap();
   const { result: delegatorInfo } = useRestakeDelegatorInfo();
   const { operatorTVL } = useRestakeTVL(operatorMap, delegatorInfo);
 

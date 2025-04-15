@@ -19,6 +19,8 @@ import OperatorsTable from './OperatorsTable';
 import BlueprintListing from '../../pages/blueprints/BlueprintListing';
 import { useNavigate } from 'react-router';
 import { PagePath } from '../../types';
+import { RestakeAssetId } from '@tangle-network/tangle-shared-ui/types';
+import { RestakeAsset } from '@tangle-network/tangle-shared-ui/types/restake';
 
 type RestakeTabOrAction = RestakeTab | RestakeAction;
 
@@ -28,12 +30,17 @@ type Props = {
 
 const RestakeTabContent: FC<Props> = ({ tab }) => {
   const { result: delegatorInfo } = useRestakeDelegatorInfo();
-  const { operatorMap } = useRestakeOperatorMap();
+  const { result: operatorMap } = useRestakeOperatorMap();
   const { operatorConcentration, operatorTVL } = useRestakeTVL(
     operatorMap,
     delegatorInfo,
   );
   const navigate = useNavigate();
+  const {
+    assets,
+    isLoading: isLoadingAssets,
+    refetchErc20Balances,
+  } = useRestakeAssets();
 
   const handleRestakeClicked = useCallback(() => {
     navigate(PagePath.RESTAKE_DEPOSIT);
@@ -42,15 +49,23 @@ const RestakeTabContent: FC<Props> = ({ tab }) => {
   const getRestakeTabContent = (action: RestakeTabOrAction): ReactNode => {
     switch (action) {
       case RestakeAction.DEPOSIT:
-        return <DepositForm />;
+        return (
+          <DepositForm
+            assets={assets}
+            isLoadingAssets={isLoadingAssets}
+            refetchErc20Balances={refetchErc20Balances}
+          />
+        );
       case RestakeAction.WITHDRAW:
-        return <RestakeWithdrawForm />;
+        return <RestakeWithdrawForm assets={assets} />;
       case RestakeAction.DELEGATE:
-        return <RestakeDelegateForm />;
+        return <RestakeDelegateForm assets={assets} />;
       case RestakeAction.UNDELEGATE:
-        return <RestakeUnstakeForm />;
+        return <RestakeUnstakeForm assets={assets} />;
       case RestakeTab.VAULTS:
-        return <VaultTabContent />;
+        return (
+          <VaultTabContent assets={assets} isLoadingAssets={isLoadingAssets} />
+        );
       case RestakeTab.OPERATORS:
         return (
           <OperatorsTable
@@ -75,8 +90,12 @@ const RestakeTabContent: FC<Props> = ({ tab }) => {
 
 export default RestakeTabContent;
 
-const VaultTabContent = () => {
-  const { assets, isLoading: isLoadingAssets } = useRestakeAssets();
+type VaultTabContentProps = {
+  assets: Map<RestakeAssetId, RestakeAsset> | null;
+  isLoadingAssets: boolean;
+};
+
+const VaultTabContent = ({ assets, isLoadingAssets }: VaultTabContentProps) => {
   const assetsTvl = useRestakeAssetsTvl();
   const { result: delegatorInfo } = useRestakeDelegatorInfo();
 

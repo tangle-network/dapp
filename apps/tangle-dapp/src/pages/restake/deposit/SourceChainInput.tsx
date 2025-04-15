@@ -1,4 +1,7 @@
+import { BN_ZERO } from '@polkadot/util';
 import { ZERO_BIG_INT } from '@tangle-network/dapp-config/constants';
+import { RestakeAssetId } from '@tangle-network/tangle-shared-ui/types';
+import { RestakeAsset } from '@tangle-network/tangle-shared-ui/types/restake';
 import type { TextFieldInputProps } from '@tangle-network/ui-components/components/TextField/types';
 import type { TokenSelectorProps } from '@tangle-network/ui-components/components/TokenSelector/types';
 import { TransactionInputCard } from '@tangle-network/ui-components/components/TransactionInputCard';
@@ -15,8 +18,6 @@ import { DepositFormFields } from '../../../types/restake';
 import decimalsToStep from '../../../utils/decimalsToStep';
 import { getAmountValidation } from '../../../utils/getAmountValidation';
 import AssetPlaceholder from '../AssetPlaceholder';
-import useRestakeAsset from '../../../data/restake/useRestakeAsset';
-import { BN_ZERO } from '@polkadot/util';
 
 type Props = {
   amountError?: string;
@@ -24,9 +25,11 @@ type Props = {
   register: UseFormRegister<DepositFormFields>;
   setValue: UseFormSetValue<DepositFormFields>;
   watch: UseFormWatch<DepositFormFields>;
+  assets: Map<RestakeAssetId, RestakeAsset> | null;
 };
 
 const SourceChainInput: FC<Props> = ({
+  assets,
   amountError,
   openTokenModal,
   register,
@@ -38,7 +41,9 @@ const SourceChainInput: FC<Props> = ({
   const depositAssetId = watch('depositAssetId');
 
   const { minDelegateAmount } = useRestakeConsts();
-  const asset = useRestakeAsset(depositAssetId);
+  const asset = useMemo(() => {
+    return assets?.get(depositAssetId) ?? null;
+  }, [assets, depositAssetId]);
 
   const { max, maxFormatted } = useMemo(() => {
     if (asset === null) {

@@ -44,7 +44,8 @@ export const SelectOperatorsStep: FC<SelectOperatorsStepProps> = ({
   );
   const [searchQuery, setSearchQuery] = useState('');
 
-  const { operatorMap } = useRestakeOperatorMap();
+  const { result: operatorMap } = useRestakeOperatorMap();
+
   const operatorAddresses = useMemo(
     () =>
       Object.keys(operatorMap).map((address) =>
@@ -55,11 +56,13 @@ export const SelectOperatorsStep: FC<SelectOperatorsStepProps> = ({
 
   const { result: operatorServicesMap } =
     useOperatorsServices(operatorAddresses);
+
   const { result: identities } = useIdentities(operatorAddresses);
+
   const { assets } = useRestakeAssets();
 
   const operators = useMemo<OperatorSelectionTable[]>(() => {
-    return Object.entries(operatorMap).map(
+    return Object.entries(operatorMap ?? {}).map(
       ([addressString, { delegations, restakersCount }]) => {
         const address = assertSubstrateAddress(addressString);
 
