@@ -96,7 +96,7 @@
     "rxjs": "7.8.2",
     "swr": "^2.3.3",
     "use-local-storage-state": "^19.5.0",
-    "viem": "^2.26.5",
+    "viem": "^2.27.0",
     "wagmi": "^2.14.16",
     "zod": "^3.24.2",
     "zustand": "^5.0.3"
@@ -132,7 +132,7 @@
     "@storybook/react-vite": "^8.6.12",
     "@storybook/theming": "^8.6.12",
     "@swc-node/register": "^1.10.10",
-    "@swc/cli": "~0.6.0",
+    "@swc/cli": "~0.7.2",
     "@swc/core": "~1.11.21",
     "@swc/helpers": "~0.5.17",
     "@swc/jest": "~0.2.37",

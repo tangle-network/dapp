@@ -13436,9 +13436,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@swc/cli@npm:~0.6.0":
-  version: 0.6.0
-  resolution: "@swc/cli@npm:0.6.0"
+"@swc/cli@npm:~0.7.2":
+  version: 0.7.2
+  resolution: "@swc/cli@npm:0.7.2"
   dependencies:
     "@swc/counter": "npm:^0.1.3"
     "@xhmikosr/bin-wrapper": "npm:^13.0.5"
@@ -13459,7 +13459,7 @@ __metadata:
     spack: bin/spack.js
     swc: bin/swc.js
     swcx: bin/swcx.js
-  checksum: 10c0/eaeac958e271c0ad41c94df0712b8fc65c884c8515439ac48451928f18bde6fa4f931c430cc3efc2bc3c2bc9af8fecca810e1c86962041e10a28200590314f6f
+  checksum: 10c0/d955fb8d6bf380ef4eec4cc15cd88da8274c6ca6d6278e88c6e561fe9581411f2af35d58a78d5250032cb8fc2f20cf3e9258a33240e925cc5d18af9b134fec88
   languageName: node
   linkType: hard
 
@@ -33397,7 +33397,7 @@ __metadata:
     "@storybook/react-vite": "npm:^8.6.12"
     "@storybook/theming": "npm:^8.6.12"
     "@swc-node/register": "npm:^1.10.10"
-    "@swc/cli": "npm:~0.6.0"
+    "@swc/cli": "npm:~0.7.2"
     "@swc/core": "npm:~1.11.21"
     "@swc/helpers": "npm:~0.5.17"
     "@swc/jest": "npm:~0.2.37"
@@ -33483,7 +33483,7 @@ __metadata:
     typescript: "npm:^5.8.3"
     typescript-eslint: "npm:^8.30.1"
     use-local-storage-state: "npm:^19.5.0"
-    viem: "npm:^2.26.5"
+    viem: "npm:^2.27.0"
     vite: "npm:~6.2.6"
     vite-plugin-dts: "npm:~4.5.3"
     vite-plugin-node-polyfills: "npm:^0.23.0"
@@ -35345,9 +35345,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"viem@npm:^2.26.5":
-  version: 2.26.5
-  resolution: "viem@npm:2.26.5"
+"viem@npm:^2.27.0":
+  version: 2.27.0
+  resolution: "viem@npm:2.27.0"
   dependencies:
     "@noble/curves": "npm:1.8.1"
     "@noble/hashes": "npm:1.7.1"
@@ -35362,7 +35362,7 @@ __metadata:
   peerDependenciesMeta:
     typescript:
       optional: true
-  checksum: 10c0/b89f4d0bd1c01b766cbfeba7f032194423d38e25a79291745989ad0b00ddfd30aeaa984311960079de0fb206d0c36d5773d5170bf71520c1c2af21523e2f2c00
+  checksum: 10c0/0c36fd742e6d4224229169048532f2576ed28a313258f4d41f5064e4134a46d5674253960b4703cc2cfc41c04902a3c469043bb7015ca70b0a8b392667317f6b
   languageName: node
   linkType: hard
 
