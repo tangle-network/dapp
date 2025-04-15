@@ -16,6 +16,7 @@ export default tseslint.config(
   ...nxEslintPlugin.configs['flat/javascript'],
   ...nxEslintPlugin.configs['flat/react'],
   ...storybook.configs['flat/recommended'],
+  { plugins: { '@nx': nxEslintPlugin } },
   {
     files: ['**/*.{js,mjs,cjs,jsx,mjsx,ts,tsx,mtsx}'],
     languageOptions: {
