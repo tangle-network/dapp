@@ -25,7 +25,7 @@ import { QueryParamKey } from '../../../types';
 import type { DelegationFormFields } from '../../../types/restake';
 import filterBy from '../../../utils/filterBy';
 import Form from '../Form';
-import RestakeTabs from '../RestakeTabs';
+import RestakeActionTabs from '../RestakeActionTabs';
 import StyleContainer from '../../../components/restaking/StyleContainer';
 import SupportedChainModal from '../SupportedChainModal';
 import useSwitchChain from '../useSwitchChain';
@@ -301,7 +301,7 @@ const RestakeDelegateForm: FC = () => {
 
   return (
     <StyleContainer className="md:min-w-[512px]">
-      <RestakeTabs />
+      <RestakeActionTabs />
 
       <Card withShadow tightPadding>
         <Form onSubmit={handleSubmit(onSubmit)}>

@@ -37,7 +37,7 @@ import parseChainUnits from '../../../utils/parseChainUnits';
 import { AnimatedTable } from '../AnimatedTable';
 import AssetPlaceholder from '../AssetPlaceholder';
 import { ExpandTableButton } from '../ExpandTableButton';
-import RestakeTabs from '../RestakeTabs';
+import RestakeActionTabs from '../RestakeActionTabs';
 import SupportedChainModal from '../SupportedChainModal';
 import useSwitchChain from '../useSwitchChain';
 import Details from './Details';
@@ -249,7 +249,7 @@ const RestakeUnstakeForm: FC = () => {
   return (
     <div className="grid items-start justify-center gap-4 max-md:grid-cols-1 md:auto-cols-auto md:grid-flow-col">
       <div>
-        <RestakeTabs />
+        <RestakeActionTabs />
 
         <Card withShadow tightPadding className="relative md:min-w-[512px]">
           {!isUnstakeRequestTableOpen && (
