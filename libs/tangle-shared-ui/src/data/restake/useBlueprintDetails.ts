@@ -31,7 +31,7 @@ const useBlueprintDetails = (id?: bigint) => {
   const rpcEndpoint = useNetworkStore((store) => store.network.wsRpcEndpoint);
   const { assets } = useRestakeAssets();
   const { operatorMap } = useRestakeOperatorMap();
-  const { delegatorInfo } = useRestakeDelegatorInfo();
+  const { result: delegatorInfo } = useRestakeDelegatorInfo();
   const activeSubstrateAddress = useSubstrateAddress(false);
 
   const { operatorTVL, operatorConcentration, operatorTVLByAsset } =

@@ -167,7 +167,7 @@ export const ExpandedInfo: React.FC<ExpandedInfoProps> = ({ row }) => {
               />
               <TaskIndicator
                 completed={testnetTaskCompletion?.bonus}
-                label="Bonus Points"
+                label="Bonus Points (Complete All Tasks)"
               />
             </div>
           </div>

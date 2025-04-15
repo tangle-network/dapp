@@ -8,6 +8,7 @@ type Props = {
   logo: ReactNode;
   leftUpperContent: ReactNode | string;
   leftBottomContent?: ReactNode | string;
+  leftBottomContentTwo?: ReactNode | string;
   rightUpperText?: string;
   rightBottomText?: string;
 };
@@ -16,6 +17,7 @@ const LogoListItem: FC<Props> = ({
   logo,
   leftUpperContent,
   leftBottomContent,
+  leftBottomContentTwo,
   rightUpperText,
   rightBottomText,
 }) => {
@@ -41,7 +43,7 @@ const LogoListItem: FC<Props> = ({
             typeof leftBottomContent === 'string' ? (
               <Typography
                 variant="body1"
-                className="block text-mono-140 dark:text-mono-120"
+                className="block text-mono-120 dark:text-mono-100 dark:hover:text-mono-80"
               >
                 {leftBottomContent}
               </Typography>
@@ -49,19 +51,35 @@ const LogoListItem: FC<Props> = ({
               leftBottomContent
             )
           ) : null}
+
+          {leftBottomContentTwo !== undefined ? (
+            typeof leftBottomContentTwo === 'string' ? (
+              <Typography
+                variant="body1"
+                className="block text-mono-120 dark:text-mono-100 dark:hover:text-mono-80"
+              >
+                {leftBottomContentTwo}
+              </Typography>
+            ) : (
+              leftBottomContentTwo
+            )
+          ) : null}
         </div>
       </div>
 
       {(rightUpperText !== undefined || rightBottomText !== undefined) && (
         <div className="flex flex-col items-end justify-center">
-          <Typography variant="body1">
+          <Typography
+            variant="body1"
+            className="text-mono-200 dark:text-mono-0"
+          >
             {rightUpperText ?? EMPTY_VALUE_PLACEHOLDER}
           </Typography>
 
           {rightBottomText !== undefined && (
             <Typography
               variant="body1"
-              className="block text-mono-140 dark:text-mono-120"
+              className="block text-mono-120 dark:text-mono-100 dark:hover:text-mono-80"
             >
               {rightBottomText}
             </Typography>

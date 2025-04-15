@@ -1,6 +1,6 @@
 import { BN } from '@polkadot/util';
 import { ZERO_BIG_INT } from '@tangle-network/dapp-config/constants';
-import { TokenIcon } from '@tangle-network/icons/TokenIcon';
+import { TokenIcon, ArrowRightUp } from '@tangle-network/icons';
 import ListModal from '@tangle-network/tangle-shared-ui/components/ListModal';
 import { RestakeAssetId } from '@tangle-network/tangle-shared-ui/types';
 import { DelegatorInfo } from '@tangle-network/tangle-shared-ui/types/restake';
@@ -10,6 +10,7 @@ import {
   formatDisplayAmount,
   isEvmAddress,
   shortenHex,
+  Typography,
 } from '@tangle-network/ui-components';
 import { useMemo } from 'react';
 import { formatUnits } from 'viem';
@@ -17,6 +18,10 @@ import LogoListItem from '../../components/Lists/LogoListItem';
 import filterBy from '../../utils/filterBy';
 import calculateRestakeAvailableBalance from '../../utils/restaking/calculateRestakeAvailableBalance';
 import useRestakeAssets from '@tangle-network/tangle-shared-ui/data/restake/useRestakeAssets';
+import { useActiveChain } from '@tangle-network/api-provider-environment/hooks/useActiveChain';
+import { makeExplorerUrl } from '@tangle-network/api-provider-environment/transaction/utils';
+import { ChainType } from '@tangle-network/dapp-types';
+import AssetListItem from '../../components/Lists/AssetListItem';
 
 type Props = {
   delegatorInfo: DelegatorInfo | null;
@@ -37,6 +42,7 @@ const WithdrawModal = ({
   onItemSelected,
 }: Props) => {
   const { assets } = useRestakeAssets();
+  const activeChain = useActiveChain();
 
   const availableForWithdrawal = useMemo(() => {
     if (!delegatorInfo?.deposits) {
@@ -62,7 +68,7 @@ const WithdrawModal = ({
       isOpen={isOpen}
       setIsOpen={setIsOpen}
       searchInputId="restake-withdraw-asset-search"
-      searchPlaceholder="Search assets by ID or name..."
+      searchPlaceholder="Search assets..."
       items={availableForWithdrawal}
       titleWhenEmpty="No Assets Found"
       descriptionWhenEmpty="This account has no assets available to withdraw."
@@ -89,7 +95,6 @@ const WithdrawModal = ({
           asset?.metadata.vaultId,
         ]);
       }}
-      // TODO: This can be cleaned up a bit. Seems like a bit of reused code.
       renderItem={({ amount, assetId }) => {
         const asset = assets?.get(assetId);
 
@@ -97,31 +102,20 @@ const WithdrawModal = ({
           return null;
         }
 
-        const fmtAmount = formatDisplayAmount(
-          new BN(amount.toString()),
-          asset.metadata.decimals,
-          AmountFormatStyle.SHORT,
-        );
-
-        const idText = isEvmAddress(assetId)
-          ? `Address: ${shortenHex(assetId)}`
-          : `Asset ID: ${assetId}`;
-
         return (
-          <LogoListItem
-            logo={<TokenIcon size="xl" name={asset.metadata.symbol} />}
-            leftUpperContent={
-              asset.metadata.name !== undefined
-                ? `${asset.metadata.name} (${asset.metadata.symbol})`
-                : asset.metadata.symbol
-            }
-            leftBottomContent={idText}
-            rightUpperText={`${fmtAmount} ${asset.metadata.symbol}`}
-            rightBottomText={
-              asset.metadata.vaultId !== null
-                ? `Vault ID: ${asset.metadata.vaultId}`
-                : undefined
-            }
+          <AssetListItem
+            assetId={assetId}
+            name={asset.metadata.name}
+            symbol={asset.metadata.symbol}
+            balance={new BN(amount.toString())}
+            decimals={asset.metadata.decimals}
+            rightBottomText="Balance"
+            // TODO: Do we need to display vault id here?
+            // leftBottomContentTwo={
+            //   asset.metadata.vaultId !== null
+            //     ? `Vault Id: ${asset.metadata.vaultId}`
+            //     : undefined
+            // }
           />
         );
       }}

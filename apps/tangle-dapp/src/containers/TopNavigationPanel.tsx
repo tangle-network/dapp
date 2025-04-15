@@ -22,6 +22,7 @@ const TopNavigationPanel: FC = () => {
         disableChainSelection={isInBridgePath}
         preferredChain={isInBridgePath ? selectedSourceChain : undefined}
       />
+
       <ConnectWalletButton
         showChainSpecificWallets={isInBridgePath}
         preferredChain={isInBridgePath ? selectedSourceChain : undefined}

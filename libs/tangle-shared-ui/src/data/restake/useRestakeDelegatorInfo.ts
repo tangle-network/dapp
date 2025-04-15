@@ -9,91 +9,78 @@ import {
   WebbErrorCodes,
 } from '@tangle-network/dapp-types/WebbError';
 import assertSubstrateAddress from '@tangle-network/ui-components/utils/assertSubstrateAddress';
-import { useObservable, useObservableState } from 'observable-hooks';
-import { map, of, switchMap } from 'rxjs';
-import usePolkadotApi from '../../hooks/usePolkadotApi';
+import { useCallback } from 'react';
+import { map } from 'rxjs';
+import useApiRx from '../../hooks/useApiRx';
 import useSubstrateAddress from '../../hooks/useSubstrateAddress';
+import { TangleError, TangleErrorCode } from '../../types/error';
 import { DelegatorInfo } from '../../types/restake';
 import createRestakeAssetId from '../../utils/createRestakeAssetId';
 
 export default function useRestakeDelegatorInfo() {
   const activeAddress = useSubstrateAddress();
-  const { apiRx } = usePolkadotApi();
 
-  const delegatorInfo$ = useObservable(
-    (input$) =>
-      input$.pipe(
-        switchMap(([activeAddress, apiRx]) => {
-          if (
-            apiRx.query.multiAssetDelegation?.delegators === undefined ||
-            activeAddress === null
-          ) {
-            return of(null);
-          }
+  return useApiRx(
+    useCallback(
+      (apiRx) => {
+        if (activeAddress === null) {
+          return new TangleError(TangleErrorCode.INVALID_PARAMS);
+        }
 
-          return apiRx.query.multiAssetDelegation
-            ?.delegators(activeAddress)
-            .pipe(
-              map((delegatorInfo) => {
-                if (delegatorInfo.isNone) {
-                  return null;
-                }
+        return apiRx.query.multiAssetDelegation.delegators(activeAddress).pipe(
+          map((delegatorInfo) => {
+            if (delegatorInfo.isNone) {
+              return null;
+            }
 
-                const info = delegatorInfo.unwrap();
+            const info = delegatorInfo.unwrap();
 
-                const deposits = Array.from(info.deposits.entries()).reduce(
-                  (depositRecord, [assetId, deposit]) => {
-                    const amountBigInt = deposit.amount.toBigInt();
+            const deposits = Array.from(info.deposits.entries()).reduce(
+              (depositRecord, [assetId, deposit]) => {
+                const amountBigInt = deposit.amount.toBigInt();
 
-                    const delegatedAmountBigInt =
-                      deposit.delegatedAmount.toBigInt();
+                const delegatedAmountBigInt =
+                  deposit.delegatedAmount.toBigInt();
 
-                    return Object.assign(depositRecord, {
-                      [createRestakeAssetId(assetId)]: {
-                        amount: amountBigInt,
-                        delegatedAmount: delegatedAmountBigInt,
-                      },
-                    } satisfies DelegatorInfo['deposits']);
+                return Object.assign(depositRecord, {
+                  [createRestakeAssetId(assetId)]: {
+                    amount: amountBigInt,
+                    delegatedAmount: delegatedAmountBigInt,
                   },
-                  {} as DelegatorInfo['deposits'],
-                );
-
-                const delegations = info.delegations.map<
-                  DelegatorInfo['delegations'][number]
-                >((delegation) => {
-                  const amountBigInt = delegation.amount.toBigInt();
-
-                  return {
-                    assetId: createRestakeAssetId(delegation.asset),
-                    amountBonded: amountBigInt,
-                    operatorAccountId: assertSubstrateAddress(
-                      delegation.operator.toString(),
-                    ),
-                  };
-                });
-
-                return {
-                  deposits,
-                  withdrawRequests: getWithdrawRequests(info.withdrawRequests),
-                  delegations,
-                  unstakeRequests: getUnstakeRequests(
-                    info.delegatorUnstakeRequests,
-                  ),
-                  status: getStatus(info.status),
-                } satisfies DelegatorInfo;
-              }),
+                } satisfies DelegatorInfo['deposits']);
+              },
+              {} as DelegatorInfo['deposits'],
             );
-        }),
-      ),
-    [activeAddress, apiRx],
+
+            const delegations = info.delegations.map<
+              DelegatorInfo['delegations'][number]
+            >((delegation) => {
+              const amountBigInt = delegation.amount.toBigInt();
+
+              return {
+                assetId: createRestakeAssetId(delegation.asset),
+                amountBonded: amountBigInt,
+                operatorAccountId: assertSubstrateAddress(
+                  delegation.operator.toString(),
+                ),
+              };
+            });
+
+            return {
+              deposits,
+              withdrawRequests: getWithdrawRequests(info.withdrawRequests),
+              delegations,
+              unstakeRequests: getUnstakeRequests(
+                info.delegatorUnstakeRequests,
+              ),
+              status: getStatus(info.status),
+            } satisfies DelegatorInfo;
+          }),
+        );
+      },
+      [activeAddress],
+    ),
   );
-
-  const delegatorInfo = useObservableState(delegatorInfo$, null);
-
-  return {
-    delegatorInfo,
-    delegatorInfo$,
-  };
 }
 
 function getWithdrawRequests(

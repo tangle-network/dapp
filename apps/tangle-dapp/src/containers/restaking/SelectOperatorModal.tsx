@@ -48,7 +48,7 @@ const SelectOperatorModal = ({
       isOpen={isOpen}
       setIsOpen={setIsOpen}
       searchInputId="restake-undelegate-operator-search"
-      searchPlaceholder="Search operators by account ID..."
+      searchPlaceholder="Search operators..."
       items={delegations}
       title="Select Operator"
       titleWhenEmpty="No Delegation Found"
@@ -109,7 +109,7 @@ const SelectOperatorModal = ({
             accountAddress={operatorAccountId}
             identity={identityName ?? undefined}
             rightUpperText={`${fmtAmount} ${asset.metadata.symbol}`}
-            rightBottomText="Delegated"
+            rightBottomText="Balance"
           />
         );
       }}

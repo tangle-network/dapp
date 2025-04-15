@@ -4,7 +4,7 @@ import useApiRx from '../../hooks/useApiRx';
 import { useCallback } from 'react';
 
 const useVaultsPotAccounts = () => {
-  const result = useApiRx(
+  return useApiRx(
     useCallback((api) => {
       return api.query.rewards.rewardVaultsPotAccount.entries().pipe(
         map((entries) => {
@@ -24,8 +24,6 @@ const useVaultsPotAccounts = () => {
       );
     }, []),
   );
-
-  return result;
 };
 
 export default useVaultsPotAccounts;

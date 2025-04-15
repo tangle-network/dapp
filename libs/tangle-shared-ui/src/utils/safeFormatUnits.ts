@@ -9,7 +9,7 @@ import ensureError from './ensureError';
  * @returns either the formatted value or an error message
  */
 export default function safeFormatUnits(
-  value: bigint,
+  value: bigint | (() => bigint),
   decimals: number = DEFAULT_DECIMALS,
 ):
   | {
@@ -21,7 +21,8 @@ export default function safeFormatUnits(
       error: string;
     } {
   try {
-    const formatted = formatUnits(value, decimals);
+    const valueBigInt = typeof value === 'function' ? value() : value;
+    const formatted = formatUnits(valueBigInt, decimals);
 
     return {
       success: true,

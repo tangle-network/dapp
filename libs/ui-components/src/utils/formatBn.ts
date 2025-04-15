@@ -180,14 +180,34 @@ export function formatBn(
   };
 
   if (options.withSi) {
-    // Replace the space with an empty string to remove the
-    // space between the number and the SI unit.
-    return formatBalance(amount, {
+    const formattedValue = formatBalance(amount, {
       decimals,
       withSi: true,
       withUnit: false,
       withZero: false,
-    }).replace(' ', '');
+    });
+
+    if (options.fractionMaxLength === undefined) {
+      return formattedValue;
+    }
+
+    // Extract the value part (excluding the SI unit)
+    const [valuePart, siPart = ''] = formattedValue.split(' ');
+
+    // Split the value into integer and fraction parts
+    const [integerPart, fractionPart] = valuePart.split('.');
+
+    if (fractionPart && fractionPart.length > options.fractionMaxLength) {
+      // Truncate the fraction part to match fractionMaxLength
+      const truncatedFractionPart = fractionPart.substring(
+        0,
+        options.fractionMaxLength,
+      );
+
+      return `${integerPart}.${truncatedFractionPart}${siPart}`;
+    }
+
+    return formattedValue;
   }
 
   const chainUnitFactorBn = getChainUnitFactor(decimals);

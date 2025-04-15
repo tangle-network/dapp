@@ -1,16 +1,10 @@
 import { BN, BN_ZERO } from '@polkadot/util';
 import { PresetTypedChainId } from '@tangle-network/dapp-types';
 import isDefined from '@tangle-network/dapp-types/utils/isDefined';
-import { TokenIcon } from '@tangle-network/icons';
 import ListModal from '@tangle-network/tangle-shared-ui/components/ListModal';
-import {
-  AmountFormatStyle,
-  Card,
-  formatBn,
-  formatDisplayAmount,
-  isEvmAddress,
-  shortenHex,
-} from '@tangle-network/ui-components';
+import useRestakeAssets from '@tangle-network/tangle-shared-ui/data/restake/useRestakeAssets';
+import { RestakeAsset } from '@tangle-network/tangle-shared-ui/types/restake';
+import { Card, formatBn, isEvmAddress } from '@tangle-network/ui-components';
 import { useModal } from '@tangle-network/ui-components/hooks/useModal';
 import assert from 'assert';
 import {
@@ -22,7 +16,7 @@ import {
   useRef,
 } from 'react';
 import { type SubmitHandler, useForm } from 'react-hook-form';
-import LogoListItem from '../../../components/Lists/LogoListItem';
+import AssetListItem from '../../../components/Lists/AssetListItem';
 import StyleContainer from '../../../components/restaking/StyleContainer';
 import { SUPPORTED_RESTAKE_DEPOSIT_TYPED_CHAIN_IDS } from '../../../constants/restake';
 import useRestakeApi from '../../../data/restake/useRestakeApi';
@@ -38,8 +32,6 @@ import RestakeTabs from '../RestakeTabs';
 import ActionButton from './ActionButton';
 import Details from './Details';
 import SourceChainInput from './SourceChainInput';
-import useRestakeAssets from '@tangle-network/tangle-shared-ui/data/restake/useRestakeAssets';
-import { RestakeAsset } from '@tangle-network/tangle-shared-ui/types/restake';
 
 const getDefaultTypedChainId = (
   activeTypedChainId: number | null,
@@ -160,9 +152,15 @@ const DepositForm: FC<Props> = (props) => {
       return [];
     }
 
-    return Array.from(assets.values()).filter(
-      (asset) => asset.balance !== undefined && !asset.balance.isZero(),
-    );
+    return Array.from(assets.values()).sort((a, b) => {
+      const aBalance = a.balance ?? BN_ZERO;
+      const bBalance = b.balance ?? BN_ZERO;
+      return aBalance.isZero()
+        ? 1
+        : bBalance.isZero()
+          ? -1
+          : bBalance.cmp(aBalance);
+    });
   }, [assets]);
 
   const handleAssetSelection = useCallback(
@@ -259,27 +257,14 @@ const DepositForm: FC<Props> = (props) => {
             renderItem={(asset) => {
               const balance = asset.balance ?? BN_ZERO;
 
-              const fmtBalance = formatDisplayAmount(
-                balance,
-                asset.metadata.decimals,
-                AmountFormatStyle.SHORT,
-              );
-
-              const idText = isEvmAddress(asset.id)
-                ? `Address: ${shortenHex(asset.id)}`
-                : `Asset ID: ${asset.id}`;
-
               return (
-                <LogoListItem
-                  logo={<TokenIcon size="xl" name={asset.metadata.symbol} />}
-                  leftUpperContent={
-                    asset.metadata.name !== undefined
-                      ? `${asset.metadata.name} (${asset.metadata.symbol})`
-                      : asset.metadata.symbol
-                  }
-                  leftBottomContent={idText}
+                <AssetListItem
+                  assetId={asset.id}
+                  name={asset.metadata.name}
+                  symbol={asset.metadata.symbol}
+                  balance={balance}
+                  decimals={asset.metadata.decimals}
                   rightBottomText="Balance"
-                  rightUpperText={`${fmtBalance} ${asset.metadata.symbol}`}
                 />
               );
             }}

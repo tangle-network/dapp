@@ -86,7 +86,7 @@ const RestakeWithdrawForm: FC = () => {
     reset();
   }, [activeTypedChainId, reset]);
 
-  const { delegatorInfo } = useRestakeDelegatorInfo();
+  const { result: delegatorInfo } = useRestakeDelegatorInfo();
 
   const selectedAssetId = watch('assetId');
   const amount = watch('amount');

@@ -1,8 +1,6 @@
 'use client';
 
-import chainsPopulated from '@tangle-network/dapp-config/chains/chainsPopulated';
-import isDefined from '@tangle-network/dapp-types/utils/isDefined';
-import { useContext, useEffect } from 'react';
+import { useContext } from 'react';
 
 import { PolkadotApiContext } from '../context/PolkadotApiContext';
 
@@ -14,19 +12,4 @@ export default function usePolkadotApi() {
   }
 
   return ctx;
-}
-
-export function useRpcSubscription(typedChainId?: number | null) {
-  const { setCustomRpc } = usePolkadotApi();
-
-  // Subscribe to sourceTypedChainId and update customRpc.
-  useEffect(() => {
-    if (!isDefined(typedChainId)) {
-      return;
-    }
-
-    const chain = chainsPopulated[typedChainId];
-
-    setCustomRpc(chain?.rpcUrls.default.webSocket?.[0]);
-  }, [setCustomRpc, typedChainId]);
 }

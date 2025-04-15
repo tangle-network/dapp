@@ -90,7 +90,7 @@ const RestakeUnstakeForm: FC = () => {
     reset();
   }, [activeTypedChainId, reset]);
 
-  const { delegatorInfo } = useRestakeDelegatorInfo();
+  const { result: delegatorInfo } = useRestakeDelegatorInfo();
 
   const { result: operatorIdentities } = useIdentities(
     useMemo(

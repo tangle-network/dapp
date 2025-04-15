@@ -1,17 +1,11 @@
 import { BN } from '@polkadot/util';
-import {
-  createColumnHelper,
-  getCoreRowModel,
-  getPaginationRowModel,
-  getSortedRowModel,
-  SortingState,
-  useReactTable,
-} from '@tanstack/react-table';
+import { TANGLE_TOKEN_DECIMALS } from '@tangle-network/dapp-config';
 import {
   AddCircleLineIcon,
   SubtractCircleLineIcon,
 } from '@tangle-network/icons';
 import TableStatus from '@tangle-network/tangle-shared-ui/components/tables/TableStatus';
+import useIsAccountConnected from '@tangle-network/tangle-shared-ui/hooks/useIsAccountConnected';
 import {
   ActionsDropdown,
   AmountFormatStyle,
@@ -28,23 +22,28 @@ import { ActionItemType } from '@tangle-network/ui-components/components/Actions
 import { TableVariant } from '@tangle-network/ui-components/components/Table/types';
 import { EMPTY_VALUE_PLACEHOLDER } from '@tangle-network/ui-components/constants';
 import pluralize from '@tangle-network/ui-components/utils/pluralize';
+import {
+  createColumnHelper,
+  getCoreRowModel,
+  getPaginationRowModel,
+  getSortedRowModel,
+  SortingState,
+  useReactTable,
+} from '@tanstack/react-table';
 import assert from 'assert';
 import { FC, useEffect, useMemo, useState } from 'react';
 import { twMerge } from 'tailwind-merge';
-
 import { LsPool } from '../../constants/liquidStaking/types';
 import LsUpdateRolesModal from '../../containers/LsUpdateRolesModal';
 import useLsSetStakingIntent from '../../data/liquidStaking/useLsSetStakingIntent';
 import { useLsStore } from '../../data/liquidStaking/useLsStore';
-import useIsAccountConnected from '../../hooks/useIsAccountConnected';
 import BlueIconButton from '../BlueIconButton';
 import PercentageCell from '../tableCells/PercentageCell';
 import TokenAmountCell from '../tableCells/TokenAmountCell';
-import LstIcon from './LstIcon';
-import UpdateCommissionModal from './UpdateCommissionModal';
-import { TANGLE_TOKEN_DECIMALS } from '@tangle-network/dapp-config';
 import LsSetPoolStateModal from './LsSetPoolStateModal';
+import LstIcon from './LstIcon';
 import LsUpdateNominationsModal from './LsUpdateNominationsModal';
+import UpdateCommissionModal from './UpdateCommissionModal';
 
 export interface LsMyPoolRow extends LsPool {
   myStake: BN;

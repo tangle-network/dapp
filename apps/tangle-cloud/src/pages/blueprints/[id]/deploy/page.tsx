@@ -7,7 +7,6 @@ import {
 import { useForm } from 'react-hook-form';
 import {
   BLUEPRINT_DEPLOY_STEPS,
-  DeployBlueprintSchema,
   deployBlueprintSchema,
 } from '../../../../utils/validations/deployBlueprint';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -37,7 +36,7 @@ const DeployPage: FC = () => {
     setValue,
     trigger,
     formState: { errors },
-  } = useForm<DeployBlueprintSchema>({
+  } = useForm({
     mode: 'onChange',
     resolver: zodResolver(deployBlueprintSchema),
   });
