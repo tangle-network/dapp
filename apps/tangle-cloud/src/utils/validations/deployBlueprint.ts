@@ -1,5 +1,6 @@
 import assertRestakeAssetId from '@tangle-network/tangle-shared-ui/utils/assertRestakeAssetId';
 import {
+  assertSubstrateAddress,
   isEvmAddress,
   isSubstrateAddress,
 } from '@tangle-network/ui-components';
@@ -69,7 +70,6 @@ export const deployBlueprintSchema = z
         }
       }
 
-      // validate not duplicate caller
       const uniqueCallers = new Set(value);
       if (uniqueCallers.size !== value.length) {
         context.addIssue({
@@ -168,7 +168,7 @@ export const deployBlueprintSchema = z
       // If approval model is dynamic, `maxApproval` is required
       if (!schema.maxApproval) {
         ctx.addIssue({
-          path: [`maxApproval`],
+          path: ["maxApproval"],
           code: z.ZodIssueCode.custom,
           message: 'Max approval is required for dynamic approval model',
         });
@@ -179,7 +179,7 @@ export const deployBlueprintSchema = z
       // `approvalThreshold` must be less than or equal to the number of operators
       if (schema.minApproval > schema.operators.length) {
         ctx.addIssue({
-          path: [`minApproval`],
+          path: ["minApproval"],
           code: z.ZodIssueCode.custom,
           message: 'Min approval cannot be greater than number of operators',
         });
@@ -243,18 +243,13 @@ export const formatServiceRegisterData = (
       return caller;
     }),
     operators: data.operators.map((operator) => {
-      // already validated in the schema
-      if (!isSubstrateAddress(operator)) {
-        throw new Error('Invalid operator address');
-      }
-
-      return operator;
+      return assertSubstrateAddress(operator);
     }),
     requestArgs: blueprintRequestArgs,
     securityRequirements: data.securityCommitments,
     assets: data.assets.map((asset) => assertRestakeAssetId(asset.id)),
     ttl: BigInt(data.instanceDuration),
-    paymentAsset: data.paymentAsset.id,
+    paymentAsset: assertRestakeAssetId(data.paymentAsset.id),
     paymentValue: paymentAmount,
     membershipModel: data.approvalModel,
     minOperator: data.minApproval,

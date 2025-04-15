@@ -18,20 +18,22 @@ const useAssets = () => {
         map((entries) => {
           return entries.map(([assetId, assetDetail]) => {
             if (assetDetail.isSome) {
+              const details = assetDetail.unwrap()
+
               return {
                 id: assertRestakeAssetId(assetId.args[0].toString()),
-                accounts: assetDetail.unwrap().accounts.toString(),
-                admin: assetDetail.unwrap().admin.toString(),
-                approvals: assetDetail.unwrap().approvals.toString(),
-                deposit: assetDetail.unwrap().deposit.toString(),
-                freezer: assetDetail.unwrap().freezer.toString(),
-                isSufficient: assetDetail.unwrap().isSufficient.toString(),
-                issuer: assetDetail.unwrap().issuer.toString(),
-                minBalance: assetDetail.unwrap().minBalance.toNumber(),
-                owner: assetDetail.unwrap().owner.toString(),
-                status: assetDetail.unwrap().status.toString(),
-                sufficients: assetDetail.unwrap().sufficients.toNumber(),
-                supply: assetDetail.unwrap().supply.toNumber(),
+                accounts: details.accounts.toString(),
+                admin: details.admin.toString(),
+                approvals: details.approvals.toString(),
+                deposit: details.deposit.toString(),
+                freezer: details.freezer.toString(),
+                isSufficient: details.isSufficient.toString(),
+                issuer: details.issuer.toString(),
+                minBalance: details.minBalance.toNumber(),
+                owner: details.owner.toString(),
+                status: details.status.toString(),
+                sufficients: details.sufficients.toNumber(),
+                supply: details.supply.toNumber(),
               };
             }
             return undefined;
@@ -76,8 +78,8 @@ const useAssets = () => {
             name: assetMetadata?.name ?? '',
             symbol: assetMetadata?.symbol ?? '',
             decimals: assetMetadata?.decimals ?? 0,
-            deposit: assetMetadata?.deposit ?? '',
-            isFrozen: assetMetadata?.isFrozen ?? false,
+            deposit: assetMetadata?.deposit,
+            isFrozen: assetMetadata?.isFrozen,
             assetId: assetId,
             // @dev get all assets, so this is not exit
             vaultId: null,

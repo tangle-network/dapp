@@ -36,6 +36,7 @@ import useRestakeAssets from '@tangle-network/tangle-shared-ui/data/restake/useR
 import useBlueprintRegisteredOperator from '@tangle-network/tangle-shared-ui/data/blueprints/useBlueprintRegisteredOperator';
 import { getOperatorPricing } from '../../../../../utils';
 import { NATIVE_ASSET_ID } from '@tangle-network/tangle-shared-ui/constants/restaking';
+import lodash from 'lodash';
 
 const MAX_ASSET_TO_SHOW = 3;
 
@@ -90,7 +91,7 @@ export const SelectOperatorsStep: FC<SelectOperatorsStepProps> = ({
       ([addressString, { delegations, restakersCount }]) => {
         const address = assertSubstrateAddress(addressString);
         const operatorPreferences = registeredOperators.get(address);
-        // @dev this case should not happen because we filter the operators in the `restakeOperatorMap`
+        // this case should not happen because we filter the operators in the `restakeOperatorMap`
         if (!operatorPreferences) throw new Error('Operator not found');
         const registeredData = operatorPreferences.preferences;
 
@@ -145,28 +146,30 @@ export const SelectOperatorsStep: FC<SelectOperatorsStepProps> = ({
     });
   }, [operators, selectedAssets]);
 
-  /**
-   * @dev set the operators to the form value when the rowSelection changes
-   */
+  // set the operators to the form value when the rowSelection changes
   useEffect(() => {
     setValue(`operators`, Object.keys(rowSelection));
   }, [rowSelection]);
 
   const onSelectAsset = useCallback(
     (asset: RestakeAsset, isChecked: boolean) => {
-      // Create a new array instead of mutating the existing one
       const newSelectedAssets = isChecked
         ? [
             ...selectedAssets,
             {
               id: asset.id,
-              metadata: {
-                ...asset.metadata,
-                name: asset.metadata.name,
-                decimals: asset.metadata.decimals,
-                deposit: asset.metadata.deposit,
-                isFrozen: asset.metadata.isFrozen,
-              },
+              metadata: lodash.pick(asset.metadata, [
+                'symbol',
+                'assetId',
+                'vaultId',
+                'priceInUsd',
+                'name',
+                'decimals',
+                'details',
+                'status',
+                'deposit',
+                'isFrozen'
+              ])
             },
           ]
         : selectedAssets.filter(

@@ -22,7 +22,7 @@ import { toHex } from 'viem';
  * @see https://docs.tangle.tools/developers/technicals/evm-substrate-transfers#convert-substrate-address-to-evm
  */
 export const toEvmAddress = (
-  address: SubstrateAddress | EvmAddress | string,
+  address: SubstrateAddress | EvmAddress,
 ): EvmAddress => {
   // Nothing to do. Have this option for convenience.
   if (isEvmAddress(address)) {
