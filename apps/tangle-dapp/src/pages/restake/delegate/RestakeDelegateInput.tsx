@@ -2,7 +2,10 @@ import isDefined from '@tangle-network/dapp-types/utils/isDefined';
 import type { Noop } from '@tangle-network/dapp-types/utils/types';
 import LockFillIcon from '@tangle-network/icons/LockFillIcon';
 import { LockLineIcon } from '@tangle-network/icons/LockLineIcon';
-import type { DelegatorInfo } from '@tangle-network/tangle-shared-ui/types/restake';
+import type {
+  DelegatorInfo,
+  RestakeAsset,
+} from '@tangle-network/tangle-shared-ui/types/restake';
 import type { IdentityType } from '@tangle-network/tangle-shared-ui/utils/polkadot/identity';
 import type { TextFieldInputProps } from '@tangle-network/ui-components/components/TextField/types';
 import { TransactionInputCard } from '@tangle-network/ui-components/components/TransactionInputCard';
@@ -15,7 +18,6 @@ import type {
 import { formatUnits } from 'viem';
 import AvatarWithText from '../../../components/AvatarWithText';
 import ErrorMessage from '../../../components/ErrorMessage';
-import useRestakeAsset from '../../../data/restake/useRestakeAsset';
 import useRestakeConsts from '../../../data/restake/useRestakeConsts';
 import type { DelegationFormFields } from '../../../types/restake';
 import decimalsToStep from '../../../utils/decimalsToStep';
@@ -24,6 +26,7 @@ import AssetPlaceholder from '../AssetPlaceholder';
 import calculateRestakeAvailableBalance from '../../../utils/restaking/calculateRestakeAvailableBalance';
 import useNativeRestakeAssetBalance from '../../../data/restake/useNativeRestakeAssetBalance';
 import { NATIVE_ASSET_ID } from '@tangle-network/tangle-shared-ui/constants/restaking';
+import { RestakeAssetId } from '@tangle-network/tangle-shared-ui/types';
 
 type Props = {
   amountError: string | undefined;
@@ -34,6 +37,7 @@ type Props = {
   setValue: UseFormSetValue<DelegationFormFields>;
   watch: UseFormWatch<DelegationFormFields>;
   operatorIdentities?: Record<string, IdentityType | null> | null;
+  assets: Map<RestakeAssetId, RestakeAsset> | null;
 };
 
 const RestakeDelegateInput: FC<Props> = ({
@@ -45,13 +49,17 @@ const RestakeDelegateInput: FC<Props> = ({
   setValue,
   watch,
   operatorIdentities,
+  assets,
 }) => {
   const selectedAssetId = watch('assetId');
   const selectedOperatorAccountId = watch('operatorAccountId');
 
   const { minDelegateAmount } = useRestakeConsts();
-  const selectedAsset = useRestakeAsset(selectedAssetId);
   const nativeAssetBalance = useNativeRestakeAssetBalance();
+
+  const selectedAsset = useMemo(() => {
+    return assets?.get(selectedAssetId) ?? null;
+  }, [assets, selectedAssetId]);
 
   const availableBalance = useMemo(() => {
     if (selectedAssetId === NATIVE_ASSET_ID) {

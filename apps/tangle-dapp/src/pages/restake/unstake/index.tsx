@@ -41,12 +41,17 @@ import RestakeTabs from '../RestakeTabs';
 import SupportedChainModal from '../SupportedChainModal';
 import useSwitchChain from '../useSwitchChain';
 import Details from './Details';
-import useRestakeAssets from '@tangle-network/tangle-shared-ui/data/restake/useRestakeAssets';
 import useNativeRestakeUnstakeTx from '../../../data/restake/useNativeRestakeUnstakeTx';
 import { NATIVE_ASSET_ID } from '@tangle-network/tangle-shared-ui/constants/restaking';
 import { TxStatus } from '@tangle-network/tangle-shared-ui/hooks/useSubstrateTx';
+import { RestakeAssetId } from '@tangle-network/tangle-shared-ui/types';
+import { RestakeAsset } from '@tangle-network/tangle-shared-ui/types/restake';
 
-const RestakeUnstakeForm: FC = () => {
+type RestakeUnstakeFormProps = {
+  assets: Map<RestakeAssetId, RestakeAsset> | null;
+};
+
+const RestakeUnstakeForm: FC<RestakeUnstakeFormProps> = ({ assets }) => {
   const [isUnstakeRequestTableOpen, setIsUnstakeRequestTableOpen] =
     useState(false);
 
@@ -63,7 +68,6 @@ const RestakeUnstakeForm: FC = () => {
 
   const switchChain = useSwitchChain();
   const activeTypedChainId = useActiveTypedChainId();
-  const { assets } = useRestakeAssets();
 
   const {
     status: isOperatorModalOpen,

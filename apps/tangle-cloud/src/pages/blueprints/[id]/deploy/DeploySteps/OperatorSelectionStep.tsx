@@ -81,7 +81,7 @@ export const SelectOperatorsStep: FC<SelectOperatorsStepProps> = ({
 
   const { result: identities } = useIdentities(operatorAddresses);
 
-  const { operatorMap: restakeOperatorMap } = useRestakeOperatorMap();
+  const { result: restakeOperatorMap } = useRestakeOperatorMap();
 
   const operators = useMemo<OperatorSelectionTable[]>(() => {
     const filteredRestakeOperators = Object.entries(restakeOperatorMap).filter(

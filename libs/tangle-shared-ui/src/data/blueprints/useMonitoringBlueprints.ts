@@ -20,7 +20,7 @@ import { SubstrateAddress } from '@tangle-network/ui-components/types/address';
 export default function useMonitoringBlueprints(
   operatorAccountAddress?: SubstrateAddress | null,
 ) {
-  const { operatorMap } = useRestakeOperatorMap();
+  const { result: operatorMap } = useRestakeOperatorMap();
   const { assets } = useRestakeAssets();
   const { operatorTVLByAsset } = useOperatorTVL(operatorMap, assets);
 

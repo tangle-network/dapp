@@ -9,7 +9,6 @@ import type { State } from 'wagmi';
 import { z } from 'zod';
 import BridgeHyperlaneProvider from '../features/bridge/context/BridgeHyperlaneContext/BridgeHyperlaneProvider';
 import BridgeTxQueueProvider from '../features/bridge/context/BridgeTxQueueContext/BridgeTxQueueProvider';
-import PolkadotApiProvider from '@tangle-network/tangle-shared-ui/context/PolkadotApiProvider';
 
 const appEvent = new AppEvent();
 
@@ -48,9 +47,7 @@ const Providers = ({
           blockedCountryCodes={blockedCountryCodes}
         >
           <BridgeHyperlaneProvider>
-            <BridgeTxQueueProvider>
-              <PolkadotApiProvider>{children}</PolkadotApiProvider>
-            </BridgeTxQueueProvider>
+            <BridgeTxQueueProvider>{children}</BridgeTxQueueProvider>
           </BridgeHyperlaneProvider>
         </OFACFilterProvider>
       </WebbProvider>
