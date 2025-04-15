@@ -130,7 +130,10 @@ const useServicesRegisterTx = () => {
 
     const [paymentAssetId, paymentTokenAddress] = isEvmAssetPayment
       ? [BigInt(0), toEvmAddress(context.paymentAsset as EvmAddress)]
-      : [BigInt(context.paymentAsset), toEvmAddress(assertEvmAddress(zeroAddress))];
+      : [
+          BigInt(context.paymentAsset),
+          toEvmAddress(assertEvmAddress(zeroAddress)),
+        ];
 
     return {
       functionName: 'requestService',

@@ -25,35 +25,31 @@ export const AssetConfigurationStep: FC<AssetConfigurationStepProps> = ({
     }));
   }, [assets]);
 
-  const onChangeExposurePercent = useCallback((
-    index: number,
-    assetId: RestakeAssetId,
-    value: number[]
-  ) => {
-    const minExposurePercent = Number(value[0]);
-    const maxExposurePercent = Number(value[1]);
-    setValue(
-      `securityCommitments.${index}.minExposurePercent`,
-      minExposurePercent,
-    );
-    setValue(
-      `securityCommitments.${index}.maxExposurePercent`,
-      maxExposurePercent,
-    );
-  
-    if (
-      assetId === NATIVE_ASSET_ID &&
-      minExposurePercent < minimumNativeSecurityRequirement
-    ) {
-      setError(
+  const onChangeExposurePercent = useCallback(
+    (index: number, assetId: RestakeAssetId, value: number[]) => {
+      const minExposurePercent = Number(value[0]);
+      const maxExposurePercent = Number(value[1]);
+      setValue(
         `securityCommitments.${index}.minExposurePercent`,
-        {
-          message: `Minimum exposure percent must be greater than or equal to ${minimumNativeSecurityRequirement}`,
-        },
+        minExposurePercent,
       );
-    }
-  }, [setValue, setError, minimumNativeSecurityRequirement]);
-  
+      setValue(
+        `securityCommitments.${index}.maxExposurePercent`,
+        maxExposurePercent,
+      );
+
+      if (
+        assetId === NATIVE_ASSET_ID &&
+        minExposurePercent < minimumNativeSecurityRequirement
+      ) {
+        setError(`securityCommitments.${index}.minExposurePercent`, {
+          message: `Minimum exposure percent must be greater than or equal to ${minimumNativeSecurityRequirement}`,
+        });
+      }
+    },
+    [setValue, setError, minimumNativeSecurityRequirement],
+  );
+
   return (
     <Card className="p-6">
       <Typography variant="h5" className="text-mono-200 dark:text-mono-0 mb-4">
@@ -79,7 +75,9 @@ export const AssetConfigurationStep: FC<AssetConfigurationStepProps> = ({
                 assetMetadata={asset}
                 minExposurePercent={minExposurePercentFormValue}
                 maxExposurePercent={maxExposurePercentFormValue}
-                onChangeExposurePercent={(value) => onChangeExposurePercent(index, asset.id, value)}
+                onChangeExposurePercent={(value) =>
+                  onChangeExposurePercent(index, asset.id, value)
+                }
                 minExposurePercentErrorMsg={
                   errors?.securityCommitments?.[index]?.minExposurePercent
                     ?.message

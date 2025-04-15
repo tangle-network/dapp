@@ -168,8 +168,8 @@ export const SelectOperatorsStep: FC<SelectOperatorsStepProps> = ({
                 'details',
                 'status',
                 'deposit',
-                'isFrozen'
-              ])
+                'isFrozen',
+              ]),
             },
           ]
         : selectedAssets.filter(

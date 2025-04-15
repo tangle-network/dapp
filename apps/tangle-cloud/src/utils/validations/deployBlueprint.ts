@@ -168,7 +168,7 @@ export const deployBlueprintSchema = z
       // If approval model is dynamic, `maxApproval` is required
       if (!schema.maxApproval) {
         ctx.addIssue({
-          path: ["maxApproval"],
+          path: ['maxApproval'],
           code: z.ZodIssueCode.custom,
           message: 'Max approval is required for dynamic approval model',
         });
@@ -179,7 +179,7 @@ export const deployBlueprintSchema = z
       // `approvalThreshold` must be less than or equal to the number of operators
       if (schema.minApproval > schema.operators.length) {
         ctx.addIssue({
-          path: ["minApproval"],
+          path: ['minApproval'],
           code: z.ZodIssueCode.custom,
           message: 'Min approval cannot be greater than number of operators',
         });

@@ -13,7 +13,7 @@ export const Deployment: FC<BaseDeployStepProps> = (props) => {
 
   const minimumNativeSecurityRequirement = useMemo(() => {
     return minimumNativeSecurityRequirementResult || 0;
-  }, [minimumNativeSecurityRequirementResult])
+  }, [minimumNativeSecurityRequirementResult]);
 
   return (
     <>

@@ -18,7 +18,7 @@ const useAssets = () => {
         map((entries) => {
           return entries.map(([assetId, assetDetail]) => {
             if (assetDetail.isSome) {
-              const details = assetDetail.unwrap()
+              const details = assetDetail.unwrap();
 
               return {
                 id: assertRestakeAssetId(assetId.args[0].toString()),
