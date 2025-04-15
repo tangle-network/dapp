@@ -30,7 +30,7 @@ export const TotalValueLockedTabs = () => {
   const { result: delegatorInfo } = useRestakeDelegatorInfo();
 
   const address = useActiveAccountAddress();
-  const { operatorMap } = useRestakeOperatorMap();
+  const { result: operatorMap } = useRestakeOperatorMap();
   const rewardConfig = useRestakeRewardConfig();
   const assetTvl = useRestakeAssetsTvl();
 

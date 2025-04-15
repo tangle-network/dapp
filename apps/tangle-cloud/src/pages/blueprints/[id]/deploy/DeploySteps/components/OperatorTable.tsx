@@ -53,7 +53,7 @@ export const OperatorTable: FC<Props> = ({ advanceFilter, ...tableProps }) => {
 
   const { assets } = useRestakeAssets();
 
-  const { operatorMap: restakeOperatorMap } = useRestakeOperatorMap();
+  const { result: restakeOperatorMap } = useRestakeOperatorMap();
 
   const { result: registeredOperators_ } =
     useBlueprintRegisteredOperator(blueprintId);

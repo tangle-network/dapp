@@ -30,7 +30,7 @@ import { toPrimitiveService } from '../blueprints/utils/toPrimitiveService';
 const useBlueprintDetails = (id?: string) => {
   const rpcEndpoint = useNetworkStore((store) => store.network.wsRpcEndpoint);
   const { assets } = useRestakeAssets();
-  const { operatorMap } = useRestakeOperatorMap();
+  const { result: operatorMap } = useRestakeOperatorMap();
   const { result: delegatorInfo } = useRestakeDelegatorInfo();
   const activeSubstrateAddress = useSubstrateAddress(false);
 

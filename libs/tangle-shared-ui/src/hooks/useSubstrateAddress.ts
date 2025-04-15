@@ -20,11 +20,11 @@ import type { SubstrateAddress } from '@tangle-network/ui-components/types/addre
  */
 const useSubstrateAddress = (useSs58Prefix = true): SubstrateAddress | null => {
   const [activeAccount] = useActiveAccount();
-  const { network } = useNetworkStore();
+  const network = useNetworkStore((store) => store.network2);
 
   const substrateAddress = useMemo(() => {
     // Wait for the active account address to be set.
-    if (activeAccount === null) {
+    if (activeAccount === null || network?.ss58Prefix === undefined) {
       return null;
     }
 
@@ -45,7 +45,7 @@ const useSubstrateAddress = (useSs58Prefix = true): SubstrateAddress | null => {
       console.error('Error converting address to Substrate format:', err);
       return null;
     }
-  }, [activeAccount, network.ss58Prefix, useSs58Prefix]);
+  }, [activeAccount, network?.ss58Prefix, useSs58Prefix]);
 
   return substrateAddress;
 };

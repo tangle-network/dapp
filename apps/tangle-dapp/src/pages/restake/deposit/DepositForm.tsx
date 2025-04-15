@@ -2,7 +2,6 @@ import { BN, BN_ZERO } from '@polkadot/util';
 import { PresetTypedChainId } from '@tangle-network/dapp-types';
 import isDefined from '@tangle-network/dapp-types/utils/isDefined';
 import ListModal from '@tangle-network/tangle-shared-ui/components/ListModal';
-import useRestakeAssets from '@tangle-network/tangle-shared-ui/data/restake/useRestakeAssets';
 import { RestakeAsset } from '@tangle-network/tangle-shared-ui/types/restake';
 import { Card, formatBn, isEvmAddress } from '@tangle-network/ui-components';
 import { useModal } from '@tangle-network/ui-components/hooks/useModal';
@@ -20,7 +19,6 @@ import AssetListItem from '../../../components/Lists/AssetListItem';
 import StyleContainer from '../../../components/restaking/StyleContainer';
 import { SUPPORTED_RESTAKE_DEPOSIT_TYPED_CHAIN_IDS } from '../../../constants/restake';
 import useRestakeApi from '../../../data/restake/useRestakeApi';
-import useRestakeAsset from '../../../data/restake/useRestakeAsset';
 import useActiveTypedChainId from '../../../hooks/useActiveTypedChainId';
 import useQueryState from '../../../hooks/useQueryState';
 import { QueryParamKey } from '../../../types';
@@ -32,6 +30,7 @@ import RestakeTabs from '../RestakeTabs';
 import ActionButton from './ActionButton';
 import Details from './Details';
 import SourceChainInput from './SourceChainInput';
+import { RestakeAssetId } from '@tangle-network/tangle-shared-ui/types';
 
 const getDefaultTypedChainId = (
   activeTypedChainId: number | null,
@@ -42,9 +41,18 @@ const getDefaultTypedChainId = (
     : SUPPORTED_RESTAKE_DEPOSIT_TYPED_CHAIN_IDS[0];
 };
 
-type Props = ComponentProps<'form'>;
+type Props = ComponentProps<'form'> & {
+  assets: Map<RestakeAssetId, RestakeAsset> | null;
+  isLoadingAssets: boolean;
+  refetchErc20Balances: () => void;
+};
 
-const DepositForm: FC<Props> = (props) => {
+const DepositForm: FC<Props> = ({
+  assets,
+  isLoadingAssets,
+  refetchErc20Balances,
+  ...props
+}) => {
   const formRef = useRef<HTMLFormElement>(null);
   const activeTypedChainId = useActiveTypedChainId();
 
@@ -62,17 +70,10 @@ const DepositForm: FC<Props> = (props) => {
     },
   });
 
-  const depositAssetId = watch('depositAssetId');
-
   const [vaultIdParam, setVaultIdParam] = useQueryState(
     QueryParamKey.RESTAKE_VAULT,
   );
 
-  const {
-    assets,
-    refetchErc20Balances,
-    isLoading: isLoadingAssets,
-  } = useRestakeAssets();
   const restakeApi = useRestakeApi();
 
   const setValue = useCallback(
@@ -171,7 +172,11 @@ const DepositForm: FC<Props> = (props) => {
     [closeTokenModal, setValue],
   );
 
-  const asset = useRestakeAsset(depositAssetId);
+  const asset = useMemo(() => {
+    return assets?.get(watch('depositAssetId')) ?? null;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [watch('depositAssetId'), assets]);
+
   const isReady = restakeApi !== null && asset !== null && !isSubmitting;
 
   const onSubmit = useCallback<SubmitHandler<DepositFormFields>>(
@@ -216,6 +221,7 @@ const DepositForm: FC<Props> = (props) => {
           <div className="flex flex-col h-full space-y-4 grow">
             <div className="space-y-2">
               <SourceChainInput
+                assets={assets}
                 amountError={errors.amount?.message}
                 openTokenModal={openTokenModal}
                 register={register}

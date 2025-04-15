@@ -4,10 +4,13 @@ import useRestakeAssets from '@tangle-network/tangle-shared-ui/data/restake/useR
 import useRestakeAssetsTvl from '@tangle-network/tangle-shared-ui/data/restake/useRestakeAssetsTvl';
 import useRestakeDelegatorInfo from '@tangle-network/tangle-shared-ui/data/restake/useRestakeDelegatorInfo';
 import { useRestakeVaults } from '@tangle-network/tangle-shared-ui/data/restake/useRestakeVaults';
-import type { OperatorMap } from '@tangle-network/tangle-shared-ui/types/restake';
+import type {
+  OperatorMap,
+  RestakeAsset,
+} from '@tangle-network/tangle-shared-ui/types/restake';
 import { TableAndChartTabs } from '@tangle-network/ui-components/components/TableAndChartTabs';
 import { TabContent } from '@tangle-network/ui-components/components/Tabs/TabContent';
-import { type FC, ReactNode, useCallback, useState } from 'react';
+import { type FC, useCallback, useState } from 'react';
 import {
   useVaultsTableProps,
   VaultsTable,
@@ -19,6 +22,7 @@ import DepositForm from '../../pages/restake/deposit/DepositForm';
 import RestakeUnstakeForm from '../../pages/restake/unstake';
 import RestakeWithdrawForm from '../../pages/restake/withdraw';
 import OperatorsTable from './OperatorsTable';
+import { RestakeAssetId } from '@tangle-network/tangle-shared-ui/types';
 
 enum RestakeTab {
   RESTAKE = 'Restake',
@@ -34,19 +38,6 @@ type Props = {
   action: RestakeAction;
 };
 
-const getFormOfRestakeAction = (action: RestakeAction): ReactNode => {
-  switch (action) {
-    case RestakeAction.DEPOSIT:
-      return <DepositForm />;
-    case RestakeAction.WITHDRAW:
-      return <RestakeWithdrawForm />;
-    case RestakeAction.DELEGATE:
-      return <RestakeDelegateForm />;
-    case RestakeAction.UNDELEGATE:
-      return <RestakeUnstakeForm />;
-  }
-};
-
 const RestakeOverviewTabs: FC<Props> = ({
   operatorConcentration,
   operatorMap,
@@ -54,6 +45,12 @@ const RestakeOverviewTabs: FC<Props> = ({
   action,
 }) => {
   const [tab, setTab] = useState(RestakeTab.RESTAKE);
+
+  const {
+    assets,
+    isLoading: isLoadingAssets,
+    refetchErc20Balances,
+  } = useRestakeAssets();
 
   const handleRestakeClicked = useCallback(() => {
     setTab(RestakeTab.RESTAKE);
@@ -71,11 +68,23 @@ const RestakeOverviewTabs: FC<Props> = ({
         value={RestakeTab.RESTAKE}
         className="flex justify-center md:min-w-[480px] mx-auto"
       >
-        {getFormOfRestakeAction(action)}
+        {action === RestakeAction.DEPOSIT ? (
+          <DepositForm
+            assets={assets}
+            isLoadingAssets={isLoadingAssets}
+            refetchErc20Balances={refetchErc20Balances}
+          />
+        ) : action === RestakeAction.WITHDRAW ? (
+          <RestakeWithdrawForm assets={assets} />
+        ) : action === RestakeAction.DELEGATE ? (
+          <RestakeDelegateForm assets={assets} />
+        ) : action === RestakeAction.UNDELEGATE ? (
+          <RestakeUnstakeForm assets={assets} />
+        ) : null}
       </TabContent>
 
       <TabContent value={RestakeTab.VAULTS}>
-        <VaultTabContent />
+        <VaultTabContent assets={assets} isLoadingAssets={isLoadingAssets} />
       </TabContent>
 
       <TabContent value={RestakeTab.OPERATORS}>
@@ -96,8 +105,12 @@ const RestakeOverviewTabs: FC<Props> = ({
 
 export default RestakeOverviewTabs;
 
-const VaultTabContent = () => {
-  const { assets, isLoading: isLoadingAssets } = useRestakeAssets();
+type VaultTabContentProps = {
+  assets: Map<RestakeAssetId, RestakeAsset> | null;
+  isLoadingAssets: boolean;
+};
+
+const VaultTabContent = ({ assets, isLoadingAssets }: VaultTabContentProps) => {
   const assetsTvl = useRestakeAssetsTvl();
   const { result: delegatorInfo } = useRestakeDelegatorInfo();
 
