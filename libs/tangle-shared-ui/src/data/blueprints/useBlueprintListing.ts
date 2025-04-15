@@ -18,7 +18,7 @@ import {
 import { ServiceInstance } from './utils/type';
 import { toPrimitiveService } from './utils/toPrimitiveService';
 
-export default function useBlueprintListing() {
+const useBlueprintListing = () => {
   const rpcEndpoint = useNetworkStore((store) => store.network.wsRpcEndpoint);
   const { operatorMap } = useRestakeOperatorMap();
   const { assets } = useRestakeAssets();
@@ -118,4 +118,6 @@ export default function useBlueprintListing() {
     ...rest,
     blueprints: result ?? {},
   };
-}
+};
+
+export default useBlueprintListing;

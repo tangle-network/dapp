@@ -10,11 +10,11 @@ import {
   ModalHeader,
 } from '@tangle-network/ui-components';
 import { SubstrateAddress } from '@tangle-network/ui-components/types/address';
-import BlueprintGridItem from '../../components/restaking/BlueprintGridItem';
 import { Search } from '@tangle-network/icons';
 import { Blueprint } from '@tangle-network/tangle-shared-ui/types/blueprint';
 import useOperatorBlueprints from '@tangle-network/tangle-shared-ui/data/blueprints/useOperatorBlueprints';
 import filterBy from '../../utils/filterBy';
+import BlueprintSelectionListbox from './BlueprintSelectionListbox';
 
 type Props = {
   operatorAddress?: SubstrateAddress;
@@ -102,16 +102,11 @@ const SelectBlueprintsModal: FC<Props> = ({
           )}
 
           {!isEmpty ? (
-            <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
-              {filteredBlueprints.map((blueprint) => (
-                <BlueprintGridItem
-                  key={blueprint.blueprintId}
-                  isSelected={localSelection.includes(blueprint.blueprintId)}
-                  onClick={() => handleSelect(blueprint.blueprintId)}
-                  blueprint={blueprint}
-                />
-              ))}
-            </div>
+            <BlueprintSelectionListbox
+              blueprints={filteredBlueprints}
+              selection={localSelection}
+              setSelection={setLocalSelection}
+            />
           ) : (
             <ListStatus
               title="No Blueprints Available"
