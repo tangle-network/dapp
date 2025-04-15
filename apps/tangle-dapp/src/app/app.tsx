@@ -2,7 +2,7 @@
 import '@tangle-network/ui-components/tailwind.css';
 import '../styles.css';
 
-import { Route, Routes } from 'react-router';
+import { Navigate, Route, Routes } from 'react-router';
 import Layout from '../containers/Layout';
 import DashboardPage from '../pages/dashboard';
 import BlueprintsPage from '../pages/blueprints';
@@ -16,9 +16,10 @@ import NominationPage from '../pages/nomination';
 import ValidatorDetailsPage from '../pages/nomination/[validatorAddress]';
 import NominationLayout from '../pages/nomination/layout';
 import NotFoundPage from '../pages/notFound';
-import RestakePage from '../pages/restake';
 import { PagePath } from '../types';
 import Providers from './providers';
+import RestakeTabContent from '../containers/restaking/RestakeTabContent';
+import { RestakeAction, RestakeTab } from '../constants';
 
 function App() {
   return (
@@ -66,12 +67,40 @@ function App() {
               element={<LiquidStakingPage />}
             />
 
-            <Route path={`${PagePath.RESTAKE}`} element={<RestakePage />} />
-
-            <Route
-              path={`${PagePath.RESTAKE}/:action`}
-              element={<RestakePage />}
-            />
+            <Route path={PagePath.RESTAKE}>
+              <Route
+                index
+                element={<Navigate to={PagePath.RESTAKE_DEPOSIT} replace />}
+              />
+              <Route
+                path={PagePath.RESTAKE_DEPOSIT}
+                element={<RestakeTabContent tab={RestakeAction.DEPOSIT} />}
+              />
+              <Route
+                path={PagePath.RESTAKE_DELEGATE}
+                element={<RestakeTabContent tab={RestakeAction.DELEGATE} />}
+              />
+              <Route
+                path={PagePath.RESTAKE_UNDELEGATE}
+                element={<RestakeTabContent tab={RestakeAction.UNDELEGATE} />}
+              />
+              <Route
+                path={PagePath.RESTAKE_WITHDRAW}
+                element={<RestakeTabContent tab={RestakeAction.WITHDRAW} />}
+              />
+              <Route
+                path={PagePath.RESTAKE_VAULT}
+                element={<RestakeTabContent tab={RestakeTab.VAULTS} />}
+              />
+              <Route
+                path={PagePath.RESTAKE_OPERATOR}
+                element={<RestakeTabContent tab={RestakeTab.OPERATORS} />}
+              />
+              <Route
+                path={PagePath.RESTAKE_BLUEPRINT}
+                element={<RestakeTabContent tab={RestakeTab.BLUEPRINTS} />}
+              />
+            </Route>
 
             <Route path="*" element={<NotFoundPage />} />
           </Routes>
