@@ -188,6 +188,7 @@ export function createBlueprintObjects(
         id: blueprintId,
         name: metadata.name,
         author: metadata.author ?? owner,
+        deployer: owner,
         imgUrl: metadata.logo,
         description: metadata.description,
         registrationParams,
@@ -201,6 +202,7 @@ export function createBlueprintObjects(
         email: ownerIdentitiesMap.get(owner)?.email,
         // TODO: Determine `isBoosted` value.
         isBoosted: false,
+        requestParams: registrationParams,
       };
 
       return acc;

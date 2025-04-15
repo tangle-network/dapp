@@ -12,7 +12,7 @@ import NotFoundPage from '../notFound';
 const RestakePage: FC = () => {
   const { action } = useParams();
   const { result: delegatorInfo } = useRestakeDelegatorInfo();
-  const { operatorMap } = useRestakeOperatorMap();
+  const { result: operatorMap } = useRestakeOperatorMap();
 
   const { operatorConcentration, operatorTVL } = useRestakeTVL(
     operatorMap,

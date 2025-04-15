@@ -20,7 +20,7 @@ import { toPrimitiveService } from './utils/toPrimitiveService';
 
 const useBlueprintListing = () => {
   const rpcEndpoint = useNetworkStore((store) => store.network.wsRpcEndpoint);
-  const { operatorMap } = useRestakeOperatorMap();
+  const { result: operatorMap } = useRestakeOperatorMap();
   const { assets } = useRestakeAssets();
   const { operatorTVLByAsset } = useOperatorTVL(operatorMap, assets);
 

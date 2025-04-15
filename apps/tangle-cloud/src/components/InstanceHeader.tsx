@@ -4,9 +4,9 @@ import { FC } from 'react';
 import { twMerge } from 'tailwind-merge';
 
 type Props = {
-  title: string;
-  githubPath?: string;
-  creator: string;
+  title?: string;
+  githubPath?: string | null;
+  creator?: string;
 };
 
 const InstanceHeader: FC<Props> = ({ title, githubPath, creator }) => {
@@ -20,7 +20,10 @@ const InstanceHeader: FC<Props> = ({ title, githubPath, creator }) => {
     >
       <div className="flex flex-col gap-2">
         <Typography variant="h5" className="flex items-center gap-2">
-          {title} <GithubFill size="lg" target="_blank" href={githubPath} />
+          {title}{' '}
+          {githubPath && (
+            <GithubFill size="lg" target="_blank" href={githubPath} />
+          )}
         </Typography>
 
         <Typography variant="body1" className="!text-mono-100">

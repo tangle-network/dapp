@@ -5,17 +5,12 @@ import type {
   PalletMultiAssetDelegationOperatorOperatorStatus,
 } from '@polkadot/types/lookup';
 import isDefined from '@tangle-network/dapp-types/utils/isDefined';
-import { useObservableState } from 'observable-hooks';
-import { useMemo } from 'react';
-import { map, type Observable, of } from 'rxjs';
-import usePolkadotApi from '../../hooks/usePolkadotApi';
+import { useCallback } from 'react';
+import { map } from 'rxjs';
+import useApiRx from '../../hooks/useApiRx';
+import { TangleError, TangleErrorCode } from '../../types/error';
 import { OperatorMap, OperatorMetadata } from '../../types/restake';
 import createRestakeAssetId from '../../utils/createRestakeAssetId';
-
-type ReturnType = {
-  operatorMap: OperatorMap;
-  operatorMap$: Observable<OperatorMap>;
-};
 
 /**
  * Hook to retrieve the operator map for restaking.
@@ -23,52 +18,50 @@ type ReturnType = {
  *  - `operatorMap`: The operator map.
  *  - `operatorMap$`: The observable for the operator map.
  */
-const useRestakeOperatorMap = (): ReturnType => {
-  const { apiRx } = usePolkadotApi();
+const useRestakeOperatorMap = () => {
+  const { result, ...rest } = useApiRx(
+    useCallback((apiRx) => {
+      if (!isDefined(apiRx?.query?.multiAssetDelegation?.operators?.entries))
+        return new TangleError(TangleErrorCode.FEATURE_NOT_SUPPORTED);
 
-  const operatorMap$ = useMemo(() => {
-    if (!isDefined(apiRx.query?.multiAssetDelegation?.operators?.entries))
-      return of<OperatorMap>({});
+      return apiRx.query.multiAssetDelegation.operators.entries().pipe(
+        map((entries) => {
+          return entries.reduce(
+            (operatorsMap, [accountStorage, operatorMetadata]) => {
+              if (operatorMetadata.isNone) return operatorsMap;
 
-    return apiRx.query.multiAssetDelegation.operators.entries().pipe(
-      map((entries) => {
-        return entries.reduce(
-          (operatorsMap, [accountStorage, operatorMetadata]) => {
-            if (operatorMetadata.isNone) return operatorsMap;
+              const accountId = accountStorage.args[0];
+              const operator = operatorMetadata.unwrap();
 
-            const accountId = accountStorage.args[0];
-            const operator = operatorMetadata.unwrap();
+              const { delegations, restakersCount } = toPrimitiveDelegations(
+                operator.delegations,
+              );
 
-            const { delegations, restakersCount } = toPrimitiveDelegations(
-              operator.delegations,
-            );
+              const operatorMetadataPrimitive = {
+                stake: operator.stake.toBigInt(),
+                delegationCount: operator.delegationCount.toNumber(),
+                bondLessRequest: toPrimitiveRequest(operator.request),
+                delegations,
+                restakersCount,
+                status: toPrimitiveStatus(operator.status),
+              } satisfies OperatorMetadata;
 
-            const operatorMetadataPrimitive = {
-              stake: operator.stake.toBigInt(),
-              delegationCount: operator.delegationCount.toNumber(),
-              bondLessRequest: toPrimitiveRequest(operator.request),
-              delegations,
-              restakersCount,
-              status: toPrimitiveStatus(operator.status),
-            } satisfies OperatorMetadata;
-
-            // Object.assign creates a new object, combining existing operatorsMap
-            // with the new operator entry, maintaining immutability in the reduce pattern.
-            return Object.assign(operatorsMap, {
-              [accountId.toString()]: operatorMetadataPrimitive,
-            } satisfies OperatorMap);
-          },
-          {} as OperatorMap,
-        );
-      }),
-    );
-  }, [apiRx.query.multiAssetDelegation?.operators]);
-
-  const operatorMap = useObservableState(operatorMap$, {});
+              // Object.assign creates a new object, combining existing operatorsMap
+              // with the new operator entry, maintaining immutability in the reduce pattern.
+              return Object.assign(operatorsMap, {
+                [accountId.toString()]: operatorMetadataPrimitive,
+              } satisfies OperatorMap);
+            },
+            {} as OperatorMap,
+          );
+        }),
+      );
+    }, []),
+  );
 
   return {
-    operatorMap,
-    operatorMap$,
+    result: result ?? {}, // Return an empty object for API compatibility
+    ...rest,
   };
 };
 

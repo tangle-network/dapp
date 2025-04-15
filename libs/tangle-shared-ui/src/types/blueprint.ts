@@ -1,5 +1,26 @@
 import { TanglePrimitivesServicesFieldFieldType } from '@polkadot/types/lookup';
 
+export const basePrimitiveTypeList = [
+  'Uint8',
+  'Int8',
+  'Uint16',
+  'Int16',
+  'Uint32',
+  'Int32',
+  'Uint64',
+  'Int64',
+  'AccountId',
+  'String',
+  'Bool',
+] as const;
+
+export const primitiveTypeList = [
+  ...basePrimitiveTypeList,
+  'Array',
+  'List',
+  'Struct',
+] as const;
+
 export type PrimitiveFieldType =
   | { Optional: PrimitiveFieldType }
   | { Array: [number, PrimitiveFieldType] }
@@ -50,7 +71,9 @@ export type Blueprint = {
   id: bigint;
   name: string;
   author: string;
+  deployer: string;
   registrationParams: PrimitiveFieldType[];
+  requestParams: PrimitiveFieldType[];
   imgUrl: string | null;
   category: string | null;
   description: string | null;

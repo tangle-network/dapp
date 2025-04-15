@@ -30,7 +30,7 @@ import { toPrimitiveService } from '../blueprints/utils/toPrimitiveService';
 const useBlueprintDetails = (id?: bigint) => {
   const rpcEndpoint = useNetworkStore((store) => store.network.wsRpcEndpoint);
   const { assets } = useRestakeAssets();
-  const { operatorMap } = useRestakeOperatorMap();
+  const { result: operatorMap } = useRestakeOperatorMap();
   const { result: delegatorInfo } = useRestakeDelegatorInfo();
   const activeSubstrateAddress = useSubstrateAddress(false);
 
@@ -78,7 +78,7 @@ const useBlueprintDetails = (id?: bigint) => {
                 blueprintDetails.unwrap();
               const owner = ownerAccount.toString();
 
-              const { metadata, registrationParams } =
+              const { metadata, registrationParams, requestParams } =
                 toPrimitiveBlueprint(serviceBlueprint);
 
               const runningInstancesMap = new Map<bigint, ServiceInstance[]>();
@@ -147,6 +147,8 @@ const useBlueprintDetails = (id?: bigint) => {
                 twitterUrl: info?.twitter ?? null,
                 email: info?.email ?? null,
                 registrationParams,
+                requestParams,
+                deployer: owner,
                 // TODO: Determine `isBoosted` value.
                 isBoosted: false,
               };

@@ -1,4 +1,4 @@
-import { PrimitiveFieldType } from '@tangle-network/tangle-shared-ui/types/blueprint';
+import { PrimitiveFieldType } from '../types/blueprint';
 import { Label } from '@tangle-network/ui-components/components/Label';
 import {
   Select,
@@ -10,7 +10,7 @@ import {
 import { TextField } from '@tangle-network/ui-components/components/TextField';
 import { useEffect } from 'react';
 
-export interface FieldTypeInputProps {
+export interface PrimitiveFieldTypeInputProps {
   fieldType: PrimitiveFieldType;
   label?: string;
   id: string;
@@ -67,7 +67,7 @@ const isTextType = (
 ): type is 'Text' | 'Bytes' | 'AccountId' | 'String' =>
   ['Text', 'Bytes', 'AccountId', 'String'].includes(type);
 
-const FieldTypeInput: React.FC<FieldTypeInputProps> = ({
+const PrimitiveFieldTypeInput: React.FC<PrimitiveFieldTypeInputProps> = ({
   fieldType,
   label,
   id,
@@ -177,7 +177,7 @@ const FieldTypeInput: React.FC<FieldTypeInputProps> = ({
       <div>
         <Label>{label} (Optional)</Label>
 
-        <FieldTypeInput
+        <PrimitiveFieldTypeInput
           id={`${id}.Optional`}
           fieldType={fieldType.Optional}
           value={value?.Optional}
@@ -196,7 +196,7 @@ const FieldTypeInput: React.FC<FieldTypeInputProps> = ({
 
         <div className="space-y-2">
           {Array.from({ length }).map((_, index) => (
-            <FieldTypeInput
+            <PrimitiveFieldTypeInput
               key={`${id}.Array[${index}]`}
               fieldType={elementType}
               id={`${id}.Array[${index}]`}
@@ -235,7 +235,7 @@ const FieldTypeInput: React.FC<FieldTypeInputProps> = ({
             <div key={`${id}.Struct.${idx}`}>
               <Label>Field {idx + 1}</Label>
 
-              <FieldTypeInput
+              <PrimitiveFieldTypeInput
                 fieldType={fieldType}
                 id={`${id}.Struct.${idx}`}
                 value={value?.Struct?.[idx]}
@@ -254,4 +254,4 @@ const FieldTypeInput: React.FC<FieldTypeInputProps> = ({
   return null;
 };
 
-export default FieldTypeInput;
+export default PrimitiveFieldTypeInput;
