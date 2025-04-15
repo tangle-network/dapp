@@ -1,212 +1,96 @@
-import { Label, Input } from '@tangle-network/ui-components';
+import { Card, Typography } from '@tangle-network/ui-components';
 import { Children, FC, useCallback, useMemo } from 'react';
 import { AssetConfigurationStepProps } from './type';
-import {
-  BLUEPRINT_DEPLOY_STEPS,
-  DeployBlueprintSchema,
-} from '../../../../../utils/validations/deployBlueprint';
-import { InstructionSideCard } from './InstructionSideCard';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@tangle-network/ui-components/components/select';
-import useAssetsMetadata from '@tangle-network/tangle-shared-ui/hooks/useAssetsMetadata';
 import assertRestakeAssetId from '@tangle-network/tangle-shared-ui/utils/assertRestakeAssetId';
 import { AssetRequirementFormItem } from './components/AssetRequirementFormItem';
 import ErrorMessage from '../../../../../components/ErrorMessage';
-import { OperatorTable } from './components/OperatorTable';
-import { useWatch } from 'react-hook-form';
+import { RestakeAssetId } from '@tangle-network/tangle-shared-ui/types';
+import { NATIVE_ASSET_ID } from '@tangle-network/tangle-shared-ui/constants/restaking';
 
 export const AssetConfigurationStep: FC<AssetConfigurationStepProps> = ({
-  errors: globalErrors,
+  errors,
   setValue,
   watch,
-  control,
+  setError,
+  minimumNativeSecurityRequirement,
 }) => {
-  const labelClassName = 'text-mono-200 dark:text-mono-0 font-normal';
+  const assets = watch('assets');
+  const securityCommitments = watch('securityCommitments');
 
-  const stepKey = BLUEPRINT_DEPLOY_STEPS.ASSET_CONFIGURATION;
-  const operatorsStepKey = BLUEPRINT_DEPLOY_STEPS.OPERATOR_SELECTION;
-  const values = watch(stepKey);
+  const selectedAssets = useMemo(() => {
+    if (!assets) return [];
+    return assets.map((asset) => ({
+      ...asset,
+      id: assertRestakeAssetId(asset.id),
+    }));
+  }, [assets]);
 
-  const errors = globalErrors?.[stepKey];
+  const onChangeExposurePercent = useCallback(
+    (index: number, assetId: RestakeAssetId, value: number[]) => {
+      const minExposurePercent = Number(value[0]);
+      const maxExposurePercent = Number(value[1]);
+      setValue(
+        `securityCommitments.${index}.minExposurePercent`,
+        minExposurePercent,
+      );
+      setValue(
+        `securityCommitments.${index}.maxExposurePercent`,
+        maxExposurePercent,
+      );
 
-  const approvalModel = values?.approvalModel;
-  const minApprovalThreshold = values?.minApproval?.toString();
-
-  const selectedAssets = useMemo(
-    () =>
-      (watch(`${operatorsStepKey}.assets`) ?? []).map((asset) => ({
-        ...asset,
-        id: assertRestakeAssetId(asset.id),
-      })),
-    [watch(`${operatorsStepKey}.assets`)],
-  );
-
-  const selectedOperators = useWatch({
-    control,
-    name: `${operatorsStepKey}.operators`,
-    defaultValue: [],
-  });
-
-  const { result: assetsMetadata } = useAssetsMetadata(
-    useMemo(() => selectedAssets.map(({ id }) => id), [selectedAssets]),
-  );
-
-  const onChangeApprovalModel = useCallback(
-    (value: DeployBlueprintSchema[typeof stepKey]['approvalModel']) => {
-      let changes = { ...values, approvalModel: value };
-      if (value === 'Dynamic') {
-        changes = {
-          ...changes,
-          maxApproval: selectedOperators.length,
-        };
-      } else {
-        changes = {
-          ...changes,
-          maxApproval: undefined,
-          minApproval: selectedOperators.length,
-        };
+      if (
+        assetId === NATIVE_ASSET_ID &&
+        minExposurePercent < minimumNativeSecurityRequirement
+      ) {
+        setError(`securityCommitments.${index}.minExposurePercent`, {
+          message: `Minimum exposure percent must be greater than or equal to ${minimumNativeSecurityRequirement}`,
+        });
       }
-
-      setValue(stepKey, changes);
     },
-    [stepKey, values, setValue, selectedOperators],
-  );
-
-  const onChangeMinApproval = useCallback(
-    (value: DeployBlueprintSchema[typeof stepKey]['minApproval']) => {
-      setValue(stepKey, {
-        ...values,
-        minApproval: value,
-      });
-    },
-    [stepKey, values, setValue],
+    [setValue, setError, minimumNativeSecurityRequirement],
   );
 
   return (
-    <div className="flex">
-      <div>
-        <InstructionSideCard
-          title="Finalize Deployment"
-          description="After submitting request, operators will need to approve it before the instance deployment begins."
-        />
-      </div>
+    <Card className="p-6">
+      <Typography variant="h5" className="text-mono-200 dark:text-mono-0 mb-4">
+        Asset Requirements
+      </Typography>
+      {errors?.securityCommitments?.message && (
+        <ErrorMessage>{errors?.securityCommitments?.message}</ErrorMessage>
+      )}
+      <hr className="border-mono-80 dark:border-mono-160 mb-6" />
 
-      <div className="w-full pl-8">
-        <Label className={labelClassName}>Asset Requirements:</Label>
-        <div className="mt-5">
-          {Children.toArray(
-            selectedAssets.map(({ id }, index) => {
-              const assetMetadata = assetsMetadata?.get(id);
-              const minExposurePercentFormValue = watch(
-                `${stepKey}.securityCommitments.${index}.minExposurePercent`,
-              )?.toString();
-              const maxExposurePercentFormValue = watch(
-                `${stepKey}.securityCommitments.${index}.maxExposurePercent`,
-              )?.toString();
+      <div className="mt-5">
+        {Children.toArray(
+          selectedAssets.map((asset, index) => {
+            const minExposurePercentFormValue =
+              securityCommitments?.at(index)?.minExposurePercent ?? 1;
+            const maxExposurePercentFormValue =
+              securityCommitments?.at(index)?.maxExposurePercent ?? 100;
 
-              return (
-                <AssetRequirementFormItem
-                  index={index}
-                  assetId={id}
-                  className="mb-8"
-                  assetMetadata={assetMetadata}
-                  minExposurePercent={minExposurePercentFormValue}
-                  onChangeMinExposurePercent={(value) => {
-                    setValue(
-                      `${stepKey}.securityCommitments.${index}.minExposurePercent`,
-                      Number(value),
-                      {
-                        shouldValidate: true,
-                        shouldDirty: true,
-                      },
-                    );
-                  }}
-                  minExposurePercentErrorMsg={
-                    errors?.securityCommitments?.[index]?.minExposurePercent
-                      ?.message
-                  }
-                  maxExposurePercent={maxExposurePercentFormValue}
-                  onChangeMaxExposurePercent={(value) => {
-                    setValue(
-                      `${stepKey}.securityCommitments.${index}.maxExposurePercent`,
-                      Number(value),
-                      {
-                        shouldValidate: true,
-                        shouldDirty: true,
-                      },
-                    );
-                  }}
-                  maxExposurePercentErrorMsg={
-                    errors?.securityCommitments?.[index]?.maxExposurePercent
-                      ?.message
-                  }
-                />
-              );
-            }),
-          )}
-        </div>
-
-        <div className="mt-5 flex gap-4">
-          <div className="w-1/2">
-            <Label className={labelClassName}>Approval Model:</Label>
-            <Select value={approvalModel} onValueChange={onChangeApprovalModel}>
-              <SelectTrigger>
-                <SelectValue
-                  className="text-[16px] leading-[30px]"
-                  placeholder="Select an approval model"
-                />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="Fixed">
-                  Require all operators to approve
-                </SelectItem>
-                <SelectItem value="Dynamic">
-                  Minimum required approvals
-                </SelectItem>
-              </SelectContent>
-            </Select>
-            {globalErrors?.[stepKey]?.approvalModel?.message && (
-              <ErrorMessage>
-                {globalErrors?.[stepKey]?.approvalModel?.message}
-              </ErrorMessage>
-            )}
-          </div>
-
-          {approvalModel === 'Dynamic' && (
-            <div className="w-1/2">
-              <Label className={labelClassName}>Approval Threshold:</Label>
-              <Input
-                value={minApprovalThreshold}
-                onChange={(nextValue) => onChangeMinApproval(Number(nextValue))}
-                isControlled
-                type="number"
-                id="approval-threshold"
+            return (
+              <AssetRequirementFormItem
+                assetId={asset.id}
+                className="mb-8"
+                assetMetadata={asset}
+                minExposurePercent={minExposurePercentFormValue}
+                maxExposurePercent={maxExposurePercentFormValue}
+                onChangeExposurePercent={(value) =>
+                  onChangeExposurePercent(index, asset.id, value)
+                }
+                minExposurePercentErrorMsg={
+                  errors?.securityCommitments?.[index]?.minExposurePercent
+                    ?.message
+                }
+                maxExposurePercentErrorMsg={
+                  errors?.securityCommitments?.[index]?.maxExposurePercent
+                    ?.message
+                }
               />
-              {globalErrors?.[stepKey]?.minApproval?.message && (
-                <ErrorMessage>
-                  {globalErrors?.[stepKey]?.minApproval?.message}
-                </ErrorMessage>
-              )}
-            </div>
-          )}
-        </div>
-
-        <div className="mt-5">
-          <Label className={labelClassName}>Selected Operators:</Label>
-          <OperatorTable
-            advanceFilter={(row) => {
-              return watch(`${operatorsStepKey}.operators`).includes(
-                row.address,
-              );
-            }}
-          />
-        </div>
+            );
+          }),
+        )}
       </div>
-    </div>
+    </Card>
   );
 };

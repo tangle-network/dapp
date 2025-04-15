@@ -3,7 +3,7 @@ import pluralize from '@tangle-network/ui-components/utils/pluralize';
 import { FC, useCallback } from 'react';
 
 import DetailItem from './DetailItem';
-import useApi from '../../../hooks/useApi';
+import useApi from '@tangle-network/tangle-shared-ui/hooks/useApi';
 
 type UnstakePeriod = {
   value: number;

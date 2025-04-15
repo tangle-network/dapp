@@ -1,23 +1,37 @@
 import { DeployBlueprintSchema } from '../../../../../utils/validations/deployBlueprint';
-import { FieldErrors, UseFormSetValue, UseFormWatch } from 'react-hook-form';
+import {
+  FieldErrors,
+  UseFormSetError,
+  UseFormSetValue,
+  UseFormWatch,
+} from 'react-hook-form';
 import { Blueprint } from '@tangle-network/tangle-shared-ui/types/blueprint';
 import { SubstrateAddress } from '@tangle-network/ui-components/types/address';
 import { VaultToken } from '@tangle-network/tangle-shared-ui/types';
-import { Control } from 'react-hook-form';
+
+export const LabelClassName = 'text-mono-200 dark:text-mono-0 font-medium';
 
 export type BaseDeployStepProps = {
   errors?: FieldErrors<DeployBlueprintSchema>;
   setValue: UseFormSetValue<DeployBlueprintSchema>;
   watch: UseFormWatch<DeployBlueprintSchema>;
   blueprint?: Blueprint;
-  control: Control<DeployBlueprintSchema>;
+  setError: UseFormSetError<DeployBlueprintSchema>;
 };
 
 export type BasicInformationStepProps = BaseDeployStepProps;
 
-export type SelectOperatorsStepProps = BaseDeployStepProps;
+export type SelectOperatorsStepProps = BaseDeployStepProps & {
+  minimumNativeSecurityRequirement: number;
+};
 
-export type AssetConfigurationStepProps = BaseDeployStepProps;
+export type AssetConfigurationStepProps = BaseDeployStepProps & {
+  minimumNativeSecurityRequirement: number;
+};
+
+export type RequestArgsConfigurationStepProps = BaseDeployStepProps;
+
+export type PaymentStepProps = BaseDeployStepProps;
 
 export type OperatorSelectionTable = {
   address: SubstrateAddress;
@@ -29,3 +43,11 @@ export type OperatorSelectionTable = {
   vaultTokens?: VaultToken[];
   pricing?: number;
 };
+
+export const ApprovalModelLabel: Record<
+  DeployBlueprintSchema['approvalModel'],
+  string
+> = {
+  Fixed: 'Require all operators to approve',
+  Dynamic: 'Minimum required approvals',
+} as const;
