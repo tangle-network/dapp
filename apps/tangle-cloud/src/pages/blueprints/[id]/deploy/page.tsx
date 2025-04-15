@@ -49,6 +49,7 @@ const DeployPage: FC = () => {
     clearErrors,
   } = useForm<DeployBlueprintSchema>({
     mode: 'onChange',
+    // @ts-expect-error Two different types with this name exist, but they are unrelated.
     resolver: zodResolver(deployBlueprintSchema),
   });
 

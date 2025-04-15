@@ -21,7 +21,7 @@ const BlueprintHeader: FC<BlueprintHeaderProps> = ({
   enableDeploy,
   enableRegister,
   registerBtnProps,
-  deployBtnProps
+  deployBtnProps,
 }) => {
   const {
     isBoosted,
@@ -106,20 +106,14 @@ const BlueprintHeader: FC<BlueprintHeaderProps> = ({
                   {/* <ExternalLinkIcon href /> */}
                 </div>
               </div>
-              <div className='flex gap-2'>
+              <div className="flex gap-2">
                 {enableDeploy && (
-                  <Button 
-                    variant='primary'
-                    {...deployBtnProps}
-                  >
+                  <Button variant="primary" {...deployBtnProps}>
                     Deploy
                   </Button>
                 )}
                 {enableRegister && (
-                  <Button 
-                    variant='secondary' 
-                    {...registerBtnProps}
-                  >
+                  <Button variant="secondary" {...registerBtnProps}>
                     Register
                   </Button>
                 )}

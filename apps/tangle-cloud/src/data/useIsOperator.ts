@@ -11,11 +11,11 @@ export const useIsOperator = () => {
 
   const isOperator = useMemo(() => {
     if (!address || !isSubstrateAddress(address.toString())) {
-      return false
+      return false;
     }
-  
-    return true
-  }, [address])
+
+    return true;
+  }, [address]);
 
   return isOperator;
-}
+};

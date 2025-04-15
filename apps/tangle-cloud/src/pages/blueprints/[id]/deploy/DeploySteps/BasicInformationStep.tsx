@@ -152,9 +152,7 @@ export const BasicInformationStep: FC<BasicInformationStepProps> = ({
             onClick={() => {
               const newPermittedCaller = permittedCallers ?? [];
               newPermittedCaller.push('');
-              /**
-               * @dev adding empty string to render the input field
-               */
+              // adding empty string to render the input field
               setValue(`permittedCallers`, newPermittedCaller);
             }}
             className="mt-4"

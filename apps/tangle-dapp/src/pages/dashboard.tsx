@@ -1,24 +1,59 @@
+import useRestakeAssets from '@tangle-network/tangle-shared-ui/data/restake/useRestakeAssets';
+import useRestakeAssetsTvl from '@tangle-network/tangle-shared-ui/data/restake/useRestakeAssetsTvl';
+import useRestakeDelegatorInfo from '@tangle-network/tangle-shared-ui/data/restake/useRestakeDelegatorInfo';
+import { useRestakeVaults } from '@tangle-network/tangle-shared-ui/data/restake/useRestakeVaults';
 import { Typography } from '@tangle-network/ui-components/typography/Typography/Typography';
 import { FC } from 'react';
-
 import AccountSummaryCard from '../components/account/AccountSummaryCard';
-import PromotionalBanner from '../components/account/PromotionalBanner';
-import VaultsOverview from '../containers/restaking/VaultsOverview';
+import { ProtocolStatisticCard } from '../components/account/ProtocolStatisticCard';
+import { VaultsTable, useVaultsTableProps } from '../components/tables/Vaults';
+import VaultsHightlightCard from '../components/account/ProtocolStatisticCard/VaultsHightlightCard';
 
 const DashboardPage: FC = () => {
+  const { assets, isLoading: isLoadingAssets } = useRestakeAssets();
+
+  const assetsTvl = useRestakeAssetsTvl();
+
+  const { result: delegatorInfo } = useRestakeDelegatorInfo();
+
+  const vaults = useRestakeVaults({
+    assets,
+    delegatorInfo,
+    assetsTvl,
+  });
+
+  const tableProps = useVaultsTableProps({
+    delegatorDeposits: delegatorInfo?.deposits,
+    assets,
+  });
+
   return (
     <div className="flex flex-col gap-5">
-      <div className="flex flex-col gap-6 lg:flex-row">
-        <AccountSummaryCard className="flex-1 md:max-w-none" />
+      <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
+        <AccountSummaryCard className="md:max-w-none" />
 
-        <PromotionalBanner className="flex-1" />
+        <ProtocolStatisticCard
+          isLoadingAssets={isLoadingAssets}
+          assets={assets}
+          assetsTvl={assetsTvl}
+        >
+          <VaultsHightlightCard
+            className="grow max-w-56 hidden sm:block lg:hidden xl:block"
+            vaults={vaults}
+            isLoading={isLoadingAssets}
+          />
+        </ProtocolStatisticCard>
       </div>
 
       <Typography variant="h4" fw="bold">
         Restake Vaults
       </Typography>
 
-      <VaultsOverview />
+      <VaultsTable
+        data={vaults}
+        tableProps={tableProps}
+        isLoading={isLoadingAssets}
+      />
     </div>
   );
 };

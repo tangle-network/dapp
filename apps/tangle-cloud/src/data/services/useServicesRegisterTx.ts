@@ -1,3 +1,4 @@
+import optimizeTxBatch from '@tangle-network/tangle-shared-ui/utils/optimizeTxBatch';
 import { SUCCESS_MESSAGES } from '../../hooks/useTxNotification';
 import { useCallback } from 'react';
 
@@ -32,11 +33,7 @@ const useServicesRegisterTx = () => {
         );
       });
 
-      if (registerTx.length > 1) {
-        return api.tx.utility.batch(registerTx);
-      }
-
-      return registerTx[0];
+      return optimizeTxBatch(api, registerTx);
     },
     [],
   );

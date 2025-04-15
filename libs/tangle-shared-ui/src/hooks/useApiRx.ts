@@ -4,9 +4,8 @@ import { ApiRx } from '@polkadot/api';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { catchError, EMPTY, Observable } from 'rxjs';
 import useNetworkStore from '../context/useNetworkStore';
-import usePromise from './usePromise';
-import { getApiRx } from '../utils/polkadot/api';
 import ensureError from '../utils/ensureError';
+import { useApiRxQuery } from './useApiRxQuery';
 
 export type ObservableFactory<T> = (api: ApiRx) => Observable<T> | Error | null;
 
@@ -33,19 +32,12 @@ const useApiRx = <T>(factory: ObservableFactory<T>) => {
   const [result, setResult] = useState<T | null>(null);
   const [isLoading, setLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
+
   const isMountedRef = useRef(true);
+
   const rpcEndpoint = useNetworkStore((store) => store.network2?.wsRpcEndpoint);
 
-  const { result: apiRx } = usePromise(
-    useCallback(async () => {
-      if (rpcEndpoint === undefined) {
-        return null;
-      }
-
-      return await getApiRx(rpcEndpoint);
-    }, [rpcEndpoint]),
-    null,
-  );
+  const { data: apiRx = null } = useApiRxQuery(rpcEndpoint);
 
   const reset = useCallback(() => {
     setLoading(true);

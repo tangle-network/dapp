@@ -303,7 +303,7 @@ export const LeaderboardTable = () => {
 
   return (
     <Card className="space-y-6 !bg-transparent !border-transparent p-0">
-      <div className="flex items-center justify-between gap-4">
+      <div className="flex items-center justify-between flex-wrap sm:flex-nowrap gap-4">
         {/* <TabsRoot
               className="max-w-xs flex-auto"
               value={networkTab}
@@ -416,6 +416,7 @@ export const LeaderboardTable = () => {
               'dark:bg-mono-200',
               'peer-[&[data-expanded="true"]:hover]:bg-mono-20',
               'peer-[&[data-expanded="true"]:hover]:dark:bg-mono-190',
+              'peer-[&[data-expanded="true"]]:animate-slide-down',
             )}
             onRowClick={(row) => {
               table.resetExpanded();

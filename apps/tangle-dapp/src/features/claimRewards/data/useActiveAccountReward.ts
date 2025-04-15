@@ -58,7 +58,12 @@ export default function useActiveAccountReward() {
     }
 
     return assetIds.reduce((acc, current, idx) => {
-      const resp = rewardsResponse[idx];
+      const resp = rewardsResponse.at(idx);
+
+      if (resp === undefined) {
+        logger.error(`Failed to fetch rewards for asset ${current}`);
+        return acc;
+      }
 
       if ('error' in resp) {
         logger.error(`Failed to fetch rewards for asset ${current}`, resp);

@@ -9,7 +9,7 @@ const useServiceMinimumNativeSecurityRequirement = () => {
   );
 
   return {
-    result: result ?? 0,
+    result: result ?? undefined,
     ...rest,
   };
 };

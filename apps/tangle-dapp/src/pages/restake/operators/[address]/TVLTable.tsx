@@ -1,10 +1,15 @@
+import useRestakeAssets from '@tangle-network/tangle-shared-ui/data/restake/useRestakeAssets';
+import useRestakeAssetsTvl from '@tangle-network/tangle-shared-ui/data/restake/useRestakeAssetsTvl';
+import { useRestakeVaults } from '@tangle-network/tangle-shared-ui/data/restake/useRestakeVaults';
 import type {
   DelegatorInfo,
   OperatorMetadata,
 } from '@tangle-network/tangle-shared-ui/types/restake';
 import { type FC } from 'react';
-import VaultsTable from '../../../../components/tables/Vaults';
-import useVaultTableData from '../../../../hooks/useVaultTableData';
+import {
+  VaultsTable,
+  useVaultsTableProps,
+} from '../../../../components/tables/Vaults';
 
 type Props = {
   operatorData: OperatorMetadata | undefined;
@@ -12,13 +17,24 @@ type Props = {
 };
 
 const TVLTable: FC<Props> = ({ operatorData, delegatorInfo }) => {
-  const { vaults, tableProps } = useVaultTableData({
-    operatorData,
+  const { assets, isLoading } = useRestakeAssets();
+  const assetsTvl = useRestakeAssetsTvl();
+
+  const vaults = useRestakeVaults({
+    assets,
     delegatorInfo,
+    assetsTvl,
+    operatorData,
+  });
+
+  const tableProps = useVaultsTableProps({
+    delegatorDeposits: delegatorInfo?.deposits,
+    assets,
   });
 
   return (
     <VaultsTable
+      isLoading={isLoading}
       emptyTableProps={{
         title: 'No TVL data available',
         description:

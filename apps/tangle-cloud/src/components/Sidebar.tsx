@@ -29,7 +29,6 @@ import { useLocation } from 'react-router';
 import { PagePath } from '../types';
 import { HomeFillIcon, UserLineIcon } from '@tangle-network/icons';
 // import { twMerge } from 'tailwind-merge';
-// import cx from 'classnames';
 
 type Props = {
   isExpandedByDefault?: boolean;

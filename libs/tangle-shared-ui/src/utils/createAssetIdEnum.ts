@@ -10,7 +10,7 @@ export type AssetIdEnum =
       Erc20: EvmAddress;
     };
 
-const createAssetIdEnum = (assetId: RestakeAssetId | string): AssetIdEnum => {
+const createAssetIdEnum = (assetId: RestakeAssetId): AssetIdEnum => {
   return isEvmAddress(assetId)
     ? { Erc20: assetId }
     : { Custom: BigInt(assetId) };

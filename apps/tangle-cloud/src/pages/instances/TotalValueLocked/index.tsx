@@ -6,7 +6,6 @@ import { TotalValueLockedTable } from './TotalValueLockedTable';
 import useRestakeDelegatorInfo from '@tangle-network/tangle-shared-ui/data/restake/useRestakeDelegatorInfo';
 import useRestakeRewardConfig from '@tangle-network/tangle-shared-ui/hooks/useRestakeRewardConfig';
 import useRestakeAssetsTvl from '@tangle-network/tangle-shared-ui/data/restake/useRestakeAssetsTvl';
-import useVaultRewards from '@tangle-network/tangle-shared-ui/data/rewards/useVaultRewards';
 import { RestakeAssetId } from '@tangle-network/tangle-shared-ui/types';
 import useRestakeOperatorMap from '@tangle-network/tangle-shared-ui/data/restake/useRestakeOperatorMap';
 import useActiveAccountAddress from '@tangle-network/tangle-shared-ui/hooks/useActiveAccountAddress';
@@ -14,7 +13,7 @@ import { BN } from '@polkadot/util';
 import VaultAssetsTable from '@tangle-network/tangle-shared-ui/components/tables/VaultAssets';
 import { VaultAssetData } from '@tangle-network/tangle-shared-ui/components/tables/VaultAssets/types';
 import useRestakeAssets from '@tangle-network/tangle-shared-ui/data/restake/useRestakeAssets';
-import createVaultMap from '@tangle-network/tangle-shared-ui/utils/createVaultMap';
+import { createVaultMap } from '@tangle-network/tangle-shared-ui/data/restake/useRestakeVaults';
 
 enum TotalValueLockedTab {
   TVL = 'Total Value Locked',
@@ -28,12 +27,11 @@ export const TotalValueLockedTabs = () => {
   const [selectedTab, setSelectedTab] = useState(TotalValueLockedTab.TVL);
 
   const { assets } = useRestakeAssets();
-  const { delegatorInfo } = useRestakeDelegatorInfo();
+  const { result: delegatorInfo } = useRestakeDelegatorInfo();
 
   const address = useActiveAccountAddress();
   const { operatorMap } = useRestakeOperatorMap();
   const rewardConfig = useRestakeRewardConfig();
-  const { result: vaultsRewards } = useVaultRewards();
   const assetTvl = useRestakeAssetsTvl();
 
   const operatorData = useMemo(() => {
@@ -53,7 +51,6 @@ export const TotalValueLockedTabs = () => {
         assets: Array.from(assets.values()),
         rewardConfig,
         delegatorInfo,
-        vaultsRewards,
         assetTvl,
       })
         .values()
@@ -78,19 +75,11 @@ export const TotalValueLockedTabs = () => {
       assets: operatorAssets,
       rewardConfig,
       delegatorInfo,
-      vaultsRewards,
       assetTvl,
     })
       .values()
       .toArray();
-  }, [
-    assetTvl,
-    assets,
-    delegatorInfo,
-    operatorData,
-    rewardConfig,
-    vaultsRewards,
-  ]);
+  }, [assetTvl, assets, delegatorInfo, operatorData, rewardConfig]);
 
   return (
     <TableAndChartTabs
@@ -138,10 +127,9 @@ export const TotalValueLockedTabs = () => {
                     metadata: { decimals, symbol, name },
                     balance,
                   }) => {
-                    const tvl = assetTvl?.get(assetId) ?? null;
                     const available = balance ?? null;
 
-                    const totalDeposits =
+                    const deposited =
                       typeof delegatorInfo?.deposits[assetId]?.amount ===
                       'bigint'
                         ? new BN(
@@ -154,9 +142,8 @@ export const TotalValueLockedTabs = () => {
                       name,
                       symbol,
                       decimals,
-                      tvl,
                       available,
-                      totalDeposits,
+                      deposited,
                     } satisfies VaultAssetData;
                   },
                 );

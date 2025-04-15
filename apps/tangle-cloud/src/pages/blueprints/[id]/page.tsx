@@ -74,15 +74,15 @@ const Page = () => {
         enableRegister
         deployBtnProps={{
           onClick: (e) => {
-            e.preventDefault()
+            e.preventDefault();
             navigate(PagePath.BLUEPRINTS_DEPLOY.replace(':id', id ?? ''));
           },
         }}
         registerBtnProps={{
-          onClick:(e) => {
+          onClick: (e) => {
             e.preventDefault();
             setIsPricingModalOpen(true);
-          }
+          },
         }}
       />
 

@@ -3,7 +3,6 @@ import { ArrowDownIcon } from '@radix-ui/react-icons';
 import { Button, Card } from '@tangle-network/ui-components';
 import { EMPTY_VALUE_PLACEHOLDER } from '@tangle-network/ui-components/constants';
 import { FC, useCallback, useEffect, useMemo, useRef, useState } from 'react';
-
 import {
   LsPool,
   LsPoolDisplayName,
@@ -12,7 +11,7 @@ import useLsPoolUnbondTx from '../../../data/liquidStaking/tangle/useLsPoolUnbon
 import useLsExchangeRate from '../../../data/liquidStaking/useLsExchangeRate';
 import useLsMyPools from '../../../data/liquidStaking/useLsMyPools';
 import { useLsStore } from '../../../data/liquidStaking/useLsStore';
-import useIsAccountConnected from '../../../hooks/useIsAccountConnected';
+import useIsAccountConnected from '@tangle-network/tangle-shared-ui/hooks/useIsAccountConnected';
 import { TxStatus } from '@tangle-network/tangle-shared-ui/hooks/useSubstrateTx';
 import ExchangeRateDetailItem from './ExchangeRateDetailItem';
 import LsAgnosticBalance from './LsAgnosticBalance';

@@ -19,7 +19,7 @@ import { TableStatusProps } from '@tangle-network/tangle-shared-ui/components/ta
 import { ChevronDown } from '@tangle-network/icons';
 import pluralize from '@tangle-network/ui-components/utils/pluralize';
 import { TangleCloudTable } from '../../../components/tangleCloudTable';
-import type { RestakeVault } from '@tangle-network/tangle-shared-ui/utils/createVaultMap';
+import type { RestakeVault } from '@tangle-network/tangle-shared-ui/data/restake/useRestakeVaults';
 import TableCellWrapper from '@tangle-network/tangle-shared-ui/components/tables/TableCellWrapper';
 import LsTokenIcon from '@tangle-network/tangle-shared-ui/components/LsTokenIcon';
 import calculateBnRatio from '@tangle-network/ui-components/utils/calculateBnRatio';
@@ -73,27 +73,6 @@ const getColumns = (nativeTokenSymbol: string) => [
             );
 
       return <TableCellWrapper>{fmtDeposits}</TableCellWrapper>;
-    },
-  }),
-  COLUMN_HELPER.accessor('reward', {
-    sortUndefined: 'last',
-    header: () => 'Rewards',
-    cell: (props) => {
-      const value = props.getValue();
-      const fmtRewards =
-        value === undefined
-          ? EMPTY_VALUE_PLACEHOLDER
-          : formatDisplayAmount(
-              value,
-              props.row.original.decimals,
-              AmountFormatStyle.SHORT,
-            );
-
-      return (
-        <TableCellWrapper removeRightBorder>
-          {fmtRewards} {nativeTokenSymbol}
-        </TableCellWrapper>
-      );
     },
   }),
   COLUMN_HELPER.accessor('tvl', {
@@ -221,7 +200,7 @@ export const TotalValueLockedTable: FC<Props> = ({
     getPaginationRowModel: getPaginationRowModel(),
     getExpandedRowModel: getExpandedRowModel(),
     getSortedRowModel: getSortedRowModel(),
-    getRowCanExpand: (row) => row.original.tokenCount > 0,
+    getRowCanExpand: (row) => row.original.assetMetadata.length > 0,
     autoResetPageIndex: false,
     enableSortingRemoval: false,
   });

@@ -1,4 +1,4 @@
-import { ChainIcon, StatusIndicator } from '@tangle-network/icons';
+import { ChainIcon, Spinner, StatusIndicator } from '@tangle-network/icons';
 import {
   DropdownMenuItem,
   InfoIconWithTooltip,
@@ -6,25 +6,29 @@ import {
 } from '@tangle-network/ui-components';
 import {
   Network,
+  NetworkId,
   TANGLE_LOCAL_DEV_NETWORK,
   TANGLE_MAINNET_NETWORK,
   TANGLE_TESTNET_NATIVE_NETWORK,
 } from '@tangle-network/ui-components/constants/networks';
-import { FC, ReactNode, useCallback } from 'react';
+import { FC, ReactElement, ReactNode } from 'react';
 
 import CustomRpcEndpointInput from './CustomRpcEndpointInput';
+import { GearIcon } from '@radix-ui/react-icons';
 
 export type NetworkSelectorDropdownProps = {
-  selectedNetwork: Network | null;
+  selectedNetwork: Network | undefined;
   isCustomEndpointSelected: boolean;
+  switchingNetworkId: NetworkId | null | 'custom';
   onSetCustomNetwork: (customRpcEndpoint: string) => void;
-  onNetworkChange: (network: Network) => void;
+  onNetworkChange: (network: Network, event: Event) => void;
   isNotConnectedToSelectedNetwork: boolean;
 };
 
 export const NetworkSelectorDropdown: FC<NetworkSelectorDropdownProps> = ({
   selectedNetwork,
   isCustomEndpointSelected,
+  switchingNetworkId,
   onSetCustomNetwork,
   onNetworkChange,
   isNotConnectedToSelectedNetwork,
@@ -33,17 +37,21 @@ export const NetworkSelectorDropdown: FC<NetworkSelectorDropdownProps> = ({
     <div className="flex flex-col items-center justify-between">
       {/* Tangle Mainnet */}
       <NetworkOption
+        isSwitching={switchingNetworkId === TANGLE_MAINNET_NETWORK.id}
         isSelected={selectedNetwork?.id === TANGLE_MAINNET_NETWORK.id}
         name={TANGLE_MAINNET_NETWORK.name}
-        onClick={() => onNetworkChange(TANGLE_MAINNET_NETWORK)}
+        onSelect={(event) => onNetworkChange(TANGLE_MAINNET_NETWORK, event)}
         isNotConnected={isNotConnectedToSelectedNetwork}
       />
 
       {/* Tangle Testnet */}
       <NetworkOption
+        isSwitching={switchingNetworkId === TANGLE_TESTNET_NATIVE_NETWORK.id}
         isSelected={selectedNetwork?.id === TANGLE_TESTNET_NATIVE_NETWORK.id}
         name={TANGLE_TESTNET_NATIVE_NETWORK.name}
-        onClick={() => onNetworkChange(TANGLE_TESTNET_NATIVE_NETWORK)}
+        onSelect={(event) =>
+          onNetworkChange(TANGLE_TESTNET_NATIVE_NETWORK, event)
+        }
         isNotConnected={isNotConnectedToSelectedNetwork}
       />
 
@@ -51,16 +59,19 @@ export const NetworkSelectorDropdown: FC<NetworkSelectorDropdownProps> = ({
 
       {/* Tangle Local Dev */}
       <NetworkOption
+        isSwitching={switchingNetworkId === TANGLE_LOCAL_DEV_NETWORK.id}
         isSelected={selectedNetwork?.id === TANGLE_LOCAL_DEV_NETWORK.id}
         name={TANGLE_LOCAL_DEV_NETWORK.name}
-        onClick={() => onNetworkChange(TANGLE_LOCAL_DEV_NETWORK)}
+        onSelect={(event) => onNetworkChange(TANGLE_LOCAL_DEV_NETWORK, event)}
         isNotConnected={isNotConnectedToSelectedNetwork}
       />
 
       {/* Custom network */}
       <NetworkOption
+        isSwitching={switchingNetworkId === 'custom'}
         isSelected={isCustomEndpointSelected}
         name="Custom endpoint"
+        icon={<GearIcon className="size-6" />}
         tooltip="Connect to a custom network by specifying its RPC endpoint URL"
         isNotConnected={isNotConnectedToSelectedNetwork}
       />
@@ -79,30 +90,33 @@ export const NetworkSelectorDropdown: FC<NetworkSelectorDropdownProps> = ({
 type NetworkOptionProps = {
   name: string;
   isSelected: boolean;
+  isSwitching: boolean;
   isNotConnected: boolean;
+  icon?: ReactElement;
   tooltip?: ReactNode;
-  onClick?: () => void;
+  onSelect?: (event: Event) => void;
 };
 
 const NetworkOption: FC<NetworkOptionProps> = ({
   name,
   isSelected,
+  isSwitching,
   isNotConnected,
+  icon,
   tooltip,
-  onClick,
+  onSelect,
 }) => {
-  const handleClick = useCallback(() => {
-    if (isSelected || onClick === undefined) {
-      return;
-    }
-
-    onClick();
-  }, [isSelected, onClick]);
-
   return (
     <DropdownMenuItem
-      leftIcon={<ChainIcon size="lg" name={name} />}
-      onClick={handleClick}
+      leftIcon={
+        isSwitching ? (
+          <Spinner size="lg" />
+        ) : (
+          (icon ?? <ChainIcon size="lg" name={name} />)
+        )
+      }
+      onSelect={onSelect}
+      disabled={isSelected}
       className="flex justify-between w-full py-3"
     >
       <div className="flex items-center justify-between">

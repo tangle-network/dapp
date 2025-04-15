@@ -16,6 +16,7 @@ import { RestakeAssetId } from '@tangle-network/tangle-shared-ui/types';
 import { EvmTxFactory } from '@tangle-network/tangle-shared-ui/hooks/useEvmPrecompileCall';
 import { Hash, zeroAddress } from 'viem';
 import {
+  assertEvmAddress,
   isEvmAddress,
   toEvmAddress,
   toSubstrateAddress,
@@ -35,7 +36,7 @@ export type Context = {
   }>;
   assets: RestakeAssetId[];
   ttl: bigint;
-  paymentAsset: string;
+  paymentAsset: RestakeAssetId;
   paymentValue: bigint;
   membershipModel: 'Fixed' | 'Dynamic';
   minOperator: number;
@@ -128,8 +129,11 @@ const useServicesRegisterTx = () => {
     const isEvmAssetPayment = isEvmAddress(context.paymentAsset);
 
     const [paymentAssetId, paymentTokenAddress] = isEvmAssetPayment
-      ? [BigInt(0), toEvmAddress(context.paymentAsset)]
-      : [BigInt(context.paymentAsset), toEvmAddress(zeroAddress)];
+      ? [BigInt(0), toEvmAddress(context.paymentAsset as EvmAddress)]
+      : [
+          BigInt(context.paymentAsset),
+          toEvmAddress(assertEvmAddress(zeroAddress)),
+        ];
 
     return {
       functionName: 'requestService',
