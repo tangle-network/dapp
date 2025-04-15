@@ -1,10 +1,10 @@
-# .husky/pre-commit
+# .husky/pre-push
 
 echo "*****Running linting & formatting******"
-yarn concurrently "yarn run lint" "yarn run format:check"
+yarn concurrently "yarn run lint --verbose false" "yarn run format:check"
 
 echo "*****Running testing******"
-yarn run test
+yarn run test --verbose false
 
 echo "*****Running building******"
-yarn run build
+yarn run build --verbose false
