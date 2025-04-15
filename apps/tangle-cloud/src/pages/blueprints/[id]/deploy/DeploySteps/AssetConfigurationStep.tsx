@@ -43,6 +43,7 @@ export const AssetConfigurationStep: FC<AssetConfigurationStepProps> = ({
         ...asset,
         id: assertRestakeAssetId(asset.id),
       })),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [watch(`${operatorsStepKey}.assets`)],
   );
 

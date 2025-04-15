@@ -41,13 +41,16 @@ const DeployPage: FC = () => {
     resolver: zodResolver(deployBlueprintSchema),
   });
 
-  const commonProps = {
-    control,
-    errors,
-    setValue,
-    watch,
-    blueprint: blueprintResult?.details,
-  };
+  const commonProps = useMemo(
+    () => ({
+      control,
+      errors,
+      setValue,
+      watch,
+      blueprint: blueprintResult?.details,
+    }),
+    [control, errors, setValue, watch, blueprintResult?.details],
+  );
 
   const steps = useMemo(
     () => [
@@ -64,7 +67,7 @@ const DeployPage: FC = () => {
         props: commonProps,
       },
     ],
-    [errors, setValue, watch, blueprintResult?.details],
+    [commonProps],
   );
 
   const StepComponent = createElement(steps[step].component, steps[step].props);

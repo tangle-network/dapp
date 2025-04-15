@@ -85,7 +85,8 @@ function useAgnosticTx<
   name,
   getSuccessMessage,
   successMessageByTxName,
-  isEvmTxRelayerSubsidized = false,
+  // TODO: Handle evmTxRelayerSubsidized
+  isEvmTxRelayerSubsidized: _ = false,
 }: AgnosticTxOptions<Abi, FunctionName, Context, TxName>) {
   const [agnosticStatus, setAgnosticStatus] = useState(
     TxStatus.NOT_YET_INITIATED,

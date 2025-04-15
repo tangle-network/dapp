@@ -25,14 +25,13 @@ import LsTokenIcon from '@tangle-network/tangle-shared-ui/components/LsTokenIcon
 import calculateBnRatio from '@tangle-network/ui-components/utils/calculateBnRatio';
 import formatPercentage from '@tangle-network/ui-components/utils/formatPercentage';
 import { twMerge } from 'tailwind-merge';
-import useNetworkStore from '@tangle-network/tangle-shared-ui/context/useNetworkStore';
 import { TangleCloudTableProps } from '../../../components/tangleCloudTable/type';
 import { Link } from 'react-router';
 import { TangleDAppPagePath } from '../../../types';
 
 const COLUMN_HELPER = createColumnHelper<RestakeVault>();
 
-const getColumns = (nativeTokenSymbol: string) => [
+const getColumns = () => [
   COLUMN_HELPER.accessor('name', {
     header: () => 'Vault',
     cell: (props) => (
@@ -189,10 +188,7 @@ export const TotalValueLockedTable: FC<Props> = ({
   emptyTableProps = {},
   tableConfig,
 }) => {
-  const nativeTokenSymbol = useNetworkStore(
-    (store) => store.network.tokenSymbol,
-  );
-  const columns = getColumns(nativeTokenSymbol);
+  const columns = getColumns();
   const table = useReactTable({
     data,
     columns,

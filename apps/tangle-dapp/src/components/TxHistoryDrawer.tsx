@@ -170,7 +170,7 @@ const TransactionItem = ({
   const { isEvm } = useAgnosticAccountInfo();
 
   // TODO: Open account details on explorer.
-  const createExplorerAccountUrl = useNetworkStore(
+  const _createExplorerAccountUrl = useNetworkStore(
     (store) => store.network2?.createExplorerAccountUrl,
   );
 

@@ -9,7 +9,7 @@
     "**/*.js",
     "**/*.jsx",
     "../../types/**/*.d.ts",
-    "eslint.config.cjs"
+    "eslint.config.js"
   ],
   "exclude": [
     "jest.config.ts",

@@ -25,11 +25,11 @@ export const NestedOperatorCell: FC<NestedOperatorCellProps> = ({
   operators,
   operatorIdentityMap,
 }) => {
+  const network = useNetworkStore((store) => store.network);
+
   if (!operators || !Array.isArray(operators) || operators.length === 0) {
     return EMPTY_VALUE_PLACEHOLDER;
   }
-
-  const network = useNetworkStore((store) => store.network);
 
   return (
     <Dropdown>

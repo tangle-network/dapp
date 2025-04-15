@@ -26,7 +26,7 @@ If you have feedback or questions, head to the [Tangle Network Feedback Discussi
 
 ## Prerequisites
 
-This library makes use of yarn, nodejs, and requires version node `>=18.12.x`. To install node.js binaries, installers, and source tarballs, please visit https://nodejs.org/en/download/.
+This library makes use of yarn, nodejs, and requires version node `>=18.18.x`. To install node.js binaries, installers, and source tarballs, please visit https://nodejs.org/en/download/.
 
 Once node.js is installed you may proceed to install [`yarn`](https://yarnpkg.com/getting-started) via `corepack`:
 

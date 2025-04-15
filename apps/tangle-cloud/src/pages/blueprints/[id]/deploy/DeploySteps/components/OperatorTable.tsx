@@ -125,7 +125,13 @@ export const OperatorTable: FC<Props> = ({ advanceFilter, ...tableProps }) => {
         };
       },
     );
-  }, [operatorServicesMap, restakeOperatorMap, identities, assets]);
+  }, [
+    restakeOperatorMap,
+    registeredOperators,
+    identities,
+    assets,
+    operatorServicesMap,
+  ]);
 
   const columns = [
     COLUMN_HELPER.accessor('address', {

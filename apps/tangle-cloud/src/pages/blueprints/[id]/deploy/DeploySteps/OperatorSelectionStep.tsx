@@ -124,7 +124,7 @@ export const SelectOperatorsStep: FC<SelectOperatorsStepProps> = ({
    */
   useEffect(() => {
     setValue(`${stepKey}.operators`, Object.keys(rowSelection));
-  }, [rowSelection]);
+  }, [rowSelection, setValue]);
 
   const onSelectAsset = useCallback(
     (asset: RestakeAsset, isChecked: boolean) => {
@@ -157,7 +157,7 @@ export const SelectOperatorsStep: FC<SelectOperatorsStepProps> = ({
 
       setValue(`${stepKey}.assets`, newSelectedAssets);
     },
-    [selectedAssets, operators, setValue, stepKey],
+    [selectedAssets, operators, setValue],
   );
 
   return (

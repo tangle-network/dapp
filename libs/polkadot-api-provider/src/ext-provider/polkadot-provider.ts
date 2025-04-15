@@ -140,7 +140,7 @@ export class PolkadotProvider extends EventBus<ExtensionProviderEvents> {
             resolve(new WsProvider(endPoints));
 
             break;
-          } catch (_) {
+          } catch {
             // If the maxTries is reached then exit the loop
             if (
               typeof options?.maxTries === 'number' &&

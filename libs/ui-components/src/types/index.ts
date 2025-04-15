@@ -7,7 +7,6 @@ import type {
   TableOptionsResolved,
 } from '@tanstack/react-table';
 import type { Nullable, Maybe } from '@tangle-network/dapp-types/utils/types';
-import { ReactNode } from 'react';
 
 /******************
  * DECLARE GLOBAL *

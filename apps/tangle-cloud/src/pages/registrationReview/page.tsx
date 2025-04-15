@@ -42,7 +42,7 @@ export default function RegistrationReview() {
       };
     }
     return { pricingSettings: null, blueprints: [] };
-  }, [sessionStorage]);
+  }, []);
 
   const [amount, setAmount] = useState<Record<string, any>>({});
 
@@ -128,7 +128,14 @@ export default function RegistrationReview() {
       ),
       amounts: blueprints.map(({ id }) => amount[id]),
     });
-  }, [activeAccount, pricingSettings, registrationParams, registerTx]);
+  }, [
+    activeAccount,
+    pricingSettings,
+    registerTx,
+    blueprints,
+    registrationParams,
+    amount,
+  ]);
 
   return (
     <div>

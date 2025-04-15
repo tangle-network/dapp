@@ -1,4 +1,3 @@
-/* eslint-disable */
 export default {
   displayName: 'browser-utils',
   preset: '../../jest.preset.cjs',
