@@ -28,7 +28,8 @@
     "chromatic": "chromatic --build-script-name=build:storybook --exit-zero-on-changes",
     "generate:release": "node ./tools/release.js",
     "codegen": "graphql-codegen --config codegen.ts",
-    "check:codegen": "node ./tools/checkCodegen.js"
+    "check:codegen": "node ./tools/checkCodegen.js",
+    "postinstall": "husky"
   },
   "resolutions": {
     "@polkadot/api": "^13.2.1",
@@ -76,6 +77,7 @@
     "@tanstack/react-query": "^5.74.3",
     "@walletconnect/ethereum-provider": "^2.19.2",
     "chromatic": "^11.28.0",
+    "concurrently": "^9.1.2",
     "decimal.js": "^10.5.0",
     "detect-browser": "^5.3.0",
     "ethers": "5.8.0",
@@ -169,6 +171,7 @@
     "eslint-plugin-react-refresh": "^0.4.19",
     "eslint-plugin-storybook": "^0.12.0",
     "framer-motion": "^12.7.2",
+    "husky": "^9.1.7",
     "jest": "29.7.0",
     "jest-environment-jsdom": "^29.7.0",
     "jest-environment-node": "^29.7.0",
