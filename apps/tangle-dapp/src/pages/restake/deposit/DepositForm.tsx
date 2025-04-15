@@ -172,10 +172,10 @@ const DepositForm: FC<Props> = ({
     [closeTokenModal, setValue],
   );
 
+  const depositAssetId = watch('depositAssetId');
   const asset = useMemo(() => {
-    return assets?.get(watch('depositAssetId')) ?? null;
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [watch('depositAssetId'), assets]);
+    return assets?.get(depositAssetId) ?? null;
+  }, [assets, depositAssetId]);
 
   const isReady = restakeApi !== null && asset !== null && !isSubmitting;
 
