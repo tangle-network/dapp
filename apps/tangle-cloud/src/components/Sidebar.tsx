@@ -4,12 +4,12 @@ import CommandFillIcon from '@tangle-network/icons/CommandFillIcon';
 import { DocumentationIcon } from '@tangle-network/icons/DocumentationIcon';
 import GlobalLine from '@tangle-network/icons/GlobalLine';
 import { GridFillIcon } from '@tangle-network/icons/GridFillIcon';
-import {
-  Dropdown,
-  DropdownBody,
-  DropdownButton,
-  DropdownMenuItem,
-} from '@tangle-network/ui-components/components/Dropdown';
+// import {
+//   Dropdown,
+//   DropdownBody,
+//   DropdownButton,
+//   DropdownMenuItem,
+// } from '@tangle-network/ui-components/components/Dropdown';
 import {
   MobileSidebar,
   SideBar as SideBarCmp,
@@ -22,13 +22,13 @@ import {
   TANGLE_DAPP_URL,
   TANGLE_DOCS_URL,
 } from '@tangle-network/ui-components/constants';
-import capitalize from 'lodash/capitalize';
-import { FC, useMemo } from 'react';
+// import capitalize from 'lodash/capitalize';
+import { FC } from 'react';
 import { useLocation } from 'react-router';
-import useRoleStore, { Role, ROLE_ICON_MAP } from '../stores/roleStore';
+// import useRoleStore, { Role, ROLE_ICON_MAP } from '../stores/roleStore';
 import { PagePath } from '../types';
-import { ChevronRight, HomeFillIcon } from '@tangle-network/icons';
-import { twMerge } from 'tailwind-merge';
+import { HomeFillIcon, UserLineIcon } from '@tangle-network/icons';
+// import { twMerge } from 'tailwind-merge';
 
 type Props = {
   isExpandedByDefault?: boolean;
@@ -56,6 +56,13 @@ const SIDEBAR_ITEMS: SideBarItemProps[] = [
     Icon: GlobalLine,
     subItems: [],
   },
+  {
+    name: 'Account',
+    href: PagePath.ACCOUNT,
+    isInternal: true,
+    Icon: UserLineIcon,
+    subItems: [],
+  },
 
   // External links
   {
@@ -74,51 +81,51 @@ const SIDEBAR_FOOTER: SideBarFooterType = {
   name: 'Docs',
 };
 
-const ActionButton: FC<{ isExpanded: boolean }> = ({ isExpanded }) => {
-  const { role, setRole } = useRoleStore();
+// const ActionButton: FC<{ isExpanded: boolean }> = ({ isExpanded }) => {
+//   const { role, setRole } = useRoleStore();
 
-  const capitalizedRole = useMemo(() => capitalize(role), [role]);
+//   const capitalizedRole = useMemo(() => capitalize(role), [role]);
 
-  return (
-    <Dropdown>
-      <DropdownButton
-        icon={ROLE_ICON_MAP[role]({ size: 'lg' })}
-        isHideArrowIcon={!isExpanded}
-        arrowElement={<ChevronRight size="lg" />}
-        className={twMerge(
-          'px-3 py-3 !rounded-full border-none',
-          '!bg-purple-50 font-bold text-mono-0',
-          'w-full',
-        )}
-      >
-        <span>{isExpanded ? capitalizedRole : ''}</span>
-      </DropdownButton>
+//   return (
+//     <Dropdown>
+//       <DropdownButton
+//         icon={ROLE_ICON_MAP[role]({ size: 'lg' })}
+//         isHideArrowIcon={!isExpanded}
+//         arrowElement={<ChevronRight size="lg" />}
+//         className={twMerge(
+//           'px-3 py-3 !rounded-full border-none',
+//           '!bg-purple-50 font-bold text-mono-0',
+//           'w-full',
+//         )}
+//       >
+//         <span>{isExpanded ? capitalizedRole : ''}</span>
+//       </DropdownButton>
 
-      <DropdownBody
-        isPortal={false}
-        sideOffset={8}
-        side="right"
-        className="z-[60]"
-        align="center"
-      >
-        <DropdownMenuItem
-          isActive={role === Role.OPERATOR}
-          onClick={() => setRole(Role.OPERATOR)}
-          leftIcon={ROLE_ICON_MAP[Role.OPERATOR]()}
-        >
-          Operate
-        </DropdownMenuItem>
-        <DropdownMenuItem
-          isActive={role === Role.DEPLOYER}
-          onClick={() => setRole(Role.DEPLOYER)}
-          leftIcon={ROLE_ICON_MAP[Role.DEPLOYER]()}
-        >
-          Deploy
-        </DropdownMenuItem>
-      </DropdownBody>
-    </Dropdown>
-  );
-};
+//       <DropdownBody
+//         isPortal={false}
+//         sideOffset={8}
+//         side="right"
+//         className="z-[60]"
+//         align="center"
+//       >
+//         <DropdownMenuItem
+//           isActive={role === Role.OPERATOR}
+//           onClick={() => setRole(Role.OPERATOR)}
+//           leftIcon={ROLE_ICON_MAP[Role.OPERATOR]()}
+//         >
+//           Operate
+//         </DropdownMenuItem>
+//         <DropdownMenuItem
+//           isActive={role === Role.DEPLOYER}
+//           onClick={() => setRole(Role.DEPLOYER)}
+//           leftIcon={ROLE_ICON_MAP[Role.DEPLOYER]()}
+//         >
+//           Deploy
+//         </DropdownMenuItem>
+//       </DropdownBody>
+//     </Dropdown>
+//   );
+// };
 
 const Sidebar: FC<Props> = ({ isExpandedByDefault }) => {
   const pathname = useLocation().pathname;
@@ -134,7 +141,7 @@ const Sidebar: FC<Props> = ({ isExpandedByDefault }) => {
         pathnameOrHash={pathname}
         className="hidden h-screen lg:block"
         isExpandedByDefault={isExpandedByDefault}
-        ActionButton={ActionButton}
+        // ActionButton={ActionButton}
       />
 
       {/* Small screen sidebar */}
@@ -145,7 +152,7 @@ const Sidebar: FC<Props> = ({ isExpandedByDefault }) => {
         Logo={TangleCloudLogo}
         pathnameOrHash={pathname}
         className="fixed top-[34px] left-4 md:left-8 lg:hidden"
-        ActionButton={ActionButton}
+        // ActionButton={ActionButton}
       />
     </>
   );

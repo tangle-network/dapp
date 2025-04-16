@@ -1,44 +1,16 @@
 import { RegisteredBlueprintsTabs } from './RegisteredBlueprints';
 import { InstancesTabs } from './Instances';
-import useMonitoringBlueprints from '@tangle-network/tangle-shared-ui/data/blueprints/useMonitoringBlueprints';
-import { FC, useMemo } from 'react';
-import useSubstrateAddress from '@tangle-network/tangle-shared-ui/hooks/useSubstrateAddress';
+import { FC } from 'react';
 
 export const BlueprintManagementSection: FC = () => {
-  const operatorAccountAddress = useSubstrateAddress();
-  const {
-    isLoading,
-    blueprints: registeredBlueprints,
-    error,
-  } = useMonitoringBlueprints(operatorAccountAddress);
-
-  const runningInstances = useMemo(() => {
-    if (registeredBlueprints.length === 0) {
-      return [];
-    }
-    return registeredBlueprints.flatMap((blueprint) => blueprint.services);
-  }, [registeredBlueprints]);
-
   return (
     <>
       <RegisteredBlueprintsTabs
-        blueprints={registeredBlueprints}
-        isLoading={isLoading}
-        error={error}
+        blueprints={[]}
+        isLoading={false}
+        error={null}
       />
-      <InstancesTabs
-        runningInstances={{
-          data: runningInstances,
-          isLoading,
-          error,
-        }}
-        // TODO: Implement stopped instances
-        stoppedInstances={{
-          data: [],
-          isLoading,
-          error,
-        }}
-      />
+      <InstancesTabs />
     </>
   );
 };

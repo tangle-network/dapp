@@ -20,6 +20,8 @@ import TableCellWrapper from '@tangle-network/tangle-shared-ui/components/tables
 import { Link } from 'react-router';
 import { PagePath } from '../../../types';
 import getTVLToDisplay from '@tangle-network/tangle-shared-ui/utils/getTVLToDisplay';
+import useRegisteredBlueprints from '@tangle-network/tangle-shared-ui/data/blueprints/useRegisteredBlueprints';
+import useOperatorInfo from '../../../hooks/useOperatorInfo';
 
 export type RegisteredBlueprintsTableProps = {
   blueprints: MonitoringBlueprint[];
@@ -28,12 +30,23 @@ export type RegisteredBlueprintsTableProps = {
 };
 const columnHelper = createColumnHelper<MonitoringBlueprint>();
 
-export const RegisteredBlueprints: FC<RegisteredBlueprintsTableProps> = ({
-  blueprints,
-  isLoading,
-  error,
-}) => {
-  const isEmpty = blueprints.length === 0;
+export const RegisteredBlueprints: FC = () => {
+  const { operatorAddress } = useOperatorInfo();
+  const {
+    result: registeredBlueprints,
+    isLoading,
+    error,
+  } = useRegisteredBlueprints(operatorAddress);
+
+  const data = useMemo(() => {
+    if (Array.isArray(registeredBlueprints)) {
+      return registeredBlueprints;
+    }
+
+    return [];
+  }, [registeredBlueprints]);
+
+  const isEmpty = data?.length === 0;
 
   const columns = useMemo(
     () => [
@@ -170,7 +183,7 @@ export const RegisteredBlueprints: FC<RegisteredBlueprintsTableProps> = ({
   );
 
   const table = useReactTable({
-    data: blueprints,
+    data,
     columns,
     getCoreRowModel: getCoreRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
@@ -182,7 +195,7 @@ export const RegisteredBlueprints: FC<RegisteredBlueprintsTableProps> = ({
   return (
     <TangleCloudTable<MonitoringBlueprint>
       title={pluralize('blueprint', !isEmpty)}
-      data={blueprints}
+      data={data}
       error={error}
       isLoading={isLoading}
       tableProps={table}

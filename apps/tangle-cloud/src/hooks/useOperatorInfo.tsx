@@ -9,7 +9,7 @@ import { isEvmAddress } from '@tangle-network/ui-components';
 type UseOperatorInfo = {
   operatorAddress: SubstrateAddress | null;
   isOperator: boolean;
-}
+};
 
 const useOperatorInfo = (useSs58Prefix = true): UseOperatorInfo => {
   const [activeAccount] = useActiveAccount();
@@ -27,7 +27,10 @@ const useOperatorInfo = (useSs58Prefix = true): UseOperatorInfo => {
       };
     }
 
-    if (isSolanaAddress(activeAccount.address) || isEvmAddress(activeAccount.address)) {
+    if (
+      isSolanaAddress(activeAccount.address) ||
+      isEvmAddress(activeAccount.address)
+    ) {
       return {
         operatorAddress,
         isOperator,

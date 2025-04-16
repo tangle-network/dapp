@@ -106,7 +106,9 @@ export default function useMonitoringBlueprints(
 
             return blueprints.map((blueprint) =>
               createMonitoringBlueprint(
-                blueprint,
+                blueprint.blueprintId,
+                blueprint.blueprint,
+                blueprint.services,
                 operatorInstances,
                 operatorTVLByAsset,
                 runningInstancesMap,
@@ -127,7 +129,7 @@ export default function useMonitoringBlueprints(
   );
 
   return {
-    blueprints: result ?? [],
+    result,
     ...rest,
   };
 }

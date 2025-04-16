@@ -11,6 +11,7 @@ export enum PagePath {
   BLUEPRINTS_REGISTRATION_REVIEW = '/registration-review',
 
   OPERATORS = '/operators',
+  ACCOUNT = '/account',
 }
 
 export enum TangleDAppPagePath {
