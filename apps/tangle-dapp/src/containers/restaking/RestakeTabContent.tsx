@@ -7,7 +7,7 @@ import RestakeDelegateForm from '../../pages/restake/delegate';
 import RestakeUnstakeForm from '../../pages/restake/unstake';
 import useRestakeDelegatorInfo from '@tangle-network/tangle-shared-ui/data/restake/useRestakeDelegatorInfo';
 import useRestakeOperatorMap from '@tangle-network/tangle-shared-ui/data/restake/useRestakeOperatorMap';
-import useRestakeTvl from '@tangle-network/tangle-shared-ui/data/restake/useRestakeTvl';
+import useRestakeTvl from '@tangle-network/tangle-shared-ui/data/restake/useRestakeTvl2';
 import useRestakeAssets from '@tangle-network/tangle-shared-ui/data/restake/useRestakeAssets';
 import useRestakeAssetsTvl from '@tangle-network/tangle-shared-ui/data/restake/useRestakeAssetsTvl';
 import { useRestakeVaults } from '@tangle-network/tangle-shared-ui/data/restake/useRestakeVaults';
@@ -69,7 +69,7 @@ const RestakeTabContent: FC<Props> = ({ tab }) => {
           <OperatorsTable
             operatorConcentration={operatorConcentration}
             operatorMap={operatorMap}
-            operatorTVL={operatorTvl}
+            operatorTvl={operatorTvl}
             onRestakeClicked={handleRestakeClicked}
           />
         );

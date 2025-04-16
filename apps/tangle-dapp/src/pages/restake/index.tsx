@@ -1,6 +1,6 @@
 import useRestakeDelegatorInfo from '@tangle-network/tangle-shared-ui/data/restake/useRestakeDelegatorInfo';
 import useRestakeOperatorMap from '@tangle-network/tangle-shared-ui/data/restake/useRestakeOperatorMap';
-import useRestakeTvl from '@tangle-network/tangle-shared-ui/data/restake/useRestakeTvl';
+import useRestakeTvl from '@tangle-network/tangle-shared-ui/data/restake/useRestakeTvl2';
 import { FC } from 'react';
 import { Navigate, useParams } from 'react-router';
 import { RestakeAction } from '../../constants';

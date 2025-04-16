@@ -35,7 +35,7 @@ const ROLE_DESCRIPTION = {
 
 const Page: FC = () => {
   const navigate = useNavigate();
-  const { role } = useRoleStore();
+  const role = useRoleStore((store) => store.role);
   const [rowSelection, setRowSelection] = useState<RowSelectionState>({});
   const [isPricingModalOpen, setIsPricingModalOpen] = useState(false);
   const { blueprints, isLoading, error } = useAllBlueprints();

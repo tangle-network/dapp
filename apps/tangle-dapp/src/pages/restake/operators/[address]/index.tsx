@@ -4,7 +4,7 @@ import { Typography } from '@tangle-network/ui-components/typography/Typography'
 import { ComponentProps, useMemo } from 'react';
 
 import useRestakeDelegatorInfo from '@tangle-network/tangle-shared-ui/data/restake/useRestakeDelegatorInfo';
-import useRestakeTvl from '@tangle-network/tangle-shared-ui/data/restake/useRestakeTvl';
+import useRestakeTvl from '@tangle-network/tangle-shared-ui/data/restake/useRestakeTvl2';
 import { useParams } from 'react-router';
 import useOperatorBlueprints from '@tangle-network/tangle-shared-ui/data/blueprints/useOperatorBlueprints';
 import OperatorInfoCard from './OperatorInfoCard';
@@ -15,10 +15,7 @@ const Page = () => {
   const { address } = useParams();
   const { result: operatorMap } = useRestakeOperatorMap();
   const { result: delegatorInfo } = useRestakeDelegatorInfo();
-  const { operatorTvl: operatorTVL } = useRestakeTvl(
-    operatorMap,
-    delegatorInfo,
-  );
+  const { operatorTvl: operatorTVL } = useRestakeTvl(delegatorInfo);
 
   const operatorAddressParam =
     address === undefined
@@ -60,7 +57,7 @@ const Page = () => {
       <div className="flex flex-col md:flex-row items-stretch gap-5 max-h-none md:max-h-[290px]">
         <OperatorInfoCard
           className="flex-1"
-          operatorData={operatorMap[address]}
+          operatorData={operatorMap.get(address)}
           operatorAddress={address}
           operatorMap={operatorMap}
           delegatorInfo={delegatorInfo}
@@ -81,7 +78,7 @@ const Page = () => {
         </Typography>
 
         <TVLTable
-          operatorData={operatorMap[address]}
+          operatorData={operatorMap.get(address)}
           delegatorInfo={delegatorInfo}
         />
       </div>

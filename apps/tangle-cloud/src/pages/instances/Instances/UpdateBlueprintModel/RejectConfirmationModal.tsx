@@ -39,7 +39,7 @@ function RejectConfirmationModal({
       description="Are you sure you want to reject this blueprint?"
     >
       <ModalHeader onClose={onClose} className="pb-4">
-        Service Request #{selectedRequest?.requestId}
+        Service Request #{selectedRequest?.requestId?.toString()}
       </ModalHeader>
 
       <ModalBody>
@@ -54,7 +54,6 @@ function RejectConfirmationModal({
               />
             );
           }}
-          id={selectedRequest?.blueprintData?.metadata.name ?? ''}
           // TODO
           restakersCount={selectedRequest?.blueprintData?.jobs.length ?? 0}
           // TODO

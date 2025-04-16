@@ -12,7 +12,7 @@ import { ThreeDotsVerticalIcon } from '@tangle-network/icons';
 import useNetworkStore from '@tangle-network/tangle-shared-ui/context/useNetworkStore';
 import useRestakeOperatorMap from '@tangle-network/tangle-shared-ui/data/restake/useRestakeOperatorMap';
 import useRestakeDelegatorInfo from '@tangle-network/tangle-shared-ui/data/restake/useRestakeDelegatorInfo';
-import useRestakeTvl from '@tangle-network/tangle-shared-ui/data/restake/useRestakeTvl';
+import useRestakeTvl from '@tangle-network/tangle-shared-ui/data/restake/useRestakeTvl2';
 import getTVLToDisplay from '@tangle-network/tangle-shared-ui/utils/getTVLToDisplay';
 import useSWRImmutable from 'swr/immutable';
 import {

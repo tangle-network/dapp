@@ -91,7 +91,7 @@ const RestakeOverviewTabs: FC<Props> = ({
         <OperatorsTable
           operatorConcentration={operatorConcentration}
           operatorMap={operatorMap}
-          operatorTVL={operatorTVL}
+          operatorTvl={operatorTVL}
           onRestakeClicked={handleRestakeClicked}
         />
       </TabContent>

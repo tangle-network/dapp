@@ -6,7 +6,9 @@ import useRoleStore, { Role } from '../../stores/roleStore';
 import cx from 'classnames';
 
 const Page = () => {
-  const isOperator = useRoleStore().role === Role.OPERATOR;
+  const role = useRoleStore((store) => store.role);
+
+  const isOperator = role === Role.OPERATOR;
 
   return (
     <>

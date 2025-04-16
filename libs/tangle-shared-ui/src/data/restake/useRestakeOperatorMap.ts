@@ -9,8 +9,10 @@ import { useCallback } from 'react';
 import { map } from 'rxjs';
 import useApiRx from '../../hooks/useApiRx';
 import { TangleError, TangleErrorCode } from '../../types/error';
-import { OperatorMap, OperatorMetadata } from '../../types/restake';
+import { OperatorMetadata } from '../../types/restake';
 import createRestakeAssetId from '../../utils/createRestakeAssetId';
+import { assertSubstrateAddress } from '@tangle-network/ui-components';
+import { SubstrateAddress } from '@tangle-network/ui-components/types/address';
 
 const useRestakeOperatorMap = () => {
   const { result, ...rest } = useApiRx(
@@ -43,11 +45,14 @@ const useRestakeOperatorMap = () => {
                 status: toPrimitiveStatus(operator.status),
               } satisfies OperatorMetadata;
 
-              operatorsMap.set(accountId.toString(), operatorMetadataPrimitive);
+              operatorsMap.set(
+                assertSubstrateAddress(accountId.toString()),
+                operatorMetadataPrimitive,
+              );
 
               return operatorsMap;
             },
-            new Map() as Map<string, OperatorMetadata>,
+            new Map<SubstrateAddress, OperatorMetadata>(),
           );
         }),
       );
@@ -56,7 +61,7 @@ const useRestakeOperatorMap = () => {
 
   return {
     // Return an empty Map for API compatibility.
-    result: result ?? new Map(),
+    result: result ?? new Map<SubstrateAddress, OperatorMetadata>(),
     ...rest,
   };
 };

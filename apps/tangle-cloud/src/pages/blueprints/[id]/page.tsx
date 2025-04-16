@@ -45,8 +45,10 @@ const Page = () => {
   }, [idParam]);
 
   const { result, isLoading, error } = useBlueprintDetails(id);
-  const isOperator = useRoleStore().role === Role.OPERATOR;
+  const role = useRoleStore((store) => store.role);
   const [isPricingModalOpen, setIsPricingModalOpen] = useState(false);
+
+  const isOperator = role === Role.OPERATOR;
 
   if (id === undefined || result === null) {
     return <Navigate to={PagePath.NOT_FOUND} />;

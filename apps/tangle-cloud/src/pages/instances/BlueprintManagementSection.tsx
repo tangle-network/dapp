@@ -6,13 +6,16 @@ import useSubstrateAddress from '@tangle-network/tangle-shared-ui/hooks/useSubst
 import useRoleStore, { Role } from '../../stores/roleStore';
 
 export const BlueprintManagementSection: FC = () => {
-  const isOperator = useRoleStore().role === Role.OPERATOR;
+  const role = useRoleStore((store) => store.role);
   const operatorAccountAddress = useSubstrateAddress();
+
   const {
     isLoading,
     blueprints: registeredBlueprints,
     error,
   } = useMonitoringBlueprints(operatorAccountAddress);
+
+  const isOperator = role === Role.OPERATOR;
 
   const runningInstances = useMemo(() => {
     if (registeredBlueprints.length === 0) {

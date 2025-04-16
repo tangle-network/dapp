@@ -139,7 +139,7 @@ const RestakeDelegateForm: FC<Props> = ({ assets }) => {
       !operatorParam ||
       typeof operatorParam !== 'string' ||
       !isSubstrateAddress(operatorParam) ||
-      !operatorMap[operatorParam]
+      !operatorMap.get(operatorParam)
     ) {
       return;
     }

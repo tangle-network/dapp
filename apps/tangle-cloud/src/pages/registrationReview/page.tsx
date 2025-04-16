@@ -59,7 +59,8 @@ export default function RegistrationReview() {
 
   const isValidParams = useMemo(() => {
     return blueprints.every((blueprint) => {
-      const params = registrationParams[blueprint.id];
+      const params = registrationParams[blueprint.id.toString()];
+
       if (!params) {
         return false;
       }
@@ -99,7 +100,7 @@ export default function RegistrationReview() {
       const blueprintPriceSettings =
         pricingSettings.type === PricingType.GLOBAL
           ? pricingSettings.values
-          : pricingSettings.values[id];
+          : pricingSettings.values[id.toString()];
 
       return {
         key: toTanglePrimitiveEcdsaKey(activeAccount),
@@ -114,21 +115,21 @@ export default function RegistrationReview() {
     }) as any;
 
     registerTx({
-      blueprintIds: blueprints.map((blueprint) => blueprint.id),
+      blueprintIds: blueprints.map((blueprint) => blueprint.id.toString()),
       preferences,
       registrationArgs: blueprints.map(
         ({
           id: blueprintId,
           registrationParams: blueprintRegistrationParams,
         }) => {
-          const paramValues = registrationParams[blueprintId];
+          const paramValues = registrationParams[blueprintId.toString()];
           return toPrimitiveArgsDataType(
             blueprintRegistrationParams,
             paramValues,
           );
         },
       ),
-      amounts: blueprints.map(({ id }) => amount[id]),
+      amounts: blueprints.map(({ id }) => amount[id.toString()]),
     });
   }, [activeAccount, pricingSettings, registrationParams, registerTx]);
 
@@ -196,16 +197,16 @@ export default function RegistrationReview() {
               <ParamsForm
                 params={blueprint.registrationParams}
                 tokenSymbol={network.tokenSymbol}
-                amountValue={amount[blueprint.id] ?? ''}
-                paramsValue={registrationParams[blueprint.id] ?? {}}
+                amountValue={amount[blueprint.id.toString()] ?? ''}
+                paramsValue={registrationParams[blueprint.id.toString()] ?? {}}
                 onSave={(params, amount) => {
                   setRegistrationParams((prev) => ({
                     ...prev,
-                    [blueprint.id]: params,
+                    [blueprint.id.toString()]: params,
                   }));
                   setAmount((prev) => ({
                     ...prev,
-                    [blueprint.id]: amount,
+                    [blueprint.id.toString()]: amount,
                   }));
                 }}
               />

@@ -8,7 +8,6 @@ import { useCallback } from 'react';
 import { combineLatest, of, switchMap } from 'rxjs';
 import useNetworkStore from '../../context/useNetworkStore';
 import useRestakeDelegatorInfo from '../../data/restake/useRestakeDelegatorInfo';
-import useRestakeTvl from './useRestakeTvl';
 import useApiRx from '../../hooks/useApiRx';
 import useSubstrateAddress from '../../hooks/useSubstrateAddress';
 import { RestakeOperator } from '../../types';
@@ -26,6 +25,7 @@ import useRestakeAssets from './useRestakeAssets';
 import useRestakeOperatorMap from './useRestakeOperatorMap';
 import { ServiceInstance } from '../blueprints/utils/type';
 import { toPrimitiveService } from '../blueprints/utils/toPrimitiveService';
+import useRestakeTvl from './useRestakeTvl2';
 
 const useBlueprintDetails = (id?: bigint) => {
   const rpcEndpoint = useNetworkStore((store) => store.network.wsRpcEndpoint);
@@ -38,7 +38,7 @@ const useBlueprintDetails = (id?: bigint) => {
     operatorTvl: operatorTVL,
     operatorConcentration,
     operatorTvlByAsset: operatorTVLByAsset,
-  } = useRestakeTvl(operatorMap, delegatorInfo);
+  } = useRestakeTvl(delegatorInfo);
 
   return useApiRx(
     useCallback(
@@ -53,7 +53,6 @@ const useBlueprintDetails = (id?: bigint) => {
         }
 
         const blueprintDetails$ = api.query.services.blueprints(id);
-
         const runningInstanceEntries$ = api.query.services.instances.entries();
 
         const operatorEntries$ =
@@ -210,8 +209,8 @@ async function getBlueprintOperators(
     const info = accountInfoArr[idx];
     const concentrationPercentage = operatorConcentration.get(address) ?? null;
     const tvlInUsd = operatorTVL.get(address) ?? null;
-    const delegations = operatorMap[address].delegations ?? [];
-    const selfBondedAmount = operatorMap[address]?.stake ?? ZERO_BIG_INT;
+    const delegations = operatorMap.get(address)?.delegations ?? [];
+    const selfBondedAmount = operatorMap.get(address)?.stake ?? ZERO_BIG_INT;
 
     const isDelegated =
       activeSubstrateAddress !== null &&
@@ -224,7 +223,7 @@ async function getBlueprintOperators(
       address,
       identityName: info?.name ?? undefined,
       concentrationPercentage,
-      restakersCount: operatorMap[address]?.restakersCount,
+      restakersCount: operatorMap.get(address)?.restakersCount ?? 0,
       selfBondedAmount,
       tvlInUsd,
       vaultTokens: delegationsToVaultTokens(delegations, assetMap),

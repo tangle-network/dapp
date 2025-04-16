@@ -8,7 +8,10 @@ import useIdentities from '@tangle-network/tangle-shared-ui/hooks/useIdentities'
 import useIsAccountConnected from '@tangle-network/tangle-shared-ui/hooks/useIsAccountConnected';
 import useSubstrateAddress from '@tangle-network/tangle-shared-ui/hooks/useSubstrateAddress';
 import { RestakeOperator } from '@tangle-network/tangle-shared-ui/types';
-import type { OperatorMap } from '@tangle-network/tangle-shared-ui/types/restake';
+import type {
+  OperatorMap,
+  OperatorDelegatorBond,
+} from '@tangle-network/tangle-shared-ui/types/restake';
 import delegationsToVaultTokens from '@tangle-network/tangle-shared-ui/utils/restake/delegationsToVaultTokens';
 import Button from '@tangle-network/ui-components/components/buttons/Button';
 import {
@@ -36,17 +39,18 @@ type OperatorUI = NonNullable<
 type Props = {
   operatorConcentration?: OperatorConcentration;
   operatorMap: OperatorMap;
-  operatorTVL?: OperatorTvlGroup['operatorTvl'];
+  operatorTvl?: OperatorTvlGroup['operatorTvl'];
   onRestakeClicked?: LinkProps['onClick'];
 };
 
 const OperatorsTable: FC<Props> = ({
   operatorConcentration,
   operatorMap,
-  operatorTVL,
+  operatorTvl,
   onRestakeClicked,
 }) => {
   const [globalFilter, setGlobalFilter] = useState('');
+
   const [isJoinOperatorsModalOpen, setIsJoinOperatorsModalOpen] =
     useState(false);
 
@@ -70,7 +74,7 @@ const OperatorsTable: FC<Props> = ({
       Object.entries(operatorMap).map<OperatorUI>(
         ([addressString, { delegations, restakersCount, stake }]) => {
           const address = assertSubstrateAddress(addressString);
-          const tvlInUsd = operatorTVL?.get(address) ?? null;
+          const tvlInUsd = operatorTvl?.get(address) ?? null;
 
           const concentrationPercentage =
             operatorConcentration?.get(address) ?? null;
@@ -78,7 +82,7 @@ const OperatorsTable: FC<Props> = ({
           const isDelegated =
             activeSubstrateAddress !== null &&
             delegations.some(
-              (delegation) =>
+              (delegation: OperatorDelegatorBond) =>
                 delegation.delegatorAccountId === activeSubstrateAddress,
             );
 
@@ -99,7 +103,7 @@ const OperatorsTable: FC<Props> = ({
       ),
     [
       operatorMap,
-      operatorTVL,
+      operatorTvl,
       operatorConcentration,
       activeSubstrateAddress,
       identities,
@@ -114,7 +118,7 @@ const OperatorsTable: FC<Props> = ({
   const isActiveAccountInOperatorMap = useMemo(
     () =>
       activeSubstrateAddress !== null &&
-      operatorMap[activeSubstrateAddress] !== undefined,
+      operatorMap.get(activeSubstrateAddress) !== undefined,
     [activeSubstrateAddress, operatorMap],
   );
 
