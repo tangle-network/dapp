@@ -18,6 +18,7 @@ import { AssetCommitmentFormItem } from './AssetCommitmentFormItem';
 import { validateSecurityCommitments } from '../../../../utils/validations/validateSecurityCommitment';
 import { TxStatus } from '@tangle-network/tangle-shared-ui/hooks/useSubstrateTx';
 import { RestakeAssetId } from '@tangle-network/tangle-shared-ui/types';
+import addCommasToNumber from '@tangle-network/ui-components/utils/addCommasToNumber';
 
 type Props = {
   onClose: () => void;
@@ -91,48 +92,54 @@ const ApproveConfirmationModal: FC<Props> = ({
     }
   }, [status, onClose]);
 
-  // Handle form submission with type conversion
+  // Handle form submission with type conversion.
   const handleFormSubmit = (data: FormValues) => {
-    // Convert the form data to match the expected type
+    // Convert the form data to match the expected type.
     const formattedData: ApprovalConfirmationFormFields = {
       requestId:
         typeof data.requestId === 'bigint'
           ? Number(data.requestId)
           : data.requestId,
-      securityCommitment: data.securityCommitment as SecurityCommitment[],
+      securityCommitment:
+        data.securityCommitment satisfies SecurityCommitment[],
     };
     return onConfirm(formattedData);
   };
+
+  // Don't load the modal until the request prop is given.
+  if (selectedRequest === null) {
+    return;
+  }
 
   return (
     <ModalContent
       size="lg"
       onInteractOutside={(event) => event.preventDefault()}
-      title={`Service Request #${selectedRequest?.requestId}`}
-      description="Are you sure you want to approve this blueprint?"
+      title={`Service Request #${addCommasToNumber(selectedRequest.requestId)}`}
+      description="Are you sure you want to approve this request?"
     >
       <ModalHeader onClose={onClose}>
-        Service Request #{selectedRequest?.requestId?.toString()}
+        Service Request #{addCommasToNumber(selectedRequest.requestId)}
       </ModalHeader>
 
       <ModalBody>
         <BlueprintItem
-          imgUrl={selectedRequest?.blueprintData?.metadata.logo ?? ''}
-          name={selectedRequest?.blueprintData?.metadata.name ?? ''}
-          restakersCount={selectedRequest?.blueprintData?.restakersCount ?? 0}
-          operatorsCount={selectedRequest?.blueprintData?.operatorsCount ?? 0}
-          tvl={selectedRequest?.blueprintData?.tvl?.toString() ?? '0'}
+          imgUrl={selectedRequest.blueprintData?.metadata.logo ?? ''}
+          name={selectedRequest.blueprintData?.metadata.name ?? ''}
+          restakersCount={selectedRequest.blueprintData?.restakersCount ?? 0}
+          operatorsCount={selectedRequest.blueprintData?.operatorsCount ?? 0}
+          tvl={selectedRequest.blueprintData?.tvl?.toString() ?? '0'}
           isBoosted={false}
           category={selectedRequest?.blueprintData?.metadata.category ?? ''}
           author={selectedRequest?.blueprintData?.metadata.author ?? ''}
           description={
-            selectedRequest?.blueprintData?.metadata.description ?? ''
+            selectedRequest.blueprintData?.metadata.description ?? ''
           }
           renderImage={(imageUrl) => {
             return (
               <img
                 src={imageUrl}
-                alt={selectedRequest?.blueprintData?.metadata.name ?? ''}
+                alt={selectedRequest.blueprintData?.metadata.name ?? ''}
                 className="flex-shrink-0 bg-center rounded-full"
               />
             );
@@ -149,6 +156,7 @@ const ApproveConfirmationModal: FC<Props> = ({
           {Children.toArray(
             securityCommitmentDefaultFormValue.map(({ assetId }, index) => {
               const assetMetadata = assetsMetadata?.get(assetId);
+
               const exposurePercentFormValue = watch(
                 `securityCommitment.${index}.exposurePercent`,
               );

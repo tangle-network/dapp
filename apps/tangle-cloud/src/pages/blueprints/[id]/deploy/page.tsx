@@ -11,7 +11,7 @@ import {
   formatServiceRegisterData,
 } from '../../../../utils/validations/deployBlueprint';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useNavigate, useParams } from 'react-router';
+import { useNavigate } from 'react-router';
 import useBlueprintDetails from '@tangle-network/tangle-shared-ui/data/restake/useBlueprintDetails';
 import { Deployment } from './DeploySteps/Deployment';
 import { twMerge } from 'tailwind-merge';
@@ -23,24 +23,15 @@ import { TxStatus } from '@tangle-network/tangle-shared-ui/hooks/useSubstrateTx'
 import { PagePath } from '../../../../types';
 import { getApiPromise } from '@tangle-network/tangle-shared-ui/utils/polkadot/api';
 import useNetworkStore from '@tangle-network/tangle-shared-ui/context/useNetworkStore';
+import useParamWithSchema from '@tangle-network/tangle-shared-ui/hooks/useParamWithSchema';
 
 const DeployPage: FC = () => {
-  const { id: idParam } = useParams();
+  const id = useParamWithSchema('id', z.coerce.bigint());
   const navigate = useNavigate();
 
   const wsRpcEndpoint = useNetworkStore(
     (store) => store.network2?.wsRpcEndpoint,
   );
-
-  const id = useMemo(() => {
-    if (idParam === undefined) {
-      return undefined;
-    }
-
-    const result = z.coerce.bigint().safeParse(idParam);
-
-    return result.success ? result.data : undefined;
-  }, [idParam]);
 
   const {
     result: blueprintResult,

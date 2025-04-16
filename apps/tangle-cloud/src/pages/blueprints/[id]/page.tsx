@@ -6,14 +6,15 @@ import useBlueprintDetails from '@tangle-network/tangle-shared-ui/data/restake/u
 import { ErrorFallback } from '@tangle-network/ui-components/components/ErrorFallback';
 import SkeletonLoader from '@tangle-network/ui-components/components/SkeletonLoader';
 import { Typography } from '@tangle-network/ui-components/typography/Typography';
-import { FC, PropsWithChildren, useMemo, useState } from 'react';
-import { Link, useParams, useNavigate, Navigate } from 'react-router-dom';
+import { type FC, type PropsWithChildren, useState } from 'react';
+import { Link, useNavigate, Navigate } from 'react-router-dom';
 import { PagePath, TangleDAppPagePath } from '../../../types';
 import useRoleStore, { Role } from '../../../stores/roleStore';
 import PricingModal from '../PricingModal';
 import { Modal } from '@tangle-network/ui-components';
-import { PricingFormResult } from '../PricingModal/types';
+import type { PricingFormResult } from '../PricingModal/types';
 import { SessionStorageKey } from '../../../constants';
+import useParamWithSchema from '@tangle-network/tangle-shared-ui/hooks/useParamWithSchema';
 import { z } from 'zod';
 
 const RestakeOperatorAction: FC<PropsWithChildren<{ address: string }>> = ({
@@ -32,18 +33,7 @@ const RestakeOperatorAction: FC<PropsWithChildren<{ address: string }>> = ({
 
 const Page = () => {
   const navigate = useNavigate();
-  const { id: idParam } = useParams();
-
-  const id = useMemo(() => {
-    if (idParam === undefined) {
-      return undefined;
-    }
-
-    const result = z.coerce.bigint().safeParse(idParam);
-
-    return result.success ? result.data : undefined;
-  }, [idParam]);
-
+  const id = useParamWithSchema('id', z.coerce.bigint());
   const { result, isLoading, error } = useBlueprintDetails(id);
   const role = useRoleStore((store) => store.role);
   const [isPricingModalOpen, setIsPricingModalOpen] = useState(false);

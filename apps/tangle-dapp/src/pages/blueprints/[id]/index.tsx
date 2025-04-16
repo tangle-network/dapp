@@ -4,24 +4,14 @@ import useBlueprintDetails from '@tangle-network/tangle-shared-ui/data/restake/u
 import { ErrorFallback } from '@tangle-network/ui-components/components/ErrorFallback';
 import SkeletonLoader from '@tangle-network/ui-components/components/SkeletonLoader';
 import { Typography } from '@tangle-network/ui-components/typography/Typography';
-import { FC, useMemo } from 'react';
-import { Navigate, useParams } from 'react-router';
-import { z } from 'zod';
+import { FC } from 'react';
+import { Navigate } from 'react-router';
 import { PagePath } from '../../../types';
+import useParamWithSchema from '@tangle-network/tangle-shared-ui/hooks/useParamWithSchema';
+import { z } from 'zod';
 
 const BlueprintDetailsPage: FC = () => {
-  const { id: idParam } = useParams();
-
-  const id = useMemo(() => {
-    if (idParam === undefined) {
-      return undefined;
-    }
-
-    const result = z.coerce.bigint().safeParse(idParam);
-
-    return result.success ? result.data : undefined;
-  }, [idParam]);
-
+  const id = useParamWithSchema('id', z.coerce.bigint());
   const { result, isLoading, error } = useBlueprintDetails(id);
 
   if (result === null || id === undefined) {
