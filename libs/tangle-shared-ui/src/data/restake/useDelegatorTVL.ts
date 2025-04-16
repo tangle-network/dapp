@@ -1,6 +1,5 @@
-import { useObservable, useObservableState } from 'observable-hooks';
-import { of, switchMap } from 'rxjs';
-import type { RestakeAssetMap, DelegatorInfo } from '../../types/restake';
+import { useMemo } from 'react';
+import type { DelegatorInfo, RestakeAssetMap } from '../../types/restake';
 
 const calculateDelegatorTVL = (
   delegatorInfo: DelegatorInfo,
@@ -37,19 +36,11 @@ export function useDelegatorTVL(
   delegatorInfo: DelegatorInfo | null,
   assetMap: RestakeAssetMap | null,
 ) {
-  const tvl$ = useObservable(
-    (input$) =>
-      input$.pipe(
-        switchMap(([delegatorInfo, assetMap]) =>
-          of(
-            !delegatorInfo || !assetMap
-              ? { delegatorTVL: {}, totalDelegatorTVL: 0 }
-              : calculateDelegatorTVL(delegatorInfo, assetMap),
-          ),
-        ),
-      ),
-    [delegatorInfo, assetMap],
-  );
+  return useMemo(() => {
+    if (delegatorInfo === null || assetMap === null) {
+      return { delegatorTVL: {}, totalDelegatorTVL: 0 };
+    }
 
-  return useObservableState(tvl$, { delegatorTVL: {}, totalDelegatorTVL: 0 });
+    return calculateDelegatorTVL(delegatorInfo, assetMap);
+  }, [delegatorInfo, assetMap]);
 }

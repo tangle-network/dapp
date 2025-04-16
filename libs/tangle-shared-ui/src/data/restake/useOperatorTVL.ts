@@ -1,10 +1,9 @@
-import { useObservable, useObservableState } from 'observable-hooks';
-import { of, switchMap } from 'rxjs';
-import { RestakeAssetMap, OperatorMap } from '../../types/restake';
-import safeFormatUnits from '../../utils/safeFormatUnits';
 import { SubstrateAddress } from '@tangle-network/ui-components/types/address';
-import { RestakeAssetId } from '../../types';
 import { assertSubstrateAddress } from '@tangle-network/ui-components/utils';
+import { useMemo } from 'react';
+import { RestakeAssetId } from '../../types';
+import { OperatorMap, RestakeAssetMap } from '../../types/restake';
+import safeFormatUnits from '../../utils/safeFormatUnits';
 
 export type OperatorTVLType = {
   operatorTVLByAsset: Map<SubstrateAddress, Map<RestakeAssetId, number>>;
@@ -82,36 +81,23 @@ export const useOperatorTVL = (
   operatorMap: OperatorMap,
   assetMap: RestakeAssetMap | null,
 ) => {
-  const tvl$ = useObservable(
-    (input$) =>
-      input$.pipe(
-        switchMap(([operatorMap, assetMap]) => {
-          if (assetMap === null) {
-            return of<OperatorTVLType>({
-              operatorTVLByAsset: new Map(),
-              vaultTVL: new Map(),
-              operatorTVL: new Map(),
-            });
-          }
+  return useMemo(() => {
+    if (assetMap === null)
+      return {
+        operatorTVLByAsset: new Map(),
+        vaultTVL: new Map(),
+        operatorTVL: new Map(),
+      };
 
-          const { operatorTVLByAsset, operatorTVL, vaultTVL } = calculateTVL(
-            operatorMap,
-            assetMap,
-          );
+    const { operatorTVLByAsset, operatorTVL, vaultTVL } = calculateTVL(
+      operatorMap,
+      assetMap,
+    );
 
-          return of<OperatorTVLType>({
-            operatorTVLByAsset,
-            operatorTVL,
-            vaultTVL,
-          });
-        }),
-      ),
-    [operatorMap, assetMap],
-  );
-
-  return useObservableState<OperatorTVLType>(tvl$, {
-    operatorTVLByAsset: new Map(),
-    operatorTVL: new Map(),
-    vaultTVL: new Map(),
-  });
+    return {
+      operatorTVLByAsset,
+      operatorTVL,
+      vaultTVL,
+    };
+  }, [assetMap, operatorMap]);
 };

@@ -116,11 +116,6 @@ const useApiRx = <T>(factory: ObservableFactory<T>) => {
     };
   }, [factory, apiRx, reset]);
 
-  // Reset the result when the RPC endpoint changes.
-  useEffect(() => {
-    setResult(null);
-  }, [rpcEndpoint]);
-
   return { result, isLoading, error };
 };
 
