@@ -51,7 +51,7 @@ export function toPrimitiveServiceRequest(
   return {
     requestId: requestId.args[0].toNumber(),
     blueprint: blueprint.toNumber(),
-    owner: assertSubstrateAddress(owner.toString()),
+    owner: assertSubstrateAddress(owner.toHuman()),
     securityRequirements: toPrimitiveSecurityRequirements(securityRequirements),
     ttl: ttl.toNumber(),
     // TODO: toPrimitiveArgs(args)

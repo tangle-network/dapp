@@ -5,7 +5,9 @@ import { useUIContext } from '@tangle-network/ui-components/hooks/useUIContext';
 import { useCallback, useEffect, useState } from 'react';
 
 import useCurrentEra from '../../data/staking/useCurrentEra';
-import useApi, { ApiFetcher } from '../../hooks/useApi';
+import useApi, {
+  ApiFetcher,
+} from '@tangle-network/tangle-shared-ui/hooks/useApi';
 
 export default function useValidatorInfoCard(
   rpcEndpoint: string,

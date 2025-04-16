@@ -3,7 +3,7 @@ import useApiRx from '@tangle-network/tangle-shared-ui/hooks/useApiRx';
 import { useCallback } from 'react';
 
 import useVestingInfo from '../../data/vesting/useVestingInfo';
-import useApi from '../../hooks/useApi';
+import useApi from '@tangle-network/tangle-shared-ui/hooks/useApi';
 import calculateTimeRemaining from '../../utils/calculateTimeRemaining';
 import getBlockDate from '../../utils/getBlockDate';
 import { sortVestingSchedulesAscending } from './LockedBalanceDetails/utils';

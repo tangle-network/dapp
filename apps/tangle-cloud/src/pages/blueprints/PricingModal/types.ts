@@ -6,41 +6,38 @@ export enum PricingType {
 }
 
 const getPriceSchema = (priceType: string) =>
-  z
-    .string()
-    .or(z.number().int().positive())
-    .transform((value, context) => {
-      if (value === '') {
-        context.addIssue({
-          code: z.ZodIssueCode.custom,
-          message: `${priceType} price is required`,
-        });
+  z.string().transform((value, context) => {
+    if (value === '') {
+      context.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: `${priceType} price is required`,
+      });
 
-        return z.NEVER;
-      }
+      return z.NEVER;
+    }
 
-      const parsed = Number(value);
+    const parsed = Number(value);
 
-      if (isNaN(parsed) || !Number.isInteger(parsed)) {
-        context.addIssue({
-          code: z.ZodIssueCode.custom,
-          message: `${priceType} price is invalid`,
-        });
+    if (isNaN(parsed) || !Number.isInteger(parsed)) {
+      context.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: `${priceType} price is invalid`,
+      });
 
-        return z.NEVER;
-      }
+      return z.NEVER;
+    }
 
-      if (parsed < 0) {
-        context.addIssue({
-          code: z.ZodIssueCode.custom,
-          message: `${priceType} price must be greater than 0`,
-        });
+    if (parsed < 0) {
+      context.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: `${priceType} price must be greater than 0`,
+      });
 
-        return z.NEVER;
-      }
+      return z.NEVER;
+    }
 
-      return value;
-    });
+    return value;
+  });
 
 const priceSchema = z.object({
   cpuPrice: getPriceSchema('CPU'),

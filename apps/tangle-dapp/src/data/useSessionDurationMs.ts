@@ -1,5 +1,5 @@
 import { useCallback, useMemo } from 'react';
-import useApi from '../hooks/useApi';
+import useApi from '@tangle-network/tangle-shared-ui/hooks/useApi';
 import { BN } from '@polkadot/util';
 
 const useSessionDurationMs = () => {
