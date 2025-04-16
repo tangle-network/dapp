@@ -37,7 +37,7 @@ export const PaymentStep: FC<PaymentStepProps> = ({
 
   const onChangePaymentAmount = useCallback(
     (nextValue: string) => {
-      setValue('paymentAmount', Number(nextValue));
+      setValue('paymentAmount', nextValue);
     },
     [setValue],
   );
@@ -107,7 +107,7 @@ export const PaymentStep: FC<PaymentStepProps> = ({
             placeholder="Enter payment amount"
             value={watch('paymentAmount')?.toString() ?? ''}
             onChange={onChangePaymentAmount}
-            type="number"
+            type="text"
             className="w-full"
           />
           {errors?.paymentAmount?.message && (
