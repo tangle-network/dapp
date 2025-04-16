@@ -1,85 +1,76 @@
 import {
   Label,
   Input,
-  IconButton,
   Button,
+  Card,
+  Typography,
 } from '@tangle-network/ui-components';
 import InstanceHeader from '../../../../../components/InstanceHeader';
 import ErrorMessage from '../../../../../components/ErrorMessage';
-import { Children, FC, useCallback, useMemo } from 'react';
-import { BasicInformationStepProps } from './type';
-import { TrashIcon } from '@radix-ui/react-icons';
-import { BLUEPRINT_DEPLOY_STEPS } from '../../../../../utils/validations/deployBlueprint';
-import { InstructionSideCard } from './InstructionSideCard';
+import { Children, FC, useCallback } from 'react';
+import { BasicInformationStepProps, LabelClassName } from './type';
+import { TrashIcon, PlusIcon } from '@radix-ui/react-icons';
 
 export const BasicInformationStep: FC<BasicInformationStepProps> = ({
-  errors: globalErrors,
+  errors,
   setValue,
   watch,
   blueprint,
 }) => {
-  const labelClassName = 'text-mono-200 dark:text-mono-0';
-
-  const stepKey = BLUEPRINT_DEPLOY_STEPS.BASIC_INFO;
-  const values = watch(stepKey);
-
-  const errors = globalErrors?.[stepKey];
-
-  const permittedCallers = useMemo(
-    () => values?.permittedCallers || [],
-    [values?.permittedCallers],
-  );
+  const permittedCallers = watch('permittedCallers');
+  const instanceName = watch('instanceName');
+  const instanceDuration = watch('instanceDuration');
 
   const handleCallerChange = useCallback(
     (index: number, value: string) => {
       const newCallers = [...permittedCallers];
       newCallers[index] = value;
-      setValue(`${stepKey}.permittedCallers`, newCallers);
+      setValue(`permittedCallers`, newCallers);
     },
-    [permittedCallers, setValue, stepKey],
+    [permittedCallers, setValue],
   );
 
   const handleRemoveCaller = useCallback(
     (index: number) => {
       const newCallers = permittedCallers.filter((_, idx) => idx !== index);
-      setValue(`${stepKey}.permittedCallers`, newCallers);
+      setValue(`permittedCallers`, newCallers);
     },
-    [permittedCallers, setValue, stepKey],
+    [permittedCallers, setValue],
   );
 
   const handleInstanceNameChange = useCallback(
     (value: string) => {
-      setValue(`${stepKey}.instanceName`, value);
+      setValue(`instanceName`, value);
     },
-    [setValue, stepKey],
+    [setValue],
   );
 
   const handleInstanceDurationChange = useCallback(
     (value: string) => {
-      setValue(`${stepKey}.instanceDuration`, parseInt(value));
+      setValue(`instanceDuration`, parseInt(value));
     },
-    [setValue, stepKey],
+    [setValue],
   );
 
   return (
-    <div className="flex">
-      <div>
-        <InstructionSideCard
-          title="Instance Settings"
-          description="Register to run Blueprints and start earning as you secure and execute service instances."
-        />
-      </div>
+    <>
+      <InstanceHeader
+        title={blueprint?.name}
+        creator={blueprint?.author}
+        githubPath={blueprint?.githubUrl}
+      />
+      <Card className="p-6">
+        <Typography
+          variant="h5"
+          className="text-mono-200 dark:text-mono-0 mb-4"
+        >
+          Basic Information
+        </Typography>
+        <hr className="border-mono-80 dark:border-mono-160 mb-6" />
 
-      <div className="w-full pl-8">
-        <InstanceHeader
-          title={blueprint?.name || ''}
-          creator={blueprint?.author || ''}
-          githubPath={blueprint?.githubUrl || ''}
-        />
-
-        <div className="mt-8 grid grid-cols-2 gap-8">
-          <div>
-            <Label className={labelClassName}>Instance Name:</Label>
+        <div className="grid grid-cols-2 gap-8">
+          <div className="space-y-2">
+            <Label className={LabelClassName}>Instance Name</Label>
             <Input
               id="instanceName"
               autoFocus
@@ -87,16 +78,16 @@ export const BasicInformationStep: FC<BasicInformationStepProps> = ({
               inputClassName="placeholder:text-mono-80 dark:placeholder:text-mono-120 h-10"
               placeholder="Enter instance name"
               autoComplete="off"
-              value={values?.instanceName}
+              value={instanceName}
               onChange={(nextValue) => handleInstanceNameChange(nextValue)}
             />
-            {errors?.['instanceName'] && (
-              <ErrorMessage>{errors['instanceName'].message}</ErrorMessage>
+            {errors?.instanceName && (
+              <ErrorMessage>{errors.instanceName.message}</ErrorMessage>
             )}
           </div>
 
-          <div>
-            <Label className={labelClassName}>Instance Duration:</Label>
+          <div className="space-y-2">
+            <Label className={LabelClassName}>Instance Duration</Label>
             <Input
               id="instanceDuration"
               isControlled
@@ -105,25 +96,25 @@ export const BasicInformationStep: FC<BasicInformationStepProps> = ({
               autoComplete="off"
               type="number"
               min={1}
-              value={values?.instanceDuration?.toString()}
+              value={instanceDuration?.toString()}
               rightIcon={<>Block(s)</>}
               onChange={(nextValue) => handleInstanceDurationChange(nextValue)}
             />
-            {errors?.['instanceDuration'] && (
-              <ErrorMessage>{errors['instanceDuration'].message}</ErrorMessage>
+            {errors?.instanceDuration && (
+              <ErrorMessage>{errors.instanceDuration.message}</ErrorMessage>
             )}
           </div>
         </div>
 
-        <div className="mt-8 space-y-4">
-          <Label className={labelClassName}>Permitted Callers:</Label>
+        <div className="mt-6 space-y-4">
+          <Label className={LabelClassName}>Permitted Callers</Label>
           {errors?.['permittedCallers'] && (
             <ErrorMessage>{errors['permittedCallers'].message}</ErrorMessage>
           )}
           {Children.toArray(
-            permittedCallers.map((caller, index) => (
+            permittedCallers?.map((caller, index) => (
               <div className="pl-4">
-                <Label className={labelClassName}>
+                <Label className={LabelClassName}>
                   Permitted Caller {index + 1}:
                 </Label>
                 <div className="flex gap-2">
@@ -139,12 +130,13 @@ export const BasicInformationStep: FC<BasicInformationStepProps> = ({
                     placeholder="Enter permitted caller"
                     autoComplete="off"
                   />
-                  <IconButton
+                  <Button
                     onClick={() => handleRemoveCaller(index)}
                     className="flex-shrink-0"
+                    variant="utility"
                   >
                     <TrashIcon className="h-5 w-5" />
-                  </IconButton>
+                  </Button>
                 </div>
                 {errors?.['permittedCallers']?.[index] && (
                   <ErrorMessage>
@@ -156,18 +148,20 @@ export const BasicInformationStep: FC<BasicInformationStepProps> = ({
           )}
 
           <Button
+            variant="utility"
             onClick={() => {
-              setValue(`${stepKey}.permittedCallers`, [
-                ...permittedCallers,
-                '',
-              ]);
+              const newPermittedCaller = permittedCallers ?? [];
+              newPermittedCaller.push('');
+              // adding empty string to render the input field
+              setValue(`permittedCallers`, newPermittedCaller);
             }}
             className="mt-4"
+            leftIcon={<PlusIcon />}
           >
             Add Caller
           </Button>
         </div>
-      </div>
-    </div>
+      </Card>
+    </>
   );
 };

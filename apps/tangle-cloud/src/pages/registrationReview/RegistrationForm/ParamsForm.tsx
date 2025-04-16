@@ -2,7 +2,7 @@ import type { PrimitiveFieldType } from '@tangle-network/tangle-shared-ui/types/
 import Button from '@tangle-network/ui-components/components/buttons/Button';
 import set from 'lodash/set';
 import { Children, useCallback, useState } from 'react';
-import FieldTypeInput from './FieldTypeInput';
+import FieldTypeInput from '@tangle-network/tangle-shared-ui/components/PrimitiveFieldTypeInput';
 import { Label } from '@tangle-network/ui-components/components/Label';
 import { TextField } from '@tangle-network/ui-components';
 

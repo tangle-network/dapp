@@ -26,7 +26,6 @@ import { SUPPORTED_RESTAKE_DEPOSIT_TYPED_CHAIN_IDS } from '../../../constants/re
 import WithdrawModal from '../../../containers/restaking/WithdrawModal';
 import WithdrawRequestTable from '../../../containers/restaking/WithdrawRequestTable';
 import useRestakeApi from '../../../data/restake/useRestakeApi';
-import useRestakeAsset from '../../../data/restake/useRestakeAsset';
 import useActiveTypedChainId from '../../../hooks/useActiveTypedChainId';
 import type { WithdrawFormFields } from '../../../types/restake';
 import decimalsToStep from '../../../utils/decimalsToStep';
@@ -35,15 +34,23 @@ import parseChainUnits from '../../../utils/parseChainUnits';
 import { AnimatedTable } from '../AnimatedTable';
 import AssetPlaceholder from '../AssetPlaceholder';
 import { ExpandTableButton } from '../ExpandTableButton';
-import RestakeTabs from '../RestakeTabs';
+import RestakeActionTabs from '../RestakeActionTabs';
 import SupportedChainModal from '../SupportedChainModal';
 import useSwitchChain from '../useSwitchChain';
 import Details from './Details';
-import { DelegatorWithdrawRequest } from '@tangle-network/tangle-shared-ui/types/restake';
+import {
+  DelegatorWithdrawRequest,
+  RestakeAsset,
+} from '@tangle-network/tangle-shared-ui/types/restake';
 import { twMerge } from 'tailwind-merge';
 import calculateRestakeAvailableBalance from '../../../utils/restaking/calculateRestakeAvailableBalance';
+import { RestakeAssetId } from '@tangle-network/tangle-shared-ui/types';
 
-const RestakeWithdrawForm: FC = () => {
+type Props = {
+  assets: Map<RestakeAssetId, RestakeAsset> | null;
+};
+
+const RestakeWithdrawForm: FC<Props> = ({ assets }) => {
   const {
     register,
     setValue: setFormValue,
@@ -99,7 +106,9 @@ const RestakeWithdrawForm: FC = () => {
     return delegatorInfo.withdrawRequests;
   }, [delegatorInfo?.withdrawRequests]);
 
-  const selectedAsset = useRestakeAsset(selectedAssetId);
+  const selectedAsset = useMemo(() => {
+    return assets?.get(selectedAssetId) ?? null;
+  }, [assets, selectedAssetId]);
 
   const { maxAmount, formattedMaxAmount } = useMemo(() => {
     if (!delegatorInfo?.deposits || selectedAsset === null) {
@@ -189,7 +198,7 @@ const RestakeWithdrawForm: FC = () => {
   return (
     <div className="grid items-start justify-center gap-4 max-md:grid-cols-1 md:auto-cols-auto md:grid-flow-col">
       <StyleContainer>
-        <RestakeTabs />
+        <RestakeActionTabs />
 
         <Card withShadow tightPadding className="relative md:min-w-[512px]">
           {!isWithdrawRequestTableOpen && (

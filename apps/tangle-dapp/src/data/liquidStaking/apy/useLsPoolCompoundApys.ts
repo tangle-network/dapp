@@ -1,7 +1,7 @@
 import { Decimal } from 'decimal.js';
 import { useCallback, useMemo } from 'react';
 
-import useApi from '../../../hooks/useApi';
+import useApi from '@tangle-network/tangle-shared-ui/hooks/useApi';
 import useAllStakingExposures from '../../staking/useAllStakingExposures';
 import useEraTotalRewards2 from '../../staking/useEraTotalRewards2';
 import useLsBondedPools from '../useLsBondedPools';

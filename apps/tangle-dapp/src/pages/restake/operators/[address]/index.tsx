@@ -13,7 +13,7 @@ import TVLTable from './TVLTable';
 
 const Page = () => {
   const { address } = useParams();
-  const { operatorMap } = useRestakeOperatorMap();
+  const { result: operatorMap } = useRestakeOperatorMap();
   const { result: delegatorInfo } = useRestakeDelegatorInfo();
   const { operatorTVL } = useRestakeTVL(operatorMap, delegatorInfo);
 

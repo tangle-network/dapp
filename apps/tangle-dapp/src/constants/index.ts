@@ -127,6 +127,13 @@ export enum LockUnlocksAtKind {
   BLOCK,
 }
 
+export enum RestakeTab {
+  RESTAKE = 'restake',
+  VAULTS = 'vaults',
+  OPERATORS = 'operators',
+  BLUEPRINTS = 'blueprints',
+}
+
 export enum RestakeAction {
   DEPOSIT = 'deposit',
   DELEGATE = 'delegate',

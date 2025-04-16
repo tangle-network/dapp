@@ -16,7 +16,7 @@ const preferencesSchema = z.object({
   priceTargets: priceTargetsSchema.optional(),
 });
 
-export default function useBlueprintRegisteredOperator(blueprintId?: number) {
+export default function useBlueprintRegisteredOperator(blueprintId?: string) {
   const { result, ...rest } = useApiRx(
     useCallback(
       (apiRx) => {

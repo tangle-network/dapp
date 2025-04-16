@@ -1,4 +1,4 @@
-import { createElement, FC, useMemo, useState, useCallback } from 'react';
+import { FC, useEffect, useMemo } from 'react';
 import {
   Button,
   ErrorFallback,
@@ -6,86 +6,70 @@ import {
 } from '@tangle-network/ui-components';
 import { useForm } from 'react-hook-form';
 import {
-  BLUEPRINT_DEPLOY_STEPS,
+  DeployBlueprintSchema,
   deployBlueprintSchema,
+  formatServiceRegisterData,
 } from '../../../../utils/validations/deployBlueprint';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { useNavigate, useParams } from 'react-router';
+import useBlueprintDetails from '@tangle-network/tangle-shared-ui/data/restake/useBlueprintDetails';
+import { Deployment } from './DeploySteps/Deployment';
 import { twMerge } from 'tailwind-merge';
 import { ArrowRightIcon } from '@radix-ui/react-icons';
-import { useParams } from 'react-router';
-import useBlueprintDetails from '@tangle-network/tangle-shared-ui/data/restake/useBlueprintDetails';
-import { ArrowLeft } from '@tangle-network/icons';
-import { SelectOperatorsStep } from './DeploySteps/OperatorSelectionStep';
-import { BasicInformationStep } from './DeploySteps/BasicInformationStep';
-import { AssetConfigurationStep } from './DeploySteps/AssetConfigurationStep';
-
-const DEPLOY_STEPS = Object.values(BLUEPRINT_DEPLOY_STEPS);
+import ErrorMessage from '../../../../components/ErrorMessage';
+import { z } from 'zod';
+import useServiceRequestTx from '../../../../data/services/useServicesRequestTx';
+import { TxStatus } from '@tangle-network/tangle-shared-ui/hooks/useSubstrateTx';
+import { PagePath } from '../../../../types';
+import useNetworkStore from '@tangle-network/tangle-shared-ui/context/useNetworkStore';
+import { getApiPromise } from '@tangle-network/tangle-shared-ui/utils/polkadot/api';
 
 const DeployPage: FC = () => {
   const { id } = useParams();
-  const [step, setStep] = useState(0);
+  const navigate = useNavigate();
+  const wsRpcEndpoint = useNetworkStore(
+    (store) => store.network2?.wsRpcEndpoint,
+  );
+
   const {
     result: blueprintResult,
     isLoading: isBlueprintLoading,
     error: blueprintError,
   } = useBlueprintDetails(id);
 
+  const { execute: serviceRegisterTx, status: serviceRegisterStatus } =
+    useServiceRequestTx();
+
   const {
-    control,
     watch,
     setValue,
-    trigger,
+    control,
     formState: { errors },
-  } = useForm({
+    setError,
+    clearErrors,
+  } = useForm<DeployBlueprintSchema>({
     mode: 'onChange',
+    // @ts-expect-error Two different types with this name exist, but they are unrelated.
     resolver: zodResolver(deployBlueprintSchema),
   });
 
   const commonProps = useMemo(
     () => ({
-      control,
       errors,
       setValue,
       watch,
+      control,
+      setError,
       blueprint: blueprintResult?.details,
     }),
-    [control, errors, setValue, watch, blueprintResult?.details],
+    [blueprintResult?.details, control, errors, setError, setValue, watch],
   );
 
-  const steps = useMemo(
-    () => [
-      {
-        component: BasicInformationStep,
-        props: commonProps,
-      },
-      {
-        component: SelectOperatorsStep,
-        props: commonProps,
-      },
-      {
-        component: AssetConfigurationStep,
-        props: commonProps,
-      },
-    ],
-    [commonProps],
-  );
-
-  const StepComponent = createElement(steps[step].component, steps[step].props);
-
-  const onNextStep = useCallback(async () => {
-    const currentStepKey = DEPLOY_STEPS[step];
-    const isStepValid = await trigger(currentStepKey);
-
-    if (isStepValid && step < DEPLOY_STEPS.length - 1) {
-      setStep(step + 1);
+  useEffect(() => {
+    if (id && serviceRegisterStatus === TxStatus.COMPLETE) {
+      navigate(`${PagePath.BLUEPRINTS_DETAILS}`.replace(':id', id));
     }
-  }, [step, trigger]);
-
-  const onBackStep = useCallback(() => {
-    if (step > 0) {
-      setStep(step - 1);
-    }
-  }, [step]);
+  }, [serviceRegisterStatus, id, navigate]);
 
   if (isBlueprintLoading) {
     return <SkeletonLoader className="min-h-64" />;
@@ -96,34 +80,57 @@ const DeployPage: FC = () => {
     return null;
   }
 
+  const onDeployBlueprint = async () => {
+    try {
+      clearErrors();
+      const validatedData = deployBlueprintSchema.parse(watch());
+
+      const serviceRegisterData = formatServiceRegisterData(
+        blueprintResult.details,
+        validatedData,
+      );
+      if (serviceRegisterTx && wsRpcEndpoint) {
+        const apiPromise = await getApiPromise(wsRpcEndpoint);
+        await serviceRegisterTx({
+          ...serviceRegisterData,
+          apiPromise: apiPromise,
+        });
+      }
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        error.errors.forEach((err) => {
+          setError(err.path[0] as keyof DeployBlueprintSchema, {
+            type: 'manual',
+            message: err.message,
+          });
+        });
+      }
+    }
+  };
+
   return (
     <>
-      {StepComponent}
+      <Deployment {...commonProps} />
 
-      <div className="absolute w-[calc(100%-5rem)]">
-        <div
-          className={twMerge(
-            'p-6 rounded-xl mt-4',
-            'flex items-center justify-end gap-5',
-            "bg-[url('/static/assets/blueprints/selected-blueprint-panel.png')]",
-          )}
+      <div
+        className={twMerge(
+          'p-6 rounded-xl mt-4',
+          'flex items-center justify-end gap-5',
+          "bg-[url('/static/assets/blueprints/selected-blueprint-panel.png')]",
+        )}
+      >
+        {Object.keys(errors).length > 0 && (
+          <ErrorMessage>
+            Error(s) on validation. Please check the form and try again.
+          </ErrorMessage>
+        )}
+        <Button
+          rightIcon={<ArrowRightIcon width={24} height={24} />}
+          onClick={onDeployBlueprint}
+          isLoading={serviceRegisterStatus === TxStatus.PROCESSING}
         >
-          {step > 0 && (
-            <Button
-              variant="secondary"
-              onClick={onBackStep}
-              leftIcon={<ArrowLeft width={24} height={24} />}
-            >
-              Back
-            </Button>
-          )}
-          <Button
-            rightIcon={<ArrowRightIcon width={24} height={24} />}
-            onClick={onNextStep}
-          >
-            Next
-          </Button>
-        </div>
+          Deploy
+        </Button>
       </div>
     </>
   );

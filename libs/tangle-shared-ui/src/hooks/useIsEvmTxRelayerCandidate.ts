@@ -3,9 +3,9 @@ import useBalances from './useBalances';
 
 const useIsEvmTxRelayerCandidate = (): boolean | null => {
   const { free } = useBalances();
-  const { network } = useNetworkStore();
+  const network = useNetworkStore((store) => store.network2);
 
-  if (free === null) {
+  if (free === null || network === undefined) {
     return null;
   }
 
