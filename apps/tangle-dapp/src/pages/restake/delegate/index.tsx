@@ -235,10 +235,10 @@ const RestakeDelegateForm: FC<Props> = ({ assets }) => {
     [closeChainModal, switchChain],
   );
 
+  const selectedAssetId = watch('assetId');
   const selectedAsset = useMemo(() => {
-    return assets?.get(watch('assetId')) ?? null;
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [watch('assetId')]);
+    return assets?.get(selectedAssetId) ?? null;
+  }, [assets, selectedAssetId]);
 
   const isReady =
     restakeApi !== null &&
