@@ -19,6 +19,7 @@ import { PricingFormResult } from './PricingModal/types';
 import { useNavigate } from 'react-router';
 import { SessionStorageKey } from '../../constants';
 import { PagePath } from '../../types';
+import useOperatorInfo from '../../hooks/useOperatorInfo';
 export const dynamic = 'force-static';
 
 const ROLE_TITLE = {
@@ -40,7 +41,7 @@ const Page = () => {
   const [isPricingModalOpen, setIsPricingModalOpen] = useState(false);
   const { blueprints, isLoading, error } = useBlueprintListing();
 
-  const isOperator = useMemo(() => role === Role.OPERATOR, [role]);
+  const { isOperator } = useOperatorInfo();
 
   const selectedBlueprints = useMemo(() => {
     return Object.keys(rowSelection)

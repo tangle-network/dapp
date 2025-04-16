@@ -9,11 +9,11 @@ import { Typography } from '@tangle-network/ui-components/typography/Typography'
 import { PropsWithChildren, useState } from 'react';
 import { Link, useParams, useNavigate } from 'react-router-dom';
 import { PagePath, TangleDAppPagePath } from '../../../types';
-import useRoleStore, { Role } from '../../../stores/roleStore';
 import PricingModal from '../PricingModal';
 import { Modal } from '@tangle-network/ui-components';
 import { PricingFormResult } from '../PricingModal/types';
 import { SessionStorageKey } from '../../../constants';
+import useOperatorInfo from '../../../hooks/useOperatorInfo';
 
 const RestakeOperatorAction = ({
   children,
@@ -33,7 +33,7 @@ const Page = () => {
   const navigate = useNavigate();
   const { id } = useParams();
   const { result, isLoading, error } = useBlueprintDetails(id);
-  const isOperator = useRoleStore().role === Role.OPERATOR;
+  const { isOperator } = useOperatorInfo();
   const [isPricingModalOpen, setIsPricingModalOpen] = useState(false);
 
   if (isLoading) {
@@ -70,15 +70,18 @@ const Page = () => {
     <div className="space-y-10">
       <BlueprintHeader
         blueprint={result.details}
-        actionProps={{
-          children: isOperator ? 'Register' : 'Deploy',
+        enableDeploy={isOperator}
+        enableRegister
+        deployBtnProps={{
           onClick: (e) => {
             e.preventDefault();
-            if (isOperator) {
-              setIsPricingModalOpen(true);
-            } else {
-              navigate(PagePath.BLUEPRINTS_DEPLOY.replace(':id', id ?? ''));
-            }
+            navigate(PagePath.BLUEPRINTS_DEPLOY.replace(':id', id ?? ''));
+          },
+        }}
+        registerBtnProps={{
+          onClick: (e) => {
+            e.preventDefault();
+            setIsPricingModalOpen(true);
           },
         }}
       />

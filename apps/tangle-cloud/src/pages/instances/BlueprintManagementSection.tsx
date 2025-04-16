@@ -3,10 +3,8 @@ import { InstancesTabs } from './Instances';
 import useMonitoringBlueprints from '@tangle-network/tangle-shared-ui/data/blueprints/useMonitoringBlueprints';
 import { FC, useMemo } from 'react';
 import useSubstrateAddress from '@tangle-network/tangle-shared-ui/hooks/useSubstrateAddress';
-import useRoleStore, { Role } from '../../stores/roleStore';
 
 export const BlueprintManagementSection: FC = () => {
-  const isOperator = useRoleStore().role === Role.OPERATOR;
   const operatorAccountAddress = useSubstrateAddress();
   const {
     isLoading,
@@ -23,13 +21,11 @@ export const BlueprintManagementSection: FC = () => {
 
   return (
     <>
-      {isOperator && (
-        <RegisteredBlueprintsTabs
-          blueprints={registeredBlueprints}
-          isLoading={isLoading}
-          error={error}
-        />
-      )}
+      <RegisteredBlueprintsTabs
+        blueprints={registeredBlueprints}
+        isLoading={isLoading}
+        error={error}
+      />
       <InstancesTabs
         runningInstances={{
           data: runningInstances,
