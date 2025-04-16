@@ -1,17 +1,16 @@
 import useRestakeOperatorMap from '@tangle-network/tangle-shared-ui/data/restake/useRestakeOperatorMap';
 import { isSubstrateAddress } from '@tangle-network/ui-components';
 import { Typography } from '@tangle-network/ui-components/typography/Typography';
-import { ComponentProps, useMemo } from 'react';
-
+import { ComponentProps, FC, useMemo } from 'react';
 import useRestakeDelegatorInfo from '@tangle-network/tangle-shared-ui/data/restake/useRestakeDelegatorInfo';
-import useRestakeTvl from '@tangle-network/tangle-shared-ui/data/restake/useRestakeTvl2';
+import useRestakeTvl from '@tangle-network/tangle-shared-ui/data/restake/useRestakeTvl';
 import { useParams } from 'react-router';
 import useOperatorBlueprints from '@tangle-network/tangle-shared-ui/data/blueprints/useOperatorBlueprints';
 import OperatorInfoCard from './OperatorInfoCard';
 import RegisteredBlueprintsCard from './RegisteredBlueprintsCard';
 import TVLTable from './TVLTable';
 
-const Page = () => {
+const Page: FC = () => {
   const { address } = useParams();
   const { result: operatorMap } = useRestakeOperatorMap();
   const { result: delegatorInfo } = useRestakeDelegatorInfo();
