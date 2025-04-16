@@ -6,7 +6,7 @@ import { combineLatest, switchMap } from 'rxjs';
 import useNetworkStore from '../../context/useNetworkStore';
 import useApiRx from '../../hooks/useApiRx';
 import { TangleError, TangleErrorCode } from '../../types/error';
-import useOperatorTvl from '../restake/useOperatorTvl';
+import useOperatorTvl from '../restake/useOperatorTvl2';
 import useRestakeOperatorMap from '../restake/useRestakeOperatorMap';
 import {
   createBlueprintObjects,
@@ -14,7 +14,7 @@ import {
   extractOperatorData,
   fetchOwnerIdentities,
 } from './utils/blueprintHelpers';
-import { ServiceInstance } from './utils/type';
+import type { ServiceInstance } from './utils/type';
 import { toPrimitiveService } from './utils/toPrimitiveService';
 
 const useAllBlueprints = () => {

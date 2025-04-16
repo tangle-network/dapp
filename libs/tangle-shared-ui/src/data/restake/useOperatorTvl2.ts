@@ -1,9 +1,9 @@
-import { RestakeAssetMap, OperatorMap } from '../../types/restake';
+import type { RestakeAssetMap, OperatorMap } from '../../types/restake';
 import safeFormatUnits from '../../utils/safeFormatUnits';
-import { SubstrateAddress } from '@tangle-network/ui-components/types/address';
+import type { SubstrateAddress } from '@tangle-network/ui-components/types/address';
 import { assertSubstrateAddress } from '@tangle-network/ui-components/utils';
 import { useMemo } from 'react';
-import { RestakeAssetId } from '../../types';
+import type { RestakeAssetId } from '../../types';
 import useRestakeOperatorMap from './useRestakeOperatorMap';
 import useRestakeAssets from './useRestakeAssets';
 
@@ -21,16 +21,17 @@ const calculateTvl = (
     (acc: OperatorTvlGroup, [operatorId_, operatorData]) => {
       const operatorId = assertSubstrateAddress(operatorId_);
 
-      operatorData.delegations.forEach((delegation) => {
+      for (const delegation of operatorData.delegations) {
         const asset = assetMap.get(delegation.assetId);
+
         if (asset === undefined) {
-          return;
+          continue;
         }
 
         const assetPrice = asset.metadata.priceInUsd ?? null;
 
         if (typeof assetPrice !== 'number') {
-          return;
+          continue;
         }
 
         const result = safeFormatUnits(
@@ -39,7 +40,7 @@ const calculateTvl = (
         );
 
         if (!result.success) {
-          return;
+          continue;
         }
 
         const amount = Number(result.value) * assetPrice;
@@ -65,9 +66,7 @@ const calculateTvl = (
           operatorId,
           (acc.operatorTvl.get(operatorId) || 0) + amount,
         );
-
-        return;
-      });
+      }
 
       return acc;
     },

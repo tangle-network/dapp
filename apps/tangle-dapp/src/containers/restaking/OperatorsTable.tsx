@@ -1,13 +1,13 @@
 import { AddLineIcon } from '@tangle-network/icons';
 import OperatorsTableUI from '@tangle-network/tangle-shared-ui/components/tables/Operators';
-import { OperatorConcentration } from '@tangle-network/tangle-shared-ui/data/restake/useOperatorConcentration';
-import { OperatorTvlGroup } from '@tangle-network/tangle-shared-ui/data/restake/useOperatorTvl';
+import type { OperatorConcentration } from '@tangle-network/tangle-shared-ui/data/restake/useOperatorConcentration';
+import type { OperatorTvlGroup } from '@tangle-network/tangle-shared-ui/data/restake/useOperatorTvl2';
 import useRestakeAssets from '@tangle-network/tangle-shared-ui/data/restake/useRestakeAssets';
 import useAgnosticAccountInfo from '@tangle-network/tangle-shared-ui/hooks/useAgnosticAccountInfo';
 import useIdentities from '@tangle-network/tangle-shared-ui/hooks/useIdentities';
 import useIsAccountConnected from '@tangle-network/tangle-shared-ui/hooks/useIsAccountConnected';
 import useSubstrateAddress from '@tangle-network/tangle-shared-ui/hooks/useSubstrateAddress';
-import { RestakeOperator } from '@tangle-network/tangle-shared-ui/types';
+import type { RestakeOperator } from '@tangle-network/tangle-shared-ui/types';
 import type {
   OperatorMap,
   OperatorDelegatorBond,
@@ -23,12 +23,12 @@ import cx from 'classnames';
 import {
   type ComponentProps,
   type FC,
-  PropsWithChildren,
+  type PropsWithChildren,
   useCallback,
   useMemo,
   useState,
 } from 'react';
-import { LinkProps } from 'react-router';
+import type { LinkProps } from 'react-router';
 import { RestakeOperatorWrapper } from '../../components/tables/RestakeActionWrappers';
 import JoinOperatorsModal from './JoinOperatorsModal';
 

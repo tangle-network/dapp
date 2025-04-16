@@ -1,5 +1,5 @@
-import { OperatorConcentration } from '@tangle-network/tangle-shared-ui/data/restake/useOperatorConcentration';
-import { OperatorTvlGroup } from '@tangle-network/tangle-shared-ui/data/restake/useOperatorTvl';
+import type { OperatorConcentration } from '@tangle-network/tangle-shared-ui/data/restake/useOperatorConcentration';
+import type { OperatorTvlGroup } from '@tangle-network/tangle-shared-ui/data/restake/useOperatorTvl2';
 import useRestakeAssets from '@tangle-network/tangle-shared-ui/data/restake/useRestakeAssets';
 import useRestakeAssetsTvl from '@tangle-network/tangle-shared-ui/data/restake/useRestakeAssetsTvl';
 import useRestakeDelegatorInfo from '@tangle-network/tangle-shared-ui/data/restake/useRestakeDelegatorInfo';
@@ -22,7 +22,7 @@ import DepositForm from '../../pages/restake/deposit/DepositForm';
 import RestakeUnstakeForm from '../../pages/restake/unstake';
 import RestakeWithdrawForm from '../../pages/restake/withdraw';
 import OperatorsTable from './OperatorsTable';
-import { RestakeAssetId } from '@tangle-network/tangle-shared-ui/types';
+import type { RestakeAssetId } from '@tangle-network/tangle-shared-ui/types';
 
 enum RestakeTab {
   RESTAKE = 'Restake',
