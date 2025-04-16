@@ -1,11 +1,11 @@
-import { useObservable, useObservableState } from 'observable-hooks';
-import { Observable, of, switchMap } from 'rxjs';
 import { RestakeAssetMap, OperatorMap } from '../../types/restake';
 import safeFormatUnits from '../../utils/safeFormatUnits';
 import { SubstrateAddress } from '@tangle-network/ui-components/types/address';
 import { assertSubstrateAddress } from '@tangle-network/ui-components/utils';
-import { useMemo, useCallback } from 'react';
+import { useMemo } from 'react';
 import { RestakeAssetId } from '../../types';
+import useRestakeOperatorMap from './useRestakeOperatorMap';
+import useRestakeAssets from './useRestakeAssets';
 
 export type OperatorTvlGroup = {
   operatorTvlByAsset: Map<SubstrateAddress, Map<RestakeAssetId, number>>;
@@ -79,17 +79,27 @@ const calculateTvl = (
   );
 };
 
-const useOperatorTvl = (
-  operatorMap: OperatorMap,
-  assetMap: RestakeAssetMap | null,
-) => {
+type ReturnType = {
+  operatorTvlByAsset: Map<SubstrateAddress, Map<RestakeAssetId, number>>;
+  operatorTvl: Map<SubstrateAddress, number>;
+  vaultTvl: Map<RestakeAssetId, number>;
+};
+
+const useOperatorTvl = (): ReturnType => {
+  const { result: operatorMap } = useRestakeOperatorMap();
+  const { assets: assetMap } = useRestakeAssets();
+
   return useMemo(() => {
-    if (assetMap === null)
+    if (assetMap === null) {
       return {
-        operatorTVLByAsset: new Map(),
-        vaultTVL: new Map(),
-        operatorTVL: new Map(),
+        operatorTvlByAsset: new Map<
+          SubstrateAddress,
+          Map<RestakeAssetId, number>
+        >(),
+        vaultTvl: new Map<RestakeAssetId, number>(),
+        operatorTvl: new Map<SubstrateAddress, number>(),
       };
+    }
 
     const { operatorTvlByAsset, operatorTvl, vaultTvl } = calculateTvl(
       operatorMap,

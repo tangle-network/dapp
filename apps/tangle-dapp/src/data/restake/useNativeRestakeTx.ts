@@ -32,7 +32,7 @@ const useNativeRestakeTx = () => {
       arguments: [
         convertAddressToBytes32(context.operatorAddress),
         BigInt(context.amount.toString()),
-        context.blueprintSelection.map((id) => BigInt(id.toString()))
+        context.blueprintSelection.map((id) => BigInt(id.toString())),
       ],
     }),
     [],

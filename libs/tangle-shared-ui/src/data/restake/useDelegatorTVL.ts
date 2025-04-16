@@ -1,5 +1,3 @@
-import { useObservable, useObservableState } from 'observable-hooks';
-import { of, switchMap } from 'rxjs';
 import type { RestakeAssetMap, DelegatorInfo } from '../../types/restake';
 import { useMemo } from 'react';
 
@@ -47,3 +45,5 @@ const useDelegatorTvl = (
     return calculateDelegatorTvl(delegatorInfo, assetMap);
   }, [delegatorInfo, assetMap]);
 };
+
+export default useDelegatorTvl;
