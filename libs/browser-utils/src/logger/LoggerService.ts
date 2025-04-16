@@ -114,7 +114,6 @@ class LoggerService {
     if (this.logLevel <= level) {
       const date = new Date();
 
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
       return [
         `${color}[${date.getHours()}:${date.getMinutes()}:${date.getSeconds()}], [${
           this.ctx

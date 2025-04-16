@@ -43,7 +43,7 @@ It uses [nx.dev](https://nx.dev/) for fast and extensible building. The `apps` d
 
 ### Prerequisites
 
-This repository makes use of yarn, nodejs, and requires version node v18.12.x. To install node.js binaries, installers, and source tarballs, please visit https://nodejs.org/en/download/.
+This repository makes use of yarn, nodejs, and requires version node v18.18.x. To install node.js binaries, installers, and source tarballs, please visit https://nodejs.org/en/download/.
 
 <div align="right"><a href="#table-of-contents">↑ Back to top ↑</a></div>
 

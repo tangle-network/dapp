@@ -19,7 +19,6 @@ import { PricingFormResult } from './PricingModal/types';
 import { useNavigate } from 'react-router';
 import { SessionStorageKey } from '../../constants';
 import { PagePath } from '../../types';
-export const dynamic = 'force-static';
 
 const ROLE_TITLE = {
   [Role.OPERATOR]: 'Register Your First Blueprint',
@@ -62,7 +61,7 @@ const Page = () => {
       );
       navigate(PagePath.BLUEPRINTS_REGISTRATION_REVIEW);
     },
-    [selectedBlueprints],
+    [navigate, selectedBlueprints],
   );
 
   return (

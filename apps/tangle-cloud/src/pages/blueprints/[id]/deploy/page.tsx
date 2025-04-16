@@ -1,4 +1,4 @@
-import { FC, useEffect } from 'react';
+import { FC, useEffect, useMemo } from 'react';
 import {
   Button,
   ErrorFallback,
@@ -53,14 +53,17 @@ const DeployPage: FC = () => {
     resolver: zodResolver(deployBlueprintSchema),
   });
 
-  const commonProps = {
-    errors,
-    setValue,
-    watch,
-    control,
-    setError,
-    blueprint: blueprintResult?.details,
-  };
+  const commonProps = useMemo(
+    () => ({
+      errors,
+      setValue,
+      watch,
+      control,
+      setError,
+      blueprint: blueprintResult?.details,
+    }),
+    [blueprintResult?.details, control, errors, setError, setValue, watch],
+  );
 
   useEffect(() => {
     if (id && serviceRegisterStatus === TxStatus.COMPLETE) {

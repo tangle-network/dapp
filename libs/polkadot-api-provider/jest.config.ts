@@ -1,4 +1,3 @@
-/* eslint-disable */
 export default {
   displayName: 'polkadot-api-provider',
   preset: '../../jest.preset.cjs',

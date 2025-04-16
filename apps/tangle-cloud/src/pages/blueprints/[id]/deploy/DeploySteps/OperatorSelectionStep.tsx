@@ -127,9 +127,15 @@ export const SelectOperatorsStep: FC<SelectOperatorsStepProps> = ({
         };
       },
     );
-  }, [operatorServicesMap, restakeOperatorMap, identities, assets]);
+  }, [
+    restakeOperatorMap,
+    registeredOperators,
+    identities,
+    assets,
+    operatorServicesMap,
+  ]);
 
-  const selectedAssets = watch(`assets`) ?? [];
+  const selectedAssets = useMemo(() => watch(`assets`) ?? [], [watch]);
   const formValues = watch();
 
   const tableData = useMemo(() => {
@@ -149,7 +155,7 @@ export const SelectOperatorsStep: FC<SelectOperatorsStepProps> = ({
   // set the operators to the form value when the rowSelection changes
   useEffect(() => {
     setValue(`operators`, Object.keys(rowSelection));
-  }, [rowSelection]);
+  }, [rowSelection, setValue]);
 
   const onSelectAsset = useCallback(
     (asset: RestakeAsset, isChecked: boolean) => {
@@ -214,7 +220,13 @@ export const SelectOperatorsStep: FC<SelectOperatorsStepProps> = ({
 
       setRowSelection((prev) => ({ ...prev, ...newRowSelection }));
     },
-    [selectedAssets, setValue, tableData],
+    [
+      minimumNativeSecurityRequirement,
+      rowSelection,
+      selectedAssets,
+      setValue,
+      tableData,
+    ],
   );
 
   const onChangeApprovalModel = useCallback(
@@ -240,14 +252,14 @@ export const SelectOperatorsStep: FC<SelectOperatorsStepProps> = ({
       setValue(`maxApproval`, changes.maxApproval);
       setValue(`minApproval`, changes.minApproval);
     },
-    [formValues, setValue],
+    [formValues, rowSelection, setValue],
   );
 
   const onChangeMinApproval = useCallback(
     (value: DeployBlueprintSchema['minApproval']) => {
       setValue(`minApproval`, value);
     },
-    [formValues, setValue],
+    [setValue],
   );
 
   return (

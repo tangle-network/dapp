@@ -1,4 +1,3 @@
-/* eslint-disable */
 export default {
   displayName: 'abstract-api-provider',
   preset: '../../jest.preset.cjs',

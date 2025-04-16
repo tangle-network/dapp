@@ -1,15 +1,7 @@
-const { FlatCompat } = require('@eslint/eslintrc');
-const js = require('@eslint/js');
-const baseConfig = require('../../eslint.config.cjs');
+import baseConfig from '../../eslint.config.js';
 
-const compat = new FlatCompat({
-  baseDirectory: __dirname,
-  recommendedConfig: js.configs.recommended,
-});
-
-module.exports = [
+export default [
   ...baseConfig,
-  ...compat.extends('plugin:@nx/react', 'plugin:react-hooks/recommended'),
   {
     ignores: ['vite.config.*.timestamp*'],
   },

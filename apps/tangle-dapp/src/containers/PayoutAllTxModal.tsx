@@ -607,7 +607,7 @@ const PayoutAllTxModal: FC<Props> = ({
                         </span>
 
                         <div className="space-y-2.5 text-sm divide-y divide-gray-200 dark:divide-gray-700">
-                          {processedValidators.map((validator, index) => (
+                          {processedValidators.map((validator) => (
                             <div
                               key={validator}
                               className="flex justify-between items-center pt-2 first:pt-0"

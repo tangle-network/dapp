@@ -19,7 +19,7 @@ jobs:
       - name: Set up Node.js environment
         uses: actions/setup-node@v4.4.0
         with:
-          node-version: '>=18.12.x'
+          node-version: '>=18.18.x'
 
       - name: Install dependencies
         run: yarn install

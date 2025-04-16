@@ -1,27 +1,15 @@
 import { BN } from '@polkadot/util';
 import { ZERO_BIG_INT } from '@tangle-network/dapp-config/constants';
-import { TokenIcon, ArrowRightUp } from '@tangle-network/icons';
 import ListModal from '@tangle-network/tangle-shared-ui/components/ListModal';
+import useRestakeAssets from '@tangle-network/tangle-shared-ui/data/restake/useRestakeAssets';
 import { RestakeAssetId } from '@tangle-network/tangle-shared-ui/types';
 import { DelegatorInfo } from '@tangle-network/tangle-shared-ui/types/restake';
 import assertRestakeAssetId from '@tangle-network/tangle-shared-ui/utils/assertRestakeAssetId';
-import {
-  AmountFormatStyle,
-  formatDisplayAmount,
-  isEvmAddress,
-  shortenHex,
-  Typography,
-} from '@tangle-network/ui-components';
 import { useMemo } from 'react';
 import { formatUnits } from 'viem';
-import LogoListItem from '../../components/Lists/LogoListItem';
+import AssetListItem from '../../components/Lists/AssetListItem';
 import filterBy from '../../utils/filterBy';
 import calculateRestakeAvailableBalance from '../../utils/restaking/calculateRestakeAvailableBalance';
-import useRestakeAssets from '@tangle-network/tangle-shared-ui/data/restake/useRestakeAssets';
-import { useActiveChain } from '@tangle-network/api-provider-environment/hooks/useActiveChain';
-import { makeExplorerUrl } from '@tangle-network/api-provider-environment/transaction/utils';
-import { ChainType } from '@tangle-network/dapp-types';
-import AssetListItem from '../../components/Lists/AssetListItem';
 
 type Props = {
   delegatorInfo: DelegatorInfo | null;
@@ -42,8 +30,6 @@ const WithdrawModal = ({
   onItemSelected,
 }: Props) => {
   const { assets } = useRestakeAssets();
-  const activeChain = useActiveChain();
-
   const availableForWithdrawal = useMemo(() => {
     if (!delegatorInfo?.deposits) {
       return [];
