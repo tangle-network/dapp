@@ -1,4 +1,4 @@
-import { FC, useEffect } from 'react';
+import { FC, useEffect, useState } from 'react';
 import {
   Button,
   ErrorFallback,
@@ -21,12 +21,13 @@ import { z } from 'zod';
 import useServiceRequestTx from '../../../../data/services/useServicesRequestTx';
 import { TxStatus } from '@tangle-network/tangle-shared-ui/hooks/useSubstrateTx';
 import { PagePath } from '../../../../types';
-import useNetworkStore from '@tangle-network/tangle-shared-ui/context/useNetworkStore';
 import { getApiPromise } from '@tangle-network/tangle-shared-ui/utils/polkadot/api';
+import useNetworkStore from '@tangle-network/tangle-shared-ui/context/useNetworkStore';
 
 const DeployPage: FC = () => {
   const { id } = useParams();
   const navigate = useNavigate();
+
   const wsRpcEndpoint = useNetworkStore(
     (store) => store.network2?.wsRpcEndpoint,
   );
