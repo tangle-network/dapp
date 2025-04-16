@@ -1,3 +1,73 @@
+## 0.1.2 (2025-04-16)
+
+### 🚀 Features
+
+- **tangle-cloud:** blueprint deployment request args configuration & finalization ([#2957](https://github.com/tangle-network/dapp/pull/2957))
+- **tangle-dapp:** Add Protocol Stats Component ([#2966](https://github.com/tangle-network/dapp/pull/2966))
+- **tangle-dapp:** Add Phantom wallet to dApp wallet provider ([#2885](https://github.com/tangle-network/dapp/pull/2885))
+- **leaderboard:** Show Validator Identity, Use Timestamp ([#2947](https://github.com/tangle-network/dapp/pull/2947))
+- **tangle-dapp:** Add XP & Points Banner to Sidebar ([#2949](https://github.com/tangle-network/dapp/pull/2949))
+- **leaderboard:** Integrate Leaderboard with GraphQL Server ([#2938](https://github.com/tangle-network/dapp/pull/2938))
+- **tangle-cloud:** implement logic update pending service request ([#2917](https://github.com/tangle-network/dapp/pull/2917))
+- **tangle-dapp:** Add LS pools loading state ([#2914](https://github.com/tangle-network/dapp/pull/2914))
+- **leaderboard:** Add Leaderboard dApp ([#2913](https://github.com/tangle-network/dapp/pull/2913))
+- **ui-components:** Setup Release Automation [skip ci] ([#2888](https://github.com/tangle-network/dapp/pull/2888))
+- **tangle-dapp:** Add LS pools update nominations modal & tx ([#2911](https://github.com/tangle-network/dapp/pull/2911))
+- **tangle-dapp:** Add LS pool bouncer controls (close/open pool) ([#2898](https://github.com/tangle-network/dapp/pull/2898))
+- **tangle-cloud:** implement logic for registered blueprints and running blueprints ([#2902](https://github.com/tangle-network/dapp/pull/2902))
+
+### 🩹 Fixes
+
+- **tangle-shared-ui:** Correct memo check ([aab0c101](https://github.com/tangle-network/dapp/commit/aab0c101))
+- **tangle-shared-ui:** Update Tx Eligible Check ([#2969](https://github.com/tangle-network/dapp/pull/2969))
+- **tangle-dapp:** Fix Theme Flickering, Disable Link ([#2953](https://github.com/tangle-network/dapp/pull/2953))
+- **libs/tangle-shared-ui:** update the TVL calculation in use blueprint hook ([#2903](https://github.com/tangle-network/dapp/pull/2903))
+- **tangle-dapp:** Fix Incorrect Precompile Reward, Bump Types ([#2901](https://github.com/tangle-network/dapp/pull/2901))
+
+### 💅 Refactors
+
+- **tangle-dapp:** Relocate Claim Rewards in Top Navigation ([#2948](https://github.com/tangle-network/dapp/pull/2948))
+- **repo:** move useAgnosticTx to common ([#2920](https://github.com/tangle-network/dapp/pull/2920))
+- **repo:** move evmPrecompiles to common ([#2919](https://github.com/tangle-network/dapp/pull/2919))
+- **repo:** move graphql to common ([#2899](https://github.com/tangle-network/dapp/pull/2899))
+
+### 🏡 Chore
+
+- **tangle-dapp:** Refactor restake page with new tab navigation and content structure ([#2973](https://github.com/tangle-network/dapp/pull/2973))
+- **tangle-dapp:** Revert release notes ([c5b6d902](https://github.com/tangle-network/dapp/commit/c5b6d902))
+- bump @hookform/resolvers from 3.10.0 to 5.0.1 ([#2972](https://github.com/tangle-network/dapp/pull/2972))
+- bump eslint-config-prettier from 9.1.0 to 10.1.2 ([#2971](https://github.com/tangle-network/dapp/pull/2971))
+- bump actions/setup-node from 4.3.0 to 4.4.0 ([#2970](https://github.com/tangle-network/dapp/pull/2970))
+- bump vite-plugin-dts from 4.3.0 to 4.5.3 ([#2968](https://github.com/tangle-network/dapp/pull/2968))
+- bump typescript-eslint from 8.29.1 to 8.30.0 ([#2967](https://github.com/tangle-network/dapp/pull/2967))
+- **tangle-dapp:** Update asset selection modal ([#2965](https://github.com/tangle-network/dapp/pull/2965))
+- bump actions/create-github-app-token from 1 to 2 ([#2961](https://github.com/tangle-network/dapp/pull/2961))
+- bump @polkadot/keyring from 13.3.1 to 13.4.3 ([#2962](https://github.com/tangle-network/dapp/pull/2962))
+- **tangle-dapp:** Improve Vault Table ([#2956](https://github.com/tangle-network/dapp/pull/2956))
+- **tangle-dapp:** Group chains by chain type in ChainList component ([#2954](https://github.com/tangle-network/dapp/pull/2954))
+- **tangle-dapp:** Update Account Card Components ([#2951](https://github.com/tangle-network/dapp/pull/2951))
+- bump lycheeverse/lychee-action from 2.3.0 to 2.4.0 ([#2943](https://github.com/tangle-network/dapp/pull/2943))
+- bump @commitlint/config-conventional from 19.7.1 to 19.8.0 ([#2929](https://github.com/tangle-network/dapp/pull/2929))
+- bump @testing-library/react from 16.1.0 to 16.2.0 ([#2928](https://github.com/tangle-network/dapp/pull/2928))
+- bump actions/setup-node from 4.2.0 to 4.3.0 ([#2930](https://github.com/tangle-network/dapp/pull/2930))
+- bump actions/setup-node from 4.2.0 to 4.3.0 ([#2906](https://github.com/tangle-network/dapp/pull/2906))
+- **repo:** bump `tangle-substrate-type` version ([#2900](https://github.com/tangle-network/dapp/pull/2900))
+
+### 🎨 Styles
+
+- **ui-components:** Improve modal scrollable behavior ([#2952](https://github.com/tangle-network/dapp/pull/2952))
+
+### 🤖 CI
+
+- **tools:** Add Netlify Build Ignore to Improve Release Process ([#2912](https://github.com/tangle-network/dapp/pull/2912))
+
+### ❤️ Thank You
+
+- Daniel Bui @danielbui12
+- Pavan Soratur @devpavan04
+- Trung-Tin Pham @AtelyPham
+- yurixander @yurixander
+
 ## 0.1.1 (2025-03-10)
 
 ### 🩹 Fixes
