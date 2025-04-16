@@ -39,29 +39,11 @@ const useDelegatorTvl = (
   delegatorInfo: DelegatorInfo | null,
   assetMap: RestakeAssetMap | null,
 ) => {
-  const tvl$ = useObservable(
-    (input$) =>
-      input$.pipe(
-        switchMap(([delegatorInfo, assetMap]) =>
-          of(
-            !delegatorInfo || !assetMap
-              ? { delegatorTvl: {}, totalDelegatorTvl: 0 }
-              : calculateDelegatorTvl(delegatorInfo, assetMap),
-          ),
-        ),
-      ),
-    [delegatorInfo, assetMap],
-  );
+  return useMemo(() => {
+    if (delegatorInfo === null || assetMap === null) {
+      return { delegatorTvl: {}, totalDelegatorTvl: 0 };
+    }
 
-  const initialState = useMemo(
-    () => ({
-      delegatorTvl: {},
-      totalDelegatorTvl: 0,
-    }),
-    [],
-  );
-
-  return useObservableState(tvl$, initialState);
+    return calculateDelegatorTvl(delegatorInfo, assetMap);
+  }, [delegatorInfo, assetMap]);
 };
-
-export default useDelegatorTvl;

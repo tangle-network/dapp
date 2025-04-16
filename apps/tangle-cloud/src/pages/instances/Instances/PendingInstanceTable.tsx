@@ -270,7 +270,7 @@ export const PendingInstanceTable: FC = () => {
         }),
         columnHelper.accessor('requestId', {
           header: '',
-          cell: (props) => {
+          cell: () => {
             return (
               <TableCellWrapper removeRightBorder className="p-0 min-h-fit">
                 <Dropdown>
@@ -300,7 +300,7 @@ export const PendingInstanceTable: FC = () => {
     }
 
     return baseColumns;
-  }, [isOperator, assetsMetadata, operatorIdentityMap]);
+  }, [isOperator, network, operatorIdentityMap]);
 
   const table = useReactTable({
     data: pendingBlueprints,

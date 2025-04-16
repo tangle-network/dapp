@@ -1,4 +1,3 @@
-/* eslint-disable */
 export default {
   displayName: 'dapp-types',
   preset: '../../jest.preset.cjs',

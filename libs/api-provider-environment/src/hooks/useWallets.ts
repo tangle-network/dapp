@@ -27,7 +27,7 @@ export const useWallets = () => {
         const wallets = await Promise.all(
           walletsFromActiveChain.map(
             async ({ detect, ...walletConfig }): Promise<ManagedWallet> => {
-              const isDetected = Boolean(await detect(appName)) ?? false;
+              const isDetected = Boolean(await detect(appName));
               const connected =
                 activeWallet?.id === walletConfig.id && !!activeApi;
 

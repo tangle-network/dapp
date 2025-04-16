@@ -57,6 +57,7 @@ export default defineConfig({
         'tailwind.preset': 'src/tailwind.preset.ts',
       },
       name: 'ui-components',
+      cssFileName: 'style.css',
       // Change this to the formats you want to support.
       // Don't forget to update your package.json as well.
       formats: ['cjs', 'es'],

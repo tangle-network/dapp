@@ -1,5 +1,3 @@
-import cx from 'classnames';
-import { StatusIndicator } from '@tangle-network/icons';
 import { IconBase } from '@tangle-network/icons/types';
 import {
   EventFor,
@@ -8,10 +6,10 @@ import {
   TooltipTrigger,
   Typography,
 } from '@tangle-network/ui-components';
-import { Link, LinkProps } from 'react-router';
 import { ComponentProps, FC, ReactElement, useCallback } from 'react';
+import { Link } from 'react-router';
 import { twMerge } from 'tailwind-merge';
-
+import { StatusIndicator } from '@tangle-network/icons';
 import { InternalPath } from '../../types';
 
 type ActionItemProps = {

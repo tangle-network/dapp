@@ -1,4 +1,3 @@
-import { TANGLE_AVAILABLE_SOCIALS } from '../../constants';
 import { PropsOf, SocialConfigsType } from '../../types';
 
 export type IconPlacement = 'start' | 'end' | 'center';

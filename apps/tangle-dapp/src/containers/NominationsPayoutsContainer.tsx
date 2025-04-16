@@ -79,16 +79,15 @@ const DelegationsPayoutsContainer: FC = () => {
     },
   );
 
-  const { getClaimedEras, claimedErasByValidator } = useClaimedEras();
+  const { getClaimedEras } = useClaimedEras();
 
   const unclaimedPayouts = useMemo(() => {
     return filterClaimedPayouts(
       payoutsData?.payouts,
-      claimedErasByValidator,
       getClaimedEras,
       networkId,
     );
-  }, [payoutsData, claimedErasByValidator, getClaimedEras, networkId]);
+  }, [payoutsData, getClaimedEras, networkId]);
 
   const validatorsAndEras = useMemo(() => {
     if (!unclaimedPayouts.length) {

@@ -1,7 +1,10 @@
-const baseConfig = require('../../eslint.config.cjs');
+import baseConfig from '../../eslint.config.js';
 
-module.exports = [
+export default [
   ...baseConfig,
+  {
+    ignores: ['vite.config.*.timestamp*'],
+  },
   {
     files: ['**/*.ts', '**/*.tsx', '**/*.js', '**/*.jsx'],
     // Override or add rules here

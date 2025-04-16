@@ -64,14 +64,17 @@ const DeployPage: FC = () => {
     resolver: zodResolver(deployBlueprintSchema),
   });
 
-  const commonProps = {
-    errors,
-    setValue,
-    watch,
-    control,
-    setError,
-    blueprint: blueprintResult?.details,
-  };
+  const commonProps = useMemo(
+    () => ({
+      errors,
+      setValue,
+      watch,
+      control,
+      setError,
+      blueprint: blueprintResult?.details,
+    }),
+    [blueprintResult?.details, control, errors, setError, setValue, watch],
+  );
 
   // Automatically navigate to the blueprint details page when the service
   // register transaction is complete.
