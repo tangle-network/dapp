@@ -19,6 +19,8 @@ export enum PagePath {
   RESTAKE_DELEGATE = '/restake/delegate',
   RESTAKE_UNDELEGATE = '/restake/undelegate',
   RESTAKE_WITHDRAW = '/restake/withdraw',
+  RESTAKE_VAULT = '/restake/vaults',
+  RESTAKE_BLUEPRINT = '/restake/blueprints',
   RESTAKE_OPERATOR = '/restake/operators',
   LIQUID_STAKING = '/liquid-staking',
 }

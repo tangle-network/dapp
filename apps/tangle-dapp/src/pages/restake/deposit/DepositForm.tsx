@@ -26,7 +26,7 @@ import { DepositFormFields } from '../../../types/restake';
 import filterBy from '../../../utils/filterBy';
 import parseChainUnits from '../../../utils/parseChainUnits';
 import Form from '../Form';
-import RestakeTabs from '../RestakeTabs';
+import RestakeActionTabs from '../RestakeActionTabs';
 import ActionButton from './ActionButton';
 import Details from './Details';
 import SourceChainInput from './SourceChainInput';
@@ -214,7 +214,7 @@ const DepositForm: FC<Props> = ({
 
   return (
     <StyleContainer className="md:min-w-[512px]">
-      <RestakeTabs />
+      <RestakeActionTabs />
 
       <Card withShadow tightPadding>
         <Form {...props} ref={formRef} onSubmit={handleSubmit(onSubmit)}>
