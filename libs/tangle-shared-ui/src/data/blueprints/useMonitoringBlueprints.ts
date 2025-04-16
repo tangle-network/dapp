@@ -12,17 +12,13 @@ import {
 import { createMonitoringBlueprint } from './utils/blueprintHelpers';
 import { Option } from '@polkadot/types';
 import { TanglePrimitivesServicesService } from '@polkadot/types/lookup';
-import useRestakeOperatorMap from '../restake/useRestakeOperatorMap';
-import useRestakeAssets from '../restake/useRestakeAssets';
-import { useOperatorTVL } from '../restake/useOperatorTVL';
+import useOperatorTvl from '../restake/useOperatorTvl';
 import { SubstrateAddress } from '@tangle-network/ui-components/types/address';
 
 const useMonitoringBlueprints = (
   operatorAccountAddress?: SubstrateAddress | null,
 ) => {
-  const { result: operatorMap } = useRestakeOperatorMap();
-  const { assets } = useRestakeAssets();
-  const { operatorTVLByAsset } = useOperatorTVL(operatorMap, assets);
+  const { operatorTvlByAsset } = useOperatorTvl();
 
   const { result, ...rest } = useApiRx(
     useCallback(
@@ -79,7 +75,7 @@ const useMonitoringBlueprints = (
           runningInstanceEntries$,
         ]).pipe(
           map(([blueprints, operatorInstances, runningInstanceEntries]) => {
-            // mapping from blueprint id to service instance
+            // Mapping from blueprint ID to service instance.
             const runningInstancesMap = new Map<bigint, ServiceInstance[]>();
 
             for (const [
@@ -109,7 +105,7 @@ const useMonitoringBlueprints = (
               createMonitoringBlueprint(
                 blueprint,
                 operatorInstances,
-                operatorTVLByAsset,
+                operatorTvlByAsset,
                 runningInstancesMap,
               ),
             );
@@ -123,7 +119,7 @@ const useMonitoringBlueprints = (
           }),
         );
       },
-      [operatorAccountAddress, operatorTVLByAsset],
+      [operatorAccountAddress, operatorTvlByAsset],
     ),
   );
 

@@ -46,9 +46,7 @@ export type OperatorMetadata = {
   readonly restakersCount: number;
 };
 
-export type OperatorMap = {
-  readonly [accountAddress: SubstrateAddress]: OperatorMetadata;
-};
+export type OperatorMap = Map<SubstrateAddress, OperatorMetadata>;
 
 export type PrimitiveAssetMetadata = {
   name: string;

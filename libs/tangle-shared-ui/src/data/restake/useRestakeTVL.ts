@@ -1,54 +1,44 @@
 import { useMemo } from 'react';
-import { useDelegatorTVL } from '../../data/restake/useDelegatorTVL';
-import useOperatorConcentration from '../../data/restake/useOperatorConcentration';
-import {
-  OperatorTVLType,
-  useOperatorTVL,
-} from '../../data/restake/useOperatorTVL';
-import type { DelegatorInfo, OperatorMap } from '../../types/restake';
+import useOperatorConcentration from './useOperatorConcentration';
+import useOperatorTvl, { OperatorTvlGroup } from './useOperatorTvl';
+import type { DelegatorInfo } from '../../types/restake';
 import useRestakeAssets from './useRestakeAssets';
 import { BN } from '@polkadot/util';
+import useDelegatorTvl from './useDelegatorTVL';
 
-export type RestakeTVLType = OperatorTVLType & {
-  delegatorTVL: BN;
-  totalDelegatorTVL: BN;
-  totalNetworkTVL: BN;
+export type RestakeTvlGroup = OperatorTvlGroup & {
+  delegatorTvl: BN;
+  totalDelegatorTvl: BN;
+  totalNetworkTvl: BN;
 };
 
-const useRestakeTVL = (
-  operatorMap: OperatorMap,
-  delegatorInfo: DelegatorInfo | null,
-) => {
+const useRestakeTvl = (delegatorInfo: DelegatorInfo | null) => {
   const { assets } = useRestakeAssets();
+  const { operatorTvl, vaultTvl, operatorTvlByAsset } = useOperatorTvl();
 
-  const { operatorTVL, vaultTVL, operatorTVLByAsset } = useOperatorTVL(
-    operatorMap,
-    assets,
-  );
-
-  const { delegatorTVL, totalDelegatorTVL } = useDelegatorTVL(
+  const { delegatorTvl, totalDelegatorTvl } = useDelegatorTvl(
     delegatorInfo,
     assets,
   );
 
-  const totalNetworkTVL = useMemo(() => {
-    return Object.values(vaultTVL).reduce((sum, tvl) => sum + tvl, 0);
-  }, [vaultTVL]);
+  const totalNetworkTvl = useMemo(() => {
+    return Object.values(vaultTvl).reduce((sum, tvl) => sum + tvl, 0);
+  }, [vaultTvl]);
 
   const operatorConcentration = useOperatorConcentration(
-    operatorTVL,
-    totalNetworkTVL,
+    operatorTvl,
+    totalNetworkTvl,
   );
 
   return {
-    delegatorTVL,
+    delegatorTvl,
     operatorConcentration,
-    operatorTVL,
-    vaultTVL,
-    totalDelegatorTVL,
-    totalNetworkTVL,
-    operatorTVLByAsset,
+    operatorTvl,
+    vaultTvl,
+    totalDelegatorTvl,
+    totalNetworkTvl,
+    operatorTvlByAsset,
   };
 };
 
-export default useRestakeTVL;
+export default useRestakeTvl;

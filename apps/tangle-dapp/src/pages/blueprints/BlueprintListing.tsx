@@ -4,11 +4,11 @@ import { FC, PropsWithChildren } from 'react';
 import { Link } from 'react-router';
 import { PagePath } from '../../types';
 
-const BlueprintItemWrapper: FC<PropsWithChildren<{ id: string }>> = ({
+const BlueprintItemWrapper: FC<PropsWithChildren<{ id: bigint }>> = ({
   children,
   id,
 }) => {
-  return <Link to={`${PagePath.BLUEPRINTS}/${id}`}>{children}</Link>;
+  return <Link to={`${PagePath.BLUEPRINTS}/${id.toString()}`}>{children}</Link>;
 };
 
 const BlueprintListing: FC = () => {

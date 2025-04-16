@@ -28,7 +28,8 @@
     "chromatic": "chromatic --build-script-name=build:storybook --exit-zero-on-changes",
     "generate:release": "node ./tools/release.js",
     "codegen": "graphql-codegen --config codegen.ts",
-    "check:codegen": "node ./tools/checkCodegen.js"
+    "check:codegen": "node ./tools/checkCodegen.js",
+    "scan": "react-scan"
   },
   "resolutions": {
     "eslint-plugin-import": "npm:eslint-plugin-import-x@^4.6.1",
@@ -186,6 +187,7 @@
     "postcss-preset-env": "^10.1.2",
     "prettier": "^3.4.2",
     "react-is": "^18.3.1",
+    "react-scan": "^0.3.3",
     "rollup": "^4.28.1",
     "storybook": "^8.6.3",
     "tailwind-merge": "^2.5.5",

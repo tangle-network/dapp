@@ -4,13 +4,29 @@ import useBlueprintDetails from '@tangle-network/tangle-shared-ui/data/restake/u
 import { ErrorFallback } from '@tangle-network/ui-components/components/ErrorFallback';
 import SkeletonLoader from '@tangle-network/ui-components/components/SkeletonLoader';
 import { Typography } from '@tangle-network/ui-components/typography/Typography';
-import { useParams } from 'react-router';
+import { FC, useMemo } from 'react';
+import { Navigate, useParams } from 'react-router';
+import { z } from 'zod';
+import { PagePath } from '../../../types';
 
-const BlueprintDetailsPage = () => {
-  const { id = '' } = useParams();
+const BlueprintDetailsPage: FC = () => {
+  const { id: idParam } = useParams();
+
+  const id = useMemo(() => {
+    if (idParam === undefined) {
+      return undefined;
+    }
+
+    const result = z.coerce.bigint().safeParse(idParam);
+
+    return result.success ? result.data : undefined;
+  }, [idParam]);
+
   const { result, isLoading, error } = useBlueprintDetails(id);
 
-  if (isLoading) {
+  if (result === null || id === undefined) {
+    return <Navigate to={PagePath.NOT_FOUND} />;
+  } else if (isLoading) {
     return (
       <div className="space-y-5">
         <SkeletonLoader className="min-h-64" />
@@ -24,9 +40,6 @@ const BlueprintDetailsPage = () => {
     );
   } else if (error !== null) {
     return <ErrorFallback title={error.name} />;
-  } else if (result === null) {
-    // TODO: Should redirect to the 404 page
-    return null;
   }
 
   return (

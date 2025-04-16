@@ -6,19 +6,20 @@ import useBlueprintDetails from '@tangle-network/tangle-shared-ui/data/restake/u
 import { ErrorFallback } from '@tangle-network/ui-components/components/ErrorFallback';
 import SkeletonLoader from '@tangle-network/ui-components/components/SkeletonLoader';
 import { Typography } from '@tangle-network/ui-components/typography/Typography';
-import { PropsWithChildren, useState } from 'react';
-import { Link, useParams, useNavigate } from 'react-router-dom';
+import { FC, PropsWithChildren, useMemo, useState } from 'react';
+import { Link, useParams, useNavigate, Navigate } from 'react-router-dom';
 import { PagePath, TangleDAppPagePath } from '../../../types';
 import useRoleStore, { Role } from '../../../stores/roleStore';
 import PricingModal from '../PricingModal';
 import { Modal } from '@tangle-network/ui-components';
 import { PricingFormResult } from '../PricingModal/types';
 import { SessionStorageKey } from '../../../constants';
+import { z } from 'zod';
 
-const RestakeOperatorAction = ({
+const RestakeOperatorAction: FC<PropsWithChildren<{ address: string }>> = ({
   children,
   address,
-}: PropsWithChildren<{ address: string }>) => {
+}) => {
   return (
     <Link
       to={`${TangleDAppPagePath.RESTAKE_OPERATOR}/${address}`}
@@ -31,12 +32,25 @@ const RestakeOperatorAction = ({
 
 const Page = () => {
   const navigate = useNavigate();
-  const { id } = useParams();
+  const { id: idParam } = useParams();
+
+  const id = useMemo(() => {
+    if (idParam === undefined) {
+      return undefined;
+    }
+
+    const result = z.coerce.bigint().safeParse(idParam);
+
+    return result.success ? result.data : undefined;
+  }, [idParam]);
+
   const { result, isLoading, error } = useBlueprintDetails(id);
   const isOperator = useRoleStore().role === Role.OPERATOR;
   const [isPricingModalOpen, setIsPricingModalOpen] = useState(false);
 
-  if (isLoading) {
+  if (id === undefined || result === null) {
+    return <Navigate to={PagePath.NOT_FOUND} />;
+  } else if (isLoading) {
     return (
       <div className="space-y-5">
         <SkeletonLoader className="min-h-64" />
@@ -50,9 +64,6 @@ const Page = () => {
     );
   } else if (error) {
     return <ErrorFallback title={error.name} />;
-  } else if (result === null) {
-    // TODO: Show 404 page
-    return null;
   }
 
   const handlePricingFormSubmit = (formResult: PricingFormResult) => {
@@ -77,7 +88,9 @@ const Page = () => {
             if (isOperator) {
               setIsPricingModalOpen(true);
             } else {
-              navigate(PagePath.BLUEPRINTS_DEPLOY.replace(':id', id ?? ''));
+              navigate(
+                PagePath.BLUEPRINTS_DEPLOY.replace(':id', id.toString()),
+              );
             }
           },
         }}

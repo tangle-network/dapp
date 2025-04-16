@@ -1,7 +1,7 @@
 import { ArrowRightIcon } from '@radix-ui/react-icons';
 import { RowSelectionState } from '@tanstack/table-core';
 import RestakeBanner from '@tangle-network/tangle-shared-ui/components/blueprints/RestakeBanner';
-import useBlueprintListing from '@tangle-network/tangle-shared-ui/data/blueprints/useBlueprintListing';
+import useAllBlueprints from '@tangle-network/tangle-shared-ui/data/blueprints/useAllBlueprints';
 import Button from '@tangle-network/ui-components/components/buttons/Button';
 import {
   Modal,
@@ -10,7 +10,7 @@ import {
 import { BLUEPRINT_DOCS_LINK } from '@tangle-network/ui-components/constants/tangleDocs';
 import pluralize from '@tangle-network/ui-components/utils/pluralize';
 import { AnimatePresence, motion } from 'framer-motion';
-import { useCallback, useMemo, useState } from 'react';
+import { FC, useCallback, useMemo, useState } from 'react';
 import { twMerge } from 'tailwind-merge';
 import useRoleStore, { Role } from '../../stores/roleStore';
 import BlueprintListing from './BlueprintListing';
@@ -33,20 +33,23 @@ const ROLE_DESCRIPTION = {
     'Select a Blueprint, customize settings, and deploy your decentralized service instance in minutes.',
 } satisfies Record<Role, string>;
 
-const Page = () => {
+const Page: FC = () => {
   const navigate = useNavigate();
   const { role } = useRoleStore();
   const [rowSelection, setRowSelection] = useState<RowSelectionState>({});
   const [isPricingModalOpen, setIsPricingModalOpen] = useState(false);
-  const { blueprints, isLoading, error } = useBlueprintListing();
+  const { blueprints, isLoading, error } = useAllBlueprints();
 
-  const isOperator = useMemo(() => role === Role.OPERATOR, [role]);
+  const isOperator = role === Role.OPERATOR;
 
   const selectedBlueprints = useMemo(() => {
-    return Object.keys(rowSelection)
-      .filter((blueprintId) => rowSelection[blueprintId])
-      .map((blueprintId) => blueprints[blueprintId])
-      .filter((blueprint) => blueprint !== undefined);
+    return (
+      Object.keys(rowSelection)
+        .filter((blueprintId) => rowSelection[blueprintId])
+        .map((blueprintId) => blueprints.get(blueprintId))
+        // TODO: Is this filter necessary? The type system doesn't show that this can be undefined at this point.
+        .filter((blueprint) => blueprint !== undefined)
+    );
   }, [blueprints, rowSelection]);
 
   const size = Object.keys(selectedBlueprints).length;
@@ -60,6 +63,7 @@ const Page = () => {
           selectedBlueprints: selectedBlueprints,
         }),
       );
+
       navigate(PagePath.BLUEPRINTS_REGISTRATION_REVIEW);
     },
     [selectedBlueprints],

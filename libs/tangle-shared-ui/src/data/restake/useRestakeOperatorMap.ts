@@ -12,23 +12,20 @@ import { TangleError, TangleErrorCode } from '../../types/error';
 import { OperatorMap, OperatorMetadata } from '../../types/restake';
 import createRestakeAssetId from '../../utils/createRestakeAssetId';
 
-/**
- * Hook to retrieve the operator map for restaking.
- * @returns
- *  - `operatorMap`: The operator map.
- *  - `operatorMap$`: The observable for the operator map.
- */
 const useRestakeOperatorMap = () => {
   const { result, ...rest } = useApiRx(
     useCallback((apiRx) => {
-      if (!isDefined(apiRx?.query?.multiAssetDelegation?.operators?.entries))
+      if (!isDefined(apiRx?.query?.multiAssetDelegation?.operators?.entries)) {
         return new TangleError(TangleErrorCode.FEATURE_NOT_SUPPORTED);
+      }
 
       return apiRx.query.multiAssetDelegation.operators.entries().pipe(
         map((entries) => {
           return entries.reduce(
             (operatorsMap, [accountStorage, operatorMetadata]) => {
-              if (operatorMetadata.isNone) return operatorsMap;
+              if (operatorMetadata.isNone) {
+                return operatorsMap;
+              }
 
               const accountId = accountStorage.args[0];
               const operator = operatorMetadata.unwrap();
@@ -46,13 +43,11 @@ const useRestakeOperatorMap = () => {
                 status: toPrimitiveStatus(operator.status),
               } satisfies OperatorMetadata;
 
-              // Object.assign creates a new object, combining existing operatorsMap
-              // with the new operator entry, maintaining immutability in the reduce pattern.
-              return Object.assign(operatorsMap, {
-                [accountId.toString()]: operatorMetadataPrimitive,
-              } satisfies OperatorMap);
+              operatorsMap.set(accountId.toString(), operatorMetadataPrimitive);
+
+              return operatorsMap;
             },
-            {} as OperatorMap,
+            new Map() as Map<string, OperatorMetadata>,
           );
         }),
       );
@@ -60,7 +55,8 @@ const useRestakeOperatorMap = () => {
   );
 
   return {
-    result: result ?? {}, // Return an empty object for API compatibility
+    // Return an empty Map for API compatibility.
+    result: result ?? new Map(),
     ...rest,
   };
 };
@@ -68,9 +64,9 @@ const useRestakeOperatorMap = () => {
 /**
  * @internal
  */
-function toPrimitiveRequest(
+const toPrimitiveRequest = (
   request: Option<PalletMultiAssetDelegationOperatorOperatorBondLessRequest>,
-): OperatorMetadata['bondLessRequest'] {
+): OperatorMetadata['bondLessRequest'] => {
   if (request.isNone) return null;
 
   const requestValue = request.unwrap();
@@ -79,14 +75,14 @@ function toPrimitiveRequest(
     amount: requestValue.amount.toBigInt(),
     requestTime: requestValue.requestTime.toNumber(),
   };
-}
+};
 
 /**
  * @internal
  */
-function toPrimitiveStatus(
+const toPrimitiveStatus = (
   status: PalletMultiAssetDelegationOperatorOperatorStatus,
-): OperatorMetadata['status'] {
+): OperatorMetadata['status'] => {
   if (status.type === 'Leaving') {
     return {
       Leaving: status.asLeaving.toNumber(),
@@ -94,14 +90,17 @@ function toPrimitiveStatus(
   }
 
   return status.type;
-}
+};
 
 /**
  * @internal
  */
-function toPrimitiveDelegations(
+const toPrimitiveDelegations = (
   delegations: Vec<PalletMultiAssetDelegationOperatorDelegatorBond>,
-) {
+): {
+  delegations: OperatorMetadata['delegations'];
+  restakersCount: number;
+} => {
   const restakerSet = new Set<string>();
 
   const primitiveDelegations = delegations.map(
@@ -122,6 +121,6 @@ function toPrimitiveDelegations(
     delegations: primitiveDelegations,
     restakersCount: restakerSet.size,
   };
-}
+};
 
 export default useRestakeOperatorMap;

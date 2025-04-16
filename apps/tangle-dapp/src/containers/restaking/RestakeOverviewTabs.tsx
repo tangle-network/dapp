@@ -1,5 +1,5 @@
 import { OperatorConcentration } from '@tangle-network/tangle-shared-ui/data/restake/useOperatorConcentration';
-import { OperatorTVLType } from '@tangle-network/tangle-shared-ui/data/restake/useOperatorTVL';
+import { OperatorTvlGroup } from '@tangle-network/tangle-shared-ui/data/restake/useOperatorTvl';
 import useRestakeAssets from '@tangle-network/tangle-shared-ui/data/restake/useRestakeAssets';
 import useRestakeAssetsTvl from '@tangle-network/tangle-shared-ui/data/restake/useRestakeAssetsTvl';
 import useRestakeDelegatorInfo from '@tangle-network/tangle-shared-ui/data/restake/useRestakeDelegatorInfo';
@@ -34,7 +34,7 @@ enum RestakeTab {
 type Props = {
   operatorConcentration?: OperatorConcentration;
   operatorMap: OperatorMap;
-  operatorTVL?: OperatorTVLType['operatorTVL'];
+  operatorTVL?: OperatorTvlGroup['operatorTvl'];
   action: RestakeAction;
 };
 

@@ -1,18 +1,19 @@
 import { useObservable, useObservableState } from 'observable-hooks';
 import { of, switchMap } from 'rxjs';
 import type { RestakeAssetMap, DelegatorInfo } from '../../types/restake';
+import { useMemo } from 'react';
 
-const calculateDelegatorTVL = (
+const calculateDelegatorTvl = (
   delegatorInfo: DelegatorInfo,
   assetMap: RestakeAssetMap,
 ) => {
-  const delegatorTVL: Record<string, number> = {};
+  const delegatorTvl: Record<string, number> = {};
 
   for (const delegation of delegatorInfo.delegations) {
     const asset = assetMap.get(delegation.assetId);
 
     if (asset === undefined) {
-      delegatorTVL[delegation.assetId] = 0;
+      delegatorTvl[delegation.assetId] = 0;
 
       continue;
     }
@@ -22,19 +23,19 @@ const calculateDelegatorTVL = (
         ? 0
         : Number(delegation.amountBonded * BigInt(asset.metadata.priceInUsd));
 
-    delegatorTVL[delegation.assetId] =
-      (delegatorTVL[delegation.assetId] || 0) + value;
+    delegatorTvl[delegation.assetId] =
+      (delegatorTvl[delegation.assetId] || 0) + value;
   }
 
-  const totalDelegatorTVL = Object.values(delegatorTVL).reduce(
+  const totalDelegatorTvl = Object.values(delegatorTvl).reduce(
     (sum, tvl) => sum + tvl,
     0,
   );
 
-  return { delegatorTVL, totalDelegatorTVL };
+  return { delegatorTvl, totalDelegatorTvl };
 };
 
-export const useDelegatorTVL = (
+const useDelegatorTvl = (
   delegatorInfo: DelegatorInfo | null,
   assetMap: RestakeAssetMap | null,
 ) => {
@@ -44,13 +45,23 @@ export const useDelegatorTVL = (
         switchMap(([delegatorInfo, assetMap]) =>
           of(
             !delegatorInfo || !assetMap
-              ? { delegatorTVL: {}, totalDelegatorTVL: 0 }
-              : calculateDelegatorTVL(delegatorInfo, assetMap),
+              ? { delegatorTvl: {}, totalDelegatorTvl: 0 }
+              : calculateDelegatorTvl(delegatorInfo, assetMap),
           ),
         ),
       ),
     [delegatorInfo, assetMap],
   );
 
-  return useObservableState(tvl$, { delegatorTVL: {}, totalDelegatorTVL: 0 });
+  const initialState = useMemo(
+    () => ({
+      delegatorTvl: {},
+      totalDelegatorTvl: 0,
+    }),
+    [],
+  );
+
+  return useObservableState(tvl$, initialState);
 };
+
+export default useDelegatorTvl;

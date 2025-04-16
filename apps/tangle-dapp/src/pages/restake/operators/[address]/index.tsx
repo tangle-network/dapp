@@ -4,7 +4,7 @@ import { Typography } from '@tangle-network/ui-components/typography/Typography'
 import { ComponentProps, useMemo } from 'react';
 
 import useRestakeDelegatorInfo from '@tangle-network/tangle-shared-ui/data/restake/useRestakeDelegatorInfo';
-import useRestakeTVL from '@tangle-network/tangle-shared-ui/data/restake/useRestakeTVL';
+import useRestakeTvl from '@tangle-network/tangle-shared-ui/data/restake/useRestakeTvl';
 import { useParams } from 'react-router';
 import useOperatorBlueprints from '@tangle-network/tangle-shared-ui/data/blueprints/useOperatorBlueprints';
 import OperatorInfoCard from './OperatorInfoCard';
@@ -15,7 +15,10 @@ const Page = () => {
   const { address } = useParams();
   const { result: operatorMap } = useRestakeOperatorMap();
   const { result: delegatorInfo } = useRestakeDelegatorInfo();
-  const { operatorTVL } = useRestakeTVL(operatorMap, delegatorInfo);
+  const { operatorTvl: operatorTVL } = useRestakeTvl(
+    operatorMap,
+    delegatorInfo,
+  );
 
   const operatorAddressParam =
     address === undefined

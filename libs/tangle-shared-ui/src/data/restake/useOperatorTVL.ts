@@ -1,23 +1,26 @@
 import { useObservable, useObservableState } from 'observable-hooks';
-import { of, switchMap } from 'rxjs';
+import { Observable, of, switchMap } from 'rxjs';
 import { RestakeAssetMap, OperatorMap } from '../../types/restake';
 import safeFormatUnits from '../../utils/safeFormatUnits';
 import { SubstrateAddress } from '@tangle-network/ui-components/types/address';
 import { RestakeAssetId } from '../../types';
 import { assertSubstrateAddress } from '@tangle-network/ui-components/utils';
+import { useMemo, useCallback } from 'react';
+import useRestakeAssets from './useRestakeAssets';
+import useRestakeOperatorMap from './useRestakeOperatorMap';
 
-export type OperatorTVLType = {
-  operatorTVLByAsset: Map<SubstrateAddress, Map<RestakeAssetId, number>>;
-  operatorTVL: Map<SubstrateAddress, number>;
-  vaultTVL: Map<RestakeAssetId, number>;
+export type OperatorTvlGroup = {
+  operatorTvlByAsset: Map<SubstrateAddress, Map<RestakeAssetId, number>>;
+  operatorTvl: Map<SubstrateAddress, number>;
+  vaultTvl: Map<RestakeAssetId, number>;
 };
 
-const calculateTVL = (
+const calculateTvl = (
   operatorMap: OperatorMap,
   assetMap: RestakeAssetMap,
-): OperatorTVLType => {
-  return Object.entries(operatorMap).reduce(
-    (acc: OperatorTVLType, [operatorId_, operatorData]) => {
+): OperatorTvlGroup => {
+  return Array.from(operatorMap.entries()).reduce(
+    (acc: OperatorTvlGroup, [operatorId_, operatorData]) => {
       const operatorId = assertSubstrateAddress(operatorId_);
 
       operatorData.delegations.forEach((delegation) => {
@@ -43,26 +46,26 @@ const calculateTVL = (
 
         const amount = Number(result.value) * assetPrice;
 
-        if (!acc.operatorTVLByAsset.has(operatorId)) {
-          acc.operatorTVLByAsset.set(operatorId, new Map());
+        if (!acc.operatorTvlByAsset.has(operatorId)) {
+          acc.operatorTvlByAsset.set(operatorId, new Map());
         }
 
-        acc.operatorTVLByAsset
+        acc.operatorTvlByAsset
           .get(operatorId)
           ?.set(
             delegation.assetId,
-            (acc.operatorTVLByAsset.get(operatorId)?.get(delegation.assetId) ||
+            (acc.operatorTvlByAsset.get(operatorId)?.get(delegation.assetId) ||
               0) + amount,
           );
 
-        acc.vaultTVL.set(
+        acc.vaultTvl.set(
           delegation.assetId,
-          (acc.vaultTVL.get(delegation.assetId) || 0) + amount,
+          (acc.vaultTvl.get(delegation.assetId) || 0) + amount,
         );
 
-        acc.operatorTVL.set(
+        acc.operatorTvl.set(
           operatorId,
-          (acc.operatorTVL.get(operatorId) || 0) + amount,
+          (acc.operatorTvl.get(operatorId) || 0) + amount,
         );
 
         return;
@@ -71,47 +74,52 @@ const calculateTVL = (
       return acc;
     },
     {
-      operatorTVLByAsset: new Map(),
-      vaultTVL: new Map(),
-      operatorTVL: new Map(),
-    } satisfies OperatorTVLType,
+      operatorTvlByAsset: new Map(),
+      vaultTvl: new Map(),
+      operatorTvl: new Map(),
+    } satisfies OperatorTvlGroup,
   );
 };
 
-export const useOperatorTVL = (
-  operatorMap: OperatorMap,
-  assetMap: RestakeAssetMap | null,
-) => {
+const useOperatorTvl = () => {
+  const { result: operatorMap } = useRestakeOperatorMap();
+  const { assets } = useRestakeAssets();
+
   const tvl$ = useObservable(
-    (input$) =>
-      input$.pipe(
-        switchMap(([operatorMap, assetMap]) => {
-          if (assetMap === null) {
-            return of<OperatorTVLType>({
-              operatorTVLByAsset: new Map(),
-              vaultTVL: new Map(),
-              operatorTVL: new Map(),
-            });
-          }
+    useCallback<
+      (
+        input$: Observable<[OperatorMap, RestakeAssetMap | null]>,
+      ) => Observable<OperatorTvlGroup>
+    >(
+      (input$) =>
+        input$.pipe(
+          switchMap(([operatorMap, assets]) => {
+            if (assets === null) {
+              return of<OperatorTvlGroup>({
+                operatorTvlByAsset: new Map(),
+                vaultTvl: new Map(),
+                operatorTvl: new Map(),
+              });
+            }
 
-          const { operatorTVLByAsset, operatorTVL, vaultTVL } = calculateTVL(
-            operatorMap,
-            assetMap,
-          );
-
-          return of<OperatorTVLType>({
-            operatorTVLByAsset,
-            operatorTVL,
-            vaultTVL,
-          });
-        }),
-      ),
-    [operatorMap, assetMap],
+            return of<OperatorTvlGroup>(calculateTvl(operatorMap, assets));
+          }),
+        ),
+      [],
+    ),
+    [operatorMap, assets],
   );
 
-  return useObservableState<OperatorTVLType>(tvl$, {
-    operatorTVLByAsset: new Map(),
-    operatorTVL: new Map(),
-    vaultTVL: new Map(),
-  });
+  const initialState = useMemo(
+    () => ({
+      operatorTvlByAsset: new Map(),
+      operatorTvl: new Map(),
+      vaultTvl: new Map(),
+    }),
+    [],
+  );
+
+  return useObservableState<OperatorTvlGroup>(tvl$, initialState);
 };
+
+export default useOperatorTvl;

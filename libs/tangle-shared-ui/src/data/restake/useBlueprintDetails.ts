@@ -8,7 +8,7 @@ import { useCallback } from 'react';
 import { combineLatest, of, switchMap } from 'rxjs';
 import useNetworkStore from '../../context/useNetworkStore';
 import useRestakeDelegatorInfo from '../../data/restake/useRestakeDelegatorInfo';
-import useRestakeTVL from '../../data/restake/useRestakeTVL';
+import useRestakeTvl from './useRestakeTvl';
 import useApiRx from '../../hooks/useApiRx';
 import useSubstrateAddress from '../../hooks/useSubstrateAddress';
 import { RestakeOperator } from '../../types';
@@ -34,8 +34,11 @@ const useBlueprintDetails = (id?: bigint) => {
   const { result: delegatorInfo } = useRestakeDelegatorInfo();
   const activeSubstrateAddress = useSubstrateAddress(false);
 
-  const { operatorTVL, operatorConcentration, operatorTVLByAsset } =
-    useRestakeTVL(operatorMap, delegatorInfo);
+  const {
+    operatorTvl: operatorTVL,
+    operatorConcentration,
+    operatorTvlByAsset: operatorTVLByAsset,
+  } = useRestakeTvl(operatorMap, delegatorInfo);
 
   return useApiRx(
     useCallback(
@@ -44,8 +47,7 @@ const useBlueprintDetails = (id?: bigint) => {
           api.query.services?.blueprints === undefined ||
           api.query.services?.operators === undefined
         ) {
-          // TODO: Should return the error here instead of throw it
-          throw new TangleError(TangleErrorCode.FEATURE_NOT_SUPPORTED);
+          return new TangleError(TangleErrorCode.FEATURE_NOT_SUPPORTED);
         } else if (id === undefined) {
           return of(null);
         }

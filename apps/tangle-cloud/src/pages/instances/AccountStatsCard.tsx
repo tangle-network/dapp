@@ -12,9 +12,8 @@ import { ThreeDotsVerticalIcon } from '@tangle-network/icons';
 import useNetworkStore from '@tangle-network/tangle-shared-ui/context/useNetworkStore';
 import useRestakeOperatorMap from '@tangle-network/tangle-shared-ui/data/restake/useRestakeOperatorMap';
 import useRestakeDelegatorInfo from '@tangle-network/tangle-shared-ui/data/restake/useRestakeDelegatorInfo';
-import useRestakeTVL from '@tangle-network/tangle-shared-ui/data/restake/useRestakeTVL';
+import useRestakeTvl from '@tangle-network/tangle-shared-ui/data/restake/useRestakeTvl';
 import getTVLToDisplay from '@tangle-network/tangle-shared-ui/utils/getTVLToDisplay';
-import { SubstrateAddress } from '@tangle-network/ui-components/types/address';
 import useSWRImmutable from 'swr/immutable';
 import {
   getAccountInfo,
@@ -29,23 +28,21 @@ export const AccountStatsCard: FC<AccountStatsCardProps> = (props) => {
   const rpcEndpoint = useNetworkStore((store) => store.network.wsRpcEndpoint);
   const { result: operatorMap } = useRestakeOperatorMap();
   const { result: delegatorInfo } = useRestakeDelegatorInfo();
-  const { operatorTVL } = useRestakeTVL(operatorMap, delegatorInfo);
+  const { operatorTvl } = useRestakeTvl(delegatorInfo);
 
   const network = useNetworkStore((store) => store.network);
 
   const operatorData = useMemo(() => {
-    return accountAddress
-      ? operatorMap[accountAddress as SubstrateAddress]
-      : null;
-  }, [accountAddress]);
+    return accountAddress ? operatorMap.get(accountAddress) : null;
+  }, [accountAddress, operatorMap]);
 
   const totalRestaked = useMemo(() => {
     if (!accountAddress || !operatorData) {
       return EMPTY_VALUE_PLACEHOLDER;
     }
 
-    return getTVLToDisplay(operatorTVL.get(accountAddress));
-  }, [accountAddress, operatorTVL, operatorData]);
+    return getTVLToDisplay(operatorTvl.get(accountAddress));
+  }, [accountAddress, operatorTvl, operatorData]);
 
   const restakersCount = useMemo(
     () =>
@@ -56,13 +53,19 @@ export const AccountStatsCard: FC<AccountStatsCardProps> = (props) => {
   const { data: operatorInfo } = useSWRImmutable(
     [rpcEndpoint, accountAddress],
     (args) => {
-      if (!args[1]) return null;
+      if (!args[1]) {
+        return null;
+      }
+
       return getAccountInfo(args[0], args[1]);
     },
   );
 
   const identityName = useMemo(() => {
-    if (!accountAddress) return '';
+    if (!accountAddress) {
+      return '';
+    }
+
     const defaultName = shortenString(accountAddress);
 
     if (!operatorInfo) {
@@ -74,12 +77,14 @@ export const AccountStatsCard: FC<AccountStatsCardProps> = (props) => {
 
   const validatorSocials = useMemo(() => {
     const twitterHandle = operatorInfo?.twitter ?? '';
+
     const twitterUrl =
       twitterHandle === '' || isValidUrl(twitterHandle)
         ? twitterHandle
         : `https://x.com/${twitterHandle}`;
 
     const emailHandle = operatorInfo?.email ?? '';
+
     const emailUrl =
       emailHandle === '' || isValidUrl(emailHandle)
         ? emailHandle
@@ -87,7 +92,7 @@ export const AccountStatsCard: FC<AccountStatsCardProps> = (props) => {
 
     return {
       [IdentityDataType.TWITTER]: twitterUrl,
-      // TODO: Add github link
+      // TODO: Add GitHub link.
       github: undefined,
       [IdentityDataType.EMAIL]: emailUrl,
       [IdentityDataType.WEB]: operatorInfo?.web,
@@ -95,7 +100,10 @@ export const AccountStatsCard: FC<AccountStatsCardProps> = (props) => {
   }, [operatorInfo?.email, operatorInfo?.twitter, operatorInfo?.web]);
 
   const accountExplorerUrl = useMemo(() => {
-    if (!accountAddress) return null;
+    if (!accountAddress) {
+      return null;
+    }
+
     return network.createExplorerAccountUrl(accountAddress);
   }, [network, accountAddress]);
 

@@ -1,5 +1,5 @@
 import BlueprintGallery from '@tangle-network/tangle-shared-ui/components/blueprints/BlueprintGallery';
-import useBlueprintListing from '@tangle-network/tangle-shared-ui/data/blueprints/useBlueprintListing';
+import useAllBlueprints from '@tangle-network/tangle-shared-ui/data/blueprints/useAllBlueprints';
 import { RowSelectionState } from '@tanstack/table-core';
 import {
   ComponentProps,
@@ -12,17 +12,17 @@ import {
 import { Link } from 'react-router';
 import { PagePath } from '../../types';
 
-const BlueprintItemWrapper = ({
+const BlueprintItemWrapper: FC<PropsWithChildren<{ id: bigint }>> = ({
   children,
   id,
-}: PropsWithChildren<{ id: string }>) => {
-  return <Link to={`${PagePath.BLUEPRINTS}/${id}`}>{children}</Link>;
+}) => {
+  return <Link to={`${PagePath.BLUEPRINTS}/${id.toString()}`}>{children}</Link>;
 };
 
 type Props = {
   rowSelection?: RowSelectionState;
   onRowSelectionChange?: Dispatch<SetStateAction<RowSelectionState>>;
-} & ReturnType<typeof useBlueprintListing>;
+} & ReturnType<typeof useAllBlueprints>;
 
 const BlueprintListing: FC<Props> = ({
   rowSelection,
@@ -34,7 +34,7 @@ const BlueprintListing: FC<Props> = ({
   const blueprintsDisplay = useMemo<
     ComponentProps<typeof BlueprintGallery>['blueprints']
   >(() => {
-    return Object.values(blueprints).map((blueprint) => ({
+    return Array.from(blueprints.values()).map((blueprint) => ({
       ...blueprint,
       renderImage(imageUrl) {
         return (

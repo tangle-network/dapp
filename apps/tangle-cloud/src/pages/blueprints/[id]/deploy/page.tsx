@@ -1,4 +1,4 @@
-import { FC, useEffect, useState } from 'react';
+import { FC, useEffect, useMemo } from 'react';
 import {
   Button,
   ErrorFallback,
@@ -25,12 +25,22 @@ import { getApiPromise } from '@tangle-network/tangle-shared-ui/utils/polkadot/a
 import useNetworkStore from '@tangle-network/tangle-shared-ui/context/useNetworkStore';
 
 const DeployPage: FC = () => {
-  const { id } = useParams();
+  const { id: idParam } = useParams();
   const navigate = useNavigate();
 
   const wsRpcEndpoint = useNetworkStore(
     (store) => store.network2?.wsRpcEndpoint,
   );
+
+  const id = useMemo(() => {
+    if (idParam === undefined) {
+      return undefined;
+    }
+
+    const result = z.coerce.bigint().safeParse(idParam);
+
+    return result.success ? result.data : undefined;
+  }, [idParam]);
 
   const {
     result: blueprintResult,
@@ -63,9 +73,11 @@ const DeployPage: FC = () => {
     blueprint: blueprintResult?.details,
   };
 
+  // Automatically navigate to the blueprint details page when the service
+  // register transaction is complete.
   useEffect(() => {
-    if (id && serviceRegisterStatus === TxStatus.COMPLETE) {
-      navigate(`${PagePath.BLUEPRINTS_DETAILS}`.replace(':id', id));
+    if (id !== undefined && serviceRegisterStatus === TxStatus.COMPLETE) {
+      navigate(`${PagePath.BLUEPRINTS_DETAILS}`.replace(':id', id.toString()));
     }
   }, [serviceRegisterStatus, id, navigate]);
 

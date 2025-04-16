@@ -1,7 +1,7 @@
 import { AddLineIcon } from '@tangle-network/icons';
 import OperatorsTableUI from '@tangle-network/tangle-shared-ui/components/tables/Operators';
 import { OperatorConcentration } from '@tangle-network/tangle-shared-ui/data/restake/useOperatorConcentration';
-import { OperatorTVLType } from '@tangle-network/tangle-shared-ui/data/restake/useOperatorTVL';
+import { OperatorTvlGroup } from '@tangle-network/tangle-shared-ui/data/restake/useOperatorTvl';
 import useRestakeAssets from '@tangle-network/tangle-shared-ui/data/restake/useRestakeAssets';
 import useAgnosticAccountInfo from '@tangle-network/tangle-shared-ui/hooks/useAgnosticAccountInfo';
 import useIdentities from '@tangle-network/tangle-shared-ui/hooks/useIdentities';
@@ -36,7 +36,7 @@ type OperatorUI = NonNullable<
 type Props = {
   operatorConcentration?: OperatorConcentration;
   operatorMap: OperatorMap;
-  operatorTVL?: OperatorTVLType['operatorTVL'];
+  operatorTVL?: OperatorTvlGroup['operatorTvl'];
   onRestakeClicked?: LinkProps['onClick'];
 };
 
