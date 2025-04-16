@@ -1,7 +1,7 @@
 import { AddLineIcon } from '@tangle-network/icons';
 import OperatorsTableUI from '@tangle-network/tangle-shared-ui/components/tables/Operators';
 import type { OperatorConcentration } from '@tangle-network/tangle-shared-ui/data/restake/useOperatorConcentration';
-import type { OperatorTvlGroup } from '@tangle-network/tangle-shared-ui/data/restake/useOperatorTvl2';
+import type { OperatorTvlGroup } from '@tangle-network/tangle-shared-ui/data/restake/useOperatorTvl';
 import useRestakeAssets from '@tangle-network/tangle-shared-ui/data/restake/useRestakeAssets';
 import useAgnosticAccountInfo from '@tangle-network/tangle-shared-ui/hooks/useAgnosticAccountInfo';
 import useIdentities from '@tangle-network/tangle-shared-ui/hooks/useIdentities';

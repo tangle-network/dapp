@@ -27,7 +27,7 @@ import { twMerge } from 'tailwind-merge';
 
 import AvatarWithText from '../../../../components/AvatarWithText';
 import ValidatorSocials from '../../../../components/ValidatorSocials';
-import type { OperatorTvlGroup } from '@tangle-network/tangle-shared-ui/data/restake/useOperatorTvl2';
+import type { OperatorTvlGroup } from '@tangle-network/tangle-shared-ui/data/restake/useOperatorTvl';
 interface Props extends Partial<ComponentProps<typeof Card>> {
   operatorAddress: string;
   operatorData: OperatorMetadata | undefined;

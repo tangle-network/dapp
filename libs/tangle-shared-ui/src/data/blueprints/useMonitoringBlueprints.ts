@@ -12,7 +12,7 @@ import {
 import { createMonitoringBlueprint } from './utils/blueprintHelpers';
 import { Option } from '@polkadot/types';
 import { TanglePrimitivesServicesService } from '@polkadot/types/lookup';
-import useOperatorTvl from '../restake/useOperatorTvl2';
+import useOperatorTvl from '../restake/useOperatorTvl';
 import { SubstrateAddress } from '@tangle-network/ui-components/types/address';
 
 const useMonitoringBlueprints = (

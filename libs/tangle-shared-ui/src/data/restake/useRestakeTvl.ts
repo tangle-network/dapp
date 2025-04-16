@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
 import useOperatorConcentration from './useOperatorConcentration';
-import useOperatorTvl, { OperatorTvlGroup } from './useOperatorTvl2';
+import useOperatorTvl, { OperatorTvlGroup } from './useOperatorTvl';
 import type { DelegatorInfo } from '../../types/restake';
 import useRestakeAssets from './useRestakeAssets';
 import { BN } from '@polkadot/util';

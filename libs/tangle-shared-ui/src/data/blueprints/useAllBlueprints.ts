@@ -6,7 +6,7 @@ import { combineLatest, switchMap } from 'rxjs';
 import useNetworkStore from '../../context/useNetworkStore';
 import useApiRx from '../../hooks/useApiRx';
 import { TangleError, TangleErrorCode } from '../../types/error';
-import useOperatorTvl from '../restake/useOperatorTvl2';
+import useOperatorTvl from '../restake/useOperatorTvl';
 import useRestakeOperatorMap from '../restake/useRestakeOperatorMap';
 import {
   createBlueprintObjects,
