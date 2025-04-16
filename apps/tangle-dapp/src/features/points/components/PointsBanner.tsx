@@ -7,6 +7,7 @@ import addCommasToNumber from '@tangle-network/ui-components/utils/addCommasToNu
 import cx from 'classnames';
 import { SVGProps } from 'react';
 import useActiveAccountPoints from '../data/useActiveAccountPoints';
+import { ArrowRightUp } from '@tangle-network/icons';
 
 const LEADERBOARD_URL = 'https://leaderboard.tangle.tools';
 
@@ -48,12 +49,14 @@ export const PointsBanner = () => {
           target="_blank"
           rel="noopener noreferrer"
           className={cx(
+            'flex items-center justify-center gap-1',
             'backdrop-blur-[5px] py-2 text-center w-full block rounded-xl !text-mono-0 mt-1.5',
             '[background:_linear-gradient(126.97deg,_rgba(6,_11,_40,_0.74)_28.26%,_rgba(10,_14,_35,_0.71)_91.2%)]',
             'body4 font-bold uppercase',
           )}
         >
-          Leaderboard
+          Leaderboard{' '}
+          <ArrowRightUp className="fill-current dark:fill-current" />
         </a>
       </div>
     </div>

@@ -36,7 +36,7 @@ const BlueprintSelection: FC<Props> = ({ operatorAddress }) => {
           'flex justify-between items-center rounded-xl py-2.5 px-4 bg-mono-20 dark:bg-mono-180',
           operatorAddress !== undefined &&
             areBlueprintsAvailable &&
-            'cursor-pointer hover:bg-mono-30 dark:hover:bg-mono-170',
+            'cursor-pointer hover:bg-mono-40 dark:hover:bg-mono-170',
         )}
       >
         <div className="flex items-center gap-1">

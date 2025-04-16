@@ -56,6 +56,11 @@ const ClaimRewardsDropdown = () => {
     );
   }, [data]);
 
+  // Hide if there's no rewards to claim.
+  if (data === undefined) {
+    return;
+  }
+
   return (
     <Dropdown>
       <DropdownButton

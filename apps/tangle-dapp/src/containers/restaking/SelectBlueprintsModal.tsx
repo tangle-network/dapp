@@ -122,7 +122,6 @@ const SelectBlueprintsModal: FC<Props> = ({
             variant="secondary"
             // Disable if there are no blueprints available.
             isDisabled={isEmpty}
-            className="hidden sm:flex"
             onClick={handleSelectAll}
           >
             {blueprints.length === 0 ||

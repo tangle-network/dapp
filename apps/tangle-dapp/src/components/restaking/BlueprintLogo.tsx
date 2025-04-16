@@ -14,7 +14,11 @@ const LOGO_SIZES = {
 const BlueprintLogo: FC<Props> = ({ name, url, size }) => {
   return (
     <div>
-      <img src={url} alt={`${name}'s logo`} className={LOGO_SIZES[size]} />
+      <img
+        src={'https://avatars.githubusercontent.com/u/76852793?s=200&v=4'}
+        alt={`${name}'s logo`}
+        className={LOGO_SIZES[size]}
+      />
     </div>
   );
 };
