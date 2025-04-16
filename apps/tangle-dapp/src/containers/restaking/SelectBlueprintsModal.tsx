@@ -31,7 +31,6 @@ const SelectBlueprintsModal: FC<Props> = ({
 }) => {
   const [searchQuery, setSearchQuery] = useState<string>('');
   const { blueprints } = useOperatorBlueprints(operatorAddress);
-
   const [localSelection, setLocalSelection] = useState<Blueprint['id'][]>([]);
 
   const filteredBlueprints = useMemo(() => {
@@ -48,17 +47,6 @@ const SelectBlueprintsModal: FC<Props> = ({
       ]);
     });
   }, [blueprints, searchQuery]);
-
-  const handleSelect = useCallback((blueprintId: Blueprint['id']) => {
-    setLocalSelection((prev) => {
-      // Toggle the selection of the blueprint.
-      // If the blueprint is already selected, unselect it.
-      // Otherwise, select it.
-      return prev.includes(blueprintId)
-        ? prev.filter((id) => id !== blueprintId)
-        : [...prev, blueprintId];
-    });
-  }, []);
 
   const handleSelectAll = useCallback(() => {
     // If all blueprints are selected, unselect all.

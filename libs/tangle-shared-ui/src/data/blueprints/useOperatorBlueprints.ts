@@ -34,7 +34,7 @@ const useOperatorBlueprints = (operatorAddress?: SubstrateAddress) => {
                 },
               );
             }),
-            catchError((error) => {
+            catchError((error: unknown) => {
               console.error(
                 'Error querying services with blueprints by operator:',
                 error,

@@ -26,7 +26,11 @@ const BlueprintItem: FC<ItemProps> = ({ blueprint, onClick }) => {
       onClick={() => onClick(blueprint.blueprintId)}
     >
       <div>
-        <BlueprintLogo name={blueprint.blueprint.metadata.name} size="lg" />
+        <BlueprintLogo
+          name={blueprint.blueprint.metadata.name}
+          url={blueprint.blueprint.metadata.logo ?? undefined}
+          size="lg"
+        />
       </div>
 
       <div className="flex flex-col">

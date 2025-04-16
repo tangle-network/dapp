@@ -18,7 +18,7 @@ import {
 import { ServiceInstance } from './utils/type';
 import { toPrimitiveService } from './utils/toPrimitiveService';
 
-const useBlueprintListing = () => {
+const useAllBlueprints = () => {
   const rpcEndpoint = useNetworkStore((store) => store.network.wsRpcEndpoint);
   const { result: operatorMap } = useRestakeOperatorMap();
   const { assets } = useRestakeAssets();
@@ -36,6 +36,7 @@ const useBlueprintListing = () => {
         }
 
         const blueprintEntries$ = apiRx.query.services.blueprints.entries();
+
         const runningInstanceEntries$ =
           apiRx.query.services.instances.entries();
 
@@ -120,4 +121,4 @@ const useBlueprintListing = () => {
   };
 };
 
-export default useBlueprintListing;
+export default useAllBlueprints;

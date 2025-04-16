@@ -1,18 +1,18 @@
 import BlueprintGallery from '@tangle-network/tangle-shared-ui/components/blueprints/BlueprintGallery';
-import useBlueprintListing from '@tangle-network/tangle-shared-ui/data/blueprints/useBlueprintListing';
+import useAllBlueprints from '@tangle-network/tangle-shared-ui/data/blueprints/useAllBlueprints';
 import { FC, PropsWithChildren } from 'react';
 import { Link } from 'react-router';
 import { PagePath } from '../../types';
 
-const BlueprintItemWrapper = ({
+const BlueprintItemWrapper: FC<PropsWithChildren<{ id: string }>> = ({
   children,
   id,
-}: PropsWithChildren<{ id: string }>) => {
+}) => {
   return <Link to={`${PagePath.BLUEPRINTS}/${id}`}>{children}</Link>;
 };
 
 const BlueprintListing: FC = () => {
-  const { blueprints, isLoading, error } = useBlueprintListing();
+  const { blueprints, isLoading, error } = useAllBlueprints();
 
   return (
     <BlueprintGallery
