@@ -25,26 +25,30 @@ export const AssetConfigurationStep: FC<AssetConfigurationStepProps> = ({
     }));
   }, [assets]);
 
-  const onChangeExposurePercent = (index: number, assetId: RestakeAssetId, value: number[]) => {
+  const onChangeExposurePercent = (
+    index: number,
+    assetId: RestakeAssetId,
+    value: number[],
+  ) => {
     const minExposurePercent = Number(value[0]);
     const maxExposurePercent = Number(value[1]);
     setValue(
-        `securityCommitments.${index}.minExposurePercent`,
-        minExposurePercent,
-      );
-      setValue(
-        `securityCommitments.${index}.maxExposurePercent`,
-        maxExposurePercent,
-      );
+      `securityCommitments.${index}.minExposurePercent`,
+      minExposurePercent,
+    );
+    setValue(
+      `securityCommitments.${index}.maxExposurePercent`,
+      maxExposurePercent,
+    );
 
-      if (
-        assetId === NATIVE_ASSET_ID &&
-        minExposurePercent < minimumNativeSecurityRequirement
-      ) {
-        setError(`securityCommitments.${index}.minExposurePercent`, {
-          message: `Minimum exposure percent must be greater than or equal to ${minimumNativeSecurityRequirement}`,
-        });
-      }
+    if (
+      assetId === NATIVE_ASSET_ID &&
+      minExposurePercent < minimumNativeSecurityRequirement
+    ) {
+      setError(`securityCommitments.${index}.minExposurePercent`, {
+        message: `Minimum exposure percent must be greater than or equal to ${minimumNativeSecurityRequirement}`,
+      });
+    }
   };
 
   return (

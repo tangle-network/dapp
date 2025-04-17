@@ -135,12 +135,13 @@ export const SelectOperatorsStep: FC<SelectOperatorsStepProps> = ({
     operatorServicesMap,
   ]);
 
-  const selectedAssets = watch("assets");
-  const approvalModel = watch("approvalModel");
-  const minApproval = watch("minApproval");
+  const selectedAssets = watch('assets');
+  const approvalModel = watch('approvalModel');
+  const minApproval = watch('minApproval');
 
   const tableData = useMemo(() => {
-    if (!Array.isArray(selectedAssets) || selectedAssets.length === 0) return operators;
+    if (!Array.isArray(selectedAssets) || selectedAssets.length === 0)
+      return operators;
 
     const selectedSymbols = new Set(
       selectedAssets.map((asset) => asset.metadata.symbol),
@@ -179,67 +180,67 @@ export const SelectOperatorsStep: FC<SelectOperatorsStepProps> = ({
             ]),
           },
         ]
-      : selectedAssets.filter(
-          (selectedAsset) => selectedAsset.id !== asset.id,
-        );
+      : selectedAssets.filter((selectedAsset) => selectedAsset.id !== asset.id);
 
-      setValue(`assets`, newSelectedAssets);
+    setValue(`assets`, newSelectedAssets);
 
-      // initialize security commitments
-      const securityCommitments = newSelectedAssets.map((asset) => {
-        const securityCommitment = {
-          asset: asset.id,
-          minExposurePercent: 0,
-          maxExposurePercent: 100,
-        };
-        if (asset.id === NATIVE_ASSET_ID) {
-          securityCommitment.minExposurePercent =
-            minimumNativeSecurityRequirement;
-        }
-        return securityCommitment;
-      });
-      setValue(`securityCommitments`, securityCommitments);
-
-      // Filter operators that are selected but don't have delegated assets in the selected assets
-      const selectedOperators = tableData
-        .filter((operator) => rowSelection[operator.address]) // selected operators
-        .filter((operator) =>
-          operator.vaultTokens?.every((vaultToken) =>
-            newSelectedAssets.every(
-              (selectedAsset) =>
-                selectedAsset.metadata.symbol !== vaultToken.symbol,
-            ),
-          ),
-        )
-        .map((operator) => operator.address);
-
-      const newRowSelection = selectedOperators.reduce((acc, operator) => {
-        acc[operator] = false;
-        return acc;
-      }, {} as RowSelectionState);
-
-      setRowSelection((prev) => ({ ...prev, ...newRowSelection }));
-    };
-
-  const onChangeApprovalModel = (value: DeployBlueprintSchema['approvalModel']) => {
-      let newMaxApproval: number | undefined;
-      let newMinApproval: number = minApproval;
-
-      if (value === 'Dynamic') {
-        newMaxApproval = Object.keys(rowSelection).length;
-      } else {
-        newMaxApproval = undefined;
-        newMinApproval = Object.keys(rowSelection).length;
+    // initialize security commitments
+    const securityCommitments = newSelectedAssets.map((asset) => {
+      const securityCommitment = {
+        asset: asset.id,
+        minExposurePercent: 0,
+        maxExposurePercent: 100,
+      };
+      if (asset.id === NATIVE_ASSET_ID) {
+        securityCommitment.minExposurePercent =
+          minimumNativeSecurityRequirement;
       }
-      
-      setValue(`approvalModel`, value);
-      setValue(`maxApproval`, newMaxApproval);
-      setValue(`minApproval`, newMinApproval);
-    };
+      return securityCommitment;
+    });
+    setValue(`securityCommitments`, securityCommitments);
+
+    // Filter operators that are selected but don't have delegated assets in the selected assets
+    const selectedOperators = tableData
+      .filter((operator) => rowSelection[operator.address]) // selected operators
+      .filter((operator) =>
+        operator.vaultTokens?.every((vaultToken) =>
+          newSelectedAssets.every(
+            (selectedAsset) =>
+              selectedAsset.metadata.symbol !== vaultToken.symbol,
+          ),
+        ),
+      )
+      .map((operator) => operator.address);
+
+    const newRowSelection = selectedOperators.reduce((acc, operator) => {
+      acc[operator] = false;
+      return acc;
+    }, {} as RowSelectionState);
+
+    setRowSelection((prev) => ({ ...prev, ...newRowSelection }));
+  };
+
+  const onChangeApprovalModel = (
+    value: DeployBlueprintSchema['approvalModel'],
+  ) => {
+    let newMaxApproval: number | undefined;
+    let newMinApproval: number = minApproval;
+
+    if (value === 'Dynamic') {
+      newMaxApproval = Object.keys(rowSelection).length;
+    } else {
+      newMaxApproval = undefined;
+      newMinApproval = Object.keys(rowSelection).length;
+    }
+
+    setValue(`approvalModel`, value);
+    setValue(`maxApproval`, newMaxApproval);
+    setValue(`minApproval`, newMinApproval);
+  };
 
   const onChangeMinApproval = (value: DeployBlueprintSchema['minApproval']) => {
     setValue(`minApproval`, value);
-  }
+  };
 
   return (
     <Card className="p-6">
@@ -308,7 +309,7 @@ export const SelectOperatorsStep: FC<SelectOperatorsStepProps> = ({
                         </Typography>
                       </div>
                     </SelectCheckboxItem>
-                  )
+                  );
                 }),
               )}
             </SelectContent>
@@ -370,10 +371,7 @@ export const SelectOperatorsStep: FC<SelectOperatorsStepProps> = ({
       <div className="mt-5 flex gap-4">
         <div className="w-1/2">
           <Label className={LabelClassName}>Approval Model:</Label>
-          <Select
-            value={approvalModel}
-            onValueChange={onChangeApprovalModel}
-          >
+          <Select value={approvalModel} onValueChange={onChangeApprovalModel}>
             <SelectTrigger>
               <SelectValue
                 className="text-[16px] leading-[30px]"

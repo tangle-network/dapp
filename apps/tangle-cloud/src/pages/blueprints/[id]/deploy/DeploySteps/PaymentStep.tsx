@@ -36,7 +36,6 @@ export const PaymentStep: FC<PaymentStepProps> = ({
     setValue('paymentAmount', nextValue);
   };
 
-
   return (
     <Card className="p-6">
       <Typography variant="h5" className="text-mono-200 dark:text-mono-0 mb-4">

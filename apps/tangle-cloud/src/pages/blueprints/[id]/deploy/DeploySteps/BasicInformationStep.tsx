@@ -40,7 +40,6 @@ export const BasicInformationStep: FC<BasicInformationStepProps> = ({
     setValue(`instanceDuration`, parseInt(value));
   };
 
-
   return (
     <>
       <InstanceHeader
