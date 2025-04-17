@@ -5,7 +5,7 @@ import {
   Card,
   Label,
 } from '@tangle-network/ui-components';
-import { FC, useEffect, useMemo, useState, Children, useCallback } from 'react';
+import { FC, useEffect, useMemo, useState, Children } from 'react';
 import {
   SelectOperatorsStepProps,
   OperatorSelectionTable,
@@ -135,11 +135,12 @@ export const SelectOperatorsStep: FC<SelectOperatorsStepProps> = ({
     operatorServicesMap,
   ]);
 
-  const selectedAssets = useMemo(() => watch(`assets`) ?? [], [watch]);
-  const formValues = watch();
+  const selectedAssets = watch("assets");
+  const approvalModel = watch("approvalModel");
+  const minApproval = watch("minApproval");
 
   const tableData = useMemo(() => {
-    if (selectedAssets.length === 0) return operators;
+    if (!Array.isArray(selectedAssets) || selectedAssets.length === 0) return operators;
 
     const selectedSymbols = new Set(
       selectedAssets.map((asset) => asset.metadata.symbol),
@@ -157,30 +158,30 @@ export const SelectOperatorsStep: FC<SelectOperatorsStepProps> = ({
     setValue(`operators`, Object.keys(rowSelection));
   }, [rowSelection, setValue]);
 
-  const onSelectAsset = useCallback(
-    (asset: RestakeAsset, isChecked: boolean) => {
-      const newSelectedAssets = isChecked
-        ? [
-            ...selectedAssets,
-            {
-              id: asset.id,
-              metadata: lodash.pick(asset.metadata, [
-                'symbol',
-                'assetId',
-                'vaultId',
-                'priceInUsd',
-                'name',
-                'decimals',
-                'details',
-                'status',
-                'deposit',
-                'isFrozen',
-              ]),
-            },
-          ]
-        : selectedAssets.filter(
-            (selectedAsset) => selectedAsset.id !== asset.id,
-          );
+  const onSelectAsset = (asset: RestakeAsset, isChecked: boolean) => {
+    const selectedAssets_ = Array.from(selectedAssets ?? []);
+    const newSelectedAssets = isChecked
+      ? [
+          ...selectedAssets_,
+          {
+            id: asset.id,
+            metadata: lodash.pick(asset.metadata, [
+              'symbol',
+              'assetId',
+              'vaultId',
+              'priceInUsd',
+              'name',
+              'decimals',
+              'details',
+              'status',
+              'deposit',
+              'isFrozen',
+            ]),
+          },
+        ]
+      : selectedAssets.filter(
+          (selectedAsset) => selectedAsset.id !== asset.id,
+        );
 
       setValue(`assets`, newSelectedAssets);
 
@@ -218,48 +219,27 @@ export const SelectOperatorsStep: FC<SelectOperatorsStepProps> = ({
       }, {} as RowSelectionState);
 
       setRowSelection((prev) => ({ ...prev, ...newRowSelection }));
-    },
-    [
-      minimumNativeSecurityRequirement,
-      rowSelection,
-      selectedAssets,
-      setValue,
-      tableData,
-    ],
-  );
+    };
 
-  const onChangeApprovalModel = useCallback(
-    (value: DeployBlueprintSchema['approvalModel']) => {
-      let changes = {
-        ...formValues,
-        approvalModel: value,
-      };
+  const onChangeApprovalModel = (value: DeployBlueprintSchema['approvalModel']) => {
+      let newMaxApproval: number | undefined;
+      let newMinApproval: number = minApproval;
+
       if (value === 'Dynamic') {
-        changes = {
-          ...changes,
-          maxApproval: Object.keys(rowSelection).length,
-        };
+        newMaxApproval = Object.keys(rowSelection).length;
       } else {
-        changes = {
-          ...changes,
-          maxApproval: undefined,
-          minApproval: Object.keys(rowSelection).length,
-        };
+        newMaxApproval = undefined;
+        newMinApproval = Object.keys(rowSelection).length;
       }
+      
+      setValue(`approvalModel`, value);
+      setValue(`maxApproval`, newMaxApproval);
+      setValue(`minApproval`, newMinApproval);
+    };
 
-      setValue(`approvalModel`, changes.approvalModel);
-      setValue(`maxApproval`, changes.maxApproval);
-      setValue(`minApproval`, changes.minApproval);
-    },
-    [formValues, rowSelection, setValue],
-  );
-
-  const onChangeMinApproval = useCallback(
-    (value: DeployBlueprintSchema['minApproval']) => {
-      setValue(`minApproval`, value);
-    },
-    [setValue],
-  );
+  const onChangeMinApproval = (value: DeployBlueprintSchema['minApproval']) => {
+    setValue(`minApproval`, value);
+  }
 
   return (
     <Card className="p-6">
@@ -274,7 +254,7 @@ export const SelectOperatorsStep: FC<SelectOperatorsStepProps> = ({
             <SelectTrigger>
               <SelectValue
                 placeholder={
-                  selectedAssets.length > 0 ? (
+                  selectedAssets?.length > 0 ? (
                     <div className="flex items-center gap-2">
                       <div className="flex items-center">
                         {Children.toArray(
@@ -289,14 +269,14 @@ export const SelectOperatorsStep: FC<SelectOperatorsStepProps> = ({
                               </div>
                             )),
                         )}
-                        {selectedAssets.length > MAX_ASSET_TO_SHOW && (
+                        {selectedAssets?.length > MAX_ASSET_TO_SHOW && (
                           <Typography variant="body1" className="ml-1">
                             ..
                           </Typography>
                         )}
                       </div>
                       <Typography variant="body1">
-                        {selectedAssets.length} asset(s) selected
+                        {selectedAssets?.length} asset(s) selected
                       </Typography>
                     </div>
                   ) : (
@@ -308,26 +288,28 @@ export const SelectOperatorsStep: FC<SelectOperatorsStepProps> = ({
 
             <SelectContent>
               {Children.toArray(
-                Array.from(assets?.values() ?? []).map((asset) => (
-                  <SelectCheckboxItem
-                    onChange={(e) => onSelectAsset(asset, e.target.checked)}
-                    id={asset.id}
-                    isChecked={selectedAssets.some(
-                      (selectedAsset) => selectedAsset.id === asset.id,
-                    )}
-                    spacingClassName="ml-0"
-                  >
-                    <div className="flex items-center gap-2">
-                      <LsTokenIcon
-                        name={asset.metadata.name ?? 'TNT'}
-                        size="md"
-                      />
-                      <Typography variant="body1">
-                        {asset.metadata.name ?? 'TNT'}
-                      </Typography>
-                    </div>
-                  </SelectCheckboxItem>
-                )),
+                Array.from(assets?.values() ?? []).map((asset) => {
+                  return (
+                    <SelectCheckboxItem
+                      onChange={(e) => onSelectAsset(asset, e.target.checked)}
+                      id={asset.id}
+                      isChecked={selectedAssets?.some(
+                        (selectedAsset) => selectedAsset.id === asset.id,
+                      )}
+                      spacingClassName="ml-0"
+                    >
+                      <div className="flex items-center gap-2">
+                        <LsTokenIcon
+                          name={asset.metadata.name ?? 'TNT'}
+                          size="md"
+                        />
+                        <Typography variant="body1">
+                          {asset.metadata.name ?? 'TNT'}
+                        </Typography>
+                      </div>
+                    </SelectCheckboxItem>
+                  )
+                }),
               )}
             </SelectContent>
           </Select>
@@ -389,7 +371,7 @@ export const SelectOperatorsStep: FC<SelectOperatorsStepProps> = ({
         <div className="w-1/2">
           <Label className={LabelClassName}>Approval Model:</Label>
           <Select
-            value={formValues.approvalModel}
+            value={approvalModel}
             onValueChange={onChangeApprovalModel}
           >
             <SelectTrigger>
@@ -411,11 +393,11 @@ export const SelectOperatorsStep: FC<SelectOperatorsStepProps> = ({
           )}
         </div>
 
-        {formValues.approvalModel === 'Dynamic' && (
+        {approvalModel === 'Dynamic' && (
           <div className="w-1/2">
             <Label className={LabelClassName}>Approval Threshold:</Label>
             <Input
-              value={formValues.minApproval?.toString()}
+              value={minApproval?.toString()}
               onChange={(nextValue) => onChangeMinApproval(Number(nextValue))}
               isControlled
               type="number"

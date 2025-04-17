@@ -1,5 +1,5 @@
 import { Card, Typography } from '@tangle-network/ui-components';
-import { Children, FC, useCallback, useMemo } from 'react';
+import { Children, FC, useMemo } from 'react';
 import { AssetConfigurationStepProps } from './type';
 import assertRestakeAssetId from '@tangle-network/tangle-shared-ui/utils/assertRestakeAssetId';
 import { AssetRequirementFormItem } from './components/AssetRequirementFormItem';
@@ -25,11 +25,10 @@ export const AssetConfigurationStep: FC<AssetConfigurationStepProps> = ({
     }));
   }, [assets]);
 
-  const onChangeExposurePercent = useCallback(
-    (index: number, assetId: RestakeAssetId, value: number[]) => {
-      const minExposurePercent = Number(value[0]);
-      const maxExposurePercent = Number(value[1]);
-      setValue(
+  const onChangeExposurePercent = (index: number, assetId: RestakeAssetId, value: number[]) => {
+    const minExposurePercent = Number(value[0]);
+    const maxExposurePercent = Number(value[1]);
+    setValue(
         `securityCommitments.${index}.minExposurePercent`,
         minExposurePercent,
       );
@@ -46,9 +45,7 @@ export const AssetConfigurationStep: FC<AssetConfigurationStepProps> = ({
           message: `Minimum exposure percent must be greater than or equal to ${minimumNativeSecurityRequirement}`,
         });
       }
-    },
-    [setValue, setError, minimumNativeSecurityRequirement],
-  );
+  };
 
   return (
     <Card className="p-6">
