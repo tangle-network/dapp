@@ -205,13 +205,14 @@ export const SelectOperatorsStep: FC<SelectOperatorsStepProps> = ({
         .filter((operator) =>
           operator.vaultTokens?.every((vaultToken) =>
             newSelectedAssets.every(
-              (selectedAsset) => selectedAsset.metadata.symbol !== vaultToken.symbol,
+              (selectedAsset) =>
+                selectedAsset.metadata.symbol !== vaultToken.symbol,
             ),
           ),
         )
         .map((operator) => operator.address);
 
-        const newRowSelection = selectedOperators.reduce((acc, operator) => {
+      const newRowSelection = selectedOperators.reduce((acc, operator) => {
         acc[operator] = false;
         return acc;
       }, {} as RowSelectionState);
