@@ -193,21 +193,19 @@ export const SelectOperatorsStep: FC<SelectOperatorsStepProps> = ({
       });
       setValue(`securityCommitments`, securityCommitments);
 
-      // Filter operators that don't have delegated assets in the selected assets
+      // Filter operators that are selected but don't have delegated assets in the selected assets
       const selectedOperators = tableData
-        .filter((operator) => rowSelection[operator.address])
+        .filter((operator) => rowSelection[operator.address]) // selected operators
         .filter((operator) =>
-          operator.vaultTokens?.some((vaultToken) =>
-            newSelectedAssets.some(
-              (selectedAsset) =>
-                selectedAsset.metadata.symbol !== vaultToken.symbol,
+          operator.vaultTokens?.every((vaultToken) =>
+            newSelectedAssets.every(
+              (selectedAsset) => selectedAsset.metadata.symbol !== vaultToken.symbol,
             ),
           ),
         )
         .map((operator) => operator.address);
 
-      // Create a single object with all operators set to false
-      const newRowSelection = selectedOperators.reduce((acc, operator) => {
+        const newRowSelection = selectedOperators.reduce((acc, operator) => {
         acc[operator] = false;
         return acc;
       }, {} as RowSelectionState);

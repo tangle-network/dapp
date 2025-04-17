@@ -83,7 +83,12 @@ export function toPrimitiveJobMetadata({ name, description }: JobMetadata) {
   } as const;
 }
 
-export function toPrimitiveGadget(gadget: Gadget) {
+// TODO: gadget was removed from the ServiceBlueprint type
+export function toPrimitiveGadget(gadget?: Gadget) {
+  if (!gadget) {
+    return null;
+  }
+
   switch (gadget.type) {
     case 'Container':
       return toPrimitiveContainerGadget(gadget.asContainer);

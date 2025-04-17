@@ -1,7 +1,7 @@
 import type { Option } from '@polkadot/types';
 import type { TanglePrimitivesServicesTypesOperatorPreferences } from '@polkadot/types/lookup';
 import { useCallback } from 'react';
-import { combineLatest, switchMap } from 'rxjs';
+import { catchError, combineLatest, of, switchMap } from 'rxjs';
 
 import useNetworkStore from '../../context/useNetworkStore';
 import useApiRx from '../../hooks/useApiRx';
@@ -108,6 +108,10 @@ export default function useBlueprintListing() {
               );
             },
           ),
+          catchError((error) => {
+            console.error('Error querying listing blueprints:', error);
+            return of(null);
+          }),
         );
       },
       [operatorMap, operatorTVLByAsset, rpcEndpoint],
