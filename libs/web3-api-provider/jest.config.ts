@@ -1,4 +1,3 @@
-/* eslint-disable */
 export default {
   displayName: 'web3-api-provider',
   preset: '../../jest.preset.cjs',

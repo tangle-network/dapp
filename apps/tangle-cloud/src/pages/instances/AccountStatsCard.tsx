@@ -37,7 +37,7 @@ export const AccountStatsCard: FC<AccountStatsCardProps> = (props) => {
     return accountAddress
       ? operatorMap[accountAddress as SubstrateAddress]
       : null;
-  }, [accountAddress]);
+  }, [accountAddress, operatorMap]);
 
   const totalRestaked = useMemo(() => {
     if (!accountAddress || !operatorData) {

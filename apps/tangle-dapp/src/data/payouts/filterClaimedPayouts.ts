@@ -12,7 +12,6 @@ import { NetworkId } from '@tangle-network/ui-components/constants/networks';
  */
 function filterClaimedPayouts(
   payouts: Payout[] | null | undefined,
-  claimedErasByValidator: Record<string, number[]>,
   getClaimedEras: (
     networkId: NetworkId,
     validatorAddress: SubstrateAddress,

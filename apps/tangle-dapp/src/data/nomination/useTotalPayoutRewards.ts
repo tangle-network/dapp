@@ -13,7 +13,7 @@ import useSubstrateAddress from '@tangle-network/tangle-shared-ui/hooks/useSubst
  */
 export default function useTotalPayoutRewards() {
   const rpcEndpoint = useNetworkStore((store) => store.network.wsRpcEndpoint);
-  const { getClaimedEras, claimedErasByValidator } = useClaimedEras();
+  const { getClaimedEras } = useClaimedEras();
   const { nativeTokenSymbol } = useNetworkStore();
   const networkId = useNetworkStore((store) => store.network.id);
 
@@ -42,17 +42,10 @@ export default function useTotalPayoutRewards() {
 
     return filterClaimedPayouts(
       payoutsData?.payouts,
-      claimedErasByValidator,
       getClaimedEras,
       networkId,
     );
-  }, [
-    payoutsData,
-    claimedErasByValidator,
-    getClaimedEras,
-    userSubstrateAddress,
-    networkId,
-  ]);
+  }, [payoutsData, getClaimedEras, userSubstrateAddress, networkId]);
 
   // Calculate total rewards from unclaimed payouts
   const totalRewards = useMemo(() => {

@@ -68,6 +68,6 @@
       "@tangle-network/web3-api-provider/*": ["libs/web3-api-provider/src/*"]
     }
   },
-  "include": ["./types/global.d.ts"],
+  "include": ["./types/global.d.ts", "eslint.config.js"],
   "exclude": ["node_modules", "tmp", "**/node_modules/*"]
 }

@@ -214,9 +214,7 @@ const WebbProviderInner: FC<WebbProviderInnerProps> = ({
       const code = errorMessage.code;
       switch (code) {
         case WebbErrorCodes.UnsupportedChain:
-          {
-            setActiveChain(undefined);
-          }
+          setActiveChain(undefined);
           break;
         case WebbErrorCodes.UnselectedChain:
         case WebbErrorCodes.NoAccountAvailable:
@@ -227,14 +225,10 @@ const WebbProviderInner: FC<WebbProviderInnerProps> = ({
         case WebbErrorCodes.TalismanExtensionNotInstalled:
         case WebbErrorCodes.SubWalletExtensionNotInstalled:
         case WebbErrorCodes.PhantomExtensionNotInstalled:
-          {
-            // TODO: Implement interactive feedback with new components from ui-components:
-          }
+          // TODO: Implement interactive feedback with new components from ui-components:
           break;
         case WebbErrorCodes.InsufficientProviderInterface:
-          {
-            setActiveChain(undefined);
-          }
+          setActiveChain(undefined);
           break;
         default: {
           alert(`Unhandled Webb error code: ${code}`);
