@@ -1,23 +1,30 @@
 import useRestakeOperatorMap from '@tangle-network/tangle-shared-ui/data/restake/useRestakeOperatorMap';
 import { isSubstrateAddress } from '@tangle-network/ui-components';
 import { Typography } from '@tangle-network/ui-components/typography/Typography';
-import { ComponentProps, useMemo } from 'react';
-
+import { ComponentProps, FC, useMemo } from 'react';
 import useRestakeDelegatorInfo from '@tangle-network/tangle-shared-ui/data/restake/useRestakeDelegatorInfo';
-import useRestakeTVL from '@tangle-network/tangle-shared-ui/data/restake/useRestakeTVL';
+import useRestakeTvl from '@tangle-network/tangle-shared-ui/data/restake/useRestakeTvl';
 import { useParams } from 'react-router';
 import useOperatorBlueprints from '@tangle-network/tangle-shared-ui/data/blueprints/useOperatorBlueprints';
 import OperatorInfoCard from './OperatorInfoCard';
 import RegisteredBlueprintsCard from './RegisteredBlueprintsCard';
 import TVLTable from './TVLTable';
 
-const Page = () => {
+const Page: FC = () => {
   const { address } = useParams();
   const { result: operatorMap } = useRestakeOperatorMap();
   const { result: delegatorInfo } = useRestakeDelegatorInfo();
-  const { operatorTVL } = useRestakeTVL(operatorMap, delegatorInfo);
+  const { operatorTvl: operatorTVL } = useRestakeTvl(delegatorInfo);
 
-  const { isLoading, blueprints, error } = useOperatorBlueprints(address);
+  const operatorAddressParam =
+    address === undefined
+      ? undefined
+      : isSubstrateAddress(address)
+        ? address
+        : undefined;
+
+  const { isLoading, blueprints, error } =
+    useOperatorBlueprints(operatorAddressParam);
 
   const blueprintsUI = useMemo<
     ComponentProps<typeof RegisteredBlueprintsCard>['blueprints']
@@ -49,7 +56,7 @@ const Page = () => {
       <div className="flex flex-col md:flex-row items-stretch gap-5 max-h-none md:max-h-[290px]">
         <OperatorInfoCard
           className="flex-1"
-          operatorData={operatorMap[address]}
+          operatorData={operatorMap.get(address)}
           operatorAddress={address}
           operatorMap={operatorMap}
           delegatorInfo={delegatorInfo}
@@ -70,7 +77,7 @@ const Page = () => {
         </Typography>
 
         <TVLTable
-          operatorData={operatorMap[address]}
+          operatorData={operatorMap.get(address)}
           delegatorInfo={delegatorInfo}
         />
       </div>

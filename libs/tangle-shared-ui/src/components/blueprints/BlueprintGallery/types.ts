@@ -2,7 +2,7 @@ import type { RowSelectionState } from '@tanstack/table-core';
 import type { Dispatch, PropsWithChildren, SetStateAction } from 'react';
 
 export type BlueprintItemProps = {
-  id: string;
+  id: bigint;
   name: string;
   author: string;
   imgUrl: string | null;

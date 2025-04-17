@@ -1,5 +1,4 @@
 import { SUCCESS_MESSAGES } from '../../hooks/useTxNotification';
-import { BN } from '@polkadot/util';
 import { useCallback } from 'react';
 
 import { TxName } from '../../constants';
@@ -9,13 +8,13 @@ import {
 } from '@tangle-network/tangle-shared-ui/hooks/useSubstrateTx';
 
 type Context = {
-  requestId: number;
+  requestId: bigint;
 };
 
 const useServicesRejectTx = () => {
   const substrateTxFactory: SubstrateTxFactory<Context> = useCallback(
     (api, _activeSubstrateAddress, context) =>
-      api.tx.services.reject(new BN(context.requestId)),
+      api.tx.services.reject(context.requestId),
     [],
   );
 

@@ -1,6 +1,5 @@
 import { BN_ONE } from '@polkadot/util';
 import { useCallback, useEffect, useState } from 'react';
-
 import useApi from '@tangle-network/tangle-shared-ui/hooks/useApi';
 
 function useExistentialDeposit() {

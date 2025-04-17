@@ -10,7 +10,7 @@ import BoostedChip from '../BoostedChip';
 import { BlueprintItemProps } from './types';
 import { CheckBox } from '@tangle-network/ui-components/components/CheckBox';
 
-const BlueprintItem: FC<BlueprintItemProps> = ({
+const BlueprintItem: FC<Omit<BlueprintItemProps, 'id'>> = ({
   name,
   author,
   imgUrl,

@@ -10,6 +10,7 @@ import { PagePath } from '../types';
 import RegistrationReview from '../pages/registrationReview/page';
 import RegistrationLayout from '../pages/registrationReview/layout';
 import DeployPage from '../pages/blueprints/[id]/deploy/page';
+import NotFoundPage from '../pages/notFound';
 
 function App() {
   return (
@@ -77,6 +78,8 @@ function App() {
               </RegistrationLayout>
             }
           />
+
+          <Route path="*" element={<NotFoundPage />} />
         </Routes>
       </Layout>
     </Providers>

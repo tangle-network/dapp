@@ -68,7 +68,7 @@ export type PrimitiveField =
     };
 
 export type Blueprint = {
-  id: string;
+  id: bigint;
   name: string;
   author: string;
   deployer: string;

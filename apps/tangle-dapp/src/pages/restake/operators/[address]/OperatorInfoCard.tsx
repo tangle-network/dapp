@@ -27,13 +27,13 @@ import { twMerge } from 'tailwind-merge';
 
 import AvatarWithText from '../../../../components/AvatarWithText';
 import ValidatorSocials from '../../../../components/ValidatorSocials';
-import { OperatorTVLType } from '@tangle-network/tangle-shared-ui/data/restake/useOperatorTVL';
+import type { OperatorTvlGroup } from '@tangle-network/tangle-shared-ui/data/restake/useOperatorTvl';
 interface Props extends Partial<ComponentProps<typeof Card>> {
   operatorAddress: string;
   operatorData: OperatorMetadata | undefined;
   operatorMap: OperatorMap;
   delegatorInfo: DelegatorInfo | null;
-  operatorTVL: OperatorTVLType['operatorTVL'];
+  operatorTVL: OperatorTvlGroup['operatorTvl'];
 }
 
 const OperatorInfoCard: FC<Props> = ({

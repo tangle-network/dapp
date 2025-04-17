@@ -38,7 +38,8 @@ export const TotalValueLockedTabs = () => {
     if (!address) {
       return undefined;
     }
-    return operatorMap[toSubstrateAddress(address)];
+
+    return operatorMap.get(toSubstrateAddress(address));
   }, [operatorMap, address]);
 
   const vaults = useMemo(() => {
@@ -59,7 +60,7 @@ export const TotalValueLockedTabs = () => {
 
     // Handle operator-specific vaults.
     const uniqueAssetIds = operatorData.delegations.reduce(
-      (acc, { assetId }) => {
+      (acc: Set<RestakeAssetId>, { assetId }: { assetId: RestakeAssetId }) => {
         acc.add(assetId);
 
         return acc;
@@ -67,7 +68,7 @@ export const TotalValueLockedTabs = () => {
       new Set<RestakeAssetId>(),
     );
 
-    const operatorAssets = Array.from(uniqueAssetIds)
+    const operatorAssets = [...uniqueAssetIds]
       .map((assetId) => assets.get(assetId))
       .filter((asset) => asset !== undefined);
 

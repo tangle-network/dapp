@@ -19,7 +19,7 @@ import { TangleError } from '../../../types/error';
 import BlueprintItem from './BlueprintItem';
 import { BlueprintGalleryProps, BlueprintItemProps } from './types';
 
-const columnHelper = createColumnHelper<BlueprintItemProps>();
+const COLUMN_HELPER = createColumnHelper<BlueprintItemProps>();
 
 const BlueprintGallery: FC<BlueprintGalleryProps> = ({
   blueprints,
@@ -64,7 +64,7 @@ const BlueprintGallery: FC<BlueprintGalleryProps> = ({
 
   const columns = useMemo(
     () => [
-      columnHelper.accessor('name', {
+      COLUMN_HELPER.accessor('name', {
         header: () => 'Project',
         cell: (props) => {
           const selectionProps =
@@ -106,7 +106,7 @@ const BlueprintGallery: FC<BlueprintGalleryProps> = ({
           return 0;
         },
       }),
-      columnHelper.accessor('category', {
+      COLUMN_HELPER.accessor('category', {
         header: () => null,
         cell: () => null,
         filterFn: (row, _, filterValue) => {
@@ -148,7 +148,7 @@ const BlueprintGallery: FC<BlueprintGalleryProps> = ({
           ],
         },
         onRowSelectionChange,
-        getRowId: (row) => row.id,
+        getRowId: (row) => row.id.toString(),
         getCoreRowModel: getCoreRowModel(),
         getFilteredRowModel: getFilteredRowModel(),
         getPaginationRowModel: getPaginationRowModel(),

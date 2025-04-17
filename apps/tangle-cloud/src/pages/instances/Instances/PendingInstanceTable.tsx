@@ -43,14 +43,20 @@ import useServicesApproveTx from '../../../data/services/useServicesApproveTx';
 const columnHelper = createColumnHelper<MonitoringServiceRequest>();
 
 export const PendingInstanceTable: FC = () => {
-  const isOperator = useRoleStore().role === Role.OPERATOR;
+  const role = useRoleStore((store) => store.role);
   const operatorAccountAddress = useSubstrateAddress();
+  const network = useNetworkStore((store) => store.network);
+
   const [isRejectConfirmationModalOpen, setIsRejectConfirmationModalOpen] =
     useState(false);
+
   const [isApproveConfirmationModalOpen, setIsApproveConfirmationModalOpen] =
     useState(false);
+
   const [selectedRequest, setSelectedRequest] =
     useState<MonitoringServiceRequest | null>(null);
+
+  const isOperator = role === Role.OPERATOR;
 
   const {
     blueprints: pendingBlueprints,
@@ -72,10 +78,9 @@ export const PendingInstanceTable: FC = () => {
 
   const { execute: rejectServiceRequest, status: rejectStatus } =
     useServicesRejectTx();
+
   const { execute: approveServiceRequest, status: approveStatus } =
     useServicesApproveTx();
-
-  const network = useNetworkStore((store) => store.network);
 
   const isEmpty = pendingBlueprints.length === 0;
 

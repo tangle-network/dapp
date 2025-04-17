@@ -6,8 +6,7 @@ import { combineLatest, switchMap } from 'rxjs';
 import useNetworkStore from '../../context/useNetworkStore';
 import useApiRx from '../../hooks/useApiRx';
 import { TangleError, TangleErrorCode } from '../../types/error';
-import { useOperatorTVL } from '../restake/useOperatorTVL';
-import useRestakeAssets from '../restake/useRestakeAssets';
+import useOperatorTvl from '../restake/useOperatorTvl';
 import useRestakeOperatorMap from '../restake/useRestakeOperatorMap';
 import {
   createBlueprintObjects,
@@ -15,14 +14,13 @@ import {
   extractOperatorData,
   fetchOwnerIdentities,
 } from './utils/blueprintHelpers';
-import { ServiceInstance } from './utils/type';
+import type { ServiceInstance } from './utils/type';
 import { toPrimitiveService } from './utils/toPrimitiveService';
 
-export default function useBlueprintListing() {
+const useAllBlueprints = () => {
   const rpcEndpoint = useNetworkStore((store) => store.network.wsRpcEndpoint);
   const { result: operatorMap } = useRestakeOperatorMap();
-  const { assets } = useRestakeAssets();
-  const { operatorTVLByAsset } = useOperatorTVL(operatorMap, assets);
+  const { operatorTvlByAsset } = useOperatorTvl();
 
   const { result, ...rest } = useApiRx(
     useCallback(
@@ -31,11 +29,11 @@ export default function useBlueprintListing() {
           apiRx.query.services?.blueprints === undefined ||
           apiRx.query.services?.operators === undefined
         ) {
-          // TODO: Should return the error here instead of throw it
-          throw new TangleError(TangleErrorCode.FEATURE_NOT_SUPPORTED);
+          return new TangleError(TangleErrorCode.FEATURE_NOT_SUPPORTED);
         }
 
         const blueprintEntries$ = apiRx.query.services.blueprints.entries();
+
         const runningInstanceEntries$ =
           apiRx.query.services.instances.entries();
 
@@ -63,14 +61,14 @@ export default function useBlueprintListing() {
                 ownerSet,
               );
 
-              // mapping from blueprint id to service instance
-              const runningInstancesMap = new Map<number, ServiceInstance[]>();
+              // Mapping from blueprint ID to service instance.
+              const runningInstancesMap = new Map<bigint, ServiceInstance[]>();
 
               for (const [
                 instanceId,
                 mayBeServiceInstance,
               ] of runningInstanceEntries) {
-                const serviceInstanceId = instanceId.args[0].toNumber();
+                const serviceInstanceId = instanceId.args[0].toBigInt();
 
                 if (mayBeServiceInstance.isNone) {
                   continue;
@@ -95,7 +93,7 @@ export default function useBlueprintListing() {
               } = extractOperatorData(
                 operatorEntries,
                 operatorMap,
-                operatorTVLByAsset,
+                operatorTvlByAsset,
                 runningInstancesMap,
               );
 
@@ -110,12 +108,14 @@ export default function useBlueprintListing() {
           ),
         );
       },
-      [operatorMap, operatorTVLByAsset, rpcEndpoint],
+      [operatorMap, operatorTvlByAsset, rpcEndpoint],
     ),
   );
 
   return {
     ...rest,
-    blueprints: result ?? {},
+    blueprints: result ?? new Map(),
   };
-}
+};
+
+export default useAllBlueprints;

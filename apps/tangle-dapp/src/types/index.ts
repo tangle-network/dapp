@@ -23,6 +23,7 @@ export enum PagePath {
   RESTAKE_BLUEPRINT = '/restake/blueprints',
   RESTAKE_OPERATOR = '/restake/operators',
   LIQUID_STAKING = '/liquid-staking',
+  NOT_FOUND = '/404',
 }
 
 export enum QueryParamKey {

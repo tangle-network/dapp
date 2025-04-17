@@ -20,7 +20,9 @@ const useOperatorsServices = (operatorAccounts?: SubstrateAddress[]) => {
           return new TangleError(TangleErrorCode.FEATURE_NOT_SUPPORTED);
         }
 
-        if (!operatorSet) return of(new Map());
+        if (!operatorSet) {
+          return of(new Map());
+        }
 
         return apiRx.query.services.instances.entries().pipe(
           map((servicesVec) => {

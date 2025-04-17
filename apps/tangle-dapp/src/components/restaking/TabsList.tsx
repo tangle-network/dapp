@@ -1,9 +1,10 @@
 import type { PropsOf } from '@tangle-network/ui-components/types';
+import { FC } from 'react';
 import { twMerge } from 'tailwind-merge';
 
-export type TabsListProps = PropsOf<'ul'>;
+type Props = PropsOf<'ul'>;
 
-const TabsList = ({ className, ...props }: TabsListProps) => {
+const TabsList: FC<Props> = ({ className, ...props }) => {
   return (
     <ul
       {...props}

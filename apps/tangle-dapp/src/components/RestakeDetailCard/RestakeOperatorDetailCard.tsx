@@ -6,12 +6,11 @@ import { Avatar } from '@tangle-network/ui-components/components/Avatar';
 import { Chip } from '@tangle-network/ui-components/components/Chip';
 import { KeyValueWithButton } from '@tangle-network/ui-components/components/KeyValueWithButton';
 import { shortenString } from '@tangle-network/ui-components/utils/shortenString';
-import { cloneElement, ReactElement } from 'react';
-
+import { cloneElement, FC, ReactElement } from 'react';
 import RestakeDetailCard from './index';
-import { getDisplayValue } from './utils';
+import getDisplayValue from './utils';
 
-type RestakeOperatorDetailCardProps = {
+type Props = {
   delegationCount?: number;
   identityEmailLink?: string;
   identityName?: string;
@@ -24,7 +23,7 @@ type RestakeOperatorDetailCardProps = {
   location?: string;
 };
 
-const RestakeOperatorDetailCard = ({
+const RestakeOperatorDetailCard: FC<Props> = ({
   delegationCount,
   identityEmailLink,
   identityName,
@@ -35,7 +34,7 @@ const RestakeOperatorDetailCard = ({
   totalStaked,
   validatorExternalLink,
   location = 'Unknown',
-}: RestakeOperatorDetailCardProps) => {
+}) => {
   return (
     <RestakeDetailCard.Root>
       <RestakeDetailCard.Header
@@ -89,7 +88,10 @@ const RestakeOperatorDetailCard = ({
 
 export default RestakeOperatorDetailCard;
 
-const SocialLink = ({ href, Icon }: { href?: string; Icon: ReactElement }) => {
+const SocialLink: FC<{ href?: string; Icon: ReactElement }> = ({
+  href,
+  Icon,
+}) => {
   return (
     <a
       href={href}

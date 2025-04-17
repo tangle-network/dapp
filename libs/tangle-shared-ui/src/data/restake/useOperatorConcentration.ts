@@ -4,10 +4,10 @@ import { useMemo } from 'react';
 
 export type OperatorConcentration = Map<SubstrateAddress, number | null>;
 
-export function useOperatorConcentration(
+const useOperatorConcentration = (
   operatorTVL: Map<SubstrateAddress, number>,
   totalNetworkTVL: number,
-) {
+) => {
   return useMemo(() => {
     const operatorConcentration = Object.entries(operatorTVL).reduce(
       (acc, [operatorId_, operatorTVL]) => {
@@ -24,4 +24,6 @@ export function useOperatorConcentration(
 
     return operatorConcentration;
   }, [operatorTVL, totalNetworkTVL]);
-}
+};
+
+export default useOperatorConcentration;

@@ -8,7 +8,9 @@ import { BN } from '@polkadot/util';
  * addCommasToInteger(new BN('123456789')); // '123,456,789'
  * ```
  */
-const addCommasToNumber = (numberLike: BN | number | string): string => {
+const addCommasToNumber = (
+  numberLike: BN | number | string | bigint,
+): string => {
   const valueAsString = numberLike.toString();
 
   // Sanity check that the value is not already formatted.

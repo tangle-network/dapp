@@ -101,3 +101,6 @@ vite.config.*.timestamp*
 libs/tangle-shared-ui/src/graphql/
 
 vitest.config.*.timestamp*
+
+# React Scan reports
+reports/

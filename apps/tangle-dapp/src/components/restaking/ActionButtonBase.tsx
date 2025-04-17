@@ -14,9 +14,7 @@ const ActionButtonBase: FC<Props> = ({ targetTypedChainId, children }) => {
 
   const { isLoading, loadingText } = useMemo(() => {
     if (loading) {
-      return {
-        isLoading: true,
-      };
+      return { isLoading: true };
     } else if (isConnecting) {
       return {
         isLoading: true,
@@ -24,9 +22,7 @@ const ActionButtonBase: FC<Props> = ({ targetTypedChainId, children }) => {
       };
     }
 
-    return {
-      isLoading: false,
-    };
+    return { isLoading: false };
   }, [isConnecting, loading]);
 
   // If the user is not connected to a wallet, show the connect wallet button

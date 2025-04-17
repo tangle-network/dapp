@@ -29,6 +29,7 @@
     "generate:release": "node ./tools/release.js",
     "codegen": "graphql-codegen --config codegen.ts",
     "check:codegen": "node ./tools/checkCodegen.js",
+    "scan": "react-scan",
     "postinstall": "husky"
   },
   "resolutions": {
@@ -140,7 +141,7 @@
     "@swc/jest": "~0.2.37",
     "@tailwindcss/forms": "^0.5.10",
     "@tangle-network/tangle-restaking-types": "^0.1.0",
-    "@tangle-network/tangle-substrate-types": "^0.9.21",
+    "@tangle-network/tangle-substrate-types": "0.9.21",
     "@tanstack/match-sorter-utils": "^8.19.4",
     "@tanstack/react-table": "^8.21.3",
     "@testing-library/dom": "^10.4.0",
@@ -185,6 +186,7 @@
     "postcss-preset-env": "^10.1.5",
     "prettier": "^3.5.3",
     "react-is": "^18.3.1",
+    "react-scan": "^0.3.3",
     "rollup": "^4.40.0",
     "storybook": "^8.6.12",
     "tailwind-merge": "^2.6.0",

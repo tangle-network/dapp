@@ -1,11 +1,11 @@
 import { ArrowRightUp } from '@tangle-network/icons/ArrowRightUp';
 import { TokenIcon } from '@tangle-network/icons/TokenIcon';
 import Button from '@tangle-network/ui-components/components/buttons/Button';
-
+import { FC } from 'react';
 import RestakeDetailCard from './index';
-import { getDisplayValue } from './utils';
+import getDisplayValue from './utils';
 
-type RestakeAssetDetailCardProps = {
+type Props = {
   assetExternalLink?: string;
   getAssetLink?: string;
   limit?: string | number;
@@ -14,14 +14,14 @@ type RestakeAssetDetailCardProps = {
   tvl?: string | number;
 };
 
-const RestakeAssetDetailCard = ({
+const RestakeAssetDetailCard: FC<Props> = ({
   assetExternalLink,
   getAssetLink,
   limit,
   name,
   symbol,
   tvl,
-}: RestakeAssetDetailCardProps) => {
+}) => {
   return (
     <RestakeDetailCard.Root>
       <RestakeDetailCard.Header

@@ -16,7 +16,7 @@ const preferencesSchema = z.object({
   priceTargets: priceTargetsSchema.optional(),
 });
 
-export default function useBlueprintRegisteredOperator(blueprintId?: string) {
+export default function useBlueprintRegisteredOperator(blueprintId?: bigint) {
   const { result, ...rest } = useApiRx(
     useCallback(
       (apiRx) => {
@@ -33,11 +33,14 @@ export default function useBlueprintRegisteredOperator(blueprintId?: string) {
               return entries.map(([storageKey, operatorPrefs]) => {
                 const operatorAccount = storageKey.args[1].toString();
                 const preferences = operatorPrefs.unwrapOrDefault().toHuman();
+
                 const parsedPreferences =
                   preferencesSchema.safeParse(preferences);
+
                 const priceTargets = parsedPreferences.success
                   ? parsedPreferences.data.priceTargets
                   : undefined;
+
                 return {
                   operatorAccount,
                   preferences: {
