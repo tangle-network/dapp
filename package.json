@@ -30,7 +30,9 @@
     "codegen": "graphql-codegen --config codegen.ts",
     "check:codegen": "node ./tools/checkCodegen.js",
     "scan": "react-scan",
-    "postinstall": "husky"
+    "postinstall": "husky",
+    "script:setupServices": "bun scripts/setupServices.ts",
+    "script:setupRestaking": "bun scripts/setupRestaking.ts"
   },
   "resolutions": {
     "@polkadot/api": "^13.2.1",
