@@ -77,8 +77,7 @@ export default function useRegisteredBlueprints(
           .multi(blueprintIds)
           .pipe(
             map((results) => {
-              const blueprints = results
-              .map((blueprintOpt, index) => {
+              const blueprints = results.map((blueprintOpt, index) => {
                 if (blueprintOpt.isNone) return null;
                 const [owner, blueprint] = blueprintOpt.unwrap();
                 return {
