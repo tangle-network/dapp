@@ -5,10 +5,11 @@ import AccountStatsDetailCard, {
 import {
   Avatar,
   EMPTY_VALUE_PLACEHOLDER,
+  isEvmAddress,
+  isSubstrateAddress,
   KeyValueWithButton,
   shortenString,
 } from '@tangle-network/ui-components';
-import { ThreeDotsVerticalIcon } from '@tangle-network/icons';
 import useNetworkStore from '@tangle-network/tangle-shared-ui/context/useNetworkStore';
 import useRestakeOperatorMap from '@tangle-network/tangle-shared-ui/data/restake/useRestakeOperatorMap';
 import useRestakeDelegatorInfo from '@tangle-network/tangle-shared-ui/data/restake/useRestakeDelegatorInfo';
@@ -21,10 +22,10 @@ import {
   IdentityDataType,
 } from '@tangle-network/tangle-shared-ui/utils/polkadot/identity';
 import { isValidUrl } from '@tangle-network/dapp-types';
-import useSubstrateAddress from '@tangle-network/tangle-shared-ui/hooks/useSubstrateAddress';
+import useActiveAccountAddress from '@tangle-network/tangle-shared-ui/hooks/useActiveAccountAddress';
 
 export const AccountStatsCard: FC<AccountStatsCardProps> = (props) => {
-  const accountAddress = useSubstrateAddress();
+  const accountAddress = useActiveAccountAddress();
   const rpcEndpoint = useNetworkStore((store) => store.network.wsRpcEndpoint);
   const { result: operatorMap } = useRestakeOperatorMap();
   const { result: delegatorInfo } = useRestakeDelegatorInfo();
@@ -32,12 +33,28 @@ export const AccountStatsCard: FC<AccountStatsCardProps> = (props) => {
 
   const network = useNetworkStore((store) => store.network);
 
+  const evmAddress = useMemo(() => {
+    if (!accountAddress) {
+      return true;
+    }
+
+    return isEvmAddress(accountAddress);
+  }, [accountAddress]);
+
   const operatorData = useMemo(() => {
-    return accountAddress ? operatorMap.get(accountAddress) : null;
-  }, [accountAddress, operatorMap]);
+    if (!accountAddress || evmAddress || !isSubstrateAddress(accountAddress)) {
+      return null;
+    }
+
+    return operatorMap.get(accountAddress);
+  }, [accountAddress, operatorMap, evmAddress]);
 
   const totalRestaked = useMemo(() => {
-    if (!accountAddress || !operatorData) {
+    if (
+      !accountAddress ||
+      !operatorData ||
+      !isSubstrateAddress(accountAddress)
+    ) {
       return EMPTY_VALUE_PLACEHOLDER;
     }
 
@@ -111,7 +128,11 @@ export const AccountStatsCard: FC<AccountStatsCardProps> = (props) => {
     <AccountStatsDetailCard.Root {...props.rootProps}>
       <AccountStatsDetailCard.Header
         IconElement={
-          <Avatar size="lg" value={accountAddress ?? ''} theme="substrate" />
+          <Avatar
+            size="lg"
+            value={accountAddress ?? ''}
+            theme={evmAddress ? 'ethereum' : 'substrate'}
+          />
         }
         title={identityName}
         description={
@@ -124,13 +145,20 @@ export const AccountStatsCard: FC<AccountStatsCardProps> = (props) => {
         descExternalLink={accountExplorerUrl ?? ''}
         className="mb-10"
         {...props.headerProps}
-        RightElement={<ThreeDotsVerticalIcon />}
       />
 
       <AccountStatsDetailCard.Body
         {...props.bodyProps}
-        totalRestake={totalRestaked}
-        restakers={restakersCount}
+        statsItems={[
+          {
+            title: 'Total Restake',
+            children: totalRestaked,
+          },
+          {
+            title: 'Restakers',
+            children: restakersCount,
+          },
+        ]}
         socialLinks={Object.entries(validatorSocials)
           .filter(([key, value]) => !!value && key in IDENTITY_ICONS_RECORD)
           .map(([key, value]) => ({
