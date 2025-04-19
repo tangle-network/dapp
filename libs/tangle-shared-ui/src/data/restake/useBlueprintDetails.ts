@@ -8,7 +8,6 @@ import { useCallback } from 'react';
 import { combineLatest, of, switchMap } from 'rxjs';
 import useNetworkStore from '../../context/useNetworkStore';
 import useRestakeDelegatorInfo from '../../data/restake/useRestakeDelegatorInfo';
-import useRestakeTVL from '../../data/restake/useRestakeTVL';
 import useApiRx from '../../hooks/useApiRx';
 import useSubstrateAddress from '../../hooks/useSubstrateAddress';
 import { RestakeOperator } from '../../types';
@@ -26,16 +25,20 @@ import useRestakeAssets from './useRestakeAssets';
 import useRestakeOperatorMap from './useRestakeOperatorMap';
 import { ServiceInstance } from '../blueprints/utils/type';
 import { toPrimitiveService } from '../blueprints/utils/toPrimitiveService';
+import useRestakeTvl from './useRestakeTvl';
 
-const useBlueprintDetails = (id?: string) => {
+const useBlueprintDetails = (id?: bigint) => {
   const rpcEndpoint = useNetworkStore((store) => store.network.wsRpcEndpoint);
   const { assets } = useRestakeAssets();
   const { result: operatorMap } = useRestakeOperatorMap();
   const { result: delegatorInfo } = useRestakeDelegatorInfo();
   const activeSubstrateAddress = useSubstrateAddress(false);
 
-  const { operatorTVL, operatorConcentration, operatorTVLByAsset } =
-    useRestakeTVL(operatorMap, delegatorInfo);
+  const {
+    operatorTvl: operatorTVL,
+    operatorConcentration,
+    operatorTvlByAsset: operatorTVLByAsset,
+  } = useRestakeTvl(delegatorInfo);
 
   return useApiRx(
     useCallback(
@@ -44,14 +47,12 @@ const useBlueprintDetails = (id?: string) => {
           api.query.services?.blueprints === undefined ||
           api.query.services?.operators === undefined
         ) {
-          // TODO: Should return the error here instead of throw it
-          throw new TangleError(TangleErrorCode.FEATURE_NOT_SUPPORTED);
+          return new TangleError(TangleErrorCode.FEATURE_NOT_SUPPORTED);
         } else if (id === undefined) {
           return of(null);
         }
 
         const blueprintDetails$ = api.query.services.blueprints(id);
-
         const runningInstanceEntries$ = api.query.services.instances.entries();
 
         const operatorEntries$ =
@@ -74,7 +75,6 @@ const useBlueprintDetails = (id?: string) => {
                 return null;
               }
 
-              const idNumber = Number(id);
               const [ownerAccount, serviceBlueprint] =
                 blueprintDetails.unwrap();
               const owner = ownerAccount.toString();
@@ -82,13 +82,13 @@ const useBlueprintDetails = (id?: string) => {
               const { metadata, registrationParams, requestParams } =
                 toPrimitiveBlueprint(serviceBlueprint);
 
-              const runningInstancesMap = new Map<number, ServiceInstance[]>();
+              const runningInstancesMap = new Map<bigint, ServiceInstance[]>();
 
               for (const [
                 instanceId,
                 mayBeServiceInstance,
               ] of runningInstanceEntries) {
-                const serviceInstanceId = instanceId.args[0].toNumber();
+                const serviceInstanceId = instanceId.args[0].toBigInt();
 
                 if (mayBeServiceInstance.isNone) {
                   continue;
@@ -98,7 +98,7 @@ const useBlueprintDetails = (id?: string) => {
                   mayBeServiceInstance.unwrap(),
                 );
 
-                if (instanceData.blueprint !== idNumber) {
+                if (instanceData.blueprint !== id) {
                   continue;
                 }
 
@@ -123,7 +123,7 @@ const useBlueprintDetails = (id?: string) => {
               );
 
               const info = await getAccountInfo(rpcEndpoint, owner);
-              const operatorsSet = blueprintOperatorMap.get(idNumber);
+              const operatorsSet = blueprintOperatorMap.get(id);
 
               const details: Blueprint = {
                 id,
@@ -132,11 +132,10 @@ const useBlueprintDetails = (id?: string) => {
                 author: metadata.author ?? owner,
                 imgUrl: metadata.logo,
                 category: metadata.category,
-                restakersCount:
-                  blueprintRestakersMap.get(idNumber)?.size ?? null,
+                restakersCount: blueprintRestakersMap.get(id)?.size ?? null,
                 operatorsCount: operatorsSet?.size ?? null,
                 tvl: (() => {
-                  const blueprintTVL = blueprintTVLMap.get(idNumber);
+                  const blueprintTVL = blueprintTVLMap.get(id);
 
                   if (blueprintTVL === undefined) {
                     return null;
@@ -210,8 +209,8 @@ async function getBlueprintOperators(
     const info = accountInfoArr[idx];
     const concentrationPercentage = operatorConcentration.get(address) ?? null;
     const tvlInUsd = operatorTVL.get(address) ?? null;
-    const delegations = operatorMap[address].delegations ?? [];
-    const selfBondedAmount = operatorMap[address]?.stake ?? ZERO_BIG_INT;
+    const delegations = operatorMap.get(address)?.delegations ?? [];
+    const selfBondedAmount = operatorMap.get(address)?.stake ?? ZERO_BIG_INT;
 
     const isDelegated =
       activeSubstrateAddress !== null &&
@@ -224,7 +223,7 @@ async function getBlueprintOperators(
       address,
       identityName: info?.name ?? undefined,
       concentrationPercentage,
-      restakersCount: operatorMap[address]?.restakersCount,
+      restakersCount: operatorMap.get(address)?.restakersCount ?? 0,
       selfBondedAmount,
       tvlInUsd,
       vaultTokens: delegationsToVaultTokens(delegations, assetMap),

@@ -5,34 +5,36 @@ import { TangleError, TangleErrorCode } from '../../types/error';
 import { useCallback } from 'react';
 import { catchError, map, of } from 'rxjs';
 import { OperatorBlueprint } from './utils/type';
+import { SubstrateAddress } from '@tangle-network/ui-components/types/address';
 
-const useOperatorBlueprints = (operatorAccount?: string) => {
+const useOperatorBlueprints = (operatorAddress?: SubstrateAddress) => {
   const { result, ...rest } = useApiRx(
     useCallback(
       (apiRx) => {
         if (
           apiRx.rpc?.services?.queryServicesWithBlueprintsByOperator ===
           undefined
-        )
+        ) {
           return new TangleError(TangleErrorCode.FEATURE_NOT_SUPPORTED);
-
-        if (!operatorAccount) return of<OperatorBlueprint[]>([]);
+        } else if (operatorAddress === undefined) {
+          return of<OperatorBlueprint[]>([]);
+        }
 
         return apiRx.rpc.services
-          .queryServicesWithBlueprintsByOperator(operatorAccount)
+          .queryServicesWithBlueprintsByOperator(operatorAddress)
           .pipe(
             map((servicesWithBlueprintsVec) => {
               return servicesWithBlueprintsVec.map(
                 ({ blueprintId, blueprint, services }) => {
                   return {
-                    blueprintId: blueprintId.toNumber(),
+                    blueprintId: blueprintId.toBigInt(),
                     blueprint: toPrimitiveBlueprint(blueprint),
                     services: services.map(toPrimitiveService),
                   };
                 },
               );
             }),
-            catchError((error) => {
+            catchError((error: unknown) => {
               console.error(
                 'Error querying services with blueprints by operator:',
                 error,
@@ -43,7 +45,7 @@ const useOperatorBlueprints = (operatorAccount?: string) => {
             }),
           );
       },
-      [operatorAccount],
+      [operatorAddress],
     ),
   );
 

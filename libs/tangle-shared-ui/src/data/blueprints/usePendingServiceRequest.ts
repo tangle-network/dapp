@@ -7,9 +7,9 @@ import { createPendingServiceRequests } from './utils/blueprintHelpers';
 import { SubstrateAddress } from '@tangle-network/ui-components/types/address';
 import { toPrimitiveBlueprint } from './utils/toPrimitiveBlueprint';
 
-export default function usePendingServiceRequest(
+const usePendingServiceRequest = (
   operatorAccountAddress: SubstrateAddress | null,
-) {
+) => {
   const { result: serviceRequestEntries } = useApiRx(
     useCallback(
       (apiRx) => {
@@ -85,4 +85,6 @@ export default function usePendingServiceRequest(
     blueprints: finalResult,
     ...rest,
   };
-}
+};
+
+export default usePendingServiceRequest;

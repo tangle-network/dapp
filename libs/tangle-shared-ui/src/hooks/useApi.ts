@@ -19,7 +19,7 @@ export type ApiFetcher<T> = (api: ApiPromise) => Promise<T> | T;
  *
  * @returns Substrate API instance or `null` if still loading.
  */
-function useApi<T>(fetcher: ApiFetcher<T>, overrideRpcEndpoint?: string) {
+const useApi = <T>(fetcher: ApiFetcher<T>, overrideRpcEndpoint?: string) => {
   const [result, setResult] = useState<T | null>(null);
   const [error, setError] = useState<Error | null>(null);
 
@@ -73,6 +73,6 @@ function useApi<T>(fetcher: ApiFetcher<T>, overrideRpcEndpoint?: string) {
   }, [refetch]);
 
   return { result, error, refetch };
-}
+};
 
 export default useApi;

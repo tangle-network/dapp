@@ -30,7 +30,10 @@ import { Search } from '@tangle-network/icons';
 import LsTokenIcon from '@tangle-network/tangle-shared-ui/components/LsTokenIcon';
 import { OperatorTable } from './components/OperatorTable';
 import { DeployBlueprintSchema } from '../../../../../utils/validations/deployBlueprint';
-import { RestakeAsset } from '@tangle-network/tangle-shared-ui/types/restake';
+import {
+  OperatorDelegatorBond,
+  RestakeAsset,
+} from '@tangle-network/tangle-shared-ui/types/restake';
 import delegationsToVaultTokens from '@tangle-network/tangle-shared-ui/utils/restake/delegationsToVaultTokens';
 import useRestakeAssets from '@tangle-network/tangle-shared-ui/data/restake/useRestakeAssets';
 import useBlueprintRegisteredOperator from '@tangle-network/tangle-shared-ui/data/blueprints/useBlueprintRegisteredOperator';
@@ -53,14 +56,15 @@ export const SelectOperatorsStep: FC<SelectOperatorsStepProps> = ({
       return acc;
     }, {} as RowSelectionState) || {},
   );
+
   const [searchQuery, setSearchQuery] = useState('');
+  const { assets } = useRestakeAssets();
 
   const blueprintId = blueprint?.id;
 
-  const { assets } = useRestakeAssets();
-
   const { result: registeredOperators_ } =
     useBlueprintRegisteredOperator(blueprintId);
+
   const registeredOperators = useMemo(() => {
     return new Map(
       registeredOperators_.map((operator) => [
@@ -69,6 +73,7 @@ export const SelectOperatorsStep: FC<SelectOperatorsStepProps> = ({
       ]),
     );
   }, [registeredOperators_]);
+
   const operatorAddresses = useMemo(
     () =>
       registeredOperators_.map((operator) =>
@@ -76,52 +81,64 @@ export const SelectOperatorsStep: FC<SelectOperatorsStepProps> = ({
       ),
     [registeredOperators_],
   );
+
   const { result: operatorServicesMap } =
     useOperatorsServices(operatorAddresses);
 
   const { result: identities } = useIdentities(operatorAddresses);
-
   const { result: restakeOperatorMap } = useRestakeOperatorMap();
 
   const operators = useMemo<OperatorSelectionTable[]>(() => {
-    const filteredRestakeOperators = Object.entries(restakeOperatorMap).filter(
-      ([address]) => registeredOperators.has(address),
-    );
+    const filteredRestakeOperators = Array.from(
+      restakeOperatorMap.entries(),
+    ).filter(([address]) => registeredOperators.has(address));
+
     return filteredRestakeOperators.map(
       ([addressString, { delegations, restakersCount }]) => {
         const address = assertSubstrateAddress(addressString);
         const operatorPreferences = registeredOperators.get(address);
-        // this case should not happen because we filter the operators in the `restakeOperatorMap`
-        if (!operatorPreferences) throw new Error('Operator not found');
+
+        // This case should not happen because we filter the operators in the restake operator map.
+        if (!operatorPreferences) {
+          throw new Error('Operator not found');
+        }
+
         const registeredData = operatorPreferences.preferences;
 
         return {
           address,
           identityName: identities.get(address)?.name ?? undefined,
           restakersCount,
-          vaultTokensInUsd: delegations.reduce((acc, curr) => {
-            const asset = assets?.get(curr.assetId);
-            if (!asset) {
-              return acc;
-            }
-            const parsed = safeFormatUnits(
-              curr.amount,
-              asset.metadata.decimals,
-            );
+          vaultTokensInUsd: delegations.reduce(
+            (acc: number, curr: OperatorDelegatorBond) => {
+              const asset = assets?.get(curr.assetId);
 
-            if (parsed.success === false) {
-              return acc;
-            }
-            const currPrice =
-              Number(parsed.value) * (asset.metadata.priceInUsd ?? 0);
-            return acc + currPrice;
-          }, 0),
+              if (!asset) {
+                return acc;
+              }
+
+              const parsed = safeFormatUnits(
+                curr.amount,
+                asset.metadata.decimals,
+              );
+
+              if (parsed.success === false) {
+                return acc;
+              }
+
+              const currentPrice =
+                Number(parsed.value) * (asset.metadata.priceInUsd ?? 0);
+
+              return acc + currentPrice;
+            },
+            0,
+          ),
           vaultTokens:
             assets === null
               ? []
               : delegationsToVaultTokens(delegations, assets),
           instanceCount: operatorServicesMap.get(address)?.length ?? 0,
-          // TODO: using graphql with im online pallet to get uptime of operator
+          // TODO: Using GraphQL with im online pallet to get uptime of operator.
           uptime: Math.round(Math.random() * 100),
           pricing: getOperatorPricing(registeredData.priceTargets),
         };

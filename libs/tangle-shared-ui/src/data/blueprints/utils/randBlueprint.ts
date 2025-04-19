@@ -8,7 +8,7 @@ import {
   randUserName,
 } from '@ngneat/falso';
 import { Blueprint } from '../../../types/blueprint';
-import { randFieldType } from './randFieldType';
+import randFieldType from './randFieldType';
 
 const categories = [
   'Bridge',
@@ -33,7 +33,7 @@ const githubRepos = [
   'hyperbridge-relayer-blueprint',
 ];
 
-export default function randBlueprint(id: string) {
+export default function randBlueprint(id: bigint) {
   return {
     id,
     name: randCompanyName(),

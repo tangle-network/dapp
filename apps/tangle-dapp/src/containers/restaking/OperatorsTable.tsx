@@ -1,14 +1,17 @@
 import { AddLineIcon } from '@tangle-network/icons';
 import OperatorsTableUI from '@tangle-network/tangle-shared-ui/components/tables/Operators';
-import { OperatorConcentration } from '@tangle-network/tangle-shared-ui/data/restake/useOperatorConcentration';
-import { OperatorTVLType } from '@tangle-network/tangle-shared-ui/data/restake/useOperatorTVL';
+import type { OperatorConcentration } from '@tangle-network/tangle-shared-ui/data/restake/useOperatorConcentration';
+import type { OperatorTvlGroup } from '@tangle-network/tangle-shared-ui/data/restake/useOperatorTvl';
 import useRestakeAssets from '@tangle-network/tangle-shared-ui/data/restake/useRestakeAssets';
 import useAgnosticAccountInfo from '@tangle-network/tangle-shared-ui/hooks/useAgnosticAccountInfo';
 import useIdentities from '@tangle-network/tangle-shared-ui/hooks/useIdentities';
 import useIsAccountConnected from '@tangle-network/tangle-shared-ui/hooks/useIsAccountConnected';
 import useSubstrateAddress from '@tangle-network/tangle-shared-ui/hooks/useSubstrateAddress';
-import { RestakeOperator } from '@tangle-network/tangle-shared-ui/types';
-import type { OperatorMap } from '@tangle-network/tangle-shared-ui/types/restake';
+import type { RestakeOperator } from '@tangle-network/tangle-shared-ui/types';
+import type {
+  OperatorMap,
+  OperatorDelegatorBond,
+} from '@tangle-network/tangle-shared-ui/types/restake';
 import delegationsToVaultTokens from '@tangle-network/tangle-shared-ui/utils/restake/delegationsToVaultTokens';
 import Button from '@tangle-network/ui-components/components/buttons/Button';
 import {
@@ -20,12 +23,12 @@ import cx from 'classnames';
 import {
   type ComponentProps,
   type FC,
-  PropsWithChildren,
+  type PropsWithChildren,
   useCallback,
   useMemo,
   useState,
 } from 'react';
-import { LinkProps } from 'react-router';
+import type { LinkProps } from 'react-router';
 import { RestakeOperatorWrapper } from '../../components/tables/RestakeActionWrappers';
 import JoinOperatorsModal from './JoinOperatorsModal';
 
@@ -36,17 +39,18 @@ type OperatorUI = NonNullable<
 type Props = {
   operatorConcentration?: OperatorConcentration;
   operatorMap: OperatorMap;
-  operatorTVL?: OperatorTVLType['operatorTVL'];
+  operatorTvl?: OperatorTvlGroup['operatorTvl'];
   onRestakeClicked?: LinkProps['onClick'];
 };
 
 const OperatorsTable: FC<Props> = ({
   operatorConcentration,
   operatorMap,
-  operatorTVL,
+  operatorTvl,
   onRestakeClicked,
 }) => {
   const [globalFilter, setGlobalFilter] = useState('');
+
   const [isJoinOperatorsModalOpen, setIsJoinOperatorsModalOpen] =
     useState(false);
 
@@ -70,7 +74,7 @@ const OperatorsTable: FC<Props> = ({
       Object.entries(operatorMap).map<OperatorUI>(
         ([addressString, { delegations, restakersCount, stake }]) => {
           const address = assertSubstrateAddress(addressString);
-          const tvlInUsd = operatorTVL?.get(address) ?? null;
+          const tvlInUsd = operatorTvl?.get(address) ?? null;
 
           const concentrationPercentage =
             operatorConcentration?.get(address) ?? null;
@@ -78,7 +82,7 @@ const OperatorsTable: FC<Props> = ({
           const isDelegated =
             activeSubstrateAddress !== null &&
             delegations.some(
-              (delegation) =>
+              (delegation: OperatorDelegatorBond) =>
                 delegation.delegatorAccountId === activeSubstrateAddress,
             );
 
@@ -99,7 +103,7 @@ const OperatorsTable: FC<Props> = ({
       ),
     [
       operatorMap,
-      operatorTVL,
+      operatorTvl,
       operatorConcentration,
       activeSubstrateAddress,
       identities,
@@ -114,7 +118,7 @@ const OperatorsTable: FC<Props> = ({
   const isActiveAccountInOperatorMap = useMemo(
     () =>
       activeSubstrateAddress !== null &&
-      operatorMap[activeSubstrateAddress] !== undefined,
+      operatorMap.get(activeSubstrateAddress) !== undefined,
     [activeSubstrateAddress, operatorMap],
   );
 

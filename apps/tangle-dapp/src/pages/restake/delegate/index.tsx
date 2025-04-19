@@ -47,6 +47,8 @@ import useSwitchChain from '../useSwitchChain';
 import ActionButton from './ActionButton';
 import Details from './Details';
 import RestakeDelegateInput from './RestakeDelegateInput';
+import BlueprintSelection from '../../../components/restaking/BlueprintSelection';
+import useBlueprintStore from '../../../context/useBlueprintStore';
 
 type RestakeOperator = {
   accountId: SubstrateAddress;
@@ -68,6 +70,8 @@ const RestakeDelegateForm: FC<Props> = ({ assets }) => {
   } = useForm<DelegationFormFields>({
     mode: 'onBlur',
   });
+
+  const selectedOperatorAddress = watch('operatorAccountId');
 
   const [operatorParam, setOperatorParam] = useQueryState(
     QueryParamKey.RESTAKE_OPERATOR,
@@ -93,6 +97,7 @@ const RestakeDelegateForm: FC<Props> = ({ assets }) => {
   const restakeApi = useRestakeApi();
   const { result: delegatorInfo } = useRestakeDelegatorInfo();
   const { result: operatorMap } = useRestakeOperatorMap();
+  const blueprintSelection = useBlueprintStore((store) => store.selection);
 
   const { result: operatorIdentities } = useIdentities(
     useMemo(
@@ -134,7 +139,7 @@ const RestakeDelegateForm: FC<Props> = ({ assets }) => {
       !operatorParam ||
       typeof operatorParam !== 'string' ||
       !isSubstrateAddress(operatorParam) ||
-      !operatorMap[operatorParam]
+      !operatorMap.get(operatorParam)
     ) {
       return;
     }
@@ -265,6 +270,9 @@ const RestakeDelegateForm: FC<Props> = ({ assets }) => {
         await executeNativeRestake({
           amount: amountBn,
           operatorAddress: operatorAccountId,
+          blueprintSelection: blueprintSelection.map(
+            (id) => new BN(id.toString()),
+          ),
         });
       } else {
         if (!restakeApi) return;
@@ -276,6 +284,7 @@ const RestakeDelegateForm: FC<Props> = ({ assets }) => {
       setValue('assetId', '', { shouldValidate: false });
     },
     [
+      blueprintSelection,
       executeNativeRestake,
       isReady,
       restakeApi,
@@ -313,17 +322,21 @@ const RestakeDelegateForm: FC<Props> = ({ assets }) => {
 
       <Card withShadow tightPadding>
         <Form onSubmit={handleSubmit(onSubmit)}>
-          <div className="flex flex-col h-full space-y-4 grow">
-            <RestakeDelegateInput
-              assets={assets}
-              amountError={errors.amount?.message}
-              delegatorInfo={delegatorInfo}
-              openAssetModal={openAssetModal}
-              openOperatorModal={openOperatorModal}
-              register={register}
-              setValue={setValue}
-              watch={watch}
-            />
+          <div className="flex flex-col h-full gap-4 grow">
+            <div className="flex flex-col gap-2">
+              <RestakeDelegateInput
+                amountError={errors.amount?.message}
+                delegatorInfo={delegatorInfo}
+                openAssetModal={openAssetModal}
+                openOperatorModal={openOperatorModal}
+                register={register}
+                setValue={setValue}
+                watch={watch}
+                assets={assets}
+              />
+
+              <BlueprintSelection operatorAddress={selectedOperatorAddress} />
+            </div>
 
             <div className="flex flex-col justify-between gap-4 grow">
               <Details />

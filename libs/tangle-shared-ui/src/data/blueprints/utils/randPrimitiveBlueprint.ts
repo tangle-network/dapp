@@ -1,18 +1,18 @@
 import { randFullName } from '@ngneat/falso';
 import { toPrimitiveBlueprint } from './toPrimitiveBlueprint';
 
-function randPrimitiveBlueprint(
-  id: number,
-): ReturnType<typeof toPrimitiveBlueprint> {
+const randPrimitiveBlueprint = (
+  id: bigint,
+): ReturnType<typeof toPrimitiveBlueprint> => {
   return {
     metadata: {
-      name: `Blueprint ${id}`,
-      description: `Description for Blueprint ${id}`,
+      name: `Blueprint ${id.toString()}`,
+      description: `Description for Blueprint ${id.toString()}`,
       author: randFullName(),
-      category: `Category ${id}`,
-      codeRepository: `https://github.com/blueprint-${id}`,
+      category: `Category ${id.toString()}`,
+      codeRepository: `https://github.com/blueprint-${id.toString()}`,
       logo: `https://dummyimage.com/100x100`,
-      website: `https://example.com/blueprint-${id}`,
+      website: `https://example.com/blueprint-${id.toString()}`,
       license: `MIT`,
     },
     jobs: [],
@@ -23,8 +23,8 @@ function randPrimitiveBlueprint(
         {
           fetcher: {
             ContainerImage: {
-              registry_: `https://example.com/registry-${id}`,
-              image: `https://example.com/image-${id}`,
+              registry_: `https://example.com/registry-${id.toString()}`,
+              image: `https://example.com/image-${id.toString()}`,
               tag: `latest`,
             },
           },
@@ -32,6 +32,6 @@ function randPrimitiveBlueprint(
       ],
     },
   };
-}
+};
 
 export default randPrimitiveBlueprint;

@@ -33,14 +33,14 @@ export function extractBlueprintsData(
   ][],
 ) {
   const blueprintsMap = new Map<
-    number,
+    bigint,
     ReturnType<typeof toPrimitiveBlueprint> & { owner: string }
   >();
 
   const ownerSet = new Set<string>();
 
   for (const [key, value] of blueprintEntries) {
-    const id = key.args[0].toNumber();
+    const id = key.args[0].toBigInt();
 
     if (value.isNone) {
       continue;
@@ -64,11 +64,11 @@ export function extractOperatorData(
   ][],
   operatorMap: OperatorMap,
   operatorTVLByAsset: Map<SubstrateAddress, Map<RestakeAssetId, number>>,
-  runningInstancesMap: Map<number, ServiceInstance[]>,
+  runningInstancesMap: Map<bigint, ServiceInstance[]>,
 ) {
-  const blueprintOperatorMap = new Map<number, Set<SubstrateAddress>>();
-  const blueprintRestakersMap = new Map<number, Set<string>>();
-  const blueprintTVLMap = new Map<number, number>();
+  const blueprintOperatorMap = new Map<bigint, Set<SubstrateAddress>>();
+  const blueprintRestakersMap = new Map<bigint, Set<string>>();
+  const blueprintTVLMap = new Map<bigint, number>();
 
   for (const [key, value] of operatorEntries) {
     if (value.isNone) {
@@ -76,7 +76,7 @@ export function extractOperatorData(
     }
 
     const [blueprintIdU64, operatorAccountId32] = key.args;
-    const blueprintId = blueprintIdU64.toNumber();
+    const blueprintId = blueprintIdU64.toBigInt();
 
     const operatorAccount = assertSubstrateAddress(
       operatorAccountId32.toString(),
@@ -90,7 +90,7 @@ export function extractOperatorData(
       operatorSet.add(operatorAccount);
     }
 
-    const operator = operatorMap[operatorAccount];
+    const operator = operatorMap.get(operatorAccount);
 
     if (operator !== undefined) {
       const restakerSet = blueprintRestakersMap.get(blueprintId);
@@ -119,8 +119,8 @@ export function extractOperatorData(
 }
 
 function calculateBlueprintOperatorExposure(
-  runningInstancesMap: Map<number, ServiceInstance[]>,
-  blueprintId: number,
+  runningInstancesMap: Map<bigint, ServiceInstance[]>,
+  blueprintId: bigint,
   operatorTVLByAsset: Map<SubstrateAddress, Map<RestakeAssetId, number>>,
 ) {
   const PERCENT_DIVISOR = 100;
@@ -181,34 +181,36 @@ export function createBlueprintObjects(
   >['blueprintRestakersMap'],
   blueprintTVLMap: ReturnType<typeof extractOperatorData>['blueprintTVLMap'],
   ownerIdentitiesMap: Awaited<ReturnType<typeof fetchOwnerIdentities>>,
-): Record<string, Blueprint> {
-  return Array.from(blueprintsMap.entries()).reduce(
-    (acc, [blueprintId, { metadata, owner, registrationParams }]) => {
-      acc[blueprintId.toString()] = {
-        id: blueprintId.toString(),
-        name: metadata.name,
-        author: metadata.author ?? owner,
-        deployer: owner,
-        imgUrl: metadata.logo,
-        description: metadata.description,
-        registrationParams,
-        category: metadata.category,
-        restakersCount: blueprintRestakersMap.get(blueprintId)?.size ?? null,
-        operatorsCount: blueprintOperatorMap.get(blueprintId)?.size ?? null,
-        tvl: blueprintTVLMap.get(blueprintId)?.toLocaleString() ?? null,
-        githubUrl: metadata.codeRepository,
-        websiteUrl: metadata.website,
-        twitterUrl: ownerIdentitiesMap.get(owner)?.twitter,
-        email: ownerIdentitiesMap.get(owner)?.email,
-        // TODO: Determine `isBoosted` value.
-        isBoosted: false,
-        requestParams: registrationParams,
-      };
+): Map<string, Blueprint> {
+  const blueprintMap = new Map<string, Blueprint>();
 
-      return acc;
-    },
-    {} as Record<string, Blueprint>,
-  );
+  for (const [
+    blueprintId,
+    { metadata, owner, registrationParams },
+  ] of blueprintsMap.entries()) {
+    blueprintMap.set(blueprintId.toString(), {
+      id: blueprintId,
+      name: metadata.name,
+      author: metadata.author ?? owner,
+      deployer: owner,
+      imgUrl: metadata.logo,
+      description: metadata.description,
+      registrationParams,
+      category: metadata.category,
+      restakersCount: blueprintRestakersMap.get(blueprintId)?.size ?? null,
+      operatorsCount: blueprintOperatorMap.get(blueprintId)?.size ?? null,
+      tvl: blueprintTVLMap.get(blueprintId)?.toLocaleString() ?? null,
+      githubUrl: metadata.codeRepository,
+      websiteUrl: metadata.website,
+      twitterUrl: ownerIdentitiesMap.get(owner)?.twitter,
+      email: ownerIdentitiesMap.get(owner)?.email,
+      // TODO: Determine `isBoosted` value.
+      isBoosted: false,
+      requestParams: registrationParams,
+    });
+  }
+
+  return blueprintMap;
 }
 
 export async function fetchOwnerIdentities(
@@ -233,7 +235,7 @@ export function createMonitoringBlueprint(
   operatorServices: OperatorBlueprint['services'],
   serviceInstances: ServiceInstance[],
   operatorTVLByAsset: Map<SubstrateAddress, Map<RestakeAssetId, number>>,
-  runningInstancesMap: Map<number, ServiceInstance[]>,
+  runningInstancesMap: Map<bigint, ServiceInstance[]>,
 ): MonitoringBlueprint {
   const filteredServiceInstances = serviceInstances.filter((instance) => {
     return instance.serviceInstance?.blueprint === blueprintId;
@@ -286,7 +288,7 @@ export function createMonitoringBlueprint(
   return {
     blueprintId,
     blueprint: blueprintData,
-    services: services,
+    services,
   };
 }
 

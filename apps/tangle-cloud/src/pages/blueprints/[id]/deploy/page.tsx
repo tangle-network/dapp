@@ -11,7 +11,7 @@ import {
   formatServiceRegisterData,
 } from '../../../../utils/validations/deployBlueprint';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useNavigate, useParams } from 'react-router';
+import { useNavigate } from 'react-router';
 import useBlueprintDetails from '@tangle-network/tangle-shared-ui/data/restake/useBlueprintDetails';
 import { Deployment } from './DeploySteps/Deployment';
 import { twMerge } from 'tailwind-merge';
@@ -21,12 +21,14 @@ import { z } from 'zod';
 import useServiceRequestTx from '../../../../data/services/useServicesRequestTx';
 import { TxStatus } from '@tangle-network/tangle-shared-ui/hooks/useSubstrateTx';
 import { PagePath } from '../../../../types';
-import useNetworkStore from '@tangle-network/tangle-shared-ui/context/useNetworkStore';
 import { getApiPromise } from '@tangle-network/tangle-shared-ui/utils/polkadot/api';
+import useNetworkStore from '@tangle-network/tangle-shared-ui/context/useNetworkStore';
+import useParamWithSchema from '@tangle-network/tangle-shared-ui/hooks/useParamWithSchema';
 
 const DeployPage: FC = () => {
-  const { id } = useParams();
+  const id = useParamWithSchema('id', z.coerce.bigint());
   const navigate = useNavigate();
+
   const wsRpcEndpoint = useNetworkStore(
     (store) => store.network2?.wsRpcEndpoint,
   );
@@ -65,9 +67,11 @@ const DeployPage: FC = () => {
     [blueprintResult?.details, control, errors, setError, setValue, watch],
   );
 
+  // Automatically navigate to the blueprint details page when the service
+  // register transaction is complete.
   useEffect(() => {
-    if (id && serviceRegisterStatus === TxStatus.COMPLETE) {
-      navigate(`${PagePath.BLUEPRINTS_DETAILS}`.replace(':id', id));
+    if (id !== undefined && serviceRegisterStatus === TxStatus.COMPLETE) {
+      navigate(`${PagePath.BLUEPRINTS_DETAILS}`.replace(':id', id.toString()));
     }
   }, [serviceRegisterStatus, id, navigate]);
 

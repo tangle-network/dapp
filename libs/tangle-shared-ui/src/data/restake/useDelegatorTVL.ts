@@ -1,17 +1,17 @@
+import type { RestakeAssetMap, DelegatorInfo } from '../../types/restake';
 import { useMemo } from 'react';
-import type { DelegatorInfo, RestakeAssetMap } from '../../types/restake';
 
-const calculateDelegatorTVL = (
+const calculateDelegatorTvl = (
   delegatorInfo: DelegatorInfo,
   assetMap: RestakeAssetMap,
 ) => {
-  const delegatorTVL: Record<string, number> = {};
+  const delegatorTvl: Record<string, number> = {};
 
   for (const delegation of delegatorInfo.delegations) {
     const asset = assetMap.get(delegation.assetId);
 
     if (asset === undefined) {
-      delegatorTVL[delegation.assetId] = 0;
+      delegatorTvl[delegation.assetId] = 0;
 
       continue;
     }
@@ -21,26 +21,29 @@ const calculateDelegatorTVL = (
         ? 0
         : Number(delegation.amountBonded * BigInt(asset.metadata.priceInUsd));
 
-    delegatorTVL[delegation.assetId] =
-      (delegatorTVL[delegation.assetId] || 0) + value;
+    delegatorTvl[delegation.assetId] =
+      (delegatorTvl[delegation.assetId] || 0) + value;
   }
 
-  const totalDelegatorTVL = Object.values(delegatorTVL).reduce(
+  const totalDelegatorTvl = Object.values(delegatorTvl).reduce(
     (sum, tvl) => sum + tvl,
     0,
   );
-  return { delegatorTVL, totalDelegatorTVL };
+
+  return { delegatorTvl, totalDelegatorTvl };
 };
 
-export function useDelegatorTVL(
+const useDelegatorTvl = (
   delegatorInfo: DelegatorInfo | null,
   assetMap: RestakeAssetMap | null,
-) {
+) => {
   return useMemo(() => {
     if (delegatorInfo === null || assetMap === null) {
-      return { delegatorTVL: {}, totalDelegatorTVL: 0 };
+      return { delegatorTvl: {}, totalDelegatorTvl: 0 };
     }
 
-    return calculateDelegatorTVL(delegatorInfo, assetMap);
+    return calculateDelegatorTvl(delegatorInfo, assetMap);
   }, [delegatorInfo, assetMap]);
-}
+};
+
+export default useDelegatorTvl;

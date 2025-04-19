@@ -7,7 +7,7 @@ import RestakeDelegateForm from '../../pages/restake/delegate';
 import RestakeUnstakeForm from '../../pages/restake/unstake';
 import useRestakeDelegatorInfo from '@tangle-network/tangle-shared-ui/data/restake/useRestakeDelegatorInfo';
 import useRestakeOperatorMap from '@tangle-network/tangle-shared-ui/data/restake/useRestakeOperatorMap';
-import useRestakeTVL from '@tangle-network/tangle-shared-ui/data/restake/useRestakeTVL';
+import useRestakeTvl from '@tangle-network/tangle-shared-ui/data/restake/useRestakeTvl';
 import useRestakeAssets from '@tangle-network/tangle-shared-ui/data/restake/useRestakeAssets';
 import useRestakeAssetsTvl from '@tangle-network/tangle-shared-ui/data/restake/useRestakeAssetsTvl';
 import { useRestakeVaults } from '@tangle-network/tangle-shared-ui/data/restake/useRestakeVaults';
@@ -31,11 +31,9 @@ type Props = {
 const RestakeTabContent: FC<Props> = ({ tab }) => {
   const { result: delegatorInfo } = useRestakeDelegatorInfo();
   const { result: operatorMap } = useRestakeOperatorMap();
-  const { operatorConcentration, operatorTVL } = useRestakeTVL(
-    operatorMap,
-    delegatorInfo,
-  );
+  const { operatorConcentration, operatorTvl } = useRestakeTvl(delegatorInfo);
   const navigate = useNavigate();
+
   const {
     assets,
     isLoading: isLoadingAssets,
@@ -71,7 +69,7 @@ const RestakeTabContent: FC<Props> = ({ tab }) => {
           <OperatorsTable
             operatorConcentration={operatorConcentration}
             operatorMap={operatorMap}
-            operatorTVL={operatorTVL}
+            operatorTvl={operatorTvl}
             onRestakeClicked={handleRestakeClicked}
           />
         );

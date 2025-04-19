@@ -7,23 +7,21 @@ import randBlueprint from './utils/randBlueprint';
 
 const generateBlueprints = () => {
   return Array.from({ length: randNumber({ min: 2, max: 10 }) }, (_, idx) =>
-    randBlueprint(idx.toString()),
-  ).reduce(
-    (acc, blueprint) => {
-      acc[blueprint.id] = blueprint;
-      return acc;
-    },
-    {} as Record<string, Blueprint>,
-  );
+    randBlueprint(BigInt(idx)),
+  ).reduce((acc, blueprint) => {
+    acc.set(blueprint.id, blueprint);
+
+    return acc;
+  }, new Map<bigint, Blueprint>());
 };
 
-export default function useFakeBlueprintListing(delayMs = 3000) {
-  const [data, setData] = useState<Record<string, Blueprint>>({});
+const useFakeBlueprintListing = (delayMs = 3000) => {
+  const [data, setData] = useState<Map<bigint, Blueprint>>(new Map());
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     setIsLoading(true);
-    setData({});
+    setData(new Map());
 
     const timer = setTimeout(() => {
       setIsLoading(false);
@@ -33,13 +31,15 @@ export default function useFakeBlueprintListing(delayMs = 3000) {
     return () => {
       clearTimeout(timer);
       setIsLoading(false);
-      setData({});
+      setData(new Map());
     };
   }, [delayMs]);
 
   return {
     blueprints: data,
     isLoading,
-    error: null as Error | null,
+    error: null satisfies Error | null,
   };
-}
+};
+
+export default useFakeBlueprintListing;

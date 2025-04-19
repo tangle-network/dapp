@@ -9,9 +9,8 @@ export enum PagePath {
   BLUEPRINTS_DETAILS = '/blueprints/:id',
   BLUEPRINTS_DEPLOY = '/blueprints/:id/deploy',
   BLUEPRINTS_REGISTRATION_REVIEW = '/registration-review',
-
   OPERATORS = '/operators',
-  ACCOUNT = '/account',
+  NOT_FOUND = '/404',
 }
 
 export enum TangleDAppPagePath {

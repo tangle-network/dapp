@@ -12,7 +12,7 @@ export enum InstanceStatus {
 }
 
 export interface OperatorBlueprint {
-  blueprintId: number;
+  blueprintId: bigint;
   blueprint: ReturnType<typeof toPrimitiveBlueprint>;
   services: Array<ReturnType<typeof toPrimitiveService>>;
 }
@@ -53,7 +53,7 @@ export type MonitoringServiceRequest = ReturnType<
 };
 
 export interface ServiceInstance {
-  instanceId: number;
+  instanceId: bigint;
   serviceInstance?: ReturnType<typeof toPrimitiveService>;
 }
 

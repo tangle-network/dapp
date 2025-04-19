@@ -1,7 +1,7 @@
-import useApiRx from './useApiRx';
 import { extractIdentityInfo } from '../utils/polkadot/identity';
 import { useCallback, useMemo } from 'react';
 import { SubstrateAddress } from '@tangle-network/ui-components/types/address';
+import useApi from './useApi';
 
 const useIdentities = (
   singleOrMultipleValidatorAddresses: SubstrateAddress | SubstrateAddress[],
@@ -14,7 +14,7 @@ const useIdentities = (
     addresses = [singleOrMultipleValidatorAddresses];
   }
 
-  const { result, ...other } = useApiRx(
+  const { result, ...other } = useApi(
     useCallback(
       (api) => api.query.identity.identityOf.multi(addresses),
       [addresses],

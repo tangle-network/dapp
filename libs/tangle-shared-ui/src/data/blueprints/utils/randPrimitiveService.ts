@@ -1,12 +1,12 @@
 import { toPrimitiveService } from './toPrimitiveService';
 import { SubstrateAddress } from '@tangle-network/ui-components/types/address';
 
-function randPrimitiveService(
-  id: number,
+const randPrimitiveService = (
+  id: bigint,
   operatorAccountAddr: SubstrateAddress,
-): ReturnType<typeof toPrimitiveService> {
+): ReturnType<typeof toPrimitiveService> => {
   return {
-    id: 10000 + id,
+    id: BigInt(10000) + id,
     blueprint: id,
     ownerAccount: operatorAccountAddr,
     permittedCallers: [],
@@ -25,6 +25,6 @@ function randPrimitiveService(
     },
     ttl: 1000,
   };
-}
+};
 
 export default randPrimitiveService;
