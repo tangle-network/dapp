@@ -1,4 +1,11 @@
-import { ALICE, CHARLIE, createAmount, createApi, submitTx } from './util';
+import {
+  ALICE,
+  CHARLIE,
+  createAmount,
+  createApi,
+  getRandomShortId,
+  submitTx,
+} from './util';
 
 const PALLET_ACCOUNT_ADDRESS =
   '5EYCAe5cKPAoFh2HnQQvpKqRYZGqBpaA87u4Zzw89qPE58is';
@@ -25,7 +32,7 @@ const LST_AND_ASSET_AND_VAULT_ID = 1;
       ALICE.address,
       ALICE.address,
       ALICE.address,
-      null,
+      `LST ${getRandomShortId()}`,
       null,
     ),
   });
