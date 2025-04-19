@@ -38,7 +38,7 @@ import useRestakeApi from '../../../data/restake/useRestakeApi';
 import useQueryState from '../../../hooks/useQueryState';
 import { QueryParamKey } from '../../../types';
 import type { DelegationFormFields } from '../../../types/restake';
-import filterBy from '../../../utils/filterBy';
+import filterBy from '@tangle-network/tangle-shared-ui/utils/filterBy';
 import parseChainUnits from '../../../utils/parseChainUnits';
 import Form from '../Form';
 import RestakeActionTabs from '../RestakeActionTabs';

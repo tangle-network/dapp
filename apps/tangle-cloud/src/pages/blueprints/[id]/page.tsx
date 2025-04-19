@@ -10,9 +10,9 @@ import { type FC, type PropsWithChildren, useState } from 'react';
 import { Link, useNavigate, Navigate } from 'react-router-dom';
 import { PagePath, TangleDAppPagePath } from '../../../types';
 import useRoleStore, { Role } from '../../../stores/roleStore';
-import PricingModal from '../PricingModal';
+import ConfigurePricingModal from '../ConfigurePricingModal';
 import { Modal } from '@tangle-network/ui-components';
-import type { PricingFormResult } from '../PricingModal/types';
+import type { PricingFormResult } from '../ConfigurePricingModal/types';
 import { SessionStorageKey } from '../../../constants';
 import useParamWithSchema from '@tangle-network/tangle-shared-ui/hooks/useParamWithSchema';
 import { z } from 'zod';
@@ -77,9 +77,11 @@ const Page = () => {
       SessionStorageKey.BLUEPRINT_REGISTRATION_PARAMS,
       JSON.stringify({
         pricingSettings: formResult,
+        // TODO: This includes bigints, which aren't JSON-serializable. This leads to an error when saving the form result to session storage. Need to fix this.
         selectedBlueprints: [result.details],
       }),
     );
+
     navigate(PagePath.BLUEPRINTS_REGISTRATION_REVIEW);
   };
 
@@ -91,6 +93,7 @@ const Page = () => {
           children: isOperator ? 'Register' : 'Deploy',
           onClick: (e) => {
             e.preventDefault();
+
             if (isOperator) {
               setIsPricingModalOpen(true);
             } else {
@@ -114,7 +117,7 @@ const Page = () => {
       </div>
 
       <Modal open={isPricingModalOpen} onOpenChange={setIsPricingModalOpen}>
-        <PricingModal
+        <ConfigurePricingModal
           onOpenChange={setIsPricingModalOpen}
           blueprints={[result.details]}
           onSubmit={handlePricingFormSubmit}

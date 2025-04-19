@@ -14,8 +14,8 @@ import { FC, useCallback, useMemo, useState } from 'react';
 import { twMerge } from 'tailwind-merge';
 import useRoleStore, { Role } from '../../stores/roleStore';
 import BlueprintListing from './BlueprintListing';
-import PricingModal from './PricingModal';
-import { PricingFormResult } from './PricingModal/types';
+import ConfigurePricingModal from './ConfigurePricingModal';
+import { PricingFormResult } from './ConfigurePricingModal/types';
 import { useNavigate } from 'react-router';
 import { SessionStorageKey } from '../../constants';
 import { PagePath } from '../../types';
@@ -51,7 +51,7 @@ const Page: FC = () => {
     );
   }, [blueprints, rowSelection]);
 
-  const size = Object.keys(selectedBlueprints).length;
+  const selectedBlueprintCount = Object.keys(selectedBlueprints).length;
 
   const handlePricingFormSubmit = useCallback(
     (result: PricingFormResult) => {
@@ -59,7 +59,7 @@ const Page: FC = () => {
         SessionStorageKey.BLUEPRINT_REGISTRATION_PARAMS,
         JSON.stringify({
           pricingSettings: result,
-          selectedBlueprints: selectedBlueprints,
+          selectedBlueprints,
         }),
       );
 
@@ -87,7 +87,7 @@ const Page: FC = () => {
 
       <Modal open={isPricingModalOpen} onOpenChange={setIsPricingModalOpen}>
         <AnimatePresence>
-          {size > 0 && (
+          {selectedBlueprintCount > 0 && (
             <motion.div
               className={twMerge(
                 'fixed bottom-2 w-screen max-w-4xl p-6 -translate-x-1/2 left-1/2 rounded-xl',
@@ -101,7 +101,8 @@ const Page: FC = () => {
             >
               <div className="flex items-center gap-6">
                 <p className="font-bold text-mono-0 body1">
-                  {size} {pluralize('Blueprint', size > 1)} selected
+                  {selectedBlueprintCount}{' '}
+                  {pluralize('blueprint', selectedBlueprintCount > 1)} selected
                 </p>
 
                 <Button variant="link" onClick={() => setRowSelection({})}>
@@ -118,7 +119,7 @@ const Page: FC = () => {
           )}
         </AnimatePresence>
 
-        <PricingModal
+        <ConfigurePricingModal
           onOpenChange={setIsPricingModalOpen}
           blueprints={selectedBlueprints}
           onSubmit={handlePricingFormSubmit}

@@ -11,8 +11,9 @@ import RegistrationReview from '../pages/registrationReview/page';
 import RegistrationLayout from '../pages/registrationReview/layout';
 import DeployPage from '../pages/blueprints/[id]/deploy/page';
 import NotFoundPage from '../pages/notFound';
+import { FC } from 'react';
 
-function App() {
+const App: FC = () => {
   return (
     <Providers>
       <Layout>
@@ -84,6 +85,6 @@ function App() {
       </Layout>
     </Providers>
   );
-}
+};
 
 export default App;

@@ -13,7 +13,7 @@ import { SubstrateAddress } from '@tangle-network/ui-components/types/address';
 import { Search } from '@tangle-network/icons';
 import { Blueprint } from '@tangle-network/tangle-shared-ui/types/blueprint';
 import useOperatorBlueprints from '@tangle-network/tangle-shared-ui/data/blueprints/useOperatorBlueprints';
-import filterBy from '../../utils/filterBy';
+import filterBy from '@tangle-network/tangle-shared-ui/utils/filterBy';
 import BlueprintSelectionListbox from './BlueprintSelectionListbox';
 
 type Props = {

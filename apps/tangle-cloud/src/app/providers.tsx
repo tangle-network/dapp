@@ -5,7 +5,7 @@ import {
   WebbProvider,
 } from '@tangle-network/api-provider-environment';
 import { UIProvider } from '@tangle-network/ui-components';
-import { type PropsWithChildren, type ReactNode } from 'react';
+import { FC, type PropsWithChildren } from 'react';
 import type { State } from 'wagmi';
 
 const appEvent = new AppEvent();
@@ -14,10 +14,10 @@ type Props = {
   wagmiInitialState?: State;
 };
 
-const Providers = ({
+const Providers: FC<PropsWithChildren<Props>> = ({
   children,
   wagmiInitialState,
-}: PropsWithChildren<Props>): ReactNode => {
+}) => {
   return (
     <UIProvider hasErrorBoundary>
       <WebbProvider
