@@ -3,7 +3,6 @@ import type { IdentityType } from '@tangle-network/tangle-shared-ui/utils/polkad
 import { useMemo } from 'react';
 import ListModal from '@tangle-network/tangle-shared-ui/components/ListModal';
 import { formatUnits } from 'viem';
-import filterBy from '../../utils/filterBy';
 import OperatorListItem from '../../components/Lists/OperatorListItem';
 import {
   AmountFormatStyle,
@@ -11,6 +10,7 @@ import {
 } from '@tangle-network/ui-components';
 import { BN } from '@polkadot/util';
 import useRestakeAssets from '@tangle-network/tangle-shared-ui/data/restake/useRestakeAssets';
+import filterBy from '@tangle-network/tangle-shared-ui/utils/filterBy';
 
 type Props = {
   delegatorInfo: DelegatorInfo | null;

@@ -71,6 +71,7 @@ export const deployBlueprintSchema = z
       }
 
       const uniqueCallers = new Set(value);
+
       if (uniqueCallers.size !== value.length) {
         context.addIssue({
           code: z.ZodIssueCode.custom,
@@ -151,6 +152,7 @@ export const deployBlueprintSchema = z
         assertRestakeAssetId(value.id);
       } catch (error: unknown) {
         console.error(`Asset id ${value.id} is invalid: ${error}`);
+
         context.addIssue({
           code: z.ZodIssueCode.custom,
           message: 'Invalid payment asset',
@@ -208,6 +210,7 @@ export const formatServiceRegisterData = (
   data: DeployBlueprintSchema,
 ): ServiceRequestTxContext => {
   let blueprintRequestArgs: PrimitiveField[] = [];
+
   if (blueprintData.requestParams.length > 0) {
     if (
       !data.requestArgs ||

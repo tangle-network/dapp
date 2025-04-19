@@ -1,8 +1,7 @@
 import type { Option } from '@polkadot/types';
 import type { TanglePrimitivesServicesTypesOperatorPreferences } from '@polkadot/types/lookup';
-import { useCallback } from 'react';
+import { useCallback, useMemo } from 'react';
 import { catchError, combineLatest, of, switchMap } from 'rxjs';
-
 import useNetworkStore from '../../context/useNetworkStore';
 import useApiRx from '../../hooks/useApiRx';
 import { TangleError, TangleErrorCode } from '../../types/error';
@@ -56,6 +55,7 @@ const useAllBlueprints = () => {
               const { blueprintsMap, ownerSet } =
                 extractBlueprintsData(blueprintEntries);
 
+              // TODO: This can likely be optimized to reduce request count.
               const ownerIdentitiesMap = await fetchOwnerIdentities(
                 rpcEndpoint,
                 ownerSet,
@@ -77,6 +77,8 @@ const useAllBlueprints = () => {
                 const instanceData = toPrimitiveService(
                   mayBeServiceInstance.unwrap(),
                 );
+
+                // TODO: Use lodash to merge arrays.
                 runningInstancesMap.set(instanceData.blueprint, [
                   ...(runningInstancesMap.get(instanceData.blueprint) ?? []),
                   {
@@ -116,9 +118,13 @@ const useAllBlueprints = () => {
     ),
   );
 
+  const blueprints = useMemo(() => {
+    return result ?? new Map();
+  }, [result]);
+
   return {
     ...rest,
-    blueprints: result ?? new Map(),
+    blueprints,
   };
 };
 

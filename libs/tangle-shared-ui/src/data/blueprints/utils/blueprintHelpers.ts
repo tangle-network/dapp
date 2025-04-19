@@ -24,14 +24,14 @@ import {
 import { randNumber } from '@ngneat/falso';
 import { RestakeAssetId } from '../../../types';
 
-export function extractBlueprintsData(
+export const extractBlueprintsData = (
   blueprintEntries: [
     StorageKey<[u64]>,
     Option<
       ITuple<[AccountId32, TanglePrimitivesServicesServiceServiceBlueprint]>
     >,
   ][],
-) {
+) => {
   const blueprintsMap = new Map<
     bigint,
     ReturnType<typeof toPrimitiveBlueprint> & { owner: string }
@@ -55,7 +55,7 @@ export function extractBlueprintsData(
   }
 
   return { blueprintsMap, ownerSet };
-}
+};
 
 export function extractOperatorData(
   operatorEntries: [
@@ -171,7 +171,7 @@ function calculateBlueprintOperatorExposure(
   return blueprintTVL;
 }
 
-export function createBlueprintObjects(
+export const createBlueprintObjects = (
   blueprintsMap: ReturnType<typeof extractBlueprintsData>['blueprintsMap'],
   blueprintOperatorMap: ReturnType<
     typeof extractOperatorData
@@ -181,7 +181,7 @@ export function createBlueprintObjects(
   >['blueprintRestakersMap'],
   blueprintTVLMap: ReturnType<typeof extractOperatorData>['blueprintTVLMap'],
   ownerIdentitiesMap: Awaited<ReturnType<typeof fetchOwnerIdentities>>,
-): Map<string, Blueprint> {
+): Map<string, Blueprint> => {
   const blueprintMap = new Map<string, Blueprint>();
 
   for (const [
@@ -211,12 +211,12 @@ export function createBlueprintObjects(
   }
 
   return blueprintMap;
-}
+};
 
-export async function fetchOwnerIdentities(
+export const fetchOwnerIdentities = async (
   rpcEndpoint: string,
   ownerSet: Set<string>,
-) {
+) => {
   const ownerArray = Array.from(ownerSet);
   const accountInfo = await getMultipleAccountInfo(rpcEndpoint, ownerArray);
 
@@ -226,7 +226,7 @@ export async function fetchOwnerIdentities(
   });
 
   return ownerIdentitiesMap;
-}
+};
 
 // TODO: implement full features of this function
 export function createMonitoringBlueprint(
@@ -290,12 +290,12 @@ export function createMonitoringBlueprint(
     blueprint: blueprintData,
     services,
   };
-}
+};
 
-export function createPendingServiceRequests(
+export const createPendingServiceRequests = (
   pendingServiceRequests: MonitoringServiceRequest[],
   blueprints: OperatorBlueprint['blueprint'][],
-): MonitoringServiceRequest[] {
+): MonitoringServiceRequest[] => {
   return pendingServiceRequests.map((pendingServiceRequest, idx) => {
     return {
       ...pendingServiceRequest,
@@ -306,4 +306,4 @@ export function createPendingServiceRequests(
       },
     };
   });
-}
+};

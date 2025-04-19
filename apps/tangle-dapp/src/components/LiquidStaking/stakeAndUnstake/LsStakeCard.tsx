@@ -19,7 +19,7 @@ import LsInput from './LsInput';
 import UnstakePeriodDetailItem from './UnstakePeriodDetailItem';
 import ListModal from '@tangle-network/tangle-shared-ui/components/ListModal';
 import LstListItem from '../LstListItem';
-import filterBy from '../../../utils/filterBy';
+import filterBy from '@tangle-network/tangle-shared-ui/utils/filterBy';
 import useActiveAccountAddress from '@tangle-network/tangle-shared-ui/hooks/useActiveAccountAddress';
 import useLsAgnosticBalance from './useLsAgnosticBalance';
 

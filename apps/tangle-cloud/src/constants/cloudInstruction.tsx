@@ -14,7 +14,7 @@ export const CLOUD_INSTRUCTIONS = [
     external: true,
   },
   {
-    title: 'Item',
+    title: 'Register as an Operator',
     description: 'Register as an Operator to participate in managing services.',
     icon: GlobalLine,
     to: PagePath.OPERATORS,

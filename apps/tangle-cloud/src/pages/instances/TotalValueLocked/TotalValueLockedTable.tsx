@@ -189,6 +189,7 @@ export const TotalValueLockedTable: FC<Props> = ({
   tableConfig,
 }) => {
   const columns = getColumns();
+
   const table = useReactTable({
     data,
     columns,
@@ -200,11 +201,10 @@ export const TotalValueLockedTable: FC<Props> = ({
     autoResetPageIndex: false,
     enableSortingRemoval: false,
   });
-  const isEmpty = data.length === 0;
 
   return (
     <TangleCloudTable<RestakeVault>
-      title={pluralize('blueprint', !isEmpty)}
+      title={pluralize('blueprint', data.length !== 1)}
       data={data}
       error={error}
       isLoading={isLoading}

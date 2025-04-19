@@ -3,8 +3,6 @@ import {
   CheckboxCircleFill,
   InformationLineFill,
 } from '@tangle-network/icons';
-import cx from 'classnames';
-import { useMemo } from 'react';
 import { twMerge } from 'tailwind-merge';
 import { Typography } from '../../typography/Typography';
 import { AlertProps } from './types';
@@ -32,68 +30,65 @@ import {
  * <Alert title="Transaction Status" description="Your transaction was successful!" type='success' />
  */
 export const Alert: React.FC<AlertProps> = ({
-  className: _className,
+  className,
   size = 'md',
   type = 'info',
   description,
   title,
 }) => {
-  const iconSize = useMemo(() => (size === 'md' ? '20px' : '14px'), [size]);
+  const iconSize = size === 'md' ? '16px' : '12px';
 
-  const iconClassName = useMemo(() => getIconClassNamesByType(type), [type]);
-
-  const className = useMemo(() => {
-    return twMerge(
-      _className,
-      'flex w-full p-3 pl-4 space-x-1 rounded-lg gap-2.5',
-      getClassNamesByType(type),
-    );
-  }, [_className, type]);
-
-  const titleClassName = useMemo(() => {
-    return twMerge(
-      getTypographyClassNamesByType(type),
-      getTitleClassNamesBySize(size),
-    );
-  }, [type, size]);
-
-  const descriptionlassName = useMemo(() => {
-    return twMerge(
-      getTypographyClassNamesByType(type),
-      getDescriptionClassNamesBySize(size),
-    );
-  }, [type, size]);
+  const iconClassName = 'fill-current dark:fill-current mt-1';
 
   return (
-    <div className={className}>
-      <div className={iconClassName}>
+    <div
+      className={twMerge(
+        className,
+        'flex w-full p-3 rounded-lg gap-2',
+        getClassNamesByType(type),
+      )}
+    >
+      <div className={getIconClassNamesByType(type)}>
         {type === 'success' ? (
           <CheckboxCircleFill
             width={iconSize}
             height={iconSize}
-            className="!fill-current"
+            className={iconClassName}
           />
         ) : type === 'error' || type === 'warning' ? (
           <AlertFill
             width={iconSize}
             height={iconSize}
-            className="!fill-current"
+            className={iconClassName}
           />
         ) : (
           <InformationLineFill
             width={iconSize}
             height={iconSize}
-            className="!fill-current"
+            className={iconClassName}
           />
         )}
       </div>
 
-      <div className={cx('flex flex-col', { 'gap-1': title && description })}>
-        <Typography variant="body1" className={titleClassName}>
+      <div className="flex flex-col">
+        <Typography
+          variant="body2"
+          className={twMerge(
+            getTypographyClassNamesByType(type),
+            getTitleClassNamesBySize(size),
+          )}
+        >
           {title}
         </Typography>
+
         {description && (
-          <Typography variant="body1" className={descriptionlassName}>
+          <Typography
+            variant="body2"
+            className={twMerge(
+              getTypographyClassNamesByType(type),
+              getDescriptionClassNamesBySize(size),
+            )}
+          >
             {description}
           </Typography>
         )}

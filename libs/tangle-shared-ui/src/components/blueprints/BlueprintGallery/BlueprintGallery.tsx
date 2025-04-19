@@ -18,6 +18,8 @@ import { twMerge } from 'tailwind-merge';
 import { TangleError } from '../../../types/error';
 import BlueprintItem from './BlueprintItem';
 import { BlueprintGalleryProps, BlueprintItemProps } from './types';
+import pluralize from '@tangle-network/ui-components/utils/pluralize';
+import filterBy from '../../../utils/filterBy';
 
 const COLUMN_HELPER = createColumnHelper<BlueprintItemProps>();
 
@@ -84,26 +86,23 @@ const BlueprintGallery: FC<BlueprintGalleryProps> = ({
             </BlueprintItemWrapper>
           );
         },
-        filterFn: (row, _, filterValue) => {
-          const { name, author, description } = row.original;
-          return (
-            name.toLowerCase().includes(filterValue.toLowerCase()) ||
-            author.toLowerCase().includes(filterValue.toLowerCase()) ||
-            (description?.toLowerCase() ?? '').includes(
-              filterValue.toLowerCase(),
-            )
-          );
-        },
+        filterFn: (row, query) =>
+          filterBy(query, [
+            row.original.name,
+            row.original.author,
+            row.original.description,
+          ]),
         sortingFn: (rowA, rowB) => {
           const isBlueprintABoosted = rowA.original.isBoosted;
           const isBlueprintBBoosted = rowB.original.isBoosted;
+
           if (isBlueprintABoosted && !isBlueprintBBoosted) {
             return -1;
-          }
-          if (!isBlueprintABoosted && isBlueprintBBoosted) {
+          } else if (!isBlueprintABoosted && isBlueprintBBoosted) {
             return 1;
+          } else {
+            return 0;
           }
-          return 0;
         },
       }),
       COLUMN_HELPER.accessor('category', {
@@ -233,7 +232,6 @@ const BlueprintGallery: FC<BlueprintGalleryProps> = ({
             ))}
           </GalleryContainer>
 
-          {/* Pagination */}
           <Pagination
             itemsPerPage={table.getState().pagination.pageSize}
             totalItems={table.getRowCount()}
@@ -244,7 +242,7 @@ const BlueprintGallery: FC<BlueprintGalleryProps> = ({
             canNextPage={table.getCanNextPage()}
             nextPage={table.nextPage}
             setPageIndex={table.setPageIndex}
-            title="Blueprints"
+            title={pluralize('blueprint', blueprints.length !== 1)}
           />
         </>
       )}

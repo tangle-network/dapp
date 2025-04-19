@@ -16,7 +16,7 @@ const reportIssueLink =
 /**
  * The `ErrorFallback` component, used to display an error message when an UI error occurs.
  *
- * - `title`: The error title to display (default is "Oops something went wrong.)
+ * - `title`: The error title to display (default is "Something went wrong")
  * - `description`: The error description to display, can be a string or a react element (string with links, etc.). When noWrapper is true, the children will be rendered without a wrapper (`<Typography />`)
  * - `buttons`: The button prop list for displaying the buttons in the error fallback component. if not provided, the default button will be rendered (refresh page and report issue)
  * - `contactUsLinkProps`: Contact us link props, for overriding the default props
@@ -40,7 +40,7 @@ export const ErrorFallback = forwardRef<HTMLDivElement, ErrorFallbackProps>(
       description: descriptionProp,
       refreshPageButtonProps,
       reportIssueButtonProps,
-      title = 'Oops something went wrong.',
+      title = 'Something went wrong',
       ...props
     },
     ref,
@@ -147,7 +147,7 @@ export const ErrorFallback = forwardRef<HTMLDivElement, ErrorFallbackProps>(
               return (
                 <Typography
                   key={index}
-                  className="w-3/4 mx-auto"
+                  className="w-3/4 mx-auto break-words"
                   variant="body1"
                   ta="center"
                   fw="semibold"

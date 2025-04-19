@@ -8,7 +8,7 @@ import assertRestakeAssetId from '@tangle-network/tangle-shared-ui/utils/assertR
 import { useMemo } from 'react';
 import { formatUnits } from 'viem';
 import AssetListItem from '../../components/Lists/AssetListItem';
-import filterBy from '../../utils/filterBy';
+import filterBy from '@tangle-network/tangle-shared-ui/utils/filterBy';
 import calculateRestakeAvailableBalance from '../../utils/restaking/calculateRestakeAvailableBalance';
 
 type Props = {

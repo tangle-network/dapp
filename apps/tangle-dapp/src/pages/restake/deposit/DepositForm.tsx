@@ -23,7 +23,6 @@ import useActiveTypedChainId from '../../../hooks/useActiveTypedChainId';
 import useQueryState from '../../../hooks/useQueryState';
 import { QueryParamKey } from '../../../types';
 import { DepositFormFields } from '../../../types/restake';
-import filterBy from '../../../utils/filterBy';
 import parseChainUnits from '../../../utils/parseChainUnits';
 import Form from '../Form';
 import RestakeActionTabs from '../RestakeActionTabs';
@@ -31,6 +30,7 @@ import ActionButton from './ActionButton';
 import Details from './Details';
 import SourceChainInput from './SourceChainInput';
 import { RestakeAssetId } from '@tangle-network/tangle-shared-ui/types';
+import filterBy from '@tangle-network/tangle-shared-ui/utils/filterBy';
 
 const getDefaultTypedChainId = (
   activeTypedChainId: number | null,
