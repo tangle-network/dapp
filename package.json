@@ -142,7 +142,7 @@
     "@swc/helpers": "~0.5.17",
     "@swc/jest": "~0.2.37",
     "@tailwindcss/forms": "^0.5.10",
-    "@tangle-network/tangle-restaking-types": "^0.1.0",
+    "@tangle-network/tangle-restaking-types": "0.1.0",
     "@tangle-network/tangle-substrate-types": "0.9.21",
     "@tanstack/match-sorter-utils": "^8.19.4",
     "@tanstack/react-table": "^8.21.3",

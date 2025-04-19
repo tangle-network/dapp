@@ -14015,7 +14015,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@tangle-network/tangle-restaking-types@npm:^0.1.0":
+"@tangle-network/tangle-restaking-types@npm:0.1.0":
   version: 0.1.0
   resolution: "@tangle-network/tangle-restaking-types@npm:0.1.0"
   dependencies:
@@ -33873,7 +33873,7 @@ __metadata:
     "@swc/jest": "npm:~0.2.37"
     "@tailwindcss/forms": "npm:^0.5.10"
     "@tangle-network/evm-contract-metadata": "npm:^1.3.0"
-    "@tangle-network/tangle-restaking-types": "npm:^0.1.0"
+    "@tangle-network/tangle-restaking-types": "npm:0.1.0"
     "@tangle-network/tangle-substrate-types": "npm:0.9.21"
     "@tanstack/match-sorter-utils": "npm:^8.19.4"
     "@tanstack/react-query": "npm:^5.74.3"
