@@ -10,9 +10,9 @@ import { type FC, type PropsWithChildren, useState } from 'react';
 import { Link, useNavigate, Navigate } from 'react-router-dom';
 import { PagePath, TangleDAppPagePath } from '../../../types';
 import useRoleStore, { Role } from '../../../stores/roleStore';
-import PricingModal from '../PricingModal';
+import ConfigurePricingModal from '../ConfigurePricingModal';
 import { Modal } from '@tangle-network/ui-components';
-import type { PricingFormResult } from '../PricingModal/types';
+import type { PricingFormResult } from '../ConfigurePricingModal/types';
 import { SessionStorageKey } from '../../../constants';
 import useParamWithSchema from '@tangle-network/tangle-shared-ui/hooks/useParamWithSchema';
 import { z } from 'zod';
@@ -40,7 +40,7 @@ const Page = () => {
 
   const isOperator = role === Role.OPERATOR;
 
-  if (id === undefined || result === null) {
+  if (id === undefined) {
     return <Navigate to={PagePath.NOT_FOUND} />;
   } else if (isLoading) {
     return (
@@ -54,8 +54,22 @@ const Page = () => {
         <SkeletonLoader className="min-h-52" />
       </div>
     );
-  } else if (error) {
-    return <ErrorFallback title={error.name} />;
+  }
+  // TODO: If the blueprint is not found, it's showing this error fallback. Instead, it should redirect to the not found page.
+  else if (error) {
+    return <ErrorFallback description={[error.message]} />;
+  } else if (isLoading || result === null) {
+    return (
+      <div className="space-y-5">
+        <SkeletonLoader className="min-h-64" />
+
+        <Typography variant="h4" fw="bold">
+          Registered Operators
+        </Typography>
+
+        <SkeletonLoader className="min-h-52" />
+      </div>
+    );
   }
 
   const handlePricingFormSubmit = (formResult: PricingFormResult) => {
@@ -63,9 +77,11 @@ const Page = () => {
       SessionStorageKey.BLUEPRINT_REGISTRATION_PARAMS,
       JSON.stringify({
         pricingSettings: formResult,
+        // TODO: This includes bigints, which aren't JSON-serializable. This leads to an error when saving the form result to session storage. Need to fix this.
         selectedBlueprints: [result.details],
       }),
     );
+
     navigate(PagePath.BLUEPRINTS_REGISTRATION_REVIEW);
   };
 
@@ -77,6 +93,7 @@ const Page = () => {
           children: isOperator ? 'Register' : 'Deploy',
           onClick: (e) => {
             e.preventDefault();
+
             if (isOperator) {
               setIsPricingModalOpen(true);
             } else {
@@ -90,7 +107,7 @@ const Page = () => {
 
       <div className="space-y-5">
         <Typography variant="h4" fw="bold">
-          Operators running {result.details.name}
+          Registered Operators
         </Typography>
 
         <OperatorsTable
@@ -100,7 +117,7 @@ const Page = () => {
       </div>
 
       <Modal open={isPricingModalOpen} onOpenChange={setIsPricingModalOpen}>
-        <PricingModal
+        <ConfigurePricingModal
           onOpenChange={setIsPricingModalOpen}
           blueprints={[result.details]}
           onSubmit={handlePricingFormSubmit}

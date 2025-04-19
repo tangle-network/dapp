@@ -15,7 +15,7 @@ import { Children, useCallback, useEffect, useMemo, useState } from 'react';
 import {
   PricingFormResult,
   PricingType,
-} from '../blueprints/PricingModal/types';
+} from '../blueprints/ConfigurePricingModal/types';
 import ParamsForm from './RegistrationForm/ParamsForm';
 import { SessionStorageKey } from '../../constants';
 import { useNavigate } from 'react-router';

@@ -13,7 +13,7 @@ import {
   TabsRoot,
   TabsTriggerWithAnimation,
 } from '@tangle-network/ui-components/components/Tabs';
-import { useCallback, useState } from 'react';
+import { FC, useCallback, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import FormActions from './FormActions';
 import GlobalPricingFields from './GlobalPricingFields';
@@ -29,15 +29,15 @@ import {
 
 type Props = {
   blueprints: Blueprint[];
-  onOpenChange: (open: boolean) => void;
+  onOpenChange: (isOpen: boolean) => void;
   onSubmit: (result: PricingFormResult) => void;
 };
 
-export default function PricingModal({
+const ConfigurePricingModal: FC<Props> = ({
   blueprints,
   onOpenChange,
   onSubmit,
-}: Props) {
+}) => {
   const [pricingType, setPricingType] = useState<PricingType>(
     PricingType.GLOBAL,
   );
@@ -77,6 +77,7 @@ export default function PricingModal({
   const onGlobalPricingFormSubmit = useCallback(
     (values: GlobalFormSchema) => {
       handleClose();
+
       onSubmit({
         type: PricingType.GLOBAL,
         values,
@@ -88,6 +89,7 @@ export default function PricingModal({
   const onIndividualFormSubmit = useCallback(
     (values: IndividualFormSchema) => {
       handleClose();
+
       onSubmit({
         type: PricingType.INDIVIDUAL,
         values,
@@ -146,7 +148,7 @@ export default function PricingModal({
 
                   <Alert
                     type="info"
-                    title="Once you set your pricing, it will automatically apply across every Blueprint you register for. Note that pricing updates will only affect future deployments, not currently active instances."
+                    description="Once you set your pricing, it will automatically apply across every blueprint you register for. Note that pricing updates will only affect future deployments, not currently active instances."
                   />
 
                   <FormActions />
@@ -175,4 +177,6 @@ export default function PricingModal({
       </ModalBody>
     </ModalContent>
   );
-}
+};
+
+export default ConfigurePricingModal;
