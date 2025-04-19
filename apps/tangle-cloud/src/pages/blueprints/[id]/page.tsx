@@ -71,8 +71,8 @@ const Page = () => {
     <div className="space-y-10">
       <BlueprintHeader
         blueprint={result.details}
-        enableDeploy={isOperator}
-        enableRegister
+        enableDeploy
+        enableRegister={isOperator}
         deployBtnProps={{
           onClick: (e) => {
             e.preventDefault();

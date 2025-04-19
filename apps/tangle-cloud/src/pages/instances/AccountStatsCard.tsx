@@ -4,17 +4,11 @@ import AccountStatsDetailCard, {
 } from '../../components/accountStatsCard';
 import {
   Avatar,
-  EMPTY_VALUE_PLACEHOLDER,
-  isEvmAddress,
   isSubstrateAddress,
   KeyValueWithButton,
   shortenString,
 } from '@tangle-network/ui-components';
 import useNetworkStore from '@tangle-network/tangle-shared-ui/context/useNetworkStore';
-import useRestakeOperatorMap from '@tangle-network/tangle-shared-ui/data/restake/useRestakeOperatorMap';
-import useRestakeDelegatorInfo from '@tangle-network/tangle-shared-ui/data/restake/useRestakeDelegatorInfo';
-import useRestakeTvl from '@tangle-network/tangle-shared-ui/data/restake/useRestakeTvl';
-import getTVLToDisplay from '@tangle-network/tangle-shared-ui/utils/getTVLToDisplay';
 import useSWRImmutable from 'swr/immutable';
 import {
   getAccountInfo,
@@ -23,51 +17,41 @@ import {
 } from '@tangle-network/tangle-shared-ui/utils/polkadot/identity';
 import { isValidUrl } from '@tangle-network/dapp-types';
 import useActiveAccountAddress from '@tangle-network/tangle-shared-ui/hooks/useActiveAccountAddress';
+import useOperatorInfo from '../../hooks/useOperatorInfo';
+import { useOperatorStatsData } from '../../data/operators/useOperatorStatsData';
+import { useUserStatsData } from '../../data/operators/useUserStatsData';
 
 export const AccountStatsCard: FC<AccountStatsCardProps> = (props) => {
   const accountAddress = useActiveAccountAddress();
+  const { isOperator } = useOperatorInfo();
   const rpcEndpoint = useNetworkStore((store) => store.network.wsRpcEndpoint);
-  const { result: operatorMap } = useRestakeOperatorMap();
-  const { result: delegatorInfo } = useRestakeDelegatorInfo();
-  const { operatorTvl } = useRestakeTvl(delegatorInfo);
-
   const network = useNetworkStore((store) => store.network);
 
-  const evmAddress = useMemo(() => {
-    if (!accountAddress) {
-      return true;
-    }
+  const operatorStatsData = useOperatorStatsData(
+    useMemo(() => {
+      if (
+        !accountAddress ||
+        !isOperator ||
+        !isSubstrateAddress(accountAddress)
+      ) {
+        return null;
+      }
 
-    return isEvmAddress(accountAddress);
-  }, [accountAddress]);
-
-  const operatorData = useMemo(() => {
-    if (!accountAddress || evmAddress || !isSubstrateAddress(accountAddress)) {
-      return null;
-    }
-
-    return operatorMap.get(accountAddress);
-  }, [accountAddress, operatorMap, evmAddress]);
-
-  const totalRestaked = useMemo(() => {
-    if (
-      !accountAddress ||
-      !operatorData ||
-      !isSubstrateAddress(accountAddress)
-    ) {
-      return EMPTY_VALUE_PLACEHOLDER;
-    }
-
-    return getTVLToDisplay(operatorTvl.get(accountAddress));
-  }, [accountAddress, operatorTvl, operatorData]);
-
-  const restakersCount = useMemo(
-    () =>
-      operatorData?.restakersCount.toLocaleString() ?? EMPTY_VALUE_PLACEHOLDER,
-    [operatorData?.restakersCount],
+      return accountAddress;
+    }, [accountAddress, isOperator, isSubstrateAddress]),
   );
 
-  const { data: operatorInfo } = useSWRImmutable(
+  const userStatsData = useUserStatsData(
+    useMemo(() => {
+      if (isOperator) {
+        return null;
+      }
+
+      return accountAddress;
+    }, [isOperator, accountAddress]),
+  );
+
+  const { data: accountInfo } = useSWRImmutable(
     [rpcEndpoint, accountAddress],
     (args) => {
       if (!args[1]) {
@@ -85,36 +69,50 @@ export const AccountStatsCard: FC<AccountStatsCardProps> = (props) => {
 
     const defaultName = shortenString(accountAddress);
 
-    if (!operatorInfo) {
+    if (!accountInfo) {
       return defaultName;
     }
 
-    return operatorInfo.name || defaultName;
-  }, [accountAddress, operatorInfo]);
+    return accountInfo.name || defaultName;
+  }, [accountAddress, accountInfo]);
 
-  const validatorSocials = useMemo(() => {
-    const twitterHandle = operatorInfo?.twitter ?? '';
+  const accountSocials = useMemo(() => {
+    if (!accountInfo) {
+      return [];
+    }
+
+    const twitterHandle = accountInfo?.twitter ?? '';
 
     const twitterUrl =
       twitterHandle === '' || isValidUrl(twitterHandle)
         ? twitterHandle
         : `https://x.com/${twitterHandle}`;
 
-    const emailHandle = operatorInfo?.email ?? '';
+    const emailHandle = accountInfo?.email ?? '';
 
     const emailUrl =
       emailHandle === '' || isValidUrl(emailHandle)
         ? emailHandle
         : `mailto:${emailHandle}`;
 
-    return {
+    const socialInfos = {
       [IdentityDataType.TWITTER]: twitterUrl,
       // TODO: Add GitHub link.
       github: undefined,
       [IdentityDataType.EMAIL]: emailUrl,
-      [IdentityDataType.WEB]: operatorInfo?.web,
+      [IdentityDataType.WEB]: accountInfo?.web,
     };
-  }, [operatorInfo?.email, operatorInfo?.twitter, operatorInfo?.web]);
+
+    return Object.entries(socialInfos)
+      .filter(([key, value]) => !!value && key in IDENTITY_ICONS_RECORD)
+      .map(([key, value]) => ({
+        name: key,
+        href: value || '',
+        Icon: IDENTITY_ICONS_RECORD[key as keyof typeof IDENTITY_ICONS_RECORD],
+        target: '_blank' as const,
+        rel: 'noopener noreferrer',
+      }));
+  }, [accountInfo?.email, accountInfo?.twitter, accountInfo?.web, isOperator]);
 
   const accountExplorerUrl = useMemo(() => {
     if (!accountAddress) {
@@ -124,6 +122,71 @@ export const AccountStatsCard: FC<AccountStatsCardProps> = (props) => {
     return network.createExplorerAccountUrl(accountAddress);
   }, [network, accountAddress]);
 
+  const statsItems = useMemo(() => {
+    if (isOperator && !operatorStatsData) {
+      return [];
+    }
+
+    // operator
+    if (isOperator && operatorStatsData) {
+      return [
+        {
+          title: 'Registered Blueprints',
+          children: operatorStatsData.registeredBlueprints,
+        },
+        {
+          title: 'Total Services',
+          children: operatorStatsData.totalServices,
+          tooltip: 'Total services including stopped and running services',
+        },
+        {
+          title: 'Pending Services',
+          children: operatorStatsData.pendingServices,
+          tooltip: 'Pending services waiting to be deployed',
+        },
+        {
+          title: 'Deployed Services',
+          children: operatorStatsData.deployedServices,
+          tooltip: 'Total services you have requested Operator to operate',
+        },
+        {
+          title: 'Avg Uptime',
+          children: operatorStatsData.avgUptime,
+          tooltip: 'Average online time of Operator',
+        },
+        {
+          title: 'Published Services',
+          children: operatorStatsData.publishedServices,
+          tooltip: 'Total services published to Tangle ecosystem',
+        },
+      ];
+    }
+
+    // others
+
+    return [
+      {
+        title: 'Total Services',
+        children: userStatsData?.totalServices,
+        tooltip:
+          'Total services including stopped, running services, and consuming services',
+      },
+      {
+        title: 'Deployed Services',
+        children: userStatsData?.deployedServices,
+        tooltip: 'Total services you have requested Operator to operate',
+      },
+      {
+        title: 'Pending Services',
+        children: userStatsData?.pendingServices,
+      },
+      {
+        title: 'Consuming Services',
+        children: userStatsData?.consumedServices,
+      },
+    ];
+  }, [operatorStatsData, userStatsData]);
+
   return (
     <AccountStatsDetailCard.Root {...props.rootProps}>
       <AccountStatsDetailCard.Header
@@ -131,7 +194,7 @@ export const AccountStatsCard: FC<AccountStatsCardProps> = (props) => {
           <Avatar
             size="lg"
             value={accountAddress ?? ''}
-            theme={evmAddress ? 'ethereum' : 'substrate'}
+            theme={isOperator ? 'substrate' : 'ethereum'}
           />
         }
         title={identityName}
@@ -143,33 +206,14 @@ export const AccountStatsCard: FC<AccountStatsCardProps> = (props) => {
           />
         }
         descExternalLink={accountExplorerUrl ?? ''}
-        className="mb-10"
+        className="mb-5"
         {...props.headerProps}
       />
 
       <AccountStatsDetailCard.Body
         {...props.bodyProps}
-        statsItems={[
-          {
-            title: 'Total Restake',
-            children: totalRestaked,
-          },
-          {
-            title: 'Restakers',
-            children: restakersCount,
-          },
-        ]}
-        socialLinks={Object.entries(validatorSocials)
-          .filter(([key, value]) => !!value && key in IDENTITY_ICONS_RECORD)
-          .map(([key, value]) => ({
-            name: key,
-            href: value || '',
-            Icon: IDENTITY_ICONS_RECORD[
-              key as keyof typeof IDENTITY_ICONS_RECORD
-            ],
-            target: '_blank',
-            rel: 'noopener noreferrer',
-          }))}
+        statsItems={statsItems}
+        socialLinks={accountSocials}
       />
     </AccountStatsDetailCard.Root>
   );

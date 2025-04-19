@@ -1,6 +1,7 @@
 import { Children, type FC } from 'react';
 import { Socials, StatsItem } from '@tangle-network/ui-components';
 import { AccountStatsCardBodyProps } from '.';
+import cx from 'classnames';
 
 export const AccountStatsCardBody: FC<AccountStatsCardBodyProps> = ({
   children,
@@ -11,11 +12,15 @@ export const AccountStatsCardBody: FC<AccountStatsCardBodyProps> = ({
 }) => {
   return (
     <div {...props} className="w-full space-y-5">
-      <div className="grid grid-cols-2 gap-2 mb-10">
+      <div className="grid grid-cols-2">
         {Children.toArray(
-          statsItems.map((item) => (
+          statsItems.map((item, index) => (
             <StatsItem
-              className="gap-0"
+              className={cx('gap-0 border-mono-100 dark:border-mono-140 p-2', {
+                'border-r': index % 2 === 0,
+                'border-b': index < statsItems.length - 2,
+                'pl-5': index % 2 === 1,
+              })}
               title={item.title}
               tooltip={item.tooltip}
             >
