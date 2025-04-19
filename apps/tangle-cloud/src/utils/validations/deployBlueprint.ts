@@ -161,7 +161,7 @@ export const deployBlueprintSchema = z
 
       return value;
     }),
-    paymentAmount: z.number().min(1),
+    paymentAmount: z.string().regex(/^\d*\.?\d*$/, 'Must be a valid number'),
   })
   .superRefine((schema, ctx) => {
     if (schema.approvalModel === 'Dynamic') {

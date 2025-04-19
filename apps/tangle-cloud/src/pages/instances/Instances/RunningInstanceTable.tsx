@@ -17,25 +17,43 @@ import {
 } from '@tangle-network/ui-components';
 import pluralize from '@tangle-network/ui-components/utils/pluralize';
 import { TangleCloudTable } from '../../../components/tangleCloudTable/TangleCloudTable';
-import { RunningInstanceTabProps } from './type';
 import { format } from 'date-fns';
 import { ChevronRight } from '@tangle-network/icons';
 import TableCellWrapper from '@tangle-network/tangle-shared-ui/components/tables/TableCellWrapper';
 import { Link } from 'react-router';
 import { PagePath } from '../../../types';
 import { MonitoringBlueprint } from '@tangle-network/tangle-shared-ui/data/blueprints/utils/type';
+import useOperatorInfo from '../../../hooks/useOperatorInfo';
+import useMonitoringBlueprints from '@tangle-network/tangle-shared-ui/data/blueprints/useMonitoringBlueprints';
 
 const columnHelper =
   createColumnHelper<MonitoringBlueprint['services'][number]>();
 
 const MOCK_CURRENT_BLOCK = 5000;
 
-export const RunningInstanceTable: FC<RunningInstanceTabProps> = ({
-  data,
-  isLoading,
-  error,
-}) => {
-  const isEmpty = data.length === 0;
+export const RunningInstanceTable: FC = () => {
+  const { operatorAddress } = useOperatorInfo();
+  const {
+    isLoading,
+    result: registeredBlueprints_,
+    error,
+  } = useMonitoringBlueprints(operatorAddress);
+
+  const registeredBlueprints = useMemo(() => {
+    if (!registeredBlueprints_) {
+      return [];
+    }
+    return registeredBlueprints_;
+  }, [registeredBlueprints_]);
+
+  const runningInstances = useMemo(() => {
+    if (!registeredBlueprints || registeredBlueprints.length === 0) {
+      return [];
+    }
+    return registeredBlueprints.flatMap((blueprint) => blueprint.services);
+  }, [registeredBlueprints]);
+
+  const isEmpty = runningInstances.length === 0;
 
   const columns = useMemo(
     () => [
@@ -223,7 +241,7 @@ export const RunningInstanceTable: FC<RunningInstanceTabProps> = ({
   );
 
   const table = useReactTable({
-    data,
+    data: runningInstances,
     columns,
     getCoreRowModel: getCoreRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
@@ -235,7 +253,7 @@ export const RunningInstanceTable: FC<RunningInstanceTabProps> = ({
   return (
     <TangleCloudTable<MonitoringBlueprint['services'][number]>
       title={pluralize('Running Instance', !isEmpty)}
-      data={data}
+      data={runningInstances}
       error={error}
       isLoading={isLoading}
       tableProps={table}

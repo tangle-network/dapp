@@ -1,5 +1,5 @@
 import { Card, Input, Typography } from '@tangle-network/ui-components';
-import { Children, FC, useCallback } from 'react';
+import { Children, FC } from 'react';
 import { PaymentStepProps } from './type';
 import {
   Select,
@@ -21,26 +21,20 @@ export const PaymentStep: FC<PaymentStepProps> = ({
 }) => {
   const { result: assets } = useAssets();
 
-  const onSelectAsset = useCallback(
-    (asset: RestakeAsset) => {
-      setValue('paymentAsset', {
-        id: asset.id,
-        metadata: {
-          ...asset.metadata,
-          deposit: asset.metadata.deposit ?? '',
-          isFrozen: asset.metadata.isFrozen ?? false,
-        },
-      });
-    },
-    [setValue],
-  );
+  const onSelectAsset = (asset: RestakeAsset) => {
+    setValue('paymentAsset', {
+      id: asset.id,
+      metadata: {
+        ...asset.metadata,
+        deposit: asset.metadata.deposit ?? '',
+        isFrozen: asset.metadata.isFrozen ?? false,
+      },
+    });
+  };
 
-  const onChangePaymentAmount = useCallback(
-    (nextValue: string) => {
-      setValue('paymentAmount', Number(nextValue));
-    },
-    [setValue],
-  );
+  const onChangePaymentAmount = (nextValue: string) => {
+    setValue('paymentAmount', nextValue);
+  };
 
   return (
     <Card className="p-6">
@@ -107,7 +101,7 @@ export const PaymentStep: FC<PaymentStepProps> = ({
             placeholder="Enter payment amount"
             value={watch('paymentAmount')?.toString() ?? ''}
             onChange={onChangePaymentAmount}
-            type="number"
+            type="text"
             className="w-full"
           />
           {errors?.paymentAmount?.message && (

@@ -103,7 +103,9 @@ const useMonitoringBlueprints = (
 
             return blueprints.map((blueprint) =>
               createMonitoringBlueprint(
-                blueprint,
+                blueprint.blueprintId,
+                blueprint.blueprint,
+                blueprint.services,
                 operatorInstances,
                 operatorTvlByAsset,
                 runningInstancesMap,
@@ -124,7 +126,7 @@ const useMonitoringBlueprints = (
   );
 
   return {
-    blueprints: result ?? [],
+    result,
     ...rest,
   };
 };

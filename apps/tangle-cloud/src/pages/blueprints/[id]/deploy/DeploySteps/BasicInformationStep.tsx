@@ -7,7 +7,7 @@ import {
 } from '@tangle-network/ui-components';
 import InstanceHeader from '../../../../../components/InstanceHeader';
 import ErrorMessage from '../../../../../components/ErrorMessage';
-import { Children, FC, useCallback } from 'react';
+import { Children, FC } from 'react';
 import { BasicInformationStepProps, LabelClassName } from './type';
 import { TrashIcon, PlusIcon } from '@radix-ui/react-icons';
 
@@ -21,36 +21,24 @@ export const BasicInformationStep: FC<BasicInformationStepProps> = ({
   const instanceName = watch('instanceName');
   const instanceDuration = watch('instanceDuration');
 
-  const handleCallerChange = useCallback(
-    (index: number, value: string) => {
-      const newCallers = [...permittedCallers];
-      newCallers[index] = value;
-      setValue(`permittedCallers`, newCallers);
-    },
-    [permittedCallers, setValue],
-  );
+  const handleCallerChange = (index: number, value: string) => {
+    const newCallers = [...permittedCallers];
+    newCallers[index] = value;
+    setValue(`permittedCallers`, newCallers);
+  };
 
-  const handleRemoveCaller = useCallback(
-    (index: number) => {
-      const newCallers = permittedCallers.filter((_, idx) => idx !== index);
-      setValue(`permittedCallers`, newCallers);
-    },
-    [permittedCallers, setValue],
-  );
+  const handleRemoveCaller = (index: number) => {
+    const newCallers = permittedCallers.filter((_, idx) => idx !== index);
+    setValue(`permittedCallers`, newCallers);
+  };
 
-  const handleInstanceNameChange = useCallback(
-    (value: string) => {
-      setValue(`instanceName`, value);
-    },
-    [setValue],
-  );
+  const handleInstanceNameChange = (value: string) => {
+    setValue(`instanceName`, value);
+  };
 
-  const handleInstanceDurationChange = useCallback(
-    (value: string) => {
-      setValue(`instanceDuration`, parseInt(value));
-    },
-    [setValue],
-  );
+  const handleInstanceDurationChange = (value: string) => {
+    setValue(`instanceDuration`, parseInt(value));
+  };
 
   return (
     <>

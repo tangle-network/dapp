@@ -1,53 +1,33 @@
-import { type FC } from 'react';
-import {
-  Socials,
-  StatsItem,
-  Typography,
-  EMPTY_VALUE_PLACEHOLDER,
-} from '@tangle-network/ui-components';
+import { Children, type FC } from 'react';
+import { Socials, StatsItem } from '@tangle-network/ui-components';
 import { AccountStatsCardBodyProps } from '.';
+import cx from 'classnames';
 
 export const AccountStatsCardBody: FC<AccountStatsCardBodyProps> = ({
   children,
   className,
-  totalRestake = EMPTY_VALUE_PLACEHOLDER,
-  restakers = EMPTY_VALUE_PLACEHOLDER,
+  statsItems = [],
   socialLinks = [],
   ...props
 }) => {
   return (
     <div {...props} className="w-full space-y-5">
-      <div className="grid grid-cols-2 gap-2 mb-10">
-        <StatsItem
-          className="gap-0"
-          title={
-            <Typography
-              variant="label"
-              className="text-mono-120 dark:!text-mono-100"
+      <div className="grid grid-cols-2">
+        {Children.toArray(
+          statsItems.map((item, index) => (
+            <StatsItem
+              className={cx('gap-0 border-mono-100 dark:border-mono-140 p-2', {
+                'border-r': index % 2 === 0,
+                'border-b': index < statsItems.length - 2,
+                'pl-5': index % 2 === 1,
+              })}
+              title={item.title}
+              tooltip={item.tooltip}
             >
-              Total Restaked
-            </Typography>
-          }
-          isError={false}
-        >
-          {totalRestake}
-        </StatsItem>
-
-        <StatsItem
-          className="gap-0"
-          title={
-            <Typography
-              variant="label"
-              className="text-mono-120 dark:!text-mono-100"
-            >
-              Restakers
-            </Typography>
-          }
-          tooltip="The total amount of restakers have delegated to this operator."
-          isError={false}
-        >
-          {restakers}
-        </StatsItem>
+              {item.children}
+            </StatsItem>
+          )),
+        )}
       </div>
 
       <Socials

@@ -9,11 +9,11 @@ import { Typography } from '@tangle-network/ui-components/typography/Typography'
 import { type FC, type PropsWithChildren, useState } from 'react';
 import { Link, useNavigate, Navigate } from 'react-router-dom';
 import { PagePath, TangleDAppPagePath } from '../../../types';
-import useRoleStore, { Role } from '../../../stores/roleStore';
 import PricingModal from '../PricingModal';
 import { Modal } from '@tangle-network/ui-components';
 import type { PricingFormResult } from '../PricingModal/types';
 import { SessionStorageKey } from '../../../constants';
+import useOperatorInfo from '../../../hooks/useOperatorInfo';
 import useParamWithSchema from '@tangle-network/tangle-shared-ui/hooks/useParamWithSchema';
 import { z } from 'zod';
 
@@ -35,14 +35,10 @@ const Page = () => {
   const navigate = useNavigate();
   const id = useParamWithSchema('id', z.coerce.bigint());
   const { result, isLoading, error } = useBlueprintDetails(id);
-  const role = useRoleStore((store) => store.role);
+  const { isOperator } = useOperatorInfo();
   const [isPricingModalOpen, setIsPricingModalOpen] = useState(false);
 
-  const isOperator = role === Role.OPERATOR;
-
-  if (id === undefined || result === null) {
-    return <Navigate to={PagePath.NOT_FOUND} />;
-  } else if (isLoading) {
+  if (isLoading) {
     return (
       <div className="space-y-5">
         <SkeletonLoader className="min-h-64" />
@@ -54,6 +50,8 @@ const Page = () => {
         <SkeletonLoader className="min-h-52" />
       </div>
     );
+  } else if (id === undefined || result === null) {
+    return <Navigate to={PagePath.NOT_FOUND} />;
   } else if (error) {
     return <ErrorFallback title={error.name} />;
   }
@@ -73,17 +71,18 @@ const Page = () => {
     <div className="space-y-10">
       <BlueprintHeader
         blueprint={result.details}
-        actionProps={{
-          children: isOperator ? 'Register' : 'Deploy',
+        enableDeploy
+        enableRegister={isOperator}
+        deployBtnProps={{
           onClick: (e) => {
             e.preventDefault();
-            if (isOperator) {
-              setIsPricingModalOpen(true);
-            } else {
-              navigate(
-                PagePath.BLUEPRINTS_DEPLOY.replace(':id', id.toString()),
-              );
-            }
+            navigate(PagePath.BLUEPRINTS_DEPLOY.replace(':id', `${id ?? ''}`));
+          },
+        }}
+        registerBtnProps={{
+          onClick: (e) => {
+            e.preventDefault();
+            setIsPricingModalOpen(true);
           },
         }}
       />

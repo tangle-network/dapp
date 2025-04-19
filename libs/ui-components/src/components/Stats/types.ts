@@ -17,7 +17,7 @@ export type StatsItemProps = {
   tooltip?: string | ReactNode;
   className?: string;
   children: ReactNode | null;
-  isError: boolean;
+  isError?: boolean;
 };
 
 export type KeyStatsItemProps = {
