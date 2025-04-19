@@ -14,15 +14,15 @@ const BlueprintDetailsPage: FC = () => {
   const id = useParamWithSchema('id', z.coerce.bigint());
   const { result, isLoading, error } = useBlueprintDetails(id);
 
-  if (result === null || id === undefined) {
+  if (id === undefined) {
     return <Navigate to={PagePath.NOT_FOUND} />;
-  } else if (isLoading) {
+  } else if (isLoading || result === null) {
     return (
       <div className="space-y-5">
         <SkeletonLoader className="min-h-64" />
 
         <Typography variant="h4" fw="bold">
-          Operators running
+          Registered Operators
         </Typography>
 
         <SkeletonLoader className="min-h-52" />
@@ -38,7 +38,7 @@ const BlueprintDetailsPage: FC = () => {
 
       <div className="space-y-5">
         <Typography variant="h4" fw="bold">
-          Operators running {result.details.name}
+          Registered Operators
         </Typography>
 
         <OperatorsTable data={result.operators} />

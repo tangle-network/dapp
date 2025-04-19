@@ -40,7 +40,7 @@ const Page = () => {
 
   const isOperator = role === Role.OPERATOR;
 
-  if (id === undefined || result === null) {
+  if (id === undefined) {
     return <Navigate to={PagePath.NOT_FOUND} />;
   } else if (isLoading) {
     return (
@@ -54,8 +54,22 @@ const Page = () => {
         <SkeletonLoader className="min-h-52" />
       </div>
     );
-  } else if (error) {
-    return <ErrorFallback title={error.name} />;
+  }
+  // TODO: If the blueprint is not found, it's showing this error fallback. Instead, it should redirect to the not found page.
+  else if (error) {
+    return <ErrorFallback description={[error.message]} />;
+  } else if (isLoading || result === null) {
+    return (
+      <div className="space-y-5">
+        <SkeletonLoader className="min-h-64" />
+
+        <Typography variant="h4" fw="bold">
+          Registered Operators
+        </Typography>
+
+        <SkeletonLoader className="min-h-52" />
+      </div>
+    );
   }
 
   const handlePricingFormSubmit = (formResult: PricingFormResult) => {
@@ -90,7 +104,7 @@ const Page = () => {
 
       <div className="space-y-5">
         <Typography variant="h4" fw="bold">
-          Operators running {result.details.name}
+          Registered Operators
         </Typography>
 
         <OperatorsTable
