@@ -38,7 +38,7 @@ export const AccountStatsCard: FC<AccountStatsCardProps> = (props) => {
       }
 
       return accountAddress;
-    }, [accountAddress, isOperator, isSubstrateAddress]),
+    }, [accountAddress, isOperator]),
   );
 
   const userStatsData = useUserStatsData(
@@ -112,7 +112,7 @@ export const AccountStatsCard: FC<AccountStatsCardProps> = (props) => {
         target: '_blank' as const,
         rel: 'noopener noreferrer',
       }));
-  }, [accountInfo?.email, accountInfo?.twitter, accountInfo?.web, isOperator]);
+  }, [accountInfo, isOperator]);
 
   const accountExplorerUrl = useMemo(() => {
     if (!accountAddress) {
@@ -185,7 +185,7 @@ export const AccountStatsCard: FC<AccountStatsCardProps> = (props) => {
         children: userStatsData?.consumedServices,
       },
     ];
-  }, [operatorStatsData, userStatsData]);
+  }, [operatorStatsData, userStatsData, isOperator]);
 
   return (
     <AccountStatsDetailCard.Root {...props.rootProps}>
