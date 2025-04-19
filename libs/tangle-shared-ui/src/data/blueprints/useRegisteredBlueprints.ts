@@ -27,7 +27,7 @@ export default function useRegisteredBlueprints(
           return new TangleError(TangleErrorCode.FEATURE_NOT_SUPPORTED);
 
         if (!operatorAccountAddress) {
-          return of<bigint[]>([]);
+          return of<string[]>([]);
         }
 
         return apiRx.query.services
@@ -38,14 +38,14 @@ export default function useRegisteredBlueprints(
                 return [];
               }
 
-              return operatorProfile.unwrap().blueprints.toHuman();
+              return <string[]>operatorProfile.unwrap().blueprints.toHuman();
             }),
             catchError((error) => {
               console.error(
                 'Error querying services with blueprints by operator:',
                 error,
               );
-              return of<bigint[]>([]);
+              return of<string[]>([]);
             }),
           );
       },
@@ -55,7 +55,7 @@ export default function useRegisteredBlueprints(
 
   const blueprintIds = useMemo(() => {
     return Array.isArray(registeredBlueprintIds)
-      ? registeredBlueprintIds.map((id) => id)
+      ? registeredBlueprintIds.map((id) => BigInt(id))
       : [];
   }, [registeredBlueprintIds]);
 
@@ -76,27 +76,20 @@ export default function useRegisteredBlueprints(
         const blueprints$ = apiRx.query.services.blueprints
           .multi(blueprintIds)
           .pipe(
-            map((results) =>
-              results
-                .map((blueprintOpt, index) => {
-                  if (blueprintOpt.isNone) return null;
-                  const [owner, blueprint] = blueprintOpt.unwrap();
-                  return {
-                    blueprintId: blueprintIds[index],
-                    owner: owner.toHuman() as string,
-                    blueprint: toPrimitiveBlueprint(blueprint),
-                  };
-                })
-                .filter(
-                  (
-                    b,
-                  ): b is {
-                    blueprintId: bigint;
-                    owner: string;
-                    blueprint: MonitoringBlueprint['blueprint'];
-                  } => b !== null,
-                ),
-            ),
+            map((results) => {
+              const blueprints = results
+              .map((blueprintOpt, index) => {
+                if (blueprintOpt.isNone) return null;
+                const [owner, blueprint] = blueprintOpt.unwrap();
+                return {
+                  blueprintId: blueprintIds[index],
+                  owner: owner.toHuman(),
+                  blueprint: toPrimitiveBlueprint(blueprint),
+                };
+              });
+
+              return blueprints.filter((b) => b !== null);
+            }),
           );
 
         const operatorInstances$ = apiRx.query.services.instances

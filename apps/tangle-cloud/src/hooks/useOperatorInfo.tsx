@@ -41,7 +41,6 @@ const useOperatorInfo = (useSs58Prefix = true): UseOperatorInfo => {
     const prefix = useSs58Prefix ? network.ss58Prefix : undefined;
 
     try {
-      // This handles both EVM and Substrate addresses
       operatorAddress = toSubstrateAddress(activeAccount.address, prefix);
       isOperator = true;
     } catch (err) {
