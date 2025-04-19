@@ -38,9 +38,7 @@ const Page = () => {
   const { isOperator } = useOperatorInfo();
   const [isPricingModalOpen, setIsPricingModalOpen] = useState(false);
 
-  if (id === undefined || result === null) {
-    return <Navigate to={PagePath.NOT_FOUND} />;
-  } else if (isLoading) {
+  if (isLoading) {
     return (
       <div className="space-y-5">
         <SkeletonLoader className="min-h-64" />
@@ -52,6 +50,8 @@ const Page = () => {
         <SkeletonLoader className="min-h-52" />
       </div>
     );
+  } else if (id === undefined || result === null) {
+    return <Navigate to={PagePath.NOT_FOUND} />;
   } else if (error) {
     return <ErrorFallback title={error.name} />;
   }

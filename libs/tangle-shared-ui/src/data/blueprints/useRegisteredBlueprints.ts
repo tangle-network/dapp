@@ -8,17 +8,13 @@ import { MonitoringBlueprint, ServiceInstance } from './utils/type';
 import { createMonitoringBlueprint } from './utils/blueprintHelpers';
 import { Option } from '@polkadot/types';
 import { TanglePrimitivesServicesService } from '@polkadot/types/lookup';
-import useRestakeOperatorMap from '../restake/useRestakeOperatorMap';
-import useRestakeAssets from '../restake/useRestakeAssets';
-import { useOperatorTVL } from '../restake/useOperatorTVL';
+import useOperatorTVL from '../restake/useOperatorTvl';
 import { SubstrateAddress } from '@tangle-network/ui-components/types/address';
 
 export default function useRegisteredBlueprints(
   operatorAccountAddress?: SubstrateAddress | null,
 ) {
-  const { result: operatorMap } = useRestakeOperatorMap();
-  const { assets } = useRestakeAssets();
-  const { operatorTVLByAsset } = useOperatorTVL(operatorMap, assets);
+  const { operatorTvlByAsset } = useOperatorTVL();
 
   const {
     result: registeredBlueprintIds,
@@ -31,7 +27,7 @@ export default function useRegisteredBlueprints(
           return new TangleError(TangleErrorCode.FEATURE_NOT_SUPPORTED);
 
         if (!operatorAccountAddress) {
-          return of<number[]>([]);
+          return of<bigint[]>([]);
         }
 
         return apiRx.query.services
@@ -49,7 +45,7 @@ export default function useRegisteredBlueprints(
                 'Error querying services with blueprints by operator:',
                 error,
               );
-              return of<number[]>([]);
+              return of<bigint[]>([]);
             }),
           );
       },
@@ -59,7 +55,7 @@ export default function useRegisteredBlueprints(
 
   const blueprintIds = useMemo(() => {
     return Array.isArray(registeredBlueprintIds)
-      ? registeredBlueprintIds.map((id) => Number(id))
+      ? registeredBlueprintIds.map((id) => id)
       : [];
   }, [registeredBlueprintIds]);
 
@@ -95,7 +91,7 @@ export default function useRegisteredBlueprints(
                   (
                     b,
                   ): b is {
-                    blueprintId: number;
+                    blueprintId: bigint;
                     owner: string;
                     blueprint: MonitoringBlueprint['blueprint'];
                   } => b !== null,
@@ -108,7 +104,7 @@ export default function useRegisteredBlueprints(
           .pipe(
             map((entries): ServiceInstance[] =>
               entries.map(([key, optInstance]) => ({
-                instanceId: key.args[0].toNumber(),
+                instanceId: key.args[0].toBigInt(),
                 serviceInstance: optInstance.isSome
                   ? toPrimitiveService(optInstance.unwrap())
                   : undefined,
@@ -126,10 +122,10 @@ export default function useRegisteredBlueprints(
         ]).pipe(
           map(([blueprints, operatorInstances, runningInstanceEntries]) => {
             // mapping from blueprint id to service instance
-            const runningInstancesMap = new Map<number, ServiceInstance[]>();
+            const runningInstancesMap = new Map<bigint, ServiceInstance[]>();
 
             for (const [key, optServiceInstance] of runningInstanceEntries) {
-              const serviceInstanceId = key.args[0].toNumber();
+              const serviceInstanceId = key.args[0].toBigInt();
 
               if (optServiceInstance.isNone) {
                 continue;
@@ -154,7 +150,7 @@ export default function useRegisteredBlueprints(
                 // registered blueprints do not have to care about services
                 [],
                 operatorInstances,
-                operatorTVLByAsset,
+                operatorTvlByAsset,
                 runningInstancesMap,
               ),
             );
@@ -168,7 +164,7 @@ export default function useRegisteredBlueprints(
           }),
         );
       },
-      [blueprintIds, operatorTVLByAsset],
+      [blueprintIds, operatorTvlByAsset],
     ),
   );
 
