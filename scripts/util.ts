@@ -62,7 +62,7 @@ export const submitTx = async ({
   useSudo = false,
 }: SubmitTxOptions) => {
   // Use a random ID to identify the transaction in the logs.
-  const randomId = Math.random().toString(36).substring(2, 8);
+  const randomId = getRandomShortId();
 
   console.log(`${randomId} ${description}: submitting...`);
 
@@ -121,4 +121,8 @@ const extractErrorFromTxStatus = (status: ISubmittableResult): Error | null => {
   return new Error(
     `${status.dispatchError.type}.${status.dispatchError.value.toString()}`,
   );
+};
+
+export const getRandomShortId = (): string => {
+  return Math.random().toString(36).substring(2, 8);
 };

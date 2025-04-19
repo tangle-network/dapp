@@ -53,5 +53,5 @@ const LST_AND_ASSET_AND_VAULT_ID = 1;
     tx: api.tx.multiAssetDelegation.joinOperators(createAmount(100)),
   });
 
-  api.disconnect();
+  await api.disconnect();
 })();
