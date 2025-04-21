@@ -26,7 +26,7 @@ const NominationValidatorTables: FC = () => {
   const isActiveValidatorsLoading = activeValidators === null;
   const isWaitingValidatorsLoading = waitingValidators === null;
 
-  const learnMoreUrl = `https://polkadot.js.org/apps/?rpc=${network.wsRpcEndpoint}#/staking`;
+  const learnMoreUrl = `https://polkadot.js.org/apps/?rpc=${network.wsRpcEndpoints[0]}#/staking`;
 
   return (
     <TableAndChartTabs

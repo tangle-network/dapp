@@ -20,7 +20,7 @@ export default function useInflationPercentage(
   const [value1, setValue1] = useState(defaultValue.value1);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
-  const rpcEndpoint = useNetworkStore((store) => store.network.wsRpcEndpoint);
+  const rpcEndpoints = useNetworkStore((store) => store.network.wsRpcEndpoints);
 
   useEffect(() => {
     let isMounted = true;
@@ -28,8 +28,8 @@ export default function useInflationPercentage(
 
     const fetchData = async () => {
       try {
-        const apiRx = await getApiRx(rpcEndpoint);
-        const apiPromise = await getApiPromise(rpcEndpoint);
+        const apiRx = await getApiRx(rpcEndpoints);
+        const apiPromise = await getApiPromise(rpcEndpoints);
 
         setIsLoading(true);
 
@@ -68,7 +68,7 @@ export default function useInflationPercentage(
       isMounted = false;
       sub?.unsubscribe();
     };
-  }, [rpcEndpoint]);
+  }, [rpcEndpoints]);
 
   return useFormatReturnType({
     isLoading,

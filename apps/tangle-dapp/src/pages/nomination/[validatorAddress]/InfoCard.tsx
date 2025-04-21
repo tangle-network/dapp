@@ -26,14 +26,14 @@ const InfoCard: FC<InfoCardProps> = ({
   validatorAddress,
   className,
 }: InfoCardProps) => {
-  const rpcEndpoint = useNetworkStore((store) => store.network.wsRpcEndpoint);
+  const rpcEndpoints = useNetworkStore((store) => store.network.wsRpcEndpoints);
 
   const createExplorerAccountUrl = useNetworkStore(
     (store) => store.network.createExplorerAccountUrl,
   );
 
   const { name, isActive, nominations, twitter, email, web, isLoading } =
-    useValidatorInfoCard(rpcEndpoint, validatorAddress);
+    useValidatorInfoCard(rpcEndpoints, validatorAddress);
 
   const accountAddressUrl = createExplorerAccountUrl(validatorAddress);
 

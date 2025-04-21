@@ -23,13 +23,14 @@ const useApi = <T>(fetcher: ApiFetcher<T>, overrideRpcEndpoint?: string) => {
   const [result, setResult] = useState<T | null>(null);
   const [error, setError] = useState<Error | null>(null);
 
-  const rpcEndpointFromStore = useNetworkStore(
-    (store) => store.network2?.wsRpcEndpoint,
+  const rpcEndpointsFromStore = useNetworkStore(
+    (store) => store.network2?.wsRpcEndpoints,
   );
 
-  const rpcEndpoint = overrideRpcEndpoint || rpcEndpointFromStore;
+  const rpcEndpoints =
+    (overrideRpcEndpoint && [overrideRpcEndpoint]) || rpcEndpointsFromStore;
 
-  const { data: api = null } = useApiPromiseQuery(rpcEndpoint);
+  const { data: api = null } = useApiPromiseQuery(rpcEndpoints);
 
   const refetch = useCallback(async () => {
     // Api not yet ready.

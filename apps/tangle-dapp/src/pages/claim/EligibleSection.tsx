@@ -59,7 +59,7 @@ const EligibleSection: FC<Props> = ({
   const { notificationApi } = useUIContext();
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
-  const rpcEndpoint = useNetworkStore((store) => store.network.wsRpcEndpoint);
+  const rpcEndpoints = useNetworkStore((store) => store.network.wsRpcEndpoints);
   const { nativeTokenSymbol } = useNetworkStore();
   const activeAccountAddress = useActiveAccountAddress();
 
@@ -89,7 +89,7 @@ const EligibleSection: FC<Props> = ({
   useEffect(() => {
     const fetchStatement = async () => {
       try {
-        const api = await getApiPromise(rpcEndpoint);
+        const api = await getApiPromise(rpcEndpoints);
         const systemChain = await api.rpc.system.chain();
         const statement = getStatement(
           systemChain.toHuman(),
@@ -110,7 +110,7 @@ const EligibleSection: FC<Props> = ({
     };
 
     fetchStatement();
-  }, [rpcEndpoint, isRegularStatement, notificationApi]);
+  }, [rpcEndpoints, isRegularStatement, notificationApi]);
 
   const handleClaimClick = useCallback(async () => {
     if (!activeApi || activeAccountAddress === null) {
@@ -130,7 +130,7 @@ const EligibleSection: FC<Props> = ({
       setIsClaiming(true);
       setStep(Step.SIGN);
 
-      const api = await getApiPromise(rpcEndpoint);
+      const api = await getApiPromise(rpcEndpoints);
       const accountId = activeAccountAddress;
       const isEvmRecipient = isEthereumAddress(recipient);
       const isEvmSigner = isEthereumAddress(accountId);
@@ -164,7 +164,7 @@ const EligibleSection: FC<Props> = ({
 
       // TODO: Need to centralize these search parameters in an enum, in case they ever change.
       newSearchParams.set('h', txReceiptHash);
-      newSearchParams.set('rpcEndpoint', rpcEndpoint);
+      newSearchParams.set('rpcEndpoint', rpcEndpoints[0]);
 
       navigate(`claim/success?${newSearchParams.toString()}`, {
         preventScrollReset: false,
@@ -189,7 +189,7 @@ const EligibleSection: FC<Props> = ({
     activeAccountAddress,
     notificationApi,
     setIsClaiming,
-    rpcEndpoint,
+    rpcEndpoints,
     recipient,
     statement?.sentence,
     searchParams,

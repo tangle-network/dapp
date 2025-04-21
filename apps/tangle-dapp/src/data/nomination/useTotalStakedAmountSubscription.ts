@@ -20,7 +20,7 @@ export default function useTotalStakedAmountSubscription(
   const [error, setError] = useState<Error | null>(null);
 
   const { nativeTokenSymbol } = useNetworkStore();
-  const rpcEndpoint = useNetworkStore((store) => store.network.wsRpcEndpoint);
+  const rpcEndpoints = useNetworkStore((store) => store.network.wsRpcEndpoints);
   const address = useSubstrateAddress();
 
   useEffect(() => {
@@ -29,7 +29,7 @@ export default function useTotalStakedAmountSubscription(
 
     const subscribeData = async () => {
       try {
-        const api = await getApiRx(rpcEndpoint);
+        const api = await getApiRx(rpcEndpoints);
 
         if (!address) {
           setValue1(null);
@@ -70,7 +70,7 @@ export default function useTotalStakedAmountSubscription(
       isMounted = false;
       sub?.unsubscribe();
     };
-  }, [address, rpcEndpoint, nativeTokenSymbol]);
+  }, [address, rpcEndpoints, nativeTokenSymbol]);
 
   return useFormatReturnType({ isLoading, error, data: { value1 } });
 }

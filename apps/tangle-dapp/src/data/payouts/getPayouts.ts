@@ -46,7 +46,7 @@ function getLegacyClaimedEras(
 
 export const getPayouts = async (
   address: string | null,
-  rpcEndpoint: string | null,
+  rpcEndpoints: string[] | null,
   nativeTokenSymbol: TangleTokenSymbol,
 ): Promise<{
   payouts: Payout[] | null;
@@ -57,13 +57,13 @@ export const getPayouts = async (
     totalReward: '0',
   };
 
-  if (!address || !rpcEndpoint) {
+  if (!address || !rpcEndpoints) {
     return defaultReturn;
   }
 
   try {
     // 1. Initialize API
-    const provider = new WsProvider(rpcEndpoint);
+    const provider = new WsProvider(rpcEndpoints);
     const api = await ApiPromise.create({ provider });
 
     // Get active era

@@ -12,7 +12,7 @@ import useSubstrateAddress from '@tangle-network/tangle-shared-ui/hooks/useSubst
  * @returns Object containing the total unclaimed rewards and any error
  */
 export default function useTotalPayoutRewards() {
-  const rpcEndpoint = useNetworkStore((store) => store.network.wsRpcEndpoint);
+  const rpcEndpoints = useNetworkStore((store) => store.network.wsRpcEndpoints);
   const { getClaimedEras } = useClaimedEras();
   const { nativeTokenSymbol } = useNetworkStore();
   const networkId = useNetworkStore((store) => store.network.id);
@@ -25,9 +25,9 @@ export default function useTotalPayoutRewards() {
     error: payoutsError,
     isLoading,
   } = useSWR(
-    ['payoutsData', userSubstrateAddress, rpcEndpoint, nativeTokenSymbol],
-    ([, address, rpcEndpoint, nativeTokenSymbol]) =>
-      getPayouts(address, rpcEndpoint, nativeTokenSymbol),
+    ['payoutsData', userSubstrateAddress, rpcEndpoints, nativeTokenSymbol],
+    ([, address, rpcEndpoints, nativeTokenSymbol]) =>
+      getPayouts(address, rpcEndpoints, nativeTokenSymbol),
     {
       revalidateOnFocus: true,
       revalidateOnReconnect: true,

@@ -25,7 +25,7 @@ import useSubstrateAddress from '@tangle-network/tangle-shared-ui/hooks/useSubst
 
 export const AccountStatsCard: FC<AccountStatsCardProps> = (props) => {
   const accountAddress = useSubstrateAddress();
-  const rpcEndpoint = useNetworkStore((store) => store.network.wsRpcEndpoint);
+  const rpcEndpoints = useNetworkStore((store) => store.network.wsRpcEndpoints);
   const { result: operatorMap } = useRestakeOperatorMap();
   const { result: delegatorInfo } = useRestakeDelegatorInfo();
   const { operatorTvl } = useRestakeTvl(delegatorInfo);
@@ -51,7 +51,7 @@ export const AccountStatsCard: FC<AccountStatsCardProps> = (props) => {
   );
 
   const { data: operatorInfo } = useSWRImmutable(
-    [rpcEndpoint, accountAddress],
+    [rpcEndpoints, accountAddress],
     (args) => {
       if (!args[1]) {
         return null;

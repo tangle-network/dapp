@@ -214,11 +214,11 @@ export const createBlueprintObjects = (
 };
 
 export const fetchOwnerIdentities = async (
-  rpcEndpoint: string,
+  rpcEndpoints: string[],
   ownerSet: Set<string>,
 ) => {
   const ownerArray = Array.from(ownerSet);
-  const accountInfo = await getMultipleAccountInfo(rpcEndpoint, ownerArray);
+  const accountInfo = await getMultipleAccountInfo(rpcEndpoints, ownerArray);
 
   const ownerIdentitiesMap = new Map<string, IdentityType | null>();
   accountInfo.forEach((info, index) => {

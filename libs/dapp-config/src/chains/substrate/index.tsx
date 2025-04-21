@@ -5,6 +5,7 @@ import {
 import { ChainType } from '@tangle-network/dapp-types/TypedChainId';
 import {
   TANGLE_LOCAL_WS_RPC_ENDPOINT,
+  TANGLE_MAINNET_WS_DWELLIR_RPC_ENDPOINT,
   TANGLE_MAINNET_NATIVE_EXPLORER_URL,
   TANGLE_MAINNET_NATIVE_TOKEN_SYMBOL,
   TANGLE_MAINNET_WS_RPC_ENDPOINT,
@@ -23,7 +24,7 @@ export const chainsConfig = {
     group: 'tangle',
     tag: 'live',
     id: SubstrateChainId.TangleMainnetNative,
-    name: 'Tangle Mainnet Native',
+    name: 'Tangle Mainnet',
     nativeCurrency: {
       name: 'Tangle Mainnet Token',
       symbol: TANGLE_MAINNET_NATIVE_TOKEN_SYMBOL,
@@ -38,7 +39,10 @@ export const chainsConfig = {
     rpcUrls: {
       default: {
         http: [],
-        webSocket: [TANGLE_MAINNET_WS_RPC_ENDPOINT],
+        webSocket: [
+          TANGLE_MAINNET_WS_DWELLIR_RPC_ENDPOINT,
+          TANGLE_MAINNET_WS_RPC_ENDPOINT,
+        ],
       },
     },
   },

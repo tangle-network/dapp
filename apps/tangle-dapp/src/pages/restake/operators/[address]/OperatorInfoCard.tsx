@@ -45,7 +45,7 @@ const OperatorInfoCard: FC<Props> = ({
   operatorTVL,
   ...props
 }) => {
-  const rpcEndpoint = useNetworkStore((store) => store.network.wsRpcEndpoint);
+  const rpcEndpoints = useNetworkStore((store) => store.network.wsRpcEndpoints);
   const operatorAccountId = assertSubstrateAddress(operatorAddress);
 
   const isRestaked = useMemo<boolean>(() => {
@@ -71,7 +71,7 @@ const OperatorInfoCard: FC<Props> = ({
   );
 
   const { data: operatorInfo } = useSWRImmutable(
-    [rpcEndpoint, operatorAddress],
+    [rpcEndpoints, operatorAddress],
     (args) => getAccountInfo(...args),
   );
 

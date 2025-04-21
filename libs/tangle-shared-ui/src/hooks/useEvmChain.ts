@@ -9,7 +9,7 @@ const useEvmChain = () => {
     if (
       network2 === undefined ||
       network2.evmChainId === undefined ||
-      network2.httpRpcEndpoint === undefined
+      network2.httpRpcEndpoints === undefined
     ) {
       return null;
     }

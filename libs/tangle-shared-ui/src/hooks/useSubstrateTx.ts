@@ -58,7 +58,7 @@ const useSubstrateTx = <Context = void>({
   const { isEvm: isEvmAccount } = useAgnosticAccountInfo();
   const activeSubstrateAddress = useSubstrateAddress();
   const isMountedRef = useIsMountedRef();
-  const rpcEndpoint = useNetworkStore((store) => store.network.wsRpcEndpoint);
+  const rpcEndpoints = useNetworkStore((store) => store.network.wsRpcEndpoints);
   const injector = useSubstrateInjectedExtension();
   const { patchTx, pushTx } = useTxHistoryStore();
   const networkId = useNetworkStore((store) => store.network2?.id ?? null);
@@ -94,7 +94,9 @@ const useSubstrateTx = <Context = void>({
         'An injector should be available to sign and send the transaction',
       );
 
-      const api = await getApiPromise(overrideRpcEndpoint ?? rpcEndpoint);
+      const api = await getApiPromise(
+        overrideRpcEndpoint ? [overrideRpcEndpoint] : rpcEndpoints,
+      );
       let tx: SubmittableExtrinsic<'promise', ISubmittableResult> | null;
 
       // TODO: Consider resetting state here, before executing the tx. Or is it fine to keep the old state?
@@ -200,7 +202,7 @@ const useSubstrateTx = <Context = void>({
       networkId,
       injector,
       overrideRpcEndpoint,
-      rpcEndpoint,
+      rpcEndpoints,
       pushTx,
       name,
       getDetails,

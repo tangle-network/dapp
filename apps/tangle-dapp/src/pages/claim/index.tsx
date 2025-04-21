@@ -23,7 +23,7 @@ const ClaimPage: FC = () => {
   const { loading, isConnecting } = useWebContext();
   const activeAccountAddress = useActiveAccountAddress();
   const { notificationApi } = useUIContext();
-  const rpcEndpoint = useNetworkStore((store) => store.network.wsRpcEndpoint);
+  const rpcEndpoints = useNetworkStore((store) => store.network.wsRpcEndpoints);
   const { nativeTokenSymbol } = useNetworkStore();
 
   // Default to null to indicate that we are still checking
@@ -66,7 +66,7 @@ const ClaimPage: FC = () => {
 
     const fetchClaimData = async () => {
       try {
-        const apiRx = await getApiRx(rpcEndpoint);
+        const apiRx = await getApiRx(rpcEndpoints);
 
         const params = isEthereumAddress(accountAddress)
           ? { EVM: accountAddress }
@@ -121,7 +121,7 @@ const ClaimPage: FC = () => {
       isMounted = false;
       sub?.unsubscribe();
     };
-  }, [activeAccountAddress, rpcEndpoint, nativeTokenSymbol, notificationApi]);
+  }, [activeAccountAddress, rpcEndpoints, nativeTokenSymbol, notificationApi]);
 
   return (
     <AppTemplate.Content>

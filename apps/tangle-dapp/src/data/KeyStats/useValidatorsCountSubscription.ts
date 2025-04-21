@@ -17,7 +17,7 @@ export default function useValidatorCountSubscription(
   const [value2, setValue2] = useState(defaultValue.value2);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
-  const rpcEndpoint = useNetworkStore((store) => store.network.wsRpcEndpoint);
+  const rpcEndpoints = useNetworkStore((store) => store.network.wsRpcEndpoints);
 
   useEffect(() => {
     let isMounted = true;
@@ -25,7 +25,7 @@ export default function useValidatorCountSubscription(
 
     const subscribeData = async () => {
       try {
-        const api = await getApiRx(rpcEndpoint);
+        const api = await getApiRx(rpcEndpoints);
 
         sub = api.query.session.validators().subscribe(async (validators) => {
           try {
@@ -72,7 +72,7 @@ export default function useValidatorCountSubscription(
       isMounted = false;
       sub?.unsubscribe();
     };
-  }, [value1, value2, rpcEndpoint]);
+  }, [value1, value2, rpcEndpoints]);
 
   return {
     data: { value1, value2 },

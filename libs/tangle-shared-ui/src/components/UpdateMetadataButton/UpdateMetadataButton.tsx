@@ -32,7 +32,7 @@ const UpdateMetadataButton: FC = () => {
   const network = useNetworkStore((store) => store.network2);
 
   const { data: apiPromise = null } = useApiPromiseQuery(
-    network?.wsRpcEndpoint,
+    network?.wsRpcEndpoints,
   );
 
   const { setWithPreviousValue: setCache, valueOpt: cachedMetadata } =
@@ -88,7 +88,7 @@ const UpdateMetadataButton: FC = () => {
       return;
     }
 
-    const api = await getApiPromise(network.wsRpcEndpoint);
+    const api = await getApiPromise(network.wsRpcEndpoints);
     const genesisHash = api.genesisHash.toHex();
 
     const metadata: MetadataDef = {

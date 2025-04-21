@@ -15,7 +15,7 @@ export default function useEraCountSubscription(
   const [era, setEra] = useState(defaultValue);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
-  const rpcEndpoint = useNetworkStore((store) => store.network.wsRpcEndpoint);
+  const rpcEndpoints = useNetworkStore((store) => store.network.wsRpcEndpoints);
 
   useEffect(() => {
     let isMounted = true;
@@ -23,7 +23,7 @@ export default function useEraCountSubscription(
 
     const subscribeData = async () => {
       try {
-        const api = await getApiRx(rpcEndpoint);
+        const api = await getApiRx(rpcEndpoints);
 
         sub = api.query.staking.activeEra().subscribe((nextEra) => {
           const activeEra = nextEra.unwrapOr(null);
@@ -56,7 +56,7 @@ export default function useEraCountSubscription(
       isMounted = false;
       sub?.unsubscribe();
     };
-  }, [rpcEndpoint]);
+  }, [rpcEndpoints]);
 
   return useFormatReturnType({ isLoading, error, data: era });
 }

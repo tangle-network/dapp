@@ -35,9 +35,9 @@ const useApiRx = <T>(factory: ObservableFactory<T>) => {
 
   const isMountedRef = useRef(true);
 
-  const rpcEndpoint = useNetworkStore((store) => store.network2?.wsRpcEndpoint);
+  const rpcEndpoints = useNetworkStore((store) => store.network2?.wsRpcEndpoints);
 
-  const { data: apiRx = null } = useApiRxQuery(rpcEndpoint);
+  const { data: apiRx = null } = useApiRxQuery(rpcEndpoints);
 
   const reset = useCallback(() => {
     setLoading(true);
