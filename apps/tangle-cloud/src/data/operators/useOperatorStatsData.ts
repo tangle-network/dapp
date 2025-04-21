@@ -110,7 +110,7 @@ export const useOperatorStatsData = (
                   return of({});
                 }),
               );
-        
+
         // TODO: after the instance is terminated, this will be removed. using Graphql to get the deployed services
         const deployedServices$ =
           apiRx.query.services?.instances === undefined
