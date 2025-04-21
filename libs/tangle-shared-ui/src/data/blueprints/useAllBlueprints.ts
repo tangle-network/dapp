@@ -1,8 +1,7 @@
 import type { Option } from '@polkadot/types';
 import type { TanglePrimitivesServicesTypesOperatorPreferences } from '@polkadot/types/lookup';
 import { useCallback, useMemo } from 'react';
-import { combineLatest, switchMap } from 'rxjs';
-
+import { catchError, combineLatest, of, switchMap } from 'rxjs';
 import useNetworkStore from '../../context/useNetworkStore';
 import useApiRx from '../../hooks/useApiRx';
 import { TangleError, TangleErrorCode } from '../../types/error';
@@ -109,6 +108,10 @@ const useAllBlueprints = () => {
               );
             },
           ),
+          catchError((error) => {
+            console.error('Error querying listing blueprints:', error);
+            return of(null);
+          }),
         );
       },
       [operatorMap, operatorTvlByAsset, rpcEndpoint],

@@ -229,29 +229,38 @@ export const fetchOwnerIdentities = async (
 };
 
 // TODO: implement full features of this function
-export const createMonitoringBlueprint = (
-  operatorBlueprints: OperatorBlueprint,
+export function createMonitoringBlueprint(
+  blueprintId: OperatorBlueprint['blueprintId'],
+  operatorBlueprint: OperatorBlueprint['blueprint'],
+  operatorServices: OperatorBlueprint['services'],
   serviceInstances: ServiceInstance[],
   operatorTVLByAsset: Map<SubstrateAddress, Map<RestakeAssetId, number>>,
   runningInstancesMap: Map<bigint, ServiceInstance[]>,
-): MonitoringBlueprint => {
-  const totalOperator = operatorBlueprints.services.reduce((acc, service) => {
-    return acc + service.operatorSecurityCommitments.length;
+): MonitoringBlueprint {
+  const filteredServiceInstances = serviceInstances.filter((instance) => {
+    return instance.serviceInstance?.blueprint === blueprintId;
+  });
+
+  const totalOperator = filteredServiceInstances.reduce((acc, service) => {
+    if (service.serviceInstance?.operatorSecurityCommitments) {
+      return acc + service.serviceInstance.operatorSecurityCommitments.length;
+    }
+
+    return acc;
   }, 0);
 
   const instanceCount = serviceInstances.filter(
-    (instance) =>
-      instance.serviceInstance?.blueprint === operatorBlueprints.blueprintId,
+    (instance) => instance.serviceInstance?.blueprint === blueprintId,
   ).length;
 
   const blueprintTVL = calculateBlueprintOperatorExposure(
     runningInstancesMap,
-    operatorBlueprints.blueprintId,
+    blueprintId,
     operatorTVLByAsset,
   );
 
   const blueprintData = {
-    ...operatorBlueprints.blueprint,
+    ...operatorBlueprint,
     instanceCount: instanceCount,
     operatorsCount: totalOperator,
     tvl: blueprintTVL,
@@ -259,14 +268,7 @@ export const createMonitoringBlueprint = (
     uptime: randNumber({ min: 0, max: 100 }),
   };
 
-  const services = operatorBlueprints.services.map((service) => {
-    const instanceId = serviceInstances.find(
-      (instance) =>
-        instance.serviceInstance?.blueprint ===
-          operatorBlueprints.blueprintId &&
-        instance.serviceInstance?.id === service.id,
-    )?.instanceId;
-
+  const services = operatorServices.map((service) => {
     return {
       ...service,
       blueprintData: blueprintData,
@@ -278,19 +280,17 @@ export const createMonitoringBlueprint = (
       earnedInUsd: randNumber({ min: 0, max: 1000000 }),
       // TODO: get last active from the graphql
       lastActive: new Date(),
-      // TODO: may be update this
-      externalInstanceId: instanceId ? `i-${instanceId}` : undefined,
       // TODO: get last active from the graphql
       createdAtBlock: randNumber({ min: 0, max: 10000 }),
     };
   });
 
   return {
-    ...operatorBlueprints,
+    blueprintId,
     blueprint: blueprintData,
     services,
   };
-};
+}
 
 export const createPendingServiceRequests = (
   pendingServiceRequests: MonitoringServiceRequest[],

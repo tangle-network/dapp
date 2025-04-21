@@ -19,7 +19,6 @@ import { TangleCloudTable } from '../../../components/tangleCloudTable/TangleClo
 import { format } from 'date-fns';
 import { ChevronRight } from '@tangle-network/icons';
 import TableCellWrapper from '@tangle-network/tangle-shared-ui/components/tables/TableCellWrapper';
-import { StoppedInstanceTabProps } from './type';
 import { MonitoringBlueprint } from '@tangle-network/tangle-shared-ui/data/blueprints/utils/type';
 import { PagePath } from '../../../types';
 import { Link } from 'react-router';
@@ -27,12 +26,12 @@ import { Link } from 'react-router';
 const columnHelper =
   createColumnHelper<MonitoringBlueprint['services'][number]>();
 
-export const StoppedInstanceTable: FC<StoppedInstanceTabProps> = ({
-  data,
-  isLoading,
-  error,
-}) => {
-  const isEmpty = data.length === 0;
+export const StoppedInstanceTable: FC = () => {
+  // TODO: Implement fetch stopped instances from graphql server
+  const data: MonitoringBlueprint['services'] = [];
+  const error = null;
+  const isLoading = false;
+  const isEmpty = true;
 
   const columns = useMemo(
     () => [

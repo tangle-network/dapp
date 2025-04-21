@@ -12,7 +12,7 @@ type InstructionCardProps = {
 export const InstructionCard: FC<InstructionCardProps> = ({ rootProps }) => {
   return (
     <TangleCloudCard {...rootProps}>
-      <ul className="h-full flex flex-col gap-6">
+      <ul className="h-full flex flex-col gap-5">
         {Children.toArray(
           CLOUD_INSTRUCTIONS.map((instruction) => (
             <ListItem
