@@ -60,7 +60,10 @@ const Page: FC = () => {
         SessionStorageKey.BLUEPRINT_REGISTRATION_PARAMS,
         JSON.stringify({
           pricingSettings: result,
-          selectedBlueprints,
+          selectedBlueprints: selectedBlueprints.map((blueprint) => ({
+            ...blueprint,
+            id: blueprint.id.toString(),
+          })),
         }),
       );
 

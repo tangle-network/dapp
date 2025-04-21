@@ -61,8 +61,12 @@ const Page = () => {
       SessionStorageKey.BLUEPRINT_REGISTRATION_PARAMS,
       JSON.stringify({
         pricingSettings: formResult,
-        // TODO: This includes bigints, which aren't JSON-serializable. This leads to an error when saving the form result to session storage. Need to fix this.
-        selectedBlueprints: [result.details],
+        selectedBlueprints: [
+          {
+            ...result.details,
+            id: result.details.id.toString(),
+          },
+        ],
       }),
     );
 
