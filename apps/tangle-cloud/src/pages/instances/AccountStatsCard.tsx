@@ -41,7 +41,7 @@ export const AccountStatsCard: FC<AccountStatsCardProps> = (props) => {
     }, [accountAddress, isOperator]),
   );
 
-  const { result: userStatsData} = useUserStatsData(
+  const { result: userStatsData } = useUserStatsData(
     useMemo(() => {
       if (isOperator) {
         return null;

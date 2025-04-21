@@ -25,110 +25,136 @@ export const useOperatorStatsData = (
           return of({});
         }
 
-        const operatorProfile$ = apiRx.query.services?.operatorsProfile === undefined ? of({}) :
-          apiRx.query.services?.operatorsProfile(operatorAddress).pipe(
-          map((operatorProfile) => {
-            if (operatorProfile.isNone) {
-              return {};
-            }
+        const operatorProfile$ =
+          apiRx.query.services?.operatorsProfile === undefined
+            ? of({})
+            : apiRx.query.services?.operatorsProfile(operatorAddress).pipe(
+                map((operatorProfile) => {
+                  if (operatorProfile.isNone) {
+                    return {};
+                  }
 
-            const detailed = operatorProfile.unwrap();
-            return {
-              registeredBlueprints: detailed.blueprints.strings.length,
-              runningServices: detailed.services.strings.length,
-            };
-          }),
-          catchError((error) => {
-            console.error(
-              'Error querying services with blueprints by operator profile:',
-              error,
-            );
-            return of({});
-          }),
-        );
-
-        const serviceRequest$ = apiRx.query?.services?.serviceRequests === undefined ? of({}) :
-          apiRx.query.services?.serviceRequests.entries().pipe(
-            map((serviceRequests) => {
-              const pendingServices = serviceRequests.filter(([requestId, serviceRequest]) => {
-                if (serviceRequest.isNone) {
-                  return false;
-                }
-
-                const primitiveServiceRequest = toPrimitiveServiceRequest(requestId, serviceRequest.unwrap());
-                return primitiveServiceRequest.operatorsWithApprovalState.some(
-                  (operator) =>
-                    operator.operator === operatorAddress &&
-                    operator.approvalStateStatus === 'Pending',
-                )
-              });
-              return {
-                pendingServices: pendingServices.length,
-              }
-            }),
-            catchError((error) => {
-              console.error(
-                'Error querying services with blueprints by operator profile:',
-                error,
+                  const detailed = operatorProfile.unwrap();
+                  return {
+                    registeredBlueprints: detailed.blueprints.strings.length,
+                    runningServices: detailed.services.strings.length,
+                  };
+                }),
+                catchError((error) => {
+                  console.error(
+                    'Error querying services with blueprints by operator profile:',
+                    error,
+                  );
+                  return of({});
+                }),
               );
-              return of({});
-            }),
-          );
 
-        const publishedBlueprints$ = apiRx.query.services?.blueprints === undefined ? of({}) : 
-          apiRx.query.services?.blueprints?.entries().pipe(
-            map((blueprints) => {
-              blueprints.filter(([blueprintId, optBlueprint]) => {
-                if (optBlueprint.isNone) {
-                  return false;
-                }
+        const serviceRequest$ =
+          apiRx.query?.services?.serviceRequests === undefined
+            ? of({})
+            : apiRx.query.services?.serviceRequests.entries().pipe(
+                map((serviceRequests) => {
+                  const pendingServices = serviceRequests.filter(
+                    ([requestId, serviceRequest]) => {
+                      if (serviceRequest.isNone) {
+                        return false;
+                      }
 
-                const blueprint = optBlueprint.unwrap();
-                const publisher = blueprint[0].toHuman();
-                return publisher === operatorAddress;
-              })
-              return {
-                publishedBlueprints: blueprints.length,
-              }
-            }),
-            catchError((error) => {
-              console.error('Error querying services with blueprints:', error);
-              return of({});
-            }),
-          );
-        
-        const deployedServices$ = apiRx.query.services?.instances === undefined ? of({}) :
-          apiRx.query.services?.instances.entries().pipe(
-            map((instances) => {
-              instances.filter(([instanceId, instance]) => {
-                if (instance.isNone) {
-                  return false;
-                }
-                const detailed = instance.unwrap();
-                return detailed.owner.toHuman() === operatorAddress;
-              })
-              return instances.length;
-            }),
-            catchError((error) => {
-              console.error('Error querying services with blueprints:', error);
-              return of({});
-            }),
-          );
-          
+                      const primitiveServiceRequest = toPrimitiveServiceRequest(
+                        requestId,
+                        serviceRequest.unwrap(),
+                      );
+                      return primitiveServiceRequest.operatorsWithApprovalState.some(
+                        (operator) =>
+                          operator.operator === operatorAddress &&
+                          operator.approvalStateStatus === 'Pending',
+                      );
+                    },
+                  );
+                  return {
+                    pendingServices: pendingServices.length,
+                  };
+                }),
+                catchError((error) => {
+                  console.error(
+                    'Error querying services with blueprints by operator profile:',
+                    error,
+                  );
+                  return of({});
+                }),
+              );
+
+        const publishedBlueprints$ =
+          apiRx.query.services?.blueprints === undefined
+            ? of({})
+            : apiRx.query.services?.blueprints?.entries().pipe(
+                map((blueprints) => {
+                  blueprints.filter(([_, optBlueprint]) => {
+                    if (optBlueprint.isNone) {
+                      return false;
+                    }
+
+                    const blueprint = optBlueprint.unwrap();
+                    const publisher = blueprint[0].toHuman();
+                    return publisher === operatorAddress;
+                  });
+                  return {
+                    publishedBlueprints: blueprints.length,
+                  };
+                }),
+                catchError((error) => {
+                  console.error(
+                    'Error querying services with blueprints:',
+                    error,
+                  );
+                  return of({});
+                }),
+              );
+
+        const deployedServices$ =
+          apiRx.query.services?.instances === undefined
+            ? of({})
+            : apiRx.query.services?.instances.entries().pipe(
+                map((instances) => {
+                  instances.filter(([_, instance]) => {
+                    if (instance.isNone) {
+                      return false;
+                    }
+                    const detailed = instance.unwrap();
+                    return detailed.owner.toHuman() === operatorAddress;
+                  });
+                  return instances.length;
+                }),
+                catchError((error) => {
+                  console.error(
+                    'Error querying services with blueprints:',
+                    error,
+                  );
+                  return of({});
+                }),
+              );
+
         return combineLatest([
           operatorProfile$,
           serviceRequest$,
           publishedBlueprints$,
-          deployedServices$
+          deployedServices$,
         ]).pipe(
-          map(([operatorProfile, serviceRequest, publishedBlueprints, deployedServices]) => {
-            return {
-              ...operatorProfile,
-              ...serviceRequest,
-              ...publishedBlueprints,
-              ...deployedServices,
-            }
-          })
+          map(
+            ([
+              operatorProfile,
+              serviceRequest,
+              publishedBlueprints,
+              deployedServices,
+            ]) => {
+              return {
+                ...operatorProfile,
+                ...serviceRequest,
+                ...publishedBlueprints,
+                ...deployedServices,
+              };
+            },
+          ),
         );
       },
       [operatorAddress],
@@ -139,7 +165,7 @@ export const useOperatorStatsData = (
     const parsed = operatorStatsSchema.safeParse(operatorStats);
     return parsed.success ? parsed.data : null;
   }, [operatorStats]);
-  
+
   return {
     result,
     ...rest,
