@@ -112,7 +112,7 @@ export const AccountStatsCard: FC<AccountStatsCardProps> = (props) => {
         target: '_blank' as const,
         rel: 'noopener noreferrer',
       }));
-  }, [accountInfo, isOperator]);
+  }, [accountInfo]);
 
   const accountExplorerUrl = useMemo(() => {
     if (!accountAddress) {
