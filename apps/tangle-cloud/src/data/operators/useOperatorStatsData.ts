@@ -8,13 +8,13 @@ import { z } from 'zod';
 const operatorStatsSchema = z.object({
   registeredBlueprints: z.number().default(0),
   runningServices: z.number().default(0),
+  // TODO: Implement this
   avgUptime: z.number().default(0),
   deployedServices: z.number().default(0),
   publishedBlueprints: z.number().default(0),
   pendingServices: z.number().default(0),
 });
 
-// TODO: Implement this
 export const useOperatorStatsData = (
   operatorAddress: SubstrateAddress | null | undefined,
 ) => {
@@ -110,20 +110,23 @@ export const useOperatorStatsData = (
                   return of({});
                 }),
               );
-
+        
+        // TODO: after the instance is terminated, this will be removed. using Graphql to get the deployed services
         const deployedServices$ =
           apiRx.query.services?.instances === undefined
             ? of({})
             : apiRx.query.services?.instances.entries().pipe(
                 map((instances) => {
-                  instances.filter(([_, instance]) => {
+                  const deployedServices = instances.filter(([_, instance]) => {
                     if (instance.isNone) {
                       return false;
                     }
                     const detailed = instance.unwrap();
                     return detailed.owner.toHuman() === operatorAddress;
                   });
-                  return instances.length;
+                  return {
+                    deployedServices: deployedServices.length,
+                  };
                 }),
                 catchError((error) => {
                   console.error(
