@@ -95,10 +95,11 @@ export const useOperatorStatsData = (
                         return false;
                       }
 
-                    const blueprint = optBlueprint.unwrap();
-                    const publisher = blueprint[0].toHuman();
-                    return publisher === operatorAddress;
-                  });
+                      const blueprint = optBlueprint.unwrap();
+                      const publisher = blueprint[0].toHuman();
+                      return publisher === operatorAddress;
+                    },
+                  );
                   return {
                     publishedBlueprints: publishedBlueprints.length,
                   };
