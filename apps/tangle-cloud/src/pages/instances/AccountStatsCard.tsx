@@ -27,7 +27,7 @@ export const AccountStatsCard: FC<AccountStatsCardProps> = (props) => {
   const rpcEndpoint = useNetworkStore((store) => store.network.wsRpcEndpoint);
   const network = useNetworkStore((store) => store.network);
 
-  const operatorStatsData = useOperatorStatsData(
+  const { result: operatorStatsData } = useOperatorStatsData(
     useMemo(() => {
       if (
         !accountAddress ||
@@ -41,7 +41,7 @@ export const AccountStatsCard: FC<AccountStatsCardProps> = (props) => {
     }, [accountAddress, isOperator]),
   );
 
-  const userStatsData = useUserStatsData(
+  const { result: userStatsData} = useUserStatsData(
     useMemo(() => {
       if (isOperator) {
         return null;
@@ -135,9 +135,8 @@ export const AccountStatsCard: FC<AccountStatsCardProps> = (props) => {
           children: operatorStatsData.registeredBlueprints,
         },
         {
-          title: 'Total Services',
-          children: operatorStatsData.totalServices,
-          tooltip: 'Total services including stopped and running services',
+          title: 'Running Services',
+          children: operatorStatsData.runningServices,
         },
         {
           title: 'Pending Services',
@@ -156,7 +155,7 @@ export const AccountStatsCard: FC<AccountStatsCardProps> = (props) => {
         },
         {
           title: 'Published Services',
-          children: operatorStatsData.publishedServices,
+          children: operatorStatsData.publishedBlueprints,
           tooltip: 'Total services published to Tangle ecosystem',
         },
       ];
@@ -166,10 +165,8 @@ export const AccountStatsCard: FC<AccountStatsCardProps> = (props) => {
 
     return [
       {
-        title: 'Total Services',
-        children: userStatsData?.totalServices,
-        tooltip:
-          'Total services including stopped, running services, and consuming services',
+        title: 'Running Services',
+        children: userStatsData?.runningServices,
       },
       {
         title: 'Deployed Services',
