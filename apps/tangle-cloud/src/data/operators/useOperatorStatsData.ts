@@ -89,17 +89,18 @@ export const useOperatorStatsData = (
             ? of({})
             : apiRx.query.services?.blueprints?.entries().pipe(
                 map((blueprints) => {
-                  blueprints.filter(([_, optBlueprint]) => {
-                    if (optBlueprint.isNone) {
-                      return false;
-                    }
+                  const publishedBlueprints = blueprints.filter(
+                    ([_, optBlueprint]) => {
+                      if (optBlueprint.isNone) {
+                        return false;
+                      }
 
                     const blueprint = optBlueprint.unwrap();
                     const publisher = blueprint[0].toHuman();
                     return publisher === operatorAddress;
                   });
                   return {
-                    publishedBlueprints: blueprints.length,
+                    publishedBlueprints: publishedBlueprints.length,
                   };
                 }),
                 catchError((error) => {
