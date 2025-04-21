@@ -78,7 +78,10 @@ export const extractIdentityInfo = (
   } satisfies IdentityType;
 };
 
-export async function getAccountInfo(rpcEndpoints: string[], address: string) {
+export async function getAccountInfo(
+  rpcEndpoints: string | string[],
+  address: string,
+) {
   const api = await getApiPromise(rpcEndpoints);
   const identityData = await api.query.identity.identityOf(address);
 
@@ -101,7 +104,7 @@ export async function getAccountInfo(rpcEndpoints: string[], address: string) {
  *          If an address has no identity information, the corresponding element will be null.
  */
 export async function getMultipleAccountInfo(
-  rpcEndpoints: string[],
+  rpcEndpoints: string | string[],
   addresses: string[],
 ): Promise<(IdentityType | null)[]> {
   const api = await getApiPromise(rpcEndpoints);
