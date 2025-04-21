@@ -290,7 +290,7 @@ export function createMonitoringBlueprint(
     blueprint: blueprintData,
     services,
   };
-}
+};
 
 export const createPendingServiceRequests = (
   pendingServiceRequests: MonitoringServiceRequest[],
