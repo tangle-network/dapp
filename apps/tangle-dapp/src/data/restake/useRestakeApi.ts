@@ -29,7 +29,9 @@ const useRestakeApi = () => {
     (store) => store.network2?.createExplorerTxUrl,
   );
 
-  const rpcEndpoints = useNetworkStore((store) => store.network2?.wsRpcEndpoints);
+  const rpcEndpoints = useNetworkStore(
+    (store) => store.network2?.wsRpcEndpoints,
+  );
 
   const { data: apiPromise } = useApiPromiseQuery(rpcEndpoints);
 

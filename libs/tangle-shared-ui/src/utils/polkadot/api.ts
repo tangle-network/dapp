@@ -60,9 +60,9 @@ async function getOrCacheApiVariant<T extends ApiPromise | ApiRx>(
   }
 }
 
-export const getApiPromise: (endpoints: string |string[]) => Promise<ApiPromise> = async (
+export const getApiPromise: (
   endpoints: string | string[],
-) => {
+) => Promise<ApiPromise> = async (endpoints: string | string[]) => {
   return getOrCacheApiVariant(endpoints, apiPromiseCache, async () => {
     const provider = new WsProvider(endpoints);
 
@@ -75,7 +75,9 @@ export const getApiPromise: (endpoints: string |string[]) => Promise<ApiPromise>
   });
 };
 
-export const getApiRx = async (endpoints: string | string[]): Promise<ApiRx> => {
+export const getApiRx = async (
+  endpoints: string | string[],
+): Promise<ApiRx> => {
   return getOrCacheApiVariant(endpoints, apiRxCache, async () => {
     const provider = new WsProvider(endpoints);
 

@@ -10,7 +10,7 @@ export const TANGLE_MAINNET_WS_DWELLIR_RPC_ENDPOINT =
 export const TANGLE_MAINNET_HTTP_RPC_ENDPOINT = 'https://rpc.tangle.tools';
 export const TANGLE_MAINNET_HTTP_DWELLIR_RPC_ENDPOINT =
   'https://tangle-mainnet-rpc.dwellir.com';
-  
+
 export const TANGLE_MAINNET_POLKADOT_JS_DASHBOARD_URL =
   getPolkadotJsDashboardUrl(TANGLE_MAINNET_WS_RPC_ENDPOINT);
 export const TANGLE_MAINNET_NATIVE_EXPLORER_URL =

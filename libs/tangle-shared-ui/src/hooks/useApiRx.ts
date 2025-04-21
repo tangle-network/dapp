@@ -35,7 +35,9 @@ const useApiRx = <T>(factory: ObservableFactory<T>) => {
 
   const isMountedRef = useRef(true);
 
-  const rpcEndpoints = useNetworkStore((store) => store.network2?.wsRpcEndpoints);
+  const rpcEndpoints = useNetworkStore(
+    (store) => store.network2?.wsRpcEndpoints,
+  );
 
   const { data: apiRx = null } = useApiRxQuery(rpcEndpoints);
 
