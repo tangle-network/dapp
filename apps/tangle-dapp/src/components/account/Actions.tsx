@@ -1,6 +1,7 @@
 import {
   CoinsLineIcon,
   CoinsStackedLineIcon,
+  FaucetIcon,
   GiftLineIcon,
   LockUnlockLineIcon,
   SendPlanLineIcon,
@@ -11,6 +12,7 @@ import { FC, useMemo, useState } from 'react';
 import useActiveAccountAddress from '@tangle-network/tangle-shared-ui/hooks/useActiveAccountAddress';
 import useBalances from '@tangle-network/tangle-shared-ui/hooks/useBalances';
 import { TxStatus } from '@tangle-network/tangle-shared-ui/hooks/useSubstrateTx';
+import { TANGLE_FAUCET_URL } from '@tangle-network/ui-components';
 import TransferTxModal from '../../containers/TransferTxModal';
 import useAirdropEligibility from '../../data/claims/useAirdropEligibility';
 import useTotalPayoutRewards from '../../data/nomination/useTotalPayoutRewards';
@@ -66,6 +68,13 @@ const Actions: FC = () => {
         label="Nominate"
         internalHref={StaticSearchQueryPath.NominationsTable}
         Icon={CoinsStackedLineIcon}
+      />
+
+      <ActionItem
+        label="Faucet"
+        tooltip="Request testnet assets from the Tangle Network Faucet"
+        Icon={FaucetIcon}
+        externalHref={TANGLE_FAUCET_URL}
       />
 
       <ActionItem

@@ -52,7 +52,7 @@ export const WEBB_CAREERS_URL = 'https://wellfound.com/company/webb-4/jobs';
 
 export const WEBB_DAPP_NEW_ISSUE_URL =
   'https://github.com/tangle-network/dapp/issues/new/choose';
-export const WEBB_FAUCET_URL = 'https://faucet.tangle.tools';
+export const TANGLE_FAUCET_URL = 'https://faucet.tangle.tools';
 export const WEBB_DISCORD_CHANNEL_URL =
   'https://discord.com/channels/833784453251596298/1183826417625075753';
 
