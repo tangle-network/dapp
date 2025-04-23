@@ -20,9 +20,17 @@ type ActionItemProps = {
   isDisabled?: boolean;
   hasNotificationDot?: boolean;
   notificationDotVariant?: ComponentProps<typeof StatusIndicator>['variant'];
-  internalHref?: InternalPath;
   tooltip?: ReactElement | string;
-};
+} & (
+  | {
+      internalHref?: InternalPath;
+      externalHref?: undefined;
+    }
+  | {
+      internalHref?: undefined;
+      externalHref?: string;
+    }
+);
 
 const ActionItem: FC<ActionItemProps> = ({
   Icon,
@@ -30,6 +38,7 @@ const ActionItem: FC<ActionItemProps> = ({
   label,
   onClick,
   internalHref,
+  externalHref,
   tooltip,
   isDisabled = false,
   hasNotificationDot = false,
@@ -97,6 +106,10 @@ const ActionItem: FC<ActionItemProps> = ({
   const withLink =
     internalHref !== undefined ? (
       <Link to={internalHref} onClick={handleLinkClick}>
+        {content}
+      </Link>
+    ) : externalHref !== undefined ? (
+      <Link to={externalHref} target="_blank" rel="noopener noreferrer">
         {content}
       </Link>
     ) : (
