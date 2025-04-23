@@ -1,3 +1,4 @@
+import { BN_ZERO } from '@polkadot/util';
 import { TokenIcon } from '@tangle-network/icons';
 import { ChevronDown } from '@tangle-network/icons/ChevronDown';
 import Spinner from '@tangle-network/icons/Spinner';
@@ -77,13 +78,12 @@ const COLUMNS = [
         </TableCellWrapper>
       );
     },
-    sortingFn: 'alphanumeric',
+    sortingFn: 'alphanumericCaseSensitive',
     sortDescFirst: true,
   }),
   COLUMN_HELPER.accessor('totalDeposits', {
-    sortUndefined: 'last',
     sortingFn: sortByBnToDecimal(
-      (row) => row.totalDeposits,
+      (row) => row.totalDeposits ?? BN_ZERO,
       (row) => row.decimals,
     ),
     header: () => <HeaderCell title="Deposited Balance" />,
@@ -103,7 +103,6 @@ const COLUMNS = [
     },
   }),
   COLUMN_HELPER.accessor('tvl', {
-    sortUndefined: 'last',
     sortingFn: sortByBnToDecimal(
       (row) => row.tvl,
       (row) => row.decimals,
