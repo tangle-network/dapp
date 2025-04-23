@@ -2,6 +2,7 @@ import {
   AppsLine,
   CoinLine,
   DocumentationIcon,
+  FaucetIcon,
   GiftLineIcon,
   GlobalLine,
   HomeFillIcon,
@@ -19,6 +20,7 @@ import {
 import { SidebarTangleClosedIcon } from '@tangle-network/ui-components/components';
 import {
   TANGLE_DOCS_URL,
+  TANGLE_FAUCET_URL,
   TANGLE_MKT_URL,
 } from '@tangle-network/ui-components/constants';
 import { PointsBanner } from '../../features/points/components/PointsBanner';
@@ -120,6 +122,13 @@ export default function getSidebarProps({
           },
         ]
       : []),
+    {
+      name: 'Testnet Faucet',
+      href: TANGLE_FAUCET_URL,
+      isInternal: false,
+      Icon: FaucetIcon,
+      subItems: [],
+    },
   ];
 
   // Filter the sidebar items based on the current environment.
