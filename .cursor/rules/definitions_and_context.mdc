@@ -1,0 +1,32 @@
+---
+description: Understanding context-specific concepts about the project & Tangle node, such as restaking, liquid staking, blueprints and more.
+globs: 
+alwaysApply: false
+---
+# Restaking
+
+Tangle provides permissionless and asset-configurable restaking for Blueprints. Any asset created on and bridged to Tangle can be used as collateral to stake on operators. These restaked assets, commonly in the form of LSTs, act as security collateral for service instances that are requested on-demand. The restaking providers (the restakers) earn rewards proportional to the rewards issued to the services and Blueprints on Tangle, depending on the usage and utility of the services themselves.
+
+The restaking infrastructure divides assets into pools, which can be created to represent a single asset or a basket of similarly valued assets. Pools of assets are used to secure Tangle Blueprint service instances and are rewarded collectively as pools. This is beneficial when integrating many liquid staked tokens of a single protocol, such as validator-specific liquid staking protocols, or when bundling lots of different LSTs of a single ecosystem such as a basket of ETH LSTs.
+
+Users deposit assets into the restaking infrastructure by depositing into a pool. The user then stakes (similarly delegates) their asset on an operator who will leverage these assets to provide shared security to their service providing operations. If a validator misbehaves or fails to provide a service as outlined by their Blueprint specification, the user's assets will be liable to be slashed.
+
+# Liquid Staking
+
+Tangle includes a variety of liquid staking protocol implementations for partner projects and blockchain ecosystems, providing the restaking infrastructure with unique liquid staking tokens to be used in securing new services. The tokens Tangle takes an active part in developing and leveraging bear the prefix tg.... The tg LST protocols are stake operation specific liquid staking protocols. By stake operation, we mean a unique staking action that exists separate to another, such as staking on Validator A versus Validator B or staking on Vault A or Vault B for an arbitrary staking protocol. These examples would create tgXYZ_A and tgXYZ_B liquid staked tokens which are not fungible with respect to one another.
+
+In doing so, Tangle's LST protocol creates a plethora of new LSTs and a well-defined pool in the restaking infrastructure. Validators, node operators, and vaults of various protocols have unique assets to represent their operations, and Tangle’s liquid staking tokens provides these communities with additional product opportunities for leveraging those assets and actions.
+
+# Liquid Restaking
+
+Liquid Restaking Tokens (LRTs) are used to restake any assets into the restaking infrastructure. LRT in the nutshell is a way where you take any asset (usually an already staked asset, like stETH) and stake it again by depositing it into a the Tangle Restaking infrastructure and receive extra rewards for doing so.
+
+# Tangle Blueprints
+
+Blueprints are Infrastructure as Code templates and Instances are their instantiations on the Tangle Network. Developers build Blueprints using our Blueprint SDK and deploy them to the Tangle Network. Users can discover Blueprints and create Instances of them, which are run by Tangle Operators. The Tangle Network incentivizes operators to run these instances by rewarding them with TNT tokens and fees from execution.
+A Blueprint Instance is a computational service. Blueprints are reusable templates so that useful services can be leveraged by many customers. A key benefit of instancing Blueprints is that each instance can have different operators and different restaked assets securing them.
+
+A Tangle Blueprint is defined by:
+- An native program binary, a docker image, or a virtual machine binary.
+- A set of smart contracts that provide programmability over the service's output verification and handling of malicious failures
+- Tangle Blueprints specify their target environment for program execution. The Blueprint's binary can run natively on the operator's machine, in a virtual machine, or in a containerized environment.
