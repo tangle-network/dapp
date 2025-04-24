@@ -1,0 +1,64 @@
+# Tangle dApp Monorepo
+
+This project is Tangle dApp - a monorepo containing multiple dApp projects that serve as the frontend for our custom Substrate-based network/node 'Tangle'. Tangle is a cryptocurrency network created using the Substrate framework, which is part of the Polkadot ecosystem. Tangle is a layer 1 for on-demand services where developers can build and monetize decentralized services using Tangle Blueprints. They can also deploy innovative infrastructure in any blockchain ecosystem.
+
+# Coding style
+
+- Avoid comments whenever possible; unless the logic itself is complicated and would benefit from a brief explanation.
+- Break comments down into multiple lines if they get too long.
+- Always use capitalization and a period at the end of comments to stay consistent.
+- Always use fully descriptive and explicit variable names and avoid acronyms.
+- Use `useMemo` and `useCallback` whenever possible & applicable. Skip `useMemo` for simple/constant-time calculations such as size/length comparisons.
+- Always write new code using `const ... => {}` style instead of `function ... () {}` style.
+- Avoid long & complex one-liners; always prefer explicit, readable code.
+- Always use `if (condition) { ... }` style over `if (condition) ...` (braces = less chance for logic bugs to creep in).
+- If making new components, always prefer the `const ...: FC<Props> = ({propA, propB, ...}) => {...}` style.
+- When writing JSX, add empty lines between sibiling components to stay consistent. Example:
+
+```
+<>
+  <div>
+    <a>first</a>
+
+    <a>second</a>
+
+    <p>third</p>
+  </div>
+
+  <div>...</div>
+<>
+```
+
+# Additional notes
+
+- You'll likely be working within a single dApp/project at any given time, so avoid making cross-project changes, UNLESS shared libraries (such as `ui-components` or `tangle-shared-ui`) are involved.
+- Avoid creating or modifying storybook files, as it is considered legacy and will be removed in the future.
+- Remember that this is a monorepo, as such, keep your changes as localized and isolated as possible to the relevant project that you're currently working in.
+- Do not assume that a package exists unless you see it imported in existing code or check the root `package.json` to confirm it is installed.
+- Avoid installing new packages unless directed by the user.
+- When processing values such as numbers obtained from the chain, do not blindly convert/cast them as JS' number, as they might not fit; instead, if the value is greater than `u32`, convert it to `BN` (most functions expect this) or `bigint` where appropriate. If it is `u32` or smaller, then it can be safely casted to number, generally using `.toNumber`.
+- Avoid using `as` or type-casting whenever possible, unless absolutely fitting & appropriate. The reasoning here is that strongly-typed code should not require type assertions, which can easily introduce logic bugs. This includes avoiding the usage of the `any` type as well.
+- There are many useful & re-usable functions under `utils/` folder. Whenever possible, use an existing util function.
+- If a new utility function is needed: If it is sufficiently simple & used once, keep it within the same React component or file. Otherwise, create its own file under `utils/` folder.
+
+# Common folder structure
+
+- `util/`: Contains utility functions. This is organized by having each function be its own file, with the same exact filename as the function name. All functions export default at the end.
+- `components/`: "Dumb", mostly re-usable components that are specific to Tangle dApp. Usually if a component is re-usable and generic enough to be used in other dApps, it should be placed within either `libs/tangle-shared-ui` or `libs/ui-components/`.
+- `containers/`: "Smart" React components with business logic that fetch, calculate or otherwise interact with stuff that isn't passed directly as props. These smart components usually reuse components from `components/` folder, and even other containers too.
+- `hooks/`: React hooks containing core infrastructure logic & functionality.
+- `data/`: React hooks containing data fetching logic, generally organized by their corresponding areas (such as restaking, liquid staking, etc.).
+- `pages/`: Contains pages of the dApps, which are used by `react-router-dom`.
+- `abi/`: Contains EVM ABI definitions as a JS object, which is used when utilizing Viem to call Substrate precompiles. This is useful for when EVM accounts interact with our dApp and call extrinsics.
+
+# dApp: Tangle dApp (`apps/tangle-dapp`)
+
+Tangle dApp is the main product and focus of the monorepo. Here's the tech stack:
+
+- ViteJS, TypeScript, TailwindCSS
+- PolkadotJS along with TypeScript-auto-generated types for the custom pallets & functionality of the Tangle node. This is imported as a package `@tangle-network/tangle-substrate-types`.
+- There are no testing libraries used or planned to be added.
+
+# Library: `libs/tangle-shared-ui`
+
+Contains shared logic, hooks, and utility functions between multiple Tangle dApps, such as `tangle-cloud` & `tangle-dapp`. This differs from `ui-components` in that `ui-components` is more geared towards general & re-usable components, not necesarily tied to any context, whereas `libs/tangle-shared-ui` is specific to Tangle-related logic.

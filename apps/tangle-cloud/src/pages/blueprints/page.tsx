@@ -19,6 +19,7 @@ import { PricingFormResult } from './ConfigurePricingModal/types';
 import { useNavigate } from 'react-router';
 import { SessionStorageKey } from '../../constants';
 import { PagePath } from '../../types';
+import useOperatorInfo from '../../hooks/useOperatorInfo';
 
 const ROLE_TITLE = {
   [Role.OPERATOR]: 'Register Your First Blueprint',
@@ -39,7 +40,7 @@ const Page: FC = () => {
   const [isPricingModalOpen, setIsPricingModalOpen] = useState(false);
   const { blueprints, isLoading, error } = useAllBlueprints();
 
-  const isOperator = role === Role.OPERATOR;
+  const { isOperator } = useOperatorInfo();
 
   const selectedBlueprints = useMemo(() => {
     return (
@@ -59,7 +60,10 @@ const Page: FC = () => {
         SessionStorageKey.BLUEPRINT_REGISTRATION_PARAMS,
         JSON.stringify({
           pricingSettings: result,
-          selectedBlueprints,
+          selectedBlueprints: selectedBlueprints.map((blueprint) => ({
+            ...blueprint,
+            id: blueprint.id.toString(),
+          })),
         }),
       );
 

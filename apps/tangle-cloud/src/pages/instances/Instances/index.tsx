@@ -6,7 +6,6 @@ import { TrashIcon } from '@radix-ui/react-icons';
 import { RunningInstanceTable } from './RunningInstanceTable';
 import { PendingInstanceTable } from './PendingInstanceTable';
 import { StoppedInstanceTable } from './StoppedInstanceTable';
-import { InstancesTabsProps } from './type';
 
 enum InstancesTab {
   RUNNING_INSTANCES = 'Running',
@@ -20,10 +19,7 @@ const InstancesTabIcon: ReactElement[] = [
   <TrashIcon className="w-4 h-4  [&>path]:fill-red-100" />,
 ] as const;
 
-export const InstancesTabs: FC<InstancesTabsProps> = ({
-  runningInstances,
-  stoppedInstances,
-}) => {
+export const InstancesTabs: FC = () => {
   const [selectedTab, setSelectedTab] = useState(
     InstancesTab.RUNNING_INSTANCES,
   );
@@ -41,7 +37,7 @@ export const InstancesTabs: FC<InstancesTabsProps> = ({
         value={InstancesTab.RUNNING_INSTANCES}
         className="flex justify-center mx-auto"
       >
-        <RunningInstanceTable {...runningInstances} />
+        <RunningInstanceTable />
       </TabContent>
 
       <TabContent
@@ -55,7 +51,7 @@ export const InstancesTabs: FC<InstancesTabsProps> = ({
         value={InstancesTab.HISTORY_INSTANCES}
         className="flex justify-center mx-auto"
       >
-        <StoppedInstanceTable {...stoppedInstances} />
+        <StoppedInstanceTable />
       </TabContent>
     </TableAndChartTabs>
   );

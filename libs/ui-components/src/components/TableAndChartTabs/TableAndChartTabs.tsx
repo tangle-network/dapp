@@ -47,13 +47,11 @@ export const TableAndChartTabs: FC<TableAndChartTabsProps> = ({
                 isDisableStyle
                 className={twMerge(
                   'text-mono-100 radix-state-active:text-mono-200',
-                  'dark:radix-state-active:!text-mono-0',
+                  'dark:text-mono-120 dark:radix-state-active:text-mono-0',
                   'flex gap-2 items-center',
                   cx({
                     'border-b-4 py-4': enableAdvancedDivider,
                     'aria-selected:border-blue-50 border-transparent':
-                      enableAdvancedDivider,
-                    '[&>*]:opacity-50 [&[aria-selected="true"]>*]:opacity-100':
                       enableAdvancedDivider,
                   }),
                   triggerClassName,

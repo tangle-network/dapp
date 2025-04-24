@@ -91,7 +91,7 @@ const WalletDropdown: FC<{
           accountName={accountName}
           wallet={wallet}
           address={accountAddress}
-          className="max-w-60"
+          className="max-w-80"
         />
       </DropdownTrigger>
 
