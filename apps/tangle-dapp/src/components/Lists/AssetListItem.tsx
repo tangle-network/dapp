@@ -2,6 +2,7 @@ import { TokenIcon, ArrowRightUp } from '@tangle-network/icons';
 import { ChainType } from '@tangle-network/dapp-types';
 import {
   AmountFormatStyle,
+  CopyWithTooltip,
   formatDisplayAmount,
   isEvmAddress,
   shortenHex,
@@ -43,6 +44,11 @@ const AssetListItem = ({
   const activeChainIsEvm = activeChain[0]?.chainType === ChainType.EVM;
   let assetExplorerUrl = null;
 
+  console.log(
+    'activeChain[0].blockExplorers.default.url ✅',
+    activeChain[0]?.blockExplorers?.default?.url,
+  );
+
   if (activeChainIsEvm && assetIdIsEvmAddress) {
     assetExplorerUrl = activeChain[0]?.blockExplorers?.default?.url
       ? makeExplorerUrl(
@@ -74,9 +80,10 @@ const AssetListItem = ({
     ) : (
       <Typography
         variant="body1"
-        className="text-mono-120 dark:text-mono-100 dark:hover:text-mono-80"
+        className="text-mono-120 dark:text-mono-100 dark:hover:text-mono-80 flex items-center gap-2"
       >
-        Asset Id: {assetId}
+        Asset Id: {assetIdIsEvmAddress ? shortenHex(assetId) : assetId}
+        <CopyWithTooltip textToCopy={assetId} className="" isButton={false} />
       </Typography>
     );
 
