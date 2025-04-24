@@ -77,7 +77,7 @@ const Sidebar: FC<Props> = ({ isExpandedByDefault }) => {
         footer={SIDEBAR_FOOTER}
         Logo={TangleCloudLogo}
         pathnameOrHash={pathname}
-        className="hidden h-screen lg:block"
+        className="hidden h-screen lg:block !z-10"
         isExpandedByDefault={isExpandedByDefault}
       />
 
@@ -88,7 +88,7 @@ const Sidebar: FC<Props> = ({ isExpandedByDefault }) => {
         footer={SIDEBAR_FOOTER}
         Logo={TangleCloudLogo}
         pathnameOrHash={pathname}
-        className="fixed top-[34px] left-4 md:left-8 lg:hidden"
+        className="fixed top-[34px] left-4 md:left-8 lg:hidden !z-10"
       />
     </>
   );
