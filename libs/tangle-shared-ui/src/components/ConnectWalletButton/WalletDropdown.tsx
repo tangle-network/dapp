@@ -91,6 +91,7 @@ const WalletDropdown: FC<{
           accountName={accountName}
           wallet={wallet}
           address={accountAddress}
+          className="max-w-80"
         />
       </DropdownTrigger>
 
@@ -213,7 +214,7 @@ const SwitchAccountButton: FC = () => {
 
       <AccountDropdownBody
         addressShortenFn={shortenString}
-        className="mt-2"
+        className="mt-2 w-fit"
         accountItems={accounts.map((account) => {
           // Attempt to re-encode the address to match the active network's
           // SS58 prefix, if it's available. Leave it as is if it's an EVM
