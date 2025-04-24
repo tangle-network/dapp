@@ -44,11 +44,6 @@ const AssetListItem = ({
   const activeChainIsEvm = activeChain[0]?.chainType === ChainType.EVM;
   let assetExplorerUrl = null;
 
-  console.log(
-    'activeChain[0].blockExplorers.default.url ✅',
-    activeChain[0]?.blockExplorers?.default?.url,
-  );
-
   if (activeChainIsEvm && assetIdIsEvmAddress) {
     assetExplorerUrl = activeChain[0]?.blockExplorers?.default?.url
       ? makeExplorerUrl(
