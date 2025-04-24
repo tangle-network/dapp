@@ -30,7 +30,7 @@ const TabListItem: FC<Props> = ({
 
       <span
         className={twMerge(
-          'absolute body1 w-full p-2 text-center',
+          'absolute body1 w-full py-1 text-center',
           isActive && 'font-bold',
           isActive
             ? 'text-mono-200 dark:text-blue-50'
