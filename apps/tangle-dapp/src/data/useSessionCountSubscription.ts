@@ -13,7 +13,7 @@ function useSessionCountSubscription(defaultValue = NaN) {
   const [session, setSession] = useState(defaultValue);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
-  const rpcEndpoint = useNetworkStore((store) => store.network.wsRpcEndpoint);
+  const rpcEndpoints = useNetworkStore((store) => store.network.wsRpcEndpoints);
 
   useEffect(() => {
     let isMounted = true;
@@ -21,7 +21,7 @@ function useSessionCountSubscription(defaultValue = NaN) {
 
     const subscribeData = async () => {
       try {
-        const api = await getApiRx(rpcEndpoint);
+        const api = await getApiRx(rpcEndpoints);
 
         sub = api.query.session.currentIndex().subscribe((nextSession) => {
           const idx = nextSession.toNumber();
@@ -49,7 +49,7 @@ function useSessionCountSubscription(defaultValue = NaN) {
       isMounted = false;
       sub?.unsubscribe();
     };
-  }, [rpcEndpoint]);
+  }, [rpcEndpoints]);
 
   return useFormatReturnType({ isLoading, error, data: session });
 }

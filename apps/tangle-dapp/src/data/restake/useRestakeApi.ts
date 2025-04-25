@@ -29,9 +29,11 @@ const useRestakeApi = () => {
     (store) => store.network2?.createExplorerTxUrl,
   );
 
-  const rpcEndpoint = useNetworkStore((store) => store.network2?.wsRpcEndpoint);
+  const rpcEndpoints = useNetworkStore(
+    (store) => store.network2?.wsRpcEndpoints,
+  );
 
-  const { data: apiPromise } = useApiPromiseQuery(rpcEndpoint);
+  const { data: apiPromise } = useApiPromiseQuery(rpcEndpoints);
 
   const onSuccess = useCallback(
     (txHash: Hash, blockHash: Hash, txName: TxName) => {

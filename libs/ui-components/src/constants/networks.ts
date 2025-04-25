@@ -1,7 +1,9 @@
 import { EVMChainId, SubstrateChainId } from '@tangle-network/dapp-types';
 import {
   TANGLE_MAINNET_WS_RPC_ENDPOINT,
+  TANGLE_MAINNET_WS_DWELLIR_RPC_ENDPOINT,
   TANGLE_MAINNET_HTTP_RPC_ENDPOINT,
+  TANGLE_MAINNET_HTTP_DWELLIR_RPC_ENDPOINT,
   TANGLE_MAINNET_POLKADOT_JS_DASHBOARD_URL,
   TANGLE_MAINNET_NATIVE_EXPLORER_URL,
   TANGLE_MAINNET_EVM_EXPLORER_URL,
@@ -62,19 +64,19 @@ export type Network = {
   ) => string | null;
 
   /**
-   * The Web Socket RPC endpoint of the network.
+   * The Web Socket RPC endpoint(s) of the network.
    *
    * Usually used for Substrate-based connections.
    */
-  wsRpcEndpoint: string;
+  wsRpcEndpoints: string[];
 
   /**
-   * The HTTP RPC endpoint of the network.
+   * The HTTP RPC endpoint(s) of the network.
    *
    * Usually used for EVM-based actions, such as Viem wallet
    * client requests.
    */
-  httpRpcEndpoint?: string;
+  httpRpcEndpoints?: string[];
 
   /**
    * The endpoint for the archive node of the network.
@@ -91,9 +93,15 @@ export const TANGLE_MAINNET_NETWORK = {
   name: 'Tangle Mainnet',
   tokenSymbol: TANGLE_MAINNET_NATIVE_TOKEN_SYMBOL,
   nodeType: 'standalone',
-  wsRpcEndpoint: TANGLE_MAINNET_WS_RPC_ENDPOINT,
-  httpRpcEndpoint: TANGLE_MAINNET_HTTP_RPC_ENDPOINT,
-  archiveRpcEndpoint: TANGLE_MAINNET_WS_RPC_ENDPOINT,
+  wsRpcEndpoints: [
+    TANGLE_MAINNET_WS_DWELLIR_RPC_ENDPOINT,
+    TANGLE_MAINNET_WS_RPC_ENDPOINT,
+  ],
+  httpRpcEndpoints: [
+    TANGLE_MAINNET_HTTP_DWELLIR_RPC_ENDPOINT,
+    TANGLE_MAINNET_HTTP_RPC_ENDPOINT,
+  ],
+  archiveRpcEndpoint: TANGLE_MAINNET_WS_DWELLIR_RPC_ENDPOINT,
   polkadotJsDashboardUrl: TANGLE_MAINNET_POLKADOT_JS_DASHBOARD_URL,
   explorerUrl: TANGLE_MAINNET_NATIVE_EXPLORER_URL,
   evmExplorerUrl: TANGLE_MAINNET_EVM_EXPLORER_URL,
@@ -126,8 +134,8 @@ export const TANGLE_TESTNET_NATIVE_NETWORK = {
   tokenSymbol: TANGLE_TESTNET_NATIVE_TOKEN_SYMBOL,
   nodeType: 'standalone',
   subqueryEndpoint: SUBQUERY_ENDPOINT,
-  httpRpcEndpoint: TANGLE_TESTNET_HTTP_RPC_ENDPOINT,
-  wsRpcEndpoint: TANGLE_TESTNET_WS_RPC_ENDPOINT,
+  httpRpcEndpoints: [TANGLE_TESTNET_HTTP_RPC_ENDPOINT],
+  wsRpcEndpoints: [TANGLE_TESTNET_WS_RPC_ENDPOINT],
   archiveRpcEndpoint: TANGLE_TESTNET_ARCHIVE_RPC_ENDPOINT,
   polkadotJsDashboardUrl: TANGLE_TESTNET_POLKADOT_JS_DASHBOARD_URL,
   explorerUrl: TANGLE_TESTNET_NATIVE_EXPLORER_URL,
@@ -165,8 +173,8 @@ export const TANGLE_LOCAL_DEV_NETWORK = {
   tokenSymbol: TANGLE_TESTNET_NATIVE_TOKEN_SYMBOL,
   nodeType: 'standalone',
   subqueryEndpoint: 'http://localhost:4000/graphql',
-  wsRpcEndpoint: TANGLE_LOCAL_WS_RPC_ENDPOINT,
-  httpRpcEndpoint: TANGLE_LOCAL_HTTP_RPC_ENDPOINT,
+  wsRpcEndpoints: [TANGLE_LOCAL_WS_RPC_ENDPOINT],
+  httpRpcEndpoints: [TANGLE_LOCAL_HTTP_RPC_ENDPOINT],
   polkadotJsDashboardUrl: TANGLE_LOCAL_POLKADOT_JS_DASHBOARD_URL,
   ss58Prefix: 42,
   evmTxRelayerEndpoint: 'http://localhost:3000',
@@ -190,7 +198,7 @@ export const TANGLE_RESTAKING_PARACHAIN_LOCAL_DEV_NETWORK = {
   name: 'Tangle Restaking Parachain (Local)',
   nodeType: 'parachain',
   tokenSymbol: 'TNT',
-  wsRpcEndpoint: 'ws://localhost:30337',
+  wsRpcEndpoints: [TANGLE_LOCAL_WS_RPC_ENDPOINT],
   polkadotJsDashboardUrl: getPolkadotJsDashboardUrl('ws://localhost:30337'),
   createExplorerAccountUrl: (
     _address: SubstrateAddress | EvmAddress | SolanaAddress,
@@ -203,7 +211,7 @@ export const TANGLE_RESTAKING_PARACHAIN_TESTNET_NETWORK = {
   name: 'Tangle Restaking Parachain (Testnet)',
   nodeType: 'parachain',
   tokenSymbol: 'tTNT',
-  wsRpcEndpoint: 'wss://testnet-parachain.tangle.tools',
+  wsRpcEndpoints: [TANGLE_TESTNET_WS_RPC_ENDPOINT],
   polkadotJsDashboardUrl: getPolkadotJsDashboardUrl(
     'wss://testnet-parachain.tangle.tools',
   ),

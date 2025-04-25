@@ -2,11 +2,11 @@ import { getApiPromise } from '@tangle-network/tangle-shared-ui/utils/polkadot/a
 import { getAccountInfo } from '@tangle-network/tangle-shared-ui/utils/polkadot/identity';
 
 export const getValidatorIdentityName = async (
-  rpcEndpoint: string,
+  rpcEndpoints: string[],
   validatorAddress: string,
 ): Promise<string> => {
   const validatorAccountInfo = await getAccountInfo(
-    rpcEndpoint,
+    rpcEndpoints,
     validatorAddress,
   );
 

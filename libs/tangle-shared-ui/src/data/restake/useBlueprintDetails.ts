@@ -28,7 +28,7 @@ import { toPrimitiveService } from '../blueprints/utils/toPrimitiveService';
 import useRestakeTvl from './useRestakeTvl';
 
 const useBlueprintDetails = (id?: bigint) => {
-  const rpcEndpoint = useNetworkStore((store) => store.network.wsRpcEndpoint);
+  const rpcEndpoints = useNetworkStore((store) => store.network.wsRpcEndpoints);
   const { assets } = useRestakeAssets();
   const { result: operatorMap } = useRestakeOperatorMap();
   const { result: delegatorInfo } = useRestakeDelegatorInfo();
@@ -122,7 +122,7 @@ const useBlueprintDetails = (id?: bigint) => {
                 runningInstancesMap,
               );
 
-              const info = await getAccountInfo(rpcEndpoint, owner);
+              const info = await getAccountInfo(rpcEndpoints, owner);
               const operatorsSet = blueprintOperatorMap.get(id);
 
               const details: Blueprint = {
@@ -157,7 +157,7 @@ const useBlueprintDetails = (id?: bigint) => {
               const operators =
                 operatorsSet !== undefined && assets !== null
                   ? await getBlueprintOperators(
-                      rpcEndpoint,
+                      rpcEndpoints,
                       assets,
                       operatorsSet,
                       operatorMap,
@@ -179,7 +179,7 @@ const useBlueprintDetails = (id?: bigint) => {
         id,
         operatorMap,
         operatorTVL,
-        rpcEndpoint,
+        rpcEndpoints,
         assets,
         operatorConcentration,
         activeSubstrateAddress,
@@ -190,7 +190,7 @@ const useBlueprintDetails = (id?: bigint) => {
 };
 
 async function getBlueprintOperators(
-  rpcEndpoint: string,
+  rpcEndpoints: string[],
   assetMap: RestakeAssetMap,
   operatorAccountSet: Set<SubstrateAddress>,
   operatorMap: OperatorMap,
@@ -201,7 +201,7 @@ async function getBlueprintOperators(
   const operatorAccountArr = Array.from(operatorAccountSet);
 
   const accountInfoArr = await getMultipleAccountInfo(
-    rpcEndpoint,
+    rpcEndpoints,
     operatorAccountArr,
   );
 

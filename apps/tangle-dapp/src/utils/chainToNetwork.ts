@@ -59,7 +59,7 @@ export default function chainToNetwork(typedChainId: number): Network {
     polkadotJsDashboardUrl: getPolkadotJsDashboardUrl(wsRpcEndpoint),
     createExplorerAccountUrl: () => null,
     createExplorerTxUrl: () => null,
-    wsRpcEndpoint,
+    wsRpcEndpoints: [wsRpcEndpoint],
     ...(chain.rpcUrls.default.http?.[0]
       ? {
           httpRpcEndpoint: chain.rpcUrls.default.http[0],

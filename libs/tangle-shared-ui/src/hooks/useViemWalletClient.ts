@@ -42,7 +42,7 @@ const useViemWalletClient = (transport = WalletClientTransport.HTTP_RPC) => {
 
   // Update the wallet client when the network changes.
   useEffect(() => {
-    if (evmChain === null || network?.httpRpcEndpoint === undefined) {
+    if (evmChain === null || network?.httpRpcEndpoints === undefined) {
       return;
     }
 
@@ -50,7 +50,7 @@ const useViemWalletClient = (transport = WalletClientTransport.HTTP_RPC) => {
 
     switch (transport) {
       case WalletClientTransport.HTTP_RPC:
-        transport_ = http(network.httpRpcEndpoint);
+        transport_ = http(network.httpRpcEndpoints[0]);
 
         break;
       case WalletClientTransport.WINDOW:

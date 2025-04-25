@@ -8,40 +8,63 @@ const apiRxCache = new Map<string, Promise<ApiRx>>();
 const injectorCache = new Map<string, InjectedExtension>();
 
 async function getOrCacheApiVariant<T extends ApiPromise | ApiRx>(
-  endpoint: string,
+  endpoints: string | string[],
   cache: Map<string, Promise<T>>,
   factory: () => Promise<T>,
 ): Promise<T> {
-  const cachedInstance = cache.get(endpoint);
+  const cacheKey = Array.isArray(endpoints)
+    ? [...endpoints].sort().join(',')
+    : endpoints;
+
+  const cachedInstance = cache.get(cacheKey);
 
   if (cachedInstance !== undefined) {
     return cachedInstance;
   }
 
-  // Immediately cache the promise to prevent data races
-  // that would result in multiple API instances being created.
-  const newInstance = factory();
+  const newInstancePromise = factory();
 
-  cache.set(endpoint, newInstance);
+  cache.set(cacheKey, newInstancePromise);
 
-  const newInstanceAwaited = await newInstance;
+  try {
+    const newInstance = await newInstancePromise;
 
-  newInstanceAwaited.once('connected', () => {
-    console.debug('Created new API instance for endpoint:', endpoint);
-  });
+    newInstance.once('connected', () => {
+      console.debug(
+        'Created and connected new API instance for endpoints:',
+        endpoints,
+      );
+    });
 
-  newInstanceAwaited.on('error', (error) => {
-    console.debug('Got error for API instance at endpoint:', endpoint, error);
-  });
+    newInstance.on('error', (error) => {
+      console.error(
+        'API instance error for endpoints:',
+        endpoints,
+        error instanceof Error ? error.message : error,
+      );
+    });
 
-  return newInstance;
+    newInstance.on('disconnected', () => {
+      console.warn('API instance disconnected for endpoints:', endpoints);
+    });
+
+    return newInstance;
+  } catch (error) {
+    console.error(
+      'Failed to create API instance for endpoints:',
+      endpoints,
+      error,
+    );
+    cache.delete(cacheKey);
+    throw error;
+  }
 }
 
-export const getApiPromise: (endpoint: string) => Promise<ApiPromise> = async (
-  endpoint: string,
-) => {
-  return getOrCacheApiVariant(endpoint, apiPromiseCache, async () => {
-    const provider = new WsProvider(endpoint);
+export const getApiPromise: (
+  endpoints: string | string[],
+) => Promise<ApiPromise> = async (endpoints: string | string[]) => {
+  return getOrCacheApiVariant(endpoints, apiPromiseCache, async () => {
+    const provider = new WsProvider(endpoints);
 
     return ApiPromise.create({
       provider,
@@ -52,9 +75,11 @@ export const getApiPromise: (endpoint: string) => Promise<ApiPromise> = async (
   });
 };
 
-export const getApiRx = async (endpoint: string): Promise<ApiRx> => {
-  return getOrCacheApiVariant(endpoint, apiRxCache, async () => {
-    const provider = new WsProvider(endpoint);
+export const getApiRx = async (
+  endpoints: string | string[],
+): Promise<ApiRx> => {
+  return getOrCacheApiVariant(endpoints, apiRxCache, async () => {
+    const provider = new WsProvider(endpoints);
 
     const api = new ApiRx({
       provider,

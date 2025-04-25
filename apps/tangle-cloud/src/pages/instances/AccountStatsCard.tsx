@@ -24,7 +24,7 @@ import { useUserStatsData } from '../../data/operators/useUserStatsData';
 export const AccountStatsCard: FC<AccountStatsCardProps> = (props) => {
   const accountAddress = useActiveAccountAddress();
   const { isOperator } = useOperatorInfo();
-  const rpcEndpoint = useNetworkStore((store) => store.network.wsRpcEndpoint);
+  const rpcEndpoints = useNetworkStore((store) => store.network.wsRpcEndpoints);
   const network = useNetworkStore((store) => store.network);
 
   const { result: operatorStatsData } = useOperatorStatsData(
@@ -52,7 +52,7 @@ export const AccountStatsCard: FC<AccountStatsCardProps> = (props) => {
   );
 
   const { data: accountInfo } = useSWRImmutable(
-    [rpcEndpoint, accountAddress],
+    [rpcEndpoints, accountAddress],
     (args) => {
       if (!args[1]) {
         return null;

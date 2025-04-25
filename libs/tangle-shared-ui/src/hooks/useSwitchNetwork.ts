@@ -63,7 +63,7 @@ const useSwitchNetwork = () => {
       }
 
       console.debug(
-        `Set initial network: ${initialNetwork.name} | RPC: ${initialNetwork.wsRpcEndpoint}`,
+        `Set initial network: ${initialNetwork.name} | RPC: ${initialNetwork.wsRpcEndpoints[0]}`,
       );
 
       setNetwork(initialNetwork);
@@ -85,10 +85,12 @@ const useSwitchNetwork = () => {
         return true;
       }
       // Test connection to the new network.
-      else if (!(await testRpcEndpointConnection(newNetwork.wsRpcEndpoint))) {
+      else if (
+        !(await testRpcEndpointConnection(newNetwork.wsRpcEndpoints[0]))
+      ) {
         notificationApi({
           variant: 'error',
-          message: `Unable to connect to the requested network: ${newNetwork.wsRpcEndpoint}`,
+          message: `Unable to connect to the requested network: ${newNetwork.wsRpcEndpoints[0]}`,
         });
 
         return false;
@@ -101,7 +103,7 @@ const useSwitchNetwork = () => {
 
           if (switchChainResult !== null) {
             console.debug(
-              `Switched to network: ${newNetwork.name} | RPC: ${newNetwork.wsRpcEndpoint}`,
+              `Switched to network: ${newNetwork.name} | RPC: ${newNetwork.wsRpcEndpoints[0]}`,
             );
           }
         } catch (error) {
@@ -116,7 +118,7 @@ const useSwitchNetwork = () => {
       // Update local storage cache with the new network.
       if (isCustom) {
         removeCachedNetworkId();
-        setCachedCustomRpcEndpoint(newNetwork.wsRpcEndpoint);
+        setCachedCustomRpcEndpoint(newNetwork.wsRpcEndpoints[0]);
       } else {
         removeCachedCustomRpcEndpoint();
         setCachedNetworkId(newNetwork.id);
@@ -150,7 +152,7 @@ async function mapNetworkToChain(
   activeWallet: WalletConfig,
 ): Promise<Chain> {
   if (activeWallet.platform === 'Substrate') {
-    const api = await getApiPromise(network.wsRpcEndpoint);
+    const api = await getApiPromise(network.wsRpcEndpoints);
 
     // if the chain id is not defined, fetch the chain id from the api
     if (network.substrateChainId === undefined) {
@@ -186,9 +188,9 @@ async function mapNetworkToChain(
 
   const viemClient = createPublicClient({
     transport: fallback(
-      network.httpRpcEndpoint
-        ? [http(network.httpRpcEndpoint, { timeout: 60_000 })]
-        : [webSocket(network.wsRpcEndpoint, { timeout: 60_000 })],
+      network.httpRpcEndpoints
+        ? [http(network.httpRpcEndpoints[0], { timeout: 60_000 })]
+        : [webSocket(network.wsRpcEndpoints[0], { timeout: 60_000 })],
     ),
   });
 
@@ -226,12 +228,8 @@ function defineWebbChain(
     },
     rpcUrls: {
       default: {
-        http: [
-          network.httpRpcEndpoint
-            ? network.httpRpcEndpoint
-            : network.wsRpcEndpoint,
-        ],
-        webSocket: [network.wsRpcEndpoint],
+        http: [...(network.httpRpcEndpoints ?? [])],
+        webSocket: [...(network.wsRpcEndpoints ?? [])],
       },
     },
     chainType,

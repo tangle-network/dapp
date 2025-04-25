@@ -9,7 +9,7 @@ import useApi, {
 } from '@tangle-network/tangle-shared-ui/hooks/useApi';
 
 const useValidatorInfoCard = (
-  rpcEndpoint: string,
+  rpcEndpoints: string[],
   validatorAddress: string,
 ) => {
   const { notificationApi } = useUIContext();
@@ -60,7 +60,7 @@ const useValidatorInfoCard = (
     const fetchNameAndSocials = async () => {
       try {
         const validatorAccountInfo = await getAccountInfo(
-          rpcEndpoint,
+          rpcEndpoints,
           validatorAddress,
         );
 
@@ -81,7 +81,7 @@ const useValidatorInfoCard = (
     };
 
     fetchNameAndSocials();
-  }, [validatorAddress, rpcEndpoint, currentEra, notificationApi]);
+  }, [validatorAddress, rpcEndpoints, currentEra, notificationApi]);
 
   return {
     name,

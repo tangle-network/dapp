@@ -12,12 +12,12 @@ export default function useIdealStakedPercentage(
   const [value1, setValue1] = useState(defaultValue.value1);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
-  const rpcEndpoint = useNetworkStore((store) => store.network.wsRpcEndpoint);
+  const rpcEndpoints = useNetworkStore((store) => store.network.wsRpcEndpoints);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const api = await getApiPromise(rpcEndpoint);
+        const api = await getApiPromise(rpcEndpoints);
         const inflation = calculateInflation(api, BN_ZERO, BN_ZERO, BN_ZERO);
         const idealStakePercentage = inflation.idealStake * 100;
 
@@ -33,7 +33,7 @@ export default function useIdealStakedPercentage(
     };
 
     fetchData();
-  }, [value1, rpcEndpoint]);
+  }, [value1, rpcEndpoints]);
 
   return {
     isLoading,

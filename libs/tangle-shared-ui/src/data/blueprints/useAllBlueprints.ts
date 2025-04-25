@@ -17,7 +17,7 @@ import type { ServiceInstance } from './utils/type';
 import { toPrimitiveService } from './utils/toPrimitiveService';
 
 const useAllBlueprints = () => {
-  const rpcEndpoint = useNetworkStore((store) => store.network.wsRpcEndpoint);
+  const rpcEndpoints = useNetworkStore((store) => store.network.wsRpcEndpoints);
   const { result: operatorMap } = useRestakeOperatorMap();
   const { operatorTvlByAsset } = useOperatorTvl();
 
@@ -57,7 +57,7 @@ const useAllBlueprints = () => {
 
               // TODO: This can likely be optimized to reduce request count.
               const ownerIdentitiesMap = await fetchOwnerIdentities(
-                rpcEndpoint,
+                rpcEndpoints,
                 ownerSet,
               );
 
@@ -114,7 +114,7 @@ const useAllBlueprints = () => {
           }),
         );
       },
-      [operatorMap, operatorTvlByAsset, rpcEndpoint],
+      [operatorMap, operatorTvlByAsset, rpcEndpoints],
     ),
   );
 

@@ -11,7 +11,7 @@ const createCustomNetwork = (customRpcEndpoint: string): Network => ({
   // Default to testnet symbol for all custom networks
   tokenSymbol: TANGLE_TESTNET_NATIVE_TOKEN_SYMBOL,
   nodeType: 'standalone',
-  wsRpcEndpoint: customRpcEndpoint,
+  wsRpcEndpoints: [customRpcEndpoint],
   polkadotJsDashboardUrl: getPolkadotJsDashboardUrl(customRpcEndpoint),
   createExplorerAccountUrl: () => null,
   createExplorerTxUrl: () => null,

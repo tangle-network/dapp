@@ -30,11 +30,11 @@ export default function useActiveAccountReward() {
       return wsEndpoints[0];
     }
 
-    return network?.archiveRpcEndpoint ?? network.wsRpcEndpoint;
+    return network?.archiveRpcEndpoint ?? network.wsRpcEndpoints[0];
   }, [
     activeChain?.rpcUrls.default?.webSocket,
     network?.archiveRpcEndpoint,
-    network.wsRpcEndpoint,
+    network.wsRpcEndpoints,
   ]);
 
   const assetIds = useMemo(() => {

@@ -1613,7 +1613,18 @@ export const HYPERLANE_CHAINS: ChainMap<ChainMetadata> = {
     protocol: ProtocolType.Ethereum,
     rpcUrls: [
       {
+        http: 'https://tangle-mainnet-rpc.dwellir.com',
+        retry: {
+          maxRequests: 5,
+          baseRetryMs: 60000,
+        },
+      },
+      {
         http: 'https://rpc.tangle.tools',
+        retry: {
+          maxRequests: 5,
+          baseRetryMs: 60000,
+        },
       },
     ],
     technicalStack: ChainTechnicalStack.PolkadotSubstrate,

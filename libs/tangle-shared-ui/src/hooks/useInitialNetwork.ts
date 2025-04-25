@@ -48,7 +48,7 @@ const useCachedNetworkId = (): ((
       }
 
       const connectionEstablished = await testRpcEndpointConnection(
-        knownNetwork.wsRpcEndpoint,
+        knownNetwork.wsRpcEndpoints[0],
       );
 
       if (!connectionEstablished) {

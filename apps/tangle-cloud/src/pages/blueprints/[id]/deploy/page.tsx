@@ -29,8 +29,8 @@ const DeployPage: FC = () => {
   const id = useParamWithSchema('id', z.coerce.bigint());
   const navigate = useNavigate();
 
-  const wsRpcEndpoint = useNetworkStore(
-    (store) => store.network2?.wsRpcEndpoint,
+  const wsRpcEndpoints = useNetworkStore(
+    (store) => store.network2?.wsRpcEndpoints,
   );
 
   const {
@@ -93,8 +93,8 @@ const DeployPage: FC = () => {
         blueprintResult.details,
         validatedData,
       );
-      if (serviceRegisterTx && wsRpcEndpoint) {
-        const apiPromise = await getApiPromise(wsRpcEndpoint);
+      if (serviceRegisterTx && wsRpcEndpoints) {
+        const apiPromise = await getApiPromise(wsRpcEndpoints);
         await serviceRegisterTx({
           ...serviceRegisterData,
           apiPromise: apiPromise,

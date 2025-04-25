@@ -16,7 +16,7 @@ export default function useWaitingCountSubscription(
   const [value1, setValue1] = useState(defaultValue.value1);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
-  const rpcEndpoint = useNetworkStore((store) => store.network.wsRpcEndpoint);
+  const rpcEndpoints = useNetworkStore((store) => store.network.wsRpcEndpoints);
 
   useEffect(() => {
     let isMounted = true;
@@ -24,7 +24,7 @@ export default function useWaitingCountSubscription(
 
     const subscribeData = async () => {
       try {
-        const api = await getApiRx(rpcEndpoint);
+        const api = await getApiRx(rpcEndpoints);
 
         // Combine both active validators and all validators observables
         sub = combineLatest([
@@ -63,7 +63,7 @@ export default function useWaitingCountSubscription(
       isMounted = false;
       sub?.unsubscribe();
     };
-  }, [value1, rpcEndpoint]);
+  }, [value1, rpcEndpoints]);
 
   return {
     isLoading,

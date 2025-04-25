@@ -18,11 +18,13 @@ function formatBytes(bytes: number): string {
 
 const DebugMetrics: FC = () => {
   const [isCollapsed, setIsCollapsed] = useState(true);
-  const rpcEndpoint = useNetworkStore((store) => store.network2?.wsRpcEndpoint);
+  const rpcEndpoints = useNetworkStore(
+    (store) => store.network2?.wsRpcEndpoints,
+  );
 
-  const { data: api } = useApiRxQuery(rpcEndpoint);
+  const { data: api } = useApiRxQuery(rpcEndpoints);
 
-  const { data: apiRx } = useApiPromiseQuery(rpcEndpoint);
+  const { data: apiRx } = useApiPromiseQuery(rpcEndpoints);
 
   const isApiLoading = api === null || apiRx === null;
   const [tick, setTick] = useState(0);

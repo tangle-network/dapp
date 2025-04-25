@@ -57,7 +57,7 @@ const DelegationsPayoutsContainer: FC = () => {
   const [isPayoutAllModalOpen, setIsPayoutAllModalOpen] = useState(false);
   const [isUpdatePayeeModalOpen, setIsUpdatePayeeModalOpen] = useState(false);
 
-  const rpcEndpoint = useNetworkStore((store) => store.network.wsRpcEndpoint);
+  const rpcEndpoints = useNetworkStore((store) => store.network.wsRpcEndpoints);
   const nativeTokenSymbol = useNetworkStore((store) => store.nativeTokenSymbol);
   const networkId = useNetworkStore((store) => store.network.id);
 
@@ -68,9 +68,9 @@ const DelegationsPayoutsContainer: FC = () => {
     isLoading: payoutsIsLoading,
     mutate: mutatePayouts,
   } = useSWR(
-    ['payouts', substrateAddress, rpcEndpoint, nativeTokenSymbol],
-    ([, address, rpcEndpoint, nativeTokenSymbol]) =>
-      getPayouts(address, rpcEndpoint, nativeTokenSymbol),
+    ['payouts', substrateAddress, rpcEndpoints, nativeTokenSymbol],
+    ([, address, rpcEndpoints, nativeTokenSymbol]) =>
+      getPayouts(address, rpcEndpoints, nativeTokenSymbol),
     {
       revalidateOnFocus: true,
       revalidateOnReconnect: true,
