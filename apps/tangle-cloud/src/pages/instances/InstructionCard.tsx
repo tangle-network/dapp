@@ -37,7 +37,7 @@ export const InstructionCard: FC<InstructionCardProps> = ({ rootProps }) => {
                     <Typography
                       variant="body1"
                       fw="bold"
-                      className="!text-blue-50"
+                      className="text-blue-60 dark:text-blue-40"
                     >
                       {instruction.title}
                     </Typography>
