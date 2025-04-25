@@ -30,7 +30,11 @@ type Props = {
 
 const RestakeTabContent: FC<Props> = ({ tab }) => {
   const { result: delegatorInfo } = useRestakeDelegatorInfo();
-  const { result: operatorMap, isLoading: isLoadingOperators, error: operatorMapError } = useRestakeOperatorMap();
+  const {
+    result: operatorMap,
+    isLoading: isLoadingOperators,
+    error: operatorMapError,
+  } = useRestakeOperatorMap();
   const { operatorConcentration, operatorTvl } = useRestakeTvl(delegatorInfo);
   const navigate = useNavigate();
 
