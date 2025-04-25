@@ -1,4 +1,4 @@
-import { ReactNode, useCallback, type FC } from 'react';
+import { ReactNode, useCallback, useEffect, type FC } from 'react';
 import RestakeTabs from '../../pages/restake/RestakeTabs';
 import { RestakeAction, RestakeTab } from '../../constants';
 import DepositForm from '../../pages/restake/deposit/DepositForm';
@@ -30,7 +30,7 @@ type Props = {
 
 const RestakeTabContent: FC<Props> = ({ tab }) => {
   const { result: delegatorInfo } = useRestakeDelegatorInfo();
-  const { result: operatorMap } = useRestakeOperatorMap();
+  const { result: operatorMap, isLoading: isLoadingOperators, error: operatorMapError } = useRestakeOperatorMap();
   const { operatorConcentration, operatorTvl } = useRestakeTvl(delegatorInfo);
   const navigate = useNavigate();
 
@@ -43,6 +43,12 @@ const RestakeTabContent: FC<Props> = ({ tab }) => {
   const handleRestakeClicked = useCallback(() => {
     navigate(PagePath.RESTAKE_DEPOSIT);
   }, [navigate]);
+
+  useEffect(() => {
+    if (operatorMapError) {
+      console.error('Error fetching operator map:', operatorMapError);
+    }
+  }, [operatorMapError]);
 
   const getRestakeTabContent = (action: RestakeTabOrAction): ReactNode => {
     switch (action) {
@@ -71,6 +77,7 @@ const RestakeTabContent: FC<Props> = ({ tab }) => {
             operatorMap={operatorMap}
             operatorTvl={operatorTvl}
             onRestakeClicked={handleRestakeClicked}
+            isLoading={isLoadingOperators}
           />
         );
       case RestakeTab.BLUEPRINTS:

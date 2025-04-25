@@ -295,7 +295,7 @@ const RestakeDelegateForm: FC<Props> = ({ assets }) => {
 
   const operators = useMemo<RestakeOperator[]>(() => {
     return (
-      Object.entries(operatorMap)
+      Array.from(operatorMap.entries())
         // Include only active operators.
         .filter(([, metadata]) => metadata.status === 'Active')
         .map(([accountId]) => ({

@@ -24,31 +24,37 @@ const useRestakeOperatorMap = () => {
       return apiRx.query.multiAssetDelegation.operators.entries().pipe(
         map((entries) => {
           return entries.reduce(
-            (operatorsMap, [accountStorage, operatorMetadata]) => {
+            (operatorsMap, [accountStorage, operatorMetadata], _index) => {
+              const accountId = accountStorage.args[0];
+              const accountIdStr = accountId.toString();
+
               if (operatorMetadata.isNone) {
                 return operatorsMap;
               }
 
-              const accountId = accountStorage.args[0];
               const operator = operatorMetadata.unwrap();
 
-              const { delegations, restakersCount } = toPrimitiveDelegations(
-                operator.delegations,
-              );
+              try {
+                const { delegations, restakersCount } = toPrimitiveDelegations(
+                  operator.delegations,
+                );
 
-              const operatorMetadataPrimitive = {
-                stake: operator.stake.toBigInt(),
-                delegationCount: operator.delegationCount.toNumber(),
-                bondLessRequest: toPrimitiveRequest(operator.request),
-                delegations,
-                restakersCount,
-                status: toPrimitiveStatus(operator.status),
-              } satisfies OperatorMetadata;
+                const operatorMetadataPrimitive = {
+                  stake: operator.stake.toBigInt(),
+                  delegationCount: operator.delegationCount.toNumber(),
+                  bondLessRequest: toPrimitiveRequest(operator.request),
+                  delegations,
+                  restakersCount,
+                  status: toPrimitiveStatus(operator.status),
+                } satisfies OperatorMetadata;
 
-              operatorsMap.set(
-                assertSubstrateAddress(accountId.toString()),
-                operatorMetadataPrimitive,
-              );
+                operatorsMap.set(
+                  assertSubstrateAddress(accountIdStr),
+                  operatorMetadataPrimitive,
+                );
+              } catch (e) {
+                console.error(`Error processing operator ${accountIdStr}:`, e);
+              }
 
               return operatorsMap;
             },

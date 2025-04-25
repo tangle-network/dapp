@@ -41,6 +41,7 @@ type Props = {
   operatorMap: OperatorMap;
   operatorTvl?: OperatorTvlGroup['operatorTvl'];
   onRestakeClicked?: LinkProps['onClick'];
+  isLoading?: boolean;
 };
 
 const OperatorsTable: FC<Props> = ({
@@ -48,6 +49,7 @@ const OperatorsTable: FC<Props> = ({
   operatorMap,
   operatorTvl,
   onRestakeClicked,
+  isLoading,
 }) => {
   const [globalFilter, setGlobalFilter] = useState('');
 
@@ -71,7 +73,7 @@ const OperatorsTable: FC<Props> = ({
 
   const operators = useMemo(
     () =>
-      Object.entries(operatorMap).map<OperatorUI>(
+      Array.from(operatorMap.entries()).map<OperatorUI>(
         ([addressString, { delegations, restakersCount, stake }]) => {
           const address = assertSubstrateAddress(addressString);
           const tvlInUsd = operatorTvl?.get(address) ?? null;
@@ -168,6 +170,7 @@ const OperatorsTable: FC<Props> = ({
           onGlobalFilterChange={setGlobalFilter}
           data={operators}
           RestakeOperatorAction={RestakeAction}
+          isLoading={isLoading}
         />
 
         <JoinOperatorsModal setIsOpen={setIsJoinOperatorsModalOpen} />
