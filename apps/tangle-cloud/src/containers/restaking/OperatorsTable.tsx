@@ -44,8 +44,11 @@ const OperatorsTable: FC<Props> = ({
   isLoading: isLoadingOperatorMap,
 }) => {
   const [globalFilter, setGlobalFilter] = useState('');
-  const [blueprintCountsMap, setBlueprintCountsMap] = useState<Map<SubstrateAddress, number>>(new Map());
-  const [isLoadingBlueprintCounts, setIsLoadingBlueprintCounts] = useState(false);
+  const [blueprintCountsMap, setBlueprintCountsMap] = useState<
+    Map<SubstrateAddress, number>
+  >(new Map());
+  const [isLoadingBlueprintCounts, setIsLoadingBlueprintCounts] =
+    useState(false);
   const { activeApi } = useWebContext();
 
   const activeSubstrateAddress = useSubstrateAddress(false);
@@ -53,20 +56,28 @@ const OperatorsTable: FC<Props> = ({
 
   const operatorAddresses = useMemo(
     () => Array.from(operatorMap.keys()).map(assertSubstrateAddress),
-    [operatorMap]
+    [operatorMap],
   );
 
   const { result: identities } = useIdentities(operatorAddresses);
 
   // Effect to fetch blueprint counts for all operators
   useEffect(() => {
-    if (!activeApi || !(activeApi instanceof WebbPolkadot) || operatorAddresses.length === 0) {
+    if (
+      !activeApi ||
+      !(activeApi instanceof WebbPolkadot) ||
+      operatorAddresses.length === 0
+    ) {
       setBlueprintCountsMap(new Map());
       return;
     }
 
-    if (!activeApi.api.rx.rpc?.services?.queryServicesWithBlueprintsByOperator) {
-      console.error('RPC method queryServicesWithBlueprintsByOperator not found on api.rx');
+    if (
+      !activeApi.api.rx.rpc?.services?.queryServicesWithBlueprintsByOperator
+    ) {
+      console.error(
+        'RPC method queryServicesWithBlueprintsByOperator not found on api.rx',
+      );
       setBlueprintCountsMap(new Map()); // Reset if method not found
       return;
     }
@@ -103,7 +114,8 @@ const OperatorsTable: FC<Props> = ({
 
   const operators = useMemo(
     () =>
-      Array.from(operatorMap.entries()).map<OperatorUI>(([addressString, { delegations, restakersCount, stake }]) => {
+      Array.from(operatorMap.entries()).map<OperatorUI>(
+        ([addressString, { delegations, restakersCount, stake }]) => {
           const address = assertSubstrateAddress(addressString);
           const tvlInUsd = operatorTvl?.get(address) ?? null;
 
@@ -133,7 +145,8 @@ const OperatorsTable: FC<Props> = ({
             isDelegated,
             blueprintCount,
           } satisfies RestakeOperator;
-        }),
+        },
+      ),
     [
       operatorMap,
       operatorTvl,
