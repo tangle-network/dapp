@@ -46,7 +46,7 @@
     "@hookform/resolvers": "^5.0.1",
     "@hyperlane-xyz/registry": "^6.2.0",
     "@hyperlane-xyz/sdk": "^5.7.0",
-    "@hyperlane-xyz/utils": "^5.7.0",
+    "@hyperlane-xyz/utils": "^12.5.0",
     "@ngneat/falso": "^7.3.0",
     "@octokit/request": "^9.2.3",
     "@polkadot/api": "^13.2.1",
