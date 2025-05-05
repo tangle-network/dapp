@@ -33976,7 +33976,7 @@ __metadata:
     "@nx/web": "npm:20.8.0"
     "@nx/workspace": "npm:20.8.0"
     "@octokit/request": "npm:^9.2.3"
-    "@polkadot/api": "npm:^13.2.1"
+    "@polkadot/api": "npm:^15.9.2"
     "@polkadot/apps-config": "npm:^0.153.1"
     "@polkadot/extension-dapp": "npm:0.58.7"
     "@polkadot/extension-inject": "npm:0.58.7"
