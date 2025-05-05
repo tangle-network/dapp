@@ -10,6 +10,8 @@ import { PagePath } from '../types';
 import RegistrationReview from '../pages/registrationReview/page';
 import RegistrationLayout from '../pages/registrationReview/layout';
 import DeployPage from '../pages/blueprints/[id]/deploy/page';
+import OperatorsPage from '../pages/operators/page';
+import OperatorsLayout from '../pages/operators/layout';
 import NotFoundPage from '../pages/notFound';
 import { FC } from 'react';
 
@@ -77,6 +79,15 @@ const App: FC = () => {
               <RegistrationLayout>
                 <RegistrationReview />
               </RegistrationLayout>
+            }
+          />
+
+          <Route
+            path={PagePath.OPERATORS}
+            element={
+              <OperatorsLayout>
+                <OperatorsPage />
+              </OperatorsLayout>
             }
           />
 

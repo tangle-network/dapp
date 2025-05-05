@@ -63,6 +63,7 @@ export type RestakeOperator = {
   tvlInUsd: number | null;
   isDelegated?: boolean;
   vaultTokens: VaultToken[];
+  blueprintCount?: number;
 };
 
 // Bridge

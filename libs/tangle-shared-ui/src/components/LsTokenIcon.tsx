@@ -91,9 +91,9 @@ function getSizeValues(size: LsTokenIconSize): {
   switch (size) {
     case 'md':
       return {
-        wrapperSizeClassName: 'w-[20px] h-[20px]',
-        iconSizeClassName: 'w-5 h-5',
-        borderSize: 25,
+        wrapperSizeClassName: 'w-[24px] h-[24px]',
+        iconSizeClassName: 'w-6 h-6',
+        borderSize: 30,
       };
     case 'lg':
       return {
