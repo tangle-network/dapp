@@ -24,7 +24,7 @@ const Page: FC = () => {
   }, [operatorMapError]);
 
   return (
-    <div>
+    <div className="!mt-16">
       <OperatorsTable
         operatorConcentration={operatorConcentration}
         operatorMap={operatorMap}

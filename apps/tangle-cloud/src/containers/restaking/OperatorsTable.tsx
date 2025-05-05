@@ -23,6 +23,12 @@ import { useWebContext } from '@tangle-network/api-provider-environment';
 import { WebbPolkadot } from '@tangle-network/polkadot-api-provider';
 import { catchError, forkJoin, map, of } from 'rxjs';
 import type { SubstrateAddress } from '@tangle-network/ui-components/types/address';
+import { Button, Modal, ModalTrigger } from '@tangle-network/ui-components';
+import { AddLineIcon } from '@tangle-network/icons';
+import cx from 'classnames';
+import useIsAccountConnected from '@tangle-network/tangle-shared-ui/hooks/useIsAccountConnected';
+import useAgnosticAccountInfo from '@tangle-network/tangle-shared-ui/hooks/useAgnosticAccountInfo';
+import JoinOperatorsModal from '@tangle-network/tangle-shared-ui/components/Restaking/JoinOperatorsModal';
 
 type OperatorUI = NonNullable<
   ComponentProps<typeof OperatorsTableUI>['data']
@@ -44,6 +50,8 @@ const OperatorsTable: FC<Props> = ({
   isLoading: isLoadingOperatorMap,
 }) => {
   const [globalFilter, setGlobalFilter] = useState('');
+  const [isJoinOperatorsModalOpen, setIsJoinOperatorsModalOpen] =
+    useState(false);
   const [blueprintCountsMap, setBlueprintCountsMap] = useState<
     Map<SubstrateAddress, number>
   >(new Map());
@@ -53,6 +61,8 @@ const OperatorsTable: FC<Props> = ({
 
   const activeSubstrateAddress = useSubstrateAddress(false);
   const { assets } = useRestakeAssets();
+  const isAccountConnected = useIsAccountConnected();
+  const { isEvm } = useAgnosticAccountInfo();
 
   const operatorAddresses = useMemo(
     () => Array.from(operatorMap.keys()).map(assertSubstrateAddress),
@@ -169,16 +179,58 @@ const OperatorsTable: FC<Props> = ({
   //   [onRestakeClicked],
   // );
 
+  const disabledTooltip = isAccountConnected
+    ? 'Only Substrate accounts can register as operators at this time.'
+    : 'Connect a Substrate account to join as an operator.';
+
+  const isActiveAccountInOperatorMap = useMemo(
+    () =>
+      activeSubstrateAddress !== null &&
+      operatorMap.get(activeSubstrateAddress) !== undefined,
+    [activeSubstrateAddress, operatorMap],
+  );
+
   return (
-    <div className="w-full [&>button]:block [&>button]:ml-auto">
-      <OperatorsTableUI
-        globalFilter={globalFilter}
-        onGlobalFilterChange={setGlobalFilter}
-        data={operators}
-        RestakeOperatorAction={() => null}
-        isLoading={isLoadingOperatorMap || isLoadingBlueprintCounts}
-      />
-    </div>
+    <Modal
+      open={isJoinOperatorsModalOpen}
+      onOpenChange={setIsJoinOperatorsModalOpen}
+    >
+      <div className="w-full [&>button]:block [&>button]:ml-auto">
+        <ModalTrigger asChild>
+          <Button
+            className={cx('mb-4 ml-auto -mt-14', {
+              hidden: isActiveAccountInOperatorMap,
+            })}
+            variant="utility"
+            size="sm"
+            leftIcon={
+              <AddLineIcon
+                size="md"
+                className="fill-current dark:fill-current"
+              />
+            }
+            onClick={() => setIsJoinOperatorsModalOpen(true)}
+            disabledTooltip={disabledTooltip}
+            // Disable the button until it is known whether the current account
+            // is an EVM account or not.
+            isDisabled={isEvm ?? true}
+            as="span"
+          >
+            Join Operators
+          </Button>
+        </ModalTrigger>
+
+        <OperatorsTableUI
+          globalFilter={globalFilter}
+          onGlobalFilterChange={setGlobalFilter}
+          data={operators}
+          RestakeOperatorAction={() => null}
+          isLoading={isLoadingOperatorMap || isLoadingBlueprintCounts}
+        />
+
+        <JoinOperatorsModal setIsOpen={setIsJoinOperatorsModalOpen} />
+      </div>
+    </Modal>
   );
 };
 
