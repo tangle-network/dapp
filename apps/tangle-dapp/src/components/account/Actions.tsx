@@ -3,6 +3,7 @@ import {
   CoinsStackedLineIcon,
   FaucetIcon,
   GiftLineIcon,
+  GitHubFill,
   LockUnlockLineIcon,
   SendPlanLineIcon,
 } from '@tangle-network/icons';
@@ -22,6 +23,8 @@ import { PagePath, StaticSearchQueryPath } from '../../types';
 import formatTangleBalance from '../../utils/formatTangleBalance';
 import ActionItem from './ActionItem';
 import WithdrawEvmBalanceAction from './WithdrawEvmBalanceAction';
+import useGitHubCredits from '../../data/github/useGitHubCredits';
+import { ClaimGitHubCreditsModal } from '../../features/claimGitHubCredits';
 
 const Actions: FC = () => {
   const { nativeTokenSymbol } = useNetworkStore();
@@ -29,14 +32,20 @@ const Actions: FC = () => {
   const activeAccountAddress = useActiveAccountAddress();
   const { transferable: transferableBalance } = useBalances();
   const [isTransferModalOpen, setIsTransferModalOpen] = useState(false);
+  const [isGitHubCreditsModalOpen, setIsGitHubCreditsModalOpen] = useState(false);
 
   const { isEligible: isAirdropEligible } = useAirdropEligibility();
 
-  const { data } = useTotalPayoutRewards();
+  const { data: payoutData } = useTotalPayoutRewards();
+  const { data: githubCreditsData, isPending: isLoadingGitHubCredits } = useGitHubCredits();
 
   const isPayoutsAvailable = useMemo(() => {
-    return !data.isZero();
-  }, [data]);
+    return !payoutData.isZero();
+  }, [payoutData]);
+
+  const hasGitHubCredits = useMemo(() => {
+    return githubCreditsData?.amount && !githubCreditsData.amount.isZero();
+  }, [githubCreditsData]);
 
   const {
     isVesting,
@@ -90,6 +99,21 @@ const Actions: FC = () => {
         }
       />
 
+      <ActionItem
+        label="GitHub"
+        hasNotificationDot={!!hasGitHubCredits}
+        isDisabled={isLoadingGitHubCredits || !hasGitHubCredits || activeAccountAddress === null}
+        Icon={GitHubFill}
+        onClick={() => setIsGitHubCreditsModalOpen(true)}
+        tooltip={
+          hasGitHubCredits
+            ? 'You have credits available to claim. Associate them with your GitHub account.'
+            : isLoadingGitHubCredits
+            ? 'Loading GitHub credits data...'
+            : 'No GitHub credits available.'
+        }
+      />
+
       {isAirdropEligible === null && isAirdropEligible && (
         <ActionItem
           label="Airdrop"
@@ -140,6 +164,11 @@ const Actions: FC = () => {
       <TransferTxModal
         isModalOpen={isTransferModalOpen}
         setIsModalOpen={setIsTransferModalOpen}
+      />
+
+      <ClaimGitHubCreditsModal
+        isOpen={isGitHubCreditsModalOpen}
+        setIsOpen={setIsGitHubCreditsModalOpen}
       />
     </div>
   );
