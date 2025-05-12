@@ -1,38 +1,50 @@
-/* eslint-disable */
 import { DocumentTypeDecoration } from '@graphql-typed-document-node/core';
 export type Maybe<T> = T | null;
 export type InputMaybe<T> = Maybe<T>;
-export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
-export type MakeOptional<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]?: Maybe<T[SubKey]> };
-export type MakeMaybe<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]: Maybe<T[SubKey]> };
-export type MakeEmpty<T extends { [key: string]: unknown }, K extends keyof T> = { [_ in K]?: never };
-export type Incremental<T> = T | { [P in keyof T]?: P extends ' $fragmentName' | '__typename' ? T[P] : never };
+export type Exact<T extends { [key: string]: unknown }> = {
+  [K in keyof T]: T[K];
+};
+export type MakeOptional<T, K extends keyof T> = Omit<T, K> & {
+  [SubKey in K]?: Maybe<T[SubKey]>;
+};
+export type MakeMaybe<T, K extends keyof T> = Omit<T, K> & {
+  [SubKey in K]: Maybe<T[SubKey]>;
+};
+export type MakeEmpty<
+  T extends { [key: string]: unknown },
+  K extends keyof T,
+> = { [_ in K]?: never };
+export type Incremental<T> =
+  | T
+  | {
+      [P in keyof T]?: P extends ' $fragmentName' | '__typename' ? T[P] : never;
+    };
 /** All built-in and custom scalars, mapped to their actual values */
 export type Scalars = {
-  ID: { input: string; output: string; }
-  String: { input: string; output: string; }
-  Boolean: { input: boolean; output: boolean; }
-  Int: { input: number; output: number; }
-  Float: { input: number; output: number; }
+  ID: { input: string; output: string };
+  String: { input: string; output: string };
+  Boolean: { input: boolean; output: boolean };
+  Int: { input: number; output: number };
+  Float: { input: number; output: number };
   /** A floating point number that requires more precision than IEEE 754 binary 64 */
-  BigFloat: { input: string; output: string; }
+  BigFloat: { input: string; output: string };
   /**
    * A signed eight-byte integer. The upper big integer values are greater than the
    * max value for a JavaScript number. Therefore all big integers will be output as
    * strings and not numbers.
    */
-  BigInt: { input: any; output: any; }
+  BigInt: { input: any; output: any };
   /** A location in a connection that can be used for resuming pagination. */
-  Cursor: { input: any; output: any; }
+  Cursor: { input: any; output: any };
   /** The day, does not include a time. */
-  Date: { input: any; output: any; }
+  Date: { input: any; output: any };
   /**
    * A point in time as described by the [ISO
    * 8601](https://en.wikipedia.org/wiki/ISO_8601) standard. May or may not include a timezone.
    */
-  Datetime: { input: any; output: any; }
+  Datetime: { input: any; output: any };
   /** The `JSON` scalar type represents JSON values as specified by [ECMA-404](http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf). */
-  JSON: { input: any; output: any; }
+  JSON: { input: any; output: any };
 };
 
 export type Account = Node & {
@@ -77,7 +89,6 @@ export type Account = Node & {
   totalPoints: Scalars['BigFloat']['output'];
 };
 
-
 export type AccountBlueprintsArgs = {
   after?: InputMaybe<Scalars['Cursor']['input']>;
   before?: InputMaybe<Scalars['Cursor']['input']>;
@@ -90,7 +101,6 @@ export type AccountBlueprintsArgs = {
   orderBy?: InputMaybe<Array<BlueprintsOrderBy>>;
   orderByNull?: InputMaybe<NullOrder>;
 };
-
 
 export type AccountBlueprintsByServiceOwnerIdAndBlueprintIdArgs = {
   after?: InputMaybe<Scalars['Cursor']['input']>;
@@ -105,7 +115,6 @@ export type AccountBlueprintsByServiceOwnerIdAndBlueprintIdArgs = {
   orderByNull?: InputMaybe<NullOrder>;
 };
 
-
 export type AccountBlueprintsByServiceRequestOwnerIdAndBlueprintIdArgs = {
   after?: InputMaybe<Scalars['Cursor']['input']>;
   before?: InputMaybe<Scalars['Cursor']['input']>;
@@ -118,7 +127,6 @@ export type AccountBlueprintsByServiceRequestOwnerIdAndBlueprintIdArgs = {
   orderBy?: InputMaybe<Array<BlueprintsOrderBy>>;
   orderByNull?: InputMaybe<NullOrder>;
 };
-
 
 export type AccountDelegatorsArgs = {
   after?: InputMaybe<Scalars['Cursor']['input']>;
@@ -133,7 +141,6 @@ export type AccountDelegatorsArgs = {
   orderByNull?: InputMaybe<NullOrder>;
 };
 
-
 export type AccountJobCallsArgs = {
   after?: InputMaybe<Scalars['Cursor']['input']>;
   before?: InputMaybe<Scalars['Cursor']['input']>;
@@ -146,7 +153,6 @@ export type AccountJobCallsArgs = {
   orderBy?: InputMaybe<Array<JobCallsOrderBy>>;
   orderByNull?: InputMaybe<NullOrder>;
 };
-
 
 export type AccountLstPoolMembersArgs = {
   after?: InputMaybe<Scalars['Cursor']['input']>;
@@ -161,7 +167,6 @@ export type AccountLstPoolMembersArgs = {
   orderByNull?: InputMaybe<NullOrder>;
 };
 
-
 export type AccountLstPoolsByLstPoolMemberAccountIdAndLstPoolIdArgs = {
   after?: InputMaybe<Scalars['Cursor']['input']>;
   before?: InputMaybe<Scalars['Cursor']['input']>;
@@ -174,7 +179,6 @@ export type AccountLstPoolsByLstPoolMemberAccountIdAndLstPoolIdArgs = {
   orderBy?: InputMaybe<Array<LstPoolsOrderBy>>;
   orderByNull?: InputMaybe<NullOrder>;
 };
-
 
 export type AccountOperatorsArgs = {
   after?: InputMaybe<Scalars['Cursor']['input']>;
@@ -189,7 +193,6 @@ export type AccountOperatorsArgs = {
   orderByNull?: InputMaybe<NullOrder>;
 };
 
-
 export type AccountPointsAccrualsArgs = {
   after?: InputMaybe<Scalars['Cursor']['input']>;
   before?: InputMaybe<Scalars['Cursor']['input']>;
@@ -202,7 +205,6 @@ export type AccountPointsAccrualsArgs = {
   orderBy?: InputMaybe<Array<PointsAccrualRatesOrderBy>>;
   orderByNull?: InputMaybe<NullOrder>;
 };
-
 
 export type AccountServiceRequestsArgs = {
   after?: InputMaybe<Scalars['Cursor']['input']>;
@@ -217,7 +219,6 @@ export type AccountServiceRequestsArgs = {
   orderByNull?: InputMaybe<NullOrder>;
 };
 
-
 export type AccountServiceRequestsByServiceOwnerIdAndServiceRequestIdArgs = {
   after?: InputMaybe<Scalars['Cursor']['input']>;
   before?: InputMaybe<Scalars['Cursor']['input']>;
@@ -230,7 +231,6 @@ export type AccountServiceRequestsByServiceOwnerIdAndServiceRequestIdArgs = {
   orderBy?: InputMaybe<Array<ServiceRequestsOrderBy>>;
   orderByNull?: InputMaybe<NullOrder>;
 };
-
 
 export type AccountServicesArgs = {
   after?: InputMaybe<Scalars['Cursor']['input']>;
@@ -245,7 +245,6 @@ export type AccountServicesArgs = {
   orderByNull?: InputMaybe<NullOrder>;
 };
 
-
 export type AccountServicesByJobCallCallerIdAndServiceIdArgs = {
   after?: InputMaybe<Scalars['Cursor']['input']>;
   before?: InputMaybe<Scalars['Cursor']['input']>;
@@ -258,7 +257,6 @@ export type AccountServicesByJobCallCallerIdAndServiceIdArgs = {
   orderBy?: InputMaybe<Array<ServicesOrderBy>>;
   orderByNull?: InputMaybe<NullOrder>;
 };
-
 
 export type AccountSnapshotsArgs = {
   after?: InputMaybe<Scalars['Cursor']['input']>;
@@ -307,28 +305,29 @@ export type AccountAverageAggregates = {
 };
 
 /** A connection to a list of `Blueprint` values, with data from `Service`. */
-export type AccountBlueprintsByServiceOwnerIdAndBlueprintIdManyToManyConnection = {
-  __typename?: 'AccountBlueprintsByServiceOwnerIdAndBlueprintIdManyToManyConnection';
-  /** Aggregates across the matching connection (ignoring before/after/first/last/offset) */
-  aggregates?: Maybe<BlueprintAggregates>;
-  /** A list of edges which contains the `Blueprint`, info from the `Service`, and the cursor to aid in pagination. */
-  edges: Array<AccountBlueprintsByServiceOwnerIdAndBlueprintIdManyToManyEdge>;
-  /** Grouped aggregates across the matching connection (ignoring before/after/first/last/offset) */
-  groupedAggregates?: Maybe<Array<BlueprintAggregates>>;
-  /** A list of `Blueprint` objects. */
-  nodes: Array<Maybe<Blueprint>>;
-  /** Information to aid in pagination. */
-  pageInfo: PageInfo;
-  /** The count of *all* `Blueprint` you could get from the connection. */
-  totalCount: Scalars['Int']['output'];
-};
-
+export type AccountBlueprintsByServiceOwnerIdAndBlueprintIdManyToManyConnection =
+  {
+    __typename?: 'AccountBlueprintsByServiceOwnerIdAndBlueprintIdManyToManyConnection';
+    /** Aggregates across the matching connection (ignoring before/after/first/last/offset) */
+    aggregates?: Maybe<BlueprintAggregates>;
+    /** A list of edges which contains the `Blueprint`, info from the `Service`, and the cursor to aid in pagination. */
+    edges: Array<AccountBlueprintsByServiceOwnerIdAndBlueprintIdManyToManyEdge>;
+    /** Grouped aggregates across the matching connection (ignoring before/after/first/last/offset) */
+    groupedAggregates?: Maybe<Array<BlueprintAggregates>>;
+    /** A list of `Blueprint` objects. */
+    nodes: Array<Maybe<Blueprint>>;
+    /** Information to aid in pagination. */
+    pageInfo: PageInfo;
+    /** The count of *all* `Blueprint` you could get from the connection. */
+    totalCount: Scalars['Int']['output'];
+  };
 
 /** A connection to a list of `Blueprint` values, with data from `Service`. */
-export type AccountBlueprintsByServiceOwnerIdAndBlueprintIdManyToManyConnectionGroupedAggregatesArgs = {
-  groupBy: Array<BlueprintsGroupBy>;
-  having?: InputMaybe<BlueprintsHavingInput>;
-};
+export type AccountBlueprintsByServiceOwnerIdAndBlueprintIdManyToManyConnectionGroupedAggregatesArgs =
+  {
+    groupBy: Array<BlueprintsGroupBy>;
+    having?: InputMaybe<BlueprintsHavingInput>;
+  };
 
 /** A `Blueprint` edge in the connection, with data from `Service`. */
 export type AccountBlueprintsByServiceOwnerIdAndBlueprintIdManyToManyEdge = {
@@ -341,70 +340,72 @@ export type AccountBlueprintsByServiceOwnerIdAndBlueprintIdManyToManyEdge = {
   services: ServicesConnection;
 };
 
-
 /** A `Blueprint` edge in the connection, with data from `Service`. */
-export type AccountBlueprintsByServiceOwnerIdAndBlueprintIdManyToManyEdgeServicesArgs = {
-  after?: InputMaybe<Scalars['Cursor']['input']>;
-  before?: InputMaybe<Scalars['Cursor']['input']>;
-  blockHeight?: InputMaybe<Scalars['String']['input']>;
-  distinct?: InputMaybe<Array<InputMaybe<Services_Distinct_Enum>>>;
-  filter?: InputMaybe<ServiceFilter>;
-  first?: InputMaybe<Scalars['Int']['input']>;
-  last?: InputMaybe<Scalars['Int']['input']>;
-  offset?: InputMaybe<Scalars['Int']['input']>;
-  orderBy?: InputMaybe<Array<ServicesOrderBy>>;
-  orderByNull?: InputMaybe<NullOrder>;
-};
+export type AccountBlueprintsByServiceOwnerIdAndBlueprintIdManyToManyEdgeServicesArgs =
+  {
+    after?: InputMaybe<Scalars['Cursor']['input']>;
+    before?: InputMaybe<Scalars['Cursor']['input']>;
+    blockHeight?: InputMaybe<Scalars['String']['input']>;
+    distinct?: InputMaybe<Array<InputMaybe<Services_Distinct_Enum>>>;
+    filter?: InputMaybe<ServiceFilter>;
+    first?: InputMaybe<Scalars['Int']['input']>;
+    last?: InputMaybe<Scalars['Int']['input']>;
+    offset?: InputMaybe<Scalars['Int']['input']>;
+    orderBy?: InputMaybe<Array<ServicesOrderBy>>;
+    orderByNull?: InputMaybe<NullOrder>;
+  };
 
 /** A connection to a list of `Blueprint` values, with data from `ServiceRequest`. */
-export type AccountBlueprintsByServiceRequestOwnerIdAndBlueprintIdManyToManyConnection = {
-  __typename?: 'AccountBlueprintsByServiceRequestOwnerIdAndBlueprintIdManyToManyConnection';
-  /** Aggregates across the matching connection (ignoring before/after/first/last/offset) */
-  aggregates?: Maybe<BlueprintAggregates>;
-  /** A list of edges which contains the `Blueprint`, info from the `ServiceRequest`, and the cursor to aid in pagination. */
-  edges: Array<AccountBlueprintsByServiceRequestOwnerIdAndBlueprintIdManyToManyEdge>;
-  /** Grouped aggregates across the matching connection (ignoring before/after/first/last/offset) */
-  groupedAggregates?: Maybe<Array<BlueprintAggregates>>;
-  /** A list of `Blueprint` objects. */
-  nodes: Array<Maybe<Blueprint>>;
-  /** Information to aid in pagination. */
-  pageInfo: PageInfo;
-  /** The count of *all* `Blueprint` you could get from the connection. */
-  totalCount: Scalars['Int']['output'];
-};
-
+export type AccountBlueprintsByServiceRequestOwnerIdAndBlueprintIdManyToManyConnection =
+  {
+    __typename?: 'AccountBlueprintsByServiceRequestOwnerIdAndBlueprintIdManyToManyConnection';
+    /** Aggregates across the matching connection (ignoring before/after/first/last/offset) */
+    aggregates?: Maybe<BlueprintAggregates>;
+    /** A list of edges which contains the `Blueprint`, info from the `ServiceRequest`, and the cursor to aid in pagination. */
+    edges: Array<AccountBlueprintsByServiceRequestOwnerIdAndBlueprintIdManyToManyEdge>;
+    /** Grouped aggregates across the matching connection (ignoring before/after/first/last/offset) */
+    groupedAggregates?: Maybe<Array<BlueprintAggregates>>;
+    /** A list of `Blueprint` objects. */
+    nodes: Array<Maybe<Blueprint>>;
+    /** Information to aid in pagination. */
+    pageInfo: PageInfo;
+    /** The count of *all* `Blueprint` you could get from the connection. */
+    totalCount: Scalars['Int']['output'];
+  };
 
 /** A connection to a list of `Blueprint` values, with data from `ServiceRequest`. */
-export type AccountBlueprintsByServiceRequestOwnerIdAndBlueprintIdManyToManyConnectionGroupedAggregatesArgs = {
-  groupBy: Array<BlueprintsGroupBy>;
-  having?: InputMaybe<BlueprintsHavingInput>;
-};
+export type AccountBlueprintsByServiceRequestOwnerIdAndBlueprintIdManyToManyConnectionGroupedAggregatesArgs =
+  {
+    groupBy: Array<BlueprintsGroupBy>;
+    having?: InputMaybe<BlueprintsHavingInput>;
+  };
 
 /** A `Blueprint` edge in the connection, with data from `ServiceRequest`. */
-export type AccountBlueprintsByServiceRequestOwnerIdAndBlueprintIdManyToManyEdge = {
-  __typename?: 'AccountBlueprintsByServiceRequestOwnerIdAndBlueprintIdManyToManyEdge';
-  /** A cursor for use in pagination. */
-  cursor?: Maybe<Scalars['Cursor']['output']>;
-  /** The `Blueprint` at the end of the edge. */
-  node?: Maybe<Blueprint>;
-  /** Reads and enables pagination through a set of `ServiceRequest`. */
-  serviceRequests: ServiceRequestsConnection;
-};
-
+export type AccountBlueprintsByServiceRequestOwnerIdAndBlueprintIdManyToManyEdge =
+  {
+    __typename?: 'AccountBlueprintsByServiceRequestOwnerIdAndBlueprintIdManyToManyEdge';
+    /** A cursor for use in pagination. */
+    cursor?: Maybe<Scalars['Cursor']['output']>;
+    /** The `Blueprint` at the end of the edge. */
+    node?: Maybe<Blueprint>;
+    /** Reads and enables pagination through a set of `ServiceRequest`. */
+    serviceRequests: ServiceRequestsConnection;
+  };
 
 /** A `Blueprint` edge in the connection, with data from `ServiceRequest`. */
-export type AccountBlueprintsByServiceRequestOwnerIdAndBlueprintIdManyToManyEdgeServiceRequestsArgs = {
-  after?: InputMaybe<Scalars['Cursor']['input']>;
-  before?: InputMaybe<Scalars['Cursor']['input']>;
-  blockHeight?: InputMaybe<Scalars['String']['input']>;
-  distinct?: InputMaybe<Array<InputMaybe<Service_Requests_Distinct_Enum>>>;
-  filter?: InputMaybe<ServiceRequestFilter>;
-  first?: InputMaybe<Scalars['Int']['input']>;
-  last?: InputMaybe<Scalars['Int']['input']>;
-  offset?: InputMaybe<Scalars['Int']['input']>;
-  orderBy?: InputMaybe<Array<ServiceRequestsOrderBy>>;
-  orderByNull?: InputMaybe<NullOrder>;
-};
+export type AccountBlueprintsByServiceRequestOwnerIdAndBlueprintIdManyToManyEdgeServiceRequestsArgs =
+  {
+    after?: InputMaybe<Scalars['Cursor']['input']>;
+    before?: InputMaybe<Scalars['Cursor']['input']>;
+    blockHeight?: InputMaybe<Scalars['String']['input']>;
+    distinct?: InputMaybe<Array<InputMaybe<Service_Requests_Distinct_Enum>>>;
+    filter?: InputMaybe<ServiceRequestFilter>;
+    first?: InputMaybe<Scalars['Int']['input']>;
+    last?: InputMaybe<Scalars['Int']['input']>;
+    offset?: InputMaybe<Scalars['Int']['input']>;
+    orderBy?: InputMaybe<Array<ServiceRequestsOrderBy>>;
+    orderByNull?: InputMaybe<NullOrder>;
+  };
 
 export type AccountDistinctCountAggregates = {
   __typename?: 'AccountDistinctCountAggregates';
@@ -477,54 +478,56 @@ export type AccountFilter = {
 };
 
 /** A connection to a list of `LstPool` values, with data from `LstPoolMember`. */
-export type AccountLstPoolsByLstPoolMemberAccountIdAndLstPoolIdManyToManyConnection = {
-  __typename?: 'AccountLstPoolsByLstPoolMemberAccountIdAndLstPoolIdManyToManyConnection';
-  /** Aggregates across the matching connection (ignoring before/after/first/last/offset) */
-  aggregates?: Maybe<LstPoolAggregates>;
-  /** A list of edges which contains the `LstPool`, info from the `LstPoolMember`, and the cursor to aid in pagination. */
-  edges: Array<AccountLstPoolsByLstPoolMemberAccountIdAndLstPoolIdManyToManyEdge>;
-  /** Grouped aggregates across the matching connection (ignoring before/after/first/last/offset) */
-  groupedAggregates?: Maybe<Array<LstPoolAggregates>>;
-  /** A list of `LstPool` objects. */
-  nodes: Array<Maybe<LstPool>>;
-  /** Information to aid in pagination. */
-  pageInfo: PageInfo;
-  /** The count of *all* `LstPool` you could get from the connection. */
-  totalCount: Scalars['Int']['output'];
-};
-
+export type AccountLstPoolsByLstPoolMemberAccountIdAndLstPoolIdManyToManyConnection =
+  {
+    __typename?: 'AccountLstPoolsByLstPoolMemberAccountIdAndLstPoolIdManyToManyConnection';
+    /** Aggregates across the matching connection (ignoring before/after/first/last/offset) */
+    aggregates?: Maybe<LstPoolAggregates>;
+    /** A list of edges which contains the `LstPool`, info from the `LstPoolMember`, and the cursor to aid in pagination. */
+    edges: Array<AccountLstPoolsByLstPoolMemberAccountIdAndLstPoolIdManyToManyEdge>;
+    /** Grouped aggregates across the matching connection (ignoring before/after/first/last/offset) */
+    groupedAggregates?: Maybe<Array<LstPoolAggregates>>;
+    /** A list of `LstPool` objects. */
+    nodes: Array<Maybe<LstPool>>;
+    /** Information to aid in pagination. */
+    pageInfo: PageInfo;
+    /** The count of *all* `LstPool` you could get from the connection. */
+    totalCount: Scalars['Int']['output'];
+  };
 
 /** A connection to a list of `LstPool` values, with data from `LstPoolMember`. */
-export type AccountLstPoolsByLstPoolMemberAccountIdAndLstPoolIdManyToManyConnectionGroupedAggregatesArgs = {
-  groupBy: Array<LstPoolsGroupBy>;
-  having?: InputMaybe<LstPoolsHavingInput>;
-};
+export type AccountLstPoolsByLstPoolMemberAccountIdAndLstPoolIdManyToManyConnectionGroupedAggregatesArgs =
+  {
+    groupBy: Array<LstPoolsGroupBy>;
+    having?: InputMaybe<LstPoolsHavingInput>;
+  };
 
 /** A `LstPool` edge in the connection, with data from `LstPoolMember`. */
-export type AccountLstPoolsByLstPoolMemberAccountIdAndLstPoolIdManyToManyEdge = {
-  __typename?: 'AccountLstPoolsByLstPoolMemberAccountIdAndLstPoolIdManyToManyEdge';
-  /** A cursor for use in pagination. */
-  cursor?: Maybe<Scalars['Cursor']['output']>;
-  /** Reads and enables pagination through a set of `LstPoolMember`. */
-  members: LstPoolMembersConnection;
-  /** The `LstPool` at the end of the edge. */
-  node?: Maybe<LstPool>;
-};
-
+export type AccountLstPoolsByLstPoolMemberAccountIdAndLstPoolIdManyToManyEdge =
+  {
+    __typename?: 'AccountLstPoolsByLstPoolMemberAccountIdAndLstPoolIdManyToManyEdge';
+    /** A cursor for use in pagination. */
+    cursor?: Maybe<Scalars['Cursor']['output']>;
+    /** Reads and enables pagination through a set of `LstPoolMember`. */
+    members: LstPoolMembersConnection;
+    /** The `LstPool` at the end of the edge. */
+    node?: Maybe<LstPool>;
+  };
 
 /** A `LstPool` edge in the connection, with data from `LstPoolMember`. */
-export type AccountLstPoolsByLstPoolMemberAccountIdAndLstPoolIdManyToManyEdgeMembersArgs = {
-  after?: InputMaybe<Scalars['Cursor']['input']>;
-  before?: InputMaybe<Scalars['Cursor']['input']>;
-  blockHeight?: InputMaybe<Scalars['String']['input']>;
-  distinct?: InputMaybe<Array<InputMaybe<Lst_Pool_Members_Distinct_Enum>>>;
-  filter?: InputMaybe<LstPoolMemberFilter>;
-  first?: InputMaybe<Scalars['Int']['input']>;
-  last?: InputMaybe<Scalars['Int']['input']>;
-  offset?: InputMaybe<Scalars['Int']['input']>;
-  orderBy?: InputMaybe<Array<LstPoolMembersOrderBy>>;
-  orderByNull?: InputMaybe<NullOrder>;
-};
+export type AccountLstPoolsByLstPoolMemberAccountIdAndLstPoolIdManyToManyEdgeMembersArgs =
+  {
+    after?: InputMaybe<Scalars['Cursor']['input']>;
+    before?: InputMaybe<Scalars['Cursor']['input']>;
+    blockHeight?: InputMaybe<Scalars['String']['input']>;
+    distinct?: InputMaybe<Array<InputMaybe<Lst_Pool_Members_Distinct_Enum>>>;
+    filter?: InputMaybe<LstPoolMemberFilter>;
+    first?: InputMaybe<Scalars['Int']['input']>;
+    last?: InputMaybe<Scalars['Int']['input']>;
+    offset?: InputMaybe<Scalars['Int']['input']>;
+    orderBy?: InputMaybe<Array<LstPoolMembersOrderBy>>;
+    orderByNull?: InputMaybe<NullOrder>;
+  };
 
 export type AccountMaxAggregates = {
   __typename?: 'AccountMaxAggregates';
@@ -547,54 +550,56 @@ export type AccountMinAggregates = {
 };
 
 /** A connection to a list of `ServiceRequest` values, with data from `Service`. */
-export type AccountServiceRequestsByServiceOwnerIdAndServiceRequestIdManyToManyConnection = {
-  __typename?: 'AccountServiceRequestsByServiceOwnerIdAndServiceRequestIdManyToManyConnection';
-  /** Aggregates across the matching connection (ignoring before/after/first/last/offset) */
-  aggregates?: Maybe<ServiceRequestAggregates>;
-  /** A list of edges which contains the `ServiceRequest`, info from the `Service`, and the cursor to aid in pagination. */
-  edges: Array<AccountServiceRequestsByServiceOwnerIdAndServiceRequestIdManyToManyEdge>;
-  /** Grouped aggregates across the matching connection (ignoring before/after/first/last/offset) */
-  groupedAggregates?: Maybe<Array<ServiceRequestAggregates>>;
-  /** A list of `ServiceRequest` objects. */
-  nodes: Array<Maybe<ServiceRequest>>;
-  /** Information to aid in pagination. */
-  pageInfo: PageInfo;
-  /** The count of *all* `ServiceRequest` you could get from the connection. */
-  totalCount: Scalars['Int']['output'];
-};
-
+export type AccountServiceRequestsByServiceOwnerIdAndServiceRequestIdManyToManyConnection =
+  {
+    __typename?: 'AccountServiceRequestsByServiceOwnerIdAndServiceRequestIdManyToManyConnection';
+    /** Aggregates across the matching connection (ignoring before/after/first/last/offset) */
+    aggregates?: Maybe<ServiceRequestAggregates>;
+    /** A list of edges which contains the `ServiceRequest`, info from the `Service`, and the cursor to aid in pagination. */
+    edges: Array<AccountServiceRequestsByServiceOwnerIdAndServiceRequestIdManyToManyEdge>;
+    /** Grouped aggregates across the matching connection (ignoring before/after/first/last/offset) */
+    groupedAggregates?: Maybe<Array<ServiceRequestAggregates>>;
+    /** A list of `ServiceRequest` objects. */
+    nodes: Array<Maybe<ServiceRequest>>;
+    /** Information to aid in pagination. */
+    pageInfo: PageInfo;
+    /** The count of *all* `ServiceRequest` you could get from the connection. */
+    totalCount: Scalars['Int']['output'];
+  };
 
 /** A connection to a list of `ServiceRequest` values, with data from `Service`. */
-export type AccountServiceRequestsByServiceOwnerIdAndServiceRequestIdManyToManyConnectionGroupedAggregatesArgs = {
-  groupBy: Array<ServiceRequestsGroupBy>;
-  having?: InputMaybe<ServiceRequestsHavingInput>;
-};
+export type AccountServiceRequestsByServiceOwnerIdAndServiceRequestIdManyToManyConnectionGroupedAggregatesArgs =
+  {
+    groupBy: Array<ServiceRequestsGroupBy>;
+    having?: InputMaybe<ServiceRequestsHavingInput>;
+  };
 
 /** A `ServiceRequest` edge in the connection, with data from `Service`. */
-export type AccountServiceRequestsByServiceOwnerIdAndServiceRequestIdManyToManyEdge = {
-  __typename?: 'AccountServiceRequestsByServiceOwnerIdAndServiceRequestIdManyToManyEdge';
-  /** A cursor for use in pagination. */
-  cursor?: Maybe<Scalars['Cursor']['output']>;
-  /** The `ServiceRequest` at the end of the edge. */
-  node?: Maybe<ServiceRequest>;
-  /** Reads and enables pagination through a set of `Service`. */
-  services: ServicesConnection;
-};
-
+export type AccountServiceRequestsByServiceOwnerIdAndServiceRequestIdManyToManyEdge =
+  {
+    __typename?: 'AccountServiceRequestsByServiceOwnerIdAndServiceRequestIdManyToManyEdge';
+    /** A cursor for use in pagination. */
+    cursor?: Maybe<Scalars['Cursor']['output']>;
+    /** The `ServiceRequest` at the end of the edge. */
+    node?: Maybe<ServiceRequest>;
+    /** Reads and enables pagination through a set of `Service`. */
+    services: ServicesConnection;
+  };
 
 /** A `ServiceRequest` edge in the connection, with data from `Service`. */
-export type AccountServiceRequestsByServiceOwnerIdAndServiceRequestIdManyToManyEdgeServicesArgs = {
-  after?: InputMaybe<Scalars['Cursor']['input']>;
-  before?: InputMaybe<Scalars['Cursor']['input']>;
-  blockHeight?: InputMaybe<Scalars['String']['input']>;
-  distinct?: InputMaybe<Array<InputMaybe<Services_Distinct_Enum>>>;
-  filter?: InputMaybe<ServiceFilter>;
-  first?: InputMaybe<Scalars['Int']['input']>;
-  last?: InputMaybe<Scalars['Int']['input']>;
-  offset?: InputMaybe<Scalars['Int']['input']>;
-  orderBy?: InputMaybe<Array<ServicesOrderBy>>;
-  orderByNull?: InputMaybe<NullOrder>;
-};
+export type AccountServiceRequestsByServiceOwnerIdAndServiceRequestIdManyToManyEdgeServicesArgs =
+  {
+    after?: InputMaybe<Scalars['Cursor']['input']>;
+    before?: InputMaybe<Scalars['Cursor']['input']>;
+    blockHeight?: InputMaybe<Scalars['String']['input']>;
+    distinct?: InputMaybe<Array<InputMaybe<Services_Distinct_Enum>>>;
+    filter?: InputMaybe<ServiceFilter>;
+    first?: InputMaybe<Scalars['Int']['input']>;
+    last?: InputMaybe<Scalars['Int']['input']>;
+    offset?: InputMaybe<Scalars['Int']['input']>;
+    orderBy?: InputMaybe<Array<ServicesOrderBy>>;
+    orderByNull?: InputMaybe<NullOrder>;
+  };
 
 /** A connection to a list of `Service` values, with data from `JobCall`. */
 export type AccountServicesByJobCallCallerIdAndServiceIdManyToManyConnection = {
@@ -613,12 +618,12 @@ export type AccountServicesByJobCallCallerIdAndServiceIdManyToManyConnection = {
   totalCount: Scalars['Int']['output'];
 };
 
-
 /** A connection to a list of `Service` values, with data from `JobCall`. */
-export type AccountServicesByJobCallCallerIdAndServiceIdManyToManyConnectionGroupedAggregatesArgs = {
-  groupBy: Array<ServicesGroupBy>;
-  having?: InputMaybe<ServicesHavingInput>;
-};
+export type AccountServicesByJobCallCallerIdAndServiceIdManyToManyConnectionGroupedAggregatesArgs =
+  {
+    groupBy: Array<ServicesGroupBy>;
+    having?: InputMaybe<ServicesHavingInput>;
+  };
 
 /** A `Service` edge in the connection, with data from `JobCall`. */
 export type AccountServicesByJobCallCallerIdAndServiceIdManyToManyEdge = {
@@ -631,20 +636,20 @@ export type AccountServicesByJobCallCallerIdAndServiceIdManyToManyEdge = {
   node?: Maybe<Service>;
 };
 
-
 /** A `Service` edge in the connection, with data from `JobCall`. */
-export type AccountServicesByJobCallCallerIdAndServiceIdManyToManyEdgeJobCallsArgs = {
-  after?: InputMaybe<Scalars['Cursor']['input']>;
-  before?: InputMaybe<Scalars['Cursor']['input']>;
-  blockHeight?: InputMaybe<Scalars['String']['input']>;
-  distinct?: InputMaybe<Array<InputMaybe<Job_Calls_Distinct_Enum>>>;
-  filter?: InputMaybe<JobCallFilter>;
-  first?: InputMaybe<Scalars['Int']['input']>;
-  last?: InputMaybe<Scalars['Int']['input']>;
-  offset?: InputMaybe<Scalars['Int']['input']>;
-  orderBy?: InputMaybe<Array<JobCallsOrderBy>>;
-  orderByNull?: InputMaybe<NullOrder>;
-};
+export type AccountServicesByJobCallCallerIdAndServiceIdManyToManyEdgeJobCallsArgs =
+  {
+    after?: InputMaybe<Scalars['Cursor']['input']>;
+    before?: InputMaybe<Scalars['Cursor']['input']>;
+    blockHeight?: InputMaybe<Scalars['String']['input']>;
+    distinct?: InputMaybe<Array<InputMaybe<Job_Calls_Distinct_Enum>>>;
+    filter?: InputMaybe<JobCallFilter>;
+    first?: InputMaybe<Scalars['Int']['input']>;
+    last?: InputMaybe<Scalars['Int']['input']>;
+    offset?: InputMaybe<Scalars['Int']['input']>;
+    orderBy?: InputMaybe<Array<JobCallsOrderBy>>;
+    orderByNull?: InputMaybe<NullOrder>;
+  };
 
 export type AccountStddevPopulationAggregates = {
   __typename?: 'AccountStddevPopulationAggregates';
@@ -821,7 +826,6 @@ export type AccountsConnection = {
   totalCount: Scalars['Int']['output'];
 };
 
-
 /** A connection to a list of `Account` values. */
 export type AccountsConnectionGroupedAggregatesArgs = {
   groupBy: Array<AccountsGroupBy>;
@@ -842,7 +846,7 @@ export enum AccountsGroupBy {
   CreatedAt = 'CREATED_AT',
   Id = 'ID',
   LastUpdateAt = 'LAST_UPDATE_AT',
-  TotalPoints = 'TOTAL_POINTS'
+  TotalPoints = 'TOTAL_POINTS',
 }
 
 export type AccountsHavingAverageInput = {
@@ -2132,7 +2136,7 @@ export enum AccountsOrderBy {
   SnapshotsVarianceSampleValidatorRegistrationPointsAsc = 'SNAPSHOTS_VARIANCE_SAMPLE_VALIDATOR_REGISTRATION_POINTS_ASC',
   SnapshotsVarianceSampleValidatorRegistrationPointsDesc = 'SNAPSHOTS_VARIANCE_SAMPLE_VALIDATOR_REGISTRATION_POINTS_DESC',
   TotalPointsAsc = 'TOTAL_POINTS_ASC',
-  TotalPointsDesc = 'TOTAL_POINTS_DESC'
+  TotalPointsDesc = 'TOTAL_POINTS_DESC',
 }
 
 /** A filter to be used against BigFloat fields. All fields are combined with a logical ‘and.’ */
@@ -2215,7 +2219,6 @@ export type Blueprint = Node & {
   services: ServicesConnection;
 };
 
-
 export type BlueprintAccountsByServiceBlueprintIdAndOwnerIdArgs = {
   after?: InputMaybe<Scalars['Cursor']['input']>;
   before?: InputMaybe<Scalars['Cursor']['input']>;
@@ -2228,7 +2231,6 @@ export type BlueprintAccountsByServiceBlueprintIdAndOwnerIdArgs = {
   orderBy?: InputMaybe<Array<AccountsOrderBy>>;
   orderByNull?: InputMaybe<NullOrder>;
 };
-
 
 export type BlueprintAccountsByServiceRequestBlueprintIdAndOwnerIdArgs = {
   after?: InputMaybe<Scalars['Cursor']['input']>;
@@ -2243,7 +2245,6 @@ export type BlueprintAccountsByServiceRequestBlueprintIdAndOwnerIdArgs = {
   orderByNull?: InputMaybe<NullOrder>;
 };
 
-
 export type BlueprintBlueprintOperatorsArgs = {
   after?: InputMaybe<Scalars['Cursor']['input']>;
   before?: InputMaybe<Scalars['Cursor']['input']>;
@@ -2257,20 +2258,19 @@ export type BlueprintBlueprintOperatorsArgs = {
   orderByNull?: InputMaybe<NullOrder>;
 };
 
-
-export type BlueprintOperatorsByBlueprintOperatorBlueprintIdAndOperatorIdArgs = {
-  after?: InputMaybe<Scalars['Cursor']['input']>;
-  before?: InputMaybe<Scalars['Cursor']['input']>;
-  blockHeight?: InputMaybe<Scalars['String']['input']>;
-  distinct?: InputMaybe<Array<InputMaybe<Operators_Distinct_Enum>>>;
-  filter?: InputMaybe<OperatorFilter>;
-  first?: InputMaybe<Scalars['Int']['input']>;
-  last?: InputMaybe<Scalars['Int']['input']>;
-  offset?: InputMaybe<Scalars['Int']['input']>;
-  orderBy?: InputMaybe<Array<OperatorsOrderBy>>;
-  orderByNull?: InputMaybe<NullOrder>;
-};
-
+export type BlueprintOperatorsByBlueprintOperatorBlueprintIdAndOperatorIdArgs =
+  {
+    after?: InputMaybe<Scalars['Cursor']['input']>;
+    before?: InputMaybe<Scalars['Cursor']['input']>;
+    blockHeight?: InputMaybe<Scalars['String']['input']>;
+    distinct?: InputMaybe<Array<InputMaybe<Operators_Distinct_Enum>>>;
+    filter?: InputMaybe<OperatorFilter>;
+    first?: InputMaybe<Scalars['Int']['input']>;
+    last?: InputMaybe<Scalars['Int']['input']>;
+    offset?: InputMaybe<Scalars['Int']['input']>;
+    orderBy?: InputMaybe<Array<OperatorsOrderBy>>;
+    orderByNull?: InputMaybe<NullOrder>;
+  };
 
 export type BlueprintServiceRequestsArgs = {
   after?: InputMaybe<Scalars['Cursor']['input']>;
@@ -2285,20 +2285,19 @@ export type BlueprintServiceRequestsArgs = {
   orderByNull?: InputMaybe<NullOrder>;
 };
 
-
-export type BlueprintServiceRequestsByServiceBlueprintIdAndServiceRequestIdArgs = {
-  after?: InputMaybe<Scalars['Cursor']['input']>;
-  before?: InputMaybe<Scalars['Cursor']['input']>;
-  blockHeight?: InputMaybe<Scalars['String']['input']>;
-  distinct?: InputMaybe<Array<InputMaybe<Service_Requests_Distinct_Enum>>>;
-  filter?: InputMaybe<ServiceRequestFilter>;
-  first?: InputMaybe<Scalars['Int']['input']>;
-  last?: InputMaybe<Scalars['Int']['input']>;
-  offset?: InputMaybe<Scalars['Int']['input']>;
-  orderBy?: InputMaybe<Array<ServiceRequestsOrderBy>>;
-  orderByNull?: InputMaybe<NullOrder>;
-};
-
+export type BlueprintServiceRequestsByServiceBlueprintIdAndServiceRequestIdArgs =
+  {
+    after?: InputMaybe<Scalars['Cursor']['input']>;
+    before?: InputMaybe<Scalars['Cursor']['input']>;
+    blockHeight?: InputMaybe<Scalars['String']['input']>;
+    distinct?: InputMaybe<Array<InputMaybe<Service_Requests_Distinct_Enum>>>;
+    filter?: InputMaybe<ServiceRequestFilter>;
+    first?: InputMaybe<Scalars['Int']['input']>;
+    last?: InputMaybe<Scalars['Int']['input']>;
+    offset?: InputMaybe<Scalars['Int']['input']>;
+    orderBy?: InputMaybe<Array<ServiceRequestsOrderBy>>;
+    orderByNull?: InputMaybe<NullOrder>;
+  };
 
 export type BlueprintServicesArgs = {
   after?: InputMaybe<Scalars['Cursor']['input']>;
@@ -2314,28 +2313,29 @@ export type BlueprintServicesArgs = {
 };
 
 /** A connection to a list of `Account` values, with data from `Service`. */
-export type BlueprintAccountsByServiceBlueprintIdAndOwnerIdManyToManyConnection = {
-  __typename?: 'BlueprintAccountsByServiceBlueprintIdAndOwnerIdManyToManyConnection';
-  /** Aggregates across the matching connection (ignoring before/after/first/last/offset) */
-  aggregates?: Maybe<AccountAggregates>;
-  /** A list of edges which contains the `Account`, info from the `Service`, and the cursor to aid in pagination. */
-  edges: Array<BlueprintAccountsByServiceBlueprintIdAndOwnerIdManyToManyEdge>;
-  /** Grouped aggregates across the matching connection (ignoring before/after/first/last/offset) */
-  groupedAggregates?: Maybe<Array<AccountAggregates>>;
-  /** A list of `Account` objects. */
-  nodes: Array<Maybe<Account>>;
-  /** Information to aid in pagination. */
-  pageInfo: PageInfo;
-  /** The count of *all* `Account` you could get from the connection. */
-  totalCount: Scalars['Int']['output'];
-};
-
+export type BlueprintAccountsByServiceBlueprintIdAndOwnerIdManyToManyConnection =
+  {
+    __typename?: 'BlueprintAccountsByServiceBlueprintIdAndOwnerIdManyToManyConnection';
+    /** Aggregates across the matching connection (ignoring before/after/first/last/offset) */
+    aggregates?: Maybe<AccountAggregates>;
+    /** A list of edges which contains the `Account`, info from the `Service`, and the cursor to aid in pagination. */
+    edges: Array<BlueprintAccountsByServiceBlueprintIdAndOwnerIdManyToManyEdge>;
+    /** Grouped aggregates across the matching connection (ignoring before/after/first/last/offset) */
+    groupedAggregates?: Maybe<Array<AccountAggregates>>;
+    /** A list of `Account` objects. */
+    nodes: Array<Maybe<Account>>;
+    /** Information to aid in pagination. */
+    pageInfo: PageInfo;
+    /** The count of *all* `Account` you could get from the connection. */
+    totalCount: Scalars['Int']['output'];
+  };
 
 /** A connection to a list of `Account` values, with data from `Service`. */
-export type BlueprintAccountsByServiceBlueprintIdAndOwnerIdManyToManyConnectionGroupedAggregatesArgs = {
-  groupBy: Array<AccountsGroupBy>;
-  having?: InputMaybe<AccountsHavingInput>;
-};
+export type BlueprintAccountsByServiceBlueprintIdAndOwnerIdManyToManyConnectionGroupedAggregatesArgs =
+  {
+    groupBy: Array<AccountsGroupBy>;
+    having?: InputMaybe<AccountsHavingInput>;
+  };
 
 /** A `Account` edge in the connection, with data from `Service`. */
 export type BlueprintAccountsByServiceBlueprintIdAndOwnerIdManyToManyEdge = {
@@ -2348,70 +2348,72 @@ export type BlueprintAccountsByServiceBlueprintIdAndOwnerIdManyToManyEdge = {
   services: ServicesConnection;
 };
 
-
 /** A `Account` edge in the connection, with data from `Service`. */
-export type BlueprintAccountsByServiceBlueprintIdAndOwnerIdManyToManyEdgeServicesArgs = {
-  after?: InputMaybe<Scalars['Cursor']['input']>;
-  before?: InputMaybe<Scalars['Cursor']['input']>;
-  blockHeight?: InputMaybe<Scalars['String']['input']>;
-  distinct?: InputMaybe<Array<InputMaybe<Services_Distinct_Enum>>>;
-  filter?: InputMaybe<ServiceFilter>;
-  first?: InputMaybe<Scalars['Int']['input']>;
-  last?: InputMaybe<Scalars['Int']['input']>;
-  offset?: InputMaybe<Scalars['Int']['input']>;
-  orderBy?: InputMaybe<Array<ServicesOrderBy>>;
-  orderByNull?: InputMaybe<NullOrder>;
-};
+export type BlueprintAccountsByServiceBlueprintIdAndOwnerIdManyToManyEdgeServicesArgs =
+  {
+    after?: InputMaybe<Scalars['Cursor']['input']>;
+    before?: InputMaybe<Scalars['Cursor']['input']>;
+    blockHeight?: InputMaybe<Scalars['String']['input']>;
+    distinct?: InputMaybe<Array<InputMaybe<Services_Distinct_Enum>>>;
+    filter?: InputMaybe<ServiceFilter>;
+    first?: InputMaybe<Scalars['Int']['input']>;
+    last?: InputMaybe<Scalars['Int']['input']>;
+    offset?: InputMaybe<Scalars['Int']['input']>;
+    orderBy?: InputMaybe<Array<ServicesOrderBy>>;
+    orderByNull?: InputMaybe<NullOrder>;
+  };
 
 /** A connection to a list of `Account` values, with data from `ServiceRequest`. */
-export type BlueprintAccountsByServiceRequestBlueprintIdAndOwnerIdManyToManyConnection = {
-  __typename?: 'BlueprintAccountsByServiceRequestBlueprintIdAndOwnerIdManyToManyConnection';
-  /** Aggregates across the matching connection (ignoring before/after/first/last/offset) */
-  aggregates?: Maybe<AccountAggregates>;
-  /** A list of edges which contains the `Account`, info from the `ServiceRequest`, and the cursor to aid in pagination. */
-  edges: Array<BlueprintAccountsByServiceRequestBlueprintIdAndOwnerIdManyToManyEdge>;
-  /** Grouped aggregates across the matching connection (ignoring before/after/first/last/offset) */
-  groupedAggregates?: Maybe<Array<AccountAggregates>>;
-  /** A list of `Account` objects. */
-  nodes: Array<Maybe<Account>>;
-  /** Information to aid in pagination. */
-  pageInfo: PageInfo;
-  /** The count of *all* `Account` you could get from the connection. */
-  totalCount: Scalars['Int']['output'];
-};
-
+export type BlueprintAccountsByServiceRequestBlueprintIdAndOwnerIdManyToManyConnection =
+  {
+    __typename?: 'BlueprintAccountsByServiceRequestBlueprintIdAndOwnerIdManyToManyConnection';
+    /** Aggregates across the matching connection (ignoring before/after/first/last/offset) */
+    aggregates?: Maybe<AccountAggregates>;
+    /** A list of edges which contains the `Account`, info from the `ServiceRequest`, and the cursor to aid in pagination. */
+    edges: Array<BlueprintAccountsByServiceRequestBlueprintIdAndOwnerIdManyToManyEdge>;
+    /** Grouped aggregates across the matching connection (ignoring before/after/first/last/offset) */
+    groupedAggregates?: Maybe<Array<AccountAggregates>>;
+    /** A list of `Account` objects. */
+    nodes: Array<Maybe<Account>>;
+    /** Information to aid in pagination. */
+    pageInfo: PageInfo;
+    /** The count of *all* `Account` you could get from the connection. */
+    totalCount: Scalars['Int']['output'];
+  };
 
 /** A connection to a list of `Account` values, with data from `ServiceRequest`. */
-export type BlueprintAccountsByServiceRequestBlueprintIdAndOwnerIdManyToManyConnectionGroupedAggregatesArgs = {
-  groupBy: Array<AccountsGroupBy>;
-  having?: InputMaybe<AccountsHavingInput>;
-};
+export type BlueprintAccountsByServiceRequestBlueprintIdAndOwnerIdManyToManyConnectionGroupedAggregatesArgs =
+  {
+    groupBy: Array<AccountsGroupBy>;
+    having?: InputMaybe<AccountsHavingInput>;
+  };
 
 /** A `Account` edge in the connection, with data from `ServiceRequest`. */
-export type BlueprintAccountsByServiceRequestBlueprintIdAndOwnerIdManyToManyEdge = {
-  __typename?: 'BlueprintAccountsByServiceRequestBlueprintIdAndOwnerIdManyToManyEdge';
-  /** A cursor for use in pagination. */
-  cursor?: Maybe<Scalars['Cursor']['output']>;
-  /** The `Account` at the end of the edge. */
-  node?: Maybe<Account>;
-  /** Reads and enables pagination through a set of `ServiceRequest`. */
-  serviceRequests: ServiceRequestsConnection;
-};
-
+export type BlueprintAccountsByServiceRequestBlueprintIdAndOwnerIdManyToManyEdge =
+  {
+    __typename?: 'BlueprintAccountsByServiceRequestBlueprintIdAndOwnerIdManyToManyEdge';
+    /** A cursor for use in pagination. */
+    cursor?: Maybe<Scalars['Cursor']['output']>;
+    /** The `Account` at the end of the edge. */
+    node?: Maybe<Account>;
+    /** Reads and enables pagination through a set of `ServiceRequest`. */
+    serviceRequests: ServiceRequestsConnection;
+  };
 
 /** A `Account` edge in the connection, with data from `ServiceRequest`. */
-export type BlueprintAccountsByServiceRequestBlueprintIdAndOwnerIdManyToManyEdgeServiceRequestsArgs = {
-  after?: InputMaybe<Scalars['Cursor']['input']>;
-  before?: InputMaybe<Scalars['Cursor']['input']>;
-  blockHeight?: InputMaybe<Scalars['String']['input']>;
-  distinct?: InputMaybe<Array<InputMaybe<Service_Requests_Distinct_Enum>>>;
-  filter?: InputMaybe<ServiceRequestFilter>;
-  first?: InputMaybe<Scalars['Int']['input']>;
-  last?: InputMaybe<Scalars['Int']['input']>;
-  offset?: InputMaybe<Scalars['Int']['input']>;
-  orderBy?: InputMaybe<Array<ServiceRequestsOrderBy>>;
-  orderByNull?: InputMaybe<NullOrder>;
-};
+export type BlueprintAccountsByServiceRequestBlueprintIdAndOwnerIdManyToManyEdgeServiceRequestsArgs =
+  {
+    after?: InputMaybe<Scalars['Cursor']['input']>;
+    before?: InputMaybe<Scalars['Cursor']['input']>;
+    blockHeight?: InputMaybe<Scalars['String']['input']>;
+    distinct?: InputMaybe<Array<InputMaybe<Service_Requests_Distinct_Enum>>>;
+    filter?: InputMaybe<ServiceRequestFilter>;
+    first?: InputMaybe<Scalars['Int']['input']>;
+    last?: InputMaybe<Scalars['Int']['input']>;
+    offset?: InputMaybe<Scalars['Int']['input']>;
+    orderBy?: InputMaybe<Array<ServiceRequestsOrderBy>>;
+    orderByNull?: InputMaybe<NullOrder>;
+  };
 
 export type BlueprintAggregates = {
   __typename?: 'BlueprintAggregates';
@@ -2773,54 +2775,56 @@ export type BlueprintOperatorVarianceSampleAggregates = {
 };
 
 /** A connection to a list of `Operator` values, with data from `BlueprintOperator`. */
-export type BlueprintOperatorsByBlueprintOperatorBlueprintIdAndOperatorIdManyToManyConnection = {
-  __typename?: 'BlueprintOperatorsByBlueprintOperatorBlueprintIdAndOperatorIdManyToManyConnection';
-  /** Aggregates across the matching connection (ignoring before/after/first/last/offset) */
-  aggregates?: Maybe<OperatorAggregates>;
-  /** A list of edges which contains the `Operator`, info from the `BlueprintOperator`, and the cursor to aid in pagination. */
-  edges: Array<BlueprintOperatorsByBlueprintOperatorBlueprintIdAndOperatorIdManyToManyEdge>;
-  /** Grouped aggregates across the matching connection (ignoring before/after/first/last/offset) */
-  groupedAggregates?: Maybe<Array<OperatorAggregates>>;
-  /** A list of `Operator` objects. */
-  nodes: Array<Maybe<Operator>>;
-  /** Information to aid in pagination. */
-  pageInfo: PageInfo;
-  /** The count of *all* `Operator` you could get from the connection. */
-  totalCount: Scalars['Int']['output'];
-};
-
+export type BlueprintOperatorsByBlueprintOperatorBlueprintIdAndOperatorIdManyToManyConnection =
+  {
+    __typename?: 'BlueprintOperatorsByBlueprintOperatorBlueprintIdAndOperatorIdManyToManyConnection';
+    /** Aggregates across the matching connection (ignoring before/after/first/last/offset) */
+    aggregates?: Maybe<OperatorAggregates>;
+    /** A list of edges which contains the `Operator`, info from the `BlueprintOperator`, and the cursor to aid in pagination. */
+    edges: Array<BlueprintOperatorsByBlueprintOperatorBlueprintIdAndOperatorIdManyToManyEdge>;
+    /** Grouped aggregates across the matching connection (ignoring before/after/first/last/offset) */
+    groupedAggregates?: Maybe<Array<OperatorAggregates>>;
+    /** A list of `Operator` objects. */
+    nodes: Array<Maybe<Operator>>;
+    /** Information to aid in pagination. */
+    pageInfo: PageInfo;
+    /** The count of *all* `Operator` you could get from the connection. */
+    totalCount: Scalars['Int']['output'];
+  };
 
 /** A connection to a list of `Operator` values, with data from `BlueprintOperator`. */
-export type BlueprintOperatorsByBlueprintOperatorBlueprintIdAndOperatorIdManyToManyConnectionGroupedAggregatesArgs = {
-  groupBy: Array<OperatorsGroupBy>;
-  having?: InputMaybe<OperatorsHavingInput>;
-};
+export type BlueprintOperatorsByBlueprintOperatorBlueprintIdAndOperatorIdManyToManyConnectionGroupedAggregatesArgs =
+  {
+    groupBy: Array<OperatorsGroupBy>;
+    having?: InputMaybe<OperatorsHavingInput>;
+  };
 
 /** A `Operator` edge in the connection, with data from `BlueprintOperator`. */
-export type BlueprintOperatorsByBlueprintOperatorBlueprintIdAndOperatorIdManyToManyEdge = {
-  __typename?: 'BlueprintOperatorsByBlueprintOperatorBlueprintIdAndOperatorIdManyToManyEdge';
-  /** Reads and enables pagination through a set of `BlueprintOperator`. */
-  blueprintOperators: BlueprintOperatorsConnection;
-  /** A cursor for use in pagination. */
-  cursor?: Maybe<Scalars['Cursor']['output']>;
-  /** The `Operator` at the end of the edge. */
-  node?: Maybe<Operator>;
-};
-
+export type BlueprintOperatorsByBlueprintOperatorBlueprintIdAndOperatorIdManyToManyEdge =
+  {
+    __typename?: 'BlueprintOperatorsByBlueprintOperatorBlueprintIdAndOperatorIdManyToManyEdge';
+    /** Reads and enables pagination through a set of `BlueprintOperator`. */
+    blueprintOperators: BlueprintOperatorsConnection;
+    /** A cursor for use in pagination. */
+    cursor?: Maybe<Scalars['Cursor']['output']>;
+    /** The `Operator` at the end of the edge. */
+    node?: Maybe<Operator>;
+  };
 
 /** A `Operator` edge in the connection, with data from `BlueprintOperator`. */
-export type BlueprintOperatorsByBlueprintOperatorBlueprintIdAndOperatorIdManyToManyEdgeBlueprintOperatorsArgs = {
-  after?: InputMaybe<Scalars['Cursor']['input']>;
-  before?: InputMaybe<Scalars['Cursor']['input']>;
-  blockHeight?: InputMaybe<Scalars['String']['input']>;
-  distinct?: InputMaybe<Array<InputMaybe<Blueprint_Operators_Distinct_Enum>>>;
-  filter?: InputMaybe<BlueprintOperatorFilter>;
-  first?: InputMaybe<Scalars['Int']['input']>;
-  last?: InputMaybe<Scalars['Int']['input']>;
-  offset?: InputMaybe<Scalars['Int']['input']>;
-  orderBy?: InputMaybe<Array<BlueprintOperatorsOrderBy>>;
-  orderByNull?: InputMaybe<NullOrder>;
-};
+export type BlueprintOperatorsByBlueprintOperatorBlueprintIdAndOperatorIdManyToManyEdgeBlueprintOperatorsArgs =
+  {
+    after?: InputMaybe<Scalars['Cursor']['input']>;
+    before?: InputMaybe<Scalars['Cursor']['input']>;
+    blockHeight?: InputMaybe<Scalars['String']['input']>;
+    distinct?: InputMaybe<Array<InputMaybe<Blueprint_Operators_Distinct_Enum>>>;
+    filter?: InputMaybe<BlueprintOperatorFilter>;
+    first?: InputMaybe<Scalars['Int']['input']>;
+    last?: InputMaybe<Scalars['Int']['input']>;
+    offset?: InputMaybe<Scalars['Int']['input']>;
+    orderBy?: InputMaybe<Array<BlueprintOperatorsOrderBy>>;
+    orderByNull?: InputMaybe<NullOrder>;
+  };
 
 /** A connection to a list of `BlueprintOperator` values. */
 export type BlueprintOperatorsConnection = {
@@ -2838,7 +2842,6 @@ export type BlueprintOperatorsConnection = {
   /** The count of *all* `BlueprintOperator` you could get from the connection. */
   totalCount: Scalars['Int']['output'];
 };
-
 
 /** A connection to a list of `BlueprintOperator` values. */
 export type BlueprintOperatorsConnectionGroupedAggregatesArgs = {
@@ -2862,7 +2865,7 @@ export enum BlueprintOperatorsGroupBy {
   IsActive = 'IS_ACTIVE',
   OperatorId = 'OPERATOR_ID',
   RegisteredAt = 'REGISTERED_AT',
-  UpdatedAt = 'UPDATED_AT'
+  UpdatedAt = 'UPDATED_AT',
 }
 
 export type BlueprintOperatorsHavingAverageInput = {
@@ -2967,58 +2970,60 @@ export enum BlueprintOperatorsOrderBy {
   RegisteredAtAsc = 'REGISTERED_AT_ASC',
   RegisteredAtDesc = 'REGISTERED_AT_DESC',
   UpdatedAtAsc = 'UPDATED_AT_ASC',
-  UpdatedAtDesc = 'UPDATED_AT_DESC'
+  UpdatedAtDesc = 'UPDATED_AT_DESC',
 }
 
 /** A connection to a list of `ServiceRequest` values, with data from `Service`. */
-export type BlueprintServiceRequestsByServiceBlueprintIdAndServiceRequestIdManyToManyConnection = {
-  __typename?: 'BlueprintServiceRequestsByServiceBlueprintIdAndServiceRequestIdManyToManyConnection';
-  /** Aggregates across the matching connection (ignoring before/after/first/last/offset) */
-  aggregates?: Maybe<ServiceRequestAggregates>;
-  /** A list of edges which contains the `ServiceRequest`, info from the `Service`, and the cursor to aid in pagination. */
-  edges: Array<BlueprintServiceRequestsByServiceBlueprintIdAndServiceRequestIdManyToManyEdge>;
-  /** Grouped aggregates across the matching connection (ignoring before/after/first/last/offset) */
-  groupedAggregates?: Maybe<Array<ServiceRequestAggregates>>;
-  /** A list of `ServiceRequest` objects. */
-  nodes: Array<Maybe<ServiceRequest>>;
-  /** Information to aid in pagination. */
-  pageInfo: PageInfo;
-  /** The count of *all* `ServiceRequest` you could get from the connection. */
-  totalCount: Scalars['Int']['output'];
-};
-
+export type BlueprintServiceRequestsByServiceBlueprintIdAndServiceRequestIdManyToManyConnection =
+  {
+    __typename?: 'BlueprintServiceRequestsByServiceBlueprintIdAndServiceRequestIdManyToManyConnection';
+    /** Aggregates across the matching connection (ignoring before/after/first/last/offset) */
+    aggregates?: Maybe<ServiceRequestAggregates>;
+    /** A list of edges which contains the `ServiceRequest`, info from the `Service`, and the cursor to aid in pagination. */
+    edges: Array<BlueprintServiceRequestsByServiceBlueprintIdAndServiceRequestIdManyToManyEdge>;
+    /** Grouped aggregates across the matching connection (ignoring before/after/first/last/offset) */
+    groupedAggregates?: Maybe<Array<ServiceRequestAggregates>>;
+    /** A list of `ServiceRequest` objects. */
+    nodes: Array<Maybe<ServiceRequest>>;
+    /** Information to aid in pagination. */
+    pageInfo: PageInfo;
+    /** The count of *all* `ServiceRequest` you could get from the connection. */
+    totalCount: Scalars['Int']['output'];
+  };
 
 /** A connection to a list of `ServiceRequest` values, with data from `Service`. */
-export type BlueprintServiceRequestsByServiceBlueprintIdAndServiceRequestIdManyToManyConnectionGroupedAggregatesArgs = {
-  groupBy: Array<ServiceRequestsGroupBy>;
-  having?: InputMaybe<ServiceRequestsHavingInput>;
-};
+export type BlueprintServiceRequestsByServiceBlueprintIdAndServiceRequestIdManyToManyConnectionGroupedAggregatesArgs =
+  {
+    groupBy: Array<ServiceRequestsGroupBy>;
+    having?: InputMaybe<ServiceRequestsHavingInput>;
+  };
 
 /** A `ServiceRequest` edge in the connection, with data from `Service`. */
-export type BlueprintServiceRequestsByServiceBlueprintIdAndServiceRequestIdManyToManyEdge = {
-  __typename?: 'BlueprintServiceRequestsByServiceBlueprintIdAndServiceRequestIdManyToManyEdge';
-  /** A cursor for use in pagination. */
-  cursor?: Maybe<Scalars['Cursor']['output']>;
-  /** The `ServiceRequest` at the end of the edge. */
-  node?: Maybe<ServiceRequest>;
-  /** Reads and enables pagination through a set of `Service`. */
-  services: ServicesConnection;
-};
-
+export type BlueprintServiceRequestsByServiceBlueprintIdAndServiceRequestIdManyToManyEdge =
+  {
+    __typename?: 'BlueprintServiceRequestsByServiceBlueprintIdAndServiceRequestIdManyToManyEdge';
+    /** A cursor for use in pagination. */
+    cursor?: Maybe<Scalars['Cursor']['output']>;
+    /** The `ServiceRequest` at the end of the edge. */
+    node?: Maybe<ServiceRequest>;
+    /** Reads and enables pagination through a set of `Service`. */
+    services: ServicesConnection;
+  };
 
 /** A `ServiceRequest` edge in the connection, with data from `Service`. */
-export type BlueprintServiceRequestsByServiceBlueprintIdAndServiceRequestIdManyToManyEdgeServicesArgs = {
-  after?: InputMaybe<Scalars['Cursor']['input']>;
-  before?: InputMaybe<Scalars['Cursor']['input']>;
-  blockHeight?: InputMaybe<Scalars['String']['input']>;
-  distinct?: InputMaybe<Array<InputMaybe<Services_Distinct_Enum>>>;
-  filter?: InputMaybe<ServiceFilter>;
-  first?: InputMaybe<Scalars['Int']['input']>;
-  last?: InputMaybe<Scalars['Int']['input']>;
-  offset?: InputMaybe<Scalars['Int']['input']>;
-  orderBy?: InputMaybe<Array<ServicesOrderBy>>;
-  orderByNull?: InputMaybe<NullOrder>;
-};
+export type BlueprintServiceRequestsByServiceBlueprintIdAndServiceRequestIdManyToManyEdgeServicesArgs =
+  {
+    after?: InputMaybe<Scalars['Cursor']['input']>;
+    before?: InputMaybe<Scalars['Cursor']['input']>;
+    blockHeight?: InputMaybe<Scalars['String']['input']>;
+    distinct?: InputMaybe<Array<InputMaybe<Services_Distinct_Enum>>>;
+    filter?: InputMaybe<ServiceFilter>;
+    first?: InputMaybe<Scalars['Int']['input']>;
+    last?: InputMaybe<Scalars['Int']['input']>;
+    offset?: InputMaybe<Scalars['Int']['input']>;
+    orderBy?: InputMaybe<Array<ServicesOrderBy>>;
+    orderByNull?: InputMaybe<NullOrder>;
+  };
 
 export type BlueprintStddevPopulationAggregateFilter = {
   createdAt?: InputMaybe<BigFloatFilter>;
@@ -3123,7 +3128,6 @@ export type BlueprintsConnection = {
   totalCount: Scalars['Int']['output'];
 };
 
-
 /** A connection to a list of `Blueprint` values. */
 export type BlueprintsConnectionGroupedAggregatesArgs = {
   groupBy: Array<BlueprintsGroupBy>;
@@ -3143,7 +3147,7 @@ export type BlueprintsEdge = {
 export enum BlueprintsGroupBy {
   CreatedAt = 'CREATED_AT',
   Id = 'ID',
-  OwnerId = 'OWNER_ID'
+  OwnerId = 'OWNER_ID',
 }
 
 export type BlueprintsHavingAverageInput = {
@@ -3605,7 +3609,7 @@ export enum BlueprintsOrderBy {
   ServiceRequestsVarianceSampleIdAsc = 'SERVICE_REQUESTS_VARIANCE_SAMPLE_ID_ASC',
   ServiceRequestsVarianceSampleIdDesc = 'SERVICE_REQUESTS_VARIANCE_SAMPLE_ID_DESC',
   ServiceRequestsVarianceSampleOwnerIdAsc = 'SERVICE_REQUESTS_VARIANCE_SAMPLE_OWNER_ID_ASC',
-  ServiceRequestsVarianceSampleOwnerIdDesc = 'SERVICE_REQUESTS_VARIANCE_SAMPLE_OWNER_ID_DESC'
+  ServiceRequestsVarianceSampleOwnerIdDesc = 'SERVICE_REQUESTS_VARIANCE_SAMPLE_OWNER_ID_DESC',
 }
 
 /**  Enum representing the different types of bond change actions for an Operator. */
@@ -3613,7 +3617,7 @@ export enum BondChangeAction {
   DecreaseCancelled = 'DECREASE_CANCELLED',
   DecreaseExecuted = 'DECREASE_EXECUTED',
   DecreaseScheduled = 'DECREASE_SCHEDULED',
-  Increase = 'INCREASE'
+  Increase = 'INCREASE',
 }
 
 /** A filter to be used against BondChangeAction fields. All fields are combined with a logical ‘and.’ */
@@ -3724,20 +3728,19 @@ export type Delegation = Node & {
   unstakeRequests: UnstakeRequestsConnection;
 };
 
-
-export type DelegationDelegatorsByUnstakeRequestDelegationIdAndDelegatorIdArgs = {
-  after?: InputMaybe<Scalars['Cursor']['input']>;
-  before?: InputMaybe<Scalars['Cursor']['input']>;
-  blockHeight?: InputMaybe<Scalars['String']['input']>;
-  distinct?: InputMaybe<Array<InputMaybe<Delegators_Distinct_Enum>>>;
-  filter?: InputMaybe<DelegatorFilter>;
-  first?: InputMaybe<Scalars['Int']['input']>;
-  last?: InputMaybe<Scalars['Int']['input']>;
-  offset?: InputMaybe<Scalars['Int']['input']>;
-  orderBy?: InputMaybe<Array<DelegatorsOrderBy>>;
-  orderByNull?: InputMaybe<NullOrder>;
-};
-
+export type DelegationDelegatorsByUnstakeRequestDelegationIdAndDelegatorIdArgs =
+  {
+    after?: InputMaybe<Scalars['Cursor']['input']>;
+    before?: InputMaybe<Scalars['Cursor']['input']>;
+    blockHeight?: InputMaybe<Scalars['String']['input']>;
+    distinct?: InputMaybe<Array<InputMaybe<Delegators_Distinct_Enum>>>;
+    filter?: InputMaybe<DelegatorFilter>;
+    first?: InputMaybe<Scalars['Int']['input']>;
+    last?: InputMaybe<Scalars['Int']['input']>;
+    offset?: InputMaybe<Scalars['Int']['input']>;
+    orderBy?: InputMaybe<Array<DelegatorsOrderBy>>;
+    orderByNull?: InputMaybe<NullOrder>;
+  };
 
 export type DelegationHistoryArgs = {
   after?: InputMaybe<Scalars['Cursor']['input']>;
@@ -3752,7 +3755,6 @@ export type DelegationHistoryArgs = {
   orderByNull?: InputMaybe<NullOrder>;
 };
 
-
 export type DelegationOperatorsByUnstakeRequestDelegationIdAndOperatorIdArgs = {
   after?: InputMaybe<Scalars['Cursor']['input']>;
   before?: InputMaybe<Scalars['Cursor']['input']>;
@@ -3765,7 +3767,6 @@ export type DelegationOperatorsByUnstakeRequestDelegationIdAndOperatorIdArgs = {
   orderBy?: InputMaybe<Array<OperatorsOrderBy>>;
   orderByNull?: InputMaybe<NullOrder>;
 };
-
 
 export type DelegationUnstakeRequestsArgs = {
   after?: InputMaybe<Scalars['Cursor']['input']>;
@@ -3838,54 +3839,56 @@ export type DelegationAverageAggregates = {
 };
 
 /** A connection to a list of `Delegator` values, with data from `UnstakeRequest`. */
-export type DelegationDelegatorsByUnstakeRequestDelegationIdAndDelegatorIdManyToManyConnection = {
-  __typename?: 'DelegationDelegatorsByUnstakeRequestDelegationIdAndDelegatorIdManyToManyConnection';
-  /** Aggregates across the matching connection (ignoring before/after/first/last/offset) */
-  aggregates?: Maybe<DelegatorAggregates>;
-  /** A list of edges which contains the `Delegator`, info from the `UnstakeRequest`, and the cursor to aid in pagination. */
-  edges: Array<DelegationDelegatorsByUnstakeRequestDelegationIdAndDelegatorIdManyToManyEdge>;
-  /** Grouped aggregates across the matching connection (ignoring before/after/first/last/offset) */
-  groupedAggregates?: Maybe<Array<DelegatorAggregates>>;
-  /** A list of `Delegator` objects. */
-  nodes: Array<Maybe<Delegator>>;
-  /** Information to aid in pagination. */
-  pageInfo: PageInfo;
-  /** The count of *all* `Delegator` you could get from the connection. */
-  totalCount: Scalars['Int']['output'];
-};
-
+export type DelegationDelegatorsByUnstakeRequestDelegationIdAndDelegatorIdManyToManyConnection =
+  {
+    __typename?: 'DelegationDelegatorsByUnstakeRequestDelegationIdAndDelegatorIdManyToManyConnection';
+    /** Aggregates across the matching connection (ignoring before/after/first/last/offset) */
+    aggregates?: Maybe<DelegatorAggregates>;
+    /** A list of edges which contains the `Delegator`, info from the `UnstakeRequest`, and the cursor to aid in pagination. */
+    edges: Array<DelegationDelegatorsByUnstakeRequestDelegationIdAndDelegatorIdManyToManyEdge>;
+    /** Grouped aggregates across the matching connection (ignoring before/after/first/last/offset) */
+    groupedAggregates?: Maybe<Array<DelegatorAggregates>>;
+    /** A list of `Delegator` objects. */
+    nodes: Array<Maybe<Delegator>>;
+    /** Information to aid in pagination. */
+    pageInfo: PageInfo;
+    /** The count of *all* `Delegator` you could get from the connection. */
+    totalCount: Scalars['Int']['output'];
+  };
 
 /** A connection to a list of `Delegator` values, with data from `UnstakeRequest`. */
-export type DelegationDelegatorsByUnstakeRequestDelegationIdAndDelegatorIdManyToManyConnectionGroupedAggregatesArgs = {
-  groupBy: Array<DelegatorsGroupBy>;
-  having?: InputMaybe<DelegatorsHavingInput>;
-};
+export type DelegationDelegatorsByUnstakeRequestDelegationIdAndDelegatorIdManyToManyConnectionGroupedAggregatesArgs =
+  {
+    groupBy: Array<DelegatorsGroupBy>;
+    having?: InputMaybe<DelegatorsHavingInput>;
+  };
 
 /** A `Delegator` edge in the connection, with data from `UnstakeRequest`. */
-export type DelegationDelegatorsByUnstakeRequestDelegationIdAndDelegatorIdManyToManyEdge = {
-  __typename?: 'DelegationDelegatorsByUnstakeRequestDelegationIdAndDelegatorIdManyToManyEdge';
-  /** A cursor for use in pagination. */
-  cursor?: Maybe<Scalars['Cursor']['output']>;
-  /** The `Delegator` at the end of the edge. */
-  node?: Maybe<Delegator>;
-  /** Reads and enables pagination through a set of `UnstakeRequest`. */
-  unstakeRequests: UnstakeRequestsConnection;
-};
-
+export type DelegationDelegatorsByUnstakeRequestDelegationIdAndDelegatorIdManyToManyEdge =
+  {
+    __typename?: 'DelegationDelegatorsByUnstakeRequestDelegationIdAndDelegatorIdManyToManyEdge';
+    /** A cursor for use in pagination. */
+    cursor?: Maybe<Scalars['Cursor']['output']>;
+    /** The `Delegator` at the end of the edge. */
+    node?: Maybe<Delegator>;
+    /** Reads and enables pagination through a set of `UnstakeRequest`. */
+    unstakeRequests: UnstakeRequestsConnection;
+  };
 
 /** A `Delegator` edge in the connection, with data from `UnstakeRequest`. */
-export type DelegationDelegatorsByUnstakeRequestDelegationIdAndDelegatorIdManyToManyEdgeUnstakeRequestsArgs = {
-  after?: InputMaybe<Scalars['Cursor']['input']>;
-  before?: InputMaybe<Scalars['Cursor']['input']>;
-  blockHeight?: InputMaybe<Scalars['String']['input']>;
-  distinct?: InputMaybe<Array<InputMaybe<Unstake_Requests_Distinct_Enum>>>;
-  filter?: InputMaybe<UnstakeRequestFilter>;
-  first?: InputMaybe<Scalars['Int']['input']>;
-  last?: InputMaybe<Scalars['Int']['input']>;
-  offset?: InputMaybe<Scalars['Int']['input']>;
-  orderBy?: InputMaybe<Array<UnstakeRequestsOrderBy>>;
-  orderByNull?: InputMaybe<NullOrder>;
-};
+export type DelegationDelegatorsByUnstakeRequestDelegationIdAndDelegatorIdManyToManyEdgeUnstakeRequestsArgs =
+  {
+    after?: InputMaybe<Scalars['Cursor']['input']>;
+    before?: InputMaybe<Scalars['Cursor']['input']>;
+    blockHeight?: InputMaybe<Scalars['String']['input']>;
+    distinct?: InputMaybe<Array<InputMaybe<Unstake_Requests_Distinct_Enum>>>;
+    filter?: InputMaybe<UnstakeRequestFilter>;
+    first?: InputMaybe<Scalars['Int']['input']>;
+    last?: InputMaybe<Scalars['Int']['input']>;
+    offset?: InputMaybe<Scalars['Int']['input']>;
+    orderBy?: InputMaybe<Array<UnstakeRequestsOrderBy>>;
+    orderByNull?: InputMaybe<NullOrder>;
+  };
 
 export type DelegationDistinctCountAggregateFilter = {
   _blockRange?: InputMaybe<BigIntFilter>;
@@ -3969,7 +3972,6 @@ export type DelegationHistoriesConnection = {
   totalCount: Scalars['Int']['output'];
 };
 
-
 /** A connection to a list of `DelegationHistory` values. */
 export type DelegationHistoriesConnectionGroupedAggregatesArgs = {
   groupBy: Array<DelegationHistoriesGroupBy>;
@@ -3990,7 +3992,7 @@ export enum DelegationHistoriesGroupBy {
   Amount = 'AMOUNT',
   BlockNumber = 'BLOCK_NUMBER',
   DelegationId = 'DELEGATION_ID',
-  Id = 'ID'
+  Id = 'ID',
 }
 
 export type DelegationHistoriesHavingAverageInput = {
@@ -4077,7 +4079,7 @@ export enum DelegationHistoriesOrderBy {
   IdDesc = 'ID_DESC',
   Natural = 'NATURAL',
   PrimaryKeyAsc = 'PRIMARY_KEY_ASC',
-  PrimaryKeyDesc = 'PRIMARY_KEY_DESC'
+  PrimaryKeyDesc = 'PRIMARY_KEY_DESC',
 }
 
 export type DelegationHistory = Node & {
@@ -4313,54 +4315,56 @@ export type DelegationMinAggregates = {
 };
 
 /** A connection to a list of `Operator` values, with data from `UnstakeRequest`. */
-export type DelegationOperatorsByUnstakeRequestDelegationIdAndOperatorIdManyToManyConnection = {
-  __typename?: 'DelegationOperatorsByUnstakeRequestDelegationIdAndOperatorIdManyToManyConnection';
-  /** Aggregates across the matching connection (ignoring before/after/first/last/offset) */
-  aggregates?: Maybe<OperatorAggregates>;
-  /** A list of edges which contains the `Operator`, info from the `UnstakeRequest`, and the cursor to aid in pagination. */
-  edges: Array<DelegationOperatorsByUnstakeRequestDelegationIdAndOperatorIdManyToManyEdge>;
-  /** Grouped aggregates across the matching connection (ignoring before/after/first/last/offset) */
-  groupedAggregates?: Maybe<Array<OperatorAggregates>>;
-  /** A list of `Operator` objects. */
-  nodes: Array<Maybe<Operator>>;
-  /** Information to aid in pagination. */
-  pageInfo: PageInfo;
-  /** The count of *all* `Operator` you could get from the connection. */
-  totalCount: Scalars['Int']['output'];
-};
-
+export type DelegationOperatorsByUnstakeRequestDelegationIdAndOperatorIdManyToManyConnection =
+  {
+    __typename?: 'DelegationOperatorsByUnstakeRequestDelegationIdAndOperatorIdManyToManyConnection';
+    /** Aggregates across the matching connection (ignoring before/after/first/last/offset) */
+    aggregates?: Maybe<OperatorAggregates>;
+    /** A list of edges which contains the `Operator`, info from the `UnstakeRequest`, and the cursor to aid in pagination. */
+    edges: Array<DelegationOperatorsByUnstakeRequestDelegationIdAndOperatorIdManyToManyEdge>;
+    /** Grouped aggregates across the matching connection (ignoring before/after/first/last/offset) */
+    groupedAggregates?: Maybe<Array<OperatorAggregates>>;
+    /** A list of `Operator` objects. */
+    nodes: Array<Maybe<Operator>>;
+    /** Information to aid in pagination. */
+    pageInfo: PageInfo;
+    /** The count of *all* `Operator` you could get from the connection. */
+    totalCount: Scalars['Int']['output'];
+  };
 
 /** A connection to a list of `Operator` values, with data from `UnstakeRequest`. */
-export type DelegationOperatorsByUnstakeRequestDelegationIdAndOperatorIdManyToManyConnectionGroupedAggregatesArgs = {
-  groupBy: Array<OperatorsGroupBy>;
-  having?: InputMaybe<OperatorsHavingInput>;
-};
+export type DelegationOperatorsByUnstakeRequestDelegationIdAndOperatorIdManyToManyConnectionGroupedAggregatesArgs =
+  {
+    groupBy: Array<OperatorsGroupBy>;
+    having?: InputMaybe<OperatorsHavingInput>;
+  };
 
 /** A `Operator` edge in the connection, with data from `UnstakeRequest`. */
-export type DelegationOperatorsByUnstakeRequestDelegationIdAndOperatorIdManyToManyEdge = {
-  __typename?: 'DelegationOperatorsByUnstakeRequestDelegationIdAndOperatorIdManyToManyEdge';
-  /** A cursor for use in pagination. */
-  cursor?: Maybe<Scalars['Cursor']['output']>;
-  /** The `Operator` at the end of the edge. */
-  node?: Maybe<Operator>;
-  /** Reads and enables pagination through a set of `UnstakeRequest`. */
-  unstakeRequests: UnstakeRequestsConnection;
-};
-
+export type DelegationOperatorsByUnstakeRequestDelegationIdAndOperatorIdManyToManyEdge =
+  {
+    __typename?: 'DelegationOperatorsByUnstakeRequestDelegationIdAndOperatorIdManyToManyEdge';
+    /** A cursor for use in pagination. */
+    cursor?: Maybe<Scalars['Cursor']['output']>;
+    /** The `Operator` at the end of the edge. */
+    node?: Maybe<Operator>;
+    /** Reads and enables pagination through a set of `UnstakeRequest`. */
+    unstakeRequests: UnstakeRequestsConnection;
+  };
 
 /** A `Operator` edge in the connection, with data from `UnstakeRequest`. */
-export type DelegationOperatorsByUnstakeRequestDelegationIdAndOperatorIdManyToManyEdgeUnstakeRequestsArgs = {
-  after?: InputMaybe<Scalars['Cursor']['input']>;
-  before?: InputMaybe<Scalars['Cursor']['input']>;
-  blockHeight?: InputMaybe<Scalars['String']['input']>;
-  distinct?: InputMaybe<Array<InputMaybe<Unstake_Requests_Distinct_Enum>>>;
-  filter?: InputMaybe<UnstakeRequestFilter>;
-  first?: InputMaybe<Scalars['Int']['input']>;
-  last?: InputMaybe<Scalars['Int']['input']>;
-  offset?: InputMaybe<Scalars['Int']['input']>;
-  orderBy?: InputMaybe<Array<UnstakeRequestsOrderBy>>;
-  orderByNull?: InputMaybe<NullOrder>;
-};
+export type DelegationOperatorsByUnstakeRequestDelegationIdAndOperatorIdManyToManyEdgeUnstakeRequestsArgs =
+  {
+    after?: InputMaybe<Scalars['Cursor']['input']>;
+    before?: InputMaybe<Scalars['Cursor']['input']>;
+    blockHeight?: InputMaybe<Scalars['String']['input']>;
+    distinct?: InputMaybe<Array<InputMaybe<Unstake_Requests_Distinct_Enum>>>;
+    filter?: InputMaybe<UnstakeRequestFilter>;
+    first?: InputMaybe<Scalars['Int']['input']>;
+    last?: InputMaybe<Scalars['Int']['input']>;
+    offset?: InputMaybe<Scalars['Int']['input']>;
+    orderBy?: InputMaybe<Array<UnstakeRequestsOrderBy>>;
+    orderByNull?: InputMaybe<NullOrder>;
+  };
 
 export type DelegationStddevPopulationAggregateFilter = {
   totalAmount?: InputMaybe<BigFloatFilter>;
@@ -4453,7 +4457,6 @@ export type DelegationsConnection = {
   totalCount: Scalars['Int']['output'];
 };
 
-
 /** A connection to a list of `Delegation` values. */
 export type DelegationsConnectionGroupedAggregatesArgs = {
   groupBy: Array<DelegationsGroupBy>;
@@ -4476,7 +4479,7 @@ export enum DelegationsGroupBy {
   HasActiveUnstakeRequest = 'HAS_ACTIVE_UNSTAKE_REQUEST',
   Id = 'ID',
   OperatorId = 'OPERATOR_ID',
-  TotalAmount = 'TOTAL_AMOUNT'
+  TotalAmount = 'TOTAL_AMOUNT',
 }
 
 export type DelegationsHavingAverageInput = {
@@ -4870,7 +4873,7 @@ export enum DelegationsOrderBy {
   UnstakeRequestsVarianceSampleRequestedRoundAsc = 'UNSTAKE_REQUESTS_VARIANCE_SAMPLE_REQUESTED_ROUND_ASC',
   UnstakeRequestsVarianceSampleRequestedRoundDesc = 'UNSTAKE_REQUESTS_VARIANCE_SAMPLE_REQUESTED_ROUND_DESC',
   UnstakeRequestsVarianceSampleUpdatedAtAsc = 'UNSTAKE_REQUESTS_VARIANCE_SAMPLE_UPDATED_AT_ASC',
-  UnstakeRequestsVarianceSampleUpdatedAtDesc = 'UNSTAKE_REQUESTS_VARIANCE_SAMPLE_UPDATED_AT_DESC'
+  UnstakeRequestsVarianceSampleUpdatedAtDesc = 'UNSTAKE_REQUESTS_VARIANCE_SAMPLE_UPDATED_AT_DESC',
 }
 
 export type Delegator = Node & {
@@ -4905,7 +4908,6 @@ export type Delegator = Node & {
   withdrawRequests: WithdrawRequestsConnection;
 };
 
-
 export type DelegatorDelegationsArgs = {
   after?: InputMaybe<Scalars['Cursor']['input']>;
   before?: InputMaybe<Scalars['Cursor']['input']>;
@@ -4919,20 +4921,19 @@ export type DelegatorDelegationsArgs = {
   orderByNull?: InputMaybe<NullOrder>;
 };
 
-
-export type DelegatorDelegationsByUnstakeRequestDelegatorIdAndDelegationIdArgs = {
-  after?: InputMaybe<Scalars['Cursor']['input']>;
-  before?: InputMaybe<Scalars['Cursor']['input']>;
-  blockHeight?: InputMaybe<Scalars['String']['input']>;
-  distinct?: InputMaybe<Array<InputMaybe<Delegations_Distinct_Enum>>>;
-  filter?: InputMaybe<DelegationFilter>;
-  first?: InputMaybe<Scalars['Int']['input']>;
-  last?: InputMaybe<Scalars['Int']['input']>;
-  offset?: InputMaybe<Scalars['Int']['input']>;
-  orderBy?: InputMaybe<Array<DelegationsOrderBy>>;
-  orderByNull?: InputMaybe<NullOrder>;
-};
-
+export type DelegatorDelegationsByUnstakeRequestDelegatorIdAndDelegationIdArgs =
+  {
+    after?: InputMaybe<Scalars['Cursor']['input']>;
+    before?: InputMaybe<Scalars['Cursor']['input']>;
+    blockHeight?: InputMaybe<Scalars['String']['input']>;
+    distinct?: InputMaybe<Array<InputMaybe<Delegations_Distinct_Enum>>>;
+    filter?: InputMaybe<DelegationFilter>;
+    first?: InputMaybe<Scalars['Int']['input']>;
+    last?: InputMaybe<Scalars['Int']['input']>;
+    offset?: InputMaybe<Scalars['Int']['input']>;
+    orderBy?: InputMaybe<Array<DelegationsOrderBy>>;
+    orderByNull?: InputMaybe<NullOrder>;
+  };
 
 export type DelegatorDepositsArgs = {
   after?: InputMaybe<Scalars['Cursor']['input']>;
@@ -4947,7 +4948,6 @@ export type DelegatorDepositsArgs = {
   orderByNull?: InputMaybe<NullOrder>;
 };
 
-
 export type DelegatorDepositsByWithdrawRequestDelegatorIdAndDepositIdArgs = {
   after?: InputMaybe<Scalars['Cursor']['input']>;
   before?: InputMaybe<Scalars['Cursor']['input']>;
@@ -4960,7 +4960,6 @@ export type DelegatorDepositsByWithdrawRequestDelegatorIdAndDepositIdArgs = {
   orderBy?: InputMaybe<Array<DepositsOrderBy>>;
   orderByNull?: InputMaybe<NullOrder>;
 };
-
 
 export type DelegatorOperatorsByDelegationDelegatorIdAndOperatorIdArgs = {
   after?: InputMaybe<Scalars['Cursor']['input']>;
@@ -4975,7 +4974,6 @@ export type DelegatorOperatorsByDelegationDelegatorIdAndOperatorIdArgs = {
   orderByNull?: InputMaybe<NullOrder>;
 };
 
-
 export type DelegatorOperatorsByUnstakeRequestDelegatorIdAndOperatorIdArgs = {
   after?: InputMaybe<Scalars['Cursor']['input']>;
   before?: InputMaybe<Scalars['Cursor']['input']>;
@@ -4989,7 +4987,6 @@ export type DelegatorOperatorsByUnstakeRequestDelegatorIdAndOperatorIdArgs = {
   orderByNull?: InputMaybe<NullOrder>;
 };
 
-
 export type DelegatorUnstakeRequestsArgs = {
   after?: InputMaybe<Scalars['Cursor']['input']>;
   before?: InputMaybe<Scalars['Cursor']['input']>;
@@ -5002,7 +4999,6 @@ export type DelegatorUnstakeRequestsArgs = {
   orderBy?: InputMaybe<Array<UnstakeRequestsOrderBy>>;
   orderByNull?: InputMaybe<NullOrder>;
 };
-
 
 export type DelegatorWithdrawRequestsArgs = {
   after?: InputMaybe<Scalars['Cursor']['input']>;
@@ -5078,104 +5074,108 @@ export type DelegatorAverageAggregates = {
 };
 
 /** A connection to a list of `Delegation` values, with data from `UnstakeRequest`. */
-export type DelegatorDelegationsByUnstakeRequestDelegatorIdAndDelegationIdManyToManyConnection = {
-  __typename?: 'DelegatorDelegationsByUnstakeRequestDelegatorIdAndDelegationIdManyToManyConnection';
-  /** Aggregates across the matching connection (ignoring before/after/first/last/offset) */
-  aggregates?: Maybe<DelegationAggregates>;
-  /** A list of edges which contains the `Delegation`, info from the `UnstakeRequest`, and the cursor to aid in pagination. */
-  edges: Array<DelegatorDelegationsByUnstakeRequestDelegatorIdAndDelegationIdManyToManyEdge>;
-  /** Grouped aggregates across the matching connection (ignoring before/after/first/last/offset) */
-  groupedAggregates?: Maybe<Array<DelegationAggregates>>;
-  /** A list of `Delegation` objects. */
-  nodes: Array<Maybe<Delegation>>;
-  /** Information to aid in pagination. */
-  pageInfo: PageInfo;
-  /** The count of *all* `Delegation` you could get from the connection. */
-  totalCount: Scalars['Int']['output'];
-};
-
+export type DelegatorDelegationsByUnstakeRequestDelegatorIdAndDelegationIdManyToManyConnection =
+  {
+    __typename?: 'DelegatorDelegationsByUnstakeRequestDelegatorIdAndDelegationIdManyToManyConnection';
+    /** Aggregates across the matching connection (ignoring before/after/first/last/offset) */
+    aggregates?: Maybe<DelegationAggregates>;
+    /** A list of edges which contains the `Delegation`, info from the `UnstakeRequest`, and the cursor to aid in pagination. */
+    edges: Array<DelegatorDelegationsByUnstakeRequestDelegatorIdAndDelegationIdManyToManyEdge>;
+    /** Grouped aggregates across the matching connection (ignoring before/after/first/last/offset) */
+    groupedAggregates?: Maybe<Array<DelegationAggregates>>;
+    /** A list of `Delegation` objects. */
+    nodes: Array<Maybe<Delegation>>;
+    /** Information to aid in pagination. */
+    pageInfo: PageInfo;
+    /** The count of *all* `Delegation` you could get from the connection. */
+    totalCount: Scalars['Int']['output'];
+  };
 
 /** A connection to a list of `Delegation` values, with data from `UnstakeRequest`. */
-export type DelegatorDelegationsByUnstakeRequestDelegatorIdAndDelegationIdManyToManyConnectionGroupedAggregatesArgs = {
-  groupBy: Array<DelegationsGroupBy>;
-  having?: InputMaybe<DelegationsHavingInput>;
-};
+export type DelegatorDelegationsByUnstakeRequestDelegatorIdAndDelegationIdManyToManyConnectionGroupedAggregatesArgs =
+  {
+    groupBy: Array<DelegationsGroupBy>;
+    having?: InputMaybe<DelegationsHavingInput>;
+  };
 
 /** A `Delegation` edge in the connection, with data from `UnstakeRequest`. */
-export type DelegatorDelegationsByUnstakeRequestDelegatorIdAndDelegationIdManyToManyEdge = {
-  __typename?: 'DelegatorDelegationsByUnstakeRequestDelegatorIdAndDelegationIdManyToManyEdge';
-  /** A cursor for use in pagination. */
-  cursor?: Maybe<Scalars['Cursor']['output']>;
-  /** The `Delegation` at the end of the edge. */
-  node?: Maybe<Delegation>;
-  /** Reads and enables pagination through a set of `UnstakeRequest`. */
-  unstakeRequests: UnstakeRequestsConnection;
-};
-
+export type DelegatorDelegationsByUnstakeRequestDelegatorIdAndDelegationIdManyToManyEdge =
+  {
+    __typename?: 'DelegatorDelegationsByUnstakeRequestDelegatorIdAndDelegationIdManyToManyEdge';
+    /** A cursor for use in pagination. */
+    cursor?: Maybe<Scalars['Cursor']['output']>;
+    /** The `Delegation` at the end of the edge. */
+    node?: Maybe<Delegation>;
+    /** Reads and enables pagination through a set of `UnstakeRequest`. */
+    unstakeRequests: UnstakeRequestsConnection;
+  };
 
 /** A `Delegation` edge in the connection, with data from `UnstakeRequest`. */
-export type DelegatorDelegationsByUnstakeRequestDelegatorIdAndDelegationIdManyToManyEdgeUnstakeRequestsArgs = {
-  after?: InputMaybe<Scalars['Cursor']['input']>;
-  before?: InputMaybe<Scalars['Cursor']['input']>;
-  blockHeight?: InputMaybe<Scalars['String']['input']>;
-  distinct?: InputMaybe<Array<InputMaybe<Unstake_Requests_Distinct_Enum>>>;
-  filter?: InputMaybe<UnstakeRequestFilter>;
-  first?: InputMaybe<Scalars['Int']['input']>;
-  last?: InputMaybe<Scalars['Int']['input']>;
-  offset?: InputMaybe<Scalars['Int']['input']>;
-  orderBy?: InputMaybe<Array<UnstakeRequestsOrderBy>>;
-  orderByNull?: InputMaybe<NullOrder>;
-};
+export type DelegatorDelegationsByUnstakeRequestDelegatorIdAndDelegationIdManyToManyEdgeUnstakeRequestsArgs =
+  {
+    after?: InputMaybe<Scalars['Cursor']['input']>;
+    before?: InputMaybe<Scalars['Cursor']['input']>;
+    blockHeight?: InputMaybe<Scalars['String']['input']>;
+    distinct?: InputMaybe<Array<InputMaybe<Unstake_Requests_Distinct_Enum>>>;
+    filter?: InputMaybe<UnstakeRequestFilter>;
+    first?: InputMaybe<Scalars['Int']['input']>;
+    last?: InputMaybe<Scalars['Int']['input']>;
+    offset?: InputMaybe<Scalars['Int']['input']>;
+    orderBy?: InputMaybe<Array<UnstakeRequestsOrderBy>>;
+    orderByNull?: InputMaybe<NullOrder>;
+  };
 
 /** A connection to a list of `Deposit` values, with data from `WithdrawRequest`. */
-export type DelegatorDepositsByWithdrawRequestDelegatorIdAndDepositIdManyToManyConnection = {
-  __typename?: 'DelegatorDepositsByWithdrawRequestDelegatorIdAndDepositIdManyToManyConnection';
-  /** Aggregates across the matching connection (ignoring before/after/first/last/offset) */
-  aggregates?: Maybe<DepositAggregates>;
-  /** A list of edges which contains the `Deposit`, info from the `WithdrawRequest`, and the cursor to aid in pagination. */
-  edges: Array<DelegatorDepositsByWithdrawRequestDelegatorIdAndDepositIdManyToManyEdge>;
-  /** Grouped aggregates across the matching connection (ignoring before/after/first/last/offset) */
-  groupedAggregates?: Maybe<Array<DepositAggregates>>;
-  /** A list of `Deposit` objects. */
-  nodes: Array<Maybe<Deposit>>;
-  /** Information to aid in pagination. */
-  pageInfo: PageInfo;
-  /** The count of *all* `Deposit` you could get from the connection. */
-  totalCount: Scalars['Int']['output'];
-};
-
+export type DelegatorDepositsByWithdrawRequestDelegatorIdAndDepositIdManyToManyConnection =
+  {
+    __typename?: 'DelegatorDepositsByWithdrawRequestDelegatorIdAndDepositIdManyToManyConnection';
+    /** Aggregates across the matching connection (ignoring before/after/first/last/offset) */
+    aggregates?: Maybe<DepositAggregates>;
+    /** A list of edges which contains the `Deposit`, info from the `WithdrawRequest`, and the cursor to aid in pagination. */
+    edges: Array<DelegatorDepositsByWithdrawRequestDelegatorIdAndDepositIdManyToManyEdge>;
+    /** Grouped aggregates across the matching connection (ignoring before/after/first/last/offset) */
+    groupedAggregates?: Maybe<Array<DepositAggregates>>;
+    /** A list of `Deposit` objects. */
+    nodes: Array<Maybe<Deposit>>;
+    /** Information to aid in pagination. */
+    pageInfo: PageInfo;
+    /** The count of *all* `Deposit` you could get from the connection. */
+    totalCount: Scalars['Int']['output'];
+  };
 
 /** A connection to a list of `Deposit` values, with data from `WithdrawRequest`. */
-export type DelegatorDepositsByWithdrawRequestDelegatorIdAndDepositIdManyToManyConnectionGroupedAggregatesArgs = {
-  groupBy: Array<DepositsGroupBy>;
-  having?: InputMaybe<DepositsHavingInput>;
-};
+export type DelegatorDepositsByWithdrawRequestDelegatorIdAndDepositIdManyToManyConnectionGroupedAggregatesArgs =
+  {
+    groupBy: Array<DepositsGroupBy>;
+    having?: InputMaybe<DepositsHavingInput>;
+  };
 
 /** A `Deposit` edge in the connection, with data from `WithdrawRequest`. */
-export type DelegatorDepositsByWithdrawRequestDelegatorIdAndDepositIdManyToManyEdge = {
-  __typename?: 'DelegatorDepositsByWithdrawRequestDelegatorIdAndDepositIdManyToManyEdge';
-  /** A cursor for use in pagination. */
-  cursor?: Maybe<Scalars['Cursor']['output']>;
-  /** The `Deposit` at the end of the edge. */
-  node?: Maybe<Deposit>;
-  /** Reads and enables pagination through a set of `WithdrawRequest`. */
-  withdrawRequests: WithdrawRequestsConnection;
-};
-
+export type DelegatorDepositsByWithdrawRequestDelegatorIdAndDepositIdManyToManyEdge =
+  {
+    __typename?: 'DelegatorDepositsByWithdrawRequestDelegatorIdAndDepositIdManyToManyEdge';
+    /** A cursor for use in pagination. */
+    cursor?: Maybe<Scalars['Cursor']['output']>;
+    /** The `Deposit` at the end of the edge. */
+    node?: Maybe<Deposit>;
+    /** Reads and enables pagination through a set of `WithdrawRequest`. */
+    withdrawRequests: WithdrawRequestsConnection;
+  };
 
 /** A `Deposit` edge in the connection, with data from `WithdrawRequest`. */
-export type DelegatorDepositsByWithdrawRequestDelegatorIdAndDepositIdManyToManyEdgeWithdrawRequestsArgs = {
-  after?: InputMaybe<Scalars['Cursor']['input']>;
-  before?: InputMaybe<Scalars['Cursor']['input']>;
-  blockHeight?: InputMaybe<Scalars['String']['input']>;
-  distinct?: InputMaybe<Array<InputMaybe<Withdraw_Requests_Distinct_Enum>>>;
-  filter?: InputMaybe<WithdrawRequestFilter>;
-  first?: InputMaybe<Scalars['Int']['input']>;
-  last?: InputMaybe<Scalars['Int']['input']>;
-  offset?: InputMaybe<Scalars['Int']['input']>;
-  orderBy?: InputMaybe<Array<WithdrawRequestsOrderBy>>;
-  orderByNull?: InputMaybe<NullOrder>;
-};
+export type DelegatorDepositsByWithdrawRequestDelegatorIdAndDepositIdManyToManyEdgeWithdrawRequestsArgs =
+  {
+    after?: InputMaybe<Scalars['Cursor']['input']>;
+    before?: InputMaybe<Scalars['Cursor']['input']>;
+    blockHeight?: InputMaybe<Scalars['String']['input']>;
+    distinct?: InputMaybe<Array<InputMaybe<Withdraw_Requests_Distinct_Enum>>>;
+    filter?: InputMaybe<WithdrawRequestFilter>;
+    first?: InputMaybe<Scalars['Int']['input']>;
+    last?: InputMaybe<Scalars['Int']['input']>;
+    offset?: InputMaybe<Scalars['Int']['input']>;
+    orderBy?: InputMaybe<Array<WithdrawRequestsOrderBy>>;
+    orderByNull?: InputMaybe<NullOrder>;
+  };
 
 export type DelegatorDistinctCountAggregateFilter = {
   _blockRange?: InputMaybe<BigIntFilter>;
@@ -5265,104 +5265,108 @@ export type DelegatorMinAggregates = {
 };
 
 /** A connection to a list of `Operator` values, with data from `Delegation`. */
-export type DelegatorOperatorsByDelegationDelegatorIdAndOperatorIdManyToManyConnection = {
-  __typename?: 'DelegatorOperatorsByDelegationDelegatorIdAndOperatorIdManyToManyConnection';
-  /** Aggregates across the matching connection (ignoring before/after/first/last/offset) */
-  aggregates?: Maybe<OperatorAggregates>;
-  /** A list of edges which contains the `Operator`, info from the `Delegation`, and the cursor to aid in pagination. */
-  edges: Array<DelegatorOperatorsByDelegationDelegatorIdAndOperatorIdManyToManyEdge>;
-  /** Grouped aggregates across the matching connection (ignoring before/after/first/last/offset) */
-  groupedAggregates?: Maybe<Array<OperatorAggregates>>;
-  /** A list of `Operator` objects. */
-  nodes: Array<Maybe<Operator>>;
-  /** Information to aid in pagination. */
-  pageInfo: PageInfo;
-  /** The count of *all* `Operator` you could get from the connection. */
-  totalCount: Scalars['Int']['output'];
-};
-
+export type DelegatorOperatorsByDelegationDelegatorIdAndOperatorIdManyToManyConnection =
+  {
+    __typename?: 'DelegatorOperatorsByDelegationDelegatorIdAndOperatorIdManyToManyConnection';
+    /** Aggregates across the matching connection (ignoring before/after/first/last/offset) */
+    aggregates?: Maybe<OperatorAggregates>;
+    /** A list of edges which contains the `Operator`, info from the `Delegation`, and the cursor to aid in pagination. */
+    edges: Array<DelegatorOperatorsByDelegationDelegatorIdAndOperatorIdManyToManyEdge>;
+    /** Grouped aggregates across the matching connection (ignoring before/after/first/last/offset) */
+    groupedAggregates?: Maybe<Array<OperatorAggregates>>;
+    /** A list of `Operator` objects. */
+    nodes: Array<Maybe<Operator>>;
+    /** Information to aid in pagination. */
+    pageInfo: PageInfo;
+    /** The count of *all* `Operator` you could get from the connection. */
+    totalCount: Scalars['Int']['output'];
+  };
 
 /** A connection to a list of `Operator` values, with data from `Delegation`. */
-export type DelegatorOperatorsByDelegationDelegatorIdAndOperatorIdManyToManyConnectionGroupedAggregatesArgs = {
-  groupBy: Array<OperatorsGroupBy>;
-  having?: InputMaybe<OperatorsHavingInput>;
-};
+export type DelegatorOperatorsByDelegationDelegatorIdAndOperatorIdManyToManyConnectionGroupedAggregatesArgs =
+  {
+    groupBy: Array<OperatorsGroupBy>;
+    having?: InputMaybe<OperatorsHavingInput>;
+  };
 
 /** A `Operator` edge in the connection, with data from `Delegation`. */
-export type DelegatorOperatorsByDelegationDelegatorIdAndOperatorIdManyToManyEdge = {
-  __typename?: 'DelegatorOperatorsByDelegationDelegatorIdAndOperatorIdManyToManyEdge';
-  /** A cursor for use in pagination. */
-  cursor?: Maybe<Scalars['Cursor']['output']>;
-  /** Reads and enables pagination through a set of `Delegation`. */
-  delegations: DelegationsConnection;
-  /** The `Operator` at the end of the edge. */
-  node?: Maybe<Operator>;
-};
-
+export type DelegatorOperatorsByDelegationDelegatorIdAndOperatorIdManyToManyEdge =
+  {
+    __typename?: 'DelegatorOperatorsByDelegationDelegatorIdAndOperatorIdManyToManyEdge';
+    /** A cursor for use in pagination. */
+    cursor?: Maybe<Scalars['Cursor']['output']>;
+    /** Reads and enables pagination through a set of `Delegation`. */
+    delegations: DelegationsConnection;
+    /** The `Operator` at the end of the edge. */
+    node?: Maybe<Operator>;
+  };
 
 /** A `Operator` edge in the connection, with data from `Delegation`. */
-export type DelegatorOperatorsByDelegationDelegatorIdAndOperatorIdManyToManyEdgeDelegationsArgs = {
-  after?: InputMaybe<Scalars['Cursor']['input']>;
-  before?: InputMaybe<Scalars['Cursor']['input']>;
-  blockHeight?: InputMaybe<Scalars['String']['input']>;
-  distinct?: InputMaybe<Array<InputMaybe<Delegations_Distinct_Enum>>>;
-  filter?: InputMaybe<DelegationFilter>;
-  first?: InputMaybe<Scalars['Int']['input']>;
-  last?: InputMaybe<Scalars['Int']['input']>;
-  offset?: InputMaybe<Scalars['Int']['input']>;
-  orderBy?: InputMaybe<Array<DelegationsOrderBy>>;
-  orderByNull?: InputMaybe<NullOrder>;
-};
+export type DelegatorOperatorsByDelegationDelegatorIdAndOperatorIdManyToManyEdgeDelegationsArgs =
+  {
+    after?: InputMaybe<Scalars['Cursor']['input']>;
+    before?: InputMaybe<Scalars['Cursor']['input']>;
+    blockHeight?: InputMaybe<Scalars['String']['input']>;
+    distinct?: InputMaybe<Array<InputMaybe<Delegations_Distinct_Enum>>>;
+    filter?: InputMaybe<DelegationFilter>;
+    first?: InputMaybe<Scalars['Int']['input']>;
+    last?: InputMaybe<Scalars['Int']['input']>;
+    offset?: InputMaybe<Scalars['Int']['input']>;
+    orderBy?: InputMaybe<Array<DelegationsOrderBy>>;
+    orderByNull?: InputMaybe<NullOrder>;
+  };
 
 /** A connection to a list of `Operator` values, with data from `UnstakeRequest`. */
-export type DelegatorOperatorsByUnstakeRequestDelegatorIdAndOperatorIdManyToManyConnection = {
-  __typename?: 'DelegatorOperatorsByUnstakeRequestDelegatorIdAndOperatorIdManyToManyConnection';
-  /** Aggregates across the matching connection (ignoring before/after/first/last/offset) */
-  aggregates?: Maybe<OperatorAggregates>;
-  /** A list of edges which contains the `Operator`, info from the `UnstakeRequest`, and the cursor to aid in pagination. */
-  edges: Array<DelegatorOperatorsByUnstakeRequestDelegatorIdAndOperatorIdManyToManyEdge>;
-  /** Grouped aggregates across the matching connection (ignoring before/after/first/last/offset) */
-  groupedAggregates?: Maybe<Array<OperatorAggregates>>;
-  /** A list of `Operator` objects. */
-  nodes: Array<Maybe<Operator>>;
-  /** Information to aid in pagination. */
-  pageInfo: PageInfo;
-  /** The count of *all* `Operator` you could get from the connection. */
-  totalCount: Scalars['Int']['output'];
-};
-
+export type DelegatorOperatorsByUnstakeRequestDelegatorIdAndOperatorIdManyToManyConnection =
+  {
+    __typename?: 'DelegatorOperatorsByUnstakeRequestDelegatorIdAndOperatorIdManyToManyConnection';
+    /** Aggregates across the matching connection (ignoring before/after/first/last/offset) */
+    aggregates?: Maybe<OperatorAggregates>;
+    /** A list of edges which contains the `Operator`, info from the `UnstakeRequest`, and the cursor to aid in pagination. */
+    edges: Array<DelegatorOperatorsByUnstakeRequestDelegatorIdAndOperatorIdManyToManyEdge>;
+    /** Grouped aggregates across the matching connection (ignoring before/after/first/last/offset) */
+    groupedAggregates?: Maybe<Array<OperatorAggregates>>;
+    /** A list of `Operator` objects. */
+    nodes: Array<Maybe<Operator>>;
+    /** Information to aid in pagination. */
+    pageInfo: PageInfo;
+    /** The count of *all* `Operator` you could get from the connection. */
+    totalCount: Scalars['Int']['output'];
+  };
 
 /** A connection to a list of `Operator` values, with data from `UnstakeRequest`. */
-export type DelegatorOperatorsByUnstakeRequestDelegatorIdAndOperatorIdManyToManyConnectionGroupedAggregatesArgs = {
-  groupBy: Array<OperatorsGroupBy>;
-  having?: InputMaybe<OperatorsHavingInput>;
-};
+export type DelegatorOperatorsByUnstakeRequestDelegatorIdAndOperatorIdManyToManyConnectionGroupedAggregatesArgs =
+  {
+    groupBy: Array<OperatorsGroupBy>;
+    having?: InputMaybe<OperatorsHavingInput>;
+  };
 
 /** A `Operator` edge in the connection, with data from `UnstakeRequest`. */
-export type DelegatorOperatorsByUnstakeRequestDelegatorIdAndOperatorIdManyToManyEdge = {
-  __typename?: 'DelegatorOperatorsByUnstakeRequestDelegatorIdAndOperatorIdManyToManyEdge';
-  /** A cursor for use in pagination. */
-  cursor?: Maybe<Scalars['Cursor']['output']>;
-  /** The `Operator` at the end of the edge. */
-  node?: Maybe<Operator>;
-  /** Reads and enables pagination through a set of `UnstakeRequest`. */
-  unstakeRequests: UnstakeRequestsConnection;
-};
-
+export type DelegatorOperatorsByUnstakeRequestDelegatorIdAndOperatorIdManyToManyEdge =
+  {
+    __typename?: 'DelegatorOperatorsByUnstakeRequestDelegatorIdAndOperatorIdManyToManyEdge';
+    /** A cursor for use in pagination. */
+    cursor?: Maybe<Scalars['Cursor']['output']>;
+    /** The `Operator` at the end of the edge. */
+    node?: Maybe<Operator>;
+    /** Reads and enables pagination through a set of `UnstakeRequest`. */
+    unstakeRequests: UnstakeRequestsConnection;
+  };
 
 /** A `Operator` edge in the connection, with data from `UnstakeRequest`. */
-export type DelegatorOperatorsByUnstakeRequestDelegatorIdAndOperatorIdManyToManyEdgeUnstakeRequestsArgs = {
-  after?: InputMaybe<Scalars['Cursor']['input']>;
-  before?: InputMaybe<Scalars['Cursor']['input']>;
-  blockHeight?: InputMaybe<Scalars['String']['input']>;
-  distinct?: InputMaybe<Array<InputMaybe<Unstake_Requests_Distinct_Enum>>>;
-  filter?: InputMaybe<UnstakeRequestFilter>;
-  first?: InputMaybe<Scalars['Int']['input']>;
-  last?: InputMaybe<Scalars['Int']['input']>;
-  offset?: InputMaybe<Scalars['Int']['input']>;
-  orderBy?: InputMaybe<Array<UnstakeRequestsOrderBy>>;
-  orderByNull?: InputMaybe<NullOrder>;
-};
+export type DelegatorOperatorsByUnstakeRequestDelegatorIdAndOperatorIdManyToManyEdgeUnstakeRequestsArgs =
+  {
+    after?: InputMaybe<Scalars['Cursor']['input']>;
+    before?: InputMaybe<Scalars['Cursor']['input']>;
+    blockHeight?: InputMaybe<Scalars['String']['input']>;
+    distinct?: InputMaybe<Array<InputMaybe<Unstake_Requests_Distinct_Enum>>>;
+    filter?: InputMaybe<UnstakeRequestFilter>;
+    first?: InputMaybe<Scalars['Int']['input']>;
+    last?: InputMaybe<Scalars['Int']['input']>;
+    offset?: InputMaybe<Scalars['Int']['input']>;
+    orderBy?: InputMaybe<Array<UnstakeRequestsOrderBy>>;
+    orderByNull?: InputMaybe<NullOrder>;
+  };
 
 export type DelegatorStddevPopulationAggregateFilter = {
   joinedAt?: InputMaybe<BigFloatFilter>;
@@ -5494,7 +5498,6 @@ export type DelegatorsConnection = {
   totalCount: Scalars['Int']['output'];
 };
 
-
 /** A connection to a list of `Delegator` values. */
 export type DelegatorsConnectionGroupedAggregatesArgs = {
   groupBy: Array<DelegatorsGroupBy>;
@@ -5515,7 +5518,7 @@ export enum DelegatorsGroupBy {
   AccountId = 'ACCOUNT_ID',
   Id = 'ID',
   JoinedAt = 'JOINED_AT',
-  LastUpdateAt = 'LAST_UPDATE_AT'
+  LastUpdateAt = 'LAST_UPDATE_AT',
 }
 
 export type DelegatorsHavingAverageInput = {
@@ -6226,7 +6229,7 @@ export enum DelegatorsOrderBy {
   WithdrawRequestsVarianceSampleRequestedRoundAsc = 'WITHDRAW_REQUESTS_VARIANCE_SAMPLE_REQUESTED_ROUND_ASC',
   WithdrawRequestsVarianceSampleRequestedRoundDesc = 'WITHDRAW_REQUESTS_VARIANCE_SAMPLE_REQUESTED_ROUND_DESC',
   WithdrawRequestsVarianceSampleUpdatedAtAsc = 'WITHDRAW_REQUESTS_VARIANCE_SAMPLE_UPDATED_AT_ASC',
-  WithdrawRequestsVarianceSampleUpdatedAtDesc = 'WITHDRAW_REQUESTS_VARIANCE_SAMPLE_UPDATED_AT_DESC'
+  WithdrawRequestsVarianceSampleUpdatedAtDesc = 'WITHDRAW_REQUESTS_VARIANCE_SAMPLE_UPDATED_AT_DESC',
 }
 
 export type Deposit = Node & {
@@ -6253,7 +6256,6 @@ export type Deposit = Node & {
   withdrawRequests: WithdrawRequestsConnection;
 };
 
-
 export type DepositDelegatorsByWithdrawRequestDepositIdAndDelegatorIdArgs = {
   after?: InputMaybe<Scalars['Cursor']['input']>;
   before?: InputMaybe<Scalars['Cursor']['input']>;
@@ -6267,7 +6269,6 @@ export type DepositDelegatorsByWithdrawRequestDepositIdAndDelegatorIdArgs = {
   orderByNull?: InputMaybe<NullOrder>;
 };
 
-
 export type DepositHistoryArgs = {
   after?: InputMaybe<Scalars['Cursor']['input']>;
   before?: InputMaybe<Scalars['Cursor']['input']>;
@@ -6280,7 +6281,6 @@ export type DepositHistoryArgs = {
   orderBy?: InputMaybe<Array<DepositHistoriesOrderBy>>;
   orderByNull?: InputMaybe<NullOrder>;
 };
-
 
 export type DepositWithdrawRequestsArgs = {
   after?: InputMaybe<Scalars['Cursor']['input']>;
@@ -6353,54 +6353,56 @@ export type DepositAverageAggregates = {
 };
 
 /** A connection to a list of `Delegator` values, with data from `WithdrawRequest`. */
-export type DepositDelegatorsByWithdrawRequestDepositIdAndDelegatorIdManyToManyConnection = {
-  __typename?: 'DepositDelegatorsByWithdrawRequestDepositIdAndDelegatorIdManyToManyConnection';
-  /** Aggregates across the matching connection (ignoring before/after/first/last/offset) */
-  aggregates?: Maybe<DelegatorAggregates>;
-  /** A list of edges which contains the `Delegator`, info from the `WithdrawRequest`, and the cursor to aid in pagination. */
-  edges: Array<DepositDelegatorsByWithdrawRequestDepositIdAndDelegatorIdManyToManyEdge>;
-  /** Grouped aggregates across the matching connection (ignoring before/after/first/last/offset) */
-  groupedAggregates?: Maybe<Array<DelegatorAggregates>>;
-  /** A list of `Delegator` objects. */
-  nodes: Array<Maybe<Delegator>>;
-  /** Information to aid in pagination. */
-  pageInfo: PageInfo;
-  /** The count of *all* `Delegator` you could get from the connection. */
-  totalCount: Scalars['Int']['output'];
-};
-
+export type DepositDelegatorsByWithdrawRequestDepositIdAndDelegatorIdManyToManyConnection =
+  {
+    __typename?: 'DepositDelegatorsByWithdrawRequestDepositIdAndDelegatorIdManyToManyConnection';
+    /** Aggregates across the matching connection (ignoring before/after/first/last/offset) */
+    aggregates?: Maybe<DelegatorAggregates>;
+    /** A list of edges which contains the `Delegator`, info from the `WithdrawRequest`, and the cursor to aid in pagination. */
+    edges: Array<DepositDelegatorsByWithdrawRequestDepositIdAndDelegatorIdManyToManyEdge>;
+    /** Grouped aggregates across the matching connection (ignoring before/after/first/last/offset) */
+    groupedAggregates?: Maybe<Array<DelegatorAggregates>>;
+    /** A list of `Delegator` objects. */
+    nodes: Array<Maybe<Delegator>>;
+    /** Information to aid in pagination. */
+    pageInfo: PageInfo;
+    /** The count of *all* `Delegator` you could get from the connection. */
+    totalCount: Scalars['Int']['output'];
+  };
 
 /** A connection to a list of `Delegator` values, with data from `WithdrawRequest`. */
-export type DepositDelegatorsByWithdrawRequestDepositIdAndDelegatorIdManyToManyConnectionGroupedAggregatesArgs = {
-  groupBy: Array<DelegatorsGroupBy>;
-  having?: InputMaybe<DelegatorsHavingInput>;
-};
+export type DepositDelegatorsByWithdrawRequestDepositIdAndDelegatorIdManyToManyConnectionGroupedAggregatesArgs =
+  {
+    groupBy: Array<DelegatorsGroupBy>;
+    having?: InputMaybe<DelegatorsHavingInput>;
+  };
 
 /** A `Delegator` edge in the connection, with data from `WithdrawRequest`. */
-export type DepositDelegatorsByWithdrawRequestDepositIdAndDelegatorIdManyToManyEdge = {
-  __typename?: 'DepositDelegatorsByWithdrawRequestDepositIdAndDelegatorIdManyToManyEdge';
-  /** A cursor for use in pagination. */
-  cursor?: Maybe<Scalars['Cursor']['output']>;
-  /** The `Delegator` at the end of the edge. */
-  node?: Maybe<Delegator>;
-  /** Reads and enables pagination through a set of `WithdrawRequest`. */
-  withdrawRequests: WithdrawRequestsConnection;
-};
-
+export type DepositDelegatorsByWithdrawRequestDepositIdAndDelegatorIdManyToManyEdge =
+  {
+    __typename?: 'DepositDelegatorsByWithdrawRequestDepositIdAndDelegatorIdManyToManyEdge';
+    /** A cursor for use in pagination. */
+    cursor?: Maybe<Scalars['Cursor']['output']>;
+    /** The `Delegator` at the end of the edge. */
+    node?: Maybe<Delegator>;
+    /** Reads and enables pagination through a set of `WithdrawRequest`. */
+    withdrawRequests: WithdrawRequestsConnection;
+  };
 
 /** A `Delegator` edge in the connection, with data from `WithdrawRequest`. */
-export type DepositDelegatorsByWithdrawRequestDepositIdAndDelegatorIdManyToManyEdgeWithdrawRequestsArgs = {
-  after?: InputMaybe<Scalars['Cursor']['input']>;
-  before?: InputMaybe<Scalars['Cursor']['input']>;
-  blockHeight?: InputMaybe<Scalars['String']['input']>;
-  distinct?: InputMaybe<Array<InputMaybe<Withdraw_Requests_Distinct_Enum>>>;
-  filter?: InputMaybe<WithdrawRequestFilter>;
-  first?: InputMaybe<Scalars['Int']['input']>;
-  last?: InputMaybe<Scalars['Int']['input']>;
-  offset?: InputMaybe<Scalars['Int']['input']>;
-  orderBy?: InputMaybe<Array<WithdrawRequestsOrderBy>>;
-  orderByNull?: InputMaybe<NullOrder>;
-};
+export type DepositDelegatorsByWithdrawRequestDepositIdAndDelegatorIdManyToManyEdgeWithdrawRequestsArgs =
+  {
+    after?: InputMaybe<Scalars['Cursor']['input']>;
+    before?: InputMaybe<Scalars['Cursor']['input']>;
+    blockHeight?: InputMaybe<Scalars['String']['input']>;
+    distinct?: InputMaybe<Array<InputMaybe<Withdraw_Requests_Distinct_Enum>>>;
+    filter?: InputMaybe<WithdrawRequestFilter>;
+    first?: InputMaybe<Scalars['Int']['input']>;
+    last?: InputMaybe<Scalars['Int']['input']>;
+    offset?: InputMaybe<Scalars['Int']['input']>;
+    orderBy?: InputMaybe<Array<WithdrawRequestsOrderBy>>;
+    orderByNull?: InputMaybe<NullOrder>;
+  };
 
 export type DepositDistinctCountAggregateFilter = {
   _blockRange?: InputMaybe<BigIntFilter>;
@@ -6477,7 +6479,6 @@ export type DepositHistoriesConnection = {
   totalCount: Scalars['Int']['output'];
 };
 
-
 /** A connection to a list of `DepositHistory` values. */
 export type DepositHistoriesConnectionGroupedAggregatesArgs = {
   groupBy: Array<DepositHistoriesGroupBy>;
@@ -6498,7 +6499,7 @@ export enum DepositHistoriesGroupBy {
   Amount = 'AMOUNT',
   BlockNumber = 'BLOCK_NUMBER',
   DepositId = 'DEPOSIT_ID',
-  Id = 'ID'
+  Id = 'ID',
 }
 
 export type DepositHistoriesHavingAverageInput = {
@@ -6583,7 +6584,7 @@ export enum DepositHistoriesOrderBy {
   IdDesc = 'ID_DESC',
   Natural = 'NATURAL',
   PrimaryKeyAsc = 'PRIMARY_KEY_ASC',
-  PrimaryKeyDesc = 'PRIMARY_KEY_DESC'
+  PrimaryKeyDesc = 'PRIMARY_KEY_DESC',
 }
 
 export type DepositHistory = Node & {
@@ -6909,7 +6910,6 @@ export type DepositsConnection = {
   totalCount: Scalars['Int']['output'];
 };
 
-
 /** A connection to a list of `Deposit` values. */
 export type DepositsConnectionGroupedAggregatesArgs = {
   groupBy: Array<DepositsGroupBy>;
@@ -6931,7 +6931,7 @@ export enum DepositsGroupBy {
   DelegatorId = 'DELEGATOR_ID',
   HasActiveWithdrawRequest = 'HAS_ACTIVE_WITHDRAW_REQUEST',
   Id = 'ID',
-  TotalAmount = 'TOTAL_AMOUNT'
+  TotalAmount = 'TOTAL_AMOUNT',
 }
 
 export type DepositsHavingAverageInput = {
@@ -7285,7 +7285,7 @@ export enum DepositsOrderBy {
   WithdrawRequestsVarianceSampleRequestedRoundAsc = 'WITHDRAW_REQUESTS_VARIANCE_SAMPLE_REQUESTED_ROUND_ASC',
   WithdrawRequestsVarianceSampleRequestedRoundDesc = 'WITHDRAW_REQUESTS_VARIANCE_SAMPLE_REQUESTED_ROUND_DESC',
   WithdrawRequestsVarianceSampleUpdatedAtAsc = 'WITHDRAW_REQUESTS_VARIANCE_SAMPLE_UPDATED_AT_ASC',
-  WithdrawRequestsVarianceSampleUpdatedAtDesc = 'WITHDRAW_REQUESTS_VARIANCE_SAMPLE_UPDATED_AT_DESC'
+  WithdrawRequestsVarianceSampleUpdatedAtDesc = 'WITHDRAW_REQUESTS_VARIANCE_SAMPLE_UPDATED_AT_DESC',
 }
 
 /** A filter to be used against Float fields. All fields are combined with a logical ‘and.’ */
@@ -7438,7 +7438,6 @@ export type JobCall = Node & {
   servicesByJobResultJobCallIdAndServiceId: JobCallServicesByJobResultJobCallIdAndServiceIdManyToManyConnection;
 };
 
-
 export type JobCallJobResultsArgs = {
   after?: InputMaybe<Scalars['Cursor']['input']>;
   before?: InputMaybe<Scalars['Cursor']['input']>;
@@ -7452,7 +7451,6 @@ export type JobCallJobResultsArgs = {
   orderByNull?: InputMaybe<NullOrder>;
 };
 
-
 export type JobCallOperatorsByJobResultJobCallIdAndOperatorIdArgs = {
   after?: InputMaybe<Scalars['Cursor']['input']>;
   before?: InputMaybe<Scalars['Cursor']['input']>;
@@ -7465,7 +7463,6 @@ export type JobCallOperatorsByJobResultJobCallIdAndOperatorIdArgs = {
   orderBy?: InputMaybe<Array<OperatorsOrderBy>>;
   orderByNull?: InputMaybe<NullOrder>;
 };
-
 
 export type JobCallServicesByJobResultJobCallIdAndServiceIdArgs = {
   after?: InputMaybe<Scalars['Cursor']['input']>;
@@ -7623,28 +7620,29 @@ export type JobCallMinAggregates = {
 };
 
 /** A connection to a list of `Operator` values, with data from `JobResult`. */
-export type JobCallOperatorsByJobResultJobCallIdAndOperatorIdManyToManyConnection = {
-  __typename?: 'JobCallOperatorsByJobResultJobCallIdAndOperatorIdManyToManyConnection';
-  /** Aggregates across the matching connection (ignoring before/after/first/last/offset) */
-  aggregates?: Maybe<OperatorAggregates>;
-  /** A list of edges which contains the `Operator`, info from the `JobResult`, and the cursor to aid in pagination. */
-  edges: Array<JobCallOperatorsByJobResultJobCallIdAndOperatorIdManyToManyEdge>;
-  /** Grouped aggregates across the matching connection (ignoring before/after/first/last/offset) */
-  groupedAggregates?: Maybe<Array<OperatorAggregates>>;
-  /** A list of `Operator` objects. */
-  nodes: Array<Maybe<Operator>>;
-  /** Information to aid in pagination. */
-  pageInfo: PageInfo;
-  /** The count of *all* `Operator` you could get from the connection. */
-  totalCount: Scalars['Int']['output'];
-};
-
+export type JobCallOperatorsByJobResultJobCallIdAndOperatorIdManyToManyConnection =
+  {
+    __typename?: 'JobCallOperatorsByJobResultJobCallIdAndOperatorIdManyToManyConnection';
+    /** Aggregates across the matching connection (ignoring before/after/first/last/offset) */
+    aggregates?: Maybe<OperatorAggregates>;
+    /** A list of edges which contains the `Operator`, info from the `JobResult`, and the cursor to aid in pagination. */
+    edges: Array<JobCallOperatorsByJobResultJobCallIdAndOperatorIdManyToManyEdge>;
+    /** Grouped aggregates across the matching connection (ignoring before/after/first/last/offset) */
+    groupedAggregates?: Maybe<Array<OperatorAggregates>>;
+    /** A list of `Operator` objects. */
+    nodes: Array<Maybe<Operator>>;
+    /** Information to aid in pagination. */
+    pageInfo: PageInfo;
+    /** The count of *all* `Operator` you could get from the connection. */
+    totalCount: Scalars['Int']['output'];
+  };
 
 /** A connection to a list of `Operator` values, with data from `JobResult`. */
-export type JobCallOperatorsByJobResultJobCallIdAndOperatorIdManyToManyConnectionGroupedAggregatesArgs = {
-  groupBy: Array<OperatorsGroupBy>;
-  having?: InputMaybe<OperatorsHavingInput>;
-};
+export type JobCallOperatorsByJobResultJobCallIdAndOperatorIdManyToManyConnectionGroupedAggregatesArgs =
+  {
+    groupBy: Array<OperatorsGroupBy>;
+    having?: InputMaybe<OperatorsHavingInput>;
+  };
 
 /** A `Operator` edge in the connection, with data from `JobResult`. */
 export type JobCallOperatorsByJobResultJobCallIdAndOperatorIdManyToManyEdge = {
@@ -7657,44 +7655,45 @@ export type JobCallOperatorsByJobResultJobCallIdAndOperatorIdManyToManyEdge = {
   node?: Maybe<Operator>;
 };
 
-
 /** A `Operator` edge in the connection, with data from `JobResult`. */
-export type JobCallOperatorsByJobResultJobCallIdAndOperatorIdManyToManyEdgeJobResultsArgs = {
-  after?: InputMaybe<Scalars['Cursor']['input']>;
-  before?: InputMaybe<Scalars['Cursor']['input']>;
-  blockHeight?: InputMaybe<Scalars['String']['input']>;
-  distinct?: InputMaybe<Array<InputMaybe<Job_Results_Distinct_Enum>>>;
-  filter?: InputMaybe<JobResultFilter>;
-  first?: InputMaybe<Scalars['Int']['input']>;
-  last?: InputMaybe<Scalars['Int']['input']>;
-  offset?: InputMaybe<Scalars['Int']['input']>;
-  orderBy?: InputMaybe<Array<JobResultsOrderBy>>;
-  orderByNull?: InputMaybe<NullOrder>;
-};
+export type JobCallOperatorsByJobResultJobCallIdAndOperatorIdManyToManyEdgeJobResultsArgs =
+  {
+    after?: InputMaybe<Scalars['Cursor']['input']>;
+    before?: InputMaybe<Scalars['Cursor']['input']>;
+    blockHeight?: InputMaybe<Scalars['String']['input']>;
+    distinct?: InputMaybe<Array<InputMaybe<Job_Results_Distinct_Enum>>>;
+    filter?: InputMaybe<JobResultFilter>;
+    first?: InputMaybe<Scalars['Int']['input']>;
+    last?: InputMaybe<Scalars['Int']['input']>;
+    offset?: InputMaybe<Scalars['Int']['input']>;
+    orderBy?: InputMaybe<Array<JobResultsOrderBy>>;
+    orderByNull?: InputMaybe<NullOrder>;
+  };
 
 /** A connection to a list of `Service` values, with data from `JobResult`. */
-export type JobCallServicesByJobResultJobCallIdAndServiceIdManyToManyConnection = {
-  __typename?: 'JobCallServicesByJobResultJobCallIdAndServiceIdManyToManyConnection';
-  /** Aggregates across the matching connection (ignoring before/after/first/last/offset) */
-  aggregates?: Maybe<ServiceAggregates>;
-  /** A list of edges which contains the `Service`, info from the `JobResult`, and the cursor to aid in pagination. */
-  edges: Array<JobCallServicesByJobResultJobCallIdAndServiceIdManyToManyEdge>;
-  /** Grouped aggregates across the matching connection (ignoring before/after/first/last/offset) */
-  groupedAggregates?: Maybe<Array<ServiceAggregates>>;
-  /** A list of `Service` objects. */
-  nodes: Array<Maybe<Service>>;
-  /** Information to aid in pagination. */
-  pageInfo: PageInfo;
-  /** The count of *all* `Service` you could get from the connection. */
-  totalCount: Scalars['Int']['output'];
-};
-
+export type JobCallServicesByJobResultJobCallIdAndServiceIdManyToManyConnection =
+  {
+    __typename?: 'JobCallServicesByJobResultJobCallIdAndServiceIdManyToManyConnection';
+    /** Aggregates across the matching connection (ignoring before/after/first/last/offset) */
+    aggregates?: Maybe<ServiceAggregates>;
+    /** A list of edges which contains the `Service`, info from the `JobResult`, and the cursor to aid in pagination. */
+    edges: Array<JobCallServicesByJobResultJobCallIdAndServiceIdManyToManyEdge>;
+    /** Grouped aggregates across the matching connection (ignoring before/after/first/last/offset) */
+    groupedAggregates?: Maybe<Array<ServiceAggregates>>;
+    /** A list of `Service` objects. */
+    nodes: Array<Maybe<Service>>;
+    /** Information to aid in pagination. */
+    pageInfo: PageInfo;
+    /** The count of *all* `Service` you could get from the connection. */
+    totalCount: Scalars['Int']['output'];
+  };
 
 /** A connection to a list of `Service` values, with data from `JobResult`. */
-export type JobCallServicesByJobResultJobCallIdAndServiceIdManyToManyConnectionGroupedAggregatesArgs = {
-  groupBy: Array<ServicesGroupBy>;
-  having?: InputMaybe<ServicesHavingInput>;
-};
+export type JobCallServicesByJobResultJobCallIdAndServiceIdManyToManyConnectionGroupedAggregatesArgs =
+  {
+    groupBy: Array<ServicesGroupBy>;
+    having?: InputMaybe<ServicesHavingInput>;
+  };
 
 /** A `Service` edge in the connection, with data from `JobResult`. */
 export type JobCallServicesByJobResultJobCallIdAndServiceIdManyToManyEdge = {
@@ -7707,20 +7706,20 @@ export type JobCallServicesByJobResultJobCallIdAndServiceIdManyToManyEdge = {
   node?: Maybe<Service>;
 };
 
-
 /** A `Service` edge in the connection, with data from `JobResult`. */
-export type JobCallServicesByJobResultJobCallIdAndServiceIdManyToManyEdgeJobResultsArgs = {
-  after?: InputMaybe<Scalars['Cursor']['input']>;
-  before?: InputMaybe<Scalars['Cursor']['input']>;
-  blockHeight?: InputMaybe<Scalars['String']['input']>;
-  distinct?: InputMaybe<Array<InputMaybe<Job_Results_Distinct_Enum>>>;
-  filter?: InputMaybe<JobResultFilter>;
-  first?: InputMaybe<Scalars['Int']['input']>;
-  last?: InputMaybe<Scalars['Int']['input']>;
-  offset?: InputMaybe<Scalars['Int']['input']>;
-  orderBy?: InputMaybe<Array<JobResultsOrderBy>>;
-  orderByNull?: InputMaybe<NullOrder>;
-};
+export type JobCallServicesByJobResultJobCallIdAndServiceIdManyToManyEdgeJobResultsArgs =
+  {
+    after?: InputMaybe<Scalars['Cursor']['input']>;
+    before?: InputMaybe<Scalars['Cursor']['input']>;
+    blockHeight?: InputMaybe<Scalars['String']['input']>;
+    distinct?: InputMaybe<Array<InputMaybe<Job_Results_Distinct_Enum>>>;
+    filter?: InputMaybe<JobResultFilter>;
+    first?: InputMaybe<Scalars['Int']['input']>;
+    last?: InputMaybe<Scalars['Int']['input']>;
+    offset?: InputMaybe<Scalars['Int']['input']>;
+    orderBy?: InputMaybe<Array<JobResultsOrderBy>>;
+    orderByNull?: InputMaybe<NullOrder>;
+  };
 
 export type JobCallStddevPopulationAggregateFilter = {
   createdAt?: InputMaybe<BigFloatFilter>;
@@ -7816,7 +7815,6 @@ export type JobCallsConnection = {
   totalCount: Scalars['Int']['output'];
 };
 
-
 /** A connection to a list of `JobCall` values. */
 export type JobCallsConnectionGroupedAggregatesArgs = {
   groupBy: Array<JobCallsGroupBy>;
@@ -7838,7 +7836,7 @@ export enum JobCallsGroupBy {
   CreatedAt = 'CREATED_AT',
   Id = 'ID',
   JobId = 'JOB_ID',
-  ServiceId = 'SERVICE_ID'
+  ServiceId = 'SERVICE_ID',
 }
 
 export type JobCallsHavingAverageInput = {
@@ -8049,7 +8047,7 @@ export enum JobCallsOrderBy {
   ServiceByServiceIdTerminatedAtAsc = 'SERVICE_BY_SERVICE_ID__TERMINATED_AT_ASC',
   ServiceByServiceIdTerminatedAtDesc = 'SERVICE_BY_SERVICE_ID__TERMINATED_AT_DESC',
   ServiceIdAsc = 'SERVICE_ID_ASC',
-  ServiceIdDesc = 'SERVICE_ID_DESC'
+  ServiceIdDesc = 'SERVICE_ID_DESC',
 }
 
 export type JobResult = Node & {
@@ -8272,7 +8270,6 @@ export type JobResultsConnection = {
   totalCount: Scalars['Int']['output'];
 };
 
-
 /** A connection to a list of `JobResult` values. */
 export type JobResultsConnectionGroupedAggregatesArgs = {
   groupBy: Array<JobResultsGroupBy>;
@@ -8294,7 +8291,7 @@ export enum JobResultsGroupBy {
   Id = 'ID',
   JobCallId = 'JOB_CALL_ID',
   OperatorId = 'OPERATOR_ID',
-  ServiceId = 'SERVICE_ID'
+  ServiceId = 'SERVICE_ID',
 }
 
 export type JobResultsHavingAverageInput = {
@@ -8406,7 +8403,7 @@ export enum JobResultsOrderBy {
   ServiceByServiceIdTerminatedAtAsc = 'SERVICE_BY_SERVICE_ID__TERMINATED_AT_ASC',
   ServiceByServiceIdTerminatedAtDesc = 'SERVICE_BY_SERVICE_ID__TERMINATED_AT_DESC',
   ServiceIdAsc = 'SERVICE_ID_ASC',
-  ServiceIdDesc = 'SERVICE_ID_DESC'
+  ServiceIdDesc = 'SERVICE_ID_DESC',
 }
 
 export type LstPool = Node & {
@@ -8427,7 +8424,6 @@ export type LstPool = Node & {
   totalStake: Scalars['BigFloat']['output'];
 };
 
-
 export type LstPoolAccountsByLstPoolMemberLstPoolIdAndAccountIdArgs = {
   after?: InputMaybe<Scalars['Cursor']['input']>;
   before?: InputMaybe<Scalars['Cursor']['input']>;
@@ -8440,7 +8436,6 @@ export type LstPoolAccountsByLstPoolMemberLstPoolIdAndAccountIdArgs = {
   orderBy?: InputMaybe<Array<AccountsOrderBy>>;
   orderByNull?: InputMaybe<NullOrder>;
 };
-
 
 export type LstPoolMembersArgs = {
   after?: InputMaybe<Scalars['Cursor']['input']>;
@@ -8455,12 +8450,13 @@ export type LstPoolMembersArgs = {
   orderByNull?: InputMaybe<NullOrder>;
 };
 
-
 export type LstPoolStateHistoryArgs = {
   after?: InputMaybe<Scalars['Cursor']['input']>;
   before?: InputMaybe<Scalars['Cursor']['input']>;
   blockHeight?: InputMaybe<Scalars['String']['input']>;
-  distinct?: InputMaybe<Array<InputMaybe<Lst_Pool_State_Changes_Distinct_Enum>>>;
+  distinct?: InputMaybe<
+    Array<InputMaybe<Lst_Pool_State_Changes_Distinct_Enum>>
+  >;
   filter?: InputMaybe<LstPoolStateChangeFilter>;
   first?: InputMaybe<Scalars['Int']['input']>;
   last?: InputMaybe<Scalars['Int']['input']>;
@@ -8470,54 +8466,56 @@ export type LstPoolStateHistoryArgs = {
 };
 
 /** A connection to a list of `Account` values, with data from `LstPoolMember`. */
-export type LstPoolAccountsByLstPoolMemberLstPoolIdAndAccountIdManyToManyConnection = {
-  __typename?: 'LstPoolAccountsByLstPoolMemberLstPoolIdAndAccountIdManyToManyConnection';
-  /** Aggregates across the matching connection (ignoring before/after/first/last/offset) */
-  aggregates?: Maybe<AccountAggregates>;
-  /** A list of edges which contains the `Account`, info from the `LstPoolMember`, and the cursor to aid in pagination. */
-  edges: Array<LstPoolAccountsByLstPoolMemberLstPoolIdAndAccountIdManyToManyEdge>;
-  /** Grouped aggregates across the matching connection (ignoring before/after/first/last/offset) */
-  groupedAggregates?: Maybe<Array<AccountAggregates>>;
-  /** A list of `Account` objects. */
-  nodes: Array<Maybe<Account>>;
-  /** Information to aid in pagination. */
-  pageInfo: PageInfo;
-  /** The count of *all* `Account` you could get from the connection. */
-  totalCount: Scalars['Int']['output'];
-};
-
+export type LstPoolAccountsByLstPoolMemberLstPoolIdAndAccountIdManyToManyConnection =
+  {
+    __typename?: 'LstPoolAccountsByLstPoolMemberLstPoolIdAndAccountIdManyToManyConnection';
+    /** Aggregates across the matching connection (ignoring before/after/first/last/offset) */
+    aggregates?: Maybe<AccountAggregates>;
+    /** A list of edges which contains the `Account`, info from the `LstPoolMember`, and the cursor to aid in pagination. */
+    edges: Array<LstPoolAccountsByLstPoolMemberLstPoolIdAndAccountIdManyToManyEdge>;
+    /** Grouped aggregates across the matching connection (ignoring before/after/first/last/offset) */
+    groupedAggregates?: Maybe<Array<AccountAggregates>>;
+    /** A list of `Account` objects. */
+    nodes: Array<Maybe<Account>>;
+    /** Information to aid in pagination. */
+    pageInfo: PageInfo;
+    /** The count of *all* `Account` you could get from the connection. */
+    totalCount: Scalars['Int']['output'];
+  };
 
 /** A connection to a list of `Account` values, with data from `LstPoolMember`. */
-export type LstPoolAccountsByLstPoolMemberLstPoolIdAndAccountIdManyToManyConnectionGroupedAggregatesArgs = {
-  groupBy: Array<AccountsGroupBy>;
-  having?: InputMaybe<AccountsHavingInput>;
-};
+export type LstPoolAccountsByLstPoolMemberLstPoolIdAndAccountIdManyToManyConnectionGroupedAggregatesArgs =
+  {
+    groupBy: Array<AccountsGroupBy>;
+    having?: InputMaybe<AccountsHavingInput>;
+  };
 
 /** A `Account` edge in the connection, with data from `LstPoolMember`. */
-export type LstPoolAccountsByLstPoolMemberLstPoolIdAndAccountIdManyToManyEdge = {
-  __typename?: 'LstPoolAccountsByLstPoolMemberLstPoolIdAndAccountIdManyToManyEdge';
-  /** A cursor for use in pagination. */
-  cursor?: Maybe<Scalars['Cursor']['output']>;
-  /** Reads and enables pagination through a set of `LstPoolMember`. */
-  lstPoolMembers: LstPoolMembersConnection;
-  /** The `Account` at the end of the edge. */
-  node?: Maybe<Account>;
-};
-
+export type LstPoolAccountsByLstPoolMemberLstPoolIdAndAccountIdManyToManyEdge =
+  {
+    __typename?: 'LstPoolAccountsByLstPoolMemberLstPoolIdAndAccountIdManyToManyEdge';
+    /** A cursor for use in pagination. */
+    cursor?: Maybe<Scalars['Cursor']['output']>;
+    /** Reads and enables pagination through a set of `LstPoolMember`. */
+    lstPoolMembers: LstPoolMembersConnection;
+    /** The `Account` at the end of the edge. */
+    node?: Maybe<Account>;
+  };
 
 /** A `Account` edge in the connection, with data from `LstPoolMember`. */
-export type LstPoolAccountsByLstPoolMemberLstPoolIdAndAccountIdManyToManyEdgeLstPoolMembersArgs = {
-  after?: InputMaybe<Scalars['Cursor']['input']>;
-  before?: InputMaybe<Scalars['Cursor']['input']>;
-  blockHeight?: InputMaybe<Scalars['String']['input']>;
-  distinct?: InputMaybe<Array<InputMaybe<Lst_Pool_Members_Distinct_Enum>>>;
-  filter?: InputMaybe<LstPoolMemberFilter>;
-  first?: InputMaybe<Scalars['Int']['input']>;
-  last?: InputMaybe<Scalars['Int']['input']>;
-  offset?: InputMaybe<Scalars['Int']['input']>;
-  orderBy?: InputMaybe<Array<LstPoolMembersOrderBy>>;
-  orderByNull?: InputMaybe<NullOrder>;
-};
+export type LstPoolAccountsByLstPoolMemberLstPoolIdAndAccountIdManyToManyEdgeLstPoolMembersArgs =
+  {
+    after?: InputMaybe<Scalars['Cursor']['input']>;
+    before?: InputMaybe<Scalars['Cursor']['input']>;
+    blockHeight?: InputMaybe<Scalars['String']['input']>;
+    distinct?: InputMaybe<Array<InputMaybe<Lst_Pool_Members_Distinct_Enum>>>;
+    filter?: InputMaybe<LstPoolMemberFilter>;
+    first?: InputMaybe<Scalars['Int']['input']>;
+    last?: InputMaybe<Scalars['Int']['input']>;
+    offset?: InputMaybe<Scalars['Int']['input']>;
+    orderBy?: InputMaybe<Array<LstPoolMembersOrderBy>>;
+    orderByNull?: InputMaybe<NullOrder>;
+  };
 
 export type LstPoolAggregates = {
   __typename?: 'LstPoolAggregates';
@@ -8611,7 +8609,6 @@ export type LstPoolMember = Node & {
   /** Reads and enables pagination through a set of `MemberStakeChange`. */
   stakeHistory: MemberStakeChangesConnection;
 };
-
 
 export type LstPoolMemberStakeHistoryArgs = {
   after?: InputMaybe<Scalars['Cursor']['input']>;
@@ -8833,7 +8830,6 @@ export type LstPoolMembersConnection = {
   totalCount: Scalars['Int']['output'];
 };
 
-
 /** A connection to a list of `LstPoolMember` values. */
 export type LstPoolMembersConnectionGroupedAggregatesArgs = {
   groupBy: Array<LstPoolMembersGroupBy>;
@@ -8854,7 +8850,7 @@ export enum LstPoolMembersGroupBy {
   AccountId = 'ACCOUNT_ID',
   CurrentStake = 'CURRENT_STAKE',
   Id = 'ID',
-  LstPoolId = 'LST_POOL_ID'
+  LstPoolId = 'LST_POOL_ID',
 }
 
 export type LstPoolMembersHavingAverageInput = {
@@ -9028,7 +9024,7 @@ export enum LstPoolMembersOrderBy {
   StakeHistoryVarianceSampleIdAsc = 'STAKE_HISTORY_VARIANCE_SAMPLE_ID_ASC',
   StakeHistoryVarianceSampleIdDesc = 'STAKE_HISTORY_VARIANCE_SAMPLE_ID_DESC',
   StakeHistoryVarianceSampleMemberIdAsc = 'STAKE_HISTORY_VARIANCE_SAMPLE_MEMBER_ID_ASC',
-  StakeHistoryVarianceSampleMemberIdDesc = 'STAKE_HISTORY_VARIANCE_SAMPLE_MEMBER_ID_DESC'
+  StakeHistoryVarianceSampleMemberIdDesc = 'STAKE_HISTORY_VARIANCE_SAMPLE_MEMBER_ID_DESC',
 }
 
 export type LstPoolMinAggregates = {
@@ -9041,7 +9037,7 @@ export type LstPoolMinAggregates = {
 export enum LstPoolState {
   Closed = 'CLOSED',
   Destroying = 'DESTROYING',
-  Open = 'OPEN'
+  Open = 'OPEN',
 }
 
 export type LstPoolStateChange = Node & {
@@ -9249,7 +9245,6 @@ export type LstPoolStateChangesConnection = {
   totalCount: Scalars['Int']['output'];
 };
 
-
 /** A connection to a list of `LstPoolStateChange` values. */
 export type LstPoolStateChangesConnectionGroupedAggregatesArgs = {
   groupBy: Array<LstPoolStateChangesGroupBy>;
@@ -9270,7 +9265,7 @@ export enum LstPoolStateChangesGroupBy {
   BlockNumber = 'BLOCK_NUMBER',
   Id = 'ID',
   LstPoolId = 'LST_POOL_ID',
-  State = 'STATE'
+  State = 'STATE',
 }
 
 export type LstPoolStateChangesHavingAverageInput = {
@@ -9342,7 +9337,7 @@ export enum LstPoolStateChangesOrderBy {
   PrimaryKeyAsc = 'PRIMARY_KEY_ASC',
   PrimaryKeyDesc = 'PRIMARY_KEY_DESC',
   StateAsc = 'STATE_ASC',
-  StateDesc = 'STATE_DESC'
+  StateDesc = 'STATE_DESC',
 }
 
 /** A filter to be used against LstPoolState fields. All fields are combined with a logical ‘and.’ */
@@ -9442,7 +9437,6 @@ export type LstPoolsConnection = {
   totalCount: Scalars['Int']['output'];
 };
 
-
 /** A connection to a list of `LstPool` values. */
 export type LstPoolsConnectionGroupedAggregatesArgs = {
   groupBy: Array<LstPoolsGroupBy>;
@@ -9462,7 +9456,7 @@ export type LstPoolsEdge = {
 export enum LstPoolsGroupBy {
   CurrentState = 'CURRENT_STATE',
   Id = 'ID',
-  TotalStake = 'TOTAL_STAKE'
+  TotalStake = 'TOTAL_STAKE',
 }
 
 export type LstPoolsHavingAverageInput = {
@@ -9714,7 +9708,7 @@ export enum LstPoolsOrderBy {
   StateHistoryVarianceSampleStateAsc = 'STATE_HISTORY_VARIANCE_SAMPLE_STATE_ASC',
   StateHistoryVarianceSampleStateDesc = 'STATE_HISTORY_VARIANCE_SAMPLE_STATE_DESC',
   TotalStakeAsc = 'TOTAL_STAKE_ASC',
-  TotalStakeDesc = 'TOTAL_STAKE_DESC'
+  TotalStakeDesc = 'TOTAL_STAKE_DESC',
 }
 
 export type MemberStakeChange = Node & {
@@ -9946,7 +9940,6 @@ export type MemberStakeChangesConnection = {
   totalCount: Scalars['Int']['output'];
 };
 
-
 /** A connection to a list of `MemberStakeChange` values. */
 export type MemberStakeChangesConnectionGroupedAggregatesArgs = {
   groupBy: Array<MemberStakeChangesGroupBy>;
@@ -9967,7 +9960,7 @@ export enum MemberStakeChangesGroupBy {
   Amount = 'AMOUNT',
   BlockNumber = 'BLOCK_NUMBER',
   Id = 'ID',
-  MemberId = 'MEMBER_ID'
+  MemberId = 'MEMBER_ID',
 }
 
 export type MemberStakeChangesHavingAverageInput = {
@@ -10050,7 +10043,7 @@ export enum MemberStakeChangesOrderBy {
   MemberIdDesc = 'MEMBER_ID_DESC',
   Natural = 'NATURAL',
   PrimaryKeyAsc = 'PRIMARY_KEY_ASC',
-  PrimaryKeyDesc = 'PRIMARY_KEY_DESC'
+  PrimaryKeyDesc = 'PRIMARY_KEY_DESC',
 }
 
 /** An object with a globally unique `ID`. */
@@ -10064,7 +10057,7 @@ export enum NullOrder {
   /** Order null values first. */
   NullsFirst = 'NULLS_FIRST',
   /** Order null values last. */
-  NullsLast = 'NULLS_LAST'
+  NullsLast = 'NULLS_LAST',
 }
 
 export type Operator = Node & {
@@ -10130,7 +10123,6 @@ export type Operator = Node & {
   unstakeRequests: UnstakeRequestsConnection;
 };
 
-
 export type OperatorBlueprintOperatorsArgs = {
   after?: InputMaybe<Scalars['Cursor']['input']>;
   before?: InputMaybe<Scalars['Cursor']['input']>;
@@ -10144,20 +10136,19 @@ export type OperatorBlueprintOperatorsArgs = {
   orderByNull?: InputMaybe<NullOrder>;
 };
 
-
-export type OperatorBlueprintsByBlueprintOperatorOperatorIdAndBlueprintIdArgs = {
-  after?: InputMaybe<Scalars['Cursor']['input']>;
-  before?: InputMaybe<Scalars['Cursor']['input']>;
-  blockHeight?: InputMaybe<Scalars['String']['input']>;
-  distinct?: InputMaybe<Array<InputMaybe<Blueprints_Distinct_Enum>>>;
-  filter?: InputMaybe<BlueprintFilter>;
-  first?: InputMaybe<Scalars['Int']['input']>;
-  last?: InputMaybe<Scalars['Int']['input']>;
-  offset?: InputMaybe<Scalars['Int']['input']>;
-  orderBy?: InputMaybe<Array<BlueprintsOrderBy>>;
-  orderByNull?: InputMaybe<NullOrder>;
-};
-
+export type OperatorBlueprintsByBlueprintOperatorOperatorIdAndBlueprintIdArgs =
+  {
+    after?: InputMaybe<Scalars['Cursor']['input']>;
+    before?: InputMaybe<Scalars['Cursor']['input']>;
+    blockHeight?: InputMaybe<Scalars['String']['input']>;
+    distinct?: InputMaybe<Array<InputMaybe<Blueprints_Distinct_Enum>>>;
+    filter?: InputMaybe<BlueprintFilter>;
+    first?: InputMaybe<Scalars['Int']['input']>;
+    last?: InputMaybe<Scalars['Int']['input']>;
+    offset?: InputMaybe<Scalars['Int']['input']>;
+    orderBy?: InputMaybe<Array<BlueprintsOrderBy>>;
+    orderByNull?: InputMaybe<NullOrder>;
+  };
 
 export type OperatorBondChangesArgs = {
   after?: InputMaybe<Scalars['Cursor']['input']>;
@@ -10172,7 +10163,6 @@ export type OperatorBondChangesArgs = {
   orderByNull?: InputMaybe<NullOrder>;
 };
 
-
 export type OperatorDelegationsArgs = {
   after?: InputMaybe<Scalars['Cursor']['input']>;
   before?: InputMaybe<Scalars['Cursor']['input']>;
@@ -10185,7 +10175,6 @@ export type OperatorDelegationsArgs = {
   orderBy?: InputMaybe<Array<DelegationsOrderBy>>;
   orderByNull?: InputMaybe<NullOrder>;
 };
-
 
 export type OperatorDelegationsByUnstakeRequestOperatorIdAndDelegationIdArgs = {
   after?: InputMaybe<Scalars['Cursor']['input']>;
@@ -10200,7 +10189,6 @@ export type OperatorDelegationsByUnstakeRequestOperatorIdAndDelegationIdArgs = {
   orderByNull?: InputMaybe<NullOrder>;
 };
 
-
 export type OperatorDelegatorsByDelegationOperatorIdAndDelegatorIdArgs = {
   after?: InputMaybe<Scalars['Cursor']['input']>;
   before?: InputMaybe<Scalars['Cursor']['input']>;
@@ -10213,7 +10201,6 @@ export type OperatorDelegatorsByDelegationOperatorIdAndDelegatorIdArgs = {
   orderBy?: InputMaybe<Array<DelegatorsOrderBy>>;
   orderByNull?: InputMaybe<NullOrder>;
 };
-
 
 export type OperatorDelegatorsByUnstakeRequestOperatorIdAndDelegatorIdArgs = {
   after?: InputMaybe<Scalars['Cursor']['input']>;
@@ -10228,7 +10215,6 @@ export type OperatorDelegatorsByUnstakeRequestOperatorIdAndDelegatorIdArgs = {
   orderByNull?: InputMaybe<NullOrder>;
 };
 
-
 export type OperatorJobCallsByJobResultOperatorIdAndJobCallIdArgs = {
   after?: InputMaybe<Scalars['Cursor']['input']>;
   before?: InputMaybe<Scalars['Cursor']['input']>;
@@ -10241,7 +10227,6 @@ export type OperatorJobCallsByJobResultOperatorIdAndJobCallIdArgs = {
   orderBy?: InputMaybe<Array<JobCallsOrderBy>>;
   orderByNull?: InputMaybe<NullOrder>;
 };
-
 
 export type OperatorJobResultsArgs = {
   after?: InputMaybe<Scalars['Cursor']['input']>;
@@ -10256,7 +10241,6 @@ export type OperatorJobResultsArgs = {
   orderByNull?: InputMaybe<NullOrder>;
 };
 
-
 export type OperatorServiceOperatorsArgs = {
   after?: InputMaybe<Scalars['Cursor']['input']>;
   before?: InputMaybe<Scalars['Cursor']['input']>;
@@ -10270,12 +10254,13 @@ export type OperatorServiceOperatorsArgs = {
   orderByNull?: InputMaybe<NullOrder>;
 };
 
-
 export type OperatorServiceRequestOperatorsArgs = {
   after?: InputMaybe<Scalars['Cursor']['input']>;
   before?: InputMaybe<Scalars['Cursor']['input']>;
   blockHeight?: InputMaybe<Scalars['String']['input']>;
-  distinct?: InputMaybe<Array<InputMaybe<Service_Request_Operators_Distinct_Enum>>>;
+  distinct?: InputMaybe<
+    Array<InputMaybe<Service_Request_Operators_Distinct_Enum>>
+  >;
   filter?: InputMaybe<ServiceRequestOperatorFilter>;
   first?: InputMaybe<Scalars['Int']['input']>;
   last?: InputMaybe<Scalars['Int']['input']>;
@@ -10284,20 +10269,19 @@ export type OperatorServiceRequestOperatorsArgs = {
   orderByNull?: InputMaybe<NullOrder>;
 };
 
-
-export type OperatorServiceRequestsByServiceRequestOperatorOperatorIdAndServiceRequestIdArgs = {
-  after?: InputMaybe<Scalars['Cursor']['input']>;
-  before?: InputMaybe<Scalars['Cursor']['input']>;
-  blockHeight?: InputMaybe<Scalars['String']['input']>;
-  distinct?: InputMaybe<Array<InputMaybe<Service_Requests_Distinct_Enum>>>;
-  filter?: InputMaybe<ServiceRequestFilter>;
-  first?: InputMaybe<Scalars['Int']['input']>;
-  last?: InputMaybe<Scalars['Int']['input']>;
-  offset?: InputMaybe<Scalars['Int']['input']>;
-  orderBy?: InputMaybe<Array<ServiceRequestsOrderBy>>;
-  orderByNull?: InputMaybe<NullOrder>;
-};
-
+export type OperatorServiceRequestsByServiceRequestOperatorOperatorIdAndServiceRequestIdArgs =
+  {
+    after?: InputMaybe<Scalars['Cursor']['input']>;
+    before?: InputMaybe<Scalars['Cursor']['input']>;
+    blockHeight?: InputMaybe<Scalars['String']['input']>;
+    distinct?: InputMaybe<Array<InputMaybe<Service_Requests_Distinct_Enum>>>;
+    filter?: InputMaybe<ServiceRequestFilter>;
+    first?: InputMaybe<Scalars['Int']['input']>;
+    last?: InputMaybe<Scalars['Int']['input']>;
+    offset?: InputMaybe<Scalars['Int']['input']>;
+    orderBy?: InputMaybe<Array<ServiceRequestsOrderBy>>;
+    orderByNull?: InputMaybe<NullOrder>;
+  };
 
 export type OperatorServicesByJobResultOperatorIdAndServiceIdArgs = {
   after?: InputMaybe<Scalars['Cursor']['input']>;
@@ -10312,7 +10296,6 @@ export type OperatorServicesByJobResultOperatorIdAndServiceIdArgs = {
   orderByNull?: InputMaybe<NullOrder>;
 };
 
-
 export type OperatorServicesByServiceOperatorOperatorIdAndServiceIdArgs = {
   after?: InputMaybe<Scalars['Cursor']['input']>;
   before?: InputMaybe<Scalars['Cursor']['input']>;
@@ -10326,12 +10309,13 @@ export type OperatorServicesByServiceOperatorOperatorIdAndServiceIdArgs = {
   orderByNull?: InputMaybe<NullOrder>;
 };
 
-
 export type OperatorStatusHistoryArgs = {
   after?: InputMaybe<Scalars['Cursor']['input']>;
   before?: InputMaybe<Scalars['Cursor']['input']>;
   blockHeight?: InputMaybe<Scalars['String']['input']>;
-  distinct?: InputMaybe<Array<InputMaybe<Operator_Status_Changes_Distinct_Enum>>>;
+  distinct?: InputMaybe<
+    Array<InputMaybe<Operator_Status_Changes_Distinct_Enum>>
+  >;
   filter?: InputMaybe<OperatorStatusChangeFilter>;
   first?: InputMaybe<Scalars['Int']['input']>;
   last?: InputMaybe<Scalars['Int']['input']>;
@@ -10339,7 +10323,6 @@ export type OperatorStatusHistoryArgs = {
   orderBy?: InputMaybe<Array<OperatorStatusChangesOrderBy>>;
   orderByNull?: InputMaybe<NullOrder>;
 };
-
 
 export type OperatorUnstakeRequestsArgs = {
   after?: InputMaybe<Scalars['Cursor']['input']>;
@@ -10430,54 +10413,56 @@ export type OperatorAverageAggregates = {
 };
 
 /** A connection to a list of `Blueprint` values, with data from `BlueprintOperator`. */
-export type OperatorBlueprintsByBlueprintOperatorOperatorIdAndBlueprintIdManyToManyConnection = {
-  __typename?: 'OperatorBlueprintsByBlueprintOperatorOperatorIdAndBlueprintIdManyToManyConnection';
-  /** Aggregates across the matching connection (ignoring before/after/first/last/offset) */
-  aggregates?: Maybe<BlueprintAggregates>;
-  /** A list of edges which contains the `Blueprint`, info from the `BlueprintOperator`, and the cursor to aid in pagination. */
-  edges: Array<OperatorBlueprintsByBlueprintOperatorOperatorIdAndBlueprintIdManyToManyEdge>;
-  /** Grouped aggregates across the matching connection (ignoring before/after/first/last/offset) */
-  groupedAggregates?: Maybe<Array<BlueprintAggregates>>;
-  /** A list of `Blueprint` objects. */
-  nodes: Array<Maybe<Blueprint>>;
-  /** Information to aid in pagination. */
-  pageInfo: PageInfo;
-  /** The count of *all* `Blueprint` you could get from the connection. */
-  totalCount: Scalars['Int']['output'];
-};
-
+export type OperatorBlueprintsByBlueprintOperatorOperatorIdAndBlueprintIdManyToManyConnection =
+  {
+    __typename?: 'OperatorBlueprintsByBlueprintOperatorOperatorIdAndBlueprintIdManyToManyConnection';
+    /** Aggregates across the matching connection (ignoring before/after/first/last/offset) */
+    aggregates?: Maybe<BlueprintAggregates>;
+    /** A list of edges which contains the `Blueprint`, info from the `BlueprintOperator`, and the cursor to aid in pagination. */
+    edges: Array<OperatorBlueprintsByBlueprintOperatorOperatorIdAndBlueprintIdManyToManyEdge>;
+    /** Grouped aggregates across the matching connection (ignoring before/after/first/last/offset) */
+    groupedAggregates?: Maybe<Array<BlueprintAggregates>>;
+    /** A list of `Blueprint` objects. */
+    nodes: Array<Maybe<Blueprint>>;
+    /** Information to aid in pagination. */
+    pageInfo: PageInfo;
+    /** The count of *all* `Blueprint` you could get from the connection. */
+    totalCount: Scalars['Int']['output'];
+  };
 
 /** A connection to a list of `Blueprint` values, with data from `BlueprintOperator`. */
-export type OperatorBlueprintsByBlueprintOperatorOperatorIdAndBlueprintIdManyToManyConnectionGroupedAggregatesArgs = {
-  groupBy: Array<BlueprintsGroupBy>;
-  having?: InputMaybe<BlueprintsHavingInput>;
-};
+export type OperatorBlueprintsByBlueprintOperatorOperatorIdAndBlueprintIdManyToManyConnectionGroupedAggregatesArgs =
+  {
+    groupBy: Array<BlueprintsGroupBy>;
+    having?: InputMaybe<BlueprintsHavingInput>;
+  };
 
 /** A `Blueprint` edge in the connection, with data from `BlueprintOperator`. */
-export type OperatorBlueprintsByBlueprintOperatorOperatorIdAndBlueprintIdManyToManyEdge = {
-  __typename?: 'OperatorBlueprintsByBlueprintOperatorOperatorIdAndBlueprintIdManyToManyEdge';
-  /** Reads and enables pagination through a set of `BlueprintOperator`. */
-  blueprintOperators: BlueprintOperatorsConnection;
-  /** A cursor for use in pagination. */
-  cursor?: Maybe<Scalars['Cursor']['output']>;
-  /** The `Blueprint` at the end of the edge. */
-  node?: Maybe<Blueprint>;
-};
-
+export type OperatorBlueprintsByBlueprintOperatorOperatorIdAndBlueprintIdManyToManyEdge =
+  {
+    __typename?: 'OperatorBlueprintsByBlueprintOperatorOperatorIdAndBlueprintIdManyToManyEdge';
+    /** Reads and enables pagination through a set of `BlueprintOperator`. */
+    blueprintOperators: BlueprintOperatorsConnection;
+    /** A cursor for use in pagination. */
+    cursor?: Maybe<Scalars['Cursor']['output']>;
+    /** The `Blueprint` at the end of the edge. */
+    node?: Maybe<Blueprint>;
+  };
 
 /** A `Blueprint` edge in the connection, with data from `BlueprintOperator`. */
-export type OperatorBlueprintsByBlueprintOperatorOperatorIdAndBlueprintIdManyToManyEdgeBlueprintOperatorsArgs = {
-  after?: InputMaybe<Scalars['Cursor']['input']>;
-  before?: InputMaybe<Scalars['Cursor']['input']>;
-  blockHeight?: InputMaybe<Scalars['String']['input']>;
-  distinct?: InputMaybe<Array<InputMaybe<Blueprint_Operators_Distinct_Enum>>>;
-  filter?: InputMaybe<BlueprintOperatorFilter>;
-  first?: InputMaybe<Scalars['Int']['input']>;
-  last?: InputMaybe<Scalars['Int']['input']>;
-  offset?: InputMaybe<Scalars['Int']['input']>;
-  orderBy?: InputMaybe<Array<BlueprintOperatorsOrderBy>>;
-  orderByNull?: InputMaybe<NullOrder>;
-};
+export type OperatorBlueprintsByBlueprintOperatorOperatorIdAndBlueprintIdManyToManyEdgeBlueprintOperatorsArgs =
+  {
+    after?: InputMaybe<Scalars['Cursor']['input']>;
+    before?: InputMaybe<Scalars['Cursor']['input']>;
+    blockHeight?: InputMaybe<Scalars['String']['input']>;
+    distinct?: InputMaybe<Array<InputMaybe<Blueprint_Operators_Distinct_Enum>>>;
+    filter?: InputMaybe<BlueprintOperatorFilter>;
+    first?: InputMaybe<Scalars['Int']['input']>;
+    last?: InputMaybe<Scalars['Int']['input']>;
+    offset?: InputMaybe<Scalars['Int']['input']>;
+    orderBy?: InputMaybe<Array<BlueprintOperatorsOrderBy>>;
+    orderByNull?: InputMaybe<NullOrder>;
+  };
 
 export type OperatorBondChange = Node & {
   __typename?: 'OperatorBondChange';
@@ -10715,7 +10700,6 @@ export type OperatorBondChangesConnection = {
   totalCount: Scalars['Int']['output'];
 };
 
-
 /** A connection to a list of `OperatorBondChange` values. */
 export type OperatorBondChangesConnectionGroupedAggregatesArgs = {
   groupBy: Array<OperatorBondChangesGroupBy>;
@@ -10737,7 +10721,7 @@ export enum OperatorBondChangesGroupBy {
   Amount = 'AMOUNT',
   BlockNumber = 'BLOCK_NUMBER',
   Id = 'ID',
-  OperatorId = 'OPERATOR_ID'
+  OperatorId = 'OPERATOR_ID',
 }
 
 export type OperatorBondChangesHavingAverageInput = {
@@ -10834,158 +10818,164 @@ export enum OperatorBondChangesOrderBy {
   OperatorIdAsc = 'OPERATOR_ID_ASC',
   OperatorIdDesc = 'OPERATOR_ID_DESC',
   PrimaryKeyAsc = 'PRIMARY_KEY_ASC',
-  PrimaryKeyDesc = 'PRIMARY_KEY_DESC'
+  PrimaryKeyDesc = 'PRIMARY_KEY_DESC',
 }
 
 /** A connection to a list of `Delegation` values, with data from `UnstakeRequest`. */
-export type OperatorDelegationsByUnstakeRequestOperatorIdAndDelegationIdManyToManyConnection = {
-  __typename?: 'OperatorDelegationsByUnstakeRequestOperatorIdAndDelegationIdManyToManyConnection';
-  /** Aggregates across the matching connection (ignoring before/after/first/last/offset) */
-  aggregates?: Maybe<DelegationAggregates>;
-  /** A list of edges which contains the `Delegation`, info from the `UnstakeRequest`, and the cursor to aid in pagination. */
-  edges: Array<OperatorDelegationsByUnstakeRequestOperatorIdAndDelegationIdManyToManyEdge>;
-  /** Grouped aggregates across the matching connection (ignoring before/after/first/last/offset) */
-  groupedAggregates?: Maybe<Array<DelegationAggregates>>;
-  /** A list of `Delegation` objects. */
-  nodes: Array<Maybe<Delegation>>;
-  /** Information to aid in pagination. */
-  pageInfo: PageInfo;
-  /** The count of *all* `Delegation` you could get from the connection. */
-  totalCount: Scalars['Int']['output'];
-};
-
+export type OperatorDelegationsByUnstakeRequestOperatorIdAndDelegationIdManyToManyConnection =
+  {
+    __typename?: 'OperatorDelegationsByUnstakeRequestOperatorIdAndDelegationIdManyToManyConnection';
+    /** Aggregates across the matching connection (ignoring before/after/first/last/offset) */
+    aggregates?: Maybe<DelegationAggregates>;
+    /** A list of edges which contains the `Delegation`, info from the `UnstakeRequest`, and the cursor to aid in pagination. */
+    edges: Array<OperatorDelegationsByUnstakeRequestOperatorIdAndDelegationIdManyToManyEdge>;
+    /** Grouped aggregates across the matching connection (ignoring before/after/first/last/offset) */
+    groupedAggregates?: Maybe<Array<DelegationAggregates>>;
+    /** A list of `Delegation` objects. */
+    nodes: Array<Maybe<Delegation>>;
+    /** Information to aid in pagination. */
+    pageInfo: PageInfo;
+    /** The count of *all* `Delegation` you could get from the connection. */
+    totalCount: Scalars['Int']['output'];
+  };
 
 /** A connection to a list of `Delegation` values, with data from `UnstakeRequest`. */
-export type OperatorDelegationsByUnstakeRequestOperatorIdAndDelegationIdManyToManyConnectionGroupedAggregatesArgs = {
-  groupBy: Array<DelegationsGroupBy>;
-  having?: InputMaybe<DelegationsHavingInput>;
-};
+export type OperatorDelegationsByUnstakeRequestOperatorIdAndDelegationIdManyToManyConnectionGroupedAggregatesArgs =
+  {
+    groupBy: Array<DelegationsGroupBy>;
+    having?: InputMaybe<DelegationsHavingInput>;
+  };
 
 /** A `Delegation` edge in the connection, with data from `UnstakeRequest`. */
-export type OperatorDelegationsByUnstakeRequestOperatorIdAndDelegationIdManyToManyEdge = {
-  __typename?: 'OperatorDelegationsByUnstakeRequestOperatorIdAndDelegationIdManyToManyEdge';
-  /** A cursor for use in pagination. */
-  cursor?: Maybe<Scalars['Cursor']['output']>;
-  /** The `Delegation` at the end of the edge. */
-  node?: Maybe<Delegation>;
-  /** Reads and enables pagination through a set of `UnstakeRequest`. */
-  unstakeRequests: UnstakeRequestsConnection;
-};
-
+export type OperatorDelegationsByUnstakeRequestOperatorIdAndDelegationIdManyToManyEdge =
+  {
+    __typename?: 'OperatorDelegationsByUnstakeRequestOperatorIdAndDelegationIdManyToManyEdge';
+    /** A cursor for use in pagination. */
+    cursor?: Maybe<Scalars['Cursor']['output']>;
+    /** The `Delegation` at the end of the edge. */
+    node?: Maybe<Delegation>;
+    /** Reads and enables pagination through a set of `UnstakeRequest`. */
+    unstakeRequests: UnstakeRequestsConnection;
+  };
 
 /** A `Delegation` edge in the connection, with data from `UnstakeRequest`. */
-export type OperatorDelegationsByUnstakeRequestOperatorIdAndDelegationIdManyToManyEdgeUnstakeRequestsArgs = {
-  after?: InputMaybe<Scalars['Cursor']['input']>;
-  before?: InputMaybe<Scalars['Cursor']['input']>;
-  blockHeight?: InputMaybe<Scalars['String']['input']>;
-  distinct?: InputMaybe<Array<InputMaybe<Unstake_Requests_Distinct_Enum>>>;
-  filter?: InputMaybe<UnstakeRequestFilter>;
-  first?: InputMaybe<Scalars['Int']['input']>;
-  last?: InputMaybe<Scalars['Int']['input']>;
-  offset?: InputMaybe<Scalars['Int']['input']>;
-  orderBy?: InputMaybe<Array<UnstakeRequestsOrderBy>>;
-  orderByNull?: InputMaybe<NullOrder>;
-};
+export type OperatorDelegationsByUnstakeRequestOperatorIdAndDelegationIdManyToManyEdgeUnstakeRequestsArgs =
+  {
+    after?: InputMaybe<Scalars['Cursor']['input']>;
+    before?: InputMaybe<Scalars['Cursor']['input']>;
+    blockHeight?: InputMaybe<Scalars['String']['input']>;
+    distinct?: InputMaybe<Array<InputMaybe<Unstake_Requests_Distinct_Enum>>>;
+    filter?: InputMaybe<UnstakeRequestFilter>;
+    first?: InputMaybe<Scalars['Int']['input']>;
+    last?: InputMaybe<Scalars['Int']['input']>;
+    offset?: InputMaybe<Scalars['Int']['input']>;
+    orderBy?: InputMaybe<Array<UnstakeRequestsOrderBy>>;
+    orderByNull?: InputMaybe<NullOrder>;
+  };
 
 /** A connection to a list of `Delegator` values, with data from `Delegation`. */
-export type OperatorDelegatorsByDelegationOperatorIdAndDelegatorIdManyToManyConnection = {
-  __typename?: 'OperatorDelegatorsByDelegationOperatorIdAndDelegatorIdManyToManyConnection';
-  /** Aggregates across the matching connection (ignoring before/after/first/last/offset) */
-  aggregates?: Maybe<DelegatorAggregates>;
-  /** A list of edges which contains the `Delegator`, info from the `Delegation`, and the cursor to aid in pagination. */
-  edges: Array<OperatorDelegatorsByDelegationOperatorIdAndDelegatorIdManyToManyEdge>;
-  /** Grouped aggregates across the matching connection (ignoring before/after/first/last/offset) */
-  groupedAggregates?: Maybe<Array<DelegatorAggregates>>;
-  /** A list of `Delegator` objects. */
-  nodes: Array<Maybe<Delegator>>;
-  /** Information to aid in pagination. */
-  pageInfo: PageInfo;
-  /** The count of *all* `Delegator` you could get from the connection. */
-  totalCount: Scalars['Int']['output'];
-};
-
+export type OperatorDelegatorsByDelegationOperatorIdAndDelegatorIdManyToManyConnection =
+  {
+    __typename?: 'OperatorDelegatorsByDelegationOperatorIdAndDelegatorIdManyToManyConnection';
+    /** Aggregates across the matching connection (ignoring before/after/first/last/offset) */
+    aggregates?: Maybe<DelegatorAggregates>;
+    /** A list of edges which contains the `Delegator`, info from the `Delegation`, and the cursor to aid in pagination. */
+    edges: Array<OperatorDelegatorsByDelegationOperatorIdAndDelegatorIdManyToManyEdge>;
+    /** Grouped aggregates across the matching connection (ignoring before/after/first/last/offset) */
+    groupedAggregates?: Maybe<Array<DelegatorAggregates>>;
+    /** A list of `Delegator` objects. */
+    nodes: Array<Maybe<Delegator>>;
+    /** Information to aid in pagination. */
+    pageInfo: PageInfo;
+    /** The count of *all* `Delegator` you could get from the connection. */
+    totalCount: Scalars['Int']['output'];
+  };
 
 /** A connection to a list of `Delegator` values, with data from `Delegation`. */
-export type OperatorDelegatorsByDelegationOperatorIdAndDelegatorIdManyToManyConnectionGroupedAggregatesArgs = {
-  groupBy: Array<DelegatorsGroupBy>;
-  having?: InputMaybe<DelegatorsHavingInput>;
-};
+export type OperatorDelegatorsByDelegationOperatorIdAndDelegatorIdManyToManyConnectionGroupedAggregatesArgs =
+  {
+    groupBy: Array<DelegatorsGroupBy>;
+    having?: InputMaybe<DelegatorsHavingInput>;
+  };
 
 /** A `Delegator` edge in the connection, with data from `Delegation`. */
-export type OperatorDelegatorsByDelegationOperatorIdAndDelegatorIdManyToManyEdge = {
-  __typename?: 'OperatorDelegatorsByDelegationOperatorIdAndDelegatorIdManyToManyEdge';
-  /** A cursor for use in pagination. */
-  cursor?: Maybe<Scalars['Cursor']['output']>;
-  /** Reads and enables pagination through a set of `Delegation`. */
-  delegations: DelegationsConnection;
-  /** The `Delegator` at the end of the edge. */
-  node?: Maybe<Delegator>;
-};
-
+export type OperatorDelegatorsByDelegationOperatorIdAndDelegatorIdManyToManyEdge =
+  {
+    __typename?: 'OperatorDelegatorsByDelegationOperatorIdAndDelegatorIdManyToManyEdge';
+    /** A cursor for use in pagination. */
+    cursor?: Maybe<Scalars['Cursor']['output']>;
+    /** Reads and enables pagination through a set of `Delegation`. */
+    delegations: DelegationsConnection;
+    /** The `Delegator` at the end of the edge. */
+    node?: Maybe<Delegator>;
+  };
 
 /** A `Delegator` edge in the connection, with data from `Delegation`. */
-export type OperatorDelegatorsByDelegationOperatorIdAndDelegatorIdManyToManyEdgeDelegationsArgs = {
-  after?: InputMaybe<Scalars['Cursor']['input']>;
-  before?: InputMaybe<Scalars['Cursor']['input']>;
-  blockHeight?: InputMaybe<Scalars['String']['input']>;
-  distinct?: InputMaybe<Array<InputMaybe<Delegations_Distinct_Enum>>>;
-  filter?: InputMaybe<DelegationFilter>;
-  first?: InputMaybe<Scalars['Int']['input']>;
-  last?: InputMaybe<Scalars['Int']['input']>;
-  offset?: InputMaybe<Scalars['Int']['input']>;
-  orderBy?: InputMaybe<Array<DelegationsOrderBy>>;
-  orderByNull?: InputMaybe<NullOrder>;
-};
+export type OperatorDelegatorsByDelegationOperatorIdAndDelegatorIdManyToManyEdgeDelegationsArgs =
+  {
+    after?: InputMaybe<Scalars['Cursor']['input']>;
+    before?: InputMaybe<Scalars['Cursor']['input']>;
+    blockHeight?: InputMaybe<Scalars['String']['input']>;
+    distinct?: InputMaybe<Array<InputMaybe<Delegations_Distinct_Enum>>>;
+    filter?: InputMaybe<DelegationFilter>;
+    first?: InputMaybe<Scalars['Int']['input']>;
+    last?: InputMaybe<Scalars['Int']['input']>;
+    offset?: InputMaybe<Scalars['Int']['input']>;
+    orderBy?: InputMaybe<Array<DelegationsOrderBy>>;
+    orderByNull?: InputMaybe<NullOrder>;
+  };
 
 /** A connection to a list of `Delegator` values, with data from `UnstakeRequest`. */
-export type OperatorDelegatorsByUnstakeRequestOperatorIdAndDelegatorIdManyToManyConnection = {
-  __typename?: 'OperatorDelegatorsByUnstakeRequestOperatorIdAndDelegatorIdManyToManyConnection';
-  /** Aggregates across the matching connection (ignoring before/after/first/last/offset) */
-  aggregates?: Maybe<DelegatorAggregates>;
-  /** A list of edges which contains the `Delegator`, info from the `UnstakeRequest`, and the cursor to aid in pagination. */
-  edges: Array<OperatorDelegatorsByUnstakeRequestOperatorIdAndDelegatorIdManyToManyEdge>;
-  /** Grouped aggregates across the matching connection (ignoring before/after/first/last/offset) */
-  groupedAggregates?: Maybe<Array<DelegatorAggregates>>;
-  /** A list of `Delegator` objects. */
-  nodes: Array<Maybe<Delegator>>;
-  /** Information to aid in pagination. */
-  pageInfo: PageInfo;
-  /** The count of *all* `Delegator` you could get from the connection. */
-  totalCount: Scalars['Int']['output'];
-};
-
+export type OperatorDelegatorsByUnstakeRequestOperatorIdAndDelegatorIdManyToManyConnection =
+  {
+    __typename?: 'OperatorDelegatorsByUnstakeRequestOperatorIdAndDelegatorIdManyToManyConnection';
+    /** Aggregates across the matching connection (ignoring before/after/first/last/offset) */
+    aggregates?: Maybe<DelegatorAggregates>;
+    /** A list of edges which contains the `Delegator`, info from the `UnstakeRequest`, and the cursor to aid in pagination. */
+    edges: Array<OperatorDelegatorsByUnstakeRequestOperatorIdAndDelegatorIdManyToManyEdge>;
+    /** Grouped aggregates across the matching connection (ignoring before/after/first/last/offset) */
+    groupedAggregates?: Maybe<Array<DelegatorAggregates>>;
+    /** A list of `Delegator` objects. */
+    nodes: Array<Maybe<Delegator>>;
+    /** Information to aid in pagination. */
+    pageInfo: PageInfo;
+    /** The count of *all* `Delegator` you could get from the connection. */
+    totalCount: Scalars['Int']['output'];
+  };
 
 /** A connection to a list of `Delegator` values, with data from `UnstakeRequest`. */
-export type OperatorDelegatorsByUnstakeRequestOperatorIdAndDelegatorIdManyToManyConnectionGroupedAggregatesArgs = {
-  groupBy: Array<DelegatorsGroupBy>;
-  having?: InputMaybe<DelegatorsHavingInput>;
-};
+export type OperatorDelegatorsByUnstakeRequestOperatorIdAndDelegatorIdManyToManyConnectionGroupedAggregatesArgs =
+  {
+    groupBy: Array<DelegatorsGroupBy>;
+    having?: InputMaybe<DelegatorsHavingInput>;
+  };
 
 /** A `Delegator` edge in the connection, with data from `UnstakeRequest`. */
-export type OperatorDelegatorsByUnstakeRequestOperatorIdAndDelegatorIdManyToManyEdge = {
-  __typename?: 'OperatorDelegatorsByUnstakeRequestOperatorIdAndDelegatorIdManyToManyEdge';
-  /** A cursor for use in pagination. */
-  cursor?: Maybe<Scalars['Cursor']['output']>;
-  /** The `Delegator` at the end of the edge. */
-  node?: Maybe<Delegator>;
-  /** Reads and enables pagination through a set of `UnstakeRequest`. */
-  unstakeRequests: UnstakeRequestsConnection;
-};
-
+export type OperatorDelegatorsByUnstakeRequestOperatorIdAndDelegatorIdManyToManyEdge =
+  {
+    __typename?: 'OperatorDelegatorsByUnstakeRequestOperatorIdAndDelegatorIdManyToManyEdge';
+    /** A cursor for use in pagination. */
+    cursor?: Maybe<Scalars['Cursor']['output']>;
+    /** The `Delegator` at the end of the edge. */
+    node?: Maybe<Delegator>;
+    /** Reads and enables pagination through a set of `UnstakeRequest`. */
+    unstakeRequests: UnstakeRequestsConnection;
+  };
 
 /** A `Delegator` edge in the connection, with data from `UnstakeRequest`. */
-export type OperatorDelegatorsByUnstakeRequestOperatorIdAndDelegatorIdManyToManyEdgeUnstakeRequestsArgs = {
-  after?: InputMaybe<Scalars['Cursor']['input']>;
-  before?: InputMaybe<Scalars['Cursor']['input']>;
-  blockHeight?: InputMaybe<Scalars['String']['input']>;
-  distinct?: InputMaybe<Array<InputMaybe<Unstake_Requests_Distinct_Enum>>>;
-  filter?: InputMaybe<UnstakeRequestFilter>;
-  first?: InputMaybe<Scalars['Int']['input']>;
-  last?: InputMaybe<Scalars['Int']['input']>;
-  offset?: InputMaybe<Scalars['Int']['input']>;
-  orderBy?: InputMaybe<Array<UnstakeRequestsOrderBy>>;
-  orderByNull?: InputMaybe<NullOrder>;
-};
+export type OperatorDelegatorsByUnstakeRequestOperatorIdAndDelegatorIdManyToManyEdgeUnstakeRequestsArgs =
+  {
+    after?: InputMaybe<Scalars['Cursor']['input']>;
+    before?: InputMaybe<Scalars['Cursor']['input']>;
+    blockHeight?: InputMaybe<Scalars['String']['input']>;
+    distinct?: InputMaybe<Array<InputMaybe<Unstake_Requests_Distinct_Enum>>>;
+    filter?: InputMaybe<UnstakeRequestFilter>;
+    first?: InputMaybe<Scalars['Int']['input']>;
+    last?: InputMaybe<Scalars['Int']['input']>;
+    offset?: InputMaybe<Scalars['Int']['input']>;
+    orderBy?: InputMaybe<Array<UnstakeRequestsOrderBy>>;
+    orderByNull?: InputMaybe<NullOrder>;
+  };
 
 export type OperatorDistinctCountAggregateFilter = {
   _blockRange?: InputMaybe<BigIntFilter>;
@@ -11095,28 +11085,29 @@ export type OperatorFilter = {
 };
 
 /** A connection to a list of `JobCall` values, with data from `JobResult`. */
-export type OperatorJobCallsByJobResultOperatorIdAndJobCallIdManyToManyConnection = {
-  __typename?: 'OperatorJobCallsByJobResultOperatorIdAndJobCallIdManyToManyConnection';
-  /** Aggregates across the matching connection (ignoring before/after/first/last/offset) */
-  aggregates?: Maybe<JobCallAggregates>;
-  /** A list of edges which contains the `JobCall`, info from the `JobResult`, and the cursor to aid in pagination. */
-  edges: Array<OperatorJobCallsByJobResultOperatorIdAndJobCallIdManyToManyEdge>;
-  /** Grouped aggregates across the matching connection (ignoring before/after/first/last/offset) */
-  groupedAggregates?: Maybe<Array<JobCallAggregates>>;
-  /** A list of `JobCall` objects. */
-  nodes: Array<Maybe<JobCall>>;
-  /** Information to aid in pagination. */
-  pageInfo: PageInfo;
-  /** The count of *all* `JobCall` you could get from the connection. */
-  totalCount: Scalars['Int']['output'];
-};
-
+export type OperatorJobCallsByJobResultOperatorIdAndJobCallIdManyToManyConnection =
+  {
+    __typename?: 'OperatorJobCallsByJobResultOperatorIdAndJobCallIdManyToManyConnection';
+    /** Aggregates across the matching connection (ignoring before/after/first/last/offset) */
+    aggregates?: Maybe<JobCallAggregates>;
+    /** A list of edges which contains the `JobCall`, info from the `JobResult`, and the cursor to aid in pagination. */
+    edges: Array<OperatorJobCallsByJobResultOperatorIdAndJobCallIdManyToManyEdge>;
+    /** Grouped aggregates across the matching connection (ignoring before/after/first/last/offset) */
+    groupedAggregates?: Maybe<Array<JobCallAggregates>>;
+    /** A list of `JobCall` objects. */
+    nodes: Array<Maybe<JobCall>>;
+    /** Information to aid in pagination. */
+    pageInfo: PageInfo;
+    /** The count of *all* `JobCall` you could get from the connection. */
+    totalCount: Scalars['Int']['output'];
+  };
 
 /** A connection to a list of `JobCall` values, with data from `JobResult`. */
-export type OperatorJobCallsByJobResultOperatorIdAndJobCallIdManyToManyConnectionGroupedAggregatesArgs = {
-  groupBy: Array<JobCallsGroupBy>;
-  having?: InputMaybe<JobCallsHavingInput>;
-};
+export type OperatorJobCallsByJobResultOperatorIdAndJobCallIdManyToManyConnectionGroupedAggregatesArgs =
+  {
+    groupBy: Array<JobCallsGroupBy>;
+    having?: InputMaybe<JobCallsHavingInput>;
+  };
 
 /** A `JobCall` edge in the connection, with data from `JobResult`. */
 export type OperatorJobCallsByJobResultOperatorIdAndJobCallIdManyToManyEdge = {
@@ -11129,20 +11120,20 @@ export type OperatorJobCallsByJobResultOperatorIdAndJobCallIdManyToManyEdge = {
   node?: Maybe<JobCall>;
 };
 
-
 /** A `JobCall` edge in the connection, with data from `JobResult`. */
-export type OperatorJobCallsByJobResultOperatorIdAndJobCallIdManyToManyEdgeJobResultsArgs = {
-  after?: InputMaybe<Scalars['Cursor']['input']>;
-  before?: InputMaybe<Scalars['Cursor']['input']>;
-  blockHeight?: InputMaybe<Scalars['String']['input']>;
-  distinct?: InputMaybe<Array<InputMaybe<Job_Results_Distinct_Enum>>>;
-  filter?: InputMaybe<JobResultFilter>;
-  first?: InputMaybe<Scalars['Int']['input']>;
-  last?: InputMaybe<Scalars['Int']['input']>;
-  offset?: InputMaybe<Scalars['Int']['input']>;
-  orderBy?: InputMaybe<Array<JobResultsOrderBy>>;
-  orderByNull?: InputMaybe<NullOrder>;
-};
+export type OperatorJobCallsByJobResultOperatorIdAndJobCallIdManyToManyEdgeJobResultsArgs =
+  {
+    after?: InputMaybe<Scalars['Cursor']['input']>;
+    before?: InputMaybe<Scalars['Cursor']['input']>;
+    blockHeight?: InputMaybe<Scalars['String']['input']>;
+    distinct?: InputMaybe<Array<InputMaybe<Job_Results_Distinct_Enum>>>;
+    filter?: InputMaybe<JobResultFilter>;
+    first?: InputMaybe<Scalars['Int']['input']>;
+    last?: InputMaybe<Scalars['Int']['input']>;
+    offset?: InputMaybe<Scalars['Int']['input']>;
+    orderBy?: InputMaybe<Array<JobResultsOrderBy>>;
+    orderByNull?: InputMaybe<NullOrder>;
+  };
 
 export type OperatorMaxAggregateFilter = {
   currentStake?: InputMaybe<BigFloatFilter>;
@@ -11201,78 +11192,83 @@ export type OperatorMinAggregates = {
 };
 
 /** A connection to a list of `ServiceRequest` values, with data from `ServiceRequestOperator`. */
-export type OperatorServiceRequestsByServiceRequestOperatorOperatorIdAndServiceRequestIdManyToManyConnection = {
-  __typename?: 'OperatorServiceRequestsByServiceRequestOperatorOperatorIdAndServiceRequestIdManyToManyConnection';
-  /** Aggregates across the matching connection (ignoring before/after/first/last/offset) */
-  aggregates?: Maybe<ServiceRequestAggregates>;
-  /** A list of edges which contains the `ServiceRequest`, info from the `ServiceRequestOperator`, and the cursor to aid in pagination. */
-  edges: Array<OperatorServiceRequestsByServiceRequestOperatorOperatorIdAndServiceRequestIdManyToManyEdge>;
-  /** Grouped aggregates across the matching connection (ignoring before/after/first/last/offset) */
-  groupedAggregates?: Maybe<Array<ServiceRequestAggregates>>;
-  /** A list of `ServiceRequest` objects. */
-  nodes: Array<Maybe<ServiceRequest>>;
-  /** Information to aid in pagination. */
-  pageInfo: PageInfo;
-  /** The count of *all* `ServiceRequest` you could get from the connection. */
-  totalCount: Scalars['Int']['output'];
-};
-
+export type OperatorServiceRequestsByServiceRequestOperatorOperatorIdAndServiceRequestIdManyToManyConnection =
+  {
+    __typename?: 'OperatorServiceRequestsByServiceRequestOperatorOperatorIdAndServiceRequestIdManyToManyConnection';
+    /** Aggregates across the matching connection (ignoring before/after/first/last/offset) */
+    aggregates?: Maybe<ServiceRequestAggregates>;
+    /** A list of edges which contains the `ServiceRequest`, info from the `ServiceRequestOperator`, and the cursor to aid in pagination. */
+    edges: Array<OperatorServiceRequestsByServiceRequestOperatorOperatorIdAndServiceRequestIdManyToManyEdge>;
+    /** Grouped aggregates across the matching connection (ignoring before/after/first/last/offset) */
+    groupedAggregates?: Maybe<Array<ServiceRequestAggregates>>;
+    /** A list of `ServiceRequest` objects. */
+    nodes: Array<Maybe<ServiceRequest>>;
+    /** Information to aid in pagination. */
+    pageInfo: PageInfo;
+    /** The count of *all* `ServiceRequest` you could get from the connection. */
+    totalCount: Scalars['Int']['output'];
+  };
 
 /** A connection to a list of `ServiceRequest` values, with data from `ServiceRequestOperator`. */
-export type OperatorServiceRequestsByServiceRequestOperatorOperatorIdAndServiceRequestIdManyToManyConnectionGroupedAggregatesArgs = {
-  groupBy: Array<ServiceRequestsGroupBy>;
-  having?: InputMaybe<ServiceRequestsHavingInput>;
-};
+export type OperatorServiceRequestsByServiceRequestOperatorOperatorIdAndServiceRequestIdManyToManyConnectionGroupedAggregatesArgs =
+  {
+    groupBy: Array<ServiceRequestsGroupBy>;
+    having?: InputMaybe<ServiceRequestsHavingInput>;
+  };
 
 /** A `ServiceRequest` edge in the connection, with data from `ServiceRequestOperator`. */
-export type OperatorServiceRequestsByServiceRequestOperatorOperatorIdAndServiceRequestIdManyToManyEdge = {
-  __typename?: 'OperatorServiceRequestsByServiceRequestOperatorOperatorIdAndServiceRequestIdManyToManyEdge';
-  /** A cursor for use in pagination. */
-  cursor?: Maybe<Scalars['Cursor']['output']>;
-  /** The `ServiceRequest` at the end of the edge. */
-  node?: Maybe<ServiceRequest>;
-  /** Reads and enables pagination through a set of `ServiceRequestOperator`. */
-  serviceRequestOperators: ServiceRequestOperatorsConnection;
-};
-
+export type OperatorServiceRequestsByServiceRequestOperatorOperatorIdAndServiceRequestIdManyToManyEdge =
+  {
+    __typename?: 'OperatorServiceRequestsByServiceRequestOperatorOperatorIdAndServiceRequestIdManyToManyEdge';
+    /** A cursor for use in pagination. */
+    cursor?: Maybe<Scalars['Cursor']['output']>;
+    /** The `ServiceRequest` at the end of the edge. */
+    node?: Maybe<ServiceRequest>;
+    /** Reads and enables pagination through a set of `ServiceRequestOperator`. */
+    serviceRequestOperators: ServiceRequestOperatorsConnection;
+  };
 
 /** A `ServiceRequest` edge in the connection, with data from `ServiceRequestOperator`. */
-export type OperatorServiceRequestsByServiceRequestOperatorOperatorIdAndServiceRequestIdManyToManyEdgeServiceRequestOperatorsArgs = {
-  after?: InputMaybe<Scalars['Cursor']['input']>;
-  before?: InputMaybe<Scalars['Cursor']['input']>;
-  blockHeight?: InputMaybe<Scalars['String']['input']>;
-  distinct?: InputMaybe<Array<InputMaybe<Service_Request_Operators_Distinct_Enum>>>;
-  filter?: InputMaybe<ServiceRequestOperatorFilter>;
-  first?: InputMaybe<Scalars['Int']['input']>;
-  last?: InputMaybe<Scalars['Int']['input']>;
-  offset?: InputMaybe<Scalars['Int']['input']>;
-  orderBy?: InputMaybe<Array<ServiceRequestOperatorsOrderBy>>;
-  orderByNull?: InputMaybe<NullOrder>;
-};
+export type OperatorServiceRequestsByServiceRequestOperatorOperatorIdAndServiceRequestIdManyToManyEdgeServiceRequestOperatorsArgs =
+  {
+    after?: InputMaybe<Scalars['Cursor']['input']>;
+    before?: InputMaybe<Scalars['Cursor']['input']>;
+    blockHeight?: InputMaybe<Scalars['String']['input']>;
+    distinct?: InputMaybe<
+      Array<InputMaybe<Service_Request_Operators_Distinct_Enum>>
+    >;
+    filter?: InputMaybe<ServiceRequestOperatorFilter>;
+    first?: InputMaybe<Scalars['Int']['input']>;
+    last?: InputMaybe<Scalars['Int']['input']>;
+    offset?: InputMaybe<Scalars['Int']['input']>;
+    orderBy?: InputMaybe<Array<ServiceRequestOperatorsOrderBy>>;
+    orderByNull?: InputMaybe<NullOrder>;
+  };
 
 /** A connection to a list of `Service` values, with data from `JobResult`. */
-export type OperatorServicesByJobResultOperatorIdAndServiceIdManyToManyConnection = {
-  __typename?: 'OperatorServicesByJobResultOperatorIdAndServiceIdManyToManyConnection';
-  /** Aggregates across the matching connection (ignoring before/after/first/last/offset) */
-  aggregates?: Maybe<ServiceAggregates>;
-  /** A list of edges which contains the `Service`, info from the `JobResult`, and the cursor to aid in pagination. */
-  edges: Array<OperatorServicesByJobResultOperatorIdAndServiceIdManyToManyEdge>;
-  /** Grouped aggregates across the matching connection (ignoring before/after/first/last/offset) */
-  groupedAggregates?: Maybe<Array<ServiceAggregates>>;
-  /** A list of `Service` objects. */
-  nodes: Array<Maybe<Service>>;
-  /** Information to aid in pagination. */
-  pageInfo: PageInfo;
-  /** The count of *all* `Service` you could get from the connection. */
-  totalCount: Scalars['Int']['output'];
-};
-
+export type OperatorServicesByJobResultOperatorIdAndServiceIdManyToManyConnection =
+  {
+    __typename?: 'OperatorServicesByJobResultOperatorIdAndServiceIdManyToManyConnection';
+    /** Aggregates across the matching connection (ignoring before/after/first/last/offset) */
+    aggregates?: Maybe<ServiceAggregates>;
+    /** A list of edges which contains the `Service`, info from the `JobResult`, and the cursor to aid in pagination. */
+    edges: Array<OperatorServicesByJobResultOperatorIdAndServiceIdManyToManyEdge>;
+    /** Grouped aggregates across the matching connection (ignoring before/after/first/last/offset) */
+    groupedAggregates?: Maybe<Array<ServiceAggregates>>;
+    /** A list of `Service` objects. */
+    nodes: Array<Maybe<Service>>;
+    /** Information to aid in pagination. */
+    pageInfo: PageInfo;
+    /** The count of *all* `Service` you could get from the connection. */
+    totalCount: Scalars['Int']['output'];
+  };
 
 /** A connection to a list of `Service` values, with data from `JobResult`. */
-export type OperatorServicesByJobResultOperatorIdAndServiceIdManyToManyConnectionGroupedAggregatesArgs = {
-  groupBy: Array<ServicesGroupBy>;
-  having?: InputMaybe<ServicesHavingInput>;
-};
+export type OperatorServicesByJobResultOperatorIdAndServiceIdManyToManyConnectionGroupedAggregatesArgs =
+  {
+    groupBy: Array<ServicesGroupBy>;
+    having?: InputMaybe<ServicesHavingInput>;
+  };
 
 /** A `Service` edge in the connection, with data from `JobResult`. */
 export type OperatorServicesByJobResultOperatorIdAndServiceIdManyToManyEdge = {
@@ -11285,76 +11281,78 @@ export type OperatorServicesByJobResultOperatorIdAndServiceIdManyToManyEdge = {
   node?: Maybe<Service>;
 };
 
-
 /** A `Service` edge in the connection, with data from `JobResult`. */
-export type OperatorServicesByJobResultOperatorIdAndServiceIdManyToManyEdgeJobResultsArgs = {
-  after?: InputMaybe<Scalars['Cursor']['input']>;
-  before?: InputMaybe<Scalars['Cursor']['input']>;
-  blockHeight?: InputMaybe<Scalars['String']['input']>;
-  distinct?: InputMaybe<Array<InputMaybe<Job_Results_Distinct_Enum>>>;
-  filter?: InputMaybe<JobResultFilter>;
-  first?: InputMaybe<Scalars['Int']['input']>;
-  last?: InputMaybe<Scalars['Int']['input']>;
-  offset?: InputMaybe<Scalars['Int']['input']>;
-  orderBy?: InputMaybe<Array<JobResultsOrderBy>>;
-  orderByNull?: InputMaybe<NullOrder>;
-};
+export type OperatorServicesByJobResultOperatorIdAndServiceIdManyToManyEdgeJobResultsArgs =
+  {
+    after?: InputMaybe<Scalars['Cursor']['input']>;
+    before?: InputMaybe<Scalars['Cursor']['input']>;
+    blockHeight?: InputMaybe<Scalars['String']['input']>;
+    distinct?: InputMaybe<Array<InputMaybe<Job_Results_Distinct_Enum>>>;
+    filter?: InputMaybe<JobResultFilter>;
+    first?: InputMaybe<Scalars['Int']['input']>;
+    last?: InputMaybe<Scalars['Int']['input']>;
+    offset?: InputMaybe<Scalars['Int']['input']>;
+    orderBy?: InputMaybe<Array<JobResultsOrderBy>>;
+    orderByNull?: InputMaybe<NullOrder>;
+  };
 
 /** A connection to a list of `Service` values, with data from `ServiceOperator`. */
-export type OperatorServicesByServiceOperatorOperatorIdAndServiceIdManyToManyConnection = {
-  __typename?: 'OperatorServicesByServiceOperatorOperatorIdAndServiceIdManyToManyConnection';
-  /** Aggregates across the matching connection (ignoring before/after/first/last/offset) */
-  aggregates?: Maybe<ServiceAggregates>;
-  /** A list of edges which contains the `Service`, info from the `ServiceOperator`, and the cursor to aid in pagination. */
-  edges: Array<OperatorServicesByServiceOperatorOperatorIdAndServiceIdManyToManyEdge>;
-  /** Grouped aggregates across the matching connection (ignoring before/after/first/last/offset) */
-  groupedAggregates?: Maybe<Array<ServiceAggregates>>;
-  /** A list of `Service` objects. */
-  nodes: Array<Maybe<Service>>;
-  /** Information to aid in pagination. */
-  pageInfo: PageInfo;
-  /** The count of *all* `Service` you could get from the connection. */
-  totalCount: Scalars['Int']['output'];
-};
-
+export type OperatorServicesByServiceOperatorOperatorIdAndServiceIdManyToManyConnection =
+  {
+    __typename?: 'OperatorServicesByServiceOperatorOperatorIdAndServiceIdManyToManyConnection';
+    /** Aggregates across the matching connection (ignoring before/after/first/last/offset) */
+    aggregates?: Maybe<ServiceAggregates>;
+    /** A list of edges which contains the `Service`, info from the `ServiceOperator`, and the cursor to aid in pagination. */
+    edges: Array<OperatorServicesByServiceOperatorOperatorIdAndServiceIdManyToManyEdge>;
+    /** Grouped aggregates across the matching connection (ignoring before/after/first/last/offset) */
+    groupedAggregates?: Maybe<Array<ServiceAggregates>>;
+    /** A list of `Service` objects. */
+    nodes: Array<Maybe<Service>>;
+    /** Information to aid in pagination. */
+    pageInfo: PageInfo;
+    /** The count of *all* `Service` you could get from the connection. */
+    totalCount: Scalars['Int']['output'];
+  };
 
 /** A connection to a list of `Service` values, with data from `ServiceOperator`. */
-export type OperatorServicesByServiceOperatorOperatorIdAndServiceIdManyToManyConnectionGroupedAggregatesArgs = {
-  groupBy: Array<ServicesGroupBy>;
-  having?: InputMaybe<ServicesHavingInput>;
-};
+export type OperatorServicesByServiceOperatorOperatorIdAndServiceIdManyToManyConnectionGroupedAggregatesArgs =
+  {
+    groupBy: Array<ServicesGroupBy>;
+    having?: InputMaybe<ServicesHavingInput>;
+  };
 
 /** A `Service` edge in the connection, with data from `ServiceOperator`. */
-export type OperatorServicesByServiceOperatorOperatorIdAndServiceIdManyToManyEdge = {
-  __typename?: 'OperatorServicesByServiceOperatorOperatorIdAndServiceIdManyToManyEdge';
-  /** A cursor for use in pagination. */
-  cursor?: Maybe<Scalars['Cursor']['output']>;
-  /** The `Service` at the end of the edge. */
-  node?: Maybe<Service>;
-  /** Reads and enables pagination through a set of `ServiceOperator`. */
-  serviceOperators: ServiceOperatorsConnection;
-};
-
+export type OperatorServicesByServiceOperatorOperatorIdAndServiceIdManyToManyEdge =
+  {
+    __typename?: 'OperatorServicesByServiceOperatorOperatorIdAndServiceIdManyToManyEdge';
+    /** A cursor for use in pagination. */
+    cursor?: Maybe<Scalars['Cursor']['output']>;
+    /** The `Service` at the end of the edge. */
+    node?: Maybe<Service>;
+    /** Reads and enables pagination through a set of `ServiceOperator`. */
+    serviceOperators: ServiceOperatorsConnection;
+  };
 
 /** A `Service` edge in the connection, with data from `ServiceOperator`. */
-export type OperatorServicesByServiceOperatorOperatorIdAndServiceIdManyToManyEdgeServiceOperatorsArgs = {
-  after?: InputMaybe<Scalars['Cursor']['input']>;
-  before?: InputMaybe<Scalars['Cursor']['input']>;
-  blockHeight?: InputMaybe<Scalars['String']['input']>;
-  distinct?: InputMaybe<Array<InputMaybe<Service_Operators_Distinct_Enum>>>;
-  filter?: InputMaybe<ServiceOperatorFilter>;
-  first?: InputMaybe<Scalars['Int']['input']>;
-  last?: InputMaybe<Scalars['Int']['input']>;
-  offset?: InputMaybe<Scalars['Int']['input']>;
-  orderBy?: InputMaybe<Array<ServiceOperatorsOrderBy>>;
-  orderByNull?: InputMaybe<NullOrder>;
-};
+export type OperatorServicesByServiceOperatorOperatorIdAndServiceIdManyToManyEdgeServiceOperatorsArgs =
+  {
+    after?: InputMaybe<Scalars['Cursor']['input']>;
+    before?: InputMaybe<Scalars['Cursor']['input']>;
+    blockHeight?: InputMaybe<Scalars['String']['input']>;
+    distinct?: InputMaybe<Array<InputMaybe<Service_Operators_Distinct_Enum>>>;
+    filter?: InputMaybe<ServiceOperatorFilter>;
+    first?: InputMaybe<Scalars['Int']['input']>;
+    last?: InputMaybe<Scalars['Int']['input']>;
+    offset?: InputMaybe<Scalars['Int']['input']>;
+    orderBy?: InputMaybe<Array<ServiceOperatorsOrderBy>>;
+    orderByNull?: InputMaybe<NullOrder>;
+  };
 
 /**  Enum representing the current status of an Operator in the network. */
 export enum OperatorStatus {
   Active = 'ACTIVE',
   Leaving = 'LEAVING',
-  Offline = 'OFFLINE'
+  Offline = 'OFFLINE',
 }
 
 export type OperatorStatusChange = Node & {
@@ -11562,7 +11560,6 @@ export type OperatorStatusChangesConnection = {
   totalCount: Scalars['Int']['output'];
 };
 
-
 /** A connection to a list of `OperatorStatusChange` values. */
 export type OperatorStatusChangesConnectionGroupedAggregatesArgs = {
   groupBy: Array<OperatorStatusChangesGroupBy>;
@@ -11583,7 +11580,7 @@ export enum OperatorStatusChangesGroupBy {
   BlockNumber = 'BLOCK_NUMBER',
   Id = 'ID',
   OperatorId = 'OPERATOR_ID',
-  Status = 'STATUS'
+  Status = 'STATUS',
 }
 
 export type OperatorStatusChangesHavingAverageInput = {
@@ -11669,7 +11666,7 @@ export enum OperatorStatusChangesOrderBy {
   PrimaryKeyAsc = 'PRIMARY_KEY_ASC',
   PrimaryKeyDesc = 'PRIMARY_KEY_DESC',
   StatusAsc = 'STATUS_ASC',
-  StatusDesc = 'STATUS_DESC'
+  StatusDesc = 'STATUS_DESC',
 }
 
 /** A filter to be used against OperatorStatus fields. All fields are combined with a logical ‘and.’ */
@@ -11951,7 +11948,6 @@ export type OperatorsConnection = {
   totalCount: Scalars['Int']['output'];
 };
 
-
 /** A connection to a list of `Operator` values. */
 export type OperatorsConnectionGroupedAggregatesArgs = {
   groupBy: Array<OperatorsGroupBy>;
@@ -11978,7 +11974,7 @@ export enum OperatorsGroupBy {
   ScheduledUnstakeAmount = 'SCHEDULED_UNSTAKE_AMOUNT',
   TotalBlueprints = 'TOTAL_BLUEPRINTS',
   TotalServices = 'TOTAL_SERVICES',
-  TotalServiceRequests = 'TOTAL_SERVICE_REQUESTS'
+  TotalServiceRequests = 'TOTAL_SERVICE_REQUESTS',
 }
 
 export type OperatorsHavingAverageInput = {
@@ -13122,7 +13118,7 @@ export enum OperatorsOrderBy {
   UnstakeRequestsVarianceSampleRequestedRoundAsc = 'UNSTAKE_REQUESTS_VARIANCE_SAMPLE_REQUESTED_ROUND_ASC',
   UnstakeRequestsVarianceSampleRequestedRoundDesc = 'UNSTAKE_REQUESTS_VARIANCE_SAMPLE_REQUESTED_ROUND_DESC',
   UnstakeRequestsVarianceSampleUpdatedAtAsc = 'UNSTAKE_REQUESTS_VARIANCE_SAMPLE_UPDATED_AT_ASC',
-  UnstakeRequestsVarianceSampleUpdatedAtDesc = 'UNSTAKE_REQUESTS_VARIANCE_SAMPLE_UPDATED_AT_DESC'
+  UnstakeRequestsVarianceSampleUpdatedAtDesc = 'UNSTAKE_REQUESTS_VARIANCE_SAMPLE_UPDATED_AT_DESC',
 }
 
 /** Information about pagination in a connection. */
@@ -13436,7 +13432,6 @@ export type PointsAccrualRatesConnection = {
   totalCount: Scalars['Int']['output'];
 };
 
-
 /** A connection to a list of `PointsAccrualRate` values. */
 export type PointsAccrualRatesConnectionGroupedAggregatesArgs = {
   groupBy: Array<PointsAccrualRatesGroupBy>;
@@ -13460,7 +13455,7 @@ export enum PointsAccrualRatesGroupBy {
   LastUpdateBlock = 'LAST_UPDATE_BLOCK',
   RatePerHour = 'RATE_PER_HOUR',
   Source = 'SOURCE',
-  StartBlock = 'START_BLOCK'
+  StartBlock = 'START_BLOCK',
 }
 
 export type PointsAccrualRatesHavingAverageInput = {
@@ -13567,7 +13562,7 @@ export enum PointsAccrualRatesOrderBy {
   SourceAsc = 'SOURCE_ASC',
   SourceDesc = 'SOURCE_DESC',
   StartBlockAsc = 'START_BLOCK_ASC',
-  StartBlockDesc = 'START_BLOCK_DESC'
+  StartBlockDesc = 'START_BLOCK_DESC',
 }
 
 export type PointsSnapshot = Node & {
@@ -13987,7 +13982,6 @@ export type PointsSnapshotsConnection = {
   totalCount: Scalars['Int']['output'];
 };
 
-
 /** A connection to a list of `PointsSnapshot` values. */
 export type PointsSnapshotsConnectionGroupedAggregatesArgs = {
   groupBy: Array<PointsSnapshotsGroupBy>;
@@ -14017,7 +14011,7 @@ export enum PointsSnapshotsGroupBy {
   TimestampTruncatedToHour = 'TIMESTAMP_TRUNCATED_TO_HOUR',
   TotalPoints = 'TOTAL_POINTS',
   ValidatorNominationPoints = 'VALIDATOR_NOMINATION_POINTS',
-  ValidatorRegistrationPoints = 'VALIDATOR_REGISTRATION_POINTS'
+  ValidatorRegistrationPoints = 'VALIDATOR_REGISTRATION_POINTS',
 }
 
 export type PointsSnapshotsHavingAverageInput = {
@@ -14177,7 +14171,7 @@ export enum PointsSnapshotsOrderBy {
   ValidatorNominationPointsAsc = 'VALIDATOR_NOMINATION_POINTS_ASC',
   ValidatorNominationPointsDesc = 'VALIDATOR_NOMINATION_POINTS_DESC',
   ValidatorRegistrationPointsAsc = 'VALIDATOR_REGISTRATION_POINTS_ASC',
-  ValidatorRegistrationPointsDesc = 'VALIDATOR_REGISTRATION_POINTS_DESC'
+  ValidatorRegistrationPointsDesc = 'VALIDATOR_REGISTRATION_POINTS_DESC',
 }
 
 /**  Enum representing the source of points. */
@@ -14187,7 +14181,7 @@ export enum PointsSource {
   RestakingDelegation = 'RESTAKING_DELEGATION',
   RestakingDeposit = 'RESTAKING_DEPOSIT',
   ValidatorNomination = 'VALIDATOR_NOMINATION',
-  ValidatorRegistration = 'VALIDATOR_REGISTRATION'
+  ValidatorRegistration = 'VALIDATOR_REGISTRATION',
 }
 
 /** A filter to be used against PointsSource fields. All fields are combined with a logical ‘and.’ */
@@ -14362,12 +14356,10 @@ export type Query = Node & {
   withdrawRequests?: Maybe<WithdrawRequestsConnection>;
 };
 
-
 /** The root query type which gives access points into the data universe. */
 export type Query_MetadataArgs = {
   chainId?: InputMaybe<Scalars['String']['input']>;
 };
-
 
 /** The root query type which gives access points into the data universe. */
 export type Query_MetadatasArgs = {
@@ -14375,20 +14367,17 @@ export type Query_MetadatasArgs = {
   before?: InputMaybe<Scalars['Cursor']['input']>;
 };
 
-
 /** The root query type which gives access points into the data universe. */
 export type QueryAccountArgs = {
   blockHeight?: InputMaybe<Scalars['String']['input']>;
   id: Scalars['String']['input'];
 };
 
-
 /** The root query type which gives access points into the data universe. */
 export type QueryAccountByNodeIdArgs = {
   distinct?: InputMaybe<Array<InputMaybe<Accounts_Distinct_Enum>>>;
   nodeId: Scalars['ID']['input'];
 };
-
 
 /** The root query type which gives access points into the data universe. */
 export type QueryAccountsArgs = {
@@ -14404,13 +14393,11 @@ export type QueryAccountsArgs = {
   orderByNull?: InputMaybe<NullOrder>;
 };
 
-
 /** The root query type which gives access points into the data universe. */
 export type QueryBlueprintArgs = {
   blockHeight?: InputMaybe<Scalars['String']['input']>;
   id: Scalars['String']['input'];
 };
-
 
 /** The root query type which gives access points into the data universe. */
 export type QueryBlueprintByNodeIdArgs = {
@@ -14418,20 +14405,17 @@ export type QueryBlueprintByNodeIdArgs = {
   nodeId: Scalars['ID']['input'];
 };
 
-
 /** The root query type which gives access points into the data universe. */
 export type QueryBlueprintOperatorArgs = {
   blockHeight?: InputMaybe<Scalars['String']['input']>;
   id: Scalars['String']['input'];
 };
 
-
 /** The root query type which gives access points into the data universe. */
 export type QueryBlueprintOperatorByNodeIdArgs = {
   distinct?: InputMaybe<Array<InputMaybe<Blueprint_Operators_Distinct_Enum>>>;
   nodeId: Scalars['ID']['input'];
 };
-
 
 /** The root query type which gives access points into the data universe. */
 export type QueryBlueprintOperatorsArgs = {
@@ -14447,7 +14431,6 @@ export type QueryBlueprintOperatorsArgs = {
   orderByNull?: InputMaybe<NullOrder>;
 };
 
-
 /** The root query type which gives access points into the data universe. */
 export type QueryBlueprintsArgs = {
   after?: InputMaybe<Scalars['Cursor']['input']>;
@@ -14462,20 +14445,17 @@ export type QueryBlueprintsArgs = {
   orderByNull?: InputMaybe<NullOrder>;
 };
 
-
 /** The root query type which gives access points into the data universe. */
 export type QueryDelegationArgs = {
   blockHeight?: InputMaybe<Scalars['String']['input']>;
   id: Scalars['String']['input'];
 };
 
-
 /** The root query type which gives access points into the data universe. */
 export type QueryDelegationByNodeIdArgs = {
   distinct?: InputMaybe<Array<InputMaybe<Delegations_Distinct_Enum>>>;
   nodeId: Scalars['ID']['input'];
 };
-
 
 /** The root query type which gives access points into the data universe. */
 export type QueryDelegationHistoriesArgs = {
@@ -14491,20 +14471,17 @@ export type QueryDelegationHistoriesArgs = {
   orderByNull?: InputMaybe<NullOrder>;
 };
 
-
 /** The root query type which gives access points into the data universe. */
 export type QueryDelegationHistoryArgs = {
   blockHeight?: InputMaybe<Scalars['String']['input']>;
   id: Scalars['String']['input'];
 };
 
-
 /** The root query type which gives access points into the data universe. */
 export type QueryDelegationHistoryByNodeIdArgs = {
   distinct?: InputMaybe<Array<InputMaybe<Delegation_Histories_Distinct_Enum>>>;
   nodeId: Scalars['ID']['input'];
 };
-
 
 /** The root query type which gives access points into the data universe. */
 export type QueryDelegationsArgs = {
@@ -14520,20 +14497,17 @@ export type QueryDelegationsArgs = {
   orderByNull?: InputMaybe<NullOrder>;
 };
 
-
 /** The root query type which gives access points into the data universe. */
 export type QueryDelegatorArgs = {
   blockHeight?: InputMaybe<Scalars['String']['input']>;
   id: Scalars['String']['input'];
 };
 
-
 /** The root query type which gives access points into the data universe. */
 export type QueryDelegatorByNodeIdArgs = {
   distinct?: InputMaybe<Array<InputMaybe<Delegators_Distinct_Enum>>>;
   nodeId: Scalars['ID']['input'];
 };
-
 
 /** The root query type which gives access points into the data universe. */
 export type QueryDelegatorsArgs = {
@@ -14549,20 +14523,17 @@ export type QueryDelegatorsArgs = {
   orderByNull?: InputMaybe<NullOrder>;
 };
 
-
 /** The root query type which gives access points into the data universe. */
 export type QueryDepositArgs = {
   blockHeight?: InputMaybe<Scalars['String']['input']>;
   id: Scalars['String']['input'];
 };
 
-
 /** The root query type which gives access points into the data universe. */
 export type QueryDepositByNodeIdArgs = {
   distinct?: InputMaybe<Array<InputMaybe<Deposits_Distinct_Enum>>>;
   nodeId: Scalars['ID']['input'];
 };
-
 
 /** The root query type which gives access points into the data universe. */
 export type QueryDepositHistoriesArgs = {
@@ -14578,20 +14549,17 @@ export type QueryDepositHistoriesArgs = {
   orderByNull?: InputMaybe<NullOrder>;
 };
 
-
 /** The root query type which gives access points into the data universe. */
 export type QueryDepositHistoryArgs = {
   blockHeight?: InputMaybe<Scalars['String']['input']>;
   id: Scalars['String']['input'];
 };
 
-
 /** The root query type which gives access points into the data universe. */
 export type QueryDepositHistoryByNodeIdArgs = {
   distinct?: InputMaybe<Array<InputMaybe<Deposit_Histories_Distinct_Enum>>>;
   nodeId: Scalars['ID']['input'];
 };
-
 
 /** The root query type which gives access points into the data universe. */
 export type QueryDepositsArgs = {
@@ -14607,20 +14575,17 @@ export type QueryDepositsArgs = {
   orderByNull?: InputMaybe<NullOrder>;
 };
 
-
 /** The root query type which gives access points into the data universe. */
 export type QueryJobCallArgs = {
   blockHeight?: InputMaybe<Scalars['String']['input']>;
   id: Scalars['String']['input'];
 };
 
-
 /** The root query type which gives access points into the data universe. */
 export type QueryJobCallByNodeIdArgs = {
   distinct?: InputMaybe<Array<InputMaybe<Job_Calls_Distinct_Enum>>>;
   nodeId: Scalars['ID']['input'];
 };
-
 
 /** The root query type which gives access points into the data universe. */
 export type QueryJobCallsArgs = {
@@ -14636,20 +14601,17 @@ export type QueryJobCallsArgs = {
   orderByNull?: InputMaybe<NullOrder>;
 };
 
-
 /** The root query type which gives access points into the data universe. */
 export type QueryJobResultArgs = {
   blockHeight?: InputMaybe<Scalars['String']['input']>;
   id: Scalars['String']['input'];
 };
 
-
 /** The root query type which gives access points into the data universe. */
 export type QueryJobResultByNodeIdArgs = {
   distinct?: InputMaybe<Array<InputMaybe<Job_Results_Distinct_Enum>>>;
   nodeId: Scalars['ID']['input'];
 };
-
 
 /** The root query type which gives access points into the data universe. */
 export type QueryJobResultsArgs = {
@@ -14665,13 +14627,11 @@ export type QueryJobResultsArgs = {
   orderByNull?: InputMaybe<NullOrder>;
 };
 
-
 /** The root query type which gives access points into the data universe. */
 export type QueryLstPoolArgs = {
   blockHeight?: InputMaybe<Scalars['String']['input']>;
   id: Scalars['String']['input'];
 };
-
 
 /** The root query type which gives access points into the data universe. */
 export type QueryLstPoolByNodeIdArgs = {
@@ -14679,20 +14639,17 @@ export type QueryLstPoolByNodeIdArgs = {
   nodeId: Scalars['ID']['input'];
 };
 
-
 /** The root query type which gives access points into the data universe. */
 export type QueryLstPoolMemberArgs = {
   blockHeight?: InputMaybe<Scalars['String']['input']>;
   id: Scalars['String']['input'];
 };
 
-
 /** The root query type which gives access points into the data universe. */
 export type QueryLstPoolMemberByNodeIdArgs = {
   distinct?: InputMaybe<Array<InputMaybe<Lst_Pool_Members_Distinct_Enum>>>;
   nodeId: Scalars['ID']['input'];
 };
-
 
 /** The root query type which gives access points into the data universe. */
 export type QueryLstPoolMembersArgs = {
@@ -14708,27 +14665,28 @@ export type QueryLstPoolMembersArgs = {
   orderByNull?: InputMaybe<NullOrder>;
 };
 
-
 /** The root query type which gives access points into the data universe. */
 export type QueryLstPoolStateChangeArgs = {
   blockHeight?: InputMaybe<Scalars['String']['input']>;
   id: Scalars['String']['input'];
 };
 
-
 /** The root query type which gives access points into the data universe. */
 export type QueryLstPoolStateChangeByNodeIdArgs = {
-  distinct?: InputMaybe<Array<InputMaybe<Lst_Pool_State_Changes_Distinct_Enum>>>;
+  distinct?: InputMaybe<
+    Array<InputMaybe<Lst_Pool_State_Changes_Distinct_Enum>>
+  >;
   nodeId: Scalars['ID']['input'];
 };
-
 
 /** The root query type which gives access points into the data universe. */
 export type QueryLstPoolStateChangesArgs = {
   after?: InputMaybe<Scalars['Cursor']['input']>;
   before?: InputMaybe<Scalars['Cursor']['input']>;
   blockHeight?: InputMaybe<Scalars['String']['input']>;
-  distinct?: InputMaybe<Array<InputMaybe<Lst_Pool_State_Changes_Distinct_Enum>>>;
+  distinct?: InputMaybe<
+    Array<InputMaybe<Lst_Pool_State_Changes_Distinct_Enum>>
+  >;
   filter?: InputMaybe<LstPoolStateChangeFilter>;
   first?: InputMaybe<Scalars['Int']['input']>;
   last?: InputMaybe<Scalars['Int']['input']>;
@@ -14736,7 +14694,6 @@ export type QueryLstPoolStateChangesArgs = {
   orderBy?: InputMaybe<Array<LstPoolStateChangesOrderBy>>;
   orderByNull?: InputMaybe<NullOrder>;
 };
-
 
 /** The root query type which gives access points into the data universe. */
 export type QueryLstPoolsArgs = {
@@ -14752,20 +14709,17 @@ export type QueryLstPoolsArgs = {
   orderByNull?: InputMaybe<NullOrder>;
 };
 
-
 /** The root query type which gives access points into the data universe. */
 export type QueryMemberStakeChangeArgs = {
   blockHeight?: InputMaybe<Scalars['String']['input']>;
   id: Scalars['String']['input'];
 };
 
-
 /** The root query type which gives access points into the data universe. */
 export type QueryMemberStakeChangeByNodeIdArgs = {
   distinct?: InputMaybe<Array<InputMaybe<Member_Stake_Changes_Distinct_Enum>>>;
   nodeId: Scalars['ID']['input'];
 };
-
 
 /** The root query type which gives access points into the data universe. */
 export type QueryMemberStakeChangesArgs = {
@@ -14781,12 +14735,10 @@ export type QueryMemberStakeChangesArgs = {
   orderByNull?: InputMaybe<NullOrder>;
 };
 
-
 /** The root query type which gives access points into the data universe. */
 export type QueryNodeArgs = {
   nodeId: Scalars['ID']['input'];
 };
-
 
 /** The root query type which gives access points into the data universe. */
 export type QueryOperatorArgs = {
@@ -14794,20 +14746,17 @@ export type QueryOperatorArgs = {
   id: Scalars['String']['input'];
 };
 
-
 /** The root query type which gives access points into the data universe. */
 export type QueryOperatorBondChangeArgs = {
   blockHeight?: InputMaybe<Scalars['String']['input']>;
   id: Scalars['String']['input'];
 };
 
-
 /** The root query type which gives access points into the data universe. */
 export type QueryOperatorBondChangeByNodeIdArgs = {
   distinct?: InputMaybe<Array<InputMaybe<Operator_Bond_Changes_Distinct_Enum>>>;
   nodeId: Scalars['ID']['input'];
 };
-
 
 /** The root query type which gives access points into the data universe. */
 export type QueryOperatorBondChangesArgs = {
@@ -14823,13 +14772,11 @@ export type QueryOperatorBondChangesArgs = {
   orderByNull?: InputMaybe<NullOrder>;
 };
 
-
 /** The root query type which gives access points into the data universe. */
 export type QueryOperatorByNodeIdArgs = {
   distinct?: InputMaybe<Array<InputMaybe<Operators_Distinct_Enum>>>;
   nodeId: Scalars['ID']['input'];
 };
-
 
 /** The root query type which gives access points into the data universe. */
 export type QueryOperatorStatusChangeArgs = {
@@ -14837,20 +14784,22 @@ export type QueryOperatorStatusChangeArgs = {
   id: Scalars['String']['input'];
 };
 
-
 /** The root query type which gives access points into the data universe. */
 export type QueryOperatorStatusChangeByNodeIdArgs = {
-  distinct?: InputMaybe<Array<InputMaybe<Operator_Status_Changes_Distinct_Enum>>>;
+  distinct?: InputMaybe<
+    Array<InputMaybe<Operator_Status_Changes_Distinct_Enum>>
+  >;
   nodeId: Scalars['ID']['input'];
 };
-
 
 /** The root query type which gives access points into the data universe. */
 export type QueryOperatorStatusChangesArgs = {
   after?: InputMaybe<Scalars['Cursor']['input']>;
   before?: InputMaybe<Scalars['Cursor']['input']>;
   blockHeight?: InputMaybe<Scalars['String']['input']>;
-  distinct?: InputMaybe<Array<InputMaybe<Operator_Status_Changes_Distinct_Enum>>>;
+  distinct?: InputMaybe<
+    Array<InputMaybe<Operator_Status_Changes_Distinct_Enum>>
+  >;
   filter?: InputMaybe<OperatorStatusChangeFilter>;
   first?: InputMaybe<Scalars['Int']['input']>;
   last?: InputMaybe<Scalars['Int']['input']>;
@@ -14858,7 +14807,6 @@ export type QueryOperatorStatusChangesArgs = {
   orderBy?: InputMaybe<Array<OperatorStatusChangesOrderBy>>;
   orderByNull?: InputMaybe<NullOrder>;
 };
-
 
 /** The root query type which gives access points into the data universe. */
 export type QueryOperatorsArgs = {
@@ -14874,20 +14822,17 @@ export type QueryOperatorsArgs = {
   orderByNull?: InputMaybe<NullOrder>;
 };
 
-
 /** The root query type which gives access points into the data universe. */
 export type QueryPointsAccrualRateArgs = {
   blockHeight?: InputMaybe<Scalars['String']['input']>;
   id: Scalars['String']['input'];
 };
 
-
 /** The root query type which gives access points into the data universe. */
 export type QueryPointsAccrualRateByNodeIdArgs = {
   distinct?: InputMaybe<Array<InputMaybe<Points_Accrual_Rates_Distinct_Enum>>>;
   nodeId: Scalars['ID']['input'];
 };
-
 
 /** The root query type which gives access points into the data universe. */
 export type QueryPointsAccrualRatesArgs = {
@@ -14903,20 +14848,17 @@ export type QueryPointsAccrualRatesArgs = {
   orderByNull?: InputMaybe<NullOrder>;
 };
 
-
 /** The root query type which gives access points into the data universe. */
 export type QueryPointsSnapshotArgs = {
   blockHeight?: InputMaybe<Scalars['String']['input']>;
   id: Scalars['String']['input'];
 };
 
-
 /** The root query type which gives access points into the data universe. */
 export type QueryPointsSnapshotByNodeIdArgs = {
   distinct?: InputMaybe<Array<InputMaybe<Points_Snapshots_Distinct_Enum>>>;
   nodeId: Scalars['ID']['input'];
 };
-
 
 /** The root query type which gives access points into the data universe. */
 export type QueryPointsSnapshotsArgs = {
@@ -14932,13 +14874,11 @@ export type QueryPointsSnapshotsArgs = {
   orderByNull?: InputMaybe<NullOrder>;
 };
 
-
 /** The root query type which gives access points into the data universe. */
 export type QueryServiceArgs = {
   blockHeight?: InputMaybe<Scalars['String']['input']>;
   id: Scalars['String']['input'];
 };
-
 
 /** The root query type which gives access points into the data universe. */
 export type QueryServiceByNodeIdArgs = {
@@ -14946,20 +14886,17 @@ export type QueryServiceByNodeIdArgs = {
   nodeId: Scalars['ID']['input'];
 };
 
-
 /** The root query type which gives access points into the data universe. */
 export type QueryServiceOperatorArgs = {
   blockHeight?: InputMaybe<Scalars['String']['input']>;
   id: Scalars['String']['input'];
 };
 
-
 /** The root query type which gives access points into the data universe. */
 export type QueryServiceOperatorByNodeIdArgs = {
   distinct?: InputMaybe<Array<InputMaybe<Service_Operators_Distinct_Enum>>>;
   nodeId: Scalars['ID']['input'];
 };
-
 
 /** The root query type which gives access points into the data universe. */
 export type QueryServiceOperatorsArgs = {
@@ -14975,13 +14912,11 @@ export type QueryServiceOperatorsArgs = {
   orderByNull?: InputMaybe<NullOrder>;
 };
 
-
 /** The root query type which gives access points into the data universe. */
 export type QueryServiceRequestArgs = {
   blockHeight?: InputMaybe<Scalars['String']['input']>;
   id: Scalars['String']['input'];
 };
-
 
 /** The root query type which gives access points into the data universe. */
 export type QueryServiceRequestByNodeIdArgs = {
@@ -14989,27 +14924,28 @@ export type QueryServiceRequestByNodeIdArgs = {
   nodeId: Scalars['ID']['input'];
 };
 
-
 /** The root query type which gives access points into the data universe. */
 export type QueryServiceRequestOperatorArgs = {
   blockHeight?: InputMaybe<Scalars['String']['input']>;
   id: Scalars['String']['input'];
 };
 
-
 /** The root query type which gives access points into the data universe. */
 export type QueryServiceRequestOperatorByNodeIdArgs = {
-  distinct?: InputMaybe<Array<InputMaybe<Service_Request_Operators_Distinct_Enum>>>;
+  distinct?: InputMaybe<
+    Array<InputMaybe<Service_Request_Operators_Distinct_Enum>>
+  >;
   nodeId: Scalars['ID']['input'];
 };
-
 
 /** The root query type which gives access points into the data universe. */
 export type QueryServiceRequestOperatorsArgs = {
   after?: InputMaybe<Scalars['Cursor']['input']>;
   before?: InputMaybe<Scalars['Cursor']['input']>;
   blockHeight?: InputMaybe<Scalars['String']['input']>;
-  distinct?: InputMaybe<Array<InputMaybe<Service_Request_Operators_Distinct_Enum>>>;
+  distinct?: InputMaybe<
+    Array<InputMaybe<Service_Request_Operators_Distinct_Enum>>
+  >;
   filter?: InputMaybe<ServiceRequestOperatorFilter>;
   first?: InputMaybe<Scalars['Int']['input']>;
   last?: InputMaybe<Scalars['Int']['input']>;
@@ -15017,7 +14953,6 @@ export type QueryServiceRequestOperatorsArgs = {
   orderBy?: InputMaybe<Array<ServiceRequestOperatorsOrderBy>>;
   orderByNull?: InputMaybe<NullOrder>;
 };
-
 
 /** The root query type which gives access points into the data universe. */
 export type QueryServiceRequestsArgs = {
@@ -15033,7 +14968,6 @@ export type QueryServiceRequestsArgs = {
   orderByNull?: InputMaybe<NullOrder>;
 };
 
-
 /** The root query type which gives access points into the data universe. */
 export type QueryServicesArgs = {
   after?: InputMaybe<Scalars['Cursor']['input']>;
@@ -15048,20 +14982,17 @@ export type QueryServicesArgs = {
   orderByNull?: InputMaybe<NullOrder>;
 };
 
-
 /** The root query type which gives access points into the data universe. */
 export type QuerySessionArgs = {
   blockHeight?: InputMaybe<Scalars['String']['input']>;
   id: Scalars['String']['input'];
 };
 
-
 /** The root query type which gives access points into the data universe. */
 export type QuerySessionByNodeIdArgs = {
   distinct?: InputMaybe<Array<InputMaybe<Sessions_Distinct_Enum>>>;
   nodeId: Scalars['ID']['input'];
 };
-
 
 /** The root query type which gives access points into the data universe. */
 export type QuerySessionsArgs = {
@@ -15077,20 +15008,17 @@ export type QuerySessionsArgs = {
   orderByNull?: InputMaybe<NullOrder>;
 };
 
-
 /** The root query type which gives access points into the data universe. */
 export type QueryUnstakeRequestArgs = {
   blockHeight?: InputMaybe<Scalars['String']['input']>;
   id: Scalars['String']['input'];
 };
 
-
 /** The root query type which gives access points into the data universe. */
 export type QueryUnstakeRequestByNodeIdArgs = {
   distinct?: InputMaybe<Array<InputMaybe<Unstake_Requests_Distinct_Enum>>>;
   nodeId: Scalars['ID']['input'];
 };
-
 
 /** The root query type which gives access points into the data universe. */
 export type QueryUnstakeRequestsArgs = {
@@ -15106,20 +15034,17 @@ export type QueryUnstakeRequestsArgs = {
   orderByNull?: InputMaybe<NullOrder>;
 };
 
-
 /** The root query type which gives access points into the data universe. */
 export type QueryWithdrawRequestArgs = {
   blockHeight?: InputMaybe<Scalars['String']['input']>;
   id: Scalars['String']['input'];
 };
 
-
 /** The root query type which gives access points into the data universe. */
 export type QueryWithdrawRequestByNodeIdArgs = {
   distinct?: InputMaybe<Array<InputMaybe<Withdraw_Requests_Distinct_Enum>>>;
   nodeId: Scalars['ID']['input'];
 };
-
 
 /** The root query type which gives access points into the data universe. */
 export type QueryWithdrawRequestsArgs = {
@@ -15175,7 +15100,6 @@ export type Service = Node & {
   terminatedAt?: Maybe<Scalars['Int']['output']>;
 };
 
-
 export type ServiceAccountsByJobCallServiceIdAndCallerIdArgs = {
   after?: InputMaybe<Scalars['Cursor']['input']>;
   before?: InputMaybe<Scalars['Cursor']['input']>;
@@ -15188,7 +15112,6 @@ export type ServiceAccountsByJobCallServiceIdAndCallerIdArgs = {
   orderBy?: InputMaybe<Array<AccountsOrderBy>>;
   orderByNull?: InputMaybe<NullOrder>;
 };
-
 
 export type ServiceJobCallsArgs = {
   after?: InputMaybe<Scalars['Cursor']['input']>;
@@ -15203,7 +15126,6 @@ export type ServiceJobCallsArgs = {
   orderByNull?: InputMaybe<NullOrder>;
 };
 
-
 export type ServiceJobCallsByJobResultServiceIdAndJobCallIdArgs = {
   after?: InputMaybe<Scalars['Cursor']['input']>;
   before?: InputMaybe<Scalars['Cursor']['input']>;
@@ -15216,7 +15138,6 @@ export type ServiceJobCallsByJobResultServiceIdAndJobCallIdArgs = {
   orderBy?: InputMaybe<Array<JobCallsOrderBy>>;
   orderByNull?: InputMaybe<NullOrder>;
 };
-
 
 export type ServiceJobResultsArgs = {
   after?: InputMaybe<Scalars['Cursor']['input']>;
@@ -15231,7 +15152,6 @@ export type ServiceJobResultsArgs = {
   orderByNull?: InputMaybe<NullOrder>;
 };
 
-
 export type ServiceOperatorsByJobResultServiceIdAndOperatorIdArgs = {
   after?: InputMaybe<Scalars['Cursor']['input']>;
   before?: InputMaybe<Scalars['Cursor']['input']>;
@@ -15245,7 +15165,6 @@ export type ServiceOperatorsByJobResultServiceIdAndOperatorIdArgs = {
   orderByNull?: InputMaybe<NullOrder>;
 };
 
-
 export type ServiceOperatorsByServiceOperatorServiceIdAndOperatorIdArgs = {
   after?: InputMaybe<Scalars['Cursor']['input']>;
   before?: InputMaybe<Scalars['Cursor']['input']>;
@@ -15258,7 +15177,6 @@ export type ServiceOperatorsByServiceOperatorServiceIdAndOperatorIdArgs = {
   orderBy?: InputMaybe<Array<OperatorsOrderBy>>;
   orderByNull?: InputMaybe<NullOrder>;
 };
-
 
 export type ServiceServiceOperatorsArgs = {
   after?: InputMaybe<Scalars['Cursor']['input']>;
@@ -15290,12 +15208,12 @@ export type ServiceAccountsByJobCallServiceIdAndCallerIdManyToManyConnection = {
   totalCount: Scalars['Int']['output'];
 };
 
-
 /** A connection to a list of `Account` values, with data from `JobCall`. */
-export type ServiceAccountsByJobCallServiceIdAndCallerIdManyToManyConnectionGroupedAggregatesArgs = {
-  groupBy: Array<AccountsGroupBy>;
-  having?: InputMaybe<AccountsHavingInput>;
-};
+export type ServiceAccountsByJobCallServiceIdAndCallerIdManyToManyConnectionGroupedAggregatesArgs =
+  {
+    groupBy: Array<AccountsGroupBy>;
+    having?: InputMaybe<AccountsHavingInput>;
+  };
 
 /** A `Account` edge in the connection, with data from `JobCall`. */
 export type ServiceAccountsByJobCallServiceIdAndCallerIdManyToManyEdge = {
@@ -15308,20 +15226,20 @@ export type ServiceAccountsByJobCallServiceIdAndCallerIdManyToManyEdge = {
   node?: Maybe<Account>;
 };
 
-
 /** A `Account` edge in the connection, with data from `JobCall`. */
-export type ServiceAccountsByJobCallServiceIdAndCallerIdManyToManyEdgeJobCallsArgs = {
-  after?: InputMaybe<Scalars['Cursor']['input']>;
-  before?: InputMaybe<Scalars['Cursor']['input']>;
-  blockHeight?: InputMaybe<Scalars['String']['input']>;
-  distinct?: InputMaybe<Array<InputMaybe<Job_Calls_Distinct_Enum>>>;
-  filter?: InputMaybe<JobCallFilter>;
-  first?: InputMaybe<Scalars['Int']['input']>;
-  last?: InputMaybe<Scalars['Int']['input']>;
-  offset?: InputMaybe<Scalars['Int']['input']>;
-  orderBy?: InputMaybe<Array<JobCallsOrderBy>>;
-  orderByNull?: InputMaybe<NullOrder>;
-};
+export type ServiceAccountsByJobCallServiceIdAndCallerIdManyToManyEdgeJobCallsArgs =
+  {
+    after?: InputMaybe<Scalars['Cursor']['input']>;
+    before?: InputMaybe<Scalars['Cursor']['input']>;
+    blockHeight?: InputMaybe<Scalars['String']['input']>;
+    distinct?: InputMaybe<Array<InputMaybe<Job_Calls_Distinct_Enum>>>;
+    filter?: InputMaybe<JobCallFilter>;
+    first?: InputMaybe<Scalars['Int']['input']>;
+    last?: InputMaybe<Scalars['Int']['input']>;
+    offset?: InputMaybe<Scalars['Int']['input']>;
+    orderBy?: InputMaybe<Array<JobCallsOrderBy>>;
+    orderByNull?: InputMaybe<NullOrder>;
+  };
 
 export type ServiceAggregates = {
   __typename?: 'ServiceAggregates';
@@ -15460,28 +15378,29 @@ export type ServiceFilter = {
 };
 
 /** A connection to a list of `JobCall` values, with data from `JobResult`. */
-export type ServiceJobCallsByJobResultServiceIdAndJobCallIdManyToManyConnection = {
-  __typename?: 'ServiceJobCallsByJobResultServiceIdAndJobCallIdManyToManyConnection';
-  /** Aggregates across the matching connection (ignoring before/after/first/last/offset) */
-  aggregates?: Maybe<JobCallAggregates>;
-  /** A list of edges which contains the `JobCall`, info from the `JobResult`, and the cursor to aid in pagination. */
-  edges: Array<ServiceJobCallsByJobResultServiceIdAndJobCallIdManyToManyEdge>;
-  /** Grouped aggregates across the matching connection (ignoring before/after/first/last/offset) */
-  groupedAggregates?: Maybe<Array<JobCallAggregates>>;
-  /** A list of `JobCall` objects. */
-  nodes: Array<Maybe<JobCall>>;
-  /** Information to aid in pagination. */
-  pageInfo: PageInfo;
-  /** The count of *all* `JobCall` you could get from the connection. */
-  totalCount: Scalars['Int']['output'];
-};
-
+export type ServiceJobCallsByJobResultServiceIdAndJobCallIdManyToManyConnection =
+  {
+    __typename?: 'ServiceJobCallsByJobResultServiceIdAndJobCallIdManyToManyConnection';
+    /** Aggregates across the matching connection (ignoring before/after/first/last/offset) */
+    aggregates?: Maybe<JobCallAggregates>;
+    /** A list of edges which contains the `JobCall`, info from the `JobResult`, and the cursor to aid in pagination. */
+    edges: Array<ServiceJobCallsByJobResultServiceIdAndJobCallIdManyToManyEdge>;
+    /** Grouped aggregates across the matching connection (ignoring before/after/first/last/offset) */
+    groupedAggregates?: Maybe<Array<JobCallAggregates>>;
+    /** A list of `JobCall` objects. */
+    nodes: Array<Maybe<JobCall>>;
+    /** Information to aid in pagination. */
+    pageInfo: PageInfo;
+    /** The count of *all* `JobCall` you could get from the connection. */
+    totalCount: Scalars['Int']['output'];
+  };
 
 /** A connection to a list of `JobCall` values, with data from `JobResult`. */
-export type ServiceJobCallsByJobResultServiceIdAndJobCallIdManyToManyConnectionGroupedAggregatesArgs = {
-  groupBy: Array<JobCallsGroupBy>;
-  having?: InputMaybe<JobCallsHavingInput>;
-};
+export type ServiceJobCallsByJobResultServiceIdAndJobCallIdManyToManyConnectionGroupedAggregatesArgs =
+  {
+    groupBy: Array<JobCallsGroupBy>;
+    having?: InputMaybe<JobCallsHavingInput>;
+  };
 
 /** A `JobCall` edge in the connection, with data from `JobResult`. */
 export type ServiceJobCallsByJobResultServiceIdAndJobCallIdManyToManyEdge = {
@@ -15494,20 +15413,20 @@ export type ServiceJobCallsByJobResultServiceIdAndJobCallIdManyToManyEdge = {
   node?: Maybe<JobCall>;
 };
 
-
 /** A `JobCall` edge in the connection, with data from `JobResult`. */
-export type ServiceJobCallsByJobResultServiceIdAndJobCallIdManyToManyEdgeJobResultsArgs = {
-  after?: InputMaybe<Scalars['Cursor']['input']>;
-  before?: InputMaybe<Scalars['Cursor']['input']>;
-  blockHeight?: InputMaybe<Scalars['String']['input']>;
-  distinct?: InputMaybe<Array<InputMaybe<Job_Results_Distinct_Enum>>>;
-  filter?: InputMaybe<JobResultFilter>;
-  first?: InputMaybe<Scalars['Int']['input']>;
-  last?: InputMaybe<Scalars['Int']['input']>;
-  offset?: InputMaybe<Scalars['Int']['input']>;
-  orderBy?: InputMaybe<Array<JobResultsOrderBy>>;
-  orderByNull?: InputMaybe<NullOrder>;
-};
+export type ServiceJobCallsByJobResultServiceIdAndJobCallIdManyToManyEdgeJobResultsArgs =
+  {
+    after?: InputMaybe<Scalars['Cursor']['input']>;
+    before?: InputMaybe<Scalars['Cursor']['input']>;
+    blockHeight?: InputMaybe<Scalars['String']['input']>;
+    distinct?: InputMaybe<Array<InputMaybe<Job_Results_Distinct_Enum>>>;
+    filter?: InputMaybe<JobResultFilter>;
+    first?: InputMaybe<Scalars['Int']['input']>;
+    last?: InputMaybe<Scalars['Int']['input']>;
+    offset?: InputMaybe<Scalars['Int']['input']>;
+    orderBy?: InputMaybe<Array<JobResultsOrderBy>>;
+    orderByNull?: InputMaybe<NullOrder>;
+  };
 
 export type ServiceMaxAggregateFilter = {
   createdAt?: InputMaybe<IntFilter>;
@@ -15728,28 +15647,29 @@ export type ServiceOperatorVarianceSampleAggregates = {
 };
 
 /** A connection to a list of `Operator` values, with data from `JobResult`. */
-export type ServiceOperatorsByJobResultServiceIdAndOperatorIdManyToManyConnection = {
-  __typename?: 'ServiceOperatorsByJobResultServiceIdAndOperatorIdManyToManyConnection';
-  /** Aggregates across the matching connection (ignoring before/after/first/last/offset) */
-  aggregates?: Maybe<OperatorAggregates>;
-  /** A list of edges which contains the `Operator`, info from the `JobResult`, and the cursor to aid in pagination. */
-  edges: Array<ServiceOperatorsByJobResultServiceIdAndOperatorIdManyToManyEdge>;
-  /** Grouped aggregates across the matching connection (ignoring before/after/first/last/offset) */
-  groupedAggregates?: Maybe<Array<OperatorAggregates>>;
-  /** A list of `Operator` objects. */
-  nodes: Array<Maybe<Operator>>;
-  /** Information to aid in pagination. */
-  pageInfo: PageInfo;
-  /** The count of *all* `Operator` you could get from the connection. */
-  totalCount: Scalars['Int']['output'];
-};
-
+export type ServiceOperatorsByJobResultServiceIdAndOperatorIdManyToManyConnection =
+  {
+    __typename?: 'ServiceOperatorsByJobResultServiceIdAndOperatorIdManyToManyConnection';
+    /** Aggregates across the matching connection (ignoring before/after/first/last/offset) */
+    aggregates?: Maybe<OperatorAggregates>;
+    /** A list of edges which contains the `Operator`, info from the `JobResult`, and the cursor to aid in pagination. */
+    edges: Array<ServiceOperatorsByJobResultServiceIdAndOperatorIdManyToManyEdge>;
+    /** Grouped aggregates across the matching connection (ignoring before/after/first/last/offset) */
+    groupedAggregates?: Maybe<Array<OperatorAggregates>>;
+    /** A list of `Operator` objects. */
+    nodes: Array<Maybe<Operator>>;
+    /** Information to aid in pagination. */
+    pageInfo: PageInfo;
+    /** The count of *all* `Operator` you could get from the connection. */
+    totalCount: Scalars['Int']['output'];
+  };
 
 /** A connection to a list of `Operator` values, with data from `JobResult`. */
-export type ServiceOperatorsByJobResultServiceIdAndOperatorIdManyToManyConnectionGroupedAggregatesArgs = {
-  groupBy: Array<OperatorsGroupBy>;
-  having?: InputMaybe<OperatorsHavingInput>;
-};
+export type ServiceOperatorsByJobResultServiceIdAndOperatorIdManyToManyConnectionGroupedAggregatesArgs =
+  {
+    groupBy: Array<OperatorsGroupBy>;
+    having?: InputMaybe<OperatorsHavingInput>;
+  };
 
 /** A `Operator` edge in the connection, with data from `JobResult`. */
 export type ServiceOperatorsByJobResultServiceIdAndOperatorIdManyToManyEdge = {
@@ -15762,70 +15682,72 @@ export type ServiceOperatorsByJobResultServiceIdAndOperatorIdManyToManyEdge = {
   node?: Maybe<Operator>;
 };
 
-
 /** A `Operator` edge in the connection, with data from `JobResult`. */
-export type ServiceOperatorsByJobResultServiceIdAndOperatorIdManyToManyEdgeJobResultsArgs = {
-  after?: InputMaybe<Scalars['Cursor']['input']>;
-  before?: InputMaybe<Scalars['Cursor']['input']>;
-  blockHeight?: InputMaybe<Scalars['String']['input']>;
-  distinct?: InputMaybe<Array<InputMaybe<Job_Results_Distinct_Enum>>>;
-  filter?: InputMaybe<JobResultFilter>;
-  first?: InputMaybe<Scalars['Int']['input']>;
-  last?: InputMaybe<Scalars['Int']['input']>;
-  offset?: InputMaybe<Scalars['Int']['input']>;
-  orderBy?: InputMaybe<Array<JobResultsOrderBy>>;
-  orderByNull?: InputMaybe<NullOrder>;
-};
+export type ServiceOperatorsByJobResultServiceIdAndOperatorIdManyToManyEdgeJobResultsArgs =
+  {
+    after?: InputMaybe<Scalars['Cursor']['input']>;
+    before?: InputMaybe<Scalars['Cursor']['input']>;
+    blockHeight?: InputMaybe<Scalars['String']['input']>;
+    distinct?: InputMaybe<Array<InputMaybe<Job_Results_Distinct_Enum>>>;
+    filter?: InputMaybe<JobResultFilter>;
+    first?: InputMaybe<Scalars['Int']['input']>;
+    last?: InputMaybe<Scalars['Int']['input']>;
+    offset?: InputMaybe<Scalars['Int']['input']>;
+    orderBy?: InputMaybe<Array<JobResultsOrderBy>>;
+    orderByNull?: InputMaybe<NullOrder>;
+  };
 
 /** A connection to a list of `Operator` values, with data from `ServiceOperator`. */
-export type ServiceOperatorsByServiceOperatorServiceIdAndOperatorIdManyToManyConnection = {
-  __typename?: 'ServiceOperatorsByServiceOperatorServiceIdAndOperatorIdManyToManyConnection';
-  /** Aggregates across the matching connection (ignoring before/after/first/last/offset) */
-  aggregates?: Maybe<OperatorAggregates>;
-  /** A list of edges which contains the `Operator`, info from the `ServiceOperator`, and the cursor to aid in pagination. */
-  edges: Array<ServiceOperatorsByServiceOperatorServiceIdAndOperatorIdManyToManyEdge>;
-  /** Grouped aggregates across the matching connection (ignoring before/after/first/last/offset) */
-  groupedAggregates?: Maybe<Array<OperatorAggregates>>;
-  /** A list of `Operator` objects. */
-  nodes: Array<Maybe<Operator>>;
-  /** Information to aid in pagination. */
-  pageInfo: PageInfo;
-  /** The count of *all* `Operator` you could get from the connection. */
-  totalCount: Scalars['Int']['output'];
-};
-
+export type ServiceOperatorsByServiceOperatorServiceIdAndOperatorIdManyToManyConnection =
+  {
+    __typename?: 'ServiceOperatorsByServiceOperatorServiceIdAndOperatorIdManyToManyConnection';
+    /** Aggregates across the matching connection (ignoring before/after/first/last/offset) */
+    aggregates?: Maybe<OperatorAggregates>;
+    /** A list of edges which contains the `Operator`, info from the `ServiceOperator`, and the cursor to aid in pagination. */
+    edges: Array<ServiceOperatorsByServiceOperatorServiceIdAndOperatorIdManyToManyEdge>;
+    /** Grouped aggregates across the matching connection (ignoring before/after/first/last/offset) */
+    groupedAggregates?: Maybe<Array<OperatorAggregates>>;
+    /** A list of `Operator` objects. */
+    nodes: Array<Maybe<Operator>>;
+    /** Information to aid in pagination. */
+    pageInfo: PageInfo;
+    /** The count of *all* `Operator` you could get from the connection. */
+    totalCount: Scalars['Int']['output'];
+  };
 
 /** A connection to a list of `Operator` values, with data from `ServiceOperator`. */
-export type ServiceOperatorsByServiceOperatorServiceIdAndOperatorIdManyToManyConnectionGroupedAggregatesArgs = {
-  groupBy: Array<OperatorsGroupBy>;
-  having?: InputMaybe<OperatorsHavingInput>;
-};
+export type ServiceOperatorsByServiceOperatorServiceIdAndOperatorIdManyToManyConnectionGroupedAggregatesArgs =
+  {
+    groupBy: Array<OperatorsGroupBy>;
+    having?: InputMaybe<OperatorsHavingInput>;
+  };
 
 /** A `Operator` edge in the connection, with data from `ServiceOperator`. */
-export type ServiceOperatorsByServiceOperatorServiceIdAndOperatorIdManyToManyEdge = {
-  __typename?: 'ServiceOperatorsByServiceOperatorServiceIdAndOperatorIdManyToManyEdge';
-  /** A cursor for use in pagination. */
-  cursor?: Maybe<Scalars['Cursor']['output']>;
-  /** The `Operator` at the end of the edge. */
-  node?: Maybe<Operator>;
-  /** Reads and enables pagination through a set of `ServiceOperator`. */
-  serviceOperators: ServiceOperatorsConnection;
-};
-
+export type ServiceOperatorsByServiceOperatorServiceIdAndOperatorIdManyToManyEdge =
+  {
+    __typename?: 'ServiceOperatorsByServiceOperatorServiceIdAndOperatorIdManyToManyEdge';
+    /** A cursor for use in pagination. */
+    cursor?: Maybe<Scalars['Cursor']['output']>;
+    /** The `Operator` at the end of the edge. */
+    node?: Maybe<Operator>;
+    /** Reads and enables pagination through a set of `ServiceOperator`. */
+    serviceOperators: ServiceOperatorsConnection;
+  };
 
 /** A `Operator` edge in the connection, with data from `ServiceOperator`. */
-export type ServiceOperatorsByServiceOperatorServiceIdAndOperatorIdManyToManyEdgeServiceOperatorsArgs = {
-  after?: InputMaybe<Scalars['Cursor']['input']>;
-  before?: InputMaybe<Scalars['Cursor']['input']>;
-  blockHeight?: InputMaybe<Scalars['String']['input']>;
-  distinct?: InputMaybe<Array<InputMaybe<Service_Operators_Distinct_Enum>>>;
-  filter?: InputMaybe<ServiceOperatorFilter>;
-  first?: InputMaybe<Scalars['Int']['input']>;
-  last?: InputMaybe<Scalars['Int']['input']>;
-  offset?: InputMaybe<Scalars['Int']['input']>;
-  orderBy?: InputMaybe<Array<ServiceOperatorsOrderBy>>;
-  orderByNull?: InputMaybe<NullOrder>;
-};
+export type ServiceOperatorsByServiceOperatorServiceIdAndOperatorIdManyToManyEdgeServiceOperatorsArgs =
+  {
+    after?: InputMaybe<Scalars['Cursor']['input']>;
+    before?: InputMaybe<Scalars['Cursor']['input']>;
+    blockHeight?: InputMaybe<Scalars['String']['input']>;
+    distinct?: InputMaybe<Array<InputMaybe<Service_Operators_Distinct_Enum>>>;
+    filter?: InputMaybe<ServiceOperatorFilter>;
+    first?: InputMaybe<Scalars['Int']['input']>;
+    last?: InputMaybe<Scalars['Int']['input']>;
+    offset?: InputMaybe<Scalars['Int']['input']>;
+    orderBy?: InputMaybe<Array<ServiceOperatorsOrderBy>>;
+    orderByNull?: InputMaybe<NullOrder>;
+  };
 
 /** A connection to a list of `ServiceOperator` values. */
 export type ServiceOperatorsConnection = {
@@ -15843,7 +15765,6 @@ export type ServiceOperatorsConnection = {
   /** The count of *all* `ServiceOperator` you could get from the connection. */
   totalCount: Scalars['Int']['output'];
 };
-
 
 /** A connection to a list of `ServiceOperator` values. */
 export type ServiceOperatorsConnectionGroupedAggregatesArgs = {
@@ -15865,7 +15786,7 @@ export enum ServiceOperatorsGroupBy {
   CreatedAt = 'CREATED_AT',
   Id = 'ID',
   OperatorId = 'OPERATOR_ID',
-  ServiceId = 'SERVICE_ID'
+  ServiceId = 'SERVICE_ID',
 }
 
 export type ServiceOperatorsHavingAverageInput = {
@@ -15965,7 +15886,7 @@ export enum ServiceOperatorsOrderBy {
   ServiceByServiceIdTerminatedAtAsc = 'SERVICE_BY_SERVICE_ID__TERMINATED_AT_ASC',
   ServiceByServiceIdTerminatedAtDesc = 'SERVICE_BY_SERVICE_ID__TERMINATED_AT_DESC',
   ServiceIdAsc = 'SERVICE_ID_ASC',
-  ServiceIdDesc = 'SERVICE_ID_DESC'
+  ServiceIdDesc = 'SERVICE_ID_DESC',
 }
 
 export type ServiceRequest = Node & {
@@ -15998,7 +15919,6 @@ export type ServiceRequest = Node & {
   services: ServicesConnection;
 };
 
-
 export type ServiceRequestAccountsByServiceServiceRequestIdAndOwnerIdArgs = {
   after?: InputMaybe<Scalars['Cursor']['input']>;
   before?: InputMaybe<Scalars['Cursor']['input']>;
@@ -16012,40 +15932,41 @@ export type ServiceRequestAccountsByServiceServiceRequestIdAndOwnerIdArgs = {
   orderByNull?: InputMaybe<NullOrder>;
 };
 
+export type ServiceRequestBlueprintsByServiceServiceRequestIdAndBlueprintIdArgs =
+  {
+    after?: InputMaybe<Scalars['Cursor']['input']>;
+    before?: InputMaybe<Scalars['Cursor']['input']>;
+    blockHeight?: InputMaybe<Scalars['String']['input']>;
+    distinct?: InputMaybe<Array<InputMaybe<Blueprints_Distinct_Enum>>>;
+    filter?: InputMaybe<BlueprintFilter>;
+    first?: InputMaybe<Scalars['Int']['input']>;
+    last?: InputMaybe<Scalars['Int']['input']>;
+    offset?: InputMaybe<Scalars['Int']['input']>;
+    orderBy?: InputMaybe<Array<BlueprintsOrderBy>>;
+    orderByNull?: InputMaybe<NullOrder>;
+  };
 
-export type ServiceRequestBlueprintsByServiceServiceRequestIdAndBlueprintIdArgs = {
-  after?: InputMaybe<Scalars['Cursor']['input']>;
-  before?: InputMaybe<Scalars['Cursor']['input']>;
-  blockHeight?: InputMaybe<Scalars['String']['input']>;
-  distinct?: InputMaybe<Array<InputMaybe<Blueprints_Distinct_Enum>>>;
-  filter?: InputMaybe<BlueprintFilter>;
-  first?: InputMaybe<Scalars['Int']['input']>;
-  last?: InputMaybe<Scalars['Int']['input']>;
-  offset?: InputMaybe<Scalars['Int']['input']>;
-  orderBy?: InputMaybe<Array<BlueprintsOrderBy>>;
-  orderByNull?: InputMaybe<NullOrder>;
-};
-
-
-export type ServiceRequestOperatorsByServiceRequestOperatorServiceRequestIdAndOperatorIdArgs = {
-  after?: InputMaybe<Scalars['Cursor']['input']>;
-  before?: InputMaybe<Scalars['Cursor']['input']>;
-  blockHeight?: InputMaybe<Scalars['String']['input']>;
-  distinct?: InputMaybe<Array<InputMaybe<Operators_Distinct_Enum>>>;
-  filter?: InputMaybe<OperatorFilter>;
-  first?: InputMaybe<Scalars['Int']['input']>;
-  last?: InputMaybe<Scalars['Int']['input']>;
-  offset?: InputMaybe<Scalars['Int']['input']>;
-  orderBy?: InputMaybe<Array<OperatorsOrderBy>>;
-  orderByNull?: InputMaybe<NullOrder>;
-};
-
+export type ServiceRequestOperatorsByServiceRequestOperatorServiceRequestIdAndOperatorIdArgs =
+  {
+    after?: InputMaybe<Scalars['Cursor']['input']>;
+    before?: InputMaybe<Scalars['Cursor']['input']>;
+    blockHeight?: InputMaybe<Scalars['String']['input']>;
+    distinct?: InputMaybe<Array<InputMaybe<Operators_Distinct_Enum>>>;
+    filter?: InputMaybe<OperatorFilter>;
+    first?: InputMaybe<Scalars['Int']['input']>;
+    last?: InputMaybe<Scalars['Int']['input']>;
+    offset?: InputMaybe<Scalars['Int']['input']>;
+    orderBy?: InputMaybe<Array<OperatorsOrderBy>>;
+    orderByNull?: InputMaybe<NullOrder>;
+  };
 
 export type ServiceRequestServiceRequestOperatorsArgs = {
   after?: InputMaybe<Scalars['Cursor']['input']>;
   before?: InputMaybe<Scalars['Cursor']['input']>;
   blockHeight?: InputMaybe<Scalars['String']['input']>;
-  distinct?: InputMaybe<Array<InputMaybe<Service_Request_Operators_Distinct_Enum>>>;
+  distinct?: InputMaybe<
+    Array<InputMaybe<Service_Request_Operators_Distinct_Enum>>
+  >;
   filter?: InputMaybe<ServiceRequestOperatorFilter>;
   first?: InputMaybe<Scalars['Int']['input']>;
   last?: InputMaybe<Scalars['Int']['input']>;
@@ -16053,7 +15974,6 @@ export type ServiceRequestServiceRequestOperatorsArgs = {
   orderBy?: InputMaybe<Array<ServiceRequestOperatorsOrderBy>>;
   orderByNull?: InputMaybe<NullOrder>;
 };
-
 
 export type ServiceRequestServicesArgs = {
   after?: InputMaybe<Scalars['Cursor']['input']>;
@@ -16069,54 +15989,56 @@ export type ServiceRequestServicesArgs = {
 };
 
 /** A connection to a list of `Account` values, with data from `Service`. */
-export type ServiceRequestAccountsByServiceServiceRequestIdAndOwnerIdManyToManyConnection = {
-  __typename?: 'ServiceRequestAccountsByServiceServiceRequestIdAndOwnerIdManyToManyConnection';
-  /** Aggregates across the matching connection (ignoring before/after/first/last/offset) */
-  aggregates?: Maybe<AccountAggregates>;
-  /** A list of edges which contains the `Account`, info from the `Service`, and the cursor to aid in pagination. */
-  edges: Array<ServiceRequestAccountsByServiceServiceRequestIdAndOwnerIdManyToManyEdge>;
-  /** Grouped aggregates across the matching connection (ignoring before/after/first/last/offset) */
-  groupedAggregates?: Maybe<Array<AccountAggregates>>;
-  /** A list of `Account` objects. */
-  nodes: Array<Maybe<Account>>;
-  /** Information to aid in pagination. */
-  pageInfo: PageInfo;
-  /** The count of *all* `Account` you could get from the connection. */
-  totalCount: Scalars['Int']['output'];
-};
-
+export type ServiceRequestAccountsByServiceServiceRequestIdAndOwnerIdManyToManyConnection =
+  {
+    __typename?: 'ServiceRequestAccountsByServiceServiceRequestIdAndOwnerIdManyToManyConnection';
+    /** Aggregates across the matching connection (ignoring before/after/first/last/offset) */
+    aggregates?: Maybe<AccountAggregates>;
+    /** A list of edges which contains the `Account`, info from the `Service`, and the cursor to aid in pagination. */
+    edges: Array<ServiceRequestAccountsByServiceServiceRequestIdAndOwnerIdManyToManyEdge>;
+    /** Grouped aggregates across the matching connection (ignoring before/after/first/last/offset) */
+    groupedAggregates?: Maybe<Array<AccountAggregates>>;
+    /** A list of `Account` objects. */
+    nodes: Array<Maybe<Account>>;
+    /** Information to aid in pagination. */
+    pageInfo: PageInfo;
+    /** The count of *all* `Account` you could get from the connection. */
+    totalCount: Scalars['Int']['output'];
+  };
 
 /** A connection to a list of `Account` values, with data from `Service`. */
-export type ServiceRequestAccountsByServiceServiceRequestIdAndOwnerIdManyToManyConnectionGroupedAggregatesArgs = {
-  groupBy: Array<AccountsGroupBy>;
-  having?: InputMaybe<AccountsHavingInput>;
-};
+export type ServiceRequestAccountsByServiceServiceRequestIdAndOwnerIdManyToManyConnectionGroupedAggregatesArgs =
+  {
+    groupBy: Array<AccountsGroupBy>;
+    having?: InputMaybe<AccountsHavingInput>;
+  };
 
 /** A `Account` edge in the connection, with data from `Service`. */
-export type ServiceRequestAccountsByServiceServiceRequestIdAndOwnerIdManyToManyEdge = {
-  __typename?: 'ServiceRequestAccountsByServiceServiceRequestIdAndOwnerIdManyToManyEdge';
-  /** A cursor for use in pagination. */
-  cursor?: Maybe<Scalars['Cursor']['output']>;
-  /** The `Account` at the end of the edge. */
-  node?: Maybe<Account>;
-  /** Reads and enables pagination through a set of `Service`. */
-  services: ServicesConnection;
-};
-
+export type ServiceRequestAccountsByServiceServiceRequestIdAndOwnerIdManyToManyEdge =
+  {
+    __typename?: 'ServiceRequestAccountsByServiceServiceRequestIdAndOwnerIdManyToManyEdge';
+    /** A cursor for use in pagination. */
+    cursor?: Maybe<Scalars['Cursor']['output']>;
+    /** The `Account` at the end of the edge. */
+    node?: Maybe<Account>;
+    /** Reads and enables pagination through a set of `Service`. */
+    services: ServicesConnection;
+  };
 
 /** A `Account` edge in the connection, with data from `Service`. */
-export type ServiceRequestAccountsByServiceServiceRequestIdAndOwnerIdManyToManyEdgeServicesArgs = {
-  after?: InputMaybe<Scalars['Cursor']['input']>;
-  before?: InputMaybe<Scalars['Cursor']['input']>;
-  blockHeight?: InputMaybe<Scalars['String']['input']>;
-  distinct?: InputMaybe<Array<InputMaybe<Services_Distinct_Enum>>>;
-  filter?: InputMaybe<ServiceFilter>;
-  first?: InputMaybe<Scalars['Int']['input']>;
-  last?: InputMaybe<Scalars['Int']['input']>;
-  offset?: InputMaybe<Scalars['Int']['input']>;
-  orderBy?: InputMaybe<Array<ServicesOrderBy>>;
-  orderByNull?: InputMaybe<NullOrder>;
-};
+export type ServiceRequestAccountsByServiceServiceRequestIdAndOwnerIdManyToManyEdgeServicesArgs =
+  {
+    after?: InputMaybe<Scalars['Cursor']['input']>;
+    before?: InputMaybe<Scalars['Cursor']['input']>;
+    blockHeight?: InputMaybe<Scalars['String']['input']>;
+    distinct?: InputMaybe<Array<InputMaybe<Services_Distinct_Enum>>>;
+    filter?: InputMaybe<ServiceFilter>;
+    first?: InputMaybe<Scalars['Int']['input']>;
+    last?: InputMaybe<Scalars['Int']['input']>;
+    offset?: InputMaybe<Scalars['Int']['input']>;
+    orderBy?: InputMaybe<Array<ServicesOrderBy>>;
+    orderByNull?: InputMaybe<NullOrder>;
+  };
 
 export type ServiceRequestAggregates = {
   __typename?: 'ServiceRequestAggregates';
@@ -16176,54 +16098,56 @@ export type ServiceRequestAverageAggregates = {
 };
 
 /** A connection to a list of `Blueprint` values, with data from `Service`. */
-export type ServiceRequestBlueprintsByServiceServiceRequestIdAndBlueprintIdManyToManyConnection = {
-  __typename?: 'ServiceRequestBlueprintsByServiceServiceRequestIdAndBlueprintIdManyToManyConnection';
-  /** Aggregates across the matching connection (ignoring before/after/first/last/offset) */
-  aggregates?: Maybe<BlueprintAggregates>;
-  /** A list of edges which contains the `Blueprint`, info from the `Service`, and the cursor to aid in pagination. */
-  edges: Array<ServiceRequestBlueprintsByServiceServiceRequestIdAndBlueprintIdManyToManyEdge>;
-  /** Grouped aggregates across the matching connection (ignoring before/after/first/last/offset) */
-  groupedAggregates?: Maybe<Array<BlueprintAggregates>>;
-  /** A list of `Blueprint` objects. */
-  nodes: Array<Maybe<Blueprint>>;
-  /** Information to aid in pagination. */
-  pageInfo: PageInfo;
-  /** The count of *all* `Blueprint` you could get from the connection. */
-  totalCount: Scalars['Int']['output'];
-};
-
+export type ServiceRequestBlueprintsByServiceServiceRequestIdAndBlueprintIdManyToManyConnection =
+  {
+    __typename?: 'ServiceRequestBlueprintsByServiceServiceRequestIdAndBlueprintIdManyToManyConnection';
+    /** Aggregates across the matching connection (ignoring before/after/first/last/offset) */
+    aggregates?: Maybe<BlueprintAggregates>;
+    /** A list of edges which contains the `Blueprint`, info from the `Service`, and the cursor to aid in pagination. */
+    edges: Array<ServiceRequestBlueprintsByServiceServiceRequestIdAndBlueprintIdManyToManyEdge>;
+    /** Grouped aggregates across the matching connection (ignoring before/after/first/last/offset) */
+    groupedAggregates?: Maybe<Array<BlueprintAggregates>>;
+    /** A list of `Blueprint` objects. */
+    nodes: Array<Maybe<Blueprint>>;
+    /** Information to aid in pagination. */
+    pageInfo: PageInfo;
+    /** The count of *all* `Blueprint` you could get from the connection. */
+    totalCount: Scalars['Int']['output'];
+  };
 
 /** A connection to a list of `Blueprint` values, with data from `Service`. */
-export type ServiceRequestBlueprintsByServiceServiceRequestIdAndBlueprintIdManyToManyConnectionGroupedAggregatesArgs = {
-  groupBy: Array<BlueprintsGroupBy>;
-  having?: InputMaybe<BlueprintsHavingInput>;
-};
+export type ServiceRequestBlueprintsByServiceServiceRequestIdAndBlueprintIdManyToManyConnectionGroupedAggregatesArgs =
+  {
+    groupBy: Array<BlueprintsGroupBy>;
+    having?: InputMaybe<BlueprintsHavingInput>;
+  };
 
 /** A `Blueprint` edge in the connection, with data from `Service`. */
-export type ServiceRequestBlueprintsByServiceServiceRequestIdAndBlueprintIdManyToManyEdge = {
-  __typename?: 'ServiceRequestBlueprintsByServiceServiceRequestIdAndBlueprintIdManyToManyEdge';
-  /** A cursor for use in pagination. */
-  cursor?: Maybe<Scalars['Cursor']['output']>;
-  /** The `Blueprint` at the end of the edge. */
-  node?: Maybe<Blueprint>;
-  /** Reads and enables pagination through a set of `Service`. */
-  services: ServicesConnection;
-};
-
+export type ServiceRequestBlueprintsByServiceServiceRequestIdAndBlueprintIdManyToManyEdge =
+  {
+    __typename?: 'ServiceRequestBlueprintsByServiceServiceRequestIdAndBlueprintIdManyToManyEdge';
+    /** A cursor for use in pagination. */
+    cursor?: Maybe<Scalars['Cursor']['output']>;
+    /** The `Blueprint` at the end of the edge. */
+    node?: Maybe<Blueprint>;
+    /** Reads and enables pagination through a set of `Service`. */
+    services: ServicesConnection;
+  };
 
 /** A `Blueprint` edge in the connection, with data from `Service`. */
-export type ServiceRequestBlueprintsByServiceServiceRequestIdAndBlueprintIdManyToManyEdgeServicesArgs = {
-  after?: InputMaybe<Scalars['Cursor']['input']>;
-  before?: InputMaybe<Scalars['Cursor']['input']>;
-  blockHeight?: InputMaybe<Scalars['String']['input']>;
-  distinct?: InputMaybe<Array<InputMaybe<Services_Distinct_Enum>>>;
-  filter?: InputMaybe<ServiceFilter>;
-  first?: InputMaybe<Scalars['Int']['input']>;
-  last?: InputMaybe<Scalars['Int']['input']>;
-  offset?: InputMaybe<Scalars['Int']['input']>;
-  orderBy?: InputMaybe<Array<ServicesOrderBy>>;
-  orderByNull?: InputMaybe<NullOrder>;
-};
+export type ServiceRequestBlueprintsByServiceServiceRequestIdAndBlueprintIdManyToManyEdgeServicesArgs =
+  {
+    after?: InputMaybe<Scalars['Cursor']['input']>;
+    before?: InputMaybe<Scalars['Cursor']['input']>;
+    blockHeight?: InputMaybe<Scalars['String']['input']>;
+    distinct?: InputMaybe<Array<InputMaybe<Services_Distinct_Enum>>>;
+    filter?: InputMaybe<ServiceFilter>;
+    first?: InputMaybe<Scalars['Int']['input']>;
+    last?: InputMaybe<Scalars['Int']['input']>;
+    offset?: InputMaybe<Scalars['Int']['input']>;
+    orderBy?: InputMaybe<Array<ServicesOrderBy>>;
+    orderByNull?: InputMaybe<NullOrder>;
+  };
 
 export type ServiceRequestDistinctCountAggregateFilter = {
   _blockRange?: InputMaybe<BigIntFilter>;
@@ -16560,54 +16484,58 @@ export type ServiceRequestOperatorVarianceSampleAggregates = {
 };
 
 /** A connection to a list of `Operator` values, with data from `ServiceRequestOperator`. */
-export type ServiceRequestOperatorsByServiceRequestOperatorServiceRequestIdAndOperatorIdManyToManyConnection = {
-  __typename?: 'ServiceRequestOperatorsByServiceRequestOperatorServiceRequestIdAndOperatorIdManyToManyConnection';
-  /** Aggregates across the matching connection (ignoring before/after/first/last/offset) */
-  aggregates?: Maybe<OperatorAggregates>;
-  /** A list of edges which contains the `Operator`, info from the `ServiceRequestOperator`, and the cursor to aid in pagination. */
-  edges: Array<ServiceRequestOperatorsByServiceRequestOperatorServiceRequestIdAndOperatorIdManyToManyEdge>;
-  /** Grouped aggregates across the matching connection (ignoring before/after/first/last/offset) */
-  groupedAggregates?: Maybe<Array<OperatorAggregates>>;
-  /** A list of `Operator` objects. */
-  nodes: Array<Maybe<Operator>>;
-  /** Information to aid in pagination. */
-  pageInfo: PageInfo;
-  /** The count of *all* `Operator` you could get from the connection. */
-  totalCount: Scalars['Int']['output'];
-};
-
+export type ServiceRequestOperatorsByServiceRequestOperatorServiceRequestIdAndOperatorIdManyToManyConnection =
+  {
+    __typename?: 'ServiceRequestOperatorsByServiceRequestOperatorServiceRequestIdAndOperatorIdManyToManyConnection';
+    /** Aggregates across the matching connection (ignoring before/after/first/last/offset) */
+    aggregates?: Maybe<OperatorAggregates>;
+    /** A list of edges which contains the `Operator`, info from the `ServiceRequestOperator`, and the cursor to aid in pagination. */
+    edges: Array<ServiceRequestOperatorsByServiceRequestOperatorServiceRequestIdAndOperatorIdManyToManyEdge>;
+    /** Grouped aggregates across the matching connection (ignoring before/after/first/last/offset) */
+    groupedAggregates?: Maybe<Array<OperatorAggregates>>;
+    /** A list of `Operator` objects. */
+    nodes: Array<Maybe<Operator>>;
+    /** Information to aid in pagination. */
+    pageInfo: PageInfo;
+    /** The count of *all* `Operator` you could get from the connection. */
+    totalCount: Scalars['Int']['output'];
+  };
 
 /** A connection to a list of `Operator` values, with data from `ServiceRequestOperator`. */
-export type ServiceRequestOperatorsByServiceRequestOperatorServiceRequestIdAndOperatorIdManyToManyConnectionGroupedAggregatesArgs = {
-  groupBy: Array<OperatorsGroupBy>;
-  having?: InputMaybe<OperatorsHavingInput>;
-};
+export type ServiceRequestOperatorsByServiceRequestOperatorServiceRequestIdAndOperatorIdManyToManyConnectionGroupedAggregatesArgs =
+  {
+    groupBy: Array<OperatorsGroupBy>;
+    having?: InputMaybe<OperatorsHavingInput>;
+  };
 
 /** A `Operator` edge in the connection, with data from `ServiceRequestOperator`. */
-export type ServiceRequestOperatorsByServiceRequestOperatorServiceRequestIdAndOperatorIdManyToManyEdge = {
-  __typename?: 'ServiceRequestOperatorsByServiceRequestOperatorServiceRequestIdAndOperatorIdManyToManyEdge';
-  /** A cursor for use in pagination. */
-  cursor?: Maybe<Scalars['Cursor']['output']>;
-  /** The `Operator` at the end of the edge. */
-  node?: Maybe<Operator>;
-  /** Reads and enables pagination through a set of `ServiceRequestOperator`. */
-  serviceRequestOperators: ServiceRequestOperatorsConnection;
-};
-
+export type ServiceRequestOperatorsByServiceRequestOperatorServiceRequestIdAndOperatorIdManyToManyEdge =
+  {
+    __typename?: 'ServiceRequestOperatorsByServiceRequestOperatorServiceRequestIdAndOperatorIdManyToManyEdge';
+    /** A cursor for use in pagination. */
+    cursor?: Maybe<Scalars['Cursor']['output']>;
+    /** The `Operator` at the end of the edge. */
+    node?: Maybe<Operator>;
+    /** Reads and enables pagination through a set of `ServiceRequestOperator`. */
+    serviceRequestOperators: ServiceRequestOperatorsConnection;
+  };
 
 /** A `Operator` edge in the connection, with data from `ServiceRequestOperator`. */
-export type ServiceRequestOperatorsByServiceRequestOperatorServiceRequestIdAndOperatorIdManyToManyEdgeServiceRequestOperatorsArgs = {
-  after?: InputMaybe<Scalars['Cursor']['input']>;
-  before?: InputMaybe<Scalars['Cursor']['input']>;
-  blockHeight?: InputMaybe<Scalars['String']['input']>;
-  distinct?: InputMaybe<Array<InputMaybe<Service_Request_Operators_Distinct_Enum>>>;
-  filter?: InputMaybe<ServiceRequestOperatorFilter>;
-  first?: InputMaybe<Scalars['Int']['input']>;
-  last?: InputMaybe<Scalars['Int']['input']>;
-  offset?: InputMaybe<Scalars['Int']['input']>;
-  orderBy?: InputMaybe<Array<ServiceRequestOperatorsOrderBy>>;
-  orderByNull?: InputMaybe<NullOrder>;
-};
+export type ServiceRequestOperatorsByServiceRequestOperatorServiceRequestIdAndOperatorIdManyToManyEdgeServiceRequestOperatorsArgs =
+  {
+    after?: InputMaybe<Scalars['Cursor']['input']>;
+    before?: InputMaybe<Scalars['Cursor']['input']>;
+    blockHeight?: InputMaybe<Scalars['String']['input']>;
+    distinct?: InputMaybe<
+      Array<InputMaybe<Service_Request_Operators_Distinct_Enum>>
+    >;
+    filter?: InputMaybe<ServiceRequestOperatorFilter>;
+    first?: InputMaybe<Scalars['Int']['input']>;
+    last?: InputMaybe<Scalars['Int']['input']>;
+    offset?: InputMaybe<Scalars['Int']['input']>;
+    orderBy?: InputMaybe<Array<ServiceRequestOperatorsOrderBy>>;
+    orderByNull?: InputMaybe<NullOrder>;
+  };
 
 /** A connection to a list of `ServiceRequestOperator` values. */
 export type ServiceRequestOperatorsConnection = {
@@ -16625,7 +16553,6 @@ export type ServiceRequestOperatorsConnection = {
   /** The count of *all* `ServiceRequestOperator` you could get from the connection. */
   totalCount: Scalars['Int']['output'];
 };
-
 
 /** A connection to a list of `ServiceRequestOperator` values. */
 export type ServiceRequestOperatorsConnectionGroupedAggregatesArgs = {
@@ -16649,7 +16576,7 @@ export enum ServiceRequestOperatorsGroupBy {
   Id = 'ID',
   OperatorId = 'OPERATOR_ID',
   RejectedAt = 'REJECTED_AT',
-  ServiceRequestId = 'SERVICE_REQUEST_ID'
+  ServiceRequestId = 'SERVICE_REQUEST_ID',
 }
 
 export type ServiceRequestOperatorsHavingAverageInput = {
@@ -16767,7 +16694,7 @@ export enum ServiceRequestOperatorsOrderBy {
   ServiceRequestByServiceRequestIdOwnerIdAsc = 'SERVICE_REQUEST_BY_SERVICE_REQUEST_ID__OWNER_ID_ASC',
   ServiceRequestByServiceRequestIdOwnerIdDesc = 'SERVICE_REQUEST_BY_SERVICE_REQUEST_ID__OWNER_ID_DESC',
   ServiceRequestIdAsc = 'SERVICE_REQUEST_ID_ASC',
-  ServiceRequestIdDesc = 'SERVICE_REQUEST_ID_DESC'
+  ServiceRequestIdDesc = 'SERVICE_REQUEST_ID_DESC',
 }
 
 export type ServiceRequestStddevPopulationAggregateFilter = {
@@ -16861,7 +16788,6 @@ export type ServiceRequestsConnection = {
   totalCount: Scalars['Int']['output'];
 };
 
-
 /** A connection to a list of `ServiceRequest` values. */
 export type ServiceRequestsConnectionGroupedAggregatesArgs = {
   groupBy: Array<ServiceRequestsGroupBy>;
@@ -16883,7 +16809,7 @@ export enum ServiceRequestsGroupBy {
   BlueprintId = 'BLUEPRINT_ID',
   CreatedAt = 'CREATED_AT',
   Id = 'ID',
-  OwnerId = 'OWNER_ID'
+  OwnerId = 'OWNER_ID',
 }
 
 export type ServiceRequestsHavingAverageInput = {
@@ -17243,7 +17169,7 @@ export enum ServiceRequestsOrderBy {
   ServiceRequestOperatorsVarianceSampleRejectedAtAsc = 'SERVICE_REQUEST_OPERATORS_VARIANCE_SAMPLE_REJECTED_AT_ASC',
   ServiceRequestOperatorsVarianceSampleRejectedAtDesc = 'SERVICE_REQUEST_OPERATORS_VARIANCE_SAMPLE_REJECTED_AT_DESC',
   ServiceRequestOperatorsVarianceSampleServiceRequestIdAsc = 'SERVICE_REQUEST_OPERATORS_VARIANCE_SAMPLE_SERVICE_REQUEST_ID_ASC',
-  ServiceRequestOperatorsVarianceSampleServiceRequestIdDesc = 'SERVICE_REQUEST_OPERATORS_VARIANCE_SAMPLE_SERVICE_REQUEST_ID_DESC'
+  ServiceRequestOperatorsVarianceSampleServiceRequestIdDesc = 'SERVICE_REQUEST_OPERATORS_VARIANCE_SAMPLE_SERVICE_REQUEST_ID_DESC',
 }
 
 export type ServiceStddevPopulationAggregateFilter = {
@@ -17364,7 +17290,6 @@ export type ServicesConnection = {
   totalCount: Scalars['Int']['output'];
 };
 
-
 /** A connection to a list of `Service` values. */
 export type ServicesConnectionGroupedAggregatesArgs = {
   groupBy: Array<ServicesGroupBy>;
@@ -17388,7 +17313,7 @@ export enum ServicesGroupBy {
   Id = 'ID',
   OwnerId = 'OWNER_ID',
   ServiceRequestId = 'SERVICE_REQUEST_ID',
-  TerminatedAt = 'TERMINATED_AT'
+  TerminatedAt = 'TERMINATED_AT',
 }
 
 export type ServicesHavingAverageInput = {
@@ -17811,7 +17736,7 @@ export enum ServicesOrderBy {
   ServiceRequestIdAsc = 'SERVICE_REQUEST_ID_ASC',
   ServiceRequestIdDesc = 'SERVICE_REQUEST_ID_DESC',
   TerminatedAtAsc = 'TERMINATED_AT_ASC',
-  TerminatedAtDesc = 'TERMINATED_AT_DESC'
+  TerminatedAtDesc = 'TERMINATED_AT_DESC',
 }
 
 export type Session = Node & {
@@ -17829,7 +17754,6 @@ export type Session = Node & {
   /** List of validators in this session */
   validators: Scalars['JSON']['output'];
 };
-
 
 export type SessionOperatorsArgs = {
   distinct?: InputMaybe<Array<InputMaybe<Operators_Distinct_Enum>>>;
@@ -17961,7 +17885,6 @@ export type SessionsConnection = {
   totalCount: Scalars['Int']['output'];
 };
 
-
 /** A connection to a list of `Session` values. */
 export type SessionsConnectionGroupedAggregatesArgs = {
   groupBy: Array<SessionsGroupBy>;
@@ -17985,7 +17908,7 @@ export enum SessionsGroupBy {
   Timestamp = 'TIMESTAMP',
   TimestampTruncatedToDay = 'TIMESTAMP_TRUNCATED_TO_DAY',
   TimestampTruncatedToHour = 'TIMESTAMP_TRUNCATED_TO_HOUR',
-  Validators = 'VALIDATORS'
+  Validators = 'VALIDATORS',
 }
 
 export type SessionsHavingAverageInput = {
@@ -18062,7 +17985,7 @@ export enum SessionsOrderBy {
   TimestampAsc = 'TIMESTAMP_ASC',
   TimestampDesc = 'TIMESTAMP_DESC',
   ValidatorsAsc = 'VALIDATORS_ASC',
-  ValidatorsDesc = 'VALIDATORS_DESC'
+  ValidatorsDesc = 'VALIDATORS_DESC',
 }
 
 /** A filter to be used against String fields. All fields are combined with a logical ‘and.’ */
@@ -18368,7 +18291,7 @@ export type UnstakeRequestMinAggregates = {
 export enum UnstakeRequestStatus {
   Cancelled = 'CANCELLED',
   Executed = 'EXECUTED',
-  Scheduled = 'SCHEDULED'
+  Scheduled = 'SCHEDULED',
 }
 
 /** A filter to be used against UnstakeRequestStatus fields. All fields are combined with a logical ‘and.’ */
@@ -18509,7 +18432,6 @@ export type UnstakeRequestsConnection = {
   totalCount: Scalars['Int']['output'];
 };
 
-
 /** A connection to a list of `UnstakeRequest` values. */
 export type UnstakeRequestsConnectionGroupedAggregatesArgs = {
   groupBy: Array<UnstakeRequestsGroupBy>;
@@ -18536,7 +18458,7 @@ export enum UnstakeRequestsGroupBy {
   Id = 'ID',
   OperatorId = 'OPERATOR_ID',
   RequestedRound = 'REQUESTED_ROUND',
-  UpdatedAt = 'UPDATED_AT'
+  UpdatedAt = 'UPDATED_AT',
 }
 
 export type UnstakeRequestsHavingAverageInput = {
@@ -18681,7 +18603,7 @@ export enum UnstakeRequestsOrderBy {
   RequestedRoundAsc = 'REQUESTED_ROUND_ASC',
   RequestedRoundDesc = 'REQUESTED_ROUND_DESC',
   UpdatedAtAsc = 'UPDATED_AT_ASC',
-  UpdatedAtDesc = 'UPDATED_AT_DESC'
+  UpdatedAtDesc = 'UPDATED_AT_DESC',
 }
 
 export type WithdrawRequest = Node & {
@@ -18892,7 +18814,7 @@ export type WithdrawRequestMinAggregates = {
 export enum WithdrawRequestStatus {
   Cancelled = 'CANCELLED',
   Executed = 'EXECUTED',
-  Scheduled = 'SCHEDULED'
+  Scheduled = 'SCHEDULED',
 }
 
 /** A filter to be used against WithdrawRequestStatus fields. All fields are combined with a logical ‘and.’ */
@@ -19033,7 +18955,6 @@ export type WithdrawRequestsConnection = {
   totalCount: Scalars['Int']['output'];
 };
 
-
 /** A connection to a list of `WithdrawRequest` values. */
 export type WithdrawRequestsConnectionGroupedAggregatesArgs = {
   groupBy: Array<WithdrawRequestsGroupBy>;
@@ -19059,7 +18980,7 @@ export enum WithdrawRequestsGroupBy {
   DepositId = 'DEPOSIT_ID',
   Id = 'ID',
   RequestedRound = 'REQUESTED_ROUND',
-  UpdatedAt = 'UPDATED_AT'
+  UpdatedAt = 'UPDATED_AT',
 }
 
 export type WithdrawRequestsHavingAverageInput = {
@@ -19180,7 +19101,7 @@ export enum WithdrawRequestsOrderBy {
   RequestedRoundAsc = 'REQUESTED_ROUND_ASC',
   RequestedRoundDesc = 'REQUESTED_ROUND_DESC',
   UpdatedAtAsc = 'UPDATED_AT_ASC',
-  UpdatedAtDesc = 'UPDATED_AT_DESC'
+  UpdatedAtDesc = 'UPDATED_AT_DESC',
 }
 
 export type _Metadata = {
@@ -19216,7 +19137,7 @@ export enum Accounts_Distinct_Enum {
   CreatedAt = 'CREATED_AT',
   Id = 'ID',
   LastUpdateAt = 'LAST_UPDATE_AT',
-  TotalPoints = 'TOTAL_POINTS'
+  TotalPoints = 'TOTAL_POINTS',
 }
 
 export enum Blueprint_Operators_Distinct_Enum {
@@ -19225,20 +19146,20 @@ export enum Blueprint_Operators_Distinct_Enum {
   IsActive = 'IS_ACTIVE',
   OperatorId = 'OPERATOR_ID',
   RegisteredAt = 'REGISTERED_AT',
-  UpdatedAt = 'UPDATED_AT'
+  UpdatedAt = 'UPDATED_AT',
 }
 
 export enum Blueprints_Distinct_Enum {
   CreatedAt = 'CREATED_AT',
   Id = 'ID',
-  OwnerId = 'OWNER_ID'
+  OwnerId = 'OWNER_ID',
 }
 
 export enum Delegation_Histories_Distinct_Enum {
   Amount = 'AMOUNT',
   BlockNumber = 'BLOCK_NUMBER',
   DelegationId = 'DELEGATION_ID',
-  Id = 'ID'
+  Id = 'ID',
 }
 
 export enum Delegations_Distinct_Enum {
@@ -19247,21 +19168,21 @@ export enum Delegations_Distinct_Enum {
   HasActiveUnstakeRequest = 'HAS_ACTIVE_UNSTAKE_REQUEST',
   Id = 'ID',
   OperatorId = 'OPERATOR_ID',
-  TotalAmount = 'TOTAL_AMOUNT'
+  TotalAmount = 'TOTAL_AMOUNT',
 }
 
 export enum Delegators_Distinct_Enum {
   AccountId = 'ACCOUNT_ID',
   Id = 'ID',
   JoinedAt = 'JOINED_AT',
-  LastUpdateAt = 'LAST_UPDATE_AT'
+  LastUpdateAt = 'LAST_UPDATE_AT',
 }
 
 export enum Deposit_Histories_Distinct_Enum {
   Amount = 'AMOUNT',
   BlockNumber = 'BLOCK_NUMBER',
   DepositId = 'DEPOSIT_ID',
-  Id = 'ID'
+  Id = 'ID',
 }
 
 export enum Deposits_Distinct_Enum {
@@ -19269,7 +19190,7 @@ export enum Deposits_Distinct_Enum {
   DelegatorId = 'DELEGATOR_ID',
   HasActiveWithdrawRequest = 'HAS_ACTIVE_WITHDRAW_REQUEST',
   Id = 'ID',
-  TotalAmount = 'TOTAL_AMOUNT'
+  TotalAmount = 'TOTAL_AMOUNT',
 }
 
 export enum Job_Calls_Distinct_Enum {
@@ -19277,7 +19198,7 @@ export enum Job_Calls_Distinct_Enum {
   CreatedAt = 'CREATED_AT',
   Id = 'ID',
   JobId = 'JOB_ID',
-  ServiceId = 'SERVICE_ID'
+  ServiceId = 'SERVICE_ID',
 }
 
 export enum Job_Results_Distinct_Enum {
@@ -19285,34 +19206,34 @@ export enum Job_Results_Distinct_Enum {
   Id = 'ID',
   JobCallId = 'JOB_CALL_ID',
   OperatorId = 'OPERATOR_ID',
-  ServiceId = 'SERVICE_ID'
+  ServiceId = 'SERVICE_ID',
 }
 
 export enum Lst_Pool_Members_Distinct_Enum {
   AccountId = 'ACCOUNT_ID',
   CurrentStake = 'CURRENT_STAKE',
   Id = 'ID',
-  LstPoolId = 'LST_POOL_ID'
+  LstPoolId = 'LST_POOL_ID',
 }
 
 export enum Lst_Pool_State_Changes_Distinct_Enum {
   BlockNumber = 'BLOCK_NUMBER',
   Id = 'ID',
   LstPoolId = 'LST_POOL_ID',
-  State = 'STATE'
+  State = 'STATE',
 }
 
 export enum Lst_Pools_Distinct_Enum {
   CurrentState = 'CURRENT_STATE',
   Id = 'ID',
-  TotalStake = 'TOTAL_STAKE'
+  TotalStake = 'TOTAL_STAKE',
 }
 
 export enum Member_Stake_Changes_Distinct_Enum {
   Amount = 'AMOUNT',
   BlockNumber = 'BLOCK_NUMBER',
   Id = 'ID',
-  MemberId = 'MEMBER_ID'
+  MemberId = 'MEMBER_ID',
 }
 
 export enum Operator_Bond_Changes_Distinct_Enum {
@@ -19320,14 +19241,14 @@ export enum Operator_Bond_Changes_Distinct_Enum {
   Amount = 'AMOUNT',
   BlockNumber = 'BLOCK_NUMBER',
   Id = 'ID',
-  OperatorId = 'OPERATOR_ID'
+  OperatorId = 'OPERATOR_ID',
 }
 
 export enum Operator_Status_Changes_Distinct_Enum {
   BlockNumber = 'BLOCK_NUMBER',
   Id = 'ID',
   OperatorId = 'OPERATOR_ID',
-  Status = 'STATUS'
+  Status = 'STATUS',
 }
 
 export enum Operators_Distinct_Enum {
@@ -19340,7 +19261,7 @@ export enum Operators_Distinct_Enum {
   ScheduledUnstakeAmount = 'SCHEDULED_UNSTAKE_AMOUNT',
   TotalBlueprints = 'TOTAL_BLUEPRINTS',
   TotalServices = 'TOTAL_SERVICES',
-  TotalServiceRequests = 'TOTAL_SERVICE_REQUESTS'
+  TotalServiceRequests = 'TOTAL_SERVICE_REQUESTS',
 }
 
 export enum Points_Accrual_Rates_Distinct_Enum {
@@ -19350,7 +19271,7 @@ export enum Points_Accrual_Rates_Distinct_Enum {
   LastUpdateBlock = 'LAST_UPDATE_BLOCK',
   RatePerHour = 'RATE_PER_HOUR',
   Source = 'SOURCE',
-  StartBlock = 'START_BLOCK'
+  StartBlock = 'START_BLOCK',
 }
 
 export enum Points_Snapshots_Distinct_Enum {
@@ -19364,14 +19285,14 @@ export enum Points_Snapshots_Distinct_Enum {
   Timestamp = 'TIMESTAMP',
   TotalPoints = 'TOTAL_POINTS',
   ValidatorNominationPoints = 'VALIDATOR_NOMINATION_POINTS',
-  ValidatorRegistrationPoints = 'VALIDATOR_REGISTRATION_POINTS'
+  ValidatorRegistrationPoints = 'VALIDATOR_REGISTRATION_POINTS',
 }
 
 export enum Service_Operators_Distinct_Enum {
   CreatedAt = 'CREATED_AT',
   Id = 'ID',
   OperatorId = 'OPERATOR_ID',
-  ServiceId = 'SERVICE_ID'
+  ServiceId = 'SERVICE_ID',
 }
 
 export enum Service_Request_Operators_Distinct_Enum {
@@ -19380,7 +19301,7 @@ export enum Service_Request_Operators_Distinct_Enum {
   Id = 'ID',
   OperatorId = 'OPERATOR_ID',
   RejectedAt = 'REJECTED_AT',
-  ServiceRequestId = 'SERVICE_REQUEST_ID'
+  ServiceRequestId = 'SERVICE_REQUEST_ID',
 }
 
 export enum Service_Requests_Distinct_Enum {
@@ -19388,7 +19309,7 @@ export enum Service_Requests_Distinct_Enum {
   BlueprintId = 'BLUEPRINT_ID',
   CreatedAt = 'CREATED_AT',
   Id = 'ID',
-  OwnerId = 'OWNER_ID'
+  OwnerId = 'OWNER_ID',
 }
 
 export enum Services_Distinct_Enum {
@@ -19398,7 +19319,7 @@ export enum Services_Distinct_Enum {
   Id = 'ID',
   OwnerId = 'OWNER_ID',
   ServiceRequestId = 'SERVICE_REQUEST_ID',
-  TerminatedAt = 'TERMINATED_AT'
+  TerminatedAt = 'TERMINATED_AT',
 }
 
 export enum Sessions_Distinct_Enum {
@@ -19406,7 +19327,7 @@ export enum Sessions_Distinct_Enum {
   Operators = 'OPERATORS',
   StartBlock = 'START_BLOCK',
   Timestamp = 'TIMESTAMP',
-  Validators = 'VALIDATORS'
+  Validators = 'VALIDATORS',
 }
 
 export enum Unstake_Requests_Distinct_Enum {
@@ -19419,7 +19340,7 @@ export enum Unstake_Requests_Distinct_Enum {
   Id = 'ID',
   OperatorId = 'OPERATOR_ID',
   RequestedRound = 'REQUESTED_ROUND',
-  UpdatedAt = 'UPDATED_AT'
+  UpdatedAt = 'UPDATED_AT',
 }
 
 export enum Withdraw_Requests_Distinct_Enum {
@@ -19431,15 +19352,17 @@ export enum Withdraw_Requests_Distinct_Enum {
   DepositId = 'DEPOSIT_ID',
   Id = 'ID',
   RequestedRound = 'REQUESTED_ROUND',
-  UpdatedAt = 'UPDATED_AT'
+  UpdatedAt = 'UPDATED_AT',
 }
 
 export type GetAccountPointsQueryVariables = Exact<{
   account: Scalars['String']['input'];
 }>;
 
-
-export type GetAccountPointsQuery = { __typename?: 'Query', account?: { __typename?: 'Account', id: string, totalPoints: string } | null };
+export type GetAccountPointsQuery = {
+  __typename?: 'Query';
+  account?: { __typename?: 'Account'; id: string; totalPoints: string } | null;
+};
 
 export class TypedDocumentString<TResult, TVariables>
   extends String
@@ -19447,7 +19370,10 @@ export class TypedDocumentString<TResult, TVariables>
 {
   __apiType?: DocumentTypeDecoration<TResult, TVariables>['__apiType'];
 
-  constructor(private value: string, public __meta__?: Record<string, any> | undefined) {
+  constructor(
+    private value: string,
+    public __meta__?: Record<string, any> | undefined,
+  ) {
     super(value);
   }
 
@@ -19463,4 +19389,7 @@ export const GetAccountPointsDocument = new TypedDocumentString(`
     totalPoints
   }
 }
-    `) as unknown as TypedDocumentString<GetAccountPointsQuery, GetAccountPointsQueryVariables>;
+    `) as unknown as TypedDocumentString<
+  GetAccountPointsQuery,
+  GetAccountPointsQueryVariables
+>;
