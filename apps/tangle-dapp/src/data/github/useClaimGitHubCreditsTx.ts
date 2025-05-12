@@ -21,7 +21,10 @@ const useClaimGitHubCreditsTx = () => {
   > = useCallback((context) => {
     return {
       functionName: 'claimCredits',
-      arguments: [BigInt(context.amountToClaim.toString()), context.githubUsername],
+      arguments: [
+        BigInt(context.amountToClaim.toString()),
+        context.githubUsername,
+      ],
     };
   }, []);
 
@@ -30,10 +33,10 @@ const useClaimGitHubCreditsTx = () => {
       // Based on the pallet specification: api.tx.credits.claim_credits(origin, amount_to_claim, offchain_account_id)
       return api.tx.credits.claimCredits(
         context.amountToClaim,
-        context.githubUsername
+        context.githubUsername,
       );
     },
-    []
+    [],
   );
 
   return useAgnosticTx({

@@ -1,8 +1,6 @@
 /* eslint-disable */
 import * as types from './graphql';
 
-
-
 /**
  * Map of all GraphQL operations in the project.
  *
@@ -15,17 +13,19 @@ import * as types from './graphql';
  * Learn more about it here: https://the-guild.dev/graphql/codegen/plugins/presets/preset-client#reducing-bundle-size
  */
 type Documents = {
-    "\n  query GetAccountPoints($account: String!) {\n    account(id: $account) {\n      id\n      totalPoints\n    }\n  }\n": typeof types.GetAccountPointsDocument,
+  '\n  query GetAccountPoints($account: String!) {\n    account(id: $account) {\n      id\n      totalPoints\n    }\n  }\n': typeof types.GetAccountPointsDocument;
 };
 const documents: Documents = {
-    "\n  query GetAccountPoints($account: String!) {\n    account(id: $account) {\n      id\n      totalPoints\n    }\n  }\n": types.GetAccountPointsDocument,
+  '\n  query GetAccountPoints($account: String!) {\n    account(id: $account) {\n      id\n      totalPoints\n    }\n  }\n':
+    types.GetAccountPointsDocument,
 };
 
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
-export function graphql(source: "\n  query GetAccountPoints($account: String!) {\n    account(id: $account) {\n      id\n      totalPoints\n    }\n  }\n"): typeof import('./graphql').GetAccountPointsDocument;
-
+export function graphql(
+  source: '\n  query GetAccountPoints($account: String!) {\n    account(id: $account) {\n      id\n      totalPoints\n    }\n  }\n',
+): typeof import('./graphql').GetAccountPointsDocument;
 
 export function graphql(source: string) {
   return (documents as any)[source] ?? {};

@@ -30,7 +30,8 @@ const Actions: FC = () => {
   const activeAccountAddress = useActiveAccountAddress();
   const { transferable: transferableBalance } = useBalances();
   const [isTransferModalOpen, setIsTransferModalOpen] = useState(false);
-  const [isGitHubCreditsModalOpen, setIsGitHubCreditsModalOpen] = useState(false);
+  const [isGitHubCreditsModalOpen, setIsGitHubCreditsModalOpen] =
+    useState(false);
 
   const { isEligible: isAirdropEligible } = useAirdropEligibility();
 

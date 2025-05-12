@@ -38,14 +38,14 @@ export default function useGitHubCredits() {
   ]);
 
   return useQuery(
-    getQueryOptions(overrideRpcEndpoint, activeSubstrateAddress, api)
+    getQueryOptions(overrideRpcEndpoint, activeSubstrateAddress, api),
   );
 }
 
 export function getQueryOptions(
   rpcEndpoint: string,
   activeSubstrateAddress: string | null,
-  api: any
+  api: any,
 ) {
   return queryOptions({
     queryKey: [
@@ -57,16 +57,16 @@ export function getQueryOptions(
       if (!activeSubstrateAddress || !api) {
         return null;
       }
-      
+
       try {
         // For now, we're simulating this by returning a fixed amount
         // In reality, we would fetch this from the chain or from an indexer
         // that keeps track of credit balances
-        
+
         // This simulates having 100 TNT worth of credits from staking
         return {
           amount: new BN('100000000000000'),
-          githubUsername: ''
+          githubUsername: '',
         };
       } catch (error) {
         logger.error('Error fetching GitHub credits', error);
