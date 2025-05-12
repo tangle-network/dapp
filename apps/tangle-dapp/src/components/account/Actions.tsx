@@ -3,7 +3,6 @@ import {
   CoinsStackedLineIcon,
   FaucetIcon,
   GiftLineIcon,
-  GitHubFill,
   LockUnlockLineIcon,
   SendPlanLineIcon,
 } from '@tangle-network/icons';
@@ -23,7 +22,6 @@ import { PagePath, StaticSearchQueryPath } from '../../types';
 import formatTangleBalance from '../../utils/formatTangleBalance';
 import ActionItem from './ActionItem';
 import WithdrawEvmBalanceAction from './WithdrawEvmBalanceAction';
-import useGitHubCredits from '../../data/github/useGitHubCredits';
 import { ClaimGitHubCreditsModal } from '../../features/claimGitHubCredits';
 
 const Actions: FC = () => {
@@ -36,16 +34,11 @@ const Actions: FC = () => {
 
   const { isEligible: isAirdropEligible } = useAirdropEligibility();
 
-  const { data: payoutData } = useTotalPayoutRewards();
-  const { data: githubCreditsData, isPending: isLoadingGitHubCredits } = useGitHubCredits();
+  const { data } = useTotalPayoutRewards();
 
   const isPayoutsAvailable = useMemo(() => {
-    return !payoutData.isZero();
-  }, [payoutData]);
-
-  const hasGitHubCredits = useMemo(() => {
-    return githubCreditsData?.amount && !githubCreditsData.amount.isZero();
-  }, [githubCreditsData]);
+    return !data.isZero();
+  }, [data]);
 
   const {
     isVesting,
@@ -96,21 +89,6 @@ const Actions: FC = () => {
           isPayoutsAvailable
             ? 'You have payouts available. Click here to visit the Payouts page.'
             : 'No payouts available.'
-        }
-      />
-
-      <ActionItem
-        label="GitHub"
-        hasNotificationDot={!!hasGitHubCredits}
-        isDisabled={isLoadingGitHubCredits || !hasGitHubCredits || activeAccountAddress === null}
-        Icon={GitHubFill}
-        onClick={() => setIsGitHubCreditsModalOpen(true)}
-        tooltip={
-          hasGitHubCredits
-            ? 'You have credits available to claim. Associate them with your GitHub account.'
-            : isLoadingGitHubCredits
-            ? 'Loading GitHub credits data...'
-            : 'No GitHub credits available.'
         }
       />
 

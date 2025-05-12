@@ -18,7 +18,7 @@ import {
 } from '@tangle-network/ui-components';
 import useGitHubCredits from '../../../data/github/useGitHubCredits';
 import useClaimGitHubCreditsTx from '../../../data/github/useClaimGitHubCreditsTx';
-import { GitHubFill } from '@tangle-network/icons';
+import { GithubFill } from '@tangle-network/icons';
 
 type Props = {
   isOpen: boolean;
@@ -68,7 +68,7 @@ const ClaimGitHubCreditsModal: FC<Props> = ({ isOpen, setIsOpen }) => {
   const hasCredits = data?.amount && !data.amount.isZero();
 
   return (
-    <Modal isOpen={isOpen} onClose={() => setIsOpen(false)}>
+    <Modal open={isOpen} onOpenChange={setIsOpen}>
       <ModalContent>
         <ModalHeader>
           <ModalTitle>Claim GitHub Credits</ModalTitle>
@@ -107,7 +107,7 @@ const ClaimGitHubCreditsModal: FC<Props> = ({ isOpen, setIsOpen }) => {
                   className="p-2 rounded-lg bg-mono-0 dark:bg-mono-180 text-mono-140 dark:text-mono-40 border border-mono-80 dark:border-mono-120"
                 >
                   <TextField.Slot>
-                    <GitHubFill size="md" />
+                    <GithubFill size="md" />
                   </TextField.Slot>
 
                   <TextField.Input
