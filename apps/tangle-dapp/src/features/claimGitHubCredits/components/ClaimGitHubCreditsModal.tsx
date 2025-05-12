@@ -12,8 +12,10 @@ import {
 import useNetworkStore from '@tangle-network/tangle-shared-ui/context/useNetworkStore';
 import { TxStatus } from '@tangle-network/tangle-shared-ui/hooks/useSubstrateTx';
 import { TANGLE_TOKEN_DECIMALS } from '@tangle-network/dapp-config';
-import { BN } from '@polkadot/util';
-import { AmountFormatStyle, formatDisplayAmount } from '@tangle-network/ui-components';
+import {
+  AmountFormatStyle,
+  formatDisplayAmount,
+} from '@tangle-network/ui-components';
 import useGitHubCredits from '../../../data/github/useGitHubCredits';
 import useClaimGitHubCreditsTx from '../../../data/github/useClaimGitHubCreditsTx';
 import { GitHubFill } from '@tangle-network/icons';
@@ -26,9 +28,13 @@ type Props = {
 const ClaimGitHubCreditsModal: FC<Props> = ({ isOpen, setIsOpen }) => {
   const { data, refetch, isPending } = useGitHubCredits();
   const { execute, status } = useClaimGitHubCreditsTx();
-  const [githubUsername, setGithubUsername] = useState(data?.githubUsername || '');
+  const [githubUsername, setGithubUsername] = useState(
+    data?.githubUsername || '',
+  );
   const [inputError, setInputError] = useState('');
-  const nativeTokenSymbol = useNetworkStore((state) => state.network2?.tokenSymbol);
+  const nativeTokenSymbol = useNetworkStore(
+    (state) => state.network2?.tokenSymbol,
+  );
 
   const handleClaimCredits = useCallback(async () => {
     if (!githubUsername.trim()) {
@@ -39,9 +45,9 @@ const ClaimGitHubCreditsModal: FC<Props> = ({ isOpen, setIsOpen }) => {
     if (!execute || !data?.amount) return;
 
     try {
-      await execute({ 
+      await execute({
         amountToClaim: data.amount,
-        githubUsername 
+        githubUsername,
       });
       await refetch();
       setIsOpen(false);
@@ -54,7 +60,7 @@ const ClaimGitHubCreditsModal: FC<Props> = ({ isOpen, setIsOpen }) => {
     ? formatDisplayAmount(
         data.amount,
         TANGLE_TOKEN_DECIMALS,
-        AmountFormatStyle.SHORT
+        AmountFormatStyle.SHORT,
       )
     : '0';
 
@@ -89,7 +95,10 @@ const ClaimGitHubCreditsModal: FC<Props> = ({ isOpen, setIsOpen }) => {
                 <Typography variant="body1" fw="bold">
                   GitHub Username
                 </Typography>
-                <Typography variant="body2" className="text-mono-120 dark:text-mono-80">
+                <Typography
+                  variant="body2"
+                  className="text-mono-120 dark:text-mono-80"
+                >
                   Enter your GitHub username to associate with these credits
                 </Typography>
 
@@ -126,7 +135,8 @@ const ClaimGitHubCreditsModal: FC<Props> = ({ isOpen, setIsOpen }) => {
           ) : (
             <>
               <Typography variant="body1" ta="center">
-                You don't have any credits available to claim. Stake your TNT tokens to earn credits for GitHub.
+                You don't have any credits available to claim. Stake your TNT
+                tokens to earn credits for GitHub.
               </Typography>
               <Button
                 isFullWidth
