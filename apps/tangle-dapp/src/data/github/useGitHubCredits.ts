@@ -5,8 +5,9 @@ import { queryOptions, useQuery } from '@tanstack/react-query';
 import { useMemo } from 'react';
 import { ReactQueryKey } from '../../constants/reactQuery';
 import { LoggerService } from '@tangle-network/browser-utils';
-import useApiRx from '@tangle-network/tangle-shared-ui/hooks/useApiRx';
 import { BN } from '@polkadot/util';
+import { useApiPromiseQuery } from '@tangle-network/tangle-shared-ui/hooks/useApiPromiseQuery';
+import { ApiPromise } from '@polkadot/api';
 
 const logger = LoggerService.new('useGitHubCredits');
 
@@ -20,7 +21,11 @@ export default function useGitHubCredits() {
   const activeSubstrateAddress = useSubstrateAddress(false);
   const { network } = useNetworkStore();
   const [activeChain] = useActiveChain();
-  const api = useApiRx();
+  const rpcEndpoints = useNetworkStore(
+    (store) => store.network2?.wsRpcEndpoints,
+  );
+
+  const { data: apiPromise } = useApiPromiseQuery(rpcEndpoints);
 
   // Use archive RPC endpoint if available
   const overrideRpcEndpoint = useMemo(() => {
@@ -38,14 +43,14 @@ export default function useGitHubCredits() {
   ]);
 
   return useQuery(
-    getQueryOptions(overrideRpcEndpoint, activeSubstrateAddress, api),
+    getQueryOptions(overrideRpcEndpoint, activeSubstrateAddress, apiPromise),
   );
 }
 
 export function getQueryOptions(
   rpcEndpoint: string,
   activeSubstrateAddress: string | null,
-  api: any,
+  api: ApiPromise | undefined,
 ) {
   return queryOptions({
     queryKey: [
