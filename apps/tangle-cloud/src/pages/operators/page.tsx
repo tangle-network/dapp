@@ -1,4 +1,4 @@
-import OperatorsTable from '../../containers/restaking/OperatorsTable';
+import OperatorsTableContainer from '@tangle-network/tangle-shared-ui/components/Restaking/OperatorsTableContainer';
 import useRestakeDelegatorInfo from '@tangle-network/tangle-shared-ui/data/restake/useRestakeDelegatorInfo';
 import useRestakeOperatorMap from '@tangle-network/tangle-shared-ui/data/restake/useRestakeOperatorMap';
 import useRestakeTvl from '@tangle-network/tangle-shared-ui/data/restake/useRestakeTvl';
@@ -14,7 +14,7 @@ const Page: FC = () => {
   const { operatorConcentration, operatorTvl } = useRestakeTvl(delegatorInfo);
 
   const handleRestakeClicked = useCallback(() => {
-    console.log('Restake clicked');
+    console.log('Redirecting to restake/delegate page');
   }, []);
 
   useEffect(() => {
@@ -25,11 +25,13 @@ const Page: FC = () => {
 
   return (
     <div className="!mt-16">
-      <OperatorsTable
+      <OperatorsTableContainer
         operatorConcentration={operatorConcentration}
         operatorMap={operatorMap}
         operatorTvl={operatorTvl}
         onRestakeClicked={handleRestakeClicked}
+        onRestakeClickedPagePath=""
+        onRestakeClickedQueryParamKey=""
         isLoading={isLoadingOperators}
       />
     </div>

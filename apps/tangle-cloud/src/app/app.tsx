@@ -74,15 +74,6 @@ const App: FC = () => {
           />
 
           <Route
-            path={PagePath.BLUEPRINTS_REGISTRATION_REVIEW}
-            element={
-              <RegistrationLayout>
-                <RegistrationReview />
-              </RegistrationLayout>
-            }
-          />
-
-          <Route
             path={PagePath.OPERATORS}
             element={
               <OperatorsLayout>

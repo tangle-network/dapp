@@ -9,9 +9,10 @@ import { Typography } from '@tangle-network/ui-components/typography/Typography'
 import { type FC, type PropsWithChildren, useState } from 'react';
 import { Link, useNavigate, Navigate } from 'react-router-dom';
 import { PagePath, TangleDAppPagePath } from '../../../types';
-import ConfigurePricingModal from '../ConfigurePricingModal';
+import ConfigureBlueprintModal from '../ConfigureBlueprintModal';
 import { Modal } from '@tangle-network/ui-components';
-import type { PricingFormResult } from '../ConfigurePricingModal/types';
+import type { BlueprintFormResult } from '../ConfigureBlueprintModal/types';
+
 import { SessionStorageKey } from '../../../constants';
 import useOperatorInfo from '../../../hooks/useOperatorInfo';
 import useParamWithSchema from '@tangle-network/tangle-shared-ui/hooks/useParamWithSchema';
@@ -36,7 +37,7 @@ const Page = () => {
   const id = useParamWithSchema('id', z.coerce.bigint());
   const { result, isLoading, error } = useBlueprintDetails(id);
   const { isOperator } = useOperatorInfo();
-  const [isPricingModalOpen, setIsPricingModalOpen] = useState(false);
+  const [isBlueprintModalOpen, setIsBlueprintModalOpen] = useState(false);
 
   if (isLoading) {
     return (
@@ -56,11 +57,11 @@ const Page = () => {
     return <ErrorFallback title={error.name} />;
   }
 
-  const handlePricingFormSubmit = (formResult: PricingFormResult) => {
+  const handleBlueprintFormSubmit = (formResult: BlueprintFormResult) => {
     sessionStorage.setItem(
       SessionStorageKey.BLUEPRINT_REGISTRATION_PARAMS,
       JSON.stringify({
-        pricingSettings: formResult,
+        rpcUrl: formResult.values.rpcUrl,
         selectedBlueprints: [
           {
             ...result.details,
@@ -86,10 +87,7 @@ const Page = () => {
           },
         }}
         registerBtnProps={{
-          onClick: (e) => {
-            e.preventDefault();
-            setIsPricingModalOpen(true);
-          },
+          onClick: () => setIsBlueprintModalOpen(true),
         }}
       />
 
@@ -104,11 +102,11 @@ const Page = () => {
         />
       </div>
 
-      <Modal open={isPricingModalOpen} onOpenChange={setIsPricingModalOpen}>
-        <ConfigurePricingModal
-          onOpenChange={setIsPricingModalOpen}
+      <Modal open={isBlueprintModalOpen} onOpenChange={setIsBlueprintModalOpen}>
+        <ConfigureBlueprintModal
+          onOpenChange={setIsBlueprintModalOpen}
           blueprints={[result.details]}
-          onSubmit={handlePricingFormSubmit}
+          onSubmit={handleBlueprintFormSubmit}
         />
       </Modal>
     </div>

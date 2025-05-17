@@ -1,19 +1,18 @@
-import OperatorsTableUI from '@tangle-network/tangle-shared-ui/components/tables/Operators';
-import type { OperatorConcentration } from '@tangle-network/tangle-shared-ui/data/restake/useOperatorConcentration';
-import type { OperatorTvlGroup } from '@tangle-network/tangle-shared-ui/data/restake/useOperatorTvl';
-import useRestakeAssets from '@tangle-network/tangle-shared-ui/data/restake/useRestakeAssets';
-import useIdentities from '@tangle-network/tangle-shared-ui/hooks/useIdentities';
-import useSubstrateAddress from '@tangle-network/tangle-shared-ui/hooks/useSubstrateAddress';
-import type { RestakeOperator } from '@tangle-network/tangle-shared-ui/types';
-import type {
-  OperatorMap,
-  OperatorDelegatorBond,
-} from '@tangle-network/tangle-shared-ui/types/restake';
-import delegationsToVaultTokens from '@tangle-network/tangle-shared-ui/utils/restake/delegationsToVaultTokens';
+import OperatorsTableUI from '../tables/Operators';
+import type { OperatorConcentration } from '../../data/restake/useOperatorConcentration';
+import type { OperatorTvlGroup } from '../../data/restake/useOperatorTvl';
+import useRestakeAssets from '../../data/restake/useRestakeAssets';
+import useIdentities from '../../hooks/useIdentities';
+import useSubstrateAddress from '../../hooks/useSubstrateAddress';
+import type { RestakeOperator } from '../../types';
+import type { OperatorMap, OperatorDelegatorBond } from '../../types/restake';
+import delegationsToVaultTokens from '../../utils/restake/delegationsToVaultTokens';
 import assertSubstrateAddress from '@tangle-network/ui-components/utils/assertSubstrateAddress';
 import {
   type ComponentProps,
   type FC,
+  PropsWithChildren,
+  useCallback,
   useEffect,
   useMemo,
   useState,
@@ -26,9 +25,10 @@ import type { SubstrateAddress } from '@tangle-network/ui-components/types/addre
 import { Button, Modal, ModalTrigger } from '@tangle-network/ui-components';
 import { AddLineIcon } from '@tangle-network/icons';
 import cx from 'classnames';
-import useIsAccountConnected from '@tangle-network/tangle-shared-ui/hooks/useIsAccountConnected';
-import useAgnosticAccountInfo from '@tangle-network/tangle-shared-ui/hooks/useAgnosticAccountInfo';
-import JoinOperatorsModal from '@tangle-network/tangle-shared-ui/components/Restaking/JoinOperatorsModal';
+import useIsAccountConnected from '../../hooks/useIsAccountConnected';
+import useAgnosticAccountInfo from '../../hooks/useAgnosticAccountInfo';
+import { RestakeOperatorWrapper } from '../tables/RestakeActionWrappers';
+import JoinOperatorsModal from './JoinOperatorsModal';
 
 type OperatorUI = NonNullable<
   ComponentProps<typeof OperatorsTableUI>['data']
@@ -38,15 +38,19 @@ type Props = {
   operatorConcentration?: OperatorConcentration;
   operatorMap: OperatorMap;
   operatorTvl?: OperatorTvlGroup['operatorTvl'];
-  onRestakeClicked?: LinkProps['onClick'];
+  onRestakeClicked: LinkProps['onClick'];
+  onRestakeClickedPagePath: string;
+  onRestakeClickedQueryParamKey: string;
   isLoading?: boolean;
 };
 
-const OperatorsTable: FC<Props> = ({
+const OperatorsTableContainer: FC<Props> = ({
   operatorConcentration,
   operatorMap,
   operatorTvl,
-  // onRestakeClicked,
+  onRestakeClicked,
+  onRestakeClickedPagePath,
+  onRestakeClickedQueryParamKey,
   isLoading: isLoadingOperatorMap,
 }) => {
   const [globalFilter, setGlobalFilter] = useState('');
@@ -168,17 +172,6 @@ const OperatorsTable: FC<Props> = ({
     ],
   );
 
-  // const RestakeAction = useCallback(
-  //   ({ address, children }: PropsWithChildren<{ address: string }>) => {
-  //     return (
-  //       <RestakeOperatorWrapper address={address} onClick={onRestakeClicked}>
-  //         {children}
-  //       </RestakeOperatorWrapper>
-  //     );
-  //   },
-  //   [onRestakeClicked],
-  // );
-
   const disabledTooltip = isAccountConnected
     ? 'Only Substrate accounts can register as operators at this time.'
     : 'Connect a Substrate account to join as an operator.';
@@ -188,6 +181,22 @@ const OperatorsTable: FC<Props> = ({
       activeSubstrateAddress !== null &&
       operatorMap.get(activeSubstrateAddress) !== undefined,
     [activeSubstrateAddress, operatorMap],
+  );
+
+  const RestakeAction = useCallback(
+    ({ address, children }: PropsWithChildren<{ address: string }>) => {
+      return (
+        <RestakeOperatorWrapper
+          pagePath={onRestakeClickedPagePath}
+          queryParamKey={onRestakeClickedQueryParamKey}
+          address={address}
+          onClick={onRestakeClicked}
+        >
+          {children}
+        </RestakeOperatorWrapper>
+      );
+    },
+    [onRestakeClicked, onRestakeClickedPagePath, onRestakeClickedQueryParamKey],
   );
 
   return (
@@ -224,7 +233,7 @@ const OperatorsTable: FC<Props> = ({
           globalFilter={globalFilter}
           onGlobalFilterChange={setGlobalFilter}
           data={operators}
-          RestakeOperatorAction={() => null}
+          RestakeOperatorAction={RestakeAction}
           isLoading={isLoadingOperatorMap || isLoadingBlueprintCounts}
         />
 
@@ -234,4 +243,4 @@ const OperatorsTable: FC<Props> = ({
   );
 };
 
-export default OperatorsTable;
+export default OperatorsTableContainer;

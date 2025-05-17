@@ -41,7 +41,6 @@ export type OperatorSelectionTable = {
   uptime?: number;
   restakersCount?: number;
   vaultTokens?: VaultToken[];
-  pricing?: number;
 };
 
 export const ApprovalModelLabel: Record<
