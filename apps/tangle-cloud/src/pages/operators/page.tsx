@@ -13,6 +13,7 @@ const Page: FC = () => {
   } = useRestakeOperatorMap();
   const { operatorConcentration, operatorTvl } = useRestakeTvl(delegatorInfo);
 
+  // TODO: Redirect to tangle-dapp restake/delegate page
   const handleRestakeClicked = useCallback(() => {
     console.log('Redirecting to restake/delegate page');
   }, []);

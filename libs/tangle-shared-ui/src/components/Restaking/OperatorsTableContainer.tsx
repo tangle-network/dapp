@@ -13,15 +13,10 @@ import {
   type FC,
   PropsWithChildren,
   useCallback,
-  useEffect,
   useMemo,
   useState,
 } from 'react';
 import type { LinkProps } from 'react-router';
-import { useWebContext } from '@tangle-network/api-provider-environment';
-import { WebbPolkadot } from '@tangle-network/polkadot-api-provider';
-import { catchError, forkJoin, map, of } from 'rxjs';
-import type { SubstrateAddress } from '@tangle-network/ui-components/types/address';
 import { Button, Modal, ModalTrigger } from '@tangle-network/ui-components';
 import { AddLineIcon } from '@tangle-network/icons';
 import cx from 'classnames';
@@ -56,12 +51,6 @@ const OperatorsTableContainer: FC<Props> = ({
   const [globalFilter, setGlobalFilter] = useState('');
   const [isJoinOperatorsModalOpen, setIsJoinOperatorsModalOpen] =
     useState(false);
-  const [blueprintCountsMap, setBlueprintCountsMap] = useState<
-    Map<SubstrateAddress, number>
-  >(new Map());
-  const [isLoadingBlueprintCounts, setIsLoadingBlueprintCounts] =
-    useState(false);
-  const { activeApi } = useWebContext();
 
   const activeSubstrateAddress = useSubstrateAddress(false);
   const { assets } = useRestakeAssets();
@@ -74,57 +63,6 @@ const OperatorsTableContainer: FC<Props> = ({
   );
 
   const { result: identities } = useIdentities(operatorAddresses);
-
-  // Effect to fetch blueprint counts for all operators
-  useEffect(() => {
-    if (
-      !activeApi ||
-      !(activeApi instanceof WebbPolkadot) ||
-      operatorAddresses.length === 0
-    ) {
-      setBlueprintCountsMap(new Map());
-      return;
-    }
-
-    if (
-      !activeApi.api.rx.rpc?.services?.queryServicesWithBlueprintsByOperator
-    ) {
-      console.error(
-        'RPC method queryServicesWithBlueprintsByOperator not found on api.rx',
-      );
-      setBlueprintCountsMap(new Map()); // Reset if method not found
-      return;
-    }
-
-    const apiRx = activeApi.api.rx;
-
-    setIsLoadingBlueprintCounts(true);
-    const operatorAddrList = Array.from(operatorAddresses.values());
-
-    const sub = forkJoin(
-      operatorAddrList.map((address) =>
-        apiRx.rpc.services.queryServicesWithBlueprintsByOperator(address).pipe(
-          map((result) => ({ address, count: result.length })), // Map to address and count
-          catchError((error) => {
-            console.error(
-              `Error fetching blueprints for operator ${address}:`,
-              error,
-            );
-            return of({ address, count: 0 }); // Return 0 on error for this operator
-          }),
-        ),
-      ),
-    ).subscribe((results) => {
-      const newMap = new Map<SubstrateAddress, number>();
-      results.forEach(({ address, count }) => {
-        newMap.set(address, count);
-      });
-      setBlueprintCountsMap(newMap);
-      setIsLoadingBlueprintCounts(false);
-    });
-
-    return () => sub.unsubscribe();
-  }, [activeApi, operatorAddresses]);
 
   const operators = useMemo(
     () =>
@@ -143,8 +81,6 @@ const OperatorsTableContainer: FC<Props> = ({
                 delegation.delegatorAccountId === activeSubstrateAddress,
             );
 
-          const blueprintCount = blueprintCountsMap.get(address);
-
           return {
             address,
             concentrationPercentage,
@@ -157,7 +93,6 @@ const OperatorsTableContainer: FC<Props> = ({
                 : delegationsToVaultTokens(delegations, assets),
             selfBondedAmount: stake,
             isDelegated,
-            blueprintCount,
           } satisfies RestakeOperator;
         },
       ),
@@ -168,7 +103,6 @@ const OperatorsTableContainer: FC<Props> = ({
       activeSubstrateAddress,
       identities,
       assets,
-      blueprintCountsMap,
     ],
   );
 
@@ -234,7 +168,7 @@ const OperatorsTableContainer: FC<Props> = ({
           onGlobalFilterChange={setGlobalFilter}
           data={operators}
           RestakeOperatorAction={RestakeAction}
-          isLoading={isLoadingOperatorMap || isLoadingBlueprintCounts}
+          isLoading={isLoadingOperatorMap}
         />
 
         <JoinOperatorsModal setIsOpen={setIsJoinOperatorsModalOpen} />
