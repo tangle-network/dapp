@@ -12,10 +12,6 @@ import {
 } from '@tangle-network/ui-components/components/Dropdown';
 import { Typography } from '@tangle-network/ui-components/typography/Typography';
 import { Children, useCallback, useEffect, useMemo, useState } from 'react';
-import {
-  PricingFormResult,
-  PricingType,
-} from '../blueprints/ConfigurePricingModal/types';
 import ParamsForm from './RegistrationForm/ParamsForm';
 import { SessionStorageKey } from '../../constants';
 import { useNavigate } from 'react-router';
@@ -29,18 +25,18 @@ import { toPrimitiveArgsDataType } from '../../utils/toPrimitiveArgsDataType';
 export default function RegistrationReview() {
   const navigate = useNavigate();
 
-  const { pricingSettings, blueprints } = useMemo(() => {
+  const { rpcUrl, blueprints } = useMemo(() => {
     const data = JSON.parse(
       sessionStorage.getItem(SessionStorageKey.BLUEPRINT_REGISTRATION_PARAMS) ||
         '{}',
     );
-    if (data && 'pricingSettings' in data && 'selectedBlueprints' in data) {
+    if (data && 'rpcUrl' in data && 'selectedBlueprints' in data) {
       return {
-        pricingSettings: data.pricingSettings as PricingFormResult,
+        rpcUrl: data.rpcUrl,
         blueprints: data.selectedBlueprints as Blueprint[],
       };
     }
-    return { pricingSettings: null, blueprints: [] };
+    return { rpcUrl: null, blueprints: [] };
   }, []);
 
   const [amount, setAmount] = useState<Record<string, any>>({});
@@ -92,25 +88,15 @@ export default function RegistrationReview() {
   };
 
   const handleRegister = useCallback(async () => {
-    if (!activeAccount || !pricingSettings || !registerTx) {
+    if (!activeAccount || !registerTx) {
       return;
     }
 
-    const preferences = blueprints.map(({ id }) => {
-      const blueprintPriceSettings =
-        pricingSettings.type === PricingType.GLOBAL
-          ? pricingSettings.values
-          : pricingSettings.values[id.toString()];
-
+    const preferences = blueprints.map(() => {
       return {
         key: toTanglePrimitiveEcdsaKey(activeAccount),
-        priceTargets: {
-          cpu: Number(blueprintPriceSettings.cpuPrice),
-          mem: Number(blueprintPriceSettings.memPrice),
-          storageHdd: Number(blueprintPriceSettings.hddStoragePrice),
-          storageSsd: Number(blueprintPriceSettings.ssdStoragePrice),
-          storageNvme: Number(blueprintPriceSettings.nvmeStoragePrice),
-        },
+        // Include RPC URL in preferences if provided
+        ...(rpcUrl ? { rpcUrl } : {}),
       };
     }) as any;
 
@@ -133,7 +119,7 @@ export default function RegistrationReview() {
     });
   }, [
     activeAccount,
-    pricingSettings,
+    rpcUrl,
     registerTx,
     blueprints,
     registrationParams,
@@ -231,7 +217,6 @@ export default function RegistrationReview() {
             isDisabled={
               !isValidParams ||
               !isValidAmount ||
-              !pricingSettings ||
               !activeChain ||
               registerTxStatus === TxStatus.PROCESSING
             }

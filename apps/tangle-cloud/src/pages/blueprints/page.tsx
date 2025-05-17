@@ -14,8 +14,8 @@ import { FC, useCallback, useMemo, useState } from 'react';
 import { twMerge } from 'tailwind-merge';
 import useRoleStore, { Role } from '../../stores/roleStore';
 import BlueprintListing from './BlueprintListing';
-import ConfigurePricingModal from './ConfigurePricingModal';
-import { PricingFormResult } from './ConfigurePricingModal/types';
+import ConfigureBlueprintModal from './ConfigureBlueprintModal';
+import { BlueprintFormResult } from './ConfigureBlueprintModal/types';
 import { useNavigate } from 'react-router';
 import { SessionStorageKey } from '../../constants';
 import { PagePath } from '../../types';
@@ -37,7 +37,7 @@ const Page: FC = () => {
   const navigate = useNavigate();
   const role = useRoleStore((store) => store.role);
   const [rowSelection, setRowSelection] = useState<RowSelectionState>({});
-  const [isPricingModalOpen, setIsPricingModalOpen] = useState(false);
+  const [isBlueprintModalOpen, setIsBlueprintModalOpen] = useState(false);
   const { blueprints, isLoading, error } = useAllBlueprints();
 
   const { isOperator } = useOperatorInfo();
@@ -54,12 +54,12 @@ const Page: FC = () => {
 
   const selectedBlueprintCount = Object.keys(selectedBlueprints).length;
 
-  const handlePricingFormSubmit = useCallback(
-    (result: PricingFormResult) => {
+  const handleBlueprintFormSubmit = useCallback(
+    (result: BlueprintFormResult) => {
       sessionStorage.setItem(
         SessionStorageKey.BLUEPRINT_REGISTRATION_PARAMS,
         JSON.stringify({
-          pricingSettings: result,
+          rpcUrl: result,
           selectedBlueprints: selectedBlueprints.map((blueprint) => ({
             ...blueprint,
             id: blueprint.id.toString(),
@@ -89,7 +89,7 @@ const Page: FC = () => {
         onRowSelectionChange={isOperator ? setRowSelection : undefined}
       />
 
-      <Modal open={isPricingModalOpen} onOpenChange={setIsPricingModalOpen}>
+      <Modal open={isBlueprintModalOpen} onOpenChange={setIsBlueprintModalOpen}>
         <AnimatePresence>
           {selectedBlueprintCount > 0 && (
             <motion.div
@@ -123,10 +123,10 @@ const Page: FC = () => {
           )}
         </AnimatePresence>
 
-        <ConfigurePricingModal
-          onOpenChange={setIsPricingModalOpen}
+        <ConfigureBlueprintModal
+          onOpenChange={setIsBlueprintModalOpen}
           blueprints={selectedBlueprints}
-          onSubmit={handlePricingFormSubmit}
+          onSubmit={handleBlueprintFormSubmit}
         />
       </Modal>
     </div>

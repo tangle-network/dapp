@@ -7,7 +7,6 @@ import {
   EnergyChipStack,
   ExternalLinkIcon,
   fuzzyFilter,
-  getRoundedAmountString,
   KeyValueWithButton,
   Table,
   Typography,
@@ -82,18 +81,6 @@ export const OperatorTable: FC<Props> = ({ tableData, ...tableProps }) => {
                 )}
               </div>
             </div>
-          </TableCellWrapper>
-        );
-      },
-    }),
-    COLUMN_HELPER.accessor('pricing', {
-      header: () => 'Pricing',
-      cell: (props) => {
-        return (
-          <TableCellWrapper className="pl-3 min-h-fit">
-            <Typography variant="body1">
-              {`$${getRoundedAmountString(props.row.original.pricing)}`}
-            </Typography>
           </TableCellWrapper>
         );
       },

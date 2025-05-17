@@ -1,35 +1,28 @@
-import { AddLineIcon } from '@tangle-network/icons';
-import OperatorsTableUI from '@tangle-network/tangle-shared-ui/components/tables/Operators';
-import type { OperatorConcentration } from '@tangle-network/tangle-shared-ui/data/restake/useOperatorConcentration';
-import type { OperatorTvlGroup } from '@tangle-network/tangle-shared-ui/data/restake/useOperatorTvl';
-import useRestakeAssets from '@tangle-network/tangle-shared-ui/data/restake/useRestakeAssets';
-import useAgnosticAccountInfo from '@tangle-network/tangle-shared-ui/hooks/useAgnosticAccountInfo';
-import useIdentities from '@tangle-network/tangle-shared-ui/hooks/useIdentities';
-import useIsAccountConnected from '@tangle-network/tangle-shared-ui/hooks/useIsAccountConnected';
-import useSubstrateAddress from '@tangle-network/tangle-shared-ui/hooks/useSubstrateAddress';
-import type { RestakeOperator } from '@tangle-network/tangle-shared-ui/types';
-import type {
-  OperatorMap,
-  OperatorDelegatorBond,
-} from '@tangle-network/tangle-shared-ui/types/restake';
-import delegationsToVaultTokens from '@tangle-network/tangle-shared-ui/utils/restake/delegationsToVaultTokens';
-import Button from '@tangle-network/ui-components/components/buttons/Button';
-import {
-  Modal,
-  ModalTrigger,
-} from '@tangle-network/ui-components/components/Modal';
+import OperatorsTableUI from '../tables/Operators';
+import type { OperatorConcentration } from '../../data/restake/useOperatorConcentration';
+import type { OperatorTvlGroup } from '../../data/restake/useOperatorTvl';
+import useRestakeAssets from '../../data/restake/useRestakeAssets';
+import useIdentities from '../../hooks/useIdentities';
+import useSubstrateAddress from '../../hooks/useSubstrateAddress';
+import type { RestakeOperator } from '../../types';
+import type { OperatorMap, OperatorDelegatorBond } from '../../types/restake';
+import delegationsToVaultTokens from '../../utils/restake/delegationsToVaultTokens';
 import assertSubstrateAddress from '@tangle-network/ui-components/utils/assertSubstrateAddress';
-import cx from 'classnames';
 import {
   type ComponentProps,
   type FC,
-  type PropsWithChildren,
+  PropsWithChildren,
   useCallback,
   useMemo,
   useState,
 } from 'react';
 import type { LinkProps } from 'react-router';
-import { RestakeOperatorWrapper } from '../../components/tables/RestakeActionWrappers';
+import { Button, Modal, ModalTrigger } from '@tangle-network/ui-components';
+import { AddLineIcon } from '@tangle-network/icons';
+import cx from 'classnames';
+import useIsAccountConnected from '../../hooks/useIsAccountConnected';
+import useAgnosticAccountInfo from '../../hooks/useAgnosticAccountInfo';
+import { RestakeOperatorWrapper } from '../tables/RestakeActionWrappers';
 import JoinOperatorsModal from './JoinOperatorsModal';
 
 type OperatorUI = NonNullable<
@@ -40,36 +33,36 @@ type Props = {
   operatorConcentration?: OperatorConcentration;
   operatorMap: OperatorMap;
   operatorTvl?: OperatorTvlGroup['operatorTvl'];
-  onRestakeClicked?: LinkProps['onClick'];
+  onRestakeClicked: LinkProps['onClick'];
+  onRestakeClickedPagePath: string;
+  onRestakeClickedQueryParamKey: string;
   isLoading?: boolean;
 };
 
-const OperatorsTable: FC<Props> = ({
+const OperatorsTableContainer: FC<Props> = ({
   operatorConcentration,
   operatorMap,
   operatorTvl,
   onRestakeClicked,
-  isLoading,
+  onRestakeClickedPagePath,
+  onRestakeClickedQueryParamKey,
+  isLoading: isLoadingOperatorMap,
 }) => {
   const [globalFilter, setGlobalFilter] = useState('');
-
   const [isJoinOperatorsModalOpen, setIsJoinOperatorsModalOpen] =
     useState(false);
 
-  const { isEvm } = useAgnosticAccountInfo();
-  const isAccountConnected = useIsAccountConnected();
   const activeSubstrateAddress = useSubstrateAddress(false);
   const { assets } = useRestakeAssets();
+  const isAccountConnected = useIsAccountConnected();
+  const { isEvm } = useAgnosticAccountInfo();
 
-  const { result: identities } = useIdentities(
-    useMemo(
-      () =>
-        Object.keys(operatorMap).map((address) =>
-          assertSubstrateAddress(address),
-        ),
-      [operatorMap],
-    ),
+  const operatorAddresses = useMemo(
+    () => Array.from(operatorMap.keys()).map(assertSubstrateAddress),
+    [operatorMap],
   );
+
+  const { result: identities } = useIdentities(operatorAddresses);
 
   const operators = useMemo(
     () =>
@@ -127,12 +120,17 @@ const OperatorsTable: FC<Props> = ({
   const RestakeAction = useCallback(
     ({ address, children }: PropsWithChildren<{ address: string }>) => {
       return (
-        <RestakeOperatorWrapper address={address} onClick={onRestakeClicked}>
+        <RestakeOperatorWrapper
+          pagePath={onRestakeClickedPagePath}
+          queryParamKey={onRestakeClickedQueryParamKey}
+          address={address}
+          onClick={onRestakeClicked}
+        >
           {children}
         </RestakeOperatorWrapper>
       );
     },
-    [onRestakeClicked],
+    [onRestakeClicked, onRestakeClickedPagePath, onRestakeClickedQueryParamKey],
   );
 
   return (
@@ -170,7 +168,7 @@ const OperatorsTable: FC<Props> = ({
           onGlobalFilterChange={setGlobalFilter}
           data={operators}
           RestakeOperatorAction={RestakeAction}
-          isLoading={isLoading}
+          isLoading={isLoadingOperatorMap}
         />
 
         <JoinOperatorsModal setIsOpen={setIsJoinOperatorsModalOpen} />
@@ -179,4 +177,4 @@ const OperatorsTable: FC<Props> = ({
   );
 };
 
-export default OperatorsTable;
+export default OperatorsTableContainer;

@@ -14173,16 +14173,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@tangle-network/tangle-substrate-types@npm:0.9.21":
-  version: 0.9.21
-  resolution: "@tangle-network/tangle-substrate-types@npm:0.9.21"
+"@tangle-network/tangle-substrate-types@npm:^0.9.22":
+  version: 0.9.22
+  resolution: "@tangle-network/tangle-substrate-types@npm:0.9.22"
   dependencies:
     "@polkadot/api": "npm:^13.2.1"
     "@polkadot/typegen": "npm:^13.2.1"
     "@polkadot/types": "npm:^13.2.1"
     ecpair: "npm:^2.1.0"
     tiny-secp256k1: "npm:^2.2.3"
-  checksum: 10c0/01aae6a0dc9b9b0ff1f67fe07a1a2e879641cdfb7ab0a6ae821c854721f7af2d09720725c0fcea55feac94916b4bcdec5e3d7b0dd6b02f2c3fb8ded4781ee997
+  checksum: 10c0/767b15b8052f692102b2e74d4094e87c158e33ac7c704a783a747ed9681346332b648d68fd5bf341e4c5d4104dd00098d75cecf8c4e9154f8825d27ef55ae0d5
   languageName: node
   linkType: hard
 
@@ -34025,7 +34025,7 @@ __metadata:
     "@tailwindcss/forms": "npm:^0.5.10"
     "@tangle-network/evm-contract-metadata": "npm:^1.3.0"
     "@tangle-network/tangle-restaking-types": "npm:0.1.0"
-    "@tangle-network/tangle-substrate-types": "npm:0.9.21"
+    "@tangle-network/tangle-substrate-types": "npm:^0.9.22"
     "@tanstack/match-sorter-utils": "npm:^8.19.4"
     "@tanstack/react-query": "npm:^5.74.3"
     "@tanstack/react-table": "npm:^8.21.3"

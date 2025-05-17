@@ -21,8 +21,9 @@ import RestakeDelegateForm from '../../pages/restake/delegate';
 import DepositForm from '../../pages/restake/deposit/DepositForm';
 import RestakeUnstakeForm from '../../pages/restake/unstake';
 import RestakeWithdrawForm from '../../pages/restake/withdraw';
-import OperatorsTable from './OperatorsTable';
+import OperatorsTableContainer from '@tangle-network/tangle-shared-ui/components/Restaking/OperatorsTableContainer';
 import type { RestakeAssetId } from '@tangle-network/tangle-shared-ui/types';
+import { PagePath, QueryParamKey } from '../../types';
 
 enum RestakeTab {
   RESTAKE = 'Restake',
@@ -88,11 +89,14 @@ const RestakeOverviewTabs: FC<Props> = ({
       </TabContent>
 
       <TabContent value={RestakeTab.OPERATORS}>
-        <OperatorsTable
+        <OperatorsTableContainer
           operatorConcentration={operatorConcentration}
           operatorMap={operatorMap}
           operatorTvl={operatorTVL}
           onRestakeClicked={handleRestakeClicked}
+          onRestakeClickedPagePath={PagePath.RESTAKE_DELEGATE}
+          onRestakeClickedQueryParamKey={QueryParamKey.RESTAKE_OPERATOR}
+          isLoading={isLoadingAssets}
         />
       </TabContent>
 
