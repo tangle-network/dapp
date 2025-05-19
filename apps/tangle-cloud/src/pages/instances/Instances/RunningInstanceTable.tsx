@@ -23,7 +23,7 @@ import TableCellWrapper from '@tangle-network/tangle-shared-ui/components/tables
 import { Link } from 'react-router';
 import { PagePath } from '../../../types';
 import { MonitoringBlueprint } from '@tangle-network/tangle-shared-ui/data/blueprints/utils/type';
-import useOperatorInfo from '../../../hooks/useOperatorInfo';
+import useOperatorInfo from '@tangle-network/tangle-shared-ui/hooks/useOperatorInfo';
 import useMonitoringBlueprints from '@tangle-network/tangle-shared-ui/data/blueprints/useMonitoringBlueprints';
 
 const columnHelper =

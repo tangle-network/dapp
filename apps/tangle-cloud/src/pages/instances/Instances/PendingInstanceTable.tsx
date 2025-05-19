@@ -38,7 +38,7 @@ import useSubstrateAddress from '@tangle-network/tangle-shared-ui/hooks/useSubst
 import useIdentities from '@tangle-network/tangle-shared-ui/hooks/useIdentities';
 import useServicesRejectTx from '../../../data/services/useServicesRejectTx';
 import useServicesApproveTx from '../../../data/services/useServicesApproveTx';
-import useOperatorInfo from '../../../hooks/useOperatorInfo';
+import useOperatorInfo from '@tangle-network/tangle-shared-ui/hooks/useOperatorInfo';
 
 const columnHelper = createColumnHelper<MonitoringServiceRequest>();
 

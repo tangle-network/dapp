@@ -7,6 +7,7 @@ import { ComponentProps, FC } from 'react';
 import { twMerge } from 'tailwind-merge';
 import type { Blueprint } from '../../types/blueprint';
 import BoostedChip from './BoostedChip';
+import RegisteredChip from './RegisteredChip';
 
 interface BlueprintHeaderProps {
   blueprint: Blueprint;
@@ -14,6 +15,7 @@ interface BlueprintHeaderProps {
   registerBtnProps?: ComponentProps<typeof Button>;
   enableDeploy?: boolean;
   deployBtnProps?: ComponentProps<typeof Button>;
+  isRegistered: boolean;
 }
 
 const BlueprintHeader: FC<BlueprintHeaderProps> = ({
@@ -22,6 +24,7 @@ const BlueprintHeader: FC<BlueprintHeaderProps> = ({
   enableRegister,
   registerBtnProps,
   deployBtnProps,
+  isRegistered,
 }) => {
   const {
     isBoosted,
@@ -77,23 +80,28 @@ const BlueprintHeader: FC<BlueprintHeaderProps> = ({
             )}
             <div className="space-y-4">
               <div>
-                <div className="flex items-center gap-1">
-                  <Typography variant="h4" fw="bold">
-                    {name}
-                  </Typography>
-                  {githubUrl && (
-                    <a
-                      href={githubUrl}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                    >
-                      <GithubFill
-                        size="lg"
-                        className="!fill-mono-200 dark:!fill-mono-0 hover:!fill-mono-120 dark:hover:!fill-mono-80"
-                      />
-                    </a>
-                  )}
-                  {isBoosted && <BoostedChip />}
+                <div className="flex items-center gap-4">
+                  <div className="flex items-center gap-1">
+                    <Typography variant="h4" fw="bold">
+                      {name}
+                    </Typography>
+                    {githubUrl && (
+                      <a
+                        href={githubUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        <GithubFill
+                          size="lg"
+                          className="!fill-mono-200 dark:!fill-mono-0 hover:!fill-mono-120 dark:hover:!fill-mono-80"
+                        />
+                      </a>
+                    )}
+                  </div>
+                  <div className="flex items-center gap-1">
+                    {isBoosted && <BoostedChip />}
+                    {isRegistered && <RegisteredChip />}
+                  </div>
                 </div>
                 <div className="flex items-center">
                   <Typography
