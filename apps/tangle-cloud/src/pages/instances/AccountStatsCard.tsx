@@ -17,7 +17,7 @@ import {
 } from '@tangle-network/tangle-shared-ui/utils/polkadot/identity';
 import { isValidUrl } from '@tangle-network/dapp-types';
 import useActiveAccountAddress from '@tangle-network/tangle-shared-ui/hooks/useActiveAccountAddress';
-import useOperatorInfo from '../../hooks/useOperatorInfo';
+import useOperatorInfo from '@tangle-network/tangle-shared-ui/hooks/useOperatorInfo';
 import { useOperatorStatsData } from '../../data/operators/useOperatorStatsData';
 import { useUserStatsData } from '../../data/operators/useUserStatsData';
 

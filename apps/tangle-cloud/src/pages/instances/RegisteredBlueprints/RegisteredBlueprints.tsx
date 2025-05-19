@@ -21,7 +21,7 @@ import { Link } from 'react-router';
 import { PagePath } from '../../../types';
 import getTVLToDisplay from '@tangle-network/tangle-shared-ui/utils/getTVLToDisplay';
 import useRegisteredBlueprints from '@tangle-network/tangle-shared-ui/data/blueprints/useRegisteredBlueprints';
-import useOperatorInfo from '../../../hooks/useOperatorInfo';
+import useOperatorInfo from '@tangle-network/tangle-shared-ui/hooks/useOperatorInfo';
 
 export type RegisteredBlueprintsTableProps = {
   blueprints: MonitoringBlueprint[];

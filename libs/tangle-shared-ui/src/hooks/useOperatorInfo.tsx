@@ -2,7 +2,7 @@ import { useActiveAccount } from '@tangle-network/api-provider-environment/hooks
 import { toSubstrateAddress } from '@tangle-network/ui-components/utils/toSubstrateAddress';
 import { isSolanaAddress } from '@tangle-network/ui-components/utils/isSolanaAddress';
 import { useMemo } from 'react';
-import useNetworkStore from '@tangle-network/tangle-shared-ui/context/useNetworkStore';
+import useNetworkStore from '../context/useNetworkStore';
 import type { SubstrateAddress } from '@tangle-network/ui-components/types/address';
 import { isEvmAddress } from '@tangle-network/ui-components';
 
