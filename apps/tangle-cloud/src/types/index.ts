@@ -45,6 +45,7 @@ export type RegisterServiceFormFields = {
       storageSsd: number;
       storageNvme: number;
     };
+    rpcUrl?: string; // Optional RPC URL for the service
   }[];
   registrationArgs: Array<PrimitiveField[]>;
   amounts: number[];

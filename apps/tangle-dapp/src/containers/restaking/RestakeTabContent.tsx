@@ -15,10 +15,10 @@ import {
   useVaultsTableProps,
   VaultsTable,
 } from '../../components/tables/Vaults';
-import OperatorsTable from './OperatorsTable';
+import OperatorsTableContainer from '@tangle-network/tangle-shared-ui/components/Restaking/OperatorsTableContainer';
 import BlueprintListing from '../../pages/blueprints/BlueprintListing';
 import { useNavigate } from 'react-router';
-import { PagePath } from '../../types';
+import { PagePath, QueryParamKey } from '../../types';
 import { RestakeAssetId } from '@tangle-network/tangle-shared-ui/types';
 import { RestakeAsset } from '@tangle-network/tangle-shared-ui/types/restake';
 
@@ -76,11 +76,13 @@ const RestakeTabContent: FC<Props> = ({ tab }) => {
         );
       case RestakeTab.OPERATORS:
         return (
-          <OperatorsTable
+          <OperatorsTableContainer
             operatorConcentration={operatorConcentration}
             operatorMap={operatorMap}
             operatorTvl={operatorTvl}
             onRestakeClicked={handleRestakeClicked}
+            onRestakeClickedPagePath={PagePath.RESTAKE_DELEGATE}
+            onRestakeClickedQueryParamKey={QueryParamKey.RESTAKE_OPERATOR}
             isLoading={isLoadingOperators}
           />
         );

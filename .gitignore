@@ -104,3 +104,5 @@ vitest.config.*.timestamp*
 
 # React Scan reports
 reports/
+.cursor/rules/nx-rules.mdc
+.github/instructions/nx.instructions.md

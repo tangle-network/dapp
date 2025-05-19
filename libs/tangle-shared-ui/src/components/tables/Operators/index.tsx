@@ -119,6 +119,20 @@ const getStaticColumns = (
       </TableCellWrapper>
     ),
   }),
+  // COLUMN_HELPER.accessor('blueprintCount', {
+  //   header: () => 'Blueprints',
+  //   cell: (props) => (
+  //     <TableCellWrapper>
+  //       <Typography
+  //         variant="body1"
+  //         fw="bold"
+  //         className="text-mono-200 dark:text-mono-0"
+  //       >
+  //         {props.getValue() ?? '-'}
+  //       </Typography>
+  //     </TableCellWrapper>
+  //   ),
+  // }),
   // For sorting purpose
   COLUMN_HELPER.accessor('isDelegated', {
     header: () => null,
