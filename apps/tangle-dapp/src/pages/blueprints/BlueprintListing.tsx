@@ -14,9 +14,13 @@ const BlueprintItemWrapper: FC<PropsWithChildren<{ id: bigint }>> = ({
 const BlueprintListing: FC = () => {
   const { blueprints, isLoading, error } = useAllBlueprints();
 
+  const blueprintsArray = Array.isArray(blueprints)
+    ? blueprints
+    : Array.from(blueprints?.values() || []);
+
   return (
     <BlueprintGallery
-      blueprints={Object.values(blueprints).map((blueprint) => ({
+      blueprints={blueprintsArray.map((blueprint) => ({
         ...blueprint,
         renderImage(imageUrl) {
           return (

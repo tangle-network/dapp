@@ -14,7 +14,7 @@ import { Modal } from '@tangle-network/ui-components';
 import type { BlueprintFormResult } from '../ConfigureBlueprintModal/types';
 
 import { SessionStorageKey } from '../../../constants';
-import useOperatorInfo from '../../../hooks/useOperatorInfo';
+import useOperatorInfo from '@tangle-network/tangle-shared-ui/hooks/useOperatorInfo';
 import useParamWithSchema from '@tangle-network/tangle-shared-ui/hooks/useParamWithSchema';
 import { z } from 'zod';
 
