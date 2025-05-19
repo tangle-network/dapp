@@ -6,7 +6,7 @@ import useBlueprintDetails from '@tangle-network/tangle-shared-ui/data/restake/u
 import { ErrorFallback } from '@tangle-network/ui-components/components/ErrorFallback';
 import SkeletonLoader from '@tangle-network/ui-components/components/SkeletonLoader';
 import { Typography } from '@tangle-network/ui-components/typography/Typography';
-import { type FC, type PropsWithChildren, useState } from 'react';
+import { type FC, type PropsWithChildren, useMemo, useState } from 'react';
 import { Link, useNavigate, Navigate } from 'react-router-dom';
 import { PagePath, TangleDAppPagePath } from '../../../types';
 import ConfigureBlueprintModal from '../ConfigureBlueprintModal';
@@ -36,8 +36,14 @@ const Page = () => {
   const navigate = useNavigate();
   const id = useParamWithSchema('id', z.coerce.bigint());
   const { result, isLoading, error } = useBlueprintDetails(id);
-  const { isOperator } = useOperatorInfo();
+  const { isOperator, operatorAddress } = useOperatorInfo();
   const [isBlueprintModalOpen, setIsBlueprintModalOpen] = useState(false);
+
+  const isRegistered = useMemo(() => {
+    return result?.operators.some(
+      (operator) => operator.address === operatorAddress,
+    );
+  }, [operatorAddress, result?.operators]);
 
   if (isLoading) {
     return (
@@ -79,7 +85,7 @@ const Page = () => {
       <BlueprintHeader
         blueprint={result.details}
         enableDeploy
-        enableRegister={isOperator}
+        enableRegister={isOperator && !isRegistered}
         deployBtnProps={{
           onClick: (e) => {
             e.preventDefault();
@@ -89,6 +95,7 @@ const Page = () => {
         registerBtnProps={{
           onClick: () => setIsBlueprintModalOpen(true),
         }}
+        isRegistered={isRegistered ?? false}
       />
 
       <div className="space-y-5">
