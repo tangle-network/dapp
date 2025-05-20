@@ -3,7 +3,6 @@ import { CrossCircledIcon } from '@radix-ui/react-icons';
 import { TANGLE_TOKEN_DECIMALS } from '@tangle-network/dapp-config';
 import { Spinner } from '@tangle-network/icons';
 import { SparklingIcon } from '@tangle-network/icons';
-import useNetworkStore from '@tangle-network/tangle-shared-ui/context/useNetworkStore';
 import { TxStatus } from '@tangle-network/tangle-shared-ui/hooks/useSubstrateTx';
 import {
   AmountFormatStyle,
@@ -22,10 +21,6 @@ import useCredits from '../../../data/credits/useCredits';
 import useClaimCreditsTx from '../../../data/credits/useClaimCreditsTx';
 
 const ClaimCreditsButton = () => {
-  const nativeTokenSymbol = useNetworkStore(
-    (store) => store.network2?.tokenSymbol,
-  );
-
   const { data, error, refetch, isPending } = useCredits();
   const [offchainAccountId, setOffchainAccountId] = useState('');
   const [inputError, setInputError] = useState('');
@@ -73,11 +68,11 @@ const ClaimCreditsButton = () => {
 
       <DropdownBody align="start" sideOffset={8} className="p-4 space-y-3">
         <Typography variant="body3" fw="bold" className="!text-muted uppercase">
-          AI Credits
+          Unclaimed AI Credits
         </Typography>
 
         <Typography variant="h4" component="p" fw="bold">
-          {formattedCredits} {nativeTokenSymbol}
+          {formattedCredits}
         </Typography>
 
         <Typography variant="body2" fw="semibold" className="!text-muted">

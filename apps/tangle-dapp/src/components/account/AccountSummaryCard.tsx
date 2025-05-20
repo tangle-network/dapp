@@ -8,8 +8,8 @@ import { ClaimCreditsButton } from '../../features/claimCredits';
 const AccountSummaryCard: FC<{ className?: string }> = ({ className }) => {
   return (
     <CardWithTangleLogo className={className}>
-      <div className="w-full space-y-5">
-        <header className="flex flex-row justify-between items-start">
+      <div className="w-full flex flex-col gap-4">
+        <header className="flex lg:flex-col xl:flex-row justify-between items-start lg:min-h-[80px] xl:min-h-0">
           <AccountAddress />
           <ClaimCreditsButton />
         </header>
