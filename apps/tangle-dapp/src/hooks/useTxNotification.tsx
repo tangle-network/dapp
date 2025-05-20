@@ -41,6 +41,7 @@ export const SUCCESS_MESSAGES: Record<TxName, string> = {
   [TxName.RESTAKE_EXECUTE_WITHDRAW]: 'Withdraw request executed',
   [TxName.RESTAKE_CANCEL_WITHDRAW]: 'Withdraw request(s) cancelled',
   [TxName.CLAIM_REWARDS]: 'Claimed rewards',
+  [TxName.CLAIM_CREDITS]: 'Credits claimed successfully',
   [TxName.DEMOCRACY_UNLOCK]: 'Democracy tokens unlocked',
   [TxName.RESTAKE_NATIVE_DELEGATE]: 'Restaked native tokens',
   [TxName.RESTAKE_NATIVE_UNSTAKE]: 'Scheduled undelegate request',

@@ -1,5 +1,6 @@
 import { TANGLE_TOKEN_DECIMALS } from '@tangle-network/dapp-config';
 import { isEvmAddress } from '@tangle-network/ui-components';
+import { BN } from '@polkadot/util';
 import assert from 'assert';
 import { useCallback, useMemo } from 'react';
 import { map } from 'rxjs';
@@ -14,9 +15,11 @@ import createRestakeAssetId from '../../utils/createRestakeAssetId';
 import useVaultsPotAccounts from '../rewards/useVaultsPotAccounts';
 import useRestakeAssetBalances from './useRestakeAssetBalances';
 import { useVaultAssets } from './useVaultAssets';
+import useBalances from '../../hooks/useBalances';
 
 const useRestakeAssets = () => {
   const nativeTokenSymbol = useNetworkStore((store) => store.nativeTokenSymbol);
+  const { transferable: nativeBalance } = useBalances();
 
   const { result: vaultPotAccounts, isLoading: isLoadingVaultsPotAccounts } =
     useVaultsPotAccounts();
@@ -249,6 +252,8 @@ const useRestakeAssets = () => {
     const map = new Map<RestakeAssetId, RestakeAsset>();
 
     for (const [assetId, metadata] of assetMap.entries()) {
+      if (assetId === NATIVE_ASSET_ID) continue;
+
       map.set(assetId, {
         id: assetId,
         metadata,
@@ -256,8 +261,25 @@ const useRestakeAssets = () => {
       });
     }
 
+    if (nativeTokenSymbol) {
+      map.set(NATIVE_ASSET_ID, {
+        id: NATIVE_ASSET_ID,
+        metadata: {
+          assetId: NATIVE_ASSET_ID,
+          name: nativeTokenSymbol,
+          symbol: nativeTokenSymbol,
+          decimals: TANGLE_TOKEN_DECIMALS,
+          isFrozen: false,
+          vaultId: null,
+          priceInUsd: null, // TODO: Get actual price
+          status: 'Live',
+        },
+        balance: nativeBalance || new BN(0),
+      });
+    }
+
     return map;
-  }, [assetMap, balances]);
+  }, [assetMap, balances, nativeTokenSymbol, nativeBalance]);
 
   const refetchErc20Balances_ = useCallback(async () => {
     await refetchErc20Balances();
