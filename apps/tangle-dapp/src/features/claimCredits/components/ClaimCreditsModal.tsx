@@ -16,29 +16,26 @@ import {
   AmountFormatStyle,
   formatDisplayAmount,
 } from '@tangle-network/ui-components';
-import useGitHubCredits from '../../../data/github/useGitHubCredits';
-import useClaimGitHubCreditsTx from '../../../data/github/useClaimGitHubCreditsTx';
-import { GithubFill } from '@tangle-network/icons';
+import useCredits from '../../../data/credits/useCredits';
+import useClaimCreditsTx from '../../../data/credits/useClaimCreditsTx';
 
 type Props = {
   isOpen: boolean;
   setIsOpen: (isOpen: boolean) => void;
 };
 
-const ClaimGitHubCreditsModal: FC<Props> = ({ isOpen, setIsOpen }) => {
-  const { data, refetch, isPending } = useGitHubCredits();
-  const { execute, status } = useClaimGitHubCreditsTx();
-  const [githubUsername, setGithubUsername] = useState(
-    data?.githubUsername || '',
-  );
+const ClaimCreditsModal: FC<Props> = ({ isOpen, setIsOpen }) => {
+  const { data, refetch, isPending } = useCredits();
+  const { execute, status } = useClaimCreditsTx();
+  const [offchainAccountId, setOffchainAccountId] = useState('');
   const [inputError, setInputError] = useState('');
   const nativeTokenSymbol = useNetworkStore(
     (state) => state.network2?.tokenSymbol,
   );
 
   const handleClaimCredits = useCallback(async () => {
-    if (!githubUsername.trim()) {
-      setInputError('Please enter your GitHub username');
+    if (!offchainAccountId.trim()) {
+      setInputError('Please enter your offchain account ID');
       return;
     }
 
@@ -47,14 +44,14 @@ const ClaimGitHubCreditsModal: FC<Props> = ({ isOpen, setIsOpen }) => {
     try {
       await execute({
         amountToClaim: data.amount,
-        githubUsername,
+        offchainAccountId,
       });
       await refetch();
       setIsOpen(false);
     } catch (error) {
-      console.error('Failed to claim GitHub credits:', error);
+      console.error('Failed to claim credits:', error);
     }
-  }, [githubUsername, execute, refetch, setIsOpen, data]);
+  }, [offchainAccountId, execute, refetch, setIsOpen, data]);
 
   const formattedAmount = data?.amount
     ? formatDisplayAmount(
@@ -71,7 +68,7 @@ const ClaimGitHubCreditsModal: FC<Props> = ({ isOpen, setIsOpen }) => {
     <Modal open={isOpen} onOpenChange={setIsOpen}>
       <ModalContent>
         <ModalHeader>
-          <ModalTitle>Claim GitHub Credits</ModalTitle>
+          <ModalTitle>Claim AI Credits</ModalTitle>
         </ModalHeader>
 
         <ModalBody className="p-4 space-y-6">
@@ -93,31 +90,27 @@ const ClaimGitHubCreditsModal: FC<Props> = ({ isOpen, setIsOpen }) => {
 
               <div className="space-y-2">
                 <Typography variant="body1" fw="bold">
-                  GitHub Username
+                  Account ID
                 </Typography>
                 <Typography
                   variant="body2"
                   className="text-mono-120 dark:text-mono-80"
                 >
-                  Enter your GitHub username to associate with these credits
+                  Enter your account ID to associate with these credits
                 </Typography>
 
                 <TextField.Root
                   error={inputError}
                   className="p-2 rounded-lg bg-mono-0 dark:bg-mono-180 text-mono-140 dark:text-mono-40 border border-mono-80 dark:border-mono-120"
                 >
-                  <TextField.Slot>
-                    <GithubFill size="md" />
-                  </TextField.Slot>
-
                   <TextField.Input
                     className="font-light"
-                    value={githubUsername}
+                    value={offchainAccountId}
                     onChange={(e) => {
-                      setGithubUsername(e.target.value);
+                      setOffchainAccountId(e.target.value);
                       setInputError('');
                     }}
-                    placeholder="Enter your GitHub username"
+                    placeholder="Enter your account ID"
                   />
                 </TextField.Root>
               </div>
@@ -136,7 +129,7 @@ const ClaimGitHubCreditsModal: FC<Props> = ({ isOpen, setIsOpen }) => {
             <>
               <Typography variant="body1" ta="center">
                 You don't have any credits available to claim. Stake your TNT
-                tokens to earn credits for GitHub.
+                tokens to earn credits.
               </Typography>
               <Button
                 isFullWidth
@@ -153,4 +146,4 @@ const ClaimGitHubCreditsModal: FC<Props> = ({ isOpen, setIsOpen }) => {
   );
 };
 
-export default ClaimGitHubCreditsModal;
+export default ClaimCreditsModal;

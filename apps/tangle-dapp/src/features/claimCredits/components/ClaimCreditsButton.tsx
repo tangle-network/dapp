@@ -2,7 +2,7 @@ import { BN } from '@polkadot/util';
 import { CrossCircledIcon } from '@radix-ui/react-icons';
 import { TANGLE_TOKEN_DECIMALS } from '@tangle-network/dapp-config';
 import { Spinner } from '@tangle-network/icons';
-import { GithubFill } from '@tangle-network/icons';
+import { SparklingIcon } from '@tangle-network/icons';
 import useNetworkStore from '@tangle-network/tangle-shared-ui/context/useNetworkStore';
 import { TxStatus } from '@tangle-network/tangle-shared-ui/hooks/useSubstrateTx';
 import {
@@ -18,16 +18,16 @@ import {
   DropdownButton,
 } from '@tangle-network/ui-components/components/Dropdown';
 import { useCallback, useMemo, useState } from 'react';
-import useGitHubCredits from '../../../data/github/useGitHubCredits';
-import useClaimGitHubCreditsTx from '../../../data/github/useClaimGitHubCreditsTx';
+import useCredits from '../../../data/credits/useCredits';
+import useClaimCreditsTx from '../../../data/credits/useClaimCreditsTx';
 
-const ClaimGitHubCreditsButton = () => {
+const ClaimCreditsButton = () => {
   const nativeTokenSymbol = useNetworkStore(
     (store) => store.network2?.tokenSymbol,
   );
 
-  const { data, error, refetch, isPending } = useGitHubCredits();
-  const [githubUsername, setGithubUsername] = useState('');
+  const { data, error, refetch, isPending } = useCredits();
+  const [offchainAccountId, setOffchainAccountId] = useState('');
   const [inputError, setInputError] = useState('');
 
   const formattedCredits = useMemo(() => {
@@ -58,7 +58,7 @@ const ClaimGitHubCreditsButton = () => {
           ) : error ? (
             <CrossCircledIcon className="size-6" />
           ) : (
-            <GithubFill size="lg" />
+            <SparklingIcon size="md" />
           )
         }
       >
@@ -73,7 +73,7 @@ const ClaimGitHubCreditsButton = () => {
 
       <DropdownBody align="start" sideOffset={8} className="p-4 space-y-3">
         <Typography variant="body3" fw="bold" className="!text-muted uppercase">
-          GitHub Credits
+          AI Credits
         </Typography>
 
         <Typography variant="h4" component="p" fw="bold">
@@ -81,37 +81,33 @@ const ClaimGitHubCreditsButton = () => {
         </Typography>
 
         <Typography variant="body2" fw="semibold" className="!text-muted">
-          Associate your GitHub account to claim these credits.
+          Associate your account to claim these credits.
         </Typography>
 
         <div className="space-y-2">
           <Typography variant="body2" fw="semibold">
-            GitHub Username
+            Account ID
           </Typography>
           <TextField.Root
             error={inputError}
             className="p-2 rounded-lg bg-mono-0 dark:bg-mono-180 text-mono-140 dark:text-mono-40 border border-mono-80 dark:border-mono-120"
           >
-            <TextField.Slot>
-              <GithubFill size="md" />
-            </TextField.Slot>
-
             <TextField.Input
               className="font-light"
-              value={githubUsername}
+              value={offchainAccountId}
               onChange={(e) => {
-                setGithubUsername(e.target.value);
+                setOffchainAccountId(e.target.value);
                 setInputError('');
               }}
-              placeholder="Enter your GitHub username"
+              placeholder="Enter your account ID"
             />
           </TextField.Root>
         </div>
 
-        <ClaimCreditsButton
+        <CreditsButton
           credits={data?.amount}
-          githubUsername={githubUsername}
-          setGithubUsername={setGithubUsername}
+          offchainAccountId={offchainAccountId}
+          setOffchainAccountId={setOffchainAccountId}
           setInputError={setInputError}
           refetchCredits={refetch}
         />
@@ -120,28 +116,28 @@ const ClaimGitHubCreditsButton = () => {
   );
 };
 
-export default ClaimGitHubCreditsButton;
+export default ClaimCreditsButton;
 
-type ClaimCreditsButtonProps = {
+type CreditsButtonProps = {
   credits?: BN;
-  githubUsername: string;
-  setGithubUsername: (value: string) => void;
+  offchainAccountId: string;
+  setOffchainAccountId: (value: string) => void;
   setInputError: (value: string) => void;
   refetchCredits: () => Promise<any>;
 };
 
-const ClaimCreditsButton = ({
+const CreditsButton = ({
   credits,
-  githubUsername,
-  setGithubUsername,
+  offchainAccountId,
+  setOffchainAccountId,
   setInputError,
   refetchCredits,
-}: ClaimCreditsButtonProps) => {
-  const { execute, status } = useClaimGitHubCreditsTx();
+}: CreditsButtonProps) => {
+  const { execute, status } = useClaimCreditsTx();
 
   const handleClick = useCallback(async () => {
-    if (!githubUsername.trim()) {
-      setInputError('Please enter your GitHub username');
+    if (!offchainAccountId.trim()) {
+      setInputError('Please enter your offchain account ID');
       return;
     }
 
@@ -152,20 +148,20 @@ const ClaimCreditsButton = ({
     try {
       await execute({
         amountToClaim: credits,
-        githubUsername,
+        offchainAccountId,
       });
 
       await refetchCredits();
-      setGithubUsername('');
+      setOffchainAccountId('');
     } catch (error) {
-      console.error('Failed to claim GitHub credits:', error);
+      console.error('Failed to claim credits:', error);
     }
   }, [
     credits,
     execute,
-    githubUsername,
+    offchainAccountId,
     refetchCredits,
-    setGithubUsername,
+    setOffchainAccountId,
     setInputError,
   ]);
 
@@ -175,7 +171,7 @@ const ClaimCreditsButton = ({
   return (
     <Button
       isFullWidth
-      isDisabled={!hasCredits || isLoading || !githubUsername.trim()}
+      isDisabled={!hasCredits || isLoading || !offchainAccountId.trim()}
       onClick={handleClick}
       isLoading={isLoading}
     >

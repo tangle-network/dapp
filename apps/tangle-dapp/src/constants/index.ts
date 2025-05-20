@@ -76,7 +76,7 @@ export enum TxName {
   RESTAKE_EXECUTE_WITHDRAW = 'restake execute withdraw',
   RESTAKE_CANCEL_WITHDRAW = 'restake cancel withdraw',
   CLAIM_REWARDS = 'claim rewards',
-  CLAIM_GITHUB_CREDITS = 'claim github credits',
+  CLAIM_CREDITS = 'claim credits',
   DEMOCRACY_UNLOCK = 'unlock democracy',
   RESTAKE_NATIVE_DELEGATE = 'restake delegate nomination',
   RESTAKE_NATIVE_UNSTAKE = 'restake undelegate native',

@@ -22,7 +22,7 @@ import { PagePath, StaticSearchQueryPath } from '../../types';
 import formatTangleBalance from '../../utils/formatTangleBalance';
 import ActionItem from './ActionItem';
 import WithdrawEvmBalanceAction from './WithdrawEvmBalanceAction';
-import { ClaimGitHubCreditsModal } from '../../features/claimGitHubCredits';
+import { ClaimCreditsModal } from '../../features/claimCredits';
 
 const Actions: FC = () => {
   const { nativeTokenSymbol } = useNetworkStore();
@@ -30,8 +30,7 @@ const Actions: FC = () => {
   const activeAccountAddress = useActiveAccountAddress();
   const { transferable: transferableBalance } = useBalances();
   const [isTransferModalOpen, setIsTransferModalOpen] = useState(false);
-  const [isGitHubCreditsModalOpen, setIsGitHubCreditsModalOpen] =
-    useState(false);
+  const [isCreditsModalOpen, setIsCreditsModalOpen] = useState(false);
 
   const { isEligible: isAirdropEligible } = useAirdropEligibility();
 
@@ -145,9 +144,9 @@ const Actions: FC = () => {
         setIsModalOpen={setIsTransferModalOpen}
       />
 
-      <ClaimGitHubCreditsModal
-        isOpen={isGitHubCreditsModalOpen}
-        setIsOpen={setIsGitHubCreditsModalOpen}
+      <ClaimCreditsModal
+        isOpen={isCreditsModalOpen}
+        setIsOpen={setIsCreditsModalOpen}
       />
     </div>
   );

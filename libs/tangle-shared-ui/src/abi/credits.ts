@@ -5,17 +5,17 @@ const CREDITS_PRECOMPILE_ABI = [
     inputs: [
       {
         internalType: 'uint256',
-        name: 'amountToClaim',
+        name: 'amount_to_claim',
         type: 'uint256',
       },
       {
-        internalType: 'string',
-        name: 'offchainAccountId',
-        type: 'string',
+        internalType: 'bytes',
+        name: 'offchain_account_id',
+        type: 'bytes',
       },
     ],
-    name: 'claimCredits',
-    outputs: [],
+    name: 'claim_credits',
+    outputs: [{ internalType: 'bool', name: 'success', type: 'bool' }],
     stateMutability: 'nonpayable',
     type: 'function',
   },

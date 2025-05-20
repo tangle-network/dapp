@@ -3,7 +3,7 @@ import CardWithTangleLogo from '../CardWithTangleLogo';
 import AccountAddress from './AccountAddress';
 import Actions from './Actions';
 import Balance from './Balance';
-import { ClaimGitHubCreditsButton } from '../../features/claimGitHubCredits';
+import { ClaimCreditsButton } from '../../features/claimCredits';
 
 const AccountSummaryCard: FC<{ className?: string }> = ({ className }) => {
   return (
@@ -11,7 +11,7 @@ const AccountSummaryCard: FC<{ className?: string }> = ({ className }) => {
       <div className="w-full space-y-5">
         <header className="flex flex-row justify-between items-start">
           <AccountAddress />
-          <ClaimGitHubCreditsButton />
+          <ClaimCreditsButton />
         </header>
 
         <Balance />
