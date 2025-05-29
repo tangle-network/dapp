@@ -22,6 +22,7 @@ import { PagePath, StaticSearchQueryPath } from '../../types';
 import formatTangleBalance from '../../utils/formatTangleBalance';
 import ActionItem from './ActionItem';
 import WithdrawEvmBalanceAction from './WithdrawEvmBalanceAction';
+import { ClaimCreditsModal } from '../../features/claimCredits';
 
 const Actions: FC = () => {
   const { nativeTokenSymbol } = useNetworkStore();
@@ -29,6 +30,7 @@ const Actions: FC = () => {
   const activeAccountAddress = useActiveAccountAddress();
   const { transferable: transferableBalance } = useBalances();
   const [isTransferModalOpen, setIsTransferModalOpen] = useState(false);
+  const [isCreditsModalOpen, setIsCreditsModalOpen] = useState(false);
 
   const { isEligible: isAirdropEligible } = useAirdropEligibility();
 
@@ -140,6 +142,11 @@ const Actions: FC = () => {
       <TransferTxModal
         isModalOpen={isTransferModalOpen}
         setIsModalOpen={setIsTransferModalOpen}
+      />
+
+      <ClaimCreditsModal
+        isOpen={isCreditsModalOpen}
+        setIsOpen={setIsCreditsModalOpen}
       />
     </div>
   );
