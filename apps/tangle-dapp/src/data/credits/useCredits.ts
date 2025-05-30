@@ -75,7 +75,7 @@ const responseSchema = z.union([
   z.object({
     id: z.number(),
     jsonrpc: z.string(),
-    result: z.bigint(),
+    result: z.bigint().or(z.number()),
   }),
 ]);
 
@@ -149,7 +149,7 @@ export function getQueryOptions(
     queryKey: [ReactQueryKey.GetCredits, rpcEndpoint, activeSubstrateAddress],
     queryFn: () => fetcher(rpcEndpoint, activeSubstrateAddress),
     retry: 3,
-    refetchInterval: 30000, // Refetch every 30 seconds
+    refetchInterval: 6000, // Refetch every 6 seconds
     placeholderData: (prev) => prev,
   });
 }
