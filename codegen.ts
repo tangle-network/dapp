@@ -17,6 +17,7 @@ const config: CodegenConfig = {
       config: {
         defaultScalarType: 'unknown',
         documentMode: 'string',
+        enumsAsTypes: true,
         scalars: {
           BigFloat: 'string',
           Date: 'Date',
