@@ -13,9 +13,9 @@ export const createAccountExplorerUrl = (
   network: NetworkType,
 ) => {
   switch (network) {
-    case NetworkType.Mainnet:
+    case 'MAINNET':
       return TANGLE_MAINNET_NETWORK.createExplorerAccountUrl(address);
-    case NetworkType.Testnet:
+    case 'TESTNET':
       return TANGLE_TESTNET_NATIVE_NETWORK.createExplorerAccountUrl(address);
     default:
       console.error(`Unsupported network: ${network}`);

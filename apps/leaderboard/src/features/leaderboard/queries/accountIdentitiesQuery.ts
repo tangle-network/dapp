@@ -1,4 +1,3 @@
-import { NetworkType } from '@tangle-network/tangle-shared-ui/graphql/graphql';
 import {
   getMultipleAccountInfo,
   IdentityType,
@@ -9,13 +8,13 @@ import { getRpcEndpoint } from '../../../utils/getRpcEndpoint';
 import { Account } from '../types';
 
 const fetcher = async (accounts: Pick<Account, 'id' | 'network'>[]) => {
-  const { testnetRpc, mainnetRpc } = getRpcEndpoint('all');
+  const { testnetRpc, mainnetRpc } = getRpcEndpoint('ALL');
 
   const testnetAccounts: string[] = [];
   const mainnetAccounts: string[] = [];
 
   accounts.forEach((account) => {
-    if (account.network === NetworkType.Testnet) {
+    if (account.network === 'TESTNET') {
       testnetAccounts.push(account.id);
     } else {
       mainnetAccounts.push(account.id);

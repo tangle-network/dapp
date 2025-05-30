@@ -1,4 +1,3 @@
-import { NetworkType } from '@tangle-network/tangle-shared-ui/graphql/graphql';
 import { getApiPromise } from '@tangle-network/tangle-shared-ui/utils/polkadot/api';
 import { useQuery } from '@tanstack/react-query';
 import { LATEST_FINALIZED_BLOCK_QUERY_KEY } from '../constants/query';
@@ -11,12 +10,12 @@ type UseLatestFinalizedBlockResult<TNetwork extends Network> =
         mainnetBlock: number;
         testnetBlock: number;
       }
-    : TNetwork extends NetworkType.Testnet
+    : TNetwork extends 'TESTNET'
       ? {
           mainnetBlock: never;
           testnetBlock: number;
         }
-      : TNetwork extends NetworkType.Mainnet
+      : TNetwork extends 'MAINNET'
         ? {
             mainnetBlock: number;
             testnetBlock: never;
