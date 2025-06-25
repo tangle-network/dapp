@@ -104,7 +104,11 @@ const WalletDropdown: FC<{
             {wallet.Logo}
 
             <div>
-              <Typography variant="h5" fw="bold" className="capitalize">
+              <Typography
+                variant="h5"
+                fw="bold"
+                className="capitalize truncate max-w-[200px]"
+              >
                 {accountName ?? wallet.name}
               </Typography>
 
