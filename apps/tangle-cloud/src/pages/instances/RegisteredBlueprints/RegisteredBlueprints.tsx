@@ -9,8 +9,6 @@ import {
   Avatar,
   Button,
   EMPTY_VALUE_PLACEHOLDER,
-  EnergyChipColors,
-  EnergyChipStack,
   Typography,
 } from '@tangle-network/ui-components';
 import pluralize from '@tangle-network/ui-components/utils/pluralize';
@@ -87,37 +85,7 @@ export const RegisteredBlueprints: FC = () => {
           );
         },
       }),
-      columnHelper.accessor('blueprint.uptime', {
-        header: () => 'Uptime',
-        cell: (props) => {
-          const DEFAULT_STACK = 10;
-          const DEFAULT_PERCENTAGE = 100;
 
-          const numberOfActiveChips = !props.row.original.blueprint.uptime
-            ? 0
-            : Math.round(
-                (props.row.original.blueprint.uptime * DEFAULT_STACK) /
-                  DEFAULT_PERCENTAGE,
-              );
-
-          const activeColors = Array.from({ length: numberOfActiveChips }).fill(
-            EnergyChipColors.GREEN,
-          );
-          const inactiveColors = Array.from({
-            length: DEFAULT_STACK - numberOfActiveChips,
-          }).fill(EnergyChipColors.GREY);
-          const colors = [...activeColors, ...inactiveColors];
-
-          return (
-            <TableCellWrapper className="p-0 min-h-fit">
-              <EnergyChipStack
-                colors={colors as EnergyChipColors[]}
-                label={`${props.row.original.blueprint.uptime || EMPTY_VALUE_PLACEHOLDER}%`}
-              />
-            </TableCellWrapper>
-          );
-        },
-      }),
       columnHelper.accessor('blueprint.instanceCount', {
         header: () => 'Instances',
         cell: (props) => {
