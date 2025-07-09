@@ -7,8 +7,10 @@ import { TangleError, TangleErrorCode } from '../../types/error';
 import { MonitoringBlueprint, ServiceInstance } from './utils/type';
 import { createMonitoringBlueprint } from './utils/blueprintHelpers';
 import { Option } from '@polkadot/types';
+import { extractOperatorData } from './utils/blueprintHelpers';
 import { TanglePrimitivesServicesService } from '@polkadot/types/lookup';
 import useOperatorTVL from '../restake/useOperatorTvl';
+import { TanglePrimitivesServicesTypesOperatorPreferences } from '@polkadot/types/lookup';
 import { SubstrateAddress } from '@tangle-network/ui-components/types/address';
 
 export default function useRegisteredBlueprints(
@@ -104,15 +106,18 @@ export default function useRegisteredBlueprints(
             ),
           );
 
+        const operatorEntries$ = apiRx.query.services.operators.entries<Option<TanglePrimitivesServicesTypesOperatorPreferences>>();
+
         const runningInstanceEntries$ =
           apiRx.query.services.instances.entries();
 
         return combineLatest([
           blueprints$,
           operatorInstances$,
+          operatorEntries$,
           runningInstanceEntries$,
         ]).pipe(
-          map(([blueprints, operatorInstances, runningInstanceEntries]) => {
+          map(([blueprints, operatorInstances, operatorEntries, runningInstanceEntries]) => {
             // mapping from blueprint id to service instance
             const runningInstancesMap = new Map<bigint, ServiceInstance[]>();
 
@@ -135,7 +140,7 @@ export default function useRegisteredBlueprints(
               ]);
             }
 
-            return blueprints.map((blueprint) =>
+            const monitoringBlueprints = blueprints.map((blueprint) =>
               createMonitoringBlueprint(
                 blueprint.blueprintId,
                 blueprint.blueprint,
@@ -146,6 +151,25 @@ export default function useRegisteredBlueprints(
                 runningInstancesMap,
               ),
             );
+
+            // Calculate operators count from preferences entries.
+            const { blueprintOperatorMap } = extractOperatorData(
+              operatorEntries,
+              new Map(),
+              operatorTvlByAsset,
+              runningInstancesMap,
+            );
+
+            return monitoringBlueprints.map((bp) => {
+              const count = blueprintOperatorMap.get(bp.blueprintId)?.size ?? 0;
+              return {
+                ...bp,
+                blueprint: {
+                  ...bp.blueprint,
+                  operatorsCount: count,
+                },
+              } as typeof bp;
+            });
           }),
           catchError((error) => {
             console.error(
