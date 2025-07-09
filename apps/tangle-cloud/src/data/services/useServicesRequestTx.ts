@@ -46,6 +46,14 @@ export type Context = {
 const useServicesRegisterTx = () => {
   const substrateTxFactory: SubstrateTxFactory<Context> = useCallback(
     async (api, activeSubstrateAddress, context) => {
+      // Ensure EVM addresses are converted to their corresponding SS58 representation
+      const formatAccount = (addr: SubstrateAddress | EvmAddress): SubstrateAddress => {
+        return isEvmAddress(addr) ? toSubstrateAddress(addr) : addr;
+      };
+
+      const formattedPermittedCallers = context.permittedCallers.map(formatAccount);
+      const formattedOperators = context.operators.map(formatAccount);
+
       const membershipModel = createMembershipModelEnum({
         type: context.membershipModel,
         minOperators: context.minOperator,
@@ -67,8 +75,8 @@ const useServicesRegisterTx = () => {
           ? toEvmAddress(activeSubstrateAddress)
           : null,
         context.blueprintId,
-        context.permittedCallers,
-        context.operators,
+        formattedPermittedCallers,
+        formattedOperators,
         context.requestArgs,
         assetSecurityRequirements,
         context.ttl,
