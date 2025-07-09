@@ -69,13 +69,13 @@ export const Pagination = forwardRef<HTMLDivElement, PaginationProps>(
       >
         {/** Left label */}
         {labelOverride === undefined ? (
-          <p className="body1 text-mono-160 dark:text-mono-100">
+          <p className="body1 text-mono-120 dark:text-mono-100">
             {totalItems === 0
               ? 'No items'
               : `Showing ${showingItemsCount} ${titleSection}out of ${totalItems ?? '—'}`}
           </p>
         ) : (
-          <p className="body1 text-mono-160 dark:text-mono-100">
+          <p className="body1 text-mono-100">
             {labelOverride}
           </p>
         )}

@@ -386,7 +386,7 @@ export const SelectOperatorsStep: FC<SelectOperatorsStepProps> = ({
       )}
 
       <div className="mt-5 flex gap-4">
-        <div className="w-1/2">
+        <div className="space-y-2 w-1/2">
           <Label className={LabelClassName}>Approval Model:</Label>
           <Select value={approvalModel} onValueChange={onChangeApprovalModel}>
             <SelectTrigger>
@@ -409,7 +409,7 @@ export const SelectOperatorsStep: FC<SelectOperatorsStepProps> = ({
         </div>
 
         {approvalModel === 'Dynamic' && (
-          <div className="w-1/2">
+          <div className="space-y-2 w-1/2">
             <Label className={LabelClassName}>Approval Threshold:</Label>
             <Input
               value={minApproval?.toString()}
