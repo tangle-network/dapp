@@ -58,7 +58,7 @@ export const PaymentStep: FC<PaymentStepProps> = ({
               }
             }}
           >
-            <SelectTrigger className="w-full">
+            <SelectTrigger className="w-full h-10">
               <SelectValue placeholder={'Select payment asset'} />
             </SelectTrigger>
 
@@ -101,7 +101,7 @@ export const PaymentStep: FC<PaymentStepProps> = ({
             value={watch('paymentAmount')?.toString() ?? ''}
             onChange={onChangePaymentAmount}
             type="text"
-            className="w-full"
+            inputClassName="h-10" className="w-full"
           />
           {errors?.paymentAmount?.message && (
             <ErrorMessage className="mt-1">

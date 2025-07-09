@@ -269,7 +269,7 @@ export const SelectOperatorsStep: FC<SelectOperatorsStepProps> = ({
       <div className="flex justify-between mb-3">
         <div className="w-1/4">
           <Select>
-            <SelectTrigger>
+            <SelectTrigger className="h-10">
               <SelectValue
                 placeholder={
                   selectedAssets?.length > 0 ? (
@@ -347,7 +347,7 @@ export const SelectOperatorsStep: FC<SelectOperatorsStepProps> = ({
             size="md"
             value={searchQuery}
             onChange={setSearchQuery}
-            inputClassName="py-1"
+            inputClassName="h-10"
           />
         </div>
       </div>
@@ -389,7 +389,7 @@ export const SelectOperatorsStep: FC<SelectOperatorsStepProps> = ({
         <div className="space-y-2 w-1/2">
           <Label className={LabelClassName}>Approval Model:</Label>
           <Select value={approvalModel} onValueChange={onChangeApprovalModel}>
-            <SelectTrigger>
+            <SelectTrigger className="h-10">
               <SelectValue
                 className="text-[16px] leading-[30px]"
                 placeholder="Select an approval model"
@@ -413,6 +413,7 @@ export const SelectOperatorsStep: FC<SelectOperatorsStepProps> = ({
             <Label className={LabelClassName}>Approval Threshold:</Label>
             <Input
               value={minApproval?.toString()}
+              inputClassName="h-10"
               onChange={(nextValue) => onChangeMinApproval(Number(nextValue))}
               isControlled
               type="number"

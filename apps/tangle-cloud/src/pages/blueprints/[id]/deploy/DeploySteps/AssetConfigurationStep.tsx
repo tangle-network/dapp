@@ -126,7 +126,7 @@ export const AssetConfigurationStep: FC<AssetConfigurationStepProps> = ({
               setSelectedAsset(''); // reset to placeholder
             }}
           >
-            <SelectTrigger className="w-64">
+            <SelectTrigger className="w-64 h-10">
               <SelectValue placeholder="Select asset" />
             </SelectTrigger>
             <SelectContent>
