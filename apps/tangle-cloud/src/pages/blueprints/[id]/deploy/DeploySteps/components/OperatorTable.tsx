@@ -1,11 +1,9 @@
 import useNetworkStore from '@tangle-network/tangle-shared-ui/context/useNetworkStore';
 import {
   Avatar,
+  ExternalLinkIcon,
   CheckBox,
   EMPTY_VALUE_PLACEHOLDER,
-  EnergyChipColors,
-  EnergyChipStack,
-  ExternalLinkIcon,
   fuzzyFilter,
   KeyValueWithButton,
   Table,
@@ -106,35 +104,6 @@ export const OperatorTable: FC<Props> = ({ tableData, ...tableProps }) => {
             <Typography variant="body1">
               {props.row.original.restakersCount}
             </Typography>
-          </TableCellWrapper>
-        );
-      },
-    }),
-    COLUMN_HELPER.accessor('uptime', {
-      header: () => 'Uptime',
-      cell: (props) => {
-        const DEFAULT_STACK = 10;
-        const DEFAULT_PERCENTAGE = 100;
-        const numberOfActiveChips = !props.row.original.uptime
-          ? 0
-          : Math.round(
-              (props.row.original.uptime * DEFAULT_STACK) / DEFAULT_PERCENTAGE,
-            );
-
-        const activeColors = Array<EnergyChipColors>(numberOfActiveChips).fill(
-          EnergyChipColors.GREEN,
-        );
-        const inactiveColors = Array<EnergyChipColors>(
-          DEFAULT_STACK - numberOfActiveChips,
-        ).fill(EnergyChipColors.GREY);
-        const colors = [...activeColors, ...inactiveColors];
-
-        return (
-          <TableCellWrapper className="pl-3 min-h-fit">
-            <EnergyChipStack
-              colors={colors}
-              label={`${props.row.original.uptime || EMPTY_VALUE_PLACEHOLDER}%`}
-            />
           </TableCellWrapper>
         );
       },
