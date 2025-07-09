@@ -37,6 +37,7 @@ export type OperatorSelectionTable = {
   address: SubstrateAddress;
   identityName?: string;
   vaultTokensInUsd?: number;
+  selfBondedAmount: bigint;
   instanceCount?: number;
   uptime?: number;
   restakersCount?: number;

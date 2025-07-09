@@ -6,6 +6,8 @@ import {
   EMPTY_VALUE_PLACEHOLDER,
   fuzzyFilter,
   KeyValueWithButton,
+  formatDisplayAmount,
+  AmountFormatStyle,
   Table,
   Typography,
 } from '@tangle-network/ui-components';
@@ -24,6 +26,8 @@ import { sortByAddressOrIdentity } from '@tangle-network/tangle-shared-ui/compon
 import TableCellWrapper from '@tangle-network/tangle-shared-ui/components/tables/TableCellWrapper';
 import VaultsDropdown from '@tangle-network/tangle-shared-ui/components/tables/Operators/VaultsDropdown';
 import { TableVariant } from '@tangle-network/ui-components/components/Table/types';
+import { BN } from 'bn.js';
+import { TANGLE_TOKEN_DECIMALS } from '@tangle-network/dapp-config';
 
 const COLUMN_HELPER = createColumnHelper<OperatorSelectionTable>();
 
@@ -81,6 +85,29 @@ export const OperatorTable: FC<Props> = ({ tableData, ...tableProps }) => {
             </div>
           </TableCellWrapper>
         );
+      },
+    }),
+    COLUMN_HELPER.accessor('selfBondedAmount', {
+      header: () => 'Self-Bonded',
+      cell: (props) => {
+        const value = props.row.original.selfBondedAmount;
+        return (
+          <TableCellWrapper className="pl-3 min-h-fit">
+            <Typography variant="body1">
+              {formatDisplayAmount(
+                new BN(value.toString()),
+                TANGLE_TOKEN_DECIMALS,
+                AmountFormatStyle.SHORT,
+              )}{' '}
+              TNT
+            </Typography>
+          </TableCellWrapper>
+        );
+      },
+      sortingFn: (rowA, rowB) => {
+        const a = rowA.original.selfBondedAmount ?? BigInt(0);
+        const b = rowB.original.selfBondedAmount ?? BigInt(0);
+        return Number(a - b);
       },
     }),
     COLUMN_HELPER.accessor('instanceCount', {

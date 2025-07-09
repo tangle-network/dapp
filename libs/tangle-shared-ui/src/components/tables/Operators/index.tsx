@@ -105,6 +105,20 @@ const getStaticColumns = (
       );
     },
   }),
+  COLUMN_HELPER.accessor('instanceCount', {
+    header: () => 'Instances',
+    cell: (props) => (
+      <TableCellWrapper>
+        <Typography
+          variant="body1"
+          fw="bold"
+          className="text-mono-200 dark:text-mono-0"
+        >
+          {props.getValue() ?? 0}
+        </Typography>
+      </TableCellWrapper>
+    ),
+  }),
   COLUMN_HELPER.accessor('restakersCount', {
     header: () => 'Restakers',
     cell: (props) => (
@@ -179,7 +193,7 @@ const getStaticColumns = (
     ),
   }), */
   COLUMN_HELPER.accessor('vaultTokens', {
-    header: () => 'Assets',
+    header: () => 'Delegated Assets',
     cell: (props) => {
       const tokensList = props.getValue();
 

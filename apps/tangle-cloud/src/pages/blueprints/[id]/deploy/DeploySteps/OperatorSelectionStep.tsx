@@ -94,7 +94,7 @@ export const SelectOperatorsStep: FC<SelectOperatorsStepProps> = ({
     ).filter(([address]) => registeredOperators.has(address));
 
     return filteredRestakeOperators.map(
-      ([addressString, { delegations, restakersCount }]) => {
+      ([addressString, { delegations, restakersCount, stake }]) => {
         const address = assertSubstrateAddress(addressString);
         const operatorPreferences = registeredOperators.get(address);
 
@@ -133,6 +133,7 @@ export const SelectOperatorsStep: FC<SelectOperatorsStepProps> = ({
             },
             0,
           ),
+          selfBondedAmount: stake,
           vaultTokens:
             assets === null
               ? []
