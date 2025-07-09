@@ -111,7 +111,6 @@ export const AssetConfigurationStep: FC<AssetConfigurationStepProps> = ({
       {errors?.securityCommitments?.message && (
         <ErrorMessage>{errors?.securityCommitments?.message}</ErrorMessage>
       )}
-      <hr className="border-mono-80 dark:border-mono-160 mb-6" />
 
       {/* asset selector */}
       <div>

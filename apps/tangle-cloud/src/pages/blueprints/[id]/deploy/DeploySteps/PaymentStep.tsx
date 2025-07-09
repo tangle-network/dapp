@@ -41,7 +41,6 @@ export const PaymentStep: FC<PaymentStepProps> = ({
       <Typography variant="h5" className="text-mono-200 dark:text-mono-0 mb-4">
         Payment
       </Typography>
-      <hr className="border-mono-80 dark:border-mono-160 mb-6" />
 
       <div className="flex gap-6 w-full">
         <div className="space-y-2 flex-1">

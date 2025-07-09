@@ -265,7 +265,6 @@ export const SelectOperatorsStep: FC<SelectOperatorsStepProps> = ({
       <Typography variant="h5" className="text-mono-200 dark:text-mono-0 mb-4">
         Select Operators
       </Typography>
-      <hr className="border-mono-80 dark:border-mono-160 mb-6" />
 
       <div className="flex justify-between mb-3">
         <div className="w-1/4">
