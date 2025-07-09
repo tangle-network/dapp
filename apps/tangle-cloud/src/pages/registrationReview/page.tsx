@@ -92,13 +92,26 @@ export default function RegistrationReview() {
       return;
     }
 
-    const preferences = blueprints.map(() => {
-      return {
-        key: toTanglePrimitiveEcdsaKey(activeAccount),
-        // Include RPC URL in preferences if provided
-        ...(rpcUrl ? { rpcUrl } : {}),
-      };
-    }) as any;
+                    const key = toTanglePrimitiveEcdsaKey(activeAccount);
+
+    if (!key) {
+      // TODO: Handle error case where key could not be generated.
+      return;
+    }
+
+    const preferences = blueprints.map(() => ({
+      key,
+      // Include RPC URL in preferences if provided
+      ...(rpcUrl ? { rpcUrl } : {}),
+      // TODO: Add UI for setting price targets
+      priceTargets: {
+        cpu: 0,
+        mem: 0,
+        storageHdd: 0,
+        storageSsd: 0,
+        storageNvme: 0,
+      },
+    }));
 
     registerTx({
       blueprintIds: blueprints.map((blueprint) => blueprint.id.toString()),

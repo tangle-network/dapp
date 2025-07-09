@@ -49,11 +49,12 @@ const ConfigureBlueprintModal: FC<Props> = ({
   const handleSubmit = useCallback(
     (values: BlueprintFormSchema) => {
       handleClose();
-      onSubmit({
-        values,
+            onSubmit({
+        ...values,
+        blueprints,
       });
     },
-    [handleClose, onSubmit],
+    [handleClose, onSubmit, blueprints],
   );
 
   return (

@@ -164,8 +164,7 @@ export const RegisteredBlueprints: FC = () => {
                   ':id',
                   props.row.original.blueprintId.toString(),
                 )}
-                target="_blank"
-                rel="noopener noreferrer"
+
                 onClick={(event) => {
                   event.stopPropagation();
                 }}

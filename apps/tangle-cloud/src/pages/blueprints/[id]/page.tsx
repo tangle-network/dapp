@@ -67,7 +67,7 @@ const Page = () => {
     sessionStorage.setItem(
       SessionStorageKey.BLUEPRINT_REGISTRATION_PARAMS,
       JSON.stringify({
-        rpcUrl: formResult.values.rpcUrl,
+                rpcUrl: formResult.rpcUrl,
         selectedBlueprints: [
           {
             ...result.details,
