@@ -1,5 +1,6 @@
 import { ZERO_BIG_INT } from '@tangle-network/dapp-config/constants';
 import type { IdentityType } from '@tangle-network/tangle-shared-ui/utils/polkadot/identity';
+import { NetworkType } from '@tangle-network/tangle-shared-ui/graphql/graphql';
 import { toBigInt } from '@tangle-network/ui-components';
 import find from 'lodash/find';
 import findLast from 'lodash/findLast';
@@ -251,6 +252,6 @@ export const processLeaderboardRecord = (
     lastUpdatedAtTimestamp: record.lastUpdatedAtTimestamp,
     identity,
     // TODO: This should fetch from the API once the server supports multi-chain
-    network: 'TESTNET',
+    network: 'TESTNET' as NetworkType,
   } satisfies Account;
 };

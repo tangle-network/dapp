@@ -1,5 +1,5 @@
 import type { Option, StorageKey, u32, Vec } from '@polkadot/types';
-import type { TanglePrimitivesServicesTypesAsset } from '@polkadot/types/lookup';
+import type { TanglePrimitivesServicesTypesAssetU128 } from '@polkadot/types/lookup';
 import { useMemorizedValue } from '@tangle-network/ui-components/hooks/useMemorizedValue';
 import { useCallback } from 'react';
 import { map } from 'rxjs';
@@ -10,7 +10,7 @@ import createRestakeAssetId from '../../utils/createRestakeAssetId';
 const toPrimitiveRewardVault = (
   entries: [
     StorageKey<[u32]> | number,
-    Option<Vec<TanglePrimitivesServicesTypesAsset>>,
+    Option<Vec<TanglePrimitivesServicesTypesAssetU128>>,
   ][],
 ): Map<number, Set<RestakeAssetId>> => {
   return entries.reduce((vaultAssetMap, [vaultId, assets]) => {
