@@ -10,6 +10,7 @@ import {
   AmountFormatStyle,
   Table,
   Typography,
+  toSubstrateAddress,
 } from '@tangle-network/ui-components';
 import { FC } from 'react';
 import { OperatorSelectionTable } from '../type';
@@ -46,9 +47,11 @@ export const OperatorTable: FC<Props> = ({ tableData, ...tableProps }) => {
       header: () => 'Identity',
       sortingFn: sortByAddressOrIdentity<OperatorSelectionTable>(),
       cell: (props) => {
-        const { address, identityName: identity } = props.row.original;
+        const { address: rawAddress, identityName: identity } = props.row.original;
 
-        const accountUrl = activeNetwork.createExplorerAccountUrl(address);
+        const substrateAddress = toSubstrateAddress(rawAddress, activeNetwork.ss58Prefix);
+
+        const accountUrl = activeNetwork.createExplorerAccountUrl(substrateAddress);
 
         return (
           <TableCellWrapper className="pl-3 min-h-fit">
@@ -64,14 +67,14 @@ export const OperatorTable: FC<Props> = ({ tableData, ...tableProps }) => {
 
               <Avatar
                 sourceVariant="address"
-                value={address}
+                value={substrateAddress}
                 theme="substrate"
                 size="md"
               />
 
               <div className="flex items-center">
                 <KeyValueWithButton
-                  keyValue={identity ? identity : address}
+                  keyValue={identity ? identity : substrateAddress}
                   size="sm"
                 />
                 {accountUrl && (

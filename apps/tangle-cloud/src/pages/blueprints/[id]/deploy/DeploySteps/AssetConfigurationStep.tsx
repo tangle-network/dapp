@@ -22,6 +22,7 @@ export const AssetConfigurationStep: FC<AssetConfigurationStepProps> = ({
   setValue,
   watch,
   setError,
+  clearErrors,
   minimumNativeSecurityRequirement,
 }) => {
   const assets = watch('assets');
@@ -43,22 +44,42 @@ export const AssetConfigurationStep: FC<AssetConfigurationStepProps> = ({
   ) => {
     const minExposurePercent = Number(value[0]);
     const maxExposurePercent = Number(value[1]);
+
+    // always clear previous errors before re-validating
+    clearErrors(`securityCommitments.${index}.minExposurePercent`);
+    clearErrors(`securityCommitments.${index}.maxExposurePercent`);
+    clearErrors('securityCommitments');
+
     setValue(
       `securityCommitments.${index}.minExposurePercent`,
       minExposurePercent,
+      { shouldValidate: false },
     );
     setValue(
       `securityCommitments.${index}.maxExposurePercent`,
       maxExposurePercent,
+      { shouldValidate: false },
     );
+
+    let errorMsg: string | null = null;
 
     if (
       assetId === NATIVE_ASSET_ID &&
       minExposurePercent < minimumNativeSecurityRequirement
     ) {
+      errorMsg = `Minimum exposure percent must be greater than or equal to ${minimumNativeSecurityRequirement}`;
+    } else if (minExposurePercent > maxExposurePercent) {
+      errorMsg = 'Minimum exposure percent cannot exceed maximum';
+    }
+
+    if (errorMsg) {
       setError(`securityCommitments.${index}.minExposurePercent`, {
-        message: `Minimum exposure percent must be greater than or equal to ${minimumNativeSecurityRequirement}`,
+        message: errorMsg,
       });
+    } else {
+      clearErrors(`securityCommitments.${index}.minExposurePercent`);
+      clearErrors(`securityCommitments.${index}`);
+      clearErrors('securityCommitments');
     }
   };
 

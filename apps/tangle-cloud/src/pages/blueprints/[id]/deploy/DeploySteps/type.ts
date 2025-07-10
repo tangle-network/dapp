@@ -2,6 +2,7 @@ import { DeployBlueprintSchema } from '../../../../../utils/validations/deployBl
 import {
   FieldErrors,
   UseFormSetError,
+  UseFormClearErrors,
   UseFormSetValue,
   UseFormWatch,
 } from 'react-hook-form';
@@ -17,6 +18,7 @@ export type BaseDeployStepProps = {
   watch: UseFormWatch<DeployBlueprintSchema>;
   blueprint?: Blueprint;
   setError: UseFormSetError<DeployBlueprintSchema>;
+  clearErrors: UseFormClearErrors<DeployBlueprintSchema>;
 };
 
 export type BasicInformationStepProps = BaseDeployStepProps;

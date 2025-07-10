@@ -21,6 +21,7 @@ import {
   shortenString,
   Table,
   Typography,
+  toSubstrateAddress,
 } from '@tangle-network/ui-components';
 import { TableVariant } from '@tangle-network/ui-components/components/Table/types';
 import pluralize from '@tangle-network/ui-components/utils/pluralize';
@@ -40,16 +41,19 @@ const COLUMN_HELPER = createColumnHelper<RestakeOperator>();
 
 const getStaticColumns = (
   nativeTokenSymbol: string,
+  ss58Prefix: number,
 ): ColumnDef<RestakeOperator, any>[] => [
   COLUMN_HELPER.accessor('address', {
     header: () => 'Identity',
     sortingFn: sortByAddressOrIdentity<RestakeOperator>(),
     cell: (props) => {
       const {
-        address,
+        address: rawAddress,
         identityName: identity,
         isDelegated,
       } = props.row.original;
+
+      const address = toSubstrateAddress(rawAddress, ss58Prefix);
 
       return (
         <TableCellWrapper className="pl-3">
@@ -241,9 +245,11 @@ const OperatorsTable: FC<Props> = ({
     (store) => store.network.tokenSymbol,
   );
 
+  const ss58Prefix = useNetworkStore((store) => store.network.ss58Prefix);
+
   const columns = useMemo(
     () =>
-      getStaticColumns(nativeTokenSymbol).concat([
+      getStaticColumns(nativeTokenSymbol, ss58Prefix).concat([
         COLUMN_HELPER.display({
           id: 'actions',
           header: () => null,
@@ -267,7 +273,7 @@ const OperatorsTable: FC<Props> = ({
           enableSorting: false,
         }) satisfies ColumnDef<RestakeOperator>,
       ]),
-    [RestakeOperatorAction, nativeTokenSymbol],
+    [RestakeOperatorAction, nativeTokenSymbol, ss58Prefix],
   );
 
   const table = useReactTable({

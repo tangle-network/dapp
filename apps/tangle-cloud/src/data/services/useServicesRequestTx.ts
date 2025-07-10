@@ -21,8 +21,9 @@ import {
   toEvmAddress,
   toSubstrateAddress,
 } from '@tangle-network/ui-components';
-import createMembershipModelEnum from '@tangle-network/tangle-shared-ui/utils/createMembershipModelEnum';
+
 import { decodeAddress } from '@polkadot/util-crypto';
+import createMembershipModelEnum from '@tangle-network/tangle-shared-ui/utils/createMembershipModelEnum';
 import { ApiPromise } from '@polkadot/api';
 
 export type Context = {
@@ -45,7 +46,7 @@ export type Context = {
 
 const useServicesRegisterTx = () => {
   const substrateTxFactory: SubstrateTxFactory<Context> = useCallback(
-    async (api, activeSubstrateAddress, context) => {
+    async (api, _activeSubstrateAddress, context) => {
       // Ensure EVM addresses are converted to their corresponding SS58 representation
       const formatAccount = (addr: SubstrateAddress | EvmAddress): SubstrateAddress => {
         return isEvmAddress(addr) ? toSubstrateAddress(addr) : addr;
@@ -54,13 +55,13 @@ const useServicesRegisterTx = () => {
       const formattedPermittedCallers = context.permittedCallers.map(formatAccount);
       const formattedOperators = context.operators.map(formatAccount);
 
+      const paymentAsset = createAssetIdEnum(context.paymentAsset);
+
       const membershipModel = createMembershipModelEnum({
         type: context.membershipModel,
         minOperators: context.minOperator,
         maxOperators: context.maxOperator,
       });
-
-      const paymentAsset = createAssetIdEnum(context.paymentAsset);
 
       const assetSecurityRequirements = context.assets.map((asset, index) => ({
         asset: createAssetIdEnum(asset),
@@ -70,10 +71,21 @@ const useServicesRegisterTx = () => {
           context.securityRequirements[index].maxExposurePercent,
       }));
 
-      return api.tx.services.request(
-        isEvmAddress(context.paymentAsset)
-          ? toEvmAddress(activeSubstrateAddress)
-          : null,
+      // Debug log to inspect arguments being sent to services.request
+      console.log('services.request substrate args', {
+        blueprintId: context.blueprintId.toString(),
+        permittedCallers: formattedPermittedCallers,
+        operators: formattedOperators,
+        requestArgs: context.requestArgs,
+        assetSecurityRequirements,
+        ttl: context.ttl.toString(),
+        paymentAsset,
+        paymentValue: context.paymentValue.toString(),
+        membershipModel,
+      });
+
+      return (api.tx.services.request as any)(
+        null, // evm_origin (None)
         context.blueprintId,
         formattedPermittedCallers,
         formattedOperators,
@@ -82,7 +94,7 @@ const useServicesRegisterTx = () => {
         context.ttl,
         paymentAsset,
         context.paymentValue,
-        membershipModel,
+        membershipModel
       );
     },
     [],

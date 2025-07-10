@@ -15,6 +15,8 @@ import type { BlueprintFormResult } from '../ConfigureBlueprintModal/types';
 
 import { SessionStorageKey } from '../../../constants';
 import useOperatorInfo from '@tangle-network/tangle-shared-ui/hooks/useOperatorInfo';
+import useNetworkStore from '@tangle-network/tangle-shared-ui/context/useNetworkStore';
+import { toSubstrateAddress } from '@tangle-network/ui-components';
 import useParamWithSchema from '@tangle-network/tangle-shared-ui/hooks/useParamWithSchema';
 import { z } from 'zod';
 
@@ -37,13 +39,23 @@ const Page = () => {
   const id = useParamWithSchema('id', z.coerce.bigint());
   const { result, isLoading, error } = useBlueprintDetails(id);
   const { isOperator, operatorAddress } = useOperatorInfo();
+  const ss58Prefix = useNetworkStore((store) => store.network.ss58Prefix);
   const [isBlueprintModalOpen, setIsBlueprintModalOpen] = useState(false);
 
   const isRegistered = useMemo(() => {
-    return result?.operators.some(
-      (operator) => operator.address === operatorAddress,
-    );
-  }, [operatorAddress, result?.operators]);
+    if (operatorAddress === null || result?.operators === undefined) {
+      return false;
+    }
+
+    return result.operators.some((operator) => {
+      try {
+        const opAddr = toSubstrateAddress(operator.address, ss58Prefix);
+        return opAddr === operatorAddress;
+      } catch {
+        return false;
+      }
+    });
+  }, [operatorAddress, result?.operators, ss58Prefix]);
 
   if (isLoading) {
     return (
