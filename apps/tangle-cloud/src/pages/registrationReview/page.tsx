@@ -92,7 +92,7 @@ export default function RegistrationReview() {
       return;
     }
 
-                    const key = toTanglePrimitiveEcdsaKey(activeAccount);
+    const key = toTanglePrimitiveEcdsaKey(activeAccount);
 
     if (!key) {
       // TODO: Handle error case where key could not be generated.

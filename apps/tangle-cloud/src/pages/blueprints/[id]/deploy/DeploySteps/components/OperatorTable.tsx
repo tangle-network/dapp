@@ -47,11 +47,16 @@ export const OperatorTable: FC<Props> = ({ tableData, ...tableProps }) => {
       header: () => 'Identity',
       sortingFn: sortByAddressOrIdentity<OperatorSelectionTable>(),
       cell: (props) => {
-        const { address: rawAddress, identityName: identity } = props.row.original;
+        const { address: rawAddress, identityName: identity } =
+          props.row.original;
 
-        const substrateAddress = toSubstrateAddress(rawAddress, activeNetwork.ss58Prefix);
+        const substrateAddress = toSubstrateAddress(
+          rawAddress,
+          activeNetwork.ss58Prefix,
+        );
 
-        const accountUrl = activeNetwork.createExplorerAccountUrl(substrateAddress);
+        const accountUrl =
+          activeNetwork.createExplorerAccountUrl(substrateAddress);
 
         return (
           <TableCellWrapper className="pl-3 min-h-fit">

@@ -132,7 +132,6 @@ export const RegisteredBlueprints: FC = () => {
                   ':id',
                   props.row.original.blueprintId.toString(),
                 )}
-
                 onClick={(event) => {
                   event.stopPropagation();
                 }}

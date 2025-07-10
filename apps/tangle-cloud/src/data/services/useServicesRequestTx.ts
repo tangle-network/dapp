@@ -48,11 +48,14 @@ const useServicesRegisterTx = () => {
   const substrateTxFactory: SubstrateTxFactory<Context> = useCallback(
     async (api, _activeSubstrateAddress, context) => {
       // Ensure EVM addresses are converted to their corresponding SS58 representation
-      const formatAccount = (addr: SubstrateAddress | EvmAddress): SubstrateAddress => {
+      const formatAccount = (
+        addr: SubstrateAddress | EvmAddress,
+      ): SubstrateAddress => {
         return isEvmAddress(addr) ? toSubstrateAddress(addr) : addr;
       };
 
-      const formattedPermittedCallers = context.permittedCallers.map(formatAccount);
+      const formattedPermittedCallers =
+        context.permittedCallers.map(formatAccount);
       const formattedOperators = context.operators.map(formatAccount);
 
       const paymentAsset = createAssetIdEnum(context.paymentAsset);
@@ -94,7 +97,7 @@ const useServicesRegisterTx = () => {
         context.ttl,
         paymentAsset,
         context.paymentValue,
-        membershipModel
+        membershipModel,
       );
     },
     [],

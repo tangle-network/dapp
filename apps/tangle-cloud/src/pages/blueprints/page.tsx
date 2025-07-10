@@ -54,7 +54,7 @@ const Page: FC = () => {
 
   const selectedBlueprintCount = Object.keys(selectedBlueprints).length;
 
-    const handleBlueprintFormSubmit = useCallback(
+  const handleBlueprintFormSubmit = useCallback(
     (result: BlueprintFormResult) => {
       sessionStorage.setItem(
         SessionStorageKey.BLUEPRINT_REGISTRATION_PARAMS,

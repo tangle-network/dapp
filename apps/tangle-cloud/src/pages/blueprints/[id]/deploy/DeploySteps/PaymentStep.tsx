@@ -101,7 +101,8 @@ export const PaymentStep: FC<PaymentStepProps> = ({
             value={watch('paymentAmount')?.toString() ?? ''}
             onChange={onChangePaymentAmount}
             type="text"
-            inputClassName="h-10" className="w-full"
+            inputClassName="h-10"
+            className="w-full"
           />
           {errors?.paymentAmount?.message && (
             <ErrorMessage className="mt-1">

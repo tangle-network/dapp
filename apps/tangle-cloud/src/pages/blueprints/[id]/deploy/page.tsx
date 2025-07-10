@@ -65,7 +65,15 @@ const DeployPage: FC = () => {
       clearErrors,
       blueprint: blueprintResult?.details,
     }),
-    [blueprintResult?.details, control, errors, setError, setValue, watch, clearErrors],
+    [
+      blueprintResult?.details,
+      control,
+      errors,
+      setError,
+      setValue,
+      watch,
+      clearErrors,
+    ],
   );
 
   // Automatically navigate to the blueprint details page when the service

@@ -37,7 +37,7 @@ const toPrimitiveServiceMetadata = ({
   license,
 }: ServiceMetadata) => {
   return {
-                name: u8aToString(name),
+    name: u8aToString(name),
     description: optionalBytesToString(description),
     author: optionalBytesToString(author),
     category: optionalBytesToString(category),
@@ -98,5 +98,5 @@ const toPrimitiveFieldType = (
 };
 
 const optionalBytesToString = (bytes: Option<Bytes>) => {
-        return bytes.isSome ? u8aToString(bytes.unwrap()) : null;
+  return bytes.isSome ? u8aToString(bytes.unwrap()) : null;
 };

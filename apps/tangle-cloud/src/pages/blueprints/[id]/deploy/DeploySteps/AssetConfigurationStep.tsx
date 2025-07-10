@@ -90,21 +90,27 @@ export const AssetConfigurationStep: FC<AssetConfigurationStepProps> = ({
     const asset = allAssets.get(assetId);
     if (!asset) return;
 
-    const nextAssets = [...(assets ?? []), {
-      id: asset.id,
-      metadata: {
-        ...asset.metadata,
-        deposit: asset.metadata.deposit ?? '',
-        isFrozen: asset.metadata.isFrozen ?? false,
+    const nextAssets = [
+      ...(assets ?? []),
+      {
+        id: asset.id,
+        metadata: {
+          ...asset.metadata,
+          deposit: asset.metadata.deposit ?? '',
+          isFrozen: asset.metadata.isFrozen ?? false,
+        },
       },
-    }];
+    ];
     setValue('assets', nextAssets);
 
     // ensure corresponding security commitment
-    const nextSec = [...(securityCommitments ?? []), {
-      minExposurePercent: 1,
-      maxExposurePercent: 100,
-    }];
+    const nextSec = [
+      ...(securityCommitments ?? []),
+      {
+        minExposurePercent: 1,
+        maxExposurePercent: 100,
+      },
+    ];
     setValue('securityCommitments', nextSec);
   };
 
@@ -112,7 +118,8 @@ export const AssetConfigurationStep: FC<AssetConfigurationStepProps> = ({
     const nextAssets = assets?.filter((_, idx) => idx !== index) ?? [];
     setValue('assets', nextAssets);
 
-    const nextSec = securityCommitments?.filter((_, idx) => idx !== index) ?? [];
+    const nextSec =
+      securityCommitments?.filter((_, idx) => idx !== index) ?? [];
     setValue('securityCommitments', nextSec);
   };
 
@@ -157,8 +164,13 @@ export const AssetConfigurationStep: FC<AssetConfigurationStepProps> = ({
                   return (
                     <SelectItem value={id} id={id}>
                       <div className="flex items-center gap-2">
-                        <LsTokenIcon name={meta?.metadata.name ?? 'TNT'} size="md" />
-                        <Typography variant="body1">{meta?.metadata.name ?? 'TNT'}</Typography>
+                        <LsTokenIcon
+                          name={meta?.metadata.name ?? 'TNT'}
+                          size="md"
+                        />
+                        <Typography variant="body1">
+                          {meta?.metadata.name ?? 'TNT'}
+                        </Typography>
                       </div>
                     </SelectItem>
                   );
@@ -180,24 +192,23 @@ export const AssetConfigurationStep: FC<AssetConfigurationStepProps> = ({
             return (
               <div className="flex items-center">
                 <AssetRequirementFormItem
-                assetId={asset.id}
-                className="mb-8"
-                assetMetadata={asset}
-                minExposurePercent={minExposurePercentFormValue}
-                maxExposurePercent={maxExposurePercentFormValue}
-                onChangeExposurePercent={(value) =>
-                  onChangeExposurePercent(index, asset.id, value)
-                }
-
-                minExposurePercentErrorMsg={
-                  errors?.securityCommitments?.[index]?.minExposurePercent
-                    ?.message
-                }
-                maxExposurePercentErrorMsg={
-                  errors?.securityCommitments?.[index]?.maxExposurePercent
-                    ?.message
-                }
-              />
+                  assetId={asset.id}
+                  className="mb-8"
+                  assetMetadata={asset}
+                  minExposurePercent={minExposurePercentFormValue}
+                  maxExposurePercent={maxExposurePercentFormValue}
+                  onChangeExposurePercent={(value) =>
+                    onChangeExposurePercent(index, asset.id, value)
+                  }
+                  minExposurePercentErrorMsg={
+                    errors?.securityCommitments?.[index]?.minExposurePercent
+                      ?.message
+                  }
+                  maxExposurePercentErrorMsg={
+                    errors?.securityCommitments?.[index]?.maxExposurePercent
+                      ?.message
+                  }
+                />
                 <Button
                   variant="utility"
                   onClick={() => removeAsset(index)}

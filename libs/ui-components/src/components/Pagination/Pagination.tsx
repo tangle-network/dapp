@@ -75,9 +75,7 @@ export const Pagination = forwardRef<HTMLDivElement, PaginationProps>(
               : `Showing ${showingItemsCount} ${titleSection}out of ${totalItems ?? '—'}`}
           </p>
         ) : (
-          <p className="body1 text-mono-100">
-            {labelOverride}
-          </p>
+          <p className="body1 text-mono-100">{labelOverride}</p>
         )}
 
         {/** Right buttons */}

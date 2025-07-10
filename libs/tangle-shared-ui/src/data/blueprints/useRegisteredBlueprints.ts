@@ -106,7 +106,10 @@ export default function useRegisteredBlueprints(
             ),
           );
 
-        const operatorEntries$ = apiRx.query.services.operators.entries<Option<TanglePrimitivesServicesTypesOperatorPreferences>>();
+        const operatorEntries$ =
+          apiRx.query.services.operators.entries<
+            Option<TanglePrimitivesServicesTypesOperatorPreferences>
+          >();
 
         const runningInstanceEntries$ =
           apiRx.query.services.instances.entries();
@@ -117,60 +120,68 @@ export default function useRegisteredBlueprints(
           operatorEntries$,
           runningInstanceEntries$,
         ]).pipe(
-          map(([blueprints, operatorInstances, operatorEntries, runningInstanceEntries]) => {
-            // mapping from blueprint id to service instance
-            const runningInstancesMap = new Map<bigint, ServiceInstance[]>();
+          map(
+            ([
+              blueprints,
+              operatorInstances,
+              operatorEntries,
+              runningInstanceEntries,
+            ]) => {
+              // mapping from blueprint id to service instance
+              const runningInstancesMap = new Map<bigint, ServiceInstance[]>();
 
-            for (const [key, optServiceInstance] of runningInstanceEntries) {
-              const serviceInstanceId = key.args[0].toBigInt();
+              for (const [key, optServiceInstance] of runningInstanceEntries) {
+                const serviceInstanceId = key.args[0].toBigInt();
 
-              if (optServiceInstance.isNone) {
-                continue;
+                if (optServiceInstance.isNone) {
+                  continue;
+                }
+
+                const instanceData = toPrimitiveService(
+                  optServiceInstance.unwrap(),
+                );
+                runningInstancesMap.set(instanceData.blueprint, [
+                  ...(runningInstancesMap.get(instanceData.blueprint) ?? []),
+                  {
+                    instanceId: serviceInstanceId,
+                    serviceInstance: instanceData,
+                  },
+                ]);
               }
 
-              const instanceData = toPrimitiveService(
-                optServiceInstance.unwrap(),
+              const monitoringBlueprints = blueprints.map((blueprint) =>
+                createMonitoringBlueprint(
+                  blueprint.blueprintId,
+                  blueprint.blueprint,
+                  // registered blueprints do not have to care about services
+                  [],
+                  operatorInstances,
+                  operatorTvlByAsset,
+                  runningInstancesMap,
+                ),
               );
-              runningInstancesMap.set(instanceData.blueprint, [
-                ...(runningInstancesMap.get(instanceData.blueprint) ?? []),
-                {
-                  instanceId: serviceInstanceId,
-                  serviceInstance: instanceData,
-                },
-              ]);
-            }
 
-            const monitoringBlueprints = blueprints.map((blueprint) =>
-              createMonitoringBlueprint(
-                blueprint.blueprintId,
-                blueprint.blueprint,
-                // registered blueprints do not have to care about services
-                [],
-                operatorInstances,
+              // Calculate operators count from preferences entries.
+              const { blueprintOperatorMap } = extractOperatorData(
+                operatorEntries,
+                new Map(),
                 operatorTvlByAsset,
                 runningInstancesMap,
-              ),
-            );
+              );
 
-            // Calculate operators count from preferences entries.
-            const { blueprintOperatorMap } = extractOperatorData(
-              operatorEntries,
-              new Map(),
-              operatorTvlByAsset,
-              runningInstancesMap,
-            );
-
-            return monitoringBlueprints.map((bp) => {
-              const count = blueprintOperatorMap.get(bp.blueprintId)?.size ?? 0;
-              return {
-                ...bp,
-                blueprint: {
-                  ...bp.blueprint,
-                  operatorsCount: count,
-                },
-              } as typeof bp;
-            });
-          }),
+              return monitoringBlueprints.map((bp) => {
+                const count =
+                  blueprintOperatorMap.get(bp.blueprintId)?.size ?? 0;
+                return {
+                  ...bp,
+                  blueprint: {
+                    ...bp.blueprint,
+                    operatorsCount: count,
+                  },
+                } as typeof bp;
+              });
+            },
+          ),
           catchError((error) => {
             console.error(
               'Error querying services with blueprints by operator:',

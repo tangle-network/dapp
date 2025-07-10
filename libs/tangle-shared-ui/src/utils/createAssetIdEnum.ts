@@ -11,9 +11,7 @@ export type AssetIdEnum =
     };
 
 const createAssetIdEnum = (assetId: RestakeAssetId): AssetIdEnum => {
-  return isEvmAddress(assetId)
-    ? { Erc20: assetId }
-    : { Custom: assetId };
+  return isEvmAddress(assetId) ? { Erc20: assetId } : { Custom: assetId };
 };
 
 export default createAssetIdEnum;

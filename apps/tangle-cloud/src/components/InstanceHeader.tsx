@@ -20,14 +20,20 @@ const InstanceHeader: FC<Props> = ({ title, githubPath, creator }) => {
       )}
     >
       <div className="flex flex-col gap-2">
-        <Typography variant="h5" className="flex items-center gap-2 text-mono-200 dark:text-mono-0">
+        <Typography
+          variant="h5"
+          className="flex items-center gap-2 text-mono-200 dark:text-mono-0"
+        >
           {title}{' '}
           {githubPath && (
             <GithubFill size="lg" target="_blank" href={githubPath} />
           )}
         </Typography>
 
-        <Typography variant="body1" className="text-mono-140 dark:text-mono-100">
+        <Typography
+          variant="body1"
+          className="text-mono-140 dark:text-mono-100"
+        >
           {creator}
         </Typography>
       </div>
