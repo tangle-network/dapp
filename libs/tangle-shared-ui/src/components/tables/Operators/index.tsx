@@ -247,34 +247,36 @@ const OperatorsTable: FC<Props> = ({
 
   const ss58Prefix = useNetworkStore((store) => store.network.ss58Prefix);
 
-  const columns = useMemo(
-    () =>
-      getStaticColumns(nativeTokenSymbol, ss58Prefix).concat([
-        COLUMN_HELPER.display({
-          id: 'actions',
-          header: () => null,
-          cell: (props) => (
-            <TableCellWrapper removeRightBorder>
-              <div className="flex items-center justify-end flex-1 gap-2">
-                {RestakeOperatorAction ? (
-                  <RestakeOperatorAction address={props.row.original.address}>
-                    <Button variant="utility" className="uppercase body4">
-                      Delegate
-                    </Button>
-                  </RestakeOperatorAction>
-                ) : (
+  const columns = useMemo(() => {
+    if (ss58Prefix === undefined) {
+      return [];
+    }
+
+    return getStaticColumns(nativeTokenSymbol, ss58Prefix).concat([
+      COLUMN_HELPER.display({
+        id: 'actions',
+        header: () => null,
+        cell: (props) => (
+          <TableCellWrapper removeRightBorder>
+            <div className="flex items-center justify-end flex-1 gap-2">
+              {RestakeOperatorAction ? (
+                <RestakeOperatorAction address={props.row.original.address}>
                   <Button variant="utility" className="uppercase body4">
                     Delegate
                   </Button>
-                )}
-              </div>
-            </TableCellWrapper>
-          ),
-          enableSorting: false,
-        }) satisfies ColumnDef<RestakeOperator>,
-      ]),
-    [RestakeOperatorAction, nativeTokenSymbol, ss58Prefix],
-  );
+                </RestakeOperatorAction>
+              ) : (
+                <Button variant="utility" className="uppercase body4">
+                  Delegate
+                </Button>
+              )}
+            </div>
+          </TableCellWrapper>
+        ),
+        enableSorting: false,
+      }) satisfies ColumnDef<RestakeOperator>,
+    ]);
+  }, [RestakeOperatorAction, nativeTokenSymbol, ss58Prefix]);
 
   const table = useReactTable({
     data,
