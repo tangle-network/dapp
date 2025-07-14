@@ -39,19 +39,19 @@ export const RunningInstanceTable: FC = () => {
     error,
   } = useMonitoringBlueprints(operatorAddress);
 
-  const registeredBlueprints = useMemo(() => {
-    if (!registeredBlueprints_) {
-      return [];
-    }
-    return registeredBlueprints_;
-  }, [registeredBlueprints_]);
-
   const runningInstances = useMemo(() => {
-    if (!registeredBlueprints || registeredBlueprints.length === 0) {
+    const blueprints = registeredBlueprints_ as
+      | MonitoringBlueprint[]
+      | undefined;
+
+    if (!blueprints?.length) {
       return [];
     }
-    return registeredBlueprints.flatMap((blueprint) => blueprint.services);
-  }, [registeredBlueprints]);
+
+    return blueprints.flatMap(
+      (blueprint: MonitoringBlueprint) => blueprint.services,
+    );
+  }, [registeredBlueprints_]);
 
   const isEmpty = runningInstances.length === 0;
 

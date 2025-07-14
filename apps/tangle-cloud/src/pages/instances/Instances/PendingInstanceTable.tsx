@@ -13,9 +13,10 @@ import {
   DropdownBody,
   EMPTY_VALUE_PLACEHOLDER,
   Modal,
-  shortenString,
   Typography,
+  ValidatorIdentity,
 } from '@tangle-network/ui-components';
+import assertSubstrateAddress from '@tangle-network/ui-components/utils/assertSubstrateAddress';
 import pluralize from '@tangle-network/ui-components/utils/pluralize';
 import { TangleCloudTable } from '../../../components/tangleCloudTable/TangleCloudTable';
 import { ChevronDown } from '@tangle-network/icons';
@@ -147,24 +148,15 @@ export const PendingInstanceTable: FC = () => {
 
             return (
               <TableCellWrapper className="p-0 min-h-fit">
-                <div className="flex items-center gap-2">
-                  <Avatar
-                    sourceVariant="address"
-                    value={owner.toString()}
-                    theme="substrate"
-                    size="md"
-                  />
-                  <Button
-                    variant="link"
-                    className="uppercase body4"
-                    href={ownerUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    {deployerIdentityMap?.get(owner)?.name ??
-                      shortenString(owner)}
-                  </Button>
-                </div>
+                <ValidatorIdentity
+                  address={assertSubstrateAddress(owner)}
+                  identityName={deployerIdentityMap?.get(owner)?.name ?? null}
+                  accountExplorerUrl={ownerUrl ?? undefined}
+                  avatarSize="md"
+                  textVariant="body1"
+                  textWeight="bold"
+                  showAddressInTooltip
+                />
               </TableCellWrapper>
             );
           },
@@ -290,7 +282,7 @@ export const PendingInstanceTable: FC = () => {
     }
 
     return baseColumns;
-  }, [isOperator, network, operatorIdentityMap]);
+  }, [isOperator, network, operatorIdentityMap, deployerIdentityMap]);
 
   const table = useReactTable({
     data: pendingBlueprints,
