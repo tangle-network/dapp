@@ -25,6 +25,7 @@ import {
 import { decodeAddress } from '@polkadot/util-crypto';
 import createMembershipModelEnum from '@tangle-network/tangle-shared-ui/utils/createMembershipModelEnum';
 import { ApiPromise } from '@polkadot/api';
+import useNetworkStore from '@tangle-network/tangle-shared-ui/context/useNetworkStore';
 
 export type Context = {
   blueprintId: bigint;
@@ -45,13 +46,18 @@ export type Context = {
 };
 
 const useServicesRegisterTx = () => {
+  const { network } = useNetworkStore();
+
   const substrateTxFactory: SubstrateTxFactory<Context> = useCallback(
     async (api, _activeSubstrateAddress, context) => {
       // Ensure EVM addresses are converted to their corresponding SS58 representation
+      // with the correct Tangle network SS58 prefix for consistency
       const formatAccount = (
         addr: SubstrateAddress | EvmAddress,
       ): SubstrateAddress => {
-        return isEvmAddress(addr) ? toSubstrateAddress(addr) : addr;
+        return isEvmAddress(addr)
+          ? toSubstrateAddress(addr, network.ss58Prefix)
+          : toSubstrateAddress(addr, network.ss58Prefix);
       };
 
       const formattedPermittedCallers =
@@ -100,7 +106,7 @@ const useServicesRegisterTx = () => {
         membershipModel,
       );
     },
-    [],
+    [network.ss58Prefix],
   );
 
   const evmTxFactory: EvmTxFactory<
@@ -112,9 +118,9 @@ const useServicesRegisterTx = () => {
 
     const decodedPermittedCallers = context.permittedCallers.map((caller) => {
       if (isEvmAddress(caller)) {
-        return decodeAddress(toSubstrateAddress(caller));
+        return decodeAddress(toSubstrateAddress(caller, network.ss58Prefix));
       } else {
-        return decodeAddress(caller);
+        return decodeAddress(toSubstrateAddress(caller, network.ss58Prefix));
       }
     });
     const encodedPermittedCallers: Hash = api
@@ -136,9 +142,9 @@ const useServicesRegisterTx = () => {
 
     const decodedOperators = context.operators.map((operator) => {
       if (isEvmAddress(operator)) {
-        return decodeAddress(toSubstrateAddress(operator));
+        return decodeAddress(toSubstrateAddress(operator, network.ss58Prefix));
       } else {
-        return decodeAddress(operator);
+        return decodeAddress(toSubstrateAddress(operator, network.ss58Prefix));
       }
     });
     const encodedOperators = api
@@ -174,7 +180,7 @@ const useServicesRegisterTx = () => {
         context.maxOperator,
       ],
     };
-  }, []);
+  }, [network.ss58Prefix]);
 
   return useAgnosticTx({
     name: TxName.DEPLOY_BLUEPRINT,

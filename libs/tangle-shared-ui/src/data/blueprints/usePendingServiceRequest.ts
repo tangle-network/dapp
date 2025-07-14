@@ -6,10 +6,13 @@ import { TangleError, TangleErrorCode } from '../../types/error';
 import { createPendingServiceRequests } from './utils/blueprintHelpers';
 import { SubstrateAddress } from '@tangle-network/ui-components/types/address';
 import { toPrimitiveBlueprint } from './utils/toPrimitiveBlueprint';
+import { toSubstrateAddress } from '@tangle-network/ui-components/utils/toSubstrateAddress';
+import useNetworkStore from '../../context/useNetworkStore';
 
 const usePendingServiceRequest = (
   operatorAccountAddress: SubstrateAddress | null,
 ) => {
+  const { network } = useNetworkStore();
   const { result: serviceRequestEntries } = useApiRx(
     useCallback(
       (apiRx) => {
@@ -36,18 +39,38 @@ const usePendingServiceRequest = (
   const primitiveServiceRequests = useMemo(() => {
     if (!serviceRequestEntries) return [];
 
-    return serviceRequestEntries
-      .map(([requestId, serviceRequest]) =>
-        toPrimitiveServiceRequest(requestId, serviceRequest.unwrap()),
-      )
-      .filter((serviceRequest) =>
-        serviceRequest.operatorsWithApprovalState.some(
-          (operator) =>
-            operator.operator === operatorAccountAddress &&
-            operator.approvalStateStatus === 'Pending',
+    const allServiceRequests = serviceRequestEntries.map(
+      ([requestId, serviceRequest]) =>
+        toPrimitiveServiceRequest(
+          requestId as any,
+          (serviceRequest as any).unwrap(),
         ),
-      );
-  }, [serviceRequestEntries, operatorAccountAddress]);
+    );
+
+    const filtered = allServiceRequests.filter((serviceRequest) => {
+      const hasMatchingOperator =
+        serviceRequest.operatorsWithApprovalState.some((operator) => {
+          // Normalize both addresses to the same format for comparison
+          const normalizedChainOperator = toSubstrateAddress(
+            operator.operator,
+            network.ss58Prefix,
+          );
+          const normalizedCurrentOperator = operatorAccountAddress
+            ? toSubstrateAddress(operatorAccountAddress, network.ss58Prefix)
+            : null;
+
+          const addressMatch =
+            normalizedChainOperator === normalizedCurrentOperator;
+          const statusMatch = operator.approvalStateStatus === 'Pending';
+
+          return addressMatch && statusMatch;
+        });
+
+      return hasMatchingOperator;
+    });
+
+    return filtered;
+  }, [serviceRequestEntries, operatorAccountAddress, network.ss58Prefix]);
 
   const blueprintIds = useMemo(() => {
     return primitiveServiceRequests.map(
@@ -63,7 +86,7 @@ const usePendingServiceRequest = (
         return apiRx.query.services.blueprints.multi(blueprintIds).pipe(
           map((blueprints) =>
             blueprints
-              .map((blueprint) => blueprint.unwrap())
+              .map((blueprint) => (blueprint as any).unwrap())
               .map(([_, blueprint]) => toPrimitiveBlueprint(blueprint)),
           ),
           catchError((error) => {

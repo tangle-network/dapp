@@ -158,18 +158,21 @@ export const SelectOperatorsStep: FC<SelectOperatorsStepProps> = ({
   const minApproval = watch('minApproval');
 
   const tableData = useMemo(() => {
-    if (!Array.isArray(selectedAssets) || selectedAssets.length === 0)
+    if (!Array.isArray(selectedAssets) || selectedAssets.length === 0) {
       return operators;
+    }
 
     const selectedSymbols = new Set(
       selectedAssets.map((asset) => asset.metadata.symbol),
     );
 
-    return operators.filter((operator) => {
-      return operator.vaultTokens?.some((vaultToken) =>
+    const filtered = operators.filter((operator) =>
+      operator.vaultTokens?.some((vaultToken) =>
         selectedSymbols.has(vaultToken.symbol),
-      );
-    });
+      ),
+    );
+
+    return filtered.length > 0 ? filtered : operators;
   }, [operators, selectedAssets]);
 
   // set the operators to the form value when the rowSelection changes

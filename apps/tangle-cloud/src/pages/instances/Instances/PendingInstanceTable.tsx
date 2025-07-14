@@ -12,7 +12,6 @@ import {
   Dropdown,
   DropdownBody,
   EMPTY_VALUE_PLACEHOLDER,
-  getRoundedAmountString,
   Modal,
   shortenString,
   Typography,
@@ -74,6 +73,15 @@ export const PendingInstanceTable: FC = () => {
     }, [pendingBlueprints]),
   );
 
+  const { result: deployerIdentityMap } = useIdentities(
+    useMemo(() => {
+      const deployerAddresses = pendingBlueprints.map(
+        (blueprint) => blueprint.owner,
+      );
+      return Array.from(new Set(deployerAddresses));
+    }, [pendingBlueprints]),
+  );
+
   const { execute: rejectServiceRequest, status: rejectStatus } =
     useServicesRejectTx();
 
@@ -131,18 +139,6 @@ export const PendingInstanceTable: FC = () => {
 
     if (isOperator) {
       baseColumns.push(
-        columnHelper.accessor('pricing', {
-          header: () => 'Pricing',
-          cell: (props) => {
-            return (
-              <TableCellWrapper className="p-0 min-h-fit">
-                {props.row.original.pricing
-                  ? `$${getRoundedAmountString(props.row.original.pricing)}`
-                  : EMPTY_VALUE_PLACEHOLDER}
-              </TableCellWrapper>
-            );
-          },
-        }),
         columnHelper.accessor('owner', {
           header: () => 'Deployer',
           cell: (props) => {
@@ -151,28 +147,24 @@ export const PendingInstanceTable: FC = () => {
 
             return (
               <TableCellWrapper className="p-0 min-h-fit">
-                {!ownerUrl ? (
-                  EMPTY_VALUE_PLACEHOLDER
-                ) : (
-                  <>
-                    <Avatar
-                      sourceVariant="address"
-                      value={owner.toString()}
-                      theme="substrate"
-                      size="md"
-                    />
-                    <Button
-                      variant="link"
-                      className="uppercase body4"
-                      href={ownerUrl}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                    >
-                      {operatorIdentityMap?.get(owner)?.name ??
-                        shortenString(owner)}
-                    </Button>
-                  </>
-                )}
+                <div className="flex items-center gap-2">
+                  <Avatar
+                    sourceVariant="address"
+                    value={owner.toString()}
+                    theme="substrate"
+                    size="md"
+                  />
+                  <Button
+                    variant="link"
+                    className="uppercase body4"
+                    href={ownerUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    {deployerIdentityMap?.get(owner)?.name ??
+                      shortenString(owner)}
+                  </Button>
+                </div>
               </TableCellWrapper>
             );
           },

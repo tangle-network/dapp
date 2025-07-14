@@ -117,6 +117,11 @@ const DeployPage: FC = () => {
             message: err.message,
           });
         });
+      } else if (error instanceof Error) {
+        setError('requestArgs', {
+          type: 'manual',
+          message: error.message,
+        });
       }
     }
   };
