@@ -17,7 +17,7 @@ const BlueprintItem: FC<Omit<BlueprintItemProps, 'id'>> = ({
   description,
   instancesCount,
   operatorsCount,
-  restakersCount,
+  restakersCount: _restakersCount,
   isBoosted,
   renderImage,
   isSelected,
