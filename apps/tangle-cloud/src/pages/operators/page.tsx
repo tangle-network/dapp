@@ -2,6 +2,7 @@ import OperatorsTableContainer from '@tangle-network/tangle-shared-ui/components
 import useRestakeDelegatorInfo from '@tangle-network/tangle-shared-ui/data/restake/useRestakeDelegatorInfo';
 import useRestakeOperatorMap from '@tangle-network/tangle-shared-ui/data/restake/useRestakeOperatorMap';
 import useRestakeTvl from '@tangle-network/tangle-shared-ui/data/restake/useRestakeTvl';
+import { DelegatorInfo } from '@tangle-network/tangle-shared-ui/types/restake';
 import { FC, useCallback, useEffect } from 'react';
 
 const Page: FC = () => {
@@ -11,7 +12,9 @@ const Page: FC = () => {
     isLoading: isLoadingOperators,
     error: operatorMapError,
   } = useRestakeOperatorMap();
-  const { operatorConcentration, operatorTvl } = useRestakeTvl(delegatorInfo);
+  const { operatorConcentration, operatorTvl } = useRestakeTvl(
+    delegatorInfo as DelegatorInfo | null,
+  );
 
   // TODO: Redirect to tangle-dapp restake/delegate page
   const handleRestakeClicked = useCallback(() => {

@@ -80,19 +80,6 @@ const useServicesRegisterTx = () => {
           context.securityRequirements[index].maxExposurePercent,
       }));
 
-      // Debug log to inspect arguments being sent to services.request
-      console.log('services.request substrate args', {
-        blueprintId: context.blueprintId.toString(),
-        permittedCallers: formattedPermittedCallers,
-        operators: formattedOperators,
-        requestArgs: context.requestArgs,
-        assetSecurityRequirements,
-        ttl: context.ttl.toString(),
-        paymentAsset,
-        paymentValue: context.paymentValue.toString(),
-        membershipModel,
-      });
-
       return (api.tx.services.request as any)(
         null, // evm_origin (None)
         context.blueprintId,

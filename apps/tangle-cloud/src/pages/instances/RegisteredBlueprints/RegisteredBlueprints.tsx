@@ -111,18 +111,19 @@ export const RegisteredBlueprints: FC = () => {
         },
       }),
 
-      columnHelper.accessor('blueprint.restakersCount', {
-        header: () => 'Restakers',
-        cell: (props) => {
-          return (
-            <TableCellWrapper className="p-0 min-h-fit">
-              {(
-                props.row.original.blueprint.restakersCount ?? 0
-              ).toLocaleString()}
-            </TableCellWrapper>
-          );
-        },
-      }),
+      // Hide restakers column
+      // columnHelper.accessor('blueprint.restakersCount', {
+      //   header: () => 'Restakers',
+      //   cell: (props) => {
+      //     return (
+      //       <TableCellWrapper className="p-0 min-h-fit">
+      //         {(
+      //           props.row.original.blueprint.restakersCount ?? 0
+      //         ).toLocaleString()}
+      //       </TableCellWrapper>
+      //     );
+      //   },
+      // }),
 
       columnHelper.accessor('blueprintId', {
         header: () => '',

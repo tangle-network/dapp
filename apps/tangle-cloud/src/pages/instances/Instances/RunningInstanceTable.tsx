@@ -196,14 +196,14 @@ export const RunningInstanceTable: FC = () => {
                       ? `Instance-${props.row.original.id}`
                       : EMPTY_VALUE_PLACEHOLDER}
                   </Typography>
-                  <Typography
+                  {/* <Typography
                     variant="body2"
                     fw="normal"
                     className="!text-mono-100 text-ellipsis whitespace-nowrap overflow-hidden"
                   >
                     {props.row.original.externalInstanceId ||
                       EMPTY_VALUE_PLACEHOLDER}
-                  </Typography>
+                  </Typography> */}
                 </div>
               </div>
             </TableCellWrapper>
@@ -224,18 +224,8 @@ export const RunningInstanceTable: FC = () => {
               ? encodeAddress(decodeAddress(currentUserAddress))
               : null;
             isOwner = normalizedOwner === normalizedUser;
-            console.log('Terminate button check:', {
-              serviceOwnerAddress,
-              currentUserAddress,
-              normalizedOwner,
-              normalizedUser,
-              isOwner,
-            });
           } catch (error) {
-            console.error(
-              'Address normalization error in terminate button:',
-              error,
-            );
+            console.error(error);
             isOwner = currentUserAddress === serviceOwnerAddress;
           }
 
@@ -259,7 +249,7 @@ export const RunningInstanceTable: FC = () => {
                 {isOwner && (
                   <Button
                     variant="utility"
-                    className="uppercase body4 !bg-red-400 !text-white hover:!bg-red-500"
+                    className="uppercase body4 !bg-red-500 !text-white hover:!bg-red-600"
                     onClick={(event) => {
                       event.stopPropagation();
                       handleTerminateClick(props.row.original);

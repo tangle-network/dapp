@@ -123,7 +123,8 @@ const BlueprintItem: FC<Omit<BlueprintItemProps, 'id'>> = ({
               {operatorsCount ?? EMPTY_VALUE_PLACEHOLDER}
             </Typography>
           </div>
-          <div className="flex-1 space-y-2">
+          {/* Hide restakers section */}
+          {/* <div className="flex-1 space-y-2">
             <Typography
               variant="body2"
               className="text-mono-120 dark:text-mono-100"
@@ -133,7 +134,7 @@ const BlueprintItem: FC<Omit<BlueprintItemProps, 'id'>> = ({
             <Typography variant="h5">
               {restakersCount ?? EMPTY_VALUE_PLACEHOLDER}
             </Typography>
-          </div>
+          </div> */}
         </div>
       </div>
     </div>

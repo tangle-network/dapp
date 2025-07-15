@@ -20,12 +20,7 @@ export const useUserOwnedInstances = (
   const { result: userOwnedData, ...rest } = useApiRx(
     useCallback(
       (apiRx) => {
-        console.log(
-          'useUserOwnedInstances called with userAddress:',
-          userAddress,
-        );
         if (!userAddress) {
-          console.log('No userAddress provided, returning empty array');
           return of([]);
         }
 
@@ -52,14 +47,7 @@ export const useUserOwnedInstances = (
                           const normalizedUser = encodeAddress(
                             decodeAddress(userAddress),
                           );
-                          console.log(
-                            'Normalized owner:',
-                            normalizedOwner,
-                            'Normalized user:',
-                            normalizedUser,
-                            'Match:',
-                            normalizedOwner === normalizedUser,
-                          );
+
                           return normalizedOwner === normalizedUser;
                         } catch (error) {
                           console.error('Address normalization error:', error);
