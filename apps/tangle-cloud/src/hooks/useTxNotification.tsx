@@ -6,6 +6,7 @@ export const SUCCESS_MESSAGES: Record<TxName, string> = {
   [TxName.APPROVE_SERVICE_REQUEST]: 'Service request approved',
   [TxName.REGISTER_BLUEPRINT]: 'Blueprint registered',
   [TxName.DEPLOY_BLUEPRINT]: 'Blueprint deployed',
+  [TxName.TERMINATE_SERVICE_INSTANCE]: 'Service instance terminated',
 };
 
 const useTxNotification = () => {

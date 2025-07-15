@@ -45,8 +45,8 @@ const BlueprintItem: FC<Omit<BlueprintItemProps, 'id'>> = ({
           'relative flex-1 flex flex-col justify-between py-3 px-6 overflow-hidden',
           'bg-[linear-gradient(180deg,rgba(184,196,255,0.20)0%,rgba(236,239,255,0.20)100%),linear-gradient(180deg,rgba(255,255,255,0.50)0%,rgba(255,255,255,0.30)100%)]',
           'dark:bg-[linear-gradient(180deg,rgba(17,22,50,0.20)0%,rgba(21,37,117,0.20)100%),linear-gradient(180deg,rgba(43,47,64,0.50)0%,rgba(43,47,64,0.30)100%)]',
-          'hover:before:absolute hover:before:inset-0 hover:before:bg-cover hover:before:bg-no-repeat hover:before:opacity-50 hover:before:pointer-events-none',
-          "hover:before:bg-[url('/static/assets/blueprints/grid-bg.png')] dark:hover:before:bg-[url('/static/assets/blueprints/grid-bg-dark.png')]",
+          'before:absolute before:inset-0 before:bg-cover before:bg-no-repeat before:opacity-50 before:pointer-events-none',
+          "before:bg-[url('/static/assets/blueprints/grid-bg.png')] dark:before:bg-[url('/static/assets/blueprints/grid-bg-dark.png')]",
         )}
       >
         <div className="space-y-3">
@@ -94,7 +94,7 @@ const BlueprintItem: FC<Omit<BlueprintItemProps, 'id'>> = ({
 
           <Typography
             variant="body2"
-            className="line-clamp-[7] text-mono-120 dark:text-mono-100 group-hover:text-mono-200 dark:group-hover:text-mono-0"
+            className="line-clamp-[7] text-mono-200 dark:text-mono-0"
           >
             {description}
           </Typography>

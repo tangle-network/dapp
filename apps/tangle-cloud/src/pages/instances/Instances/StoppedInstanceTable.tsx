@@ -9,29 +9,29 @@ import {
   Avatar,
   Button,
   EMPTY_VALUE_PLACEHOLDER,
-  EnergyChipColors,
-  EnergyChipStack,
-  getRoundedAmountString,
   Typography,
 } from '@tangle-network/ui-components';
 import pluralize from '@tangle-network/ui-components/utils/pluralize';
 import { TangleCloudTable } from '../../../components/tangleCloudTable/TangleCloudTable';
-import { format } from 'date-fns';
 import { ChevronRight } from '@tangle-network/icons';
 import TableCellWrapper from '@tangle-network/tangle-shared-ui/components/tables/TableCellWrapper';
 import { MonitoringBlueprint } from '@tangle-network/tangle-shared-ui/data/blueprints/utils/type';
 import { PagePath } from '../../../types';
 import { Link } from 'react-router';
+import useOperatorInfo from '@tangle-network/tangle-shared-ui/hooks/useOperatorInfo';
+import useStoppedInstances from '@tangle-network/tangle-shared-ui/data/blueprints/useStoppedInstances';
 
 const columnHelper =
   createColumnHelper<MonitoringBlueprint['services'][number]>();
 
 export const StoppedInstanceTable: FC = () => {
-  // TODO: Implement fetch stopped instances from graphql server
-  const data: MonitoringBlueprint['services'] = [];
-  const error = null;
-  const isLoading = false;
-  const isEmpty = true;
+  const { operatorAddress } = useOperatorInfo();
+  const {
+    result: stoppedInstances,
+    isEmpty,
+    isLoading,
+    error,
+  } = useStoppedInstances(operatorAddress);
 
   const columns = useMemo(
     () => [
@@ -101,62 +101,6 @@ export const StoppedInstanceTable: FC = () => {
           );
         },
       }),
-      columnHelper.accessor('earned', {
-        header: () => 'Earned',
-        cell: (props) => {
-          return (
-            <TableCellWrapper className="p-0 min-h-fit">
-              {props.row.original.earned
-                ? `$${getRoundedAmountString(props.row.original.earned)}`
-                : EMPTY_VALUE_PLACEHOLDER}
-            </TableCellWrapper>
-          );
-        },
-      }),
-      columnHelper.accessor('uptime', {
-        header: () => 'Uptime',
-        cell: (props) => {
-          const DEFAULT_STACK = 10;
-          const DEFAULT_PERCENTAGE = 100;
-          const numberOfActiveChips = !props.row.original.uptime
-            ? 0
-            : Math.round(
-                (props.row.original.uptime * DEFAULT_STACK) /
-                  DEFAULT_PERCENTAGE,
-              );
-
-          const activeColors = Array.from({ length: numberOfActiveChips }).fill(
-            EnergyChipColors.GREEN,
-          );
-          const inactiveColors = Array.from({
-            length: DEFAULT_STACK - numberOfActiveChips,
-          }).fill(EnergyChipColors.GREY);
-          const colors = [...activeColors, ...inactiveColors];
-
-          return (
-            <TableCellWrapper className="p-0 min-h-fit">
-              <EnergyChipStack
-                colors={colors as EnergyChipColors[]}
-                label={`${props.row.original.uptime || EMPTY_VALUE_PLACEHOLDER}%`}
-              />
-            </TableCellWrapper>
-          );
-        },
-      }),
-      columnHelper.accessor('lastActive', {
-        header: () => 'Last Active',
-        cell: (props) => {
-          return (
-            <TableCellWrapper className="p-0 min-h-fit">
-              <Typography variant="body1" fw="normal">
-                {props.row.original.lastActive
-                  ? format(props.row.original.lastActive, 'yy/MM/dd HH:mm')
-                  : EMPTY_VALUE_PLACEHOLDER}
-              </Typography>
-            </TableCellWrapper>
-          );
-        },
-      }),
       columnHelper.accessor('id', {
         header: () => '',
         cell: (props) => {
@@ -184,11 +128,12 @@ export const StoppedInstanceTable: FC = () => {
   );
 
   const table = useReactTable({
-    data,
+    data: stoppedInstances,
     columns,
     getCoreRowModel: getCoreRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
-    getRowId: (row) => row.id.toString(),
+    getRowId: (row) =>
+      `StoppedInstance-${row.blueprint.toString()}-${row.id.toString()}`,
     autoResetPageIndex: false,
     enableSortingRemoval: false,
   });
@@ -196,7 +141,7 @@ export const StoppedInstanceTable: FC = () => {
   return (
     <TangleCloudTable<MonitoringBlueprint['services'][number]>
       title={pluralize('Stopped Instance', !isEmpty)}
-      data={data}
+      data={stoppedInstances}
       error={error}
       isLoading={isLoading}
       tableProps={table}
