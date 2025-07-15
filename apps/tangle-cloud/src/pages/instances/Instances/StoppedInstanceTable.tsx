@@ -167,8 +167,6 @@ export const StoppedInstanceTable: FC = () => {
                   ':id',
                   props.row.original.blueprint.toString(),
                 )}
-                target="_blank"
-                rel="noopener noreferrer"
                 onClick={(event) => {
                   event.stopPropagation();
                 }}
