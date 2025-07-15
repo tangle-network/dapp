@@ -87,7 +87,10 @@ const usePendingServiceRequest = (
           map((blueprints) =>
             blueprints
               .map((blueprint) => (blueprint as any).unwrap())
-              .map(([_, blueprint]) => toPrimitiveBlueprint(blueprint)),
+              .map(([owner, blueprint]) => ({
+                owner: owner.toHuman(),
+                blueprint: toPrimitiveBlueprint(blueprint),
+              })),
           ),
           catchError((error) => {
             console.error('Error querying blueprints:', error);

@@ -165,6 +165,7 @@ export default function useRegisteredBlueprints(
                   operatorInstances,
                   operatorTvlByAsset,
                   runningInstancesMap,
+                  blueprint.owner,
                 ),
               );
 

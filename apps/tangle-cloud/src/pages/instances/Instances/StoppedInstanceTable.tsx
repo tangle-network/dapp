@@ -20,6 +20,8 @@ import { PagePath } from '../../../types';
 import { Link } from 'react-router';
 import useOperatorInfo from '@tangle-network/tangle-shared-ui/hooks/useOperatorInfo';
 import useStoppedInstances from '@tangle-network/tangle-shared-ui/data/blueprints/useStoppedInstances';
+import { isSubstrateAddress } from '@tangle-network/ui-components/utils/isSubstrateAddress';
+import { encodeAddress, blake2AsU8a } from '@polkadot/util-crypto';
 
 const columnHelper =
   createColumnHelper<MonitoringBlueprint['services'][number]>();
@@ -54,7 +56,26 @@ export const StoppedInstanceTable: FC = () => {
                   <Avatar
                     size="lg"
                     className="min-w-12"
-                    value={props.row.original.id.toString()}
+                    sourceVariant="address"
+                    value={
+                      (props.row.original.blueprintData?.metadata as any)
+                        ?.owner ||
+                      (props.row.original.blueprintData?.metadata?.author &&
+                      isSubstrateAddress(
+                        props.row.original.blueprintData.metadata.author,
+                      )
+                        ? props.row.original.blueprintData.metadata.author
+                        : null) ||
+                      (props.row.original.blueprintData?.metadata?.name
+                        ? encodeAddress(
+                            blake2AsU8a(
+                              props.row.original.blueprintData.metadata.name,
+                              256,
+                            ).slice(0, 32),
+                            42,
+                          )
+                        : undefined)
+                    }
                     theme="substrate"
                   />
                 )}

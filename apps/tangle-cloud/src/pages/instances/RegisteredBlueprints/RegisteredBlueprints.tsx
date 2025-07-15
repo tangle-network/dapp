@@ -20,6 +20,8 @@ import { PagePath } from '../../../types';
 
 import useRegisteredBlueprints from '@tangle-network/tangle-shared-ui/data/blueprints/useRegisteredBlueprints';
 import useOperatorInfo from '@tangle-network/tangle-shared-ui/hooks/useOperatorInfo';
+import { isSubstrateAddress } from '@tangle-network/ui-components/utils/isSubstrateAddress';
+import { encodeAddress, blake2AsU8a } from '@polkadot/util-crypto';
 
 export type RegisteredBlueprintsTableProps = {
   blueprints: MonitoringBlueprint[];
@@ -66,10 +68,24 @@ export const RegisteredBlueprints: FC = () => {
                   <Avatar
                     size="lg"
                     className="min-w-12"
-                    value={props.row.original.blueprint.metadata.name.substring(
-                      0,
-                      2,
-                    )}
+                    sourceVariant="address"
+                    value={
+                      (props.row.original.blueprint.metadata.author &&
+                      isSubstrateAddress(
+                        props.row.original.blueprint.metadata.author,
+                      )
+                        ? props.row.original.blueprint.metadata.author
+                        : null) ||
+                      (props.row.original.blueprint.metadata.name
+                        ? encodeAddress(
+                            blake2AsU8a(
+                              props.row.original.blueprint.metadata.name,
+                              256,
+                            ).slice(0, 32),
+                            42,
+                          )
+                        : undefined)
+                    }
                     theme="substrate"
                   />
                 )}

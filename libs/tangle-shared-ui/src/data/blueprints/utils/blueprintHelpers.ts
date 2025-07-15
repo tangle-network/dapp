@@ -240,6 +240,7 @@ export function createMonitoringBlueprint(
   serviceInstances: ServiceInstance[],
   operatorTVLByAsset: Map<SubstrateAddress, Map<RestakeAssetId, number>>,
   runningInstancesMap: Map<bigint, ServiceInstance[]>,
+  owner?: string,
 ): MonitoringBlueprint {
   const filteredServiceInstances = serviceInstances.filter((instance) => {
     return instance.serviceInstance?.blueprint === blueprintId;
@@ -270,6 +271,12 @@ export function createMonitoringBlueprint(
     tvl: blueprintTVL,
     // TODO: get uptime from the graphql
     uptime: randNumber({ min: 0, max: 100 }),
+    ...(owner && {
+      metadata: {
+        ...operatorBlueprint.metadata,
+        owner,
+      },
+    }),
   };
 
   const services = operatorServices.map((service) => {
@@ -298,16 +305,33 @@ export function createMonitoringBlueprint(
 
 export const createPendingServiceRequests = (
   pendingServiceRequests: MonitoringServiceRequest[],
-  blueprints: OperatorBlueprint['blueprint'][],
+  blueprints: Array<{
+    owner: string;
+    blueprint: OperatorBlueprint['blueprint'];
+  }>,
 ): MonitoringServiceRequest[] => {
   return pendingServiceRequests.map((pendingServiceRequest, idx) => {
+    const blueprintWithOwner = blueprints[idx];
+
+    if (!blueprintWithOwner) {
+      console.warn(
+        `Blueprint data missing for service request at index ${idx}. Blueprint ID: ${pendingServiceRequest.blueprint}`,
+      );
+    }
+
     return {
       ...pendingServiceRequest,
       // TODO: sum asset price
       pricing: Math.round(Math.random() * 10000),
-      blueprintData: {
-        ...blueprints[idx],
-      },
+      blueprintData: blueprintWithOwner
+        ? {
+            ...blueprintWithOwner.blueprint,
+            metadata: {
+              ...blueprintWithOwner.blueprint.metadata,
+              owner: blueprintWithOwner.owner,
+            },
+          }
+        : undefined,
     };
   });
 };

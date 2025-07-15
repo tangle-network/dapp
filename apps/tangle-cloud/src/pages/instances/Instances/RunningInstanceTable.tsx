@@ -26,8 +26,12 @@ import useServicesTerminateTx from '../../../data/services/useServicesTerminateT
 import TerminateConfirmationModal from './UpdateBlueprintModel/TerminateConfirmationModal';
 import useActiveAccountAddress from '@tangle-network/tangle-shared-ui/hooks/useActiveAccountAddress';
 import useUserOwnedInstances from '../../../data/services/useUserOwnedInstances';
-import { isSubstrateAddress } from '@tangle-network/ui-components';
-import { encodeAddress, decodeAddress } from '@polkadot/util-crypto';
+import { isSubstrateAddress } from '@tangle-network/ui-components/utils/isSubstrateAddress';
+import {
+  encodeAddress,
+  blake2AsU8a,
+  decodeAddress,
+} from '@polkadot/util-crypto';
 
 const columnHelper =
   createColumnHelper<MonitoringBlueprint['services'][number]>();
@@ -163,7 +167,26 @@ export const RunningInstanceTable: FC = () => {
                   <Avatar
                     size="lg"
                     className="min-w-12"
-                    value={props.row.original.id.toString()}
+                    sourceVariant="address"
+                    value={
+                      (props.row.original.blueprintData?.metadata as any)
+                        ?.owner ||
+                      (props.row.original.blueprintData?.metadata?.author &&
+                      isSubstrateAddress(
+                        props.row.original.blueprintData.metadata.author,
+                      )
+                        ? props.row.original.blueprintData.metadata.author
+                        : null) ||
+                      (props.row.original.blueprintData?.metadata?.name
+                        ? encodeAddress(
+                            blake2AsU8a(
+                              props.row.original.blueprintData.metadata.name,
+                              256,
+                            ).slice(0, 32),
+                            42,
+                          )
+                        : undefined)
+                    }
                     theme="substrate"
                   />
                 )}
