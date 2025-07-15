@@ -36,10 +36,9 @@ const BlueprintHeader: FC<BlueprintHeaderProps> = ({
     websiteUrl,
     twitterUrl,
     email,
+    instancesCount,
     operatorsCount,
     restakersCount,
-    tvl,
-    category,
   } = blueprint;
 
   return (
@@ -144,7 +143,11 @@ const BlueprintHeader: FC<BlueprintHeaderProps> = ({
           </div>
         </div>
 
-        <div className="grid grid-cols-2 md:!grid-cols-4 gap-4">
+        <div className="grid grid-cols-3 gap-4">
+          <StatsItem
+            label="Total Instances"
+            value={instancesCount?.toLocaleString()}
+          />
           <StatsItem
             label="Total Operators"
             value={operatorsCount?.toLocaleString()}
@@ -153,8 +156,6 @@ const BlueprintHeader: FC<BlueprintHeaderProps> = ({
             label="Total Restakers"
             value={restakersCount?.toLocaleString()}
           />
-          <StatsItem label="Total Value Locked" value={tvl} />
-          <StatsItem label="Category" value={category} />
         </div>
       </div>
     </div>

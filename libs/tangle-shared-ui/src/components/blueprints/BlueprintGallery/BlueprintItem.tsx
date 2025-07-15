@@ -15,9 +15,9 @@ const BlueprintItem: FC<Omit<BlueprintItemProps, 'id'>> = ({
   author,
   imgUrl,
   description,
-  restakersCount,
+  instancesCount,
   operatorsCount,
-  tvl,
+  restakersCount,
   isBoosted,
   renderImage,
   isSelected,
@@ -106,10 +106,10 @@ const BlueprintItem: FC<Omit<BlueprintItemProps, 'id'>> = ({
               variant="body2"
               className="text-mono-120 dark:text-mono-100"
             >
-              Restakers
+              Instances
             </Typography>
             <Typography variant="h5">
-              {restakersCount ?? EMPTY_VALUE_PLACEHOLDER}
+              {instancesCount ?? EMPTY_VALUE_PLACEHOLDER}
             </Typography>
           </div>
           <div className="flex-1 space-y-2">
@@ -128,10 +128,10 @@ const BlueprintItem: FC<Omit<BlueprintItemProps, 'id'>> = ({
               variant="body2"
               className="text-mono-120 dark:text-mono-100"
             >
-              TVL
+              Restakers
             </Typography>
             <Typography variant="h5">
-              {tvl ?? EMPTY_VALUE_PLACEHOLDER}
+              {restakersCount ?? EMPTY_VALUE_PLACEHOLDER}
             </Typography>
           </div>
         </div>

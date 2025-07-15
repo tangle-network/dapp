@@ -45,9 +45,9 @@ const RejectConfirmationModal: FC<Props> = ({
     selectedRequest.blueprint.toString(),
   );
 
-  const restakersCount = blueprintStats?.restakersCount ?? 0;
+  const instancesCount = blueprintStats?.instancesCount ?? 0;
   const operatorsCount = blueprintStats?.operatorsCount ?? 0;
-  const tvl = blueprintStats?.tvl ?? '0';
+  const restakersCount = blueprintStats?.restakersCount ?? 0;
 
   return (
     <ModalContent
@@ -72,9 +72,9 @@ const RejectConfirmationModal: FC<Props> = ({
               />
             );
           }}
-          restakersCount={restakersCount}
+          instancesCount={instancesCount}
           operatorsCount={operatorsCount}
-          tvl={tvl}
+          restakersCount={restakersCount}
           isBoosted={false}
           category={selectedRequest.blueprintData?.metadata.category ?? ''}
           description={

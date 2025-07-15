@@ -105,6 +105,7 @@ const useAllBlueprints = () => {
                 blueprintRestakersMap,
                 blueprintTVLMap,
                 ownerIdentitiesMap,
+                runningInstancesMap,
               );
             },
           ),

@@ -132,8 +132,9 @@ const useBlueprintDetails = (id?: bigint) => {
                 author: metadata.author ?? owner,
                 imgUrl: metadata.logo,
                 category: metadata.category,
-                restakersCount: blueprintRestakersMap.get(id)?.size ?? null,
+                instancesCount: runningInstancesMap.get(id)?.length ?? null,
                 operatorsCount: operatorsSet?.size ?? null,
+                restakersCount: blueprintRestakersMap.get(id)?.size ?? null,
                 tvl: (() => {
                   const blueprintTVL = blueprintTVLMap.get(id);
 

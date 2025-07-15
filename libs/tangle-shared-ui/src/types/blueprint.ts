@@ -77,8 +77,9 @@ export type Blueprint = {
   imgUrl: string | null;
   category: string | null;
   description: string | null;
-  restakersCount: number | null;
+  instancesCount: number | null;
   operatorsCount: number | null;
+  restakersCount: number | null;
   tvl: string | null;
   isBoosted?: boolean;
   githubUrl?: string | null;

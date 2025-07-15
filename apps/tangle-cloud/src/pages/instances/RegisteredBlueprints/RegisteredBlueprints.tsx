@@ -17,7 +17,7 @@ import { MonitoringBlueprint } from '@tangle-network/tangle-shared-ui/data/bluep
 import TableCellWrapper from '@tangle-network/tangle-shared-ui/components/tables/TableCellWrapper';
 import { Link } from 'react-router';
 import { PagePath } from '../../../types';
-import getTVLToDisplay from '@tangle-network/tangle-shared-ui/utils/getTVLToDisplay';
+
 import useRegisteredBlueprints from '@tangle-network/tangle-shared-ui/data/blueprints/useRegisteredBlueprints';
 import useOperatorInfo from '@tangle-network/tangle-shared-ui/hooks/useOperatorInfo';
 
@@ -110,18 +110,18 @@ export const RegisteredBlueprints: FC = () => {
           );
         },
       }),
-      columnHelper.accessor('blueprint.tvl', {
-        header: () => 'TVL',
+
+      columnHelper.accessor('blueprint.restakersCount', {
+        header: () => 'Restakers',
         cell: (props) => {
           return (
             <TableCellWrapper className="p-0 min-h-fit">
-              {props.row.original.blueprint.tvl
-                ? getTVLToDisplay(props.row.original.blueprint.tvl)
-                : EMPTY_VALUE_PLACEHOLDER}
+              {(props.row.original.blueprint.restakersCount ?? 0).toLocaleString()}
             </TableCellWrapper>
           );
         },
       }),
+
       columnHelper.accessor('blueprintId', {
         header: () => '',
         cell: (props) => {

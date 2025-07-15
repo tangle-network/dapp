@@ -181,6 +181,7 @@ export const createBlueprintObjects = (
   >['blueprintRestakersMap'],
   blueprintTVLMap: ReturnType<typeof extractOperatorData>['blueprintTVLMap'],
   ownerIdentitiesMap: Awaited<ReturnType<typeof fetchOwnerIdentities>>,
+  runningInstancesMap: Map<bigint, ServiceInstance[]>,
 ): Map<string, Blueprint> => {
   const blueprintMap = new Map<string, Blueprint>();
 
@@ -188,6 +189,8 @@ export const createBlueprintObjects = (
     blueprintId,
     { metadata, owner, registrationParams },
   ] of blueprintsMap.entries()) {
+    const instancesCount = runningInstancesMap.get(blueprintId)?.length ?? null;
+
     blueprintMap.set(blueprintId.toString(), {
       id: blueprintId,
       name: metadata.name,
@@ -197,8 +200,9 @@ export const createBlueprintObjects = (
       description: metadata.description,
       registrationParams,
       category: metadata.category,
-      restakersCount: blueprintRestakersMap.get(blueprintId)?.size ?? null,
+      instancesCount,
       operatorsCount: blueprintOperatorMap.get(blueprintId)?.size ?? null,
+      restakersCount: blueprintRestakersMap.get(blueprintId)?.size ?? null,
       tvl: blueprintTVLMap.get(blueprintId)?.toLocaleString() ?? null,
       githubUrl: metadata.codeRepository,
       websiteUrl: metadata.website,
