@@ -168,13 +168,8 @@ export const AssetConfigurationStep: FC<AssetConfigurationStepProps> = ({
                   return (
                     <SelectItem value={id} id={id}>
                       <div className="flex items-center gap-2">
-                        <LsTokenIcon
-                          name={name}
-                          size="md"
-                        />
-                        <Typography variant="body1">
-                          {name}
-                        </Typography>
+                        <LsTokenIcon name={name} size="md" />
+                        <Typography variant="body1">{name}</Typography>
                       </div>
                     </SelectItem>
                   );

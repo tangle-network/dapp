@@ -64,7 +64,7 @@ export const AssetRequirementFormItem: FC<
       </div>
 
       <div className="flex-1 min-w-0">
-        <Label className={cx(LabelClassName, "mb-2 block")}>
+        <Label className={cx(LabelClassName, 'mb-2 block')}>
           {isViewOnly ? 'Exposure Percentage' : 'Set Exposure Percentage'}
         </Label>
         {isViewOnly ? (
@@ -83,20 +83,22 @@ export const AssetRequirementFormItem: FC<
               }}
               className="w-full"
             />
-            {(!isViewOnly && (props.minExposurePercentErrorMsg || props.maxExposurePercentErrorMsg)) && (
-              <div className="space-y-1">
-                {props.minExposurePercentErrorMsg && (
-                  <ErrorMessage className="text-sm">
-                    {props.minExposurePercentErrorMsg}
-                  </ErrorMessage>
-                )}
-                {props.maxExposurePercentErrorMsg && (
-                  <ErrorMessage className="text-sm">
-                    {props.maxExposurePercentErrorMsg}
-                  </ErrorMessage>
-                )}
-              </div>
-            )}
+            {!isViewOnly &&
+              (props.minExposurePercentErrorMsg ||
+                props.maxExposurePercentErrorMsg) && (
+                <div className="space-y-1">
+                  {props.minExposurePercentErrorMsg && (
+                    <ErrorMessage className="text-sm">
+                      {props.minExposurePercentErrorMsg}
+                    </ErrorMessage>
+                  )}
+                  {props.maxExposurePercentErrorMsg && (
+                    <ErrorMessage className="text-sm">
+                      {props.maxExposurePercentErrorMsg}
+                    </ErrorMessage>
+                  )}
+                </div>
+              )}
           </div>
         )}
       </div>

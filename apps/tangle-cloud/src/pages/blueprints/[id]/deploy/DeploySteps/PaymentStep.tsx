@@ -65,19 +65,17 @@ export const PaymentStep: FC<PaymentStepProps> = ({
             <SelectContent>
               {Children.toArray(
                 Array.from(assets?.values() ?? [])
-                  .filter((asset) => asset.metadata.name && asset.metadata.name.trim() !== '')
+                  .filter(
+                    (asset) =>
+                      asset.metadata.name && asset.metadata.name.trim() !== '',
+                  )
                   .map((asset) => {
                     const name = asset.metadata.name || 'TNT';
                     return (
                       <SelectItem value={asset.id} id={asset.id}>
                         <div className="flex items-center gap-2">
-                          <LsTokenIcon
-                            name={name}
-                            size="md"
-                          />
-                          <Typography variant="body1">
-                            {name}
-                          </Typography>
+                          <LsTokenIcon name={name} size="md" />
+                          <Typography variant="body1">{name}</Typography>
                         </div>
                       </SelectItem>
                     );
