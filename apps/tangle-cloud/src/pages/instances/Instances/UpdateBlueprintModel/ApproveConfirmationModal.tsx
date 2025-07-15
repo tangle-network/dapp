@@ -13,6 +13,7 @@ import {
 } from '../../../../types';
 import { useForm } from 'react-hook-form';
 import { Children, useMemo, useEffect, FC } from 'react';
+import useAllBlueprints from '@tangle-network/tangle-shared-ui/data/blueprints/useAllBlueprints';
 import { PrimitiveAssetMetadata } from '@tangle-network/tangle-shared-ui/types/restake';
 import { AssetCommitmentFormItem } from './AssetCommitmentFormItem';
 import { validateSecurityCommitments } from '../../../../utils/validations/validateSecurityCommitment';
@@ -45,6 +46,8 @@ const ApproveConfirmationModal: FC<Props> = ({
   status,
 }: Props) => {
   const isSubmitting = status === TxStatus.PROCESSING;
+
+  const { blueprints: allBlueprints } = useAllBlueprints();
 
   const securityCommitmentDefaultFormValue = useMemo(() => {
     if (!selectedRequest?.securityRequirements?.length) return [];
@@ -111,6 +114,14 @@ const ApproveConfirmationModal: FC<Props> = ({
     return;
   }
 
+  const blueprintStats = allBlueprints.get(
+    selectedRequest.blueprint.toString(),
+  );
+
+  const restakersCount = blueprintStats?.restakersCount ?? 0;
+  const operatorsCount = blueprintStats?.operatorsCount ?? 0;
+  const tvl = blueprintStats?.tvl ?? '0';
+
   return (
     <ModalContent
       size="lg"
@@ -126,9 +137,9 @@ const ApproveConfirmationModal: FC<Props> = ({
         <BlueprintItem
           imgUrl={selectedRequest.blueprintData?.metadata.logo ?? ''}
           name={selectedRequest.blueprintData?.metadata.name ?? ''}
-          restakersCount={selectedRequest.blueprintData?.restakersCount ?? 0}
-          operatorsCount={selectedRequest.blueprintData?.operatorsCount ?? 0}
-          tvl={selectedRequest.blueprintData?.tvl?.toString() ?? '0'}
+          restakersCount={restakersCount}
+          operatorsCount={operatorsCount}
+          tvl={tvl}
           isBoosted={false}
           category={selectedRequest?.blueprintData?.metadata.category ?? ''}
           author={selectedRequest?.blueprintData?.metadata.author ?? ''}

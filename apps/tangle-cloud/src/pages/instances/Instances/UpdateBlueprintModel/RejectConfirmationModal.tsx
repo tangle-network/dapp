@@ -9,6 +9,7 @@ import { MonitoringServiceRequest } from '@tangle-network/tangle-shared-ui/data/
 import BlueprintItem from '@tangle-network/tangle-shared-ui/components/blueprints/BlueprintGallery/BlueprintItem';
 import { TxStatus } from '@tangle-network/tangle-shared-ui/hooks/useSubstrateTx';
 import { FC, useEffect } from 'react';
+import useAllBlueprints from '@tangle-network/tangle-shared-ui/data/blueprints/useAllBlueprints';
 import addCommasToNumber from '@tangle-network/ui-components/utils/addCommasToNumber';
 
 type Props = {
@@ -26,6 +27,8 @@ const RejectConfirmationModal: FC<Props> = ({
 }) => {
   const isSubmitting = status === TxStatus.PROCESSING;
 
+  const { blueprints: allBlueprints } = useAllBlueprints();
+
   // Close the modal when the transaction is complete.
   useEffect(() => {
     if (status === TxStatus.COMPLETE) {
@@ -37,6 +40,14 @@ const RejectConfirmationModal: FC<Props> = ({
   if (selectedRequest === null) {
     return;
   }
+
+  const blueprintStats = allBlueprints.get(
+    selectedRequest.blueprint.toString(),
+  );
+
+  const restakersCount = blueprintStats?.restakersCount ?? 0;
+  const operatorsCount = blueprintStats?.operatorsCount ?? 0;
+  const tvl = blueprintStats?.tvl ?? '0';
 
   return (
     <ModalContent
@@ -61,12 +72,9 @@ const RejectConfirmationModal: FC<Props> = ({
               />
             );
           }}
-          // TODO
-          restakersCount={selectedRequest.blueprintData?.jobs.length ?? 0}
-          // TODO
-          operatorsCount={selectedRequest.blueprintData?.operatorsCount ?? 0}
-          // TODO
-          tvl={'0'}
+          restakersCount={restakersCount}
+          operatorsCount={operatorsCount}
+          tvl={tvl}
           isBoosted={false}
           category={selectedRequest.blueprintData?.metadata.category ?? ''}
           description={
