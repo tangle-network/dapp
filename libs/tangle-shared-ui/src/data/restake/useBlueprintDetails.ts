@@ -169,6 +169,8 @@ const useBlueprintDetails = (id?: bigint) => {
                       operatorTVL,
                       operatorConcentration,
                       activeSubstrateAddress,
+                      runningInstancesMap,
+                      id,
                     )
                   : [];
 
@@ -202,6 +204,8 @@ async function getBlueprintOperators(
   operatorTVL: Map<SubstrateAddress, number>,
   operatorConcentration: Map<SubstrateAddress, number | null>,
   activeSubstrateAddress: SubstrateAddress | null,
+  runningInstancesMap: Map<bigint, ServiceInstance[]>,
+  blueprintId: bigint,
 ) {
   const operatorAccountArr = Array.from(operatorAccountSet);
 
@@ -224,6 +228,15 @@ async function getBlueprintOperators(
         (delegate) => delegate.delegatorAccountId === activeSubstrateAddress,
       );
 
+    const operatorsCount =
+      runningInstancesMap
+        .get(blueprintId)
+        ?.filter((instance) =>
+          instance.serviceInstance?.operatorSecurityCommitments?.some(
+            (commitment) => commitment.operator === address,
+          ),
+        ).length ?? 0;
+
     return {
       address,
       identityName: info?.name ?? undefined,
@@ -233,6 +246,7 @@ async function getBlueprintOperators(
       tvlInUsd,
       vaultTokens: delegationsToVaultTokens(delegations, assetMap),
       isDelegated,
+      instanceCount: operatorsCount,
     } satisfies RestakeOperator;
   });
 }
