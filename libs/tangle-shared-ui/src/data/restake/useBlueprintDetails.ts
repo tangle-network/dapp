@@ -38,7 +38,7 @@ const useBlueprintDetails = (id?: bigint) => {
     operatorTvl: operatorTVL,
     operatorConcentration,
     operatorTvlByAsset: operatorTVLByAsset,
-  } = useRestakeTvl(delegatorInfo);
+  } = useRestakeTvl(delegatorInfo as any);
 
   return useApiRx(
     useCallback(
@@ -71,12 +71,13 @@ const useBlueprintDetails = (id?: bigint) => {
               runningInstanceEntries,
               operatorEntries,
             ]) => {
-              if (blueprintDetails.isNone) {
+              const optionalBlueprint = blueprintDetails as Option<any>;
+              if (optionalBlueprint.isNone) {
                 return null;
               }
 
               const [ownerAccount, serviceBlueprint] =
-                blueprintDetails.unwrap();
+                optionalBlueprint.unwrap();
               const owner = ownerAccount.toString();
 
               const { metadata, registrationParams, requestParams } =
@@ -88,14 +89,17 @@ const useBlueprintDetails = (id?: bigint) => {
                 instanceId,
                 mayBeServiceInstance,
               ] of runningInstanceEntries) {
-                const serviceInstanceId = instanceId.args[0].toBigInt();
+                const serviceInstanceId = (
+                  instanceId.args[0] as any
+                ).toBigInt();
 
-                if (mayBeServiceInstance.isNone) {
+                const optionalInstance = mayBeServiceInstance as Option<any>;
+                if (optionalInstance.isNone) {
                   continue;
                 }
 
                 const instanceData = toPrimitiveService(
-                  mayBeServiceInstance.unwrap(),
+                  optionalInstance.unwrap(),
                 );
 
                 if (instanceData.blueprint !== id) {
@@ -116,7 +120,7 @@ const useBlueprintDetails = (id?: bigint) => {
                 blueprintRestakersMap,
                 blueprintTVLMap,
               } = extractOperatorData(
-                operatorEntries,
+                operatorEntries as any,
                 operatorMap,
                 operatorTVLByAsset,
                 runningInstancesMap,

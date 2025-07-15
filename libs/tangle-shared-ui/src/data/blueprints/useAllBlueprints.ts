@@ -52,8 +52,9 @@ const useAllBlueprints = () => {
               runningInstanceEntries,
               operatorEntries,
             ]) => {
-              const { blueprintsMap, ownerSet } =
-                extractBlueprintsData(blueprintEntries);
+              const { blueprintsMap, ownerSet } = extractBlueprintsData(
+                blueprintEntries as any,
+              );
 
               // TODO: This can likely be optimized to reduce request count.
               const ownerIdentitiesMap = await fetchOwnerIdentities(
@@ -68,14 +69,17 @@ const useAllBlueprints = () => {
                 instanceId,
                 mayBeServiceInstance,
               ] of runningInstanceEntries) {
-                const serviceInstanceId = instanceId.args[0].toBigInt();
+                const serviceInstanceId = (
+                  instanceId.args[0] as any
+                ).toBigInt();
 
-                if (mayBeServiceInstance.isNone) {
+                const optionalInstance = mayBeServiceInstance as Option<any>;
+                if (optionalInstance.isNone) {
                   continue;
                 }
 
                 const instanceData = toPrimitiveService(
-                  mayBeServiceInstance.unwrap(),
+                  optionalInstance.unwrap(),
                 );
 
                 // TODO: Use lodash to merge arrays.
@@ -93,7 +97,7 @@ const useAllBlueprints = () => {
                 blueprintRestakersMap,
                 blueprintTVLMap,
               } = extractOperatorData(
-                operatorEntries,
+                operatorEntries as any,
                 operatorMap,
                 operatorTvlByAsset,
                 runningInstancesMap,
