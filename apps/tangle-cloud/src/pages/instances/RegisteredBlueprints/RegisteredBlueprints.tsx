@@ -116,7 +116,9 @@ export const RegisteredBlueprints: FC = () => {
         cell: (props) => {
           return (
             <TableCellWrapper className="p-0 min-h-fit">
-              {(props.row.original.blueprint.restakersCount ?? 0).toLocaleString()}
+              {(
+                props.row.original.blueprint.restakersCount ?? 0
+              ).toLocaleString()}
             </TableCellWrapper>
           );
         },

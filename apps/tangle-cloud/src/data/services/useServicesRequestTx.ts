@@ -113,74 +113,81 @@ const useServicesRegisterTx = () => {
     typeof SERVICES_PRECOMPILE_ABI,
     'requestService',
     Context & { apiPromise: ApiPromise }
-  > = useCallback(async (context) => {
-    const api = context.apiPromise;
+  > = useCallback(
+    async (context) => {
+      const api = context.apiPromise;
 
-    const decodedPermittedCallers = context.permittedCallers.map((caller) => {
-      if (isEvmAddress(caller)) {
-        return decodeAddress(toSubstrateAddress(caller, network.ss58Prefix));
-      } else {
-        return decodeAddress(toSubstrateAddress(caller, network.ss58Prefix));
-      }
-    });
-    const encodedPermittedCallers: Hash = api
-      .createType('Vec<AccountId>', decodedPermittedCallers)
-      .toHex();
+      const decodedPermittedCallers = context.permittedCallers.map((caller) => {
+        if (isEvmAddress(caller)) {
+          return decodeAddress(toSubstrateAddress(caller, network.ss58Prefix));
+        } else {
+          return decodeAddress(toSubstrateAddress(caller, network.ss58Prefix));
+        }
+      });
+      const encodedPermittedCallers: Hash = api
+        .createType('Vec<AccountId>', decodedPermittedCallers)
+        .toHex();
 
-    const encodedAssetSecurityRequirements: Hash[] = context.assets.map(
-      (asset, index) =>
-        api
-          .createType('AssetSecurityRequirement', {
-            asset: createAssetIdEnum(asset),
-            minExposurePercent:
-              context.securityRequirements[index].minExposurePercent,
-            maxExposurePercent:
-              context.securityRequirements[index].maxExposurePercent,
-          })
-          .toHex(),
-    );
+      const encodedAssetSecurityRequirements: Hash[] = context.assets.map(
+        (asset, index) =>
+          api
+            .createType('AssetSecurityRequirement', {
+              asset: createAssetIdEnum(asset),
+              minExposurePercent:
+                context.securityRequirements[index].minExposurePercent,
+              maxExposurePercent:
+                context.securityRequirements[index].maxExposurePercent,
+            })
+            .toHex(),
+      );
 
-    const decodedOperators = context.operators.map((operator) => {
-      if (isEvmAddress(operator)) {
-        return decodeAddress(toSubstrateAddress(operator, network.ss58Prefix));
-      } else {
-        return decodeAddress(toSubstrateAddress(operator, network.ss58Prefix));
-      }
-    });
-    const encodedOperators = api
-      .createType('Vec<AccountId>', decodedOperators)
-      .toHex();
+      const decodedOperators = context.operators.map((operator) => {
+        if (isEvmAddress(operator)) {
+          return decodeAddress(
+            toSubstrateAddress(operator, network.ss58Prefix),
+          );
+        } else {
+          return decodeAddress(
+            toSubstrateAddress(operator, network.ss58Prefix),
+          );
+        }
+      });
+      const encodedOperators = api
+        .createType('Vec<AccountId>', decodedOperators)
+        .toHex();
 
-    const encodedRequestArgs: Hash = api
-      .createType('Vec<TanglePrimitivesServicesField>', context.requestArgs)
-      .toHex();
+      const encodedRequestArgs: Hash = api
+        .createType('Vec<TanglePrimitivesServicesField>', context.requestArgs)
+        .toHex();
 
-    const isEvmAssetPayment = isEvmAddress(context.paymentAsset);
+      const isEvmAssetPayment = isEvmAddress(context.paymentAsset);
 
-    const [paymentAssetId, paymentTokenAddress] = isEvmAssetPayment
-      ? [BigInt(0), toEvmAddress(context.paymentAsset as EvmAddress)]
-      : [
-          BigInt(context.paymentAsset),
-          toEvmAddress(assertEvmAddress(zeroAddress)),
-        ];
+      const [paymentAssetId, paymentTokenAddress] = isEvmAssetPayment
+        ? [BigInt(0), toEvmAddress(context.paymentAsset as EvmAddress)]
+        : [
+            BigInt(context.paymentAsset),
+            toEvmAddress(assertEvmAddress(zeroAddress)),
+          ];
 
-    return {
-      functionName: 'requestService',
-      arguments: [
-        context.blueprintId,
-        encodedAssetSecurityRequirements,
-        encodedPermittedCallers,
-        encodedOperators,
-        encodedRequestArgs,
-        context.ttl,
-        paymentAssetId,
-        paymentTokenAddress,
-        context.paymentValue,
-        context.minOperator,
-        context.maxOperator,
-      ],
-    };
-  }, [network.ss58Prefix]);
+      return {
+        functionName: 'requestService',
+        arguments: [
+          context.blueprintId,
+          encodedAssetSecurityRequirements,
+          encodedPermittedCallers,
+          encodedOperators,
+          encodedRequestArgs,
+          context.ttl,
+          paymentAssetId,
+          paymentTokenAddress,
+          context.paymentValue,
+          context.minOperator,
+          context.maxOperator,
+        ],
+      };
+    },
+    [network.ss58Prefix],
+  );
 
   return useAgnosticTx({
     name: TxName.DEPLOY_BLUEPRINT,
