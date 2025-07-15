@@ -6,12 +6,13 @@ import useApiRx from '../../hooks/useApiRx';
 import { TangleError, TangleErrorCode } from '../../types/error';
 import { MonitoringBlueprint, ServiceInstance } from './utils/type';
 import { createMonitoringBlueprint } from './utils/blueprintHelpers';
-import { Option } from '@polkadot/types';
+import { Option, StorageKey, u64 } from '@polkadot/types';
 import { extractOperatorData } from './utils/blueprintHelpers';
 import { TanglePrimitivesServicesService } from '@polkadot/types/lookup';
 import useOperatorTVL from '../restake/useOperatorTvl';
 import { TanglePrimitivesServicesTypesOperatorPreferences } from '@polkadot/types/lookup';
 import { SubstrateAddress } from '@tangle-network/ui-components/types/address';
+import { AccountId32 } from '@polkadot/types/interfaces';
 
 export default function useRegisteredBlueprints(
   operatorAccountAddress?: SubstrateAddress | null,
@@ -36,11 +37,13 @@ export default function useRegisteredBlueprints(
           ?.operatorsProfile(operatorAccountAddress)
           .pipe(
             map((operatorProfile) => {
-              if (operatorProfile.isNone) {
+              if ((operatorProfile as any).isNone) {
                 return [];
               }
 
-              return <string[]>operatorProfile.unwrap().blueprints.toHuman();
+              return <string[]>(
+                (operatorProfile as any).unwrap().blueprints.toHuman()
+              );
             }),
             catchError((error) => {
               console.error(
@@ -65,7 +68,7 @@ export default function useRegisteredBlueprints(
     result: blueprints,
     isLoading: isLoadingBlueprints,
     error: errorBlueprints,
-  } = useApiRx(
+  } = useApiRx<MonitoringBlueprint[]>(
     useCallback(
       (apiRx) => {
         if (apiRx.query.services?.blueprints === undefined)
@@ -80,8 +83,8 @@ export default function useRegisteredBlueprints(
           .pipe(
             map((results) => {
               const blueprints = results.map((blueprintOpt, index) => {
-                if (blueprintOpt.isNone) return null;
-                const [owner, blueprint] = blueprintOpt.unwrap();
+                if ((blueprintOpt as any).isNone) return null;
+                const [owner, blueprint] = (blueprintOpt as any).unwrap();
                 return {
                   blueprintId: blueprintIds[index],
                   owner: owner.toHuman(),
@@ -98,7 +101,7 @@ export default function useRegisteredBlueprints(
           .pipe(
             map((entries): ServiceInstance[] =>
               entries.map(([key, optInstance]) => ({
-                instanceId: key.args[0].toBigInt(),
+                instanceId: (key as StorageKey<[u64]>).args[0].toBigInt(),
                 serviceInstance: optInstance.isSome
                   ? toPrimitiveService(optInstance.unwrap())
                   : undefined,
@@ -112,7 +115,9 @@ export default function useRegisteredBlueprints(
           >();
 
         const runningInstanceEntries$ =
-          apiRx.query.services.instances.entries();
+          apiRx.query.services.instances.entries<
+            Option<TanglePrimitivesServicesService>
+          >();
 
         return combineLatest([
           blueprints$,
@@ -131,7 +136,9 @@ export default function useRegisteredBlueprints(
               const runningInstancesMap = new Map<bigint, ServiceInstance[]>();
 
               for (const [key, optServiceInstance] of runningInstanceEntries) {
-                const serviceInstanceId = key.args[0].toBigInt();
+                const serviceInstanceId = (
+                  key as StorageKey<[u64]>
+                ).args[0].toBigInt();
 
                 if (optServiceInstance.isNone) {
                   continue;
@@ -163,7 +170,10 @@ export default function useRegisteredBlueprints(
 
               // Calculate operators count from preferences entries.
               const { blueprintOperatorMap } = extractOperatorData(
-                operatorEntries,
+                operatorEntries as [
+                  StorageKey<[u64, AccountId32]>,
+                  Option<TanglePrimitivesServicesTypesOperatorPreferences>,
+                ][],
                 new Map(),
                 operatorTvlByAsset,
                 runningInstancesMap,

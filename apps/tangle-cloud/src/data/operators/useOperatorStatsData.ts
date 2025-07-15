@@ -4,6 +4,7 @@ import { SubstrateAddress } from '@tangle-network/ui-components/types/address';
 import { useCallback, useMemo } from 'react';
 import { catchError, combineLatest, map, of } from 'rxjs';
 import { z } from 'zod';
+import { StorageKey, u64 } from '@polkadot/types';
 
 const operatorStatsSchema = z.object({
   registeredBlueprints: z.number().default(0),
@@ -30,11 +31,11 @@ export const useOperatorStatsData = (
             ? of({})
             : apiRx.query.services?.operatorsProfile(operatorAddress).pipe(
                 map((operatorProfile) => {
-                  if (operatorProfile.isNone) {
+                  if ((operatorProfile as any).isNone) {
                     return {};
                   }
 
-                  const detailed = operatorProfile.unwrap();
+                  const detailed = (operatorProfile as any).unwrap();
                   return {
                     registeredBlueprints: detailed.blueprints.strings.length,
                     runningServices: detailed.services.strings.length,
@@ -53,16 +54,16 @@ export const useOperatorStatsData = (
           apiRx.query?.services?.serviceRequests === undefined
             ? of({})
             : apiRx.query.services?.serviceRequests.entries().pipe(
-                map((serviceRequests) => {
+                map((serviceRequests: any[]) => {
                   const pendingServices = serviceRequests.filter(
                     ([requestId, serviceRequest]) => {
-                      if (serviceRequest.isNone) {
+                      if ((serviceRequest as any).isNone) {
                         return false;
                       }
 
                       const primitiveServiceRequest = toPrimitiveServiceRequest(
-                        requestId,
-                        serviceRequest.unwrap(),
+                        requestId as StorageKey<[u64]>,
+                        (serviceRequest as any).unwrap(),
                       );
                       return primitiveServiceRequest.operatorsWithApprovalState.some(
                         (operator) =>
@@ -88,14 +89,14 @@ export const useOperatorStatsData = (
           apiRx.query.services?.blueprints === undefined
             ? of({})
             : apiRx.query.services?.blueprints?.entries().pipe(
-                map((blueprints) => {
+                map((blueprints: any[]) => {
                   const publishedBlueprints = blueprints.filter(
                     ([_, optBlueprint]) => {
-                      if (optBlueprint.isNone) {
+                      if ((optBlueprint as any).isNone) {
                         return false;
                       }
 
-                      const blueprint = optBlueprint.unwrap();
+                      const blueprint = (optBlueprint as any).unwrap();
                       const publisher = blueprint[0].toHuman();
                       return publisher === operatorAddress;
                     },
@@ -118,12 +119,12 @@ export const useOperatorStatsData = (
           apiRx.query.services?.instances === undefined
             ? of({})
             : apiRx.query.services?.instances.entries().pipe(
-                map((instances) => {
+                map((instances: any[]) => {
                   const deployedServices = instances.filter(([_, instance]) => {
-                    if (instance.isNone) {
+                    if ((instance as any).isNone) {
                       return false;
                     }
-                    const detailed = instance.unwrap();
+                    const detailed = (instance as any).unwrap();
                     return detailed.owner.toHuman() === operatorAddress;
                   });
                   return {
