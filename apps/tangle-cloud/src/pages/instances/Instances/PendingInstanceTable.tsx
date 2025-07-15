@@ -15,8 +15,8 @@ import {
   Modal,
   Typography,
   ValidatorIdentity,
+  toSubstrateAddress,
 } from '@tangle-network/ui-components';
-import assertSubstrateAddress from '@tangle-network/ui-components/utils/assertSubstrateAddress';
 import pluralize from '@tangle-network/ui-components/utils/pluralize';
 import { TangleCloudTable } from '../../../components/tangleCloudTable/TangleCloudTable';
 import { ChevronDown } from '@tangle-network/icons';
@@ -144,12 +144,17 @@ export const PendingInstanceTable: FC = () => {
           header: () => 'Deployer',
           cell: (props) => {
             const owner = props.row.original.owner;
-            const ownerUrl = network.createExplorerAccountUrl(owner);
+            const tangleFormatAddress = toSubstrateAddress(
+              owner,
+              network.ss58Prefix,
+            );
+            const ownerUrl =
+              network.createExplorerAccountUrl(tangleFormatAddress);
 
             return (
               <TableCellWrapper className="p-0 min-h-fit">
                 <ValidatorIdentity
-                  address={assertSubstrateAddress(owner)}
+                  address={tangleFormatAddress}
                   identityName={deployerIdentityMap?.get(owner)?.name ?? null}
                   accountExplorerUrl={ownerUrl ?? undefined}
                   avatarSize="md"
