@@ -5,6 +5,8 @@ import { useCallback, useMemo } from 'react';
 import { catchError, combineLatest, map, of } from 'rxjs';
 import { z } from 'zod';
 import { StorageKey, u64 } from '@polkadot/types';
+import { toSubstrateAddress } from '@tangle-network/ui-components/utils/toSubstrateAddress';
+import useNetworkStore from '@tangle-network/tangle-shared-ui/context/useNetworkStore';
 
 const operatorStatsSchema = z.object({
   registeredBlueprints: z.number().default(0),
@@ -19,6 +21,8 @@ const operatorStatsSchema = z.object({
 export const useOperatorStatsData = (
   operatorAddress: SubstrateAddress | null | undefined,
 ) => {
+  const { network } = useNetworkStore();
+
   const { result: operatorStats, ...rest } = useApiRx(
     useCallback(
       (apiRx) => {
@@ -66,9 +70,26 @@ export const useOperatorStatsData = (
                         (serviceRequest as any).unwrap(),
                       );
                       return primitiveServiceRequest.operatorsWithApprovalState.some(
-                        (operator) =>
-                          operator.operator === operatorAddress &&
-                          operator.approvalStateStatus === 'Pending',
+                        (operator) => {
+                          const normalizedChainOperator = toSubstrateAddress(
+                            operator.operator,
+                            network.ss58Prefix,
+                          );
+                          const normalizedCurrentOperator = operatorAddress
+                            ? toSubstrateAddress(
+                                operatorAddress,
+                                network.ss58Prefix,
+                              )
+                            : null;
+
+                          const addressMatch =
+                            normalizedChainOperator ===
+                            normalizedCurrentOperator;
+                          const statusMatch =
+                            operator.approvalStateStatus === 'Pending';
+
+                          return addressMatch && statusMatch;
+                        },
                       );
                     },
                   );
@@ -163,7 +184,7 @@ export const useOperatorStatsData = (
           ),
         );
       },
-      [operatorAddress],
+      [operatorAddress, network.ss58Prefix],
     ),
   );
 

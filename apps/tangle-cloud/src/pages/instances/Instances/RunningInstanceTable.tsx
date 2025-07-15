@@ -24,17 +24,78 @@ import useOperatorInfo from '@tangle-network/tangle-shared-ui/hooks/useOperatorI
 import useMonitoringBlueprints from '@tangle-network/tangle-shared-ui/data/blueprints/useMonitoringBlueprints';
 import useServicesTerminateTx from '../../../data/services/useServicesTerminateTx';
 import TerminateConfirmationModal from './UpdateBlueprintModel/TerminateConfirmationModal';
+import useActiveAccountAddress from '@tangle-network/tangle-shared-ui/hooks/useActiveAccountAddress';
+import useUserOwnedInstances from '../../../data/services/useUserOwnedInstances';
+import { isSubstrateAddress } from '@tangle-network/ui-components';
+import { encodeAddress, decodeAddress } from '@polkadot/util-crypto';
 
 const columnHelper =
   createColumnHelper<MonitoringBlueprint['services'][number]>();
 
 export const RunningInstanceTable: FC = () => {
-  const { operatorAddress } = useOperatorInfo();
+  const { operatorAddress, isOperator } = useOperatorInfo();
+  const currentUserAddress = useActiveAccountAddress();
+
+  const userSubstrateAddress =
+    currentUserAddress && isSubstrateAddress(currentUserAddress)
+      ? currentUserAddress
+      : null;
+
   const {
-    isLoading,
-    result: registeredBlueprints_,
-    error,
-  } = useMonitoringBlueprints(operatorAddress);
+    isLoading: operatorLoading,
+    result: operatorBlueprints,
+    error: operatorError,
+  } = useMonitoringBlueprints(isOperator ? operatorAddress : null);
+
+  const {
+    isLoading: userLoading,
+    result: userOwnedBlueprints,
+    error: userError,
+  } = useUserOwnedInstances(userSubstrateAddress);
+
+  const isLoading = operatorLoading || userLoading;
+  const error = operatorError || userError;
+
+  const registeredBlueprints_ = useMemo(() => {
+    const combined: MonitoringBlueprint[] = [];
+    const seenBlueprintIds = new Set<string>();
+
+    if (operatorBlueprints && Array.isArray(operatorBlueprints)) {
+      operatorBlueprints.forEach((blueprint: MonitoringBlueprint) => {
+        const id = blueprint.blueprintId.toString();
+        if (!seenBlueprintIds.has(id)) {
+          combined.push(blueprint);
+          seenBlueprintIds.add(id);
+        }
+      });
+    }
+
+    if (userOwnedBlueprints && Array.isArray(userOwnedBlueprints)) {
+      userOwnedBlueprints.forEach((userBlueprint: MonitoringBlueprint) => {
+        const id = userBlueprint.blueprintId.toString();
+        const existingBlueprintIndex = combined.findIndex(
+          (bp) => bp.blueprintId.toString() === id,
+        );
+
+        if (existingBlueprintIndex >= 0) {
+          const existingBlueprint = combined[existingBlueprintIndex];
+          const existingServiceIds = new Set(
+            existingBlueprint.services.map((s) => s.id.toString()),
+          );
+
+          userBlueprint.services.forEach((service) => {
+            if (!existingServiceIds.has(service.id.toString())) {
+              existingBlueprint.services.push(service);
+            }
+          });
+        } else {
+          combined.push(userBlueprint);
+        }
+      });
+    }
+
+    return combined;
+  }, [operatorBlueprints, userOwnedBlueprints]);
 
   const [isTerminateModalOpen, setIsTerminateModalOpen] = useState(false);
   const [selectedInstance, setSelectedInstance] = useState<
@@ -152,6 +213,32 @@ export const RunningInstanceTable: FC = () => {
       columnHelper.accessor('id', {
         header: () => '',
         cell: (props) => {
+          const serviceOwnerAddress = props.row.original.ownerAccount;
+
+          let isOwner = false;
+          try {
+            const normalizedOwner = encodeAddress(
+              decodeAddress(serviceOwnerAddress),
+            );
+            const normalizedUser = currentUserAddress
+              ? encodeAddress(decodeAddress(currentUserAddress))
+              : null;
+            isOwner = normalizedOwner === normalizedUser;
+            console.log('Terminate button check:', {
+              serviceOwnerAddress,
+              currentUserAddress,
+              normalizedOwner,
+              normalizedUser,
+              isOwner,
+            });
+          } catch (error) {
+            console.error(
+              'Address normalization error in terminate button:',
+              error,
+            );
+            isOwner = currentUserAddress === serviceOwnerAddress;
+          }
+
           return (
             <TableCellWrapper removeRightBorder className="p-0 min-h-fit">
               <div className="flex gap-2">
@@ -169,23 +256,25 @@ export const RunningInstanceTable: FC = () => {
                   </Button>
                 </Link>
 
-                <Button
-                  variant="utility"
-                  className="uppercase body4 !bg-red-500 !text-white hover:!bg-red-600"
-                  onClick={(event) => {
-                    event.stopPropagation();
-                    handleTerminateClick(props.row.original);
-                  }}
-                >
-                  Terminate
-                </Button>
+                {isOwner && (
+                  <Button
+                    variant="utility"
+                    className="uppercase body4 !bg-red-400 !text-white hover:!bg-red-500"
+                    onClick={(event) => {
+                      event.stopPropagation();
+                      handleTerminateClick(props.row.original);
+                    }}
+                  >
+                    Terminate
+                  </Button>
+                )}
               </div>
             </TableCellWrapper>
           );
         },
       }),
     ],
-    [handleTerminateClick],
+    [handleTerminateClick, currentUserAddress],
   );
 
   const table = useReactTable({
