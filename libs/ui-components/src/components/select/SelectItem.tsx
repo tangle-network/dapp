@@ -12,7 +12,7 @@ const SelectItem = forwardRef<
     className={twMerge(
       'relative flex w-full cursor-default select-none items-center',
       'rounded-sm py-1.5 pl-8 pr-2 text-sm outline-none',
-      'focus:bg-purple-40 dark:focus:bg-mono-170',
+      'focus:bg-mono-40 dark:focus:bg-mono-170 hover:bg-mono-40 dark:hover:bg-mono-170',
       'data-[disabled]:pointer-events-none data-[disabled]:opacity-50',
       className,
     )}

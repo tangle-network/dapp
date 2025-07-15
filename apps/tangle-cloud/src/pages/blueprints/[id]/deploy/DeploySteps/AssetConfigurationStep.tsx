@@ -128,6 +128,9 @@ export const AssetConfigurationStep: FC<AssetConfigurationStepProps> = ({
     const selectedIds = new Set(assets?.map((a) => a.id));
     return Array.from(allAssets.values())
       .filter((asset) => !selectedIds.has(asset.id))
+      .filter(
+        (asset) => asset.metadata.name && asset.metadata.name.trim() !== '',
+      )
       .map((a) => a.id);
   }, [allAssets, assets]);
 
@@ -161,15 +164,16 @@ export const AssetConfigurationStep: FC<AssetConfigurationStepProps> = ({
               {Children.toArray(
                 availableAssets.map((id) => {
                   const meta = allAssets?.get(id);
+                  const name = meta?.metadata.name || 'TNT';
                   return (
                     <SelectItem value={id} id={id}>
                       <div className="flex items-center gap-2">
                         <LsTokenIcon
-                          name={meta?.metadata.name ?? 'TNT'}
+                          name={name}
                           size="md"
                         />
                         <Typography variant="body1">
-                          {meta?.metadata.name ?? 'TNT'}
+                          {name}
                         </Typography>
                       </div>
                     </SelectItem>
@@ -181,7 +185,7 @@ export const AssetConfigurationStep: FC<AssetConfigurationStepProps> = ({
         </div>
       </div>
 
-      <div className="mt-5">
+      <div className="space-y-4">
         {Children.toArray(
           selectedAssets.map((asset, index) => {
             const minExposurePercentFormValue =
@@ -190,10 +194,10 @@ export const AssetConfigurationStep: FC<AssetConfigurationStepProps> = ({
               securityCommitments?.at(index)?.maxExposurePercent ?? 100;
 
             return (
-              <div className="flex items-center">
+              <div className="flex flex-col lg:flex-row lg:items-start gap-3 mb-6">
                 <AssetRequirementFormItem
                   assetId={asset.id}
-                  className="mb-8"
+                  className="flex-1"
                   assetMetadata={asset}
                   minExposurePercent={minExposurePercentFormValue}
                   maxExposurePercent={maxExposurePercentFormValue}
@@ -212,9 +216,10 @@ export const AssetConfigurationStep: FC<AssetConfigurationStepProps> = ({
                 <Button
                   variant="utility"
                   onClick={() => removeAsset(index)}
-                  className="ml-3"
+                  className="self-start lg:self-center lg:mt-2 flex-shrink-0"
+                  size="sm"
                 >
-                  <TrashIcon className="h-5 w-5" />
+                  <TrashIcon className="h-4 w-4" />
                 </Button>
               </div>
             );

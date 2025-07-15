@@ -48,27 +48,12 @@ export const RequestArgsConfigurationStep: FC<
         <Typography variant="body1">No request arguments required.</Typography>
       ) : (
         <>
-          <Typography variant="body2" className="mb-2">
+          <Typography variant="body2" className="mb-4">
             Paste or upload a JSON array representing the request arguments.
-            Example:
           </Typography>
 
-          <pre className="bg-mono-80 dark:bg-mono-160 rounded p-3 text-xs overflow-x-auto mb-3">
-            {`[
-  {
-    "config": {
-      "runtime": "docker",
-      "package": "tangle-network/mcp-solidity-kit:latest",
-      "args": [],
-      "env": [],
-      "transportAdapter": "none"
-    }
-  }
-]`}
-          </pre>
-
           <textarea
-            className="w-full min-h-[180px] border border-mono-100 dark:border-mono-140 rounded p-3 text-sm font-mono mb-3 resize-vertical"
+            className="w-full min-h-[180px] bg-mono-0 dark:bg-mono-180 border border-mono-60 dark:border-mono-120 rounded-lg p-4 text-sm font-mono mb-4 resize-vertical text-mono-160 dark:text-mono-40 placeholder:text-mono-100 dark:placeholder:text-mono-100 focus:border-blue-50 dark:focus:border-blue-50 focus:ring-1 focus:ring-blue-50 dark:focus:ring-blue-50 transition-colors"
             value={jsonText}
             onChange={(e) => handleJsonChange(e.target.value)}
             placeholder="Paste JSON array here"
@@ -79,6 +64,7 @@ export const RequestArgsConfigurationStep: FC<
               type="file"
               accept="application/json"
               onChange={handleFileUpload}
+              className="block w-full text-sm text-mono-140 dark:text-mono-60 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-medium file:bg-mono-40 dark:file:bg-mono-140 file:text-mono-160 dark:file:text-mono-40 hover:file:bg-mono-60 dark:hover:file:bg-mono-120 file:cursor-pointer cursor-pointer transition-colors"
             />
           </div>
         </>
