@@ -1,3 +1,4 @@
+import type { Blueprint } from '@tangle-network/tangle-shared-ui/types/blueprint';
 import { z } from 'zod';
 
 export const blueprintFormSchema = z.object({
@@ -10,6 +11,6 @@ export const blueprintFormSchema = z.object({
 
 export type BlueprintFormSchema = z.infer<typeof blueprintFormSchema>;
 
-export type BlueprintFormResult = {
-  values: BlueprintFormSchema;
+export type BlueprintFormResult = BlueprintFormSchema & {
+  blueprints: Blueprint[];
 };

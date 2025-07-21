@@ -29,11 +29,11 @@ const useAssets = () => {
                 freezer: details.freezer.toString(),
                 isSufficient: details.isSufficient.toString(),
                 issuer: details.issuer.toString(),
-                minBalance: details.minBalance.toNumber(),
+                minBalance: details.minBalance.toString(),
                 owner: details.owner.toString(),
                 status: details.status.toString(),
                 sufficients: details.sufficients.toNumber(),
-                supply: details.supply.toNumber(),
+                supply: details.supply.toString(),
               };
             }
             return undefined;

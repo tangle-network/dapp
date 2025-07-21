@@ -48,7 +48,7 @@ export const extractBlueprintsData = (
 
     const [ownerAccountId32, serviceBlueprint] = value.unwrap();
     const owner = ownerAccountId32.toString();
-    const primitiveBlueprint = toPrimitiveBlueprint(serviceBlueprint);
+    const primitiveBlueprint = toPrimitiveBlueprint(id, serviceBlueprint);
 
     blueprintsMap.set(id, merge(primitiveBlueprint, { owner }));
     ownerSet.add(owner);
@@ -171,6 +171,47 @@ function calculateBlueprintOperatorExposure(
   return blueprintTVL;
 }
 
+export const createPendingServiceRequests = (
+  pendingServiceRequests: MonitoringServiceRequest[],
+  blueprints: Array<{
+    owner: string;
+    blueprint: OperatorBlueprint['blueprint'];
+  }>,
+): MonitoringServiceRequest[] => {
+  if (!pendingServiceRequests.length || !blueprints.length) return [];
+
+  const blueprintMap = new Map(
+    blueprints.map((blueprint) => [
+      blueprint.blueprint.id.toString(),
+      blueprint,
+    ]),
+  );
+
+  return pendingServiceRequests.map((request) => {
+    const blueprint = blueprintMap.get(request.blueprint.toString());
+
+    if (!blueprint) return request;
+
+    const approvedOperators = request.operatorsWithApprovalState
+      .filter((operator) => operator.approvalStateStatus === 'Approved')
+      .map((operator) => operator.operator);
+
+    const pendingOperators = request.operatorsWithApprovalState
+      .filter((operator) => operator.approvalStateStatus === 'Pending')
+      .map((operator) => operator.operator);
+
+    return {
+      ...request,
+      blueprintData: {
+        ...blueprint.blueprint,
+        owner: blueprint.owner,
+      },
+      approvedOperators,
+      pendingOperators,
+    };
+  });
+};
+
 export const createBlueprintObjects = (
   blueprintsMap: ReturnType<typeof extractBlueprintsData>['blueprintsMap'],
   blueprintOperatorMap: ReturnType<
@@ -181,6 +222,7 @@ export const createBlueprintObjects = (
   >['blueprintRestakersMap'],
   blueprintTVLMap: ReturnType<typeof extractOperatorData>['blueprintTVLMap'],
   ownerIdentitiesMap: Awaited<ReturnType<typeof fetchOwnerIdentities>>,
+  runningInstancesMap: Map<bigint, ServiceInstance[]>,
 ): Map<string, Blueprint> => {
   const blueprintMap = new Map<string, Blueprint>();
 
@@ -188,6 +230,8 @@ export const createBlueprintObjects = (
     blueprintId,
     { metadata, owner, registrationParams },
   ] of blueprintsMap.entries()) {
+    const instancesCount = runningInstancesMap.get(blueprintId)?.length ?? null;
+
     blueprintMap.set(blueprintId.toString(), {
       id: blueprintId,
       name: metadata.name,
@@ -197,8 +241,9 @@ export const createBlueprintObjects = (
       description: metadata.description,
       registrationParams,
       category: metadata.category,
-      restakersCount: blueprintRestakersMap.get(blueprintId)?.size ?? null,
+      instancesCount,
       operatorsCount: blueprintOperatorMap.get(blueprintId)?.size ?? null,
+      restakersCount: blueprintRestakersMap.get(blueprintId)?.size ?? null,
       tvl: blueprintTVLMap.get(blueprintId)?.toLocaleString() ?? null,
       githubUrl: metadata.codeRepository,
       websiteUrl: metadata.website,
@@ -236,6 +281,7 @@ export function createMonitoringBlueprint(
   serviceInstances: ServiceInstance[],
   operatorTVLByAsset: Map<SubstrateAddress, Map<RestakeAssetId, number>>,
   runningInstancesMap: Map<bigint, ServiceInstance[]>,
+  owner?: string,
 ): MonitoringBlueprint {
   const filteredServiceInstances = serviceInstances.filter((instance) => {
     return instance.serviceInstance?.blueprint === blueprintId;
@@ -253,7 +299,7 @@ export function createMonitoringBlueprint(
     (instance) => instance.serviceInstance?.blueprint === blueprintId,
   ).length;
 
-  const blueprintTVL = calculateBlueprintOperatorExposure(
+  const tvl = calculateBlueprintOperatorExposure(
     runningInstancesMap,
     blueprintId,
     operatorTVLByAsset,
@@ -263,9 +309,15 @@ export function createMonitoringBlueprint(
     ...operatorBlueprint,
     instanceCount: instanceCount,
     operatorsCount: totalOperator,
-    tvl: blueprintTVL,
+    tvl: tvl,
     // TODO: get uptime from the graphql
     uptime: randNumber({ min: 0, max: 100 }),
+    ...(owner && {
+      metadata: {
+        ...operatorBlueprint.metadata,
+        owner,
+      },
+    }),
   };
 
   const services = operatorServices.map((service) => {
@@ -291,19 +343,3 @@ export function createMonitoringBlueprint(
     services,
   };
 }
-
-export const createPendingServiceRequests = (
-  pendingServiceRequests: MonitoringServiceRequest[],
-  blueprints: OperatorBlueprint['blueprint'][],
-): MonitoringServiceRequest[] => {
-  return pendingServiceRequests.map((pendingServiceRequest, idx) => {
-    return {
-      ...pendingServiceRequest,
-      // TODO: sum asset price
-      pricing: Math.round(Math.random() * 10000),
-      blueprintData: {
-        ...blueprints[idx],
-      },
-    };
-  });
-};

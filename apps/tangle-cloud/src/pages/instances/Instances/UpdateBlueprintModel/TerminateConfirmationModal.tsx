@@ -5,7 +5,7 @@ import {
   ModalFooterActions,
   ModalHeader,
 } from '@tangle-network/ui-components';
-import { MonitoringServiceRequest } from '@tangle-network/tangle-shared-ui/data/blueprints/utils/type';
+import { MonitoringBlueprint } from '@tangle-network/tangle-shared-ui/data/blueprints/utils/type';
 import BlueprintItem from '@tangle-network/tangle-shared-ui/components/blueprints/BlueprintGallery/BlueprintItem';
 import { TxStatus } from '@tangle-network/tangle-shared-ui/hooks/useSubstrateTx';
 import { FC, useEffect } from 'react';
@@ -15,14 +15,14 @@ import addCommasToNumber from '@tangle-network/ui-components/utils/addCommasToNu
 type Props = {
   onClose: () => void;
   onConfirm: () => Promise<void>;
-  selectedRequest: MonitoringServiceRequest | null;
+  selectedInstance: MonitoringBlueprint['services'][number] | null;
   status: TxStatus;
 };
 
-const RejectConfirmationModal: FC<Props> = ({
+const TerminateConfirmationModal: FC<Props> = ({
   onClose,
   onConfirm,
-  selectedRequest,
+  selectedInstance,
   status,
 }) => {
   const isSubmitting = status === TxStatus.PROCESSING;
@@ -36,13 +36,13 @@ const RejectConfirmationModal: FC<Props> = ({
     }
   }, [status, onClose]);
 
-  // Don't load the modal until the request prop is given.
-  if (selectedRequest === null) {
+  // Don't load the modal until the instance prop is given.
+  if (selectedInstance === null) {
     return;
   }
 
   const blueprintStats = allBlueprints.get(
-    selectedRequest.blueprint.toString(),
+    selectedInstance.blueprint.toString(),
   );
 
   const instancesCount = blueprintStats?.instancesCount ?? 0;
@@ -53,21 +53,21 @@ const RejectConfirmationModal: FC<Props> = ({
     <ModalContent
       size="lg"
       onInteractOutside={(event) => event.preventDefault()}
-      title={`Service Request #${addCommasToNumber(selectedRequest.requestId)}`}
-      description="Are you sure you want to reject this request?"
+      title={`Terminate Service Instance #${addCommasToNumber(selectedInstance.id)}`}
+      description="Are you sure you want to terminate this service instance?"
     >
       <ModalHeader onClose={onClose} className="pb-4">
-        Service Request #{addCommasToNumber(selectedRequest.requestId)}
+        Terminate Service Instance #{addCommasToNumber(selectedInstance.id)}
       </ModalHeader>
 
       <ModalBody>
         <BlueprintItem
-          imgUrl={selectedRequest.blueprintData?.metadata.logo ?? ''}
+          imgUrl={selectedInstance.blueprintData?.metadata.logo ?? ''}
           renderImage={(imageUrl) => {
             return (
               <img
                 src={imageUrl}
-                alt={selectedRequest.blueprintData?.metadata.name ?? ''}
+                alt={selectedInstance.blueprintData?.metadata.name ?? ''}
                 className="flex-shrink-0 bg-center rounded-full"
               />
             );
@@ -76,24 +76,25 @@ const RejectConfirmationModal: FC<Props> = ({
           operatorsCount={operatorsCount}
           restakersCount={restakersCount}
           isBoosted={false}
-          category={selectedRequest.blueprintData?.metadata.category ?? ''}
+          category={selectedInstance.blueprintData?.metadata.category ?? ''}
           description={
-            selectedRequest.blueprintData?.metadata.description ?? ''
+            selectedInstance.blueprintData?.metadata.description ?? ''
           }
-          name={selectedRequest.blueprintData?.metadata.name ?? ''}
-          author={selectedRequest.blueprintData?.metadata.author ?? ''}
+          name={selectedInstance.blueprintData?.metadata.name ?? ''}
+          author={selectedInstance.blueprintData?.metadata.author ?? ''}
         />
 
         <Alert
           className="mt-4"
           type="error"
-          description="Are you sure you want to reject this service request?"
+          description="This will permanently stop the service instance. All ongoing operations will be halted and the instance will be moved to the stopped state. This action cannot be undone."
         />
       </ModalBody>
+
       <ModalFooterActions
         isConfirmDisabled={isSubmitting}
         isProcessing={isSubmitting}
-        confirmButtonText="Reject"
+        confirmButtonText="Terminate Instance"
         onConfirm={onConfirm}
         hasCloseButton
       />
@@ -101,4 +102,4 @@ const RejectConfirmationModal: FC<Props> = ({
   );
 };
 
-export default RejectConfirmationModal;
+export default TerminateConfirmationModal;

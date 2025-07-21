@@ -7,9 +7,10 @@ export type BlueprintItemProps = {
   author: string;
   imgUrl: string | null;
   description: string | null;
-  restakersCount: number | null;
+  instancesCount: number | null;
   operatorsCount: number | null;
-  tvl: string | null;
+  restakersCount: number | null;
+  tvl?: string | null;
   isBoosted?: boolean;
   category: string | null;
   renderImage: (imageUrl: string) => React.ReactNode;

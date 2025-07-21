@@ -6,10 +6,20 @@ import { TangleError, TangleErrorCode } from '../../types/error';
 import { createPendingServiceRequests } from './utils/blueprintHelpers';
 import { SubstrateAddress } from '@tangle-network/ui-components/types/address';
 import { toPrimitiveBlueprint } from './utils/toPrimitiveBlueprint';
+import { toSubstrateAddress } from '@tangle-network/ui-components/utils/toSubstrateAddress';
+import useNetworkStore from '../../context/useNetworkStore';
+import { Option } from '@polkadot/types';
+import {
+  TanglePrimitivesServicesServiceServiceBlueprint,
+  TanglePrimitivesServicesServiceServiceRequest,
+} from '@polkadot/types/lookup';
+import { ITuple } from '@polkadot/types/types';
+import { AccountId32 } from '@polkadot/types/interfaces';
 
 const usePendingServiceRequest = (
   operatorAccountAddress: SubstrateAddress | null,
 ) => {
+  const { network } = useNetworkStore();
   const { result: serviceRequestEntries } = useApiRx(
     useCallback(
       (apiRx) => {
@@ -36,18 +46,45 @@ const usePendingServiceRequest = (
   const primitiveServiceRequests = useMemo(() => {
     if (!serviceRequestEntries) return [];
 
-    return serviceRequestEntries
-      .map(([requestId, serviceRequest]) =>
-        toPrimitiveServiceRequest(requestId, serviceRequest.unwrap()),
+    const allServiceRequests = serviceRequestEntries
+      .map(
+        ([requestId, serviceRequest]) =>
+          [
+            requestId,
+            (
+              serviceRequest as Option<TanglePrimitivesServicesServiceServiceRequest>
+            ).unwrapOr(null),
+          ] as const,
       )
-      .filter((serviceRequest) =>
-        serviceRequest.operatorsWithApprovalState.some(
-          (operator) =>
-            operator.operator === operatorAccountAddress &&
-            operator.approvalStateStatus === 'Pending',
-        ),
+      .filter((entry): entry is [any, any] => entry[1] !== null)
+      .map(([requestId, serviceRequest]) =>
+        toPrimitiveServiceRequest(requestId, serviceRequest),
       );
-  }, [serviceRequestEntries, operatorAccountAddress]);
+
+    const filtered = allServiceRequests.filter((serviceRequest) => {
+      const hasMatchingOperator =
+        serviceRequest.operatorsWithApprovalState.some((operator) => {
+          // Normalize both addresses to the same format for comparison
+          const normalizedChainOperator = toSubstrateAddress(
+            operator.operator,
+            network.ss58Prefix,
+          );
+          const normalizedCurrentOperator = operatorAccountAddress
+            ? toSubstrateAddress(operatorAccountAddress, network.ss58Prefix)
+            : null;
+
+          const addressMatch =
+            normalizedChainOperator === normalizedCurrentOperator;
+          const statusMatch = operator.approvalStateStatus === 'Pending';
+
+          return addressMatch && statusMatch;
+        });
+
+      return hasMatchingOperator;
+    });
+
+    return filtered;
+  }, [serviceRequestEntries, operatorAccountAddress, network.ss58Prefix]);
 
   const blueprintIds = useMemo(() => {
     return primitiveServiceRequests.map(
@@ -63,8 +100,30 @@ const usePendingServiceRequest = (
         return apiRx.query.services.blueprints.multi(blueprintIds).pipe(
           map((blueprints) =>
             blueprints
-              .map((blueprint) => blueprint.unwrap())
-              .map(([_, blueprint]) => toPrimitiveBlueprint(blueprint)),
+              .map(
+                (blueprint, index) =>
+                  [
+                    blueprintIds[index],
+                    (
+                      blueprint as Option<
+                        ITuple<
+                          [
+                            AccountId32,
+                            TanglePrimitivesServicesServiceServiceBlueprint,
+                          ]
+                        >
+                      >
+                    ).unwrapOr(null),
+                  ] as const,
+              )
+              .filter(
+                (entry): entry is [bigint, ITuple<[AccountId32, any]>] =>
+                  entry[1] !== null,
+              )
+              .map(([id, [owner, blueprint]]) => ({
+                owner: owner.toHuman(),
+                blueprint: toPrimitiveBlueprint(id, blueprint),
+              })),
           ),
           catchError((error) => {
             console.error('Error querying blueprints:', error);

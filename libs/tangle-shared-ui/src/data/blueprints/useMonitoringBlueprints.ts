@@ -59,7 +59,10 @@ const useMonitoringBlueprints = (
               vec.map(
                 (item): OperatorBlueprint => ({
                   blueprintId: item.blueprintId.toBigInt(),
-                  blueprint: toPrimitiveBlueprint(item.blueprint),
+                  blueprint: toPrimitiveBlueprint(
+                    item.blueprintId.toBigInt(),
+                    item.blueprint,
+                  ),
                   services: item.services.map(toPrimitiveService),
                 }),
               ),
