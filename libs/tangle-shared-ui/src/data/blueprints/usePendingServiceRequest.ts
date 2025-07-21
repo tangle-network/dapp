@@ -8,6 +8,13 @@ import { SubstrateAddress } from '@tangle-network/ui-components/types/address';
 import { toPrimitiveBlueprint } from './utils/toPrimitiveBlueprint';
 import { toSubstrateAddress } from '@tangle-network/ui-components/utils/toSubstrateAddress';
 import useNetworkStore from '../../context/useNetworkStore';
+import { Option } from '@polkadot/types';
+import {
+  TanglePrimitivesServicesServiceServiceBlueprint,
+  TanglePrimitivesServicesServiceServiceRequest,
+} from '@polkadot/types/lookup';
+import { ITuple } from '@polkadot/types/types';
+import { AccountId32 } from '@polkadot/types/interfaces';
 
 const usePendingServiceRequest = (
   operatorAccountAddress: SubstrateAddress | null,
@@ -39,13 +46,20 @@ const usePendingServiceRequest = (
   const primitiveServiceRequests = useMemo(() => {
     if (!serviceRequestEntries) return [];
 
-    const allServiceRequests = serviceRequestEntries.map(
-      ([requestId, serviceRequest]) =>
-        toPrimitiveServiceRequest(
-          requestId as any,
-          (serviceRequest as any).unwrap(),
-        ),
-    );
+    const allServiceRequests = serviceRequestEntries
+      .map(
+        ([requestId, serviceRequest]) =>
+          [
+            requestId,
+            (
+              serviceRequest as Option<TanglePrimitivesServicesServiceServiceRequest>
+            ).unwrapOr(null),
+          ] as const,
+      )
+      .filter((entry): entry is [any, any] => entry[1] !== null)
+      .map(([requestId, serviceRequest]) =>
+        toPrimitiveServiceRequest(requestId, serviceRequest),
+      );
 
     const filtered = allServiceRequests.filter((serviceRequest) => {
       const hasMatchingOperator =
@@ -86,10 +100,29 @@ const usePendingServiceRequest = (
         return apiRx.query.services.blueprints.multi(blueprintIds).pipe(
           map((blueprints) =>
             blueprints
-              .map((blueprint) => (blueprint as any).unwrap())
-              .map(([owner, blueprint]) => ({
+              .map(
+                (blueprint, index) =>
+                  [
+                    blueprintIds[index],
+                    (
+                      blueprint as Option<
+                        ITuple<
+                          [
+                            AccountId32,
+                            TanglePrimitivesServicesServiceServiceBlueprint,
+                          ]
+                        >
+                      >
+                    ).unwrapOr(null),
+                  ] as const,
+              )
+              .filter(
+                (entry): entry is [bigint, ITuple<[AccountId32, any]>] =>
+                  entry[1] !== null,
+              )
+              .map(([id, [owner, blueprint]]) => ({
                 owner: owner.toHuman(),
-                blueprint: toPrimitiveBlueprint(blueprint),
+                blueprint: toPrimitiveBlueprint(id, blueprint),
               })),
           ),
           catchError((error) => {

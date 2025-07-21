@@ -12,13 +12,17 @@ import type {
 } from '@tangle-network/tangle-substrate-types';
 import { PrimitiveFieldType } from '../../../types/blueprint';
 
-export const toPrimitiveBlueprint = ({
-  metadata,
-  jobs,
-  registrationParams,
-  requestParams,
-}: ServiceBlueprint | TanglePrimitivesServicesServiceServiceBlueprint) => {
+export const toPrimitiveBlueprint = (
+  id: bigint,
+  {
+    metadata,
+    jobs,
+    registrationParams,
+    requestParams,
+  }: ServiceBlueprint | TanglePrimitivesServicesServiceServiceBlueprint,
+) => {
   return {
+    id,
     metadata: toPrimitiveServiceMetadata(metadata),
     jobs: jobs.map(toPrimitiveJobDefinition),
     registrationParams: registrationParams.map(toPrimitiveFieldType),

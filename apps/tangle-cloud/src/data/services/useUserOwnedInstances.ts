@@ -94,10 +94,10 @@ export const useUserOwnedInstances = (
                         const blueprintId = (
                           key as StorageKey<[u64]>
                         ).args[0].toBigInt();
-                        return {
-                          id: blueprintId,
-                          ...toPrimitiveBlueprint(serviceBlueprint),
-                        };
+                        return toPrimitiveBlueprint(
+                          blueprintId,
+                          serviceBlueprint,
+                        );
                       });
                   }),
                   catchError((error) => {

@@ -83,16 +83,21 @@ export default function useRegisteredBlueprints(
           .pipe(
             map((results) => {
               const blueprints = results.map((blueprintOpt, index) => {
-                if ((blueprintOpt as any).isNone) return null;
-                const [owner, blueprint] = (blueprintOpt as any).unwrap();
+                if (blueprintOpt.isNone) return null;
+                const [owner, blueprint] = blueprintOpt.unwrap();
                 return {
                   blueprintId: blueprintIds[index],
                   owner: owner.toHuman(),
-                  blueprint: toPrimitiveBlueprint(blueprint),
+                  blueprint: toPrimitiveBlueprint(
+                    blueprintIds[index],
+                    blueprint,
+                  ),
                 };
               });
 
-              return blueprints.filter((b) => b !== null);
+              return blueprints.filter(
+                (b): b is NonNullable<typeof b> => b !== null,
+              );
             }),
           );
 

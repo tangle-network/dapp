@@ -81,7 +81,7 @@ const useBlueprintDetails = (id?: bigint) => {
               const owner = ownerAccount.toString();
 
               const { metadata, registrationParams, requestParams } =
-                toPrimitiveBlueprint(serviceBlueprint);
+                toPrimitiveBlueprint(id, serviceBlueprint);
 
               const runningInstancesMap = new Map<bigint, ServiceInstance[]>();
 
