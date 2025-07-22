@@ -62,9 +62,18 @@ const DeployPage: FC = () => {
       watch,
       control,
       setError,
+      clearErrors,
       blueprint: blueprintResult?.details,
     }),
-    [blueprintResult?.details, control, errors, setError, setValue, watch],
+    [
+      blueprintResult?.details,
+      control,
+      errors,
+      setError,
+      setValue,
+      watch,
+      clearErrors,
+    ],
   );
 
   // Automatically navigate to the blueprint details page when the service
@@ -107,6 +116,11 @@ const DeployPage: FC = () => {
             type: 'manual',
             message: err.message,
           });
+        });
+      } else if (error instanceof Error) {
+        setError('requestArgs', {
+          type: 'manual',
+          message: error.message,
         });
       }
     }

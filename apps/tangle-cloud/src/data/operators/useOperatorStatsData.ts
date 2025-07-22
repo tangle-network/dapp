@@ -4,6 +4,18 @@ import { SubstrateAddress } from '@tangle-network/ui-components/types/address';
 import { useCallback, useMemo } from 'react';
 import { catchError, combineLatest, map, of } from 'rxjs';
 import { z } from 'zod';
+import { StorageKey, u64 } from '@polkadot/types';
+import { toSubstrateAddress } from '@tangle-network/ui-components/utils/toSubstrateAddress';
+import useNetworkStore from '@tangle-network/tangle-shared-ui/context/useNetworkStore';
+import { Option } from '@polkadot/types';
+import {
+  TanglePrimitivesServicesService,
+  TanglePrimitivesServicesServiceServiceBlueprint,
+  TanglePrimitivesServicesServiceServiceRequest,
+  TanglePrimitivesServicesTypesOperatorProfile,
+} from '@polkadot/types/lookup';
+import { ITuple } from '@polkadot/types/types';
+import { AccountId32 } from '@polkadot/types/interfaces';
 
 const operatorStatsSchema = z.object({
   registeredBlueprints: z.number().default(0),
@@ -18,6 +30,8 @@ const operatorStatsSchema = z.object({
 export const useOperatorStatsData = (
   operatorAddress: SubstrateAddress | null | undefined,
 ) => {
+  const { network } = useNetworkStore();
+
   const { result: operatorStats, ...rest } = useApiRx(
     useCallback(
       (apiRx) => {
@@ -30,14 +44,17 @@ export const useOperatorStatsData = (
             ? of({})
             : apiRx.query.services?.operatorsProfile(operatorAddress).pipe(
                 map((operatorProfile) => {
-                  if (operatorProfile.isNone) {
+                  const unwrapped = (
+                    operatorProfile as Option<TanglePrimitivesServicesTypesOperatorProfile>
+                  ).unwrapOr(null);
+
+                  if (unwrapped === null) {
                     return {};
                   }
 
-                  const detailed = operatorProfile.unwrap();
                   return {
-                    registeredBlueprints: detailed.blueprints.strings.length,
-                    runningServices: detailed.services.strings.length,
+                    registeredBlueprints: unwrapped.blueprints.size,
+                    runningServices: unwrapped.services.size,
                   };
                 }),
                 catchError((error) => {
@@ -56,18 +73,39 @@ export const useOperatorStatsData = (
                 map((serviceRequests) => {
                   const pendingServices = serviceRequests.filter(
                     ([requestId, serviceRequest]) => {
-                      if (serviceRequest.isNone) {
+                      const unwrapped = (
+                        serviceRequest as Option<TanglePrimitivesServicesServiceServiceRequest>
+                      ).unwrapOr(null);
+
+                      if (unwrapped === null) {
                         return false;
                       }
 
                       const primitiveServiceRequest = toPrimitiveServiceRequest(
-                        requestId,
-                        serviceRequest.unwrap(),
+                        requestId as StorageKey<[u64]>,
+                        unwrapped,
                       );
                       return primitiveServiceRequest.operatorsWithApprovalState.some(
-                        (operator) =>
-                          operator.operator === operatorAddress &&
-                          operator.approvalStateStatus === 'Pending',
+                        (operator) => {
+                          const normalizedChainOperator = toSubstrateAddress(
+                            operator.operator,
+                            network.ss58Prefix,
+                          );
+                          const normalizedCurrentOperator = operatorAddress
+                            ? toSubstrateAddress(
+                                operatorAddress,
+                                network.ss58Prefix,
+                              )
+                            : null;
+
+                          const addressMatch =
+                            normalizedChainOperator ===
+                            normalizedCurrentOperator;
+                          const statusMatch =
+                            operator.approvalStateStatus === 'Pending';
+
+                          return addressMatch && statusMatch;
+                        },
                       );
                     },
                   );
@@ -90,13 +128,24 @@ export const useOperatorStatsData = (
             : apiRx.query.services?.blueprints?.entries().pipe(
                 map((blueprints) => {
                   const publishedBlueprints = blueprints.filter(
-                    ([_, optBlueprint]) => {
-                      if (optBlueprint.isNone) {
+                    ([, optBlueprint]) => {
+                      const unwrapped = (
+                        optBlueprint as Option<
+                          ITuple<
+                            [
+                              AccountId32,
+                              TanglePrimitivesServicesServiceServiceBlueprint,
+                            ]
+                          >
+                        >
+                      ).unwrapOr(null);
+
+                      if (unwrapped === null) {
                         return false;
                       }
 
-                      const blueprint = optBlueprint.unwrap();
-                      const publisher = blueprint[0].toHuman();
+                      const owner = unwrapped[0];
+                      const publisher = owner.toHuman();
                       return publisher === operatorAddress;
                     },
                   );
@@ -120,11 +169,13 @@ export const useOperatorStatsData = (
             : apiRx.query.services?.instances.entries().pipe(
                 map((instances) => {
                   const deployedServices = instances.filter(([_, instance]) => {
-                    if (instance.isNone) {
+                    const unwrapped = (
+                      instance as Option<TanglePrimitivesServicesService>
+                    ).unwrapOr(null);
+                    if (unwrapped === null) {
                       return false;
                     }
-                    const detailed = instance.unwrap();
-                    return detailed.owner.toHuman() === operatorAddress;
+                    return unwrapped.owner.toHuman() === operatorAddress;
                   });
                   return {
                     deployedServices: deployedServices.length,
@@ -162,7 +213,7 @@ export const useOperatorStatsData = (
           ),
         );
       },
-      [operatorAddress],
+      [operatorAddress, network.ss58Prefix],
     ),
   );
 

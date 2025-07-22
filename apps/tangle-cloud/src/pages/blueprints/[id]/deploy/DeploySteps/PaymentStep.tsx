@@ -41,7 +41,6 @@ export const PaymentStep: FC<PaymentStepProps> = ({
       <Typography variant="h5" className="text-mono-200 dark:text-mono-0 mb-4">
         Payment
       </Typography>
-      <hr className="border-mono-80 dark:border-mono-160 mb-6" />
 
       <div className="flex gap-6 w-full">
         <div className="space-y-2 flex-1">
@@ -59,25 +58,28 @@ export const PaymentStep: FC<PaymentStepProps> = ({
               }
             }}
           >
-            <SelectTrigger className="w-full">
+            <SelectTrigger className="w-full h-10">
               <SelectValue placeholder={'Select payment asset'} />
             </SelectTrigger>
 
             <SelectContent>
               {Children.toArray(
-                Array.from(assets?.values() ?? []).map((asset) => (
-                  <SelectItem value={asset.id} id={asset.id}>
-                    <div className="flex items-center gap-2">
-                      <LsTokenIcon
-                        name={asset.metadata.name ?? 'TNT'}
-                        size="md"
-                      />
-                      <Typography variant="body1">
-                        {asset.metadata.name ?? 'TNT'}
-                      </Typography>
-                    </div>
-                  </SelectItem>
-                )),
+                Array.from(assets?.values() ?? [])
+                  .filter(
+                    (asset) =>
+                      asset.metadata.name && asset.metadata.name.trim() !== '',
+                  )
+                  .map((asset) => {
+                    const name = asset.metadata.name || 'TNT';
+                    return (
+                      <SelectItem value={asset.id} id={asset.id}>
+                        <div className="flex items-center gap-2">
+                          <LsTokenIcon name={name} size="md" />
+                          <Typography variant="body1">{name}</Typography>
+                        </div>
+                      </SelectItem>
+                    );
+                  }),
               )}
             </SelectContent>
           </Select>
@@ -102,6 +104,7 @@ export const PaymentStep: FC<PaymentStepProps> = ({
             value={watch('paymentAmount')?.toString() ?? ''}
             onChange={onChangePaymentAmount}
             type="text"
+            inputClassName="h-10"
             className="w-full"
           />
           {errors?.paymentAmount?.message && (

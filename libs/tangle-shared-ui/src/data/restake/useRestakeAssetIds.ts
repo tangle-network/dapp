@@ -1,5 +1,5 @@
 import { Option, StorageKey, u32, Vec } from '@polkadot/types';
-import { TanglePrimitivesServicesTypesAsset } from '@polkadot/types/lookup';
+import { TanglePrimitivesServicesTypesAssetU128 } from '@polkadot/types/lookup';
 import { useCallback } from 'react';
 import { map, of } from 'rxjs';
 import useApiRx from '../../hooks/useApiRx';
@@ -11,7 +11,7 @@ import useVaultsPotAccounts from '../rewards/useVaultsPotAccounts';
 function toPrimitive(
   entries: [
     StorageKey<[u32]> | number,
-    Option<Vec<TanglePrimitivesServicesTypesAsset>>,
+    Option<Vec<TanglePrimitivesServicesTypesAssetU128>>,
   ][],
 ): RestakeAssetId[] {
   return entries.flatMap(([, assets]) => {

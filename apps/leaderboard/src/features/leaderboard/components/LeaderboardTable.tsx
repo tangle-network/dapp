@@ -204,7 +204,7 @@ export const LeaderboardTable = () => {
   });
 
   // TODO: Add network tabs when we support both mainnet and testnet
-  const [networkTab] = useState<NetworkType>('TESTNET');
+  const [networkTab] = useState<NetworkType>('TESTNET' as NetworkType);
 
   const {
     data: latestBlock,

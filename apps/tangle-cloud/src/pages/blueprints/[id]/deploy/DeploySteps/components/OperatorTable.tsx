@@ -1,15 +1,16 @@
 import useNetworkStore from '@tangle-network/tangle-shared-ui/context/useNetworkStore';
 import {
   Avatar,
+  ExternalLinkIcon,
   CheckBox,
   EMPTY_VALUE_PLACEHOLDER,
-  EnergyChipColors,
-  EnergyChipStack,
-  ExternalLinkIcon,
   fuzzyFilter,
   KeyValueWithButton,
+  formatDisplayAmount,
+  AmountFormatStyle,
   Table,
   Typography,
+  toSubstrateAddress,
 } from '@tangle-network/ui-components';
 import { FC } from 'react';
 import { OperatorSelectionTable } from '../type';
@@ -26,6 +27,8 @@ import { sortByAddressOrIdentity } from '@tangle-network/tangle-shared-ui/compon
 import TableCellWrapper from '@tangle-network/tangle-shared-ui/components/tables/TableCellWrapper';
 import VaultsDropdown from '@tangle-network/tangle-shared-ui/components/tables/Operators/VaultsDropdown';
 import { TableVariant } from '@tangle-network/ui-components/components/Table/types';
+import { BN } from 'bn.js';
+import { TANGLE_TOKEN_DECIMALS } from '@tangle-network/dapp-config';
 
 const COLUMN_HELPER = createColumnHelper<OperatorSelectionTable>();
 
@@ -44,9 +47,16 @@ export const OperatorTable: FC<Props> = ({ tableData, ...tableProps }) => {
       header: () => 'Identity',
       sortingFn: sortByAddressOrIdentity<OperatorSelectionTable>(),
       cell: (props) => {
-        const { address, identityName: identity } = props.row.original;
+        const { address: rawAddress, identityName: identity } =
+          props.row.original;
 
-        const accountUrl = activeNetwork.createExplorerAccountUrl(address);
+        const substrateAddress = toSubstrateAddress(
+          rawAddress,
+          activeNetwork.ss58Prefix,
+        );
+
+        const accountUrl =
+          activeNetwork.createExplorerAccountUrl(substrateAddress);
 
         return (
           <TableCellWrapper className="pl-3 min-h-fit">
@@ -62,14 +72,14 @@ export const OperatorTable: FC<Props> = ({ tableData, ...tableProps }) => {
 
               <Avatar
                 sourceVariant="address"
-                value={address}
+                value={substrateAddress}
                 theme="substrate"
                 size="md"
               />
 
               <div className="flex items-center">
                 <KeyValueWithButton
-                  keyValue={identity ? identity : address}
+                  keyValue={identity ? identity : substrateAddress}
                   size="sm"
                 />
                 {accountUrl && (
@@ -83,6 +93,29 @@ export const OperatorTable: FC<Props> = ({ tableData, ...tableProps }) => {
             </div>
           </TableCellWrapper>
         );
+      },
+    }),
+    COLUMN_HELPER.accessor('selfBondedAmount', {
+      header: () => 'Self-Bonded',
+      cell: (props) => {
+        const value = props.row.original.selfBondedAmount;
+        return (
+          <TableCellWrapper className="pl-3 min-h-fit">
+            <Typography variant="body1">
+              {formatDisplayAmount(
+                new BN(value.toString()),
+                TANGLE_TOKEN_DECIMALS,
+                AmountFormatStyle.SHORT,
+              )}{' '}
+              TNT
+            </Typography>
+          </TableCellWrapper>
+        );
+      },
+      sortingFn: (rowA, rowB) => {
+        const a = rowA.original.selfBondedAmount ?? BigInt(0);
+        const b = rowB.original.selfBondedAmount ?? BigInt(0);
+        return Number(a - b);
       },
     }),
     COLUMN_HELPER.accessor('instanceCount', {
@@ -106,35 +139,6 @@ export const OperatorTable: FC<Props> = ({ tableData, ...tableProps }) => {
             <Typography variant="body1">
               {props.row.original.restakersCount}
             </Typography>
-          </TableCellWrapper>
-        );
-      },
-    }),
-    COLUMN_HELPER.accessor('uptime', {
-      header: () => 'Uptime',
-      cell: (props) => {
-        const DEFAULT_STACK = 10;
-        const DEFAULT_PERCENTAGE = 100;
-        const numberOfActiveChips = !props.row.original.uptime
-          ? 0
-          : Math.round(
-              (props.row.original.uptime * DEFAULT_STACK) / DEFAULT_PERCENTAGE,
-            );
-
-        const activeColors = Array<EnergyChipColors>(numberOfActiveChips).fill(
-          EnergyChipColors.GREEN,
-        );
-        const inactiveColors = Array<EnergyChipColors>(
-          DEFAULT_STACK - numberOfActiveChips,
-        ).fill(EnergyChipColors.GREY);
-        const colors = [...activeColors, ...inactiveColors];
-
-        return (
-          <TableCellWrapper className="pl-3 min-h-fit">
-            <EnergyChipStack
-              colors={colors}
-              label={`${props.row.original.uptime || EMPTY_VALUE_PLACEHOLDER}%`}
-            />
           </TableCellWrapper>
         );
       },

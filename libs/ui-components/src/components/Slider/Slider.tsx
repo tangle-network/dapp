@@ -66,12 +66,7 @@ export const Slider = forwardRef<HTMLSpanElement, SliderProps>(
     );
 
     return (
-      <div
-        className={twMerge(
-          'min-w-[495px] min-h-[36px] flex items-end',
-          className,
-        )}
-      >
+      <div className={twMerge('w-full min-h-[36px] flex items-end', className)}>
         <SliderPrimitive.Root
           {...props}
           defaultValue={value}
@@ -118,7 +113,7 @@ function SliderThumb({ hasLabel, value }: SliderThumbProps) {
       )}
     >
       {hasLabel && (
-        <span className="absolute left-0 translate-x-1/4 -top-5 utility">
+        <span className="absolute left-1/2 -translate-x-1/2 -top-6 utility">
           {value}
         </span>
       )}

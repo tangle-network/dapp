@@ -9,8 +9,6 @@ import {
   Avatar,
   Button,
   EMPTY_VALUE_PLACEHOLDER,
-  EnergyChipColors,
-  EnergyChipStack,
   Typography,
 } from '@tangle-network/ui-components';
 import pluralize from '@tangle-network/ui-components/utils/pluralize';
@@ -19,9 +17,11 @@ import { MonitoringBlueprint } from '@tangle-network/tangle-shared-ui/data/bluep
 import TableCellWrapper from '@tangle-network/tangle-shared-ui/components/tables/TableCellWrapper';
 import { Link } from 'react-router';
 import { PagePath } from '../../../types';
-import getTVLToDisplay from '@tangle-network/tangle-shared-ui/utils/getTVLToDisplay';
+
 import useRegisteredBlueprints from '@tangle-network/tangle-shared-ui/data/blueprints/useRegisteredBlueprints';
 import useOperatorInfo from '@tangle-network/tangle-shared-ui/hooks/useOperatorInfo';
+import { isSubstrateAddress } from '@tangle-network/ui-components/utils/isSubstrateAddress';
+import { encodeAddress, blake2AsU8a } from '@polkadot/util-crypto';
 
 export type RegisteredBlueprintsTableProps = {
   blueprints: MonitoringBlueprint[];
@@ -68,10 +68,24 @@ export const RegisteredBlueprints: FC = () => {
                   <Avatar
                     size="lg"
                     className="min-w-12"
-                    value={props.row.original.blueprint.metadata.name.substring(
-                      0,
-                      2,
-                    )}
+                    sourceVariant="address"
+                    value={
+                      (props.row.original.blueprint.metadata.author &&
+                      isSubstrateAddress(
+                        props.row.original.blueprint.metadata.author,
+                      )
+                        ? props.row.original.blueprint.metadata.author
+                        : null) ||
+                      (props.row.original.blueprint.metadata.name
+                        ? encodeAddress(
+                            blake2AsU8a(
+                              props.row.original.blueprint.metadata.name,
+                              256,
+                            ).slice(0, 32),
+                            42,
+                          )
+                        : undefined)
+                    }
                     theme="substrate"
                   />
                 )}
@@ -87,37 +101,7 @@ export const RegisteredBlueprints: FC = () => {
           );
         },
       }),
-      columnHelper.accessor('blueprint.uptime', {
-        header: () => 'Uptime',
-        cell: (props) => {
-          const DEFAULT_STACK = 10;
-          const DEFAULT_PERCENTAGE = 100;
 
-          const numberOfActiveChips = !props.row.original.blueprint.uptime
-            ? 0
-            : Math.round(
-                (props.row.original.blueprint.uptime * DEFAULT_STACK) /
-                  DEFAULT_PERCENTAGE,
-              );
-
-          const activeColors = Array.from({ length: numberOfActiveChips }).fill(
-            EnergyChipColors.GREEN,
-          );
-          const inactiveColors = Array.from({
-            length: DEFAULT_STACK - numberOfActiveChips,
-          }).fill(EnergyChipColors.GREY);
-          const colors = [...activeColors, ...inactiveColors];
-
-          return (
-            <TableCellWrapper className="p-0 min-h-fit">
-              <EnergyChipStack
-                colors={colors as EnergyChipColors[]}
-                label={`${props.row.original.blueprint.uptime || EMPTY_VALUE_PLACEHOLDER}%`}
-              />
-            </TableCellWrapper>
-          );
-        },
-      }),
       columnHelper.accessor('blueprint.instanceCount', {
         header: () => 'Instances',
         cell: (props) => {
@@ -142,18 +126,21 @@ export const RegisteredBlueprints: FC = () => {
           );
         },
       }),
-      columnHelper.accessor('blueprint.tvl', {
-        header: () => 'TVL',
-        cell: (props) => {
-          return (
-            <TableCellWrapper className="p-0 min-h-fit">
-              {props.row.original.blueprint.tvl
-                ? getTVLToDisplay(props.row.original.blueprint.tvl)
-                : EMPTY_VALUE_PLACEHOLDER}
-            </TableCellWrapper>
-          );
-        },
-      }),
+
+      // Hide restakers column
+      // columnHelper.accessor('blueprint.restakersCount', {
+      //   header: () => 'Restakers',
+      //   cell: (props) => {
+      //     return (
+      //       <TableCellWrapper className="p-0 min-h-fit">
+      //         {(
+      //           props.row.original.blueprint.restakersCount ?? 0
+      //         ).toLocaleString()}
+      //       </TableCellWrapper>
+      //     );
+      //   },
+      // }),
+
       columnHelper.accessor('blueprintId', {
         header: () => '',
         cell: (props) => {
@@ -164,8 +151,6 @@ export const RegisteredBlueprints: FC = () => {
                   ':id',
                   props.row.original.blueprintId.toString(),
                 )}
-                target="_blank"
-                rel="noopener noreferrer"
                 onClick={(event) => {
                   event.stopPropagation();
                 }}

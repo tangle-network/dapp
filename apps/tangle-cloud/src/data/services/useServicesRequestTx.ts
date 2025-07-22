@@ -21,9 +21,11 @@ import {
   toEvmAddress,
   toSubstrateAddress,
 } from '@tangle-network/ui-components';
-import createMembershipModelEnum from '@tangle-network/tangle-shared-ui/utils/createMembershipModelEnum';
+
 import { decodeAddress } from '@polkadot/util-crypto';
+import createMembershipModelEnum from '@tangle-network/tangle-shared-ui/utils/createMembershipModelEnum';
 import { ApiPromise } from '@polkadot/api';
+import useNetworkStore from '@tangle-network/tangle-shared-ui/context/useNetworkStore';
 
 export type Context = {
   blueprintId: bigint;
@@ -44,15 +46,31 @@ export type Context = {
 };
 
 const useServicesRegisterTx = () => {
+  const { network } = useNetworkStore();
+
   const substrateTxFactory: SubstrateTxFactory<Context> = useCallback(
-    async (api, activeSubstrateAddress, context) => {
+    async (api, _activeSubstrateAddress, context) => {
+      // Ensure EVM addresses are converted to their corresponding SS58 representation
+      // with the correct Tangle network SS58 prefix for consistency
+      const formatAccount = (
+        addr: SubstrateAddress | EvmAddress,
+      ): SubstrateAddress => {
+        return isEvmAddress(addr)
+          ? toSubstrateAddress(addr, network.ss58Prefix)
+          : toSubstrateAddress(addr, network.ss58Prefix);
+      };
+
+      const formattedPermittedCallers =
+        context.permittedCallers.map(formatAccount);
+      const formattedOperators = context.operators.map(formatAccount);
+
+      const paymentAsset = createAssetIdEnum(context.paymentAsset);
+
       const membershipModel = createMembershipModelEnum({
         type: context.membershipModel,
         minOperators: context.minOperator,
         maxOperators: context.maxOperator,
       });
-
-      const paymentAsset = createAssetIdEnum(context.paymentAsset);
 
       const assetSecurityRequirements = context.assets.map((asset, index) => ({
         asset: createAssetIdEnum(asset),
@@ -62,13 +80,11 @@ const useServicesRegisterTx = () => {
           context.securityRequirements[index].maxExposurePercent,
       }));
 
-      return api.tx.services.request(
-        isEvmAddress(context.paymentAsset)
-          ? toEvmAddress(activeSubstrateAddress)
-          : null,
+      return (api.tx.services.request as any)(
+        null, // evm_origin (None)
         context.blueprintId,
-        context.permittedCallers,
-        context.operators,
+        formattedPermittedCallers,
+        formattedOperators,
         context.requestArgs,
         assetSecurityRequirements,
         context.ttl,
@@ -77,81 +93,88 @@ const useServicesRegisterTx = () => {
         membershipModel,
       );
     },
-    [],
+    [network.ss58Prefix],
   );
 
   const evmTxFactory: EvmTxFactory<
     typeof SERVICES_PRECOMPILE_ABI,
     'requestService',
     Context & { apiPromise: ApiPromise }
-  > = useCallback(async (context) => {
-    const api = context.apiPromise;
+  > = useCallback(
+    async (context) => {
+      const api = context.apiPromise;
 
-    const decodedPermittedCallers = context.permittedCallers.map((caller) => {
-      if (isEvmAddress(caller)) {
-        return decodeAddress(toSubstrateAddress(caller));
-      } else {
-        return decodeAddress(caller);
-      }
-    });
-    const encodedPermittedCallers: Hash = api
-      .createType('Vec<AccountId>', decodedPermittedCallers)
-      .toHex();
+      const decodedPermittedCallers = context.permittedCallers.map((caller) => {
+        if (isEvmAddress(caller)) {
+          return decodeAddress(toSubstrateAddress(caller, network.ss58Prefix));
+        } else {
+          return decodeAddress(toSubstrateAddress(caller, network.ss58Prefix));
+        }
+      });
+      const encodedPermittedCallers: Hash = api
+        .createType('Vec<AccountId>', decodedPermittedCallers)
+        .toHex();
 
-    const encodedAssetSecurityRequirements: Hash[] = context.assets.map(
-      (asset, index) =>
-        api
-          .createType('AssetSecurityRequirement', {
-            asset: createAssetIdEnum(asset),
-            minExposurePercent:
-              context.securityRequirements[index].minExposurePercent,
-            maxExposurePercent:
-              context.securityRequirements[index].maxExposurePercent,
-          })
-          .toHex(),
-    );
+      const encodedAssetSecurityRequirements: Hash[] = context.assets.map(
+        (asset, index) =>
+          api
+            .createType('AssetSecurityRequirement', {
+              asset: createAssetIdEnum(asset),
+              minExposurePercent:
+                context.securityRequirements[index].minExposurePercent,
+              maxExposurePercent:
+                context.securityRequirements[index].maxExposurePercent,
+            })
+            .toHex(),
+      );
 
-    const decodedOperators = context.operators.map((operator) => {
-      if (isEvmAddress(operator)) {
-        return decodeAddress(toSubstrateAddress(operator));
-      } else {
-        return decodeAddress(operator);
-      }
-    });
-    const encodedOperators = api
-      .createType('Vec<AccountId>', decodedOperators)
-      .toHex();
+      const decodedOperators = context.operators.map((operator) => {
+        if (isEvmAddress(operator)) {
+          return decodeAddress(
+            toSubstrateAddress(operator, network.ss58Prefix),
+          );
+        } else {
+          return decodeAddress(
+            toSubstrateAddress(operator, network.ss58Prefix),
+          );
+        }
+      });
+      const encodedOperators = api
+        .createType('Vec<AccountId>', decodedOperators)
+        .toHex();
 
-    const encodedRequestArgs: Hash = api
-      .createType('Vec<TanglePrimitivesServicesField>', context.requestArgs)
-      .toHex();
+      const encodedRequestArgs: Hash = api
+        .createType('Vec<TanglePrimitivesServicesField>', context.requestArgs)
+        .toHex();
 
-    const isEvmAssetPayment = isEvmAddress(context.paymentAsset);
+      const isEvmAssetPayment = isEvmAddress(context.paymentAsset);
 
-    const [paymentAssetId, paymentTokenAddress] = isEvmAssetPayment
-      ? [BigInt(0), toEvmAddress(context.paymentAsset as EvmAddress)]
-      : [
-          BigInt(context.paymentAsset),
-          toEvmAddress(assertEvmAddress(zeroAddress)),
-        ];
+      const [paymentAssetId, paymentTokenAddress] = isEvmAssetPayment
+        ? [BigInt(0), toEvmAddress(context.paymentAsset as EvmAddress)]
+        : [
+            BigInt(context.paymentAsset),
+            toEvmAddress(assertEvmAddress(zeroAddress)),
+          ];
 
-    return {
-      functionName: 'requestService',
-      arguments: [
-        context.blueprintId,
-        encodedAssetSecurityRequirements,
-        encodedPermittedCallers,
-        encodedOperators,
-        encodedRequestArgs,
-        context.ttl,
-        paymentAssetId,
-        paymentTokenAddress,
-        context.paymentValue,
-        context.minOperator,
-        context.maxOperator,
-      ],
-    };
-  }, []);
+      return {
+        functionName: 'requestService',
+        arguments: [
+          context.blueprintId,
+          encodedAssetSecurityRequirements,
+          encodedPermittedCallers,
+          encodedOperators,
+          encodedRequestArgs,
+          context.ttl,
+          paymentAssetId,
+          paymentTokenAddress,
+          context.paymentValue,
+          context.minOperator,
+          context.maxOperator,
+        ],
+      };
+    },
+    [network.ss58Prefix],
+  );
 
   return useAgnosticTx({
     name: TxName.DEPLOY_BLUEPRINT,

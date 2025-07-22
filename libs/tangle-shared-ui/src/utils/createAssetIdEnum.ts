@@ -4,16 +4,14 @@ import { RestakeAssetId } from '../types';
 
 export type AssetIdEnum =
   | {
-      Custom: bigint;
+      Custom: string;
     }
   | {
       Erc20: EvmAddress;
     };
 
 const createAssetIdEnum = (assetId: RestakeAssetId): AssetIdEnum => {
-  return isEvmAddress(assetId)
-    ? { Erc20: assetId }
-    : { Custom: BigInt(assetId) };
+  return isEvmAddress(assetId) ? { Erc20: assetId } : { Custom: assetId };
 };
 
 export default createAssetIdEnum;

@@ -43,12 +43,12 @@ export const AccountStatsCard: FC<AccountStatsCardProps> = (props) => {
 
   const { result: userStatsData } = useUserStatsData(
     useMemo(() => {
-      if (isOperator) {
+      if (!accountAddress || !isSubstrateAddress(accountAddress)) {
         return null;
       }
 
       return accountAddress;
-    }, [isOperator, accountAddress]),
+    }, [accountAddress]),
   );
 
   const { data: accountInfo } = useSWRImmutable(
@@ -123,63 +123,44 @@ export const AccountStatsCard: FC<AccountStatsCardProps> = (props) => {
   }, [network, accountAddress]);
 
   const statsItems = useMemo(() => {
-    if (isOperator && !operatorStatsData) {
+    // Default to empty array if no user stats data
+    if (!userStatsData) {
       return [];
     }
 
-    // operator
-    if (isOperator && operatorStatsData) {
-      return [
-        {
-          title: 'Registered Blueprints',
-          children: operatorStatsData.registeredBlueprints,
-        },
-        {
-          title: 'Running Services',
-          children: operatorStatsData.runningServices,
-        },
-        {
-          title: 'Pending Services',
-          children: operatorStatsData.pendingServices,
-          tooltip: 'Pending services waiting to be deployed',
-        },
-        {
-          title: 'Deployed Services',
-          children: operatorStatsData.deployedServices,
-          tooltip: 'Total services you have requested Operator to operate',
-        },
-        {
-          title: 'Avg Uptime',
-          children: operatorStatsData.avgUptime,
-          tooltip: 'Average online time of Operator',
-        },
-        {
-          title: 'Published Services',
-          children: operatorStatsData.publishedBlueprints,
-          tooltip: 'Total services published to Tangle ecosystem',
-        },
-      ];
-    }
-
-    // others
+    // Check if user is an active operator (has registered blueprints)
+    const hasOperatorData =
+      operatorStatsData && operatorStatsData.registeredBlueprints > 0;
+    const isActiveOperator = isOperator && hasOperatorData;
 
     return [
       {
-        title: 'Running Services',
-        children: userStatsData?.runningServices,
+        title: 'Registered Blueprints',
+        children: isActiveOperator ? operatorStatsData.registeredBlueprints : 0,
+        tooltip: 'Number of blueprints you have registered as an operator',
       },
       {
-        title: 'Deployed Services',
-        children: userStatsData?.deployedServices,
-        tooltip: 'Total services you have requested Operator to operate',
+        title: 'Running Services',
+        children: isActiveOperator
+          ? operatorStatsData.runningServices
+          : userStatsData.runningServices,
+        tooltip: isActiveOperator
+          ? 'Services currently running that you operate as an operator'
+          : 'Services currently running that you have deployed',
       },
       {
         title: 'Pending Services',
-        children: userStatsData?.pendingServices,
+        children: isActiveOperator
+          ? operatorStatsData.pendingServices
+          : userStatsData.pendingServices,
+        tooltip: isActiveOperator
+          ? 'Service requests pending your approval/rejection as an operator'
+          : 'Service requests you have submitted that are pending operator approval',
       },
       {
-        title: 'Consuming Services',
-        children: userStatsData?.consumedServices,
+        title: 'Deployed Services',
+        children: userStatsData.deployedServices,
+        tooltip: 'Total services you have deployed as a user/deployer',
       },
     ];
   }, [operatorStatsData, userStatsData, isOperator]);

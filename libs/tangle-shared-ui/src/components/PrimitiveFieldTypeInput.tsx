@@ -1,5 +1,6 @@
 import { PrimitiveFieldType } from '../types/blueprint';
 import { Label } from '@tangle-network/ui-components/components/Label';
+import { CheckBox } from '@tangle-network/ui-components/components/CheckBox';
 import {
   Select,
   SelectContent,
@@ -173,17 +174,38 @@ const PrimitiveFieldTypeInput: React.FC<PrimitiveFieldTypeInputProps> = ({
         }
     }
   } else if (isOptional(fieldType)) {
-    return (
-      <div>
-        <Label>{label} (Optional)</Label>
+    const isEnabled = value?.Optional !== null && value?.Optional !== undefined;
 
-        <PrimitiveFieldTypeInput
-          id={`${id}.Optional`}
-          fieldType={fieldType.Optional}
-          value={value?.Optional}
-          onValueChange={onValueChange}
-          tabIndex={tabIndex}
-        />
+    return (
+      <div className="space-y-2">
+        <div className="flex items-center gap-2">
+          <CheckBox
+            id={`${id}.OptionalToggle`}
+            isChecked={isEnabled}
+            onChange={(e) => {
+              const checked = e.target.checked;
+              if (checked) {
+                // Initialise inner value as undefined so nested input can manage it.
+                onValueChange?.(id, { Optional: undefined });
+              } else {
+                onValueChange?.(id, { Optional: null });
+              }
+            }}
+          />
+          <Label>{label} (Optional)</Label>
+        </div>
+
+        {isEnabled && (
+          <div className="ml-4">
+            <PrimitiveFieldTypeInput
+              id={`${id}.Optional`}
+              fieldType={fieldType.Optional}
+              value={value?.Optional}
+              onValueChange={onValueChange}
+              tabIndex={tabIndex}
+            />
+          </div>
+        )}
       </div>
     );
   } else if (isArray(fieldType)) {

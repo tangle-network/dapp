@@ -12,10 +12,10 @@ import {
   Dropdown,
   DropdownBody,
   EMPTY_VALUE_PLACEHOLDER,
-  getRoundedAmountString,
   Modal,
-  shortenString,
   Typography,
+  ValidatorIdentity,
+  toSubstrateAddress,
 } from '@tangle-network/ui-components';
 import pluralize from '@tangle-network/ui-components/utils/pluralize';
 import { TangleCloudTable } from '../../../components/tangleCloudTable/TangleCloudTable';
@@ -39,6 +39,8 @@ import useIdentities from '@tangle-network/tangle-shared-ui/hooks/useIdentities'
 import useServicesRejectTx from '../../../data/services/useServicesRejectTx';
 import useServicesApproveTx from '../../../data/services/useServicesApproveTx';
 import useOperatorInfo from '@tangle-network/tangle-shared-ui/hooks/useOperatorInfo';
+import { isSubstrateAddress } from '@tangle-network/ui-components/utils/isSubstrateAddress';
+import { encodeAddress, blake2AsU8a } from '@polkadot/util-crypto';
 
 const columnHelper = createColumnHelper<MonitoringServiceRequest>();
 
@@ -71,6 +73,15 @@ export const PendingInstanceTable: FC = () => {
       });
       const operatorSet = new Set(operatorMap);
       return Array.from(operatorSet);
+    }, [pendingBlueprints]),
+  );
+
+  const { result: deployerIdentityMap } = useIdentities(
+    useMemo(() => {
+      const deployerAddresses = pendingBlueprints.map(
+        (blueprint) => blueprint.owner,
+      );
+      return Array.from(new Set(deployerAddresses));
     }, [pendingBlueprints]),
   );
 
@@ -111,7 +122,24 @@ export const PendingInstanceTable: FC = () => {
                   <Avatar
                     size="lg"
                     className="min-w-12"
-                    value={props.row.original.blueprintData?.metadata?.name}
+                    sourceVariant="address"
+                    value={
+                      (props.row.original.blueprintData?.metadata?.author &&
+                      isSubstrateAddress(
+                        props.row.original.blueprintData.metadata.author,
+                      )
+                        ? props.row.original.blueprintData.metadata.author
+                        : null) ||
+                      (props.row.original.blueprintData?.metadata?.name
+                        ? encodeAddress(
+                            blake2AsU8a(
+                              props.row.original.blueprintData.metadata.name,
+                              256,
+                            ).slice(0, 32),
+                            42,
+                          )
+                        : undefined)
+                    }
                     theme="substrate"
                   />
                 )}
@@ -131,48 +159,28 @@ export const PendingInstanceTable: FC = () => {
 
     if (isOperator) {
       baseColumns.push(
-        columnHelper.accessor('pricing', {
-          header: () => 'Pricing',
-          cell: (props) => {
-            return (
-              <TableCellWrapper className="p-0 min-h-fit">
-                {props.row.original.pricing
-                  ? `$${getRoundedAmountString(props.row.original.pricing)}`
-                  : EMPTY_VALUE_PLACEHOLDER}
-              </TableCellWrapper>
-            );
-          },
-        }),
         columnHelper.accessor('owner', {
           header: () => 'Deployer',
           cell: (props) => {
             const owner = props.row.original.owner;
-            const ownerUrl = network.createExplorerAccountUrl(owner);
+            const tangleFormatAddress = toSubstrateAddress(
+              owner,
+              network.ss58Prefix,
+            );
+            const ownerUrl =
+              network.createExplorerAccountUrl(tangleFormatAddress);
 
             return (
               <TableCellWrapper className="p-0 min-h-fit">
-                {!ownerUrl ? (
-                  EMPTY_VALUE_PLACEHOLDER
-                ) : (
-                  <>
-                    <Avatar
-                      sourceVariant="address"
-                      value={owner.toString()}
-                      theme="substrate"
-                      size="md"
-                    />
-                    <Button
-                      variant="link"
-                      className="uppercase body4"
-                      href={ownerUrl}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                    >
-                      {operatorIdentityMap?.get(owner)?.name ??
-                        shortenString(owner)}
-                    </Button>
-                  </>
-                )}
+                <ValidatorIdentity
+                  address={tangleFormatAddress}
+                  identityName={deployerIdentityMap?.get(owner)?.name ?? null}
+                  accountExplorerUrl={ownerUrl ?? undefined}
+                  avatarSize="md"
+                  textVariant="body1"
+                  textWeight="bold"
+                  showAddressInTooltip
+                />
               </TableCellWrapper>
             );
           },
@@ -298,7 +306,7 @@ export const PendingInstanceTable: FC = () => {
     }
 
     return baseColumns;
-  }, [isOperator, network, operatorIdentityMap]);
+  }, [isOperator, network, operatorIdentityMap, deployerIdentityMap]);
 
   const table = useReactTable({
     data: pendingBlueprints,

@@ -50,10 +50,11 @@ const ConfigureBlueprintModal: FC<Props> = ({
     (values: BlueprintFormSchema) => {
       handleClose();
       onSubmit({
-        values,
+        ...values,
+        blueprints,
       });
     },
-    [handleClose, onSubmit],
+    [handleClose, onSubmit, blueprints],
   );
 
   return (
