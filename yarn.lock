@@ -13232,11 +13232,11 @@ __metadata:
   linkType: hard
 
 "@storybook/channels@npm:^8.6.12":
-  version: 8.6.12
-  resolution: "@storybook/channels@npm:8.6.12"
+  version: 8.6.14
+  resolution: "@storybook/channels@npm:8.6.14"
   peerDependencies:
     storybook: ^8.2.0 || ^8.3.0-0 || ^8.4.0-0 || ^8.5.0-0 || ^8.6.0-0
-  checksum: 10c0/c43ebed915194dc3fb5e104a63eccfddad20ac8af164068c1439a48aaca446cba0c4e752147aaf3d88d453af2987bccf2dc92ee793e624f0dba902c10d6fdb42
+  checksum: 10c0/559fa605c48add2cbb3879854cf5e3df56cc5ec59bc6f8b6fa287ddeb0a210d345bcfe2c6ebd4eb8792b130cc9d831aae89cf190a1e708a15d9b7188dff438b4
   languageName: node
   linkType: hard
 
@@ -14180,16 +14180,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@tangle-network/tangle-substrate-types@npm:^0.9.24":
-  version: 0.9.24
-  resolution: "@tangle-network/tangle-substrate-types@npm:0.9.24"
+"@tangle-network/tangle-substrate-types@npm:^0.9.32":
+  version: 0.9.32
+  resolution: "@tangle-network/tangle-substrate-types@npm:0.9.32"
   dependencies:
     "@polkadot/api": "npm:^13.2.1"
     "@polkadot/typegen": "npm:^13.2.1"
     "@polkadot/types": "npm:^13.2.1"
     ecpair: "npm:^2.1.0"
     tiny-secp256k1: "npm:^2.2.3"
-  checksum: 10c0/b9ed57cb83acb39b20e0fcef717debb0c7d982a24221777e52a8e224262e703fe6d418a8681365b8dedb068936947c45ecb0c2a1c5ed4d882d372fb32d35b569
+  checksum: 10c0/f39c37af7692b15dac022dcc222b68dadbca23a0e977fe2c8f8f523740d85422b94cf737a450e0616f106340446a7708b6a85fc1aa076691ac48dd483ec39027
   languageName: node
   linkType: hard
 
@@ -31168,11 +31168,11 @@ __metadata:
   linkType: hard
 
 "react-hook-form@npm:^7.55.0":
-  version: 7.55.0
-  resolution: "react-hook-form@npm:7.55.0"
+  version: 7.60.0
+  resolution: "react-hook-form@npm:7.60.0"
   peerDependencies:
     react: ^16.8.0 || ^17 || ^18 || ^19
-  checksum: 10c0/9cff0da58d8223dd14e01ac83688e3546edc42cfa557974b6f2f09922ee051e4713fd53abb69c7a815bf3600142a14186b977d69d438da32f63475a8ecf6b452
+  checksum: 10c0/eb8518d42a074d9e115d4b414bac18ae72708b2d047a9453dcc7588b00df300b32cebf6ecb7f2c8aa534808b3dc54bde4124af95c1e432b6691f9aba07c93b11
   languageName: node
   linkType: hard
 
@@ -34063,7 +34063,7 @@ __metadata:
     "@tailwindcss/forms": "npm:^0.5.10"
     "@tangle-network/evm-contract-metadata": "npm:^1.3.0"
     "@tangle-network/tangle-restaking-types": "npm:0.1.0"
-    "@tangle-network/tangle-substrate-types": "npm:^0.9.24"
+    "@tangle-network/tangle-substrate-types": "npm:^0.9.32"
     "@tanstack/match-sorter-utils": "npm:^8.19.4"
     "@tanstack/react-query": "npm:^5.74.3"
     "@tanstack/react-table": "npm:^8.21.3"

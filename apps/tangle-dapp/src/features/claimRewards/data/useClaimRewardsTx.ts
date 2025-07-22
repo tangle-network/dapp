@@ -13,7 +13,6 @@ import { EvmTxFactory } from '@tangle-network/tangle-shared-ui/hooks/useEvmPreco
 import { SubstrateTxFactory } from '@tangle-network/tangle-shared-ui/hooks/useSubstrateTx';
 import createEvmBatchCall from '../../../utils/staking/createEvmBatchCall';
 import createEvmBatchCallArgs from '../../../utils/staking/createEvmBatchCallArgs';
-import optimizeTxBatch from '@tangle-network/tangle-shared-ui/utils/optimizeTxBatch';
 import { SUCCESS_MESSAGES } from '../../../hooks/useTxNotification';
 
 type Context = {
@@ -32,7 +31,7 @@ const useClaimRewardsTx = () => {
 
     const batchCalls = context.assetIds.map((assetId) => {
       const args = isEvmAddress(assetId)
-        ? ([ZERO_BIG_INT, assetId] as const)
+        ? ([ZERO_BIG_INT, assetId as EvmAddress] as const)
         : ([BigInt(assetId), zeroAddress as EvmAddress] as const);
 
       return createEvmBatchCall(
@@ -55,15 +54,7 @@ const useClaimRewardsTx = () => {
         return null;
       }
 
-      const txes = context.assetIds.map((assetId) => {
-        const args = isEvmAddress(assetId)
-          ? ({ Erc20: assetId } as const)
-          : ({ Custom: BigInt(assetId) } as const);
-
-        return api.tx.rewards.claimRewards(args);
-      });
-
-      return optimizeTxBatch(api, txes);
+      return api.tx.rewards.claimRewards();
     },
     [],
   );

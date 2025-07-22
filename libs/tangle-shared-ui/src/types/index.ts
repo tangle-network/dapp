@@ -61,6 +61,7 @@ export type RestakeOperator = {
   restakersCount: number;
   concentrationPercentage: number | null;
   tvlInUsd: number | null;
+  instanceCount?: number;
   isDelegated?: boolean;
   vaultTokens: VaultToken[];
   blueprintCount?: number;

@@ -24,6 +24,7 @@ import useIsAccountConnected from '../../hooks/useIsAccountConnected';
 import useAgnosticAccountInfo from '../../hooks/useAgnosticAccountInfo';
 import { RestakeOperatorWrapper } from '../tables/RestakeActionWrappers';
 import JoinOperatorsModal from './JoinOperatorsModal';
+import useOperatorsServices from '../../data/blueprints/useOperatorsServices';
 
 type OperatorUI = NonNullable<
   ComponentProps<typeof OperatorsTableUI>['data']
@@ -63,6 +64,8 @@ const OperatorsTableContainer: FC<Props> = ({
   );
 
   const { result: identities } = useIdentities(operatorAddresses);
+  const { result: operatorServicesMap } =
+    useOperatorsServices(operatorAddresses);
 
   const operators = useMemo(
     () =>
@@ -81,6 +84,8 @@ const OperatorsTableContainer: FC<Props> = ({
                 delegation.delegatorAccountId === activeSubstrateAddress,
             );
 
+          const instanceCount = operatorServicesMap.get(address)?.length ?? 0;
+
           return {
             address,
             concentrationPercentage,
@@ -93,6 +98,7 @@ const OperatorsTableContainer: FC<Props> = ({
                 : delegationsToVaultTokens(delegations, assets),
             selfBondedAmount: stake,
             isDelegated,
+            instanceCount,
           } satisfies RestakeOperator;
         },
       ),
@@ -103,6 +109,7 @@ const OperatorsTableContainer: FC<Props> = ({
       activeSubstrateAddress,
       identities,
       assets,
+      operatorServicesMap,
     ],
   );
 

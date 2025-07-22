@@ -1,4 +1,4 @@
-import { useMemo, type FC } from 'react';
+import { useMemo, useState, useCallback, type FC } from 'react';
 import {
   createColumnHelper,
   getCoreRowModel,
@@ -8,16 +8,13 @@ import {
 import {
   Avatar,
   Button,
-  CircularProgress,
   EMPTY_VALUE_PLACEHOLDER,
-  EnergyChipColors,
-  EnergyChipStack,
-  getRoundedAmountString,
   Typography,
+  Modal,
 } from '@tangle-network/ui-components';
 import pluralize from '@tangle-network/ui-components/utils/pluralize';
 import { TangleCloudTable } from '../../../components/tangleCloudTable/TangleCloudTable';
-import { format } from 'date-fns';
+
 import { ChevronRight } from '@tangle-network/icons';
 import TableCellWrapper from '@tangle-network/tangle-shared-ui/components/tables/TableCellWrapper';
 import { Link } from 'react-router';
@@ -25,35 +22,129 @@ import { PagePath } from '../../../types';
 import { MonitoringBlueprint } from '@tangle-network/tangle-shared-ui/data/blueprints/utils/type';
 import useOperatorInfo from '@tangle-network/tangle-shared-ui/hooks/useOperatorInfo';
 import useMonitoringBlueprints from '@tangle-network/tangle-shared-ui/data/blueprints/useMonitoringBlueprints';
+import useServicesTerminateTx from '../../../data/services/useServicesTerminateTx';
+import TerminateConfirmationModal from './UpdateBlueprintModel/TerminateConfirmationModal';
+import useActiveAccountAddress from '@tangle-network/tangle-shared-ui/hooks/useActiveAccountAddress';
+import useUserOwnedInstances from '../../../data/services/useUserOwnedInstances';
+import { isSubstrateAddress } from '@tangle-network/ui-components/utils/isSubstrateAddress';
+import {
+  encodeAddress,
+  blake2AsU8a,
+  decodeAddress,
+} from '@polkadot/util-crypto';
 
 const columnHelper =
   createColumnHelper<MonitoringBlueprint['services'][number]>();
 
-const MOCK_CURRENT_BLOCK = 5000;
-
 export const RunningInstanceTable: FC = () => {
-  const { operatorAddress } = useOperatorInfo();
-  const {
-    isLoading,
-    result: registeredBlueprints_,
-    error,
-  } = useMonitoringBlueprints(operatorAddress);
+  const { operatorAddress, isOperator } = useOperatorInfo();
+  const currentUserAddress = useActiveAccountAddress();
 
-  const registeredBlueprints = useMemo(() => {
-    if (!registeredBlueprints_) {
-      return [];
+  const userSubstrateAddress =
+    currentUserAddress && isSubstrateAddress(currentUserAddress)
+      ? currentUserAddress
+      : null;
+
+  const {
+    isLoading: operatorLoading,
+    result: operatorBlueprints,
+    error: operatorError,
+  } = useMonitoringBlueprints(isOperator ? operatorAddress : null);
+
+  const {
+    isLoading: userLoading,
+    result: userOwnedBlueprints,
+    error: userError,
+  } = useUserOwnedInstances(userSubstrateAddress);
+
+  const isLoading = operatorLoading || userLoading;
+  const error = operatorError || userError;
+
+  const registeredBlueprints_ = useMemo(() => {
+    const combined: MonitoringBlueprint[] = [];
+    const seenBlueprintIds = new Set<string>();
+
+    if (operatorBlueprints && Array.isArray(operatorBlueprints)) {
+      operatorBlueprints.forEach((blueprint: MonitoringBlueprint) => {
+        const id = blueprint.blueprintId.toString();
+        if (!seenBlueprintIds.has(id)) {
+          combined.push(blueprint);
+          seenBlueprintIds.add(id);
+        }
+      });
     }
-    return registeredBlueprints_;
-  }, [registeredBlueprints_]);
+
+    if (userOwnedBlueprints && Array.isArray(userOwnedBlueprints)) {
+      userOwnedBlueprints.forEach((userBlueprint: MonitoringBlueprint) => {
+        const id = userBlueprint.blueprintId.toString();
+        const existingBlueprintIndex = combined.findIndex(
+          (bp) => bp.blueprintId.toString() === id,
+        );
+
+        if (existingBlueprintIndex >= 0) {
+          const existingBlueprint = combined[existingBlueprintIndex];
+          const existingServiceIds = new Set(
+            existingBlueprint.services.map((s) => s.id.toString()),
+          );
+
+          userBlueprint.services.forEach((service) => {
+            if (!existingServiceIds.has(service.id.toString())) {
+              existingBlueprint.services.push(service);
+            }
+          });
+        } else {
+          combined.push(userBlueprint);
+        }
+      });
+    }
+
+    return combined;
+  }, [operatorBlueprints, userOwnedBlueprints]);
+
+  const [isTerminateModalOpen, setIsTerminateModalOpen] = useState(false);
+  const [selectedInstance, setSelectedInstance] = useState<
+    MonitoringBlueprint['services'][number] | null
+  >(null);
+
+  const { execute: terminateServiceInstance, status: terminateStatus } =
+    useServicesTerminateTx();
 
   const runningInstances = useMemo(() => {
-    if (!registeredBlueprints || registeredBlueprints.length === 0) {
+    const blueprints = registeredBlueprints_ as
+      | MonitoringBlueprint[]
+      | undefined;
+
+    if (!blueprints?.length) {
       return [];
     }
-    return registeredBlueprints.flatMap((blueprint) => blueprint.services);
-  }, [registeredBlueprints]);
+
+    return blueprints.flatMap(
+      (blueprint: MonitoringBlueprint) => blueprint.services,
+    );
+  }, [registeredBlueprints_]);
 
   const isEmpty = runningInstances.length === 0;
+
+  const handleTerminateClick = useCallback(
+    (instance: MonitoringBlueprint['services'][number]) => {
+      setSelectedInstance(instance);
+      setIsTerminateModalOpen(true);
+    },
+    [],
+  );
+
+  const handleCloseTerminateModal = useCallback(() => {
+    setIsTerminateModalOpen(false);
+    setSelectedInstance(null);
+  }, []);
+
+  const handleConfirmTerminate = useCallback(async () => {
+    if (!selectedInstance || !terminateServiceInstance) return;
+
+    await terminateServiceInstance({
+      instanceId: selectedInstance.id,
+    });
+  }, [selectedInstance, terminateServiceInstance]);
 
   const columns = useMemo(
     () => [
@@ -76,7 +167,26 @@ export const RunningInstanceTable: FC = () => {
                   <Avatar
                     size="lg"
                     className="min-w-12"
-                    value={props.row.original.id.toString()}
+                    sourceVariant="address"
+                    value={
+                      (props.row.original.blueprintData?.metadata as any)
+                        ?.owner ||
+                      (props.row.original.blueprintData?.metadata?.author &&
+                      isSubstrateAddress(
+                        props.row.original.blueprintData.metadata.author,
+                      )
+                        ? props.row.original.blueprintData.metadata.author
+                        : null) ||
+                      (props.row.original.blueprintData?.metadata?.name
+                        ? encodeAddress(
+                            blake2AsU8a(
+                              props.row.original.blueprintData.metadata.name,
+                              256,
+                            ).slice(0, 32),
+                            42,
+                          )
+                        : undefined)
+                    }
                     theme="substrate"
                   />
                 )}
@@ -109,105 +219,16 @@ export const RunningInstanceTable: FC = () => {
                       ? `Instance-${props.row.original.id}`
                       : EMPTY_VALUE_PLACEHOLDER}
                   </Typography>
-                  <Typography
+                  {/* <Typography
                     variant="body2"
                     fw="normal"
                     className="!text-mono-100 text-ellipsis whitespace-nowrap overflow-hidden"
                   >
                     {props.row.original.externalInstanceId ||
                       EMPTY_VALUE_PLACEHOLDER}
-                  </Typography>
+                  </Typography> */}
                 </div>
               </div>
-            </TableCellWrapper>
-          );
-        },
-      }),
-      columnHelper.accessor('ttl', {
-        header: () => 'Time Remaining',
-        cell: (props) => {
-          let createdAtBlock = 0,
-            totalTtl = 0,
-            timeRemaining = 0,
-            progress = 0,
-            tooltip = 'No metrics';
-
-          if (props.row.original.createdAtBlock && props.row.original.ttl) {
-            createdAtBlock = props.row.original.createdAtBlock;
-            totalTtl = createdAtBlock + props.row.original.ttl;
-            timeRemaining = totalTtl - MOCK_CURRENT_BLOCK;
-
-            const isCompleted = timeRemaining < 0;
-
-            progress = isCompleted ? 1 : timeRemaining / totalTtl;
-            tooltip = isCompleted
-              ? 'Completed'
-              : `${timeRemaining} blocks remaining`;
-          }
-
-          return (
-            <TableCellWrapper className="p-0 min-h-fit">
-              <CircularProgress
-                progress={progress}
-                size="md"
-                tooltip={tooltip}
-              />
-            </TableCellWrapper>
-          );
-        },
-      }),
-      columnHelper.accessor('earned', {
-        header: () => 'Earned',
-        cell: (props) => {
-          return (
-            <TableCellWrapper className="p-0 min-h-fit">
-              {props.row.original.earned
-                ? `$${getRoundedAmountString(props.row.original.earned)}`
-                : EMPTY_VALUE_PLACEHOLDER}
-            </TableCellWrapper>
-          );
-        },
-      }),
-      columnHelper.accessor('uptime', {
-        header: () => 'Uptime',
-        cell: (props) => {
-          const DEFAULT_STACK = 10;
-          const DEFAULT_PERCENTAGE = 100;
-          const numberOfActiveChips = !props.row.original.uptime
-            ? 0
-            : Math.round(
-                (props.row.original.uptime * DEFAULT_STACK) /
-                  DEFAULT_PERCENTAGE,
-              );
-
-          const activeColors = Array.from({ length: numberOfActiveChips }).fill(
-            EnergyChipColors.GREEN,
-          );
-          const inactiveColors = Array.from({
-            length: DEFAULT_STACK - numberOfActiveChips,
-          }).fill(EnergyChipColors.GREY);
-          const colors = [...activeColors, ...inactiveColors];
-
-          return (
-            <TableCellWrapper className="p-0 min-h-fit">
-              <EnergyChipStack
-                colors={colors as EnergyChipColors[]}
-                label={`${props.row.original.uptime || EMPTY_VALUE_PLACEHOLDER}%`}
-              />
-            </TableCellWrapper>
-          );
-        },
-      }),
-      columnHelper.accessor('lastActive', {
-        header: () => 'Last Active',
-        cell: (props) => {
-          return (
-            <TableCellWrapper className="p-0 min-h-fit">
-              <Typography variant="body1" fw="normal">
-                {props.row.original.lastActive
-                  ? format(props.row.original.lastActive, 'yy/MM/dd HH:mm')
-                  : EMPTY_VALUE_PLACEHOLDER}
-              </Typography>
             </TableCellWrapper>
           );
         },
@@ -215,29 +236,58 @@ export const RunningInstanceTable: FC = () => {
       columnHelper.accessor('id', {
         header: () => '',
         cell: (props) => {
+          const serviceOwnerAddress = props.row.original.ownerAccount;
+
+          let isOwner = false;
+          try {
+            const normalizedOwner = encodeAddress(
+              decodeAddress(serviceOwnerAddress),
+            );
+            const normalizedUser = currentUserAddress
+              ? encodeAddress(decodeAddress(currentUserAddress))
+              : null;
+            isOwner = normalizedOwner === normalizedUser;
+          } catch (error) {
+            console.error(error);
+            isOwner = currentUserAddress === serviceOwnerAddress;
+          }
+
           return (
             <TableCellWrapper removeRightBorder className="p-0 min-h-fit">
-              <Link
-                to={PagePath.BLUEPRINTS_DETAILS.replace(
-                  ':id',
-                  props.row.original.blueprint.toString(),
+              <div className="flex gap-2">
+                <Link
+                  to={PagePath.BLUEPRINTS_DETAILS.replace(
+                    ':id',
+                    props.row.original.blueprint.toString(),
+                  )}
+                  onClick={(event) => {
+                    event.stopPropagation();
+                  }}
+                >
+                  <Button variant="utility" className="uppercase body4">
+                    View
+                  </Button>
+                </Link>
+
+                {isOwner && (
+                  <Button
+                    variant="utility"
+                    className="uppercase body4 !bg-red-500 !text-white hover:!bg-red-600"
+                    onClick={(event) => {
+                      event.stopPropagation();
+                      handleTerminateClick(props.row.original);
+                    }}
+                  >
+                    Terminate
+                  </Button>
                 )}
-                target="_blank"
-                rel="noopener noreferrer"
-                onClick={(event) => {
-                  event.stopPropagation();
-                }}
-              >
-                <Button variant="utility" className="uppercase body4">
-                  View
-                </Button>
-              </Link>
+              </div>
             </TableCellWrapper>
           );
         },
       }),
     ],
-    [],
+    [handleTerminateClick, currentUserAddress],
   );
 
   const table = useReactTable({
@@ -245,22 +295,34 @@ export const RunningInstanceTable: FC = () => {
     columns,
     getCoreRowModel: getCoreRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
-    getRowId: (row) => `RunningInstance-${row.id.toString()}`,
+    getRowId: (row) =>
+      `RunningInstance-${row.blueprint.toString()}-${row.id.toString()}`,
     autoResetPageIndex: false,
     enableSortingRemoval: false,
   });
 
   return (
-    <TangleCloudTable<MonitoringBlueprint['services'][number]>
-      title={pluralize('Running Instance', !isEmpty)}
-      data={runningInstances}
-      error={error}
-      isLoading={isLoading}
-      tableProps={table}
-      tableConfig={{
-        tableClassName: 'min-w-[1000px]',
-      }}
-    />
+    <>
+      <TangleCloudTable<MonitoringBlueprint['services'][number]>
+        title={pluralize('Running Instance', !isEmpty)}
+        data={runningInstances}
+        error={error}
+        isLoading={isLoading}
+        tableProps={table}
+        tableConfig={{
+          tableClassName: 'min-w-[1000px]',
+        }}
+      />
+
+      <Modal open={isTerminateModalOpen} onOpenChange={setIsTerminateModalOpen}>
+        <TerminateConfirmationModal
+          onClose={handleCloseTerminateModal}
+          onConfirm={handleConfirmTerminate}
+          selectedInstance={selectedInstance}
+          status={terminateStatus}
+        />
+      </Modal>
+    </>
   );
 };
 

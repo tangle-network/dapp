@@ -43,11 +43,11 @@ export const AssetRequirementFormItem: FC<
   return (
     <div
       className={cx(
-        'flex items-center gap-6 p-4 bg-mono-20 dark:bg-mono-160 rounded-lg',
+        'flex flex-col lg:flex-row lg:items-center gap-4 lg:gap-6 p-4 bg-mono-20 dark:bg-mono-160 rounded-lg w-full',
         className,
       )}
     >
-      <div className="flex items-center gap-3">
+      <div className="flex items-center gap-3 flex-shrink-0">
         <LsTokenIcon
           name={assetMetadata?.metadata.name ?? 'TNT'}
           hasRainbowBorder
@@ -63,8 +63,8 @@ export const AssetRequirementFormItem: FC<
         </div>
       </div>
 
-      <div>
-        <Label className={LabelClassName}>
+      <div className="flex-1 min-w-0">
+        <Label className={cx(LabelClassName, 'mb-2 block')}>
           {isViewOnly ? 'Exposure Percentage' : 'Set Exposure Percentage'}
         </Label>
         {isViewOnly ? (
@@ -72,7 +72,7 @@ export const AssetRequirementFormItem: FC<
             {maxExposurePercent ?? '0'}%
           </Typography>
         ) : (
-          <>
+          <div className="space-y-2">
             <Slider
               hasLabel
               value={[minExposurePercent || 0, maxExposurePercent || 100]}
@@ -81,20 +81,25 @@ export const AssetRequirementFormItem: FC<
                   props.onChangeExposurePercent(value);
                 }
               }}
+              className="w-full"
             />
-            <div className="flex justify-between">
-              {!isViewOnly && (
-                <ErrorMessage className="mt-1">
-                  {props.minExposurePercentErrorMsg}
-                </ErrorMessage>
+            {!isViewOnly &&
+              (props.minExposurePercentErrorMsg ||
+                props.maxExposurePercentErrorMsg) && (
+                <div className="space-y-1">
+                  {props.minExposurePercentErrorMsg && (
+                    <ErrorMessage className="text-sm">
+                      {props.minExposurePercentErrorMsg}
+                    </ErrorMessage>
+                  )}
+                  {props.maxExposurePercentErrorMsg && (
+                    <ErrorMessage className="text-sm">
+                      {props.maxExposurePercentErrorMsg}
+                    </ErrorMessage>
+                  )}
+                </div>
               )}
-              {!isViewOnly && (
-                <ErrorMessage className="mt-1">
-                  {props.maxExposurePercentErrorMsg}
-                </ErrorMessage>
-              )}
-            </div>
-          </>
+          </div>
         )}
       </div>
     </div>

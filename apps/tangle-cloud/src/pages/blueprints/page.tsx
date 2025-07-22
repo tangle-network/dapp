@@ -59,8 +59,8 @@ const Page: FC = () => {
       sessionStorage.setItem(
         SessionStorageKey.BLUEPRINT_REGISTRATION_PARAMS,
         JSON.stringify({
-          rpcUrl: result,
-          selectedBlueprints: selectedBlueprints.map((blueprint) => ({
+          rpcUrl: result.rpcUrl,
+          selectedBlueprints: result.blueprints.map((blueprint) => ({
             ...blueprint,
             id: blueprint.id.toString(),
           })),
@@ -69,7 +69,7 @@ const Page: FC = () => {
 
       navigate(PagePath.BLUEPRINTS_REGISTRATION_REVIEW);
     },
-    [navigate, selectedBlueprints],
+    [navigate],
   );
 
   return (

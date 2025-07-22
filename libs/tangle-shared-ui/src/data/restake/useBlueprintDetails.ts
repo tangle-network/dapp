@@ -38,7 +38,7 @@ const useBlueprintDetails = (id?: bigint) => {
     operatorTvl: operatorTVL,
     operatorConcentration,
     operatorTvlByAsset: operatorTVLByAsset,
-  } = useRestakeTvl(delegatorInfo);
+  } = useRestakeTvl(delegatorInfo as any);
 
   return useApiRx(
     useCallback(
@@ -71,16 +71,17 @@ const useBlueprintDetails = (id?: bigint) => {
               runningInstanceEntries,
               operatorEntries,
             ]) => {
-              if (blueprintDetails.isNone) {
+              const optionalBlueprint = blueprintDetails as Option<any>;
+              if (optionalBlueprint.isNone) {
                 return null;
               }
 
               const [ownerAccount, serviceBlueprint] =
-                blueprintDetails.unwrap();
+                optionalBlueprint.unwrap();
               const owner = ownerAccount.toString();
 
               const { metadata, registrationParams, requestParams } =
-                toPrimitiveBlueprint(serviceBlueprint);
+                toPrimitiveBlueprint(id, serviceBlueprint);
 
               const runningInstancesMap = new Map<bigint, ServiceInstance[]>();
 
@@ -88,14 +89,17 @@ const useBlueprintDetails = (id?: bigint) => {
                 instanceId,
                 mayBeServiceInstance,
               ] of runningInstanceEntries) {
-                const serviceInstanceId = instanceId.args[0].toBigInt();
+                const serviceInstanceId = (
+                  instanceId.args[0] as any
+                ).toBigInt();
 
-                if (mayBeServiceInstance.isNone) {
+                const optionalInstance = mayBeServiceInstance as Option<any>;
+                if (optionalInstance.isNone) {
                   continue;
                 }
 
                 const instanceData = toPrimitiveService(
-                  mayBeServiceInstance.unwrap(),
+                  optionalInstance.unwrap(),
                 );
 
                 if (instanceData.blueprint !== id) {
@@ -116,7 +120,7 @@ const useBlueprintDetails = (id?: bigint) => {
                 blueprintRestakersMap,
                 blueprintTVLMap,
               } = extractOperatorData(
-                operatorEntries,
+                operatorEntries as any,
                 operatorMap,
                 operatorTVLByAsset,
                 runningInstancesMap,
@@ -132,8 +136,9 @@ const useBlueprintDetails = (id?: bigint) => {
                 author: metadata.author ?? owner,
                 imgUrl: metadata.logo,
                 category: metadata.category,
-                restakersCount: blueprintRestakersMap.get(id)?.size ?? null,
+                instancesCount: runningInstancesMap.get(id)?.length ?? null,
                 operatorsCount: operatorsSet?.size ?? null,
+                restakersCount: blueprintRestakersMap.get(id)?.size ?? null,
                 tvl: (() => {
                   const blueprintTVL = blueprintTVLMap.get(id);
 
@@ -164,6 +169,8 @@ const useBlueprintDetails = (id?: bigint) => {
                       operatorTVL,
                       operatorConcentration,
                       activeSubstrateAddress,
+                      runningInstancesMap,
+                      id,
                     )
                   : [];
 
@@ -197,6 +204,8 @@ async function getBlueprintOperators(
   operatorTVL: Map<SubstrateAddress, number>,
   operatorConcentration: Map<SubstrateAddress, number | null>,
   activeSubstrateAddress: SubstrateAddress | null,
+  runningInstancesMap: Map<bigint, ServiceInstance[]>,
+  blueprintId: bigint,
 ) {
   const operatorAccountArr = Array.from(operatorAccountSet);
 
@@ -219,6 +228,15 @@ async function getBlueprintOperators(
         (delegate) => delegate.delegatorAccountId === activeSubstrateAddress,
       );
 
+    const operatorsCount =
+      runningInstancesMap
+        .get(blueprintId)
+        ?.filter((instance) =>
+          instance.serviceInstance?.operatorSecurityCommitments?.some(
+            (commitment) => commitment.operator === address,
+          ),
+        ).length ?? 0;
+
     return {
       address,
       identityName: info?.name ?? undefined,
@@ -228,6 +246,7 @@ async function getBlueprintOperators(
       tvlInUsd,
       vaultTokens: delegationsToVaultTokens(delegations, assetMap),
       isDelegated,
+      instanceCount: operatorsCount,
     } satisfies RestakeOperator;
   });
 }

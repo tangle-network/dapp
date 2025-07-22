@@ -28,7 +28,10 @@ const useOperatorBlueprints = (operatorAddress?: SubstrateAddress) => {
                 ({ blueprintId, blueprint, services }) => {
                   return {
                     blueprintId: blueprintId.toBigInt(),
-                    blueprint: toPrimitiveBlueprint(blueprint),
+                    blueprint: toPrimitiveBlueprint(
+                      blueprintId.toBigInt(),
+                      blueprint,
+                    ),
                     services: services.map(toPrimitiveService),
                   };
                 },

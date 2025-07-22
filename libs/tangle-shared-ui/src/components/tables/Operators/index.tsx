@@ -21,6 +21,7 @@ import {
   shortenString,
   Table,
   Typography,
+  toSubstrateAddress,
 } from '@tangle-network/ui-components';
 import { TableVariant } from '@tangle-network/ui-components/components/Table/types';
 import pluralize from '@tangle-network/ui-components/utils/pluralize';
@@ -40,16 +41,19 @@ const COLUMN_HELPER = createColumnHelper<RestakeOperator>();
 
 const getStaticColumns = (
   nativeTokenSymbol: string,
+  ss58Prefix: number,
 ): ColumnDef<RestakeOperator, any>[] => [
   COLUMN_HELPER.accessor('address', {
     header: () => 'Identity',
     sortingFn: sortByAddressOrIdentity<RestakeOperator>(),
     cell: (props) => {
       const {
-        address,
+        address: rawAddress,
         identityName: identity,
         isDelegated,
       } = props.row.original;
+
+      const address = toSubstrateAddress(rawAddress, ss58Prefix);
 
       return (
         <TableCellWrapper className="pl-3">
@@ -104,6 +108,20 @@ const getStaticColumns = (
         </TableCellWrapper>
       );
     },
+  }),
+  COLUMN_HELPER.accessor('instanceCount', {
+    header: () => 'Instances',
+    cell: (props) => (
+      <TableCellWrapper>
+        <Typography
+          variant="body1"
+          fw="bold"
+          className="text-mono-200 dark:text-mono-0"
+        >
+          {props.getValue() ?? 0}
+        </Typography>
+      </TableCellWrapper>
+    ),
   }),
   COLUMN_HELPER.accessor('restakersCount', {
     header: () => 'Restakers',
@@ -179,7 +197,7 @@ const getStaticColumns = (
     ),
   }), */
   COLUMN_HELPER.accessor('vaultTokens', {
-    header: () => 'Assets',
+    header: () => 'Delegated Assets',
     cell: (props) => {
       const tokensList = props.getValue();
 
@@ -227,34 +245,38 @@ const OperatorsTable: FC<Props> = ({
     (store) => store.network.tokenSymbol,
   );
 
-  const columns = useMemo(
-    () =>
-      getStaticColumns(nativeTokenSymbol).concat([
-        COLUMN_HELPER.display({
-          id: 'actions',
-          header: () => null,
-          cell: (props) => (
-            <TableCellWrapper removeRightBorder>
-              <div className="flex items-center justify-end flex-1 gap-2">
-                {RestakeOperatorAction ? (
-                  <RestakeOperatorAction address={props.row.original.address}>
-                    <Button variant="utility" className="uppercase body4">
-                      Delegate
-                    </Button>
-                  </RestakeOperatorAction>
-                ) : (
+  const ss58Prefix = useNetworkStore((store) => store.network.ss58Prefix);
+
+  const columns = useMemo(() => {
+    if (ss58Prefix === undefined) {
+      return [];
+    }
+
+    return getStaticColumns(nativeTokenSymbol, ss58Prefix).concat([
+      COLUMN_HELPER.display({
+        id: 'actions',
+        header: () => null,
+        cell: (props) => (
+          <TableCellWrapper removeRightBorder>
+            <div className="flex items-center justify-end flex-1 gap-2">
+              {RestakeOperatorAction ? (
+                <RestakeOperatorAction address={props.row.original.address}>
                   <Button variant="utility" className="uppercase body4">
                     Delegate
                   </Button>
-                )}
-              </div>
-            </TableCellWrapper>
-          ),
-          enableSorting: false,
-        }) satisfies ColumnDef<RestakeOperator>,
-      ]),
-    [RestakeOperatorAction, nativeTokenSymbol],
-  );
+                </RestakeOperatorAction>
+              ) : (
+                <Button variant="utility" className="uppercase body4">
+                  Delegate
+                </Button>
+              )}
+            </div>
+          </TableCellWrapper>
+        ),
+        enableSorting: false,
+      }) satisfies ColumnDef<RestakeOperator>,
+    ]);
+  }, [RestakeOperatorAction, nativeTokenSymbol, ss58Prefix]);
 
   const table = useReactTable({
     data,

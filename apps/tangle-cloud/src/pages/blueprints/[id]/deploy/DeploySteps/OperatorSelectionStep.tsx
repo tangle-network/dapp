@@ -94,7 +94,7 @@ export const SelectOperatorsStep: FC<SelectOperatorsStepProps> = ({
     ).filter(([address]) => registeredOperators.has(address));
 
     return filteredRestakeOperators.map(
-      ([addressString, { delegations, restakersCount }]) => {
+      ([addressString, { delegations, restakersCount, stake }]) => {
         const address = assertSubstrateAddress(addressString);
         const operatorPreferences = registeredOperators.get(address);
 
@@ -133,6 +133,7 @@ export const SelectOperatorsStep: FC<SelectOperatorsStepProps> = ({
             },
             0,
           ),
+          selfBondedAmount: stake,
           vaultTokens:
             assets === null
               ? []
@@ -157,18 +158,21 @@ export const SelectOperatorsStep: FC<SelectOperatorsStepProps> = ({
   const minApproval = watch('minApproval');
 
   const tableData = useMemo(() => {
-    if (!Array.isArray(selectedAssets) || selectedAssets.length === 0)
+    if (!Array.isArray(selectedAssets) || selectedAssets.length === 0) {
       return operators;
+    }
 
     const selectedSymbols = new Set(
       selectedAssets.map((asset) => asset.metadata.symbol),
     );
 
-    return operators.filter((operator) => {
-      return operator.vaultTokens?.some((vaultToken) =>
+    const filtered = operators.filter((operator) =>
+      operator.vaultTokens?.some((vaultToken) =>
         selectedSymbols.has(vaultToken.symbol),
-      );
-    });
+      ),
+    );
+
+    return filtered.length > 0 ? filtered : operators;
   }, [operators, selectedAssets]);
 
   // set the operators to the form value when the rowSelection changes
@@ -264,12 +268,11 @@ export const SelectOperatorsStep: FC<SelectOperatorsStepProps> = ({
       <Typography variant="h5" className="text-mono-200 dark:text-mono-0 mb-4">
         Select Operators
       </Typography>
-      <hr className="border-mono-80 dark:border-mono-160 mb-6" />
 
       <div className="flex justify-between mb-3">
         <div className="w-1/4">
           <Select>
-            <SelectTrigger>
+            <SelectTrigger className="h-10">
               <SelectValue
                 placeholder={
                   selectedAssets?.length > 0 ? (
@@ -347,7 +350,7 @@ export const SelectOperatorsStep: FC<SelectOperatorsStepProps> = ({
             size="md"
             value={searchQuery}
             onChange={setSearchQuery}
-            inputClassName="py-1"
+            inputClassName="h-10"
           />
         </div>
       </div>
@@ -386,10 +389,10 @@ export const SelectOperatorsStep: FC<SelectOperatorsStepProps> = ({
       )}
 
       <div className="mt-5 flex gap-4">
-        <div className="w-1/2">
+        <div className="space-y-2 w-1/2">
           <Label className={LabelClassName}>Approval Model:</Label>
           <Select value={approvalModel} onValueChange={onChangeApprovalModel}>
-            <SelectTrigger>
+            <SelectTrigger className="h-10">
               <SelectValue
                 className="text-[16px] leading-[30px]"
                 placeholder="Select an approval model"
@@ -409,10 +412,11 @@ export const SelectOperatorsStep: FC<SelectOperatorsStepProps> = ({
         </div>
 
         {approvalModel === 'Dynamic' && (
-          <div className="w-1/2">
+          <div className="space-y-2 w-1/2">
             <Label className={LabelClassName}>Approval Threshold:</Label>
             <Input
               value={minApproval?.toString()}
+              inputClassName="h-10"
               onChange={(nextValue) => onChangeMinApproval(Number(nextValue))}
               isControlled
               type="number"

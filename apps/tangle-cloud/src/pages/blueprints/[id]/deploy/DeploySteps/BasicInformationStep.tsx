@@ -54,7 +54,6 @@ export const BasicInformationStep: FC<BasicInformationStepProps> = ({
         >
           Basic Information
         </Typography>
-        <hr className="border-mono-80 dark:border-mono-160 mb-6" />
 
         <div className="grid grid-cols-2 gap-8">
           <div className="space-y-2">

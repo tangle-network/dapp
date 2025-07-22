@@ -112,17 +112,19 @@ export function toPrimitiveOperatorsWithApprovalState(
 export function toPrimitiveOperatorSecurityCommitments(
   operatorSecurityCommitments: Service['operatorSecurityCommitments'],
 ) {
-  return operatorSecurityCommitments.map(([operatorId, securityCommitment]) => {
-    return {
-      operator: assertSubstrateAddress(operatorId.toString()),
-      securityCommitments: securityCommitment.map((commitment) => {
-        return {
-          asset: createRestakeAssetId(commitment.asset),
-          exposurePercent: commitment.exposurePercent.toNumber(),
-        };
-      }),
-    };
-  });
+  return operatorSecurityCommitments.map(
+    ([operatorId, securityCommitments]) => {
+      return {
+        operator: assertSubstrateAddress(operatorId.toString()),
+        securityCommitments: securityCommitments.map((commitment) => {
+          return {
+            asset: createRestakeAssetId(commitment.asset),
+            exposurePercent: commitment.exposurePercent.toNumber(),
+          };
+        }),
+      };
+    },
+  );
 }
 
 export function toPrimitiveSecurityRequirements(
