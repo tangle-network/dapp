@@ -1,4 +1,12 @@
-import { useMemo, type FC, useState, useCallback } from 'react';
+import {
+  useMemo,
+  useState,
+  useCallback,
+  useEffect,
+  type FC,
+  Dispatch,
+  SetStateAction,
+} from 'react';
 import {
   AccessorKeyColumnDef,
   createColumnHelper,
@@ -41,10 +49,19 @@ import useServicesApproveTx from '../../../data/services/useServicesApproveTx';
 import useOperatorInfo from '@tangle-network/tangle-shared-ui/hooks/useOperatorInfo';
 import { isSubstrateAddress } from '@tangle-network/ui-components/utils/isSubstrateAddress';
 import { encodeAddress, blake2AsU8a } from '@polkadot/util-crypto';
+import { TxStatus } from '@tangle-network/tangle-shared-ui/hooks/useSubstrateTx';
 
 const columnHelper = createColumnHelper<MonitoringServiceRequest>();
 
-export const PendingInstanceTable: FC = () => {
+interface PendingInstanceTableProps {
+  refreshTrigger: number;
+  setRefreshTrigger: Dispatch<SetStateAction<number>>;
+}
+
+export const PendingInstanceTable: FC<PendingInstanceTableProps> = ({
+  refreshTrigger,
+  setRefreshTrigger,
+}) => {
   const { isOperator } = useOperatorInfo();
   const operatorAccountAddress = useSubstrateAddress();
   const network = useNetworkStore((store) => store.network);
@@ -62,7 +79,7 @@ export const PendingInstanceTable: FC = () => {
     blueprints: pendingBlueprints,
     error,
     isLoading,
-  } = usePendingServiceRequest(operatorAccountAddress);
+  } = usePendingServiceRequest(operatorAccountAddress, refreshTrigger);
 
   const { result: operatorIdentityMap } = useIdentities(
     useMemo(() => {
@@ -90,6 +107,18 @@ export const PendingInstanceTable: FC = () => {
 
   const { execute: approveServiceRequest, status: approveStatus } =
     useServicesApproveTx();
+
+  useEffect(() => {
+    if (approveStatus === TxStatus.COMPLETE) {
+      setRefreshTrigger((prev) => prev + 1);
+    }
+  }, [approveStatus, setRefreshTrigger]);
+
+  useEffect(() => {
+    if (rejectStatus === TxStatus.COMPLETE) {
+      setRefreshTrigger((prev) => prev + 1);
+    }
+  }, [rejectStatus, setRefreshTrigger]);
 
   const isEmpty = pendingBlueprints.length === 0;
 

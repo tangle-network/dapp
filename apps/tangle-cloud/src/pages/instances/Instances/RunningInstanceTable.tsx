@@ -1,4 +1,12 @@
-import { useMemo, useState, useCallback, type FC } from 'react';
+import {
+  useMemo,
+  useState,
+  useCallback,
+  useEffect,
+  type FC,
+  Dispatch,
+  SetStateAction,
+} from 'react';
 import {
   createColumnHelper,
   getCoreRowModel,
@@ -32,11 +40,20 @@ import {
   blake2AsU8a,
   decodeAddress,
 } from '@polkadot/util-crypto';
+import { TxStatus } from '@tangle-network/tangle-shared-ui/hooks/useSubstrateTx';
 
 const columnHelper =
   createColumnHelper<MonitoringBlueprint['services'][number]>();
 
-export const RunningInstanceTable: FC = () => {
+interface RunningInstanceTableProps {
+  refreshTrigger: number;
+  setRefreshTrigger: Dispatch<SetStateAction<number>>;
+}
+
+export const RunningInstanceTable: FC<RunningInstanceTableProps> = ({
+  refreshTrigger,
+  setRefreshTrigger,
+}) => {
   const { operatorAddress, isOperator } = useOperatorInfo();
   const currentUserAddress = useActiveAccountAddress();
 
@@ -49,13 +66,16 @@ export const RunningInstanceTable: FC = () => {
     isLoading: operatorLoading,
     result: operatorBlueprints,
     error: operatorError,
-  } = useMonitoringBlueprints(isOperator ? operatorAddress : null);
+  } = useMonitoringBlueprints(
+    isOperator ? operatorAddress : null,
+    refreshTrigger,
+  );
 
   const {
     isLoading: userLoading,
     result: userOwnedBlueprints,
     error: userError,
-  } = useUserOwnedInstances(userSubstrateAddress);
+  } = useUserOwnedInstances(userSubstrateAddress, refreshTrigger);
 
   const isLoading = operatorLoading || userLoading;
   const error = operatorError || userError;
@@ -108,6 +128,12 @@ export const RunningInstanceTable: FC = () => {
 
   const { execute: terminateServiceInstance, status: terminateStatus } =
     useServicesTerminateTx();
+
+  useEffect(() => {
+    if (terminateStatus === TxStatus.COMPLETE) {
+      setRefreshTrigger((prev) => prev + 1);
+    }
+  }, [terminateStatus, setRefreshTrigger]);
 
   const runningInstances = useMemo(() => {
     const blueprints = registeredBlueprints_ as

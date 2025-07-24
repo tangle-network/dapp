@@ -21,7 +21,10 @@ import useOperatorInfo from '@tangle-network/tangle-shared-ui/hooks/useOperatorI
 import { useOperatorStatsData } from '../../data/operators/useOperatorStatsData';
 import { useUserStatsData } from '../../data/operators/useUserStatsData';
 
-export const AccountStatsCard: FC<AccountStatsCardProps> = (props) => {
+export const AccountStatsCard: FC<
+  AccountStatsCardProps & { refreshTrigger?: number }
+> = (props) => {
+  const { refreshTrigger, ...cardProps } = props;
   const accountAddress = useActiveAccountAddress();
   const { isOperator } = useOperatorInfo();
   const rpcEndpoints = useNetworkStore((store) => store.network.wsRpcEndpoints);
@@ -39,6 +42,7 @@ export const AccountStatsCard: FC<AccountStatsCardProps> = (props) => {
 
       return accountAddress;
     }, [accountAddress, isOperator]),
+    refreshTrigger,
   );
 
   const { result: userStatsData } = useUserStatsData(
@@ -49,6 +53,7 @@ export const AccountStatsCard: FC<AccountStatsCardProps> = (props) => {
 
       return accountAddress;
     }, [accountAddress]),
+    refreshTrigger,
   );
 
   const { data: accountInfo } = useSWRImmutable(
@@ -166,7 +171,7 @@ export const AccountStatsCard: FC<AccountStatsCardProps> = (props) => {
   }, [operatorStatsData, userStatsData, isOperator]);
 
   return (
-    <AccountStatsDetailCard.Root {...props.rootProps}>
+    <AccountStatsDetailCard.Root {...cardProps.rootProps}>
       <AccountStatsDetailCard.Header
         IconElement={
           <Avatar

@@ -18,6 +18,7 @@ import { AccountId32 } from '@polkadot/types/interfaces';
 
 const usePendingServiceRequest = (
   operatorAccountAddress: SubstrateAddress | null,
+  refreshTrigger?: number,
 ) => {
   const { network } = useNetworkStore();
   const { result: serviceRequestEntries } = useApiRx(
@@ -39,7 +40,8 @@ const usePendingServiceRequest = (
           }),
         );
       },
-      [operatorAccountAddress],
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+      [operatorAccountAddress, refreshTrigger],
     ),
   );
 

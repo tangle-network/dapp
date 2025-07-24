@@ -1,6 +1,6 @@
 import { TableAndChartTabs } from '@tangle-network/ui-components/components/TableAndChartTabs';
 import { PlayFillIcon, TimeLineIcon } from '@tangle-network/icons';
-import { FC, ReactElement, useState } from 'react';
+import { FC, ReactElement, useState, Dispatch, SetStateAction } from 'react';
 import { TabContent } from '@tangle-network/ui-components';
 import { RunningInstanceTable } from './RunningInstanceTable';
 import { PendingInstanceTable } from './PendingInstanceTable';
@@ -15,7 +15,15 @@ const InstancesTabIcon: ReactElement[] = [
   <TimeLineIcon className="w-4 h-4 !fill-yellow-100" />,
 ] as const;
 
-export const InstancesTabs: FC = () => {
+interface InstancesTabsProps {
+  refreshTrigger: number;
+  setRefreshTrigger: Dispatch<SetStateAction<number>>;
+}
+
+export const InstancesTabs: FC<InstancesTabsProps> = ({
+  refreshTrigger,
+  setRefreshTrigger,
+}) => {
   const [selectedTab, setSelectedTab] = useState(
     InstancesTab.RUNNING_INSTANCES,
   );
@@ -33,14 +41,20 @@ export const InstancesTabs: FC = () => {
         value={InstancesTab.RUNNING_INSTANCES}
         className="flex justify-center mx-auto"
       >
-        <RunningInstanceTable />
+        <RunningInstanceTable
+          refreshTrigger={refreshTrigger}
+          setRefreshTrigger={setRefreshTrigger}
+        />
       </TabContent>
 
       <TabContent
         value={InstancesTab.PENDING_INSTANCES}
         className="flex justify-center mx-auto"
       >
-        <PendingInstanceTable />
+        <PendingInstanceTable
+          refreshTrigger={refreshTrigger}
+          setRefreshTrigger={setRefreshTrigger}
+        />
       </TabContent>
     </TableAndChartTabs>
   );

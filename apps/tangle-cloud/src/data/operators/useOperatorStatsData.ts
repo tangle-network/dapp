@@ -29,6 +29,7 @@ const operatorStatsSchema = z.object({
 
 export const useOperatorStatsData = (
   operatorAddress: SubstrateAddress | null | undefined,
+  refreshTrigger?: number,
 ) => {
   const { network } = useNetworkStore();
 
@@ -162,7 +163,6 @@ export const useOperatorStatsData = (
                 }),
               );
 
-        // TODO: after the instance is terminated, this will be removed. using Graphql to get the deployed services
         const deployedServices$ =
           apiRx.query.services?.instances === undefined
             ? of({})
@@ -213,7 +213,8 @@ export const useOperatorStatsData = (
           ),
         );
       },
-      [operatorAddress, network.ss58Prefix],
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+      [operatorAddress, network.ss58Prefix, refreshTrigger],
     ),
   );
 

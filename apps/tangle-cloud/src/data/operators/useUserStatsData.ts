@@ -16,7 +16,10 @@ const userStatsSchema = z.object({
   consumedServices: z.number().default(0),
 });
 
-export const useUserStatsData = (accountAddress: string | null | undefined) => {
+export const useUserStatsData = (
+  accountAddress: string | null | undefined,
+  refreshTrigger?: number,
+) => {
   const { result: userStats, ...rest } = useApiRx(
     useCallback(
       (apiRx) => {
@@ -221,7 +224,8 @@ export const useUserStatsData = (accountAddress: string | null | undefined) => {
           }),
         );
       },
-      [accountAddress],
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+      [accountAddress, refreshTrigger],
     ),
   );
 
