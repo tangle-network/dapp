@@ -1,3 +1,44 @@
+## 0.1.3 (2025-07-24)
+
+### 🚀 Features
+
+- **tangle-cloud:** Service Management Flow ([#3034](https://github.com/tangle-network/dapp/pull/3034))
+- integrate cloud credits ([#3021](https://github.com/tangle-network/dapp/pull/3021))
+- **tangle-cloud:** List operators in the Operators page ([#3005](https://github.com/tangle-network/dapp/pull/3005))
+- **tangle-cloud:** List all blueprints ([#2987](https://github.com/tangle-network/dapp/pull/2987))
+- **tangle-dapp:** Create restaking & services setup scripts ([#2986](https://github.com/tangle-network/dapp/pull/2986))
+- **tangle-dapp:** Add blueprint selection ([#2941](https://github.com/tangle-network/dapp/pull/2941))
+
+### 🩹 Fixes
+
+- **tangle-dapp:** update result type and reduce refetch interval in useCredits ([#3026](https://github.com/tangle-network/dapp/pull/3026))
+- **tangle-dapp:** Fixes empty operators list in restake page ([#3004](https://github.com/tangle-network/dapp/pull/3004))
+- **tangle-dapp:** Asset modal, restake action tabs & wallet dropdown fixes ([#3002](https://github.com/tangle-network/dapp/pull/3002))
+- **tangle-dapp:** Fix Sorting Issue & Add Faucet Link ([#2999](https://github.com/tangle-network/dapp/pull/2999))
+
+### 🏡 Chore
+
+- bump react-hook-form from 7.55.0 to 7.60.0 ([#3035](https://github.com/tangle-network/dapp/pull/3035))
+- bump @storybook/channels from 8.6.12 to 8.6.14 ([#3025](https://github.com/tangle-network/dapp/pull/3025))
+- **tangle-dapp:** Registered blueprint chip & fix tangle-dapp blueprints page ([#3022](https://github.com/tangle-network/dapp/pull/3022))
+- bump @radix-ui/react-tabs from 1.1.4 to 1.1.9 ([#3006](https://github.com/tangle-network/dapp/pull/3006))
+- bump @vitest/ui from 3.1.1 to 3.1.2 ([#3007](https://github.com/tangle-network/dapp/pull/3007))
+- **tangle-dapp:** Add Multiple RPC Endpoints Support for Polkadot APIs ([#2990](https://github.com/tangle-network/dapp/pull/2990))
+- Add initial Cursor rules ([#2998](https://github.com/tangle-network/dapp/pull/2998))
+- bump framer-motion from 12.7.2 to 12.7.4 ([#2993](https://github.com/tangle-network/dapp/pull/2993))
+
+### 🤖 CI
+
+- **repo:** Bump Deps & Add Git Hook ([#2975](https://github.com/tangle-network/dapp/pull/2975))
+
+### ❤️ Thank You
+
+- drewstone @drewstone
+- Pavan Soratur @devpavan04
+- Trung-Tin Pham @AtelyPham
+- yuri @yuri-xyz
+- yuri-xyz @yuri-xyz
+
 ## 0.1.2 (2025-04-16)
 
 ### 🚀 Features
