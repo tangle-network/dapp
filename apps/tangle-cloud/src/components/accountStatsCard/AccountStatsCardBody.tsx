@@ -17,7 +17,7 @@ export const AccountStatsCardBody: FC<AccountStatsCardBodyProps> = ({
           const item = statsItems[index];
           const isLeftColumn = index % 2 === 0;
           const isTopRow = index < 2;
-          
+
           return item ? (
             <StatsItem
               key={index}

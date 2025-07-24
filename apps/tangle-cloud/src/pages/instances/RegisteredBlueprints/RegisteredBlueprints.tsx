@@ -107,8 +107,8 @@ export const RegisteredBlueprints: FC = () => {
         cell: (props) => {
           return (
             <TableCellWrapper className="p-3 min-h-fit">
-              <Typography 
-                variant="body1" 
+              <Typography
+                variant="body1"
                 fw="semibold"
                 className="text-mono-160 dark:text-mono-60"
               >
@@ -124,8 +124,8 @@ export const RegisteredBlueprints: FC = () => {
         cell: (props) => {
           return (
             <TableCellWrapper className="p-3 min-h-fit">
-              <Typography 
-                variant="body1" 
+              <Typography
+                variant="body1"
                 fw="semibold"
                 className="text-mono-160 dark:text-mono-60"
               >
@@ -165,8 +165,8 @@ export const RegisteredBlueprints: FC = () => {
                   event.stopPropagation();
                 }}
               >
-                <Button 
-                  variant="utility" 
+                <Button
+                  variant="utility"
                   className="uppercase body4 bg-blue-10 dark:bg-blue-120 text-blue-70 dark:text-blue-40 hover:bg-blue-20 dark:hover:bg-blue-110 border border-blue-30 dark:border-blue-100 transition-all duration-200"
                 >
                   View

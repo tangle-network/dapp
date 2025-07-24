@@ -157,7 +157,8 @@ export const AccountStatsCard: FC<
         {
           title: 'Pending Services',
           children: operatorStatsData.pendingServices,
-          tooltip: 'Service requests pending your approval/rejection as an operator',
+          tooltip:
+            'Service requests pending your approval/rejection as an operator',
         },
       );
     }
@@ -184,10 +185,7 @@ export const AccountStatsCard: FC<
         title={identityName}
         RightElement={
           isOperator ? (
-            <Chip
-              color="blue"
-              className="text-xs px-2 py-1"
-            >
+            <Chip color="blue" className="text-xs px-2 py-1">
               Operator
             </Chip>
           ) : undefined

@@ -1,6 +1,13 @@
 import { TableAndChartTabs } from '@tangle-network/ui-components/components/TableAndChartTabs';
 import { PlayFillIcon, TimeLineIcon } from '@tangle-network/icons';
-import { FC, ReactElement, useState, Dispatch, SetStateAction, useMemo } from 'react';
+import {
+  FC,
+  ReactElement,
+  useState,
+  Dispatch,
+  SetStateAction,
+  useMemo,
+} from 'react';
 import { TabContent } from '@tangle-network/ui-components';
 import { RunningInstanceTable } from './RunningInstanceTable';
 import { PendingInstanceTable } from './PendingInstanceTable';

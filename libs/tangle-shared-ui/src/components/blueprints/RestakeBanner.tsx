@@ -32,8 +32,8 @@ const RestakeBanner: FC<RestakeBannerProps> = ({
     >
       <div className="space-y-6 flex-1">
         <div className="space-y-4">
-          <Typography 
-            variant="h4" 
+          <Typography
+            variant="h4"
             className="text-mono-0 dark:text-mono-0 font-bold leading-tight drop-shadow-sm"
           >
             {title}
@@ -63,11 +63,7 @@ const RestakeBanner: FC<RestakeBannerProps> = ({
         </Button>
       </div>
 
-      {action && (
-        <div className="flex-shrink-0">
-          {action}
-        </div>
-      )}
+      {action && <div className="flex-shrink-0">{action}</div>}
     </div>
   );
 };

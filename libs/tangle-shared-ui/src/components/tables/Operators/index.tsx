@@ -68,8 +68,8 @@ const getStaticColumns = (
 
             <div className="flex-1">
               <div className="flex items-center gap-2 mb-1">
-                <Typography 
-                  variant="h5" 
+                <Typography
+                  variant="h5"
                   fw="bold"
                   className="text-mono-200 dark:text-mono-0"
                 >
@@ -78,15 +78,17 @@ const getStaticColumns = (
 
                 {isDelegated && (
                   <IconWithTooltip
-                    icon={<CheckboxCircleFill className="!fill-green-60 dark:!fill-green-50" />}
+                    icon={
+                      <CheckboxCircleFill className="!fill-green-60 dark:!fill-green-50" />
+                    }
                     content="Delegated"
                   />
                 )}
               </div>
 
-              <KeyValueWithButton 
-                keyValue={address} 
-                size="sm" 
+              <KeyValueWithButton
+                keyValue={address}
+                size="sm"
                 className="text-mono-140 dark:text-mono-80"
               />
             </div>
@@ -217,8 +219,8 @@ const getStaticColumns = (
           {tokensList.length > 0 ? (
             <VaultsDropdown vaultTokens={tokensList} />
           ) : (
-            <Typography 
-              variant="body1" 
+            <Typography
+              variant="body1"
               className="text-mono-140 dark:text-mono-80"
             >
               No vaults
@@ -277,16 +279,16 @@ const OperatorsTable: FC<Props> = ({
             <div className="flex items-center justify-end flex-1 gap-2">
               {RestakeOperatorAction ? (
                 <RestakeOperatorAction address={props.row.original.address}>
-                  <Button 
-                    variant="utility" 
+                  <Button
+                    variant="utility"
                     className="uppercase body4 bg-blue-10 dark:bg-blue-120 text-blue-70 dark:text-blue-40 hover:bg-blue-20 dark:hover:bg-blue-110 border border-blue-30 dark:border-blue-100 transition-all duration-200 font-semibold"
                   >
                     Delegate
                   </Button>
                 </RestakeOperatorAction>
               ) : (
-                <Button 
-                  variant="utility" 
+                <Button
+                  variant="utility"
                   className="uppercase body4 bg-blue-10 dark:bg-blue-120 text-blue-70 dark:text-blue-40 hover:bg-blue-20 dark:hover:bg-blue-110 border border-blue-30 dark:border-blue-100 transition-all duration-200 font-semibold"
                 >
                   Delegate
