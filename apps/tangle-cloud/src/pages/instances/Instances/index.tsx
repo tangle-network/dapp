@@ -1,9 +1,20 @@
 import { TableAndChartTabs } from '@tangle-network/ui-components/components/TableAndChartTabs';
 import { PlayFillIcon, TimeLineIcon } from '@tangle-network/icons';
-import { FC, ReactElement, useState } from 'react';
+import {
+  FC,
+  ReactElement,
+  useState,
+  Dispatch,
+  SetStateAction,
+  useMemo,
+} from 'react';
 import { TabContent } from '@tangle-network/ui-components';
 import { RunningInstanceTable } from './RunningInstanceTable';
 import { PendingInstanceTable } from './PendingInstanceTable';
+import useOperatorInfo from '@tangle-network/tangle-shared-ui/hooks/useOperatorInfo';
+import { useOperatorStatsData } from '../../../data/operators/useOperatorStatsData';
+import useActiveAccountAddress from '@tangle-network/tangle-shared-ui/hooks/useActiveAccountAddress';
+import { isSubstrateAddress } from '@tangle-network/ui-components';
 
 enum InstancesTab {
   RUNNING_INSTANCES = 'Running',
@@ -15,15 +26,55 @@ const InstancesTabIcon: ReactElement[] = [
   <TimeLineIcon className="w-4 h-4 !fill-yellow-100" />,
 ] as const;
 
-export const InstancesTabs: FC = () => {
+interface InstancesTabsProps {
+  refreshTrigger: number;
+  setRefreshTrigger: Dispatch<SetStateAction<number>>;
+}
+
+export const InstancesTabs: FC<InstancesTabsProps> = ({
+  refreshTrigger,
+  setRefreshTrigger,
+}) => {
+  const { isOperator } = useOperatorInfo();
+  const accountAddress = useActiveAccountAddress();
+
+  const { result: operatorStatsData } = useOperatorStatsData(
+    useMemo(() => {
+      if (
+        !accountAddress ||
+        !isOperator ||
+        !isSubstrateAddress(accountAddress)
+      ) {
+        return null;
+      }
+
+      return accountAddress;
+    }, [accountAddress, isOperator]),
+    refreshTrigger,
+  );
+
+  const hasRegisteredBlueprints = useMemo(() => {
+    return operatorStatsData && operatorStatsData.registeredBlueprints > 0;
+  }, [operatorStatsData]);
+
+  const shouldShowPendingTab = isOperator && hasRegisteredBlueprints;
+
+  const availableTabs = shouldShowPendingTab
+    ? Object.values(InstancesTab)
+    : [InstancesTab.RUNNING_INSTANCES];
+
+  const availableIcons = shouldShowPendingTab
+    ? InstancesTabIcon
+    : [InstancesTabIcon[0]];
+
   const [selectedTab, setSelectedTab] = useState(
     InstancesTab.RUNNING_INSTANCES,
   );
 
   return (
     <TableAndChartTabs
-      tabs={Object.values(InstancesTab)}
-      icons={InstancesTabIcon}
+      tabs={availableTabs}
+      icons={availableIcons}
       value={selectedTab}
       onValueChange={(tab) => setSelectedTab(tab as InstancesTab)}
       className="space-y-9 w-full"
@@ -33,15 +84,23 @@ export const InstancesTabs: FC = () => {
         value={InstancesTab.RUNNING_INSTANCES}
         className="flex justify-center mx-auto"
       >
-        <RunningInstanceTable />
+        <RunningInstanceTable
+          refreshTrigger={refreshTrigger}
+          setRefreshTrigger={setRefreshTrigger}
+        />
       </TabContent>
 
-      <TabContent
-        value={InstancesTab.PENDING_INSTANCES}
-        className="flex justify-center mx-auto"
-      >
-        <PendingInstanceTable />
-      </TabContent>
+      {shouldShowPendingTab && (
+        <TabContent
+          value={InstancesTab.PENDING_INSTANCES}
+          className="flex justify-center mx-auto"
+        >
+          <PendingInstanceTable
+            refreshTrigger={refreshTrigger}
+            setRefreshTrigger={setRefreshTrigger}
+          />
+        </TabContent>
+      )}
     </TableAndChartTabs>
   );
 };

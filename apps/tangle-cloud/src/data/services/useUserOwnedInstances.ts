@@ -16,6 +16,7 @@ import { encodeAddress, decodeAddress } from '@polkadot/util-crypto';
 
 export const useUserOwnedInstances = (
   userAddress: SubstrateAddress | null | undefined,
+  refreshTrigger?: number,
 ) => {
   const { result: userOwnedData, ...rest } = useApiRx(
     useCallback(
@@ -163,7 +164,8 @@ export const useUserOwnedInstances = (
           }),
         );
       },
-      [userAddress],
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+      [userAddress, refreshTrigger],
     ),
   );
 

@@ -7,6 +7,7 @@ import {
   isSubstrateAddress,
   KeyValueWithButton,
   shortenString,
+  Chip,
 } from '@tangle-network/ui-components';
 import useNetworkStore from '@tangle-network/tangle-shared-ui/context/useNetworkStore';
 import useSWRImmutable from 'swr/immutable';
@@ -21,7 +22,10 @@ import useOperatorInfo from '@tangle-network/tangle-shared-ui/hooks/useOperatorI
 import { useOperatorStatsData } from '../../data/operators/useOperatorStatsData';
 import { useUserStatsData } from '../../data/operators/useUserStatsData';
 
-export const AccountStatsCard: FC<AccountStatsCardProps> = (props) => {
+export const AccountStatsCard: FC<
+  AccountStatsCardProps & { refreshTrigger?: number }
+> = (props) => {
+  const { refreshTrigger, ...cardProps } = props;
   const accountAddress = useActiveAccountAddress();
   const { isOperator } = useOperatorInfo();
   const rpcEndpoints = useNetworkStore((store) => store.network.wsRpcEndpoints);
@@ -39,6 +43,7 @@ export const AccountStatsCard: FC<AccountStatsCardProps> = (props) => {
 
       return accountAddress;
     }, [accountAddress, isOperator]),
+    refreshTrigger,
   );
 
   const { result: userStatsData } = useUserStatsData(
@@ -49,6 +54,7 @@ export const AccountStatsCard: FC<AccountStatsCardProps> = (props) => {
 
       return accountAddress;
     }, [accountAddress]),
+    refreshTrigger,
   );
 
   const { data: accountInfo } = useSWRImmutable(
@@ -133,40 +139,41 @@ export const AccountStatsCard: FC<AccountStatsCardProps> = (props) => {
       operatorStatsData && operatorStatsData.registeredBlueprints > 0;
     const isActiveOperator = isOperator && hasOperatorData;
 
-    return [
-      {
-        title: 'Registered Blueprints',
-        children: isActiveOperator ? operatorStatsData.registeredBlueprints : 0,
-        tooltip: 'Number of blueprints you have registered as an operator',
-      },
-      {
-        title: 'Running Services',
-        children: isActiveOperator
-          ? operatorStatsData.runningServices
-          : userStatsData.runningServices,
-        tooltip: isActiveOperator
-          ? 'Services currently running that you operate as an operator'
-          : 'Services currently running that you have deployed',
-      },
-      {
-        title: 'Pending Services',
-        children: isActiveOperator
-          ? operatorStatsData.pendingServices
-          : userStatsData.pendingServices,
-        tooltip: isActiveOperator
-          ? 'Service requests pending your approval/rejection as an operator'
-          : 'Service requests you have submitted that are pending operator approval',
-      },
-      {
-        title: 'Deployed Services',
-        children: userStatsData.deployedServices,
-        tooltip: 'Total services you have deployed as a user/deployer',
-      },
-    ];
-  }, [operatorStatsData, userStatsData, isOperator]);
+    const items = [];
 
+    // Only show operator-specific stats if user is an operator with registered blueprints
+    if (isActiveOperator) {
+      items.push(
+        {
+          title: 'Registered Blueprints',
+          children: operatorStatsData.registeredBlueprints,
+          tooltip: 'Number of blueprints you have registered as an operator',
+        },
+        {
+          title: 'Running Services',
+          children: operatorStatsData.runningServices,
+          tooltip: 'Services currently running that you operate as an operator',
+        },
+        {
+          title: 'Pending Services',
+          children: operatorStatsData.pendingServices,
+          tooltip:
+            'Service requests pending your approval/rejection as an operator',
+        },
+      );
+    }
+
+    // Always show deployed services for all users
+    items.push({
+      title: 'Deployed Services',
+      children: userStatsData.deployedServices,
+      tooltip: 'Total services you have deployed as a user/deployer',
+    });
+
+    return items;
+  }, [operatorStatsData, userStatsData, isOperator]);
   return (
-    <AccountStatsDetailCard.Root {...props.rootProps}>
+    <AccountStatsDetailCard.Root {...cardProps.rootProps}>
       <AccountStatsDetailCard.Header
         IconElement={
           <Avatar
@@ -176,6 +183,13 @@ export const AccountStatsCard: FC<AccountStatsCardProps> = (props) => {
           />
         }
         title={identityName}
+        RightElement={
+          isOperator ? (
+            <Chip color="blue" className="text-xs px-2 py-1">
+              Operator
+            </Chip>
+          ) : undefined
+        }
         description={
           <KeyValueWithButton
             size="sm"

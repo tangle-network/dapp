@@ -17,6 +17,7 @@ import { SubstrateAddress } from '@tangle-network/ui-components/types/address';
 
 const useMonitoringBlueprints = (
   operatorAccountAddress?: SubstrateAddress | null,
+  refreshTrigger?: number,
 ) => {
   const { operatorTvlByAsset } = useOperatorTvl();
 
@@ -124,7 +125,8 @@ const useMonitoringBlueprints = (
           }),
         );
       },
-      [operatorAccountAddress, operatorTvlByAsset],
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+      [operatorAccountAddress, operatorTvlByAsset, refreshTrigger],
     ),
   );
 

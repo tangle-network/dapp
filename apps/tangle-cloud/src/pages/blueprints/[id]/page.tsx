@@ -62,10 +62,6 @@ const Page = () => {
       <div className="space-y-5">
         <SkeletonLoader className="min-h-64" />
 
-        <Typography variant="h4" fw="bold">
-          Operators running
-        </Typography>
-
         <SkeletonLoader className="min-h-52" />
       </div>
     );
@@ -111,13 +107,16 @@ const Page = () => {
       />
 
       <div className="space-y-5">
-        <Typography variant="h4" fw="bold">
-          Registered Operators
-        </Typography>
+        {!isLoading && (
+          <Typography variant="h4" fw="bold">
+            Registered Operators
+          </Typography>
+        )}
 
         <OperatorsTable
           RestakeOperatorAction={RestakeOperatorAction}
           data={result.operators}
+          isLoading={isLoading}
         />
       </div>
 

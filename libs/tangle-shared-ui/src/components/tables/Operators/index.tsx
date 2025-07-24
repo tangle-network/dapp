@@ -56,30 +56,41 @@ const getStaticColumns = (
       const address = toSubstrateAddress(rawAddress, ss58Prefix);
 
       return (
-        <TableCellWrapper className="pl-3">
-          <div className="flex items-center flex-1 gap-2 pr-3">
+        <TableCellWrapper className="p-3">
+          <div className="flex items-center flex-1 gap-3 pr-3">
             <Avatar
               sourceVariant="address"
               value={address}
               theme="substrate"
               size="lg"
+              className="shadow-sm"
             />
 
-            <div>
-              <div className="flex items-center gap-2">
-                <Typography variant="h5" fw="bold">
+            <div className="flex-1">
+              <div className="flex items-center gap-2 mb-1">
+                <Typography
+                  variant="h5"
+                  fw="bold"
+                  className="text-mono-200 dark:text-mono-0"
+                >
                   {identity ? identity : shortenString(address)}
                 </Typography>
 
                 {isDelegated && (
                   <IconWithTooltip
-                    icon={<CheckboxCircleFill className="!fill-green-50" />}
+                    icon={
+                      <CheckboxCircleFill className="!fill-green-60 dark:!fill-green-50" />
+                    }
                     content="Delegated"
                   />
                 )}
               </div>
 
-              <KeyValueWithButton keyValue={address} size="sm" />
+              <KeyValueWithButton
+                keyValue={address}
+                size="sm"
+                className="text-mono-140 dark:text-mono-80"
+              />
             </div>
           </div>
         </TableCellWrapper>
@@ -92,18 +103,20 @@ const getStaticColumns = (
       const value = props.getValue();
 
       return (
-        <TableCellWrapper>
+        <TableCellWrapper className="p-3">
           <Typography
             variant="body1"
-            fw="bold"
-            className="text-mono-200 dark:text-mono-0"
+            fw="semibold"
+            className="text-mono-160 dark:text-mono-60"
           >
             {formatDisplayAmount(
               new BN(value.toString()),
               TANGLE_TOKEN_DECIMALS,
               AmountFormatStyle.SHORT,
             )}{' '}
-            {nativeTokenSymbol}
+            <span className="text-mono-120 dark:text-mono-100">
+              {nativeTokenSymbol}
+            </span>
           </Typography>
         </TableCellWrapper>
       );
@@ -112,11 +125,11 @@ const getStaticColumns = (
   COLUMN_HELPER.accessor('instanceCount', {
     header: () => 'Instances',
     cell: (props) => (
-      <TableCellWrapper>
+      <TableCellWrapper className="p-3">
         <Typography
           variant="body1"
-          fw="bold"
-          className="text-mono-200 dark:text-mono-0"
+          fw="semibold"
+          className="text-mono-160 dark:text-mono-60"
         >
           {props.getValue() ?? 0}
         </Typography>
@@ -126,11 +139,11 @@ const getStaticColumns = (
   COLUMN_HELPER.accessor('restakersCount', {
     header: () => 'Restakers',
     cell: (props) => (
-      <TableCellWrapper>
+      <TableCellWrapper className="p-3">
         <Typography
           variant="body1"
-          fw="bold"
-          className="text-mono-200 dark:text-mono-0"
+          fw="semibold"
+          className="text-mono-160 dark:text-mono-60"
         >
           {props.getValue()}
         </Typography>
@@ -202,11 +215,16 @@ const getStaticColumns = (
       const tokensList = props.getValue();
 
       return (
-        <TableCellWrapper removeRightBorder>
+        <TableCellWrapper removeRightBorder className="p-3">
           {tokensList.length > 0 ? (
             <VaultsDropdown vaultTokens={tokensList} />
           ) : (
-            <Typography variant="body1">No vaults</Typography>
+            <Typography
+              variant="body1"
+              className="text-mono-140 dark:text-mono-80"
+            >
+              No vaults
+            </Typography>
           )}
         </TableCellWrapper>
       );
@@ -257,16 +275,22 @@ const OperatorsTable: FC<Props> = ({
         id: 'actions',
         header: () => null,
         cell: (props) => (
-          <TableCellWrapper removeRightBorder>
+          <TableCellWrapper removeRightBorder className="p-3">
             <div className="flex items-center justify-end flex-1 gap-2">
               {RestakeOperatorAction ? (
                 <RestakeOperatorAction address={props.row.original.address}>
-                  <Button variant="utility" className="uppercase body4">
+                  <Button
+                    variant="utility"
+                    className="uppercase body4 bg-blue-10 dark:bg-blue-120 text-blue-70 dark:text-blue-40 hover:bg-blue-20 dark:hover:bg-blue-110 border border-blue-30 dark:border-blue-100 transition-all duration-200 font-semibold"
+                  >
                     Delegate
                   </Button>
                 </RestakeOperatorAction>
               ) : (
-                <Button variant="utility" className="uppercase body4">
+                <Button
+                  variant="utility"
+                  className="uppercase body4 bg-blue-10 dark:bg-blue-120 text-blue-70 dark:text-blue-40 hover:bg-blue-20 dark:hover:bg-blue-110 border border-blue-30 dark:border-blue-100 transition-all duration-200 font-semibold"
+                >
                   Delegate
                 </Button>
               )}

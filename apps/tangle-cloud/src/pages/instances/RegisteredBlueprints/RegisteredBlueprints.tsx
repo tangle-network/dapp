@@ -54,12 +54,12 @@ export const RegisteredBlueprints: FC = () => {
         header: () => 'Blueprint',
         cell: (props) => {
           return (
-            <TableCellWrapper className="p-0 min-h-fit">
-              <div className="flex items-center gap-2 overflow-hidden">
+            <TableCellWrapper className="p-3 min-h-fit">
+              <div className="flex items-center gap-3 overflow-hidden">
                 {props.row.original.blueprint.metadata.logo ? (
                   <Avatar
                     size="lg"
-                    className="min-w-12"
+                    className="min-w-12 shadow-sm"
                     src={props.row.original.blueprint.metadata.logo}
                     alt={props.row.original.blueprint.metadata.name}
                     sourceVariant="uri"
@@ -67,7 +67,7 @@ export const RegisteredBlueprints: FC = () => {
                 ) : (
                   <Avatar
                     size="lg"
-                    className="min-w-12"
+                    className="min-w-12 shadow-sm"
                     sourceVariant="address"
                     value={
                       (props.row.original.blueprint.metadata.author &&
@@ -92,7 +92,7 @@ export const RegisteredBlueprints: FC = () => {
                 <Typography
                   variant="body1"
                   fw="bold"
-                  className="!text-blue-50 text-ellipsis whitespace-nowrap overflow-hidden"
+                  className="text-mono-200 dark:text-mono-0 text-ellipsis whitespace-nowrap overflow-hidden"
                 >
                   {props.row.original.blueprint.metadata.name}
                 </Typography>
@@ -106,8 +106,12 @@ export const RegisteredBlueprints: FC = () => {
         header: () => 'Instances',
         cell: (props) => {
           return (
-            <TableCellWrapper className="p-0 min-h-fit">
-              <Typography variant="body1" fw="normal">
+            <TableCellWrapper className="p-3 min-h-fit">
+              <Typography
+                variant="body1"
+                fw="semibold"
+                className="text-mono-160 dark:text-mono-60"
+              >
                 {props.row.original.blueprint.instanceCount?.toLocaleString() ??
                   EMPTY_VALUE_PLACEHOLDER}
               </Typography>
@@ -119,9 +123,15 @@ export const RegisteredBlueprints: FC = () => {
         header: () => 'Operators',
         cell: (props) => {
           return (
-            <TableCellWrapper className="p-0 min-h-fit">
-              {props.row.original.blueprint.operatorsCount?.toLocaleString() ??
-                EMPTY_VALUE_PLACEHOLDER}
+            <TableCellWrapper className="p-3 min-h-fit">
+              <Typography
+                variant="body1"
+                fw="semibold"
+                className="text-mono-160 dark:text-mono-60"
+              >
+                {props.row.original.blueprint.operatorsCount?.toLocaleString() ??
+                  EMPTY_VALUE_PLACEHOLDER}
+              </Typography>
             </TableCellWrapper>
           );
         },
@@ -145,7 +155,7 @@ export const RegisteredBlueprints: FC = () => {
         header: () => '',
         cell: (props) => {
           return (
-            <TableCellWrapper removeRightBorder className="p-0 min-h-fit">
+            <TableCellWrapper removeRightBorder className="p-3 min-h-fit">
               <Link
                 to={PagePath.BLUEPRINTS_DETAILS.replace(
                   ':id',
@@ -155,7 +165,10 @@ export const RegisteredBlueprints: FC = () => {
                   event.stopPropagation();
                 }}
               >
-                <Button variant="utility" className="uppercase body4">
+                <Button
+                  variant="utility"
+                  className="uppercase body4 bg-blue-10 dark:bg-blue-120 text-blue-70 dark:text-blue-40 hover:bg-blue-20 dark:hover:bg-blue-110 border border-blue-30 dark:border-blue-100 transition-all duration-200"
+                >
                   View
                 </Button>
               </Link>

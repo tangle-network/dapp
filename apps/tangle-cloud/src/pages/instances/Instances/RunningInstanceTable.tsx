@@ -1,4 +1,12 @@
-import { useMemo, useState, useCallback, type FC } from 'react';
+import {
+  useMemo,
+  useState,
+  useCallback,
+  useEffect,
+  type FC,
+  Dispatch,
+  SetStateAction,
+} from 'react';
 import {
   createColumnHelper,
   getCoreRowModel,
@@ -32,11 +40,20 @@ import {
   blake2AsU8a,
   decodeAddress,
 } from '@polkadot/util-crypto';
+import { TxStatus } from '@tangle-network/tangle-shared-ui/hooks/useSubstrateTx';
 
 const columnHelper =
   createColumnHelper<MonitoringBlueprint['services'][number]>();
 
-export const RunningInstanceTable: FC = () => {
+interface RunningInstanceTableProps {
+  refreshTrigger: number;
+  setRefreshTrigger: Dispatch<SetStateAction<number>>;
+}
+
+export const RunningInstanceTable: FC<RunningInstanceTableProps> = ({
+  refreshTrigger,
+  setRefreshTrigger,
+}) => {
   const { operatorAddress, isOperator } = useOperatorInfo();
   const currentUserAddress = useActiveAccountAddress();
 
@@ -49,13 +66,16 @@ export const RunningInstanceTable: FC = () => {
     isLoading: operatorLoading,
     result: operatorBlueprints,
     error: operatorError,
-  } = useMonitoringBlueprints(isOperator ? operatorAddress : null);
+  } = useMonitoringBlueprints(
+    isOperator ? operatorAddress : null,
+    refreshTrigger,
+  );
 
   const {
     isLoading: userLoading,
     result: userOwnedBlueprints,
     error: userError,
-  } = useUserOwnedInstances(userSubstrateAddress);
+  } = useUserOwnedInstances(userSubstrateAddress, refreshTrigger);
 
   const isLoading = operatorLoading || userLoading;
   const error = operatorError || userError;
@@ -109,6 +129,12 @@ export const RunningInstanceTable: FC = () => {
   const { execute: terminateServiceInstance, status: terminateStatus } =
     useServicesTerminateTx();
 
+  useEffect(() => {
+    if (terminateStatus === TxStatus.COMPLETE) {
+      setRefreshTrigger((prev) => prev + 1);
+    }
+  }, [terminateStatus, setRefreshTrigger]);
+
   const runningInstances = useMemo(() => {
     const blueprints = registeredBlueprints_ as
       | MonitoringBlueprint[]
@@ -153,12 +179,12 @@ export const RunningInstanceTable: FC = () => {
         enableSorting: false,
         cell: (props) => {
           return (
-            <TableCellWrapper className="p-0 min-h-fit">
-              <div className="flex items-center gap-2 w-11/12">
+            <TableCellWrapper className="p-3 min-h-fit">
+              <div className="flex items-center gap-3 w-11/12">
                 {props.row.original.blueprintData?.metadata?.logo ? (
                   <Avatar
                     size="lg"
-                    className="min-w-12"
+                    className="min-w-12 shadow-sm"
                     src={props.row.original.blueprintData.metadata?.logo}
                     alt={props.row.original.id.toString()}
                     sourceVariant="uri"
@@ -166,7 +192,7 @@ export const RunningInstanceTable: FC = () => {
                 ) : (
                   <Avatar
                     size="lg"
-                    className="min-w-12"
+                    className="min-w-12 shadow-sm"
                     sourceVariant="address"
                     value={
                       (props.row.original.blueprintData?.metadata as any)
@@ -194,26 +220,26 @@ export const RunningInstanceTable: FC = () => {
                   <Typography
                     variant="body1"
                     fw="bold"
-                    className="!text-blue-50 text-ellipsis whitespace-nowrap overflow-hidden"
+                    className="text-mono-200 dark:text-mono-0 text-ellipsis whitespace-nowrap overflow-hidden"
                   >
                     {props.row.original.blueprintData?.metadata?.author || ''}
                   </Typography>
                   <Typography
                     variant="body2"
                     fw="normal"
-                    className="!text-mono-100 text-ellipsis whitespace-nowrap overflow-hidden"
+                    className="text-mono-140 dark:text-mono-80 text-ellipsis whitespace-nowrap overflow-hidden"
                   >
                     {props.row.original.blueprintData?.metadata?.name || ''}
                   </Typography>
                 </div>
                 <div>
-                  <ChevronRight className="w-6 h-6" />
+                  <ChevronRight className="w-6 h-6 text-mono-120 dark:text-mono-100" />
                 </div>
                 <div className="w-4/12">
                   <Typography
                     variant="body1"
                     fw="bold"
-                    className="!text-blue-50 text-ellipsis whitespace-nowrap overflow-hidden"
+                    className="text-blue-70 dark:text-blue-40 text-ellipsis whitespace-nowrap overflow-hidden"
                   >
                     {props.row.original.id
                       ? `Instance-${props.row.original.id}`
@@ -222,7 +248,7 @@ export const RunningInstanceTable: FC = () => {
                   {/* <Typography
                     variant="body2"
                     fw="normal"
-                    className="!text-mono-100 text-ellipsis whitespace-nowrap overflow-hidden"
+                    className="text-mono-140 dark:text-mono-80 text-ellipsis whitespace-nowrap overflow-hidden"
                   >
                     {props.row.original.externalInstanceId ||
                       EMPTY_VALUE_PLACEHOLDER}
@@ -253,8 +279,8 @@ export const RunningInstanceTable: FC = () => {
           }
 
           return (
-            <TableCellWrapper removeRightBorder className="p-0 min-h-fit">
-              <div className="flex gap-2">
+            <TableCellWrapper removeRightBorder className="p-3 min-h-fit">
+              <div className="flex gap-3">
                 <Link
                   to={PagePath.BLUEPRINTS_DETAILS.replace(
                     ':id',
@@ -264,7 +290,10 @@ export const RunningInstanceTable: FC = () => {
                     event.stopPropagation();
                   }}
                 >
-                  <Button variant="utility" className="uppercase body4">
+                  <Button
+                    variant="utility"
+                    className="uppercase body4 bg-blue-10 dark:bg-blue-120 text-blue-70 dark:text-blue-40 hover:bg-blue-20 dark:hover:bg-blue-110 border border-blue-30 dark:border-blue-100 transition-all duration-200"
+                  >
                     View
                   </Button>
                 </Link>
@@ -272,7 +301,7 @@ export const RunningInstanceTable: FC = () => {
                 {isOwner && (
                   <Button
                     variant="utility"
-                    className="uppercase body4 !bg-red-500 !text-white hover:!bg-red-600"
+                    className="uppercase body4 bg-red-10 dark:bg-red-120 text-red-70 dark:text-red-40 hover:bg-red-20 dark:hover:bg-red-110 border border-red-30 dark:border-red-100 transition-all duration-200"
                     onClick={(event) => {
                       event.stopPropagation();
                       handleTerminateClick(props.row.original);
