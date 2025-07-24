@@ -138,36 +138,37 @@ export const AccountStatsCard: FC<
       operatorStatsData && operatorStatsData.registeredBlueprints > 0;
     const isActiveOperator = isOperator && hasOperatorData;
 
-    return [
-      {
-        title: 'Registered Blueprints',
-        children: isActiveOperator ? operatorStatsData.registeredBlueprints : 0,
-        tooltip: 'Number of blueprints you have registered as an operator',
-      },
-      {
-        title: 'Running Services',
-        children: isActiveOperator
-          ? operatorStatsData.runningServices
-          : userStatsData.runningServices,
-        tooltip: isActiveOperator
-          ? 'Services currently running that you operate as an operator'
-          : 'Services currently running that you have deployed',
-      },
-      {
-        title: 'Pending Services',
-        children: isActiveOperator
-          ? operatorStatsData.pendingServices
-          : userStatsData.pendingServices,
-        tooltip: isActiveOperator
-          ? 'Service requests pending your approval/rejection as an operator'
-          : 'Service requests you have submitted that are pending operator approval',
-      },
-      {
-        title: 'Deployed Services',
-        children: userStatsData.deployedServices,
-        tooltip: 'Total services you have deployed as a user/deployer',
-      },
-    ];
+    const items = [];
+
+    // Only show operator-specific stats if user is an operator with registered blueprints
+    if (isActiveOperator) {
+      items.push(
+        {
+          title: 'Registered Blueprints',
+          children: operatorStatsData.registeredBlueprints,
+          tooltip: 'Number of blueprints you have registered as an operator',
+        },
+        {
+          title: 'Running Services',
+          children: operatorStatsData.runningServices,
+          tooltip: 'Services currently running that you operate as an operator',
+        },
+        {
+          title: 'Pending Services',
+          children: operatorStatsData.pendingServices,
+          tooltip: 'Service requests pending your approval/rejection as an operator',
+        },
+      );
+    }
+
+    // Always show deployed services for all users
+    items.push({
+      title: 'Deployed Services',
+      children: userStatsData.deployedServices,
+      tooltip: 'Total services you have deployed as a user/deployer',
+    });
+
+    return items;
   }, [operatorStatsData, userStatsData, isOperator]);
 
   return (
