@@ -7,6 +7,7 @@ import {
   isSubstrateAddress,
   KeyValueWithButton,
   shortenString,
+  Chip,
 } from '@tangle-network/ui-components';
 import useNetworkStore from '@tangle-network/tangle-shared-ui/context/useNetworkStore';
 import useSWRImmutable from 'swr/immutable';
@@ -170,7 +171,6 @@ export const AccountStatsCard: FC<
 
     return items;
   }, [operatorStatsData, userStatsData, isOperator]);
-
   return (
     <AccountStatsDetailCard.Root {...cardProps.rootProps}>
       <AccountStatsDetailCard.Header
@@ -182,6 +182,16 @@ export const AccountStatsCard: FC<
           />
         }
         title={identityName}
+        RightElement={
+          isOperator ? (
+            <Chip
+              color="blue"
+              className="text-xs px-2 py-1"
+            >
+              Operator
+            </Chip>
+          ) : undefined
+        }
         description={
           <KeyValueWithButton
             size="sm"
