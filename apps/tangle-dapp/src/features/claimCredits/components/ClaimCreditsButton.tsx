@@ -19,6 +19,8 @@ import {
 import { useCallback, useMemo, useState } from 'react';
 import useCredits from '../../../data/credits/useCredits';
 import useClaimCreditsTx from '../../../data/credits/useClaimCreditsTx';
+import { meetsMinimumClaimThreshold } from '../../../utils/creditConstraints';
+import CreditVelocityTooltip from './CreditVelocityTooltip';
 
 const ClaimCreditsButton = () => {
   const { data, error, refetch, isPending } = useCredits();
@@ -36,6 +38,10 @@ const ClaimCreditsButton = () => {
       AmountFormatStyle.SHORT,
     );
   }, [data]);
+
+  const meetsMinimumThreshold = useMemo(() => {
+    return meetsMinimumClaimThreshold(data?.amount);
+  }, [data?.amount]);
 
   // Hide if there's no data
   if (data === undefined) {
@@ -67,21 +73,35 @@ const ClaimCreditsButton = () => {
       </DropdownButton>
 
       <DropdownBody align="start" sideOffset={8} className="p-4 space-y-3">
-        <Typography variant="body3" fw="bold" className="!text-muted uppercase">
-          Unclaimed AI Credits
-        </Typography>
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <Typography variant="body1" fw="bold">
+              Unclaimed AI Credits
+            </Typography>
+            <CreditVelocityTooltip currentAmount={data?.amount} />
+          </div>
 
-        <Typography variant="h4" component="p" fw="bold">
-          {formattedCredits}
-        </Typography>
+          <Typography variant="body1" fw="bold">
+            {formattedCredits}
+          </Typography>
+        </div>
+
+        {data?.amount && !data.amount.isZero() && !meetsMinimumThreshold && (
+          <Typography 
+            variant="body2"
+            className="text-blue-600 dark:text-blue-400"
+          >
+            Minimum 0.01 required to claim
+          </Typography>
+        )}
 
         <Typography variant="body2" fw="semibold" className="!text-muted">
-          Associate your account to claim these credits.
+          Associate your AI app account to claim these credits.
         </Typography>
 
         <div className="space-y-2">
           <Typography variant="body2" fw="semibold">
-            Account ID
+            AI App User ID
           </Typography>
           <TextField.Root
             error={inputError}
@@ -94,7 +114,7 @@ const ClaimCreditsButton = () => {
                 setOffchainAccountId(e.target.value);
                 setInputError('');
               }}
-              placeholder="Enter your account ID"
+              placeholder="Enter your AI app user ID"
             />
           </TextField.Root>
         </div>
@@ -162,11 +182,17 @@ const CreditsButton = ({
 
   const isLoading = useMemo(() => status === TxStatus.PROCESSING, [status]);
   const hasCredits = useMemo(() => credits && !credits.isZero(), [credits]);
+  const meetsMinimumThreshold = useMemo(() => {
+    return meetsMinimumClaimThreshold(credits);
+  }, [credits]);
+  const canClaim = useMemo(() => {
+    return hasCredits && meetsMinimumThreshold;
+  }, [hasCredits, meetsMinimumThreshold]);
 
   return (
     <Button
       isFullWidth
-      isDisabled={!hasCredits || isLoading || !offchainAccountId.trim()}
+      isDisabled={!canClaim || isLoading || !offchainAccountId.trim()}
       onClick={handleClick}
       isLoading={isLoading}
     >
