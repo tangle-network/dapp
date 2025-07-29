@@ -6,7 +6,7 @@ import type {
 } from '@polkadot/types/lookup';
 import isDefined from '@tangle-network/dapp-types/utils/isDefined';
 import { useCallback } from 'react';
-import { map } from 'rxjs';
+import { map, catchError, of } from 'rxjs';
 import useApiRx from '../../hooks/useApiRx';
 import { TangleError, TangleErrorCode } from '../../types/error';
 import { OperatorMetadata } from '../../types/restake';
@@ -14,14 +14,19 @@ import createRestakeAssetId from '../../utils/createRestakeAssetId';
 import { assertSubstrateAddress } from '@tangle-network/ui-components';
 import { SubstrateAddress } from '@tangle-network/ui-components/types/address';
 
-const useRestakeOperatorMap = () => {
+const useRestakeOperatorMap = (refreshTrigger?: number) => {
   const { result, ...rest } = useApiRx(
     useCallback((apiRx) => {
+      void refreshTrigger;
       if (!isDefined(apiRx?.query?.multiAssetDelegation?.operators?.entries)) {
         return new TangleError(TangleErrorCode.FEATURE_NOT_SUPPORTED);
       }
 
       return apiRx.query.multiAssetDelegation.operators.entries().pipe(
+        catchError((error) => {
+          console.error('Error fetching operator map entries:', error);
+          return of([]);
+        }),
         map((entries) => {
           return entries.reduce(
             (operatorsMap, [accountStorage, operatorMetadata], _index) => {
@@ -62,7 +67,7 @@ const useRestakeOperatorMap = () => {
           );
         }),
       );
-    }, []),
+    }, [refreshTrigger]),
   );
 
   return {
