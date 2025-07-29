@@ -87,7 +87,7 @@ const ClaimCreditsButton = () => {
         </div>
 
         {data?.amount && !data.amount.isZero() && !meetsMinimumThreshold && (
-          <Typography 
+          <Typography
             variant="body2"
             className="text-blue-600 dark:text-blue-400"
           >

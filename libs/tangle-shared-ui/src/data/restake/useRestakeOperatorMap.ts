@@ -16,58 +16,65 @@ import { SubstrateAddress } from '@tangle-network/ui-components/types/address';
 
 const useRestakeOperatorMap = (refreshTrigger?: number) => {
   const { result, ...rest } = useApiRx(
-    useCallback((apiRx) => {
-      void refreshTrigger;
-      if (!isDefined(apiRx?.query?.multiAssetDelegation?.operators?.entries)) {
-        return new TangleError(TangleErrorCode.FEATURE_NOT_SUPPORTED);
-      }
+    useCallback(
+      (apiRx) => {
+        void refreshTrigger;
+        if (
+          !isDefined(apiRx?.query?.multiAssetDelegation?.operators?.entries)
+        ) {
+          return new TangleError(TangleErrorCode.FEATURE_NOT_SUPPORTED);
+        }
 
-      return apiRx.query.multiAssetDelegation.operators.entries().pipe(
-        catchError((error) => {
-          console.error('Error fetching operator map entries:', error);
-          return of([]);
-        }),
-        map((entries) => {
-          return entries.reduce(
-            (operatorsMap, [accountStorage, operatorMetadata], _index) => {
-              const accountId = accountStorage.args[0];
-              const accountIdStr = accountId.toString();
+        return apiRx.query.multiAssetDelegation.operators.entries().pipe(
+          catchError((error) => {
+            console.error('Error fetching operator map entries:', error);
+            return of([]);
+          }),
+          map((entries) => {
+            return entries.reduce(
+              (operatorsMap, [accountStorage, operatorMetadata], _index) => {
+                const accountId = accountStorage.args[0];
+                const accountIdStr = accountId.toString();
 
-              if (operatorMetadata.isNone) {
+                if (operatorMetadata.isNone) {
+                  return operatorsMap;
+                }
+
+                const operator = operatorMetadata.unwrap();
+
+                try {
+                  const { delegations, restakersCount } =
+                    toPrimitiveDelegations(operator.delegations);
+
+                  const operatorMetadataPrimitive = {
+                    stake: operator.stake.toBigInt(),
+                    delegationCount: operator.delegationCount.toNumber(),
+                    bondLessRequest: toPrimitiveRequest(operator.request),
+                    delegations,
+                    restakersCount,
+                    status: toPrimitiveStatus(operator.status),
+                  } satisfies OperatorMetadata;
+
+                  operatorsMap.set(
+                    assertSubstrateAddress(accountIdStr),
+                    operatorMetadataPrimitive,
+                  );
+                } catch (e) {
+                  console.error(
+                    `Error processing operator ${accountIdStr}:`,
+                    e,
+                  );
+                }
+
                 return operatorsMap;
-              }
-
-              const operator = operatorMetadata.unwrap();
-
-              try {
-                const { delegations, restakersCount } = toPrimitiveDelegations(
-                  operator.delegations,
-                );
-
-                const operatorMetadataPrimitive = {
-                  stake: operator.stake.toBigInt(),
-                  delegationCount: operator.delegationCount.toNumber(),
-                  bondLessRequest: toPrimitiveRequest(operator.request),
-                  delegations,
-                  restakersCount,
-                  status: toPrimitiveStatus(operator.status),
-                } satisfies OperatorMetadata;
-
-                operatorsMap.set(
-                  assertSubstrateAddress(accountIdStr),
-                  operatorMetadataPrimitive,
-                );
-              } catch (e) {
-                console.error(`Error processing operator ${accountIdStr}:`, e);
-              }
-
-              return operatorsMap;
-            },
-            new Map<SubstrateAddress, OperatorMetadata>(),
-          );
-        }),
-      );
-    }, [refreshTrigger]),
+              },
+              new Map<SubstrateAddress, OperatorMetadata>(),
+            );
+          }),
+        );
+      },
+      [refreshTrigger],
+    ),
   );
 
   return {

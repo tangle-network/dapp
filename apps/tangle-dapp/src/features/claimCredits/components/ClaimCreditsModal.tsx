@@ -96,10 +96,10 @@ const ClaimCreditsModal: FC<Props> = ({ isOpen, setIsOpen }) => {
                 <Typography variant="h3" fw="bold">
                   {formattedAmount} {nativeTokenSymbol}
                 </Typography>
-                
+
                 {!meetsMinimumThreshold && (
-                  <Typography 
-                    variant="body2" 
+                  <Typography
+                    variant="body2"
                     className="text-yellow-600 dark:text-yellow-400 mt-2"
                   >
                     Minimum 0.01 {nativeTokenSymbol} required to claim
