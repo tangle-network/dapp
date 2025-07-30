@@ -20,9 +20,10 @@ import { TxStatus } from '../../hooks/useSubstrateTx';
 
 type Props = {
   setIsOpen: (isOpen: boolean) => void;
+  onSuccess?: () => void;
 };
 
-const JoinOperatorsModal: FC<Props> = ({ setIsOpen }) => {
+const JoinOperatorsModal: FC<Props> = ({ setIsOpen, onSuccess }) => {
   const [bondAmount, setBondAmount] = useState<BN | null>(null);
   const { nativeTokenSymbol } = useNetworkStore();
   const { execute, status } = useJoinOperatorsTx();
@@ -73,8 +74,9 @@ const JoinOperatorsModal: FC<Props> = ({ setIsOpen }) => {
     if (status === TxStatus.COMPLETE) {
       setBondAmount(null);
       setIsOpen(false);
+      onSuccess?.();
     }
-  }, [setIsOpen, status]);
+  }, [setIsOpen, status, onSuccess]);
 
   return (
     <ModalContent size="sm">

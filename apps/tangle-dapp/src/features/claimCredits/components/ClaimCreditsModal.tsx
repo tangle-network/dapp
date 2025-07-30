@@ -18,6 +18,8 @@ import {
 } from '@tangle-network/ui-components';
 import useCredits from '../../../data/credits/useCredits';
 import useClaimCreditsTx from '../../../data/credits/useClaimCreditsTx';
+import { meetsMinimumClaimThreshold } from '../../../utils/creditConstraints';
+import CreditVelocityTooltip from './CreditVelocityTooltip';
 
 type Props = {
   isOpen: boolean;
@@ -63,6 +65,8 @@ const ClaimCreditsModal: FC<Props> = ({ isOpen, setIsOpen }) => {
 
   const isLoading = status === TxStatus.PROCESSING;
   const hasCredits = data?.amount && !data.amount.isZero();
+  const meetsMinimumThreshold = meetsMinimumClaimThreshold(data?.amount);
+  const canClaim = hasCredits && meetsMinimumThreshold;
 
   return (
     <Modal open={isOpen} onOpenChange={setIsOpen}>
@@ -79,24 +83,39 @@ const ClaimCreditsModal: FC<Props> = ({ isOpen, setIsOpen }) => {
           ) : hasCredits ? (
             <>
               <div className="flex flex-col items-center justify-center p-4 bg-glass dark:bg-glass_dark rounded-xl border border-mono-0 dark:border-mono-180">
-                <Typography variant="body1" fw="bold">
-                  Available Credits
-                </Typography>
+                <div className="flex items-center gap-2">
+                  <Typography variant="body1" fw="bold">
+                    Available Credits
+                  </Typography>
+                  <CreditVelocityTooltip
+                    currentAmount={data?.amount}
+                    tokenSymbol={nativeTokenSymbol}
+                  />
+                </div>
 
                 <Typography variant="h3" fw="bold">
                   {formattedAmount} {nativeTokenSymbol}
                 </Typography>
+
+                {!meetsMinimumThreshold && (
+                  <Typography
+                    variant="body2"
+                    className="text-yellow-600 dark:text-yellow-400 mt-2"
+                  >
+                    Minimum 0.01 {nativeTokenSymbol} required to claim
+                  </Typography>
+                )}
               </div>
 
               <div className="space-y-2">
                 <Typography variant="body1" fw="bold">
-                  Account ID
+                  AI App User ID
                 </Typography>
                 <Typography
                   variant="body2"
                   className="text-mono-120 dark:text-mono-80"
                 >
-                  Enter your account ID to associate with these credits
+                  Enter your AI app user ID to associate with these credits
                 </Typography>
 
                 <TextField.Root
@@ -110,14 +129,14 @@ const ClaimCreditsModal: FC<Props> = ({ isOpen, setIsOpen }) => {
                       setOffchainAccountId(e.target.value);
                       setInputError('');
                     }}
-                    placeholder="Enter your account ID"
+                    placeholder="Enter your AI app user ID"
                   />
                 </TextField.Root>
               </div>
 
               <Button
                 isFullWidth
-                isDisabled={!hasCredits || isLoading}
+                isDisabled={!canClaim || isLoading}
                 isLoading={isLoading}
                 loadingText="Claiming credits..."
                 onClick={handleClaimCredits}

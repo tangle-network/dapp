@@ -197,7 +197,7 @@ const VaultHighlight = ({
       <Typography
         variant="h4"
         fw="bold"
-        className="text-mono-0 dark:text-mono-0"
+        className="text-mono-180 dark:text-mono-0"
       >
         {vaultName}
       </Typography>
@@ -208,8 +208,8 @@ const VaultHighlight = ({
           result={vaultTvl || EMPTY_VALUE_PLACEHOLDER}
           isLoading={isVaultTvlLoading}
           error={null}
-          labelClassName="text-mono-60 dark:text-mono-60"
-          valueClassName="text-mono-0 dark:text-mono-0"
+          labelClassName="text-mono-180 dark:text-mono-60"
+          valueClassName="text-mono-200 dark:text-mono-0"
         />
 
         <StatsItem
@@ -221,8 +221,8 @@ const VaultHighlight = ({
           }
           isLoading={isVaultParticipantsLoading}
           error={vaultParticipantsError}
-          labelClassName="text-mono-60 dark:text-mono-60"
-          valueClassName="text-mono-0 dark:text-mono-0"
+          labelClassName="text-mono-180 dark:text-mono-60"
+          valueClassName="text-mono-200 dark:text-mono-0"
         />
       </div>
     </div>

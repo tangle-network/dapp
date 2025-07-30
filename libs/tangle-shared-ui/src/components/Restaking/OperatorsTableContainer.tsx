@@ -38,6 +38,7 @@ type Props = {
   onRestakeClickedPagePath: string;
   onRestakeClickedQueryParamKey: string;
   isLoading?: boolean;
+  onOperatorJoined?: () => void;
 };
 
 const OperatorsTableContainer: FC<Props> = ({
@@ -48,6 +49,7 @@ const OperatorsTableContainer: FC<Props> = ({
   onRestakeClickedPagePath,
   onRestakeClickedQueryParamKey,
   isLoading: isLoadingOperatorMap,
+  onOperatorJoined,
 }) => {
   const [globalFilter, setGlobalFilter] = useState('');
   const [isJoinOperatorsModalOpen, setIsJoinOperatorsModalOpen] =
@@ -178,7 +180,10 @@ const OperatorsTableContainer: FC<Props> = ({
           isLoading={isLoadingOperatorMap}
         />
 
-        <JoinOperatorsModal setIsOpen={setIsJoinOperatorsModalOpen} />
+        <JoinOperatorsModal
+          setIsOpen={setIsJoinOperatorsModalOpen}
+          onSuccess={onOperatorJoined}
+        />
       </div>
     </Modal>
   );
