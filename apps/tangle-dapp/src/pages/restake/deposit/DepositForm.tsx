@@ -263,10 +263,13 @@ const DepositForm: FC<Props> = ({
             renderItem={(asset) => {
               const balance = asset.balance ?? BN_ZERO;
 
+              const displayName =
+                asset.id === '0' ? 'Tangle Network Token' : asset.metadata.name;
+
               return (
                 <AssetListItem
                   assetId={asset.id}
-                  name={asset.metadata.name}
+                  name={displayName}
                   symbol={asset.metadata.symbol}
                   balance={balance}
                   decimals={asset.metadata.decimals}

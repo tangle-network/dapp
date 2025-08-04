@@ -88,10 +88,13 @@ const WithdrawModal = ({
           return null;
         }
 
+        const displayName =
+          assetId === '0' ? 'Tangle Network Token' : asset.metadata.name;
+
         return (
           <AssetListItem
             assetId={assetId}
-            name={asset.metadata.name}
+            name={displayName}
             symbol={asset.metadata.symbol}
             balance={new BN(amount.toString())}
             decimals={asset.metadata.decimals}

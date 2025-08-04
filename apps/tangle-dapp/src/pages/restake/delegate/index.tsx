@@ -27,7 +27,7 @@ import { Modal } from '@tangle-network/ui-components/components/Modal';
 import { useModal } from '@tangle-network/ui-components/hooks/useModal';
 import { SubstrateAddress } from '@tangle-network/ui-components/types/address';
 import keys from 'lodash/keys';
-import { FC, useCallback, useEffect, useMemo } from 'react';
+import { FC, useCallback, useEffect, useMemo, useState } from 'react';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import AssetListItem from '../../../components/Lists/AssetListItem';
 import OperatorListItem from '../../../components/Lists/OperatorListItem';
@@ -99,15 +99,15 @@ const RestakeDelegateForm: FC<Props> = ({ assets }) => {
   const { result: operatorMap } = useRestakeOperatorMap();
   const blueprintSelection = useBlueprintStore((store) => store.selection);
 
-  const { result: operatorIdentities } = useIdentities(
-    useMemo(
-      () =>
-        Object.keys(operatorMap).map((address) =>
-          assertSubstrateAddress(address),
-        ),
-      [operatorMap],
-    ),
-  );
+  const addressesToFetch = useMemo(() => {
+    const keys = Array.from(operatorMap.keys());
+    if (keys.length === 0) {
+      return [];
+    }
+    return keys.map((address) => assertSubstrateAddress(address));
+  }, [operatorMap]);
+
+  const { result: operatorIdentities } = useIdentities(addressesToFetch);
 
   const switchChain = useSwitchChain();
 
@@ -125,13 +125,6 @@ const RestakeDelegateForm: FC<Props> = ({ assets }) => {
 
     return assetIds[0];
   }, [delegatorInfo]);
-
-  // Set the default asset ID to the first deposited asset.
-  useEffect(() => {
-    if (defaultAssetId !== null) {
-      setValue('assetId', defaultAssetId);
-    }
-  }, [defaultAssetId, setValue]);
 
   // Set the operatorAccountId from the URL param.
   useEffect(() => {
@@ -173,9 +166,11 @@ const RestakeDelegateForm: FC<Props> = ({ assets }) => {
 
   const { nativeTokenSymbol } = useNetworkStore();
   const nativeRestakeAssetBalance = useNativeRestakeAssetBalance();
-
-  const { execute: executeNativeRestake, status: nativeRestakeTxStatus } =
+  const { status: nativeRestakeTxStatus, execute: executeNativeRestake } =
     useNativeRestakeTx();
+
+  const [selectedAssetItem, setSelectedAssetItem] =
+    useState<RestakeAssetTableItem | null>(null);
 
   const depositedAssets = useMemo<RestakeAssetTableItem[]>(() => {
     const result: RestakeAssetTableItem[] = [];
@@ -188,10 +183,12 @@ const RestakeDelegateForm: FC<Props> = ({ assets }) => {
     ) {
       result.push({
         id: NATIVE_ASSET_ID,
-        name: undefined,
+        name: 'Tangle Network Token',
         symbol: nativeTokenSymbol,
         decimals: TANGLE_TOKEN_DECIMALS,
         balance: nativeRestakeAssetBalance,
+        label: 'Nominated',
+        labelColor: 'purple' as const,
       } satisfies RestakeAssetTableItem);
     }
 
@@ -209,11 +206,18 @@ const RestakeDelegateForm: FC<Props> = ({ assets }) => {
           return [];
         }
 
+        const isNativeAsset = assetId === NATIVE_ASSET_ID;
+        const displayName = isNativeAsset
+          ? 'Tangle Network Token'
+          : asset.metadata.name;
+
         return {
           id: asset.id,
-          name: asset.metadata.name,
+          name: displayName,
           symbol: asset.metadata.symbol,
           decimals: asset.metadata.decimals,
+          label: isNativeAsset ? 'Deposited' : undefined,
+          labelColor: isNativeAsset ? ('green' as const) : undefined,
           balance,
         } satisfies RestakeAssetTableItem;
       },
@@ -222,9 +226,22 @@ const RestakeDelegateForm: FC<Props> = ({ assets }) => {
     return result.concat(deposits);
   }, [assets, delegatorInfo, nativeRestakeAssetBalance, nativeTokenSymbol]);
 
+  useEffect(() => {
+    if (defaultAssetId !== null && depositedAssets.length > 0) {
+      setValue('assetId', defaultAssetId);
+      const firstAsset = depositedAssets.find(
+        (asset) => asset.id === defaultAssetId,
+      );
+      if (firstAsset) {
+        setSelectedAssetItem(firstAsset);
+      }
+    }
+  }, [defaultAssetId, setValue, depositedAssets]);
+
   const handleAssetSelect = useCallback(
     (asset: RestakeAssetTableItem) => {
       setValue('assetId', asset.id);
+      setSelectedAssetItem(asset);
       closeAssetModal();
     },
     [closeAssetModal, setValue],
@@ -242,8 +259,26 @@ const RestakeDelegateForm: FC<Props> = ({ assets }) => {
 
   const selectedAssetId = watch('assetId');
   const selectedAsset = useMemo(() => {
+    if (selectedAssetItem) {
+      const asset = {
+        id: selectedAssetItem.id,
+        metadata: {
+          assetId: selectedAssetItem.id,
+          name: selectedAssetItem.name || selectedAssetItem.symbol,
+          symbol: selectedAssetItem.symbol,
+          decimals: selectedAssetItem.decimals,
+          isFrozen: false,
+          vaultId: null,
+          priceInUsd: null,
+          status: 'Live' as const,
+        },
+        balance: selectedAssetItem.balance,
+      };
+      return asset;
+    }
+
     return assets?.get(selectedAssetId) ?? null;
-  }, [assets, selectedAssetId]);
+  }, [assets, selectedAssetId, selectedAssetItem]);
 
   const isReady =
     restakeApi !== null &&
@@ -264,9 +299,9 @@ const RestakeDelegateForm: FC<Props> = ({ assets }) => {
         return;
       }
 
-      // If the asset ID is the native asset, the user is trying to native
-      // restake. This is a special case because it uses a different extrinsic.
-      if (assetId === NATIVE_ASSET_ID) {
+      const isNominatedAsset = selectedAssetItem?.label === 'Nominated';
+
+      if (assetId === NATIVE_ASSET_ID && isNominatedAsset) {
         await executeNativeRestake({
           amount: amountBn,
           operatorAddress: operatorAccountId,
@@ -276,36 +311,45 @@ const RestakeDelegateForm: FC<Props> = ({ assets }) => {
         });
       } else {
         if (!restakeApi) return;
-        await restakeApi.delegate(operatorAccountId, assetId, amountBn);
+        await restakeApi.delegate(
+          operatorAccountId,
+          assetId,
+          amountBn,
+          blueprintSelection?.map((id) => new BN(id.toString())),
+          isNominatedAsset,
+        );
       }
 
       setValue('operatorAccountId', '', { shouldValidate: false });
       setValue('amount', '', { shouldValidate: false });
       setValue('assetId', '', { shouldValidate: false });
+      setSelectedAssetItem(null);
     },
     [
       blueprintSelection,
       executeNativeRestake,
       isReady,
       restakeApi,
-      selectedAsset?.metadata.decimals,
+      selectedAsset,
+      selectedAssetItem,
       setValue,
     ],
   );
 
   const operators = useMemo<RestakeOperator[]>(() => {
-    return (
-      Array.from(operatorMap.entries())
-        // Include only active operators.
-        .filter(([, metadata]) => metadata.status === 'Active')
-        .map(([accountId]) => ({
-          accountId: assertSubstrateAddress(accountId),
-          identityName:
-            operatorIdentities.get(assertSubstrateAddress(accountId))?.name ??
-            undefined,
+    const result = Array.from(operatorMap.entries())
+      .filter(([, metadata]) => metadata.status === 'Active')
+      .map(([accountId]) => {
+        const substrateAddress = assertSubstrateAddress(accountId);
+        const identity = operatorIdentities.get(substrateAddress);
+        return {
+          accountId: substrateAddress,
+          identityName: identity?.name ?? undefined,
           isActive: true,
-        }))
-    );
+        };
+      });
+
+    return result;
   }, [operatorMap, operatorIdentities]);
 
   const handleOnSelectOperator = useCallback(
@@ -333,6 +377,8 @@ const RestakeDelegateForm: FC<Props> = ({ assets }) => {
                 setValue={setValue}
                 watch={watch}
                 assets={assets}
+                selectedAsset={selectedAsset}
+                operatorIdentities={operatorIdentities}
               />
 
               <BlueprintSelection operatorAddress={selectedOperatorAddress} />
@@ -376,6 +422,8 @@ const RestakeDelegateForm: FC<Props> = ({ assets }) => {
                   balance={asset.balance}
                   decimals={asset.decimals}
                   rightBottomText="Balance"
+                  label={asset.label}
+                  labelColor={asset.labelColor}
                 />
               );
             }}

@@ -161,23 +161,40 @@ class RestakeEvmApi extends RestakeApiBase {
     assetId: RestakeAssetId,
     amount: BN,
     blueprintSelection?: BN[],
+    isNominatedAsset?: boolean,
   ) {
-    const customAssetId = isEvmAddress(assetId) ? BigInt(0) : BigInt(assetId);
-    const tokenAddress = isEvmAddress(assetId) ? assetId : ZERO_ADDRESS;
+    if (isNominatedAsset) {
+      // For nominated assets, use delegateNomination function
+      await this.callContract(
+        TxName.RESTAKE_DELEGATE,
+        RESTAKING_PRECOMPILE_ABI,
+        PrecompileAddress.RESTAKING,
+        'delegateNomination',
+        [
+          convertAddressToBytes32(operatorAddress),
+          BigInt(amount.toString()),
+          blueprintSelection?.map((id) => BigInt(id.toString())) ?? [],
+        ],
+      );
+    } else {
+      // For regular assets, use standard delegate function
+      const customAssetId = isEvmAddress(assetId) ? BigInt(0) : BigInt(assetId);
+      const tokenAddress = isEvmAddress(assetId) ? assetId : ZERO_ADDRESS;
 
-    await this.callContract(
-      TxName.RESTAKE_DELEGATE,
-      RESTAKING_PRECOMPILE_ABI,
-      PrecompileAddress.RESTAKING,
-      'delegate',
-      [
-        convertAddressToBytes32(operatorAddress),
-        customAssetId,
-        tokenAddress,
-        BigInt(amount.toString()),
-        blueprintSelection?.map((id) => BigInt(id.toString())) ?? [],
-      ],
-    );
+      await this.callContract(
+        TxName.RESTAKE_DELEGATE,
+        RESTAKING_PRECOMPILE_ABI,
+        PrecompileAddress.RESTAKING,
+        'delegate',
+        [
+          convertAddressToBytes32(operatorAddress),
+          customAssetId,
+          tokenAddress,
+          BigInt(amount.toString()),
+          blueprintSelection?.map((id) => BigInt(id.toString())) ?? [],
+        ],
+      );
+    }
   }
 
   async undelegate(

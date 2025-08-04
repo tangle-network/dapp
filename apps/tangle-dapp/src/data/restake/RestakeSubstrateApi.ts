@@ -80,20 +80,30 @@ class RestakeSubstrateApi extends RestakeApiBase {
     assetId: RestakeAssetId,
     amount: BN,
     blueprintSelection?: BN[],
+    isNominatedAsset?: boolean,
   ) {
-    const assetIdEnum = isEvmAddress(assetId)
-      ? { Erc20: assetId }
-      : { Custom: new BN(assetId) };
-
     const blueprintSelectionEnum = { Fixed: blueprintSelection ?? [] };
 
-    // TODO: Evm address & lock multiplier.
-    const extrinsic = this.api.tx.multiAssetDelegation.delegate(
-      operatorAddress,
-      assetIdEnum,
-      amount,
-      blueprintSelectionEnum,
-    );
+    let extrinsic;
+
+    if (isNominatedAsset) {
+      extrinsic = this.api.tx.multiAssetDelegation.delegateNomination(
+        operatorAddress,
+        amount,
+        blueprintSelectionEnum,
+      );
+    } else {
+      const assetIdEnum = isEvmAddress(assetId)
+        ? { Erc20: assetId }
+        : { Custom: new BN(assetId) };
+
+      extrinsic = this.api.tx.multiAssetDelegation.delegate(
+        operatorAddress,
+        assetIdEnum,
+        amount,
+        blueprintSelectionEnum,
+      );
+    }
 
     return this.submitTx(TxName.RESTAKE_DELEGATE, extrinsic);
   }
