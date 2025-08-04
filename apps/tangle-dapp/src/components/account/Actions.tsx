@@ -18,7 +18,8 @@ import useAirdropEligibility from '../../data/claims/useAirdropEligibility';
 import useTotalPayoutRewards from '../../data/nomination/useTotalPayoutRewards';
 import useVestingInfo from '../../data/vesting/useVestingInfo';
 import useVestTx from '../../data/vesting/useVestTx';
-import { PagePath, StaticSearchQueryPath } from '../../types';
+import useNetworkFeatures from '../../hooks/useNetworkFeatures';
+import { NetworkFeature, PagePath, StaticSearchQueryPath } from '../../types';
 import formatTangleBalance from '../../utils/formatTangleBalance';
 import ActionItem from './ActionItem';
 import WithdrawEvmBalanceAction from './WithdrawEvmBalanceAction';
@@ -31,6 +32,7 @@ const Actions: FC = () => {
   const { transferable: transferableBalance } = useBalances();
   const [isTransferModalOpen, setIsTransferModalOpen] = useState(false);
   const [isCreditsModalOpen, setIsCreditsModalOpen] = useState(false);
+  const networkFeatures = useNetworkFeatures();
 
   const { isEligible: isAirdropEligible } = useAirdropEligibility();
 
@@ -72,12 +74,14 @@ const Actions: FC = () => {
         Icon={CoinsStackedLineIcon}
       />
 
-      <ActionItem
-        label="Faucet"
-        tooltip="Request testnet assets from the Tangle Network Faucet"
-        Icon={FaucetIcon}
-        externalHref={TANGLE_FAUCET_URL}
-      />
+      {networkFeatures.includes(NetworkFeature.Faucet) && (
+        <ActionItem
+          label="Faucet"
+          tooltip="Request testnet assets from the Tangle Network Faucet"
+          Icon={FaucetIcon}
+          externalHref={TANGLE_FAUCET_URL}
+        />
+      )}
 
       <ActionItem
         hasNotificationDot={isPayoutsAvailable}

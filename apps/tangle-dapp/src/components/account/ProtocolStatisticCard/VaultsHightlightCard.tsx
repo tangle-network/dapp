@@ -36,11 +36,12 @@ const VaultsHightlightCard = ({
   isLoading,
   ...props
 }: Props) => {
-  // Get first 5 vaults with the highest tvl, then ID
+  // Get first 5 vaults with the highest tvl, then ID (excluding ETH vault ID: 2 since the image is not available)
   const sortedVaults = useMemo(
     () =>
       vaults
         ?.slice()
+        .filter((vault) => vault.id !== 2) // Filter out ETH vault
         .sort((a, b) => {
           if (a.tvl === undefined && b.tvl === undefined) {
             return a.id - b.id;
@@ -189,7 +190,7 @@ const VaultHighlight = ({
       <Typography
         variant="body4"
         fw="bold"
-        className="uppercase text-blue-60 dark:text-blue-40"
+        className="uppercase text-blue-40 dark:text-blue-40"
       >
         Featured Vault
       </Typography>
@@ -197,7 +198,7 @@ const VaultHighlight = ({
       <Typography
         variant="h4"
         fw="bold"
-        className="text-mono-180 dark:text-mono-0"
+        className="text-mono-0 dark:text-mono-0"
       >
         {vaultName}
       </Typography>
@@ -208,8 +209,8 @@ const VaultHighlight = ({
           result={vaultTvl || EMPTY_VALUE_PLACEHOLDER}
           isLoading={isVaultTvlLoading}
           error={null}
-          labelClassName="text-mono-180 dark:text-mono-60"
-          valueClassName="text-mono-200 dark:text-mono-0"
+          labelClassName="text-mono-0 dark:text-mono-60"
+          valueClassName="text-mono-0 dark:text-mono-0"
         />
 
         <StatsItem
@@ -221,8 +222,8 @@ const VaultHighlight = ({
           }
           isLoading={isVaultParticipantsLoading}
           error={vaultParticipantsError}
-          labelClassName="text-mono-180 dark:text-mono-60"
-          valueClassName="text-mono-200 dark:text-mono-0"
+          labelClassName="text-mono-0 dark:text-mono-60"
+          valueClassName="text-mono-0 dark:text-mono-0"
         />
       </div>
     </div>
