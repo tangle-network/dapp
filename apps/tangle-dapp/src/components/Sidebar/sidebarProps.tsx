@@ -24,7 +24,7 @@ import {
   TANGLE_MKT_URL,
 } from '@tangle-network/ui-components/constants';
 // import { PointsBanner } from '../../features/points/components/PointsBanner';
-import { PagePath } from '../../types';
+import { NetworkFeature, PagePath } from '../../types';
 
 // TODO: This entire system of handling sidebar props can be improved in a more React-compliant manner. For now, leaving as is since it is not necessary.
 // Only show the services dropdown if on development mode.
@@ -84,10 +84,12 @@ export default function getSidebarProps({
   polkadotJsDashboardUrl,
   nativeExplorerUrl,
   evmExplorerUrl,
+  networkFeatures,
 }: {
   polkadotJsDashboardUrl: string;
   nativeExplorerUrl?: string;
   evmExplorerUrl?: string;
+  networkFeatures: readonly NetworkFeature[];
 }): MobileSidebarProps {
   const isProductionEnv = import.meta.env.PROD;
 
@@ -122,13 +124,17 @@ export default function getSidebarProps({
           },
         ]
       : []),
-    {
-      name: 'Testnet Faucet',
-      href: TANGLE_FAUCET_URL,
-      isInternal: false,
-      Icon: FaucetIcon,
-      subItems: [],
-    },
+    ...(networkFeatures.includes(NetworkFeature.Faucet)
+      ? [
+          {
+            name: 'Testnet Faucet',
+            href: TANGLE_FAUCET_URL,
+            isInternal: false,
+            Icon: FaucetIcon,
+            subItems: [],
+          },
+        ]
+      : []),
   ];
 
   // Filter the sidebar items based on the current environment.

@@ -2,9 +2,11 @@ import useNetworkStore from '@tangle-network/tangle-shared-ui/context/useNetwork
 import { useMemo } from 'react';
 
 import getSidebarProps from './sidebarProps';
+import useNetworkFeatures from '../../hooks/useNetworkFeatures';
 
 export default function useSidebarProps() {
   const { network } = useNetworkStore();
+  const networkFeatures = useNetworkFeatures();
 
   const sidebarProps = useMemo(
     () =>
@@ -12,11 +14,13 @@ export default function useSidebarProps() {
         polkadotJsDashboardUrl: network.polkadotJsDashboardUrl,
         nativeExplorerUrl: network.explorerUrl,
         evmExplorerUrl: network.evmExplorerUrl,
+        networkFeatures,
       }),
     [
       network.evmExplorerUrl,
       network.explorerUrl,
       network.polkadotJsDashboardUrl,
+      networkFeatures,
     ],
   );
 
