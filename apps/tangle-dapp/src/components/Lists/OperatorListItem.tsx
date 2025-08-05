@@ -1,7 +1,6 @@
 import { SubstrateAddress } from '@tangle-network/ui-components/types/address';
 import {
   Avatar,
-  EMPTY_VALUE_PLACEHOLDER,
   KeyValueWithButton,
   shortenString,
 } from '@tangle-network/ui-components';
@@ -36,7 +35,7 @@ const OperatorListItem: FC<Props> = ({
           valueVariant="body1"
         />
       }
-      rightUpperText={rightUpperText ?? EMPTY_VALUE_PLACEHOLDER}
+      rightUpperText={rightUpperText}
       rightBottomText={rightBottomText}
     />
   );

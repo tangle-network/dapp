@@ -1,9 +1,7 @@
 import { EVMChainId, SubstrateChainId } from '@tangle-network/dapp-types';
 import {
   TANGLE_MAINNET_WS_RPC_ENDPOINT,
-  TANGLE_MAINNET_WS_DWELLIR_RPC_ENDPOINT,
   TANGLE_MAINNET_HTTP_RPC_ENDPOINT,
-  TANGLE_MAINNET_HTTP_DWELLIR_RPC_ENDPOINT,
   TANGLE_MAINNET_POLKADOT_JS_DASHBOARD_URL,
   TANGLE_MAINNET_NATIVE_EXPLORER_URL,
   TANGLE_MAINNET_EVM_EXPLORER_URL,
@@ -93,15 +91,9 @@ export const TANGLE_MAINNET_NETWORK = {
   name: 'Tangle Mainnet',
   tokenSymbol: TANGLE_MAINNET_NATIVE_TOKEN_SYMBOL,
   nodeType: 'standalone',
-  wsRpcEndpoints: [
-    TANGLE_MAINNET_WS_DWELLIR_RPC_ENDPOINT,
-    TANGLE_MAINNET_WS_RPC_ENDPOINT,
-  ],
-  httpRpcEndpoints: [
-    TANGLE_MAINNET_HTTP_DWELLIR_RPC_ENDPOINT,
-    TANGLE_MAINNET_HTTP_RPC_ENDPOINT,
-  ],
-  archiveRpcEndpoint: TANGLE_MAINNET_WS_DWELLIR_RPC_ENDPOINT,
+  wsRpcEndpoints: [TANGLE_MAINNET_WS_RPC_ENDPOINT],
+  httpRpcEndpoints: [TANGLE_MAINNET_HTTP_RPC_ENDPOINT],
+  archiveRpcEndpoint: TANGLE_MAINNET_WS_RPC_ENDPOINT,
   polkadotJsDashboardUrl: TANGLE_MAINNET_POLKADOT_JS_DASHBOARD_URL,
   explorerUrl: TANGLE_MAINNET_NATIVE_EXPLORER_URL,
   evmExplorerUrl: TANGLE_MAINNET_EVM_EXPLORER_URL,
@@ -111,7 +103,7 @@ export const TANGLE_MAINNET_NETWORK = {
     if (isEvmAddress(address)) {
       return `${TANGLE_MAINNET_EVM_EXPLORER_URL}/address/${address}`;
     } else {
-      return `${TANGLE_MAINNET_NATIVE_EXPLORER_URL}/#/accounts/${address}`;
+      return `${TANGLE_MAINNET_NATIVE_EXPLORER_URL}/accounts`;
     }
   },
 
@@ -122,7 +114,7 @@ export const TANGLE_MAINNET_NETWORK = {
 
     return blockHash === undefined
       ? null
-      : `${TANGLE_MAINNET_NATIVE_EXPLORER_URL}/#/blocks/${blockHash}`;
+      : `${TANGLE_MAINNET_NATIVE_EXPLORER_URL}/query/${blockHash}`;
   },
 } as const satisfies Network;
 

@@ -145,4 +145,6 @@ export type RestakeAssetTableItem = {
   symbol: string;
   balance: BN;
   decimals: number;
+  label?: string;
+  labelColor?: 'green' | 'purple' | 'blue' | 'red' | 'yellow';
 };

@@ -8,6 +8,7 @@ import type {
 } from '@tangle-network/tangle-shared-ui/types/restake';
 import type { IdentityType } from '@tangle-network/tangle-shared-ui/utils/polkadot/identity';
 import type { TextFieldInputProps } from '@tangle-network/ui-components/components/TextField/types';
+import { SubstrateAddress } from '@tangle-network/ui-components/types/address';
 import { TransactionInputCard } from '@tangle-network/ui-components/components/TransactionInputCard';
 import { FC, useCallback, useMemo, useRef } from 'react';
 import type {
@@ -36,8 +37,9 @@ type Props = {
   register: UseFormRegister<DelegationFormFields>;
   setValue: UseFormSetValue<DelegationFormFields>;
   watch: UseFormWatch<DelegationFormFields>;
-  operatorIdentities?: Record<string, IdentityType | null> | null;
+  operatorIdentities?: Map<SubstrateAddress, IdentityType | null> | null;
   assets: Map<RestakeAssetId, RestakeAsset> | null;
+  selectedAsset?: RestakeAsset | null;
 };
 
 const RestakeDelegateInput: FC<Props> = ({
@@ -50,6 +52,7 @@ const RestakeDelegateInput: FC<Props> = ({
   watch,
   operatorIdentities,
   assets,
+  selectedAsset: propSelectedAsset,
 }) => {
   const selectedAssetId = watch('assetId');
   const selectedOperatorAccountId = watch('operatorAccountId');
@@ -58,15 +61,26 @@ const RestakeDelegateInput: FC<Props> = ({
   const nativeAssetBalance = useNativeRestakeAssetBalance();
 
   const selectedAsset = useMemo(() => {
+    if (propSelectedAsset) {
+      return propSelectedAsset;
+    }
     return assets?.get(selectedAssetId) ?? null;
-  }, [assets, selectedAssetId]);
+  }, [assets, selectedAssetId, propSelectedAsset]);
 
   const availableBalance = useMemo(() => {
+    if (selectedAsset === null) {
+      return null;
+    }
+
+    if (selectedAsset.balance) {
+      return BigInt(selectedAsset.balance.toString());
+    }
+
     if (selectedAssetId === NATIVE_ASSET_ID) {
       return nativeAssetBalance === null
         ? null
         : BigInt(nativeAssetBalance.toString());
-    } else if (delegatorInfo === null || selectedAsset === null) {
+    } else if (delegatorInfo === null) {
       return null;
     } else {
       return calculateRestakeAvailableBalance(delegatorInfo, selectedAsset.id);
@@ -78,7 +92,6 @@ const RestakeDelegateInput: FC<Props> = ({
       return {};
     }
 
-    // TODO: This should not be casted to a number, as it will fail in large/small values. Need to refactor.
     const maxFormatted = +formatUnits(
       availableBalance,
       selectedAsset.metadata.decimals,
@@ -156,7 +169,7 @@ const RestakeDelegateInput: FC<Props> = ({
                     <AvatarWithText
                       accountAddress={selectedOperatorAccountId}
                       identityName={
-                        operatorIdentities?.[selectedOperatorAccountId]?.name
+                        operatorIdentities?.get(selectedOperatorAccountId)?.name
                       }
                       overrideTypographyProps={{ variant: 'h5' }}
                     />

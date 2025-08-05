@@ -31,6 +31,7 @@ abstract class RestakeApiBase {
     assetId: RestakeAssetId,
     amount: BN,
     blueprintSelection?: BN[],
+    isNominatedAsset?: boolean,
   ): Promise<void>;
 
   abstract undelegate(

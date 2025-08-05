@@ -3,13 +3,13 @@ import {
   CoinLine,
   DocumentationIcon,
   FaucetIcon,
-  GiftLineIcon,
+  // GiftLineIcon,
   GlobalLine,
   HomeFillIcon,
   PolkadotJs,
   ShuffleLine,
   TokenSwapFill,
-  WaterDropletIcon,
+  // WaterDropletIcon,
 } from '@tangle-network/icons';
 import {
   MobileSidebarProps,
@@ -23,8 +23,8 @@ import {
   TANGLE_FAUCET_URL,
   TANGLE_MKT_URL,
 } from '@tangle-network/ui-components/constants';
-import { PointsBanner } from '../../features/points/components/PointsBanner';
-import { PagePath } from '../../types';
+// import { PointsBanner } from '../../features/points/components/PointsBanner';
+import { NetworkFeature, PagePath } from '../../types';
 
 // TODO: This entire system of handling sidebar props can be improved in a more React-compliant manner. For now, leaving as is since it is not necessary.
 // Only show the services dropdown if on development mode.
@@ -43,13 +43,13 @@ const SIDEBAR_STATIC_ITEMS: SideBarItemProps[] = [
     Icon: TokenSwapFill,
     subItems: [],
   },
-  {
-    name: 'Liquid Stake',
-    href: PagePath.LIQUID_STAKING,
-    isInternal: true,
-    Icon: WaterDropletIcon,
-    subItems: [],
-  },
+  // {
+  //   name: 'Liquid Stake',
+  //   href: PagePath.LIQUID_STAKING,
+  //   isInternal: true,
+  //   Icon: WaterDropletIcon,
+  //   subItems: [],
+  // },
   {
     name: 'Bridge',
     href: PagePath.BRIDGE,
@@ -64,13 +64,13 @@ const SIDEBAR_STATIC_ITEMS: SideBarItemProps[] = [
     Icon: CoinLine,
     subItems: [],
   },
-  {
-    name: 'Claim Airdrop',
-    href: PagePath.CLAIM_AIRDROP,
-    isInternal: true,
-    Icon: GiftLineIcon,
-    subItems: [],
-  },
+  // {
+  //   name: 'Claim Airdrop',
+  //   href: PagePath.CLAIM_AIRDROP,
+  //   isInternal: true,
+  //   Icon: GiftLineIcon,
+  //   subItems: [],
+  // },
 ];
 
 const SIDEBAR_FOOTER: SideBarFooterType = {
@@ -84,10 +84,12 @@ export default function getSidebarProps({
   polkadotJsDashboardUrl,
   nativeExplorerUrl,
   evmExplorerUrl,
+  networkFeatures,
 }: {
   polkadotJsDashboardUrl: string;
   nativeExplorerUrl?: string;
   evmExplorerUrl?: string;
+  networkFeatures: readonly NetworkFeature[];
 }): MobileSidebarProps {
   const isProductionEnv = import.meta.env.PROD;
 
@@ -122,13 +124,17 @@ export default function getSidebarProps({
           },
         ]
       : []),
-    {
-      name: 'Testnet Faucet',
-      href: TANGLE_FAUCET_URL,
-      isInternal: false,
-      Icon: FaucetIcon,
-      subItems: [],
-    },
+    ...(networkFeatures.includes(NetworkFeature.Faucet)
+      ? [
+          {
+            name: 'Testnet Faucet',
+            href: TANGLE_FAUCET_URL,
+            isInternal: false,
+            Icon: FaucetIcon,
+            subItems: [],
+          },
+        ]
+      : []),
   ];
 
   // Filter the sidebar items based on the current environment.
@@ -146,7 +152,7 @@ export default function getSidebarProps({
     Logo: TangleLogo,
     footer: {
       ...SIDEBAR_FOOTER,
-      extraContent: <PointsBanner />,
+      // extraContent: <PointsBanner />,
     },
     items,
     logoLink: TANGLE_MKT_URL,

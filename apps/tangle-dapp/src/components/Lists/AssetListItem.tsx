@@ -21,6 +21,8 @@ type Props = {
   decimals: number;
   rightBottomText?: string;
   leftBottomContentTwo?: string;
+  label?: string;
+  labelColor?: 'green' | 'purple' | 'blue' | 'red' | 'yellow';
 };
 
 const AssetListItem = ({
@@ -31,6 +33,8 @@ const AssetListItem = ({
   decimals,
   rightBottomText = 'Balance',
   leftBottomContentTwo,
+  label,
+  labelColor,
 }: Props) => {
   const activeChain = useActiveChain();
 
@@ -82,10 +86,40 @@ const AssetListItem = ({
       </Typography>
     );
 
+  // Create the display name with label
+  const displayName = (() => {
+    if (name === undefined) {
+      return symbol;
+    }
+
+    if (label && labelColor) {
+      return (
+        <div className="flex items-center gap-2">
+          <span>
+            {name} ({symbol})
+          </span>
+          <span
+            className={`px-2 py-1 rounded text-xs font-medium ${
+              labelColor === 'green'
+                ? 'bg-green-100 text-mono-0 dark:bg-green-900 dark:text-mono-0'
+                : labelColor === 'purple'
+                  ? 'bg-purple-900 text-mono-0 dark:bg-purple-900 dark:text-mono-0'
+                  : 'bg-blue-900 text-mono-0 dark:bg-blue-900 dark:text-mono-0'
+            }`}
+          >
+            {label}
+          </span>
+        </div>
+      );
+    }
+
+    return `${name} (${symbol})`;
+  })();
+
   return (
     <LogoListItem
       logo={<TokenIcon size="xl" name={symbol} />}
-      leftUpperContent={name !== undefined ? `${name} (${symbol})` : symbol}
+      leftUpperContent={displayName}
       leftBottomContent={leftBottomContent}
       leftBottomContentTwo={leftBottomContentTwo}
       rightUpperText={`${fmtBalance} ${symbol}`}
