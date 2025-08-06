@@ -128,8 +128,16 @@ const RestakeUnstakeForm: FC<RestakeUnstakeFormProps> = ({ assets }) => {
 
   const calculateUndelegatableAmount = useCallback(
     (
-      delegation: { operatorAccountId: string; assetId: string; amountBonded: bigint },
-      unstakeRequests: { operatorAccountId: string; assetId: string; amount: bigint }[],
+      delegation: {
+        operatorAccountId: string;
+        assetId: string;
+        amountBonded: bigint;
+      },
+      unstakeRequests: {
+        operatorAccountId: string;
+        assetId: string;
+        amount: bigint;
+      }[],
     ) => {
       const pendingUnstakeAmount = unstakeRequests
         .filter(
@@ -243,8 +251,6 @@ const RestakeUnstakeForm: FC<RestakeUnstakeFormProps> = ({ assets }) => {
     assets !== null &&
     executeNativeUnstakeTx !== null;
 
-
-
   const onSubmit = useCallback<SubmitHandler<UnstakeFormFields>>(
     async ({ amount, assetId, operatorAccountId }) => {
       const asset = assets?.get(assetId);
@@ -281,7 +287,14 @@ const RestakeUnstakeForm: FC<RestakeUnstakeFormProps> = ({ assets }) => {
       });
       setIsSelectedNomination(false);
     },
-    [assets, executeNativeUnstakeTx, isReady, restakeApi, setFormValue, isSelectedNomination],
+    [
+      assets,
+      executeNativeUnstakeTx,
+      isReady,
+      restakeApi,
+      setFormValue,
+      isSelectedNomination,
+    ],
   );
 
   return (

@@ -75,7 +75,8 @@ const SelectOperatorModalEnhanced = ({
 
         const isRequestReady =
           !pendingRequest ||
-          (currentRound !== null && pendingRequest.requestedRound <= currentRound) ||
+          (currentRound !== null &&
+            pendingRequest.requestedRound <= currentRound) ||
           false;
 
         return {
@@ -154,10 +155,11 @@ const SelectOperatorModalEnhanced = ({
         )?.name;
 
         const assetLabel = item.isNomination ? 'Nominated' : 'Deposited';
-        
-        const statusText = item.pendingUnstakeRequest && !item.isRequestReady
-          ? `Waiting (Round ${item.pendingUnstakeRequest.requestedRound})`
-          : 'Available';
+
+        const statusText =
+          item.pendingUnstakeRequest && !item.isRequestReady
+            ? `Waiting (Round ${item.pendingUnstakeRequest.requestedRound})`
+            : 'Available';
 
         return (
           <div className="flex items-center justify-between w-full">
@@ -167,11 +169,14 @@ const SelectOperatorModalEnhanced = ({
               rightUpperText={`${fmtAmount} ${asset.metadata.symbol}`}
               rightBottomText={`${assetLabel} • ${statusText}`}
             />
-            {item.pendingUnstakeRequest && currentRound && !item.isRequestReady && (
-              <Typography variant="body2" className="text-mono-100 ml-2">
-                {item.pendingUnstakeRequest.requestedRound - currentRound} rounds left
-              </Typography>
-            )}
+            {item.pendingUnstakeRequest &&
+              currentRound &&
+              !item.isRequestReady && (
+                <Typography variant="body2" className="text-mono-100 ml-2">
+                  {item.pendingUnstakeRequest.requestedRound - currentRound}{' '}
+                  rounds left
+                </Typography>
+              )}
           </div>
         );
       }}
