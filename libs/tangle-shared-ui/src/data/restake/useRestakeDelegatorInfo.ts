@@ -63,6 +63,7 @@ export default function useRestakeDelegatorInfo() {
                 operatorAccountId: assertSubstrateAddress(
                   delegation.operator.toString(),
                 ),
+                isNomination: delegation.isNomination.toHuman() as boolean,
               };
             });
 

@@ -83,6 +83,7 @@ export type DelegatorBondInfo = {
   readonly operatorAccountId: SubstrateAddress;
   readonly amountBonded: bigint;
   readonly assetId: RestakeAssetId;
+  readonly isNomination: boolean;
 };
 
 export type DelegatorUnstakeRequest = {

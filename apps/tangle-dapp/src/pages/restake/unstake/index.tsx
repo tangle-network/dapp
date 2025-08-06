@@ -25,7 +25,7 @@ import ErrorMessage from '../../../components/ErrorMessage';
 import RestakeDetailCard from '../../../components/RestakeDetailCard';
 import ActionButtonBase from '../../../components/restaking/ActionButtonBase';
 import { SUPPORTED_RESTAKE_DEPOSIT_TYPED_CHAIN_IDS } from '../../../constants/restake';
-import SelectOperatorModal from '../../../containers/restaking/SelectOperatorModal';
+import SelectOperatorModalEnhanced from '../../../containers/restaking/SelectOperatorModalEnhanced';
 import UnstakeRequestTable from '../../../containers/restaking/UnstakeRequestTable';
 import useRestakeApi from '../../../data/restake/useRestakeApi';
 import useIdentities from '@tangle-network/tangle-shared-ui/hooks/useIdentities';
@@ -69,11 +69,13 @@ const RestakeUnstakeForm: FC<RestakeUnstakeFormProps> = ({ assets }) => {
   const switchChain = useSwitchChain();
   const activeTypedChainId = useActiveTypedChainId();
 
+  const [isSelectedNomination, setIsSelectedNomination] = useState(false);
+
   const {
-    status: isOperatorModalOpen,
+    status: isSelectOperatorModalOpen,
     open: openOperatorModal,
-    close: closeOperatorModal,
-    update: updateOperatorModal,
+    close: closeSelectOperatorModal,
+    update: setIsSelectOperatorModalOpen,
   } = useModal();
 
   const {
@@ -124,43 +126,70 @@ const RestakeUnstakeForm: FC<RestakeUnstakeFormProps> = ({ assets }) => {
     return assets.get(selectedAssetId) ?? null;
   }, [assets, selectedAssetId]);
 
+  const calculateUndelegatableAmount = useCallback(
+    (
+      delegation: { operatorAccountId: string; assetId: string; amountBonded: bigint },
+      unstakeRequests: { operatorAccountId: string; assetId: string; amount: bigint }[],
+    ) => {
+      const pendingUnstakeAmount = unstakeRequests
+        .filter(
+          (req) =>
+            req.operatorAccountId === delegation.operatorAccountId &&
+            req.assetId === delegation.assetId,
+        )
+        .reduce((sum, req) => sum + req.amount, BigInt(0));
+
+      const availableAmount = delegation.amountBonded - pendingUnstakeAmount;
+      return availableAmount > BigInt(0) ? availableAmount : BigInt(0);
+    },
+    [],
+  );
+
   const { maxAmount, formattedMaxAmount } = useMemo(() => {
     if (!Array.isArray(delegatorInfo?.delegations) || assets === null) {
-      return {};
+      return { maxAmount: undefined, formattedMaxAmount: undefined };
     }
 
     const selectedDelegation = delegatorInfo.delegations.find(
       (item) =>
         item.assetId === selectedAssetId &&
-        item.operatorAccountId === selectedOperatorAccountId,
+        item.operatorAccountId === selectedOperatorAccountId &&
+        item.isNomination === isSelectedNomination,
     );
 
     if (selectedDelegation === undefined) {
-      return {};
+      return { maxAmount: undefined, formattedMaxAmount: undefined };
     }
 
     const selectedDelegationAsset = assets.get(selectedDelegation.assetId);
 
     if (selectedDelegationAsset === undefined) {
-      return {};
+      return { maxAmount: undefined, formattedMaxAmount: undefined };
     }
 
-    const maxAmount = selectedDelegation.amountBonded;
+    const undelegatableAmount = calculateUndelegatableAmount(
+      selectedDelegation,
+      delegatorInfo.unstakeRequests || [],
+    );
 
-    // TODO: This should not be a number.
+    const maxAmountBigInt = undelegatableAmount;
+
     const formattedMaxAmount = Number(
-      formatUnits(maxAmount, selectedDelegationAsset.metadata.decimals),
+      formatUnits(maxAmountBigInt, selectedDelegationAsset.metadata.decimals),
     );
 
     return {
-      maxAmount,
+      maxAmount: maxAmountBigInt,
       formattedMaxAmount,
     };
   }, [
     delegatorInfo?.delegations,
+    delegatorInfo?.unstakeRequests,
     assets,
     selectedAssetId,
     selectedOperatorAccountId,
+    isSelectedNomination,
+    calculateUndelegatableAmount,
   ]);
 
   const customAmountProps = useMemo<TextFieldInputProps>(() => {
@@ -214,6 +243,8 @@ const RestakeUnstakeForm: FC<RestakeUnstakeFormProps> = ({ assets }) => {
     assets !== null &&
     executeNativeUnstakeTx !== null;
 
+
+
   const onSubmit = useCallback<SubmitHandler<UnstakeFormFields>>(
     async ({ amount, assetId, operatorAccountId }) => {
       const asset = assets?.get(assetId);
@@ -228,13 +259,16 @@ const RestakeUnstakeForm: FC<RestakeUnstakeFormProps> = ({ assets }) => {
         return;
       }
 
-      // Native restaking's unstake operation is handled through a separate
-      // extrinsic.
       if (assetId === NATIVE_ASSET_ID) {
-        await executeNativeUnstakeTx({
-          amount: amountBn,
-          operatorAddress: operatorAccountId,
-        });
+        if (isSelectedNomination) {
+          await executeNativeUnstakeTx({
+            amount: amountBn,
+            operatorAddress: operatorAccountId,
+          });
+        } else {
+          if (!restakeApi) return;
+          await restakeApi.undelegate(operatorAccountId, assetId, amountBn);
+        }
       } else {
         if (!restakeApi) return;
         await restakeApi.undelegate(operatorAccountId, assetId, amountBn);
@@ -242,12 +276,12 @@ const RestakeUnstakeForm: FC<RestakeUnstakeFormProps> = ({ assets }) => {
 
       setFormValue('amount', '', { shouldValidate: false });
       setFormValue('assetId', '0x0', { shouldValidate: false });
-
       setFormValue('operatorAccountId', '' as SubstrateAddress, {
         shouldValidate: false,
       });
+      setIsSelectedNomination(false);
     },
-    [assets, executeNativeUnstakeTx, isReady, restakeApi, setFormValue],
+    [assets, executeNativeUnstakeTx, isReady, restakeApi, setFormValue, isSelectedNomination],
   );
 
   return (
@@ -375,28 +409,17 @@ const RestakeUnstakeForm: FC<RestakeUnstakeFormProps> = ({ assets }) => {
         className="md:hidden"
       />
 
-      <SelectOperatorModal
+      <SelectOperatorModalEnhanced
         delegatorInfo={delegatorInfo}
-        isOpen={isOperatorModalOpen}
-        setIsOpen={updateOperatorModal}
         operatorIdentities={operatorIdentities}
+        isOpen={isSelectOperatorModalOpen}
+        setIsOpen={setIsSelectOperatorModalOpen}
         onItemSelected={(item) => {
-          closeOperatorModal();
+          setFormValue('operatorAccountId', item.operatorAccountId);
+          setFormValue('assetId', item.assetId);
+          setIsSelectedNomination(item.isNomination);
 
-          const { formattedAmount, assetId, operatorAccountId } = item;
-
-          const commonOpts = {
-            shouldDirty: true,
-            shouldValidate: true,
-          };
-
-          setFormValue(
-            'operatorAccountId',
-            operatorAccountId as SubstrateAddress,
-            commonOpts,
-          );
-          setFormValue('assetId', assetId, commonOpts);
-          setFormValue('amount', formattedAmount, commonOpts);
+          closeSelectOperatorModal();
         }}
       />
 

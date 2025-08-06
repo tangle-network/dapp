@@ -17,7 +17,7 @@ const useNativeRestakeAssetBalance = (): BN | null => {
     }
 
     return delegatorInfo.delegations
-      .filter((item) => item.assetId === NATIVE_ASSET_ID)
+      .filter((item) => item.assetId === NATIVE_ASSET_ID && item.isNomination)
       .reduce(
         (acc, item) => acc.add(new BN(item.amountBonded.toString())),
         new BN(0),
