@@ -46,6 +46,7 @@ export const SUCCESS_MESSAGES: Record<TxName, string> = {
   [TxName.RESTAKE_NATIVE_DELEGATE]: 'Restaked native tokens',
   [TxName.RESTAKE_NATIVE_UNSTAKE]: 'Scheduled undelegate request',
   [TxName.RESTAKE_NATIVE_UNSTAKE_EXECUTE]: 'Undelegate request(s) executed',
+  [TxName.RESTAKE_DEPOSITED_UNSTAKE_EXECUTE]: 'Undelegate request(s) executed',
   [TxName.RESTAKE_NATIVE_UNSTAKE_CANCEL]: 'Undelegate request(s) cancelled',
 };
 

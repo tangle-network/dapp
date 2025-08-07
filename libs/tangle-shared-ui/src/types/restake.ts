@@ -91,6 +91,7 @@ export type DelegatorUnstakeRequest = {
   readonly assetId: RestakeAssetId;
   readonly amount: bigint;
   readonly requestedRound: number;
+  readonly isNomination: boolean;
 };
 
 /**

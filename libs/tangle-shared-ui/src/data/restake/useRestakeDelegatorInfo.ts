@@ -108,6 +108,7 @@ function getUnstakeRequests(
       assetId: createRestakeAssetId(req.asset),
       requestedRound: req.requestedRound.toNumber(),
       operatorAccountId: assertSubstrateAddress(req.operator.toString()),
+      isNomination: req.isNomination.toHuman() as boolean,
     } satisfies DelegatorInfo['unstakeRequests'][number];
   });
 }

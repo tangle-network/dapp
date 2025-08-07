@@ -29,7 +29,9 @@ const useNativeRestakeAssetBalance = (): BN | null => {
       return null;
     }
 
-    return bondedInStaking.value.sub(delegated);
+    const nominatedBalance = bondedInStaking.value.sub(delegated);
+    
+    return nominatedBalance.isNeg() ? BN_ZERO : nominatedBalance;
   }, [bondedInStaking, delegated]);
 
   return balance;

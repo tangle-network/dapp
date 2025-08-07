@@ -6,6 +6,7 @@ import { BN } from '@polkadot/util';
 import useRestakeApi from '../../data/restake/useRestakeApi';
 import { NATIVE_ASSET_ID } from '@tangle-network/tangle-shared-ui/constants/restaking';
 import useNativeRestakeUnstakeExecuteTx from '../../data/restake/useNativeRestakeUnstakeExecuteTx';
+import useDepositedRestakeUnstakeExecuteTx from '../../data/restake/useDepositedRestakeUnstakeExecuteTx';
 import { TxStatus } from '@tangle-network/tangle-shared-ui/hooks/useSubstrateTx';
 import useNativeRestakeUnstakeCancelTx from '../../data/restake/useNativeRestakeUnstakeCancelTx';
 
@@ -21,8 +22,11 @@ const UnstakeRequestTableActions: FC<Props> = ({
   const [isTransacting, setIsTransacting] = useState(false);
   const restakeApi = useRestakeApi();
 
-  const { execute: executeExecute, status: executeStatus } =
+  const { execute: executeNominatedExecute, status: nominatedExecuteStatus } =
     useNativeRestakeUnstakeExecuteTx();
+
+  const { execute: executeDepositedExecute, status: depositedExecuteStatus } =
+    useDepositedRestakeUnstakeExecuteTx();
 
   const { execute: executeCancel, status: cancelStatus } =
     useNativeRestakeUnstakeCancelTx();
@@ -30,8 +34,10 @@ const UnstakeRequestTableActions: FC<Props> = ({
   const isReady =
     restakeApi !== null &&
     !isTransacting &&
-    executeExecute !== null &&
-    executeStatus !== TxStatus.PROCESSING &&
+    executeNominatedExecute !== null &&
+    nominatedExecuteStatus !== TxStatus.PROCESSING &&
+    executeDepositedExecute !== null &&
+    depositedExecuteStatus !== TxStatus.PROCESSING &&
     executeCancel !== null &&
     cancelStatus !== TxStatus.PROCESSING;
 
@@ -81,21 +87,18 @@ const UnstakeRequestTableActions: FC<Props> = ({
 
     setIsTransacting(true);
 
-    const allUnstakeRequests = allRequests.map(
-      ({ operatorAccountId, assetId }) => {
-        return {
-          assetId,
-          operatorAddress: operatorAccountId,
-        };
-      },
+    const nominatedNativeRequests = allRequests.filter(
+      ({ assetId, isNomination }) =>
+        assetId === NATIVE_ASSET_ID && isNomination === true,
     );
 
-    const nativeUnstakeRequests = allUnstakeRequests.filter(
-      (request) => request.assetId === NATIVE_ASSET_ID,
+    const depositedNativeRequests = allRequests.filter(
+      ({ assetId, isNomination }) =>
+        assetId === NATIVE_ASSET_ID && isNomination === false,
     );
 
-    const hasNonNativeUnstakeRequests = allUnstakeRequests.some(
-      (request) => request.assetId !== NATIVE_ASSET_ID,
+    const hasNonNativeUnstakeRequests = allRequests.some(
+      ({ assetId }) => assetId !== NATIVE_ASSET_ID,
     );
 
     if (hasNonNativeUnstakeRequests) {
@@ -103,14 +106,24 @@ const UnstakeRequestTableActions: FC<Props> = ({
       await restakeApi.executeUndelegate();
     }
 
-    if (nativeUnstakeRequests.length > 0) {
-      await executeExecute(
-        nativeUnstakeRequests.map((request) => request.operatorAddress),
+    if (nominatedNativeRequests.length > 0) {
+      await executeNominatedExecute(
+        nominatedNativeRequests.map((request) => request.operatorAccountId),
       );
     }
 
+    if (depositedNativeRequests.length > 0) {
+      await executeDepositedExecute();
+    }
+
     setIsTransacting(false);
-  }, [allRequests, executeExecute, isReady, restakeApi]);
+  }, [
+    allRequests,
+    executeNominatedExecute,
+    executeDepositedExecute,
+    isReady,
+    restakeApi,
+  ]);
 
   const canCancelUnstake = selectedRequests.length > 0;
 

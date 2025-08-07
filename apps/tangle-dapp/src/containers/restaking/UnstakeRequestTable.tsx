@@ -43,6 +43,7 @@ export type UnstakeRequestTableRow = {
   sessionDurationMs: number;
   operatorAccountId: SubstrateAddress;
   operatorIdentityName?: string;
+  isNomination: boolean;
 };
 
 const COLUMN_HELPER = createColumnHelper<UnstakeRequestTableRow>();
@@ -71,8 +72,23 @@ const COLUMNS = [
   COLUMN_HELPER.accessor('amount', {
     header: () => <TableCell>Amount</TableCell>,
     cell: (props) => (
-      <TableCell fw="normal" className="text-mono-200 dark:text-mono-0">
-        {props.getValue()} {props.row.original.assetSymbol}
+      <TableCell>
+        <div className="flex items-center gap-2">
+          <Typography variant="body2" className="font-bold">
+            {props.getValue()}
+          </Typography>
+          {props.row.original.assetId === '0' && (
+            <span
+              className={`inline-flex items-center px-2 py-0.5 rounded text-xs font-medium ${
+                props.row.original.isNomination
+                  ? 'bg-purple-900 text-mono-0'
+                  : 'bg-green-100 text-mono-0 dark:bg-green-900'
+              }`}
+            >
+              {props.row.original.isNomination ? 'Nominated' : 'Deposited'}
+            </span>
+          )}
+        </div>
       </TableCell>
     ),
   }),
@@ -129,7 +145,7 @@ const UnstakeRequestTable: FC<Props> = ({
     }
 
     return unstakeRequests.flatMap(
-      ({ assetId, amount, requestedRound, operatorAccountId }) => {
+      ({ assetId, amount, requestedRound, operatorAccountId, isNomination }) => {
         const asset = assets?.get(assetId);
 
         // Skip requests that are lacking metadata.
@@ -159,6 +175,7 @@ const UnstakeRequestTable: FC<Props> = ({
           operatorAccountId,
           operatorIdentityName:
             operatorIdentities.get(operatorAccountId)?.name ?? undefined,
+          isNomination,
         } satisfies UnstakeRequestTableRow;
       },
     );

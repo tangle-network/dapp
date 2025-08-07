@@ -37,7 +37,8 @@ const calculateUndelegatableAmount = (
     .filter(
       (req) =>
         req.operatorAccountId === delegation.operatorAccountId &&
-        req.assetId === delegation.assetId,
+        req.assetId === delegation.assetId &&
+        req.isNomination === delegation.isNomination,
     )
     .reduce((sum, req) => sum + req.amount, BigInt(0));
 

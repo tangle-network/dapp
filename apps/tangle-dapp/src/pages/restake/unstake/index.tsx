@@ -57,11 +57,11 @@ const RestakeUnstakeForm: FC<RestakeUnstakeFormProps> = ({ assets }) => {
 
   const {
     register,
-    setValue: setFormValue,
     handleSubmit,
-    watch,
     reset,
+    setValue,
     formState: { errors, isValid, isSubmitting },
+    watch,
   } = useForm<UnstakeFormFields>({
     mode: 'onBlur',
   });
@@ -132,18 +132,21 @@ const RestakeUnstakeForm: FC<RestakeUnstakeFormProps> = ({ assets }) => {
         operatorAccountId: string;
         assetId: string;
         amountBonded: bigint;
+        isNomination: boolean;
       },
       unstakeRequests: {
         operatorAccountId: string;
         assetId: string;
         amount: bigint;
+        isNomination: boolean;
       }[],
     ) => {
       const pendingUnstakeAmount = unstakeRequests
         .filter(
           (req) =>
             req.operatorAccountId === delegation.operatorAccountId &&
-            req.assetId === delegation.assetId,
+            req.assetId === delegation.assetId &&
+            req.isNomination === delegation.isNomination,
         )
         .reduce((sum, req) => sum + req.amount, BigInt(0));
 
@@ -153,9 +156,13 @@ const RestakeUnstakeForm: FC<RestakeUnstakeFormProps> = ({ assets }) => {
     [],
   );
 
-  const { maxAmount, formattedMaxAmount } = useMemo(() => {
+  const { maxAmount, formattedMaxAmount, totalDelegatedAmount } = useMemo(() => {
     if (!Array.isArray(delegatorInfo?.delegations) || assets === null) {
-      return { maxAmount: undefined, formattedMaxAmount: undefined };
+      return { 
+        maxAmount: undefined, 
+        formattedMaxAmount: undefined,
+        totalDelegatedAmount: undefined 
+      };
     }
 
     const selectedDelegation = delegatorInfo.delegations.find(
@@ -166,13 +173,21 @@ const RestakeUnstakeForm: FC<RestakeUnstakeFormProps> = ({ assets }) => {
     );
 
     if (selectedDelegation === undefined) {
-      return { maxAmount: undefined, formattedMaxAmount: undefined };
+      return { 
+        maxAmount: undefined, 
+        formattedMaxAmount: undefined,
+        totalDelegatedAmount: undefined 
+      };
     }
 
     const selectedDelegationAsset = assets.get(selectedDelegation.assetId);
 
     if (selectedDelegationAsset === undefined) {
-      return { maxAmount: undefined, formattedMaxAmount: undefined };
+      return { 
+        maxAmount: undefined, 
+        formattedMaxAmount: undefined,
+        totalDelegatedAmount: undefined 
+      };
     }
 
     const undelegatableAmount = calculateUndelegatableAmount(
@@ -186,9 +201,18 @@ const RestakeUnstakeForm: FC<RestakeUnstakeFormProps> = ({ assets }) => {
       formatUnits(maxAmountBigInt, selectedDelegationAsset.metadata.decimals),
     );
 
+    const totalDelegatedBigInt = selectedDelegation.amountBonded;
+    
+    const formattedTotalDelegated = Number(
+      formatUnits(totalDelegatedBigInt, selectedDelegationAsset.metadata.decimals),
+    );
+
+
+
     return {
       maxAmount: maxAmountBigInt,
       formattedMaxAmount,
+      totalDelegatedAmount: formattedTotalDelegated,
     };
   }, [
     delegatorInfo?.delegations,
@@ -265,6 +289,8 @@ const RestakeUnstakeForm: FC<RestakeUnstakeFormProps> = ({ assets }) => {
         return;
       }
 
+
+
       if (assetId === NATIVE_ASSET_ID) {
         if (isSelectedNomination) {
           await executeNativeUnstakeTx({
@@ -280,9 +306,9 @@ const RestakeUnstakeForm: FC<RestakeUnstakeFormProps> = ({ assets }) => {
         await restakeApi.undelegate(operatorAccountId, assetId, amountBn);
       }
 
-      setFormValue('amount', '', { shouldValidate: false });
-      setFormValue('assetId', '0x0', { shouldValidate: false });
-      setFormValue('operatorAccountId', '' as SubstrateAddress, {
+      setValue('amount', '', { shouldValidate: false });
+      setValue('assetId', '0x0', { shouldValidate: false });
+      setValue('operatorAccountId', '' as SubstrateAddress, {
         shouldValidate: false,
       });
       setIsSelectedNomination(false);
@@ -292,7 +318,7 @@ const RestakeUnstakeForm: FC<RestakeUnstakeFormProps> = ({ assets }) => {
       executeNativeUnstakeTx,
       isReady,
       restakeApi,
-      setFormValue,
+      setValue,
       isSelectedNomination,
     ],
   );
@@ -338,14 +364,21 @@ const RestakeUnstakeForm: FC<RestakeUnstakeFormProps> = ({ assets }) => {
                       : {})}
                   />
                   <TransactionInputCard.MaxAmountButton
-                    maxAmount={formattedMaxAmount}
-                    tooltipBody="Available Balance"
+                    maxAmount={totalDelegatedAmount ?? formattedMaxAmount}
+                    tooltipBody="Total Delegated"
                     Icon={
                       useRef({
                         enabled: <LockLineIcon />,
                         disabled: <LockFillIcon />,
                       }).current
                     }
+                    onClick={() => {
+                      if (formattedMaxAmount !== undefined) {
+                        setValue('amount', formattedMaxAmount.toString(), {
+                          shouldValidate: true,
+                        });
+                      }
+                    }}
                   />
                 </TransactionInputCard.Header>
 
@@ -355,6 +388,24 @@ const RestakeUnstakeForm: FC<RestakeUnstakeFormProps> = ({ assets }) => {
                     useRef({
                       placeholder: <AssetPlaceholder />,
                       isDisabled: true,
+                      ...(selectedAsset && totalDelegatedAmount !== undefined
+                        ? {
+                            renderBody: () => (
+                              <div className="flex items-center gap-2">
+                                <Typography variant="h5" fw="bold">
+                                  {selectedAsset.metadata.symbol}
+                                </Typography>
+                                <Typography
+                                  variant="body2"
+                                  className="text-mono-120 dark:text-mono-100"
+                                >
+                                  Balance: {totalDelegatedAmount}{' '}
+                                  {selectedAsset.metadata.symbol}
+                                </Typography>
+                              </div>
+                            ),
+                          }
+                        : {}),
                     }).current
                   }
                 />
@@ -428,8 +479,8 @@ const RestakeUnstakeForm: FC<RestakeUnstakeFormProps> = ({ assets }) => {
         isOpen={isSelectOperatorModalOpen}
         setIsOpen={setIsSelectOperatorModalOpen}
         onItemSelected={(item) => {
-          setFormValue('operatorAccountId', item.operatorAccountId);
-          setFormValue('assetId', item.assetId);
+          setValue('operatorAccountId', item.operatorAccountId);
+          setValue('assetId', item.assetId);
           setIsSelectedNomination(item.isNomination);
 
           closeSelectOperatorModal();

@@ -202,7 +202,7 @@ const RestakeDelegateForm: FC<Props> = ({ assets }) => {
         const balance = new BN((amount - delegatedAmount).toString());
         const asset = assets?.get(assetId);
 
-        if (asset === undefined) {
+        if (asset === undefined || balance.isZero()) {
           return [];
         }
 
