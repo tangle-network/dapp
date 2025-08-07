@@ -1,3 +1,21 @@
+## 0.1.4 (2025-08-06)
+
+### 🩹 Fixes
+
+- **tangle-cloud:** Fixes & Improvements ([#3038](https://github.com/tangle-network/dapp/pull/3038))
+
+### 🏡 Chore
+
+- **tangle-dapp:** Restake Improvements & Fixes ([#3040](https://github.com/tangle-network/dapp/pull/3040))
+
+### 🤖 CI
+
+- **workflows:** Add Claude workflows for PR reviews and issue comments ([#3039](https://github.com/tangle-network/dapp/pull/3039))
+
+### ❤️ Thank You
+
+- Pavan Soratur @devpavan04
+
 ## 0.1.3 (2025-07-24)
 
 ### 🚀 Features
