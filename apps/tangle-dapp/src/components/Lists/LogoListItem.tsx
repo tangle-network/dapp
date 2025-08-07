@@ -9,7 +9,7 @@ type Props = {
   leftUpperContent: ReactNode | string;
   leftBottomContent?: ReactNode | string;
   leftBottomContentTwo?: ReactNode | string;
-  rightUpperText?: string;
+  rightUpperText?: string | ReactNode;
   rightBottomText?: string;
 };
 
@@ -69,12 +69,18 @@ const LogoListItem: FC<Props> = ({
 
       {(rightUpperText !== undefined || rightBottomText !== undefined) && (
         <div className="flex flex-col items-end justify-center">
-          <Typography
-            variant="body1"
-            className="text-mono-200 dark:text-mono-0"
-          >
-            {rightUpperText ?? EMPTY_VALUE_PLACEHOLDER}
-          </Typography>
+          {typeof rightUpperText === 'string' ? (
+            <Typography
+              variant="body1"
+              className="text-mono-200 dark:text-mono-0"
+            >
+              {rightUpperText ?? EMPTY_VALUE_PLACEHOLDER}
+            </Typography>
+          ) : (
+            <div className="text-mono-200 dark:text-mono-0">
+              {rightUpperText ?? EMPTY_VALUE_PLACEHOLDER}
+            </div>
+          )}
 
           {rightBottomText !== undefined && (
             <Typography

@@ -10,7 +10,7 @@ import LogoListItem from './LogoListItem';
 type Props = {
   accountAddress: SubstrateAddress;
   identity?: string;
-  rightUpperText?: string;
+  rightUpperText?: string | React.ReactNode;
   rightBottomText?: string;
 };
 

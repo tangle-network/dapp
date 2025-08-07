@@ -145,7 +145,7 @@ const SelectOperatorModalEnhanced = ({
           return null;
         }
 
-        const fmtAmount = formatDisplayAmount(
+        const fmtAvailableAmount = formatDisplayAmount(
           new BN(item.undelegatableAmount.toString()),
           asset.metadata.decimals,
           AmountFormatStyle.SHORT,
@@ -156,19 +156,30 @@ const SelectOperatorModalEnhanced = ({
         )?.name;
 
         const assetLabel = item.isNomination ? 'Nominated' : 'Deposited';
-
-        const statusText =
-          item.pendingUnstakeRequest && !item.isRequestReady
-            ? `Waiting (Round ${item.pendingUnstakeRequest.requestedRound})`
-            : 'Available';
+        const labelColor = item.isNomination ? 'purple' : 'green';
 
         return (
           <div className="flex items-center justify-between w-full">
             <OperatorListItem
               accountAddress={item.operatorAccountId}
               identity={identityName ?? undefined}
-              rightUpperText={`${fmtAmount} ${asset.metadata.symbol}`}
-              rightBottomText={`${assetLabel} • ${statusText}`}
+              rightUpperText={
+                <div className="flex items-center gap-2">
+                  <span>{fmtAvailableAmount} {asset.metadata.symbol}</span>
+                  <span
+                    className={`px-2 py-1 rounded text-xs font-medium ${
+                      labelColor === 'green'
+                        ? 'bg-green-100 text-mono-0 dark:bg-green-900 dark:text-mono-0'
+                        : labelColor === 'purple'
+                          ? 'bg-purple-900 text-mono-0 dark:bg-purple-900 dark:text-mono-0'
+                          : 'bg-blue-900 text-mono-0 dark:bg-blue-900 dark:text-mono-0'
+                    }`}
+                  >
+                    {assetLabel}
+                  </span>
+                </div>
+              }
+              rightBottomText="Balance"
             />
             {item.pendingUnstakeRequest &&
               currentRound &&

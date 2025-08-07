@@ -3,8 +3,7 @@ import { Cross1Icon } from '@radix-ui/react-icons';
 import { ZERO_BIG_INT } from '@tangle-network/dapp-config/constants';
 import { calculateTypedChainId } from '@tangle-network/dapp-types/TypedChainId';
 import isDefined from '@tangle-network/dapp-types/utils/isDefined';
-import LockFillIcon from '@tangle-network/icons/LockFillIcon';
-import { LockLineIcon } from '@tangle-network/icons/LockLineIcon';
+import { LockUnlockLineIcon } from '@tangle-network/icons/LockUnlockLineIcon';
 import useRestakeDelegatorInfo from '@tangle-network/tangle-shared-ui/data/restake/useRestakeDelegatorInfo';
 import { DelegatorUnstakeRequest } from '@tangle-network/tangle-shared-ui/types/restake';
 import { IdentityType } from '@tangle-network/tangle-shared-ui/utils/polkadot/identity';
@@ -364,12 +363,12 @@ const RestakeUnstakeForm: FC<RestakeUnstakeFormProps> = ({ assets }) => {
                       : {})}
                   />
                   <TransactionInputCard.MaxAmountButton
-                    maxAmount={totalDelegatedAmount ?? formattedMaxAmount}
-                    tooltipBody="Total Delegated"
+                    maxAmount={formattedMaxAmount ?? totalDelegatedAmount}
+                    tooltipBody="Available to Undelegate"
                     Icon={
                       useRef({
-                        enabled: <LockLineIcon />,
-                        disabled: <LockFillIcon />,
+                        enabled: <LockUnlockLineIcon />,
+                        disabled: <LockUnlockLineIcon />,
                       }).current
                     }
                     onClick={() => {
@@ -388,20 +387,29 @@ const RestakeUnstakeForm: FC<RestakeUnstakeFormProps> = ({ assets }) => {
                     useRef({
                       placeholder: <AssetPlaceholder />,
                       isDisabled: true,
-                      ...(selectedAsset && totalDelegatedAmount !== undefined
+                      ...(selectedAsset && totalDelegatedAmount !== undefined && formattedMaxAmount !== undefined
                         ? {
                             renderBody: () => (
                               <div className="flex items-center gap-2">
                                 <Typography variant="h5" fw="bold">
                                   {selectedAsset.metadata.symbol}
                                 </Typography>
-                                <Typography
-                                  variant="body2"
-                                  className="text-mono-120 dark:text-mono-100"
-                                >
-                                  Balance: {totalDelegatedAmount}{' '}
-                                  {selectedAsset.metadata.symbol}
-                                </Typography>
+                                <div className="flex flex-col gap-1">
+                                  <Typography
+                                    variant="body2"
+                                    className="text-mono-120 dark:text-mono-100"
+                                  >
+                                    Total: {totalDelegatedAmount}{' '}
+                                    {selectedAsset.metadata.symbol}
+                                  </Typography>
+                                  <Typography
+                                    variant="body2"
+                                    className="text-mono-120 dark:text-mono-100"
+                                  >
+                                    Available: {formattedMaxAmount}{' '}
+                                    {selectedAsset.metadata.symbol}
+                                  </Typography>
+                                </div>
                               </div>
                             ),
                           }
