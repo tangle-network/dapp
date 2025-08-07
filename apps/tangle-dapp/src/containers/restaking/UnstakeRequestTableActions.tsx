@@ -46,34 +46,32 @@ const UnstakeRequestTableActions: FC<Props> = ({
       return;
     }
 
-    const unstakeRequests = selectedRequests.map(
-      ({ amountRaw, operatorAccountId, assetId }) => {
-        return {
-          amount: new BN(amountRaw.toString()),
-          assetId,
-          operatorAddress: operatorAccountId,
-        };
-      },
+    const nominatedUnstakeRequests = selectedRequests.filter(
+      (request) => request.isNomination === true,
     );
 
-    const nativeUnstakeRequests = unstakeRequests.filter(
-      (request) => request.assetId === NATIVE_ASSET_ID,
+    const depositedUnstakeRequests = selectedRequests.filter(
+      (request) => request.isNomination !== true,
     );
 
-    const nonNativeUnstakeRequests = unstakeRequests.filter(
-      (request) => request.assetId !== NATIVE_ASSET_ID,
+    const depositedUnstakeRequestsForApi = depositedUnstakeRequests.map(
+      ({ amountRaw, operatorAccountId, assetId }) => ({
+        amount: new BN(amountRaw.toString()),
+        assetId,
+        operatorAddress: operatorAccountId,
+      }),
     );
 
     setIsTransacting(true);
 
-    if (nonNativeUnstakeRequests.length > 0) {
+    if (depositedUnstakeRequestsForApi.length > 0) {
       if (!restakeApi) return;
-      await restakeApi.cancelUndelegate(nonNativeUnstakeRequests);
+      await restakeApi.cancelUndelegate(depositedUnstakeRequestsForApi);
     }
 
-    if (nativeUnstakeRequests.length > 0) {
+    if (nominatedUnstakeRequests.length > 0) {
       await executeCancel(
-        nativeUnstakeRequests.map((request) => request.operatorAddress),
+        nominatedUnstakeRequests.map((request) => request.operatorAccountId),
       );
     }
 
