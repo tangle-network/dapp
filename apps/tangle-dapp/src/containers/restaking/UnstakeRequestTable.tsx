@@ -145,7 +145,13 @@ const UnstakeRequestTable: FC<Props> = ({
     }
 
     return unstakeRequests.flatMap(
-      ({ assetId, amount, requestedRound, operatorAccountId, isNomination }) => {
+      ({
+        assetId,
+        amount,
+        requestedRound,
+        operatorAccountId,
+        isNomination,
+      }) => {
         const asset = assets?.get(assetId);
 
         // Skip requests that are lacking metadata.

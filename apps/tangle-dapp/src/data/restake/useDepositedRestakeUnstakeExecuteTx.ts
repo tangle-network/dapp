@@ -22,12 +22,9 @@ const useDepositedRestakeUnstakeExecuteTx = () => {
     };
   }, []);
 
-  const substrateTxFactory: SubstrateTxFactory<Context> = useCallback(
-    (api) => {
-      return api.tx.multiAssetDelegation.executeDelegatorUnstake();
-    },
-    [],
-  );
+  const substrateTxFactory: SubstrateTxFactory<Context> = useCallback((api) => {
+    return api.tx.multiAssetDelegation.executeDelegatorUnstake();
+  }, []);
 
   return useAgnosticTx({
     name: TxName.RESTAKE_DEPOSITED_UNSTAKE_EXECUTE,

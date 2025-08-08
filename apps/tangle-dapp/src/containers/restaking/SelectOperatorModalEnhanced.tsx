@@ -165,7 +165,9 @@ const SelectOperatorModalEnhanced = ({
               identity={identityName ?? undefined}
               rightUpperText={
                 <div className="flex items-center gap-2">
-                  <span>{fmtAvailableAmount} {asset.metadata.symbol}</span>
+                  <span>
+                    {fmtAvailableAmount} {asset.metadata.symbol}
+                  </span>
                   <span
                     className={`px-2 py-1 rounded text-xs font-medium ${
                       labelColor === 'green'

@@ -155,73 +155,75 @@ const RestakeUnstakeForm: FC<RestakeUnstakeFormProps> = ({ assets }) => {
     [],
   );
 
-  const { maxAmount, formattedMaxAmount, totalDelegatedAmount } = useMemo(() => {
-    if (!Array.isArray(delegatorInfo?.delegations) || assets === null) {
-      return { 
-        maxAmount: undefined, 
-        formattedMaxAmount: undefined,
-        totalDelegatedAmount: undefined 
+  const { maxAmount, formattedMaxAmount, totalDelegatedAmount } =
+    useMemo(() => {
+      if (!Array.isArray(delegatorInfo?.delegations) || assets === null) {
+        return {
+          maxAmount: undefined,
+          formattedMaxAmount: undefined,
+          totalDelegatedAmount: undefined,
+        };
+      }
+
+      const selectedDelegation = delegatorInfo.delegations.find(
+        (item) =>
+          item.assetId === selectedAssetId &&
+          item.operatorAccountId === selectedOperatorAccountId &&
+          item.isNomination === isSelectedNomination,
+      );
+
+      if (selectedDelegation === undefined) {
+        return {
+          maxAmount: undefined,
+          formattedMaxAmount: undefined,
+          totalDelegatedAmount: undefined,
+        };
+      }
+
+      const selectedDelegationAsset = assets.get(selectedDelegation.assetId);
+
+      if (selectedDelegationAsset === undefined) {
+        return {
+          maxAmount: undefined,
+          formattedMaxAmount: undefined,
+          totalDelegatedAmount: undefined,
+        };
+      }
+
+      const undelegatableAmount = calculateUndelegatableAmount(
+        selectedDelegation,
+        delegatorInfo.unstakeRequests || [],
+      );
+
+      const maxAmountBigInt = undelegatableAmount;
+
+      const formattedMaxAmount = Number(
+        formatUnits(maxAmountBigInt, selectedDelegationAsset.metadata.decimals),
+      );
+
+      const totalDelegatedBigInt = selectedDelegation.amountBonded;
+
+      const formattedTotalDelegated = Number(
+        formatUnits(
+          totalDelegatedBigInt,
+          selectedDelegationAsset.metadata.decimals,
+        ),
+      );
+
+      return {
+        maxAmount: maxAmountBigInt,
+        formattedMaxAmount,
+        totalDelegatedAmount: formattedTotalDelegated,
       };
-    }
-
-    const selectedDelegation = delegatorInfo.delegations.find(
-      (item) =>
-        item.assetId === selectedAssetId &&
-        item.operatorAccountId === selectedOperatorAccountId &&
-        item.isNomination === isSelectedNomination,
-    );
-
-    if (selectedDelegation === undefined) {
-      return { 
-        maxAmount: undefined, 
-        formattedMaxAmount: undefined,
-        totalDelegatedAmount: undefined 
-      };
-    }
-
-    const selectedDelegationAsset = assets.get(selectedDelegation.assetId);
-
-    if (selectedDelegationAsset === undefined) {
-      return { 
-        maxAmount: undefined, 
-        formattedMaxAmount: undefined,
-        totalDelegatedAmount: undefined 
-      };
-    }
-
-    const undelegatableAmount = calculateUndelegatableAmount(
-      selectedDelegation,
-      delegatorInfo.unstakeRequests || [],
-    );
-
-    const maxAmountBigInt = undelegatableAmount;
-
-    const formattedMaxAmount = Number(
-      formatUnits(maxAmountBigInt, selectedDelegationAsset.metadata.decimals),
-    );
-
-    const totalDelegatedBigInt = selectedDelegation.amountBonded;
-    
-    const formattedTotalDelegated = Number(
-      formatUnits(totalDelegatedBigInt, selectedDelegationAsset.metadata.decimals),
-    );
-
-
-
-    return {
-      maxAmount: maxAmountBigInt,
-      formattedMaxAmount,
-      totalDelegatedAmount: formattedTotalDelegated,
-    };
-  }, [
-    delegatorInfo?.delegations,
-    delegatorInfo?.unstakeRequests,
-    assets,
-    selectedAssetId,
-    selectedOperatorAccountId,
-    isSelectedNomination,
-    calculateUndelegatableAmount,
-  ]);
+    }, [
+      delegatorInfo?.delegations,
+      delegatorInfo?.unstakeRequests,
+      assets,
+      selectedAssetId,
+      selectedOperatorAccountId,
+      isSelectedNomination,
+      calculateUndelegatableAmount,
+    ]);
 
   const customAmountProps = useMemo<TextFieldInputProps>(() => {
     const step = decimalsToStep(selectedAsset?.metadata.decimals);
@@ -287,8 +289,6 @@ const RestakeUnstakeForm: FC<RestakeUnstakeFormProps> = ({ assets }) => {
       if (!(amountBn instanceof BN)) {
         return;
       }
-
-
 
       if (assetId === NATIVE_ASSET_ID) {
         if (isSelectedNomination) {
@@ -387,7 +387,9 @@ const RestakeUnstakeForm: FC<RestakeUnstakeFormProps> = ({ assets }) => {
                     useRef({
                       placeholder: <AssetPlaceholder />,
                       isDisabled: true,
-                      ...(selectedAsset && totalDelegatedAmount !== undefined && formattedMaxAmount !== undefined
+                      ...(selectedAsset &&
+                      totalDelegatedAmount !== undefined &&
+                      formattedMaxAmount !== undefined
                         ? {
                             renderBody: () => (
                               <div className="flex items-center gap-2">
