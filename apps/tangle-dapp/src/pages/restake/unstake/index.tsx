@@ -276,6 +276,15 @@ const RestakeUnstakeForm: FC<RestakeUnstakeFormProps> = ({ assets }) => {
     assets !== null &&
     executeNativeUnstakeTx !== null;
 
+  const resetForm = useCallback(() => {
+    setValue('amount', '', { shouldValidate: false });
+    setValue('assetId', '' as RestakeAssetId, { shouldValidate: false });
+    setValue('operatorAccountId', '' as SubstrateAddress, {
+      shouldValidate: false,
+    });
+    setIsSelectedNomination(false);
+  }, [setValue, setIsSelectedNomination]);
+
   const onSubmit = useCallback<SubmitHandler<UnstakeFormFields>>(
     async ({ amount, assetId, operatorAccountId }) => {
       const asset = assets?.get(assetId);
@@ -290,34 +299,44 @@ const RestakeUnstakeForm: FC<RestakeUnstakeFormProps> = ({ assets }) => {
         return;
       }
 
+      let transactionPromise: Promise<void>;
+
       if (assetId === NATIVE_ASSET_ID) {
         if (isSelectedNomination) {
-          await executeNativeUnstakeTx({
+          transactionPromise = executeNativeUnstakeTx({
             amount: amountBn,
             operatorAddress: operatorAccountId,
           });
         } else {
           if (!restakeApi) return;
-          await restakeApi.undelegate(operatorAccountId, assetId, amountBn);
+          transactionPromise = restakeApi.undelegate(
+            operatorAccountId,
+            assetId,
+            amountBn,
+          );
         }
       } else {
         if (!restakeApi) return;
-        await restakeApi.undelegate(operatorAccountId, assetId, amountBn);
+        transactionPromise = restakeApi.undelegate(
+          operatorAccountId,
+          assetId,
+          amountBn,
+        );
       }
 
-      setValue('amount', '', { shouldValidate: false });
-      setValue('assetId', '0x0', { shouldValidate: false });
-      setValue('operatorAccountId', '' as SubstrateAddress, {
-        shouldValidate: false,
-      });
-      setIsSelectedNomination(false);
+      try {
+        await transactionPromise;
+        resetForm();
+      } catch (error) {
+        console.error('Transaction failed:', error);
+      }
     },
     [
       assets,
       executeNativeUnstakeTx,
       isReady,
       restakeApi,
-      setValue,
+      resetForm,
       isSelectedNomination,
     ],
   );

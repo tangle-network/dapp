@@ -3,6 +3,7 @@ import type { IdentityType } from '@tangle-network/tangle-shared-ui/utils/polkad
 import { useMemo } from 'react';
 import ListModal from '@tangle-network/tangle-shared-ui/components/ListModal';
 import { formatUnits } from 'viem';
+import { getAssetLabelColorClasses } from '../../utils/getAssetLabelColorClasses';
 import OperatorListItem from '../../components/Lists/OperatorListItem';
 import {
   AmountFormatStyle,
@@ -56,19 +57,27 @@ const SelectOperatorModalEnhanced = ({
   const { assets } = useRestakeAssets();
   const { result: currentRound } = useRestakeCurrentRound();
 
+  const delegations = delegatorInfo?.delegations;
+  const unstakeRequests = useMemo(
+    () => delegatorInfo?.unstakeRequests || [],
+    [delegatorInfo?.unstakeRequests],
+  );
+
+  const isLoading = delegatorInfo === null || assets === undefined;
+
   const availableDelegations = useMemo(() => {
-    if (!Array.isArray(delegatorInfo?.delegations)) {
-      return [];
+    if (isLoading || !Array.isArray(delegations)) {
+      return undefined;
     }
 
-    return delegatorInfo.delegations
+    return delegations
       .map((delegation) => {
         const undelegatableAmount = calculateUndelegatableAmount(
           delegation,
-          delegatorInfo.unstakeRequests || [],
+          unstakeRequests,
         );
 
-        const pendingRequest = delegatorInfo.unstakeRequests?.find(
+        const pendingRequest = unstakeRequests.find(
           (req) =>
             req.operatorAccountId === delegation.operatorAccountId &&
             req.assetId === delegation.assetId,
@@ -88,7 +97,7 @@ const SelectOperatorModalEnhanced = ({
         };
       })
       .filter((item) => item.undelegatableAmount > BigInt(0));
-  }, [delegatorInfo, currentRound]);
+  }, [isLoading, delegations, unstakeRequests, currentRound]);
 
   return (
     <ListModal
@@ -97,6 +106,7 @@ const SelectOperatorModalEnhanced = ({
       searchInputId="restake-undelegate-operator-search"
       searchPlaceholder="Search operators..."
       items={availableDelegations}
+      isLoading={isLoading}
       title="Select Operator to Unstake"
       titleWhenEmpty="No Delegations Found"
       descriptionWhenEmpty="No delegations available for unstaking. You may need to wait for pending unstake requests to complete or delegate assets first."
@@ -104,6 +114,10 @@ const SelectOperatorModalEnhanced = ({
         const asset = assets?.get(item.assetId);
 
         if (asset === undefined) {
+          console.error(
+            `SelectOperatorModalEnhanced: Asset with ID ${item.assetId} not found in assets map. Available assets:`,
+            Array.from(assets?.keys() || []),
+          );
           return;
         }
 
@@ -169,13 +183,7 @@ const SelectOperatorModalEnhanced = ({
                     {fmtAvailableAmount} {asset.metadata.symbol}
                   </span>
                   <span
-                    className={`px-2 py-1 rounded text-xs font-medium ${
-                      labelColor === 'green'
-                        ? 'bg-green-100 text-mono-0 dark:bg-green-900 dark:text-mono-0'
-                        : labelColor === 'purple'
-                          ? 'bg-purple-900 text-mono-0 dark:bg-purple-900 dark:text-mono-0'
-                          : 'bg-blue-900 text-mono-0 dark:bg-blue-900 dark:text-mono-0'
-                    }`}
+                    className={`px-2 py-1 rounded text-xs font-medium ${getAssetLabelColorClasses(labelColor)}`}
                   >
                     {assetLabel}
                   </span>
