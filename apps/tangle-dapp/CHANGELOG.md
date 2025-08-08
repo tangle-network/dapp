@@ -1,3 +1,13 @@
+## 0.1.5 (2025-08-08)
+
+### 🏡 Chore
+
+- **tangle-dapp:** Restake Undelegate & Withdraw Improvements ([#3041](https://github.com/tangle-network/dapp/pull/3041))
+
+### ❤️ Thank You
+
+- Pavan Soratur @devpavan04
+
 ## 0.1.4 (2025-08-06)
 
 ### 🩹 Fixes
