@@ -81,6 +81,7 @@ export enum TxName {
   RESTAKE_NATIVE_DELEGATE = 'restake delegate nomination',
   RESTAKE_NATIVE_UNSTAKE = 'restake undelegate native',
   RESTAKE_NATIVE_UNSTAKE_EXECUTE = 'restake execute undelegate native',
+  RESTAKE_DEPOSITED_UNSTAKE_EXECUTE = 'restake execute undelegate deposited',
   RESTAKE_NATIVE_UNSTAKE_CANCEL = 'restake cancel undelegate native',
 }
 

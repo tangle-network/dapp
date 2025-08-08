@@ -12,6 +12,7 @@ import { makeExplorerUrl } from '@tangle-network/api-provider-environment/transa
 import { useActiveChain } from '@tangle-network/api-provider-environment/hooks/useActiveChain';
 import LogoListItem from './LogoListItem';
 import { BN } from '@polkadot/util';
+import { getAssetLabelColorClasses } from '../../utils/getAssetLabelColorClasses';
 
 type Props = {
   assetId: string;
@@ -99,13 +100,7 @@ const AssetListItem = ({
             {name} ({symbol})
           </span>
           <span
-            className={`px-2 py-1 rounded text-xs font-medium ${
-              labelColor === 'green'
-                ? 'bg-green-100 text-mono-0 dark:bg-green-900 dark:text-mono-0'
-                : labelColor === 'purple'
-                  ? 'bg-purple-900 text-mono-0 dark:bg-purple-900 dark:text-mono-0'
-                  : 'bg-blue-900 text-mono-0 dark:bg-blue-900 dark:text-mono-0'
-            }`}
+            className={`px-2 py-1 rounded text-xs font-medium ${getAssetLabelColorClasses(labelColor)}`}
           >
             {label}
           </span>

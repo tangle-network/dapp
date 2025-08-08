@@ -63,6 +63,7 @@ export default function useRestakeDelegatorInfo() {
                 operatorAccountId: assertSubstrateAddress(
                   delegation.operator.toString(),
                 ),
+                isNomination: delegation.isNomination.toHuman() as boolean,
               };
             });
 
@@ -107,6 +108,7 @@ function getUnstakeRequests(
       assetId: createRestakeAssetId(req.asset),
       requestedRound: req.requestedRound.toNumber(),
       operatorAccountId: assertSubstrateAddress(req.operator.toString()),
+      isNomination: req.isNomination.toHuman() as boolean,
     } satisfies DelegatorInfo['unstakeRequests'][number];
   });
 }

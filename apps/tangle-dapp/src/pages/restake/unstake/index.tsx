@@ -3,8 +3,7 @@ import { Cross1Icon } from '@radix-ui/react-icons';
 import { ZERO_BIG_INT } from '@tangle-network/dapp-config/constants';
 import { calculateTypedChainId } from '@tangle-network/dapp-types/TypedChainId';
 import isDefined from '@tangle-network/dapp-types/utils/isDefined';
-import LockFillIcon from '@tangle-network/icons/LockFillIcon';
-import { LockLineIcon } from '@tangle-network/icons/LockLineIcon';
+import { LockUnlockLineIcon } from '@tangle-network/icons/LockUnlockLineIcon';
 import useRestakeDelegatorInfo from '@tangle-network/tangle-shared-ui/data/restake/useRestakeDelegatorInfo';
 import { DelegatorUnstakeRequest } from '@tangle-network/tangle-shared-ui/types/restake';
 import { IdentityType } from '@tangle-network/tangle-shared-ui/utils/polkadot/identity';
@@ -25,7 +24,7 @@ import ErrorMessage from '../../../components/ErrorMessage';
 import RestakeDetailCard from '../../../components/RestakeDetailCard';
 import ActionButtonBase from '../../../components/restaking/ActionButtonBase';
 import { SUPPORTED_RESTAKE_DEPOSIT_TYPED_CHAIN_IDS } from '../../../constants/restake';
-import SelectOperatorModal from '../../../containers/restaking/SelectOperatorModal';
+import SelectOperatorModalEnhanced from '../../../containers/restaking/SelectOperatorModalEnhanced';
 import UnstakeRequestTable from '../../../containers/restaking/UnstakeRequestTable';
 import useRestakeApi from '../../../data/restake/useRestakeApi';
 import useIdentities from '@tangle-network/tangle-shared-ui/hooks/useIdentities';
@@ -57,11 +56,11 @@ const RestakeUnstakeForm: FC<RestakeUnstakeFormProps> = ({ assets }) => {
 
   const {
     register,
-    setValue: setFormValue,
     handleSubmit,
-    watch,
     reset,
+    setValue,
     formState: { errors, isValid, isSubmitting },
+    watch,
   } = useForm<UnstakeFormFields>({
     mode: 'onBlur',
   });
@@ -69,11 +68,13 @@ const RestakeUnstakeForm: FC<RestakeUnstakeFormProps> = ({ assets }) => {
   const switchChain = useSwitchChain();
   const activeTypedChainId = useActiveTypedChainId();
 
+  const [isSelectedNomination, setIsSelectedNomination] = useState(false);
+
   const {
-    status: isOperatorModalOpen,
+    status: isSelectOperatorModalOpen,
     open: openOperatorModal,
-    close: closeOperatorModal,
-    update: updateOperatorModal,
+    close: closeSelectOperatorModal,
+    update: setIsSelectOperatorModalOpen,
   } = useModal();
 
   const {
@@ -124,44 +125,105 @@ const RestakeUnstakeForm: FC<RestakeUnstakeFormProps> = ({ assets }) => {
     return assets.get(selectedAssetId) ?? null;
   }, [assets, selectedAssetId]);
 
-  const { maxAmount, formattedMaxAmount } = useMemo(() => {
-    if (!Array.isArray(delegatorInfo?.delegations) || assets === null) {
-      return {};
-    }
+  const calculateUndelegatableAmount = useCallback(
+    (
+      delegation: {
+        operatorAccountId: string;
+        assetId: string;
+        amountBonded: bigint;
+        isNomination: boolean;
+      },
+      unstakeRequests: {
+        operatorAccountId: string;
+        assetId: string;
+        amount: bigint;
+        isNomination: boolean;
+      }[],
+    ) => {
+      const pendingUnstakeAmount = unstakeRequests
+        .filter(
+          (req) =>
+            req.operatorAccountId === delegation.operatorAccountId &&
+            req.assetId === delegation.assetId &&
+            req.isNomination === delegation.isNomination,
+        )
+        .reduce((sum, req) => sum + req.amount, BigInt(0));
 
-    const selectedDelegation = delegatorInfo.delegations.find(
-      (item) =>
-        item.assetId === selectedAssetId &&
-        item.operatorAccountId === selectedOperatorAccountId,
-    );
+      const availableAmount = delegation.amountBonded - pendingUnstakeAmount;
+      return availableAmount > BigInt(0) ? availableAmount : BigInt(0);
+    },
+    [],
+  );
 
-    if (selectedDelegation === undefined) {
-      return {};
-    }
+  const { maxAmount, formattedMaxAmount, totalDelegatedAmount } =
+    useMemo(() => {
+      if (!Array.isArray(delegatorInfo?.delegations) || assets === null) {
+        return {
+          maxAmount: undefined,
+          formattedMaxAmount: undefined,
+          totalDelegatedAmount: undefined,
+        };
+      }
 
-    const selectedDelegationAsset = assets.get(selectedDelegation.assetId);
+      const selectedDelegation = delegatorInfo.delegations.find(
+        (item) =>
+          item.assetId === selectedAssetId &&
+          item.operatorAccountId === selectedOperatorAccountId &&
+          item.isNomination === isSelectedNomination,
+      );
 
-    if (selectedDelegationAsset === undefined) {
-      return {};
-    }
+      if (selectedDelegation === undefined) {
+        return {
+          maxAmount: undefined,
+          formattedMaxAmount: undefined,
+          totalDelegatedAmount: undefined,
+        };
+      }
 
-    const maxAmount = selectedDelegation.amountBonded;
+      const selectedDelegationAsset = assets.get(selectedDelegation.assetId);
 
-    // TODO: This should not be a number.
-    const formattedMaxAmount = Number(
-      formatUnits(maxAmount, selectedDelegationAsset.metadata.decimals),
-    );
+      if (selectedDelegationAsset === undefined) {
+        return {
+          maxAmount: undefined,
+          formattedMaxAmount: undefined,
+          totalDelegatedAmount: undefined,
+        };
+      }
 
-    return {
-      maxAmount,
-      formattedMaxAmount,
-    };
-  }, [
-    delegatorInfo?.delegations,
-    assets,
-    selectedAssetId,
-    selectedOperatorAccountId,
-  ]);
+      const undelegatableAmount = calculateUndelegatableAmount(
+        selectedDelegation,
+        delegatorInfo.unstakeRequests || [],
+      );
+
+      const maxAmountBigInt = undelegatableAmount;
+
+      const formattedMaxAmount = Number(
+        formatUnits(maxAmountBigInt, selectedDelegationAsset.metadata.decimals),
+      );
+
+      const totalDelegatedBigInt = selectedDelegation.amountBonded;
+
+      const formattedTotalDelegated = Number(
+        formatUnits(
+          totalDelegatedBigInt,
+          selectedDelegationAsset.metadata.decimals,
+        ),
+      );
+
+      return {
+        maxAmount: maxAmountBigInt,
+        formattedMaxAmount,
+        totalDelegatedAmount: formattedTotalDelegated,
+      };
+    }, [
+      delegatorInfo?.delegations,
+      delegatorInfo?.unstakeRequests,
+      assets,
+      selectedAssetId,
+      selectedOperatorAccountId,
+      isSelectedNomination,
+      calculateUndelegatableAmount,
+    ]);
 
   const customAmountProps = useMemo<TextFieldInputProps>(() => {
     const step = decimalsToStep(selectedAsset?.metadata.decimals);
@@ -214,6 +276,15 @@ const RestakeUnstakeForm: FC<RestakeUnstakeFormProps> = ({ assets }) => {
     assets !== null &&
     executeNativeUnstakeTx !== null;
 
+  const resetForm = useCallback(() => {
+    setValue('amount', '', { shouldValidate: false });
+    setValue('assetId', '' as RestakeAssetId, { shouldValidate: false });
+    setValue('operatorAccountId', '' as SubstrateAddress, {
+      shouldValidate: false,
+    });
+    setIsSelectedNomination(false);
+  }, [setValue, setIsSelectedNomination]);
+
   const onSubmit = useCallback<SubmitHandler<UnstakeFormFields>>(
     async ({ amount, assetId, operatorAccountId }) => {
       const asset = assets?.get(assetId);
@@ -228,26 +299,46 @@ const RestakeUnstakeForm: FC<RestakeUnstakeFormProps> = ({ assets }) => {
         return;
       }
 
-      // Native restaking's unstake operation is handled through a separate
-      // extrinsic.
+      let transactionPromise: Promise<void>;
+
       if (assetId === NATIVE_ASSET_ID) {
-        await executeNativeUnstakeTx({
-          amount: amountBn,
-          operatorAddress: operatorAccountId,
-        });
+        if (isSelectedNomination) {
+          transactionPromise = executeNativeUnstakeTx({
+            amount: amountBn,
+            operatorAddress: operatorAccountId,
+          });
+        } else {
+          if (!restakeApi) return;
+          transactionPromise = restakeApi.undelegate(
+            operatorAccountId,
+            assetId,
+            amountBn,
+          );
+        }
       } else {
         if (!restakeApi) return;
-        await restakeApi.undelegate(operatorAccountId, assetId, amountBn);
+        transactionPromise = restakeApi.undelegate(
+          operatorAccountId,
+          assetId,
+          amountBn,
+        );
       }
 
-      setFormValue('amount', '', { shouldValidate: false });
-      setFormValue('assetId', '0x0', { shouldValidate: false });
-
-      setFormValue('operatorAccountId', '' as SubstrateAddress, {
-        shouldValidate: false,
-      });
+      try {
+        await transactionPromise;
+        resetForm();
+      } catch (error) {
+        console.error('Transaction failed:', error);
+      }
     },
-    [assets, executeNativeUnstakeTx, isReady, restakeApi, setFormValue],
+    [
+      assets,
+      executeNativeUnstakeTx,
+      isReady,
+      restakeApi,
+      resetForm,
+      isSelectedNomination,
+    ],
   );
 
   return (
@@ -291,14 +382,21 @@ const RestakeUnstakeForm: FC<RestakeUnstakeFormProps> = ({ assets }) => {
                       : {})}
                   />
                   <TransactionInputCard.MaxAmountButton
-                    maxAmount={formattedMaxAmount}
-                    tooltipBody="Available Balance"
+                    maxAmount={formattedMaxAmount ?? totalDelegatedAmount}
+                    tooltipBody="Available to Undelegate"
                     Icon={
                       useRef({
-                        enabled: <LockLineIcon />,
-                        disabled: <LockFillIcon />,
+                        enabled: <LockUnlockLineIcon />,
+                        disabled: <LockUnlockLineIcon />,
                       }).current
                     }
+                    onClick={() => {
+                      if (formattedMaxAmount !== undefined) {
+                        setValue('amount', formattedMaxAmount.toString(), {
+                          shouldValidate: true,
+                        });
+                      }
+                    }}
                   />
                 </TransactionInputCard.Header>
 
@@ -308,6 +406,35 @@ const RestakeUnstakeForm: FC<RestakeUnstakeFormProps> = ({ assets }) => {
                     useRef({
                       placeholder: <AssetPlaceholder />,
                       isDisabled: true,
+                      ...(selectedAsset &&
+                      totalDelegatedAmount !== undefined &&
+                      formattedMaxAmount !== undefined
+                        ? {
+                            renderBody: () => (
+                              <div className="flex items-center gap-2">
+                                <Typography variant="h5" fw="bold">
+                                  {selectedAsset.metadata.symbol}
+                                </Typography>
+                                <div className="flex flex-col gap-1">
+                                  <Typography
+                                    variant="body2"
+                                    className="text-mono-120 dark:text-mono-100"
+                                  >
+                                    Total: {totalDelegatedAmount}{' '}
+                                    {selectedAsset.metadata.symbol}
+                                  </Typography>
+                                  <Typography
+                                    variant="body2"
+                                    className="text-mono-120 dark:text-mono-100"
+                                  >
+                                    Available: {formattedMaxAmount}{' '}
+                                    {selectedAsset.metadata.symbol}
+                                  </Typography>
+                                </div>
+                              </div>
+                            ),
+                          }
+                        : {}),
                     }).current
                   }
                 />
@@ -375,28 +502,17 @@ const RestakeUnstakeForm: FC<RestakeUnstakeFormProps> = ({ assets }) => {
         className="md:hidden"
       />
 
-      <SelectOperatorModal
+      <SelectOperatorModalEnhanced
         delegatorInfo={delegatorInfo}
-        isOpen={isOperatorModalOpen}
-        setIsOpen={updateOperatorModal}
         operatorIdentities={operatorIdentities}
+        isOpen={isSelectOperatorModalOpen}
+        setIsOpen={setIsSelectOperatorModalOpen}
         onItemSelected={(item) => {
-          closeOperatorModal();
+          setValue('operatorAccountId', item.operatorAccountId);
+          setValue('assetId', item.assetId);
+          setIsSelectedNomination(item.isNomination);
 
-          const { formattedAmount, assetId, operatorAccountId } = item;
-
-          const commonOpts = {
-            shouldDirty: true,
-            shouldValidate: true,
-          };
-
-          setFormValue(
-            'operatorAccountId',
-            operatorAccountId as SubstrateAddress,
-            commonOpts,
-          );
-          setFormValue('assetId', assetId, commonOpts);
-          setFormValue('amount', formattedAmount, commonOpts);
+          closeSelectOperatorModal();
         }}
       />
 
