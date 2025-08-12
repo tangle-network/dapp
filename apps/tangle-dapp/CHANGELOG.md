@@ -1,3 +1,16 @@
+## 0.1.6 (2025-08-12)
+
+### 🏡 Chore
+
+- **tangle-dapp:** Display TNT restake vault and fix transaction loading states ([#3050](https://github.com/tangle-network/dapp/pull/3050))
+- bump @storybook/theming from 8.6.12 to 8.6.14 ([#3048](https://github.com/tangle-network/dapp/pull/3048))
+- bump lycheeverse/lychee-action from 2.4.0 to 2.5.0 ([#3049](https://github.com/tangle-network/dapp/pull/3049))
+- **tangle-dapp:** Restake Undelegate & Withdraw Improvements ([#3041](https://github.com/tangle-network/dapp/pull/3041))
+
+### ❤️ Thank You
+
+- Pavan Soratur @devpavan04
+
 ## 0.1.5 (2025-08-08)
 
 ### 🏡 Chore
