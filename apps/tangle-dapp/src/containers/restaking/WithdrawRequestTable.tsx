@@ -21,7 +21,7 @@ import {
   type TableOptions,
   useReactTable,
 } from '@tanstack/react-table';
-import { FC, useMemo } from 'react';
+import { FC, useCallback, useMemo } from 'react';
 import TableCell from '../../components/restaking/TableCell';
 import useRestakeConsts from '../../data/restake/useRestakeConsts';
 import useRestakeCurrentRound from '../../data/restake/useRestakeCurrentRound';
@@ -185,6 +185,10 @@ const WithdrawRequestTable: FC<Props> = ({ withdrawRequests }) => {
     [rowSelection],
   );
 
+  const handleExecuted = useCallback(() => {
+    table.toggleAllRowsSelected(false);
+  }, [table]);
+
   return (
     <>
       <Table
@@ -196,6 +200,7 @@ const WithdrawRequestTable: FC<Props> = ({ withdrawRequests }) => {
       <WithdrawRequestTableActions
         allRequests={requests}
         selectedRequests={selectedRequests}
+        onExecuted={handleExecuted}
       />
     </>
   );

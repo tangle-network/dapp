@@ -15,13 +15,15 @@ import {
 export type RestakeVault = {
   id: number;
   name: string;
-  logo?: string;
   representAssetSymbol: string;
+  logo?: string;
   decimals: number;
   capacity?: BN;
   assetMetadata: RestakeAssetMetadata[];
   totalDeposits?: BN;
+  totalDelegated?: BN;
   tvl?: BN;
+  isNativeToken?: boolean;
 };
 
 type UseRestakeVaultsOptions = {
@@ -44,9 +46,16 @@ export const useRestakeVaults = ({
     if (assets === null) {
       return null;
     }
-    // Handle all vaults.
-    else if (operatorData === undefined) {
-      return createVaultMap({
+
+    const tntVault = createTntVault({
+      assets,
+      delegatorInfo,
+      assetsTvl,
+      networkId,
+    });
+
+    if (operatorData === undefined) {
+      const regularVaults = createVaultMap({
         assets: Array.from(assets.values()),
         rewardConfig,
         delegatorInfo,
@@ -55,6 +64,8 @@ export const useRestakeVaults = ({
       })
         .values()
         .toArray();
+
+      return [tntVault, ...regularVaults];
     }
 
     // Handle operator-specific vaults.
@@ -71,7 +82,7 @@ export const useRestakeVaults = ({
       .map((assetId) => assets.get(assetId))
       .filter((asset) => asset !== undefined);
 
-    return createVaultMap({
+    const regularVaults = createVaultMap({
       assets: operatorAssets,
       rewardConfig,
       delegatorInfo,
@@ -80,6 +91,8 @@ export const useRestakeVaults = ({
     })
       .values()
       .toArray();
+
+    return [tntVault, ...regularVaults];
   }, [assetsTvl, assets, delegatorInfo, networkId, operatorData, rewardConfig]);
 };
 
@@ -110,6 +123,11 @@ export const createVaultMap = ({
         ? new BN(delegatorInfo.deposits[asset.id].amount.toString())
         : undefined;
 
+    const totalDelegated =
+      typeof delegatorInfo?.deposits[asset.id]?.delegatedAmount === 'bigint'
+        ? new BN(delegatorInfo.deposits[asset.id].delegatedAmount.toString())
+        : undefined;
+
     const tvl = assetTvl?.get(asset.id);
     const existingVault = vaults.get(asset.metadata.vaultId);
 
@@ -133,6 +151,7 @@ export const createVaultMap = ({
         capacity,
         assetMetadata: [asset.metadata],
         totalDeposits,
+        totalDelegated,
         tvl,
       });
     }
@@ -141,6 +160,11 @@ export const createVaultMap = ({
       existingVault.totalDeposits = tryAddBNs(
         existingVault.totalDeposits,
         totalDeposits,
+      );
+
+      existingVault.totalDelegated = tryAddBNs(
+        existingVault.totalDelegated,
+        totalDelegated,
       );
 
       existingVault.tvl = tryAddBNs(existingVault.tvl, tvl);
@@ -161,7 +185,70 @@ const tryAddBNs = (a: BN | undefined, b: BN | undefined): BN | undefined => {
   return a.add(b);
 };
 
-// TODO: Use metadata from chain.
+type CreateTntVaultOptions = {
+  assets: Map<RestakeAssetId, RestakeAsset> | null;
+  delegatorInfo: DelegatorInfo | null;
+  assetsTvl: Map<RestakeAssetId, BN> | null;
+  networkId?: NetworkId;
+};
+
+const createTntVault = ({
+  assets,
+  delegatorInfo,
+  assetsTvl,
+  networkId: _networkId,
+}: CreateTntVaultOptions): RestakeVault => {
+  const NATIVE_ASSET_ID = '0' as RestakeAssetId;
+
+  const tntAsset = assets?.get(NATIVE_ASSET_ID);
+  const decimals = tntAsset?.metadata?.decimals ?? 18;
+  const symbol = tntAsset?.metadata?.symbol ?? 'TNT';
+
+  const userTntDeposit = delegatorInfo?.deposits[NATIVE_ASSET_ID];
+  const totalDeposits = userTntDeposit
+    ? new BN(userTntDeposit.amount.toString())
+    : undefined;
+
+  let totalDelegated: BN | undefined;
+  if (delegatorInfo) {
+    let delegatedSum = new BN(0);
+    const tntDelegations = delegatorInfo.delegations.filter(
+      (d) => d.assetId === NATIVE_ASSET_ID,
+    );
+    for (const delegation of tntDelegations) {
+      delegatedSum = delegatedSum.add(
+        new BN(delegation.amountBonded.toString()),
+      );
+    }
+
+    totalDelegated = delegatedSum.gt(new BN(0)) ? delegatedSum : undefined;
+  }
+
+  const tvl = assetsTvl?.get(NATIVE_ASSET_ID);
+
+  const tntMetadata: RestakeAssetMetadata = {
+    assetId: NATIVE_ASSET_ID,
+    name: 'Tangle Network Token',
+    symbol: symbol,
+    decimals: decimals,
+    vaultId: null,
+    priceInUsd: null,
+    status: 'Live' as const,
+  };
+
+  return {
+    id: 0,
+    name: 'Tangle Network Token',
+    representAssetSymbol: symbol,
+    decimals: decimals,
+    assetMetadata: [tntMetadata],
+    totalDeposits,
+    totalDelegated,
+    tvl,
+    isNativeToken: true,
+  };
+};
+
 const MAINNET_VAULT_METADATA = new Map<
   number,
   {

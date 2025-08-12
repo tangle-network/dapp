@@ -11,6 +11,7 @@ type Props = {
   errors: FieldErrors<DepositFormFields>;
   formRef: RefObject<HTMLFormElement>;
   isSubmitting: boolean;
+  isTransactionLoading: boolean;
   isValid: boolean;
   watch: UseFormWatch<DepositFormFields>;
 };
@@ -19,6 +20,7 @@ export default function ActionButton({
   errors,
   formRef,
   isSubmitting,
+  isTransactionLoading,
   isValid,
   watch,
 }: Props) {
@@ -55,7 +57,7 @@ export default function ActionButton({
 
           return (
             <Button
-              isLoading={isSubmitting || isLoading}
+              isLoading={isSubmitting || isTransactionLoading || isLoading}
               loadingText={loadingText}
               type="button"
               isFullWidth
@@ -68,7 +70,7 @@ export default function ActionButton({
 
         return (
           <Button
-            isLoading={isSubmitting || isLoading}
+            isLoading={isSubmitting || isTransactionLoading || isLoading}
             loadingText={loadingText}
             type="submit"
             isDisabled={!isValid || displayError !== undefined}

@@ -37,32 +37,62 @@ export const useVaultsTableProps = ({ delegatorDeposits, assets }: Options) => {
         }
 
         const vaultId = row.original.id;
+        const isNativeToken = row.original.isNativeToken;
 
-        const vaultAssets = Array.from(assets.values())
-          .filter((asset) => asset.metadata.vaultId === vaultId)
-          .map(
-            ({
-              id: assetId,
-              metadata: { decimals, symbol, name },
-              balance,
-            }) => {
-              const available = balance ?? null;
+        let vaultAssets: VaultAssetData[];
 
-              const deposited =
-                typeof delegatorDeposits?.[assetId]?.amount === 'bigint'
-                  ? new BN(delegatorDeposits[assetId].amount.toString())
-                  : null;
+        if (isNativeToken) {
+          // Special handling for TNT since TNT vault is not created.
+          const NATIVE_ASSET_ID = '0' as RestakeAssetId;
+          const tntAsset = assets.get(NATIVE_ASSET_ID);
 
-              return {
-                id: assetId,
-                name,
-                symbol,
-                decimals,
+          if (tntAsset) {
+            const available = tntAsset.balance ?? null;
+            const deposited =
+              typeof delegatorDeposits?.[NATIVE_ASSET_ID]?.amount === 'bigint'
+                ? new BN(delegatorDeposits[NATIVE_ASSET_ID].amount.toString())
+                : null;
+
+            vaultAssets = [
+              {
+                id: NATIVE_ASSET_ID,
+                name: tntAsset.metadata.name,
+                symbol: tntAsset.metadata.symbol,
+                decimals: tntAsset.metadata.decimals,
                 available,
                 deposited,
-              } satisfies VaultAssetData;
-            },
-          );
+              },
+            ];
+          } else {
+            vaultAssets = [];
+          }
+        } else {
+          vaultAssets = Array.from(assets.values())
+            .filter((asset) => asset.metadata.vaultId === vaultId)
+            .map(
+              ({
+                id: assetId,
+                metadata: { decimals, symbol, name },
+                balance,
+              }) => {
+                const available = balance ?? null;
+
+                const deposited =
+                  typeof delegatorDeposits?.[assetId]?.amount === 'bigint'
+                    ? new BN(delegatorDeposits[assetId].amount.toString())
+                    : null;
+
+                return {
+                  id: assetId,
+                  name,
+                  symbol,
+                  decimals,
+                  available,
+                  deposited,
+                } satisfies VaultAssetData;
+              },
+            );
+        }
 
         return (
           <VaultAssetsTable

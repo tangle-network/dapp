@@ -1,45 +1,48 @@
 import Button from '@tangle-network/ui-components/components/buttons/Button';
-import { FC, useCallback, useMemo, useState } from 'react';
+import { FC, useCallback, useEffect, useMemo } from 'react';
 import { isScheduledRequestReady } from '../../pages/restake/utils';
 import { UnstakeRequestTableRow } from './UnstakeRequestTable';
 import { BN } from '@polkadot/util';
 import useRestakeApi from '../../data/restake/useRestakeApi';
 import { NATIVE_ASSET_ID } from '@tangle-network/tangle-shared-ui/constants/restaking';
-import useNativeRestakeUnstakeExecuteTx from '../../data/restake/useNativeRestakeUnstakeExecuteTx';
-import useDepositedRestakeUnstakeExecuteTx from '../../data/restake/useDepositedRestakeUnstakeExecuteTx';
+import useRestakeUnstakeExecuteAllTx from '../../data/restake/useRestakeUnstakeExecuteAllTx';
 import { TxStatus } from '@tangle-network/tangle-shared-ui/hooks/useSubstrateTx';
 import useNativeRestakeUnstakeCancelTx from '../../data/restake/useNativeRestakeUnstakeCancelTx';
 
-type Props = {
+type UnstakeRequestTableActionsProps = {
   allRequests: UnstakeRequestTableRow[];
   selectedRequests: UnstakeRequestTableRow[];
+  onExecuted: () => void;
 };
 
-const UnstakeRequestTableActions: FC<Props> = ({
+const UnstakeRequestTableActions: FC<UnstakeRequestTableActionsProps> = ({
   allRequests,
   selectedRequests,
+  onExecuted,
 }) => {
-  const [isTransacting, setIsTransacting] = useState(false);
   const restakeApi = useRestakeApi();
 
-  const { execute: executeNominatedExecute, status: nominatedExecuteStatus } =
-    useNativeRestakeUnstakeExecuteTx();
-
-  const { execute: executeDepositedExecute, status: depositedExecuteStatus } =
-    useDepositedRestakeUnstakeExecuteTx();
+  const { execute: executeAll, status: executeAllStatus } =
+    useRestakeUnstakeExecuteAllTx();
 
   const { execute: executeCancel, status: cancelStatus } =
     useNativeRestakeUnstakeCancelTx();
 
+  const isExecuting = executeAllStatus === TxStatus.PROCESSING;
+  const isCancelling = cancelStatus === TxStatus.PROCESSING;
+
   const isReady =
     restakeApi !== null &&
-    !isTransacting &&
-    executeNominatedExecute !== null &&
-    nominatedExecuteStatus !== TxStatus.PROCESSING &&
-    executeDepositedExecute !== null &&
-    depositedExecuteStatus !== TxStatus.PROCESSING &&
+    executeAll !== null &&
+    executeAllStatus !== TxStatus.PROCESSING &&
     executeCancel !== null &&
     cancelStatus !== TxStatus.PROCESSING;
+
+  useEffect(() => {
+    if (executeAllStatus === TxStatus.COMPLETE && onExecuted) {
+      onExecuted();
+    }
+  }, [executeAllStatus, onExecuted]);
 
   const handleCancelUnstake = useCallback(async () => {
     if (!isReady) {
@@ -62,8 +65,6 @@ const UnstakeRequestTableActions: FC<Props> = ({
       }),
     );
 
-    setIsTransacting(true);
-
     if (depositedUnstakeRequestsForApi.length > 0) {
       if (!restakeApi) return;
       await restakeApi.cancelUndelegate(depositedUnstakeRequestsForApi);
@@ -74,16 +75,12 @@ const UnstakeRequestTableActions: FC<Props> = ({
         nominatedUnstakeRequests.map((request) => request.operatorAccountId),
       );
     }
-
-    setIsTransacting(false);
   }, [executeCancel, isReady, restakeApi, selectedRequests]);
 
   const handleExecuteUnstake = useCallback(async () => {
     if (!isReady) {
       return;
     }
-
-    setIsTransacting(true);
 
     const nominatedNativeRequests = allRequests.filter(
       ({ assetId, isNomination }) =>
@@ -99,29 +96,14 @@ const UnstakeRequestTableActions: FC<Props> = ({
       ({ assetId }) => assetId !== NATIVE_ASSET_ID,
     );
 
-    if (hasNonNativeUnstakeRequests) {
-      if (!restakeApi) return;
-      await restakeApi.executeUndelegate();
-    }
-
-    if (nominatedNativeRequests.length > 0) {
-      await executeNominatedExecute(
-        nominatedNativeRequests.map((request) => request.operatorAccountId),
-      );
-    }
-
-    if (depositedNativeRequests.length > 0) {
-      await executeDepositedExecute();
-    }
-
-    setIsTransacting(false);
-  }, [
-    allRequests,
-    executeNominatedExecute,
-    executeDepositedExecute,
-    isReady,
-    restakeApi,
-  ]);
+    await executeAll({
+      nominatedOperators: nominatedNativeRequests.map(
+        (request) => request.operatorAccountId,
+      ),
+      hasDepositedRequests: depositedNativeRequests.length > 0,
+      hasNonNativeRequests: hasNonNativeUnstakeRequests,
+    });
+  }, [allRequests, executeAll, isReady]);
 
   const canCancelUnstake = selectedRequests.length > 0;
 
@@ -138,7 +120,7 @@ const UnstakeRequestTableActions: FC<Props> = ({
   return (
     <div className="flex items-center gap-3">
       <Button
-        isLoading={isTransacting}
+        isLoading={isCancelling}
         isDisabled={!isReady || !canCancelUnstake}
         isFullWidth
         onClick={handleCancelUnstake}
@@ -148,10 +130,10 @@ const UnstakeRequestTableActions: FC<Props> = ({
       </Button>
 
       <Button
-        isLoading={isTransacting}
-        isDisabled={!isReady || canCancelUnstake || !canExecuteUnstake}
-        isFullWidth
+        isLoading={isExecuting}
+        isDisabled={!isReady || !canExecuteUnstake}
         onClick={handleExecuteUnstake}
+        isFullWidth
       >
         Execute All
       </Button>

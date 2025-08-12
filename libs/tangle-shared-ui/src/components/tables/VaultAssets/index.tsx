@@ -82,7 +82,7 @@ const getColumns = (isAccountConnected: boolean, evmExplorerUrl?: string) => [
     },
   }),
   COLUMN_HELPER.accessor('deposited', {
-    header: () => <HeaderCell title="Deposited Balance" />,
+    header: () => <HeaderCell title="Deposited" />,
     cell: (props) => {
       const value = props.getValue();
       const tokenSymbol = props.row.original.symbol;
@@ -181,38 +181,40 @@ const VaultAssetsTable: FC<Props> = ({
         )}
       />
 
-      <div
-        className={cx(
-          'flex-initial w-1/4 bg-mono-40/50 dark:bg-mono-200 p-3',
-          'rounded-2xl flex flex-col',
-        )}
-      >
-        <ResponsiveContainer>
-          <PieChart>
-            <Pie
-              data={chartData}
-              dataKey="value"
-              innerRadius={50}
-              startAngle={90}
-              endAngle={-270}
-            />
-          </PieChart>
-        </ResponsiveContainer>
-
-        <Typography
-          ta="center"
-          variant="body1"
-          className="font-semibold text-mono-200 dark:text-mono-0"
+      {depositCapacity !== undefined && (
+        <div
+          className={cx(
+            'flex-initial w-1/4 bg-mono-40/50 dark:bg-mono-200 p-3',
+            'rounded-2xl flex flex-col',
+          )}
         >
-          TVL / Deposit Capacity
-        </Typography>
+          <ResponsiveContainer>
+            <PieChart>
+              <Pie
+                data={chartData}
+                dataKey="value"
+                innerRadius={50}
+                startAngle={90}
+                endAngle={-270}
+              />
+            </PieChart>
+          </ResponsiveContainer>
 
-        <Typography variant="body1" ta="center">
-          {fmtTvl === null
-            ? `${fmtDepositCap}`
-            : `${fmtTvl} / ${fmtDepositCap}`}
-        </Typography>
-      </div>
+          <Typography
+            ta="center"
+            variant="body1"
+            className="font-semibold text-mono-200 dark:text-mono-0"
+          >
+            TVL / Deposit Capacity
+          </Typography>
+
+          <Typography variant="body1" ta="center">
+            {fmtTvl === null
+              ? `${fmtDepositCap}`
+              : `${fmtTvl} / ${fmtDepositCap}`}
+          </Typography>
+        </div>
+      )}
     </div>
   );
 };
