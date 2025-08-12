@@ -2,7 +2,7 @@ import { BN_ZERO } from '@polkadot/util';
 import { TokenIcon } from '@tangle-network/icons';
 import { ChevronDown } from '@tangle-network/icons/ChevronDown';
 import Spinner from '@tangle-network/icons/Spinner';
-import LsTokenIcon from '@tangle-network/tangle-shared-ui/components/LsTokenIcon';
+
 import HeaderCell from '@tangle-network/tangle-shared-ui/components/tables/HeaderCell';
 import TableCellWrapper from '@tangle-network/tangle-shared-ui/components/tables/TableCellWrapper';
 import TableStatus from '@tangle-network/tangle-shared-ui/components/tables/TableStatus';
@@ -48,6 +48,8 @@ const COLUMNS = [
   COLUMN_HELPER.accessor('id', {
     header: () => <HeaderCell title="Vault" />,
     cell: (props) => {
+      const isNativeToken = props.row.original.isNativeToken;
+
       return (
         <TableCellWrapper className="pl-3 flex items-center gap-2 justify-start">
           {props.row.original.logo ? (
@@ -58,7 +60,7 @@ const COLUMNS = [
               className="w-10 h-10"
             />
           ) : (
-            <LsTokenIcon
+            <TokenIcon
               name={props.row.original.representAssetSymbol}
               size="lg"
             />
@@ -72,21 +74,29 @@ const COLUMNS = [
               variant="body3"
               className="text-mono-120 dark:text-mono-100"
             >
-              ID: #{props.getValue()}
+              {isNativeToken ? '' : `ID: #${props.getValue()}`}
             </Typography>
           </div>
         </TableCellWrapper>
       );
     },
-    sortingFn: 'alphanumericCaseSensitive',
-    sortDescFirst: true,
+    sortingFn: (rowA, rowB) => {
+      const aIsNative = rowA.original.isNativeToken;
+      const bIsNative = rowB.original.isNativeToken;
+
+      if (aIsNative && !bIsNative) return -1;
+      if (!aIsNative && bIsNative) return 1;
+
+      return String(rowA.original.id).localeCompare(String(rowB.original.id));
+    },
+    sortDescFirst: false,
   }),
   COLUMN_HELPER.accessor('totalDeposits', {
     sortingFn: sortByBnToDecimal(
       (row) => row.totalDeposits ?? BN_ZERO,
       (row) => row.decimals,
     ),
-    header: () => <HeaderCell title="Deposited Balance" />,
+    header: () => <HeaderCell title="Deposited" />,
     cell: (props) => {
       const value = props.getValue();
 
@@ -100,6 +110,27 @@ const COLUMNS = [
             );
 
       return <TableCellWrapper>{fmtDeposits}</TableCellWrapper>;
+    },
+  }),
+  COLUMN_HELPER.accessor('totalDelegated', {
+    sortingFn: sortByBnToDecimal(
+      (row) => row.totalDelegated,
+      (row) => row.decimals,
+    ),
+    header: () => <HeaderCell title="Delegated" />,
+    cell: (props) => {
+      const value = props.getValue();
+
+      const fmtDelegated =
+        value === undefined
+          ? 0
+          : formatDisplayAmount(
+              value,
+              props.row.original.decimals,
+              AmountFormatStyle.SHORT,
+            );
+
+      return <TableCellWrapper>{fmtDelegated}</TableCellWrapper>;
     },
   }),
   COLUMN_HELPER.accessor('tvl', {
@@ -153,9 +184,11 @@ const COLUMNS = [
             )}
 
             <Typography variant="body1" className="dark:text-mono-0">
-              {fmtTvl === null
-                ? `${fmtDepositCap}`
-                : `${fmtTvl}/${fmtDepositCap}`}
+              {props.row.original.isNativeToken
+                ? fmtTvl
+                : fmtTvl === null
+                  ? `${fmtDepositCap}`
+                  : `${fmtTvl}/${fmtDepositCap}`}
             </Typography>
           </div>
         </TableCellWrapper>
@@ -234,8 +267,8 @@ export const VaultsTable: FC<VaultsTableProps> = ({
           columns: COLUMNS,
           initialState: {
             sorting: [
-              { id: 'totalDeposits', desc: true },
               { id: 'id', desc: false },
+              { id: 'totalDeposits', desc: true },
             ],
           },
           getCoreRowModel: getCoreRowModel(),

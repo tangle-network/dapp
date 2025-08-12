@@ -50,7 +50,7 @@ const getVariantTdClass = (variant: TableVariant): string => {
 const getVariantTrClass = (variant: TableVariant): string => {
   switch (variant) {
     case TableVariant.GLASS_OUTER:
-      return 'border-b border-mono-0 dark:border-mono-160 cursor-pointer even:bg-mono-20 even:dark:bg-mono-160 odd:bg-mono-0 odd:dark:bg-mono-180';
+      return 'border-b border-mono-40 dark:border-mono-160 cursor-pointer bg-mono-0 dark:bg-mono-180';
     case TableVariant.GLASS_INNER:
     case TableVariant.DEFAULT:
     case TableVariant.EMBEDDED_IN_MODAL:
