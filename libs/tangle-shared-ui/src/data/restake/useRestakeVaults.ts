@@ -237,7 +237,7 @@ const createTntVault = ({
   };
 
   return {
-    id: 9999,
+    id: 0,
     name: 'Tangle Network Token',
     representAssetSymbol: symbol,
     decimals: decimals,
