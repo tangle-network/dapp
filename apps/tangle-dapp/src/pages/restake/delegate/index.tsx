@@ -35,6 +35,7 @@ import StyleContainer from '../../../components/restaking/StyleContainer';
 import useNativeRestakeAssetBalance from '../../../data/restake/useNativeRestakeAssetBalance';
 import useNativeRestakeTx from '../../../data/restake/useNativeRestakeTx';
 import useRestakeApi from '../../../data/restake/useRestakeApi';
+import useRestakeDelegateTx from '../../../data/restake/useRestakeDelegateTx';
 import useQueryState from '../../../hooks/useQueryState';
 import { QueryParamKey } from '../../../types';
 import type { DelegationFormFields } from '../../../types/restake';
@@ -168,6 +169,8 @@ const RestakeDelegateForm: FC<Props> = ({ assets }) => {
   const nativeRestakeAssetBalance = useNativeRestakeAssetBalance();
   const { status: nativeRestakeTxStatus, execute: executeNativeRestake } =
     useNativeRestakeTx();
+  const { status: delegateTxStatus, execute: executeDelegateTx } =
+    useRestakeDelegateTx();
 
   const [selectedAssetItem, setSelectedAssetItem] =
     useState<RestakeAssetTableItem | null>(null);
@@ -285,7 +288,9 @@ const RestakeDelegateForm: FC<Props> = ({ assets }) => {
     !isSubmitting &&
     selectedAsset !== null &&
     executeNativeRestake !== null &&
-    nativeRestakeTxStatus !== TxStatus.PROCESSING;
+    executeDelegateTx !== null &&
+    nativeRestakeTxStatus !== TxStatus.PROCESSING &&
+    delegateTxStatus !== TxStatus.PROCESSING;
 
   const onSubmit = useCallback<SubmitHandler<DelegationFormFields>>(
     async ({ amount, assetId, operatorAccountId }) => {
@@ -310,14 +315,15 @@ const RestakeDelegateForm: FC<Props> = ({ assets }) => {
           ),
         });
       } else {
-        if (!restakeApi) return;
-        await restakeApi.delegate(
+        await executeDelegateTx({
           operatorAccountId,
           assetId,
-          amountBn,
-          blueprintSelection?.map((id) => new BN(id.toString())),
+          amount: amountBn,
+          blueprintSelection: blueprintSelection?.map(
+            (id) => new BN(id.toString()),
+          ),
           isNominatedAsset,
-        );
+        });
       }
 
       setValue('operatorAccountId', '', { shouldValidate: false });
@@ -328,8 +334,8 @@ const RestakeDelegateForm: FC<Props> = ({ assets }) => {
     [
       blueprintSelection,
       executeNativeRestake,
+      executeDelegateTx,
       isReady,
-      restakeApi,
       selectedAsset,
       selectedAssetItem,
       setValue,
@@ -393,7 +399,9 @@ const RestakeDelegateForm: FC<Props> = ({ assets }) => {
                 openChainModal={openChainModal}
                 watch={watch}
                 isSubmitting={
-                  isSubmitting || nativeRestakeTxStatus === TxStatus.PROCESSING
+                  isSubmitting ||
+                  nativeRestakeTxStatus === TxStatus.PROCESSING ||
+                  delegateTxStatus === TxStatus.PROCESSING
                 }
               />
             </div>

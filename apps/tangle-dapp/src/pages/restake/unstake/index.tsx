@@ -41,6 +41,7 @@ import SupportedChainModal from '../SupportedChainModal';
 import useSwitchChain from '../useSwitchChain';
 import Details from './Details';
 import useNativeRestakeUnstakeTx from '../../../data/restake/useNativeRestakeUnstakeTx';
+import useRestakeUndelegateTx from '../../../data/restake/useRestakeUndelegateTx';
 import { NATIVE_ASSET_ID } from '@tangle-network/tangle-shared-ui/constants/restaking';
 import { TxStatus } from '@tangle-network/tangle-shared-ui/hooks/useSubstrateTx';
 import { RestakeAssetId } from '@tangle-network/tangle-shared-ui/types';
@@ -267,14 +268,20 @@ const RestakeUnstakeForm: FC<RestakeUnstakeFormProps> = ({ assets }) => {
   const { execute: executeNativeUnstakeTx, status: nativeUnstakeTxStatus } =
     useNativeRestakeUnstakeTx();
 
+  const { execute: executeUndelegateTx, status: undelegateTxStatus } =
+    useRestakeUndelegateTx();
+
   const isTransacting =
-    isSubmitting || nativeUnstakeTxStatus === TxStatus.PROCESSING;
+    isSubmitting ||
+    nativeUnstakeTxStatus === TxStatus.PROCESSING ||
+    undelegateTxStatus === TxStatus.PROCESSING;
 
   const isReady =
     restakeApi !== null &&
     !isTransacting &&
     assets !== null &&
-    executeNativeUnstakeTx !== null;
+    executeNativeUnstakeTx !== null &&
+    executeUndelegateTx !== null;
 
   const resetForm = useCallback(() => {
     setValue('amount', '', { shouldValidate: false });
@@ -308,20 +315,20 @@ const RestakeUnstakeForm: FC<RestakeUnstakeFormProps> = ({ assets }) => {
             operatorAddress: operatorAccountId,
           });
         } else {
-          if (!restakeApi) return;
-          transactionPromise = restakeApi.undelegate(
+          transactionPromise = executeUndelegateTx({
             operatorAccountId,
             assetId,
-            amountBn,
-          );
+            amount: amountBn,
+            isNominatedAsset: false,
+          });
         }
       } else {
-        if (!restakeApi) return;
-        transactionPromise = restakeApi.undelegate(
+        transactionPromise = executeUndelegateTx({
           operatorAccountId,
           assetId,
-          amountBn,
-        );
+          amount: amountBn,
+          isNominatedAsset: false,
+        });
       }
 
       try {
@@ -334,8 +341,8 @@ const RestakeUnstakeForm: FC<RestakeUnstakeFormProps> = ({ assets }) => {
     [
       assets,
       executeNativeUnstakeTx,
+      executeUndelegateTx,
       isReady,
-      restakeApi,
       resetForm,
       isSelectedNomination,
     ],

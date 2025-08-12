@@ -26,6 +26,7 @@ import { SUPPORTED_RESTAKE_DEPOSIT_TYPED_CHAIN_IDS } from '../../../constants/re
 import WithdrawModal from '../../../containers/restaking/WithdrawModal';
 import WithdrawRequestTable from '../../../containers/restaking/WithdrawRequestTable';
 import useRestakeApi from '../../../data/restake/useRestakeApi';
+import useRestakeWithdrawTx from '../../../data/restake/useRestakeWithdrawTx';
 import useActiveTypedChainId from '../../../hooks/useActiveTypedChainId';
 import type { WithdrawFormFields } from '../../../types/restake';
 import decimalsToStep from '../../../utils/decimalsToStep';
@@ -45,6 +46,7 @@ import {
 import { twMerge } from 'tailwind-merge';
 import calculateRestakeAvailableBalance from '../../../utils/restaking/calculateRestakeAvailableBalance';
 import { RestakeAssetId } from '@tangle-network/tangle-shared-ui/types';
+import { TxStatus } from '@tangle-network/tangle-shared-ui/hooks/useSubstrateTx';
 
 type Props = {
   assets: Map<RestakeAssetId, RestakeAsset> | null;
@@ -171,8 +173,17 @@ const RestakeWithdrawForm: FC<Props> = ({ assets }) => {
 
   const restakeApi = useRestakeApi();
 
+  const { execute: executeWithdrawTx, status: withdrawTxStatus } =
+    useRestakeWithdrawTx();
+
+  const isTransacting =
+    isSubmitting || withdrawTxStatus === TxStatus.PROCESSING;
+
   const isReady =
-    restakeApi !== null && !isSubmitting && selectedAsset !== null;
+    restakeApi !== null &&
+    !isTransacting &&
+    selectedAsset !== null &&
+    executeWithdrawTx !== null;
 
   const onSubmit = useCallback<SubmitHandler<WithdrawFormFields>>(
     async ({ amount, assetId }) => {
@@ -186,13 +197,20 @@ const RestakeWithdrawForm: FC<Props> = ({ assets }) => {
         return;
       }
 
-      if (!restakeApi) return;
-      await restakeApi.withdraw(assetId, amountBn);
+      await executeWithdrawTx({
+        assetId,
+        amount: amountBn,
+      });
 
       setFormValue('amount', '', { shouldValidate: false });
       setFormValue('assetId', '0x0', { shouldValidate: false });
     },
-    [isReady, restakeApi, selectedAsset?.metadata.decimals, setFormValue],
+    [
+      isReady,
+      executeWithdrawTx,
+      selectedAsset?.metadata.decimals,
+      setFormValue,
+    ],
   );
 
   return (
@@ -292,7 +310,7 @@ const RestakeWithdrawForm: FC<Props> = ({ assets }) => {
                     isDisabled={!isValid || isDefined(displayError) || !isReady}
                     type="submit"
                     isFullWidth
-                    isLoading={isSubmitting || isLoading}
+                    isLoading={isTransacting || isLoading}
                     loadingText={loadingText}
                   >
                     {displayError ?? 'Schedule Withdraw'}

@@ -1,36 +1,30 @@
 import { BN, BN_ZERO } from '@polkadot/util';
+import assert from 'assert';
 import { PresetTypedChainId } from '@tangle-network/dapp-types';
 import isDefined from '@tangle-network/dapp-types/utils/isDefined';
 import ListModal from '@tangle-network/tangle-shared-ui/components/ListModal';
 import { RestakeAsset } from '@tangle-network/tangle-shared-ui/types/restake';
-import { Card, formatBn, isEvmAddress } from '@tangle-network/ui-components';
+import { RestakeAssetId } from '@tangle-network/tangle-shared-ui/types';
+import { Card } from '@tangle-network/ui-components';
 import { useModal } from '@tangle-network/ui-components/hooks/useModal';
-import assert from 'assert';
-import {
-  type ComponentProps,
-  FC,
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-} from 'react';
-import { type SubmitHandler, useForm } from 'react-hook-form';
+import { isEvmAddress } from '@tangle-network/ui-components';
+import { FC, useCallback, useMemo, useEffect, useRef } from 'react';
+import { SubmitHandler, useForm } from 'react-hook-form';
 import AssetListItem from '../../../components/Lists/AssetListItem';
 import StyleContainer from '../../../components/restaking/StyleContainer';
-import { SUPPORTED_RESTAKE_DEPOSIT_TYPED_CHAIN_IDS } from '../../../constants/restake';
-import useRestakeApi from '../../../data/restake/useRestakeApi';
+import useRestakeDepositTx from '../../../data/restake/useRestakeDepositTx';
 import useActiveTypedChainId from '../../../hooks/useActiveTypedChainId';
-import useQueryState from '../../../hooks/useQueryState';
-import { QueryParamKey } from '../../../types';
 import { DepositFormFields } from '../../../types/restake';
 import parseChainUnits from '../../../utils/parseChainUnits';
+
 import Form from '../Form';
 import RestakeActionTabs from '../RestakeActionTabs';
 import ActionButton from './ActionButton';
-import Details from './Details';
 import SourceChainInput from './SourceChainInput';
-import { RestakeAssetId } from '@tangle-network/tangle-shared-ui/types';
+import Details from './Details';
 import filterBy from '@tangle-network/tangle-shared-ui/utils/filterBy';
+import { TxStatus } from '@tangle-network/tangle-shared-ui/hooks/useSubstrateTx';
+import { SUPPORTED_RESTAKE_DEPOSIT_TYPED_CHAIN_IDS } from '../../../constants/restake';
 
 const getDefaultTypedChainId = (
   activeTypedChainId: number | null,
@@ -41,7 +35,7 @@ const getDefaultTypedChainId = (
     : SUPPORTED_RESTAKE_DEPOSIT_TYPED_CHAIN_IDS[0];
 };
 
-type Props = ComponentProps<'form'> & {
+type Props = {
   assets: Map<RestakeAssetId, RestakeAsset> | null;
   isLoadingAssets: boolean;
   refetchErc20Balances: () => void;
@@ -51,10 +45,11 @@ const DepositForm: FC<Props> = ({
   assets,
   isLoadingAssets,
   refetchErc20Balances,
-  ...props
 }) => {
-  const formRef = useRef<HTMLFormElement>(null);
   const activeTypedChainId = useActiveTypedChainId();
+  const { status: depositTxStatus, execute: executeDepositTx } =
+    useRestakeDepositTx();
+  const formRef = useRef<HTMLFormElement>(null);
 
   const {
     register,
@@ -62,19 +57,13 @@ const DepositForm: FC<Props> = ({
     resetField,
     handleSubmit,
     watch,
-    formState: { errors, isValid, isSubmitting },
+    formState: { errors, isSubmitting, isValid },
   } = useForm<DepositFormFields>({
     mode: 'onBlur',
     defaultValues: {
       sourceTypedChainId: getDefaultTypedChainId(activeTypedChainId),
     },
   });
-
-  const [vaultIdParam, setVaultIdParam] = useQueryState(
-    QueryParamKey.RESTAKE_VAULT,
-  );
-
-  const restakeApi = useRestakeApi();
 
   const setValue = useCallback(
     (...params: Parameters<typeof setFormValue>) => {
@@ -103,43 +92,22 @@ const DepositForm: FC<Props> = ({
   }, [activeTypedChainId, resetField]);
 
   useEffect(() => {
-    if (!vaultIdParam || assets === null || isLoadingAssets) {
+    if (assets === null || isLoadingAssets) {
       return;
     }
 
-    // Find the first asset in the vault that has a balance.
     const defaultAsset = Array.from(assets.values()).find(
-      ({ metadata, balance }) => {
-        if (metadata.vaultId?.toString() !== vaultIdParam) {
-          return false;
-        }
-
-        return balance !== undefined && !balance.isZero();
-      },
+      ({ balance }) => balance !== undefined && !balance.isZero(),
     );
 
     if (defaultAsset === undefined) {
-      setVaultIdParam(null);
-
       return;
     }
 
     assert(defaultAsset.balance !== undefined);
 
-    // Select the first asset in the vault by default.
     setValue('depositAssetId', defaultAsset.id);
-
-    setValue(
-      'amount',
-      formatBn(defaultAsset.balance, defaultAsset.metadata.decimals, {
-        // Show the entire fraction part.
-        fractionMaxLength: undefined,
-      }),
-    );
-
-    // Remove the param to prevent reuse after initial load.
-    setVaultIdParam(null);
-  }, [assets, setValue, setVaultIdParam, vaultIdParam, isLoadingAssets]);
+  }, [assets, setValue, isLoadingAssets]);
 
   const {
     status: tokenModalOpen,
@@ -164,6 +132,20 @@ const DepositForm: FC<Props> = ({
     });
   }, [assets]);
 
+  const assetId = watch('depositAssetId');
+
+  const asset = useMemo(() => {
+    if (assets === null || assetId === null) {
+      return null;
+    }
+
+    const candidates = Array.from(assets.values()).filter(
+      (restakeAsset) => restakeAsset.id === assetId,
+    );
+
+    return candidates.length === 0 ? null : candidates[0];
+  }, [assetId, assets]);
+
   const handleAssetSelection = useCallback(
     (asset: RestakeAsset) => {
       setValue('depositAssetId', asset.id);
@@ -172,12 +154,11 @@ const DepositForm: FC<Props> = ({
     [closeTokenModal, setValue],
   );
 
-  const depositAssetId = watch('depositAssetId');
-  const asset = useMemo(() => {
-    return assets?.get(depositAssetId) ?? null;
-  }, [assets, depositAssetId]);
-
-  const isReady = restakeApi !== null && asset !== null && !isSubmitting;
+  const isReady =
+    executeDepositTx !== null &&
+    asset !== null &&
+    !isSubmitting &&
+    depositTxStatus !== TxStatus.PROCESSING;
 
   const onSubmit = useCallback<SubmitHandler<DepositFormFields>>(
     async ({ amount }) => {
@@ -191,13 +172,16 @@ const DepositForm: FC<Props> = ({
         return;
       }
 
-      if (!restakeApi) return;
-      await restakeApi.deposit(asset.id, amountBn);
+      if (!executeDepositTx) return;
+
+      await executeDepositTx({
+        assetId: asset.id,
+        amount: amountBn,
+      });
+
       setValue('amount', '', { shouldValidate: false });
       setValue('depositAssetId', '', { shouldValidate: false });
 
-      // Reload balances after depositing an EVM ERC-20 asset,
-      // so that the deposit amount is reflected in the balance.
       if (isEvmAddress(asset.id)) {
         refetchErc20Balances();
       }
@@ -207,7 +191,7 @@ const DepositForm: FC<Props> = ({
       asset?.id,
       isReady,
       refetchErc20Balances,
-      restakeApi,
+      executeDepositTx,
       setValue,
     ],
   );
@@ -217,7 +201,7 @@ const DepositForm: FC<Props> = ({
       <RestakeActionTabs />
 
       <Card withShadow tightPadding>
-        <Form {...props} ref={formRef} onSubmit={handleSubmit(onSubmit)}>
+        <Form ref={formRef} onSubmit={handleSubmit(onSubmit)}>
           <div className="flex flex-col h-full space-y-4 grow">
             <div className="space-y-2">
               <SourceChainInput
@@ -237,49 +221,49 @@ const DepositForm: FC<Props> = ({
                 errors={errors}
                 formRef={formRef}
                 isSubmitting={isSubmitting}
-                isValid={isValid && isReady}
+                isTransactionLoading={depositTxStatus === TxStatus.PROCESSING}
+                isValid={isValid}
                 watch={watch}
               />
             </div>
           </div>
-
-          <ListModal
-            title="Select Asset"
-            isOpen={tokenModalOpen}
-            setIsOpen={updateTokenModal}
-            onSelect={handleAssetSelection}
-            filterItem={(asset, query) =>
-              filterBy(query, [
-                asset.id,
-                asset.metadata.name,
-                asset.metadata.symbol,
-              ])
-            }
-            searchInputId="restake-deposit-assets-search"
-            searchPlaceholder="Search assets..."
-            titleWhenEmpty="No Assets Found"
-            descriptionWhenEmpty="It seems that there are no available assets on this account in this network yet. Please try again later."
-            items={allAssets}
-            renderItem={(asset) => {
-              const balance = asset.balance ?? BN_ZERO;
-
-              const displayName =
-                asset.id === '0' ? 'Tangle Network Token' : asset.metadata.name;
-
-              return (
-                <AssetListItem
-                  assetId={asset.id}
-                  name={displayName}
-                  symbol={asset.metadata.symbol}
-                  balance={balance}
-                  decimals={asset.metadata.decimals}
-                  rightBottomText="Balance"
-                />
-              );
-            }}
-          />
         </Form>
       </Card>
+
+      <ListModal
+        title="Select Asset"
+        isOpen={tokenModalOpen}
+        setIsOpen={updateTokenModal}
+        onSelect={handleAssetSelection}
+        filterItem={(asset, query) =>
+          filterBy(query, [
+            asset.id,
+            asset.metadata.name,
+            asset.metadata.symbol,
+          ])
+        }
+        searchInputId="restake-deposit-assets-search"
+        searchPlaceholder="Search assets..."
+        titleWhenEmpty="No Assets Found"
+        descriptionWhenEmpty="It seems that there are no available assets on this account in this network yet. Please try again later."
+        items={allAssets}
+        renderItem={(asset) => {
+          const balance = asset.balance ?? BN_ZERO;
+          const displayName =
+            asset.id === '0' ? 'Tangle Network Token' : asset.metadata.name;
+
+          return (
+            <AssetListItem
+              assetId={asset.id}
+              name={displayName}
+              symbol={asset.metadata.symbol}
+              balance={balance}
+              decimals={asset.metadata.decimals}
+              rightBottomText="Balance"
+            />
+          );
+        }}
+      />
     </StyleContainer>
   );
 };

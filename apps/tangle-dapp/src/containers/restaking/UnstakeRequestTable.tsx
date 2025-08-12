@@ -127,11 +127,13 @@ const COLUMNS = [
 type Props = {
   unstakeRequests: DelegatorUnstakeRequest[];
   operatorIdentities: Map<string, IdentityType | null>;
+  onExecuted?: () => void;
 };
 
 const UnstakeRequestTable: FC<Props> = ({
   unstakeRequests,
   operatorIdentities,
+  onExecuted,
 }) => {
   const { assets } = useRestakeAssets();
   const { delegationBondLessDelay } = useRestakeConsts();
@@ -236,6 +238,11 @@ const UnstakeRequestTable: FC<Props> = ({
       <UnstakeRequestTableActions
         allRequests={requests}
         selectedRequests={selectedRequests}
+        onExecuted={() => {
+          if (onExecuted) {
+            onExecuted();
+          }
+        }}
       />
     </>
   );
