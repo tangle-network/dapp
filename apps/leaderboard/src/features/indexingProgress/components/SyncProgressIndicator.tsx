@@ -1,5 +1,6 @@
 import { CrossCircledIcon } from '@radix-ui/react-icons';
 import { StatusIndicator } from '@tangle-network/icons';
+import { NetworkType } from '@tangle-network/tangle-shared-ui/graphql/graphql';
 import {
   Chip,
   EMPTY_VALUE_PLACEHOLDER,
@@ -8,8 +9,12 @@ import {
 import { useMemo } from 'react';
 import { useIndexingProgress } from '../queries';
 
-export const SyncProgressIndicator = () => {
-  const { data, error, isPending } = useIndexingProgress();
+export const SyncProgressIndicator = ({
+  network,
+}: {
+  network: NetworkType;
+}) => {
+  const { data, error, isPending } = useIndexingProgress(network);
 
   const progress = useMemo(() => {
     if (!data?.lastProcessedHeight || !data?.targetHeight) {
