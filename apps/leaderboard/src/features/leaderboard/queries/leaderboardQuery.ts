@@ -10,7 +10,6 @@ import {
 import { executeGraphQL } from '@tangle-network/tangle-shared-ui/utils/executeGraphQL';
 import { useQuery } from '@tanstack/react-query';
 import { LEADERBOARD_QUERY_KEY } from '../../../constants/query';
-import { getGraphQLEndpointFromNetwork } from '../utils/getGraphQLEndpointFromNetwork';
 
 const TEAM_ACCOUNTS = [
   '5CJFrNyjRahyb7kcn8HH3LPJRaZf2aq6jguk5kx5V5Aa6rXh',
@@ -114,8 +113,7 @@ const fetcher = async (
   blockNumberSevenDaysAgo: number,
   accountIdQuery?: string,
 ) => {
-  const endpoint = getGraphQLEndpointFromNetwork(network);
-  const result = await executeGraphQL(endpoint, LeaderboardQueryDocument, {
+  const result = await executeGraphQL(network, LeaderboardQueryDocument, {
     first,
     offset,
     blockNumberSevenDaysAgo,

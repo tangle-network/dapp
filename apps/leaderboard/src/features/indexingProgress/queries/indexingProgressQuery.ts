@@ -4,7 +4,6 @@ import { NetworkType } from '@tangle-network/tangle-shared-ui/graphql/graphql';
 import { executeGraphQL } from '@tangle-network/tangle-shared-ui/utils/executeGraphQL';
 import { useQuery } from '@tanstack/react-query';
 import { INDEXING_PROGRESS_QUERY_KEY } from '../../../constants/query';
-import { getGraphQLEndpointFromNetwork } from '../../leaderboard/utils/getGraphQLEndpointFromNetwork';
 
 const IndexingProgressQueryDocument = graphql(/* GraphQL */ `
   query IndexingProgress {
@@ -16,8 +15,7 @@ const IndexingProgressQueryDocument = graphql(/* GraphQL */ `
 `);
 
 const fetcher = async (network: NetworkType) => {
-  const endpoint = getGraphQLEndpointFromNetwork(network);
-  const result = await executeGraphQL(endpoint, IndexingProgressQueryDocument);
+  const result = await executeGraphQL(network, IndexingProgressQueryDocument);
   return result.data._metadata;
 };
 
