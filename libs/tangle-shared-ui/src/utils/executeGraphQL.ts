@@ -1,14 +1,11 @@
-import { DEFAULT_GRAPHQL_ENDPOINT } from '@tangle-network/dapp-config/constants/graphql';
 import type { TypedDocumentString } from '../graphql/graphql';
 
-const ENDPOINT =
-  import.meta.env.VITE_GRAPHQL_ENDPOINT ?? DEFAULT_GRAPHQL_ENDPOINT;
-
 export async function executeGraphQL<TResult, TVariables>(
+  endpoint: string,
   query: TypedDocumentString<TResult, TVariables>,
   ...[variables]: TVariables extends Record<string, never> ? [] : [TVariables]
 ) {
-  const response = await fetch(ENDPOINT, {
+  const response = await fetch(endpoint, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
