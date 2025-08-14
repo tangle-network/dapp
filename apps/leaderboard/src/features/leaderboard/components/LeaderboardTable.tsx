@@ -8,6 +8,9 @@ import {
   isSubstrateAddress,
   KeyValueWithButton,
   Table,
+  TabsListWithAnimation,
+  TabsRoot,
+  TabsTriggerWithAnimation,
   Tooltip,
   TooltipBody,
   TooltipTrigger,
@@ -203,8 +206,7 @@ export const LeaderboardTable = () => {
     pageSize: 15,
   });
 
-  // TODO: Add network tabs when we support both mainnet and testnet
-  const [networkTab] = useState<NetworkType>('TESTNET' as NetworkType);
+  const [networkTab, setNetworkTab] = useState<NetworkType>('MAINNET');
 
   const {
     data: latestBlock,
@@ -243,6 +245,7 @@ export const LeaderboardTable = () => {
     isPending,
     isFetching,
   } = useLeaderboard(
+    networkTab,
     pagination.pageSize,
     pagination.pageIndex * pagination.pageSize,
     blockNumberSevenDaysAgo,
@@ -304,52 +307,36 @@ export const LeaderboardTable = () => {
   return (
     <Card className="space-y-6 !bg-transparent !border-transparent p-0">
       <div className="flex items-center justify-between flex-wrap sm:flex-nowrap gap-4">
-        {/* <TabsRoot
-              className="max-w-xs flex-auto"
-              value={networkTab}
-              onValueChange={(tab) =>
-                setNetworkTab(tab as 'all' | 'mainnet' | 'testnet')
-              }
+        <TabsRoot
+          className="max-w-xs flex-auto"
+          value={networkTab}
+          onValueChange={(tab) => setNetworkTab(tab as NetworkType)}
+        >
+          <TabsListWithAnimation>
+            <TabsTriggerWithAnimation
+              className="min-h-8"
+              value="MAINNET"
+              isActive={networkTab === 'MAINNET'}
+              hideSeparator
+              labelVariant="body2"
+              labelClassName="py-1 px-0"
             >
-              <TabsListWithAnimation>
-                <TabsTriggerWithAnimation
-                  className="min-h-8"
-                  value="all"
-                  isActive={networkTab === 'all'}
-                  hideSeparator
-                  labelVariant="body2"
-                  labelClassName="py-1 px-0"
-                >
-                  <span className="block xs:hidden !text-inherit">All</span>
+              Mainnet
+            </TabsTriggerWithAnimation>
+            <TabsTriggerWithAnimation
+              className="min-h-8"
+              value="TESTNET"
+              isActive={networkTab === 'TESTNET'}
+              hideSeparator
+              labelVariant="body2"
+              labelClassName="py-1 px-0"
+            >
+              Testnet
+            </TabsTriggerWithAnimation>
+          </TabsListWithAnimation>
+        </TabsRoot>
 
-                  <span className="hidden xs:block !text-inherit">
-                    All Networks
-                  </span>
-                </TabsTriggerWithAnimation>
-                <TabsTriggerWithAnimation
-                  className="min-h-8"
-                  value="mainnet"
-                  isActive={networkTab === 'mainnet'}
-                  hideSeparator
-                  labelVariant="body2"
-                  labelClassName="py-1 px-0"
-                >
-                  Mainnet
-                </TabsTriggerWithAnimation>
-                <TabsTriggerWithAnimation
-                  className="min-h-8"
-                  value="testnet"
-                  isActive={networkTab === 'testnet'}
-                  hideSeparator
-                  labelVariant="body2"
-                  labelClassName="py-1 px-0"
-                >
-                  Testnet
-                </TabsTriggerWithAnimation>
-              </TabsListWithAnimation>
-            </TabsRoot> */}
-
-        <SyncProgressIndicator />
+        <SyncProgressIndicator network={networkTab} />
 
         <div className="flex items-center justify-end gap-2 grow">
           <Input

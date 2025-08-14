@@ -1,6 +1,8 @@
-import { DEFAULT_GRAPHQL_ENDPOINT } from './libs/dapp-config/src/constants/graphql';
 import type { CodegenConfig } from '@graphql-codegen/cli';
 import 'dotenv/config';
+
+export const DEFAULT_GRAPHQL_ENDPOINT =
+  'https://mainnet-gql.tangle.tools/graphql';
 
 const VITE_GRAPHQL_ENDPOINT =
   process.env.VITE_GRAPHQL_ENDPOINT ?? DEFAULT_GRAPHQL_ENDPOINT;

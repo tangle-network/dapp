@@ -4,6 +4,9 @@ import { executeGraphQL } from '@tangle-network/tangle-shared-ui/utils/executeGr
 import { useQuery } from '@tanstack/react-query';
 import { useMemo } from 'react';
 import { ReactQueryKey } from '../../../constants/reactQuery';
+import useNetworkStore from '@tangle-network/tangle-shared-ui/context/useNetworkStore';
+import { NetworkId } from '@tangle-network/ui-components/constants/networks';
+import { NetworkType } from '@tangle-network/tangle-shared-ui/graphql/graphql';
 
 const GetAccountPointsQueryDocument = graphql(/* GraphQL */ `
   query GetAccountPoints($account: String!) {
@@ -14,12 +17,12 @@ const GetAccountPointsQueryDocument = graphql(/* GraphQL */ `
   }
 `);
 
-const fetcher = async (activeAccount: string | null) => {
+const fetcher = async (network: NetworkType, activeAccount: string | null) => {
   if (activeAccount === null) {
     return null;
   }
 
-  const result = await executeGraphQL(GetAccountPointsQueryDocument, {
+  const result = await executeGraphQL(network, GetAccountPointsQueryDocument, {
     account: activeAccount,
   });
 
@@ -27,11 +30,16 @@ const fetcher = async (activeAccount: string | null) => {
 };
 
 export default function useActiveAccountPoints() {
+  const network = useNetworkStore((state) => state.network);
   const activeAccount = useSubstrateAddress(false);
 
   const { data: accountPointsResponse, ...rest } = useQuery({
     queryKey: [ReactQueryKey.GetAccountPoints, activeAccount],
-    queryFn: () => fetcher(activeAccount),
+    queryFn: () =>
+      fetcher(
+        network.id === NetworkId.TANGLE_MAINNET ? 'MAINNET' : 'TESTNET',
+        activeAccount,
+      ),
     retry: 10,
     refetchInterval: 6000,
   });

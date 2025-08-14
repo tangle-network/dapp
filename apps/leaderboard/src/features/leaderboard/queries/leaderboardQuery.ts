@@ -3,7 +3,10 @@ import {
   SafeNestedType,
 } from '@tangle-network/dapp-types/utils/types';
 import { graphql } from '@tangle-network/tangle-shared-ui/graphql';
-import { LeaderboardTableDocumentQuery } from '@tangle-network/tangle-shared-ui/graphql/graphql';
+import {
+  LeaderboardTableDocumentQuery,
+  NetworkType,
+} from '@tangle-network/tangle-shared-ui/graphql/graphql';
 import { executeGraphQL } from '@tangle-network/tangle-shared-ui/utils/executeGraphQL';
 import { useQuery } from '@tanstack/react-query';
 import { LEADERBOARD_QUERY_KEY } from '../../../constants/query';
@@ -104,12 +107,13 @@ const LeaderboardQueryDocument = graphql(/* GraphQL */ `
 `);
 
 const fetcher = async (
+  network: NetworkType,
   first: number,
   offset: number,
   blockNumberSevenDaysAgo: number,
   accountIdQuery?: string,
 ) => {
-  const result = await executeGraphQL(LeaderboardQueryDocument, {
+  const result = await executeGraphQL(network, LeaderboardQueryDocument, {
     first,
     offset,
     blockNumberSevenDaysAgo,
@@ -120,6 +124,7 @@ const fetcher = async (
 };
 
 export function useLeaderboard(
+  network: NetworkType,
   first: number,
   offset: number,
   blockNumberSevenDaysAgo: number,
@@ -128,13 +133,14 @@ export function useLeaderboard(
   return useQuery({
     queryKey: [
       LEADERBOARD_QUERY_KEY,
+      network,
       first,
       offset,
       blockNumberSevenDaysAgo,
       accountIdQuery,
     ],
     queryFn: () =>
-      fetcher(first, offset, blockNumberSevenDaysAgo, accountIdQuery),
+      fetcher(network, first, offset, blockNumberSevenDaysAgo, accountIdQuery),
     enabled: first > 0 && offset >= 0 && blockNumberSevenDaysAgo > 0,
     placeholderData: (prev) => prev,
   });
