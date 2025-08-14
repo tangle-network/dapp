@@ -192,7 +192,7 @@
     "rollup": "^4.40.0",
     "storybook": "^8.6.12",
     "tailwind-merge": "^2.6.0",
-    "tailwind-scrollbar": "^3.1.0",
+    "tailwind-scrollbar": "^4.0.2",
     "tailwindcss": "^3.4.17",
     "tailwindcss-animate": "^1.0.7",
     "tailwindcss-radix": "^3.0.5",
