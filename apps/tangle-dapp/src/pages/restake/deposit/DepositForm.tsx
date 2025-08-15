@@ -59,7 +59,7 @@ const DepositForm: FC<Props> = ({
     watch,
     formState: { errors, isSubmitting, isValid },
   } = useForm<DepositFormFields>({
-    mode: 'onBlur',
+    mode: 'onChange',
     defaultValues: {
       sourceTypedChainId: getDefaultTypedChainId(activeTypedChainId),
     },
