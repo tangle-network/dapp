@@ -22,11 +22,10 @@ import { z } from 'zod';
 
 const RestakeOperatorAction: FC<PropsWithChildren<{ address: string }>> = ({
   children,
-  address,
 }) => {
   return (
     <Link
-      to={`${TangleDAppPagePath.RESTAKE_OPERATOR}/${address}`}
+      to={TangleDAppPagePath.RESTAKE_DELEGATE}
       target="_blank"
     >
       {children}

@@ -1,3 +1,7 @@
+---
+trigger: always_on
+---
+
 # Tangle dApp Monorepo
 
 This project is Tangle dApp - a monorepo containing multiple dApp projects that serve as the frontend for our custom Substrate-based network/node 'Tangle'. Tangle is a cryptocurrency network created using the Substrate framework, which is part of the Polkadot ecosystem. Tangle is a layer 1 for on-demand services where developers can build and monetize decentralized services using Tangle Blueprints. They can also deploy innovative infrastructure in any blockchain ecosystem.

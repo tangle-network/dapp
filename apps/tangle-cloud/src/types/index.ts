@@ -14,8 +14,9 @@ export enum PagePath {
 }
 
 export enum TangleDAppPagePath {
-  RESTAKE_OPERATOR = `${TANGLE_DAPP_URL}restake/operators`,
   RESTAKE_DEPOSIT = `${TANGLE_DAPP_URL}restake?vault={{vault}}`,
+  RESTAKE_DELEGATE = `${TANGLE_DAPP_URL}restake/delegate`,
+  RESTAKE_OPERATOR = `${TANGLE_DAPP_URL}restake/operators`,
 }
 
 export type ApprovalConfirmationFormFields = {

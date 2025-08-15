@@ -4,8 +4,10 @@ import { Avatar } from '@tangle-network/ui-components/components/Avatar';
 import { Typography } from '@tangle-network/ui-components/typography/Typography';
 import { shortenHex } from '@tangle-network/ui-components/utils/shortenHex';
 import { shortenString } from '@tangle-network/ui-components/utils/shortenString';
+import { toSubstrateAddress } from '@tangle-network/ui-components/utils/toSubstrateAddress';
+import useNetworkStore from '@tangle-network/tangle-shared-ui/context/useNetworkStore';
 import isEqual from 'lodash/isEqual';
-import { type ComponentProps, memo, type ReactNode } from 'react';
+import { type ComponentProps, memo, type ReactNode, useMemo } from 'react';
 import { twMerge } from 'tailwind-merge';
 import { isHex } from 'viem';
 
@@ -26,6 +28,14 @@ const AvatarWithText = ({
   overrideTypographyProps,
   ...props
 }: Props) => {
+  const ss58Prefix = useNetworkStore((store) => store.network.ss58Prefix);
+
+  const tangleFormattedAddress = useMemo(() => {
+    return isEthereumAddress(accountAddress)
+      ? accountAddress
+      : toSubstrateAddress(accountAddress, ss58Prefix);
+  }, [accountAddress, ss58Prefix]);
+
   return (
     <div
       {...props}
@@ -36,7 +46,7 @@ const AvatarWithText = ({
     >
       <Avatar
         theme={isEthereumAddress(accountAddress) ? 'ethereum' : 'substrate'}
-        value={accountAddress}
+        value={tangleFormattedAddress}
         {...overrideAvatarProps}
         className={twMerge(
           `${getFlexBasic('lg')} shrink-0`,
@@ -55,9 +65,9 @@ const AvatarWithText = ({
           )}
         >
           {identityName ||
-            (isHex(accountAddress)
-              ? shortenHex(accountAddress)
-              : shortenString(accountAddress))}
+            (isHex(tangleFormattedAddress)
+              ? shortenHex(tangleFormattedAddress)
+              : shortenString(tangleFormattedAddress))}
         </Typography>
 
         {description}

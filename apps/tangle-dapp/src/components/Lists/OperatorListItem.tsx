@@ -3,8 +3,10 @@ import {
   Avatar,
   KeyValueWithButton,
   shortenString,
+  toSubstrateAddress,
 } from '@tangle-network/ui-components';
-import { FC } from 'react';
+import { FC, useMemo } from 'react';
+import useNetworkStore from '@tangle-network/tangle-shared-ui/context/useNetworkStore';
 import LogoListItem from './LogoListItem';
 
 type Props = {
@@ -20,17 +22,25 @@ const OperatorListItem: FC<Props> = ({
   rightUpperText,
   rightBottomText,
 }) => {
-  const shortAccountAddress = shortenString(accountAddress);
+  const ss58Prefix = useNetworkStore((store) => store.network.ss58Prefix);
+
+  const tangleFormattedAddress = useMemo(() => {
+    return toSubstrateAddress(accountAddress, ss58Prefix);
+  }, [accountAddress, ss58Prefix]);
+
+  const shortAccountAddress = shortenString(tangleFormattedAddress);
   const leftUpperContent = identity ?? shortAccountAddress;
 
   return (
     <LogoListItem
-      logo={<Avatar size="lg" theme="substrate" value={accountAddress} />}
+      logo={
+        <Avatar size="lg" theme="substrate" value={tangleFormattedAddress} />
+      }
       leftUpperContent={leftUpperContent}
       leftBottomContent={
         <KeyValueWithButton
           size="sm"
-          keyValue={accountAddress}
+          keyValue={tangleFormattedAddress}
           valueFontWeight="normal"
           valueVariant="body1"
         />

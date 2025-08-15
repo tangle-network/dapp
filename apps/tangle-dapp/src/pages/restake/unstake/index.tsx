@@ -63,7 +63,7 @@ const RestakeUnstakeForm: FC<RestakeUnstakeFormProps> = ({ assets }) => {
     formState: { errors, isValid, isSubmitting },
     watch,
   } = useForm<UnstakeFormFields>({
-    mode: 'onBlur',
+    mode: 'onChange',
   });
 
   const switchChain = useSwitchChain();
