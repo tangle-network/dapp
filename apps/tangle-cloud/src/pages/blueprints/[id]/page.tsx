@@ -24,10 +24,7 @@ const RestakeOperatorAction: FC<PropsWithChildren<{ address: string }>> = ({
   children,
 }) => {
   return (
-    <Link
-      to={TangleDAppPagePath.RESTAKE_DELEGATE}
-      target="_blank"
-    >
+    <Link to={TangleDAppPagePath.RESTAKE_DELEGATE} target="_blank">
       {children}
     </Link>
   );
