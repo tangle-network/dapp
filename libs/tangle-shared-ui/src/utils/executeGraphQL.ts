@@ -1,14 +1,13 @@
-import { DEFAULT_GRAPHQL_ENDPOINT } from '@tangle-network/dapp-config/constants/graphql';
-import type { TypedDocumentString } from '../graphql/graphql';
-
-const ENDPOINT =
-  import.meta.env.VITE_GRAPHQL_ENDPOINT ?? DEFAULT_GRAPHQL_ENDPOINT;
+import type { NetworkType, TypedDocumentString } from '../graphql/graphql';
 
 export async function executeGraphQL<TResult, TVariables>(
+  network: NetworkType,
   query: TypedDocumentString<TResult, TVariables>,
   ...[variables]: TVariables extends Record<string, never> ? [] : [TVariables]
 ) {
-  const response = await fetch(ENDPOINT, {
+  const endpoint = getGraphQLEndpointFromNetwork(network);
+
+  const response = await fetch(endpoint, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -26,3 +25,14 @@ export async function executeGraphQL<TResult, TVariables>(
 
   return response.json() as Promise<{ data: TResult }>;
 }
+
+const getGraphQLEndpointFromNetwork = (network: NetworkType) => {
+  switch (network) {
+    case 'MAINNET':
+      return 'https://mainnet-gql.tangle.tools/graphql';
+    case 'TESTNET':
+      return 'https://testnet-gql.tangle.tools/graphql';
+    default:
+      throw new Error(`Invalid network: ${network}`);
+  }
+};
