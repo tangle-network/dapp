@@ -1,4 +1,4 @@
-import { ReactNode, useCallback, useEffect, type FC } from 'react';
+import { ReactNode, useCallback, useEffect, useState, type FC } from 'react';
 import RestakeTabs from '../../pages/restake/RestakeTabs';
 import { RestakeAction, RestakeTab } from '../../constants';
 import DepositForm from '../../pages/restake/deposit/DepositForm';
@@ -30,11 +30,20 @@ type Props = {
 
 const RestakeTabContent: FC<Props> = ({ tab }) => {
   const { result: delegatorInfo } = useRestakeDelegatorInfo();
+
+  const [refreshTrigger, setRefreshTrigger] = useState(0);
+
+  const handleOperatorJoined = useCallback(() => {
+    setTimeout(() => {
+      setRefreshTrigger((v) => v + 1);
+    }, 2000);
+  }, []);
+
   const {
     result: operatorMap,
     isLoading: isLoadingOperators,
     error: operatorMapError,
-  } = useRestakeOperatorMap();
+  } = useRestakeOperatorMap(refreshTrigger);
   const { operatorConcentration, operatorTvl } = useRestakeTvl(delegatorInfo);
   const navigate = useNavigate();
 
@@ -84,6 +93,7 @@ const RestakeTabContent: FC<Props> = ({ tab }) => {
             onRestakeClickedPagePath={PagePath.RESTAKE_DELEGATE}
             onRestakeClickedQueryParamKey={QueryParamKey.RESTAKE_OPERATOR}
             isLoading={isLoadingOperators}
+            onOperatorJoined={handleOperatorJoined}
           />
         );
       case RestakeTab.BLUEPRINTS:
