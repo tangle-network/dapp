@@ -76,15 +76,21 @@ const NetworkSelectionButton: FC<NetworkSelectionButtonProps> = ({
     () => {
       if (isConnecting) {
         return 'Connecting';
-      } else if (loading) {
+      }
+
+      if (loading) {
         return 'Loading';
       }
 
       const UNKNOWN_NETWORK = 'Unknown Network';
 
+      if (!activeWallet) {
+        return network?.name ?? UNKNOWN_NETWORK;
+      }
+
       if (disableChainSelection) {
         return activeChain?.name === 'Tangle Mainnet'
-          ? activeChain.name
+          ? (activeChain?.name ?? network?.name ?? UNKNOWN_NETWORK)
           : (activeChain?.displayName ??
               activeChain?.name ??
               network?.name ??
@@ -99,7 +105,7 @@ const NetworkSelectionButton: FC<NetworkSelectionButtonProps> = ({
       );
     },
     // prettier-ignore
-    [isConnecting, loading, disableChainSelection, network?.name, activeChain?.displayName, activeChain?.name],
+    [isConnecting, loading, disableChainSelection, network?.name, activeWallet, activeChain?.displayName, activeChain?.name],
   );
 
   const isWrongEvmNetwork = useMemo(() => {

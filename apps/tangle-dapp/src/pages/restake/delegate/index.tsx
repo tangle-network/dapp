@@ -69,7 +69,7 @@ const RestakeDelegateForm: FC<Props> = ({ assets }) => {
     watch,
     formState: { errors, isValid, isSubmitting },
   } = useForm<DelegationFormFields>({
-    mode: 'onBlur',
+    mode: 'onChange',
   });
 
   const selectedOperatorAddress = watch('operatorAccountId');

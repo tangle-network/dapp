@@ -2,7 +2,7 @@ import { CrossCircledIcon } from '@radix-ui/react-icons';
 import { Spinner } from '@tangle-network/icons';
 import { Search } from '@tangle-network/icons/Search';
 import TableStatus from '@tangle-network/tangle-shared-ui/components/tables/TableStatus';
-import { NetworkType } from '@tangle-network/tangle-shared-ui/graphql/graphql';
+import type { NetworkType } from '@tangle-network/tangle-shared-ui/graphql/graphql';
 import {
   Input,
   isSubstrateAddress,
@@ -206,7 +206,9 @@ export const LeaderboardTable = () => {
     pageSize: 15,
   });
 
-  const [networkTab, setNetworkTab] = useState<NetworkType>('MAINNET');
+  const [networkTab, setNetworkTab] = useState<NetworkType>(
+    'MAINNET' as NetworkType,
+  );
 
   const {
     data: latestBlock,

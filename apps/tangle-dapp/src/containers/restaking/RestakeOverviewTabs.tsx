@@ -37,6 +37,7 @@ type Props = {
   operatorMap: OperatorMap;
   operatorTVL?: OperatorTvlGroup['operatorTvl'];
   action: RestakeAction;
+  onOperatorJoined?: () => void;
 };
 
 const RestakeOverviewTabs: FC<Props> = ({
@@ -44,6 +45,7 @@ const RestakeOverviewTabs: FC<Props> = ({
   operatorMap,
   operatorTVL,
   action,
+  onOperatorJoined,
 }) => {
   const [tab, setTab] = useState(RestakeTab.RESTAKE);
 
@@ -97,6 +99,7 @@ const RestakeOverviewTabs: FC<Props> = ({
           onRestakeClickedPagePath={PagePath.RESTAKE_DELEGATE}
           onRestakeClickedQueryParamKey={QueryParamKey.RESTAKE_OPERATOR}
           isLoading={isLoadingAssets}
+          onOperatorJoined={onOperatorJoined}
         />
       </TabContent>
 

@@ -61,7 +61,7 @@ const RestakeWithdrawForm: FC<Props> = ({ assets }) => {
     reset,
     formState: { errors, isValid, isSubmitting },
   } = useForm<WithdrawFormFields>({
-    mode: 'onBlur',
+    mode: 'onChange',
   });
 
   const switchChain = useSwitchChain();
