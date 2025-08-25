@@ -1,3 +1,13 @@
+## 0.0.4 (2025-08-25)
+
+### 🚀 Features
+
+- add mainnet support to leaderboard with network toggle ([#3052](https://github.com/tangle-network/dapp/pull/3052))
+
+### ❤️ Thank You
+
+- Trung-Tin Pham @AtelyPham
+
 ## 0.0.3 (2025-08-06)
 
 ### 🏡 Chore

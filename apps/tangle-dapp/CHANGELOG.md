@@ -1,3 +1,13 @@
+## 0.1.7 (2025-08-25)
+
+### 🏡 Chore
+
+- Tangle dapp & cloud fixes ([#3053](https://github.com/tangle-network/dapp/pull/3053))
+
+### ❤️ Thank You
+
+- Pavan Soratur @devpavan04
+
 ## 0.1.6 (2025-08-12)
 
 ### 🏡 Chore
