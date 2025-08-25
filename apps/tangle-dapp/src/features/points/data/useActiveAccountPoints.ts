@@ -6,7 +6,7 @@ import { useMemo } from 'react';
 import { ReactQueryKey } from '../../../constants/reactQuery';
 import useNetworkStore from '@tangle-network/tangle-shared-ui/context/useNetworkStore';
 import { NetworkId } from '@tangle-network/ui-components/constants/networks';
-import { NetworkType } from '@tangle-network/tangle-shared-ui/graphql/graphql';
+import type { NetworkType } from '@tangle-network/tangle-shared-ui/graphql/graphql';
 
 const GetAccountPointsQueryDocument = graphql(/* GraphQL */ `
   query GetAccountPoints($account: String!) {
@@ -37,9 +37,9 @@ export default function useActiveAccountPoints() {
     queryKey: [ReactQueryKey.GetAccountPoints, activeAccount],
     queryFn: () =>
       fetcher(
-        network.id === NetworkId.TANGLE_MAINNET
-          ? NetworkType.Mainnet
-          : NetworkType.Testnet,
+        (network.id === NetworkId.TANGLE_MAINNET
+          ? 'MAINNET'
+          : 'TESTNET') as NetworkType,
         activeAccount,
       ),
     retry: 10,
