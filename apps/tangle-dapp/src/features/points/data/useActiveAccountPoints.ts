@@ -37,7 +37,9 @@ export default function useActiveAccountPoints() {
     queryKey: [ReactQueryKey.GetAccountPoints, activeAccount],
     queryFn: () =>
       fetcher(
-        network.id === NetworkId.TANGLE_MAINNET ? 'MAINNET' : 'TESTNET',
+        network.id === NetworkId.TANGLE_MAINNET
+          ? NetworkType.Mainnet
+          : NetworkType.Testnet,
         activeAccount,
       ),
     retry: 10,

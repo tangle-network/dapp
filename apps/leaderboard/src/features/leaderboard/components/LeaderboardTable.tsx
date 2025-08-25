@@ -206,7 +206,9 @@ export const LeaderboardTable = () => {
     pageSize: 15,
   });
 
-  const [networkTab, setNetworkTab] = useState<NetworkType>('MAINNET');
+  const [networkTab, setNetworkTab] = useState<NetworkType>(
+    NetworkType.Mainnet,
+  );
 
   const {
     data: latestBlock,
