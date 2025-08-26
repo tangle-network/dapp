@@ -14892,13 +14892,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/prop-types@npm:*":
-  version: 15.7.14
-  resolution: "@types/prop-types@npm:15.7.14"
-  checksum: 10c0/1ec775160bfab90b67a782d735952158c7e702ca4502968aa82565bd8e452c2de8601c8dfe349733073c31179116cf7340710160d3836aa8a1ef76d1532893b1
-  languageName: node
-  linkType: hard
-
 "@types/qs@npm:*":
   version: 6.9.18
   resolution: "@types/qs@npm:6.9.18"
@@ -14949,13 +14942,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/react@npm:18.3.20":
-  version: 18.3.20
-  resolution: "@types/react@npm:18.3.20"
+"@types/react@npm:19.1.11":
+  version: 19.1.11
+  resolution: "@types/react@npm:19.1.11"
   dependencies:
-    "@types/prop-types": "npm:*"
     csstype: "npm:^3.0.2"
-  checksum: 10c0/65fa867c91357e4c4c646945c8b99044360f8973cb7f928ec4de115fe3207827985d45be236e6fd6c092b09f631c2126ce835c137be30718419e143d73300d8f
+  checksum: 10c0/639b225c2bbcd4b8a30e1ea7a73aec81ae5b952a4c432460b48c9881c9d12e76645c9032d24f15eefae9985a12d5cb26557fe10e9850b2da0fabfb0a1e2d16bd
   languageName: node
   linkType: hard
 
@@ -31361,12 +31353,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react@npm:^18.3.1":
-  version: 18.3.1
-  resolution: "react@npm:18.3.1"
-  dependencies:
-    loose-envify: "npm:^1.1.0"
-  checksum: 10c0/283e8c5efcf37802c9d1ce767f302dd569dd97a70d9bb8c7be79a789b9902451e0d16334b05d73299b20f048cbc3c7d288bbbde10b701fa194e2089c237dbea3
+"react@npm:^19.1.1":
+  version: 19.1.1
+  resolution: "react@npm:19.1.1"
+  checksum: 10c0/8c9769a2dfd02e603af6445058325e6c8a24b47b185d0e461f66a6454765ddcaecb3f0a90184836c68bb509f3c38248359edbc42f0d07c23eb500a5c30c87b4e
   languageName: node
   linkType: hard
 
@@ -34043,7 +34033,7 @@ __metadata:
     "@types/jest": "npm:29.5.14"
     "@types/lodash": "npm:^4.17.16"
     "@types/node": "npm:18.19.86"
-    "@types/react": "npm:18.3.20"
+    "@types/react": "npm:19.1.11"
     "@types/react-dom": "npm:18.3.6"
     "@types/react-syntax-highlighter": "npm:^15.5.13"
     "@types/yargs": "npm:^17.0.33"
@@ -34089,7 +34079,7 @@ __metadata:
     postcss-nested: "npm:^7.0.2"
     postcss-preset-env: "npm:^10.1.5"
     prettier: "npm:^3.5.3"
-    react: "npm:^18.3.1"
+    react: "npm:^19.1.1"
     react-circular-progressbar: "npm:^2.2.0"
     react-dom: "npm:^18.3.1"
     react-dropzone: "npm:^14.3.8"
