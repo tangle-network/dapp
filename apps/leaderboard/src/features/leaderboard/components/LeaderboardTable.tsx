@@ -233,7 +233,7 @@ export const LeaderboardTable = () => {
     }
 
     const trimmedQuery = searchQuery.trim();
-    
+
     // Use server-side filtering only for valid addresses
     if (isValidAddress(trimmedQuery)) {
       return trimmedQuery;
@@ -251,8 +251,12 @@ export const LeaderboardTable = () => {
   } = useLeaderboard(
     networkTab,
     // Load more data when doing client-side filtering to ensure we don't miss results
-    searchQuery && !accountQuery ? Math.max(100, pagination.pageSize) : pagination.pageSize,
-    searchQuery && !accountQuery ? 0 : pagination.pageIndex * pagination.pageSize,
+    searchQuery && !accountQuery
+      ? Math.max(100, pagination.pageSize)
+      : pagination.pageSize,
+    searchQuery && !accountQuery
+      ? 0
+      : pagination.pageIndex * pagination.pageSize,
     blockNumberSevenDaysAgo,
     accountQuery,
   );
@@ -294,14 +298,14 @@ export const LeaderboardTable = () => {
     }
 
     const trimmedQuery = searchQuery.trim().toLowerCase();
-    
+
     // Client-side filter by identity name, address, or partial matches
     return processedData.filter((account) => {
       // Search by identity name
       if (account.identity?.name?.toLowerCase().includes(trimmedQuery)) {
         return true;
       }
-      
+
       // Search by address (case insensitive)
       if (account.id.toLowerCase().includes(trimmedQuery)) {
         return true;
