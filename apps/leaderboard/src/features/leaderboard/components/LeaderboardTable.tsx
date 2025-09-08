@@ -56,6 +56,9 @@ const COLUMN_ID = {
   POINTS_HISTORY: 'pointsHistory',
 } as const;
 
+const CLIENT_SIDE_FILTER_MIN_LENGTH = 3;
+const CLIENT_SIDE_FILTER_PAGE_SIZE = 100;
+
 const COLUMN_HELPER = createColumnHelper<Account>();
 
 const RankIcon = ({ rank }: { rank: number }) => {
@@ -243,6 +246,13 @@ export const LeaderboardTable = () => {
     return undefined;
   }, [searchQuery]);
 
+  const shouldUseClientSideFiltering = useMemo(() => {
+    const trimmedQuery = searchQuery.trim();
+    return (
+      trimmedQuery.length >= CLIENT_SIDE_FILTER_MIN_LENGTH && !accountQuery
+    );
+  }, [searchQuery, accountQuery]);
+
   const {
     data: leaderboardData,
     error,
@@ -251,10 +261,10 @@ export const LeaderboardTable = () => {
   } = useLeaderboard(
     networkTab,
     // Load more data when doing client-side filtering to ensure we don't miss results
-    searchQuery && !accountQuery
-      ? Math.max(100, pagination.pageSize)
+    shouldUseClientSideFiltering
+      ? Math.max(CLIENT_SIDE_FILTER_PAGE_SIZE, pagination.pageSize)
       : pagination.pageSize,
-    searchQuery && !accountQuery
+    shouldUseClientSideFiltering
       ? 0
       : pagination.pageIndex * pagination.pageSize,
     blockNumberSevenDaysAgo,
@@ -292,8 +302,8 @@ export const LeaderboardTable = () => {
       .filter((record) => record !== null);
 
     // Apply client-side filtering for identity names and other searches
-    if (!searchQuery || accountQuery) {
-      // If no search query or we're doing server-side filtering, return as-is
+    if (!searchQuery || accountQuery || !shouldUseClientSideFiltering) {
+      // If no search query, server-side filtering, or query too short, return as-is
       return processedData;
     }
 
@@ -320,6 +330,7 @@ export const LeaderboardTable = () => {
     accountIdentities,
     searchQuery,
     accountQuery,
+    shouldUseClientSideFiltering,
   ]);
 
   const table = useReactTable({
@@ -380,8 +391,13 @@ export const LeaderboardTable = () => {
             value={searchQuery}
             onChange={setSearchQuery}
             leftIcon={<Search />}
+            rightIcon={
+              isFetching && shouldUseClientSideFiltering ? (
+                <Spinner size="lg" />
+              ) : undefined
+            }
             id="search"
-            placeholder="Search by address (Substrate or EVM)"
+            placeholder="Search by address or identity name"
             size="md"
             inputClassName="py-1"
           />
