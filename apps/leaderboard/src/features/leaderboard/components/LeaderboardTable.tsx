@@ -6,6 +6,7 @@ import type { NetworkType } from '@tangle-network/tangle-shared-ui/graphql/graph
 import {
   Input,
   isSubstrateAddress,
+  isValidAddress,
   KeyValueWithButton,
   Table,
   TabsListWithAnimation,
@@ -14,7 +15,6 @@ import {
   Tooltip,
   TooltipBody,
   TooltipTrigger,
-  toSubstrateAddress,
   Typography,
   ValidatorIdentity,
 } from '@tangle-network/ui-components';
@@ -232,13 +232,15 @@ export const LeaderboardTable = () => {
       return undefined;
     }
 
-    try {
-      const substrateAddress = toSubstrateAddress(searchQuery);
-
-      return substrateAddress;
-    } catch {
-      return searchQuery;
+    const trimmedQuery = searchQuery.trim();
+    
+    // Use server-side filtering only for valid addresses
+    if (isValidAddress(trimmedQuery)) {
+      return trimmedQuery;
     }
+
+    // Use client-side filtering for identity names and other searches
+    return undefined;
   }, [searchQuery]);
 
   const {
@@ -248,8 +250,9 @@ export const LeaderboardTable = () => {
     isFetching,
   } = useLeaderboard(
     networkTab,
-    pagination.pageSize,
-    pagination.pageIndex * pagination.pageSize,
+    // Load more data when doing client-side filtering to ensure we don't miss results
+    searchQuery && !accountQuery ? Math.max(100, pagination.pageSize) : pagination.pageSize,
+    searchQuery && !accountQuery ? 0 : pagination.pageIndex * pagination.pageSize,
     blockNumberSevenDaysAgo,
     accountQuery,
   );
@@ -272,7 +275,7 @@ export const LeaderboardTable = () => {
       return [] as Account[];
     }
 
-    return leaderboardData.nodes
+    const processedData = leaderboardData.nodes
       .map((record, index) =>
         processLeaderboardRecord(
           record,
@@ -283,11 +286,36 @@ export const LeaderboardTable = () => {
         ),
       )
       .filter((record) => record !== null);
+
+    // Apply client-side filtering for identity names and other searches
+    if (!searchQuery || accountQuery) {
+      // If no search query or we're doing server-side filtering, return as-is
+      return processedData;
+    }
+
+    const trimmedQuery = searchQuery.trim().toLowerCase();
+    
+    // Client-side filter by identity name, address, or partial matches
+    return processedData.filter((account) => {
+      // Search by identity name
+      if (account.identity?.name?.toLowerCase().includes(trimmedQuery)) {
+        return true;
+      }
+      
+      // Search by address (case insensitive)
+      if (account.id.toLowerCase().includes(trimmedQuery)) {
+        return true;
+      }
+
+      return false;
+    });
   }, [
     leaderboardData?.nodes,
     pagination.pageIndex,
     pagination.pageSize,
     accountIdentities,
+    searchQuery,
+    accountQuery,
   ]);
 
   const table = useReactTable({
