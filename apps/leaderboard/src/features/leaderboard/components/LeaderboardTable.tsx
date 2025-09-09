@@ -6,6 +6,7 @@ import type { NetworkType } from '@tangle-network/tangle-shared-ui/graphql/graph
 import {
   Input,
   isSubstrateAddress,
+  isValidAddress,
   KeyValueWithButton,
   Table,
   TabsListWithAnimation,
@@ -14,7 +15,6 @@ import {
   Tooltip,
   TooltipBody,
   TooltipTrigger,
-  toSubstrateAddress,
   Typography,
   ValidatorIdentity,
 } from '@tangle-network/ui-components';
@@ -55,6 +55,9 @@ const COLUMN_ID = {
   ACTIVITY: 'activity',
   POINTS_HISTORY: 'pointsHistory',
 } as const;
+
+const CLIENT_SIDE_FILTER_MIN_LENGTH = 3;
+const CLIENT_SIDE_FILTER_PAGE_SIZE = 100;
 
 const COLUMN_HELPER = createColumnHelper<Account>();
 
@@ -232,14 +235,23 @@ export const LeaderboardTable = () => {
       return undefined;
     }
 
-    try {
-      const substrateAddress = toSubstrateAddress(searchQuery);
+    const trimmedQuery = searchQuery.trim();
 
-      return substrateAddress;
-    } catch {
-      return searchQuery;
+    // Use server-side filtering only for valid addresses
+    if (isValidAddress(trimmedQuery)) {
+      return trimmedQuery;
     }
+
+    // Use client-side filtering for identity names and other searches
+    return undefined;
   }, [searchQuery]);
+
+  const shouldUseClientSideFiltering = useMemo(() => {
+    const trimmedQuery = searchQuery.trim();
+    return (
+      trimmedQuery.length >= CLIENT_SIDE_FILTER_MIN_LENGTH && !accountQuery
+    );
+  }, [searchQuery, accountQuery]);
 
   const {
     data: leaderboardData,
@@ -248,8 +260,13 @@ export const LeaderboardTable = () => {
     isFetching,
   } = useLeaderboard(
     networkTab,
-    pagination.pageSize,
-    pagination.pageIndex * pagination.pageSize,
+    // Load more data when doing client-side filtering to ensure we don't miss results
+    shouldUseClientSideFiltering
+      ? Math.max(CLIENT_SIDE_FILTER_PAGE_SIZE, pagination.pageSize)
+      : pagination.pageSize,
+    shouldUseClientSideFiltering
+      ? 0
+      : pagination.pageIndex * pagination.pageSize,
     blockNumberSevenDaysAgo,
     accountQuery,
   );
@@ -272,7 +289,7 @@ export const LeaderboardTable = () => {
       return [] as Account[];
     }
 
-    return leaderboardData.nodes
+    const processedData = leaderboardData.nodes
       .map((record, index) =>
         processLeaderboardRecord(
           record,
@@ -283,11 +300,37 @@ export const LeaderboardTable = () => {
         ),
       )
       .filter((record) => record !== null);
+
+    // Apply client-side filtering for identity names and other searches
+    if (!searchQuery || accountQuery || !shouldUseClientSideFiltering) {
+      // If no search query, server-side filtering, or query too short, return as-is
+      return processedData;
+    }
+
+    const trimmedQuery = searchQuery.trim().toLowerCase();
+
+    // Client-side filter by identity name, address, or partial matches
+    return processedData.filter((account) => {
+      // Search by identity name
+      if (account.identity?.name?.toLowerCase().includes(trimmedQuery)) {
+        return true;
+      }
+
+      // Search by address (case insensitive)
+      if (account.id.toLowerCase().includes(trimmedQuery)) {
+        return true;
+      }
+
+      return false;
+    });
   }, [
     leaderboardData?.nodes,
     pagination.pageIndex,
     pagination.pageSize,
     accountIdentities,
+    searchQuery,
+    accountQuery,
+    shouldUseClientSideFiltering,
   ]);
 
   const table = useReactTable({
@@ -348,8 +391,13 @@ export const LeaderboardTable = () => {
             value={searchQuery}
             onChange={setSearchQuery}
             leftIcon={<Search />}
+            rightIcon={
+              isFetching && shouldUseClientSideFiltering ? (
+                <Spinner size="lg" />
+              ) : undefined
+            }
             id="search"
-            placeholder="Search by address (Substrate or EVM)"
+            placeholder="Search by address or identity name"
             size="md"
             inputClassName="py-1"
           />
