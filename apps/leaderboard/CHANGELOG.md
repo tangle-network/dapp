@@ -1,3 +1,13 @@
+## 0.0.5 (2025-09-10)
+
+### 🩹 Fixes
+
+- enhance leaderboard search with hybrid filtering ([#3062](https://github.com/tangle-network/dapp/pull/3062))
+
+### ❤️ Thank You
+
+- Pavan Soratur @devpavan04
+
 ## 0.0.4 (2025-08-25)
 
 ### 🚀 Features
