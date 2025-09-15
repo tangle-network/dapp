@@ -16,7 +16,7 @@ jobs:
     timeout-minutes: 1
     steps:
       - name: 'Block Concurrent Executions'
-        uses: softprops/turnstyle@v1
+        uses: softprops/turnstyle@v3
         with:
           poll-interval-seconds: 10
         env:
