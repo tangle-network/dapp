@@ -13233,12 +13233,21 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@storybook/components@npm:8.6.12, @storybook/components@npm:^8.6.12":
+"@storybook/components@npm:8.6.12":
   version: 8.6.12
   resolution: "@storybook/components@npm:8.6.12"
   peerDependencies:
     storybook: ^8.2.0 || ^8.3.0-0 || ^8.4.0-0 || ^8.5.0-0 || ^8.6.0-0
   checksum: 10c0/f443f41354d382307734f0507989ffd78d9b3fb9413122487d5e01927057d34b9526bb9ee6b5343cee806a650d6eef2aecf5112af5b0817eeb3204b1ac4fdc3d
+  languageName: node
+  linkType: hard
+
+"@storybook/components@npm:^8.6.12":
+  version: 8.6.14
+  resolution: "@storybook/components@npm:8.6.14"
+  peerDependencies:
+    storybook: ^8.2.0 || ^8.3.0-0 || ^8.4.0-0 || ^8.5.0-0 || ^8.6.0-0
+  checksum: 10c0/43a9192f312c8b2ac1aaeabcfc7c766215e934efd340b01edd9e71ca194ebf30ac896f60817ed539aec9d4183dc77296056e78c5c3705607875df79df7ab7acc
   languageName: node
   linkType: hard
 
