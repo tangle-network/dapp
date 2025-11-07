@@ -168,7 +168,7 @@ const COLUMNS = [
             );
 
       const capacityPercentage =
-        tvl === undefined || depositCap === undefined
+        tvl === undefined || depositCap === undefined || depositCap.isZero()
           ? null
           : calculateBnRatio(tvl, depositCap);
 

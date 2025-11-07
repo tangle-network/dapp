@@ -1,5 +1,4 @@
 import { RestakeVault } from '@tangle-network/tangle-shared-ui/data/restake/useRestakeVaults';
-import { useVaultAssets } from '@tangle-network/tangle-shared-ui/data/restake/useVaultAssets';
 import useApiRx from '@tangle-network/tangle-shared-ui/hooks/useApiRx';
 import { RestakeAssetId } from '@tangle-network/tangle-shared-ui/types';
 import createRestakeAssetId from '@tangle-network/tangle-shared-ui/utils/createRestakeAssetId';
@@ -72,7 +71,7 @@ const VaultsHightlightCard = ({
     result: vaultParticipants,
     isLoading: isVaultParticipantsLoading,
     error: vaultParticipantsError,
-  } = useVaultParticipants();
+  } = useVaultParticipants(sortedVaults);
 
   useEffect(() => {
     if (!sortedVaults || sortedVaults.length <= 1) return;
@@ -216,7 +215,7 @@ const VaultHighlight = ({
         <StatsItem
           label="Participants"
           result={
-            typeof vaultParticipants === 'number'
+            typeof vaultParticipants === 'number' && vaultParticipants > 0
               ? addCommasToNumber(vaultParticipants)
               : EMPTY_VALUE_PLACEHOLDER
           }
@@ -230,13 +229,7 @@ const VaultHighlight = ({
   );
 };
 
-const useVaultParticipants = () => {
-  const {
-    result: vaultAssets,
-    isLoading: isVaultAssetsLoading,
-    error: vaultAssetsError,
-  } = useVaultAssets();
-
+const useVaultParticipants = (vaults: RestakeVault[] | null) => {
   const {
     result: assetDelegators,
     isLoading: isAssetDelegatorsLoading,
@@ -254,21 +247,21 @@ const useVaultParticipants = () => {
       return null;
     }
 
-    if (vaultAssets === null) {
+    if (vaults === null) {
       return null;
     }
 
     const vaultParticipantsMap = new Map<number, Set<SubstrateAddress>>();
 
-    vaultAssets.forEach((assetSet, vaultId) => {
+    vaults.forEach((vault) => {
       const participantSet =
-        vaultParticipantsMap.get(vaultId) ?? new Set<SubstrateAddress>();
+        vaultParticipantsMap.get(vault.id) ?? new Set<SubstrateAddress>();
 
-      assetSet.forEach((assetId) => {
+      vault.assetMetadata.forEach((assetMeta) => {
         const delegators =
-          assetDelegators.get(assetId) ?? new Set<SubstrateAddress>();
+          assetDelegators.get(assetMeta.assetId) ?? new Set<SubstrateAddress>();
         const operators =
-          assetOperators.get(assetId) ?? new Set<SubstrateAddress>();
+          assetOperators.get(assetMeta.assetId) ?? new Set<SubstrateAddress>();
 
         delegators.forEach((delegator) => {
           participantSet.add(delegator);
@@ -279,19 +272,16 @@ const useVaultParticipants = () => {
         });
       });
 
-      vaultParticipantsMap.set(vaultId, participantSet);
+      vaultParticipantsMap.set(vault.id, participantSet);
     });
 
     return vaultParticipantsMap;
-  }, [assetDelegators, assetOperators, vaultAssets]);
+  }, [assetDelegators, assetOperators, vaults]);
 
   return {
     result,
-    isLoading:
-      isVaultAssetsLoading ||
-      isAssetDelegatorsLoading ||
-      isAssetOperatorsLoading,
-    error: vaultAssetsError || assetDelegatorsError || assetOperatorsError,
+    isLoading: isAssetDelegatorsLoading || isAssetOperatorsLoading,
+    error: assetDelegatorsError || assetOperatorsError,
   };
 };
 
@@ -306,8 +296,8 @@ const useAssetDelegators = () => {
                 return assetDelegatorMap;
               }
 
-              const delegatorId = delegatorIdStorage.args[0].toString();
-              if (!isSubstrateAddress(delegatorId)) {
+              const delegatorId = delegatorIdStorage.args?.[0]?.toString();
+              if (!delegatorId || !isSubstrateAddress(delegatorId)) {
                 return assetDelegatorMap;
               }
 
@@ -358,8 +348,8 @@ const useAssetOperators = () => {
                 return assetOperatorMap;
               }
 
-              const operatorId = operatorIdStorage.args[0].toString();
-              if (!isSubstrateAddress(operatorId)) {
+              const operatorId = operatorIdStorage.args?.[0]?.toString();
+              if (!operatorId || !isSubstrateAddress(operatorId)) {
                 return assetOperatorMap;
               }
 
