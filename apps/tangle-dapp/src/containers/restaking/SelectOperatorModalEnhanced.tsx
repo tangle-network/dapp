@@ -9,7 +9,7 @@ import {
   AmountFormatStyle,
   formatDisplayAmount,
 } from '@tangle-network/ui-components';
-import BN from 'bn.js';
+import { BN } from '@tangle-network/tangle-shared-ui/bn';
 import useRestakeAssets from '@tangle-network/tangle-shared-ui/data/restake/useRestakeAssets';
 import filterBy from '@tangle-network/tangle-shared-ui/utils/filterBy';
 import { Typography } from '@tangle-network/ui-components/typography/Typography';

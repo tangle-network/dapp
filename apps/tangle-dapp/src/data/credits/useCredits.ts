@@ -5,7 +5,7 @@ import { queryOptions, useQuery } from '@tanstack/react-query';
 import { useMemo } from 'react';
 import { ReactQueryKey } from '../../constants/reactQuery';
 import { LoggerService } from '@tangle-network/browser-utils';
-import BN from 'bn.js';
+import { BN } from '@tangle-network/tangle-shared-ui/bn';
 import JSONParseBigInt from '@tangle-network/ui-components/utils/JSONParseBigInt';
 import JSONStringifyBigInt from '@tangle-network/ui-components/utils/JSONStringifyBigInt';
 import { z } from 'zod';

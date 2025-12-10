@@ -1,4 +1,4 @@
-import BN from 'bn.js';
+import { BN } from '@tangle-network/tangle-shared-ui/bn';
 import { chainsConfig } from '@tangle-network/dapp-config/chains';
 import { ChainConfig } from '@tangle-network/dapp-config/chains/chain-config.interface';
 import { PresetTypedChainId } from '@tangle-network/dapp-types';

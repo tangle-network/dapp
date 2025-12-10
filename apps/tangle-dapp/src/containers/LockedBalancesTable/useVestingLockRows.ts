@@ -8,7 +8,7 @@ import { BalanceLockRow } from '.';
 import { LockUnlocksAtKind, SubstrateLockId } from '../../constants';
 import addCommasToNumber from '@tangle-network/ui-components/utils/addCommasToNumber';
 import { sortVestingSchedulesAscending } from '../BalancesTableContainer/LockedBalanceDetails/utils';
-import { BN, BN_ZERO } from '@polkadot/util';
+import { BN, BN_ZERO } from '@tangle-network/tangle-shared-ui/bn';
 
 const useVestingLockRows = (): BalanceLockRow[] | null => {
   const { schedulesOpt: vestingSchedulesOpt } = useVestingInfo();

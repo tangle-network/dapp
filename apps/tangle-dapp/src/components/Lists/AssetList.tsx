@@ -1,4 +1,4 @@
-import BN from 'bn.js';
+import { BN } from '@tangle-network/tangle-shared-ui/bn';
 import { ArrowRightUp, Search, TokenIcon } from '@tangle-network/icons';
 import {
   AmountFormatStyle,

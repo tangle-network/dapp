@@ -1,4 +1,4 @@
-import { BN_ZERO } from '@polkadot/util';
+import { BN_ZERO } from '@tangle-network/tangle-shared-ui/bn';
 import { ZERO_BIG_INT } from '@tangle-network/dapp-config/constants';
 import { RestakeAssetId } from '@tangle-network/tangle-shared-ui/types';
 import { RestakeAsset } from '@tangle-network/tangle-shared-ui/types/restake';

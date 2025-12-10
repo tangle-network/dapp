@@ -9,7 +9,7 @@ import useRestakeAssetsTvl from '@tangle-network/tangle-shared-ui/data/restake/u
 import { RestakeAssetId } from '@tangle-network/tangle-shared-ui/types';
 import useRestakeOperatorMap from '@tangle-network/tangle-shared-ui/data/restake/useRestakeOperatorMap';
 import useActiveAccountAddress from '@tangle-network/tangle-shared-ui/hooks/useActiveAccountAddress';
-import BN from 'bn.js';
+import { BN } from '@tangle-network/tangle-shared-ui/bn';
 import VaultAssetsTable from '@tangle-network/tangle-shared-ui/components/tables/VaultAssets';
 import { VaultAssetData } from '@tangle-network/tangle-shared-ui/components/tables/VaultAssets/types';
 import useRestakeAssets from '@tangle-network/tangle-shared-ui/data/restake/useRestakeAssets';

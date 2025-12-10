@@ -8,7 +8,7 @@ import RestakeApiBase, {
 import { ISubmittableResult, Signer } from '@polkadot/types/types';
 import { ApiPromise } from '@polkadot/api';
 import { RestakeAssetId } from '@tangle-network/tangle-shared-ui/types';
-import BN from 'bn.js';
+import { BN } from '@tangle-network/tangle-shared-ui/bn';
 import { isEvmAddress } from '@tangle-network/ui-components';
 import { SubmittableExtrinsic } from '@polkadot/api/types';
 import { TxName } from '../../constants';

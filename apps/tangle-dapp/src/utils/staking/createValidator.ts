@@ -1,5 +1,5 @@
 import { PalletStakingValidatorPrefs } from '@polkadot/types/lookup';
-import { BN, BN_ZERO } from '@polkadot/util';
+import { BN, BN_ZERO } from '@tangle-network/tangle-shared-ui/bn';
 import { Validator } from '@tangle-network/tangle-shared-ui/types';
 import { SubstrateAddress } from '@tangle-network/ui-components/types/address';
 

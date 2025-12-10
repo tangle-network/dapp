@@ -2,7 +2,7 @@ import {
   PalletAssetsAssetAccount,
   PalletTangleLstPoolsPoolState,
 } from '@polkadot/types/lookup';
-import BN from 'bn.js';
+import { BN } from '@tangle-network/tangle-shared-ui/bn';
 import { LsProtocolId } from '@tangle-network/tangle-shared-ui/types/liquidStaking';
 import { NetworkId } from '@tangle-network/ui-components/constants/networks';
 import type { SubstrateAddress } from '@tangle-network/ui-components/types/address';

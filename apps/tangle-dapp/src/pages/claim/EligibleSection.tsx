@@ -1,11 +1,12 @@
 import type { SubmittableExtrinsic } from '@polkadot/api/types';
 import type { ISubmittableResult } from '@polkadot/types/types';
-import { BN_ZERO, hexToU8a, stringToU8a, u8aToString } from '@polkadot/util';
+import { hexToU8a, stringToU8a, u8aToString } from '@polkadot/util';
 import {
   decodeAddress,
   isEthereumAddress,
   keccakAsHex,
 } from '@polkadot/util-crypto';
+import { BN_ZERO } from '@tangle-network/tangle-shared-ui/bn';
 import { useConnectWallet } from '@tangle-network/api-provider-environment/ConnectWallet';
 import { useWebContext } from '@tangle-network/api-provider-environment/webb-context';
 import {

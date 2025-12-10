@@ -1,4 +1,4 @@
-import { BN_ZERO } from '@polkadot/util';
+import { BN_ZERO } from '@tangle-network/tangle-shared-ui/bn';
 import { isEthereumAddress } from '@polkadot/util-crypto';
 import { useConnectWallet } from '@tangle-network/api-provider-environment/ConnectWallet';
 import { useWebContext } from '@tangle-network/api-provider-environment/webb-context';

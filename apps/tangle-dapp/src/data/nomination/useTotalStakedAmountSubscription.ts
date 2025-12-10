@@ -1,5 +1,5 @@
 import { u128 } from '@polkadot/types';
-import BN from 'bn.js';
+import { BN } from '@tangle-network/tangle-shared-ui/bn';
 import {
   WebbError,
   WebbErrorCodes,

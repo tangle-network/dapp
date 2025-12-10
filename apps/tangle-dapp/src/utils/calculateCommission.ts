@@ -1,4 +1,4 @@
-import BN from 'bn.js';
+import { BN } from '@tangle-network/tangle-shared-ui/bn';
 import { Decimal } from 'decimal.js';
 
 const PERBILL_FACTOR = 1_000_000_000;

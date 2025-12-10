@@ -1,4 +1,4 @@
-import { BN_ZERO } from '@polkadot/util';
+import { BN_ZERO } from '@tangle-network/tangle-shared-ui/bn';
 import { TokenIcon } from '@tangle-network/icons';
 import { ChevronDown } from '@tangle-network/icons/ChevronDown';
 import Spinner from '@tangle-network/icons/Spinner';

@@ -1,4 +1,4 @@
-import BN from 'bn.js';
+import { BN } from '@tangle-network/tangle-shared-ui/bn';
 import { toSubstrateAddress } from '@tangle-network/ui-components';
 import { AnyAddress } from '@tangle-network/ui-components/types/address';
 import convertAddressToBytes32 from '@tangle-network/ui-components/utils/convertAddressToBytes32';

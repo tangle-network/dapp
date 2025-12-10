@@ -2,7 +2,7 @@ import Button from '@tangle-network/ui-components/components/buttons/Button';
 import { FC, useCallback, useMemo, useEffect } from 'react';
 import { isScheduledRequestReady } from '../../pages/restake/utils';
 import { WithdrawRequestTableRow } from './WithdrawRequestTable';
-import BN from 'bn.js';
+import { BN } from '@tangle-network/tangle-shared-ui/bn';
 import useRestakeWithdrawExecuteTx from '../../data/restake/useRestakeWithdrawExecuteTx';
 import useRestakeWithdrawCancelTx from '../../data/restake/useRestakeWithdrawCancelTx';
 import { TxStatus } from '@tangle-network/tangle-shared-ui/hooks/useSubstrateTx';

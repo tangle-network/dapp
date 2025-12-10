@@ -1,4 +1,4 @@
-import BN from 'bn.js';
+import { BN } from '@tangle-network/tangle-shared-ui/bn';
 import { ToBn } from '@polkadot/util/types';
 import { TANGLE_TOKEN_DECIMALS } from '@tangle-network/dapp-config/constants/tangle';
 import { TangleTokenSymbol } from '@tangle-network/tangle-shared-ui/types';

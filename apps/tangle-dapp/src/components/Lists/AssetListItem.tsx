@@ -11,7 +11,7 @@ import {
 import { makeExplorerUrl } from '@tangle-network/api-provider-environment/transaction/utils';
 import { useActiveChain } from '@tangle-network/api-provider-environment/hooks/useActiveChain';
 import LogoListItem from './LogoListItem';
-import BN from 'bn.js';
+import { BN } from '@tangle-network/tangle-shared-ui/bn';
 import { getAssetLabelColorClasses } from '../../utils/getAssetLabelColorClasses';
 
 type Props = {

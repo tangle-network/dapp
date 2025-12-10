@@ -1,4 +1,4 @@
-import { BN_ZERO } from '@polkadot/util';
+import { BN_ZERO } from '@tangle-network/tangle-shared-ui/bn';
 import { useWebContext } from '@tangle-network/api-provider-environment';
 import useNetworkStore from '@tangle-network/tangle-shared-ui/context/useNetworkStore';
 import {

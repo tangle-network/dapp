@@ -1,4 +1,4 @@
-import { BN_ZERO } from '@polkadot/util';
+import { BN_ZERO } from '@tangle-network/tangle-shared-ui/bn';
 import useNetworkStore from '@tangle-network/tangle-shared-ui/context/useNetworkStore';
 import { EMPTY_VALUE_PLACEHOLDER } from '@tangle-network/ui-components/constants';
 import addCommasToNumber from '@tangle-network/ui-components/utils/addCommasToNumber';

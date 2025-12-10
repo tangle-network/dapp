@@ -1,7 +1,7 @@
 import { useCallback } from 'react';
 import { TxName } from '../../constants';
 import { useSubstrateTxWithNotification } from '@tangle-network/tangle-shared-ui/hooks/useSubstrateTx';
-import BN from 'bn.js';
+import { BN } from '@tangle-network/tangle-shared-ui/bn';
 import { SUCCESS_MESSAGES } from '../../hooks/useTxNotification';
 
 type Context = {

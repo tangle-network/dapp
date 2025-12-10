@@ -3,7 +3,7 @@ import useBalanceLocks from '../../data/balances/useBalanceLocks';
 import useBalancesLock from '../../data/balances/useBalancesLock';
 import { BalanceLockRow } from '.';
 import { LockUnlocksAtKind, SubstrateLockId } from '../../constants';
-import { BN_ZERO } from '@polkadot/util';
+import { BN_ZERO } from '@tangle-network/tangle-shared-ui/bn';
 import useVestingLockRows from './useVestingLockRows';
 
 const useLockRows = () => {

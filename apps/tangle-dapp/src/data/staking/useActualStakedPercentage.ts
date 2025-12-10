@@ -1,4 +1,4 @@
-import { BN_MILLION, BN_ZERO } from '@polkadot/util';
+import { BN_MILLION, BN_ZERO } from '@tangle-network/tangle-shared-ui/bn';
 import useApiRx from '@tangle-network/tangle-shared-ui/hooks/useApiRx';
 import { useCallback, useMemo } from 'react';
 

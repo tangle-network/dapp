@@ -1,4 +1,4 @@
-import BN from 'bn.js';
+import { BN } from '@tangle-network/tangle-shared-ui/bn';
 import { useCallback } from 'react';
 
 import { TxName } from '../../../constants';

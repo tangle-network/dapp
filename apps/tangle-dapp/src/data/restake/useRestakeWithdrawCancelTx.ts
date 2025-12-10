@@ -7,7 +7,7 @@ import { TxName } from '../../constants';
 import RESTAKING_PRECOMPILE_ABI from '@tangle-network/tangle-shared-ui/abi/restaking';
 import BATCH_PRECOMPILE_ABI from '@tangle-network/tangle-shared-ui/abi/batch';
 import { useCallback } from 'react';
-import BN from 'bn.js';
+import { BN } from '@tangle-network/tangle-shared-ui/bn';
 import optimizeTxBatch from '@tangle-network/tangle-shared-ui/utils/optimizeTxBatch';
 import createEvmBatchCall from '../../utils/staking/createEvmBatchCall';
 import createEvmBatchCallArgs from '../../utils/staking/createEvmBatchCallArgs';

@@ -1,4 +1,4 @@
-import BN from 'bn.js';
+import { BN } from '@tangle-network/tangle-shared-ui/bn';
 import { CrossCircledIcon } from '@radix-ui/react-icons';
 import {
   TANGLE_TOKEN_DECIMALS,

@@ -2,7 +2,7 @@ import type {
   SpStakingExposurePage,
   SpStakingPagedExposureMetadata,
 } from '@polkadot/types/lookup';
-import type { BN } from '@polkadot/util';
+import { BN } from '@tangle-network/tangle-shared-ui/bn';
 
 export enum PagePath {
   DASHBOARD = '/',

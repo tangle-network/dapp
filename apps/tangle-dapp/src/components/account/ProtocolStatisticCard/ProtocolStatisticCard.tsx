@@ -1,4 +1,4 @@
-import BN from 'bn.js';
+import { BN } from '@tangle-network/tangle-shared-ui/bn';
 import { ArrowDownIcon, StatusIndicator } from '@tangle-network/icons';
 import useVaultsPotAccounts from '@tangle-network/tangle-shared-ui/data/rewards/useVaultsPotAccounts';
 import { useTokenPrices } from '@tangle-network/tangle-shared-ui/data/tokenPrices/useTokenPrices';

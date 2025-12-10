@@ -2,7 +2,7 @@ import Button from '@tangle-network/ui-components/components/buttons/Button';
 import { FC, useCallback, useEffect, useMemo } from 'react';
 import { isScheduledRequestReady } from '../../pages/restake/utils';
 import { UnstakeRequestTableRow } from './UnstakeRequestTable';
-import BN from 'bn.js';
+import { BN } from '@tangle-network/tangle-shared-ui/bn';
 import useRestakeApi from '../../data/restake/useRestakeApi';
 import { NATIVE_ASSET_ID } from '@tangle-network/tangle-shared-ui/constants/restaking';
 import useRestakeUnstakeExecuteAllTx from '../../data/restake/useRestakeUnstakeExecuteAllTx';

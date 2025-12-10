@@ -1,4 +1,4 @@
-import BN from 'bn.js';
+import { BN } from '@tangle-network/tangle-shared-ui/bn';
 import { LsProtocolId } from '@tangle-network/tangle-shared-ui/types/liquidStaking';
 import {
   EMPTY_VALUE_PLACEHOLDER,

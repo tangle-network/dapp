@@ -6,7 +6,7 @@ import RestakeApiBase, {
   TxFailureCallback,
   TxSuccessCallback,
 } from './RestakeAbiBase';
-import BN from 'bn.js';
+import { BN } from '@tangle-network/tangle-shared-ui/bn';
 import {
   EvmAddress,
   SubstrateAddress,

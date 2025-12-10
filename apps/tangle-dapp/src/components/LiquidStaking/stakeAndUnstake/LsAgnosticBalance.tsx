@@ -1,4 +1,4 @@
-import BN from 'bn.js';
+import { BN } from '@tangle-network/tangle-shared-ui/bn';
 import { WalletFillIcon, WalletLineIcon } from '@tangle-network/icons';
 import {
   AmountFormatStyle,

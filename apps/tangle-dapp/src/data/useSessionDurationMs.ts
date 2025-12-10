@@ -1,6 +1,6 @@
 import { useCallback, useMemo } from 'react';
 import useApi from '@tangle-network/tangle-shared-ui/hooks/useApi';
-import BN from 'bn.js';
+import { BN } from '@tangle-network/tangle-shared-ui/bn';
 
 const useSessionDurationMs = () => {
   const { result: epochDuration } = useApi(

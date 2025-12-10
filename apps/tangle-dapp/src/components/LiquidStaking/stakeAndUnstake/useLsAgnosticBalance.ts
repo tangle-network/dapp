@@ -1,4 +1,4 @@
-import BN from 'bn.js';
+import { BN } from '@tangle-network/tangle-shared-ui/bn';
 import { EMPTY_VALUE_PLACEHOLDER } from '@tangle-network/ui-components/constants';
 import { useEffect, useState } from 'react';
 import useBalances from '@tangle-network/tangle-shared-ui/hooks/useBalances';

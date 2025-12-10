@@ -1,4 +1,4 @@
-import { BN, BN_ZERO } from '@polkadot/util';
+import { BN, BN_ZERO } from '@tangle-network/tangle-shared-ui/bn';
 import {
   Modal,
   ModalBody,

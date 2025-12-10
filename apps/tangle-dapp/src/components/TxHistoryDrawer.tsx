@@ -1,4 +1,4 @@
-import BN from 'bn.js';
+import { BN } from '@tangle-network/tangle-shared-ui/bn';
 import * as Dialog from '@radix-ui/react-dialog';
 import { TANGLE_TOKEN_DECIMALS } from '@tangle-network/dapp-config';
 import {

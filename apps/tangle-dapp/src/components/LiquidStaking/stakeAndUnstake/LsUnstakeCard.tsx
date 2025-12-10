@@ -1,4 +1,4 @@
-import BN from 'bn.js';
+import { BN } from '@tangle-network/tangle-shared-ui/bn';
 import { ArrowDownIcon } from '@radix-ui/react-icons';
 import { Button, Card } from '@tangle-network/ui-components';
 import { EMPTY_VALUE_PLACEHOLDER } from '@tangle-network/ui-components/constants';

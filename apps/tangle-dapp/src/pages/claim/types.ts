@@ -1,4 +1,4 @@
-import BN from 'bn.js';
+import { BN } from '@tangle-network/tangle-shared-ui/bn';
 
 export type ClaimInfoType = {
   totalAmount: BN;

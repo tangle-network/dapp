@@ -1,5 +1,5 @@
 import { FC } from 'react';
-import BN from 'bn.js';
+import { BN } from '@tangle-network/tangle-shared-ui/bn';
 import { InfoCircledIcon } from '@radix-ui/react-icons';
 import { Typography } from '@tangle-network/ui-components/typography/Typography';
 import {

@@ -1,4 +1,4 @@
-import BN from 'bn.js';
+import { BN } from '@tangle-network/tangle-shared-ui/bn';
 
 const scaleAmountByPercentage = (amount: BN, percentage: number): BN => {
   // Scale factor for 4 decimal places (0.xxxx).

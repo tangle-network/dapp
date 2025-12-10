@@ -4,7 +4,7 @@ import { Typography } from '@tangle-network/ui-components';
 import { type FC } from 'react';
 
 import formatTangleBalance from '../utils/formatTangleBalance';
-import BN from 'bn.js';
+import { BN } from '@tangle-network/tangle-shared-ui/bn';
 
 type Props = {
   type: 'unbonded' | 'unbonding';

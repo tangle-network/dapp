@@ -1,4 +1,4 @@
-import BN from 'bn.js';
+import { BN } from '@tangle-network/tangle-shared-ui/bn';
 import { CheckboxCircleFill } from '@tangle-network/icons/CheckboxCircleFill';
 import { TimeFillIcon } from '@tangle-network/icons/TimeFillIcon';
 import { RestakeAssetId } from '@tangle-network/tangle-shared-ui/types';

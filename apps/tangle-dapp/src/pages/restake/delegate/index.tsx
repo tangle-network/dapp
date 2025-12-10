@@ -1,4 +1,4 @@
-import BN from 'bn.js';
+import { BN } from '@tangle-network/tangle-shared-ui/bn';
 import {
   ChainConfig,
   TANGLE_TOKEN_DECIMALS,

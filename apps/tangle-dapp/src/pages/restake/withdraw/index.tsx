@@ -1,4 +1,4 @@
-import BN from 'bn.js';
+import { BN } from '@tangle-network/tangle-shared-ui/bn';
 import { Cross1Icon } from '@radix-ui/react-icons';
 import { useWebContext } from '@tangle-network/api-provider-environment/webb-context';
 import { ZERO_BIG_INT } from '@tangle-network/dapp-config/constants';
