@@ -1,4 +1,4 @@
-import { BN, formatBalance } from '@polkadot/util';
+import { BN } from '@tangle-network/tangle-shared-ui/bn';
 import useNetworkStore from '@tangle-network/tangle-shared-ui/context/useNetworkStore';
 import useSWR from 'swr';
 import { getPayouts } from '../payouts/getPayouts';
@@ -14,7 +14,6 @@ import useSubstrateAddress from '@tangle-network/tangle-shared-ui/hooks/useSubst
 export default function useTotalPayoutRewards() {
   const rpcEndpoints = useNetworkStore((store) => store.network.wsRpcEndpoints);
   const { getClaimedEras } = useClaimedEras();
-  const { nativeTokenSymbol } = useNetworkStore();
   const networkId = useNetworkStore((store) => store.network.id);
 
   const userSubstrateAddress = useSubstrateAddress();
@@ -25,9 +24,9 @@ export default function useTotalPayoutRewards() {
     error: payoutsError,
     isLoading,
   } = useSWR(
-    ['payoutsData', userSubstrateAddress, rpcEndpoints, nativeTokenSymbol],
-    ([, address, rpcEndpoints, nativeTokenSymbol]) =>
-      getPayouts(address, rpcEndpoints, nativeTokenSymbol),
+    ['payoutsData', userSubstrateAddress, rpcEndpoints],
+    ([, address, rpcEndpoints]) =>
+      getPayouts(address, rpcEndpoints),
     {
       revalidateOnFocus: true,
       revalidateOnReconnect: true,
@@ -59,20 +58,8 @@ export default function useTotalPayoutRewards() {
     );
   }, [unclaimedPayouts]);
 
-  // Format the total rewards
-  const formattedTotalRewards = useMemo(() => {
-    if (totalRewards.isZero()) {
-      return '0';
-    }
-
-    return formatBalance(totalRewards, {
-      withUnit: nativeTokenSymbol,
-    });
-  }, [nativeTokenSymbol, totalRewards]);
-
   return {
     data: totalRewards,
-    formattedTotal: formattedTotalRewards,
     unclaimedPayouts,
     error: payoutsError,
     isLoading,

@@ -26,7 +26,6 @@ export type Payout = {
   eras: number[];
   validator: AddressWithIdentity;
   totalReward: BN;
-  totalRewardFormatted: string;
 };
 
 export const ExplorerType = {

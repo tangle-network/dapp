@@ -129,7 +129,6 @@ const PayoutsTable: React.FC<Props> = ({
                   eras: rowData.eras,
                   validator: rowData.validator,
                   totalReward: rowData.totalReward,
-                  totalRewardFormatted: rowData.totalRewardFormatted,
                 };
                 setPayoutTxProps(payout);
                 setIsModalOpen(true);

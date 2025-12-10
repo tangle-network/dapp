@@ -1,12 +1,9 @@
 import { ApiPromise, WsProvider } from '@polkadot/api';
-import { BN, formatBalance } from '@polkadot/util';
+import { BN } from '@tangle-network/tangle-shared-ui/bn';
 import type { Option } from '@polkadot/types';
 import type { EraIndex } from '@polkadot/types/interfaces';
 import type { PalletStakingStakingLedger } from '@polkadot/types/lookup';
-import {
-  Payout,
-  TangleTokenSymbol,
-} from '@tangle-network/tangle-shared-ui/types';
+import { Payout } from '@tangle-network/tangle-shared-ui/types';
 import assertSubstrateAddress from '@tangle-network/ui-components/utils/assertSubstrateAddress';
 
 // Get legacy claimed rewards from staking ledger
@@ -47,10 +44,8 @@ function getLegacyClaimedEras(
 export const getPayouts = async (
   address: string | null,
   rpcEndpoints: string[] | null,
-  nativeTokenSymbol: TangleTokenSymbol,
 ): Promise<{
   payouts: Payout[] | null;
-  totalReward: string;
 }> => {
   const defaultReturn = {
     payouts: null,
@@ -189,9 +184,6 @@ export const getPayouts = async (
           identity: validatorIdentities.get(validatorId) || null,
         },
         totalReward,
-        totalRewardFormatted: formatBalance(totalReward, {
-          withUnit: nativeTokenSymbol,
-        }),
       }))
       .sort((a, b) => b.totalReward.cmp(a.totalReward)); // Sort by highest reward first
 
@@ -199,9 +191,6 @@ export const getPayouts = async (
 
     return {
       payouts: formattedPayouts,
-      totalReward: formatBalance(totalRewardBN, {
-        withUnit: nativeTokenSymbol,
-      }),
     };
   } catch (error) {
     console.error('Error fetching payouts:', error);
@@ -214,10 +203,8 @@ export const getPayouts = async (
             identity: null,
           },
           totalReward: new BN(0),
-          totalRewardFormatted: '0',
         },
       ],
-      totalReward: '0',
     };
   }
 };
