@@ -87,6 +87,13 @@ const WebbProviderInner: FC<WebbProviderInnerProps> = ({
 
   const { connectAsync, connectors } = useConnect();
 
+  // Debug: Log available connectors
+  console.log('[WebbProvider] Available connectors:', connectors.map((c) => ({
+    id: c.id,
+    name: c.name,
+    type: c.type,
+  })));
+
   const wagmiHydrated = useWagmiHydration();
 
   /**
@@ -275,12 +282,65 @@ const WebbProviderInner: FC<WebbProviderInnerProps> = ({
           case WalletId.MetaMask:
           case WalletId.WalletConnectV2:
           case WalletId.Rainbow:
+          case WalletId.Coinbase:
+          case WalletId.Safe:
+          case WalletId.Talisman:
+          case WalletId.TrustWallet:
+          case WalletId.Keplr:
             {
               abortSignal?.throwIfAborted();
 
-              const connector = connectors.find((c) => c.id === wallet.rdns);
+              // Connector ID mapping for different wallet types
+              const connectorIdMap: Record<number, string> = {
+                [WalletId.Coinbase]: 'coinbaseWalletSDK',
+                [WalletId.Safe]: 'safe',
+                [WalletId.WalletConnectV2]: 'walletConnect',
+              };
+
+              // Find connector - try multiple matching strategies
+              let connector = connectors.find((c) => {
+                // 1. Match by rdns in connector id (EIP-6963 discovered wallets)
+                if (wallet.rdns && c.id === wallet.rdns) {
+                  return true;
+                }
+
+                // 2. Match by connector type for known connectors
+                const mappedId = connectorIdMap[wallet.id];
+                if (mappedId && c.id === mappedId) {
+                  return true;
+                }
+
+                // 3. For injected wallets, check if the connector has matching info
+                const connectorInfo = (c as { info?: { rdns?: string } }).info;
+                if (wallet.rdns && connectorInfo?.rdns === wallet.rdns) {
+                  return true;
+                }
+
+                // 4. Match MetaMask by name if rdns doesn't match
+                if (
+                  wallet.id === WalletId.MetaMask &&
+                  c.name.toLowerCase().includes('metamask')
+                ) {
+                  return true;
+                }
+
+                return false;
+              });
+
+              // 5. Fallback: use generic injected connector for injected wallets
+              const injectedWalletIds = [
+                WalletId.MetaMask,
+                WalletId.Rainbow,
+                WalletId.Talisman,
+                WalletId.TrustWallet,
+                WalletId.Keplr,
+              ];
+              if (!connector && injectedWalletIds.includes(wallet.id)) {
+                connector = connectors.find((c) => c.id === 'injected');
+              }
 
               if (!connector) {
+                logger.error('Available connectors:', connectors.map((c) => ({ id: c.id, name: c.name })));
                 throw new WalletNotInstalledError(wallet.id);
               }
 

@@ -1,6 +1,13 @@
 import { createClient, fallback, http } from 'viem';
 import { Config, cookieStorage, createConfig, createStorage } from 'wagmi';
+import { injected, coinbaseWallet, safe, walletConnect } from 'wagmi/connectors';
 import { wagmiChains as chains } from './chains/evm';
+
+// WalletConnect project ID - should be configured via env var in production
+const WALLETCONNECT_PROJECT_ID =
+  process.env.VITE_WALLETCONNECT_PROJECT_ID ??
+  process.env.NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID ??
+  'demo-project-id';
 
 let config: Config<typeof chains>;
 
@@ -33,6 +40,24 @@ export default function getWagmiConfig({
           }
         : {}),
       chains,
+      // Enable EIP-6963 multi-injected provider discovery
+      // This allows detection of MetaMask, Rainbow, etc. by their rdns
+      multiInjectedProviderDiscovery: true,
+      connectors: [
+        // Injected wallets (MetaMask, Rainbow, etc.)
+        injected(),
+        // Coinbase Wallet
+        coinbaseWallet({
+          appName: 'Tangle Network',
+        }),
+        // Safe Wallet
+        safe(),
+        // WalletConnect
+        walletConnect({
+          projectId: WALLETCONNECT_PROJECT_ID,
+          showQrModal: true,
+        }),
+      ],
       client: ({ chain }) => {
         return createClient({
           chain,

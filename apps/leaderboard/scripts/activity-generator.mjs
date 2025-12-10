@@ -43,39 +43,31 @@ const ANVIL_ACCOUNTS = [
   '0x2a871d0798f97d79848a013d4936a73bf4cc922c825d33c1cf7073dff6d409c6',
 ];
 
-// ABI fragments for contract interactions
+// ABI fragments for contract interactions (matching actual MultiAssetDelegation contract)
 const MULTI_ASSET_DELEGATION_ABI = [
   {
     name: 'deposit',
     type: 'function',
-    inputs: [
-      { name: 'token', type: 'address' },
-      { name: 'amount', type: 'uint256' },
-      { name: 'lock', type: 'uint8' },
-    ],
+    inputs: [],
     outputs: [],
+    stateMutability: 'payable',
   },
   {
     name: 'delegate',
     type: 'function',
     inputs: [
       { name: 'operator', type: 'address' },
-      { name: 'token', type: 'address' },
       { name: 'amount', type: 'uint256' },
-      { name: 'blueprintSelection', type: 'tuple',
-        components: [
-          { name: 'mode', type: 'uint8' },
-          { name: 'blueprintIds', type: 'uint64[]' },
-        ]
-      },
     ],
-    outputs: [{ name: 'shares', type: 'uint256' }],
+    outputs: [],
+    stateMutability: 'nonpayable',
   },
   {
-    name: 'registerAsOperator',
+    name: 'registerOperator',
     type: 'function',
-    inputs: [{ name: 'stake', type: 'uint256' }],
+    inputs: [],
     outputs: [],
+    stateMutability: 'payable',
   },
 ];
 
@@ -123,11 +115,7 @@ async function depositNativeToken(accountIndex) {
       data: encodeFunctionData({
         abi: MULTI_ASSET_DELEGATION_ABI,
         functionName: 'deposit',
-        args: [
-          '0x0000000000000000000000000000000000000000', // Native token
-          amount,
-          0, // No lock
-        ],
+        args: [], // deposit() takes no args, just msg.value
       }),
     });
 
@@ -166,9 +154,7 @@ async function delegateToOperator(accountIndex, operatorIndex) {
         functionName: 'delegate',
         args: [
           operatorAccount.address,
-          '0x0000000000000000000000000000000000000000', // Native token
           amount,
-          { mode: 0, blueprintIds: [] }, // All blueprints
         ],
       }),
     });
@@ -195,8 +181,8 @@ async function registerOperator(accountIndex) {
       value: stake,
       data: encodeFunctionData({
         abi: MULTI_ASSET_DELEGATION_ABI,
-        functionName: 'registerAsOperator',
-        args: [stake],
+        functionName: 'registerOperator',
+        args: [], // registerOperator() takes no args, just msg.value
       }),
     });
 

@@ -1,3 +1,4 @@
+import { Spinner } from '@tangle-network/icons';
 import {
   InfoIconWithTooltip,
   KeyValueWithButton,
@@ -8,6 +9,7 @@ import React, { useMemo } from 'react';
 import { twMerge } from 'tailwind-merge';
 import { Account } from '../types';
 import { BadgeEnum, BADGE_ICON_RECORD } from '../constants';
+import { useAccountActivity } from '../queries';
 import { createAccountExplorerUrl } from '../utils/createAccountExplorerUrl';
 
 interface ExpandedInfoProps {
@@ -213,10 +215,45 @@ const ActivityBadge = ({
   );
 };
 
+const CompactActivityBadge = ({
+  badge,
+  isActive,
+}: {
+  badge: BadgeEnum;
+  isActive: boolean;
+}) => {
+  return (
+    <div
+      className={twMerge(
+        'flex items-center justify-center w-8 h-8 rounded-full text-base',
+        isActive
+          ? 'bg-green-500/20 dark:bg-green-500/30 ring-1 ring-green-500/50'
+          : 'bg-mono-40 dark:bg-mono-170',
+      )}
+      title={ACTIVITY_POINT_INFO[badge].label}
+    >
+      {BADGE_ICON_RECORD[badge]}
+    </div>
+  );
+};
+
+const safeBigInt = (value: string | undefined | null): bigint => {
+  if (!value) return ZERO_BIG_INT;
+  try {
+    return BigInt(value);
+  } catch {
+    return ZERO_BIG_INT;
+  }
+};
+
 export const ExpandedInfo: React.FC<ExpandedInfoProps> = ({ row }) => {
   const account = row.original;
   const address = account.id;
   const accountNetwork = account.network;
+
+  // Fetch activity data for this account
+  const { data: activityData, isPending: isLoadingActivity } =
+    useAccountActivity(accountNetwork, address);
 
   const { mainnetPercentage, testnetPercentage, totalPoints } = useMemo(() => {
     const total = account.totalPoints;
@@ -234,35 +271,240 @@ export const ExpandedInfo: React.FC<ExpandedInfoProps> = ({ row }) => {
     };
   }, [account.totalPoints, account.pointsBreakdown]);
 
+  // Calculate activity counts from fetched data
+  const activityCounts = useMemo(() => {
+    if (!activityData) {
+      return {
+        depositCount: 0,
+        delegationCount: 0,
+        liquidVaultPositionCount: 0,
+        blueprintCount: 0,
+        serviceCount: 0,
+        jobCallCount: 0,
+        isOperator: false,
+      };
+    }
+
+    const delegator = activityData.Delegator_by_pk;
+
+    return {
+      depositCount:
+        delegator?.assetPositions?.filter(
+          (pos) => safeBigInt(pos.totalDeposited) > ZERO_BIG_INT,
+        ).length ?? 0,
+      delegationCount:
+        delegator?.delegations?.filter(
+          (del) => safeBigInt(del.shares) > ZERO_BIG_INT,
+        ).length ?? 0,
+      liquidVaultPositionCount:
+        delegator?.liquidVaultPositions?.filter(
+          (pos) => safeBigInt(pos.shares) > ZERO_BIG_INT,
+        ).length ?? 0,
+      blueprintCount: activityData.Blueprint?.length ?? 0,
+      serviceCount: activityData.Service?.length ?? 0,
+      jobCallCount: activityData.JobCall?.length ?? 0,
+      isOperator: (activityData.Operator?.length ?? 0) > 0,
+    };
+  }, [activityData]);
+
+  // Calculate badges based on activity
+  const earnedBadges = useMemo(() => {
+    const badges: BadgeEnum[] = [];
+
+    if (activityCounts.depositCount > 0) {
+      badges.push(BadgeEnum.RESTAKE_DEPOSITOR);
+    }
+    if (activityCounts.delegationCount > 0) {
+      badges.push(BadgeEnum.RESTAKE_DELEGATOR);
+    }
+    if (activityCounts.liquidVaultPositionCount > 0) {
+      badges.push(BadgeEnum.LIQUID_STAKER);
+    }
+    if (activityCounts.isOperator) {
+      badges.push(BadgeEnum.OPERATOR);
+    }
+    if (activityCounts.blueprintCount > 0) {
+      badges.push(BadgeEnum.BLUEPRINT_OWNER);
+    }
+    if (activityCounts.serviceCount > 0) {
+      badges.push(BadgeEnum.SERVICE_PROVIDER);
+    }
+    if (activityCounts.jobCallCount > 0) {
+      badges.push(BadgeEnum.JOB_CALLER);
+    }
+
+    return badges;
+  }, [activityCounts]);
+
   const activityBadges = useMemo(() => {
     const badges = Object.values(BadgeEnum);
     return badges.map((badge) => {
       const info = ACTIVITY_POINT_INFO[badge];
-      const count =
-        badge === BadgeEnum.OPERATOR
-          ? account.badges.includes(BadgeEnum.OPERATOR)
-            ? 1
-            : 0
-          : account.activity[info.activityKey];
-      const isActive = account.badges.includes(badge);
-      return { badge, count, isActive };
+      let count = 0;
+
+      switch (badge) {
+        case BadgeEnum.RESTAKE_DEPOSITOR:
+          count = activityCounts.depositCount;
+          break;
+        case BadgeEnum.RESTAKE_DELEGATOR:
+          count = activityCounts.delegationCount;
+          break;
+        case BadgeEnum.LIQUID_STAKER:
+          count = activityCounts.liquidVaultPositionCount;
+          break;
+        case BadgeEnum.OPERATOR:
+          count = activityCounts.isOperator ? 1 : 0;
+          break;
+        case BadgeEnum.BLUEPRINT_OWNER:
+          count = activityCounts.blueprintCount;
+          break;
+        case BadgeEnum.SERVICE_PROVIDER:
+          count = activityCounts.serviceCount;
+          break;
+        case BadgeEnum.JOB_CALLER:
+          count = activityCounts.jobCallCount;
+          break;
+      }
+
+      const isActive = earnedBadges.includes(badge);
+      return { badge, count, isActive, info };
     });
-  }, [account.badges, account.activity]);
+  }, [activityCounts, earnedBadges]);
 
   const totalActivityCount = useMemo(() => {
     return (
-      account.activity.depositCount +
-      account.activity.delegationCount +
-      account.activity.liquidVaultPositionCount +
-      account.activity.blueprintCount +
-      account.activity.serviceCount +
-      account.activity.jobCallCount
+      activityCounts.depositCount +
+      activityCounts.delegationCount +
+      activityCounts.liquidVaultPositionCount +
+      activityCounts.blueprintCount +
+      activityCounts.serviceCount +
+      activityCounts.jobCallCount
     );
-  }, [account.activity]);
+  }, [activityCounts]);
 
   return (
-    <div className="px-4 pb-4">
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+    <div className="px-2 sm:px-4 pb-4">
+      {/* Mobile Layout - Compact Single Column */}
+      <div className="block md:hidden overflow-hidden">
+        <div className="rounded-xl bg-mono-20 dark:bg-mono-180 border border-mono-60 dark:border-mono-160 p-3 space-y-3">
+          {/* Header with Address and Explorer Link */}
+          <div className="flex items-center justify-between gap-2 min-w-0">
+            <div className="min-w-0 flex-1">
+              <KeyValueWithButton size="sm" keyValue={address} />
+            </div>
+            <a
+              href={createAccountExplorerUrl(address, accountNetwork)}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-blue-500 hover:text-blue-600 dark:text-blue-400 dark:hover:text-blue-300 text-xs whitespace-nowrap flex-shrink-0"
+            >
+              Explorer
+            </a>
+          </div>
+
+          {/* Points Summary Row */}
+          <div className="grid grid-cols-3 gap-1 py-2 border-y border-mono-60 dark:border-mono-160">
+            <div className="text-center min-w-0">
+              <Typography
+                variant="body1"
+                fw="bold"
+                className="text-mono-200 dark:text-mono-0 tabular-nums truncate"
+              >
+                {formatPoints(totalPoints)}
+              </Typography>
+              <Typography
+                variant="body3"
+                className="text-mono-100 dark:text-mono-120"
+              >
+                Total
+              </Typography>
+            </div>
+            <div className="text-center border-x border-mono-60 dark:border-mono-160 min-w-0 px-1">
+              <Typography
+                variant="body1"
+                fw="bold"
+                className="text-blue-600 dark:text-blue-400 tabular-nums truncate"
+              >
+                {formatPoints(account.pointsBreakdown.mainnet)}
+              </Typography>
+              <Typography
+                variant="body3"
+                className="text-mono-100 dark:text-mono-120"
+              >
+                Mainnet
+              </Typography>
+            </div>
+            <div className="text-center min-w-0">
+              <Typography
+                variant="body1"
+                fw="bold"
+                className="text-purple-600 dark:text-purple-400 tabular-nums truncate"
+              >
+                {formatPoints(account.pointsBreakdown.testnet)}
+              </Typography>
+              <Typography
+                variant="body3"
+                className="text-mono-100 dark:text-mono-120"
+              >
+                Testnet
+              </Typography>
+            </div>
+          </div>
+
+          {/* 7-Day Change */}
+          <div className="flex items-center justify-between">
+            <Typography
+              variant="body2"
+              className="text-mono-100 dark:text-mono-120"
+            >
+              Last 7 days
+            </Typography>
+            <Typography
+              variant="body2"
+              fw="bold"
+              className="text-green-600 dark:text-green-400"
+            >
+              +{formatPoints(account.pointsBreakdown.lastSevenDays)}
+            </Typography>
+          </div>
+
+          {/* Activity Badges - Emoji Only */}
+          <div className="pt-2 border-t border-mono-60 dark:border-mono-160">
+            <div className="flex items-center justify-between mb-2">
+              <Typography
+                variant="body2"
+                fw="bold"
+                className="text-mono-200 dark:text-mono-0"
+              >
+                Activities
+              </Typography>
+              {isLoadingActivity ? (
+                <Spinner size="md" />
+              ) : (
+                <Typography
+                  variant="body3"
+                  className="text-mono-100 dark:text-mono-120"
+                >
+                  {earnedBadges.length} badge
+                  {earnedBadges.length !== 1 ? 's' : ''}
+                </Typography>
+              )}
+            </div>
+            <div className="flex flex-wrap gap-2">
+              {activityBadges.map(({ badge, isActive }) => (
+                <CompactActivityBadge
+                  key={badge}
+                  badge={badge}
+                  isActive={isActive}
+                />
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Desktop Layout - 3 Column Grid */}
+      <div className="hidden md:grid md:grid-cols-2 lg:grid-cols-3 gap-4">
         {/* Account Overview Card */}
         <div className="rounded-xl bg-mono-20 dark:bg-mono-180 border border-mono-60 dark:border-mono-160 p-5">
           <div className="space-y-4">
@@ -368,7 +610,7 @@ export const ExpandedInfo: React.FC<ExpandedInfoProps> = ({ row }) => {
         </div>
 
         {/* Activity & Badges Card */}
-        <div className="rounded-xl bg-mono-20 dark:bg-mono-180 border border-mono-60 dark:border-mono-160 p-5">
+        <div className="rounded-xl bg-mono-20 dark:bg-mono-180 border border-mono-60 dark:border-mono-160 p-5 md:col-span-2 lg:col-span-1">
           <div className="space-y-4">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
@@ -381,13 +623,17 @@ export const ExpandedInfo: React.FC<ExpandedInfoProps> = ({ row }) => {
                 </Typography>
                 <InfoIconWithTooltip content="Activities that contribute to earning points. Green badges indicate active participation in that category." />
               </div>
-              <Typography
-                variant="body2"
-                className="text-mono-100 dark:text-mono-120"
-              >
-                {account.badges.length} badge
-                {account.badges.length !== 1 ? 's' : ''} earned
-              </Typography>
+              {isLoadingActivity ? (
+                <Spinner size="md" />
+              ) : (
+                <Typography
+                  variant="body2"
+                  className="text-mono-100 dark:text-mono-120"
+                >
+                  {earnedBadges.length} badge
+                  {earnedBadges.length !== 1 ? 's' : ''} earned
+                </Typography>
+              )}
             </div>
 
             <div className="space-y-2 max-h-[200px] overflow-y-auto pr-1">
