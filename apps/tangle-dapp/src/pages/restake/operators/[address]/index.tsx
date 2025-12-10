@@ -9,6 +9,8 @@ import useOperatorBlueprints from '@tangle-network/tangle-shared-ui/data/bluepri
 import OperatorInfoCard from './OperatorInfoCard';
 import RegisteredBlueprintsCard from './RegisteredBlueprintsCard';
 import TVLTable from './TVLTable';
+import { isAddress } from 'viem';
+import type { Address } from 'viem';
 
 const Page: FC = () => {
   const { address } = useParams();
@@ -16,10 +18,10 @@ const Page: FC = () => {
   const { result: delegatorInfo } = useRestakeDelegatorInfo();
   const { operatorTvl: operatorTVL } = useRestakeTvl(delegatorInfo);
 
-  const operatorAddressParam =
+  const operatorAddressParam: Address | undefined =
     address === undefined
       ? undefined
-      : isSubstrateAddress(address)
+      : isAddress(address)
         ? address
         : undefined;
 
@@ -67,7 +69,7 @@ const Page: FC = () => {
           className="flex-1"
           blueprints={blueprintsUI}
           isLoading={isLoading}
-          error={error && error.message}
+          error={(error as Error | null)?.message}
         />
       </div>
 

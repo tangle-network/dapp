@@ -7,10 +7,12 @@ import { OperatorBlueprint } from './utils/type';
  */
 const useOperatorBlueprints = (_operatorAddress?: Address) => {
   // TODO: Implement EVM-based blueprint fetching when available
+  const error: Error | null = null;
+
   return {
     blueprints: [] as OperatorBlueprint[],
     isLoading: false,
-    error: null,
+    error,
   };
 };
 

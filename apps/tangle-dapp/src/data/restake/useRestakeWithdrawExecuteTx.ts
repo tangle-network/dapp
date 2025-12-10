@@ -2,8 +2,12 @@ import { TxStatus } from '@tangle-network/tangle-shared-ui/hooks/useContractWrit
 
 /** @deprecated Use useExecuteWithdrawTx from tangle-shared-ui instead */
 const useRestakeWithdrawExecuteTx = () => {
-  // Return null execute but with proper typing to avoid "never" type narrowing
-  const execute: (() => Promise<void>) | null = null;
+  // Return no-op function that logs deprecation warning
+  const execute = async (): Promise<void> => {
+    console.warn(
+      'useRestakeWithdrawExecuteTx is deprecated. Use useExecuteWithdrawTx instead.',
+    );
+  };
 
   return {
     execute,

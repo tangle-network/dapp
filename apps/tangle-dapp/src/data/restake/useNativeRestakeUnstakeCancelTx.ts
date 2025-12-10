@@ -3,9 +3,12 @@ import { SubstrateAddress } from '@tangle-network/ui-components/types/address';
 
 /** @deprecated Native unstake cancel is not supported in EVM-only mode */
 const useNativeRestakeUnstakeCancelTx = () => {
-  // Return null execute but with proper typing to avoid "never" type narrowing
-  const execute: ((operators: SubstrateAddress[]) => Promise<void>) | null =
-    null;
+  // Return no-op function that logs deprecation warning
+  const execute = async (_operators: SubstrateAddress[]): Promise<void> => {
+    console.warn(
+      'useNativeRestakeUnstakeCancelTx is deprecated. Native unstake cancel is not supported in EVM-only mode.',
+    );
+  };
 
   return {
     execute,

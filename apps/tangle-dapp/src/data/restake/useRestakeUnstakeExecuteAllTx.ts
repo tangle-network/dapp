@@ -9,8 +9,12 @@ type ExecuteAllContext = {
 
 /** @deprecated Use useExecuteUnstakeTx from tangle-shared-ui instead */
 const useRestakeUnstakeExecuteAllTx = () => {
-  // Return null execute but with proper typing to avoid "never" type narrowing
-  const execute: ((context: ExecuteAllContext) => Promise<void>) | null = null;
+  // Return no-op function that logs deprecation warning
+  const execute = async (_context: ExecuteAllContext): Promise<void> => {
+    console.warn(
+      'useRestakeUnstakeExecuteAllTx is deprecated. Use useExecuteUnstakeTx instead.',
+    );
+  };
 
   return {
     execute,

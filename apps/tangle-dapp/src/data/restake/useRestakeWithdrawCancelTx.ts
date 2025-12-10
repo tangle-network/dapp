@@ -9,9 +9,12 @@ type WithdrawCancelRequest = {
 
 /** @deprecated Withdraw cancel is not supported in EVM-only mode */
 const useRestakeWithdrawCancelTx = () => {
-  // Return null execute but with proper typing to avoid "never" type narrowing
-  const execute: ((requests: WithdrawCancelRequest[]) => Promise<void>) | null =
-    null;
+  // Return no-op function that logs deprecation warning
+  const execute = async (_requests: WithdrawCancelRequest[]): Promise<void> => {
+    console.warn(
+      'useRestakeWithdrawCancelTx is deprecated. Withdraw cancel is not supported in EVM-only mode.',
+    );
+  };
 
   return {
     execute,

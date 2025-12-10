@@ -235,7 +235,7 @@ interface SourceChainInputEvmProps {
   amountError?: string;
   openTokenModal: () => void;
   register: ReturnType<typeof useForm<EvmDepositFormFields>>['register'];
-  setValue: (name: keyof EvmDepositFormFields, value: unknown) => void;
+  setValue: ReturnType<typeof useForm<EvmDepositFormFields>>['setValue'];
   watch: ReturnType<typeof useForm<EvmDepositFormFields>>['watch'];
 }
 

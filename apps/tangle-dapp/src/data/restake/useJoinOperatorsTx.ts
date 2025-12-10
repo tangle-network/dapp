@@ -7,9 +7,12 @@ type JoinOperatorsContext = {
 
 /** @deprecated Use EVM MultiAssetDelegation instead */
 const useJoinOperatorsTx = () => {
-  // Return null execute but with proper typing to avoid "never" type narrowing
-  const execute: ((context: JoinOperatorsContext) => Promise<void>) | null =
-    null;
+  // Return no-op function that logs deprecation warning
+  const execute = async (_context: JoinOperatorsContext): Promise<void> => {
+    console.warn(
+      'useJoinOperatorsTx is deprecated. Use EVM MultiAssetDelegation contract directly.',
+    );
+  };
 
   return {
     execute,
