@@ -19,35 +19,18 @@ import {
   optimism,
   linea,
   base,
+  baseSepolia,
   bsc,
   bitlayer,
 } from 'viem/chains';
 import type { ChainConfig } from '../chain-config.interface';
-import tangleLocalEVM from './customChains/tangleLocalEvm';
-import tangleMainnetEVM from './customChains/tangleMainnetEVM';
-import tangleTestnetEVM from './customChains/tangleTestnetEVM';
+import anvilLocal from './customChains/anvilLocal';
 
+// Primary chains for development and production
 export const wagmiChains = [
-  mainnet,
-  goerli,
-  optimismGoerli,
-  arbitrumGoerli,
-  polygonMumbai,
-  moonbaseAlpha,
-  sepolia,
-  avalancheFuji,
-  scrollSepolia,
-  tangleMainnetEVM,
-  tangleTestnetEVM,
-  tangleLocalEVM,
-  holesky,
-  polygon,
-  arbitrum,
-  optimism,
-  linea,
-  base,
-  bsc,
-  bitlayer,
+  anvilLocal, // Local development (Anvil on port 8545)
+  base, // Base mainnet
+  baseSepolia, // Base testnet
 ] as const;
 
 export const chainsConfig = {
@@ -197,27 +180,19 @@ export const chainsConfig = {
     tag: 'test',
   } satisfies ChainConfig,
 
-  [PresetTypedChainId.TangleMainnetEVM]: {
-    ...tangleMainnetEVM,
+  [PresetTypedChainId.BaseSepolia]: {
+    ...baseSepolia,
     chainType: ChainType.EVM,
-    group: 'tangle',
-    tag: 'live',
-    displayName: 'Tangle Mainnet',
-  } satisfies ChainConfig,
-
-  [PresetTypedChainId.TangleTestnetEVM]: {
-    ...tangleTestnetEVM,
-    chainType: ChainType.EVM,
-    group: 'tangle',
+    group: 'base',
     tag: 'test',
-    displayName: 'Tangle Testnet',
+    displayName: 'Base Sepolia',
   } satisfies ChainConfig,
 
-  [PresetTypedChainId.TangleLocalEVM]: {
-    ...tangleLocalEVM,
+  [PresetTypedChainId.AnvilLocal]: {
+    ...anvilLocal,
     chainType: ChainType.EVM,
-    group: 'tangle',
+    group: 'webb-dev',
     tag: 'dev',
-    displayName: 'Tangle Local (EVM)',
+    displayName: 'Anvil Local',
   } satisfies ChainConfig,
 } as const satisfies Record<PresetTypedChainId, ChainConfig>;

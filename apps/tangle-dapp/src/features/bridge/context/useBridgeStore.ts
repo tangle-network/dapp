@@ -26,14 +26,18 @@ const DEFAULT_DESTINATION_CHAINS = sortChainOptions(
 );
 
 const getDefaultTokens = (): BridgeToken[] => {
-  const firstSourceChain = get(chainsConfig, PresetTypedChainId.Arbitrum);
+  const firstSourceChain = get(chainsConfig, PresetTypedChainId.Base);
+  const firstDestChain = get(chainsConfig, PresetTypedChainId.BaseSepolia);
+
+  // Return empty array if chains are not configured
+  if (!firstSourceChain || !firstDestChain) {
+    return [];
+  }
 
   const firstSourceChainId = calculateTypedChainId(
     firstSourceChain.chainType,
     firstSourceChain.id,
   );
-
-  const firstDestChain = get(chainsConfig, PresetTypedChainId.TangleMainnetEVM);
 
   const firstDestChainId = calculateTypedChainId(
     firstDestChain.chainType,
