@@ -1,6 +1,11 @@
 import { createClient, fallback, http } from 'viem';
 import { Config, cookieStorage, createConfig, createStorage } from 'wagmi';
-import { injected, coinbaseWallet, safe, walletConnect } from 'wagmi/connectors';
+import {
+  injected,
+  coinbaseWallet,
+  safe,
+  walletConnect,
+} from 'wagmi/connectors';
 import { wagmiChains as chains } from './chains/evm';
 
 // WalletConnect project ID - should be configured via env var in production

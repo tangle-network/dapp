@@ -88,11 +88,14 @@ const WebbProviderInner: FC<WebbProviderInnerProps> = ({
   const { connectAsync, connectors } = useConnect();
 
   // Debug: Log available connectors
-  console.log('[WebbProvider] Available connectors:', connectors.map((c) => ({
-    id: c.id,
-    name: c.name,
-    type: c.type,
-  })));
+  console.log(
+    '[WebbProvider] Available connectors:',
+    connectors.map((c) => ({
+      id: c.id,
+      name: c.name,
+      type: c.type,
+    })),
+  );
 
   const wagmiHydrated = useWagmiHydration();
 
@@ -340,7 +343,10 @@ const WebbProviderInner: FC<WebbProviderInnerProps> = ({
               }
 
               if (!connector) {
-                logger.error('Available connectors:', connectors.map((c) => ({ id: c.id, name: c.name })));
+                logger.error(
+                  'Available connectors:',
+                  connectors.map((c) => ({ id: c.id, name: c.name })),
+                );
                 throw new WalletNotInstalledError(wallet.id);
               }
 
