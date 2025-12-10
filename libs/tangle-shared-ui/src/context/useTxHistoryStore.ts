@@ -1,5 +1,5 @@
 import BN from 'bn.js';
-import { HexString } from '@polkadot/util/types';
+import { Hex } from 'viem';
 import { NetworkId } from '@tangle-network/ui-components/constants/networks';
 import {
   EvmAddress,
@@ -19,7 +19,7 @@ export type HistoryTxDetail =
 
 export type HistoryTx<TxName extends BaseTxName = BaseTxName> = {
   name: TxName;
-  hash: HexString;
+  hash: Hex;
   origin: SubstrateAddress | EvmAddress;
   network: NetworkId;
   timestamp: number;
@@ -31,12 +31,12 @@ export type HistoryTx<TxName extends BaseTxName = BaseTxName> = {
 const useTxHistoryStore = create<{
   transactions: HistoryTx[];
   pushTx: (transaction: HistoryTx) => void;
-  patchTx: (hash: HexString, patch: Omit<Partial<HistoryTx>, 'hash'>) => void;
+  patchTx: (hash: Hex, patch: Omit<Partial<HistoryTx>, 'hash'>) => void;
 }>((set) => ({
   transactions: [],
   pushTx: (transaction: HistoryTx) =>
     set((state) => ({ transactions: [...state.transactions, transaction] })),
-  patchTx: (hash: HexString, patch: Omit<Partial<HistoryTx>, 'hash'>) =>
+  patchTx: (hash: Hex, patch: Omit<Partial<HistoryTx>, 'hash'>) =>
     set((state) => ({
       transactions: state.transactions.map((tx) =>
         tx.hash === hash ? { ...tx, ...patch } : tx,

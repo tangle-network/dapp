@@ -1,5 +1,5 @@
 import { PalletBalancesAccountData } from '@polkadot/types/lookup';
-import { BN, BN_ZERO, bnMax } from '@polkadot/util';
+import { BN, BN_ZERO, bnMax } from '../../bn';
 
 export const calculateTransferableBalance = (
   accInfo: PalletBalancesAccountData,

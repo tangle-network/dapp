@@ -22,7 +22,7 @@ import {
 import { SUBQUERY_ENDPOINT } from './index';
 import getPolkadotJsDashboardUrl from '@tangle-network/dapp-config/utils/getPolkadotJsDashboardUrl';
 import { EvmAddress, SolanaAddress, SubstrateAddress } from '../types/address';
-import { HexString } from '@polkadot/util/types';
+import { Hex } from 'viem';
 import { isEvmAddress } from '../utils';
 
 export type NetworkNodeType = 'parachain' | 'standalone';
@@ -57,8 +57,8 @@ export type Network = {
 
   createExplorerTxUrl: (
     isEvm: boolean,
-    txHash: HexString,
-    blockHash?: HexString,
+    txHash: Hex,
+    blockHash?: Hex,
   ) => string | null;
 
   /**

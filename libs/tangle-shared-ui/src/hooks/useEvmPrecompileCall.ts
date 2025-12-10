@@ -1,4 +1,3 @@
-import { HexString } from '@polkadot/util/types';
 import { PromiseOrT } from '@tangle-network/abstract-api-provider';
 import ensureError from '../utils/ensureError';
 import { useCallback, useState } from 'react';
@@ -70,7 +69,7 @@ function useEvmPrecompileCall<
 ) {
   const [status, setStatus] = useState(TxStatus.NOT_YET_INITIATED);
   const [error, setError] = useState<Error | null>(null);
-  const [txHash, setTxHash] = useState<HexString | null>(null);
+  const [txHash, setTxHash] = useState<Hex | null>(null);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const relayEvmTx = useEvmTxRelayer();
   const isEvmTxRelayerCandidate = useIsEvmTxRelayerCandidate();

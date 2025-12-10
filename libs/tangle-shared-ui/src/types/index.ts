@@ -1,4 +1,4 @@
-import type { BN } from '@polkadot/util';
+import BN from 'bn.js';
 import type { WebbProviderType } from '@tangle-network/abstract-api-provider/types';
 import {
   EvmAddress,

@@ -1,7 +1,7 @@
 'use client';
 
 import { MetadataDef } from '@polkadot/extension-inject/types';
-import { HexString } from '@polkadot/util/types';
+import { Hex } from 'viem';
 import { useActiveWallet } from '@tangle-network/api-provider-environment/hooks/useActiveWallet';
 import { TANGLE_TOKEN_DECIMALS } from '@tangle-network/dapp-config';
 import { RefreshLineIcon } from '@tangle-network/icons';
@@ -39,7 +39,7 @@ const UpdateMetadataButton: FC = () => {
     useLocalStorage(LocalStorageKey.SUBSTRATE_WALLETS_METADATA);
 
   const updateCache = useCallback(
-    (genesisHash: HexString, metadata: SubstrateWalletsMetadataEntry) => {
+    (genesisHash: Hex, metadata: SubstrateWalletsMetadataEntry) => {
       setCache((cache) => ({
         ...cache,
         [genesisHash]: metadata,

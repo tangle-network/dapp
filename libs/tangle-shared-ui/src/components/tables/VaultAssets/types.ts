@@ -1,4 +1,4 @@
-import type { BN } from '@polkadot/util';
+import BN from 'bn.js';
 import type { RestakeAssetId } from '../../../types';
 
 export type VaultAssetData = {
