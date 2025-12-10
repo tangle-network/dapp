@@ -21,7 +21,8 @@ export enum TangleDAppPagePath {
 
 export type ApprovalConfirmationFormFields = {
   requestId: number;
-  securityCommitment: SecurityCommitment[];
+  restakingPercent?: number;
+  securityCommitment?: SecurityCommitment[];
 };
 
 export type SecurityCommitment = {

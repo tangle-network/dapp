@@ -1,10 +1,9 @@
 import { RegisteredBlueprintsTabs } from './RegisteredBlueprints';
 import { InstancesTabs } from './Instances';
 import { FC, Dispatch, SetStateAction, useMemo } from 'react';
-import useOperatorInfo from '@tangle-network/tangle-shared-ui/hooks/useOperatorInfo';
-import { useOperatorStatsData } from '../../data/operators/useOperatorStatsData';
-import useActiveAccountAddress from '@tangle-network/tangle-shared-ui/hooks/useActiveAccountAddress';
-import { isSubstrateAddress } from '@tangle-network/ui-components';
+import { useAccount } from 'wagmi';
+import useEvmOperatorInfo from '../../hooks/useEvmOperatorInfo';
+import useOperatorStats from '../../data/operators/useOperatorStats';
 
 interface BlueprintManagementSectionProps {
   refreshTrigger: number;
@@ -14,21 +13,11 @@ interface BlueprintManagementSectionProps {
 export const BlueprintManagementSection: FC<
   BlueprintManagementSectionProps
 > = ({ refreshTrigger, setRefreshTrigger }) => {
-  const { isOperator } = useOperatorInfo();
-  const accountAddress = useActiveAccountAddress();
+  const { address: accountAddress } = useAccount();
+  const { isOperator, operatorAddress } = useEvmOperatorInfo();
 
-  const { result: operatorStatsData } = useOperatorStatsData(
-    useMemo(() => {
-      if (
-        !accountAddress ||
-        !isOperator ||
-        !isSubstrateAddress(accountAddress)
-      ) {
-        return null;
-      }
-
-      return accountAddress;
-    }, [accountAddress, isOperator]),
+  const { result: operatorStatsData } = useOperatorStats(
+    isOperator ? operatorAddress ?? undefined : undefined,
     refreshTrigger,
   );
 

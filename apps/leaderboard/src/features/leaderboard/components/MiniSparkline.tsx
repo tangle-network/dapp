@@ -1,5 +1,5 @@
 import { ZERO_BIG_INT } from '@tangle-network/dapp-config';
-import { BLOCK_COUNT_IN_ONE_DAY } from '../constants';
+import { SECONDS_IN_ONE_DAY } from '../constants';
 import { Account } from '../types';
 
 export const MiniSparkline = ({
@@ -22,19 +22,19 @@ export const MiniSparkline = ({
     );
   }
 
-  // Get the most recent block number from the history
-  const mostRecentBlockNumber =
-    pointsHistory[pointsHistory.length - 1].blockNumber;
+  // Get the most recent timestamp from the history
+  const mostRecentTimestamp =
+    pointsHistory[pointsHistory.length - 1].timestamp;
 
   // Cumulate points for each day
   const cumulatedPoints = pointsHistory
     .reduce(
       (acc, snapshot) => {
-        // Calculate which day this block belongs to (0-6, where 0 is today)
-        const blocksAgo = mostRecentBlockNumber - snapshot.blockNumber;
-        const day = Math.floor(blocksAgo / BLOCK_COUNT_IN_ONE_DAY);
+        // Calculate which day this snapshot belongs to (0-6, where 0 is today)
+        const secondsAgo = mostRecentTimestamp - snapshot.timestamp;
+        const day = Math.floor(secondsAgo / SECONDS_IN_ONE_DAY);
 
-        // Only process blocks within the last 7 days
+        // Only process snapshots within the last 7 days
         if (day >= 0 && day < 7) {
           acc[day] = acc[day] + snapshot.points;
         }

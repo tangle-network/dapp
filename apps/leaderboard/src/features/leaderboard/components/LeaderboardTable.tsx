@@ -5,8 +5,6 @@ import TableStatus from '@tangle-network/tangle-shared-ui/components/tables/Tabl
 import type { NetworkType } from '@tangle-network/tangle-shared-ui/graphql/graphql';
 import {
   Input,
-  isSubstrateAddress,
-  isValidAddress,
   KeyValueWithButton,
   Table,
   TabsListWithAnimation,
@@ -16,8 +14,8 @@ import {
   TooltipBody,
   TooltipTrigger,
   Typography,
-  ValidatorIdentity,
 } from '@tangle-network/ui-components';
+import { isEvmAddress } from '@tangle-network/ui-components/utils/isEvmAddress20';
 import { Card } from '@tangle-network/ui-components/components/Card';
 import {
   createColumnHelper,
@@ -30,14 +28,12 @@ import {
 import cx from 'classnames';
 import { useMemo, useState } from 'react';
 import { twMerge } from 'tailwind-merge';
-import { useLatestFinalizedBlock } from '../../../queries';
+import { useLatestTimestamp } from '../../../queries';
 import { SyncProgressIndicator } from '../../indexingProgress';
-import { BLOCK_COUNT_IN_SEVEN_DAYS } from '../constants';
+import { SEVEN_DAYS_IN_SECONDS } from '../constants';
 import { useLeaderboard } from '../queries';
-import { useAccountIdentities } from '../queries/accountIdentitiesQuery';
 import { Account } from '../types';
 import { createAccountExplorerUrl } from '../utils/createAccountExplorerUrl';
-import { formatDisplayBlockNumber } from '../utils/formatDisplayBlockNumber';
 import { processLeaderboardRecord } from '../utils/processLeaderboardRecord';
 import { BadgesCell } from './BadgesCell';
 import { ExpandedInfo } from './ExpandedInfo';
@@ -90,46 +86,26 @@ const COLUMNS = [
     cell: (props) => {
       const address = props.getValue();
       const accountNetwork = props.row.original.network;
-      const identity = props.row.original.identity;
-
-      if (isSubstrateAddress(address)) {
-        return (
-          <ValidatorIdentity
-            address={address}
-            identityName={identity?.name}
-            accountExplorerUrl={createAccountExplorerUrl(
-              address,
-              accountNetwork,
-            )}
-            subContent={
-              <Typography
-                variant="body2"
-                className="text-gray-500 dark:text-gray-400"
-              >
-                Created{' '}
-                {formatDisplayBlockNumber(
-                  props.row.original.createdAt,
-                  props.row.original.createdAtTimestamp,
-                )}
-              </Typography>
-            }
-          />
-        );
-      }
+      const updatedAt = props.row.original.updatedAtTimestamp;
 
       return (
-        <div className="space-y-2">
-          <KeyValueWithButton size="sm" keyValue={address} />
-          <Typography
-            variant="body2"
-            className="text-gray-500 dark:text-gray-400"
+        <div className="space-y-1">
+          <a
+            href={createAccountExplorerUrl(address, accountNetwork)}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="hover:underline"
           >
-            Created{' '}
-            {formatDisplayBlockNumber(
-              props.row.original.createdAt,
-              props.row.original.createdAtTimestamp,
-            )}
-          </Typography>
+            <KeyValueWithButton size="sm" keyValue={address} />
+          </a>
+          {updatedAt && (
+            <Typography
+              variant="body2"
+              className="text-gray-500 dark:text-gray-400"
+            >
+              Updated {updatedAt.toLocaleDateString()}
+            </Typography>
+          )}
         </div>
       );
     },
@@ -214,21 +190,28 @@ export const LeaderboardTable = () => {
   );
 
   const {
-    data: latestBlock,
-    isPending: isLatestBlockPending,
-    error: latestBlockError,
-  } = useLatestFinalizedBlock(networkTab);
+    data: latestTimestamp,
+    isPending: isTimestampPending,
+    error: timestampError,
+  } = useLatestTimestamp(networkTab);
 
-  // TODO: Figure out how to handle this for both mainnet and testnet
-  const blockNumberSevenDaysAgo = useMemo(() => {
-    if (isLatestBlockPending || latestBlockError) {
+  // Calculate timestamp for 7 days ago (Envio uses timestamps instead of block numbers)
+  const timestampSevenDaysAgo = useMemo(() => {
+    if (isTimestampPending || timestampError) {
       return -1;
     }
 
-    const result = latestBlock.testnetBlock - BLOCK_COUNT_IN_SEVEN_DAYS;
+    const currentTimestamp =
+      networkTab === 'MAINNET'
+        ? latestTimestamp?.mainnetTimestamp
+        : latestTimestamp?.testnetTimestamp;
 
-    return result < 0 ? 1 : result;
-  }, [isLatestBlockPending, latestBlockError, latestBlock?.testnetBlock]);
+    if (!currentTimestamp) {
+      return -1;
+    }
+
+    return currentTimestamp - SEVEN_DAYS_IN_SECONDS;
+  }, [isTimestampPending, timestampError, latestTimestamp, networkTab]);
 
   const accountQuery = useMemo(() => {
     if (!searchQuery) {
@@ -237,8 +220,8 @@ export const LeaderboardTable = () => {
 
     const trimmedQuery = searchQuery.trim();
 
-    // Use server-side filtering only for valid addresses
-    if (isValidAddress(trimmedQuery)) {
+    // Use server-side filtering only for valid EVM addresses
+    if (isEvmAddress(trimmedQuery)) {
       return trimmedQuery;
     }
 
@@ -267,21 +250,8 @@ export const LeaderboardTable = () => {
     shouldUseClientSideFiltering
       ? 0
       : pagination.pageIndex * pagination.pageSize,
-    blockNumberSevenDaysAgo,
+    timestampSevenDaysAgo,
     accountQuery,
-  );
-
-  const { data: accountIdentities } = useAccountIdentities(
-    useMemo(
-      () =>
-        leaderboardData?.nodes
-          .filter((node) => node !== undefined && node !== null)
-          .map((node) => ({
-            id: node.id,
-            network: networkTab,
-          })) ?? [],
-      [leaderboardData?.nodes, networkTab],
-    ),
   );
 
   const data = useMemo<Account[]>(() => {
@@ -296,12 +266,13 @@ export const LeaderboardTable = () => {
           index,
           pagination.pageIndex,
           pagination.pageSize,
-          record ? accountIdentities?.get(record.id) : null,
+          undefined, // activity data - loaded separately if needed
+          networkTab,
         ),
       )
       .filter((record) => record !== null);
 
-    // Apply client-side filtering for identity names and other searches
+    // Apply client-side filtering for address searches
     if (!searchQuery || accountQuery || !shouldUseClientSideFiltering) {
       // If no search query, server-side filtering, or query too short, return as-is
       return processedData;
@@ -309,28 +280,18 @@ export const LeaderboardTable = () => {
 
     const trimmedQuery = searchQuery.trim().toLowerCase();
 
-    // Client-side filter by identity name, address, or partial matches
+    // Client-side filter by address (case insensitive)
     return processedData.filter((account) => {
-      // Search by identity name
-      if (account.identity?.name?.toLowerCase().includes(trimmedQuery)) {
-        return true;
-      }
-
-      // Search by address (case insensitive)
-      if (account.id.toLowerCase().includes(trimmedQuery)) {
-        return true;
-      }
-
-      return false;
+      return account.id.toLowerCase().includes(trimmedQuery);
     });
   }, [
     leaderboardData?.nodes,
     pagination.pageIndex,
     pagination.pageSize,
-    accountIdentities,
     searchQuery,
     accountQuery,
     shouldUseClientSideFiltering,
+    networkTab,
   ]);
 
   const table = useReactTable({
@@ -397,7 +358,7 @@ export const LeaderboardTable = () => {
               ) : undefined
             }
             id="search"
-            placeholder="Search by address or identity name"
+            placeholder="Search by address"
             size="md"
             inputClassName="py-1"
           />

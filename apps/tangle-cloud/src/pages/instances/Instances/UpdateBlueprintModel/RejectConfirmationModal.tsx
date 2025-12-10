@@ -5,17 +5,25 @@ import {
   ModalFooterActions,
   ModalHeader,
 } from '@tangle-network/ui-components';
-import { MonitoringServiceRequest } from '@tangle-network/tangle-shared-ui/data/blueprints/utils/type';
 import BlueprintItem from '@tangle-network/tangle-shared-ui/components/blueprints/BlueprintGallery/BlueprintItem';
-import { TxStatus } from '@tangle-network/tangle-shared-ui/hooks/useSubstrateTx';
+import { TxStatus } from '@tangle-network/tangle-shared-ui/hooks/useContractWrite';
 import { FC, useEffect } from 'react';
-import useAllBlueprints from '@tangle-network/tangle-shared-ui/data/blueprints/useAllBlueprints';
+import {
+  useAllBlueprints,
+  type ServiceRequest,
+  type BlueprintWithMetadata,
+} from '@tangle-network/tangle-shared-ui/data/graphql';
 import addCommasToNumber from '@tangle-network/ui-components/utils/addCommasToNumber';
+
+// Service request with optional blueprint metadata
+interface ServiceRequestWithBlueprint extends ServiceRequest {
+  blueprintData?: BlueprintWithMetadata;
+}
 
 type Props = {
   onClose: () => void;
   onConfirm: () => Promise<void>;
-  selectedRequest: MonitoringServiceRequest | null;
+  selectedRequest: ServiceRequestWithBlueprint | null;
   status: TxStatus;
 };
 
@@ -38,36 +46,36 @@ const RejectConfirmationModal: FC<Props> = ({
 
   // Don't load the modal until the request prop is given.
   if (selectedRequest === null) {
-    return;
+    return null;
   }
 
-  const blueprintStats = allBlueprints.get(
-    selectedRequest.blueprint.toString(),
+  const blueprintStats = allBlueprints?.get(
+    selectedRequest.blueprintId.toString(),
   );
 
-  const instancesCount = blueprintStats?.instancesCount ?? 0;
-  const operatorsCount = blueprintStats?.operatorsCount ?? 0;
-  const restakersCount = blueprintStats?.restakersCount ?? 0;
+  const instancesCount = blueprintStats?.serviceCount ?? 0;
+  const operatorsCount = Number(blueprintStats?.operatorCount ?? 0);
+  const restakersCount = 0; // TODO: Get from indexer when available
 
   return (
     <ModalContent
       size="lg"
       onInteractOutside={(event) => event.preventDefault()}
-      title={`Service Request #${addCommasToNumber(selectedRequest.requestId)}`}
+      title={`Service Request #${addCommasToNumber(Number(selectedRequest.requestId))}`}
       description="Are you sure you want to reject this request?"
     >
       <ModalHeader onClose={onClose} className="pb-4">
-        Service Request #{addCommasToNumber(selectedRequest.requestId)}
+        Service Request #{addCommasToNumber(Number(selectedRequest.requestId))}
       </ModalHeader>
 
       <ModalBody>
         <BlueprintItem
-          imgUrl={selectedRequest.blueprintData?.metadata.logo ?? ''}
+          imgUrl={selectedRequest.blueprintData?.logo ?? ''}
           renderImage={(imageUrl) => {
             return (
               <img
                 src={imageUrl}
-                alt={selectedRequest.blueprintData?.metadata.name ?? ''}
+                alt={selectedRequest.blueprintData?.name ?? ''}
                 className="flex-shrink-0 bg-center rounded-full"
               />
             );
@@ -76,12 +84,12 @@ const RejectConfirmationModal: FC<Props> = ({
           operatorsCount={operatorsCount}
           restakersCount={restakersCount}
           isBoosted={false}
-          category={selectedRequest.blueprintData?.metadata.category ?? ''}
+          category={selectedRequest.blueprintData?.category ?? ''}
           description={
-            selectedRequest.blueprintData?.metadata.description ?? ''
+            selectedRequest.blueprintData?.description ?? ''
           }
-          name={selectedRequest.blueprintData?.metadata.name ?? ''}
-          author={selectedRequest.blueprintData?.metadata.author ?? ''}
+          name={selectedRequest.blueprintData?.name ?? ''}
+          author={selectedRequest.blueprintData?.author ?? ''}
         />
 
         <Alert

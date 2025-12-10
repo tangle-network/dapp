@@ -1,52 +1,54 @@
-import { getApiPromise } from '@tangle-network/tangle-shared-ui/utils/polkadot/api';
 import { useQuery } from '@tanstack/react-query';
 import { LATEST_FINALIZED_BLOCK_QUERY_KEY } from '../constants/query';
 import { Network } from '../types';
-import { getRpcEndpoint } from '../utils/getRpcEndpoint';
 
-type UseLatestFinalizedBlockResult<TNetwork extends Network> =
+type UseLatestTimestampResult<TNetwork extends Network> =
   TNetwork extends 'all'
     ? {
-        mainnetBlock: number;
-        testnetBlock: number;
+        mainnetTimestamp: number;
+        testnetTimestamp: number;
       }
     : TNetwork extends 'TESTNET'
       ? {
-          mainnetBlock: never;
-          testnetBlock: number;
+          mainnetTimestamp: never;
+          testnetTimestamp: number;
         }
       : TNetwork extends 'MAINNET'
         ? {
-            mainnetBlock: number;
-            testnetBlock: never;
+            mainnetTimestamp: number;
+            testnetTimestamp: never;
           }
         : never;
 
+/**
+ * Returns current timestamps for use with Envio queries.
+ * Envio uses timestamps (in seconds) instead of block numbers for filtering.
+ */
 const fetcher = async <TNetwork extends Network>(
   network: TNetwork,
-): Promise<UseLatestFinalizedBlockResult<TNetwork>> => {
-  const { testnetRpc, mainnetRpc } = getRpcEndpoint(network);
+): Promise<UseLatestTimestampResult<TNetwork>> => {
+  // Get current timestamp in seconds (Envio uses Unix timestamps)
+  const currentTimestamp = Math.floor(Date.now() / 1000);
 
-  const getBlockNumber = async (rpc: string) => {
-    const api = await getApiPromise(rpc);
-    // no blockHash is specified, so we retrieve the latest
-    const { block } = await api.rpc.chain.getBlock();
+  if (network === 'all') {
+    return {
+      testnetTimestamp: currentTimestamp,
+      mainnetTimestamp: currentTimestamp,
+    } as UseLatestTimestampResult<TNetwork>;
+  }
 
-    return block.header.number.toNumber();
-  };
-
-  const [testnetBlock, mainnetBlock] = await Promise.all([
-    testnetRpc ? getBlockNumber(testnetRpc) : null,
-    mainnetRpc ? getBlockNumber(mainnetRpc) : null,
-  ]);
+  if (network === 'TESTNET') {
+    return {
+      testnetTimestamp: currentTimestamp,
+    } as UseLatestTimestampResult<TNetwork>;
+  }
 
   return {
-    testnetBlock,
-    mainnetBlock,
-  } as UseLatestFinalizedBlockResult<TNetwork>;
+    mainnetTimestamp: currentTimestamp,
+  } as UseLatestTimestampResult<TNetwork>;
 };
 
-export function useLatestFinalizedBlock<TNetwork extends Network>(
+export function useLatestTimestamp<TNetwork extends Network>(
   network: TNetwork,
 ) {
   return useQuery({

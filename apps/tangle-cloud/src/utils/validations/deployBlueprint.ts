@@ -1,46 +1,40 @@
-import assertRestakeAssetId from '@tangle-network/tangle-shared-ui/utils/assertRestakeAssetId';
-import {
-  assertSubstrateAddress,
-  isEvmAddress,
-  isSubstrateAddress,
-} from '@tangle-network/ui-components';
+import { isEvmAddress } from '@tangle-network/ui-components';
 import { z, ZodError } from 'zod';
-import { Context as ServiceRequestTxContext } from '../../data/services/useServicesRequestTx';
 import { toPrimitiveArgsDataType } from '../toPrimitiveArgsDataType';
 import {
   Blueprint,
   PrimitiveField,
 } from '@tangle-network/tangle-shared-ui/types/blueprint';
-import { parseUnits } from 'viem';
+import { parseUnits, Address } from 'viem';
+
+// EVM service request context - compatible with useServiceRequestTx
+export type ServiceRequestContext = {
+  blueprintId: bigint;
+  operators: Address[];
+  config: `0x${string}`;
+  permittedCallers: Address[];
+  ttl: bigint;
+  paymentToken: Address;
+  paymentAmount: bigint;
+};
 
 export const assetSchema = z.object({
   id: z.string().transform((value, ctx) => {
-    try {
-      assertRestakeAssetId(value);
-    } catch (error: unknown) {
-      console.error(`Asset id ${value} is invalid: ${error}`);
+    // For EVM, asset IDs are token addresses
+    if (!isEvmAddress(value)) {
       ctx.addIssue({
         code: z.ZodIssueCode.custom,
-        message: 'Invalid RestakeAssetId',
+        message: 'Invalid asset address',
       });
-
       return z.NEVER;
     }
-
-    return value;
+    return value as Address;
   }),
   metadata: z.object({
     name: z.string(),
     symbol: z.string(),
     decimals: z.number(),
-    deposit: z.string().optional(),
-    isFrozen: z.boolean().optional(),
-    priceInUsd: z.number().nullable(),
-    assetId: z.string(),
-    vaultId: z.number().nullable(),
-    status: z.enum(['Live', 'Frozen', 'Destroying']).optional(),
-    // TODO: add details
-    details: z.any().optional(),
+    priceInUsd: z.number().nullable().optional(),
   }),
 });
 
@@ -61,7 +55,7 @@ export const deployBlueprintSchema = z
       }
 
       for (const [index, caller] of value.entries()) {
-        if (!isEvmAddress(caller) && !isSubstrateAddress(caller)) {
+        if (!isEvmAddress(caller)) {
           context.addIssue({
             path: [index],
             code: z.ZodIssueCode.custom,
@@ -81,7 +75,7 @@ export const deployBlueprintSchema = z
         return z.NEVER;
       }
 
-      return value;
+      return value as Address[];
     }),
     operators: z.array(z.string()).transform((value, context) => {
       if (value.length === 0) {
@@ -93,7 +87,18 @@ export const deployBlueprintSchema = z
         return z.NEVER;
       }
 
-      return value;
+      // Validate all operators are EVM addresses
+      for (const [index, operator] of value.entries()) {
+        if (!isEvmAddress(operator)) {
+          context.addIssue({
+            path: [index],
+            code: z.ZodIssueCode.custom,
+            message: 'Invalid operator address',
+          });
+        }
+      }
+
+      return value as Address[];
     }),
     assets: z.array(assetSchema).transform((value, context) => {
       if (value.length === 0) {
@@ -147,22 +152,7 @@ export const deployBlueprintSchema = z
      * and use {toPrimitiveArgsDataType}@link{../index.ts} to convert it to the correct type
      */
     requestArgs: z.array(z.any()).nullable().optional(),
-    paymentAsset: assetSchema.transform((value, context) => {
-      try {
-        assertRestakeAssetId(value.id);
-      } catch (error: unknown) {
-        console.error(`Asset id ${value.id} is invalid: ${error}`);
-
-        context.addIssue({
-          code: z.ZodIssueCode.custom,
-          message: 'Invalid payment asset',
-        });
-
-        return z.NEVER;
-      }
-
-      return value;
-    }),
+    paymentAsset: assetSchema,
     paymentAmount: z.string().regex(/^\d*\.?\d*$/, 'Must be a valid number'),
   })
   .superRefine((schema, ctx) => {
@@ -205,12 +195,16 @@ export const deployBlueprintSchema = z
 
 export type DeployBlueprintSchema = z.infer<typeof deployBlueprintSchema>;
 
-export const formatServiceRegisterData = (
+/**
+ * Format the deploy blueprint form data into the EVM service request context.
+ */
+export const formatServiceRequestData = (
   blueprintData: Blueprint,
   data: DeployBlueprintSchema,
-): ServiceRequestTxContext => {
-  let blueprintRequestArgs: PrimitiveField[] = [];
+): ServiceRequestContext => {
+  let config: `0x${string}` = '0x';
 
+  // Encode request args if provided
   if (blueprintData.requestParams.length > 0) {
     if (
       !data.requestArgs ||
@@ -224,10 +218,12 @@ export const formatServiceRegisterData = (
         },
       ]);
     }
-    blueprintRequestArgs = toPrimitiveArgsDataType(
+    const requestArgs = toPrimitiveArgsDataType(
       blueprintData.requestParams,
       data.requestArgs,
     );
+    // Encode the request args as bytes for the contract
+    config = JSON.stringify(requestArgs) as `0x${string}`;
   }
 
   const paymentAmount = parseUnits(
@@ -237,25 +233,11 @@ export const formatServiceRegisterData = (
 
   return {
     blueprintId: BigInt(blueprintData.id),
-    permittedCallers: data.permittedCallers.map((caller) => {
-      // already validated in the schema
-      if (!isEvmAddress(caller) && !isSubstrateAddress(caller)) {
-        throw new Error('Invalid caller address');
-      }
-
-      return caller;
-    }),
-    operators: data.operators.map((operator) => {
-      return assertSubstrateAddress(operator);
-    }),
-    requestArgs: blueprintRequestArgs,
-    securityRequirements: data.securityCommitments,
-    assets: data.assets.map((asset) => assertRestakeAssetId(asset.id)),
+    operators: data.operators as Address[],
+    config,
+    permittedCallers: data.permittedCallers as Address[],
     ttl: BigInt(data.instanceDuration),
-    paymentAsset: assertRestakeAssetId(data.paymentAsset.id),
-    paymentValue: paymentAmount,
-    membershipModel: data.approvalModel,
-    minOperator: data.minApproval,
-    maxOperator: data.maxApproval || data.minApproval,
+    paymentToken: data.paymentAsset.id as Address,
+    paymentAmount,
   };
 };

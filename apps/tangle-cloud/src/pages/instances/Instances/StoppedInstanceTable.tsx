@@ -15,41 +15,69 @@ import pluralize from '@tangle-network/ui-components/utils/pluralize';
 import { TangleCloudTable } from '../../../components/tangleCloudTable/TangleCloudTable';
 import { ChevronRight } from '@tangle-network/icons';
 import TableCellWrapper from '@tangle-network/tangle-shared-ui/components/tables/TableCellWrapper';
-import { MonitoringBlueprint } from '@tangle-network/tangle-shared-ui/data/blueprints/utils/type';
 import { PagePath } from '../../../types';
 import { Link } from 'react-router';
-import useOperatorInfo from '@tangle-network/tangle-shared-ui/hooks/useOperatorInfo';
-import useStoppedInstances from '@tangle-network/tangle-shared-ui/data/blueprints/useStoppedInstances';
-import { isSubstrateAddress } from '@tangle-network/ui-components/utils/isSubstrateAddress';
-import { encodeAddress, blake2AsU8a } from '@polkadot/util-crypto';
+import { useAccount } from 'wagmi';
+import useEvmOperatorInfo from '../../../hooks/useEvmOperatorInfo';
+import {
+  useServicesByOperator,
+  useBlueprintMap,
+  type Service,
+  type BlueprintWithMetadata,
+} from '@tangle-network/tangle-shared-ui/data/graphql';
 
-const columnHelper =
-  createColumnHelper<MonitoringBlueprint['services'][number]>();
+// Service with blueprint metadata
+interface ServiceWithBlueprint extends Service {
+  blueprintData?: BlueprintWithMetadata;
+}
+
+const columnHelper = createColumnHelper<ServiceWithBlueprint>();
 
 export const StoppedInstanceTable: FC = () => {
-  const { operatorAddress } = useOperatorInfo();
+  const { address: currentUserAddress } = useAccount();
+  const { isOperator, operatorAddress } = useEvmOperatorInfo();
+
+  // Fetch terminated services where user is an operator
   const {
-    result: stoppedInstances,
-    isEmpty,
+    data: stoppedServices,
     isLoading,
     error,
-  } = useStoppedInstances(operatorAddress);
+  } = useServicesByOperator(
+    isOperator ? operatorAddress ?? undefined : undefined,
+    { status: 'TERMINATED' },
+  );
+
+  // Fetch blueprint metadata
+  const { data: blueprintMap } = useBlueprintMap();
+
+  // Combine services with blueprint data
+  const stoppedInstances = useMemo<ServiceWithBlueprint[]>(() => {
+    if (!stoppedServices) return [];
+
+    return stoppedServices.map((service) => ({
+      ...service,
+      blueprintData: blueprintMap?.get(service.blueprintId.toString()),
+    }));
+  }, [stoppedServices, blueprintMap]);
+
+  const isEmpty = stoppedInstances.length === 0;
 
   const columns = useMemo(
     () => [
-      columnHelper.accessor('id', {
+      columnHelper.accessor('serviceId', {
         header: () => 'Blueprint > Instance',
         enableSorting: false,
         cell: (props) => {
+          const service = props.row.original;
           return (
             <TableCellWrapper className="p-0 min-h-fit">
               <div className="flex items-center gap-2 w-full">
-                {props.row.original.blueprintData?.metadata?.logo ? (
+                {service.blueprintData?.logo ? (
                   <Avatar
                     size="lg"
                     className="min-w-12"
-                    src={props.row.original.blueprintData.metadata?.logo}
-                    alt={props.row.original.id.toString()}
+                    src={service.blueprintData.logo}
+                    alt={service.serviceId.toString()}
                     sourceVariant="uri"
                   />
                 ) : (
@@ -57,26 +85,8 @@ export const StoppedInstanceTable: FC = () => {
                     size="lg"
                     className="min-w-12"
                     sourceVariant="address"
-                    value={
-                      (props.row.original.blueprintData?.metadata as any)
-                        ?.owner ||
-                      (props.row.original.blueprintData?.metadata?.author &&
-                      isSubstrateAddress(
-                        props.row.original.blueprintData.metadata.author,
-                      )
-                        ? props.row.original.blueprintData.metadata.author
-                        : null) ||
-                      (props.row.original.blueprintData?.metadata?.name
-                        ? encodeAddress(
-                            blake2AsU8a(
-                              props.row.original.blueprintData.metadata.name,
-                              256,
-                            ).slice(0, 32),
-                            42,
-                          )
-                        : undefined)
-                    }
-                    theme="substrate"
+                    value={service.owner}
+                    theme="ethereum"
                   />
                 )}
                 <div className="w-4/12">
@@ -85,14 +95,14 @@ export const StoppedInstanceTable: FC = () => {
                     fw="bold"
                     className="!text-blue-50 text-ellipsis whitespace-nowrap overflow-hidden"
                   >
-                    {props.row.original.blueprintData?.metadata?.author || ''}
+                    {service.blueprintData?.author || ''}
                   </Typography>
                   <Typography
                     variant="body2"
                     fw="normal"
                     className="!text-mono-100 text-ellipsis whitespace-nowrap overflow-hidden"
                   >
-                    {props.row.original.blueprintData?.metadata?.name || ''}
+                    {service.blueprintData?.name || ''}
                   </Typography>
                 </div>
                 <div>
@@ -104,17 +114,9 @@ export const StoppedInstanceTable: FC = () => {
                     fw="bold"
                     className="!text-blue-50 text-ellipsis whitespace-nowrap overflow-hidden"
                   >
-                    {props.row.original.id
-                      ? `Instance-${props.row.original.id}`
+                    {service.serviceId
+                      ? `Instance-${service.serviceId}`
                       : EMPTY_VALUE_PLACEHOLDER}
-                  </Typography>
-                  <Typography
-                    variant="body2"
-                    fw="normal"
-                    className="!text-mono-100 text-ellipsis whitespace-nowrap overflow-hidden"
-                  >
-                    {props.row.original.externalInstanceId ||
-                      EMPTY_VALUE_PLACEHOLDER}
                   </Typography>
                 </div>
               </div>
@@ -122,7 +124,8 @@ export const StoppedInstanceTable: FC = () => {
           );
         },
       }),
-      columnHelper.accessor('id', {
+      columnHelper.accessor('serviceId', {
+        id: 'actions',
         header: () => '',
         cell: (props) => {
           return (
@@ -130,7 +133,7 @@ export const StoppedInstanceTable: FC = () => {
               <Link
                 to={PagePath.BLUEPRINTS_DETAILS.replace(
                   ':id',
-                  props.row.original.blueprint.toString(),
+                  props.row.original.blueprintId.toString(),
                 )}
                 onClick={(event) => {
                   event.stopPropagation();
@@ -154,13 +157,13 @@ export const StoppedInstanceTable: FC = () => {
     getCoreRowModel: getCoreRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
     getRowId: (row) =>
-      `StoppedInstance-${row.blueprint.toString()}-${row.id.toString()}`,
+      `StoppedInstance-${row.blueprintId}-${row.serviceId}`,
     autoResetPageIndex: false,
     enableSortingRemoval: false,
   });
 
   return (
-    <TangleCloudTable<MonitoringBlueprint['services'][number]>
+    <TangleCloudTable<ServiceWithBlueprint>
       title={pluralize('Stopped Instance', !isEmpty)}
       data={stoppedInstances}
       error={error}

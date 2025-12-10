@@ -1,55 +1,49 @@
-import { BN, BN_ZERO } from '@polkadot/util';
 import assert from 'assert';
-import { PresetTypedChainId } from '@tangle-network/dapp-types';
 import isDefined from '@tangle-network/dapp-types/utils/isDefined';
 import ListModal from '@tangle-network/tangle-shared-ui/components/ListModal';
-import { RestakeAsset } from '@tangle-network/tangle-shared-ui/types/restake';
-import { RestakeAssetId } from '@tangle-network/tangle-shared-ui/types';
 import { Card } from '@tangle-network/ui-components';
 import { useModal } from '@tangle-network/ui-components/hooks/useModal';
-import { isEvmAddress } from '@tangle-network/ui-components';
 import { FC, useCallback, useMemo, useEffect, useRef } from 'react';
 import { SubmitHandler, useForm } from 'react-hook-form';
+import { parseUnits, Address, formatUnits } from 'viem';
 import AssetListItem from '../../../components/Lists/AssetListItem';
 import StyleContainer from '../../../components/restaking/StyleContainer';
-import useRestakeDepositTx from '../../../data/restake/useRestakeDepositTx';
 import useActiveTypedChainId from '../../../hooks/useActiveTypedChainId';
-import { DepositFormFields } from '../../../types/restake';
-import parseChainUnits from '../../../utils/parseChainUnits';
+import { EvmDepositFormFields } from '../../../types/restake';
 
 import Form from '../Form';
 import RestakeActionTabs from '../RestakeActionTabs';
 import ActionButton from './ActionButton';
-import SourceChainInput from './SourceChainInput';
 import Details from './Details';
 import filterBy from '@tangle-network/tangle-shared-ui/utils/filterBy';
-import { TxStatus } from '@tangle-network/tangle-shared-ui/hooks/useSubstrateTx';
+import { TxStatus } from '@tangle-network/tangle-shared-ui/hooks/useContractWrite';
 import { SUPPORTED_RESTAKE_DEPOSIT_TYPED_CHAIN_IDS } from '../../../constants/restake';
+import {
+  useRestakeAssets,
+  type RestakeAsset,
+} from '@tangle-network/tangle-shared-ui/data/graphql';
+import { useDepositTx } from '@tangle-network/tangle-shared-ui/data/tx';
 
 const getDefaultTypedChainId = (
   activeTypedChainId: number | null,
-): number | PresetTypedChainId.TangleTestnetNative => {
+): number => {
   return isDefined(activeTypedChainId) &&
     SUPPORTED_RESTAKE_DEPOSIT_TYPED_CHAIN_IDS.includes(activeTypedChainId)
     ? activeTypedChainId
     : SUPPORTED_RESTAKE_DEPOSIT_TYPED_CHAIN_IDS[0];
 };
 
-type Props = {
-  assets: Map<RestakeAssetId, RestakeAsset> | null;
-  isLoadingAssets: boolean;
-  refetchErc20Balances: () => void;
-};
-
-const DepositForm: FC<Props> = ({
-  assets,
-  isLoadingAssets,
-  refetchErc20Balances,
-}) => {
+const DepositForm: FC = () => {
   const activeTypedChainId = useActiveTypedChainId();
-  const { status: depositTxStatus, execute: executeDepositTx } =
-    useRestakeDepositTx();
+  const { status: depositTxStatus, execute: executeDepositTx } = useDepositTx();
   const formRef = useRef<HTMLFormElement>(null);
+
+  // Fetch restaking assets with balances
+  const {
+    assets,
+    isLoading: isLoadingAssets,
+    refetchBalances,
+  } = useRestakeAssets();
 
   const {
     register,
@@ -58,7 +52,7 @@ const DepositForm: FC<Props> = ({
     handleSubmit,
     watch,
     formState: { errors, isSubmitting, isValid },
-  } = useForm<DepositFormFields>({
+  } = useForm<EvmDepositFormFields>({
     mode: 'onChange',
     defaultValues: {
       sourceTypedChainId: getDefaultTypedChainId(activeTypedChainId),
@@ -91,20 +85,19 @@ const DepositForm: FC<Props> = ({
     resetField('amount');
   }, [activeTypedChainId, resetField]);
 
+  // Auto-select first asset with balance
   useEffect(() => {
     if (assets === null || isLoadingAssets) {
       return;
     }
 
     const defaultAsset = Array.from(assets.values()).find(
-      ({ balance }) => balance !== undefined && !balance.isZero(),
+      ({ balance }) => balance > 0n,
     );
 
     if (defaultAsset === undefined) {
       return;
     }
-
-    assert(defaultAsset.balance !== undefined);
 
     setValue('depositAssetId', defaultAsset.id);
   }, [assets, setValue, isLoadingAssets]);
@@ -122,33 +115,28 @@ const DepositForm: FC<Props> = ({
     }
 
     return Array.from(assets.values()).sort((a, b) => {
-      const aBalance = a.balance ?? BN_ZERO;
-      const bBalance = b.balance ?? BN_ZERO;
-      return aBalance.isZero()
-        ? 1
-        : bBalance.isZero()
-          ? -1
-          : bBalance.cmp(aBalance);
+      // Sort by balance descending (assets with balance first)
+      if (a.balance === 0n && b.balance > 0n) return 1;
+      if (b.balance === 0n && a.balance > 0n) return -1;
+      if (a.balance > b.balance) return -1;
+      if (a.balance < b.balance) return 1;
+      return 0;
     });
   }, [assets]);
 
   const assetId = watch('depositAssetId');
 
   const asset = useMemo(() => {
-    if (assets === null || assetId === null) {
+    if (assets === null || assetId === undefined) {
       return null;
     }
 
-    const candidates = Array.from(assets.values()).filter(
-      (restakeAsset) => restakeAsset.id === assetId,
-    );
-
-    return candidates.length === 0 ? null : candidates[0];
+    return assets.get(assetId) ?? null;
   }, [assetId, assets]);
 
   const handleAssetSelection = useCallback(
-    (asset: RestakeAsset) => {
-      setValue('depositAssetId', asset.id);
+    (selectedAsset: RestakeAsset) => {
+      setValue('depositAssetId', selectedAsset.id);
       closeTokenModal();
     },
     [closeTokenModal, setValue],
@@ -160,40 +148,31 @@ const DepositForm: FC<Props> = ({
     !isSubmitting &&
     depositTxStatus !== TxStatus.PROCESSING;
 
-  const onSubmit = useCallback<SubmitHandler<DepositFormFields>>(
+  const onSubmit = useCallback<SubmitHandler<EvmDepositFormFields>>(
     async ({ amount }) => {
-      if (!isReady) {
+      if (!isReady || !asset) {
         return;
       }
 
-      const amountBn = parseChainUnits(amount, asset.metadata.decimals);
+      // Parse amount to bigint using token decimals
+      const amountBigInt = parseUnits(amount, asset.metadata.decimals);
 
-      if (!(amountBn instanceof BN)) {
+      if (amountBigInt <= 0n) {
         return;
       }
-
-      if (!executeDepositTx) return;
 
       await executeDepositTx({
-        assetId: asset.id,
-        amount: amountBn,
+        token: asset.id,
+        amount: amountBigInt,
       });
 
       setValue('amount', '', { shouldValidate: false });
-      setValue('depositAssetId', '', { shouldValidate: false });
+      setValue('depositAssetId', undefined as unknown as Address, { shouldValidate: false });
 
-      if (isEvmAddress(asset.id)) {
-        refetchErc20Balances();
-      }
+      // Refresh balances after deposit
+      refetchBalances();
     },
-    [
-      asset?.metadata.decimals,
-      asset?.id,
-      isReady,
-      refetchErc20Balances,
-      executeDepositTx,
-      setValue,
-    ],
+    [asset, isReady, refetchBalances, executeDepositTx, setValue],
   );
 
   return (
@@ -204,7 +183,7 @@ const DepositForm: FC<Props> = ({
         <Form ref={formRef} onSubmit={handleSubmit(onSubmit)}>
           <div className="flex flex-col h-full space-y-4 grow">
             <div className="space-y-2">
-              <SourceChainInput
+              <SourceChainInputEvm
                 assets={assets}
                 amountError={errors.amount?.message}
                 openTokenModal={openTokenModal}
@@ -235,11 +214,11 @@ const DepositForm: FC<Props> = ({
         isOpen={tokenModalOpen}
         setIsOpen={updateTokenModal}
         onSelect={handleAssetSelection}
-        filterItem={(asset, query) =>
+        filterItem={(assetItem, query) =>
           filterBy(query, [
-            asset.id,
-            asset.metadata.name,
-            asset.metadata.symbol,
+            assetItem.id,
+            assetItem.metadata.name,
+            assetItem.metadata.symbol,
           ])
         }
         searchInputId="restake-deposit-assets-search"
@@ -247,24 +226,121 @@ const DepositForm: FC<Props> = ({
         titleWhenEmpty="No Assets Found"
         descriptionWhenEmpty="It seems that there are no available assets on this account in this network yet. Please try again later."
         items={allAssets}
-        renderItem={(asset) => {
-          const balance = asset.balance ?? BN_ZERO;
-          const displayName =
-            asset.id === '0' ? 'Tangle Network Token' : asset.metadata.name;
-
+        renderItem={(assetItem) => {
           return (
-            <AssetListItem
-              assetId={asset.id}
-              name={displayName}
-              symbol={asset.metadata.symbol}
-              balance={balance}
-              decimals={asset.metadata.decimals}
-              rightBottomText="Balance"
+            <AssetListItemEvm
+              asset={assetItem}
             />
           );
         }}
       />
     </StyleContainer>
+  );
+};
+
+// EVM version of SourceChainInput that works with Address types
+interface SourceChainInputEvmProps {
+  assets: Map<Address, RestakeAsset> | null;
+  amountError?: string;
+  openTokenModal: () => void;
+  register: ReturnType<typeof useForm<EvmDepositFormFields>>['register'];
+  setValue: (name: keyof EvmDepositFormFields, value: unknown) => void;
+  watch: ReturnType<typeof useForm<EvmDepositFormFields>>['watch'];
+}
+
+const SourceChainInputEvm: FC<SourceChainInputEvmProps> = ({
+  assets,
+  amountError,
+  openTokenModal,
+  register,
+  setValue,
+  watch,
+}) => {
+  const assetId = watch('depositAssetId');
+  const asset = assetId ? assets?.get(assetId) : null;
+
+  // Max button handler
+  const handleMaxClick = useCallback(() => {
+    if (!asset) return;
+    const maxAmount = formatUnits(asset.balance, asset.metadata.decimals);
+    setValue('amount', maxAmount);
+  }, [asset, setValue]);
+
+  return (
+    <div className="space-y-2">
+      <div className="flex items-center justify-between">
+        <label className="text-sm font-medium text-mono-140 dark:text-mono-80">
+          Amount
+        </label>
+        {asset && (
+          <button
+            type="button"
+            onClick={handleMaxClick}
+            className="text-xs text-blue-50 hover:text-blue-40"
+          >
+            Max: {formatUnits(asset.balance, asset.metadata.decimals)} {asset.metadata.symbol}
+          </button>
+        )}
+      </div>
+
+      <div className="flex gap-2">
+        <input
+          {...register('amount', {
+            required: 'Amount is required',
+            validate: (value) => {
+              if (!asset) return 'Select an asset first';
+              const parsed = parseUnits(value, asset.metadata.decimals);
+              if (parsed <= 0n) return 'Amount must be greater than 0';
+              if (parsed > asset.balance) return 'Insufficient balance';
+              return true;
+            },
+          })}
+          type="text"
+          placeholder="0.0"
+          className="flex-1 px-3 py-2 border rounded-lg bg-mono-0 dark:bg-mono-180 border-mono-60 dark:border-mono-140"
+        />
+
+        <button
+          type="button"
+          onClick={openTokenModal}
+          className="flex items-center gap-2 px-4 py-2 border rounded-lg bg-mono-0 dark:bg-mono-180 border-mono-60 dark:border-mono-140 hover:bg-mono-20 dark:hover:bg-mono-160"
+        >
+          {asset ? (
+            <>
+              <span className="font-medium">{asset.metadata.symbol}</span>
+            </>
+          ) : (
+            <span className="text-mono-100">Select token</span>
+          )}
+        </button>
+      </div>
+
+      {amountError && (
+        <p className="text-xs text-red-50">{amountError}</p>
+      )}
+    </div>
+  );
+};
+
+// EVM version of AssetListItem that works with RestakeAsset
+interface AssetListItemEvmProps {
+  asset: RestakeAsset;
+}
+
+const AssetListItemEvm: FC<AssetListItemEvmProps> = ({ asset }) => {
+  const formattedBalance = formatUnits(asset.balance, asset.metadata.decimals);
+
+  return (
+    <div className="flex items-center justify-between w-full p-2">
+      <div className="flex flex-col">
+        <span className="font-medium">{asset.metadata.symbol}</span>
+        <span className="text-xs text-mono-100">{asset.metadata.name}</span>
+      </div>
+      <div className="flex flex-col items-end">
+        <span className="text-sm">{formattedBalance}</span>
+        <span className="text-xs text-mono-100">Balance</span>
+      </div>
+    </div>
   );
 };
 

@@ -7,8 +7,8 @@ import {
   UseFormWatch,
 } from 'react-hook-form';
 import { Blueprint } from '@tangle-network/tangle-shared-ui/types/blueprint';
-import { SubstrateAddress } from '@tangle-network/ui-components/types/address';
 import { VaultToken } from '@tangle-network/tangle-shared-ui/types';
+import { Address } from 'viem';
 
 export const LabelClassName = 'text-mono-200 dark:text-mono-0 font-medium';
 
@@ -36,7 +36,7 @@ export type RequestArgsConfigurationStepProps = BaseDeployStepProps;
 export type PaymentStepProps = BaseDeployStepProps;
 
 export type OperatorSelectionTable = {
-  address: SubstrateAddress;
+  address: Address;
   identityName?: string;
   vaultTokensInUsd?: number;
   selfBondedAmount: bigint;

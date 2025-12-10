@@ -1,17 +1,12 @@
-import { CircleIcon } from '@radix-ui/react-icons';
-import { CheckboxCircleFill } from '@tangle-network/icons';
 import {
   Card,
-  isSubstrateAddress,
   KeyValueWithButton,
   Typography,
-  ValidatorIdentity,
 } from '@tangle-network/ui-components';
 import { Row } from '@tanstack/react-table';
 import React from 'react';
 import { Account } from '../types';
 import { createAccountExplorerUrl } from '../utils/createAccountExplorerUrl';
-import { formatDisplayBlockNumber } from '../utils/formatDisplayBlockNumber';
 
 interface ExpandedInfoProps {
   row: Row<Account>;
@@ -22,7 +17,6 @@ export const ExpandedInfo: React.FC<ExpandedInfoProps> = ({ row }) => {
   const address = account.id;
   const accountNetwork = account.network;
 
-  // Helper function to render a detail row with label and value
   const DetailRow = ({
     label,
     value,
@@ -36,25 +30,6 @@ export const ExpandedInfo: React.FC<ExpandedInfoProps> = ({ row }) => {
     </div>
   );
 
-  // Helper function to render task completion indicator
-  const TaskIndicator = ({
-    completed,
-    label,
-  }: {
-    completed?: boolean;
-    label: string;
-  }) => (
-    <div className="flex items-center gap-1 [&>svg]:flex-initial">
-      {completed ? (
-        <CheckboxCircleFill className="fill-green-500 dark:fill-green-400" />
-      ) : (
-        <CircleIcon />
-      )}
-      <span>{label}</span>
-    </div>
-  );
-
-  // Helper function to create a section with title and content
   const Section = ({
     title,
     children,
@@ -70,42 +45,29 @@ export const ExpandedInfo: React.FC<ExpandedInfoProps> = ({ row }) => {
     </div>
   );
 
-  const { testnetTaskCompletion } = account;
-
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 px-4 pb-4">
       <Card className="bg-mono-40/80 dark:bg-mono-0/5 space-y-4 border-0">
         <Section title="Account Details">
           <DetailRow
-            label="Account ID"
+            label="Account"
             value={
-              isSubstrateAddress(address) ? (
-                <ValidatorIdentity
-                  address={address}
-                  accountExplorerUrl={createAccountExplorerUrl(
-                    address,
-                    accountNetwork,
-                  )}
-                />
-              ) : (
+              <a
+                href={createAccountExplorerUrl(address, accountNetwork)}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="hover:underline"
+              >
                 <KeyValueWithButton size="sm" keyValue={address} />
-              )
+              </a>
             }
           />
-          <DetailRow
-            label="Created"
-            value={formatDisplayBlockNumber(
-              account.createdAt,
-              account.createdAtTimestamp,
-            )}
-          />
-          <DetailRow
-            label="Last Updated"
-            value={formatDisplayBlockNumber(
-              account.lastUpdatedAt,
-              account.lastUpdatedAtTimestamp,
-            )}
-          />
+          {account.updatedAtTimestamp && (
+            <DetailRow
+              label="Last Updated"
+              value={account.updatedAtTimestamp.toLocaleString()}
+            />
+          )}
         </Section>
 
         <Section title="Points Breakdown">
@@ -132,46 +94,16 @@ export const ExpandedInfo: React.FC<ExpandedInfoProps> = ({ row }) => {
             value={account.activity.delegationCount}
           />
           <DetailRow
-            label="Liquid Staking Pools"
+            label="Liquid Vault Positions"
             value={account.activity.liquidStakingPoolCount}
           />
+          <DetailRow
+            label="Blueprints Owned"
+            value={account.activity.blueprintCount}
+          />
           <DetailRow label="Services" value={account.activity.serviceCount} />
+          <DetailRow label="Job Calls" value={account.activity.jobCallCount} />
         </Section>
-
-        <div className="space-y-2">
-          <Typography variant="h5" component="h3" className="font-semibold">
-            Testnet Task Completion
-          </Typography>
-
-          <div className="space-y-3">
-            <div className="grid grid-cols-2 gap-2 text-sm">
-              <TaskIndicator
-                completed={testnetTaskCompletion?.depositedThreeAssets}
-                label="Deposit 3+ Assets"
-              />
-              <TaskIndicator
-                completed={testnetTaskCompletion?.delegatedAssets}
-                label="Delegation"
-              />
-              <TaskIndicator
-                completed={testnetTaskCompletion?.liquidStaked}
-                label="Liquid Stake"
-              />
-              <TaskIndicator
-                completed={testnetTaskCompletion?.nominated}
-                label="Nomination"
-              />
-              <TaskIndicator
-                completed={testnetTaskCompletion?.nativeRestaked}
-                label="Native Restake"
-              />
-              <TaskIndicator
-                completed={testnetTaskCompletion?.bonus}
-                label="Bonus Points (Complete All Tasks)"
-              />
-            </div>
-          </div>
-        </div>
       </Card>
     </div>
   );
