@@ -1,4 +1,4 @@
-import { isHex } from '@polkadot/util';
+import { isHex } from 'viem';
 import isValidUrl from '@tangle-network/dapp-types/utils/isValidUrl';
 import { ExternalLinkLine } from '@tangle-network/icons/ExternalLinkLine';
 import useNetworkStore from '@tangle-network/tangle-shared-ui/context/useNetworkStore';

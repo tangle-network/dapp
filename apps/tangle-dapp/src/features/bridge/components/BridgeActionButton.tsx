@@ -1,4 +1,4 @@
-import { BN } from '@polkadot/util/bn/bn';
+import { BN } from '@tangle-network/tangle-shared-ui/bn';
 import { Account } from '@tangle-network/abstract-api-provider/account';
 import { Chain, ChainConfig, WalletConfig } from '@tangle-network/dapp-config';
 import { EVMTokenBridgeEnum } from '@tangle-network/evm-contract-metadata';

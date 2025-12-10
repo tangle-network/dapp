@@ -1,7 +1,5 @@
-import { isHex } from '@polkadot/util';
 import { getApiPromise } from '@tangle-network/tangle-shared-ui/utils/polkadot/api';
-
-import type { HexString } from '@polkadot/util/types';
+import { type Hex, isHex } from 'viem';
 import { useEffect, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router';
 import { PagePath } from '../../../types';
@@ -24,7 +22,7 @@ const isBlockHashExistOnChain = async (
 const Page = () => {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
-  const [validBlockHash, setValidBlockHash] = useState<HexString | null>(null);
+  const [validBlockHash, setValidBlockHash] = useState<Hex | null>(null);
 
   useEffect(() => {
     const checkBlockHash = async () => {

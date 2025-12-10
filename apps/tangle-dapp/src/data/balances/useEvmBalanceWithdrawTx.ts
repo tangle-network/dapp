@@ -1,6 +1,6 @@
-import type { HexString } from '@polkadot/util/types';
-import { ZERO_BIG_INT } from '@tangle-network/dapp-config';
 import { useCallback } from 'react';
+import { Address } from 'viem';
+import { ZERO_BIG_INT } from '@tangle-network/dapp-config';
 
 import { TxName } from '../../constants';
 import { useSubstrateTxWithNotification } from '@tangle-network/tangle-shared-ui/hooks/useSubstrateTx';
@@ -9,7 +9,7 @@ import { SUCCESS_MESSAGES } from '../../hooks/useTxNotification';
 
 type Context = {
   pendingEvmBalance: bigint | null;
-  evmAddress20: HexString | null;
+  evmAddress20: Address | null;
 };
 
 const useEvmBalanceWithdrawTx = (tokenAmountStr?: string | null) => {

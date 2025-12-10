@@ -1,9 +1,9 @@
 import { encodeAddress } from '@polkadot/util-crypto';
-import { HexString } from '@polkadot/util/types';
 import { Account } from '@tangle-network/abstract-api-provider';
 import { useWebContext } from '@tangle-network/api-provider-environment';
 import useNetworkStore from '@tangle-network/tangle-shared-ui/context/useNetworkStore';
 import {
+  EvmAddress,
   SolanaAddress,
   SubstrateAddress,
 } from '@tangle-network/ui-components/types/address';
@@ -15,7 +15,7 @@ import { useMemo } from 'react';
 
 export type WalletAccount = {
   name: string;
-  address: HexString | SubstrateAddress | SolanaAddress;
+  address: EvmAddress | SubstrateAddress | SolanaAddress;
   originalAccount: Account;
 };
 
@@ -25,7 +25,7 @@ const useWalletAccounts = (): WalletAccount[] => {
 
   const accounts = useMemo(() => {
     return webContextAccounts.map((account) => {
-      let address: HexString | SubstrateAddress | SolanaAddress;
+      let address: EvmAddress | SubstrateAddress | SolanaAddress;
 
       if (isSolanaAddress(account.address)) {
         address = assertSolanaAddress(account.address);

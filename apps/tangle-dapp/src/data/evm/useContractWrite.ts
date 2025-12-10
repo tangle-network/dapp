@@ -1,4 +1,3 @@
-import { HexString } from '@polkadot/util/types';
 import { useWebContext } from '@tangle-network/api-provider-environment';
 import chainsPopulated from '@tangle-network/dapp-config/chains/chainsPopulated';
 import {
@@ -12,6 +11,7 @@ import {
   Abi as ViemAbi,
   ContractFunctionArgs,
   ContractFunctionName,
+  type Address,
 } from 'viem';
 import {
   simulateContract,
@@ -34,7 +34,7 @@ export type ContractWriteOptions<
   FunctionName extends ContractFunctionName<Abi, 'nonpayable'>,
 > = {
   txName: TxName;
-  address: HexString;
+  address: Address;
   functionName: FunctionName;
   args: ContractFunctionArgs<Abi, 'payable' | 'nonpayable', FunctionName>;
   notificationStep?: NotificationSteps;
