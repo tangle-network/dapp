@@ -1,4 +1,4 @@
-import { BN } from '@polkadot/util';
+import BN from 'bn.js';
 import { useMemo } from 'react';
 import { RestakeAssetId } from '../../types';
 import useRestakeDeposits from './useRestakeDeposits';

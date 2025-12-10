@@ -1,4 +1,4 @@
-import { BN } from '@polkadot/util';
+import BN from 'bn.js';
 import { HexString } from '@polkadot/util/types';
 import { NetworkId } from '@tangle-network/ui-components/constants/networks';
 import {

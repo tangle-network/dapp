@@ -25,7 +25,7 @@ import {
 } from '@tangle-network/ui-components';
 import { TableVariant } from '@tangle-network/ui-components/components/Table/types';
 import pluralize from '@tangle-network/ui-components/utils/pluralize';
-import { BN } from 'bn.js';
+import BN from 'bn.js';
 import type { ComponentProps, PropsWithChildren } from 'react';
 import { FC, useMemo } from 'react';
 import { twMerge } from 'tailwind-merge';

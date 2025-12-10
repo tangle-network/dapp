@@ -1,4 +1,4 @@
-import { BN } from '@polkadot/util';
+import BN from 'bn.js';
 import { ArrowDownIcon } from '@tangle-network/icons';
 import { Card } from '@tangle-network/ui-components';
 import Button from '@tangle-network/ui-components/components/buttons/Button';

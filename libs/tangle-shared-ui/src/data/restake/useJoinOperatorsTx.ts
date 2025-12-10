@@ -1,7 +1,7 @@
 import { useCallback } from 'react';
 import { TxName } from '../../constants/restaking';
 import { useSubstrateTxWithNotification } from '../../hooks/useSubstrateTx';
-import { BN } from '@polkadot/util';
+import BN from 'bn.js';
 import { SUCCESS_MESSAGES } from '../../constants/restaking';
 
 type Context = {

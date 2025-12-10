@@ -2,7 +2,7 @@ import { useCallback, useMemo } from 'react';
 import useApiRx from '../../hooks/useApiRx';
 import createRestakeAssetId from '../../utils/createRestakeAssetId';
 import { RestakeAssetId } from '../../types';
-import { BN } from '@polkadot/util';
+import BN from 'bn.js';
 import { SubstrateAddress } from '@tangle-network/ui-components/types/address';
 import { PalletMultiAssetDelegationDelegatorDelegatorBlueprintSelection } from '@polkadot/types/lookup';
 import { assertSubstrateAddress } from '@tangle-network/ui-components';

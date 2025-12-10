@@ -1,4 +1,4 @@
-import { BN } from '@polkadot/util';
+import BN from 'bn.js';
 import { useCallback } from 'react';
 
 import { TxName } from '../../constants';

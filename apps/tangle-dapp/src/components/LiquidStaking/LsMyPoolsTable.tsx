@@ -1,4 +1,4 @@
-import { BN } from '@polkadot/util';
+import BN from 'bn.js';
 import { TANGLE_TOKEN_DECIMALS } from '@tangle-network/dapp-config';
 import {
   AddCircleLineIcon,

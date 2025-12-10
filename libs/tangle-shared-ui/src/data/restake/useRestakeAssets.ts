@@ -1,6 +1,6 @@
 import { TANGLE_TOKEN_DECIMALS } from '@tangle-network/dapp-config';
 import { isEvmAddress } from '@tangle-network/ui-components';
-import { BN } from '@polkadot/util';
+import BN from 'bn.js';
 import assert from 'assert';
 import { useCallback, useMemo } from 'react';
 import { map } from 'rxjs';

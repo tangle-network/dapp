@@ -3,7 +3,7 @@
  * Selected rows are sorted to appear before non-selected rows.
  */
 
-import { BN } from '@polkadot/util';
+import BN from 'bn.js';
 import { Row } from '@tanstack/react-table';
 
 export const sortSelected = <T extends { getIsSelected: () => boolean }>(

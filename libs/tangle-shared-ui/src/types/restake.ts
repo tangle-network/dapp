@@ -5,7 +5,7 @@ import {
   PalletMultiAssetDelegationDelegatorDelegatorStatus,
   PalletMultiAssetDelegationOperatorOperatorStatus,
 } from '@polkadot/types/lookup';
-import { BN } from '@polkadot/util';
+import BN from 'bn.js';
 import { SubstrateAddress } from '@tangle-network/ui-components/types/address';
 import { RestakeAssetId } from '../types';
 import { TransformEnum } from './utils';

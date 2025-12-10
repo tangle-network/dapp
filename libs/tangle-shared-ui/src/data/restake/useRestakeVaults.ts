@@ -1,5 +1,5 @@
 import { PalletRewardsRewardConfigForAssetVault } from '@polkadot/types/lookup';
-import { BN } from '@polkadot/util';
+import BN from 'bn.js';
 import { NetworkId } from '@tangle-network/ui-components/constants/networks';
 import { useMemo } from 'react';
 import useNetworkStore from '../../context/useNetworkStore';

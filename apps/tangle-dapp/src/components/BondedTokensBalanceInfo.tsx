@@ -4,7 +4,7 @@ import { Typography } from '@tangle-network/ui-components';
 import { type FC } from 'react';
 
 import formatTangleBalance from '../utils/formatTangleBalance';
-import { BN } from '@polkadot/util';
+import BN from 'bn.js';
 
 type Props = {
   type: 'unbonded' | 'unbonding';

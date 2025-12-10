@@ -1,4 +1,4 @@
-import { BN } from '@polkadot/util';
+import BN from 'bn.js';
 import { SubstrateAddress } from '@tangle-network/ui-components/types/address';
 import convertAddressToBytes32 from '@tangle-network/ui-components/utils/convertAddressToBytes32';
 import { useCallback } from 'react';

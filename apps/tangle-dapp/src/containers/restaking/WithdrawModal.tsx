@@ -1,4 +1,4 @@
-import { BN } from '@polkadot/util';
+import BN from 'bn.js';
 import { ZERO_BIG_INT } from '@tangle-network/dapp-config/constants';
 import ListModal from '@tangle-network/tangle-shared-ui/components/ListModal';
 import useRestakeAssets from '@tangle-network/tangle-shared-ui/data/restake/useRestakeAssets';

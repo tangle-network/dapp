@@ -8,7 +8,7 @@ import {
   AmountFormatStyle,
   formatDisplayAmount,
 } from '@tangle-network/ui-components';
-import { BN } from '@polkadot/util';
+import BN from 'bn.js';
 import useRestakeAssets from '@tangle-network/tangle-shared-ui/data/restake/useRestakeAssets';
 import filterBy from '@tangle-network/tangle-shared-ui/utils/filterBy';
 

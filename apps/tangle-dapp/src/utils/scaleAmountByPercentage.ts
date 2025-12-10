@@ -1,4 +1,4 @@
-import { BN } from '@polkadot/util';
+import BN from 'bn.js';
 
 const scaleAmountByPercentage = (amount: BN, percentage: number): BN => {
   // Scale factor for 4 decimal places (0.xxxx).

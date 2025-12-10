@@ -1,5 +1,5 @@
 import { FC } from 'react';
-import { BN } from '@polkadot/util';
+import BN from 'bn.js';
 import { InfoCircledIcon } from '@radix-ui/react-icons';
 import { Typography } from '@tangle-network/ui-components/typography/Typography';
 import {

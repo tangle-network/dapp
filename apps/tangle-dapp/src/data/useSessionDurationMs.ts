@@ -1,6 +1,6 @@
 import { useCallback, useMemo } from 'react';
 import useApi from '@tangle-network/tangle-shared-ui/hooks/useApi';
-import { BN } from '@polkadot/util';
+import BN from 'bn.js';
 
 const useSessionDurationMs = () => {
   const { result: epochDuration } = useApi(

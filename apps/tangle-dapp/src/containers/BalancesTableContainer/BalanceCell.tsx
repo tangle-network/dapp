@@ -1,4 +1,4 @@
-import { BN } from '@polkadot/util';
+import BN from 'bn.js';
 import StatusIndicator from '@tangle-network/icons/StatusIndicator';
 import useNetworkStore from '@tangle-network/tangle-shared-ui/context/useNetworkStore';
 import {

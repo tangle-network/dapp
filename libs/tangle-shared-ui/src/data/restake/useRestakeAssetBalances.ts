@@ -1,5 +1,5 @@
 import { PalletAssetsAssetAccount } from '@polkadot/types/lookup';
-import { BN } from '@polkadot/util';
+import BN from 'bn.js';
 import { isTemplateBigInt } from '@tangle-network/ui-components';
 import { EvmAddress } from '@tangle-network/ui-components/types/address';
 import { isEvmAddress } from '@tangle-network/ui-components/utils/isEvmAddress20';

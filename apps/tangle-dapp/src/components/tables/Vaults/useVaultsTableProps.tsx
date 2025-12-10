@@ -1,4 +1,4 @@
-import { BN } from '@polkadot/util';
+import BN from 'bn.js';
 import VaultAssetsTable from '@tangle-network/tangle-shared-ui/components/tables/VaultAssets';
 import { VaultAssetData } from '@tangle-network/tangle-shared-ui/components/tables/VaultAssets/types';
 import { RestakeAssetId } from '@tangle-network/tangle-shared-ui/types';

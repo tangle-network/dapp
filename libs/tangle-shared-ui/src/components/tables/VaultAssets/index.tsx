@@ -1,4 +1,4 @@
-import { BN } from '@polkadot/util';
+import BN from 'bn.js';
 import { makeExplorerUrl } from '@tangle-network/api-provider-environment/transaction/utils';
 import { TokenIcon } from '@tangle-network/icons';
 import {

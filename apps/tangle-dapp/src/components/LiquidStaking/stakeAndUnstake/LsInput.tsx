@@ -1,4 +1,4 @@
-import { BN } from '@polkadot/util';
+import BN from 'bn.js';
 import { LsProtocolId } from '@tangle-network/tangle-shared-ui/types/liquidStaking';
 import {
   EMPTY_VALUE_PLACEHOLDER,

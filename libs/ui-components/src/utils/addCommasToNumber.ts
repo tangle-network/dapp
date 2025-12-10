@@ -1,4 +1,4 @@
-import { BN } from '@polkadot/util';
+import BN from 'bn.js';
 
 /**
  * Formats a BN value with commas every 3 digits.

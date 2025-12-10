@@ -1,4 +1,4 @@
-import { BN } from '@polkadot/util';
+import BN from 'bn.js';
 import { Decimal } from 'decimal.js';
 
 const PERBILL_FACTOR = 1_000_000_000;

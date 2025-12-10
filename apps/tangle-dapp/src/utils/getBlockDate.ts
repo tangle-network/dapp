@@ -1,4 +1,4 @@
-import { BN } from '@polkadot/util';
+import BN from 'bn.js';
 
 /**
  * Calculates the estimated date of a block based on the expected block time,

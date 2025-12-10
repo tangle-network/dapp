@@ -1,6 +1,6 @@
 'use client';
 
-import { BN } from '@polkadot/util';
+import BN from 'bn.js';
 import { CheckboxCircleFill } from '@tangle-network/icons';
 import TableStatus from '@tangle-network/tangle-shared-ui/components/tables/TableStatus';
 import useIsAccountConnected from '@tangle-network/tangle-shared-ui/hooks/useIsAccountConnected';

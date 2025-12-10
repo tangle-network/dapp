@@ -1,4 +1,4 @@
-import { BN } from '@polkadot/util';
+import BN from 'bn.js';
 import useApiRx, { ObservableFactory } from './useApiRx';
 import useSubstrateAddress from './useSubstrateAddress';
 import { useCallback } from 'react';

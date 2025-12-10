@@ -1,4 +1,4 @@
-import { BN } from '@polkadot/util';
+import BN from 'bn.js';
 import { ArrowDownIcon } from '@radix-ui/react-icons';
 import { Button, Card } from '@tangle-network/ui-components';
 import { EMPTY_VALUE_PLACEHOLDER } from '@tangle-network/ui-components/constants';

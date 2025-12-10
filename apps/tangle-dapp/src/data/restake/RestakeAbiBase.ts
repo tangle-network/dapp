@@ -1,4 +1,4 @@
-import { BN } from '@polkadot/util';
+import BN from 'bn.js';
 import { RestakeAssetId } from '@tangle-network/tangle-shared-ui/types';
 import { SubstrateAddress } from '@tangle-network/ui-components/types/address';
 import { Hash } from 'viem';

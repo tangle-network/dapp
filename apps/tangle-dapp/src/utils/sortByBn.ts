@@ -1,4 +1,4 @@
-import { BN } from '@polkadot/util';
+import BN from 'bn.js';
 import { SortingFn } from '@tanstack/react-table';
 
 const sortByBn = <T>(

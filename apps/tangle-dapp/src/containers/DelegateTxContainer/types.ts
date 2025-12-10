@@ -1,4 +1,4 @@
-import { BN } from '@polkadot/util';
+import BN from 'bn.js';
 import { Validator } from '@tangle-network/tangle-shared-ui/types';
 import {
   StakingRewardsDestination,

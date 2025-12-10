@@ -1,4 +1,4 @@
-import { BN } from '@polkadot/util';
+import BN from 'bn.js';
 
 import { useBalancesContext } from '../../context/BalancesContext';
 import useFormatReturnType from '../../hooks/useFormatReturnType';

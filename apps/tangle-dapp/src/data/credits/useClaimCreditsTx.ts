@@ -5,7 +5,7 @@ import useAgnosticTx from '@tangle-network/tangle-shared-ui/hooks/useAgnosticTx'
 import { EvmTxFactory } from '@tangle-network/tangle-shared-ui/hooks/useEvmPrecompileCall';
 import { SubstrateTxFactory } from '@tangle-network/tangle-shared-ui/hooks/useSubstrateTx';
 import { SUCCESS_MESSAGES } from '../../hooks/useTxNotification';
-import { BN } from '@polkadot/util';
+import BN from 'bn.js';
 import { PrecompileAddress } from '@tangle-network/tangle-shared-ui/constants/evmPrecompiles';
 import CREDITS_PRECOMPILE_ABI from '@tangle-network/tangle-shared-ui/abi/credits';
 

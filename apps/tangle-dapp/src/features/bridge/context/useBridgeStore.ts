@@ -1,4 +1,4 @@
-import { BN } from '@polkadot/util';
+import BN from 'bn.js';
 import { chainsConfig } from '@tangle-network/dapp-config/chains';
 import { ChainConfig } from '@tangle-network/dapp-config/chains/chain-config.interface';
 import { PresetTypedChainId } from '@tangle-network/dapp-types';

@@ -1,4 +1,4 @@
-import { BN } from '@polkadot/util';
+import BN from 'bn.js';
 import { CheckboxCircleFill } from '@tangle-network/icons/CheckboxCircleFill';
 import { TimeFillIcon } from '@tangle-network/icons/TimeFillIcon';
 import { RestakeAssetId } from '@tangle-network/tangle-shared-ui/types';

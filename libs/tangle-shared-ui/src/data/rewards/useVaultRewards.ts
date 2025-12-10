@@ -2,7 +2,7 @@ import { useCallback } from 'react';
 import useApiRx from '../../hooks/useApiRx';
 import useVaultPotAccount from './useVaultsPotAccounts';
 import { map } from 'rxjs';
-import { BN } from '@polkadot/util';
+import BN from 'bn.js';
 import { TangleError, TangleErrorCode } from '../../types/error';
 
 const useVaultRewards = () => {

@@ -3,7 +3,7 @@ import useOperatorConcentration from './useOperatorConcentration';
 import useOperatorTvl, { OperatorTvlGroup } from './useOperatorTvl';
 import type { DelegatorInfo } from '../../types/restake';
 import useRestakeAssets from './useRestakeAssets';
-import { BN } from '@polkadot/util';
+import BN from 'bn.js';
 import useDelegatorTvl from './useDelegatorTVL';
 
 export type RestakeTvlGroup = OperatorTvlGroup & {

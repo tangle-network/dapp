@@ -1,5 +1,5 @@
 import { u128 } from '@polkadot/types';
-import { BN } from '@polkadot/util';
+import BN from 'bn.js';
 import {
   WebbError,
   WebbErrorCodes,

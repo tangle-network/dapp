@@ -6,7 +6,7 @@ import RestakeApiBase, {
   TxFailureCallback,
   TxSuccessCallback,
 } from './RestakeAbiBase';
-import { BN } from '@polkadot/util';
+import BN from 'bn.js';
 import {
   EvmAddress,
   SubstrateAddress,

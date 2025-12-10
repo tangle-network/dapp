@@ -1,4 +1,4 @@
-import { BN } from '@polkadot/util';
+import BN from 'bn.js';
 import { Cross1Icon } from '@radix-ui/react-icons';
 import { ZERO_BIG_INT } from '@tangle-network/dapp-config/constants';
 import { calculateTypedChainId } from '@tangle-network/dapp-types/TypedChainId';
