@@ -5,7 +5,6 @@ import { useLocation } from 'react-router';
 import useBridgeStore from '../features/bridge/context/useBridgeStore';
 import ClaimRewardsDropdown from '../features/claimRewards/components/ClaimRewardsDropdown';
 import { PagePath } from '../types';
-// import TxHistoryDrawer from '../components/TxHistoryDrawer';
 
 const TopNavigationPanel: FC = () => {
   const location = useLocation();
@@ -23,12 +22,7 @@ const TopNavigationPanel: FC = () => {
         preferredChain={isInBridgePath ? selectedSourceChain : undefined}
       />
 
-      <ConnectWalletButton
-        showChainSpecificWallets={isInBridgePath}
-        preferredChain={isInBridgePath ? selectedSourceChain : undefined}
-      />
-      {/** Hide for now, until it is fully implemented. */}
-      {/* <TxHistoryDrawer /> */}
+      <ConnectWalletButton />
     </div>
   );
 };

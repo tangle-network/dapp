@@ -1,20 +1,28 @@
-import { createClient, fallback, http } from 'viem';
-import { Config, cookieStorage, createConfig, createStorage } from 'wagmi';
-import {
-  injected,
-  coinbaseWallet,
-  safe,
-  walletConnect,
-} from 'wagmi/connectors';
+import { getDefaultConfig } from '@rainbow-me/rainbowkit';
+import { http } from 'viem';
 import { wagmiChains as chains } from './chains/evm';
 
 // WalletConnect project ID - should be configured via env var in production
 const WALLETCONNECT_PROJECT_ID =
   process.env.VITE_WALLETCONNECT_PROJECT_ID ??
   process.env.NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID ??
-  'demo-project-id';
+  '3e45c77c9b5d51c8dcf9db03f6c4f826'; // Tangle's WalletConnect project ID
 
-let config: Config<typeof chains>;
+// Create config using RainbowKit's getDefaultConfig
+// This automatically sets up all popular wallets with EIP-6963 detection
+const config = getDefaultConfig({
+  appName: 'Tangle Network',
+  projectId: WALLETCONNECT_PROJECT_ID,
+  chains,
+  transports: chains.reduce(
+    (acc, chain) => {
+      acc[chain.id] = http();
+      return acc;
+    },
+    {} as Record<number, ReturnType<typeof http>>,
+  ),
+  ssr: false,
+});
 
 /**
  * Registers the wagmi config
@@ -27,54 +35,8 @@ declare module 'wagmi' {
   }
 }
 
-export type GetWagmiConfigParamsType = {
-  isSSR?: boolean;
-};
-
-export default function getWagmiConfig({
-  isSSR,
-}: GetWagmiConfigParamsType = {}) {
-  if (config === undefined) {
-    config = createConfig({
-      ...(typeof isSSR === 'boolean' ? { ssr: isSSR } : {}),
-      ...(isSSR === true
-        ? {
-            storage: createStorage({
-              storage: cookieStorage,
-            }),
-          }
-        : {}),
-      chains,
-      // Enable EIP-6963 multi-injected provider discovery
-      // This allows detection of MetaMask, Rainbow, etc. by their rdns
-      multiInjectedProviderDiscovery: true,
-      connectors: [
-        // Injected wallets (MetaMask, Rainbow, etc.)
-        injected(),
-        // Coinbase Wallet
-        coinbaseWallet({
-          appName: 'Tangle Network',
-        }),
-        // Safe Wallet
-        safe(),
-        // WalletConnect
-        walletConnect({
-          projectId: WALLETCONNECT_PROJECT_ID,
-          showQrModal: true,
-        }),
-      ],
-      client: ({ chain }) => {
-        return createClient({
-          chain,
-          transport: fallback(
-            chain.rpcUrls.default.http.map((url) =>
-              http(url, { timeout: 60_000 }),
-            ),
-          ),
-        });
-      },
-    });
-  }
-
+export default function getWagmiConfig(_options?: { isSSR?: boolean }) {
   return config;
 }
+
+export { config };
