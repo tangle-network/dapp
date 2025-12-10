@@ -25,8 +25,7 @@ export default function useTotalPayoutRewards() {
     isLoading,
   } = useSWR(
     ['payoutsData', userSubstrateAddress, rpcEndpoints],
-    ([, address, rpcEndpoints]) =>
-      getPayouts(address, rpcEndpoints),
+    ([, address, rpcEndpoints]) => getPayouts(address, rpcEndpoints),
     {
       revalidateOnFocus: true,
       revalidateOnReconnect: true,

@@ -68,8 +68,7 @@ const DelegationsPayoutsContainer: FC = () => {
     mutate: mutatePayouts,
   } = useSWR(
     ['payouts', substrateAddress, rpcEndpoints],
-    ([, address, rpcEndpoints]) =>
-      getPayouts(address, rpcEndpoints),
+    ([, address, rpcEndpoints]) => getPayouts(address, rpcEndpoints),
     {
       revalidateOnFocus: true,
       revalidateOnReconnect: true,
