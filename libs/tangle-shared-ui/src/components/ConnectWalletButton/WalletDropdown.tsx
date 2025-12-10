@@ -1,6 +1,7 @@
 'use client';
 
 import { Trigger as DropdownTrigger } from '@radix-ui/react-dropdown-menu';
+import { ChevronDown } from '@tangle-network/icons/ChevronDown';
 import { LoginBoxLineIcon, WalletLineIcon } from '@tangle-network/icons';
 import {
   Button,
@@ -8,23 +9,27 @@ import {
   DropdownBody,
   ExternalLinkIcon,
   KeyValueWithButton,
-  shortenString,
+  shortenHex,
   Typography,
 } from '@tangle-network/ui-components';
 import { EvmAddress } from '@tangle-network/ui-components/types/address';
-import { FC, useCallback, useMemo } from 'react';
+import { cloneElement, FC, ReactElement, useCallback, useMemo } from 'react';
 import { useDisconnect } from 'wagmi';
 import useNetworkStore from '../../context/useNetworkStore';
+import { twMerge } from 'tailwind-merge';
+import { getFlexBasic } from '@tangle-network/icons/utils';
 
 type WalletDropdownProps = {
   accountAddress: EvmAddress;
   walletName: string;
+  walletIcon: ReactElement;
   onAccountClick?: () => void;
 };
 
 const WalletDropdown: FC<WalletDropdownProps> = ({
   accountAddress,
   walletName,
+  walletIcon,
   onAccountClick,
 }) => {
   const { disconnect } = useDisconnect();
@@ -44,14 +49,33 @@ const WalletDropdown: FC<WalletDropdownProps> = ({
   return (
     <Dropdown>
       <DropdownTrigger asChild>
-        <button className="flex items-center gap-2 px-4 py-2 rounded-lg bg-mono-160 hover:bg-mono-140 transition-colors">
+        <button
+          type="button"
+          className={twMerge(
+            'max-w-56 rounded-lg border-2 p-2 flex items-center gap-2',
+            'bg-mono-0/10 dark:bg-mono-0/5',
+            'hover:bg-mono-100/10 dark:hover:bg-mono-0/10',
+            'border-2 border-mono-60 dark:border-mono-140',
+          )}
+        >
+          {cloneElement(walletIcon, {
+            ...walletIcon.props,
+            className: twMerge(
+              walletIcon.props.className,
+              `shrink-0 grow-0 ${getFlexBasic('lg')}`,
+            ),
+          })}
+
           <Typography
             variant="body1"
-            fw="semibold"
-            className="truncate max-w-[120px]"
+            fw="bold"
+            component="p"
+            className="truncate dark:text-mono-0 sr-only sm:not-sr-only"
           >
-            {shortenString(accountAddress, 4)}
+            {shortenHex(accountAddress)}
           </Typography>
+
+          <ChevronDown size="lg" className="shrink-0 grow-0" />
         </button>
       </DropdownTrigger>
 
@@ -61,6 +85,8 @@ const WalletDropdown: FC<WalletDropdownProps> = ({
       >
         <div className="flex flex-col justify-between gap-2 md:flex-row md:items-center">
           <div className="flex space-x-2 items-center">
+            {walletIcon}
+
             <div>
               <Typography
                 variant="h5"

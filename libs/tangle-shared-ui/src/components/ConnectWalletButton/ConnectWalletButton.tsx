@@ -8,6 +8,7 @@ import { EvmAddress } from '@tangle-network/ui-components/types/address';
 import { useMemo } from 'react';
 import { useAccount } from 'wagmi';
 import WalletDropdown from './WalletDropdown';
+import { getWalletIcon } from './walletIcons';
 
 type ConnectWalletButtonProps = {
   className?: string;
@@ -29,6 +30,7 @@ const ConnectWalletButton = ({ className }: ConnectWalletButtonProps) => {
   }, [address]);
 
   const walletName = connector?.name ?? 'Wallet';
+  const walletIcon = getWalletIcon(connector?.id, connector?.name);
   const isReady = isConnected && accountAddress !== null;
 
   return (
@@ -47,6 +49,7 @@ const ConnectWalletButton = ({ className }: ConnectWalletButtonProps) => {
         <WalletDropdown
           accountAddress={accountAddress}
           walletName={walletName}
+          walletIcon={walletIcon}
           onAccountClick={openAccountModal}
         />
       )}
