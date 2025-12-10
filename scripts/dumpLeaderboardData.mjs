@@ -4,10 +4,16 @@
  * Leaderboard Data Dump Script
  * Fetches all leaderboard data from mainnet and testnet GraphQL endpoints
  * Output: __fixtures__/leaderboard/
+ *
+ * Usage:
+ *   node scripts/dumpLeaderboardData.mjs              # Fetch and save new data
+ *   node scripts/dumpLeaderboardData.mjs --clear      # Clear old data before fetching (interactive)
+ *   node scripts/dumpLeaderboardData.mjs --clear -y   # Clear without confirmation (CI/non-interactive)
  */
 
-import { writeFileSync, mkdirSync } from 'fs';
+import { writeFileSync, mkdirSync, readdirSync, rmSync, existsSync } from 'fs';
 import { join } from 'path';
+import { createInterface } from 'readline';
 
 const OUTPUT_DIR = join(process.cwd(), '__fixtures__/leaderboard');
 
@@ -220,10 +226,59 @@ function saveJson(timestamp, filename, data) {
   console.log(`Saved: ${filepath}`);
 }
 
+async function confirm(message) {
+  const rl = createInterface({ input: process.stdin, output: process.stdout });
+  return new Promise((resolve) => {
+    rl.question(`${message} (y/N): `, (answer) => {
+      rl.close();
+      resolve(answer.toLowerCase() === 'y');
+    });
+  });
+}
+
+async function clearPreviousData(skipConfirmation = false) {
+  if (!existsSync(OUTPUT_DIR)) {
+    console.log('No existing data to clear.');
+    return true;
+  }
+
+  const files = readdirSync(OUTPUT_DIR).filter((f) => f.endsWith('.json'));
+  if (files.length === 0) {
+    console.log('No existing data to clear.');
+    return true;
+  }
+
+  console.log(`\nFound ${files.length} existing file(s):`);
+  files.forEach((f) => console.log(`  - ${f}`));
+
+  if (!skipConfirmation) {
+    const confirmed = await confirm(`\nDelete all ${files.length} file(s)?`);
+    if (!confirmed) {
+      console.log('Aborted.');
+      return false;
+    }
+  }
+
+  files.forEach((f) => rmSync(join(OUTPUT_DIR, f)));
+  console.log(`Deleted ${files.length} file(s).\n`);
+  return true;
+}
+
 async function main() {
+  const args = process.argv.slice(2);
+  const shouldClear = args.includes('--clear');
+  const skipConfirmation = args.includes('-y') || args.includes('--yes');
   const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
   console.log('=== Leaderboard Data Dump ===');
   console.log(`Timestamp: ${timestamp}`);
+
+  // Handle --clear flag
+  if (shouldClear) {
+    const proceed = await clearPreviousData(skipConfirmation);
+    if (!proceed) {
+      process.exit(0);
+    }
+  }
 
   // Ensure output directory exists
   mkdirSync(OUTPUT_DIR, { recursive: true });
