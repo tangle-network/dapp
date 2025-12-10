@@ -8,6 +8,7 @@ export * from './calculateDateProgress';
 export { default as convertAddressToBytes32 } from './convertAddressToBytes32';
 export * from './formatBn';
 export * from './formatDateToUtc';
+export * from './formatDecimal';
 export * from './formatDisplayAmount';
 export * from './formatTokenAmount';
 export { default as forwardRef } from './forwardRef';

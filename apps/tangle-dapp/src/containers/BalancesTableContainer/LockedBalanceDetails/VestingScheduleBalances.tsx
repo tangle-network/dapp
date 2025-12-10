@@ -1,4 +1,4 @@
-import { formatDecimal } from '@polkadot/util';
+import { formatDecimal } from '@tangle-network/ui-components';
 import { BN, BN_ZERO } from '@tangle-network/tangle-shared-ui/bn';
 import useApiRx from '@tangle-network/tangle-shared-ui/hooks/useApiRx';
 import { FC, useCallback } from 'react';

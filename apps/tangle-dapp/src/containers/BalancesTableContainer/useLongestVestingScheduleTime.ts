@@ -1,5 +1,5 @@
-import { formatDecimal } from '@polkadot/util';
 import useApiRx from '@tangle-network/tangle-shared-ui/hooks/useApiRx';
+import { formatDecimal } from '@tangle-network/ui-components';
 import { useCallback } from 'react';
 
 import useVestingInfo from '../../data/vesting/useVestingInfo';
