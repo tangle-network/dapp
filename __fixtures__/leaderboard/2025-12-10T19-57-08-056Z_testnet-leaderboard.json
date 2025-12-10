@@ -1,0 +1,2735 @@
+{
+  "accounts": {
+    "nodes": [
+      {
+        "id": "5Ft8PKLE2ocnoEHoQ2nC49imFMg3kjxESf5LUL8kwJLaYjbT",
+        "totalPoints": "21180",
+        "totalMainnetPoints": "0",
+        "totalTestnetPoints": "21180",
+        "isValidator": null,
+        "isNominator": null,
+        "delegators": {
+          "nodes": []
+        },
+        "operators": {
+          "totalCount": 1
+        },
+        "lstPoolMembers": {
+          "totalCount": 0
+        },
+        "blueprints": {
+          "totalCount": 3
+        },
+        "services": {
+          "totalCount": 1
+        },
+        "jobCalls": {
+          "totalCount": 1
+        },
+        "testnetTaskCompletions": {
+          "nodes": []
+        },
+        "snapshots": {
+          "totalCount": 2109,
+          "nodes": [
+            {
+              "blockNumber": 2298061,
+              "totalPoints": "100"
+            },
+            {
+              "blockNumber": 2299145,
+              "totalPoints": "110"
+            },
+            {
+              "blockNumber": 2300343,
+              "totalPoints": "120"
+            },
+            {
+              "blockNumber": 2301543,
+              "totalPoints": "130"
+            },
+            {
+              "blockNumber": 2302740,
+              "totalPoints": "140"
+            },
+            {
+              "blockNumber": 2303937,
+              "totalPoints": "150"
+            },
+            {
+              "blockNumber": 2305136,
+              "totalPoints": "160"
+            },
+            {
+              "blockNumber": 2306333,
+              "totalPoints": "170"
+            },
+            {
+              "blockNumber": 2307532,
+              "totalPoints": "180"
+            },
+            {
+              "blockNumber": 2308732,
+              "totalPoints": "190"
+            },
+            {
+              "blockNumber": 2309930,
+              "totalPoints": "200"
+            },
+            {
+              "blockNumber": 2311129,
+              "totalPoints": "210"
+            },
+            {
+              "blockNumber": 2312326,
+              "totalPoints": "220"
+            },
+            {
+              "blockNumber": 2313525,
+              "totalPoints": "230"
+            },
+            {
+              "blockNumber": 2314723,
+              "totalPoints": "240"
+            },
+            {
+              "blockNumber": 2315923,
+              "totalPoints": "250"
+            },
+            {
+              "blockNumber": 2317122,
+              "totalPoints": "260"
+            },
+            {
+              "blockNumber": 2318320,
+              "totalPoints": "270"
+            },
+            {
+              "blockNumber": 2319520,
+              "totalPoints": "280"
+            },
+            {
+              "blockNumber": 2320719,
+              "totalPoints": "290"
+            },
+            {
+              "blockNumber": 2321915,
+              "totalPoints": "300"
+            },
+            {
+              "blockNumber": 2323115,
+              "totalPoints": "310"
+            },
+            {
+              "blockNumber": 2324313,
+              "totalPoints": "320"
+            },
+            {
+              "blockNumber": 2325512,
+              "totalPoints": "330"
+            },
+            {
+              "blockNumber": 2326711,
+              "totalPoints": "340"
+            },
+            {
+              "blockNumber": 2327910,
+              "totalPoints": "350"
+            },
+            {
+              "blockNumber": 2329108,
+              "totalPoints": "360"
+            },
+            {
+              "blockNumber": 2330308,
+              "totalPoints": "370"
+            },
+            {
+              "blockNumber": 2331504,
+              "totalPoints": "380"
+            },
+            {
+              "blockNumber": 2332704,
+              "totalPoints": "390"
+            },
+            {
+              "blockNumber": 2333900,
+              "totalPoints": "400"
+            },
+            {
+              "blockNumber": 2335094,
+              "totalPoints": "410"
+            },
+            {
+              "blockNumber": 2336286,
+              "totalPoints": "420"
+            },
+            {
+              "blockNumber": 2337483,
+              "totalPoints": "430"
+            },
+            {
+              "blockNumber": 2338680,
+              "totalPoints": "440"
+            },
+            {
+              "blockNumber": 2339878,
+              "totalPoints": "450"
+            },
+            {
+              "blockNumber": 2341077,
+              "totalPoints": "460"
+            },
+            {
+              "blockNumber": 2342273,
+              "totalPoints": "470"
+            },
+            {
+              "blockNumber": 2343470,
+              "totalPoints": "480"
+            },
+            {
+              "blockNumber": 2344670,
+              "totalPoints": "490"
+            },
+            {
+              "blockNumber": 2345863,
+              "totalPoints": "500"
+            },
+            {
+              "blockNumber": 2347061,
+              "totalPoints": "510"
+            },
+            {
+              "blockNumber": 2348259,
+              "totalPoints": "520"
+            },
+            {
+              "blockNumber": 2349456,
+              "totalPoints": "530"
+            },
+            {
+              "blockNumber": 2350655,
+              "totalPoints": "540"
+            },
+            {
+              "blockNumber": 2351851,
+              "totalPoints": "550"
+            },
+            {
+              "blockNumber": 2353040,
+              "totalPoints": "560"
+            },
+            {
+              "blockNumber": 2354235,
+              "totalPoints": "570"
+            },
+            {
+              "blockNumber": 2355434,
+              "totalPoints": "580"
+            },
+            {
+              "blockNumber": 2356630,
+              "totalPoints": "590"
+            },
+            {
+              "blockNumber": 2357828,
+              "totalPoints": "600"
+            },
+            {
+              "blockNumber": 2359026,
+              "totalPoints": "610"
+            },
+            {
+              "blockNumber": 2360224,
+              "totalPoints": "620"
+            },
+            {
+              "blockNumber": 2361424,
+              "totalPoints": "630"
+            },
+            {
+              "blockNumber": 2362623,
+              "totalPoints": "640"
+            },
+            {
+              "blockNumber": 2363815,
+              "totalPoints": "650"
+            },
+            {
+              "blockNumber": 2365015,
+              "totalPoints": "660"
+            },
+            {
+              "blockNumber": 2366209,
+              "totalPoints": "670"
+            },
+            {
+              "blockNumber": 2367407,
+              "totalPoints": "680"
+            },
+            {
+              "blockNumber": 2368605,
+              "totalPoints": "690"
+            },
+            {
+              "blockNumber": 2369804,
+              "totalPoints": "700"
+            },
+            {
+              "blockNumber": 2371002,
+              "totalPoints": "710"
+            },
+            {
+              "blockNumber": 2372198,
+              "totalPoints": "720"
+            },
+            {
+              "blockNumber": 2373393,
+              "totalPoints": "730"
+            },
+            {
+              "blockNumber": 2374588,
+              "totalPoints": "740"
+            },
+            {
+              "blockNumber": 2375783,
+              "totalPoints": "750"
+            },
+            {
+              "blockNumber": 2376981,
+              "totalPoints": "760"
+            },
+            {
+              "blockNumber": 2378177,
+              "totalPoints": "770"
+            },
+            {
+              "blockNumber": 2379374,
+              "totalPoints": "780"
+            },
+            {
+              "blockNumber": 2380568,
+              "totalPoints": "790"
+            },
+            {
+              "blockNumber": 2381764,
+              "totalPoints": "800"
+            },
+            {
+              "blockNumber": 2382957,
+              "totalPoints": "810"
+            },
+            {
+              "blockNumber": 2384155,
+              "totalPoints": "820"
+            },
+            {
+              "blockNumber": 2385354,
+              "totalPoints": "830"
+            },
+            {
+              "blockNumber": 2386552,
+              "totalPoints": "840"
+            },
+            {
+              "blockNumber": 2387746,
+              "totalPoints": "850"
+            },
+            {
+              "blockNumber": 2388943,
+              "totalPoints": "860"
+            },
+            {
+              "blockNumber": 2390141,
+              "totalPoints": "870"
+            },
+            {
+              "blockNumber": 2391334,
+              "totalPoints": "880"
+            },
+            {
+              "blockNumber": 2392529,
+              "totalPoints": "890"
+            },
+            {
+              "blockNumber": 2393725,
+              "totalPoints": "900"
+            },
+            {
+              "blockNumber": 2394922,
+              "totalPoints": "910"
+            },
+            {
+              "blockNumber": 2396117,
+              "totalPoints": "920"
+            },
+            {
+              "blockNumber": 2397316,
+              "totalPoints": "930"
+            },
+            {
+              "blockNumber": 2398514,
+              "totalPoints": "940"
+            },
+            {
+              "blockNumber": 2399711,
+              "totalPoints": "950"
+            },
+            {
+              "blockNumber": 2400909,
+              "totalPoints": "960"
+            },
+            {
+              "blockNumber": 2402105,
+              "totalPoints": "970"
+            },
+            {
+              "blockNumber": 2403303,
+              "totalPoints": "980"
+            },
+            {
+              "blockNumber": 2404502,
+              "totalPoints": "990"
+            },
+            {
+              "blockNumber": 2405701,
+              "totalPoints": "1000"
+            },
+            {
+              "blockNumber": 2406901,
+              "totalPoints": "1010"
+            },
+            {
+              "blockNumber": 2408100,
+              "totalPoints": "1020"
+            },
+            {
+              "blockNumber": 2409297,
+              "totalPoints": "1030"
+            },
+            {
+              "blockNumber": 2410494,
+              "totalPoints": "1040"
+            },
+            {
+              "blockNumber": 2411692,
+              "totalPoints": "1050"
+            },
+            {
+              "blockNumber": 2412892,
+              "totalPoints": "1060"
+            },
+            {
+              "blockNumber": 2414091,
+              "totalPoints": "1070"
+            },
+            {
+              "blockNumber": 2415289,
+              "totalPoints": "1080"
+            },
+            {
+              "blockNumber": 2416488,
+              "totalPoints": "1090"
+            }
+          ]
+        },
+        "createdAt": 2298028,
+        "createdAtTimestamp": "2025-06-17T19:03:48.001",
+        "lastUpdatedAt": 2610487,
+        "lastUpdatedAtTimestamp": "2025-07-09T19:50:36.001"
+      },
+      {
+        "id": "5FTPDvkhYBNtSHVUmNyRts5LMPGkj3UFbbrQTyerDndSDN2P",
+        "totalPoints": "18710",
+        "totalMainnetPoints": "0",
+        "totalTestnetPoints": "18710",
+        "isValidator": null,
+        "isNominator": null,
+        "delegators": {
+          "nodes": []
+        },
+        "operators": {
+          "totalCount": 1
+        },
+        "lstPoolMembers": {
+          "totalCount": 0
+        },
+        "blueprints": {
+          "totalCount": 0
+        },
+        "services": {
+          "totalCount": 3
+        },
+        "jobCalls": {
+          "totalCount": 5
+        },
+        "testnetTaskCompletions": {
+          "nodes": []
+        },
+        "snapshots": {
+          "totalCount": 1862,
+          "nodes": [
+            {
+              "blockNumber": 2593169,
+              "totalPoints": "100"
+            },
+            {
+              "blockNumber": 2594832,
+              "totalPoints": "110"
+            },
+            {
+              "blockNumber": 2595550,
+              "totalPoints": "120"
+            },
+            {
+              "blockNumber": 2596347,
+              "totalPoints": "130"
+            },
+            {
+              "blockNumber": 2597390,
+              "totalPoints": "140"
+            },
+            {
+              "blockNumber": 2598588,
+              "totalPoints": "150"
+            },
+            {
+              "blockNumber": 2599787,
+              "totalPoints": "160"
+            },
+            {
+              "blockNumber": 2600986,
+              "totalPoints": "170"
+            },
+            {
+              "blockNumber": 2602186,
+              "totalPoints": "180"
+            },
+            {
+              "blockNumber": 2603386,
+              "totalPoints": "190"
+            },
+            {
+              "blockNumber": 2604585,
+              "totalPoints": "200"
+            },
+            {
+              "blockNumber": 2605578,
+              "totalPoints": "210"
+            },
+            {
+              "blockNumber": 2606516,
+              "totalPoints": "220"
+            },
+            {
+              "blockNumber": 2607563,
+              "totalPoints": "230"
+            },
+            {
+              "blockNumber": 2608761,
+              "totalPoints": "240"
+            },
+            {
+              "blockNumber": 2609958,
+              "totalPoints": "250"
+            },
+            {
+              "blockNumber": 2611036,
+              "totalPoints": "260"
+            },
+            {
+              "blockNumber": 2612030,
+              "totalPoints": "270"
+            },
+            {
+              "blockNumber": 2613052,
+              "totalPoints": "280"
+            },
+            {
+              "blockNumber": 2614041,
+              "totalPoints": "290"
+            },
+            {
+              "blockNumber": 2615063,
+              "totalPoints": "300"
+            },
+            {
+              "blockNumber": 2616044,
+              "totalPoints": "310"
+            },
+            {
+              "blockNumber": 2617050,
+              "totalPoints": "320"
+            },
+            {
+              "blockNumber": 2618036,
+              "totalPoints": "330"
+            },
+            {
+              "blockNumber": 2619040,
+              "totalPoints": "340"
+            },
+            {
+              "blockNumber": 2620063,
+              "totalPoints": "350"
+            },
+            {
+              "blockNumber": 2621092,
+              "totalPoints": "360"
+            },
+            {
+              "blockNumber": 2622113,
+              "totalPoints": "370"
+            },
+            {
+              "blockNumber": 2623141,
+              "totalPoints": "380"
+            },
+            {
+              "blockNumber": 2624147,
+              "totalPoints": "390"
+            },
+            {
+              "blockNumber": 2625140,
+              "totalPoints": "400"
+            },
+            {
+              "blockNumber": 2626134,
+              "totalPoints": "410"
+            },
+            {
+              "blockNumber": 2627138,
+              "totalPoints": "420"
+            },
+            {
+              "blockNumber": 2628143,
+              "totalPoints": "430"
+            },
+            {
+              "blockNumber": 2629168,
+              "totalPoints": "440"
+            },
+            {
+              "blockNumber": 2630181,
+              "totalPoints": "450"
+            },
+            {
+              "blockNumber": 2631206,
+              "totalPoints": "460"
+            },
+            {
+              "blockNumber": 2632212,
+              "totalPoints": "470"
+            },
+            {
+              "blockNumber": 2633210,
+              "totalPoints": "480"
+            },
+            {
+              "blockNumber": 2634227,
+              "totalPoints": "490"
+            },
+            {
+              "blockNumber": 2635236,
+              "totalPoints": "500"
+            },
+            {
+              "blockNumber": 2636222,
+              "totalPoints": "510"
+            },
+            {
+              "blockNumber": 2637222,
+              "totalPoints": "520"
+            },
+            {
+              "blockNumber": 2638225,
+              "totalPoints": "530"
+            },
+            {
+              "blockNumber": 2639257,
+              "totalPoints": "540"
+            },
+            {
+              "blockNumber": 2640268,
+              "totalPoints": "550"
+            },
+            {
+              "blockNumber": 2641271,
+              "totalPoints": "560"
+            },
+            {
+              "blockNumber": 2642268,
+              "totalPoints": "570"
+            },
+            {
+              "blockNumber": 2643286,
+              "totalPoints": "580"
+            },
+            {
+              "blockNumber": 2644307,
+              "totalPoints": "590"
+            },
+            {
+              "blockNumber": 2645329,
+              "totalPoints": "600"
+            },
+            {
+              "blockNumber": 2646339,
+              "totalPoints": "610"
+            },
+            {
+              "blockNumber": 2647319,
+              "totalPoints": "620"
+            },
+            {
+              "blockNumber": 2648331,
+              "totalPoints": "630"
+            },
+            {
+              "blockNumber": 2649333,
+              "totalPoints": "640"
+            },
+            {
+              "blockNumber": 2650333,
+              "totalPoints": "650"
+            },
+            {
+              "blockNumber": 2651333,
+              "totalPoints": "660"
+            },
+            {
+              "blockNumber": 2652349,
+              "totalPoints": "670"
+            },
+            {
+              "blockNumber": 2653346,
+              "totalPoints": "680"
+            },
+            {
+              "blockNumber": 2654355,
+              "totalPoints": "690"
+            },
+            {
+              "blockNumber": 2655355,
+              "totalPoints": "700"
+            },
+            {
+              "blockNumber": 2656344,
+              "totalPoints": "710"
+            },
+            {
+              "blockNumber": 2657342,
+              "totalPoints": "720"
+            },
+            {
+              "blockNumber": 2658343,
+              "totalPoints": "730"
+            },
+            {
+              "blockNumber": 2659339,
+              "totalPoints": "740"
+            },
+            {
+              "blockNumber": 2660351,
+              "totalPoints": "750"
+            },
+            {
+              "blockNumber": 2661335,
+              "totalPoints": "760"
+            },
+            {
+              "blockNumber": 2662339,
+              "totalPoints": "770"
+            },
+            {
+              "blockNumber": 2663349,
+              "totalPoints": "780"
+            },
+            {
+              "blockNumber": 2664352,
+              "totalPoints": "790"
+            },
+            {
+              "blockNumber": 2665371,
+              "totalPoints": "800"
+            },
+            {
+              "blockNumber": 2666414,
+              "totalPoints": "810"
+            },
+            {
+              "blockNumber": 2667419,
+              "totalPoints": "820"
+            },
+            {
+              "blockNumber": 2668428,
+              "totalPoints": "830"
+            },
+            {
+              "blockNumber": 2669435,
+              "totalPoints": "840"
+            },
+            {
+              "blockNumber": 2670438,
+              "totalPoints": "850"
+            },
+            {
+              "blockNumber": 2671442,
+              "totalPoints": "860"
+            },
+            {
+              "blockNumber": 2672456,
+              "totalPoints": "870"
+            },
+            {
+              "blockNumber": 2673456,
+              "totalPoints": "880"
+            },
+            {
+              "blockNumber": 2674469,
+              "totalPoints": "890"
+            },
+            {
+              "blockNumber": 2675454,
+              "totalPoints": "900"
+            },
+            {
+              "blockNumber": 2676468,
+              "totalPoints": "910"
+            },
+            {
+              "blockNumber": 2677451,
+              "totalPoints": "920"
+            },
+            {
+              "blockNumber": 2678471,
+              "totalPoints": "930"
+            },
+            {
+              "blockNumber": 2679460,
+              "totalPoints": "940"
+            },
+            {
+              "blockNumber": 2680435,
+              "totalPoints": "950"
+            },
+            {
+              "blockNumber": 2680793,
+              "totalPoints": "960"
+            },
+            {
+              "blockNumber": 2681799,
+              "totalPoints": "970"
+            },
+            {
+              "blockNumber": 2682813,
+              "totalPoints": "980"
+            },
+            {
+              "blockNumber": 2684013,
+              "totalPoints": "990"
+            },
+            {
+              "blockNumber": 2685212,
+              "totalPoints": "1000"
+            },
+            {
+              "blockNumber": 2686411,
+              "totalPoints": "1010"
+            },
+            {
+              "blockNumber": 2687607,
+              "totalPoints": "1020"
+            },
+            {
+              "blockNumber": 2688802,
+              "totalPoints": "1030"
+            },
+            {
+              "blockNumber": 2690000,
+              "totalPoints": "1040"
+            },
+            {
+              "blockNumber": 2691194,
+              "totalPoints": "1050"
+            },
+            {
+              "blockNumber": 2692388,
+              "totalPoints": "1060"
+            },
+            {
+              "blockNumber": 2693580,
+              "totalPoints": "1070"
+            },
+            {
+              "blockNumber": 2694758,
+              "totalPoints": "1080"
+            },
+            {
+              "blockNumber": 2695953,
+              "totalPoints": "1090"
+            }
+          ]
+        },
+        "createdAt": 2593169,
+        "createdAtTimestamp": "2025-07-08T11:09:48",
+        "lastUpdatedAt": 2610494,
+        "lastUpdatedAtTimestamp": "2025-07-09T19:51:42.002"
+      },
+      {
+        "id": "5GrwvaEF5zXb26Fz9rcQpDWS57CtERHpNehXCPcNoHGKutQY",
+        "totalPoints": "14370",
+        "totalMainnetPoints": "0",
+        "totalTestnetPoints": "14370",
+        "isValidator": null,
+        "isNominator": true,
+        "delegators": {
+          "nodes": []
+        },
+        "operators": {
+          "totalCount": 1
+        },
+        "lstPoolMembers": {
+          "totalCount": 0
+        },
+        "blueprints": {
+          "totalCount": 0
+        },
+        "services": {
+          "totalCount": 3
+        },
+        "jobCalls": {
+          "totalCount": 0
+        },
+        "testnetTaskCompletions": {
+          "nodes": [
+            {
+              "hasDepositedThreeAssets": null,
+              "hasDelegatedAssets": null,
+              "hasNominated": true,
+              "hasLiquidStaked": null,
+              "hasNativeRestaked": null,
+              "hasBonusPoints": null
+            }
+          ]
+        },
+        "snapshots": {
+          "totalCount": 1428,
+          "nodes": [
+            {
+              "blockNumber": 2003563,
+              "totalPoints": "100"
+            },
+            {
+              "blockNumber": 3097192,
+              "totalPoints": "110"
+            },
+            {
+              "blockNumber": 3098200,
+              "totalPoints": "120"
+            },
+            {
+              "blockNumber": 3099209,
+              "totalPoints": "130"
+            },
+            {
+              "blockNumber": 3100224,
+              "totalPoints": "140"
+            },
+            {
+              "blockNumber": 3101225,
+              "totalPoints": "150"
+            },
+            {
+              "blockNumber": 3102223,
+              "totalPoints": "160"
+            },
+            {
+              "blockNumber": 3103250,
+              "totalPoints": "170"
+            },
+            {
+              "blockNumber": 3104255,
+              "totalPoints": "180"
+            },
+            {
+              "blockNumber": 3105269,
+              "totalPoints": "190"
+            },
+            {
+              "blockNumber": 3106275,
+              "totalPoints": "200"
+            },
+            {
+              "blockNumber": 3107292,
+              "totalPoints": "210"
+            },
+            {
+              "blockNumber": 3108304,
+              "totalPoints": "220"
+            },
+            {
+              "blockNumber": 3109313,
+              "totalPoints": "230"
+            },
+            {
+              "blockNumber": 3110316,
+              "totalPoints": "240"
+            },
+            {
+              "blockNumber": 3111316,
+              "totalPoints": "250"
+            },
+            {
+              "blockNumber": 3112313,
+              "totalPoints": "260"
+            },
+            {
+              "blockNumber": 3113323,
+              "totalPoints": "270"
+            },
+            {
+              "blockNumber": 3114305,
+              "totalPoints": "280"
+            },
+            {
+              "blockNumber": 3115328,
+              "totalPoints": "290"
+            },
+            {
+              "blockNumber": 3116341,
+              "totalPoints": "300"
+            },
+            {
+              "blockNumber": 3117333,
+              "totalPoints": "310"
+            },
+            {
+              "blockNumber": 3118347,
+              "totalPoints": "320"
+            },
+            {
+              "blockNumber": 3119354,
+              "totalPoints": "330"
+            },
+            {
+              "blockNumber": 3120361,
+              "totalPoints": "340"
+            },
+            {
+              "blockNumber": 3121381,
+              "totalPoints": "350"
+            },
+            {
+              "blockNumber": 3122387,
+              "totalPoints": "360"
+            },
+            {
+              "blockNumber": 3123388,
+              "totalPoints": "370"
+            },
+            {
+              "blockNumber": 3124376,
+              "totalPoints": "380"
+            },
+            {
+              "blockNumber": 3125387,
+              "totalPoints": "390"
+            },
+            {
+              "blockNumber": 3126372,
+              "totalPoints": "400"
+            },
+            {
+              "blockNumber": 3127376,
+              "totalPoints": "410"
+            },
+            {
+              "blockNumber": 3128386,
+              "totalPoints": "420"
+            },
+            {
+              "blockNumber": 3129397,
+              "totalPoints": "430"
+            },
+            {
+              "blockNumber": 3130411,
+              "totalPoints": "440"
+            },
+            {
+              "blockNumber": 3131407,
+              "totalPoints": "450"
+            },
+            {
+              "blockNumber": 3132419,
+              "totalPoints": "460"
+            },
+            {
+              "blockNumber": 3133457,
+              "totalPoints": "470"
+            },
+            {
+              "blockNumber": 3134473,
+              "totalPoints": "480"
+            },
+            {
+              "blockNumber": 3135459,
+              "totalPoints": "490"
+            },
+            {
+              "blockNumber": 3136450,
+              "totalPoints": "500"
+            },
+            {
+              "blockNumber": 3137455,
+              "totalPoints": "510"
+            },
+            {
+              "blockNumber": 3138456,
+              "totalPoints": "520"
+            },
+            {
+              "blockNumber": 3139477,
+              "totalPoints": "530"
+            },
+            {
+              "blockNumber": 3140496,
+              "totalPoints": "540"
+            },
+            {
+              "blockNumber": 3141522,
+              "totalPoints": "550"
+            },
+            {
+              "blockNumber": 3142530,
+              "totalPoints": "560"
+            },
+            {
+              "blockNumber": 3143548,
+              "totalPoints": "570"
+            },
+            {
+              "blockNumber": 3144562,
+              "totalPoints": "580"
+            },
+            {
+              "blockNumber": 3145548,
+              "totalPoints": "590"
+            },
+            {
+              "blockNumber": 3146533,
+              "totalPoints": "600"
+            },
+            {
+              "blockNumber": 3147572,
+              "totalPoints": "610"
+            },
+            {
+              "blockNumber": 3148564,
+              "totalPoints": "620"
+            },
+            {
+              "blockNumber": 3149591,
+              "totalPoints": "630"
+            },
+            {
+              "blockNumber": 3150611,
+              "totalPoints": "640"
+            },
+            {
+              "blockNumber": 3151594,
+              "totalPoints": "650"
+            },
+            {
+              "blockNumber": 3152598,
+              "totalPoints": "660"
+            },
+            {
+              "blockNumber": 3153601,
+              "totalPoints": "670"
+            },
+            {
+              "blockNumber": 3154606,
+              "totalPoints": "680"
+            },
+            {
+              "blockNumber": 3155622,
+              "totalPoints": "690"
+            },
+            {
+              "blockNumber": 3156621,
+              "totalPoints": "700"
+            },
+            {
+              "blockNumber": 3157634,
+              "totalPoints": "710"
+            },
+            {
+              "blockNumber": 3158646,
+              "totalPoints": "720"
+            },
+            {
+              "blockNumber": 3159665,
+              "totalPoints": "730"
+            },
+            {
+              "blockNumber": 3160664,
+              "totalPoints": "740"
+            },
+            {
+              "blockNumber": 3161677,
+              "totalPoints": "750"
+            },
+            {
+              "blockNumber": 3162679,
+              "totalPoints": "760"
+            },
+            {
+              "blockNumber": 3163674,
+              "totalPoints": "770"
+            },
+            {
+              "blockNumber": 3164674,
+              "totalPoints": "780"
+            },
+            {
+              "blockNumber": 3165658,
+              "totalPoints": "790"
+            },
+            {
+              "blockNumber": 3166667,
+              "totalPoints": "800"
+            },
+            {
+              "blockNumber": 3167670,
+              "totalPoints": "810"
+            },
+            {
+              "blockNumber": 3168688,
+              "totalPoints": "820"
+            },
+            {
+              "blockNumber": 3169701,
+              "totalPoints": "830"
+            },
+            {
+              "blockNumber": 3170727,
+              "totalPoints": "840"
+            },
+            {
+              "blockNumber": 3171734,
+              "totalPoints": "850"
+            },
+            {
+              "blockNumber": 3172751,
+              "totalPoints": "860"
+            },
+            {
+              "blockNumber": 3173751,
+              "totalPoints": "870"
+            },
+            {
+              "blockNumber": 3174756,
+              "totalPoints": "880"
+            },
+            {
+              "blockNumber": 3175771,
+              "totalPoints": "890"
+            },
+            {
+              "blockNumber": 3176765,
+              "totalPoints": "900"
+            },
+            {
+              "blockNumber": 3177754,
+              "totalPoints": "910"
+            },
+            {
+              "blockNumber": 3178763,
+              "totalPoints": "920"
+            },
+            {
+              "blockNumber": 3179774,
+              "totalPoints": "930"
+            },
+            {
+              "blockNumber": 3180763,
+              "totalPoints": "940"
+            },
+            {
+              "blockNumber": 3181777,
+              "totalPoints": "950"
+            },
+            {
+              "blockNumber": 3182798,
+              "totalPoints": "960"
+            },
+            {
+              "blockNumber": 3183795,
+              "totalPoints": "970"
+            },
+            {
+              "blockNumber": 3184794,
+              "totalPoints": "980"
+            },
+            {
+              "blockNumber": 3185799,
+              "totalPoints": "990"
+            },
+            {
+              "blockNumber": 3186809,
+              "totalPoints": "1000"
+            },
+            {
+              "blockNumber": 3187811,
+              "totalPoints": "1010"
+            },
+            {
+              "blockNumber": 3188841,
+              "totalPoints": "1020"
+            },
+            {
+              "blockNumber": 3189855,
+              "totalPoints": "1030"
+            },
+            {
+              "blockNumber": 3190836,
+              "totalPoints": "1040"
+            },
+            {
+              "blockNumber": 3191846,
+              "totalPoints": "1050"
+            },
+            {
+              "blockNumber": 3192863,
+              "totalPoints": "1060"
+            },
+            {
+              "blockNumber": 3193866,
+              "totalPoints": "1070"
+            },
+            {
+              "blockNumber": 3194875,
+              "totalPoints": "1080"
+            },
+            {
+              "blockNumber": 3195885,
+              "totalPoints": "1090"
+            }
+          ]
+        },
+        "createdAt": 2003563,
+        "createdAtTimestamp": "2025-05-28T06:55:36",
+        "lastUpdatedAt": 4530208,
+        "lastUpdatedAtTimestamp": "2025-12-10T16:55:36"
+      },
+      {
+        "id": "5H464CBU59y81CbM4ACM9JuM3EqFgEcxkqw4oZY6n14eGYJw",
+        "totalPoints": "620",
+        "totalMainnetPoints": "0",
+        "totalTestnetPoints": "620",
+        "isValidator": null,
+        "isNominator": true,
+        "delegators": {
+          "nodes": [
+            {
+              "deposits": {
+                "totalCount": 1
+              },
+              "delegations": {
+                "totalCount": 2,
+                "nodes": [
+                  {
+                    "assetId": "0"
+                  },
+                  {
+                    "assetId": "0"
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        "operators": {
+          "totalCount": 1
+        },
+        "lstPoolMembers": {
+          "totalCount": 0
+        },
+        "blueprints": {
+          "totalCount": 0
+        },
+        "services": {
+          "totalCount": 0
+        },
+        "jobCalls": {
+          "totalCount": 0
+        },
+        "testnetTaskCompletions": {
+          "nodes": [
+            {
+              "hasDepositedThreeAssets": null,
+              "hasDelegatedAssets": null,
+              "hasNominated": true,
+              "hasLiquidStaked": null,
+              "hasNativeRestaked": true,
+              "hasBonusPoints": null
+            }
+          ]
+        },
+        "snapshots": {
+          "totalCount": 35,
+          "nodes": [
+            {
+              "blockNumber": 2610213,
+              "totalPoints": "100"
+            },
+            {
+              "blockNumber": 2680435,
+              "totalPoints": "110"
+            },
+            {
+              "blockNumber": 2680793,
+              "totalPoints": "120"
+            },
+            {
+              "blockNumber": 2681799,
+              "totalPoints": "130"
+            },
+            {
+              "blockNumber": 2764084,
+              "totalPoints": "140"
+            },
+            {
+              "blockNumber": 2765277,
+              "totalPoints": "150"
+            },
+            {
+              "blockNumber": 2766473,
+              "totalPoints": "160"
+            },
+            {
+              "blockNumber": 2767671,
+              "totalPoints": "170"
+            },
+            {
+              "blockNumber": 2768864,
+              "totalPoints": "180"
+            },
+            {
+              "blockNumber": 2770055,
+              "totalPoints": "190"
+            },
+            {
+              "blockNumber": 2771250,
+              "totalPoints": "200"
+            },
+            {
+              "blockNumber": 2772446,
+              "totalPoints": "210"
+            },
+            {
+              "blockNumber": 2773643,
+              "totalPoints": "220"
+            },
+            {
+              "blockNumber": 2774840,
+              "totalPoints": "230"
+            },
+            {
+              "blockNumber": 2776036,
+              "totalPoints": "240"
+            },
+            {
+              "blockNumber": 2777235,
+              "totalPoints": "250"
+            },
+            {
+              "blockNumber": 2778435,
+              "totalPoints": "260"
+            },
+            {
+              "blockNumber": 2779630,
+              "totalPoints": "270"
+            },
+            {
+              "blockNumber": 2780824,
+              "totalPoints": "280"
+            },
+            {
+              "blockNumber": 2782015,
+              "totalPoints": "290"
+            },
+            {
+              "blockNumber": 2783207,
+              "totalPoints": "300"
+            },
+            {
+              "blockNumber": 2784401,
+              "totalPoints": "310"
+            },
+            {
+              "blockNumber": 2785594,
+              "totalPoints": "320"
+            },
+            {
+              "blockNumber": 2786790,
+              "totalPoints": "330"
+            },
+            {
+              "blockNumber": 2787987,
+              "totalPoints": "340"
+            },
+            {
+              "blockNumber": 2789184,
+              "totalPoints": "350"
+            },
+            {
+              "blockNumber": 2790382,
+              "totalPoints": "360"
+            },
+            {
+              "blockNumber": 2791578,
+              "totalPoints": "370"
+            },
+            {
+              "blockNumber": 2803508,
+              "totalPoints": "380"
+            },
+            {
+              "blockNumber": 2805880,
+              "totalPoints": "390"
+            },
+            {
+              "blockNumber": 2807076,
+              "totalPoints": "400"
+            },
+            {
+              "blockNumber": 2808269,
+              "totalPoints": "410"
+            },
+            {
+              "blockNumber": 2809464,
+              "totalPoints": "420"
+            },
+            {
+              "blockNumber": 2877721,
+              "totalPoints": "520"
+            },
+            {
+              "blockNumber": 2882424,
+              "totalPoints": "620"
+            }
+          ]
+        },
+        "createdAt": 2610213,
+        "createdAtTimestamp": "2025-07-09T19:21:12.001",
+        "lastUpdatedAt": 4530208,
+        "lastUpdatedAtTimestamp": "2025-12-10T16:55:36"
+      },
+      {
+        "id": "5FLSigC9HGRKVhB9FiEo4Y3koPsNmBmLJbpXg2mp1hXcS59Y",
+        "totalPoints": "200",
+        "totalMainnetPoints": "0",
+        "totalTestnetPoints": "200",
+        "isValidator": null,
+        "isNominator": null,
+        "delegators": {
+          "nodes": [
+            {
+              "deposits": {
+                "totalCount": 1
+              },
+              "delegations": {
+                "totalCount": 2,
+                "nodes": [
+                  {
+                    "assetId": "0"
+                  },
+                  {
+                    "assetId": "0"
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        "operators": {
+          "totalCount": 1
+        },
+        "lstPoolMembers": {
+          "totalCount": 0
+        },
+        "blueprints": {
+          "totalCount": 0
+        },
+        "services": {
+          "totalCount": 17
+        },
+        "jobCalls": {
+          "totalCount": 0
+        },
+        "testnetTaskCompletions": {
+          "nodes": [
+            {
+              "hasDepositedThreeAssets": null,
+              "hasDelegatedAssets": true,
+              "hasNominated": null,
+              "hasLiquidStaked": null,
+              "hasNativeRestaked": null,
+              "hasBonusPoints": null
+            }
+          ]
+        },
+        "snapshots": {
+          "totalCount": 2,
+          "nodes": [
+            {
+              "blockNumber": 2668472,
+              "totalPoints": "100"
+            },
+            {
+              "blockNumber": 3096371,
+              "totalPoints": "200"
+            }
+          ]
+        },
+        "createdAt": 2668472,
+        "createdAtTimestamp": "2025-07-14T15:01:06.013",
+        "lastUpdatedAt": 4131098,
+        "lastUpdatedAtTimestamp": "2025-11-07T15:46:18.001"
+      },
+      {
+        "id": "5GYfHYX14i2wMPbqiuaGdTUTdFwMWexZAW3ouo47JFRHZd4j",
+        "totalPoints": "100",
+        "totalMainnetPoints": "0",
+        "totalTestnetPoints": "100",
+        "isValidator": null,
+        "isNominator": true,
+        "delegators": {
+          "nodes": []
+        },
+        "operators": {
+          "totalCount": 0
+        },
+        "lstPoolMembers": {
+          "totalCount": 0
+        },
+        "blueprints": {
+          "totalCount": 0
+        },
+        "services": {
+          "totalCount": 0
+        },
+        "jobCalls": {
+          "totalCount": 0
+        },
+        "testnetTaskCompletions": {
+          "nodes": [
+            {
+              "hasDepositedThreeAssets": null,
+              "hasDelegatedAssets": null,
+              "hasNominated": true,
+              "hasLiquidStaked": null,
+              "hasNativeRestaked": null,
+              "hasBonusPoints": null
+            }
+          ]
+        },
+        "snapshots": {
+          "totalCount": 1,
+          "nodes": [
+            {
+              "blockNumber": 2003563,
+              "totalPoints": "100"
+            }
+          ]
+        },
+        "createdAt": 2003563,
+        "createdAtTimestamp": "2025-05-28T06:55:36",
+        "lastUpdatedAt": 4530208,
+        "lastUpdatedAtTimestamp": "2025-12-10T16:55:36"
+      },
+      {
+        "id": "5HBXHgGuu5kuFtiLFxa7r3ygKCDBmddnyAA7AQ5HpLuJqXQb",
+        "totalPoints": "100",
+        "totalMainnetPoints": "0",
+        "totalTestnetPoints": "100",
+        "isValidator": null,
+        "isNominator": true,
+        "delegators": {
+          "nodes": []
+        },
+        "operators": {
+          "totalCount": 0
+        },
+        "lstPoolMembers": {
+          "totalCount": 0
+        },
+        "blueprints": {
+          "totalCount": 0
+        },
+        "services": {
+          "totalCount": 0
+        },
+        "jobCalls": {
+          "totalCount": 0
+        },
+        "testnetTaskCompletions": {
+          "nodes": [
+            {
+              "hasDepositedThreeAssets": null,
+              "hasDelegatedAssets": null,
+              "hasNominated": true,
+              "hasLiquidStaked": null,
+              "hasNativeRestaked": null,
+              "hasBonusPoints": null
+            }
+          ]
+        },
+        "snapshots": {
+          "totalCount": 1,
+          "nodes": [
+            {
+              "blockNumber": 2003563,
+              "totalPoints": "100"
+            }
+          ]
+        },
+        "createdAt": 2003563,
+        "createdAtTimestamp": "2025-05-28T06:55:36",
+        "lastUpdatedAt": 4530208,
+        "lastUpdatedAtTimestamp": "2025-12-10T16:55:36"
+      },
+      {
+        "id": "5GbUvf3Vn7AnoyGghzKDeER36ZsEEFxsQGp6MTmWVsTCaopb",
+        "totalPoints": "100",
+        "totalMainnetPoints": "0",
+        "totalTestnetPoints": "100",
+        "isValidator": null,
+        "isNominator": true,
+        "delegators": {
+          "nodes": []
+        },
+        "operators": {
+          "totalCount": 0
+        },
+        "lstPoolMembers": {
+          "totalCount": 0
+        },
+        "blueprints": {
+          "totalCount": 0
+        },
+        "services": {
+          "totalCount": 0
+        },
+        "jobCalls": {
+          "totalCount": 0
+        },
+        "testnetTaskCompletions": {
+          "nodes": [
+            {
+              "hasDepositedThreeAssets": null,
+              "hasDelegatedAssets": null,
+              "hasNominated": true,
+              "hasLiquidStaked": null,
+              "hasNativeRestaked": null,
+              "hasBonusPoints": null
+            }
+          ]
+        },
+        "snapshots": {
+          "totalCount": 1,
+          "nodes": [
+            {
+              "blockNumber": 2003563,
+              "totalPoints": "100"
+            }
+          ]
+        },
+        "createdAt": 2003563,
+        "createdAtTimestamp": "2025-05-28T06:55:36",
+        "lastUpdatedAt": 4530208,
+        "lastUpdatedAtTimestamp": "2025-12-10T16:55:36"
+      },
+      {
+        "id": "5GMHK7zgpwqWx98Qsu1SadhS4DexD2tWmVfboTRvMrbFmJAK",
+        "totalPoints": "100",
+        "totalMainnetPoints": "0",
+        "totalTestnetPoints": "100",
+        "isValidator": null,
+        "isNominator": true,
+        "delegators": {
+          "nodes": []
+        },
+        "operators": {
+          "totalCount": 0
+        },
+        "lstPoolMembers": {
+          "totalCount": 0
+        },
+        "blueprints": {
+          "totalCount": 0
+        },
+        "services": {
+          "totalCount": 0
+        },
+        "jobCalls": {
+          "totalCount": 0
+        },
+        "testnetTaskCompletions": {
+          "nodes": [
+            {
+              "hasDepositedThreeAssets": null,
+              "hasDelegatedAssets": null,
+              "hasNominated": true,
+              "hasLiquidStaked": null,
+              "hasNativeRestaked": null,
+              "hasBonusPoints": null
+            }
+          ]
+        },
+        "snapshots": {
+          "totalCount": 1,
+          "nodes": [
+            {
+              "blockNumber": 2003563,
+              "totalPoints": "100"
+            }
+          ]
+        },
+        "createdAt": 2003563,
+        "createdAtTimestamp": "2025-05-28T06:55:36",
+        "lastUpdatedAt": 4530208,
+        "lastUpdatedAtTimestamp": "2025-12-10T16:55:36"
+      },
+      {
+        "id": "5FsW39eFd2duPJm29yka2NLFiU49ePgovdiEbUMhdVV24WL2",
+        "totalPoints": "100",
+        "totalMainnetPoints": "0",
+        "totalTestnetPoints": "100",
+        "isValidator": null,
+        "isNominator": null,
+        "delegators": {
+          "nodes": []
+        },
+        "operators": {
+          "totalCount": 1
+        },
+        "lstPoolMembers": {
+          "totalCount": 0
+        },
+        "blueprints": {
+          "totalCount": 0
+        },
+        "services": {
+          "totalCount": 0
+        },
+        "jobCalls": {
+          "totalCount": 0
+        },
+        "testnetTaskCompletions": {
+          "nodes": []
+        },
+        "snapshots": {
+          "totalCount": 1,
+          "nodes": [
+            {
+              "blockNumber": 2808294,
+              "totalPoints": "100"
+            }
+          ]
+        },
+        "createdAt": 2808294,
+        "createdAtTimestamp": "2025-07-24T18:58:06",
+        "lastUpdatedAt": 2808403,
+        "lastUpdatedAtTimestamp": "2025-07-24T19:09:00.009"
+      },
+      {
+        "id": "5DdA9nC8xeTKbPK1nQ87saKpw6jGFty3nQnoCmfBxh8W7rPT",
+        "totalPoints": "100",
+        "totalMainnetPoints": "0",
+        "totalTestnetPoints": "100",
+        "isValidator": null,
+        "isNominator": true,
+        "delegators": {
+          "nodes": []
+        },
+        "operators": {
+          "totalCount": 0
+        },
+        "lstPoolMembers": {
+          "totalCount": 0
+        },
+        "blueprints": {
+          "totalCount": 0
+        },
+        "services": {
+          "totalCount": 0
+        },
+        "jobCalls": {
+          "totalCount": 0
+        },
+        "testnetTaskCompletions": {
+          "nodes": [
+            {
+              "hasDepositedThreeAssets": null,
+              "hasDelegatedAssets": null,
+              "hasNominated": true,
+              "hasLiquidStaked": null,
+              "hasNativeRestaked": null,
+              "hasBonusPoints": null
+            }
+          ]
+        },
+        "snapshots": {
+          "totalCount": 1,
+          "nodes": [
+            {
+              "blockNumber": 2003563,
+              "totalPoints": "100"
+            }
+          ]
+        },
+        "createdAt": 2003563,
+        "createdAtTimestamp": "2025-05-28T06:55:36",
+        "lastUpdatedAt": 4530208,
+        "lastUpdatedAtTimestamp": "2025-12-10T16:55:36"
+      },
+      {
+        "id": "5GvFpeavSqQGs1tiCdoMKHBemhtsQNisra44xpShMXDXFVwp",
+        "totalPoints": "100",
+        "totalMainnetPoints": "0",
+        "totalTestnetPoints": "100",
+        "isValidator": null,
+        "isNominator": true,
+        "delegators": {
+          "nodes": []
+        },
+        "operators": {
+          "totalCount": 0
+        },
+        "lstPoolMembers": {
+          "totalCount": 0
+        },
+        "blueprints": {
+          "totalCount": 0
+        },
+        "services": {
+          "totalCount": 0
+        },
+        "jobCalls": {
+          "totalCount": 0
+        },
+        "testnetTaskCompletions": {
+          "nodes": [
+            {
+              "hasDepositedThreeAssets": null,
+              "hasDelegatedAssets": null,
+              "hasNominated": true,
+              "hasLiquidStaked": null,
+              "hasNativeRestaked": null,
+              "hasBonusPoints": null
+            }
+          ]
+        },
+        "snapshots": {
+          "totalCount": 1,
+          "nodes": [
+            {
+              "blockNumber": 2003563,
+              "totalPoints": "100"
+            }
+          ]
+        },
+        "createdAt": 2003563,
+        "createdAtTimestamp": "2025-05-28T06:55:36",
+        "lastUpdatedAt": 4530208,
+        "lastUpdatedAtTimestamp": "2025-12-10T16:55:36"
+      },
+      {
+        "id": "5D82gred9eR2ZwJAdVG4En8sQBdMDdBj2pWWtgUmVQb8qCep",
+        "totalPoints": "100",
+        "totalMainnetPoints": "0",
+        "totalTestnetPoints": "100",
+        "isValidator": null,
+        "isNominator": true,
+        "delegators": {
+          "nodes": []
+        },
+        "operators": {
+          "totalCount": 0
+        },
+        "lstPoolMembers": {
+          "totalCount": 0
+        },
+        "blueprints": {
+          "totalCount": 0
+        },
+        "services": {
+          "totalCount": 0
+        },
+        "jobCalls": {
+          "totalCount": 0
+        },
+        "testnetTaskCompletions": {
+          "nodes": [
+            {
+              "hasDepositedThreeAssets": null,
+              "hasDelegatedAssets": null,
+              "hasNominated": true,
+              "hasLiquidStaked": null,
+              "hasNativeRestaked": null,
+              "hasBonusPoints": null
+            }
+          ]
+        },
+        "snapshots": {
+          "totalCount": 1,
+          "nodes": [
+            {
+              "blockNumber": 2003563,
+              "totalPoints": "100"
+            }
+          ]
+        },
+        "createdAt": 2003563,
+        "createdAtTimestamp": "2025-05-28T06:55:36",
+        "lastUpdatedAt": 4530208,
+        "lastUpdatedAtTimestamp": "2025-12-10T16:55:36"
+      },
+      {
+        "id": "5H6TrFknVnAJ5YyEemUKJ1UY4c4dYDBseV5FXTKQtEcjVfsN",
+        "totalPoints": "100",
+        "totalMainnetPoints": "0",
+        "totalTestnetPoints": "100",
+        "isValidator": null,
+        "isNominator": true,
+        "delegators": {
+          "nodes": []
+        },
+        "operators": {
+          "totalCount": 0
+        },
+        "lstPoolMembers": {
+          "totalCount": 0
+        },
+        "blueprints": {
+          "totalCount": 0
+        },
+        "services": {
+          "totalCount": 0
+        },
+        "jobCalls": {
+          "totalCount": 0
+        },
+        "testnetTaskCompletions": {
+          "nodes": [
+            {
+              "hasDepositedThreeAssets": null,
+              "hasDelegatedAssets": null,
+              "hasNominated": true,
+              "hasLiquidStaked": null,
+              "hasNativeRestaked": null,
+              "hasBonusPoints": null
+            }
+          ]
+        },
+        "snapshots": {
+          "totalCount": 1,
+          "nodes": [
+            {
+              "blockNumber": 2003563,
+              "totalPoints": "100"
+            }
+          ]
+        },
+        "createdAt": 2003563,
+        "createdAtTimestamp": "2025-05-28T06:55:36",
+        "lastUpdatedAt": 4530208,
+        "lastUpdatedAtTimestamp": "2025-12-10T16:55:36"
+      },
+      {
+        "id": "5DNmDxvbfNuPPDh43pJbVrn4cd52UbnNfAWv8aGNeuh44YeR",
+        "totalPoints": "100",
+        "totalMainnetPoints": "0",
+        "totalTestnetPoints": "100",
+        "isValidator": null,
+        "isNominator": null,
+        "delegators": {
+          "nodes": []
+        },
+        "operators": {
+          "totalCount": 1
+        },
+        "lstPoolMembers": {
+          "totalCount": 0
+        },
+        "blueprints": {
+          "totalCount": 0
+        },
+        "services": {
+          "totalCount": 0
+        },
+        "jobCalls": {
+          "totalCount": 0
+        },
+        "testnetTaskCompletions": {
+          "nodes": []
+        },
+        "snapshots": {
+          "totalCount": 1,
+          "nodes": [
+            {
+              "blockNumber": 2804484,
+              "totalPoints": "100"
+            }
+          ]
+        },
+        "createdAt": 2804484,
+        "createdAtTimestamp": "2025-07-24T12:35:12.014",
+        "lastUpdatedAt": 2804484,
+        "lastUpdatedAtTimestamp": "2025-07-24T12:35:12.014"
+      },
+      {
+        "id": "5FxhUmPgCHDRoCSqqdiuQV3wvNYzUGGHrb9iB16pxLmnEKhP",
+        "totalPoints": "100",
+        "totalMainnetPoints": "0",
+        "totalTestnetPoints": "100",
+        "isValidator": null,
+        "isNominator": true,
+        "delegators": {
+          "nodes": []
+        },
+        "operators": {
+          "totalCount": 0
+        },
+        "lstPoolMembers": {
+          "totalCount": 0
+        },
+        "blueprints": {
+          "totalCount": 0
+        },
+        "services": {
+          "totalCount": 0
+        },
+        "jobCalls": {
+          "totalCount": 0
+        },
+        "testnetTaskCompletions": {
+          "nodes": [
+            {
+              "hasDepositedThreeAssets": null,
+              "hasDelegatedAssets": null,
+              "hasNominated": true,
+              "hasLiquidStaked": null,
+              "hasNativeRestaked": null,
+              "hasBonusPoints": null
+            }
+          ]
+        },
+        "snapshots": {
+          "totalCount": 1,
+          "nodes": [
+            {
+              "blockNumber": 2003563,
+              "totalPoints": "100"
+            }
+          ]
+        },
+        "createdAt": 2003563,
+        "createdAtTimestamp": "2025-05-28T06:55:36",
+        "lastUpdatedAt": 4530208,
+        "lastUpdatedAtTimestamp": "2025-12-10T16:55:36"
+      },
+      {
+        "id": "5Ft9wkPE8Wdt3S5e2AT3Ac5mqvbZKi2HyGcXe6UgzU87qYNw",
+        "totalPoints": "100",
+        "totalMainnetPoints": "0",
+        "totalTestnetPoints": "100",
+        "isValidator": null,
+        "isNominator": true,
+        "delegators": {
+          "nodes": []
+        },
+        "operators": {
+          "totalCount": 0
+        },
+        "lstPoolMembers": {
+          "totalCount": 0
+        },
+        "blueprints": {
+          "totalCount": 0
+        },
+        "services": {
+          "totalCount": 0
+        },
+        "jobCalls": {
+          "totalCount": 0
+        },
+        "testnetTaskCompletions": {
+          "nodes": [
+            {
+              "hasDepositedThreeAssets": null,
+              "hasDelegatedAssets": null,
+              "hasNominated": true,
+              "hasLiquidStaked": null,
+              "hasNativeRestaked": null,
+              "hasBonusPoints": null
+            }
+          ]
+        },
+        "snapshots": {
+          "totalCount": 1,
+          "nodes": [
+            {
+              "blockNumber": 2003563,
+              "totalPoints": "100"
+            }
+          ]
+        },
+        "createdAt": 2003563,
+        "createdAtTimestamp": "2025-05-28T06:55:36",
+        "lastUpdatedAt": 4530208,
+        "lastUpdatedAtTimestamp": "2025-12-10T16:55:36"
+      },
+      {
+        "id": "5E2bHgqFgAST8KvroiZ87aoJyv4tzkFWVxmLp4dhKBnqMntR",
+        "totalPoints": "100",
+        "totalMainnetPoints": "0",
+        "totalTestnetPoints": "100",
+        "isValidator": null,
+        "isNominator": true,
+        "delegators": {
+          "nodes": []
+        },
+        "operators": {
+          "totalCount": 0
+        },
+        "lstPoolMembers": {
+          "totalCount": 0
+        },
+        "blueprints": {
+          "totalCount": 0
+        },
+        "services": {
+          "totalCount": 0
+        },
+        "jobCalls": {
+          "totalCount": 0
+        },
+        "testnetTaskCompletions": {
+          "nodes": [
+            {
+              "hasDepositedThreeAssets": null,
+              "hasDelegatedAssets": null,
+              "hasNominated": true,
+              "hasLiquidStaked": null,
+              "hasNativeRestaked": null,
+              "hasBonusPoints": null
+            }
+          ]
+        },
+        "snapshots": {
+          "totalCount": 1,
+          "nodes": [
+            {
+              "blockNumber": 2003563,
+              "totalPoints": "100"
+            }
+          ]
+        },
+        "createdAt": 2003563,
+        "createdAtTimestamp": "2025-05-28T06:55:36",
+        "lastUpdatedAt": 4530208,
+        "lastUpdatedAtTimestamp": "2025-12-10T16:55:36"
+      },
+      {
+        "id": "5CwpCGqK4hVKHJCcGnfVatZkm6XXZz4S8NnpvenR5GFvjPZZ",
+        "totalPoints": "100",
+        "totalMainnetPoints": "0",
+        "totalTestnetPoints": "100",
+        "isValidator": null,
+        "isNominator": true,
+        "delegators": {
+          "nodes": []
+        },
+        "operators": {
+          "totalCount": 0
+        },
+        "lstPoolMembers": {
+          "totalCount": 0
+        },
+        "blueprints": {
+          "totalCount": 0
+        },
+        "services": {
+          "totalCount": 0
+        },
+        "jobCalls": {
+          "totalCount": 0
+        },
+        "testnetTaskCompletions": {
+          "nodes": [
+            {
+              "hasDepositedThreeAssets": null,
+              "hasDelegatedAssets": null,
+              "hasNominated": true,
+              "hasLiquidStaked": null,
+              "hasNativeRestaked": null,
+              "hasBonusPoints": null
+            }
+          ]
+        },
+        "snapshots": {
+          "totalCount": 1,
+          "nodes": [
+            {
+              "blockNumber": 2003563,
+              "totalPoints": "100"
+            }
+          ]
+        },
+        "createdAt": 2003563,
+        "createdAtTimestamp": "2025-05-28T06:55:36",
+        "lastUpdatedAt": 4530208,
+        "lastUpdatedAtTimestamp": "2025-12-10T16:55:36"
+      },
+      {
+        "id": "5GRgVNtZDUA7WPyQCpvvemR5SAE7CsFcUWVTi7VNDKrAJvKt",
+        "totalPoints": "100",
+        "totalMainnetPoints": "0",
+        "totalTestnetPoints": "100",
+        "isValidator": null,
+        "isNominator": null,
+        "delegators": {
+          "nodes": []
+        },
+        "operators": {
+          "totalCount": 1
+        },
+        "lstPoolMembers": {
+          "totalCount": 0
+        },
+        "blueprints": {
+          "totalCount": 0
+        },
+        "services": {
+          "totalCount": 0
+        },
+        "jobCalls": {
+          "totalCount": 0
+        },
+        "testnetTaskCompletions": {
+          "nodes": []
+        },
+        "snapshots": {
+          "totalCount": 1,
+          "nodes": [
+            {
+              "blockNumber": 2808166,
+              "totalPoints": "100"
+            }
+          ]
+        },
+        "createdAt": 2808166,
+        "createdAtTimestamp": "2025-07-24T18:45:06",
+        "lastUpdatedAt": 2808166,
+        "lastUpdatedAtTimestamp": "2025-07-24T18:45:06"
+      },
+      {
+        "id": "5H17Rd2J2Wtg7kkKuRN2pxHpY3zFiUbK2CXEuqdCbnyqRz4Q",
+        "totalPoints": "100",
+        "totalMainnetPoints": "0",
+        "totalTestnetPoints": "100",
+        "isValidator": null,
+        "isNominator": null,
+        "delegators": {
+          "nodes": []
+        },
+        "operators": {
+          "totalCount": 1
+        },
+        "lstPoolMembers": {
+          "totalCount": 0
+        },
+        "blueprints": {
+          "totalCount": 0
+        },
+        "services": {
+          "totalCount": 0
+        },
+        "jobCalls": {
+          "totalCount": 0
+        },
+        "testnetTaskCompletions": {
+          "nodes": []
+        },
+        "snapshots": {
+          "totalCount": 1,
+          "nodes": [
+            {
+              "blockNumber": 2804716,
+              "totalPoints": "100"
+            }
+          ]
+        },
+        "createdAt": 2804716,
+        "createdAtTimestamp": "2025-07-24T12:58:36",
+        "lastUpdatedAt": 2804716,
+        "lastUpdatedAtTimestamp": "2025-07-24T12:58:36"
+      },
+      {
+        "id": "5H4RzH7KC1UZYwwNGgxmUEuahzYK21UJibS5jNkupHbLToqw",
+        "totalPoints": "100",
+        "totalMainnetPoints": "0",
+        "totalTestnetPoints": "100",
+        "isValidator": null,
+        "isNominator": true,
+        "delegators": {
+          "nodes": []
+        },
+        "operators": {
+          "totalCount": 0
+        },
+        "lstPoolMembers": {
+          "totalCount": 0
+        },
+        "blueprints": {
+          "totalCount": 0
+        },
+        "services": {
+          "totalCount": 0
+        },
+        "jobCalls": {
+          "totalCount": 0
+        },
+        "testnetTaskCompletions": {
+          "nodes": [
+            {
+              "hasDepositedThreeAssets": null,
+              "hasDelegatedAssets": null,
+              "hasNominated": true,
+              "hasLiquidStaked": null,
+              "hasNativeRestaked": null,
+              "hasBonusPoints": null
+            }
+          ]
+        },
+        "snapshots": {
+          "totalCount": 1,
+          "nodes": [
+            {
+              "blockNumber": 2003563,
+              "totalPoints": "100"
+            }
+          ]
+        },
+        "createdAt": 2003563,
+        "createdAtTimestamp": "2025-05-28T06:55:36",
+        "lastUpdatedAt": 4530208,
+        "lastUpdatedAtTimestamp": "2025-12-10T16:55:36"
+      },
+      {
+        "id": "5CuQosqZBqDktXKwFbAmFsKB1sMtjXnL5wtbZpRTESntS2Sh",
+        "totalPoints": "100",
+        "totalMainnetPoints": "0",
+        "totalTestnetPoints": "100",
+        "isValidator": null,
+        "isNominator": true,
+        "delegators": {
+          "nodes": []
+        },
+        "operators": {
+          "totalCount": 0
+        },
+        "lstPoolMembers": {
+          "totalCount": 0
+        },
+        "blueprints": {
+          "totalCount": 0
+        },
+        "services": {
+          "totalCount": 0
+        },
+        "jobCalls": {
+          "totalCount": 0
+        },
+        "testnetTaskCompletions": {
+          "nodes": [
+            {
+              "hasDepositedThreeAssets": null,
+              "hasDelegatedAssets": null,
+              "hasNominated": true,
+              "hasLiquidStaked": null,
+              "hasNativeRestaked": null,
+              "hasBonusPoints": null
+            }
+          ]
+        },
+        "snapshots": {
+          "totalCount": 1,
+          "nodes": [
+            {
+              "blockNumber": 2003563,
+              "totalPoints": "100"
+            }
+          ]
+        },
+        "createdAt": 2003563,
+        "createdAtTimestamp": "2025-05-28T06:55:36",
+        "lastUpdatedAt": 4530208,
+        "lastUpdatedAtTimestamp": "2025-12-10T16:55:36"
+      },
+      {
+        "id": "5Fnh8CtpmVJScr2EB354u1cyp2SNpTUnJn7NaZbMNHziNyc8",
+        "totalPoints": "100",
+        "totalMainnetPoints": "0",
+        "totalTestnetPoints": "100",
+        "isValidator": null,
+        "isNominator": true,
+        "delegators": {
+          "nodes": []
+        },
+        "operators": {
+          "totalCount": 0
+        },
+        "lstPoolMembers": {
+          "totalCount": 0
+        },
+        "blueprints": {
+          "totalCount": 0
+        },
+        "services": {
+          "totalCount": 0
+        },
+        "jobCalls": {
+          "totalCount": 0
+        },
+        "testnetTaskCompletions": {
+          "nodes": [
+            {
+              "hasDepositedThreeAssets": null,
+              "hasDelegatedAssets": null,
+              "hasNominated": true,
+              "hasLiquidStaked": null,
+              "hasNativeRestaked": null,
+              "hasBonusPoints": null
+            }
+          ]
+        },
+        "snapshots": {
+          "totalCount": 1,
+          "nodes": [
+            {
+              "blockNumber": 2003563,
+              "totalPoints": "100"
+            }
+          ]
+        },
+        "createdAt": 2003563,
+        "createdAtTimestamp": "2025-05-28T06:55:36",
+        "lastUpdatedAt": 4530208,
+        "lastUpdatedAtTimestamp": "2025-12-10T16:55:36"
+      },
+      {
+        "id": "5HovJg4WfXEZVD4Z3fUwLmsv9akW1hARmE21oqyWHxTCFPBb",
+        "totalPoints": "100",
+        "totalMainnetPoints": "0",
+        "totalTestnetPoints": "100",
+        "isValidator": null,
+        "isNominator": null,
+        "delegators": {
+          "nodes": []
+        },
+        "operators": {
+          "totalCount": 1
+        },
+        "lstPoolMembers": {
+          "totalCount": 0
+        },
+        "blueprints": {
+          "totalCount": 0
+        },
+        "services": {
+          "totalCount": 0
+        },
+        "jobCalls": {
+          "totalCount": 0
+        },
+        "testnetTaskCompletions": {
+          "nodes": []
+        },
+        "snapshots": {
+          "totalCount": 1,
+          "nodes": [
+            {
+              "blockNumber": 2804628,
+              "totalPoints": "100"
+            }
+          ]
+        },
+        "createdAt": 2804628,
+        "createdAtTimestamp": "2025-07-24T12:49:48.002",
+        "lastUpdatedAt": 4131098,
+        "lastUpdatedAtTimestamp": "2025-11-07T15:46:18.001"
+      },
+      {
+        "id": "5EL62xVH7zWxwecPVT5rnGw7qUEPStJeTBauVcsSrsfnauio",
+        "totalPoints": "100",
+        "totalMainnetPoints": "0",
+        "totalTestnetPoints": "100",
+        "isValidator": null,
+        "isNominator": null,
+        "delegators": {
+          "nodes": []
+        },
+        "operators": {
+          "totalCount": 1
+        },
+        "lstPoolMembers": {
+          "totalCount": 0
+        },
+        "blueprints": {
+          "totalCount": 0
+        },
+        "services": {
+          "totalCount": 0
+        },
+        "jobCalls": {
+          "totalCount": 0
+        },
+        "testnetTaskCompletions": {
+          "nodes": []
+        },
+        "snapshots": {
+          "totalCount": 1,
+          "nodes": [
+            {
+              "blockNumber": 2804767,
+              "totalPoints": "100"
+            }
+          ]
+        },
+        "createdAt": 2804767,
+        "createdAtTimestamp": "2025-07-24T13:03:42.001",
+        "lastUpdatedAt": 2804767,
+        "lastUpdatedAtTimestamp": "2025-07-24T13:03:42.001"
+      },
+      {
+        "id": "5F6EkR1JsaNabWkibPacacbrS5ezuSkrduated34LDa3wcWQ",
+        "totalPoints": "0",
+        "totalMainnetPoints": "0",
+        "totalTestnetPoints": "0",
+        "isValidator": null,
+        "isNominator": null,
+        "delegators": {
+          "nodes": [
+            {
+              "deposits": {
+                "totalCount": 1
+              },
+              "delegations": {
+                "totalCount": 0,
+                "nodes": []
+              }
+            }
+          ]
+        },
+        "operators": {
+          "totalCount": 0
+        },
+        "lstPoolMembers": {
+          "totalCount": 0
+        },
+        "blueprints": {
+          "totalCount": 0
+        },
+        "services": {
+          "totalCount": 0
+        },
+        "jobCalls": {
+          "totalCount": 0
+        },
+        "testnetTaskCompletions": {
+          "nodes": [
+            {
+              "hasDepositedThreeAssets": null,
+              "hasDelegatedAssets": null,
+              "hasNominated": null,
+              "hasLiquidStaked": null,
+              "hasNativeRestaked": null,
+              "hasBonusPoints": null
+            }
+          ]
+        },
+        "snapshots": {
+          "totalCount": 0,
+          "nodes": []
+        },
+        "createdAt": 2022372,
+        "createdAtTimestamp": "2025-05-29T14:19:42",
+        "lastUpdatedAt": 2022372,
+        "lastUpdatedAtTimestamp": "2025-05-29T14:19:42"
+      },
+      {
+        "id": "5FbUZts9Gn9yGk7sqj7m4hjFTMDGp8u6XNcqetJgZvSCiwDk",
+        "totalPoints": "0",
+        "totalMainnetPoints": "0",
+        "totalTestnetPoints": "0",
+        "isValidator": null,
+        "isNominator": null,
+        "delegators": {
+          "nodes": [
+            {
+              "deposits": {
+                "totalCount": 1
+              },
+              "delegations": {
+                "totalCount": 0,
+                "nodes": []
+              }
+            }
+          ]
+        },
+        "operators": {
+          "totalCount": 0
+        },
+        "lstPoolMembers": {
+          "totalCount": 0
+        },
+        "blueprints": {
+          "totalCount": 0
+        },
+        "services": {
+          "totalCount": 0
+        },
+        "jobCalls": {
+          "totalCount": 0
+        },
+        "testnetTaskCompletions": {
+          "nodes": [
+            {
+              "hasDepositedThreeAssets": null,
+              "hasDelegatedAssets": null,
+              "hasNominated": null,
+              "hasLiquidStaked": null,
+              "hasNativeRestaked": null,
+              "hasBonusPoints": null
+            }
+          ]
+        },
+        "snapshots": {
+          "totalCount": 0,
+          "nodes": []
+        },
+        "createdAt": 2122657,
+        "createdAtTimestamp": "2025-06-05T13:51:06",
+        "lastUpdatedAt": 2159981,
+        "lastUpdatedAtTimestamp": "2025-06-08T04:31:48"
+      }
+    ],
+    "totalCount": 28
+  }
+}
