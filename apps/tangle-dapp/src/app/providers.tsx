@@ -7,8 +7,6 @@ import { UIProvider } from '@tangle-network/ui-components';
 import { type PropsWithChildren, type ReactNode, useState } from 'react';
 import { WagmiProvider } from 'wagmi';
 import { z } from 'zod';
-import BridgeHyperlaneProvider from '../features/bridge/context/BridgeHyperlaneContext/BridgeHyperlaneProvider';
-import BridgeTxQueueProvider from '../features/bridge/context/BridgeTxQueueContext/BridgeTxQueueProvider';
 
 const envSchema = z.object({
   OFAC_REGIONS: z
@@ -44,9 +42,7 @@ const Providers = ({ children }: PropsWithChildren): ReactNode => {
               blockedRegions={blockedRegions}
               blockedCountryCodes={blockedCountryCodes}
             >
-              <BridgeHyperlaneProvider>
-                <BridgeTxQueueProvider>{children}</BridgeTxQueueProvider>
-              </BridgeHyperlaneProvider>
+              {children}
             </OFACFilterProvider>
           </RainbowKitProvider>
         </QueryClientProvider>
