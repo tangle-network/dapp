@@ -1,4 +1,4 @@
-import { BN, formatBalance } from '@polkadot/util';
+import BN from 'bn.js';
 import { merge } from 'lodash';
 
 import addCommasToNumber from './addCommasToNumber';
@@ -21,7 +21,6 @@ const getChainUnitFactor = (decimals: number) => {
 export type FormatOptions = {
   includeCommas: boolean;
   trimTrailingZeroes: boolean;
-  withSi?: boolean;
 
   /**
    * Leave `undefined` to show the entire fraction part.
@@ -33,7 +32,6 @@ const DEFAULT_FORMAT_OPTIONS: FormatOptions = {
   fractionMaxLength: 4,
   includeCommas: false,
   trimTrailingZeroes: true,
-  withSi: false,
 };
 
 type State = {
@@ -178,37 +176,6 @@ export function formatBn(
     ...DEFAULT_FORMAT_OPTIONS,
     ...partialOptions,
   };
-
-  if (options.withSi) {
-    const formattedValue = formatBalance(amount, {
-      decimals,
-      withSi: true,
-      withUnit: false,
-      withZero: false,
-    });
-
-    if (options.fractionMaxLength === undefined) {
-      return formattedValue;
-    }
-
-    // Extract the value part (excluding the SI unit)
-    const [valuePart, siPart = ''] = formattedValue.split(' ');
-
-    // Split the value into integer and fraction parts
-    const [integerPart, fractionPart] = valuePart.split('.');
-
-    if (fractionPart && fractionPart.length > options.fractionMaxLength) {
-      // Truncate the fraction part to match fractionMaxLength
-      const truncatedFractionPart = fractionPart.substring(
-        0,
-        options.fractionMaxLength,
-      );
-
-      return `${integerPart}.${truncatedFractionPart}${siPart}`;
-    }
-
-    return formattedValue;
-  }
 
   const chainUnitFactorBn = getChainUnitFactor(decimals);
 

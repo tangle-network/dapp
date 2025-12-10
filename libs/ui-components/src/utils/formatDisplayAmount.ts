@@ -45,7 +45,6 @@ export const formatDisplayAmount = (
 ): string => {
   return formatBn(amount, decimals, {
     includeCommas: true,
-    withSi: style === AmountFormatStyle.SI ? true : undefined,
     fractionMaxLength:
       style === AmountFormatStyle.SHORT
         ? (options?.fractionMaxLength ?? 4)
