@@ -5,7 +5,7 @@ import { WithdrawRequestTableRow } from './WithdrawRequestTable';
 import { BN } from '@polkadot/util';
 import useRestakeWithdrawExecuteTx from '../../data/restake/useRestakeWithdrawExecuteTx';
 import useRestakeWithdrawCancelTx from '../../data/restake/useRestakeWithdrawCancelTx';
-import { TxStatus } from '@tangle-network/tangle-shared-ui/hooks/useSubstrateTx';
+import { TxStatus } from '@tangle-network/tangle-shared-ui/hooks/useContractWrite';
 
 type Props = {
   allRequests: WithdrawRequestTableRow[];

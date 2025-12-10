@@ -262,13 +262,14 @@ async function runActivityCycle() {
       }
       break;
 
-    case 'multiDeposit':
+    case 'multiDeposit': {
       // Multiple accounts deposit at once
       const accounts = [1, 2, 3].map(() =>
         1 + Math.floor(Math.random() * (ANVIL_ACCOUNTS.length - 1))
       );
       await Promise.all(accounts.map(idx => depositNativeToken(idx)));
       break;
+    }
   }
 
   console.log(`\nState: ${state.operators.length} operators, ${state.delegators.length} delegators`);

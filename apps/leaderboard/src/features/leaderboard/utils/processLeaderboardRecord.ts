@@ -123,7 +123,7 @@ const calculateActivityCounts = (activity?: ActivityData) => {
     return {
       depositCount: 0,
       delegationCount: 0,
-      liquidStakingPoolCount: 0,
+      liquidVaultPositionCount: 0,
       blueprintCount: 0,
       serviceCount: 0,
       jobCallCount: 0,
@@ -135,14 +135,16 @@ const calculateActivityCounts = (activity?: ActivityData) => {
   return {
     depositCount: delegator?.assetPositions?.length ?? 0,
     delegationCount: delegator?.delegations?.length ?? 0,
-    liquidStakingPoolCount: delegator?.liquidVaultPositions?.length ?? 0,
+    liquidVaultPositionCount: delegator?.liquidVaultPositions?.length ?? 0,
     blueprintCount,
     serviceCount,
     jobCallCount,
   };
 };
 
-const processPointsHistory = (record: LeaderboardAccountNodeType): PointsHistory[] => {
+const processPointsHistory = (
+  record: LeaderboardAccountNodeType,
+): PointsHistory[] => {
   if (!record.snapshots) {
     return [];
   }
@@ -168,7 +170,7 @@ export const processLeaderboardRecord = (
   pageIndex: number,
   pageSize: number,
   activity?: ActivityData,
-  network: NetworkType = 'MAINNET',
+  network: NetworkType = NetworkType.Mainnet,
 ): Account | null => {
   if (!record) {
     return null;

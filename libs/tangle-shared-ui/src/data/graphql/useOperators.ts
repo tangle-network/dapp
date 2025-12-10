@@ -70,7 +70,9 @@ interface OperatorsQueryResult {
 }
 
 // Parse operator data from GraphQL response
-const parseOperator = (raw: OperatorsQueryResult['operators'][number]): Operator => ({
+const parseOperator = (
+  raw: OperatorsQueryResult['operators'][number],
+): Operator => ({
   id: raw.id,
   ecdsaPublicKey: raw.ecdsaPublicKey,
   rpcAddress: raw.rpcAddress,
@@ -99,11 +101,14 @@ const fetchOperators = async (
   first?: number,
   skip?: number,
 ): Promise<Operator[]> => {
-  const result = await executeEnvioGraphQL<OperatorsQueryResult, {
-    first?: number;
-    skip?: number;
-    status?: RestakingOperatorStatus;
-  }>(OPERATORS_QUERY, { first, skip, status }, network);
+  const result = await executeEnvioGraphQL<
+    OperatorsQueryResult,
+    {
+      first?: number;
+      skip?: number;
+      status?: RestakingOperatorStatus;
+    }
+  >(OPERATORS_QUERY, { first, skip, status }, network);
 
   return result.data.operators.map(parseOperator);
 };
@@ -116,7 +121,13 @@ export const useOperators = (options?: {
   skip?: number;
   enabled?: boolean;
 }) => {
-  const { network, status, first = 100, skip = 0, enabled = true } = options ?? {};
+  const {
+    network,
+    status,
+    first = 100,
+    skip = 0,
+    enabled = true,
+  } = options ?? {};
 
   return useQuery({
     queryKey: ['envio', 'operators', network, status, first, skip],

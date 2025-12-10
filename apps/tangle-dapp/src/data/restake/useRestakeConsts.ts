@@ -1,8 +1,5 @@
-import type { AugmentedConsts } from '@polkadot/api/types';
-import type { MapKnownKeys } from '@tangle-network/dapp-types/utils/types';
-import { useCallback, useState } from 'react';
-import useApi from '@tangle-network/tangle-shared-ui/hooks/useApi';
-import getModuleConstant from '../../utils/getModuleConstant';
+import { useProtocolConfig } from '@tangle-network/tangle-shared-ui/data/graphql';
+import { useMemo } from 'react';
 
 export type RestakeConsts = {
   delegationBondLessDelay: number | null;
@@ -13,68 +10,31 @@ export type RestakeConsts = {
   operatorBondLessDelay: number | null;
 };
 
-type RestakeConstsKeys = keyof MapKnownKeys<
-  AugmentedConsts<'promise'>['multiAssetDelegation']
->;
-
-const CONSTANTS_U32 = [
-  'delegationBondLessDelay',
-  'leaveDelegatorsDelay',
-  'leaveOperatorsDelay',
-  'operatorBondLessDelay',
-] as const satisfies RestakeConstsKeys[];
-
-const CONSTANTS_U128 = [
-  'minDelegateAmount',
-  'minOperatorBondAmount',
-] as const satisfies RestakeConstsKeys[];
-
-type ConstantU32Name = (typeof CONSTANTS_U32)[number];
-type ConstantU128Name = (typeof CONSTANTS_U128)[number];
-type ConstantName = ConstantU32Name | ConstantU128Name;
-
 const useRestakeConsts = (): RestakeConsts => {
-  // Create initial state with all values set to null
-  const [defaultConsts] = useState<RestakeConsts>(() => {
-    const initialState = {} as RestakeConsts;
+  const { data: config } = useProtocolConfig();
 
-    // Initialize all U32 constants to null
-    CONSTANTS_U32.forEach((key) => {
-      initialState[key] = null;
-    });
+  return useMemo(() => {
+    if (!config) {
+      return {
+        delegationBondLessDelay: null,
+        leaveDelegatorsDelay: null,
+        leaveOperatorsDelay: null,
+        minDelegateAmount: null,
+        minOperatorBondAmount: null,
+        operatorBondLessDelay: null,
+      };
+    }
 
-    // Initialize all U128 constants to null
-    CONSTANTS_U128.forEach((key) => {
-      initialState[key] = null;
-    });
-
-    return initialState;
-  });
-
-  const { result: consts } = useApi(
-    useCallback((api) => {
-      const getConstant = (name: ConstantName) =>
-        getModuleConstant(api, 'multiAssetDelegation', name);
-
-      const result = {} as RestakeConsts;
-
-      // Process U32 constants
-      CONSTANTS_U32.forEach((key) => {
-        const value = getConstant(key);
-        result[key] = value ? value.toNumber() : null;
-      });
-
-      // Process U128 constants
-      CONSTANTS_U128.forEach((key) => {
-        const value = getConstant(key);
-        result[key] = value ? value.toBigInt() : null;
-      });
-
-      return result;
-    }, []),
-  );
-
-  return consts ?? defaultConsts;
+    return {
+      delegationBondLessDelay: Number(config.delegationBondLessDelay),
+      leaveDelegatorsDelay: Number(config.leaveDelegatorsDelay),
+      leaveOperatorsDelay: Number(config.leaveOperatorsDelay),
+      // TODO: Fetch these from contract when available
+      minDelegateAmount: null,
+      minOperatorBondAmount: null,
+      operatorBondLessDelay: null,
+    };
+  }, [config]);
 };
 
 export default useRestakeConsts;

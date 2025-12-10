@@ -6,11 +6,9 @@ import {
   Typography,
 } from '@tangle-network/ui-components';
 import BlueprintItem from '@tangle-network/tangle-shared-ui/components/blueprints/BlueprintGallery/BlueprintItem';
-import {
-  ApprovalConfirmationFormFields,
-} from '../../../../types';
+import { ApprovalConfirmationFormFields } from '../../../../types';
 import { useForm } from 'react-hook-form';
-import { useMemo, useEffect, FC } from 'react';
+import { useEffect, FC } from 'react';
 import {
   useAllBlueprints,
   type ServiceRequest,
@@ -43,7 +41,6 @@ const ApproveConfirmationModal: FC<Props> = ({
   onClose,
   onConfirm,
   selectedRequest,
-  assetsMetadata,
   status,
 }: Props) => {
   const isSubmitting = status === TxStatus.PROCESSING;
@@ -112,9 +109,7 @@ const ApproveConfirmationModal: FC<Props> = ({
           isBoosted={false}
           category={selectedRequest.blueprintData?.category ?? ''}
           author={selectedRequest.blueprintData?.author ?? ''}
-          description={
-            selectedRequest.blueprintData?.description ?? ''
-          }
+          description={selectedRequest.blueprintData?.description ?? ''}
           renderImage={(imageUrl) => {
             return (
               <img
@@ -150,7 +145,9 @@ const ApproveConfirmationModal: FC<Props> = ({
               placeholder="Enter restaking percentage"
             />
             {errors.restakingPercent && (
-              <p className="text-xs text-red-50">{errors.restakingPercent.message}</p>
+              <p className="text-xs text-red-50">
+                {errors.restakingPercent.message}
+              </p>
             )}
           </div>
         </form>

@@ -17,7 +17,6 @@ import {
 import {
   Avatar,
   Button,
-  EMPTY_VALUE_PLACEHOLDER,
   Modal,
   Typography,
   shortenString,
@@ -25,8 +24,7 @@ import {
 import pluralize from '@tangle-network/ui-components/utils/pluralize';
 import { TangleCloudTable } from '../../../components/tangleCloudTable/TangleCloudTable';
 import TableCellWrapper from '@tangle-network/tangle-shared-ui/components/tables/TableCellWrapper';
-import { Address } from 'viem';
-import { useAccount, useChainId } from 'wagmi';
+import { useChainId } from 'wagmi';
 import { chainsConfig } from '@tangle-network/dapp-config/chains';
 import {
   usePendingServiceRequests,
@@ -55,10 +53,8 @@ interface PendingInstanceTableProps {
 }
 
 export const PendingInstanceTable: FC<PendingInstanceTableProps> = ({
-  refreshTrigger,
   setRefreshTrigger,
 }) => {
-  const { address: currentUserAddress } = useAccount();
   const chainId = useChainId();
   const { isOperator, operatorAddress } = useEvmOperatorInfo();
 
@@ -82,7 +78,9 @@ export const PendingInstanceTable: FC<PendingInstanceTableProps> = ({
     isLoading,
     error,
     refetch,
-  } = usePendingServiceRequests(isOperator ? operatorAddress ?? undefined : undefined);
+  } = usePendingServiceRequests(
+    isOperator ? (operatorAddress ?? undefined) : undefined,
+  );
 
   // Fetch blueprint metadata
   const { data: blueprintMap } = useBlueprintMap();
@@ -120,7 +118,10 @@ export const PendingInstanceTable: FC<PendingInstanceTableProps> = ({
   }, [rejectStatus, setRefreshTrigger, refetch]);
 
   const columns = useMemo(() => {
-    const baseColumns: AccessorKeyColumnDef<ServiceRequestWithBlueprint, any>[] = [
+    const baseColumns: AccessorKeyColumnDef<
+      ServiceRequestWithBlueprint,
+      any
+    >[] = [
       columnHelper.accessor('blueprintId', {
         header: () => 'Blueprint',
         enableSorting: false,
@@ -134,7 +135,7 @@ export const PendingInstanceTable: FC<PendingInstanceTableProps> = ({
                     size="lg"
                     className="min-w-12"
                     src={request.blueprintData.logo}
-                    alt={request.blueprintData.name}
+                    alt={request.blueprintData?.name ?? 'Blueprint'}
                     sourceVariant="uri"
                   />
                 ) : (
@@ -151,7 +152,8 @@ export const PendingInstanceTable: FC<PendingInstanceTableProps> = ({
                   fw="bold"
                   className="!text-blue-50 text-ellipsis whitespace-nowrap overflow-hidden"
                 >
-                  {request.blueprintData?.name || `Blueprint ${request.blueprintId}`}
+                  {request.blueprintData?.name ||
+                    `Blueprint ${request.blueprintId}`}
                 </Typography>
               </div>
             </TableCellWrapper>
@@ -173,11 +175,7 @@ export const PendingInstanceTable: FC<PendingInstanceTableProps> = ({
             return (
               <TableCellWrapper className="p-0 min-h-fit">
                 <div className="flex items-center gap-2">
-                  <Avatar
-                    size="md"
-                    value={requester}
-                    theme="ethereum"
-                  />
+                  <Avatar size="md" value={requester} theme="ethereum" />
                   <div>
                     <Typography variant="body1" fw="bold">
                       {shortenString(requester, 8)}
@@ -240,7 +238,7 @@ export const PendingInstanceTable: FC<PendingInstanceTableProps> = ({
             return (
               <TableCellWrapper className="p-0 min-h-fit">
                 <div className="flex -space-x-2">
-                  {operators.slice(0, 3).map((op, i) => (
+                  {operators.slice(0, 3).map((op) => (
                     <Avatar
                       key={op}
                       size="sm"

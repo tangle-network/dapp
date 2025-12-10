@@ -3,11 +3,13 @@
  */
 
 import { useCallback } from 'react';
-import { Address, encodeFunctionData } from 'viem';
+import { encodeFunctionData } from 'viem';
 import { useAccount, usePublicClient, useWalletClient } from 'wagmi';
 import TangleABI from '@tangle-network/tangle-shared-ui/abi/Tangle';
 import { getTangleContractAddress } from '@tangle-network/tangle-shared-ui/constants/tangleContracts';
-import useContractWrite, { TxStatus } from '@tangle-network/tangle-shared-ui/hooks/useContractWrite';
+import useContractWrite, {
+  TxStatus,
+} from '@tangle-network/tangle-shared-ui/hooks/useContractWrite';
 
 export interface ServiceTerminateParams {
   serviceId: bigint;

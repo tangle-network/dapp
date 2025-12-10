@@ -19,6 +19,19 @@ const CREDITS_PRECOMPILE_ABI = [
     stateMutability: 'nonpayable',
     type: 'function',
   },
+  {
+    inputs: [
+      {
+        internalType: 'address',
+        name: 'account',
+        type: 'address',
+      },
+    ],
+    name: 'query_credits',
+    outputs: [{ internalType: 'uint256', name: 'credits', type: 'uint256' }],
+    stateMutability: 'view',
+    type: 'function',
+  },
 ] as const satisfies AbiFunction[];
 
 export default CREDITS_PRECOMPILE_ABI;

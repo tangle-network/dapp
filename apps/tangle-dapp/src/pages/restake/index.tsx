@@ -6,13 +6,11 @@ import { RestakeAction } from '../../constants';
 import isEnumValue from '../../utils/isEnumValue';
 
 // EVM hooks
-import {
-  useOperatorMap,
-} from '@tangle-network/tangle-shared-ui/data/graphql';
+import { useOperatorMap } from '@tangle-network/tangle-shared-ui/data/graphql';
 
 const RestakePage: FC = () => {
   const { action } = useParams();
-  const [refreshTrigger, setRefreshTrigger] = useState(0);
+  const [_refreshTrigger, setRefreshTrigger] = useState(0);
 
   // Fetch operators using v2 GraphQL hook
   const { data: operatorMap, refetch: refetchOperators } = useOperatorMap();

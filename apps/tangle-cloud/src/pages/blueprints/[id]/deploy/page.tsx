@@ -38,7 +38,6 @@ const DeployPage: FC = () => {
 
   const {
     execute: serviceRequestTx,
-    status: serviceRequestStatus,
     isSuccess: serviceRequestSuccess,
     isPending: serviceRequestPending,
   } = useServiceRequestTx();
@@ -99,12 +98,15 @@ const DeployPage: FC = () => {
       const validatedData = deployBlueprintSchema.parse(watch());
 
       // Format the service request data for the Tangle contract
-      const operators = validatedData.operators?.map((op) => op.address as Address) ?? [];
-      const permittedCallers = validatedData.permittedCallers?.map((c) => c as Address) ?? [];
+      const operators =
+        validatedData.operators?.map((op) => op.address as Address) ?? [];
+      const permittedCallers =
+        validatedData.permittedCallers?.map((c) => c as Address) ?? [];
       const ttl = BigInt(validatedData.ttl ?? 0);
 
       // Get payment configuration
-      const paymentToken = (validatedData.paymentAsset ?? zeroAddress) as Address;
+      const paymentToken = (validatedData.paymentAsset ??
+        zeroAddress) as Address;
       const paymentAmount = BigInt(validatedData.paymentValue ?? 0);
 
       // Encode service configuration from request args

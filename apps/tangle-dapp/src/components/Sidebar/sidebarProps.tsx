@@ -1,15 +1,10 @@
 import {
-  AppsLine,
-  CoinLine,
   DocumentationIcon,
   FaucetIcon,
-  // GiftLineIcon,
   GlobalLine,
   HomeFillIcon,
-  PolkadotJs,
   ShuffleLine,
   TokenSwapFill,
-  // WaterDropletIcon,
 } from '@tangle-network/icons';
 import {
   MobileSidebarProps,
@@ -57,13 +52,6 @@ const SIDEBAR_STATIC_ITEMS: SideBarItemProps[] = [
     Icon: ShuffleLine,
     subItems: [],
   },
-  {
-    name: 'Nomination',
-    href: PagePath.NOMINATION,
-    isInternal: true,
-    Icon: CoinLine,
-    subItems: [],
-  },
   // {
   //   name: 'Claim Airdrop',
   //   href: PagePath.CLAIM_AIRDROP,
@@ -81,13 +69,9 @@ const SIDEBAR_FOOTER: SideBarFooterType = {
 };
 
 export default function getSidebarProps({
-  polkadotJsDashboardUrl,
-  nativeExplorerUrl,
   evmExplorerUrl,
   networkFeatures,
 }: {
-  polkadotJsDashboardUrl: string;
-  nativeExplorerUrl?: string;
   evmExplorerUrl?: string;
   networkFeatures: readonly NetworkFeature[];
 }): MobileSidebarProps {
@@ -95,24 +79,6 @@ export default function getSidebarProps({
 
   const sideBarItems: SideBarItemProps[] = [
     ...SIDEBAR_STATIC_ITEMS,
-    {
-      Icon: PolkadotJs,
-      href: polkadotJsDashboardUrl,
-      isInternal: false,
-      name: 'Polkadot-JS',
-      subItems: [],
-    },
-    ...(nativeExplorerUrl
-      ? [
-          {
-            Icon: AppsLine,
-            href: nativeExplorerUrl,
-            isInternal: false,
-            name: 'Substrate Explorer',
-            subItems: [],
-          },
-        ]
-      : []),
     ...(evmExplorerUrl
       ? [
           {

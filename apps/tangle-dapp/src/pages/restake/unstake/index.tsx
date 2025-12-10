@@ -1,5 +1,4 @@
 import { Cross1Icon } from '@radix-ui/react-icons';
-import { ZERO_BIG_INT } from '@tangle-network/dapp-config/constants';
 import { calculateTypedChainId } from '@tangle-network/dapp-types/TypedChainId';
 import isDefined from '@tangle-network/dapp-types/utils/isDefined';
 import { LockUnlockLineIcon } from '@tangle-network/icons/LockUnlockLineIcon';
@@ -33,7 +32,6 @@ import Details from './Details';
 // EVM hooks
 import {
   useDelegator,
-  type DelegationPosition,
   type UnstakeRequest,
 } from '@tangle-network/tangle-shared-ui/data/graphql';
 import { useScheduleUnstakeTx } from '@tangle-network/tangle-shared-ui/data/tx';
@@ -57,7 +55,8 @@ type DelegationItem = {
 
 const RestakeUnstakeForm: FC = () => {
   const { address: userAddress } = useAccount();
-  const [isUnstakeRequestTableOpen, setIsUnstakeRequestTableOpen] = useState(false);
+  const [isUnstakeRequestTableOpen, setIsUnstakeRequestTableOpen] =
+    useState(false);
 
   const {
     register,
@@ -99,7 +98,7 @@ const RestakeUnstakeForm: FC = () => {
   }, [activeTypedChainId, reset]);
 
   // Fetch delegator data
-  const { data: delegator, isLoading: isLoadingDelegator } = useDelegator(userAddress);
+  const { data: delegator } = useDelegator(userAddress);
 
   // Get unique token addresses from delegations
   const tokenAddresses = useMemo(() => {
@@ -112,7 +111,8 @@ const RestakeUnstakeForm: FC = () => {
   // Fetch token metadata
   const { data: tokenMetadatas } = useEvmAssetMetadatas(tokenAddresses);
 
-  const [selectedDelegation, setSelectedDelegation] = useState<DelegationItem | null>(null);
+  const [selectedDelegation, setSelectedDelegation] =
+    useState<DelegationItem | null>(null);
 
   const selectedAssetId = watch('assetId');
   const selectedOperatorAddress = watch('operatorAddress');
@@ -136,18 +136,20 @@ const RestakeUnstakeForm: FC = () => {
         const pendingUnstakes = delegator.unstakeRequests
           .filter(
             (req) =>
-              req.operatorId.toLowerCase() === delegation.operatorId.toLowerCase() &&
+              req.operatorId.toLowerCase() ===
+                delegation.operatorId.toLowerCase() &&
               req.token.toLowerCase() === delegation.token.toLowerCase() &&
               req.status === 'PENDING',
           )
-          .reduce((sum, req) => sum + req.shares, 0n);
+          .reduce((sum, req) => sum + req.shares, BigInt(0));
 
-        const availableToUnstake = delegation.shares > pendingUnstakes
-          ? delegation.shares - pendingUnstakes
-          : 0n;
+        const availableToUnstake =
+          delegation.shares > pendingUnstakes
+            ? delegation.shares - pendingUnstakes
+            : BigInt(0);
 
         // Only show delegations with available shares
-        if (availableToUnstake <= 0n) return null;
+        if (availableToUnstake <= BigInt(0)) return null;
 
         return {
           id: delegation.id,
@@ -165,7 +167,9 @@ const RestakeUnstakeForm: FC = () => {
 
   // Get pending unstake requests
   const unstakeRequests = useMemo(() => {
-    return delegator?.unstakeRequests.filter((r) => r.status === 'PENDING') ?? [];
+    return (
+      delegator?.unstakeRequests.filter((r) => r.status === 'PENDING') ?? []
+    );
   }, [delegator?.unstakeRequests]);
 
   const { maxAmount, formattedMaxAmount } = useMemo(() => {
@@ -195,8 +199,9 @@ const RestakeUnstakeForm: FC = () => {
         validate: (value) => {
           if (!selectedDelegation) return 'Select a delegation first';
           const parsed = parseUnits(value, selectedDelegation.tokenDecimals);
-          if (parsed <= 0n) return 'Amount must be greater than 0';
-          if (maxAmount && parsed > maxAmount) return 'Exceeds available amount';
+          if (parsed <= BigInt(0)) return 'Amount must be greater than 0';
+          if (maxAmount && parsed > maxAmount)
+            return 'Exceeds available amount';
           return true;
         },
       }),
@@ -218,8 +223,7 @@ const RestakeUnstakeForm: FC = () => {
   const { execute: executeScheduleUnstake, status: unstakeTxStatus } =
     useScheduleUnstakeTx();
 
-  const isTransacting =
-    isSubmitting || unstakeTxStatus === TxStatus.PROCESSING;
+  const isTransacting = isSubmitting || unstakeTxStatus === TxStatus.PROCESSING;
 
   const isReady =
     !isTransacting &&
@@ -294,7 +298,8 @@ const RestakeUnstakeForm: FC = () => {
                           renderBody: () => (
                             <div className="flex flex-col">
                               <span className="font-mono text-sm">
-                                {selectedDelegation.operatorAddress.slice(0, 8)}...
+                                {selectedDelegation.operatorAddress.slice(0, 8)}
+                                ...
                                 {selectedDelegation.operatorAddress.slice(-6)}
                               </span>
                               <span className="text-xs text-mono-100">
@@ -435,7 +440,8 @@ const RestakeUnstakeForm: FC = () => {
           <div className="flex items-center justify-between w-full p-2">
             <div className="flex flex-col">
               <span className="font-mono text-sm">
-                {item.operatorAddress.slice(0, 10)}...{item.operatorAddress.slice(-8)}
+                {item.operatorAddress.slice(0, 10)}...
+                {item.operatorAddress.slice(-8)}
               </span>
               <span className="text-xs text-mono-100">{item.tokenSymbol}</span>
             </div>
@@ -471,7 +477,9 @@ export default RestakeUnstakeForm;
 // Unstake requests view component
 type UnstakeRequestsViewProps = {
   unstakeRequests: UnstakeRequest[];
-  tokenMetadatas: Array<{ id: EvmAddress; symbol: string; decimals: number }> | undefined;
+  tokenMetadatas:
+    | Array<{ id: EvmAddress; symbol: string; decimals: number }>
+    | undefined;
   onClose: () => void;
   className?: string;
 };
@@ -513,11 +521,15 @@ const UnstakeRequestsView: FC<UnstakeRequestsViewProps> = ({
                 <div className="flex items-center justify-between">
                   <div className="flex flex-col">
                     <span className="font-mono text-xs">
-                      {request.operatorId.slice(0, 8)}...{request.operatorId.slice(-6)}
+                      {request.operatorId.slice(0, 8)}...
+                      {request.operatorId.slice(-6)}
                     </span>
                     <span className="text-sm font-medium">
                       {metadata
-                        ? formatUnits(request.estimatedAmount, metadata.decimals)
+                        ? formatUnits(
+                            request.estimatedAmount,
+                            metadata.decimals,
+                          )
                         : request.estimatedAmount.toString()}{' '}
                       {metadata?.symbol ?? 'tokens'}
                     </span>
@@ -535,8 +547,8 @@ const UnstakeRequestsView: FC<UnstakeRequestsViewProps> = ({
           variant="body1"
           className="text-mono-120 dark:text-mono-100"
         >
-          Your requests will appear here after scheduling an unstake.
-          Requests can be executed after the waiting period.
+          Your requests will appear here after scheduling an unstake. Requests
+          can be executed after the waiting period.
         </Typography>
       )}
     </RestakeDetailCard.Root>

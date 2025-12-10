@@ -1,21 +1,22 @@
 import { FC, useMemo } from 'react';
 import DetailsContainer from '../../../components/DetailsContainer';
 import DetailItem from '../../../components/LiquidStaking/stakeAndUnstake/DetailItem';
-import useRestakeConsts from '../../../data/restake/useRestakeConsts';
-import useSessionDurationMs from '../../../data/useSessionDurationMs';
+import { useProtocolConfig } from '@tangle-network/tangle-shared-ui/data/graphql';
 import formatMsDuration from '../../../utils/formatMsDuration';
 
 const Details: FC = () => {
-  const { leaveDelegatorsDelay } = useRestakeConsts();
-  const sessionDurationMs = useSessionDurationMs();
+  const { data: config } = useProtocolConfig();
 
   const withdrawPeriod = useMemo(() => {
-    if (sessionDurationMs === null || leaveDelegatorsDelay === null) {
+    if (!config) {
       return null;
     }
 
-    return formatMsDuration(sessionDurationMs * leaveDelegatorsDelay);
-  }, [leaveDelegatorsDelay, sessionDurationMs]);
+    // Calculate delay in milliseconds from rounds and round duration
+    const delayMs =
+      Number(config.leaveDelegatorsDelay) * Number(config.roundDuration) * 1000;
+    return formatMsDuration(delayMs);
+  }, [config]);
 
   return (
     <DetailsContainer>

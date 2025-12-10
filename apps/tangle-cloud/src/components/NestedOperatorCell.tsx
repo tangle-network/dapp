@@ -9,8 +9,6 @@ import {
   shortenString,
   Typography,
 } from '@tangle-network/ui-components';
-import { Link } from 'react-router';
-import { ExternalLinkLine } from '@tangle-network/icons';
 import { Children, FC } from 'react';
 import { Address } from 'viem';
 
@@ -69,7 +67,8 @@ export const NestedOperatorCell: FC<NestedOperatorCellProps> = ({
                         />
                         <Typography variant="body3" fw="bold">
                           {shortenString(
-                            operatorMetadataMap?.get(operator)?.name || operator,
+                            operatorMetadataMap?.get(operator)?.name ||
+                              operator,
                           )}
                         </Typography>
                       </div>

@@ -10,7 +10,13 @@
  */
 
 import { useCallback, useState } from 'react';
-import { Address, Hash, Abi, ContractFunctionName, ContractFunctionArgs } from 'viem';
+import {
+  Address,
+  Hash,
+  Abi,
+  ContractFunctionName,
+  ContractFunctionArgs,
+} from 'viem';
 import {
   simulateContract,
   writeContract,
@@ -55,7 +61,10 @@ export type ContractCallFactory<
 > = (
   context: TContext,
   activeAddress: Address,
-) => ContractCallConfig<TAbi, TFunctionName> | null | Promise<ContractCallConfig<TAbi, TFunctionName> | null>;
+) =>
+  | ContractCallConfig<TAbi, TFunctionName>
+  | null
+  | Promise<ContractCallConfig<TAbi, TFunctionName> | null>;
 
 // Hook options
 export interface UseContractWriteOptions<TContext = void> {
@@ -112,12 +121,16 @@ const useContractWrite = <
       }
 
       if (status === TxStatus.PROCESSING) {
-        console.warn('Cannot execute contract write: Transaction already in progress');
+        console.warn(
+          'Cannot execute contract write: Transaction already in progress',
+        );
         return null;
       }
 
       if (connectorClient === undefined) {
-        console.warn('Cannot execute contract write: Connector client not ready');
+        console.warn(
+          'Cannot execute contract write: Connector client not ready',
+        );
         return null;
       }
 
@@ -172,9 +185,7 @@ const useContractWrite = <
 
         if (receipt.status === 'success') {
           setStatus(TxStatus.COMPLETE);
-          setSuccessMessage(
-            options?.getSuccessMessage?.(context) ?? null,
-          );
+          setSuccessMessage(options?.getSuccessMessage?.(context) ?? null);
           options?.onSuccess?.(txResult, context);
         } else {
           const revertError = new Error('Transaction reverted');
@@ -195,14 +206,7 @@ const useContractWrite = <
         return null;
       }
     },
-    [
-      activeAddress,
-      status,
-      connectorClient,
-      factory,
-      abi,
-      options,
-    ],
+    [activeAddress, status, connectorClient, factory, abi, options],
   );
 
   const reset = useCallback(() => {

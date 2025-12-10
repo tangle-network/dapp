@@ -29,12 +29,15 @@ export const AccountStatsCard: FC<
 
   // Fetch operator stats if user is an operator
   const { result: operatorStatsData } = useOperatorStats(
-    isOperator ? operatorAddress ?? undefined : undefined,
+    isOperator ? (operatorAddress ?? undefined) : undefined,
     refreshTrigger,
   );
 
   // Fetch user stats
-  const { result: userStatsData } = useUserStats(accountAddress, refreshTrigger);
+  const { result: userStatsData } = useUserStats(
+    accountAddress,
+    refreshTrigger,
+  );
 
   const identityName = useMemo(() => {
     if (!accountAddress) {
@@ -99,11 +102,7 @@ export const AccountStatsCard: FC<
     <AccountStatsDetailCard.Root {...cardProps.rootProps}>
       <AccountStatsDetailCard.Header
         IconElement={
-          <Avatar
-            size="lg"
-            value={accountAddress ?? ''}
-            theme="ethereum"
-          />
+          <Avatar size="lg" value={accountAddress ?? ''} theme="ethereum" />
         }
         title={identityName}
         RightElement={

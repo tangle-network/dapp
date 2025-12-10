@@ -3,10 +3,6 @@ import { TabContent } from '@tangle-network/ui-components/components/Tabs/TabCon
 import { type FC, useCallback, useState } from 'react';
 import { Address, formatUnits } from 'viem';
 import { useAccount } from 'wagmi';
-import {
-  useVaultsTableProps,
-  VaultsTable,
-} from '../../components/tables/Vaults';
 import { RestakeAction } from '../../constants';
 import BlueprintListing from '../../pages/blueprints/BlueprintListing';
 import RestakeDelegateForm from '../../pages/restake/delegate';
@@ -95,35 +91,38 @@ export default RestakeOverviewTabs;
 // EVM Vault tab content
 const VaultTabContent: FC = () => {
   const { address: userAddress } = useAccount();
-  const { data: delegator, isLoading: isLoadingDelegator } = useDelegator(userAddress);
-  const { data: restakingAssets, isLoading: isLoadingAssets } = useRestakingAssets();
+  const { data: delegator } = useDelegator(userAddress);
+  const { data: restakingAssets, isLoading: isLoadingAssets } =
+    useRestakingAssets();
 
   // Get token addresses for metadata
-  const tokenAddresses = restakingAssets?.map((a) => a.token as EvmAddress) ?? [];
+  const tokenAddresses =
+    restakingAssets?.map((a) => a.token as EvmAddress) ?? [];
   const { data: tokenMetadatas } = useEvmAssetMetadatas(tokenAddresses);
 
   // Build vault data from restaking assets
-  const vaults = restakingAssets?.map((asset) => {
-    const metadata = tokenMetadatas?.find(
-      (m) => m.id.toLowerCase() === asset.token.toLowerCase(),
-    );
+  const vaults =
+    restakingAssets?.map((asset) => {
+      const metadata = tokenMetadatas?.find(
+        (m) => m.id.toLowerCase() === asset.token.toLowerCase(),
+      );
 
-    const userDeposit = delegator?.assetPositions.find(
-      (p) => p.token.toLowerCase() === asset.token.toLowerCase(),
-    );
+      const userDeposit = delegator?.assetPositions.find(
+        (p) => p.token.toLowerCase() === asset.token.toLowerCase(),
+      );
 
-    return {
-      id: asset.token,
-      name: metadata?.name ?? 'Unknown',
-      symbol: metadata?.symbol ?? '???',
-      decimals: metadata?.decimals ?? 18,
-      tvl: asset.currentDeposits,
-      userDeposit: userDeposit?.totalDeposited ?? 0n,
-      minStake: asset.minStake,
-      depositCap: asset.depositCap,
-      rewardMultiplier: asset.rewardMultiplier,
-    };
-  }) ?? [];
+      return {
+        id: asset.token,
+        name: metadata?.name ?? 'Unknown',
+        symbol: metadata?.symbol ?? '???',
+        decimals: metadata?.decimals ?? 18,
+        tvl: asset.currentDeposits,
+        userDeposit: userDeposit?.totalDeposited ?? BigInt(0),
+        minStake: asset.minDelegation,
+        depositCap: asset.depositCap,
+        rewardMultiplier: asset.rewardMultiplierBps / 10000,
+      };
+    }) ?? [];
 
   return (
     <div className="space-y-4">
@@ -131,10 +130,18 @@ const VaultTabContent: FC = () => {
         <table className="w-full min-w-[600px]">
           <thead>
             <tr className="text-left border-b border-mono-60 dark:border-mono-140">
-              <th className="px-4 py-3 text-sm font-medium text-mono-120">Asset</th>
-              <th className="px-4 py-3 text-sm font-medium text-mono-120">TVL</th>
-              <th className="px-4 py-3 text-sm font-medium text-mono-120">Your Deposit</th>
-              <th className="px-4 py-3 text-sm font-medium text-mono-120">Multiplier</th>
+              <th className="px-4 py-3 text-sm font-medium text-mono-120">
+                Asset
+              </th>
+              <th className="px-4 py-3 text-sm font-medium text-mono-120">
+                TVL
+              </th>
+              <th className="px-4 py-3 text-sm font-medium text-mono-120">
+                Your Deposit
+              </th>
+              <th className="px-4 py-3 text-sm font-medium text-mono-120">
+                Multiplier
+              </th>
             </tr>
           </thead>
           <tbody>
@@ -159,20 +166,20 @@ const VaultTabContent: FC = () => {
                   <td className="px-4 py-3">
                     <div className="flex flex-col">
                       <span className="font-medium">{vault.symbol}</span>
-                      <span className="text-xs text-mono-100">{vault.name}</span>
+                      <span className="text-xs text-mono-100">
+                        {vault.name}
+                      </span>
                     </div>
                   </td>
                   <td className="px-4 py-3">
                     {formatUnits(vault.tvl, vault.decimals)} {vault.symbol}
                   </td>
                   <td className="px-4 py-3">
-                    {vault.userDeposit > 0n
+                    {vault.userDeposit > BigInt(0)
                       ? `${formatUnits(vault.userDeposit, vault.decimals)} ${vault.symbol}`
                       : '-'}
                   </td>
-                  <td className="px-4 py-3">
-                    {vault.rewardMultiplier}x
-                  </td>
+                  <td className="px-4 py-3">{vault.rewardMultiplier}x</td>
                 </tr>
               ))
             )}
@@ -193,7 +200,6 @@ type OperatorsTableProps = {
 const OperatorsTable: FC<OperatorsTableProps> = ({
   operatorMap,
   onRestakeClicked,
-  onOperatorJoined,
 }) => {
   const operators = operatorMap ? Array.from(operatorMap.values()) : [];
   const isLoading = operatorMap === null;
@@ -204,11 +210,21 @@ const OperatorsTable: FC<OperatorsTableProps> = ({
         <table className="w-full min-w-[600px]">
           <thead>
             <tr className="text-left border-b border-mono-60 dark:border-mono-140">
-              <th className="px-4 py-3 text-sm font-medium text-mono-120">Operator</th>
-              <th className="px-4 py-3 text-sm font-medium text-mono-120">Status</th>
-              <th className="px-4 py-3 text-sm font-medium text-mono-120">Stake</th>
-              <th className="px-4 py-3 text-sm font-medium text-mono-120">Delegations</th>
-              <th className="px-4 py-3 text-sm font-medium text-mono-120">Actions</th>
+              <th className="px-4 py-3 text-sm font-medium text-mono-120">
+                Operator
+              </th>
+              <th className="px-4 py-3 text-sm font-medium text-mono-120">
+                Status
+              </th>
+              <th className="px-4 py-3 text-sm font-medium text-mono-120">
+                Stake
+              </th>
+              <th className="px-4 py-3 text-sm font-medium text-mono-120">
+                Delegations
+              </th>
+              <th className="px-4 py-3 text-sm font-medium text-mono-120">
+                Actions
+              </th>
             </tr>
           </thead>
           <tbody>
@@ -238,19 +254,19 @@ const OperatorsTable: FC<OperatorsTableProps> = ({
                   <td className="px-4 py-3">
                     <span
                       className={`px-2 py-1 text-xs rounded ${
-                        operator.status === 'ACTIVE'
+                        operator.restakingStatus === 'ACTIVE'
                           ? 'bg-green-500/20 text-green-500'
                           : 'bg-mono-80 text-mono-120'
                       }`}
                     >
-                      {operator.status}
+                      {operator.restakingStatus ?? 'UNKNOWN'}
                     </span>
                   </td>
                   <td className="px-4 py-3">
-                    {formatUnits(operator.stake, 18)} TNT
+                    {formatUnits(operator.restakingStake ?? BigInt(0), 18)} TNT
                   </td>
                   <td className="px-4 py-3">
-                    {operator.delegationCount}
+                    {operator.restakingDelegationCount?.toString() ?? '0'}
                   </td>
                   <td className="px-4 py-3">
                     <a

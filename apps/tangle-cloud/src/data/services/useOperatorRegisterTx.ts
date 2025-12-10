@@ -3,11 +3,11 @@
  */
 
 import { useCallback } from 'react';
-import { Address, encodeFunctionData, parseUnits } from 'viem';
+import { encodeFunctionData, parseUnits } from 'viem';
 import { useAccount, useChainId } from 'wagmi';
 import TangleABI from '@tangle-network/tangle-shared-ui/abi/Tangle';
 import { getTangleContractAddress } from '@tangle-network/tangle-shared-ui/constants/tangleContracts';
-import { useContractWrite, TxStatus } from '@tangle-network/tangle-shared-ui/hooks/useContractWrite';
+import { useContractWrite } from '@tangle-network/tangle-shared-ui/hooks/useContractWrite';
 import { TANGLE_TOKEN_DECIMALS } from '@tangle-network/dapp-config';
 
 export interface OperatorRegisterParams {
@@ -32,7 +32,13 @@ export interface OperatorBatchRegisterParams {
 export const useOperatorRegisterTx = () => {
   const chainId = useChainId();
   const { address: userAddress } = useAccount();
-  const { execute: executeWrite, status, error, reset, txHash } = useContractWrite();
+  const {
+    execute: executeWrite,
+    status,
+    error,
+    reset,
+    txHash,
+  } = useContractWrite();
 
   const tangleAddress = chainId ? getTangleContractAddress(chainId) : null;
 
@@ -86,7 +92,13 @@ export const useOperatorRegisterTx = () => {
 export const useOperatorBatchRegisterTx = () => {
   const chainId = useChainId();
   const { address: userAddress } = useAccount();
-  const { execute: executeWrite, status, error, reset, txHash } = useContractWrite();
+  const {
+    execute: executeWrite,
+    status,
+    error,
+    reset,
+    txHash,
+  } = useContractWrite();
 
   const tangleAddress = chainId ? getTangleContractAddress(chainId) : null;
 
@@ -96,7 +108,13 @@ export const useOperatorBatchRegisterTx = () => {
         return null;
       }
 
-      const { blueprintIds, ecdsaPublicKey, rpcAddress, registrationArgs, amounts } = params;
+      const {
+        blueprintIds,
+        ecdsaPublicKey,
+        rpcAddress,
+        registrationArgs,
+        amounts,
+      } = params;
 
       // Calculate total amount
       let totalAmount = 0n;

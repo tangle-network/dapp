@@ -40,8 +40,8 @@ export const useScheduleUnstakeTx = () => {
     (params: ScheduleUnstakeParams, _activeAddress) => ({
       address: contracts.multiAssetDelegation,
       abi: MULTI_ASSET_DELEGATION_ABI,
-      functionName: 'scheduleDelegatorUnstake',
-      args: [params.operator, params.token, params.shares],
+      functionName: 'scheduleDelegatorUnstake' as const,
+      args: [params.operator, params.token, params.shares] as const,
     }),
     {
       getSuccessMessage: () => 'Successfully scheduled unstake',
@@ -62,8 +62,8 @@ export const useExecuteUnstakeTx = () => {
     (_params: void, _activeAddress) => ({
       address: contracts.multiAssetDelegation,
       abi: MULTI_ASSET_DELEGATION_ABI,
-      functionName: 'executeDelegatorUnstake',
-      args: [],
+      functionName: 'executeDelegatorUnstake' as const,
+      args: [] as const,
     }),
     {
       getSuccessMessage: () => 'Successfully executed unstake',

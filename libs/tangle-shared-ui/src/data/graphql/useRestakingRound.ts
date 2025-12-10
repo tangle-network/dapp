@@ -53,11 +53,10 @@ const parseRestakingRound = (
 const fetchCurrentRound = async (
   network?: EnvioNetwork,
 ): Promise<RestakingRound | null> => {
-  const result = await executeEnvioGraphQL<RestakingRoundQueryResult, Record<string, never>>(
-    RESTAKING_ROUND_QUERY,
-    {},
-    network,
-  );
+  const result = await executeEnvioGraphQL<
+    RestakingRoundQueryResult,
+    Record<string, never>
+  >(RESTAKING_ROUND_QUERY, {}, network);
 
   const rounds = result.data.restakingRounds;
   return rounds.length > 0 ? parseRestakingRound(rounds[0]) : null;

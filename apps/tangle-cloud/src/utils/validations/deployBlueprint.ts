@@ -1,10 +1,7 @@
 import { isEvmAddress } from '@tangle-network/ui-components';
 import { z, ZodError } from 'zod';
 import { toPrimitiveArgsDataType } from '../toPrimitiveArgsDataType';
-import {
-  Blueprint,
-  PrimitiveField,
-} from '@tangle-network/tangle-shared-ui/types/blueprint';
+import { Blueprint } from '@tangle-network/tangle-shared-ui/types/blueprint';
 import { parseUnits, Address } from 'viem';
 
 // EVM service request context - compatible with useServiceRequestTx

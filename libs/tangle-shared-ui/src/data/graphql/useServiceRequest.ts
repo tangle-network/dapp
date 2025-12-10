@@ -5,7 +5,7 @@
 import { useCallback, useState } from 'react';
 import { Address, encodeFunctionData, zeroAddress } from 'viem';
 import { useAccount, usePublicClient, useWalletClient } from 'wagmi';
-import TangleABI from '../../abi/Tangle';
+import TangleABI from '../../abi/tangle';
 import { getTangleContractAddress } from '../../constants/tangleContracts';
 
 export interface ServiceRequestParams {
@@ -48,7 +48,9 @@ export const useServiceRequestTx = () => {
 
       const tangleAddress = getTangleContractAddress(chainId);
       if (!tangleAddress) {
-        const error = new Error('Tangle contract not available on this network');
+        const error = new Error(
+          'Tangle contract not available on this network',
+        );
         setStatus('error');
         setResult({ error });
         return { error };
@@ -59,10 +61,13 @@ export const useServiceRequestTx = () => {
 
       try {
         // Request service via Tangle contract
-        const { request: simulateRequest } = await publicClient.simulateContract({
+        // Use type assertion to avoid "union type too complex" error from large ABI
+        const { request: simulateRequest } = await (
+          publicClient as any
+        ).simulateContract({
           address: tangleAddress,
           abi: TangleABI,
-          functionName: 'requestService',
+          functionName: 'requestService' as const,
           args: [
             params.blueprintId,
             params.operators,
@@ -71,15 +76,20 @@ export const useServiceRequestTx = () => {
             params.ttl,
             params.paymentToken,
             params.paymentAmount,
-          ],
+          ] as const,
           account: userAddress,
-          value: params.paymentToken === zeroAddress ? params.paymentAmount : 0n,
+          value:
+            params.paymentToken === zeroAddress
+              ? params.paymentAmount
+              : BigInt(0),
         });
 
         const txHash = await walletClient.writeContract(simulateRequest);
 
         // Wait for transaction receipt
-        const receipt = await publicClient.waitForTransactionReceipt({ hash: txHash });
+        const receipt = await publicClient.waitForTransactionReceipt({
+          hash: txHash,
+        });
 
         if (receipt.status === 'reverted') {
           throw new Error('Transaction reverted');
@@ -102,7 +112,8 @@ export const useServiceRequestTx = () => {
         setResult(successResult);
         return successResult;
       } catch (error) {
-        const err = error instanceof Error ? error : new Error('Service request failed');
+        const err =
+          error instanceof Error ? error : new Error('Service request failed');
         setStatus('error');
         setResult({ error: err });
         return { error: err };
@@ -141,7 +152,13 @@ export const encodeServiceConfig = (requestArgs: unknown[]): `0x${string}` => {
 
   // Basic encoding - this will need to be customized based on the blueprint
   const encoded = encodeFunctionData({
-    abi: [{ type: 'function', name: 'config', inputs: [{ type: 'bytes', name: 'data' }] }],
+    abi: [
+      {
+        type: 'function',
+        name: 'config',
+        inputs: [{ type: 'bytes', name: 'data' }],
+      },
+    ],
     functionName: 'config',
     args: [JSON.stringify(requestArgs)],
   });

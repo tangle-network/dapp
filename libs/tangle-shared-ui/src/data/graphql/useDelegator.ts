@@ -15,7 +15,12 @@ import {
 export type RequestStatus = 'PENDING' | 'READY' | 'EXECUTED' | 'CANCELLED';
 
 // Lock duration enum
-export type LockDuration = 'NONE' | 'ONE_MONTH' | 'TWO_MONTHS' | 'THREE_MONTHS' | 'SIX_MONTHS';
+export type LockDuration =
+  | 'NONE'
+  | 'ONE_MONTH'
+  | 'TWO_MONTHS'
+  | 'THREE_MONTHS'
+  | 'SIX_MONTHS';
 
 // Blueprint selection mode
 export type BlueprintSelectionMode = 'ALL' | 'FIXED';
@@ -203,7 +208,9 @@ interface DelegatorQueryResult {
 }
 
 // Parse delegator from GraphQL response
-const parseDelegator = (raw: NonNullable<DelegatorQueryResult['delegator']>): Delegator => ({
+const parseDelegator = (
+  raw: NonNullable<DelegatorQueryResult['delegator']>,
+): Delegator => ({
   id: raw.id,
   address: raw.address as Address,
   totalDeposited: BigInt(raw.totalDeposited),
@@ -269,13 +276,14 @@ export const useDelegator = (
     queryKey: ['envio', 'delegator', address, network],
     queryFn: async () => {
       if (!address) return null;
-      const result = await executeEnvioGraphQL<DelegatorQueryResult, { id: string }>(
-        DELEGATOR_QUERY,
-        { id: address.toLowerCase() },
-        network,
-      );
+      const result = await executeEnvioGraphQL<
+        DelegatorQueryResult,
+        { id: string }
+      >(DELEGATOR_QUERY, { id: address.toLowerCase() }, network);
 
-      return result.data.delegator ? parseDelegator(result.data.delegator) : null;
+      return result.data.delegator
+        ? parseDelegator(result.data.delegator)
+        : null;
     },
     enabled: enabled && !!address,
     staleTime: 15_000, // 15 seconds - delegator data changes more frequently

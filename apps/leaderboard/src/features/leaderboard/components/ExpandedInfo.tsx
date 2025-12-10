@@ -95,7 +95,7 @@ export const ExpandedInfo: React.FC<ExpandedInfoProps> = ({ row }) => {
           />
           <DetailRow
             label="Liquid Vault Positions"
-            value={account.activity.liquidStakingPoolCount}
+            value={account.activity.liquidVaultPositionCount}
           />
           <DetailRow
             label="Blueprints Owned"

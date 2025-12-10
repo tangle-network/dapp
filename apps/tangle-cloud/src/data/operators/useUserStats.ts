@@ -21,16 +21,25 @@ export interface UserStats {
  */
 export const useUserStats = (
   userAddress: Address | undefined,
-  refreshTrigger?: number,
+  _refreshTrigger?: number,
 ) => {
   // Fetch services owned by user
-  const { data: ownedServices, isLoading: isLoadingOwned, refetch: refetchOwned } = useServicesByOwner(userAddress);
+  const {
+    data: ownedServices,
+    isLoading: isLoadingOwned,
+    refetch: refetchOwned,
+  } = useServicesByOwner(userAddress);
 
   // Fetch pending service requests by user
-  const { data: pendingRequests, isLoading: isLoadingPending, refetch: refetchPending } = usePendingServiceRequests(userAddress);
+  const {
+    data: pendingRequests,
+    isLoading: isLoadingPending,
+    refetch: refetchPending,
+  } = usePendingServiceRequests(userAddress);
 
   const result = useMemo<UserStats>(() => {
-    const activeServices = ownedServices?.filter((s) => s.status === 'ACTIVE') ?? [];
+    const activeServices =
+      ownedServices?.filter((s) => s.status === 'ACTIVE') ?? [];
     const allDeployed = ownedServices ?? [];
     const pendingCount = pendingRequests?.length ?? 0;
 

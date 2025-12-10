@@ -85,9 +85,7 @@ const RejectConfirmationModal: FC<Props> = ({
           restakersCount={restakersCount}
           isBoosted={false}
           category={selectedRequest.blueprintData?.category ?? ''}
-          description={
-            selectedRequest.blueprintData?.description ?? ''
-          }
+          description={selectedRequest.blueprintData?.description ?? ''}
           name={selectedRequest.blueprintData?.name ?? ''}
           author={selectedRequest.blueprintData?.author ?? ''}
         />

@@ -16,7 +16,7 @@ import AmountInput from '../../components/AmountInput';
 import useBalances from '@tangle-network/tangle-shared-ui/hooks/useBalances';
 import useJoinOperatorsTx from '../../data/restake/useJoinOperatorsTx';
 import useApi from '@tangle-network/tangle-shared-ui/hooks/useApi';
-import { TxStatus } from '@tangle-network/tangle-shared-ui/hooks/useSubstrateTx';
+import { TxStatus } from '@tangle-network/tangle-shared-ui/hooks/useContractWrite';
 
 type Props = {
   setIsOpen: (isOpen: boolean) => void;

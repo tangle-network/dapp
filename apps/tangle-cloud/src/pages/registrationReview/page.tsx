@@ -92,9 +92,7 @@ export default function RegistrationReview() {
 
     // Generate ECDSA public key from the connected wallet address
     // For EVM, we use a deterministic derivation from the address
-    const ecdsaPublicKey = keccak256(
-      toHex(activeAccount),
-    ) as `0x${string}`;
+    const ecdsaPublicKey = keccak256(toHex(activeAccount)) as `0x${string}`;
 
     // Encode registration arguments for each blueprint
     const registrationArgs = blueprints.map(

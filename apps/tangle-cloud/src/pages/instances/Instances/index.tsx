@@ -11,7 +11,6 @@ import {
 import { TabContent } from '@tangle-network/ui-components';
 import { RunningInstanceTable } from './RunningInstanceTable';
 import { PendingInstanceTable } from './PendingInstanceTable';
-import { useAccount } from 'wagmi';
 import useEvmOperatorInfo from '../../../hooks/useEvmOperatorInfo';
 import useOperatorStats from '../../../data/operators/useOperatorStats';
 
@@ -34,11 +33,10 @@ export const InstancesTabs: FC<InstancesTabsProps> = ({
   refreshTrigger,
   setRefreshTrigger,
 }) => {
-  const { address: accountAddress } = useAccount();
   const { isOperator, operatorAddress } = useEvmOperatorInfo();
 
   const { result: operatorStatsData } = useOperatorStats(
-    isOperator ? operatorAddress ?? undefined : undefined,
+    isOperator ? (operatorAddress ?? undefined) : undefined,
     refreshTrigger,
   );
 

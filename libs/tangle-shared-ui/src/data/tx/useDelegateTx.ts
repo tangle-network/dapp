@@ -59,14 +59,14 @@ export const useDelegateTx = () => {
     (params: DelegateParams, _activeAddress) => ({
       address: contracts.multiAssetDelegation,
       abi: MULTI_ASSET_DELEGATION_ABI,
-      functionName: 'delegate',
+      functionName: 'delegateWithOptions' as const,
       args: [
         params.operator,
         params.token,
         params.amount,
         SELECTION_MODE_VALUES[params.blueprintSelection ?? 'ALL'],
-        params.blueprintIds ?? [],
-      ],
+        (params.blueprintIds ?? []).map((id) => BigInt(id)),
+      ] as const,
     }),
     {
       getSuccessMessage: (params) =>

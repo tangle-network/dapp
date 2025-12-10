@@ -3,7 +3,7 @@
  * Combines GraphQL restaking asset data with ERC20 token metadata and user balances.
  */
 
-import { useQuery, useQueries } from '@tanstack/react-query';
+import { useQuery } from '@tanstack/react-query';
 import { Address, erc20Abi } from 'viem';
 import { useAccount, useBalance, usePublicClient } from 'wagmi';
 import { useRestakingAssets, type RestakingAsset } from './useRestakingAssets';
@@ -67,16 +67,17 @@ export const useRestakeAssets = (options?: {
   const tokenAddresses = restakingAssets?.map((a) => a.token) ?? [];
 
   // 2. Fetch ERC20 metadata for all tokens
-  const {
-    data: tokenMetadatas,
-    isLoading: isLoadingMetadata,
-  } = useQuery({
+  const { data: tokenMetadatas, isLoading: isLoadingMetadata } = useQuery({
     queryKey: ['erc20Metadata', tokenAddresses, publicClient?.chain?.id],
     queryFn: async () => {
       if (!publicClient || tokenAddresses.length === 0) {
         return [];
       }
-      return fetchErc20TokenMetadata(publicClient, tokenAddresses as EvmAddress[]);
+      // Cast publicClient to any to avoid type incompatibility between wagmi and viem versions
+      return fetchErc20TokenMetadata(
+        publicClient as any,
+        tokenAddresses as EvmAddress[],
+      );
     },
     enabled: enabled && !!publicClient && tokenAddresses.length > 0,
     staleTime: Infinity, // Token metadata doesn't change
@@ -88,7 +89,12 @@ export const useRestakeAssets = (options?: {
     isLoading: isLoadingBalances,
     refetch: refetchBalances,
   } = useQuery({
-    queryKey: ['erc20Balances', userAddress, tokenAddresses, publicClient?.chain?.id],
+    queryKey: [
+      'erc20Balances',
+      userAddress,
+      tokenAddresses,
+      publicClient?.chain?.id,
+    ],
     queryFn: async () => {
       if (!publicClient || !userAddress || tokenAddresses.length === 0) {
         return new Map<Address, bigint>();
@@ -111,7 +117,7 @@ export const useRestakeAssets = (options?: {
           if (result.status === 'success') {
             balanceMap.set(token, result.result as bigint);
           } else {
-            balanceMap.set(token, 0n);
+            balanceMap.set(token, BigInt(0));
           }
         });
 
@@ -121,7 +127,8 @@ export const useRestakeAssets = (options?: {
         return new Map<Address, bigint>();
       }
     },
-    enabled: enabled && !!publicClient && !!userAddress && tokenAddresses.length > 0,
+    enabled:
+      enabled && !!publicClient && !!userAddress && tokenAddresses.length > 0,
     staleTime: 15_000, // 15 seconds - balances can change frequently
     refetchInterval: 30_000, // Auto-refresh every 30 seconds
   });
@@ -147,7 +154,7 @@ export const useRestakeAssets = (options?: {
           continue;
         }
 
-        const balance = balances?.get(restakingAsset.token) ?? 0n;
+        const balance = balances?.get(restakingAsset.token) ?? BigInt(0);
 
         assetMap.set(restakingAsset.token, {
           id: restakingAsset.token,
@@ -193,10 +200,11 @@ export const useRestakeAsset = (
     enabled?: boolean;
   },
 ) => {
-  const { assets, isLoading, isLoadingBalances, refetch } = useRestakeAssets(options);
+  const { assets, isLoading, isLoadingBalances, refetch } =
+    useRestakeAssets(options);
 
   return {
-    asset: tokenAddress ? assets?.get(tokenAddress) ?? null : null,
+    asset: tokenAddress ? (assets?.get(tokenAddress) ?? null) : null,
     isLoading,
     isLoadingBalances,
     refetch,
@@ -214,7 +222,7 @@ export const useNativeBalance = () => {
   });
 
   return {
-    balance: data?.value ?? 0n,
+    balance: data?.value ?? BigInt(0),
     decimals: data?.decimals ?? 18,
     symbol: data?.symbol ?? 'ETH',
     isLoading,

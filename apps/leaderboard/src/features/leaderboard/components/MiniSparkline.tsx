@@ -23,8 +23,7 @@ export const MiniSparkline = ({
   }
 
   // Get the most recent timestamp from the history
-  const mostRecentTimestamp =
-    pointsHistory[pointsHistory.length - 1].timestamp;
+  const mostRecentTimestamp = pointsHistory[pointsHistory.length - 1].timestamp;
 
   // Cumulate points for each day
   const cumulatedPoints = pointsHistory

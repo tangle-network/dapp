@@ -3,15 +3,16 @@
  * Replaces the Substrate-based useRestakeDepositTx hook.
  */
 
-import { Address, parseUnits } from 'viem';
-import useContractWrite, { TxStatus } from '../../hooks/useContractWrite';
+import { Address } from 'viem';
+import useContractWrite from '../../hooks/useContractWrite';
 import MULTI_ASSET_DELEGATION_ABI from '../../abi/multiAssetDelegation';
 import { getContractsByChainId } from '@tangle-network/dapp-config/contracts';
 import { useChainId } from 'wagmi';
 import { LockDuration } from '../graphql/useDelegator';
 
-// Lock duration enum values (matching contract)
-const LOCK_DURATION_VALUES: Record<LockDuration, number> = {
+// Lock multiplier enum values (matching contract's Types.LockMultiplier)
+// Maps our LockDuration type to the contract's LockMultiplier enum
+const LOCK_MULTIPLIER_VALUES: Record<LockDuration, number> = {
   NONE: 0,
   ONE_MONTH: 1,
   TWO_MONTHS: 2,
@@ -55,12 +56,12 @@ export const useDepositTx = () => {
     (params: DepositParams, _activeAddress) => ({
       address: contracts.multiAssetDelegation,
       abi: MULTI_ASSET_DELEGATION_ABI,
-      functionName: 'deposit',
+      functionName: 'depositERC20WithLock' as const,
       args: [
         params.token,
         params.amount,
-        LOCK_DURATION_VALUES[params.lockDuration ?? 'NONE'],
-      ],
+        LOCK_MULTIPLIER_VALUES[params.lockDuration ?? 'NONE'],
+      ] as const,
     }),
     {
       getSuccessMessage: (params) =>

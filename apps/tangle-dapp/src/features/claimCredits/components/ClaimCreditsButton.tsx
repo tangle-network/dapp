@@ -1,9 +1,9 @@
-import { BN } from '@polkadot/util';
 import { CrossCircledIcon } from '@radix-ui/react-icons';
 import { TANGLE_TOKEN_DECIMALS } from '@tangle-network/dapp-config';
 import { Spinner } from '@tangle-network/icons';
 import { SparklingIcon } from '@tangle-network/icons';
 import { TxStatus } from '@tangle-network/tangle-shared-ui/hooks/useSubstrateTx';
+import { BN } from '@polkadot/util';
 import {
   AmountFormatStyle,
   Button,
@@ -33,7 +33,7 @@ const ClaimCreditsButton = () => {
     }
 
     return formatDisplayAmount(
-      data.amount,
+      new BN(data.amount.toString()),
       TANGLE_TOKEN_DECIMALS,
       AmountFormatStyle.SHORT,
     );
@@ -86,14 +86,16 @@ const ClaimCreditsButton = () => {
           </Typography>
         </div>
 
-        {data?.amount && !data.amount.isZero() && !meetsMinimumThreshold && (
+        {data?.amount !== undefined &&
+        data.amount !== BigInt(0) &&
+        !meetsMinimumThreshold ? (
           <Typography
             variant="body2"
             className="text-blue-600 dark:text-blue-400"
           >
             Minimum 0.01 required to claim
           </Typography>
-        )}
+        ) : null}
 
         <Typography variant="body2" fw="semibold" className="!text-muted">
           Associate your AI app account to claim these credits.
@@ -134,7 +136,7 @@ const ClaimCreditsButton = () => {
 export default ClaimCreditsButton;
 
 type CreditsButtonProps = {
-  credits?: BN;
+  credits?: bigint;
   offchainAccountId: string;
   setOffchainAccountId: (value: string) => void;
   setInputError: (value: string) => void;
@@ -181,7 +183,7 @@ const CreditsButton = ({
   ]);
 
   const isLoading = useMemo(() => status === TxStatus.PROCESSING, [status]);
-  const hasCredits = useMemo(() => credits && !credits.isZero(), [credits]);
+  const hasCredits = useMemo(() => credits && credits !== BigInt(0), [credits]);
   const meetsMinimumThreshold = useMemo(() => {
     return meetsMinimumClaimThreshold(credits);
   }, [credits]);

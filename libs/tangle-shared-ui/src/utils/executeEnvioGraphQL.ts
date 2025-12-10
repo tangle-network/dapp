@@ -8,9 +8,15 @@ export type EnvioNetwork = 'local' | 'testnet' | 'mainnet';
 
 // Envio indexer endpoints
 const ENVIO_ENDPOINTS: Record<EnvioNetwork, string> = {
-  local: import.meta.env.VITE_ENVIO_LOCAL_ENDPOINT ?? 'http://localhost:8080/graphql',
-  testnet: import.meta.env.VITE_ENVIO_TESTNET_ENDPOINT ?? 'http://localhost:8080/graphql',
-  mainnet: import.meta.env.VITE_ENVIO_MAINNET_ENDPOINT ?? 'http://localhost:8080/graphql',
+  local:
+    import.meta.env.VITE_ENVIO_LOCAL_ENDPOINT ??
+    'http://localhost:8080/graphql',
+  testnet:
+    import.meta.env.VITE_ENVIO_TESTNET_ENDPOINT ??
+    'http://localhost:8080/graphql',
+  mainnet:
+    import.meta.env.VITE_ENVIO_MAINNET_ENDPOINT ??
+    'http://localhost:8080/graphql',
 };
 
 // Get current network from environment
@@ -53,7 +59,9 @@ export async function executeEnvioGraphQL<TResult, TVariables>(
   });
 
   if (!response.ok) {
-    throw new Error(`GraphQL request failed: ${response.status} ${response.statusText}`);
+    throw new Error(
+      `GraphQL request failed: ${response.status} ${response.statusText}`,
+    );
   }
 
   const result = await response.json();

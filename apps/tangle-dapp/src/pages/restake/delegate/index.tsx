@@ -1,13 +1,7 @@
-import {
-  ChainConfig,
-} from '@tangle-network/dapp-config';
+import { ChainConfig } from '@tangle-network/dapp-config';
 import { calculateTypedChainId } from '@tangle-network/dapp-types/TypedChainId';
-import isDefined from '@tangle-network/dapp-types/utils/isDefined';
 import ListModal from '@tangle-network/tangle-shared-ui/components/ListModal';
-import {
-  Card,
-  isEvmAddress,
-} from '@tangle-network/ui-components';
+import { Card, isEvmAddress } from '@tangle-network/ui-components';
 import { Modal } from '@tangle-network/ui-components/components/Modal';
 import { useModal } from '@tangle-network/ui-components/hooks/useModal';
 import { FC, useCallback, useEffect, useMemo, useState } from 'react';
@@ -22,7 +16,6 @@ import Form from '../Form';
 import RestakeActionTabs from '../RestakeActionTabs';
 import SupportedChainModal from '../SupportedChainModal';
 import useSwitchChain from '../useSwitchChain';
-import ActionButton from './ActionButton';
 import Details from './Details';
 import BlueprintSelection from '../../../components/restaking/BlueprintSelection';
 import useBlueprintStore from '../../../context/useBlueprintStore';
@@ -31,12 +24,9 @@ import useBlueprintStore from '../../../context/useBlueprintStore';
 import {
   useDelegator,
   useOperatorMap,
-  type Operator,
-  type DelegatorAssetPosition,
 } from '@tangle-network/tangle-shared-ui/data/graphql';
 import { useDelegateTx } from '@tangle-network/tangle-shared-ui/data/tx';
 import { TxStatus } from '@tangle-network/tangle-shared-ui/hooks/useContractWrite';
-import { useRestakingAssetMap } from '@tangle-network/tangle-shared-ui/data/graphql';
 import { useAccount } from 'wagmi';
 import { useEvmAssetMetadatas } from '@tangle-network/tangle-shared-ui/hooks/useEvmAssetMetadatas';
 import type { EvmAddress } from '@tangle-network/ui-components/types/address';
@@ -96,9 +86,8 @@ const RestakeDelegateForm: FC = () => {
   }, [register]);
 
   // Fetch data using v2 hooks
-  const { data: delegator, isLoading: isLoadingDelegator } = useDelegator(userAddress);
-  const { data: operatorMap, isLoading: isLoadingOperators } = useOperatorMap();
-  const { data: restakingAssetMap } = useRestakingAssetMap();
+  const { data: delegator } = useDelegator(userAddress);
+  const { data: operatorMap } = useOperatorMap();
   const blueprintSelection = useBlueprintStore((store) => store.selection);
 
   // Get token addresses for metadata fetch
@@ -108,10 +97,13 @@ const RestakeDelegateForm: FC = () => {
   }, [delegator?.assetPositions]);
 
   // Fetch token metadata
-  const { data: tokenMetadatas } = useEvmAssetMetadatas(tokenAddresses as EvmAddress[]);
+  const { data: tokenMetadatas } = useEvmAssetMetadatas(
+    tokenAddresses as EvmAddress[],
+  );
 
   const switchChain = useSwitchChain();
-  const { status: delegateTxStatus, execute: executeDelegateTx } = useDelegateTx();
+  const { status: delegateTxStatus, execute: executeDelegateTx } =
+    useDelegateTx();
 
   // Set the operatorAddress from the URL param.
   useEffect(() => {
@@ -151,7 +143,9 @@ const RestakeDelegateForm: FC = () => {
     update: updateOperatorModal,
   } = useModal(false);
 
-  const [selectedAssetItem, setSelectedAssetItem] = useState<AssetItem | null>(null);
+  const [selectedAssetItem, setSelectedAssetItem] = useState<AssetItem | null>(
+    null,
+  );
 
   // Build deposited assets list from delegator positions
   const depositedAssets = useMemo<AssetItem[]>(() => {
@@ -169,10 +163,11 @@ const RestakeDelegateForm: FC = () => {
           return null;
         }
 
-        const availableBalance = position.totalDeposited - position.delegatedAmount;
+        const availableBalance =
+          position.totalDeposited - position.delegatedAmount;
 
         // Only show assets with available balance
-        if (availableBalance <= 0n) {
+        if (availableBalance <= BigInt(0)) {
           return null;
         }
 
@@ -217,8 +212,6 @@ const RestakeDelegateForm: FC = () => {
     [closeChainModal, switchChain],
   );
 
-  const selectedAssetId = watch('assetId');
-
   const isReady =
     !isSubmitting &&
     selectedAssetItem !== null &&
@@ -233,7 +226,7 @@ const RestakeDelegateForm: FC = () => {
 
       const amountBigInt = parseUnits(amount, selectedAssetItem.decimals);
 
-      if (amountBigInt <= 0n) {
+      if (amountBigInt <= BigInt(0)) {
         return;
       }
 
@@ -264,11 +257,11 @@ const RestakeDelegateForm: FC = () => {
     if (!operatorMap) return [];
 
     return Array.from(operatorMap.entries())
-      .filter(([, op]) => op.status === 'ACTIVE')
+      .filter(([, op]) => op.restakingStatus === 'ACTIVE')
       .map(([address, op]) => ({
         address,
-        stake: op.stake,
-        delegationCount: op.delegationCount,
+        stake: op.restakingStake ?? BigInt(0),
+        delegationCount: Number(op.restakingDelegationCount ?? BigInt(0)),
         isActive: true,
       }));
   }, [operatorMap]);
@@ -301,14 +294,17 @@ const RestakeDelegateForm: FC = () => {
                 >
                   {selectedOperatorAddress ? (
                     <span className="font-mono text-sm">
-                      {selectedOperatorAddress.slice(0, 8)}...{selectedOperatorAddress.slice(-6)}
+                      {selectedOperatorAddress.slice(0, 8)}...
+                      {selectedOperatorAddress.slice(-6)}
                     </span>
                   ) : (
                     <span className="text-mono-100">Select an operator</span>
                   )}
                 </button>
                 {errors.operatorAddress && (
-                  <p className="text-xs text-red-50">{errors.operatorAddress.message}</p>
+                  <p className="text-xs text-red-50">
+                    {errors.operatorAddress.message}
+                  </p>
                 )}
               </div>
 
@@ -330,7 +326,12 @@ const RestakeDelegateForm: FC = () => {
                       }}
                       className="text-xs text-blue-50 hover:text-blue-40"
                     >
-                      Max: {formatUnits(selectedAssetItem.availableBalance, selectedAssetItem.decimals)} {selectedAssetItem.symbol}
+                      Max:{' '}
+                      {formatUnits(
+                        selectedAssetItem.availableBalance,
+                        selectedAssetItem.decimals,
+                      )}{' '}
+                      {selectedAssetItem.symbol}
                     </button>
                   )}
                 </div>
@@ -341,9 +342,14 @@ const RestakeDelegateForm: FC = () => {
                       required: 'Amount is required',
                       validate: (value) => {
                         if (!selectedAssetItem) return 'Select an asset first';
-                        const parsed = parseUnits(value, selectedAssetItem.decimals);
-                        if (parsed <= 0n) return 'Amount must be greater than 0';
-                        if (parsed > selectedAssetItem.availableBalance) return 'Insufficient balance';
+                        const parsed = parseUnits(
+                          value,
+                          selectedAssetItem.decimals,
+                        );
+                        if (parsed <= BigInt(0))
+                          return 'Amount must be greater than 0';
+                        if (parsed > selectedAssetItem.availableBalance)
+                          return 'Insufficient balance';
                         return true;
                       },
                     })}
@@ -358,7 +364,9 @@ const RestakeDelegateForm: FC = () => {
                     className="flex items-center gap-2 px-4 py-2 border rounded-lg bg-mono-0 dark:bg-mono-180 border-mono-60 dark:border-mono-140 hover:bg-mono-20 dark:hover:bg-mono-160"
                   >
                     {selectedAssetItem ? (
-                      <span className="font-medium">{selectedAssetItem.symbol}</span>
+                      <span className="font-medium">
+                        {selectedAssetItem.symbol}
+                      </span>
                     ) : (
                       <span className="text-mono-100">Select token</span>
                     )}
@@ -428,10 +436,8 @@ const RestakeDelegateForm: FC = () => {
             searchPlaceholder="Search operators..."
             getItemKey={(item) => item.address}
             onSelect={handleOnSelectOperator}
-            filterItem={(item, query) =>
-              filterBy(query, [item.address])
-            }
-            renderItem={({ address, stake, delegationCount }) => (
+            filterItem={(item, query) => filterBy(query, [item.address])}
+            renderItem={({ address, delegationCount }) => (
               <div className="flex items-center justify-between w-full p-2">
                 <div className="flex flex-col">
                   <span className="font-mono text-sm">
@@ -459,7 +465,9 @@ const RestakeDelegateForm: FC = () => {
 
 // EVM Action Button
 interface DelegateActionButtonProps {
-  errors: ReturnType<typeof useForm<EvmDelegationFormFields>>['formState']['errors'];
+  errors: ReturnType<
+    typeof useForm<EvmDelegationFormFields>
+  >['formState']['errors'];
   isValid: boolean;
   openChainModal: () => void;
   isSubmitting: boolean;
@@ -468,7 +476,6 @@ interface DelegateActionButtonProps {
 const DelegateActionButton: FC<DelegateActionButtonProps> = ({
   errors,
   isValid,
-  openChainModal,
   isSubmitting,
 }) => {
   const displayError =
@@ -486,7 +493,7 @@ const DelegateActionButton: FC<DelegateActionButtonProps> = ({
       disabled={!isValid || displayError !== undefined || isSubmitting}
       className="w-full px-4 py-3 font-medium text-white rounded-lg bg-blue-50 hover:bg-blue-40 disabled:bg-mono-80 disabled:cursor-not-allowed"
     >
-      {isSubmitting ? 'Delegating...' : displayError ?? 'Delegate'}
+      {isSubmitting ? 'Delegating...' : (displayError ?? 'Delegate')}
     </button>
   );
 };

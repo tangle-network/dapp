@@ -6,7 +6,7 @@ import { BN } from '@polkadot/util';
 import useRestakeApi from '../../data/restake/useRestakeApi';
 import { NATIVE_ASSET_ID } from '@tangle-network/tangle-shared-ui/constants/restaking';
 import useRestakeUnstakeExecuteAllTx from '../../data/restake/useRestakeUnstakeExecuteAllTx';
-import { TxStatus } from '@tangle-network/tangle-shared-ui/hooks/useSubstrateTx';
+import { TxStatus } from '@tangle-network/tangle-shared-ui/hooks/useContractWrite';
 import useNativeRestakeUnstakeCancelTx from '../../data/restake/useNativeRestakeUnstakeCancelTx';
 
 type UnstakeRequestTableActionsProps = {

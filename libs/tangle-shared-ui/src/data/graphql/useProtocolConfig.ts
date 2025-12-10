@@ -85,11 +85,26 @@ export const useProtocolConfig = (options?: { enabled?: boolean }) => {
       }
 
       return {
-        currentRound: results[0].status === 'success' ? (results[0].result as bigint) : 0n,
-        roundDuration: results[1].status === 'success' ? (results[1].result as bigint) : 0n,
-        delegationBondLessDelay: results[2].status === 'success' ? (results[2].result as bigint) : 0n,
-        leaveDelegatorsDelay: results[3].status === 'success' ? (results[3].result as bigint) : 0n,
-        leaveOperatorsDelay: results[4].status === 'success' ? (results[4].result as bigint) : 0n,
+        currentRound:
+          results[0].status === 'success'
+            ? (results[0].result as bigint)
+            : BigInt(0),
+        roundDuration:
+          results[1].status === 'success'
+            ? (results[1].result as bigint)
+            : BigInt(0),
+        delegationBondLessDelay:
+          results[2].status === 'success'
+            ? (results[2].result as bigint)
+            : BigInt(0),
+        leaveDelegatorsDelay:
+          results[3].status === 'success'
+            ? (results[3].result as bigint)
+            : BigInt(0),
+        leaveOperatorsDelay:
+          results[4].status === 'success'
+            ? (results[4].result as bigint)
+            : BigInt(0),
       } satisfies ProtocolConfig;
     },
     enabled: enabled && !!publicClient,

@@ -65,7 +65,8 @@ const TerminateConfirmationModal: FC<Props> = ({
       description="Are you sure you want to terminate this service instance?"
     >
       <ModalHeader onClose={onClose} className="pb-4">
-        Terminate Service Instance #{addCommasToNumber(Number(selectedInstance.serviceId))}
+        Terminate Service Instance #
+        {addCommasToNumber(Number(selectedInstance.serviceId))}
       </ModalHeader>
 
       <ModalBody>
@@ -85,9 +86,7 @@ const TerminateConfirmationModal: FC<Props> = ({
           restakersCount={restakersCount}
           isBoosted={false}
           category={selectedInstance.blueprintData?.category ?? ''}
-          description={
-            selectedInstance.blueprintData?.description ?? ''
-          }
+          description={selectedInstance.blueprintData?.description ?? ''}
           name={selectedInstance.blueprintData?.name ?? ''}
           author={selectedInstance.blueprintData?.author ?? ''}
         />

@@ -10,7 +10,7 @@ export interface PointsBreakdown {
 export interface AccountActivity {
   depositCount: number;
   delegationCount: number;
-  liquidStakingPoolCount: number;
+  liquidVaultPositionCount: number;
   blueprintCount: number;
   serviceCount: number;
   jobCallCount: number;

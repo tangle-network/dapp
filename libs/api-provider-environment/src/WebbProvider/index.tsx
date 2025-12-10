@@ -19,7 +19,6 @@ import {
   type Wallet,
 } from '@tangle-network/dapp-config';
 import getWagmiConfig from '@tangle-network/dapp-config/wagmi-config';
-import { type WebbSolanaProvider } from '@tangle-network/solana-api-provider';
 import {
   WalletId,
   WebbError,
@@ -28,13 +27,11 @@ import {
 } from '@tangle-network/dapp-types';
 import WalletNotInstalledError from '@tangle-network/dapp-types/errors/WalletNotInstalledError';
 import type { Maybe, Nullable } from '@tangle-network/dapp-types/utils/types';
-import { WebbPolkadot } from '@tangle-network/polkadot-api-provider';
 import {
   ChainType,
   calculateTypedChainId,
 } from '@tangle-network/dapp-types/TypedChainId';
 import { WebbWeb3Provider } from '@tangle-network/web3-api-provider';
-import { createSolanaProvider } from '@tangle-network/solana-api-provider';
 import { useUIContext } from '@tangle-network/ui-components';
 import useWagmiHydration from '@tangle-network/ui-components/hooks/useWagmiHydration';
 import { useCallback, useEffect, useRef, useState, type FC } from 'react';
@@ -221,10 +218,6 @@ const WebbProviderInner: FC<WebbProviderInnerProps> = ({
           break;
         case WebbErrorCodes.MetaMaskExtensionNotInstalled:
         case WebbErrorCodes.RainbowExtensionNotInstalled:
-        case WebbErrorCodes.PolkadotJSExtensionNotInstalled:
-        case WebbErrorCodes.TalismanExtensionNotInstalled:
-        case WebbErrorCodes.SubWalletExtensionNotInstalled:
-        case WebbErrorCodes.PhantomExtensionNotInstalled:
           // TODO: Implement interactive feedback with new components from ui-components:
           break;
         case WebbErrorCodes.InsufficientProviderInterface:
@@ -248,8 +241,6 @@ const WebbProviderInner: FC<WebbProviderInnerProps> = ({
       _networkStorage?: NetworkStorage | undefined,
       abortSignal?: AbortSignal,
     ) => {
-      const nextTypedChainId = calculateTypedChainId(chain.chainType, chain.id);
-
       const sharedWalletConnectionPayload = {
         walletId: wallet.id,
         typedChainId: { chainId: chain.id, chainType: chain.chainType },
@@ -281,122 +272,6 @@ const WebbProviderInner: FC<WebbProviderInnerProps> = ({
         abortSignal?.throwIfAborted();
 
         switch (wallet.id) {
-          case WalletId.Phantom:
-            {
-              abortSignal?.throwIfAborted();
-
-              const webbSolanaProvider = await createSolanaProvider(
-                wallet.id,
-                chain.id,
-                apiConfig,
-              );
-
-              const providerUpdateHandler = async ([
-                updatedChainId,
-              ]: number[]) => {
-                const nextChain = Object.values(chains).find(
-                  (chain) =>
-                    chain.id === updatedChainId &&
-                    chain.chainType === ChainType.Solana,
-                );
-                const activeChain = nextChain ? nextChain : chain;
-
-                try {
-                  const newTypedChainId = calculateTypedChainId(
-                    ChainType.Solana,
-                    updatedChainId,
-                  );
-
-                  webbSolanaProvider.typedChainidSubject.next(newTypedChainId);
-
-                  setActiveWallet(wallet);
-                  setActiveChain(activeChain);
-
-                  appEvent.send('networkSwitched', [
-                    {
-                      chainType: activeChain.chainType,
-                      chainId: activeChain.id,
-                    },
-                    wallet.id,
-                  ]);
-                } catch (e) {
-                  setActiveChain(undefined);
-                  setActiveWallet(wallet);
-                  if (e instanceof WebbError) {
-                    catchWebbError(e);
-                  }
-                }
-              };
-
-              abortSignal?.throwIfAborted();
-
-              webbSolanaProvider.on('providerUpdate', providerUpdateHandler);
-
-              (webbSolanaProvider as WebbSolanaProvider).setChainListener();
-              (webbSolanaProvider as WebbSolanaProvider).setAccountListener();
-
-              abortSignal?.throwIfAborted();
-
-              appEvent.send('networkSwitched', [
-                {
-                  chainType: chain.chainType,
-                  chainId: chain.id,
-                },
-                wallet.id,
-              ]);
-
-              abortSignal?.throwIfAborted();
-
-              await setActiveApiWithAccounts(
-                webbSolanaProvider,
-                chain,
-                _networkStorage ?? networkStorage,
-              );
-
-              localActiveApi = webbSolanaProvider;
-            }
-            break;
-
-          case WalletId.Polkadot:
-          case WalletId.Talisman:
-          case WalletId.SubWallet:
-            {
-              abortSignal?.throwIfAborted();
-
-              const webSocketUrls = chain.rpcUrls.default.webSocket;
-              if (!webSocketUrls || webSocketUrls.length === 0) {
-                throw new Error(
-                  `No websocket urls found for chain ${chain.name}`,
-                );
-              }
-
-              abortSignal?.throwIfAborted();
-
-              const webbPolkadot = await WebbPolkadot.init(
-                applicationName,
-                Array.from(webSocketUrls),
-                apiConfig,
-                nextTypedChainId,
-                wallet,
-              );
-
-              abortSignal?.throwIfAborted();
-
-              await setActiveApiWithAccounts(
-                webbPolkadot,
-                chain,
-                _networkStorage ?? (await appNetworkStoragePromise),
-              );
-
-              localActiveApi = webbPolkadot;
-
-              appEvent.send('walletConnectionState', {
-                ...sharedWalletConnectionPayload,
-                status: 'sucess',
-              });
-            }
-            break;
-
           case WalletId.MetaMask:
           case WalletId.WalletConnectV2:
           case WalletId.Rainbow:

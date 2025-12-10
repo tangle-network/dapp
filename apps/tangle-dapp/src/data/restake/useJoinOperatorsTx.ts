@@ -1,21 +1,20 @@
-import { useCallback } from 'react';
-import { TxName } from '../../constants';
-import { useSubstrateTxWithNotification } from '@tangle-network/tangle-shared-ui/hooks/useSubstrateTx';
+import { TxStatus } from '@tangle-network/tangle-shared-ui/hooks/useContractWrite';
 import { BN } from '@polkadot/util';
-import { SUCCESS_MESSAGES } from '../../hooks/useTxNotification';
 
-type Context = {
+type JoinOperatorsContext = {
   bondAmount: BN;
 };
 
+/** @deprecated Use EVM MultiAssetDelegation instead */
 const useJoinOperatorsTx = () => {
-  return useSubstrateTxWithNotification<Context>(
-    TxName.RESTAKE_JOIN_OPERATORS,
-    useCallback((api, _activeSubstrateAddress, context) => {
-      return api.tx.multiAssetDelegation.joinOperators(context.bondAmount);
-    }, []),
-    SUCCESS_MESSAGES,
-  );
+  // Return null execute but with proper typing to avoid "never" type narrowing
+  const execute: ((context: JoinOperatorsContext) => Promise<void>) | null =
+    null;
+
+  return {
+    execute,
+    status: TxStatus.NOT_YET_INITIATED,
+  };
 };
 
 export default useJoinOperatorsTx;

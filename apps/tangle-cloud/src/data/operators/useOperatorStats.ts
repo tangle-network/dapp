@@ -23,13 +23,18 @@ export interface OperatorStats {
  */
 export const useOperatorStats = (
   operatorAddress: Address | undefined,
-  refreshTrigger?: number,
+  _refreshTrigger?: number,
 ) => {
   // Fetch operator data from indexer
-  const { data: operator, isLoading: isLoadingOperator } = useOperator(operatorAddress);
+  const { data: operator, isLoading: isLoadingOperator } =
+    useOperator(operatorAddress);
 
   // Fetch operator stats from indexer
-  const { data: stats, isLoading: isLoadingStats, refetch } = useOperatorStatsQuery(operatorAddress);
+  const {
+    data: stats,
+    isLoading: isLoadingStats,
+    refetch,
+  } = useOperatorStatsQuery(operatorAddress);
 
   const result = useMemo<OperatorStats | null>(() => {
     if (!operator) {

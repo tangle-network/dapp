@@ -24,4 +24,8 @@ export {
 } from './useWithdrawTx';
 
 // Re-export the base hook
-export { default as useContractWrite, TxStatus, type TxResult } from '../../hooks/useContractWrite';
+export {
+  default as useContractWrite,
+  TxStatus,
+  type TxResult,
+} from '../../hooks/useContractWrite';

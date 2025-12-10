@@ -1,24 +1,23 @@
 import { useQuery } from '@tanstack/react-query';
-import { LATEST_FINALIZED_BLOCK_QUERY_KEY } from '../constants/query';
+import { LATEST_TIMESTAMP_QUERY_KEY } from '../constants/query';
 import { Network } from '../types';
 
-type UseLatestTimestampResult<TNetwork extends Network> =
-  TNetwork extends 'all'
+type UseLatestTimestampResult<TNetwork extends Network> = TNetwork extends 'all'
+  ? {
+      mainnetTimestamp: number;
+      testnetTimestamp: number;
+    }
+  : TNetwork extends 'TESTNET'
     ? {
-        mainnetTimestamp: number;
+        mainnetTimestamp: never;
         testnetTimestamp: number;
       }
-    : TNetwork extends 'TESTNET'
+    : TNetwork extends 'MAINNET'
       ? {
-          mainnetTimestamp: never;
-          testnetTimestamp: number;
+          mainnetTimestamp: number;
+          testnetTimestamp: never;
         }
-      : TNetwork extends 'MAINNET'
-        ? {
-            mainnetTimestamp: number;
-            testnetTimestamp: never;
-          }
-        : never;
+      : never;
 
 /**
  * Returns current timestamps for use with Envio queries.
@@ -52,7 +51,7 @@ export function useLatestTimestamp<TNetwork extends Network>(
   network: TNetwork,
 ) {
   return useQuery({
-    queryKey: [LATEST_FINALIZED_BLOCK_QUERY_KEY, network],
+    queryKey: [LATEST_TIMESTAMP_QUERY_KEY, network],
     queryFn: () => fetcher(network),
     staleTime: Infinity,
   });

@@ -1,7 +1,11 @@
 import { TableAndChartTabs } from '@tangle-network/ui-components/components/TableAndChartTabs';
 import { LockFillIcon } from '@tangle-network/icons';
 import { ReactElement, useMemo, useState } from 'react';
-import { TabContent, Typography, SkeletonLoader } from '@tangle-network/ui-components';
+import {
+  TabContent,
+  Typography,
+  SkeletonLoader,
+} from '@tangle-network/ui-components';
 import { useAccount } from 'wagmi';
 import {
   useRestakeAssets,
@@ -22,7 +26,8 @@ export const TotalValueLockedTabs = () => {
 
   const { address } = useAccount();
   const { assets, isLoading: isLoadingAssets } = useRestakeAssets();
-  const { data: delegator, isLoading: isLoadingDelegator } = useDelegator(address);
+  const { data: delegator, isLoading: isLoadingDelegator } =
+    useDelegator(address);
 
   const isLoading = isLoadingAssets || isLoadingDelegator;
 
@@ -32,21 +37,26 @@ export const TotalValueLockedTabs = () => {
 
     const deposits = delegator.deposits ?? [];
 
-    return deposits.map((deposit) => {
-      const asset = assets.get(deposit.token);
-      if (!asset) return null;
+    return deposits
+      .map((deposit) => {
+        const asset = assets.get(deposit.token);
+        if (!asset) return null;
 
-      const depositedAmount = formatUnits(deposit.amount, asset.metadata.decimals);
+        const depositedAmount = formatUnits(
+          deposit.amount,
+          asset.metadata.decimals,
+        );
 
-      return {
-        id: deposit.token,
-        name: asset.metadata.name,
-        symbol: asset.metadata.symbol,
-        decimals: asset.metadata.decimals,
-        amount: depositedAmount,
-        token: deposit.token,
-      };
-    }).filter(Boolean);
+        return {
+          id: deposit.token,
+          name: asset.metadata.name,
+          symbol: asset.metadata.symbol,
+          decimals: asset.metadata.decimals,
+          amount: depositedAmount,
+          token: deposit.token,
+        };
+      })
+      .filter(Boolean);
   }, [assets, delegator]);
 
   return (
@@ -76,33 +86,34 @@ export const TotalValueLockedTabs = () => {
           </div>
         ) : (
           <div className="w-full space-y-4">
-            {tvlData.map((item) => (
-              item && (
-                <div
-                  key={item.id}
-                  className="flex items-center justify-between p-4 border rounded-lg border-mono-60 dark:border-mono-140"
-                >
-                  <div className="flex flex-col">
-                    <Typography variant="body1" fw="bold">
-                      {item.symbol}
-                    </Typography>
-                    <Typography variant="body2" className="text-mono-100">
-                      {item.name}
-                    </Typography>
+            {tvlData.map(
+              (item) =>
+                item && (
+                  <div
+                    key={item.id}
+                    className="flex items-center justify-between p-4 border rounded-lg border-mono-60 dark:border-mono-140"
+                  >
+                    <div className="flex flex-col">
+                      <Typography variant="body1" fw="bold">
+                        {item.symbol}
+                      </Typography>
+                      <Typography variant="body2" className="text-mono-100">
+                        {item.name}
+                      </Typography>
+                    </div>
+                    <div className="flex flex-col items-end">
+                      <Typography variant="body1" fw="bold">
+                        {Number(item.amount).toLocaleString(undefined, {
+                          maximumFractionDigits: 6,
+                        })}
+                      </Typography>
+                      <Typography variant="body2" className="text-mono-100">
+                        Deposited
+                      </Typography>
+                    </div>
                   </div>
-                  <div className="flex flex-col items-end">
-                    <Typography variant="body1" fw="bold">
-                      {Number(item.amount).toLocaleString(undefined, {
-                        maximumFractionDigits: 6,
-                      })}
-                    </Typography>
-                    <Typography variant="body2" className="text-mono-100">
-                      Deposited
-                    </Typography>
-                  </div>
-                </div>
-              )
-            ))}
+                ),
+            )}
           </div>
         )}
       </TabContent>

@@ -66,7 +66,7 @@ check_prerequisites() {
 start_anvil() {
     log_info "Starting Anvil on port $ANVIL_PORT..."
 
-    anvil --chain-id $ANVIL_CHAIN_ID --port $ANVIL_PORT --block-time 1 --base-fee 0 --gas-limit 30000000 --silent &
+    anvil --chain-id $ANVIL_CHAIN_ID --port $ANVIL_PORT --block-time 1 --base-fee 0 --gas-limit 30000000 --disable-code-size-limit --silent &
     ANVIL_PID=$!
     sleep 2
 
@@ -83,10 +83,49 @@ deploy_contracts() {
     log_info "Deploying contracts..."
     cd "$TNT_CORE_DIR"
 
+    # Clear forge broadcast cache to force fresh deployment
+    log_info "Clearing forge broadcast cache..."
+    rm -rf broadcast/LocalTestnet.s.sol/ 2>/dev/null || true
+
+    # Clean forge cache and rebuild
+    forge clean 2>/dev/null || true
+
+    # Anvil's default deployer private key
+    local ANVIL_PRIVATE_KEY="0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80"
+
+    # Run forge script (may return non-zero due to size warnings, but deployment still succeeds)
     forge script script/v2/LocalTestnet.s.sol:LocalTestnetSetup \
         --rpc-url http://127.0.0.1:$ANVIL_PORT \
+        --private-key "$ANVIL_PRIVATE_KEY" \
         --broadcast \
+        --non-interactive \
         --slow 2>&1 | tee /tmp/deploy.log || true
+
+    # Give anvil time to process transactions
+    sleep 2
+
+    # Check if deployment actually happened by verifying deployer nonce
+    local deployer_nonce=$(curl -s http://127.0.0.1:$ANVIL_PORT -X POST -H "Content-Type: application/json" \
+        --data '{"jsonrpc":"2.0","method":"eth_getTransactionCount","params":["0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266", "latest"],"id":1}' \
+        | grep -o '"result":"[^"]*"' | cut -d'"' -f4)
+
+    if [[ "$deployer_nonce" == "0x0" ]]; then
+        log_error "Deployment failed - no transactions sent. Check /tmp/deploy.log"
+        exit 1
+    fi
+
+    # Verify contract code exists
+    local contract_code=$(curl -s http://127.0.0.1:$ANVIL_PORT -X POST -H "Content-Type: application/json" \
+        --data '{"jsonrpc":"2.0","method":"eth_getCode","params":["0xCf7Ed3AccA5a467e9e704C703E8D87F634fB0Fc9", "latest"],"id":1}' \
+        | grep -o '"result":"[^"]*"' | cut -d'"' -f4)
+
+    if [[ "$contract_code" == "0x" || -z "$contract_code" ]]; then
+        log_error "Tangle contract has no code. Deployment may have failed."
+        exit 1
+    fi
+
+    log_info "Deployer nonce: $deployer_nonce"
+    log_info "Tangle contract code length: ${#contract_code} chars"
 
     # Deterministic addresses from Anvil
     export TANGLE_PROXY="0xCf7Ed3AccA5a467e9e704C703E8D87F634fB0Fc9"
@@ -209,10 +248,10 @@ print_status() {
     echo ""
     echo "Test Queries:"
     echo "  curl http://localhost:$GRAPHQL_PORT/v1/graphql -H 'Content-Type: application/json' \\"
-    echo "    -d '{\"query\": \"{ Operator { id restakingStake } }\"}'"
+    echo "    -d '{\"query\": \"{ Operator(limit: 5) { id restakingStake } }\"}'"
     echo ""
     echo "  curl http://localhost:$GRAPHQL_PORT/v1/graphql -H 'Content-Type: application/json' \\"
-    echo "    -d '{\"query\": \"{ PointsAccount { id totalPoints leaderboardPoints } }\"}'"
+    echo "    -d '{\"query\": \"{ PointsAccount(limit: 5) { id totalPoints leaderboardPoints } }\"}'"
     echo ""
     echo "Logs:"
     echo "  - Anvil:    anvil output (silent mode)"

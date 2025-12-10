@@ -52,7 +52,8 @@ export interface DelegatorActivityData {
 /**
  * Combined account data with activity information
  */
-export interface LeaderboardAccountWithActivity extends LeaderboardAccountNodeType {
+export interface LeaderboardAccountWithActivity
+  extends LeaderboardAccountNodeType {
   delegator?: DelegatorActivityData;
   isOperator: boolean;
   blueprintCount: number;
@@ -61,15 +62,15 @@ export interface LeaderboardAccountWithActivity extends LeaderboardAccountNodeTy
 }
 
 interface LeaderboardQueryResponse {
-  pointsAccounts: LeaderboardAccountNodeType[];
+  PointsAccount: LeaderboardAccountNodeType[];
 }
 
 interface ActivityQueryResponse {
-  delegator: DelegatorActivityData | null;
-  operators: Array<{ id: string }>;
-  blueprints: Array<{ id: string; owner: string }>;
-  services: Array<{ id: string; owner: string }>;
-  jobCalls: Array<{ id: string; caller: string }>;
+  Delegator_by_pk: DelegatorActivityData | null;
+  Operator: Array<{ id: string }>;
+  Blueprint: Array<{ id: string; owner: string }>;
+  Service: Array<{ id: string; owner: string }>;
+  JobCall: Array<{ id: string; caller: string }>;
 }
 
 const getEndpoint = (network: NetworkType): string => {
@@ -87,17 +88,16 @@ const getEndpoint = (network: NetworkType): string => {
 
 const LEADERBOARD_QUERY = `
   query LeaderboardQuery(
-    $first: Int!
-    $skip: Int!
-    $timestampSevenDaysAgo: BigInt!
+    $limit: Int!
+    $offset: Int!
+    $timestampSevenDaysAgo: numeric!
     $accountIdQuery: String
   ) {
-    pointsAccounts(
-      first: $first
-      skip: $skip
-      orderBy: leaderboardPoints
-      orderDirection: desc
-      where: { id_contains: $accountIdQuery }
+    PointsAccount(
+      limit: $limit
+      offset: $offset
+      order_by: { leaderboardPoints: desc }
+      where: { id: { _ilike: $accountIdQuery } }
     ) {
       id
       totalPoints
@@ -106,9 +106,8 @@ const LEADERBOARD_QUERY = `
       leaderboardPoints
       updatedAt
       snapshots(
-        orderBy: blockNumber
-        orderDirection: asc
-        where: { timestamp_gte: $timestampSevenDaysAgo }
+        order_by: { blockNumber: asc }
+        where: { timestamp: { _gte: $timestampSevenDaysAgo } }
       ) {
         id
         blockNumber
@@ -121,7 +120,7 @@ const LEADERBOARD_QUERY = `
 
 const ACTIVITY_QUERY = `
   query AccountActivity($accountId: String!) {
-    delegator(id: $accountId) {
+    Delegator_by_pk(id: $accountId) {
       id
       totalDeposited
       totalDelegated
@@ -141,18 +140,18 @@ const ACTIVITY_QUERY = `
         shares
       }
     }
-    operators(where: { id: $accountId }) {
+    Operator(where: { id: { _eq: $accountId } }) {
       id
     }
-    blueprints(where: { owner: $accountId }) {
-      id
-      owner
-    }
-    services(where: { owner: $accountId }) {
+    Blueprint(where: { owner: { _eq: $accountId } }) {
       id
       owner
     }
-    jobCalls(where: { caller: $accountId }) {
+    Service(where: { owner: { _eq: $accountId } }) {
+      id
+      owner
+    }
+    JobCall(where: { caller: { _eq: $accountId } }) {
       id
       caller
     }
@@ -161,8 +160,8 @@ const ACTIVITY_QUERY = `
 
 const fetchLeaderboard = async (
   network: NetworkType,
-  first: number,
-  skip: number,
+  limit: number,
+  offset: number,
   timestampSevenDaysAgo: number,
   accountIdQuery?: string,
 ): Promise<{ nodes: LeaderboardAccountNodeType[]; totalCount: number }> => {
@@ -177,10 +176,10 @@ const fetchLeaderboard = async (
     body: JSON.stringify({
       query: LEADERBOARD_QUERY,
       variables: {
-        first,
-        skip,
-        timestampSevenDaysAgo: String(timestampSevenDaysAgo),
-        accountIdQuery: accountIdQuery || '',
+        limit,
+        offset,
+        timestampSevenDaysAgo,
+        accountIdQuery: accountIdQuery ? `%${accountIdQuery}%` : '%%',
       },
     }),
   });
@@ -192,9 +191,11 @@ const fetchLeaderboard = async (
   const result = (await response.json()) as { data: LeaderboardQueryResponse };
 
   // Filter out team accounts
-  const filteredAccounts = result.data.pointsAccounts.filter(
+  const filteredAccounts = result.data.PointsAccount.filter(
     (account) =>
-      !TEAM_ACCOUNTS.includes(account.id.toLowerCase() as (typeof TEAM_ACCOUNTS)[number]),
+      !TEAM_ACCOUNTS.includes(
+        account.id.toLowerCase() as (typeof TEAM_ACCOUNTS)[number],
+      ),
   );
 
   return {
@@ -246,7 +247,13 @@ export function useLeaderboard(
       accountIdQuery,
     ],
     queryFn: () =>
-      fetchLeaderboard(network, first, offset, timestampSevenDaysAgo, accountIdQuery),
+      fetchLeaderboard(
+        network,
+        first,
+        offset,
+        timestampSevenDaysAgo,
+        accountIdQuery,
+      ),
     enabled: first > 0 && offset >= 0 && timestampSevenDaysAgo > 0,
     placeholderData: (prev) => prev,
   });

@@ -1,9 +1,4 @@
-import {
-  Typography,
-  Input,
-  Card,
-  Label,
-} from '@tangle-network/ui-components';
+import { Typography, Input, Card, Label } from '@tangle-network/ui-components';
 import { FC, useEffect, useMemo, useState, Children } from 'react';
 import {
   SelectOperatorsStepProps,
@@ -13,7 +8,6 @@ import {
 } from './type';
 import { RowSelectionState } from '@tanstack/react-table';
 import ErrorMessage from '../../../../../components/ErrorMessage';
-import safeFormatUnits from '@tangle-network/tangle-shared-ui/utils/safeFormatUnits';
 import {
   Select,
   SelectContent,
@@ -29,10 +23,8 @@ import { DeployBlueprintSchema } from '../../../../../utils/validations/deployBl
 import {
   useOperatorMap,
   useRestakingAssetMap,
-  type Operator,
   type RestakingAsset,
 } from '@tangle-network/tangle-shared-ui/data/graphql';
-import lodash from 'lodash';
 import { Address, formatUnits } from 'viem';
 
 const MAX_ASSET_TO_SHOW = 3;
@@ -41,7 +33,6 @@ export const SelectOperatorsStep: FC<SelectOperatorsStepProps> = ({
   errors,
   setValue,
   watch,
-  minimumNativeSecurityRequirement,
   blueprint,
 }) => {
   const [rowSelection, setRowSelection] = useState<RowSelectionState>(
@@ -54,7 +45,7 @@ export const SelectOperatorsStep: FC<SelectOperatorsStepProps> = ({
   const [searchQuery, setSearchQuery] = useState('');
 
   // Fetch operators from GraphQL indexer
-  const { data: operatorMap, isLoading: isLoadingOperators } = useOperatorMap();
+  const { data: operatorMap } = useOperatorMap();
 
   // Fetch restaking assets from GraphQL indexer
   const { data: assetMap } = useRestakingAssetMap();
@@ -72,27 +63,30 @@ export const SelectOperatorsStep: FC<SelectOperatorsStepProps> = ({
 
     return filteredOperators.map((operator) => {
       // Calculate total stake value
-      const totalStakeValue = operator.delegations?.reduce(
-        (acc, delegation) => {
-          const asset = assetMap?.get(delegation.token.toLowerCase() as Address);
+      const totalStakeValue =
+        operator.delegations?.reduce((acc, delegation) => {
+          const asset = assetMap?.get(
+            delegation.token.toLowerCase() as Address,
+          );
           if (!asset) return acc;
 
           const formatted = formatUnits(delegation.amount, asset.decimals);
           const usdValue = parseFloat(formatted) * (asset.priceUsd ?? 0);
           return acc + usdValue;
-        },
-        0,
-      ) ?? 0;
+        }, 0) ?? 0;
 
       // Get vault tokens from delegations
-      const vaultTokens = operator.delegations?.map((delegation) => {
-        const asset = assetMap?.get(delegation.token.toLowerCase() as Address);
-        return {
-          symbol: asset?.symbol ?? 'Unknown',
-          amount: delegation.amount,
-          decimals: asset?.decimals ?? 18,
-        };
-      }) ?? [];
+      const vaultTokens =
+        operator.delegations?.map((delegation) => {
+          const asset = assetMap?.get(
+            delegation.token.toLowerCase() as Address,
+          );
+          return {
+            symbol: asset?.symbol ?? 'Unknown',
+            amount: delegation.amount,
+            decimals: asset?.decimals ?? 18,
+          };
+        }) ?? [];
 
       return {
         address: operator.address,
@@ -154,7 +148,9 @@ export const SelectOperatorsStep: FC<SelectOperatorsStepProps> = ({
             },
           },
         ]
-      : selectedAssets.filter((selectedAsset) => selectedAsset.id !== asset.token);
+      : selectedAssets.filter(
+          (selectedAsset) => selectedAsset.id !== asset.token,
+        );
 
     setValue(`assets`, newSelectedAssets);
 
@@ -254,10 +250,7 @@ export const SelectOperatorsStep: FC<SelectOperatorsStepProps> = ({
                       spacingClassName="ml-0"
                     >
                       <div className="flex items-center gap-2">
-                        <LsTokenIcon
-                          name={asset.name ?? 'TNT'}
-                          size="md"
-                        />
+                        <LsTokenIcon name={asset.name ?? 'TNT'} size="md" />
                         <Typography variant="body1">
                           {asset.name ?? 'TNT'}
                         </Typography>

@@ -225,7 +225,7 @@ export const LeaderboardTable = () => {
       return trimmedQuery;
     }
 
-    // Use client-side filtering for identity names and other searches
+    // Use client-side filtering for partial address matches
     return undefined;
   }, [searchQuery]);
 

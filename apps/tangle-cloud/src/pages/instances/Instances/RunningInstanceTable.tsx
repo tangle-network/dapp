@@ -26,8 +26,7 @@ import { ChevronRight } from '@tangle-network/icons';
 import TableCellWrapper from '@tangle-network/tangle-shared-ui/components/tables/TableCellWrapper';
 import { Link } from 'react-router';
 import { PagePath } from '../../../types';
-import { Address } from 'viem';
-import { useAccount, useChainId } from 'wagmi';
+import { useAccount } from 'wagmi';
 import {
   useServicesByOwner,
   useServicesByOperator,
@@ -53,7 +52,6 @@ interface RunningInstanceTableProps {
 }
 
 export const RunningInstanceTable: FC<RunningInstanceTableProps> = ({
-  refreshTrigger,
   setRefreshTrigger,
 }) => {
   const { address: currentUserAddress } = useAccount();
@@ -74,12 +72,13 @@ export const RunningInstanceTable: FC<RunningInstanceTableProps> = ({
     error: operatorError,
     refetch: refetchOperator,
   } = useServicesByOperator(
-    isOperator ? operatorAddress ?? undefined : undefined,
+    isOperator ? (operatorAddress ?? undefined) : undefined,
     { status: 'ACTIVE' },
   );
 
   // Fetch blueprint metadata
-  const { data: blueprintMap, isLoading: isLoadingBlueprints } = useBlueprintMap();
+  const { data: blueprintMap, isLoading: isLoadingBlueprints } =
+    useBlueprintMap();
 
   const isLoading = isLoadingOwned || isLoadingOperator || isLoadingBlueprints;
   const error = ownedError || operatorError;
@@ -112,7 +111,8 @@ export const RunningInstanceTable: FC<RunningInstanceTableProps> = ({
   }, [ownedServices, operatorServices, blueprintMap]);
 
   const [isTerminateModalOpen, setIsTerminateModalOpen] = useState(false);
-  const [selectedInstance, setSelectedInstance] = useState<ServiceWithBlueprint | null>(null);
+  const [selectedInstance, setSelectedInstance] =
+    useState<ServiceWithBlueprint | null>(null);
 
   const { execute: terminateServiceInstance, status: terminateStatus } =
     useServiceTerminateTx();

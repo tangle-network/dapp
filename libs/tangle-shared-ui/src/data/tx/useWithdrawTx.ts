@@ -38,8 +38,8 @@ export const useScheduleWithdrawTx = () => {
     (params: ScheduleWithdrawParams, _activeAddress) => ({
       address: contracts.multiAssetDelegation,
       abi: MULTI_ASSET_DELEGATION_ABI,
-      functionName: 'scheduleWithdraw',
-      args: [params.token, params.amount],
+      functionName: 'scheduleWithdraw' as const,
+      args: [params.token, params.amount] as const,
     }),
     {
       getSuccessMessage: () => 'Successfully scheduled withdrawal',
@@ -60,8 +60,8 @@ export const useExecuteWithdrawTx = () => {
     (_params: void, _activeAddress) => ({
       address: contracts.multiAssetDelegation,
       abi: MULTI_ASSET_DELEGATION_ABI,
-      functionName: 'executeWithdraw',
-      args: [],
+      functionName: 'executeWithdraw' as const,
+      args: [] as const,
     }),
     {
       getSuccessMessage: () => 'Successfully executed withdrawal',

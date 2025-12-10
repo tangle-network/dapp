@@ -1,5 +1,4 @@
 import { Cross1Icon } from '@radix-ui/react-icons';
-import { ZERO_BIG_INT } from '@tangle-network/dapp-config/constants';
 import { calculateTypedChainId } from '@tangle-network/dapp-types/TypedChainId';
 import isDefined from '@tangle-network/dapp-types/utils/isDefined';
 import { ChainIcon } from '@tangle-network/icons/ChainIcon';
@@ -36,7 +35,6 @@ import { twMerge } from 'tailwind-merge';
 // EVM hooks
 import {
   useDelegator,
-  type DelegatorAssetPosition,
   type WithdrawRequest,
 } from '@tangle-network/tangle-shared-ui/data/graphql';
 import { useScheduleWithdrawTx } from '@tangle-network/tangle-shared-ui/data/tx';
@@ -107,7 +105,7 @@ const RestakeWithdrawForm: FC = () => {
   }, [activeTypedChainId, reset]);
 
   // Fetch delegator data
-  const { data: delegator, isLoading: isLoadingDelegator } = useDelegator(userAddress);
+  const { data: delegator } = useDelegator(userAddress);
 
   // Get unique token addresses from positions
   const tokenAddresses = useMemo(() => {
@@ -118,14 +116,17 @@ const RestakeWithdrawForm: FC = () => {
   // Fetch token metadata
   const { data: tokenMetadatas } = useEvmAssetMetadatas(tokenAddresses);
 
-  const [selectedAssetPosition, setSelectedAssetPosition] = useState<AssetPositionItem | null>(null);
+  const [selectedAssetPosition, setSelectedAssetPosition] =
+    useState<AssetPositionItem | null>(null);
 
   const selectedAssetId = watch('assetId');
   const amount = watch('amount');
 
   // Get pending withdraw requests
   const withdrawRequests = useMemo(() => {
-    return delegator?.withdrawRequests.filter((r) => r.status === 'PENDING') ?? [];
+    return (
+      delegator?.withdrawRequests.filter((r) => r.status === 'PENDING') ?? []
+    );
   }, [delegator?.withdrawRequests]);
 
   // Build asset position items with metadata
@@ -149,14 +150,16 @@ const RestakeWithdrawForm: FC = () => {
               req.token.toLowerCase() === position.token.toLowerCase() &&
               req.status === 'PENDING',
           )
-          .reduce((sum, req) => sum + req.amount, 0n);
+          .reduce((sum, req) => sum + req.amount, BigInt(0));
 
         // Available = deposited - delegated - pending withdrawals
         const availableToWithdraw =
-          position.totalDeposited - position.delegatedAmount - pendingWithdrawals;
+          position.totalDeposited -
+          position.delegatedAmount -
+          pendingWithdrawals;
 
         // Only show positions with available balance
-        if (availableToWithdraw <= 0n) return null;
+        if (availableToWithdraw <= BigInt(0)) return null;
 
         return {
           id: position.id,
@@ -177,7 +180,10 @@ const RestakeWithdrawForm: FC = () => {
     }
 
     const formatted = Number(
-      formatUnits(selectedAssetPosition.availableToWithdraw, selectedAssetPosition.tokenDecimals),
+      formatUnits(
+        selectedAssetPosition.availableToWithdraw,
+        selectedAssetPosition.tokenDecimals,
+      ),
     );
 
     return {
@@ -197,8 +203,9 @@ const RestakeWithdrawForm: FC = () => {
         validate: (value) => {
           if (!selectedAssetPosition) return 'Select an asset first';
           const parsed = parseUnits(value, selectedAssetPosition.tokenDecimals);
-          if (parsed <= 0n) return 'Amount must be greater than 0';
-          if (maxAmount && parsed > maxAmount) return 'Exceeds available amount';
+          if (parsed <= BigInt(0)) return 'Amount must be greater than 0';
+          if (maxAmount && parsed > maxAmount)
+            return 'Exceeds available amount';
           return true;
         },
       }),
@@ -232,7 +239,10 @@ const RestakeWithdrawForm: FC = () => {
         return;
       }
 
-      const amountBigInt = parseUnits(amount, selectedAssetPosition.tokenDecimals);
+      const amountBigInt = parseUnits(
+        amount,
+        selectedAssetPosition.tokenDecimals,
+      );
 
       await executeScheduleWithdraw({
         token: assetId,
@@ -453,7 +463,9 @@ export default RestakeWithdrawForm;
 // Withdraw requests view component
 type WithdrawRequestViewProps = {
   withdrawRequests: WithdrawRequest[];
-  tokenMetadatas: Array<{ id: EvmAddress; symbol: string; decimals: number }> | undefined;
+  tokenMetadatas:
+    | Array<{ id: EvmAddress; symbol: string; decimals: number }>
+    | undefined;
   onClose: () => void;
   className?: string;
 };

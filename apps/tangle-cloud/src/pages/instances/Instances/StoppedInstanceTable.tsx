@@ -17,7 +17,6 @@ import { ChevronRight } from '@tangle-network/icons';
 import TableCellWrapper from '@tangle-network/tangle-shared-ui/components/tables/TableCellWrapper';
 import { PagePath } from '../../../types';
 import { Link } from 'react-router';
-import { useAccount } from 'wagmi';
 import useEvmOperatorInfo from '../../../hooks/useEvmOperatorInfo';
 import {
   useServicesByOperator,
@@ -34,7 +33,6 @@ interface ServiceWithBlueprint extends Service {
 const columnHelper = createColumnHelper<ServiceWithBlueprint>();
 
 export const StoppedInstanceTable: FC = () => {
-  const { address: currentUserAddress } = useAccount();
   const { isOperator, operatorAddress } = useEvmOperatorInfo();
 
   // Fetch terminated services where user is an operator
@@ -43,7 +41,7 @@ export const StoppedInstanceTable: FC = () => {
     isLoading,
     error,
   } = useServicesByOperator(
-    isOperator ? operatorAddress ?? undefined : undefined,
+    isOperator ? (operatorAddress ?? undefined) : undefined,
     { status: 'TERMINATED' },
   );
 
@@ -156,8 +154,7 @@ export const StoppedInstanceTable: FC = () => {
     columns,
     getCoreRowModel: getCoreRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
-    getRowId: (row) =>
-      `StoppedInstance-${row.blueprintId}-${row.serviceId}`,
+    getRowId: (row) => `StoppedInstance-${row.blueprintId}-${row.serviceId}`,
     autoResetPageIndex: false,
     enableSortingRemoval: false,
   });

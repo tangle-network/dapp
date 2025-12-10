@@ -11,10 +11,6 @@ import BridgePage from '../pages/bridge';
 import ClaimPage from '../pages/claim';
 import ClaimLayout from '../pages/claim/layout';
 import ClaimSuccessPage from '../pages/claim/success';
-import LiquidStakingPage from '../pages/liquid-staking';
-import NominationPage from '../pages/nomination';
-import ValidatorDetailsPage from '../pages/nomination/[validatorAddress]';
-import NominationLayout from '../pages/nomination/layout';
 import NotFoundPage from '../pages/notFound';
 import { PagePath } from '../types';
 import Providers from './providers';
@@ -42,15 +38,6 @@ function App() {
               />
             </Route>
 
-            <Route path={PagePath.NOMINATION} element={<NominationLayout />}>
-              <Route index element={<NominationPage />} />
-
-              <Route
-                path={PagePath.NOMINATION_VALIDATOR}
-                element={<ValidatorDetailsPage />}
-              />
-            </Route>
-
             <Route path={PagePath.BRIDGE} element={<BridgePage />} />
 
             <Route path={PagePath.BLUEPRINTS}>
@@ -61,11 +48,6 @@ function App() {
                 element={<BlueprintDetailsPage />}
               />
             </Route>
-
-            <Route
-              path={PagePath.LIQUID_STAKING}
-              element={<LiquidStakingPage />}
-            />
 
             <Route path={PagePath.RESTAKE}>
               <Route

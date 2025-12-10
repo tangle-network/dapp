@@ -1,4 +1,3 @@
-import assert from 'assert';
 import isDefined from '@tangle-network/dapp-types/utils/isDefined';
 import ListModal from '@tangle-network/tangle-shared-ui/components/ListModal';
 import { Card } from '@tangle-network/ui-components';
@@ -6,14 +5,12 @@ import { useModal } from '@tangle-network/ui-components/hooks/useModal';
 import { FC, useCallback, useMemo, useEffect, useRef } from 'react';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import { parseUnits, Address, formatUnits } from 'viem';
-import AssetListItem from '../../../components/Lists/AssetListItem';
 import StyleContainer from '../../../components/restaking/StyleContainer';
 import useActiveTypedChainId from '../../../hooks/useActiveTypedChainId';
 import { EvmDepositFormFields } from '../../../types/restake';
 
 import Form from '../Form';
 import RestakeActionTabs from '../RestakeActionTabs';
-import ActionButton from './ActionButton';
 import Details from './Details';
 import filterBy from '@tangle-network/tangle-shared-ui/utils/filterBy';
 import { TxStatus } from '@tangle-network/tangle-shared-ui/hooks/useContractWrite';
@@ -24,9 +21,7 @@ import {
 } from '@tangle-network/tangle-shared-ui/data/graphql';
 import { useDepositTx } from '@tangle-network/tangle-shared-ui/data/tx';
 
-const getDefaultTypedChainId = (
-  activeTypedChainId: number | null,
-): number => {
+const getDefaultTypedChainId = (activeTypedChainId: number | null): number => {
   return isDefined(activeTypedChainId) &&
     SUPPORTED_RESTAKE_DEPOSIT_TYPED_CHAIN_IDS.includes(activeTypedChainId)
     ? activeTypedChainId
@@ -92,7 +87,7 @@ const DepositForm: FC = () => {
     }
 
     const defaultAsset = Array.from(assets.values()).find(
-      ({ balance }) => balance > 0n,
+      ({ balance }) => balance > BigInt(0),
     );
 
     if (defaultAsset === undefined) {
@@ -116,8 +111,8 @@ const DepositForm: FC = () => {
 
     return Array.from(assets.values()).sort((a, b) => {
       // Sort by balance descending (assets with balance first)
-      if (a.balance === 0n && b.balance > 0n) return 1;
-      if (b.balance === 0n && a.balance > 0n) return -1;
+      if (a.balance === BigInt(0) && b.balance > BigInt(0)) return 1;
+      if (b.balance === BigInt(0) && a.balance > BigInt(0)) return -1;
       if (a.balance > b.balance) return -1;
       if (a.balance < b.balance) return 1;
       return 0;
@@ -157,7 +152,7 @@ const DepositForm: FC = () => {
       // Parse amount to bigint using token decimals
       const amountBigInt = parseUnits(amount, asset.metadata.decimals);
 
-      if (amountBigInt <= 0n) {
+      if (amountBigInt <= BigInt(0)) {
         return;
       }
 
@@ -167,7 +162,9 @@ const DepositForm: FC = () => {
       });
 
       setValue('amount', '', { shouldValidate: false });
-      setValue('depositAssetId', undefined as unknown as Address, { shouldValidate: false });
+      setValue('depositAssetId', undefined as unknown as Address, {
+        shouldValidate: false,
+      });
 
       // Refresh balances after deposit
       refetchBalances();
@@ -196,13 +193,11 @@ const DepositForm: FC = () => {
             <div className="flex flex-col justify-between gap-4 grow">
               <Details />
 
-              <ActionButton
+              <DepositActionButton
                 errors={errors}
-                formRef={formRef}
                 isSubmitting={isSubmitting}
                 isTransactionLoading={depositTxStatus === TxStatus.PROCESSING}
                 isValid={isValid}
-                watch={watch}
               />
             </div>
           </div>
@@ -227,11 +222,7 @@ const DepositForm: FC = () => {
         descriptionWhenEmpty="It seems that there are no available assets on this account in this network yet. Please try again later."
         items={allAssets}
         renderItem={(assetItem) => {
-          return (
-            <AssetListItemEvm
-              asset={assetItem}
-            />
-          );
+          return <AssetListItemEvm asset={assetItem} />;
         }}
       />
     </StyleContainer>
@@ -278,7 +269,8 @@ const SourceChainInputEvm: FC<SourceChainInputEvmProps> = ({
             onClick={handleMaxClick}
             className="text-xs text-blue-50 hover:text-blue-40"
           >
-            Max: {formatUnits(asset.balance, asset.metadata.decimals)} {asset.metadata.symbol}
+            Max: {formatUnits(asset.balance, asset.metadata.decimals)}{' '}
+            {asset.metadata.symbol}
           </button>
         )}
       </div>
@@ -290,7 +282,7 @@ const SourceChainInputEvm: FC<SourceChainInputEvmProps> = ({
             validate: (value) => {
               if (!asset) return 'Select an asset first';
               const parsed = parseUnits(value, asset.metadata.decimals);
-              if (parsed <= 0n) return 'Amount must be greater than 0';
+              if (parsed <= BigInt(0)) return 'Amount must be greater than 0';
               if (parsed > asset.balance) return 'Insufficient balance';
               return true;
             },
@@ -306,18 +298,14 @@ const SourceChainInputEvm: FC<SourceChainInputEvmProps> = ({
           className="flex items-center gap-2 px-4 py-2 border rounded-lg bg-mono-0 dark:bg-mono-180 border-mono-60 dark:border-mono-140 hover:bg-mono-20 dark:hover:bg-mono-160"
         >
           {asset ? (
-            <>
-              <span className="font-medium">{asset.metadata.symbol}</span>
-            </>
+            <span className="font-medium">{asset.metadata.symbol}</span>
           ) : (
             <span className="text-mono-100">Select token</span>
           )}
         </button>
       </div>
 
-      {amountError && (
-        <p className="text-xs text-red-50">{amountError}</p>
-      )}
+      {amountError && <p className="text-xs text-red-50">{amountError}</p>}
     </div>
   );
 };
@@ -341,6 +329,49 @@ const AssetListItemEvm: FC<AssetListItemEvmProps> = ({ asset }) => {
         <span className="text-xs text-mono-100">Balance</span>
       </div>
     </div>
+  );
+};
+
+// Action button for deposit form
+interface DepositActionButtonProps {
+  errors: ReturnType<
+    typeof useForm<EvmDepositFormFields>
+  >['formState']['errors'];
+  isSubmitting: boolean;
+  isTransactionLoading: boolean;
+  isValid: boolean;
+}
+
+const DepositActionButton: FC<DepositActionButtonProps> = ({
+  errors,
+  isSubmitting,
+  isTransactionLoading,
+  isValid,
+}) => {
+  const displayError = errors.depositAssetId
+    ? 'Select Asset'
+    : errors.amount
+      ? 'Enter Amount'
+      : undefined;
+
+  const isDisabled =
+    !isValid ||
+    displayError !== undefined ||
+    isSubmitting ||
+    isTransactionLoading;
+  const buttonText =
+    isSubmitting || isTransactionLoading
+      ? 'Depositing...'
+      : (displayError ?? 'Deposit');
+
+  return (
+    <button
+      type="submit"
+      disabled={isDisabled}
+      className="w-full px-4 py-3 font-medium text-white rounded-lg bg-blue-50 hover:bg-blue-40 disabled:bg-mono-80 disabled:cursor-not-allowed"
+    >
+      {buttonText}
+    </button>
   );
 };
 

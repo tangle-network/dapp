@@ -104,7 +104,9 @@ const fetchBlueprintMetadata = async (
       fetchUrl = `https://ipfs.io/ipfs/${cid}`;
     }
 
-    const response = await fetch(fetchUrl, { signal: AbortSignal.timeout(5000) });
+    const response = await fetch(fetchUrl, {
+      signal: AbortSignal.timeout(5000),
+    });
     if (!response.ok) {
       throw new Error(`Failed to fetch metadata: ${response.status}`);
     }
@@ -162,11 +164,14 @@ const fetchBlueprints = async (
     }
   `;
 
-  const result = await executeEnvioGraphQL<BlueprintQueryResponse, {
-    limit: number;
-    offset: number;
-    active?: boolean;
-  }>(query, { limit, offset, active: activeOnly ? true : undefined }, network);
+  const result = await executeEnvioGraphQL<
+    BlueprintQueryResponse,
+    {
+      limit: number;
+      offset: number;
+      active?: boolean;
+    }
+  >(query, { limit, offset, active: activeOnly ? true : undefined }, network);
 
   if (result.errors?.length) {
     console.error('GraphQL errors:', result.errors);
@@ -206,9 +211,12 @@ const fetchBlueprintById = async (
     }
   `;
 
-  const result = await executeEnvioGraphQL<{
-    Blueprint_by_pk: BlueprintQueryResponse['Blueprint'][0] | null;
-  }, { id: string }>(query, { id: blueprintId }, network);
+  const result = await executeEnvioGraphQL<
+    {
+      Blueprint_by_pk: BlueprintQueryResponse['Blueprint'][0] | null;
+    },
+    { id: string }
+  >(query, { id: blueprintId }, network);
 
   if (!result.data.Blueprint_by_pk) {
     return null;
@@ -237,7 +245,12 @@ export const useBlueprints = (options?: {
   enabled?: boolean;
   limit?: number;
 }) => {
-  const { network, activeOnly = true, enabled = true, limit = 100 } = options ?? {};
+  const {
+    network,
+    activeOnly = true,
+    enabled = true,
+    limit = 100,
+  } = options ?? {};
 
   return useQuery({
     queryKey: ['envio', 'blueprints', network, activeOnly, limit],
@@ -260,7 +273,12 @@ export const useBlueprintsWithMetadata = (options?: {
   enabled?: boolean;
   limit?: number;
 }) => {
-  const { network, activeOnly = true, enabled = true, limit = 100 } = options ?? {};
+  const {
+    network,
+    activeOnly = true,
+    enabled = true,
+    limit = 100,
+  } = options ?? {};
 
   return useQuery({
     queryKey: ['envio', 'blueprintsWithMetadata', network, activeOnly, limit],
@@ -294,7 +312,9 @@ export const useBlueprintMap = (options?: {
   const { data: blueprints, ...rest } = useBlueprintsWithMetadata(options);
 
   const blueprintMap = blueprints
-    ? new Map(blueprints.map((bp) => [bp.blueprintId.toString(), toAppBlueprint(bp)]))
+    ? new Map(
+        blueprints.map((bp) => [bp.blueprintId.toString(), toAppBlueprint(bp)]),
+      )
     : new Map<string, AppBlueprint>();
 
   return {
@@ -366,7 +386,11 @@ export interface BlueprintOperator {
   restakersCount: number;
   selfBondedAmount: bigint;
   tvlInUsd: number | null;
-  vaultTokens: Array<{ name?: string; symbol: string; amount: { toNumber: () => number } }>;
+  vaultTokens: Array<{
+    name?: string;
+    symbol: string;
+    amount: { toNumber: () => number };
+  }>;
   isDelegated: boolean;
   instanceCount: number;
 }
@@ -398,16 +422,19 @@ const fetchBlueprintOperators = async (
   `;
 
   try {
-    const result = await executeEnvioGraphQL<{
-      OperatorBlueprint: Array<{
-        operator: {
-          id: string;
-          delegationCount: string;
-          stake: string;
-          status: string;
-        };
-      }>;
-    }, { blueprintId: string }>(query, { blueprintId }, network);
+    const result = await executeEnvioGraphQL<
+      {
+        OperatorBlueprint: Array<{
+          operator: {
+            id: string;
+            delegationCount: string;
+            stake: string;
+            status: string;
+          };
+        }>;
+      },
+      { blueprintId: string }
+    >(query, { blueprintId }, network);
 
     return (result.data.OperatorBlueprint ?? []).map((ob) => ({
       address: ob.operator.id,

@@ -115,10 +115,17 @@ const fetchServices = async (
     }
   `;
 
-  const result = await executeEnvioGraphQL<ServiceQueryResponse, {
-    limit: number;
-    offset: number;
-  }>(query, { limit: options.limit ?? 100, offset: options.offset ?? 0 }, network);
+  const result = await executeEnvioGraphQL<
+    ServiceQueryResponse,
+    {
+      limit: number;
+      offset: number;
+    }
+  >(
+    query,
+    { limit: options.limit ?? 100, offset: options.offset ?? 0 },
+    network,
+  );
 
   if (result.errors?.length) {
     console.error('GraphQL errors:', result.errors);
@@ -185,10 +192,17 @@ const fetchServiceRequests = async (
     }
   `;
 
-  const result = await executeEnvioGraphQL<ServiceRequestQueryResponse, {
-    limit: number;
-    offset: number;
-  }>(query, { limit: options.limit ?? 100, offset: options.offset ?? 0 }, network);
+  const result = await executeEnvioGraphQL<
+    ServiceRequestQueryResponse,
+    {
+      limit: number;
+      offset: number;
+    }
+  >(
+    query,
+    { limit: options.limit ?? 100, offset: options.offset ?? 0 },
+    network,
+  );
 
   if (result.errors?.length) {
     console.error('GraphQL errors:', result.errors);
@@ -314,12 +328,16 @@ export const useOperatorStats = (
         }
       `;
 
-      const blueprintResult = await executeEnvioGraphQL<{
-        OperatorBlueprint: Array<{ id: string; blueprintId: string }>;
-      }, { operator: string }>(blueprintQuery, { operator }, network);
+      const blueprintResult = await executeEnvioGraphQL<
+        {
+          OperatorBlueprint: Array<{ id: string; blueprintId: string }>;
+        },
+        { operator: string }
+      >(blueprintQuery, { operator }, network);
 
       return {
-        registeredBlueprints: blueprintResult.data.OperatorBlueprint?.length ?? 0,
+        registeredBlueprints:
+          blueprintResult.data.OperatorBlueprint?.length ?? 0,
         runningServices: activeServices?.length ?? 0,
         pendingServices: pendingRequests?.length ?? 0,
         avgUptime: 0, // TODO: Calculate from metrics

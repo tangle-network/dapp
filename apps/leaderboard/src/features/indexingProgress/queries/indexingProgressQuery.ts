@@ -1,6 +1,6 @@
 import { BLOCK_TIME_MS } from '@tangle-network/dapp-config/constants/tangle';
 import { NetworkType } from '@tangle-network/tangle-shared-ui/graphql/graphql';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery as _useQuery } from '@tanstack/react-query';
 import { INDEXING_PROGRESS_QUERY_KEY } from '../../../constants/query';
 
 interface IndexingMetadata {
@@ -8,12 +8,14 @@ interface IndexingMetadata {
   targetHeight: number;
 }
 
-// Envio metadata query
+// Envio chain_metadata query - uses the Envio-specific table
 const INDEXING_PROGRESS_QUERY = `
   query IndexingProgress {
-    _metadata {
-      lastProcessedHeight
-      targetHeight
+    chain_metadata {
+      first_event_block_number
+      latest_processed_block
+      num_events_processed
+      chain_id
     }
   }
 `;
@@ -31,7 +33,16 @@ const getEndpoint = (network: NetworkType): string => {
   );
 };
 
-const fetcher = async (network: NetworkType): Promise<IndexingMetadata | null> => {
+interface ChainMetadataRow {
+  first_event_block_number: number;
+  latest_processed_block: number;
+  num_events_processed: number;
+  chain_id: number;
+}
+
+const fetcher = async (
+  network: NetworkType,
+): Promise<IndexingMetadata | null> => {
   const endpoint = getEndpoint(network);
 
   const response = await fetch(endpoint, {
@@ -50,13 +61,29 @@ const fetcher = async (network: NetworkType): Promise<IndexingMetadata | null> =
   }
 
   const result = (await response.json()) as {
-    data: { _metadata: IndexingMetadata | null };
+    data: { chain_metadata: ChainMetadataRow[] };
+    errors?: Array<{ message: string }>;
   };
-  return result.data._metadata;
+
+  if (result.errors?.length) {
+    console.warn('GraphQL errors:', result.errors);
+    return null;
+  }
+
+  const metadata = result.data.chain_metadata?.[0];
+  if (!metadata) {
+    return null;
+  }
+
+  // Envio tracks latest_processed_block, we estimate target as a bit ahead
+  return {
+    lastProcessedHeight: metadata.latest_processed_block,
+    targetHeight: metadata.latest_processed_block + 1, // Estimate target
+  };
 };
 
 export function useIndexingProgress(network: NetworkType) {
-  return useQuery({
+  return _useQuery({
     queryKey: [INDEXING_PROGRESS_QUERY_KEY, network],
     queryFn: () => fetcher(network),
     refetchInterval: BLOCK_TIME_MS,
