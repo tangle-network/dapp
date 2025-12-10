@@ -1,5 +1,6 @@
 import { BN } from '@tangle-network/tangle-shared-ui/bn';
 import { LsProtocolId } from '@tangle-network/tangle-shared-ui/types/liquidStaking';
+import useInputAmount from '@tangle-network/tangle-shared-ui/hooks/useInputAmount';
 import {
   EMPTY_VALUE_PLACEHOLDER,
   formatBn,
@@ -7,7 +8,6 @@ import {
 import { forwardRef, ReactNode, useEffect } from 'react';
 import { twMerge } from 'tailwind-merge';
 
-import useInputAmount from '../../../hooks/useInputAmount';
 import ErrorMessage from '../../ErrorMessage';
 import LsActiveNetwork from './LsActiveNetwork';
 import LsTokenChip from './LsTokenChip';

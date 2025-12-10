@@ -1,11 +1,11 @@
 import BN  from 'bn.js';
 import { TANGLE_TOKEN_DECIMALS } from '@tangle-network/dapp-config/constants/tangle';
 import useNetworkStore from '@tangle-network/tangle-shared-ui/context/useNetworkStore';
+import useInputAmount from '@tangle-network/tangle-shared-ui/hooks/useInputAmount';
 import { Button, Input } from '@tangle-network/ui-components';
 import { FC, ReactNode, useCallback, useEffect, useMemo, useRef } from 'react';
 import { twMerge } from 'tailwind-merge';
 
-import useInputAmount from '../hooks/useInputAmount';
 import InputWrapper, { InputWrapperProps } from './InputWrapper';
 
 export type AmountInputProps = {
