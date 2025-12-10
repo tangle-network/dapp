@@ -10,6 +10,7 @@ import ErrorMessage from '../../../../../components/ErrorMessage';
 import { Children, FC } from 'react';
 import { BasicInformationStepProps, LabelClassName } from './type';
 import { TrashIcon, PlusIcon } from '@radix-ui/react-icons';
+import type { Address } from 'viem';
 
 export const BasicInformationStep: FC<BasicInformationStepProps> = ({
   errors,
@@ -23,7 +24,7 @@ export const BasicInformationStep: FC<BasicInformationStepProps> = ({
 
   const handleCallerChange = (index: number, value: string) => {
     const newCallers = [...permittedCallers];
-    newCallers[index] = value;
+    newCallers[index] = value as Address;
     setValue(`permittedCallers`, newCallers);
   };
 
@@ -138,8 +139,8 @@ export const BasicInformationStep: FC<BasicInformationStepProps> = ({
             variant="utility"
             onClick={() => {
               const newPermittedCaller = permittedCallers ?? [];
-              newPermittedCaller.push('');
-              // adding empty string to render the input field
+              // Adding placeholder address that user will fill in
+              newPermittedCaller.push('0x' as Address);
               setValue(`permittedCallers`, newPermittedCaller);
             }}
             className="mt-4"

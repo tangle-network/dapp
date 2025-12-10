@@ -11,13 +11,13 @@ import { FC, useEffect } from 'react';
 import {
   useAllBlueprints,
   type Service,
-  type BlueprintWithMetadata,
 } from '@tangle-network/tangle-shared-ui/data/graphql';
+import type { Blueprint } from '@tangle-network/tangle-shared-ui/types/blueprint';
 import addCommasToNumber from '@tangle-network/ui-components/utils/addCommasToNumber';
 
 // Service with optional blueprint metadata
 interface ServiceWithBlueprint extends Service {
-  blueprintData?: BlueprintWithMetadata;
+  blueprintData?: Blueprint;
 }
 
 type Props = {
@@ -53,9 +53,9 @@ const TerminateConfirmationModal: FC<Props> = ({
     selectedInstance.blueprintId.toString(),
   );
 
-  const instancesCount = blueprintStats?.serviceCount ?? 0;
-  const operatorsCount = Number(blueprintStats?.operatorCount ?? 0);
-  const restakersCount = 0; // TODO: Get from indexer when available
+  const instancesCount = blueprintStats?.instancesCount ?? 0;
+  const operatorsCount = blueprintStats?.operatorsCount ?? 0;
+  const restakersCount = blueprintStats?.restakersCount ?? 0;
 
   return (
     <ModalContent
@@ -71,7 +71,7 @@ const TerminateConfirmationModal: FC<Props> = ({
 
       <ModalBody>
         <BlueprintItem
-          imgUrl={selectedInstance.blueprintData?.logo ?? ''}
+          imgUrl={selectedInstance.blueprintData?.imgUrl ?? ''}
           renderImage={(imageUrl) => {
             return (
               <img

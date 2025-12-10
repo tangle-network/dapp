@@ -54,11 +54,11 @@ export const RegisteredBlueprints: FC = () => {
           return (
             <TableCellWrapper className="p-3 min-h-fit">
               <div className="flex items-center gap-3 overflow-hidden">
-                {blueprint.logo ? (
+                {blueprint.imageUrl ? (
                   <Avatar
                     size="lg"
                     className="min-w-12 shadow-sm"
-                    src={blueprint.logo}
+                    src={blueprint.imageUrl}
                     alt={blueprint.name}
                     sourceVariant="uri"
                   />

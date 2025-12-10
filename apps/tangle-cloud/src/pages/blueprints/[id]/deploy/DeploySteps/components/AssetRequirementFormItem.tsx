@@ -1,4 +1,3 @@
-import { RestakeAssetId } from '@tangle-network/tangle-shared-ui/types';
 import { Typography, Label, Slider } from '@tangle-network/ui-components';
 import { FC } from 'react';
 import LsTokenIcon from '@tangle-network/tangle-shared-ui/components/LsTokenIcon';
@@ -6,9 +5,10 @@ import ErrorMessage from '../../../../../../components/ErrorMessage';
 import cx from 'classnames';
 import { AssetSchema } from '../../../../../../utils/validations/deployBlueprint';
 import { LabelClassName } from '../type';
+import type { Address } from 'viem';
 
 type BaseAssetRequirementFormItemProps = {
-  assetId?: RestakeAssetId;
+  assetId?: Address;
   assetMetadata?: AssetSchema | null;
   minExposurePercent?: number;
   maxExposurePercent?: number;

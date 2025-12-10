@@ -31,29 +31,29 @@ export const TotalValueLockedTabs = () => {
 
   const isLoading = isLoadingAssets || isLoadingDelegator;
 
-  // Calculate TVL from user's deposits
+  // Calculate TVL from user's deposits (asset positions)
   const tvlData = useMemo(() => {
     if (!assets || !delegator) return [];
 
-    const deposits = delegator.deposits ?? [];
+    const assetPositions = delegator.assetPositions ?? [];
 
-    return deposits
-      .map((deposit) => {
-        const asset = assets.get(deposit.token);
+    return assetPositions
+      .map((position) => {
+        const asset = assets.get(position.token);
         if (!asset) return null;
 
         const depositedAmount = formatUnits(
-          deposit.amount,
+          position.totalDeposited,
           asset.metadata.decimals,
         );
 
         return {
-          id: deposit.token,
+          id: position.token,
           name: asset.metadata.name,
           symbol: asset.metadata.symbol,
           decimals: asset.metadata.decimals,
           amount: depositedAmount,
-          token: deposit.token,
+          token: position.token,
         };
       })
       .filter(Boolean);

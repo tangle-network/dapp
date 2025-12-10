@@ -10,24 +10,26 @@ import {
 } from '@tangle-network/ui-components/components/select';
 import ErrorMessage from '../../../../../components/ErrorMessage';
 import LsTokenIcon from '@tangle-network/tangle-shared-ui/components/LsTokenIcon';
-import { RestakeAsset } from '@tangle-network/tangle-shared-ui/types/restake';
-import assertRestakeAssetId from '@tangle-network/tangle-shared-ui/utils/assertRestakeAssetId';
-import useAssets from '@tangle-network/tangle-shared-ui/hooks/useAssets';
+import {
+  useRestakeAssets,
+  type RestakeAsset,
+} from '@tangle-network/tangle-shared-ui/data/graphql';
 
 export const PaymentStep: FC<PaymentStepProps> = ({
   errors,
   setValue,
   watch,
 }) => {
-  const { result: assets } = useAssets();
+  const { assets } = useRestakeAssets();
 
   const onSelectAsset = (asset: RestakeAsset) => {
     setValue('paymentAsset', {
       id: asset.id,
       metadata: {
-        ...asset.metadata,
-        deposit: asset.metadata.deposit ?? '',
-        isFrozen: asset.metadata.isFrozen ?? false,
+        name: asset.metadata.name,
+        symbol: asset.metadata.symbol,
+        decimals: asset.metadata.decimals,
+        priceInUsd: null, // TODO: Add price feed
       },
     });
   };
@@ -52,7 +54,7 @@ export const PaymentStep: FC<PaymentStepProps> = ({
           </Typography>
           <Select
             onValueChange={(assetId) => {
-              const asset = assets?.get(assertRestakeAssetId(assetId));
+              const asset = assets?.get(assetId as `0x${string}`);
               if (asset) {
                 onSelectAsset(asset);
               }

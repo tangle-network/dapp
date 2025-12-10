@@ -17,13 +17,32 @@ import {
   useReactTable,
   getPaginationRowModel,
   TableOptions,
+  SortingFn,
 } from '@tanstack/react-table';
-import { sortByAddressOrIdentity } from '@tangle-network/tangle-shared-ui/components/tables/utils';
 import TableCellWrapper from '@tangle-network/tangle-shared-ui/components/tables/TableCellWrapper';
 import VaultsDropdown from '@tangle-network/tangle-shared-ui/components/tables/Operators/VaultsDropdown';
 import { TableVariant } from '@tangle-network/ui-components/components/Table/types';
 import { formatUnits } from 'viem';
 import { TANGLE_TOKEN_DECIMALS } from '@tangle-network/dapp-config';
+
+// Local sort function for EVM address-based operator table
+const sortByAddressOrIdentity: SortingFn<OperatorSelectionTable> = (
+  rowA,
+  rowB,
+) => {
+  const { address: addressA, identityName: identityNameA } = rowA.original;
+  const { address: addressB, identityName: identityNameB } = rowB.original;
+
+  if (identityNameA && identityNameB) {
+    return identityNameA.localeCompare(identityNameB);
+  } else if (identityNameA) {
+    return -1;
+  } else if (identityNameB) {
+    return 1;
+  } else {
+    return addressA.localeCompare(addressB);
+  }
+};
 
 const COLUMN_HELPER = createColumnHelper<OperatorSelectionTable>();
 
@@ -38,7 +57,7 @@ export const OperatorTable: FC<Props> = ({ tableData, ...tableProps }) => {
   const columns = [
     COLUMN_HELPER.accessor('address', {
       header: () => 'Identity',
-      sortingFn: sortByAddressOrIdentity<OperatorSelectionTable>(),
+      sortingFn: sortByAddressOrIdentity,
       cell: (props) => {
         const { address, identityName: identity } = props.row.original;
 
@@ -87,14 +106,13 @@ export const OperatorTable: FC<Props> = ({ tableData, ...tableProps }) => {
         );
       },
       sortingFn: (rowA, rowB) => {
-        const a = rowA.original.selfBondedAmount ?? 0n;
-        const b = rowB.original.selfBondedAmount ?? 0n;
+        const a = rowA.original.selfBondedAmount ?? BigInt(0);
+        const b = rowB.original.selfBondedAmount ?? BigInt(0);
         return Number(a - b);
       },
     }),
     COLUMN_HELPER.accessor('instanceCount', {
       header: () => 'Instances',
-      sortingFn: sortByAddressOrIdentity<OperatorSelectionTable>(),
       cell: (props) => {
         return (
           <TableCellWrapper className="pl-3 min-h-fit">

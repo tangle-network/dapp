@@ -24,7 +24,7 @@ import ErrorMessage from '../../../../components/ErrorMessage';
 import { z } from 'zod';
 import { PagePath } from '../../../../types';
 import useParamWithSchema from '@tangle-network/tangle-shared-ui/hooks/useParamWithSchema';
-import { Address, zeroAddress } from 'viem';
+import { zeroAddress } from 'viem';
 
 const DeployPage: FC = () => {
   const id = useParamWithSchema('id', z.coerce.bigint());
@@ -98,22 +98,20 @@ const DeployPage: FC = () => {
       const validatedData = deployBlueprintSchema.parse(watch());
 
       // Format the service request data for the Tangle contract
-      const operators =
-        validatedData.operators?.map((op) => op.address as Address) ?? [];
-      const permittedCallers =
-        validatedData.permittedCallers?.map((c) => c as Address) ?? [];
-      const ttl = BigInt(validatedData.ttl ?? 0);
+      // Operators are already Address[] from the schema
+      const operators = validatedData.operators ?? [];
+      const permittedCallers = validatedData.permittedCallers ?? [];
+      const ttl = BigInt(validatedData.instanceDuration ?? 0);
 
       // Get payment configuration
-      const paymentToken = (validatedData.paymentAsset ??
-        zeroAddress) as Address;
-      const paymentAmount = BigInt(validatedData.paymentValue ?? 0);
+      const paymentToken = validatedData.paymentAsset?.id ?? zeroAddress;
+      const paymentAmount = BigInt(validatedData.paymentAmount ?? '0');
 
       // Encode service configuration from request args
       const config = encodeServiceConfig(validatedData.requestArgs ?? []);
 
       const params: ServiceRequestParams = {
-        blueprintId: id ?? 0n,
+        blueprintId: id ?? BigInt(0),
         operators,
         config,
         permittedCallers,

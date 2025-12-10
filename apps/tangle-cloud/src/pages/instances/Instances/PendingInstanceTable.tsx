@@ -30,8 +30,8 @@ import {
   usePendingServiceRequests,
   useBlueprintMap,
   type ServiceRequest,
-  type BlueprintWithMetadata,
 } from '@tangle-network/tangle-shared-ui/data/graphql';
+import type { Blueprint } from '@tangle-network/tangle-shared-ui/types/blueprint';
 import useEvmOperatorInfo from '../../../hooks/useEvmOperatorInfo';
 import RejectConfirmationModel from './UpdateBlueprintModel/RejectConfirmationModal';
 import ApproveConfirmationModel from './UpdateBlueprintModel/ApproveConfirmationModal';
@@ -42,7 +42,7 @@ import { TxStatus } from '@tangle-network/tangle-shared-ui/hooks/useContractWrit
 
 // Service request with blueprint metadata
 interface ServiceRequestWithBlueprint extends ServiceRequest {
-  blueprintData?: BlueprintWithMetadata;
+  blueprintData?: Blueprint;
 }
 
 const columnHelper = createColumnHelper<ServiceRequestWithBlueprint>();
@@ -83,7 +83,7 @@ export const PendingInstanceTable: FC<PendingInstanceTableProps> = ({
   );
 
   // Fetch blueprint metadata
-  const { data: blueprintMap } = useBlueprintMap();
+  const { blueprints: blueprintMap } = useBlueprintMap();
 
   // Combine requests with blueprint data
   const requestsWithBlueprints = useMemo<ServiceRequestWithBlueprint[]>(() => {
@@ -130,11 +130,11 @@ export const PendingInstanceTable: FC<PendingInstanceTableProps> = ({
           return (
             <TableCellWrapper className="p-0 min-h-fit">
               <div className="flex items-center gap-2 overflow-hidden">
-                {request.blueprintData?.logo ? (
+                {request.blueprintData?.imgUrl ? (
                   <Avatar
                     size="lg"
                     className="min-w-12"
-                    src={request.blueprintData.logo}
+                    src={request.blueprintData.imgUrl}
                     alt={request.blueprintData?.name ?? 'Blueprint'}
                     sourceVariant="uri"
                   />

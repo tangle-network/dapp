@@ -32,8 +32,8 @@ import {
   useServicesByOperator,
   useBlueprintMap,
   type Service,
-  type BlueprintWithMetadata,
 } from '@tangle-network/tangle-shared-ui/data/graphql';
+import type { Blueprint } from '@tangle-network/tangle-shared-ui/types/blueprint';
 import useEvmOperatorInfo from '../../../hooks/useEvmOperatorInfo';
 import TerminateConfirmationModal from './UpdateBlueprintModel/TerminateConfirmationModal';
 import { useServiceTerminateTx } from '../../../data/services/useServiceTerminateTx';
@@ -41,7 +41,7 @@ import { TxStatus } from '@tangle-network/tangle-shared-ui/hooks/useContractWrit
 
 // Combined service with blueprint metadata
 interface ServiceWithBlueprint extends Service {
-  blueprintData?: BlueprintWithMetadata;
+  blueprintData?: Blueprint;
 }
 
 const columnHelper = createColumnHelper<ServiceWithBlueprint>();
@@ -77,7 +77,7 @@ export const RunningInstanceTable: FC<RunningInstanceTableProps> = ({
   );
 
   // Fetch blueprint metadata
-  const { data: blueprintMap, isLoading: isLoadingBlueprints } =
+  const { blueprints: blueprintMap, isLoading: isLoadingBlueprints } =
     useBlueprintMap();
 
   const isLoading = isLoadingOwned || isLoadingOperator || isLoadingBlueprints;
@@ -155,11 +155,11 @@ export const RunningInstanceTable: FC<RunningInstanceTableProps> = ({
           return (
             <TableCellWrapper className="p-3 min-h-fit">
               <div className="flex items-center gap-3 w-11/12">
-                {service.blueprintData?.logo ? (
+                {service.blueprintData?.imgUrl ? (
                   <Avatar
                     size="lg"
                     className="min-w-12 shadow-sm"
-                    src={service.blueprintData.logo}
+                    src={service.blueprintData.imgUrl}
                     alt={service.serviceId.toString()}
                     sourceVariant="uri"
                   />

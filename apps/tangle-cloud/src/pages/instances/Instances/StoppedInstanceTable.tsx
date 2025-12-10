@@ -22,12 +22,12 @@ import {
   useServicesByOperator,
   useBlueprintMap,
   type Service,
-  type BlueprintWithMetadata,
 } from '@tangle-network/tangle-shared-ui/data/graphql';
+import type { Blueprint } from '@tangle-network/tangle-shared-ui/types/blueprint';
 
 // Service with blueprint metadata
 interface ServiceWithBlueprint extends Service {
-  blueprintData?: BlueprintWithMetadata;
+  blueprintData?: Blueprint;
 }
 
 const columnHelper = createColumnHelper<ServiceWithBlueprint>();
@@ -46,7 +46,7 @@ export const StoppedInstanceTable: FC = () => {
   );
 
   // Fetch blueprint metadata
-  const { data: blueprintMap } = useBlueprintMap();
+  const { blueprints: blueprintMap } = useBlueprintMap();
 
   // Combine services with blueprint data
   const stoppedInstances = useMemo<ServiceWithBlueprint[]>(() => {
@@ -70,11 +70,11 @@ export const StoppedInstanceTable: FC = () => {
           return (
             <TableCellWrapper className="p-0 min-h-fit">
               <div className="flex items-center gap-2 w-full">
-                {service.blueprintData?.logo ? (
+                {service.blueprintData?.imgUrl ? (
                   <Avatar
                     size="lg"
                     className="min-w-12"
-                    src={service.blueprintData.logo}
+                    src={service.blueprintData.imgUrl}
                     alt={service.serviceId.toString()}
                     sourceVariant="uri"
                   />

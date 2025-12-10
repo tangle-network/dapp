@@ -22,10 +22,10 @@ import { OperatorTable } from './components/OperatorTable';
 import { DeployBlueprintSchema } from '../../../../../utils/validations/deployBlueprint';
 import {
   useOperatorMap,
-  useRestakingAssetMap,
-  type RestakingAsset,
+  useRestakeAssets,
+  type RestakeAsset,
 } from '@tangle-network/tangle-shared-ui/data/graphql';
-import { Address, formatUnits } from 'viem';
+import { Address } from 'viem';
 
 const MAX_ASSET_TO_SHOW = 3;
 
@@ -33,7 +33,7 @@ export const SelectOperatorsStep: FC<SelectOperatorsStepProps> = ({
   errors,
   setValue,
   watch,
-  blueprint,
+  blueprint: _blueprint,
 }) => {
   const [rowSelection, setRowSelection] = useState<RowSelectionState>(
     watch(`operators`)?.reduce((acc, operator) => {
@@ -48,54 +48,29 @@ export const SelectOperatorsStep: FC<SelectOperatorsStepProps> = ({
   const { data: operatorMap } = useOperatorMap();
 
   // Fetch restaking assets from GraphQL indexer
-  const { data: assetMap } = useRestakingAssetMap();
+  const { assets: assetMap } = useRestakeAssets();
 
   // Get operators registered for this blueprint
   const operators = useMemo<OperatorSelectionTable[]>(() => {
     if (!operatorMap) return [];
 
-    // Filter operators registered for this blueprint if blueprint is provided
-    const filteredOperators = blueprint?.blueprintId
-      ? Array.from(operatorMap.values()).filter((op) =>
-          op.blueprints?.some((b) => b.blueprintId === blueprint.blueprintId),
-        )
-      : Array.from(operatorMap.values());
+    // For now, use all operators - blueprint filtering not yet available from indexer
+    const filteredOperators = Array.from(operatorMap.values());
 
     return filteredOperators.map((operator) => {
-      // Calculate total stake value
-      const totalStakeValue =
-        operator.delegations?.reduce((acc, delegation) => {
-          const asset = assetMap?.get(
-            delegation.token.toLowerCase() as Address,
-          );
-          if (!asset) return acc;
-
-          const formatted = formatUnits(delegation.amount, asset.decimals);
-          const usdValue = parseFloat(formatted) * (asset.priceUsd ?? 0);
-          return acc + usdValue;
-        }, 0) ?? 0;
-
-      // Get vault tokens from delegations
-      const vaultTokens =
-        operator.delegations?.map((delegation) => {
-          const asset = assetMap?.get(
-            delegation.token.toLowerCase() as Address,
-          );
-          return {
-            symbol: asset?.symbol ?? 'Unknown',
-            amount: delegation.amount,
-            decimals: asset?.decimals ?? 18,
-          };
-        }) ?? [];
+      // Calculate total stake value from restaking stake
+      const restakingStake = operator.restakingStake ?? BigInt(0);
+      // TODO: Get actual USD value from price feed
+      const totalStakeValue = 0;
 
       return {
-        address: operator.address,
-        identityName: operator.metadata?.name,
-        restakersCount: operator.delegatorCount ?? 0,
+        address: operator.id as Address,
+        identityName: undefined, // Not yet available from indexer
+        restakersCount: Number(operator.restakingDelegationCount ?? BigInt(0)),
         vaultTokensInUsd: totalStakeValue,
-        selfBondedAmount: operator.stake ?? 0n,
-        vaultTokens,
-        instanceCount: operator.serviceCount ?? 0,
+        selfBondedAmount: restakingStake,
+        vaultTokens: [], // TODO: Get from delegations when available
+        instanceCount: 0, // TODO: Get from services when available
         uptime: 100, // TODO: Get from metrics
         pricing: {
           cpu: 0,
@@ -104,7 +79,7 @@ export const SelectOperatorsStep: FC<SelectOperatorsStepProps> = ({
         },
       };
     });
-  }, [operatorMap, assetMap, blueprint]);
+  }, [operatorMap]);
 
   const selectedAssets = watch('assets');
   const approvalModel = watch('approvalModel');
@@ -130,27 +105,25 @@ export const SelectOperatorsStep: FC<SelectOperatorsStepProps> = ({
 
   // Set the operators to the form value when the rowSelection changes
   useEffect(() => {
-    setValue(`operators`, Object.keys(rowSelection));
+    setValue(`operators`, Object.keys(rowSelection) as Address[]);
   }, [rowSelection, setValue]);
 
-  const onSelectAsset = (asset: RestakingAsset, isChecked: boolean) => {
+  const onSelectAsset = (asset: RestakeAsset, isChecked: boolean) => {
     const selectedAssets_ = Array.from(selectedAssets ?? []);
     const newSelectedAssets = isChecked
       ? [
           ...selectedAssets_,
           {
-            id: asset.token,
+            id: asset.id,
             metadata: {
-              symbol: asset.symbol,
-              name: asset.name,
-              decimals: asset.decimals,
-              priceInUsd: asset.priceUsd,
+              symbol: asset.metadata.symbol,
+              name: asset.metadata.name,
+              decimals: asset.metadata.decimals,
+              priceInUsd: null, // TODO: Add price feed
             },
           },
         ]
-      : selectedAssets.filter(
-          (selectedAsset) => selectedAsset.id !== asset.token,
-        );
+      : selectedAssets.filter((selectedAsset) => selectedAsset.id !== asset.id);
 
     setValue(`assets`, newSelectedAssets);
 
@@ -188,7 +161,7 @@ export const SelectOperatorsStep: FC<SelectOperatorsStepProps> = ({
   };
 
   // Get all available assets for filtering
-  const allAssets = useMemo(() => {
+  const allAssets = useMemo<RestakeAsset[]>(() => {
     if (!assetMap) return [];
     return Array.from(assetMap.values());
   }, [assetMap]);
@@ -243,16 +216,19 @@ export const SelectOperatorsStep: FC<SelectOperatorsStepProps> = ({
                   return (
                     <SelectCheckboxItem
                       onChange={(e) => onSelectAsset(asset, e.target.checked)}
-                      id={asset.token}
+                      id={asset.id}
                       isChecked={selectedAssets?.some(
-                        (selectedAsset) => selectedAsset.id === asset.token,
+                        (selectedAsset) => selectedAsset.id === asset.id,
                       )}
                       spacingClassName="ml-0"
                     >
                       <div className="flex items-center gap-2">
-                        <LsTokenIcon name={asset.name ?? 'TNT'} size="md" />
+                        <LsTokenIcon
+                          name={asset.metadata.name ?? 'TNT'}
+                          size="md"
+                        />
                         <Typography variant="body1">
-                          {asset.name ?? 'TNT'}
+                          {asset.metadata.name ?? 'TNT'}
                         </Typography>
                       </div>
                     </SelectCheckboxItem>

@@ -12,15 +12,14 @@ import { useEffect, FC } from 'react';
 import {
   useAllBlueprints,
   type ServiceRequest,
-  type BlueprintWithMetadata,
 } from '@tangle-network/tangle-shared-ui/data/graphql';
+import type { Blueprint } from '@tangle-network/tangle-shared-ui/types/blueprint';
 import { TxStatus } from '@tangle-network/tangle-shared-ui/hooks/useContractWrite';
 import addCommasToNumber from '@tangle-network/ui-components/utils/addCommasToNumber';
-import { Input } from '@tangle-network/ui-components';
 
 // Service request with optional blueprint metadata
 interface ServiceRequestWithBlueprint extends ServiceRequest {
-  blueprintData?: BlueprintWithMetadata;
+  blueprintData?: Blueprint;
 }
 
 type Props = {
@@ -54,7 +53,7 @@ const ApproveConfirmationModal: FC<Props> = ({
   } = useForm<FormValues>({
     mode: 'onChange',
     defaultValues: {
-      requestId: selectedRequest?.requestId ?? 0n,
+      requestId: selectedRequest?.requestId ?? BigInt(0),
       restakingPercent: 0,
     },
   });
@@ -84,9 +83,9 @@ const ApproveConfirmationModal: FC<Props> = ({
     selectedRequest.blueprintId.toString(),
   );
 
-  const instancesCount = blueprintStats?.serviceCount ?? 0;
-  const operatorsCount = Number(blueprintStats?.operatorCount ?? 0);
-  const restakersCount = 0; // TODO: Get from indexer when available
+  const instancesCount = blueprintStats?.instancesCount ?? 0;
+  const operatorsCount = blueprintStats?.operatorsCount ?? 0;
+  const restakersCount = blueprintStats?.restakersCount ?? 0;
 
   return (
     <ModalContent
@@ -101,7 +100,7 @@ const ApproveConfirmationModal: FC<Props> = ({
 
       <ModalBody>
         <BlueprintItem
-          imgUrl={selectedRequest.blueprintData?.logo ?? ''}
+          imgUrl={selectedRequest.blueprintData?.imgUrl ?? ''}
           name={selectedRequest.blueprintData?.name ?? ''}
           instancesCount={instancesCount}
           operatorsCount={operatorsCount}
@@ -133,7 +132,8 @@ const ApproveConfirmationModal: FC<Props> = ({
             <label className="text-sm text-mono-140 dark:text-mono-80">
               Restaking Percentage (0-100%)
             </label>
-            <Input
+            <input
+              id="restakingPercent"
               type="number"
               min={0}
               max={100}
@@ -143,6 +143,7 @@ const ApproveConfirmationModal: FC<Props> = ({
                 max: { value: 100, message: 'Cannot exceed 100%' },
               })}
               placeholder="Enter restaking percentage"
+              className="w-full h-10 px-3 rounded-lg border border-mono-80 dark:border-mono-140 bg-mono-0 dark:bg-mono-180 text-mono-200 dark:text-mono-0 placeholder:text-mono-80 dark:placeholder:text-mono-120"
             />
             {errors.restakingPercent && (
               <p className="text-xs text-red-50">

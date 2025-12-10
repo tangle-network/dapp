@@ -107,7 +107,7 @@ export default function RegistrationReview() {
         return toPrimitiveArgsDataType(
           blueprintRegistrationParams,
           paramValues,
-        ) as `0x${string}`;
+        );
       },
     );
 
