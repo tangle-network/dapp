@@ -1,4 +1,4 @@
-import { formatNumber } from '@polkadot/util';
+import { formatDecimal } from '@tangle-network/ui-components';
 import { DEFAULT_FLAGS_ELECTED } from '@tangle-network/dapp-config/constants/tangle';
 import useApiRx from '@tangle-network/tangle-shared-ui/hooks/useApiRx';
 import { useCallback, useEffect, useState } from 'react';
@@ -23,7 +23,9 @@ export default function useActiveAndDelegationCountSubscription(
       (apiRx) =>
         apiRx.query.staking.counterForNominators().pipe(
           map((nominatorsCount) => {
-            const nominatorsCountNum = Number(formatNumber(nominatorsCount));
+            const nominatorsCountNum = Number(
+              formatDecimal(nominatorsCount.toString()),
+            );
 
             setValue2(nominatorsCountNum);
           }),

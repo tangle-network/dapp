@@ -11,11 +11,10 @@ const NUMBER_REGEX = new RegExp('(\\d+?)(?=(\\d{3})+(?!\\d)|$)', 'g');
  * formatDecimal('123') => '123'
  */
 export const formatDecimal = (value: string, separator = ','): string => {
-  const isNegative = value[0].startsWith('-');
+  const isNegative = value.startsWith('-');
   const matched = isNegative
     ? value.substring(1).match(NUMBER_REGEX)
     : value.match(NUMBER_REGEX);
 
   return matched ? `${isNegative ? '-' : ''}${matched.join(separator)}` : value;
 };
-
