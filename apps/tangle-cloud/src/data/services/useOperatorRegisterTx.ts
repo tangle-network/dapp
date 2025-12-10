@@ -29,7 +29,9 @@ export const useOperatorRegisterTx = () => {
     execute,
     status: TxStatus.NOT_YET_INITIATED,
     error: null,
-    reset: () => {},
+    reset: () => {
+      // No-op: stub implementation
+    },
     txHash: null,
     isSuccess: false,
     isPending: false,
