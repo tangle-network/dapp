@@ -151,4 +151,16 @@ export enum AddressType {
   SUBSTRATE_OR_EVM,
 }
 
+export enum LiquidStakingTab {
+  STAKE = 'stake',
+  VAULTS = 'vaults',
+  POSITIONS = 'positions',
+}
+
+export enum LiquidStakingAction {
+  DEPOSIT = 'deposit',
+  REDEEM = 'redeem',
+  CREATE_VAULT = 'create-vault',
+}
+
 export const ERROR_NOT_ENOUGH_BALANCE = 'Not enough available balance';

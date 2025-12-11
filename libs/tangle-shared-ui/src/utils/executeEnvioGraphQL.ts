@@ -27,6 +27,22 @@ export const getEnvioNetwork = (): EnvioNetwork => {
   return 'local';
 };
 
+// Map chain ID to Envio network
+export const getEnvioNetworkFromChainId = (chainId: number): EnvioNetwork => {
+  switch (chainId) {
+    case 31337: // Anvil/Hardhat local
+    case 84532: // Base Sepolia (local testnet)
+      return 'local';
+    case 421614: // Arbitrum Sepolia
+      return 'testnet';
+    case 8453: // Base Mainnet
+    case 42161: // Arbitrum One
+      return 'mainnet';
+    default:
+      return 'local';
+  }
+};
+
 // Get the Envio endpoint for a given network
 export const getEnvioEndpoint = (network?: EnvioNetwork): string => {
   return ENVIO_ENDPOINTS[network ?? getEnvioNetwork()];

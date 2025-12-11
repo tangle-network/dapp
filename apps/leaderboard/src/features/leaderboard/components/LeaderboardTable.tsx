@@ -31,7 +31,11 @@ import { twMerge } from 'tailwind-merge';
 import { useLatestTimestamp } from '../../../queries';
 import { SyncProgressIndicator } from '../../indexingProgress';
 import { RoleFilterEnum, SEVEN_DAYS_IN_SECONDS } from '../constants';
-import { getAccountIdsForRoles, useLeaderboard, useRoleAccounts } from '../queries';
+import {
+  getAccountIdsForRoles,
+  useLeaderboard,
+  useRoleAccounts,
+} from '../queries';
 import { Account } from '../types';
 import { createAccountExplorerUrl } from '../utils/createAccountExplorerUrl';
 import { processLeaderboardRecord } from '../utils/processLeaderboardRecord';
@@ -171,9 +175,7 @@ export const LeaderboardTable = () => {
 
   const handleRoleToggle = useCallback((role: RoleFilterEnum) => {
     setSelectedRoles((prev) =>
-      prev.includes(role)
-        ? prev.filter((r) => r !== role)
-        : [...prev, role],
+      prev.includes(role) ? prev.filter((r) => r !== role) : [...prev, role],
     );
     setPagination((prev) => ({ ...prev, pageIndex: 0 }));
   }, []);
@@ -189,10 +191,8 @@ export const LeaderboardTable = () => {
     error: timestampError,
   } = useLatestTimestamp(networkTab);
 
-  const {
-    data: roleAccounts,
-    isPending: isRoleAccountsPending,
-  } = useRoleAccounts(networkTab);
+  const { data: roleAccounts, isPending: isRoleAccountsPending } =
+    useRoleAccounts(networkTab);
 
   const roleFilteredAccountIds = useMemo(() => {
     if (selectedRoles.length === 0 || !roleAccounts) {

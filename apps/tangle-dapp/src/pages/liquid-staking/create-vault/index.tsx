@@ -61,7 +61,7 @@ const CreateVaultForm: FC = () => {
     handleSubmit,
     watch,
     reset,
-    formState: { errors, isSubmitting, isValid },
+    formState: { errors: _errors, isSubmitting, isValid },
   } = useForm<CreateVaultFormFields>({
     mode: 'onChange',
     defaultValues: {

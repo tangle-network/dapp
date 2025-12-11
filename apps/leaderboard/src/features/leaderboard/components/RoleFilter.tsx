@@ -76,9 +76,7 @@ export const RoleFilter: FC<RoleFilterProps> = ({
               <span
                 className={cx(
                   'px-1.5 py-0.5 rounded-full text-xs',
-                  isSelected
-                    ? 'bg-blue-500/30'
-                    : 'bg-mono-40 dark:bg-mono-160',
+                  isSelected ? 'bg-blue-500/30' : 'bg-mono-40 dark:bg-mono-160',
                 )}
               >
                 {count}

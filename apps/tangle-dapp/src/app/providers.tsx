@@ -3,6 +3,7 @@ import { RainbowKitProvider, darkTheme } from '@rainbow-me/rainbowkit';
 import '@rainbow-me/rainbowkit/styles.css';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { config } from '@tangle-network/dapp-config/wagmi-config';
+import { DataSourceProvider } from '@tangle-network/tangle-shared-ui/context/DataSourceContext';
 import { UIProvider } from '@tangle-network/ui-components';
 import { type PropsWithChildren, type ReactNode, useState } from 'react';
 import { WagmiProvider } from 'wagmi';
@@ -37,13 +38,15 @@ const Providers = ({ children }: PropsWithChildren): ReactNode => {
             })}
             modalSize="compact"
           >
-            <OFACFilterProvider
-              isActivated={process.env.NODE_ENV !== 'development'}
-              blockedRegions={blockedRegions}
-              blockedCountryCodes={blockedCountryCodes}
-            >
-              {children}
-            </OFACFilterProvider>
+            <DataSourceProvider>
+              <OFACFilterProvider
+                isActivated={process.env.NODE_ENV !== 'development'}
+                blockedRegions={blockedRegions}
+                blockedCountryCodes={blockedCountryCodes}
+              >
+                {children}
+              </OFACFilterProvider>
+            </DataSourceProvider>
           </RainbowKitProvider>
         </QueryClientProvider>
       </WagmiProvider>

@@ -1,37 +1,46 @@
 import { ChainConfig } from '@tangle-network/dapp-config';
 import { calculateTypedChainId } from '@tangle-network/dapp-types/TypedChainId';
+import isDefined from '@tangle-network/dapp-types/utils/isDefined';
+import { LockUnlockLineIcon } from '@tangle-network/icons/LockUnlockLineIcon';
 import ListModal from '@tangle-network/tangle-shared-ui/components/ListModal';
 import { Card, isEvmAddress } from '@tangle-network/ui-components';
+import Button from '@tangle-network/ui-components/components/buttons/Button';
 import { Modal } from '@tangle-network/ui-components/components/Modal';
+import type { TextFieldInputProps } from '@tangle-network/ui-components/components/TextField/types';
+import { TransactionInputCard } from '@tangle-network/ui-components/components/TransactionInputCard';
 import { useModal } from '@tangle-network/ui-components/hooks/useModal';
-import { FC, useCallback, useEffect, useMemo, useState } from 'react';
+import { Typography } from '@tangle-network/ui-components/typography/Typography';
+import { FC, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import { Address, formatUnits, parseUnits } from 'viem';
+import { useAccount } from 'wagmi';
+import ErrorMessage from '../../../components/ErrorMessage';
+import ActionButtonBase from '../../../components/restaking/ActionButtonBase';
+import BlueprintSelection from '../../../components/restaking/BlueprintSelection';
 import StyleContainer from '../../../components/restaking/StyleContainer';
+import { SUPPORTED_RESTAKE_DEPOSIT_TYPED_CHAIN_IDS } from '../../../constants/restake';
+import useBlueprintStore from '../../../context/useBlueprintStore';
+import useActiveTypedChainId from '../../../hooks/useActiveTypedChainId';
 import useQueryState from '../../../hooks/useQueryState';
 import { QueryParamKey } from '../../../types';
 import type { EvmDelegationFormFields } from '../../../types/restake';
-import filterBy from '@tangle-network/tangle-shared-ui/utils/filterBy';
-import Form from '../Form';
+import decimalsToStep from '../../../utils/decimalsToStep';
+import AssetPlaceholder from '../AssetPlaceholder';
 import RestakeActionTabs from '../RestakeActionTabs';
 import SupportedChainModal from '../SupportedChainModal';
 import useSwitchChain from '../useSwitchChain';
 import Details from './Details';
-import BlueprintSelection from '../../../components/restaking/BlueprintSelection';
-import useBlueprintStore from '../../../context/useBlueprintStore';
+import filterBy from '@tangle-network/tangle-shared-ui/utils/filterBy';
 
-// EVM hooks
 import {
   useDelegator,
   useOperatorMap,
 } from '@tangle-network/tangle-shared-ui/data/graphql';
 import { useDelegateTx } from '@tangle-network/tangle-shared-ui/data/tx';
 import { TxStatus } from '@tangle-network/tangle-shared-ui/hooks/useContractWrite';
-import { useAccount } from 'wagmi';
 import { useEvmAssetMetadatas } from '@tangle-network/tangle-shared-ui/hooks/useEvmAssetMetadatas';
 import type { EvmAddress } from '@tangle-network/ui-components/types/address';
 
-// Asset item for selection
 type AssetItem = {
   id: Address;
   name: string;
@@ -39,10 +48,9 @@ type AssetItem = {
   decimals: number;
   balance: bigint;
   delegatedAmount: bigint;
-  availableBalance: bigint; // balance - delegated
+  availableBalance: bigint;
 };
 
-// Operator item for selection
 type OperatorItem = {
   address: Address;
   stake: bigint;
@@ -52,17 +60,23 @@ type OperatorItem = {
 
 const RestakeDelegateForm: FC = () => {
   const { address: userAddress } = useAccount();
+  const activeTypedChainId = useActiveTypedChainId();
+  const switchChain = useSwitchChain();
+
   const {
     register,
     setValue: setFormValue,
     handleSubmit,
     watch,
+    reset,
     formState: { errors, isValid, isSubmitting },
   } = useForm<EvmDelegationFormFields>({
     mode: 'onChange',
   });
 
   const selectedOperatorAddress = watch('operatorAddress');
+  const selectedAssetId = watch('assetId');
+  const amount = watch('amount');
 
   const [operatorParam, setOperatorParam] = useQueryState(
     QueryParamKey.RESTAKE_OPERATOR,
@@ -79,33 +93,31 @@ const RestakeDelegateForm: FC = () => {
     [setFormValue],
   );
 
-  // Register select fields on mount.
   useEffect(() => {
     register('assetId', { required: 'Asset is required' });
     register('operatorAddress', { required: 'Operator is required' });
   }, [register]);
 
-  // Fetch data using v2 hooks
+  useEffect(() => {
+    reset();
+  }, [activeTypedChainId, reset]);
+
   const { data: delegator } = useDelegator(userAddress);
   const { data: operatorMap } = useOperatorMap();
   const blueprintSelection = useBlueprintStore((store) => store.selection);
 
-  // Get token addresses for metadata fetch
   const tokenAddresses = useMemo(() => {
     if (!delegator?.assetPositions) return [];
     return delegator.assetPositions.map((pos) => pos.token);
   }, [delegator?.assetPositions]);
 
-  // Fetch token metadata
   const { data: tokenMetadatas } = useEvmAssetMetadatas(
     tokenAddresses as EvmAddress[],
   );
 
-  const switchChain = useSwitchChain();
   const { status: delegateTxStatus, execute: executeDelegateTx } =
     useDelegateTx();
 
-  // Set the operatorAddress from the URL param.
   useEffect(() => {
     if (
       !operatorParam ||
@@ -117,8 +129,6 @@ const RestakeDelegateForm: FC = () => {
     }
 
     setFormValue('operatorAddress', operatorParam as Address);
-
-    // Remove the param to prevent reuse after initial load.
     setOperatorParam(null);
   }, [operatorMap, operatorParam, setFormValue, setOperatorParam]);
 
@@ -147,7 +157,6 @@ const RestakeDelegateForm: FC = () => {
     null,
   );
 
-  // Build deposited assets list from delegator positions
   const depositedAssets = useMemo<AssetItem[]>(() => {
     if (!delegator?.assetPositions || !tokenMetadatas) {
       return [];
@@ -166,7 +175,6 @@ const RestakeDelegateForm: FC = () => {
         const availableBalance =
           position.totalDeposited - position.delegatedAmount;
 
-        // Only show assets with available balance
         if (availableBalance <= BigInt(0)) {
           return null;
         }
@@ -184,7 +192,6 @@ const RestakeDelegateForm: FC = () => {
       .filter((item): item is AssetItem => item !== null);
   }, [delegator?.assetPositions, tokenMetadatas]);
 
-  // Set default asset
   useEffect(() => {
     if (depositedAssets.length > 0 && !selectedAssetItem) {
       const firstAsset = depositedAssets[0];
@@ -212,47 +219,6 @@ const RestakeDelegateForm: FC = () => {
     [closeChainModal, switchChain],
   );
 
-  const isReady =
-    !isSubmitting &&
-    selectedAssetItem !== null &&
-    executeDelegateTx !== null &&
-    delegateTxStatus !== TxStatus.PROCESSING;
-
-  const onSubmit = useCallback<SubmitHandler<EvmDelegationFormFields>>(
-    async ({ amount, assetId, operatorAddress }) => {
-      if (!isReady || !selectedAssetItem) {
-        return;
-      }
-
-      const amountBigInt = parseUnits(amount, selectedAssetItem.decimals);
-
-      if (amountBigInt <= BigInt(0)) {
-        return;
-      }
-
-      await executeDelegateTx({
-        operator: operatorAddress,
-        token: assetId,
-        amount: amountBigInt,
-        blueprintSelection: blueprintSelection.length > 0 ? 'FIXED' : 'ALL',
-        blueprintIds: blueprintSelection.map((id) => BigInt(id)),
-      });
-
-      setValue('operatorAddress', '' as Address, { shouldValidate: false });
-      setValue('amount', '', { shouldValidate: false });
-      setValue('assetId', '' as Address, { shouldValidate: false });
-      setSelectedAssetItem(null);
-    },
-    [
-      blueprintSelection,
-      executeDelegateTx,
-      isReady,
-      selectedAssetItem,
-      setValue,
-    ],
-  );
-
-  // Build operators list
   const operators = useMemo<OperatorItem[]>(() => {
     if (!operatorMap) return [];
 
@@ -274,227 +240,298 @@ const RestakeDelegateForm: FC = () => {
     [closeOperatorModal, setValue],
   );
 
+  const { maxAmount, formattedMaxAmount } = useMemo(() => {
+    if (!selectedAssetItem) {
+      return { maxAmount: undefined, formattedMaxAmount: undefined };
+    }
+
+    const formatted = Number(
+      formatUnits(
+        selectedAssetItem.availableBalance,
+        selectedAssetItem.decimals,
+      ),
+    );
+
+    return {
+      maxAmount: selectedAssetItem.availableBalance,
+      formattedMaxAmount: formatted,
+    };
+  }, [selectedAssetItem]);
+
+  const customAmountProps = useMemo<TextFieldInputProps>(() => {
+    const step = decimalsToStep(selectedAssetItem?.decimals);
+
+    return {
+      type: 'number',
+      step,
+      ...register('amount', {
+        required: 'Amount is required',
+        validate: (value) => {
+          if (!selectedAssetItem) return 'Select an asset first';
+          const parsed = parseUnits(value, selectedAssetItem.decimals);
+          if (parsed <= BigInt(0)) return 'Amount must be greater than 0';
+          if (maxAmount && parsed > maxAmount) return 'Insufficient balance';
+          return true;
+        },
+      }),
+    };
+  }, [maxAmount, register, selectedAssetItem]);
+
+  const displayError = useMemo(() => {
+    return errors.operatorAddress !== undefined || !selectedOperatorAddress
+      ? 'Select Operator'
+      : errors.assetId !== undefined || !selectedAssetId
+        ? 'Select Asset'
+        : !amount
+          ? 'Enter Amount'
+          : errors.amount !== undefined
+            ? 'Invalid Amount'
+            : undefined;
+  }, [
+    errors.operatorAddress,
+    errors.assetId,
+    errors.amount,
+    selectedOperatorAddress,
+    selectedAssetId,
+    amount,
+  ]);
+
+  const isTransacting =
+    isSubmitting || delegateTxStatus === TxStatus.PROCESSING;
+
+  const isReady =
+    !isTransacting && selectedAssetItem !== null && executeDelegateTx !== null;
+
+  const resetForm = useCallback(() => {
+    setValue('amount', '', { shouldValidate: false });
+    setValue('assetId', '' as Address, { shouldValidate: false });
+    setValue('operatorAddress', '' as Address, { shouldValidate: false });
+    setSelectedAssetItem(null);
+  }, [setValue]);
+
+  const onSubmit = useCallback<SubmitHandler<EvmDelegationFormFields>>(
+    async ({ amount, assetId, operatorAddress }) => {
+      if (!isReady || !selectedAssetItem) {
+        return;
+      }
+
+      const amountBigInt = parseUnits(amount, selectedAssetItem.decimals);
+
+      if (amountBigInt <= BigInt(0)) {
+        return;
+      }
+
+      try {
+        await executeDelegateTx({
+          operator: operatorAddress,
+          token: assetId,
+          amount: amountBigInt,
+          blueprintSelection: blueprintSelection.length > 0 ? 'FIXED' : 'ALL',
+          blueprintIds: blueprintSelection.map((id) => BigInt(id)),
+        });
+        resetForm();
+      } catch (error) {
+        console.error('Transaction failed:', error);
+      }
+    },
+    [
+      blueprintSelection,
+      executeDelegateTx,
+      isReady,
+      resetForm,
+      selectedAssetItem,
+    ],
+  );
+
   return (
-    <StyleContainer className="md:min-w-[512px]">
+    <StyleContainer>
       <RestakeActionTabs />
 
-      <Card withShadow tightPadding>
-        <Form onSubmit={handleSubmit(onSubmit)}>
-          <div className="flex flex-col h-full gap-4 grow">
-            <div className="flex flex-col gap-2">
-              {/* Operator Selection */}
-              <div className="space-y-2">
-                <label className="text-sm font-medium text-mono-140 dark:text-mono-80">
-                  Operator
-                </label>
-                <button
-                  type="button"
+      <Card withShadow tightPadding className="relative md:min-w-[512px]">
+        <form className="space-y-4" onSubmit={handleSubmit(onSubmit)}>
+          <div className="flex flex-col items-start justify-stretch">
+            <TransactionInputCard.Root
+              tokenSymbol={selectedAssetItem?.symbol}
+              className="bg-mono-20 dark:bg-mono-180"
+            >
+              <TransactionInputCard.Header>
+                <TransactionInputCard.ChainSelector
+                  placeholder="Select Operator"
                   onClick={openOperatorModal}
-                  className="w-full px-4 py-3 text-left border rounded-lg bg-mono-0 dark:bg-mono-180 border-mono-60 dark:border-mono-140 hover:bg-mono-20 dark:hover:bg-mono-160"
-                >
-                  {selectedOperatorAddress ? (
-                    <span className="font-mono text-sm">
-                      {selectedOperatorAddress.slice(0, 8)}...
-                      {selectedOperatorAddress.slice(-6)}
-                    </span>
-                  ) : (
-                    <span className="text-mono-100">Select an operator</span>
-                  )}
-                </button>
-                {errors.operatorAddress && (
-                  <p className="text-xs text-red-50">
-                    {errors.operatorAddress.message}
-                  </p>
-                )}
-              </div>
+                  {...(selectedOperatorAddress
+                    ? {
+                        renderBody: () => (
+                          <div className="flex flex-col">
+                            <span className="font-mono text-sm">
+                              {selectedOperatorAddress.slice(0, 8)}...
+                              {selectedOperatorAddress.slice(-6)}
+                            </span>
+                            <span className="text-xs text-mono-100">
+                              Operator
+                            </span>
+                          </div>
+                        ),
+                      }
+                    : {})}
+                />
+                <TransactionInputCard.MaxAmountButton
+                  maxAmount={formattedMaxAmount}
+                  tooltipBody="Available to Delegate"
+                  Icon={
+                    useRef({
+                      enabled: <LockUnlockLineIcon />,
+                      disabled: <LockUnlockLineIcon />,
+                    }).current
+                  }
+                  onClick={() => {
+                    if (formattedMaxAmount !== undefined) {
+                      setValue('amount', formattedMaxAmount.toString(), {
+                        shouldValidate: true,
+                      });
+                    }
+                  }}
+                />
+              </TransactionInputCard.Header>
 
-              {/* Asset Selection & Amount */}
-              <div className="space-y-2">
-                <div className="flex items-center justify-between">
-                  <label className="text-sm font-medium text-mono-140 dark:text-mono-80">
-                    Amount
-                  </label>
-                  {selectedAssetItem && (
-                    <button
-                      type="button"
-                      onClick={() => {
-                        const maxAmount = formatUnits(
-                          selectedAssetItem.availableBalance,
-                          selectedAssetItem.decimals,
-                        );
-                        setValue('amount', maxAmount);
-                      }}
-                      className="text-xs text-blue-50 hover:text-blue-40"
-                    >
-                      Max:{' '}
-                      {formatUnits(
-                        selectedAssetItem.availableBalance,
-                        selectedAssetItem.decimals,
-                      )}{' '}
-                      {selectedAssetItem.symbol}
-                    </button>
-                  )}
-                </div>
-
-                <div className="flex gap-2">
-                  <input
-                    {...register('amount', {
-                      required: 'Amount is required',
-                      validate: (value) => {
-                        if (!selectedAssetItem) return 'Select an asset first';
-                        const parsed = parseUnits(
-                          value,
-                          selectedAssetItem.decimals,
-                        );
-                        if (parsed <= BigInt(0))
-                          return 'Amount must be greater than 0';
-                        if (parsed > selectedAssetItem.availableBalance)
-                          return 'Insufficient balance';
-                        return true;
-                      },
-                    })}
-                    type="text"
-                    placeholder="0.0"
-                    className="flex-1 px-3 py-2 border rounded-lg bg-mono-0 dark:bg-mono-180 border-mono-60 dark:border-mono-140"
-                  />
-
-                  <button
-                    type="button"
-                    onClick={openAssetModal}
-                    className="flex items-center gap-2 px-4 py-2 border rounded-lg bg-mono-0 dark:bg-mono-180 border-mono-60 dark:border-mono-140 hover:bg-mono-20 dark:hover:bg-mono-160"
-                  >
-                    {selectedAssetItem ? (
-                      <span className="font-medium">
-                        {selectedAssetItem.symbol}
-                      </span>
-                    ) : (
-                      <span className="text-mono-100">Select token</span>
-                    )}
-                  </button>
-                </div>
-
-                {errors.amount && (
-                  <p className="text-xs text-red-50">{errors.amount.message}</p>
-                )}
-              </div>
-
-              <BlueprintSelection operatorAddress={selectedOperatorAddress} />
-            </div>
-
-            <div className="flex flex-col justify-between gap-4 grow">
-              <Details />
-
-              <DelegateActionButton
-                errors={errors}
-                isValid={isValid && isReady}
-                openChainModal={openChainModal}
-                isSubmitting={
-                  isSubmitting || delegateTxStatus === TxStatus.PROCESSING
+              <TransactionInputCard.Body
+                customAmountProps={customAmountProps}
+                tokenSelectorProps={
+                  useRef({
+                    placeholder: <AssetPlaceholder />,
+                    onClick: openAssetModal,
+                    ...(selectedAssetItem && formattedMaxAmount !== undefined
+                      ? {
+                          renderBody: () => (
+                            <div className="flex items-center gap-2">
+                              <Typography variant="h5" fw="bold">
+                                {selectedAssetItem.symbol}
+                              </Typography>
+                              <div className="flex flex-col gap-1">
+                                <Typography
+                                  variant="body2"
+                                  className="text-mono-120 dark:text-mono-100"
+                                >
+                                  Available: {formattedMaxAmount}{' '}
+                                  {selectedAssetItem.symbol}
+                                </Typography>
+                              </div>
+                            </div>
+                          ),
+                        }
+                      : {}),
+                  }).current
                 }
               />
-            </div>
+            </TransactionInputCard.Root>
+
+            <ErrorMessage>{errors.amount?.message}</ErrorMessage>
           </div>
 
-          <ListModal
-            title="Select Asset"
-            isOpen={isAssetModalOpen}
-            setIsOpen={updateAssetModal}
-            titleWhenEmpty="No Assets Available"
-            descriptionWhenEmpty="Have you made a deposit on this network yet?"
-            items={depositedAssets}
-            searchInputId="restake-delegate-asset-search"
-            searchPlaceholder="Search assets..."
-            getItemKey={(item) => item.id}
-            onSelect={handleAssetSelect}
-            filterItem={(item, query) =>
-              filterBy(query, [item.name, item.symbol, item.id])
-            }
-            renderItem={(asset) => (
-              <div className="flex items-center justify-between w-full p-2">
-                <div className="flex flex-col">
-                  <span className="font-medium">{asset.symbol}</span>
-                  <span className="text-xs text-mono-100">{asset.name}</span>
-                </div>
-                <div className="flex flex-col items-end">
-                  <span className="text-sm">
-                    {formatUnits(asset.availableBalance, asset.decimals)}
-                  </span>
-                  <span className="text-xs text-mono-100">Available</span>
-                </div>
-              </div>
-            )}
-          />
+          <BlueprintSelection operatorAddress={selectedOperatorAddress} />
 
-          <ListModal
-            title="Select Operator"
-            isOpen={isOperatorModalOpen}
-            setIsOpen={updateOperatorModal}
-            titleWhenEmpty="No Operators Available"
-            descriptionWhenEmpty="Looks like there aren't any registered operators in this network yet."
-            items={operators}
-            searchInputId="restake-delegate-operator-search"
-            searchPlaceholder="Search operators..."
-            getItemKey={(item) => item.address}
-            onSelect={handleOnSelectOperator}
-            filterItem={(item, query) => filterBy(query, [item.address])}
-            renderItem={({ address, delegationCount }) => (
-              <div className="flex items-center justify-between w-full p-2">
-                <div className="flex flex-col">
-                  <span className="font-mono text-sm">
-                    {address.slice(0, 10)}...{address.slice(-8)}
-                  </span>
-                  <span className="text-xs text-mono-100">
-                    {delegationCount} delegations
-                  </span>
-                </div>
-              </div>
-            )}
-          />
+          <Details />
 
-          <Modal open={isChainModalOpen} onOpenChange={updateChainModal}>
-            <SupportedChainModal
-              onClose={closeChainModal}
-              onChainChange={handleChainChange}
-            />
-          </Modal>
-        </Form>
+          <ActionButtonBase>
+            {(isLoading, loadingText) => {
+              const activeChainSupported =
+                isDefined(activeTypedChainId) &&
+                SUPPORTED_RESTAKE_DEPOSIT_TYPED_CHAIN_IDS.includes(
+                  activeTypedChainId,
+                );
+
+              if (!activeChainSupported) {
+                return (
+                  <Button
+                    isFullWidth
+                    type="button"
+                    isLoading={isLoading}
+                    loadingText={loadingText}
+                    onClick={openChainModal}
+                  >
+                    Switch to supported chain
+                  </Button>
+                );
+              }
+
+              return (
+                <Button
+                  isDisabled={!isValid || isDefined(displayError) || !isReady}
+                  type="submit"
+                  isFullWidth
+                  isLoading={isTransacting || isLoading}
+                  loadingText={loadingText}
+                >
+                  {displayError ?? 'Delegate'}
+                </Button>
+              );
+            }}
+          </ActionButtonBase>
+        </form>
       </Card>
+
+      <ListModal
+        title="Select Asset"
+        isOpen={isAssetModalOpen}
+        setIsOpen={updateAssetModal}
+        titleWhenEmpty="No Assets Available"
+        descriptionWhenEmpty="Have you made a deposit on this network yet?"
+        items={depositedAssets}
+        searchInputId="restake-delegate-asset-search"
+        searchPlaceholder="Search assets..."
+        getItemKey={(item) => item.id}
+        onSelect={handleAssetSelect}
+        filterItem={(item, query) =>
+          filterBy(query, [item.name, item.symbol, item.id])
+        }
+        renderItem={(asset) => (
+          <div className="flex items-center justify-between w-full p-2">
+            <div className="flex flex-col">
+              <span className="font-medium">{asset.symbol}</span>
+              <span className="text-xs text-mono-100">{asset.name}</span>
+            </div>
+            <div className="flex flex-col items-end">
+              <span className="text-sm">
+                {formatUnits(asset.availableBalance, asset.decimals)}
+              </span>
+              <span className="text-xs text-mono-100">Available</span>
+            </div>
+          </div>
+        )}
+      />
+
+      <ListModal
+        title="Select Operator"
+        isOpen={isOperatorModalOpen}
+        setIsOpen={updateOperatorModal}
+        titleWhenEmpty="No Operators Available"
+        descriptionWhenEmpty="Looks like there aren't any registered operators in this network yet."
+        items={operators}
+        searchInputId="restake-delegate-operator-search"
+        searchPlaceholder="Search operators..."
+        getItemKey={(item) => item.address}
+        onSelect={handleOnSelectOperator}
+        filterItem={(item, query) => filterBy(query, [item.address])}
+        renderItem={({ address, delegationCount }) => (
+          <div className="flex items-center justify-between w-full p-2">
+            <div className="flex flex-col">
+              <span className="font-mono text-sm">
+                {address.slice(0, 10)}...{address.slice(-8)}
+              </span>
+              <span className="text-xs text-mono-100">
+                {delegationCount} delegations
+              </span>
+            </div>
+          </div>
+        )}
+      />
+
+      <Modal open={isChainModalOpen} onOpenChange={updateChainModal}>
+        <SupportedChainModal
+          onClose={closeChainModal}
+          onChainChange={handleChainChange}
+        />
+      </Modal>
     </StyleContainer>
-  );
-};
-
-// EVM Action Button
-interface DelegateActionButtonProps {
-  errors: ReturnType<
-    typeof useForm<EvmDelegationFormFields>
-  >['formState']['errors'];
-  isValid: boolean;
-  openChainModal: () => void;
-  isSubmitting: boolean;
-}
-
-const DelegateActionButton: FC<DelegateActionButtonProps> = ({
-  errors,
-  isValid,
-  isSubmitting,
-}) => {
-  const displayError =
-    errors.operatorAddress !== undefined
-      ? 'Select Operator'
-      : errors.assetId !== undefined
-        ? 'Select Asset'
-        : errors.amount !== undefined
-          ? 'Enter Amount'
-          : undefined;
-
-  return (
-    <button
-      type="submit"
-      disabled={!isValid || displayError !== undefined || isSubmitting}
-      className="w-full px-4 py-3 font-medium text-white rounded-lg bg-blue-50 hover:bg-blue-40 disabled:bg-mono-80 disabled:cursor-not-allowed"
-    >
-      {isSubmitting ? 'Delegating...' : (displayError ?? 'Delegate')}
-    </button>
   );
 };
 

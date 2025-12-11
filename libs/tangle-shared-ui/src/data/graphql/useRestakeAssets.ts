@@ -1,14 +1,17 @@
 /**
  * Hook for fetching restaking assets with metadata and balances.
  * Combines GraphQL restaking asset data with ERC20 token metadata and user balances.
+ * Automatically falls back to on-chain queries when the indexer is unavailable.
  */
 
 import { useQuery } from '@tanstack/react-query';
 import { Address, erc20Abi } from 'viem';
-import { useAccount, useBalance, usePublicClient } from 'wagmi';
+import { useAccount, useBalance, useChainId, usePublicClient } from 'wagmi';
 import { useRestakingAssets, type RestakingAsset } from './useRestakingAssets';
 import { EnvioNetwork } from '../../utils/executeEnvioGraphQL';
+import { useEnvioHealthCheckByChainId } from '../../utils/checkEnvioHealth';
 import fetchErc20TokenMetadata from '../../utils/fetchErc20TokenMetadata';
+import useOnChainRestakeAssets from '../restake/useOnChainRestakeAssets';
 import type { EvmAddress } from '@tangle-network/ui-components/types/address';
 
 // Token metadata from ERC20
@@ -32,6 +35,7 @@ export type RestakeAssetMap = Map<Address, RestakeAsset>;
 
 /**
  * Hook to fetch restaking assets with full metadata and balances.
+ * Automatically falls back to on-chain queries when the indexer is unavailable.
  *
  * @example
  * ```tsx
@@ -49,10 +53,23 @@ export const useRestakeAssets = (options?: {
   enabled?: boolean;
 }) => {
   const { network, enabled = true } = options ?? {};
+  const chainId = useChainId();
   const { address: userAddress } = useAccount();
   const publicClient = usePublicClient();
 
-  // 1. Fetch restaking assets from GraphQL indexer
+  // Check if indexer is healthy
+  const { data: isIndexerHealthy, isLoading: isCheckingHealth } =
+    useEnvioHealthCheckByChainId(chainId);
+
+  // Determine if we should use on-chain fallback
+  const useOnChainFallback = !isCheckingHealth && !isIndexerHealthy;
+
+  // On-chain fallback hook (always called but may be disabled)
+  const onChainResult = useOnChainRestakeAssets({
+    enabled: enabled && useOnChainFallback,
+  });
+
+  // 1. Fetch restaking assets from GraphQL indexer (only if healthy)
   const {
     data: restakingAssets,
     isLoading: isLoadingAssets,
@@ -60,7 +77,7 @@ export const useRestakeAssets = (options?: {
   } = useRestakingAssets({
     network,
     enabledOnly: true,
-    enabled,
+    enabled: enabled && !useOnChainFallback,
   });
 
   // Get token addresses from restaking assets
@@ -79,7 +96,11 @@ export const useRestakeAssets = (options?: {
         tokenAddresses as EvmAddress[],
       );
     },
-    enabled: enabled && !!publicClient && tokenAddresses.length > 0,
+    enabled:
+      enabled &&
+      !useOnChainFallback &&
+      !!publicClient &&
+      tokenAddresses.length > 0,
     staleTime: Infinity, // Token metadata doesn't change
   });
 
@@ -128,13 +149,17 @@ export const useRestakeAssets = (options?: {
       }
     },
     enabled:
-      enabled && !!publicClient && !!userAddress && tokenAddresses.length > 0,
+      enabled &&
+      !useOnChainFallback &&
+      !!publicClient &&
+      !!userAddress &&
+      tokenAddresses.length > 0,
     staleTime: 15_000, // 15 seconds - balances can change frequently
     refetchInterval: 30_000, // Auto-refresh every 30 seconds
   });
 
-  // 4. Combine all data into RestakeAsset map
-  const { data: assets } = useQuery({
+  // 4. Combine all data into RestakeAsset map (only when using indexer)
+  const { data: graphqlAssets } = useQuery({
     queryKey: ['restakeAssets', restakingAssets, tokenMetadatas, balances],
     queryFn: () => {
       if (!restakingAssets || !tokenMetadatas) {
@@ -171,22 +196,40 @@ export const useRestakeAssets = (options?: {
 
       return assetMap;
     },
-    enabled: !!restakingAssets && !!tokenMetadatas,
+    enabled: !useOnChainFallback && !!restakingAssets && !!tokenMetadatas,
     staleTime: 15_000,
   });
 
   // Refetch function that refreshes all data
   const refetch = async () => {
-    await Promise.all([refetchAssets(), refetchBalances()]);
+    if (useOnChainFallback) {
+      await onChainResult.refetch();
+    } else {
+      await Promise.all([refetchAssets(), refetchBalances()]);
+    }
   };
 
+  // Use on-chain data if fallback is active, otherwise use GraphQL data
+  if (useOnChainFallback) {
+    return {
+      assets: onChainResult.assets,
+      assetList: onChainResult.assetList,
+      isLoading: isCheckingHealth || onChainResult.isLoading,
+      isLoadingBalances: onChainResult.isLoadingBalances,
+      refetch,
+      refetchBalances: onChainResult.refetchBalances,
+      source: 'onchain' as const,
+    };
+  }
+
   return {
-    assets: assets ?? null,
-    assetList: assets ? Array.from(assets.values()) : [],
-    isLoading: isLoadingAssets || isLoadingMetadata,
+    assets: graphqlAssets ?? null,
+    assetList: graphqlAssets ? Array.from(graphqlAssets.values()) : [],
+    isLoading: isCheckingHealth || isLoadingAssets || isLoadingMetadata,
     isLoadingBalances,
     refetch,
     refetchBalances,
+    source: 'graphql' as const,
   };
 };
 

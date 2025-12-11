@@ -1,10 +1,12 @@
 import {
+  CoinsStackedLineIcon,
   DocumentationIcon,
   FaucetIcon,
   GlobalLine,
   HomeFillIcon,
   ShuffleLine,
   TokenSwapFill,
+  WaterDropletIcon,
 } from '@tangle-network/icons';
 import {
   MobileSidebarProps,
@@ -38,13 +40,20 @@ const SIDEBAR_STATIC_ITEMS: SideBarItemProps[] = [
     Icon: TokenSwapFill,
     subItems: [],
   },
-  // {
-  //   name: 'Liquid Stake',
-  //   href: PagePath.LIQUID_STAKING,
-  //   isInternal: true,
-  //   Icon: WaterDropletIcon,
-  //   subItems: [],
-  // },
+  {
+    name: 'Liquid Stake',
+    href: PagePath.LIQUID_STAKING,
+    isInternal: true,
+    Icon: WaterDropletIcon,
+    subItems: [],
+  },
+  {
+    name: 'Native Restake',
+    href: PagePath.NATIVE_RESTAKE,
+    isInternal: true,
+    Icon: CoinsStackedLineIcon,
+    subItems: [],
+  },
   {
     name: 'Bridge',
     href: PagePath.BRIDGE,
