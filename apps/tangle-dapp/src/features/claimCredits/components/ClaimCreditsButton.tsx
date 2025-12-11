@@ -87,7 +87,7 @@ const ClaimCreditsButton = () => {
         </div>
 
         {data?.amount !== undefined &&
-        data.amount !== BigInt(0) &&
+        !data.amount.isZero() &&
         !meetsMinimumThreshold ? (
           <Typography
             variant="body2"
@@ -136,7 +136,7 @@ const ClaimCreditsButton = () => {
 export default ClaimCreditsButton;
 
 type CreditsButtonProps = {
-  credits?: bigint;
+  credits?: BN;
   offchainAccountId: string;
   setOffchainAccountId: (value: string) => void;
   setInputError: (value: string) => void;
@@ -183,7 +183,7 @@ const CreditsButton = ({
   ]);
 
   const isLoading = useMemo(() => status === TxStatus.PROCESSING, [status]);
-  const hasCredits = useMemo(() => credits && credits !== BigInt(0), [credits]);
+  const hasCredits = useMemo(() => credits && !credits.isZero(), [credits]);
   const meetsMinimumThreshold = useMemo(() => {
     return meetsMinimumClaimThreshold(credits);
   }, [credits]);

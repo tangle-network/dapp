@@ -65,7 +65,7 @@ const ClaimCreditsModal: FC<Props> = ({ isOpen, setIsOpen }) => {
     : '0';
 
   const isLoading = status === TxStatus.PROCESSING;
-  const hasCredits = data?.amount && data.amount !== BigInt(0);
+  const hasCredits = data?.amount && !data.amount.isZero();
   const meetsMinimumThreshold = meetsMinimumClaimThreshold(data?.amount);
   const canClaim = hasCredits && meetsMinimumThreshold;
 

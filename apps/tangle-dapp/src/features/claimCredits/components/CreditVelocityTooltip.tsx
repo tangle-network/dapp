@@ -55,7 +55,7 @@ const CreditVelocityTooltip: FC<Props> = ({
           You need at least {formattedMinimum} {tokenSymbol} to claim credits.
         </Typography>
 
-        {creditsNeeded !== BigInt(0) && (
+        {!creditsNeeded.isZero() && (
           <Typography
             variant="body2"
             className="text-mono-120 dark:text-mono-80"

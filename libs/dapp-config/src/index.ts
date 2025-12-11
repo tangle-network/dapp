@@ -4,5 +4,4 @@ export { default as chainsPopulated } from './chains/chainsPopulated';
 export * from './constants';
 export * from './contracts';
 export * from './localTokens';
-export * from './utils';
 export * from './wallets';
