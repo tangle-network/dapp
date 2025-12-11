@@ -219,6 +219,23 @@ export const RunningInstanceTable: FC<RunningInstanceTableProps> = ({
             <TableCellWrapper removeRightBorder className="p-3 min-h-fit">
               <div className="flex gap-3">
                 <Link
+                  to={PagePath.SERVICE_DETAILS.replace(
+                    ':id',
+                    service.serviceId.toString(),
+                  )}
+                  onClick={(event) => {
+                    event.stopPropagation();
+                  }}
+                >
+                  <Button
+                    variant="utility"
+                    className="uppercase body4 bg-purple-10 dark:bg-purple-120 text-purple-70 dark:text-purple-40 hover:bg-purple-20 dark:hover:bg-purple-110 border border-purple-30 dark:border-purple-100 transition-all duration-200"
+                  >
+                    Manage
+                  </Button>
+                </Link>
+
+                <Link
                   to={PagePath.BLUEPRINTS_DETAILS.replace(
                     ':id',
                     service.blueprintId.toString(),

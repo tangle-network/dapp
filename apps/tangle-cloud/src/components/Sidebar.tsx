@@ -19,7 +19,7 @@ import {
 import { FC } from 'react';
 import { useLocation } from 'react-router';
 import { PagePath } from '../types';
-import { HomeFillIcon } from '@tangle-network/icons';
+import { HomeFillIcon, GiftLineIcon, CoinsLineIcon } from '@tangle-network/icons';
 
 type Props = {
   isExpandedByDefault?: boolean;
@@ -45,6 +45,20 @@ const SIDEBAR_ITEMS: SideBarItemProps[] = [
     href: PagePath.OPERATORS,
     isInternal: true,
     Icon: GlobalLine,
+    subItems: [],
+  },
+  {
+    name: 'Rewards',
+    href: PagePath.REWARDS,
+    isInternal: true,
+    Icon: GiftLineIcon,
+    subItems: [],
+  },
+  {
+    name: 'Earnings',
+    href: PagePath.EARNINGS,
+    isInternal: true,
+    Icon: CoinsLineIcon,
     subItems: [],
   },
 

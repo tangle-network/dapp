@@ -96,3 +96,80 @@ export {
   type ServiceRequest,
   type ServiceStatus,
 } from './useServices';
+
+// Jobs
+export {
+  useJobsByService,
+  useJobResults,
+  type JobCall,
+  type JobResult,
+  type JobStatus,
+} from './useJobs';
+
+// Job Submission
+export {
+  useSubmitJobTx,
+  type SubmitJobParams,
+  type SubmitJobStatus,
+  type UseSubmitJobTxReturn,
+} from './useSubmitJobTx';
+
+// Rewards
+export {
+  usePendingRewards,
+  useRewardHistory,
+  useClaimRewardsTx,
+  formatRewardAmount,
+  type RewardEntry,
+  type AggregatedRewards,
+  type ClaimRewardsStatus,
+  type UseClaimRewardsTxReturn,
+} from './useRewards';
+
+// Blueprint Management
+export {
+  useBlueprintsByOwner,
+  useCreateBlueprintTx,
+  useUpdateBlueprintTx,
+  useTransferBlueprintTx,
+  useDeactivateBlueprintTx,
+  type OwnedBlueprint,
+  type BlueprintDefinition,
+  type BlueprintConfig,
+  type BlueprintMetadata,
+  type BlueprintSource,
+  type SupportedMemberships,
+  type JobDefinition,
+  type PricingModel,
+  type MembershipModel,
+  type BlueprintSourceKind,
+} from './useBlueprintManagement';
+
+// Developer Earnings
+export {
+  useDeveloperEarnings,
+  formatEarningsAmount,
+  type BlueprintEarnings,
+  type EarningEvent,
+  type DeveloperEarningsSummary,
+} from './useDeveloperEarnings';
+
+// Operator Management
+export {
+  useOperatorRegistrations,
+  useRegisterOperatorTx,
+  useUnregisterOperatorTx,
+  useUpdateOperatorPreferencesTx,
+  type OperatorPreferences,
+  type OperatorRegistration,
+} from './useOperatorManagement';
+
+// Slashing
+export {
+  useSlashProposals,
+  useDisputeSlashTx,
+  useCancelSlashTx,
+  formatSlashAmount,
+  type SlashProposal,
+  type SlashStatus,
+} from './useSlashing';

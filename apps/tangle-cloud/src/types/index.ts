@@ -5,11 +5,17 @@ import { TANGLE_DAPP_URL } from '@tangle-network/ui-components/constants';
 export enum PagePath {
   HOME = '/',
   INSTANCES = '/instances',
+  SERVICE_DETAILS = '/services/:id',
   BLUEPRINTS = '/blueprints',
   BLUEPRINTS_DETAILS = '/blueprints/:id',
   BLUEPRINTS_DEPLOY = '/blueprints/:id/deploy',
+  BLUEPRINTS_CREATE = '/blueprints/create',
+  BLUEPRINTS_MANAGE = '/blueprints/manage',
   BLUEPRINTS_REGISTRATION_REVIEW = '/registration-review',
   OPERATORS = '/operators',
+  OPERATORS_MANAGE = '/operators/manage',
+  REWARDS = '/rewards',
+  EARNINGS = '/earnings',
   NOT_FOUND = '/404',
 }
 
