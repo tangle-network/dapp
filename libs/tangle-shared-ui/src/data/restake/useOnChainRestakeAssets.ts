@@ -4,6 +4,7 @@
  */
 
 import { useQuery } from '@tanstack/react-query';
+import { useEffect } from 'react';
 import { Address, erc20Abi } from 'viem';
 import { useAccount, useChainId, usePublicClient } from 'wagmi';
 import { getContractsByChainId } from '@tangle-network/dapp-config/contracts';
@@ -44,6 +45,26 @@ export const useOnChainRestakeAssets = (options?: { enabled?: boolean }) => {
   const potentialTokens = isLocalDev
     ? LOCAL_MOCK_TOKENS.map((t) => t.address)
     : [];
+
+  // Debug: Log the state
+  useEffect(() => {
+    console.log('[useOnChainRestakeAssets]', {
+      enabled,
+      chainId,
+      isLocalDev,
+      potentialTokensCount: potentialTokens.length,
+      hasContracts: !!contracts,
+      multiAssetDelegation: contracts?.multiAssetDelegation,
+      hasPublicClient: !!publicClient,
+    });
+  }, [
+    enabled,
+    chainId,
+    isLocalDev,
+    potentialTokens.length,
+    contracts,
+    publicClient,
+  ]);
 
   // 2. Query which tokens are enabled
   const {
@@ -234,6 +255,23 @@ export const useOnChainRestakeAssets = (options?: { enabled?: boolean }) => {
   const refetch = async () => {
     await Promise.all([refetchConfigs(), refetchBalances()]);
   };
+
+  // Debug: Log results
+  useEffect(() => {
+    console.log('[useOnChainRestakeAssets] Results:', {
+      enabledTokensCount: enabledTokens?.length ?? 0,
+      tokenMetadatasCount: tokenMetadatas?.length ?? 0,
+      assetsCount: assets?.size ?? 0,
+      isLoadingConfigs,
+      isLoadingMetadata,
+    });
+  }, [
+    enabledTokens,
+    tokenMetadatas,
+    assets,
+    isLoadingConfigs,
+    isLoadingMetadata,
+  ]);
 
   return {
     assets: assets ?? null,

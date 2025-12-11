@@ -14,7 +14,8 @@ const Actions: FC = () => {
   // Show faucet for testnet chains
   const isTestnet = chainId === 31337 || chainId === 84532; // Anvil local or Base Sepolia
 
-  const hasBalance = balance && balance.value > BigInt(0);
+  // Check if user has balance for transfer button
+  const _hasBalance = balance && balance.value > BigInt(0);
 
   return (
     <>

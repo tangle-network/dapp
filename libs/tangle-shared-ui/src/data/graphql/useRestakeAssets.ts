@@ -5,6 +5,7 @@
  */
 
 import { useQuery } from '@tanstack/react-query';
+import { useEffect } from 'react';
 import { Address, erc20Abi } from 'viem';
 import { useAccount, useBalance, useChainId, usePublicClient } from 'wagmi';
 import { useRestakingAssets, type RestakingAsset } from './useRestakingAssets';
@@ -63,6 +64,23 @@ export const useRestakeAssets = (options?: {
 
   // Determine if we should use on-chain fallback
   const useOnChainFallback = !isCheckingHealth && !isIndexerHealthy;
+
+  // Debug: Log the state
+  useEffect(() => {
+    console.log('[useRestakeAssets]', {
+      chainId,
+      isCheckingHealth,
+      isIndexerHealthy,
+      useOnChainFallback,
+      enabled,
+    });
+  }, [
+    chainId,
+    isCheckingHealth,
+    isIndexerHealthy,
+    useOnChainFallback,
+    enabled,
+  ]);
 
   // On-chain fallback hook (always called but may be disabled)
   const onChainResult = useOnChainRestakeAssets({

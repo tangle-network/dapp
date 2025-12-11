@@ -95,7 +95,10 @@ const useSubmitClaim = () => {
   const submitClaim = useCallback(
     async (args: ClaimArgs) => {
       console.log('[useSubmitClaim] Starting claim submission...');
-      console.log('[useSubmitClaim] Contract address:', TANGLE_MIGRATION_ADDRESS);
+      console.log(
+        '[useSubmitClaim] Contract address:',
+        TANGLE_MIGRATION_ADDRESS,
+      );
       console.log('[useSubmitClaim] Args:', {
         ss58Address: args.ss58Address,
         amount: args.amount.toString(),
@@ -128,7 +131,9 @@ const useSubmitClaim = () => {
             args.recipient,
           ],
         });
-        console.log('[useSubmitClaim] writeContract called (check wallet for prompt)');
+        console.log(
+          '[useSubmitClaim] writeContract called (check wallet for prompt)',
+        );
       } catch (err) {
         console.error('[useSubmitClaim] writeContract error:', err);
         throw err;

@@ -2,7 +2,6 @@ import { FC, useCallback, useMemo, useState } from 'react';
 import {
   useAccount,
   useBalance,
-  useChainId,
   usePublicClient,
   useWalletClient,
 } from 'wagmi';
@@ -14,14 +13,11 @@ import {
   ModalBody,
   ModalFooter,
 } from '@tangle-network/ui-components/components/Modal';
-import { Button } from '@tangle-network/ui-components/components/buttons/Button';
+import { Button } from '@tangle-network/ui-components/components/buttons';
 import { Input } from '@tangle-network/ui-components/components/Input';
 import { Typography } from '@tangle-network/ui-components/typography/Typography';
 import { TokenIcon } from '@tangle-network/icons';
-import {
-  useRestakeAssets,
-  type RestakeAsset,
-} from '@tangle-network/tangle-shared-ui/data/graphql/useRestakeAssets';
+import { useRestakeAssets } from '@tangle-network/tangle-shared-ui/data/graphql/useRestakeAssets';
 
 interface TransferModalProps {
   isOpen: boolean;
@@ -41,7 +37,6 @@ interface TokenOption {
 
 const TransferModal: FC<TransferModalProps> = ({ isOpen, onClose }) => {
   const { address: userAddress } = useAccount();
-  const chainId = useChainId();
   const publicClient = usePublicClient();
   const { data: walletClient } = useWalletClient();
 
@@ -148,6 +143,17 @@ const TransferModal: FC<TransferModalProps> = ({ isOpen, onClose }) => {
     }
   }, [selectedToken]);
 
+  // Reset and close
+  const handleClose = useCallback(() => {
+    setSelectedToken(null);
+    setRecipient('');
+    setAmount('');
+    setStatus('idle');
+    setError(null);
+    setTxHash(null);
+    onClose();
+  }, [onClose]);
+
   // Execute transfer
   const handleTransfer = useCallback(async () => {
     if (!canSubmit || !selectedToken || !walletClient || !publicClient) return;
@@ -206,18 +212,8 @@ const TransferModal: FC<TransferModalProps> = ({ isOpen, onClose }) => {
     recipient,
     refetchNativeBalance,
     refetchBalances,
+    handleClose,
   ]);
-
-  // Reset and close
-  const handleClose = useCallback(() => {
-    setSelectedToken(null);
-    setRecipient('');
-    setAmount('');
-    setStatus('idle');
-    setError(null);
-    setTxHash(null);
-    onClose();
-  }, [onClose]);
 
   return (
     <Modal open={isOpen} onOpenChange={(open) => !open && handleClose()}>
@@ -232,11 +228,17 @@ const TransferModal: FC<TransferModalProps> = ({ isOpen, onClose }) => {
             </Typography>
             <div className="space-y-2 max-h-48 overflow-y-auto">
               {isLoadingAssets ? (
-                <Typography variant="body2" className="text-mono-100 py-4 text-center">
+                <Typography
+                  variant="body2"
+                  className="text-mono-100 py-4 text-center"
+                >
                   Loading tokens...
                 </Typography>
               ) : tokenOptions.length === 0 ? (
-                <Typography variant="body2" className="text-mono-100 py-4 text-center">
+                <Typography
+                  variant="body2"
+                  className="text-mono-100 py-4 text-center"
+                >
                   No tokens available
                 </Typography>
               ) : (
@@ -280,7 +282,8 @@ const TransferModal: FC<TransferModalProps> = ({ isOpen, onClose }) => {
               id="recipient"
               placeholder="0x..."
               value={recipient}
-              onChange={(e) => setRecipient(e.target.value)}
+              isControlled
+              onChange={(val) => setRecipient(val)}
               isInvalid={recipient.length > 0 && !isValidRecipient}
             />
             {recipient.length > 0 && !isValidRecipient && (
@@ -302,33 +305,41 @@ const TransferModal: FC<TransferModalProps> = ({ isOpen, onClose }) => {
                   onClick={handleSetMax}
                   className="text-blue-500 hover:text-blue-400 text-sm"
                 >
-                  Max: {formatBalance(selectedToken.balance, selectedToken.decimals)}{' '}
+                  Max:{' '}
+                  {formatBalance(selectedToken.balance, selectedToken.decimals)}{' '}
                   {selectedToken.symbol}
                 </button>
               )}
             </div>
-            <Input
-              id="amount"
-              type="text"
-              placeholder="0.0"
-              value={amount}
-              onChange={(e) => {
-                // Only allow valid number input
-                const val = e.target.value;
-                if (val === '' || /^\d*\.?\d*$/.test(val)) {
-                  setAmount(val);
-                }
-              }}
-              isInvalid={amount.length > 0 && !isValidAmount}
-              rightElement={
-                selectedToken ? (
-                  <span className="text-mono-100">{selectedToken.symbol}</span>
-                ) : undefined
-              }
-            />
+            <div className="relative">
+              <Input
+                id="amount"
+                type="text"
+                placeholder="0.0"
+                value={amount}
+                isControlled
+                onChange={(val) => {
+                  // Only allow valid number input
+                  if (val === '' || /^\d*\.?\d*$/.test(val)) {
+                    setAmount(val);
+                  }
+                }}
+                isInvalid={amount.length > 0 && !isValidAmount}
+              />
+              {selectedToken && (
+                <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none">
+                  <Typography variant="body2" className="text-mono-100">
+                    {selectedToken.symbol}
+                  </Typography>
+                </div>
+              )}
+            </div>
             {amount.length > 0 && !isValidAmount && selectedToken && (
               <Typography variant="body2" className="text-red-500 mt-1">
-                {parseFloat(amount) > parseFloat(formatUnits(selectedToken.balance, selectedToken.decimals))
+                {parseFloat(amount) >
+                parseFloat(
+                  formatUnits(selectedToken.balance, selectedToken.decimals),
+                )
                   ? 'Insufficient balance'
                   : 'Invalid amount'}
               </Typography>
@@ -350,7 +361,10 @@ const TransferModal: FC<TransferModalProps> = ({ isOpen, onClose }) => {
                 Transfer successful!
               </Typography>
               {txHash && (
-                <Typography variant="body2" className="text-mono-100 mt-1 break-all">
+                <Typography
+                  variant="body2"
+                  className="text-mono-100 mt-1 break-all"
+                >
                   Tx: {txHash.slice(0, 10)}...{txHash.slice(-8)}
                 </Typography>
               )}

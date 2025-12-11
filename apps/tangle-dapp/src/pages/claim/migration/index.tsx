@@ -21,6 +21,12 @@ import { type Hex, formatUnits, isAddress, keccak256, toHex } from 'viem';
 import { twMerge } from 'tailwind-merge';
 import type { InjectedAccountWithMeta } from '@polkadot/extension-inject/types';
 import { AnimatePresence, motion } from 'framer-motion';
+import SubstrateWalletSelector from './components/SubstrateWalletSelector';
+import useClaimEligibility, {
+  generateChallenge,
+} from './hooks/useClaimEligibility';
+import useGenerateProof from './hooks/useGenerateProof';
+import useSubmitClaim from './hooks/useSubmitClaim';
 
 // Parse transaction errors into user-friendly messages
 const parseTransactionError = (error: Error): string => {
@@ -68,13 +74,6 @@ const parseTransactionError = (error: Error): string => {
 
   return message;
 };
-
-import SubstrateWalletSelector from './components/SubstrateWalletSelector';
-import useClaimEligibility, {
-  generateChallenge,
-} from './hooks/useClaimEligibility';
-import useGenerateProof from './hooks/useGenerateProof';
-import useSubmitClaim from './hooks/useSubmitClaim';
 
 enum ClaimStep {
   CONNECT_WALLETS = 0,

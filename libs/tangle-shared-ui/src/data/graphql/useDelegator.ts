@@ -377,11 +377,10 @@ export const useDelegatorCount = (options?: {
   return useQuery({
     queryKey: ['envio', 'delegatorCount', network],
     queryFn: async () => {
-      const result = await executeEnvioGraphQL<DelegatorCountQueryResult, {}>(
-        DELEGATOR_COUNT_QUERY,
-        {},
-        network,
-      );
+      const result = await executeEnvioGraphQL<
+        DelegatorCountQueryResult,
+        Record<string, never>
+      >(DELEGATOR_COUNT_QUERY, {}, network);
       return result.data.Delegator?.length ?? 0;
     },
     enabled,
