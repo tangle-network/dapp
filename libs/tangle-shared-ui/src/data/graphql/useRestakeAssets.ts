@@ -8,34 +8,25 @@ import { useQuery } from '@tanstack/react-query';
 import { useEffect } from 'react';
 import { Address, erc20Abi, zeroAddress } from 'viem';
 import { useAccount, useBalance, useChainId, usePublicClient } from 'wagmi';
-import { useRestakingAssets, type RestakingAsset } from './useRestakingAssets';
+import { useRestakingAssets } from './useRestakingAssets';
+import type { RestakeAsset } from '../restake/types';
 import { EnvioNetwork } from '../../utils/executeEnvioGraphQL';
 import { useEnvioHealthCheckByChainId } from '../../utils/checkEnvioHealth';
 import fetchErc20TokenMetadata from '../../utils/fetchErc20TokenMetadata';
 import useOnChainRestakeAssets from '../restake/useOnChainRestakeAssets';
 import type { EvmAddress } from '@tangle-network/ui-components/types/address';
+import { getCachedTokenMetadata } from '@tangle-network/dapp-config/tokenMetadata';
 
 // Native token (ETH) uses zero address - needs special handling
 const NATIVE_TOKEN_ADDRESS = zeroAddress as Address;
 
-// Token metadata from ERC20
-export interface TokenMetadata {
-  address: Address;
-  name: string;
-  symbol: string;
-  decimals: number;
-}
-
-// Combined restake asset with metadata and balance
-export interface RestakeAsset {
-  id: Address; // Token address (EVM format)
-  metadata: TokenMetadata;
-  balance: bigint; // User's wallet balance
-  restakingInfo: RestakingAsset; // On-chain restaking config from indexer
-}
-
-// Map of assets keyed by token address
-export type RestakeAssetMap = Map<Address, RestakeAsset>;
+// Re-export types from shared types file
+export type {
+  RestakingAsset,
+  TokenMetadata,
+  RestakeAsset,
+  RestakeAssetMap,
+} from '../restake/types';
 
 /**
  * Hook to fetch restaking assets with full metadata and balances.
@@ -65,27 +56,27 @@ export const useRestakeAssets = (options?: {
   const { data: isIndexerHealthy, isLoading: isCheckingHealth } =
     useEnvioHealthCheckByChainId(chainId);
 
-  // Determine if we should use on-chain fallback
-  const useOnChainFallback = !isCheckingHealth && !isIndexerHealthy;
+  // Determine data source:
+  // - While checking health: wait (neither source enabled)
+  // - Indexer healthy: use GraphQL
+  // - Indexer unhealthy: use on-chain fallback
+  const healthCheckComplete = !isCheckingHealth;
+  const useGraphQL = healthCheckComplete && isIndexerHealthy === true;
+  const useOnChainFallback = healthCheckComplete && !isIndexerHealthy;
 
-  // Debug: Log the state
+  // Debug for local testnet
   useEffect(() => {
-    console.log('[useRestakeAssets]', {
+    console.log('[useRestakeAssets] Data source:', {
       chainId,
       isCheckingHealth,
       isIndexerHealthy,
+      useGraphQL,
       useOnChainFallback,
-      enabled,
+      publicClientAvailable: !!publicClient,
     });
-  }, [
-    chainId,
-    isCheckingHealth,
-    isIndexerHealthy,
-    useOnChainFallback,
-    enabled,
-  ]);
+  }, [chainId, isCheckingHealth, isIndexerHealthy, useGraphQL, useOnChainFallback, publicClient]);
 
-  // On-chain fallback hook (always called but may be disabled)
+  // On-chain fallback hook (for when indexer is unavailable)
   const onChainResult = useOnChainRestakeAssets({
     enabled: enabled && useOnChainFallback,
   });
@@ -98,7 +89,7 @@ export const useRestakeAssets = (options?: {
   } = useRestakingAssets({
     network,
     enabledOnly: true,
-    enabled: enabled && !useOnChainFallback,
+    enabled: enabled && useGraphQL,
   });
 
   // Get token addresses from restaking assets, filtering out native token (zero address)
@@ -235,21 +226,25 @@ export const useRestakeAssets = (options?: {
           (m) => m.id.toLowerCase() === restakingAsset.token.toLowerCase(),
         );
 
-        // Skip if we couldn't fetch metadata
-        if (!metadata) {
-          console.warn(`Missing metadata for token ${restakingAsset.token}`);
-          continue;
-        }
+        // Try fallback metadata if on-chain fetch failed
+        const fallbackMetadata = getCachedTokenMetadata(restakingAsset.token);
 
+        // Use fetched metadata, cached fallback, or create placeholder from address
         const balance = balances?.get(restakingAsset.token) ?? BigInt(0);
+        const tokenMetadata = metadata ?? fallbackMetadata ?? {
+          // Placeholder when metadata unavailable - use truncated address
+          name: `Token ${restakingAsset.token.slice(0, 8)}...`,
+          symbol: `${restakingAsset.token.slice(0, 6)}...${restakingAsset.token.slice(-4)}`,
+          decimals: 18, // Default to 18 decimals
+        };
 
         assetMap.set(restakingAsset.token, {
           id: restakingAsset.token,
           metadata: {
             address: restakingAsset.token,
-            name: metadata.name,
-            symbol: metadata.symbol,
-            decimals: metadata.decimals,
+            name: tokenMetadata.name,
+            symbol: tokenMetadata.symbol,
+            decimals: tokenMetadata.decimals,
           },
           balance,
           restakingInfo: restakingAsset,
@@ -258,10 +253,8 @@ export const useRestakeAssets = (options?: {
 
       return assetMap;
     },
-    enabled:
-      !useOnChainFallback &&
-      !!restakingAssets &&
-      (erc20TokenAddresses.length === 0 || !!tokenMetadatas),
+    // Enable when we have restaking assets - metadata is optional (will use placeholders)
+    enabled: !useOnChainFallback && !!restakingAssets,
     staleTime: 15_000,
   });
 
@@ -274,12 +267,25 @@ export const useRestakeAssets = (options?: {
     }
   };
 
-  // Use on-chain data if fallback is active, otherwise use GraphQL data
+  // Still checking health - return loading state
+  if (isCheckingHealth) {
+    return {
+      assets: null,
+      assetList: [],
+      isLoading: true,
+      isLoadingBalances: false,
+      refetch,
+      refetchBalances,
+      source: 'loading' as const,
+    };
+  }
+
+  // Use on-chain data if fallback is active
   if (useOnChainFallback) {
     return {
       assets: onChainResult.assets,
       assetList: onChainResult.assetList,
-      isLoading: isCheckingHealth || onChainResult.isLoading,
+      isLoading: onChainResult.isLoading,
       isLoadingBalances: onChainResult.isLoadingBalances,
       refetch,
       refetchBalances: onChainResult.refetchBalances,
@@ -287,10 +293,11 @@ export const useRestakeAssets = (options?: {
     };
   }
 
+  // Use GraphQL data (indexer is healthy)
   return {
     assets: graphqlAssets ?? null,
     assetList: graphqlAssets ? Array.from(graphqlAssets.values()) : [],
-    isLoading: isCheckingHealth || isLoadingAssets || isLoadingMetadata,
+    isLoading: isLoadingAssets || isLoadingMetadata,
     isLoadingBalances,
     refetch,
     refetchBalances,

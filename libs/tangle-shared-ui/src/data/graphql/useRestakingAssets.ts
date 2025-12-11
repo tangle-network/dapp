@@ -10,20 +10,10 @@ import {
   gql,
   EnvioNetwork,
 } from '../../utils/executeEnvioGraphQL';
+import type { RestakingAsset } from '../restake/types';
 
-// Restaking asset type
-export interface RestakingAsset {
-  id: string;
-  token: Address;
-  enabled: boolean;
-  minOperatorStake: bigint;
-  minDelegation: bigint;
-  depositCap: bigint | null;
-  currentDeposits: bigint;
-  rewardMultiplierBps: number;
-  createdAt: bigint;
-  updatedAt: bigint;
-}
+// Re-export for backwards compatibility
+export type { RestakingAsset } from '../restake/types';
 
 // GraphQL query for restaking assets (Hasura uses PascalCase table names)
 const RESTAKING_ASSETS_QUERY = gql`
