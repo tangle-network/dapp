@@ -698,11 +698,14 @@ async function runActivityCycle() {
       break;
 
     case 'multiDeposit': {
-      const accounts = [1, 2, 3].map(() =>
+      // Generate 3 random accounts, then deduplicate to prevent nonce collisions
+      const rawAccounts = [1, 2, 3].map(() =>
         1 + Math.floor(Math.random() * (ANVIL_ACCOUNTS.length - 1))
       );
-      // Mix of ETH and ERC20 deposits
-      await Promise.all(accounts.map(async (idx) => {
+      const uniqueAccounts = [...new Set(rawAccounts)];
+
+      // Mix of ETH and ERC20 deposits - each unique account processes sequentially
+      await Promise.all(uniqueAccounts.map(async (idx) => {
         if (Math.random() > 0.5 && state.tokensAvailable.length > 0) {
           const tokenKey = randomChoice(state.tokensAvailable);
           return depositERC20Token(idx, tokenKey);
