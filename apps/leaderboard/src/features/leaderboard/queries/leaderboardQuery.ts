@@ -1,6 +1,7 @@
 import { NetworkType } from '@tangle-network/tangle-shared-ui/graphql/graphql';
 import { useQuery } from '@tanstack/react-query';
 import { LEADERBOARD_QUERY_KEY } from '../../../constants/query';
+import { RoleFilterEnum } from '../constants';
 
 // Team accounts to exclude from leaderboard (EVM addresses)
 const TEAM_ACCOUNTS = [
@@ -230,6 +231,9 @@ const fetchAccountActivity = async (
   return result.data;
 };
 
+// Auto-refresh interval in milliseconds (10 seconds)
+const LEADERBOARD_REFETCH_INTERVAL = 10_000;
+
 export function useLeaderboard(
   network: NetworkType,
   first: number,
@@ -256,6 +260,7 @@ export function useLeaderboard(
       ),
     enabled: first > 0 && offset >= 0 && timestampSevenDaysAgo > 0,
     placeholderData: (prev) => prev,
+    refetchInterval: LEADERBOARD_REFETCH_INTERVAL,
   });
 }
 
@@ -265,5 +270,109 @@ export function useAccountActivity(network: NetworkType, accountId: string) {
     queryFn: () => fetchAccountActivity(network, accountId),
     enabled: !!accountId,
     staleTime: Infinity,
+  });
+}
+
+const ROLE_ACCOUNTS_QUERY = `
+  query RoleAccounts {
+    Operator {
+      id
+    }
+    Delegator(where: { _or: [
+      { totalDeposited: { _gt: "0" } },
+      { totalDelegated: { _gt: "0" } }
+    ]}) {
+      id
+    }
+    Blueprint {
+      owner
+    }
+    JobCall {
+      caller
+    }
+  }
+`;
+
+interface RoleAccountsResponse {
+  Operator: Array<{ id: string }>;
+  Delegator: Array<{ id: string }>;
+  Blueprint: Array<{ owner: string }>;
+  JobCall: Array<{ caller: string }>;
+}
+
+export interface RoleAccountsData {
+  operators: Set<string>;
+  restakers: Set<string>;
+  developers: Set<string>;
+  customers: Set<string>;
+}
+
+const fetchRoleAccounts = async (
+  network: NetworkType,
+): Promise<RoleAccountsData> => {
+  const endpoint = getEndpoint(network);
+
+  const response = await fetch(endpoint, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      Accept: 'application/json',
+    },
+    body: JSON.stringify({
+      query: ROLE_ACCOUNTS_QUERY,
+    }),
+  });
+
+  if (!response.ok) {
+    throw new Error('Network response was not ok');
+  }
+
+  const result = (await response.json()) as { data: RoleAccountsResponse };
+
+  return {
+    operators: new Set(result.data.Operator.map((o) => o.id.toLowerCase())),
+    restakers: new Set(result.data.Delegator.map((d) => d.id.toLowerCase())),
+    developers: new Set(
+      result.data.Blueprint.map((b) => b.owner.toLowerCase()),
+    ),
+    customers: new Set(result.data.JobCall.map((j) => j.caller.toLowerCase())),
+  };
+};
+
+export const getAccountIdsForRoles = (
+  roleAccounts: RoleAccountsData,
+  selectedRoles: RoleFilterEnum[],
+): Set<string> => {
+  if (selectedRoles.length === 0) {
+    return new Set();
+  }
+
+  const accountIds = new Set<string>();
+
+  for (const role of selectedRoles) {
+    switch (role) {
+      case RoleFilterEnum.OPERATOR:
+        roleAccounts.operators.forEach((id) => accountIds.add(id));
+        break;
+      case RoleFilterEnum.RESTAKER:
+        roleAccounts.restakers.forEach((id) => accountIds.add(id));
+        break;
+      case RoleFilterEnum.DEVELOPER:
+        roleAccounts.developers.forEach((id) => accountIds.add(id));
+        break;
+      case RoleFilterEnum.CUSTOMER:
+        roleAccounts.customers.forEach((id) => accountIds.add(id));
+        break;
+    }
+  }
+
+  return accountIds;
+};
+
+export function useRoleAccounts(network: NetworkType) {
+  return useQuery({
+    queryKey: ['roleAccounts', network],
+    queryFn: () => fetchRoleAccounts(network),
+    staleTime: 30_000,
   });
 }

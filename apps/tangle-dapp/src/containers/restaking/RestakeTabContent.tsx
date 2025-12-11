@@ -21,6 +21,7 @@ import { useNavigate } from 'react-router';
 import { PagePath, QueryParamKey } from '../../types';
 import { RestakeAssetId } from '@tangle-network/tangle-shared-ui/types';
 import { RestakeAsset } from '@tangle-network/tangle-shared-ui/types/restake';
+import { NetworkGuard } from '../../components/NetworkGuard';
 
 type RestakeTabOrAction = RestakeTab | RestakeAction;
 
@@ -85,10 +86,12 @@ const RestakeTabContent: FC<Props> = ({ tab }) => {
   };
 
   return (
-    <div className="space-y-9">
-      <RestakeTabs />
-      {getRestakeTabContent(tab)}
-    </div>
+    <NetworkGuard>
+      <div className="space-y-9">
+        <RestakeTabs />
+        {getRestakeTabContent(tab)}
+      </div>
+    </NetworkGuard>
   );
 };
 

@@ -26,12 +26,12 @@ import {
   useReactTable,
 } from '@tanstack/react-table';
 import cx from 'classnames';
-import { useMemo, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { twMerge } from 'tailwind-merge';
 import { useLatestTimestamp } from '../../../queries';
 import { SyncProgressIndicator } from '../../indexingProgress';
-import { SEVEN_DAYS_IN_SECONDS } from '../constants';
-import { useLeaderboard } from '../queries';
+import { RoleFilterEnum, SEVEN_DAYS_IN_SECONDS } from '../constants';
+import { getAccountIdsForRoles, useLeaderboard, useRoleAccounts } from '../queries';
 import { Account } from '../types';
 import { createAccountExplorerUrl } from '../utils/createAccountExplorerUrl';
 import { processLeaderboardRecord } from '../utils/processLeaderboardRecord';
@@ -41,6 +41,7 @@ import { HeaderCell } from './HeaderCell';
 import { MiniSparkline } from './MiniSparkline';
 import { Overlay } from './Overlay';
 import { FirstPlaceIcon, SecondPlaceIcon, ThirdPlaceIcon } from './RankIcon';
+import { RoleFilter } from './RoleFilter';
 import { TrendIndicator } from './TrendIndicator';
 
 const COLUMN_ID = {
@@ -48,7 +49,6 @@ const COLUMN_ID = {
   ACCOUNT: 'account',
   BADGES: 'badges',
   TOTAL_POINTS: 'totalPoints',
-  ACTIVITY: 'activity',
   POINTS_HISTORY: 'pointsHistory',
 } as const;
 
@@ -136,27 +136,6 @@ const COLUMNS = [
       </Tooltip>
     ),
   }),
-  COLUMN_HELPER.accessor('activity', {
-    id: COLUMN_ID.ACTIVITY,
-    header: () => <HeaderCell title="Activity" />,
-    cell: ({ row }) => (
-      <div className="flex flex-col">
-        <Typography
-          variant="body1"
-          className="flex items-center gap-1 [&>svg]:flex-initial"
-        >
-          {row.original.activity.depositCount} deposits
-        </Typography>
-
-        <Typography
-          variant="body1"
-          className="flex items-center gap-1 [&>svg]:flex-initial"
-        >
-          {row.original.activity.delegationCount} delegations
-        </Typography>
-      </div>
-    ),
-  }),
   COLUMN_HELPER.display({
     id: COLUMN_ID.POINTS_HISTORY,
     header: () => <HeaderCell title="7-Day Points" />,
@@ -179,6 +158,7 @@ const getExpandedRowContent = (row: Row<Account>) => {
 export const LeaderboardTable = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [expanded, setExpanded] = useState<ExpandedState>({});
+  const [selectedRoles, setSelectedRoles] = useState<RoleFilterEnum[]>([]);
 
   const [pagination, setPagination] = useState<PaginationState>({
     pageIndex: 0,
@@ -189,11 +169,47 @@ export const LeaderboardTable = () => {
     'MAINNET' as NetworkType,
   );
 
+  const handleRoleToggle = useCallback((role: RoleFilterEnum) => {
+    setSelectedRoles((prev) =>
+      prev.includes(role)
+        ? prev.filter((r) => r !== role)
+        : [...prev, role],
+    );
+    setPagination((prev) => ({ ...prev, pageIndex: 0 }));
+  }, []);
+
+  const handleClearRoles = useCallback(() => {
+    setSelectedRoles([]);
+    setPagination((prev) => ({ ...prev, pageIndex: 0 }));
+  }, []);
+
   const {
     data: latestTimestamp,
     isPending: isTimestampPending,
     error: timestampError,
   } = useLatestTimestamp(networkTab);
+
+  const {
+    data: roleAccounts,
+    isPending: isRoleAccountsPending,
+  } = useRoleAccounts(networkTab);
+
+  const roleFilteredAccountIds = useMemo(() => {
+    if (selectedRoles.length === 0 || !roleAccounts) {
+      return null;
+    }
+    return getAccountIdsForRoles(roleAccounts, selectedRoles);
+  }, [selectedRoles, roleAccounts]);
+
+  const roleCounts = useMemo(() => {
+    if (!roleAccounts) return undefined;
+    return {
+      operators: roleAccounts.operators.size,
+      restakers: roleAccounts.restakers.size,
+      developers: roleAccounts.developers.size,
+      customers: roleAccounts.customers.size,
+    };
+  }, [roleAccounts]);
 
   // Calculate timestamp for 7 days ago (Envio uses timestamps instead of block numbers)
   const timestampSevenDaysAgo = useMemo(() => {
@@ -272,18 +288,24 @@ export const LeaderboardTable = () => {
       )
       .filter((record) => record !== null);
 
-    // Apply client-side filtering for address searches
-    if (!searchQuery || accountQuery || !shouldUseClientSideFiltering) {
-      // If no search query, server-side filtering, or query too short, return as-is
-      return processedData;
+    let filteredData = processedData;
+
+    // Apply role-based filtering
+    if (roleFilteredAccountIds && roleFilteredAccountIds.size > 0) {
+      filteredData = filteredData.filter((account) =>
+        roleFilteredAccountIds.has(account.id.toLowerCase()),
+      );
     }
 
-    const trimmedQuery = searchQuery.trim().toLowerCase();
+    // Apply client-side filtering for address searches
+    if (searchQuery && !accountQuery && shouldUseClientSideFiltering) {
+      const trimmedQuery = searchQuery.trim().toLowerCase();
+      filteredData = filteredData.filter((account) =>
+        account.id.toLowerCase().includes(trimmedQuery),
+      );
+    }
 
-    // Client-side filter by address (case insensitive)
-    return processedData.filter((account) => {
-      return account.id.toLowerCase().includes(trimmedQuery);
-    });
+    return filteredData;
   }, [
     leaderboardData?.nodes,
     pagination.pageIndex,
@@ -292,6 +314,7 @@ export const LeaderboardTable = () => {
     accountQuery,
     shouldUseClientSideFiltering,
     networkTab,
+    roleFilteredAccountIds,
   ]);
 
   const table = useReactTable({
@@ -312,41 +335,52 @@ export const LeaderboardTable = () => {
 
   return (
     <Card className="space-y-6 !bg-transparent !border-transparent p-0">
-      <div className="flex items-center justify-between flex-wrap sm:flex-nowrap gap-4">
-        <TabsRoot
-          className="max-w-xs flex-auto"
-          value={networkTab}
-          onValueChange={(tab) => setNetworkTab(tab as NetworkType)}
-        >
-          <TabsListWithAnimation>
-            <TabsTriggerWithAnimation
-              className="min-h-8"
-              value="MAINNET"
-              isActive={networkTab === 'MAINNET'}
-              hideSeparator
-              labelVariant="body2"
-              labelClassName="py-1 px-0"
-            >
-              Mainnet
-            </TabsTriggerWithAnimation>
-            <TabsTriggerWithAnimation
-              className="min-h-8"
-              value="TESTNET"
-              isActive={networkTab === 'TESTNET'}
-              hideSeparator
-              labelVariant="body2"
-              labelClassName="py-1 px-0"
-            >
-              Testnet
-            </TabsTriggerWithAnimation>
-          </TabsListWithAnimation>
-        </TabsRoot>
+      <div className="flex flex-col gap-3 sm:gap-4">
+        {/* Top row: Tabs and Sync indicator */}
+        <div className="flex items-center gap-3 flex-wrap">
+          <TabsRoot
+            className="w-[180px]"
+            value={networkTab}
+            onValueChange={(tab) => setNetworkTab(tab as NetworkType)}
+          >
+            <TabsListWithAnimation className="flex-nowrap">
+              <TabsTriggerWithAnimation
+                value="MAINNET"
+                isActive={networkTab === 'MAINNET'}
+                hideSeparator
+                labelVariant="body2"
+                labelClassName="py-2 px-2"
+              >
+                Mainnet
+              </TabsTriggerWithAnimation>
+              <TabsTriggerWithAnimation
+                value="TESTNET"
+                isActive={networkTab === 'TESTNET'}
+                hideSeparator
+                labelVariant="body2"
+                labelClassName="py-2 px-2"
+              >
+                Testnet
+              </TabsTriggerWithAnimation>
+            </TabsListWithAnimation>
+          </TabsRoot>
 
-        <SyncProgressIndicator network={networkTab} />
+          <SyncProgressIndicator network={networkTab} />
+        </div>
 
-        <div className="flex items-center justify-end gap-2 grow">
+        {/* Role filter */}
+        <RoleFilter
+          selectedRoles={selectedRoles}
+          onRoleToggle={handleRoleToggle}
+          onClearAll={handleClearRoles}
+          isLoading={isRoleAccountsPending}
+          roleCounts={roleCounts}
+        />
+
+        {/* Bottom row: Search */}
+        <div className="flex items-center gap-2">
           <Input
-            className="grow max-w-xs"
+            className="grow sm:max-w-xs"
             debounceTime={300}
             isControlled
             value={searchQuery}
@@ -362,16 +396,6 @@ export const LeaderboardTable = () => {
             size="md"
             inputClassName="py-1"
           />
-
-          {/* <Button
-                leftIcon={
-                  <FilterIcon2 className="fill-current dark:fill-current" />
-                }
-                variant="utility"
-                className="px-4 py-[7px]"
-              >
-                Filter
-              </Button> */}
         </div>
       </div>
 

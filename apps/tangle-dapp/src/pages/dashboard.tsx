@@ -8,6 +8,8 @@ import AccountSummaryCard from '../components/account/AccountSummaryCard';
 import { ProtocolStatisticCard } from '../components/account/ProtocolStatisticCard';
 import { VaultsTable, useVaultsTableProps } from '../components/tables/Vaults';
 import VaultsHightlightCard from '../components/account/ProtocolStatisticCard/VaultsHightlightCard';
+import { UserRestakingOverview } from '../components/restaking';
+import { NetworkGuard } from '../components/NetworkGuard';
 
 const DashboardPage: FC = () => {
   const { assets, isLoading: isLoadingAssets } = useRestakeAssets();
@@ -28,33 +30,41 @@ const DashboardPage: FC = () => {
   });
 
   return (
-    <div className="flex flex-col gap-5">
-      <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
-        <AccountSummaryCard className="md:max-w-none" />
+    <NetworkGuard>
+      <div className="flex flex-col gap-5">
+        <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
+          <AccountSummaryCard className="md:max-w-none" />
 
-        <ProtocolStatisticCard
-          isLoadingAssets={isLoadingAssets}
-          assets={assets}
-          assetsTvl={assetsTvl}
-        >
-          <VaultsHightlightCard
-            className="grow max-w-56 hidden sm:block lg:hidden xl:block"
-            vaults={vaults}
-            isLoading={isLoadingAssets}
-          />
-        </ProtocolStatisticCard>
+          <ProtocolStatisticCard
+            isLoadingAssets={isLoadingAssets}
+            assets={assets}
+            assetsTvl={assetsTvl}
+          >
+            <VaultsHightlightCard
+              className="grow max-w-56 hidden sm:block lg:hidden xl:block"
+              vaults={vaults}
+              isLoading={isLoadingAssets}
+            />
+          </ProtocolStatisticCard>
+        </div>
+
+        <Typography variant="h4" fw="bold">
+          Your Position
+        </Typography>
+
+        <UserRestakingOverview />
+
+        <Typography variant="h4" fw="bold">
+          Restake Vaults
+        </Typography>
+
+        <VaultsTable
+          data={vaults}
+          tableProps={tableProps}
+          isLoading={isLoadingAssets}
+        />
       </div>
-
-      <Typography variant="h4" fw="bold">
-        Restake Vaults
-      </Typography>
-
-      <VaultsTable
-        data={vaults}
-        tableProps={tableProps}
-        isLoading={isLoadingAssets}
-      />
-    </div>
+    </NetworkGuard>
   );
 };
 
