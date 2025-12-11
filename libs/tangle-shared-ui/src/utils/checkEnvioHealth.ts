@@ -7,7 +7,8 @@ import {
 import { CACHE_CONFIG } from '../constants/cacheConfig';
 
 /**
- * Check if the Envio GraphQL indexer is healthy and responding.
+ * Check if the Envio GraphQL indexer is healthy and has data.
+ * Not just checking if endpoint responds, but also if it has restaking assets.
  */
 export const checkEnvioHealth = async (
   network?: EnvioNetwork,
@@ -15,13 +16,25 @@ export const checkEnvioHealth = async (
   const endpoint = getEnvioEndpoint(network);
 
   try {
+    // Query for actual restaking assets to verify indexer has data
     const response = await fetch(endpoint, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ query: '{ __typename }' }),
+      body: JSON.stringify({
+        query: '{ RestakingAsset(limit: 1) { id } }',
+      }),
     });
 
-    return response.ok;
+    if (!response.ok) {
+      return false;
+    }
+
+    // Check if we got actual data back
+    const result = await response.json();
+    const hasData =
+      result.data?.RestakingAsset && result.data.RestakingAsset.length > 0;
+
+    return hasData;
   } catch {
     return false;
   }
