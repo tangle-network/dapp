@@ -116,7 +116,7 @@ const SubstrateWalletSelector: FC<Props> = ({
             )}
           </div>
           <div className="flex-1 text-left">
-            <Typography variant="body1" fw="semibold" className="text-mono-0">
+            <Typography variant="body1" fw="semibold" className="text-mono-200 dark:text-mono-0">
               {isConnecting ? 'Connecting...' : 'Connect Polkadot Wallet'}
             </Typography>
             <Typography variant="body2" className="text-mono-100 text-xs">
@@ -136,8 +136,8 @@ const SubstrateWalletSelector: FC<Props> = ({
         disabled={disabled}
         className={twMerge(
           'w-full flex items-center gap-3 px-4 py-3 rounded-xl',
-          'bg-mono-0/5 dark:bg-mono-0/5 border border-mono-0/10',
-          'hover:bg-mono-0/10 transition-all duration-200',
+          'bg-mono-200/5 dark:bg-mono-0/5 border border-mono-200/10 dark:border-mono-0/10',
+          'hover:bg-mono-200/10 dark:hover:bg-mono-0/10 transition-all duration-200',
           'disabled:opacity-50 disabled:cursor-not-allowed',
           isDropdownOpen && 'ring-2 ring-purple-500/50',
         )}
@@ -153,7 +153,7 @@ const SubstrateWalletSelector: FC<Props> = ({
               <Typography
                 variant="body2"
                 fw="semibold"
-                className="text-mono-0 truncate"
+                className="text-mono-200 dark:text-mono-0 truncate"
               >
                 {selectedAccount.meta.name || 'Account'}
               </Typography>
@@ -193,7 +193,7 @@ const SubstrateWalletSelector: FC<Props> = ({
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: -10, scale: 0.95 }}
             transition={{ duration: 0.15 }}
-            className="absolute z-50 w-full mt-2 rounded-xl bg-mono-180 border border-mono-160 shadow-xl overflow-hidden"
+            className="absolute z-50 w-full mt-2 rounded-xl bg-mono-0 dark:bg-mono-180 border border-mono-40 dark:border-mono-160 shadow-xl overflow-hidden"
           >
             <div className="max-h-64 overflow-y-auto">
               {accounts.map((account) => (
@@ -202,9 +202,9 @@ const SubstrateWalletSelector: FC<Props> = ({
                   onClick={() => handleAccountClick(account)}
                   className={twMerge(
                     'w-full px-4 py-3 flex items-center gap-3',
-                    'hover:bg-mono-170 transition-colors',
+                    'hover:bg-mono-20 dark:hover:bg-mono-170 transition-colors',
                     selectedAccount?.address === account.address &&
-                      'bg-mono-170',
+                      'bg-mono-20 dark:bg-mono-170',
                   )}
                 >
                   <Avatar
@@ -216,7 +216,7 @@ const SubstrateWalletSelector: FC<Props> = ({
                     <Typography
                       variant="body2"
                       fw="medium"
-                      className="text-mono-0 truncate"
+                      className="text-mono-200 dark:text-mono-0 truncate"
                     >
                       {account.meta.name || 'Account'}
                     </Typography>
@@ -234,7 +234,7 @@ const SubstrateWalletSelector: FC<Props> = ({
               ))}
             </div>
 
-            <div className="border-t border-mono-160 p-2">
+            <div className="border-t border-mono-40 dark:border-mono-160 p-2">
               <button
                 onClick={handleDisconnect}
                 className="w-full px-3 py-2 text-sm text-red-400 hover:bg-red-500/10 rounded-lg transition-colors"

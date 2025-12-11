@@ -1,5 +1,5 @@
 import { FC, useState, useCallback } from 'react';
-import { Button, Card, Typography } from '@tangle-network/ui-components';
+import { Button, Card, CardVariant, Typography } from '@tangle-network/ui-components';
 import type { Address } from 'viem';
 import { useVerifyWithdrawalCredentials, usePodInfo } from '../hooks';
 import type { CredentialProofBundle } from '../types';
@@ -71,7 +71,7 @@ const VerifyCredentialsCard: FC<VerifyCredentialsCardProps> = ({
   }, [proofJson, verifyWithdrawalCredentials]);
 
   return (
-    <Card className="p-6">
+    <Card variant={CardVariant.GLASS} className="p-6">
       <Typography variant="h5" fw="bold" className="mb-4">
         Verify Withdrawal Credentials
       </Typography>

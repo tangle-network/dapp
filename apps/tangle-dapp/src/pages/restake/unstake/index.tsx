@@ -2,6 +2,7 @@ import { Cross1Icon } from '@radix-ui/react-icons';
 import { calculateTypedChainId } from '@tangle-network/dapp-types/TypedChainId';
 import isDefined from '@tangle-network/dapp-types/utils/isDefined';
 import { LockUnlockLineIcon } from '@tangle-network/icons/LockUnlockLineIcon';
+import { TokenIcon } from '@tangle-network/icons';
 import { Card, IconButton } from '@tangle-network/ui-components';
 import Button from '@tangle-network/ui-components/components/buttons/Button';
 import { Modal } from '@tangle-network/ui-components/components/Modal';
@@ -339,18 +340,13 @@ const RestakeUnstakeForm: FC = () => {
                         ? {
                             renderBody: () => (
                               <div className="flex items-center gap-2">
+                                <TokenIcon
+                                  name={selectedDelegation.tokenSymbol}
+                                  size="lg"
+                                />
                                 <Typography variant="h5" fw="bold">
                                   {selectedDelegation.tokenSymbol}
                                 </Typography>
-                                <div className="flex flex-col gap-1">
-                                  <Typography
-                                    variant="body2"
-                                    className="text-mono-120 dark:text-mono-100"
-                                  >
-                                    Available: {formattedMaxAmount}{' '}
-                                    {selectedDelegation.tokenSymbol}
-                                  </Typography>
-                                </div>
                               </div>
                             ),
                           }
@@ -438,12 +434,17 @@ const RestakeUnstakeForm: FC = () => {
         }
         renderItem={(item) => (
           <div className="flex items-center justify-between w-full p-2">
-            <div className="flex flex-col">
-              <span className="font-mono text-sm">
-                {item.operatorAddress.slice(0, 10)}...
-                {item.operatorAddress.slice(-8)}
-              </span>
-              <span className="text-xs text-mono-100">{item.tokenSymbol}</span>
+            <div className="flex items-center gap-3">
+              <TokenIcon name={item.tokenSymbol} size="lg" />
+              <div className="flex flex-col">
+                <span className="font-mono text-sm">
+                  {item.operatorAddress.slice(0, 10)}...
+                  {item.operatorAddress.slice(-8)}
+                </span>
+                <span className="text-xs text-mono-100">
+                  {item.tokenSymbol}
+                </span>
+              </div>
             </div>
             <div className="flex flex-col items-end">
               <span className="text-sm">

@@ -3,6 +3,7 @@ import isDefined from '@tangle-network/dapp-types/utils/isDefined';
 import { ChainIcon } from '@tangle-network/icons/ChainIcon';
 import LockFillIcon from '@tangle-network/icons/LockFillIcon';
 import { LockLineIcon } from '@tangle-network/icons/LockLineIcon';
+import { TokenIcon } from '@tangle-network/icons';
 import ListModal from '@tangle-network/tangle-shared-ui/components/ListModal';
 import { Card } from '@tangle-network/ui-components';
 import Button from '@tangle-network/ui-components/components/buttons/Button';
@@ -306,9 +307,15 @@ const DepositForm: FC = () => {
                     ...(asset
                       ? {
                           renderBody: () => (
-                            <Typography variant="h5" fw="bold">
-                              {asset.metadata.symbol}
-                            </Typography>
+                            <div className="flex items-center gap-2">
+                              <TokenIcon
+                                name={asset.metadata.symbol}
+                                size="lg"
+                              />
+                              <Typography variant="h5" fw="bold">
+                                {asset.metadata.symbol}
+                              </Typography>
+                            </div>
                           ),
                         }
                       : {}),
@@ -379,11 +386,14 @@ const DepositForm: FC = () => {
         items={allAssets}
         renderItem={(assetItem) => (
           <div className="flex items-center justify-between w-full p-2">
-            <div className="flex flex-col">
-              <span className="font-medium">{assetItem.metadata.symbol}</span>
-              <span className="text-xs text-mono-100">
-                {assetItem.metadata.name}
-              </span>
+            <div className="flex items-center gap-3">
+              <TokenIcon name={assetItem.metadata.symbol} size="lg" />
+              <div className="flex flex-col">
+                <span className="font-medium">{assetItem.metadata.symbol}</span>
+                <span className="text-xs text-mono-100">
+                  {assetItem.metadata.name}
+                </span>
+              </div>
             </div>
             <div className="flex flex-col items-end">
               <span className="text-sm">

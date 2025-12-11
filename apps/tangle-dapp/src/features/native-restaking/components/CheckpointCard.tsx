@@ -1,5 +1,5 @@
 import { FC, useState } from 'react';
-import { Button, Card, Typography } from '@tangle-network/ui-components';
+import { Button, Card, CardVariant, Typography } from '@tangle-network/ui-components';
 import type { Address } from 'viem';
 import { usePodInfo, useStartCheckpoint } from '../hooks';
 import { gweiToEth } from '../types';
@@ -25,7 +25,7 @@ const CheckpointCard: FC<CheckpointCardProps> = ({ podAddress }) => {
 
   if (isLoading || !podInfo) {
     return (
-      <Card className="p-6">
+      <Card variant={CardVariant.GLASS} className="p-6">
         <Typography variant="h5" fw="bold" className="mb-4">
           Checkpoint Management
         </Typography>
@@ -40,7 +40,7 @@ const CheckpointCard: FC<CheckpointCardProps> = ({ podAddress }) => {
     !podInfo.checkpointActive && podInfo.activeValidatorCount > 0;
 
   return (
-    <Card className="p-6">
+    <Card variant={CardVariant.GLASS} className="p-6">
       <Typography variant="h5" fw="bold" className="mb-4">
         Checkpoint Management
       </Typography>

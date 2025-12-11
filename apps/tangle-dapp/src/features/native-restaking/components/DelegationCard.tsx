@@ -1,5 +1,5 @@
 import { FC, useState, useMemo } from 'react';
-import { Button, Card, Typography, Input } from '@tangle-network/ui-components';
+import { Button, Card, CardVariant, Typography, Input } from '@tangle-network/ui-components';
 import type { Address } from 'viem';
 import { isAddress, parseEther } from 'viem';
 import { usePodOwnerInfo, useDelegateTo, useUndelegateFrom } from '../hooks';
@@ -84,7 +84,7 @@ const DelegationCard: FC<DelegationCardProps> = ({ ownerAddress }) => {
 
   if (isLoading || !ownerInfo) {
     return (
-      <Card className="p-6">
+      <Card variant={CardVariant.GLASS} className="p-6">
         <Typography variant="h5" fw="bold" className="mb-4">
           Delegation
         </Typography>
@@ -96,7 +96,7 @@ const DelegationCard: FC<DelegationCardProps> = ({ ownerAddress }) => {
   }
 
   return (
-    <Card className="p-6">
+    <Card variant={CardVariant.GLASS} className="p-6">
       <Typography variant="h5" fw="bold" className="mb-4">
         Delegation
       </Typography>

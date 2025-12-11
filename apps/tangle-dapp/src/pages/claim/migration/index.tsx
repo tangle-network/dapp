@@ -312,13 +312,13 @@ const MigrationClaimPage: FC = () => {
             >
               <CheckboxCircleFill className="w-12 h-12 text-white" />
             </motion.div>
-            <Typography variant="h4" fw="bold" className="mb-2 text-mono-0">
+            <Typography variant="h4" fw="bold" className="mb-2 text-mono-200 dark:text-mono-0">
               Claim Successful!
             </Typography>
             <Typography variant="body1" className="text-mono-100 mb-4">
               Your TNT tokens have been claimed successfully.
             </Typography>
-            <div className="p-3 rounded-lg bg-mono-170 break-all">
+            <div className="p-3 rounded-lg bg-mono-20 dark:bg-mono-170 break-all">
               <Typography
                 variant="body2"
                 className="font-mono text-xs text-mono-100"
@@ -344,7 +344,7 @@ const MigrationClaimPage: FC = () => {
           <Typography
             variant="h3"
             fw="bold"
-            className="bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 bg-clip-text text-transparent"
+            className="bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 dark:from-blue-400 dark:via-purple-400 dark:to-pink-400 bg-clip-text text-transparent"
           >
             Claim your TNT!
           </Typography>
@@ -427,7 +427,7 @@ const MigrationClaimPage: FC = () => {
                     'w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold transition-all',
                     isConnected
                       ? 'bg-gradient-to-br from-green-400 to-emerald-500 text-white'
-                      : 'bg-mono-160 text-mono-100',
+                      : 'bg-mono-40 dark:bg-mono-160 text-mono-100',
                   )}
                 >
                   {isConnected ? (
@@ -436,7 +436,7 @@ const MigrationClaimPage: FC = () => {
                     '1'
                   )}
                 </div>
-                <Typography variant="body1" fw="bold" className="text-mono-0">
+                <Typography variant="body1" fw="bold" className="text-mono-200 dark:text-mono-0">
                   Receiving Address
                 </Typography>
               </div>
@@ -458,7 +458,7 @@ const MigrationClaimPage: FC = () => {
                     <Typography
                       variant="body1"
                       fw="semibold"
-                      className="text-mono-0"
+                      className="text-mono-200 dark:text-mono-0"
                     >
                       Connect EVM Wallet
                     </Typography>
@@ -518,8 +518,8 @@ const MigrationClaimPage: FC = () => {
                       disabled={currentStep >= ClaimStep.SIGN_CHALLENGE}
                       className={twMerge(
                         'w-full flex items-center gap-3 px-4 py-3 rounded-xl',
-                        'bg-mono-0/5 border border-mono-0/10',
-                        'hover:bg-mono-0/10 transition-all duration-200',
+                        'bg-mono-200/5 dark:bg-mono-0/5 border border-mono-200/10 dark:border-mono-0/10',
+                        'hover:bg-mono-200/10 dark:hover:bg-mono-0/10 transition-all duration-200',
                         'disabled:opacity-50 disabled:cursor-not-allowed',
                       )}
                     >
@@ -536,7 +536,7 @@ const MigrationClaimPage: FC = () => {
                         <Typography
                           variant="body2"
                           fw="medium"
-                          className="text-mono-0 font-mono truncate"
+                          className="text-mono-200 dark:text-mono-0 font-mono truncate"
                         >
                           {recipientAddress.slice(0, 10)}...
                           {recipientAddress.slice(-8)}
@@ -564,7 +564,7 @@ const MigrationClaimPage: FC = () => {
                       'w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold transition-all',
                       substrateAccount
                         ? 'bg-gradient-to-br from-green-400 to-emerald-500 text-white'
-                        : 'bg-mono-160 text-mono-100',
+                        : 'bg-mono-40 dark:bg-mono-160 text-mono-100',
                     )}
                   >
                     {substrateAccount ? (
@@ -573,7 +573,7 @@ const MigrationClaimPage: FC = () => {
                       '2'
                     )}
                   </div>
-                  <Typography variant="body1" fw="bold" className="text-mono-0">
+                  <Typography variant="body1" fw="bold" className="text-mono-200 dark:text-mono-0">
                     Source Account
                   </Typography>
                 </div>
@@ -605,7 +605,7 @@ const MigrationClaimPage: FC = () => {
                       <Typography
                         variant="body1"
                         fw="semibold"
-                        className="text-mono-0"
+                        className="text-mono-200 dark:text-mono-0"
                       >
                         Checking Eligibility
                       </Typography>
@@ -801,12 +801,12 @@ const MigrationClaimPage: FC = () => {
           >
             <Card withShadow className="p-6">
               <div className="flex items-center justify-between mb-5">
-                <Typography variant="h5" fw="bold" className="text-mono-0">
+                <Typography variant="h5" fw="bold" className="text-mono-200 dark:text-mono-0">
                   How it works
                 </Typography>
                 <button
                   onClick={() => setIsHowItWorksOpen(false)}
-                  className="w-8 h-8 rounded-full bg-mono-160 hover:bg-mono-140 flex items-center justify-center transition-colors"
+                  className="w-8 h-8 rounded-full bg-mono-40 dark:bg-mono-160 hover:bg-mono-60 dark:hover:bg-mono-140 flex items-center justify-center transition-colors"
                 >
                   <span className="text-mono-100 text-sm">✕</span>
                 </button>
@@ -848,7 +848,7 @@ const MigrationClaimPage: FC = () => {
                       <Typography
                         variant="body2"
                         fw="semibold"
-                        className="text-mono-0"
+                        className="text-mono-200 dark:text-mono-0"
                       >
                         {title}
                       </Typography>
@@ -863,7 +863,7 @@ const MigrationClaimPage: FC = () => {
                 ))}
               </ol>
 
-              <div className="mt-5 p-3 rounded-xl bg-mono-170">
+              <div className="mt-5 p-3 rounded-xl bg-mono-20 dark:bg-mono-170">
                 <Typography variant="body2" className="text-mono-100 text-xs">
                   You have 1 year from migration start to claim. Unclaimed
                   tokens return to treasury.

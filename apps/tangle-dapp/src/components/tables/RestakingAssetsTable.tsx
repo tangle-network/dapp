@@ -6,16 +6,28 @@ import {
   SkeletonLoader,
   Typography,
 } from '@tangle-network/ui-components';
+import { TokenIcon } from '@tangle-network/icons';
 import type { RestakingAsset } from '@tangle-network/tangle-shared-ui/data/graphql/useRestakingAssets';
 import type { Delegator } from '@tangle-network/tangle-shared-ui/data/graphql/useDelegator';
-import { formatUnits } from 'viem';
+import { formatUnits, Address } from 'viem';
 import { twMerge } from 'tailwind-merge';
+import { getLocalTokenByAddress } from '@tangle-network/dapp-config/localTokens';
 
 interface Props {
   assets: RestakingAsset[];
   delegator: Delegator | null;
   isLoading: boolean;
 }
+
+// Get token symbol from address using local token config or fallback to truncated address
+const getTokenSymbol = (tokenAddress: string): string => {
+  const localToken = getLocalTokenByAddress(tokenAddress as Address);
+  if (localToken) {
+    return localToken.symbol;
+  }
+  // Fallback to truncated address
+  return `${tokenAddress.slice(0, 6)}...${tokenAddress.slice(-4)}`;
+};
 
 const formatAmount = (amount: bigint, decimals: number): string => {
   const formatted = formatUnits(amount, decimals);
@@ -93,7 +105,9 @@ export const RestakingAssetsTable: FC<Props> = ({
       {/* Rows */}
       {assets.map((asset) => {
         const position = assetPositions.get(asset.token.toLowerCase());
-        const decimals = 18; // Default to 18 decimals
+        const localToken = getLocalTokenByAddress(asset.token as Address);
+        const decimals = localToken?.decimals ?? 18;
+        const symbol = getTokenSymbol(asset.token);
 
         return (
           <Card
@@ -104,16 +118,19 @@ export const RestakingAssetsTable: FC<Props> = ({
               'hover:bg-mono-20/50 dark:hover:bg-mono-180/50 transition-colors',
             )}
           >
-            <div>
-              <Typography variant="body1" fw="semibold">
-                {asset.token.slice(0, 6)}...{asset.token.slice(-4)}
-              </Typography>
-              <Typography
-                variant="body2"
-                className="text-mono-100 dark:text-mono-100"
-              >
-                {asset.enabled ? 'Enabled' : 'Disabled'}
-              </Typography>
+            <div className="flex items-center gap-3">
+              <TokenIcon name={symbol} size="lg" />
+              <div>
+                <Typography variant="body1" fw="semibold">
+                  {symbol}
+                </Typography>
+                <Typography
+                  variant="body2"
+                  className="text-mono-100 dark:text-mono-100"
+                >
+                  {localToken?.name ?? (asset.enabled ? 'Enabled' : 'Disabled')}
+                </Typography>
+              </div>
             </div>
 
             <Typography variant="body1" className="text-right">

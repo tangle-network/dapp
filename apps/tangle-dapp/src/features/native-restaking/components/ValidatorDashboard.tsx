@@ -1,5 +1,5 @@
 import { FC, useState } from 'react';
-import { Button, Card, Typography, Input } from '@tangle-network/ui-components';
+import { Button, Card, CardVariant, Typography, Input } from '@tangle-network/ui-components';
 import type { Address } from 'viem';
 import { keccak256 } from 'viem';
 import { useValidatorInfo, usePodInfo } from '../hooks';
@@ -167,7 +167,7 @@ const ValidatorDashboard: FC<ValidatorDashboardProps> = ({ podAddress }) => {
 
   if (isLoading || !podInfo) {
     return (
-      <Card className="p-6">
+      <Card variant={CardVariant.GLASS} className="p-6">
         <Typography variant="h5" fw="bold" className="mb-4">
           Validators
         </Typography>
@@ -179,7 +179,7 @@ const ValidatorDashboard: FC<ValidatorDashboardProps> = ({ podAddress }) => {
   }
 
   return (
-    <Card className="p-6">
+    <Card variant={CardVariant.GLASS} className="p-6">
       <Typography variant="h5" fw="bold" className="mb-4">
         Validators
       </Typography>

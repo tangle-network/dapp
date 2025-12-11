@@ -2,6 +2,7 @@ import { ChainConfig } from '@tangle-network/dapp-config';
 import { calculateTypedChainId } from '@tangle-network/dapp-types/TypedChainId';
 import isDefined from '@tangle-network/dapp-types/utils/isDefined';
 import { LockUnlockLineIcon } from '@tangle-network/icons/LockUnlockLineIcon';
+import { TokenIcon } from '@tangle-network/icons';
 import ListModal from '@tangle-network/tangle-shared-ui/components/ListModal';
 import { Card, isEvmAddress } from '@tangle-network/ui-components';
 import Button from '@tangle-network/ui-components/components/buttons/Button';
@@ -403,18 +404,13 @@ const RestakeDelegateForm: FC = () => {
                       ? {
                           renderBody: () => (
                             <div className="flex items-center gap-2">
+                              <TokenIcon
+                                name={selectedAssetItem.symbol}
+                                size="lg"
+                              />
                               <Typography variant="h5" fw="bold">
                                 {selectedAssetItem.symbol}
                               </Typography>
-                              <div className="flex flex-col gap-1">
-                                <Typography
-                                  variant="body2"
-                                  className="text-mono-120 dark:text-mono-100"
-                                >
-                                  Available: {formattedMaxAmount}{' '}
-                                  {selectedAssetItem.symbol}
-                                </Typography>
-                              </div>
                             </div>
                           ),
                         }
@@ -485,9 +481,12 @@ const RestakeDelegateForm: FC = () => {
         }
         renderItem={(asset) => (
           <div className="flex items-center justify-between w-full p-2">
-            <div className="flex flex-col">
-              <span className="font-medium">{asset.symbol}</span>
-              <span className="text-xs text-mono-100">{asset.name}</span>
+            <div className="flex items-center gap-3">
+              <TokenIcon name={asset.symbol} size="lg" />
+              <div className="flex flex-col">
+                <span className="font-medium">{asset.symbol}</span>
+                <span className="text-xs text-mono-100">{asset.name}</span>
+              </div>
             </div>
             <div className="flex flex-col items-end">
               <span className="text-sm">

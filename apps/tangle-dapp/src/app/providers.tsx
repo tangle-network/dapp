@@ -1,10 +1,14 @@
 import { OFACFilterProvider } from '@tangle-network/api-provider-environment';
-import { RainbowKitProvider, darkTheme } from '@rainbow-me/rainbowkit';
+import {
+  RainbowKitProvider,
+  darkTheme,
+  lightTheme,
+} from '@rainbow-me/rainbowkit';
 import '@rainbow-me/rainbowkit/styles.css';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { config } from '@tangle-network/dapp-config/wagmi-config';
 import { DataSourceProvider } from '@tangle-network/tangle-shared-ui/context/DataSourceContext';
-import { UIProvider } from '@tangle-network/ui-components';
+import { UIProvider, useUIContext } from '@tangle-network/ui-components';
 import { type PropsWithChildren, type ReactNode, useState } from 'react';
 import { WagmiProvider } from 'wagmi';
 import { z } from 'zod';
@@ -18,6 +22,25 @@ const envSchema = z.object({
     .optional(),
 });
 
+const rainbowThemeConfig = {
+  accentColor: '#7c3aed',
+  accentColorForeground: 'white',
+  borderRadius: 'medium' as const,
+};
+
+const ThemedRainbowKit = ({ children }: PropsWithChildren): ReactNode => {
+  const { theme } = useUIContext();
+  const rainbowTheme = theme.isDarkMode
+    ? darkTheme(rainbowThemeConfig)
+    : lightTheme(rainbowThemeConfig);
+
+  return (
+    <RainbowKitProvider theme={rainbowTheme} modalSize="compact">
+      {children}
+    </RainbowKitProvider>
+  );
+};
+
 const Providers = ({ children }: PropsWithChildren): ReactNode => {
   const [queryClient] = useState(() => new QueryClient());
 
@@ -30,14 +53,7 @@ const Providers = ({ children }: PropsWithChildren): ReactNode => {
     <UIProvider hasErrorBoundary>
       <WagmiProvider config={config}>
         <QueryClientProvider client={queryClient}>
-          <RainbowKitProvider
-            theme={darkTheme({
-              accentColor: '#7c3aed',
-              accentColorForeground: 'white',
-              borderRadius: 'medium',
-            })}
-            modalSize="compact"
-          >
+          <ThemedRainbowKit>
             <DataSourceProvider>
               <OFACFilterProvider
                 isActivated={process.env.NODE_ENV !== 'development'}
@@ -47,7 +63,7 @@ const Providers = ({ children }: PropsWithChildren): ReactNode => {
                 {children}
               </OFACFilterProvider>
             </DataSourceProvider>
-          </RainbowKitProvider>
+          </ThemedRainbowKit>
         </QueryClientProvider>
       </WagmiProvider>
     </UIProvider>

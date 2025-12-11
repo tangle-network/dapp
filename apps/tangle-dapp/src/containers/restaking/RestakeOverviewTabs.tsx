@@ -1,6 +1,37 @@
+import { BN } from '@polkadot/util';
+import { TokenIcon } from '@tangle-network/icons';
+import Spinner from '@tangle-network/icons/Spinner';
+import {
+  useDelegator,
+  useRestakingAssets,
+  type Operator,
+} from '@tangle-network/tangle-shared-ui/data/graphql';
+import HeaderCell from '@tangle-network/tangle-shared-ui/components/tables/HeaderCell';
+import TableCellWrapper from '@tangle-network/tangle-shared-ui/components/tables/TableCellWrapper';
+import TableStatus from '@tangle-network/tangle-shared-ui/components/tables/TableStatus';
+import { useEvmAssetMetadatas } from '@tangle-network/tangle-shared-ui/hooks/useEvmAssetMetadatas';
+import {
+  AmountFormatStyle,
+  formatDisplayAmount,
+  EMPTY_VALUE_PLACEHOLDER,
+} from '@tangle-network/ui-components';
+import Button from '@tangle-network/ui-components/components/buttons/Button';
+import { Table } from '@tangle-network/ui-components/components/Table';
+import { TableVariant } from '@tangle-network/ui-components/components/Table/types';
 import { TableAndChartTabs } from '@tangle-network/ui-components/components/TableAndChartTabs';
 import { TabContent } from '@tangle-network/ui-components/components/Tabs/TabContent';
-import { type FC, useCallback, useState } from 'react';
+import type { EvmAddress } from '@tangle-network/ui-components/types/address';
+import { Typography } from '@tangle-network/ui-components/typography/Typography';
+import pluralize from '@tangle-network/ui-components/utils/pluralize';
+import {
+  createColumnHelper,
+  getCoreRowModel,
+  getPaginationRowModel,
+  getSortedRowModel,
+  useReactTable,
+} from '@tanstack/react-table';
+import { type FC, useCallback, useMemo, useState } from 'react';
+import { twMerge } from 'tailwind-merge';
 import { Address, formatUnits } from 'viem';
 import { useAccount } from 'wagmi';
 import { RestakeAction } from '../../constants';
@@ -10,15 +41,6 @@ import DepositForm from '../../pages/restake/deposit/DepositForm';
 import RestakeUnstakeForm from '../../pages/restake/unstake';
 import RestakeWithdrawForm from '../../pages/restake/withdraw';
 import { PagePath, QueryParamKey } from '../../types';
-
-// EVM hooks
-import {
-  useDelegator,
-  useRestakingAssets,
-  type Operator,
-} from '@tangle-network/tangle-shared-ui/data/graphql';
-import { useEvmAssetMetadatas } from '@tangle-network/tangle-shared-ui/hooks/useEvmAssetMetadatas';
-import type { EvmAddress } from '@tangle-network/ui-components/types/address';
 
 enum RestakeTab {
   RESTAKE = 'Restake',
@@ -88,6 +110,80 @@ const RestakeOverviewTabs: FC<Props> = ({
 
 export default RestakeOverviewTabs;
 
+// Vault row type
+interface VaultRow {
+  id: Address;
+  name: string;
+  symbol: string;
+  decimals: number;
+  tvl: bigint;
+  userDeposit: bigint;
+  rewardMultiplier: number;
+}
+
+const VAULT_COLUMN_HELPER = createColumnHelper<VaultRow>();
+
+const getVaultColumns = () => [
+  VAULT_COLUMN_HELPER.accessor('id', {
+    header: () => <HeaderCell title="Asset" />,
+    cell: (props) => (
+      <TableCellWrapper className="pl-3">
+        <div className="flex items-center gap-2">
+          <TokenIcon name={props.row.original.symbol} size="lg" />
+          <div>
+            <Typography variant="h5" className="whitespace-nowrap">
+              {props.row.original.symbol}
+            </Typography>
+            <Typography
+              variant="body3"
+              className="text-mono-120 dark:text-mono-100"
+            >
+              {props.row.original.name}
+            </Typography>
+          </div>
+        </div>
+      </TableCellWrapper>
+    ),
+  }),
+  VAULT_COLUMN_HELPER.accessor('tvl', {
+    header: () => <HeaderCell title="TVL" />,
+    cell: (props) => (
+      <TableCellWrapper>
+        {formatDisplayAmount(
+          new BN(props.getValue().toString()),
+          props.row.original.decimals,
+          AmountFormatStyle.SHORT,
+        )}
+      </TableCellWrapper>
+    ),
+  }),
+  VAULT_COLUMN_HELPER.accessor('userDeposit', {
+    header: () => <HeaderCell title="Your Deposit" />,
+    cell: (props) => {
+      const value = props.getValue();
+      return (
+        <TableCellWrapper>
+          {value > BigInt(0)
+            ? formatDisplayAmount(
+                new BN(value.toString()),
+                props.row.original.decimals,
+                AmountFormatStyle.SHORT,
+              )
+            : EMPTY_VALUE_PLACEHOLDER}
+        </TableCellWrapper>
+      );
+    },
+  }),
+  VAULT_COLUMN_HELPER.accessor('rewardMultiplier', {
+    header: () => <HeaderCell title="Multiplier" />,
+    cell: (props) => (
+      <TableCellWrapper removeRightBorder>
+        {props.getValue()}x
+      </TableCellWrapper>
+    ),
+  }),
+];
+
 // EVM Vault tab content
 const VaultTabContent: FC = () => {
   const { address: userAddress } = useAccount();
@@ -101,16 +197,15 @@ const VaultTabContent: FC = () => {
   const { data: tokenMetadatas } = useEvmAssetMetadatas(tokenAddresses);
 
   // Build vault data from restaking assets
-  const vaults =
-    restakingAssets?.map((asset) => {
+  const vaults = useMemo<VaultRow[]>(() => {
+    if (!restakingAssets) return [];
+    return restakingAssets.map((asset) => {
       const metadata = tokenMetadatas?.find(
         (m) => m.id.toLowerCase() === asset.token.toLowerCase(),
       );
-
       const userDeposit = delegator?.assetPositions.find(
         (p) => p.token.toLowerCase() === asset.token.toLowerCase(),
       );
-
       return {
         id: asset.token,
         name: metadata?.name ?? 'Unknown',
@@ -118,77 +213,144 @@ const VaultTabContent: FC = () => {
         decimals: metadata?.decimals ?? 18,
         tvl: asset.currentDeposits,
         userDeposit: userDeposit?.totalDeposited ?? BigInt(0),
-        minStake: asset.minDelegation,
-        depositCap: asset.depositCap,
         rewardMultiplier: asset.rewardMultiplierBps / 10000,
       };
-    }) ?? [];
+    });
+  }, [restakingAssets, tokenMetadatas, delegator]);
+
+  const columns = useMemo(() => getVaultColumns(), []);
+
+  const table = useReactTable({
+    data: vaults,
+    columns,
+    getCoreRowModel: getCoreRowModel(),
+    getSortedRowModel: getSortedRowModel(),
+    getPaginationRowModel: getPaginationRowModel(),
+    autoResetPageIndex: false,
+  });
+
+  if (isLoadingAssets) {
+    return (
+      <TableStatus
+        title="Loading Vaults"
+        description="Please wait while we load the vaults."
+        icon={<Spinner size="lg" />}
+      />
+    );
+  }
+
+  if (vaults.length === 0) {
+    return (
+      <TableStatus
+        title="No Vaults Found"
+        description="It looks like there are no vaults available at the moment."
+      />
+    );
+  }
 
   return (
-    <div className="space-y-4">
-      <div className="overflow-x-auto">
-        <table className="w-full min-w-[600px]">
-          <thead>
-            <tr className="text-left border-b border-mono-60 dark:border-mono-140">
-              <th className="px-4 py-3 text-sm font-medium text-mono-120">
-                Asset
-              </th>
-              <th className="px-4 py-3 text-sm font-medium text-mono-120">
-                TVL
-              </th>
-              <th className="px-4 py-3 text-sm font-medium text-mono-120">
-                Your Deposit
-              </th>
-              <th className="px-4 py-3 text-sm font-medium text-mono-120">
-                Multiplier
-              </th>
-            </tr>
-          </thead>
-          <tbody>
-            {isLoadingAssets ? (
-              <tr>
-                <td colSpan={4} className="px-4 py-8 text-center text-mono-100">
-                  Loading vaults...
-                </td>
-              </tr>
-            ) : vaults.length === 0 ? (
-              <tr>
-                <td colSpan={4} className="px-4 py-8 text-center text-mono-100">
-                  No vaults available
-                </td>
-              </tr>
-            ) : (
-              vaults.map((vault) => (
-                <tr
-                  key={vault.id}
-                  className="border-b border-mono-40 dark:border-mono-160"
-                >
-                  <td className="px-4 py-3">
-                    <div className="flex flex-col">
-                      <span className="font-medium">{vault.symbol}</span>
-                      <span className="text-xs text-mono-100">
-                        {vault.name}
-                      </span>
-                    </div>
-                  </td>
-                  <td className="px-4 py-3">
-                    {formatUnits(vault.tvl, vault.decimals)} {vault.symbol}
-                  </td>
-                  <td className="px-4 py-3">
-                    {vault.userDeposit > BigInt(0)
-                      ? `${formatUnits(vault.userDeposit, vault.decimals)} ${vault.symbol}`
-                      : '-'}
-                  </td>
-                  <td className="px-4 py-3">{vault.rewardMultiplier}x</td>
-                </tr>
-              ))
-            )}
-          </tbody>
-        </table>
-      </div>
-    </div>
+    <Table
+      variant={TableVariant.GLASS_OUTER}
+      title={pluralize('vault', vaults.length !== 1)}
+      isPaginated
+      tableProps={table}
+      className="px-2"
+      tableWrapperClassName="py-2"
+      tableClassName="border-collapse border-spacing-0"
+      thClassName="py-2"
+      tbodyClassName={twMerge(
+        '[&_tr:first-child_td:first-child]:rounded-tl-xl [&_tr:first-child_td:last-child]:rounded-tr-xl',
+        '[&_tr:last-child_td:first-child]:rounded-bl-xl [&_tr:last-child_td:last-child]:rounded-br-xl',
+      )}
+      trClassName="last:border-b-0"
+      tdClassName="first:rounded-l-none last:rounded-r-none"
+    />
   );
 };
+
+// Operator row type
+interface OperatorRow {
+  id: Address;
+  status: string;
+  stake: bigint;
+  delegationCount: number;
+}
+
+const OPERATOR_COLUMN_HELPER = createColumnHelper<OperatorRow>();
+
+const getOperatorColumns = (onRestakeClicked: () => void) => [
+  OPERATOR_COLUMN_HELPER.accessor('id', {
+    header: () => <HeaderCell title="Operator" />,
+    cell: (props) => (
+      <TableCellWrapper className="pl-3">
+        <Typography variant="body2" className="font-mono">
+          {props.getValue().slice(0, 10)}...{props.getValue().slice(-8)}
+        </Typography>
+      </TableCellWrapper>
+    ),
+  }),
+  OPERATOR_COLUMN_HELPER.accessor('status', {
+    header: () => <HeaderCell title="Status" />,
+    cell: (props) => {
+      const status = props.getValue();
+      return (
+        <TableCellWrapper>
+          <span
+            className={twMerge(
+              'px-2 py-1 text-xs rounded',
+              status === 'ACTIVE'
+                ? 'bg-green-500/20 text-green-500'
+                : 'bg-mono-80 text-mono-120',
+            )}
+          >
+            {status}
+          </span>
+        </TableCellWrapper>
+      );
+    },
+  }),
+  OPERATOR_COLUMN_HELPER.accessor('stake', {
+    header: () => <HeaderCell title="Stake" />,
+    cell: (props) => (
+      <TableCellWrapper>
+        {formatDisplayAmount(
+          new BN(props.getValue().toString()),
+          18,
+          AmountFormatStyle.SHORT,
+        )}{' '}
+        TNT
+      </TableCellWrapper>
+    ),
+  }),
+  OPERATOR_COLUMN_HELPER.accessor('delegationCount', {
+    header: () => <HeaderCell title="Delegations" />,
+    cell: (props) => (
+      <TableCellWrapper>{props.getValue()}</TableCellWrapper>
+    ),
+  }),
+  OPERATOR_COLUMN_HELPER.display({
+    id: 'actions',
+    header: () => <HeaderCell title="Actions" />,
+    cell: (props) => (
+      <TableCellWrapper removeRightBorder>
+        <Button
+          variant="utility"
+          size="sm"
+          onClick={() => {
+            onRestakeClicked();
+            window.history.pushState(
+              {},
+              '',
+              `${PagePath.RESTAKE_DELEGATE}?${QueryParamKey.RESTAKE_OPERATOR}=${props.row.original.id}`,
+            );
+          }}
+        >
+          Delegate
+        </Button>
+      </TableCellWrapper>
+    ),
+  }),
+];
 
 // EVM Operators table
 type OperatorsTableProps = {
@@ -201,96 +363,67 @@ const OperatorsTable: FC<OperatorsTableProps> = ({
   operatorMap,
   onRestakeClicked,
 }) => {
-  const operators = operatorMap ? Array.from(operatorMap.values()) : [];
   const isLoading = operatorMap === null;
 
+  const operators = useMemo<OperatorRow[]>(() => {
+    if (!operatorMap) return [];
+    return Array.from(operatorMap.values()).map((op) => ({
+      id: op.id as Address,
+      status: op.restakingStatus ?? 'UNKNOWN',
+      stake: op.restakingStake ?? BigInt(0),
+      delegationCount: Number(op.restakingDelegationCount ?? 0),
+    }));
+  }, [operatorMap]);
+
+  const columns = useMemo(
+    () => getOperatorColumns(onRestakeClicked),
+    [onRestakeClicked],
+  );
+
+  const table = useReactTable({
+    data: operators,
+    columns,
+    getCoreRowModel: getCoreRowModel(),
+    getSortedRowModel: getSortedRowModel(),
+    getPaginationRowModel: getPaginationRowModel(),
+    autoResetPageIndex: false,
+  });
+
+  if (isLoading) {
+    return (
+      <TableStatus
+        title="Loading Operators"
+        description="Please wait while we load the operators."
+        icon={<Spinner size="lg" />}
+      />
+    );
+  }
+
+  if (operators.length === 0) {
+    return (
+      <TableStatus
+        title="No Operators Found"
+        description="It looks like there are no operators registered yet."
+      />
+    );
+  }
+
   return (
-    <div className="space-y-4">
-      <div className="overflow-x-auto">
-        <table className="w-full min-w-[600px]">
-          <thead>
-            <tr className="text-left border-b border-mono-60 dark:border-mono-140">
-              <th className="px-4 py-3 text-sm font-medium text-mono-120">
-                Operator
-              </th>
-              <th className="px-4 py-3 text-sm font-medium text-mono-120">
-                Status
-              </th>
-              <th className="px-4 py-3 text-sm font-medium text-mono-120">
-                Stake
-              </th>
-              <th className="px-4 py-3 text-sm font-medium text-mono-120">
-                Delegations
-              </th>
-              <th className="px-4 py-3 text-sm font-medium text-mono-120">
-                Actions
-              </th>
-            </tr>
-          </thead>
-          <tbody>
-            {isLoading ? (
-              <tr>
-                <td colSpan={5} className="px-4 py-8 text-center text-mono-100">
-                  Loading operators...
-                </td>
-              </tr>
-            ) : operators.length === 0 ? (
-              <tr>
-                <td colSpan={5} className="px-4 py-8 text-center text-mono-100">
-                  No operators registered yet
-                </td>
-              </tr>
-            ) : (
-              operators.map((operator) => (
-                <tr
-                  key={operator.id}
-                  className="border-b border-mono-40 dark:border-mono-160"
-                >
-                  <td className="px-4 py-3">
-                    <span className="font-mono text-sm">
-                      {operator.id.slice(0, 10)}...{operator.id.slice(-8)}
-                    </span>
-                  </td>
-                  <td className="px-4 py-3">
-                    <span
-                      className={`px-2 py-1 text-xs rounded ${
-                        operator.restakingStatus === 'ACTIVE'
-                          ? 'bg-green-500/20 text-green-500'
-                          : 'bg-mono-80 text-mono-120'
-                      }`}
-                    >
-                      {operator.restakingStatus ?? 'UNKNOWN'}
-                    </span>
-                  </td>
-                  <td className="px-4 py-3">
-                    {formatUnits(operator.restakingStake ?? BigInt(0), 18)} TNT
-                  </td>
-                  <td className="px-4 py-3">
-                    {operator.restakingDelegationCount?.toString() ?? '0'}
-                  </td>
-                  <td className="px-4 py-3">
-                    <a
-                      href={`${PagePath.RESTAKE_DELEGATE}?${QueryParamKey.RESTAKE_OPERATOR}=${operator.id}`}
-                      onClick={(e) => {
-                        e.preventDefault();
-                        onRestakeClicked();
-                        window.history.pushState(
-                          {},
-                          '',
-                          `${PagePath.RESTAKE_DELEGATE}?${QueryParamKey.RESTAKE_OPERATOR}=${operator.id}`,
-                        );
-                      }}
-                      className="text-sm text-blue-50 hover:text-blue-40"
-                    >
-                      Delegate
-                    </a>
-                  </td>
-                </tr>
-              ))
-            )}
-          </tbody>
-        </table>
-      </div>
-    </div>
+    <Table
+      variant={TableVariant.GLASS_OUTER}
+      title={pluralize('operator', operators.length !== 1)}
+      isPaginated
+      tableProps={table}
+      className="px-2"
+      tableWrapperClassName="py-2"
+      tableClassName="border-collapse border-spacing-0"
+      thClassName="py-2"
+      tbodyClassName={twMerge(
+        '[&_tr:first-child_td:first-child]:rounded-tl-xl [&_tr:first-child_td:last-child]:rounded-tr-xl',
+        '[&_tr:last-child_td:first-child]:rounded-bl-xl [&_tr:last-child_td:last-child]:rounded-br-xl',
+      )}
+      trClassName="last:border-b-0"
+      tdClassName="first:rounded-l-none last:rounded-r-none"
+    />
   );
 };

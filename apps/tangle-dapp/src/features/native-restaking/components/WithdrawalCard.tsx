@@ -1,5 +1,5 @@
 import { FC, useState, useMemo } from 'react';
-import { Button, Card, Typography, Input } from '@tangle-network/ui-components';
+import { Button, Card, CardVariant, Typography, Input } from '@tangle-network/ui-components';
 import type { Address } from 'viem';
 import { parseEther } from 'viem';
 import {
@@ -76,7 +76,7 @@ const WithdrawalCard: FC<WithdrawalCardProps> = ({ ownerAddress }) => {
 
   if (isLoading || !ownerInfo) {
     return (
-      <Card className="p-6">
+      <Card variant={CardVariant.GLASS} className="p-6">
         <Typography variant="h5" fw="bold" className="mb-4">
           Withdrawals
         </Typography>
@@ -88,7 +88,7 @@ const WithdrawalCard: FC<WithdrawalCardProps> = ({ ownerAddress }) => {
   }
 
   return (
-    <Card className="p-6">
+    <Card variant={CardVariant.GLASS} className="p-6">
       <Typography variant="h5" fw="bold" className="mb-4">
         Withdrawals
       </Typography>

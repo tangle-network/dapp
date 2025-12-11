@@ -4,6 +4,7 @@ import isDefined from '@tangle-network/dapp-types/utils/isDefined';
 import { ChainIcon } from '@tangle-network/icons/ChainIcon';
 import LockFillIcon from '@tangle-network/icons/LockFillIcon';
 import { LockLineIcon } from '@tangle-network/icons/LockLineIcon';
+import { TokenIcon } from '@tangle-network/icons';
 import { Card, IconButton } from '@tangle-network/ui-components';
 import Button from '@tangle-network/ui-components/components/buttons/Button';
 import { Modal } from '@tangle-network/ui-components/components/Modal';
@@ -338,9 +339,15 @@ const RestakeWithdrawForm: FC = () => {
                       ...(selectedAssetPosition
                         ? {
                             renderBody: () => (
-                              <Typography variant="h5" fw="bold">
-                                {selectedAssetPosition.tokenSymbol}
-                              </Typography>
+                              <div className="flex items-center gap-2">
+                                <TokenIcon
+                                  name={selectedAssetPosition.tokenSymbol}
+                                  size="lg"
+                                />
+                                <Typography variant="h5" fw="bold">
+                                  {selectedAssetPosition.tokenSymbol}
+                                </Typography>
+                              </div>
                             ),
                           }
                         : {}),
@@ -427,7 +434,8 @@ const RestakeWithdrawForm: FC = () => {
         }
         renderItem={(item) => (
           <div className="flex items-center justify-between w-full p-2">
-            <div className="flex flex-col">
+            <div className="flex items-center gap-3">
+              <TokenIcon name={item.tokenSymbol} size="lg" />
               <span className="font-medium">{item.tokenSymbol}</span>
             </div>
             <div className="flex flex-col items-end">

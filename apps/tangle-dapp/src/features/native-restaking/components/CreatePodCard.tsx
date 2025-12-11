@@ -1,5 +1,5 @@
 import { FC } from 'react';
-import { Button, Card, Typography } from '@tangle-network/ui-components';
+import { Button, Card, CardVariant, Typography } from '@tangle-network/ui-components';
 import { useAccount } from 'wagmi';
 import { useCreatePod, useHasPod } from '../hooks';
 
@@ -20,7 +20,7 @@ const CreatePodCard: FC = () => {
 
   if (!isConnected) {
     return (
-      <Card className="p-6">
+      <Card variant={CardVariant.GLASS} className="p-6">
         <Typography variant="h5" fw="bold" className="mb-4">
           Create Validator Pod
         </Typography>
@@ -33,7 +33,7 @@ const CreatePodCard: FC = () => {
 
   if (checkingPod) {
     return (
-      <Card className="p-6">
+      <Card variant={CardVariant.GLASS} className="p-6">
         <Typography variant="h5" fw="bold" className="mb-4">
           Checking Pod Status...
         </Typography>
@@ -46,7 +46,7 @@ const CreatePodCard: FC = () => {
   }
 
   return (
-    <Card className="p-6">
+    <Card variant={CardVariant.GLASS} className="p-6">
       <Typography variant="h5" fw="bold" className="mb-4">
         Create Validator Pod
       </Typography>

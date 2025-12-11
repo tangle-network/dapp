@@ -2,32 +2,26 @@ import { CloudOutlineIcon, GlobalLine } from '@tangle-network/icons';
 import { GridFillIcon } from '@tangle-network/icons/GridFillIcon';
 import { PagePath } from '../types';
 
-const ICON_CLASSNAME = 'h-6 w-6 fill-mono-120 !dark:fill-mono-0';
-
 export const CLOUD_INSTRUCTIONS = [
   {
-    title: 'Getting started with Tangle Cloud',
-    description: 'Learn how to set up and manage decentralized services.',
-    icon: CloudOutlineIcon,
-    to: 'https://docs.tangle.tools/developers/blueprints/introduction',
-    className: ICON_CLASSNAME,
-    external: true,
-  },
-  {
-    title: 'Register as an Operator',
-    description: 'Register as an Operator to participate in managing services.',
+    title: 'Become an Operator',
+    description: 'Start earning by running decentralized services on Tangle.',
     icon: GlobalLine,
     to: PagePath.OPERATORS,
-    className: ICON_CLASSNAME,
     external: false,
   },
   {
-    title: 'Register and run Blueprints',
-    description:
-      'Browse available Blueprints to select services you can operate and support.',
+    title: 'Browse Blueprints',
+    description: 'Discover and deploy available service blueprints.',
     icon: GridFillIcon,
     to: PagePath.BLUEPRINTS,
-    className: ICON_CLASSNAME,
     external: false,
+  },
+  {
+    title: 'Read the Docs',
+    description: 'Learn how to build and operate services on Tangle.',
+    icon: CloudOutlineIcon,
+    to: 'https://docs.tangle.tools/developers/blueprints/introduction',
+    external: true,
   },
 ];

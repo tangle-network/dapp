@@ -62,7 +62,7 @@ const PodOverviewCard: FC<PodOverviewCardProps> = ({
 
   if (loadingPod || loadingOwner) {
     return (
-      <Card className="p-6">
+      <Card variant={CardVariant.GLASS} className="p-6">
         <Typography variant="h5" fw="bold" className="mb-4">
           Pod Overview
         </Typography>
@@ -75,7 +75,7 @@ const PodOverviewCard: FC<PodOverviewCardProps> = ({
 
   if (!podInfo || !ownerInfo) {
     return (
-      <Card className="p-6">
+      <Card variant={CardVariant.GLASS} className="p-6">
         <Typography variant="h5" fw="bold" className="mb-4">
           Pod Overview
         </Typography>
@@ -87,7 +87,7 @@ const PodOverviewCard: FC<PodOverviewCardProps> = ({
   }
 
   return (
-    <Card className="p-6">
+    <Card variant={CardVariant.GLASS} className="p-6">
       <div className="flex items-center justify-between mb-6">
         <Typography variant="h5" fw="bold">
           Pod Overview
