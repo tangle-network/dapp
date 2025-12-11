@@ -1,6 +1,7 @@
 import { FC, useMemo } from 'react';
 import {
   Card,
+  CardVariant,
   Typography,
   CopyWithTooltip,
 } from '@tangle-network/ui-components';

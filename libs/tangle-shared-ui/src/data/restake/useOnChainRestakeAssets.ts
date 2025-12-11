@@ -5,8 +5,8 @@
 
 import { useQuery } from '@tanstack/react-query';
 import { useEffect } from 'react';
-import { Address, erc20Abi } from 'viem';
-import { useAccount, useChainId, usePublicClient } from 'wagmi';
+import { Address, erc20Abi, zeroAddress } from 'viem';
+import { useAccount, useBalance, useChainId, usePublicClient } from 'wagmi';
 import { getContractsByChainId } from '@tangle-network/dapp-config/contracts';
 import { LOCAL_MOCK_TOKENS } from '@tangle-network/dapp-config/localTokens';
 import MULTI_ASSET_DELEGATION_ABI from '../../abi/multiAssetDelegation';
@@ -14,6 +14,9 @@ import fetchErc20TokenMetadata from '../../utils/fetchErc20TokenMetadata';
 import { CACHE_CONFIG } from '../../constants/cacheConfig';
 import type { RestakeAsset } from '../graphql/useRestakeAssets';
 import type { EvmAddress } from '@tangle-network/ui-components/types/address';
+
+// Native token uses zero address
+const NATIVE_TOKEN_ADDRESS = zeroAddress as Address;
 
 // AssetConfig from MultiAssetDelegation contract
 interface AssetConfig {
@@ -42,9 +45,9 @@ export const useOnChainRestakeAssets = (options?: { enabled?: boolean }) => {
   const isLocalDev = chainId === 84532 || chainId === 31337;
 
   // 1. Get potential token addresses (from config for local dev)
-  const potentialTokens = isLocalDev
-    ? LOCAL_MOCK_TOKENS.map((t) => t.address)
-    : [];
+  // Always include native token (ETH) as a potential restaking asset
+  const erc20Tokens = isLocalDev ? LOCAL_MOCK_TOKENS.map((t) => t.address) : [];
+  const potentialTokens = [NATIVE_TOKEN_ADDRESS, ...erc20Tokens];
 
   // Debug: Log the state
   useEffect(() => {
@@ -105,10 +108,13 @@ export const useOnChainRestakeAssets = (options?: { enabled?: boolean }) => {
       results.forEach((result, index) => {
         if (result.status === 'success') {
           const config = result.result as AssetConfig;
-          console.log(`[useOnChainRestakeAssets] Token ${potentialTokens[index]}:`, {
-            enabled: config.enabled,
-            config,
-          });
+          console.log(
+            `[useOnChainRestakeAssets] Token ${potentialTokens[index]}:`,
+            {
+              enabled: config.enabled,
+              config,
+            },
+          );
           if (config.enabled) {
             enabled.push({
               token: potentialTokens[index],
@@ -116,49 +122,75 @@ export const useOnChainRestakeAssets = (options?: { enabled?: boolean }) => {
             });
           }
         } else {
-          console.log(`[useOnChainRestakeAssets] Token ${potentialTokens[index]} failed:`, result);
+          console.log(
+            `[useOnChainRestakeAssets] Token ${potentialTokens[index]} failed:`,
+            result,
+          );
         }
       });
 
-      console.log('[useOnChainRestakeAssets] Found enabled tokens:', enabled.length);
+      console.log(
+        '[useOnChainRestakeAssets] Found enabled tokens:',
+        enabled.length,
+      );
       return enabled;
     },
     enabled: enabled && !!publicClient && potentialTokens.length > 0,
     ...CACHE_CONFIG.ASSETS,
   });
 
-  // Get token addresses from enabled configs
-  const tokenAddresses = enabledTokens?.map((e) => e.token) ?? [];
+  // Get token addresses from enabled configs, separating native ETH from ERC20
+  const allTokenAddresses = enabledTokens?.map((e) => e.token) ?? [];
+  const erc20TokenAddresses = allTokenAddresses.filter(
+    (addr) => addr.toLowerCase() !== NATIVE_TOKEN_ADDRESS.toLowerCase(),
+  );
+  const hasNativeToken = allTokenAddresses.some(
+    (addr) => addr.toLowerCase() === NATIVE_TOKEN_ADDRESS.toLowerCase(),
+  );
+  const nativeTokenConfig = enabledTokens?.find(
+    (e) => e.token.toLowerCase() === NATIVE_TOKEN_ADDRESS.toLowerCase(),
+  )?.config;
 
-  // 3. Fetch ERC20 metadata
+  // Fetch native balance using wagmi hook
+  const { data: nativeBalanceData } = useBalance({
+    address: userAddress,
+  });
+  const nativeBalance = nativeBalanceData?.value ?? BigInt(0);
+
+  // 3. Fetch ERC20 metadata (only for ERC20 tokens, not native)
   const { data: tokenMetadatas, isLoading: isLoadingMetadata } = useQuery({
-    queryKey: ['onChainErc20Metadata', tokenAddresses, chainId],
+    queryKey: ['onChainErc20Metadata', erc20TokenAddresses, chainId],
     queryFn: async () => {
-      if (!publicClient || tokenAddresses.length === 0) {
+      if (!publicClient || erc20TokenAddresses.length === 0) {
         return [];
       }
       return fetchErc20TokenMetadata(
         publicClient as any,
-        tokenAddresses as EvmAddress[],
+        erc20TokenAddresses as EvmAddress[],
       );
     },
-    enabled: enabled && !!publicClient && tokenAddresses.length > 0,
+    enabled: enabled && !!publicClient && erc20TokenAddresses.length > 0,
     staleTime: Infinity, // Token metadata doesn't change
   });
 
-  // 4. Fetch user balances
+  // 4. Fetch user ERC20 balances
   const {
     data: balances,
     isLoading: isLoadingBalances,
     refetch: refetchBalances,
   } = useQuery({
-    queryKey: ['onChainErc20Balances', userAddress, tokenAddresses, chainId],
+    queryKey: [
+      'onChainErc20Balances',
+      userAddress,
+      erc20TokenAddresses,
+      chainId,
+    ],
     queryFn: async () => {
-      if (!publicClient || !userAddress || tokenAddresses.length === 0) {
+      if (!publicClient || !userAddress || erc20TokenAddresses.length === 0) {
         return new Map<Address, bigint>();
       }
 
-      const calls = tokenAddresses.map((token) => ({
+      const calls = erc20TokenAddresses.map((token) => ({
         address: token,
         abi: erc20Abi,
         functionName: 'balanceOf' as const,
@@ -169,7 +201,7 @@ export const useOnChainRestakeAssets = (options?: { enabled?: boolean }) => {
       const balanceMap = new Map<Address, bigint>();
 
       results.forEach((result, index) => {
-        const token = tokenAddresses[index];
+        const token = erc20TokenAddresses[index];
         balanceMap.set(
           token,
           result.status === 'success' ? (result.result as bigint) : BigInt(0),
@@ -179,7 +211,10 @@ export const useOnChainRestakeAssets = (options?: { enabled?: boolean }) => {
       return balanceMap;
     },
     enabled:
-      enabled && !!publicClient && !!userAddress && tokenAddresses.length > 0,
+      enabled &&
+      !!publicClient &&
+      !!userAddress &&
+      erc20TokenAddresses.length > 0,
     ...CACHE_CONFIG.BALANCES,
   });
 
@@ -189,20 +224,58 @@ export const useOnChainRestakeAssets = (options?: { enabled?: boolean }) => {
   const { data: assets } = useQuery({
     queryKey: [
       'onChainRestakeAssets',
-      tokenAddresses,
+      erc20TokenAddresses,
       tokenMetadatas?.length ?? 0,
+      hasNativeToken,
       userAddress,
       chainId,
     ],
     queryFn: () => {
-      if (!enabledTokens || !tokenMetadatas) {
+      if (!enabledTokens) {
+        return null;
+      }
+
+      // Need tokenMetadatas if there are ERC20 tokens
+      if (erc20TokenAddresses.length > 0 && !tokenMetadatas) {
         return null;
       }
 
       const assetMap = new Map<Address, RestakeAsset>();
 
+      // Add native ETH if enabled
+      if (hasNativeToken && nativeTokenConfig) {
+        assetMap.set(NATIVE_TOKEN_ADDRESS, {
+          id: NATIVE_TOKEN_ADDRESS,
+          metadata: {
+            address: NATIVE_TOKEN_ADDRESS,
+            name: 'Ether',
+            symbol: 'ETH',
+            decimals: 18,
+          },
+          balance: nativeBalance,
+          restakingInfo: {
+            id: NATIVE_TOKEN_ADDRESS,
+            token: NATIVE_TOKEN_ADDRESS,
+            enabled: true,
+            minOperatorStake: nativeTokenConfig.minOperatorStake,
+            minDelegation: nativeTokenConfig.minDelegation,
+            depositCap: nativeTokenConfig.depositCap,
+            currentDeposits: nativeTokenConfig.currentDeposits,
+            rewardMultiplierBps: nativeTokenConfig.rewardMultiplierBps,
+            createdAt: BigInt(0),
+            updatedAt: BigInt(0),
+          },
+        });
+      }
+
+      // Add ERC20 tokens
       for (const { token, config } of enabledTokens) {
-        const metadata = tokenMetadatas.find(
+        // Skip native token (already handled above)
+        if (token.toLowerCase() === NATIVE_TOKEN_ADDRESS.toLowerCase()) {
+          continue;
+        }
+
+        const metadata = tokenMetadatas?.find(
           (m) => m.id.toLowerCase() === token.toLowerCase(),
         );
 
@@ -264,7 +337,11 @@ export const useOnChainRestakeAssets = (options?: { enabled?: boolean }) => {
 
       return assetMap;
     },
-    enabled: !!enabledTokens && !!tokenMetadatas,
+    // Enable when we have enabled tokens and either:
+    // 1. No ERC20 tokens (only native), or
+    // 2. Token metadata is loaded for ERC20 tokens
+    enabled:
+      !!enabledTokens && (erc20TokenAddresses.length === 0 || !!tokenMetadatas),
     staleTime: CACHE_CONFIG.ASSETS.staleTime,
   });
 
