@@ -19,6 +19,7 @@ export {
   useDelegatorDelegations,
   useDelegatorWithdrawRequests,
   useDelegatorUnstakeRequests,
+  useDelegatorCount,
   type Delegator,
   type DelegatorAssetPosition,
   type DelegationPosition,

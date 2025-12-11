@@ -1,5 +1,6 @@
 import { StatusIndicator } from '@tangle-network/icons';
 import { useOperators } from '@tangle-network/tangle-shared-ui/data/graphql/useOperators';
+import { useDelegatorCount } from '@tangle-network/tangle-shared-ui/data/graphql/useDelegator';
 import type { RestakingAsset } from '@tangle-network/tangle-shared-ui/data/graphql/useRestakingAssets';
 import {
   Card,
@@ -45,6 +46,10 @@ export const ProtocolStatisticCard: FC<Props> = ({
     status: 'ACTIVE',
   });
 
+  // Get unique restaker (delegator) count
+  const { data: restakerCount, isLoading: isLoadingRestakers } =
+    useDelegatorCount();
+
   // Calculate TVL display value (using first asset's decimals as estimate)
   const tvlDisplay = useMemo(() => {
     if (!tvlData || tvlData.totalDeposits === BigInt(0)) {
@@ -55,14 +60,6 @@ export const ProtocolStatisticCard: FC<Props> = ({
     const num = parseFloat(formatted);
     return formatLargeNumber(num, 2);
   }, [tvlData]);
-
-  // Get unique delegator count from operators' delegation counts
-  const delegatorCount = useMemo(() => {
-    if (!operators) return null;
-    return operators.reduce((sum, op) => {
-      return sum + Number(op.restakingDelegationCount ?? 0);
-    }, 0);
-  }, [operators]);
 
   return (
     <Card
@@ -107,8 +104,8 @@ export const ProtocolStatisticCard: FC<Props> = ({
         <div className="grid grid-cols-3 gap-6 mt-auto">
           <StatsItem
             label="Restakers"
-            result={delegatorCount}
-            isLoading={isLoadingOperators}
+            result={restakerCount ?? null}
+            isLoading={isLoadingRestakers}
             error={null}
             displayLabelBottom
           />

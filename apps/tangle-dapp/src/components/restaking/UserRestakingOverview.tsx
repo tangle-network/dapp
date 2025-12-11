@@ -2,7 +2,6 @@ import { FC, useMemo } from 'react';
 import {
   Card,
   CardVariant,
-  EMPTY_VALUE_PLACEHOLDER,
   SkeletonLoader,
   Typography,
 } from '@tangle-network/ui-components';
@@ -83,25 +82,17 @@ export const UserRestakingOverview: FC<Props> = ({
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <SummaryCard
           label="Total Deposited"
-          value={
-            totalDeposited > 0
-              ? formatBalance(totalDeposited, 18)
-              : EMPTY_VALUE_PLACEHOLDER
-          }
-          suffix="ETH"
+          value={formatBalance(totalDeposited, 18)}
+          suffix="TNT"
         />
         <SummaryCard
           label="Total Delegated"
-          value={
-            totalDelegated > 0
-              ? formatBalance(totalDelegated, 18)
-              : EMPTY_VALUE_PLACEHOLDER
-          }
-          suffix="ETH"
+          value={formatBalance(totalDelegated, 18)}
+          suffix="TNT"
         />
         <SummaryCard
           label="Pending Withdrawals"
-          value={pendingWithdrawals > 0 ? String(pendingWithdrawals) : '0'}
+          value={String(pendingWithdrawals)}
         />
       </div>
 

@@ -30,8 +30,9 @@ export interface Operator {
 }
 
 // Query to fetch all active operators (Hasura uses PascalCase table names)
+// Note: restakingoperatorstatus is the Hasura enum type (lowercase)
 const OPERATORS_QUERY = gql`
-  query Operators($limit: Int, $offset: Int, $status: String) {
+  query Operators($limit: Int, $offset: Int, $status: restakingoperatorstatus) {
     Operator(
       limit: $limit
       offset: $offset

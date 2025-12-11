@@ -159,8 +159,16 @@ export const useRestakeAssets = (options?: {
   });
 
   // 4. Combine all data into RestakeAsset map (only when using indexer)
+  // Note: We use tokenAddresses and counts as keys instead of full objects
+  // because React Query can't serialize BigInt values
   const { data: graphqlAssets } = useQuery({
-    queryKey: ['restakeAssets', restakingAssets, tokenMetadatas, balances],
+    queryKey: [
+      'restakeAssets',
+      tokenAddresses,
+      tokenMetadatas?.length ?? 0,
+      userAddress,
+      chainId,
+    ],
     queryFn: () => {
       if (!restakingAssets || !tokenMetadatas) {
         return null;

@@ -18,6 +18,13 @@ const anvilLocal = defineChain({
       http: ['http://127.0.0.1:8545'],
     },
   },
+  contracts: {
+    // Multicall3 deployed by start-local-env.sh
+    // Uses deterministic CREATE2 address matching other chains
+    multicall3: {
+      address: '0xcA11bde05977b3631167028862bE2a173976CA11',
+    },
+  },
   testnet: true,
   iconUrl: TANGLE_ICON_URL,
 });

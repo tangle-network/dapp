@@ -1,4 +1,4 @@
-import { useCallback } from 'react';
+import { useCallback, useEffect } from 'react';
 import { type Hex } from 'viem';
 import {
   useAccount,
@@ -64,31 +64,75 @@ const useSubmitClaim = () => {
     hash: txHash,
   });
 
+  // Log state changes for debugging
+  useEffect(() => {
+    if (writeError) {
+      console.error('[useSubmitClaim] Write error:', writeError);
+    }
+  }, [writeError]);
+
+  useEffect(() => {
+    if (confirmError) {
+      console.error('[useSubmitClaim] Confirm error:', confirmError);
+    }
+  }, [confirmError]);
+
+  useEffect(() => {
+    if (txHash) {
+      console.log('[useSubmitClaim] Transaction submitted:', txHash);
+    }
+  }, [txHash]);
+
+  useEffect(() => {
+    if (isConfirmed) {
+      console.log('[useSubmitClaim] Transaction confirmed!');
+    }
+  }, [isConfirmed]);
+
   /**
    * Submit a claim transaction using claimWithZKProof
    */
   const submitClaim = useCallback(
     async (args: ClaimArgs) => {
+      console.log('[useSubmitClaim] Starting claim submission...');
+      console.log('[useSubmitClaim] Contract address:', TANGLE_MIGRATION_ADDRESS);
+      console.log('[useSubmitClaim] Args:', {
+        ss58Address: args.ss58Address,
+        amount: args.amount.toString(),
+        merkleProofLength: args.merkleProof.length,
+        zkProofLength: args.zkProof.length,
+        recipient: args.recipient,
+      });
+
       if (!TANGLE_MIGRATION_ADDRESS) {
+        console.error('[useSubmitClaim] Contract not configured');
         throw new Error('TangleMigration contract not configured');
       }
 
       if (!userAddress) {
+        console.error('[useSubmitClaim] Wallet not connected');
         throw new Error('Wallet not connected');
       }
 
-      writeContract({
-        address: TANGLE_MIGRATION_ADDRESS,
-        abi: TANGLE_MIGRATION_ABI,
-        functionName: 'claimWithZKProof',
-        args: [
-          args.ss58Address,
-          args.amount,
-          args.merkleProof,
-          args.zkProof,
-          args.recipient,
-        ],
-      });
+      try {
+        console.log('[useSubmitClaim] Calling writeContract...');
+        writeContract({
+          address: TANGLE_MIGRATION_ADDRESS,
+          abi: TANGLE_MIGRATION_ABI,
+          functionName: 'claimWithZKProof',
+          args: [
+            args.ss58Address,
+            args.amount,
+            args.merkleProof,
+            args.zkProof,
+            args.recipient,
+          ],
+        });
+        console.log('[useSubmitClaim] writeContract called (check wallet for prompt)');
+      } catch (err) {
+        console.error('[useSubmitClaim] writeContract error:', err);
+        throw err;
+      }
     },
     [userAddress, writeContract],
   );

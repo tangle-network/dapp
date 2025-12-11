@@ -147,8 +147,16 @@ export const useOnChainRestakeAssets = (options?: { enabled?: boolean }) => {
   });
 
   // 5. Combine into RestakeAsset map
+  // Note: We use tokenAddresses and userAddress as keys instead of full objects
+  // because React Query can't serialize BigInt values in enabledTokens/balances
   const { data: assets } = useQuery({
-    queryKey: ['onChainRestakeAssets', enabledTokens, tokenMetadatas, balances],
+    queryKey: [
+      'onChainRestakeAssets',
+      tokenAddresses,
+      tokenMetadatas?.length ?? 0,
+      userAddress,
+      chainId,
+    ],
     queryFn: () => {
       if (!enabledTokens || !tokenMetadatas) {
         return null;

@@ -2,6 +2,7 @@ import {
   InformationLine,
   CheckboxCircleFill,
   EditLine,
+  AlertLine,
 } from '@tangle-network/icons';
 import { Card } from '@tangle-network/ui-components';
 import Button from '@tangle-network/ui-components/components/buttons/Button';
@@ -20,6 +21,53 @@ import { type Hex, formatUnits, isAddress, keccak256, toHex } from 'viem';
 import { twMerge } from 'tailwind-merge';
 import type { InjectedAccountWithMeta } from '@polkadot/extension-inject/types';
 import { AnimatePresence, motion } from 'framer-motion';
+
+// Parse transaction errors into user-friendly messages
+const parseTransactionError = (error: Error): string => {
+  const message = error.message || String(error);
+
+  // Common error patterns
+  if (message.includes('intrinsic gas too low')) {
+    return 'Transaction failed: Gas limit too low. Please try again.';
+  }
+  if (message.includes('insufficient funds')) {
+    return 'Insufficient funds to cover gas fees.';
+  }
+  if (message.includes('user rejected') || message.includes('User rejected')) {
+    return 'Transaction was rejected by user.';
+  }
+  if (message.includes('nonce too low')) {
+    return 'Transaction nonce conflict. Please try again.';
+  }
+  if (message.includes('already claimed')) {
+    return 'This address has already claimed its allocation.';
+  }
+  if (message.includes('invalid proof')) {
+    return 'Invalid proof. Please regenerate and try again.';
+  }
+  if (message.includes('not in merkle tree')) {
+    return 'Address not found in the merkle tree.';
+  }
+  if (message.includes('claim period ended')) {
+    return 'The claim period has ended.';
+  }
+  if (message.includes('paused')) {
+    return 'Claims are currently paused.';
+  }
+
+  // Extract "Details:" section if present
+  const detailsMatch = message.match(/Details:\s*([^V]+?)(?:Version:|$)/);
+  if (detailsMatch) {
+    return detailsMatch[1].trim();
+  }
+
+  // Fallback: truncate long messages
+  if (message.length > 100) {
+    return 'Transaction failed. Please try again.';
+  }
+
+  return message;
+};
 
 import SubstrateWalletSelector from './components/SubstrateWalletSelector';
 import useClaimEligibility, {
@@ -206,6 +254,15 @@ const MigrationClaimPage: FC = () => {
 
   // Handle claim submission
   const handleSubmitClaim = useCallback(async () => {
+    console.log('[ClaimPage] handleSubmitClaim called');
+    console.log('[ClaimPage] Checking prerequisites:', {
+      hasSubstrateAccount: !!substrateAccount,
+      hasAmount: !!eligibility.amount,
+      hasMerkleProof: !!eligibility.merkleProof,
+      hasProof: !!proof,
+      hasValidRecipient: !!validRecipient,
+    });
+
     if (
       !substrateAccount ||
       !eligibility.amount ||
@@ -213,10 +270,12 @@ const MigrationClaimPage: FC = () => {
       !proof ||
       !validRecipient
     ) {
+      console.error('[ClaimPage] Missing prerequisites, aborting');
       return;
     }
 
     try {
+      console.log('[ClaimPage] Calling submitClaim...');
       await submitClaim({
         ss58Address: substrateAccount.address,
         amount: eligibility.amount,
@@ -224,9 +283,10 @@ const MigrationClaimPage: FC = () => {
         zkProof: proof.zkProof,
         recipient: validRecipient,
       });
-      setCurrentStep(ClaimStep.COMPLETE);
+      console.log('[ClaimPage] submitClaim returned');
+      // Note: Don't set COMPLETE here - wait for isConfirmed
     } catch (err) {
-      console.error('Failed to submit claim:', err);
+      console.error('[ClaimPage] Failed to submit claim:', err);
     }
   }, [substrateAccount, eligibility, proof, validRecipient, submitClaim]);
 
@@ -691,12 +751,26 @@ const MigrationClaimPage: FC = () => {
                   className="space-y-3"
                 >
                   {submitError && (
-                    <Typography
-                      variant="body2"
-                      className="text-red-70 dark:text-red-50 text-center"
-                    >
-                      {submitError.message}
-                    </Typography>
+                    <div className="p-4 rounded-xl bg-red-500/10 border border-red-500/20">
+                      <div className="flex items-start gap-3">
+                        <AlertLine className="w-5 h-5 text-red-400 flex-shrink-0 mt-0.5" />
+                        <div>
+                          <Typography
+                            variant="body2"
+                            fw="semibold"
+                            className="text-red-400"
+                          >
+                            Transaction Failed
+                          </Typography>
+                          <Typography
+                            variant="body2"
+                            className="text-red-400/80 mt-1"
+                          >
+                            {parseTransactionError(submitError)}
+                          </Typography>
+                        </div>
+                      </div>
+                    </div>
                   )}
                   <Button
                     isFullWidth

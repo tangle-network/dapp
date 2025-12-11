@@ -353,3 +353,38 @@ export const useDelegatorUnstakeRequests = (
     data: delegator?.unstakeRequests ?? null,
   };
 };
+
+// Query to count all delegators (restakers)
+const DELEGATOR_COUNT_QUERY = gql`
+  query DelegatorCount {
+    Delegator {
+      id
+    }
+  }
+`;
+
+interface DelegatorCountQueryResult {
+  Delegator: Array<{ id: string }>;
+}
+
+// Hook to get the total count of unique restakers (delegators)
+export const useDelegatorCount = (options?: {
+  network?: EnvioNetwork;
+  enabled?: boolean;
+}) => {
+  const { network, enabled = true } = options ?? {};
+
+  return useQuery({
+    queryKey: ['envio', 'delegatorCount', network],
+    queryFn: async () => {
+      const result = await executeEnvioGraphQL<DelegatorCountQueryResult, {}>(
+        DELEGATOR_COUNT_QUERY,
+        {},
+        network,
+      );
+      return result.data.Delegator?.length ?? 0;
+    },
+    enabled,
+    staleTime: 30_000, // 30 seconds
+  });
+};
