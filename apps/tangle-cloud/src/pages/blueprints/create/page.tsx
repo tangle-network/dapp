@@ -19,7 +19,11 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@tangle-network/ui-components/components/select';
-import { ArrowLeft, ArrowRight, CheckboxCircleFill } from '@tangle-network/icons';
+import {
+  ArrowLeft,
+  ArrowRight,
+  CheckboxCircleFill,
+} from '@tangle-network/icons';
 import {
   useCreateBlueprintTx,
   type BlueprintDefinition,
@@ -37,7 +41,13 @@ enum Step {
   Review = 4,
 }
 
-const STEP_LABELS = ['Basic Info', 'Configuration', 'Jobs', 'Sources', 'Review'];
+const STEP_LABELS = [
+  'Basic Info',
+  'Configuration',
+  'Jobs',
+  'Sources',
+  'Review',
+];
 
 // Simplified job form
 interface JobForm {
@@ -112,12 +122,18 @@ const initialFormState: FormState = {
 };
 
 // Convert form to ABI-compatible definition
-const formToDefinition = (form: FormState, address: Address): BlueprintDefinition => {
+const formToDefinition = (
+  form: FormState,
+  address: Address,
+): BlueprintDefinition => {
   const membershipNum = form.membership === 'Fixed' ? 0 : 1;
-  const pricingNum = form.pricing === 'PayOnce' ? 0 : form.pricing === 'Subscription' ? 1 : 2;
+  const pricingNum =
+    form.pricing === 'PayOnce' ? 0 : form.pricing === 'Subscription' ? 1 : 2;
 
   // Convert schemas to hex bytes
-  const registrationBytes = toHex(new TextEncoder().encode(form.registrationSchema));
+  const registrationBytes = toHex(
+    new TextEncoder().encode(form.registrationSchema),
+  );
   const requestBytes = toHex(new TextEncoder().encode(form.requestSchema));
 
   // Convert jobs
@@ -131,7 +147,8 @@ const formToDefinition = (form: FormState, address: Address): BlueprintDefinitio
 
   // Convert sources
   const sources = form.sources.map((source) => {
-    const kindNum = source.kind === 'Container' ? 0 : source.kind === 'Wasm' ? 1 : 2;
+    const kindNum =
+      source.kind === 'Container' ? 0 : source.kind === 'Wasm' ? 1 : 2;
     return {
       kind: kindNum,
       container: {
@@ -273,17 +290,14 @@ const CreateBlueprintPage: FC = () => {
   }, []);
 
   // Update job helper
-  const updateJob = useCallback(
-    (index: number, updates: Partial<JobForm>) => {
-      setForm((prev) => ({
-        ...prev,
-        jobs: prev.jobs.map((job, i) =>
-          i === index ? { ...job, ...updates } : job,
-        ),
-      }));
-    },
-    [],
-  );
+  const updateJob = useCallback((index: number, updates: Partial<JobForm>) => {
+    setForm((prev) => ({
+      ...prev,
+      jobs: prev.jobs.map((job, i) =>
+        i === index ? { ...job, ...updates } : job,
+      ),
+    }));
+  }, []);
 
   // Remove job helper
   const removeJob = useCallback((index: number) => {
@@ -616,7 +630,9 @@ const ConfigurationStep: FC<StepProps> = ({ form, updateForm }) => (
         </Typography>
         <Select
           value={form.membership}
-          onValueChange={(v) => updateForm('membership', v as 'Fixed' | 'Dynamic')}
+          onValueChange={(v) =>
+            updateForm('membership', v as 'Fixed' | 'Dynamic')
+          }
         >
           <SelectTrigger className="w-full">
             <SelectValue />
@@ -634,7 +650,12 @@ const ConfigurationStep: FC<StepProps> = ({ form, updateForm }) => (
         </Typography>
         <Select
           value={form.pricing}
-          onValueChange={(v) => updateForm('pricing', v as 'PayOnce' | 'Subscription' | 'EventDriven')}
+          onValueChange={(v) =>
+            updateForm(
+              'pricing',
+              v as 'PayOnce' | 'Subscription' | 'EventDriven',
+            )
+          }
         >
           <SelectTrigger className="w-full">
             <SelectValue />
@@ -739,7 +760,12 @@ interface JobsStepProps {
   removeJob: (index: number) => void;
 }
 
-const JobsStep: FC<JobsStepProps> = ({ form, addJob, updateJob, removeJob }) => (
+const JobsStep: FC<JobsStepProps> = ({
+  form,
+  addJob,
+  updateJob,
+  removeJob,
+}) => (
   <div className="space-y-4">
     <div className="flex items-center justify-between mb-4">
       <Typography variant="h5" fw="bold">
@@ -866,14 +892,18 @@ const SourcesStep: FC<SourcesStepProps> = ({
                 <Select
                   value={source.kind}
                   onValueChange={(v) =>
-                    updateSource(index, { kind: v as 'Container' | 'Wasm' | 'Native' })
+                    updateSource(index, {
+                      kind: v as 'Container' | 'Wasm' | 'Native',
+                    })
                   }
                 >
                   <SelectTrigger className="w-full">
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="Container">Container (Docker)</SelectItem>
+                    <SelectItem value="Container">
+                      Container (Docker)
+                    </SelectItem>
                     <SelectItem value="Wasm">WebAssembly</SelectItem>
                     <SelectItem value="Native">Native Binary</SelectItem>
                   </SelectContent>
@@ -974,9 +1004,7 @@ const ReviewStep: FC<{ form: FormState }> = ({ form }) => (
         <Typography variant="body2" className="text-mono-100">
           Author
         </Typography>
-        <Typography variant="body1">
-          {form.author || 'Your address'}
-        </Typography>
+        <Typography variant="body1">{form.author || 'Your address'}</Typography>
       </div>
 
       <div>
@@ -1012,7 +1040,8 @@ const ReviewStep: FC<{ form: FormState }> = ({ form }) => (
           Operators
         </Typography>
         <Typography variant="body1">
-          {form.minOperators} - {form.maxOperators === 0 ? '∞' : form.maxOperators}
+          {form.minOperators} -{' '}
+          {form.maxOperators === 0 ? '∞' : form.maxOperators}
         </Typography>
       </div>
 

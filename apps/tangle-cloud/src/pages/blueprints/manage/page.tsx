@@ -43,7 +43,12 @@ const columnHelper = createColumnHelper<OwnedBlueprint>();
 const ManageBlueprintsPage: FC = () => {
   const navigate = useNavigate();
   const { isConnected } = useAccount();
-  const { data: blueprints, isLoading, error, refetch } = useBlueprintsByOwner();
+  const {
+    data: blueprints,
+    isLoading,
+    error,
+    refetch,
+  } = useBlueprintsByOwner();
 
   const [selectedBlueprint, setSelectedBlueprint] =
     useState<OwnedBlueprint | null>(null);
@@ -346,8 +351,12 @@ const DeactivateModal: FC<DeactivateModalProps> = ({
   onClose,
   onSuccess,
 }) => {
-  const { deactivateBlueprint, status, error, reset: _reset } =
-    useDeactivateBlueprintTx();
+  const {
+    deactivateBlueprint,
+    status,
+    error,
+    reset: _reset,
+  } = useDeactivateBlueprintTx();
 
   const isSubmitting = status === 'pending';
   const _isSuccess = status === 'success';
@@ -380,7 +389,11 @@ const DeactivateModal: FC<DeactivateModalProps> = ({
           )}
         </ModalBody>
         <ModalFooter>
-          <Button variant="secondary" onClick={onClose} isDisabled={isSubmitting}>
+          <Button
+            variant="secondary"
+            onClick={onClose}
+            isDisabled={isSubmitting}
+          >
             Cancel
           </Button>
           <Button
@@ -411,7 +424,12 @@ const TransferModal: FC<TransferModalProps> = ({
 }) => {
   const [newOwner, setNewOwner] = useState('');
   const [validationError, setValidationError] = useState<string | null>(null);
-  const { transferBlueprint, status, error, reset: _resetTransfer } = useTransferBlueprintTx();
+  const {
+    transferBlueprint,
+    status,
+    error,
+    reset: _resetTransfer,
+  } = useTransferBlueprintTx();
 
   const isSubmitting = status === 'pending';
 
@@ -425,7 +443,10 @@ const TransferModal: FC<TransferModalProps> = ({
       return;
     }
 
-    const hash = await transferBlueprint(blueprint.id, newOwner as `0x${string}`);
+    const hash = await transferBlueprint(
+      blueprint.id,
+      newOwner as `0x${string}`,
+    );
     if (hash) {
       onSuccess();
     }
@@ -474,7 +495,11 @@ const TransferModal: FC<TransferModalProps> = ({
           </Typography>
         </ModalBody>
         <ModalFooter>
-          <Button variant="secondary" onClick={onClose} isDisabled={isSubmitting}>
+          <Button
+            variant="secondary"
+            onClick={onClose}
+            isDisabled={isSubmitting}
+          >
             Cancel
           </Button>
           <Button onClick={handleTransfer} isLoading={isSubmitting}>

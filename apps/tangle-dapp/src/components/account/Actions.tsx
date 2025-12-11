@@ -8,7 +8,7 @@ const Actions: FC = () => {
   const { address } = useAccount();
   const chainId = useChainId();
   const { data: balance } = useBalance({ address });
-  const [isTransferModalOpen, setIsTransferModalOpen] = useState(false);
+  const [_isTransferModalOpen, setIsTransferModalOpen] = useState(false);
 
   // Show faucet for testnet chains
   const isTestnet = chainId === 31337 || chainId === 84532; // Anvil local or Base Sepolia

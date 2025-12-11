@@ -19,7 +19,11 @@ import {
 import { FC } from 'react';
 import { useLocation } from 'react-router';
 import { PagePath } from '../types';
-import { HomeFillIcon, GiftLineIcon, CoinsLineIcon } from '@tangle-network/icons';
+import {
+  HomeFillIcon,
+  GiftLineIcon,
+  CoinsLineIcon,
+} from '@tangle-network/icons';
 
 type Props = {
   isExpandedByDefault?: boolean;

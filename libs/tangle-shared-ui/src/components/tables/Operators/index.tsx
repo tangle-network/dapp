@@ -52,7 +52,11 @@ const getStaticColumns = (
   COLUMN_HELPER.accessor('address', {
     header: () => 'Identity',
     cell: (props) => {
-      const { address, identityName: identity, isDelegated } = props.row.original;
+      const {
+        address,
+        identityName: identity,
+        isDelegated,
+      } = props.row.original;
 
       return (
         <TableCellWrapper className="p-3">

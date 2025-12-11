@@ -34,7 +34,7 @@ export interface EarningEvent {
 }
 
 // Raw response from GraphQL for blueprint earnings
-interface BlueprintEarningsResponse {
+interface _BlueprintEarningsResponse {
   Blueprint: Array<{
     blueprintId: string;
     metadataUri: string | null;
@@ -52,7 +52,7 @@ interface BlueprintEarningsResponse {
 }
 
 // Raw response for earning events
-interface EarningEventsResponse {
+interface _EarningEventsResponse {
   EarningEvent: Array<{
     id: string;
     blueprintId: string;
@@ -314,10 +314,7 @@ export const useDeveloperEarnings = (options?: {
 /**
  * Format earnings amount for display.
  */
-export const formatEarningsAmount = (
-  amount: bigint,
-  decimals: number = 18,
-): string => {
+export const formatEarningsAmount = (amount: bigint, decimals = 18): string => {
   const formatted = formatUnits(amount, decimals);
   const num = parseFloat(formatted);
   if (num === 0) return '0';

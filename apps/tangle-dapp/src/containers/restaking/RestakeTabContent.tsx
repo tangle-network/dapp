@@ -5,18 +5,16 @@ import DepositForm from '../../pages/restake/deposit/DepositForm';
 import RestakeWithdrawForm from '../../pages/restake/withdraw';
 import RestakeDelegateForm from '../../pages/restake/delegate';
 import RestakeUnstakeForm from '../../pages/restake/unstake';
-import {
-  useOperatorMap,
-  useRestakingAssets,
-} from '@tangle-network/tangle-shared-ui/data/graphql';
-import { useDelegator } from '@tangle-network/tangle-shared-ui/data/graphql/useDelegator';
 import BlueprintListing from '../../pages/blueprints/BlueprintListing';
 import { useNavigate } from 'react-router';
-import { useAccount } from 'wagmi';
 import { PagePath } from '../../types';
 import { NetworkGuard } from '../../components/NetworkGuard';
 import { RestakingAssetsTable } from '../../components/tables/RestakingAssetsTable';
 import { OperatorsTable } from '../../components/tables/OperatorsTable';
+import {
+  RestakeProvider,
+  useRestakeContext,
+} from '@tangle-network/tangle-shared-ui/context/RestakeContext';
 
 type RestakeTabOrAction = RestakeTab | RestakeAction;
 
@@ -24,22 +22,18 @@ type Props = {
   tab: RestakeTabOrAction;
 };
 
-const RestakeTabContent: FC<Props> = ({ tab }) => {
-  const { address } = useAccount();
+const RestakeTabContentInner: FC<Props> = ({ tab }) => {
   const navigate = useNavigate();
 
-  // Fetch delegator info from GraphQL
-  const { data: delegatorInfo, isLoading: isLoadingDelegator } =
-    useDelegator(address);
-
-  // Fetch operators from GraphQL
-  const { data: operatorMap, isLoading: isLoadingOperators } = useOperatorMap({
-    status: 'ACTIVE',
-  });
-
-  // Fetch restaking assets from GraphQL
-  const { data: restakingAssets, isLoading: isLoadingAssets } =
-    useRestakingAssets();
+  // Use unified context for all restaking data
+  const {
+    restakingAssets,
+    delegator,
+    operatorMap,
+    isLoadingRestakingAssets,
+    isLoadingDelegator,
+    isLoadingOperators,
+  } = useRestakeContext();
 
   const handleRestakeClicked = useCallback(() => {
     navigate(PagePath.RESTAKE_DEPOSIT);
@@ -59,14 +53,14 @@ const RestakeTabContent: FC<Props> = ({ tab }) => {
         return (
           <RestakingAssetsTable
             assets={restakingAssets ?? []}
-            delegator={delegatorInfo ?? null}
-            isLoading={isLoadingAssets || isLoadingDelegator}
+            delegator={delegator}
+            isLoading={isLoadingRestakingAssets || isLoadingDelegator}
           />
         );
       case RestakeTab.OPERATORS:
         return (
           <OperatorsTable
-            operatorMap={operatorMap ?? null}
+            operatorMap={operatorMap}
             isLoading={isLoadingOperators}
             onRestakeClicked={handleRestakeClicked}
           />
@@ -77,11 +71,19 @@ const RestakeTabContent: FC<Props> = ({ tab }) => {
   };
 
   return (
+    <div className="space-y-9">
+      <RestakeTabs />
+      {getRestakeTabContent(tab)}
+    </div>
+  );
+};
+
+const RestakeTabContent: FC<Props> = ({ tab }) => {
+  return (
     <NetworkGuard>
-      <div className="space-y-9">
-        <RestakeTabs />
-        {getRestakeTabContent(tab)}
-      </div>
+      <RestakeProvider>
+        <RestakeTabContentInner tab={tab} />
+      </RestakeProvider>
     </NetworkGuard>
   );
 };

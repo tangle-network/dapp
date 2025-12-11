@@ -170,7 +170,10 @@ const SubstrateWalletSelector: FC<Props> = ({
             <div className="w-10 h-10 rounded-full bg-mono-100/20 flex items-center justify-center">
               <WalletLineIcon className="w-5 h-5 text-mono-100" />
             </div>
-            <Typography variant="body2" className="text-mono-100 flex-1 text-left">
+            <Typography
+              variant="body2"
+              className="text-mono-100 flex-1 text-left"
+            >
               Select an account
             </Typography>
           </>
@@ -200,7 +203,8 @@ const SubstrateWalletSelector: FC<Props> = ({
                   className={twMerge(
                     'w-full px-4 py-3 flex items-center gap-3',
                     'hover:bg-mono-170 transition-colors',
-                    selectedAccount?.address === account.address && 'bg-mono-170',
+                    selectedAccount?.address === account.address &&
+                      'bg-mono-170',
                   )}
                 >
                   <Avatar

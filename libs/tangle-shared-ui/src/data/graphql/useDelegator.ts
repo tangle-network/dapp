@@ -90,10 +90,10 @@ export interface Delegator {
   unstakeRequests: UnstakeRequest[];
 }
 
-// GraphQL query for delegator
+// GraphQL query for delegator (Hasura uses _by_pk for single row queries)
 const DELEGATOR_QUERY = gql`
-  query Delegator($id: ID!) {
-    delegator(id: $id) {
+  query Delegator($id: String!) {
+    Delegator_by_pk(id: $id) {
       id
       address
       totalDeposited
@@ -125,7 +125,7 @@ const DELEGATOR_QUERY = gql`
         createdAtRound
         updatedAtRound
       }
-      withdrawRequests(where: { status: PENDING }) {
+      withdrawRequests(where: { status: { _eq: "PENDING" } }) {
         id
         token
         nonce
@@ -135,7 +135,7 @@ const DELEGATOR_QUERY = gql`
         status
         executedAt
       }
-      unstakeRequests(where: { status: PENDING }) {
+      unstakeRequests(where: { status: { _eq: "PENDING" } }) {
         id
         operator {
           id
@@ -154,7 +154,7 @@ const DELEGATOR_QUERY = gql`
 `;
 
 interface DelegatorQueryResult {
-  delegator: {
+  Delegator_by_pk: {
     id: string;
     address: string;
     totalDeposited: string;
@@ -209,7 +209,7 @@ interface DelegatorQueryResult {
 
 // Parse delegator from GraphQL response
 const parseDelegator = (
-  raw: NonNullable<DelegatorQueryResult['delegator']>,
+  raw: NonNullable<DelegatorQueryResult['Delegator_by_pk']>,
 ): Delegator => ({
   id: raw.id,
   address: raw.address as Address,
@@ -281,8 +281,8 @@ export const useDelegator = (
         { id: string }
       >(DELEGATOR_QUERY, { id: address.toLowerCase() }, network);
 
-      return result.data.delegator
-        ? parseDelegator(result.data.delegator)
+      return result.data.Delegator_by_pk
+        ? parseDelegator(result.data.Delegator_by_pk)
         : null;
     },
     enabled: enabled && !!address,

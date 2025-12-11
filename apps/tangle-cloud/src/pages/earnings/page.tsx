@@ -19,7 +19,11 @@ import {
   useReactTable,
   flexRender,
 } from '@tanstack/react-table';
-import { CoinsLineIcon, LineChartIcon, WalletLineIcon } from '@tangle-network/icons';
+import {
+  CoinsLineIcon,
+  LineChartIcon,
+  WalletLineIcon,
+} from '@tangle-network/icons';
 import {
   useDeveloperEarnings,
   formatEarningsAmount,

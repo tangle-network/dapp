@@ -1,4 +1,8 @@
-import { InformationLine, CheckboxCircleFill, EditLine } from '@tangle-network/icons';
+import {
+  InformationLine,
+  CheckboxCircleFill,
+  EditLine,
+} from '@tangle-network/icons';
 import { Card } from '@tangle-network/ui-components';
 import Button from '@tangle-network/ui-components/components/buttons/Button';
 import IconButton from '@tangle-network/ui-components/components/buttons/IconButton';
@@ -118,25 +122,18 @@ const MigrationClaimPage: FC = () => {
     [isConnected],
   );
 
-  // Dev mode - allow testing UI without contract deployed
-  const isDevMode = !contractConfigured;
-
   // Check if ready to proceed to signing
+  // Core requirements: eligibility loaded, user is eligible, hasn't claimed, has valid recipient
   const canSign = useMemo(() => {
-    // In dev mode, only require basic conditions
-    if (isDevMode) {
-      return substrateAccount && validRecipient && eligibility.isEligible;
-    }
     return (
       substrateAccount &&
+      !isLoadingEligibility &&
       eligibility.isEligible &&
       !eligibility.hasClaimed &&
       !eligibility.isPaused &&
-      eligibility.timeRemaining > BigInt(0) &&
-      challenge &&
       validRecipient
     );
-  }, [substrateAccount, eligibility, challenge, validRecipient, isDevMode]);
+  }, [substrateAccount, isLoadingEligibility, eligibility, validRecipient]);
 
   // Handle signing the challenge
   const handleSignChallenge = useCallback(async () => {
@@ -146,7 +143,8 @@ const MigrationClaimPage: FC = () => {
 
     try {
       // In dev mode without contract, use a mock challenge
-      const challengeToSign = challenge || keccak256(toHex('dev-mode-challenge'));
+      const challengeToSign =
+        challenge || keccak256(toHex('dev-mode-challenge'));
 
       const { web3FromAddress } = await import('@polkadot/extension-dapp');
       const injector = await web3FromAddress(substrateAccount.address);
@@ -262,7 +260,10 @@ const MigrationClaimPage: FC = () => {
               Your TNT tokens have been claimed successfully.
             </Typography>
             <div className="p-3 rounded-lg bg-mono-170 break-all">
-              <Typography variant="body2" className="font-mono text-xs text-mono-100">
+              <Typography
+                variant="body2"
+                className="font-mono text-xs text-mono-100"
+              >
                 {txHash}
               </Typography>
             </div>
@@ -310,16 +311,33 @@ const MigrationClaimPage: FC = () => {
           )}
 
           <div className="space-y-6">
+            {/* Dev mode banner - always visible when contract not configured */}
+            {!contractConfigured && (
+              <div className="p-4 rounded-xl bg-blue-500/10 border border-blue-500/20">
+                <Typography
+                  variant="body2"
+                  className="text-blue-400 text-center"
+                >
+                  <span className="font-semibold">Dev Mode:</span> Contract not
+                  deployed. Using mock data for UI testing.
+                </Typography>
+              </div>
+            )}
+
             {/* Status alerts */}
             <AnimatePresence>
               {eligibility.hasClaimed && (
                 <motion.div
+                  key="claimed"
                   initial={{ opacity: 0, height: 0 }}
                   animate={{ opacity: 1, height: 'auto' }}
                   exit={{ opacity: 0, height: 0 }}
                   className="p-4 rounded-xl bg-yellow-500/10 border border-yellow-500/20"
                 >
-                  <Typography variant="body2" className="text-yellow-400 text-center">
+                  <Typography
+                    variant="body2"
+                    className="text-yellow-400 text-center"
+                  >
                     This address has already claimed its allocation.
                   </Typography>
                 </motion.div>
@@ -327,25 +345,16 @@ const MigrationClaimPage: FC = () => {
 
               {eligibility.isPaused && (
                 <motion.div
+                  key="paused"
                   initial={{ opacity: 0, height: 0 }}
                   animate={{ opacity: 1, height: 'auto' }}
                   className="p-4 rounded-xl bg-yellow-500/10 border border-yellow-500/20"
                 >
-                  <Typography variant="body2" className="text-yellow-400 text-center">
+                  <Typography
+                    variant="body2"
+                    className="text-yellow-400 text-center"
+                  >
                     Claims are currently paused.
-                  </Typography>
-                </motion.div>
-              )}
-
-              {!contractConfigured && (
-                <motion.div
-                  initial={{ opacity: 0, height: 0 }}
-                  animate={{ opacity: 1, height: 'auto' }}
-                  className="p-4 rounded-xl bg-blue-500/10 border border-blue-500/20"
-                >
-                  <Typography variant="body2" className="text-blue-400 text-center">
-                    <span className="font-semibold">Dev Mode:</span> Contract not deployed.
-                    Using mock data for UI testing.
                   </Typography>
                 </motion.div>
               )}
@@ -362,7 +371,11 @@ const MigrationClaimPage: FC = () => {
                       : 'bg-mono-160 text-mono-100',
                   )}
                 >
-                  {isConnected ? <CheckboxCircleFill className="w-5 h-5" /> : '1'}
+                  {isConnected ? (
+                    <CheckboxCircleFill className="w-5 h-5" />
+                  ) : (
+                    '1'
+                  )}
                 </div>
                 <Typography variant="body1" fw="bold" className="text-mono-0">
                   Receiving Address
@@ -383,10 +396,17 @@ const MigrationClaimPage: FC = () => {
                     <div className="w-5 h-5 rounded-full border-2 border-blue-400" />
                   </div>
                   <div className="flex-1 text-left">
-                    <Typography variant="body1" fw="semibold" className="text-mono-0">
+                    <Typography
+                      variant="body1"
+                      fw="semibold"
+                      className="text-mono-0"
+                    >
                       Connect EVM Wallet
                     </Typography>
-                    <Typography variant="body2" className="text-mono-100 text-xs">
+                    <Typography
+                      variant="body2"
+                      className="text-mono-100 text-xs"
+                    >
                       MetaMask, Rainbow, or any EVM wallet
                     </Typography>
                   </div>
@@ -400,7 +420,9 @@ const MigrationClaimPage: FC = () => {
                         value={recipientAddress}
                         onChange={setRecipientAddress}
                         placeholder="0x..."
-                        isInvalid={recipientAddress.length > 0 && !isRecipientValid}
+                        isInvalid={
+                          recipientAddress.length > 0 && !isRecipientValid
+                        }
                         errorMessage={
                           recipientAddress.length > 0 && !isRecipientValid
                             ? 'Invalid EVM address'
@@ -446,7 +468,10 @@ const MigrationClaimPage: FC = () => {
                         <CheckboxCircleFill className="w-5 h-5 text-green-400" />
                       </div>
                       <div className="flex-1 text-left min-w-0">
-                        <Typography variant="body2" className="text-mono-100 text-xs">
+                        <Typography
+                          variant="body2"
+                          className="text-mono-100 text-xs"
+                        >
                           TNT will be sent to
                         </Typography>
                         <Typography
@@ -454,7 +479,8 @@ const MigrationClaimPage: FC = () => {
                           fw="medium"
                           className="text-mono-0 font-mono truncate"
                         >
-                          {recipientAddress.slice(0, 10)}...{recipientAddress.slice(-8)}
+                          {recipientAddress.slice(0, 10)}...
+                          {recipientAddress.slice(-8)}
                         </Typography>
                       </div>
                       {currentStep < ClaimStep.SIGN_CHALLENGE && (
@@ -517,10 +543,17 @@ const MigrationClaimPage: FC = () => {
                       <div className="absolute inset-0 w-16 h-16 rounded-full border-4 border-blue-500 border-t-transparent animate-spin" />
                     </div>
                     <div className="text-center">
-                      <Typography variant="body1" fw="semibold" className="text-mono-0">
+                      <Typography
+                        variant="body1"
+                        fw="semibold"
+                        className="text-mono-0"
+                      >
                         Checking Eligibility
                       </Typography>
-                      <Typography variant="body2" className="text-mono-100 mt-1">
+                      <Typography
+                        variant="body2"
+                        className="text-mono-100 mt-1"
+                      >
                         Verifying your allocation in the merkle tree...
                       </Typography>
                     </div>
@@ -540,7 +573,10 @@ const MigrationClaimPage: FC = () => {
                     className="p-6 rounded-xl bg-gradient-to-br from-green-500/10 to-emerald-500/10 border border-green-500/30"
                   >
                     <div className="text-center">
-                      <Typography variant="body2" className="text-green-400 mb-2">
+                      <Typography
+                        variant="body2"
+                        className="text-green-400 mb-2"
+                      >
                         You are eligible to claim
                       </Typography>
                       <Typography
@@ -551,9 +587,14 @@ const MigrationClaimPage: FC = () => {
                         {Number(formattedAmount).toLocaleString()} TNT
                       </Typography>
                       {eligibility.timeRemaining > BigInt(0) && (
-                        <Typography variant="body2" className="text-mono-100 mt-2">
-                          {Math.floor(Number(eligibility.timeRemaining) / 86400)} days
-                          remaining to claim
+                        <Typography
+                          variant="body2"
+                          className="text-mono-100 mt-2"
+                        >
+                          {Math.floor(
+                            Number(eligibility.timeRemaining) / 86400,
+                          )}{' '}
+                          days remaining to claim
                         </Typography>
                       )}
                     </div>
@@ -572,12 +613,19 @@ const MigrationClaimPage: FC = () => {
                     className="p-6 rounded-xl bg-red-500/10 border border-red-500/20"
                   >
                     <div className="text-center">
-                      <Typography variant="body1" fw="semibold" className="text-red-400">
+                      <Typography
+                        variant="body1"
+                        fw="semibold"
+                        className="text-red-400"
+                      >
                         Not Eligible
                       </Typography>
-                      <Typography variant="body2" className="text-mono-100 mt-2">
-                        This Polkadot account is not eligible for the migration claim.
-                        Try connecting a different account.
+                      <Typography
+                        variant="body2"
+                        className="text-mono-100 mt-2"
+                      >
+                        This Polkadot account is not eligible for the migration
+                        claim. Try connecting a different account.
                       </Typography>
                     </div>
                   </motion.div>
@@ -593,11 +641,7 @@ const MigrationClaimPage: FC = () => {
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -10 }}
                 >
-                  <Button
-                    isFullWidth
-                    onClick={handleSignChallenge}
-                    className="py-4 text-lg font-semibold bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600"
-                  >
+                  <Button isFullWidth onClick={handleSignChallenge}>
                     Sign Ownership Proof
                   </Button>
                 </motion.div>
@@ -612,15 +656,18 @@ const MigrationClaimPage: FC = () => {
                   className="space-y-3"
                 >
                   {proofProgress && (
-                    <div className="flex items-center justify-center gap-3 p-3 rounded-lg bg-blue-500/10">
-                      <div className="w-4 h-4 border-2 border-blue-400 border-t-transparent rounded-full animate-spin" />
-                      <Typography variant="body2" className="text-blue-400">
+                    <div className="flex items-center justify-center gap-3 p-3 rounded-lg bg-blue-0 dark:bg-blue-120">
+                      <div className="w-4 h-4 border-2 border-blue-50 border-t-transparent rounded-full animate-spin" />
+                      <Typography variant="body2" className="text-blue-50">
                         {proofProgress}
                       </Typography>
                     </div>
                   )}
                   {proofError && (
-                    <Typography variant="body2" className="text-red-400 text-center">
+                    <Typography
+                      variant="body2"
+                      className="text-red-70 dark:text-red-50 text-center"
+                    >
                       {proofError}
                     </Typography>
                   )}
@@ -629,7 +676,6 @@ const MigrationClaimPage: FC = () => {
                     onClick={handleGenerateProof}
                     isLoading={isGenerating}
                     loadingText="Generating ZK Proof..."
-                    className="py-4 text-lg font-semibold bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600"
                   >
                     Generate ZK Proof
                   </Button>
@@ -645,7 +691,10 @@ const MigrationClaimPage: FC = () => {
                   className="space-y-3"
                 >
                   {submitError && (
-                    <Typography variant="body2" className="text-red-400 text-center">
+                    <Typography
+                      variant="body2"
+                      className="text-red-70 dark:text-red-50 text-center"
+                    >
                       {submitError.message}
                     </Typography>
                   )}
@@ -653,8 +702,9 @@ const MigrationClaimPage: FC = () => {
                     isFullWidth
                     onClick={handleSubmitClaim}
                     isLoading={isSubmitting || isConfirming}
-                    loadingText={isConfirming ? 'Confirming...' : 'Submitting...'}
-                    className="py-4 text-lg font-semibold bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600"
+                    loadingText={
+                      isConfirming ? 'Confirming...' : 'Submitting...'
+                    }
                   >
                     Claim {Number(formattedAmount).toLocaleString()} TNT
                   </Button>
@@ -722,10 +772,17 @@ const MigrationClaimPage: FC = () => {
                       {step}
                     </div>
                     <div>
-                      <Typography variant="body2" fw="semibold" className="text-mono-0">
+                      <Typography
+                        variant="body2"
+                        fw="semibold"
+                        className="text-mono-0"
+                      >
                         {title}
                       </Typography>
-                      <Typography variant="body2" className="text-mono-100 text-xs">
+                      <Typography
+                        variant="body2"
+                        className="text-mono-100 text-xs"
+                      >
                         {desc}
                       </Typography>
                     </div>
@@ -735,8 +792,8 @@ const MigrationClaimPage: FC = () => {
 
               <div className="mt-5 p-3 rounded-xl bg-mono-170">
                 <Typography variant="body2" className="text-mono-100 text-xs">
-                  You have 1 year from migration start to claim. Unclaimed tokens
-                  return to treasury.
+                  You have 1 year from migration start to claim. Unclaimed
+                  tokens return to treasury.
                 </Typography>
               </div>
             </Card>

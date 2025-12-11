@@ -8,7 +8,7 @@ import {
 } from '@tangle-network/ui-components';
 import type { RestakingAsset } from '@tangle-network/tangle-shared-ui/data/graphql/useRestakingAssets';
 import type { Delegator } from '@tangle-network/tangle-shared-ui/data/graphql/useDelegator';
-import { formatUnits, Address } from 'viem';
+import { formatUnits } from 'viem';
 import { twMerge } from 'tailwind-merge';
 
 interface Props {

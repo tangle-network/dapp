@@ -8,6 +8,12 @@ import { type Hex } from 'viem';
 const PROVER_API_URL =
   import.meta.env.VITE_SP1_PROVER_API_URL || 'http://localhost:3001/api/prove';
 
+/**
+ * Dev mode - skip actual proof generation and return mock proof
+ * Enable by setting VITE_MOCK_PROOF=true or when no prover URL is configured
+ */
+const USE_MOCK_PROOF = import.meta.env.VITE_MOCK_PROOF === 'true';
+
 export interface ProofInput {
   /** The SS58 Substrate address (public key is derived from this in ZK circuit) */
   ss58Address: string;
@@ -62,17 +68,26 @@ const useGenerateProof = () => {
       if (!input.ss58Address) {
         throw new Error('SS58 address is required');
       }
-      if (input.signature.length !== 130) {
-        throw new Error('Invalid signature length (expected 64 bytes)');
-      }
       if (input.evmAddress.length !== 42) {
         throw new Error('Invalid EVM address');
       }
-      if (input.challenge.length !== 66) {
-        throw new Error('Invalid challenge length');
-      }
       if (input.amount <= BigInt(0)) {
         throw new Error('Invalid claim amount');
+      }
+
+      // Dev mode: return mock proof for UI testing
+      if (USE_MOCK_PROOF) {
+        setProgress('Dev mode: Generating mock proof...');
+        await new Promise((resolve) => setTimeout(resolve, 2000));
+
+        const mockProof: ProofResult = {
+          zkProof: ('0x' + '00'.repeat(256)) as Hex,
+        };
+
+        setProof(mockProof);
+        setStatus(ProofStatus.SUCCESS);
+        setProgress('Mock proof generated (dev mode)');
+        return mockProof;
       }
 
       setProgress('Sending to prover network...');

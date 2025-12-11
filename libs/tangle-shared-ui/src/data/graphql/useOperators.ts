@@ -29,14 +29,14 @@ export interface Operator {
   restakingScheduledUnstakeRound: bigint | null;
 }
 
-// Query to fetch all active operators
+// Query to fetch all active operators (Hasura uses PascalCase table names)
 const OPERATORS_QUERY = gql`
-  query Operators($first: Int, $skip: Int, $status: RestakingOperatorStatus) {
-    operators(
-      first: $first
-      skip: $skip
-      where: { restakingStatus: $status }
-      orderBy: restakingStake
+  query Operators($limit: Int, $offset: Int, $status: String) {
+    Operator(
+      limit: $limit
+      offset: $offset
+      where: { restakingStatus: { _eq: $status } }
+      order_by: { restakingStake: desc }
     ) {
       id
       ecdsaPublicKey
@@ -54,7 +54,7 @@ const OPERATORS_QUERY = gql`
 `;
 
 interface OperatorsQueryResult {
-  operators: Array<{
+  Operator: Array<{
     id: string;
     ecdsaPublicKey: string | null;
     rpcAddress: string | null;
@@ -71,7 +71,7 @@ interface OperatorsQueryResult {
 
 // Parse operator data from GraphQL response
 const parseOperator = (
-  raw: OperatorsQueryResult['operators'][number],
+  raw: OperatorsQueryResult['Operator'][number],
 ): Operator => ({
   id: raw.id,
   ecdsaPublicKey: raw.ecdsaPublicKey,
@@ -98,40 +98,40 @@ const parseOperator = (
 const fetchOperators = async (
   network?: EnvioNetwork,
   status?: RestakingOperatorStatus,
-  first?: number,
-  skip?: number,
+  limit?: number,
+  offset?: number,
 ): Promise<Operator[]> => {
   const result = await executeEnvioGraphQL<
     OperatorsQueryResult,
     {
-      first?: number;
-      skip?: number;
-      status?: RestakingOperatorStatus;
+      limit?: number;
+      offset?: number;
+      status?: string;
     }
-  >(OPERATORS_QUERY, { first, skip, status }, network);
+  >(OPERATORS_QUERY, { limit, offset, status }, network);
 
-  return result.data.operators.map(parseOperator);
+  return (result.data.Operator ?? []).map(parseOperator);
 };
 
 // Hook to fetch all operators
 export const useOperators = (options?: {
   network?: EnvioNetwork;
   status?: RestakingOperatorStatus;
-  first?: number;
-  skip?: number;
+  limit?: number;
+  offset?: number;
   enabled?: boolean;
 }) => {
   const {
     network,
     status,
-    first = 100,
-    skip = 0,
+    limit = 100,
+    offset = 0,
     enabled = true,
   } = options ?? {};
 
   return useQuery({
-    queryKey: ['envio', 'operators', network, status, first, skip],
-    queryFn: () => fetchOperators(network, status, first, skip),
+    queryKey: ['envio', 'operators', network, status, limit, offset],
+    queryFn: () => fetchOperators(network, status, limit, offset),
     enabled,
     staleTime: 30_000, // 30 seconds
   });
@@ -148,6 +148,7 @@ export const useOperatorMap = (options?: {
   return useQuery({
     queryKey: ['envio', 'operatorMap', network, status],
     queryFn: async () => {
+      // Use limit/offset for Hasura pagination
       const operators = await fetchOperators(network, status, 1000, 0);
       const map = new Map<Address, Operator>();
       for (const op of operators) {
@@ -160,7 +161,7 @@ export const useOperatorMap = (options?: {
   });
 };
 
-// Hook to fetch a single operator by address
+// Hook to fetch a single operator by address (Hasura uses _by_pk for single row queries)
 export const useOperator = (
   address: Address | undefined,
   options?: {
@@ -171,8 +172,8 @@ export const useOperator = (
   const { network, enabled = true } = options ?? {};
 
   const OPERATOR_QUERY = gql`
-    query Operator($id: ID!) {
-      operator(id: $id) {
+    query Operator($id: String!) {
+      Operator_by_pk(id: $id) {
         id
         ecdsaPublicKey
         rpcAddress
@@ -193,11 +194,13 @@ export const useOperator = (
     queryFn: async () => {
       if (!address) return null;
       const result = await executeEnvioGraphQL<
-        { operator: OperatorsQueryResult['operators'][number] | null },
+        { Operator_by_pk: OperatorsQueryResult['Operator'][number] | null },
         { id: string }
       >(OPERATOR_QUERY, { id: address.toLowerCase() }, network);
 
-      return result.data.operator ? parseOperator(result.data.operator) : null;
+      return result.data.Operator_by_pk
+        ? parseOperator(result.data.Operator_by_pk)
+        : null;
     },
     enabled: enabled && !!address,
     staleTime: 30_000,

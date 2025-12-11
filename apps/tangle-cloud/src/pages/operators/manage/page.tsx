@@ -83,7 +83,9 @@ const Page: FC = () => {
     if (result) {
       setShowUnregisterModal(false);
       setSelectedRegistration(null);
-      queryClient.invalidateQueries({ queryKey: ['operator', 'registrations'] });
+      queryClient.invalidateQueries({
+        queryKey: ['operator', 'registrations'],
+      });
     }
   }, [selectedRegistration, unregisterOperator, queryClient]);
 
@@ -97,7 +99,9 @@ const Page: FC = () => {
       setShowUpdateModal(false);
       setSelectedRegistration(null);
       setNewRpcAddress('');
-      queryClient.invalidateQueries({ queryKey: ['operator', 'registrations'] });
+      queryClient.invalidateQueries({
+        queryKey: ['operator', 'registrations'],
+      });
     }
   }, [selectedRegistration, newRpcAddress, updatePreferences, queryClient]);
 
@@ -372,7 +376,8 @@ const Page: FC = () => {
         tableProps={registrationTable}
         loadingTableProps={{
           title: 'Loading registrations...',
-          description: 'Please wait while we fetch your operator registrations.',
+          description:
+            'Please wait while we fetch your operator registrations.',
           icon: '🔄',
         }}
         emptyTableProps={{
@@ -501,7 +506,9 @@ const Page: FC = () => {
           </ModalBody>
           <ModalFooterActions
             hasCloseButton
-            isConfirmDisabled={disputeStatus === 'pending' || !disputeReason.trim()}
+            isConfirmDisabled={
+              disputeStatus === 'pending' || !disputeReason.trim()
+            }
             isProcessing={disputeStatus === 'pending'}
             confirmButtonText="Submit Dispute"
             onConfirm={handleDispute}

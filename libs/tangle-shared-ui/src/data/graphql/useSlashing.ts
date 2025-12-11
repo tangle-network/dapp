@@ -284,7 +284,10 @@ export const formatSlashAmount = (amount: bigint, decimals = 18): string => {
   }
   const whole = amount / divisor;
   const fractional = amount % divisor;
-  const fractionalStr = fractional.toString().padStart(decimals, '0').slice(0, 4);
+  const fractionalStr = fractional
+    .toString()
+    .padStart(decimals, '0')
+    .slice(0, 4);
   return `${whole}.${fractionalStr}`;
 };
 

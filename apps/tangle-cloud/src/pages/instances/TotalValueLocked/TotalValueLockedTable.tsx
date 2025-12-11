@@ -22,6 +22,10 @@ import TableCellWrapper from '@tangle-network/tangle-shared-ui/components/tables
 import LsTokenIcon from '@tangle-network/tangle-shared-ui/components/LsTokenIcon';
 import formatPercentage from '@tangle-network/ui-components/utils/formatPercentage';
 import { formatUnits } from 'viem';
+import { twMerge } from 'tailwind-merge';
+import { TangleCloudTableProps } from '../../../components/tangleCloudTable/type';
+import { Link } from 'react-router';
+import { TangleDAppPagePath } from '../../../types';
 
 const formatAmount = (amount: bigint, decimals: number): string => {
   const formatted = formatUnits(amount, decimals);
@@ -39,10 +43,6 @@ const calculateRatio = (a: bigint, b: bigint): number => {
   if (b === BigInt(0)) return 0;
   return Number((a * BigInt(10000)) / b) / 10000;
 };
-import { twMerge } from 'tailwind-merge';
-import { TangleCloudTableProps } from '../../../components/tangleCloudTable/type';
-import { Link } from 'react-router';
-import { TangleDAppPagePath } from '../../../types';
 
 const COLUMN_HELPER = createColumnHelper<RestakeVault>();
 

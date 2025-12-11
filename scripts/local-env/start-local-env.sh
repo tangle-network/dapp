@@ -53,6 +53,9 @@ export WETH_ADDRESS=""
 export STETH_ADDRESS=""
 export WSTETH_ADDRESS=""
 export EIGEN_ADDRESS=""
+# Migration contract addresses
+export TANGLE_MIGRATION_ADDRESS=""
+export TNT_TOKEN_ADDRESS=""
 
 # Colors for output
 RED='\033[0;31m'
@@ -104,11 +107,25 @@ check_prerequisites() {
     log_info "TNT_CORE_DIR: $TNT_CORE_DIR"
 }
 
+# Cache file locations
+CACHE_DIR="/tmp/local-env-cache"
+ANVIL_STATE_FILE="$CACHE_DIR/anvil-state.json"
+ADDRESSES_CACHE="$CACHE_DIR/addresses.env"
+
 start_anvil() {
     log_info "Starting Anvil on port $ANVIL_PORT..."
 
-    anvil --chain-id $ANVIL_CHAIN_ID --port $ANVIL_PORT --block-time 1 --base-fee 0 --gas-limit 30000000 --disable-code-size-limit --silent &
-    ANVIL_PID=$!
+    # Check if we have cached state
+    if [[ -f "$ANVIL_STATE_FILE" && -f "$ADDRESSES_CACHE" ]]; then
+        log_info "Loading cached Anvil state..."
+        anvil --chain-id $ANVIL_CHAIN_ID --port $ANVIL_PORT --block-time 1 --base-fee 0 --gas-limit 30000000 --disable-code-size-limit --silent --load-state "$ANVIL_STATE_FILE" &
+        ANVIL_PID=$!
+        ANVIL_CACHED=true
+    else
+        anvil --chain-id $ANVIL_CHAIN_ID --port $ANVIL_PORT --block-time 1 --base-fee 0 --gas-limit 30000000 --disable-code-size-limit --silent &
+        ANVIL_PID=$!
+        ANVIL_CACHED=false
+    fi
     sleep 2
 
     if ! curl -s http://127.0.0.1:$ANVIL_PORT -X POST -H "Content-Type: application/json" \
@@ -117,10 +134,56 @@ start_anvil() {
         exit 1
     fi
 
-    log_success "Anvil started (PID: $ANVIL_PID)"
+    if [[ "$ANVIL_CACHED" == "true" ]]; then
+        log_success "Anvil started from cache (PID: $ANVIL_PID)"
+        # Load cached addresses
+        source "$ADDRESSES_CACHE"
+    else
+        log_success "Anvil started fresh (PID: $ANVIL_PID)"
+    fi
+}
+
+save_anvil_state() {
+    log_info "Saving Anvil state to cache..."
+    mkdir -p "$CACHE_DIR"
+
+    # Dump Anvil state
+    curl -s http://127.0.0.1:$ANVIL_PORT -X POST -H "Content-Type: application/json" \
+        --data '{"jsonrpc":"2.0","method":"anvil_dumpState","params":[],"id":1}' \
+        | jq -r '.result' > "$ANVIL_STATE_FILE" 2>/dev/null
+
+    # Save addresses
+    cat > "$ADDRESSES_CACHE" << EOF
+export TANGLE_PROXY="$TANGLE_PROXY"
+export RESTAKING_PROXY="$RESTAKING_PROXY"
+export STATUS_REGISTRY="$STATUS_REGISTRY"
+export USDC_ADDRESS="$USDC_ADDRESS"
+export USDT_ADDRESS="$USDT_ADDRESS"
+export DAI_ADDRESS="$DAI_ADDRESS"
+export WETH_ADDRESS="$WETH_ADDRESS"
+export STETH_ADDRESS="$STETH_ADDRESS"
+export WSTETH_ADDRESS="$WSTETH_ADDRESS"
+export EIGEN_ADDRESS="$EIGEN_ADDRESS"
+export TNT_TOKEN_ADDRESS="${TNT_TOKEN_ADDRESS:-}"
+export TANGLE_MIGRATION_ADDRESS="${TANGLE_MIGRATION_ADDRESS:-}"
+EOF
+
+    log_success "Anvil state cached"
+}
+
+clear_cache() {
+    log_info "Clearing local-env cache..."
+    rm -rf "$CACHE_DIR"
+    log_success "Cache cleared - next startup will do fresh deployment"
 }
 
 deploy_contracts() {
+    # Skip if loaded from cache
+    if [[ "${ANVIL_CACHED:-false}" == "true" ]]; then
+        log_info "Skipping contract deployment (loaded from cache)"
+        return 0
+    fi
+
     log_info "Deploying contracts..."
     cd "$TNT_CORE_DIR"
 
@@ -190,6 +253,193 @@ deploy_contracts() {
     log_success "Contracts deployed"
 }
 
+deploy_migration_contracts() {
+    # Skip if loaded from cache and migration address exists
+    if [[ "${ANVIL_CACHED:-false}" == "true" && -n "${TANGLE_MIGRATION_ADDRESS:-}" ]]; then
+        log_info "Skipping migration deployment (loaded from cache)"
+        return 0
+    fi
+
+    log_info "Deploying TangleMigration contracts..."
+
+    # Check if migration output exists
+    local migration_output=""
+    if [[ -d "$DAPP_ROOT/scripts/migration/migration_output" ]]; then
+        migration_output="$DAPP_ROOT/scripts/migration/migration_output"
+    elif [[ -d "/Users/drew/webb/tangle/types/migration_output" ]]; then
+        migration_output="/Users/drew/webb/tangle/types/migration_output"
+    fi
+
+    if [[ -z "$migration_output" || ! -f "$migration_output/distribution.json" ]]; then
+        log_warn "Migration distribution.json not found - skipping TangleMigration deployment"
+        log_info "To enable: cd scripts/migration && npm install && npm run merkleize:latest"
+        return 0
+    fi
+
+    local contract_dir="$DAPP_ROOT/contracts/migration-claim"
+    if [[ ! -d "$contract_dir" ]]; then
+        log_warn "Migration contract directory not found: $contract_dir"
+        return 0
+    fi
+
+    # Read distribution data for exact totals using Node.js
+    log_info "Reading distribution data from $migration_output..."
+    local dist_data=$(node -e "
+const dist = require('$migration_output/distribution.json');
+const evm = require('$migration_output/evm-airdrop.json');
+let evmTotal = BigInt(0);
+for (const [addr, amt] of Object.entries(evm)) { evmTotal += BigInt(amt); }
+let substrateTotal = BigInt(0);
+for (const acc of dist.substrateAccounts) { substrateTotal += BigInt(acc.finalAmount); }
+console.log(JSON.stringify({
+  merkleRoot: dist.metadata.merkleRoot,
+  totalSubstrate: substrateTotal.toString(),
+  totalEvm: evmTotal.toString(),
+  substrateAccounts: dist.metadata.totalSubstrateAccounts,
+  evmAccounts: dist.metadata.totalEvmAccounts
+}));
+" 2>/dev/null) || { log_warn "Failed to read distribution data"; return 0; }
+
+    local merkle_root=$(echo "$dist_data" | jq -r '.merkleRoot')
+    local total_substrate=$(echo "$dist_data" | jq -r '.totalSubstrate')
+    local total_evm=$(echo "$dist_data" | jq -r '.totalEvm')
+    local substrate_accounts=$(echo "$dist_data" | jq -r '.substrateAccounts')
+    local evm_accounts=$(echo "$dist_data" | jq -r '.evmAccounts')
+
+    log_info "Merkle Root: $merkle_root"
+    log_info "Substrate: $(node -pe "BigInt('$total_substrate') / BigInt(1e18)") TNT ($substrate_accounts accounts)"
+    log_info "EVM: $(node -pe "BigInt('$total_evm') / BigInt(1e18)") TNT ($evm_accounts accounts)"
+
+    cd "$contract_dir"
+
+    # Install dependencies if needed
+    if [[ ! -d "lib/forge-std" ]]; then
+        log_info "Installing Foundry dependencies..."
+        forge install foundry-rs/forge-std OpenZeppelin/openzeppelin-contracts@v5.0.0 --no-git 2>/dev/null || true
+    fi
+
+    # Build and deploy
+    forge build --quiet 2>/dev/null || true
+
+    local ANVIL_PRIVATE_KEY="0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80"
+
+    # Deploy with exact totals from distribution
+    MERKLE_ROOT="$merkle_root" \
+    TOTAL_SUBSTRATE="$total_substrate" \
+    TOTAL_EVM="$total_evm" \
+    USE_MOCK_VERIFIER="true" \
+    PRIVATE_KEY="$ANVIL_PRIVATE_KEY" \
+    forge script script/DeployTangleMigration.s.sol:DeployTangleMigration \
+        --rpc-url "http://127.0.0.1:$ANVIL_PORT" \
+        --broadcast \
+        --quiet \
+        2>&1 | tee /tmp/migration-deploy.log || true
+
+    # Extract addresses from broadcast
+    local broadcast_file=$(ls -t broadcast/DeployTangleMigration.s.sol/*/run-latest.json 2>/dev/null | head -1)
+
+    if [[ -f "$broadcast_file" ]]; then
+        export TNT_TOKEN_ADDRESS=$(jq -r '.transactions[] | select(.contractName == "TNT") | .contractAddress' "$broadcast_file" 2>/dev/null | head -1)
+        export TANGLE_MIGRATION_ADDRESS=$(jq -r '.transactions[] | select(.contractName == "TangleMigration") | .contractAddress' "$broadcast_file" 2>/dev/null | head -1)
+
+        # Fallback to grep if jq fails
+        if [[ -z "${TNT_TOKEN_ADDRESS:-}" || "${TNT_TOKEN_ADDRESS}" == "null" ]]; then
+            TNT_TOKEN_ADDRESS=$(grep -o '"contractName": "TNT"' -A5 "$broadcast_file" 2>/dev/null | grep '"contractAddress"' | head -1 | grep -o '0x[a-fA-F0-9]\{40\}' || echo "")
+        fi
+        if [[ -z "${TANGLE_MIGRATION_ADDRESS:-}" || "${TANGLE_MIGRATION_ADDRESS}" == "null" ]]; then
+            TANGLE_MIGRATION_ADDRESS=$(grep -o '"contractName": "TangleMigration"' -A5 "$broadcast_file" 2>/dev/null | grep '"contractAddress"' | head -1 | grep -o '0x[a-fA-F0-9]\{40\}' || echo "")
+        fi
+    fi
+
+    # Copy proofs to frontend
+    local proofs_dest="$DAPP_ROOT/apps/tangle-dapp/public/data"
+    mkdir -p "$proofs_dest"
+    cp "$migration_output/proofs.json" "$proofs_dest/migration-proofs.json"
+
+    if [[ -n "${TANGLE_MIGRATION_ADDRESS:-}" && "${TANGLE_MIGRATION_ADDRESS}" != "null" ]]; then
+        log_success "TangleMigration deployed: $TANGLE_MIGRATION_ADDRESS"
+        log_info "TNT Token: $TNT_TOKEN_ADDRESS"
+        log_info "Substrate allocation: $(node -pe "BigInt('$total_substrate') / BigInt(1e18)") TNT transferred to contract"
+        log_info "EVM allocation: $(node -pe "BigInt('$total_evm') / BigInt(1e18)") TNT in deployer"
+        log_info "Proofs copied to: $proofs_dest/migration-proofs.json"
+    else
+        log_warn "TangleMigration deployment may have failed - check /tmp/migration-deploy.log"
+    fi
+
+    cd "$DAPP_ROOT"
+}
+
+execute_evm_airdrop() {
+    log_info "Executing EVM airdrop..."
+
+    if [[ -z "${TNT_TOKEN_ADDRESS:-}" || "${TNT_TOKEN_ADDRESS}" == "null" ]]; then
+        log_error "TNT token not deployed. Run 'migration deploy' first."
+        return 1
+    fi
+
+    # Find migration output
+    local migration_output=""
+    if [[ -d "$DAPP_ROOT/scripts/migration/migration_output" ]]; then
+        migration_output="$DAPP_ROOT/scripts/migration/migration_output"
+    elif [[ -d "/Users/drew/webb/tangle/types/migration_output" ]]; then
+        migration_output="/Users/drew/webb/tangle/types/migration_output"
+    fi
+
+    if [[ -z "$migration_output" || ! -f "$migration_output/evm-airdrop.json" ]]; then
+        log_error "evm-airdrop.json not found"
+        return 1
+    fi
+
+    local ANVIL_PRIVATE_KEY="0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80"
+    local RPC_URL="http://127.0.0.1:$ANVIL_PORT"
+
+    # Execute airdrop in batches using Node.js + cast
+    node -e "
+const evm = require('$migration_output/evm-airdrop.json');
+const { execSync } = require('child_process');
+
+const TNT_ADDRESS = '$TNT_TOKEN_ADDRESS';
+const RPC_URL = '$RPC_URL';
+const PRIVATE_KEY = '$ANVIL_PRIVATE_KEY';
+const BATCH_SIZE = 100;
+
+const entries = Object.entries(evm);
+console.log('Total EVM recipients:', entries.length);
+
+let totalAirdropped = BigInt(0);
+
+for (let i = 0; i < entries.length; i += BATCH_SIZE) {
+    const batch = entries.slice(i, i + BATCH_SIZE);
+    const recipients = batch.map(([addr]) => addr);
+    const amounts = batch.map(([, amt]) => amt);
+
+    const batchNum = Math.floor(i / BATCH_SIZE) + 1;
+    const totalBatches = Math.ceil(entries.length / BATCH_SIZE);
+
+    console.log('Processing batch', batchNum, '/', totalBatches, '(' + batch.length + ' recipients)');
+
+    const recipientsArg = '[' + recipients.join(',') + ']';
+    const amountsArg = '[' + amounts.join(',') + ']';
+
+    try {
+        execSync(
+            'cast send --rpc-url ' + RPC_URL + ' --private-key ' + PRIVATE_KEY + ' ' + TNT_ADDRESS + ' \"batchMint(address[],uint256[])\" \"' + recipientsArg + '\" \"' + amountsArg + '\"',
+            { stdio: 'pipe' }
+        );
+        for (const amt of amounts) { totalAirdropped += BigInt(amt); }
+    } catch (e) {
+        console.error('Batch', batchNum, 'failed:', e.message);
+        process.exit(1);
+    }
+}
+
+console.log('EVM airdrop complete!');
+console.log('Total airdropped:', (totalAirdropped / BigInt(1e18)).toString(), 'TNT to', entries.length, 'addresses');
+" 2>&1 | while read line; do log_info "$line"; done
+
+    log_success "EVM airdrop complete"
+}
+
 start_indexer() {
     log_info "Setting up Envio indexer..."
     cd "$INDEXER_DIR"
@@ -197,9 +447,21 @@ start_indexer() {
     # Use local config
     cp config.local.yaml config.yaml
 
-    # Run codegen
-    log_info "Running Envio codegen..."
-    pnpm codegen
+    # Check if we can skip codegen (generated files exist and are recent)
+    local needs_codegen=true
+    if [[ -f "$INDEXER_DIR/generated/src/EventHandlers.res.js" ]]; then
+        local config_mtime=$(stat -f %m config.yaml 2>/dev/null || stat -c %Y config.yaml 2>/dev/null)
+        local gen_mtime=$(stat -f %m "$INDEXER_DIR/generated/src/EventHandlers.res.js" 2>/dev/null || stat -c %Y "$INDEXER_DIR/generated/src/EventHandlers.res.js" 2>/dev/null)
+        if [[ "$gen_mtime" -gt "$config_mtime" ]]; then
+            log_info "Skipping codegen (generated files are up to date)"
+            needs_codegen=false
+        fi
+    fi
+
+    if [[ "$needs_codegen" == "true" ]]; then
+        log_info "Running Envio codegen..."
+        pnpm codegen
+    fi
 
     # Setup generated package symlink
     log_info "Setting up generated package symlink..."
@@ -210,18 +472,36 @@ start_indexer() {
     # Clear persisted state
     rm -f "$INDEXER_DIR/generated/persisted_state.envio.json"
 
-    # Start database (fresh volumes)
-    log_info "Starting indexer database..."
+    # Check if Docker containers are already running
     cd "$INDEXER_DIR/generated"
-    docker compose down -v 2>/dev/null || true
-    docker compose up -d
-    sleep 3
+    local docker_running=false
+    if docker compose ps 2>/dev/null | grep -q "running"; then
+        docker_running=true
+        log_info "Docker containers already running, reusing..."
+    fi
 
-    # Run DB migrations
+    if [[ "$docker_running" == "false" ]]; then
+        # Start database (fresh volumes)
+        log_info "Starting indexer database..."
+        docker compose down -v 2>/dev/null || true
+        docker compose up -d
+    fi
+
+    # Wait for Hasura to be ready before db-setup
+    log_info "Waiting for Hasura to be ready..."
+    for i in {1..30}; do
+        if curl -s "http://localhost:8080/healthz" | grep -q "OK" 2>/dev/null; then
+            log_success "Hasura is ready"
+            break
+        fi
+        sleep 1
+    done
+
+    # Run DB migrations (needed even if reusing containers)
     log_info "Running DB migrations..."
     pnpm db-setup
 
-    # Clear chain progress
+    # Clear chain progress (for fresh indexing from block 0)
     log_info "Clearing chain progress..."
     PGPASSWORD=testing psql -h localhost -p 5433 -U postgres -d envio-dev -c \
         "TRUNCATE TABLE public.persisted_state, public.chain_metadata, public.dynamic_contract_registry CASCADE;" 2>/dev/null || true
@@ -234,7 +514,7 @@ start_indexer() {
     # Start the indexer
     log_info "Starting indexer..."
     cd "$INDEXER_DIR/generated"
-    TUI_OFF=true ENVIO_RPC_URL_${ANVIL_CHAIN_ID}=http://127.0.0.1:$ANVIL_PORT pnpm start &
+    env "ENVIO_RPC_URL_${ANVIL_CHAIN_ID}=http://127.0.0.1:$ANVIL_PORT" TUI_OFF=true pnpm start &
     INDEXER_PID=$!
     cd "$INDEXER_DIR"
     sleep 5
@@ -331,7 +611,7 @@ restart_indexer() {
     # Restart just the indexer process, not the full DB setup
     log_info "Restarting indexer..."
     cd "$INDEXER_DIR/generated"
-    TUI_OFF=true ENVIO_RPC_URL_${ANVIL_CHAIN_ID}=http://127.0.0.1:$ANVIL_PORT pnpm start &
+    env "ENVIO_RPC_URL_${ANVIL_CHAIN_ID}=http://127.0.0.1:$ANVIL_PORT" TUI_OFF=true pnpm start &
     INDEXER_PID=$!
     cd "$SCRIPT_DIR"
     log_success "Indexer restarted (PID: $INDEXER_PID)"
@@ -394,6 +674,13 @@ show_status() {
         echo -e "  Docker:            ${RED}Stopped${NC}"
     fi
 
+    # Check cache status
+    if [[ -f "$ANVIL_STATE_FILE" ]]; then
+        echo -e "  Cache:             ${GREEN}Active${NC} (use 'cache clear' to reset)"
+    else
+        echo -e "  Cache:             ${YELLOW}Empty${NC}"
+    fi
+
     echo ""
     echo "Services:"
     echo "  - Anvil RPC:    http://localhost:$ANVIL_PORT"
@@ -409,6 +696,10 @@ show_addresses() {
     echo "  - Tangle:              ${TANGLE_PROXY:-Not deployed}"
     echo "  - MultiAssetDelegation: ${RESTAKING_PROXY:-Not deployed}"
     echo "  - StatusRegistry:       ${STATUS_REGISTRY:-Not deployed}"
+    echo ""
+    echo "Migration Contracts:"
+    echo "  - TangleMigration:      ${TANGLE_MIGRATION_ADDRESS:-Not deployed}"
+    echo "  - TNT Token:            ${TNT_TOKEN_ADDRESS:-Not deployed}"
     echo ""
     echo "Token Addresses:"
     [[ -n "${USDC_ADDRESS:-}" ]] && echo "  - USDC:   $USDC_ADDRESS"
@@ -592,8 +883,12 @@ show_logs() {
             echo -e "${BOLD}=== Deployment Log (last 50 lines) ===${NC}"
             tail -50 /tmp/deploy.log 2>/dev/null || echo "No deployment log found"
             ;;
+        migration)
+            echo -e "${BOLD}=== Migration Deployment Log (last 50 lines) ===${NC}"
+            tail -50 /tmp/migration-deploy.log 2>/dev/null || echo "No migration deployment log found"
+            ;;
         *)
-            echo "Usage: logs <deploy|contracts>"
+            echo "Usage: logs <deploy|contracts|migration>"
             ;;
     esac
 }
@@ -622,10 +917,21 @@ print_help() {
     echo "  indexer stop        - Stop the indexer"
     echo "  indexer clear       - Clear indexer state (then restart to re-sync)"
     echo ""
+    echo -e "${CYAN}Migration:${NC}"
+    echo "  migration deploy    - Deploy/redeploy TangleMigration contracts"
+    echo "  migration airdrop   - Execute EVM airdrop (distribute to EVM holders)"
+    echo "  logs migration      - Show migration deployment logs"
+    echo ""
     echo -e "${CYAN}Docker:${NC}"
     echo "  docker down         - Run docker compose down -v"
     echo "  docker up           - Run docker compose up -d"
     echo "  docker restart      - Restart docker containers"
+    echo ""
+    echo -e "${CYAN}Cache:${NC}"
+    echo "  cache clear         - Clear cached Anvil state (force fresh deploy)"
+    echo "  cache save          - Save current Anvil state to cache"
+    echo "  cache status        - Show cache status"
+    echo "  reset               - Clear cache and exit (restart script for fresh deploy)"
     echo ""
     echo -e "${CYAN}Funding:${NC}"
     echo "  fund <address>      - Fund an address with ETH + ERC20 tokens"
@@ -656,6 +962,9 @@ print_startup_banner() {
     echo "dApp Config (.env.local):"
     echo "  VITE_ENVIO_MAINNET_ENDPOINT=http://localhost:$GRAPHQL_PORT/v1/graphql"
     echo "  VITE_ENVIO_TESTNET_ENDPOINT=http://localhost:$GRAPHQL_PORT/v1/graphql"
+    if [[ -n "${TANGLE_MIGRATION_ADDRESS:-}" && "${TANGLE_MIGRATION_ADDRESS}" != "null" ]]; then
+        echo "  VITE_TANGLE_MIGRATION_ADDRESS=$TANGLE_MIGRATION_ADDRESS"
+    fi
     echo ""
     echo -e "${BOLD}Development Accounts (10 accounts with 10,000 ETH + ERC20 tokens):${NC}"
     echo "  #0 0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266 (Deployer)"
@@ -663,6 +972,10 @@ print_startup_banner() {
     echo "  #2 0x3C44CdDdB6a900fa2b585dd299e03d12FA4293BC"
     echo -e "  ${CYAN}...type 'accounts' for all 10 with private keys${NC}"
     echo ""
+    if [[ -n "${TANGLE_MIGRATION_ADDRESS:-}" && "${TANGLE_MIGRATION_ADDRESS}" != "null" ]]; then
+        echo -e "${GREEN}Migration claim available at: http://localhost:5173/claim/migration${NC}"
+        echo ""
+    fi
     echo -e "${YELLOW}Type 'help' for available commands${NC}"
     echo ""
 }
@@ -695,6 +1008,15 @@ interactive_cli() {
                 esac
                 ;;
 
+            # Migration commands
+            migration)
+                case "$args" in
+                    deploy) deploy_migration_contracts ;;
+                    airdrop) execute_evm_airdrop ;;
+                    *) echo "Usage: migration <deploy|airdrop>" ;;
+                esac
+                ;;
+
             # Docker commands
             docker)
                 case "$args" in
@@ -702,6 +1024,35 @@ interactive_cli() {
                     up) docker_up ;;
                     restart) docker_restart ;;
                     *) echo "Usage: docker <down|up|restart>" ;;
+                esac
+                ;;
+
+            # Cache commands
+            cache)
+                case "$args" in
+                    clear)
+                        clear_cache
+                        ;;
+                    save)
+                        save_anvil_state
+                        ;;
+                    status)
+                        echo -e "${BOLD}=== Cache Status ===${NC}"
+                        if [[ -f "$ANVIL_STATE_FILE" ]]; then
+                            local size=$(ls -lh "$ANVIL_STATE_FILE" 2>/dev/null | awk '{print $5}')
+                            echo -e "  Anvil state:   ${GREEN}Cached${NC} ($size)"
+                        else
+                            echo -e "  Anvil state:   ${YELLOW}Not cached${NC}"
+                        fi
+                        if [[ -f "$ADDRESSES_CACHE" ]]; then
+                            echo -e "  Addresses:     ${GREEN}Cached${NC}"
+                        else
+                            echo -e "  Addresses:     ${YELLOW}Not cached${NC}"
+                        fi
+                        echo ""
+                        echo "Cache location: $CACHE_DIR"
+                        ;;
+                    *) echo "Usage: cache <clear|save|status>" ;;
                 esac
                 ;;
 
@@ -719,6 +1070,13 @@ interactive_cli() {
             accounts) show_accounts ;;
             logs) show_logs "$args" ;;
             help|h|\?) print_help ;;
+
+            # Reset command - clear cache and exit
+            reset)
+                clear_cache
+                log_info "Exiting - restart script for fresh deployment..."
+                break
+                ;;
 
             # Exit commands
             quit|exit|q)
@@ -744,6 +1102,13 @@ main() {
     check_prerequisites
     start_anvil
     deploy_contracts
+    deploy_migration_contracts
+
+    # Save state after deployments (only if we did fresh deployment)
+    if [[ "${ANVIL_CACHED:-false}" != "true" ]]; then
+        save_anvil_state
+    fi
+
     start_indexer
     start_activity_generator
 

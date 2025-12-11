@@ -3,11 +3,7 @@
  */
 
 import { FC, useState } from 'react';
-import {
-  Card,
-  Typography,
-  Input,
-} from '@tangle-network/ui-components';
+import { Card, Typography, Input } from '@tangle-network/ui-components';
 import {
   Select,
   SelectContent,

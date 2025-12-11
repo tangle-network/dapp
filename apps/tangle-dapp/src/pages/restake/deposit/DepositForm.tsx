@@ -29,10 +29,9 @@ import useSwitchChain from '../useSwitchChain';
 import Details from './Details';
 import filterBy from '@tangle-network/tangle-shared-ui/utils/filterBy';
 import { TxStatus } from '@tangle-network/tangle-shared-ui/hooks/useContractWrite';
-import {
-  useRestakeAssets,
-  type RestakeAsset,
-} from '@tangle-network/tangle-shared-ui/data/graphql';
+import type { RestakeAsset } from '@tangle-network/tangle-shared-ui/data/graphql';
+import { useOptionalRestakeContext } from '@tangle-network/tangle-shared-ui/context/RestakeContext';
+import { useRestakeAssets } from '@tangle-network/tangle-shared-ui/data/graphql';
 import { useDepositTx } from '@tangle-network/tangle-shared-ui/data/tx';
 import { chainsConfig } from '@tangle-network/dapp-config/chains';
 
@@ -53,11 +52,22 @@ const DepositForm: FC = () => {
   const { status: depositTxStatus, execute: executeDepositTx } = useDepositTx();
   const switchChain = useSwitchChain();
 
+  // Try to use context first (if within RestakeProvider), fall back to hook
+  const restakeContext = useOptionalRestakeContext();
+  const directAssets = useRestakeAssets({ enabled: !restakeContext });
+
+  // Use context data if available, otherwise use direct fetch
   const {
     assets,
     isLoading: isLoadingAssets,
     refetchBalances,
-  } = useRestakeAssets();
+  } = restakeContext
+    ? {
+        assets: restakeContext.assets,
+        isLoading: restakeContext.isLoadingAssets,
+        refetchBalances: restakeContext.refetchBalances,
+      }
+    : directAssets;
 
   const {
     register,

@@ -5,8 +5,8 @@ import 'dotenv/config';
 export const LEGACY_GRAPHQL_ENDPOINT =
   'https://mainnet-gql.tangle.tools/graphql';
 
-// New Envio indexer endpoint (v2 EVM)
-export const ENVIO_LOCAL_ENDPOINT = 'http://localhost:8080/graphql';
+// New Envio indexer endpoint (v2 EVM) - Hasura serves at /v1/graphql
+export const ENVIO_LOCAL_ENDPOINT = 'http://localhost:8080/v1/graphql';
 export const ENVIO_TESTNET_ENDPOINT =
   process.env.VITE_ENVIO_TESTNET_ENDPOINT ?? ENVIO_LOCAL_ENDPOINT;
 export const ENVIO_MAINNET_ENDPOINT =

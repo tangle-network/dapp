@@ -257,10 +257,7 @@ export const useClaimRewardsTx = (): UseClaimRewardsTxReturn => {
 /**
  * Format reward amount for display.
  */
-export const formatRewardAmount = (
-  amount: bigint,
-  decimals: number = 18,
-): string => {
+export const formatRewardAmount = (amount: bigint, decimals = 18): string => {
   const formatted = formatUnits(amount, decimals);
   const num = parseFloat(formatted);
   if (num === 0) return '0';

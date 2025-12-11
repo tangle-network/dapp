@@ -18,10 +18,10 @@ export interface RestakingRound {
   timestamp: bigint;
 }
 
-// GraphQL query for the latest restaking round
+// GraphQL query for the latest restaking round (Hasura uses PascalCase + order_by)
 const RESTAKING_ROUND_QUERY = gql`
   query RestakingRounds {
-    restakingRounds(first: 1, orderBy: round) {
+    RestakingRound(limit: 1, order_by: { round: desc }) {
       id
       round
       blockNumber
@@ -31,7 +31,7 @@ const RESTAKING_ROUND_QUERY = gql`
 `;
 
 interface RestakingRoundQueryResult {
-  restakingRounds: Array<{
+  RestakingRound: Array<{
     id: string;
     round: string;
     blockNumber: string;
@@ -41,7 +41,7 @@ interface RestakingRoundQueryResult {
 
 // Parse restaking round from GraphQL response
 const parseRestakingRound = (
-  raw: RestakingRoundQueryResult['restakingRounds'][number],
+  raw: RestakingRoundQueryResult['RestakingRound'][number],
 ): RestakingRound => ({
   id: raw.id,
   round: BigInt(raw.round),
@@ -58,7 +58,7 @@ const fetchCurrentRound = async (
     Record<string, never>
   >(RESTAKING_ROUND_QUERY, {}, network);
 
-  const rounds = result.data.restakingRounds;
+  const rounds = result.data.RestakingRound ?? [];
   return rounds.length > 0 ? parseRestakingRound(rounds[0]) : null;
 };
 

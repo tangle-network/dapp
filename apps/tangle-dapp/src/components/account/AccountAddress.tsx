@@ -1,7 +1,5 @@
-import { isEthereumAddress } from '@polkadot/util-crypto';
 import { LoopRightFillIcon } from '@tangle-network/icons';
 import useNetworkStore from '@tangle-network/tangle-shared-ui/context/useNetworkStore';
-import useActiveAccountAddress from '@tangle-network/tangle-shared-ui/hooks/useActiveAccountAddress';
 import {
   CopyWithTooltip,
   shortenHex,
@@ -12,39 +10,27 @@ import {
   Typography,
   useHiddenValue,
 } from '@tangle-network/ui-components';
-import { isSolanaAddress } from '@tangle-network/ui-components/utils/isSolanaAddress';
 import { Avatar } from '@tangle-network/ui-components/components/Avatar';
 import { IconWithTooltip } from '@tangle-network/ui-components/components/IconWithTooltip';
 import { EMPTY_VALUE_PLACEHOLDER } from '@tangle-network/ui-components/constants';
 import { shortenString } from '@tangle-network/ui-components/utils/shortenString';
 import type { FC } from 'react';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
+import { useAccount } from 'wagmi';
 
 const AccountAddress: FC = () => {
   const { network } = useNetworkStore();
-  const activeAccountAddress = useActiveAccountAddress();
+  const { address: activeAccountAddress } = useAccount();
   const [isHiddenValue] = useHiddenValue();
 
-  const isEvmAccountAddress =
-    activeAccountAddress === null
-      ? null
-      : isEthereumAddress(activeAccountAddress);
+  // wagmi addresses are always EVM addresses
+  const isEvmAccountAddress = activeAccountAddress !== undefined;
 
-  const [isDisplayingEvmAddress, setIsDisplayingEvmAddress] =
-    useState(isEvmAccountAddress);
-
-  // Make sure the address type is updated when the active address changes.
-  useEffect(() => {
-    setIsDisplayingEvmAddress(isEvmAccountAddress);
-  }, [activeAccountAddress, isEvmAccountAddress]);
+  const [isDisplayingEvmAddress, setIsDisplayingEvmAddress] = useState(true);
 
   const displayAddress = useMemo(() => {
-    if (activeAccountAddress === null) {
+    if (!activeAccountAddress) {
       return null;
-    }
-
-    if (isSolanaAddress(activeAccountAddress)) {
-      return activeAccountAddress;
     }
 
     return isDisplayingEvmAddress
@@ -63,35 +49,29 @@ const AccountAddress: FC = () => {
   );
 
   const handleAddressTypeToggle = useCallback(() => {
-    if (
-      activeAccountAddress !== null &&
-      !isSolanaAddress(activeAccountAddress)
-    ) {
+    if (activeAccountAddress) {
       setIsDisplayingEvmAddress((previous) => !previous);
     }
-  }, [activeAccountAddress, setIsDisplayingEvmAddress]);
+  }, [activeAccountAddress]);
 
   const iconFillColorClass = 'dark:!fill-mono-80 !fill-mono-160';
 
   const shortenFn = isHiddenValue
     ? shortenString
-    : activeAccountAddress === null
+    : !activeAccountAddress
       ? shortenString
-      : isSolanaAddress(activeAccountAddress)
-        ? shortenString
-        : isDisplayingEvmAddress
-          ? shortenHex
-          : shortenString;
+      : isDisplayingEvmAddress
+        ? shortenHex
+        : shortenString;
 
-  const avatarIcon =
-    activeAccountAddress === null ? (
-      <div className="w-6 h-6 rounded-full bg-mono-40 dark:bg-mono-160" />
-    ) : (
-      <Avatar
-        value={displayAddress}
-        theme={isDisplayingEvmAddress ? 'ethereum' : 'substrate'}
-      />
-    );
+  const avatarIcon = !activeAccountAddress ? (
+    <div className="w-6 h-6 rounded-full bg-mono-40 dark:bg-mono-160" />
+  ) : (
+    <Avatar
+      value={displayAddress}
+      theme={isDisplayingEvmAddress ? 'ethereum' : 'substrate'}
+    />
+  );
 
   return (
     <div className="flex items-center gap-1">

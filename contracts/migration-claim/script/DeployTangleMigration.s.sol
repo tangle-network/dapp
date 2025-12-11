@@ -11,27 +11,30 @@ import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
  * @title DeployTangleMigration
  * @notice Full deployment script for the TNT migration system
  *
- * Environment Variables:
- *   PRIVATE_KEY          - Deployer private key
- *   MERKLE_ROOT          - Merkle root from migration snapshot (required)
- *   TOTAL_SUBSTRATE      - Total TNT for Substrate claims (default: 108.14M)
- *   TOTAL_EVM            - Total TNT for EVM airdrop (default: 1.13M)
- *   SP1_VERIFIER         - SP1 Verifier Gateway address (Base: 0x397A...)
+ * Environment Variables (Required):
+ *   MERKLE_ROOT          - Merkle root from migration snapshot
+ *   TOTAL_SUBSTRATE      - Exact total for Substrate claims (from distribution.json)
+ *   TOTAL_EVM            - Exact total for EVM airdrop (from distribution.json)
+ *
+ * Environment Variables (Optional):
+ *   PRIVATE_KEY          - Deployer private key (default: Anvil account 0)
+ *   SP1_VERIFIER         - SP1 Verifier Gateway address (default: Base gateway)
  *   PROGRAM_VKEY         - SP1 program verification key
  *   USE_MOCK_VERIFIER    - Set to "true" for testing without real ZK proofs
  *
  * Usage:
- *   # Local testnet with mock verifier
- *   USE_MOCK_VERIFIER=true MERKLE_ROOT=0x844f... forge script script/DeployTangleMigration.s.sol:DeployTangleMigration --rpc-url http://localhost:8545 --broadcast
+ *   # Use the deploy-migration.sh wrapper script which reads from distribution.json:
+ *   ./scripts/local-env/deploy-migration.sh
  *
- *   # Base Sepolia with real SP1 verifier
- *   MERKLE_ROOT=0x844f... SP1_VERIFIER=0x397A... PROGRAM_VKEY=0x... forge script script/DeployTangleMigration.s.sol:DeployTangleMigration --rpc-url $BASE_SEPOLIA_RPC_URL --broadcast --verify
+ *   # Or manually with exact values:
+ *   MERKLE_ROOT=0x824b... \
+ *   TOTAL_SUBSTRATE=108138164691043996671207028 \
+ *   TOTAL_EVM=1125776519168932493729792 \
+ *   USE_MOCK_VERIFIER=true \
+ *   forge script script/DeployTangleMigration.s.sol:DeployTangleMigration \
+ *     --rpc-url http://localhost:8545 --broadcast
  */
 contract DeployTangleMigration is Script {
-    // Default values
-    uint256 constant DEFAULT_SUBSTRATE_ALLOCATION = 108_140_000 * 1e18; // 108.14M TNT
-    uint256 constant DEFAULT_EVM_ALLOCATION = 1_130_000 * 1e18; // 1.13M TNT
-
     // SP1 Verifier Gateway on Base
     address constant SP1_VERIFIER_BASE = 0x397A5f7f3dBd538f23DE225B51f532c34448dA9B;
 
@@ -43,11 +46,16 @@ contract DeployTangleMigration is Script {
         );
         address deployer = vm.addr(deployerPrivateKey);
 
+        // Required: Read from distribution.json via wrapper script
         bytes32 merkleRoot = vm.envBytes32("MERKLE_ROOT");
-        require(merkleRoot != bytes32(0), "MERKLE_ROOT required");
+        require(merkleRoot != bytes32(0), "MERKLE_ROOT required - use deploy-migration.sh wrapper");
 
-        uint256 substrateAllocation = vm.envOr("TOTAL_SUBSTRATE", DEFAULT_SUBSTRATE_ALLOCATION);
-        uint256 evmAllocation = vm.envOr("TOTAL_EVM", DEFAULT_EVM_ALLOCATION);
+        uint256 substrateAllocation = vm.envUint("TOTAL_SUBSTRATE");
+        require(substrateAllocation > 0, "TOTAL_SUBSTRATE required - use deploy-migration.sh wrapper");
+
+        uint256 evmAllocation = vm.envUint("TOTAL_EVM");
+        require(evmAllocation > 0, "TOTAL_EVM required - use deploy-migration.sh wrapper");
+
         uint256 totalSupply = substrateAllocation + evmAllocation;
 
         bool useMockVerifier = vm.envOr("USE_MOCK_VERIFIER", false);
@@ -57,8 +65,11 @@ contract DeployTangleMigration is Script {
         console.log("=== Tangle Migration Deployment ===");
         console.log("Deployer:", deployer);
         console.log("Merkle Root:", vm.toString(merkleRoot));
-        console.log("Substrate Allocation:", substrateAllocation / 1e18, "TNT");
-        console.log("EVM Allocation:", evmAllocation / 1e18, "TNT");
+        console.log("Substrate Allocation (wei):", substrateAllocation);
+        console.log("Substrate Allocation (TNT):", substrateAllocation / 1e18);
+        console.log("EVM Allocation (wei):", evmAllocation);
+        console.log("EVM Allocation (TNT):", evmAllocation / 1e18);
+        console.log("Total Supply (TNT):", totalSupply / 1e18);
         console.log("Use Mock Verifier:", useMockVerifier);
 
         vm.startBroadcast(deployerPrivateKey);
@@ -69,7 +80,7 @@ contract DeployTangleMigration is Script {
 
         // 2. Mint total supply to deployer
         tnt.mintInitialSupply(deployer, totalSupply);
-        console.log("   Minted:", totalSupply / 1e18, "TNT");
+        console.log("   Minted:", totalSupply / 1e18, "TNT to deployer");
 
         // 3. Deploy ZK Verifier
         address zkVerifier;
@@ -96,17 +107,19 @@ contract DeployTangleMigration is Script {
         );
         console.log("\n3. TangleMigration deployed:", address(migration));
 
-        // 5. Fund the migration contract with Substrate allocation
+        // 5. Fund the migration contract with EXACT Substrate allocation
         tnt.transfer(address(migration), substrateAllocation);
-        console.log("   Funded with:", substrateAllocation / 1e18, "TNT for claims");
+        console.log("   Funded with:", substrateAllocation / 1e18, "TNT for Substrate claims");
 
         // 6. Set claim deadline (1 year from now)
         uint256 deadline = block.timestamp + 365 days;
         migration.setClaimDeadline(deadline);
-        console.log("   Claim deadline set:", deadline);
+        console.log("   Claim deadline:", deadline);
 
-        // 7. Keep EVM allocation in deployer for airdrop
-        console.log("\n4. EVM Airdrop allocation retained:", evmAllocation / 1e18, "TNT");
+        // 7. EVM allocation remains in deployer for batchMint airdrop
+        console.log("\n4. EVM Airdrop:");
+        console.log("   Remaining in deployer:", evmAllocation / 1e18, "TNT");
+        console.log("   Run ExecuteEVMAirdrop to distribute to", "EVM holders");
 
         vm.stopBroadcast();
 
@@ -120,35 +133,83 @@ contract DeployTangleMigration is Script {
         console.log("  VITE_TNT_TOKEN_ADDRESS=", address(tnt));
         console.log("  VITE_TANGLE_MIGRATION_ADDRESS=", address(migration));
         console.log("  VITE_ZK_VERIFIER_ADDRESS=", zkVerifier);
+        console.log("");
+        console.log("Next: Run ExecuteEVMAirdrop to distribute EVM tokens");
     }
 }
 
 /**
  * @title ExecuteEVMAirdrop
- * @notice Executes the direct EVM airdrop from evm-airdrop.json
+ * @notice Executes the direct EVM airdrop using batchMint
+ *
+ * This script reads arrays of addresses and amounts and calls TNT.batchMint()
+ * The arrays should be generated from evm-airdrop.json by the wrapper script
+ *
+ * Environment Variables:
+ *   TNT_ADDRESS          - Deployed TNT token address
+ *   PRIVATE_KEY          - Deployer private key (must be TNT owner)
+ *   AIRDROP_RECIPIENTS   - Comma-separated list of addresses
+ *   AIRDROP_AMOUNTS      - Comma-separated list of amounts (in wei)
  *
  * Usage:
- *   TNT_ADDRESS=0x... forge script script/DeployTangleMigration.s.sol:ExecuteEVMAirdrop --rpc-url http://localhost:8545 --broadcast --sig "run(string)" "path/to/evm-airdrop.json"
+ *   # Use the deploy-migration.sh wrapper which handles parsing:
+ *   ./scripts/local-env/deploy-migration.sh --airdrop
  */
 contract ExecuteEVMAirdrop is Script {
-    function run(string calldata airdropFile) external {
+    function run() external {
         uint256 deployerPrivateKey = vm.envOr(
             "PRIVATE_KEY",
             uint256(0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80)
         );
         address tntAddress = vm.envAddress("TNT_ADDRESS");
 
+        // Parse recipients and amounts from env
+        // These are set by the wrapper script from evm-airdrop.json
+        string memory recipientsStr = vm.envString("AIRDROP_RECIPIENTS");
+        string memory amountsStr = vm.envString("AIRDROP_AMOUNTS");
+
         console.log("=== EVM Airdrop Execution ===");
         console.log("TNT Token:", tntAddress);
-        console.log("Airdrop file:", airdropFile);
 
-        // Read and parse the airdrop file
-        string memory json = vm.readFile(airdropFile);
+        // For local testing, use direct transfers
+        // For production, use a proper batch transfer solution
+        TNT tnt = TNT(tntAddress);
 
-        // Note: For actual execution, you'd parse the JSON and loop through recipients
-        // This is a placeholder - use a separate script or tool for batch transfers
+        vm.startBroadcast(deployerPrivateKey);
 
-        console.log("\nTo execute the airdrop, use a batch transfer tool or script");
-        console.log("that reads evm-airdrop.json and calls TNT.transfer() for each recipient.");
+        // Note: Forge's string parsing is limited
+        // The wrapper script should call this in batches with proper arrays
+        // For now, log instructions
+        console.log("\nAirdrop execution requires the wrapper script to parse JSON");
+        console.log("and call TNT.batchMint() with proper arrays.");
+        console.log("");
+        console.log("Recipients:", recipientsStr);
+        console.log("Amounts:", amountsStr);
+
+        vm.stopBroadcast();
+    }
+
+    /// @notice Execute airdrop with pre-parsed arrays (called by wrapper)
+    function runBatch(
+        address tntAddress,
+        address[] calldata recipients,
+        uint256[] calldata amounts
+    ) external {
+        uint256 deployerPrivateKey = vm.envOr(
+            "PRIVATE_KEY",
+            uint256(0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80)
+        );
+
+        console.log("=== EVM Airdrop Batch ===");
+        console.log("TNT Token:", tntAddress);
+        console.log("Recipients:", recipients.length);
+
+        TNT tnt = TNT(tntAddress);
+
+        vm.startBroadcast(deployerPrivateKey);
+        tnt.batchMint(recipients, amounts);
+        vm.stopBroadcast();
+
+        console.log("Airdrop complete!");
     }
 }

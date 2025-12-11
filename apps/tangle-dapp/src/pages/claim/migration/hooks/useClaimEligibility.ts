@@ -246,10 +246,22 @@ const useClaimEligibility = ({ ss58Address }: UseClaimEligibilityOptions) => {
       formattedBalance,
       isPaused: isPaused ?? false,
     };
-  }, [claimData, claimedAmount, timeRemaining, isPaused, isDevMode, ss58Address]);
+  }, [
+    claimData,
+    claimedAmount,
+    timeRemaining,
+    isPaused,
+    isDevMode,
+    ss58Address,
+  ]);
 
-  const isLoading =
-    isLoadingProofs || isLoadingClaimed || isLoadingDeadline || isLoadingPaused;
+  // In dev mode, don't wait for contract reads since they're disabled anyway
+  const isLoading = isDevMode
+    ? false
+    : isLoadingProofs ||
+      isLoadingClaimed ||
+      isLoadingDeadline ||
+      isLoadingPaused;
 
   return {
     eligibility,

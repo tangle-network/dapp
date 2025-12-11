@@ -25,10 +25,13 @@ export interface RestakingAsset {
   updatedAt: bigint;
 }
 
-// GraphQL query for restaking assets
+// GraphQL query for restaking assets (Hasura uses PascalCase table names)
 const RESTAKING_ASSETS_QUERY = gql`
   query RestakingAssets($enabled: Boolean) {
-    restakingAssets(where: { enabled: $enabled }, orderBy: createdAt) {
+    RestakingAsset(
+      where: { enabled: { _eq: $enabled } }
+      order_by: { createdAt: asc }
+    ) {
       id
       token
       enabled
@@ -44,7 +47,7 @@ const RESTAKING_ASSETS_QUERY = gql`
 `;
 
 interface RestakingAssetsQueryResult {
-  restakingAssets: Array<{
+  RestakingAsset: Array<{
     id: string;
     token: string;
     enabled: boolean;
@@ -60,7 +63,7 @@ interface RestakingAssetsQueryResult {
 
 // Parse restaking asset from GraphQL response
 const parseRestakingAsset = (
-  raw: RestakingAssetsQueryResult['restakingAssets'][number],
+  raw: RestakingAssetsQueryResult['RestakingAsset'][number],
 ): RestakingAsset => ({
   id: raw.id,
   token: raw.token as Address,
@@ -84,7 +87,7 @@ const fetchRestakingAssets = async (
     { enabled?: boolean }
   >(RESTAKING_ASSETS_QUERY, { enabled: enabledOnly }, network);
 
-  return result.data.restakingAssets.map(parseRestakingAsset);
+  return result.data.RestakingAsset.map(parseRestakingAsset);
 };
 
 // Hook to fetch all restaking assets

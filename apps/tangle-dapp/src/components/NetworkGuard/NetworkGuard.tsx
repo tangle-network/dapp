@@ -61,7 +61,7 @@ const NetworkGuard: FC<NetworkGuardProps> = ({ children }) => {
   }, [switchChain]);
 
   if (!isWrongNetwork) {
-    return <>{children}</>;
+    return children;
   }
 
   return (

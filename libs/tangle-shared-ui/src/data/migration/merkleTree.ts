@@ -25,24 +25,36 @@ import type { Hex } from 'viem';
 export type MerkleLeaf = [string, string];
 
 /**
- * Entry in the proofs.json file
+ * Raw entry format in proofs.json file
+ * Format: { proof: string[], leaf: [ss58Address, amountWei] }
+ */
+export interface RawProofEntry {
+  /** Merkle proof - array of bytes32 hashes */
+  proof: string[];
+  /** Leaf data: [ss58Address, amountWei] */
+  leaf: MerkleLeaf;
+}
+
+/**
+ * Processed entry with derived fields for easier access
  */
 export interface ProofEntry {
-  /** The 32-byte public key as bytes32 hex (for contract calls) */
-  pubkey: string;
-  /** Balance in wei */
+  /** The SS58 address from leaf[0] */
+  ss58Address: string;
+  /** Balance in wei from leaf[1] */
   balance: string;
   /** Merkle proof - array of bytes32 hashes */
   proof: string[];
-  /** Leaf data: [pubkey (bytes32 hex), amountWei] */
+  /** Leaf data: [ss58Address, amountWei] */
   leaf: MerkleLeaf;
 }
 
 /**
  * Full proofs.json data structure - keyed by SS58 address
+ * Uses the raw format as stored in proofs.json
  */
 export interface MigrationProofsData {
-  [ss58Address: string]: ProofEntry;
+  [ss58Address: string]: RawProofEntry;
 }
 
 /**
@@ -94,35 +106,42 @@ export const loadMerkleTreeData = (json: string): MigrationProofsData => {
  * This is important because the proofs.json uses Tangle SS58 format (prefix 5181,
  * starts with "tg") but users might enter addresses with different prefixes
  * (e.g., generic prefix 42 starts with "5").
+ *
+ * The leaf[0] in proofs.json contains an SS58 address which we decode to get
+ * the raw 32-byte pubkey for comparison.
  */
 export const lookupClaim = (
   proofsData: MigrationProofsData,
   ss58Address: string,
 ): ClaimData | null => {
-  // First, try direct lookup (fast path for matching prefix)
+  // First, try direct lookup by SS58 key (fast path for matching prefix)
   let entry = proofsData[ss58Address];
   let foundAddress = ss58Address;
 
-  // If direct lookup fails, try lookup by pubkey
+  // If direct lookup fails, try lookup by comparing decoded pubkeys
   if (!entry) {
     try {
-      // Decode the input address to get its pubkey
+      // Decode the input address to get its raw 32-byte pubkey
       const inputPubkey = ss58ToPubkey(ss58Address).toLowerCase();
 
       // Search through all entries to find a matching pubkey
       for (const [storedAddress, storedEntry] of Object.entries(proofsData)) {
-        const storedPubkey = storedEntry.pubkey.startsWith('0x')
-          ? storedEntry.pubkey.toLowerCase()
-          : `0x${storedEntry.pubkey}`.toLowerCase();
-
-        if (storedPubkey === inputPubkey) {
-          entry = storedEntry;
-          foundAddress = storedAddress;
-          break;
+        // The leaf[0] contains an SS58 address - decode it to get pubkey
+        const leafAddress = storedEntry.leaf[0];
+        try {
+          const storedPubkey = ss58ToPubkey(leafAddress).toLowerCase();
+          if (storedPubkey === inputPubkey) {
+            entry = storedEntry;
+            foundAddress = storedAddress;
+            break;
+          }
+        } catch {
+          // Skip entries with invalid addresses
+          continue;
         }
       }
     } catch {
-      // Invalid address format - can't decode
+      // Invalid input address format - can't decode
       return null;
     }
   }
@@ -131,15 +150,15 @@ export const lookupClaim = (
     return null;
   }
 
-  // Use pubkey from entry (with 0x prefix normalization)
-  const pubkey = entry.pubkey.startsWith('0x')
-    ? entry.pubkey
-    : `0x${entry.pubkey}`;
+  // Decode the leaf SS58 address to get the raw 32-byte pubkey for contract calls
+  const pubkey = ss58ToPubkey(entry.leaf[0]);
+  // Amount is in leaf[1]
+  const amount = BigInt(entry.leaf[1]);
 
   return {
     ss58Address: foundAddress,
     pubkey: pubkey as Hex,
-    amount: BigInt(entry.balance),
+    amount,
     merkleProof: entry.proof.map((p) => p as Hex),
   };
 };
@@ -174,7 +193,8 @@ export const getMigrationStats = (proofsData: MigrationProofsData) => {
 
   for (const address of addresses) {
     const entry = proofsData[address];
-    totalAmount += BigInt(entry.balance);
+    // Amount is in leaf[1]
+    totalAmount += BigInt(entry.leaf[1]);
   }
 
   return {

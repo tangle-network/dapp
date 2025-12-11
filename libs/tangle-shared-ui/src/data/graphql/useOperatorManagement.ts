@@ -334,7 +334,11 @@ export const useUpdateOperatorPreferencesTx = () => {
         const data = encodeFunctionData({
           abi: TANGLE_ABI,
           functionName: 'updateOperatorPreferences',
-          args: [blueprintId, preferences.ecdsaPublicKey, preferences.rpcAddress],
+          args: [
+            blueprintId,
+            preferences.ecdsaPublicKey,
+            preferences.rpcAddress,
+          ],
         });
 
         const hash = await walletClient.sendTransaction({

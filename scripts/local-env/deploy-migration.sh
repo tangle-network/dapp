@@ -1,12 +1,17 @@
 #!/bin/bash
-# Deploy TangleMigration contracts to local Anvil testnet
+# Deploy TangleMigration contracts and execute EVM airdrop
+#
+# This script reads from distribution.json to get exact totals and merkle root,
+# then deploys contracts and executes the EVM airdrop.
 #
 # Prerequisites:
 # - Anvil running on port 8545 (via start-local-env.sh)
 # - Foundry installed (forge)
-# - Migration proofs generated in /Users/drew/webb/tangle/types/migration_output/
+# - Migration proofs generated in scripts/migration/migration_output/
 #
-# Usage: ./scripts/local-env/deploy-migration.sh
+# Usage:
+#   ./scripts/local-env/deploy-migration.sh           # Deploy contracts only
+#   ./scripts/local-env/deploy-migration.sh --airdrop # Deploy + execute EVM airdrop
 
 set -euo pipefail
 
@@ -14,12 +19,15 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 DAPP_ROOT="$(cd "$SCRIPT_DIR/../.." && pwd)"
 CONTRACT_DIR="$DAPP_ROOT/contracts/migration-claim"
 
-# Check local migration_output first, then external
+# Check for migration output
+MIGRATION_OUTPUT=""
 if [[ -d "$DAPP_ROOT/scripts/migration/migration_output" ]]; then
     MIGRATION_OUTPUT="$DAPP_ROOT/scripts/migration/migration_output"
 elif [[ -d "/Users/drew/webb/tangle/types/migration_output" ]]; then
     MIGRATION_OUTPUT="/Users/drew/webb/tangle/types/migration_output"
-else
+fi
+
+if [[ -z "$MIGRATION_OUTPUT" ]]; then
     echo "Error: migration_output directory not found"
     echo "Run: cd scripts/migration && npm install && npm run merkleize:latest"
     exit 1
@@ -29,6 +37,21 @@ fi
 ANVIL_PORT="${ANVIL_PORT:-8545}"
 RPC_URL="${RPC_URL:-http://localhost:$ANVIL_PORT}"
 PRIVATE_KEY="${PRIVATE_KEY:-0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80}"
+EXECUTE_AIRDROP=false
+
+# Parse arguments
+while [[ $# -gt 0 ]]; do
+    case $1 in
+        --airdrop)
+            EXECUTE_AIRDROP=true
+            shift
+            ;;
+        *)
+            echo "Unknown option: $1"
+            exit 1
+            ;;
+    esac
+done
 
 # Colors
 RED='\033[0;31m'
@@ -54,6 +77,7 @@ echo ""
 log_info "Checking prerequisites..."
 
 command -v forge >/dev/null 2>&1 || { log_error "Foundry (forge) not installed. Install: https://getfoundry.sh"; exit 1; }
+command -v node >/dev/null 2>&1 || { log_error "Node.js not installed"; exit 1; }
 
 if ! curl -s "$RPC_URL" -X POST -H "Content-Type: application/json" \
     --data '{"jsonrpc":"2.0","method":"eth_chainId","params":[],"id":1}' > /dev/null 2>&1; then
@@ -62,23 +86,57 @@ if ! curl -s "$RPC_URL" -X POST -H "Content-Type: application/json" \
     exit 1
 fi
 
-if [[ ! -f "$MIGRATION_OUTPUT/proofs.json" ]]; then
-    log_error "Migration proofs not found at $MIGRATION_OUTPUT/proofs.json"
-    log_error "Run the migration snapshot generator first"
+if [[ ! -f "$MIGRATION_OUTPUT/distribution.json" ]]; then
+    log_error "distribution.json not found at $MIGRATION_OUTPUT"
     exit 1
 fi
 
 log_success "All prerequisites met"
+log_info "Migration output: $MIGRATION_OUTPUT"
 
-# Get Merkle root
-log_info "Reading Merkle root from migration output..."
-if [[ -f "$MIGRATION_OUTPUT/merkle-tree.json" ]]; then
-    MERKLE_ROOT=$(grep -o '"0x[a-fA-F0-9]\{64\}"' "$MIGRATION_OUTPUT/merkle-tree.json" | head -1 | tr -d '"')
-    log_success "Merkle Root: $MERKLE_ROOT"
-else
-    log_error "merkle-tree.json not found at $MIGRATION_OUTPUT"
-    exit 1
-fi
+# Read distribution data using Node.js
+log_info "Reading distribution data..."
+
+DIST_DATA=$(node -e "
+const dist = require('$MIGRATION_OUTPUT/distribution.json');
+const evm = require('$MIGRATION_OUTPUT/evm-airdrop.json');
+
+// Calculate totals
+let evmTotal = BigInt(0);
+for (const [addr, amt] of Object.entries(evm)) {
+  evmTotal += BigInt(amt);
+}
+
+let substrateTotal = BigInt(0);
+for (const acc of dist.substrateAccounts) {
+  substrateTotal += BigInt(acc.finalAmount);
+}
+
+console.log(JSON.stringify({
+  merkleRoot: dist.metadata.merkleRoot,
+  totalSubstrate: substrateTotal.toString(),
+  totalEvm: evmTotal.toString(),
+  totalDistribution: dist.metadata.totalDistribution,
+  substrateAccounts: dist.metadata.totalSubstrateAccounts,
+  evmAccounts: dist.metadata.totalEvmAccounts
+}));
+")
+
+MERKLE_ROOT=$(echo "$DIST_DATA" | node -pe "JSON.parse(require('fs').readFileSync('/dev/stdin', 'utf8')).merkleRoot")
+TOTAL_SUBSTRATE=$(echo "$DIST_DATA" | node -pe "JSON.parse(require('fs').readFileSync('/dev/stdin', 'utf8')).totalSubstrate")
+TOTAL_EVM=$(echo "$DIST_DATA" | node -pe "JSON.parse(require('fs').readFileSync('/dev/stdin', 'utf8')).totalEvm")
+SUBSTRATE_ACCOUNTS=$(echo "$DIST_DATA" | node -pe "JSON.parse(require('fs').readFileSync('/dev/stdin', 'utf8')).substrateAccounts")
+EVM_ACCOUNTS=$(echo "$DIST_DATA" | node -pe "JSON.parse(require('fs').readFileSync('/dev/stdin', 'utf8')).evmAccounts")
+
+log_success "Distribution data loaded"
+echo ""
+echo -e "${CYAN}Distribution Summary:${NC}"
+echo "  Merkle Root:        $MERKLE_ROOT"
+echo "  Substrate Accounts: $SUBSTRATE_ACCOUNTS"
+echo "  Substrate Total:    $(node -pe "BigInt('$TOTAL_SUBSTRATE') / BigInt(1e18)") TNT"
+echo "  EVM Accounts:       $EVM_ACCOUNTS"
+echo "  EVM Total:          $(node -pe "BigInt('$TOTAL_EVM') / BigInt(1e18)") TNT"
+echo ""
 
 # Build contracts
 log_info "Building contracts..."
@@ -92,20 +150,25 @@ fi
 
 forge build --quiet
 
-# Deploy
+# Deploy contracts
 log_info "Deploying contracts..."
 
 MERKLE_ROOT="$MERKLE_ROOT" \
+TOTAL_SUBSTRATE="$TOTAL_SUBSTRATE" \
+TOTAL_EVM="$TOTAL_EVM" \
 USE_MOCK_VERIFIER="true" \
 PRIVATE_KEY="$PRIVATE_KEY" \
 forge script script/DeployTangleMigration.s.sol:DeployTangleMigration \
     --rpc-url "$RPC_URL" \
     --broadcast \
-    --quiet \
     2>&1 | tee /tmp/migration-deploy.log
 
 # Extract addresses from broadcast
 BROADCAST_FILE=$(ls -t broadcast/DeployTangleMigration.s.sol/*/run-latest.json 2>/dev/null | head -1)
+
+TNT_ADDRESS=""
+MIGRATION_ADDRESS=""
+VERIFIER_ADDRESS=""
 
 if [[ -f "$BROADCAST_FILE" ]]; then
     TNT_ADDRESS=$(jq -r '.transactions[] | select(.contractName == "TNT") | .contractAddress' "$BROADCAST_FILE" 2>/dev/null | head -1)
@@ -113,15 +176,65 @@ if [[ -f "$BROADCAST_FILE" ]]; then
     VERIFIER_ADDRESS=$(jq -r '.transactions[] | select(.contractName == "MockZKVerifier") | .contractAddress' "$BROADCAST_FILE" 2>/dev/null | head -1)
 fi
 
-# Fallback to grep if jq fails
-if [[ -z "${TNT_ADDRESS:-}" ]]; then
-    TNT_ADDRESS=$(grep -o '"contractName": "TNT"' -A5 "$BROADCAST_FILE" 2>/dev/null | grep '"contractAddress"' | head -1 | grep -o '0x[a-fA-F0-9]\{40\}' || echo "")
+if [[ -z "$TNT_ADDRESS" || "$TNT_ADDRESS" == "null" ]]; then
+    log_error "Failed to extract contract addresses from deployment"
+    exit 1
 fi
-if [[ -z "${MIGRATION_ADDRESS:-}" ]]; then
-    MIGRATION_ADDRESS=$(grep -o '"contractName": "TangleMigration"' -A5 "$BROADCAST_FILE" 2>/dev/null | grep '"contractAddress"' | head -1 | grep -o '0x[a-fA-F0-9]\{40\}' || echo "")
-fi
-if [[ -z "${VERIFIER_ADDRESS:-}" ]]; then
-    VERIFIER_ADDRESS=$(grep -o '"contractName": "MockZKVerifier"' -A5 "$BROADCAST_FILE" 2>/dev/null | grep '"contractAddress"' | head -1 | grep -o '0x[a-fA-F0-9]\{40\}' || echo "")
+
+log_success "Contracts deployed"
+echo ""
+echo -e "${CYAN}Contract Addresses:${NC}"
+echo "  TNT Token:        $TNT_ADDRESS"
+echo "  TangleMigration:  $MIGRATION_ADDRESS"
+echo "  ZK Verifier:      $VERIFIER_ADDRESS (Mock)"
+echo ""
+
+# Execute EVM airdrop if requested
+if [[ "$EXECUTE_AIRDROP" == "true" ]]; then
+    log_info "Executing EVM airdrop..."
+
+    # Execute airdrop in batches using Node.js + cast
+    node -e "
+const evm = require('$MIGRATION_OUTPUT/evm-airdrop.json');
+const { execSync } = require('child_process');
+
+const TNT_ADDRESS = '$TNT_ADDRESS';
+const RPC_URL = '$RPC_URL';
+const PRIVATE_KEY = '$PRIVATE_KEY';
+const BATCH_SIZE = 100;
+
+const entries = Object.entries(evm);
+console.log('Total EVM recipients:', entries.length);
+
+// Build arrays for batch calls
+for (let i = 0; i < entries.length; i += BATCH_SIZE) {
+    const batch = entries.slice(i, i + BATCH_SIZE);
+    const recipients = batch.map(([addr]) => addr);
+    const amounts = batch.map(([, amt]) => amt);
+
+    const batchNum = Math.floor(i / BATCH_SIZE) + 1;
+    const totalBatches = Math.ceil(entries.length / BATCH_SIZE);
+
+    console.log('Processing batch', batchNum, '/', totalBatches, '(' + batch.length + ' recipients)');
+
+    // Encode the batchMint call
+    const recipientsArg = '[' + recipients.join(',') + ']';
+    const amountsArg = '[' + amounts.join(',') + ']';
+
+    try {
+        execSync(
+            'cast send --rpc-url ' + RPC_URL + ' --private-key ' + PRIVATE_KEY + ' ' + TNT_ADDRESS + ' \"batchMint(address[],uint256[])\" \"' + recipientsArg + '\" \"' + amountsArg + '\"',
+            { stdio: 'pipe' }
+        );
+    } catch (e) {
+        console.error('Batch', batchNum, 'failed:', e.message);
+        process.exit(1);
+    }
+}
+
+console.log('EVM airdrop complete!');
+"
+    log_success "EVM airdrop executed"
 fi
 
 # Copy proofs to frontend
@@ -131,22 +244,30 @@ mkdir -p "$PROOFS_DEST"
 cp "$MIGRATION_OUTPUT/proofs.json" "$PROOFS_DEST/migration-proofs.json"
 log_success "Proofs copied to $PROOFS_DEST/migration-proofs.json"
 
-# Create/update .env.local
+# Update .env.local
 ENV_FILE="$DAPP_ROOT/apps/tangle-dapp/.env.local"
 log_info "Updating $ENV_FILE..."
 
-# Append or update migration env vars
-{
-    echo ""
-    echo "# TangleMigration Contracts (Local Testnet)"
-    echo "VITE_TNT_TOKEN_ADDRESS=$TNT_ADDRESS"
-    echo "VITE_TANGLE_MIGRATION_ADDRESS=$MIGRATION_ADDRESS"
-    echo "VITE_ZK_VERIFIER_ADDRESS=$VERIFIER_ADDRESS"
-    echo "VITE_MIGRATION_MERKLE_ROOT=$MERKLE_ROOT"
-    echo "VITE_MIGRATION_PROOFS_URL=/data/migration-proofs.json"
-} >> "$ENV_FILE"
+# Remove old migration env vars if present
+if [[ -f "$ENV_FILE" ]]; then
+    sed -i.bak '/^VITE_TNT_TOKEN_ADDRESS=/d' "$ENV_FILE" 2>/dev/null || true
+    sed -i.bak '/^VITE_TANGLE_MIGRATION_ADDRESS=/d' "$ENV_FILE" 2>/dev/null || true
+    sed -i.bak '/^VITE_ZK_VERIFIER_ADDRESS=/d' "$ENV_FILE" 2>/dev/null || true
+    sed -i.bak '/^VITE_MIGRATION_MERKLE_ROOT=/d' "$ENV_FILE" 2>/dev/null || true
+    rm -f "$ENV_FILE.bak"
+fi
 
-log_success "Environment variables added to $ENV_FILE"
+# Append migration env vars
+cat >> "$ENV_FILE" << EOF
+
+# TangleMigration Contracts (deployed $(date +%Y-%m-%d))
+VITE_TNT_TOKEN_ADDRESS=$TNT_ADDRESS
+VITE_TANGLE_MIGRATION_ADDRESS=$MIGRATION_ADDRESS
+VITE_ZK_VERIFIER_ADDRESS=$VERIFIER_ADDRESS
+VITE_MIGRATION_MERKLE_ROOT=$MERKLE_ROOT
+EOF
+
+log_success "Environment variables updated"
 
 # Print summary
 echo ""
@@ -159,23 +280,26 @@ echo "  TNT Token:        $TNT_ADDRESS"
 echo "  TangleMigration:  $MIGRATION_ADDRESS"
 echo "  ZK Verifier:      $VERIFIER_ADDRESS (MockZKVerifier)"
 echo ""
+echo -e "${CYAN}Token Distribution:${NC}"
+echo "  Substrate Claims: $(node -pe "BigInt('$TOTAL_SUBSTRATE') / BigInt(1e18)") TNT ($SUBSTRATE_ACCOUNTS accounts)"
+echo "  EVM Airdrop:      $(node -pe "BigInt('$TOTAL_EVM') / BigInt(1e18)") TNT ($EVM_ACCOUNTS accounts)"
+if [[ "$EXECUTE_AIRDROP" == "true" ]]; then
+    echo "  EVM Status:       Airdropped directly to holders"
+else
+    echo "  EVM Status:       Pending (run with --airdrop to execute)"
+fi
+echo ""
 echo -e "${CYAN}Merkle Root:${NC}"
 echo "  $MERKLE_ROOT"
-echo ""
-echo -e "${CYAN}Migration Stats:${NC}"
-echo "  7,004 Substrate accounts (108.14M TNT - requires ZK proof)"
-echo "  7,124 EVM accounts (1.13M TNT - direct airdrop)"
 echo ""
 echo -e "${CYAN}Frontend Config:${NC}"
 echo "  Proofs: apps/tangle-dapp/public/data/migration-proofs.json"
 echo "  Env:    apps/tangle-dapp/.env.local"
 echo ""
 echo -e "${YELLOW}Next Steps:${NC}"
-echo "  1. Start the dApp: yarn start:tangle-dapp"
+echo "  1. Restart the dApp to pick up new env vars: yarn start:tangle-dapp"
 echo "  2. Navigate to: http://localhost:5173/claim/migration"
-echo "  3. Test with any SS58 address from proofs.json"
-echo ""
-echo -e "${CYAN}Test Addresses (from proofs.json):${NC}"
-echo "  tgFbShs5bUXZ8bcFfHkRm5vDbUQbUR3QQNhQktuK2mCW19qCR"
-echo "  tgDj7AtseoEFPvVGTQowV6x1YCTfDQ5Ms7FyiJ2P273za9tik"
+if [[ "$EXECUTE_AIRDROP" != "true" ]]; then
+    echo "  3. Run './scripts/local-env/deploy-migration.sh --airdrop' to airdrop EVM tokens"
+fi
 echo ""
