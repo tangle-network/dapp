@@ -1,15 +1,18 @@
 /**
  * Hook to fetch delegator data from the Envio indexer.
  * Replaces the Substrate-based useRestakeDelegatorInfo hook.
+ * Returns null if the indexer is unavailable.
  */
 
 import { useQuery } from '@tanstack/react-query';
 import { Address } from 'viem';
+import { useChainId } from 'wagmi';
 import {
   executeEnvioGraphQL,
   gql,
   EnvioNetwork,
 } from '../../utils/executeEnvioGraphQL';
+import { useEnvioHealthCheckByChainId } from '../../utils/checkEnvioHealth';
 
 // Request status enum
 export type RequestStatus = 'PENDING' | 'READY' | 'EXECUTED' | 'CANCELLED';
@@ -263,6 +266,7 @@ const parseDelegator = (
 });
 
 // Hook to fetch delegator info by address
+// Only queries GraphQL if the indexer is healthy, otherwise returns null
 export const useDelegator = (
   address: Address | undefined,
   options?: {
@@ -271,8 +275,16 @@ export const useDelegator = (
   },
 ) => {
   const { network, enabled = true } = options ?? {};
+  const chainId = useChainId();
 
-  return useQuery({
+  // Check if indexer is healthy before querying
+  const { data: isIndexerHealthy, isLoading: isCheckingHealth } =
+    useEnvioHealthCheckByChainId(chainId);
+
+  const healthCheckComplete = !isCheckingHealth;
+  const shouldQuery = healthCheckComplete && isIndexerHealthy === true;
+
+  const queryResult = useQuery({
     queryKey: ['envio', 'delegator', address, network],
     queryFn: async () => {
       if (!address) return null;
@@ -285,9 +297,33 @@ export const useDelegator = (
         ? parseDelegator(result.data.Delegator_by_pk)
         : null;
     },
-    enabled: enabled && !!address,
+    // Only query if indexer is healthy
+    enabled: enabled && !!address && shouldQuery,
     staleTime: 15_000, // 15 seconds - delegator data changes more frequently
+    retry: 2, // Reduce retries since we already check health
   });
+
+  // If indexer is unhealthy, return null without loading state
+  if (healthCheckComplete && !isIndexerHealthy) {
+    return {
+      ...queryResult,
+      data: null,
+      isLoading: false,
+      isError: false,
+      error: null,
+    };
+  }
+
+  // Still checking health
+  if (isCheckingHealth) {
+    return {
+      ...queryResult,
+      data: undefined,
+      isLoading: true,
+    };
+  }
+
+  return queryResult;
 };
 
 // Hook to get delegator's deposits (asset positions)

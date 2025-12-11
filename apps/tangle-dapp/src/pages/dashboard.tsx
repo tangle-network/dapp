@@ -1,11 +1,7 @@
 import { BN } from '@polkadot/util';
 import { TokenIcon } from '@tangle-network/icons';
 import Spinner from '@tangle-network/icons/Spinner';
-import {
-  useRestakeAssets,
-  useRestakingAssets,
-} from '@tangle-network/tangle-shared-ui/data/graphql';
-import { useDelegator } from '@tangle-network/tangle-shared-ui/data/graphql/useDelegator';
+import { useRestakingOverview } from '@tangle-network/tangle-shared-ui/data/restake/useRestakingData';
 import HeaderCell from '@tangle-network/tangle-shared-ui/components/tables/HeaderCell';
 import TableCellWrapper from '@tangle-network/tangle-shared-ui/components/tables/TableCellWrapper';
 import TableStatus from '@tangle-network/tangle-shared-ui/components/tables/TableStatus';
@@ -28,7 +24,6 @@ import {
 import { FC, useMemo } from 'react';
 import { twMerge } from 'tailwind-merge';
 import { Address } from 'viem';
-import { useAccount } from 'wagmi';
 import AccountSummaryCard from '../components/account/AccountSummaryCard';
 import { ProtocolStatisticCard } from '../components/account/ProtocolStatisticCard';
 import { UserRestakingOverview } from '../components/restaking/UserRestakingOverview';
@@ -53,8 +48,10 @@ const getColumns = () => [
     header: () => <HeaderCell title="Asset" />,
     cell: (props) => (
       <TableCellWrapper className="pl-3">
-        <div className="flex items-center gap-2">
-          <TokenIcon name={props.row.original.symbol} size="lg" />
+        <div className="flex items-center gap-3">
+          <div className="flex items-center justify-center w-10 h-10">
+            <TokenIcon name={props.row.original.symbol} size="xl" />
+          </div>
 
           <div>
             <Typography variant="h5" className="whitespace-nowrap">
@@ -139,34 +136,24 @@ const getColumns = () => [
 ];
 
 const DashboardPage: FC = () => {
-  const { address } = useAccount();
-
-  // Fetch restaking assets (tokens that can be restaked)
-  const { data: restakingAssets, isLoading: isLoadingRestakingAssets } =
-    useRestakingAssets();
-
-  // Fetch assets with user balances
+  // Use the unified restaking data hook
   const {
     assets,
     assetList,
-    isLoading: isLoadingAssets,
-  } = useRestakeAssets();
+    restakingAssets,
+    delegator: delegatorInfo,
+    isLoading,
+    isLoadingAssets,
+    isLoadingDelegator,
+    protocolTvl,
+    assetCount,
+  } = useRestakingOverview();
 
-  // Fetch delegator info for the connected user
-  const { data: delegatorInfo, isLoading: isLoadingDelegator } =
-    useDelegator(address);
-
-  // Calculate TVL from restaking assets
+  // Calculate TVL data for ProtocolStatisticCard
   const tvlData = useMemo(() => {
     if (!restakingAssets) return null;
-    const totalDeposits = restakingAssets.reduce(
-      (sum, asset) => sum + asset.currentDeposits,
-      BigInt(0),
-    );
-    return { totalDeposits, assetCount: restakingAssets.length };
-  }, [restakingAssets]);
-
-  const isLoading = isLoadingRestakingAssets || isLoadingAssets;
+    return { totalDeposits: protocolTvl, assetCount };
+  }, [restakingAssets, protocolTvl, assetCount]);
 
   // Build table data
   const tableData = useMemo<RestakeAssetRow[]>(() => {
@@ -175,8 +162,12 @@ const DashboardPage: FC = () => {
         (p) => p.token.toLowerCase() === asset.id.toLowerCase(),
       );
       const available = new BN(asset.balance.toString());
-      const deposited = new BN((position?.totalDeposited ?? BigInt(0)).toString());
-      const delegated = new BN((position?.delegatedAmount ?? BigInt(0)).toString());
+      const deposited = new BN(
+        (position?.totalDeposited ?? BigInt(0)).toString(),
+      );
+      const delegated = new BN(
+        (position?.delegatedAmount ?? BigInt(0)).toString(),
+      );
       const total = available.add(deposited);
 
       return {

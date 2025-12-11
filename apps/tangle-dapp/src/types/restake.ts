@@ -4,8 +4,6 @@
  * - Amount should has a better type than string.
  */
 
-import { RestakeAssetId } from '@tangle-network/tangle-shared-ui/types';
-import { SubstrateAddress } from '@tangle-network/ui-components/types/address';
 import type { Address } from 'viem';
 
 export type RewardVaultMap = {
@@ -42,25 +40,6 @@ export type RewardConfig = {
    * A list of blueprint IDs that are whitelisted for rewards.
    */
   whitelistedBlueprintIds: number[];
-};
-
-export type DepositFormFields = {
-  amount: string;
-  sourceTypedChainId: number;
-  depositAssetId: RestakeAssetId;
-};
-
-export type DelegationFormFields = {
-  amount: string;
-  operatorAccountId: SubstrateAddress;
-  assetId: RestakeAssetId;
-};
-
-export type UnstakeFormFields = DelegationFormFields;
-
-export type WithdrawFormFields = {
-  amount: string;
-  assetId: RestakeAssetId;
 };
 
 // EVM form types using EVM addresses

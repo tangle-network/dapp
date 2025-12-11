@@ -1,5 +1,10 @@
 import { FC } from 'react';
-import { Button, Card, CardVariant, Typography } from '@tangle-network/ui-components';
+import {
+  Button,
+  Card,
+  CardVariant,
+  Typography,
+} from '@tangle-network/ui-components';
 import { useAccount } from 'wagmi';
 import { useCreatePod, useHasPod } from '../hooks';
 

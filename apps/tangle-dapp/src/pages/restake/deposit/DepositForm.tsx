@@ -15,6 +15,7 @@ import { Typography } from '@tangle-network/ui-components/typography/Typography'
 import { FC, useCallback, useEffect, useMemo, useRef } from 'react';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import { parseUnits, Address, formatUnits } from 'viem';
+import { BN } from '@polkadot/util';
 import { useChainId } from 'wagmi';
 import ErrorMessage from '../../../components/ErrorMessage';
 import ActionButtonBase from '../../../components/restaking/ActionButtonBase';
@@ -29,6 +30,7 @@ import SupportedChainModal from '../SupportedChainModal';
 import useSwitchChain from '../useSwitchChain';
 import Details from './Details';
 import filterBy from '@tangle-network/tangle-shared-ui/utils/filterBy';
+import AssetListItem from '../../../components/Lists/AssetListItem';
 import { TxStatus } from '@tangle-network/tangle-shared-ui/hooks/useContractWrite';
 import type { RestakeAsset } from '@tangle-network/tangle-shared-ui/data/graphql';
 import { useOptionalRestakeContext } from '@tangle-network/tangle-shared-ui/context/RestakeContext';
@@ -385,23 +387,13 @@ const DepositForm: FC = () => {
         descriptionWhenEmpty="It seems that there are no available assets on this account in this network yet. Please try again later."
         items={allAssets}
         renderItem={(assetItem) => (
-          <div className="flex items-center justify-between w-full p-2">
-            <div className="flex items-center gap-3">
-              <TokenIcon name={assetItem.metadata.symbol} size="lg" />
-              <div className="flex flex-col">
-                <span className="font-medium">{assetItem.metadata.symbol}</span>
-                <span className="text-xs text-mono-100">
-                  {assetItem.metadata.name}
-                </span>
-              </div>
-            </div>
-            <div className="flex flex-col items-end">
-              <span className="text-sm">
-                {formatUnits(assetItem.balance, assetItem.metadata.decimals)}
-              </span>
-              <span className="text-xs text-mono-100">Balance</span>
-            </div>
-          </div>
+          <AssetListItem
+            assetId={assetItem.id}
+            name={assetItem.metadata.name}
+            symbol={assetItem.metadata.symbol}
+            balance={new BN(assetItem.balance.toString())}
+            decimals={assetItem.metadata.decimals}
+          />
         )}
       />
 

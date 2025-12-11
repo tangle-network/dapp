@@ -22,7 +22,9 @@ const AccountAddress: FC = () => {
   const displayAddress = useMemo(() => {
     if (!address) return null;
     if (isHiddenValue) {
-      return Array.from({ length: 42 }).map(() => '*').join('');
+      return Array.from({ length: 42 })
+        .map(() => '*')
+        .join('');
     }
     return address;
   }, [address, isHiddenValue]);

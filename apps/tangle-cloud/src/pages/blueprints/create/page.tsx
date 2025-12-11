@@ -19,11 +19,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@tangle-network/ui-components/components/select';
-import {
-  ArrowLeft,
-  ArrowRight,
-  CheckboxCircleFill,
-} from '@tangle-network/icons';
+import { ArrowLeft, CheckboxCircleFill } from '@tangle-network/icons';
 import {
   useCreateBlueprintTx,
   type BlueprintDefinition,
@@ -470,19 +466,15 @@ const CreateBlueprintPage: FC = () => {
           onClick={handleBack}
           isDisabled={step === Step.BasicInfo || isSubmitting}
         >
-          <ArrowLeft className="w-4 h-4 mr-2" />
           Back
         </Button>
 
         {step === Step.Review ? (
           <Button onClick={handleSubmit} isLoading={isSubmitting}>
-            {isSubmitting ? 'Creating...' : 'Create Blueprint'}
+            {isSubmitting ? 'Creating...' : 'Create'}
           </Button>
         ) : (
-          <Button onClick={handleNext}>
-            Next
-            <ArrowRight className="w-4 h-4 ml-2" />
-          </Button>
+          <Button onClick={handleNext}>Next</Button>
         )}
       </div>
     </div>
@@ -511,6 +503,7 @@ const BasicInfoStep: FC<StepProps> = ({ form, updateForm }) => (
           value={form.name}
           onChange={(v) => updateForm('name', v)}
           placeholder="Enter blueprint name"
+          isControlled
         />
       </div>
 
@@ -523,6 +516,7 @@ const BasicInfoStep: FC<StepProps> = ({ form, updateForm }) => (
           value={form.author}
           onChange={(v) => updateForm('author', v)}
           placeholder="Your name or address"
+          isControlled
         />
       </div>
     </div>
@@ -549,6 +543,7 @@ const BasicInfoStep: FC<StepProps> = ({ form, updateForm }) => (
           value={form.category}
           onChange={(v) => updateForm('category', v)}
           placeholder="e.g., DeFi, Oracle, Compute"
+          isControlled
         />
       </div>
 
@@ -561,6 +556,7 @@ const BasicInfoStep: FC<StepProps> = ({ form, updateForm }) => (
           value={form.license}
           onChange={(v) => updateForm('license', v)}
           placeholder="MIT"
+          isControlled
         />
       </div>
     </div>
@@ -575,6 +571,7 @@ const BasicInfoStep: FC<StepProps> = ({ form, updateForm }) => (
           value={form.codeRepository}
           onChange={(v) => updateForm('codeRepository', v)}
           placeholder="https://github.com/..."
+          isControlled
         />
       </div>
 
@@ -587,6 +584,7 @@ const BasicInfoStep: FC<StepProps> = ({ form, updateForm }) => (
           value={form.website}
           onChange={(v) => updateForm('website', v)}
           placeholder="https://..."
+          isControlled
         />
       </div>
     </div>
@@ -600,6 +598,7 @@ const BasicInfoStep: FC<StepProps> = ({ form, updateForm }) => (
         value={form.logo}
         onChange={(v) => updateForm('logo', v)}
         placeholder="https://... or ipfs://..."
+        isControlled
       />
     </div>
 
@@ -612,6 +611,7 @@ const BasicInfoStep: FC<StepProps> = ({ form, updateForm }) => (
         value={form.manager}
         onChange={(v) => updateForm('manager', v)}
         placeholder="0x... (leave empty for none)"
+        isControlled
       />
     </div>
   </div>
@@ -680,6 +680,7 @@ const ConfigurationStep: FC<StepProps> = ({ form, updateForm }) => (
           min={1}
           value={form.minOperators.toString()}
           onChange={(v) => updateForm('minOperators', Number(v))}
+          isControlled
         />
       </div>
 
@@ -693,6 +694,7 @@ const ConfigurationStep: FC<StepProps> = ({ form, updateForm }) => (
           min={0}
           value={form.maxOperators.toString()}
           onChange={(v) => updateForm('maxOperators', Number(v))}
+          isControlled
         />
       </div>
     </div>
@@ -708,6 +710,7 @@ const ConfigurationStep: FC<StepProps> = ({ form, updateForm }) => (
             value={form.subscriptionRate}
             onChange={(v) => updateForm('subscriptionRate', v)}
             placeholder="0"
+            isControlled
           />
         </div>
 
@@ -720,6 +723,7 @@ const ConfigurationStep: FC<StepProps> = ({ form, updateForm }) => (
             value={form.subscriptionInterval}
             onChange={(v) => updateForm('subscriptionInterval', v)}
             placeholder="2592000"
+            isControlled
           />
         </div>
       </div>
@@ -735,6 +739,7 @@ const ConfigurationStep: FC<StepProps> = ({ form, updateForm }) => (
           value={form.eventRate}
           onChange={(v) => updateForm('eventRate', v)}
           placeholder="0"
+          isControlled
         />
       </div>
     )}
@@ -748,6 +753,7 @@ const ConfigurationStep: FC<StepProps> = ({ form, updateForm }) => (
         value={form.operatorBond}
         onChange={(v) => updateForm('operatorBond', v)}
         placeholder="0"
+        isControlled
       />
     </div>
   </div>
@@ -812,6 +818,7 @@ const JobsStep: FC<JobsStepProps> = ({
                   value={job.name}
                   onChange={(v) => updateJob(index, { name: v })}
                   placeholder="e.g., process_data"
+                  isControlled
                 />
               </div>
 
@@ -824,6 +831,7 @@ const JobsStep: FC<JobsStepProps> = ({
                   value={job.description}
                   onChange={(v) => updateJob(index, { description: v })}
                   placeholder="What does this job do?"
+                  isControlled
                 />
               </div>
             </div>
@@ -921,6 +929,7 @@ const SourcesStep: FC<SourcesStepProps> = ({
                       value={source.registry || ''}
                       onChange={(v) => updateSource(index, { registry: v })}
                       placeholder="docker.io"
+                      isControlled
                     />
                   </div>
                   <div className="grid grid-cols-2 gap-3">
@@ -933,6 +942,7 @@ const SourcesStep: FC<SourcesStepProps> = ({
                         value={source.image || ''}
                         onChange={(v) => updateSource(index, { image: v })}
                         placeholder="my-blueprint"
+                        isControlled
                       />
                     </div>
                     <div>
@@ -944,6 +954,7 @@ const SourcesStep: FC<SourcesStepProps> = ({
                         value={source.tag || ''}
                         onChange={(v) => updateSource(index, { tag: v })}
                         placeholder="latest"
+                        isControlled
                       />
                     </div>
                   </div>
@@ -961,6 +972,7 @@ const SourcesStep: FC<SourcesStepProps> = ({
                       value={source.artifactUri || ''}
                       onChange={(v) => updateSource(index, { artifactUri: v })}
                       placeholder="ipfs://... or https://..."
+                      isControlled
                     />
                   </div>
                   <div>
@@ -972,6 +984,7 @@ const SourcesStep: FC<SourcesStepProps> = ({
                       value={source.entrypoint || ''}
                       onChange={(v) => updateSource(index, { entrypoint: v })}
                       placeholder="main"
+                      isControlled
                     />
                   </div>
                 </>

@@ -74,7 +74,14 @@ export const useRestakeAssets = (options?: {
       useOnChainFallback,
       publicClientAvailable: !!publicClient,
     });
-  }, [chainId, isCheckingHealth, isIndexerHealthy, useGraphQL, useOnChainFallback, publicClient]);
+  }, [
+    chainId,
+    isCheckingHealth,
+    isIndexerHealthy,
+    useGraphQL,
+    useOnChainFallback,
+    publicClient,
+  ]);
 
   // On-chain fallback hook (for when indexer is unavailable)
   const onChainResult = useOnChainRestakeAssets({
@@ -231,12 +238,13 @@ export const useRestakeAssets = (options?: {
 
         // Use fetched metadata, cached fallback, or create placeholder from address
         const balance = balances?.get(restakingAsset.token) ?? BigInt(0);
-        const tokenMetadata = metadata ?? fallbackMetadata ?? {
-          // Placeholder when metadata unavailable - use truncated address
-          name: `Token ${restakingAsset.token.slice(0, 8)}...`,
-          symbol: `${restakingAsset.token.slice(0, 6)}...${restakingAsset.token.slice(-4)}`,
-          decimals: 18, // Default to 18 decimals
-        };
+        const tokenMetadata = metadata ??
+          fallbackMetadata ?? {
+            // Placeholder when metadata unavailable - use truncated address
+            name: `Token ${restakingAsset.token.slice(0, 8)}...`,
+            symbol: `${restakingAsset.token.slice(0, 6)}...${restakingAsset.token.slice(-4)}`,
+            decimals: 18, // Default to 18 decimals
+          };
 
         assetMap.set(restakingAsset.token, {
           id: restakingAsset.token,

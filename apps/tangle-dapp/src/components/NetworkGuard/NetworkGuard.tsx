@@ -6,6 +6,7 @@ import {
   CardVariant,
   Typography,
 } from '@tangle-network/ui-components';
+import { ChainIcon } from '@tangle-network/icons';
 import EVMChainId from '@tangle-network/dapp-types/EVMChainId';
 
 // Supported chain IDs for the main dApp features (restaking, liquid staking, dashboard)
@@ -52,13 +53,12 @@ const NetworkGuard: FC<NetworkGuardProps> = ({ children }) => {
     );
   }, [isConnected, chainId]);
 
-  const handleSwitchToBase = useCallback(() => {
-    switchChain({ chainId: EVMChainId.Base });
-  }, [switchChain]);
-
-  const handleSwitchToBaseSepolia = useCallback(() => {
-    switchChain({ chainId: EVMChainId.BaseSepolia });
-  }, [switchChain]);
+  const handleSwitchNetwork = useCallback(
+    (targetChainId: number) => {
+      switchChain({ chainId: targetChainId });
+    },
+    [switchChain],
+  );
 
   if (!isWrongNetwork) {
     return children;
@@ -95,16 +95,17 @@ const NetworkGuard: FC<NetworkGuardProps> = ({ children }) => {
             variant="body1"
             className="text-mono-100 dark:text-mono-100 mb-6 max-w-md"
           >
-            This feature requires Base or Base Sepolia network. Please switch to
-            a supported network to continue.
+            This feature requires a supported network. Please switch to one of
+            the networks below to continue.
           </Typography>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 w-full max-w-md mb-6">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 w-full max-w-lg mb-6">
             <Button
               isFullWidth
-              onClick={handleSwitchToBase}
+              onClick={() => handleSwitchNetwork(EVMChainId.Base)}
               isLoading={isSwitchingChain}
               isDisabled={isSwitchingChain}
+              leftIcon={<ChainIcon name="base" size="md" />}
             >
               Base
             </Button>
@@ -112,11 +113,23 @@ const NetworkGuard: FC<NetworkGuardProps> = ({ children }) => {
             <Button
               isFullWidth
               variant="secondary"
-              onClick={handleSwitchToBaseSepolia}
+              onClick={() => handleSwitchNetwork(EVMChainId.BaseSepolia)}
               isLoading={isSwitchingChain}
               isDisabled={isSwitchingChain}
+              leftIcon={<ChainIcon name="base" size="md" />}
             >
               Base Sepolia
+            </Button>
+
+            <Button
+              isFullWidth
+              variant="secondary"
+              onClick={() => handleSwitchNetwork(EVMChainId.AnvilLocal)}
+              isLoading={isSwitchingChain}
+              isDisabled={isSwitchingChain}
+              leftIcon={<ChainIcon name="tangle" size="md" />}
+            >
+              Tangle Local
             </Button>
           </div>
 

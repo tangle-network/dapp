@@ -14,9 +14,9 @@ import {
   TooltipTrigger,
 } from '@tangle-network/ui-components/components/Tooltip';
 import { Typography } from '@tangle-network/ui-components/typography/Typography';
+import { EvmWalletModal } from '@tangle-network/tangle-shared-ui/components/EvmWalletModal';
 import { type FC, useCallback, useState, useMemo, useEffect } from 'react';
 import { useAccount, useChainId } from 'wagmi';
-import { useConnectModal } from '@rainbow-me/rainbowkit';
 import { type Hex, formatUnits, isAddress, keccak256, toHex } from 'viem';
 import { twMerge } from 'tailwind-merge';
 import type { InjectedAccountWithMeta } from '@polkadot/extension-inject/types';
@@ -87,7 +87,6 @@ enum ClaimStep {
 const MigrationClaimPage: FC = () => {
   const { address: evmAddress, isConnected } = useAccount();
   const chainId = useChainId();
-  const { openConnectModal } = useConnectModal();
 
   // State
   const [substrateAccount, setSubstrateAccount] =
@@ -98,6 +97,7 @@ const MigrationClaimPage: FC = () => {
   );
   const [isHowItWorksOpen, setIsHowItWorksOpen] = useState(false);
   const [recipientAddress, setRecipientAddress] = useState<string>('');
+  const [isWalletModalOpen, setIsWalletModalOpen] = useState(false);
   const [isEditingRecipient, setIsEditingRecipient] = useState(false);
 
   // Sync recipient address with connected wallet when it changes
@@ -312,7 +312,11 @@ const MigrationClaimPage: FC = () => {
             >
               <CheckboxCircleFill className="w-12 h-12 text-white" />
             </motion.div>
-            <Typography variant="h4" fw="bold" className="mb-2 text-mono-200 dark:text-mono-0">
+            <Typography
+              variant="h4"
+              fw="bold"
+              className="mb-2 text-mono-200 dark:text-mono-0"
+            >
               Claim Successful!
             </Typography>
             <Typography variant="body1" className="text-mono-100 mb-4">
@@ -344,7 +348,7 @@ const MigrationClaimPage: FC = () => {
           <Typography
             variant="h3"
             fw="bold"
-            className="bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 dark:from-blue-400 dark:via-purple-400 dark:to-pink-400 bg-clip-text text-transparent"
+            className="text-mono-200 dark:bg-gradient-to-r dark:from-blue-400 dark:via-purple-400 dark:to-pink-400 dark:bg-clip-text dark:text-transparent"
           >
             Claim your TNT!
           </Typography>
@@ -436,14 +440,18 @@ const MigrationClaimPage: FC = () => {
                     '1'
                   )}
                 </div>
-                <Typography variant="body1" fw="bold" className="text-mono-200 dark:text-mono-0">
+                <Typography
+                  variant="body1"
+                  fw="bold"
+                  className="text-mono-200 dark:text-mono-0"
+                >
                   Receiving Address
                 </Typography>
               </div>
 
               {!isConnected ? (
                 <button
-                  onClick={openConnectModal}
+                  onClick={() => setIsWalletModalOpen(true)}
                   className={twMerge(
                     'w-full flex items-center gap-3 px-4 py-4 rounded-xl',
                     'bg-gradient-to-r from-blue-500/10 to-purple-500/10',
@@ -573,7 +581,11 @@ const MigrationClaimPage: FC = () => {
                       '2'
                     )}
                   </div>
-                  <Typography variant="body1" fw="bold" className="text-mono-200 dark:text-mono-0">
+                  <Typography
+                    variant="body1"
+                    fw="bold"
+                    className="text-mono-200 dark:text-mono-0"
+                  >
                     Source Account
                   </Typography>
                 </div>
@@ -801,7 +813,11 @@ const MigrationClaimPage: FC = () => {
           >
             <Card withShadow className="p-6">
               <div className="flex items-center justify-between mb-5">
-                <Typography variant="h5" fw="bold" className="text-mono-200 dark:text-mono-0">
+                <Typography
+                  variant="h5"
+                  fw="bold"
+                  className="text-mono-200 dark:text-mono-0"
+                >
                   How it works
                 </Typography>
                 <button
@@ -873,6 +889,11 @@ const MigrationClaimPage: FC = () => {
           </motion.div>
         )}
       </AnimatePresence>
+
+      <EvmWalletModal
+        isOpen={isWalletModalOpen}
+        onClose={() => setIsWalletModalOpen(false)}
+      />
     </div>
   );
 };

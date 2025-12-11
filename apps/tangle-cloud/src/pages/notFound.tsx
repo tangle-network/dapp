@@ -1,7 +1,6 @@
 import { Button, Typography } from '@tangle-network/ui-components';
 import { PagePath } from '../types';
 import { FC } from 'react';
-import { ArrowRight } from '@tangle-network/icons';
 import { Link } from 'react-router';
 
 const NotFoundPage: FC = () => {
@@ -19,7 +18,7 @@ const NotFoundPage: FC = () => {
       </div>
 
       <Link to={PagePath.HOME}>
-        <Button rightIcon={<ArrowRight />}>Go Home</Button>
+        <Button>Go Home</Button>
       </Link>
     </div>
   );

@@ -1,5 +1,11 @@
 import { FC, useState } from 'react';
-import { Button, Card, CardVariant, Typography, Input } from '@tangle-network/ui-components';
+import {
+  Button,
+  Card,
+  CardVariant,
+  Typography,
+  Input,
+} from '@tangle-network/ui-components';
 import type { Address } from 'viem';
 import { keccak256 } from 'viem';
 import { useValidatorInfo, usePodInfo } from '../hooks';

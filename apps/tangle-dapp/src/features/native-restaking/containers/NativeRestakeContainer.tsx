@@ -5,8 +5,9 @@ import {
   CardVariant,
   Typography,
 } from '@tangle-network/ui-components';
+import Spinner from '@tangle-network/icons/Spinner';
 import { useAccount, useChainId, useSwitchChain } from 'wagmi';
-import { mainnet, holesky } from 'viem/chains';
+import { mainnet, holesky, foundry } from 'viem/chains';
 import {
   CreatePodCard,
   PodOverviewCard,
@@ -19,7 +20,11 @@ import {
 import { useHasPod, useGetPod } from '../hooks';
 
 // Supported chain IDs for native restaking
-const NATIVE_RESTAKING_CHAIN_IDS = [mainnet.id, holesky.id] as const;
+const NATIVE_RESTAKING_CHAIN_IDS = [
+  mainnet.id,
+  holesky.id,
+  foundry.id,
+] as const;
 
 const getChainName = (chainId: number): string => {
   switch (chainId) {
@@ -46,7 +51,7 @@ const NativeRestakeContainer: FC = () => {
   const { address, isConnected } = useAccount();
   const chainId = useChainId();
   const { switchChain, isPending: isSwitchingChain } = useSwitchChain();
-  const { hasPod, isLoading: checkingPod } = useHasPod(address);
+  const { hasPod, isLoading: checkingPod, isDeployed } = useHasPod(address);
   const { podAddress, isLoading: loadingPod } = useGetPod(address);
 
   const isLoading = checkingPod || loadingPod;
@@ -64,6 +69,10 @@ const NativeRestakeContainer: FC = () => {
 
   const handleSwitchToHolesky = useCallback(() => {
     switchChain({ chainId: holesky.id });
+  }, [switchChain]);
+
+  const handleSwitchToLocal = useCallback(() => {
+    switchChain({ chainId: foundry.id });
   }, [switchChain]);
 
   const content = useMemo(() => {
@@ -117,18 +126,18 @@ const NativeRestakeContainer: FC = () => {
                 variant="body1"
                 className="text-mono-100 dark:text-mono-100 mb-6 max-w-md"
               >
-                Native restaking requires Ethereum mainnet or Holesky testnet.
-                Please switch to one of the supported networks to continue.
+                Native restaking requires a supported network. Please switch to
+                one of the supported networks to continue.
               </Typography>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 w-full max-w-md mb-6">
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 w-full max-w-lg mb-6">
                 <Button
                   isFullWidth
                   onClick={handleSwitchToMainnet}
                   isLoading={isSwitchingChain}
                   isDisabled={isSwitchingChain}
                 >
-                  Ethereum Mainnet
+                  Mainnet
                 </Button>
 
                 <Button
@@ -138,7 +147,17 @@ const NativeRestakeContainer: FC = () => {
                   isLoading={isSwitchingChain}
                   isDisabled={isSwitchingChain}
                 >
-                  Holesky Testnet
+                  Holesky
+                </Button>
+
+                <Button
+                  isFullWidth
+                  variant="secondary"
+                  onClick={handleSwitchToLocal}
+                  isLoading={isSwitchingChain}
+                  isDisabled={isSwitchingChain}
+                >
+                  Local
                 </Button>
               </div>
 
@@ -153,15 +172,69 @@ const NativeRestakeContainer: FC = () => {
       );
     }
 
+    // Show "not deployed" message when contracts aren't available
+    if (!isDeployed) {
+      return (
+        <div className="flex items-center justify-center min-h-[400px] px-4">
+          <Card
+            variant={CardVariant.GLASS}
+            className="p-8 max-w-2xl w-full border border-mono-60 dark:border-mono-160"
+          >
+            <div className="flex flex-col items-center text-center">
+              <div className="mb-6 p-4 bg-blue-50/20 dark:bg-blue-120/30 rounded-full">
+                <svg
+                  className="w-12 h-12 text-blue-50"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                  />
+                </svg>
+              </div>
+
+              <Typography variant="h4" fw="bold" className="mb-2">
+                Coming Soon
+              </Typography>
+
+              <Typography
+                variant="body1"
+                className="text-mono-100 dark:text-mono-100 mb-6 max-w-md"
+              >
+                Native restaking contracts are not yet deployed on{' '}
+                {getChainName(chainId)}. This feature will be available once the
+                ValidatorPodManager contract is deployed.
+              </Typography>
+
+              <div className="p-4 bg-mono-20 dark:bg-mono-160 rounded-lg w-full max-w-md">
+                <Typography variant="body2" className="text-mono-100">
+                  Native restaking allows you to restake your Ethereum beacon
+                  chain validators on Tangle Network to earn additional rewards
+                  while maintaining your validator duties.
+                </Typography>
+              </div>
+            </div>
+          </Card>
+        </div>
+      );
+    }
+
     if (isLoading) {
       return (
         <div className="flex items-center justify-center min-h-[400px]">
-          <Typography
-            variant="body1"
-            className="text-mono-120 dark:text-mono-80"
-          >
-            Loading...
-          </Typography>
+          <div className="flex flex-col items-center gap-4">
+            <Spinner size="xl" />
+            <Typography
+              variant="body1"
+              className="text-mono-120 dark:text-mono-80"
+            >
+              Loading pod data...
+            </Typography>
+          </div>
         </div>
       );
     }
@@ -214,17 +287,19 @@ const NativeRestakeContainer: FC = () => {
     isConnected,
     isLoading,
     isWrongNetwork,
+    isDeployed,
     chainId,
     handleSwitchToMainnet,
     handleSwitchToHolesky,
+    handleSwitchToLocal,
     isSwitchingChain,
     hasPod,
     podAddress,
     address,
   ]);
 
-  // Show wrong network or not connected states without the page header
-  if (!isConnected || isWrongNetwork) {
+  // Show wrong network, not connected, or not deployed states without the page header
+  if (!isConnected || isWrongNetwork || !isDeployed) {
     return <div className="py-6">{content}</div>;
   }
 

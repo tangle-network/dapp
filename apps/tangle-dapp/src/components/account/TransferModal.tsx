@@ -1,4 +1,4 @@
-import { FC, useCallback, useMemo, useState } from 'react';
+import { FC, useCallback, useEffect, useMemo, useState } from 'react';
 import {
   useAccount,
   useBalance,
@@ -101,12 +101,23 @@ const TransferModal: FC<TransferModalProps> = ({ isOpen, onClose }) => {
     return options;
   }, [nativeBalance, assetList]);
 
-  // Set default token when options are available
-  useMemo(() => {
-    if (!selectedToken && tokenOptions.length > 0) {
+  // Set default token and keep selectedToken in sync with balance updates
+  useEffect(() => {
+    if (tokenOptions.length === 0) return;
+
+    if (!selectedToken) {
+      // Set default token when first available
       setSelectedToken(tokenOptions[0]);
+    } else {
+      // Update selectedToken when balance changes in tokenOptions
+      const updatedToken = tokenOptions.find(
+        (t) => t.address === selectedToken.address,
+      );
+      if (updatedToken && updatedToken.balance !== selectedToken.balance) {
+        setSelectedToken(updatedToken);
+      }
     }
-  }, [tokenOptions, selectedToken]);
+  }, [tokenOptions]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // Validate form
   const isValidRecipient = recipient && isAddress(recipient);
@@ -239,188 +250,195 @@ const TransferModal: FC<TransferModalProps> = ({ isOpen, onClose }) => {
 
   return (
     <>
-    <Modal open={isOpen} onOpenChange={(open) => !open && handleClose()}>
-      <ModalContent size="md">
-        <ModalHeader onClose={handleClose}>Send Tokens</ModalHeader>
+      <Modal open={isOpen} onOpenChange={(open) => !open && handleClose()}>
+        <ModalContent size="md">
+          <ModalHeader onClose={handleClose}>Send Tokens</ModalHeader>
 
-        <ModalBody className="space-y-4">
-          {/* Token Selection */}
-          <div>
-            <Typography variant="body2" className="mb-2 text-mono-100">
-              Select Token
-            </Typography>
-            <div className="flex items-center justify-between">
-              <TokenSelector onClick={openTokenModal}>
-                {selectedToken?.symbol ?? 'Select token'}
-              </TokenSelector>
-
-              {selectedToken && (
-                <Typography variant="body2" className="text-mono-100">
-                  Balance: {formatBalance(selectedToken.balance, selectedToken.decimals)}{' '}
-                  {selectedToken.symbol}
-                </Typography>
-              )}
-            </div>
-          </div>
-
-          {/* Recipient Address */}
-          <div>
-            <Typography variant="body2" className="mb-2 text-mono-100">
-              Recipient Address
-            </Typography>
-            <Input
-              id="recipient"
-              placeholder="0x..."
-              value={recipient}
-              isControlled
-              onChange={(val) => setRecipient(val)}
-              isInvalid={recipient.length > 0 && !isValidRecipient}
-            />
-            {recipient.length > 0 && !isValidRecipient && (
-              <Typography variant="body2" className="text-red-500 mt-1">
-                Invalid address
+          <ModalBody className="space-y-4">
+            {/* Token Selection */}
+            <div>
+              <Typography variant="body2" className="mb-2 text-mono-100">
+                Select Token
               </Typography>
-            )}
-          </div>
+              <div className="flex items-center justify-between">
+                <TokenSelector onClick={openTokenModal}>
+                  {selectedToken?.symbol ?? 'Select token'}
+                </TokenSelector>
 
-          {/* Amount */}
-          <div>
-            <div className="flex items-center justify-between mb-2">
-              <Typography variant="body2" className="text-mono-100">
-                Amount
-              </Typography>
-              {selectedToken && (
-                <button
-                  type="button"
-                  onClick={handleSetMax}
-                  className="text-blue-500 hover:text-blue-400 text-sm"
-                >
-                  Max:{' '}
-                  {formatBalance(selectedToken.balance, selectedToken.decimals)}{' '}
-                  {selectedToken.symbol}
-                </button>
-              )}
-            </div>
-            <div className="relative">
-              <Input
-                id="amount"
-                type="text"
-                placeholder="0.0"
-                value={amount}
-                isControlled
-                onChange={(val) => {
-                  // Only allow valid number input
-                  if (val === '' || /^\d*\.?\d*$/.test(val)) {
-                    setAmount(val);
-                  }
-                }}
-                isInvalid={amount.length > 0 && !isValidAmount}
-              />
-              {selectedToken && (
-                <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none">
+                {selectedToken && (
                   <Typography variant="body2" className="text-mono-100">
+                    Balance:{' '}
+                    {formatBalance(
+                      selectedToken.balance,
+                      selectedToken.decimals,
+                    )}{' '}
                     {selectedToken.symbol}
                   </Typography>
-                </div>
-              )}
+                )}
+              </div>
             </div>
-            {amount.length > 0 && !isValidAmount && selectedToken && (
-              <Typography variant="body2" className="text-red-500 mt-1">
-                {parseFloat(amount) >
-                parseFloat(
-                  formatUnits(selectedToken.balance, selectedToken.decimals),
-                )
-                  ? 'Insufficient balance'
-                  : 'Invalid amount'}
-              </Typography>
-            )}
-          </div>
 
-          {/* Status Messages */}
-          {status === 'pending' && (
-            <div className="p-3 rounded-lg bg-blue-500/20 border border-blue-500">
-              <Typography variant="body2" className="text-blue-500">
-                Transaction pending...
+            {/* Recipient Address */}
+            <div>
+              <Typography variant="body2" className="mb-2 text-mono-100">
+                Recipient Address
               </Typography>
-            </div>
-          )}
-
-          {status === 'success' && (
-            <div className="p-3 rounded-lg bg-green-500/20 border border-green-500">
-              <Typography variant="body2" className="text-green-500">
-                Transfer successful!
-              </Typography>
-              {txHash && (
-                <Typography
-                  variant="body2"
-                  className="text-mono-100 mt-1 break-all"
-                >
-                  Tx: {txHash.slice(0, 10)}...{txHash.slice(-8)}
+              <Input
+                id="recipient"
+                placeholder="0x..."
+                value={recipient}
+                isControlled
+                onChange={(val) => setRecipient(val)}
+                isInvalid={recipient.length > 0 && !isValidRecipient}
+              />
+              {recipient.length > 0 && !isValidRecipient && (
+                <Typography variant="body2" className="text-red-500 mt-1">
+                  Invalid address
                 </Typography>
               )}
             </div>
-          )}
 
-          {status === 'error' && error && (
-            <div className="p-3 rounded-lg bg-red-500/20 border border-red-500">
-              <Typography variant="body2" className="text-red-500">
-                {error}
-              </Typography>
-            </div>
-          )}
-        </ModalBody>
-
-        <ModalFooter>
-          <Button variant="secondary" onClick={handleClose}>
-            Cancel
-          </Button>
-          <Button
-            isDisabled={!canSubmit}
-            isLoading={status === 'pending'}
-            onClick={handleTransfer}
-          >
-            Send
-          </Button>
-        </ModalFooter>
-      </ModalContent>
-    </Modal>
-
-    {/* Token Selection Modal */}
-    <ListModal<TokenOption>
-      title="Select Token"
-      isOpen={isTokenModalOpen}
-      setIsOpen={updateTokenModal}
-      onSelect={handleTokenSelect}
-      isLoading={isLoadingAssets}
-      filterItem={(token, query) =>
-        filterBy(query, [token.symbol, token.name, token.address.toString()])
-      }
-      searchInputId="transfer-token-search"
-      searchPlaceholder="Search tokens..."
-      titleWhenEmpty="No Tokens Available"
-      descriptionWhenEmpty="There are no tokens available in your wallet."
-      items={tokenOptions}
-      getItemKey={(token) => token.address.toString()}
-      renderItem={(token) => (
-        <div className="flex items-center justify-between w-full">
-          <div className="flex items-center gap-3">
-            <TokenIcon name={token.symbol} size="lg" />
+            {/* Amount */}
             <div>
-              <Typography variant="body1" fw="bold">
-                {token.symbol}
-              </Typography>
-              <Typography variant="body2" className="text-mono-100">
-                {token.name}
-              </Typography>
+              <div className="flex items-center justify-between mb-2">
+                <Typography variant="body2" className="text-mono-100">
+                  Amount
+                </Typography>
+                {selectedToken && (
+                  <button
+                    type="button"
+                    onClick={handleSetMax}
+                    className="text-blue-500 hover:text-blue-400 text-sm"
+                  >
+                    Max:{' '}
+                    {formatBalance(
+                      selectedToken.balance,
+                      selectedToken.decimals,
+                    )}{' '}
+                    {selectedToken.symbol}
+                  </button>
+                )}
+              </div>
+              <div className="relative">
+                <Input
+                  id="amount"
+                  type="text"
+                  placeholder="0.0"
+                  value={amount}
+                  isControlled
+                  onChange={(val) => {
+                    // Only allow valid number input
+                    if (val === '' || /^\d*\.?\d*$/.test(val)) {
+                      setAmount(val);
+                    }
+                  }}
+                  isInvalid={amount.length > 0 && !isValidAmount}
+                />
+                {selectedToken && (
+                  <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none">
+                    <Typography variant="body2" className="text-mono-100">
+                      {selectedToken.symbol}
+                    </Typography>
+                  </div>
+                )}
+              </div>
+              {amount.length > 0 && !isValidAmount && selectedToken && (
+                <Typography variant="body2" className="text-red-500 mt-1">
+                  {parseFloat(amount) >
+                  parseFloat(
+                    formatUnits(selectedToken.balance, selectedToken.decimals),
+                  )
+                    ? 'Insufficient balance'
+                    : 'Invalid amount'}
+                </Typography>
+              )}
             </div>
+
+            {/* Status Messages */}
+            {status === 'pending' && (
+              <div className="p-3 rounded-lg bg-blue-500/20 border border-blue-500">
+                <Typography variant="body2" className="text-blue-500">
+                  Transaction pending...
+                </Typography>
+              </div>
+            )}
+
+            {status === 'success' && (
+              <div className="p-3 rounded-lg bg-green-500/20 border border-green-500">
+                <Typography variant="body2" className="text-green-500">
+                  Transfer successful!
+                </Typography>
+                {txHash && (
+                  <Typography
+                    variant="body2"
+                    className="text-mono-100 mt-1 break-all"
+                  >
+                    Tx: {txHash.slice(0, 10)}...{txHash.slice(-8)}
+                  </Typography>
+                )}
+              </div>
+            )}
+
+            {status === 'error' && error && (
+              <div className="p-3 rounded-lg bg-red-500/20 border border-red-500">
+                <Typography variant="body2" className="text-red-500">
+                  {error}
+                </Typography>
+              </div>
+            )}
+          </ModalBody>
+
+          <ModalFooter>
+            <Button variant="secondary" onClick={handleClose}>
+              Cancel
+            </Button>
+            <Button
+              isDisabled={!canSubmit}
+              isLoading={status === 'pending'}
+              onClick={handleTransfer}
+            >
+              Send
+            </Button>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
+
+      {/* Token Selection Modal */}
+      <ListModal<TokenOption>
+        title="Select Token"
+        isOpen={isTokenModalOpen}
+        setIsOpen={updateTokenModal}
+        onSelect={handleTokenSelect}
+        isLoading={isLoadingAssets}
+        filterItem={(token, query) =>
+          filterBy(query, [token.symbol, token.name, token.address.toString()])
+        }
+        searchInputId="transfer-token-search"
+        searchPlaceholder="Search tokens..."
+        titleWhenEmpty="No Tokens Available"
+        descriptionWhenEmpty="There are no tokens available in your wallet."
+        items={tokenOptions}
+        getItemKey={(token) => token.address.toString()}
+        renderItem={(token) => (
+          <div className="flex items-center justify-between w-full">
+            <div className="flex items-center gap-3">
+              <TokenIcon name={token.symbol} size="lg" />
+              <div>
+                <Typography variant="body1" fw="bold">
+                  {token.symbol}
+                </Typography>
+                <Typography variant="body2" className="text-mono-100">
+                  {token.name}
+                </Typography>
+              </div>
+            </div>
+            <Typography variant="body2" className="text-mono-100">
+              {formatBalance(token.balance, token.decimals)}
+            </Typography>
           </div>
-          <Typography variant="body2" className="text-mono-100">
-            {formatBalance(token.balance, token.decimals)}
-          </Typography>
-        </div>
-      )}
-    />
-  </>
+        )}
+      />
+    </>
   );
 };
 

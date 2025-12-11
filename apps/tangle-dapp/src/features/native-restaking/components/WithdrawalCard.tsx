@@ -1,5 +1,11 @@
 import { FC, useState, useMemo } from 'react';
-import { Button, Card, CardVariant, Typography, Input } from '@tangle-network/ui-components';
+import {
+  Button,
+  Card,
+  CardVariant,
+  Typography,
+  Input,
+} from '@tangle-network/ui-components';
 import type { Address } from 'viem';
 import { parseEther } from 'viem';
 import {

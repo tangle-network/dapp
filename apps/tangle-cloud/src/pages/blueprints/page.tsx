@@ -1,4 +1,4 @@
-import { ArrowRightIcon } from '@radix-ui/react-icons';
+import { PlusIcon } from '@radix-ui/react-icons';
 import { RowSelectionState } from '@tanstack/table-core';
 import RestakeBanner from '@tangle-network/tangle-shared-ui/components/blueprints/RestakeBanner';
 import { useAllBlueprints } from '@tangle-network/tangle-shared-ui/data/graphql';
@@ -7,10 +7,12 @@ import {
   Modal,
   ModalTrigger,
 } from '@tangle-network/ui-components/components/Modal';
+import { Typography } from '@tangle-network/ui-components';
 import { BLUEPRINT_DOCS_LINK } from '@tangle-network/ui-components/constants/tangleDocs';
 import pluralize from '@tangle-network/ui-components/utils/pluralize';
 import { AnimatePresence, motion } from 'framer-motion';
 import { FC, useCallback, useMemo, useState } from 'react';
+import { Link } from 'react-router-dom';
 import { twMerge } from 'tailwind-merge';
 import useRoleStore, { Role } from '../../stores/roleStore';
 import BlueprintListing from './BlueprintListing';
@@ -81,6 +83,22 @@ const Page: FC = () => {
         buttonText="Get Started"
       />
 
+      <div className="flex items-center justify-between">
+        <Typography
+          variant="h5"
+          fw="bold"
+          className="text-mono-200 dark:text-mono-0"
+        >
+          Available Blueprints
+        </Typography>
+
+        <Link to={PagePath.BLUEPRINTS_CREATE}>
+          <Button leftIcon={<PlusIcon className="w-4 h-4" />}>
+            Create Blueprint
+          </Button>
+        </Link>
+      </div>
+
       <BlueprintListing
         blueprints={blueprints}
         isLoading={isLoading}
@@ -115,9 +133,7 @@ const Page: FC = () => {
               </div>
 
               <ModalTrigger asChild>
-                <Button rightIcon={<ArrowRightIcon width={24} height={24} />}>
-                  Register
-                </Button>
+                <Button>Register</Button>
               </ModalTrigger>
             </motion.div>
           )}

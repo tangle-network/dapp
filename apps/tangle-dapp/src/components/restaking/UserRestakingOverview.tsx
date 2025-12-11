@@ -37,7 +37,10 @@ export const UserRestakingOverview: FC<Props> = ({
   const positions = useMemo(() => {
     if (!delegator || !assets) return [];
     return delegator.assetPositions
-      .filter((pos) => pos.totalDeposited > BigInt(0) || pos.delegatedAmount > BigInt(0))
+      .filter(
+        (pos) =>
+          pos.totalDeposited > BigInt(0) || pos.delegatedAmount > BigInt(0),
+      )
       .map((pos) => {
         const asset = assets.get(pos.token as Address);
         return {
@@ -65,10 +68,7 @@ export const UserRestakingOverview: FC<Props> = ({
   if (positions.length === 0) {
     return (
       <Card variant={CardVariant.GLASS} className="p-6 text-center">
-        <Typography
-          variant="body1"
-          className="text-mono-120 dark:text-mono-80"
-        >
+        <Typography variant="body1" className="text-mono-120 dark:text-mono-80">
           No positions yet. Deposit assets to start restaking.
         </Typography>
       </Card>
@@ -99,7 +99,9 @@ export const UserRestakingOverview: FC<Props> = ({
             )}
           >
             <div className="flex items-center gap-3">
-              <TokenIcon name={pos.symbol} size="lg" />
+              <div className="flex items-center justify-center w-10 h-10">
+                <TokenIcon name={pos.symbol} size="xl" />
+              </div>
 
               <div>
                 <Typography variant="body1" fw="semibold">

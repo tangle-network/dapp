@@ -1,5 +1,11 @@
-import { ChainIcon, Spinner, StatusIndicator } from '@tangle-network/icons';
 import {
+  ChainIcon,
+  SettingsFillIcon,
+  Spinner,
+  StatusIndicator,
+} from '@tangle-network/icons';
+import {
+  Divider,
   DropdownMenuItem,
   InfoIconWithTooltip,
   Typography,
@@ -14,7 +20,6 @@ import {
 import { FC, ReactElement, ReactNode } from 'react';
 
 import CustomRpcEndpointInput from './CustomRpcEndpointInput';
-import { GearIcon } from '@radix-ui/react-icons';
 
 // Default networks for the main Tangle dApp
 const DEFAULT_NETWORKS: Network[] = [
@@ -54,7 +59,7 @@ export const NetworkSelectorDropdown: FC<NetworkSelectorDropdownProps> = ({
 }) => {
   return (
     <div className="flex flex-col items-center justify-between">
-      {networks.map((network, index) => (
+      {networks.map((network) => (
         <NetworkOption
           key={network.id}
           isSwitching={switchingNetworkId === network.id}
@@ -67,14 +72,14 @@ export const NetworkSelectorDropdown: FC<NetworkSelectorDropdownProps> = ({
 
       {showCustomEndpoint && (
         <>
-          <hr className="w-full h-0 border-t border-mono-40 dark:border-mono-120" />
+          <Divider className="dark:bg-mono-120" />
 
           {/* Custom network */}
           <NetworkOption
             isSwitching={switchingNetworkId === 'custom'}
             isSelected={isCustomEndpointSelected}
             name="Custom endpoint"
-            icon={<GearIcon className="size-6" />}
+            icon={<SettingsFillIcon size="lg" />}
             tooltip="Connect to a custom network by specifying its RPC endpoint URL"
             isNotConnected={isNotConnectedToSelectedNetwork}
           />
@@ -111,6 +116,10 @@ const NetworkOption: FC<NetworkOptionProps> = ({
   tooltip,
   onSelect,
 }) => {
+  const statusIcon = isSelected ? (
+    <StatusIndicator variant={isNotConnected ? 'warning' : 'success'} />
+  ) : undefined;
+
   return (
     <DropdownMenuItem
       leftIcon={
@@ -120,28 +129,17 @@ const NetworkOption: FC<NetworkOptionProps> = ({
           (icon ?? <ChainIcon size="lg" name={name} />)
         )
       }
+      rightIcon={statusIcon}
       onSelect={onSelect}
       disabled={isSelected}
-      className="flex justify-between w-full py-3"
+      className="w-full py-3"
     >
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-2">
-          <Typography
-            variant="body1"
-            fw="semibold"
-            className="dark:text-mono-0"
-          >
-            {name}
-          </Typography>
+      <div className="flex items-center gap-2">
+        <Typography variant="body1" fw="semibold" className="dark:text-mono-0">
+          {name}
+        </Typography>
 
-          {tooltip !== undefined && <InfoIconWithTooltip content={tooltip} />}
-        </div>
-
-        {isSelected && isNotConnected ? (
-          <StatusIndicator variant="warning" />
-        ) : isSelected && !isNotConnected ? (
-          <StatusIndicator variant="success" />
-        ) : null}
+        {tooltip !== undefined && <InfoIconWithTooltip content={tooltip} />}
       </div>
     </DropdownMenuItem>
   );

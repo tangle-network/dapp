@@ -13,7 +13,11 @@ export const InstructionCard: FC<InstructionCardProps> = ({ rootProps }) => {
   return (
     <TangleCloudCard {...rootProps}>
       <div className="flex flex-col gap-4">
-        <Typography variant="h5" fw="bold" className="text-mono-200 dark:text-mono-0">
+        <Typography
+          variant="h5"
+          fw="bold"
+          className="text-mono-200 dark:text-mono-0"
+        >
           Quick Actions
         </Typography>
 

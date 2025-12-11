@@ -1,5 +1,10 @@
 import { FC, useState } from 'react';
-import { Button, Card, CardVariant, Typography } from '@tangle-network/ui-components';
+import {
+  Button,
+  Card,
+  CardVariant,
+  Typography,
+} from '@tangle-network/ui-components';
 import type { Address } from 'viem';
 import { usePodInfo, useStartCheckpoint } from '../hooks';
 import { gweiToEth } from '../types';

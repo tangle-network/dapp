@@ -116,7 +116,11 @@ const SubstrateWalletSelector: FC<Props> = ({
             )}
           </div>
           <div className="flex-1 text-left">
-            <Typography variant="body1" fw="semibold" className="text-mono-200 dark:text-mono-0">
+            <Typography
+              variant="body1"
+              fw="semibold"
+              className="text-mono-200 dark:text-mono-0"
+            >
               {isConnecting ? 'Connecting...' : 'Connect Polkadot Wallet'}
             </Typography>
             <Typography variant="body2" className="text-mono-100 text-xs">

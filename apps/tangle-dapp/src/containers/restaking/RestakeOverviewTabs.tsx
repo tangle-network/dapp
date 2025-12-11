@@ -181,9 +181,7 @@ const getVaultColumns = () => [
   VAULT_COLUMN_HELPER.accessor('rewardMultiplier', {
     header: () => <HeaderCell title="Multiplier" />,
     cell: (props) => (
-      <TableCellWrapper removeRightBorder>
-        {props.getValue()}x
-      </TableCellWrapper>
+      <TableCellWrapper removeRightBorder>{props.getValue()}x</TableCellWrapper>
     ),
   }),
 ];
@@ -328,9 +326,7 @@ const getOperatorColumns = (onRestakeClicked: () => void) => [
   }),
   OPERATOR_COLUMN_HELPER.accessor('delegationCount', {
     header: () => <HeaderCell title="Delegations" />,
-    cell: (props) => (
-      <TableCellWrapper>{props.getValue()}</TableCellWrapper>
-    ),
+    cell: (props) => <TableCellWrapper>{props.getValue()}</TableCellWrapper>,
   }),
   OPERATOR_COLUMN_HELPER.display({
     id: 'actions',

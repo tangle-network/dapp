@@ -3,9 +3,10 @@
 import { LiFiWidget, type WidgetConfig } from '@lifi/widget';
 import { FC, useMemo } from 'react';
 import { base } from 'viem/chains';
+import { useDarkMode } from '@tangle-network/ui-components';
 
 // Tangle dark theme colors (from tailwind.preset.ts)
-const TANGLE_COLORS = {
+const DARK_COLORS = {
   // Backgrounds
   bgDefault: '#10101A', // mono-200 - darkest
   bgPaper: '#1D1D2B', // mono-180 - card background
@@ -27,61 +28,89 @@ const TANGLE_COLORS = {
   warning: '#F4C328', // yellow-60
 } as const;
 
+// Tangle light theme colors
+const LIGHT_COLORS = {
+  // Backgrounds
+  bgDefault: '#FFFFFF', // mono-0
+  bgPaper: '#F7F8F7', // mono-20
+  bgCard: '#ECEDEC', // mono-40
+  // Primary (purple)
+  primary: '#5953F9', // purple-50
+  primaryLight: '#7A75FF', // purple-40
+  primaryDark: '#433ED9', // purple-60
+  // Text
+  textPrimary: '#10101A', // mono-200
+  textSecondary: '#6C6F80', // mono-120
+  textDisabled: '#9C9FB0', // mono-100
+  // Borders
+  border: '#D6D8DA', // mono-60
+  borderLight: '#ECEDEC', // mono-40
+  // Success/Error
+  success: '#4CB457', // green-50
+  error: '#EF570D', // red-50
+  warning: '#F4C328', // yellow-60
+} as const;
+
 // Satoshi font stack matching the app
 const FONT_FAMILY =
   "'Satoshi', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif";
 
 const LiFiBridgeContainer: FC = () => {
+  const [isDarkMode] = useDarkMode();
+  const colors = isDarkMode ? DARK_COLORS : LIGHT_COLORS;
+
   const widgetConfig: Partial<WidgetConfig> = useMemo(
     () => ({
       variant: 'wide',
       subvariant: 'default',
-      appearance: 'dark',
+      appearance: isDarkMode ? 'dark' : 'light',
       theme: {
         container: {
           borderRadius: '12px',
-          boxShadow: '0 4px 24px -1px rgba(0, 0, 0, 0.3)',
-          border: `1px solid ${TANGLE_COLORS.border}`,
+          boxShadow: isDarkMode
+            ? '0 4px 24px -1px rgba(0, 0, 0, 0.3)'
+            : '0 4px 24px -1px rgba(0, 0, 0, 0.1)',
+          border: `1px solid ${colors.border}`,
         },
         palette: {
-          mode: 'dark',
+          mode: isDarkMode ? 'dark' : 'light',
           primary: {
-            main: TANGLE_COLORS.primary,
-            light: TANGLE_COLORS.primaryLight,
-            dark: TANGLE_COLORS.primaryDark,
+            main: colors.primary,
+            light: colors.primaryLight,
+            dark: colors.primaryDark,
           },
           secondary: {
-            main: TANGLE_COLORS.primaryLight,
+            main: colors.primaryLight,
           },
           background: {
-            paper: TANGLE_COLORS.bgPaper,
-            default: TANGLE_COLORS.bgDefault,
+            paper: colors.bgPaper,
+            default: colors.bgDefault,
           },
           text: {
-            primary: TANGLE_COLORS.textPrimary,
-            secondary: TANGLE_COLORS.textSecondary,
+            primary: colors.textPrimary,
+            secondary: colors.textSecondary,
           },
           grey: {
-            100: TANGLE_COLORS.borderLight,
-            200: TANGLE_COLORS.border,
-            300: TANGLE_COLORS.borderLight,
-            400: TANGLE_COLORS.textDisabled,
-            500: TANGLE_COLORS.textSecondary,
-            600: TANGLE_COLORS.bgCard,
-            700: TANGLE_COLORS.bgCard,
-            800: TANGLE_COLORS.bgPaper,
-            900: TANGLE_COLORS.bgDefault,
+            100: colors.borderLight,
+            200: colors.border,
+            300: colors.borderLight,
+            400: colors.textDisabled,
+            500: colors.textSecondary,
+            600: colors.bgCard,
+            700: colors.bgCard,
+            800: colors.bgPaper,
+            900: colors.bgDefault,
           },
           success: {
-            main: TANGLE_COLORS.success,
+            main: colors.success,
           },
           error: {
-            main: TANGLE_COLORS.error,
+            main: colors.error,
           },
           warning: {
-            main: TANGLE_COLORS.warning,
+            main: colors.warning,
           },
-          divider: TANGLE_COLORS.border,
+          divider: colors.border,
         },
         shape: {
           borderRadius: 8,
@@ -111,16 +140,16 @@ const LiFiBridgeContainer: FC = () => {
             },
             styleOverrides: {
               root: {
-                backgroundColor: TANGLE_COLORS.bgPaper,
-                borderColor: TANGLE_COLORS.border,
+                backgroundColor: colors.bgPaper,
+                borderColor: colors.border,
               },
             },
           },
           MuiInputCard: {
             styleOverrides: {
               root: {
-                backgroundColor: TANGLE_COLORS.bgCard,
-                borderColor: TANGLE_COLORS.border,
+                backgroundColor: colors.bgCard,
+                borderColor: colors.border,
               },
             },
           },
@@ -170,7 +199,7 @@ const LiFiBridgeContainer: FC = () => {
         ],
       },
     }),
-    [],
+    [isDarkMode, colors],
   );
 
   return (

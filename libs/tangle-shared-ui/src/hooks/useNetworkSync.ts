@@ -2,7 +2,10 @@
 
 import { useEffect } from 'react';
 import { useChainId, useAccount } from 'wagmi';
-import { Network, NETWORK_MAP } from '@tangle-network/ui-components/constants/networks';
+import {
+  Network,
+  NETWORK_MAP,
+} from '@tangle-network/ui-components/constants/networks';
 import useNetworkStore from '../context/useNetworkStore';
 
 /**

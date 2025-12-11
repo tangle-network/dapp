@@ -1,17 +1,17 @@
 import { TableAndChartTabs } from '@tangle-network/ui-components/components/TableAndChartTabs';
 import { LockFillIcon } from '@tangle-network/icons';
-import { ReactElement, useMemo, useState } from 'react';
+import { ReactElement, useState } from 'react';
 import {
   TabContent,
   Typography,
   SkeletonLoader,
+  Button,
 } from '@tangle-network/ui-components';
 import { useAccount } from 'wagmi';
-import {
-  useRestakeAssets,
-  useDelegator,
-} from '@tangle-network/tangle-shared-ui/data/graphql';
+import { useRestakingOverview } from '@tangle-network/tangle-shared-ui/data/restake/useRestakingData';
 import { formatUnits } from 'viem';
+import { Link } from 'react-router';
+import { TangleDAppPagePath } from '../../../types';
 
 enum TotalValueLockedTab {
   TVL = 'Total Value Locked',
@@ -23,41 +23,20 @@ const TotalValueLockedTabIcon: ReactElement[] = [
 
 export const TotalValueLockedTabs = () => {
   const [selectedTab, setSelectedTab] = useState(TotalValueLockedTab.TVL);
+  const { isConnected } = useAccount();
 
-  const { address } = useAccount();
-  const { assets, isLoading: isLoadingAssets } = useRestakeAssets();
-  const { data: delegator, isLoading: isLoadingDelegator } =
-    useDelegator(address);
+  // Use the unified restaking data hook
+  const { positions, isLoading } = useRestakingOverview();
 
-  const isLoading = isLoadingAssets || isLoadingDelegator;
-
-  // Calculate TVL from user's deposits (asset positions)
-  const tvlData = useMemo(() => {
-    if (!assets || !delegator) return [];
-
-    const assetPositions = delegator.assetPositions ?? [];
-
-    return assetPositions
-      .map((position) => {
-        const asset = assets.get(position.token);
-        if (!asset) return null;
-
-        const depositedAmount = formatUnits(
-          position.totalDeposited,
-          asset.metadata.decimals,
-        );
-
-        return {
-          id: position.token,
-          name: asset.metadata.name,
-          symbol: asset.metadata.symbol,
-          decimals: asset.metadata.decimals,
-          amount: depositedAmount,
-          token: position.token,
-        };
-      })
-      .filter(Boolean);
-  }, [assets, delegator]);
+  // Format positions for display
+  const tvlData = positions.map((pos) => ({
+    id: pos.token,
+    name: pos.symbol,
+    symbol: pos.symbol,
+    decimals: pos.decimals,
+    amount: formatUnits(pos.deposited, pos.decimals),
+    token: pos.token,
+  }));
 
   return (
     <TableAndChartTabs
@@ -75,14 +54,28 @@ export const TotalValueLockedTabs = () => {
       >
         {isLoading ? (
           <SkeletonLoader className="w-full h-48" />
+        ) : !isConnected ? (
+          <div className="flex flex-col items-center justify-center py-8 gap-2">
+            <Typography variant="body1" className="text-mono-100">
+              Connect wallet to view your TVL
+            </Typography>
+            <Typography variant="body2" className="text-mono-80">
+              Connect your wallet to see your deposited assets
+            </Typography>
+          </div>
         ) : tvlData.length === 0 ? (
-          <div className="flex flex-col items-center justify-center py-8">
+          <div className="flex flex-col items-center justify-center py-8 gap-3">
             <Typography variant="body1" className="text-mono-100">
               No deposits found
             </Typography>
-            <Typography variant="body2" className="text-mono-80">
+            <Typography variant="body2" className="text-mono-80 text-center">
               Start by depositing assets to see your TVL
             </Typography>
+            <Link to={TangleDAppPagePath.RESTAKE}>
+              <Button variant="secondary" size="sm">
+                Go to Restake
+              </Button>
+            </Link>
           </div>
         ) : (
           <div className="w-full space-y-4">

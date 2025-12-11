@@ -14,6 +14,7 @@ import { Typography } from '@tangle-network/ui-components/typography/Typography'
 import { FC, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import { Address, formatUnits, parseUnits } from 'viem';
+import { BN } from '@polkadot/util';
 import { useAccount } from 'wagmi';
 import ErrorMessage from '../../../components/ErrorMessage';
 import ActionButtonBase from '../../../components/restaking/ActionButtonBase';
@@ -32,6 +33,7 @@ import SupportedChainModal from '../SupportedChainModal';
 import useSwitchChain from '../useSwitchChain';
 import Details from './Details';
 import filterBy from '@tangle-network/tangle-shared-ui/utils/filterBy';
+import AssetListItem from '../../../components/Lists/AssetListItem';
 
 import {
   useDelegator,
@@ -480,21 +482,14 @@ const RestakeDelegateForm: FC = () => {
           filterBy(query, [item.name, item.symbol, item.id])
         }
         renderItem={(asset) => (
-          <div className="flex items-center justify-between w-full p-2">
-            <div className="flex items-center gap-3">
-              <TokenIcon name={asset.symbol} size="lg" />
-              <div className="flex flex-col">
-                <span className="font-medium">{asset.symbol}</span>
-                <span className="text-xs text-mono-100">{asset.name}</span>
-              </div>
-            </div>
-            <div className="flex flex-col items-end">
-              <span className="text-sm">
-                {formatUnits(asset.availableBalance, asset.decimals)}
-              </span>
-              <span className="text-xs text-mono-100">Available</span>
-            </div>
-          </div>
+          <AssetListItem
+            assetId={asset.id}
+            name={asset.name}
+            symbol={asset.symbol}
+            balance={new BN(asset.availableBalance.toString())}
+            decimals={asset.decimals}
+            rightBottomText="Available"
+          />
         )}
       />
 

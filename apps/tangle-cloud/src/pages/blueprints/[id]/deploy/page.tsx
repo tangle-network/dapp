@@ -19,7 +19,6 @@ import {
 } from '@tangle-network/tangle-shared-ui/data/graphql';
 import { Deployment } from './DeploySteps/Deployment';
 import { twMerge } from 'tailwind-merge';
-import { ArrowRightIcon } from '@radix-ui/react-icons';
 import ErrorMessage from '../../../../components/ErrorMessage';
 import { z } from 'zod';
 import { PagePath } from '../../../../types';
@@ -154,11 +153,7 @@ const DeployPage: FC = () => {
             Error(s) on validation. Please check the form and try again.
           </ErrorMessage>
         )}
-        <Button
-          rightIcon={<ArrowRightIcon width={24} height={24} />}
-          onClick={onDeployBlueprint}
-          isLoading={serviceRequestPending}
-        >
+        <Button onClick={onDeployBlueprint} isLoading={serviceRequestPending}>
           Deploy
         </Button>
       </div>

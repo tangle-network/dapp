@@ -13,9 +13,9 @@ import { CACHE_CONFIG } from '../constants/cacheConfig';
 export const checkEnvioHealth = async (
   network?: EnvioNetwork,
 ): Promise<boolean> => {
-  const endpoint = getEnvioEndpoint(network);
-
   try {
+    const endpoint = getEnvioEndpoint(network);
+
     // Query for actual restaking assets to verify indexer has data
     const response = await fetch(endpoint, {
       method: 'POST',
@@ -23,6 +23,8 @@ export const checkEnvioHealth = async (
       body: JSON.stringify({
         query: '{ RestakingAsset(limit: 1) { id } }',
       }),
+      // Short timeout for health check
+      signal: AbortSignal.timeout(5000),
     });
 
     if (!response.ok) {
@@ -34,8 +36,9 @@ export const checkEnvioHealth = async (
     const hasData =
       result.data?.RestakingAsset && result.data.RestakingAsset.length > 0;
 
-    return hasData;
+    return hasData === true;
   } catch {
+    // Any error means indexer is not healthy
     return false;
   }
 };

@@ -514,7 +514,7 @@ const WebbProviderInner: FC<WebbProviderInnerProps> = ({
       }
     },
     // prettier-ignore
-    [activeApi, appEvent, applicationName, catchWebbError, connectAsync, connectors, notificationApi, setActiveApiWithAccounts, setActiveChain, setActiveWallet],
+    [activeApi, appEvent, catchWebbError, connectAsync, connectors, notificationApi, setActiveApiWithAccounts, setActiveChain, setActiveWallet],
   );
 
   /**

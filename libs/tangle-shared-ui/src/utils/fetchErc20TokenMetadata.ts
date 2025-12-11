@@ -2,6 +2,7 @@ import { isEvmAddress } from '@tangle-network/ui-components';
 import { EvmAddress } from '@tangle-network/ui-components/types/address';
 import { ContractFunctionName, erc20Abi, PublicClient } from 'viem';
 import { z } from 'zod';
+import { cacheTokenMetadata } from '@tangle-network/dapp-config/tokenMetadata';
 
 type TokenMetadata = {
   id: EvmAddress;
@@ -86,6 +87,13 @@ const fetchErc20TokenMetadata = async (
           decimals: Number(decimalsResult.result),
         });
 
+        // Cache for future lookups
+        cacheTokenMetadata(id, {
+          name: token.name,
+          symbol: token.symbol,
+          decimals: token.decimals,
+        });
+
         metadatas.push(token);
       } catch (parseError) {
         console.warn(
@@ -136,12 +144,20 @@ const fetchErc20TokenMetadataWithIndividualCalls = async (
         }),
       ]);
 
-      tokenMetadata[tokenAddress] = {
+      const metadata = {
         id: tokenAddress,
         name: nameResult,
         symbol: symbolResult,
         decimals: decimalsResult,
       };
+      tokenMetadata[tokenAddress] = metadata;
+
+      // Cache for future lookups
+      cacheTokenMetadata(tokenAddress, {
+        name: nameResult,
+        symbol: symbolResult,
+        decimals: decimalsResult,
+      });
     } catch (error) {
       console.error(
         `Error fetching metadata for token ${tokenAddress}:`,

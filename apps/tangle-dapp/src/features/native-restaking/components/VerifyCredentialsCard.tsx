@@ -1,5 +1,10 @@
 import { FC, useState, useCallback } from 'react';
-import { Button, Card, CardVariant, Typography } from '@tangle-network/ui-components';
+import {
+  Button,
+  Card,
+  CardVariant,
+  Typography,
+} from '@tangle-network/ui-components';
 import type { Address } from 'viem';
 import { useVerifyWithdrawalCredentials, usePodInfo } from '../hooks';
 import type { CredentialProofBundle } from '../types';

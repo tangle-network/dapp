@@ -9,9 +9,8 @@ import {
 import { TokenIcon } from '@tangle-network/icons';
 import type { RestakingAsset } from '@tangle-network/tangle-shared-ui/data/graphql/useRestakingAssets';
 import type { Delegator } from '@tangle-network/tangle-shared-ui/data/graphql/useDelegator';
-import { formatUnits, Address } from 'viem';
+import { formatUnits } from 'viem';
 import { twMerge } from 'tailwind-merge';
-import { getLocalTokenByAddress } from '@tangle-network/dapp-config/localTokens';
 
 interface Props {
   assets: RestakingAsset[];
@@ -19,14 +18,12 @@ interface Props {
   isLoading: boolean;
 }
 
-// Get token symbol from address using local token config or fallback to truncated address
-const getTokenSymbol = (tokenAddress: string): string => {
-  const localToken = getLocalTokenByAddress(tokenAddress as Address);
-  if (localToken) {
-    return localToken.symbol;
-  }
-  // Fallback to truncated address
-  return `${tokenAddress.slice(0, 6)}...${tokenAddress.slice(-4)}`;
+// Get token symbol - truncate address if no metadata available
+const getTokenSymbol = (asset: RestakingAsset): string => {
+  // Token address might have metadata from indexer in the future
+  // For now just truncate the address
+  const addr = asset.token;
+  return `${addr.slice(0, 6)}...${addr.slice(-4)}`;
 };
 
 const formatAmount = (amount: bigint, decimals: number): string => {
@@ -105,9 +102,9 @@ export const RestakingAssetsTable: FC<Props> = ({
       {/* Rows */}
       {assets.map((asset) => {
         const position = assetPositions.get(asset.token.toLowerCase());
-        const localToken = getLocalTokenByAddress(asset.token as Address);
-        const decimals = localToken?.decimals ?? 18;
-        const symbol = getTokenSymbol(asset.token);
+        // Default to 18 decimals if not known
+        const decimals = 18;
+        const symbol = getTokenSymbol(asset);
 
         return (
           <Card
@@ -119,16 +116,20 @@ export const RestakingAssetsTable: FC<Props> = ({
             )}
           >
             <div className="flex items-center gap-3">
-              <TokenIcon name={symbol} size="lg" />
+              <div className="flex items-center justify-center w-10 h-10">
+                <TokenIcon name={symbol} size="xl" />
+              </div>
+
               <div>
                 <Typography variant="body1" fw="semibold">
                   {symbol}
                 </Typography>
+
                 <Typography
                   variant="body2"
                   className="text-mono-100 dark:text-mono-100"
                 >
-                  {localToken?.name ?? (asset.enabled ? 'Enabled' : 'Disabled')}
+                  {asset.enabled ? 'Enabled' : 'Disabled'}
                 </Typography>
               </div>
             </div>

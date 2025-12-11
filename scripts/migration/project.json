@@ -1,0 +1,15 @@
+{
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "name": "tangle-migration-scripts",
+  "targets": {
+    "lint": {
+      "executor": "nx:run-commands",
+      "options": {
+        "cwd": "{projectRoot}",
+        "command": "eslint . --no-error-on-unmatched-pattern"
+      },
+      "outputs": ["{options.outputFile}"]
+    }
+  },
+  "tags": []
+}

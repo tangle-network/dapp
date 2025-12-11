@@ -15,6 +15,7 @@ import { Typography } from '@tangle-network/ui-components/typography/Typography'
 import { FC, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { type SubmitHandler, useForm } from 'react-hook-form';
 import { Address, formatUnits, parseUnits } from 'viem';
+import { BN } from '@polkadot/util';
 import { useAccount, useChainId } from 'wagmi';
 import ErrorMessage from '../../../components/ErrorMessage';
 import RestakeDetailCard from '../../../components/RestakeDetailCard';
@@ -45,6 +46,7 @@ import type { EvmAddress } from '@tangle-network/ui-components/types/address';
 import ListModal from '@tangle-network/tangle-shared-ui/components/ListModal';
 import filterBy from '@tangle-network/tangle-shared-ui/utils/filterBy';
 import { chainsConfig } from '@tangle-network/dapp-config/chains';
+import AssetListItem from '../../../components/Lists/AssetListItem';
 
 // Asset position item for selection
 type AssetPositionItem = {
@@ -433,18 +435,13 @@ const RestakeWithdrawForm: FC = () => {
           filterBy(query, [item.token, item.tokenSymbol])
         }
         renderItem={(item) => (
-          <div className="flex items-center justify-between w-full p-2">
-            <div className="flex items-center gap-3">
-              <TokenIcon name={item.tokenSymbol} size="lg" />
-              <span className="font-medium">{item.tokenSymbol}</span>
-            </div>
-            <div className="flex flex-col items-end">
-              <span className="text-sm">
-                {formatUnits(item.availableToWithdraw, item.tokenDecimals)}
-              </span>
-              <span className="text-xs text-mono-100">Available</span>
-            </div>
-          </div>
+          <AssetListItem
+            assetId={item.token}
+            symbol={item.tokenSymbol}
+            balance={new BN(item.availableToWithdraw.toString())}
+            decimals={item.tokenDecimals}
+            rightBottomText="Available"
+          />
         )}
       />
 

@@ -2,59 +2,103 @@ import {
   useReadContract,
   useWriteContract,
   useWaitForTransactionReceipt,
+  useChainId,
 } from 'wagmi';
 import { type Address, parseEther } from 'viem';
 import { useCallback, useMemo } from 'react';
 import { VALIDATOR_POD_MANAGER_ABI } from '../../../abi/validatorPodManager';
 import type { PodOwnerInfo, OperatorInfo, Withdrawal } from '../types';
 
-// TODO: Replace with actual deployed contract address
-const VALIDATOR_POD_MANAGER_ADDRESS =
-  '0x0000000000000000000000000000000000000000' as const;
+// Contract addresses by chain ID
+// TODO: Add mainnet/testnet addresses when deployed
+const VALIDATOR_POD_MANAGER_ADDRESSES: Record<number, Address> = {
+  // 1: '0x...', // Ethereum Mainnet - not deployed yet
+  // 17000: '0x...', // Holesky Testnet - not deployed yet
+  31337: '0x07882Ae1ecB7429a84f1D53048d35c4bB2056877', // Local (Anvil)
+};
+
+// Helper to check if contracts are deployed
+export const isNativeRestakingDeployed = (chainId: number): boolean => {
+  return chainId in VALIDATOR_POD_MANAGER_ADDRESSES;
+};
+
+export const getValidatorPodManagerAddress = (
+  chainId: number,
+): Address | null => {
+  return VALIDATOR_POD_MANAGER_ADDRESSES[chainId] ?? null;
+};
+
+// Helper hook for getting contract address with chain awareness
+const useContractAddress = () => {
+  const chainId = useChainId();
+  return getValidatorPodManagerAddress(chainId);
+};
 
 export const useValidatorPodManagerAddress = () => {
-  return VALIDATOR_POD_MANAGER_ADDRESS;
+  const chainId = useChainId();
+  return getValidatorPodManagerAddress(chainId);
 };
 
 // Hook to check if user has a pod
 export const useHasPod = (ownerAddress: Address | undefined) => {
+  const chainId = useChainId();
+  const contractAddress = getValidatorPodManagerAddress(chainId);
+
   const { data, isLoading, error, refetch } = useReadContract({
-    address: VALIDATOR_POD_MANAGER_ADDRESS,
+    address: contractAddress ?? undefined,
     abi: VALIDATOR_POD_MANAGER_ABI,
     functionName: 'hasPod',
     args: ownerAddress ? [ownerAddress] : undefined,
     query: {
-      enabled: !!ownerAddress,
+      enabled: !!ownerAddress && !!contractAddress,
     },
   });
 
-  return { hasPod: data as boolean | undefined, isLoading, error, refetch };
+  return {
+    hasPod: data as boolean | undefined,
+    isLoading: contractAddress ? isLoading : false,
+    error,
+    refetch,
+    isDeployed: !!contractAddress,
+  };
 };
 
 // Hook to get pod address for an owner
 export const useGetPod = (ownerAddress: Address | undefined) => {
+  const chainId = useChainId();
+  const contractAddress = getValidatorPodManagerAddress(chainId);
+
   const { data, isLoading, error, refetch } = useReadContract({
-    address: VALIDATOR_POD_MANAGER_ADDRESS,
+    address: contractAddress ?? undefined,
     abi: VALIDATOR_POD_MANAGER_ABI,
     functionName: 'getPod',
     args: ownerAddress ? [ownerAddress] : undefined,
     query: {
-      enabled: !!ownerAddress,
+      enabled: !!ownerAddress && !!contractAddress,
     },
   });
 
-  return { podAddress: data as Address | undefined, isLoading, error, refetch };
+  return {
+    podAddress: data as Address | undefined,
+    isLoading: contractAddress ? isLoading : false,
+    error,
+    refetch,
+    isDeployed: !!contractAddress,
+  };
 };
 
 // Hook to get owner's shares
 export const usePodOwnerShares = (ownerAddress: Address | undefined) => {
+  const chainId = useChainId();
+  const contractAddress = getValidatorPodManagerAddress(chainId);
+
   const { data, isLoading, error, refetch } = useReadContract({
-    address: VALIDATOR_POD_MANAGER_ADDRESS,
+    address: contractAddress ?? undefined,
     abi: VALIDATOR_POD_MANAGER_ABI,
     functionName: 'podOwnerShares',
     args: ownerAddress ? [ownerAddress] : undefined,
     query: {
-      enabled: !!ownerAddress,
+      enabled: !!ownerAddress && !!contractAddress,
     },
   });
 
@@ -65,13 +109,16 @@ export const usePodOwnerShares = (ownerAddress: Address | undefined) => {
 export const useDelegatorTotalDelegated = (
   delegatorAddress: Address | undefined,
 ) => {
+  const chainId = useChainId();
+  const contractAddress = getValidatorPodManagerAddress(chainId);
+
   const { data, isLoading, error, refetch } = useReadContract({
-    address: VALIDATOR_POD_MANAGER_ADDRESS,
+    address: contractAddress ?? undefined,
     abi: VALIDATOR_POD_MANAGER_ABI,
     functionName: 'delegatorTotalDelegated',
     args: delegatorAddress ? [delegatorAddress] : undefined,
     query: {
-      enabled: !!delegatorAddress,
+      enabled: !!delegatorAddress && !!contractAddress,
     },
   });
 
@@ -85,13 +132,16 @@ export const useDelegatorTotalDelegated = (
 
 // Hook to get queued shares
 export const useQueuedShares = (stakerAddress: Address | undefined) => {
+  const chainId = useChainId();
+  const contractAddress = getValidatorPodManagerAddress(chainId);
+
   const { data, isLoading, error, refetch } = useReadContract({
-    address: VALIDATOR_POD_MANAGER_ADDRESS,
+    address: contractAddress ?? undefined,
     abi: VALIDATOR_POD_MANAGER_ABI,
     functionName: 'queuedShares',
     args: stakerAddress ? [stakerAddress] : undefined,
     query: {
-      enabled: !!stakerAddress,
+      enabled: !!stakerAddress && !!contractAddress,
     },
   });
 
@@ -105,13 +155,16 @@ export const useQueuedShares = (stakerAddress: Address | undefined) => {
 
 // Hook to get available to withdraw
 export const useAvailableToWithdraw = (stakerAddress: Address | undefined) => {
+  const chainId = useChainId();
+  const contractAddress = getValidatorPodManagerAddress(chainId);
+
   const { data, isLoading, error, refetch } = useReadContract({
-    address: VALIDATOR_POD_MANAGER_ADDRESS,
+    address: contractAddress ?? undefined,
     abi: VALIDATOR_POD_MANAGER_ABI,
     functionName: 'getAvailableToWithdraw',
     args: stakerAddress ? [stakerAddress] : undefined,
     query: {
-      enabled: !!stakerAddress,
+      enabled: !!stakerAddress && !!contractAddress,
     },
   });
 
@@ -218,16 +271,18 @@ export const useOperatorInfo = (
   isLoading: boolean;
   refetch: () => void;
 } => {
+  const contractAddress = useContractAddress();
+
   const {
     data: isOperator,
     isLoading: l1,
     refetch: r1,
   } = useReadContract({
-    address: VALIDATOR_POD_MANAGER_ADDRESS,
+    address: contractAddress ?? undefined,
     abi: VALIDATOR_POD_MANAGER_ABI,
     functionName: 'isOperator',
     args: operatorAddress ? [operatorAddress] : undefined,
-    query: { enabled: !!operatorAddress },
+    query: { enabled: !!operatorAddress && !!contractAddress },
   });
 
   const {
@@ -235,11 +290,11 @@ export const useOperatorInfo = (
     isLoading: l2,
     refetch: r2,
   } = useReadContract({
-    address: VALIDATOR_POD_MANAGER_ADDRESS,
+    address: contractAddress ?? undefined,
     abi: VALIDATOR_POD_MANAGER_ABI,
     functionName: 'isOperatorActive',
     args: operatorAddress ? [operatorAddress] : undefined,
-    query: { enabled: !!operatorAddress },
+    query: { enabled: !!operatorAddress && !!contractAddress },
   });
 
   const {
@@ -247,11 +302,11 @@ export const useOperatorInfo = (
     isLoading: l3,
     refetch: r3,
   } = useReadContract({
-    address: VALIDATOR_POD_MANAGER_ADDRESS,
+    address: contractAddress ?? undefined,
     abi: VALIDATOR_POD_MANAGER_ABI,
     functionName: 'operatorStake',
     args: operatorAddress ? [operatorAddress] : undefined,
-    query: { enabled: !!operatorAddress },
+    query: { enabled: !!operatorAddress && !!contractAddress },
   });
 
   const {
@@ -259,11 +314,11 @@ export const useOperatorInfo = (
     isLoading: l4,
     refetch: r4,
   } = useReadContract({
-    address: VALIDATOR_POD_MANAGER_ADDRESS,
+    address: contractAddress ?? undefined,
     abi: VALIDATOR_POD_MANAGER_ABI,
     functionName: 'operatorDelegatedStake',
     args: operatorAddress ? [operatorAddress] : undefined,
-    query: { enabled: !!operatorAddress },
+    query: { enabled: !!operatorAddress && !!contractAddress },
   });
 
   const isLoading = l1 || l2 || l3 || l4;
@@ -297,13 +352,15 @@ export const useOperatorInfo = (
 export const useWithdrawalInfo = (
   withdrawalRoot: `0x${string}` | undefined,
 ) => {
+  const contractAddress = useContractAddress();
+
   const { data, isLoading, error, refetch } = useReadContract({
-    address: VALIDATOR_POD_MANAGER_ADDRESS,
+    address: contractAddress ?? undefined,
     abi: VALIDATOR_POD_MANAGER_ABI,
     functionName: 'getWithdrawalInfo',
     args: withdrawalRoot ? [withdrawalRoot] : undefined,
     query: {
-      enabled: !!withdrawalRoot,
+      enabled: !!withdrawalRoot && !!contractAddress,
     },
   });
 
@@ -331,10 +388,13 @@ export const useWithdrawalInfo = (
 
 // Hook to get min operator stake
 export const useMinOperatorStake = () => {
+  const contractAddress = useContractAddress();
+
   const { data, isLoading, error } = useReadContract({
-    address: VALIDATOR_POD_MANAGER_ADDRESS,
+    address: contractAddress ?? undefined,
     abi: VALIDATOR_POD_MANAGER_ABI,
     functionName: 'minOperatorStakeAmount',
+    query: { enabled: !!contractAddress },
   });
 
   return { minStake: data as bigint | undefined, isLoading, error };
@@ -342,10 +402,13 @@ export const useMinOperatorStake = () => {
 
 // Hook to get withdrawal delay
 export const useWithdrawalDelayBlocks = () => {
+  const contractAddress = useContractAddress();
+
   const { data, isLoading, error } = useReadContract({
-    address: VALIDATOR_POD_MANAGER_ADDRESS,
+    address: contractAddress ?? undefined,
     abi: VALIDATOR_POD_MANAGER_ABI,
     functionName: 'withdrawalDelayBlocks',
+    query: { enabled: !!contractAddress },
   });
 
   return { delayBlocks: data as number | undefined, isLoading, error };
@@ -356,8 +419,10 @@ export const useDelegation = (
   delegatorAddress: Address | undefined,
   operatorAddress: Address | undefined,
 ) => {
+  const contractAddress = useContractAddress();
+
   const { data, isLoading, error, refetch } = useReadContract({
-    address: VALIDATOR_POD_MANAGER_ADDRESS,
+    address: contractAddress ?? undefined,
     abi: VALIDATOR_POD_MANAGER_ABI,
     functionName: 'delegations',
     args:
@@ -365,7 +430,7 @@ export const useDelegation = (
         ? [delegatorAddress, operatorAddress]
         : undefined,
     query: {
-      enabled: !!delegatorAddress && !!operatorAddress,
+      enabled: !!delegatorAddress && !!operatorAddress && !!contractAddress,
     },
   });
 
@@ -374,23 +439,26 @@ export const useDelegation = (
 
 // Write hooks
 export const useCreatePod = () => {
+  const contractAddress = useContractAddress();
   const { writeContract, data: hash, isPending, error } = useWriteContract();
   const { isLoading: isConfirming, isSuccess } = useWaitForTransactionReceipt({
     hash,
   });
 
   const createPod = useCallback(() => {
+    if (!contractAddress) return;
     writeContract({
-      address: VALIDATOR_POD_MANAGER_ADDRESS,
+      address: contractAddress,
       abi: VALIDATOR_POD_MANAGER_ABI,
       functionName: 'createPod',
     });
-  }, [writeContract]);
+  }, [writeContract, contractAddress]);
 
   return { createPod, hash, isPending, isConfirming, isSuccess, error };
 };
 
 export const useRegisterOperator = () => {
+  const contractAddress = useContractAddress();
   const { writeContract, data: hash, isPending, error } = useWriteContract();
   const { isLoading: isConfirming, isSuccess } = useWaitForTransactionReceipt({
     hash,
@@ -398,20 +466,22 @@ export const useRegisterOperator = () => {
 
   const registerOperator = useCallback(
     (stakeAmountEth: string) => {
+      if (!contractAddress) return;
       writeContract({
-        address: VALIDATOR_POD_MANAGER_ADDRESS,
+        address: contractAddress,
         abi: VALIDATOR_POD_MANAGER_ABI,
         functionName: 'registerOperator',
         value: parseEther(stakeAmountEth),
       });
     },
-    [writeContract],
+    [writeContract, contractAddress],
   );
 
   return { registerOperator, hash, isPending, isConfirming, isSuccess, error };
 };
 
 export const useDelegateTo = () => {
+  const contractAddress = useContractAddress();
   const { writeContract, data: hash, isPending, error } = useWriteContract();
   const { isLoading: isConfirming, isSuccess } = useWaitForTransactionReceipt({
     hash,
@@ -419,20 +489,22 @@ export const useDelegateTo = () => {
 
   const delegateTo = useCallback(
     (operator: Address, amount: bigint) => {
+      if (!contractAddress) return;
       writeContract({
-        address: VALIDATOR_POD_MANAGER_ADDRESS,
+        address: contractAddress,
         abi: VALIDATOR_POD_MANAGER_ABI,
         functionName: 'delegateTo',
         args: [operator, amount],
       });
     },
-    [writeContract],
+    [writeContract, contractAddress],
   );
 
   return { delegateTo, hash, isPending, isConfirming, isSuccess, error };
 };
 
 export const useUndelegateFrom = () => {
+  const contractAddress = useContractAddress();
   const { writeContract, data: hash, isPending, error } = useWriteContract();
   const { isLoading: isConfirming, isSuccess } = useWaitForTransactionReceipt({
     hash,
@@ -440,20 +512,22 @@ export const useUndelegateFrom = () => {
 
   const undelegateFrom = useCallback(
     (operator: Address, amount: bigint) => {
+      if (!contractAddress) return;
       writeContract({
-        address: VALIDATOR_POD_MANAGER_ADDRESS,
+        address: contractAddress,
         abi: VALIDATOR_POD_MANAGER_ABI,
         functionName: 'undelegateFrom',
         args: [operator, amount],
       });
     },
-    [writeContract],
+    [writeContract, contractAddress],
   );
 
   return { undelegateFrom, hash, isPending, isConfirming, isSuccess, error };
 };
 
 export const useQueueWithdrawal = () => {
+  const contractAddress = useContractAddress();
   const { writeContract, data: hash, isPending, error } = useWriteContract();
   const { isLoading: isConfirming, isSuccess } = useWaitForTransactionReceipt({
     hash,
@@ -461,20 +535,22 @@ export const useQueueWithdrawal = () => {
 
   const queueWithdrawal = useCallback(
     (shares: bigint) => {
+      if (!contractAddress) return;
       writeContract({
-        address: VALIDATOR_POD_MANAGER_ADDRESS,
+        address: contractAddress,
         abi: VALIDATOR_POD_MANAGER_ABI,
         functionName: 'queueWithdrawal',
         args: [shares],
       });
     },
-    [writeContract],
+    [writeContract, contractAddress],
   );
 
   return { queueWithdrawal, hash, isPending, isConfirming, isSuccess, error };
 };
 
 export const useCompleteWithdrawal = () => {
+  const contractAddress = useContractAddress();
   const { writeContract, data: hash, isPending, error } = useWriteContract();
   const { isLoading: isConfirming, isSuccess } = useWaitForTransactionReceipt({
     hash,
@@ -482,14 +558,15 @@ export const useCompleteWithdrawal = () => {
 
   const completeWithdrawal = useCallback(
     (withdrawalRoot: `0x${string}`) => {
+      if (!contractAddress) return;
       writeContract({
-        address: VALIDATOR_POD_MANAGER_ADDRESS,
+        address: contractAddress,
         abi: VALIDATOR_POD_MANAGER_ABI,
         functionName: 'completeWithdrawal',
         args: [withdrawalRoot],
       });
     },
-    [writeContract],
+    [writeContract, contractAddress],
   );
 
   return {

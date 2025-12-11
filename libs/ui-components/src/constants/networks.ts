@@ -242,7 +242,9 @@ export const BASE_NETWORK = {
   httpRpcEndpoints: ['https://mainnet.base.org'],
   polkadotJsDashboardUrl: '',
   evmExplorerUrl: 'https://basescan.org',
-  createExplorerAccountUrl: (address: EvmAddress | SubstrateAddress | SolanaAddress) => {
+  createExplorerAccountUrl: (
+    address: EvmAddress | SubstrateAddress | SolanaAddress,
+  ) => {
     if (isEvmAddress(address)) {
       return `https://basescan.org/address/${address}`;
     }
@@ -266,7 +268,9 @@ export const BASE_SEPOLIA_NETWORK = {
   httpRpcEndpoints: ['https://sepolia.base.org'],
   polkadotJsDashboardUrl: '',
   evmExplorerUrl: 'https://sepolia.basescan.org',
-  createExplorerAccountUrl: (address: EvmAddress | SubstrateAddress | SolanaAddress) => {
+  createExplorerAccountUrl: (
+    address: EvmAddress | SubstrateAddress | SolanaAddress,
+  ) => {
     if (isEvmAddress(address)) {
       return `https://sepolia.basescan.org/address/${address}`;
     }

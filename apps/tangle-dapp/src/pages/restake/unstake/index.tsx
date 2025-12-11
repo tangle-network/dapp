@@ -3,7 +3,7 @@ import { calculateTypedChainId } from '@tangle-network/dapp-types/TypedChainId';
 import isDefined from '@tangle-network/dapp-types/utils/isDefined';
 import { LockUnlockLineIcon } from '@tangle-network/icons/LockUnlockLineIcon';
 import { TokenIcon } from '@tangle-network/icons';
-import { Card, IconButton } from '@tangle-network/ui-components';
+import { Card, IconButton, shortenHex } from '@tangle-network/ui-components';
 import Button from '@tangle-network/ui-components/components/buttons/Button';
 import { Modal } from '@tangle-network/ui-components/components/Modal';
 import type { TextFieldInputProps } from '@tangle-network/ui-components/components/TextField/types';
@@ -14,6 +14,7 @@ import { FC, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { type SubmitHandler, useForm } from 'react-hook-form';
 import { twMerge } from 'tailwind-merge';
 import { Address, formatUnits, parseUnits } from 'viem';
+import { BN } from '@polkadot/util';
 import { useAccount } from 'wagmi';
 import ErrorMessage from '../../../components/ErrorMessage';
 import RestakeDetailCard from '../../../components/RestakeDetailCard';
@@ -41,6 +42,11 @@ import { useEvmAssetMetadatas } from '@tangle-network/tangle-shared-ui/hooks/use
 import type { EvmAddress } from '@tangle-network/ui-components/types/address';
 import ListModal from '@tangle-network/tangle-shared-ui/components/ListModal';
 import filterBy from '@tangle-network/tangle-shared-ui/utils/filterBy';
+import LogoListItem from '../../../components/Lists/LogoListItem';
+import {
+  AmountFormatStyle,
+  formatDisplayAmount,
+} from '@tangle-network/ui-components';
 
 // Delegation item with metadata for selection
 type DelegationItem = {
@@ -432,28 +438,29 @@ const RestakeUnstakeForm: FC = () => {
         filterItem={(item, query) =>
           filterBy(query, [item.operatorAddress, item.tokenSymbol])
         }
-        renderItem={(item) => (
-          <div className="flex items-center justify-between w-full p-2">
-            <div className="flex items-center gap-3">
-              <TokenIcon name={item.tokenSymbol} size="lg" />
-              <div className="flex flex-col">
-                <span className="font-mono text-sm">
-                  {item.operatorAddress.slice(0, 10)}...
-                  {item.operatorAddress.slice(-8)}
-                </span>
-                <span className="text-xs text-mono-100">
-                  {item.tokenSymbol}
-                </span>
-              </div>
-            </div>
-            <div className="flex flex-col items-end">
-              <span className="text-sm">
-                {formatUnits(item.availableToUnstake, item.tokenDecimals)}
-              </span>
-              <span className="text-xs text-mono-100">Available</span>
-            </div>
-          </div>
-        )}
+        renderItem={(item) => {
+          const fmtBalance = formatDisplayAmount(
+            new BN(item.availableToUnstake.toString()),
+            item.tokenDecimals,
+            AmountFormatStyle.SHORT,
+          );
+          return (
+            <LogoListItem
+              logo={<TokenIcon size="xl" name={item.tokenSymbol} />}
+              leftUpperContent={`${item.tokenSymbol} Delegation`}
+              leftBottomContent={
+                <Typography
+                  variant="body1"
+                  className="text-mono-120 dark:text-mono-100"
+                >
+                  Operator: {shortenHex(item.operatorAddress)}
+                </Typography>
+              }
+              rightUpperText={`${fmtBalance} ${item.tokenSymbol}`}
+              rightBottomText="Available"
+            />
+          );
+        }}
       />
 
       <Modal open={isChainModalOpen} onOpenChange={updateChainModal}>
