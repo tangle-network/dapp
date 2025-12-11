@@ -198,10 +198,28 @@ const useClaimEligibility = ({ ss58Address }: UseClaimEligibilityOptions) => {
     return lookupClaim(proofsData, ss58Address);
   }, [ss58Address, proofsData]);
 
+  // Dev mode - use mock data when contract not configured
+  const isDevMode = !TANGLE_MIGRATION_ADDRESS;
+
   // Build eligibility object
   const eligibility = useMemo((): ClaimEligibility => {
     const actualClaimedAmount = claimedAmount ?? BigInt(0);
     const hasClaimed = actualClaimedAmount > BigInt(0);
+
+    // In dev mode without proofs, provide mock eligibility for UI testing
+    if (isDevMode && !claimData && ss58Address) {
+      const mockAmount = BigInt('1000000000000000000000'); // 1000 TNT
+      return {
+        isEligible: true,
+        amount: mockAmount,
+        merkleProof: ['0x' + '00'.repeat(32)] as Hex[],
+        hasClaimed: false,
+        claimedAmount: BigInt(0),
+        timeRemaining: BigInt(365 * 24 * 60 * 60), // 1 year
+        formattedBalance: '1,000',
+        isPaused: false,
+      };
+    }
 
     if (!claimData) {
       return {
@@ -228,7 +246,7 @@ const useClaimEligibility = ({ ss58Address }: UseClaimEligibilityOptions) => {
       formattedBalance,
       isPaused: isPaused ?? false,
     };
-  }, [claimData, claimedAmount, timeRemaining, isPaused]);
+  }, [claimData, claimedAmount, timeRemaining, isPaused, isDevMode, ss58Address]);
 
   const isLoading =
     isLoadingProofs || isLoadingClaimed || isLoadingDeadline || isLoadingPaused;

@@ -1,19 +1,15 @@
-import { FC, useMemo } from 'react';
+import { FC } from 'react';
 import { BasicInformationStep } from './BasicInformationStep';
 import { BaseDeployStepProps } from './type';
 import { AssetConfigurationStep } from './AssetConfigurationStep';
 import { SelectOperatorsStep } from './OperatorSelectionStep';
 import { RequestArgsConfigurationStep } from './RequestArgsConfigurationStep';
 import { PaymentStep } from './PaymentStep';
-import useServiceMinimumNativeSecurityRequirement from '@tangle-network/tangle-shared-ui/data/blueprints/useServicePalletConfig';
 
 export const Deployment: FC<BaseDeployStepProps> = (props) => {
-  const { result: minimumNativeSecurityRequirementResult } =
-    useServiceMinimumNativeSecurityRequirement();
-
-  const minimumNativeSecurityRequirement = useMemo(() => {
-    return minimumNativeSecurityRequirementResult || 0;
-  }, [minimumNativeSecurityRequirementResult]);
+  // In EVM mode, the minimum security requirement is handled differently
+  // through security commitments in the AssetConfigurationStep
+  const minimumNativeSecurityRequirement = 0;
 
   return (
     <>

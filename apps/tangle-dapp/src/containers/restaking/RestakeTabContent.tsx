@@ -1,27 +1,22 @@
-import { ReactNode, useCallback, useEffect, useState, type FC } from 'react';
+import { ReactNode, useCallback, type FC } from 'react';
 import RestakeTabs from '../../pages/restake/RestakeTabs';
 import { RestakeAction, RestakeTab } from '../../constants';
 import DepositForm from '../../pages/restake/deposit/DepositForm';
 import RestakeWithdrawForm from '../../pages/restake/withdraw';
 import RestakeDelegateForm from '../../pages/restake/delegate';
 import RestakeUnstakeForm from '../../pages/restake/unstake';
-import useRestakeDelegatorInfo from '@tangle-network/tangle-shared-ui/data/restake/useRestakeDelegatorInfo';
-import useRestakeOperatorMap from '@tangle-network/tangle-shared-ui/data/restake/useRestakeOperatorMap';
-import useRestakeTvl from '@tangle-network/tangle-shared-ui/data/restake/useRestakeTvl';
-import useRestakeAssets from '@tangle-network/tangle-shared-ui/data/restake/useRestakeAssets';
-import useRestakeAssetsTvl from '@tangle-network/tangle-shared-ui/data/restake/useRestakeAssetsTvl';
-import { useRestakeVaults } from '@tangle-network/tangle-shared-ui/data/restake/useRestakeVaults';
 import {
-  useVaultsTableProps,
-  VaultsTable,
-} from '../../components/tables/Vaults';
-import OperatorsTableContainer from '@tangle-network/tangle-shared-ui/components/Restaking/OperatorsTableContainer';
+  useOperatorMap,
+  useRestakingAssets,
+} from '@tangle-network/tangle-shared-ui/data/graphql';
+import { useDelegator } from '@tangle-network/tangle-shared-ui/data/graphql/useDelegator';
 import BlueprintListing from '../../pages/blueprints/BlueprintListing';
 import { useNavigate } from 'react-router';
-import { PagePath, QueryParamKey } from '../../types';
-import { RestakeAssetId } from '@tangle-network/tangle-shared-ui/types';
-import { RestakeAsset } from '@tangle-network/tangle-shared-ui/types/restake';
+import { useAccount } from 'wagmi';
+import { PagePath } from '../../types';
 import { NetworkGuard } from '../../components/NetworkGuard';
+import { RestakingAssetsTable } from '../../components/tables/RestakingAssetsTable';
+import { OperatorsTable } from '../../components/tables/OperatorsTable';
 
 type RestakeTabOrAction = RestakeTab | RestakeAction;
 
@@ -30,29 +25,25 @@ type Props = {
 };
 
 const RestakeTabContent: FC<Props> = ({ tab }) => {
-  const { result: delegatorInfo } = useRestakeDelegatorInfo();
-
-  const [refreshTrigger] = useState(0);
-
-  const {
-    result: operatorMap,
-    isLoading: isLoadingOperators,
-    error: operatorMapError,
-  } = useRestakeOperatorMap(refreshTrigger);
-  const { operatorConcentration, operatorTvl } = useRestakeTvl(delegatorInfo);
+  const { address } = useAccount();
   const navigate = useNavigate();
 
-  const { assets, isLoading: isLoadingAssets } = useRestakeAssets();
+  // Fetch delegator info from GraphQL
+  const { data: delegatorInfo, isLoading: isLoadingDelegator } =
+    useDelegator(address);
+
+  // Fetch operators from GraphQL
+  const { data: operatorMap, isLoading: isLoadingOperators } = useOperatorMap({
+    status: 'ACTIVE',
+  });
+
+  // Fetch restaking assets from GraphQL
+  const { data: restakingAssets, isLoading: isLoadingAssets } =
+    useRestakingAssets();
 
   const handleRestakeClicked = useCallback(() => {
     navigate(PagePath.RESTAKE_DEPOSIT);
   }, [navigate]);
-
-  useEffect(() => {
-    if (operatorMapError) {
-      console.error('Error fetching operator map:', operatorMapError);
-    }
-  }, [operatorMapError]);
 
   const getRestakeTabContent = (action: RestakeTabOrAction): ReactNode => {
     switch (action) {
@@ -66,18 +57,18 @@ const RestakeTabContent: FC<Props> = ({ tab }) => {
         return <RestakeUnstakeForm />;
       case RestakeTab.VAULTS:
         return (
-          <VaultTabContent assets={assets} isLoadingAssets={isLoadingAssets} />
+          <RestakingAssetsTable
+            assets={restakingAssets ?? []}
+            delegator={delegatorInfo ?? null}
+            isLoading={isLoadingAssets || isLoadingDelegator}
+          />
         );
       case RestakeTab.OPERATORS:
         return (
-          <OperatorsTableContainer
-            operatorConcentration={operatorConcentration}
-            operatorMap={operatorMap}
-            operatorTvl={operatorTvl}
-            onRestakeClicked={handleRestakeClicked}
-            onRestakeClickedPagePath={PagePath.RESTAKE_DELEGATE}
-            onRestakeClickedQueryParamKey={QueryParamKey.RESTAKE_OPERATOR}
+          <OperatorsTable
+            operatorMap={operatorMap ?? null}
             isLoading={isLoadingOperators}
+            onRestakeClicked={handleRestakeClicked}
           />
         );
       case RestakeTab.BLUEPRINTS:
@@ -96,32 +87,3 @@ const RestakeTabContent: FC<Props> = ({ tab }) => {
 };
 
 export default RestakeTabContent;
-
-type VaultTabContentProps = {
-  assets: Map<RestakeAssetId, RestakeAsset> | null;
-  isLoadingAssets: boolean;
-};
-
-const VaultTabContent = ({ assets, isLoadingAssets }: VaultTabContentProps) => {
-  const assetsTvl = useRestakeAssetsTvl();
-  const { result: delegatorInfo } = useRestakeDelegatorInfo();
-
-  const vaults = useRestakeVaults({
-    assets,
-    delegatorInfo,
-    assetsTvl,
-  });
-
-  const tableProps = useVaultsTableProps({
-    delegatorDeposits: delegatorInfo?.deposits,
-    assets,
-  });
-
-  return (
-    <VaultsTable
-      data={vaults}
-      tableProps={tableProps}
-      isLoading={isLoadingAssets}
-    />
-  );
-};

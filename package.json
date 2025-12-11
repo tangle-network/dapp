@@ -52,6 +52,7 @@
     "@mysten/dapp-kit": "^0.19.11",
     "@ngneat/falso": "^7.3.0",
     "@octokit/request": "^9.2.3",
+    "@openzeppelin/merkle-tree": "^1.0.8",
     "@polkadot/api": "^13.2.1",
     "@polkadot/apps-config": "^0.153.1",
     "@polkadot/extension-dapp": "0.58.7",

@@ -8,22 +8,37 @@ import {
   useReactTable,
 } from '@tanstack/react-table';
 import {
-  AmountFormatStyle,
   Button,
   CircularProgress,
   EMPTY_VALUE_PLACEHOLDER,
-  formatDisplayAmount,
   Typography,
 } from '@tangle-network/ui-components';
 import { TableStatusProps } from '@tangle-network/tangle-shared-ui/components/tables/TableStatus';
 import { ChevronDown } from '@tangle-network/icons';
 import pluralize from '@tangle-network/ui-components/utils/pluralize';
 import { TangleCloudTable } from '../../../components/tangleCloudTable';
-import type { RestakeVault } from '@tangle-network/tangle-shared-ui/data/restake/useRestakeVaults';
+import type { RestakeVault } from '@tangle-network/tangle-shared-ui/types/restake';
 import TableCellWrapper from '@tangle-network/tangle-shared-ui/components/tables/TableCellWrapper';
 import LsTokenIcon from '@tangle-network/tangle-shared-ui/components/LsTokenIcon';
-import calculateBnRatio from '@tangle-network/ui-components/utils/calculateBnRatio';
 import formatPercentage from '@tangle-network/ui-components/utils/formatPercentage';
+import { formatUnits } from 'viem';
+
+const formatAmount = (amount: bigint, decimals: number): string => {
+  const formatted = formatUnits(amount, decimals);
+  const num = parseFloat(formatted);
+  if (num === 0) return '0';
+  if (num >= 1_000_000) return `${(num / 1_000_000).toFixed(2)}M`;
+  if (num >= 1_000) return `${(num / 1_000).toFixed(2)}K`;
+  return num.toLocaleString(undefined, {
+    maximumFractionDigits: 2,
+    minimumFractionDigits: 0,
+  });
+};
+
+const calculateRatio = (a: bigint, b: bigint): number => {
+  if (b === BigInt(0)) return 0;
+  return Number((a * BigInt(10000)) / b) / 10000;
+};
 import { twMerge } from 'tailwind-merge';
 import { TangleCloudTableProps } from '../../../components/tangleCloudTable/type';
 import { Link } from 'react-router';
@@ -65,11 +80,7 @@ const getColumns = () => [
       const fmtDeposits =
         value === undefined
           ? EMPTY_VALUE_PLACEHOLDER
-          : formatDisplayAmount(
-              value,
-              props.row.original.decimals,
-              AmountFormatStyle.SHORT,
-            );
+          : formatAmount(value, props.row.original.decimals);
 
       return <TableCellWrapper>{fmtDeposits}</TableCellWrapper>;
     },
@@ -83,27 +94,19 @@ const getColumns = () => [
       const fmtTvl =
         tvl === undefined
           ? EMPTY_VALUE_PLACEHOLDER
-          : formatDisplayAmount(
-              tvl,
-              props.row.original.decimals,
-              AmountFormatStyle.SHORT,
-            );
+          : formatAmount(tvl, props.row.original.decimals);
 
       const depositCap = props.row.original.capacity;
 
       const fmtDepositCap =
         depositCap === undefined
           ? '∞'
-          : formatDisplayAmount(
-              depositCap,
-              props.row.original.decimals,
-              AmountFormatStyle.SHORT,
-            );
+          : formatAmount(depositCap, props.row.original.decimals);
 
       const capacityPercentage =
         tvl === undefined || depositCap === undefined
           ? null
-          : calculateBnRatio(tvl, depositCap);
+          : calculateRatio(tvl, depositCap);
 
       return (
         <TableCellWrapper removeRightBorder>

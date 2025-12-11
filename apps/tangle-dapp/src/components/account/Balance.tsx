@@ -1,23 +1,46 @@
-import useNetworkStore from '@tangle-network/tangle-shared-ui/context/useNetworkStore';
 import { InfoIconWithTooltip, Typography } from '@tangle-network/ui-components';
 import { EMPTY_VALUE_PLACEHOLDER } from '@tangle-network/ui-components/constants';
-import { FC } from 'react';
-
-import useBalances from '@tangle-network/tangle-shared-ui/hooks/useBalances';
-import formatTangleBalance from '../../utils/formatTangleBalance';
+import { FC, useMemo } from 'react';
+import { useAccount, useBalance, useChainId } from 'wagmi';
+import { formatUnits } from 'viem';
 
 const Balance: FC = () => {
-  const { transferable } = useBalances();
-  const { nativeTokenSymbol } = useNetworkStore();
+  const { address } = useAccount();
+  const chainId = useChainId();
 
-  const formattedTransferableBalance =
-    transferable === null
-      ? null
-      : formatTangleBalance(transferable, nativeTokenSymbol);
+  const { data: balance, isLoading } = useBalance({
+    address,
+  });
 
-  const parts = formattedTransferableBalance?.split(' ');
-  const left = parts?.[0] ?? EMPTY_VALUE_PLACEHOLDER;
-  const right = parts?.[1] ?? nativeTokenSymbol;
+  const formattedBalance = useMemo(() => {
+    if (!balance) return null;
+    const formatted = formatUnits(balance.value, balance.decimals);
+    const num = parseFloat(formatted);
+    return num.toLocaleString(undefined, {
+      maximumFractionDigits: 4,
+      minimumFractionDigits: 0,
+    });
+  }, [balance]);
+
+  // Get native token symbol based on chain
+  const nativeSymbol = useMemo(() => {
+    if (balance?.symbol) return balance.symbol;
+    // Fallback based on chain ID
+    switch (chainId) {
+      case 31337: // Anvil Local
+        return 'TNT';
+      case 8453: // Base
+      case 84532: // Base Sepolia
+        return 'ETH';
+      default:
+        return 'ETH';
+    }
+  }, [balance?.symbol, chainId]);
+
+  const left = isLoading
+    ? EMPTY_VALUE_PLACEHOLDER
+    : (formattedBalance ?? EMPTY_VALUE_PLACEHOLDER);
+  const right = nativeSymbol;
 
   return (
     <div className="flex flex-col w-full">

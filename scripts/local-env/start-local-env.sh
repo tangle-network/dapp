@@ -472,6 +472,121 @@ show_accounts() {
     echo ""
 }
 
+fund_account() {
+    local target_address="${1:-}"
+    local eth_amount="${2:-100}"
+
+    if [[ -z "$target_address" ]]; then
+        echo ""
+        echo -e "${BOLD}=== Fund Account ===${NC}"
+        echo ""
+        echo "Usage: fund <address> [eth_amount]"
+        echo ""
+        echo "Examples:"
+        echo "  fund 0xd04E36A1C370c6115e1C676838AcD0b430d740F3"
+        echo "  fund 0xd04E36A1C370c6115e1C676838AcD0b430d740F3 500"
+        echo ""
+        echo "This will:"
+        echo "  1. Set ETH balance using anvil_setBalance (default: 100 ETH)"
+        echo "  2. Transfer ERC20 tokens from deployer account"
+        echo ""
+        return
+    fi
+
+    log_info "Funding account: $target_address"
+
+    # Convert ETH amount to wei (hex)
+    local eth_wei=$(printf "0x%x" $(echo "$eth_amount * 1000000000000000000" | bc))
+
+    # Use anvil_setBalance to set ETH balance
+    log_info "Setting ETH balance to $eth_amount ETH..."
+    curl -s http://127.0.0.1:$ANVIL_PORT -X POST -H "Content-Type: application/json" \
+        --data "{\"jsonrpc\":\"2.0\",\"method\":\"anvil_setBalance\",\"params\":[\"$target_address\", \"$eth_wei\"],\"id\":1}" > /dev/null
+
+    if [[ $? -eq 0 ]]; then
+        log_success "ETH balance set to $eth_amount ETH"
+    else
+        log_error "Failed to set ETH balance"
+    fi
+
+    # Transfer ERC20 tokens using the activity generator
+    if [[ -f "$SCRIPT_DIR/activity-generator.mjs" ]]; then
+        log_info "Transferring ERC20 tokens..."
+
+        cd "$SCRIPT_DIR"
+        RPC_URL=http://127.0.0.1:$ANVIL_PORT \
+        USDC_ADDRESS="${USDC_ADDRESS:-}" \
+        USDT_ADDRESS="${USDT_ADDRESS:-}" \
+        DAI_ADDRESS="${DAI_ADDRESS:-}" \
+        WETH_ADDRESS="${WETH_ADDRESS:-}" \
+        STETH_ADDRESS="${STETH_ADDRESS:-}" \
+        WSTETH_ADDRESS="${WSTETH_ADDRESS:-}" \
+        EIGEN_ADDRESS="${EIGEN_ADDRESS:-}" \
+        FUND_ADDRESS="$target_address" \
+        node --input-type=module -e "
+import { createPublicClient, createWalletClient, http, parseUnits } from 'viem';
+import { privateKeyToAccount } from 'viem/accounts';
+import { anvil } from 'viem/chains';
+
+const RPC_URL = process.env.RPC_URL;
+const FUND_ADDRESS = process.env.FUND_ADDRESS;
+const DEPLOYER_KEY = '0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80';
+
+const TOKENS = {
+  usdc: { address: process.env.USDC_ADDRESS, decimals: 6, amount: '100000' },
+  usdt: { address: process.env.USDT_ADDRESS, decimals: 6, amount: '100000' },
+  dai: { address: process.env.DAI_ADDRESS, decimals: 18, amount: '100000' },
+  weth: { address: process.env.WETH_ADDRESS, decimals: 18, amount: '100' },
+  stETH: { address: process.env.STETH_ADDRESS, decimals: 18, amount: '100' },
+  wstETH: { address: process.env.WSTETH_ADDRESS, decimals: 18, amount: '100' },
+  eigen: { address: process.env.EIGEN_ADDRESS, decimals: 18, amount: '10000' },
+};
+
+const ERC20_ABI = [
+  { name: 'transfer', type: 'function', inputs: [{ name: 'to', type: 'address' }, { name: 'amount', type: 'uint256' }], outputs: [{ name: '', type: 'bool' }], stateMutability: 'nonpayable' },
+  { name: 'balanceOf', type: 'function', inputs: [{ name: 'account', type: 'address' }], outputs: [{ name: '', type: 'uint256' }], stateMutability: 'view' },
+];
+
+const publicClient = createPublicClient({ chain: { ...anvil, id: 31337 }, transport: http(RPC_URL) });
+const account = privateKeyToAccount(DEPLOYER_KEY);
+const walletClient = createWalletClient({ account, chain: { ...anvil, id: 31337 }, transport: http(RPC_URL) });
+
+for (const [name, token] of Object.entries(TOKENS)) {
+  if (!token.address) continue;
+  try {
+    const amount = parseUnits(token.amount, token.decimals);
+    const balance = await publicClient.readContract({ address: token.address, abi: ERC20_ABI, functionName: 'balanceOf', args: [account.address] });
+    if (balance >= amount) {
+      const hash = await walletClient.writeContract({ address: token.address, abi: ERC20_ABI, functionName: 'transfer', args: [FUND_ADDRESS, amount] });
+      await publicClient.waitForTransactionReceipt({ hash });
+      console.log('Transferred ' + token.amount + ' ' + name.toUpperCase());
+    } else {
+      console.log('Insufficient ' + name.toUpperCase() + ' balance in deployer');
+    }
+  } catch (e) {
+    console.log('Failed to transfer ' + name.toUpperCase() + ': ' + e.message);
+  }
+}
+console.log('Done!');
+" 2>&1 | while read line; do log_info "$line"; done
+
+        cd "$SCRIPT_DIR"
+    fi
+
+    log_success "Account funded: $target_address"
+    echo ""
+    echo "Balances:"
+    echo "  - ETH: $eth_amount"
+    [[ -n "${USDC_ADDRESS:-}" ]] && echo "  - USDC: 100,000"
+    [[ -n "${USDT_ADDRESS:-}" ]] && echo "  - USDT: 100,000"
+    [[ -n "${DAI_ADDRESS:-}" ]] && echo "  - DAI: 100,000"
+    [[ -n "${WETH_ADDRESS:-}" ]] && echo "  - WETH: 100"
+    [[ -n "${STETH_ADDRESS:-}" ]] && echo "  - stETH: 100"
+    [[ -n "${WSTETH_ADDRESS:-}" ]] && echo "  - wstETH: 100"
+    [[ -n "${EIGEN_ADDRESS:-}" ]] && echo "  - EIGEN: 10,000"
+    echo ""
+}
+
 show_logs() {
     local component="${1:-}"
     case "$component" in
@@ -513,6 +628,10 @@ print_help() {
     echo "  docker down         - Run docker compose down -v"
     echo "  docker up           - Run docker compose up -d"
     echo "  docker restart      - Restart docker containers"
+    echo ""
+    echo -e "${CYAN}Funding:${NC}"
+    echo "  fund <address>      - Fund an address with ETH + ERC20 tokens"
+    echo "  fund <address> <eth>- Fund with specific ETH amount"
     echo ""
     echo -e "${CYAN}Info:${NC}"
     echo "  status              - Show status of all components"
@@ -586,6 +705,14 @@ interactive_cli() {
                     restart) docker_restart ;;
                     *) echo "Usage: docker <down|up|restart>" ;;
                 esac
+                ;;
+
+            # Funding commands
+            fund)
+                # Parse address and optional amount from args
+                local fund_addr=$(echo "$args" | awk '{print $1}')
+                local fund_amt=$(echo "$args" | awk '{print $2}')
+                fund_account "$fund_addr" "$fund_amt"
                 ;;
 
             # Info commands

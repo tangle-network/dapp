@@ -9,51 +9,50 @@ import {
   getSortedRowModel,
   useReactTable,
 } from '@tanstack/react-table';
-import { TANGLE_TOKEN_DECIMALS } from '@tangle-network/dapp-config';
 import { CheckboxCircleFill } from '@tangle-network/icons/CheckboxCircleFill';
 import {
-  AmountFormatStyle,
   Avatar,
   Button,
-  formatDisplayAmount,
   IconWithTooltip,
   KeyValueWithButton,
   shortenString,
   Table,
   Typography,
-  toSubstrateAddress,
 } from '@tangle-network/ui-components';
 import { TableVariant } from '@tangle-network/ui-components/components/Table/types';
 import pluralize from '@tangle-network/ui-components/utils/pluralize';
-import { BN } from 'bn.js';
 import type { ComponentProps, PropsWithChildren } from 'react';
 import { FC, useMemo } from 'react';
 import { twMerge } from 'tailwind-merge';
+import { formatUnits } from 'viem';
 import TableCellWrapper from '../../../components/tables/TableCellWrapper';
 import type { TableStatusProps } from '../../../components/tables/TableStatus';
 import TableStatus from '../../../components/tables/TableStatus';
-import { sortByAddressOrIdentity } from '../../../components/tables/utils';
-import useNetworkStore from '../../../context/useNetworkStore';
 import { RestakeOperator } from '../../../types';
 import VaultsDropdown from './VaultsDropdown';
 
 const COLUMN_HELPER = createColumnHelper<RestakeOperator>();
 
+const formatAmount = (amount: bigint, decimals = 18): string => {
+  const formatted = formatUnits(amount, decimals);
+  const num = parseFloat(formatted);
+  if (num === 0) return '0';
+  if (num < 0.0001) return '< 0.0001';
+  if (num >= 1_000_000) return `${(num / 1_000_000).toFixed(2)}M`;
+  if (num >= 1_000) return `${(num / 1_000).toFixed(2)}K`;
+  return num.toLocaleString(undefined, {
+    maximumFractionDigits: 4,
+    minimumFractionDigits: 0,
+  });
+};
+
 const getStaticColumns = (
-  nativeTokenSymbol: string,
-  ss58Prefix: number,
+  tokenSymbol: string,
 ): ColumnDef<RestakeOperator, any>[] => [
   COLUMN_HELPER.accessor('address', {
     header: () => 'Identity',
-    sortingFn: sortByAddressOrIdentity<RestakeOperator>(),
     cell: (props) => {
-      const {
-        address: rawAddress,
-        identityName: identity,
-        isDelegated,
-      } = props.row.original;
-
-      const address = toSubstrateAddress(rawAddress, ss58Prefix);
+      const { address, identityName: identity, isDelegated } = props.row.original;
 
       return (
         <TableCellWrapper className="p-3">
@@ -61,7 +60,7 @@ const getStaticColumns = (
             <Avatar
               sourceVariant="address"
               value={address}
-              theme="substrate"
+              theme="ethereum"
               size="lg"
               className="shadow-sm"
             />
@@ -109,13 +108,9 @@ const getStaticColumns = (
             fw="semibold"
             className="text-mono-160 dark:text-mono-60"
           >
-            {formatDisplayAmount(
-              new BN(value.toString()),
-              TANGLE_TOKEN_DECIMALS,
-              AmountFormatStyle.SHORT,
-            )}{' '}
+            {formatAmount(value)}{' '}
             <span className="text-mono-120 dark:text-mono-100">
-              {nativeTokenSymbol}
+              {tokenSymbol}
             </span>
           </Typography>
         </TableCellWrapper>
@@ -150,20 +145,6 @@ const getStaticColumns = (
       </TableCellWrapper>
     ),
   }),
-  // COLUMN_HELPER.accessor('blueprintCount', {
-  //   header: () => 'Blueprints',
-  //   cell: (props) => (
-  //     <TableCellWrapper>
-  //       <Typography
-  //         variant="body1"
-  //         fw="bold"
-  //         className="text-mono-200 dark:text-mono-0"
-  //       >
-  //         {props.getValue() ?? '-'}
-  //       </Typography>
-  //     </TableCellWrapper>
-  //   ),
-  // }),
   // For sorting purpose
   COLUMN_HELPER.accessor('isDelegated', {
     header: () => null,
@@ -175,40 +156,6 @@ const getStaticColumns = (
       return aIsDelegated ? -1 : bIsDelegated ? 1 : 0;
     },
   }),
-  // Hidden now as we don't have price for testnet and TNT assets
-  /* COLUMN_HELPER.accessor('concentrationPercentage', {
-    header: () => 'Concentration',
-    cell: (props) => {
-      const value = props.getValue();
-
-      return (
-        <TableCellWrapper>
-          <Typography
-            variant="body1"
-            fw="bold"
-            className="text-mono-200 dark:text-mono-0"
-          >
-            {typeof value !== 'number'
-              ? EMPTY_VALUE_PLACEHOLDER
-              : formatPercentage(value)}
-          </Typography>
-        </TableCellWrapper>
-      );
-    },
-  }),
-  COLUMN_HELPER.accessor('tvlInUsd', {
-    header: () => 'TVL',
-    cell: (props) => (
-      <TableCellWrapper>
-        <Typography
-          variant="body1"
-          className="text-mono-120 dark:text-mono-100"
-        >
-          {getTVLToDisplay(props.getValue())}
-        </Typography>
-      </TableCellWrapper>
-    ),
-  }), */
   COLUMN_HELPER.accessor('vaultTokens', {
     header: () => 'Delegated Assets',
     cell: (props) => {
@@ -247,6 +194,7 @@ type Props = {
   emptyTableProps?: Partial<TableStatusProps>;
   tableProps?: Partial<ComponentProps<typeof Table<RestakeOperator>>>;
   RestakeOperatorAction?: React.FC<PropsWithChildren<{ address: string }>>;
+  tokenSymbol?: string;
 };
 
 const OperatorsTable: FC<Props> = ({
@@ -258,19 +206,10 @@ const OperatorsTable: FC<Props> = ({
   globalFilter,
   onGlobalFilterChange,
   RestakeOperatorAction,
+  tokenSymbol = 'ETH',
 }) => {
-  const nativeTokenSymbol = useNetworkStore(
-    (store) => store.network.tokenSymbol,
-  );
-
-  const ss58Prefix = useNetworkStore((store) => store.network.ss58Prefix);
-
   const columns = useMemo(() => {
-    if (ss58Prefix === undefined) {
-      return [];
-    }
-
-    return getStaticColumns(nativeTokenSymbol, ss58Prefix).concat([
+    return getStaticColumns(tokenSymbol).concat([
       COLUMN_HELPER.display({
         id: 'actions',
         header: () => null,
@@ -300,7 +239,7 @@ const OperatorsTable: FC<Props> = ({
         enableSorting: false,
       }) satisfies ColumnDef<RestakeOperator>,
     ]);
-  }, [RestakeOperatorAction, nativeTokenSymbol, ss58Prefix]);
+  }, [RestakeOperatorAction, tokenSymbol]);
 
   const table = useReactTable({
     data,

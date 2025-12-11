@@ -10,14 +10,25 @@ import {
 } from '@tangle-network/ui-components/components/Dropdown';
 import { Table } from '@tangle-network/ui-components/components/Table';
 import { Typography } from '@tangle-network/ui-components/typography/Typography';
-import { getRoundedAmountString } from '@tangle-network/ui-components/utils/getRoundedAmountString';
 import cx from 'classnames';
 import { FC } from 'react';
+import { formatUnits } from 'viem';
 
 import { VaultToken } from '../../../types';
 import LsTokenIcon from '../../LsTokenIcon';
 
 const COLUMN_HELPER = createColumnHelper<VaultToken>();
+
+const formatAmount = (amount: bigint, decimals: number): string => {
+  const formatted = formatUnits(amount, decimals);
+  const num = parseFloat(formatted);
+  if (num === 0) return '0';
+  if (num < 0.0001) return '< 0.0001';
+  return num.toLocaleString(undefined, {
+    maximumFractionDigits: 4,
+    minimumFractionDigits: 0,
+  });
+};
 
 const COLUMNS = [
   COLUMN_HELPER.accessor('name', {
@@ -38,10 +49,11 @@ const COLUMNS = [
     ),
     cell: (props) => {
       const value = props.getValue();
+      const decimals = props.row.original.decimals;
 
       return (
         <Typography variant="body1" ta="right">
-          {getRoundedAmountString(value.toNumber())}
+          {formatAmount(value, decimals)}
         </Typography>
       );
     },
@@ -64,7 +76,6 @@ const VaultsDropdown: FC<{ vaultTokens: VaultToken[] }> = ({ vaultTokens }) => {
       </DropdownBasicButton>
 
       <DropdownBody isPortal className="mt-2 bg-mono-0 dark:bg-mono-200">
-        {/** TODO: Check styling after max depth issue is fixed. */}
         <Table
           tableProps={table}
           thClassName={cx('px-0 py-3 first:pl-5 last:pr-5')}

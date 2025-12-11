@@ -1,87 +1,57 @@
 import { Expand } from '@tangle-network/icons';
-import useNetworkStore from '@tangle-network/tangle-shared-ui/context/useNetworkStore';
-import { useApiPromiseQuery } from '@tangle-network/tangle-shared-ui/hooks/useApiPromiseQuery';
-import { useApiRxQuery } from '@tangle-network/tangle-shared-ui/hooks/useApiRxQuery';
-import { SkeletonLoader, Typography } from '@tangle-network/ui-components';
-import { FC, useEffect, useState } from 'react';
-
-/**
- * Format bytes to megabytes, rounded to two decimal places
- * and suffixed with `mb`.
- */
-function formatBytes(bytes: number): string {
-  // The multiplier to convert bytes to megabytes.
-  const MEGABYTE_FACTOR = 0.000001;
-
-  return Math.round(bytes * MEGABYTE_FACTOR * 100) / 100 + 'mb';
-}
+import { Typography } from '@tangle-network/ui-components';
+import { FC, useState } from 'react';
+import { useAccount, useChainId, useBlockNumber } from 'wagmi';
 
 const DebugMetrics: FC = () => {
   const [isCollapsed, setIsCollapsed] = useState(true);
-  const rpcEndpoints = useNetworkStore(
-    (store) => store.network2?.wsRpcEndpoints,
-  );
-
-  const { data: api } = useApiRxQuery(rpcEndpoints);
-
-  const { data: apiRx } = useApiPromiseQuery(rpcEndpoints);
-
-  const isApiLoading = api === null || apiRx === null;
-  const [tick, setTick] = useState(0);
-
-  const totalRequests =
-    (api?.stats?.total.requests ?? 0) + (apiRx?.stats?.total.requests ?? 0);
-
-  const totalBytesReceived =
-    (api?.stats?.total.bytesRecv ?? 0) + (apiRx?.stats?.total.bytesRecv ?? 0);
-
-  const totalBytesSent =
-    (api?.stats?.total.bytesSent ?? 0) + (apiRx?.stats?.total.bytesSent ?? 0);
-
-  const totalErrors =
-    (api?.stats?.total.errors ?? 0) + (apiRx?.stats?.total.errors ?? 0);
-
-  const totalActiveSubscriptions =
-    (api?.stats?.active.subscriptions ?? 0) +
-    (apiRx?.stats?.active.subscriptions ?? 0);
-
-  // Manually trigger a re-render every second, since the stats
-  // are not automatically updated.
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setTick((prevTick) => prevTick + 1);
-    }, 1000);
-
-    return () => clearInterval(interval);
-  }, [tick]);
+  const { address, isConnected } = useAccount();
+  const chainId = useChainId();
+  const { data: blockNumber } = useBlockNumber({ watch: true });
 
   const stats = (
     <>
-      <Metric
-        title="Requests"
-        value={totalRequests}
-        warnAt={100}
-        isApiLoading={isApiLoading}
-      />
+      <div className="flex flex-col">
+        <Typography variant="body2" className="text-mono-100">
+          Chain
+        </Typography>
+        <Typography variant="body1" fw="semibold">
+          {chainId}
+        </Typography>
+      </div>
 
-      <Metric
-        title="Subscriptions"
-        value={`${totalActiveSubscriptions} active`}
-        isApiLoading={isApiLoading}
-      />
+      <div className="flex flex-col">
+        <Typography variant="body2" className="text-mono-100">
+          Block
+        </Typography>
+        <Typography variant="body1" fw="semibold">
+          {blockNumber?.toString() ?? '...'}
+        </Typography>
+      </div>
 
-      <Metric
-        title="Data usage"
-        value={`${formatBytes(totalBytesReceived)} in, ${formatBytes(totalBytesSent)} out`}
-        isApiLoading={isApiLoading}
-      />
+      <div className="flex flex-col">
+        <Typography variant="body2" className="text-mono-100">
+          Status
+        </Typography>
+        <Typography variant="body1" fw="semibold">
+          {isConnected ? 'Connected' : 'Disconnected'}
+        </Typography>
+      </div>
 
-      <Metric
-        title="Errors"
-        value={totalErrors}
-        warnAt={1}
-        isApiLoading={isApiLoading}
-      />
+      {address && (
+        <div className="flex flex-col">
+          <Typography variant="body2" className="text-mono-100">
+            Account
+          </Typography>
+          <Typography
+            variant="body1"
+            fw="semibold"
+            className="truncate max-w-24"
+          >
+            {address.slice(0, 6)}...{address.slice(-4)}
+          </Typography>
+        </div>
+      )}
     </>
   );
 
@@ -96,35 +66,6 @@ const DebugMetrics: FC = () => {
         </div>
       ) : (
         stats
-      )}
-    </div>
-  );
-};
-
-/** @internal */
-const Metric: FC<{
-  title: string;
-  value: string | number;
-  isApiLoading: boolean;
-  warnAt?: number;
-}> = ({ title, value, warnAt, isApiLoading }) => {
-  const warnAfterClassName =
-    warnAt !== undefined && typeof value === 'number' && value >= warnAt
-      ? 'dark:text-red-40'
-      : '';
-
-  return (
-    <div className="flex flex-col w-max whitespace-nowrap">
-      <Typography variant="body1" className="whitespace-nowrap">
-        {title}
-      </Typography>
-
-      {isApiLoading ? (
-        <SkeletonLoader />
-      ) : (
-        <Typography variant="h5" className={warnAfterClassName}>
-          {value}
-        </Typography>
       )}
     </div>
   );

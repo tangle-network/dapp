@@ -25,7 +25,7 @@ import decimalsToStep from '../../../utils/decimalsToStep';
 import { getAmountValidation } from '../../../utils/getAmountValidation';
 import AssetPlaceholder from '../AssetPlaceholder';
 import calculateRestakeAvailableBalance from '../../../utils/restaking/calculateRestakeAvailableBalance';
-import useNativeRestakeAssetBalance from '../../../data/restake/useNativeRestakeAssetBalance';
+import { useNativeBalance } from '@tangle-network/tangle-shared-ui/data/graphql';
 import { NATIVE_ASSET_ID } from '@tangle-network/tangle-shared-ui/constants/restaking';
 import { RestakeAssetId } from '@tangle-network/tangle-shared-ui/types';
 
@@ -58,7 +58,7 @@ const RestakeDelegateInput: FC<Props> = ({
   const selectedOperatorAccountId = watch('operatorAccountId');
 
   const { minDelegateAmount } = useRestakeConsts();
-  const nativeAssetBalance = useNativeRestakeAssetBalance();
+  const { balance: nativeAssetBalance } = useNativeBalance();
 
   const selectedAsset = useMemo(() => {
     if (propSelectedAsset) {
@@ -77,9 +77,7 @@ const RestakeDelegateInput: FC<Props> = ({
     }
 
     if (selectedAssetId === NATIVE_ASSET_ID) {
-      return nativeAssetBalance === null
-        ? null
-        : BigInt(nativeAssetBalance.toString());
+      return nativeAssetBalance;
     } else if (delegatorInfo === null) {
       return null;
     } else {

@@ -1,31 +1,28 @@
-import type { BN } from '@polkadot/util';
 import type { WebbProviderType } from '@tangle-network/abstract-api-provider/types';
 import {
   EvmAddress,
   SolanaAddress,
-  SubstrateAddress,
 } from '@tangle-network/ui-components/types/address';
 
-import { u128 } from '@polkadot/types';
 import { PresetTypedChainId } from '@tangle-network/dapp-types';
 import {
   EVMTokenBridgeEnum,
   EVMTokenEnum,
 } from '@tangle-network/evm-contract-metadata';
 import { Decimal } from 'decimal.js';
-import { Abi } from 'viem';
+import { Abi, Address } from 'viem';
 
 export type TangleTokenSymbol = 'tTNT' | 'TNT';
 
 export type AddressWithIdentity = {
-  address: SubstrateAddress | null;
+  address: Address | null;
   identity: string | null;
 };
 
 export type Payout = {
   eras: number[];
   validator: AddressWithIdentity;
-  totalReward: BN;
+  totalReward: bigint;
   totalRewardFormatted: string;
 };
 
@@ -36,26 +33,27 @@ export const ExplorerType = {
 } as const;
 
 export type BasicAccountInfo = {
-  address: SubstrateAddress;
+  address: Address;
   identityName?: string;
 };
 
 export interface Validator extends BasicAccountInfo {
   isActive: boolean;
-  commission: BN;
-  selfStakeAmount: BN;
-  totalStakeAmount: BN;
+  commission: bigint;
+  selfStakeAmount: bigint;
+  totalStakeAmount: bigint;
   nominatorCount: number;
 }
 
 export type VaultToken = {
   name?: string;
   symbol: string;
-  amount: Decimal;
+  amount: bigint;
+  decimals: number;
 };
 
 export type RestakeOperator = {
-  address: SubstrateAddress;
+  address: string;
   identityName?: string;
   selfBondedAmount: bigint;
   restakersCount: number;
@@ -125,9 +123,9 @@ export type BridgeChainBalances = Partial<
   Record<PresetTypedChainId, BridgeTokenWithBalance[]>
 >;
 
-export type RestakeAssetId = `${bigint}` | EvmAddress;
+export type RestakeAssetId = string | EvmAddress;
 
-export type TangleAssetId = { Custom: u128 } | { Erc20: EvmAddress };
+export type TangleAssetId = { Custom: bigint } | { Erc20: EvmAddress };
 
 export interface GraphQLPagination {
   first: number;

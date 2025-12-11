@@ -1,4 +1,3 @@
-import { BN_ZERO } from '@polkadot/util';
 import { ZERO_BIG_INT } from '@tangle-network/dapp-config/constants';
 import { RestakeAssetId } from '@tangle-network/tangle-shared-ui/types';
 import { RestakeAsset } from '@tangle-network/tangle-shared-ui/types/restake';
@@ -50,12 +49,11 @@ const SourceChainInput: FC<Props> = ({
       return {};
     }
 
-    const balance = asset.balance ?? BN_ZERO;
-    const balanceBigInt = BigInt(balance.toString());
+    const balance = asset.balance ?? ZERO_BIG_INT;
 
     return {
-      max: balanceBigInt,
-      maxFormatted: formatUnits(balanceBigInt, asset.metadata.decimals),
+      max: balance,
+      maxFormatted: formatUnits(balance, asset.metadata.decimals),
     };
   }, [asset]);
 

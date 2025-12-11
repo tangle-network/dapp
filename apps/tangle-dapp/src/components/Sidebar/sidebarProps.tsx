@@ -2,6 +2,7 @@ import {
   CoinsStackedLineIcon,
   DocumentationIcon,
   FaucetIcon,
+  GiftLineIcon,
   GlobalLine,
   HomeFillIcon,
   ShuffleLine,
@@ -61,13 +62,13 @@ const SIDEBAR_STATIC_ITEMS: SideBarItemProps[] = [
     Icon: ShuffleLine,
     subItems: [],
   },
-  // {
-  //   name: 'Claim Airdrop',
-  //   href: PagePath.CLAIM_AIRDROP,
-  //   isInternal: true,
-  //   Icon: GiftLineIcon,
-  //   subItems: [],
-  // },
+  {
+    name: 'Claim TNT',
+    href: PagePath.CLAIM_MIGRATION,
+    isInternal: true,
+    Icon: GiftLineIcon,
+    subItems: [],
+  },
 ];
 
 const SIDEBAR_FOOTER: SideBarFooterType = {

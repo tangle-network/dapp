@@ -1,4 +1,4 @@
-import { TanglePrimitivesServicesFieldFieldType } from '@polkadot/types/lookup';
+// EVM-compatible blueprint types
 
 export const basePrimitiveTypeList = [
   'Uint8',
@@ -12,6 +12,7 @@ export const basePrimitiveTypeList = [
   'AccountId',
   'String',
   'Bool',
+  'Void',
 ] as const;
 
 export const primitiveTypeList = [
@@ -21,15 +22,14 @@ export const primitiveTypeList = [
   'Struct',
 ] as const;
 
+export type BasePrimitiveType = (typeof basePrimitiveTypeList)[number];
+
 export type PrimitiveFieldType =
   | { Optional: PrimitiveFieldType }
   | { Array: [number, PrimitiveFieldType] }
   | { List: PrimitiveFieldType }
   | { Struct: PrimitiveFieldType[] }
-  | Exclude<
-      TanglePrimitivesServicesFieldFieldType['type'],
-      'Optional' | 'Array' | 'List' | 'Struct'
-    >;
+  | BasePrimitiveType;
 
 export type PrimitiveNumberFieldKeys =
   | 'Uint8'

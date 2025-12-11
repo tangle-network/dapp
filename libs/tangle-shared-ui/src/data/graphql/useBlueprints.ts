@@ -380,7 +380,7 @@ export const useBlueprint = (
 
 // Operator info for blueprint details (compatible with RestakeOperator type)
 export interface BlueprintOperator {
-  address: string; // EVM address - will be converted for display
+  address: string; // EVM address
   identityName?: string;
   concentrationPercentage: number | null;
   restakersCount: number;
@@ -389,7 +389,8 @@ export interface BlueprintOperator {
   vaultTokens: Array<{
     name?: string;
     symbol: string;
-    amount: { toNumber: () => number };
+    amount: bigint;
+    decimals: number;
   }>;
   isDelegated: boolean;
   instanceCount: number;
