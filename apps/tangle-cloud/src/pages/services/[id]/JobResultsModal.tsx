@@ -77,7 +77,7 @@ export const JobResultsModal: FC<Props> = ({ job, onClose }) => {
 
           {/* Input Data */}
           <div className="mb-6">
-            <Typography variant="h6" fw="semibold" className="mb-2">
+            <Typography variant="h5" fw="semibold" className="mb-2">
               Input Data
             </Typography>
             <div className="p-3 bg-mono-20 dark:bg-mono-170 rounded-lg font-mono text-sm overflow-x-auto">
@@ -87,7 +87,7 @@ export const JobResultsModal: FC<Props> = ({ job, onClose }) => {
 
           {/* Results */}
           <div>
-            <Typography variant="h6" fw="semibold" className="mb-2">
+            <Typography variant="h5" fw="semibold" className="mb-2">
               Operator Results
             </Typography>
             {isLoading ? (

@@ -43,7 +43,7 @@ const ServiceDetailPage: FC = () => {
 
   const service = useMemo(() => {
     if (!services || !serviceId) return null;
-    return services.find((s) => s.id === serviceId) ?? null;
+    return services.find((s) => s.serviceId === serviceId) ?? null;
   }, [services, serviceId]);
 
   // Fetch blueprint details for job definitions
@@ -138,7 +138,9 @@ const ServiceDetailPage: FC = () => {
           />
           <InfoItem
             label="Operators"
-            value={service.operatorCount?.toString() ?? EMPTY_VALUE_PLACEHOLDER}
+            value={
+              service.operators?.length?.toString() ?? EMPTY_VALUE_PLACEHOLDER
+            }
           />
           <InfoItem
             label="Created"
