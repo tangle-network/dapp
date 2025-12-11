@@ -16,6 +16,7 @@ import {
   useOptionalRestakeContext,
 } from '@tangle-network/tangle-shared-ui/context/RestakeContext';
 import { Typography } from '@tangle-network/ui-components';
+import Spinner from '@tangle-network/icons/Spinner';
 
 type RestakeTabOrAction = RestakeTab | RestakeAction;
 
@@ -25,21 +26,11 @@ type Props = {
 
 const LoadingSpinner: FC = () => (
   <div className="flex items-center justify-center py-16">
-    <div className="p-8 rounded-2xl bg-gradient-to-br from-purple-500/5 to-blue-500/5 border border-purple-500/20">
-      <div className="flex flex-col items-center gap-5">
-        <div className="relative">
-          <div className="w-16 h-16 rounded-full border-4 border-purple-500/20" />
-          <div className="absolute inset-0 w-16 h-16 rounded-full border-4 border-purple-500 border-t-transparent animate-spin" />
-        </div>
-        <div className="text-center">
-          <Typography variant="body1" fw="semibold" className="text-mono-0">
-            Loading Assets
-          </Typography>
-          <Typography variant="body2" className="text-mono-100 mt-1">
-            Fetching restaking data...
-          </Typography>
-        </div>
-      </div>
+    <div className="flex flex-col items-center gap-4">
+      <Spinner size="xl" />
+      <Typography variant="body1" className="text-mono-120 dark:text-mono-80">
+        Loading restaking data...
+      </Typography>
     </div>
   </div>
 );
@@ -49,6 +40,11 @@ const RestakeTabContentInner: FC<Props> = ({ tab }) => {
 
   // Use optional context to handle HMR edge cases
   const context = useOptionalRestakeContext();
+
+  // Must call useCallback before any conditional returns (React hooks rules)
+  const handleRestakeClicked = useCallback(() => {
+    navigate(PagePath.RESTAKE_DEPOSIT);
+  }, [navigate]);
 
   // If context is not available (e.g., during HMR), show loading state
   if (!context) {
@@ -68,10 +64,6 @@ const RestakeTabContentInner: FC<Props> = ({ tab }) => {
     isLoadingDelegator,
     isLoadingOperators,
   } = context;
-
-  const handleRestakeClicked = useCallback(() => {
-    navigate(PagePath.RESTAKE_DEPOSIT);
-  }, [navigate]);
 
   const getRestakeTabContent = (action: RestakeTabOrAction): ReactNode => {
     switch (action) {

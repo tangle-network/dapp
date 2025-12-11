@@ -32,7 +32,7 @@ import {
 } from '@tanstack/react-table';
 import { type FC, useCallback, useMemo, useState } from 'react';
 import { twMerge } from 'tailwind-merge';
-import { Address, formatUnits } from 'viem';
+import { Address } from 'viem';
 import { useAccount } from 'wagmi';
 import { RestakeAction } from '../../constants';
 import BlueprintListing from '../../pages/blueprints/BlueprintListing';
@@ -128,12 +128,16 @@ const getVaultColumns = () => [
     header: () => <HeaderCell title="Asset" />,
     cell: (props) => (
       <TableCellWrapper className="pl-3">
-        <div className="flex items-center gap-2">
-          <TokenIcon name={props.row.original.symbol} size="lg" />
+        <div className="flex items-center gap-3">
+          <div className="flex items-center justify-center w-10 h-10">
+            <TokenIcon name={props.row.original.symbol} size="xl" />
+          </div>
+
           <div>
             <Typography variant="h5" className="whitespace-nowrap">
               {props.row.original.symbol}
             </Typography>
+
             <Typography
               variant="body3"
               className="text-mono-120 dark:text-mono-100"
