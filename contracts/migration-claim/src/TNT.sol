@@ -58,4 +58,19 @@ contract TNT is ERC20, ERC20Burnable, Ownable, ERC20Permit {
     function mintInitialSupply(address to, uint256 amount) external onlyOwner {
         _mint(to, amount);
     }
+
+    /**
+     * @notice Batch mint to multiple addresses (for EVM airdrop claims)
+     * @dev Can only be called by the owner. Used to mint unclaimed airdrop allocations.
+     * @param recipients Array of addresses to mint to
+     * @param amounts Array of amounts to mint (must match recipients length)
+     */
+    function batchMint(address[] calldata recipients, uint256[] calldata amounts) external onlyOwner {
+        if (recipients.length != amounts.length) revert("Length mismatch");
+        for (uint256 i = 0; i < recipients.length; i++) {
+            if (recipients[i] != address(0)) {
+                _mint(recipients[i], amounts[i]);
+            }
+        }
+    }
 }

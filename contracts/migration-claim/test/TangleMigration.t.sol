@@ -397,12 +397,12 @@ contract TangleMigrationTest is Test {
     // ═══════════════════════════════════════════════════════════════════════
 
     function test_MultiLeafMerkleTree() public {
-        // Create a tree with 4 leaves
-        string[4] memory addresses = [
-            "tgAddress1xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
-            "tgAddress2xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
-            "tgAddress3xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
-            "tgAddress4xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+        // Create a tree with 4 leaves using bytes32 pubkeys
+        bytes32[4] memory pubkeys = [
+            bytes32(0x1111111111111111111111111111111111111111111111111111111111111111),
+            bytes32(0x2222222222222222222222222222222222222222222222222222222222222222),
+            bytes32(0x3333333333333333333333333333333333333333333333333333333333333333),
+            bytes32(0x4444444444444444444444444444444444444444444444444444444444444444)
         ];
         uint256[4] memory amounts = [
             uint256(100 ether),
@@ -416,7 +416,7 @@ contract TangleMigrationTest is Test {
         for (uint i = 0; i < 4; i++) {
             leaves[i] = keccak256(
                 bytes.concat(
-                    keccak256(abi.encode(addresses[i], amounts[i]))
+                    keccak256(abi.encode(pubkeys[i], amounts[i]))
                 )
             );
         }
@@ -442,7 +442,7 @@ contract TangleMigrationTest is Test {
 
         // Verify proof works
         assertTrue(multiMigration.verifyMerkleProof(
-            addresses[0],
+            pubkeys[0],
             amounts[0],
             proof0
         ));
@@ -450,14 +450,14 @@ contract TangleMigrationTest is Test {
         // Claim should work
         vm.prank(claimer);
         multiMigration.claimWithZKProof(
-            addresses[0],
+            pubkeys[0],
             amounts[0],
             proof0,
             "",
             claimer
         );
 
-        assertEq(multiMigration.getClaimedAmount(addresses[0]), amounts[0]);
+        assertEq(multiMigration.getClaimedAmount(pubkeys[0]), amounts[0]);
     }
 
     function _hashPair(bytes32 a, bytes32 b) internal pure returns (bytes32) {
@@ -491,12 +491,12 @@ contract TangleMigrationTest is Test {
 
 /// @notice Strict mock verifier that validates public inputs
 contract StrictMockVerifier is IZKVerifier {
-    string public expectedAddress;
+    bytes32 public expectedPubkey;
     address public expectedRecipient;
     uint256 public expectedAmount;
 
-    constructor(string memory _address, address _recipient, uint256 _amount) {
-        expectedAddress = _address;
+    constructor(bytes32 _pubkey, address _recipient, uint256 _amount) {
+        expectedPubkey = _pubkey;
         expectedRecipient = _recipient;
         expectedAmount = _amount;
     }
@@ -505,11 +505,11 @@ contract StrictMockVerifier is IZKVerifier {
         bytes calldata,
         bytes calldata publicInputs
     ) external view override returns (bool) {
-        (string memory addr, address recipient, uint256 amount) =
-            abi.decode(publicInputs, (string, address, uint256));
+        (bytes32 pubkey, address recipient, uint256 amount) =
+            abi.decode(publicInputs, (bytes32, address, uint256));
 
         // Return false if inputs don't match expected values
-        if (keccak256(bytes(addr)) != keccak256(bytes(expectedAddress))) {
+        if (pubkey != expectedPubkey) {
             return false;
         }
         if (recipient != expectedRecipient) {

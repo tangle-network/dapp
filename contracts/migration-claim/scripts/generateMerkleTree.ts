@@ -16,25 +16,103 @@
 
 import { StandardMerkleTree } from '@openzeppelin/merkle-tree';
 import { writeFileSync, readFileSync, existsSync } from 'fs';
-import { keccak256, encodePacked, formatUnits, parseUnits } from 'viem';
+import { formatUnits, parseUnits } from 'viem';
+import { decodeAddress } from '@polkadot/util-crypto';
 
+/**
+ * Snapshot entry format - flexible to accept various input formats
+ * The script will normalize these to the required format
+ */
 interface SnapshotEntry {
+  /** SS58 address (can be named 'address' or 'substrateAddress') */
   substrateAddress?: string;
+  address?: string;
+  /** Public key in hex (optional - will be derived from SS58 if not provided) */
+  publicKey?: string;
+  pubkey?: string;
+  /** Balance - can be raw wei string or formatted with decimals */
+  balance?: string;
+  amount?: string;
+  /** Free balance (from Tangle snapshot format) */
+  free?: string;
+}
+
+/**
+ * Tangle snapshot format with metadata
+ */
+interface TangleSnapshot {
+  metadata?: {
+    chainName?: string;
+    blockNumber?: number;
+    blockHash?: string;
+    timestamp?: string;
+  };
+  accounts: SnapshotEntry[];
+}
+
+/**
+ * Convert SS58 address to hex pubkey
+ */
+function ss58ToHex(ss58Address: string): string {
+  const pubkeyBytes = decodeAddress(ss58Address);
+  const hex = Array.from(pubkeyBytes)
+    .map((b) => b.toString(16).padStart(2, '0'))
+    .join('');
+  return `0x${hex}`;
+}
+
+/**
+ * Normalize snapshot entry to consistent format
+ */
+function normalizeEntry(entry: SnapshotEntry): {
+  ss58Address: string;
   publicKey: string;
   balance: string;
+} {
+  // Get SS58 address
+  const ss58Address = entry.substrateAddress || entry.address;
+  if (!ss58Address) {
+    throw new Error('Entry missing address (substrateAddress or address field)');
+  }
+
+  // Get or derive public key
+  let publicKey = entry.publicKey || entry.pubkey;
+  if (!publicKey) {
+    // Derive from SS58 address
+    publicKey = ss58ToHex(ss58Address);
+  }
+
+  // Normalize public key format
+  if (!publicKey.startsWith('0x')) {
+    publicKey = `0x${publicKey}`;
+  }
+
+  // Get balance (support multiple field names)
+  const balance = entry.balance || entry.amount || entry.free;
+  if (!balance) {
+    throw new Error(`Entry missing balance for ${ss58Address}`);
+  }
+
+  return { ss58Address, publicKey, balance };
+}
+
+interface MerkleTreeEntry {
+  /** The 32-byte public key as bytes32 hex (for contract calls) */
+  pubkey: string;
+  /** Balance in wei */
+  balance: string;
+  /** Merkle proof */
+  proof: string[];
+  /** Leaf data: [pubkey, balance] */
+  leaf: [string, string];
 }
 
 interface MerkleTreeOutput {
   root: string;
   totalValue: string;
   entryCount: number;
-  entries: Record<
-    string,
-    {
-      balance: string;
-      proof: string[];
-    }
-  >;
+  /** Entries keyed by SS58 address for easy lookup */
+  entries: Record<string, MerkleTreeEntry>;
 }
 
 // Test accounts for local development
@@ -75,37 +153,50 @@ const TEST_CLAIMS: SnapshotEntry[] = [
 function generateMerkleTree(entries: SnapshotEntry[]): MerkleTreeOutput {
   console.log(`Generating Merkle tree for ${entries.length} entries...`);
 
+  // Normalize all entries
+  const normalized = entries.map(normalizeEntry);
+
   // Prepare values for the tree
   // Format: [publicKey (bytes32), balance (uint256)]
-  const values = entries.map((entry) => {
-    const publicKey = entry.publicKey.startsWith('0x')
-      ? entry.publicKey
-      : `0x${entry.publicKey}`;
-    return [publicKey, entry.balance] as [string, string];
+  const values = normalized.map((entry) => {
+    return [entry.publicKey, entry.balance] as [string, string];
   });
 
-  // Create the tree
+  // Create the tree with bytes32 pubkey format (matches contract)
   const tree = StandardMerkleTree.of(values, ['bytes32', 'uint256']);
 
   console.log('Merkle Root:', tree.root);
 
   // Calculate total value
-  const totalValue = entries.reduce(
+  const totalValue = normalized.reduce(
     (sum, e) => sum + BigInt(e.balance),
     BigInt(0),
   );
   console.log('Total Value:', formatUnits(totalValue, 18), 'TNT');
 
-  // Build the output with proofs for each entry
+  // Build the output with proofs for each entry, indexed by SS58 address
   const outputEntries: MerkleTreeOutput['entries'] = {};
+
+  // Create a map from pubkey to SS58 address for reverse lookup
+  const pubkeyToSs58 = new Map<string, string>();
+  for (const entry of normalized) {
+    pubkeyToSs58.set(entry.publicKey.toLowerCase(), entry.ss58Address);
+  }
 
   for (const [index, [publicKey, balance]] of tree.entries()) {
     const proof = tree.getProof(index);
-    const normalizedKey = publicKey.toLowerCase();
+    const normalizedPubkey = publicKey.toLowerCase();
+    const ss58Address = pubkeyToSs58.get(normalizedPubkey);
 
-    outputEntries[normalizedKey] = {
+    if (!ss58Address) {
+      throw new Error(`No SS58 address found for pubkey: ${normalizedPubkey}`);
+    }
+
+    outputEntries[ss58Address] = {
+      pubkey: normalizedPubkey,
       balance,
       proof: proof as string[],
+      leaf: [normalizedPubkey, balance],
     };
   }
 
@@ -153,7 +244,32 @@ function main() {
 
     console.log(`Reading snapshot from: ${inputPath}`);
     const inputData = readFileSync(inputPath, 'utf-8');
-    entries = JSON.parse(inputData);
+    const parsed = JSON.parse(inputData);
+
+    // Handle Tangle snapshot format with nested accounts array
+    if (parsed.accounts && Array.isArray(parsed.accounts)) {
+      console.log('Detected Tangle snapshot format');
+      if (parsed.metadata) {
+        console.log(`  Chain: ${parsed.metadata.chainName || 'Unknown'}`);
+        console.log(`  Block: ${parsed.metadata.blockNumber || 'Unknown'}`);
+      }
+      entries = parsed.accounts;
+    } else if (Array.isArray(parsed)) {
+      // Direct array of entries
+      entries = parsed;
+    } else {
+      console.error('Invalid snapshot format: expected array or { accounts: [...] }');
+      process.exit(1);
+    }
+
+    // Filter out zero-balance accounts
+    const originalCount = entries.length;
+    entries = entries.filter((e) => {
+      const balance = e.balance || e.amount || e.free;
+      return balance && BigInt(balance) > BigInt(0);
+    });
+    console.log(`Filtered ${originalCount - entries.length} zero-balance accounts`);
+    console.log(`Processing ${entries.length} accounts with balance`);
   }
 
   // Generate the tree

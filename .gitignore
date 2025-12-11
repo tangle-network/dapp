@@ -106,3 +106,15 @@ vitest.config.*.timestamp*
 reports/
 .cursor/rules/nx-rules.mdc
 .github/instructions/nx.instructions.md
+
+# Contracts - Foundry build artifacts
+contracts/**/cache/
+contracts/**/out/
+contracts/**/broadcast/
+
+# Contracts - Rust/SP1 build artifacts
+contracts/**/target/
+
+# Contracts - Generated migration data (large files)
+**/migration-proofs.json
+contracts/**/evm-claims.json
