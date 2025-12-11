@@ -64,10 +64,10 @@ export const useVaultUserPosition = (vaultAddress: Address | undefined) => {
 
   const { data: conversionResults } = useReadContracts({
     contracts:
-      balance > BigInt(0)
+      balance > BigInt(0) && vaultAddress
         ? [
             {
-              address: vaultAddress!,
+              address: vaultAddress,
               abi: LIQUID_DELEGATION_VAULT_ABI,
               functionName: 'convertToAssets' as const,
               args: [balance] as const,

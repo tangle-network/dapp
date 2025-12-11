@@ -118,3 +118,4 @@ Generic, reusable components not tied to any specific context. Should be usable 
 - Use `polkadot-api-provider` for Substrate/Polkadot interactions
 - Use `web3-api-provider` for EVM interactions
 - Use `abstract-api-provider` base classes when creating new providers
+- After finish updating/adding code, always run yarn lint to check for errors and fix them all

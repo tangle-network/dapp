@@ -22,7 +22,6 @@ import {
 import TableCellWrapper from '@tangle-network/tangle-shared-ui/components/tables/TableCellWrapper';
 import VaultsDropdown from '@tangle-network/tangle-shared-ui/components/tables/Operators/VaultsDropdown';
 import { TableVariant } from '@tangle-network/ui-components/components/Table/types';
-import { BN } from '@tangle-network/tangle-shared-ui/bn';
 import { formatUnits } from 'viem';
 import { TANGLE_TOKEN_DECIMALS } from '@tangle-network/dapp-config';
 

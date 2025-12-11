@@ -1,0 +1,5 @@
+# Ignore forge/foundry library directories
+contracts/migration-claim/lib
+
+# Ignore node_modules
+node_modules
