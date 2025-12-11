@@ -38,6 +38,7 @@ export default function randBlueprint(id: bigint) {
     id,
     name: randCompanyName(),
     author: randUserName(),
+    deployer: `0x${Array.from({ length: 40 }, () => Math.floor(Math.random() * 16).toString(16)).join('')}`,
     imgUrl: 'https://picsum.photos/600',
     category: categories[randNumber({ min: 0, max: categories.length - 1 })],
     description: randProductDescription(),
@@ -53,6 +54,9 @@ export default function randBlueprint(id: bigint) {
     registrationParams: Array.from(
       { length: randNumber({ min: 1, max: 5 }) },
       () => randFieldType(false),
+    ),
+    requestParams: Array.from({ length: randNumber({ min: 1, max: 3 }) }, () =>
+      randFieldType(false),
     ),
   } satisfies Blueprint;
 }

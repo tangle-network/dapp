@@ -1,15 +1,12 @@
 import {
-  AppsLine,
-  CoinLine,
+  CoinsStackedLineIcon,
   DocumentationIcon,
   FaucetIcon,
-  // GiftLineIcon,
   GlobalLine,
   HomeFillIcon,
-  PolkadotJs,
   ShuffleLine,
   TokenSwapFill,
-  // WaterDropletIcon,
+  WaterDropletIcon,
 } from '@tangle-network/icons';
 import {
   MobileSidebarProps,
@@ -43,25 +40,25 @@ const SIDEBAR_STATIC_ITEMS: SideBarItemProps[] = [
     Icon: TokenSwapFill,
     subItems: [],
   },
-  // {
-  //   name: 'Liquid Stake',
-  //   href: PagePath.LIQUID_STAKING,
-  //   isInternal: true,
-  //   Icon: WaterDropletIcon,
-  //   subItems: [],
-  // },
+  {
+    name: 'Liquid Stake',
+    href: PagePath.LIQUID_STAKING,
+    isInternal: true,
+    Icon: WaterDropletIcon,
+    subItems: [],
+  },
+  {
+    name: 'Native Restake',
+    href: PagePath.NATIVE_RESTAKE,
+    isInternal: true,
+    Icon: CoinsStackedLineIcon,
+    subItems: [],
+  },
   {
     name: 'Bridge',
     href: PagePath.BRIDGE,
     isInternal: true,
     Icon: ShuffleLine,
-    subItems: [],
-  },
-  {
-    name: 'Nomination',
-    href: PagePath.NOMINATION,
-    isInternal: true,
-    Icon: CoinLine,
     subItems: [],
   },
   // {
@@ -81,13 +78,9 @@ const SIDEBAR_FOOTER: SideBarFooterType = {
 };
 
 export default function getSidebarProps({
-  polkadotJsDashboardUrl,
-  nativeExplorerUrl,
   evmExplorerUrl,
   networkFeatures,
 }: {
-  polkadotJsDashboardUrl: string;
-  nativeExplorerUrl?: string;
   evmExplorerUrl?: string;
   networkFeatures: readonly NetworkFeature[];
 }): MobileSidebarProps {
@@ -95,24 +88,6 @@ export default function getSidebarProps({
 
   const sideBarItems: SideBarItemProps[] = [
     ...SIDEBAR_STATIC_ITEMS,
-    {
-      Icon: PolkadotJs,
-      href: polkadotJsDashboardUrl,
-      isInternal: false,
-      name: 'Polkadot-JS',
-      subItems: [],
-    },
-    ...(nativeExplorerUrl
-      ? [
-          {
-            Icon: AppsLine,
-            href: nativeExplorerUrl,
-            isInternal: false,
-            name: 'Substrate Explorer',
-            subItems: [],
-          },
-        ]
-      : []),
     ...(evmExplorerUrl
       ? [
           {

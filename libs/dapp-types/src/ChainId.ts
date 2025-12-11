@@ -109,6 +109,15 @@ export enum PresetTypedChainId {
 
   Base = calculateTypedChainId(ChainType.EVM, EVMChainId.Base),
 
+  BaseSepolia = calculateTypedChainId(ChainType.EVM, EVMChainId.BaseSepolia),
+
+  ArbitrumSepolia = calculateTypedChainId(
+    ChainType.EVM,
+    EVMChainId.ArbitrumSepolia,
+  ),
+
+  AnvilLocal = calculateTypedChainId(ChainType.EVM, EVMChainId.AnvilLocal),
+
   BSC = calculateTypedChainId(ChainType.EVM, EVMChainId.BSC),
 
   Bitlayer = calculateTypedChainId(ChainType.EVM, EVMChainId.Bitlayer),

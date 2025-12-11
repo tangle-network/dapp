@@ -2,7 +2,7 @@
 
 import BlueprintHeader from '@tangle-network/tangle-shared-ui/components/blueprints/BlueprintHeader';
 import OperatorsTable from '@tangle-network/tangle-shared-ui/components/tables/Operators';
-import useBlueprintDetails from '@tangle-network/tangle-shared-ui/data/restake/useBlueprintDetails';
+import { useBlueprintDetails } from '@tangle-network/tangle-shared-ui/data/graphql';
 import { ErrorFallback } from '@tangle-network/ui-components/components/ErrorFallback';
 import SkeletonLoader from '@tangle-network/ui-components/components/SkeletonLoader';
 import { Typography } from '@tangle-network/ui-components/typography/Typography';
@@ -15,10 +15,9 @@ import type { BlueprintFormResult } from '../ConfigureBlueprintModal/types';
 
 import { SessionStorageKey } from '../../../constants';
 import useOperatorInfo from '@tangle-network/tangle-shared-ui/hooks/useOperatorInfo';
-import useNetworkStore from '@tangle-network/tangle-shared-ui/context/useNetworkStore';
-import { toSubstrateAddress } from '@tangle-network/ui-components';
 import useParamWithSchema from '@tangle-network/tangle-shared-ui/hooks/useParamWithSchema';
 import { z } from 'zod';
+import { useAccount } from 'wagmi';
 
 const RestakeOperatorAction: FC<PropsWithChildren<{ address: string }>> = ({
   children,
@@ -34,24 +33,20 @@ const Page = () => {
   const navigate = useNavigate();
   const id = useParamWithSchema('id', z.coerce.bigint());
   const { result, isLoading, error } = useBlueprintDetails(id);
-  const { isOperator, operatorAddress } = useOperatorInfo();
-  const ss58Prefix = useNetworkStore((store) => store.network.ss58Prefix);
+  const { isOperator } = useOperatorInfo();
+  const { address: userAddress } = useAccount();
   const [isBlueprintModalOpen, setIsBlueprintModalOpen] = useState(false);
 
+  // Check if the current user is registered as an operator for this blueprint
   const isRegistered = useMemo(() => {
-    if (operatorAddress === null || result?.operators === undefined) {
+    if (!userAddress || result?.operators === undefined) {
       return false;
     }
 
     return result.operators.some((operator) => {
-      try {
-        const opAddr = toSubstrateAddress(operator.address, ss58Prefix);
-        return opAddr === operatorAddress;
-      } catch {
-        return false;
-      }
+      return operator.address.toLowerCase() === userAddress.toLowerCase();
     });
-  }, [operatorAddress, result?.operators, ss58Prefix]);
+  }, [userAddress, result?.operators]);
 
   if (isLoading) {
     return (
@@ -111,7 +106,7 @@ const Page = () => {
 
         <OperatorsTable
           RestakeOperatorAction={RestakeOperatorAction}
-          data={result.operators}
+          data={result.operators as any} // Type mismatch until OperatorsTable is updated for EVM
           isLoading={isLoading}
         />
       </div>

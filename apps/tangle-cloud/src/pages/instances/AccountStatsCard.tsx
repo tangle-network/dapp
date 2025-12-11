@@ -4,129 +4,54 @@ import AccountStatsDetailCard, {
 } from '../../components/accountStatsCard';
 import {
   Avatar,
-  isSubstrateAddress,
   KeyValueWithButton,
   shortenString,
   Chip,
 } from '@tangle-network/ui-components';
-import useNetworkStore from '@tangle-network/tangle-shared-ui/context/useNetworkStore';
-import useSWRImmutable from 'swr/immutable';
-import {
-  getAccountInfo,
-  IDENTITY_ICONS_RECORD,
-  IdentityDataType,
-} from '@tangle-network/tangle-shared-ui/utils/polkadot/identity';
-import { isValidUrl } from '@tangle-network/dapp-types';
-import useActiveAccountAddress from '@tangle-network/tangle-shared-ui/hooks/useActiveAccountAddress';
-import useOperatorInfo from '@tangle-network/tangle-shared-ui/hooks/useOperatorInfo';
-import { useOperatorStatsData } from '../../data/operators/useOperatorStatsData';
-import { useUserStatsData } from '../../data/operators/useUserStatsData';
+import { useAccount, useChainId } from 'wagmi';
+import { chainsConfig } from '@tangle-network/dapp-config/chains';
+import useEvmOperatorInfo from '../../hooks/useEvmOperatorInfo';
+import useOperatorStats from '../../data/operators/useOperatorStats';
+import useUserStats from '../../data/operators/useUserStats';
 
 export const AccountStatsCard: FC<
   AccountStatsCardProps & { refreshTrigger?: number }
 > = (props) => {
   const { refreshTrigger, ...cardProps } = props;
-  const accountAddress = useActiveAccountAddress();
-  const { isOperator } = useOperatorInfo();
-  const rpcEndpoints = useNetworkStore((store) => store.network.wsRpcEndpoints);
-  const network = useNetworkStore((store) => store.network);
+  const { address: accountAddress } = useAccount();
+  const chainId = useChainId();
+  const { isOperator, operatorAddress } = useEvmOperatorInfo();
 
-  const { result: operatorStatsData } = useOperatorStatsData(
-    useMemo(() => {
-      if (
-        !accountAddress ||
-        !isOperator ||
-        !isSubstrateAddress(accountAddress)
-      ) {
-        return null;
-      }
+  // Get chain config for explorer URL
+  const activeChain = useMemo(() => {
+    return Object.values(chainsConfig).find((c) => c.id === chainId);
+  }, [chainId]);
 
-      return accountAddress;
-    }, [accountAddress, isOperator]),
+  // Fetch operator stats if user is an operator
+  const { result: operatorStatsData } = useOperatorStats(
+    isOperator ? (operatorAddress ?? undefined) : undefined,
     refreshTrigger,
   );
 
-  const { result: userStatsData } = useUserStatsData(
-    useMemo(() => {
-      if (!accountAddress || !isSubstrateAddress(accountAddress)) {
-        return null;
-      }
-
-      return accountAddress;
-    }, [accountAddress]),
+  // Fetch user stats
+  const { result: userStatsData } = useUserStats(
+    accountAddress,
     refreshTrigger,
-  );
-
-  const { data: accountInfo } = useSWRImmutable(
-    [rpcEndpoints, accountAddress],
-    (args) => {
-      if (!args[1]) {
-        return null;
-      }
-
-      return getAccountInfo(args[0], args[1]);
-    },
   );
 
   const identityName = useMemo(() => {
     if (!accountAddress) {
       return '';
     }
-
-    const defaultName = shortenString(accountAddress);
-
-    if (!accountInfo) {
-      return defaultName;
-    }
-
-    return accountInfo.name || defaultName;
-  }, [accountAddress, accountInfo]);
-
-  const accountSocials = useMemo(() => {
-    if (!accountInfo) {
-      return [];
-    }
-
-    const twitterHandle = accountInfo?.twitter ?? '';
-
-    const twitterUrl =
-      twitterHandle === '' || isValidUrl(twitterHandle)
-        ? twitterHandle
-        : `https://x.com/${twitterHandle}`;
-
-    const emailHandle = accountInfo?.email ?? '';
-
-    const emailUrl =
-      emailHandle === '' || isValidUrl(emailHandle)
-        ? emailHandle
-        : `mailto:${emailHandle}`;
-
-    const socialInfos = {
-      [IdentityDataType.TWITTER]: twitterUrl,
-      // TODO: Add GitHub link.
-      github: undefined,
-      [IdentityDataType.EMAIL]: emailUrl,
-      [IdentityDataType.WEB]: accountInfo?.web,
-    };
-
-    return Object.entries(socialInfos)
-      .filter(([key, value]) => !!value && key in IDENTITY_ICONS_RECORD)
-      .map(([key, value]) => ({
-        name: key,
-        href: value || '',
-        Icon: IDENTITY_ICONS_RECORD[key as keyof typeof IDENTITY_ICONS_RECORD],
-        target: '_blank' as const,
-        rel: 'noopener noreferrer',
-      }));
-  }, [accountInfo]);
+    return shortenString(accountAddress);
+  }, [accountAddress]);
 
   const accountExplorerUrl = useMemo(() => {
-    if (!accountAddress) {
+    if (!accountAddress || !activeChain?.blockExplorers?.default?.url) {
       return null;
     }
-
-    return network.createExplorerAccountUrl(accountAddress);
-  }, [network, accountAddress]);
+    return `${activeChain.blockExplorers.default.url}/address/${accountAddress}`;
+  }, [accountAddress, activeChain]);
 
   const statsItems = useMemo(() => {
     // Default to empty array if no user stats data
@@ -172,15 +97,12 @@ export const AccountStatsCard: FC<
 
     return items;
   }, [operatorStatsData, userStatsData, isOperator]);
+
   return (
     <AccountStatsDetailCard.Root {...cardProps.rootProps}>
       <AccountStatsDetailCard.Header
         IconElement={
-          <Avatar
-            size="lg"
-            value={accountAddress ?? ''}
-            theme={isOperator ? 'substrate' : 'ethereum'}
-          />
+          <Avatar size="lg" value={accountAddress ?? ''} theme="ethereum" />
         }
         title={identityName}
         RightElement={
@@ -205,7 +127,7 @@ export const AccountStatsCard: FC<
       <AccountStatsDetailCard.Body
         {...props.bodyProps}
         statsItems={statsItems}
-        socialLinks={accountSocials}
+        socialLinks={[]}
       />
     </AccountStatsDetailCard.Root>
   );

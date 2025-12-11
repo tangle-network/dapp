@@ -10,7 +10,6 @@ import { type FC, type PropsWithChildren } from 'react';
 import { MobileSidebar, Sidebar } from '../components';
 import DebugMetrics from './DebugMetrics';
 import TopNavigationPanel from './TopNavigationPanel';
-import BridgeTxQueueDropdown from '../features/bridge/components/BridgeTxQueueDropdown';
 
 const SOCIAL_LINK_OVERRIDES: Partial<
   Record<(typeof TANGLE_AVAILABLE_SOCIALS)[number], string>
@@ -43,11 +42,7 @@ const Layout: FC<PropsWithChildren<LayoutProps>> = ({
                 <MobileSidebar />
               </div>
 
-              <div className="flex items-center gap-2">
-                <TopNavigationPanel />
-
-                <BridgeTxQueueDropdown dropdownButtonClassName="h-[44px]" />
-              </div>
+              <TopNavigationPanel />
             </div>
 
             {children}

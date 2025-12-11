@@ -21,6 +21,7 @@ import { useNavigate } from 'react-router';
 import { PagePath, QueryParamKey } from '../../types';
 import { RestakeAssetId } from '@tangle-network/tangle-shared-ui/types';
 import { RestakeAsset } from '@tangle-network/tangle-shared-ui/types/restake';
+import { NetworkGuard } from '../../components/NetworkGuard';
 
 type RestakeTabOrAction = RestakeTab | RestakeAction;
 
@@ -31,13 +32,7 @@ type Props = {
 const RestakeTabContent: FC<Props> = ({ tab }) => {
   const { result: delegatorInfo } = useRestakeDelegatorInfo();
 
-  const [refreshTrigger, setRefreshTrigger] = useState(0);
-
-  const handleOperatorJoined = useCallback(() => {
-    setTimeout(() => {
-      setRefreshTrigger((v) => v + 1);
-    }, 2000);
-  }, []);
+  const [refreshTrigger] = useState(0);
 
   const {
     result: operatorMap,
@@ -47,11 +42,7 @@ const RestakeTabContent: FC<Props> = ({ tab }) => {
   const { operatorConcentration, operatorTvl } = useRestakeTvl(delegatorInfo);
   const navigate = useNavigate();
 
-  const {
-    assets,
-    isLoading: isLoadingAssets,
-    refetchErc20Balances,
-  } = useRestakeAssets();
+  const { assets, isLoading: isLoadingAssets } = useRestakeAssets();
 
   const handleRestakeClicked = useCallback(() => {
     navigate(PagePath.RESTAKE_DEPOSIT);
@@ -66,19 +57,13 @@ const RestakeTabContent: FC<Props> = ({ tab }) => {
   const getRestakeTabContent = (action: RestakeTabOrAction): ReactNode => {
     switch (action) {
       case RestakeAction.DEPOSIT:
-        return (
-          <DepositForm
-            assets={assets}
-            isLoadingAssets={isLoadingAssets}
-            refetchErc20Balances={refetchErc20Balances}
-          />
-        );
+        return <DepositForm />;
       case RestakeAction.WITHDRAW:
-        return <RestakeWithdrawForm assets={assets} />;
+        return <RestakeWithdrawForm />;
       case RestakeAction.DELEGATE:
-        return <RestakeDelegateForm assets={assets} />;
+        return <RestakeDelegateForm />;
       case RestakeAction.UNDELEGATE:
-        return <RestakeUnstakeForm assets={assets} />;
+        return <RestakeUnstakeForm />;
       case RestakeTab.VAULTS:
         return (
           <VaultTabContent assets={assets} isLoadingAssets={isLoadingAssets} />
@@ -93,7 +78,6 @@ const RestakeTabContent: FC<Props> = ({ tab }) => {
             onRestakeClickedPagePath={PagePath.RESTAKE_DELEGATE}
             onRestakeClickedQueryParamKey={QueryParamKey.RESTAKE_OPERATOR}
             isLoading={isLoadingOperators}
-            onOperatorJoined={handleOperatorJoined}
           />
         );
       case RestakeTab.BLUEPRINTS:
@@ -102,10 +86,12 @@ const RestakeTabContent: FC<Props> = ({ tab }) => {
   };
 
   return (
-    <div className="space-y-9">
-      <RestakeTabs />
-      {getRestakeTabContent(tab)}
-    </div>
+    <NetworkGuard>
+      <div className="space-y-9">
+        <RestakeTabs />
+        {getRestakeTabContent(tab)}
+      </div>
+    </NetworkGuard>
   );
 };
 

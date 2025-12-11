@@ -13,55 +13,53 @@ import {
 } from '@tangle-network/ui-components';
 import pluralize from '@tangle-network/ui-components/utils/pluralize';
 import { TangleCloudTable } from '../../../components/tangleCloudTable/TangleCloudTable';
-import { MonitoringBlueprint } from '@tangle-network/tangle-shared-ui/data/blueprints/utils/type';
 import TableCellWrapper from '@tangle-network/tangle-shared-ui/components/tables/TableCellWrapper';
 import { Link } from 'react-router';
 import { PagePath } from '../../../types';
+import useEvmOperatorInfo from '../../../hooks/useEvmOperatorInfo';
+import {
+  useBlueprintsWithMetadata,
+  type BlueprintWithMetadata,
+} from '@tangle-network/tangle-shared-ui/data/graphql';
 
-import useRegisteredBlueprints from '@tangle-network/tangle-shared-ui/data/blueprints/useRegisteredBlueprints';
-import useOperatorInfo from '@tangle-network/tangle-shared-ui/hooks/useOperatorInfo';
-import { isSubstrateAddress } from '@tangle-network/ui-components/utils/isSubstrateAddress';
-import { encodeAddress, blake2AsU8a } from '@polkadot/util-crypto';
-
-export type RegisteredBlueprintsTableProps = {
-  blueprints: MonitoringBlueprint[];
-  isLoading: boolean;
-  error: Error | null;
-};
-const columnHelper = createColumnHelper<MonitoringBlueprint>();
+const columnHelper = createColumnHelper<BlueprintWithMetadata>();
 
 export const RegisteredBlueprints: FC = () => {
-  const { operatorAddress } = useOperatorInfo();
+  const { operatorAddress } = useEvmOperatorInfo();
+
+  // Fetch all blueprints with metadata
   const {
-    result: registeredBlueprints,
+    data: allBlueprints,
     isLoading,
     error,
-  } = useRegisteredBlueprints(operatorAddress);
+  } = useBlueprintsWithMetadata({ activeOnly: true });
 
+  // Filter to only show blueprints where the operator is registered
+  // For now, show all active blueprints as the filtering logic will depend on indexer data
   const data = useMemo(() => {
-    if (Array.isArray(registeredBlueprints)) {
-      return registeredBlueprints;
-    }
+    if (!allBlueprints || !operatorAddress) return [];
+    // TODO: Filter to only show blueprints where operator is registered
+    // This requires additional indexer data for operator-blueprint relationships
+    return allBlueprints;
+  }, [allBlueprints, operatorAddress]);
 
-    return [];
-  }, [registeredBlueprints]);
-
-  const isEmpty = data?.length === 0;
+  const isEmpty = data.length === 0;
 
   const columns = useMemo(
     () => [
-      columnHelper.accessor('blueprint.metadata.name', {
+      columnHelper.accessor('name', {
         header: () => 'Blueprint',
         cell: (props) => {
+          const blueprint = props.row.original;
           return (
             <TableCellWrapper className="p-3 min-h-fit">
               <div className="flex items-center gap-3 overflow-hidden">
-                {props.row.original.blueprint.metadata.logo ? (
+                {blueprint.imageUrl ? (
                   <Avatar
                     size="lg"
                     className="min-w-12 shadow-sm"
-                    src={props.row.original.blueprint.metadata.logo}
-                    alt={props.row.original.blueprint.metadata.name}
+                    src={blueprint.imageUrl}
+                    alt={blueprint.name}
                     sourceVariant="uri"
                   />
                 ) : (
@@ -69,24 +67,8 @@ export const RegisteredBlueprints: FC = () => {
                     size="lg"
                     className="min-w-12 shadow-sm"
                     sourceVariant="address"
-                    value={
-                      (props.row.original.blueprint.metadata.author &&
-                      isSubstrateAddress(
-                        props.row.original.blueprint.metadata.author,
-                      )
-                        ? props.row.original.blueprint.metadata.author
-                        : null) ||
-                      (props.row.original.blueprint.metadata.name
-                        ? encodeAddress(
-                            blake2AsU8a(
-                              props.row.original.blueprint.metadata.name,
-                              256,
-                            ).slice(0, 32),
-                            42,
-                          )
-                        : undefined)
-                    }
-                    theme="substrate"
+                    value={blueprint.owner}
+                    theme="ethereum"
                   />
                 )}
                 <Typography
@@ -94,7 +76,7 @@ export const RegisteredBlueprints: FC = () => {
                   fw="bold"
                   className="text-mono-200 dark:text-mono-0 text-ellipsis whitespace-nowrap overflow-hidden"
                 >
-                  {props.row.original.blueprint.metadata.name}
+                  {blueprint.name}
                 </Typography>
               </div>
             </TableCellWrapper>
@@ -102,7 +84,7 @@ export const RegisteredBlueprints: FC = () => {
         },
       }),
 
-      columnHelper.accessor('blueprint.instanceCount', {
+      columnHelper.accessor('serviceCount', {
         header: () => 'Instances',
         cell: (props) => {
           return (
@@ -112,14 +94,14 @@ export const RegisteredBlueprints: FC = () => {
                 fw="semibold"
                 className="text-mono-160 dark:text-mono-60"
               >
-                {props.row.original.blueprint.instanceCount?.toLocaleString() ??
+                {props.row.original.serviceCount?.toLocaleString() ??
                   EMPTY_VALUE_PLACEHOLDER}
               </Typography>
             </TableCellWrapper>
           );
         },
       }),
-      columnHelper.accessor('blueprint.operatorsCount', {
+      columnHelper.accessor('operatorCount', {
         header: () => 'Operators',
         cell: (props) => {
           return (
@@ -129,27 +111,12 @@ export const RegisteredBlueprints: FC = () => {
                 fw="semibold"
                 className="text-mono-160 dark:text-mono-60"
               >
-                {props.row.original.blueprint.operatorsCount?.toLocaleString() ??
-                  EMPTY_VALUE_PLACEHOLDER}
+                {Number(props.row.original.operatorCount ?? 0).toLocaleString()}
               </Typography>
             </TableCellWrapper>
           );
         },
       }),
-
-      // Hide restakers column
-      // columnHelper.accessor('blueprint.restakersCount', {
-      //   header: () => 'Restakers',
-      //   cell: (props) => {
-      //     return (
-      //       <TableCellWrapper className="p-0 min-h-fit">
-      //         {(
-      //           props.row.original.blueprint.restakersCount ?? 0
-      //         ).toLocaleString()}
-      //       </TableCellWrapper>
-      //     );
-      //   },
-      // }),
 
       columnHelper.accessor('blueprintId', {
         header: () => '',
@@ -191,7 +158,7 @@ export const RegisteredBlueprints: FC = () => {
   });
 
   return (
-    <TangleCloudTable<MonitoringBlueprint>
+    <TangleCloudTable<BlueprintWithMetadata>
       title={pluralize('blueprint', !isEmpty)}
       data={data}
       error={error}

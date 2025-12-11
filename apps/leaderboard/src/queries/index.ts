@@ -1,1 +1,1 @@
-export * from './latestFinalizedBlockQuery';
+export * from './latestTimestampQuery';

@@ -1,0 +1,18 @@
+[package]
+name = "sr25519-claim-lib"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+
+[dependencies]
+serde = { workspace = true, features = ["derive"] }
+serde-big-array = "0.5"
+alloy-primitives = { workspace = true }
+alloy-sol-types = { workspace = true }
+
+# SS58 address decoding
+bs58 = "0.5"
+blake2 = { version = "0.10", default-features = false }
+
+[dev-dependencies]
+bincode = { workspace = true }

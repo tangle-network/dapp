@@ -55,7 +55,11 @@ export default tseslint.config(
     },
   },
   {
-    ignores: ['**/.netlify/'],
+    ignores: [
+      '**/.netlify/',
+      '**/contracts/**',
+      '**/scripts/migration/**',
+    ],
   },
   {
     files: ['**/tailwind.config.ts', '**/eslint.config.{mjs,js}'],

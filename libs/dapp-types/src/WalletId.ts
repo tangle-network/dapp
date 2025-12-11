@@ -1,9 +1,10 @@
 export enum WalletId {
-  Polkadot = 1,
-  MetaMask,
-  WalletConnectV2,
-  Rainbow,
-  Talisman,
-  SubWallet,
-  Phantom,
+  MetaMask = 2,
+  WalletConnectV2 = 3,
+  Rainbow = 4,
+  Coinbase = 5,
+  Safe = 6,
+  Talisman = 7,
+  TrustWallet = 8,
+  Keplr = 9,
 }

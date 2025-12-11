@@ -3,13 +3,13 @@ import { Typography } from '@tangle-network/ui-components';
 import { FC, useCallback, useState } from 'react';
 import SelectBlueprintsModal from '../../containers/restaking/SelectBlueprintsModal';
 import { Blueprint } from '@tangle-network/tangle-shared-ui/types/blueprint';
-import { SubstrateAddress } from '@tangle-network/ui-components/types/address';
 import { twMerge } from 'tailwind-merge';
 import useBlueprintStore from '../../context/useBlueprintStore';
 import useOperatorBlueprints from '@tangle-network/tangle-shared-ui/data/blueprints/useOperatorBlueprints';
+import type { Address } from 'viem';
 
 type Props = {
-  operatorAddress?: SubstrateAddress;
+  operatorAddress?: Address;
 };
 
 const BlueprintSelection: FC<Props> = ({ operatorAddress }) => {

@@ -1,0 +1,38 @@
+# Foundry
+cache/
+out/
+broadcast/
+
+# Rust / SP1
+sp1/target/
+sp1/program/elf/
+
+# Dependencies (OpenZeppelin is a submodule, but just in case)
+# lib/  # Uncomment if you want to ignore lib/
+
+# Environment
+.env
+.env.local
+.env.*.local
+
+# Generated files
+merkle-tree.json
+merkle-tree-test.json
+migration-proofs.json
+proof.json
+
+# Node (if using scripts)
+node_modules/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Logs
+*.log

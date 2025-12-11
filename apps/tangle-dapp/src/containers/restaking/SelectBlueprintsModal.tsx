@@ -9,7 +9,7 @@ import {
   ModalFooter,
   ModalHeader,
 } from '@tangle-network/ui-components';
-import { SubstrateAddress } from '@tangle-network/ui-components/types/address';
+import type { Address } from 'viem';
 import { Search } from '@tangle-network/icons';
 import { Blueprint } from '@tangle-network/tangle-shared-ui/types/blueprint';
 import useOperatorBlueprints from '@tangle-network/tangle-shared-ui/data/blueprints/useOperatorBlueprints';
@@ -17,7 +17,7 @@ import filterBy from '@tangle-network/tangle-shared-ui/utils/filterBy';
 import BlueprintSelectionListbox from './BlueprintSelectionListbox';
 
 type Props = {
-  operatorAddress?: SubstrateAddress;
+  operatorAddress?: Address;
   isOpen: boolean;
   setIsOpen: (isOpen: boolean) => void;
   setSelection: (selected: Blueprint['id'][]) => void;

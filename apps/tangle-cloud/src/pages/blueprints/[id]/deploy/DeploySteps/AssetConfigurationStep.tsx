@@ -1,12 +1,12 @@
 import { Card, Typography, Button } from '@tangle-network/ui-components';
 import { Children, FC, useMemo, useState } from 'react';
 import { AssetConfigurationStepProps } from './type';
-import assertRestakeAssetId from '@tangle-network/tangle-shared-ui/utils/assertRestakeAssetId';
 import { AssetRequirementFormItem } from './components/AssetRequirementFormItem';
 import ErrorMessage from '../../../../../components/ErrorMessage';
-import { RestakeAssetId } from '@tangle-network/tangle-shared-ui/types';
-import { NATIVE_ASSET_ID } from '@tangle-network/tangle-shared-ui/constants/restaking';
-import useAssets from '@tangle-network/tangle-shared-ui/hooks/useAssets';
+import {
+  useRestakeAssets,
+  type RestakeAsset,
+} from '@tangle-network/tangle-shared-ui/data/graphql';
 import {
   Select,
   SelectContent,
@@ -16,6 +16,7 @@ import {
 } from '@tangle-network/ui-components/components/select';
 import LsTokenIcon from '@tangle-network/tangle-shared-ui/components/LsTokenIcon';
 import { TrashIcon } from '@radix-ui/react-icons';
+import type { Address } from 'viem';
 
 export const AssetConfigurationStep: FC<AssetConfigurationStepProps> = ({
   errors,
@@ -23,23 +24,20 @@ export const AssetConfigurationStep: FC<AssetConfigurationStepProps> = ({
   watch,
   setError,
   clearErrors,
-  minimumNativeSecurityRequirement,
+  minimumNativeSecurityRequirement: _minimumNativeSecurityRequirement,
 }) => {
   const assets = watch('assets');
-  const { result: allAssets } = useAssets();
+  const { assets: allAssetsMap } = useRestakeAssets();
   const securityCommitments = watch('securityCommitments');
 
   const selectedAssets = useMemo(() => {
     if (!assets) return [];
-    return assets.map((asset) => ({
-      ...asset,
-      id: assertRestakeAssetId(asset.id),
-    }));
+    return assets;
   }, [assets]);
 
   const onChangeExposurePercent = (
     index: number,
-    assetId: RestakeAssetId,
+    _assetId: Address,
     value: number[],
   ) => {
     const minExposurePercent = Number(value[0]);
@@ -63,12 +61,8 @@ export const AssetConfigurationStep: FC<AssetConfigurationStepProps> = ({
 
     let errorMsg: string | null = null;
 
-    if (
-      assetId === NATIVE_ASSET_ID &&
-      minExposurePercent < minimumNativeSecurityRequirement
-    ) {
-      errorMsg = `Minimum exposure percent must be greater than or equal to ${minimumNativeSecurityRequirement}`;
-    } else if (minExposurePercent > maxExposurePercent) {
+    // TODO: Handle native asset validation when native asset support is added
+    if (minExposurePercent > maxExposurePercent) {
       errorMsg = 'Minimum exposure percent cannot exceed maximum';
     }
 
@@ -83,11 +77,11 @@ export const AssetConfigurationStep: FC<AssetConfigurationStepProps> = ({
     }
   };
 
-  const [selectedAsset, setSelectedAsset] = useState<RestakeAssetId | ''>('');
+  const [selectedAsset, setSelectedAsset] = useState<Address | ''>('');
 
-  const addAsset = (assetId: RestakeAssetId) => {
-    if (!allAssets) return;
-    const asset = allAssets.get(assetId);
+  const addAsset = (assetId: Address) => {
+    if (!allAssetsMap) return;
+    const asset = allAssetsMap.get(assetId);
     if (!asset) return;
 
     const nextAssets = [
@@ -95,9 +89,10 @@ export const AssetConfigurationStep: FC<AssetConfigurationStepProps> = ({
       {
         id: asset.id,
         metadata: {
-          ...asset.metadata,
-          deposit: asset.metadata.deposit ?? '',
-          isFrozen: asset.metadata.isFrozen ?? false,
+          name: asset.metadata.name,
+          symbol: asset.metadata.symbol,
+          decimals: asset.metadata.decimals,
+          priceInUsd: null, // TODO: Add price feed
         },
       },
     ];
@@ -123,16 +118,15 @@ export const AssetConfigurationStep: FC<AssetConfigurationStepProps> = ({
     setValue('securityCommitments', nextSec);
   };
 
-  const availableAssets = useMemo(() => {
-    if (!allAssets) return [] as RestakeAssetId[];
+  const availableAssets = useMemo<RestakeAsset[]>(() => {
+    if (!allAssetsMap) return [];
     const selectedIds = new Set(assets?.map((a) => a.id));
-    return Array.from(allAssets.values())
+    return Array.from(allAssetsMap.values())
       .filter((asset) => !selectedIds.has(asset.id))
       .filter(
         (asset) => asset.metadata.name && asset.metadata.name.trim() !== '',
-      )
-      .map((a) => a.id);
-  }, [allAssets, assets]);
+      );
+  }, [allAssetsMap, assets]);
 
   return (
     <Card className="p-6 space-y-6">
@@ -152,8 +146,7 @@ export const AssetConfigurationStep: FC<AssetConfigurationStepProps> = ({
           <Select
             value={selectedAsset}
             onValueChange={(value) => {
-              const id = assertRestakeAssetId(value);
-              addAsset(id);
+              addAsset(value as Address);
               setSelectedAsset(''); // reset to placeholder
             }}
           >
@@ -162,11 +155,10 @@ export const AssetConfigurationStep: FC<AssetConfigurationStepProps> = ({
             </SelectTrigger>
             <SelectContent>
               {Children.toArray(
-                availableAssets.map((id) => {
-                  const meta = allAssets?.get(id);
-                  const name = meta?.metadata.name || 'TNT';
+                availableAssets.map((asset) => {
+                  const name = asset.metadata.name || 'TNT';
                   return (
-                    <SelectItem value={id} id={id}>
+                    <SelectItem value={asset.id} id={asset.id}>
                       <div className="flex items-center gap-2">
                         <LsTokenIcon name={name} size="md" />
                         <Typography variant="body1">{name}</Typography>

@@ -5,8 +5,6 @@ import TableStatus from '@tangle-network/tangle-shared-ui/components/tables/Tabl
 import type { NetworkType } from '@tangle-network/tangle-shared-ui/graphql/graphql';
 import {
   Input,
-  isSubstrateAddress,
-  isValidAddress,
   KeyValueWithButton,
   Table,
   TabsListWithAnimation,
@@ -16,8 +14,8 @@ import {
   TooltipBody,
   TooltipTrigger,
   Typography,
-  ValidatorIdentity,
 } from '@tangle-network/ui-components';
+import { isEvmAddress } from '@tangle-network/ui-components/utils/isEvmAddress20';
 import { Card } from '@tangle-network/ui-components/components/Card';
 import {
   createColumnHelper,
@@ -28,16 +26,18 @@ import {
   useReactTable,
 } from '@tanstack/react-table';
 import cx from 'classnames';
-import { useMemo, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { twMerge } from 'tailwind-merge';
-import { useLatestFinalizedBlock } from '../../../queries';
+import { useLatestTimestamp } from '../../../queries';
 import { SyncProgressIndicator } from '../../indexingProgress';
-import { BLOCK_COUNT_IN_SEVEN_DAYS } from '../constants';
-import { useLeaderboard } from '../queries';
-import { useAccountIdentities } from '../queries/accountIdentitiesQuery';
+import { RoleFilterEnum, SEVEN_DAYS_IN_SECONDS } from '../constants';
+import {
+  getAccountIdsForRoles,
+  useLeaderboard,
+  useRoleAccounts,
+} from '../queries';
 import { Account } from '../types';
 import { createAccountExplorerUrl } from '../utils/createAccountExplorerUrl';
-import { formatDisplayBlockNumber } from '../utils/formatDisplayBlockNumber';
 import { processLeaderboardRecord } from '../utils/processLeaderboardRecord';
 import { BadgesCell } from './BadgesCell';
 import { ExpandedInfo } from './ExpandedInfo';
@@ -45,6 +45,7 @@ import { HeaderCell } from './HeaderCell';
 import { MiniSparkline } from './MiniSparkline';
 import { Overlay } from './Overlay';
 import { FirstPlaceIcon, SecondPlaceIcon, ThirdPlaceIcon } from './RankIcon';
+import { RoleFilter } from './RoleFilter';
 import { TrendIndicator } from './TrendIndicator';
 
 const COLUMN_ID = {
@@ -52,7 +53,6 @@ const COLUMN_ID = {
   ACCOUNT: 'account',
   BADGES: 'badges',
   TOTAL_POINTS: 'totalPoints',
-  ACTIVITY: 'activity',
   POINTS_HISTORY: 'pointsHistory',
 } as const;
 
@@ -90,46 +90,26 @@ const COLUMNS = [
     cell: (props) => {
       const address = props.getValue();
       const accountNetwork = props.row.original.network;
-      const identity = props.row.original.identity;
-
-      if (isSubstrateAddress(address)) {
-        return (
-          <ValidatorIdentity
-            address={address}
-            identityName={identity?.name}
-            accountExplorerUrl={createAccountExplorerUrl(
-              address,
-              accountNetwork,
-            )}
-            subContent={
-              <Typography
-                variant="body2"
-                className="text-gray-500 dark:text-gray-400"
-              >
-                Created{' '}
-                {formatDisplayBlockNumber(
-                  props.row.original.createdAt,
-                  props.row.original.createdAtTimestamp,
-                )}
-              </Typography>
-            }
-          />
-        );
-      }
+      const updatedAt = props.row.original.updatedAtTimestamp;
 
       return (
-        <div className="space-y-2">
-          <KeyValueWithButton size="sm" keyValue={address} />
-          <Typography
-            variant="body2"
-            className="text-gray-500 dark:text-gray-400"
+        <div className="space-y-1">
+          <a
+            href={createAccountExplorerUrl(address, accountNetwork)}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="hover:underline"
           >
-            Created{' '}
-            {formatDisplayBlockNumber(
-              props.row.original.createdAt,
-              props.row.original.createdAtTimestamp,
-            )}
-          </Typography>
+            <KeyValueWithButton size="sm" keyValue={address} />
+          </a>
+          {updatedAt && (
+            <Typography
+              variant="body2"
+              className="text-gray-500 dark:text-gray-400"
+            >
+              Updated {updatedAt.toLocaleDateString()}
+            </Typography>
+          )}
         </div>
       );
     },
@@ -160,27 +140,6 @@ const COLUMNS = [
       </Tooltip>
     ),
   }),
-  COLUMN_HELPER.accessor('activity', {
-    id: COLUMN_ID.ACTIVITY,
-    header: () => <HeaderCell title="Activity" />,
-    cell: ({ row }) => (
-      <div className="flex flex-col">
-        <Typography
-          variant="body1"
-          className="flex items-center gap-1 [&>svg]:flex-initial"
-        >
-          {row.original.activity.depositCount} deposits
-        </Typography>
-
-        <Typography
-          variant="body1"
-          className="flex items-center gap-1 [&>svg]:flex-initial"
-        >
-          {row.original.activity.delegationCount} delegations
-        </Typography>
-      </div>
-    ),
-  }),
   COLUMN_HELPER.display({
     id: COLUMN_ID.POINTS_HISTORY,
     header: () => <HeaderCell title="7-Day Points" />,
@@ -203,6 +162,7 @@ const getExpandedRowContent = (row: Row<Account>) => {
 export const LeaderboardTable = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [expanded, setExpanded] = useState<ExpandedState>({});
+  const [selectedRoles, setSelectedRoles] = useState<RoleFilterEnum[]>([]);
 
   const [pagination, setPagination] = useState<PaginationState>({
     pageIndex: 0,
@@ -213,22 +173,61 @@ export const LeaderboardTable = () => {
     'MAINNET' as NetworkType,
   );
 
-  const {
-    data: latestBlock,
-    isPending: isLatestBlockPending,
-    error: latestBlockError,
-  } = useLatestFinalizedBlock(networkTab);
+  const handleRoleToggle = useCallback((role: RoleFilterEnum) => {
+    setSelectedRoles((prev) =>
+      prev.includes(role) ? prev.filter((r) => r !== role) : [...prev, role],
+    );
+    setPagination((prev) => ({ ...prev, pageIndex: 0 }));
+  }, []);
 
-  // TODO: Figure out how to handle this for both mainnet and testnet
-  const blockNumberSevenDaysAgo = useMemo(() => {
-    if (isLatestBlockPending || latestBlockError) {
+  const handleClearRoles = useCallback(() => {
+    setSelectedRoles([]);
+    setPagination((prev) => ({ ...prev, pageIndex: 0 }));
+  }, []);
+
+  const {
+    data: latestTimestamp,
+    isPending: isTimestampPending,
+    error: timestampError,
+  } = useLatestTimestamp(networkTab);
+
+  const { data: roleAccounts, isPending: isRoleAccountsPending } =
+    useRoleAccounts(networkTab);
+
+  const roleFilteredAccountIds = useMemo(() => {
+    if (selectedRoles.length === 0 || !roleAccounts) {
+      return null;
+    }
+    return getAccountIdsForRoles(roleAccounts, selectedRoles);
+  }, [selectedRoles, roleAccounts]);
+
+  const roleCounts = useMemo(() => {
+    if (!roleAccounts) return undefined;
+    return {
+      operators: roleAccounts.operators.size,
+      restakers: roleAccounts.restakers.size,
+      developers: roleAccounts.developers.size,
+      customers: roleAccounts.customers.size,
+    };
+  }, [roleAccounts]);
+
+  // Calculate timestamp for 7 days ago (Envio uses timestamps instead of block numbers)
+  const timestampSevenDaysAgo = useMemo(() => {
+    if (isTimestampPending || timestampError) {
       return -1;
     }
 
-    const result = latestBlock.testnetBlock - BLOCK_COUNT_IN_SEVEN_DAYS;
+    const currentTimestamp =
+      networkTab === 'MAINNET'
+        ? latestTimestamp?.mainnetTimestamp
+        : latestTimestamp?.testnetTimestamp;
 
-    return result < 0 ? 1 : result;
-  }, [isLatestBlockPending, latestBlockError, latestBlock?.testnetBlock]);
+    if (!currentTimestamp) {
+      return -1;
+    }
+
+    return currentTimestamp - SEVEN_DAYS_IN_SECONDS;
+  }, [isTimestampPending, timestampError, latestTimestamp, networkTab]);
 
   const accountQuery = useMemo(() => {
     if (!searchQuery) {
@@ -237,12 +236,12 @@ export const LeaderboardTable = () => {
 
     const trimmedQuery = searchQuery.trim();
 
-    // Use server-side filtering only for valid addresses
-    if (isValidAddress(trimmedQuery)) {
+    // Use server-side filtering only for valid EVM addresses
+    if (isEvmAddress(trimmedQuery)) {
       return trimmedQuery;
     }
 
-    // Use client-side filtering for identity names and other searches
+    // Use client-side filtering for partial address matches
     return undefined;
   }, [searchQuery]);
 
@@ -267,21 +266,8 @@ export const LeaderboardTable = () => {
     shouldUseClientSideFiltering
       ? 0
       : pagination.pageIndex * pagination.pageSize,
-    blockNumberSevenDaysAgo,
+    timestampSevenDaysAgo,
     accountQuery,
-  );
-
-  const { data: accountIdentities } = useAccountIdentities(
-    useMemo(
-      () =>
-        leaderboardData?.nodes
-          .filter((node) => node !== undefined && node !== null)
-          .map((node) => ({
-            id: node.id,
-            network: networkTab,
-          })) ?? [],
-      [leaderboardData?.nodes, networkTab],
-    ),
   );
 
   const data = useMemo<Account[]>(() => {
@@ -296,41 +282,39 @@ export const LeaderboardTable = () => {
           index,
           pagination.pageIndex,
           pagination.pageSize,
-          record ? accountIdentities?.get(record.id) : null,
+          undefined, // activity data - loaded separately if needed
+          networkTab,
         ),
       )
       .filter((record) => record !== null);
 
-    // Apply client-side filtering for identity names and other searches
-    if (!searchQuery || accountQuery || !shouldUseClientSideFiltering) {
-      // If no search query, server-side filtering, or query too short, return as-is
-      return processedData;
+    let filteredData = processedData;
+
+    // Apply role-based filtering
+    if (roleFilteredAccountIds && roleFilteredAccountIds.size > 0) {
+      filteredData = filteredData.filter((account) =>
+        roleFilteredAccountIds.has(account.id.toLowerCase()),
+      );
     }
 
-    const trimmedQuery = searchQuery.trim().toLowerCase();
+    // Apply client-side filtering for address searches
+    if (searchQuery && !accountQuery && shouldUseClientSideFiltering) {
+      const trimmedQuery = searchQuery.trim().toLowerCase();
+      filteredData = filteredData.filter((account) =>
+        account.id.toLowerCase().includes(trimmedQuery),
+      );
+    }
 
-    // Client-side filter by identity name, address, or partial matches
-    return processedData.filter((account) => {
-      // Search by identity name
-      if (account.identity?.name?.toLowerCase().includes(trimmedQuery)) {
-        return true;
-      }
-
-      // Search by address (case insensitive)
-      if (account.id.toLowerCase().includes(trimmedQuery)) {
-        return true;
-      }
-
-      return false;
-    });
+    return filteredData;
   }, [
     leaderboardData?.nodes,
     pagination.pageIndex,
     pagination.pageSize,
-    accountIdentities,
     searchQuery,
     accountQuery,
     shouldUseClientSideFiltering,
+    networkTab,
+    roleFilteredAccountIds,
   ]);
 
   const table = useReactTable({
@@ -351,41 +335,52 @@ export const LeaderboardTable = () => {
 
   return (
     <Card className="space-y-6 !bg-transparent !border-transparent p-0">
-      <div className="flex items-center justify-between flex-wrap sm:flex-nowrap gap-4">
-        <TabsRoot
-          className="max-w-xs flex-auto"
-          value={networkTab}
-          onValueChange={(tab) => setNetworkTab(tab as NetworkType)}
-        >
-          <TabsListWithAnimation>
-            <TabsTriggerWithAnimation
-              className="min-h-8"
-              value="MAINNET"
-              isActive={networkTab === 'MAINNET'}
-              hideSeparator
-              labelVariant="body2"
-              labelClassName="py-1 px-0"
-            >
-              Mainnet
-            </TabsTriggerWithAnimation>
-            <TabsTriggerWithAnimation
-              className="min-h-8"
-              value="TESTNET"
-              isActive={networkTab === 'TESTNET'}
-              hideSeparator
-              labelVariant="body2"
-              labelClassName="py-1 px-0"
-            >
-              Testnet
-            </TabsTriggerWithAnimation>
-          </TabsListWithAnimation>
-        </TabsRoot>
+      <div className="flex flex-col gap-3 sm:gap-4">
+        {/* Top row: Tabs and Sync indicator */}
+        <div className="flex items-center gap-3 flex-wrap">
+          <TabsRoot
+            className="w-[180px]"
+            value={networkTab}
+            onValueChange={(tab) => setNetworkTab(tab as NetworkType)}
+          >
+            <TabsListWithAnimation className="flex-nowrap">
+              <TabsTriggerWithAnimation
+                value="MAINNET"
+                isActive={networkTab === 'MAINNET'}
+                hideSeparator
+                labelVariant="body2"
+                labelClassName="py-2 px-2"
+              >
+                Mainnet
+              </TabsTriggerWithAnimation>
+              <TabsTriggerWithAnimation
+                value="TESTNET"
+                isActive={networkTab === 'TESTNET'}
+                hideSeparator
+                labelVariant="body2"
+                labelClassName="py-2 px-2"
+              >
+                Testnet
+              </TabsTriggerWithAnimation>
+            </TabsListWithAnimation>
+          </TabsRoot>
 
-        <SyncProgressIndicator network={networkTab} />
+          <SyncProgressIndicator network={networkTab} />
+        </div>
 
-        <div className="flex items-center justify-end gap-2 grow">
+        {/* Role filter */}
+        <RoleFilter
+          selectedRoles={selectedRoles}
+          onRoleToggle={handleRoleToggle}
+          onClearAll={handleClearRoles}
+          isLoading={isRoleAccountsPending}
+          roleCounts={roleCounts}
+        />
+
+        {/* Bottom row: Search */}
+        <div className="flex items-center gap-2">
           <Input
-            className="grow max-w-xs"
+            className="grow sm:max-w-xs"
             debounceTime={300}
             isControlled
             value={searchQuery}
@@ -397,20 +392,10 @@ export const LeaderboardTable = () => {
               ) : undefined
             }
             id="search"
-            placeholder="Search by address or identity name"
+            placeholder="Search by address"
             size="md"
             inputClassName="py-1"
           />
-
-          {/* <Button
-                leftIcon={
-                  <FilterIcon2 className="fill-current dark:fill-current" />
-                }
-                variant="utility"
-                className="px-4 py-[7px]"
-              >
-                Filter
-              </Button> */}
         </div>
       </div>
 

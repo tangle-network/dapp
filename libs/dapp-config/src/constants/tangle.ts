@@ -25,9 +25,9 @@ export const TANGLE_TESTNET_EVM_EXPLORER_URL =
   'https://testnet-explorer.tangle.tools';
 export const TANGLE_TESTNET_NATIVE_TOKEN_SYMBOL = 'tTNT';
 
-// LOCAL
-export const TANGLE_LOCAL_WS_RPC_ENDPOINT = 'ws://127.0.0.1:9944';
-export const TANGLE_LOCAL_HTTP_RPC_ENDPOINT = 'http://127.0.0.1:9944';
+// LOCAL (Anvil EVM)
+export const TANGLE_LOCAL_WS_RPC_ENDPOINT = 'ws://127.0.0.1:8545';
+export const TANGLE_LOCAL_HTTP_RPC_ENDPOINT = 'http://127.0.0.1:8545';
 export const TANGLE_LOCAL_POLKADOT_JS_DASHBOARD_URL = getPolkadotJsDashboardUrl(
   TANGLE_LOCAL_WS_RPC_ENDPOINT,
 );

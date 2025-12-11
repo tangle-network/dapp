@@ -1,32 +1,32 @@
 'use client';
 
-import {
-  AppEvent,
-  WebbProvider,
-} from '@tangle-network/api-provider-environment';
+import { RainbowKitProvider, darkTheme } from '@rainbow-me/rainbowkit';
+import '@rainbow-me/rainbowkit/styles.css';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { config } from '@tangle-network/dapp-config/wagmi-config';
 import { UIProvider } from '@tangle-network/ui-components';
-import { FC, type PropsWithChildren } from 'react';
-import type { State } from 'wagmi';
+import { FC, type PropsWithChildren, useState } from 'react';
+import { WagmiProvider } from 'wagmi';
 
-const appEvent = new AppEvent();
+const Providers: FC<PropsWithChildren> = ({ children }) => {
+  const [queryClient] = useState(() => new QueryClient());
 
-type Props = {
-  wagmiInitialState?: State;
-};
-
-const Providers: FC<PropsWithChildren<Props>> = ({
-  children,
-  wagmiInitialState,
-}) => {
   return (
     <UIProvider hasErrorBoundary>
-      <WebbProvider
-        appEvent={appEvent}
-        applicationName="Tangle Cloud"
-        wagmiInitialState={wagmiInitialState}
-      >
-        {children}
-      </WebbProvider>
+      <WagmiProvider config={config}>
+        <QueryClientProvider client={queryClient}>
+          <RainbowKitProvider
+            theme={darkTheme({
+              accentColor: '#7c3aed',
+              accentColorForeground: 'white',
+              borderRadius: 'medium',
+            })}
+            modalSize="compact"
+          >
+            {children}
+          </RainbowKitProvider>
+        </QueryClientProvider>
+      </WagmiProvider>
     </UIProvider>
   );
 };

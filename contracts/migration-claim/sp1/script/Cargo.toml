@@ -1,0 +1,45 @@
+[package]
+name = "sr25519-claim-script"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+
+[[bin]]
+name = "prove"
+path = "src/main.rs"
+
+[[bin]]
+name = "vkey"
+path = "src/vkey.rs"
+
+[dependencies]
+sp1-sdk = { workspace = true }
+sp1-helper = { workspace = true }
+sr25519-claim-lib = { path = "../lib" }
+
+# Cryptography (for testing)
+schnorrkel = "0.11"
+rand = "0.8"
+
+# Serialization
+serde = { workspace = true }
+serde_json = "1.0"
+bincode = { workspace = true }
+hex = { workspace = true }
+
+# CLI and utilities
+clap = { workspace = true }
+anyhow = { workspace = true }
+tokio = { version = "1", features = ["full"] }
+dotenv = "0.15"
+
+# Numeric types
+primitive-types = "0.12"
+
+[build-dependencies]
+sp1-helper = { workspace = true }
+
+[dev-dependencies]
+# Note: Running cargo test for this crate requires using the SP1 toolchain
+# due to serde/alloy version conflicts. Use: cargo +succinct test
+# Or run only the lib tests: cargo test -p sr25519-claim-lib

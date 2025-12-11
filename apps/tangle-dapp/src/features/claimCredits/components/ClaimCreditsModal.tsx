@@ -11,6 +11,7 @@ import {
 } from '@tangle-network/ui-components';
 import useNetworkStore from '@tangle-network/tangle-shared-ui/context/useNetworkStore';
 import { TxStatus } from '@tangle-network/tangle-shared-ui/hooks/useSubstrateTx';
+import { BN } from '@tangle-network/tangle-shared-ui/bn';
 import { TANGLE_TOKEN_DECIMALS } from '@tangle-network/dapp-config';
 import {
   AmountFormatStyle,
@@ -57,14 +58,14 @@ const ClaimCreditsModal: FC<Props> = ({ isOpen, setIsOpen }) => {
 
   const formattedAmount = data?.amount
     ? formatDisplayAmount(
-        data.amount,
+        new BN(data.amount.toString()),
         TANGLE_TOKEN_DECIMALS,
         AmountFormatStyle.SHORT,
       )
     : '0';
 
   const isLoading = status === TxStatus.PROCESSING;
-  const hasCredits = data?.amount && !data.amount.isZero();
+  const hasCredits = data?.amount && data.amount !== BigInt(0);
   const meetsMinimumThreshold = meetsMinimumClaimThreshold(data?.amount);
   const canClaim = hasCredits && meetsMinimumThreshold;
 

@@ -1,98 +1,82 @@
 'use client';
 
-import { encodeAddress } from '@polkadot/util-crypto';
 import { Trigger as DropdownTrigger } from '@radix-ui/react-dropdown-menu';
-import { useWebContext } from '@tangle-network/api-provider-environment';
-import { useWallets } from '@tangle-network/api-provider-environment/hooks/useWallets';
-import { ManagedWallet, WalletConfig } from '@tangle-network/dapp-config';
-import {
-  calculateTypedChainId,
-  WebbError,
-  WebbErrorCodes,
-} from '@tangle-network/dapp-types';
+import { ChevronDown } from '@tangle-network/icons/ChevronDown';
 import { LoginBoxLineIcon, WalletLineIcon } from '@tangle-network/icons';
-import { WebbWeb3Provider } from '@tangle-network/web3-api-provider';
 import {
-  AccountDropdownBody,
   Button,
   Dropdown,
   DropdownBody,
   ExternalLinkIcon,
-  isSubstrateAddress,
   KeyValueWithButton,
-  shortenString,
+  shortenHex,
   Typography,
-  useUIContext,
-  WalletButton,
 } from '@tangle-network/ui-components';
-import { FC, useCallback, useMemo } from 'react';
-
+import { EvmAddress } from '@tangle-network/ui-components/types/address';
+import { cloneElement, FC, ReactElement, useCallback, useMemo } from 'react';
+import { useDisconnect } from 'wagmi';
 import useNetworkStore from '../../context/useNetworkStore';
-import { BaseError } from 'viem';
-import {
-  EvmAddress,
-  SolanaAddress,
-  SubstrateAddress,
-} from '@tangle-network/ui-components/types/address';
+import { twMerge } from 'tailwind-merge';
+import { getFlexBasic } from '@tangle-network/icons/utils';
 
-const WalletDropdown: FC<{
-  accountName?: string;
-  accountAddress: SubstrateAddress | EvmAddress | SolanaAddress;
-  wallet: WalletConfig;
-}> = ({ accountAddress, accountName, wallet }) => {
-  const { inactivateApi, activeChain, activeWallet } = useWebContext();
-  const { notificationApi } = useUIContext();
-  const { wallets } = useWallets();
+type WalletDropdownProps = {
+  accountAddress: EvmAddress;
+  walletName: string;
+  walletIcon: ReactElement;
+  onAccountClick?: () => void;
+};
+
+const WalletDropdown: FC<WalletDropdownProps> = ({
+  accountAddress,
+  walletName,
+  walletIcon,
+  onAccountClick,
+}) => {
+  const { disconnect } = useDisconnect();
 
   const createExplorerAccountUrl = useNetworkStore(
     (store) => store.network.createExplorerAccountUrl,
   );
 
-  const currentManagedWallet = useMemo<ManagedWallet | undefined>(() => {
-    return wallets.find((wallet) => wallet.connected);
-  }, [wallets]);
-
   const accountExplorerUrl = useMemo(() => {
     return createExplorerAccountUrl(accountAddress);
   }, [accountAddress, createExplorerAccountUrl]);
 
-  const isWalletCompatibleWithChain = useMemo(() => {
-    const typedChainId = activeChain
-      ? calculateTypedChainId(activeChain.chainType, activeChain.id)
-      : null;
-
-    if (!typedChainId) {
-      return false;
-    }
-
-    return activeWallet?.supportedChainIds.includes(typedChainId);
-  }, [activeWallet, activeChain]);
-
-  const handleDisconnect = useCallback(async () => {
-    try {
-      if (currentManagedWallet && currentManagedWallet.canEndSession) {
-        currentManagedWallet.endSession();
-      }
-
-      await inactivateApi();
-    } catch {
-      const message = WebbError.getErrorMessage(
-        WebbErrorCodes.FailedToDisconnect,
-      ).message;
-
-      notificationApi({ variant: 'error', message });
-    }
-  }, [currentManagedWallet, inactivateApi, notificationApi]);
+  const handleDisconnect = useCallback(() => {
+    disconnect();
+  }, [disconnect]);
 
   return (
     <Dropdown>
       <DropdownTrigger asChild>
-        <WalletButton
-          accountName={accountName}
-          wallet={wallet}
-          address={accountAddress}
-          className="max-w-80"
-        />
+        <button
+          type="button"
+          className={twMerge(
+            'max-w-56 rounded-lg border-2 p-2 flex items-center gap-2',
+            'bg-mono-0/10 dark:bg-mono-0/5',
+            'hover:bg-mono-100/10 dark:hover:bg-mono-0/10',
+            'border-2 border-mono-60 dark:border-mono-140',
+          )}
+        >
+          {cloneElement(walletIcon, {
+            ...walletIcon.props,
+            className: twMerge(
+              walletIcon.props.className,
+              `shrink-0 grow-0 ${getFlexBasic('lg')}`,
+            ),
+          })}
+
+          <Typography
+            variant="body1"
+            fw="bold"
+            component="p"
+            className="truncate dark:text-mono-0 sr-only sm:not-sr-only"
+          >
+            {shortenHex(accountAddress)}
+          </Typography>
+
+          <ChevronDown size="lg" className="shrink-0 grow-0" />
+        </button>
       </DropdownTrigger>
 
       <DropdownBody
@@ -101,7 +85,7 @@ const WalletDropdown: FC<{
       >
         <div className="flex flex-col justify-between gap-2 md:flex-row md:items-center">
           <div className="flex space-x-2 items-center">
-            {wallet.Logo}
+            {walletIcon}
 
             <div>
               <Typography
@@ -109,7 +93,7 @@ const WalletDropdown: FC<{
                 fw="bold"
                 className="capitalize truncate max-w-[200px]"
               >
-                {accountName ?? wallet.name}
+                {walletName}
               </Typography>
 
               <div className="flex items-center space-x-1">
@@ -123,7 +107,7 @@ const WalletDropdown: FC<{
                   displayCharCount={5}
                 />
 
-                {accountExplorerUrl !== null && isWalletCompatibleWithChain && (
+                {accountExplorerUrl !== null && (
                   <ExternalLinkIcon href={accountExplorerUrl} size="md" />
                 )}
               </div>
@@ -131,7 +115,21 @@ const WalletDropdown: FC<{
           </div>
 
           <div className="flex items-center md:justify-end space-x-2.5">
-            <SwitchAccountButton />
+            {onAccountClick && (
+              <Button
+                onClick={onAccountClick}
+                leftIcon={
+                  <WalletLineIcon
+                    className="fill-current dark:fill-current"
+                    size="md"
+                  />
+                }
+                variant="link"
+                className="text-lg"
+              >
+                Switch
+              </Button>
+            )}
 
             <Button
               onClick={handleDisconnect}
@@ -149,91 +147,6 @@ const WalletDropdown: FC<{
           </div>
         </div>
       </DropdownBody>
-    </Dropdown>
-  );
-};
-
-const SwitchAccountButton: FC = () => {
-  const { network } = useNetworkStore();
-  const { activeApi, accounts, setActiveAccount } = useWebContext();
-
-  const { notificationApi } = useUIContext();
-
-  const handleSwitchAccount = useCallback(async () => {
-    // Switch account only support on web3 provider.
-    if (!activeApi) {
-      return;
-    }
-
-    if (activeApi instanceof WebbWeb3Provider) {
-      try {
-        const walletClient = activeApi.walletClient;
-
-        await walletClient.requestPermissions({ eth_accounts: {} });
-      } catch (error) {
-        let message = WebbError.from(
-          WebbErrorCodes.SwitchAccountFailed,
-        ).message;
-
-        if (error instanceof BaseError) {
-          message = error.shortMessage;
-        }
-
-        notificationApi({ variant: 'error', message });
-      }
-    }
-  }, [activeApi, notificationApi]);
-
-  if (!activeApi) {
-    return null;
-  }
-
-  return activeApi instanceof WebbWeb3Provider ? (
-    <Button
-      onClick={handleSwitchAccount}
-      leftIcon={
-        <WalletLineIcon className="fill-current dark:fill-current" size="md" />
-      }
-      variant="link"
-      className="text-lg"
-    >
-      Switch
-    </Button>
-  ) : (
-    <Dropdown>
-      <DropdownTrigger asChild>
-        <Button
-          leftIcon={
-            <WalletLineIcon
-              className="fill-current dark:fill-current"
-              size="md"
-            />
-          }
-          variant="link"
-          className="text-lg"
-        >
-          Switch
-        </Button>
-      </DropdownTrigger>
-
-      <AccountDropdownBody
-        addressShortenFn={shortenString}
-        className="mt-2 w-fit"
-        accountItems={accounts.map((account) => {
-          // Attempt to re-encode the address to match the active network's
-          // SS58 prefix, if it's available. Leave it as is if it's an EVM
-          // account address.
-          const address = isSubstrateAddress(account.address)
-            ? encodeAddress(account.address, network.ss58Prefix)
-            : account.address;
-
-          return {
-            address,
-            name: account.name,
-            onClick: () => setActiveAccount(account),
-          };
-        })}
-      />
     </Dropdown>
   );
 };

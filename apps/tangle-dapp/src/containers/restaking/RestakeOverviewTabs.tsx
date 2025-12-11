@@ -1,29 +1,24 @@
-import type { OperatorConcentration } from '@tangle-network/tangle-shared-ui/data/restake/useOperatorConcentration';
-import type { OperatorTvlGroup } from '@tangle-network/tangle-shared-ui/data/restake/useOperatorTvl';
-import useRestakeAssets from '@tangle-network/tangle-shared-ui/data/restake/useRestakeAssets';
-import useRestakeAssetsTvl from '@tangle-network/tangle-shared-ui/data/restake/useRestakeAssetsTvl';
-import useRestakeDelegatorInfo from '@tangle-network/tangle-shared-ui/data/restake/useRestakeDelegatorInfo';
-import { useRestakeVaults } from '@tangle-network/tangle-shared-ui/data/restake/useRestakeVaults';
-import type {
-  OperatorMap,
-  RestakeAsset,
-} from '@tangle-network/tangle-shared-ui/types/restake';
 import { TableAndChartTabs } from '@tangle-network/ui-components/components/TableAndChartTabs';
 import { TabContent } from '@tangle-network/ui-components/components/Tabs/TabContent';
 import { type FC, useCallback, useState } from 'react';
-import {
-  useVaultsTableProps,
-  VaultsTable,
-} from '../../components/tables/Vaults';
+import { Address, formatUnits } from 'viem';
+import { useAccount } from 'wagmi';
 import { RestakeAction } from '../../constants';
 import BlueprintListing from '../../pages/blueprints/BlueprintListing';
 import RestakeDelegateForm from '../../pages/restake/delegate';
 import DepositForm from '../../pages/restake/deposit/DepositForm';
 import RestakeUnstakeForm from '../../pages/restake/unstake';
 import RestakeWithdrawForm from '../../pages/restake/withdraw';
-import OperatorsTableContainer from '@tangle-network/tangle-shared-ui/components/Restaking/OperatorsTableContainer';
-import type { RestakeAssetId } from '@tangle-network/tangle-shared-ui/types';
 import { PagePath, QueryParamKey } from '../../types';
+
+// EVM hooks
+import {
+  useDelegator,
+  useRestakingAssets,
+  type Operator,
+} from '@tangle-network/tangle-shared-ui/data/graphql';
+import { useEvmAssetMetadatas } from '@tangle-network/tangle-shared-ui/hooks/useEvmAssetMetadatas';
+import type { EvmAddress } from '@tangle-network/ui-components/types/address';
 
 enum RestakeTab {
   RESTAKE = 'Restake',
@@ -33,27 +28,17 @@ enum RestakeTab {
 }
 
 type Props = {
-  operatorConcentration?: OperatorConcentration;
-  operatorMap: OperatorMap;
-  operatorTVL?: OperatorTvlGroup['operatorTvl'];
+  operatorMap: Map<Address, Operator> | null;
   action: RestakeAction;
   onOperatorJoined?: () => void;
 };
 
 const RestakeOverviewTabs: FC<Props> = ({
-  operatorConcentration,
   operatorMap,
-  operatorTVL,
   action,
   onOperatorJoined,
 }) => {
   const [tab, setTab] = useState(RestakeTab.RESTAKE);
-
-  const {
-    assets,
-    isLoading: isLoadingAssets,
-    refetchErc20Balances,
-  } = useRestakeAssets();
 
   const handleRestakeClicked = useCallback(() => {
     setTab(RestakeTab.RESTAKE);
@@ -72,33 +57,24 @@ const RestakeOverviewTabs: FC<Props> = ({
         className="flex justify-center md:min-w-[480px] mx-auto"
       >
         {action === RestakeAction.DEPOSIT ? (
-          <DepositForm
-            assets={assets}
-            isLoadingAssets={isLoadingAssets}
-            refetchErc20Balances={refetchErc20Balances}
-          />
+          <DepositForm />
         ) : action === RestakeAction.WITHDRAW ? (
-          <RestakeWithdrawForm assets={assets} />
+          <RestakeWithdrawForm />
         ) : action === RestakeAction.DELEGATE ? (
-          <RestakeDelegateForm assets={assets} />
+          <RestakeDelegateForm />
         ) : action === RestakeAction.UNDELEGATE ? (
-          <RestakeUnstakeForm assets={assets} />
+          <RestakeUnstakeForm />
         ) : null}
       </TabContent>
 
       <TabContent value={RestakeTab.VAULTS}>
-        <VaultTabContent assets={assets} isLoadingAssets={isLoadingAssets} />
+        <VaultTabContent />
       </TabContent>
 
       <TabContent value={RestakeTab.OPERATORS}>
-        <OperatorsTableContainer
-          operatorConcentration={operatorConcentration}
+        <OperatorsTable
           operatorMap={operatorMap}
-          operatorTvl={operatorTVL}
           onRestakeClicked={handleRestakeClicked}
-          onRestakeClickedPagePath={PagePath.RESTAKE_DELEGATE}
-          onRestakeClickedQueryParamKey={QueryParamKey.RESTAKE_OPERATOR}
-          isLoading={isLoadingAssets}
           onOperatorJoined={onOperatorJoined}
         />
       </TabContent>
@@ -112,31 +88,209 @@ const RestakeOverviewTabs: FC<Props> = ({
 
 export default RestakeOverviewTabs;
 
-type VaultTabContentProps = {
-  assets: Map<RestakeAssetId, RestakeAsset> | null;
-  isLoadingAssets: boolean;
-};
+// EVM Vault tab content
+const VaultTabContent: FC = () => {
+  const { address: userAddress } = useAccount();
+  const { data: delegator } = useDelegator(userAddress);
+  const { data: restakingAssets, isLoading: isLoadingAssets } =
+    useRestakingAssets();
 
-const VaultTabContent = ({ assets, isLoadingAssets }: VaultTabContentProps) => {
-  const assetsTvl = useRestakeAssetsTvl();
-  const { result: delegatorInfo } = useRestakeDelegatorInfo();
+  // Get token addresses for metadata
+  const tokenAddresses =
+    restakingAssets?.map((a) => a.token as EvmAddress) ?? [];
+  const { data: tokenMetadatas } = useEvmAssetMetadatas(tokenAddresses);
 
-  const vaults = useRestakeVaults({
-    assets,
-    delegatorInfo,
-    assetsTvl,
-  });
+  // Build vault data from restaking assets
+  const vaults =
+    restakingAssets?.map((asset) => {
+      const metadata = tokenMetadatas?.find(
+        (m) => m.id.toLowerCase() === asset.token.toLowerCase(),
+      );
 
-  const tableProps = useVaultsTableProps({
-    delegatorDeposits: delegatorInfo?.deposits,
-    assets,
-  });
+      const userDeposit = delegator?.assetPositions.find(
+        (p) => p.token.toLowerCase() === asset.token.toLowerCase(),
+      );
+
+      return {
+        id: asset.token,
+        name: metadata?.name ?? 'Unknown',
+        symbol: metadata?.symbol ?? '???',
+        decimals: metadata?.decimals ?? 18,
+        tvl: asset.currentDeposits,
+        userDeposit: userDeposit?.totalDeposited ?? BigInt(0),
+        minStake: asset.minDelegation,
+        depositCap: asset.depositCap,
+        rewardMultiplier: asset.rewardMultiplierBps / 10000,
+      };
+    }) ?? [];
 
   return (
-    <VaultsTable
-      data={vaults}
-      tableProps={tableProps}
-      isLoading={isLoadingAssets}
-    />
+    <div className="space-y-4">
+      <div className="overflow-x-auto">
+        <table className="w-full min-w-[600px]">
+          <thead>
+            <tr className="text-left border-b border-mono-60 dark:border-mono-140">
+              <th className="px-4 py-3 text-sm font-medium text-mono-120">
+                Asset
+              </th>
+              <th className="px-4 py-3 text-sm font-medium text-mono-120">
+                TVL
+              </th>
+              <th className="px-4 py-3 text-sm font-medium text-mono-120">
+                Your Deposit
+              </th>
+              <th className="px-4 py-3 text-sm font-medium text-mono-120">
+                Multiplier
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            {isLoadingAssets ? (
+              <tr>
+                <td colSpan={4} className="px-4 py-8 text-center text-mono-100">
+                  Loading vaults...
+                </td>
+              </tr>
+            ) : vaults.length === 0 ? (
+              <tr>
+                <td colSpan={4} className="px-4 py-8 text-center text-mono-100">
+                  No vaults available
+                </td>
+              </tr>
+            ) : (
+              vaults.map((vault) => (
+                <tr
+                  key={vault.id}
+                  className="border-b border-mono-40 dark:border-mono-160"
+                >
+                  <td className="px-4 py-3">
+                    <div className="flex flex-col">
+                      <span className="font-medium">{vault.symbol}</span>
+                      <span className="text-xs text-mono-100">
+                        {vault.name}
+                      </span>
+                    </div>
+                  </td>
+                  <td className="px-4 py-3">
+                    {formatUnits(vault.tvl, vault.decimals)} {vault.symbol}
+                  </td>
+                  <td className="px-4 py-3">
+                    {vault.userDeposit > BigInt(0)
+                      ? `${formatUnits(vault.userDeposit, vault.decimals)} ${vault.symbol}`
+                      : '-'}
+                  </td>
+                  <td className="px-4 py-3">{vault.rewardMultiplier}x</td>
+                </tr>
+              ))
+            )}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  );
+};
+
+// EVM Operators table
+type OperatorsTableProps = {
+  operatorMap: Map<Address, Operator> | null;
+  onRestakeClicked: () => void;
+  onOperatorJoined?: () => void;
+};
+
+const OperatorsTable: FC<OperatorsTableProps> = ({
+  operatorMap,
+  onRestakeClicked,
+}) => {
+  const operators = operatorMap ? Array.from(operatorMap.values()) : [];
+  const isLoading = operatorMap === null;
+
+  return (
+    <div className="space-y-4">
+      <div className="overflow-x-auto">
+        <table className="w-full min-w-[600px]">
+          <thead>
+            <tr className="text-left border-b border-mono-60 dark:border-mono-140">
+              <th className="px-4 py-3 text-sm font-medium text-mono-120">
+                Operator
+              </th>
+              <th className="px-4 py-3 text-sm font-medium text-mono-120">
+                Status
+              </th>
+              <th className="px-4 py-3 text-sm font-medium text-mono-120">
+                Stake
+              </th>
+              <th className="px-4 py-3 text-sm font-medium text-mono-120">
+                Delegations
+              </th>
+              <th className="px-4 py-3 text-sm font-medium text-mono-120">
+                Actions
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            {isLoading ? (
+              <tr>
+                <td colSpan={5} className="px-4 py-8 text-center text-mono-100">
+                  Loading operators...
+                </td>
+              </tr>
+            ) : operators.length === 0 ? (
+              <tr>
+                <td colSpan={5} className="px-4 py-8 text-center text-mono-100">
+                  No operators registered yet
+                </td>
+              </tr>
+            ) : (
+              operators.map((operator) => (
+                <tr
+                  key={operator.id}
+                  className="border-b border-mono-40 dark:border-mono-160"
+                >
+                  <td className="px-4 py-3">
+                    <span className="font-mono text-sm">
+                      {operator.id.slice(0, 10)}...{operator.id.slice(-8)}
+                    </span>
+                  </td>
+                  <td className="px-4 py-3">
+                    <span
+                      className={`px-2 py-1 text-xs rounded ${
+                        operator.restakingStatus === 'ACTIVE'
+                          ? 'bg-green-500/20 text-green-500'
+                          : 'bg-mono-80 text-mono-120'
+                      }`}
+                    >
+                      {operator.restakingStatus ?? 'UNKNOWN'}
+                    </span>
+                  </td>
+                  <td className="px-4 py-3">
+                    {formatUnits(operator.restakingStake ?? BigInt(0), 18)} TNT
+                  </td>
+                  <td className="px-4 py-3">
+                    {operator.restakingDelegationCount?.toString() ?? '0'}
+                  </td>
+                  <td className="px-4 py-3">
+                    <a
+                      href={`${PagePath.RESTAKE_DELEGATE}?${QueryParamKey.RESTAKE_OPERATOR}=${operator.id}`}
+                      onClick={(e) => {
+                        e.preventDefault();
+                        onRestakeClicked();
+                        window.history.pushState(
+                          {},
+                          '',
+                          `${PagePath.RESTAKE_DELEGATE}?${QueryParamKey.RESTAKE_OPERATOR}=${operator.id}`,
+                        );
+                      }}
+                      className="text-sm text-blue-50 hover:text-blue-40"
+                    >
+                      Delegate
+                    </a>
+                  </td>
+                </tr>
+              ))
+            )}
+          </tbody>
+        </table>
+      </div>
+    </div>
   );
 };

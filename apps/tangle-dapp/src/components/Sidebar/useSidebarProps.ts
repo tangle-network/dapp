@@ -11,17 +11,10 @@ export default function useSidebarProps() {
   const sidebarProps = useMemo(
     () =>
       getSidebarProps({
-        polkadotJsDashboardUrl: network.polkadotJsDashboardUrl,
-        nativeExplorerUrl: network.explorerUrl,
         evmExplorerUrl: network.evmExplorerUrl,
         networkFeatures,
       }),
-    [
-      network.evmExplorerUrl,
-      network.explorerUrl,
-      network.polkadotJsDashboardUrl,
-      networkFeatures,
-    ],
+    [network.evmExplorerUrl, networkFeatures],
   );
 
   return sidebarProps;

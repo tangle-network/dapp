@@ -11,15 +11,19 @@ import BridgePage from '../pages/bridge';
 import ClaimPage from '../pages/claim';
 import ClaimLayout from '../pages/claim/layout';
 import ClaimSuccessPage from '../pages/claim/success';
-import LiquidStakingPage from '../pages/liquid-staking';
-import NominationPage from '../pages/nomination';
-import ValidatorDetailsPage from '../pages/nomination/[validatorAddress]';
-import NominationLayout from '../pages/nomination/layout';
+import MigrationClaimPage from '../pages/claim/migration';
+import NativeRestakePage from '../pages/native-restake';
 import NotFoundPage from '../pages/notFound';
 import { PagePath } from '../types';
 import Providers from './providers';
 import RestakeTabContent from '../containers/restaking/RestakeTabContent';
-import { RestakeAction, RestakeTab } from '../constants';
+import LiquidStakingTabContent from '../containers/liquidStaking/LiquidStakingTabContent';
+import {
+  RestakeAction,
+  RestakeTab,
+  LiquidStakingAction,
+  LiquidStakingTab,
+} from '../constants';
 
 function App() {
   return (
@@ -42,14 +46,10 @@ function App() {
               />
             </Route>
 
-            <Route path={PagePath.NOMINATION} element={<NominationLayout />}>
-              <Route index element={<NominationPage />} />
-
-              <Route
-                path={PagePath.NOMINATION_VALIDATOR}
-                element={<ValidatorDetailsPage />}
-              />
-            </Route>
+            <Route
+              path={PagePath.CLAIM_MIGRATION}
+              element={<MigrationClaimPage />}
+            />
 
             <Route path={PagePath.BRIDGE} element={<BridgePage />} />
 
@@ -61,11 +61,6 @@ function App() {
                 element={<BlueprintDetailsPage />}
               />
             </Route>
-
-            <Route
-              path={PagePath.LIQUID_STAKING}
-              element={<LiquidStakingPage />}
-            />
 
             <Route path={PagePath.RESTAKE}>
               <Route
@@ -101,6 +96,52 @@ function App() {
                 element={<RestakeTabContent tab={RestakeTab.BLUEPRINTS} />}
               />
             </Route>
+
+            <Route path={PagePath.LIQUID_STAKING}>
+              <Route
+                index
+                element={
+                  <Navigate to={PagePath.LIQUID_STAKING_DEPOSIT} replace />
+                }
+              />
+              <Route
+                path={PagePath.LIQUID_STAKING_DEPOSIT}
+                element={
+                  <LiquidStakingTabContent tab={LiquidStakingAction.DEPOSIT} />
+                }
+              />
+              <Route
+                path={PagePath.LIQUID_STAKING_REDEEM}
+                element={
+                  <LiquidStakingTabContent tab={LiquidStakingAction.REDEEM} />
+                }
+              />
+              <Route
+                path={PagePath.LIQUID_STAKING_CREATE_VAULT}
+                element={
+                  <LiquidStakingTabContent
+                    tab={LiquidStakingAction.CREATE_VAULT}
+                  />
+                }
+              />
+              <Route
+                path={PagePath.LIQUID_STAKING_VAULTS}
+                element={
+                  <LiquidStakingTabContent tab={LiquidStakingTab.VAULTS} />
+                }
+              />
+              <Route
+                path={PagePath.LIQUID_STAKING_POSITIONS}
+                element={
+                  <LiquidStakingTabContent tab={LiquidStakingTab.POSITIONS} />
+                }
+              />
+            </Route>
+
+            <Route
+              path={PagePath.NATIVE_RESTAKE}
+              element={<NativeRestakePage />}
+            />
 
             <Route path="*" element={<NotFoundPage />} />
           </Routes>

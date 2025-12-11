@@ -1,7 +1,7 @@
 import { ArrowRightIcon } from '@radix-ui/react-icons';
 import { RowSelectionState } from '@tanstack/table-core';
 import RestakeBanner from '@tangle-network/tangle-shared-ui/components/blueprints/RestakeBanner';
-import useAllBlueprints from '@tangle-network/tangle-shared-ui/data/blueprints/useAllBlueprints';
+import { useAllBlueprints } from '@tangle-network/tangle-shared-ui/data/graphql';
 import Button from '@tangle-network/ui-components/components/buttons/Button';
 import {
   Modal,

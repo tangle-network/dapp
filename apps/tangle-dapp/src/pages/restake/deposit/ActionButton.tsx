@@ -3,17 +3,17 @@ import { type RefObject } from 'react';
 import type { FieldErrors, UseFormWatch } from 'react-hook-form';
 
 import useActiveTypedChainId from '../../../hooks/useActiveTypedChainId';
-import type { DepositFormFields } from '../../../types/restake';
+import type { EvmDepositFormFields } from '../../../types/restake';
 import ActionButtonBase from '../../../components/restaking/ActionButtonBase';
 import useSwitchChain from '../useSwitchChain';
 
 type Props = {
-  errors: FieldErrors<DepositFormFields>;
-  formRef: RefObject<HTMLFormElement>;
+  errors: FieldErrors<EvmDepositFormFields>;
+  formRef: RefObject<HTMLFormElement | null>;
   isSubmitting: boolean;
   isTransactionLoading: boolean;
   isValid: boolean;
-  watch: UseFormWatch<DepositFormFields>;
+  watch: UseFormWatch<EvmDepositFormFields>;
 };
 
 export default function ActionButton({

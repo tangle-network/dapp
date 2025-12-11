@@ -1,24 +1,13 @@
 import { NetworkType } from '@tangle-network/tangle-shared-ui/graphql/graphql';
-import {
-  TANGLE_MAINNET_NETWORK,
-  TANGLE_TESTNET_NATIVE_NETWORK,
-} from '@tangle-network/ui-components/constants/networks';
-import {
-  EvmAddress,
-  SubstrateAddress,
-} from '@tangle-network/ui-components/types/address';
+
+// EVM block explorer URLs for Tangle networks
+const MAINNET_EXPLORER = 'https://explorer.tangle.tools';
+const TESTNET_EXPLORER = 'https://testnet-explorer.tangle.tools';
 
 export const createAccountExplorerUrl = (
-  address: SubstrateAddress | EvmAddress,
+  address: string,
   network: NetworkType,
-) => {
-  switch (network) {
-    case 'MAINNET':
-      return TANGLE_MAINNET_NETWORK.createExplorerAccountUrl(address);
-    case 'TESTNET':
-      return TANGLE_TESTNET_NATIVE_NETWORK.createExplorerAccountUrl(address);
-    default:
-      console.error(`Unsupported network: ${network}`);
-      return null;
-  }
+): string => {
+  const baseUrl = network === 'MAINNET' ? MAINNET_EXPLORER : TESTNET_EXPLORER;
+  return `${baseUrl}/address/${address}`;
 };

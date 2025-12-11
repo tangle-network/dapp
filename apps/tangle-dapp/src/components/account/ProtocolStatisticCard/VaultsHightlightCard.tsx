@@ -103,9 +103,9 @@ const VaultsHightlightCard = ({
               className="flex w-full h-full transition-transform duration-500 ease-in-out"
               style={{ transform: `translateX(-${currentSlide * 100}%)` }}
             >
-              {sortedVaults.map((vault) => (
+              {sortedVaults.map((vault, index) => (
                 <div
-                  key={vault.id}
+                  key={`vault-${vault.id}-${index}`}
                   className="w-full min-w-full flex-shrink-0 bg-cover bg-center bg-no-repeat"
                   style={{
                     backgroundImage: `linear-gradient(180deg, rgba(18, 20, 37, 0) 0%, rgba(67, 62, 217, 0.3) 27.5%), url('/static/assets/vaults/vault-${kebabCase(vault.name || '')}.png')`,

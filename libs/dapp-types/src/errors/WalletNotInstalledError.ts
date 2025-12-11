@@ -12,15 +12,6 @@ class WalletNotInstalledError extends WebbError {
       case WalletId.Rainbow:
         super(WebbErrorCodes.RainbowExtensionNotInstalled);
         break;
-      case WalletId.Polkadot:
-        super(WebbErrorCodes.PolkadotJSExtensionNotInstalled);
-        break;
-      case WalletId.SubWallet:
-        super(WebbErrorCodes.SubWalletExtensionNotInstalled);
-        break;
-      case WalletId.Talisman:
-        super(WebbErrorCodes.TalismanExtensionNotInstalled);
-        break;
       default:
         super(WebbErrorCodes.UnknownWallet);
     }

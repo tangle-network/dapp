@@ -10,6 +10,7 @@ export enum PagePath {
   NOMINATION_VALIDATOR = '/nomination/:validatorAddress',
   CLAIM_AIRDROP = '/claim',
   CLAIM_AIRDROP_SUCCESS = '/claim/success',
+  CLAIM_MIGRATION = '/claim/migration',
   BRIDGE = '/bridge',
   BLUEPRINTS = '/blueprints',
   BLUEPRINTS_DETAILS = '/blueprints/:id',
@@ -23,6 +24,12 @@ export enum PagePath {
   RESTAKE_BLUEPRINT = '/restake/blueprints',
   RESTAKE_OPERATOR = '/restake/operators',
   LIQUID_STAKING = '/liquid-staking',
+  LIQUID_STAKING_DEPOSIT = '/liquid-staking/deposit',
+  LIQUID_STAKING_REDEEM = '/liquid-staking/redeem',
+  LIQUID_STAKING_CREATE_VAULT = '/liquid-staking/create-vault',
+  LIQUID_STAKING_VAULTS = '/liquid-staking/vaults',
+  LIQUID_STAKING_POSITIONS = '/liquid-staking/positions',
+  NATIVE_RESTAKE = '/native-restake',
   NOT_FOUND = '/404',
 }
 

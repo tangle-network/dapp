@@ -8,30 +8,27 @@ import { useForm } from 'react-hook-form';
 import {
   DeployBlueprintSchema,
   deployBlueprintSchema,
-  formatServiceRegisterData,
 } from '../../../../utils/validations/deployBlueprint';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useNavigate } from 'react-router';
-import useBlueprintDetails from '@tangle-network/tangle-shared-ui/data/restake/useBlueprintDetails';
+import {
+  useBlueprintDetails,
+  useServiceRequestTx,
+  encodeServiceConfig,
+  type ServiceRequestParams,
+} from '@tangle-network/tangle-shared-ui/data/graphql';
 import { Deployment } from './DeploySteps/Deployment';
 import { twMerge } from 'tailwind-merge';
 import { ArrowRightIcon } from '@radix-ui/react-icons';
 import ErrorMessage from '../../../../components/ErrorMessage';
 import { z } from 'zod';
-import useServiceRequestTx from '../../../../data/services/useServicesRequestTx';
-import { TxStatus } from '@tangle-network/tangle-shared-ui/hooks/useSubstrateTx';
 import { PagePath } from '../../../../types';
-import { getApiPromise } from '@tangle-network/tangle-shared-ui/utils/polkadot/api';
-import useNetworkStore from '@tangle-network/tangle-shared-ui/context/useNetworkStore';
 import useParamWithSchema from '@tangle-network/tangle-shared-ui/hooks/useParamWithSchema';
+import { zeroAddress } from 'viem';
 
 const DeployPage: FC = () => {
   const id = useParamWithSchema('id', z.coerce.bigint());
   const navigate = useNavigate();
-
-  const wsRpcEndpoints = useNetworkStore(
-    (store) => store.network2?.wsRpcEndpoints,
-  );
 
   const {
     result: blueprintResult,
@@ -39,8 +36,11 @@ const DeployPage: FC = () => {
     error: blueprintError,
   } = useBlueprintDetails(id);
 
-  const { execute: serviceRegisterTx, status: serviceRegisterStatus } =
-    useServiceRequestTx();
+  const {
+    execute: serviceRequestTx,
+    isSuccess: serviceRequestSuccess,
+    isPending: serviceRequestPending,
+  } = useServiceRequestTx();
 
   const {
     watch,
@@ -77,19 +77,18 @@ const DeployPage: FC = () => {
   );
 
   // Automatically navigate to the blueprint details page when the service
-  // register transaction is complete.
+  // request transaction is complete.
   useEffect(() => {
-    if (id !== undefined && serviceRegisterStatus === TxStatus.COMPLETE) {
+    if (id !== undefined && serviceRequestSuccess) {
       navigate(`${PagePath.BLUEPRINTS_DETAILS}`.replace(':id', id.toString()));
     }
-  }, [serviceRegisterStatus, id, navigate]);
+  }, [serviceRequestSuccess, id, navigate]);
 
   if (isBlueprintLoading) {
     return <SkeletonLoader className="min-h-64" />;
   } else if (blueprintError) {
     return <ErrorFallback title={blueprintError.name} />;
   } else if (blueprintResult === null) {
-    // TODO: Show 404 page
     return null;
   }
 
@@ -98,17 +97,30 @@ const DeployPage: FC = () => {
       clearErrors();
       const validatedData = deployBlueprintSchema.parse(watch());
 
-      const serviceRegisterData = formatServiceRegisterData(
-        blueprintResult.details,
-        validatedData,
-      );
-      if (serviceRegisterTx && wsRpcEndpoints) {
-        const apiPromise = await getApiPromise(wsRpcEndpoints);
-        await serviceRegisterTx({
-          ...serviceRegisterData,
-          apiPromise: apiPromise,
-        });
-      }
+      // Format the service request data for the Tangle contract
+      // Operators are already Address[] from the schema
+      const operators = validatedData.operators ?? [];
+      const permittedCallers = validatedData.permittedCallers ?? [];
+      const ttl = BigInt(validatedData.instanceDuration ?? 0);
+
+      // Get payment configuration
+      const paymentToken = validatedData.paymentAsset?.id ?? zeroAddress;
+      const paymentAmount = BigInt(validatedData.paymentAmount ?? '0');
+
+      // Encode service configuration from request args
+      const config = encodeServiceConfig(validatedData.requestArgs ?? []);
+
+      const params: ServiceRequestParams = {
+        blueprintId: id ?? BigInt(0),
+        operators,
+        config,
+        permittedCallers,
+        ttl,
+        paymentToken,
+        paymentAmount,
+      };
+
+      await serviceRequestTx(params);
     } catch (error) {
       if (error instanceof z.ZodError) {
         error.errors.forEach((err) => {
@@ -145,7 +157,7 @@ const DeployPage: FC = () => {
         <Button
           rightIcon={<ArrowRightIcon width={24} height={24} />}
           onClick={onDeployBlueprint}
-          isLoading={serviceRegisterStatus === TxStatus.PROCESSING}
+          isLoading={serviceRequestPending}
         >
           Deploy
         </Button>

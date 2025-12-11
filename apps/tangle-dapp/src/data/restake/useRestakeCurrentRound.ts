@@ -1,15 +1,18 @@
-import useApiRx from '@tangle-network/tangle-shared-ui/hooks/useApiRx';
-import { useCallback } from 'react';
-import { map } from 'rxjs';
+import { useProtocolConfig } from '@tangle-network/tangle-shared-ui/data/graphql';
+import { useMemo } from 'react';
 
 const useRestakeCurrentRound = () => {
-  return useApiRx(
-    useCallback((api) => {
-      return api.query.multiAssetDelegation
-        .currentRound()
-        .pipe(map((round) => round.toNumber()));
-    }, []),
-  );
+  const { data: config, isLoading, error } = useProtocolConfig();
+
+  const result = useMemo(() => {
+    if (!config) {
+      return null;
+    }
+
+    return Number(config.currentRound);
+  }, [config]);
+
+  return { result, isLoading, error };
 };
 
 export default useRestakeCurrentRound;

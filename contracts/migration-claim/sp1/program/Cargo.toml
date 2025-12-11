@@ -1,0 +1,13 @@
+[package]
+name = "sr25519-claim-program"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+
+[dependencies]
+sp1-zkvm = { workspace = true }
+sr25519-claim-lib = { path = "../lib" }
+
+# SR25519/Schnorrkel - note: needs special handling for zkVM
+schnorrkel = { workspace = true }
+merlin = { workspace = true }

@@ -1,11 +1,12 @@
-import { InjectedExtension } from '@polkadot/extension-inject/types';
-import { useWebContext } from '@tangle-network/api-provider-environment';
-import { WebbPolkadot } from '@tangle-network/polkadot-api-provider';
+import type { InjectedExtension } from '@polkadot/extension-inject/types';
 
+/**
+ * @deprecated Substrate wallet support has been removed. This hook returns null.
+ * Substrate transactions will not work without a wallet injector.
+ */
 const useSubstrateInjectedExtension = (): InjectedExtension | null => {
-  const { activeApi } = useWebContext();
-
-  return activeApi instanceof WebbPolkadot ? activeApi.injectedExtension : null;
+  // Substrate wallet support has been removed - return null
+  return null;
 };
 
 export default useSubstrateInjectedExtension;

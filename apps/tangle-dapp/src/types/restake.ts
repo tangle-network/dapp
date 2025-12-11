@@ -6,6 +6,7 @@
 
 import { RestakeAssetId } from '@tangle-network/tangle-shared-ui/types';
 import { SubstrateAddress } from '@tangle-network/ui-components/types/address';
+import type { Address } from 'viem';
 
 export type RewardVaultMap = {
   [vaultId: string]: string[] | null;
@@ -60,4 +61,25 @@ export type UnstakeFormFields = DelegationFormFields;
 export type WithdrawFormFields = {
   amount: string;
   assetId: RestakeAssetId;
+};
+
+// EVM form types using EVM addresses
+
+export type EvmDepositFormFields = {
+  amount: string;
+  sourceTypedChainId: number;
+  depositAssetId: Address;
+};
+
+export type EvmDelegationFormFields = {
+  amount: string;
+  operatorAddress: Address;
+  assetId: Address;
+};
+
+export type EvmUnstakeFormFields = EvmDelegationFormFields;
+
+export type EvmWithdrawFormFields = {
+  amount: string;
+  assetId: Address;
 };

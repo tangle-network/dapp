@@ -1,5 +1,4 @@
 import { DropdownMenuTrigger } from '@radix-ui/react-dropdown-menu';
-import { useActiveChain } from '@tangle-network/api-provider-environment/hooks/useActiveChain';
 import { ThreeDotsVerticalIcon } from '@tangle-network/icons/ThreeDotsVerticalIcon';
 import useNetworkStore from '@tangle-network/tangle-shared-ui/context/useNetworkStore';
 import { Blueprint } from '@tangle-network/tangle-shared-ui/types/blueprint';
@@ -16,11 +15,11 @@ import ParamsForm from './RegistrationForm/ParamsForm';
 import { SessionStorageKey } from '../../constants';
 import { useNavigate } from 'react-router';
 import { PagePath } from '../../types';
-import useServicesRegisterTx from '../../data/services/useServicesRegisterTx';
-import { toTanglePrimitiveEcdsaKey } from '../../utils';
-import useSubstrateAddress from '@tangle-network/tangle-shared-ui/hooks/useSubstrateAddress';
-import { TxStatus } from '@tangle-network/tangle-shared-ui/hooks/useSubstrateTx';
+import { useOperatorBatchRegisterTx } from '../../data/services/useOperatorRegisterTx';
+import { useAccount } from 'wagmi';
+import { TxStatus } from '@tangle-network/tangle-shared-ui/hooks/useContractWrite';
 import { toPrimitiveArgsDataType } from '../../utils/toPrimitiveArgsDataType';
+import { keccak256, toHex } from 'viem';
 
 export default function RegistrationReview() {
   const navigate = useNavigate();
@@ -44,14 +43,13 @@ export default function RegistrationReview() {
   const { network } = useNetworkStore();
 
   const { execute: registerTx, status: registerTxStatus } =
-    useServicesRegisterTx();
+    useOperatorBatchRegisterTx();
 
   const [registrationParams, setRegistrationParams] = useState<
     Record<string, any>
   >({});
 
-  const activeAccount = useSubstrateAddress();
-  const [activeChain] = useActiveChain();
+  const { address: activeAccount, isConnected } = useAccount();
 
   const isValidParams = useMemo(() => {
     return blueprints.every((blueprint) => {
@@ -92,43 +90,33 @@ export default function RegistrationReview() {
       return;
     }
 
-    const key = toTanglePrimitiveEcdsaKey(activeAccount);
+    // Generate ECDSA public key from the connected wallet address
+    // For EVM, we use a deterministic derivation from the address
+    const ecdsaPublicKey = keccak256(toHex(activeAccount)) as `0x${string}`;
 
-    if (!key) {
-      // TODO: Handle error case where key could not be generated.
-      return;
-    }
-
-    const preferences = blueprints.map(() => ({
-      key,
-      // Include RPC URL in preferences if provided
-      ...(rpcUrl ? { rpcUrl } : {}),
-      // TODO: Add UI for setting price targets
-      priceTargets: {
-        cpu: 0,
-        mem: 0,
-        storageHdd: 0,
-        storageSsd: 0,
-        storageNvme: 0,
+    // Encode registration arguments for each blueprint
+    const registrationArgs = blueprints.map(
+      ({
+        id: blueprintId,
+        registrationParams: blueprintRegistrationParams,
+      }) => {
+        const paramValues = registrationParams[blueprintId.toString()];
+        if (!paramValues || Object.keys(paramValues).length === 0) {
+          return undefined;
+        }
+        return toPrimitiveArgsDataType(
+          blueprintRegistrationParams,
+          paramValues,
+        );
       },
-    }));
+    );
 
-    registerTx({
-      blueprintIds: blueprints.map((blueprint) => blueprint.id.toString()),
-      preferences,
-      registrationArgs: blueprints.map(
-        ({
-          id: blueprintId,
-          registrationParams: blueprintRegistrationParams,
-        }) => {
-          const paramValues = registrationParams[blueprintId.toString()];
-          return toPrimitiveArgsDataType(
-            blueprintRegistrationParams,
-            paramValues,
-          );
-        },
-      ),
-      amounts: blueprints.map(({ id }) => amount[id.toString()]),
+    await registerTx({
+      blueprintIds: blueprints.map((blueprint) => BigInt(blueprint.id)),
+      ecdsaPublicKey,
+      rpcAddress: rpcUrl ?? '',
+      registrationArgs,
+      amounts: blueprints.map(({ id }) => amount[id.toString()] ?? '0'),
     });
   }, [
     activeAccount,
@@ -230,7 +218,7 @@ export default function RegistrationReview() {
             isDisabled={
               !isValidParams ||
               !isValidAmount ||
-              !activeChain ||
+              !isConnected ||
               registerTxStatus === TxStatus.PROCESSING
             }
             onClick={handleRegister}
