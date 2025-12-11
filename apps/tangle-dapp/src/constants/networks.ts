@@ -14,4 +14,8 @@ export const NETWORK_FEATURE_MAP: Record<NetworkId, NetworkFeature[]> = {
     NetworkFeature.LsPools,
   ],
   [NetworkId.CUSTOM]: [NetworkFeature.EraStakersOverview],
+  // EVM-only networks (no Substrate features)
+  [NetworkId.ANVIL_LOCAL]: [],
+  [NetworkId.BASE]: [],
+  [NetworkId.BASE_SEPOLIA]: [],
 };

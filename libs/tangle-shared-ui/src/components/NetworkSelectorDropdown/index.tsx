@@ -152,6 +152,8 @@ const NetworkSelectionButton: FC<NetworkSelectionButtonProps> = ({
             onSetCustomNetwork={handleSwitchCustomNetwork}
             onNetworkChange={handleNetworkChange}
             isNotConnectedToSelectedNetwork={isWrongEvmNetwork}
+            networks={networks}
+            showCustomEndpoint={showCustomEndpoint}
           />
         </DropdownBody>
       </DropdownRoot>

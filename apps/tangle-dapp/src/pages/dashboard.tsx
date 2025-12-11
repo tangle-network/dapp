@@ -1,26 +1,32 @@
 import { BN } from '@polkadot/util';
 import { TokenIcon } from '@tangle-network/icons';
+import Spinner from '@tangle-network/icons/Spinner';
 import {
   useRestakeAssets,
   useRestakingAssets,
 } from '@tangle-network/tangle-shared-ui/data/graphql';
 import { useDelegator } from '@tangle-network/tangle-shared-ui/data/graphql/useDelegator';
 import HeaderCell from '@tangle-network/tangle-shared-ui/components/tables/HeaderCell';
+import TableCellWrapper from '@tangle-network/tangle-shared-ui/components/tables/TableCellWrapper';
+import TableStatus from '@tangle-network/tangle-shared-ui/components/tables/TableStatus';
 import {
   AmountFormatStyle,
   formatDisplayAmount,
   EMPTY_VALUE_PLACEHOLDER,
-  Card,
 } from '@tangle-network/ui-components';
 import { Table } from '@tangle-network/ui-components/components/Table';
 import { TableVariant } from '@tangle-network/ui-components/components/Table/types';
 import { Typography } from '@tangle-network/ui-components/typography/Typography/Typography';
+import pluralize from '@tangle-network/ui-components/utils/pluralize';
 import {
   createColumnHelper,
   getCoreRowModel,
+  getPaginationRowModel,
+  getSortedRowModel,
   useReactTable,
 } from '@tanstack/react-table';
 import { FC, useMemo } from 'react';
+import { twMerge } from 'tailwind-merge';
 import { Address } from 'viem';
 import { useAccount } from 'wagmi';
 import AccountSummaryCard from '../components/account/AccountSummaryCard';
@@ -46,29 +52,38 @@ const getColumns = () => [
   COLUMN_HELPER.accessor('id', {
     header: () => <HeaderCell title="Asset" />,
     cell: (props) => (
-      <div className="flex items-center gap-3">
-        <TokenIcon name={props.row.original.symbol} size="lg" />
+      <TableCellWrapper className="pl-3">
+        <div className="flex items-center gap-2">
+          <TokenIcon name={props.row.original.symbol} size="lg" />
 
-        <div>
-          <Typography variant="body1" fw="bold" className="dark:text-mono-0">
-            {props.row.original.symbol}
-          </Typography>
+          <div>
+            <Typography variant="h5" className="whitespace-nowrap">
+              {props.row.original.symbol}
+            </Typography>
 
-          <Typography variant="body2" className="text-mono-100">
-            {props.row.original.name}
-          </Typography>
+            <Typography
+              variant="body3"
+              className="text-mono-120 dark:text-mono-100"
+            >
+              {props.row.original.name}
+            </Typography>
+          </div>
         </div>
-      </div>
+      </TableCellWrapper>
     ),
   }),
   COLUMN_HELPER.accessor('available', {
     header: () => <HeaderCell title="Available" />,
     cell: (props) => {
       const value = props.getValue();
-      return formatDisplayAmount(
-        value,
-        props.row.original.decimals,
-        AmountFormatStyle.SHORT,
+      return (
+        <TableCellWrapper>
+          {formatDisplayAmount(
+            value,
+            props.row.original.decimals,
+            AmountFormatStyle.SHORT,
+          )}
+        </TableCellWrapper>
       );
     },
   }),
@@ -76,26 +91,34 @@ const getColumns = () => [
     header: () => <HeaderCell title="Deposited" />,
     cell: (props) => {
       const value = props.getValue();
-      return value.gtn(0)
-        ? formatDisplayAmount(
-            value,
-            props.row.original.decimals,
-            AmountFormatStyle.SHORT,
-          )
-        : EMPTY_VALUE_PLACEHOLDER;
+      return (
+        <TableCellWrapper>
+          {value.gtn(0)
+            ? formatDisplayAmount(
+                value,
+                props.row.original.decimals,
+                AmountFormatStyle.SHORT,
+              )
+            : EMPTY_VALUE_PLACEHOLDER}
+        </TableCellWrapper>
+      );
     },
   }),
   COLUMN_HELPER.accessor('delegated', {
     header: () => <HeaderCell title="Delegated" />,
     cell: (props) => {
       const value = props.getValue();
-      return value.gtn(0)
-        ? formatDisplayAmount(
-            value,
-            props.row.original.decimals,
-            AmountFormatStyle.SHORT,
-          )
-        : EMPTY_VALUE_PLACEHOLDER;
+      return (
+        <TableCellWrapper>
+          {value.gtn(0)
+            ? formatDisplayAmount(
+                value,
+                props.row.original.decimals,
+                AmountFormatStyle.SHORT,
+              )
+            : EMPTY_VALUE_PLACEHOLDER}
+        </TableCellWrapper>
+      );
     },
   }),
   COLUMN_HELPER.accessor('total', {
@@ -103,13 +126,13 @@ const getColumns = () => [
     cell: (props) => {
       const value = props.getValue();
       return (
-        <Typography variant="body1" fw="bold" className="dark:text-mono-0">
+        <TableCellWrapper removeRightBorder>
           {formatDisplayAmount(
             value,
             props.row.original.decimals,
             AmountFormatStyle.SHORT,
           )}
-        </Typography>
+        </TableCellWrapper>
       );
     },
   }),
@@ -175,6 +198,9 @@ const DashboardPage: FC = () => {
     data: tableData,
     columns,
     getCoreRowModel: getCoreRowModel(),
+    getSortedRowModel: getSortedRowModel(),
+    getPaginationRowModel: getPaginationRowModel(),
+    autoResetPageIndex: false,
   });
 
   return (
@@ -204,24 +230,35 @@ const DashboardPage: FC = () => {
           Restake Assets
         </Typography>
 
-        <Card className="overflow-hidden">
-          {isLoadingAssets ? (
-            <div className="px-4 py-8 text-center text-mono-100">
-              Loading assets...
-            </div>
-          ) : assetList.length === 0 ? (
-            <div className="px-4 py-8 text-center text-mono-100">
-              No restakable assets found
-            </div>
-          ) : (
-            <Table
-              variant={TableVariant.DEFAULT}
-              tableProps={table}
-              thClassName="first:pl-4"
-              tdClassName="first:pl-4"
-            />
-          )}
-        </Card>
+        {isLoadingAssets ? (
+          <TableStatus
+            title="Loading Assets"
+            description="Please wait while we load the restakable assets."
+            icon={<Spinner size="lg" />}
+          />
+        ) : assetList.length === 0 ? (
+          <TableStatus
+            title="No Assets Found"
+            description="It looks like there are no restakable assets at the moment."
+          />
+        ) : (
+          <Table
+            variant={TableVariant.GLASS_OUTER}
+            title={pluralize('asset', tableData.length !== 1)}
+            isPaginated
+            tableProps={table}
+            className="px-2"
+            tableWrapperClassName="py-2"
+            tableClassName="border-collapse border-spacing-0"
+            thClassName="py-2"
+            tbodyClassName={twMerge(
+              '[&_tr:first-child_td:first-child]:rounded-tl-xl [&_tr:first-child_td:last-child]:rounded-tr-xl',
+              '[&_tr:last-child_td:first-child]:rounded-bl-xl [&_tr:last-child_td:last-child]:rounded-br-xl',
+            )}
+            trClassName="last:border-b-0"
+            tdClassName="first:rounded-l-none last:rounded-r-none"
+          />
+        )}
       </div>
     </NetworkGuard>
   );
