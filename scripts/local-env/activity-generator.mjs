@@ -239,9 +239,12 @@ const state = {
   tokensAvailable: [], // Token keys that have addresses
 };
 
+// Chain ID - use 31337 (Anvil default) to match config.local.yaml
+const CHAIN_ID = parseInt(process.env.CHAIN_ID || '31337');
+
 // Clients
 const publicClient = createPublicClient({
-  chain: { ...anvil, id: 84532 },
+  chain: { ...anvil, id: CHAIN_ID },
   transport: http(RPC_URL),
 });
 
@@ -249,7 +252,7 @@ const getWalletClient = (privateKey) => {
   const account = privateKeyToAccount(privateKey);
   return createWalletClient({
     account,
-    chain: { ...anvil, id: 84532 },
+    chain: { ...anvil, id: CHAIN_ID },
     transport: http(RPC_URL),
   });
 };
