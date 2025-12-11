@@ -5,7 +5,7 @@
 
 use anyhow::{Context, Result};
 use clap::Parser;
-use sp1_sdk::{ProverClient, SP1Stdin};
+use sp1_sdk::{HashableKey, ProverClient, SP1Stdin};
 use sr25519_claim_lib::ProgramInput;
 use std::time::Instant;
 
@@ -262,7 +262,7 @@ mod tests {
     #[test]
     #[ignore = "Requires SP1 program ELF to be built first (cargo prove build)"]
     fn test_full_zk_flow_mock() {
-        let (input, _public_key) = create_test_inputs();
+        let (input, public_key) = create_test_inputs();
 
         println!("\n=== SP1 Integration Test ===");
         println!("Substrate Address: {}", input.substrate_address);
@@ -293,12 +293,12 @@ mod tests {
             .expect("Failed to decode public values");
 
         // Verify the public values match our inputs
-        assert_eq!(decoded.substrate_address, input.substrate_address);
+        assert_eq!(decoded.pubkey, public_key, "Public key should match");
         assert_eq!(decoded.evm_address, input.evm_address);
         assert_eq!(decoded.amount, input.amount);
 
         println!("Public values verified:");
-        println!("  Substrate Address: {}", decoded.substrate_address);
+        println!("  Public Key: 0x{}", hex::encode(&decoded.pubkey));
         println!("  EVM Address: 0x{}", hex::encode(&decoded.evm_address));
         println!("  Amount: {} (big-endian bytes)", hex::encode(&decoded.amount));
     }

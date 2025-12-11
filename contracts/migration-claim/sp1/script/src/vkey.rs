@@ -3,7 +3,7 @@
 //! This is used to get the vkey for deploying the MigrationClaim contract.
 
 use anyhow::Result;
-use sp1_sdk::ProverClient;
+use sp1_sdk::{HashableKey, ProverClient};
 
 const ELF: &[u8] = include_bytes!("../../program/elf/riscv32im-succinct-zkvm-elf");
 
