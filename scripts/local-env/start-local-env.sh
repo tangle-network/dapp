@@ -124,12 +124,10 @@ deploy_contracts() {
     log_info "Deploying contracts..."
     cd "$TNT_CORE_DIR"
 
-    # Clear forge broadcast cache to force fresh deployment
+    # Clear forge broadcast cache to ensure deterministic addresses on fresh Anvil
+    # (keeps compiled artifacts cached for faster subsequent runs)
     log_info "Clearing forge broadcast cache..."
     rm -rf broadcast/LocalTestnet.s.sol/ 2>/dev/null || true
-
-    # Clean forge cache and rebuild
-    forge clean 2>/dev/null || true
 
     # Anvil's default deployer private key
     local ANVIL_PRIVATE_KEY="0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80"
