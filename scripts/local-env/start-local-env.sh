@@ -4,10 +4,43 @@
 #
 # Features an interactive CLI for managing components without full restarts
 #
-# Usage: ./scripts/local-env/start-local-env.sh
-#    or: TNT_CORE_DIR=/path/to/tnt-core ./scripts/local-env/start-local-env.sh
+# Usage:
+#   ./scripts/local-env/start-local-env.sh          # Full setup (deploys contracts, starts everything)
+#   ./scripts/local-env/start-local-env.sh resume   # Resume existing session (fast, ~5 seconds)
+#   ./scripts/local-env/start-local-env.sh clean    # Clean all cached state and start fresh
+#
+# Environment variables:
+#   TNT_CORE_DIR=/path/to/tnt-core  # Override tnt-core directory location
 
 set -euo pipefail
+
+# Parse command line arguments
+RESUME_MODE=false
+CLEAN_MODE=false
+case "${1:-}" in
+    resume|r)
+        RESUME_MODE=true
+        ;;
+    clean|c)
+        CLEAN_MODE=true
+        ;;
+    help|--help|-h)
+        echo "Usage: $0 [command]"
+        echo ""
+        echo "Commands:"
+        echo "  (none)    Full setup - deploy contracts, start all services (~2 min)"
+        echo "  resume    Resume session - reconnects to running Anvil/Docker (~5 sec)"
+        echo "            Note: Anvil must be kept running for resume to work"
+        echo "  clean     Clean cached addresses and start completely fresh"
+        echo "  help      Show this help message"
+        echo ""
+        echo "Workflow:"
+        echo "  1. Run '$0' for initial setup"
+        echo "  2. Leave Anvil running when you exit (Ctrl+C only kills the CLI)"
+        echo "  3. Run '$0 resume' to reconnect quickly"
+        exit 0
+        ;;
+esac
 
 # Configuration
 ANVIL_PORT=8545
@@ -73,24 +106,27 @@ log_error() { echo -e "${RED}[ERROR]${NC} $1"; }
 
 cleanup() {
     log_info "Cleaning up..."
-    [[ -n "${ANVIL_PID:-}" ]] && kill "$ANVIL_PID" 2>/dev/null || true
+
+    # Kill indexer and activity generator (they depend on Anvil/Docker)
     [[ -n "${INDEXER_PID:-}" ]] && kill "$INDEXER_PID" 2>/dev/null || true
     [[ -n "${ACTIVITY_PID:-}" ]] && kill "$ACTIVITY_PID" 2>/dev/null || true
     lsof -ti:9898 | xargs kill 2>/dev/null || true
 
-    if [[ -d "$INDEXER_DIR/generated" ]]; then
-        cd "$INDEXER_DIR/generated"
-        docker compose down 2>/dev/null || true
-    fi
+    # Keep Anvil and Docker running for resume mode
+    # To fully stop everything, use 'docker compose down' and kill Anvil manually
+    log_info "Anvil and Docker containers left running for resume mode"
+    log_info "To fully stop: kill Anvil (port $ANVIL_PORT) and run 'docker compose down' in indexer/generated"
     log_info "Cleanup complete"
 }
 trap cleanup EXIT
 
-# Kill any leftover processes
-pkill -f "ts-node src/Index" 2>/dev/null || true
-lsof -ti:9898 | xargs kill 2>/dev/null || true
-lsof -ti:$ANVIL_PORT | xargs kill 2>/dev/null || true
-sleep 1
+# Kill any leftover processes (skip in resume mode)
+if [[ "$RESUME_MODE" != "true" ]]; then
+    pkill -f "ts-node src/Index" 2>/dev/null || true
+    lsof -ti:9898 | xargs kill 2>/dev/null || true
+    lsof -ti:$ANVIL_PORT | xargs kill 2>/dev/null || true
+    sleep 1
+fi
 
 check_prerequisites() {
     log_info "Checking prerequisites..."
@@ -109,23 +145,15 @@ check_prerequisites() {
 
 # Cache file locations
 CACHE_DIR="/tmp/local-env-cache"
-ANVIL_STATE_FILE="$CACHE_DIR/anvil-state.json"
 ADDRESSES_CACHE="$CACHE_DIR/addresses.env"
 
 start_anvil() {
     log_info "Starting Anvil on port $ANVIL_PORT..."
 
-    # Check if we have cached state
-    if [[ -f "$ANVIL_STATE_FILE" && -f "$ADDRESSES_CACHE" ]]; then
-        log_info "Loading cached Anvil state..."
-        anvil --chain-id $ANVIL_CHAIN_ID --port $ANVIL_PORT --block-time 1 --base-fee 0 --gas-limit 30000000 --disable-code-size-limit --silent --load-state "$ANVIL_STATE_FILE" &
-        ANVIL_PID=$!
-        ANVIL_CACHED=true
-    else
-        anvil --chain-id $ANVIL_CHAIN_ID --port $ANVIL_PORT --block-time 1 --base-fee 0 --gas-limit 30000000 --disable-code-size-limit --silent &
-        ANVIL_PID=$!
-        ANVIL_CACHED=false
-    fi
+    # Always start fresh Anvil - state caching is complex and error-prone
+    # Addresses are deterministic so we just cache those
+    anvil --chain-id $ANVIL_CHAIN_ID --port $ANVIL_PORT --block-time 1 --base-fee 0 --gas-limit 30000000 --disable-code-size-limit --silent &
+    ANVIL_PID=$!
     sleep 2
 
     if ! curl -s http://127.0.0.1:$ANVIL_PORT -X POST -H "Content-Type: application/json" \
@@ -134,13 +162,7 @@ start_anvil() {
         exit 1
     fi
 
-    if [[ "$ANVIL_CACHED" == "true" ]]; then
-        log_success "Anvil started from cache (PID: $ANVIL_PID)"
-        # Load cached addresses
-        source "$ADDRESSES_CACHE"
-    else
-        log_success "Anvil started fresh (PID: $ANVIL_PID)"
-    fi
+    log_success "Anvil started (PID: $ANVIL_PID)"
 
     # Deploy Multicall3 contract at the standard address (needed for viem multicall)
     deploy_multicall3
@@ -186,13 +208,12 @@ deploy_multicall3() {
 }
 
 save_anvil_state() {
-    log_info "Saving Anvil state to cache..."
+    log_info "Saving contract addresses to cache..."
     mkdir -p "$CACHE_DIR"
 
-    # Dump Anvil state
-    curl -s http://127.0.0.1:$ANVIL_PORT -X POST -H "Content-Type: application/json" \
-        --data '{"jsonrpc":"2.0","method":"anvil_dumpState","params":[],"id":1}' \
-        | jq -r '.result' > "$ANVIL_STATE_FILE" 2>/dev/null
+    # Note: We don't dump Anvil state anymore - it's complex and error-prone.
+    # Instead, we just save the addresses. For resume to work, Anvil must stay running.
+    # If Anvil dies, user needs to do a fresh deploy.
 
     # Save addresses
     cat > "$ADDRESSES_CACHE" << EOF
@@ -220,12 +241,6 @@ clear_cache() {
 }
 
 deploy_contracts() {
-    # Skip if loaded from cache
-    if [[ "${ANVIL_CACHED:-false}" == "true" ]]; then
-        log_info "Skipping contract deployment (loaded from cache)"
-        return 0
-    fi
-
     log_info "Deploying contracts..."
     cd "$TNT_CORE_DIR"
 
@@ -296,12 +311,6 @@ deploy_contracts() {
 }
 
 deploy_migration_contracts() {
-    # Skip if loaded from cache and migration address exists
-    if [[ "${ANVIL_CACHED:-false}" == "true" && -n "${TANGLE_MIGRATION_ADDRESS:-}" ]]; then
-        log_info "Skipping migration deployment (loaded from cache)"
-        return 0
-    fi
-
     log_info "Deploying TangleMigration contracts..."
 
     # Check if migration output exists
@@ -650,9 +659,27 @@ restart_indexer() {
     stop_indexer
     sleep 1
 
-    # Restart just the indexer process, not the full DB setup
-    log_info "Restarting indexer..."
+    # Ensure Docker containers (postgres, hasura) are running
     cd "$INDEXER_DIR/generated"
+    if ! docker compose ps 2>/dev/null | grep -q "running"; then
+        log_info "Docker containers not running, starting them..."
+        docker compose up -d
+        sleep 3
+        # Wait for Hasura to be ready
+        log_info "Waiting for Hasura to be ready..."
+        for i in {1..30}; do
+            if curl -s "http://localhost:8080/healthz" | grep -q "OK" 2>/dev/null; then
+                log_success "Hasura is ready"
+                break
+            fi
+            sleep 1
+        done
+        # Run migrations
+        pnpm db-setup 2>/dev/null || true
+    fi
+
+    # Restart the indexer process
+    log_info "Restarting indexer..."
     env "ENVIO_RPC_URL_${ANVIL_CHAIN_ID}=http://127.0.0.1:$ANVIL_PORT" TUI_OFF=true pnpm start &
     INDEXER_PID=$!
     cd "$SCRIPT_DIR"
@@ -716,11 +743,11 @@ show_status() {
         echo -e "  Docker:            ${RED}Stopped${NC}"
     fi
 
-    # Check cache status
-    if [[ -f "$ANVIL_STATE_FILE" ]]; then
-        echo -e "  Cache:             ${GREEN}Active${NC} (use 'cache clear' to reset)"
+    # Check cache status (addresses only - Anvil state not cached)
+    if [[ -f "$ADDRESSES_CACHE" ]]; then
+        echo -e "  Addresses cached:  ${GREEN}Yes${NC} (use 'cache clear' to reset)"
     else
-        echo -e "  Cache:             ${YELLOW}Empty${NC}"
+        echo -e "  Addresses cached:  ${YELLOW}No${NC}"
     fi
 
     echo ""
@@ -846,7 +873,7 @@ fund_account() {
 
         cd "$SCRIPT_DIR"
         RPC_URL=http://127.0.0.1:$ANVIL_PORT \
-        TANGLE_ADDRESS="${TANGLE_PROXY:-}" \
+        TNT_TOKEN_ADDRESS="${TNT_TOKEN_ADDRESS:-}" \
         USDC_ADDRESS="${USDC_ADDRESS:-}" \
         USDT_ADDRESS="${USDT_ADDRESS:-}" \
         DAI_ADDRESS="${DAI_ADDRESS:-}" \
@@ -864,8 +891,9 @@ const RPC_URL = process.env.RPC_URL;
 const FUND_ADDRESS = process.env.FUND_ADDRESS;
 const DEPLOYER_KEY = '0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80';
 
+// Note: TNT_TOKEN_ADDRESS is from migration deployment, not TANGLE_PROXY (which is core contract)
 const TOKENS = {
-  tnt: { address: process.env.TANGLE_ADDRESS, decimals: 18, amount: '100000' },
+  tnt: { address: process.env.TNT_TOKEN_ADDRESS, decimals: 18, amount: '100000' },
   usdc: { address: process.env.USDC_ADDRESS, decimals: 6, amount: '100000' },
   usdt: { address: process.env.USDT_ADDRESS, decimals: 6, amount: '100000' },
   dai: { address: process.env.DAI_ADDRESS, decimals: 18, amount: '100000' },
@@ -910,7 +938,7 @@ console.log('Done!');
     echo ""
     echo "Balances:"
     echo "  - ETH: $eth_amount"
-    [[ -n "${TANGLE_PROXY:-}" ]] && echo "  - TNT: 100,000"
+    [[ -n "${TNT_TOKEN_ADDRESS:-}" ]] && echo "  - TNT: 100,000"
     [[ -n "${USDC_ADDRESS:-}" ]] && echo "  - USDC: 100,000"
     [[ -n "${USDT_ADDRESS:-}" ]] && echo "  - USDT: 100,000"
     [[ -n "${DAI_ADDRESS:-}" ]] && echo "  - DAI: 100,000"
@@ -990,7 +1018,8 @@ print_help() {
     echo ""
     echo -e "${CYAN}Other:${NC}"
     echo "  help                - Show this help"
-    echo "  quit, exit, q       - Exit and cleanup"
+    echo "  quit, exit, q       - Exit CLI (keeps Anvil/Docker running for resume)"
+    echo "  stop all            - Fully stop everything (Anvil, Docker, indexer)"
     echo ""
 }
 
@@ -1083,12 +1112,7 @@ interactive_cli() {
                         ;;
                     status)
                         echo -e "${BOLD}=== Cache Status ===${NC}"
-                        if [[ -f "$ANVIL_STATE_FILE" ]]; then
-                            local size=$(ls -lh "$ANVIL_STATE_FILE" 2>/dev/null | awk '{print $5}')
-                            echo -e "  Anvil state:   ${GREEN}Cached${NC} ($size)"
-                        else
-                            echo -e "  Anvil state:   ${YELLOW}Not cached${NC}"
-                        fi
+                        echo -e "  Anvil state:   ${YELLOW}Not cached${NC} (Anvil must stay running for resume)"
                         if [[ -f "$ADDRESSES_CACHE" ]]; then
                             echo -e "  Addresses:     ${GREEN}Cached${NC}"
                         else
@@ -1123,9 +1147,28 @@ interactive_cli() {
                 break
                 ;;
 
-            # Exit commands
+            # Stop all - fully shutdown everything
+            "stop all"|stopall)
+                log_info "Fully stopping all services..."
+                # Kill indexer and activity generator
+                [[ -n "${INDEXER_PID:-}" ]] && kill "$INDEXER_PID" 2>/dev/null || true
+                [[ -n "${ACTIVITY_PID:-}" ]] && kill "$ACTIVITY_PID" 2>/dev/null || true
+                pkill -f "ts-node src/Index" 2>/dev/null || true
+                pkill -f "activity-generator" 2>/dev/null || true
+                # Stop Docker
+                cd "$INDEXER_DIR/generated" && docker compose down 2>/dev/null || true
+                cd "$SCRIPT_DIR"
+                # Kill Anvil
+                lsof -ti:$ANVIL_PORT | xargs kill 2>/dev/null || true
+                log_success "All services stopped"
+                # Disable the cleanup trap since we already cleaned up
+                trap - EXIT
+                exit 0
+                ;;
+
+            # Exit commands (keeps Anvil/Docker running)
             quit|exit|q)
-                log_info "Exiting..."
+                log_info "Exiting CLI (Anvil and Docker kept running for resume)..."
                 break
                 ;;
 
@@ -1141,7 +1184,95 @@ interactive_cli() {
     done
 }
 
+resume_session() {
+    log_info "Resuming existing session..."
+
+    # Check prerequisites
+    check_prerequisites
+
+    # Load cached addresses if available
+    if [[ -f "$ADDRESSES_CACHE" ]]; then
+        source "$ADDRESSES_CACHE"
+        log_success "Loaded cached contract addresses"
+    else
+        log_error "No cached addresses found. Run without 'resume' first to deploy contracts."
+        exit 1
+    fi
+
+    # Check Anvil - must be running for resume to work
+    if curl -s http://127.0.0.1:$ANVIL_PORT -X POST -H "Content-Type: application/json" \
+        --data '{"jsonrpc":"2.0","method":"eth_chainId","params":[],"id":1}' > /dev/null 2>&1; then
+        log_success "Anvil is running on port $ANVIL_PORT"
+    else
+        log_error "Anvil is not running. Cannot resume without chain state."
+        log_info "To resume, Anvil must be kept running between sessions."
+        log_info "Run without 'resume' to do a fresh deployment."
+        exit 1
+    fi
+
+    # Check Docker containers
+    cd "$INDEXER_DIR/generated"
+    if docker compose ps 2>/dev/null | grep -q "running"; then
+        log_success "Docker containers (postgres, hasura) are running"
+    else
+        log_warn "Docker containers not running. Starting..."
+        docker compose up -d
+        sleep 3
+        # Wait for Hasura
+        for i in {1..30}; do
+            if curl -s "http://localhost:8080/healthz" | grep -q "OK" 2>/dev/null; then
+                break
+            fi
+            sleep 1
+        done
+        pnpm db-setup 2>/dev/null || true
+        log_success "Docker containers started"
+    fi
+    cd "$SCRIPT_DIR"
+
+    # Check if indexer is running
+    if pgrep -f "ts-node src/Index" > /dev/null 2>&1; then
+        INDEXER_PID=$(pgrep -f "ts-node src/Index" | head -1)
+        log_success "Indexer is running (PID: $INDEXER_PID)"
+    else
+        log_warn "Indexer not running. Starting..."
+        cd "$INDEXER_DIR/generated"
+        env "ENVIO_RPC_URL_${ANVIL_CHAIN_ID}=http://127.0.0.1:$ANVIL_PORT" TUI_OFF=true pnpm start &
+        INDEXER_PID=$!
+        cd "$SCRIPT_DIR"
+        sleep 3
+        log_success "Indexer started (PID: $INDEXER_PID)"
+    fi
+
+    # Check activity generator (optional)
+    if pgrep -f "activity-generator" > /dev/null 2>&1; then
+        ACTIVITY_PID=$(pgrep -f "activity-generator" | head -1)
+        log_success "Activity generator is running (PID: $ACTIVITY_PID)"
+    else
+        log_info "Activity generator not running. Use 'activity start' to start it."
+    fi
+
+    log_success "Session resumed successfully!"
+    echo ""
+}
+
 main() {
+    # Handle resume mode
+    if [[ "$RESUME_MODE" == "true" ]]; then
+        resume_session
+        interactive_cli
+        return
+    fi
+
+    # Handle clean mode
+    if [[ "$CLEAN_MODE" == "true" ]]; then
+        log_info "Cleaning cached state..."
+        rm -rf "$CACHE_DIR"
+        cd "$INDEXER_DIR/generated" 2>/dev/null && docker compose down -v 2>/dev/null || true
+        cd "$SCRIPT_DIR"
+        log_success "Cache cleaned"
+    fi
+
     log_info "Starting local development environment..."
 
     check_prerequisites
@@ -1149,10 +1280,8 @@ main() {
     deploy_contracts
     deploy_migration_contracts
 
-    # Save state after deployments (only if we did fresh deployment)
-    if [[ "${ANVIL_CACHED:-false}" != "true" ]]; then
-        save_anvil_state
-    fi
+    # Save contract addresses for resume mode
+    save_anvil_state
 
     start_indexer
     start_activity_generator
