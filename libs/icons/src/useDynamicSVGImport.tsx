@@ -2,6 +2,10 @@
 
 import { useEffect, useRef, useState } from 'react';
 
+// Default icons imported statically for fallback
+import DefaultChainIcon from './chains/default.svg';
+import DefaultTokenIcon from './tokens/default.svg';
+
 export interface DynamicSVGImportOptions {
   onCompleted?: (
     name: string,
@@ -22,10 +26,6 @@ export interface DynamicSVGImportOptions {
 const tokenIcons = import.meta.glob('./tokens/*.svg', { eager: false });
 const chainIcons = import.meta.glob('./chains/*.svg', { eager: false });
 
-// Default icons imported statically for fallback
-import DefaultTokenIcon from './tokens/default.svg';
-import DefaultChainIcon from './chains/default.svg';
-
 /**
  * Hook for loading the actual cryptocurrency icon based on the token symbol (e.g. usdt, polkadot, ...)
  * @param _name Represent the token symbol to get the actual icon
@@ -43,9 +43,8 @@ export function useDynamicSVGImport(
   >();
 
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<Error>();
 
-  const { onCompleted, onError } = options;
+  const { onCompleted } = options;
 
   const normalizedName =
     typeof name === 'string' ? name.trim().toLowerCase() : 'placeholder';
@@ -72,7 +71,7 @@ export function useDynamicSVGImport(
           setImportedIcon(<Icon />);
           onCompleted?.(processingName, Icon);
         }
-      } catch (err) {
+      } catch {
         const isCurrentNameMatch = processingName === currentNameRef.current;
 
         // Fallback to default icon
@@ -97,9 +96,14 @@ export function useDynamicSVGImport(
     };
 
     importIcon().catch(console.error);
-  }, [normalizedName, onCompleted, onError, type]);
+  }, [normalizedName, onCompleted, type]);
 
-  return { error, loading, svgElement: importedIcon };
+  // Never returns an error since we always fall back to default icon
+  return {
+    error: undefined as Error | undefined,
+    loading,
+    svgElement: importedIcon,
+  };
 }
 
 async function getIcon(

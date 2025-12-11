@@ -33,16 +33,33 @@ export interface ProtocolConfig {
  * console.log(config?.leaveDelegatorsDelay); // Rounds until withdrawal is ready
  * ```
  */
+// Chain IDs where restaking contracts are deployed
+const RESTAKING_ENABLED_CHAINS = [31337]; // Only local for now
+
 export const useProtocolConfig = (options?: { enabled?: boolean }) => {
   const { enabled = true } = options ?? {};
   const publicClient = usePublicClient();
   const chainId = useChainId();
+
+  // Only fetch config on chains where contracts are deployed
+  const isRestakingChain = RESTAKING_ENABLED_CHAINS.includes(chainId);
 
   return useQuery({
     queryKey: ['protocolConfig', chainId, publicClient?.chain?.id],
     queryFn: async () => {
       if (!publicClient) {
         throw new Error('Public client not available');
+      }
+
+      if (!isRestakingChain) {
+        // Return default values for chains without restaking contracts
+        return {
+          currentRound: BigInt(0),
+          roundDuration: BigInt(7200), // 2 hours default
+          delegationBondLessDelay: BigInt(7),
+          leaveDelegatorsDelay: BigInt(7),
+          leaveOperatorsDelay: BigInt(7),
+        } satisfies ProtocolConfig;
       }
 
       const contracts = getContractsByChainId(chainId);
@@ -78,10 +95,13 @@ export const useProtocolConfig = (options?: { enabled?: boolean }) => {
         ],
       });
 
-      // Check for errors
+      // Check for errors - only log in development
       const errors = results.filter((r) => r.status === 'failure');
-      if (errors.length > 0) {
-        console.error('Failed to fetch some protocol config values:', errors);
+      if (errors.length > 0 && process.env.NODE_ENV === 'development') {
+        console.debug(
+          'Failed to fetch some protocol config values (may not be deployed):',
+          errors.length,
+        );
       }
 
       return {
@@ -92,19 +112,19 @@ export const useProtocolConfig = (options?: { enabled?: boolean }) => {
         roundDuration:
           results[1].status === 'success'
             ? (results[1].result as bigint)
-            : BigInt(0),
+            : BigInt(7200),
         delegationBondLessDelay:
           results[2].status === 'success'
             ? (results[2].result as bigint)
-            : BigInt(0),
+            : BigInt(7),
         leaveDelegatorsDelay:
           results[3].status === 'success'
             ? (results[3].result as bigint)
-            : BigInt(0),
+            : BigInt(7),
         leaveOperatorsDelay:
           results[4].status === 'success'
             ? (results[4].result as bigint)
-            : BigInt(0),
+            : BigInt(7),
       } satisfies ProtocolConfig;
     },
     enabled: enabled && !!publicClient,

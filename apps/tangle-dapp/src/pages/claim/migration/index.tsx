@@ -2,7 +2,7 @@ import {
   InformationLine,
   CheckboxCircleFill,
   EditLine,
-  AlertLine,
+  Alert,
 } from '@tangle-network/icons';
 import { Card } from '@tangle-network/ui-components';
 import Button from '@tangle-network/ui-components/components/buttons/Button';
@@ -753,7 +753,7 @@ const MigrationClaimPage: FC = () => {
                   {submitError && (
                     <div className="p-4 rounded-xl bg-red-500/10 border border-red-500/20">
                       <div className="flex items-start gap-3">
-                        <AlertLine className="w-5 h-5 text-red-400 flex-shrink-0 mt-0.5" />
+                        <Alert className="w-5 h-5 text-red-400 flex-shrink-0 mt-0.5" />
                         <div>
                           <Typography
                             variant="body2"
