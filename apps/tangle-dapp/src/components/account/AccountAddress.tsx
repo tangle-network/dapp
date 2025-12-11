@@ -1,12 +1,9 @@
-import { LoopRightFillIcon } from '@tangle-network/icons';
-import useNetworkStore from '@tangle-network/tangle-shared-ui/context/useNetworkStore';
 import {
   CopyWithTooltip,
   shortenHex,
   Tooltip,
   TooltipBody,
   TooltipTrigger,
-  toSubstrateAddress,
   Typography,
   useHiddenValue,
 } from '@tangle-network/ui-components';
@@ -15,106 +12,57 @@ import { IconWithTooltip } from '@tangle-network/ui-components/components/IconWi
 import { EMPTY_VALUE_PLACEHOLDER } from '@tangle-network/ui-components/constants';
 import { shortenString } from '@tangle-network/ui-components/utils/shortenString';
 import type { FC } from 'react';
-import { useCallback, useMemo, useState } from 'react';
+import { useMemo } from 'react';
 import { useAccount } from 'wagmi';
 
 const AccountAddress: FC = () => {
-  const { network } = useNetworkStore();
-  const { address: activeAccountAddress } = useAccount();
+  const { address } = useAccount();
   const [isHiddenValue] = useHiddenValue();
 
-  // wagmi addresses are always EVM addresses
-  const isEvmAccountAddress = activeAccountAddress !== undefined;
-
-  const [isDisplayingEvmAddress, setIsDisplayingEvmAddress] = useState(true);
-
   const displayAddress = useMemo(() => {
-    if (!activeAccountAddress) {
-      return null;
+    if (!address) return null;
+    if (isHiddenValue) {
+      return Array.from({ length: 42 }).map(() => '*').join('');
     }
+    return address;
+  }, [address, isHiddenValue]);
 
-    return isDisplayingEvmAddress
-      ? activeAccountAddress
-      : toSubstrateAddress(activeAccountAddress, network.ss58Prefix);
-  }, [activeAccountAddress, isDisplayingEvmAddress, network.ss58Prefix]);
-
-  const possiblyHiddenAddress = useMemo(
-    () =>
-      isHiddenValue
-        ? Array.from({ length: 130 })
-            .map(() => '*')
-            .join('')
-        : displayAddress,
-    [displayAddress, isHiddenValue],
-  );
-
-  const handleAddressTypeToggle = useCallback(() => {
-    if (activeAccountAddress) {
-      setIsDisplayingEvmAddress((previous) => !previous);
-    }
-  }, [activeAccountAddress]);
-
-  const iconFillColorClass = 'dark:!fill-mono-80 !fill-mono-160';
-
-  const shortenFn = isHiddenValue
-    ? shortenString
-    : !activeAccountAddress
-      ? shortenString
-      : isDisplayingEvmAddress
-        ? shortenHex
-        : shortenString;
-
-  const avatarIcon = !activeAccountAddress ? (
-    <div className="w-6 h-6 rounded-full bg-mono-40 dark:bg-mono-160" />
-  ) : (
-    <Avatar
-      value={displayAddress}
-      theme={isDisplayingEvmAddress ? 'ethereum' : 'substrate'}
-    />
-  );
+  const shortenFn = isHiddenValue ? shortenString : shortenHex;
 
   return (
     <div className="flex items-center gap-1">
-      <IconWithTooltip icon={avatarIcon} content="Account public key" />
+      <IconWithTooltip
+        icon={
+          address ? (
+            <Avatar value={address} theme="ethereum" />
+          ) : (
+            <div className="w-6 h-6 rounded-full bg-mono-40 dark:bg-mono-160" />
+          )
+        }
+        content="Account address"
+      />
 
       <Typography variant="body1">Address:</Typography>
 
       <Tooltip>
         <TooltipTrigger className="cursor-default">
           <Typography variant="body1" fw="normal" className="text-mono-160">
-            {possiblyHiddenAddress !== null
-              ? shortenFn(possiblyHiddenAddress, 5)
+            {displayAddress !== null
+              ? shortenFn(displayAddress, 5)
               : EMPTY_VALUE_PLACEHOLDER}
           </Typography>
         </TooltipTrigger>
 
-        <TooltipBody className="max-w-full">{displayAddress}</TooltipBody>
+        <TooltipBody className="max-w-full">{address}</TooltipBody>
       </Tooltip>
 
-      {displayAddress !== null && (
+      {address && (
         <CopyWithTooltip
           className="!bg-transparent !p-0"
-          iconClassName={iconFillColorClass}
-          copyLabel={`Copy ${
-            isDisplayingEvmAddress ? 'EVM' : 'Substrate'
-          } address`}
-          textToCopy={displayAddress}
+          iconClassName="dark:!fill-mono-80 !fill-mono-160"
+          copyLabel="Copy address"
+          textToCopy={address}
         />
-      )}
-
-      {isEvmAccountAddress && (
-        <Tooltip>
-          <TooltipTrigger>
-            <LoopRightFillIcon
-              className={iconFillColorClass}
-              onClick={handleAddressTypeToggle}
-            />
-          </TooltipTrigger>
-
-          <TooltipBody>
-            Switch to {isDisplayingEvmAddress ? 'Substrate' : 'EVM'} address
-          </TooltipBody>
-        </Tooltip>
       )}
     </div>
   );

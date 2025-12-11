@@ -24,10 +24,22 @@ import { notificationApi } from '@tangle-network/ui-components';
 
 type NetworkSelectionButtonProps = {
   disableChainSelection?: boolean;
+  /**
+   * List of networks to display in the dropdown.
+   * Defaults to Tangle Mainnet, Testnet, and Local Dev networks.
+   */
+  networks?: Network[];
+  /**
+   * Whether to show the custom endpoint input.
+   * Defaults to true.
+   */
+  showCustomEndpoint?: boolean;
 };
 
 const NetworkSelectionButton: FC<NetworkSelectionButtonProps> = ({
   disableChainSelection = false,
+  networks,
+  showCustomEndpoint,
 }) => {
   const { isConnecting: isWalletConnecting, isConnected } = useAccount();
   const chainId = useChainId();

@@ -9,8 +9,8 @@ const anvilLocal = defineChain({
   id: EVMChainId.AnvilLocal,
   name: 'Tangle Local',
   nativeCurrency: {
-    name: 'Tangle',
-    symbol: 'TNT',
+    name: 'Ether',
+    symbol: 'ETH',
     decimals: 18,
   },
   rpcUrls: {

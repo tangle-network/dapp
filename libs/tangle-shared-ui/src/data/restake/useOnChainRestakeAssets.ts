@@ -74,7 +74,14 @@ export const useOnChainRestakeAssets = (options?: { enabled?: boolean }) => {
   } = useQuery({
     queryKey: ['onChainAssetConfigs', chainId, potentialTokens],
     queryFn: async () => {
+      console.log('[useOnChainRestakeAssets] queryFn called:', {
+        potentialTokensCount: potentialTokens.length,
+        potentialTokens,
+        multiAssetDelegation: contracts?.multiAssetDelegation,
+      });
+
       if (!publicClient || !contracts || potentialTokens.length === 0) {
+        console.log('[useOnChainRestakeAssets] Early return - missing deps');
         return [];
       }
 
@@ -86,7 +93,9 @@ export const useOnChainRestakeAssets = (options?: { enabled?: boolean }) => {
         args: [token] as const,
       }));
 
+      console.log('[useOnChainRestakeAssets] Calling multicall...');
       const results = await publicClient.multicall({ contracts: calls });
+      console.log('[useOnChainRestakeAssets] Multicall results:', results);
 
       const enabled: Array<{
         token: Address;
@@ -96,15 +105,22 @@ export const useOnChainRestakeAssets = (options?: { enabled?: boolean }) => {
       results.forEach((result, index) => {
         if (result.status === 'success') {
           const config = result.result as AssetConfig;
+          console.log(`[useOnChainRestakeAssets] Token ${potentialTokens[index]}:`, {
+            enabled: config.enabled,
+            config,
+          });
           if (config.enabled) {
             enabled.push({
               token: potentialTokens[index],
               config,
             });
           }
+        } else {
+          console.log(`[useOnChainRestakeAssets] Token ${potentialTokens[index]} failed:`, result);
         }
       });
 
+      console.log('[useOnChainRestakeAssets] Found enabled tokens:', enabled.length);
       return enabled;
     },
     enabled: enabled && !!publicClient && potentialTokens.length > 0,

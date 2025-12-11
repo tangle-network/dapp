@@ -17,6 +17,10 @@ import { Button } from '@tangle-network/ui-components/components/buttons';
 import { Input } from '@tangle-network/ui-components/components/Input';
 import { Typography } from '@tangle-network/ui-components/typography/Typography';
 import { TokenIcon } from '@tangle-network/icons';
+import TokenSelector from '@tangle-network/ui-components/components/TokenSelector';
+import { useModal } from '@tangle-network/ui-components/hooks/useModal';
+import ListModal from '@tangle-network/tangle-shared-ui/components/ListModal';
+import filterBy from '@tangle-network/tangle-shared-ui/utils/filterBy';
 import { useRestakeAssets } from '@tangle-network/tangle-shared-ui/data/graphql/useRestakeAssets';
 
 interface TransferModalProps {
@@ -39,6 +43,14 @@ const TransferModal: FC<TransferModalProps> = ({ isOpen, onClose }) => {
   const { address: userAddress } = useAccount();
   const publicClient = usePublicClient();
   const { data: walletClient } = useWalletClient();
+
+  // Token selection modal
+  const {
+    status: isTokenModalOpen,
+    open: openTokenModal,
+    close: closeTokenModal,
+    update: updateTokenModal,
+  } = useModal();
 
   // Native balance
   const { data: nativeBalance, refetch: refetchNativeBalance } = useBalance({
@@ -143,6 +155,16 @@ const TransferModal: FC<TransferModalProps> = ({ isOpen, onClose }) => {
     }
   }, [selectedToken]);
 
+  // Handle token selection from modal
+  const handleTokenSelect = useCallback(
+    (token: TokenOption) => {
+      setSelectedToken(token);
+      setAmount(''); // Reset amount when switching tokens
+      closeTokenModal();
+    },
+    [closeTokenModal],
+  );
+
   // Reset and close
   const handleClose = useCallback(() => {
     setSelectedToken(null);
@@ -216,6 +238,7 @@ const TransferModal: FC<TransferModalProps> = ({ isOpen, onClose }) => {
   ]);
 
   return (
+    <>
     <Modal open={isOpen} onOpenChange={(open) => !open && handleClose()}>
       <ModalContent size="md">
         <ModalHeader onClose={handleClose}>Send Tokens</ModalHeader>
@@ -226,49 +249,16 @@ const TransferModal: FC<TransferModalProps> = ({ isOpen, onClose }) => {
             <Typography variant="body2" className="mb-2 text-mono-100">
               Select Token
             </Typography>
-            <div className="space-y-2 max-h-48 overflow-y-auto">
-              {isLoadingAssets ? (
-                <Typography
-                  variant="body2"
-                  className="text-mono-100 py-4 text-center"
-                >
-                  Loading tokens...
+            <div className="flex items-center justify-between">
+              <TokenSelector onClick={openTokenModal}>
+                {selectedToken?.symbol ?? 'Select token'}
+              </TokenSelector>
+
+              {selectedToken && (
+                <Typography variant="body2" className="text-mono-100">
+                  Balance: {formatBalance(selectedToken.balance, selectedToken.decimals)}{' '}
+                  {selectedToken.symbol}
                 </Typography>
-              ) : tokenOptions.length === 0 ? (
-                <Typography
-                  variant="body2"
-                  className="text-mono-100 py-4 text-center"
-                >
-                  No tokens available
-                </Typography>
-              ) : (
-                tokenOptions.map((token) => (
-                  <button
-                    key={token.address}
-                    type="button"
-                    onClick={() => setSelectedToken(token)}
-                    className={`w-full flex items-center justify-between p-3 rounded-lg transition-colors ${
-                      selectedToken?.address === token.address
-                        ? 'bg-blue-500/20 border border-blue-500'
-                        : 'bg-mono-20 dark:bg-mono-170 hover:bg-mono-40 dark:hover:bg-mono-160'
-                    }`}
-                  >
-                    <div className="flex items-center gap-3">
-                      <TokenIcon name={token.symbol} size="md" />
-                      <div className="text-left">
-                        <Typography variant="body1" fw="bold">
-                          {token.symbol}
-                        </Typography>
-                        <Typography variant="body2" className="text-mono-100">
-                          {token.name}
-                        </Typography>
-                      </div>
-                    </div>
-                    <Typography variant="body2" className="text-mono-100">
-                      {formatBalance(token.balance, token.decimals)}
-                    </Typography>
-                  </button>
-                ))
               )}
             </div>
           </div>
@@ -394,6 +384,43 @@ const TransferModal: FC<TransferModalProps> = ({ isOpen, onClose }) => {
         </ModalFooter>
       </ModalContent>
     </Modal>
+
+    {/* Token Selection Modal */}
+    <ListModal<TokenOption>
+      title="Select Token"
+      isOpen={isTokenModalOpen}
+      setIsOpen={updateTokenModal}
+      onSelect={handleTokenSelect}
+      isLoading={isLoadingAssets}
+      filterItem={(token, query) =>
+        filterBy(query, [token.symbol, token.name, token.address.toString()])
+      }
+      searchInputId="transfer-token-search"
+      searchPlaceholder="Search tokens..."
+      titleWhenEmpty="No Tokens Available"
+      descriptionWhenEmpty="There are no tokens available in your wallet."
+      items={tokenOptions}
+      getItemKey={(token) => token.address.toString()}
+      renderItem={(token) => (
+        <div className="flex items-center justify-between w-full">
+          <div className="flex items-center gap-3">
+            <TokenIcon name={token.symbol} size="lg" />
+            <div>
+              <Typography variant="body1" fw="bold">
+                {token.symbol}
+              </Typography>
+              <Typography variant="body2" className="text-mono-100">
+                {token.name}
+              </Typography>
+            </div>
+          </div>
+          <Typography variant="body2" className="text-mono-100">
+            {formatBalance(token.balance, token.decimals)}
+          </Typography>
+        </div>
+      )}
+    />
+  </>
   );
 };
 

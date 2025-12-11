@@ -13,8 +13,9 @@ import { RestakingAssetsTable } from '../../components/tables/RestakingAssetsTab
 import { OperatorsTable } from '../../components/tables/OperatorsTable';
 import {
   RestakeProvider,
-  useRestakeContext,
+  useOptionalRestakeContext,
 } from '@tangle-network/tangle-shared-ui/context/RestakeContext';
+import { SkeletonLoader } from '@tangle-network/ui-components';
 
 type RestakeTabOrAction = RestakeTab | RestakeAction;
 
@@ -25,7 +26,19 @@ type Props = {
 const RestakeTabContentInner: FC<Props> = ({ tab }) => {
   const navigate = useNavigate();
 
-  // Use unified context for all restaking data
+  // Use optional context to handle HMR edge cases
+  const context = useOptionalRestakeContext();
+
+  // If context is not available (e.g., during HMR), show loading state
+  if (!context) {
+    return (
+      <div className="space-y-9">
+        <RestakeTabs />
+        <SkeletonLoader className="h-96" />
+      </div>
+    );
+  }
+
   const {
     restakingAssets,
     delegator,
@@ -33,7 +46,7 @@ const RestakeTabContentInner: FC<Props> = ({ tab }) => {
     isLoadingRestakingAssets,
     isLoadingDelegator,
     isLoadingOperators,
-  } = useRestakeContext();
+  } = context;
 
   const handleRestakeClicked = useCallback(() => {
     navigate(PagePath.RESTAKE_DEPOSIT);

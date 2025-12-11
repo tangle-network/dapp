@@ -5,6 +5,7 @@ import {
   SkeletonLoader,
   Typography,
 } from '@tangle-network/ui-components';
+import { TokenIcon } from '@tangle-network/icons';
 import type { Delegator } from '@tangle-network/tangle-shared-ui/data/graphql/useDelegator';
 import type { RestakeAssetMap } from '@tangle-network/tangle-shared-ui/data/graphql/useRestakeAssets';
 import { formatUnits, Address } from 'viem';
@@ -32,147 +33,102 @@ export const UserRestakingOverview: FC<Props> = ({
   assets,
   isLoading,
 }) => {
-  // Calculate total deposited value
-  const totalDeposited = useMemo(() => {
-    if (!delegator) return BigInt(0);
-    return delegator.totalDeposited;
-  }, [delegator]);
+  // Get position details for each asset
+  const positions = useMemo(() => {
+    if (!delegator || !assets) return [];
+    return delegator.assetPositions
+      .filter((pos) => pos.totalDeposited > BigInt(0) || pos.delegatedAmount > BigInt(0))
+      .map((pos) => {
+        const asset = assets.get(pos.token as Address);
+        return {
+          token: pos.token,
+          symbol: asset?.metadata.symbol ?? 'Unknown',
+          decimals: asset?.metadata.decimals ?? 18,
+          deposited: pos.totalDeposited,
+          delegated: pos.delegatedAmount,
+          locked: pos.lockedAmount,
+        };
+      });
+  }, [delegator, assets]);
 
-  // Calculate total delegated value
-  const totalDelegated = useMemo(() => {
-    if (!delegator) return BigInt(0);
-    return delegator.totalDelegated;
-  }, [delegator]);
-
-  // Get pending withdrawals count
-  const pendingWithdrawals = useMemo(() => {
+  // Get pending requests count
+  const pendingCount = useMemo(() => {
     if (!delegator) return 0;
     return delegator.withdrawRequests.length + delegator.unstakeRequests.length;
   }, [delegator]);
 
-  // Get position details for each asset
-  const positions = useMemo(() => {
-    if (!delegator || !assets) return [];
-    return delegator.assetPositions.map((pos) => {
-      const asset = assets.get(pos.token as Address);
-      return {
-        token: pos.token,
-        symbol: asset?.metadata.symbol ?? 'Unknown',
-        decimals: asset?.metadata.decimals ?? 18,
-        deposited: pos.totalDeposited,
-        delegated: pos.delegatedAmount,
-        locked: pos.lockedAmount,
-      };
-    });
-  }, [delegator, assets]);
-
   if (isLoading) {
+    return <SkeletonLoader className="h-32" />;
+  }
+
+  // No positions - show empty state
+  if (positions.length === 0) {
     return (
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <SkeletonLoader className="h-32" />
-        <SkeletonLoader className="h-32" />
-        <SkeletonLoader className="h-32" />
-      </div>
+      <Card variant={CardVariant.GLASS} className="p-6 text-center">
+        <Typography
+          variant="body1"
+          className="text-mono-120 dark:text-mono-80"
+        >
+          No positions yet. Deposit assets to start restaking.
+        </Typography>
+      </Card>
     );
   }
 
   return (
-    <div className="space-y-6">
-      {/* Summary Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <SummaryCard
-          label="Total Deposited"
-          value={formatBalance(totalDeposited, 18)}
-          suffix="TNT"
-        />
-        <SummaryCard
-          label="Total Delegated"
-          value={formatBalance(totalDelegated, 18)}
-          suffix="TNT"
-        />
-        <SummaryCard
-          label="Pending Withdrawals"
-          value={String(pendingWithdrawals)}
-        />
-      </div>
-
-      {/* Position Details */}
-      {positions.length > 0 && (
-        <Card variant={CardVariant.GLASS} className="p-4">
-          <Typography variant="h5" fw="bold" className="mb-4">
-            Your Positions
-          </Typography>
-          <div className="space-y-3">
-            {positions.map((pos) => (
-              <div
-                key={pos.token}
-                className={twMerge(
-                  'flex justify-between items-center p-3 rounded-lg',
-                  'bg-mono-20/50 dark:bg-mono-180/50',
-                )}
-              >
-                <div>
-                  <Typography variant="body1" fw="semibold">
-                    {pos.symbol}
-                  </Typography>
-                  <Typography
-                    variant="body2"
-                    className="text-mono-120 dark:text-mono-80"
-                  >
-                    {pos.token.slice(0, 6)}...{pos.token.slice(-4)}
-                  </Typography>
-                </div>
-                <div className="text-right">
-                  <Typography variant="body1" fw="semibold">
-                    {formatBalance(pos.deposited, pos.decimals)} deposited
-                  </Typography>
-                  <Typography
-                    variant="body2"
-                    className="text-mono-120 dark:text-mono-80"
-                  >
-                    {formatBalance(pos.delegated, pos.decimals)} delegated
-                  </Typography>
-                </div>
-              </div>
-            ))}
-          </div>
-        </Card>
-      )}
-
-      {/* Empty state */}
-      {!delegator && (
-        <Card variant={CardVariant.GLASS} className="p-6 text-center">
-          <Typography
-            variant="body1"
-            className="text-mono-120 dark:text-mono-80"
-          >
-            No positions yet. Deposit assets to start restaking.
-          </Typography>
-        </Card>
-      )}
-    </div>
-  );
-};
-
-const SummaryCard: FC<{
-  label: string;
-  value: string;
-  suffix?: string;
-}> = ({ label, value, suffix }) => {
-  return (
     <Card variant={CardVariant.GLASS} className="p-4">
-      <Typography variant="body2" className="text-mono-120 dark:text-mono-80">
-        {label}
-      </Typography>
-      <div className="flex items-baseline gap-2 mt-1">
-        <Typography variant="h4" fw="bold">
-          {value}
+      <div className="flex items-center justify-between mb-4">
+        <Typography variant="h5" fw="bold">
+          Your Positions
         </Typography>
-        {suffix && (
-          <Typography variant="body1" className="text-mono-100">
-            {suffix}
+
+        {pendingCount > 0 && (
+          <Typography variant="body2" className="text-mono-100">
+            {pendingCount} pending request{pendingCount !== 1 ? 's' : ''}
           </Typography>
         )}
+      </div>
+
+      <div className="space-y-3">
+        {positions.map((pos) => (
+          <div
+            key={pos.token}
+            className={twMerge(
+              'flex justify-between items-center p-3 rounded-lg',
+              'bg-mono-20/50 dark:bg-mono-180/50',
+            )}
+          >
+            <div className="flex items-center gap-3">
+              <TokenIcon name={pos.symbol} size="lg" />
+
+              <div>
+                <Typography variant="body1" fw="semibold">
+                  {pos.symbol}
+                </Typography>
+
+                <Typography
+                  variant="body2"
+                  className="text-mono-120 dark:text-mono-80"
+                >
+                  {pos.token.slice(0, 6)}...{pos.token.slice(-4)}
+                </Typography>
+              </div>
+            </div>
+
+            <div className="text-right">
+              <Typography variant="body1" fw="semibold">
+                {formatBalance(pos.deposited, pos.decimals)} deposited
+              </Typography>
+
+              <Typography
+                variant="body2"
+                className="text-mono-120 dark:text-mono-80"
+              >
+                {formatBalance(pos.delegated, pos.decimals)} delegated
+              </Typography>
+            </div>
+          </div>
+        ))}
       </div>
     </Card>
   );

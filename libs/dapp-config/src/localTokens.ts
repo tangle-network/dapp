@@ -15,6 +15,12 @@ export interface LocalTokenConfig {
 // These match the addresses from tnt-core LocalTestnet.s.sol deployment
 const DEFAULT_LOCAL_TOKENS: LocalTokenConfig[] = [
   {
+    address: '0xCf7Ed3AccA5a467e9e704C703E8D87F634fB0Fc9',
+    name: 'Tangle Network Token',
+    symbol: 'TNT',
+    decimals: 18,
+  },
+  {
     address: '0x68B1D87F95878fE05B998F19b66F4baba5De1aed',
     name: 'USD Coin',
     symbol: 'USDC',
@@ -60,6 +66,7 @@ const DEFAULT_LOCAL_TOKENS: LocalTokenConfig[] = [
 
 // Token metadata by symbol for dynamic token lookup
 const TOKEN_METADATA: Record<string, Omit<LocalTokenConfig, 'address'>> = {
+  TNT: { name: 'Tangle Network Token', symbol: 'TNT', decimals: 18 },
   USDC: { name: 'USD Coin', symbol: 'USDC', decimals: 6 },
   USDT: { name: 'Tether USD', symbol: 'USDT', decimals: 6 },
   DAI: { name: 'Dai Stablecoin', symbol: 'DAI', decimals: 18 },
@@ -72,12 +79,13 @@ const TOKEN_METADATA: Record<string, Omit<LocalTokenConfig, 'address'>> = {
 /**
  * Get local mock tokens, with environment variable overrides if available.
  * Environment variables:
- *   VITE_LOCAL_USDC, VITE_LOCAL_USDT, VITE_LOCAL_DAI, VITE_LOCAL_WETH,
- *   VITE_LOCAL_STETH, VITE_LOCAL_WSTETH, VITE_LOCAL_EIGEN
+ *   VITE_LOCAL_TNT, VITE_LOCAL_USDC, VITE_LOCAL_USDT, VITE_LOCAL_DAI,
+ *   VITE_LOCAL_WETH, VITE_LOCAL_STETH, VITE_LOCAL_WSTETH, VITE_LOCAL_EIGEN
  */
 const getLocalMockTokens = (): LocalTokenConfig[] => {
   // Check for individual token address overrides via environment variables
   const envOverrides: Record<string, string | undefined> = {
+    TNT: import.meta.env.VITE_LOCAL_TNT,
     USDC: import.meta.env.VITE_LOCAL_USDC,
     USDT: import.meta.env.VITE_LOCAL_USDT,
     DAI: import.meta.env.VITE_LOCAL_DAI,

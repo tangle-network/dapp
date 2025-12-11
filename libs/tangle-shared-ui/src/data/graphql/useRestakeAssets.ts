@@ -6,7 +6,7 @@
 
 import { useQuery } from '@tanstack/react-query';
 import { useEffect } from 'react';
-import { Address, erc20Abi } from 'viem';
+import { Address, erc20Abi, zeroAddress } from 'viem';
 import { useAccount, useBalance, useChainId, usePublicClient } from 'wagmi';
 import { useRestakingAssets, type RestakingAsset } from './useRestakingAssets';
 import { EnvioNetwork } from '../../utils/executeEnvioGraphQL';
@@ -14,6 +14,9 @@ import { useEnvioHealthCheckByChainId } from '../../utils/checkEnvioHealth';
 import fetchErc20TokenMetadata from '../../utils/fetchErc20TokenMetadata';
 import useOnChainRestakeAssets from '../restake/useOnChainRestakeAssets';
 import type { EvmAddress } from '@tangle-network/ui-components/types/address';
+
+// Native token (ETH) uses zero address - needs special handling
+const NATIVE_TOKEN_ADDRESS = zeroAddress as Address;
 
 // Token metadata from ERC20
 export interface TokenMetadata {
@@ -98,31 +101,38 @@ export const useRestakeAssets = (options?: {
     enabled: enabled && !useOnChainFallback,
   });
 
-  // Get token addresses from restaking assets
-  const tokenAddresses = restakingAssets?.map((a) => a.token) ?? [];
+  // Get token addresses from restaking assets, filtering out native token (zero address)
+  // Native token doesn't have ERC20 metadata and must be handled separately
+  const allTokenAddresses = restakingAssets?.map((a) => a.token) ?? [];
+  const erc20TokenAddresses = allTokenAddresses.filter(
+    (addr) => addr.toLowerCase() !== NATIVE_TOKEN_ADDRESS.toLowerCase(),
+  );
+  const hasNativeToken = allTokenAddresses.some(
+    (addr) => addr.toLowerCase() === NATIVE_TOKEN_ADDRESS.toLowerCase(),
+  );
 
-  // 2. Fetch ERC20 metadata for all tokens
+  // 2. Fetch ERC20 metadata for ERC20 tokens only (not native token)
   const { data: tokenMetadatas, isLoading: isLoadingMetadata } = useQuery({
-    queryKey: ['erc20Metadata', tokenAddresses, publicClient?.chain?.id],
+    queryKey: ['erc20Metadata', erc20TokenAddresses, publicClient?.chain?.id],
     queryFn: async () => {
-      if (!publicClient || tokenAddresses.length === 0) {
+      if (!publicClient || erc20TokenAddresses.length === 0) {
         return [];
       }
       // Cast publicClient to any to avoid type incompatibility between wagmi and viem versions
       return fetchErc20TokenMetadata(
         publicClient as any,
-        tokenAddresses as EvmAddress[],
+        erc20TokenAddresses as EvmAddress[],
       );
     },
     enabled:
       enabled &&
       !useOnChainFallback &&
       !!publicClient &&
-      tokenAddresses.length > 0,
+      erc20TokenAddresses.length > 0,
     staleTime: Infinity, // Token metadata doesn't change
   });
 
-  // 3. Fetch user balances for all tokens using multicall
+  // 3. Fetch user balances for ERC20 tokens using multicall
   const {
     data: balances,
     isLoading: isLoadingBalances,
@@ -131,17 +141,17 @@ export const useRestakeAssets = (options?: {
     queryKey: [
       'erc20Balances',
       userAddress,
-      tokenAddresses,
+      erc20TokenAddresses,
       publicClient?.chain?.id,
     ],
     queryFn: async () => {
-      if (!publicClient || !userAddress || tokenAddresses.length === 0) {
+      if (!publicClient || !userAddress || erc20TokenAddresses.length === 0) {
         return new Map<Address, bigint>();
       }
 
       try {
-        // Use multicall to fetch all balances at once
-        const calls = tokenAddresses.map((token) => ({
+        // Use multicall to fetch all ERC20 balances at once
+        const calls = erc20TokenAddresses.map((token) => ({
           address: token,
           abi: erc20Abi,
           functionName: 'balanceOf' as const,
@@ -152,7 +162,7 @@ export const useRestakeAssets = (options?: {
         const balanceMap = new Map<Address, bigint>();
 
         results.forEach((result, index) => {
-          const token = tokenAddresses[index];
+          const token = erc20TokenAddresses[index];
           if (result.status === 'success') {
             balanceMap.set(token, result.result as bigint);
           } else {
@@ -171,7 +181,7 @@ export const useRestakeAssets = (options?: {
       !useOnChainFallback &&
       !!publicClient &&
       !!userAddress &&
-      tokenAddresses.length > 0,
+      erc20TokenAddresses.length > 0,
     staleTime: 15_000, // 15 seconds - balances can change frequently
     refetchInterval: 30_000, // Auto-refresh every 30 seconds
   });
@@ -182,20 +192,46 @@ export const useRestakeAssets = (options?: {
   const { data: graphqlAssets } = useQuery({
     queryKey: [
       'restakeAssets',
-      tokenAddresses,
+      erc20TokenAddresses,
       tokenMetadatas?.length ?? 0,
+      hasNativeToken,
       userAddress,
       chainId,
     ],
     queryFn: () => {
-      if (!restakingAssets || !tokenMetadatas) {
+      if (!restakingAssets) {
+        return null;
+      }
+
+      // Need tokenMetadatas if there are ERC20 tokens
+      if (erc20TokenAddresses.length > 0 && !tokenMetadatas) {
         return null;
       }
 
       const assetMap = new Map<Address, RestakeAsset>();
 
       for (const restakingAsset of restakingAssets) {
-        const metadata = tokenMetadatas.find(
+        const isNativeToken =
+          restakingAsset.token.toLowerCase() ===
+          NATIVE_TOKEN_ADDRESS.toLowerCase();
+
+        if (isNativeToken) {
+          // Native token (ETH) has hardcoded metadata
+          assetMap.set(NATIVE_TOKEN_ADDRESS, {
+            id: NATIVE_TOKEN_ADDRESS,
+            metadata: {
+              address: NATIVE_TOKEN_ADDRESS,
+              name: 'Ether',
+              symbol: 'ETH',
+              decimals: 18,
+            },
+            balance: BigInt(0), // Native balance is fetched separately via useNativeBalance
+            restakingInfo: restakingAsset,
+          });
+          continue;
+        }
+
+        const metadata = tokenMetadatas?.find(
           (m) => m.id.toLowerCase() === restakingAsset.token.toLowerCase(),
         );
 
@@ -222,7 +258,10 @@ export const useRestakeAssets = (options?: {
 
       return assetMap;
     },
-    enabled: !useOnChainFallback && !!restakingAssets && !!tokenMetadatas,
+    enabled:
+      !useOnChainFallback &&
+      !!restakingAssets &&
+      (erc20TokenAddresses.length === 0 || !!tokenMetadatas),
     staleTime: 15_000,
   });
 
