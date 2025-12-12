@@ -74,13 +74,27 @@ contract DeployTangleMigration is Script {
 
         vm.startBroadcast(deployerPrivateKey);
 
-        // 1. Deploy TNT Token
-        TNT tnt = new TNT(deployer);
-        console.log("\n1. TNT Token deployed:", address(tnt));
+        address configuredTnt = _envAddressOrZero("TNT_TOKEN");
+        if (configuredTnt == address(0)) {
+            configuredTnt = _envAddressOrZero("TNT_TOKEN_ADDRESS");
+        }
 
-        // 2. Mint total supply to deployer
-        tnt.mintInitialSupply(deployer, totalSupply);
-        console.log("   Minted:", totalSupply / 1e18, "TNT to deployer");
+        IERC20 tntToken;
+        if (configuredTnt == address(0)) {
+            TNT fresh = new TNT(deployer);
+            configuredTnt = address(fresh);
+            console.log("\n1. TNT Token deployed:", configuredTnt);
+            fresh.mintInitialSupply(deployer, totalSupply);
+            console.log("   Minted:", totalSupply / 1e18, "TNT to deployer");
+            tntToken = IERC20(configuredTnt);
+        } else {
+            console.log("\n1. Using existing TNT token:", configuredTnt);
+            tntToken = IERC20(configuredTnt);
+            uint256 balance = tntToken.balanceOf(deployer);
+            uint256 requiredBalance = totalSupply;
+            require(balance >= requiredBalance, "Existing TNT balance insufficient for migration allocations");
+            console.log("   Existing TNT balance (TNT):", balance / 1e18);
+        }
 
         // 3. Deploy ZK Verifier
         address zkVerifier;
@@ -100,7 +114,7 @@ contract DeployTangleMigration is Script {
 
         // 4. Deploy TangleMigration
         TangleMigration migration = new TangleMigration(
-            address(tnt),
+            configuredTnt,
             merkleRoot,
             zkVerifier,
             deployer
@@ -108,7 +122,7 @@ contract DeployTangleMigration is Script {
         console.log("\n3. TangleMigration deployed:", address(migration));
 
         // 5. Fund the migration contract with EXACT Substrate allocation
-        tnt.transfer(address(migration), substrateAllocation);
+        require(tntToken.transfer(address(migration), substrateAllocation), "Funding transfer failed");
         console.log("   Funded with:", substrateAllocation / 1e18, "TNT for Substrate claims");
 
         // 6. Set claim deadline (1 year from now)
@@ -125,16 +139,27 @@ contract DeployTangleMigration is Script {
 
         // Output summary
         console.log("\n=== Deployment Complete ===");
-        console.log("TNT Token:", address(tnt));
+        console.log("TNT Token:", configuredTnt);
         console.log("TangleMigration:", address(migration));
         console.log("ZK Verifier:", zkVerifier);
         console.log("");
         console.log("Environment Variables for Frontend:");
-        console.log("  VITE_TNT_TOKEN_ADDRESS=", address(tnt));
+        console.log("  VITE_TNT_TOKEN_ADDRESS=", configuredTnt);
         console.log("  VITE_TANGLE_MIGRATION_ADDRESS=", address(migration));
         console.log("  VITE_ZK_VERIFIER_ADDRESS=", zkVerifier);
         console.log("");
         console.log("Next: Run ExecuteEVMAirdrop to distribute EVM tokens");
+    }
+
+    function _envAddressOrZero(string memory key) internal view returns (address) {
+        if (bytes(key).length == 0) {
+            return address(0);
+        }
+        try vm.envAddress(key) returns (address value) {
+            return value;
+        } catch {
+            return address(0);
+        }
     }
 }
 

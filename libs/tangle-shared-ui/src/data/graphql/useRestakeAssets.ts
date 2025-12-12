@@ -117,7 +117,6 @@ export const useRestakeAssets = (options?: {
   const erc20TokenAddresses = allTokenAddresses.filter(
     (addr) => addr.toLowerCase() !== NATIVE_TOKEN_ADDRESS.toLowerCase(),
   );
-  const erc20TokenKey = erc20TokenAddresses.join('-');
   // 2. Fetch ERC20 metadata for ERC20 tokens only (not native token)
   const { data: tokenMetadatas, isLoading: isLoadingMetadata } = useQuery({
     queryKey: ['erc20Metadata', erc20TokenAddresses, publicClient?.chain?.id],
@@ -280,7 +279,6 @@ export const useRestakeAssets = (options?: {
     restakingAssets,
     tokenMetadatas,
     balances,
-    erc20TokenKey,
     nativeBalance,
     nativeSymbol,
     nativeDecimals,

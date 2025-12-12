@@ -96,6 +96,7 @@ export EIGEN_ADDRESS=""
 # Migration contract addresses
 export TANGLE_MIGRATION_ADDRESS=""
 export TNT_TOKEN_ADDRESS=""
+export TNT_TOKEN=""
 
 # Colors for output
 RED='\033[0;31m'
@@ -309,11 +310,22 @@ deploy_contracts() {
     export STETH_ADDRESS=$(grep "stETH:" /tmp/deploy.log | head -1 | grep -oE '0x[a-fA-F0-9]{40}' || echo "")
     export WSTETH_ADDRESS=$(grep "wstETH:" /tmp/deploy.log | head -1 | grep -oE '0x[a-fA-F0-9]{40}' || echo "")
     export EIGEN_ADDRESS=$(grep "EIGEN:" /tmp/deploy.log | head -1 | grep -oE '0x[a-fA-F0-9]{40}' || echo "")
+    export TNT_TOKEN_ADDRESS=$(grep -E "TangleToken \\(bond asset\\):" /tmp/deploy.log | tail -1 | grep -oE '0x[a-fA-F0-9]{40}' || echo "")
+    if [[ -z "$TNT_TOKEN_ADDRESS" ]]; then
+        TNT_TOKEN_ADDRESS=$(grep -E "Using existing TangleToken \\(bond asset\\):" /tmp/deploy.log | tail -1 | grep -oE '0x[a-fA-F0-9]{40}' || echo "")
+    fi
 
     if [[ -n "$USDC_ADDRESS" ]]; then
         log_success "Token addresses parsed from deployment"
     else
         log_warn "Could not parse token addresses from deployment log"
+    fi
+
+    if [[ -n "$TNT_TOKEN_ADDRESS" ]]; then
+        export TNT_TOKEN="$TNT_TOKEN_ADDRESS"
+        log_success "Detected TNT token: $TNT_TOKEN_ADDRESS"
+    else
+        log_warn "Could not detect TNT token address from deployment log"
     fi
 
     log_success "Contracts deployed"
@@ -388,6 +400,8 @@ console.log(JSON.stringify({
     TOTAL_SUBSTRATE="$total_substrate" \
     TOTAL_EVM="$total_evm" \
     USE_MOCK_VERIFIER="true" \
+    TNT_TOKEN="${TNT_TOKEN_ADDRESS:-}" \
+    TNT_TOKEN_ADDRESS="${TNT_TOKEN_ADDRESS:-}" \
     PRIVATE_KEY="$ANVIL_PRIVATE_KEY" \
     forge script script/DeployTangleMigration.s.sol:DeployTangleMigration \
         --rpc-url "http://127.0.0.1:$ANVIL_PORT" \
@@ -672,6 +686,12 @@ start_claim_relayer() {
         return 1
     fi
 
+    local relayer_dir="$DAPP_ROOT/apps/claim-relayer"
+    if [[ ! -d "$relayer_dir" ]]; then
+        log_error "Claim relayer workspace not found at $relayer_dir"
+        return 1
+    fi
+
     log_info "Funding claim relayer wallet $relayer_address..."
     cast send \
         --rpc-url http://127.0.0.1:$ANVIL_PORT \
@@ -680,15 +700,15 @@ start_claim_relayer() {
         --value 500ether >/tmp/claim-relayer-fund.log 2>&1 || true
 
     log_info "Starting claim relayer dev server on port $CLAIM_RELAYER_PORT..."
-    cd "$DAPP_ROOT"
+    pushd "$relayer_dir" >/dev/null
     RELAYER_PRIVATE_KEY="$relayer_key" \
     MIGRATION_CONTRACT="$TANGLE_MIGRATION_ADDRESS" \
     RPC_URL="http://127.0.0.1:$ANVIL_PORT" \
     CHAIN_ID="$ANVIL_CHAIN_ID" \
     PORT="$CLAIM_RELAYER_PORT" \
-    yarn workspace @tangle-network/claim-relayer dev &> "$CLAIM_RELAYER_LOG" &
+    yarn dev &> "$CLAIM_RELAYER_LOG" &
     CLAIM_RELAYER_PID=$!
-    cd "$SCRIPT_DIR"
+    popd >/dev/null
 
     sleep 2
     if kill -0 "$CLAIM_RELAYER_PID" 2>/dev/null; then

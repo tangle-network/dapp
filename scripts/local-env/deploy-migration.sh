@@ -157,6 +157,8 @@ MERKLE_ROOT="$MERKLE_ROOT" \
 TOTAL_SUBSTRATE="$TOTAL_SUBSTRATE" \
 TOTAL_EVM="$TOTAL_EVM" \
 USE_MOCK_VERIFIER="true" \
+TNT_TOKEN="${TNT_TOKEN_ADDRESS:-}" \
+TNT_TOKEN_ADDRESS="${TNT_TOKEN_ADDRESS:-}" \
 PRIVATE_KEY="$PRIVATE_KEY" \
 forge script script/DeployTangleMigration.s.sol:DeployTangleMigration \
     --rpc-url "$RPC_URL" \
@@ -174,6 +176,10 @@ if [[ -f "$BROADCAST_FILE" ]]; then
     TNT_ADDRESS=$(jq -r '.transactions[] | select(.contractName == "TNT") | .contractAddress' "$BROADCAST_FILE" 2>/dev/null | head -1)
     MIGRATION_ADDRESS=$(jq -r '.transactions[] | select(.contractName == "TangleMigration") | .contractAddress' "$BROADCAST_FILE" 2>/dev/null | head -1)
     VERIFIER_ADDRESS=$(jq -r '.transactions[] | select(.contractName == "MockZKVerifier") | .contractAddress' "$BROADCAST_FILE" 2>/dev/null | head -1)
+fi
+
+if [[ -z "$TNT_ADDRESS" || "$TNT_ADDRESS" == "null" ]]; then
+    TNT_ADDRESS="${TNT_TOKEN_ADDRESS:-}"
 fi
 
 if [[ -z "$TNT_ADDRESS" || "$TNT_ADDRESS" == "null" ]]; then
