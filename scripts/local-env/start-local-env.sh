@@ -53,6 +53,7 @@ DEFAULT_RELAYER_PRIVATE_KEY="0x59c6995e998f97a5a0044966f0945389dc9e86dae88c7a841
 CLAIM_RELAYER_PRIVATE_KEY="${CLAIM_RELAYER_PRIVATE_KEY:-$DEFAULT_RELAYER_PRIVATE_KEY}"
 CLAIM_RELAYER_PID=""
 CLAIM_RELAYER_LOG="/tmp/claim-relayer.log"
+export ENVIO_PG_PORT="${ENVIO_PG_PORT:-9898}"
 
 # Resolve script directory first
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
@@ -577,7 +578,7 @@ start_indexer() {
 
     # Clear chain progress (for fresh indexing from block 0)
     log_info "Clearing chain progress..."
-    PGPASSWORD=testing psql -h localhost -p 5433 -U postgres -d envio-dev -c \
+    PGPASSWORD=testing psql -h localhost -p "$ENVIO_PG_PORT" -U postgres -d envio-dev -c \
         "TRUNCATE TABLE public.persisted_state, public.chain_metadata, public.dynamic_contract_registry CASCADE;" 2>/dev/null || true
 
     # Re-create symlink
@@ -1188,7 +1189,7 @@ clear_indexer_state() {
     log_info "Clearing indexer state..."
     rm -f "$INDEXER_DIR/generated/persisted_state.envio.json"
 
-    PGPASSWORD=testing psql -h localhost -p 5433 -U postgres -d envio-dev -c \
+    PGPASSWORD=testing psql -h localhost -p "$ENVIO_PG_PORT" -U postgres -d envio-dev -c \
         "TRUNCATE TABLE public.persisted_state, public.chain_metadata, public.dynamic_contract_registry CASCADE;" 2>/dev/null || true
 
     log_success "Indexer state cleared. Restart indexer to re-sync from block 0."
