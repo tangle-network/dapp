@@ -1,4 +1,4 @@
-import { useCallback, useEffect } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { type Hex } from 'viem';
 import {
   useAccount,
@@ -11,6 +11,11 @@ import {
  */
 const TANGLE_MIGRATION_ADDRESS =
   (import.meta.env.VITE_TANGLE_MIGRATION_ADDRESS as Hex) || null;
+const CLAIM_RELAYER_URL =
+  (import.meta.env.VITE_CLAIM_RELAYER_URL as string | undefined)?.replace(
+    /\/$/,
+    '',
+  ) || null;
 
 // TangleMigration contract ABI (claimWithZKProof function)
 const TANGLE_MIGRATION_ABI = [
@@ -32,6 +37,8 @@ const TANGLE_MIGRATION_ABI = [
 export interface ClaimArgs {
   /** The SS58 Substrate address */
   ss58Address: string;
+  /** 32-byte pubkey derived from SS58 */
+  pubkey: Hex;
   /** The amount to claim */
   amount: bigint;
   /** The Merkle proof */
@@ -47,6 +54,10 @@ export interface ClaimArgs {
  */
 const useSubmitClaim = () => {
   const { address: userAddress } = useAccount();
+  const [relayerTxHash, setRelayerTxHash] = useState<Hex | null>(null);
+  const [relayerError, setRelayerError] = useState<Error | null>(null);
+  const [isRelayerSubmitting, setIsRelayerSubmitting] = useState(false);
+  const [relayerSuccess, setRelayerSuccess] = useState(false);
 
   const {
     writeContract,
@@ -112,9 +123,56 @@ const useSubmitClaim = () => {
         throw new Error('TangleMigration contract not configured');
       }
 
-      if (!userAddress) {
+      if (!CLAIM_RELAYER_URL && !userAddress) {
         console.error('[useSubmitClaim] Wallet not connected');
         throw new Error('Wallet not connected');
+      }
+
+      if (CLAIM_RELAYER_URL) {
+        setIsRelayerSubmitting(true);
+        setRelayerError(null);
+        setRelayerTxHash(null);
+        setRelayerSuccess(false);
+        try {
+          const response = await fetch(`${CLAIM_RELAYER_URL}/claim`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              pubkey: args.pubkey,
+              amount: args.amount.toString(),
+              merkleProof: args.merkleProof,
+              zkProof: args.zkProof,
+              recipient: args.recipient,
+            }),
+          });
+
+          if (!response.ok) {
+            const errorPayload = await response.json().catch(() => ({}));
+            const message =
+              (errorPayload as { message?: string }).message ||
+              'Relayer request failed';
+            throw new Error(message);
+          }
+
+          const json = (await response.json()) as {
+            txHash?: Hex;
+          };
+
+          if (json.txHash) {
+            setRelayerTxHash(json.txHash);
+          }
+          setRelayerSuccess(true);
+          console.log('[useSubmitClaim] Relayer submission complete');
+          return;
+        } catch (err) {
+          const error =
+            err instanceof Error ? err : new Error(String(err ?? 'Error'));
+          setRelayerError(error);
+          console.error('[useSubmitClaim] Relayer error:', error);
+          throw error;
+        } finally {
+          setIsRelayerSubmitting(false);
+        }
       }
 
       try {
@@ -147,16 +205,30 @@ const useSubmitClaim = () => {
    */
   const reset = useCallback(() => {
     resetWrite();
+    setRelayerTxHash(null);
+    setRelayerError(null);
+    setRelayerSuccess(false);
+    setIsRelayerSubmitting(false);
   }, [resetWrite]);
+
+  const txHashCombined = relayerTxHash ?? txHash ?? null;
+  const isSubmittingCombined = CLAIM_RELAYER_URL
+    ? isRelayerSubmitting
+    : isWritePending;
+  const isConfirmingCombined = CLAIM_RELAYER_URL ? false : isConfirming;
+  const isConfirmedCombined = CLAIM_RELAYER_URL ? relayerSuccess : isConfirmed;
+  const errorCombined = CLAIM_RELAYER_URL
+    ? relayerError
+    : writeError || confirmError;
 
   return {
     submitClaim,
     reset,
-    txHash,
-    isSubmitting: isWritePending,
-    isConfirming,
-    isConfirmed,
-    error: writeError || confirmError,
+    txHash: txHashCombined,
+    isSubmitting: isSubmittingCombined,
+    isConfirming: isConfirmingCombined,
+    isConfirmed: isConfirmedCombined,
+    error: errorCombined,
     contractConfigured: !!TANGLE_MIGRATION_ADDRESS,
   };
 };

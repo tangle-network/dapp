@@ -46,6 +46,13 @@ esac
 ANVIL_PORT=8545
 ANVIL_CHAIN_ID=31337
 GRAPHQL_PORT=8080
+CLAIM_RELAYER_PORT=${CLAIM_RELAYER_PORT:-3001}
+
+# Claim relayer defaults (Anvil account #1 unless overridden)
+DEFAULT_RELAYER_PRIVATE_KEY="0x59c6995e998f97a5a0044966f0945389dc9e86dae88c7a8412f4603b6b78690d"
+CLAIM_RELAYER_PRIVATE_KEY="${CLAIM_RELAYER_PRIVATE_KEY:-$DEFAULT_RELAYER_PRIVATE_KEY}"
+CLAIM_RELAYER_PID=""
+CLAIM_RELAYER_LOG="/tmp/claim-relayer.log"
 
 # Resolve script directory first
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
@@ -110,6 +117,7 @@ cleanup() {
     # Kill indexer and activity generator (they depend on Anvil/Docker)
     [[ -n "${INDEXER_PID:-}" ]] && kill "$INDEXER_PID" 2>/dev/null || true
     [[ -n "${ACTIVITY_PID:-}" ]] && kill "$ACTIVITY_PID" 2>/dev/null || true
+    [[ -n "${CLAIM_RELAYER_PID:-}" ]] && kill "$CLAIM_RELAYER_PID" 2>/dev/null || true
     lsof -ti:9898 | xargs kill 2>/dev/null || true
 
     # Keep Anvil and Docker running for resume mode
@@ -202,8 +210,9 @@ deploy_multicall3() {
     if [[ "$code" != "0x" && -n "$code" && ${#code} -gt 10 ]]; then
         log_success "Multicall3 deployed at $MULTICALL3_ADDRESS"
     else
-        log_warn "Failed to deploy Multicall3 - some dApp features may not work"
+        log_error "Failed to deploy Multicall3 - aborting local environment startup"
         log_info "Response: $set_result"
+        exit 1
     fi
 }
 
@@ -643,6 +652,185 @@ restart_activity_generator() {
     start_activity_generator
 }
 
+start_claim_relayer() {
+    if [[ -n "${CLAIM_RELAYER_PID:-}" ]] && kill -0 "$CLAIM_RELAYER_PID" 2>/dev/null; then
+        log_warn "Claim relayer already running (PID: $CLAIM_RELAYER_PID)"
+        return
+    fi
+
+    if [[ -z "${TANGLE_MIGRATION_ADDRESS:-}" || "${TANGLE_MIGRATION_ADDRESS}" == "null" ]]; then
+        log_warn "Cannot start claim relayer: TangleMigration contract not deployed yet"
+        return
+    fi
+
+    local relayer_key="$CLAIM_RELAYER_PRIVATE_KEY"
+    local relayer_address
+    relayer_address=$(cast wallet address "$relayer_key" 2>/dev/null | tail -1 || true)
+
+    if [[ -z "$relayer_address" ]]; then
+        log_error "Failed to derive relayer address from CLAIM_RELAYER_PRIVATE_KEY"
+        return 1
+    fi
+
+    log_info "Funding claim relayer wallet $relayer_address..."
+    cast send \
+        --rpc-url http://127.0.0.1:$ANVIL_PORT \
+        --private-key 0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80 \
+        "$relayer_address" \
+        --value 500ether >/tmp/claim-relayer-fund.log 2>&1 || true
+
+    log_info "Starting claim relayer dev server on port $CLAIM_RELAYER_PORT..."
+    cd "$DAPP_ROOT"
+    RELAYER_PRIVATE_KEY="$relayer_key" \
+    MIGRATION_CONTRACT="$TANGLE_MIGRATION_ADDRESS" \
+    RPC_URL="http://127.0.0.1:$ANVIL_PORT" \
+    CHAIN_ID="$ANVIL_CHAIN_ID" \
+    PORT="$CLAIM_RELAYER_PORT" \
+    yarn workspace @tangle-network/claim-relayer dev &> "$CLAIM_RELAYER_LOG" &
+    CLAIM_RELAYER_PID=$!
+    cd "$SCRIPT_DIR"
+
+    sleep 2
+    if kill -0 "$CLAIM_RELAYER_PID" 2>/dev/null; then
+        log_success "Claim relayer started (PID: $CLAIM_RELAYER_PID, wallet: $relayer_address)"
+        log_info "Health check: http://localhost:$CLAIM_RELAYER_PORT/health"
+    else
+        log_error "Failed to start claim relayer. Check $CLAIM_RELAYER_LOG"
+        CLAIM_RELAYER_PID=""
+    fi
+}
+
+stop_claim_relayer() {
+    if [[ -n "${CLAIM_RELAYER_PID:-}" ]]; then
+        log_info "Stopping claim relayer (PID: $CLAIM_RELAYER_PID)..."
+        kill "$CLAIM_RELAYER_PID" 2>/dev/null || true
+        wait "$CLAIM_RELAYER_PID" 2>/dev/null || true
+        CLAIM_RELAYER_PID=""
+        log_success "Claim relayer stopped"
+    else
+        log_warn "Claim relayer not running"
+    fi
+}
+
+restart_claim_relayer() {
+    stop_claim_relayer
+    sleep 1
+    start_claim_relayer
+}
+
+ensure_tnt_restake_asset() {
+    if [[ -z "${TNT_TOKEN_ADDRESS:-}" || "${TNT_TOKEN_ADDRESS}" == "null" ]]; then
+        log_warn "Skipping TNT restake registration - TNT token address not found"
+        return
+    fi
+
+    if [[ -z "${RESTAKING_PROXY:-}" ]]; then
+        log_warn "Skipping TNT restake registration - restaking proxy not set"
+        return
+    fi
+
+    log_info "Ensuring TNT token is enabled as a restaked asset..."
+
+    local result
+    set +e
+    result=$(
+        RPC_URL="http://127.0.0.1:$ANVIL_PORT" \
+        RESTAKING_ADDRESS="$RESTAKING_PROXY" \
+        TNT_ADDRESS="$TNT_TOKEN_ADDRESS" \
+        PRIVATE_KEY="0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80" \
+        CHAIN_ID="$ANVIL_CHAIN_ID" \
+        node --input-type=module <<'NODE'
+import { createPublicClient, createWalletClient, http } from 'viem';
+import { privateKeyToAccount } from 'viem/accounts';
+import { defineChain } from 'viem';
+
+const rpcUrl = process.env.RPC_URL;
+const restaking = process.env.RESTAKING_ADDRESS;
+const tnt = process.env.TNT_ADDRESS;
+const chainId = Number(process.env.CHAIN_ID ?? '31337');
+const account = privateKeyToAccount(process.env.PRIVATE_KEY);
+
+const chain = defineChain({
+  id: chainId,
+  name: 'Anvil',
+  nativeCurrency: { name: 'ETH', symbol: 'ETH', decimals: 18 },
+  rpcUrls: {
+    default: { http: [rpcUrl] },
+    public: { http: [rpcUrl] },
+  },
+});
+
+const abi = [
+  {
+    type: 'function',
+    name: 'getAssetConfig',
+    stateMutability: 'view',
+    inputs: [{ name: 'token', type: 'address' }],
+    outputs: [
+      { name: 'enabled', type: 'bool' },
+      { name: 'minOperatorStake', type: 'uint256' },
+      { name: 'minDelegation', type: 'uint256' },
+      { name: 'depositCap', type: 'uint256' },
+      { name: 'currentDeposits', type: 'uint256' },
+      { name: 'rewardMultiplierBps', type: 'uint16' },
+    ],
+  },
+  {
+    type: 'function',
+    name: 'enableAsset',
+    stateMutability: 'nonpayable',
+    inputs: [
+      { name: 'token', type: 'address' },
+      { name: 'minOperatorStake', type: 'uint256' },
+      { name: 'minDelegation', type: 'uint256' },
+      { name: 'depositCap', type: 'uint256' },
+      { name: 'rewardMultiplierBps', type: 'uint16' },
+    ],
+    outputs: [],
+  },
+];
+
+const publicClient = createPublicClient({ chain, transport: http(rpcUrl) });
+
+const config = await publicClient.readContract({
+  address: restaking,
+  abi,
+  functionName: 'getAssetConfig',
+  args: [tnt],
+});
+
+if (config.enabled) {
+  console.log('already-enabled');
+  process.exit(0);
+}
+
+const walletClient = createWalletClient({ account, chain, transport: http(rpcUrl) });
+const txHash = await walletClient.writeContract({
+  address: restaking,
+  abi,
+  functionName: 'enableAsset',
+  args: [tnt, 0n, 0n, 0n, 10_000],
+});
+
+await publicClient.waitForTransactionReceipt({ hash: txHash });
+console.log('registered');
+NODE
+    )
+    local status=$?
+    set -e
+
+    if [[ $status -ne 0 ]]; then
+        log_warn "Failed to ensure TNT restake asset: $result"
+        return
+    fi
+
+    if [[ "$result" == *"already-enabled"* ]]; then
+        log_success "TNT already enabled as a restake asset"
+    else
+        log_success "TNT registered as a restake asset"
+    fi
+}
+
 stop_indexer() {
     if [[ -n "${INDEXER_PID:-}" ]]; then
         log_info "Stopping indexer (PID: $INDEXER_PID)..."
@@ -733,6 +921,12 @@ show_status() {
         echo -e "  Activity Gen:      ${GREEN}Running${NC} (PID: $ACTIVITY_PID)"
     else
         echo -e "  Activity Gen:      ${RED}Stopped${NC}"
+    fi
+
+    if [[ -n "${CLAIM_RELAYER_PID:-}" ]] && kill -0 "$CLAIM_RELAYER_PID" 2>/dev/null; then
+        echo -e "  Claim Relayer:     ${GREEN}Running${NC} (PID: $CLAIM_RELAYER_PID, port $CLAIM_RELAYER_PORT)"
+    else
+        echo -e "  Claim Relayer:     ${RED}Stopped${NC}"
     fi
 
     # Check Docker containers
@@ -960,8 +1154,12 @@ show_logs() {
             echo -e "${BOLD}=== Migration Deployment Log (last 50 lines) ===${NC}"
             tail -50 /tmp/migration-deploy.log 2>/dev/null || echo "No migration deployment log found"
             ;;
+        relayer)
+            echo -e "${BOLD}=== Claim Relayer Log (last 50 lines) ===${NC}"
+            tail -50 "$CLAIM_RELAYER_LOG" 2>/dev/null || echo "No relayer log found"
+            ;;
         *)
-            echo "Usage: logs <deploy|contracts|migration>"
+            echo "Usage: logs <deploy|contracts|migration|relayer>"
             ;;
     esac
 }
@@ -989,6 +1187,11 @@ print_help() {
     echo "  indexer restart     - Restart the indexer process"
     echo "  indexer stop        - Stop the indexer"
     echo "  indexer clear       - Clear indexer state (then restart to re-sync)"
+    echo ""
+    echo -e "${CYAN}Claim Relayer:${NC}"
+    echo "  relayer restart     - Restart the gasless claim relayer"
+    echo "  relayer stop        - Stop the relayer"
+    echo "  relayer start       - Start the relayer"
     echo ""
     echo -e "${CYAN}Migration:${NC}"
     echo "  migration deploy    - Deploy/redeploy TangleMigration contracts"
@@ -1038,6 +1241,7 @@ print_startup_banner() {
     echo "  VITE_ENVIO_TESTNET_ENDPOINT=http://localhost:$GRAPHQL_PORT/v1/graphql"
     if [[ -n "${TANGLE_MIGRATION_ADDRESS:-}" && "${TANGLE_MIGRATION_ADDRESS}" != "null" ]]; then
         echo "  VITE_TANGLE_MIGRATION_ADDRESS=$TANGLE_MIGRATION_ADDRESS"
+        echo "  VITE_CLAIM_RELAYER_URL=http://localhost:$CLAIM_RELAYER_PORT"
     fi
     echo ""
     echo -e "${BOLD}Development Accounts (10 accounts with 10,000 ETH + ERC20 tokens):${NC}"
@@ -1101,6 +1305,16 @@ interactive_cli() {
                 esac
                 ;;
 
+            # Claim relayer commands
+            relayer)
+                case "$args" in
+                    restart) restart_claim_relayer ;;
+                    stop) stop_claim_relayer ;;
+                    start) start_claim_relayer ;;
+                    *) echo "Usage: relayer <restart|stop|start>" ;;
+                esac
+                ;;
+
             # Cache commands
             cache)
                 case "$args" in
@@ -1153,6 +1367,7 @@ interactive_cli() {
                 # Kill indexer and activity generator
                 [[ -n "${INDEXER_PID:-}" ]] && kill "$INDEXER_PID" 2>/dev/null || true
                 [[ -n "${ACTIVITY_PID:-}" ]] && kill "$ACTIVITY_PID" 2>/dev/null || true
+                [[ -n "${CLAIM_RELAYER_PID:-}" ]] && kill "$CLAIM_RELAYER_PID" 2>/dev/null || true
                 pkill -f "ts-node src/Index" 2>/dev/null || true
                 pkill -f "activity-generator" 2>/dev/null || true
                 # Stop Docker
@@ -1252,6 +1467,19 @@ resume_session() {
         log_info "Activity generator not running. Use 'activity start' to start it."
     fi
 
+    # Check claim relayer
+    local relayer_port_pid
+    relayer_port_pid=$(lsof -ti:$CLAIM_RELAYER_PORT 2>/dev/null | head -1 || true)
+    if [[ -n "$relayer_port_pid" ]]; then
+        CLAIM_RELAYER_PID="$relayer_port_pid"
+        log_success "Claim relayer is running (PID: $CLAIM_RELAYER_PID, port $CLAIM_RELAYER_PORT)"
+    else
+        log_warn "Claim relayer not running. Starting..."
+        start_claim_relayer
+    fi
+
+    ensure_tnt_restake_asset
+
     log_success "Session resumed successfully!"
     echo ""
 }
@@ -1279,12 +1507,14 @@ main() {
     start_anvil
     deploy_contracts
     deploy_migration_contracts
+    ensure_tnt_restake_asset
 
     # Save contract addresses for resume mode
     save_anvil_state
 
     start_indexer
     start_activity_generator
+    start_claim_relayer
 
     # Check if running in an interactive terminal
     if [[ -t 0 ]]; then

@@ -21,7 +21,12 @@ export type PendingRewardsData = {
   hasRewards: boolean;
 };
 
-const usePendingRewards = () => {
+interface UsePendingRewardsOptions {
+  enabled?: boolean;
+}
+
+const usePendingRewards = (options?: UsePendingRewardsOptions) => {
+  const enabled = options?.enabled ?? true;
   const chainId = useChainId();
   const { address: userAddress } = useAccount();
 
@@ -39,7 +44,7 @@ const usePendingRewards = () => {
     error: assetsError,
   } = useReadContracts({
     contracts:
-      contracts && userAddress
+      enabled && contracts && userAddress
         ? [
             {
               address: contracts.rewardVaults,
@@ -49,7 +54,7 @@ const usePendingRewards = () => {
           ]
         : [],
     query: {
-      enabled: !!contracts && !!userAddress,
+      enabled: enabled && !!contracts && !!userAddress,
     },
   });
 
@@ -80,10 +85,10 @@ const usePendingRewards = () => {
     error: rewardsError,
     refetch,
   } = useReadContracts({
-    contracts: rewardContracts,
+    contracts: enabled ? rewardContracts : [],
     query: {
-      enabled: rewardContracts.length > 0,
-      refetchInterval: 10000, // Refresh every 10 seconds
+      enabled: enabled && rewardContracts.length > 0,
+      refetchInterval: enabled ? 10000 : false, // Refresh every 10 seconds when enabled
     },
   });
 

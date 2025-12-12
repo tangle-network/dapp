@@ -99,6 +99,7 @@ const MigrationClaimPage: FC = () => {
   const [recipientAddress, setRecipientAddress] = useState<string>('');
   const [isWalletModalOpen, setIsWalletModalOpen] = useState(false);
   const [isEditingRecipient, setIsEditingRecipient] = useState(false);
+  const [signatureCopied, setSignatureCopied] = useState(false);
 
   // Sync recipient address with connected wallet when it changes
   useEffect(() => {
@@ -106,6 +107,14 @@ const MigrationClaimPage: FC = () => {
       setRecipientAddress(evmAddress);
     }
   }, [evmAddress, recipientAddress]);
+
+  useEffect(() => {
+    if (!signatureCopied) {
+      return;
+    }
+    const timeout = setTimeout(() => setSignatureCopied(false), 1500);
+    return () => clearTimeout(timeout);
+  }, [signatureCopied]);
 
   // Hooks
   const {
@@ -218,6 +227,21 @@ const MigrationClaimPage: FC = () => {
     }
   }, [challenge, substrateAccount]);
 
+  const handleCopySignature = useCallback(() => {
+    if (
+      !signature ||
+      typeof navigator === 'undefined' ||
+      !navigator.clipboard
+    ) {
+      return;
+    }
+
+    navigator.clipboard
+      .writeText(signature)
+      .then(() => setSignatureCopied(true))
+      .catch((err) => console.error('Failed to copy signature', err));
+  }, [signature]);
+
   // Handle proof generation
   const handleGenerateProof = useCallback(async () => {
     if (
@@ -260,6 +284,7 @@ const MigrationClaimPage: FC = () => {
       hasMerkleProof: !!eligibility.merkleProof,
       hasProof: !!proof,
       hasValidRecipient: !!validRecipient,
+      hasPubkey: !!eligibility.pubkey,
     });
 
     if (
@@ -267,7 +292,8 @@ const MigrationClaimPage: FC = () => {
       !eligibility.amount ||
       !eligibility.merkleProof ||
       !proof ||
-      !validRecipient
+      !validRecipient ||
+      !eligibility.pubkey
     ) {
       console.error('[ClaimPage] Missing prerequisites, aborting');
       return;
@@ -277,6 +303,7 @@ const MigrationClaimPage: FC = () => {
       console.log('[ClaimPage] Calling submitClaim...');
       await submitClaim({
         ss58Address: substrateAccount.address,
+        pubkey: eligibility.pubkey,
         amount: eligibility.amount,
         merkleProof: eligibility.merkleProof,
         zkProof: proof.zkProof,
@@ -434,11 +461,7 @@ const MigrationClaimPage: FC = () => {
                       : 'bg-mono-40 dark:bg-mono-160 text-mono-100',
                   )}
                 >
-                  {isConnected ? (
-                    <CheckboxCircleFill className="w-5 h-5" />
-                  ) : (
-                    '1'
-                  )}
+                  1
                 </div>
                 <Typography
                   variant="body1"
@@ -575,11 +598,7 @@ const MigrationClaimPage: FC = () => {
                         : 'bg-mono-40 dark:bg-mono-160 text-mono-100',
                     )}
                   >
-                    {substrateAccount ? (
-                      <CheckboxCircleFill className="w-5 h-5" />
-                    ) : (
-                      '2'
-                    )}
+                    2
                   </div>
                   <Typography
                     variant="body1"
@@ -596,6 +615,33 @@ const MigrationClaimPage: FC = () => {
                   disabled={currentStep >= ClaimStep.SIGN_CHALLENGE}
                 />
               </motion.div>
+            )}
+
+            {signature && (
+              <div className="p-4 rounded-xl border border-mono-60 dark:border-mono-140 bg-mono-20/40 dark:bg-mono-180/30">
+                <div className="flex items-center justify-between gap-2 mb-2">
+                  <Typography
+                    variant="body2"
+                    fw="semibold"
+                    className="text-mono-120 dark:text-mono-40"
+                  >
+                    Signature
+                  </Typography>
+                  <Button
+                    variant="secondary"
+                    size="sm"
+                    onClick={handleCopySignature}
+                  >
+                    {signatureCopied ? 'Copied!' : 'Copy'}
+                  </Button>
+                </div>
+                <Typography
+                  variant="body2"
+                  className="font-mono text-xs break-all text-mono-200 dark:text-mono-10"
+                >
+                  {signature}
+                </Typography>
+              </div>
             )}
 
             {/* Eligibility Check */}

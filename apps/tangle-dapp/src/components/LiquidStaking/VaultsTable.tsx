@@ -120,9 +120,7 @@ const COLUMNS = [
             to={`${PagePath.LIQUID_STAKING_DEPOSIT}?vault=${row.original.address}`}
             onClick={(e) => e.stopPropagation()}
           >
-            <Button variant="utility" className="uppercase body4">
-              Deposit
-            </Button>
+            <Button size="sm">Deposit</Button>
           </Link>
         </div>
       </TableCellWrapper>

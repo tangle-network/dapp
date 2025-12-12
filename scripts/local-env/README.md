@@ -6,7 +6,7 @@ This directory contains scripts to run a fully simulatable local environment for
 
 | Script | Description |
 |--------|-------------|
-| `start-local-env.sh` | Start Anvil, deploy TNT contracts, run indexer |
+| `start-local-env.sh` | Start Anvil, deploy TNT contracts, run indexer & claim relayer |
 | `deploy-migration.sh` | Deploy TangleMigration contracts for TNT token claims |
 | `activity-generator.mjs` | Generate simulated restaking activity |
 
@@ -35,10 +35,13 @@ TNT_CORE_DIR=/path/to/tnt-core ./scripts/local-env/start-local-env.sh
 This will:
 1. Start Anvil (local Ethereum node) on port 8545 with chain ID 31337
 2. Deploy all TNT contracts
-3. Start the Envio indexer with PostgreSQL
-4. Run initial activity generation
-5. Start continuous activity generator
-6. Launch an interactive CLI for managing components
+3. Deploy the migration contracts and copy proofs
+4. Register the TNT ERC20 as a restaking asset so it appears in the dApp
+5. Start the claim relayer for gasless migration claims (port 3001 by default)
+6. Start the Envio indexer with PostgreSQL
+7. Run initial activity generation
+8. Start continuous activity generator
+9. Launch an interactive CLI for managing components
 
 ### Option 2: Manual Setup
 
@@ -81,6 +84,8 @@ RPC_URL=http://localhost:8545 node scripts/local-env/activity-generator.mjs
 | `TNT_CORE_DIR` | Auto-detected | Path to tnt-core repository |
 | `RPC_URL` | `http://localhost:8545` | Anvil RPC endpoint |
 | `ACTIVITY_INTERVAL_MS` | `10000` | Interval between activities (ms) |
+| `CLAIM_RELAYER_PORT` | `3001` | Port for the gasless claim relayer API |
+| `CLAIM_RELAYER_PRIVATE_KEY` | Anvil account #1 | Private key the relayer uses to pay gas |
 
 ### dApp Config
 
@@ -89,6 +94,7 @@ Create `.env.local` in the app root (e.g., `apps/tangle-dapp/.env.local`):
 ```env
 VITE_ENVIO_MAINNET_ENDPOINT=http://localhost:8080/v1/graphql
 VITE_ENVIO_TESTNET_ENDPOINT=http://localhost:8080/v1/graphql
+VITE_CLAIM_RELAYER_URL=http://localhost:3001
 ```
 
 ## Contract Addresses
@@ -148,6 +154,10 @@ Activities are weighted:
 - 20% multi-deposits (batch)
 - 10% operator registrations
 
+## TNT as a Restaked Asset
+
+When `start-local-env.sh` runs (or when you resume a session) it automatically registers the TNT ERC20 token with the local `MultiAssetDelegation` contract. This ensures TNT shows up in the “Restake Assets” list inside the dApp and lets you restake the token immediately. If you redeploy contracts manually and need TNT again, rerun the local-env script (or `resume`) so it can re-register the asset.
+
 ## Querying the Indexer
 
 Once running, you can query the GraphQL endpoint:
@@ -195,12 +205,16 @@ tail -f /tmp/anvil.log
 cast call 0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512 "owner()(address)" --rpc-url http://localhost:8545
 ```
 
+### Wallet shows 0 balance
+Some wallet extensions cache balances. Make sure the wallet is connected to `Localhost 8545` (chain ID `31337`) and that you imported one of the default Anvil private keys. If it still displays zero, run `fund <your-address>` inside the local-env CLI to top the account up, then refresh or reset the account in the wallet UI.
+
 ## Logs
 
 - Anvil: `/tmp/anvil.log`
 - Indexer: `/tmp/indexer.log`
 - Deployment: `/tmp/deploy.log`
 - Migration: `/tmp/migration-deploy.log`
+- Claim relayer: `/tmp/claim-relayer.log`
 - Scenario: `/tmp/scenario.log`
 
 ---

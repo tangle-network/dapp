@@ -75,6 +75,8 @@ export const useOnChainRestakeAssets = (options?: { enabled?: boolean }) => {
     refetch: refetchBalances,
   } = useBalance({
     address: userAddress,
+    enabled: Boolean(userAddress),
+    watch: Boolean(userAddress),
   });
   const nativeBalance = nativeBalanceData?.value ?? BigInt(0);
 

@@ -55,6 +55,8 @@ const TransferModal: FC<TransferModalProps> = ({ isOpen, onClose }) => {
   // Native balance
   const { data: nativeBalance, refetch: refetchNativeBalance } = useBalance({
     address: userAddress,
+    enabled: Boolean(userAddress),
+    watch: Boolean(userAddress),
   });
 
   // ERC20 assets

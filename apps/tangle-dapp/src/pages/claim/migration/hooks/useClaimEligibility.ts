@@ -74,6 +74,10 @@ export interface ClaimEligibility {
   amount: bigint | null;
   /** The Merkle proof for the claim */
   merkleProof: Hex[] | null;
+  /** The Merkle proof for the claim */
+  merkleProof: Hex[] | null;
+  /** 32-byte pubkey derived from the SS58 address */
+  pubkey: Hex | null;
   /** Whether this address has already claimed */
   hasClaimed: boolean;
   /** Amount already claimed (0 if not claimed) */
@@ -213,6 +217,7 @@ const useClaimEligibility = ({ ss58Address }: UseClaimEligibilityOptions) => {
         isEligible: true,
         amount: mockAmount,
         merkleProof: ['0x' + '00'.repeat(32)] as Hex[],
+        pubkey: ('0x' + '11'.repeat(32)) as Hex,
         hasClaimed: false,
         claimedAmount: BigInt(0),
         timeRemaining: BigInt(365 * 24 * 60 * 60), // 1 year
@@ -226,6 +231,7 @@ const useClaimEligibility = ({ ss58Address }: UseClaimEligibilityOptions) => {
         isEligible: false,
         amount: null,
         merkleProof: null,
+        pubkey: null,
         hasClaimed,
         claimedAmount: actualClaimedAmount,
         timeRemaining,
@@ -240,6 +246,7 @@ const useClaimEligibility = ({ ss58Address }: UseClaimEligibilityOptions) => {
       isEligible: true,
       amount: claimData.amount,
       merkleProof: claimData.merkleProof,
+      pubkey: claimData.pubkey,
       hasClaimed,
       claimedAmount: actualClaimedAmount,
       timeRemaining,

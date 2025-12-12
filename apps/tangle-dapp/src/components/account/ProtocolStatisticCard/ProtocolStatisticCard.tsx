@@ -55,10 +55,9 @@ export const ProtocolStatisticCard: FC<Props> = ({
     if (!tvlData || tvlData.totalDeposits === BigInt(0)) {
       return EMPTY_VALUE_PLACEHOLDER;
     }
-    // Use 18 decimals as default (ETH standard)
     const formatted = formatUnits(tvlData.totalDeposits, 18);
     const num = parseFloat(formatted);
-    return formatLargeNumber(num, 2);
+    return `${formatLargeNumber(num, 2)} USD`;
   }, [tvlData]);
 
   return (

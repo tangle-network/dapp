@@ -8,7 +8,11 @@ import TransferModal from './TransferModal';
 const Actions: FC = () => {
   const { address } = useAccount();
   const chainId = useChainId();
-  const { data: balance } = useBalance({ address });
+  const { data: balance } = useBalance({
+    address,
+    enabled: Boolean(address),
+    watch: Boolean(address),
+  });
   const [isTransferModalOpen, setIsTransferModalOpen] = useState(false);
 
   // Show faucet for testnet chains

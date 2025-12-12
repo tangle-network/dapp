@@ -58,9 +58,11 @@ const RestakeTabContentInner: FC<Props> = ({ tab }) => {
 
   const {
     restakingAssets,
+    assetList,
     delegator,
     operatorMap,
     isLoadingRestakingAssets,
+    isLoadingAssets,
     isLoadingDelegator,
     isLoadingOperators,
   } = context;
@@ -78,9 +80,12 @@ const RestakeTabContentInner: FC<Props> = ({ tab }) => {
       case RestakeTab.VAULTS:
         return (
           <RestakingAssetsTable
-            assets={restakingAssets ?? []}
+            assets={assetList}
+            restakingAssets={restakingAssets ?? []}
             delegator={delegator}
-            isLoading={isLoadingRestakingAssets || isLoadingDelegator}
+            isLoading={
+              isLoadingRestakingAssets || isLoadingAssets || isLoadingDelegator
+            }
           />
         );
       case RestakeTab.OPERATORS:

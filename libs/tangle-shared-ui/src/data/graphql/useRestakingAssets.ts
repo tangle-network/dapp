@@ -5,10 +5,12 @@
 
 import { useQuery } from '@tanstack/react-query';
 import { Address } from 'viem';
+import { useChainId } from 'wagmi';
 import {
   executeEnvioGraphQL,
   gql,
   EnvioNetwork,
+  getEnvioNetworkFromChainId,
 } from '../../utils/executeEnvioGraphQL';
 import type { RestakingAsset } from '../restake/types';
 
@@ -55,7 +57,7 @@ interface RestakingAssetsQueryResult {
 const parseRestakingAsset = (
   raw: RestakingAssetsQueryResult['RestakingAsset'][number],
 ): RestakingAsset => ({
-  id: raw.id,
+  id: raw.id || raw.token,
   token: raw.token as Address,
   enabled: raw.enabled,
   minOperatorStake: BigInt(raw.minOperatorStake),
@@ -87,10 +89,12 @@ export const useRestakingAssets = (options?: {
   enabled?: boolean;
 }) => {
   const { network, enabledOnly = true, enabled = true } = options ?? {};
+  const chainId = useChainId();
+  const resolvedNetwork = network ?? getEnvioNetworkFromChainId(chainId);
 
   return useQuery({
-    queryKey: ['envio', 'restakingAssets', network, enabledOnly],
-    queryFn: () => fetchRestakingAssets(network, enabledOnly),
+    queryKey: ['envio', 'restakingAssets', resolvedNetwork, enabledOnly],
+    queryFn: () => fetchRestakingAssets(resolvedNetwork, enabledOnly),
     enabled,
     staleTime: 60_000, // 1 minute - assets don't change often
   });
@@ -103,11 +107,13 @@ export const useRestakingAssetMap = (options?: {
   enabled?: boolean;
 }) => {
   const { network, enabledOnly = true, enabled = true } = options ?? {};
+  const chainId = useChainId();
+  const resolvedNetwork = network ?? getEnvioNetworkFromChainId(chainId);
 
   return useQuery({
-    queryKey: ['envio', 'restakingAssetMap', network, enabledOnly],
+    queryKey: ['envio', 'restakingAssetMap', resolvedNetwork, enabledOnly],
     queryFn: async () => {
-      const assets = await fetchRestakingAssets(network, enabledOnly);
+      const assets = await fetchRestakingAssets(resolvedNetwork, enabledOnly);
       const map = new Map<Address, RestakingAsset>();
       for (const asset of assets) {
         map.set(asset.token, asset);

@@ -1,162 +1,239 @@
 import { FC, useMemo } from 'react';
-import {
-  Card,
-  CardVariant,
-  EMPTY_VALUE_PLACEHOLDER,
-  SkeletonLoader,
-  Typography,
-} from '@tangle-network/ui-components';
+import { BN } from '@polkadot/util';
 import { TokenIcon } from '@tangle-network/icons';
+import Spinner from '@tangle-network/icons/Spinner';
+import HeaderCell from '@tangle-network/tangle-shared-ui/components/tables/HeaderCell';
+import TableCellWrapper from '@tangle-network/tangle-shared-ui/components/tables/TableCellWrapper';
+import TableStatus from '@tangle-network/tangle-shared-ui/components/tables/TableStatus';
+import {
+  AmountFormatStyle,
+  formatDisplayAmount,
+  EMPTY_VALUE_PLACEHOLDER,
+} from '@tangle-network/ui-components';
+import Button from '@tangle-network/ui-components/components/buttons/Button';
+import { Table } from '@tangle-network/ui-components/components/Table';
+import { TableVariant } from '@tangle-network/ui-components/components/Table/types';
+import { Typography } from '@tangle-network/ui-components/typography/Typography';
+import {
+  createColumnHelper,
+  getCoreRowModel,
+  getPaginationRowModel,
+  getSortedRowModel,
+  TableOptions,
+  useReactTable,
+} from '@tanstack/react-table';
+import { Address } from 'viem';
+import { Link } from 'react-router';
+import type { RestakeAsset } from '@tangle-network/tangle-shared-ui/data/graphql/useRestakeAssets';
 import type { RestakingAsset } from '@tangle-network/tangle-shared-ui/data/graphql/useRestakingAssets';
 import type { Delegator } from '@tangle-network/tangle-shared-ui/data/graphql/useDelegator';
-import { formatUnits } from 'viem';
-import { twMerge } from 'tailwind-merge';
+import { PagePath } from '../../types';
 
 interface Props {
-  assets: RestakingAsset[];
+  assets: RestakeAsset[];
+  restakingAssets: RestakingAsset[];
   delegator: Delegator | null;
   isLoading: boolean;
 }
 
-// Get token symbol - truncate address if no metadata available
-const getTokenSymbol = (asset: RestakingAsset): string => {
-  // Token address might have metadata from indexer in the future
-  // For now just truncate the address
-  const addr = asset.token;
-  return `${addr.slice(0, 6)}...${addr.slice(-4)}`;
-};
+interface RestakeAssetRow {
+  id: Address;
+  symbol: string;
+  name: string;
+  decimals: number;
+  wallet: BN;
+  deposited: BN;
+  delegated: BN;
+  protocolTvl: BN;
+  tokenAddress: Address;
+}
 
-const formatAmount = (amount: bigint, decimals: number): string => {
-  const formatted = formatUnits(amount, decimals);
-  const num = parseFloat(formatted);
-  if (num === 0) return '0';
-  if (num < 0.0001) return '< 0.0001';
-  return num.toLocaleString(undefined, {
-    maximumFractionDigits: 4,
-    minimumFractionDigits: 0,
-  });
-};
+const COLUMN_HELPER = createColumnHelper<RestakeAssetRow>();
+
+const getColumns = () => [
+  COLUMN_HELPER.accessor('id', {
+    header: () => <HeaderCell title="Asset" />,
+    cell: (props) => (
+      <TableCellWrapper className="pl-3">
+        <div className="flex items-center gap-3">
+          <div className="flex items-center justify-center w-10 h-10">
+            <TokenIcon name={props.row.original.symbol} size="xl" />
+          </div>
+
+          <div>
+            <Typography variant="h5" className="whitespace-nowrap">
+              {props.row.original.symbol}
+            </Typography>
+
+            <Typography
+              variant="body3"
+              className="text-mono-120 dark:text-mono-100"
+            >
+              {props.row.original.name}
+            </Typography>
+          </div>
+        </div>
+      </TableCellWrapper>
+    ),
+  }),
+  COLUMN_HELPER.accessor('wallet', {
+    header: () => <HeaderCell title="Wallet" />,
+    cell: (props) => (
+      <TableCellWrapper>
+        {formatDisplayAmount(
+          props.getValue(),
+          props.row.original.decimals,
+          AmountFormatStyle.SHORT,
+        )}
+      </TableCellWrapper>
+    ),
+  }),
+  COLUMN_HELPER.accessor('deposited', {
+    header: () => <HeaderCell title="Your Deposited" />,
+    cell: (props) => (
+      <TableCellWrapper>
+        {props.getValue().gtn(0)
+          ? formatDisplayAmount(
+              props.getValue(),
+              props.row.original.decimals,
+              AmountFormatStyle.SHORT,
+            )
+          : EMPTY_VALUE_PLACEHOLDER}
+      </TableCellWrapper>
+    ),
+  }),
+  COLUMN_HELPER.accessor('delegated', {
+    header: () => <HeaderCell title="Your Delegated" />,
+    cell: (props) => (
+      <TableCellWrapper>
+        {props.getValue().gtn(0)
+          ? formatDisplayAmount(
+              props.getValue(),
+              props.row.original.decimals,
+              AmountFormatStyle.SHORT,
+            )
+          : EMPTY_VALUE_PLACEHOLDER}
+      </TableCellWrapper>
+    ),
+  }),
+  COLUMN_HELPER.accessor('protocolTvl', {
+    header: () => <HeaderCell title="TVL" />,
+    cell: (props) => (
+      <TableCellWrapper>
+        {formatDisplayAmount(
+          props.getValue(),
+          props.row.original.decimals,
+          AmountFormatStyle.SHORT,
+        )}
+      </TableCellWrapper>
+    ),
+  }),
+  COLUMN_HELPER.display({
+    id: 'actions',
+    header: () => null,
+    cell: ({ row }) => (
+      <TableCellWrapper removeRightBorder>
+        <div className="flex justify-center">
+          <Link
+            to={`${PagePath.RESTAKE_DEPOSIT}?asset=${row.original.tokenAddress}`}
+          >
+            <Button size="sm">Deposit</Button>
+          </Link>
+        </div>
+      </TableCellWrapper>
+    ),
+  }),
+];
 
 export const RestakingAssetsTable: FC<Props> = ({
   assets,
+  restakingAssets,
   delegator,
   isLoading,
 }) => {
-  // Get user's positions for each asset
-  const assetPositions = useMemo(() => {
-    if (!delegator) return new Map();
-    const positions = new Map<
-      string,
-      { deposited: bigint; delegated: bigint }
-    >();
-    for (const pos of delegator.assetPositions) {
-      positions.set(pos.token.toLowerCase(), {
-        deposited: pos.totalDeposited,
-        delegated: pos.delegatedAmount,
-      });
-    }
-    return positions;
-  }, [delegator]);
+  const protocolAssetMap = useMemo(() => {
+    const map = new Map<string, RestakingAsset>();
+    restakingAssets?.forEach((asset) => {
+      map.set(asset.token.toLowerCase(), asset);
+    });
+    return map;
+  }, [restakingAssets]);
+
+  const tableData = useMemo<RestakeAssetRow[]>(() => {
+    return assets.map((asset) => {
+      const tokenKey = asset.id.toLowerCase();
+      const position = delegator?.assetPositions.find(
+        (p) => p.token.toLowerCase() === tokenKey,
+      );
+      const protocolAsset = protocolAssetMap.get(tokenKey);
+
+      const wallet = new BN((asset.balance ?? BigInt(0)).toString());
+      const deposited = new BN(
+        (position?.totalDeposited ?? BigInt(0)).toString(),
+      );
+      const delegated = new BN(
+        (position?.delegatedAmount ?? BigInt(0)).toString(),
+      );
+      const protocolTvl = new BN(
+        (protocolAsset?.currentDeposits ?? BigInt(0)).toString(),
+      );
+
+      return {
+        id: asset.id,
+        symbol: asset.metadata.symbol,
+        name: asset.metadata.name,
+        decimals: asset.metadata.decimals,
+        wallet,
+        deposited,
+        delegated,
+        protocolTvl,
+        tokenAddress: asset.id,
+      };
+    });
+  }, [assets, delegator, protocolAssetMap]);
+
+  const table = useReactTable(
+    useMemo(
+      () =>
+        ({
+          data: tableData,
+          columns: getColumns(),
+          getCoreRowModel: getCoreRowModel(),
+          getSortedRowModel: getSortedRowModel(),
+          getPaginationRowModel: getPaginationRowModel(),
+          autoResetPageIndex: false,
+          enableSortingRemoval: false,
+        }) satisfies TableOptions<RestakeAssetRow>,
+      [tableData],
+    ),
+  );
 
   if (isLoading) {
     return (
-      <div className="space-y-3">
-        <SkeletonLoader className="h-16" />
-        <SkeletonLoader className="h-16" />
-        <SkeletonLoader className="h-16" />
-      </div>
+      <TableStatus
+        title="Loading Restake Assets"
+        description="Fetching available restake assets…"
+        icon={<Spinner size="lg" />}
+      />
     );
   }
 
-  if (assets.length === 0) {
+  if (tableData.length === 0) {
     return (
-      <Card variant={CardVariant.GLASS} className="p-6 text-center">
-        <Typography variant="body1" className="text-mono-120 dark:text-mono-80">
-          No restaking assets available.
-        </Typography>
-      </Card>
+      <TableStatus
+        title="No Restake Assets"
+        description="No restaking assets are configured for this network."
+      />
     );
   }
 
   return (
-    <div className="space-y-2">
-      {/* Header */}
-      <div className="grid grid-cols-5 gap-4 px-4 py-2 text-mono-120 dark:text-mono-80">
-        <Typography variant="body2" fw="semibold">
-          Asset
-        </Typography>
-        <Typography variant="body2" fw="semibold" className="text-right">
-          Total Deposits
-        </Typography>
-        <Typography variant="body2" fw="semibold" className="text-right">
-          Min Delegation
-        </Typography>
-        <Typography variant="body2" fw="semibold" className="text-right">
-          Your Deposit
-        </Typography>
-        <Typography variant="body2" fw="semibold" className="text-right">
-          Your Delegated
-        </Typography>
-      </div>
-
-      {/* Rows */}
-      {assets.map((asset) => {
-        const position = assetPositions.get(asset.token.toLowerCase());
-        // Default to 18 decimals if not known
-        const decimals = 18;
-        const symbol = getTokenSymbol(asset);
-
-        return (
-          <Card
-            key={asset.id}
-            variant={CardVariant.GLASS}
-            className={twMerge(
-              'grid grid-cols-5 gap-4 px-4 py-3 items-center',
-              'hover:bg-mono-20/50 dark:hover:bg-mono-180/50 transition-colors',
-            )}
-          >
-            <div className="flex items-center gap-3">
-              <div className="flex items-center justify-center w-10 h-10">
-                <TokenIcon name={symbol} size="xl" />
-              </div>
-
-              <div>
-                <Typography variant="body1" fw="semibold">
-                  {symbol}
-                </Typography>
-
-                <Typography
-                  variant="body2"
-                  className="text-mono-100 dark:text-mono-100"
-                >
-                  {asset.enabled ? 'Enabled' : 'Disabled'}
-                </Typography>
-              </div>
-            </div>
-
-            <Typography variant="body1" className="text-right">
-              {formatAmount(asset.currentDeposits, decimals)}
-            </Typography>
-
-            <Typography variant="body1" className="text-right">
-              {formatAmount(asset.minDelegation, decimals)}
-            </Typography>
-
-            <Typography variant="body1" className="text-right">
-              {position
-                ? formatAmount(position.deposited, decimals)
-                : EMPTY_VALUE_PLACEHOLDER}
-            </Typography>
-
-            <Typography variant="body1" className="text-right">
-              {position
-                ? formatAmount(position.delegated, decimals)
-                : EMPTY_VALUE_PLACEHOLDER}
-            </Typography>
-          </Card>
-        );
-      })}
-    </div>
+    <Table
+      tableProps={table}
+      variant={TableVariant.GLASS_OUTER}
+      enablePagination={false}
+      className="border border-mono-40/50 dark:border-mono-170/50 bg-transparent"
+    />
   );
 };
 

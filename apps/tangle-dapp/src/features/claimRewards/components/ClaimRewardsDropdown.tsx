@@ -1,6 +1,6 @@
 'use client';
 
-import { type FC, useCallback, useMemo, useState } from 'react';
+import { type FC, useCallback, useEffect, useMemo, useState } from 'react';
 import { formatUnits } from 'viem';
 import { useAccount } from 'wagmi';
 import { VipDiamondLine, Spinner } from '@tangle-network/icons';
@@ -16,9 +16,15 @@ import usePendingRewards from '../../../data/rewards/usePendingRewards';
 import useClaimRewardsTx from '../../../data/rewards/useClaimRewardsTx';
 import { TxStatus } from '@tangle-network/tangle-shared-ui/hooks/useContractWrite';
 
-const ClaimRewardsDropdown: FC = () => {
+const ClaimRewardsDropdownContent: FC = () => {
   const { isConnected } = useAccount();
-  const { data: rewardsData, isLoading, refetch } = usePendingRewards();
+  const {
+    data: rewardsData,
+    isLoading,
+    refetch,
+  } = usePendingRewards({
+    enabled: isConnected,
+  });
   const { execute: claimRewards, status, reset } = useClaimRewardsTx();
   const [claimingAsset, setClaimingAsset] = useState<string | null>(null);
 
@@ -167,6 +173,20 @@ const ClaimRewardsDropdown: FC = () => {
       </DropdownBody>
     </Dropdown>
   );
+};
+
+const ClaimRewardsDropdown: FC = () => {
+  const [isClient, setIsClient] = useState(false);
+
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
+
+  if (!isClient) {
+    return null;
+  }
+
+  return <ClaimRewardsDropdownContent />;
 };
 
 export default ClaimRewardsDropdown;

@@ -10,6 +10,8 @@ const Balance: FC = () => {
   // Native balance (ETH/Base ETH)
   const { data: nativeBalance, isLoading } = useBalance({
     address,
+    enabled: Boolean(address),
+    watch: Boolean(address),
   });
 
   const formattedBalance = useMemo(() => {

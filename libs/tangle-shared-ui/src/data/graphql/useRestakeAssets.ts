@@ -5,7 +5,7 @@
  */
 
 import { useQuery } from '@tanstack/react-query';
-import { useEffect } from 'react';
+import { useEffect, useMemo } from 'react';
 import { Address, erc20Abi, zeroAddress } from 'viem';
 import { useAccount, useBalance, useChainId, usePublicClient } from 'wagmi';
 import { useRestakingAssets } from './useRestakingAssets';
@@ -51,6 +51,18 @@ export const useRestakeAssets = (options?: {
   const chainId = useChainId();
   const { address: userAddress } = useAccount();
   const publicClient = usePublicClient();
+  const {
+    data: nativeBalanceData,
+    isLoading: isLoadingNativeBalance,
+    refetch: refetchNativeBalance,
+  } = useBalance({
+    address: userAddress,
+    enabled: Boolean(userAddress),
+    watch: Boolean(userAddress),
+  });
+  const nativeBalance = nativeBalanceData?.value ?? BigInt(0);
+  const nativeDecimals = nativeBalanceData?.decimals ?? 18;
+  const nativeSymbol = nativeBalanceData?.symbol ?? 'ETH';
 
   // Check if indexer is healthy
   const { data: isIndexerHealthy, isLoading: isCheckingHealth } =
@@ -105,10 +117,7 @@ export const useRestakeAssets = (options?: {
   const erc20TokenAddresses = allTokenAddresses.filter(
     (addr) => addr.toLowerCase() !== NATIVE_TOKEN_ADDRESS.toLowerCase(),
   );
-  const hasNativeToken = allTokenAddresses.some(
-    (addr) => addr.toLowerCase() === NATIVE_TOKEN_ADDRESS.toLowerCase(),
-  );
-
+  const erc20TokenKey = erc20TokenAddresses.join('-');
   // 2. Fetch ERC20 metadata for ERC20 tokens only (not native token)
   const { data: tokenMetadatas, isLoading: isLoadingMetadata } = useQuery({
     queryKey: ['erc20Metadata', erc20TokenAddresses, publicClient?.chain?.id],
@@ -170,108 +179,123 @@ export const useRestakeAssets = (options?: {
 
         return balanceMap;
       } catch (error) {
-        console.error('Failed to fetch token balances:', error);
-        return new Map<Address, bigint>();
+        console.warn(
+          '[useRestakeAssets] Multicall failed for balances, falling back to individual balanceOf calls.',
+          error,
+        );
+
+        const fallbackBalances = new Map<Address, bigint>();
+        await Promise.allSettled(
+          erc20TokenAddresses.map(async (token) => {
+            try {
+              const balance = (await publicClient.readContract({
+                address: token,
+                abi: erc20Abi,
+                functionName: 'balanceOf',
+                args: [userAddress],
+              })) as bigint;
+              fallbackBalances.set(token, balance);
+            } catch (fallbackError) {
+              console.warn(
+                '[useRestakeAssets] Failed to fetch balance via direct call.',
+                {
+                  token,
+                  fallbackError,
+                },
+              );
+              fallbackBalances.set(token, BigInt(0));
+            }
+          }),
+        );
+
+        return fallbackBalances;
       }
     },
     enabled:
       enabled &&
       !useOnChainFallback &&
       !!publicClient &&
-      !!userAddress &&
       erc20TokenAddresses.length > 0,
     staleTime: 15_000, // 15 seconds - balances can change frequently
     refetchInterval: 30_000, // Auto-refresh every 30 seconds
   });
 
   // 4. Combine all data into RestakeAsset map (only when using indexer)
-  // Note: We use tokenAddresses and counts as keys instead of full objects
-  // because React Query can't serialize BigInt values
-  const { data: graphqlAssets } = useQuery({
-    queryKey: [
-      'restakeAssets',
-      erc20TokenAddresses,
-      tokenMetadatas?.length ?? 0,
-      hasNativeToken,
-      userAddress,
-      chainId,
-    ],
-    queryFn: () => {
-      if (!restakingAssets) {
-        return null;
-      }
+  const graphqlAssets = useMemo(() => {
+    if (useOnChainFallback || !restakingAssets) {
+      return null;
+    }
 
-      // Need tokenMetadatas if there are ERC20 tokens
-      if (erc20TokenAddresses.length > 0 && !tokenMetadatas) {
-        return null;
-      }
+    const assetMap = new Map<Address, RestakeAsset>();
 
-      const assetMap = new Map<Address, RestakeAsset>();
+    for (const restakingAsset of restakingAssets) {
+      const isNativeToken =
+        restakingAsset.token.toLowerCase() ===
+        NATIVE_TOKEN_ADDRESS.toLowerCase();
 
-      for (const restakingAsset of restakingAssets) {
-        const isNativeToken =
-          restakingAsset.token.toLowerCase() ===
-          NATIVE_TOKEN_ADDRESS.toLowerCase();
-
-        if (isNativeToken) {
-          // Native token (ETH) has hardcoded metadata
-          assetMap.set(NATIVE_TOKEN_ADDRESS, {
-            id: NATIVE_TOKEN_ADDRESS,
-            metadata: {
-              address: NATIVE_TOKEN_ADDRESS,
-              name: 'Ether',
-              symbol: 'ETH',
-              decimals: 18,
-            },
-            balance: BigInt(0), // Native balance is fetched separately via useNativeBalance
-            restakingInfo: restakingAsset,
-          });
-          continue;
-        }
-
-        const metadata = tokenMetadatas?.find(
-          (m) => m.id.toLowerCase() === restakingAsset.token.toLowerCase(),
-        );
-
-        // Try fallback metadata if on-chain fetch failed
-        const fallbackMetadata = getCachedTokenMetadata(restakingAsset.token);
-
-        // Use fetched metadata, cached fallback, or create placeholder from address
-        const balance = balances?.get(restakingAsset.token) ?? BigInt(0);
-        const tokenMetadata = metadata ??
-          fallbackMetadata ?? {
-            // Placeholder when metadata unavailable - use truncated address
-            name: `Token ${restakingAsset.token.slice(0, 8)}...`,
-            symbol: `${restakingAsset.token.slice(0, 6)}...${restakingAsset.token.slice(-4)}`,
-            decimals: 18, // Default to 18 decimals
-          };
-
-        assetMap.set(restakingAsset.token, {
-          id: restakingAsset.token,
+      if (isNativeToken) {
+        assetMap.set(NATIVE_TOKEN_ADDRESS, {
+          id: NATIVE_TOKEN_ADDRESS,
           metadata: {
-            address: restakingAsset.token,
-            name: tokenMetadata.name,
-            symbol: tokenMetadata.symbol,
-            decimals: tokenMetadata.decimals,
+            address: NATIVE_TOKEN_ADDRESS,
+            name: nativeSymbol,
+            symbol: nativeSymbol,
+            decimals: nativeDecimals,
           },
-          balance,
+          balance: nativeBalance,
           restakingInfo: restakingAsset,
         });
+        continue;
       }
 
-      return assetMap;
-    },
-    // Enable when we have restaking assets - metadata is optional (will use placeholders)
-    enabled: !useOnChainFallback && !!restakingAssets,
-    staleTime: 15_000,
-  });
+      const metadata = tokenMetadatas?.find(
+        (m) => m.id.toLowerCase() === restakingAsset.token.toLowerCase(),
+      );
+
+      const fallbackMetadata = getCachedTokenMetadata(restakingAsset.token);
+      const balance = balances?.get(restakingAsset.token) ?? BigInt(0);
+      const tokenMetadata = metadata ??
+        fallbackMetadata ?? {
+          name: `Token ${restakingAsset.token.slice(0, 8)}...`,
+          symbol: `${restakingAsset.token.slice(0, 6)}...${restakingAsset.token.slice(-4)}`,
+          decimals: 18,
+        };
+
+      assetMap.set(restakingAsset.token, {
+        id: restakingAsset.token,
+        metadata: {
+          address: restakingAsset.token,
+          name: tokenMetadata.name,
+          symbol: tokenMetadata.symbol,
+          decimals: tokenMetadata.decimals,
+        },
+        balance,
+        restakingInfo: restakingAsset,
+      });
+    }
+
+    return assetMap;
+  }, [
+    useOnChainFallback,
+    restakingAssets,
+    tokenMetadatas,
+    balances,
+    erc20TokenKey,
+    nativeBalance,
+    nativeSymbol,
+    nativeDecimals,
+  ]);
 
   // Refetch function that refreshes all data
   const refetch = async () => {
     if (useOnChainFallback) {
       await onChainResult.refetch();
     } else {
-      await Promise.all([refetchAssets(), refetchBalances()]);
+      await Promise.all([
+        refetchAssets(),
+        refetchBalances(),
+        refetchNativeBalance(),
+      ]);
     }
   };
 
@@ -305,7 +329,7 @@ export const useRestakeAssets = (options?: {
   return {
     assets: graphqlAssets ?? null,
     assetList: graphqlAssets ? Array.from(graphqlAssets.values()) : [],
-    isLoading: isLoadingAssets || isLoadingMetadata,
+    isLoading: isLoadingAssets || isLoadingMetadata || isLoadingNativeBalance,
     isLoadingBalances,
     refetch,
     refetchBalances,
@@ -342,6 +366,8 @@ export const useNativeBalance = () => {
   const { address } = useAccount();
   const { data, isLoading, refetch } = useBalance({
     address,
+    enabled: Boolean(address),
+    watch: Boolean(address),
   });
 
   return {
