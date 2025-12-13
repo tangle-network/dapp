@@ -74,8 +74,6 @@ export interface ClaimEligibility {
   amount: bigint | null;
   /** The Merkle proof for the claim */
   merkleProof: Hex[] | null;
-  /** The Merkle proof for the claim */
-  merkleProof: Hex[] | null;
   /** 32-byte pubkey derived from the SS58 address */
   pubkey: Hex | null;
   /** Whether this address has already claimed */
