@@ -34,9 +34,10 @@ import Details from './Details';
 // EVM hooks
 import {
   useDelegator,
+  useProtocolConfig,
   type UnstakeRequest,
 } from '@tangle-network/tangle-shared-ui/data/graphql';
-import { useScheduleUnstakeTx } from '@tangle-network/tangle-shared-ui/data/tx';
+import { useExecuteUnstakeTx, useScheduleUnstakeTx } from '@tangle-network/tangle-shared-ui/data/tx';
 import { TxStatus } from '@tangle-network/tangle-shared-ui/hooks/useContractWrite';
 import { useEvmAssetMetadatas } from '@tangle-network/tangle-shared-ui/hooks/useEvmAssetMetadatas';
 import type { EvmAddress } from '@tangle-network/ui-components/types/address';
@@ -47,6 +48,9 @@ import {
   AmountFormatStyle,
   formatDisplayAmount,
 } from '@tangle-network/ui-components';
+import { useChainId, useReadContracts } from 'wagmi';
+import MULTI_ASSET_DELEGATION_ABI from '@tangle-network/tangle-shared-ui/abi/multiAssetDelegation';
+import { getContractsByChainId } from '@tangle-network/dapp-config/contracts';
 
 // Delegation item with metadata for selection
 type DelegationItem = {
@@ -57,11 +61,12 @@ type DelegationItem = {
   tokenDecimals: number;
   shares: bigint;
   lastKnownAmount: bigint;
-  availableToUnstake: bigint; // shares minus pending unstakes
+  availableToUnstake: bigint; // amount available to schedule (safe max at current exchange rate)
 };
 
 const RestakeUnstakeForm: FC = () => {
   const { address: userAddress } = useAccount();
+  const chainId = useChainId();
   const [isUnstakeRequestTableOpen, setIsUnstakeRequestTableOpen] =
     useState(false);
 
@@ -105,7 +110,7 @@ const RestakeUnstakeForm: FC = () => {
   }, [activeTypedChainId, reset]);
 
   // Fetch delegator data
-  const { data: delegator } = useDelegator(userAddress);
+  const { data: delegator, refetch: refetchDelegator } = useDelegator(userAddress);
 
   // Get unique token addresses from delegations
   const tokenAddresses = useMemo(() => {
@@ -117,6 +122,61 @@ const RestakeUnstakeForm: FC = () => {
 
   // Fetch token metadata
   const { data: tokenMetadatas } = useEvmAssetMetadatas(tokenAddresses);
+
+  const contracts = useMemo(() => {
+    try {
+      return getContractsByChainId(chainId);
+    } catch {
+      return null;
+    }
+  }, [chainId]);
+
+  const operatorAddresses = useMemo(() => {
+    if (!delegator?.delegations) return [];
+    return Array.from(
+      new Set(delegator.delegations.map((d) => d.operatorId.toLowerCase())),
+    ) as Address[];
+  }, [delegator?.delegations]);
+
+  const { data: operatorRewardPools } = useReadContracts({
+    contracts:
+      contracts && operatorAddresses.length > 0
+        ? operatorAddresses.map((operator) => ({
+            address: contracts.multiAssetDelegation,
+            abi: MULTI_ASSET_DELEGATION_ABI,
+            functionName: 'getOperatorRewardPool' as const,
+            args: [operator] as const,
+          }))
+        : [],
+    query: {
+      enabled: Boolean(contracts) && operatorAddresses.length > 0,
+      staleTime: 15_000,
+      refetchInterval: 15_000,
+      refetchIntervalInBackground: true,
+    },
+  });
+
+  const operatorPoolMap = useMemo(() => {
+    const map = new Map<string, { totalShares: bigint; totalAssets: bigint }>();
+    if (!operatorRewardPools) return map;
+
+    operatorRewardPools.forEach((res, idx) => {
+      const operator = operatorAddresses[idx];
+      if (!operator || res?.status !== 'success') return;
+      const pool = res.result as {
+        accRewardPerShare: bigint;
+        totalShares: bigint;
+        totalAssets: bigint;
+        lastUpdateRound: bigint;
+      };
+      map.set(operator.toLowerCase(), {
+        totalShares: pool.totalShares,
+        totalAssets: pool.totalAssets,
+      });
+    });
+
+    return map;
+  }, [operatorAddresses, operatorRewardPools]);
 
   const [selectedDelegation, setSelectedDelegation] =
     useState<DelegationItem | null>(null);
@@ -150,13 +210,24 @@ const RestakeUnstakeForm: FC = () => {
           )
           .reduce((sum, req) => sum + req.shares, BigInt(0));
 
-        const availableToUnstake =
+        const availableShares =
           delegation.shares > pendingUnstakes
             ? delegation.shares - pendingUnstakes
             : BigInt(0);
 
         // Only show delegations with available shares
-        if (availableToUnstake <= BigInt(0)) return null;
+        if (availableShares <= BigInt(0)) return null;
+
+        // Convert shares to an amount that is safe to schedule at the current exchange rate.
+        const pool = operatorPoolMap.get(delegation.operatorId.toLowerCase());
+        const totalShares = pool?.totalShares ?? BigInt(0);
+        const totalAssets = pool?.totalAssets ?? BigInt(0);
+        const availableAmount =
+          totalShares === BigInt(0) || totalAssets === BigInt(0)
+            ? availableShares
+            : (availableShares * totalAssets) / totalShares;
+
+        if (availableAmount <= BigInt(0)) return null;
 
         return {
           id: delegation.id,
@@ -166,11 +237,16 @@ const RestakeUnstakeForm: FC = () => {
           tokenDecimals: metadata.decimals,
           shares: delegation.shares,
           lastKnownAmount: delegation.lastKnownAmount,
-          availableToUnstake,
+          availableToUnstake: availableAmount,
         };
       })
       .filter((item): item is DelegationItem => item !== null);
-  }, [delegator?.delegations, delegator?.unstakeRequests, tokenMetadatas]);
+  }, [
+    delegator?.delegations,
+    delegator?.unstakeRequests,
+    operatorPoolMap,
+    tokenMetadatas,
+  ]);
 
   // Get pending unstake requests
   const unstakeRequests = useMemo(() => {
@@ -256,14 +332,15 @@ const RestakeUnstakeForm: FC = () => {
         await executeScheduleUnstake({
           operator: operatorAddress,
           token: assetId,
-          shares: amountBigInt,
+          amount: amountBigInt,
         });
+        await refetchDelegator();
         resetForm();
       } catch (error) {
         console.error('Transaction failed:', error);
       }
     },
-    [executeScheduleUnstake, isReady, resetForm, selectedDelegation],
+    [executeScheduleUnstake, isReady, refetchDelegator, resetForm, selectedDelegation],
   );
 
   const handleDelegationSelect = useCallback(
@@ -414,6 +491,7 @@ const RestakeUnstakeForm: FC = () => {
           unstakeRequests={unstakeRequests}
           tokenMetadatas={tokenMetadatas}
           onClose={() => setIsUnstakeRequestTableOpen(false)}
+          onRefresh={refetchDelegator}
         />
       </AnimatedTable>
 
@@ -421,6 +499,7 @@ const RestakeUnstakeForm: FC = () => {
         unstakeRequests={unstakeRequests}
         tokenMetadatas={tokenMetadatas}
         onClose={() => setIsUnstakeRequestTableOpen(false)}
+        onRefresh={refetchDelegator}
         className="md:hidden"
       />
 
@@ -489,6 +568,7 @@ type UnstakeRequestsViewProps = {
     | Array<{ id: EvmAddress; symbol: string; decimals: number }>
     | undefined;
   onClose: () => void;
+  onRefresh: () => Promise<unknown>;
   className?: string;
 };
 
@@ -496,8 +576,18 @@ const UnstakeRequestsView: FC<UnstakeRequestsViewProps> = ({
   unstakeRequests,
   tokenMetadatas,
   onClose,
+  onRefresh,
   className,
 }) => {
+  const { data: config } = useProtocolConfig();
+  const currentRound = config?.currentRound ?? BigInt(0);
+  const readyCount = unstakeRequests.filter(
+    (r) => r.readyAtRound <= currentRound,
+  ).length;
+
+  const { execute: executeUnstake, status: executeStatus } = useExecuteUnstakeTx();
+  const isExecuting = executeStatus === TxStatus.PROCESSING;
+
   return (
     <RestakeDetailCard.Root className={twMerge('!min-w-0', className)}>
       <div className="flex items-center justify-between">
@@ -509,9 +599,26 @@ const UnstakeRequestsView: FC<UnstakeRequestsViewProps> = ({
           }
         />
 
-        <IconButton onClick={onClose}>
-          <Cross1Icon />
-        </IconButton>
+        <div className="flex items-center gap-2">
+          {unstakeRequests.length > 0 && (
+            <Button
+              size="sm"
+              isDisabled={readyCount === 0 || executeUnstake === null || isExecuting}
+              isLoading={isExecuting}
+              onClick={async () => {
+                if (!executeUnstake) return;
+                await executeUnstake(undefined as void);
+                await onRefresh();
+              }}
+            >
+              Execute Ready ({readyCount})
+            </Button>
+          )}
+
+          <IconButton onClick={onClose}>
+            <Cross1Icon />
+          </IconButton>
+        </div>
       </div>
 
       {unstakeRequests.length > 0 ? (
@@ -520,6 +627,7 @@ const UnstakeRequestsView: FC<UnstakeRequestsViewProps> = ({
             const metadata = tokenMetadatas?.find(
               (m) => m.id.toLowerCase() === request.token.toLowerCase(),
             );
+            const isReady = request.readyAtRound <= currentRound;
 
             return (
               <div
@@ -542,8 +650,9 @@ const UnstakeRequestsView: FC<UnstakeRequestsViewProps> = ({
                       {metadata?.symbol ?? 'tokens'}
                     </span>
                   </div>
-                  <div className="text-xs text-mono-100">
-                    Ready at round {request.readyAtRound.toString()}
+                  <div className="text-xs text-mono-100 text-right">
+                    <div>{isReady ? 'Ready' : 'Pending'}</div>
+                    <div>Round {request.readyAtRound.toString()}</div>
                   </div>
                 </div>
               </div>

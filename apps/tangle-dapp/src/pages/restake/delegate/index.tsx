@@ -15,7 +15,7 @@ import { FC, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import { Address, formatUnits, parseUnits } from 'viem';
 import { BN } from '@polkadot/util';
-import { useAccount } from 'wagmi';
+import { useAccount, useChainId, useReadContracts } from 'wagmi';
 import ErrorMessage from '../../../components/ErrorMessage';
 import ActionButtonBase from '../../../components/restaking/ActionButtonBase';
 import BlueprintSelection from '../../../components/restaking/BlueprintSelection';
@@ -43,6 +43,8 @@ import { useDelegateTx } from '@tangle-network/tangle-shared-ui/data/tx';
 import { TxStatus } from '@tangle-network/tangle-shared-ui/hooks/useContractWrite';
 import { useEvmAssetMetadatas } from '@tangle-network/tangle-shared-ui/hooks/useEvmAssetMetadatas';
 import type { EvmAddress } from '@tangle-network/ui-components/types/address';
+import MULTI_ASSET_DELEGATION_ABI from '@tangle-network/tangle-shared-ui/abi/multiAssetDelegation';
+import { getContractsByChainId } from '@tangle-network/dapp-config/contracts';
 
 type AssetItem = {
   id: Address;
@@ -63,6 +65,7 @@ type OperatorItem = {
 
 const RestakeDelegateForm: FC = () => {
   const { address: userAddress } = useAccount();
+  const chainId = useChainId();
   const activeTypedChainId = useActiveTypedChainId();
   const switchChain = useSwitchChain();
 
@@ -117,6 +120,47 @@ const RestakeDelegateForm: FC = () => {
   const { data: tokenMetadatas } = useEvmAssetMetadatas(
     tokenAddresses as EvmAddress[],
   );
+
+  const contracts = useMemo(() => {
+    try {
+      return getContractsByChainId(chainId);
+    } catch {
+      return null;
+    }
+  }, [chainId]);
+
+  const { data: depositResults } = useReadContracts({
+    contracts:
+      contracts && userAddress && tokenAddresses.length > 0
+        ? tokenAddresses.map((token) => ({
+            address: contracts.multiAssetDelegation,
+            abi: MULTI_ASSET_DELEGATION_ABI,
+            functionName: 'getDeposit' as const,
+            args: [userAddress, token] as const,
+          }))
+        : [],
+    query: {
+      enabled:
+        Boolean(contracts) && Boolean(userAddress) && tokenAddresses.length > 0,
+      staleTime: 15_000,
+      refetchInterval: 15_000,
+      refetchIntervalInBackground: true,
+    },
+  });
+
+  const depositMap = useMemo(() => {
+    const map = new Map<string, { amount: bigint; delegatedAmount: bigint }>();
+    if (!depositResults) return map;
+
+    depositResults.forEach((res, idx) => {
+      const token = tokenAddresses[idx];
+      if (!token || res?.status !== 'success') return;
+      const dep = res.result as { amount: bigint; delegatedAmount: bigint };
+      map.set(token.toLowerCase(), dep);
+    });
+
+    return map;
+  }, [depositResults, tokenAddresses]);
 
   const { status: delegateTxStatus, execute: executeDelegateTx } =
     useDelegateTx();
@@ -175,25 +219,28 @@ const RestakeDelegateForm: FC = () => {
           return null;
         }
 
-        const availableBalance =
-          position.totalDeposited - position.delegatedAmount;
+        const deposit = depositMap.get(position.token.toLowerCase());
+        const totalDeposited = deposit?.amount ?? position.totalDeposited;
+        const delegatedAmount =
+          deposit?.delegatedAmount ?? position.delegatedAmount;
+        const availableBalance = totalDeposited - delegatedAmount;
 
         if (availableBalance <= BigInt(0)) {
           return null;
         }
 
-        return {
-          id: position.token,
-          name: metadata.name,
-          symbol: metadata.symbol,
-          decimals: metadata.decimals,
-          balance: position.totalDeposited,
-          delegatedAmount: position.delegatedAmount,
-          availableBalance,
-        };
-      })
-      .filter((item): item is AssetItem => item !== null);
-  }, [delegator?.assetPositions, tokenMetadatas]);
+          return {
+            id: position.token,
+            name: metadata.name,
+            symbol: metadata.symbol,
+            decimals: metadata.decimals,
+            balance: totalDeposited,
+            delegatedAmount,
+            availableBalance,
+          };
+        })
+        .filter((item): item is AssetItem => item !== null);
+  }, [delegator?.assetPositions, depositMap, tokenMetadatas]);
 
   useEffect(() => {
     if (depositedAssets.length > 0 && !selectedAssetItem) {

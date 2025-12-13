@@ -12,7 +12,7 @@ import { useChainId } from 'wagmi';
 export interface ScheduleUnstakeParams {
   operator: Address;
   token: Address;
-  shares: bigint;
+  amount: bigint;
 }
 
 /**
@@ -41,7 +41,7 @@ export const useScheduleUnstakeTx = () => {
       address: contracts.multiAssetDelegation,
       abi: MULTI_ASSET_DELEGATION_ABI,
       functionName: 'scheduleDelegatorUnstake' as const,
-      args: [params.operator, params.token, params.shares] as const,
+      args: [params.operator, params.token, params.amount] as const,
     }),
     {
       getSuccessMessage: () => 'Successfully scheduled unstake',
