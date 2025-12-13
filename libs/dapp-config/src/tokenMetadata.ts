@@ -39,6 +39,7 @@ const KNOWN_TOKEN_ADDRESSES: Record<string, string> = {
   '0xe6e340d132b5f46d1e472debcd681b2abc16e57e': 'wstETH',
   '0xc3e53f4d16ae77db1c982e75a937b9f60fe63690': 'EIGEN',
   '0xc5a5c42992decbae36851359345fe25997f5c42d': 'WETH',
+  '0x0165878a594ca255338adfa4d48449f69242eb8f': 'TNT',
 };
 
 // Runtime cache: address -> metadata (populated from on-chain fetches)

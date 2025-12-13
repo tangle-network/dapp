@@ -80,11 +80,13 @@ const getColumns = () => [
     header: () => <HeaderCell title="Wallet" />,
     cell: (props) => (
       <TableCellWrapper>
-        {formatDisplayAmount(
-          props.getValue(),
-          props.row.original.decimals,
-          AmountFormatStyle.SHORT,
-        )}
+        {props.getValue().gtn(0)
+          ? formatDisplayAmount(
+              props.getValue(),
+              props.row.original.decimals,
+              AmountFormatStyle.SHORT,
+            )
+          : EMPTY_VALUE_PLACEHOLDER}
       </TableCellWrapper>
     ),
   }),
@@ -167,7 +169,8 @@ export const RestakingAssetsTable: FC<Props> = ({
       );
       const protocolAsset = protocolAssetMap.get(tokenKey);
 
-      const wallet = new BN((asset.balance ?? BigInt(0)).toString());
+      const walletBalance = asset.balance ?? BigInt(0);
+      const wallet = new BN(walletBalance.toString());
       const deposited = new BN(
         (position?.totalDeposited ?? BigInt(0)).toString(),
       );
@@ -231,7 +234,6 @@ export const RestakingAssetsTable: FC<Props> = ({
     <Table
       tableProps={table}
       variant={TableVariant.GLASS_OUTER}
-      isPaginated={false}
       className="border border-mono-40/50 dark:border-mono-170/50 bg-transparent"
     />
   );

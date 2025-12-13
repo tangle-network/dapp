@@ -11,6 +11,7 @@ import {
 } from '@tangle-network/ui-components';
 import { FC, useMemo } from 'react';
 import { twMerge } from 'tailwind-merge';
+import { formatUnits } from 'viem';
 import { StatsItem } from './StatsItem';
 
 // Format large numbers with SI suffixes (K, M, B)
@@ -31,7 +32,7 @@ type Props = {
   className?: string;
   isLoading: boolean;
   restakingAssets: RestakingAsset[];
-  tvlData: { totalUsd: number; assetCount: number } | null;
+  tvlData: { totalDeposits: bigint; assetCount: number } | null;
 };
 
 export const ProtocolStatisticCard: FC<Props> = ({
@@ -40,7 +41,6 @@ export const ProtocolStatisticCard: FC<Props> = ({
   restakingAssets,
   tvlData,
 }) => {
-  // Get operator count from GraphQL
   const { data: operators, isLoading: isLoadingOperators } = useOperators({
     status: 'ACTIVE',
   });
@@ -51,10 +51,10 @@ export const ProtocolStatisticCard: FC<Props> = ({
 
   // Calculate TVL display value
   const tvlDisplay = useMemo(() => {
-    if (!tvlData || tvlData.totalUsd <= 0) {
-      return EMPTY_VALUE_PLACEHOLDER;
-    }
-    return `${formatLargeNumber(tvlData.totalUsd, 2)} USD`;
+    if (!tvlData) return null;
+    const formatted = formatUnits(tvlData.totalDeposits, 18);
+    const num = parseFloat(formatted);
+    return formatLargeNumber(num, 2);
   }, [tvlData]);
 
   return (
@@ -89,9 +89,13 @@ export const ProtocolStatisticCard: FC<Props> = ({
           {isLoading ? (
             <SkeletonLoader className="h-14 w-full max-w-36 my-2" />
           ) : (
-            <div className="flex items-center gap-3 py-2">
+            <div className="flex items-end gap-2 py-2">
               <Typography variant="h2" fw="bold" className="!leading-none">
-                {tvlDisplay}
+                {tvlDisplay ?? EMPTY_VALUE_PLACEHOLDER}
+              </Typography>
+
+              <Typography variant="h4" className="!leading-none pb-1">
+                USD
               </Typography>
             </div>
           )}
@@ -102,7 +106,6 @@ export const ProtocolStatisticCard: FC<Props> = ({
             label="Restakers"
             result={restakerCount ?? null}
             isLoading={isLoadingRestakers}
-            error={null}
             displayLabelBottom
           />
 
@@ -110,7 +113,6 @@ export const ProtocolStatisticCard: FC<Props> = ({
             label="Operators"
             result={operators?.length ?? null}
             isLoading={isLoadingOperators}
-            error={null}
             displayLabelBottom
           />
 
@@ -118,7 +120,6 @@ export const ProtocolStatisticCard: FC<Props> = ({
             label="Assets"
             result={restakingAssets.length}
             isLoading={isLoading}
-            error={null}
             displayLabelBottom
           />
         </div>

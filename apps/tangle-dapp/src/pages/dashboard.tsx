@@ -96,11 +96,13 @@ const getColumns = () => [
       const value = props.getValue();
       return (
         <TableCellWrapper>
-          {formatDisplayAmount(
-            value,
-            props.row.original.decimals,
-            AmountFormatStyle.SHORT,
-          )}
+          {value.gtn(0)
+            ? formatDisplayAmount(
+                value,
+                props.row.original.decimals,
+                AmountFormatStyle.SHORT,
+              )
+            : EMPTY_VALUE_PLACEHOLDER}
         </TableCellWrapper>
       );
     },
@@ -211,6 +213,19 @@ const DashboardPage: FC = () => {
 
   const { data: tokenUsdPrices } = useTokenUsdPrices(tokensForPricing);
 
+  const protocolTvl = useMemo(() => {
+    if (!restakingAssets) {
+      return BigInt(0);
+    }
+
+    let total = BigInt(0);
+    for (const asset of restakingAssets) {
+      total += asset.currentDeposits;
+    }
+
+    return total;
+  }, [restakingAssets]);
+
   const protocolTvlUsd = useMemo(() => {
     if (!restakingAssets || !assets) {
       return 0;
@@ -235,10 +250,10 @@ const DashboardPage: FC = () => {
   }, [assets, restakingAssets, tokenUsdPrices]);
 
   // Calculate TVL data for ProtocolStatisticCard
-  const tvlData = useMemo(() => {
-    if (!restakingAssets) return null;
-    return { totalUsd: protocolTvlUsd, assetCount };
-  }, [restakingAssets, protocolTvlUsd, assetCount]);
+  const tvlData = useMemo(
+    () => ({ totalDeposits: protocolTvl, assetCount }),
+    [protocolTvl, assetCount],
+  );
 
   // Build table data
   const protocolAssetMap = useMemo(() => {
@@ -256,7 +271,7 @@ const DashboardPage: FC = () => {
         (p) => p.token.toLowerCase() === tokenKey,
       );
       const protocolAsset = protocolAssetMap.get(tokenKey);
-      const wallet = new BN(asset.balance.toString());
+      const wallet = new BN((asset.balance ?? BigInt(0)).toString());
       const deposited = new BN(
         (position?.totalDeposited ?? BigInt(0)).toString(),
       );

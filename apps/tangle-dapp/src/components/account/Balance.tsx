@@ -1,8 +1,13 @@
-import { InfoIconWithTooltip, Typography } from '@tangle-network/ui-components';
-import { EMPTY_VALUE_PLACEHOLDER } from '@tangle-network/ui-components/constants';
+import { BN } from '@polkadot/util';
+import {
+  AmountFormatStyle,
+  EMPTY_VALUE_PLACEHOLDER,
+  formatDisplayAmount,
+  InfoIconWithTooltip,
+  Typography,
+} from '@tangle-network/ui-components';
 import { FC, useMemo } from 'react';
 import { useAccount, useBalance } from 'wagmi';
-import { formatUnits } from 'viem';
 
 const Balance: FC = () => {
   const { address } = useAccount();
@@ -18,13 +23,17 @@ const Balance: FC = () => {
   });
 
   const formattedBalance = useMemo(() => {
-    if (!nativeBalance) return null;
-    const formatted = formatUnits(nativeBalance.value, nativeBalance.decimals);
-    const num = parseFloat(formatted);
-    return num.toLocaleString(undefined, {
-      maximumFractionDigits: 4,
-      minimumFractionDigits: 0,
-    });
+    if (!nativeBalance) {
+      return null;
+    }
+
+    const balanceBn = new BN(nativeBalance.value.toString());
+
+    return formatDisplayAmount(
+      balanceBn,
+      nativeBalance.decimals,
+      AmountFormatStyle.SHORT,
+    );
   }, [nativeBalance]);
 
   const symbol = nativeBalance?.symbol ?? 'ETH';

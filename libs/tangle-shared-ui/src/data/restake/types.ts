@@ -32,7 +32,7 @@ export interface RestakingAsset {
 export interface RestakeAsset {
   id: Address; // Token address (EVM format)
   metadata: TokenMetadata;
-  balance: bigint; // User's wallet balance
+  balance: bigint | null; // User's wallet balance (null when unknown).
   restakingInfo: RestakingAsset; // On-chain restaking config from indexer
 }
 
