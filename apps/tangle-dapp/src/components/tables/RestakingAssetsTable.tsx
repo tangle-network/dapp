@@ -231,7 +231,7 @@ export const RestakingAssetsTable: FC<Props> = ({
     <Table
       tableProps={table}
       variant={TableVariant.GLASS_OUTER}
-      enablePagination={false}
+      isPaginated={false}
       className="border border-mono-40/50 dark:border-mono-170/50 bg-transparent"
     />
   );

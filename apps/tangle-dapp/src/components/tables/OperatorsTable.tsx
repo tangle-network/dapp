@@ -27,7 +27,7 @@ export const OperatorsTable: FC<Props> = ({
 
     return Array.from(operatorMap.values()).map((operator) => ({
       address: operator.id,
-      identityName: null,
+      identityName: undefined,
       concentrationPercentage: null,
       restakersCount: formatDelegationCount(operator.restakingDelegationCount),
       selfBondedAmount: operator.restakingStake ?? BigInt(0),

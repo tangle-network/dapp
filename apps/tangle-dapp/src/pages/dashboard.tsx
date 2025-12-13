@@ -3,6 +3,7 @@ import { TokenIcon } from '@tangle-network/icons';
 import Spinner from '@tangle-network/icons/Spinner';
 import { useRestakingOverview } from '@tangle-network/tangle-shared-ui/data/restake/useRestakingData';
 import type { RestakingAsset } from '@tangle-network/tangle-shared-ui/data/graphql/useRestakingAssets';
+import { useTokenUsdPrices } from '@tangle-network/tangle-shared-ui/data/tokenPrices/useTokenUsdPrices';
 import HeaderCell from '@tangle-network/tangle-shared-ui/components/tables/HeaderCell';
 import TableCellWrapper from '@tangle-network/tangle-shared-ui/components/tables/TableCellWrapper';
 import TableStatus from '@tangle-network/tangle-shared-ui/components/tables/TableStatus';
@@ -44,10 +45,24 @@ interface RestakeAssetRow {
   wallet: BN;
   deposited: BN;
   delegated: BN;
-  protocolTvl: BN;
+  protocolTvlToken: BN;
+  protocolTvlUsd: number;
 }
 
 const COLUMN_HELPER = createColumnHelper<RestakeAssetRow>();
+
+const formatUsdShort = (value: number): string => {
+  if (!Number.isFinite(value) || value <= 0) {
+    return EMPTY_VALUE_PLACEHOLDER;
+  }
+
+  const abs = Math.abs(value);
+  if (abs >= 1_000_000_000) return `$${(value / 1_000_000_000).toFixed(2)}B`;
+  if (abs >= 1_000_000) return `$${(value / 1_000_000).toFixed(2)}M`;
+  if (abs >= 1_000) return `$${(value / 1_000).toFixed(2)}K`;
+
+  return `$${value.toLocaleString(undefined, { maximumFractionDigits: 2 })}`;
+};
 
 const getColumns = () => [
   COLUMN_HELPER.accessor('id', {
@@ -124,17 +139,32 @@ const getColumns = () => [
       );
     },
   }),
-  COLUMN_HELPER.accessor('protocolTvl', {
-    header: () => <HeaderCell title="TVL" />,
+  COLUMN_HELPER.accessor('protocolTvlUsd', {
+    header: () => <HeaderCell title="TVL (USD)" />,
     cell: (props) => {
       const value = props.getValue();
       return (
-        <TableCellWrapper removeRightBorder>
-          {formatDisplayAmount(
-            value,
-            props.row.original.decimals,
-            AmountFormatStyle.SHORT,
-          )}
+        <TableCellWrapper>
+          {formatUsdShort(value)}
+        </TableCellWrapper>
+      );
+    },
+  }),
+  COLUMN_HELPER.accessor('protocolTvlToken', {
+    header: () => <HeaderCell title="TVL (Token)" />,
+    cell: (props) => {
+      const value = props.getValue();
+      const symbol = props.row.original.symbol;
+
+      return (
+        <TableCellWrapper>
+          {value.gtn(0)
+            ? `${formatDisplayAmount(
+                value,
+                props.row.original.decimals,
+                AmountFormatStyle.SHORT,
+              )} ${symbol}`
+            : EMPTY_VALUE_PLACEHOLDER}
         </TableCellWrapper>
       );
     },
@@ -164,17 +194,55 @@ const DashboardPage: FC = () => {
     isLoading,
     isLoadingAssets,
     isLoadingDelegator,
-    protocolTvl,
     assetCount,
   } = useRestakingOverview();
   const { data: restakingStats, isLoading: isRestakingStatsLoading } =
     useUserRestakingStats();
 
+  const tokensForPricing = useMemo(() => {
+    if (restakingAssets === null || assets === null) {
+      return null;
+    }
+
+    return restakingAssets.map((asset) => {
+      const meta = assets.get(asset.token);
+      return {
+        address: asset.token.toLowerCase() as `0x${string}`,
+        symbol: meta?.metadata.symbol ?? null,
+      };
+    });
+  }, [assets, restakingAssets]);
+
+  const { data: tokenUsdPrices } = useTokenUsdPrices(tokensForPricing);
+
+  const protocolTvlUsd = useMemo(() => {
+    if (!restakingAssets || !assets) {
+      return 0;
+    }
+
+    let total = 0;
+    for (const asset of restakingAssets) {
+      const meta = assets.get(asset.token);
+      const decimals = meta?.metadata.decimals ?? 18;
+      const priceUsd =
+        tokenUsdPrices?.get(asset.token.toLowerCase() as `0x${string}`) ?? 1;
+
+      const amount = Number(formatUnits(asset.currentDeposits, decimals));
+      if (!Number.isFinite(amount)) {
+        continue;
+      }
+
+      total += amount * priceUsd;
+    }
+
+    return total;
+  }, [assets, restakingAssets, tokenUsdPrices]);
+
   // Calculate TVL data for ProtocolStatisticCard
   const tvlData = useMemo(() => {
     if (!restakingAssets) return null;
-    return { totalDeposits: protocolTvl, assetCount };
-  }, [restakingAssets, protocolTvl, assetCount]);
+    return { totalUsd: protocolTvlUsd, assetCount };
+  }, [restakingAssets, protocolTvlUsd, assetCount]);
 
   // Build table data
   const protocolAssetMap = useMemo(() => {
@@ -199,9 +267,19 @@ const DashboardPage: FC = () => {
       const delegated = new BN(
         (position?.delegatedAmount ?? BigInt(0)).toString(),
       );
-      const protocolTvl = new BN(
+      const protocolTvlToken = new BN(
         (protocolAsset?.currentDeposits ?? BigInt(0)).toString(),
       );
+      const priceUsd =
+        tokenUsdPrices?.get(asset.id.toLowerCase() as `0x${string}`) ?? 1;
+      const amount = Number(
+        formatUnits(
+          protocolAsset?.currentDeposits ?? BigInt(0),
+          asset.metadata.decimals,
+        ),
+      );
+      const protocolTvlUsd =
+        Number.isFinite(amount) && amount > 0 ? amount * priceUsd : 0;
 
       return {
         id: asset.id,
@@ -211,10 +289,11 @@ const DashboardPage: FC = () => {
         wallet,
         deposited,
         delegated,
-        protocolTvl,
+        protocolTvlToken,
+        protocolTvlUsd,
       };
     });
-  }, [assetList, delegatorInfo, protocolAssetMap]);
+  }, [assetList, delegatorInfo, protocolAssetMap, tokenUsdPrices]);
 
   const columns = useMemo(() => getColumns(), []);
 
@@ -222,9 +301,20 @@ const DashboardPage: FC = () => {
     const endsWithTnt = (symbol: string) =>
       symbol.toLowerCase().endsWith('tnt');
 
-    return (
-      assetList.find((asset) => endsWithTnt(asset.metadata.symbol)) ?? null
+    const tntCandidates = assetList.filter((asset) =>
+      endsWithTnt(asset.metadata.symbol),
     );
+
+    if (tntCandidates.length === 0) {
+      return null;
+    }
+
+    // If multiple TNT-like tokens are enabled (e.g. local migration token + core bond token),
+    // pick the one the user actually has balance in.
+    return tntCandidates.reduce((best, asset) => {
+      if (best === null) return asset;
+      return asset.balance > best.balance ? asset : best;
+    }, null as (typeof assetList)[number] | null);
   }, [assetList]);
 
   const tntPosition = useMemo(() => {

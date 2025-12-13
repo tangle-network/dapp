@@ -10,7 +10,6 @@ import {
   Typography,
 } from '@tangle-network/ui-components';
 import { FC, useMemo } from 'react';
-import { formatUnits } from 'viem';
 import { twMerge } from 'tailwind-merge';
 import { StatsItem } from './StatsItem';
 
@@ -32,7 +31,7 @@ type Props = {
   className?: string;
   isLoading: boolean;
   restakingAssets: RestakingAsset[];
-  tvlData: { totalDeposits: bigint; assetCount: number } | null;
+  tvlData: { totalUsd: number; assetCount: number } | null;
 };
 
 export const ProtocolStatisticCard: FC<Props> = ({
@@ -50,14 +49,12 @@ export const ProtocolStatisticCard: FC<Props> = ({
   const { data: restakerCount, isLoading: isLoadingRestakers } =
     useDelegatorCount();
 
-  // Calculate TVL display value (using first asset's decimals as estimate)
+  // Calculate TVL display value
   const tvlDisplay = useMemo(() => {
-    if (!tvlData || tvlData.totalDeposits === BigInt(0)) {
+    if (!tvlData || tvlData.totalUsd <= 0) {
       return EMPTY_VALUE_PLACEHOLDER;
     }
-    const formatted = formatUnits(tvlData.totalDeposits, 18);
-    const num = parseFloat(formatted);
-    return `${formatLargeNumber(num, 2)} USD`;
+    return `${formatLargeNumber(tvlData.totalUsd, 2)} USD`;
   }, [tvlData]);
 
   return (
