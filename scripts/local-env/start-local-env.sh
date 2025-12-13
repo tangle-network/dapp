@@ -116,6 +116,7 @@ export EIGEN_ADDRESS=""
 export TANGLE_MIGRATION_ADDRESS=""
 export TNT_TOKEN_ADDRESS=""
 export TNT_TOKEN=""
+export MIGRATION_TNT_TOKEN_ADDRESS=""
 
 # Colors for output
 RED='\033[0;31m'
@@ -500,6 +501,7 @@ export WSTETH_ADDRESS="$WSTETH_ADDRESS"
 export EIGEN_ADDRESS="$EIGEN_ADDRESS"
 export TNT_TOKEN_ADDRESS="${TNT_TOKEN_ADDRESS:-}"
 export TANGLE_MIGRATION_ADDRESS="${TANGLE_MIGRATION_ADDRESS:-}"
+export MIGRATION_TNT_TOKEN_ADDRESS="${MIGRATION_TNT_TOKEN_ADDRESS:-}"
 EOF
 
     log_success "Anvil state cached"
@@ -674,12 +676,12 @@ console.log(JSON.stringify({
     local broadcast_file=$(ls -t broadcast/DeployTangleMigration.s.sol/*/run-latest.json 2>/dev/null | head -1)
 
     if [[ -f "$broadcast_file" ]]; then
-        export TNT_TOKEN_ADDRESS=$(jq -r '.transactions[] | select(.contractName == "TNT") | .contractAddress' "$broadcast_file" 2>/dev/null | head -1)
+        export MIGRATION_TNT_TOKEN_ADDRESS=$(jq -r '.transactions[] | select(.contractName == "TNT") | .contractAddress' "$broadcast_file" 2>/dev/null | head -1)
         export TANGLE_MIGRATION_ADDRESS=$(jq -r '.transactions[] | select(.contractName == "TangleMigration") | .contractAddress' "$broadcast_file" 2>/dev/null | head -1)
 
         # Fallback to grep if jq fails
-        if [[ -z "${TNT_TOKEN_ADDRESS:-}" || "${TNT_TOKEN_ADDRESS}" == "null" ]]; then
-            TNT_TOKEN_ADDRESS=$(grep -o '"contractName": "TNT"' -A5 "$broadcast_file" 2>/dev/null | grep '"contractAddress"' | head -1 | grep -o '0x[a-fA-F0-9]\{40\}' || echo "")
+        if [[ -z "${MIGRATION_TNT_TOKEN_ADDRESS:-}" || "${MIGRATION_TNT_TOKEN_ADDRESS}" == "null" ]]; then
+            MIGRATION_TNT_TOKEN_ADDRESS=$(grep -o '"contractName": "TNT"' -A5 "$broadcast_file" 2>/dev/null | grep '"contractAddress"' | head -1 | grep -o '0x[a-fA-F0-9]\{40\}' || echo "")
         fi
         if [[ -z "${TANGLE_MIGRATION_ADDRESS:-}" || "${TANGLE_MIGRATION_ADDRESS}" == "null" ]]; then
             TANGLE_MIGRATION_ADDRESS=$(grep -o '"contractName": "TangleMigration"' -A5 "$broadcast_file" 2>/dev/null | grep '"contractAddress"' | head -1 | grep -o '0x[a-fA-F0-9]\{40\}' || echo "")
@@ -693,7 +695,7 @@ console.log(JSON.stringify({
 
     if [[ -n "${TANGLE_MIGRATION_ADDRESS:-}" && "${TANGLE_MIGRATION_ADDRESS}" != "null" ]]; then
         log_success "TangleMigration deployed: $TANGLE_MIGRATION_ADDRESS"
-        log_info "TNT Token: $TNT_TOKEN_ADDRESS"
+        log_info "Migration TNT token: ${MIGRATION_TNT_TOKEN_ADDRESS:-Not found}"
         log_info "Substrate allocation: $(node -pe "BigInt('$total_substrate') / BigInt(1e18)") TNT transferred to contract"
         log_info "EVM allocation: $(node -pe "BigInt('$total_evm') / BigInt(1e18)") TNT in deployer"
         log_info "Proofs copied to: $proofs_dest/migration-proofs.json"
@@ -707,8 +709,8 @@ console.log(JSON.stringify({
 execute_evm_airdrop() {
     log_info "Executing EVM airdrop..."
 
-    if [[ -z "${TNT_TOKEN_ADDRESS:-}" || "${TNT_TOKEN_ADDRESS}" == "null" ]]; then
-        log_error "TNT token not deployed. Run 'migration deploy' first."
+    if [[ -z "${MIGRATION_TNT_TOKEN_ADDRESS:-}" || "${MIGRATION_TNT_TOKEN_ADDRESS}" == "null" ]]; then
+        log_error "Migration TNT token not deployed. Run 'migration deploy' first."
         return 1
     fi
 
@@ -733,10 +735,10 @@ execute_evm_airdrop() {
 const evm = require('$migration_output/evm-airdrop.json');
 const { execSync } = require('child_process');
 
-const TNT_ADDRESS = '$TNT_TOKEN_ADDRESS';
-const RPC_URL = '$RPC_URL';
-const PRIVATE_KEY = '$ANVIL_PRIVATE_KEY';
-const BATCH_SIZE = 100;
+	const TNT_ADDRESS = '$MIGRATION_TNT_TOKEN_ADDRESS';
+	const RPC_URL = '$RPC_URL';
+	const PRIVATE_KEY = '$ANVIL_PRIVATE_KEY';
+	const BATCH_SIZE = 100;
 
 const entries = Object.entries(evm);
 console.log('Total EVM recipients:', entries.length);
@@ -1371,8 +1373,19 @@ fund_account() {
 
     log_info "Funding account: $target_address"
 
-    # Convert ETH amount to wei (hex)
-    local eth_wei=$(printf "0x%x" $(echo "$eth_amount * 1000000000000000000" | bc))
+    # Convert ETH amount to wei (hex). Use python to avoid bash integer overflow.
+    local eth_wei
+    eth_wei="$(
+        python3 - "$eth_amount" <<'PY'
+from decimal import Decimal, getcontext
+import sys
+
+getcontext().prec = 80
+eth = Decimal(sys.argv[1])
+wei = int(eth * (Decimal(10) ** 18))
+print(hex(wei))
+PY
+    )"
 
     # Use anvil_setBalance to set ETH balance
     log_info "Setting ETH balance to $eth_amount ETH..."
@@ -1409,7 +1422,7 @@ const RPC_URL = process.env.RPC_URL;
 const FUND_ADDRESS = process.env.FUND_ADDRESS;
 const DEPLOYER_KEY = '0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80';
 
-// Note: TNT_TOKEN_ADDRESS is from migration deployment, not TANGLE_PROXY (which is core contract)
+// Note: TNT_TOKEN_ADDRESS is the core TNT bond/governance token on this chain.
 const TOKENS = {
   tnt: { address: process.env.TNT_TOKEN_ADDRESS, decimals: 18, amount: '100000' },
   usdc: { address: process.env.USDC_ADDRESS, decimals: 6, amount: '100000' },
@@ -1433,6 +1446,11 @@ const walletClient = createWalletClient({ account, chain: { ...anvil, id: 31337 
 for (const [name, token] of Object.entries(TOKENS)) {
   if (!token.address) continue;
   try {
+    const code = await publicClient.getBytecode({ address: token.address });
+    if (!code || code === '0x') {
+      console.log('Skipping ' + name.toUpperCase() + ': address has no code (' + token.address + ')');
+      continue;
+    }
     const amount = parseUnits(token.amount, token.decimals);
     const balance = await publicClient.readContract({ address: token.address, abi: ERC20_ABI, functionName: 'balanceOf', args: [account.address] });
     if (balance >= amount) {
