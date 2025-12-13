@@ -11,6 +11,7 @@
 #
 # Environment variables:
 #   TNT_CORE_DIR=/path/to/tnt-core  # Override tnt-core directory location
+#   ANVIL_STATE_INTERVAL=5          # Seconds between automatic state snapshots (default: 5)
 
 set -euo pipefail
 
@@ -30,13 +31,13 @@ case "${1:-}" in
         echo "Commands:"
         echo "  (none)    Full setup - deploy contracts, start all services (~2 min)"
         echo "  resume    Resume session - reconnects to running Anvil/Docker (~5 sec)"
-        echo "            Note: Anvil must be kept running for resume to work"
+        echo "            Note: If Anvil isn't running, it will be started from the last snapshot"
         echo "  clean     Clean cached addresses and start completely fresh"
         echo "  help      Show this help message"
         echo ""
         echo "Workflow:"
         echo "  1. Run '$0' for initial setup"
-        echo "  2. Leave Anvil running when you exit (Ctrl+C only kills the CLI)"
+        echo "  2. Exit the CLI (Anvil state is snapshotted periodically)"
         echo "  3. Run '$0 resume' to reconnect quickly"
         exit 0
         ;;
@@ -45,15 +46,32 @@ esac
 # Configuration
 ANVIL_PORT=8545
 ANVIL_CHAIN_ID=31337
-GRAPHQL_PORT=8080
+HASURA_EXTERNAL_PORT="${HASURA_EXTERNAL_PORT:-8080}"
+GRAPHQL_PORT="$HASURA_EXTERNAL_PORT"
 CLAIM_RELAYER_PORT=${CLAIM_RELAYER_PORT:-3001}
+ANVIL_STATE_INTERVAL="${ANVIL_STATE_INTERVAL:-5}"
 
 # Claim relayer defaults (Anvil account #1 unless overridden)
 DEFAULT_RELAYER_PRIVATE_KEY="0x59c6995e998f97a5a0044966f0945389dc9e86dae88c7a8412f4603b6b78690d"
 CLAIM_RELAYER_PRIVATE_KEY="${CLAIM_RELAYER_PRIVATE_KEY:-$DEFAULT_RELAYER_PRIVATE_KEY}"
 CLAIM_RELAYER_PID=""
 CLAIM_RELAYER_LOG="/tmp/claim-relayer.log"
-export ENVIO_PG_PORT="${ENVIO_PG_PORT:-9898}"
+
+# Envio ports
+# - Postgres defaults to 5433 (matches docker-compose.yml default)
+# - Indexer server (metrics/console) defaults to 9898 (matches Envio default)
+ENVIO_PG_PORT="${ENVIO_PG_PORT:-5433}"
+ENVIO_INDEXER_PORT="${ENVIO_INDEXER_PORT:-9898}"
+METRICS_PORT="${METRICS_PORT:-$ENVIO_INDEXER_PORT}"
+ENVIO_PG_USER="${ENVIO_PG_USER:-postgres}"
+ENVIO_PG_PASSWORD="${ENVIO_PG_PASSWORD:-testing}"
+ENVIO_PG_DATABASE="${ENVIO_PG_DATABASE:-envio-dev}"
+WIPE_DOCKER_VOLUMES="${WIPE_DOCKER_VOLUMES:-false}"
+CLEAN_DOCKER="${CLEAN_DOCKER:-false}"
+STRICT_INDEXER_PORT="${STRICT_INDEXER_PORT:-false}"
+STRICT_PG_PORT="${STRICT_PG_PORT:-false}"
+STRICT_HASURA_PORT="${STRICT_HASURA_PORT:-false}"
+export ENVIO_PG_PORT ENVIO_INDEXER_PORT METRICS_PORT ENVIO_PG_USER ENVIO_PG_PASSWORD ENVIO_PG_DATABASE HASURA_EXTERNAL_PORT
 
 # Resolve script directory first
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
@@ -113,6 +131,226 @@ log_success() { echo -e "${GREEN}[SUCCESS]${NC} $1"; }
 log_warn() { echo -e "${YELLOW}[WARN]${NC} $1"; }
 log_error() { echo -e "${RED}[ERROR]${NC} $1"; }
 
+ensure_docker_running() {
+    if ! docker info >/dev/null 2>&1; then
+        log_error "Docker daemon is not responding (Docker Desktop may be crashed or starting)."
+        log_info "Open Docker Desktop and wait for it to be 'Running', then rerun."
+        exit 1
+    fi
+}
+
+port_has_listener_with_pattern() {
+    local port="$1"
+    local pattern="$2"
+
+    local pids
+    pids="$(lsof -nP -iTCP:"$port" -sTCP:LISTEN -t 2>/dev/null || true)"
+    if [[ -z "$pids" ]]; then
+        return 1
+    fi
+
+    for pid in $pids; do
+        local cmd
+        cmd="$(ps -p "$pid" -o command= 2>/dev/null || true)"
+        if [[ "$cmd" == *"$pattern"* ]]; then
+            return 0
+        fi
+    done
+
+    return 1
+}
+
+kill_port_listeners() {
+    local port="$1"
+    local label="${2:-port}"
+    local pattern="${3:-}"
+
+    local pids
+    pids="$(lsof -nP -iTCP:"$port" -sTCP:LISTEN -t 2>/dev/null || true)"
+    if [[ -z "$pids" ]]; then
+        return 0
+    fi
+
+    local blocked_by_other=false
+    local blocking_details=""
+    local kill_pids=""
+
+    for pid in $pids; do
+        local cmd
+        cmd="$(ps -p "$pid" -o command= 2>/dev/null || true)"
+        if [[ -n "$pattern" && "$cmd" != *"$pattern"* ]]; then
+            blocked_by_other=true
+            blocking_details="PID $pid: $cmd"
+            continue
+        fi
+
+        kill_pids="$kill_pids $pid"
+    done
+
+    if [[ "$blocked_by_other" == "true" ]]; then
+        log_warn "$label port $port is in use by a non-$pattern process and will NOT be killed:"
+        log_warn "  $blocking_details"
+        return 1
+    fi
+
+    log_warn "$label port $port is in use; attempting cleanup..."
+
+    for pid in $kill_pids; do
+        local cmd
+        cmd="$(ps -p "$pid" -o command= 2>/dev/null || true)"
+        log_warn "Killing PID $pid listening on $port ($cmd)"
+        kill -TERM "$pid" 2>/dev/null || true
+    done
+
+    sleep 0.5
+
+    pids="$(lsof -nP -iTCP:"$port" -sTCP:LISTEN -t 2>/dev/null || true)"
+    if [[ -n "$pids" ]]; then
+        for pid in $pids; do
+            kill -KILL "$pid" 2>/dev/null || true
+        done
+    fi
+}
+
+is_port_free() {
+    local port="$1"
+    [[ -z "$(lsof -nP -iTCP:"$port" -sTCP:LISTEN -t 2>/dev/null || true)" ]]
+}
+
+ensure_free_postgres_port() {
+    local start_port="$ENVIO_PG_PORT"
+
+    for offset in {0..50}; do
+        local port=$((start_port + offset))
+        if is_port_free "$port"; then
+            ENVIO_PG_PORT="$port"
+            export ENVIO_PG_PORT
+            return 0
+        fi
+
+        if [[ "$STRICT_PG_PORT" == "true" ]]; then
+            log_error "ENVIO_PG_PORT=$start_port is not available and STRICT_PG_PORT=true"
+            return 1
+        fi
+    done
+
+    log_error "Could not find a free Postgres port near $start_port"
+    return 1
+}
+
+ensure_free_hasura_port() {
+    local start_port="$HASURA_EXTERNAL_PORT"
+
+    for offset in {0..50}; do
+        local port=$((start_port + offset))
+        if is_port_free "$port"; then
+            HASURA_EXTERNAL_PORT="$port"
+            GRAPHQL_PORT="$port"
+            export HASURA_EXTERNAL_PORT
+            return 0
+        fi
+
+        if [[ "$STRICT_HASURA_PORT" == "true" ]]; then
+            log_error "HASURA_EXTERNAL_PORT=$start_port is not available and STRICT_HASURA_PORT=true"
+            return 1
+        fi
+    done
+
+    log_error "Could not find a free Hasura port near $start_port"
+    return 1
+}
+
+sync_ports_from_docker_compose() {
+    # Must be called from inside $INDEXER_DIR/generated
+    local pg_mapping
+    local hasura_mapping
+
+    pg_mapping="$(docker compose port envio-postgres 5432 2>/dev/null | head -1 || true)"
+    hasura_mapping="$(docker compose port graphql-engine 8080 2>/dev/null | head -1 || true)"
+
+    if [[ -n "$pg_mapping" ]]; then
+        local pg_port
+        pg_port="$(echo "$pg_mapping" | sed -E 's/.*:([0-9]+)$/\\1/')"
+        if [[ "$pg_port" =~ ^[0-9]+$ ]]; then
+            ENVIO_PG_PORT="$pg_port"
+            export ENVIO_PG_PORT
+        fi
+    fi
+
+    if [[ -n "$hasura_mapping" ]]; then
+        local hasura_port
+        hasura_port="$(echo "$hasura_mapping" | sed -E 's/.*:([0-9]+)$/\\1/')"
+        if [[ "$hasura_port" =~ ^[0-9]+$ ]]; then
+            HASURA_EXTERNAL_PORT="$hasura_port"
+            GRAPHQL_PORT="$hasura_port"
+            export HASURA_EXTERNAL_PORT
+        fi
+    fi
+}
+
+ensure_postgres_password() {
+    # If we can already connect from host, we're good.
+    if PGPASSWORD="$ENVIO_PG_PASSWORD" psql -h localhost -p "$ENVIO_PG_PORT" -U "$ENVIO_PG_USER" -d "$ENVIO_PG_DATABASE" -c "SELECT 1;" >/dev/null 2>&1; then
+        return 0
+    fi
+
+    log_warn "Host Postgres auth failed; attempting to reset postgres password inside the container..."
+
+    ensure_docker_running
+    cd "$INDEXER_DIR/generated"
+
+    # This typically works because local socket auth inside the container is trust.
+    if docker compose exec -T envio-postgres psql -U "$ENVIO_PG_USER" -d postgres -c "ALTER USER $ENVIO_PG_USER WITH PASSWORD '$ENVIO_PG_PASSWORD';" >/dev/null 2>&1; then
+        log_success "Reset postgres password inside container"
+    else
+        log_error "Failed to reset postgres password inside container."
+        log_info "If this is a persisted volume from a different setup, run:"
+        log_info "  CLEAN_DOCKER=true WIPE_DOCKER_VOLUMES=true ./scripts/local-env/start-local-env.sh clean"
+        exit 1
+    fi
+
+    # Re-test from host.
+    if ! PGPASSWORD="$ENVIO_PG_PASSWORD" psql -h localhost -p "$ENVIO_PG_PORT" -U "$ENVIO_PG_USER" -d "$ENVIO_PG_DATABASE" -c "SELECT 1;" >/dev/null 2>&1; then
+        log_error "Postgres is still not reachable with the configured credentials."
+        exit 1
+    fi
+}
+
+ensure_free_indexer_port() {
+    local start_port="$ENVIO_INDEXER_PORT"
+
+    for offset in {0..20}; do
+        local port=$((start_port + offset))
+
+        if is_port_free "$port"; then
+            ENVIO_INDEXER_PORT="$port"
+            METRICS_PORT="$port"
+            export ENVIO_INDEXER_PORT METRICS_PORT
+            return 0
+        fi
+
+        # Only attempt to kill if it actually looks like the stale indexer.
+        if port_has_listener_with_pattern "$port" "ts-node"; then
+            if kill_port_listeners "$port" "Envio indexer" "ts-node"; then
+                if is_port_free "$port"; then
+                    ENVIO_INDEXER_PORT="$port"
+                    METRICS_PORT="$port"
+                    export ENVIO_INDEXER_PORT METRICS_PORT
+                    return 0
+                fi
+            fi
+        fi
+
+        if [[ "$STRICT_INDEXER_PORT" == "true" ]]; then
+            log_error "ENVIO_INDEXER_PORT=$start_port is not available and STRICT_INDEXER_PORT=true"
+            return 1
+        fi
+    done
+
+    log_error "Could not find a free indexer port near $start_port"
+    return 1
+}
+
 cleanup() {
     log_info "Cleaning up..."
 
@@ -120,7 +358,7 @@ cleanup() {
     [[ -n "${INDEXER_PID:-}" ]] && kill "$INDEXER_PID" 2>/dev/null || true
     [[ -n "${ACTIVITY_PID:-}" ]] && kill "$ACTIVITY_PID" 2>/dev/null || true
     [[ -n "${CLAIM_RELAYER_PID:-}" ]] && kill "$CLAIM_RELAYER_PID" 2>/dev/null || true
-    lsof -ti:9898 | xargs kill 2>/dev/null || true
+    kill_port_listeners "$ENVIO_INDEXER_PORT" "Envio indexer" "ts-node" || true
 
     # Keep Anvil and Docker running for resume mode
     # To fully stop everything, use 'docker compose down' and kill Anvil manually
@@ -133,7 +371,6 @@ trap cleanup EXIT
 # Kill any leftover processes (skip in resume mode)
 if [[ "$RESUME_MODE" != "true" ]]; then
     pkill -f "ts-node src/Index" 2>/dev/null || true
-    lsof -ti:9898 | xargs kill 2>/dev/null || true
     lsof -ti:$ANVIL_PORT | xargs kill 2>/dev/null || true
     sleep 1
 fi
@@ -146,6 +383,8 @@ check_prerequisites() {
     command -v docker &>/dev/null || { log_error "docker not found. Install Docker"; exit 1; }
     command -v pnpm &>/dev/null || { log_error "pnpm not found. Install pnpm"; exit 1; }
 
+    ensure_docker_running
+
     [[ -d "$TNT_CORE_DIR" ]] || { log_error "TNT_CORE_DIR not found: $TNT_CORE_DIR"; exit 1; }
     [[ -d "$INDEXER_DIR" ]] || { log_error "Indexer directory not found: $INDEXER_DIR"; exit 1; }
 
@@ -156,18 +395,39 @@ check_prerequisites() {
 # Cache file locations
 CACHE_DIR="/tmp/local-env-cache"
 ADDRESSES_CACHE="$CACHE_DIR/addresses.env"
+ANVIL_STATE_FILE="$CACHE_DIR/anvil-state.json"
+
+is_anvil_running() {
+    curl -s "http://127.0.0.1:$ANVIL_PORT" -X POST -H "Content-Type: application/json" \
+        --data '{"jsonrpc":"2.0","method":"eth_chainId","params":[],"id":1}' > /dev/null 2>&1
+}
 
 start_anvil() {
+    local mode="${1:-fresh}" # fresh|resume
     log_info "Starting Anvil on port $ANVIL_PORT..."
 
-    # Always start fresh Anvil - state caching is complex and error-prone
-    # Addresses are deterministic so we just cache those
-    anvil --chain-id $ANVIL_CHAIN_ID --port $ANVIL_PORT --block-time 1 --base-fee 0 --gas-limit 30000000 --disable-code-size-limit --silent &
+    mkdir -p "$CACHE_DIR"
+
+    local state_args=()
+    if [[ "$mode" == "resume" ]]; then
+        if [[ ! -f "$ANVIL_STATE_FILE" ]]; then
+            log_error "No Anvil state snapshot found at $ANVIL_STATE_FILE"
+            log_info "Run without 'resume' to deploy a fresh local environment."
+            exit 1
+        fi
+
+        state_args=(--state "$ANVIL_STATE_FILE" --state-interval "$ANVIL_STATE_INTERVAL")
+    else
+        # Start from a clean chain; keep writing snapshots so resume can restart even if Anvil stops.
+        rm -f "$ANVIL_STATE_FILE" 2>/dev/null || true
+        state_args=(--dump-state "$ANVIL_STATE_FILE" --state-interval "$ANVIL_STATE_INTERVAL")
+    fi
+
+    anvil --chain-id $ANVIL_CHAIN_ID --port $ANVIL_PORT --block-time 1 --base-fee 0 --gas-limit 30000000 --disable-code-size-limit "${state_args[@]}" --silent &
     ANVIL_PID=$!
     sleep 2
 
-    if ! curl -s http://127.0.0.1:$ANVIL_PORT -X POST -H "Content-Type: application/json" \
-        --data '{"jsonrpc":"2.0","method":"eth_chainId","params":[],"id":1}' > /dev/null; then
+    if ! is_anvil_running; then
         log_error "Failed to start Anvil"
         exit 1
     fi
@@ -222,9 +482,9 @@ save_anvil_state() {
     log_info "Saving contract addresses to cache..."
     mkdir -p "$CACHE_DIR"
 
-    # Note: We don't dump Anvil state anymore - it's complex and error-prone.
-    # Instead, we just save the addresses. For resume to work, Anvil must stay running.
-    # If Anvil dies, user needs to do a fresh deploy.
+    # Anvil state is snapshotted by Anvil itself to:
+    #   $ANVIL_STATE_FILE
+    # via `--dump-state/--state` + `--state-interval`.
 
     # Save addresses
     cat > "$ADDRESSES_CACHE" << EOF
@@ -553,19 +813,21 @@ start_indexer() {
     if docker compose ps 2>/dev/null | grep -q "running"; then
         docker_running=true
         log_info "Docker containers already running, reusing..."
+        sync_ports_from_docker_compose
     fi
 
     if [[ "$docker_running" == "false" ]]; then
-        # Start database (fresh volumes)
         log_info "Starting indexer database..."
-        docker compose down -v 2>/dev/null || true
-        docker compose up -d
+        ensure_free_postgres_port
+        ensure_free_hasura_port
+        docker compose up -d --remove-orphans
+        sync_ports_from_docker_compose
     fi
 
     # Wait for Hasura to be ready before db-setup
     log_info "Waiting for Hasura to be ready..."
     for i in {1..30}; do
-        if curl -s "http://localhost:8080/healthz" | grep -q "OK" 2>/dev/null; then
+        if curl -s "http://localhost:$GRAPHQL_PORT/healthz" | grep -q "OK" 2>/dev/null; then
             log_success "Hasura is ready"
             break
         fi
@@ -576,9 +838,12 @@ start_indexer() {
     log_info "Running DB migrations..."
     pnpm db-setup
 
+    # Ensure indexer can authenticate to Postgres even when volumes persist from a prior run.
+    ensure_postgres_password
+
     # Clear chain progress (for fresh indexing from block 0)
     log_info "Clearing chain progress..."
-    PGPASSWORD=testing psql -h localhost -p "$ENVIO_PG_PORT" -U postgres -d envio-dev -c \
+    PGPASSWORD="$ENVIO_PG_PASSWORD" psql -h localhost -p "$ENVIO_PG_PORT" -U "$ENVIO_PG_USER" -d "$ENVIO_PG_DATABASE" -c \
         "TRUNCATE TABLE public.persisted_state, public.chain_metadata, public.dynamic_contract_registry CASCADE;" 2>/dev/null || true
 
     # Re-create symlink
@@ -588,8 +853,18 @@ start_indexer() {
 
     # Start the indexer
     log_info "Starting indexer..."
+    ensure_free_indexer_port
     cd "$INDEXER_DIR/generated"
-    env "ENVIO_RPC_URL_${ANVIL_CHAIN_ID}=http://127.0.0.1:$ANVIL_PORT" TUI_OFF=true pnpm start &
+    env \
+        "ENVIO_RPC_URL_${ANVIL_CHAIN_ID}=http://127.0.0.1:$ANVIL_PORT" \
+        ENVIO_INDEXER_PORT="$ENVIO_INDEXER_PORT" \
+        METRICS_PORT="$METRICS_PORT" \
+        ENVIO_PG_PORT="$ENVIO_PG_PORT" \
+        ENVIO_PG_USER="$ENVIO_PG_USER" \
+        ENVIO_PG_PASSWORD="$ENVIO_PG_PASSWORD" \
+        ENVIO_PG_DATABASE="$ENVIO_PG_DATABASE" \
+        TUI_OFF=true \
+        pnpm start &
     INDEXER_PID=$!
     cd "$INDEXER_DIR"
     sleep 5
@@ -872,12 +1147,15 @@ restart_indexer() {
     cd "$INDEXER_DIR/generated"
     if ! docker compose ps 2>/dev/null | grep -q "running"; then
         log_info "Docker containers not running, starting them..."
-        docker compose up -d
+        ensure_free_postgres_port
+        ensure_free_hasura_port
+        docker compose up -d --remove-orphans
+        sync_ports_from_docker_compose
         sleep 3
         # Wait for Hasura to be ready
         log_info "Waiting for Hasura to be ready..."
         for i in {1..30}; do
-            if curl -s "http://localhost:8080/healthz" | grep -q "OK" 2>/dev/null; then
+            if curl -s "http://localhost:$GRAPHQL_PORT/healthz" | grep -q "OK" 2>/dev/null; then
                 log_success "Hasura is ready"
                 break
             fi
@@ -885,11 +1163,23 @@ restart_indexer() {
         done
         # Run migrations
         pnpm db-setup 2>/dev/null || true
+    else
+        sync_ports_from_docker_compose
     fi
 
     # Restart the indexer process
     log_info "Restarting indexer..."
-    env "ENVIO_RPC_URL_${ANVIL_CHAIN_ID}=http://127.0.0.1:$ANVIL_PORT" TUI_OFF=true pnpm start &
+    ensure_free_indexer_port
+    env \
+        "ENVIO_RPC_URL_${ANVIL_CHAIN_ID}=http://127.0.0.1:$ANVIL_PORT" \
+        ENVIO_INDEXER_PORT="$ENVIO_INDEXER_PORT" \
+        METRICS_PORT="$METRICS_PORT" \
+        ENVIO_PG_PORT="$ENVIO_PG_PORT" \
+        ENVIO_PG_USER="$ENVIO_PG_USER" \
+        ENVIO_PG_PASSWORD="$ENVIO_PG_PASSWORD" \
+        ENVIO_PG_DATABASE="$ENVIO_PG_DATABASE" \
+        TUI_OFF=true \
+        pnpm start &
     INDEXER_PID=$!
     cd "$SCRIPT_DIR"
     log_success "Indexer restarted (PID: $INDEXER_PID)"
@@ -898,15 +1188,28 @@ restart_indexer() {
 docker_down() {
     log_info "Running docker compose down..."
     cd "$INDEXER_DIR/generated"
-    docker compose down -v 2>/dev/null && log_success "Docker compose down complete" || log_error "Docker compose down failed"
+    if [[ "$WIPE_DOCKER_VOLUMES" == "true" ]]; then
+        docker compose down -v --remove-orphans 2>/dev/null \
+            && log_success "Docker compose down (with volumes) complete" \
+            || log_error "Docker compose down failed"
+    else
+        docker compose down --remove-orphans 2>/dev/null \
+            && log_success "Docker compose down complete" \
+            || log_error "Docker compose down failed"
+    fi
     cd "$SCRIPT_DIR"
 }
 
 docker_up() {
     log_info "Running docker compose up..."
     cd "$INDEXER_DIR/generated"
-    docker compose up -d 2>/dev/null && log_success "Docker compose up complete" || log_error "Docker compose up failed"
+    ensure_free_postgres_port
+    ensure_free_hasura_port
+    docker compose up -d --remove-orphans 2>/dev/null \
+        && log_success "Docker compose up complete" \
+        || log_error "Docker compose up failed"
     sleep 3
+    sync_ports_from_docker_compose
     # Run migrations
     pnpm db-setup 2>/dev/null || true
     cd "$SCRIPT_DIR"
@@ -1189,7 +1492,8 @@ clear_indexer_state() {
     log_info "Clearing indexer state..."
     rm -f "$INDEXER_DIR/generated/persisted_state.envio.json"
 
-    PGPASSWORD=testing psql -h localhost -p "$ENVIO_PG_PORT" -U postgres -d envio-dev -c \
+    ensure_postgres_password
+    PGPASSWORD="$ENVIO_PG_PASSWORD" psql -h localhost -p "$ENVIO_PG_PORT" -U "$ENVIO_PG_USER" -d "$ENVIO_PG_DATABASE" -c \
         "TRUNCATE TABLE public.persisted_state, public.chain_metadata, public.dynamic_contract_registry CASCADE;" 2>/dev/null || true
 
     log_success "Indexer state cleared. Restart indexer to re-sync from block 0."
@@ -1218,12 +1522,12 @@ print_help() {
     echo "  migration deploy    - Deploy/redeploy TangleMigration contracts"
     echo "  migration airdrop   - Execute EVM airdrop (distribute to EVM holders)"
     echo "  logs migration      - Show migration deployment logs"
-    echo ""
-    echo -e "${CYAN}Docker:${NC}"
-    echo "  docker down         - Run docker compose down -v"
-    echo "  docker up           - Run docker compose up -d"
-    echo "  docker restart      - Restart docker containers"
-    echo ""
+	    echo ""
+	    echo -e "${CYAN}Docker:${NC}"
+	    echo "  docker down         - Run docker compose down (set WIPE_DOCKER_VOLUMES=true for -v)"
+	    echo "  docker up           - Run docker compose up -d"
+	    echo "  docker restart      - Restart docker containers"
+	    echo ""
     echo -e "${CYAN}Cache:${NC}"
     echo "  cache clear         - Clear cached Anvil state (force fresh deploy)"
     echo "  cache save          - Save current Anvil state to cache"
@@ -1347,7 +1651,11 @@ interactive_cli() {
                         ;;
                     status)
                         echo -e "${BOLD}=== Cache Status ===${NC}"
-                        echo -e "  Anvil state:   ${YELLOW}Not cached${NC} (Anvil must stay running for resume)"
+                        if [[ -f "$ANVIL_STATE_FILE" ]]; then
+                            echo -e "  Anvil state:   ${GREEN}Cached${NC} ($ANVIL_STATE_FILE)"
+                        else
+                            echo -e "  Anvil state:   ${YELLOW}Not cached${NC} (run once without 'resume')"
+                        fi
                         if [[ -f "$ADDRESSES_CACHE" ]]; then
                             echo -e "  Addresses:     ${GREEN}Cached${NC}"
                         else
@@ -1435,33 +1743,34 @@ resume_session() {
         exit 1
     fi
 
-    # Check Anvil - must be running for resume to work
-    if curl -s http://127.0.0.1:$ANVIL_PORT -X POST -H "Content-Type: application/json" \
-        --data '{"jsonrpc":"2.0","method":"eth_chainId","params":[],"id":1}' > /dev/null 2>&1; then
+    # Ensure Anvil is available (start from snapshot if needed)
+    if is_anvil_running; then
         log_success "Anvil is running on port $ANVIL_PORT"
     else
-        log_error "Anvil is not running. Cannot resume without chain state."
-        log_info "To resume, Anvil must be kept running between sessions."
-        log_info "Run without 'resume' to do a fresh deployment."
-        exit 1
+        log_warn "Anvil is not running; starting from last snapshot..."
+        start_anvil resume
     fi
 
     # Check Docker containers
     cd "$INDEXER_DIR/generated"
     if docker compose ps 2>/dev/null | grep -q "running"; then
         log_success "Docker containers (postgres, hasura) are running"
+        sync_ports_from_docker_compose
     else
         log_warn "Docker containers not running. Starting..."
-        docker compose up -d
+        ensure_free_postgres_port
+        ensure_free_hasura_port
+        docker compose up -d --remove-orphans
         sleep 3
         # Wait for Hasura
         for i in {1..30}; do
-            if curl -s "http://localhost:8080/healthz" | grep -q "OK" 2>/dev/null; then
+            if curl -s "http://localhost:$GRAPHQL_PORT/healthz" | grep -q "OK" 2>/dev/null; then
                 break
             fi
             sleep 1
         done
         pnpm db-setup 2>/dev/null || true
+        sync_ports_from_docker_compose
         log_success "Docker containers started"
     fi
     cd "$SCRIPT_DIR"
@@ -1473,7 +1782,17 @@ resume_session() {
     else
         log_warn "Indexer not running. Starting..."
         cd "$INDEXER_DIR/generated"
-        env "ENVIO_RPC_URL_${ANVIL_CHAIN_ID}=http://127.0.0.1:$ANVIL_PORT" TUI_OFF=true pnpm start &
+        ensure_free_indexer_port
+        env \
+            "ENVIO_RPC_URL_${ANVIL_CHAIN_ID}=http://127.0.0.1:$ANVIL_PORT" \
+            ENVIO_INDEXER_PORT="$ENVIO_INDEXER_PORT" \
+            METRICS_PORT="$METRICS_PORT" \
+            ENVIO_PG_PORT="$ENVIO_PG_PORT" \
+            ENVIO_PG_USER="$ENVIO_PG_USER" \
+            ENVIO_PG_PASSWORD="$ENVIO_PG_PASSWORD" \
+            ENVIO_PG_DATABASE="$ENVIO_PG_DATABASE" \
+            TUI_OFF=true \
+            pnpm start &
         INDEXER_PID=$!
         cd "$SCRIPT_DIR"
         sleep 3
@@ -1517,7 +1836,17 @@ main() {
     if [[ "$CLEAN_MODE" == "true" ]]; then
         log_info "Cleaning cached state..."
         rm -rf "$CACHE_DIR"
-        cd "$INDEXER_DIR/generated" 2>/dev/null && docker compose down -v 2>/dev/null || true
+        if [[ "$CLEAN_DOCKER" == "true" ]]; then
+            cd "$INDEXER_DIR/generated" 2>/dev/null && (
+                if [[ "$WIPE_DOCKER_VOLUMES" == "true" ]]; then
+                    docker compose down -v --remove-orphans 2>/dev/null || true
+                else
+                    docker compose down --remove-orphans 2>/dev/null || true
+                fi
+            )
+        else
+            log_warn "CLEAN_DOCKER=false: not running docker compose down during clean"
+        fi
         cd "$SCRIPT_DIR"
         log_success "Cache cleaned"
     fi
