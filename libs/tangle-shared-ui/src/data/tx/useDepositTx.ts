@@ -3,7 +3,7 @@
  * Replaces the Substrate-based useRestakeDepositTx hook.
  */
 
-import { Address } from 'viem';
+import { Address, zeroAddress } from 'viem';
 import useContractWrite from '../../hooks/useContractWrite';
 import MULTI_ASSET_DELEGATION_ABI from '../../abi/multiAssetDelegation';
 import { getContractsByChainId } from '@tangle-network/dapp-config/contracts';
@@ -53,19 +53,30 @@ export const useDepositTx = () => {
 
   return useContractWrite(
     MULTI_ASSET_DELEGATION_ABI,
-    (params: DepositParams, _activeAddress) => ({
-      address: contracts.multiAssetDelegation,
-      abi: MULTI_ASSET_DELEGATION_ABI,
-      functionName: 'depositERC20WithLock' as const,
-      args: [
-        params.token,
-        params.amount,
-        LOCK_MULTIPLIER_VALUES[params.lockDuration ?? 'NONE'],
-      ] as const,
-    }),
+    (params: DepositParams, _activeAddress) => {
+      const lockMultiplier = LOCK_MULTIPLIER_VALUES[params.lockDuration ?? 'NONE'];
+
+      // Native deposits are payable and do not take a token/amount argument.
+      if (params.token.toLowerCase() === zeroAddress) {
+        return {
+          address: contracts.multiAssetDelegation,
+          abi: MULTI_ASSET_DELEGATION_ABI,
+          functionName: 'depositWithLock' as const,
+          args: [lockMultiplier] as const,
+          value: params.amount,
+        };
+      }
+
+      return {
+        address: contracts.multiAssetDelegation,
+        abi: MULTI_ASSET_DELEGATION_ABI,
+        functionName: 'depositERC20WithLock' as const,
+        args: [params.token, params.amount, lockMultiplier] as const,
+      };
+    },
     {
       getSuccessMessage: (params) =>
-        `Successfully deposited ${params.amount.toString()} tokens`,
+        `Successfully deposited ${params.amount.toString()}`,
     },
   );
 };

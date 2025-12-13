@@ -1,24 +1,23 @@
-import { useWebContext } from '@tangle-network/api-provider-environment';
-import { useObservableState } from 'observable-hooks';
+import { calculateTypedChainId, ChainType } from '@tangle-network/dapp-types/TypedChainId';
 import { useMemo } from 'react';
-import { of } from 'rxjs';
-
-const NULL$ = of(null);
+import { useAccount, useChainId } from 'wagmi';
 
 /**
  * Retrieve the active typed chain id state
- * from the active api in the web context.
+ * from wagmi's active EVM chain.
  *
  * @returns the active typed chain id state or null
- * if there is no active api.
+ * if there is no connected wallet.
  */
 export default function useActiveTypedChainId() {
-  const { activeApi } = useWebContext();
+  const { isConnected } = useAccount();
+  const chainId = useChainId();
 
-  const typedChainId$ = useMemo(
-    () => activeApi?.typedChainidSubject ?? NULL$,
-    [activeApi],
-  );
+  return useMemo(() => {
+    if (!isConnected || !chainId) {
+      return null;
+    }
 
-  return useObservableState(typedChainId$, null);
+    return calculateTypedChainId(ChainType.EVM, chainId);
+  }, [chainId, isConnected]);
 }

@@ -8,15 +8,29 @@ import ListModal from '@tangle-network/tangle-shared-ui/components/ListModal';
 import { Card } from '@tangle-network/ui-components';
 import Button from '@tangle-network/ui-components/components/buttons/Button';
 import { Modal } from '@tangle-network/ui-components/components/Modal';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@tangle-network/ui-components/components/select';
 import type { TextFieldInputProps } from '@tangle-network/ui-components/components/TextField/types';
 import { TransactionInputCard } from '@tangle-network/ui-components/components/TransactionInputCard';
 import { useModal } from '@tangle-network/ui-components/hooks/useModal';
 import { Typography } from '@tangle-network/ui-components/typography/Typography';
 import { FC, useCallback, useEffect, useMemo, useRef } from 'react';
 import { SubmitHandler, useForm } from 'react-hook-form';
-import { parseUnits, Address, formatUnits } from 'viem';
+import {
+  erc20Abi,
+  formatUnits,
+  maxUint256,
+  parseUnits,
+  zeroAddress,
+  Address,
+} from 'viem';
 import { BN } from '@polkadot/util';
-import { useChainId } from 'wagmi';
+import { useAccount, useChainId, useReadContract } from 'wagmi';
 import ErrorMessage from '../../../components/ErrorMessage';
 import ActionButtonBase from '../../../components/restaking/ActionButtonBase';
 import StyleContainer from '../../../components/restaking/StyleContainer';
@@ -35,8 +49,10 @@ import { TxStatus } from '@tangle-network/tangle-shared-ui/hooks/useContractWrit
 import type { RestakeAsset } from '@tangle-network/tangle-shared-ui/data/graphql';
 import { useOptionalRestakeContext } from '@tangle-network/tangle-shared-ui/context/RestakeContext';
 import { useRestakeAssets } from '@tangle-network/tangle-shared-ui/data/graphql';
-import { useDepositTx } from '@tangle-network/tangle-shared-ui/data/tx';
+import { useContractWrite, useDepositTx } from '@tangle-network/tangle-shared-ui/data/tx';
 import { chainsConfig } from '@tangle-network/dapp-config/chains';
+import { getContractsByChainId } from '@tangle-network/dapp-config/contracts';
+import type { LockDuration } from '@tangle-network/tangle-shared-ui/data/graphql/useDelegator';
 
 const getDefaultTypedChainId = (activeTypedChainId: number | null): number => {
   return isDefined(activeTypedChainId) &&
@@ -48,11 +64,19 @@ const getDefaultTypedChainId = (activeTypedChainId: number | null): number => {
 const DepositForm: FC = () => {
   const activeTypedChainId = useActiveTypedChainId();
   const chainId = useChainId();
+  const { address: evmAddress } = useAccount();
   const activeChain = useMemo(() => {
     return Object.values(chainsConfig).find((c) => c.id === chainId);
   }, [chainId]);
 
   const { status: depositTxStatus, execute: executeDepositTx } = useDepositTx();
+  const contracts = useMemo(() => {
+    try {
+      return getContractsByChainId(chainId);
+    } catch {
+      return null;
+    }
+  }, [chainId]);
   const switchChain = useSwitchChain();
 
   // Try to use context first (if within RestakeProvider), fall back to hook
@@ -83,6 +107,7 @@ const DepositForm: FC = () => {
     mode: 'onChange',
     defaultValues: {
       sourceTypedChainId: getDefaultTypedChainId(activeTypedChainId),
+      lockDuration: 'NONE',
     },
   });
 
@@ -100,6 +125,7 @@ const DepositForm: FC = () => {
   useEffect(() => {
     register('depositAssetId', { required: 'Asset is required' });
     register('sourceTypedChainId', { required: 'Chain is required' });
+    register('lockDuration', { required: true });
   }, [register]);
 
   useEffect(() => {
@@ -156,6 +182,7 @@ const DepositForm: FC = () => {
 
   const assetId = watch('depositAssetId');
   const amount = watch('amount');
+  const lockDuration = watch('lockDuration');
 
   const asset = useMemo(() => {
     if (assets === null || assetId === undefined) {
@@ -179,6 +206,66 @@ const DepositForm: FC = () => {
       formattedMaxAmount: formatted,
     };
   }, [asset]);
+
+  const parsedAmount = useMemo(() => {
+    if (!asset || !amount) return null;
+    try {
+      const value = parseUnits(amount, asset.metadata.decimals);
+      return value > BigInt(0) ? value : null;
+    } catch {
+      return null;
+    }
+  }, [amount, asset]);
+
+  const isNativeAsset = asset?.id?.toLowerCase() === zeroAddress;
+  const spender = contracts?.multiAssetDelegation ?? null;
+
+  const {
+    data: allowance,
+    isLoading: isLoadingAllowance,
+    refetch: refetchAllowance,
+  } = useReadContract({
+    address: asset?.id,
+    abi: erc20Abi,
+    functionName: 'allowance',
+    args:
+      evmAddress && spender
+        ? ([evmAddress, spender] as const)
+        : undefined,
+    query: {
+      enabled:
+        Boolean(evmAddress) &&
+        Boolean(spender) &&
+        Boolean(asset) &&
+        !isNativeAsset &&
+        parsedAmount !== null,
+      staleTime: 10_000,
+      refetchInterval: 30_000,
+      refetchIntervalInBackground: true,
+    },
+  });
+
+  const needsApproval =
+    !isNativeAsset &&
+    parsedAmount !== null &&
+    spender !== null &&
+    typeof allowance === 'bigint' &&
+    allowance < parsedAmount;
+
+  const { status: approveTxStatus, execute: executeApproveTx } = useContractWrite(
+    erc20Abi,
+    (ctx: { token: Address; spender: Address }) => {
+      if (ctx.token.toLowerCase() === zeroAddress) return null;
+
+      return {
+        address: ctx.token,
+        abi: erc20Abi,
+        functionName: 'approve' as const,
+        args: [ctx.spender, maxUint256] as const,
+      };
+    },
+    { getSuccessMessage: () => `Approval successful` },
+  );
 
   const customAmountProps = useMemo<TextFieldInputProps>(() => {
     const step = decimalsToStep(asset?.metadata.decimals);
@@ -217,12 +304,28 @@ const DepositForm: FC = () => {
     [closeTokenModal, setValue],
   );
 
-  const isTransacting = isSubmitting || depositTxStatus === TxStatus.PROCESSING;
+  const isTransacting =
+    isSubmitting ||
+    depositTxStatus === TxStatus.PROCESSING ||
+    approveTxStatus === TxStatus.PROCESSING;
 
   const isReady = executeDepositTx !== null && asset !== null && !isTransacting;
 
+  const handleApprove = useCallback(async () => {
+    if (!asset || !spender || !executeApproveTx) {
+      return;
+    }
+
+    if (parsedAmount === null) {
+      return;
+    }
+
+    await executeApproveTx({ token: asset.id, spender });
+    await refetchAllowance();
+  }, [asset, executeApproveTx, parsedAmount, refetchAllowance, spender]);
+
   const onSubmit = useCallback<SubmitHandler<EvmDepositFormFields>>(
-    async ({ amount }) => {
+    async ({ amount, lockDuration }) => {
       if (!isReady || !asset) {
         return;
       }
@@ -233,9 +336,16 @@ const DepositForm: FC = () => {
         return;
       }
 
+      // ERC20 deposits require allowance.
+      if (!isNativeAsset && needsApproval) {
+        await handleApprove();
+        return;
+      }
+
       await executeDepositTx({
         token: asset.id,
         amount: amountBigInt,
+        lockDuration,
       });
 
       setValue('amount', '', { shouldValidate: false });
@@ -245,7 +355,28 @@ const DepositForm: FC = () => {
 
       refetchBalances();
     },
-    [asset, isReady, refetchBalances, executeDepositTx, setValue],
+    [
+      asset,
+      executeDepositTx,
+      handleApprove,
+      isNativeAsset,
+      isReady,
+      needsApproval,
+      refetchBalances,
+      setValue,
+    ],
+  );
+
+  const lockOptions = useMemo(
+    () =>
+      [
+        ['NONE', 'No lock'] as const,
+        ['ONE_MONTH', '1 month'] as const,
+        ['TWO_MONTHS', '2 months'] as const,
+        ['THREE_MONTHS', '3 months'] as const,
+        ['SIX_MONTHS', '6 months'] as const,
+      ] satisfies ReadonlyArray<readonly [LockDuration, string]>,
+    [],
   );
 
   return (
@@ -329,6 +460,28 @@ const DepositForm: FC = () => {
             <ErrorMessage>{errors.amount?.message}</ErrorMessage>
           </div>
 
+          <div className="flex items-center justify-between gap-3">
+            <Typography variant="body2" fw="semibold">
+              Lock
+            </Typography>
+
+            <Select
+              value={lockDuration}
+              onValueChange={(value) => setValue('lockDuration', value as LockDuration)}
+            >
+              <SelectTrigger className="w-[200px] bg-mono-0 dark:bg-mono-180 border border-mono-60 dark:border-mono-160 rounded-xl">
+                <SelectValue placeholder="No lock" />
+              </SelectTrigger>
+              <SelectContent>
+                {lockOptions.map(([value, label]) => (
+                  <SelectItem key={value} value={value}>
+                    {label}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+
           <Details />
 
           <ActionButtonBase>
@@ -356,12 +509,18 @@ const DepositForm: FC = () => {
               return (
                 <Button
                   isDisabled={!isValid || isDefined(displayError) || !isReady}
-                  type="submit"
+                  type={needsApproval ? 'button' : 'submit'}
                   isFullWidth
-                  isLoading={isTransacting || isLoading}
-                  loadingText={loadingText}
+                  isLoading={isTransacting || isLoading || isLoadingAllowance}
+                  loadingText={
+                    isLoadingAllowance ? 'Checking allowance' : loadingText
+                  }
+                  onClick={needsApproval ? handleApprove : undefined}
                 >
-                  {displayError ?? 'Deposit'}
+                  {displayError ??
+                    (needsApproval
+                      ? `Approve ${asset?.metadata.symbol ?? ''}`
+                      : 'Deposit')}
                 </Button>
               );
             }}

@@ -5,6 +5,7 @@
  */
 
 import type { Address } from 'viem';
+import type { LockDuration } from '@tangle-network/tangle-shared-ui/data/graphql/useDelegator';
 
 export type RewardVaultMap = {
   [vaultId: string]: string[] | null;
@@ -48,6 +49,7 @@ export type EvmDepositFormFields = {
   amount: string;
   sourceTypedChainId: number;
   depositAssetId: Address;
+  lockDuration: LockDuration;
 };
 
 export type EvmDelegationFormFields = {
