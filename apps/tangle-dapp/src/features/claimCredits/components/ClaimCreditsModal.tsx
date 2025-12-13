@@ -28,7 +28,7 @@ type Props = {
 };
 
 const ClaimCreditsModal: FC<Props> = ({ isOpen, setIsOpen }) => {
-  const { data, refetch, isPending } = useCredits();
+  const { data, refetch, isPending, isSupportedNetwork } = useCredits();
   const { execute, status } = useClaimCreditsTx();
   const [offchainAccountId, setOffchainAccountId] = useState('');
   const [inputError, setInputError] = useState('');
@@ -77,7 +77,20 @@ const ClaimCreditsModal: FC<Props> = ({ isOpen, setIsOpen }) => {
         </ModalHeader>
 
         <ModalBody className="p-4 space-y-6">
-          {isPending ? (
+          {!isSupportedNetwork ? (
+            <>
+              <Typography variant="body1" ta="center">
+                Credits are only available on Tangle EVM networks.
+              </Typography>
+              <Button
+                isFullWidth
+                variant="secondary"
+                onClick={() => setIsOpen(false)}
+              >
+                Close
+              </Button>
+            </>
+          ) : isPending ? (
             <Typography variant="body1" ta="center">
               Loading your available credits...
             </Typography>
@@ -137,7 +150,7 @@ const ClaimCreditsModal: FC<Props> = ({ isOpen, setIsOpen }) => {
 
               <Button
                 isFullWidth
-                isDisabled={!canClaim || isLoading}
+                isDisabled={!canClaim || isLoading || !execute}
                 isLoading={isLoading}
                 loadingText="Claiming credits..."
                 onClick={handleClaimCredits}

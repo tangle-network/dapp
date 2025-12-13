@@ -23,7 +23,7 @@ import { meetsMinimumClaimThreshold } from '../../../utils/creditConstraints';
 import CreditVelocityTooltip from './CreditVelocityTooltip';
 
 const ClaimCreditsButton = () => {
-  const { data, error, refetch, isPending } = useCredits();
+  const { data, error, refetch, isPending, isSupportedNetwork } = useCredits();
   const [offchainAccountId, setOffchainAccountId] = useState('');
   const [inputError, setInputError] = useState('');
 
@@ -43,20 +43,17 @@ const ClaimCreditsButton = () => {
     return meetsMinimumClaimThreshold(data?.amount);
   }, [data?.amount]);
 
-  // Hide if there's no data
-  if (data === undefined) {
-    return;
-  }
+  const isUnavailable = !isSupportedNetwork;
 
   return (
     <Dropdown>
       <DropdownButton
-        disabled={isPending || error !== null}
-        isHideArrowIcon={isPending || error !== null}
+        disabled={isPending || error !== null || isUnavailable}
+        isHideArrowIcon={isPending || error !== null || isUnavailable}
         icon={
           isPending ? (
             <Spinner size="lg" />
-          ) : error ? (
+          ) : error || isUnavailable ? (
             <CrossCircledIcon className="size-6" />
           ) : (
             <SparklingIcon size="md" />
@@ -66,13 +63,21 @@ const ClaimCreditsButton = () => {
         <span className="hidden sm:inline-block">
           {isPending
             ? 'Fetching credits...'
-            : error
-              ? error.name
-              : formattedCredits}
+            : isUnavailable
+              ? 'Credits unavailable'
+              : error
+                ? error.name
+                : formattedCredits}
         </span>
       </DropdownButton>
 
       <DropdownBody align="start" sideOffset={8} className="p-4 space-y-3">
+        {isUnavailable ? (
+          <Typography variant="body2" className="text-mono-120 dark:text-mono-80">
+            Credits are only available on Tangle EVM networks.
+          </Typography>
+        ) : null}
+
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             <Typography variant="body1" fw="bold">
@@ -194,7 +199,7 @@ const CreditsButton = ({
   return (
     <Button
       isFullWidth
-      isDisabled={!canClaim || isLoading || !offchainAccountId.trim()}
+      isDisabled={!canClaim || isLoading || execute === null || !offchainAccountId.trim()}
       onClick={handleClick}
       isLoading={isLoading}
     >
