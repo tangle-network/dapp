@@ -6,7 +6,9 @@ export default {
   plugins: {
     'postcss-import': {},
     'tailwindcss/nesting': {},
-    tailwindcss: {},
+    tailwindcss: {
+      config: './tailwind.config.ts',
+    },
     autoprefixer: {},
   },
 };

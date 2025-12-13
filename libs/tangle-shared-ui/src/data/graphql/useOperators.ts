@@ -176,6 +176,8 @@ export const useOperators = (options?: {
     queryFn: () => fetchOperators(network, status, limit, offset),
     enabled,
     staleTime: 30_000, // 30 seconds
+    refetchInterval: 30_000,
+    refetchIntervalInBackground: true,
   });
 };
 
@@ -200,6 +202,8 @@ export const useOperatorMap = (options?: {
     },
     enabled,
     staleTime: 30_000,
+    refetchInterval: 30_000,
+    refetchIntervalInBackground: true,
   });
 };
 

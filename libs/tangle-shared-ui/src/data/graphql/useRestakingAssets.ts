@@ -97,6 +97,8 @@ export const useRestakingAssets = (options?: {
     queryFn: () => fetchRestakingAssets(resolvedNetwork, enabledOnly),
     enabled,
     staleTime: 60_000, // 1 minute - assets don't change often
+    refetchInterval: 60_000,
+    refetchIntervalInBackground: true,
   });
 };
 
@@ -122,6 +124,8 @@ export const useRestakingAssetMap = (options?: {
     },
     enabled,
     staleTime: 60_000,
+    refetchInterval: 60_000,
+    refetchIntervalInBackground: true,
   });
 };
 

@@ -6,7 +6,12 @@
 
 import { useQuery } from '@tanstack/react-query';
 import { Address, zeroAddress } from 'viem';
-import { useAccount, useBalance, useChainId, usePublicClient } from 'wagmi';
+import {
+  useAccount,
+  useBalance,
+  useChainId,
+  usePublicClient,
+} from 'wagmi';
 import { getContractsByChainId } from '@tangle-network/dapp-config/contracts';
 import MULTI_ASSET_DELEGATION_ABI from '../../abi/multiAssetDelegation';
 import { CACHE_CONFIG } from '../../constants/cacheConfig';
@@ -75,10 +80,15 @@ export const useOnChainRestakeAssets = (options?: { enabled?: boolean }) => {
     refetch: refetchBalances,
   } = useBalance({
     address: userAddress,
-    enabled: Boolean(userAddress),
-    watch: Boolean(userAddress),
+    query: {
+      enabled: enabled && Boolean(userAddress),
+      refetchInterval: 10_000,
+      refetchIntervalInBackground: true,
+    },
   });
   const nativeBalance = nativeBalanceData?.value ?? BigInt(0);
+  const nativeSymbol = nativeBalanceData?.symbol ?? 'ETH';
+  const nativeDecimals = nativeBalanceData?.decimals ?? 18;
 
   // Build assets map - always include native ETH even if contract query fails
   // This ensures users can see/transfer their native balance in fallback mode
@@ -90,9 +100,9 @@ export const useOnChainRestakeAssets = (options?: { enabled?: boolean }) => {
       id: NATIVE_TOKEN_ADDRESS,
       metadata: {
         address: NATIVE_TOKEN_ADDRESS,
-        name: 'Ether',
-        symbol: 'ETH',
-        decimals: 18,
+        name: nativeSymbol,
+        symbol: nativeSymbol,
+        decimals: nativeDecimals,
       },
       balance: nativeBalance,
       restakingInfo: {

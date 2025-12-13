@@ -12,7 +12,18 @@ export type CardProps = ComponentBase & {
 const getVariantClass = (variant: CardVariant): string => {
   switch (variant) {
     case CardVariant.GLASS:
-      return 'p-6 rounded-2xl border border-mono-0 dark:border-mono-160 bg-glass dark:bg-glass_dark';
+      return [
+        'p-6 rounded-2xl',
+        // Softer “frosted” surface (color + highlight gradient) with true backdrop blur.
+        'border border-white/55 dark:border-white/10',
+        'bg-white/65 dark:bg-mono-200/40',
+        'bg-[linear-gradient(180deg,rgba(255,255,255,0.90)_0%,rgba(255,255,255,0.55)_100%)]',
+        'dark:bg-[linear-gradient(180deg,rgba(43,47,64,0.78)_0%,rgba(29,29,43,0.45)_100%)]',
+        'backdrop-blur-[18px]',
+        // Depth similar to the dashboard comps.
+        'shadow-[0_10px_60px_rgba(17,24,39,0.10)]',
+        'dark:shadow-[0_14px_70px_rgba(0,0,0,0.45)]',
+      ].join(' ');
     case CardVariant.DEFAULT:
       return '';
   }

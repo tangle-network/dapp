@@ -1,7 +1,3 @@
-// Import global styles.
-import '@tangle-network/ui-components/tailwind.css';
-import '../styles.css';
-
 import { Navigate, Route, Routes } from 'react-router';
 import Layout from '../containers/Layout';
 import DashboardPage from '../pages/dashboard';

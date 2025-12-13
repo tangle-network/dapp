@@ -63,6 +63,63 @@ export const useProtocolConfig = (options?: { enabled?: boolean }) => {
       }
 
       const contracts = getContractsByChainId(chainId);
+      const defaults = {
+        currentRound: BigInt(0),
+        roundDuration: BigInt(7200),
+        delegationBondLessDelay: BigInt(7),
+        leaveDelegatorsDelay: BigInt(7),
+        leaveOperatorsDelay: BigInt(7),
+      } satisfies ProtocolConfig;
+
+      const readDirect = async (
+        functionName:
+          | 'currentRound'
+          | 'roundDuration'
+          | 'delegationBondLessDelay'
+          | 'leaveDelegatorsDelay'
+          | 'leaveOperatorsDelay',
+      ): Promise<bigint> => {
+        return (await publicClient.readContract({
+          address: contracts.multiAssetDelegation,
+          abi: MULTI_ASSET_DELEGATION_ABI,
+          functionName,
+        })) as bigint;
+      };
+
+      // If multicall3 isn't configured for this chain, fall back to individual calls.
+      if (publicClient.chain?.contracts?.multicall3?.address === undefined) {
+        const [currentRound, roundDuration, delegationBondLessDelay, leaveDelegatorsDelay, leaveOperatorsDelay] =
+          await Promise.allSettled([
+            readDirect('currentRound'),
+            readDirect('roundDuration'),
+            readDirect('delegationBondLessDelay'),
+            readDirect('leaveDelegatorsDelay'),
+            readDirect('leaveOperatorsDelay'),
+          ]);
+
+        return {
+          currentRound:
+            currentRound.status === 'fulfilled'
+              ? currentRound.value
+              : defaults.currentRound,
+          roundDuration:
+            roundDuration.status === 'fulfilled'
+              ? roundDuration.value
+              : defaults.roundDuration,
+          delegationBondLessDelay:
+            delegationBondLessDelay.status === 'fulfilled'
+              ? delegationBondLessDelay.value
+              : defaults.delegationBondLessDelay,
+          leaveDelegatorsDelay:
+            leaveDelegatorsDelay.status === 'fulfilled'
+              ? leaveDelegatorsDelay.value
+              : defaults.leaveDelegatorsDelay,
+          leaveOperatorsDelay:
+            leaveOperatorsDelay.status === 'fulfilled'
+              ? leaveOperatorsDelay.value
+              : defaults.leaveOperatorsDelay,
+        } satisfies ProtocolConfig;
+      }
 
       // Multicall to fetch all config values at once
       const results = await publicClient.multicall({
@@ -104,27 +161,54 @@ export const useProtocolConfig = (options?: { enabled?: boolean }) => {
         );
       }
 
+      // If multicall returned failures (e.g. broken multicall3), attempt direct reads for missing values.
+      const directResults = await Promise.allSettled(
+        [
+          results[0].status === 'failure' ? readDirect('currentRound') : null,
+          results[1].status === 'failure' ? readDirect('roundDuration') : null,
+          results[2].status === 'failure'
+            ? readDirect('delegationBondLessDelay')
+            : null,
+          results[3].status === 'failure'
+            ? readDirect('leaveDelegatorsDelay')
+            : null,
+          results[4].status === 'failure'
+            ? readDirect('leaveOperatorsDelay')
+            : null,
+        ].map((p) => p ?? Promise.resolve(null)),
+      );
+
       return {
         currentRound:
           results[0].status === 'success'
             ? (results[0].result as bigint)
-            : BigInt(0),
+            : directResults[0].status === 'fulfilled' && directResults[0].value
+              ? (directResults[0].value as bigint)
+              : defaults.currentRound,
         roundDuration:
           results[1].status === 'success'
             ? (results[1].result as bigint)
-            : BigInt(7200),
+            : directResults[1].status === 'fulfilled' && directResults[1].value
+              ? (directResults[1].value as bigint)
+              : defaults.roundDuration,
         delegationBondLessDelay:
           results[2].status === 'success'
             ? (results[2].result as bigint)
-            : BigInt(7),
+            : directResults[2].status === 'fulfilled' && directResults[2].value
+              ? (directResults[2].value as bigint)
+              : defaults.delegationBondLessDelay,
         leaveDelegatorsDelay:
           results[3].status === 'success'
             ? (results[3].result as bigint)
-            : BigInt(7),
+            : directResults[3].status === 'fulfilled' && directResults[3].value
+              ? (directResults[3].value as bigint)
+              : defaults.leaveDelegatorsDelay,
         leaveOperatorsDelay:
           results[4].status === 'success'
             ? (results[4].result as bigint)
-            : BigInt(7),
+            : directResults[4].status === 'fulfilled' && directResults[4].value
+              ? (directResults[4].value as bigint)
+              : defaults.leaveOperatorsDelay,
       } satisfies ProtocolConfig;
     },
     enabled: enabled && !!publicClient,

@@ -300,6 +300,8 @@ export const useDelegator = (
     // Only query if indexer is healthy
     enabled: enabled && !!address && shouldQuery,
     staleTime: 15_000, // 15 seconds - delegator data changes more frequently
+    refetchInterval: 15_000,
+    refetchIntervalInBackground: true,
     retry: 2, // Reduce retries since we already check health
   });
 

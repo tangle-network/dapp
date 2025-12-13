@@ -4,9 +4,9 @@
  * Handles indexer unavailability gracefully.
  */
 
-import { useEffect, useMemo } from 'react';
+import { useMemo } from 'react';
 import { Address } from 'viem';
-import { useAccount, useBlockNumber } from 'wagmi';
+import { useAccount } from 'wagmi';
 import {
   useRestakeAssets,
   type RestakeAssetMap,
@@ -85,11 +85,6 @@ export const useRestakingData = (
   // Get indexer status
   const { isHealthy, isCheckingHealth, dataSource } =
     useIndexerStatusStandalone();
-  const { data: latestBlockNumber } = useBlockNumber({
-    watch: true,
-    enabled,
-    scopeKey: 'restaking-data',
-  });
 
   // Fetch assets (has on-chain fallback)
   const {
@@ -148,27 +143,6 @@ export const useRestakingData = (
       refetchRestakingAssetsInternal(),
     ]);
   };
-
-  // Subscribe to new blocks and refresh restake data so the dashboard stays live
-  useEffect(() => {
-    if (!enabled || latestBlockNumber === undefined) return;
-    void refetchAssetsInternal();
-    if (shouldFetchDelegator) {
-      void refetchDelegatorInternal();
-    }
-    if (isHealthy && !isCheckingHealth) {
-      void refetchRestakingAssetsInternal();
-    }
-  }, [
-    enabled,
-    latestBlockNumber,
-    refetchAssetsInternal,
-    refetchDelegatorInternal,
-    refetchRestakingAssetsInternal,
-    shouldFetchDelegator,
-    isHealthy,
-    isCheckingHealth,
-  ]);
 
   return {
     // Assets

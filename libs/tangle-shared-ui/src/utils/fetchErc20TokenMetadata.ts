@@ -65,16 +65,34 @@ const fetchErc20TokenMetadata = async (
       const symbolResult = results[baseIndex + 1];
       const decimalsResult = results[baseIndex + 2];
 
-      // Report failures and skip this token.
-      if (nameResult?.error || symbolResult?.error || decimalsResult?.error) {
+      const hasFailure =
+        nameResult?.status === 'failure' ||
+        symbolResult?.status === 'failure' ||
+        decimalsResult?.status === 'failure';
+
+      // If multicall returns failures (including a broken multicall3), fall back to individual calls for this token.
+      if (hasFailure) {
         console.warn(
           `Failed to fetch complete ERC20 token metadata for address ${id} (chain: ${viemPublicClient.chain?.name})`,
           {
-            nameError: nameResult?.error,
-            symbolError: symbolResult?.error,
-            decimalsError: decimalsResult?.error,
+            nameError: nameResult?.status === 'failure' ? nameResult.error : null,
+            symbolError:
+              symbolResult?.status === 'failure' ? symbolResult.error : null,
+            decimalsError:
+              decimalsResult?.status === 'failure'
+                ? decimalsResult.error
+                : null,
           },
         );
+
+        const fallback = await fetchErc20TokenMetadataWithIndividualCalls(
+          viemPublicClient,
+          [id],
+        );
+
+        if (fallback.length > 0) {
+          metadatas.push(fallback[0]);
+        }
 
         continue;
       }
@@ -110,7 +128,10 @@ const fetchErc20TokenMetadata = async (
       multicallError,
     );
 
-    return [];
+    return fetchErc20TokenMetadataWithIndividualCalls(
+      viemPublicClient,
+      contractAddresses,
+    );
   }
 };
 

@@ -7,7 +7,12 @@
 import { useQuery } from '@tanstack/react-query';
 import { useEffect, useMemo } from 'react';
 import { Address, erc20Abi, zeroAddress } from 'viem';
-import { useAccount, useBalance, useChainId, usePublicClient } from 'wagmi';
+import {
+  useAccount,
+  useBalance,
+  useChainId,
+  usePublicClient,
+} from 'wagmi';
 import { useRestakingAssets } from './useRestakingAssets';
 import type { RestakeAsset } from '../restake/types';
 import { EnvioNetwork } from '../../utils/executeEnvioGraphQL';
@@ -57,8 +62,10 @@ export const useRestakeAssets = (options?: {
     refetch: refetchNativeBalance,
   } = useBalance({
     address: userAddress,
-    enabled: Boolean(userAddress),
-    watch: Boolean(userAddress),
+    query: {
+      enabled: Boolean(userAddress),
+      refetchInterval: 15_000,
+    },
   });
   const nativeBalance = nativeBalanceData?.value ?? BigInt(0);
   const nativeDecimals = nativeBalanceData?.decimals ?? 18;
@@ -156,6 +163,34 @@ export const useRestakeAssets = (options?: {
       }
 
       try {
+        // If multicall3 isn't configured for this chain, fall back to individual calls.
+        if (publicClient.chain?.contracts?.multicall3?.address === undefined) {
+          const fallbackBalances = new Map<Address, bigint>();
+          await Promise.allSettled(
+            erc20TokenAddresses.map(async (token) => {
+              try {
+                const balance = (await publicClient.readContract({
+                  address: token,
+                  abi: erc20Abi,
+                  functionName: 'balanceOf',
+                  args: [userAddress],
+                })) as bigint;
+                fallbackBalances.set(token, balance);
+              } catch (fallbackError) {
+                console.warn(
+                  '[useRestakeAssets] Failed to fetch balance via direct call.',
+                  {
+                    token,
+                    fallbackError,
+                  },
+                );
+                fallbackBalances.set(token, BigInt(0));
+              }
+            }),
+          );
+          return fallbackBalances;
+        }
+
         // Use multicall to fetch all ERC20 balances at once
         const calls = erc20TokenAddresses.map((token) => ({
           address: token,
@@ -166,15 +201,50 @@ export const useRestakeAssets = (options?: {
 
         const results = await publicClient.multicall({ contracts: calls });
         const balanceMap = new Map<Address, bigint>();
+        const failedTokens: Address[] = [];
 
         results.forEach((result, index) => {
           const token = erc20TokenAddresses[index];
           if (result.status === 'success') {
             balanceMap.set(token, result.result as bigint);
           } else {
-            balanceMap.set(token, BigInt(0));
+            failedTokens.push(token);
           }
         });
+
+        if (failedTokens.length > 0) {
+          console.warn(
+            '[useRestakeAssets] Multicall returned failures for balances; falling back to individual balanceOf calls.',
+            {
+              chainId: publicClient.chain?.id,
+              failedCount: failedTokens.length,
+              totalCount: erc20TokenAddresses.length,
+            },
+          );
+
+          await Promise.allSettled(
+            failedTokens.map(async (token) => {
+              try {
+                const balance = (await publicClient.readContract({
+                  address: token,
+                  abi: erc20Abi,
+                  functionName: 'balanceOf',
+                  args: [userAddress],
+                })) as bigint;
+                balanceMap.set(token, balance);
+              } catch (fallbackError) {
+                console.warn(
+                  '[useRestakeAssets] Failed to fetch balance via direct call.',
+                  {
+                    token,
+                    fallbackError,
+                  },
+                );
+                balanceMap.set(token, BigInt(0));
+              }
+            }),
+          );
+        }
 
         return balanceMap;
       } catch (error) {
@@ -364,8 +434,10 @@ export const useNativeBalance = () => {
   const { address } = useAccount();
   const { data, isLoading, refetch } = useBalance({
     address,
-    enabled: Boolean(address),
-    watch: Boolean(address),
+    query: {
+      enabled: Boolean(address),
+      refetchInterval: 15_000,
+    },
   });
 
   return {

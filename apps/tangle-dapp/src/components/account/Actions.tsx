@@ -10,8 +10,11 @@ const Actions: FC = () => {
   const chainId = useChainId();
   const { data: balance } = useBalance({
     address,
-    enabled: Boolean(address),
-    watch: Boolean(address),
+    query: {
+      enabled: Boolean(address),
+      refetchInterval: 10_000,
+      refetchIntervalInBackground: true,
+    },
   });
   const [isTransferModalOpen, setIsTransferModalOpen] = useState(false);
 
