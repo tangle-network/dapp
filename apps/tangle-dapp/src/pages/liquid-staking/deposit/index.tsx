@@ -12,8 +12,8 @@ import { useModal } from '@tangle-network/ui-components/hooks/useModal';
 import { Typography } from '@tangle-network/ui-components/typography/Typography';
 import { FC, useCallback, useEffect, useMemo, useRef } from 'react';
 import { SubmitHandler, useForm } from 'react-hook-form';
-import { parseUnits, formatUnits, Address } from 'viem';
-import { useAccount, useChainId } from 'wagmi';
+import { erc20Abi, maxUint256, parseUnits, formatUnits, Address } from 'viem';
+import { useAccount, useChainId, useReadContract } from 'wagmi';
 import ErrorMessage from '../../../components/ErrorMessage';
 import ActionButtonBase from '../../../components/restaking/ActionButtonBase';
 import StyleContainer from '../../../components/restaking/StyleContainer';
@@ -30,6 +30,7 @@ import {
   type LiquidDelegationVault,
 } from '@tangle-network/tangle-shared-ui/data/liquidDelegation';
 import { useRestakeAssets } from '@tangle-network/tangle-shared-ui/data/graphql';
+import { useContractWrite } from '@tangle-network/tangle-shared-ui/data/tx';
 import { TxStatus } from '@tangle-network/tangle-shared-ui/hooks/useContractWrite';
 import filterBy from '@tangle-network/tangle-shared-ui/utils/filterBy';
 import { chainsConfig } from '@tangle-network/dapp-config/chains';
@@ -114,6 +115,67 @@ const LiquidStakingDepositForm: FC = () => {
     return assets.get(selectedVault.asset) ?? null;
   }, [selectedVault, assets]);
 
+  const parsedAmount = useMemo(() => {
+    if (!vaultAsset || !amount) return null;
+    try {
+      const value = parseUnits(amount, vaultAsset.metadata.decimals);
+      return value > BigInt(0) ? value : null;
+    } catch {
+      return null;
+    }
+  }, [amount, vaultAsset]);
+
+  const spender = selectedVault?.address ?? null;
+
+  const {
+    data: allowance,
+    isLoading: isLoadingAllowance,
+    refetch: refetchAllowance,
+  } = useReadContract({
+    address: vaultAsset?.id,
+    abi: erc20Abi,
+    functionName: 'allowance',
+    args:
+      userAddress && spender
+        ? ([userAddress, spender] as const)
+        : undefined,
+    query: {
+      enabled: Boolean(userAddress) && Boolean(spender) && Boolean(vaultAsset) && parsedAmount !== null,
+      staleTime: 10_000,
+      refetchInterval: 30_000,
+      refetchIntervalInBackground: true,
+    },
+  });
+
+  const needsApproval =
+    parsedAmount !== null &&
+    spender !== null &&
+    typeof allowance === 'bigint' &&
+    allowance < parsedAmount;
+
+  const { status: approveTxStatus, execute: executeApproveTx } = useContractWrite(
+    erc20Abi,
+    (ctx: { token: Address; spender: Address }) => ({
+      address: ctx.token,
+      abi: erc20Abi,
+      functionName: 'approve' as const,
+      args: [ctx.spender, maxUint256] as const,
+    }),
+    { getSuccessMessage: () => `Approval successful` },
+  );
+
+  const handleApprove = useCallback(async () => {
+    if (!vaultAsset || !spender || !executeApproveTx) {
+      return;
+    }
+    if (parsedAmount === null) {
+      return;
+    }
+
+    await executeApproveTx({ token: vaultAsset.id, spender });
+    await refetchAllowance();
+  }, [executeApproveTx, parsedAmount, refetchAllowance, spender, vaultAsset]);
+
   const { maxAmount, formattedMaxAmount } = useMemo(() => {
     if (!vaultAsset) {
       return { maxAmount: undefined, formattedMaxAmount: undefined };
@@ -167,12 +229,14 @@ const LiquidStakingDepositForm: FC = () => {
   );
 
   const isTransacting = isSubmitting || depositStatus === TxStatus.PROCESSING;
+  const isApproving = approveTxStatus === TxStatus.PROCESSING;
 
   const isReady =
     executeDeposit !== null &&
     selectedVault !== null &&
     userAddress !== undefined &&
-    !isTransacting;
+    !isTransacting &&
+    !isApproving;
 
   const onSubmit = useCallback<SubmitHandler<DepositFormFields>>(
     async ({ vaultAddress: vault, amount }) => {
@@ -186,6 +250,11 @@ const LiquidStakingDepositForm: FC = () => {
         return;
       }
 
+      if (needsApproval) {
+        await handleApprove();
+        return;
+      }
+
       await executeDeposit({
         vaultAddress: vault,
         amount: amountBigInt,
@@ -196,10 +265,12 @@ const LiquidStakingDepositForm: FC = () => {
       refetchBalances();
     },
     [
+      handleApprove,
       isReady,
       userAddress,
       vaultAsset,
       executeDeposit,
+      needsApproval,
       setValue,
       refetchBalances,
     ],
@@ -325,19 +396,22 @@ const LiquidStakingDepositForm: FC = () => {
                 );
               }
 
-              return (
-                <Button
-                  isDisabled={!isValid || isDefined(displayError) || !isReady}
-                  type="submit"
-                  isFullWidth
-                  isLoading={isTransacting || isLoading}
-                  loadingText={loadingText}
-                >
-                  {displayError ?? 'Deposit'}
-                </Button>
-              );
-            }}
-          </ActionButtonBase>
+                return (
+                  <Button
+                    isDisabled={!isValid || isDefined(displayError) || !isReady}
+                    type={needsApproval ? 'button' : 'submit'}
+                    isFullWidth
+                    isLoading={
+                      isTransacting || isApproving || isLoading || isLoadingAllowance
+                    }
+                    loadingText={loadingText}
+                    onClick={needsApproval ? handleApprove : undefined}
+                  >
+                    {displayError ?? (needsApproval ? 'Approve' : 'Deposit')}
+                  </Button>
+                );
+              }}
+            </ActionButtonBase>
         </form>
       </Card>
 

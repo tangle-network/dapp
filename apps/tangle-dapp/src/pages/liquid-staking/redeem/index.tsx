@@ -12,7 +12,7 @@ import { Typography } from '@tangle-network/ui-components/typography/Typography'
 import { FC, useCallback, useEffect, useMemo, useRef } from 'react';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import { parseUnits, formatUnits, Address } from 'viem';
-import { useAccount } from 'wagmi';
+import { useAccount, useReadContracts } from 'wagmi';
 import ErrorMessage from '../../../components/ErrorMessage';
 import ActionButtonBase from '../../../components/restaking/ActionButtonBase';
 import StyleContainer from '../../../components/restaking/StyleContainer';
@@ -29,9 +29,14 @@ import {
   useVaultUserPosition,
   type LiquidDelegationVault,
 } from '@tangle-network/tangle-shared-ui/data/liquidDelegation';
-import { useRestakeAssets } from '@tangle-network/tangle-shared-ui/data/graphql';
+import {
+  useLiquidRedeemRequests,
+  useRestakeAssets,
+} from '@tangle-network/tangle-shared-ui/data/graphql';
 import { TxStatus } from '@tangle-network/tangle-shared-ui/hooks/useContractWrite';
 import filterBy from '@tangle-network/tangle-shared-ui/utils/filterBy';
+import LIQUID_DELEGATION_VAULT_ABI from '@tangle-network/tangle-shared-ui/abi/liquidDelegationVault';
+import { useVaultRedeem } from '@tangle-network/tangle-shared-ui/data/liquidDelegation';
 
 type RedeemFormFields = {
   vaultAddress: Address;
@@ -47,6 +52,7 @@ const LiquidStakingRedeemForm: FC = () => {
   const { assets } = useRestakeAssets();
   const { status: redeemStatus, execute: executeRedeem } =
     useVaultRequestRedeem();
+  const { status: claimStatus, execute: executeClaim } = useVaultRedeem();
 
   const {
     register,
@@ -103,6 +109,42 @@ const LiquidStakingRedeemForm: FC = () => {
   }, [vaults, vaultAddress]);
 
   const { position } = useVaultUserPosition(selectedVault?.address);
+
+  const {
+    data: redeemRequests = [],
+    refetch: refetchRedeemRequests,
+  } = useLiquidRedeemRequests(userAddress, selectedVault?.address);
+
+  const claimableContracts = useMemo(() => {
+    if (!selectedVault || redeemRequests.length === 0) return [];
+    return redeemRequests.map((req) => ({
+      address: selectedVault.address,
+      abi: LIQUID_DELEGATION_VAULT_ABI,
+      functionName: 'claimableRedeemRequest' as const,
+      args: [req.requestId, req.controller] as const,
+    }));
+  }, [redeemRequests, selectedVault]);
+
+  const { data: claimableResults } = useReadContracts({
+    contracts: claimableContracts,
+    query: {
+      enabled: claimableContracts.length > 0,
+      staleTime: 15_000,
+      refetchInterval: 15_000,
+      refetchIntervalInBackground: true,
+    },
+  });
+
+  const claimableByRequestId = useMemo(() => {
+    const map = new Map<string, bigint>();
+    if (!claimableResults) return map;
+    claimableResults.forEach((res, idx) => {
+      const req = redeemRequests[idx];
+      if (!req || res?.status !== 'success') return;
+      map.set(req.id, res.result as bigint);
+    });
+    return map;
+  }, [claimableResults, redeemRequests]);
 
   const vaultAsset = useMemo(() => {
     if (!selectedVault || !assets) {
@@ -162,6 +204,7 @@ const LiquidStakingRedeemForm: FC = () => {
   );
 
   const isTransacting = isSubmitting || redeemStatus === TxStatus.PROCESSING;
+  const isClaiming = claimStatus === TxStatus.PROCESSING;
 
   const isReady =
     executeRedeem !== null &&
@@ -344,6 +387,74 @@ const LiquidStakingRedeemForm: FC = () => {
           </ActionButtonBase>
         </form>
       </Card>
+
+      {selectedVault && (
+        <Card withShadow tightPadding className="md:min-w-[512px]">
+          <div className="flex items-center justify-between">
+            <Typography variant="h5" fw="bold">
+              Pending Redeem Requests
+            </Typography>
+          </div>
+
+          {redeemRequests.length === 0 ? (
+            <Typography
+              variant="body2"
+              className="text-mono-120 dark:text-mono-100 mt-2"
+            >
+              No pending requests for this vault.
+            </Typography>
+          ) : (
+            <div className="mt-3 space-y-2">
+              {redeemRequests.map((req) => {
+                const claimableShares =
+                  claimableByRequestId.get(req.id) ?? BigInt(0);
+                const isReadyToClaim = claimableShares > BigInt(0);
+                return (
+                  <div
+                    key={req.id}
+                    className="flex items-center justify-between p-3 border rounded-lg border-mono-60 dark:border-mono-140"
+                  >
+                    <div className="flex flex-col">
+                      <Typography variant="body2" fw="semibold">
+                        {formatUnits(req.shares, 18)} shares
+                      </Typography>
+                      <Typography
+                        variant="body3"
+                        className="text-mono-120 dark:text-mono-100"
+                      >
+                        {isReadyToClaim
+                          ? 'Ready to claim'
+                          : 'Waiting for undelegate delay'}
+                      </Typography>
+                    </div>
+
+                    <Button
+                      size="sm"
+                      isDisabled={!isReadyToClaim || !executeClaim || isClaiming}
+                      isLoading={isClaiming}
+                      onClick={async () => {
+                        if (!executeClaim || !userAddress) return;
+                        await executeClaim({
+                          vaultAddress: selectedVault.address,
+                          shares: claimableShares,
+                          receiver: userAddress,
+                          controller: req.controller,
+                        });
+                        await Promise.all([
+                          refetchRedeemRequests(),
+                          // The user's vault share balance changes; let the existing hooks refresh.
+                        ]);
+                      }}
+                    >
+                      Redeem
+                    </Button>
+                  </div>
+                );
+              })}
+            </div>
+          )}
+        </Card>
+      )}
 
       <ListModal
         title="Select Vault"

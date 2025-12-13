@@ -30,6 +30,12 @@ export {
   type BlueprintSelectionMode,
 } from './useDelegator';
 
+// Liquid delegation (ERC7540) redeem requests
+export {
+  useLiquidRedeemRequests,
+  type LiquidRedeemRequest,
+} from './useLiquidRedeemRequests';
+
 // Restaking Assets
 export {
   useRestakingAssets,
