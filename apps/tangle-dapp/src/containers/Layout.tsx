@@ -8,6 +8,7 @@ import {
 } from '@tangle-network/ui-components/constants';
 import { type FC, type PropsWithChildren } from 'react';
 import { MobileSidebar, Sidebar } from '../components';
+import LocalEnvBanner from '../components/LocalEnvBanner';
 import DebugMetrics from './DebugMetrics';
 import TopNavigationPanel from './TopNavigationPanel';
 
@@ -45,6 +46,7 @@ const Layout: FC<PropsWithChildren<LayoutProps>> = ({
               <TopNavigationPanel />
             </div>
 
+            {!import.meta.env.PROD && <LocalEnvBanner />}
             {children}
           </div>
 
