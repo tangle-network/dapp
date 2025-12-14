@@ -38,11 +38,10 @@ export const LOCAL_CONTRACTS: ContractAddresses = {
   multiAssetDelegation: '0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512',
   masterBlueprintServiceManager: '0xa513E6E4b8f2a923D98304ec87F64353C4D5C853',
   operatorStatusRegistry: '0xDc64a140Aa3E981100a9becA4E685f962f0cF6C9',
-  // Placeholder addresses - not deployed locally yet
-  rewardVaults: '0x0000000000000000000000451234512121212444',
-  inflationPool: '0x0000000000000000000000551234512345123555',
+  rewardVaults: '0x0DCd1Bf9A1b36cE34237eEaFef220932846BCD82',
+  inflationPool: '0x0B306BF915C4d645ff596e518fAf3F9669b97016',
   credits: '0x0000000000000000000000651234512121212666',
-  liquidDelegationFactory: '0x0000000000000000000000000000000000000101',
+  liquidDelegationFactory: '0x4A679253410272dd5232B3Ff7cF5dbB88f295319',
 };
 
 // Base Sepolia testnet addresses (local development)
