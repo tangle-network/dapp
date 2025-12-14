@@ -1288,7 +1288,7 @@ show_addresses() {
     echo ""
     echo "Migration Contracts:"
     echo "  - TangleMigration:      ${TANGLE_MIGRATION_ADDRESS:-Not deployed}"
-    echo "  - TNT Token:            ${TNT_TOKEN_ADDRESS:-Not deployed}"
+    echo "  - TNT Token:            ${MIGRATION_TNT_TOKEN_ADDRESS:-Not deployed}"
     echo ""
     echo "Token Addresses:"
     [[ -n "${USDC_ADDRESS:-}" ]] && echo "  - USDC:   $USDC_ADDRESS"
@@ -1389,13 +1389,66 @@ PY
 
     # Use anvil_setBalance to set ETH balance
     log_info "Setting ETH balance to $eth_amount ETH..."
-    curl -s http://127.0.0.1:$ANVIL_PORT -X POST -H "Content-Type: application/json" \
-        --data "{\"jsonrpc\":\"2.0\",\"method\":\"anvil_setBalance\",\"params\":[\"$target_address\", \"$eth_wei\"],\"id\":1}" > /dev/null
+    local set_response
+    set_response="$(
+        curl -s http://127.0.0.1:$ANVIL_PORT -X POST -H "Content-Type: application/json" \
+            --data "{\"jsonrpc\":\"2.0\",\"method\":\"anvil_setBalance\",\"params\":[\"$target_address\", \"$eth_wei\"],\"id\":1}"
+    )"
 
-    if [[ $? -eq 0 ]]; then
-        log_success "ETH balance set to $eth_amount ETH"
+    local set_error
+    set_error="$(
+        python3 - "$set_response" <<'PY'
+import json, sys
+try:
+    payload = json.loads(sys.argv[1])
+except Exception:
+    print("invalid_json")
+    raise SystemExit(0)
+
+err = payload.get("error")
+if not err:
+    print("")
+    raise SystemExit(0)
+
+msg = err.get("message") if isinstance(err, dict) else str(err)
+print(msg or "unknown_error")
+PY
+    )"
+
+    if [[ -n "$set_error" ]]; then
+        log_error "Failed to set ETH balance: $set_error"
     else
-        log_error "Failed to set ETH balance"
+        log_success "ETH balance set to $eth_amount ETH"
+    fi
+
+    local balance_hex
+    balance_hex="$(
+        curl -s http://127.0.0.1:$ANVIL_PORT -X POST -H "Content-Type: application/json" \
+            --data "{\"jsonrpc\":\"2.0\",\"method\":\"eth_getBalance\",\"params\":[\"$target_address\",\"latest\"],\"id\":1}" \
+        | python3 - <<'PY'
+import json, sys
+try:
+    payload = json.load(sys.stdin)
+    print(payload.get("result", ""))
+except Exception:
+    print("")
+PY
+    )"
+
+    if [[ -n "$balance_hex" ]]; then
+        local balance_eth
+        balance_eth="$(
+            python3 - "$balance_hex" <<'PY'
+import sys
+from decimal import Decimal, getcontext
+
+getcontext().prec = 80
+wei = int(sys.argv[1], 16)
+eth = Decimal(wei) / (Decimal(10) ** 18)
+print(f"{eth:f}")
+PY
+        )"
+        log_info "ETH balance on RPC: $balance_eth"
     fi
 
     # Transfer ERC20 tokens using the activity generator
@@ -1473,7 +1526,7 @@ console.log('Done!');
     log_success "Account funded: $target_address"
     echo ""
     echo "Balances:"
-    echo "  - ETH: $eth_amount"
+    [[ -n "${balance_eth:-}" ]] && echo "  - ETH: $balance_eth" || echo "  - ETH: $eth_amount"
     [[ -n "${TNT_TOKEN_ADDRESS:-}" ]] && echo "  - TNT: 100,000"
     [[ -n "${USDC_ADDRESS:-}" ]] && echo "  - USDC: 100,000"
     [[ -n "${USDT_ADDRESS:-}" ]] && echo "  - USDT: 100,000"
