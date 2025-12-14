@@ -1511,18 +1511,14 @@ PY
     fi
 
     local balance_hex
+    set +e
     balance_hex="$(
         curl -s http://127.0.0.1:$ANVIL_PORT -X POST -H "Content-Type: application/json" \
             --data "{\"jsonrpc\":\"2.0\",\"method\":\"eth_getBalance\",\"params\":[\"$target_address\",\"latest\"],\"id\":1}" \
-        | python3 - <<'PY'
-import json, sys
-try:
-    payload = json.load(sys.stdin)
-    print(payload.get("result", ""))
-except Exception:
-    print("")
-PY
+            2>/dev/null \
+        | sed -n 's/.*"result":"\\([^"]*\\)".*/\\1/p'
     )"
+    set -e
 
     if [[ -n "$balance_hex" ]]; then
         local balance_eth
