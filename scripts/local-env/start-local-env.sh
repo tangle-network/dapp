@@ -573,9 +573,30 @@ deploy_contracts() {
     export STETH_ADDRESS=$(grep "stETH:" /tmp/deploy.log | head -1 | grep -oE '0x[a-fA-F0-9]{40}' || echo "")
     export WSTETH_ADDRESS=$(grep "wstETH:" /tmp/deploy.log | head -1 | grep -oE '0x[a-fA-F0-9]{40}' || echo "")
     export EIGEN_ADDRESS=$(grep "EIGEN:" /tmp/deploy.log | head -1 | grep -oE '0x[a-fA-F0-9]{40}' || echo "")
-    export TNT_TOKEN_ADDRESS=$(grep -E "TangleToken \\(bond asset\\):" /tmp/deploy.log | tail -1 | grep -oE '0x[a-fA-F0-9]{40}' || echo "")
-    if [[ -z "$TNT_TOKEN_ADDRESS" ]]; then
-        TNT_TOKEN_ADDRESS=$(grep -E "Using existing TangleToken \\(bond asset\\):" /tmp/deploy.log | tail -1 | grep -oE '0x[a-fA-F0-9]{40}' || echo "")
+    # Resolve TNT token from on-chain config (preferred) to avoid log parsing issues.
+    # Tangle.operatorBondToken() is the canonical source of truth.
+    local resolved_tnt=""
+    if command -v cast >/dev/null 2>&1; then
+        resolved_tnt="$(cast call --rpc-url "http://127.0.0.1:$ANVIL_PORT" "$TANGLE_PROXY" "operatorBondToken()(address)" 2>/dev/null | tail -n 1 || true)"
+    fi
+    if [[ -n "$resolved_tnt" && "$resolved_tnt" =~ ^0x[a-fA-F0-9]{40}$ ]]; then
+        export TNT_TOKEN_ADDRESS="$resolved_tnt"
+    else
+        export TNT_TOKEN_ADDRESS=$(grep -E "TangleToken \\(bond asset\\):" /tmp/deploy.log | tail -1 | grep -oE '0x[a-fA-F0-9]{40}' || echo "")
+        if [[ -z "$TNT_TOKEN_ADDRESS" ]]; then
+            TNT_TOKEN_ADDRESS=$(grep -E "Using existing TangleToken \\(bond asset\\):" /tmp/deploy.log | tail -1 | grep -oE '0x[a-fA-F0-9]{40}' || echo "")
+        fi
+    fi
+
+    # Sanity-check that TNT_TOKEN_ADDRESS actually has code.
+    if [[ -n "${TNT_TOKEN_ADDRESS:-}" ]]; then
+        local tnt_code=$(curl -s http://127.0.0.1:$ANVIL_PORT -X POST -H "Content-Type: application/json" \
+            --data "{\"jsonrpc\":\"2.0\",\"method\":\"eth_getCode\",\"params\":[\"$TNT_TOKEN_ADDRESS\", \"latest\"],\"id\":1}" \
+            | grep -o '"result":"[^"]*"' | cut -d'"' -f4)
+        if [[ -z "$tnt_code" || "$tnt_code" == "0x" ]]; then
+            log_warn "Detected TNT token address has no code: $TNT_TOKEN_ADDRESS (will not fund TNT)"
+            export TNT_TOKEN_ADDRESS=""
+        fi
     fi
 
     if [[ -n "$USDC_ADDRESS" ]]; then
