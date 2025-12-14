@@ -448,8 +448,19 @@ deploy_multicall3() {
     local code=$(echo "$response" | sed -n 's/.*"result":"\([^"]*\)".*/\1/p')
 
     if [[ "$code" != "0x" && -n "$code" && ${#code} -gt 10 ]]; then
-        log_info "Multicall3 already deployed at $MULTICALL3_ADDRESS"
-        return 0
+        # aggregate3((address,bool,bytes)[]) selector = 0x82ad56cb
+        # abi.encode(empty array) = offset(0x20) + length(0)
+        local probe="0x82ad56cb00000000000000000000000000000000000000000000000000000000000000200000000000000000000000000000000000000000000000000000000000000000"
+        local probe_resp
+        probe_resp=$(curl -s http://127.0.0.1:$ANVIL_PORT -X POST -H "Content-Type: application/json" \
+            --data "{\"jsonrpc\":\"2.0\",\"method\":\"eth_call\",\"params\":[{\"to\":\"$MULTICALL3_ADDRESS\",\"data\":\"$probe\"},\"latest\"],\"id\":1}")
+
+        if echo "$probe_resp" | grep -q '"result"'; then
+            log_info "Multicall3 already deployed at $MULTICALL3_ADDRESS"
+            return 0
+        fi
+
+        log_warn "Multicall3 code present but not functional; re-injecting runtime bytecode..."
     fi
 
     log_info "Deploying Multicall3 at $MULTICALL3_ADDRESS..."
@@ -458,9 +469,51 @@ deploy_multicall3() {
     # Using a minimal subset that includes aggregate3 function
     local MULTICALL3_BYTECODE="0x6080604052600436106100f35760003560e01c80634d2301cc1161008a578063a8b0574e11610059578063a8b0574e1461025a578063bce38bd714610275578063c3077fa914610288578063ee82ac5e1461029b57600080fd5b80634d2301cc146101ec57806372425d9d1461022157806382ad56cb1461023457806386d516e81461024757600080fd5b80633408e470116100c65780633408e47014610191578063399542e9146101a45780633e64a696146101c657806342cbb15c146101d957600080fd5b80630f28c97d146100f8578063174dea711461011a578063252dba421461013a57806327e86d6e1461015b575b600080fd5b34801561010457600080fd5b50425b6040519081526020015b60405180910390f35b61012d610128366004610a85565b6102ba565b6040516101119190610bbe565b61014d610148366004610a85565b6104ef565b604051610111929190610bd8565b34801561016757600080fd5b50437fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff0140610107565b34801561019d57600080fd5b5046610107565b6101b76101b2366004610c60565b610690565b60405161011193929190610cba565b3480156101d257600080fd5b5048610107565b3480156101e557600080fd5b5043610107565b3480156101f857600080fd5b50610107610207366004610ce2565b73ffffffffffffffffffffffffffffffffffffffff163190565b34801561022d57600080fd5b5044610107565b61012d610242366004610a85565b6106ab565b34801561025357600080fd5b5045610107565b34801561026657600080fd5b50604051418152602001610111565b61012d610283366004610c60565b61085a565b6101b7610296366004610a85565b610a1a565b3480156102a757600080fd5b506101076102b6366004610d18565b4090565b60606000828067ffffffffffffffff8111156102d8576102d8610d31565b60405190808252806020026020018201604052801561031e57816020015b6040805180820190915260008152606060208201528152602001906001900390816102f65790505b5092503660005b8281101561047757600085828151811061034157610341610d60565b6020026020010151905087878381811061035d5761035d610d60565b905060200281019061036f9190610d8f565b6040810135958601959093506103886020850185610ce2565b73ffffffffffffffffffffffffffffffffffffffff16816103ac6060870187610dcd565b6040516103ba929190610e32565b60006040518083038185875af1925050503d80600081146103f7576040519150601f19603f3d011682016040523d82523d6000602084013e6103fc565b606091505b50602080850191909152901515808452908501351761046d577f08c379a000000000000000000000000000000000000000000000000000000000600052602060045260176024527f4d756c746963616c6c333a2063616c6c206661696c656400000000000000000060445260846000fd5b5050600101610325565b508234146104e6576040517f08c379a000000000000000000000000000000000000000000000000000000000815260206004820152601a60248201527f4d756c746963616c6c333a2076616c7565206d69736d6174636800000000000060448201526064015b60405180910390fd5b50505092915050565b436000819003610528576040517f08c379a000000000000000000000000000000000000000000000000000000000815260206004820152601860248201527f4d756c746963616c6c333a206e6f20626c6f636b73000000000000000000000060448201526064016104dd565b804060606105368686610690565b9196509450925050509250925092565b60008060005b8381101561068957600085828151811061056857610568610d60565b6020026020010151905080600001511561060f578060200151805190602001208360405160200161059d929190918252602082015260400190565b60405160208183030381529060405280519060200120925060005b60018160ff161015610609576040805160208101859052908101849052606001604051602081830303815290604052805190602001209250806105fa81610e42565b9150506105b8565b50610674565b8060200151805190602001208360405160200161063c929190918252606082811b7fffffffffffffffffffffffffffffffffffffffff00000000000000000000000016602084015260340190565b60405160208183030381529060405280519060200120925060005b60018160ff161015610609578360405160200161067691815260200190565b60405160208183030381529060405280519060200120925080610698565b600101610574565b5050919050565b600080606061069f86866102ba565b91509150935093915050565b60606000828067ffffffffffffffff8111156106c9576106c9610d31565b60405190808252806020026020018201604052801561070f57816020015b6040805180820190915260008152606060208201528152602001906001900390816106e75790505b5092503660005b828110156104e657600085828151811061073257610732610d60565b6020026020010151905087878381811061074e5761074e610d60565b90506020028101906107609190610d8f565b6040810135958601959093506107796020850185610ce2565b73ffffffffffffffffffffffffffffffffffffffff168161079d6060870187610dcd565b6040516107ab929190610e32565b6000604051808303816000865af19150503d80600081146107e8576040519150601f19603f3d011682016040523d82523d6000602084013e6107ed565b606091505b50602083015215158082528301351761084d577f08c379a000000000000000000000000000000000000000000000000000000000600052602060045260176024527f4d756c746963616c6c333a2063616c6c206661696c656400000000000000000060445260646000fd5b5050600101610716565b60606000828067ffffffffffffffff81111561087857610878610d31565b6040519080825280602002602001820160405280156108be57816020015b6040805180820190915260008152606060208201528152602001906001900390816108965790505b5092503660005b82811015610a105760008582815181106108e1576108e1610d60565b602002602001015190508787838181106108fd576108fd610d60565b905060200281019061090f9190610e61565b6040810135958601959093506109286020850185610ce2565b73ffffffffffffffffffffffffffffffffffffffff168161094c6060870187610dcd565b60405161095a929190610e32565b6000604051808303816000865af19150503d8060008114610997576040519150601f19603f3d011682016040523d82523d6000602084013e61099c565b606091505b50602083015215158082528335176109fe577f08c379a000000000000000000000000000000000000000000000000000000000600052602060045260176024527f4d756c746963616c6c333a2063616c6c206661696c656400000000000000000060445260846000fd5b50508060010190506108c5565b5050509392505050565b6000806060610a298686610690565b915091509250929050565b60008060208385031215610a4757600080fd5b823567ffffffffffffffff80821115610a5f57600080fd5b818501915085601f830112610a7357600080fd5b813581811115610a8257600080fd5b8660208260051b8501011115610a9757600080fd5b60209290920196919550909350505050565b60005b83811015610ac4578181015183820152602001610aac565b50506000910152565b60008151808452610ae5816020860160208601610aa9565b601f017fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffe0169290920160200192915050565b600082825180855260208086019550808260051b84010181860160005b84811015610b5a57601f19868403018952610b50838351610acd565b98840198925090830190600101610b34565b5090979650505050505050565b602081526000610b7a6020830184610b17565b9392505050565b600060408201848352602060408185015281855180845260608601915060608160051b870101935082870160005b82811015610bfb577fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffa0888703018452610be9868351610acd565b95509284019290840190600101610baf565b509398975050505050505050565b60008060408385031215610c1c57600080fd5b823567ffffffffffffffff811115610c3357600080fd5b8301601f81018513610c4457600080fd5b803560208201602082011115610c5957600080fd5b8082529150509250929050565b838152826020820152606060408201526000610c856060830184610b17565b95945050505050565b600060208284031215610ca057600080fd5b813573ffffffffffffffffffffffffffffffffffffffff81168114610b7a57600080fd5b600060208284031215610cd657600080fd5b5035919050565b7f4e487b7100000000000000000000000000000000000000000000000000000000600052604160045260246000fd5b7f4e487b7100000000000000000000000000000000000000000000000000000000600052603260045260246000fd5b600082357fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff81833603018112610d7157600080fd5b9190910192915050565b60008083357fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffe1843603018112610db057600080fd5b83018035915067ffffffffffffffff821115610dcb57600080fd5b602001915036819003821315610de057600080fd5b9250929050565b8183823760009101908152919050565b600060ff821660ff8103610e34577f4e487b7100000000000000000000000000000000000000000000000000000000600052601160045260246000fd5b60010192915050565b600082357fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff41833603018112610d7157600080fdfea26469706673582212209ed684b41fe207ca7ea1bbf5b2b5e90e28af7ec8e9be42ebc5f8c6dcb76e1d9364736f6c63430008120033"
 
+    local DEFAULT_MULTICALL3_BYTECODE="$MULTICALL3_BYTECODE"
+
+    # Prefer the canonical Multicall3 runtime bytecode from tnt-core when available.
+    # This avoids silently persisting a bad/broken Multicall3 across Anvil snapshots.
+    if [[ -f "$TNT_CORE_DIR/scripts/local-env/start-local-env.sh" ]]; then
+        local core_multicall_bytecode=""
+	        core_multicall_bytecode="$(
+	            python3 - "$TNT_CORE_DIR/scripts/local-env/start-local-env.sh" <<-'PY' 2>/dev/null || true
+	import re, sys
+	text = open(sys.argv[1], "r", encoding="utf-8").read()
+	# Support both older "local MULTICALL3_BYTECODE=..." and the current heredoc format used by tnt-core.
+	m = re.search(r'local\s+MULTICALL3_BYTECODE="(0x[0-9a-fA-F]+)"', text)
+	if m:
+	    print(m.group(1))
+	    raise SystemExit(0)
+	m = re.search(r"MULTICALL3_BYTECODE=\"\$\(\s*cat <<'EOF'\n(.*?)\n\s*EOF\n\s*\)\"", text, re.S)
+	if m:
+	    code = ''.join(line.strip() for line in m.group(1).splitlines())
+	    print(code)
+	    raise SystemExit(0)
+	print("")
+	PY
+	        )"
+
+        if [[ -n "$core_multicall_bytecode" ]]; then
+            local core_digits_len=$(( ${#core_multicall_bytecode} - 2 ))
+            if (( core_digits_len % 2 != 0 )); then
+                log_warn "Ignoring invalid Multicall3 bytecode from tnt-core (odd-length hex); using embedded fallback."
+            else
+                MULTICALL3_BYTECODE="$core_multicall_bytecode"
+            fi
+        fi
+    fi
+
     # Use anvil_setCode to deploy at the deterministic address
     local set_result=$(curl -s http://127.0.0.1:$ANVIL_PORT -X POST -H "Content-Type: application/json" \
         --data "{\"jsonrpc\":\"2.0\",\"method\":\"anvil_setCode\",\"params\":[\"$MULTICALL3_ADDRESS\", \"$MULTICALL3_BYTECODE\"],\"id\":1}")
+
+    # If the tnt-core bytecode is malformed (e.g., odd-length hex), retry with embedded fallback.
+    if echo "$set_result" | grep -q '"error"' && [[ "$MULTICALL3_BYTECODE" != "$DEFAULT_MULTICALL3_BYTECODE" ]]; then
+        log_warn "anvil_setCode failed with tnt-core Multicall3 bytecode; retrying with embedded fallback..."
+        MULTICALL3_BYTECODE="$DEFAULT_MULTICALL3_BYTECODE"
+        set_result=$(curl -s http://127.0.0.1:$ANVIL_PORT -X POST -H "Content-Type: application/json" \
+            --data "{\"jsonrpc\":\"2.0\",\"method\":\"anvil_setCode\",\"params\":[\"$MULTICALL3_ADDRESS\", \"$MULTICALL3_BYTECODE\"],\"id\":1}")
+    fi
 
     # Small delay for Anvil to process
     sleep 0.5
@@ -471,7 +524,18 @@ deploy_multicall3() {
     code=$(echo "$response" | sed -n 's/.*"result":"\([^"]*\)".*/\1/p')
 
     if [[ "$code" != "0x" && -n "$code" && ${#code} -gt 10 ]]; then
-        log_success "Multicall3 deployed at $MULTICALL3_ADDRESS"
+        # Confirm it's functional.
+        local probe="0x82ad56cb00000000000000000000000000000000000000000000000000000000000000200000000000000000000000000000000000000000000000000000000000000000"
+        local probe_resp
+        probe_resp=$(curl -s http://127.0.0.1:$ANVIL_PORT -X POST -H "Content-Type: application/json" \
+            --data "{\"jsonrpc\":\"2.0\",\"method\":\"eth_call\",\"params\":[{\"to\":\"$MULTICALL3_ADDRESS\",\"data\":\"$probe\"},\"latest\"],\"id\":1}")
+
+        if echo "$probe_resp" | grep -q '"result"'; then
+            log_success "Multicall3 deployed at $MULTICALL3_ADDRESS"
+        else
+            log_error "Multicall3 injected but not functional (response: $probe_resp)"
+            exit 1
+        fi
     else
         log_error "Failed to deploy Multicall3 - aborting local environment startup"
         log_info "Response: $set_result"
@@ -684,6 +748,7 @@ console.log(JSON.stringify({
     TOTAL_SUBSTRATE="$total_substrate" \
     TOTAL_EVM="$total_evm" \
     USE_MOCK_VERIFIER="true" \
+    ALLOW_STANDALONE_TOKEN="${ALLOW_STANDALONE_TOKEN:-false}" \
     TNT_TOKEN="${TNT_TOKEN_ADDRESS:-}" \
     TNT_TOKEN_ADDRESS="${TNT_TOKEN_ADDRESS:-}" \
     PRIVATE_KEY="$ANVIL_PRIVATE_KEY" \
@@ -707,6 +772,10 @@ console.log(JSON.stringify({
         if [[ -z "${TANGLE_MIGRATION_ADDRESS:-}" || "${TANGLE_MIGRATION_ADDRESS}" == "null" ]]; then
             TANGLE_MIGRATION_ADDRESS=$(grep -o '"contractName": "TangleMigration"' -A5 "$broadcast_file" 2>/dev/null | grep '"contractAddress"' | head -1 | grep -o '0x[a-fA-F0-9]\{40\}' || echo "")
         fi
+    fi
+
+    if [[ -z "${MIGRATION_TNT_TOKEN_ADDRESS:-}" || "${MIGRATION_TNT_TOKEN_ADDRESS}" == "null" ]]; then
+        export MIGRATION_TNT_TOKEN_ADDRESS="${TNT_TOKEN_ADDRESS:-}"
     fi
 
     # Copy proofs to frontend
@@ -764,32 +833,31 @@ const { execSync } = require('child_process');
 const entries = Object.entries(evm);
 console.log('Total EVM recipients:', entries.length);
 
-let totalAirdropped = BigInt(0);
+	let totalAirdropped = BigInt(0);
 
-for (let i = 0; i < entries.length; i += BATCH_SIZE) {
-    const batch = entries.slice(i, i + BATCH_SIZE);
-    const recipients = batch.map(([addr]) => addr);
-    const amounts = batch.map(([, amt]) => amt);
+	for (let i = 0; i < entries.length; i += BATCH_SIZE) {
+	    const batch = entries.slice(i, i + BATCH_SIZE);
+	    const recipients = batch.map(([addr]) => addr);
+	    const amounts = batch.map(([, amt]) => amt);
 
-    const batchNum = Math.floor(i / BATCH_SIZE) + 1;
-    const totalBatches = Math.ceil(entries.length / BATCH_SIZE);
+	    const batchNum = Math.floor(i / BATCH_SIZE) + 1;
+	    const totalBatches = Math.ceil(entries.length / BATCH_SIZE);
 
-    console.log('Processing batch', batchNum, '/', totalBatches, '(' + batch.length + ' recipients)');
+	    console.log('Processing batch', batchNum, '/', totalBatches, '(' + batch.length + ' recipients)');
 
-    const recipientsArg = '[' + recipients.join(',') + ']';
-    const amountsArg = '[' + amounts.join(',') + ']';
-
-    try {
-        execSync(
-            'cast send --rpc-url ' + RPC_URL + ' --private-key ' + PRIVATE_KEY + ' ' + TNT_ADDRESS + ' \"batchMint(address[],uint256[])\" \"' + recipientsArg + '\" \"' + amountsArg + '\"',
-            { stdio: 'pipe' }
-        );
-        for (const amt of amounts) { totalAirdropped += BigInt(amt); }
-    } catch (e) {
-        console.error('Batch', batchNum, 'failed:', e.message);
-        process.exit(1);
-    }
-}
+	    try {
+	        for (let j = 0; j < recipients.length; j++) {
+	            execSync(
+	                'cast send --rpc-url ' + RPC_URL + ' --private-key ' + PRIVATE_KEY + ' ' + TNT_ADDRESS + ' \"transfer(address,uint256)\" ' + recipients[j] + ' ' + amounts[j],
+	                { stdio: 'pipe' }
+	            );
+	            totalAirdropped += BigInt(amounts[j]);
+	        }
+	    } catch (e) {
+	        console.error('Batch', batchNum, 'failed:', e.message);
+	        process.exit(1);
+	    }
+	}
 
 console.log('EVM airdrop complete!');
 console.log('Total airdropped:', (totalAirdropped / BigInt(1e18)).toString(), 'TNT to', entries.length, 'addresses');

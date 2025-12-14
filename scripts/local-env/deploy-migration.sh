@@ -157,6 +157,7 @@ MERKLE_ROOT="$MERKLE_ROOT" \
 TOTAL_SUBSTRATE="$TOTAL_SUBSTRATE" \
 TOTAL_EVM="$TOTAL_EVM" \
 USE_MOCK_VERIFIER="true" \
+ALLOW_STANDALONE_TOKEN="${ALLOW_STANDALONE_TOKEN:-false}" \
 TNT_TOKEN="${TNT_TOKEN_ADDRESS:-}" \
 TNT_TOKEN_ADDRESS="${TNT_TOKEN_ADDRESS:-}" \
 PRIVATE_KEY="$PRIVATE_KEY" \
@@ -199,44 +200,41 @@ echo ""
 if [[ "$EXECUTE_AIRDROP" == "true" ]]; then
     log_info "Executing EVM airdrop..."
 
-    # Execute airdrop in batches using Node.js + cast
+    # Execute airdrop in batches using Node.js + cast (transfer-based so it works with the canonical TNT)
     node -e "
-const evm = require('$MIGRATION_OUTPUT/evm-airdrop.json');
-const { execSync } = require('child_process');
+	const evm = require('$MIGRATION_OUTPUT/evm-airdrop.json');
+	const { execSync } = require('child_process');
 
-const TNT_ADDRESS = '$TNT_ADDRESS';
-const RPC_URL = '$RPC_URL';
-const PRIVATE_KEY = '$PRIVATE_KEY';
-const BATCH_SIZE = 100;
+	const TNT_ADDRESS = '$TNT_ADDRESS';
+	const RPC_URL = '$RPC_URL';
+	const PRIVATE_KEY = '$PRIVATE_KEY';
+	const BATCH_SIZE = 100;
 
-const entries = Object.entries(evm);
-console.log('Total EVM recipients:', entries.length);
+	const entries = Object.entries(evm);
+	console.log('Total EVM recipients:', entries.length);
 
-// Build arrays for batch calls
-for (let i = 0; i < entries.length; i += BATCH_SIZE) {
-    const batch = entries.slice(i, i + BATCH_SIZE);
-    const recipients = batch.map(([addr]) => addr);
-    const amounts = batch.map(([, amt]) => amt);
+	for (let i = 0; i < entries.length; i += BATCH_SIZE) {
+	    const batch = entries.slice(i, i + BATCH_SIZE);
+	    const recipients = batch.map(([addr]) => addr);
+	    const amounts = batch.map(([, amt]) => amt);
 
-    const batchNum = Math.floor(i / BATCH_SIZE) + 1;
-    const totalBatches = Math.ceil(entries.length / BATCH_SIZE);
+	    const batchNum = Math.floor(i / BATCH_SIZE) + 1;
+	    const totalBatches = Math.ceil(entries.length / BATCH_SIZE);
 
-    console.log('Processing batch', batchNum, '/', totalBatches, '(' + batch.length + ' recipients)');
+	    console.log('Processing batch', batchNum, '/', totalBatches, '(' + batch.length + ' recipients)');
 
-    // Encode the batchMint call
-    const recipientsArg = '[' + recipients.join(',') + ']';
-    const amountsArg = '[' + amounts.join(',') + ']';
-
-    try {
-        execSync(
-            'cast send --rpc-url ' + RPC_URL + ' --private-key ' + PRIVATE_KEY + ' ' + TNT_ADDRESS + ' \"batchMint(address[],uint256[])\" \"' + recipientsArg + '\" \"' + amountsArg + '\"',
-            { stdio: 'pipe' }
-        );
-    } catch (e) {
-        console.error('Batch', batchNum, 'failed:', e.message);
-        process.exit(1);
-    }
-}
+	    try {
+	        for (let j = 0; j < recipients.length; j++) {
+	            execSync(
+	                'cast send --rpc-url ' + RPC_URL + ' --private-key ' + PRIVATE_KEY + ' ' + TNT_ADDRESS + ' \"transfer(address,uint256)\" ' + recipients[j] + ' ' + amounts[j],
+	                { stdio: 'pipe' }
+	            );
+	        }
+	    } catch (e) {
+	        console.error('Batch', batchNum, 'failed:', e.message);
+	        process.exit(1);
+	    }
+	}
 
 console.log('EVM airdrop complete!');
 "
