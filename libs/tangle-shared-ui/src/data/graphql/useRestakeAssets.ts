@@ -130,7 +130,9 @@ export const useRestakeAssets = (options?: {
     if (!restakingAssets) return [];
     return restakingAssets
       .map((a) => a.token)
-      .filter((addr) => addr.toLowerCase() !== NATIVE_TOKEN_ADDRESS.toLowerCase());
+      .filter(
+        (addr) => addr.toLowerCase() !== NATIVE_TOKEN_ADDRESS.toLowerCase(),
+      );
   }, [restakingAssets]);
   // 2. Fetch ERC20 metadata for ERC20 tokens only (not native token)
   const { data: tokenMetadatas, isLoading: isLoadingMetadata } = useQuery({
