@@ -3,7 +3,7 @@ import { TokenIcon } from '@tangle-network/icons';
 import Spinner from '@tangle-network/icons/Spinner';
 import { useRestakingOverview } from '@tangle-network/tangle-shared-ui/data/restake/useRestakingData';
 import type { RestakingAsset } from '@tangle-network/tangle-shared-ui/data/graphql/useRestakingAssets';
-import { useTokenUsdPrices } from '@tangle-network/tangle-shared-ui/data/tokenPrices/useTokenUsdPrices';
+// import { useTokenUsdPrices } from '@tangle-network/tangle-shared-ui/data/tokenPrices/useTokenUsdPrices';
 import HeaderCell from '@tangle-network/tangle-shared-ui/components/tables/HeaderCell';
 import TableCellWrapper from '@tangle-network/tangle-shared-ui/components/tables/TableCellWrapper';
 import TableStatus from '@tangle-network/tangle-shared-ui/components/tables/TableStatus';
@@ -136,21 +136,21 @@ const DashboardPage: FC = () => {
   const { data: restakingStats, isLoading: isRestakingStatsLoading } =
     useUserRestakingStats();
 
-  const tokensForPricing = useMemo(() => {
-    if (restakingAssets === null || assets === null) {
-      return null;
-    }
+  // const tokensForPricing = useMemo(() => {
+  //   if (restakingAssets === null || assets === null) {
+  //     return null;
+  //   }
 
-    return restakingAssets.map((asset) => {
-      const meta = assets.get(asset.token);
-      return {
-        address: asset.token.toLowerCase() as `0x${string}`,
-        symbol: meta?.metadata.symbol ?? null,
-      };
-    });
-  }, [assets, restakingAssets]);
+  //   return restakingAssets.map((asset) => {
+  //     const meta = assets.get(asset.token);
+  //     return {
+  //       address: asset.token.toLowerCase() as `0x${string}`,
+  //       symbol: meta?.metadata.symbol ?? null,
+  //     };
+  //   });
+  // }, [assets, restakingAssets]);
 
-  const { data: tokenUsdPrices } = useTokenUsdPrices(tokensForPricing);
+  // const { data: tokenUsdPrices } = useTokenUsdPrices(tokensForPricing);
 
   const protocolTvl = useMemo(() => {
     if (!restakingAssets) {
@@ -165,28 +165,28 @@ const DashboardPage: FC = () => {
     return total;
   }, [restakingAssets]);
 
-  const protocolTvlUsd = useMemo(() => {
-    if (!restakingAssets || !assets) {
-      return 0;
-    }
+  // const protocolTvlUsd = useMemo(() => {
+  //   if (!restakingAssets || !assets) {
+  //     return 0;
+  //   }
 
-    let total = 0;
-    for (const asset of restakingAssets) {
-      const meta = assets.get(asset.token);
-      const decimals = meta?.metadata.decimals ?? 18;
-      const priceUsd =
-        tokenUsdPrices?.get(asset.token.toLowerCase() as `0x${string}`) ?? 1;
+  //   let total = 0;
+  //   for (const asset of restakingAssets) {
+  //     const meta = assets.get(asset.token);
+  //     const decimals = meta?.metadata.decimals ?? 18;
+  //     const priceUsd =
+  //       tokenUsdPrices?.get(asset.token.toLowerCase() as `0x${string}`) ?? 1;
 
-      const amount = Number(formatUnits(asset.currentDeposits, decimals));
-      if (!Number.isFinite(amount)) {
-        continue;
-      }
+  //     const amount = Number(formatUnits(asset.currentDeposits, decimals));
+  //     if (!Number.isFinite(amount)) {
+  //       continue;
+  //     }
 
-      total += amount * priceUsd;
-    }
+  //     total += amount * priceUsd;
+  //   }
 
-    return total;
-  }, [assets, restakingAssets, tokenUsdPrices]);
+  //   return total;
+  // }, [assets, restakingAssets, tokenUsdPrices]);
 
   // Calculate TVL data for ProtocolStatisticCard
   const tvlData = useMemo(
