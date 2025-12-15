@@ -23,6 +23,7 @@ import LiquidStakingActionTabs from '../LiquidStakingActionTabs';
 import {
   useCreateVault,
   useCreateAllBlueprintsVault,
+  useLiquidDelegationVaults,
 } from '@tangle-network/tangle-shared-ui/data/liquidDelegation';
 import { useRestakeAssets } from '@tangle-network/tangle-shared-ui/data/graphql';
 import { useOperatorMap } from '@tangle-network/tangle-shared-ui/data/graphql';
@@ -32,7 +33,7 @@ import { Switcher } from '@tangle-network/ui-components/components/Switcher';
 import OperatorListItem from '../../../components/Lists/OperatorListItem';
 import AssetListItem from '../../../components/Lists/AssetListItem';
 import { Avatar, shortenHex } from '@tangle-network/ui-components';
-import { TokenIcon } from '@tangle-network/icons';
+import { Alert, TokenIcon } from '@tangle-network/icons';
 
 type CreateVaultFormFields = {
   operator: Address;
@@ -55,9 +56,17 @@ const CreateVaultForm: FC = () => {
   const { assets, isLoading: isLoadingAssets } = useRestakeAssets();
   const { data: operatorMap, isLoading: isLoadingOperators } = useOperatorMap();
 
-  const { status: createStatus, execute: executeCreate } = useCreateVault();
-  const { status: createAllStatus, execute: executeCreateAll } =
-    useCreateAllBlueprintsVault();
+  const {
+    status: createStatus,
+    execute: executeCreate,
+    error: createError,
+  } = useCreateVault();
+  const {
+    status: createAllStatus,
+    execute: executeCreateAll,
+    error: createAllError,
+  } = useCreateAllBlueprintsVault();
+  const { vaults: existingVaults } = useLiquidDelegationVaults();
 
   const [useAllBlueprints, setUseAllBlueprints] = useState(true);
 
@@ -119,6 +128,40 @@ const CreateVaultForm: FC = () => {
   const selectedOperator = watch('operator');
   const selectedAsset = watch('asset');
 
+  const existingVault = useMemo(() => {
+    if (!existingVaults || !selectedOperator || !selectedAsset) {
+      return null;
+    }
+
+    // Current UI supports either:
+    // - All blueprints mode (empty blueprintIds)
+    // - Fixed mode with blueprintIds [0] (until we add selection UI)
+    const expectedBlueprintIds = useAllBlueprints ? [] : [BigInt(0)];
+
+    return (
+      existingVaults.find((vault) => {
+        if (
+          vault.operator.toLowerCase() !== selectedOperator.toLowerCase() ||
+          vault.asset.toLowerCase() !== selectedAsset.toLowerCase()
+        ) {
+          return false;
+        }
+
+        if (vault.blueprintIds.length !== expectedBlueprintIds.length) {
+          return false;
+        }
+
+        for (let i = 0; i < expectedBlueprintIds.length; i++) {
+          if (vault.blueprintIds[i] !== expectedBlueprintIds[i]) {
+            return false;
+          }
+        }
+
+        return true;
+      }) ?? null
+    );
+  }, [existingVaults, selectedOperator, selectedAsset, useAllBlueprints]);
+
   const operators = useMemo<OperatorItem[]>(() => {
     if (!operatorMap) return [];
 
@@ -167,8 +210,10 @@ const CreateVaultForm: FC = () => {
       ? 'Select Operator'
       : !selectedAsset
         ? 'Select Asset'
+        : existingVault
+          ? 'Vault already exists'
         : undefined;
-  }, [selectedOperator, selectedAsset]);
+  }, [existingVault, selectedOperator, selectedAsset]);
 
   const isTransacting =
     isSubmitting ||
@@ -182,28 +227,37 @@ const CreateVaultForm: FC = () => {
     userAddress !== undefined &&
     !isTransacting;
 
-  const onSubmit = useCallback<SubmitHandler<CreateVaultFormFields>>(
-    async ({ operator, asset }) => {
-      if (!isReady) return;
+  const submitError = useMemo(() => {
+    return createAllError ?? createError ?? null;
+  }, [createAllError, createError]);
 
-      if (useAllBlueprints && executeCreateAll) {
-        await executeCreateAll({ operator, asset });
-      } else if (executeCreate) {
-        await executeCreate({
-          operator,
-          asset,
-          blueprintIds: [BigInt(0)], // Default to blueprint 0 for now
-        });
-      }
+	  const onSubmit = useCallback<SubmitHandler<CreateVaultFormFields>>(
+	    async ({ operator, asset }) => {
+	      if (!isReady) return;
+	      if (existingVault) return;
 
-      await queryClient.invalidateQueries({
-        queryKey: ['liquidDelegation', 'vaults'],
-      });
-      reset();
-    },
-    [
-      executeCreate,
-      executeCreateAll,
+	      let txResult = null;
+	      if (useAllBlueprints && executeCreateAll) {
+	        txResult = await executeCreateAll({ operator, asset });
+	      } else if (executeCreate) {
+	        txResult = await executeCreate({
+	          operator,
+	          asset,
+	          blueprintIds: [BigInt(0)], // Default to blueprint 0 for now
+	        });
+	      }
+
+	      if (txResult?.status === 'success') {
+	        await queryClient.invalidateQueries({
+	          queryKey: ['liquidDelegation', 'vaults'],
+	        });
+	        reset();
+	      }
+	    },
+	    [
+	      executeCreate,
+	      executeCreateAll,
+      existingVault,
       isReady,
       queryClient,
       reset,
@@ -316,6 +370,46 @@ const CreateVaultForm: FC = () => {
               vault&apos;s delegated position.
             </Typography>
           </div>
+
+          {existingVault && (
+            <div className="p-4 rounded-xl bg-yellow-50/10 border border-yellow-50/20">
+              <div className="flex items-start gap-3">
+                <Alert className="w-5 h-5 text-yellow-50 flex-shrink-0 mt-0.5" />
+                <div className="flex flex-col gap-2">
+                  <Typography
+                    variant="body2"
+                    fw="semibold"
+                    className="text-yellow-50"
+                  >
+                    Vault already exists for this selection
+                  </Typography>
+                  <Typography variant="body2" className="text-yellow-50/80">
+                    {shortenHex(existingVault.address)}
+                  </Typography>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {submitError && (
+            <div className="p-4 rounded-xl bg-red-500/10 border border-red-500/20">
+              <div className="flex items-start gap-3">
+                <Alert className="w-5 h-5 text-red-400 flex-shrink-0 mt-0.5" />
+                <div className="flex flex-col gap-1">
+                  <Typography
+                    variant="body2"
+                    fw="semibold"
+                    className="text-red-400"
+                  >
+                    Vault creation failed
+                  </Typography>
+                  <Typography variant="body2" className="text-red-400/80">
+                    {submitError.message}
+                  </Typography>
+                </div>
+              </div>
+            </div>
+          )}
 
           <ActionButtonBase>
             {(isLoading, loadingText) => {
