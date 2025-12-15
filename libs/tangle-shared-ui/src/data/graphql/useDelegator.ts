@@ -181,7 +181,7 @@ interface DelegatorQueryResult {
       shares: string;
       lastKnownAmount: string;
       blueprintSelection: BlueprintSelectionMode;
-      blueprintIds: string[];
+      blueprintIds: string[] | null;
       createdAtRound: string;
       updatedAtRound: string;
     }>;
@@ -237,7 +237,9 @@ const parseDelegator = (
     shares: BigInt(del.shares),
     lastKnownAmount: BigInt(del.lastKnownAmount),
     blueprintSelection: del.blueprintSelection,
-    blueprintIds: del.blueprintIds.map((id) => BigInt(id)),
+    blueprintIds: del.blueprintIds
+      ? del.blueprintIds.map((id) => BigInt(id))
+      : [],
     createdAtRound: BigInt(del.createdAtRound),
     updatedAtRound: BigInt(del.updatedAtRound),
   })),
@@ -292,7 +294,6 @@ export const useDelegator = (
         DelegatorQueryResult,
         { id: string }
       >(DELEGATOR_QUERY, { id: address.toLowerCase() }, network);
-
       return result.data.Delegator_by_pk
         ? parseDelegator(result.data.Delegator_by_pk)
         : null;

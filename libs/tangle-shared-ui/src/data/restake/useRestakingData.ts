@@ -85,7 +85,6 @@ export const useRestakingData = (
   // Get indexer status
   const { isHealthy, isCheckingHealth, dataSource } =
     useIndexerStatusStandalone();
-
   // Fetch assets (has on-chain fallback)
   const {
     assets,
