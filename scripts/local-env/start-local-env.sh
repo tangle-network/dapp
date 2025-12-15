@@ -68,6 +68,14 @@ METRICS_PORT="${METRICS_PORT:-$ENVIO_INDEXER_PORT}"
 ENVIO_PG_USER="${ENVIO_PG_USER:-postgres}"
 ENVIO_PG_PASSWORD="${ENVIO_PG_PASSWORD:-testing}"
 ENVIO_PG_DATABASE="${ENVIO_PG_DATABASE:-envio-dev}"
+USER_PROVIDED_WIPE_DOCKER_VOLUMES=false
+USER_PROVIDED_CLEAN_DOCKER=false
+if [[ -n "${WIPE_DOCKER_VOLUMES+x}" ]]; then
+    USER_PROVIDED_WIPE_DOCKER_VOLUMES=true
+fi
+if [[ -n "${CLEAN_DOCKER+x}" ]]; then
+    USER_PROVIDED_CLEAN_DOCKER=true
+fi
 WIPE_DOCKER_VOLUMES="${WIPE_DOCKER_VOLUMES:-false}"
 CLEAN_DOCKER="${CLEAN_DOCKER:-false}"
 STRICT_INDEXER_PORT="${STRICT_INDEXER_PORT:-false}"
@@ -294,6 +302,25 @@ sync_ports_from_docker_compose() {
 }
 
 ensure_postgres_password() {
+    if ! command -v psql >/dev/null 2>&1; then
+        log_warn "psql is not installed; attempting to reset postgres password inside the container..."
+
+        ensure_docker_running
+        cd "$INDEXER_DIR/generated"
+
+        # This typically works because local socket auth inside the container is trust.
+        if docker compose exec -T envio-postgres psql -U "$ENVIO_PG_USER" -d postgres -c "ALTER USER $ENVIO_PG_USER WITH PASSWORD '$ENVIO_PG_PASSWORD';" >/dev/null 2>&1; then
+            log_success "Reset postgres password inside container"
+            POSTGRES_PASSWORD_RESET=true
+            return 0
+        fi
+
+        log_error "Failed to reset postgres password inside container."
+        log_info "If this is a persisted volume from a different setup, run:"
+        log_info "  WIPE_DOCKER_VOLUMES=true ./scripts/local-env/start-local-env.sh clean"
+        exit 1
+    fi
+
     # If we can already connect from host, we're good.
     if PGPASSWORD="$ENVIO_PG_PASSWORD" psql -h localhost -p "$ENVIO_PG_PORT" -U "$ENVIO_PG_USER" -d "$ENVIO_PG_DATABASE" -c "SELECT 1;" >/dev/null 2>&1; then
         return 0
@@ -2117,6 +2144,14 @@ main() {
 
     # Handle clean mode
     if [[ "$CLEAN_MODE" == "true" ]]; then
+        # Users expect "clean" to be fully fresh; by default, tear down docker and wipe volumes unless explicitly overridden.
+        if [[ "$USER_PROVIDED_CLEAN_DOCKER" == "false" ]]; then
+            CLEAN_DOCKER=true
+        fi
+        if [[ "$USER_PROVIDED_WIPE_DOCKER_VOLUMES" == "false" ]]; then
+            WIPE_DOCKER_VOLUMES=true
+        fi
+
         log_info "Cleaning cached state..."
         rm -rf "$CACHE_DIR"
         if [[ "$CLEAN_DOCKER" == "true" ]]; then
