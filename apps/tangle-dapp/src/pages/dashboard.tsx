@@ -43,26 +43,10 @@ interface RestakeAssetRow {
   name: string;
   decimals: number;
   wallet: BN;
-  deposited: BN;
-  delegated: BN;
-  protocolTvlToken: BN;
-  protocolTvlUsd: number;
+  protocolTvl: BN;
 }
 
 const COLUMN_HELPER = createColumnHelper<RestakeAssetRow>();
-
-const formatUsdShort = (value: number): string => {
-  if (!Number.isFinite(value) || value <= 0) {
-    return EMPTY_VALUE_PLACEHOLDER;
-  }
-
-  const abs = Math.abs(value);
-  if (abs >= 1_000_000_000) return `$${(value / 1_000_000_000).toFixed(2)}B`;
-  if (abs >= 1_000_000) return `$${(value / 1_000_000).toFixed(2)}M`;
-  if (abs >= 1_000) return `$${(value / 1_000).toFixed(2)}K`;
-
-  return `$${value.toLocaleString(undefined, { maximumFractionDigits: 2 })}`;
-};
 
 const getColumns = () => [
   COLUMN_HELPER.accessor('id', {
@@ -107,62 +91,17 @@ const getColumns = () => [
       );
     },
   }),
-  COLUMN_HELPER.accessor('deposited', {
-    header: () => <HeaderCell title="Your Deposited" />,
+  COLUMN_HELPER.accessor('protocolTvl', {
+    header: () => <HeaderCell title="TVL" />,
     cell: (props) => {
       const value = props.getValue();
       return (
-        <TableCellWrapper>
-          {value.gtn(0)
-            ? formatDisplayAmount(
-                value,
-                props.row.original.decimals,
-                AmountFormatStyle.SHORT,
-              )
-            : EMPTY_VALUE_PLACEHOLDER}
-        </TableCellWrapper>
-      );
-    },
-  }),
-  COLUMN_HELPER.accessor('delegated', {
-    header: () => <HeaderCell title="Your Delegated" />,
-    cell: (props) => {
-      const value = props.getValue();
-      return (
-        <TableCellWrapper>
-          {value.gtn(0)
-            ? formatDisplayAmount(
-                value,
-                props.row.original.decimals,
-                AmountFormatStyle.SHORT,
-              )
-            : EMPTY_VALUE_PLACEHOLDER}
-        </TableCellWrapper>
-      );
-    },
-  }),
-  COLUMN_HELPER.accessor('protocolTvlUsd', {
-    header: () => <HeaderCell title="TVL (USD)" />,
-    cell: (props) => {
-      const value = props.getValue();
-      return <TableCellWrapper>{formatUsdShort(value)}</TableCellWrapper>;
-    },
-  }),
-  COLUMN_HELPER.accessor('protocolTvlToken', {
-    header: () => <HeaderCell title="TVL (Token)" />,
-    cell: (props) => {
-      const value = props.getValue();
-      const symbol = props.row.original.symbol;
-
-      return (
-        <TableCellWrapper>
-          {value.gtn(0)
-            ? `${formatDisplayAmount(
-                value,
-                props.row.original.decimals,
-                AmountFormatStyle.SHORT,
-              )} ${symbol}`
-            : EMPTY_VALUE_PLACEHOLDER}
+        <TableCellWrapper removeRightBorder>
+          {formatDisplayAmount(
+            value,
+            props.row.original.decimals,
+            AmountFormatStyle.SHORT,
+          )}
         </TableCellWrapper>
       );
     },
@@ -172,7 +111,7 @@ const getColumns = () => [
     header: () => null,
     cell: ({ row }) => (
       <TableCellWrapper removeRightBorder>
-        <div className="flex justify-center">
+        <div className="flex justify-end">
           <Link to={`${PagePath.RESTAKE_DEPOSIT}?asset=${row.original.id}`}>
             <Button size="sm">Deposit</Button>
           </Link>
@@ -266,45 +205,19 @@ const DashboardPage: FC = () => {
 
   const tableData = useMemo<RestakeAssetRow[]>(() => {
     return assetList.map((asset) => {
-      const tokenKey = asset.id.toLowerCase();
-      const position = delegatorInfo?.assetPositions.find(
-        (p) => p.token.toLowerCase() === tokenKey,
-      );
-      const protocolAsset = protocolAssetMap.get(tokenKey);
-      const wallet = new BN((asset.balance ?? BigInt(0)).toString());
-      const deposited = new BN(
-        (position?.totalDeposited ?? BigInt(0)).toString(),
-      );
-      const delegated = new BN(
-        (position?.delegatedAmount ?? BigInt(0)).toString(),
-      );
-      const protocolTvlToken = new BN(
-        (protocolAsset?.currentDeposits ?? BigInt(0)).toString(),
-      );
-      const priceUsd =
-        tokenUsdPrices?.get(asset.id.toLowerCase() as `0x${string}`) ?? 1;
-      const amount = Number(
-        formatUnits(
-          protocolAsset?.currentDeposits ?? BigInt(0),
-          asset.metadata.decimals,
-        ),
-      );
-      const protocolTvlUsd =
-        Number.isFinite(amount) && amount > 0 ? amount * priceUsd : 0;
-
+      const protocolAsset = protocolAssetMap.get(asset.id.toLowerCase());
       return {
         id: asset.id,
         symbol: asset.metadata.symbol,
         name: asset.metadata.name,
         decimals: asset.metadata.decimals,
-        wallet,
-        deposited,
-        delegated,
-        protocolTvlToken,
-        protocolTvlUsd,
+        wallet: new BN((asset.balance ?? BigInt(0)).toString()),
+        protocolTvl: new BN(
+          (protocolAsset?.currentDeposits ?? BigInt(0)).toString(),
+        ),
       };
     });
-  }, [assetList, delegatorInfo, protocolAssetMap, tokenUsdPrices]);
+  }, [assetList, protocolAssetMap]);
 
   const columns = useMemo(() => getColumns(), []);
 
@@ -312,22 +225,8 @@ const DashboardPage: FC = () => {
     const endsWithTnt = (symbol: string) =>
       symbol.toLowerCase().endsWith('tnt');
 
-    const tntCandidates = assetList.filter((asset) =>
-      endsWithTnt(asset.metadata.symbol),
-    );
-
-    if (tntCandidates.length === 0) {
-      return null;
-    }
-
-    // If multiple TNT-like tokens are enabled (e.g. local migration token + core bond token),
-    // pick the one the user actually has balance in.
-    return tntCandidates.reduce(
-      (best, asset) => {
-        if (best === null) return asset;
-        return asset.balance > best.balance ? asset : best;
-      },
-      null as (typeof assetList)[number] | null,
+    return (
+      assetList.find((asset) => endsWithTnt(asset.metadata.symbol)) ?? null
     );
   }, [assetList]);
 

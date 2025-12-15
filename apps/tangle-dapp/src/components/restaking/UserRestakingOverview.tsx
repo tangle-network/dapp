@@ -89,13 +89,28 @@ export const UserRestakingOverview: FC<Props> = ({
         )}
       </div>
 
-      <div className="space-y-3">
-        {positions.map((pos) => (
+      <div className="grid grid-cols-[1fr_auto_auto] gap-x-8 items-center">
+        <div />
+        <Typography
+          variant="body2"
+          className="text-mono-120 dark:text-mono-80 text-right pb-2"
+        >
+          Deposited
+        </Typography>
+        <Typography
+          variant="body2"
+          className="text-mono-120 dark:text-mono-80 text-right pb-2"
+        >
+          Delegated
+        </Typography>
+
+        {positions.map((pos, index) => (
           <div
             key={pos.token}
             className={twMerge(
-              'flex justify-between items-center p-3 rounded-lg',
+              'col-span-3 grid grid-cols-subgrid items-center p-3 rounded-lg',
               'bg-mono-20/50 dark:bg-mono-180/50',
+              index > 0 && 'mt-3',
             )}
           >
             <div className="flex items-center gap-3">
@@ -117,18 +132,16 @@ export const UserRestakingOverview: FC<Props> = ({
               </div>
             </div>
 
-            <div className="text-right">
-              <Typography variant="body1" fw="semibold">
-                {formatBalance(pos.deposited, pos.decimals)} deposited
-              </Typography>
+            <Typography variant="body1" fw="semibold" className="text-right">
+              {formatBalance(pos.deposited, pos.decimals)}
+            </Typography>
 
-              <Typography
-                variant="body2"
-                className="text-mono-120 dark:text-mono-80"
-              >
-                {formatBalance(pos.delegated, pos.decimals)} delegated
-              </Typography>
-            </div>
+            <Typography
+              variant="body1"
+              className="text-mono-120 dark:text-mono-80 text-right"
+            >
+              {formatBalance(pos.delegated, pos.decimals)}
+            </Typography>
           </div>
         ))}
       </div>
