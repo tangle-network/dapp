@@ -34,6 +34,15 @@ const TANGLE_MIGRATION_ABI = [
     ],
     outputs: [],
   },
+  // Errors (for decoding revert reasons)
+  { name: 'ClaimsPaused', type: 'error', inputs: [] },
+  { name: 'ClaimDeadlinePassed', type: 'error', inputs: [] },
+  { name: 'InvalidMerkleProof', type: 'error', inputs: [] },
+  { name: 'InvalidZKProof', type: 'error', inputs: [] },
+  { name: 'AlreadyClaimed', type: 'error', inputs: [] },
+  { name: 'ZeroAmount', type: 'error', inputs: [] },
+  { name: 'ZeroAddress', type: 'error', inputs: [] },
+  { name: 'NoZKVerifier', type: 'error', inputs: [] },
 ] as const;
 
 export interface ClaimArgs {

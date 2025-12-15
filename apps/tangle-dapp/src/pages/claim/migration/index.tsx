@@ -51,6 +51,9 @@ const parseTransactionError = (error: Error): string => {
   if (message.includes('already claimed')) {
     return 'This address has already claimed its allocation.';
   }
+  if (message.includes('InvalidMerkleProof')) {
+    return 'Invalid Merkle proof for this account and amount. Double-check you selected the correct Polkadot account and you are using the correct migration proofs dataset for this network.';
+  }
   if (message.includes('invalid proof')) {
     return 'Invalid proof. Please regenerate and try again.';
   }
