@@ -42,6 +42,9 @@ const parseTransactionError = (error: Error): string => {
   if (message.includes('user rejected') || message.includes('User rejected')) {
     return 'Transaction was rejected by user.';
   }
+  if (message.includes('Failed to fetch')) {
+    return 'Network request failed. If you are using the local relayer, ensure `VITE_CLAIM_RELAYER_URL` is reachable from the browser.';
+  }
   if (message.includes('nonce too low')) {
     return 'Transaction nonce conflict. Please try again.';
   }

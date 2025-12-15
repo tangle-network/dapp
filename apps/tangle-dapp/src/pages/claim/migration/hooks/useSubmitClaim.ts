@@ -6,6 +6,8 @@ import {
   useWaitForTransactionReceipt,
 } from 'wagmi';
 
+type SubmissionMode = 'relayer' | 'wallet';
+
 /**
  * TangleMigration contract address (to be set after deployment)
  */
@@ -24,7 +26,7 @@ const TANGLE_MIGRATION_ABI = [
     type: 'function',
     stateMutability: 'nonpayable',
     inputs: [
-      { name: 'originalAddress', type: 'string' },
+      { name: 'pubkey', type: 'bytes32' },
       { name: 'amount', type: 'uint256' },
       { name: 'merkleProof', type: 'bytes32[]' },
       { name: 'zkProof', type: 'bytes' },
@@ -54,6 +56,12 @@ export interface ClaimArgs {
  */
 const useSubmitClaim = () => {
   const { address: userAddress } = useAccount();
+  const defaultSubmissionMode: SubmissionMode = CLAIM_RELAYER_URL
+    ? 'relayer'
+    : 'wallet';
+  const [submissionMode, setSubmissionMode] = useState<SubmissionMode>(
+    defaultSubmissionMode,
+  );
   const [relayerTxHash, setRelayerTxHash] = useState<Hex | null>(null);
   const [relayerError, setRelayerError] = useState<Error | null>(null);
   const [isRelayerSubmitting, setIsRelayerSubmitting] = useState(false);
@@ -128,7 +136,7 @@ const useSubmitClaim = () => {
         throw new Error('Wallet not connected');
       }
 
-      if (CLAIM_RELAYER_URL) {
+      if (CLAIM_RELAYER_URL && submissionMode === 'relayer') {
         setIsRelayerSubmitting(true);
         setRelayerError(null);
         setRelayerTxHash(null);
@@ -165,14 +173,40 @@ const useSubmitClaim = () => {
           console.log('[useSubmitClaim] Relayer submission complete');
           return;
         } catch (err) {
-          const error =
-            err instanceof Error ? err : new Error(String(err ?? 'Error'));
-          setRelayerError(error);
-          console.error('[useSubmitClaim] Relayer error:', error);
-          throw error;
+          const isNetworkError =
+            err instanceof TypeError &&
+            /failed to fetch|networkerror|load failed|fetch/i.test(err.message);
+
+          if (isNetworkError && userAddress) {
+            console.warn(
+              '[useSubmitClaim] Relayer request failed; falling back to direct wallet submission.',
+            );
+            setSubmissionMode('wallet');
+          } else if (isNetworkError) {
+            const isMixedContent =
+              typeof window !== 'undefined' &&
+              window.location.protocol === 'https:' &&
+              CLAIM_RELAYER_URL.startsWith('http://');
+            throw new Error(
+              isMixedContent
+                ? `Claim relayer blocked by the browser (mixed content): ${CLAIM_RELAYER_URL}`
+                : `Claim relayer unreachable: ${CLAIM_RELAYER_URL}`,
+            );
+          } else {
+            const error =
+              err instanceof Error ? err : new Error(String(err ?? 'Error'));
+            setRelayerError(error);
+            console.error('[useSubmitClaim] Relayer error:', error);
+            throw error;
+          }
         } finally {
           setIsRelayerSubmitting(false);
         }
+      }
+
+      if (!userAddress) {
+        console.error('[useSubmitClaim] Wallet not connected');
+        throw new Error('Wallet not connected');
       }
 
       try {
@@ -182,7 +216,7 @@ const useSubmitClaim = () => {
           abi: TANGLE_MIGRATION_ABI,
           functionName: 'claimWithZKProof',
           args: [
-            args.ss58Address,
+            args.pubkey,
             args.amount,
             args.merkleProof,
             args.zkProof,
@@ -197,7 +231,7 @@ const useSubmitClaim = () => {
         throw err;
       }
     },
-    [userAddress, writeContract],
+    [submissionMode, userAddress, writeContract],
   );
 
   /**
@@ -209,15 +243,19 @@ const useSubmitClaim = () => {
     setRelayerError(null);
     setRelayerSuccess(false);
     setIsRelayerSubmitting(false);
-  }, [resetWrite]);
+    setSubmissionMode(defaultSubmissionMode);
+  }, [defaultSubmissionMode, resetWrite]);
 
-  const txHashCombined = relayerTxHash ?? txHash ?? null;
-  const isSubmittingCombined = CLAIM_RELAYER_URL
+  const isRelayerMode = submissionMode === 'relayer' && !!CLAIM_RELAYER_URL;
+  const txHashCombined = isRelayerMode
+    ? (relayerTxHash ?? null)
+    : (txHash ?? null);
+  const isSubmittingCombined = isRelayerMode
     ? isRelayerSubmitting
     : isWritePending;
-  const isConfirmingCombined = CLAIM_RELAYER_URL ? false : isConfirming;
-  const isConfirmedCombined = CLAIM_RELAYER_URL ? relayerSuccess : isConfirmed;
-  const errorCombined = CLAIM_RELAYER_URL
+  const isConfirmingCombined = isRelayerMode ? false : isConfirming;
+  const isConfirmedCombined = isRelayerMode ? relayerSuccess : isConfirmed;
+  const errorCombined = isRelayerMode
     ? relayerError
     : writeError || confirmError;
 

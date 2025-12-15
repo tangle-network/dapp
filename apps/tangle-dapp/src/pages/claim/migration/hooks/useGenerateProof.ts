@@ -5,14 +5,16 @@ import { type Hex } from 'viem';
  * Prover API endpoint (Succinct Network or self-hosted)
  * This should be configured based on the deployment
  */
-const PROVER_API_URL =
-  import.meta.env.VITE_SP1_PROVER_API_URL || 'http://localhost:3001/api/prove';
+const PROVER_API_URL = import.meta.env.VITE_SP1_PROVER_API_URL as
+  | string
+  | undefined;
 
 /**
  * Dev mode - skip actual proof generation and return mock proof
- * Enable by setting VITE_MOCK_PROOF=true or when no prover URL is configured
+ * Enable by setting VITE_MOCK_PROOF=true or when no prover URL is configured.
  */
-const USE_MOCK_PROOF = import.meta.env.VITE_MOCK_PROOF === 'true';
+const USE_MOCK_PROOF =
+  import.meta.env.VITE_MOCK_PROOF === 'true' || !PROVER_API_URL;
 
 export interface ProofInput {
   /** The SS58 Substrate address (public key is derived from this in ZK circuit) */
@@ -91,6 +93,10 @@ const useGenerateProof = () => {
       }
 
       setProgress('Sending to prover network...');
+
+      if (!PROVER_API_URL) {
+        throw new Error('Prover API URL is not configured');
+      }
 
       // Call the prover API
       // Note: Public key is derived from SS58 address inside the ZK circuit
@@ -178,6 +184,10 @@ async function pollForProof(
   jobId: string,
   setProgress: (msg: string) => void,
 ): Promise<ProofResult> {
+  if (!PROVER_API_URL) {
+    throw new Error('Prover API URL is not configured');
+  }
+
   const maxAttempts = 120; // 10 minutes with 5s intervals
   const interval = 5000;
 

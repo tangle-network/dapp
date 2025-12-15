@@ -5,6 +5,7 @@ import { useReadContract } from 'wagmi';
 import {
   lookupClaim,
   loadMerkleTreeData,
+  ss58ToPubkey,
   type MigrationProofsData,
   type ClaimData,
 } from '@tangle-network/tangle-shared-ui/data/migration';
@@ -15,14 +16,14 @@ const TANGLE_MIGRATION_ABI = [
     name: 'claimed',
     type: 'function',
     stateMutability: 'view',
-    inputs: [{ name: 'addressHash', type: 'bytes32' }],
+    inputs: [{ name: 'pubkey', type: 'bytes32' }],
     outputs: [{ name: '', type: 'uint256' }],
   },
   {
     name: 'getClaimedAmount',
     type: 'function',
     stateMutability: 'view',
-    inputs: [{ name: 'originalAddress', type: 'string' }],
+    inputs: [{ name: 'pubkey', type: 'bytes32' }],
     outputs: [{ name: '', type: 'uint256' }],
   },
   {
@@ -115,6 +116,17 @@ export const generateChallenge = (
  * Hook to check claim eligibility for an SS58 Substrate address
  */
 const useClaimEligibility = ({ ss58Address }: UseClaimEligibilityOptions) => {
+  const pubkeyFromSs58 = useMemo((): Hex | null => {
+    if (!ss58Address) {
+      return null;
+    }
+    try {
+      return ss58ToPubkey(ss58Address);
+    } catch {
+      return null;
+    }
+  }, [ss58Address]);
+
   // Fetch the proofs data
   const {
     data: proofsData,
@@ -140,14 +152,14 @@ const useClaimEligibility = ({ ss58Address }: UseClaimEligibilityOptions) => {
     retry: 3,
   });
 
-  // Check claimed amount on-chain using the string address
+  // Check claimed amount on-chain using the pubkey (derived from SS58)
   const { data: claimedAmount, isLoading: isLoadingClaimed } = useReadContract({
     address: TANGLE_MIGRATION_ADDRESS ?? undefined,
     abi: TANGLE_MIGRATION_ABI,
     functionName: 'getClaimedAmount',
-    args: ss58Address ? [ss58Address] : undefined,
+    args: pubkeyFromSs58 ? [pubkeyFromSs58] : undefined,
     query: {
-      enabled: !!ss58Address && !!TANGLE_MIGRATION_ADDRESS,
+      enabled: !!pubkeyFromSs58 && !!TANGLE_MIGRATION_ADDRESS,
     },
   });
 

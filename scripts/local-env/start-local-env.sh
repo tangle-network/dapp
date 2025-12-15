@@ -850,6 +850,10 @@ EOF
 deploy_migration_contracts() {
     log_info "Deploying TangleMigration contracts..."
 
+    # Clear any stale values first; only set them once we confirm deployed code exists.
+    export TANGLE_MIGRATION_ADDRESS=""
+    export MIGRATION_TNT_TOKEN_ADDRESS=""
+
     # Check if migration output exists
     local migration_output=""
     if [[ -d "$DAPP_ROOT/scripts/migration/migration_output" ]]; then
@@ -909,22 +913,35 @@ console.log(JSON.stringify({
     # Build and deploy
     forge build --quiet 2>/dev/null || true
 
-    local ANVIL_PRIVATE_KEY="0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80"
+    # Clear any stale broadcast artifacts so we don't pick up old addresses when a deploy fails.
+    rm -rf broadcast/DeployTangleMigration.s.sol/ 2>/dev/null || true
+
+    run_migration_deploy() {
+        MERKLE_ROOT="$merkle_root" \
+        TOTAL_SUBSTRATE="$total_substrate" \
+        TOTAL_EVM="$total_evm" \
+        USE_MOCK_VERIFIER="true" \
+        ALLOW_STANDALONE_TOKEN="$1" \
+        TNT_TOKEN="$2" \
+        TNT_TOKEN_ADDRESS="$2" \
+        PRIVATE_KEY="$ANVIL_PRIVATE_KEY" \
+        forge script script/DeployTangleMigration.s.sol:DeployTangleMigration \
+            --rpc-url "http://127.0.0.1:$ANVIL_PORT" \
+            --broadcast \
+            --quiet \
+            2>&1 | tee /tmp/migration-deploy.log || true
+    }
 
     # Deploy with exact totals from distribution
-    MERKLE_ROOT="$merkle_root" \
-    TOTAL_SUBSTRATE="$total_substrate" \
-    TOTAL_EVM="$total_evm" \
-    USE_MOCK_VERIFIER="true" \
-    ALLOW_STANDALONE_TOKEN="${ALLOW_STANDALONE_TOKEN:-false}" \
-    TNT_TOKEN="${TNT_TOKEN_ADDRESS:-}" \
-    TNT_TOKEN_ADDRESS="${TNT_TOKEN_ADDRESS:-}" \
-    PRIVATE_KEY="$ANVIL_PRIVATE_KEY" \
-    forge script script/DeployTangleMigration.s.sol:DeployTangleMigration \
-        --rpc-url "http://127.0.0.1:$ANVIL_PORT" \
-        --broadcast \
-        --quiet \
-        2>&1 | tee /tmp/migration-deploy.log || true
+    local allow_standalone="${ALLOW_STANDALONE_TOKEN:-false}"
+    local configured_tnt="${TNT_TOKEN_ADDRESS:-}"
+    run_migration_deploy "$allow_standalone" "$configured_tnt"
+
+    if grep -q "Existing TNT balance insufficient" /tmp/migration-deploy.log 2>/dev/null; then
+        log_warn "Existing TNT balance insufficient; redeploying migration with a standalone test token..."
+        rm -rf broadcast/DeployTangleMigration.s.sol/ 2>/dev/null || true
+        run_migration_deploy "true" ""
+    fi
 
     # Extract addresses from broadcast
     local broadcast_file=$(ls -t broadcast/DeployTangleMigration.s.sol/*/run-latest.json 2>/dev/null | head -1)
@@ -946,6 +963,33 @@ console.log(JSON.stringify({
         export MIGRATION_TNT_TOKEN_ADDRESS="${TNT_TOKEN_ADDRESS:-}"
     fi
 
+    # Verify deployed code exists (avoid caching stale addresses when deploy failed).
+    local migration_code=""
+    if [[ -n "${TANGLE_MIGRATION_ADDRESS:-}" && "${TANGLE_MIGRATION_ADDRESS}" != "null" ]]; then
+        migration_code="$(curl -s http://127.0.0.1:$ANVIL_PORT -X POST -H "Content-Type: application/json" \
+            --data "{\"jsonrpc\":\"2.0\",\"method\":\"eth_getCode\",\"params\":[\"$TANGLE_MIGRATION_ADDRESS\", \"latest\"],\"id\":1}" \
+            | grep -o '"result":"[^"]*"' | cut -d'"' -f4)"
+    fi
+    if [[ -z "$migration_code" || "$migration_code" == "0x" ]]; then
+        log_warn "TangleMigration deployment failed (no code at ${TANGLE_MIGRATION_ADDRESS:-<empty>}); check /tmp/migration-deploy.log"
+        export TANGLE_MIGRATION_ADDRESS=""
+        export MIGRATION_TNT_TOKEN_ADDRESS=""
+        cd "$DAPP_ROOT"
+        unset -f run_migration_deploy 2>/dev/null || true
+        return 0
+    fi
+
+    if [[ -n "${MIGRATION_TNT_TOKEN_ADDRESS:-}" && "${MIGRATION_TNT_TOKEN_ADDRESS}" != "null" ]]; then
+        local mig_token_code
+        mig_token_code="$(curl -s http://127.0.0.1:$ANVIL_PORT -X POST -H "Content-Type: application/json" \
+            --data "{\"jsonrpc\":\"2.0\",\"method\":\"eth_getCode\",\"params\":[\"$MIGRATION_TNT_TOKEN_ADDRESS\", \"latest\"],\"id\":1}" \
+            | grep -o '"result":"[^"]*"' | cut -d'"' -f4)"
+        if [[ -z "$mig_token_code" || "$mig_token_code" == "0x" ]]; then
+            log_warn "Migration TNT token address has no code: $MIGRATION_TNT_TOKEN_ADDRESS"
+            export MIGRATION_TNT_TOKEN_ADDRESS=""
+        fi
+    fi
+
     # Copy proofs to frontend
     local proofs_dest="$DAPP_ROOT/apps/tangle-dapp/public/data"
     mkdir -p "$proofs_dest"
@@ -962,6 +1006,7 @@ console.log(JSON.stringify({
     fi
 
     cd "$DAPP_ROOT"
+    unset -f run_migration_deploy 2>/dev/null || true
 }
 
 execute_evm_airdrop() {
@@ -1219,6 +1264,16 @@ start_claim_relayer() {
         return
     fi
 
+    # Ensure the configured address actually has deployed code (avoid relayer booting with stale cache).
+    local mig_code
+    mig_code="$(curl -s http://127.0.0.1:$ANVIL_PORT -X POST -H "Content-Type: application/json" \
+        --data "{\"jsonrpc\":\"2.0\",\"method\":\"eth_getCode\",\"params\":[\"$TANGLE_MIGRATION_ADDRESS\", \"latest\"],\"id\":1}" \
+        | grep -o '"result":"[^"]*"' | cut -d'"' -f4)"
+    if [[ -z "$mig_code" || "$mig_code" == "0x" ]]; then
+        log_warn "Cannot start claim relayer: no contract code at $TANGLE_MIGRATION_ADDRESS"
+        return
+    fi
+
     local relayer_key="$CLAIM_RELAYER_PRIVATE_KEY"
     local relayer_address
     relayer_address=$(cast wallet address "$relayer_key" 2>/dev/null | tail -1 || true)
@@ -1260,6 +1315,26 @@ start_claim_relayer() {
         log_error "Failed to start claim relayer. Check $CLAIM_RELAYER_LOG"
         CLAIM_RELAYER_PID=""
     fi
+}
+
+ensure_migration_contracts() {
+    if [[ -z "${TANGLE_MIGRATION_ADDRESS:-}" || "${TANGLE_MIGRATION_ADDRESS}" == "null" ]]; then
+        deploy_migration_contracts
+        return 0
+    fi
+
+    local mig_code
+    mig_code="$(curl -s http://127.0.0.1:$ANVIL_PORT -X POST -H "Content-Type: application/json" \
+        --data "{\"jsonrpc\":\"2.0\",\"method\":\"eth_getCode\",\"params\":[\"$TANGLE_MIGRATION_ADDRESS\", \"latest\"],\"id\":1}" \
+        | grep -o '"result":"[^"]*"' | cut -d'"' -f4)"
+    if [[ -z "$mig_code" || "$mig_code" == "0x" ]]; then
+        log_warn "Cached migration contract has no code; redeploying..."
+        export TANGLE_MIGRATION_ADDRESS=""
+        export MIGRATION_TNT_TOKEN_ADDRESS=""
+        deploy_migration_contracts
+    fi
+
+    return 0
 }
 
 stop_claim_relayer() {
@@ -2145,6 +2220,7 @@ resume_session() {
         CLAIM_RELAYER_PID="$relayer_port_pid"
         log_success "Claim relayer is running (PID: $CLAIM_RELAYER_PID, port $CLAIM_RELAYER_PORT)"
     else
+        ensure_migration_contracts
         log_warn "Claim relayer not running. Starting..."
         start_claim_relayer
     fi
