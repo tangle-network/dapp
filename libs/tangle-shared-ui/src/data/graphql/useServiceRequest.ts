@@ -3,10 +3,10 @@
  */
 
 import { useCallback, useState } from 'react';
-import { Address, encodeFunctionData, zeroAddress } from 'viem';
+import { Address, encodeFunctionData, parseEventLogs, zeroAddress } from 'viem';
 import { useAccount, usePublicClient, useWalletClient } from 'wagmi';
 import TangleABI from '../../abi/tangle';
-import { getTangleContractAddress } from '../../constants/tangleContracts';
+import { getContractsByChainId } from '@tangle-network/dapp-config/contracts';
 
 export interface ServiceRequestParams {
   blueprintId: bigint;
@@ -46,20 +46,22 @@ export const useServiceRequestTx = () => {
         return { error };
       }
 
-      const tangleAddress = getTangleContractAddress(chainId);
-      if (!tangleAddress) {
-        const error = new Error(
-          'Tangle contract not available on this network',
-        );
-        setStatus('error');
-        setResult({ error });
-        return { error };
-      }
-
       setStatus('pending');
       setResult({});
 
       try {
+        let contracts: ReturnType<typeof getContractsByChainId>;
+        try {
+          contracts = getContractsByChainId(chainId);
+        } catch {
+          throw new Error('Tangle contract not available on this network');
+        }
+
+        const tangleAddress = contracts.tangle;
+        if (tangleAddress === zeroAddress) {
+          throw new Error('Tangle contract not available on this network');
+        }
+
         // Request service via Tangle contract
         // Use type assertion to avoid "union type too complex" error from large ABI
         const { request: simulateRequest } = await (
@@ -95,16 +97,16 @@ export const useServiceRequestTx = () => {
           throw new Error('Transaction reverted');
         }
 
-        // Parse the ServiceRequested event to get the request ID
-        // Event: ServiceRequested(uint64 indexed requestId, uint64 indexed blueprintId, address requester)
-        const serviceRequestedEvent = receipt.logs.find((log) => {
-          // The event signature hash for ServiceRequested
-          return log.topics[0] === '0x' + 'ServiceRequested'.padEnd(64, '0'); // Simplified - actual implementation would decode properly
-        });
-
         let requestId: bigint | undefined;
-        if (serviceRequestedEvent && serviceRequestedEvent.topics[1]) {
-          requestId = BigInt(serviceRequestedEvent.topics[1]);
+        try {
+          const parsed = parseEventLogs({
+            abi: TangleABI,
+            logs: receipt.logs,
+            eventName: 'ServiceRequested',
+          });
+          requestId = parsed[0]?.args?.requestId;
+        } catch {
+          // If the event isn't present (or decoding fails), still return the txHash.
         }
 
         const successResult: ServiceRequestResult = { requestId, txHash };
