@@ -92,6 +92,51 @@ const tryDecodeViemCustomError = (
       }
     }
 
+    // Standard panic reason: Panic(uint256)
+    if (data.startsWith('0x4e487b71')) {
+      try {
+        const [code] = decodeAbiParameters(
+          [{ type: 'uint256' }],
+          `0x${data.slice(10)}` as Hex,
+        );
+
+        const known =
+          typeof code === 'bigint'
+            ? (() => {
+                switch (code) {
+                  case BigInt(0x01):
+                    return 'assertion violated';
+                  case BigInt(0x11):
+                    return 'arithmetic overflow/underflow';
+                  case BigInt(0x12):
+                    return 'division/modulo by zero';
+                  case BigInt(0x21):
+                    return 'invalid enum conversion';
+                  case BigInt(0x22):
+                    return 'incorrectly encoded storage byte array';
+                  case BigInt(0x31):
+                    return 'pop on empty array';
+                  case BigInt(0x32):
+                    return 'array index out of bounds';
+                  case BigInt(0x41):
+                    return 'memory allocation overflow';
+                  case BigInt(0x51):
+                    return 'zero-initialized function pointer called';
+                  default:
+                    return null;
+                }
+              })()
+            : null;
+
+        if (known) return `Panic: ${known}`;
+        return typeof code === 'bigint'
+          ? `Panic: 0x${code.toString(16)}`
+          : 'Panic';
+      } catch {
+        // ignore
+      }
+    }
+
     return null;
   }
 };
@@ -250,6 +295,16 @@ const useContractWrite = <
           'Contract write factory returned null - dependencies not ready',
         );
         return null;
+      }
+
+      // Fast-fail with a helpful error if the target address is not a contract.
+      const bytecode = await publicClient.getBytecode({
+        address: callConfig.address,
+      });
+      if (bytecode === undefined || bytecode === null || bytecode === '0x') {
+        throw new Error(
+          `Target address ${callConfig.address} has no bytecode (wrong contract address for chain ${publicClient.chain?.id ?? 'unknown'})`,
+        );
       }
 
       // Reset state
