@@ -307,6 +307,7 @@ ensure_postgres_password() {
     # This typically works because local socket auth inside the container is trust.
     if docker compose exec -T envio-postgres psql -U "$ENVIO_PG_USER" -d postgres -c "ALTER USER $ENVIO_PG_USER WITH PASSWORD '$ENVIO_PG_PASSWORD';" >/dev/null 2>&1; then
         log_success "Reset postgres password inside container"
+        POSTGRES_PASSWORD_RESET=true
     else
         log_error "Failed to reset postgres password inside container."
         log_info "If this is a persisted volume from a different setup, run:"
@@ -1033,6 +1034,16 @@ start_indexer() {
         sync_ports_from_docker_compose
     fi
 
+    # Ensure indexer can authenticate to Postgres even when volumes persist from a prior run.
+    POSTGRES_PASSWORD_RESET=false
+    ensure_postgres_password
+
+    # If we changed the password under a running stack, Hasura may still be configured with the old one.
+    if [[ "$POSTGRES_PASSWORD_RESET" == "true" ]]; then
+        log_info "Recreating Hasura container to pick up updated Postgres credentials..."
+        docker compose up -d --force-recreate graphql-engine >/dev/null
+    fi
+
     # Wait for Hasura to be ready before db-setup
     log_info "Waiting for Hasura to be ready..."
     for i in {1..30}; do
@@ -1046,9 +1057,6 @@ start_indexer() {
     # Run DB migrations (needed even if reusing containers)
     log_info "Running DB migrations..."
     pnpm db-setup
-
-    # Ensure indexer can authenticate to Postgres even when volumes persist from a prior run.
-    ensure_postgres_password
 
     # Clear chain progress (for fresh indexing from block 0)
     log_info "Clearing chain progress..."
