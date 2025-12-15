@@ -5,7 +5,7 @@
  */
 
 import { useQuery } from '@tanstack/react-query';
-import { useEffect, useMemo } from 'react';
+import { useMemo } from 'react';
 import { Address, erc20Abi, zeroAddress } from 'viem';
 import {
   useAccount,
@@ -78,7 +78,7 @@ export const useRestakeAssets = (options?: {
   const { network, enabled = true } = options ?? {};
   const chainId = useChainId();
   const { address: userAddress } = useAccount();
-  const publicClient = usePublicClient();
+  const publicClient = usePublicClient({ chainId });
   const { data: connectorClient } = useConnectorClient();
   const {
     data: nativeBalanceData,
@@ -88,7 +88,7 @@ export const useRestakeAssets = (options?: {
     address: userAddress,
     query: {
       enabled: Boolean(userAddress),
-      refetchInterval: 15_000,
+      refetchInterval: 30_000,
     },
   });
   const nativeBalance = nativeBalanceData?.value ?? BigInt(0);
@@ -106,32 +106,6 @@ export const useRestakeAssets = (options?: {
   const healthCheckComplete = !isCheckingHealth;
   const useGraphQL = healthCheckComplete && isIndexerHealthy === true;
   const useOnChainFallback = healthCheckComplete && !isIndexerHealthy;
-
-  // Debug for local testnet (opt-in to avoid noisy console output)
-  useEffect(() => {
-    if (
-      !import.meta.env.DEV ||
-      import.meta.env.VITE_DEBUG_RESTAKE_ASSETS !== 'true'
-    ) {
-      return;
-    }
-
-    console.debug('[useRestakeAssets] Data source:', {
-      chainId,
-      isCheckingHealth,
-      isIndexerHealthy,
-      useGraphQL,
-      useOnChainFallback,
-      publicClientAvailable: !!publicClient,
-    });
-  }, [
-    chainId,
-    isCheckingHealth,
-    isIndexerHealthy,
-    useGraphQL,
-    useOnChainFallback,
-    publicClient,
-  ]);
 
   // On-chain fallback hook (for when indexer is unavailable)
   const onChainResult = useOnChainRestakeAssets({
@@ -151,10 +125,15 @@ export const useRestakeAssets = (options?: {
 
   // Get token addresses from restaking assets, filtering out native token (zero address)
   // Native token doesn't have ERC20 metadata and must be handled separately
-  const allTokenAddresses = restakingAssets?.map((a) => a.token) ?? [];
-  const erc20TokenAddresses = allTokenAddresses.filter(
-    (addr) => addr.toLowerCase() !== NATIVE_TOKEN_ADDRESS.toLowerCase(),
-  );
+  // Memoize to prevent new array reference on every render (causes React Query to re-fetch)
+  const erc20TokenAddresses = useMemo(() => {
+    if (!restakingAssets) return [];
+    return restakingAssets
+      .map((a) => a.token)
+      .filter(
+        (addr) => addr.toLowerCase() !== NATIVE_TOKEN_ADDRESS.toLowerCase(),
+      );
+  }, [restakingAssets]);
   // 2. Fetch ERC20 metadata for ERC20 tokens only (not native token)
   const { data: tokenMetadatas, isLoading: isLoadingMetadata } = useQuery({
     queryKey: ['erc20Metadata', erc20TokenAddresses, publicClient?.chain?.id],
@@ -176,7 +155,6 @@ export const useRestakeAssets = (options?: {
     staleTime: Infinity, // Token metadata doesn't change
   });
 
-  // 3. Fetch user balances for ERC20 tokens using multicall
   const {
     data: balances,
     isLoading: isLoadingBalances,
@@ -599,7 +577,7 @@ export const useNativeBalance = () => {
     address,
     query: {
       enabled: Boolean(address),
-      refetchInterval: 15_000,
+      refetchInterval: 30_000,
     },
   });
 

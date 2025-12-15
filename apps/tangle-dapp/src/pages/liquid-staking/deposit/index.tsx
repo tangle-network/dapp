@@ -200,7 +200,7 @@ const LiquidStakingDepositForm: FC = () => {
   );
 
   const { maxAmount, formattedMaxAmount } = useMemo(() => {
-    if (!vaultAsset) {
+    if (!vaultAsset || vaultAsset.balance === null) {
       return { maxAmount: undefined, formattedMaxAmount: undefined };
     }
 

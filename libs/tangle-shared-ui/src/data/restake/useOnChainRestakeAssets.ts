@@ -76,14 +76,10 @@ export const useOnChainRestakeAssets = (options?: { enabled?: boolean }) => {
   } = useBalance({
     address: userAddress,
     query: {
-      enabled: enabled && Boolean(userAddress),
-      refetchInterval: 10_000,
-      refetchIntervalInBackground: true,
+      enabled: Boolean(userAddress),
     },
   });
   const nativeBalance = nativeBalanceData?.value ?? BigInt(0);
-  const nativeSymbol = nativeBalanceData?.symbol ?? 'ETH';
-  const nativeDecimals = nativeBalanceData?.decimals ?? 18;
 
   // Build assets map - always include native ETH even if contract query fails
   // This ensures users can see/transfer their native balance in fallback mode
@@ -95,9 +91,9 @@ export const useOnChainRestakeAssets = (options?: { enabled?: boolean }) => {
       id: NATIVE_TOKEN_ADDRESS,
       metadata: {
         address: NATIVE_TOKEN_ADDRESS,
-        name: nativeSymbol,
-        symbol: nativeSymbol,
-        decimals: nativeDecimals,
+        name: 'Ether',
+        symbol: 'ETH',
+        decimals: 18,
       },
       balance: nativeBalance,
       restakingInfo: {

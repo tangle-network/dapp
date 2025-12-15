@@ -97,7 +97,7 @@ const TANGLE_ABI = [
 ];
 
 // Mock token addresses (set via env vars or will be detected)
-let TOKENS = {
+const TOKENS = {
   usdc: { address: process.env.USDC_ADDRESS, decimals: 6, symbol: 'USDC' },
   usdt: { address: process.env.USDT_ADDRESS, decimals: 6, symbol: 'USDT' },
   dai: { address: process.env.DAI_ADDRESS, decimals: 18, symbol: 'DAI' },
@@ -628,7 +628,7 @@ async function discoverServices() {
           state.activeServiceIds.push(i);
           console.log(`[DISCOVER_SERVICES] Found active service: ${i}`);
         }
-      } catch (e) {
+      } catch {
         // Service might not exist yet
       }
     }
@@ -763,7 +763,7 @@ async function detectTokens() {
       });
       console.log(`  Found ${symbol} at ${token.address}`);
       state.tokensAvailable.push(key);
-    } catch (error) {
+    } catch {
       console.log(`  Token ${key} at ${token.address} not available`);
     }
   }
