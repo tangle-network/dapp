@@ -17,8 +17,6 @@ const Balance: FC = () => {
     address,
     query: {
       enabled: Boolean(address),
-      refetchInterval: 10_000,
-      refetchIntervalInBackground: true,
     },
   });
 

@@ -198,7 +198,7 @@ export const RestakeProvider: FC<RestakeProviderProps> = ({ children }) => {
       restakingAssetsCount: restakingAssets?.length ?? 0,
       assets: assetList.map((a) => ({
         symbol: a.metadata.symbol,
-        balance: a.balance.toString(),
+        balance: a.balance?.toString() ?? 'null',
       })),
     });
   }

@@ -56,9 +56,7 @@ const TransferModal: FC<TransferModalProps> = ({ isOpen, onClose }) => {
   const { data: nativeBalance, refetch: refetchNativeBalance } = useBalance({
     address: userAddress,
     query: {
-      enabled: Boolean(userAddress) && isOpen,
-      refetchInterval: 10_000,
-      refetchIntervalInBackground: true,
+      enabled: Boolean(userAddress),
     },
   });
 
@@ -94,13 +92,15 @@ const TransferModal: FC<TransferModalProps> = ({ isOpen, onClose }) => {
 
     // Add ERC20 tokens from restaking assets
     for (const asset of assetList) {
-      options.push({
-        address: asset.id,
-        symbol: asset.metadata.symbol,
-        name: asset.metadata.name,
-        decimals: asset.metadata.decimals,
-        balance: asset.balance,
-      });
+      if (asset.balance !== null) {
+        options.push({
+          address: asset.id,
+          symbol: asset.metadata.symbol,
+          name: asset.metadata.name,
+          decimals: asset.metadata.decimals,
+          balance: asset.balance,
+        });
+      }
     }
 
     return options;

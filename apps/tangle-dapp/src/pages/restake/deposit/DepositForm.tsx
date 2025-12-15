@@ -141,7 +141,7 @@ const DepositForm: FC = () => {
     }
 
     const defaultAsset = Array.from(assets.values()).find(
-      ({ balance }) => balance > BigInt(0),
+      ({ balance }) => balance !== null && balance > BigInt(0),
     );
 
     if (defaultAsset === undefined) {
@@ -171,10 +171,13 @@ const DepositForm: FC = () => {
     }
 
     return Array.from(assets.values()).sort((a, b) => {
-      if (a.balance === BigInt(0) && b.balance > BigInt(0)) return 1;
-      if (b.balance === BigInt(0) && a.balance > BigInt(0)) return -1;
-      if (a.balance > b.balance) return -1;
-      if (a.balance < b.balance) return 1;
+      const aBalance = a.balance ?? BigInt(0);
+      const bBalance = b.balance ?? BigInt(0);
+
+      if (aBalance === BigInt(0) && bBalance > BigInt(0)) return 1;
+      if (bBalance === BigInt(0) && aBalance > BigInt(0)) return -1;
+      if (aBalance > bBalance) return -1;
+      if (aBalance < bBalance) return 1;
       return 0;
     });
   }, [assets]);
@@ -192,7 +195,7 @@ const DepositForm: FC = () => {
   }, [assetId, assets]);
 
   const { maxAmount, formattedMaxAmount } = useMemo(() => {
-    if (!asset) {
+    if (!asset || asset.balance === null) {
       return { maxAmount: undefined, formattedMaxAmount: undefined };
     }
 
@@ -577,7 +580,7 @@ const DepositForm: FC = () => {
             assetId={assetItem.id}
             name={assetItem.metadata.name}
             symbol={assetItem.metadata.symbol}
-            balance={new BN(assetItem.balance.toString())}
+            balance={new BN((assetItem.balance ?? BigInt(0)).toString())}
             decimals={assetItem.metadata.decimals}
           />
         )}
