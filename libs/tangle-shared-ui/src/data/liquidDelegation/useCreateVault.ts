@@ -52,6 +52,13 @@ export const useCreateVault = () => {
       args: [params.operator, params.asset, params.blueprintIds] as const,
     }),
     {
+      txName: 'liquid create vault',
+      txDetails: (params) =>
+        new Map([
+          ['Operator', params.operator],
+          ['Asset', params.asset],
+          ['Blueprints', params.blueprintIds.length.toString()],
+        ]),
       getSuccessMessage: (_params) =>
         `Successfully created liquid delegation vault`,
     },
@@ -86,6 +93,13 @@ export const useCreateAllBlueprintsVault = () => {
       args: [params.operator, params.asset] as const,
     }),
     {
+      txName: 'liquid create vault',
+      txDetails: (params) =>
+        new Map([
+          ['Operator', params.operator],
+          ['Asset', params.asset],
+          ['Blueprints', 'all'],
+        ]),
       getSuccessMessage: (_params) =>
         `Successfully created all-blueprints liquid delegation vault`,
     },

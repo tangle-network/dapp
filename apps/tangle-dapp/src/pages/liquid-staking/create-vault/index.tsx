@@ -10,7 +10,9 @@ import { Typography } from '@tangle-network/ui-components/typography/Typography'
 import { FC, useCallback, useEffect, useMemo, useState } from 'react';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import { Address } from 'viem';
+import { BN } from '@polkadot/util';
 import { useAccount } from 'wagmi';
+import { useQueryClient } from '@tanstack/react-query';
 import ActionButtonBase from '../../../components/restaking/ActionButtonBase';
 import StyleContainer from '../../../components/restaking/StyleContainer';
 import { SUPPORTED_RESTAKE_DEPOSIT_TYPED_CHAIN_IDS } from '../../../constants/restake';
@@ -26,8 +28,11 @@ import { useRestakeAssets } from '@tangle-network/tangle-shared-ui/data/graphql'
 import { useOperatorMap } from '@tangle-network/tangle-shared-ui/data/graphql';
 import { TxStatus } from '@tangle-network/tangle-shared-ui/hooks/useContractWrite';
 import filterBy from '@tangle-network/tangle-shared-ui/utils/filterBy';
-import { formatUnits } from 'viem';
 import { Switcher } from '@tangle-network/ui-components/components/Switcher';
+import OperatorListItem from '../../../components/Lists/OperatorListItem';
+import AssetListItem from '../../../components/Lists/AssetListItem';
+import { Avatar, shortenHex } from '@tangle-network/ui-components';
+import { TokenIcon } from '@tangle-network/icons';
 
 type CreateVaultFormFields = {
   operator: Address;
@@ -43,6 +48,7 @@ type OperatorItem = {
 
 const CreateVaultForm: FC = () => {
   const { address: userAddress } = useAccount();
+  const queryClient = useQueryClient();
   const activeTypedChainId = useActiveTypedChainId();
   const switchChain = useSwitchChain();
 
@@ -125,6 +131,11 @@ const CreateVaultForm: FC = () => {
       }));
   }, [operatorMap]);
 
+  const selectedOperatorData = useMemo(() => {
+    if (!selectedOperator) return null;
+    return operators.find((op) => op.address === selectedOperator) ?? null;
+  }, [operators, selectedOperator]);
+
   const assetList = useMemo(() => {
     if (!assets) return [];
     return Array.from(assets.values());
@@ -185,9 +196,19 @@ const CreateVaultForm: FC = () => {
         });
       }
 
+      await queryClient.invalidateQueries({
+        queryKey: ['liquidDelegation', 'vaults'],
+      });
       reset();
     },
-    [isReady, useAllBlueprints, executeCreate, executeCreateAll, reset],
+    [
+      executeCreate,
+      executeCreateAll,
+      isReady,
+      queryClient,
+      reset,
+      useAllBlueprints,
+    ],
   );
 
   return (
@@ -205,14 +226,31 @@ const CreateVaultForm: FC = () => {
                   {...(selectedOperator
                     ? {
                         renderBody: () => (
-                          <div className="flex flex-col">
-                            <span className="font-mono text-sm">
-                              {selectedOperator.slice(0, 8)}...
-                              {selectedOperator.slice(-6)}
-                            </span>
-                            <span className="text-xs text-mono-100">
-                              Operator
-                            </span>
+                          <div className="flex items-center gap-2">
+                            <Avatar
+                              size="md"
+                              theme="ethereum"
+                              value={selectedOperator}
+                            />
+                            <div className="flex flex-col">
+                              <Typography
+                                variant="h5"
+                                fw="bold"
+                                component="span"
+                                className="inline-block text-mono-200 dark:text-mono-40"
+                              >
+                                {shortenHex(selectedOperator)}
+                              </Typography>
+                              <Typography
+                                variant="body3"
+                                component="span"
+                                className="text-mono-120 dark:text-mono-100"
+                              >
+                                {selectedOperatorData
+                                  ? `${selectedOperatorData.delegationCount} total delegations`
+                                  : 'Operator'}
+                              </Typography>
+                            </div>
                           </div>
                         ),
                       }
@@ -229,13 +267,22 @@ const CreateVaultForm: FC = () => {
                   {...(selectedAssetData
                     ? {
                         renderBody: () => (
-                          <div className="flex flex-col">
-                            <span className="font-medium">
-                              {selectedAssetData.metadata.symbol}
-                            </span>
-                            <span className="text-xs text-mono-100">
-                              {selectedAssetData.metadata.name}
-                            </span>
+                          <div className="flex items-center gap-2">
+                            <TokenIcon
+                              name={selectedAssetData.metadata.symbol}
+                              size="lg"
+                            />
+                            <div className="flex flex-col">
+                              <Typography variant="h5" fw="bold">
+                                {selectedAssetData.metadata.symbol}
+                              </Typography>
+                              <Typography
+                                variant="body3"
+                                className="text-mono-120 dark:text-mono-100"
+                              >
+                                {selectedAssetData.metadata.name}
+                              </Typography>
+                            </div>
                           </div>
                         ),
                       }
@@ -320,17 +367,12 @@ const CreateVaultForm: FC = () => {
         descriptionWhenEmpty="No active operators found on this network."
         items={operators}
         isLoading={isLoadingOperators}
+        getItemKey={(operator) => operator.address}
         renderItem={(operator) => (
-          <div className="flex items-center justify-between w-full p-2">
-            <div className="flex flex-col">
-              <span className="font-mono text-sm">
-                {operator.address.slice(0, 10)}...{operator.address.slice(-8)}
-              </span>
-              <span className="text-xs text-mono-100">
-                {operator.delegationCount} delegations
-              </span>
-            </div>
-          </div>
+          <OperatorListItem
+            accountAddress={operator.address}
+            totalDelegations={operator.delegationCount}
+          />
         )}
       />
 
@@ -352,21 +394,15 @@ const CreateVaultForm: FC = () => {
         descriptionWhenEmpty="No restaking assets found on this network."
         items={assetList}
         isLoading={isLoadingAssets}
+        getItemKey={(asset) => asset.id}
         renderItem={(asset) => (
-          <div className="flex items-center justify-between w-full p-2">
-            <div className="flex flex-col">
-              <span className="font-medium">{asset.metadata.symbol}</span>
-              <span className="text-xs text-mono-100">
-                {asset.metadata.name}
-              </span>
-            </div>
-            <div className="flex flex-col items-end">
-              <span className="text-sm">
-                {formatUnits(asset.balance, asset.metadata.decimals)}
-              </span>
-              <span className="text-xs text-mono-100">Balance</span>
-            </div>
-          </div>
+          <AssetListItem
+            assetId={asset.id}
+            name={asset.metadata.name}
+            symbol={asset.metadata.symbol}
+            balance={new BN(asset.balance.toString())}
+            decimals={asset.metadata.decimals}
+          />
         )}
       />
 

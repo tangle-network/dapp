@@ -177,10 +177,15 @@ const LiquidDelegationVaultsTable: FC = () => {
   }
 
   if (error) {
+    const message =
+      error instanceof Error
+        ? error.message
+        : 'An error occurred while loading vaults.';
+
     return (
       <TableStatus
         title="Error Loading Vaults"
-        description={error.message || 'An error occurred while loading vaults.'}
+        description={message}
       />
     );
   }

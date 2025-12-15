@@ -37,6 +37,7 @@ import { TxStatus } from '@tangle-network/tangle-shared-ui/hooks/useContractWrit
 import filterBy from '@tangle-network/tangle-shared-ui/utils/filterBy';
 import LIQUID_DELEGATION_VAULT_ABI from '@tangle-network/tangle-shared-ui/abi/liquidDelegationVault';
 import { useVaultRedeem } from '@tangle-network/tangle-shared-ui/data/liquidDelegation';
+import VaultListItem from '../../../components/Lists/VaultListItem';
 
 type RedeemFormFields = {
   vaultAddress: Address;
@@ -256,15 +257,17 @@ const LiquidStakingRedeemForm: FC = () => {
                     ? {
                         renderBody: () => (
                           <div className="flex flex-col">
-                            <span className="font-mono text-sm">
-                              {selectedVault.operator.slice(0, 8)}...
-                              {selectedVault.operator.slice(-6)}
-                            </span>
-                            <span className="text-xs text-mono-100">
+                            <Typography variant="h5" fw="bold">
+                              {selectedVault.name} ({selectedVault.symbol})
+                            </Typography>
+                            <Typography
+                              variant="body3"
+                              className="text-mono-120 dark:text-mono-100"
+                            >
                               {selectedVault.selectionMode === 0
-                                ? 'All Blueprints'
-                                : 'Fixed Blueprints'}
-                            </span>
+                                ? 'All blueprints'
+                                : `${selectedVault.blueprintIds.length} blueprints`}
+                            </Typography>
                           </div>
                         ),
                       }
@@ -468,8 +471,9 @@ const LiquidStakingRedeemForm: FC = () => {
         searchPlaceholder="Search vaults..."
         titleWhenEmpty="No Vaults Found"
         descriptionWhenEmpty="No liquid delegation vaults found with positions."
-        items={vaults ?? []}
+        items={vaults}
         isLoading={isLoadingVaults}
+        getItemKey={(vault) => vault.address}
         renderItem={(vault) => {
           const asset = assets?.get(vault.asset);
           const tvl = formatUnits(
@@ -478,24 +482,16 @@ const LiquidStakingRedeemForm: FC = () => {
           );
 
           return (
-            <div className="flex items-center justify-between w-full p-2">
-              <div className="flex flex-col">
-                <span className="font-mono text-sm">
-                  {vault.operator.slice(0, 10)}...{vault.operator.slice(-8)}
-                </span>
-                <span className="text-xs text-mono-100">
-                  {vault.selectionMode === 0
-                    ? 'All Blueprints'
-                    : `${vault.blueprintIds.length} Blueprints`}
-                </span>
-              </div>
-              <div className="flex flex-col items-end">
-                <span className="text-sm">
-                  {tvl} {asset?.metadata.symbol ?? 'tokens'}
-                </span>
-                <span className="text-xs text-mono-100">TVL</span>
-              </div>
-            </div>
+            <VaultListItem
+              vaultAddress={vault.address}
+              vaultName={vault.name}
+              vaultSymbol={vault.symbol}
+              operatorAddress={vault.operator}
+              selectionMode={vault.selectionMode}
+              blueprintCount={vault.blueprintIds.length}
+              tvlText={tvl}
+              tvlSymbol={asset?.metadata.symbol}
+            />
           );
         }}
       />

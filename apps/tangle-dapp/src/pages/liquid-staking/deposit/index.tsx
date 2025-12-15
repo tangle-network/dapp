@@ -10,10 +10,10 @@ import type { TextFieldInputProps } from '@tangle-network/ui-components/componen
 import { TransactionInputCard } from '@tangle-network/ui-components/components/TransactionInputCard';
 import { useModal } from '@tangle-network/ui-components/hooks/useModal';
 import { Typography } from '@tangle-network/ui-components/typography/Typography';
-import { FC, useCallback, useEffect, useMemo, useRef } from 'react';
+import { FC, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { SubmitHandler, useForm } from 'react-hook-form';
-import { erc20Abi, maxUint256, parseUnits, formatUnits, Address } from 'viem';
-import { useAccount, useChainId, useReadContract } from 'wagmi';
+import { erc20Abi, parseUnits, formatUnits, Address } from 'viem';
+import { useAccount, useChainId } from 'wagmi';
 import ErrorMessage from '../../../components/ErrorMessage';
 import ActionButtonBase from '../../../components/restaking/ActionButtonBase';
 import StyleContainer from '../../../components/restaking/StyleContainer';
@@ -34,6 +34,7 @@ import { useContractWrite } from '@tangle-network/tangle-shared-ui/data/tx';
 import { TxStatus } from '@tangle-network/tangle-shared-ui/hooks/useContractWrite';
 import filterBy from '@tangle-network/tangle-shared-ui/utils/filterBy';
 import { chainsConfig } from '@tangle-network/dapp-config/chains';
+import VaultListItem from '../../../components/Lists/VaultListItem';
 
 type DepositFormFields = {
   vaultAddress: Address;
@@ -52,7 +53,11 @@ const LiquidStakingDepositForm: FC = () => {
 
   const { vaults, isLoading: isLoadingVaults } = useLiquidDelegationVaults();
   const { assets, refetchBalances } = useRestakeAssets();
-  const { status: depositStatus, execute: executeDeposit } = useVaultDeposit();
+  const {
+    status: depositStatus,
+    execute: executeDeposit,
+    txHash: depositTxHash,
+  } = useVaultDeposit();
 
   const {
     register,
@@ -115,66 +120,82 @@ const LiquidStakingDepositForm: FC = () => {
     return assets.get(selectedVault.asset) ?? null;
   }, [selectedVault, assets]);
 
-  const parsedAmount = useMemo(() => {
-    if (!vaultAsset || !amount) return null;
-    try {
-      const value = parseUnits(amount, vaultAsset.metadata.decimals);
-      return value > BigInt(0) ? value : null;
-    } catch {
-      return null;
-    }
-  }, [amount, vaultAsset]);
-
   const spender = selectedVault?.address ?? null;
 
+  const approveLastErrorRef = useRef<Error | null>(null);
+
   const {
-    data: allowance,
-    isLoading: isLoadingAllowance,
-    refetch: refetchAllowance,
-  } = useReadContract({
-    address: vaultAsset?.id,
-    abi: erc20Abi,
-    functionName: 'allowance',
-    args:
-      userAddress && spender
-        ? ([userAddress, spender] as const)
-        : undefined,
-    query: {
-      enabled: Boolean(userAddress) && Boolean(spender) && Boolean(vaultAsset) && parsedAmount !== null,
-      staleTime: 10_000,
-      refetchInterval: 30_000,
-      refetchIntervalInBackground: true,
-    },
-  });
-
-  const needsApproval =
-    parsedAmount !== null &&
-    spender !== null &&
-    typeof allowance === 'bigint' &&
-    allowance < parsedAmount;
-
-  const { status: approveTxStatus, execute: executeApproveTx } = useContractWrite(
+    status: approveTxStatus,
+    execute: executeApproveTx,
+    txHash: approveTxHash,
+  } =
+    useContractWrite(
     erc20Abi,
-    (ctx: { token: Address; spender: Address }) => ({
+    (ctx: { token: Address; spender: Address; amount: bigint }) => ({
       address: ctx.token,
       abi: erc20Abi,
       functionName: 'approve' as const,
-      args: [ctx.spender, maxUint256] as const,
+      args: [ctx.spender, ctx.amount] as const,
     }),
-    { getSuccessMessage: () => `Approval successful` },
+    {
+      txName: 'approve',
+      onError: (error) => {
+        approveLastErrorRef.current = error;
+      },
+      getSuccessMessage: () => 'Approval successful',
+    },
   );
 
-  const handleApprove = useCallback(async () => {
+  const [txStep, setTxStep] = useState<'idle' | 'approving' | 'depositing'>(
+    'idle',
+  );
+
+  const handleApprove = useCallback(async (amountToApprove: bigint) => {
     if (!vaultAsset || !spender || !executeApproveTx) {
-      return;
-    }
-    if (parsedAmount === null) {
-      return;
+      return false;
     }
 
-    await executeApproveTx({ token: vaultAsset.id, spender });
-    await refetchAllowance();
-  }, [executeApproveTx, parsedAmount, refetchAllowance, spender, vaultAsset]);
+    approveLastErrorRef.current = null;
+    const firstAttempt = await executeApproveTx({
+      token: vaultAsset.id,
+      spender,
+      amount: amountToApprove,
+    });
+
+    if (firstAttempt !== null) {
+      return true;
+    }
+
+    // TS will narrow `ref.current` to `null` after assignment, even though the
+    // async write may set it via `onError`. Widen it back for the post-attempt check.
+    const message =
+      (approveLastErrorRef.current as Error | null)?.message?.toLowerCase() ??
+      '';
+    const looksLikeNonZeroAllowanceIssue =
+      message.includes('non-zero') && message.includes('allowance');
+
+    if (!looksLikeNonZeroAllowanceIssue) {
+      return false;
+    }
+
+    const zeroAttempt = await executeApproveTx({
+      token: vaultAsset.id,
+      spender,
+      amount: BigInt(0),
+    });
+
+    if (zeroAttempt === null) {
+      return false;
+    }
+
+    const secondAttempt = await executeApproveTx({
+      token: vaultAsset.id,
+      spender,
+      amount: amountToApprove,
+    });
+
+    return secondAttempt !== null;
+  }, [executeApproveTx, spender, vaultAsset]);
 
   const { maxAmount, formattedMaxAmount } = useMemo(() => {
     if (!vaultAsset) {
@@ -250,16 +271,22 @@ const LiquidStakingDepositForm: FC = () => {
         return;
       }
 
-      if (needsApproval) {
-        await handleApprove();
-        return;
-      }
+      try {
+        // Set allowance to exactly the deposit amount (never infinite approvals).
+        if (!spender) return;
+        setTxStep('approving');
+        const approved = await handleApprove(amountBigInt);
+        if (!approved) return;
 
-      await executeDeposit({
-        vaultAddress: vault,
-        amount: amountBigInt,
-        receiver: userAddress,
-      });
+        setTxStep('depositing');
+        await executeDeposit({
+          vaultAddress: vault,
+          amount: amountBigInt,
+          receiver: userAddress,
+        });
+      } finally {
+        setTxStep('idle');
+      }
 
       setValue('amount', '', { shouldValidate: false });
       refetchBalances();
@@ -270,7 +297,7 @@ const LiquidStakingDepositForm: FC = () => {
       userAddress,
       vaultAsset,
       executeDeposit,
-      needsApproval,
+      spender,
       setValue,
       refetchBalances,
     ],
@@ -295,15 +322,17 @@ const LiquidStakingDepositForm: FC = () => {
                     ? {
                         renderBody: () => (
                           <div className="flex flex-col">
-                            <span className="font-mono text-sm">
-                              {selectedVault.operator.slice(0, 8)}...
-                              {selectedVault.operator.slice(-6)}
-                            </span>
-                            <span className="text-xs text-mono-100">
+                            <Typography variant="h5" fw="bold">
+                              {selectedVault.name} ({selectedVault.symbol})
+                            </Typography>
+                            <Typography
+                              variant="body3"
+                              className="text-mono-120 dark:text-mono-100"
+                            >
                               {selectedVault.selectionMode === 0
-                                ? 'All Blueprints'
-                                : 'Fixed Blueprints'}
-                            </span>
+                                ? 'All blueprints'
+                                : `${selectedVault.blueprintIds.length} blueprints`}
+                            </Typography>
                           </div>
                         ),
                       }
@@ -396,22 +425,29 @@ const LiquidStakingDepositForm: FC = () => {
                 );
               }
 
-                return (
-                  <Button
-                    isDisabled={!isValid || isDefined(displayError) || !isReady}
-                    type={needsApproval ? 'button' : 'submit'}
-                    isFullWidth
-                    isLoading={
-                      isTransacting || isApproving || isLoading || isLoadingAllowance
-                    }
-                    loadingText={loadingText}
-                    onClick={needsApproval ? handleApprove : undefined}
-                  >
-                    {displayError ?? (needsApproval ? 'Approve' : 'Deposit')}
-                  </Button>
-                );
-              }}
-            </ActionButtonBase>
+              return (
+                <Button
+                  isDisabled={!isValid || isDefined(displayError) || !isReady}
+                  type="submit"
+                  isFullWidth
+                  isLoading={isTransacting || isApproving || isLoading}
+                  loadingText={
+                    txStep === 'approving' && approveTxStatus === TxStatus.PROCESSING
+                      ? approveTxHash === null
+                        ? 'Preparing approval…'
+                        : 'Waiting for approval…'
+                      : txStep === 'depositing' && depositStatus === TxStatus.PROCESSING
+                        ? depositTxHash === null
+                          ? 'Preparing deposit…'
+                          : 'Waiting for deposit…'
+                        : loadingText
+                  }
+                >
+                  {displayError ?? 'Approve & Deposit'}
+                </Button>
+              );
+            }}
+          </ActionButtonBase>
         </form>
       </Card>
 
@@ -427,34 +463,24 @@ const LiquidStakingDepositForm: FC = () => {
         searchPlaceholder="Search vaults..."
         titleWhenEmpty="No Vaults Found"
         descriptionWhenEmpty="No liquid delegation vaults are available. Please try again later."
-        items={vaults ?? []}
+        items={vaults}
         isLoading={isLoadingVaults}
+        getItemKey={(vault) => vault.address}
         renderItem={(vault) => {
           const asset = assets?.get(vault.asset);
-          const tvl = formatUnits(
-            vault.totalAssets,
-            asset?.metadata.decimals ?? 18,
-          );
+          const tvl = formatUnits(vault.totalAssets, asset?.metadata.decimals ?? 18);
 
           return (
-            <div className="flex items-center justify-between w-full p-2">
-              <div className="flex flex-col">
-                <span className="font-mono text-sm">
-                  {vault.operator.slice(0, 10)}...{vault.operator.slice(-8)}
-                </span>
-                <span className="text-xs text-mono-100">
-                  {vault.selectionMode === 0
-                    ? 'All Blueprints'
-                    : `${vault.blueprintIds.length} Blueprints`}
-                </span>
-              </div>
-              <div className="flex flex-col items-end">
-                <span className="text-sm">
-                  {tvl} {asset?.metadata.symbol ?? 'tokens'}
-                </span>
-                <span className="text-xs text-mono-100">TVL</span>
-              </div>
-            </div>
+            <VaultListItem
+              vaultAddress={vault.address}
+              vaultName={vault.name}
+              vaultSymbol={vault.symbol}
+              operatorAddress={vault.operator}
+              selectionMode={vault.selectionMode}
+              blueprintCount={vault.blueprintIds.length}
+              tvlText={tvl}
+              tvlSymbol={asset?.metadata.symbol}
+            />
           );
         }}
       />
