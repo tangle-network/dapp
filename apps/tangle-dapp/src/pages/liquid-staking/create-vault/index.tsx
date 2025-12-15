@@ -212,7 +212,7 @@ const CreateVaultForm: FC = () => {
         ? 'Select Asset'
         : existingVault
           ? 'Vault already exists'
-        : undefined;
+          : undefined;
   }, [existingVault, selectedOperator, selectedAsset]);
 
   const isTransacting =
@@ -231,32 +231,32 @@ const CreateVaultForm: FC = () => {
     return createAllError ?? createError ?? null;
   }, [createAllError, createError]);
 
-	  const onSubmit = useCallback<SubmitHandler<CreateVaultFormFields>>(
-	    async ({ operator, asset }) => {
-	      if (!isReady) return;
-	      if (existingVault) return;
+  const onSubmit = useCallback<SubmitHandler<CreateVaultFormFields>>(
+    async ({ operator, asset }) => {
+      if (!isReady) return;
+      if (existingVault) return;
 
-	      let txResult = null;
-	      if (useAllBlueprints && executeCreateAll) {
-	        txResult = await executeCreateAll({ operator, asset });
-	      } else if (executeCreate) {
-	        txResult = await executeCreate({
-	          operator,
-	          asset,
-	          blueprintIds: [BigInt(0)], // Default to blueprint 0 for now
-	        });
-	      }
+      let txResult = null;
+      if (useAllBlueprints && executeCreateAll) {
+        txResult = await executeCreateAll({ operator, asset });
+      } else if (executeCreate) {
+        txResult = await executeCreate({
+          operator,
+          asset,
+          blueprintIds: [BigInt(0)], // Default to blueprint 0 for now
+        });
+      }
 
-	      if (txResult?.status === 'success') {
-	        await queryClient.invalidateQueries({
-	          queryKey: ['liquidDelegation', 'vaults'],
-	        });
-	        reset();
-	      }
-	    },
-	    [
-	      executeCreate,
-	      executeCreateAll,
+      if (txResult?.status === 'success') {
+        await queryClient.invalidateQueries({
+          queryKey: ['liquidDelegation', 'vaults'],
+        });
+        reset();
+      }
+    },
+    [
+      executeCreate,
+      executeCreateAll,
       existingVault,
       isReady,
       queryClient,

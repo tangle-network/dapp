@@ -82,7 +82,10 @@ const tryDecodeViemCustomError = (
     // Standard revert reason: Error(string)
     if (data.startsWith('0x08c379a0')) {
       try {
-        const [reason] = decodeAbiParameters([{ type: 'string' }], `0x${data.slice(10)}` as Hex);
+        const [reason] = decodeAbiParameters(
+          [{ type: 'string' }],
+          `0x${data.slice(10)}` as Hex,
+        );
         if (typeof reason === 'string' && reason.length > 0) return reason;
       } catch {
         // ignore
@@ -263,9 +266,7 @@ const useContractWrite = <
       try {
         // Simulate the transaction first (via public RPC, not the wallet provider).
         // This avoids wallet/provider-specific issues that can prevent the signing prompt.
-        let request:
-          | Parameters<typeof writeContract>[1]
-          | null = null;
+        let request: Parameters<typeof writeContract>[1] | null = null;
 
         try {
           const simulated = await simulateContract(publicClient, {
