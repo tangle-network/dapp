@@ -500,11 +500,31 @@ async function delegateERC20ToOperator(accountIndex, tokenKey) {
 async function registerOperator(accountIndex) {
   const privateKey = ANVIL_ACCOUNTS[accountIndex];
   const walletClient = getWalletClient(privateKey);
+  const account = privateKeyToAccount(privateKey);
   const stake = randomAmount(5, 20);
 
   console.log(`[REGISTER_OPERATOR] Account ${accountIndex} registering with ${Number(stake) / 1e18} ETH stake`);
 
   try {
+    const alreadyOperator = await publicClient.readContract({
+      address: CONTRACTS.multiAssetDelegation,
+      abi: MULTI_ASSET_DELEGATION_ABI,
+      functionName: 'isOperator',
+      args: [account.address],
+    });
+
+    if (alreadyOperator) {
+      console.log(
+        `[REGISTER_OPERATOR] Account ${accountIndex} already registered as an operator, skipping...`,
+      );
+
+      if (!state.operators.includes(accountIndex)) {
+        state.operators.push(accountIndex);
+      }
+
+      return true;
+    }
+
     const hash = await walletClient.sendTransaction({
       to: CONTRACTS.multiAssetDelegation,
       value: stake,

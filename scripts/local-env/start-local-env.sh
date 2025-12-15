@@ -50,6 +50,8 @@ HASURA_EXTERNAL_PORT="${HASURA_EXTERNAL_PORT:-8080}"
 GRAPHQL_PORT="$HASURA_EXTERNAL_PORT"
 CLAIM_RELAYER_PORT=${CLAIM_RELAYER_PORT:-3001}
 ANVIL_STATE_INTERVAL="${ANVIL_STATE_INTERVAL:-5}"
+# Anvil's default deployer private key (account #0)
+ANVIL_PRIVATE_KEY="${ANVIL_PRIVATE_KEY:-0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80}"
 
 # Claim relayer defaults (Anvil account #1 unless overridden)
 DEFAULT_RELAYER_PRIVATE_KEY="0x59c6995e998f97a5a0044966f0945389dc9e86dae88c7a8412f4603b6b78690d"
@@ -112,6 +114,8 @@ export WETH_ADDRESS=""
 export STETH_ADDRESS=""
 export WSTETH_ADDRESS=""
 export EIGEN_ADDRESS=""
+export REWARD_VAULTS_ADDRESS=""
+export INFLATION_POOL_ADDRESS=""
 # Migration contract addresses
 export TANGLE_MIGRATION_ADDRESS=""
 export TNT_TOKEN_ADDRESS=""
@@ -494,13 +498,16 @@ deploy_multicall3() {
 	        )"
 
         if [[ -n "$core_multicall_bytecode" ]]; then
-            local core_digits_len=$(( ${#core_multicall_bytecode} - 2 ))
-            if (( core_digits_len % 2 != 0 )); then
-                log_warn "Ignoring invalid Multicall3 bytecode from tnt-core (odd-length hex); using embedded fallback."
-            else
-                MULTICALL3_BYTECODE="$core_multicall_bytecode"
-            fi
+            MULTICALL3_BYTECODE="$core_multicall_bytecode"
         fi
+    fi
+
+    # Normalize and validate bytecode.
+    MULTICALL3_BYTECODE="${MULTICALL3_BYTECODE//$'\n'/}"
+    MULTICALL3_BYTECODE="${MULTICALL3_BYTECODE//[[:space:]]/}"
+    if [[ ! "$MULTICALL3_BYTECODE" =~ ^0x[0-9a-fA-F]+$ ]] || (( (${#MULTICALL3_BYTECODE} - 2) % 2 != 0 )); then
+        log_warn "Invalid Multicall3 bytecode; continuing without multicall"
+        return 0
     fi
 
     # Use anvil_setCode to deploy at the deterministic address
@@ -511,8 +518,14 @@ deploy_multicall3() {
     if echo "$set_result" | grep -q '"error"' && [[ "$MULTICALL3_BYTECODE" != "$DEFAULT_MULTICALL3_BYTECODE" ]]; then
         log_warn "anvil_setCode failed with tnt-core Multicall3 bytecode; retrying with embedded fallback..."
         MULTICALL3_BYTECODE="$DEFAULT_MULTICALL3_BYTECODE"
+        MULTICALL3_BYTECODE="${MULTICALL3_BYTECODE//$'\n'/}"
+        MULTICALL3_BYTECODE="${MULTICALL3_BYTECODE//[[:space:]]/}"
         set_result=$(curl -s http://127.0.0.1:$ANVIL_PORT -X POST -H "Content-Type: application/json" \
             --data "{\"jsonrpc\":\"2.0\",\"method\":\"anvil_setCode\",\"params\":[\"$MULTICALL3_ADDRESS\", \"$MULTICALL3_BYTECODE\"],\"id\":1}")
+    fi
+    if echo "$set_result" | grep -q '"error"'; then
+        log_warn "Multicall3 injection failed; continuing without multicall (response: $set_result)"
+        return 0
     fi
 
     # Small delay for Anvil to process
@@ -533,13 +546,12 @@ deploy_multicall3() {
         if echo "$probe_resp" | grep -q '"result"'; then
             log_success "Multicall3 deployed at $MULTICALL3_ADDRESS"
         else
-            log_error "Multicall3 injected but not functional (response: $probe_resp)"
-            exit 1
+            log_warn "Multicall3 injected but not functional; continuing without multicall (response: $probe_resp)"
+            return 0
         fi
     else
-        log_error "Failed to deploy Multicall3 - aborting local environment startup"
-        log_info "Response: $set_result"
-        exit 1
+        log_warn "Failed to deploy Multicall3; continuing without multicall (response: $set_result)"
+        return 0
     fi
 }
 
@@ -563,6 +575,8 @@ export WETH_ADDRESS="$WETH_ADDRESS"
 export STETH_ADDRESS="$STETH_ADDRESS"
 export WSTETH_ADDRESS="$WSTETH_ADDRESS"
 export EIGEN_ADDRESS="$EIGEN_ADDRESS"
+export REWARD_VAULTS_ADDRESS="${REWARD_VAULTS_ADDRESS:-}"
+export INFLATION_POOL_ADDRESS="${INFLATION_POOL_ADDRESS:-}"
 export TNT_TOKEN_ADDRESS="${TNT_TOKEN_ADDRESS:-}"
 export TANGLE_MIGRATION_ADDRESS="${TANGLE_MIGRATION_ADDRESS:-}"
 export MIGRATION_TNT_TOKEN_ADDRESS="${MIGRATION_TNT_TOKEN_ADDRESS:-}"
@@ -585,9 +599,6 @@ deploy_contracts() {
     # (keeps compiled artifacts cached for faster subsequent runs)
     log_info "Clearing forge broadcast cache..."
     rm -rf broadcast/LocalTestnet.s.sol/ 2>/dev/null || true
-
-    # Anvil's default deployer private key
-    local ANVIL_PRIVATE_KEY="0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80"
 
     # Run forge script (may return non-zero due to size warnings, but deployment still succeeds)
     forge script script/v2/LocalTestnet.s.sol:LocalTestnetSetup \
@@ -677,6 +688,113 @@ deploy_contracts() {
     fi
 
     log_success "Contracts deployed"
+}
+
+ensure_incentives_contracts() {
+    # RewardVaults/InflationPool are optional modules. Prefer on-chain discovery and only deploy if missing.
+    if ! command -v cast >/dev/null 2>&1; then
+        log_warn "Foundry 'cast' not found; skipping incentives check."
+        return 0
+    fi
+
+    if [[ -z "${RESTAKING_PROXY:-}" || -z "${TANGLE_PROXY:-}" || -z "${STATUS_REGISTRY:-}" ]]; then
+        log_warn "Core contract addresses not set; skipping incentives check."
+        return 0
+    fi
+
+    local rewards_manager
+    rewards_manager="$(cast call --rpc-url "http://127.0.0.1:$ANVIL_PORT" "$RESTAKING_PROXY" "rewardsManager()(address)" 2>/dev/null | tail -n 1 || true)"
+
+    if [[ -n "$rewards_manager" && "$rewards_manager" =~ ^0x[a-fA-F0-9]{40}$ && "$rewards_manager" != "0x0000000000000000000000000000000000000000" ]]; then
+        local rm_code
+        rm_code="$(curl -s "http://127.0.0.1:$ANVIL_PORT" -X POST -H "Content-Type: application/json" \
+            --data "{\"jsonrpc\":\"2.0\",\"method\":\"eth_getCode\",\"params\":[\"$rewards_manager\", \"latest\"],\"id\":1}" \
+            | grep -o '"result":"[^"]*"' | cut -d'"' -f4)"
+        if [[ -n "$rm_code" && "$rm_code" != "0x" ]]; then
+            export REWARD_VAULTS_ADDRESS="$rewards_manager"
+            log_success "Incentives already deployed (RewardVaults proxy: $rewards_manager)"
+            return 0
+        fi
+    fi
+
+    log_info "Incentives not deployed; running FullDeploy to deploy RewardVaults/InflationPool..."
+
+    local tnt_token="${TNT_TOKEN_ADDRESS:-}"
+    if [[ -z "$tnt_token" ]]; then
+        tnt_token="$(cast call --rpc-url "http://127.0.0.1:$ANVIL_PORT" "$TANGLE_PROXY" "operatorBondToken()(address)" 2>/dev/null | tail -n 1 || true)"
+    fi
+
+    if [[ -z "$tnt_token" || ! "$tnt_token" =~ ^0x[a-fA-F0-9]{40}$ || "$tnt_token" == "0x0000000000000000000000000000000000000000" ]]; then
+        log_warn "Could not resolve TNT token address; skipping incentives deploy."
+        return 0
+    fi
+
+    local cfg_path="$TNT_CORE_DIR/.local/full-deploy-config.json"
+    mkdir -p "$(dirname "$cfg_path")"
+    cat > "$cfg_path" << EOF
+{
+  "network": "local-anvil",
+  "core": {
+    "deploy": false,
+    "tangle": "$TANGLE_PROXY",
+    "restaking": "$RESTAKING_PROXY",
+    "statusRegistry": "$STATUS_REGISTRY",
+    "operatorBondToken": "$tnt_token"
+  },
+  "restakeAssets": [],
+  "incentives": {
+    "deployMetrics": true,
+    "deployRewardVaults": true,
+    "deployInflationPool": true,
+    "tntToken": "$tnt_token"
+  },
+  "manifest": { "path": "", "logSummary": false },
+  "migration": { "emitArtifacts": false, "artifactsPath": "", "merklePath": "", "notes": "" }
+}
+EOF
+
+    (cd "$TNT_CORE_DIR" && \
+      FULL_DEPLOY_CONFIG="$cfg_path" PRIVATE_KEY="$ANVIL_PRIVATE_KEY" \
+      forge script script/v2/FullDeploy.s.sol:FullDeploy \
+        --rpc-url "http://127.0.0.1:$ANVIL_PORT" \
+        --broadcast \
+        --non-interactive \
+        --slow 2>&1 | tee /tmp/full-deploy.log || true)
+
+    rewards_manager="$(cast call --rpc-url "http://127.0.0.1:$ANVIL_PORT" "$RESTAKING_PROXY" "rewardsManager()(address)" 2>/dev/null | tail -n 1 || true)"
+    if [[ -n "$rewards_manager" && "$rewards_manager" =~ ^0x[a-fA-F0-9]{40}$ && "$rewards_manager" != "0x0000000000000000000000000000000000000000" ]]; then
+        local rm_code
+        rm_code="$(curl -s "http://127.0.0.1:$ANVIL_PORT" -X POST -H "Content-Type: application/json" \
+            --data "{\"jsonrpc\":\"2.0\",\"method\":\"eth_getCode\",\"params\":[\"$rewards_manager\", \"latest\"],\"id\":1}" \
+            | grep -o '"result":"[^"]*"' | cut -d'"' -f4)"
+        if [[ -n "$rm_code" && "$rm_code" != "0x" ]]; then
+            export REWARD_VAULTS_ADDRESS="$rewards_manager"
+            log_success "Incentives deployed (RewardVaults proxy: $rewards_manager)"
+        else
+            log_warn "FullDeploy ran but RewardVaults proxy still has no code (check /tmp/full-deploy.log)."
+        fi
+    else
+        log_warn "FullDeploy ran but rewardsManager could not be resolved."
+    fi
+
+    # Best-effort: capture InflationPool proxy from Foundry broadcast artifacts.
+    if command -v jq >/dev/null 2>&1; then
+        local broadcast_file
+        broadcast_file="$(ls -t "$TNT_CORE_DIR/broadcast/FullDeploy.s.sol/"*/run-latest.json 2>/dev/null | head -1 || true)"
+        if [[ -n "$broadcast_file" && -f "$broadcast_file" ]]; then
+            local inflation_proxy
+            inflation_proxy="$(jq -r '
+              .transactions
+              | to_entries
+              | map(select(.value.contractName != null) | {name: .value.contractName, addr: (.value.contractAddress // "")})
+              | . as $txs
+              | (reduce range(0; ($txs|length)) as $i (""; if $txs[$i].name == "InflationPool" then ($txs[$i+1].addr // "") else . end))
+            ' "$broadcast_file" 2>/dev/null | tail -n 1 || true)"
+            if [[ -n "$inflation_proxy" && "$inflation_proxy" =~ ^0x[a-fA-F0-9]{40}$ ]]; then
+                export INFLATION_POOL_ADDRESS="$inflation_proxy"
+            fi
+        fi
+    fi
 }
 
 deploy_migration_contracts() {
@@ -1974,6 +2092,7 @@ resume_session() {
         start_claim_relayer
     fi
 
+    ensure_incentives_contracts
     ensure_tnt_restake_asset
 
     log_success "Session resumed successfully!"
@@ -2012,6 +2131,7 @@ main() {
     check_prerequisites
     start_anvil
     deploy_contracts
+    ensure_incentives_contracts
     deploy_migration_contracts
     ensure_tnt_restake_asset
 
