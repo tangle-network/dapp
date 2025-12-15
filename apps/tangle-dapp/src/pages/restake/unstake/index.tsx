@@ -3,7 +3,7 @@ import { calculateTypedChainId } from '@tangle-network/dapp-types/TypedChainId';
 import isDefined from '@tangle-network/dapp-types/utils/isDefined';
 import { LockUnlockLineIcon } from '@tangle-network/icons/LockUnlockLineIcon';
 import { TokenIcon } from '@tangle-network/icons';
-import { Card, IconButton, shortenHex } from '@tangle-network/ui-components';
+import { Avatar, Card, IconButton, shortenHex } from '@tangle-network/ui-components';
 import Button from '@tangle-network/ui-components/components/buttons/Button';
 import { Modal } from '@tangle-network/ui-components/components/Modal';
 import type { TextFieldInputProps } from '@tangle-network/ui-components/components/TextField/types';
@@ -15,7 +15,7 @@ import { type SubmitHandler, useForm } from 'react-hook-form';
 import { twMerge } from 'tailwind-merge';
 import { Address, formatUnits, parseUnits } from 'viem';
 import { BN } from '@polkadot/util';
-import { useAccount } from 'wagmi';
+import { useAccount, useChainId } from 'wagmi';
 import ErrorMessage from '../../../components/ErrorMessage';
 import RestakeDetailCard from '../../../components/RestakeDetailCard';
 import ActionButtonBase from '../../../components/restaking/ActionButtonBase';
@@ -48,9 +48,10 @@ import {
   AmountFormatStyle,
   formatDisplayAmount,
 } from '@tangle-network/ui-components';
-import { useChainId, useReadContracts } from 'wagmi';
 import MULTI_ASSET_DELEGATION_ABI from '@tangle-network/tangle-shared-ui/abi/multiAssetDelegation';
 import { getContractsByChainId } from '@tangle-network/dapp-config/contracts';
+import { useResilientReadContract } from '@tangle-network/tangle-shared-ui/hooks/useResilientReadContract';
+import { useResilientReadContracts } from '@tangle-network/tangle-shared-ui/hooks/useResilientReadContracts';
 
 // Delegation item with metadata for selection
 type DelegationItem = {
@@ -111,17 +112,7 @@ const RestakeUnstakeForm: FC = () => {
 
   // Fetch delegator data
   const { data: delegator, refetch: refetchDelegator } = useDelegator(userAddress);
-
-  // Get unique token addresses from delegations
-  const tokenAddresses = useMemo(() => {
-    if (!delegator?.delegations) return [];
-    const addresses = new Set<EvmAddress>();
-    delegator.delegations.forEach((d) => addresses.add(d.token as EvmAddress));
-    return Array.from(addresses);
-  }, [delegator?.delegations]);
-
-  // Fetch token metadata
-  const { data: tokenMetadatas } = useEvmAssetMetadatas(tokenAddresses);
+  const { data: protocolConfig } = useProtocolConfig();
 
   const contracts = useMemo(() => {
     try {
@@ -131,30 +122,178 @@ const RestakeUnstakeForm: FC = () => {
     }
   }, [chainId]);
 
-  const operatorAddresses = useMemo(() => {
-    if (!delegator?.delegations) return [];
-    return Array.from(
-      new Set(delegator.delegations.map((d) => d.operatorId.toLowerCase())),
-    ) as Address[];
-  }, [delegator?.delegations]);
+  type OnChainDelegation = {
+    operator: Address;
+    shares: bigint;
+    asset: { kind: number; token: Address };
+    selectionMode: number;
+  };
 
-  const { data: operatorRewardPools } = useReadContracts({
-    contracts:
-      contracts && operatorAddresses.length > 0
-        ? operatorAddresses.map((operator) => ({
+  type OnChainPendingUnstake = {
+    operator: Address;
+    asset: { kind: number; token: Address };
+    shares: bigint;
+    requestedRound: bigint;
+    selectionMode: number;
+  };
+
+  const {
+    data: onChainDelegations,
+    refetch: refetchOnChainDelegations,
+  } = useResilientReadContract({
+    queryKey: ['restake', 'unstake', 'delegations', chainId, userAddress] as const,
+    contract:
+      contracts && userAddress
+        ? {
             address: contracts.multiAssetDelegation,
             abi: MULTI_ASSET_DELEGATION_ABI,
-            functionName: 'getOperatorRewardPool' as const,
-            args: [operator] as const,
-          }))
-        : [],
+            functionName: 'getDelegations',
+            args: [userAddress] as const,
+          }
+        : null,
     query: {
-      enabled: Boolean(contracts) && operatorAddresses.length > 0,
-      staleTime: 15_000,
-      refetchInterval: 15_000,
+      enabled: Boolean(contracts) && Boolean(userAddress),
+      staleTime: 2_000,
+      refetchInterval: 2_000,
       refetchIntervalInBackground: true,
     },
   });
+
+  const {
+    data: onChainPendingUnstakes,
+    refetch: refetchOnChainPendingUnstakes,
+  } = useResilientReadContract({
+    queryKey: [
+      'restake',
+      'unstake',
+      'pendingUnstakes',
+      chainId,
+      userAddress,
+    ] as const,
+    contract:
+      contracts && userAddress
+        ? {
+            address: contracts.multiAssetDelegation,
+            abi: MULTI_ASSET_DELEGATION_ABI,
+            functionName: 'getPendingUnstakes',
+            args: [userAddress] as const,
+          }
+        : null,
+    query: {
+      enabled: Boolean(contracts) && Boolean(userAddress),
+      staleTime: 2_000,
+      refetchInterval: 2_000,
+      refetchIntervalInBackground: true,
+    },
+  });
+
+  const delegationsForUi = useMemo(() => {
+    const graphql = delegator?.delegations ?? [];
+    const onchain = (onChainDelegations as OnChainDelegation[] | undefined) ?? [];
+
+    const byKey = new Map<
+      string,
+      {
+        id: string;
+        operatorId: Address;
+        token: Address;
+        shares: bigint;
+        lastKnownAmount: bigint;
+      }
+    >();
+
+    for (const d of graphql) {
+      const key = `${d.operatorId.toLowerCase()}-${d.token.toLowerCase()}`;
+      byKey.set(key, {
+        id: d.id,
+        operatorId: d.operatorId,
+        token: d.token,
+        shares: d.shares,
+        lastKnownAmount: d.lastKnownAmount,
+      });
+    }
+
+    for (const [idx, d] of onchain.entries()) {
+      const key = `${d.operator.toLowerCase()}-${d.asset.token.toLowerCase()}`;
+      const prev = byKey.get(key);
+      byKey.set(key, {
+        id: prev?.id ?? `${key}-${idx}`,
+        operatorId: d.operator,
+        token: d.asset.token,
+        shares: d.shares,
+        lastKnownAmount: prev?.lastKnownAmount ?? d.shares,
+      });
+    }
+
+    return Array.from(byKey.values());
+  }, [delegator?.delegations, onChainDelegations]);
+
+  const pendingUnstakeSharesByDelegationKey = useMemo(() => {
+    const map = new Map<string, bigint>();
+
+    if (delegator?.unstakeRequests && delegator.unstakeRequests.length > 0) {
+      for (const req of delegator.unstakeRequests) {
+        if (req.status !== 'PENDING') continue;
+        const key = `${req.operatorId.toLowerCase()}-${req.token.toLowerCase()}`;
+        map.set(key, (map.get(key) ?? BigInt(0)) + req.shares);
+      }
+      return map;
+    }
+
+    if (!onChainPendingUnstakes) {
+      return map;
+    }
+
+    for (const req of onChainPendingUnstakes as OnChainPendingUnstake[]) {
+      const key = `${req.operator.toLowerCase()}-${req.asset.token.toLowerCase()}`;
+      map.set(key, (map.get(key) ?? BigInt(0)) + req.shares);
+    }
+
+    return map;
+  }, [delegator?.unstakeRequests, onChainPendingUnstakes]);
+
+  const operatorAddresses = useMemo(() => {
+    if (delegationsForUi.length === 0) return [];
+    return Array.from(
+      new Set(delegationsForUi.map((d) => d.operatorId.toLowerCase())),
+    ) as Address[];
+  }, [delegationsForUi]);
+
+  // Get unique token addresses from delegations
+  const tokenAddresses = useMemo(() => {
+    const addresses = new Set<EvmAddress>();
+    delegationsForUi.forEach((d) => addresses.add(d.token as EvmAddress));
+    return Array.from(addresses);
+  }, [delegationsForUi]);
+
+  // Fetch token metadata
+  const { data: tokenMetadatas } = useEvmAssetMetadatas(tokenAddresses);
+
+  const { data: operatorRewardPools, refetch: refetchOperatorRewardPools } =
+    useResilientReadContracts({
+      queryKey: [
+        'restake',
+        'unstake',
+        'operatorRewardPools',
+        chainId,
+        operatorAddresses,
+      ] as const,
+      contracts:
+        contracts && operatorAddresses.length > 0
+          ? operatorAddresses.map((operator) => ({
+              address: contracts.multiAssetDelegation,
+              abi: MULTI_ASSET_DELEGATION_ABI,
+              functionName: 'getOperatorRewardPool',
+              args: [operator] as const,
+            }))
+          : [],
+      query: {
+        enabled: Boolean(contracts) && operatorAddresses.length > 0,
+        staleTime: 15_000,
+        refetchInterval: 15_000,
+        refetchIntervalInBackground: true,
+      },
+    });
 
   const operatorPoolMap = useMemo(() => {
     const map = new Map<string, { totalShares: bigint; totalAssets: bigint }>();
@@ -187,11 +326,11 @@ const RestakeUnstakeForm: FC = () => {
 
   // Build delegation items with metadata
   const delegationItems = useMemo<DelegationItem[]>(() => {
-    if (!delegator?.delegations || !tokenMetadatas) {
+    if (delegationsForUi.length === 0 || !tokenMetadatas) {
       return [];
     }
 
-    return delegator.delegations
+    return delegationsForUi
       .map((delegation) => {
         const metadata = tokenMetadatas.find(
           (m) => m.id.toLowerCase() === delegation.token.toLowerCase(),
@@ -200,15 +339,10 @@ const RestakeUnstakeForm: FC = () => {
         if (!metadata) return null;
 
         // Calculate available to unstake (shares minus pending unstakes)
-        const pendingUnstakes = delegator.unstakeRequests
-          .filter(
-            (req) =>
-              req.operatorId.toLowerCase() ===
-                delegation.operatorId.toLowerCase() &&
-              req.token.toLowerCase() === delegation.token.toLowerCase() &&
-              req.status === 'PENDING',
-          )
-          .reduce((sum, req) => sum + req.shares, BigInt(0));
+        const pendingUnstakes =
+          pendingUnstakeSharesByDelegationKey.get(
+            `${delegation.operatorId.toLowerCase()}-${delegation.token.toLowerCase()}`,
+          ) ?? BigInt(0);
 
         const availableShares =
           delegation.shares > pendingUnstakes
@@ -242,18 +376,40 @@ const RestakeUnstakeForm: FC = () => {
       })
       .filter((item): item is DelegationItem => item !== null);
   }, [
-    delegator?.delegations,
-    delegator?.unstakeRequests,
+    delegationsForUi,
+    pendingUnstakeSharesByDelegationKey,
     operatorPoolMap,
     tokenMetadatas,
   ]);
 
   // Get pending unstake requests
   const unstakeRequests = useMemo(() => {
-    return (
-      delegator?.unstakeRequests.filter((r) => r.status === 'PENDING') ?? []
-    );
-  }, [delegator?.unstakeRequests]);
+    if (delegator?.unstakeRequests && delegator.unstakeRequests.length > 0) {
+      return delegator.unstakeRequests.filter((r) => r.status === 'PENDING');
+    }
+
+    if (!onChainPendingUnstakes) {
+      return [];
+    }
+
+    const delay = protocolConfig?.delegationBondLessDelay ?? BigInt(0);
+    return (onChainPendingUnstakes as OnChainPendingUnstake[]).map((r, idx) => ({
+      id: `${r.operator.toLowerCase()}-${r.asset.token.toLowerCase()}-${r.requestedRound.toString()}-${idx}`,
+      operatorId: r.operator,
+      token: r.asset.token,
+      nonce: BigInt(0),
+      shares: r.shares,
+      estimatedAmount: r.shares,
+      requestedRound: r.requestedRound,
+      readyAtRound: r.requestedRound + delay,
+      status: 'PENDING' as const,
+      executedAt: null,
+    })) satisfies UnstakeRequest[];
+  }, [
+    delegator?.unstakeRequests,
+    onChainPendingUnstakes,
+    protocolConfig?.delegationBondLessDelay,
+  ]);
 
   const { maxAmount, formattedMaxAmount } = useMemo(() => {
     if (!selectedDelegation) {
@@ -320,6 +476,20 @@ const RestakeUnstakeForm: FC = () => {
     setSelectedDelegation(null);
   }, [setValue]);
 
+  const refreshAll = useCallback(async () => {
+    await Promise.allSettled([
+      refetchDelegator(),
+      refetchOnChainDelegations(),
+      refetchOnChainPendingUnstakes(),
+      refetchOperatorRewardPools(),
+    ]);
+  }, [
+    refetchDelegator,
+    refetchOnChainDelegations,
+    refetchOnChainPendingUnstakes,
+    refetchOperatorRewardPools,
+  ]);
+
   const onSubmit = useCallback<SubmitHandler<EvmUnstakeFormFields>>(
     async ({ amount, assetId, operatorAddress }) => {
       if (!isReady || !selectedDelegation) {
@@ -334,13 +504,13 @@ const RestakeUnstakeForm: FC = () => {
           token: assetId,
           amount: amountBigInt,
         });
-        await refetchDelegator();
+        await refreshAll();
         resetForm();
       } catch (error) {
         console.error('Transaction failed:', error);
       }
     },
-    [executeScheduleUnstake, isReady, refetchDelegator, resetForm, selectedDelegation],
+    [executeScheduleUnstake, isReady, refreshAll, resetForm, selectedDelegation],
   );
 
   const handleDelegationSelect = useCallback(
@@ -380,15 +550,29 @@ const RestakeUnstakeForm: FC = () => {
                     {...(selectedDelegation
                       ? {
                           renderBody: () => (
-                            <div className="flex flex-col">
-                              <span className="font-mono text-sm">
-                                {selectedDelegation.operatorAddress.slice(0, 8)}
-                                ...
-                                {selectedDelegation.operatorAddress.slice(-6)}
-                              </span>
-                              <span className="text-xs text-mono-100">
-                                {selectedDelegation.tokenSymbol}
-                              </span>
+                            <div className="flex items-center gap-2">
+                              <Avatar
+                                size="md"
+                                theme="ethereum"
+                                value={selectedDelegation.operatorAddress}
+                              />
+                              <div className="flex flex-col">
+                                <Typography
+                                  variant="h5"
+                                  fw="bold"
+                                  component="span"
+                                  className="inline-block text-mono-200 dark:text-mono-40"
+                                >
+                                  {shortenHex(selectedDelegation.operatorAddress)}
+                                </Typography>
+                                <Typography
+                                  variant="body3"
+                                  component="span"
+                                  className="text-mono-120 dark:text-mono-100"
+                                >
+                                  {selectedDelegation.tokenSymbol}
+                                </Typography>
+                              </div>
                             </div>
                           ),
                         }
@@ -491,7 +675,7 @@ const RestakeUnstakeForm: FC = () => {
           unstakeRequests={unstakeRequests}
           tokenMetadatas={tokenMetadatas}
           onClose={() => setIsUnstakeRequestTableOpen(false)}
-          onRefresh={refetchDelegator}
+          onRefresh={refreshAll}
         />
       </AnimatedTable>
 
@@ -499,7 +683,7 @@ const RestakeUnstakeForm: FC = () => {
         unstakeRequests={unstakeRequests}
         tokenMetadatas={tokenMetadatas}
         onClose={() => setIsUnstakeRequestTableOpen(false)}
-        onRefresh={refetchDelegator}
+        onRefresh={refreshAll}
         className="md:hidden"
       />
 
@@ -636,10 +820,9 @@ const UnstakeRequestsView: FC<UnstakeRequestsViewProps> = ({
               >
                 <div className="flex items-center justify-between">
                   <div className="flex flex-col">
-                    <span className="font-mono text-xs">
-                      {request.operatorId.slice(0, 8)}...
-                      {request.operatorId.slice(-6)}
-                    </span>
+                    <Typography variant="body3" className="font-mono text-mono-120 dark:text-mono-100">
+                      {shortenHex(request.operatorId)}
+                    </Typography>
                     <span className="text-sm font-medium">
                       {metadata
                         ? formatUnits(

@@ -12,8 +12,10 @@ import TableStatus from '@tangle-network/tangle-shared-ui/components/tables/Tabl
 import { useEvmAssetMetadatas } from '@tangle-network/tangle-shared-ui/hooks/useEvmAssetMetadatas';
 import {
   AmountFormatStyle,
+  CopyWithTooltip,
   formatDisplayAmount,
   EMPTY_VALUE_PLACEHOLDER,
+  shortenHex,
 } from '@tangle-network/ui-components';
 import Button from '@tangle-network/ui-components/components/buttons/Button';
 import { Table } from '@tangle-network/ui-components/components/Table';
@@ -285,9 +287,12 @@ const getOperatorColumns = (onRestakeClicked: () => void) => [
     header: () => <HeaderCell title="Operator" />,
     cell: (props) => (
       <TableCellWrapper className="pl-3">
-        <Typography variant="body2" className="font-mono">
-          {props.getValue().slice(0, 10)}...{props.getValue().slice(-8)}
-        </Typography>
+        <div className="flex items-center gap-2">
+          <Typography variant="body2" className="font-mono">
+            {shortenHex(props.getValue())}
+          </Typography>
+          <CopyWithTooltip textToCopy={props.getValue()} isButton={false} />
+        </div>
       </TableCellWrapper>
     ),
   }),
@@ -325,7 +330,7 @@ const getOperatorColumns = (onRestakeClicked: () => void) => [
     ),
   }),
   OPERATOR_COLUMN_HELPER.accessor('delegationCount', {
-    header: () => <HeaderCell title="Delegations" />,
+    header: () => <HeaderCell title="Total Delegations" />,
     cell: (props) => <TableCellWrapper>{props.getValue()}</TableCellWrapper>,
   }),
   OPERATOR_COLUMN_HELPER.display({

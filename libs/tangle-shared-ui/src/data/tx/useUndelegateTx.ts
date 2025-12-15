@@ -44,6 +44,13 @@ export const useScheduleUnstakeTx = () => {
       args: [params.operator, params.token, params.amount] as const,
     }),
     {
+      txName: 'restake undelegate',
+      txDetails: (params) =>
+        new Map([
+          ['Operator', params.operator],
+          ['Token', params.token],
+          ['Amount', params.amount.toString()],
+        ]),
       getSuccessMessage: () => 'Successfully scheduled unstake',
     },
   );
@@ -66,6 +73,7 @@ export const useExecuteUnstakeTx = () => {
       args: [] as const,
     }),
     {
+      txName: 'restake execute undelegate',
       getSuccessMessage: () => 'Successfully executed unstake',
     },
   );

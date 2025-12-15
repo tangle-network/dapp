@@ -4,18 +4,17 @@ import isDefined from '@tangle-network/dapp-types/utils/isDefined';
 import { LockUnlockLineIcon } from '@tangle-network/icons/LockUnlockLineIcon';
 import { TokenIcon } from '@tangle-network/icons';
 import ListModal from '@tangle-network/tangle-shared-ui/components/ListModal';
-import { Card, isEvmAddress } from '@tangle-network/ui-components';
+import { Avatar, Card, isEvmAddress, shortenHex, Typography } from '@tangle-network/ui-components';
 import Button from '@tangle-network/ui-components/components/buttons/Button';
 import { Modal } from '@tangle-network/ui-components/components/Modal';
 import type { TextFieldInputProps } from '@tangle-network/ui-components/components/TextField/types';
 import { TransactionInputCard } from '@tangle-network/ui-components/components/TransactionInputCard';
 import { useModal } from '@tangle-network/ui-components/hooks/useModal';
-import { Typography } from '@tangle-network/ui-components/typography/Typography';
 import { FC, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import { Address, formatUnits, parseUnits } from 'viem';
 import { BN } from '@polkadot/util';
-import { useAccount, useChainId, useReadContracts } from 'wagmi';
+import { useAccount, useChainId } from 'wagmi';
 import ErrorMessage from '../../../components/ErrorMessage';
 import ActionButtonBase from '../../../components/restaking/ActionButtonBase';
 import BlueprintSelection from '../../../components/restaking/BlueprintSelection';
@@ -34,17 +33,17 @@ import useSwitchChain from '../useSwitchChain';
 import Details from './Details';
 import filterBy from '@tangle-network/tangle-shared-ui/utils/filterBy';
 import AssetListItem from '../../../components/Lists/AssetListItem';
+import OperatorListItem from '../../../components/Lists/OperatorListItem';
 
 import {
-  useDelegator,
   useOperatorMap,
+  useRestakeAssets,
 } from '@tangle-network/tangle-shared-ui/data/graphql';
 import { useDelegateTx } from '@tangle-network/tangle-shared-ui/data/tx';
 import { TxStatus } from '@tangle-network/tangle-shared-ui/hooks/useContractWrite';
-import { useEvmAssetMetadatas } from '@tangle-network/tangle-shared-ui/hooks/useEvmAssetMetadatas';
-import type { EvmAddress } from '@tangle-network/ui-components/types/address';
 import MULTI_ASSET_DELEGATION_ABI from '@tangle-network/tangle-shared-ui/abi/multiAssetDelegation';
 import { getContractsByChainId } from '@tangle-network/dapp-config/contracts';
+import { useResilientReadContracts } from '@tangle-network/tangle-shared-ui/hooks/useResilientReadContracts';
 
 type AssetItem = {
   id: Address;
@@ -59,7 +58,7 @@ type AssetItem = {
 type OperatorItem = {
   address: Address;
   stake: bigint;
-  delegationCount: number;
+  delegationCount: bigint;
   isActive: boolean;
 };
 
@@ -108,18 +107,16 @@ const RestakeDelegateForm: FC = () => {
     reset();
   }, [activeTypedChainId, reset]);
 
-  const { data: delegator } = useDelegator(userAddress);
+  const { assets: restakeAssets } = useRestakeAssets({
+    enabled: Boolean(userAddress),
+  });
   const { data: operatorMap } = useOperatorMap();
   const blueprintSelection = useBlueprintStore((store) => store.selection);
 
   const tokenAddresses = useMemo(() => {
-    if (!delegator?.assetPositions) return [];
-    return delegator.assetPositions.map((pos) => pos.token);
-  }, [delegator?.assetPositions]);
-
-  const { data: tokenMetadatas } = useEvmAssetMetadatas(
-    tokenAddresses as EvmAddress[],
-  );
+    if (!restakeAssets) return [];
+    return Array.from(restakeAssets.keys());
+  }, [restakeAssets]);
 
   const contracts = useMemo(() => {
     try {
@@ -129,24 +126,36 @@ const RestakeDelegateForm: FC = () => {
     }
   }, [chainId]);
 
-  const { data: depositResults } = useReadContracts({
-    contracts:
-      contracts && userAddress && tokenAddresses.length > 0
-        ? tokenAddresses.map((token) => ({
-            address: contracts.multiAssetDelegation,
-            abi: MULTI_ASSET_DELEGATION_ABI,
-            functionName: 'getDeposit' as const,
-            args: [userAddress, token] as const,
-          }))
-        : [],
-    query: {
-      enabled:
-        Boolean(contracts) && Boolean(userAddress) && tokenAddresses.length > 0,
-      staleTime: 15_000,
-      refetchInterval: 15_000,
-      refetchIntervalInBackground: true,
-    },
-  });
+  const { data: depositResults, refetch: refetchDeposits } =
+    useResilientReadContracts({
+      queryKey: [
+        'restake',
+        'delegate',
+        'deposits',
+        chainId,
+        userAddress,
+        tokenAddresses,
+      ] as const,
+      contracts:
+        contracts && userAddress && tokenAddresses.length > 0
+          ? tokenAddresses.map((token) => ({
+              address: contracts.multiAssetDelegation,
+              abi: MULTI_ASSET_DELEGATION_ABI,
+              functionName: 'getDeposit',
+              args: [userAddress, token] as const,
+            }))
+          : [],
+      query: {
+        enabled:
+          Boolean(contracts) &&
+          Boolean(userAddress) &&
+          tokenAddresses.length > 0,
+        staleTime: 2_000,
+        refetchInterval: 2_000,
+        refetchIntervalInBackground: true,
+        retry: 2,
+      },
+    });
 
   const depositMap = useMemo(() => {
     const map = new Map<string, { amount: bigint; delegatedAmount: bigint }>();
@@ -205,42 +214,39 @@ const RestakeDelegateForm: FC = () => {
   );
 
   const depositedAssets = useMemo<AssetItem[]>(() => {
-    if (!delegator?.assetPositions || !tokenMetadatas) {
+    if (!restakeAssets) {
       return [];
     }
 
-    return delegator.assetPositions
-      .map((position) => {
-        const metadata = tokenMetadatas.find(
-          (m) => m.id.toLowerCase() === position.token.toLowerCase(),
-        );
+    return tokenAddresses
+      .map((token) => {
+        const asset = restakeAssets.get(token);
+        const deposit = depositMap.get(token.toLowerCase());
 
-        if (!metadata) {
+        if (!asset || !deposit) {
           return null;
         }
 
-        const deposit = depositMap.get(position.token.toLowerCase());
-        const totalDeposited = deposit?.amount ?? position.totalDeposited;
-        const delegatedAmount =
-          deposit?.delegatedAmount ?? position.delegatedAmount;
+        const totalDeposited = deposit.amount;
+        const delegatedAmount = deposit.delegatedAmount;
         const availableBalance = totalDeposited - delegatedAmount;
 
         if (availableBalance <= BigInt(0)) {
           return null;
         }
 
-          return {
-            id: position.token,
-            name: metadata.name,
-            symbol: metadata.symbol,
-            decimals: metadata.decimals,
-            balance: totalDeposited,
-            delegatedAmount,
-            availableBalance,
-          };
-        })
-        .filter((item): item is AssetItem => item !== null);
-  }, [delegator?.assetPositions, depositMap, tokenMetadatas]);
+        return {
+          id: token,
+          name: asset.metadata.name,
+          symbol: asset.metadata.symbol,
+          decimals: asset.metadata.decimals,
+          balance: totalDeposited,
+          delegatedAmount,
+          availableBalance,
+        };
+      })
+      .filter((item): item is AssetItem => item !== null);
+  }, [depositMap, restakeAssets, tokenAddresses]);
 
   useEffect(() => {
     if (depositedAssets.length > 0 && !selectedAssetItem) {
@@ -277,10 +283,15 @@ const RestakeDelegateForm: FC = () => {
       .map(([address, op]) => ({
         address,
         stake: op.restakingStake ?? BigInt(0),
-        delegationCount: Number(op.restakingDelegationCount ?? BigInt(0)),
+        delegationCount: op.restakingDelegationCount ?? BigInt(0),
         isActive: true,
       }));
   }, [operatorMap]);
+
+  const selectedOperator = useMemo(() => {
+    if (!selectedOperatorAddress || !operatorMap) return null;
+    return operatorMap.get(selectedOperatorAddress as Address) ?? null;
+  }, [operatorMap, selectedOperatorAddress]);
 
   const handleOnSelectOperator = useCallback(
     (operator: OperatorItem) => {
@@ -379,6 +390,7 @@ const RestakeDelegateForm: FC = () => {
           blueprintSelection: blueprintSelection.length > 0 ? 'FIXED' : 'ALL',
           blueprintIds: blueprintSelection.map((id) => BigInt(id)),
         });
+        await refetchDeposits();
         resetForm();
       } catch (error) {
         console.error('Transaction failed:', error);
@@ -388,6 +400,7 @@ const RestakeDelegateForm: FC = () => {
       blueprintSelection,
       executeDelegateTx,
       isReady,
+      refetchDeposits,
       resetForm,
       selectedAssetItem,
     ],
@@ -411,14 +424,31 @@ const RestakeDelegateForm: FC = () => {
                   {...(selectedOperatorAddress
                     ? {
                         renderBody: () => (
-                          <div className="flex flex-col">
-                            <span className="font-mono text-sm">
-                              {selectedOperatorAddress.slice(0, 8)}...
-                              {selectedOperatorAddress.slice(-6)}
-                            </span>
-                            <span className="text-xs text-mono-100">
-                              Operator
-                            </span>
+                          <div className="flex items-center gap-2">
+                            <Avatar
+                              size="md"
+                              theme="ethereum"
+                              value={selectedOperatorAddress}
+                            />
+                            <div className="flex flex-col">
+                              <Typography
+                                variant="h5"
+                                fw="bold"
+                                component="span"
+                                className="inline-block text-mono-200 dark:text-mono-40"
+                              >
+                                {shortenHex(selectedOperatorAddress)}
+                              </Typography>
+                              <Typography
+                                variant="body3"
+                                component="span"
+                                className="text-mono-120 dark:text-mono-100"
+                              >
+                                {typeof selectedOperator?.restakingDelegationCount === 'bigint'
+                                  ? `${selectedOperator.restakingDelegationCount.toString()} total delegations`
+                                  : 'Operator'}
+                              </Typography>
+                            </div>
                           </div>
                         ),
                       }
@@ -553,16 +583,10 @@ const RestakeDelegateForm: FC = () => {
         onSelect={handleOnSelectOperator}
         filterItem={(item, query) => filterBy(query, [item.address])}
         renderItem={({ address, delegationCount }) => (
-          <div className="flex items-center justify-between w-full p-2">
-            <div className="flex flex-col">
-              <span className="font-mono text-sm">
-                {address.slice(0, 10)}...{address.slice(-8)}
-              </span>
-              <span className="text-xs text-mono-100">
-                {delegationCount} delegations
-              </span>
-            </div>
-          </div>
+          <OperatorListItem
+            accountAddress={address}
+            totalDelegations={delegationCount}
+          />
         )}
       />
 

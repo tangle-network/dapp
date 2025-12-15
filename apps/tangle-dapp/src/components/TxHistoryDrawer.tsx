@@ -9,13 +9,12 @@ import {
   Spinner,
 } from '@tangle-network/icons';
 import useNetworkStore from '@tangle-network/tangle-shared-ui/context/useNetworkStore';
-import useActiveAccountAddress from '@tangle-network/tangle-shared-ui/hooks/useActiveAccountAddress';
-import useAgnosticAccountInfo from '@tangle-network/tangle-shared-ui/hooks/useAgnosticAccountInfo';
 import {
   Alert,
   AmountFormatStyle,
   Button,
   Chip,
+  CopyWithTooltip,
   formatDisplayAmount,
   isEvmAddress,
   isSubstrateAddress,
@@ -35,15 +34,16 @@ import { twMerge } from 'tailwind-merge';
 import useTxHistoryStore, {
   HistoryTx,
 } from '@tangle-network/tangle-shared-ui/context/useTxHistoryStore';
+import useEvmAddress from '@tangle-network/tangle-shared-ui/hooks/useEvmAddress';
 import ExternalLink from './ExternalLink';
 
 const TxHistoryDrawer = () => {
-  const activeAccountAddress = useActiveAccountAddress();
+  const activeEvmAddress = useEvmAddress();
   const transactions = useTxHistoryStore((state) => state.transactions);
   const networkId = useNetworkStore((store) => store.network2?.id);
 
   const relevantTransactions = useMemo(() => {
-    if (networkId === undefined || activeAccountAddress === null) {
+    if (networkId === undefined || activeEvmAddress === null) {
       return null;
     }
 
@@ -51,12 +51,17 @@ const TxHistoryDrawer = () => {
       transactions
         .filter(
           (tx) =>
-            tx.network === networkId && tx.origin === activeAccountAddress,
+            tx.network === networkId &&
+            (isEvmAddress(activeEvmAddress) && isEvmAddress(tx.origin)
+              ? tx.origin.toLowerCase() === activeEvmAddress.toLowerCase()
+              : tx.origin === activeEvmAddress),
         )
         // Sort by timestamp in descending order.
-        .toSorted((a, b) => b.timestamp - a.timestamp)
+        // Avoid `Array.prototype.toSorted` for broader runtime compatibility.
+        .slice()
+        .sort((a, b) => b.timestamp - a.timestamp)
     );
-  }, [activeAccountAddress, networkId, transactions]);
+  }, [activeEvmAddress, networkId, transactions]);
 
   const inProgressCount = useMemo(() => {
     if (relevantTransactions === null) {
@@ -70,22 +75,14 @@ const TxHistoryDrawer = () => {
     return count === 0 ? null : count;
   }, [relevantTransactions]);
 
-  // Hide the button if there are no known transactions.
-  if (
-    relevantTransactions?.length === undefined ||
-    relevantTransactions.length === 0
-  ) {
-    return null;
-  }
-
   return (
     <div className="flex items-center">
       <Dialog.Root>
-        <Dialog.Trigger className="outline-none">
+        <Dialog.Trigger asChild>
           <Button
             variant="secondary"
             className={twMerge(
-              'rounded-full border-2 py-2 px-4',
+              'outline-none rounded-full border-2 py-2 px-4',
               'bg-mono-0/10 border-mono-60 dark:border-mono-140',
               'dark:bg-mono-0/5 dark:border-mono-140',
               'hover:bg-mono-100/10 dark:hover:bg-mono-0/10',
@@ -143,13 +140,26 @@ const TxHistoryDrawer = () => {
               <div className="flex items-center justify-between">
                 <Typography variant="h5">Transactions</Typography>
 
-                <CloseCircleLineIcon />
+                <Dialog.Close asChild>
+                  <button
+                    type="button"
+                    aria-label="Close"
+                    className="text-mono-160 dark:text-mono-0"
+                  >
+                    <CloseCircleLineIcon />
+                  </button>
+                </Dialog.Close>
               </div>
 
-              {relevantTransactions !== null &&
+              {relevantTransactions === null || relevantTransactions.length === 0 ? (
+                <Typography variant="body2" className="text-mono-140">
+                  No transactions yet.
+                </Typography>
+              ) : (
                 relevantTransactions.map((tx) => (
                   <TransactionItem key={tx.hash} {...tx} />
-                ))}
+                ))
+              )}
             </div>
           </Dialog.Content>
         </Dialog.Portal>
@@ -167,13 +177,6 @@ const TransactionItem = ({
   details,
   errorMessage,
 }: HistoryTx) => {
-  const { isEvm } = useAgnosticAccountInfo();
-
-  // TODO: Open account details on explorer.
-  const _createExplorerAccountUrl = useNetworkStore(
-    (store) => store.network2?.createExplorerAccountUrl,
-  );
-
   const createExplorerTxUrl = useNetworkStore(
     (store) => store.network2?.createExplorerTxUrl,
   );
@@ -200,12 +203,13 @@ const TransactionItem = ({
   );
 
   const explorerLink = useMemo(() => {
-    if (createExplorerTxUrl === undefined || isEvm === null) {
+    if (createExplorerTxUrl === undefined) {
       return null;
     }
 
-    return createExplorerTxUrl(isEvm, hash);
-  }, [createExplorerTxUrl, hash, isEvm]);
+    // `tangle-dapp` is EVM-only.
+    return createExplorerTxUrl(true, hash);
+  }, [createExplorerTxUrl, hash]);
 
   return (
     <div className="p-3 space-y-4 rounded-md bg-mono-20 dark:bg-mono-180">
@@ -227,21 +231,35 @@ const TransactionItem = ({
           </Typography>
         </div>
 
-        <ExternalLink href={explorerLink ?? '#'}>Explorer</ExternalLink>
+        {explorerLink !== null && (
+          <ExternalLink href={explorerLink}>Explorer</ExternalLink>
+        )}
+      </div>
+
+      <div className="flex items-center justify-between gap-2">
+        <Typography variant="body2" className="font-mono text-mono-140">
+          {shortenHex(hash)}
+        </Typography>
+
+        <CopyWithTooltip
+          textToCopy={hash}
+          copyLabel="Copy hash"
+          iconClassName="text-mono-140 dark:text-mono-80"
+        />
       </div>
 
       <div className="flex flex-wrap gap-1">
-        {details === undefined
-          ? 'No details.'
-          : Array.from(details.entries()).map(([key, value]) => (
-              <Chip
-                className="normal-case cursor-default"
-                key={key}
-                color="blue"
-              >
-                {key}: {formatDetailValue(value)}
-              </Chip>
-            ))}
+        {details === undefined ? (
+          <Typography variant="body2" className="text-mono-140">
+            No details.
+          </Typography>
+        ) : (
+          Array.from(details.entries()).map(([key, value]) => (
+            <Chip className="normal-case cursor-default" key={key} color="blue">
+              {key}: {formatDetailValue(value)}
+            </Chip>
+          ))
+        )}
       </div>
 
       {status === 'failed' && errorMessage !== undefined && (

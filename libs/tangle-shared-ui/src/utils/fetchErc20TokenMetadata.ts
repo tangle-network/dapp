@@ -49,6 +49,19 @@ const fetchErc20TokenMetadata = async (
 
   try {
     const results = await viemPublicClient.multicall({ contracts: calls });
+
+    // If everything failed, the most common cause is missing/broken multicall3 on this chain.
+    // Avoid spamming per-token logs and just fall back to individual calls.
+    if (results.every((r) => r.status === 'failure')) {
+      console.warn(
+        `Multicall returned failures for all ERC20 metadata reads (chain: ${viemPublicClient.chain?.name}); falling back to individual calls.`,
+      );
+      return fetchErc20TokenMetadataWithIndividualCalls(
+        viemPublicClient,
+        contractAddresses,
+      );
+    }
+
     const metadatas: TokenMetadata[] = [];
 
     for (

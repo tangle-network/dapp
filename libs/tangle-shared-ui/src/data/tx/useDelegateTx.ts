@@ -69,6 +69,18 @@ export const useDelegateTx = () => {
       ] as const,
     }),
     {
+      txName: 'restake delegate',
+      txDetails: (params) =>
+        new Map([
+          ['Operator', params.operator],
+          ['Token', params.token],
+          ['Amount', params.amount.toString()],
+          [
+            'Selection',
+            (params.blueprintSelection ?? 'ALL').toString().toLowerCase(),
+          ],
+          ['Blueprints', (params.blueprintIds?.length ?? 0).toString()],
+        ]),
       getSuccessMessage: (params) =>
         `Successfully delegated ${params.amount.toString()} to operator`,
     },

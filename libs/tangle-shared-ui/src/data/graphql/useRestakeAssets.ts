@@ -11,8 +11,10 @@ import {
   useAccount,
   useBalance,
   useChainId,
+  useConnectorClient,
   usePublicClient,
 } from 'wagmi';
+import { readContract } from 'viem/actions';
 import { useRestakingAssets } from './useRestakingAssets';
 import type { RestakeAsset } from '../restake/types';
 import { EnvioNetwork } from '../../utils/executeEnvioGraphQL';
@@ -24,6 +26,27 @@ import { getCachedTokenMetadata } from '@tangle-network/dapp-config/tokenMetadat
 
 // Native token (ETH) uses zero address - needs special handling
 const NATIVE_TOKEN_ADDRESS = zeroAddress as Address;
+
+const ERC20_BALANCE_CACHE = new Map<string, bigint>();
+const BALANCE_WARNED_KEYS = new Set<string>();
+
+const isNetworkishError = (error: unknown): boolean => {
+  const message = String((error as any)?.message ?? error);
+  return (
+    message.includes('Failed to fetch') ||
+    message.includes('NetworkError') ||
+    message.includes('ECONNREFUSED') ||
+    message.includes('timeout') ||
+    message.includes('timed out')
+  );
+};
+
+const isZeroDataDecodeError = (error: unknown): boolean => {
+  const message = String((error as any)?.message ?? error);
+  return message.includes('Cannot decode zero data ("0x")');
+};
+
+const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
 // Re-export types from shared types file
 export type {
@@ -56,6 +79,7 @@ export const useRestakeAssets = (options?: {
   const chainId = useChainId();
   const { address: userAddress } = useAccount();
   const publicClient = usePublicClient();
+  const { data: connectorClient } = useConnectorClient();
   const {
     data: nativeBalanceData,
     isLoading: isLoadingNativeBalance,
@@ -83,9 +107,13 @@ export const useRestakeAssets = (options?: {
   const useGraphQL = healthCheckComplete && isIndexerHealthy === true;
   const useOnChainFallback = healthCheckComplete && !isIndexerHealthy;
 
-  // Debug for local testnet
+  // Debug for local testnet (opt-in to avoid noisy console output)
   useEffect(() => {
-    console.log('[useRestakeAssets] Data source:', {
+    if (!import.meta.env.DEV || import.meta.env.VITE_DEBUG_RESTAKE_ASSETS !== 'true') {
+      return;
+    }
+
+    console.debug('[useRestakeAssets] Data source:', {
       chainId,
       isCheckingHealth,
       isIndexerHealthy,
@@ -162,32 +190,118 @@ export const useRestakeAssets = (options?: {
         return new Map<Address, bigint>();
       }
 
+      const cacheKeyPrefix = `${publicClient.chain?.id ?? chainId}:${userAddress.toLowerCase()}`;
+      const cacheKeyForToken = (token: Address) =>
+        `${cacheKeyPrefix}:${token.toLowerCase()}`;
+
+      const readBalance = async (token: Address): Promise<bigint> => {
+        const readViaPublic = async () =>
+          (await publicClient.readContract({
+            address: token,
+            abi: erc20Abi,
+            functionName: 'balanceOf',
+            args: [userAddress],
+          })) as bigint;
+
+        const readViaConnector = async () => {
+          if (!connectorClient) {
+            throw new Error('Connector client not available');
+          }
+
+          return (await readContract(connectorClient, {
+            address: token,
+            abi: erc20Abi,
+            functionName: 'balanceOf',
+            args: [userAddress],
+          })) as bigint;
+        };
+
+        try {
+          return await readViaPublic();
+        } catch (primaryError) {
+          // Anvil (and some providers) can very rarely return `0x` for eth_call under load.
+          // Retry once before falling back to the connector.
+          if (isZeroDataDecodeError(primaryError)) {
+            await delay(75);
+            try {
+              return await readViaPublic();
+            } catch {
+              // fall through
+            }
+          }
+
+          if (!connectorClient) {
+            throw primaryError;
+          }
+
+          try {
+            return await readViaConnector();
+          } catch (connectorError) {
+            if (isZeroDataDecodeError(connectorError)) {
+              await delay(75);
+              return await readViaConnector();
+            }
+            throw connectorError;
+          }
+        }
+      };
+
       try {
+        const accountHasCachedBalances = Array.from(ERC20_BALANCE_CACHE.keys()).some(
+          (k) => k.startsWith(cacheKeyPrefix),
+        );
+
+        let hadRetryableFailure = false;
+
         // If multicall3 isn't configured for this chain, fall back to individual calls.
         if (publicClient.chain?.contracts?.multicall3?.address === undefined) {
           const fallbackBalances = new Map<Address, bigint>();
           await Promise.allSettled(
             erc20TokenAddresses.map(async (token) => {
               try {
-                const balance = (await publicClient.readContract({
-                  address: token,
-                  abi: erc20Abi,
-                  functionName: 'balanceOf',
-                  args: [userAddress],
-                })) as bigint;
+                const balance = await readBalance(token);
+                ERC20_BALANCE_CACHE.set(cacheKeyForToken(token), balance);
                 fallbackBalances.set(token, balance);
               } catch (fallbackError) {
-                console.warn(
-                  '[useRestakeAssets] Failed to fetch balance via direct call.',
-                  {
-                    token,
-                    fallbackError,
-                  },
-                );
-                fallbackBalances.set(token, BigInt(0));
+                const key = cacheKeyForToken(token);
+                const cached = ERC20_BALANCE_CACHE.get(key) ?? BigInt(0);
+                const retryable = isZeroDataDecodeError(fallbackError);
+
+                // Only warn once per (chain, account, token) key to avoid console spam.
+                if (!BALANCE_WARNED_KEYS.has(key)) {
+                  BALANCE_WARNED_KEYS.add(key);
+                  console.warn(
+                    '[useRestakeAssets] Failed to fetch balance via direct call.',
+                    {
+                      token,
+                      message: String(
+                        (fallbackError as any)?.message ?? fallbackError,
+                      ),
+                    },
+                  );
+                }
+
+                fallbackBalances.set(token, cached);
+
+                if (retryable) {
+                  hadRetryableFailure = true;
+                }
+
+                // Surface transient errors to React Query so it can retry without
+                // overwriting cached values with 0s (or locking in 0s on first load).
+                if (isNetworkishError(fallbackError) || retryable) {
+                  throw fallbackError;
+                }
               }
             }),
           );
+
+          // If we hit retryable decode failures and have no cached data yet, let React Query retry
+          // rather than showing "0" balances from an incomplete snapshot.
+          if (hadRetryableFailure && !accountHasCachedBalances) {
+            throw new Error('Retryable ERC20 balance fetch failure');
+          }
+
           return fallbackBalances;
         }
 
@@ -206,7 +320,9 @@ export const useRestakeAssets = (options?: {
         results.forEach((result, index) => {
           const token = erc20TokenAddresses[index];
           if (result.status === 'success') {
-            balanceMap.set(token, result.result as bigint);
+            const balance = result.result as bigint;
+            ERC20_BALANCE_CACHE.set(cacheKeyForToken(token), balance);
+            balanceMap.set(token, balance);
           } else {
             failedTokens.push(token);
           }
@@ -225,25 +341,43 @@ export const useRestakeAssets = (options?: {
           await Promise.allSettled(
             failedTokens.map(async (token) => {
               try {
-                const balance = (await publicClient.readContract({
-                  address: token,
-                  abi: erc20Abi,
-                  functionName: 'balanceOf',
-                  args: [userAddress],
-                })) as bigint;
+                const balance = await readBalance(token);
+                ERC20_BALANCE_CACHE.set(cacheKeyForToken(token), balance);
                 balanceMap.set(token, balance);
               } catch (fallbackError) {
-                console.warn(
-                  '[useRestakeAssets] Failed to fetch balance via direct call.',
-                  {
-                    token,
-                    fallbackError,
-                  },
-                );
-                balanceMap.set(token, BigInt(0));
+                const key = cacheKeyForToken(token);
+                const cached = ERC20_BALANCE_CACHE.get(key) ?? BigInt(0);
+                const retryable = isZeroDataDecodeError(fallbackError);
+
+                if (!BALANCE_WARNED_KEYS.has(key)) {
+                  BALANCE_WARNED_KEYS.add(key);
+                  console.warn(
+                    '[useRestakeAssets] Failed to fetch balance via direct call.',
+                    {
+                      token,
+                      message: String(
+                        (fallbackError as any)?.message ?? fallbackError,
+                      ),
+                    },
+                  );
+                }
+
+                balanceMap.set(token, cached);
+
+                if (retryable) {
+                  hadRetryableFailure = true;
+                }
+
+                if (isNetworkishError(fallbackError) || retryable) {
+                  throw fallbackError;
+                }
               }
             }),
           );
+        }
+
+        if (hadRetryableFailure && !accountHasCachedBalances) {
+          throw new Error('Retryable ERC20 balance fetch failure');
         }
 
         return balanceMap;
@@ -253,29 +387,53 @@ export const useRestakeAssets = (options?: {
           error,
         );
 
+        const cacheKeyPrefix = `${publicClient.chain?.id ?? chainId}:${userAddress.toLowerCase()}`;
+        const accountHasCachedBalances = Array.from(ERC20_BALANCE_CACHE.keys()).some(
+          (k) => k.startsWith(cacheKeyPrefix),
+        );
+        let hadRetryableFailure = false;
+
         const fallbackBalances = new Map<Address, bigint>();
         await Promise.allSettled(
           erc20TokenAddresses.map(async (token) => {
             try {
-              const balance = (await publicClient.readContract({
-                address: token,
-                abi: erc20Abi,
-                functionName: 'balanceOf',
-                args: [userAddress],
-              })) as bigint;
+              const balance = await readBalance(token);
+              ERC20_BALANCE_CACHE.set(cacheKeyForToken(token), balance);
               fallbackBalances.set(token, balance);
             } catch (fallbackError) {
-              console.warn(
-                '[useRestakeAssets] Failed to fetch balance via direct call.',
-                {
-                  token,
-                  fallbackError,
-                },
-              );
-              fallbackBalances.set(token, BigInt(0));
+              const key = cacheKeyForToken(token);
+              const cached = ERC20_BALANCE_CACHE.get(key) ?? BigInt(0);
+              const retryable = isZeroDataDecodeError(fallbackError);
+
+              if (!BALANCE_WARNED_KEYS.has(key)) {
+                BALANCE_WARNED_KEYS.add(key);
+                console.warn(
+                  '[useRestakeAssets] Failed to fetch balance via direct call.',
+                  {
+                    token,
+                    message: String(
+                      (fallbackError as any)?.message ?? fallbackError,
+                    ),
+                  },
+                );
+              }
+
+              fallbackBalances.set(token, cached);
+
+              if (retryable) {
+                hadRetryableFailure = true;
+              }
+
+              if (isNetworkishError(fallbackError) || retryable) {
+                throw fallbackError;
+              }
             }
           }),
         );
+
+        if (hadRetryableFailure && !accountHasCachedBalances) {
+          throw new Error('Retryable ERC20 balance fetch failure');
+        }
 
         return fallbackBalances;
       }
@@ -287,6 +445,8 @@ export const useRestakeAssets = (options?: {
       erc20TokenAddresses.length > 0,
     staleTime: 15_000, // 15 seconds - balances can change frequently
     refetchInterval: 30_000, // Auto-refresh every 30 seconds
+    retry: 1,
+    retryDelay: 500,
   });
 
   // 4. Combine all data into RestakeAsset map (only when using indexer)

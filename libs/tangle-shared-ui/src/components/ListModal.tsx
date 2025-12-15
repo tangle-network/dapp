@@ -68,7 +68,8 @@ const ListModal = <T,>({
       return items;
     }
 
-    return items.toSorted(sorting);
+    // Avoid `Array.prototype.toSorted` for broader runtime compatibility.
+    return [...items].sort(sorting);
   }, [items, sorting]);
 
   const processedItems = useMemo(() => {

@@ -19,18 +19,17 @@ import type { TextFieldInputProps } from '@tangle-network/ui-components/componen
 import { TransactionInputCard } from '@tangle-network/ui-components/components/TransactionInputCard';
 import { useModal } from '@tangle-network/ui-components/hooks/useModal';
 import { Typography } from '@tangle-network/ui-components/typography/Typography';
-import { FC, useCallback, useEffect, useMemo, useRef } from 'react';
+import { FC, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import {
   erc20Abi,
   formatUnits,
-  maxUint256,
   parseUnits,
   zeroAddress,
   Address,
 } from 'viem';
 import { BN } from '@polkadot/util';
-import { useAccount, useChainId, useReadContract } from 'wagmi';
+import { useChainId } from 'wagmi';
 import ErrorMessage from '../../../components/ErrorMessage';
 import ActionButtonBase from '../../../components/restaking/ActionButtonBase';
 import StyleContainer from '../../../components/restaking/StyleContainer';
@@ -64,12 +63,15 @@ const getDefaultTypedChainId = (activeTypedChainId: number | null): number => {
 const DepositForm: FC = () => {
   const activeTypedChainId = useActiveTypedChainId();
   const chainId = useChainId();
-  const { address: evmAddress } = useAccount();
   const activeChain = useMemo(() => {
     return Object.values(chainsConfig).find((c) => c.id === chainId);
   }, [chainId]);
 
-  const { status: depositTxStatus, execute: executeDepositTx } = useDepositTx();
+  const {
+    status: depositTxStatus,
+    execute: executeDepositTx,
+    txHash: depositTxHash,
+  } = useDepositTx();
   const contracts = useMemo(() => {
     try {
       return getContractsByChainId(chainId);
@@ -207,64 +209,39 @@ const DepositForm: FC = () => {
     };
   }, [asset]);
 
-  const parsedAmount = useMemo(() => {
-    if (!asset || !amount) return null;
-    try {
-      const value = parseUnits(amount, asset.metadata.decimals);
-      return value > BigInt(0) ? value : null;
-    } catch {
-      return null;
-    }
-  }, [amount, asset]);
-
   const isNativeAsset = asset?.id?.toLowerCase() === zeroAddress;
   const spender = contracts?.multiAssetDelegation ?? null;
 
+  const approveLastErrorRef = useRef<Error | null>(null);
+
   const {
-    data: allowance,
-    isLoading: isLoadingAllowance,
-    refetch: refetchAllowance,
-  } = useReadContract({
-    address: asset?.id,
-    abi: erc20Abi,
-    functionName: 'allowance',
-    args:
-      evmAddress && spender
-        ? ([evmAddress, spender] as const)
-        : undefined,
-    query: {
-      enabled:
-        Boolean(evmAddress) &&
-        Boolean(spender) &&
-        Boolean(asset) &&
-        !isNativeAsset &&
-        parsedAmount !== null,
-      staleTime: 10_000,
-      refetchInterval: 30_000,
-      refetchIntervalInBackground: true,
-    },
-  });
-
-  const needsApproval =
-    !isNativeAsset &&
-    parsedAmount !== null &&
-    spender !== null &&
-    typeof allowance === 'bigint' &&
-    allowance < parsedAmount;
-
-  const { status: approveTxStatus, execute: executeApproveTx } = useContractWrite(
-    erc20Abi,
-    (ctx: { token: Address; spender: Address }) => {
+    status: approveTxStatus,
+    execute: executeApproveTx,
+    txHash: approveTxHash,
+  } =
+    useContractWrite(
+      erc20Abi,
+      (ctx: { token: Address; spender: Address; amount: bigint }) => {
       if (ctx.token.toLowerCase() === zeroAddress) return null;
 
       return {
         address: ctx.token,
         abi: erc20Abi,
         functionName: 'approve' as const,
-        args: [ctx.spender, maxUint256] as const,
+        args: [ctx.spender, ctx.amount] as const,
       };
     },
-    { getSuccessMessage: () => `Approval successful` },
+    {
+      txName: 'approve',
+      onError: (error) => {
+        approveLastErrorRef.current = error;
+      },
+      getSuccessMessage: () => 'Approval successful',
+    },
+  );
+
+  const [txStep, setTxStep] = useState<'idle' | 'approving' | 'depositing'>(
+    'idle',
   );
 
   const customAmountProps = useMemo<TextFieldInputProps>(() => {
@@ -311,18 +288,53 @@ const DepositForm: FC = () => {
 
   const isReady = executeDepositTx !== null && asset !== null && !isTransacting;
 
-  const handleApprove = useCallback(async () => {
+  const handleApprove = useCallback(async (amountToApprove: bigint) => {
     if (!asset || !spender || !executeApproveTx) {
-      return;
+      return false;
     }
 
-    if (parsedAmount === null) {
-      return;
+    approveLastErrorRef.current = null;
+    const firstAttempt = await executeApproveTx({
+      token: asset.id,
+      spender,
+      amount: amountToApprove,
+    });
+
+    if (firstAttempt !== null) {
+      return true;
     }
 
-    await executeApproveTx({ token: asset.id, spender });
-    await refetchAllowance();
-  }, [asset, executeApproveTx, parsedAmount, refetchAllowance, spender]);
+    // TS will narrow `ref.current` to `null` after assignment, even though the
+    // async write may set it via `onError`. Widen it back for the post-attempt check.
+    const message =
+      (approveLastErrorRef.current as Error | null)?.message?.toLowerCase() ??
+      '';
+    const looksLikeNonZeroAllowanceIssue =
+      message.includes('non-zero') && message.includes('allowance');
+
+    if (!looksLikeNonZeroAllowanceIssue) {
+      return false;
+    }
+
+    // Some ERC20s (e.g. USDT-style) require setting allowance to 0 before setting a new non-zero allowance.
+    const zeroAttempt = await executeApproveTx({
+      token: asset.id,
+      spender,
+      amount: BigInt(0),
+    });
+
+    if (zeroAttempt === null) {
+      return false;
+    }
+
+    const secondAttempt = await executeApproveTx({
+      token: asset.id,
+      spender,
+      amount: amountToApprove,
+    });
+
+    return secondAttempt !== null;
+  }, [asset, executeApproveTx, spender]);
 
   const onSubmit = useCallback<SubmitHandler<EvmDepositFormFields>>(
     async ({ amount, lockDuration }) => {
@@ -336,17 +348,24 @@ const DepositForm: FC = () => {
         return;
       }
 
-      // ERC20 deposits require allowance.
-      if (!isNativeAsset && needsApproval) {
-        await handleApprove();
-        return;
-      }
+      try {
+        // For ERC20 deposits, set allowance to exactly the deposit amount (never infinite approvals).
+        if (!isNativeAsset) {
+          if (!spender) return;
+          setTxStep('approving');
+          const approved = await handleApprove(amountBigInt);
+          if (!approved) return;
+        }
 
-      await executeDepositTx({
-        token: asset.id,
-        amount: amountBigInt,
-        lockDuration,
-      });
+        setTxStep('depositing');
+        await executeDepositTx({
+          token: asset.id,
+          amount: amountBigInt,
+          lockDuration,
+        });
+      } finally {
+        setTxStep('idle');
+      }
 
       setValue('amount', '', { shouldValidate: false });
       setValue('depositAssetId', undefined as unknown as Address, {
@@ -361,7 +380,7 @@ const DepositForm: FC = () => {
       handleApprove,
       isNativeAsset,
       isReady,
-      needsApproval,
+      spender,
       refetchBalances,
       setValue,
     ],
@@ -509,18 +528,23 @@ const DepositForm: FC = () => {
               return (
                 <Button
                   isDisabled={!isValid || isDefined(displayError) || !isReady}
-                  type={needsApproval ? 'button' : 'submit'}
+                  type="submit"
                   isFullWidth
-                  isLoading={isTransacting || isLoading || isLoadingAllowance}
+                  isLoading={isTransacting || isLoading}
                   loadingText={
-                    isLoadingAllowance ? 'Checking allowance' : loadingText
+                    txStep === 'approving' && approveTxStatus === TxStatus.PROCESSING
+                      ? approveTxHash === null
+                        ? 'Preparing approval…'
+                        : 'Waiting for approval…'
+                      : txStep === 'depositing' && depositTxStatus === TxStatus.PROCESSING
+                        ? depositTxHash === null
+                          ? 'Preparing deposit…'
+                          : 'Waiting for deposit…'
+                        : loadingText
                   }
-                  onClick={needsApproval ? handleApprove : undefined}
                 >
                   {displayError ??
-                    (needsApproval
-                      ? `Approve ${asset?.metadata.symbol ?? ''}`
-                      : 'Deposit')}
+                    (isNativeAsset ? 'Deposit' : 'Approve & Deposit')}
                 </Button>
               );
             }}

@@ -16,6 +16,8 @@ import {
   Abi,
   ContractFunctionName,
   ContractFunctionArgs,
+  decodeErrorResult,
+  type Hex,
 } from 'viem';
 import {
   simulateContract,
@@ -25,6 +27,10 @@ import {
 import { useConnectorClient } from 'wagmi';
 import ensureError from '../utils/ensureError';
 import useEvmAddress from './useEvmAddress';
+import useNetworkStore from '../context/useNetworkStore';
+import useTxHistoryStore from '../context/useTxHistoryStore';
+import type { HexString } from '@polkadot/util/types';
+import type { HistoryTxDetail } from '../context/useTxHistoryStore';
 
 // Transaction status enum
 export enum TxStatus {
@@ -33,6 +39,27 @@ export enum TxStatus {
   COMPLETE = 'COMPLETE',
   ERROR = 'ERROR',
 }
+
+const tryDecodeViemCustomError = (
+  abi: Abi,
+  possibleError: unknown,
+): string | null => {
+  const data =
+    (possibleError as any)?.data ??
+    (possibleError as any)?.cause?.data ??
+    (possibleError as any)?.cause?.cause?.data;
+
+  if (typeof data !== 'string' || !data.startsWith('0x') || data.length < 10) {
+    return null;
+  }
+
+  try {
+    const decoded = decodeErrorResult({ abi, data: data as Hex });
+    return decoded.errorName;
+  } catch {
+    return null;
+  }
+};
 
 // Transaction result
 export interface TxResult {
@@ -71,6 +98,22 @@ export interface UseContractWriteOptions<TContext = void> {
   onSuccess?: (result: TxResult, context: TContext) => void;
   onError?: (error: Error, context: TContext) => void;
   getSuccessMessage?: (context: TContext) => string;
+  /**
+   * Optional transaction name for the tx history store / UI (e.g. "restake deposit").
+   * If omitted, falls back to the contract function name.
+   */
+  txName?: string;
+  /**
+   * Optional details shown in transaction history UI.
+   * Returned values should be display-ready (e.g. strings), since the UI may not
+   * know token decimals or other context to format raw values.
+   */
+  txDetails?: (context: TContext) => Map<string, HistoryTxDetail> | undefined;
+  /**
+   * Enable writing tx lifecycle events into `useTxHistoryStore`.
+   * Defaults to true.
+   */
+  enableTxHistory?: boolean;
 }
 
 /**
@@ -111,6 +154,25 @@ const useContractWrite = <
 
   const activeAddress = useEvmAddress();
   const { data: connectorClient } = useConnectorClient();
+  const networkId = useNetworkStore((store) => store.network2?.id);
+  const pushTx = useTxHistoryStore((store) => store.pushTx);
+  const patchTx = useTxHistoryStore((store) => store.patchTx);
+
+  const toTxDetails = useCallback(
+    (callConfig: ContractCallConfig<TAbi, TFunctionName>) => {
+      const details = new Map<string, HistoryTxDetail>();
+
+      details.set('Contract', String(callConfig.address));
+      details.set('Function', String(callConfig.functionName));
+
+      if (callConfig.value !== undefined && callConfig.value !== BigInt(0)) {
+        details.set('Value', callConfig.value.toString());
+      }
+
+      return details;
+    },
+    [],
+  );
 
   const execute = useCallback(
     async (context: TContext): Promise<TxResult | null> => {
@@ -154,6 +216,10 @@ const useContractWrite = <
       setSuccessMessage(null);
       setStatus(TxStatus.PROCESSING);
 
+      const enableTxHistory = options?.enableTxHistory !== false;
+      const txName = options?.txName ?? String(callConfig.functionName);
+
+      let submittedHash: Hash | null = null;
       try {
         // Simulate the transaction first
         const { request } = await simulateContract(connectorClient, {
@@ -167,7 +233,31 @@ const useContractWrite = <
 
         // Execute the transaction
         const hash = await writeContract(connectorClient, request);
+        submittedHash = hash;
         setTxHash(hash);
+
+        if (enableTxHistory && networkId !== undefined) {
+          const details = toTxDetails(callConfig);
+          const extraDetails = options?.txDetails?.(context);
+          if (extraDetails) {
+            for (const [key, value] of extraDetails.entries()) {
+              details.set(key, value);
+            }
+          }
+
+          pushTx({
+            name: txName,
+            hash: hash as unknown as HexString,
+            origin: activeAddress,
+            network: networkId,
+            timestamp: Date.now(),
+            status: 'pending',
+            details,
+          });
+        }
+
+        // Ensure the pending state can render at least once before we patch to finalized/failed.
+        await new Promise((resolve) => setTimeout(resolve, 0));
 
         // Wait for confirmation
         const receipt = await waitForTransactionReceipt(connectorClient, {
@@ -187,26 +277,62 @@ const useContractWrite = <
           setStatus(TxStatus.COMPLETE);
           setSuccessMessage(options?.getSuccessMessage?.(context) ?? null);
           options?.onSuccess?.(txResult, context);
+
+          if (enableTxHistory && networkId !== undefined) {
+            patchTx(hash as unknown as HexString, { status: 'finalized' });
+          }
         } else {
           const revertError = new Error('Transaction reverted');
           setStatus(TxStatus.ERROR);
           setError(revertError);
           options?.onError?.(revertError, context);
+
+          if (enableTxHistory && networkId !== undefined) {
+            patchTx(hash as unknown as HexString, {
+              status: 'failed',
+              errorMessage: revertError.message,
+            });
+          }
         }
 
         return txResult;
       } catch (possibleError) {
         console.error('Contract write error:', possibleError);
 
-        const error = ensureError(possibleError);
+        const decodedCustomError = tryDecodeViemCustomError(abi as Abi, possibleError);
+        const error = decodedCustomError
+          ? new Error(`Execution reverted: ${decodedCustomError}`)
+          : ensureError(possibleError);
         setStatus(TxStatus.ERROR);
         setError(error);
         options?.onError?.(error, context as TContext);
 
+        if (
+          enableTxHistory &&
+          submittedHash !== null &&
+          networkId !== undefined
+        ) {
+          patchTx(submittedHash as unknown as HexString, {
+            status: 'failed',
+            errorMessage: error.message,
+          });
+        }
+
         return null;
       }
     },
-    [activeAddress, status, connectorClient, factory, abi, options],
+    [
+      activeAddress,
+      status,
+      connectorClient,
+      factory,
+      abi,
+      options,
+      networkId,
+      pushTx,
+      patchTx,
+      toTxDetails,
+    ],
   );
 
   const reset = useCallback(() => {

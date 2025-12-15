@@ -16,7 +16,7 @@ import { FC, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { type SubmitHandler, useForm } from 'react-hook-form';
 import { Address, formatUnits, parseUnits } from 'viem';
 import { BN } from '@polkadot/util';
-import { useAccount, useBlockNumber, useChainId, useReadContracts } from 'wagmi';
+import { useAccount, useBlockNumber, useChainId } from 'wagmi';
 import ErrorMessage from '../../../components/ErrorMessage';
 import RestakeDetailCard from '../../../components/RestakeDetailCard';
 import ActionButtonBase from '../../../components/restaking/ActionButtonBase';
@@ -38,6 +38,7 @@ import { twMerge } from 'tailwind-merge';
 import {
   useDelegator,
   useProtocolConfig,
+  useRestakeAssets,
   type WithdrawRequest,
 } from '@tangle-network/tangle-shared-ui/data/graphql';
 import {
@@ -45,7 +46,6 @@ import {
   useScheduleWithdrawTx,
 } from '@tangle-network/tangle-shared-ui/data/tx';
 import { TxStatus } from '@tangle-network/tangle-shared-ui/hooks/useContractWrite';
-import { useEvmAssetMetadatas } from '@tangle-network/tangle-shared-ui/hooks/useEvmAssetMetadatas';
 import type { EvmAddress } from '@tangle-network/ui-components/types/address';
 import ListModal from '@tangle-network/tangle-shared-ui/components/ListModal';
 import filterBy from '@tangle-network/tangle-shared-ui/utils/filterBy';
@@ -53,6 +53,8 @@ import { chainsConfig } from '@tangle-network/dapp-config/chains';
 import AssetListItem from '../../../components/Lists/AssetListItem';
 import MULTI_ASSET_DELEGATION_ABI from '@tangle-network/tangle-shared-ui/abi/multiAssetDelegation';
 import { getContractsByChainId } from '@tangle-network/dapp-config/contracts';
+import { useResilientReadContract } from '@tangle-network/tangle-shared-ui/hooks/useResilientReadContract';
+import { useResilientReadContracts } from '@tangle-network/tangle-shared-ui/hooks/useResilientReadContracts';
 
 // Asset position item for selection
 type AssetPositionItem = {
@@ -115,15 +117,26 @@ const RestakeWithdrawForm: FC = () => {
 
   // Fetch delegator data
   const { data: delegator, refetch: refetchDelegator } = useDelegator(userAddress);
+  const { assets: restakeAssets } = useRestakeAssets({
+    enabled: Boolean(userAddress),
+  });
 
-  // Get unique token addresses from positions
+  // Get token addresses from enabled restake assets (on-chain contracts need this even if indexer lags)
   const tokenAddresses = useMemo(() => {
-    if (!delegator?.assetPositions) return [];
-    return delegator.assetPositions.map((p) => p.token as EvmAddress);
-  }, [delegator?.assetPositions]);
+    if (!restakeAssets) return [];
+    return Array.from(restakeAssets.keys()) as EvmAddress[];
+  }, [restakeAssets]);
 
-  // Fetch token metadata
-  const { data: tokenMetadatas } = useEvmAssetMetadatas(tokenAddresses);
+  const tokenMetadatas = useMemo(() => {
+    if (!restakeAssets) return undefined;
+
+    return Array.from(restakeAssets.values()).map((asset) => ({
+      id: asset.id as unknown as EvmAddress,
+      name: asset.metadata.name,
+      symbol: asset.metadata.symbol,
+      decimals: asset.metadata.decimals,
+    }));
+  }, [restakeAssets]);
 
   const contracts = useMemo(() => {
     try {
@@ -133,24 +146,35 @@ const RestakeWithdrawForm: FC = () => {
     }
   }, [chainId]);
 
-  const { data: depositResults } = useReadContracts({
-    contracts:
-      contracts && userAddress && tokenAddresses.length > 0
-        ? tokenAddresses.map((token) => ({
-            address: contracts.multiAssetDelegation,
-            abi: MULTI_ASSET_DELEGATION_ABI,
-            functionName: 'getDeposit' as const,
-            args: [userAddress, token] as const,
-          }))
-        : [],
-    query: {
-      enabled:
-        Boolean(contracts) && Boolean(userAddress) && tokenAddresses.length > 0,
-      staleTime: 15_000,
-      refetchInterval: 15_000,
-      refetchIntervalInBackground: true,
-    },
-  });
+  const { data: depositResults, refetch: refetchDeposits } =
+    useResilientReadContracts({
+      queryKey: [
+        'restake',
+        'withdraw',
+        'deposits',
+        chainId,
+        userAddress,
+        tokenAddresses,
+      ] as const,
+      contracts:
+        contracts && userAddress && tokenAddresses.length > 0
+          ? tokenAddresses.map((token) => ({
+              address: contracts.multiAssetDelegation,
+              abi: MULTI_ASSET_DELEGATION_ABI,
+              functionName: 'getDeposit',
+              args: [userAddress, token] as const,
+            }))
+          : [],
+      query: {
+        enabled:
+          Boolean(contracts) &&
+          Boolean(userAddress) &&
+          tokenAddresses.length > 0,
+        staleTime: 2_000,
+        refetchInterval: 2_000,
+        refetchIntervalInBackground: true,
+      },
+    });
 
   const depositMap = useMemo(() => {
     const map = new Map<string, { amount: bigint; delegatedAmount: bigint }>();
@@ -166,21 +190,29 @@ const RestakeWithdrawForm: FC = () => {
 
   const { data: currentBlockNumber } = useBlockNumber({ watch: true });
 
-  const { data: lockResults } = useReadContracts({
+  const { data: lockResults, refetch: refetchLocks } = useResilientReadContracts({
+    queryKey: [
+      'restake',
+      'withdraw',
+      'locks',
+      chainId,
+      userAddress,
+      tokenAddresses,
+    ] as const,
     contracts:
       contracts && userAddress && tokenAddresses.length > 0
         ? tokenAddresses.map((token) => ({
             address: contracts.multiAssetDelegation,
             abi: MULTI_ASSET_DELEGATION_ABI,
-            functionName: 'getLocks' as const,
+            functionName: 'getLocks',
             args: [userAddress, token] as const,
           }))
         : [],
     query: {
       enabled:
         Boolean(contracts) && Boolean(userAddress) && tokenAddresses.length > 0,
-      staleTime: 15_000,
-      refetchInterval: 15_000,
+      staleTime: 2_000,
+      refetchInterval: 2_000,
       refetchIntervalInBackground: true,
     },
   });
@@ -214,33 +246,82 @@ const RestakeWithdrawForm: FC = () => {
   const selectedAssetId = watch('assetId');
   const amount = watch('amount');
 
-  // Get pending withdraw requests
-  const withdrawRequests = useMemo(() => {
-    return (
-      delegator?.withdrawRequests.filter((r) => r.status === 'PENDING') ?? []
-    );
-  }, [delegator?.withdrawRequests]);
+  const { data: protocolConfig } = useProtocolConfig();
 
-  // Build asset position items with metadata
-  const assetPositionItems = useMemo<AssetPositionItem[]>(() => {
-    if (!delegator?.assetPositions || !tokenMetadatas) {
+  const { data: onChainPendingWithdrawals, refetch: refetchOnChainWithdrawals } =
+    useResilientReadContract({
+      queryKey: [
+        'restake',
+        'withdraw',
+        'pendingWithdrawals',
+        chainId,
+        userAddress,
+      ] as const,
+      contract:
+        contracts && userAddress
+          ? {
+              address: contracts.multiAssetDelegation,
+              abi: MULTI_ASSET_DELEGATION_ABI,
+              functionName: 'getPendingWithdrawals',
+              args: [userAddress] as const,
+            }
+          : null,
+      query: {
+        enabled: Boolean(contracts) && Boolean(userAddress),
+        staleTime: 2_000,
+        refetchInterval: 2_000,
+        refetchIntervalInBackground: true,
+      },
+    });
+
+  // Get pending withdraw requests (prefer indexer, but fall back to on-chain when it lags)
+  const withdrawRequests = useMemo(() => {
+    const fromIndexer =
+      delegator?.withdrawRequests.filter((r) => r.status === 'PENDING') ?? [];
+    if (fromIndexer.length > 0) {
+      return fromIndexer;
+    }
+
+    if (!onChainPendingWithdrawals) {
       return [];
     }
 
-    return delegator.assetPositions
-      .map((position) => {
-        const metadata = tokenMetadatas.find(
-          (m) => m.id.toLowerCase() === position.token.toLowerCase(),
-        );
+    const delayRounds = protocolConfig?.leaveDelegatorsDelay ?? BigInt(0);
+    const requests = (onChainPendingWithdrawals as Array<{
+      asset: { kind: number; token: Address };
+      amount: bigint;
+      requestedRound: bigint;
+    }>).map((r, idx) => ({
+      id: `${r.asset.token.toLowerCase()}-${r.requestedRound.toString()}-${idx}`,
+      token: r.asset.token,
+      nonce: BigInt(0),
+      amount: r.amount,
+      requestedRound: r.requestedRound,
+      readyAtRound: r.requestedRound + delayRounds,
+      status: 'PENDING' as const,
+      executedAt: null,
+    })) satisfies WithdrawRequest[];
 
-        if (!metadata) return null;
+    return requests;
+  }, [delegator?.withdrawRequests, onChainPendingWithdrawals, protocolConfig?.leaveDelegatorsDelay]);
 
-        const deposit = depositMap.get(position.token.toLowerCase());
-        const totalDeposited = deposit?.amount ?? position.totalDeposited;
-        const delegatedAmount =
-          deposit?.delegatedAmount ?? position.delegatedAmount;
-        const lockedAmount =
-          lockedMap.get(position.token.toLowerCase()) ?? BigInt(0);
+  // Build asset position items with metadata
+  const assetPositionItems = useMemo<AssetPositionItem[]>(() => {
+    if (!tokenMetadatas) {
+      return [];
+    }
+
+    return tokenAddresses.flatMap((token) => {
+      const metadata = tokenMetadatas.find(
+        (m) => m.id.toLowerCase() === token.toLowerCase(),
+      );
+
+      if (!metadata) return [];
+
+      const deposit = depositMap.get(token.toLowerCase());
+      const totalDeposited = deposit?.amount ?? BigInt(0);
+      const delegatedAmount = deposit?.delegatedAmount ?? BigInt(0);
+      const lockedAmount = lockedMap.get(token.toLowerCase()) ?? BigInt(0);
 
         const available =
           totalDeposited > delegatedAmount
@@ -252,21 +333,22 @@ const RestakeWithdrawForm: FC = () => {
             : BigInt(0);
         const availableToWithdraw = available < free ? available : free;
 
-        // Only show positions with available balance
-        if (availableToWithdraw <= BigInt(0)) return null;
+      // Only show positions with available balance
+      if (availableToWithdraw <= BigInt(0)) return [];
 
-        return {
-          id: position.id,
-          token: position.token,
+      return [
+        {
+          id: token.toLowerCase(),
+          token,
           tokenSymbol: metadata.symbol,
           tokenDecimals: metadata.decimals,
           totalDeposited,
           delegatedAmount,
           availableToWithdraw,
-        };
-      })
-      .filter((item): item is AssetPositionItem => item !== null);
-  }, [delegator?.assetPositions, depositMap, lockedMap, tokenMetadatas]);
+        } satisfies AssetPositionItem,
+      ];
+    });
+  }, [depositMap, lockedMap, tokenAddresses, tokenMetadatas]);
 
   const { maxAmount, formattedMaxAmount } = useMemo(() => {
     if (!selectedAssetPosition) {
@@ -343,12 +425,26 @@ const RestakeWithdrawForm: FC = () => {
         amount: amountBigInt,
       });
 
-      await refetchDelegator();
+      await Promise.allSettled([
+        refetchDelegator(),
+        refetchDeposits(),
+        refetchLocks(),
+        refetchOnChainWithdrawals(),
+      ]);
       setFormValue('amount', '', { shouldValidate: false });
       setFormValue('assetId', '' as Address, { shouldValidate: false });
       setSelectedAssetPosition(null);
     },
-    [executeScheduleWithdraw, isReady, refetchDelegator, selectedAssetPosition, setFormValue],
+    [
+      executeScheduleWithdraw,
+      isReady,
+      refetchDelegator,
+      refetchDeposits,
+      refetchLocks,
+      refetchOnChainWithdrawals,
+      selectedAssetPosition,
+      setFormValue,
+    ],
   );
 
   const handleAssetSelect = useCallback(
@@ -498,19 +594,33 @@ const RestakeWithdrawForm: FC = () => {
         className="hidden md:block"
         isTableOpen={isWithdrawRequestTableOpen}
       >
-        <WithdrawRequestView
-          withdrawRequests={withdrawRequests}
-          tokenMetadatas={tokenMetadatas}
-          onClose={() => setIsWithdrawRequestTableOpen(false)}
-          onRefresh={refetchDelegator}
-        />
+      <WithdrawRequestView
+        withdrawRequests={withdrawRequests}
+        tokenMetadatas={tokenMetadatas}
+        onClose={() => setIsWithdrawRequestTableOpen(false)}
+        onRefresh={async () => {
+          await Promise.allSettled([
+            refetchDelegator(),
+            refetchDeposits(),
+            refetchLocks(),
+            refetchOnChainWithdrawals(),
+          ]);
+        }}
+      />
       </AnimatedTable>
 
       <WithdrawRequestView
         withdrawRequests={withdrawRequests}
         tokenMetadatas={tokenMetadatas}
         onClose={() => setIsWithdrawRequestTableOpen(false)}
-        onRefresh={refetchDelegator}
+        onRefresh={async () => {
+          await Promise.allSettled([
+            refetchDelegator(),
+            refetchDeposits(),
+            refetchLocks(),
+            refetchOnChainWithdrawals(),
+          ]);
+        }}
         className="md:hidden"
       />
 

@@ -42,6 +42,12 @@ export const useScheduleWithdrawTx = () => {
       args: [params.token, params.amount] as const,
     }),
     {
+      txName: 'restake withdraw',
+      txDetails: (params) =>
+        new Map([
+          ['Token', params.token],
+          ['Amount', params.amount.toString()],
+        ]),
       getSuccessMessage: () => 'Successfully scheduled withdrawal',
     },
   );
@@ -64,6 +70,7 @@ export const useExecuteWithdrawTx = () => {
       args: [] as const,
     }),
     {
+      txName: 'restake execute withdraw',
       getSuccessMessage: () => 'Successfully executed withdrawal',
     },
   );

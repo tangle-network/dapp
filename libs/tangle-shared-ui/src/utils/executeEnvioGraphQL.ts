@@ -7,7 +7,7 @@
 export type EnvioNetwork = 'local' | 'testnet' | 'mainnet';
 
 // Envio indexer endpoints
-// Note: Hasura serves GraphQL at /v1/graphql
+// Note: Hasura commonly serves GraphQL at /v1/graphql, but deployments may also expose it at /graphql.
 const ENVIO_ENDPOINTS: Record<EnvioNetwork, string> = {
   local:
     import.meta.env.VITE_ENVIO_LOCAL_ENDPOINT ??
@@ -32,20 +32,28 @@ export const getEnvioNetwork = (): EnvioNetwork => {
 export const getEnvioNetworkFromChainId = (chainId: number): EnvioNetwork => {
   switch (chainId) {
     case 31337: // Anvil/Hardhat local
-    case 84532: // Base Sepolia (local testnet)
       return 'local';
+    case 84532: // Base Sepolia
     case 421614: // Arbitrum Sepolia
       return 'testnet';
     case 8453: // Base Mainnet
     case 42161: // Arbitrum One
       return 'mainnet';
     default:
-      return 'local';
+      // Fall back to the build-mode based network if the chain ID isn't explicitly mapped.
+      return getEnvioNetwork();
   }
 };
 
 // Get the Envio endpoint for a given network
 export const getEnvioEndpoint = (network?: EnvioNetwork): string => {
+  // Backwards compatible override used throughout the repo/docs.
+  // If set, treat it as the single source of truth regardless of `network`.
+  const override = import.meta.env.VITE_GRAPHQL_ENDPOINT;
+  if (typeof override === 'string' && override.length > 0) {
+    return override;
+  }
+
   return ENVIO_ENDPOINTS[network ?? getEnvioNetwork()];
 };
 
