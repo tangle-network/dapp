@@ -116,7 +116,8 @@ const RestakeWithdrawForm: FC = () => {
   }, [activeTypedChainId, reset]);
 
   // Fetch delegator data
-  const { data: delegator, refetch: refetchDelegator } = useDelegator(userAddress);
+  const { data: delegator, refetch: refetchDelegator } =
+    useDelegator(userAddress);
   const { assets: restakeAssets } = useRestakeAssets({
     enabled: Boolean(userAddress),
   });
@@ -190,32 +191,35 @@ const RestakeWithdrawForm: FC = () => {
 
   const { data: currentBlockNumber } = useBlockNumber({ watch: true });
 
-  const { data: lockResults, refetch: refetchLocks } = useResilientReadContracts({
-    queryKey: [
-      'restake',
-      'withdraw',
-      'locks',
-      chainId,
-      userAddress,
-      tokenAddresses,
-    ] as const,
-    contracts:
-      contracts && userAddress && tokenAddresses.length > 0
-        ? tokenAddresses.map((token) => ({
-            address: contracts.multiAssetDelegation,
-            abi: MULTI_ASSET_DELEGATION_ABI,
-            functionName: 'getLocks',
-            args: [userAddress, token] as const,
-          }))
-        : [],
-    query: {
-      enabled:
-        Boolean(contracts) && Boolean(userAddress) && tokenAddresses.length > 0,
-      staleTime: 2_000,
-      refetchInterval: 2_000,
-      refetchIntervalInBackground: true,
-    },
-  });
+  const { data: lockResults, refetch: refetchLocks } =
+    useResilientReadContracts({
+      queryKey: [
+        'restake',
+        'withdraw',
+        'locks',
+        chainId,
+        userAddress,
+        tokenAddresses,
+      ] as const,
+      contracts:
+        contracts && userAddress && tokenAddresses.length > 0
+          ? tokenAddresses.map((token) => ({
+              address: contracts.multiAssetDelegation,
+              abi: MULTI_ASSET_DELEGATION_ABI,
+              functionName: 'getLocks',
+              args: [userAddress, token] as const,
+            }))
+          : [],
+      query: {
+        enabled:
+          Boolean(contracts) &&
+          Boolean(userAddress) &&
+          tokenAddresses.length > 0,
+        staleTime: 2_000,
+        refetchInterval: 2_000,
+        refetchIntervalInBackground: true,
+      },
+    });
 
   const lockedMap = useMemo(() => {
     const map = new Map<string, bigint>();
@@ -248,31 +252,33 @@ const RestakeWithdrawForm: FC = () => {
 
   const { data: protocolConfig } = useProtocolConfig();
 
-  const { data: onChainPendingWithdrawals, refetch: refetchOnChainWithdrawals } =
-    useResilientReadContract({
-      queryKey: [
-        'restake',
-        'withdraw',
-        'pendingWithdrawals',
-        chainId,
-        userAddress,
-      ] as const,
-      contract:
-        contracts && userAddress
-          ? {
-              address: contracts.multiAssetDelegation,
-              abi: MULTI_ASSET_DELEGATION_ABI,
-              functionName: 'getPendingWithdrawals',
-              args: [userAddress] as const,
-            }
-          : null,
-      query: {
-        enabled: Boolean(contracts) && Boolean(userAddress),
-        staleTime: 2_000,
-        refetchInterval: 2_000,
-        refetchIntervalInBackground: true,
-      },
-    });
+  const {
+    data: onChainPendingWithdrawals,
+    refetch: refetchOnChainWithdrawals,
+  } = useResilientReadContract({
+    queryKey: [
+      'restake',
+      'withdraw',
+      'pendingWithdrawals',
+      chainId,
+      userAddress,
+    ] as const,
+    contract:
+      contracts && userAddress
+        ? {
+            address: contracts.multiAssetDelegation,
+            abi: MULTI_ASSET_DELEGATION_ABI,
+            functionName: 'getPendingWithdrawals',
+            args: [userAddress] as const,
+          }
+        : null,
+    query: {
+      enabled: Boolean(contracts) && Boolean(userAddress),
+      staleTime: 2_000,
+      refetchInterval: 2_000,
+      refetchIntervalInBackground: true,
+    },
+  });
 
   // Get pending withdraw requests (prefer indexer, but fall back to on-chain when it lags)
   const withdrawRequests = useMemo(() => {
@@ -287,11 +293,13 @@ const RestakeWithdrawForm: FC = () => {
     }
 
     const delayRounds = protocolConfig?.leaveDelegatorsDelay ?? BigInt(0);
-    const requests = (onChainPendingWithdrawals as Array<{
-      asset: { kind: number; token: Address };
-      amount: bigint;
-      requestedRound: bigint;
-    }>).map((r, idx) => ({
+    const requests = (
+      onChainPendingWithdrawals as Array<{
+        asset: { kind: number; token: Address };
+        amount: bigint;
+        requestedRound: bigint;
+      }>
+    ).map((r, idx) => ({
       id: `${r.asset.token.toLowerCase()}-${r.requestedRound.toString()}-${idx}`,
       token: r.asset.token,
       nonce: BigInt(0),
@@ -303,7 +311,11 @@ const RestakeWithdrawForm: FC = () => {
     })) satisfies WithdrawRequest[];
 
     return requests;
-  }, [delegator?.withdrawRequests, onChainPendingWithdrawals, protocolConfig?.leaveDelegatorsDelay]);
+  }, [
+    delegator?.withdrawRequests,
+    onChainPendingWithdrawals,
+    protocolConfig?.leaveDelegatorsDelay,
+  ]);
 
   // Build asset position items with metadata
   const assetPositionItems = useMemo<AssetPositionItem[]>(() => {
@@ -323,15 +335,15 @@ const RestakeWithdrawForm: FC = () => {
       const delegatedAmount = deposit?.delegatedAmount ?? BigInt(0);
       const lockedAmount = lockedMap.get(token.toLowerCase()) ?? BigInt(0);
 
-        const available =
-          totalDeposited > delegatedAmount
-            ? totalDeposited - delegatedAmount
-            : BigInt(0);
-        const free =
-          totalDeposited > lockedAmount
-            ? totalDeposited - lockedAmount
-            : BigInt(0);
-        const availableToWithdraw = available < free ? available : free;
+      const available =
+        totalDeposited > delegatedAmount
+          ? totalDeposited - delegatedAmount
+          : BigInt(0);
+      const free =
+        totalDeposited > lockedAmount
+          ? totalDeposited - lockedAmount
+          : BigInt(0);
+      const availableToWithdraw = available < free ? available : free;
 
       // Only show positions with available balance
       if (availableToWithdraw <= BigInt(0)) return [];
@@ -594,19 +606,19 @@ const RestakeWithdrawForm: FC = () => {
         className="hidden md:block"
         isTableOpen={isWithdrawRequestTableOpen}
       >
-      <WithdrawRequestView
-        withdrawRequests={withdrawRequests}
-        tokenMetadatas={tokenMetadatas}
-        onClose={() => setIsWithdrawRequestTableOpen(false)}
-        onRefresh={async () => {
-          await Promise.allSettled([
-            refetchDelegator(),
-            refetchDeposits(),
-            refetchLocks(),
-            refetchOnChainWithdrawals(),
-          ]);
-        }}
-      />
+        <WithdrawRequestView
+          withdrawRequests={withdrawRequests}
+          tokenMetadatas={tokenMetadatas}
+          onClose={() => setIsWithdrawRequestTableOpen(false)}
+          onRefresh={async () => {
+            await Promise.allSettled([
+              refetchDelegator(),
+              refetchDeposits(),
+              refetchLocks(),
+              refetchOnChainWithdrawals(),
+            ]);
+          }}
+        />
       </AnimatedTable>
 
       <WithdrawRequestView
@@ -712,7 +724,9 @@ const WithdrawRequestView: FC<WithdrawRequestViewProps> = ({
           {withdrawRequests.length > 0 && (
             <Button
               size="sm"
-              isDisabled={readyCount === 0 || executeWithdraw === null || isExecuting}
+              isDisabled={
+                readyCount === 0 || executeWithdraw === null || isExecuting
+              }
               isLoading={isExecuting}
               onClick={async () => {
                 if (!executeWithdraw) return;

@@ -128,8 +128,7 @@ const LiquidStakingDepositForm: FC = () => {
     status: approveTxStatus,
     execute: executeApproveTx,
     txHash: approveTxHash,
-  } =
-    useContractWrite(
+  } = useContractWrite(
     erc20Abi,
     (ctx: { token: Address; spender: Address; amount: bigint }) => ({
       address: ctx.token,
@@ -150,52 +149,55 @@ const LiquidStakingDepositForm: FC = () => {
     'idle',
   );
 
-  const handleApprove = useCallback(async (amountToApprove: bigint) => {
-    if (!vaultAsset || !spender || !executeApproveTx) {
-      return false;
-    }
+  const handleApprove = useCallback(
+    async (amountToApprove: bigint) => {
+      if (!vaultAsset || !spender || !executeApproveTx) {
+        return false;
+      }
 
-    approveLastErrorRef.current = null;
-    const firstAttempt = await executeApproveTx({
-      token: vaultAsset.id,
-      spender,
-      amount: amountToApprove,
-    });
+      approveLastErrorRef.current = null;
+      const firstAttempt = await executeApproveTx({
+        token: vaultAsset.id,
+        spender,
+        amount: amountToApprove,
+      });
 
-    if (firstAttempt !== null) {
-      return true;
-    }
+      if (firstAttempt !== null) {
+        return true;
+      }
 
-    // TS will narrow `ref.current` to `null` after assignment, even though the
-    // async write may set it via `onError`. Widen it back for the post-attempt check.
-    const message =
-      (approveLastErrorRef.current as Error | null)?.message?.toLowerCase() ??
-      '';
-    const looksLikeNonZeroAllowanceIssue =
-      message.includes('non-zero') && message.includes('allowance');
+      // TS will narrow `ref.current` to `null` after assignment, even though the
+      // async write may set it via `onError`. Widen it back for the post-attempt check.
+      const message =
+        (approveLastErrorRef.current as Error | null)?.message?.toLowerCase() ??
+        '';
+      const looksLikeNonZeroAllowanceIssue =
+        message.includes('non-zero') && message.includes('allowance');
 
-    if (!looksLikeNonZeroAllowanceIssue) {
-      return false;
-    }
+      if (!looksLikeNonZeroAllowanceIssue) {
+        return false;
+      }
 
-    const zeroAttempt = await executeApproveTx({
-      token: vaultAsset.id,
-      spender,
-      amount: BigInt(0),
-    });
+      const zeroAttempt = await executeApproveTx({
+        token: vaultAsset.id,
+        spender,
+        amount: BigInt(0),
+      });
 
-    if (zeroAttempt === null) {
-      return false;
-    }
+      if (zeroAttempt === null) {
+        return false;
+      }
 
-    const secondAttempt = await executeApproveTx({
-      token: vaultAsset.id,
-      spender,
-      amount: amountToApprove,
-    });
+      const secondAttempt = await executeApproveTx({
+        token: vaultAsset.id,
+        spender,
+        amount: amountToApprove,
+      });
 
-    return secondAttempt !== null;
-  }, [executeApproveTx, spender, vaultAsset]);
+      return secondAttempt !== null;
+    },
+    [executeApproveTx, spender, vaultAsset],
+  );
 
   const { maxAmount, formattedMaxAmount } = useMemo(() => {
     if (!vaultAsset) {
@@ -432,11 +434,13 @@ const LiquidStakingDepositForm: FC = () => {
                   isFullWidth
                   isLoading={isTransacting || isApproving || isLoading}
                   loadingText={
-                    txStep === 'approving' && approveTxStatus === TxStatus.PROCESSING
+                    txStep === 'approving' &&
+                    approveTxStatus === TxStatus.PROCESSING
                       ? approveTxHash === null
                         ? 'Preparing approval…'
                         : 'Waiting for approval…'
-                      : txStep === 'depositing' && depositStatus === TxStatus.PROCESSING
+                      : txStep === 'depositing' &&
+                          depositStatus === TxStatus.PROCESSING
                         ? depositTxHash === null
                           ? 'Preparing deposit…'
                           : 'Waiting for deposit…'
@@ -468,7 +472,10 @@ const LiquidStakingDepositForm: FC = () => {
         getItemKey={(vault) => vault.address}
         renderItem={(vault) => {
           const asset = assets?.get(vault.asset);
-          const tvl = formatUnits(vault.totalAssets, asset?.metadata.decimals ?? 18);
+          const tvl = formatUnits(
+            vault.totalAssets,
+            asset?.metadata.decimals ?? 18,
+          );
 
           return (
             <VaultListItem

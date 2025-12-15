@@ -24,10 +24,21 @@ import {
   shortenString,
   Typography,
 } from '@tangle-network/ui-components';
-import { Modal, ModalContent, ModalHeader } from '@tangle-network/ui-components/components/Modal';
+import {
+  Modal,
+  ModalContent,
+  ModalHeader,
+} from '@tangle-network/ui-components/components/Modal';
 import { formatDistanceToNow } from 'date-fns';
 import { capitalize } from 'lodash';
-import { useCallback, useEffect, useMemo, useRef, useState, type FC } from 'react';
+import {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+  type FC,
+} from 'react';
 import { twMerge } from 'tailwind-merge';
 
 type Props = {
@@ -65,17 +76,19 @@ const TxConfirmationModal: FC<Props> = ({
       return null;
     }
 
-    return transactions
-      .filter(
-        (tx) =>
-          tx.network === network.id &&
-          (isEvmAddress(addressForFilter) && isEvmAddress(tx.origin)
-            ? tx.origin.toLowerCase() === addressForFilter.toLowerCase()
-            : tx.origin === addressForFilter),
-      )
-      // Avoid `Array.prototype.toSorted` for broader runtime compatibility.
-      .slice()
-      .sort((a, b) => b.timestamp - a.timestamp);
+    return (
+      transactions
+        .filter(
+          (tx) =>
+            tx.network === network.id &&
+            (isEvmAddress(addressForFilter) && isEvmAddress(tx.origin)
+              ? tx.origin.toLowerCase() === addressForFilter.toLowerCase()
+              : tx.origin === addressForFilter),
+        )
+        // Avoid `Array.prototype.toSorted` for broader runtime compatibility.
+        .slice()
+        .sort((a, b) => b.timestamp - a.timestamp)
+    );
   }, [activeAccountAddress, activeEvmAddress, network.id, transactions]);
 
   const tx: HistoryTx | null = useMemo(() => {
@@ -185,8 +198,15 @@ const TxConfirmationModal: FC<Props> = ({
         : 'blue';
 
   return (
-    <Modal open={open} onOpenChange={(next) => (next ? setOpen(true) : close())}>
-      <ModalContent size="md" title="Transaction" description="Transaction status">
+    <Modal
+      open={open}
+      onOpenChange={(next) => (next ? setOpen(true) : close())}
+    >
+      <ModalContent
+        size="md"
+        title="Transaction"
+        description="Transaction status"
+      >
         <ModalHeader onClose={close} titleVariant="h4">
           Transaction
         </ModalHeader>
@@ -248,7 +268,11 @@ const TxConfirmationModal: FC<Props> = ({
             {tx.details && tx.details.size > 0 && (
               <div className="flex flex-wrap gap-1">
                 {Array.from(tx.details.entries()).map(([key, value]) => (
-                  <Chip className="normal-case cursor-default" key={key} color="blue">
+                  <Chip
+                    className="normal-case cursor-default"
+                    key={key}
+                    color="blue"
+                  >
                     {key}: {formatDetailValue(value)}
                   </Chip>
                 ))}

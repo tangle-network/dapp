@@ -21,13 +21,7 @@ import { useModal } from '@tangle-network/ui-components/hooks/useModal';
 import { Typography } from '@tangle-network/ui-components/typography/Typography';
 import { FC, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { SubmitHandler, useForm } from 'react-hook-form';
-import {
-  erc20Abi,
-  formatUnits,
-  parseUnits,
-  zeroAddress,
-  Address,
-} from 'viem';
+import { erc20Abi, formatUnits, parseUnits, zeroAddress, Address } from 'viem';
 import { BN } from '@polkadot/util';
 import { useChainId } from 'wagmi';
 import ErrorMessage from '../../../components/ErrorMessage';
@@ -48,7 +42,10 @@ import { TxStatus } from '@tangle-network/tangle-shared-ui/hooks/useContractWrit
 import type { RestakeAsset } from '@tangle-network/tangle-shared-ui/data/graphql';
 import { useOptionalRestakeContext } from '@tangle-network/tangle-shared-ui/context/RestakeContext';
 import { useRestakeAssets } from '@tangle-network/tangle-shared-ui/data/graphql';
-import { useContractWrite, useDepositTx } from '@tangle-network/tangle-shared-ui/data/tx';
+import {
+  useContractWrite,
+  useDepositTx,
+} from '@tangle-network/tangle-shared-ui/data/tx';
 import { chainsConfig } from '@tangle-network/dapp-config/chains';
 import { getContractsByChainId } from '@tangle-network/dapp-config/contracts';
 import type { LockDuration } from '@tangle-network/tangle-shared-ui/data/graphql/useDelegator';
@@ -218,10 +215,9 @@ const DepositForm: FC = () => {
     status: approveTxStatus,
     execute: executeApproveTx,
     txHash: approveTxHash,
-  } =
-    useContractWrite(
-      erc20Abi,
-      (ctx: { token: Address; spender: Address; amount: bigint }) => {
+  } = useContractWrite(
+    erc20Abi,
+    (ctx: { token: Address; spender: Address; amount: bigint }) => {
       if (ctx.token.toLowerCase() === zeroAddress) return null;
 
       return {
@@ -288,53 +284,56 @@ const DepositForm: FC = () => {
 
   const isReady = executeDepositTx !== null && asset !== null && !isTransacting;
 
-  const handleApprove = useCallback(async (amountToApprove: bigint) => {
-    if (!asset || !spender || !executeApproveTx) {
-      return false;
-    }
+  const handleApprove = useCallback(
+    async (amountToApprove: bigint) => {
+      if (!asset || !spender || !executeApproveTx) {
+        return false;
+      }
 
-    approveLastErrorRef.current = null;
-    const firstAttempt = await executeApproveTx({
-      token: asset.id,
-      spender,
-      amount: amountToApprove,
-    });
+      approveLastErrorRef.current = null;
+      const firstAttempt = await executeApproveTx({
+        token: asset.id,
+        spender,
+        amount: amountToApprove,
+      });
 
-    if (firstAttempt !== null) {
-      return true;
-    }
+      if (firstAttempt !== null) {
+        return true;
+      }
 
-    // TS will narrow `ref.current` to `null` after assignment, even though the
-    // async write may set it via `onError`. Widen it back for the post-attempt check.
-    const message =
-      (approveLastErrorRef.current as Error | null)?.message?.toLowerCase() ??
-      '';
-    const looksLikeNonZeroAllowanceIssue =
-      message.includes('non-zero') && message.includes('allowance');
+      // TS will narrow `ref.current` to `null` after assignment, even though the
+      // async write may set it via `onError`. Widen it back for the post-attempt check.
+      const message =
+        (approveLastErrorRef.current as Error | null)?.message?.toLowerCase() ??
+        '';
+      const looksLikeNonZeroAllowanceIssue =
+        message.includes('non-zero') && message.includes('allowance');
 
-    if (!looksLikeNonZeroAllowanceIssue) {
-      return false;
-    }
+      if (!looksLikeNonZeroAllowanceIssue) {
+        return false;
+      }
 
-    // Some ERC20s (e.g. USDT-style) require setting allowance to 0 before setting a new non-zero allowance.
-    const zeroAttempt = await executeApproveTx({
-      token: asset.id,
-      spender,
-      amount: BigInt(0),
-    });
+      // Some ERC20s (e.g. USDT-style) require setting allowance to 0 before setting a new non-zero allowance.
+      const zeroAttempt = await executeApproveTx({
+        token: asset.id,
+        spender,
+        amount: BigInt(0),
+      });
 
-    if (zeroAttempt === null) {
-      return false;
-    }
+      if (zeroAttempt === null) {
+        return false;
+      }
 
-    const secondAttempt = await executeApproveTx({
-      token: asset.id,
-      spender,
-      amount: amountToApprove,
-    });
+      const secondAttempt = await executeApproveTx({
+        token: asset.id,
+        spender,
+        amount: amountToApprove,
+      });
 
-    return secondAttempt !== null;
-  }, [asset, executeApproveTx, spender]);
+      return secondAttempt !== null;
+    },
+    [asset, executeApproveTx, spender],
+  );
 
   const onSubmit = useCallback<SubmitHandler<EvmDepositFormFields>>(
     async ({ amount, lockDuration }) => {
@@ -486,7 +485,9 @@ const DepositForm: FC = () => {
 
             <Select
               value={lockDuration}
-              onValueChange={(value) => setValue('lockDuration', value as LockDuration)}
+              onValueChange={(value) =>
+                setValue('lockDuration', value as LockDuration)
+              }
             >
               <SelectTrigger className="w-[200px] bg-mono-0 dark:bg-mono-180 border border-mono-60 dark:border-mono-160 rounded-xl">
                 <SelectValue placeholder="No lock" />
@@ -532,11 +533,13 @@ const DepositForm: FC = () => {
                   isFullWidth
                   isLoading={isTransacting || isLoading}
                   loadingText={
-                    txStep === 'approving' && approveTxStatus === TxStatus.PROCESSING
+                    txStep === 'approving' &&
+                    approveTxStatus === TxStatus.PROCESSING
                       ? approveTxHash === null
                         ? 'Preparing approval…'
                         : 'Waiting for approval…'
-                      : txStep === 'depositing' && depositTxStatus === TxStatus.PROCESSING
+                      : txStep === 'depositing' &&
+                          depositTxStatus === TxStatus.PROCESSING
                         ? depositTxHash === null
                           ? 'Preparing deposit…'
                           : 'Waiting for deposit…'

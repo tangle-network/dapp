@@ -143,11 +143,7 @@ const getColumns = () => [
     header: () => <HeaderCell title="TVL (USD)" />,
     cell: (props) => {
       const value = props.getValue();
-      return (
-        <TableCellWrapper>
-          {formatUsdShort(value)}
-        </TableCellWrapper>
-      );
+      return <TableCellWrapper>{formatUsdShort(value)}</TableCellWrapper>;
     },
   }),
   COLUMN_HELPER.accessor('protocolTvlToken', {
@@ -311,10 +307,13 @@ const DashboardPage: FC = () => {
 
     // If multiple TNT-like tokens are enabled (e.g. local migration token + core bond token),
     // pick the one the user actually has balance in.
-    return tntCandidates.reduce((best, asset) => {
-      if (best === null) return asset;
-      return asset.balance > best.balance ? asset : best;
-    }, null as (typeof assetList)[number] | null);
+    return tntCandidates.reduce(
+      (best, asset) => {
+        if (best === null) return asset;
+        return asset.balance > best.balance ? asset : best;
+      },
+      null as (typeof assetList)[number] | null,
+    );
   }, [assetList]);
 
   const tntPosition = useMemo(() => {

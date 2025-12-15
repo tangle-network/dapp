@@ -8,7 +8,10 @@ type Props = {
   children: (isLoading: boolean, loadingText?: string) => ReactNode;
 };
 
-const ActionButtonBase: FC<Props> = ({ targetTypedChainId: _targetTypedChainId, children }) => {
+const ActionButtonBase: FC<Props> = ({
+  targetTypedChainId: _targetTypedChainId,
+  children,
+}) => {
   const { isConnected, isConnecting } = useAccount();
   const [isWalletModalOpen, setIsWalletModalOpen] = useState(false);
 

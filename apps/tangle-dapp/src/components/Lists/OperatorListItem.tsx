@@ -78,7 +78,10 @@ const OperatorListItem: FC<Props> = ({
         <Avatar
           size="lg"
           theme="ethereum"
-          value={operatorAddress ?? ('0x0000000000000000000000000000000000000000' as EvmAddress)}
+          value={
+            operatorAddress ??
+            ('0x0000000000000000000000000000000000000000' as EvmAddress)
+          }
         />
       }
       leftUpperContent={leftUpperContent}

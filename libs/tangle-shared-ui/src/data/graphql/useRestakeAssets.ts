@@ -109,7 +109,10 @@ export const useRestakeAssets = (options?: {
 
   // Debug for local testnet (opt-in to avoid noisy console output)
   useEffect(() => {
-    if (!import.meta.env.DEV || import.meta.env.VITE_DEBUG_RESTAKE_ASSETS !== 'true') {
+    if (
+      !import.meta.env.DEV ||
+      import.meta.env.VITE_DEBUG_RESTAKE_ASSETS !== 'true'
+    ) {
       return;
     }
 
@@ -247,9 +250,9 @@ export const useRestakeAssets = (options?: {
       };
 
       try {
-        const accountHasCachedBalances = Array.from(ERC20_BALANCE_CACHE.keys()).some(
-          (k) => k.startsWith(cacheKeyPrefix),
-        );
+        const accountHasCachedBalances = Array.from(
+          ERC20_BALANCE_CACHE.keys(),
+        ).some((k) => k.startsWith(cacheKeyPrefix));
 
         let hadRetryableFailure = false;
 
@@ -388,9 +391,9 @@ export const useRestakeAssets = (options?: {
         );
 
         const cacheKeyPrefix = `${publicClient.chain?.id ?? chainId}:${userAddress.toLowerCase()}`;
-        const accountHasCachedBalances = Array.from(ERC20_BALANCE_CACHE.keys()).some(
-          (k) => k.startsWith(cacheKeyPrefix),
-        );
+        const accountHasCachedBalances = Array.from(
+          ERC20_BALANCE_CACHE.keys(),
+        ).some((k) => k.startsWith(cacheKeyPrefix));
         let hadRetryableFailure = false;
 
         const fallbackBalances = new Map<Address, bigint>();

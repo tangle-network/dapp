@@ -7,10 +7,7 @@ export type TokenRef = {
   symbol?: string | null;
 };
 
-export type TokenPriceOverrides = Record<
-  string,
-  Record<`0x${string}`, number>
->;
+export type TokenPriceOverrides = Record<string, Record<`0x${string}`, number>>;
 
 const TOKEN_PRICE_OVERRIDES_STORAGE_KEY = 'token-price-overrides';
 
@@ -31,7 +28,9 @@ const readOverridesFromStorage = (): TokenPriceOverrides => {
   try {
     const raw = storage.getItem(TOKEN_PRICE_OVERRIDES_STORAGE_KEY);
     if (!raw) return {};
-    return tokenPriceOverridesSchema.parse(JSON.parse(raw)) as TokenPriceOverrides;
+    return tokenPriceOverridesSchema.parse(
+      JSON.parse(raw),
+    ) as TokenPriceOverrides;
   } catch {
     return {};
   }
@@ -39,10 +38,14 @@ const readOverridesFromStorage = (): TokenPriceOverrides => {
 
 const readOverridesFromEnv = (): TokenPriceOverrides => {
   try {
-    const viteEnv = (import.meta as any)?.env as Record<string, unknown> | undefined;
+    const viteEnv = (import.meta as any)?.env as
+      | Record<string, unknown>
+      | undefined;
     const raw = viteEnv?.VITE_TOKEN_PRICE_OVERRIDES;
     if (typeof raw !== 'string' || raw.trim() === '') return {};
-    return tokenPriceOverridesSchema.parse(JSON.parse(raw)) as TokenPriceOverrides;
+    return tokenPriceOverridesSchema.parse(
+      JSON.parse(raw),
+    ) as TokenPriceOverrides;
   } catch {
     return {};
   }
@@ -75,9 +78,10 @@ const CoingeckoTokenPriceSchema = z.record(
   z.object({ usd: z.number().optional() }),
 );
 
-const chunk = <T,>(items: T[], size: number): T[][] => {
+const chunk = <T>(items: T[], size: number): T[][] => {
   const out: T[][] = [];
-  for (let i = 0; i < items.length; i += size) out.push(items.slice(i, i + size));
+  for (let i = 0; i < items.length; i += size)
+    out.push(items.slice(i, i + size));
   return out;
 };
 
@@ -105,7 +109,11 @@ export async function fetchTokenUsdPrices(params: {
   for (const token of tokens) {
     const address = token.address.toLowerCase() as `0x${string}`;
     const override = chainOverrides[address];
-    if (typeof override === 'number' && Number.isFinite(override) && override > 0) {
+    if (
+      typeof override === 'number' &&
+      Number.isFinite(override) &&
+      override > 0
+    ) {
       results.set(address, override);
     } else {
       remaining.push({ ...token, address });
@@ -159,13 +167,19 @@ export async function fetchTokenUsdPrices(params: {
         .map((s) => s.toUpperCase()),
     );
 
-    const symbolPrices = symbolSet.size > 0 ? await fetchTokenPrices(symbolSet) : new Map();
+    const symbolPrices =
+      symbolSet.size > 0 ? await fetchTokenPrices(symbolSet) : new Map();
 
     for (const token of stillMissing) {
       const address = token.address.toLowerCase() as `0x${string}`;
       const symbol = token.symbol?.toUpperCase() ?? null;
       const price = symbol ? (symbolPrices.get(symbol) ?? null) : null;
-      results.set(address, typeof price === 'number' && Number.isFinite(price) && price > 0 ? price : 1);
+      results.set(
+        address,
+        typeof price === 'number' && Number.isFinite(price) && price > 0
+          ? price
+          : 1,
+      );
     }
   }
 

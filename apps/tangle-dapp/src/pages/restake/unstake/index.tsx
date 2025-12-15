@@ -3,7 +3,12 @@ import { calculateTypedChainId } from '@tangle-network/dapp-types/TypedChainId';
 import isDefined from '@tangle-network/dapp-types/utils/isDefined';
 import { LockUnlockLineIcon } from '@tangle-network/icons/LockUnlockLineIcon';
 import { TokenIcon } from '@tangle-network/icons';
-import { Avatar, Card, IconButton, shortenHex } from '@tangle-network/ui-components';
+import {
+  Avatar,
+  Card,
+  IconButton,
+  shortenHex,
+} from '@tangle-network/ui-components';
 import Button from '@tangle-network/ui-components/components/buttons/Button';
 import { Modal } from '@tangle-network/ui-components/components/Modal';
 import type { TextFieldInputProps } from '@tangle-network/ui-components/components/TextField/types';
@@ -37,7 +42,10 @@ import {
   useProtocolConfig,
   type UnstakeRequest,
 } from '@tangle-network/tangle-shared-ui/data/graphql';
-import { useExecuteUnstakeTx, useScheduleUnstakeTx } from '@tangle-network/tangle-shared-ui/data/tx';
+import {
+  useExecuteUnstakeTx,
+  useScheduleUnstakeTx,
+} from '@tangle-network/tangle-shared-ui/data/tx';
 import { TxStatus } from '@tangle-network/tangle-shared-ui/hooks/useContractWrite';
 import { useEvmAssetMetadatas } from '@tangle-network/tangle-shared-ui/hooks/useEvmAssetMetadatas';
 import type { EvmAddress } from '@tangle-network/ui-components/types/address';
@@ -111,7 +119,8 @@ const RestakeUnstakeForm: FC = () => {
   }, [activeTypedChainId, reset]);
 
   // Fetch delegator data
-  const { data: delegator, refetch: refetchDelegator } = useDelegator(userAddress);
+  const { data: delegator, refetch: refetchDelegator } =
+    useDelegator(userAddress);
   const { data: protocolConfig } = useProtocolConfig();
 
   const contracts = useMemo(() => {
@@ -137,27 +146,31 @@ const RestakeUnstakeForm: FC = () => {
     selectionMode: number;
   };
 
-  const {
-    data: onChainDelegations,
-    refetch: refetchOnChainDelegations,
-  } = useResilientReadContract({
-    queryKey: ['restake', 'unstake', 'delegations', chainId, userAddress] as const,
-    contract:
-      contracts && userAddress
-        ? {
-            address: contracts.multiAssetDelegation,
-            abi: MULTI_ASSET_DELEGATION_ABI,
-            functionName: 'getDelegations',
-            args: [userAddress] as const,
-          }
-        : null,
-    query: {
-      enabled: Boolean(contracts) && Boolean(userAddress),
-      staleTime: 2_000,
-      refetchInterval: 2_000,
-      refetchIntervalInBackground: true,
-    },
-  });
+  const { data: onChainDelegations, refetch: refetchOnChainDelegations } =
+    useResilientReadContract({
+      queryKey: [
+        'restake',
+        'unstake',
+        'delegations',
+        chainId,
+        userAddress,
+      ] as const,
+      contract:
+        contracts && userAddress
+          ? {
+              address: contracts.multiAssetDelegation,
+              abi: MULTI_ASSET_DELEGATION_ABI,
+              functionName: 'getDelegations',
+              args: [userAddress] as const,
+            }
+          : null,
+      query: {
+        enabled: Boolean(contracts) && Boolean(userAddress),
+        staleTime: 2_000,
+        refetchInterval: 2_000,
+        refetchIntervalInBackground: true,
+      },
+    });
 
   const {
     data: onChainPendingUnstakes,
@@ -189,7 +202,8 @@ const RestakeUnstakeForm: FC = () => {
 
   const delegationsForUi = useMemo(() => {
     const graphql = delegator?.delegations ?? [];
-    const onchain = (onChainDelegations as OnChainDelegation[] | undefined) ?? [];
+    const onchain =
+      (onChainDelegations as OnChainDelegation[] | undefined) ?? [];
 
     const byKey = new Map<
       string,
@@ -393,18 +407,20 @@ const RestakeUnstakeForm: FC = () => {
     }
 
     const delay = protocolConfig?.delegationBondLessDelay ?? BigInt(0);
-    return (onChainPendingUnstakes as OnChainPendingUnstake[]).map((r, idx) => ({
-      id: `${r.operator.toLowerCase()}-${r.asset.token.toLowerCase()}-${r.requestedRound.toString()}-${idx}`,
-      operatorId: r.operator,
-      token: r.asset.token,
-      nonce: BigInt(0),
-      shares: r.shares,
-      estimatedAmount: r.shares,
-      requestedRound: r.requestedRound,
-      readyAtRound: r.requestedRound + delay,
-      status: 'PENDING' as const,
-      executedAt: null,
-    })) satisfies UnstakeRequest[];
+    return (onChainPendingUnstakes as OnChainPendingUnstake[]).map(
+      (r, idx) => ({
+        id: `${r.operator.toLowerCase()}-${r.asset.token.toLowerCase()}-${r.requestedRound.toString()}-${idx}`,
+        operatorId: r.operator,
+        token: r.asset.token,
+        nonce: BigInt(0),
+        shares: r.shares,
+        estimatedAmount: r.shares,
+        requestedRound: r.requestedRound,
+        readyAtRound: r.requestedRound + delay,
+        status: 'PENDING' as const,
+        executedAt: null,
+      }),
+    ) satisfies UnstakeRequest[];
   }, [
     delegator?.unstakeRequests,
     onChainPendingUnstakes,
@@ -510,7 +526,13 @@ const RestakeUnstakeForm: FC = () => {
         console.error('Transaction failed:', error);
       }
     },
-    [executeScheduleUnstake, isReady, refreshAll, resetForm, selectedDelegation],
+    [
+      executeScheduleUnstake,
+      isReady,
+      refreshAll,
+      resetForm,
+      selectedDelegation,
+    ],
   );
 
   const handleDelegationSelect = useCallback(
@@ -563,7 +585,9 @@ const RestakeUnstakeForm: FC = () => {
                                   component="span"
                                   className="inline-block text-mono-200 dark:text-mono-40"
                                 >
-                                  {shortenHex(selectedDelegation.operatorAddress)}
+                                  {shortenHex(
+                                    selectedDelegation.operatorAddress,
+                                  )}
                                 </Typography>
                                 <Typography
                                   variant="body3"
@@ -769,7 +793,8 @@ const UnstakeRequestsView: FC<UnstakeRequestsViewProps> = ({
     (r) => r.readyAtRound <= currentRound,
   ).length;
 
-  const { execute: executeUnstake, status: executeStatus } = useExecuteUnstakeTx();
+  const { execute: executeUnstake, status: executeStatus } =
+    useExecuteUnstakeTx();
   const isExecuting = executeStatus === TxStatus.PROCESSING;
 
   return (
@@ -787,7 +812,9 @@ const UnstakeRequestsView: FC<UnstakeRequestsViewProps> = ({
           {unstakeRequests.length > 0 && (
             <Button
               size="sm"
-              isDisabled={readyCount === 0 || executeUnstake === null || isExecuting}
+              isDisabled={
+                readyCount === 0 || executeUnstake === null || isExecuting
+              }
               isLoading={isExecuting}
               onClick={async () => {
                 if (!executeUnstake) return;
@@ -820,7 +847,10 @@ const UnstakeRequestsView: FC<UnstakeRequestsViewProps> = ({
               >
                 <div className="flex items-center justify-between">
                   <div className="flex flex-col">
-                    <Typography variant="body3" className="font-mono text-mono-120 dark:text-mono-100">
+                    <Typography
+                      variant="body3"
+                      className="font-mono text-mono-120 dark:text-mono-100"
+                    >
                       {shortenHex(request.operatorId)}
                     </Typography>
                     <span className="text-sm font-medium">

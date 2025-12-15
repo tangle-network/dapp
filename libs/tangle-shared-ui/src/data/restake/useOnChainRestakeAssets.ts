@@ -6,12 +6,7 @@
 
 import { useQuery } from '@tanstack/react-query';
 import { Address, zeroAddress } from 'viem';
-import {
-  useAccount,
-  useBalance,
-  useChainId,
-  usePublicClient,
-} from 'wagmi';
+import { useAccount, useBalance, useChainId, usePublicClient } from 'wagmi';
 import { getContractsByChainId } from '@tangle-network/dapp-config/contracts';
 import MULTI_ASSET_DELEGATION_ABI from '../../abi/multiAssetDelegation';
 import { CACHE_CONFIG } from '../../constants/cacheConfig';

@@ -299,7 +299,10 @@ const useContractWrite = <
       } catch (possibleError) {
         console.error('Contract write error:', possibleError);
 
-        const decodedCustomError = tryDecodeViemCustomError(abi as Abi, possibleError);
+        const decodedCustomError = tryDecodeViemCustomError(
+          abi as Abi,
+          possibleError,
+        );
         const error = decodedCustomError
           ? new Error(`Execution reverted: ${decodedCustomError}`)
           : ensureError(possibleError);

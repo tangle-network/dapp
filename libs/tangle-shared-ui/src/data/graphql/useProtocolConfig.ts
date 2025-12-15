@@ -88,14 +88,19 @@ export const useProtocolConfig = (options?: { enabled?: boolean }) => {
 
       // If multicall3 isn't configured for this chain, fall back to individual calls.
       if (publicClient.chain?.contracts?.multicall3?.address === undefined) {
-        const [currentRound, roundDuration, delegationBondLessDelay, leaveDelegatorsDelay, leaveOperatorsDelay] =
-          await Promise.allSettled([
-            readDirect('currentRound'),
-            readDirect('roundDuration'),
-            readDirect('delegationBondLessDelay'),
-            readDirect('leaveDelegatorsDelay'),
-            readDirect('leaveOperatorsDelay'),
-          ]);
+        const [
+          currentRound,
+          roundDuration,
+          delegationBondLessDelay,
+          leaveDelegatorsDelay,
+          leaveOperatorsDelay,
+        ] = await Promise.allSettled([
+          readDirect('currentRound'),
+          readDirect('roundDuration'),
+          readDirect('delegationBondLessDelay'),
+          readDirect('leaveDelegatorsDelay'),
+          readDirect('leaveOperatorsDelay'),
+        ]);
 
         return {
           currentRound:

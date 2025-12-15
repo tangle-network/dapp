@@ -211,9 +211,10 @@ export const useLiquidDelegationVaults = () => {
 
   return {
     vaults,
-    isLoading: isFactoryConfigured ? isLoadingAddresses || isLoadingDetails : false,
-    error:
-      isFactoryConfigured ? addressesError || detailsError : null,
+    isLoading: isFactoryConfigured
+      ? isLoadingAddresses || isLoadingDetails
+      : false,
+    error: isFactoryConfigured ? addressesError || detailsError : null,
     refetch: async () => {
       await Promise.all([refetchAddresses(), refetchDetails()]);
     },

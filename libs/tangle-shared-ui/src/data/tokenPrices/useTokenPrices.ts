@@ -13,8 +13,7 @@ export function useTokenPrices(tokenSymbolSetArg: Set<string> | null) {
 
   return useQuery({
     queryKey: ['tokenPrices', ...(tokenSymbolSet ?? []), network?.id],
-    queryFn:
-      tokenSymbolSet ? () => fetcher(tokenSymbolSet) : skipToken,
+    queryFn: tokenSymbolSet ? () => fetcher(tokenSymbolSet) : skipToken,
     staleTime: CACHE_EXPIRY,
     initialData: getInitialData(),
     refetchInterval: CACHE_EXPIRY,

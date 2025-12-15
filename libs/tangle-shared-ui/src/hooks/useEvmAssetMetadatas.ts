@@ -50,8 +50,12 @@ export const useEvmAssetMetadatas = (
         ids.push(id);
       }
 
-      const hasNative = ids.some((id) => id.toLowerCase() === NATIVE_TOKEN_ADDRESS);
-      const erc20Ids = ids.filter((id) => id.toLowerCase() !== NATIVE_TOKEN_ADDRESS);
+      const hasNative = ids.some(
+        (id) => id.toLowerCase() === NATIVE_TOKEN_ADDRESS,
+      );
+      const erc20Ids = ids.filter(
+        (id) => id.toLowerCase() !== NATIVE_TOKEN_ADDRESS,
+      );
 
       let fetched: TokenMetadata[] = [];
       if (viemPublicClient && erc20Ids.length > 0) {
@@ -59,10 +63,13 @@ export const useEvmAssetMetadatas = (
           fetched = await fetchErc20TokenMetadata(viemPublicClient, erc20Ids);
         } catch (error) {
           // Metadata should never be a blocking failure for the UI; fall back to cached/derived values.
-          console.warn('[useEvmAssetMetadatas] Failed to fetch token metadata', {
-            chainId: viemPublicClient.chain?.id,
-            error,
-          });
+          console.warn(
+            '[useEvmAssetMetadatas] Failed to fetch token metadata',
+            {
+              chainId: viemPublicClient.chain?.id,
+              error,
+            },
+          );
           fetched = [];
         }
       }
@@ -87,7 +94,9 @@ export const useEvmAssetMetadatas = (
           return nativeMetadata ?? buildFallbackMetadata(id);
         }
 
-        return fetchedByLower.get(id.toLowerCase()) ?? buildFallbackMetadata(id);
+        return (
+          fetchedByLower.get(id.toLowerCase()) ?? buildFallbackMetadata(id)
+        );
       });
     },
     enabled: Array.isArray(evmAssetIds) && evmAssetIds.length > 0,

@@ -1,4 +1,7 @@
-import { calculateTypedChainId, ChainType } from '@tangle-network/dapp-types/TypedChainId';
+import {
+  calculateTypedChainId,
+  ChainType,
+} from '@tangle-network/dapp-types/TypedChainId';
 import { useMemo } from 'react';
 import { useAccount, useChainId } from 'wagmi';
 

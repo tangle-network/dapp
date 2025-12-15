@@ -29,7 +29,8 @@ export const isZeroDataDecodeError = (error: unknown): boolean => {
   return message.includes('Cannot decode zero data ("0x")');
 };
 
-export const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
+export const delay = (ms: number) =>
+  new Promise((resolve) => setTimeout(resolve, ms));
 
 type ReadContractClient = unknown;
 
@@ -102,7 +103,8 @@ export const readContractsResilient = async (
     return [];
   }
 
-  const canMulticall = publicClient.chain?.contracts?.multicall3?.address !== undefined;
+  const canMulticall =
+    publicClient.chain?.contracts?.multicall3?.address !== undefined;
 
   const runIndividual = async (
     targets: Array<{ call: ResilientContractCall; index: number }>,
@@ -111,7 +113,11 @@ export const readContractsResilient = async (
     await Promise.allSettled(
       targets.map(async ({ call, index }) => {
         try {
-          const result = await readContractResilient(publicClient, connectorClient, call);
+          const result = await readContractResilient(
+            publicClient,
+            connectorClient,
+            call,
+          );
           into[index] = { status: 'success', result };
         } catch (error) {
           into[index] = { status: 'failure', error };
@@ -142,7 +148,10 @@ export const readContractsResilient = async (
         args: c.args ?? [],
       })),
       allowFailure: true,
-    })) as Array<{ status: 'success'; result: unknown } | { status: 'failure'; error: unknown }>;
+    })) as Array<
+      | { status: 'success'; result: unknown }
+      | { status: 'failure'; error: unknown }
+    >;
 
     // If everything failed, fall back to individual calls (broken/missing multicall3 is common).
     if (multicallResults.every((r) => r.status === 'failure')) {
@@ -154,7 +163,8 @@ export const readContractsResilient = async (
     }
 
     // Copy successes; retry failures individually.
-    const failedTargets: Array<{ call: ResilientContractCall; index: number }> = [];
+    const failedTargets: Array<{ call: ResilientContractCall; index: number }> =
+      [];
     multicallResults.forEach((r, index) => {
       if (r.status === 'success') {
         results[index] = { status: 'success', result: r.result };
@@ -177,4 +187,3 @@ export const readContractsResilient = async (
     return results;
   }
 };
-

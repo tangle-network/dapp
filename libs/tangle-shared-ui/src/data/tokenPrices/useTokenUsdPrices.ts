@@ -24,7 +24,9 @@ export function useTokenUsdPrices(tokens: TokenRef[] | null) {
       ...(tokens?.map((t) => `${t.address.toLowerCase()}:${t.symbol ?? ''}`) ??
         []),
     ],
-    queryFn: tokens ? () => fetchTokenUsdPrices({ chainId, tokens }) : skipToken,
+    queryFn: tokens
+      ? () => fetchTokenUsdPrices({ chainId, tokens })
+      : skipToken,
     staleTime: 5 * 60 * 1000,
     gcTime: 30 * 60 * 1000,
     refetchInterval: 5 * 60 * 1000,
@@ -40,7 +42,8 @@ export function useTokenUsdPrices(tokens: TokenRef[] | null) {
 
     // Enable by default for anvil (31337); can be disabled with `VITE_AUTO_PRICE_OVERRIDES=false`.
     const rawFlag = (import.meta as any)?.env?.VITE_AUTO_PRICE_OVERRIDES;
-    const autoEnabled = rawFlag === undefined ? chainId === 31337 : rawFlag !== 'false';
+    const autoEnabled =
+      rawFlag === undefined ? chainId === 31337 : rawFlag !== 'false';
     if (!autoEnabled) return;
 
     const existing = getTokenPriceOverrides();
@@ -48,7 +51,10 @@ export function useTokenUsdPrices(tokens: TokenRef[] | null) {
     const chainOverrides = existing[chainKey] ?? {};
 
     let changed = false;
-    const nextChainOverrides = { ...chainOverrides } as Record<`0x${string}`, number>;
+    const nextChainOverrides = { ...chainOverrides } as Record<
+      `0x${string}`,
+      number
+    >;
 
     for (const token of tokens) {
       const address = token.address.toLowerCase() as `0x${string}`;

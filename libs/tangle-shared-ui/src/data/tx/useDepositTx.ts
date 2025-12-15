@@ -54,7 +54,8 @@ export const useDepositTx = () => {
   return useContractWrite(
     MULTI_ASSET_DELEGATION_ABI,
     (params: DepositParams, _activeAddress) => {
-      const lockMultiplier = LOCK_MULTIPLIER_VALUES[params.lockDuration ?? 'NONE'];
+      const lockMultiplier =
+        LOCK_MULTIPLIER_VALUES[params.lockDuration ?? 'NONE'];
 
       // Native deposits are payable and do not take a token/amount argument.
       if (params.token.toLowerCase() === zeroAddress) {
@@ -73,19 +74,19 @@ export const useDepositTx = () => {
         functionName: 'depositERC20WithLock' as const,
         args: [params.token, params.amount, lockMultiplier] as const,
       };
-	    },
-	    {
-	      txName: 'restake deposit',
-	      txDetails: (params) =>
-	        new Map([
-	          ['Token', params.token],
-	          ['Amount', params.amount.toString()],
-	          ['Lock', (params.lockDuration ?? 'NONE').toString().toLowerCase()],
-	        ]),
-	      getSuccessMessage: (params) =>
-	        `Successfully deposited ${params.amount.toString()}`,
-	    },
-	  );
+    },
+    {
+      txName: 'restake deposit',
+      txDetails: (params) =>
+        new Map([
+          ['Token', params.token],
+          ['Amount', params.amount.toString()],
+          ['Lock', (params.lockDuration ?? 'NONE').toString().toLowerCase()],
+        ]),
+      getSuccessMessage: (params) =>
+        `Successfully deposited ${params.amount.toString()}`,
+    },
+  );
 };
 
 export default useDepositTx;

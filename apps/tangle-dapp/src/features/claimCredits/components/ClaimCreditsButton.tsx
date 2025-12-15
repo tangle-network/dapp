@@ -73,7 +73,10 @@ const ClaimCreditsButton = () => {
 
       <DropdownBody align="start" sideOffset={8} className="p-4 space-y-3">
         {isUnavailable ? (
-          <Typography variant="body2" className="text-mono-120 dark:text-mono-80">
+          <Typography
+            variant="body2"
+            className="text-mono-120 dark:text-mono-80"
+          >
             Credits are only available on Tangle EVM networks.
           </Typography>
         ) : null}
@@ -199,7 +202,9 @@ const CreditsButton = ({
   return (
     <Button
       isFullWidth
-      isDisabled={!canClaim || isLoading || execute === null || !offchainAccountId.trim()}
+      isDisabled={
+        !canClaim || isLoading || execute === null || !offchainAccountId.trim()
+      }
       onClick={handleClick}
       isLoading={isLoading}
     >

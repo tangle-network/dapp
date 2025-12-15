@@ -139,7 +139,9 @@ const TxHistoryNotifier = () => {
           <Typography variant="h5">
             {capitalize(tx.name.toString())} failed
           </Typography>
-          <Typography variant="body2">{tx.errorMessage ?? 'Unknown error'}</Typography>
+          <Typography variant="body2">
+            {tx.errorMessage ?? 'Unknown error'}
+          </Typography>
           <Typography variant="body2">{shortenHex(tx.hash)}</Typography>
         </div>,
         { variant: 'error', autoHideDuration: null },

@@ -111,10 +111,8 @@ const LiquidStakingRedeemForm: FC = () => {
 
   const { position } = useVaultUserPosition(selectedVault?.address);
 
-  const {
-    data: redeemRequests = [],
-    refetch: refetchRedeemRequests,
-  } = useLiquidRedeemRequests(userAddress, selectedVault?.address);
+  const { data: redeemRequests = [], refetch: refetchRedeemRequests } =
+    useLiquidRedeemRequests(userAddress, selectedVault?.address);
 
   const claimableContracts = useMemo(() => {
     if (!selectedVault || redeemRequests.length === 0) return [];
@@ -433,7 +431,9 @@ const LiquidStakingRedeemForm: FC = () => {
 
                     <Button
                       size="sm"
-                      isDisabled={!isReadyToClaim || !executeClaim || isClaiming}
+                      isDisabled={
+                        !isReadyToClaim || !executeClaim || isClaiming
+                      }
                       isLoading={isClaiming}
                       onClick={async () => {
                         if (!executeClaim || !userAddress) return;

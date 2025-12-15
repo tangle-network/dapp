@@ -4,7 +4,13 @@ import isDefined from '@tangle-network/dapp-types/utils/isDefined';
 import { LockUnlockLineIcon } from '@tangle-network/icons/LockUnlockLineIcon';
 import { TokenIcon } from '@tangle-network/icons';
 import ListModal from '@tangle-network/tangle-shared-ui/components/ListModal';
-import { Avatar, Card, isEvmAddress, shortenHex, Typography } from '@tangle-network/ui-components';
+import {
+  Avatar,
+  Card,
+  isEvmAddress,
+  shortenHex,
+  Typography,
+} from '@tangle-network/ui-components';
 import Button from '@tangle-network/ui-components/components/buttons/Button';
 import { Modal } from '@tangle-network/ui-components/components/Modal';
 import type { TextFieldInputProps } from '@tangle-network/ui-components/components/TextField/types';
@@ -444,7 +450,8 @@ const RestakeDelegateForm: FC = () => {
                                 component="span"
                                 className="text-mono-120 dark:text-mono-100"
                               >
-                                {typeof selectedOperator?.restakingDelegationCount === 'bigint'
+                                {typeof selectedOperator?.restakingDelegationCount ===
+                                'bigint'
                                   ? `${selectedOperator.restakingDelegationCount.toString()} total delegations`
                                   : 'Operator'}
                               </Typography>

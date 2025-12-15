@@ -88,7 +88,8 @@ const fetchErc20TokenMetadata = async (
         console.warn(
           `Failed to fetch complete ERC20 token metadata for address ${id} (chain: ${viemPublicClient.chain?.name})`,
           {
-            nameError: nameResult?.status === 'failure' ? nameResult.error : null,
+            nameError:
+              nameResult?.status === 'failure' ? nameResult.error : null,
             symbolError:
               symbolResult?.status === 'failure' ? symbolResult.error : null,
             decimalsError:

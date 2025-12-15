@@ -151,7 +151,8 @@ const TxHistoryDrawer = () => {
                 </Dialog.Close>
               </div>
 
-              {relevantTransactions === null || relevantTransactions.length === 0 ? (
+              {relevantTransactions === null ||
+              relevantTransactions.length === 0 ? (
                 <Typography variant="body2" className="text-mono-140">
                   No transactions yet.
                 </Typography>

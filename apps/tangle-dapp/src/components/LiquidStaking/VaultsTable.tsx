@@ -182,12 +182,7 @@ const LiquidDelegationVaultsTable: FC = () => {
         ? error.message
         : 'An error occurred while loading vaults.';
 
-    return (
-      <TableStatus
-        title="Error Loading Vaults"
-        description={message}
-      />
-    );
+    return <TableStatus title="Error Loading Vaults" description={message} />;
   }
 
   if (!vaultsWithAssetInfo || vaultsWithAssetInfo.length === 0) {

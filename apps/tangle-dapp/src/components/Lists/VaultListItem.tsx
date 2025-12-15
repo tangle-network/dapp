@@ -53,7 +53,9 @@ const VaultListItem: FC<Props> = ({
   }, [createExplorerAccountUrl, vaultEvmAddress]);
 
   const operatorExplorerUrl = useMemo(() => {
-    return operatorEvmAddress ? createExplorerAccountUrl(operatorEvmAddress) : null;
+    return operatorEvmAddress
+      ? createExplorerAccountUrl(operatorEvmAddress)
+      : null;
   }, [createExplorerAccountUrl, operatorEvmAddress]);
 
   const selectionLabel =
@@ -62,7 +64,9 @@ const VaultListItem: FC<Props> = ({
   const operatorLabel = operatorEvmAddress
     ? shortenHex(operatorEvmAddress)
     : 'Invalid operator';
-  const vaultLabel = vaultEvmAddress ? shortenHex(vaultEvmAddress) : 'Invalid vault';
+  const vaultLabel = vaultEvmAddress
+    ? shortenHex(vaultEvmAddress)
+    : 'Invalid vault';
 
   return (
     <LogoListItem

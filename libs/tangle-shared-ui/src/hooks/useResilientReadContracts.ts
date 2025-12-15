@@ -70,4 +70,3 @@ const useResilientReadContracts = <TQueryKey extends readonly unknown[]>(
 
 export default useResilientReadContracts;
 export { useResilientReadContracts };
-
