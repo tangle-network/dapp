@@ -623,44 +623,66 @@ deploy_contracts() {
     log_info "Deploying contracts..."
     cd "$TNT_CORE_DIR"
 
-    # Clear forge broadcast cache to ensure deterministic addresses on fresh Anvil
-    # (keeps compiled artifacts cached for faster subsequent runs)
-    log_info "Clearing forge broadcast cache..."
-    rm -rf broadcast/LocalTestnet.s.sol/ 2>/dev/null || true
+    local deployer_nonce=""
+    local contract_code=""
+    local forge_status=0
+    local attempt
 
-    # Run forge script (may return non-zero due to size warnings, but deployment still succeeds)
-    forge script script/v2/LocalTestnet.s.sol:LocalTestnetSetup \
-        --rpc-url http://127.0.0.1:$ANVIL_PORT \
-        --private-key "$ANVIL_PRIVATE_KEY" \
-        --broadcast \
-        --non-interactive \
-        --slow 2>&1 | tee /tmp/deploy.log || true
+    for attempt in 1 2; do
+        # Clear forge broadcast cache to ensure deterministic addresses on fresh Anvil
+        # (keeps compiled artifacts cached for faster subsequent runs)
+        log_info "Clearing forge broadcast cache..."
+        rm -rf broadcast/LocalTestnet.s.sol/ 2>/dev/null || true
 
-    # Give anvil time to process transactions
-    sleep 2
+        log_info "Running LocalTestnet setup (attempt $attempt/2)..."
+        set +e
+        forge script script/v2/LocalTestnet.s.sol:LocalTestnetSetup \
+            --rpc-url "http://127.0.0.1:$ANVIL_PORT" \
+            --private-key "$ANVIL_PRIVATE_KEY" \
+            --broadcast \
+            --non-interactive \
+            --slow 2>&1 | tee /tmp/deploy.log
+        forge_status=${PIPESTATUS[0]}
+        set -e
 
-    # Check if deployment actually happened by verifying deployer nonce
-    local deployer_nonce=$(curl -s http://127.0.0.1:$ANVIL_PORT -X POST -H "Content-Type: application/json" \
-        --data '{"jsonrpc":"2.0","method":"eth_getTransactionCount","params":["0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266", "latest"],"id":1}' \
-        | grep -o '"result":"[^"]*"' | cut -d'"' -f4)
+        if [[ "$forge_status" -ne 0 ]]; then
+            log_warn "forge script exited non-zero (status=$forge_status)."
+        fi
 
-    if [[ "$deployer_nonce" == "0x0" ]]; then
-        log_error "Deployment failed - no transactions sent. Check /tmp/deploy.log"
-        return 1
-    fi
+        # Give anvil time to process transactions
+        sleep 2
 
-    # Verify contract code exists
-    local contract_code=$(curl -s http://127.0.0.1:$ANVIL_PORT -X POST -H "Content-Type: application/json" \
-        --data '{"jsonrpc":"2.0","method":"eth_getCode","params":["0xCf7Ed3AccA5a467e9e704C703E8D87F634fB0Fc9", "latest"],"id":1}' \
-        | grep -o '"result":"[^"]*"' | cut -d'"' -f4)
+        # Check if deployment actually happened by verifying deployer nonce
+        deployer_nonce=$(curl -s "http://127.0.0.1:$ANVIL_PORT" -X POST -H "Content-Type: application/json" \
+            --data '{"jsonrpc":"2.0","method":"eth_getTransactionCount","params":["0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266", "latest"],"id":1}' \
+            | grep -o '"result":"[^"]*"' | cut -d'"' -f4)
 
-    if [[ "$contract_code" == "0x" || -z "$contract_code" ]]; then
-        log_error "Tangle contract has no code. Deployment may have failed."
-        return 1
-    fi
+        # Verify contract code exists at the canonical deterministic address.
+        contract_code=$(curl -s "http://127.0.0.1:$ANVIL_PORT" -X POST -H "Content-Type: application/json" \
+            --data '{"jsonrpc":"2.0","method":"eth_getCode","params":["0xCf7Ed3AccA5a467e9e704C703E8D87F634fB0Fc9", "latest"],"id":1}' \
+            | grep -o '"result":"[^"]*"' | cut -d'"' -f4)
 
-    log_info "Deployer nonce: $deployer_nonce"
-    log_info "Tangle contract code length: ${#contract_code} chars"
+        if [[ "$deployer_nonce" != "0x0" && -n "$contract_code" && "$contract_code" != "0x" ]]; then
+            log_info "Deployer nonce: $deployer_nonce"
+            log_info "Tangle contract code length: ${#contract_code} chars"
+            break
+        fi
+
+        if [[ "$attempt" -eq 2 ]]; then
+            if [[ "$deployer_nonce" == "0x0" ]]; then
+                log_error "Deployment failed - no transactions sent. Check /tmp/deploy.log"
+            else
+                log_error "Tangle contract has no code at the expected address. Check /tmp/deploy.log"
+            fi
+            return 1
+        fi
+
+        log_warn "Deployment did not complete cleanly; restarting Anvil and retrying once..."
+        lsof -ti:"$ANVIL_PORT" | xargs kill 2>/dev/null || true
+        sleep 1
+        start_anvil fresh
+        cd "$TNT_CORE_DIR"
+    done
 
     # Deterministic addresses from Anvil
     export TANGLE_PROXY="0xCf7Ed3AccA5a467e9e704C703E8D87F634fB0Fc9"
