@@ -902,6 +902,36 @@ console.log(JSON.stringify({
     log_info "Substrate: $(node -pe "BigInt('$total_substrate') / BigInt(1e18)") TNT ($substrate_accounts accounts)"
     log_info "EVM: $(node -pe "BigInt('$total_evm') / BigInt(1e18)") TNT ($evm_accounts accounts)"
 
+    # Sanity check: ensure the frontend proofs.json matches the merkleRoot used for deployment.
+    # This catches leaf-encoding mismatches early (e.g. SS58 string vs bytes32 pubkey).
+    local proofs_root=""
+    proofs_root="$(node -e "
+      const fs = require('fs');
+      const { decodeAddress } = require('@polkadot/util-crypto');
+      const { encodeAbiParameters, keccak256, concatHex } = require('viem');
+      const proofs = JSON.parse(fs.readFileSync('$migration_output/proofs.json','utf8'));
+      const firstKey = Object.keys(proofs)[0];
+      const entry = proofs[firstKey];
+      const pubkey = '0x' + Buffer.from(decodeAddress(entry.leaf[0])).toString('hex');
+      const amount = BigInt(entry.leaf[1]);
+      const encoded = encodeAbiParameters([{type:'bytes32'},{type:'uint256'}],[pubkey, amount]);
+      let computed = keccak256(concatHex([keccak256(encoded)]));
+      for (const p of entry.proof) {
+        const a = BigInt(computed);
+        const b = BigInt(p);
+        computed = keccak256(a < b ? concatHex([computed, p]) : concatHex([p, computed]));
+      }
+      process.stdout.write(computed);
+    " 2>/dev/null || true)"
+
+    if [[ -n "$proofs_root" && "$proofs_root" != "null" && "$proofs_root" != "$merkle_root" ]]; then
+        log_error "Migration proofs.json does not match distribution merkleRoot."
+        log_error "  distribution.json merkleRoot: $merkle_root"
+        log_error "  proofs.json computed root:     $proofs_root"
+        log_error "Regenerate migration_output via: cd scripts/migration && npm run merkleize:latest"
+        return 0
+    fi
+
     cd "$contract_dir"
 
     # Install dependencies if needed

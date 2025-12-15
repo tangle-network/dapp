@@ -8,6 +8,7 @@ import {
   type Hex,
   type Address,
   parseAbi,
+  decodeErrorResult,
 } from 'viem';
 import { privateKeyToAccount } from 'viem/accounts';
 import { localhost, baseSepolia, base } from 'viem/chains';
@@ -79,7 +80,34 @@ const migrationAbi = parseAbi([
   'function claimWithZKProof(bytes32 pubkey, uint256 amount, bytes32[] calldata merkleProof, bytes calldata zkProof, address recipient) external',
   'function claimed(bytes32 pubkey) external view returns (uint256)',
   'function paused() external view returns (bool)',
+  'function merkleRoot() external view returns (bytes32)',
+  'error ClaimsPaused()',
+  'error ClaimDeadlinePassed()',
+  'error InvalidMerkleProof()',
+  'error InvalidZKProof()',
+  'error AlreadyClaimed()',
+  'error ZeroAmount()',
+  'error ZeroAddress()',
+  'error NoZKVerifier()',
 ]);
+
+const tryDecodeMigrationError = (possibleError: unknown): string | null => {
+  const data =
+    (possibleError as any)?.data ??
+    (possibleError as any)?.cause?.data ??
+    (possibleError as any)?.cause?.cause?.data;
+
+  if (typeof data !== 'string' || !data.startsWith('0x') || data.length < 10) {
+    return null;
+  }
+
+  try {
+    const decoded = decodeErrorResult({ abi: migrationAbi, data: data as Hex });
+    return decoded.errorName;
+  } catch {
+    return null;
+  }
+};
 
 // ============================================================================
 // EXPRESS APP
@@ -241,6 +269,10 @@ app.post('/claim', async (req, res) => {
 
     // Parse revert reason if available
     let message = error instanceof Error ? error.message : 'Unknown error';
+    const decoded = tryDecodeMigrationError(error);
+    if (decoded) {
+      message = decoded;
+    }
 
     if (message.includes('InvalidMerkleProof')) {
       message = 'Invalid merkle proof - this address may not be eligible';

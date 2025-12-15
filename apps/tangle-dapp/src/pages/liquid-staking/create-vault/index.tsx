@@ -30,6 +30,7 @@ import SupportedChainModal from '../../restake/SupportedChainModal';
 import useSwitchChain from '../../restake/useSwitchChain';
 import LiquidStakingActionTabs from '../LiquidStakingActionTabs';
 import {
+  useCreateAllBlueprintsVault,
   useCreateVault,
   useLiquidDelegationVaults,
 } from '@tangle-network/tangle-shared-ui/data/liquidDelegation';
@@ -67,11 +68,8 @@ const CreateVaultForm: FC = () => {
   const { data: operatorMap, isLoading: isLoadingOperators } = useOperatorMap();
   const { data: blueprints, isLoading: isLoadingBlueprints } = useBlueprints();
 
-  const {
-    status: createStatus,
-    execute: executeCreate,
-    error: createError,
-  } = useCreateVault();
+  const createVaultTx = useCreateVault();
+  const createAllBlueprintsVaultTx = useCreateAllBlueprintsVault();
   const { vaults: existingVaults } = useLiquidDelegationVaults();
 
   const [useAllBlueprints, setUseAllBlueprints] = useState(true);
@@ -161,17 +159,12 @@ const CreateVaultForm: FC = () => {
   }, [selectedBlueprintIdStrings]);
 
   const effectiveBlueprintIds = useMemo(() => {
-    const ids = useAllBlueprints ? allBlueprintIds : selectedBlueprintIds;
-    return [...ids].sort((a, b) => (a < b ? -1 : a > b ? 1 : 0));
-  }, [allBlueprintIds, selectedBlueprintIds, useAllBlueprints]);
+    if (useAllBlueprints) return [];
+    return [...selectedBlueprintIds].sort((a, b) => (a < b ? -1 : a > b ? 1 : 0));
+  }, [selectedBlueprintIds, useAllBlueprints]);
 
   const existingVault = useMemo(() => {
-    if (
-      !existingVaults ||
-      !selectedOperator ||
-      !selectedAsset ||
-      effectiveBlueprintIds.length === 0
-    ) {
+    if (!existingVaults || !selectedOperator || !selectedAsset) {
       return null;
     }
 
@@ -181,6 +174,14 @@ const CreateVaultForm: FC = () => {
           vault.operator.toLowerCase() !== selectedOperator.toLowerCase() ||
           vault.asset.toLowerCase() !== selectedAsset.toLowerCase()
         ) {
+          return false;
+        }
+
+        if (useAllBlueprints) {
+          return vault.blueprintIds.length === 0;
+        }
+
+        if (effectiveBlueprintIds.length === 0) {
           return false;
         }
 
@@ -201,7 +202,13 @@ const CreateVaultForm: FC = () => {
         return true;
       }) ?? null
     );
-  }, [effectiveBlueprintIds, existingVaults, selectedOperator, selectedAsset]);
+  }, [
+    effectiveBlueprintIds,
+    existingVaults,
+    selectedAsset,
+    selectedOperator,
+    useAllBlueprints,
+  ]);
 
   const operators = useMemo<OperatorItem[]>(() => {
     if (!operatorMap) return [];
@@ -251,12 +258,8 @@ const CreateVaultForm: FC = () => {
       ? 'Select Operator'
       : !selectedAsset
         ? 'Select Asset'
-        : effectiveBlueprintIds.length === 0
-          ? useAllBlueprints
-            ? isLoadingBlueprints
-              ? 'Loading Blueprints'
-              : 'No Blueprints'
-            : 'Select Blueprints'
+        : !useAllBlueprints && effectiveBlueprintIds.length === 0
+          ? 'Select Blueprints'
           : existingVault
             ? 'Vault already exists'
             : undefined;
@@ -269,30 +272,38 @@ const CreateVaultForm: FC = () => {
     useAllBlueprints,
   ]);
 
-  const isTransacting = isSubmitting || createStatus === TxStatus.PROCESSING;
+  const activeCreateTx = useAllBlueprints
+    ? createAllBlueprintsVaultTx
+    : createVaultTx;
+
+  const isTransacting =
+    isSubmitting || activeCreateTx.status === TxStatus.PROCESSING;
 
   const isReady =
-    executeCreate !== null &&
+    activeCreateTx.execute !== null &&
     selectedOperator !== undefined &&
     selectedAsset !== undefined &&
     userAddress !== undefined &&
     !isTransacting;
 
   const submitError = useMemo(() => {
-    return createError ?? null;
-  }, [createError]);
+    return activeCreateTx.error ?? null;
+  }, [activeCreateTx.error]);
 
   const onSubmit = useCallback<SubmitHandler<CreateVaultFormFields>>(
     async ({ operator, asset }) => {
       if (!isReady) return;
       if (existingVault) return;
-      if (effectiveBlueprintIds.length === 0) return;
 
-      const txResult = await executeCreate({
-        operator,
-        asset,
-        blueprintIds: effectiveBlueprintIds,
-      });
+      const txResult = useAllBlueprints
+        ? await createAllBlueprintsVaultTx.execute({ operator, asset })
+        : effectiveBlueprintIds.length === 0
+          ? null
+          : await createVaultTx.execute({
+              operator,
+              asset,
+              blueprintIds: effectiveBlueprintIds,
+            });
 
       if (txResult?.status === 'success') {
         await queryClient.invalidateQueries({
@@ -302,12 +313,14 @@ const CreateVaultForm: FC = () => {
       }
     },
     [
-      executeCreate,
+      createAllBlueprintsVaultTx.execute,
+      createVaultTx.execute,
       existingVault,
       effectiveBlueprintIds,
       isReady,
       queryClient,
       reset,
+      useAllBlueprints,
     ],
   );
 
@@ -459,7 +472,7 @@ const CreateVaultForm: FC = () => {
                               className="text-mono-120 dark:text-mono-100"
                             >
                               {useAllBlueprints
-                                ? 'Delegating to all active blueprints'
+                                ? 'Delegating to all current and future blueprints'
                                 : 'Click to change selection'}
                             </Typography>
                           </div>
@@ -478,7 +491,7 @@ const CreateVaultForm: FC = () => {
                   All Blueprints Mode
                 </Typography>
                 <Typography variant="body2" className="text-mono-100">
-                  Delegate to all available blueprints
+                  Delegate to all current and future blueprints (as the operator registers them)
                 </Typography>
               </div>
               <Switcher

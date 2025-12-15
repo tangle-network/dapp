@@ -16,6 +16,7 @@
  */
 
 import { StandardMerkleTree } from "@openzeppelin/merkle-tree";
+import { decodeAddress } from "@polkadot/util-crypto";
 import { readFileSync, writeFileSync, mkdirSync } from "fs";
 
 // Configuration
@@ -344,30 +345,41 @@ async function main() {
 
   // Build Merkle tree - ONLY for Substrate accounts
   // EVM accounts get direct airdrop, no merkle proof needed
-  // Simplified leaf format: [substrateAddress, amount]
+  // Leaf format: [substratePubkey(bytes32), amount]
+  // (The on-chain claim contract verifies against the decoded 32-byte pubkey.)
   console.log("\nBuilding Merkle tree (Substrate accounts only)...");
 
-  const leaves: [string, string][] = substrateAccounts
-    .filter(a => a.finalAmount > 0n)
-    .map(account => [
-      account.originalAddress,
-      account.finalAmount.toString(),
-    ]);
+  const leafMeta = substrateAccounts
+    .filter((a) => a.finalAmount > 0n)
+    .map((account) => {
+      const pubkeyBytes = decodeAddress(account.originalAddress);
+      const pubkeyHex = `0x${Buffer.from(pubkeyBytes).toString("hex")}`;
+      return {
+        ss58Address: account.originalAddress,
+        pubkey: pubkeyHex,
+        amount: account.finalAmount.toString(),
+      };
+    });
 
-  console.log(`  Leaves in tree: ${leaves.length}`);
+  console.log(`  Leaves in tree: ${leafMeta.length}`);
 
-  const tree = StandardMerkleTree.of(leaves, ["string", "uint256"]);
+  const tree = StandardMerkleTree.of(
+    leafMeta.map((l) => [l.pubkey, l.amount]),
+    ["bytes32", "uint256"],
+  );
   console.log(`  Merkle root: ${tree.root}`);
 
   // Generate proofs for substrate accounts only
   console.log("\nGenerating proofs for Substrate accounts...");
   const proofs: Record<string, { proof: string[]; leaf: [string, string] }> = {};
 
-  for (const [i, leaf] of tree.entries()) {
-    const address = leaf[0];
-    proofs[address] = {
+  for (const [i] of tree.entries()) {
+    const meta = leafMeta[i];
+    proofs[meta.ss58Address] = {
       proof: tree.getProof(i),
-      leaf: leaf as [string, string],
+      // Keep the legacy UI format for the frontend:
+      // leaf[0] is an SS58 address which we decode into pubkey for contract calls.
+      leaf: [meta.ss58Address, meta.amount],
     };
   }
 
@@ -388,9 +400,10 @@ async function main() {
     merkleTree: {
       root: tree.root,
       format: "StandardMerkleTree",
-      leafEncoding: ["string", "uint256"],
-      totalLeaves: leaves.length,
-      description: "Simplified format: [substrateAddress, amount]. EVM addresses are in evmAirdrop for direct migration.",
+      leafEncoding: ["bytes32", "uint256"],
+      totalLeaves: leafMeta.length,
+      description:
+        "Leaf format: [substratePubkey(bytes32), amount]. EVM addresses are in evmAirdrop for direct migration.",
     },
   };
 
