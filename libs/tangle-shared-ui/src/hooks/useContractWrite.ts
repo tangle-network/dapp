@@ -266,7 +266,8 @@ const useContractWrite = <
       try {
         // Simulate the transaction first (via public RPC, not the wallet provider).
         // This avoids wallet/provider-specific issues that can prevent the signing prompt.
-        let request: Parameters<typeof writeContract>[1] | null = null;
+        type WriteRequest = Parameters<typeof writeContract>[1];
+        let request: WriteRequest | null = null;
 
         try {
           const simulated = await simulateContract(publicClient, {
@@ -277,7 +278,7 @@ const useContractWrite = <
             value: callConfig.value,
             account: activeAddress,
           });
-          request = simulated.request;
+          request = simulated.request as WriteRequest;
         } catch (simulateError) {
           // If simulation fails due to an RPC transport issue, fall back to sending directly.
           // This preserves the normal "wallet pops up" UX in local/dev environments.
