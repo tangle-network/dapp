@@ -11,10 +11,9 @@ const PROVER_API_URL = import.meta.env.VITE_SP1_PROVER_API_URL as
 
 /**
  * Dev mode - skip actual proof generation and return mock proof
- * Enable by setting VITE_MOCK_PROOF=true or when no prover URL is configured.
+ * Enable by setting VITE_MOCK_PROOF=true.
  */
-const USE_MOCK_PROOF =
-  import.meta.env.VITE_MOCK_PROOF === 'true' || !PROVER_API_URL;
+const USE_MOCK_PROOF = import.meta.env.VITE_MOCK_PROOF === 'true';
 
 export interface ProofInput {
   /** The SS58 Substrate address (public key is derived from this in ZK circuit) */
@@ -95,7 +94,9 @@ const useGenerateProof = () => {
       setProgress('Sending to prover network...');
 
       if (!PROVER_API_URL) {
-        throw new Error('Prover API URL is not configured');
+        throw new Error(
+          'Prover API URL is not configured. Set `VITE_SP1_PROVER_API_URL` or enable `VITE_MOCK_PROOF=true` for local UI testing.',
+        );
       }
 
       // Call the prover API
@@ -185,7 +186,9 @@ async function pollForProof(
   setProgress: (msg: string) => void,
 ): Promise<ProofResult> {
   if (!PROVER_API_URL) {
-    throw new Error('Prover API URL is not configured');
+    throw new Error(
+      'Prover API URL is not configured. Set `VITE_SP1_PROVER_API_URL`.',
+    );
   }
 
   const maxAttempts = 120; // 10 minutes with 5s intervals
