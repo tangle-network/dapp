@@ -349,6 +349,20 @@ ensure_postgres_password() {
     fi
 }
 
+wait_for_postgres() {
+    log_info "Waiting for Postgres to be ready..."
+    for i in {1..30}; do
+        if docker compose exec -T envio-postgres pg_isready -U "$ENVIO_PG_USER" >/dev/null 2>&1; then
+            log_success "Postgres is ready"
+            return 0
+        fi
+        [[ $((i % 5)) -eq 0 ]] && log_info "Waiting for Postgres... ($i/30)"
+        sleep 1
+    done
+    log_error "Postgres did not become ready in time"
+    return 1
+}
+
 ensure_free_indexer_port() {
     local start_port="$ENVIO_INDEXER_PORT"
 
@@ -1156,6 +1170,7 @@ start_indexer() {
         ensure_free_hasura_port
         docker compose up -d --remove-orphans
         sync_ports_from_docker_compose
+        wait_for_postgres
     fi
 
     # Ensure indexer can authenticate to Postgres even when volumes persist from a prior run.
