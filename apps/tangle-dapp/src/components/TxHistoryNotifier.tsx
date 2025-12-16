@@ -62,12 +62,13 @@ const TxHistoryNotifier = () => {
           <Typography variant="h5">
             Processing {capitalize(tx.name.toString())}
           </Typography>
-          <div className="flex items-center justify-between gap-2">
+          <div className="flex items-center gap-2">
             <Typography variant="body2">{shortenHex(tx.hash)}</Typography>
             <CopyWithTooltip
               textToCopy={tx.hash}
               copyLabel="Copy hash"
               iconClassName="text-mono-140 dark:text-mono-80"
+              isButton={false}
             />
           </div>
           {explorerUrl !== null && (
@@ -104,12 +105,13 @@ const TxHistoryNotifier = () => {
           <Typography variant="h5">
             {title ?? `${capitalize(tx.name.toString())} completed`}
           </Typography>
-          <div className="flex items-center justify-between gap-2">
+          <div className="flex items-center gap-2">
             <Typography variant="body2">{shortenHex(tx.hash)}</Typography>
             <CopyWithTooltip
               textToCopy={tx.hash}
               copyLabel="Copy hash"
               iconClassName="text-mono-140 dark:text-mono-80"
+              isButton={false}
             />
           </div>
           {explorerUrl !== null && (

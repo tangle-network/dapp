@@ -13,17 +13,21 @@ import useTxHistoryStore, {
 import useActiveAccountAddress from '../../hooks/useActiveAccountAddress';
 import useAgnosticAccountInfo from '../../hooks/useAgnosticAccountInfo';
 import useEvmAddress from '../../hooks/useEvmAddress';
+import { useEvmAssetMetadatas } from '../../hooks/useEvmAssetMetadatas';
 import {
   Alert,
+  AmountFormatStyle,
   Button,
   Chip,
   CopyWithTooltip,
+  formatDisplayAmount,
   isEvmAddress,
   isSubstrateAddress,
   shortenHex,
   shortenString,
   Typography,
 } from '@tangle-network/ui-components';
+import { EvmAddress } from '@tangle-network/ui-components/types/address';
 import {
   Modal,
   ModalContent,
@@ -31,14 +35,7 @@ import {
 } from '@tangle-network/ui-components/components/Modal';
 import { formatDistanceToNow } from 'date-fns';
 import { capitalize } from 'lodash';
-import {
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-  type FC,
-} from 'react';
+import { useEffect, useMemo, useRef, useState, type FC } from 'react';
 import { twMerge } from 'tailwind-merge';
 
 type Props = {
@@ -52,6 +49,124 @@ type Props = {
    * Defaults to 3000.
    */
   autoCloseSuccessMs?: number;
+};
+
+/** @internal */
+type TokenMetadata = {
+  symbol: string;
+  decimals: number;
+};
+
+type DetailRowProps = {
+  label: string;
+  value: HistoryTxDetail;
+  showCopyButton?: boolean;
+  tokenMetadata?: TokenMetadata | null;
+};
+
+// Check if a string is a pure numeric value (all digits)
+const isNumericString = (value: string): boolean => {
+  return /^\d+$/.test(value);
+};
+
+const DetailRow: FC<DetailRowProps> = ({
+  label,
+  value,
+  showCopyButton,
+  tokenMetadata,
+}) => {
+  const { nativeTokenSymbol } = useNetworkStore();
+
+  const isAddress =
+    typeof value === 'string' &&
+    (isEvmAddress(value) || isSubstrateAddress(value));
+  const isAmountKey = /amount|value|stake|deposit|delegation/i.test(label);
+
+  const formattedValue = useMemo(() => {
+    if (typeof value === 'number') {
+      // For amount keys, format with decimals; otherwise just add commas
+      if (isAmountKey) {
+        const decimals = tokenMetadata?.decimals ?? 18;
+        const symbol = tokenMetadata?.symbol ?? nativeTokenSymbol;
+        const formatted = formatDisplayAmount(
+          new BN(value),
+          decimals,
+          AmountFormatStyle.SHORT,
+        );
+        return `${formatted} ${symbol}`;
+      }
+      return value.toLocaleString();
+    }
+
+    if (typeof value === 'string' && isEvmAddress(value)) {
+      return shortenHex(value);
+    }
+
+    if (typeof value === 'string' && isSubstrateAddress(value)) {
+      return shortenString(value);
+    }
+
+    if (typeof value === 'string') {
+      // For amount-related keys with numeric strings, format as token amounts
+      if (isAmountKey && isNumericString(value)) {
+        const decimals = tokenMetadata?.decimals ?? 18;
+        const symbol = tokenMetadata?.symbol ?? nativeTokenSymbol;
+        const formatted = formatDisplayAmount(
+          new BN(value),
+          decimals,
+          AmountFormatStyle.SHORT,
+        );
+        return `${formatted} ${symbol}`;
+      }
+      return value;
+    }
+
+    // BN value - format with decimals
+    const decimals = tokenMetadata?.decimals ?? 18;
+    const symbol = tokenMetadata?.symbol ?? nativeTokenSymbol;
+    const formatted = formatDisplayAmount(
+      value,
+      decimals,
+      AmountFormatStyle.SHORT,
+    );
+    return `${formatted} ${symbol}`;
+  }, [value, isAmountKey, tokenMetadata, nativeTokenSymbol]);
+
+  const rawValue = useMemo(() => {
+    if (BN.isBN(value)) {
+      return value.toString();
+    }
+
+    return typeof value === 'string' ? value : String(value);
+  }, [value]);
+
+  const shouldShowCopy = showCopyButton ?? isAddress;
+
+  return (
+    <div className="flex items-center justify-between gap-2">
+      <span className="text-mono-120 dark:text-mono-100 text-[13px]">
+        {label}
+      </span>
+      <div className="flex items-center gap-1.5">
+        <span
+          className={twMerge(
+            'text-mono-200 dark:text-mono-0 text-[13px]',
+            isAddress && 'font-mono',
+          )}
+        >
+          {formattedValue}
+        </span>
+        {shouldShowCopy && (
+          <CopyWithTooltip
+            textToCopy={rawValue}
+            copyLabel={`Copy ${label.toLowerCase()}`}
+            iconClassName="text-mono-100 dark:text-mono-80 !w-2 !h-2"
+            isButton={false}
+          />
+        )}
+      </div>
+    </div>
+  );
 };
 
 const TxConfirmationModal: FC<Props> = ({
@@ -158,20 +273,28 @@ const TxConfirmationModal: FC<Props> = ({
     setOpen(false);
   };
 
-  const formatDetailValue = useCallback((value: HistoryTxDetail) => {
-    if (typeof value === 'number') return value.toString();
-    if (typeof value === 'string') {
-      if (isEvmAddress(value)) return shortenHex(value);
-      if (isSubstrateAddress(value)) return shortenString(value);
-      return value;
+  // Extract token address from details to fetch its metadata
+  const tokenAddress = useMemo(() => {
+    if (tx?.details === undefined) return null;
+
+    // Look for a "Token" key in the details
+    const tokenValue = tx.details.get('Token');
+    if (typeof tokenValue === 'string' && isEvmAddress(tokenValue)) {
+      return tokenValue as EvmAddress;
     }
 
-    if (value instanceof BN) {
-      return value.toString();
-    }
+    return null;
+  }, [tx?.details]);
 
-    return '';
-  }, []);
+  // Fetch token metadata for proper amount formatting
+  const { data: tokenMetadatas } = useEvmAssetMetadatas(
+    tokenAddress ? [tokenAddress] : null,
+  );
+
+  const tokenMetadata = useMemo(() => {
+    if (!tokenMetadatas || tokenMetadatas.length === 0) return null;
+    return tokenMetadatas[0];
+  }, [tokenMetadatas]);
 
   if (tx === null) {
     return null;
@@ -253,31 +376,19 @@ const TxConfirmationModal: FC<Props> = ({
               )}
             </div>
 
-            <div className="flex items-center justify-between gap-2">
-              <Typography variant="body2" className="font-mono text-mono-140">
-                {shortenHex(tx.hash)}
-              </Typography>
+            <div className="space-y-1.5">
+              <DetailRow label="Transaction" value={tx.hash} showCopyButton />
 
-              <CopyWithTooltip
-                textToCopy={tx.hash}
-                copyLabel="Copy hash"
-                iconClassName="text-mono-140 dark:text-mono-80"
-              />
-            </div>
-
-            {tx.details && tx.details.size > 0 && (
-              <div className="flex flex-wrap gap-1">
-                {Array.from(tx.details.entries()).map(([key, value]) => (
-                  <Chip
-                    className="normal-case cursor-default"
+              {tx.details !== undefined &&
+                Array.from(tx.details.entries()).map(([key, value]) => (
+                  <DetailRow
                     key={key}
-                    color="blue"
-                  >
-                    {key}: {formatDetailValue(value)}
-                  </Chip>
+                    label={key}
+                    value={value}
+                    tokenMetadata={tokenMetadata}
+                  />
                 ))}
-              </div>
-            )}
+            </div>
 
             {tx.status === 'failed' && tx.errorMessage && (
               <Alert type="error" size="sm" description={tx.errorMessage} />
