@@ -217,7 +217,8 @@ const RestakeDelegateForm: FC = () => {
 
       return map;
     },
-    enabled: Boolean(publicClient) && Boolean(contracts) && Boolean(userAddress),
+    enabled:
+      Boolean(publicClient) && Boolean(contracts) && Boolean(userAddress),
     staleTime: 2_000,
     refetchInterval: 2_000,
     refetchIntervalInBackground: true,
