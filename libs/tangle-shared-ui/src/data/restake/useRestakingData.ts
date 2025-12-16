@@ -150,7 +150,8 @@ export const useRestakingData = (
     return graphqlDelegator ?? null;
   }, [onChainDelegator, graphqlDelegator]);
 
-  const isLoadingDelegator = isLoadingOnChainDelegator || isLoadingGraphqlDelegator;
+  const isLoadingDelegator =
+    isLoadingOnChainDelegator || isLoadingGraphqlDelegator;
 
   // Unified loading state
   const isLoading = useMemo(() => {

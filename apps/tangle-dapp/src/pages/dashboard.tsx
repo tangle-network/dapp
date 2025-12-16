@@ -112,7 +112,9 @@ const getColumns = () => [
     cell: ({ row }) => (
       <TableCellWrapper removeRightBorder>
         <div className="flex justify-end">
-          <Link to={`${PagePath.RESTAKE_DEPOSIT}?${QueryParamKey.RESTAKE_ASSET_ID}=${row.original.id}`}>
+          <Link
+            to={`${PagePath.RESTAKE_DEPOSIT}?${QueryParamKey.RESTAKE_ASSET_ID}=${row.original.id}`}
+          >
             <Button size="sm">Deposit</Button>
           </Link>
         </div>
