@@ -44,8 +44,23 @@ const TxHistoryNotifier = () => {
     new Map(),
   );
 
+  // Track whether initial hydration from localStorage has been processed.
+  // This prevents showing notifications for already-persisted transactions on page reload.
+  const isInitialized = useRef(false);
+
   useEffect(() => {
     if (relevantTransactions === null || network === undefined) {
+      return;
+    }
+
+    // On first run, just record current statuses without showing notifications.
+    // This prevents re-notifying for transactions that were persisted in localStorage.
+    if (!isInitialized.current) {
+      for (const tx of relevantTransactions) {
+        lastNotifiedStatusByHash.current.set(tx.hash, tx.status);
+      }
+
+      isInitialized.current = true;
       return;
     }
 

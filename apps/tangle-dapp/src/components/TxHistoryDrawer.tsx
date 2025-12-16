@@ -240,7 +240,11 @@ const DetailRow: FC<DetailRowProps> = ({
     // BN value - format with decimals
     const decimals = tokenMetadata?.decimals ?? 18;
     const symbol = tokenMetadata?.symbol ?? nativeTokenSymbol;
-    const formatted = formatDisplayAmount(value, decimals, AmountFormatStyle.SHORT);
+    const formatted = formatDisplayAmount(
+      value,
+      decimals,
+      AmountFormatStyle.SHORT,
+    );
     return `${formatted} ${symbol}`;
   }, [value, isAmountKey, tokenMetadata, nativeTokenSymbol]);
 
@@ -358,7 +362,7 @@ const TransactionItem = ({
           Array.from(details.entries()).map(([key, value]) => (
             <DetailRow
               key={key}
-              label={key}
+              label={key === 'Token' ? 'Asset Address' : key}
               value={value}
               tokenMetadata={tokenMetadata}
             />

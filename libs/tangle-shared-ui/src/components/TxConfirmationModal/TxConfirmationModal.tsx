@@ -383,7 +383,7 @@ const TxConfirmationModal: FC<Props> = ({
                 Array.from(tx.details.entries()).map(([key, value]) => (
                   <DetailRow
                     key={key}
-                    label={key}
+                    label={key === 'Token' ? 'Asset Address' : key}
                     value={value}
                     tokenMetadata={tokenMetadata}
                   />
