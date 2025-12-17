@@ -30,6 +30,8 @@ import StyleContainer from '../../../components/restaking/StyleContainer';
 import { SUPPORTED_RESTAKE_DEPOSIT_TYPED_CHAIN_IDS } from '../../../constants/restake';
 import useActiveTypedChainId from '../../../hooks/useActiveTypedChainId';
 import { EvmDepositFormFields } from '../../../types/restake';
+import { QueryParamKey } from '../../../types';
+import useQueryState from '../../../hooks/useQueryState';
 import decimalsToStep from '../../../utils/decimalsToStep';
 import AssetPlaceholder from '../AssetPlaceholder';
 import RestakeActionTabs from '../RestakeActionTabs';
@@ -77,6 +79,9 @@ const DepositForm: FC = () => {
     }
   }, [chainId]);
   const switchChain = useSwitchChain();
+
+  // Read asset ID from URL query parameter
+  const [assetIdParam] = useQueryState(QueryParamKey.RESTAKE_ASSET_ID);
 
   // Try to use context first (if within RestakeProvider), fall back to hook
   const restakeContext = useOptionalRestakeContext();
@@ -140,6 +145,16 @@ const DepositForm: FC = () => {
       return;
     }
 
+    // If asset ID is specified in URL and exists, use it
+    if (assetIdParam) {
+      const assetFromUrl = assets.get(assetIdParam.toLowerCase() as Address);
+      if (assetFromUrl) {
+        setValue('depositAssetId', assetFromUrl.id);
+        return;
+      }
+    }
+
+    // Fallback: select first asset with balance
     const defaultAsset = Array.from(assets.values()).find(
       ({ balance }) => balance !== null && balance > BigInt(0),
     );
@@ -149,7 +164,7 @@ const DepositForm: FC = () => {
     }
 
     setValue('depositAssetId', defaultAsset.id);
-  }, [assets, setValue, isLoadingAssets]);
+  }, [assets, setValue, isLoadingAssets, assetIdParam]);
 
   const {
     status: tokenModalOpen,

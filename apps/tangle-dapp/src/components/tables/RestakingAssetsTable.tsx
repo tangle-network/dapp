@@ -27,7 +27,7 @@ import { Link } from 'react-router';
 import type { RestakeAsset } from '@tangle-network/tangle-shared-ui/data/graphql/useRestakeAssets';
 import type { RestakingAsset } from '@tangle-network/tangle-shared-ui/data/graphql/useRestakingAssets';
 import type { Delegator } from '@tangle-network/tangle-shared-ui/data/graphql/useDelegator';
-import { PagePath } from '../../types';
+import { PagePath, QueryParamKey } from '../../types';
 
 interface Props {
   assets: RestakeAsset[];
@@ -137,7 +137,7 @@ const getColumns = () => [
       <TableCellWrapper removeRightBorder>
         <div className="flex justify-center">
           <Link
-            to={`${PagePath.RESTAKE_DEPOSIT}?asset=${row.original.tokenAddress}`}
+            to={`${PagePath.RESTAKE_DEPOSIT}?${QueryParamKey.RESTAKE_ASSET_ID}=${row.original.tokenAddress}`}
           >
             <Button size="sm">Deposit</Button>
           </Link>

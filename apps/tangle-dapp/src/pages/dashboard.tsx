@@ -34,7 +34,7 @@ import { UserRestakingOverview } from '../components/restaking/UserRestakingOver
 import { NetworkGuard } from '../components/NetworkGuard';
 import TntBreakdownCard from '../components/account/TntBreakdownCard';
 import useUserRestakingStats from '../data/restaking/useUserRestakingStats';
-import { PagePath } from '../types';
+import { PagePath, QueryParamKey } from '../types';
 
 // Table row data type
 interface RestakeAssetRow {
@@ -112,7 +112,9 @@ const getColumns = () => [
     cell: ({ row }) => (
       <TableCellWrapper removeRightBorder>
         <div className="flex justify-end">
-          <Link to={`${PagePath.RESTAKE_DEPOSIT}?asset=${row.original.id}`}>
+          <Link
+            to={`${PagePath.RESTAKE_DEPOSIT}?${QueryParamKey.RESTAKE_ASSET_ID}=${row.original.id}`}
+          >
             <Button size="sm">Deposit</Button>
           </Link>
         </div>

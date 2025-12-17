@@ -44,8 +44,23 @@ const TxHistoryNotifier = () => {
     new Map(),
   );
 
+  // Track whether initial hydration from localStorage has been processed.
+  // This prevents showing notifications for already-persisted transactions on page reload.
+  const isInitialized = useRef(false);
+
   useEffect(() => {
     if (relevantTransactions === null || network === undefined) {
+      return;
+    }
+
+    // On first run, just record current statuses without showing notifications.
+    // This prevents re-notifying for transactions that were persisted in localStorage.
+    if (!isInitialized.current) {
+      for (const tx of relevantTransactions) {
+        lastNotifiedStatusByHash.current.set(tx.hash, tx.status);
+      }
+
+      isInitialized.current = true;
       return;
     }
 
@@ -62,12 +77,13 @@ const TxHistoryNotifier = () => {
           <Typography variant="h5">
             Processing {capitalize(tx.name.toString())}
           </Typography>
-          <div className="flex items-center justify-between gap-2">
+          <div className="flex items-center gap-2">
             <Typography variant="body2">{shortenHex(tx.hash)}</Typography>
             <CopyWithTooltip
               textToCopy={tx.hash}
               copyLabel="Copy hash"
               iconClassName="text-mono-140 dark:text-mono-80"
+              isButton={false}
             />
           </div>
           {explorerUrl !== null && (
@@ -104,12 +120,13 @@ const TxHistoryNotifier = () => {
           <Typography variant="h5">
             {title ?? `${capitalize(tx.name.toString())} completed`}
           </Typography>
-          <div className="flex items-center justify-between gap-2">
+          <div className="flex items-center gap-2">
             <Typography variant="body2">{shortenHex(tx.hash)}</Typography>
             <CopyWithTooltip
               textToCopy={tx.hash}
               copyLabel="Copy hash"
               iconClassName="text-mono-140 dark:text-mono-80"
+              isButton={false}
             />
           </div>
           {explorerUrl !== null && (

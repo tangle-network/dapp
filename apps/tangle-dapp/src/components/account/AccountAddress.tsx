@@ -50,7 +50,7 @@ const AccountAddress: FC = () => {
         <TooltipTrigger className="cursor-default">
           <Typography variant="body1" fw="normal" className="text-mono-160">
             {displayAddress !== null
-              ? shortenFn(displayAddress, 5)
+              ? shortenFn(displayAddress, 4)
               : EMPTY_VALUE_PLACEHOLDER}
           </Typography>
         </TooltipTrigger>

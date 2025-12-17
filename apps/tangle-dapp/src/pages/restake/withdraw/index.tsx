@@ -16,7 +16,8 @@ import { FC, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { type SubmitHandler, useForm } from 'react-hook-form';
 import { Address, formatUnits, parseUnits } from 'viem';
 import { BN } from '@polkadot/util';
-import { useAccount, useBlockNumber, useChainId } from 'wagmi';
+import { useAccount, useBlockNumber, useChainId, usePublicClient } from 'wagmi';
+import { useQuery } from '@tanstack/react-query';
 import ErrorMessage from '../../../components/ErrorMessage';
 import RestakeDetailCard from '../../../components/RestakeDetailCard';
 import ActionButtonBase from '../../../components/restaking/ActionButtonBase';
@@ -147,47 +148,112 @@ const RestakeWithdrawForm: FC = () => {
     }
   }, [chainId]);
 
-  const { data: depositResults, refetch: refetchDeposits } =
-    useResilientReadContracts({
-      queryKey: [
-        'restake',
-        'withdraw',
-        'deposits',
-        chainId,
-        userAddress,
-        tokenAddresses,
-      ] as const,
-      contracts:
-        contracts && userAddress && tokenAddresses.length > 0
-          ? tokenAddresses.map((token) => ({
-              address: contracts.multiAssetDelegation,
-              abi: MULTI_ASSET_DELEGATION_ABI,
-              functionName: 'getDeposit',
-              args: [userAddress, token] as const,
-            }))
-          : [],
-      query: {
-        enabled:
-          Boolean(contracts) &&
-          Boolean(userAddress) &&
-          tokenAddresses.length > 0,
-        staleTime: 2_000,
-        refetchInterval: 2_000,
-        refetchIntervalInBackground: true,
-      },
-    });
+  const publicClient = usePublicClient({ chainId });
 
+  // Fetch deposit amounts from getDeposit
+  const { data: depositAmountMap, refetch: refetchDeposits } = useQuery({
+    queryKey: [
+      'restake',
+      'withdraw',
+      'deposits',
+      chainId,
+      userAddress,
+      tokenAddresses.map((t) => t.toLowerCase()).sort(),
+    ],
+    queryFn: async () => {
+      const map = new Map<string, bigint>();
+
+      if (!publicClient || !contracts || !userAddress) {
+        return map;
+      }
+
+      const results = await Promise.allSettled(
+        tokenAddresses.map(async (token) => {
+          const deposit = (await publicClient.readContract({
+            address: contracts.multiAssetDelegation,
+            abi: MULTI_ASSET_DELEGATION_ABI,
+            functionName: 'getDeposit',
+            args: [userAddress, token],
+          })) as { amount: bigint; delegatedAmount: bigint };
+
+          return { token, amount: deposit.amount };
+        }),
+      );
+
+      for (const result of results) {
+        if (result.status === 'fulfilled') {
+          const { token, amount } = result.value;
+          map.set(token.toLowerCase(), amount);
+        }
+      }
+
+      return map;
+    },
+    enabled:
+      Boolean(publicClient) &&
+      Boolean(contracts) &&
+      Boolean(userAddress) &&
+      tokenAddresses.length > 0,
+    staleTime: 2_000,
+    refetchInterval: 2_000,
+    refetchIntervalInBackground: true,
+    retry: 2,
+  });
+
+  // Fetch actual delegated amounts from getDelegations (getDeposit.delegatedAmount is not reliable)
+  const { data: delegatedAmountMap } = useQuery({
+    queryKey: ['restake', 'withdraw', 'delegations', chainId, userAddress],
+    queryFn: async () => {
+      const map = new Map<string, bigint>();
+
+      if (!publicClient || !contracts || !userAddress) {
+        return map;
+      }
+
+      type DelegationInfo = {
+        operator: Address;
+        shares: bigint;
+        asset: { kind: number; token: Address };
+        selectionMode: number;
+      };
+
+      const delegations = (await publicClient.readContract({
+        address: contracts.multiAssetDelegation,
+        abi: MULTI_ASSET_DELEGATION_ABI,
+        functionName: 'getDelegations',
+        args: [userAddress],
+      })) as DelegationInfo[];
+
+      // Sum shares by token to get total delegated amount per token
+      for (const delegation of delegations) {
+        const tokenKey = delegation.asset.token.toLowerCase();
+        const existing = map.get(tokenKey) ?? BigInt(0);
+        map.set(tokenKey, existing + delegation.shares);
+      }
+
+      return map;
+    },
+    enabled:
+      Boolean(publicClient) && Boolean(contracts) && Boolean(userAddress),
+    staleTime: 2_000,
+    refetchInterval: 2_000,
+    refetchIntervalInBackground: true,
+    retry: 2,
+  });
+
+  // Combine deposit and delegation data
   const depositMap = useMemo(() => {
     const map = new Map<string, { amount: bigint; delegatedAmount: bigint }>();
-    if (!depositResults) return map;
-    depositResults.forEach((res, idx) => {
-      const token = tokenAddresses[idx];
-      if (!token || res?.status !== 'success') return;
-      const dep = res.result as { amount: bigint; delegatedAmount: bigint };
-      map.set(token.toLowerCase(), dep);
-    });
+
+    if (!depositAmountMap) return map;
+
+    for (const [token, amount] of depositAmountMap.entries()) {
+      const delegatedAmount = delegatedAmountMap?.get(token) ?? BigInt(0);
+      map.set(token, { amount, delegatedAmount });
+    }
+
     return map;
-  }, [depositResults, tokenAddresses]);
+  }, [depositAmountMap, delegatedAmountMap]);
 
   const { data: currentBlockNumber } = useBlockNumber({ watch: true });
 
@@ -319,7 +385,7 @@ const RestakeWithdrawForm: FC = () => {
 
   // Build asset position items with metadata
   const assetPositionItems = useMemo<AssetPositionItem[]>(() => {
-    if (!tokenMetadatas) {
+    if (!tokenMetadatas || !depositMap) {
       return [];
     }
 
