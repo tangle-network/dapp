@@ -9,6 +9,8 @@
  * - Toast notifications (optional)
  */
 
+import capitalize from 'lodash/capitalize';
+import { useSnackbar } from 'notistack';
 import { useCallback, useState } from 'react';
 import {
   Address,
@@ -141,6 +143,44 @@ const tryDecodeViemCustomError = (
   }
 };
 
+const isUserRejectionError = (error: unknown): boolean => {
+  // Traverse the error cause chain (viem wraps errors in nested cause properties)
+  let current: unknown = error;
+  const maxDepth = 10;
+
+  for (let i = 0; i < maxDepth && current != null; i++) {
+    if (typeof current !== 'object') {
+      break;
+    }
+
+    const obj = current as Record<string, unknown>;
+
+    // Check viem UserRejectedRequestError by name
+    if (obj.name === 'UserRejectedRequestError') {
+      return true;
+    }
+
+    // Check EIP-1193 user rejection code
+    if (obj.code === 4001) {
+      return true;
+    }
+
+    // Check for rejection messages in the error
+    const message = obj.message ?? obj.shortMessage;
+    if (
+      typeof message === 'string' &&
+      /user rejected|user denied|rejected the request/i.test(message)
+    ) {
+      return true;
+    }
+
+    // Traverse to nested cause
+    current = obj.cause;
+  }
+
+  return false;
+};
+
 // Transaction result
 export interface TxResult {
   hash: Hash;
@@ -232,6 +272,7 @@ const useContractWrite = <
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [result, setResult] = useState<TxResult | null>(null);
 
+  const { enqueueSnackbar } = useSnackbar();
   const activeAddress = useEvmAddress();
   const { data: connectorClient } = useConnectorClient();
   const publicClient = usePublicClient();
@@ -246,9 +287,9 @@ const useContractWrite = <
       details.set('Contract', String(callConfig.address));
       details.set('Function', String(callConfig.functionName));
 
-      if (callConfig.value !== undefined && callConfig.value !== BigInt(0)) {
-        details.set('Value', callConfig.value.toString());
-      }
+      // Note: We intentionally do NOT add "Value" here automatically.
+      // Each tx hook should handle displaying amounts via txDetails
+      // to avoid duplication (e.g., "Value" vs "Amount" for deposits).
 
       return details;
     },
@@ -430,6 +471,15 @@ const useContractWrite = <
 
         return txResult;
       } catch (possibleError) {
+        // Check for user cancellation first (before logging as error)
+        if (isUserRejectionError(possibleError)) {
+          enqueueSnackbar(`${capitalize(txName)} cancelled`, {
+            variant: 'warning',
+          });
+          setStatus(TxStatus.ERROR);
+          return null;
+        }
+
         console.error('Contract write error:', possibleError);
 
         const decodedCustomError = tryDecodeViemCustomError(
@@ -469,6 +519,7 @@ const useContractWrite = <
       pushTx,
       patchTx,
       toTxDetails,
+      enqueueSnackbar,
     ],
   );
 
