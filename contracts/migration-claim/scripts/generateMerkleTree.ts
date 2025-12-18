@@ -97,13 +97,9 @@ function normalizeEntry(entry: SnapshotEntry): {
 }
 
 interface MerkleTreeEntry {
-  /** The 32-byte public key as bytes32 hex (for contract calls) */
-  pubkey: string;
-  /** Balance in wei */
-  balance: string;
   /** Merkle proof */
   proof: string[];
-  /** Leaf data: [pubkey, balance] */
+  /** Leaf data: [ss58Address, balance] - SS58 for frontend lookup */
   leaf: [string, string];
 }
 
@@ -192,11 +188,11 @@ function generateMerkleTree(entries: SnapshotEntry[]): MerkleTreeOutput {
       throw new Error(`No SS58 address found for pubkey: ${normalizedPubkey}`);
     }
 
+    // Store SS58 address in leaf[0] for frontend compatibility
+    // The frontend will convert SS58 -> pubkey when calling the contract
     outputEntries[ss58Address] = {
-      pubkey: normalizedPubkey,
-      balance,
       proof: proof as string[],
-      leaf: [normalizedPubkey, balance],
+      leaf: [ss58Address, balance],
     };
   }
 
