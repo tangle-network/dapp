@@ -161,44 +161,51 @@ const useClaimEligibility = ({ ss58Address }: UseClaimEligibilityOptions) => {
   // Check claimed amount on-chain using the pubkey (derived from SS58)
   // IMPORTANT: We use viem's publicClient directly because wagmi has routing issues
   // that cause it to return empty data even when the RPC works correctly.
-  const { data: claimedAmount, isLoading: isLoadingClaimed } = useQuery<bigint>({
-    queryKey: ['migration-claimed-amount', pubkeyFromSs58, TANGLE_MIGRATION_ADDRESS],
-    queryFn: async () => {
-      if (!pubkeyFromSs58 || !TANGLE_MIGRATION_ADDRESS) {
-        return BigInt(0);
-      }
-      const result = await publicClient.readContract({
-        address: TANGLE_MIGRATION_ADDRESS,
-        abi: TANGLE_MIGRATION_ABI,
-        functionName: 'getClaimedAmount',
-        args: [pubkeyFromSs58],
-      });
-      return result as bigint;
+  const { data: claimedAmount, isLoading: isLoadingClaimed } = useQuery<bigint>(
+    {
+      queryKey: [
+        'migration-claimed-amount',
+        pubkeyFromSs58,
+        TANGLE_MIGRATION_ADDRESS,
+      ],
+      queryFn: async () => {
+        if (!pubkeyFromSs58 || !TANGLE_MIGRATION_ADDRESS) {
+          return BigInt(0);
+        }
+        const result = await publicClient.readContract({
+          address: TANGLE_MIGRATION_ADDRESS,
+          abi: TANGLE_MIGRATION_ABI,
+          functionName: 'getClaimedAmount',
+          args: [pubkeyFromSs58],
+        });
+        return result as bigint;
+      },
+      enabled: !!pubkeyFromSs58 && !!TANGLE_MIGRATION_ADDRESS,
+      // Always refetch on mount and window focus to ensure we have the latest claimed status
+      refetchOnMount: 'always',
+      refetchOnWindowFocus: 'always',
+      // Don't cache - always fetch fresh data for claim status
+      staleTime: 0,
+      gcTime: 0,
     },
-    enabled: !!pubkeyFromSs58 && !!TANGLE_MIGRATION_ADDRESS,
-    // Always refetch on mount and window focus to ensure we have the latest claimed status
-    refetchOnMount: 'always',
-    refetchOnWindowFocus: 'always',
-    // Don't cache - always fetch fresh data for claim status
-    staleTime: 0,
-    gcTime: 0,
-  });
+  );
 
   // Get claim deadline using viem directly
-  const { data: claimDeadline, isLoading: isLoadingDeadline } = useQuery<bigint>({
-    queryKey: ['migration-claim-deadline', TANGLE_MIGRATION_ADDRESS],
-    queryFn: async () => {
-      if (!TANGLE_MIGRATION_ADDRESS) return BigInt(0);
-      const result = await publicClient.readContract({
-        address: TANGLE_MIGRATION_ADDRESS,
-        abi: TANGLE_MIGRATION_ABI,
-        functionName: 'claimDeadline',
-      });
-      return result as bigint;
-    },
-    enabled: !!TANGLE_MIGRATION_ADDRESS,
-    refetchInterval: 60000, // Refresh every minute
-  });
+  const { data: claimDeadline, isLoading: isLoadingDeadline } =
+    useQuery<bigint>({
+      queryKey: ['migration-claim-deadline', TANGLE_MIGRATION_ADDRESS],
+      queryFn: async () => {
+        if (!TANGLE_MIGRATION_ADDRESS) return BigInt(0);
+        const result = await publicClient.readContract({
+          address: TANGLE_MIGRATION_ADDRESS,
+          abi: TANGLE_MIGRATION_ABI,
+          functionName: 'claimDeadline',
+        });
+        return result as bigint;
+      },
+      enabled: !!TANGLE_MIGRATION_ADDRESS,
+      refetchInterval: 60000, // Refresh every minute
+    });
 
   // Check if paused using viem directly
   const { data: isPaused, isLoading: isLoadingPaused } = useQuery<boolean>({

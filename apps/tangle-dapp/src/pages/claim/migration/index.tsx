@@ -349,7 +349,9 @@ const MigrationClaimPage: FC = () => {
                 {txHash}
               </Typography>
 
-              {txHash && <CopyWithTooltip textToCopy={txHash} isButton={false} />}
+              {txHash && (
+                <CopyWithTooltip textToCopy={txHash} isButton={false} />
+              )}
             </div>
           </Card>
         </motion.div>
