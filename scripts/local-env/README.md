@@ -233,9 +233,9 @@ After starting the local environment, deploy the migration contracts:
 ```
 
 This will:
-1. Build and deploy TNT token, TangleMigration, and MockZKVerifier contracts
-2. Fund TangleMigration with 108.14M TNT for claims
-3. Copy `proofs.json` to `apps/tangle-dapp/public/data/migration-proofs.json`
+1. Build and deploy TNT token, TangleMigration, and MockZKVerifier contracts (from `tnt-core/packages/migration-claim`)
+2. Fund TangleMigration with the Substrate Merkle total from `merkle-tree.json`
+3. Copy `merkle-tree.json` to `apps/tangle-dapp/public/data/migration-proofs.json`
 4. Update `apps/tangle-dapp/.env.local` with contract addresses
 
 ### Migration Contract Addresses
@@ -264,9 +264,8 @@ After deployment, you'll see addresses like:
 
 ### Migration Stats
 
-- **7,004 Substrate accounts** - require ZK proof to claim (108.14M TNT total)
-- **7,124 EVM accounts** - direct airdrop (1.13M TNT total)
-- **Merkle Root**: `0x844f4473505261b30182a26d035473da521d0f8a174fbbbcf92b17e090df8a4f`
+Pull stats directly from `tnt-core/packages/migration-claim/merkle-tree.json` and `evm-claims.json`.
+These files are the source of truth for totals and Merkle root.
 
 ### Environment Variables
 
@@ -276,7 +275,7 @@ The deploy script adds these to `apps/tangle-dapp/.env.local`:
 VITE_TNT_TOKEN_ADDRESS=0x...
 VITE_TANGLE_MIGRATION_ADDRESS=0x...
 VITE_ZK_VERIFIER_ADDRESS=0x...
-VITE_MIGRATION_MERKLE_ROOT=0x844f...
+VITE_MIGRATION_MERKLE_ROOT=0x...
 VITE_MIGRATION_PROOFS_URL=/data/migration-proofs.json
 ```
 

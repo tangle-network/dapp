@@ -1,2 +1,0 @@
-# Exclude OpenZeppelin contracts (git submodules) from NX project detection
-contracts/migration-claim/lib/openzeppelin-contracts/**

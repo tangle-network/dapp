@@ -1,13 +1,13 @@
 #!/bin/bash
 # Deploy TangleMigration contracts and execute EVM airdrop
 #
-# This script reads from distribution.json to get exact totals and merkle root,
-# then deploys contracts and executes the EVM airdrop.
+# This script reads from tnt-core/packages/migration-claim to get exact totals
+# and merkle root, then deploys contracts and executes the EVM airdrop.
 #
 # Prerequisites:
 # - Anvil running on port 8545 (via start-local-env.sh)
 # - Foundry installed (forge)
-# - Migration proofs generated in scripts/migration/migration_output/
+# - Merkle tree + EVM claims present in tnt-core/packages/migration-claim
 #
 # Usage:
 #   ./scripts/local-env/deploy-migration.sh           # Deploy contracts only
@@ -17,19 +17,29 @@ set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 DAPP_ROOT="$(cd "$SCRIPT_DIR/../.." && pwd)"
-CONTRACT_DIR="$DAPP_ROOT/contracts/migration-claim"
-
-# Check for migration output
-MIGRATION_OUTPUT=""
-if [[ -d "$DAPP_ROOT/scripts/migration/migration_output" ]]; then
-    MIGRATION_OUTPUT="$DAPP_ROOT/scripts/migration/migration_output"
-elif [[ -d "/Users/drew/webb/tangle/types/migration_output" ]]; then
-    MIGRATION_OUTPUT="/Users/drew/webb/tangle/types/migration_output"
+if [[ -z "${TNT_CORE_DIR:-}" ]]; then
+    if [[ -d "$DAPP_ROOT/../tnt-core" ]]; then
+        TNT_CORE_DIR="$DAPP_ROOT/../tnt-core"
+    elif [[ -d "$DAPP_ROOT/../../tnt-core" ]]; then
+        TNT_CORE_DIR="$DAPP_ROOT/../../tnt-core"
+    elif [[ -d "/Users/drew/webb/tnt-core" ]]; then
+        TNT_CORE_DIR="/Users/drew/webb/tnt-core"
+    else
+        echo "Error: TNT_CORE_DIR not found. Set TNT_CORE_DIR to your tnt-core repo."
+        exit 1
+    fi
 fi
 
-if [[ -z "$MIGRATION_OUTPUT" ]]; then
-    echo "Error: migration_output directory not found"
-    echo "Run: cd scripts/migration && npm install && npm run merkleize:latest"
+CONTRACT_DIR="$TNT_CORE_DIR/packages/migration-claim"
+MIGRATION_DIR="$CONTRACT_DIR"
+
+if [[ ! -f "$MIGRATION_DIR/merkle-tree.json" ]]; then
+    echo "Error: merkle-tree.json not found at $MIGRATION_DIR"
+    exit 1
+fi
+
+if [[ ! -f "$MIGRATION_DIR/evm-claims.json" ]]; then
+    echo "Error: evm-claims.json not found at $MIGRATION_DIR"
     exit 1
 fi
 
@@ -86,39 +96,29 @@ if ! curl -s "$RPC_URL" -X POST -H "Content-Type: application/json" \
     exit 1
 fi
 
-if [[ ! -f "$MIGRATION_OUTPUT/distribution.json" ]]; then
-    log_error "distribution.json not found at $MIGRATION_OUTPUT"
-    exit 1
-fi
-
 log_success "All prerequisites met"
-log_info "Migration output: $MIGRATION_OUTPUT"
+log_info "Migration data: $MIGRATION_DIR"
 
-# Read distribution data using Node.js
-log_info "Reading distribution data..."
+# Read migration data using Node.js
+log_info "Reading migration data..."
 
 DIST_DATA=$(node -e "
-const dist = require('$MIGRATION_OUTPUT/distribution.json');
-const evm = require('$MIGRATION_OUTPUT/evm-airdrop.json');
-
-// Calculate totals
-let evmTotal = BigInt(0);
-for (const [addr, amt] of Object.entries(evm)) {
-  evmTotal += BigInt(amt);
-}
-
-let substrateTotal = BigInt(0);
-for (const acc of dist.substrateAccounts) {
-  substrateTotal += BigInt(acc.finalAmount);
-}
+const fs = require('fs');
+const merkle = JSON.parse(fs.readFileSync('$MIGRATION_DIR/merkle-tree.json','utf8'));
+const evm = JSON.parse(fs.readFileSync('$MIGRATION_DIR/evm-claims.json','utf8'));
+const treasuryPath = '$MIGRATION_DIR/treasury-carveout.json';
+const foundationPath = '$MIGRATION_DIR/foundation-carveout.json';
+const treasury = fs.existsSync(treasuryPath) ? JSON.parse(fs.readFileSync(treasuryPath,'utf8')) : { amount: '0' };
+const foundation = fs.existsSync(foundationPath) ? JSON.parse(fs.readFileSync(foundationPath,'utf8')) : { amount: '0' };
 
 console.log(JSON.stringify({
-  merkleRoot: dist.metadata.merkleRoot,
-  totalSubstrate: substrateTotal.toString(),
-  totalEvm: evmTotal.toString(),
-  totalDistribution: dist.metadata.totalDistribution,
-  substrateAccounts: dist.metadata.totalSubstrateAccounts,
-  evmAccounts: dist.metadata.totalEvmAccounts
+  merkleRoot: merkle.root,
+  totalSubstrate: merkle.totalValue,
+  totalEvm: evm.totalAmount,
+  substrateAccounts: merkle.entryCount,
+  evmAccounts: evm.totalAccounts,
+  treasuryAmount: treasury.amount || '0',
+  foundationAmount: foundation.amount || '0'
 }));
 ")
 
@@ -127,10 +127,20 @@ TOTAL_SUBSTRATE=$(echo "$DIST_DATA" | node -pe "JSON.parse(require('fs').readFil
 TOTAL_EVM=$(echo "$DIST_DATA" | node -pe "JSON.parse(require('fs').readFileSync('/dev/stdin', 'utf8')).totalEvm")
 SUBSTRATE_ACCOUNTS=$(echo "$DIST_DATA" | node -pe "JSON.parse(require('fs').readFileSync('/dev/stdin', 'utf8')).substrateAccounts")
 EVM_ACCOUNTS=$(echo "$DIST_DATA" | node -pe "JSON.parse(require('fs').readFileSync('/dev/stdin', 'utf8')).evmAccounts")
+TREASURY_AMOUNT=$(echo "$DIST_DATA" | node -pe "JSON.parse(require('fs').readFileSync('/dev/stdin', 'utf8')).treasuryAmount")
+FOUNDATION_AMOUNT=$(echo "$DIST_DATA" | node -pe "JSON.parse(require('fs').readFileSync('/dev/stdin', 'utf8')).foundationAmount")
 
-log_success "Distribution data loaded"
+# Only include carveouts if recipients are provided
+if [[ -z "${TREASURY_RECIPIENT:-}" ]]; then
+    TREASURY_AMOUNT="0"
+fi
+if [[ -z "${FOUNDATION_RECIPIENT:-}" ]]; then
+    FOUNDATION_AMOUNT="0"
+fi
+
+log_success "Migration data loaded"
 echo ""
-echo -e "${CYAN}Distribution Summary:${NC}"
+echo -e "${CYAN}Migration Summary:${NC}"
 echo "  Merkle Root:        $MERKLE_ROOT"
 echo "  Substrate Accounts: $SUBSTRATE_ACCOUNTS"
 echo "  Substrate Total:    $(node -pe "BigInt('$TOTAL_SUBSTRATE') / BigInt(1e18)") TNT"
@@ -160,6 +170,8 @@ USE_MOCK_VERIFIER="true" \
 ALLOW_STANDALONE_TOKEN="${ALLOW_STANDALONE_TOKEN:-false}" \
 TNT_TOKEN="${TNT_TOKEN_ADDRESS:-}" \
 TNT_TOKEN_ADDRESS="${TNT_TOKEN_ADDRESS:-}" \
+TREASURY_AMOUNT="${TREASURY_AMOUNT:-0}" \
+FOUNDATION_AMOUNT="${FOUNDATION_AMOUNT:-0}" \
 PRIVATE_KEY="$PRIVATE_KEY" \
 forge script script/DeployTangleMigration.s.sol:DeployTangleMigration \
     --rpc-url "$RPC_URL" \
@@ -202,7 +214,7 @@ if [[ "$EXECUTE_AIRDROP" == "true" ]]; then
 
     # Execute airdrop in batches using Node.js + cast (transfer-based so it works with the canonical TNT)
     node -e "
-	const evm = require('$MIGRATION_OUTPUT/evm-airdrop.json');
+	const evm = require('$MIGRATION_DIR/evm-claims.json');
 	const { execSync } = require('child_process');
 
 	const TNT_ADDRESS = '$TNT_ADDRESS';
@@ -210,13 +222,13 @@ if [[ "$EXECUTE_AIRDROP" == "true" ]]; then
 	const PRIVATE_KEY = '$PRIVATE_KEY';
 	const BATCH_SIZE = 100;
 
-	const entries = Object.entries(evm);
+	const entries = evm.claims || [];
 	console.log('Total EVM recipients:', entries.length);
 
 	for (let i = 0; i < entries.length; i += BATCH_SIZE) {
 	    const batch = entries.slice(i, i + BATCH_SIZE);
-	    const recipients = batch.map(([addr]) => addr);
-	    const amounts = batch.map(([, amt]) => amt);
+	    const recipients = batch.map((entry) => entry.address);
+	    const amounts = batch.map((entry) => entry.amount);
 
 	    const batchNum = Math.floor(i / BATCH_SIZE) + 1;
 	    const totalBatches = Math.ceil(entries.length / BATCH_SIZE);
@@ -241,12 +253,12 @@ console.log('EVM airdrop complete!');
     log_success "EVM airdrop executed"
 fi
 
-# Copy proofs to frontend
-log_info "Copying proofs.json to frontend..."
+# Copy merkle tree data to frontend
+log_info "Copying merkle-tree.json to frontend..."
 PROOFS_DEST="$DAPP_ROOT/apps/tangle-dapp/public/data"
 mkdir -p "$PROOFS_DEST"
-cp "$MIGRATION_OUTPUT/proofs.json" "$PROOFS_DEST/migration-proofs.json"
-log_success "Proofs copied to $PROOFS_DEST/migration-proofs.json"
+cp "$MIGRATION_DIR/merkle-tree.json" "$PROOFS_DEST/migration-proofs.json"
+log_success "Merkle data copied to $PROOFS_DEST/migration-proofs.json"
 
 # Update .env.local
 ENV_FILE="$DAPP_ROOT/apps/tangle-dapp/.env.local"
@@ -297,7 +309,7 @@ echo -e "${CYAN}Merkle Root:${NC}"
 echo "  $MERKLE_ROOT"
 echo ""
 echo -e "${CYAN}Frontend Config:${NC}"
-echo "  Proofs: apps/tangle-dapp/public/data/migration-proofs.json"
+echo "  Merkle data: apps/tangle-dapp/public/data/migration-proofs.json"
 echo "  Env:    apps/tangle-dapp/.env.local"
 echo ""
 echo -e "${YELLOW}Next Steps:${NC}"

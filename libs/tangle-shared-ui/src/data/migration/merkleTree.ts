@@ -3,16 +3,26 @@
  *
  * This module provides functions for:
  * - Loading and parsing pre-generated Merkle proofs data
- * - Looking up balances and proofs from the proofs.json file
+ * - Looking up balances and proofs from the merkle-tree.json file (tnt-core)
  * - Converting SS58 addresses to raw 32-byte pubkeys for contract calls
  *
- * The proofs.json file format is:
+ * The tnt-core merkle-tree.json format is:
  * {
- *   "ss58Address": {
- *     "proof": ["0x...", ...],
- *     "leaf": [pubkey, amount]  // pubkey is bytes32 hex string
+ *   "root": "0x...",
+ *   "entries": {
+ *     "ss58Address": {
+ *       "pubkey": "0x...",
+ *       "balance": "123",
+ *       "proof": ["0x...", ...],
+ *       "leaf": ["0xPubkey", "123"]
+ *     }
+ *   },
+ *   "entriesByPubkey": {
+ *     "0xpubkey": { ... , "ss58Address": "tg..." }
  *   }
  * }
+ *
+ * Legacy proofs.json format is still supported for backwards compatibility.
  */
 
 import { decodeAddress } from '@polkadot/util-crypto';
@@ -25,14 +35,41 @@ import type { Hex } from 'viem';
 export type MerkleLeaf = [string, string];
 
 /**
- * Raw entry format in proofs.json file
+ * Raw entry format in the legacy proofs.json file
  * Format: { proof: string[], leaf: [ss58Address, amountWei] }
  */
 export interface RawProofEntry {
   /** Merkle proof - array of bytes32 hashes */
   proof: string[];
   /** Leaf data: [ss58Address, amountWei] */
+  leaf: [string, string];
+}
+
+/**
+ * Entry format from tnt-core merkle-tree.json
+ */
+export interface MerkleTreeEntry {
+  /** The 32-byte public key as bytes32 hex (for contract calls) */
+  pubkey: string;
+  /** Balance in wei */
+  balance: string;
+  /** Merkle proof - array of bytes32 hashes */
+  proof: string[];
+  /** Leaf data: [pubkey, amountWei] */
   leaf: MerkleLeaf;
+  /** Optional SS58 address (present in entriesByPubkey) */
+  ss58Address?: string;
+}
+
+/**
+ * tnt-core merkle-tree.json format
+ */
+export interface MerkleTreeData {
+  root: string;
+  totalValue: string;
+  entryCount: number;
+  entries: Record<string, MerkleTreeEntry>;
+  entriesByPubkey?: Record<string, MerkleTreeEntry & { ss58Address: string }>;
 }
 
 /**
@@ -46,16 +83,13 @@ export interface ProofEntry {
   /** Merkle proof - array of bytes32 hashes */
   proof: string[];
   /** Leaf data: [ss58Address, amountWei] */
-  leaf: MerkleLeaf;
+  leaf: [string, string];
 }
 
 /**
- * Full proofs.json data structure - keyed by SS58 address
- * Uses the raw format as stored in proofs.json
+ * Full proofs data structure (legacy proofs.json or tnt-core merkle-tree.json)
  */
-export interface MigrationProofsData {
-  [ss58Address: string]: RawProofEntry;
-}
+export type MigrationProofsData = Record<string, RawProofEntry> | MerkleTreeData;
 
 /**
  * Claim data for a specific address (returned by lookupClaim)
@@ -93,28 +127,102 @@ export const parseProofsJson = (jsonString: string): MigrationProofsData => {
 
 /**
  * Load and parse migration proofs data
- * This is the main entry point for loading proofs.json
+ * This is the main entry point for loading merkle-tree.json (tnt-core)
  */
+const normalizeProofsData = (data: MigrationProofsData): MigrationProofsData => {
+  if (isMerkleTreeData(data)) {
+    return data;
+  }
+
+  // Handle tnt-core "entries only" export (jq '.entries')
+  if (data && typeof data === 'object') {
+    const keys = Object.keys(data);
+    if (keys.length > 0) {
+      const first = (data as Record<string, unknown>)[keys[0]];
+      if (
+        typeof first === 'object' &&
+        first !== null &&
+        'pubkey' in first &&
+        'balance' in first &&
+        'proof' in first
+      ) {
+        const entries = data as Record<string, MerkleTreeEntry>;
+        const entriesByPubkey: Record<
+          string,
+          MerkleTreeEntry & { ss58Address: string }
+        > = {};
+        for (const [ss58, entry] of Object.entries(entries)) {
+          if (entry?.pubkey) {
+            entriesByPubkey[entry.pubkey.toLowerCase()] = {
+              ...entry,
+              ss58Address: ss58,
+            };
+          }
+        }
+        return {
+          root: '',
+          totalValue: '',
+          entryCount: Object.keys(entries).length,
+          entries,
+          entriesByPubkey,
+        };
+      }
+    }
+  }
+
+  return data;
+};
+
 export const loadMerkleTreeData = (json: string): MigrationProofsData => {
-  return parseProofsJson(json);
+  const parsed = parseProofsJson(json);
+  return normalizeProofsData(parsed);
+};
+
+const isMerkleTreeData = (data: MigrationProofsData): data is MerkleTreeData => {
+  return typeof data === 'object' && data !== null && 'entries' in data;
 };
 
 /**
  * Lookup claim data for an SS58 address from the proofs data.
  * Handles different SS58 prefixes by comparing pubkeys (not string addresses).
  *
- * This is important because the proofs.json uses Tangle SS58 format (prefix 5181,
+ * This is important because the merkle-tree.json entries use Tangle SS58 format (prefix 5181,
  * starts with "tg") but users might enter addresses with different prefixes
  * (e.g., generic prefix 42 starts with "5").
  *
- * The leaf[0] in proofs.json contains an SS58 address which we decode to get
+ * The legacy proofs.json leaf[0] contains an SS58 address which we decode to get
  * the raw 32-byte pubkey for comparison.
  */
 export const lookupClaim = (
   proofsData: MigrationProofsData,
   ss58Address: string,
 ): ClaimData | null => {
-  // First, try direct lookup by SS58 key (fast path for matching prefix)
+  if (isMerkleTreeData(proofsData)) {
+    const pubkeyLower = ss58ToPubkey(ss58Address).toLowerCase();
+    const byPubkey = proofsData.entriesByPubkey?.[pubkeyLower];
+    if (byPubkey) {
+      return {
+        ss58Address: byPubkey.ss58Address ?? ss58Address,
+        pubkey: byPubkey.pubkey as Hex,
+        amount: BigInt(byPubkey.balance),
+        merkleProof: byPubkey.proof.map((p) => p as Hex),
+      };
+    }
+
+    const bySs58 = proofsData.entries?.[ss58Address];
+    if (bySs58) {
+      return {
+        ss58Address,
+        pubkey: bySs58.pubkey as Hex,
+        amount: BigInt(bySs58.balance),
+        merkleProof: bySs58.proof.map((p) => p as Hex),
+      };
+    }
+
+    return null;
+  }
+
+  // Legacy proofs.json format
   let entry = proofsData[ss58Address];
   let foundAddress = ss58Address;
 
@@ -188,6 +296,19 @@ export const getClaimableBalance = (
  * Get statistics about the migration data
  */
 export const getMigrationStats = (proofsData: MigrationProofsData) => {
+  if (isMerkleTreeData(proofsData)) {
+    const totalAmount = proofsData.totalValue
+      ? BigInt(proofsData.totalValue)
+      : Object.values(proofsData.entries).reduce(
+          (sum, entry) => sum + BigInt(entry.balance),
+          BigInt(0),
+        );
+    return {
+      totalAccounts: proofsData.entryCount || Object.keys(proofsData.entries).length,
+      totalAmount,
+    };
+  }
+
   const addresses = Object.keys(proofsData);
   let totalAmount = BigInt(0);
 
