@@ -2,6 +2,8 @@
 
 Smart contracts for the TNT token migration from Substrate to EVM. Substrate address holders prove key ownership via ZK proofs to claim TNT tokens.
 
+> **🚀 New to local testing?** See the comprehensive **[Local Testing Guide](./LOCAL_TESTING_GUIDE.md)** for step-by-step instructions to run and test the full claim flow locally.
+
 ## Distribution Summary
 
 | Category | Accounts | Amount |
@@ -24,21 +26,36 @@ Smart contracts for the TNT token migration from Substrate to EVM. Substrate add
 
 ## Quick Start
 
-### 1. Deploy to Local Testnet (with Mock Verifier)
+### 1. Deploy to Local Testnet (Recommended)
+
+```bash
+# Start Anvil (in a separate terminal)
+anvil
+
+# Deploy everything with test data
+cd contracts/migration-claim
+./scripts/deploy-local-complete.sh
+```
+
+This automatically:
+- Generates test merkle tree with 5 dev accounts (Alice, Bob, etc.)
+- Deploys TNT token, MockZKVerifier, and TangleMigration
+- Funds the migration contract
+- Creates `.env` files for frontend and relayer
+- Copies proofs to frontend
+
+For full instructions, see **[Local Testing Guide](./LOCAL_TESTING_GUIDE.md)**.
+
+### 2. Deploy with Production Data (Advanced)
 
 ```bash
 cd contracts/migration-claim
-
-# Deploy everything
 ./scripts/deploy-tangle-migration.sh
 ```
 
-This deploys:
-- TNT token with 109.26M supply
-- MockZKVerifier (always passes - for testing only)
-- TangleMigration funded with 108.14M TNT
+This deploys with production merkle root (requires migration output files).
 
-### 2. Deploy to Base Sepolia (with SP1 Verifier)
+### 3. Deploy to Base Sepolia (with SP1 Verifier)
 
 ```bash
 # Set your private key and program vkey

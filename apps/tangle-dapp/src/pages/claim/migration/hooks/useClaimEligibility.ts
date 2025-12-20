@@ -1,7 +1,13 @@
 import { useQuery } from '@tanstack/react-query';
 import { useMemo } from 'react';
-import { type Hex, formatUnits, keccak256, toHex } from 'viem';
-import { useReadContract } from 'wagmi';
+import {
+  type Hex,
+  formatUnits,
+  keccak256,
+  toHex,
+  createPublicClient,
+  http,
+} from 'viem';
 import {
   lookupClaim,
   loadMerkleTreeData,
@@ -10,15 +16,23 @@ import {
   type ClaimData,
 } from '@tangle-network/tangle-shared-ui/data/migration';
 
-// TangleMigration contract ABI (partial - only what we need)
+/**
+ * RPC URL for migration contract queries.
+ * Uses a dedicated viem client to bypass wagmi chain routing issues.
+ */
+const MIGRATION_RPC_URL =
+  import.meta.env.VITE_MIGRATION_RPC_URL || 'http://localhost:8545';
+
+/**
+ * Create a viem public client for direct contract reads.
+ * This bypasses wagmi which has issues with chain routing.
+ */
+const publicClient = createPublicClient({
+  transport: http(MIGRATION_RPC_URL),
+});
+
+// TangleMigration contract ABI (partial - only functions we use)
 const TANGLE_MIGRATION_ABI = [
-  {
-    name: 'claimed',
-    type: 'function',
-    stateMutability: 'view',
-    inputs: [{ name: 'pubkey', type: 'bytes32' }],
-    outputs: [{ name: '', type: 'uint256' }],
-  },
   {
     name: 'getClaimedAmount',
     type: 'function',
@@ -28,13 +42,6 @@ const TANGLE_MIGRATION_ABI = [
   },
   {
     name: 'claimDeadline',
-    type: 'function',
-    stateMutability: 'view',
-    inputs: [],
-    outputs: [{ name: '', type: 'uint256' }],
-  },
-  {
-    name: 'totalClaimed',
     type: 'function',
     stateMutability: 'view',
     inputs: [],
@@ -142,8 +149,7 @@ const useClaimEligibility = ({ ss58Address }: UseClaimEligibilityOptions) => {
         }
         const json = await response.text();
         return loadMerkleTreeData(json);
-      } catch (error) {
-        console.error('Failed to load migration proofs:', error);
+      } catch {
         return null;
       }
     },
@@ -153,47 +159,82 @@ const useClaimEligibility = ({ ss58Address }: UseClaimEligibilityOptions) => {
   });
 
   // Check claimed amount on-chain using the pubkey (derived from SS58)
-  const { data: claimedAmount, isLoading: isLoadingClaimed } = useReadContract({
-    address: TANGLE_MIGRATION_ADDRESS ?? undefined,
-    abi: TANGLE_MIGRATION_ABI,
-    functionName: 'getClaimedAmount',
-    args: pubkeyFromSs58 ? [pubkeyFromSs58] : undefined,
-    query: {
-      enabled: !!pubkeyFromSs58 && !!TANGLE_MIGRATION_ADDRESS,
-    },
-  });
-
-  // Get claim deadline
-  const { data: claimDeadline, isLoading: isLoadingDeadline } = useReadContract(
+  // IMPORTANT: We use viem's publicClient directly because wagmi has routing issues
+  // that cause it to return empty data even when the RPC works correctly.
+  const { data: claimedAmount, isLoading: isLoadingClaimed } = useQuery<bigint>(
     {
-      address: TANGLE_MIGRATION_ADDRESS ?? undefined,
-      abi: TANGLE_MIGRATION_ABI,
-      functionName: 'claimDeadline',
-      query: {
-        enabled: !!TANGLE_MIGRATION_ADDRESS,
-        refetchInterval: 60000, // Refresh every minute
+      queryKey: [
+        'migration-claimed-amount',
+        pubkeyFromSs58,
+        TANGLE_MIGRATION_ADDRESS,
+      ],
+      queryFn: async () => {
+        if (!pubkeyFromSs58 || !TANGLE_MIGRATION_ADDRESS) {
+          return BigInt(0);
+        }
+        const result = await publicClient.readContract({
+          address: TANGLE_MIGRATION_ADDRESS,
+          abi: TANGLE_MIGRATION_ABI,
+          functionName: 'getClaimedAmount',
+          args: [pubkeyFromSs58],
+        });
+        return result as bigint;
       },
+      enabled: !!pubkeyFromSs58 && !!TANGLE_MIGRATION_ADDRESS,
+      // Always refetch on mount and window focus to ensure we have the latest claimed status
+      refetchOnMount: 'always',
+      refetchOnWindowFocus: 'always',
+      // Don't cache - always fetch fresh data for claim status
+      staleTime: 0,
+      gcTime: 0,
     },
   );
 
-  // Check if paused
-  const { data: isPaused, isLoading: isLoadingPaused } = useReadContract({
-    address: TANGLE_MIGRATION_ADDRESS ?? undefined,
-    abi: TANGLE_MIGRATION_ABI,
-    functionName: 'paused',
-    query: {
+  // Get claim deadline using viem directly
+  const { data: claimDeadline, isLoading: isLoadingDeadline } =
+    useQuery<bigint>({
+      queryKey: ['migration-claim-deadline', TANGLE_MIGRATION_ADDRESS],
+      queryFn: async () => {
+        if (!TANGLE_MIGRATION_ADDRESS) return BigInt(0);
+        const result = await publicClient.readContract({
+          address: TANGLE_MIGRATION_ADDRESS,
+          abi: TANGLE_MIGRATION_ABI,
+          functionName: 'claimDeadline',
+        });
+        return result as bigint;
+      },
       enabled: !!TANGLE_MIGRATION_ADDRESS,
+      refetchInterval: 60000, // Refresh every minute
+    });
+
+  // Check if paused using viem directly
+  const { data: isPaused, isLoading: isLoadingPaused } = useQuery<boolean>({
+    queryKey: ['migration-paused', TANGLE_MIGRATION_ADDRESS],
+    queryFn: async () => {
+      if (!TANGLE_MIGRATION_ADDRESS) return false;
+      const result = await publicClient.readContract({
+        address: TANGLE_MIGRATION_ADDRESS,
+        abi: TANGLE_MIGRATION_ABI,
+        functionName: 'paused',
+      });
+      return result as boolean;
     },
+    enabled: !!TANGLE_MIGRATION_ADDRESS,
   });
 
-  // Get merkle root for verification
-  const { data: merkleRoot } = useReadContract({
-    address: TANGLE_MIGRATION_ADDRESS ?? undefined,
-    abi: TANGLE_MIGRATION_ABI,
-    functionName: 'merkleRoot',
-    query: {
-      enabled: !!TANGLE_MIGRATION_ADDRESS,
+  // Get merkle root for verification using viem directly
+  const { data: merkleRoot } = useQuery<Hex | null>({
+    queryKey: ['migration-merkle-root', TANGLE_MIGRATION_ADDRESS],
+    queryFn: async () => {
+      if (!TANGLE_MIGRATION_ADDRESS) return null;
+      const result = await publicClient.readContract({
+        address: TANGLE_MIGRATION_ADDRESS,
+        abi: TANGLE_MIGRATION_ABI,
+        functionName: 'merkleRoot',
+      });
+      return result as Hex;
     },
+    enabled: !!TANGLE_MIGRATION_ADDRESS,
   });
 
   // Calculate time remaining

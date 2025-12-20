@@ -4,7 +4,7 @@ import {
   EditLine,
   Alert,
 } from '@tangle-network/icons';
-import { Card } from '@tangle-network/ui-components';
+import { Card, CopyWithTooltip } from '@tangle-network/ui-components';
 import Button from '@tangle-network/ui-components/components/buttons/Button';
 import IconButton from '@tangle-network/ui-components/components/buttons/IconButton';
 import { Input } from '@tangle-network/ui-components/components/Input';
@@ -283,16 +283,6 @@ const MigrationClaimPage: FC = () => {
 
   // Handle claim submission
   const handleSubmitClaim = useCallback(async () => {
-    console.log('[ClaimPage] handleSubmitClaim called');
-    console.log('[ClaimPage] Checking prerequisites:', {
-      hasSubstrateAccount: !!substrateAccount,
-      hasAmount: !!eligibility.amount,
-      hasMerkleProof: !!eligibility.merkleProof,
-      hasProof: !!proof,
-      hasValidRecipient: !!validRecipient,
-      hasPubkey: !!eligibility.pubkey,
-    });
-
     if (
       !substrateAccount ||
       !eligibility.amount ||
@@ -301,12 +291,10 @@ const MigrationClaimPage: FC = () => {
       !validRecipient ||
       !eligibility.pubkey
     ) {
-      console.error('[ClaimPage] Missing prerequisites, aborting');
       return;
     }
 
     try {
-      console.log('[ClaimPage] Calling submitClaim...');
       await submitClaim({
         ss58Address: substrateAccount.address,
         pubkey: eligibility.pubkey,
@@ -315,10 +303,8 @@ const MigrationClaimPage: FC = () => {
         zkProof: proof.zkProof,
         recipient: validRecipient,
       });
-      console.log('[ClaimPage] submitClaim returned');
-      // Note: Don't set COMPLETE here - wait for isConfirmed
     } catch (err) {
-      console.error('[ClaimPage] Failed to submit claim:', err);
+      console.error('Failed to submit claim:', err);
     }
   }, [substrateAccount, eligibility, proof, validRecipient, submitClaim]);
 
@@ -355,13 +341,17 @@ const MigrationClaimPage: FC = () => {
             <Typography variant="body1" className="text-mono-100 mb-4">
               Your TNT tokens have been claimed successfully.
             </Typography>
-            <div className="p-3 rounded-lg bg-mono-20 dark:bg-mono-170 break-all">
+            <div className="p-3 rounded-lg bg-mono-20 dark:bg-mono-170 break-all flex items-center gap-2">
               <Typography
                 variant="body2"
                 className="font-mono text-xs text-mono-100"
               >
                 {txHash}
               </Typography>
+
+              {txHash && (
+                <CopyWithTooltip textToCopy={txHash} isButton={false} />
+              )}
             </div>
           </Card>
         </motion.div>
@@ -436,6 +426,18 @@ const MigrationClaimPage: FC = () => {
                   >
                     This address has already claimed its allocation.
                   </Typography>
+                  {eligibility.claimedAmount > BigInt(0) && (
+                    <Typography
+                      variant="body2"
+                      className="text-yellow-400/70 text-center mt-1"
+                    >
+                      Claimed:{' '}
+                      {Number(
+                        formatUnits(eligibility.claimedAmount, 18),
+                      ).toLocaleString()}{' '}
+                      TNT
+                    </Typography>
+                  )}
                 </motion.div>
               )}
 
@@ -589,7 +591,7 @@ const MigrationClaimPage: FC = () => {
             </div>
 
             {/* Step 2: Polkadot Wallet */}
-            {isConnected && !eligibility.hasClaimed && (
+            {isConnected && (
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}

@@ -77,11 +77,11 @@ const useSubmitClaim = () => {
   const [relayerSuccess, setRelayerSuccess] = useState(false);
 
   const {
-    writeContract,
     data: txHash,
     isPending: isWritePending,
     error: writeError,
     reset: resetWrite,
+    writeContractAsync,
   } = useWriteContract();
 
   const {
@@ -187,10 +187,17 @@ const useSubmitClaim = () => {
             /failed to fetch|networkerror|load failed|fetch/i.test(err.message);
 
           if (isNetworkError && userAddress) {
+            // Switch to wallet mode for the next attempt.
+            // IMPORTANT: We must NOT fall through to writeContractAsync here!
+            // The async fetch above lost the browser's "user gesture" context,
+            // so MetaMask won't popup if we call it now. By returning here,
+            // we force a new click which will go directly to wallet mode
+            // (skipping the relayer fetch), preserving the user gesture.
             console.warn(
-              '[useSubmitClaim] Relayer request failed; falling back to direct wallet submission.',
+              '[useSubmitClaim] Relayer request failed; switching to wallet mode. Please click again.',
             );
             setSubmissionMode('wallet');
+            return;
           } else if (isNetworkError) {
             const isMixedContent =
               typeof window !== 'undefined' &&
@@ -218,29 +225,21 @@ const useSubmitClaim = () => {
         throw new Error('Wallet not connected');
       }
 
-      try {
-        console.log('[useSubmitClaim] Calling writeContract...');
-        writeContract({
-          address: TANGLE_MIGRATION_ADDRESS,
-          abi: TANGLE_MIGRATION_ABI,
-          functionName: 'claimWithZKProof',
-          args: [
-            args.pubkey,
-            args.amount,
-            args.merkleProof,
-            args.zkProof,
-            args.recipient,
-          ],
-        });
-        console.log(
-          '[useSubmitClaim] writeContract called (check wallet for prompt)',
-        );
-      } catch (err) {
-        console.error('[useSubmitClaim] writeContract error:', err);
-        throw err;
-      }
+      await writeContractAsync({
+        address: TANGLE_MIGRATION_ADDRESS,
+        abi: TANGLE_MIGRATION_ABI,
+        functionName: 'claimWithZKProof',
+        args: [
+          args.pubkey,
+          args.amount,
+          args.merkleProof,
+          args.zkProof,
+          args.recipient,
+        ],
+      });
+      console.log('[useSubmitClaim] writeContractAsync completed');
     },
-    [submissionMode, userAddress, writeContract],
+    [submissionMode, userAddress, writeContractAsync],
   );
 
   /**
