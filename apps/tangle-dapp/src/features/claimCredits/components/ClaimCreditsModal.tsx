@@ -28,13 +28,17 @@ type Props = {
 };
 
 const ClaimCreditsModal: FC<Props> = ({ isOpen, setIsOpen }) => {
-  const { data, refetch, isPending, isSupportedNetwork } = useCredits();
+  const { data, refetch, isPending, isSupportedNetwork, error } = useCredits();
   const { execute, status } = useClaimCreditsTx();
   const [offchainAccountId, setOffchainAccountId] = useState('');
   const [inputError, setInputError] = useState('');
   const nativeTokenSymbol = useNetworkStore(
     (state) => state.network2?.tokenSymbol,
   );
+  const errorMessage =
+    error?.message === 'Credits root mismatch'
+      ? 'Credits data is out of sync. Please try again later.'
+      : error?.message;
 
   const handleClaimCredits = useCallback(async () => {
     if (!offchainAccountId.trim()) {
@@ -42,12 +46,14 @@ const ClaimCreditsModal: FC<Props> = ({ isOpen, setIsOpen }) => {
       return;
     }
 
-    if (!execute || !data?.amount) return;
+    if (!execute || !data?.amount || !data.epochId || !data.merkleProof) return;
 
     try {
       await execute({
+        epochId: data.epochId,
         amountToClaim: data.amount,
         offchainAccountId,
+        merkleProof: data.merkleProof,
       });
       await refetch();
       setIsOpen(false);
@@ -65,9 +71,10 @@ const ClaimCreditsModal: FC<Props> = ({ isOpen, setIsOpen }) => {
     : '0';
 
   const isLoading = status === TxStatus.PROCESSING;
-  const hasCredits = data?.amount && data.amount !== BigInt(0);
+  const hasCredits =
+    data?.totalAmount !== undefined && data.totalAmount !== BigInt(0);
   const meetsMinimumThreshold = meetsMinimumClaimThreshold(data?.amount);
-  const canClaim = hasCredits && meetsMinimumThreshold;
+  const canClaim = hasCredits && meetsMinimumThreshold && !data?.hasClaimed;
 
   return (
     <Modal open={isOpen} onOpenChange={setIsOpen}>
@@ -80,7 +87,7 @@ const ClaimCreditsModal: FC<Props> = ({ isOpen, setIsOpen }) => {
           {!isSupportedNetwork ? (
             <>
               <Typography variant="body1" ta="center">
-                Credits are only available on Tangle EVM networks.
+                Credits are not available on this network.
               </Typography>
               <Button
                 isFullWidth
@@ -94,6 +101,19 @@ const ClaimCreditsModal: FC<Props> = ({ isOpen, setIsOpen }) => {
             <Typography variant="body1" ta="center">
               Loading your available credits...
             </Typography>
+          ) : error ? (
+            <>
+              <Typography variant="body1" ta="center">
+                {errorMessage}
+              </Typography>
+              <Button
+                isFullWidth
+                variant="secondary"
+                onClick={() => setIsOpen(false)}
+              >
+                Close
+              </Button>
+            </>
           ) : hasCredits ? (
             <>
               <div className="flex flex-col items-center justify-center p-4 bg-glass dark:bg-glass_dark rounded-xl border border-mono-0 dark:border-mono-180">
@@ -117,6 +137,15 @@ const ClaimCreditsModal: FC<Props> = ({ isOpen, setIsOpen }) => {
                     className="text-yellow-600 dark:text-yellow-400 mt-2"
                   >
                     Minimum 0.01 {nativeTokenSymbol} required to claim
+                  </Typography>
+                )}
+
+                {data?.hasClaimed && (
+                  <Typography
+                    variant="body2"
+                    className="text-emerald-600 dark:text-emerald-400 mt-2"
+                  >
+                    Already claimed for this epoch.
                   </Typography>
                 )}
               </div>

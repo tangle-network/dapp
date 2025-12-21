@@ -1,5 +1,7 @@
 # Migration Claim System - Implementation Plan
 
+> **Note:** The migration claim contracts, scripts, and merkle artifacts now live in `tnt-core/packages/migration-claim`. This document is retained for historical context and may be outdated.
+
 ## Overview
 
 A ZK-based claim system allowing users to migrate their Substrate chain balances to EVM by proving SR25519 key ownership. Users submit a ZK proof to claim ERC20 TNT tokens at their EVM address.
@@ -237,7 +239,7 @@ The SP1 guest program verifies SR25519 signatures using the schnorrkel library.
 ### Project Structure
 
 ```
-migration-claim-sp1/
+tnt-core/packages/migration-claim/sp1/
 ├── Cargo.toml
 ├── program/
 │   ├── Cargo.toml
@@ -497,7 +499,7 @@ libs/tangle-shared-ui/src/data/migration/
 ├── useMigrationClaim.ts
 └── merkleTree.ts
 
-contracts/migration-claim/
+tnt-core/packages/migration-claim/
 ├── src/
 │   ├── TNT.sol
 │   └── MigrationClaim.sol
@@ -506,7 +508,7 @@ contracts/migration-claim/
 └── test/
     └── MigrationClaim.t.sol
 
-migration-claim-sp1/
+tnt-core/packages/migration-claim/sp1/
 ├── program/src/main.rs
 ├── script/src/main.rs
 └── lib/src/lib.rs

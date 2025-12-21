@@ -44,6 +44,15 @@ const ClaimCreditsButton = () => {
   }, [data?.amount]);
 
   const isUnavailable = !isSupportedNetwork;
+  const errorLabel = useMemo(() => {
+    if (!error) {
+      return '';
+    }
+    if (error.message === 'Credits root mismatch') {
+      return 'Credits data out of sync';
+    }
+    return error.message;
+  }, [error]);
 
   return (
     <Dropdown>
@@ -66,7 +75,7 @@ const ClaimCreditsButton = () => {
             : isUnavailable
               ? 'Credits unavailable'
               : error
-                ? error.name
+                ? errorLabel
                 : formattedCredits}
         </span>
       </DropdownButton>
@@ -77,7 +86,7 @@ const ClaimCreditsButton = () => {
             variant="body2"
             className="text-mono-120 dark:text-mono-80"
           >
-            Credits are only available on Tangle EVM networks.
+            Credits are not available on this network.
           </Typography>
         ) : null}
 
@@ -102,6 +111,15 @@ const ClaimCreditsButton = () => {
             className="text-blue-600 dark:text-blue-400"
           >
             Minimum 0.01 required to claim
+          </Typography>
+        ) : null}
+
+        {data?.hasClaimed ? (
+          <Typography
+            variant="body2"
+            className="text-emerald-600 dark:text-emerald-400"
+          >
+            Already claimed for this epoch.
           </Typography>
         ) : null}
 
@@ -131,6 +149,10 @@ const ClaimCreditsButton = () => {
 
         <CreditsButton
           credits={data?.amount}
+          epochId={data?.epochId}
+          merkleProof={data?.merkleProof}
+          hasClaimed={data?.hasClaimed}
+          totalCredits={data?.totalAmount}
           offchainAccountId={offchainAccountId}
           setOffchainAccountId={setOffchainAccountId}
           setInputError={setInputError}
@@ -145,6 +167,10 @@ export default ClaimCreditsButton;
 
 type CreditsButtonProps = {
   credits?: bigint;
+  epochId?: bigint;
+  merkleProof?: `0x${string}`[];
+  hasClaimed?: boolean;
+  totalCredits?: bigint;
   offchainAccountId: string;
   setOffchainAccountId: (value: string) => void;
   setInputError: (value: string) => void;
@@ -153,6 +179,10 @@ type CreditsButtonProps = {
 
 const CreditsButton = ({
   credits,
+  epochId,
+  merkleProof,
+  hasClaimed,
+  totalCredits,
   offchainAccountId,
   setOffchainAccountId,
   setInputError,
@@ -166,14 +196,16 @@ const CreditsButton = ({
       return;
     }
 
-    if (execute === null || !credits) {
+    if (execute === null || !credits || !epochId || !merkleProof) {
       return null;
     }
 
     try {
       await execute({
+        epochId,
         amountToClaim: credits,
         offchainAccountId,
+        merkleProof,
       });
 
       await refetchCredits();
@@ -184,6 +216,8 @@ const CreditsButton = ({
   }, [
     credits,
     execute,
+    epochId,
+    merkleProof,
     offchainAccountId,
     refetchCredits,
     setOffchainAccountId,
@@ -191,19 +225,24 @@ const CreditsButton = ({
   ]);
 
   const isLoading = useMemo(() => status === TxStatus.PROCESSING, [status]);
-  const hasCredits = useMemo(() => credits && credits !== BigInt(0), [credits]);
+  const hasCredits = useMemo(() => {
+    return totalCredits !== undefined && totalCredits !== BigInt(0);
+  }, [totalCredits]);
   const meetsMinimumThreshold = useMemo(() => {
     return meetsMinimumClaimThreshold(credits);
   }, [credits]);
   const canClaim = useMemo(() => {
-    return hasCredits && meetsMinimumThreshold;
-  }, [hasCredits, meetsMinimumThreshold]);
+    return hasCredits && meetsMinimumThreshold && !hasClaimed;
+  }, [hasClaimed, hasCredits, meetsMinimumThreshold]);
 
   return (
     <Button
       isFullWidth
       isDisabled={
-        !canClaim || isLoading || execute === null || !offchainAccountId.trim()
+        !canClaim ||
+        isLoading ||
+        execute === null ||
+        !offchainAccountId.trim()
       }
       onClick={handleClick}
       isLoading={isLoading}

@@ -868,43 +868,34 @@ deploy_migration_contracts() {
     export TANGLE_MIGRATION_ADDRESS=""
     export MIGRATION_TNT_TOKEN_ADDRESS=""
 
-    # Check if migration output exists
-    local migration_output=""
-    if [[ -d "$DAPP_ROOT/scripts/migration/migration_output" ]]; then
-        migration_output="$DAPP_ROOT/scripts/migration/migration_output"
-    elif [[ -d "/Users/drew/webb/tangle/types/migration_output" ]]; then
-        migration_output="/Users/drew/webb/tangle/types/migration_output"
-    fi
-
-    if [[ -z "$migration_output" || ! -f "$migration_output/distribution.json" ]]; then
-        log_warn "Migration distribution.json not found - skipping TangleMigration deployment"
-        log_info "To enable: cd scripts/migration && npm install && npm run merkleize:latest"
+    # Check if migration data exists in tnt-core
+    local migration_dir="$TNT_CORE_DIR/packages/migration-claim"
+    if [[ ! -f "$migration_dir/merkle-tree.json" || ! -f "$migration_dir/evm-claims.json" ]]; then
+        log_warn "Migration merkle-tree.json or evm-claims.json not found - skipping TangleMigration deployment"
+        log_info "Ensure tnt-core/packages/migration-claim contains the merkle tree + EVM claims."
         return 0
     fi
 
-    local contract_dir="$DAPP_ROOT/contracts/migration-claim"
+    local contract_dir="$migration_dir"
     if [[ ! -d "$contract_dir" ]]; then
         log_warn "Migration contract directory not found: $contract_dir"
         return 0
     fi
 
-    # Read distribution data for exact totals using Node.js
-    log_info "Reading distribution data from $migration_output..."
+    # Read migration data for exact totals using Node.js
+    log_info "Reading migration data from $migration_dir..."
     local dist_data=$(node -e "
-const dist = require('$migration_output/distribution.json');
-const evm = require('$migration_output/evm-airdrop.json');
-let evmTotal = BigInt(0);
-for (const [addr, amt] of Object.entries(evm)) { evmTotal += BigInt(amt); }
-let substrateTotal = BigInt(0);
-for (const acc of dist.substrateAccounts) { substrateTotal += BigInt(acc.finalAmount); }
+const fs = require('fs');
+const merkle = JSON.parse(fs.readFileSync('$migration_dir/merkle-tree.json','utf8'));
+const evm = JSON.parse(fs.readFileSync('$migration_dir/evm-claims.json','utf8'));
 console.log(JSON.stringify({
-  merkleRoot: dist.metadata.merkleRoot,
-  totalSubstrate: substrateTotal.toString(),
-  totalEvm: evmTotal.toString(),
-  substrateAccounts: dist.metadata.totalSubstrateAccounts,
-  evmAccounts: dist.metadata.totalEvmAccounts
+  merkleRoot: merkle.root,
+  totalSubstrate: merkle.totalValue,
+  totalEvm: evm.totalAmount,
+  substrateAccounts: merkle.entryCount,
+  evmAccounts: evm.totalAccounts
 }));
-" 2>/dev/null) || { log_warn "Failed to read distribution data"; return 0; }
+" 2>/dev/null) || { log_warn \"Failed to read migration data\"; return 0; }
 
     local merkle_root=$(echo "$dist_data" | jq -r '.merkleRoot')
     local total_substrate=$(echo "$dist_data" | jq -r '.totalSubstrate')
@@ -916,17 +907,16 @@ console.log(JSON.stringify({
     log_info "Substrate: $(node -pe "BigInt('$total_substrate') / BigInt(1e18)") TNT ($substrate_accounts accounts)"
     log_info "EVM: $(node -pe "BigInt('$total_evm') / BigInt(1e18)") TNT ($evm_accounts accounts)"
 
-    # Sanity check: ensure the frontend proofs.json matches the merkleRoot used for deployment.
-    # This catches leaf-encoding mismatches early (e.g. SS58 string vs bytes32 pubkey).
+    # Sanity check: ensure the merkle-tree.json proofs match the merkleRoot used for deployment.
     local proofs_root=""
     proofs_root="$(node -e "
       const fs = require('fs');
-      const { decodeAddress } = require('@polkadot/util-crypto');
       const { encodeAbiParameters, keccak256, concatHex } = require('viem');
-      const proofs = JSON.parse(fs.readFileSync('$migration_output/proofs.json','utf8'));
-      const firstKey = Object.keys(proofs)[0];
-      const entry = proofs[firstKey];
-      const pubkey = '0x' + Buffer.from(decodeAddress(entry.leaf[0])).toString('hex');
+      const tree = JSON.parse(fs.readFileSync('$migration_dir/merkle-tree.json','utf8'));
+      const firstKey = Object.keys(tree.entries || {})[0];
+      if (!firstKey) { process.stdout.write(''); process.exit(0); }
+      const entry = tree.entries[firstKey];
+      const pubkey = entry.leaf[0];
       const amount = BigInt(entry.leaf[1]);
       const encoded = encodeAbiParameters([{type:'bytes32'},{type:'uint256'}],[pubkey, amount]);
       let computed = keccak256(concatHex([keccak256(encoded)]));
@@ -939,10 +929,9 @@ console.log(JSON.stringify({
     " 2>/dev/null || true)"
 
     if [[ -n "$proofs_root" && "$proofs_root" != "null" && "$proofs_root" != "$merkle_root" ]]; then
-        log_error "Migration proofs.json does not match distribution merkleRoot."
-        log_error "  distribution.json merkleRoot: $merkle_root"
-        log_error "  proofs.json computed root:     $proofs_root"
-        log_error "Regenerate migration_output via: cd scripts/migration && npm run merkleize:latest"
+        log_error "migration-claim merkle-tree.json root mismatch."
+        log_error "  merkle-tree.json root:         $merkle_root"
+        log_error "  computed root from proof:      $proofs_root"
         return 0
     fi
 
@@ -1034,17 +1023,24 @@ console.log(JSON.stringify({
         fi
     fi
 
-    # Copy proofs to frontend
+    # Copy merkle data to frontend
     local proofs_dest="$DAPP_ROOT/apps/tangle-dapp/public/data"
     mkdir -p "$proofs_dest"
-    cp "$migration_output/proofs.json" "$proofs_dest/migration-proofs.json"
+    cp "$migration_dir/merkle-tree.json" "$proofs_dest/migration-proofs.json"
+    local credits_tree="$TNT_CORE_DIR/packages/credits/credits-tree.json"
+    if [[ -f "$credits_tree" ]]; then
+        cp "$credits_tree" "$proofs_dest/credits-tree.json"
+    fi
 
     if [[ -n "${TANGLE_MIGRATION_ADDRESS:-}" && "${TANGLE_MIGRATION_ADDRESS}" != "null" ]]; then
         log_success "TangleMigration deployed: $TANGLE_MIGRATION_ADDRESS"
         log_info "Migration TNT token: ${MIGRATION_TNT_TOKEN_ADDRESS:-Not found}"
         log_info "Substrate allocation: $(node -pe "BigInt('$total_substrate') / BigInt(1e18)") TNT transferred to contract"
         log_info "EVM allocation: $(node -pe "BigInt('$total_evm') / BigInt(1e18)") TNT in deployer"
-        log_info "Proofs copied to: $proofs_dest/migration-proofs.json"
+        log_info "Merkle data copied to: $proofs_dest/migration-proofs.json"
+        if [[ -f "$credits_tree" ]]; then
+            log_info "Credits data copied to: $proofs_dest/credits-tree.json"
+        fi
     else
         log_warn "TangleMigration deployment may have failed - check /tmp/migration-deploy.log"
     fi
@@ -1061,16 +1057,10 @@ execute_evm_airdrop() {
         return 1
     fi
 
-    # Find migration output
-    local migration_output=""
-    if [[ -d "$DAPP_ROOT/scripts/migration/migration_output" ]]; then
-        migration_output="$DAPP_ROOT/scripts/migration/migration_output"
-    elif [[ -d "/Users/drew/webb/tangle/types/migration_output" ]]; then
-        migration_output="/Users/drew/webb/tangle/types/migration_output"
-    fi
-
-    if [[ -z "$migration_output" || ! -f "$migration_output/evm-airdrop.json" ]]; then
-        log_error "evm-airdrop.json not found"
+    # Find migration data
+    local migration_dir="$TNT_CORE_DIR/packages/migration-claim"
+    if [[ ! -f "$migration_dir/evm-claims.json" ]]; then
+        log_error "evm-claims.json not found in tnt-core/packages/migration-claim"
         return 1
     fi
 
@@ -1079,7 +1069,7 @@ execute_evm_airdrop() {
 
     # Execute airdrop in batches using Node.js + cast
     node -e "
-const evm = require('$migration_output/evm-airdrop.json');
+const evm = require('$migration_dir/evm-claims.json');
 const { execSync } = require('child_process');
 
 	const TNT_ADDRESS = '$MIGRATION_TNT_TOKEN_ADDRESS';
@@ -1087,15 +1077,15 @@ const { execSync } = require('child_process');
 	const PRIVATE_KEY = '$ANVIL_PRIVATE_KEY';
 	const BATCH_SIZE = 100;
 
-const entries = Object.entries(evm);
+const entries = evm.claims || [];
 console.log('Total EVM recipients:', entries.length);
 
 	let totalAirdropped = BigInt(0);
 
 	for (let i = 0; i < entries.length; i += BATCH_SIZE) {
-	    const batch = entries.slice(i, i + BATCH_SIZE);
-	    const recipients = batch.map(([addr]) => addr);
-	    const amounts = batch.map(([, amt]) => amt);
+    const batch = entries.slice(i, i + BATCH_SIZE);
+    const recipients = batch.map((entry) => entry.address);
+    const amounts = batch.map((entry) => entry.amount);
 
 	    const batchNum = Math.floor(i / BATCH_SIZE) + 1;
 	    const totalBatches = Math.ceil(entries.length / BATCH_SIZE);
@@ -1328,7 +1318,12 @@ start_claim_relayer() {
         return 1
     fi
 
-    local relayer_dir="$DAPP_ROOT/apps/claim-relayer"
+    local relayer_dir=""
+    if [[ -d "$TNT_CORE_DIR/apps/claim-relayer" ]]; then
+        relayer_dir="$TNT_CORE_DIR/apps/claim-relayer"
+    else
+        relayer_dir="$DAPP_ROOT/apps/claim-relayer"
+    fi
     if [[ ! -d "$relayer_dir" ]]; then
         log_error "Claim relayer workspace not found at $relayer_dir"
         return 1

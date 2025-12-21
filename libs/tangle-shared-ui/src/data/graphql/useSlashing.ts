@@ -43,12 +43,12 @@ interface SlashProposalsResponse {
     id: string;
     slashId: string;
     serviceId: string;
-    operator: string;
+    operator: { id: string } | null;
     proposer: string;
     amount: string;
     effectiveAmount: string;
     evidence: string;
-    proposedAt: string;
+    createdAt: string;
     executeAfter: string;
     status: string;
     disputeReason: string | null;
@@ -77,18 +77,20 @@ const fetchSlashProposals = async (
   const query = gql`
     query GetSlashProposals($operator: String!) {
       SlashProposal(
-        where: { operator: { _eq: $operator } }
-        order_by: { proposedAt: desc }
+        where: { operator: { id: { _eq: $operator } } }
+        order_by: { createdAt: desc }
       ) {
         id
         slashId
         serviceId
-        operator
+        operator {
+          id
+        }
         proposer
         amount
         effectiveAmount
         evidence
-        proposedAt
+        createdAt
         executeAfter
         status
         disputeReason
@@ -105,12 +107,12 @@ const fetchSlashProposals = async (
     return (result.data.SlashProposal ?? []).map((sp) => ({
       id: BigInt(sp.slashId),
       serviceId: BigInt(sp.serviceId),
-      operator: sp.operator as Address,
+      operator: (sp.operator?.id ?? '0x0000000000000000000000000000000000000000') as Address,
       proposer: sp.proposer as Address,
       amount: BigInt(sp.amount),
       effectiveAmount: BigInt(sp.effectiveAmount),
       evidence: sp.evidence as `0x${string}`,
-      proposedAt: BigInt(sp.proposedAt),
+      proposedAt: BigInt(sp.createdAt),
       executeAfter: BigInt(sp.executeAfter),
       status: parseSlashStatus(sp.status),
       disputeReason: sp.disputeReason,

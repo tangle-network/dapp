@@ -4,7 +4,7 @@ import {
   type Hex,
   formatUnits,
   keccak256,
-  toHex,
+  encodeAbiParameters,
   createPublicClient,
   http,
 } from 'viem';
@@ -112,10 +112,18 @@ export const generateChallenge = (
   recipientAddress: Hex,
   amount: bigint,
 ): Hex => {
-  // Challenge format: keccak256(abi.encodePacked(contractAddress, chainId, recipientAddress, amount))
-  // Including amount provides defense in depth - signature is bound to specific claim
+  // Challenge format: keccak256(abi.encode(contractAddress, chainId, recipientAddress, amount))
+  // Matches tnt-core TangleMigration expectedChallenge and SP1 program inputs.
   return keccak256(
-    `${contractAddress}${toHex(BigInt(chainId)).slice(2).padStart(64, '0')}${recipientAddress.slice(2).padStart(40, '0')}${toHex(amount).slice(2).padStart(64, '0')}` as Hex,
+    encodeAbiParameters(
+      [
+        { type: 'address' },
+        { type: 'uint256' },
+        { type: 'address' },
+        { type: 'uint256' },
+      ],
+      [contractAddress, BigInt(chainId), recipientAddress, amount],
+    ),
   );
 };
 
