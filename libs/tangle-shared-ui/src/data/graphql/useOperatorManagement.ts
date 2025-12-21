@@ -37,7 +37,7 @@ export interface OperatorRegistration {
 
 // Raw response from GraphQL
 interface OperatorRegistrationsResponse {
-  BlueprintOperator: Array<{
+  OperatorRegistration: Array<{
     id: string;
     operator: {
       id: string;
@@ -46,10 +46,12 @@ interface OperatorRegistrationsResponse {
       blueprintId: string;
       metadataUri: string | null;
     };
-    registrationTimestamp: string | null;
-    active: boolean;
-    ecdsaKey: string | null;
-    rpcEndpoint: string | null;
+    status: 'ACTIVE' | 'UNREGISTERED';
+    registeredAt: string | null;
+    updatedAt: string | null;
+    unregisteredAt: string | null;
+    ecdsaPublicKey: string | null;
+    rpcAddress: string | null;
   }>;
 }
 
@@ -60,9 +62,9 @@ const fetchOperatorRegistrations = async (
 ): Promise<OperatorRegistration[]> => {
   const query = gql`
     query GetOperatorRegistrations($operator: String!) {
-      BlueprintOperator(
-        where: { operator_: { id: { _eq: $operator } } }
-        order_by: { registrationTimestamp: desc }
+      OperatorRegistration(
+        where: { operator: { id: { _eq: $operator } } }
+        order_by: { registeredAt: desc }
       ) {
         id
         operator {
@@ -72,10 +74,12 @@ const fetchOperatorRegistrations = async (
           blueprintId
           metadataUri
         }
-        registrationTimestamp
-        active
-        ecdsaKey
-        rpcEndpoint
+        status
+        registeredAt
+        updatedAt
+        unregisteredAt
+        ecdsaPublicKey
+        rpcAddress
       }
     }
   `;
@@ -88,7 +92,7 @@ const fetchOperatorRegistrations = async (
 
     // Fetch metadata for each blueprint
     const registrations = await Promise.all(
-      (result.data.BlueprintOperator ?? []).map(async (reg) => {
+      (result.data.OperatorRegistration ?? []).map(async (reg) => {
         let blueprintName = `Blueprint #${reg.blueprint.blueprintId}`;
 
         if (reg.blueprint.metadataUri) {
@@ -114,14 +118,14 @@ const fetchOperatorRegistrations = async (
           blueprintId: BigInt(reg.blueprint.blueprintId),
           blueprintName,
           operator: reg.operator.id as Address,
-          registeredAt: reg.registrationTimestamp
-            ? BigInt(reg.registrationTimestamp)
+          registeredAt: reg.registeredAt
+            ? BigInt(reg.registeredAt)
             : BigInt(0),
           preferences: {
-            ecdsaPublicKey: (reg.ecdsaKey ?? '0x') as `0x${string}`,
-            rpcAddress: reg.rpcEndpoint ?? '',
+            ecdsaPublicKey: (reg.ecdsaPublicKey ?? '0x') as `0x${string}`,
+            rpcAddress: reg.rpcAddress ?? '',
           },
-          active: reg.active,
+          active: reg.status === 'ACTIVE',
         };
       }),
     );

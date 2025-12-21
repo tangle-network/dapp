@@ -321,16 +321,21 @@ export const useOperatorStats = (
       // Query blueprint registrations
       const blueprintQuery = `
         query GetOperatorBlueprints($operator: String!) {
-          OperatorBlueprint(where: { operatorId: { _eq: $operator } }) {
+          OperatorBlueprint(where: { operator: { id: { _eq: $operator } } }) {
             id
-            blueprintId
+            blueprint {
+              blueprintId
+            }
           }
         }
       `;
 
       const blueprintResult = await executeEnvioGraphQL<
         {
-          OperatorBlueprint: Array<{ id: string; blueprintId: string }>;
+          OperatorBlueprint: Array<{
+            id: string;
+            blueprint: { blueprintId: string };
+          }>;
         },
         { operator: string }
       >(blueprintQuery, { operator }, network);

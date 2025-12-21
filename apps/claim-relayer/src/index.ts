@@ -8,7 +8,8 @@ import {
   type Hex,
   type Address,
   parseAbi,
-  decodeErrorResult,
+  isAddress,
+  isHex,
 } from 'viem';
 import { privateKeyToAccount } from 'viem/accounts';
 import { localhost, baseSepolia, base } from 'viem/chains';
@@ -80,42 +81,27 @@ const migrationAbi = parseAbi([
   'function claimWithZKProof(bytes32 pubkey, uint256 amount, bytes32[] calldata merkleProof, bytes calldata zkProof, address recipient) external',
   'function claimed(bytes32 pubkey) external view returns (uint256)',
   'function paused() external view returns (bool)',
-  'function merkleRoot() external view returns (bytes32)',
-  'error ClaimsPaused()',
-  'error ClaimDeadlinePassed()',
-  'error InvalidMerkleProof()',
-  'error InvalidZKProof()',
-  'error AlreadyClaimed()',
-  'error ZeroAmount()',
-  'error ZeroAddress()',
-  'error NoZKVerifier()',
 ]);
-
-const tryDecodeMigrationError = (possibleError: unknown): string | null => {
-  const data =
-    (possibleError as any)?.data ??
-    (possibleError as any)?.cause?.data ??
-    (possibleError as any)?.cause?.cause?.data;
-
-  if (typeof data !== 'string' || !data.startsWith('0x') || data.length < 10) {
-    return null;
-  }
-
-  try {
-    const decoded = decodeErrorResult({ abi: migrationAbi, data: data as Hex });
-    return decoded.errorName;
-  } catch {
-    return null;
-  }
-};
 
 // ============================================================================
 // EXPRESS APP
 // ============================================================================
 
 const app = express();
+if (process.env.TRUST_PROXY === 'true') {
+  app.set('trust proxy', 1);
+}
 app.use(cors());
 app.use(express.json());
+
+setInterval(() => {
+  const now = Date.now();
+  for (const [ip, entry] of rateLimitMap.entries()) {
+    if (now >= entry.resetTime) {
+      rateLimitMap.delete(ip);
+    }
+  }
+}, RATE_LIMIT_WINDOW_MS);
 
 // Health check
 app.get('/health', async (_req, res) => {
@@ -187,17 +173,56 @@ app.post('/claim', async (req, res) => {
     }
 
     // Validate hex formats
-    if (!pubkey.startsWith('0x') || pubkey.length !== 66) {
+    if (!isHex(pubkey, { size: 32 })) {
       return res.status(400).json({
         error: 'Invalid pubkey',
         message: 'Pubkey must be a 32-byte hex string (0x + 64 chars)',
       });
     }
 
-    if (!recipient.startsWith('0x') || recipient.length !== 42) {
+    if (!isAddress(recipient)) {
       return res.status(400).json({
         error: 'Invalid recipient',
         message: 'Recipient must be a valid Ethereum address',
+      });
+    }
+
+    if (!Array.isArray(merkleProof) || merkleProof.length === 0) {
+      return res.status(400).json({
+        error: 'Invalid merkle proof',
+        message: 'Merkle proof must be a non-empty array',
+      });
+    }
+
+    for (const proof of merkleProof) {
+      if (!isHex(proof, { size: 32 })) {
+        return res.status(400).json({
+          error: 'Invalid merkle proof',
+          message: 'Each merkle proof entry must be a bytes32 hex string',
+        });
+      }
+    }
+
+    if (!isHex(zkProof)) {
+      return res.status(400).json({
+        error: 'Invalid zk proof',
+        message: 'ZK proof must be a hex string',
+      });
+    }
+
+    const amountStr = typeof amount === 'string' ? amount : String(amount);
+    if (!/^\d+$/.test(amountStr)) {
+      return res.status(400).json({
+        error: 'Invalid amount',
+        message: 'Amount must be a base-10 string',
+      });
+    }
+
+    const amountWei = BigInt(amountStr);
+    if (amountWei <= BigInt(0)) {
+      return res.status(400).json({
+        error: 'Invalid amount',
+        message: 'Amount must be greater than zero',
       });
     }
 
@@ -235,18 +260,21 @@ app.post('/claim', async (req, res) => {
     );
 
     // Submit the claim transaction
-    const hash = await walletClient.writeContract({
+    const simulation = await publicClient.simulateContract({
       address: MIGRATION_CONTRACT,
       abi: migrationAbi,
       functionName: 'claimWithZKProof',
       args: [
         pubkey as Hex,
-        BigInt(amount),
+        amountWei,
         merkleProof as Hex[],
         zkProof as Hex,
         recipient as Address,
       ],
+      account: account.address,
     });
+
+    const hash = await walletClient.writeContract(simulation.request);
 
     console.log(`[CLAIM] Transaction submitted: ${hash}`);
 
@@ -269,10 +297,6 @@ app.post('/claim', async (req, res) => {
 
     // Parse revert reason if available
     let message = error instanceof Error ? error.message : 'Unknown error';
-    const decoded = tryDecodeMigrationError(error);
-    if (decoded) {
-      message = decoded;
-    }
 
     if (message.includes('InvalidMerkleProof')) {
       message = 'Invalid merkle proof - this address may not be eligible';
@@ -329,11 +353,20 @@ app.get('/status/:pubkey', async (req, res) => {
 // START SERVER
 // ============================================================================
 
-app.listen(PORT, () => {
-  console.log('');
-  console.log(
-    '═══════════════════════════════════════════════════════════════',
-  );
+const start = async () => {
+  const rpcChainId = await publicClient.getChainId();
+  if (rpcChainId !== CHAIN_ID) {
+    console.error(
+      `ERROR: RPC chainId ${rpcChainId} does not match CHAIN_ID ${CHAIN_ID}`,
+    );
+    process.exit(1);
+  }
+
+  app.listen(PORT, () => {
+    console.log('');
+    console.log(
+      '═══════════════════════════════════════════════════════════════',
+    );
   console.log('  TNT Migration Claim Relayer');
   console.log(
     '═══════════════════════════════════════════════════════════════',
@@ -352,4 +385,10 @@ app.listen(PORT, () => {
   console.log(`  POST /claim           - Submit a gasless claim`);
   console.log(`  GET  /status/:pubkey  - Check claim status`);
   console.log('');
+  });
+};
+
+start().catch((error) => {
+  console.error('Failed to start relayer:', error);
+  process.exit(1);
 });

@@ -1,9 +1,11 @@
 import { calculateTypedChainId } from '@tangle-network/dapp-types/TypedChainId';
 import isDefined from '@tangle-network/dapp-types/utils/isDefined';
 import ListModal from '@tangle-network/tangle-shared-ui/components/ListModal';
-import { Card } from '@tangle-network/ui-components';
+import { Card, Input } from '@tangle-network/ui-components';
 import Button from '@tangle-network/ui-components/components/buttons/Button';
 import { Modal } from '@tangle-network/ui-components/components/Modal';
+import { ModalContent } from '@tangle-network/ui-components/components/Modal/ModalContent';
+import { ModalHeader } from '@tangle-network/ui-components/components/Modal/ModalHeader';
 import { TransactionInputCard } from '@tangle-network/ui-components/components/TransactionInputCard';
 import { useModal } from '@tangle-network/ui-components/hooks/useModal';
 import { Typography } from '@tangle-network/ui-components/typography/Typography';
@@ -22,12 +24,16 @@ import {
   useCreateVault,
   useCreateAllBlueprintsVault,
 } from '@tangle-network/tangle-shared-ui/data/liquidDelegation';
-import { useRestakeAssets } from '@tangle-network/tangle-shared-ui/data/graphql';
-import { useOperatorMap } from '@tangle-network/tangle-shared-ui/data/graphql';
+import {
+  useBlueprintsWithMetadata,
+  useOperatorMap,
+  useRestakeAssets,
+} from '@tangle-network/tangle-shared-ui/data/graphql';
 import { TxStatus } from '@tangle-network/tangle-shared-ui/hooks/useContractWrite';
 import filterBy from '@tangle-network/tangle-shared-ui/utils/filterBy';
 import { formatUnits } from 'viem';
 import { Switcher } from '@tangle-network/ui-components/components/Switcher';
+import { CheckBox } from '@tangle-network/ui-components/components/CheckBox';
 
 type CreateVaultFormFields = {
   operator: Address;
@@ -48,12 +54,21 @@ const CreateVaultForm: FC = () => {
 
   const { assets, isLoading: isLoadingAssets } = useRestakeAssets();
   const { data: operatorMap, isLoading: isLoadingOperators } = useOperatorMap();
+  const {
+    data: blueprints,
+    isLoading: isLoadingBlueprints,
+    error: blueprintsError,
+  } = useBlueprintsWithMetadata();
 
   const { status: createStatus, execute: executeCreate } = useCreateVault();
   const { status: createAllStatus, execute: executeCreateAll } =
     useCreateAllBlueprintsVault();
 
   const [useAllBlueprints, setUseAllBlueprints] = useState(true);
+  const [selectedBlueprintIds, setSelectedBlueprintIds] = useState<bigint[]>(
+    [],
+  );
+  const [blueprintSearch, setBlueprintSearch] = useState('');
 
   const {
     register,
@@ -109,6 +124,12 @@ const CreateVaultForm: FC = () => {
     close: closeChainModal,
     update: updateChainModal,
   } = useModal();
+  const {
+    status: blueprintModalOpen,
+    open: openBlueprintModal,
+    close: closeBlueprintModal,
+    update: updateBlueprintModal,
+  } = useModal();
 
   const selectedOperator = watch('operator');
   const selectedAsset = watch('asset');
@@ -135,6 +156,44 @@ const CreateVaultForm: FC = () => {
     return assets.get(selectedAsset) ?? null;
   }, [selectedAsset, assets]);
 
+  const blueprintItems = useMemo(() => {
+    return blueprints ?? [];
+  }, [blueprints]);
+
+  const filteredBlueprints = useMemo(() => {
+    if (!blueprintItems.length) return [];
+    const query = blueprintSearch.trim();
+    if (query.length === 0) return blueprintItems;
+    return blueprintItems.filter((bp) =>
+      filterBy(query, [
+        bp.blueprintId.toString(),
+        bp.name,
+        bp.category,
+        bp.owner,
+      ]),
+    );
+  }, [blueprintItems, blueprintSearch]);
+
+  const selectedBlueprintNames = useMemo(() => {
+    if (selectedBlueprintIds.length === 0) return [];
+    const nameMap = new Map(
+      blueprintItems.map((bp) => [bp.blueprintId.toString(), bp.name]),
+    );
+    return selectedBlueprintIds.map(
+      (id) => nameMap.get(id.toString()) ?? `Blueprint #${id.toString()}`,
+    );
+  }, [blueprintItems, selectedBlueprintIds]);
+
+  const selectedBlueprintSummary = useMemo(() => {
+    if (selectedBlueprintNames.length === 0) return 'No blueprints selected';
+    if (selectedBlueprintNames.length <= 3) {
+      return selectedBlueprintNames.join(', ');
+    }
+    const [first, second, third] = selectedBlueprintNames;
+    const remaining = selectedBlueprintNames.length - 3;
+    return `${first}, ${second}, ${third} +${remaining} more`;
+  }, [selectedBlueprintNames]);
+
   const handleOperatorSelection = useCallback(
     (operator: OperatorItem) => {
       setValue('operator', operator.address);
@@ -151,13 +210,37 @@ const CreateVaultForm: FC = () => {
     [closeAssetModal, setValue],
   );
 
+  const toggleBlueprintSelection = useCallback((id: bigint) => {
+    setSelectedBlueprintIds((prev) => {
+      const exists = prev.some((value) => value === id);
+      if (exists) {
+        return prev.filter((value) => value !== id);
+      }
+      return [...prev, id];
+    });
+  }, []);
+
+  const handleAllBlueprintsChange = useCallback(
+    (checked: boolean) => {
+      setUseAllBlueprints(checked);
+      if (checked) {
+        setSelectedBlueprintIds([]);
+      } else {
+        openBlueprintModal();
+      }
+    },
+    [openBlueprintModal],
+  );
+
   const displayError = useMemo(() => {
     return !selectedOperator
       ? 'Select Operator'
       : !selectedAsset
         ? 'Select Asset'
+        : !useAllBlueprints && selectedBlueprintIds.length === 0
+          ? 'Select Blueprints'
         : undefined;
-  }, [selectedOperator, selectedAsset]);
+  }, [selectedOperator, selectedAsset, selectedBlueprintIds.length, useAllBlueprints]);
 
   const isTransacting =
     isSubmitting ||
@@ -178,16 +261,26 @@ const CreateVaultForm: FC = () => {
       if (useAllBlueprints && executeCreateAll) {
         await executeCreateAll({ operator, asset });
       } else if (executeCreate) {
+        if (selectedBlueprintIds.length === 0) {
+          return;
+        }
         await executeCreate({
           operator,
           asset,
-          blueprintIds: [BigInt(0)], // Default to blueprint 0 for now
+          blueprintIds: selectedBlueprintIds,
         });
       }
 
       reset();
     },
-    [isReady, useAllBlueprints, executeCreate, executeCreateAll, reset],
+    [
+      executeCreate,
+      executeCreateAll,
+      isReady,
+      reset,
+      selectedBlueprintIds,
+      useAllBlueprints,
+    ],
   );
 
   return (
@@ -257,10 +350,30 @@ const CreateVaultForm: FC = () => {
               </div>
               <Switcher
                 checked={useAllBlueprints}
-                onCheckedChange={setUseAllBlueprints}
+                onCheckedChange={handleAllBlueprintsChange}
               />
             </div>
           </div>
+
+          {!useAllBlueprints && (
+            <div className="p-3 rounded-lg bg-mono-20 dark:bg-mono-160 space-y-2">
+              <div className="flex items-center justify-between">
+                <Typography variant="body1" fw="medium">
+                  Selected Blueprints
+                </Typography>
+                <Button
+                  size="sm"
+                  variant="utility"
+                  onClick={openBlueprintModal}
+                >
+                  Choose
+                </Button>
+              </div>
+              <Typography variant="body2" className="text-mono-100">
+                {selectedBlueprintSummary}
+              </Typography>
+            </div>
+          )}
 
           <div className="p-3 rounded-lg bg-blue-50/10 border border-blue-50/20">
             <Typography variant="body2" className="text-blue-50">
@@ -385,6 +498,75 @@ const CreateVaultForm: FC = () => {
             closeChainModal();
           }}
         />
+      </Modal>
+
+      <Modal open={blueprintModalOpen} onOpenChange={updateBlueprintModal}>
+        <ModalContent size="md" className="max-h-[600px]">
+          <ModalHeader className="pb-4">Select Blueprints</ModalHeader>
+          <div className="px-4 pb-4 md:px-9">
+            <Input
+              id="create-vault-blueprint-search"
+              isControlled
+              placeholder="Search blueprints..."
+              value={blueprintSearch}
+              onChange={setBlueprintSearch}
+              inputClassName="placeholder:text-mono-80 dark:placeholder:text-mono-120"
+            />
+          </div>
+          <hr className="w-full border-b border-mono-40 dark:border-mono-170" />
+          <div className="max-h-[420px] overflow-y-auto px-4 py-4 md:px-9 space-y-3">
+            {isLoadingBlueprints && (
+              <Typography variant="body2" className="text-mono-100">
+                Loading blueprints...
+              </Typography>
+            )}
+            {blueprintsError && (
+              <Typography variant="body2" className="text-red-50">
+                Failed to load blueprints.
+              </Typography>
+            )}
+            {!isLoadingBlueprints &&
+              !blueprintsError &&
+              filteredBlueprints.length === 0 && (
+                <Typography variant="body2" className="text-mono-100">
+                  No blueprints found.
+                </Typography>
+              )}
+            {!isLoadingBlueprints &&
+              !blueprintsError &&
+              filteredBlueprints.map((bp) => {
+                const blueprintId = bp.blueprintId;
+                const isChecked = selectedBlueprintIds.some(
+                  (value) => value === blueprintId,
+                );
+                return (
+                  <div
+                    key={bp.id}
+                    className="flex items-start gap-3 p-2 rounded-lg bg-mono-10 dark:bg-mono-170"
+                  >
+                    <CheckBox
+                      id={`blueprint-${bp.blueprintId.toString()}`}
+                      isChecked={isChecked}
+                      onChange={() => toggleBlueprintSelection(blueprintId)}
+                      labelVariant="body2"
+                    >
+                      <div className="flex flex-col">
+                        <span className="font-medium">{bp.name}</span>
+                        <span className="text-xs text-mono-100">
+                          Blueprint #{bp.blueprintId.toString()}
+                        </span>
+                      </div>
+                    </CheckBox>
+                  </div>
+                );
+              })}
+          </div>
+          <div className="px-4 pb-4 md:px-9">
+            <Button isFullWidth onClick={closeBlueprintModal}>
+              Done
+            </Button>
+          </div>
+        </ModalContent>
       </Modal>
     </StyleContainer>
   );

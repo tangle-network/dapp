@@ -173,14 +173,19 @@ Deploy on any VPS (DigitalOcean, AWS EC2, etc.) with Node.js
 Convert to serverless function - the endpoint is stateless
 
 ### Option 3: Docker
-```dockerfile
-FROM node:20-alpine
-WORKDIR /app
-COPY package.json yarn.lock ./
-RUN yarn install --frozen-lockfile
-COPY . .
-RUN yarn build
-CMD ["yarn", "start"]
+Build the image:
+```bash
+docker build -t tnt-claim-relayer apps/claim-relayer
+```
+
+Run with an env file:
+```bash
+docker run --rm -p 3001:3001 --env-file apps/claim-relayer/.env tnt-claim-relayer
+```
+
+Or pull from GHCR (replace `ORG`):
+```bash
+docker run --rm -p 3001:3001 --env-file apps/claim-relayer/.env ghcr.io/ORG/tnt-claim-relayer:latest
 ```
 
 ## Monitoring

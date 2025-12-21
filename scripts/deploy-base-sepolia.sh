@@ -103,6 +103,7 @@ if [[ -f "$MIGRATION_MANIFEST_PATH" ]]; then
   migration_addr="$(node -e "const j=JSON.parse(require('fs').readFileSync(process.argv[1],'utf8'));process.stdout.write(String(j.tangleMigration||''));" "$MIGRATION_MANIFEST_PATH")"
   zk_verifier="$(node -e "const j=JSON.parse(require('fs').readFileSync(process.argv[1],'utf8'));process.stdout.write(String(j.zkVerifier||''));" "$MIGRATION_MANIFEST_PATH")"
   merkle_root="$(node -e "const j=JSON.parse(require('fs').readFileSync(process.argv[1],'utf8'));process.stdout.write(String(j.merkleRoot||''));" "$MIGRATION_MANIFEST_PATH")"
+  credits_addr="$(node -e "const fs=require('fs');const p=process.argv[1];if(!p||!fs.existsSync(p)){process.stdout.write('');process.exit(0);}const j=JSON.parse(fs.readFileSync(p,'utf8'));process.stdout.write(String(j.credits||''));" "$FULL_DEPLOY_MANIFEST")"
 
   env_file="$ROOT_DIR/apps/tangle-dapp/.env.local"
   if [[ -f "$env_file" ]]; then
@@ -111,6 +112,7 @@ if [[ -f "$MIGRATION_MANIFEST_PATH" ]]; then
     sed -i.bak '/^VITE_ZK_VERIFIER_ADDRESS=/d' "$env_file" 2>/dev/null || true
     sed -i.bak '/^VITE_MIGRATION_MERKLE_ROOT=/d' "$env_file" 2>/dev/null || true
     sed -i.bak '/^VITE_MIGRATION_RPC_URL=/d' "$env_file" 2>/dev/null || true
+    sed -i.bak '/^VITE_CREDITS_ADDRESS_84532=/d' "$env_file" 2>/dev/null || true
     rm -f "$env_file.bak"
   fi
 
@@ -122,12 +124,18 @@ VITE_TANGLE_MIGRATION_ADDRESS=$migration_addr
 VITE_ZK_VERIFIER_ADDRESS=$zk_verifier
 VITE_MIGRATION_MERKLE_ROOT=$merkle_root
 VITE_MIGRATION_RPC_URL=$BASE_SEPOLIA_RPC
+${credits_addr:+VITE_CREDITS_ADDRESS_84532=$credits_addr}
 EOF
 fi
 
 mkdir -p "$ROOT_DIR/apps/tangle-dapp/public/data"
 cp "$TNT_CORE_DIR/packages/migration-claim/merkle-tree.json" \
   "$ROOT_DIR/apps/tangle-dapp/public/data/migration-proofs.json"
+
+credits_tree="$TNT_CORE_DIR/packages/credits/credits-tree.json"
+if [[ -f "$credits_tree" ]]; then
+  cp "$credits_tree" "$ROOT_DIR/apps/tangle-dapp/public/data/credits-tree.json"
+fi
 
 echo ""
 echo "Done."

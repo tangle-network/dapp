@@ -1,53 +1,78 @@
-import { useCallback } from 'react';
-import { toHex } from 'viem';
-import useEvmPrecompileCall, {
-  EvmTxFactory,
-} from '@tangle-network/tangle-shared-ui/hooks/useEvmPrecompileCall';
-import { PrecompileAddress } from '@tangle-network/tangle-shared-ui/constants/evmPrecompiles';
-import CREDITS_PRECOMPILE_ABI from '@tangle-network/tangle-shared-ui/abi/credits';
-import EVMChainId from '@tangle-network/dapp-types/EVMChainId';
+import { useMemo } from 'react';
+import { Address, Hex, keccak256, toHex, zeroAddress } from 'viem';
 import { useChainId } from 'wagmi';
+import useContractWrite, {
+  TxStatus as ContractTxStatus,
+} from '@tangle-network/tangle-shared-ui/hooks/useContractWrite';
+import { TxStatus as SubstrateTxStatus } from '@tangle-network/tangle-shared-ui/hooks/useSubstrateTx';
+import CREDITS_MERKLE_ABI from '@tangle-network/tangle-shared-ui/abi/creditsMerkle';
+import { resolveCreditsAddress } from './resolveCreditsAddress';
 
 type Context = {
+  epochId: bigint;
   amountToClaim: bigint;
   offchainAccountId: string;
+  merkleProof: Hex[];
 };
-
-const CREDITS_SUPPORTED_EVM_CHAIN_IDS = new Set<number>([
-  EVMChainId.TangleLocalEVM,
-  EVMChainId.TangleTestnetEVM,
-  EVMChainId.TangleMainnetEVM,
-]);
 
 const useClaimCreditsTx = () => {
   const chainId = useChainId();
-  const isSupportedNetwork = CREDITS_SUPPORTED_EVM_CHAIN_IDS.has(chainId);
+  const creditsAddress = resolveCreditsAddress(chainId);
+  const isSupportedNetwork = creditsAddress !== null;
 
-  const evmTxFactory: EvmTxFactory<
-    typeof CREDITS_PRECOMPILE_ABI,
-    'claim_credits',
-    Context
-  > = useCallback((context) => {
-    return {
-      functionName: 'claim_credits',
-      arguments: [
+  const contractTx = useContractWrite(
+    CREDITS_MERKLE_ABI,
+    (context: Context) => ({
+      address: (creditsAddress ?? zeroAddress) as Address,
+      abi: CREDITS_MERKLE_ABI,
+      functionName: 'claim' as const,
+      args: [
+        context.epochId,
         context.amountToClaim,
-        toHex(new TextEncoder().encode(context.offchainAccountId)),
-      ],
-    };
-  }, []);
-
-  const tx = useEvmPrecompileCall(
-    CREDITS_PRECOMPILE_ABI,
-    PrecompileAddress.CREDITS,
-    evmTxFactory,
-    () => 'Credits claimed successfully',
+        encodeOffchainAccountId(context.offchainAccountId),
+        context.merkleProof,
+      ] as const,
+    }),
+    {
+      txName: 'claim credits',
+      getSuccessMessage: () => 'Credits claimed successfully',
+    },
   );
 
+  const mappedContractStatus = useMemo(() => {
+    switch (contractTx.status) {
+      case ContractTxStatus.NOT_YET_INITIATED:
+        return SubstrateTxStatus.NOT_YET_INITIATED;
+      case ContractTxStatus.PROCESSING:
+        return SubstrateTxStatus.PROCESSING;
+      case ContractTxStatus.COMPLETE:
+        return SubstrateTxStatus.COMPLETE;
+      case ContractTxStatus.ERROR:
+        return SubstrateTxStatus.ERROR;
+      default:
+        return SubstrateTxStatus.NOT_YET_INITIATED;
+    }
+  }, [contractTx.status]);
+
   return {
-    ...tx,
-    execute: isSupportedNetwork ? tx.execute : null,
+    ...contractTx,
+    status: mappedContractStatus,
+    execute: isSupportedNetwork ? contractTx.execute : null,
   };
 };
 
 export default useClaimCreditsTx;
+
+const encodeOffchainAccountId = (value: string): Hex => {
+  const trimmed = value.trim();
+  if (!trimmed) {
+    return ('0x' + '00'.repeat(32)) as Hex;
+  }
+
+  const bytes = new TextEncoder().encode(trimmed);
+  if (bytes.length <= 32) {
+    return toHex(bytes, { size: 32 });
+  }
+
+  return keccak256(toHex(bytes));
+};

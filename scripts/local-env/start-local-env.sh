@@ -1027,6 +1027,10 @@ console.log(JSON.stringify({
     local proofs_dest="$DAPP_ROOT/apps/tangle-dapp/public/data"
     mkdir -p "$proofs_dest"
     cp "$migration_dir/merkle-tree.json" "$proofs_dest/migration-proofs.json"
+    local credits_tree="$TNT_CORE_DIR/packages/credits/credits-tree.json"
+    if [[ -f "$credits_tree" ]]; then
+        cp "$credits_tree" "$proofs_dest/credits-tree.json"
+    fi
 
     if [[ -n "${TANGLE_MIGRATION_ADDRESS:-}" && "${TANGLE_MIGRATION_ADDRESS}" != "null" ]]; then
         log_success "TangleMigration deployed: $TANGLE_MIGRATION_ADDRESS"
@@ -1034,6 +1038,9 @@ console.log(JSON.stringify({
         log_info "Substrate allocation: $(node -pe "BigInt('$total_substrate') / BigInt(1e18)") TNT transferred to contract"
         log_info "EVM allocation: $(node -pe "BigInt('$total_evm') / BigInt(1e18)") TNT in deployer"
         log_info "Merkle data copied to: $proofs_dest/migration-proofs.json"
+        if [[ -f "$credits_tree" ]]; then
+            log_info "Credits data copied to: $proofs_dest/credits-tree.json"
+        fi
     else
         log_warn "TangleMigration deployment may have failed - check /tmp/migration-deploy.log"
     fi
@@ -1311,7 +1318,12 @@ start_claim_relayer() {
         return 1
     fi
 
-    local relayer_dir="$DAPP_ROOT/apps/claim-relayer"
+    local relayer_dir=""
+    if [[ -d "$TNT_CORE_DIR/apps/claim-relayer" ]]; then
+        relayer_dir="$TNT_CORE_DIR/apps/claim-relayer"
+    else
+        relayer_dir="$DAPP_ROOT/apps/claim-relayer"
+    fi
     if [[ ! -d "$relayer_dir" ]]; then
         log_error "Claim relayer workspace not found at $relayer_dir"
         return 1

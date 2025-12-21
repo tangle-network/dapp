@@ -410,13 +410,13 @@ const fetchBlueprintOperators = async (
   const query = `
     query GetBlueprintOperators($blueprintId: String!) {
       OperatorBlueprint(
-        where: { blueprintId: { _eq: $blueprintId } }
+        where: { blueprint: { blueprintId: { _eq: $blueprintId } } }
       ) {
         operator {
           id
-          delegationCount
-          stake
-          status
+          restakingDelegationCount
+          restakingStake
+          restakingStatus
         }
       }
     }
@@ -428,9 +428,9 @@ const fetchBlueprintOperators = async (
         OperatorBlueprint: Array<{
           operator: {
             id: string;
-            delegationCount: string;
-            stake: string;
-            status: string;
+            restakingDelegationCount: string | null;
+            restakingStake: string | null;
+            restakingStatus: string | null;
           };
         }>;
       },
@@ -441,8 +441,8 @@ const fetchBlueprintOperators = async (
       address: ob.operator.id,
       identityName: undefined,
       concentrationPercentage: null,
-      restakersCount: Number(ob.operator.delegationCount),
-      selfBondedAmount: BigInt(ob.operator.stake),
+      restakersCount: Number(ob.operator.restakingDelegationCount ?? '0'),
+      selfBondedAmount: BigInt(ob.operator.restakingStake ?? '0'),
       tvlInUsd: null,
       vaultTokens: [], // Will be populated when we have delegation data
       isDelegated: false,
