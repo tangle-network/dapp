@@ -28,10 +28,12 @@ const KNOWN_TOKENS: Record<string, TokenMetadata> = {
 };
 
 // Known token addresses -> symbol mapping (from local Anvil deployment)
-// These addresses are from the current tnt-core LocalTestnet deployment
+// These addresses are from the current tnt-core deployments
 const KNOWN_TOKEN_ADDRESSES: Record<string, string> = {
   // TNT (bond asset) from tnt-core LocalTestnetSetup (Anvil 31337)
   '0x0165878a594ca255338adfa4d48449f69242eb8f': 'TNT',
+  // TNT (Base Sepolia)
+  '0xa9ffe787eea7f385dac8481cd8bdc3d9194aeb5a': 'TNT',
   '0x4a679253410272dd5232b3ff7cf5dbb88f295319': 'USDC',
   '0x7a2088a1bfc9d81c55368ae168c2c02570cb814f': 'USDT',
   '0x09635f643e140090a9a8dcd712ed6285858cebef': 'DAI',

@@ -46,16 +46,16 @@ export const LOCAL_CONTRACTS: ContractAddresses = {
   liquidDelegationFactory: '0xCA8c8688914e0F7096c920146cd0Ad85cD7Ae8b9',
 };
 
-// Base Sepolia testnet addresses (local development)
+// Base Sepolia testnet addresses (tnt-core v2 deployment)
 export const BASE_SEPOLIA_CONTRACTS: ContractAddresses = {
-  tangle: '0x62281eac026f6c6a65708157e47151b964216303',
-  multiAssetDelegation: '0x96e682cc18874ec6cdb1b2a7f0a5f541e1fbaeb3',
+  tangle: '0x1Be58d12620Ecc8Ba9D780fEEc2596510D75a933',
+  multiAssetDelegation: '0x787dd1De4099ff8C68bFac11B82E4Aed52c7F1e1',
   masterBlueprintServiceManager: '0x0000000000000000000000000000000000000000', // Not in base-sepolia manifest
-  operatorStatusRegistry: '0x17746107e0b4cfaf4c96140f5e501bf10e740b65',
-  rewardVaults: '0x37979744708141ec1541b9b70faa7da8d0cf2d23',
-  inflationPool: '0x8152f13c37576e1a2cd74d18213105ecf816d5de',
-  credits: '0x0000000000000000000000000000000000000000', // Set via env or future deploys
-  liquidDelegationFactory: '0xF8e31cb472bc70500f08Cd84917E5A1912Ec8397',
+  operatorStatusRegistry: '0x20258c5e4CbA66D4819a06045fF00D15775E64fB',
+  rewardVaults: '0x2963a51FEC3E2cF51B19B848942D91296448a353',
+  inflationPool: '0xE620F87540724A0ceBDeE9796Dd8580e02DD4911',
+  credits: '0x758226E04478541FCdac605e1f235E2956259A10',
+  liquidDelegationFactory: '0x0000000000000000000000000000000000000000',
 };
 
 // Base mainnet addresses (to be updated after deployment)
@@ -146,9 +146,9 @@ export const getContractsByChainId = (chainId: number): ContractAddresses => {
 // These are separate from the main restaking contracts
 
 export const BASE_SEPOLIA_MIGRATION: MigrationClaimAddresses = {
-  tntToken: '0x0000000000000000000000000000000000000000', // To be deployed
-  migrationClaim: '0x0000000000000000000000000000000000000000', // To be deployed
-  treasury: '0x0000000000000000000000000000000000000000', // To be set
+  tntToken: '0xa9FfE787EEa7f385dAc8481Cd8bdc3d9194aEb5A',
+  migrationClaim: '0xD378D4ce9ed8CE23183Cc3AFe4d7991548E10C7B',
+  treasury: '0x89db5277A310C473d515891cafCD4E66b8A7F06F',
 };
 
 export const BASE_MAINNET_MIGRATION: MigrationClaimAddresses = {
