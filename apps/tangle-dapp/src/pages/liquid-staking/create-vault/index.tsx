@@ -247,8 +247,13 @@ const CreateVaultForm: FC = () => {
         ? 'Select Asset'
         : !useAllBlueprints && selectedBlueprintIds.length === 0
           ? 'Select Blueprints'
-        : undefined;
-  }, [selectedOperator, selectedAsset, selectedBlueprintIds.length, useAllBlueprints]);
+          : undefined;
+  }, [
+    selectedOperator,
+    selectedAsset,
+    selectedBlueprintIds.length,
+    useAllBlueprints,
+  ]);
 
   const isTransacting =
     isSubmitting ||

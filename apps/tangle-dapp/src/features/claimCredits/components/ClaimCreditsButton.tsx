@@ -239,10 +239,7 @@ const CreditsButton = ({
     <Button
       isFullWidth
       isDisabled={
-        !canClaim ||
-        isLoading ||
-        execute === null ||
-        !offchainAccountId.trim()
+        !canClaim || isLoading || execute === null || !offchainAccountId.trim()
       }
       onClick={handleClick}
       isLoading={isLoading}

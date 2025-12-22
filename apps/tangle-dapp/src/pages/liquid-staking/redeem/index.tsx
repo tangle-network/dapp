@@ -277,11 +277,16 @@ const LiquidStakingRedeemForm: FC = () => {
                           <div className="flex items-center gap-2">
                             <TokenIcon
                               size="lg"
-                              name={vaultAsset?.metadata.symbol ?? selectedVault.symbol}
+                              name={
+                                vaultAsset?.metadata.symbol ??
+                                selectedVault.symbol
+                              }
                             />
                             <div className="flex flex-col">
                               <Typography variant="h5" fw="bold">
-                                {vaultAsset?.metadata.symbol ?? selectedVault.symbol} Vault
+                                {vaultAsset?.metadata.symbol ??
+                                  selectedVault.symbol}{' '}
+                                Vault
                               </Typography>
                               <Typography
                                 variant="body3"
@@ -440,10 +445,17 @@ const LiquidStakingRedeemForm: FC = () => {
                         {approxAssetValue > BigInt(0) && (
                           <span className="text-mono-120 dark:text-mono-100 font-normal">
                             {' '}
-                            ({getRoundedAmountString(
-                              Number(formatUnits(approxAssetValue, vaultAsset?.metadata.decimals ?? 18)),
+                            (
+                            {getRoundedAmountString(
+                              Number(
+                                formatUnits(
+                                  approxAssetValue,
+                                  vaultAsset?.metadata.decimals ?? 18,
+                                ),
+                              ),
                               5,
-                            )} {vaultAsset?.metadata.symbol ?? ''})
+                            )}{' '}
+                            {vaultAsset?.metadata.symbol ?? ''})
                           </span>
                         )}
                       </Typography>

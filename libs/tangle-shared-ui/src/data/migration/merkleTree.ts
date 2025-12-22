@@ -89,7 +89,9 @@ export interface ProofEntry {
 /**
  * Full proofs data structure (legacy proofs.json or tnt-core merkle-tree.json)
  */
-export type MigrationProofsData = Record<string, RawProofEntry> | MerkleTreeData;
+export type MigrationProofsData =
+  | Record<string, RawProofEntry>
+  | MerkleTreeData;
 
 /**
  * Claim data for a specific address (returned by lookupClaim)
@@ -129,7 +131,9 @@ export const parseProofsJson = (jsonString: string): MigrationProofsData => {
  * Load and parse migration proofs data
  * This is the main entry point for loading merkle-tree.json (tnt-core)
  */
-const normalizeProofsData = (data: MigrationProofsData): MigrationProofsData => {
+const normalizeProofsData = (
+  data: MigrationProofsData,
+): MigrationProofsData => {
   if (isMerkleTreeData(data)) {
     return data;
   }
@@ -178,7 +182,9 @@ export const loadMerkleTreeData = (json: string): MigrationProofsData => {
   return normalizeProofsData(parsed);
 };
 
-const isMerkleTreeData = (data: MigrationProofsData): data is MerkleTreeData => {
+const isMerkleTreeData = (
+  data: MigrationProofsData,
+): data is MerkleTreeData => {
   return typeof data === 'object' && data !== null && 'entries' in data;
 };
 
@@ -304,7 +310,8 @@ export const getMigrationStats = (proofsData: MigrationProofsData) => {
           BigInt(0),
         );
     return {
-      totalAccounts: proofsData.entryCount || Object.keys(proofsData.entries).length,
+      totalAccounts:
+        proofsData.entryCount || Object.keys(proofsData.entries).length,
       totalAmount,
     };
   }

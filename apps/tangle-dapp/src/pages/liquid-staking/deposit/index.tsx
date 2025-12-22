@@ -349,11 +349,16 @@ const LiquidStakingDepositForm: FC = () => {
                           <div className="flex items-center gap-2">
                             <TokenIcon
                               size="lg"
-                              name={vaultAsset?.metadata.symbol ?? selectedVault.symbol}
+                              name={
+                                vaultAsset?.metadata.symbol ??
+                                selectedVault.symbol
+                              }
                             />
                             <div className="flex flex-col">
                               <Typography variant="h5" fw="bold">
-                                {vaultAsset?.metadata.symbol ?? selectedVault.symbol} Vault
+                                {vaultAsset?.metadata.symbol ??
+                                  selectedVault.symbol}{' '}
+                                Vault
                               </Typography>
                               <Typography
                                 variant="body3"

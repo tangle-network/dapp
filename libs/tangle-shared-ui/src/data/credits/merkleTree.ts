@@ -23,7 +23,11 @@ export type CreditsClaimData = {
 
 export const loadCreditsTreeData = (json: string): CreditsTreeData => {
   const parsed = JSON.parse(json) as CreditsTreeData;
-  if (!parsed || typeof parsed !== 'object' || typeof parsed.epochId !== 'string') {
+  if (
+    !parsed ||
+    typeof parsed !== 'object' ||
+    typeof parsed.epochId !== 'string'
+  ) {
     throw new Error('Invalid credits tree data');
   }
   if (!parsed.entries || typeof parsed.entries !== 'object') {
