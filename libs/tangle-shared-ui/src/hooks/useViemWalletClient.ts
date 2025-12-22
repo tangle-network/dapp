@@ -4,7 +4,6 @@ import { useEffect, useState } from 'react';
 import {
   createWalletClient,
   custom,
-  EIP1193Provider,
   http,
   Transport,
   WalletClient,
@@ -27,12 +26,6 @@ export enum WalletClientTransport {
    * This transport securely interacts with wallets that manage private keys.
    */
   WINDOW,
-}
-
-declare global {
-  interface Window {
-    ethereum?: EIP1193Provider;
-  }
 }
 
 const useViemWalletClient = (transport = WalletClientTransport.HTTP_RPC) => {

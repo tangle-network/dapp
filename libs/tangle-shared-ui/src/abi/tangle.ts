@@ -5551,7 +5551,6 @@ const TANGLE_ABI = [
     name: 'ZeroAddress',
     inputs: [],
   },
-  ,
   {
     type: 'function',
     name: 'forceRemoveOperator',
