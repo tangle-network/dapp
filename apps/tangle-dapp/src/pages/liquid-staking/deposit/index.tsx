@@ -13,7 +13,8 @@ import { useModal } from '@tangle-network/ui-components/hooks/useModal';
 import { Typography } from '@tangle-network/ui-components/typography/Typography';
 import { FC, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { SubmitHandler, useForm } from 'react-hook-form';
-import { erc20Abi, parseUnits, formatUnits, Address } from 'viem';
+import { useSearchParams } from 'react-router';
+import { erc20Abi, parseUnits, formatUnits, Address, isAddress } from 'viem';
 import { useAccount, useChainId } from 'wagmi';
 import ErrorMessage from '../../../components/ErrorMessage';
 import ActionButtonBase from '../../../components/restaking/ActionButtonBase';
@@ -43,6 +44,7 @@ type DepositFormFields = {
 };
 
 const LiquidStakingDepositForm: FC = () => {
+  const [searchParams] = useSearchParams();
   const { address: userAddress } = useAccount();
   const chainId = useChainId();
   const _activeChain = useMemo(() => {
@@ -89,6 +91,23 @@ const LiquidStakingDepositForm: FC = () => {
   useEffect(() => {
     reset();
   }, [activeTypedChainId, reset]);
+
+  // Pre-select vault from URL query parameter
+  useEffect(() => {
+    const vaultParam = searchParams.get('vault');
+
+    if (!vaultParam || !vaults || !isAddress(vaultParam)) {
+      return;
+    }
+
+    const matchingVault = vaults.find(
+      (v) => v.address.toLowerCase() === vaultParam.toLowerCase(),
+    );
+
+    if (matchingVault) {
+      setValue('vaultAddress', matchingVault.address);
+    }
+  }, [searchParams, vaults, setValue]);
 
   const {
     status: vaultModalOpen,

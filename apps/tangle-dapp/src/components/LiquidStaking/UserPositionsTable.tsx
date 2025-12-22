@@ -118,9 +118,7 @@ const COLUMNS = [
             to={`${PagePath.LIQUID_STAKING_REDEEM}?vault=${row.original.vaultAddress}`}
             onClick={(e) => e.stopPropagation()}
           >
-            <Button variant="utility" className="uppercase body4">
-              Redeem
-            </Button>
+            <Button size="sm">Redeem</Button>
           </Link>
         </div>
       </TableCellWrapper>
