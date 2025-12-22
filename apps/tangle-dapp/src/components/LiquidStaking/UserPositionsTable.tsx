@@ -14,6 +14,7 @@ import { Table } from '@tangle-network/ui-components/components/Table';
 import { TableVariant } from '@tangle-network/ui-components/components/Table/types';
 import { Typography } from '@tangle-network/ui-components/typography/Typography';
 import pluralize from '@tangle-network/ui-components/utils/pluralize';
+import { getRoundedAmountString } from '@tangle-network/ui-components';
 import {
   createColumnHelper,
   getCoreRowModel,
@@ -69,9 +70,7 @@ const COLUMNS = [
       return (
         <TableCellWrapper>
           <Typography variant="body1">
-            {Number(formatted).toLocaleString(undefined, {
-              maximumFractionDigits: 6,
-            })}
+            {getRoundedAmountString(Number(formatted), 5)}
           </Typography>
         </TableCellWrapper>
       );
@@ -97,9 +96,7 @@ const COLUMNS = [
       return (
         <TableCellWrapper>
           <Typography variant="body1">
-            {Number(formatted).toLocaleString(undefined, {
-              maximumFractionDigits: 6,
-            })}{' '}
+            {getRoundedAmountString(Number(formatted), 5)}{' '}
             {props.row.original.assetSymbol}
           </Typography>
         </TableCellWrapper>

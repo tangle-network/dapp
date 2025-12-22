@@ -418,13 +418,22 @@ const LiquidStakingRedeemForm: FC = () => {
                           5,
                         )}{' '}
                         shares
+                        {approxAssetValue > BigInt(0) && (
+                          <span className="text-mono-120 dark:text-mono-100 font-normal">
+                            {' '}
+                            ({getRoundedAmountString(
+                              Number(formatUnits(approxAssetValue, vaultAsset?.metadata.decimals ?? 18)),
+                              5,
+                            )} {vaultAsset?.metadata.symbol ?? ''})
+                          </span>
+                        )}
                       </Typography>
                       <Typography
                         variant="body3"
                         className="text-mono-120 dark:text-mono-100"
                       >
                         {isReadyToClaim
-                          ? `Ready to claim ≈ ${getRoundedAmountString(Number(formatUnits(approxAssetValue, vaultAsset?.metadata.decimals ?? 18)), 5)} ${vaultAsset?.metadata.symbol ?? ''}`
+                          ? 'Ready to claim'
                           : 'Waiting for undelegate delay'}
                       </Typography>
                     </div>
