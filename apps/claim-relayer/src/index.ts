@@ -173,7 +173,8 @@ app.post('/claim', async (req, res) => {
     }
 
     // Validate hex formats
-    if (!isHex(pubkey, { size: 32 })) {
+    // Note: viem's isHex doesn't support size option, so we check length separately (66 = 0x + 64 hex chars for 32 bytes)
+    if (!isHex(pubkey) || pubkey.length !== 66) {
       return res.status(400).json({
         error: 'Invalid pubkey',
         message: 'Pubkey must be a 32-byte hex string (0x + 64 chars)',
@@ -195,7 +196,7 @@ app.post('/claim', async (req, res) => {
     }
 
     for (const proof of merkleProof) {
-      if (!isHex(proof, { size: 32 })) {
+      if (!isHex(proof) || proof.length !== 66) {
         return res.status(400).json({
           error: 'Invalid merkle proof',
           message: 'Each merkle proof entry must be a bytes32 hex string',
