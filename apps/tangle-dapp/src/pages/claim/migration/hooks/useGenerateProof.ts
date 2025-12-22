@@ -10,12 +10,10 @@ const PROVER_API_URL = import.meta.env.VITE_SP1_PROVER_API_URL as
   | undefined;
 
 /**
- * Dev mode - skip actual proof generation and return mock proof
- * Enable by setting VITE_MOCK_PROOF=true (or implicit in local dev when no prover is configured).
+ * Dev mode - skip actual proof generation and return mock proof.
+ * Enable explicitly by setting VITE_MOCK_PROOF=true.
  */
-const USE_MOCK_PROOF =
-  import.meta.env.VITE_MOCK_PROOF === 'true' ||
-  (import.meta.env.DEV && !PROVER_API_URL);
+const USE_MOCK_PROOF = import.meta.env.VITE_MOCK_PROOF === 'true';
 
 export interface ProofInput {
   /** The SS58 Substrate address (public key is derived from this in ZK circuit) */
@@ -97,7 +95,7 @@ const useGenerateProof = () => {
 
       if (!PROVER_API_URL) {
         throw new Error(
-          'Prover API URL is not configured. Set `VITE_SP1_PROVER_API_URL` or enable `VITE_MOCK_PROOF=true` for local UI testing.',
+          'Prover API URL is not configured. Set `VITE_SP1_PROVER_API_URL`.',
         );
       }
 
