@@ -40,7 +40,9 @@ export const LOCAL_CONTRACTS: ContractAddresses = {
   operatorStatusRegistry: '0xDc64a140Aa3E981100a9becA4E685f962f0cF6C9',
   rewardVaults: '0xc5a5C42992dECbae36851359345FE25997F5C42d',
   inflationPool: '0xE6E340D132b5f46d1e472DebcD681B2aBc16e57E',
-  credits: '0x0000000000000000000000651234512121212666',
+  // Credits is deployed by tnt-core LocalTestnet, but the address is not deterministic across runs.
+  // Set `VITE_CREDITS_ADDRESS_31337` (or `VITE_CREDITS_ADDRESS`) to enable the credits UI.
+  credits: '0x0000000000000000000000000000000000000000',
   liquidDelegationFactory: '0xCA8c8688914e0F7096c920146cd0Ad85cD7Ae8b9',
 };
 

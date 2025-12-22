@@ -620,6 +620,7 @@ export EIGEN_ADDRESS="$EIGEN_ADDRESS"
 export REWARD_VAULTS_ADDRESS="${REWARD_VAULTS_ADDRESS:-}"
 export INFLATION_POOL_ADDRESS="${INFLATION_POOL_ADDRESS:-}"
 export TNT_TOKEN_ADDRESS="${TNT_TOKEN_ADDRESS:-}"
+export CREDITS_ADDRESS="${CREDITS_ADDRESS:-}"
 export TANGLE_MIGRATION_ADDRESS="${TANGLE_MIGRATION_ADDRESS:-}"
 export MIGRATION_TNT_TOKEN_ADDRESS="${MIGRATION_TNT_TOKEN_ADDRESS:-}"
 EOF
@@ -712,6 +713,7 @@ deploy_contracts() {
     export STETH_ADDRESS=$(grep "stETH:" /tmp/deploy.log | head -1 | grep -oE '0x[a-fA-F0-9]{40}' || echo "")
     export WSTETH_ADDRESS=$(grep "wstETH:" /tmp/deploy.log | head -1 | grep -oE '0x[a-fA-F0-9]{40}' || echo "")
     export EIGEN_ADDRESS=$(grep "EIGEN:" /tmp/deploy.log | head -1 | grep -oE '0x[a-fA-F0-9]{40}' || echo "")
+    export CREDITS_ADDRESS=$(grep "Credits:" /tmp/deploy.log | head -1 | grep -oE '0x[a-fA-F0-9]{40}' || echo "")
     # Resolve TNT token from on-chain config (preferred) to avoid log parsing issues.
     # Tangle.operatorBondToken() is the canonical source of truth.
     local resolved_tnt=""
@@ -749,6 +751,19 @@ deploy_contracts() {
         log_success "Detected TNT token: $TNT_TOKEN_ADDRESS"
     else
         log_warn "Could not detect TNT token address from deployment log"
+    fi
+
+    if [[ -n "${CREDITS_ADDRESS:-}" ]]; then
+        local credits_code
+        credits_code="$(curl -s http://127.0.0.1:$ANVIL_PORT -X POST -H "Content-Type: application/json" \
+            --data "{\"jsonrpc\":\"2.0\",\"method\":\"eth_getCode\",\"params\":[\"$CREDITS_ADDRESS\", \"latest\"],\"id\":1}" \
+            | grep -o '"result":"[^"]*"' | cut -d'"' -f4)"
+        if [[ -z "$credits_code" || "$credits_code" == "0x" ]]; then
+            log_warn "Detected Credits address has no code: $CREDITS_ADDRESS"
+            export CREDITS_ADDRESS=""
+        else
+            log_success "Detected Credits contract: $CREDITS_ADDRESS"
+        fi
     fi
 
     log_success "Contracts deployed"
@@ -2010,6 +2025,9 @@ print_startup_banner() {
     echo "dApp Config (.env.local):"
     echo "  VITE_ENVIO_MAINNET_ENDPOINT=http://localhost:$GRAPHQL_PORT/v1/graphql"
     echo "  VITE_ENVIO_TESTNET_ENDPOINT=http://localhost:$GRAPHQL_PORT/v1/graphql"
+    if [[ -n "${CREDITS_ADDRESS:-}" && "${CREDITS_ADDRESS}" != "null" ]]; then
+        echo "  VITE_CREDITS_ADDRESS_31337=$CREDITS_ADDRESS"
+    fi
     if [[ -n "${TANGLE_MIGRATION_ADDRESS:-}" && "${TANGLE_MIGRATION_ADDRESS}" != "null" ]]; then
         echo "  VITE_TANGLE_MIGRATION_ADDRESS=$TANGLE_MIGRATION_ADDRESS"
         echo "  VITE_CLAIM_RELAYER_URL=http://localhost:$CLAIM_RELAYER_PORT"
