@@ -28,17 +28,17 @@ const KNOWN_TOKENS: Record<string, TokenMetadata> = {
 };
 
 // Known token addresses -> symbol mapping (from local Anvil deployment)
-// These addresses are from the current tnt-core LocalTestnet deployment
+// These are deterministic when Anvil starts fresh (nonce 0) and broadcast cache is cleared
+// Addresses from tnt-core LocalTestnet.s.sol deployment (chain ID 31337)
 const KNOWN_TOKEN_ADDRESSES: Record<string, string> = {
-  // TNT (bond asset) from tnt-core LocalTestnetSetup (Anvil 31337)
   '0x0165878a594ca255338adfa4d48449f69242eb8f': 'TNT',
-  '0x4a679253410272dd5232b3ff7cf5dbb88f295319': 'USDC',
-  '0x7a2088a1bfc9d81c55368ae168c2c02570cb814f': 'USDT',
-  '0x09635f643e140090a9a8dcd712ed6285858cebef': 'DAI',
-  '0x67d269191c92caf3cd7723f116c85e6e9bf55933': 'stETH',
-  '0xe6e340d132b5f46d1e472debcd681b2abc16e57e': 'wstETH',
-  '0xc3e53f4d16ae77db1c982e75a937b9f60fe63690': 'EIGEN',
-  '0xc5a5c42992decbae36851359345fe25997f5c42d': 'WETH',
+  '0x809d550fca64d94bd9f66e60752a544199cfac3d': 'USDC',
+  '0x4c5859f0f772848b2d91f1d83e2fe57935348029': 'USDT',
+  '0x1291be112d480055dafd8a610b7d1e203891c274': 'DAI',
+  '0x5f3f1dbd7b74c6b46e8c44f98792a1daf8d69154': 'WETH',
+  '0xb7278a61aa25c888815afc32ad3cc52ff24fe575': 'stETH',
+  '0xcd8a1c3ba11cf5ecfa6267617243239504a98d90': 'wstETH',
+  '0x82e01223d51eb87e16a03e24687edf0f294da6f1': 'EIGEN',
 };
 
 // Runtime cache: address -> metadata (populated from on-chain fetches)

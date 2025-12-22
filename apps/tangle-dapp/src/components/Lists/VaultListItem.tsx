@@ -68,10 +68,23 @@ const VaultListItem: FC<Props> = ({
     ? shortenHex(vaultEvmAddress)
     : 'Invalid vault';
 
+  // Use underlying asset symbol for cleaner display, fall back to parsing vault name
+  const displayName = useMemo(() => {
+    if (tvlSymbol) {
+      return `${tvlSymbol} Vault`;
+    }
+    // Try to extract asset from vault name (format: "Liquid Delegation WETH Op-...")
+    const match = vaultName.match(/Liquid Delegation (\w+)/);
+    if (match) {
+      return `${match[1]} Vault`;
+    }
+    return vaultName;
+  }, [tvlSymbol, vaultName]);
+
   return (
     <LogoListItem
       logo={<TokenIcon size="xl" name={tvlSymbol ?? vaultSymbol} />}
-      leftUpperContent={`${vaultName} (${vaultSymbol})`}
+      leftUpperContent={displayName}
       leftBottomContent={
         operatorExplorerUrl ? (
           <a

@@ -138,7 +138,8 @@ const LiquidDelegationVaultsTable: FC = () => {
     if (!vaults) return null;
 
     return vaults.map((vault) => {
-      const assetInfo = assets?.get(vault.asset);
+      // Normalize to lowercase since indexer stores addresses in lowercase
+      const assetInfo = assets?.get(vault.asset.toLowerCase() as Address);
       return {
         ...vault,
         assetSymbol: assetInfo?.metadata.symbol ?? 'Unknown',

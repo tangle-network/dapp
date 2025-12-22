@@ -2,6 +2,7 @@ import { calculateTypedChainId } from '@tangle-network/dapp-types/TypedChainId';
 import isDefined from '@tangle-network/dapp-types/utils/isDefined';
 import LockFillIcon from '@tangle-network/icons/LockFillIcon';
 import { LockLineIcon } from '@tangle-network/icons/LockLineIcon';
+import { TokenIcon } from '@tangle-network/icons';
 import ListModal from '@tangle-network/tangle-shared-ui/components/ListModal';
 import { Card } from '@tangle-network/ui-components';
 import Button from '@tangle-network/ui-components/components/buttons/Button';
@@ -117,7 +118,10 @@ const LiquidStakingDepositForm: FC = () => {
     if (!selectedVault || !assets) {
       return null;
     }
-    return assets.get(selectedVault.asset) ?? null;
+    // Normalize to lowercase since indexer stores addresses in lowercase
+    // but blockchain reads return checksummed (mixed-case) addresses
+    const normalizedAsset = selectedVault.asset.toLowerCase() as Address;
+    return assets.get(normalizedAsset) ?? null;
   }, [selectedVault, assets]);
 
   const spender = selectedVault?.address ?? null;
@@ -323,18 +327,24 @@ const LiquidStakingDepositForm: FC = () => {
                   {...(selectedVault
                     ? {
                         renderBody: () => (
-                          <div className="flex flex-col">
-                            <Typography variant="h5" fw="bold">
-                              {selectedVault.name} ({selectedVault.symbol})
-                            </Typography>
-                            <Typography
-                              variant="body3"
-                              className="text-mono-120 dark:text-mono-100"
-                            >
-                              {selectedVault.selectionMode === 0
-                                ? 'All blueprints'
-                                : `${selectedVault.blueprintIds.length} blueprints`}
-                            </Typography>
+                          <div className="flex items-center gap-2">
+                            <TokenIcon
+                              size="lg"
+                              name={vaultAsset?.metadata.symbol ?? selectedVault.symbol}
+                            />
+                            <div className="flex flex-col">
+                              <Typography variant="h5" fw="bold">
+                                {vaultAsset?.metadata.symbol ?? selectedVault.symbol} Vault
+                              </Typography>
+                              <Typography
+                                variant="body3"
+                                className="text-mono-120 dark:text-mono-100"
+                              >
+                                {selectedVault.selectionMode === 0
+                                  ? 'All blueprints'
+                                  : `${selectedVault.blueprintIds.length} blueprints`}
+                              </Typography>
+                            </div>
                           </div>
                         ),
                       }
@@ -349,33 +359,18 @@ const LiquidStakingDepositForm: FC = () => {
                       disabled: <LockFillIcon />,
                     }).current
                   }
-                  onClick={() => {
-                    if (formattedMaxAmount !== undefined) {
-                      setValue('amount', formattedMaxAmount.toString(), {
-                        shouldValidate: true,
-                      });
-                    }
+                  onAmountChange={(value) => {
+                    setValue('amount', value, { shouldValidate: true });
                   }}
                 />
               </TransactionInputCard.Header>
 
               <TransactionInputCard.Body
                 customAmountProps={customAmountProps}
-                tokenSelectorProps={
-                  useRef({
-                    placeholder: <AssetPlaceholder />,
-                    isDisabled: true,
-                    ...(vaultAsset
-                      ? {
-                          renderBody: () => (
-                            <Typography variant="h5" fw="bold">
-                              {vaultAsset.metadata.symbol}
-                            </Typography>
-                          ),
-                        }
-                      : {}),
-                  }).current
-                }
+                tokenSelectorProps={{
+                  placeholder: <AssetPlaceholder />,
+                  isDisabled: true,
+                }}
               />
             </TransactionInputCard.Root>
 
@@ -471,7 +466,7 @@ const LiquidStakingDepositForm: FC = () => {
         isLoading={isLoadingVaults}
         getItemKey={(vault) => vault.address}
         renderItem={(vault) => {
-          const asset = assets?.get(vault.asset);
+          const asset = assets?.get(vault.asset.toLowerCase() as Address);
           const tvl = formatUnits(
             vault.totalAssets,
             asset?.metadata.decimals ?? 18,

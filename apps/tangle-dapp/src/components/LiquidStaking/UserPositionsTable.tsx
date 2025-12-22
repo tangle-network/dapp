@@ -202,7 +202,8 @@ const UserPositionsTable: FC = () => {
       const balance = balanceResult.result as bigint;
       if (balance <= BigInt(0)) return;
 
-      const assetInfo = assets?.get(vault.asset);
+      // Normalize to lowercase since indexer stores addresses in lowercase
+      const assetInfo = assets?.get(vault.asset.toLowerCase() as Address);
       const conversionResult = conversionResults?.[conversionIdx];
       conversionIdx++;
 

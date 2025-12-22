@@ -1,8 +1,9 @@
 import { calculateTypedChainId } from '@tangle-network/dapp-types/TypedChainId';
 import isDefined from '@tangle-network/dapp-types/utils/isDefined';
 import { LockUnlockLineIcon } from '@tangle-network/icons/LockUnlockLineIcon';
+import { TokenIcon } from '@tangle-network/icons';
 import ListModal from '@tangle-network/tangle-shared-ui/components/ListModal';
-import { Card } from '@tangle-network/ui-components';
+import { Card, getRoundedAmountString } from '@tangle-network/ui-components';
 import Button from '@tangle-network/ui-components/components/buttons/Button';
 import { Modal } from '@tangle-network/ui-components/components/Modal';
 import type { TextFieldInputProps } from '@tangle-network/ui-components/components/TextField/types';
@@ -19,7 +20,6 @@ import StyleContainer from '../../../components/restaking/StyleContainer';
 import { SUPPORTED_RESTAKE_DEPOSIT_TYPED_CHAIN_IDS } from '../../../constants/restake';
 import useActiveTypedChainId from '../../../hooks/useActiveTypedChainId';
 import decimalsToStep from '../../../utils/decimalsToStep';
-import AssetPlaceholder from '../../restake/AssetPlaceholder';
 import SupportedChainModal from '../../restake/SupportedChainModal';
 import useSwitchChain from '../../restake/useSwitchChain';
 import LiquidStakingActionTabs from '../LiquidStakingActionTabs';
@@ -149,7 +149,10 @@ const LiquidStakingRedeemForm: FC = () => {
     if (!selectedVault || !assets) {
       return null;
     }
-    return assets.get(selectedVault.asset) ?? null;
+    // Normalize to lowercase since indexer stores addresses in lowercase
+    // but blockchain reads return checksummed (mixed-case) addresses
+    const normalizedAsset = selectedVault.asset.toLowerCase() as Address;
+    return assets.get(normalizedAsset) ?? null;
   }, [selectedVault, assets]);
 
   const { maxAmount, formattedMaxAmount } = useMemo(() => {
@@ -218,6 +221,7 @@ const LiquidStakingRedeemForm: FC = () => {
         return;
       }
 
+      // Parse the input as shares (18 decimals)
       const sharesBigInt = parseUnits(amount, 18);
 
       if (sharesBigInt <= BigInt(0)) {
@@ -243,10 +247,7 @@ const LiquidStakingRedeemForm: FC = () => {
       <Card withShadow tightPadding className="relative md:min-w-[512px]">
         <form className="space-y-4" onSubmit={handleSubmit(onSubmit)}>
           <div className="flex flex-col items-start justify-stretch">
-            <TransactionInputCard.Root
-              tokenSymbol="ldTokens"
-              className="bg-mono-20 dark:bg-mono-180"
-            >
+            <TransactionInputCard.Root className="bg-mono-20 dark:bg-mono-180">
               <TransactionInputCard.Header>
                 <TransactionInputCard.ChainSelector
                   placeholder="Select Vault"
@@ -254,18 +255,24 @@ const LiquidStakingRedeemForm: FC = () => {
                   {...(selectedVault
                     ? {
                         renderBody: () => (
-                          <div className="flex flex-col">
-                            <Typography variant="h5" fw="bold">
-                              {selectedVault.name} ({selectedVault.symbol})
-                            </Typography>
-                            <Typography
-                              variant="body3"
-                              className="text-mono-120 dark:text-mono-100"
-                            >
-                              {selectedVault.selectionMode === 0
-                                ? 'All blueprints'
-                                : `${selectedVault.blueprintIds.length} blueprints`}
-                            </Typography>
+                          <div className="flex items-center gap-2">
+                            <TokenIcon
+                              size="lg"
+                              name={vaultAsset?.metadata.symbol ?? selectedVault.symbol}
+                            />
+                            <div className="flex flex-col">
+                              <Typography variant="h5" fw="bold">
+                                {vaultAsset?.metadata.symbol ?? selectedVault.symbol} Vault
+                              </Typography>
+                              <Typography
+                                variant="body3"
+                                className="text-mono-120 dark:text-mono-100"
+                              >
+                                {selectedVault.selectionMode === 0
+                                  ? 'All blueprints'
+                                  : `${selectedVault.blueprintIds.length} blueprints`}
+                              </Typography>
+                            </div>
                           </div>
                         ),
                       }
@@ -273,6 +280,7 @@ const LiquidStakingRedeemForm: FC = () => {
                 />
                 <TransactionInputCard.MaxAmountButton
                   maxAmount={formattedMaxAmount}
+                  tokenSymbol="shares"
                   tooltipBody="Available Shares"
                   Icon={
                     useRef({
@@ -280,43 +288,23 @@ const LiquidStakingRedeemForm: FC = () => {
                       disabled: <LockUnlockLineIcon />,
                     }).current
                   }
-                  onClick={() => {
-                    if (formattedMaxAmount !== undefined) {
-                      setValue('amount', formattedMaxAmount.toString(), {
-                        shouldValidate: true,
-                      });
-                    }
+                  onAmountChange={(value) => {
+                    setValue('amount', value, { shouldValidate: true });
                   }}
                 />
               </TransactionInputCard.Header>
 
               <TransactionInputCard.Body
                 customAmountProps={customAmountProps}
-                tokenSelectorProps={
-                  useRef({
-                    placeholder: <AssetPlaceholder />,
-                    isDisabled: true,
-                    ...(selectedVault && formattedMaxAmount !== undefined
-                      ? {
-                          renderBody: () => (
-                            <div className="flex items-center gap-2">
-                              <Typography variant="h5" fw="bold">
-                                ldTokens
-                              </Typography>
-                              <div className="flex flex-col gap-1">
-                                <Typography
-                                  variant="body2"
-                                  className="text-mono-120 dark:text-mono-100"
-                                >
-                                  Available: {formattedMaxAmount}
-                                </Typography>
-                              </div>
-                            </div>
-                          ),
-                        }
-                      : {}),
-                  }).current
-                }
+                tokenSelectorProps={{
+                  children: (
+                    <Typography variant="h5" fw="bold" component="span">
+                      Shares
+                    </Typography>
+                  ),
+                  isDisabled: true,
+                  isDropdown: false,
+                }}
               />
             </TransactionInputCard.Root>
 
@@ -326,19 +314,20 @@ const LiquidStakingRedeemForm: FC = () => {
           {selectedVault && position && (
             <div className="p-3 rounded-lg bg-mono-20 dark:bg-mono-160 space-y-2">
               <div className="flex justify-between text-sm">
-                <span className="text-mono-100">Your Balance</span>
+                <span className="text-mono-100">Your Shares</span>
                 <span className="font-medium">
-                  {formatUnits(position.balance, 18)} shares
+                  {formatUnits(position.balance, 18)}
                 </span>
               </div>
               <div className="flex justify-between text-sm">
-                <span className="text-mono-100">Value in Assets</span>
+                <span className="text-mono-100">
+                  ≈ Value in {vaultAsset?.metadata.symbol ?? 'Assets'}
+                </span>
                 <span className="font-medium">
                   {formatUnits(
                     position.balanceInAssets,
                     vaultAsset?.metadata.decimals ?? 18,
-                  )}{' '}
-                  {vaultAsset?.metadata.symbol ?? 'tokens'}
+                  )}
                 </span>
               </div>
             </div>
@@ -390,7 +379,7 @@ const LiquidStakingRedeemForm: FC = () => {
       </Card>
 
       {selectedVault && (
-        <Card withShadow tightPadding className="md:min-w-[512px]">
+        <Card withShadow tightPadding className="md:min-w-[512px] mt-4">
           <div className="flex items-center justify-between">
             <Typography variant="h5" fw="bold">
               Pending Redeem Requests
@@ -410,6 +399,13 @@ const LiquidStakingRedeemForm: FC = () => {
                 const claimableShares =
                   claimableByRequestId.get(req.id) ?? BigInt(0);
                 const isReadyToClaim = claimableShares > BigInt(0);
+
+                // Calculate approximate asset value for display
+                const approxAssetValue =
+                  position && position.balance > BigInt(0)
+                    ? (req.shares * position.balanceInAssets) / position.balance
+                    : BigInt(0);
+
                 return (
                   <div
                     key={req.id}
@@ -417,14 +413,18 @@ const LiquidStakingRedeemForm: FC = () => {
                   >
                     <div className="flex flex-col">
                       <Typography variant="body2" fw="semibold">
-                        {formatUnits(req.shares, 18)} shares
+                        {getRoundedAmountString(
+                          Number(formatUnits(req.shares, 18)),
+                          5,
+                        )}{' '}
+                        shares
                       </Typography>
                       <Typography
                         variant="body3"
                         className="text-mono-120 dark:text-mono-100"
                       >
                         {isReadyToClaim
-                          ? 'Ready to claim'
+                          ? `Ready to claim ≈ ${getRoundedAmountString(Number(formatUnits(approxAssetValue, vaultAsset?.metadata.decimals ?? 18)), 5)} ${vaultAsset?.metadata.symbol ?? ''}`
                           : 'Waiting for undelegate delay'}
                       </Typography>
                     </div>
@@ -475,7 +475,7 @@ const LiquidStakingRedeemForm: FC = () => {
         isLoading={isLoadingVaults}
         getItemKey={(vault) => vault.address}
         renderItem={(vault) => {
-          const asset = assets?.get(vault.asset);
+          const asset = assets?.get(vault.asset.toLowerCase() as Address);
           const tvl = formatUnits(
             vault.totalAssets,
             asset?.metadata.decimals ?? 18,
