@@ -367,24 +367,24 @@ const start = async () => {
     console.log(
       '═══════════════════════════════════════════════════════════════',
     );
-  console.log('  TNT Migration Claim Relayer');
-  console.log(
-    '═══════════════════════════════════════════════════════════════',
-  );
-  console.log(`  Port:     ${PORT}`);
-  console.log(`  Chain:    ${chain.name || 'Custom'} (${CHAIN_ID})`);
-  console.log(`  RPC:      ${RPC_URL}`);
-  console.log(`  Contract: ${MIGRATION_CONTRACT}`);
-  console.log(`  Relayer:  ${account.address}`);
-  console.log(
-    '═══════════════════════════════════════════════════════════════',
-  );
-  console.log('');
-  console.log('Endpoints:');
-  console.log(`  GET  /health          - Health check & relayer balance`);
-  console.log(`  POST /claim           - Submit a gasless claim`);
-  console.log(`  GET  /status/:pubkey  - Check claim status`);
-  console.log('');
+    console.log('  TNT Migration Claim Relayer');
+    console.log(
+      '═══════════════════════════════════════════════════════════════',
+    );
+    console.log(`  Port:     ${PORT}`);
+    console.log(`  Chain:    ${chain.name || 'Custom'} (${CHAIN_ID})`);
+    console.log(`  RPC:      ${RPC_URL}`);
+    console.log(`  Contract: ${MIGRATION_CONTRACT}`);
+    console.log(`  Relayer:  ${account.address}`);
+    console.log(
+      '═══════════════════════════════════════════════════════════════',
+    );
+    console.log('');
+    console.log('Endpoints:');
+    console.log(`  GET  /health          - Health check & relayer balance`);
+    console.log(`  POST /claim           - Submit a gasless claim`);
+    console.log(`  GET  /status/:pubkey  - Check claim status`);
+    console.log('');
   });
 };
 

@@ -1,8 +1,6 @@
 import { useRestakingOverview } from '@tangle-network/tangle-shared-ui/data/restake/useRestakingData';
 // import { useTokenUsdPrices } from '@tangle-network/tangle-shared-ui/data/tokenPrices/useTokenUsdPrices';
-import {
-  EMPTY_VALUE_PLACEHOLDER,
-} from '@tangle-network/ui-components';
+import { EMPTY_VALUE_PLACEHOLDER } from '@tangle-network/ui-components';
 import { Typography } from '@tangle-network/ui-components/typography/Typography/Typography';
 import { FC, useMemo, useCallback } from 'react';
 import { formatUnits } from 'viem';
@@ -197,9 +195,7 @@ const DashboardPage: FC = () => {
           assets={assetList}
           restakingAssets={restakingAssets ?? []}
           delegator={delegatorInfo}
-          isLoading={
-            isLoading || isLoadingAssets || isLoadingDelegator
-          }
+          isLoading={isLoading || isLoadingAssets || isLoadingDelegator}
         />
       </div>
     </NetworkGuard>

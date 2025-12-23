@@ -118,9 +118,7 @@ const fetchOperatorRegistrations = async (
           blueprintId: BigInt(reg.blueprint.blueprintId),
           blueprintName,
           operator: reg.operator.id as Address,
-          registeredAt: reg.registeredAt
-            ? BigInt(reg.registeredAt)
-            : BigInt(0),
+          registeredAt: reg.registeredAt ? BigInt(reg.registeredAt) : BigInt(0),
           preferences: {
             ecdsaPublicKey: (reg.ecdsaPublicKey ?? '0x') as `0x${string}`,
             rpcAddress: reg.rpcAddress ?? '',

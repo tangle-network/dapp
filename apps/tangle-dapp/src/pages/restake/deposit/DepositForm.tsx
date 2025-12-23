@@ -410,8 +410,7 @@ const DepositForm: FC = () => {
 
   const selectedLockOption = useMemo(() => {
     return (
-      lockOptions.find((option) => option.id === lockDuration) ??
-      lockOptions[0]
+      lockOptions.find((option) => option.id === lockDuration) ?? lockOptions[0]
     );
   }, [lockDuration, lockOptions]);
 

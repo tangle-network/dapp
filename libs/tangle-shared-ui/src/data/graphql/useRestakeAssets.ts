@@ -83,9 +83,7 @@ export const useRestakeAssets = (options?: {
   const chainId = useChainId();
   const { address: userAddress, isConnected } = useAccount();
   const networkChainId = useNetworkStore((store) => store.network2?.evmChainId);
-  const activeChainId = isConnected
-    ? chainId
-    : networkChainId ?? chainId;
+  const activeChainId = isConnected ? chainId : (networkChainId ?? chainId);
   const publicClient = usePublicClient({ chainId: activeChainId });
   const { data: connectorClient } = useConnectorClient();
   const resolvedNetwork = network ?? getEnvioNetworkFromChainId(activeChainId);
@@ -147,9 +145,7 @@ export const useRestakeAssets = (options?: {
   // 2. Fetch ERC20 metadata for ERC20 tokens only (not native token)
   const { data: tokenMetadatas, isLoading: isLoadingMetadata } =
     useEvmAssetMetadatas(
-      useGraphQL
-        ? (erc20TokenAddresses as EvmAddress[])
-        : [],
+      useGraphQL ? (erc20TokenAddresses as EvmAddress[]) : [],
     );
 
   const {

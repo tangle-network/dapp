@@ -107,7 +107,8 @@ const fetchSlashProposals = async (
     return (result.data.SlashProposal ?? []).map((sp) => ({
       id: BigInt(sp.slashId),
       serviceId: BigInt(sp.serviceId),
-      operator: (sp.operator?.id ?? '0x0000000000000000000000000000000000000000') as Address,
+      operator: (sp.operator?.id ??
+        '0x0000000000000000000000000000000000000000') as Address,
       proposer: sp.proposer as Address,
       amount: BigInt(sp.amount),
       effectiveAmount: BigInt(sp.effectiveAmount),

@@ -22,8 +22,9 @@ import {
  * RPC URL for migration contract queries.
  * Uses a dedicated viem client to bypass wagmi chain routing issues.
  */
-const MIGRATION_RPC_URL = import.meta.env
-  .VITE_MIGRATION_RPC_URL as string | undefined;
+const MIGRATION_RPC_URL = import.meta.env.VITE_MIGRATION_RPC_URL as
+  | string
+  | undefined;
 
 // TangleMigration contract ABI (partial - only functions we use)
 const TANGLE_MIGRATION_ABI = [
@@ -189,11 +190,7 @@ const useClaimEligibility = ({ ss58Address }: UseClaimEligibilityOptions) => {
   // that cause it to return empty data even when the RPC works correctly.
   const { data: claimedAmount, isLoading: isLoadingClaimed } = useQuery<bigint>(
     {
-      queryKey: [
-        'migration-claimed-amount',
-        pubkeyFromSs58,
-        migrationAddress,
-      ],
+      queryKey: ['migration-claimed-amount', pubkeyFromSs58, migrationAddress],
       queryFn: async () => {
         if (!pubkeyFromSs58 || !migrationAddress) {
           return BigInt(0);

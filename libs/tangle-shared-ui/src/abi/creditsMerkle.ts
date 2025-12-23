@@ -98,8 +98,18 @@ const CREDITS_MERKLE_ABI = [
     type: 'event',
     name: 'CreditsClaimed',
     inputs: [
-      { name: 'account', type: 'address', indexed: true, internalType: 'address' },
-      { name: 'amount', type: 'uint256', indexed: false, internalType: 'uint256' },
+      {
+        name: 'account',
+        type: 'address',
+        indexed: true,
+        internalType: 'address',
+      },
+      {
+        name: 'amount',
+        type: 'uint256',
+        indexed: false,
+        internalType: 'uint256',
+      },
       {
         name: 'offchainAccountId',
         type: 'bytes32',
@@ -113,9 +123,24 @@ const CREDITS_MERKLE_ABI = [
     type: 'event',
     name: 'MerkleRootUpdated',
     inputs: [
-      { name: 'epochId', type: 'uint256', indexed: true, internalType: 'uint256' },
-      { name: 'oldRoot', type: 'bytes32', indexed: false, internalType: 'bytes32' },
-      { name: 'newRoot', type: 'bytes32', indexed: false, internalType: 'bytes32' },
+      {
+        name: 'epochId',
+        type: 'uint256',
+        indexed: true,
+        internalType: 'uint256',
+      },
+      {
+        name: 'oldRoot',
+        type: 'bytes32',
+        indexed: false,
+        internalType: 'bytes32',
+      },
+      {
+        name: 'newRoot',
+        type: 'bytes32',
+        indexed: false,
+        internalType: 'bytes32',
+      },
     ],
     anonymous: false,
   },
