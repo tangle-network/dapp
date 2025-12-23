@@ -43,6 +43,20 @@ const ClaimCreditsButton = () => {
     return meetsMinimumClaimThreshold(data?.amount);
   }, [data?.amount]);
 
+  const formattedTimeRemaining = useMemo(() => {
+    if (!data?.timeRemaining || data.timeRemaining === BigInt(0)) {
+      return '';
+    }
+
+    const total = Number(data.timeRemaining);
+    const days = Math.floor(total / 86400);
+    const hours = Math.floor((total % 86400) / 3600);
+    const minutes = Math.floor((total % 3600) / 60);
+    if (days > 0) return `${days}d ${hours}h`;
+    if (hours > 0) return `${hours}h ${minutes}m`;
+    return `${minutes}m`;
+  }, [data?.timeRemaining]);
+
   const isUnavailable = !isSupportedNetwork;
   const errorLabel = useMemo(() => {
     if (!error) {
@@ -50,6 +64,9 @@ const ClaimCreditsButton = () => {
     }
     if (error.message === 'Credits root mismatch') {
       return 'Credits data out of sync';
+    }
+    if (error.message === 'Credits proof invalid') {
+      return 'Credits proof invalid';
     }
     return error.message;
   }, [error]);
@@ -114,6 +131,17 @@ const ClaimCreditsButton = () => {
           </Typography>
         ) : null}
 
+        {data?.timeRemaining !== undefined &&
+        data.timeRemaining > BigInt(0) ? (
+          <Typography
+            variant="body2"
+            className="text-mono-120 dark:text-mono-80"
+          >
+            Epoch ends in {formattedTimeRemaining}. Claims unlock after the
+            epoch closes.
+          </Typography>
+        ) : null}
+
         {data?.hasClaimed ? (
           <Typography
             variant="body2"
@@ -153,6 +181,7 @@ const ClaimCreditsButton = () => {
           merkleProof={data?.merkleProof}
           hasClaimed={data?.hasClaimed}
           totalCredits={data?.totalAmount}
+          isClaimable={data?.isClaimable}
           offchainAccountId={offchainAccountId}
           setOffchainAccountId={setOffchainAccountId}
           setInputError={setInputError}
@@ -171,6 +200,7 @@ type CreditsButtonProps = {
   merkleProof?: `0x${string}`[];
   hasClaimed?: boolean;
   totalCredits?: bigint;
+  isClaimable?: boolean;
   offchainAccountId: string;
   setOffchainAccountId: (value: string) => void;
   setInputError: (value: string) => void;
@@ -183,6 +213,7 @@ const CreditsButton = ({
   merkleProof,
   hasClaimed,
   totalCredits,
+  isClaimable,
   offchainAccountId,
   setOffchainAccountId,
   setInputError,
@@ -232,8 +263,8 @@ const CreditsButton = ({
     return meetsMinimumClaimThreshold(credits);
   }, [credits]);
   const canClaim = useMemo(() => {
-    return hasCredits && meetsMinimumThreshold && !hasClaimed;
-  }, [hasClaimed, hasCredits, meetsMinimumThreshold]);
+    return hasCredits && meetsMinimumThreshold && !hasClaimed && isClaimable;
+  }, [hasClaimed, hasCredits, isClaimable, meetsMinimumThreshold]);
 
   return (
     <Button

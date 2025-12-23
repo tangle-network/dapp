@@ -48,9 +48,17 @@ const KNOWN_TOKEN_ADDRESSES: Partial<
     '0xcd8a1c3ba11cf5ecfa6267617243239504a98d90': 'wstETH',
     '0x82e01223d51eb87e16a03e24687edf0f294da6f1': 'EIGEN',
   },
-  // Add more chains as needed:
-  // [EVMChainId.TangleMainnetEVM]: { ... },
-  // [EVMChainId.Base]: { ... },
+  // Base Sepolia (chain 84532) - addresses from tnt-core deployments
+  [EVMChainId.BaseSepolia]: {
+    '0xa9ffe787eea7f385dac8481cd8bdc3d9194aeb5a': 'TNT',
+    '0x4a679253410272dd5232b3ff7cf5dbb88f295319': 'USDC',
+    '0x7a2088a1bfc9d81c55368ae168c2c02570cb814f': 'USDT',
+    '0x09635f643e140090a9a8dcd712ed6285858cebef': 'DAI',
+    '0x67d269191c92caf3cd7723f116c85e6e9bf55933': 'stETH',
+    '0xe6e340d132b5f46d1e472debcd681b2abc16e57e': 'wstETH',
+    '0xc3e53f4d16ae77db1c982e75a937b9f60fe63690': 'EIGEN',
+    '0xc5a5c42992decbae36851359345fe25997f5c42d': 'WETH',
+  },
 };
 
 // Runtime cache: "chainId:address" -> metadata

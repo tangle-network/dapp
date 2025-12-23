@@ -7,8 +7,11 @@ import CREDITS_MERKLE_ABI from '@tangle-network/tangle-shared-ui/abi/creditsMerk
 import {
   loadCreditsTreeData,
   lookupCreditsClaim,
+  getCreditsWindow,
+  verifyCreditsClaim,
   type CreditsClaimData,
   type CreditsTreeData,
+  type CreditsWindow,
 } from '@tangle-network/tangle-shared-ui/data/credits';
 import {
   resolveCreditsAddress,
@@ -23,6 +26,9 @@ export type CreditsData = {
   merkleProof: Hex[];
   root: Hex;
   hasClaimed: boolean;
+  window: CreditsWindow | null;
+  timeRemaining: bigint;
+  isClaimable: boolean;
 };
 
 export default function useCredits() {
@@ -59,6 +65,18 @@ export default function useCredits() {
 
     return lookupCreditsClaim(creditsTree, activeEvmAddress);
   }, [activeEvmAddress, creditsTree]);
+
+  const creditsWindow = useMemo(() => {
+    if (!creditsTree) return null;
+    return getCreditsWindow(creditsTree);
+  }, [creditsTree]);
+
+  const timeRemaining = useMemo(() => {
+    if (!creditsWindow) return BigInt(0);
+    const now = BigInt(Math.floor(Date.now() / 1000));
+    if (creditsWindow.endTs <= now) return BigInt(0);
+    return creditsWindow.endTs - now;
+  }, [creditsWindow]);
 
   const {
     data: onchainRoot,
@@ -103,12 +121,21 @@ export default function useCredits() {
     return claimData.root.toLowerCase() === (onchainRoot as Hex).toLowerCase();
   }, [claimData, onchainRoot]);
 
-  const data = useMemo<CreditsData | null>(() => {
+  const proofValid = useMemo(() => {
     if (!claimData || !rootMatches) {
+      return false;
+    }
+    return verifyCreditsClaim(claimData.root, claimData);
+  }, [claimData, rootMatches]);
+
+  const data = useMemo<CreditsData | null>(() => {
+    if (!claimData || !rootMatches || !proofValid) {
       return null;
     }
 
     const alreadyClaimed = Boolean(hasClaimed);
+    const now = BigInt(Math.floor(Date.now() / 1000));
+    const windowComplete = creditsWindow ? now >= creditsWindow.endTs : true;
     return {
       amount: alreadyClaimed ? BigInt(0) : claimData.amount,
       totalAmount: claimData.amount,
@@ -116,18 +143,26 @@ export default function useCredits() {
       merkleProof: claimData.merkleProof,
       root: claimData.root,
       hasClaimed: alreadyClaimed,
+      window: creditsWindow,
+      timeRemaining,
+      isClaimable: windowComplete && !alreadyClaimed,
     };
-  }, [claimData, hasClaimed, rootMatches]);
+  }, [claimData, creditsWindow, hasClaimed, proofValid, rootMatches, timeRemaining]);
 
   const rootMismatchError =
     claimData && onchainRoot && !rootMatches
       ? new Error('Credits root mismatch')
       : null;
+  const invalidProofError =
+    claimData && rootMatches && !proofValid
+      ? new Error('Credits proof invalid')
+      : null;
 
   const mergedError = (treeError ??
     rootError ??
     claimedError ??
-    rootMismatchError) as Error | null;
+    rootMismatchError ??
+    invalidProofError) as Error | null;
 
   return {
     data,

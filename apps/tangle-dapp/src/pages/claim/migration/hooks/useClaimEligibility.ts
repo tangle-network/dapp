@@ -8,6 +8,8 @@ import {
   createPublicClient,
   http,
 } from 'viem';
+import { useChainId } from 'wagmi';
+import { getMigrationContractsByChainId } from '@tangle-network/dapp-config/contracts';
 import {
   lookupClaim,
   loadMerkleTreeData,
@@ -20,16 +22,8 @@ import {
  * RPC URL for migration contract queries.
  * Uses a dedicated viem client to bypass wagmi chain routing issues.
  */
-const MIGRATION_RPC_URL =
-  import.meta.env.VITE_MIGRATION_RPC_URL || 'http://localhost:8545';
-
-/**
- * Create a viem public client for direct contract reads.
- * This bypasses wagmi which has issues with chain routing.
- */
-const publicClient = createPublicClient({
-  transport: http(MIGRATION_RPC_URL),
-});
+const MIGRATION_RPC_URL = import.meta.env
+  .VITE_MIGRATION_RPC_URL as string | undefined;
 
 // TangleMigration contract ABI (partial - only functions we use)
 const TANGLE_MIGRATION_ABI = [
@@ -72,7 +66,7 @@ const PROOFS_URL =
 /**
  * TangleMigration contract address (to be set after deployment)
  */
-const TANGLE_MIGRATION_ADDRESS =
+const ENV_MIGRATION_ADDRESS =
   (import.meta.env.VITE_TANGLE_MIGRATION_ADDRESS as Hex) || null;
 
 export interface ClaimEligibility {
@@ -131,6 +125,30 @@ export const generateChallenge = (
  * Hook to check claim eligibility for an SS58 Substrate address
  */
 const useClaimEligibility = ({ ss58Address }: UseClaimEligibilityOptions) => {
+  const chainId = useChainId();
+  const migrationConfig = useMemo(() => {
+    if (!chainId) return null;
+    return getMigrationContractsByChainId(chainId);
+  }, [chainId]);
+  const migrationAddress =
+    ENV_MIGRATION_ADDRESS ?? migrationConfig?.migrationClaim ?? null;
+
+  const rpcUrl = useMemo(() => {
+    if (MIGRATION_RPC_URL) return MIGRATION_RPC_URL;
+    if (chainId === 84532) return 'https://sepolia.base.org';
+    return 'http://localhost:8545';
+  }, [chainId]);
+
+  /**
+   * Create a viem public client for direct contract reads.
+   * This bypasses wagmi which has issues with chain routing.
+   */
+  const publicClient = useMemo(() => {
+    return createPublicClient({
+      transport: http(rpcUrl),
+    });
+  }, [rpcUrl]);
+
   const pubkeyFromSs58 = useMemo((): Hex | null => {
     if (!ss58Address) {
       return null;
@@ -174,21 +192,21 @@ const useClaimEligibility = ({ ss58Address }: UseClaimEligibilityOptions) => {
       queryKey: [
         'migration-claimed-amount',
         pubkeyFromSs58,
-        TANGLE_MIGRATION_ADDRESS,
+        migrationAddress,
       ],
       queryFn: async () => {
-        if (!pubkeyFromSs58 || !TANGLE_MIGRATION_ADDRESS) {
+        if (!pubkeyFromSs58 || !migrationAddress) {
           return BigInt(0);
         }
         const result = await publicClient.readContract({
-          address: TANGLE_MIGRATION_ADDRESS,
+          address: migrationAddress,
           abi: TANGLE_MIGRATION_ABI,
           functionName: 'getClaimedAmount',
           args: [pubkeyFromSs58],
         });
         return result as bigint;
       },
-      enabled: !!pubkeyFromSs58 && !!TANGLE_MIGRATION_ADDRESS,
+      enabled: !!pubkeyFromSs58 && !!migrationAddress,
       // Always refetch on mount and window focus to ensure we have the latest claimed status
       refetchOnMount: 'always',
       refetchOnWindowFocus: 'always',
@@ -201,48 +219,48 @@ const useClaimEligibility = ({ ss58Address }: UseClaimEligibilityOptions) => {
   // Get claim deadline using viem directly
   const { data: claimDeadline, isLoading: isLoadingDeadline } =
     useQuery<bigint>({
-      queryKey: ['migration-claim-deadline', TANGLE_MIGRATION_ADDRESS],
+      queryKey: ['migration-claim-deadline', migrationAddress],
       queryFn: async () => {
-        if (!TANGLE_MIGRATION_ADDRESS) return BigInt(0);
+        if (!migrationAddress) return BigInt(0);
         const result = await publicClient.readContract({
-          address: TANGLE_MIGRATION_ADDRESS,
+          address: migrationAddress,
           abi: TANGLE_MIGRATION_ABI,
           functionName: 'claimDeadline',
         });
         return result as bigint;
       },
-      enabled: !!TANGLE_MIGRATION_ADDRESS,
+      enabled: !!migrationAddress,
       refetchInterval: 60000, // Refresh every minute
     });
 
   // Check if paused using viem directly
   const { data: isPaused, isLoading: isLoadingPaused } = useQuery<boolean>({
-    queryKey: ['migration-paused', TANGLE_MIGRATION_ADDRESS],
+    queryKey: ['migration-paused', migrationAddress],
     queryFn: async () => {
-      if (!TANGLE_MIGRATION_ADDRESS) return false;
+      if (!migrationAddress) return false;
       const result = await publicClient.readContract({
-        address: TANGLE_MIGRATION_ADDRESS,
+        address: migrationAddress,
         abi: TANGLE_MIGRATION_ABI,
         functionName: 'paused',
       });
       return result as boolean;
     },
-    enabled: !!TANGLE_MIGRATION_ADDRESS,
+    enabled: !!migrationAddress,
   });
 
   // Get merkle root for verification using viem directly
   const { data: merkleRoot } = useQuery<Hex | null>({
-    queryKey: ['migration-merkle-root', TANGLE_MIGRATION_ADDRESS],
+    queryKey: ['migration-merkle-root', migrationAddress],
     queryFn: async () => {
-      if (!TANGLE_MIGRATION_ADDRESS) return null;
+      if (!migrationAddress) return null;
       const result = await publicClient.readContract({
-        address: TANGLE_MIGRATION_ADDRESS,
+        address: migrationAddress,
         abi: TANGLE_MIGRATION_ABI,
         functionName: 'merkleRoot',
       });
       return result as Hex;
     },
-    enabled: !!TANGLE_MIGRATION_ADDRESS,
+    enabled: !!migrationAddress,
   });
 
   // Calculate time remaining
@@ -262,7 +280,7 @@ const useClaimEligibility = ({ ss58Address }: UseClaimEligibilityOptions) => {
   }, [ss58Address, proofsData]);
 
   // Dev mode - use mock data when contract not configured
-  const isDevMode = !TANGLE_MIGRATION_ADDRESS;
+  const isDevMode = !migrationAddress;
 
   // Build eligibility object
   const eligibility = useMemo((): ClaimEligibility => {
@@ -334,8 +352,8 @@ const useClaimEligibility = ({ ss58Address }: UseClaimEligibilityOptions) => {
     isLoading,
     error: proofsError,
     merkleRoot: merkleRoot ?? null,
-    contractAddress: TANGLE_MIGRATION_ADDRESS,
-    contractConfigured: !!TANGLE_MIGRATION_ADDRESS,
+    contractAddress: migrationAddress,
+    contractConfigured: !!migrationAddress,
   };
 };
 

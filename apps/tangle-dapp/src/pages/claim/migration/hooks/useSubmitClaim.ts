@@ -1,17 +1,19 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { type Hex } from 'viem';
 import {
   useAccount,
+  useChainId,
   useWriteContract,
   useWaitForTransactionReceipt,
 } from 'wagmi';
+import { getMigrationContractsByChainId } from '@tangle-network/dapp-config/contracts';
 
 type SubmissionMode = 'relayer' | 'wallet';
 
 /**
  * TangleMigration contract address (to be set after deployment)
  */
-const TANGLE_MIGRATION_ADDRESS =
+const ENV_MIGRATION_ADDRESS =
   (import.meta.env.VITE_TANGLE_MIGRATION_ADDRESS as Hex) || null;
 const CLAIM_RELAYER_URL =
   (import.meta.env.VITE_CLAIM_RELAYER_URL as string | undefined)?.replace(
@@ -65,6 +67,12 @@ export interface ClaimArgs {
  */
 const useSubmitClaim = () => {
   const { address: userAddress } = useAccount();
+  const chainId = useChainId();
+  const migrationAddress = useMemo(() => {
+    if (ENV_MIGRATION_ADDRESS) return ENV_MIGRATION_ADDRESS;
+    if (!chainId) return null;
+    return getMigrationContractsByChainId(chainId)?.migrationClaim ?? null;
+  }, [chainId]);
   const defaultSubmissionMode: SubmissionMode = CLAIM_RELAYER_URL
     ? 'relayer'
     : 'wallet';
@@ -125,7 +133,7 @@ const useSubmitClaim = () => {
       console.log('[useSubmitClaim] Starting claim submission...');
       console.log(
         '[useSubmitClaim] Contract address:',
-        TANGLE_MIGRATION_ADDRESS,
+        migrationAddress,
       );
       console.log('[useSubmitClaim] Args:', {
         ss58Address: args.ss58Address,
@@ -135,7 +143,7 @@ const useSubmitClaim = () => {
         recipient: args.recipient,
       });
 
-      if (!TANGLE_MIGRATION_ADDRESS) {
+      if (!migrationAddress) {
         console.error('[useSubmitClaim] Contract not configured');
         throw new Error('TangleMigration contract not configured');
       }
@@ -226,7 +234,7 @@ const useSubmitClaim = () => {
       }
 
       await writeContractAsync({
-        address: TANGLE_MIGRATION_ADDRESS,
+        address: migrationAddress,
         abi: TANGLE_MIGRATION_ABI,
         functionName: 'claimWithZKProof',
         args: [
@@ -239,7 +247,7 @@ const useSubmitClaim = () => {
       });
       console.log('[useSubmitClaim] writeContractAsync completed');
     },
-    [submissionMode, userAddress, writeContractAsync],
+    [migrationAddress, submissionMode, userAddress, writeContractAsync],
   );
 
   /**
@@ -275,7 +283,7 @@ const useSubmitClaim = () => {
     isConfirming: isConfirmingCombined,
     isConfirmed: isConfirmedCombined,
     error: errorCombined,
-    contractConfigured: !!TANGLE_MIGRATION_ADDRESS,
+    contractConfigured: !!migrationAddress,
   };
 };
 

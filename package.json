@@ -35,6 +35,7 @@
     "check:codegen": "node ./tools/checkCodegen.js",
     "scan": "react-scan",
     "postinstall": "husky",
+    "sync:tnt-core-assets": "node scripts/sync-tnt-core-assets.mjs",
     "script:setupServices": "bun scripts/setupServices.ts",
     "script:setupRestaking": "bun scripts/setupRestaking.ts"
   },
