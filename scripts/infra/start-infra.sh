@@ -312,13 +312,18 @@ start_bg "indexer" env \
   ENVIO_PG_DATABASE="$ENVIO_PG_DATABASE" \
   pnpm -C "$TNT_CORE_DIR/indexer" start -- --config "$INDEXER_CONFIG"
 
+if [[ ! -d "$TNT_CORE_DIR/apps/claim-relayer" ]]; then
+  log_error "Claim relayer not found at $TNT_CORE_DIR/apps/claim-relayer"
+  exit 1
+fi
+
 start_bg "claim-relayer" env \
   RELAYER_PRIVATE_KEY="$RELAYER_PRIVATE_KEY" \
   MIGRATION_CONTRACT="$MIGRATION_CONTRACT" \
   RPC_URL="$RPC_URL" \
   CHAIN_ID="$CHAIN_ID" \
   PORT="$CLAIM_RELAYER_PORT" \
-  yarn workspace @tangle-network/claim-relayer dev
+  bash -lc "cd \"$TNT_CORE_DIR/apps/claim-relayer\" && yarn dev"
 
 start_bg "prover-api" env \
   PORT="$PROVER_API_PORT" \

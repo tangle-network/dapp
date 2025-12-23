@@ -1333,12 +1333,7 @@ start_claim_relayer() {
         return 1
     fi
 
-    local relayer_dir=""
-    if [[ -d "$TNT_CORE_DIR/apps/claim-relayer" ]]; then
-        relayer_dir="$TNT_CORE_DIR/apps/claim-relayer"
-    else
-        relayer_dir="$DAPP_ROOT/apps/claim-relayer"
-    fi
+    local relayer_dir="$TNT_CORE_DIR/apps/claim-relayer"
     if [[ ! -d "$relayer_dir" ]]; then
         log_error "Claim relayer workspace not found at $relayer_dir"
         return 1
