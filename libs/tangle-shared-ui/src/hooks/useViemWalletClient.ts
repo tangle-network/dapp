@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import {
   createWalletClient,
   custom,
+  EIP1193Provider,
   http,
   Transport,
   WalletClient,
