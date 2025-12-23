@@ -46,6 +46,9 @@ type RedeemFormFields = {
   amount: string;
 };
 
+// ERC-4626/ERC-7540 vault shares always use 18 decimals regardless of the underlying asset
+const VAULT_SHARES_DECIMALS = 18;
+
 const LiquidStakingRedeemForm: FC = () => {
   const [searchParams] = useSearchParams();
   const { address: userAddress } = useAccount();
@@ -141,33 +144,30 @@ const LiquidStakingRedeemForm: FC = () => {
     LiquidRedeemRequest[]
   >([]);
 
-  // Merge optimistic requests with indexer data, removing optimistic ones that have been indexed
+  // Clean up optimistic requests when they appear in the indexer data
+  useEffect(() => {
+    setOptimisticRequests((prev) =>
+      prev.filter(
+        (opt) =>
+          !indexerRedeemRequests.some(
+            (req) =>
+              req.vaultAddress.toLowerCase() ===
+                opt.vaultAddress.toLowerCase() &&
+              req.shares === opt.shares &&
+              req.controller.toLowerCase() === opt.controller.toLowerCase(),
+          ),
+      ),
+    );
+  }, [indexerRedeemRequests]);
+
+  // Merge optimistic requests with indexer data
   const redeemRequests = useMemo(() => {
     if (optimisticRequests.length === 0) {
       return indexerRedeemRequests;
     }
 
-    // Filter out optimistic requests that are now in the indexer data
-    // We match by shares amount and vault address since we don't have the real requestId yet
-    const pendingOptimistic = optimisticRequests.filter((opt) => {
-      // Check if this optimistic request has been indexed
-      const isIndexed = indexerRedeemRequests.some(
-        (req) =>
-          req.vaultAddress.toLowerCase() === opt.vaultAddress.toLowerCase() &&
-          req.shares === opt.shares &&
-          req.controller.toLowerCase() === opt.controller.toLowerCase(),
-      );
-      return !isIndexed;
-    });
-
-    // Update state if some optimistic requests have been indexed
-    if (pendingOptimistic.length !== optimisticRequests.length) {
-      // Use setTimeout to avoid state update during render
-      setTimeout(() => setOptimisticRequests(pendingOptimistic), 0);
-    }
-
     // Prepend remaining optimistic requests to the list
-    return [...pendingOptimistic, ...indexerRedeemRequests];
+    return [...optimisticRequests, ...indexerRedeemRequests];
   }, [optimisticRequests, indexerRedeemRequests]);
 
   // Clear optimistic requests when vault changes
@@ -224,7 +224,9 @@ const LiquidStakingRedeemForm: FC = () => {
     // position.balance already reflects the user's current share balance
     // after any pending redeem requests (shares are burned immediately
     // when requestRedeem is called in ERC-7540 vaults)
-    const formatted = Number(formatUnits(position.balance, 18));
+    const formatted = Number(
+      formatUnits(position.balance, VAULT_SHARES_DECIMALS),
+    );
 
     return {
       maxAmount: position.balance,
@@ -233,7 +235,7 @@ const LiquidStakingRedeemForm: FC = () => {
   }, [position]);
 
   const customAmountProps = useMemo<TextFieldInputProps>(() => {
-    const step = decimalsToStep(18);
+    const step = decimalsToStep(VAULT_SHARES_DECIMALS);
 
     return {
       type: 'number',
@@ -242,7 +244,7 @@ const LiquidStakingRedeemForm: FC = () => {
         required: 'Amount is required',
         validate: (value) => {
           if (!position) return 'Select a vault first';
-          const parsed = parseUnits(value, 18);
+          const parsed = parseUnits(value, VAULT_SHARES_DECIMALS);
           if (parsed <= BigInt(0)) return 'Amount must be greater than 0';
           if (maxAmount && parsed > maxAmount) return 'Insufficient balance';
           return true;
@@ -285,8 +287,8 @@ const LiquidStakingRedeemForm: FC = () => {
         return;
       }
 
-      // Parse the input as shares (18 decimals)
-      const sharesBigInt = parseUnits(amount, 18);
+      // Parse the input as shares
+      const sharesBigInt = parseUnits(amount, VAULT_SHARES_DECIMALS);
 
       if (sharesBigInt <= BigInt(0)) {
         return;
@@ -421,7 +423,7 @@ const LiquidStakingRedeemForm: FC = () => {
               <div className="flex justify-between text-sm">
                 <span className="text-mono-100">Your Shares</span>
                 <span className="font-medium">
-                  {formatUnits(position.balance, 18)}
+                  {formatUnits(position.balance, VAULT_SHARES_DECIMALS)}
                 </span>
               </div>
             </div>
@@ -502,7 +504,9 @@ const LiquidStakingRedeemForm: FC = () => {
                     <div className="flex flex-col">
                       <Typography variant="body2" fw="semibold">
                         {getRoundedAmountString(
-                          Number(formatUnits(req.shares, 18)),
+                          Number(
+                            formatUnits(req.shares, VAULT_SHARES_DECIMALS),
+                          ),
                           5,
                         )}{' '}
                         shares
