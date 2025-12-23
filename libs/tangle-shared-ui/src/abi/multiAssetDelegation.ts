@@ -485,6 +485,45 @@ const ABI = [
   },
   {
     "type": "function",
+    "name": "executeDelegatorUnstakeAndWithdraw",
+    "inputs": [
+      {
+        "name": "operator",
+        "type": "address",
+        "internalType": "address"
+      },
+      {
+        "name": "token",
+        "type": "address",
+        "internalType": "address"
+      },
+      {
+        "name": "shares",
+        "type": "uint256",
+        "internalType": "uint256"
+      },
+      {
+        "name": "requestedRound",
+        "type": "uint64",
+        "internalType": "uint64"
+      },
+      {
+        "name": "receiver",
+        "type": "address",
+        "internalType": "address"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "amount",
+        "type": "uint256",
+        "internalType": "uint256"
+      }
+    ],
+    "stateMutability": "nonpayable"
+  },
+  {
+    "type": "function",
     "name": "executeOperatorUnstake",
     "inputs": [],
     "outputs": [],
