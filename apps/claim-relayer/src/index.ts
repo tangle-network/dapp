@@ -28,6 +28,8 @@ const MIGRATION_CONTRACT = process.env.MIGRATION_CONTRACT as Address;
 const RATE_LIMIT_WINDOW_MS = 60_000; // 1 minute
 const MAX_REQUESTS_PER_WINDOW = 10;
 const rateLimitMap = new Map<string, { count: number; resetTime: number }>();
+const isHexBytes = (value: string, bytes: number) =>
+  isHex(value) && value.length === 2 + bytes * 2;
 
 // ============================================================================
 // VALIDATION
@@ -173,7 +175,7 @@ app.post('/claim', async (req, res) => {
     }
 
     // Validate hex formats
-    if (!isHex(pubkey, { size: 32 })) {
+    if (!isHexBytes(pubkey, 32)) {
       return res.status(400).json({
         error: 'Invalid pubkey',
         message: 'Pubkey must be a 32-byte hex string (0x + 64 chars)',
@@ -195,7 +197,7 @@ app.post('/claim', async (req, res) => {
     }
 
     for (const proof of merkleProof) {
-      if (!isHex(proof, { size: 32 })) {
+      if (!isHexBytes(proof, 32)) {
         return res.status(400).json({
           error: 'Invalid merkle proof',
           message: 'Each merkle proof entry must be a bytes32 hex string',

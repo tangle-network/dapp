@@ -3529,6 +3529,42 @@ const ABI = [
     ],
     anonymous: false,
   },
+  {
+    type: 'function',
+    name: 'disputeSlash',
+    inputs: [
+      {
+        name: 'slashId',
+        type: 'uint64',
+        internalType: 'uint64',
+      },
+      {
+        name: 'reason',
+        type: 'string',
+        internalType: 'string',
+      },
+    ],
+    outputs: [],
+    stateMutability: 'nonpayable',
+  },
+  {
+    type: 'function',
+    name: 'cancelSlash',
+    inputs: [
+      {
+        name: 'slashId',
+        type: 'uint64',
+        internalType: 'uint64',
+      },
+      {
+        name: 'reason',
+        type: 'string',
+        internalType: 'string',
+      },
+    ],
+    outputs: [],
+    stateMutability: 'nonpayable',
+  },
 ] as const;
 
 export default ABI;

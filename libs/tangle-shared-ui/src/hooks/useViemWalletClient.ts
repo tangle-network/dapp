@@ -29,12 +29,6 @@ export enum WalletClientTransport {
   WINDOW,
 }
 
-declare global {
-  interface Window {
-    ethereum?: EIP1193Provider;
-  }
-}
-
 const useViemWalletClient = (transport = WalletClientTransport.HTTP_RPC) => {
   const [walletClient, setWalletClient] = useState<WalletClient | null>(null);
   const network = useNetworkStore((store) => store.network2);
@@ -54,7 +48,10 @@ const useViemWalletClient = (transport = WalletClientTransport.HTTP_RPC) => {
 
         break;
       case WalletClientTransport.WINDOW:
-        if (window.ethereum === undefined) {
+        const ethereumProvider = window.ethereum as
+          | EIP1193Provider
+          | undefined;
+        if (ethereumProvider === undefined) {
           console.warn(
             'Could not create Viem wallet client due to Ethereum provider not found on window object.',
           );
@@ -62,7 +59,7 @@ const useViemWalletClient = (transport = WalletClientTransport.HTTP_RPC) => {
           return;
         }
 
-        transport_ = custom(window.ethereum);
+        transport_ = custom(ethereumProvider);
 
         break;
     }
