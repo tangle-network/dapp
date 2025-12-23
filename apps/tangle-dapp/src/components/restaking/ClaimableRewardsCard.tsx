@@ -64,7 +64,7 @@ const ClaimableRewardsCard: FC = () => {
 
     setIsClaiming(true);
     try {
-      await claimRewards({});
+      await claimRewards();
       // Wait a bit then refetch stats
       setTimeout(() => {
         refetch();

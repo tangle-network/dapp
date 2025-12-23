@@ -17,12 +17,16 @@ import {
 import { readContract } from 'viem/actions';
 import { useRestakingAssets } from './useRestakingAssets';
 import type { RestakeAsset } from '../restake/types';
-import { EnvioNetwork } from '../../utils/executeEnvioGraphQL';
+import {
+  EnvioNetwork,
+  getEnvioNetworkFromChainId,
+} from '../../utils/executeEnvioGraphQL';
 import { useEnvioHealthCheckByChainId } from '../../utils/checkEnvioHealth';
-import fetchErc20TokenMetadata from '../../utils/fetchErc20TokenMetadata';
+import { useEvmAssetMetadatas } from '../../hooks/useEvmAssetMetadatas';
 import useOnChainRestakeAssets from '../restake/useOnChainRestakeAssets';
 import type { EvmAddress } from '@tangle-network/ui-components/types/address';
 import { getCachedTokenMetadata } from '@tangle-network/dapp-config/tokenMetadata';
+import useNetworkStore from '../../context/useNetworkStore';
 
 // Native token (ETH) uses zero address - needs special handling
 const NATIVE_TOKEN_ADDRESS = zeroAddress as Address;
@@ -77,15 +81,19 @@ export const useRestakeAssets = (options?: {
 }) => {
   const { network, enabled = true } = options ?? {};
   const chainId = useChainId();
-  const { address: userAddress } = useAccount();
-  const publicClient = usePublicClient({ chainId });
+  const { address: userAddress, isConnected } = useAccount();
+  const networkChainId = useNetworkStore((store) => store.network2?.evmChainId);
+  const activeChainId = isConnected ? chainId : (networkChainId ?? chainId);
+  const publicClient = usePublicClient({ chainId: activeChainId });
   const { data: connectorClient } = useConnectorClient();
+  const resolvedNetwork = network ?? getEnvioNetworkFromChainId(activeChainId);
   const {
     data: nativeBalanceData,
     isLoading: isLoadingNativeBalance,
     refetch: refetchNativeBalance,
   } = useBalance({
     address: userAddress,
+    chainId: activeChainId,
     query: {
       enabled: Boolean(userAddress),
       refetchInterval: 30_000,
@@ -97,7 +105,7 @@ export const useRestakeAssets = (options?: {
 
   // Check if indexer is healthy
   const { data: isIndexerHealthy, isLoading: isCheckingHealth } =
-    useEnvioHealthCheckByChainId(chainId);
+    useEnvioHealthCheckByChainId(activeChainId);
 
   // Determine data source:
   // - While checking health: wait (neither source enabled)
@@ -118,7 +126,7 @@ export const useRestakeAssets = (options?: {
     isLoading: isLoadingAssets,
     refetch: refetchAssets,
   } = useRestakingAssets({
-    network,
+    network: resolvedNetwork,
     enabledOnly: true,
     enabled: enabled && useGraphQL,
   });
@@ -135,25 +143,10 @@ export const useRestakeAssets = (options?: {
       );
   }, [restakingAssets]);
   // 2. Fetch ERC20 metadata for ERC20 tokens only (not native token)
-  const { data: tokenMetadatas, isLoading: isLoadingMetadata } = useQuery({
-    queryKey: ['erc20Metadata', erc20TokenAddresses, publicClient?.chain?.id],
-    queryFn: async () => {
-      if (!publicClient || erc20TokenAddresses.length === 0) {
-        return [];
-      }
-      // Cast publicClient to any to avoid type incompatibility between wagmi and viem versions
-      return fetchErc20TokenMetadata(
-        publicClient as any,
-        erc20TokenAddresses as EvmAddress[],
-      );
-    },
-    enabled:
-      enabled &&
-      !useOnChainFallback &&
-      !!publicClient &&
-      erc20TokenAddresses.length > 0,
-    staleTime: Infinity, // Token metadata doesn't change
-  });
+  const { data: tokenMetadatas, isLoading: isLoadingMetadata } =
+    useEvmAssetMetadatas(
+      useGraphQL ? (erc20TokenAddresses as EvmAddress[]) : [],
+    );
 
   const {
     data: balances,
@@ -171,7 +164,7 @@ export const useRestakeAssets = (options?: {
         return new Map<Address, bigint>();
       }
 
-      const cacheKeyPrefix = `${publicClient.chain?.id ?? chainId}:${userAddress.toLowerCase()}`;
+      const cacheKeyPrefix = `${publicClient.chain?.id ?? activeChainId}:${userAddress.toLowerCase()}`;
       const cacheKeyForToken = (token: Address) =>
         `${cacheKeyPrefix}:${token.toLowerCase()}`;
 

@@ -1333,15 +1333,18 @@ start_claim_relayer() {
         return 1
     fi
 
-    local relayer_dir=""
-    if [[ -d "$TNT_CORE_DIR/apps/claim-relayer" ]]; then
-        relayer_dir="$TNT_CORE_DIR/apps/claim-relayer"
-    else
-        relayer_dir="$DAPP_ROOT/apps/claim-relayer"
-    fi
+    local relayer_dir="$TNT_CORE_DIR/apps/claim-relayer"
     if [[ ! -d "$relayer_dir" ]]; then
         log_error "Claim relayer workspace not found at $relayer_dir"
         return 1
+    fi
+
+    if [[ ! -d "$relayer_dir/node_modules" && ! -f "$relayer_dir/.pnp.cjs" ]]; then
+        log_info "Installing claim relayer dependencies in $relayer_dir..."
+        (cd "$relayer_dir" && yarn install) || {
+            log_error "Failed to install claim relayer dependencies. Check $relayer_dir"
+            return 1
+        }
     fi
 
     log_info "Funding claim relayer wallet $relayer_address..."

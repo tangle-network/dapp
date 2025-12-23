@@ -1,3723 +1,2647 @@
-// Auto-generated from tnt-core bindings
-// Contract: MULTI_ASSET_DELEGATION
-
-const MULTI_ASSET_DELEGATION_ABI = [
+// AUTO-GENERATED FROM tnt-core. DO NOT EDIT MANUALLY.
+const ABI = [
   {
-    type: 'constructor',
-    inputs: [],
-    stateMutability: 'nonpayable',
-  },
-  {
-    type: 'receive',
-    stateMutability: 'payable',
-  },
-  {
-    type: 'function',
-    name: 'ADMIN_ROLE',
-    inputs: [],
-    outputs: [
+    "type": "function",
+    "name": "LOCK_ONE_MONTH",
+    "inputs": [],
+    "outputs": [
       {
-        name: '',
-        type: 'bytes32',
-        internalType: 'bytes32',
-      },
+        "name": "",
+        "type": "uint64",
+        "internalType": "uint64"
+      }
     ],
-    stateMutability: 'view',
+    "stateMutability": "view"
   },
   {
-    type: 'function',
-    name: 'ASSET_MANAGER_ROLE',
-    inputs: [],
-    outputs: [
+    "type": "function",
+    "name": "LOCK_SIX_MONTHS",
+    "inputs": [],
+    "outputs": [
       {
-        name: '',
-        type: 'bytes32',
-        internalType: 'bytes32',
-      },
+        "name": "",
+        "type": "uint64",
+        "internalType": "uint64"
+      }
     ],
-    stateMutability: 'view',
+    "stateMutability": "view"
   },
   {
-    type: 'function',
-    name: 'BPS_DENOMINATOR',
-    inputs: [],
-    outputs: [
+    "type": "function",
+    "name": "LOCK_THREE_MONTHS",
+    "inputs": [],
+    "outputs": [
       {
-        name: '',
-        type: 'uint256',
-        internalType: 'uint256',
-      },
+        "name": "",
+        "type": "uint64",
+        "internalType": "uint64"
+      }
     ],
-    stateMutability: 'view',
+    "stateMutability": "view"
   },
   {
-    type: 'function',
-    name: 'DEFAULT_ADMIN_ROLE',
-    inputs: [],
-    outputs: [
+    "type": "function",
+    "name": "LOCK_TWO_MONTHS",
+    "inputs": [],
+    "outputs": [
       {
-        name: '',
-        type: 'bytes32',
-        internalType: 'bytes32',
-      },
+        "name": "",
+        "type": "uint64",
+        "internalType": "uint64"
+      }
     ],
-    stateMutability: 'view',
+    "stateMutability": "view"
   },
   {
-    type: 'function',
-    name: 'LOCK_ONE_MONTH',
-    inputs: [],
-    outputs: [
+    "type": "function",
+    "name": "MULTIPLIER_NONE",
+    "inputs": [],
+    "outputs": [
       {
-        name: '',
-        type: 'uint64',
-        internalType: 'uint64',
-      },
+        "name": "",
+        "type": "uint16",
+        "internalType": "uint16"
+      }
     ],
-    stateMutability: 'view',
+    "stateMutability": "view"
   },
   {
-    type: 'function',
-    name: 'LOCK_SIX_MONTHS',
-    inputs: [],
-    outputs: [
+    "type": "function",
+    "name": "MULTIPLIER_ONE_MONTH",
+    "inputs": [],
+    "outputs": [
       {
-        name: '',
-        type: 'uint64',
-        internalType: 'uint64',
-      },
+        "name": "",
+        "type": "uint16",
+        "internalType": "uint16"
+      }
     ],
-    stateMutability: 'view',
+    "stateMutability": "view"
   },
   {
-    type: 'function',
-    name: 'LOCK_THREE_MONTHS',
-    inputs: [],
-    outputs: [
+    "type": "function",
+    "name": "MULTIPLIER_SIX_MONTHS",
+    "inputs": [],
+    "outputs": [
       {
-        name: '',
-        type: 'uint64',
-        internalType: 'uint64',
-      },
+        "name": "",
+        "type": "uint16",
+        "internalType": "uint16"
+      }
     ],
-    stateMutability: 'view',
+    "stateMutability": "view"
   },
   {
-    type: 'function',
-    name: 'LOCK_TWO_MONTHS',
-    inputs: [],
-    outputs: [
+    "type": "function",
+    "name": "MULTIPLIER_THREE_MONTHS",
+    "inputs": [],
+    "outputs": [
       {
-        name: '',
-        type: 'uint64',
-        internalType: 'uint64',
-      },
+        "name": "",
+        "type": "uint16",
+        "internalType": "uint16"
+      }
     ],
-    stateMutability: 'view',
+    "stateMutability": "view"
   },
   {
-    type: 'function',
-    name: 'MULTIPLIER_NONE',
-    inputs: [],
-    outputs: [
+    "type": "function",
+    "name": "MULTIPLIER_TWO_MONTHS",
+    "inputs": [],
+    "outputs": [
       {
-        name: '',
-        type: 'uint16',
-        internalType: 'uint16',
-      },
+        "name": "",
+        "type": "uint16",
+        "internalType": "uint16"
+      }
     ],
-    stateMutability: 'view',
+    "stateMutability": "view"
   },
   {
-    type: 'function',
-    name: 'MULTIPLIER_ONE_MONTH',
-    inputs: [],
-    outputs: [
+    "type": "function",
+    "name": "addBlueprint",
+    "inputs": [
       {
-        name: '',
-        type: 'uint16',
-        internalType: 'uint16',
-      },
+        "name": "blueprintId",
+        "type": "uint64",
+        "internalType": "uint64"
+      }
     ],
-    stateMutability: 'view',
+    "outputs": [],
+    "stateMutability": "nonpayable"
   },
   {
-    type: 'function',
-    name: 'MULTIPLIER_SIX_MONTHS',
-    inputs: [],
-    outputs: [
+    "type": "function",
+    "name": "addBlueprintToDelegation",
+    "inputs": [
       {
-        name: '',
-        type: 'uint16',
-        internalType: 'uint16',
+        "name": "delegationIndex",
+        "type": "uint256",
+        "internalType": "uint256"
       },
+      {
+        "name": "blueprintId",
+        "type": "uint64",
+        "internalType": "uint64"
+      }
     ],
-    stateMutability: 'view',
+    "outputs": [],
+    "stateMutability": "nonpayable"
   },
   {
-    type: 'function',
-    name: 'MULTIPLIER_THREE_MONTHS',
-    inputs: [],
-    outputs: [
+    "type": "function",
+    "name": "addSlasher",
+    "inputs": [
       {
-        name: '',
-        type: 'uint16',
-        internalType: 'uint16',
-      },
+        "name": "slasher",
+        "type": "address",
+        "internalType": "address"
+      }
     ],
-    stateMutability: 'view',
+    "outputs": [],
+    "stateMutability": "nonpayable"
   },
   {
-    type: 'function',
-    name: 'MULTIPLIER_TWO_MONTHS',
-    inputs: [],
-    outputs: [
+    "type": "function",
+    "name": "advanceRound",
+    "inputs": [],
+    "outputs": [],
+    "stateMutability": "nonpayable"
+  },
+  {
+    "type": "function",
+    "name": "claimDelegatorRewards",
+    "inputs": [],
+    "outputs": [
       {
-        name: '',
-        type: 'uint16',
-        internalType: 'uint16',
-      },
+        "name": "totalRewards",
+        "type": "uint256",
+        "internalType": "uint256"
+      }
     ],
-    stateMutability: 'view',
+    "stateMutability": "nonpayable"
   },
   {
-    type: 'function',
-    name: 'PRECISION',
-    inputs: [],
-    outputs: [
+    "type": "function",
+    "name": "claimOperatorRewards",
+    "inputs": [],
+    "outputs": [],
+    "stateMutability": "nonpayable"
+  },
+  {
+    "type": "function",
+    "name": "claimOperatorRewardsTo",
+    "inputs": [
       {
-        name: '',
-        type: 'uint256',
-        internalType: 'uint256',
-      },
+        "name": "recipient",
+        "type": "address",
+        "internalType": "address payable"
+      }
     ],
-    stateMutability: 'view',
+    "outputs": [],
+    "stateMutability": "nonpayable"
   },
   {
-    type: 'function',
-    name: 'SLASHER_ROLE',
-    inputs: [],
-    outputs: [
+    "type": "function",
+    "name": "completeLeaving",
+    "inputs": [],
+    "outputs": [],
+    "stateMutability": "nonpayable"
+  },
+  {
+    "type": "function",
+    "name": "currentRound",
+    "inputs": [],
+    "outputs": [
       {
-        name: '',
-        type: 'bytes32',
-        internalType: 'bytes32',
-      },
+        "name": "",
+        "type": "uint64",
+        "internalType": "uint64"
+      }
     ],
-    stateMutability: 'view',
+    "stateMutability": "view"
   },
   {
-    type: 'function',
-    name: 'UPGRADE_INTERFACE_VERSION',
-    inputs: [],
-    outputs: [
+    "type": "function",
+    "name": "delegate",
+    "inputs": [
       {
-        name: '',
-        type: 'string',
-        internalType: 'string',
+        "name": "operator",
+        "type": "address",
+        "internalType": "address"
       },
+      {
+        "name": "amount",
+        "type": "uint256",
+        "internalType": "uint256"
+      }
     ],
-    stateMutability: 'view',
+    "outputs": [],
+    "stateMutability": "nonpayable"
   },
   {
-    type: 'function',
-    name: 'addBlueprint',
-    inputs: [
+    "type": "function",
+    "name": "delegateWithOptions",
+    "inputs": [
       {
-        name: 'blueprintId',
-        type: 'uint64',
-        internalType: 'uint64',
+        "name": "operator",
+        "type": "address",
+        "internalType": "address"
       },
+      {
+        "name": "token",
+        "type": "address",
+        "internalType": "address"
+      },
+      {
+        "name": "amount",
+        "type": "uint256",
+        "internalType": "uint256"
+      },
+      {
+        "name": "selectionMode",
+        "type": "uint8",
+        "internalType": "enum Types.BlueprintSelectionMode"
+      },
+      {
+        "name": "blueprintIds",
+        "type": "uint64[]",
+        "internalType": "uint64[]"
+      }
     ],
-    outputs: [],
-    stateMutability: 'nonpayable',
+    "outputs": [],
+    "stateMutability": "nonpayable"
   },
   {
-    type: 'function',
-    name: 'addBlueprintToDelegation',
-    inputs: [
+    "type": "function",
+    "name": "delegationBondLessDelay",
+    "inputs": [],
+    "outputs": [
       {
-        name: 'delegationIndex',
-        type: 'uint256',
-        internalType: 'uint256',
-      },
-      {
-        name: 'blueprintId',
-        type: 'uint64',
-        internalType: 'uint64',
-      },
+        "name": "",
+        "type": "uint64",
+        "internalType": "uint64"
+      }
     ],
-    outputs: [],
-    stateMutability: 'nonpayable',
+    "stateMutability": "view"
   },
   {
-    type: 'function',
-    name: 'addSlasher',
-    inputs: [
+    "type": "function",
+    "name": "deposit",
+    "inputs": [],
+    "outputs": [],
+    "stateMutability": "payable"
+  },
+  {
+    "type": "function",
+    "name": "depositAndDelegate",
+    "inputs": [
       {
-        name: 'slasher',
-        type: 'address',
-        internalType: 'address',
-      },
+        "name": "operator",
+        "type": "address",
+        "internalType": "address"
+      }
     ],
-    outputs: [],
-    stateMutability: 'nonpayable',
+    "outputs": [],
+    "stateMutability": "payable"
   },
   {
-    type: 'function',
-    name: 'advanceRound',
-    inputs: [],
-    outputs: [],
-    stateMutability: 'nonpayable',
-  },
-  {
-    type: 'function',
-    name: 'blueprintSlashCount',
-    inputs: [
+    "type": "function",
+    "name": "depositAndDelegateWithOptions",
+    "inputs": [
       {
-        name: '',
-        type: 'uint64',
-        internalType: 'uint64',
+        "name": "operator",
+        "type": "address",
+        "internalType": "address"
       },
       {
-        name: '',
-        type: 'address',
-        internalType: 'address',
+        "name": "token",
+        "type": "address",
+        "internalType": "address"
       },
+      {
+        "name": "amount",
+        "type": "uint256",
+        "internalType": "uint256"
+      },
+      {
+        "name": "selectionMode",
+        "type": "uint8",
+        "internalType": "enum Types.BlueprintSelectionMode"
+      },
+      {
+        "name": "blueprintIds",
+        "type": "uint64[]",
+        "internalType": "uint64[]"
+      }
     ],
-    outputs: [
+    "outputs": [],
+    "stateMutability": "payable"
+  },
+  {
+    "type": "function",
+    "name": "depositERC20",
+    "inputs": [
       {
-        name: '',
-        type: 'uint64',
-        internalType: 'uint64',
+        "name": "token",
+        "type": "address",
+        "internalType": "address"
       },
+      {
+        "name": "amount",
+        "type": "uint256",
+        "internalType": "uint256"
+      }
     ],
-    stateMutability: 'view',
+    "outputs": [],
+    "stateMutability": "nonpayable"
   },
   {
-    type: 'function',
-    name: 'claimDelegatorRewards',
-    inputs: [],
-    outputs: [
+    "type": "function",
+    "name": "depositERC20WithLock",
+    "inputs": [
       {
-        name: 'totalRewards',
-        type: 'uint256',
-        internalType: 'uint256',
+        "name": "token",
+        "type": "address",
+        "internalType": "address"
       },
+      {
+        "name": "amount",
+        "type": "uint256",
+        "internalType": "uint256"
+      },
+      {
+        "name": "lockMultiplier",
+        "type": "uint8",
+        "internalType": "enum Types.LockMultiplier"
+      }
     ],
-    stateMutability: 'nonpayable',
+    "outputs": [],
+    "stateMutability": "nonpayable"
   },
   {
-    type: 'function',
-    name: 'claimOperatorRewards',
-    inputs: [],
-    outputs: [],
-    stateMutability: 'nonpayable',
-  },
-  {
-    type: 'function',
-    name: 'claimOperatorRewardsTo',
-    inputs: [
+    "type": "function",
+    "name": "depositWithLock",
+    "inputs": [
       {
-        name: 'recipient',
-        type: 'address',
-        internalType: 'address payable',
-      },
+        "name": "lockMultiplier",
+        "type": "uint8",
+        "internalType": "enum Types.LockMultiplier"
+      }
     ],
-    outputs: [],
-    stateMutability: 'nonpayable',
+    "outputs": [],
+    "stateMutability": "payable"
   },
   {
-    type: 'function',
-    name: 'completeLeaving',
-    inputs: [],
-    outputs: [],
-    stateMutability: 'nonpayable',
-  },
-  {
-    type: 'function',
-    name: 'currentRound',
-    inputs: [],
-    outputs: [
+    "type": "function",
+    "name": "disableAsset",
+    "inputs": [
       {
-        name: '',
-        type: 'uint64',
-        internalType: 'uint64',
-      },
+        "name": "token",
+        "type": "address",
+        "internalType": "address"
+      }
     ],
-    stateMutability: 'view',
+    "outputs": [],
+    "stateMutability": "nonpayable"
   },
   {
-    type: 'function',
-    name: 'delegate',
-    inputs: [
+    "type": "function",
+    "name": "enableAsset",
+    "inputs": [
       {
-        name: 'operator',
-        type: 'address',
-        internalType: 'address',
+        "name": "token",
+        "type": "address",
+        "internalType": "address"
       },
       {
-        name: 'amount',
-        type: 'uint256',
-        internalType: 'uint256',
+        "name": "minOperatorStake",
+        "type": "uint256",
+        "internalType": "uint256"
       },
+      {
+        "name": "minDelegation",
+        "type": "uint256",
+        "internalType": "uint256"
+      },
+      {
+        "name": "depositCap",
+        "type": "uint256",
+        "internalType": "uint256"
+      },
+      {
+        "name": "rewardMultiplierBps",
+        "type": "uint16",
+        "internalType": "uint16"
+      }
     ],
-    outputs: [],
-    stateMutability: 'nonpayable',
+    "outputs": [],
+    "stateMutability": "nonpayable"
   },
   {
-    type: 'function',
-    name: 'delegateWithOptions',
-    inputs: [
+    "type": "function",
+    "name": "enableAssetWithAdapter",
+    "inputs": [
       {
-        name: 'operator',
-        type: 'address',
-        internalType: 'address',
+        "name": "token",
+        "type": "address",
+        "internalType": "address"
       },
       {
-        name: 'token',
-        type: 'address',
-        internalType: 'address',
+        "name": "adapter",
+        "type": "address",
+        "internalType": "address"
       },
       {
-        name: 'amount',
-        type: 'uint256',
-        internalType: 'uint256',
+        "name": "minOperatorStake",
+        "type": "uint256",
+        "internalType": "uint256"
       },
       {
-        name: 'selectionMode',
-        type: 'uint8',
-        internalType: 'enum Types.BlueprintSelectionMode',
+        "name": "minDelegation",
+        "type": "uint256",
+        "internalType": "uint256"
       },
       {
-        name: 'blueprintIds',
-        type: 'uint64[]',
-        internalType: 'uint64[]',
+        "name": "depositCap",
+        "type": "uint256",
+        "internalType": "uint256"
       },
+      {
+        "name": "rewardMultiplierBps",
+        "type": "uint16",
+        "internalType": "uint16"
+      }
     ],
-    outputs: [],
-    stateMutability: 'nonpayable',
+    "outputs": [],
+    "stateMutability": "nonpayable"
   },
   {
-    type: 'function',
-    name: 'delegationBondLessDelay',
-    inputs: [],
-    outputs: [
+    "type": "function",
+    "name": "executeDelegatorUnstake",
+    "inputs": [],
+    "outputs": [],
+    "stateMutability": "nonpayable"
+  },
+  {
+    "type": "function",
+    "name": "executeOperatorUnstake",
+    "inputs": [],
+    "outputs": [],
+    "stateMutability": "nonpayable"
+  },
+  {
+    "type": "function",
+    "name": "executeWithdraw",
+    "inputs": [],
+    "outputs": [],
+    "stateMutability": "nonpayable"
+  },
+  {
+    "type": "function",
+    "name": "getAssetConfig",
+    "inputs": [
       {
-        name: '',
-        type: 'uint64',
-        internalType: 'uint64',
-      },
+        "name": "token",
+        "type": "address",
+        "internalType": "address"
+      }
     ],
-    stateMutability: 'view',
-  },
-  {
-    type: 'function',
-    name: 'deposit',
-    inputs: [],
-    outputs: [],
-    stateMutability: 'payable',
-  },
-  {
-    type: 'function',
-    name: 'depositAndDelegate',
-    inputs: [
+    "outputs": [
       {
-        name: 'operator',
-        type: 'address',
-        internalType: 'address',
-      },
-    ],
-    outputs: [],
-    stateMutability: 'payable',
-  },
-  {
-    type: 'function',
-    name: 'depositAndDelegateWithOptions',
-    inputs: [
-      {
-        name: 'operator',
-        type: 'address',
-        internalType: 'address',
-      },
-      {
-        name: 'token',
-        type: 'address',
-        internalType: 'address',
-      },
-      {
-        name: 'amount',
-        type: 'uint256',
-        internalType: 'uint256',
-      },
-      {
-        name: 'selectionMode',
-        type: 'uint8',
-        internalType: 'enum Types.BlueprintSelectionMode',
-      },
-      {
-        name: 'blueprintIds',
-        type: 'uint64[]',
-        internalType: 'uint64[]',
-      },
-    ],
-    outputs: [],
-    stateMutability: 'payable',
-  },
-  {
-    type: 'function',
-    name: 'depositERC20',
-    inputs: [
-      {
-        name: 'token',
-        type: 'address',
-        internalType: 'address',
-      },
-      {
-        name: 'amount',
-        type: 'uint256',
-        internalType: 'uint256',
-      },
-    ],
-    outputs: [],
-    stateMutability: 'nonpayable',
-  },
-  {
-    type: 'function',
-    name: 'depositERC20WithLock',
-    inputs: [
-      {
-        name: 'token',
-        type: 'address',
-        internalType: 'address',
-      },
-      {
-        name: 'amount',
-        type: 'uint256',
-        internalType: 'uint256',
-      },
-      {
-        name: 'lockMultiplier',
-        type: 'uint8',
-        internalType: 'enum Types.LockMultiplier',
-      },
-    ],
-    outputs: [],
-    stateMutability: 'nonpayable',
-  },
-  {
-    type: 'function',
-    name: 'depositWithLock',
-    inputs: [
-      {
-        name: 'lockMultiplier',
-        type: 'uint8',
-        internalType: 'enum Types.LockMultiplier',
-      },
-    ],
-    outputs: [],
-    stateMutability: 'payable',
-  },
-  {
-    type: 'function',
-    name: 'disableAsset',
-    inputs: [
-      {
-        name: 'token',
-        type: 'address',
-        internalType: 'address',
-      },
-    ],
-    outputs: [],
-    stateMutability: 'nonpayable',
-  },
-  {
-    type: 'function',
-    name: 'enableAsset',
-    inputs: [
-      {
-        name: 'token',
-        type: 'address',
-        internalType: 'address',
-      },
-      {
-        name: '_minOperatorStake',
-        type: 'uint256',
-        internalType: 'uint256',
-      },
-      {
-        name: '_minDelegation',
-        type: 'uint256',
-        internalType: 'uint256',
-      },
-      {
-        name: '_depositCap',
-        type: 'uint256',
-        internalType: 'uint256',
-      },
-      {
-        name: '_rewardMultiplierBps',
-        type: 'uint16',
-        internalType: 'uint16',
-      },
-    ],
-    outputs: [],
-    stateMutability: 'nonpayable',
-  },
-  {
-    type: 'function',
-    name: 'enableAssetWithAdapter',
-    inputs: [
-      {
-        name: 'token',
-        type: 'address',
-        internalType: 'address',
-      },
-      {
-        name: 'adapter',
-        type: 'address',
-        internalType: 'address',
-      },
-      {
-        name: '_minOperatorStake',
-        type: 'uint256',
-        internalType: 'uint256',
-      },
-      {
-        name: '_minDelegation',
-        type: 'uint256',
-        internalType: 'uint256',
-      },
-      {
-        name: '_depositCap',
-        type: 'uint256',
-        internalType: 'uint256',
-      },
-      {
-        name: '_rewardMultiplierBps',
-        type: 'uint16',
-        internalType: 'uint16',
-      },
-    ],
-    outputs: [],
-    stateMutability: 'nonpayable',
-  },
-  {
-    type: 'function',
-    name: 'executeDelegatorUnstake',
-    inputs: [],
-    outputs: [],
-    stateMutability: 'nonpayable',
-  },
-  {
-    type: 'function',
-    name: 'executeOperatorUnstake',
-    inputs: [],
-    outputs: [],
-    stateMutability: 'nonpayable',
-  },
-  {
-    type: 'function',
-    name: 'executeWithdraw',
-    inputs: [],
-    outputs: [],
-    stateMutability: 'nonpayable',
-  },
-  {
-    type: 'function',
-    name: 'getAssetAdapter',
-    inputs: [
-      {
-        name: 'token',
-        type: 'address',
-        internalType: 'address',
-      },
-    ],
-    outputs: [
-      {
-        name: '',
-        type: 'address',
-        internalType: 'address',
-      },
-    ],
-    stateMutability: 'view',
-  },
-  {
-    type: 'function',
-    name: 'getAssetConfig',
-    inputs: [
-      {
-        name: 'token',
-        type: 'address',
-        internalType: 'address',
-      },
-    ],
-    outputs: [
-      {
-        name: '',
-        type: 'tuple',
-        internalType: 'struct Types.AssetConfig',
-        components: [
+        "name": "",
+        "type": "tuple",
+        "internalType": "struct Types.AssetConfig",
+        "components": [
           {
-            name: 'enabled',
-            type: 'bool',
-            internalType: 'bool',
+            "name": "enabled",
+            "type": "bool",
+            "internalType": "bool"
           },
           {
-            name: 'minOperatorStake',
-            type: 'uint256',
-            internalType: 'uint256',
+            "name": "minOperatorStake",
+            "type": "uint256",
+            "internalType": "uint256"
           },
           {
-            name: 'minDelegation',
-            type: 'uint256',
-            internalType: 'uint256',
+            "name": "minDelegation",
+            "type": "uint256",
+            "internalType": "uint256"
           },
           {
-            name: 'depositCap',
-            type: 'uint256',
-            internalType: 'uint256',
+            "name": "depositCap",
+            "type": "uint256",
+            "internalType": "uint256"
           },
           {
-            name: 'currentDeposits',
-            type: 'uint256',
-            internalType: 'uint256',
+            "name": "currentDeposits",
+            "type": "uint256",
+            "internalType": "uint256"
           },
           {
-            name: 'rewardMultiplierBps',
-            type: 'uint16',
-            internalType: 'uint16',
-          },
-        ],
-      },
+            "name": "rewardMultiplierBps",
+            "type": "uint16",
+            "internalType": "uint16"
+          }
+        ]
+      }
     ],
-    stateMutability: 'view',
+    "stateMutability": "view"
   },
   {
-    type: 'function',
-    name: 'getDelegation',
-    inputs: [
+    "type": "function",
+    "name": "getDelegation",
+    "inputs": [
       {
-        name: 'delegator',
-        type: 'address',
-        internalType: 'address',
+        "name": "delegator",
+        "type": "address",
+        "internalType": "address"
       },
       {
-        name: 'operator',
-        type: 'address',
-        internalType: 'address',
-      },
+        "name": "operator",
+        "type": "address",
+        "internalType": "address"
+      }
     ],
-    outputs: [
+    "outputs": [
       {
-        name: '',
-        type: 'uint256',
-        internalType: 'uint256',
-      },
+        "name": "",
+        "type": "uint256",
+        "internalType": "uint256"
+      }
     ],
-    stateMutability: 'view',
+    "stateMutability": "view"
   },
   {
-    type: 'function',
-    name: 'getDelegationBlueprints',
-    inputs: [
+    "type": "function",
+    "name": "getDelegationBlueprints",
+    "inputs": [
       {
-        name: 'delegator',
-        type: 'address',
-        internalType: 'address',
+        "name": "delegator",
+        "type": "address",
+        "internalType": "address"
       },
       {
-        name: 'idx',
-        type: 'uint256',
-        internalType: 'uint256',
-      },
+        "name": "idx",
+        "type": "uint256",
+        "internalType": "uint256"
+      }
     ],
-    outputs: [
+    "outputs": [
       {
-        name: '',
-        type: 'uint64[]',
-        internalType: 'uint64[]',
-      },
+        "name": "",
+        "type": "uint64[]",
+        "internalType": "uint64[]"
+      }
     ],
-    stateMutability: 'view',
+    "stateMutability": "view"
   },
   {
-    type: 'function',
-    name: 'getDelegations',
-    inputs: [
+    "type": "function",
+    "name": "getDelegations",
+    "inputs": [
       {
-        name: 'delegator',
-        type: 'address',
-        internalType: 'address',
-      },
+        "name": "delegator",
+        "type": "address",
+        "internalType": "address"
+      }
     ],
-    outputs: [
+    "outputs": [
       {
-        name: '',
-        type: 'tuple[]',
-        internalType: 'struct Types.BondInfoDelegator[]',
-        components: [
+        "name": "",
+        "type": "tuple[]",
+        "internalType": "struct Types.BondInfoDelegator[]",
+        "components": [
           {
-            name: 'operator',
-            type: 'address',
-            internalType: 'address',
+            "name": "operator",
+            "type": "address",
+            "internalType": "address"
           },
           {
-            name: 'shares',
-            type: 'uint256',
-            internalType: 'uint256',
+            "name": "shares",
+            "type": "uint256",
+            "internalType": "uint256"
           },
           {
-            name: 'asset',
-            type: 'tuple',
-            internalType: 'struct Types.Asset',
-            components: [
+            "name": "asset",
+            "type": "tuple",
+            "internalType": "struct Types.Asset",
+            "components": [
               {
-                name: 'kind',
-                type: 'uint8',
-                internalType: 'enum Types.AssetKind',
+                "name": "kind",
+                "type": "uint8",
+                "internalType": "enum Types.AssetKind"
               },
               {
-                name: 'token',
-                type: 'address',
-                internalType: 'address',
-              },
-            ],
+                "name": "token",
+                "type": "address",
+                "internalType": "address"
+              }
+            ]
           },
           {
-            name: 'selectionMode',
-            type: 'uint8',
-            internalType: 'enum Types.BlueprintSelectionMode',
-          },
-        ],
-      },
+            "name": "selectionMode",
+            "type": "uint8",
+            "internalType": "enum Types.BlueprintSelectionMode"
+          }
+        ]
+      }
     ],
-    stateMutability: 'view',
+    "stateMutability": "view"
   },
   {
-    type: 'function',
-    name: 'getDeposit',
-    inputs: [
+    "type": "function",
+    "name": "getDeposit",
+    "inputs": [
       {
-        name: 'delegator',
-        type: 'address',
-        internalType: 'address',
+        "name": "delegator",
+        "type": "address",
+        "internalType": "address"
       },
       {
-        name: 'token',
-        type: 'address',
-        internalType: 'address',
-      },
+        "name": "token",
+        "type": "address",
+        "internalType": "address"
+      }
     ],
-    outputs: [
+    "outputs": [
       {
-        name: '',
-        type: 'tuple',
-        internalType: 'struct Types.Deposit',
-        components: [
+        "name": "",
+        "type": "tuple",
+        "internalType": "struct Types.Deposit",
+        "components": [
           {
-            name: 'amount',
-            type: 'uint256',
-            internalType: 'uint256',
+            "name": "amount",
+            "type": "uint256",
+            "internalType": "uint256"
           },
           {
-            name: 'delegatedAmount',
-            type: 'uint256',
-            internalType: 'uint256',
-          },
-        ],
-      },
+            "name": "delegatedAmount",
+            "type": "uint256",
+            "internalType": "uint256"
+          }
+        ]
+      }
     ],
-    stateMutability: 'view',
+    "stateMutability": "view"
   },
   {
-    type: 'function',
-    name: 'getLocks',
-    inputs: [
+    "type": "function",
+    "name": "getLocks",
+    "inputs": [
       {
-        name: 'delegator',
-        type: 'address',
-        internalType: 'address',
+        "name": "delegator",
+        "type": "address",
+        "internalType": "address"
       },
       {
-        name: 'token',
-        type: 'address',
-        internalType: 'address',
-      },
+        "name": "token",
+        "type": "address",
+        "internalType": "address"
+      }
     ],
-    outputs: [
+    "outputs": [
       {
-        name: '',
-        type: 'tuple[]',
-        internalType: 'struct Types.LockInfo[]',
-        components: [
+        "name": "",
+        "type": "tuple[]",
+        "internalType": "struct Types.LockInfo[]",
+        "components": [
           {
-            name: 'amount',
-            type: 'uint256',
-            internalType: 'uint256',
+            "name": "amount",
+            "type": "uint256",
+            "internalType": "uint256"
           },
           {
-            name: 'multiplier',
-            type: 'uint8',
-            internalType: 'enum Types.LockMultiplier',
+            "name": "multiplier",
+            "type": "uint8",
+            "internalType": "enum Types.LockMultiplier"
           },
           {
-            name: 'expiryBlock',
-            type: 'uint64',
-            internalType: 'uint64',
-          },
-        ],
-      },
+            "name": "expiryBlock",
+            "type": "uint64",
+            "internalType": "uint64"
+          }
+        ]
+      }
     ],
-    stateMutability: 'view',
+    "stateMutability": "view"
   },
   {
-    type: 'function',
-    name: 'getOperatorBlueprints',
-    inputs: [
+    "type": "function",
+    "name": "getOperatorBlueprints",
+    "inputs": [
       {
-        name: 'operator',
-        type: 'address',
-        internalType: 'address',
-      },
+        "name": "operator",
+        "type": "address",
+        "internalType": "address"
+      }
     ],
-    outputs: [
+    "outputs": [
       {
-        name: '',
-        type: 'uint256[]',
-        internalType: 'uint256[]',
-      },
+        "name": "",
+        "type": "uint256[]",
+        "internalType": "uint256[]"
+      }
     ],
-    stateMutability: 'view',
+    "stateMutability": "view"
   },
   {
-    type: 'function',
-    name: 'getOperatorDelegatedStake',
-    inputs: [
+    "type": "function",
+    "name": "getOperatorDelegatedStake",
+    "inputs": [
       {
-        name: 'operator',
-        type: 'address',
-        internalType: 'address',
-      },
+        "name": "operator",
+        "type": "address",
+        "internalType": "address"
+      }
     ],
-    outputs: [
+    "outputs": [
       {
-        name: '',
-        type: 'uint256',
-        internalType: 'uint256',
-      },
+        "name": "",
+        "type": "uint256",
+        "internalType": "uint256"
+      }
     ],
-    stateMutability: 'view',
+    "stateMutability": "view"
   },
   {
-    type: 'function',
-    name: 'getOperatorDelegatorCount',
-    inputs: [
+    "type": "function",
+    "name": "getOperatorDelegatorCount",
+    "inputs": [
       {
-        name: 'operator',
-        type: 'address',
-        internalType: 'address',
-      },
+        "name": "operator",
+        "type": "address",
+        "internalType": "address"
+      }
     ],
-    outputs: [
+    "outputs": [
       {
-        name: '',
-        type: 'uint256',
-        internalType: 'uint256',
-      },
+        "name": "",
+        "type": "uint256",
+        "internalType": "uint256"
+      }
     ],
-    stateMutability: 'view',
+    "stateMutability": "view"
   },
   {
-    type: 'function',
-    name: 'getOperatorDelegators',
-    inputs: [
+    "type": "function",
+    "name": "getOperatorDelegators",
+    "inputs": [
       {
-        name: 'operator',
-        type: 'address',
-        internalType: 'address',
-      },
+        "name": "operator",
+        "type": "address",
+        "internalType": "address"
+      }
     ],
-    outputs: [
+    "outputs": [
       {
-        name: '',
-        type: 'address[]',
-        internalType: 'address[]',
-      },
+        "name": "",
+        "type": "address[]",
+        "internalType": "address[]"
+      }
     ],
-    stateMutability: 'view',
+    "stateMutability": "view"
   },
   {
-    type: 'function',
-    name: 'getOperatorMetadata',
-    inputs: [
+    "type": "function",
+    "name": "getOperatorMetadata",
+    "inputs": [
       {
-        name: 'operator',
-        type: 'address',
-        internalType: 'address',
-      },
+        "name": "operator",
+        "type": "address",
+        "internalType": "address"
+      }
     ],
-    outputs: [
+    "outputs": [
       {
-        name: '',
-        type: 'tuple',
-        internalType: 'struct Types.OperatorMetadata',
-        components: [
+        "name": "",
+        "type": "tuple",
+        "internalType": "struct Types.OperatorMetadata",
+        "components": [
           {
-            name: 'stake',
-            type: 'uint256',
-            internalType: 'uint256',
-          },
-          {
-            name: 'delegationCount',
-            type: 'uint32',
-            internalType: 'uint32',
+            "name": "stake",
+            "type": "uint256",
+            "internalType": "uint256"
           },
           {
-            name: 'status',
-            type: 'uint8',
-            internalType: 'enum Types.OperatorStatus',
+            "name": "delegationCount",
+            "type": "uint32",
+            "internalType": "uint32"
           },
           {
-            name: 'leavingRound',
-            type: 'uint64',
-            internalType: 'uint64',
-          },
-        ],
-      },
-    ],
-    stateMutability: 'view',
-  },
-  {
-    type: 'function',
-    name: 'getOperatorRewardPool',
-    inputs: [
-      {
-        name: 'operator',
-        type: 'address',
-        internalType: 'address',
-      },
-    ],
-    outputs: [
-      {
-        name: '',
-        type: 'tuple',
-        internalType: 'struct Types.OperatorRewardPool',
-        components: [
-          {
-            name: 'accRewardPerShare',
-            type: 'uint256',
-            internalType: 'uint256',
+            "name": "status",
+            "type": "uint8",
+            "internalType": "enum Types.OperatorStatus"
           },
           {
-            name: 'totalShares',
-            type: 'uint256',
-            internalType: 'uint256',
+            "name": "leavingRound",
+            "type": "uint64",
+            "internalType": "uint64"
+          }
+        ]
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "getOperatorRewardPool",
+    "inputs": [
+      {
+        "name": "operator",
+        "type": "address",
+        "internalType": "address"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "",
+        "type": "tuple",
+        "internalType": "struct Types.OperatorRewardPool",
+        "components": [
+          {
+            "name": "accRewardPerShare",
+            "type": "uint256",
+            "internalType": "uint256"
           },
           {
-            name: 'totalAssets',
-            type: 'uint256',
-            internalType: 'uint256',
+            "name": "totalShares",
+            "type": "uint256",
+            "internalType": "uint256"
           },
           {
-            name: 'lastUpdateRound',
-            type: 'uint64',
-            internalType: 'uint64',
-          },
-        ],
-      },
-    ],
-    stateMutability: 'view',
-  },
-  {
-    type: 'function',
-    name: 'getOperatorSelfStake',
-    inputs: [
-      {
-        name: 'operator',
-        type: 'address',
-        internalType: 'address',
-      },
-    ],
-    outputs: [
-      {
-        name: '',
-        type: 'uint256',
-        internalType: 'uint256',
-      },
-    ],
-    stateMutability: 'view',
-  },
-  {
-    type: 'function',
-    name: 'getOperatorSlashFactor',
-    inputs: [
-      {
-        name: 'operator',
-        type: 'address',
-        internalType: 'address',
-      },
-    ],
-    outputs: [
-      {
-        name: '',
-        type: 'uint256',
-        internalType: 'uint256',
-      },
-    ],
-    stateMutability: 'view',
-  },
-  {
-    type: 'function',
-    name: 'getOperatorStake',
-    inputs: [
-      {
-        name: 'operator',
-        type: 'address',
-        internalType: 'address',
-      },
-    ],
-    outputs: [
-      {
-        name: '',
-        type: 'uint256',
-        internalType: 'uint256',
-      },
-    ],
-    stateMutability: 'view',
-  },
-  {
-    type: 'function',
-    name: 'getPendingDelegatorRewards',
-    inputs: [
-      {
-        name: 'delegator',
-        type: 'address',
-        internalType: 'address',
-      },
-    ],
-    outputs: [
-      {
-        name: '',
-        type: 'uint256',
-        internalType: 'uint256',
-      },
-    ],
-    stateMutability: 'view',
-  },
-  {
-    type: 'function',
-    name: 'getPendingOperatorRewards',
-    inputs: [
-      {
-        name: 'operator',
-        type: 'address',
-        internalType: 'address',
-      },
-    ],
-    outputs: [
-      {
-        name: '',
-        type: 'uint256',
-        internalType: 'uint256',
-      },
-    ],
-    stateMutability: 'view',
-  },
-  {
-    type: 'function',
-    name: 'getPendingUnstakes',
-    inputs: [
-      {
-        name: 'delegator',
-        type: 'address',
-        internalType: 'address',
-      },
-    ],
-    outputs: [
-      {
-        name: '',
-        type: 'tuple[]',
-        internalType: 'struct Types.BondLessRequest[]',
-        components: [
-          {
-            name: 'operator',
-            type: 'address',
-            internalType: 'address',
+            "name": "totalAssets",
+            "type": "uint256",
+            "internalType": "uint256"
           },
           {
-            name: 'asset',
-            type: 'tuple',
-            internalType: 'struct Types.Asset',
-            components: [
+            "name": "lastUpdateRound",
+            "type": "uint64",
+            "internalType": "uint64"
+          }
+        ]
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "getOperatorSelfStake",
+    "inputs": [
+      {
+        "name": "operator",
+        "type": "address",
+        "internalType": "address"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "",
+        "type": "uint256",
+        "internalType": "uint256"
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "getOperatorStake",
+    "inputs": [
+      {
+        "name": "operator",
+        "type": "address",
+        "internalType": "address"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "",
+        "type": "uint256",
+        "internalType": "uint256"
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "getPendingDelegatorRewards",
+    "inputs": [
+      {
+        "name": "delegator",
+        "type": "address",
+        "internalType": "address"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "",
+        "type": "uint256",
+        "internalType": "uint256"
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "getPendingOperatorRewards",
+    "inputs": [
+      {
+        "name": "operator",
+        "type": "address",
+        "internalType": "address"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "",
+        "type": "uint256",
+        "internalType": "uint256"
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "getPendingUnstakes",
+    "inputs": [
+      {
+        "name": "delegator",
+        "type": "address",
+        "internalType": "address"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "",
+        "type": "tuple[]",
+        "internalType": "struct Types.BondLessRequest[]",
+        "components": [
+          {
+            "name": "operator",
+            "type": "address",
+            "internalType": "address"
+          },
+          {
+            "name": "asset",
+            "type": "tuple",
+            "internalType": "struct Types.Asset",
+            "components": [
               {
-                name: 'kind',
-                type: 'uint8',
-                internalType: 'enum Types.AssetKind',
+                "name": "kind",
+                "type": "uint8",
+                "internalType": "enum Types.AssetKind"
               },
               {
-                name: 'token',
-                type: 'address',
-                internalType: 'address',
-              },
-            ],
+                "name": "token",
+                "type": "address",
+                "internalType": "address"
+              }
+            ]
           },
           {
-            name: 'shares',
-            type: 'uint256',
-            internalType: 'uint256',
+            "name": "shares",
+            "type": "uint256",
+            "internalType": "uint256"
           },
           {
-            name: 'requestedRound',
-            type: 'uint64',
-            internalType: 'uint64',
+            "name": "requestedRound",
+            "type": "uint64",
+            "internalType": "uint64"
           },
           {
-            name: 'selectionMode',
-            type: 'uint8',
-            internalType: 'enum Types.BlueprintSelectionMode',
+            "name": "selectionMode",
+            "type": "uint8",
+            "internalType": "enum Types.BlueprintSelectionMode"
           },
           {
-            name: 'slashFactorSnapshot',
-            type: 'uint256',
-            internalType: 'uint256',
-          },
-        ],
-      },
+            "name": "slashFactorSnapshot",
+            "type": "uint256",
+            "internalType": "uint256"
+          }
+        ]
+      }
     ],
-    stateMutability: 'view',
+    "stateMutability": "view"
   },
   {
-    type: 'function',
-    name: 'getPendingWithdrawals',
-    inputs: [
+    "type": "function",
+    "name": "getPendingWithdrawals",
+    "inputs": [
       {
-        name: 'delegator',
-        type: 'address',
-        internalType: 'address',
-      },
+        "name": "delegator",
+        "type": "address",
+        "internalType": "address"
+      }
     ],
-    outputs: [
+    "outputs": [
       {
-        name: '',
-        type: 'tuple[]',
-        internalType: 'struct Types.WithdrawRequest[]',
-        components: [
+        "name": "",
+        "type": "tuple[]",
+        "internalType": "struct Types.WithdrawRequest[]",
+        "components": [
           {
-            name: 'asset',
-            type: 'tuple',
-            internalType: 'struct Types.Asset',
-            components: [
+            "name": "asset",
+            "type": "tuple",
+            "internalType": "struct Types.Asset",
+            "components": [
               {
-                name: 'kind',
-                type: 'uint8',
-                internalType: 'enum Types.AssetKind',
-              },
-              {
-                name: 'token',
-                type: 'address',
-                internalType: 'address',
-              },
-            ],
-          },
-          {
-            name: 'amount',
-            type: 'uint256',
-            internalType: 'uint256',
-          },
-          {
-            name: 'requestedRound',
-            type: 'uint64',
-            internalType: 'uint64',
-          },
-        ],
-      },
-    ],
-    stateMutability: 'view',
-  },
-  {
-    type: 'function',
-    name: 'getRoleAdmin',
-    inputs: [
-      {
-        name: 'role',
-        type: 'bytes32',
-        internalType: 'bytes32',
-      },
-    ],
-    outputs: [
-      {
-        name: '',
-        type: 'bytes32',
-        internalType: 'bytes32',
-      },
-    ],
-    stateMutability: 'view',
-  },
-  {
-    type: 'function',
-    name: 'getSlashCount',
-    inputs: [
-      {
-        name: 'operator',
-        type: 'address',
-        internalType: 'address',
-      },
-    ],
-    outputs: [
-      {
-        name: '',
-        type: 'uint64',
-        internalType: 'uint64',
-      },
-    ],
-    stateMutability: 'view',
-  },
-  {
-    type: 'function',
-    name: 'getSlashCountForBlueprint',
-    inputs: [
-      {
-        name: 'blueprintId',
-        type: 'uint64',
-        internalType: 'uint64',
-      },
-      {
-        name: 'operator',
-        type: 'address',
-        internalType: 'address',
-      },
-    ],
-    outputs: [
-      {
-        name: '',
-        type: 'uint64',
-        internalType: 'uint64',
-      },
-    ],
-    stateMutability: 'view',
-  },
-  {
-    type: 'function',
-    name: 'getSlashCountForService',
-    inputs: [
-      {
-        name: 'serviceId',
-        type: 'uint64',
-        internalType: 'uint64',
-      },
-      {
-        name: 'operator',
-        type: 'address',
-        internalType: 'address',
-      },
-    ],
-    outputs: [
-      {
-        name: '',
-        type: 'uint64',
-        internalType: 'uint64',
-      },
-    ],
-    stateMutability: 'view',
-  },
-  {
-    type: 'function',
-    name: 'getSlashImpact',
-    inputs: [
-      {
-        name: 'operator',
-        type: 'address',
-        internalType: 'address',
-      },
-      {
-        name: 'slashId',
-        type: 'uint64',
-        internalType: 'uint64',
-      },
-      {
-        name: 'delegator',
-        type: 'address',
-        internalType: 'address',
-      },
-    ],
-    outputs: [
-      {
-        name: 'lostAmount',
-        type: 'uint256',
-        internalType: 'uint256',
-      },
-    ],
-    stateMutability: 'view',
-  },
-  {
-    type: 'function',
-    name: 'getSlashRecord',
-    inputs: [
-      {
-        name: 'operator',
-        type: 'address',
-        internalType: 'address',
-      },
-      {
-        name: 'slashId',
-        type: 'uint64',
-        internalType: 'uint64',
-      },
-    ],
-    outputs: [
-      {
-        name: '',
-        type: 'tuple',
-        internalType: 'struct SlashingManager.SlashRecord',
-        components: [
-          {
-            name: 'round',
-            type: 'uint64',
-            internalType: 'uint64',
-          },
-          {
-            name: 'serviceId',
-            type: 'uint64',
-            internalType: 'uint64',
-          },
-          {
-            name: 'blueprintId',
-            type: 'uint64',
-            internalType: 'uint64',
-          },
-          {
-            name: 'totalSlashed',
-            type: 'uint256',
-            internalType: 'uint256',
-          },
-          {
-            name: 'exchangeRateBefore',
-            type: 'uint256',
-            internalType: 'uint256',
-          },
-          {
-            name: 'exchangeRateAfter',
-            type: 'uint256',
-            internalType: 'uint256',
-          },
-          {
-            name: 'evidence',
-            type: 'bytes32',
-            internalType: 'bytes32',
-          },
-        ],
-      },
-    ],
-    stateMutability: 'view',
-  },
-  {
-    type: 'function',
-    name: 'getSnapshot',
-    inputs: [
-      {
-        name: 'round',
-        type: 'uint64',
-        internalType: 'uint64',
-      },
-      {
-        name: 'operator',
-        type: 'address',
-        internalType: 'address',
-      },
-    ],
-    outputs: [
-      {
-        name: '',
-        type: 'tuple',
-        internalType: 'struct Types.OperatorSnapshot',
-        components: [
-          {
-            name: 'stake',
-            type: 'uint256',
-            internalType: 'uint256',
-          },
-          {
-            name: 'totalDelegated',
-            type: 'uint256',
-            internalType: 'uint256',
-          },
-        ],
-      },
-    ],
-    stateMutability: 'view',
-  },
-  {
-    type: 'function',
-    name: 'getTotalDelegation',
-    inputs: [
-      {
-        name: 'delegator',
-        type: 'address',
-        internalType: 'address',
-      },
-    ],
-    outputs: [
-      {
-        name: 'total',
-        type: 'uint256',
-        internalType: 'uint256',
-      },
-    ],
-    stateMutability: 'view',
-  },
-  {
-    type: 'function',
-    name: 'grantRole',
-    inputs: [
-      {
-        name: 'role',
-        type: 'bytes32',
-        internalType: 'bytes32',
-      },
-      {
-        name: 'account',
-        type: 'address',
-        internalType: 'address',
-      },
-    ],
-    outputs: [],
-    stateMutability: 'nonpayable',
-  },
-  {
-    type: 'function',
-    name: 'hasRole',
-    inputs: [
-      {
-        name: 'role',
-        type: 'bytes32',
-        internalType: 'bytes32',
-      },
-      {
-        name: 'account',
-        type: 'address',
-        internalType: 'address',
-      },
-    ],
-    outputs: [
-      {
-        name: '',
-        type: 'bool',
-        internalType: 'bool',
-      },
-    ],
-    stateMutability: 'view',
-  },
-  {
-    type: 'function',
-    name: 'increaseStake',
-    inputs: [],
-    outputs: [],
-    stateMutability: 'payable',
-  },
-  {
-    type: 'function',
-    name: 'initialize',
-    inputs: [
-      {
-        name: 'admin',
-        type: 'address',
-        internalType: 'address',
-      },
-      {
-        name: 'nativeMinOperatorStake',
-        type: 'uint256',
-        internalType: 'uint256',
-      },
-      {
-        name: 'nativeMinDelegation',
-        type: 'uint256',
-        internalType: 'uint256',
-      },
-      {
-        name: '_operatorCommissionBps',
-        type: 'uint16',
-        internalType: 'uint16',
-      },
-    ],
-    outputs: [],
-    stateMutability: 'nonpayable',
-  },
-  {
-    type: 'function',
-    name: 'isOperator',
-    inputs: [
-      {
-        name: 'operator',
-        type: 'address',
-        internalType: 'address',
-      },
-    ],
-    outputs: [
-      {
-        name: '',
-        type: 'bool',
-        internalType: 'bool',
-      },
-    ],
-    stateMutability: 'view',
-  },
-  {
-    type: 'function',
-    name: 'isOperatorActive',
-    inputs: [
-      {
-        name: 'operator',
-        type: 'address',
-        internalType: 'address',
-      },
-    ],
-    outputs: [
-      {
-        name: '',
-        type: 'bool',
-        internalType: 'bool',
-      },
-    ],
-    stateMutability: 'view',
-  },
-  {
-    type: 'function',
-    name: 'isSlasher',
-    inputs: [
-      {
-        name: 'account',
-        type: 'address',
-        internalType: 'address',
-      },
-    ],
-    outputs: [
-      {
-        name: '',
-        type: 'bool',
-        internalType: 'bool',
-      },
-    ],
-    stateMutability: 'view',
-  },
-  {
-    type: 'function',
-    name: 'lastRoundAdvance',
-    inputs: [],
-    outputs: [
-      {
-        name: '',
-        type: 'uint64',
-        internalType: 'uint64',
-      },
-    ],
-    stateMutability: 'view',
-  },
-  {
-    type: 'function',
-    name: 'leaveDelegatorsDelay',
-    inputs: [],
-    outputs: [
-      {
-        name: '',
-        type: 'uint64',
-        internalType: 'uint64',
-      },
-    ],
-    stateMutability: 'view',
-  },
-  {
-    type: 'function',
-    name: 'leaveOperatorsDelay',
-    inputs: [],
-    outputs: [
-      {
-        name: '',
-        type: 'uint64',
-        internalType: 'uint64',
-      },
-    ],
-    stateMutability: 'view',
-  },
-  {
-    type: 'function',
-    name: 'meetsStakeRequirement',
-    inputs: [
-      {
-        name: 'operator',
-        type: 'address',
-        internalType: 'address',
-      },
-      {
-        name: 'required',
-        type: 'uint256',
-        internalType: 'uint256',
-      },
-    ],
-    outputs: [
-      {
-        name: '',
-        type: 'bool',
-        internalType: 'bool',
-      },
-    ],
-    stateMutability: 'view',
-  },
-  {
-    type: 'function',
-    name: 'minOperatorStake',
-    inputs: [],
-    outputs: [
-      {
-        name: '',
-        type: 'uint256',
-        internalType: 'uint256',
-      },
-    ],
-    stateMutability: 'view',
-  },
-  {
-    type: 'function',
-    name: 'nativeEnabled',
-    inputs: [],
-    outputs: [
-      {
-        name: '',
-        type: 'bool',
-        internalType: 'bool',
-      },
-    ],
-    stateMutability: 'view',
-  },
-  {
-    type: 'function',
-    name: 'nextSlashId',
-    inputs: [
-      {
-        name: '',
-        type: 'address',
-        internalType: 'address',
-      },
-    ],
-    outputs: [
-      {
-        name: '',
-        type: 'uint64',
-        internalType: 'uint64',
-      },
-    ],
-    stateMutability: 'view',
-  },
-  {
-    type: 'function',
-    name: 'notifyReward',
-    inputs: [
-      {
-        name: 'operator',
-        type: 'address',
-        internalType: 'address',
-      },
-      {
-        name: 'serviceId',
-        type: 'uint64',
-        internalType: 'uint64',
-      },
-      {
-        name: 'amount',
-        type: 'uint256',
-        internalType: 'uint256',
-      },
-    ],
-    outputs: [],
-    stateMutability: 'nonpayable',
-  },
-  {
-    type: 'function',
-    name: 'notifyRewardForBlueprint',
-    inputs: [
-      {
-        name: 'operator',
-        type: 'address',
-        internalType: 'address',
-      },
-      {
-        name: 'blueprintId',
-        type: 'uint64',
-        internalType: 'uint64',
-      },
-      {
-        name: 'serviceId',
-        type: 'uint64',
-        internalType: 'uint64',
-      },
-      {
-        name: 'amount',
-        type: 'uint256',
-        internalType: 'uint256',
-      },
-    ],
-    outputs: [],
-    stateMutability: 'nonpayable',
-  },
-  {
-    type: 'function',
-    name: 'operatorAt',
-    inputs: [
-      {
-        name: 'index',
-        type: 'uint256',
-        internalType: 'uint256',
-      },
-    ],
-    outputs: [
-      {
-        name: '',
-        type: 'address',
-        internalType: 'address',
-      },
-    ],
-    stateMutability: 'view',
-  },
-  {
-    type: 'function',
-    name: 'operatorCommissionBps',
-    inputs: [],
-    outputs: [
-      {
-        name: '',
-        type: 'uint16',
-        internalType: 'uint16',
-      },
-    ],
-    stateMutability: 'view',
-  },
-  {
-    type: 'function',
-    name: 'operatorCount',
-    inputs: [],
-    outputs: [
-      {
-        name: '',
-        type: 'uint256',
-        internalType: 'uint256',
-      },
-    ],
-    stateMutability: 'view',
-  },
-  {
-    type: 'function',
-    name: 'pause',
-    inputs: [],
-    outputs: [],
-    stateMutability: 'nonpayable',
-  },
-  {
-    type: 'function',
-    name: 'paused',
-    inputs: [],
-    outputs: [
-      {
-        name: '',
-        type: 'bool',
-        internalType: 'bool',
-      },
-    ],
-    stateMutability: 'view',
-  },
-  {
-    type: 'function',
-    name: 'proxiableUUID',
-    inputs: [],
-    outputs: [
-      {
-        name: '',
-        type: 'bytes32',
-        internalType: 'bytes32',
-      },
-    ],
-    stateMutability: 'view',
-  },
-  {
-    type: 'function',
-    name: 'registerAdapter',
-    inputs: [
-      {
-        name: 'token',
-        type: 'address',
-        internalType: 'address',
-      },
-      {
-        name: 'adapter',
-        type: 'address',
-        internalType: 'address',
-      },
-    ],
-    outputs: [],
-    stateMutability: 'nonpayable',
-  },
-  {
-    type: 'function',
-    name: 'registerOperator',
-    inputs: [],
-    outputs: [],
-    stateMutability: 'payable',
-  },
-  {
-    type: 'function',
-    name: 'registerOperatorWithAsset',
-    inputs: [
-      {
-        name: 'token',
-        type: 'address',
-        internalType: 'address',
-      },
-      {
-        name: 'amount',
-        type: 'uint256',
-        internalType: 'uint256',
-      },
-    ],
-    outputs: [],
-    stateMutability: 'nonpayable',
-  },
-  {
-    type: 'function',
-    name: 'removeAdapter',
-    inputs: [
-      {
-        name: 'token',
-        type: 'address',
-        internalType: 'address',
-      },
-    ],
-    outputs: [],
-    stateMutability: 'nonpayable',
-  },
-  {
-    type: 'function',
-    name: 'removeBlueprint',
-    inputs: [
-      {
-        name: 'blueprintId',
-        type: 'uint64',
-        internalType: 'uint64',
-      },
-    ],
-    outputs: [],
-    stateMutability: 'nonpayable',
-  },
-  {
-    type: 'function',
-    name: 'removeBlueprintFromDelegation',
-    inputs: [
-      {
-        name: 'delegationIndex',
-        type: 'uint256',
-        internalType: 'uint256',
-      },
-      {
-        name: 'blueprintId',
-        type: 'uint64',
-        internalType: 'uint64',
-      },
-    ],
-    outputs: [],
-    stateMutability: 'nonpayable',
-  },
-  {
-    type: 'function',
-    name: 'removeSlasher',
-    inputs: [
-      {
-        name: 'slasher',
-        type: 'address',
-        internalType: 'address',
-      },
-    ],
-    outputs: [],
-    stateMutability: 'nonpayable',
-  },
-  {
-    type: 'function',
-    name: 'renounceRole',
-    inputs: [
-      {
-        name: 'role',
-        type: 'bytes32',
-        internalType: 'bytes32',
-      },
-      {
-        name: 'callerConfirmation',
-        type: 'address',
-        internalType: 'address',
-      },
-    ],
-    outputs: [],
-    stateMutability: 'nonpayable',
-  },
-  {
-    type: 'function',
-    name: 'requireAdapters',
-    inputs: [],
-    outputs: [
-      {
-        name: '',
-        type: 'bool',
-        internalType: 'bool',
-      },
-    ],
-    stateMutability: 'view',
-  },
-  {
-    type: 'function',
-    name: 'rescueTokens',
-    inputs: [
-      {
-        name: 'token',
-        type: 'address',
-        internalType: 'address',
-      },
-      {
-        name: 'to',
-        type: 'address',
-        internalType: 'address',
-      },
-      {
-        name: 'amount',
-        type: 'uint256',
-        internalType: 'uint256',
-      },
-    ],
-    outputs: [],
-    stateMutability: 'nonpayable',
-  },
-  {
-    type: 'function',
-    name: 'revokeRole',
-    inputs: [
-      {
-        name: 'role',
-        type: 'bytes32',
-        internalType: 'bytes32',
-      },
-      {
-        name: 'account',
-        type: 'address',
-        internalType: 'address',
-      },
-    ],
-    outputs: [],
-    stateMutability: 'nonpayable',
-  },
-  {
-    type: 'function',
-    name: 'rewardsManager',
-    inputs: [],
-    outputs: [
-      {
-        name: '',
-        type: 'address',
-        internalType: 'address',
-      },
-    ],
-    stateMutability: 'view',
-  },
-  {
-    type: 'function',
-    name: 'roundDuration',
-    inputs: [],
-    outputs: [
-      {
-        name: '',
-        type: 'uint64',
-        internalType: 'uint64',
-      },
-    ],
-    stateMutability: 'view',
-  },
-  {
-    type: 'function',
-    name: 'scheduleDelegatorUnstake',
-    inputs: [
-      {
-        name: 'operator',
-        type: 'address',
-        internalType: 'address',
-      },
-      {
-        name: 'token',
-        type: 'address',
-        internalType: 'address',
-      },
-      {
-        name: 'amount',
-        type: 'uint256',
-        internalType: 'uint256',
-      },
-    ],
-    outputs: [],
-    stateMutability: 'nonpayable',
-  },
-  {
-    type: 'function',
-    name: 'scheduleOperatorUnstake',
-    inputs: [
-      {
-        name: 'amount',
-        type: 'uint256',
-        internalType: 'uint256',
-      },
-    ],
-    outputs: [],
-    stateMutability: 'nonpayable',
-  },
-  {
-    type: 'function',
-    name: 'scheduleWithdraw',
-    inputs: [
-      {
-        name: 'token',
-        type: 'address',
-        internalType: 'address',
-      },
-      {
-        name: 'amount',
-        type: 'uint256',
-        internalType: 'uint256',
-      },
-    ],
-    outputs: [],
-    stateMutability: 'nonpayable',
-  },
-  {
-    type: 'function',
-    name: 'serviceFeeDistributor',
-    inputs: [],
-    outputs: [
-      {
-        name: '',
-        type: 'address',
-        internalType: 'address',
-      },
-    ],
-    stateMutability: 'view',
-  },
-  {
-    type: 'function',
-    name: 'serviceSlashCount',
-    inputs: [
-      {
-        name: '',
-        type: 'uint64',
-        internalType: 'uint64',
-      },
-      {
-        name: '',
-        type: 'address',
-        internalType: 'address',
-      },
-    ],
-    outputs: [
-      {
-        name: '',
-        type: 'uint64',
-        internalType: 'uint64',
-      },
-    ],
-    stateMutability: 'view',
-  },
-  {
-    type: 'function',
-    name: 'setDelays',
-    inputs: [
-      {
-        name: '_delegationBondLessDelay',
-        type: 'uint64',
-        internalType: 'uint64',
-      },
-      {
-        name: '_leaveDelegatorsDelay',
-        type: 'uint64',
-        internalType: 'uint64',
-      },
-      {
-        name: '_leaveOperatorsDelay',
-        type: 'uint64',
-        internalType: 'uint64',
-      },
-    ],
-    outputs: [],
-    stateMutability: 'nonpayable',
-  },
-  {
-    type: 'function',
-    name: 'setOperatorCommission',
-    inputs: [
-      {
-        name: 'bps',
-        type: 'uint16',
-        internalType: 'uint16',
-      },
-    ],
-    outputs: [],
-    stateMutability: 'nonpayable',
-  },
-  {
-    type: 'function',
-    name: 'setRequireAdapters',
-    inputs: [
-      {
-        name: 'required',
-        type: 'bool',
-        internalType: 'bool',
-      },
-    ],
-    outputs: [],
-    stateMutability: 'nonpayable',
-  },
-  {
-    type: 'function',
-    name: 'setRewardsManager',
-    inputs: [
-      {
-        name: 'manager',
-        type: 'address',
-        internalType: 'address',
-      },
-    ],
-    outputs: [],
-    stateMutability: 'nonpayable',
-  },
-  {
-    type: 'function',
-    name: 'setServiceFeeDistributor',
-    inputs: [
-      {
-        name: 'distributor',
-        type: 'address',
-        internalType: 'address',
-      },
-    ],
-    outputs: [],
-    stateMutability: 'nonpayable',
-  },
-  {
-    type: 'function',
-    name: 'slash',
-    inputs: [
-      {
-        name: 'operator',
-        type: 'address',
-        internalType: 'address',
-      },
-      {
-        name: 'serviceId',
-        type: 'uint64',
-        internalType: 'uint64',
-      },
-      {
-        name: 'amount',
-        type: 'uint256',
-        internalType: 'uint256',
-      },
-      {
-        name: 'evidence',
-        type: 'bytes32',
-        internalType: 'bytes32',
-      },
-    ],
-    outputs: [
-      {
-        name: 'actualSlashed',
-        type: 'uint256',
-        internalType: 'uint256',
-      },
-    ],
-    stateMutability: 'nonpayable',
-  },
-  {
-    type: 'function',
-    name: 'slashForBlueprint',
-    inputs: [
-      {
-        name: 'operator',
-        type: 'address',
-        internalType: 'address',
-      },
-      {
-        name: 'blueprintId',
-        type: 'uint64',
-        internalType: 'uint64',
-      },
-      {
-        name: 'serviceId',
-        type: 'uint64',
-        internalType: 'uint64',
-      },
-      {
-        name: 'amount',
-        type: 'uint256',
-        internalType: 'uint256',
-      },
-      {
-        name: 'evidence',
-        type: 'bytes32',
-        internalType: 'bytes32',
-      },
-    ],
-    outputs: [
-      {
-        name: 'actualSlashed',
-        type: 'uint256',
-        internalType: 'uint256',
-      },
-    ],
-    stateMutability: 'nonpayable',
-  },
-  {
-    type: 'function',
-    name: 'slashForService',
-    inputs: [
-      {
-        name: 'operator',
-        type: 'address',
-        internalType: 'address',
-      },
-      {
-        name: 'blueprintId',
-        type: 'uint64',
-        internalType: 'uint64',
-      },
-      {
-        name: 'serviceId',
-        type: 'uint64',
-        internalType: 'uint64',
-      },
-      {
-        name: 'commitments',
-        type: 'tuple[]',
-        internalType: 'struct Types.AssetSecurityCommitment[]',
-        components: [
-          {
-            name: 'asset',
-            type: 'tuple',
-            internalType: 'struct Types.Asset',
-            components: [
-              {
-                name: 'kind',
-                type: 'uint8',
-                internalType: 'enum Types.AssetKind',
+                "name": "kind",
+                "type": "uint8",
+                "internalType": "enum Types.AssetKind"
               },
               {
-                name: 'token',
-                type: 'address',
-                internalType: 'address',
-              },
-            ],
+                "name": "token",
+                "type": "address",
+                "internalType": "address"
+              }
+            ]
           },
           {
-            name: 'exposureBps',
-            type: 'uint16',
-            internalType: 'uint16',
+            "name": "amount",
+            "type": "uint256",
+            "internalType": "uint256"
           },
-        ],
-      },
-      {
-        name: 'amount',
-        type: 'uint256',
-        internalType: 'uint256',
-      },
+          {
+            "name": "requestedRound",
+            "type": "uint64",
+            "internalType": "uint64"
+          }
+        ]
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "getSlashCount",
+    "inputs": [
       {
-        name: 'evidence',
-        type: 'bytes32',
-        internalType: 'bytes32',
-      },
+        "name": "operator",
+        "type": "address",
+        "internalType": "address"
+      }
     ],
-    outputs: [
+    "outputs": [
       {
-        name: 'actualSlashed',
-        type: 'uint256',
-        internalType: 'uint256',
-      },
+        "name": "",
+        "type": "uint64",
+        "internalType": "uint64"
+      }
     ],
-    stateMutability: 'nonpayable',
+    "stateMutability": "view"
   },
   {
-    type: 'function',
-    name: 'slashHistory',
-    inputs: [
+    "type": "function",
+    "name": "getSlashCountForBlueprint",
+    "inputs": [
       {
-        name: '',
-        type: 'address',
-        internalType: 'address',
+        "name": "blueprintId",
+        "type": "uint64",
+        "internalType": "uint64"
       },
       {
-        name: '',
-        type: 'uint64',
-        internalType: 'uint64',
-      },
+        "name": "operator",
+        "type": "address",
+        "internalType": "address"
+      }
     ],
-    outputs: [
+    "outputs": [
       {
-        name: 'round',
-        type: 'uint64',
-        internalType: 'uint64',
-      },
+        "name": "",
+        "type": "uint64",
+        "internalType": "uint64"
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "getSlashCountForService",
+    "inputs": [
       {
-        name: 'serviceId',
-        type: 'uint64',
-        internalType: 'uint64',
-      },
+        "name": "serviceId",
+        "type": "uint64",
+        "internalType": "uint64"
+      },
+      {
+        "name": "operator",
+        "type": "address",
+        "internalType": "address"
+      }
+    ],
+    "outputs": [
       {
-        name: 'blueprintId',
-        type: 'uint64',
-        internalType: 'uint64',
-      },
+        "name": "",
+        "type": "uint64",
+        "internalType": "uint64"
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "getSlashImpact",
+    "inputs": [
       {
-        name: 'totalSlashed',
-        type: 'uint256',
-        internalType: 'uint256',
+        "name": "operator",
+        "type": "address",
+        "internalType": "address"
       },
       {
-        name: 'exchangeRateBefore',
-        type: 'uint256',
-        internalType: 'uint256',
+        "name": "slashIndex",
+        "type": "uint64",
+        "internalType": "uint64"
       },
       {
-        name: 'exchangeRateAfter',
-        type: 'uint256',
-        internalType: 'uint256',
-      },
+        "name": "delegator",
+        "type": "address",
+        "internalType": "address"
+      }
+    ],
+    "outputs": [
       {
-        name: 'evidence',
-        type: 'bytes32',
-        internalType: 'bytes32',
-      },
+        "name": "",
+        "type": "uint256",
+        "internalType": "uint256"
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "getSlashRecord",
+    "inputs": [
+      {
+        "name": "operator",
+        "type": "address",
+        "internalType": "address"
+      },
+      {
+        "name": "slashIndex",
+        "type": "uint64",
+        "internalType": "uint64"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "",
+        "type": "tuple",
+        "internalType": "struct SlashingManager.SlashRecord",
+        "components": [
+          {
+            "name": "round",
+            "type": "uint64",
+            "internalType": "uint64"
+          },
+          {
+            "name": "serviceId",
+            "type": "uint64",
+            "internalType": "uint64"
+          },
+          {
+            "name": "blueprintId",
+            "type": "uint64",
+            "internalType": "uint64"
+          },
+          {
+            "name": "totalSlashed",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "exchangeRateBefore",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "exchangeRateAfter",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "evidence",
+            "type": "bytes32",
+            "internalType": "bytes32"
+          }
+        ]
+      }
     ],
-    stateMutability: 'view',
-  },
-  {
-    type: 'function',
-    name: 'snapshotOperator',
-    inputs: [
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "getTotalDelegation",
+    "inputs": [
+      {
+        "name": "delegator",
+        "type": "address",
+        "internalType": "address"
+      }
+    ],
+    "outputs": [
       {
-        name: 'operator',
-        type: 'address',
-        internalType: 'address',
-      },
+        "name": "total",
+        "type": "uint256",
+        "internalType": "uint256"
+      }
     ],
-    outputs: [],
-    stateMutability: 'nonpayable',
+    "stateMutability": "view"
   },
   {
-    type: 'function',
-    name: 'startLeaving',
-    inputs: [],
-    outputs: [],
-    stateMutability: 'nonpayable',
+    "type": "function",
+    "name": "increaseStake",
+    "inputs": [],
+    "outputs": [],
+    "stateMutability": "payable"
   },
   {
-    type: 'function',
-    name: 'supportsInterface',
-    inputs: [
+    "type": "function",
+    "name": "isOperator",
+    "inputs": [
       {
-        name: 'interfaceId',
-        type: 'bytes4',
-        internalType: 'bytes4',
-      },
+        "name": "operator",
+        "type": "address",
+        "internalType": "address"
+      }
     ],
-    outputs: [
+    "outputs": [
       {
-        name: '',
-        type: 'bool',
-        internalType: 'bool',
-      },
+        "name": "",
+        "type": "bool",
+        "internalType": "bool"
+      }
     ],
-    stateMutability: 'view',
+    "stateMutability": "view"
   },
   {
-    type: 'function',
-    name: 'undelegate',
-    inputs: [
+    "type": "function",
+    "name": "isOperatorActive",
+    "inputs": [
       {
-        name: 'operator',
-        type: 'address',
-        internalType: 'address',
-      },
+        "name": "operator",
+        "type": "address",
+        "internalType": "address"
+      }
+    ],
+    "outputs": [
       {
-        name: 'amount',
-        type: 'uint256',
-        internalType: 'uint256',
-      },
+        "name": "",
+        "type": "bool",
+        "internalType": "bool"
+      }
     ],
-    outputs: [],
-    stateMutability: 'nonpayable',
-  },
-  {
-    type: 'function',
-    name: 'unpause',
-    inputs: [],
-    outputs: [],
-    stateMutability: 'nonpayable',
+    "stateMutability": "view"
   },
   {
-    type: 'function',
-    name: 'upgradeToAndCall',
-    inputs: [
+    "type": "function",
+    "name": "isSlasher",
+    "inputs": [
       {
-        name: 'newImplementation',
-        type: 'address',
-        internalType: 'address',
-      },
+        "name": "account",
+        "type": "address",
+        "internalType": "address"
+      }
+    ],
+    "outputs": [
       {
-        name: 'data',
-        type: 'bytes',
-        internalType: 'bytes',
-      },
+        "name": "",
+        "type": "bool",
+        "internalType": "bool"
+      }
     ],
-    outputs: [],
-    stateMutability: 'payable',
+    "stateMutability": "view"
   },
   {
-    type: 'event',
-    name: 'AdapterRegistered',
-    inputs: [
+    "type": "function",
+    "name": "leaveDelegatorsDelay",
+    "inputs": [],
+    "outputs": [
       {
-        name: 'token',
-        type: 'address',
-        indexed: true,
-        internalType: 'address',
-      },
+        "name": "",
+        "type": "uint64",
+        "internalType": "uint64"
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "leaveOperatorsDelay",
+    "inputs": [],
+    "outputs": [
       {
-        name: 'adapter',
-        type: 'address',
-        indexed: true,
-        internalType: 'address',
-      },
+        "name": "",
+        "type": "uint64",
+        "internalType": "uint64"
+      }
     ],
-    anonymous: false,
+    "stateMutability": "view"
   },
   {
-    type: 'event',
-    name: 'AdapterRemoved',
-    inputs: [
+    "type": "function",
+    "name": "meetsStakeRequirement",
+    "inputs": [
       {
-        name: 'token',
-        type: 'address',
-        indexed: true,
-        internalType: 'address',
+        "name": "operator",
+        "type": "address",
+        "internalType": "address"
       },
+      {
+        "name": "required",
+        "type": "uint256",
+        "internalType": "uint256"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "",
+        "type": "bool",
+        "internalType": "bool"
+      }
     ],
-    anonymous: false,
+    "stateMutability": "view"
   },
   {
-    type: 'event',
-    name: 'AssetDisabled',
-    inputs: [
+    "type": "function",
+    "name": "minOperatorStake",
+    "inputs": [],
+    "outputs": [
       {
-        name: 'token',
-        type: 'address',
-        indexed: true,
-        internalType: 'address',
-      },
+        "name": "",
+        "type": "uint256",
+        "internalType": "uint256"
+      }
     ],
-    anonymous: false,
+    "stateMutability": "view"
   },
   {
-    type: 'event',
-    name: 'AssetEnabled',
-    inputs: [
+    "type": "function",
+    "name": "notifyReward",
+    "inputs": [
       {
-        name: 'token',
-        type: 'address',
-        indexed: true,
-        internalType: 'address',
+        "name": "operator",
+        "type": "address",
+        "internalType": "address"
       },
       {
-        name: 'minOperatorStake',
-        type: 'uint256',
-        indexed: false,
-        internalType: 'uint256',
+        "name": "serviceId",
+        "type": "uint64",
+        "internalType": "uint64"
       },
       {
-        name: 'minDelegation',
-        type: 'uint256',
-        indexed: false,
-        internalType: 'uint256',
-      },
+        "name": "amount",
+        "type": "uint256",
+        "internalType": "uint256"
+      }
     ],
-    anonymous: false,
+    "outputs": [],
+    "stateMutability": "nonpayable"
   },
   {
-    type: 'event',
-    name: 'BlueprintAddedToDelegation',
-    inputs: [
+    "type": "function",
+    "name": "notifyRewardForBlueprint",
+    "inputs": [
       {
-        name: 'delegator',
-        type: 'address',
-        indexed: true,
-        internalType: 'address',
+        "name": "operator",
+        "type": "address",
+        "internalType": "address"
       },
       {
-        name: 'delegationIndex',
-        type: 'uint256',
-        indexed: true,
-        internalType: 'uint256',
+        "name": "blueprintId",
+        "type": "uint64",
+        "internalType": "uint64"
       },
       {
-        name: 'blueprintId',
-        type: 'uint64',
-        indexed: false,
-        internalType: 'uint64',
+        "name": "serviceId",
+        "type": "uint64",
+        "internalType": "uint64"
       },
+      {
+        "name": "amount",
+        "type": "uint256",
+        "internalType": "uint256"
+      }
     ],
-    anonymous: false,
+    "outputs": [],
+    "stateMutability": "nonpayable"
   },
   {
-    type: 'event',
-    name: 'BlueprintRemovedFromDelegation',
-    inputs: [
-      {
-        name: 'delegator',
-        type: 'address',
-        indexed: true,
-        internalType: 'address',
-      },
+    "type": "function",
+    "name": "operatorAt",
+    "inputs": [
       {
-        name: 'delegationIndex',
-        type: 'uint256',
-        indexed: true,
-        internalType: 'uint256',
-      },
+        "name": "index",
+        "type": "uint256",
+        "internalType": "uint256"
+      }
+    ],
+    "outputs": [
       {
-        name: 'blueprintId',
-        type: 'uint64',
-        indexed: false,
-        internalType: 'uint64',
-      },
+        "name": "",
+        "type": "address",
+        "internalType": "address"
+      }
     ],
-    anonymous: false,
+    "stateMutability": "view"
   },
   {
-    type: 'event',
-    name: 'Delegated',
-    inputs: [
+    "type": "function",
+    "name": "operatorCommissionBps",
+    "inputs": [],
+    "outputs": [
       {
-        name: 'delegator',
-        type: 'address',
-        indexed: true,
-        internalType: 'address',
-      },
+        "name": "",
+        "type": "uint16",
+        "internalType": "uint16"
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "operatorCount",
+    "inputs": [],
+    "outputs": [
       {
-        name: 'operator',
-        type: 'address',
-        indexed: true,
-        internalType: 'address',
-      },
+        "name": "",
+        "type": "uint256",
+        "internalType": "uint256"
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "pause",
+    "inputs": [],
+    "outputs": [],
+    "stateMutability": "nonpayable"
+  },
+  {
+    "type": "function",
+    "name": "registerAdapter",
+    "inputs": [
       {
-        name: 'token',
-        type: 'address',
-        indexed: true,
-        internalType: 'address',
+        "name": "token",
+        "type": "address",
+        "internalType": "address"
       },
       {
-        name: 'amount',
-        type: 'uint256',
-        indexed: false,
-        internalType: 'uint256',
-      },
+        "name": "adapter",
+        "type": "address",
+        "internalType": "address"
+      }
+    ],
+    "outputs": [],
+    "stateMutability": "nonpayable"
+  },
+  {
+    "type": "function",
+    "name": "registerOperator",
+    "inputs": [],
+    "outputs": [],
+    "stateMutability": "payable"
+  },
+  {
+    "type": "function",
+    "name": "registerOperatorWithAsset",
+    "inputs": [
       {
-        name: 'shares',
-        type: 'uint256',
-        indexed: false,
-        internalType: 'uint256',
+        "name": "token",
+        "type": "address",
+        "internalType": "address"
       },
       {
-        name: 'selectionMode',
-        type: 'uint8',
-        indexed: false,
-        internalType: 'enum Types.BlueprintSelectionMode',
-      },
+        "name": "amount",
+        "type": "uint256",
+        "internalType": "uint256"
+      }
     ],
-    anonymous: false,
+    "outputs": [],
+    "stateMutability": "nonpayable"
   },
   {
-    type: 'event',
-    name: 'DelegatorUnstakeExecuted',
-    inputs: [
-      {
-        name: 'delegator',
-        type: 'address',
-        indexed: true,
-        internalType: 'address',
-      },
+    "type": "function",
+    "name": "removeAdapter",
+    "inputs": [
       {
-        name: 'operator',
-        type: 'address',
-        indexed: true,
-        internalType: 'address',
-      },
+        "name": "token",
+        "type": "address",
+        "internalType": "address"
+      }
+    ],
+    "outputs": [],
+    "stateMutability": "nonpayable"
+  },
+  {
+    "type": "function",
+    "name": "removeBlueprint",
+    "inputs": [
       {
-        name: 'token',
-        type: 'address',
-        indexed: true,
-        internalType: 'address',
-      },
+        "name": "blueprintId",
+        "type": "uint64",
+        "internalType": "uint64"
+      }
+    ],
+    "outputs": [],
+    "stateMutability": "nonpayable"
+  },
+  {
+    "type": "function",
+    "name": "removeBlueprintFromDelegation",
+    "inputs": [
       {
-        name: 'shares',
-        type: 'uint256',
-        indexed: false,
-        internalType: 'uint256',
+        "name": "delegationIndex",
+        "type": "uint256",
+        "internalType": "uint256"
       },
       {
-        name: 'amount',
-        type: 'uint256',
-        indexed: false,
-        internalType: 'uint256',
-      },
+        "name": "blueprintId",
+        "type": "uint64",
+        "internalType": "uint64"
+      }
     ],
-    anonymous: false,
+    "outputs": [],
+    "stateMutability": "nonpayable"
   },
   {
-    type: 'event',
-    name: 'DelegatorUnstakeScheduled',
-    inputs: [
-      {
-        name: 'delegator',
-        type: 'address',
-        indexed: true,
-        internalType: 'address',
-      },
+    "type": "function",
+    "name": "removeSlasher",
+    "inputs": [
       {
-        name: 'operator',
-        type: 'address',
-        indexed: true,
-        internalType: 'address',
-      },
+        "name": "slasher",
+        "type": "address",
+        "internalType": "address"
+      }
+    ],
+    "outputs": [],
+    "stateMutability": "nonpayable"
+  },
+  {
+    "type": "function",
+    "name": "rescueTokens",
+    "inputs": [
       {
-        name: 'token',
-        type: 'address',
-        indexed: true,
-        internalType: 'address',
+        "name": "token",
+        "type": "address",
+        "internalType": "address"
       },
       {
-        name: 'shares',
-        type: 'uint256',
-        indexed: false,
-        internalType: 'uint256',
+        "name": "to",
+        "type": "address",
+        "internalType": "address"
       },
       {
-        name: 'estimatedAmount',
-        type: 'uint256',
-        indexed: false,
-        internalType: 'uint256',
-      },
+        "name": "amount",
+        "type": "uint256",
+        "internalType": "uint256"
+      }
+    ],
+    "outputs": [],
+    "stateMutability": "nonpayable"
+  },
+  {
+    "type": "function",
+    "name": "rewardsManager",
+    "inputs": [],
+    "outputs": [
       {
-        name: 'readyRound',
-        type: 'uint64',
-        indexed: false,
-        internalType: 'uint64',
-      },
+        "name": "",
+        "type": "address",
+        "internalType": "address"
+      }
     ],
-    anonymous: false,
+    "stateMutability": "view"
   },
   {
-    type: 'event',
-    name: 'Deposited',
-    inputs: [
+    "type": "function",
+    "name": "roundDuration",
+    "inputs": [],
+    "outputs": [
       {
-        name: 'delegator',
-        type: 'address',
-        indexed: true,
-        internalType: 'address',
-      },
+        "name": "",
+        "type": "uint64",
+        "internalType": "uint64"
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "scheduleDelegatorUnstake",
+    "inputs": [
       {
-        name: 'token',
-        type: 'address',
-        indexed: true,
-        internalType: 'address',
+        "name": "operator",
+        "type": "address",
+        "internalType": "address"
       },
       {
-        name: 'amount',
-        type: 'uint256',
-        indexed: false,
-        internalType: 'uint256',
+        "name": "token",
+        "type": "address",
+        "internalType": "address"
       },
       {
-        name: 'lock',
-        type: 'uint8',
-        indexed: false,
-        internalType: 'enum Types.LockMultiplier',
-      },
+        "name": "amount",
+        "type": "uint256",
+        "internalType": "uint256"
+      }
     ],
-    anonymous: false,
+    "outputs": [],
+    "stateMutability": "nonpayable"
   },
   {
-    type: 'event',
-    name: 'Initialized',
-    inputs: [
+    "type": "function",
+    "name": "scheduleOperatorUnstake",
+    "inputs": [
       {
-        name: 'version',
-        type: 'uint64',
-        indexed: false,
-        internalType: 'uint64',
-      },
+        "name": "amount",
+        "type": "uint256",
+        "internalType": "uint256"
+      }
     ],
-    anonymous: false,
+    "outputs": [],
+    "stateMutability": "nonpayable"
   },
   {
-    type: 'event',
-    name: 'OperatorBlueprintAdded',
-    inputs: [
+    "type": "function",
+    "name": "scheduleWithdraw",
+    "inputs": [
       {
-        name: 'operator',
-        type: 'address',
-        indexed: true,
-        internalType: 'address',
+        "name": "token",
+        "type": "address",
+        "internalType": "address"
       },
       {
-        name: 'blueprintId',
-        type: 'uint64',
-        indexed: true,
-        internalType: 'uint64',
-      },
+        "name": "amount",
+        "type": "uint256",
+        "internalType": "uint256"
+      }
     ],
-    anonymous: false,
+    "outputs": [],
+    "stateMutability": "nonpayable"
   },
   {
-    type: 'event',
-    name: 'OperatorBlueprintRemoved',
-    inputs: [
-      {
-        name: 'operator',
-        type: 'address',
-        indexed: true,
-        internalType: 'address',
-      },
+    "type": "function",
+    "name": "serviceFeeDistributor",
+    "inputs": [],
+    "outputs": [
       {
-        name: 'blueprintId',
-        type: 'uint64',
-        indexed: true,
-        internalType: 'uint64',
-      },
+        "name": "",
+        "type": "address",
+        "internalType": "address"
+      }
     ],
-    anonymous: false,
+    "stateMutability": "view"
   },
   {
-    type: 'event',
-    name: 'OperatorLeavingScheduled',
-    inputs: [
+    "type": "function",
+    "name": "setDelays",
+    "inputs": [
       {
-        name: 'operator',
-        type: 'address',
-        indexed: true,
-        internalType: 'address',
+        "name": "delegationBondLessDelay",
+        "type": "uint64",
+        "internalType": "uint64"
       },
       {
-        name: 'readyRound',
-        type: 'uint64',
-        indexed: false,
-        internalType: 'uint64',
+        "name": "leaveDelegatorsDelay",
+        "type": "uint64",
+        "internalType": "uint64"
       },
+      {
+        "name": "leaveOperatorsDelay",
+        "type": "uint64",
+        "internalType": "uint64"
+      }
     ],
-    anonymous: false,
+    "outputs": [],
+    "stateMutability": "nonpayable"
   },
   {
-    type: 'event',
-    name: 'OperatorLeft',
-    inputs: [
+    "type": "function",
+    "name": "setOperatorCommission",
+    "inputs": [
       {
-        name: 'operator',
-        type: 'address',
-        indexed: true,
-        internalType: 'address',
-      },
+        "name": "bps",
+        "type": "uint16",
+        "internalType": "uint16"
+      }
     ],
-    anonymous: false,
+    "outputs": [],
+    "stateMutability": "nonpayable"
   },
   {
-    type: 'event',
-    name: 'OperatorRegistered',
-    inputs: [
+    "type": "function",
+    "name": "setRequireAdapters",
+    "inputs": [
       {
-        name: 'operator',
-        type: 'address',
-        indexed: true,
-        internalType: 'address',
-      },
+        "name": "required",
+        "type": "bool",
+        "internalType": "bool"
+      }
+    ],
+    "outputs": [],
+    "stateMutability": "nonpayable"
+  },
+  {
+    "type": "function",
+    "name": "setRewardsManager",
+    "inputs": [
       {
-        name: 'stake',
-        type: 'uint256',
-        indexed: false,
-        internalType: 'uint256',
-      },
+        "name": "manager",
+        "type": "address",
+        "internalType": "address"
+      }
     ],
-    anonymous: false,
+    "outputs": [],
+    "stateMutability": "nonpayable"
   },
   {
-    type: 'event',
-    name: 'OperatorSlashed',
-    inputs: [
+    "type": "function",
+    "name": "setServiceFeeDistributor",
+    "inputs": [
       {
-        name: 'operator',
-        type: 'address',
-        indexed: true,
-        internalType: 'address',
-      },
+        "name": "distributor",
+        "type": "address",
+        "internalType": "address"
+      }
+    ],
+    "outputs": [],
+    "stateMutability": "nonpayable"
+  },
+  {
+    "type": "function",
+    "name": "slash",
+    "inputs": [
       {
-        name: 'serviceId',
-        type: 'uint64',
-        indexed: true,
-        internalType: 'uint64',
+        "name": "operator",
+        "type": "address",
+        "internalType": "address"
       },
       {
-        name: 'amount',
-        type: 'uint256',
-        indexed: false,
-        internalType: 'uint256',
+        "name": "serviceId",
+        "type": "uint64",
+        "internalType": "uint64"
       },
       {
-        name: 'evidence',
-        type: 'bytes32',
-        indexed: false,
-        internalType: 'bytes32',
+        "name": "amount",
+        "type": "uint256",
+        "internalType": "uint256"
       },
+      {
+        "name": "evidence",
+        "type": "bytes32",
+        "internalType": "bytes32"
+      }
     ],
-    anonymous: false,
+    "outputs": [
+      {
+        "name": "actualSlashed",
+        "type": "uint256",
+        "internalType": "uint256"
+      }
+    ],
+    "stateMutability": "nonpayable"
   },
   {
-    type: 'event',
-    name: 'OperatorStakeIncreased',
-    inputs: [
+    "type": "function",
+    "name": "slashForBlueprint",
+    "inputs": [
       {
-        name: 'operator',
-        type: 'address',
-        indexed: true,
-        internalType: 'address',
+        "name": "operator",
+        "type": "address",
+        "internalType": "address"
       },
       {
-        name: 'amount',
-        type: 'uint256',
-        indexed: false,
-        internalType: 'uint256',
+        "name": "blueprintId",
+        "type": "uint64",
+        "internalType": "uint64"
       },
-    ],
-    anonymous: false,
-  },
-  {
-    type: 'event',
-    name: 'OperatorUnstakeExecuted',
-    inputs: [
       {
-        name: 'operator',
-        type: 'address',
-        indexed: true,
-        internalType: 'address',
+        "name": "serviceId",
+        "type": "uint64",
+        "internalType": "uint64"
       },
       {
-        name: 'amount',
-        type: 'uint256',
-        indexed: false,
-        internalType: 'uint256',
+        "name": "amount",
+        "type": "uint256",
+        "internalType": "uint256"
       },
+      {
+        "name": "evidence",
+        "type": "bytes32",
+        "internalType": "bytes32"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "actualSlashed",
+        "type": "uint256",
+        "internalType": "uint256"
+      }
     ],
-    anonymous: false,
+    "stateMutability": "nonpayable"
   },
   {
-    type: 'event',
-    name: 'OperatorUnstakeScheduled',
-    inputs: [
+    "type": "function",
+    "name": "slashForService",
+    "inputs": [
       {
-        name: 'operator',
-        type: 'address',
-        indexed: true,
-        internalType: 'address',
+        "name": "operator",
+        "type": "address",
+        "internalType": "address"
       },
       {
-        name: 'amount',
-        type: 'uint256',
-        indexed: false,
-        internalType: 'uint256',
+        "name": "blueprintId",
+        "type": "uint64",
+        "internalType": "uint64"
       },
       {
-        name: 'readyRound',
-        type: 'uint64',
-        indexed: false,
-        internalType: 'uint64',
+        "name": "serviceId",
+        "type": "uint64",
+        "internalType": "uint64"
       },
+      {
+        "name": "commitments",
+        "type": "tuple[]",
+        "internalType": "struct Types.AssetSecurityCommitment[]",
+        "components": [
+          {
+            "name": "asset",
+            "type": "tuple",
+            "internalType": "struct Types.Asset",
+            "components": [
+              {
+                "name": "kind",
+                "type": "uint8",
+                "internalType": "enum Types.AssetKind"
+              },
+              {
+                "name": "token",
+                "type": "address",
+                "internalType": "address"
+              }
+            ]
+          },
+          {
+            "name": "exposureBps",
+            "type": "uint16",
+            "internalType": "uint16"
+          }
+        ]
+      },
+      {
+        "name": "amount",
+        "type": "uint256",
+        "internalType": "uint256"
+      },
+      {
+        "name": "evidence",
+        "type": "bytes32",
+        "internalType": "bytes32"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "actualSlashed",
+        "type": "uint256",
+        "internalType": "uint256"
+      }
     ],
-    anonymous: false,
+    "stateMutability": "nonpayable"
   },
   {
-    type: 'event',
-    name: 'Paused',
-    inputs: [
+    "type": "function",
+    "name": "snapshotOperator",
+    "inputs": [
       {
-        name: 'account',
-        type: 'address',
-        indexed: false,
-        internalType: 'address',
-      },
+        "name": "operator",
+        "type": "address",
+        "internalType": "address"
+      }
     ],
-    anonymous: false,
+    "outputs": [],
+    "stateMutability": "nonpayable"
+  },
+  {
+    "type": "function",
+    "name": "startLeaving",
+    "inputs": [],
+    "outputs": [],
+    "stateMutability": "nonpayable"
   },
   {
-    type: 'event',
-    name: 'RequireAdaptersUpdated',
-    inputs: [
+    "type": "function",
+    "name": "undelegate",
+    "inputs": [
       {
-        name: 'required',
-        type: 'bool',
-        indexed: false,
-        internalType: 'bool',
+        "name": "operator",
+        "type": "address",
+        "internalType": "address"
       },
+      {
+        "name": "amount",
+        "type": "uint256",
+        "internalType": "uint256"
+      }
     ],
-    anonymous: false,
+    "outputs": [],
+    "stateMutability": "nonpayable"
   },
   {
-    type: 'event',
-    name: 'RewardClaimed',
-    inputs: [
+    "type": "function",
+    "name": "unpause",
+    "inputs": [],
+    "outputs": [],
+    "stateMutability": "nonpayable"
+  },
+  {
+    "type": "event",
+    "name": "AdapterRegistered",
+    "inputs": [
       {
-        name: 'account',
-        type: 'address',
-        indexed: true,
-        internalType: 'address',
+        "name": "token",
+        "type": "address",
+        "indexed": true,
+        "internalType": "address"
       },
       {
-        name: 'amount',
-        type: 'uint256',
-        indexed: false,
-        internalType: 'uint256',
-      },
+        "name": "adapter",
+        "type": "address",
+        "indexed": true,
+        "internalType": "address"
+      }
     ],
-    anonymous: false,
+    "anonymous": false
   },
   {
-    type: 'event',
-    name: 'RewardDistributed',
-    inputs: [
+    "type": "event",
+    "name": "AdapterRemoved",
+    "inputs": [
       {
-        name: 'operator',
-        type: 'address',
-        indexed: true,
-        internalType: 'address',
-      },
+        "name": "token",
+        "type": "address",
+        "indexed": true,
+        "internalType": "address"
+      }
+    ],
+    "anonymous": false
+  },
+  {
+    "type": "event",
+    "name": "AssetDisabled",
+    "inputs": [
       {
-        name: 'amount',
-        type: 'uint256',
-        indexed: false,
-        internalType: 'uint256',
-      },
+        "name": "token",
+        "type": "address",
+        "indexed": true,
+        "internalType": "address"
+      }
     ],
-    anonymous: false,
+    "anonymous": false
   },
   {
-    type: 'event',
-    name: 'RoleAdminChanged',
-    inputs: [
+    "type": "event",
+    "name": "AssetEnabled",
+    "inputs": [
       {
-        name: 'role',
-        type: 'bytes32',
-        indexed: true,
-        internalType: 'bytes32',
+        "name": "token",
+        "type": "address",
+        "indexed": true,
+        "internalType": "address"
       },
       {
-        name: 'previousAdminRole',
-        type: 'bytes32',
-        indexed: true,
-        internalType: 'bytes32',
+        "name": "minOperatorStake",
+        "type": "uint256",
+        "indexed": false,
+        "internalType": "uint256"
       },
       {
-        name: 'newAdminRole',
-        type: 'bytes32',
-        indexed: true,
-        internalType: 'bytes32',
-      },
+        "name": "minDelegation",
+        "type": "uint256",
+        "indexed": false,
+        "internalType": "uint256"
+      }
     ],
-    anonymous: false,
+    "anonymous": false
   },
   {
-    type: 'event',
-    name: 'RoleGranted',
-    inputs: [
+    "type": "event",
+    "name": "BlueprintAddedToDelegation",
+    "inputs": [
       {
-        name: 'role',
-        type: 'bytes32',
-        indexed: true,
-        internalType: 'bytes32',
+        "name": "delegator",
+        "type": "address",
+        "indexed": true,
+        "internalType": "address"
       },
       {
-        name: 'account',
-        type: 'address',
-        indexed: true,
-        internalType: 'address',
+        "name": "delegationIndex",
+        "type": "uint256",
+        "indexed": true,
+        "internalType": "uint256"
       },
       {
-        name: 'sender',
-        type: 'address',
-        indexed: true,
-        internalType: 'address',
-      },
+        "name": "blueprintId",
+        "type": "uint64",
+        "indexed": false,
+        "internalType": "uint64"
+      }
     ],
-    anonymous: false,
+    "anonymous": false
   },
   {
-    type: 'event',
-    name: 'RoleRevoked',
-    inputs: [
+    "type": "event",
+    "name": "BlueprintRemovedFromDelegation",
+    "inputs": [
       {
-        name: 'role',
-        type: 'bytes32',
-        indexed: true,
-        internalType: 'bytes32',
+        "name": "delegator",
+        "type": "address",
+        "indexed": true,
+        "internalType": "address"
       },
       {
-        name: 'account',
-        type: 'address',
-        indexed: true,
-        internalType: 'address',
+        "name": "delegationIndex",
+        "type": "uint256",
+        "indexed": true,
+        "internalType": "uint256"
       },
       {
-        name: 'sender',
-        type: 'address',
-        indexed: true,
-        internalType: 'address',
-      },
+        "name": "blueprintId",
+        "type": "uint64",
+        "indexed": false,
+        "internalType": "uint64"
+      }
     ],
-    anonymous: false,
+    "anonymous": false
   },
   {
-    type: 'event',
-    name: 'RoundAdvanced',
-    inputs: [
+    "type": "event",
+    "name": "Delegated",
+    "inputs": [
       {
-        name: 'round',
-        type: 'uint64',
-        indexed: true,
-        internalType: 'uint64',
+        "name": "delegator",
+        "type": "address",
+        "indexed": true,
+        "internalType": "address"
       },
-    ],
-    anonymous: false,
-  },
-  {
-    type: 'event',
-    name: 'SlashRecorded',
-    inputs: [
       {
-        name: 'operator',
-        type: 'address',
-        indexed: true,
-        internalType: 'address',
+        "name": "operator",
+        "type": "address",
+        "indexed": true,
+        "internalType": "address"
       },
       {
-        name: 'slashId',
-        type: 'uint64',
-        indexed: true,
-        internalType: 'uint64',
+        "name": "token",
+        "type": "address",
+        "indexed": true,
+        "internalType": "address"
       },
       {
-        name: 'totalSlashed',
-        type: 'uint256',
-        indexed: false,
-        internalType: 'uint256',
+        "name": "amount",
+        "type": "uint256",
+        "indexed": false,
+        "internalType": "uint256"
       },
       {
-        name: 'exchangeRateBefore',
-        type: 'uint256',
-        indexed: false,
-        internalType: 'uint256',
+        "name": "shares",
+        "type": "uint256",
+        "indexed": false,
+        "internalType": "uint256"
       },
       {
-        name: 'exchangeRateAfter',
-        type: 'uint256',
-        indexed: false,
-        internalType: 'uint256',
-      },
+        "name": "selectionMode",
+        "type": "uint8",
+        "indexed": false,
+        "internalType": "enum Types.BlueprintSelectionMode"
+      }
     ],
-    anonymous: false,
+    "anonymous": false
   },
   {
-    type: 'event',
-    name: 'Slashed',
-    inputs: [
+    "type": "event",
+    "name": "DelegatorUnstakeExecuted",
+    "inputs": [
       {
-        name: 'operator',
-        type: 'address',
-        indexed: true,
-        internalType: 'address',
+        "name": "delegator",
+        "type": "address",
+        "indexed": true,
+        "internalType": "address"
       },
       {
-        name: 'serviceId',
-        type: 'uint64',
-        indexed: true,
-        internalType: 'uint64',
+        "name": "operator",
+        "type": "address",
+        "indexed": true,
+        "internalType": "address"
       },
       {
-        name: 'operatorSlashed',
-        type: 'uint256',
-        indexed: false,
-        internalType: 'uint256',
+        "name": "token",
+        "type": "address",
+        "indexed": true,
+        "internalType": "address"
       },
       {
-        name: 'delegatorsSlashed',
-        type: 'uint256',
-        indexed: false,
-        internalType: 'uint256',
+        "name": "shares",
+        "type": "uint256",
+        "indexed": false,
+        "internalType": "uint256"
       },
       {
-        name: 'newExchangeRate',
-        type: 'uint256',
-        indexed: false,
-        internalType: 'uint256',
-      },
+        "name": "amount",
+        "type": "uint256",
+        "indexed": false,
+        "internalType": "uint256"
+      }
     ],
-    anonymous: false,
+    "anonymous": false
   },
   {
-    type: 'event',
-    name: 'SlashedForService',
-    inputs: [
-      {
-        name: 'operator',
-        type: 'address',
-        indexed: true,
-        internalType: 'address',
-      },
+    "type": "event",
+    "name": "DelegatorUnstakeScheduled",
+    "inputs": [
       {
-        name: 'serviceId',
-        type: 'uint64',
-        indexed: true,
-        internalType: 'uint64',
+        "name": "delegator",
+        "type": "address",
+        "indexed": true,
+        "internalType": "address"
       },
       {
-        name: 'blueprintId',
-        type: 'uint64',
-        indexed: true,
-        internalType: 'uint64',
+        "name": "operator",
+        "type": "address",
+        "indexed": true,
+        "internalType": "address"
       },
       {
-        name: 'totalSlashed',
-        type: 'uint256',
-        indexed: false,
-        internalType: 'uint256',
+        "name": "token",
+        "type": "address",
+        "indexed": true,
+        "internalType": "address"
       },
       {
-        name: 'commitmentCount',
-        type: 'uint256',
-        indexed: false,
-        internalType: 'uint256',
+        "name": "shares",
+        "type": "uint256",
+        "indexed": false,
+        "internalType": "uint256"
       },
-    ],
-    anonymous: false,
-  },
-  {
-    type: 'event',
-    name: 'Unpaused',
-    inputs: [
       {
-        name: 'account',
-        type: 'address',
-        indexed: false,
-        internalType: 'address',
+        "name": "estimatedAmount",
+        "type": "uint256",
+        "indexed": false,
+        "internalType": "uint256"
       },
-    ],
-    anonymous: false,
-  },
-  {
-    type: 'event',
-    name: 'Upgraded',
-    inputs: [
       {
-        name: 'implementation',
-        type: 'address',
-        indexed: true,
-        internalType: 'address',
-      },
+        "name": "readyRound",
+        "type": "uint64",
+        "indexed": false,
+        "internalType": "uint64"
+      }
     ],
-    anonymous: false,
+    "anonymous": false
   },
   {
-    type: 'event',
-    name: 'WithdrawScheduled',
-    inputs: [
+    "type": "event",
+    "name": "Deposited",
+    "inputs": [
       {
-        name: 'delegator',
-        type: 'address',
-        indexed: true,
-        internalType: 'address',
+        "name": "delegator",
+        "type": "address",
+        "indexed": true,
+        "internalType": "address"
       },
       {
-        name: 'token',
-        type: 'address',
-        indexed: true,
-        internalType: 'address',
+        "name": "token",
+        "type": "address",
+        "indexed": true,
+        "internalType": "address"
       },
       {
-        name: 'amount',
-        type: 'uint256',
-        indexed: false,
-        internalType: 'uint256',
+        "name": "amount",
+        "type": "uint256",
+        "indexed": false,
+        "internalType": "uint256"
       },
       {
-        name: 'readyRound',
-        type: 'uint64',
-        indexed: false,
-        internalType: 'uint64',
-      },
+        "name": "lock",
+        "type": "uint8",
+        "indexed": false,
+        "internalType": "enum Types.LockMultiplier"
+      }
     ],
-    anonymous: false,
+    "anonymous": false
   },
   {
-    type: 'event',
-    name: 'Withdrawn',
-    inputs: [
+    "type": "event",
+    "name": "ExpiredLocksHarvested",
+    "inputs": [
       {
-        name: 'delegator',
-        type: 'address',
-        indexed: true,
-        internalType: 'address',
+        "name": "delegator",
+        "type": "address",
+        "indexed": true,
+        "internalType": "address"
       },
       {
-        name: 'token',
-        type: 'address',
-        indexed: true,
-        internalType: 'address',
+        "name": "token",
+        "type": "address",
+        "indexed": true,
+        "internalType": "address"
       },
       {
-        name: 'amount',
-        type: 'uint256',
-        indexed: false,
-        internalType: 'uint256',
+        "name": "count",
+        "type": "uint256",
+        "indexed": false,
+        "internalType": "uint256"
       },
+      {
+        "name": "totalAmount",
+        "type": "uint256",
+        "indexed": false,
+        "internalType": "uint256"
+      }
     ],
-    anonymous: false,
-  },
-  {
-    type: 'error',
-    name: 'AccessControlBadConfirmation',
-    inputs: [],
+    "anonymous": false
   },
   {
-    type: 'error',
-    name: 'AccessControlUnauthorizedAccount',
-    inputs: [
+    "type": "event",
+    "name": "OperatorBlueprintAdded",
+    "inputs": [
       {
-        name: 'account',
-        type: 'address',
-        internalType: 'address',
+        "name": "operator",
+        "type": "address",
+        "indexed": true,
+        "internalType": "address"
       },
       {
-        name: 'neededRole',
-        type: 'bytes32',
-        internalType: 'bytes32',
-      },
+        "name": "blueprintId",
+        "type": "uint64",
+        "indexed": true,
+        "internalType": "uint64"
+      }
     ],
+    "anonymous": false
   },
   {
-    type: 'error',
-    name: 'AddressEmptyCode',
-    inputs: [
+    "type": "event",
+    "name": "OperatorBlueprintRemoved",
+    "inputs": [
       {
-        name: 'target',
-        type: 'address',
-        internalType: 'address',
+        "name": "operator",
+        "type": "address",
+        "indexed": true,
+        "internalType": "address"
       },
+      {
+        "name": "blueprintId",
+        "type": "uint64",
+        "indexed": true,
+        "internalType": "uint64"
+      }
     ],
-  },
-  {
-    type: 'error',
-    name: 'AllModeDisallowsBlueprints',
-    inputs: [],
+    "anonymous": false
   },
   {
-    type: 'error',
-    name: 'AmountLocked',
-    inputs: [
+    "type": "event",
+    "name": "OperatorLeavingScheduled",
+    "inputs": [
       {
-        name: 'locked',
-        type: 'uint256',
-        internalType: 'uint256',
+        "name": "operator",
+        "type": "address",
+        "indexed": true,
+        "internalType": "address"
       },
       {
-        name: 'requested',
-        type: 'uint256',
-        internalType: 'uint256',
-      },
+        "name": "readyRound",
+        "type": "uint64",
+        "indexed": false,
+        "internalType": "uint64"
+      }
     ],
+    "anonymous": false
   },
   {
-    type: 'error',
-    name: 'AssetNotEnabled',
-    inputs: [
+    "type": "event",
+    "name": "OperatorLeft",
+    "inputs": [
       {
-        name: 'asset',
-        type: 'address',
-        internalType: 'address',
-      },
+        "name": "operator",
+        "type": "address",
+        "indexed": true,
+        "internalType": "address"
+      }
     ],
+    "anonymous": false
   },
   {
-    type: 'error',
-    name: 'BelowMinimumDeposit',
-    inputs: [
+    "type": "event",
+    "name": "OperatorRegistered",
+    "inputs": [
       {
-        name: 'minimum',
-        type: 'uint256',
-        internalType: 'uint256',
+        "name": "operator",
+        "type": "address",
+        "indexed": true,
+        "internalType": "address"
       },
       {
-        name: 'provided',
-        type: 'uint256',
-        internalType: 'uint256',
-      },
+        "name": "stake",
+        "type": "uint256",
+        "indexed": false,
+        "internalType": "uint256"
+      }
     ],
+    "anonymous": false
   },
   {
-    type: 'error',
-    name: 'BlueprintAlreadySelected',
-    inputs: [
+    "type": "event",
+    "name": "OperatorStakeIncreased",
+    "inputs": [
       {
-        name: 'blueprintId',
-        type: 'uint64',
-        internalType: 'uint64',
+        "name": "operator",
+        "type": "address",
+        "indexed": true,
+        "internalType": "address"
       },
-    ],
-  },
-  {
-    type: 'error',
-    name: 'BlueprintNotSelected',
-    inputs: [
       {
-        name: 'blueprintId',
-        type: 'uint64',
-        internalType: 'uint64',
-      },
+        "name": "amount",
+        "type": "uint256",
+        "indexed": false,
+        "internalType": "uint256"
+      }
     ],
-  },
-  {
-    type: 'error',
-    name: 'CannotRemoveLastBlueprint',
-    inputs: [],
+    "anonymous": false
   },
   {
-    type: 'error',
-    name: 'DelegationNotFound',
-    inputs: [
+    "type": "event",
+    "name": "OperatorUnstakeExecuted",
+    "inputs": [
       {
-        name: 'delegator',
-        type: 'address',
-        internalType: 'address',
+        "name": "operator",
+        "type": "address",
+        "indexed": true,
+        "internalType": "address"
       },
       {
-        name: 'operator',
-        type: 'address',
-        internalType: 'address',
-      },
+        "name": "amount",
+        "type": "uint256",
+        "indexed": false,
+        "internalType": "uint256"
+      }
     ],
+    "anonymous": false
   },
   {
-    type: 'error',
-    name: 'DepositCapExceeded',
-    inputs: [
+    "type": "event",
+    "name": "OperatorUnstakeScheduled",
+    "inputs": [
       {
-        name: 'cap',
-        type: 'uint256',
-        internalType: 'uint256',
+        "name": "operator",
+        "type": "address",
+        "indexed": true,
+        "internalType": "address"
       },
       {
-        name: 'current',
-        type: 'uint256',
-        internalType: 'uint256',
+        "name": "amount",
+        "type": "uint256",
+        "indexed": false,
+        "internalType": "uint256"
       },
       {
-        name: 'adding',
-        type: 'uint256',
-        internalType: 'uint256',
-      },
+        "name": "readyRound",
+        "type": "uint64",
+        "indexed": false,
+        "internalType": "uint64"
+      }
     ],
+    "anonymous": false
   },
   {
-    type: 'error',
-    name: 'ERC1967InvalidImplementation',
-    inputs: [
+    "type": "event",
+    "name": "RequireAdaptersUpdated",
+    "inputs": [
       {
-        name: 'implementation',
-        type: 'address',
-        internalType: 'address',
-      },
+        "name": "required",
+        "type": "bool",
+        "indexed": false,
+        "internalType": "bool"
+      }
     ],
-  },
-  {
-    type: 'error',
-    name: 'ERC1967NonPayable',
-    inputs: [],
-  },
-  {
-    type: 'error',
-    name: 'EnforcedPause',
-    inputs: [],
-  },
-  {
-    type: 'error',
-    name: 'ExpectedPause',
-    inputs: [],
-  },
-  {
-    type: 'error',
-    name: 'FailedCall',
-    inputs: [],
+    "anonymous": false
   },
   {
-    type: 'error',
-    name: 'FixedModeRequiresBlueprints',
-    inputs: [],
-  },
-  {
-    type: 'error',
-    name: 'InsufficientAvailableBalance',
-    inputs: [
+    "type": "event",
+    "name": "RewardClaimed",
+    "inputs": [
       {
-        name: 'available',
-        type: 'uint256',
-        internalType: 'uint256',
+        "name": "account",
+        "type": "address",
+        "indexed": true,
+        "internalType": "address"
       },
       {
-        name: 'requested',
-        type: 'uint256',
-        internalType: 'uint256',
-      },
+        "name": "amount",
+        "type": "uint256",
+        "indexed": false,
+        "internalType": "uint256"
+      }
     ],
+    "anonymous": false
   },
   {
-    type: 'error',
-    name: 'InsufficientDelegation',
-    inputs: [
+    "type": "event",
+    "name": "RewardDistributed",
+    "inputs": [
       {
-        name: 'available',
-        type: 'uint256',
-        internalType: 'uint256',
+        "name": "operator",
+        "type": "address",
+        "indexed": true,
+        "internalType": "address"
       },
       {
-        name: 'requested',
-        type: 'uint256',
-        internalType: 'uint256',
-      },
+        "name": "amount",
+        "type": "uint256",
+        "indexed": false,
+        "internalType": "uint256"
+      }
     ],
+    "anonymous": false
   },
   {
-    type: 'error',
-    name: 'InsufficientDeposit',
-    inputs: [
+    "type": "event",
+    "name": "RoundAdvanced",
+    "inputs": [
       {
-        name: 'available',
-        type: 'uint256',
-        internalType: 'uint256',
-      },
-      {
-        name: 'requested',
-        type: 'uint256',
-        internalType: 'uint256',
-      },
+        "name": "round",
+        "type": "uint64",
+        "indexed": true,
+        "internalType": "uint64"
+      }
     ],
+    "anonymous": false
   },
   {
-    type: 'error',
-    name: 'InsufficientStake',
-    inputs: [
+    "type": "event",
+    "name": "SlashRecorded",
+    "inputs": [
       {
-        name: 'required',
-        type: 'uint256',
-        internalType: 'uint256',
+        "name": "operator",
+        "type": "address",
+        "indexed": true,
+        "internalType": "address"
       },
       {
-        name: 'provided',
-        type: 'uint256',
-        internalType: 'uint256',
+        "name": "slashId",
+        "type": "uint64",
+        "indexed": true,
+        "internalType": "uint64"
       },
-    ],
-  },
-  {
-    type: 'error',
-    name: 'InvalidDelegationIndex',
-    inputs: [
       {
-        name: 'index',
-        type: 'uint256',
-        internalType: 'uint256',
+        "name": "totalSlashed",
+        "type": "uint256",
+        "indexed": false,
+        "internalType": "uint256"
       },
-    ],
-  },
-  {
-    type: 'error',
-    name: 'InvalidInitialization',
-    inputs: [],
-  },
-  {
-    type: 'error',
-    name: 'InvalidLockMultiplier',
-    inputs: [
       {
-        name: 'value',
-        type: 'uint8',
-        internalType: 'uint8',
+        "name": "exchangeRateBefore",
+        "type": "uint256",
+        "indexed": false,
+        "internalType": "uint256"
       },
+      {
+        "name": "exchangeRateAfter",
+        "type": "uint256",
+        "indexed": false,
+        "internalType": "uint256"
+      }
     ],
+    "anonymous": false
   },
   {
-    type: 'error',
-    name: 'LeavingTooEarly',
-    inputs: [
+    "type": "event",
+    "name": "Slashed",
+    "inputs": [
       {
-        name: 'currentRound',
-        type: 'uint64',
-        internalType: 'uint64',
+        "name": "operator",
+        "type": "address",
+        "indexed": true,
+        "internalType": "address"
       },
       {
-        name: 'requiredRound',
-        type: 'uint64',
-        internalType: 'uint64',
+        "name": "serviceId",
+        "type": "uint64",
+        "indexed": true,
+        "internalType": "uint64"
       },
-    ],
-  },
-  {
-    type: 'error',
-    name: 'LegacySlashRequiresAllMode',
-    inputs: [
       {
-        name: 'operator',
-        type: 'address',
-        internalType: 'address',
+        "name": "operatorSlashed",
+        "type": "uint256",
+        "indexed": false,
+        "internalType": "uint256"
       },
-    ],
-  },
-  {
-    type: 'error',
-    name: 'NoRewardsToClaim',
-    inputs: [],
-  },
-  {
-    type: 'error',
-    name: 'NotFixedMode',
-    inputs: [],
-  },
-  {
-    type: 'error',
-    name: 'NotInitializing',
-    inputs: [],
-  },
-  {
-    type: 'error',
-    name: 'OperatorAlreadyRegistered',
-    inputs: [
       {
-        name: 'operator',
-        type: 'address',
-        internalType: 'address',
+        "name": "delegatorsSlashed",
+        "type": "uint256",
+        "indexed": false,
+        "internalType": "uint256"
       },
+      {
+        "name": "newExchangeRate",
+        "type": "uint256",
+        "indexed": false,
+        "internalType": "uint256"
+      }
     ],
+    "anonymous": false
   },
   {
-    type: 'error',
-    name: 'OperatorNotActive',
-    inputs: [
+    "type": "event",
+    "name": "SlashedForService",
+    "inputs": [
       {
-        name: 'operator',
-        type: 'address',
-        internalType: 'address',
+        "name": "operator",
+        "type": "address",
+        "indexed": true,
+        "internalType": "address"
       },
-    ],
-  },
-  {
-    type: 'error',
-    name: 'OperatorNotLeaving',
-    inputs: [
       {
-        name: 'operator',
-        type: 'address',
-        internalType: 'address',
+        "name": "serviceId",
+        "type": "uint64",
+        "indexed": true,
+        "internalType": "uint64"
       },
-    ],
-  },
-  {
-    type: 'error',
-    name: 'OperatorNotRegistered',
-    inputs: [
+      {
+        "name": "blueprintId",
+        "type": "uint64",
+        "indexed": true,
+        "internalType": "uint64"
+      },
       {
-        name: 'operator',
-        type: 'address',
-        internalType: 'address',
+        "name": "totalSlashed",
+        "type": "uint256",
+        "indexed": false,
+        "internalType": "uint256"
       },
+      {
+        "name": "commitmentCount",
+        "type": "uint256",
+        "indexed": false,
+        "internalType": "uint256"
+      }
     ],
+    "anonymous": false
   },
   {
-    type: 'error',
-    name: 'ReentrancyGuardReentrantCall',
-    inputs: [],
-  },
-  {
-    type: 'error',
-    name: 'RoundAdvanceTooSoon',
-    inputs: [
+    "type": "event",
+    "name": "WithdrawScheduled",
+    "inputs": [
       {
-        name: 'nextAllowedTime',
-        type: 'uint64',
-        internalType: 'uint64',
+        "name": "delegator",
+        "type": "address",
+        "indexed": true,
+        "internalType": "address"
       },
       {
-        name: 'currentTime',
-        type: 'uint64',
-        internalType: 'uint64',
+        "name": "token",
+        "type": "address",
+        "indexed": true,
+        "internalType": "address"
       },
-    ],
-  },
-  {
-    type: 'error',
-    name: 'SafeERC20FailedOperation',
-    inputs: [
       {
-        name: 'token',
-        type: 'address',
-        internalType: 'address',
+        "name": "amount",
+        "type": "uint256",
+        "indexed": false,
+        "internalType": "uint256"
       },
+      {
+        "name": "readyRound",
+        "type": "uint64",
+        "indexed": false,
+        "internalType": "uint64"
+      }
     ],
-  },
-  {
-    type: 'error',
-    name: 'SelectionModeMismatch',
-    inputs: [],
-  },
-  {
-    type: 'error',
-    name: 'TransferFailed',
-    inputs: [],
-  },
-  {
-    type: 'error',
-    name: 'UUPSUnauthorizedCallContext',
-    inputs: [],
+    "anonymous": false
   },
   {
-    type: 'error',
-    name: 'UUPSUnsupportedProxiableUUID',
-    inputs: [
+    "type": "event",
+    "name": "Withdrawn",
+    "inputs": [
       {
-        name: 'slot',
-        type: 'bytes32',
-        internalType: 'bytes32',
+        "name": "delegator",
+        "type": "address",
+        "indexed": true,
+        "internalType": "address"
       },
+      {
+        "name": "token",
+        "type": "address",
+        "indexed": true,
+        "internalType": "address"
+      },
+      {
+        "name": "amount",
+        "type": "uint256",
+        "indexed": false,
+        "internalType": "uint256"
+      }
     ],
-  },
-  {
-    type: 'error',
-    name: 'ZeroAddress',
-    inputs: [],
-  },
-  {
-    type: 'error',
-    name: 'ZeroAmount',
-    inputs: [],
-  },
+    "anonymous": false
+  }
 ] as const;
 
-export default MULTI_ASSET_DELEGATION_ABI;
+export default ABI;

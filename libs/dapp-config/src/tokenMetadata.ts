@@ -40,13 +40,21 @@ const KNOWN_TOKEN_ADDRESSES: Partial<
   // Anvil Local (chain 31337) - deterministic addresses from tnt-core LocalTestnet.s.sol
   [EVMChainId.AnvilLocal]: {
     '0x0165878a594ca255338adfa4d48449f69242eb8f': 'TNT',
+    '0x5eb3bc0a489c5a8288765d2336659ebca68fcd00': 'TNT',
     '0x809d550fca64d94bd9f66e60752a544199cfac3d': 'USDC',
+    '0x367761085bf3c12e5da2df99ac6e1a824612b8fb': 'USDC',
     '0x4c5859f0f772848b2d91f1d83e2fe57935348029': 'USDT',
+    '0x4c2f7092c2ae51d986befee378e50bd4db99c901': 'USDT',
     '0x1291be112d480055dafd8a610b7d1e203891c274': 'DAI',
+    '0x7a9ec1d04904907de0ed7b6839ccdd59c3716ac9': 'DAI',
     '0x5f3f1dbd7b74c6b46e8c44f98792a1daf8d69154': 'WETH',
+    '0x49fd2be640db2910c2fab69bb8531ab6e76127ff': 'WETH',
     '0xb7278a61aa25c888815afc32ad3cc52ff24fe575': 'stETH',
+    '0x4631bcabd6df18d94796344963cb60d44a4136b6': 'stETH',
     '0xcd8a1c3ba11cf5ecfa6267617243239504a98d90': 'wstETH',
+    '0x86a2ee8faf9a840f7a2c64ca3d51209f9a02081d': 'wstETH',
     '0x82e01223d51eb87e16a03e24687edf0f294da6f1': 'EIGEN',
+    '0xa4899d35897033b927acfcf422bc745916139776': 'EIGEN',
   },
   // Base Sepolia (chain 84532) - addresses from tnt-core deployments
   [EVMChainId.BaseSepolia]: {

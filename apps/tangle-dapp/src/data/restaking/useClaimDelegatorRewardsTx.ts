@@ -15,7 +15,7 @@ import { getContractsByChainId } from '@tangle-network/dapp-config/contracts';
  * const { execute, status, error } = useClaimDelegatorRewardsTx();
  *
  * // Claim all pending rewards
- * await execute({});
+ * await execute();
  * ```
  */
 export const useClaimDelegatorRewardsTx = () => {
@@ -30,7 +30,7 @@ export const useClaimDelegatorRewardsTx = () => {
 
   return useContractWrite(
     MULTI_ASSET_DELEGATION_ABI,
-    (_params: Record<string, never>, _activeAddress) => {
+    (_params: void, _activeAddress) => {
       if (!contracts) {
         return null;
       }

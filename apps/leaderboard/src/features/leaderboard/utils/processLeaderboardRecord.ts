@@ -170,7 +170,7 @@ export const processLeaderboardRecord = (
   pageIndex: number,
   pageSize: number,
   activity?: ActivityData,
-  network: NetworkType = 'MAINNET',
+  network: NetworkType = NetworkType.Mainnet,
 ): Account | null => {
   if (!record) {
     return null;

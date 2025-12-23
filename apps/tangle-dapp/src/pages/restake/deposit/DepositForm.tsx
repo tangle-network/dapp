@@ -5,16 +5,9 @@ import LockFillIcon from '@tangle-network/icons/LockFillIcon';
 import { LockLineIcon } from '@tangle-network/icons/LockLineIcon';
 import { TokenIcon } from '@tangle-network/icons';
 import ListModal from '@tangle-network/tangle-shared-ui/components/ListModal';
-import { Card } from '@tangle-network/ui-components';
+import { Card, DropdownField } from '@tangle-network/ui-components';
 import Button from '@tangle-network/ui-components/components/buttons/Button';
 import { Modal } from '@tangle-network/ui-components/components/Modal';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@tangle-network/ui-components/components/select';
 import type { TextFieldInputProps } from '@tangle-network/ui-components/components/TextField/types';
 import { TransactionInputCard } from '@tangle-network/ui-components/components/TransactionInputCard';
 import { useModal } from '@tangle-network/ui-components/hooks/useModal';
@@ -406,14 +399,20 @@ const DepositForm: FC = () => {
   const lockOptions = useMemo(
     () =>
       [
-        ['NONE', 'No lock'] as const,
-        ['ONE_MONTH', '1 month'] as const,
-        ['TWO_MONTHS', '2 months'] as const,
-        ['THREE_MONTHS', '3 months'] as const,
-        ['SIX_MONTHS', '6 months'] as const,
-      ] satisfies ReadonlyArray<readonly [LockDuration, string]>,
+        { id: 'NONE', label: 'No lock' },
+        { id: 'ONE_MONTH', label: '1 month' },
+        { id: 'TWO_MONTHS', label: '2 months' },
+        { id: 'THREE_MONTHS', label: '3 months' },
+        { id: 'SIX_MONTHS', label: '6 months' },
+      ] satisfies ReadonlyArray<{ id: LockDuration; label: string }>,
     [],
   );
+
+  const selectedLockOption = useMemo(() => {
+    return (
+      lockOptions.find((option) => option.id === lockDuration) ?? lockOptions[0]
+    );
+  }, [lockDuration, lockOptions]);
 
   return (
     <StyleContainer>
@@ -496,29 +495,16 @@ const DepositForm: FC = () => {
             <ErrorMessage>{errors.amount?.message}</ErrorMessage>
           </div>
 
-          <div className="flex items-center justify-between gap-3">
-            <Typography variant="body2" fw="semibold">
-              Lock
-            </Typography>
-
-            <Select
-              value={lockDuration}
-              onValueChange={(value) =>
-                setValue('lockDuration', value as LockDuration)
-              }
-            >
-              <SelectTrigger className="w-[200px] bg-mono-0 dark:bg-mono-180 border border-mono-60 dark:border-mono-160 rounded-xl">
-                <SelectValue placeholder="No lock" />
-              </SelectTrigger>
-              <SelectContent>
-                {lockOptions.map(([value, label]) => (
-                  <SelectItem key={value} value={value}>
-                    {label}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
+          <DropdownField
+            title="Lock"
+            items={lockOptions}
+            selectedItem={selectedLockOption}
+            setSelectedItemId={(value) =>
+              setValue('lockDuration', value as LockDuration)
+            }
+            getDisplayText={(option) => option.label}
+            getId={(option) => option.id}
+          />
 
           <Details />
 

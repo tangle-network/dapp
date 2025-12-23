@@ -38,53 +38,58 @@ export const DropdownField = ({
   );
 
   return (
-    <div
-      className={twMerge(
-        'px-2.5 lg:px-4 py-2 w-full min-h-[74px] rounded-lg',
-        'bg-mono-20 dark:bg-mono-170',
-        'outline outline-1 outline-offset-1 outline-transparent',
-        className,
-      )}
-    >
-      <Label>{title}</Label>
+    <Dropdown className="block grow shrink basis-0">
+      <DropdownBasicButton
+        type="button"
+        className={twMerge(
+          'group w-full min-h-[74px] rounded-lg px-2.5 lg:px-4 py-2',
+          'flex flex-col items-start justify-center gap-1 text-left',
+          'bg-mono-20 dark:bg-mono-170',
+          'outline outline-1 outline-offset-1 outline-transparent',
+          'transition-colors',
+          'hover:bg-mono-40 dark:hover:bg-mono-160',
+          'hover:outline-mono-40 dark:hover:outline-mono-140',
+          'focus-visible:outline-mono-80 dark:focus-visible:outline-mono-140',
+          className,
+        )}
+      >
+        <Label>{title}</Label>
 
-      <Dropdown className="block grow shrink basis-0">
-        <DropdownBasicButton className="h-full group focus-visible:outline-none w-full inline-block">
-          <div className="flex items-center gap-5 justify-between w-full">
-            <Typography variant="h5" fw="bold" className="text-lg">
-              {selectedItem}
-            </Typography>
+        <div className="flex items-center gap-5 justify-between w-full">
+          <Typography variant="h5" fw="bold" className="text-lg">
+            {selectedItem}
+          </Typography>
 
-            <AnimatedChevronRight size="lg" />
-          </div>
-        </DropdownBasicButton>
+          <AnimatedChevronRight size="lg" />
+        </div>
+      </DropdownBasicButton>
 
-        <DropdownBody
-          className={twMerge(
-            'max-w-[360px] !z-50 !bg-mono-0 dark:!bg-mono-170 !mt-6 !-mr-4',
-            dropdownBodyClassName,
-          )}
+      <DropdownBody
+        className={twMerge(
+          'w-[var(--radix-dropdown-menu-trigger-width)] min-w-[var(--radix-dropdown-menu-trigger-width)] max-w-none',
+          '!z-50 !bg-mono-0 dark:!bg-mono-170 !mt-2',
+          dropdownBodyClassName,
+        )}
+      >
+        <RadioGroup
+          className="border dark:border-mono-140 !rounded-lg"
+          value={selectedItem}
+          onValueChange={handleValueChange}
         >
-          <RadioGroup
-            className="border dark:border-mono-140 !rounded-lg"
-            value={selectedItem}
-            onValueChange={handleValueChange}
-          >
-            {items.map((item, i) => (
-              <RadioItem key={i} value={item} asChild>
-                <DropdownMenuItem className="dark:hover:!bg-mono-160">
-                  <Typography
-                    variant="body1"
-                    className="text-mono-140 dark:text-mono-0"
-                  >
-                    {item}
-                  </Typography>
-                </DropdownMenuItem>
-              </RadioItem>
-            ))}
-          </RadioGroup>
-        </DropdownBody>
-      </Dropdown>
-    </div>
+          {items.map((item, i) => (
+            <RadioItem key={i} value={item} asChild>
+              <DropdownMenuItem className="w-full dark:hover:!bg-mono-160">
+                <Typography
+                  variant="body1"
+                  className="text-mono-140 dark:text-mono-0"
+                >
+                  {item}
+                </Typography>
+              </DropdownMenuItem>
+            </RadioItem>
+          ))}
+        </RadioGroup>
+      </DropdownBody>
+    </Dropdown>
   );
 };

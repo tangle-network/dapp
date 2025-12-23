@@ -135,17 +135,30 @@ const getVaultColumns = () => [
             <TokenIcon name={props.row.original.symbol} size="xl" />
           </div>
 
-          <div>
-            <Typography variant="h5" className="whitespace-nowrap">
-              {props.row.original.symbol}
-            </Typography>
+          <div className="flex flex-col min-w-0">
+            <div className="flex items-center gap-2 min-w-0">
+              <Typography variant="h5" className="whitespace-nowrap">
+                {props.row.original.symbol}
+              </Typography>
 
-            <Typography
-              variant="body3"
-              className="text-mono-120 dark:text-mono-100"
-            >
-              {props.row.original.name}
-            </Typography>
+              <Typography
+                variant="body3"
+                className="text-mono-120 dark:text-mono-100 truncate"
+              >
+                {props.row.original.name}
+              </Typography>
+            </div>
+
+            <div className="flex items-center gap-2 text-mono-120 dark:text-mono-100">
+              <Typography variant="body4" className="font-mono">
+                {shortenHex(props.row.original.id)}
+              </Typography>
+              <CopyWithTooltip
+                textToCopy={props.row.original.id}
+                isButton={false}
+                copyLabel="Copy address"
+              />
+            </div>
           </div>
         </div>
       </TableCellWrapper>
@@ -233,7 +246,7 @@ const VaultTabContent: FC = () => {
     autoResetPageIndex: false,
   });
 
-  if (isLoadingAssets) {
+  if (isLoadingAssets && vaults.length === 0) {
     return (
       <TableStatus
         title="Loading Vaults"
