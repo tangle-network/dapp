@@ -104,7 +104,10 @@ export const useServiceRequestTx = () => {
             logs: receipt.logs,
             eventName: 'ServiceRequested',
           });
-          requestId = parsed[0]?.args?.requestId;
+          const event = parsed[0] as unknown as
+            | { args: { requestId: bigint } }
+            | undefined;
+          requestId = event?.args?.requestId;
         } catch {
           // If the event isn't present (or decoding fails), still return the txHash.
         }

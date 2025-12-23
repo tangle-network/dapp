@@ -1,5 +1,89 @@
-// AUTO-GENERATED FROM tnt-core. DO NOT EDIT MANUALLY.
-const ABI = [
+// Auto-generated from tnt-core contracts
+// Contract: TANGLE
+
+const TANGLE_ABI = [
+  {
+    type: 'receive',
+    stateMutability: 'payable',
+  },
+  {
+    type: 'function',
+    name: 'ADMIN_ROLE',
+    inputs: [],
+    outputs: [
+      {
+        name: '',
+        type: 'bytes32',
+        internalType: 'bytes32',
+      },
+    ],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
+    name: 'DEFAULT_ADMIN_ROLE',
+    inputs: [],
+    outputs: [
+      {
+        name: '',
+        type: 'bytes32',
+        internalType: 'bytes32',
+      },
+    ],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
+    name: 'PAUSER_ROLE',
+    inputs: [],
+    outputs: [
+      {
+        name: '',
+        type: 'bytes32',
+        internalType: 'bytes32',
+      },
+    ],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
+    name: 'SLASH_ADMIN_ROLE',
+    inputs: [],
+    outputs: [
+      {
+        name: '',
+        type: 'bytes32',
+        internalType: 'bytes32',
+      },
+    ],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
+    name: 'UPGRADER_ROLE',
+    inputs: [],
+    outputs: [
+      {
+        name: '',
+        type: 'bytes32',
+        internalType: 'bytes32',
+      },
+    ],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
+    name: 'UPGRADE_INTERFACE_VERSION',
+    inputs: [],
+    outputs: [
+      {
+        name: '',
+        type: 'string',
+        internalType: 'string',
+      },
+    ],
+    stateMutability: 'view',
+  },
   {
     type: 'function',
     name: 'addPermittedCaller',
@@ -446,6 +530,24 @@ const ABI = [
   },
   {
     type: 'function',
+    name: 'cancelSlash',
+    inputs: [
+      {
+        name: 'slashId',
+        type: 'uint64',
+        internalType: 'uint64',
+      },
+      {
+        name: 'reason',
+        type: 'string',
+        internalType: 'string',
+      },
+    ],
+    outputs: [],
+    stateMutability: 'nonpayable',
+  },
+  {
+    type: 'function',
     name: 'claimRewards',
     inputs: [],
     outputs: [],
@@ -469,7 +571,7 @@ const ABI = [
     name: 'createBlueprint',
     inputs: [
       {
-        name: 'definition',
+        name: 'def',
         type: 'tuple',
         internalType: 'struct Types.BlueprintDefinition',
         components: [
@@ -910,6 +1012,24 @@ const ABI = [
   },
   {
     type: 'function',
+    name: 'disputeSlash',
+    inputs: [
+      {
+        name: 'slashId',
+        type: 'uint64',
+        internalType: 'uint64',
+      },
+      {
+        name: 'reason',
+        type: 'string',
+        internalType: 'string',
+      },
+    ],
+    outputs: [],
+    stateMutability: 'nonpayable',
+  },
+  {
+    type: 'function',
     name: 'executeExit',
     inputs: [
       {
@@ -923,121 +1043,50 @@ const ABI = [
   },
   {
     type: 'function',
-    name: 'extendServiceFromQuotes',
+    name: 'executeSlash',
     inputs: [
       {
-        name: 'serviceId',
-        type: 'uint64',
-        internalType: 'uint64',
-      },
-      {
-        name: 'quotes',
-        type: 'tuple[]',
-        internalType: 'struct Types.SignedQuote[]',
-        components: [
-          {
-            name: 'details',
-            type: 'tuple',
-            internalType: 'struct Types.QuoteDetails',
-            components: [
-              {
-                name: 'blueprintId',
-                type: 'uint64',
-                internalType: 'uint64',
-              },
-              {
-                name: 'ttlBlocks',
-                type: 'uint64',
-                internalType: 'uint64',
-              },
-              {
-                name: 'totalCost',
-                type: 'uint256',
-                internalType: 'uint256',
-              },
-              {
-                name: 'timestamp',
-                type: 'uint64',
-                internalType: 'uint64',
-              },
-              {
-                name: 'expiry',
-                type: 'uint64',
-                internalType: 'uint64',
-              },
-              {
-                name: 'securityCommitments',
-                type: 'tuple[]',
-                internalType: 'struct Types.AssetSecurityCommitment[]',
-                components: [
-                  {
-                    name: 'asset',
-                    type: 'tuple',
-                    internalType: 'struct Types.Asset',
-                    components: [
-                      {
-                        name: 'kind',
-                        type: 'uint8',
-                        internalType: 'enum Types.AssetKind',
-                      },
-                      {
-                        name: 'token',
-                        type: 'address',
-                        internalType: 'address',
-                      },
-                    ],
-                  },
-                  {
-                    name: 'exposureBps',
-                    type: 'uint16',
-                    internalType: 'uint16',
-                  },
-                ],
-              },
-            ],
-          },
-          {
-            name: 'signature',
-            type: 'bytes',
-            internalType: 'bytes',
-          },
-          {
-            name: 'operator',
-            type: 'address',
-            internalType: 'address',
-          },
-        ],
-      },
-      {
-        name: 'extensionDuration',
+        name: 'slashId',
         type: 'uint64',
         internalType: 'uint64',
       },
     ],
-    outputs: [],
-    stateMutability: 'payable',
-  },
-  {
-    type: 'function',
-    name: 'forceExit',
-    inputs: [
+    outputs: [
       {
-        name: 'serviceId',
-        type: 'uint64',
-        internalType: 'uint64',
-      },
-      {
-        name: 'operator',
-        type: 'address',
-        internalType: 'address',
+        name: 'actualSlashed',
+        type: 'uint256',
+        internalType: 'uint256',
       },
     ],
-    outputs: [],
     stateMutability: 'nonpayable',
   },
   {
     type: 'function',
-    name: 'forceRemoveOperator',
+    name: 'executeSlashBatch',
+    inputs: [
+      {
+        name: 'slashIds',
+        type: 'uint64[]',
+        internalType: 'uint64[]',
+      },
+    ],
+    outputs: [
+      {
+        name: 'totalSlashed',
+        type: 'uint256',
+        internalType: 'uint256',
+      },
+      {
+        name: 'executedCount',
+        type: 'uint256',
+        internalType: 'uint256',
+      },
+    ],
+    stateMutability: 'nonpayable',
+  },
+  {
+    type: 'function',
+    name: 'forceExit',
     inputs: [
       {
         name: 'serviceId',
@@ -1095,7 +1144,7 @@ const ABI = [
     name: 'getBlueprint',
     inputs: [
       {
-        name: 'blueprintId',
+        name: 'id',
         type: 'uint64',
         internalType: 'uint64',
       },
@@ -1151,7 +1200,7 @@ const ABI = [
     name: 'getBlueprintConfig',
     inputs: [
       {
-        name: 'blueprintId',
+        name: 'id',
         type: 'uint64',
         internalType: 'uint64',
       },
@@ -1528,6 +1577,30 @@ const ABI = [
   },
   {
     type: 'function',
+    name: 'getExecutableSlashes',
+    inputs: [
+      {
+        name: 'fromId',
+        type: 'uint64',
+        internalType: 'uint64',
+      },
+      {
+        name: 'toId',
+        type: 'uint64',
+        internalType: 'uint64',
+      },
+    ],
+    outputs: [
+      {
+        name: 'ids',
+        type: 'uint64[]',
+        internalType: 'uint64[]',
+      },
+    ],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
     name: 'getExitConfig',
     inputs: [
       {
@@ -1698,7 +1771,7 @@ const ABI = [
         internalType: 'uint64',
       },
       {
-        name: 'operator',
+        name: 'op',
         type: 'address',
         internalType: 'address',
       },
@@ -1734,7 +1807,7 @@ const ABI = [
         internalType: 'uint64',
       },
       {
-        name: 'operator',
+        name: 'op',
         type: 'address',
         internalType: 'address',
       },
@@ -1758,7 +1831,7 @@ const ABI = [
         internalType: 'uint64',
       },
       {
-        name: 'operator',
+        name: 'op',
         type: 'address',
         internalType: 'address',
       },
@@ -1806,10 +1879,29 @@ const ABI = [
   },
   {
     type: 'function',
+    name: 'getRoleAdmin',
+    inputs: [
+      {
+        name: 'role',
+        type: 'bytes32',
+        internalType: 'bytes32',
+      },
+    ],
+    outputs: [
+      {
+        name: '',
+        type: 'bytes32',
+        internalType: 'bytes32',
+      },
+    ],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
     name: 'getService',
     inputs: [
       {
-        name: 'serviceId',
+        name: 'id',
         type: 'uint64',
         internalType: 'uint64',
       },
@@ -1936,7 +2028,7 @@ const ABI = [
         internalType: 'uint64',
       },
       {
-        name: 'operator',
+        name: 'op',
         type: 'address',
         internalType: 'address',
       },
@@ -1996,7 +2088,7 @@ const ABI = [
     name: 'getServiceRequest',
     inputs: [
       {
-        name: 'requestId',
+        name: 'id',
         type: 'uint64',
         internalType: 'uint64',
       },
@@ -2074,15 +2166,104 @@ const ABI = [
   },
   {
     type: 'function',
-    name: 'getServiceRequestSecurityCommitments',
+    name: 'getSlashProposal',
     inputs: [
       {
-        name: 'requestId',
+        name: 'slashId',
         type: 'uint64',
         internalType: 'uint64',
       },
+    ],
+    outputs: [
       {
-        name: 'operator',
+        name: '',
+        type: 'tuple',
+        internalType: 'struct SlashingLib.SlashProposal',
+        components: [
+          {
+            name: 'serviceId',
+            type: 'uint64',
+            internalType: 'uint64',
+          },
+          {
+            name: 'operator',
+            type: 'address',
+            internalType: 'address',
+          },
+          {
+            name: 'proposer',
+            type: 'address',
+            internalType: 'address',
+          },
+          {
+            name: 'amount',
+            type: 'uint256',
+            internalType: 'uint256',
+          },
+          {
+            name: 'effectiveAmount',
+            type: 'uint256',
+            internalType: 'uint256',
+          },
+          {
+            name: 'evidence',
+            type: 'bytes32',
+            internalType: 'bytes32',
+          },
+          {
+            name: 'proposedAt',
+            type: 'uint64',
+            internalType: 'uint64',
+          },
+          {
+            name: 'executeAfter',
+            type: 'uint64',
+            internalType: 'uint64',
+          },
+          {
+            name: 'status',
+            type: 'uint8',
+            internalType: 'enum SlashingLib.SlashStatus',
+          },
+          {
+            name: 'disputeReason',
+            type: 'string',
+            internalType: 'string',
+          },
+        ],
+      },
+    ],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
+    name: 'grantRole',
+    inputs: [
+      {
+        name: 'role',
+        type: 'bytes32',
+        internalType: 'bytes32',
+      },
+      {
+        name: 'account',
+        type: 'address',
+        internalType: 'address',
+      },
+    ],
+    outputs: [],
+    stateMutability: 'nonpayable',
+  },
+  {
+    type: 'function',
+    name: 'hasRole',
+    inputs: [
+      {
+        name: 'role',
+        type: 'bytes32',
+        internalType: 'bytes32',
+      },
+      {
+        name: 'account',
         type: 'address',
         internalType: 'address',
       },
@@ -2090,179 +2271,34 @@ const ABI = [
     outputs: [
       {
         name: '',
-        type: 'tuple[]',
-        internalType: 'struct Types.AssetSecurityCommitment[]',
-        components: [
-          {
-            name: 'asset',
-            type: 'tuple',
-            internalType: 'struct Types.Asset',
-            components: [
-              {
-                name: 'kind',
-                type: 'uint8',
-                internalType: 'enum Types.AssetKind',
-              },
-              {
-                name: 'token',
-                type: 'address',
-                internalType: 'address',
-              },
-            ],
-          },
-          {
-            name: 'exposureBps',
-            type: 'uint16',
-            internalType: 'uint16',
-          },
-        ],
+        type: 'bool',
+        internalType: 'bool',
       },
     ],
     stateMutability: 'view',
   },
   {
     type: 'function',
-    name: 'getServiceRequestSecurityRequirements',
+    name: 'initialize',
     inputs: [
       {
-        name: 'requestId',
-        type: 'uint64',
-        internalType: 'uint64',
-      },
-    ],
-    outputs: [
-      {
-        name: '',
-        type: 'tuple[]',
-        internalType: 'struct Types.AssetSecurityRequirement[]',
-        components: [
-          {
-            name: 'asset',
-            type: 'tuple',
-            internalType: 'struct Types.Asset',
-            components: [
-              {
-                name: 'kind',
-                type: 'uint8',
-                internalType: 'enum Types.AssetKind',
-              },
-              {
-                name: 'token',
-                type: 'address',
-                internalType: 'address',
-              },
-            ],
-          },
-          {
-            name: 'minExposureBps',
-            type: 'uint16',
-            internalType: 'uint16',
-          },
-          {
-            name: 'maxExposureBps',
-            type: 'uint16',
-            internalType: 'uint16',
-          },
-        ],
-      },
-    ],
-    stateMutability: 'view',
-  },
-  {
-    type: 'function',
-    name: 'getServiceSecurityCommitments',
-    inputs: [
-      {
-        name: 'serviceId',
-        type: 'uint64',
-        internalType: 'uint64',
-      },
-      {
-        name: 'operator',
+        name: 'admin',
         type: 'address',
         internalType: 'address',
       },
-    ],
-    outputs: [
       {
-        name: '',
-        type: 'tuple[]',
-        internalType: 'struct Types.AssetSecurityCommitment[]',
-        components: [
-          {
-            name: 'asset',
-            type: 'tuple',
-            internalType: 'struct Types.Asset',
-            components: [
-              {
-                name: 'kind',
-                type: 'uint8',
-                internalType: 'enum Types.AssetKind',
-              },
-              {
-                name: 'token',
-                type: 'address',
-                internalType: 'address',
-              },
-            ],
-          },
-          {
-            name: 'exposureBps',
-            type: 'uint16',
-            internalType: 'uint16',
-          },
-        ],
+        name: 'restaking_',
+        type: 'address',
+        internalType: 'address',
+      },
+      {
+        name: 'treasury_',
+        type: 'address',
+        internalType: 'address payable',
       },
     ],
-    stateMutability: 'view',
-  },
-  {
-    type: 'function',
-    name: 'getServiceSecurityRequirements',
-    inputs: [
-      {
-        name: 'serviceId',
-        type: 'uint64',
-        internalType: 'uint64',
-      },
-    ],
-    outputs: [
-      {
-        name: '',
-        type: 'tuple[]',
-        internalType: 'struct Types.AssetSecurityRequirement[]',
-        components: [
-          {
-            name: 'asset',
-            type: 'tuple',
-            internalType: 'struct Types.Asset',
-            components: [
-              {
-                name: 'kind',
-                type: 'uint8',
-                internalType: 'enum Types.AssetKind',
-              },
-              {
-                name: 'token',
-                type: 'address',
-                internalType: 'address',
-              },
-            ],
-          },
-          {
-            name: 'minExposureBps',
-            type: 'uint16',
-            internalType: 'uint16',
-          },
-          {
-            name: 'maxExposureBps',
-            type: 'uint16',
-            internalType: 'uint16',
-          },
-        ],
-      },
-    ],
-    stateMutability: 'view',
+    outputs: [],
+    stateMutability: 'nonpayable',
   },
   {
     type: 'function',
@@ -2274,7 +2310,7 @@ const ABI = [
         internalType: 'uint64',
       },
       {
-        name: 'operator',
+        name: 'op',
         type: 'address',
         internalType: 'address',
       },
@@ -2341,7 +2377,7 @@ const ABI = [
         internalType: 'uint64',
       },
       {
-        name: 'operator',
+        name: 'op',
         type: 'address',
         internalType: 'address',
       },
@@ -2375,53 +2411,6 @@ const ABI = [
   },
   {
     type: 'function',
-    name: 'joinServiceWithCommitments',
-    inputs: [
-      {
-        name: 'serviceId',
-        type: 'uint64',
-        internalType: 'uint64',
-      },
-      {
-        name: 'exposureBps',
-        type: 'uint16',
-        internalType: 'uint16',
-      },
-      {
-        name: 'commitments',
-        type: 'tuple[]',
-        internalType: 'struct Types.AssetSecurityCommitment[]',
-        components: [
-          {
-            name: 'asset',
-            type: 'tuple',
-            internalType: 'struct Types.Asset',
-            components: [
-              {
-                name: 'kind',
-                type: 'uint8',
-                internalType: 'enum Types.AssetKind',
-              },
-              {
-                name: 'token',
-                type: 'address',
-                internalType: 'address',
-              },
-            ],
-          },
-          {
-            name: 'exposureBps',
-            type: 'uint16',
-            internalType: 'uint16',
-          },
-        ],
-      },
-    ],
-    outputs: [],
-    stateMutability: 'nonpayable',
-  },
-  {
-    type: 'function',
     name: 'leaveService',
     inputs: [
       {
@@ -2432,6 +2421,151 @@ const ABI = [
     ],
     outputs: [],
     stateMutability: 'nonpayable',
+  },
+  {
+    type: 'function',
+    name: 'maxBlueprintsPerOperator',
+    inputs: [],
+    outputs: [
+      {
+        name: '',
+        type: 'uint32',
+        internalType: 'uint32',
+      },
+    ],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
+    name: 'mbsmRegistry',
+    inputs: [],
+    outputs: [
+      {
+        name: '',
+        type: 'address',
+        internalType: 'address',
+      },
+    ],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
+    name: 'metricsRecorder',
+    inputs: [],
+    outputs: [
+      {
+        name: '',
+        type: 'address',
+        internalType: 'address',
+      },
+    ],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
+    name: 'operatorBlueprintBond',
+    inputs: [],
+    outputs: [
+      {
+        name: '',
+        type: 'uint256',
+        internalType: 'uint256',
+      },
+    ],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
+    name: 'operatorBlueprintCount',
+    inputs: [
+      {
+        name: 'operator',
+        type: 'address',
+        internalType: 'address',
+      },
+    ],
+    outputs: [
+      {
+        name: '',
+        type: 'uint32',
+        internalType: 'uint32',
+      },
+    ],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
+    name: 'operatorBondToken',
+    inputs: [],
+    outputs: [
+      {
+        name: '',
+        type: 'address',
+        internalType: 'address',
+      },
+    ],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
+    name: 'operatorStatusRegistry',
+    inputs: [],
+    outputs: [
+      {
+        name: '',
+        type: 'address',
+        internalType: 'address',
+      },
+    ],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
+    name: 'pause',
+    inputs: [],
+    outputs: [],
+    stateMutability: 'nonpayable',
+  },
+  {
+    type: 'function',
+    name: 'paused',
+    inputs: [],
+    outputs: [
+      {
+        name: '',
+        type: 'bool',
+        internalType: 'bool',
+      },
+    ],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
+    name: 'paymentSplit',
+    inputs: [],
+    outputs: [
+      {
+        name: '',
+        type: 'uint16',
+        internalType: 'uint16',
+      },
+      {
+        name: '',
+        type: 'uint16',
+        internalType: 'uint16',
+      },
+      {
+        name: '',
+        type: 'uint16',
+        internalType: 'uint16',
+      },
+      {
+        name: '',
+        type: 'uint16',
+        internalType: 'uint16',
+      },
+    ],
+    stateMutability: 'view',
   },
   {
     type: 'function',
@@ -2488,6 +2622,53 @@ const ABI = [
     ],
     outputs: [],
     stateMutability: 'nonpayable',
+  },
+  {
+    type: 'function',
+    name: 'proposeSlash',
+    inputs: [
+      {
+        name: 'serviceId',
+        type: 'uint64',
+        internalType: 'uint64',
+      },
+      {
+        name: 'operator',
+        type: 'address',
+        internalType: 'address',
+      },
+      {
+        name: 'amount',
+        type: 'uint256',
+        internalType: 'uint256',
+      },
+      {
+        name: 'evidence',
+        type: 'bytes32',
+        internalType: 'bytes32',
+      },
+    ],
+    outputs: [
+      {
+        name: 'slashId',
+        type: 'uint64',
+        internalType: 'uint64',
+      },
+    ],
+    stateMutability: 'nonpayable',
+  },
+  {
+    type: 'function',
+    name: 'proxiableUUID',
+    inputs: [],
+    outputs: [
+      {
+        name: '',
+        type: 'bytes32',
+        internalType: 'bytes32',
+      },
+    ],
+    stateMutability: 'view',
   },
   {
     type: 'function',
@@ -2573,6 +2754,24 @@ const ABI = [
   },
   {
     type: 'function',
+    name: 'renounceRole',
+    inputs: [
+      {
+        name: 'role',
+        type: 'bytes32',
+        internalType: 'bytes32',
+      },
+      {
+        name: 'callerConfirmation',
+        type: 'address',
+        internalType: 'address',
+      },
+    ],
+    outputs: [],
+    stateMutability: 'nonpayable',
+  },
+  {
+    type: 'function',
     name: 'requestService',
     inputs: [
       {
@@ -2635,7 +2834,7 @@ const ABI = [
         internalType: 'address[]',
       },
       {
-        name: 'exposureBps',
+        name: 'exposures',
         type: 'uint16[]',
         internalType: 'uint16[]',
       },
@@ -2759,6 +2958,24 @@ const ABI = [
   },
   {
     type: 'function',
+    name: 'revokeRole',
+    inputs: [
+      {
+        name: 'role',
+        type: 'bytes32',
+        internalType: 'bytes32',
+      },
+      {
+        name: 'account',
+        type: 'address',
+        internalType: 'address',
+      },
+    ],
+    outputs: [],
+    stateMutability: 'nonpayable',
+  },
+  {
+    type: 'function',
     name: 'scheduleExit',
     inputs: [
       {
@@ -2782,6 +2999,168 @@ const ABI = [
       },
     ],
     stateMutability: 'view',
+  },
+  {
+    type: 'function',
+    name: 'serviceRequestCount',
+    inputs: [],
+    outputs: [
+      {
+        name: '',
+        type: 'uint64',
+        internalType: 'uint64',
+      },
+    ],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
+    name: 'setMBSMRegistry',
+    inputs: [
+      {
+        name: 'registry',
+        type: 'address',
+        internalType: 'address',
+      },
+    ],
+    outputs: [],
+    stateMutability: 'nonpayable',
+  },
+  {
+    type: 'function',
+    name: 'setMaxBlueprintsPerOperator',
+    inputs: [
+      {
+        name: 'newMax',
+        type: 'uint32',
+        internalType: 'uint32',
+      },
+    ],
+    outputs: [],
+    stateMutability: 'nonpayable',
+  },
+  {
+    type: 'function',
+    name: 'setMetricsRecorder',
+    inputs: [
+      {
+        name: 'recorder',
+        type: 'address',
+        internalType: 'address',
+      },
+    ],
+    outputs: [],
+    stateMutability: 'nonpayable',
+  },
+  {
+    type: 'function',
+    name: 'setOperatorBlueprintBond',
+    inputs: [
+      {
+        name: 'newBond',
+        type: 'uint256',
+        internalType: 'uint256',
+      },
+    ],
+    outputs: [],
+    stateMutability: 'nonpayable',
+  },
+  {
+    type: 'function',
+    name: 'setOperatorBondAsset',
+    inputs: [
+      {
+        name: 'token',
+        type: 'address',
+        internalType: 'address',
+      },
+    ],
+    outputs: [],
+    stateMutability: 'nonpayable',
+  },
+  {
+    type: 'function',
+    name: 'setOperatorStatusRegistry',
+    inputs: [
+      {
+        name: 'registry',
+        type: 'address',
+        internalType: 'address',
+      },
+    ],
+    outputs: [],
+    stateMutability: 'nonpayable',
+  },
+  {
+    type: 'function',
+    name: 'setPaymentSplit',
+    inputs: [
+      {
+        name: 'split',
+        type: 'tuple',
+        internalType: 'struct Types.PaymentSplit',
+        components: [
+          {
+            name: 'developerBps',
+            type: 'uint16',
+            internalType: 'uint16',
+          },
+          {
+            name: 'protocolBps',
+            type: 'uint16',
+            internalType: 'uint16',
+          },
+          {
+            name: 'operatorBps',
+            type: 'uint16',
+            internalType: 'uint16',
+          },
+          {
+            name: 'restakerBps',
+            type: 'uint16',
+            internalType: 'uint16',
+          },
+        ],
+      },
+    ],
+    outputs: [],
+    stateMutability: 'nonpayable',
+  },
+  {
+    type: 'function',
+    name: 'setSlashConfig',
+    inputs: [
+      {
+        name: 'disputeWindow',
+        type: 'uint64',
+        internalType: 'uint64',
+      },
+      {
+        name: 'instantSlashEnabled',
+        type: 'bool',
+        internalType: 'bool',
+      },
+      {
+        name: 'maxSlashBps',
+        type: 'uint16',
+        internalType: 'uint16',
+      },
+    ],
+    outputs: [],
+    stateMutability: 'nonpayable',
+  },
+  {
+    type: 'function',
+    name: 'setTreasury',
+    inputs: [
+      {
+        name: 'treasury_',
+        type: 'address',
+        internalType: 'address payable',
+      },
+    ],
+    outputs: [],
+    stateMutability: 'nonpayable',
   },
   {
     type: 'function',
@@ -2865,7 +3244,7 @@ const ABI = [
         internalType: 'uint64',
       },
       {
-        name: 'result',
+        name: 'output',
         type: 'bytes',
         internalType: 'bytes',
       },
@@ -2888,13 +3267,32 @@ const ABI = [
         internalType: 'uint64[]',
       },
       {
-        name: 'results',
+        name: 'outputs',
         type: 'bytes[]',
         internalType: 'bytes[]',
       },
     ],
     outputs: [],
     stateMutability: 'nonpayable',
+  },
+  {
+    type: 'function',
+    name: 'supportsInterface',
+    inputs: [
+      {
+        name: 'interfaceId',
+        type: 'bytes4',
+        internalType: 'bytes4',
+      },
+    ],
+    outputs: [
+      {
+        name: '',
+        type: 'bool',
+        internalType: 'bool',
+      },
+    ],
+    stateMutability: 'view',
   },
   {
     type: 'function',
@@ -2924,6 +3322,13 @@ const ABI = [
         internalType: 'address',
       },
     ],
+    outputs: [],
+    stateMutability: 'nonpayable',
+  },
+  {
+    type: 'function',
+    name: 'unpause',
+    inputs: [],
     outputs: [],
     stateMutability: 'nonpayable',
   },
@@ -2980,6 +3385,55 @@ const ABI = [
     ],
     outputs: [],
     stateMutability: 'nonpayable',
+  },
+  {
+    type: 'function',
+    name: 'upgradeToAndCall',
+    inputs: [
+      {
+        name: 'newImplementation',
+        type: 'address',
+        internalType: 'address',
+      },
+      {
+        name: 'data',
+        type: 'bytes',
+        internalType: 'bytes',
+      },
+    ],
+    outputs: [],
+    stateMutability: 'payable',
+  },
+  {
+    type: 'event',
+    name: 'AggregatedResultSubmitted',
+    inputs: [
+      {
+        name: 'serviceId',
+        type: 'uint64',
+        indexed: true,
+        internalType: 'uint64',
+      },
+      {
+        name: 'callId',
+        type: 'uint64',
+        indexed: true,
+        internalType: 'uint64',
+      },
+      {
+        name: 'signerBitmap',
+        type: 'uint256',
+        indexed: false,
+        internalType: 'uint256',
+      },
+      {
+        name: 'output',
+        type: 'bytes',
+        indexed: false,
+        internalType: 'bytes',
+      },
+    ],
+    anonymous: false,
   },
   {
     type: 'event',
@@ -3071,6 +3525,113 @@ const ABI = [
   },
   {
     type: 'event',
+    name: 'EscrowFunded',
+    inputs: [
+      {
+        name: 'serviceId',
+        type: 'uint64',
+        indexed: true,
+        internalType: 'uint64',
+      },
+      {
+        name: 'token',
+        type: 'address',
+        indexed: true,
+        internalType: 'address',
+      },
+      {
+        name: 'amount',
+        type: 'uint256',
+        indexed: false,
+        internalType: 'uint256',
+      },
+    ],
+    anonymous: false,
+  },
+  {
+    type: 'event',
+    name: 'ExitCanceled',
+    inputs: [
+      {
+        name: 'serviceId',
+        type: 'uint64',
+        indexed: true,
+        internalType: 'uint64',
+      },
+      {
+        name: 'operator',
+        type: 'address',
+        indexed: true,
+        internalType: 'address',
+      },
+    ],
+    anonymous: false,
+  },
+  {
+    type: 'event',
+    name: 'ExitForced',
+    inputs: [
+      {
+        name: 'serviceId',
+        type: 'uint64',
+        indexed: true,
+        internalType: 'uint64',
+      },
+      {
+        name: 'operator',
+        type: 'address',
+        indexed: true,
+        internalType: 'address',
+      },
+      {
+        name: 'forcer',
+        type: 'address',
+        indexed: true,
+        internalType: 'address',
+      },
+    ],
+    anonymous: false,
+  },
+  {
+    type: 'event',
+    name: 'ExitScheduled',
+    inputs: [
+      {
+        name: 'serviceId',
+        type: 'uint64',
+        indexed: true,
+        internalType: 'uint64',
+      },
+      {
+        name: 'operator',
+        type: 'address',
+        indexed: true,
+        internalType: 'address',
+      },
+      {
+        name: 'executeAfter',
+        type: 'uint64',
+        indexed: false,
+        internalType: 'uint64',
+      },
+    ],
+    anonymous: false,
+  },
+  {
+    type: 'event',
+    name: 'Initialized',
+    inputs: [
+      {
+        name: 'version',
+        type: 'uint64',
+        indexed: false,
+        internalType: 'uint64',
+      },
+    ],
+    anonymous: false,
+  },
+  {
+    type: 'event',
     name: 'JobCompleted',
     inputs: [
       {
@@ -3111,7 +3672,7 @@ const ABI = [
         internalType: 'address',
       },
       {
-        name: 'result',
+        name: 'output',
         type: 'bytes',
         indexed: false,
         internalType: 'bytes',
@@ -3138,7 +3699,7 @@ const ABI = [
       {
         name: 'jobIndex',
         type: 'uint8',
-        indexed: true,
+        indexed: false,
         internalType: 'uint8',
       },
       {
@@ -3152,6 +3713,19 @@ const ABI = [
         type: 'bytes',
         indexed: false,
         internalType: 'bytes',
+      },
+    ],
+    anonymous: false,
+  },
+  {
+    type: 'event',
+    name: 'MBSMRegistryUpdated',
+    inputs: [
+      {
+        name: 'registry',
+        type: 'address',
+        indexed: true,
+        internalType: 'address',
       },
     ],
     anonymous: false,
@@ -3187,6 +3761,25 @@ const ABI = [
     inputs: [
       {
         name: 'serviceId',
+        type: 'uint64',
+        indexed: true,
+        internalType: 'uint64',
+      },
+      {
+        name: 'operator',
+        type: 'address',
+        indexed: true,
+        internalType: 'address',
+      },
+    ],
+    anonymous: false,
+  },
+  {
+    type: 'event',
+    name: 'OperatorPreRegistered',
+    inputs: [
+      {
+        name: 'blueprintId',
         type: 'uint64',
         indexed: true,
         internalType: 'uint64',
@@ -3283,10 +3876,48 @@ const ABI = [
   },
   {
     type: 'event',
+    name: 'Paused',
+    inputs: [
+      {
+        name: 'account',
+        type: 'address',
+        indexed: false,
+        internalType: 'address',
+      },
+    ],
+    anonymous: false,
+  },
+  {
+    type: 'event',
+    name: 'QuoteUsed',
+    inputs: [
+      {
+        name: 'operator',
+        type: 'address',
+        indexed: true,
+        internalType: 'address',
+      },
+      {
+        name: 'quoteHash',
+        type: 'bytes32',
+        indexed: true,
+        internalType: 'bytes32',
+      },
+    ],
+    anonymous: false,
+  },
+  {
+    type: 'event',
     name: 'RewardsClaimed',
     inputs: [
       {
         name: 'account',
+        type: 'address',
+        indexed: true,
+        internalType: 'address',
+      },
+      {
+        name: 'token',
         type: 'address',
         indexed: true,
         internalType: 'address',
@@ -3302,37 +3933,75 @@ const ABI = [
   },
   {
     type: 'event',
-    name: 'RewardsDistributed',
+    name: 'RoleAdminChanged',
     inputs: [
       {
-        name: 'serviceId',
-        type: 'uint64',
+        name: 'role',
+        type: 'bytes32',
         indexed: true,
-        internalType: 'uint64',
+        internalType: 'bytes32',
       },
       {
-        name: 'developerAmount',
-        type: 'uint256',
-        indexed: false,
-        internalType: 'uint256',
+        name: 'previousAdminRole',
+        type: 'bytes32',
+        indexed: true,
+        internalType: 'bytes32',
       },
       {
-        name: 'protocolAmount',
-        type: 'uint256',
-        indexed: false,
-        internalType: 'uint256',
+        name: 'newAdminRole',
+        type: 'bytes32',
+        indexed: true,
+        internalType: 'bytes32',
+      },
+    ],
+    anonymous: false,
+  },
+  {
+    type: 'event',
+    name: 'RoleGranted',
+    inputs: [
+      {
+        name: 'role',
+        type: 'bytes32',
+        indexed: true,
+        internalType: 'bytes32',
       },
       {
-        name: 'operatorAmount',
-        type: 'uint256',
-        indexed: false,
-        internalType: 'uint256',
+        name: 'account',
+        type: 'address',
+        indexed: true,
+        internalType: 'address',
       },
       {
-        name: 'restakerAmount',
-        type: 'uint256',
-        indexed: false,
-        internalType: 'uint256',
+        name: 'sender',
+        type: 'address',
+        indexed: true,
+        internalType: 'address',
+      },
+    ],
+    anonymous: false,
+  },
+  {
+    type: 'event',
+    name: 'RoleRevoked',
+    inputs: [
+      {
+        name: 'role',
+        type: 'bytes32',
+        indexed: true,
+        internalType: 'bytes32',
+      },
+      {
+        name: 'account',
+        type: 'address',
+        indexed: true,
+        internalType: 'address',
+      },
+      {
+        name: 'sender',
+        type: 'address',
+        indexed: true,
+        internalType: 'address',
       },
     ],
     anonymous: false,
@@ -3506,6 +4175,167 @@ const ABI = [
   },
   {
     type: 'event',
+    name: 'SlashCancelled',
+    inputs: [
+      {
+        name: 'slashId',
+        type: 'uint64',
+        indexed: true,
+        internalType: 'uint64',
+      },
+      {
+        name: 'canceller',
+        type: 'address',
+        indexed: true,
+        internalType: 'address',
+      },
+      {
+        name: 'reason',
+        type: 'string',
+        indexed: false,
+        internalType: 'string',
+      },
+    ],
+    anonymous: false,
+  },
+  {
+    type: 'event',
+    name: 'SlashConfigUpdated',
+    inputs: [
+      {
+        name: 'disputeWindow',
+        type: 'uint64',
+        indexed: false,
+        internalType: 'uint64',
+      },
+      {
+        name: 'instantSlashEnabled',
+        type: 'bool',
+        indexed: false,
+        internalType: 'bool',
+      },
+      {
+        name: 'maxSlashBps',
+        type: 'uint16',
+        indexed: false,
+        internalType: 'uint16',
+      },
+    ],
+    anonymous: false,
+  },
+  {
+    type: 'event',
+    name: 'SlashDisputed',
+    inputs: [
+      {
+        name: 'slashId',
+        type: 'uint64',
+        indexed: true,
+        internalType: 'uint64',
+      },
+      {
+        name: 'disputer',
+        type: 'address',
+        indexed: true,
+        internalType: 'address',
+      },
+      {
+        name: 'reason',
+        type: 'string',
+        indexed: false,
+        internalType: 'string',
+      },
+    ],
+    anonymous: false,
+  },
+  {
+    type: 'event',
+    name: 'SlashExecuted',
+    inputs: [
+      {
+        name: 'slashId',
+        type: 'uint64',
+        indexed: true,
+        internalType: 'uint64',
+      },
+      {
+        name: 'serviceId',
+        type: 'uint64',
+        indexed: true,
+        internalType: 'uint64',
+      },
+      {
+        name: 'operator',
+        type: 'address',
+        indexed: true,
+        internalType: 'address',
+      },
+      {
+        name: 'actualSlashed',
+        type: 'uint256',
+        indexed: false,
+        internalType: 'uint256',
+      },
+    ],
+    anonymous: false,
+  },
+  {
+    type: 'event',
+    name: 'SlashProposed',
+    inputs: [
+      {
+        name: 'slashId',
+        type: 'uint64',
+        indexed: true,
+        internalType: 'uint64',
+      },
+      {
+        name: 'serviceId',
+        type: 'uint64',
+        indexed: true,
+        internalType: 'uint64',
+      },
+      {
+        name: 'operator',
+        type: 'address',
+        indexed: true,
+        internalType: 'address',
+      },
+      {
+        name: 'proposer',
+        type: 'address',
+        indexed: false,
+        internalType: 'address',
+      },
+      {
+        name: 'amount',
+        type: 'uint256',
+        indexed: false,
+        internalType: 'uint256',
+      },
+      {
+        name: 'effectiveAmount',
+        type: 'uint256',
+        indexed: false,
+        internalType: 'uint256',
+      },
+      {
+        name: 'evidence',
+        type: 'bytes32',
+        indexed: false,
+        internalType: 'bytes32',
+      },
+      {
+        name: 'executeAfter',
+        type: 'uint64',
+        indexed: false,
+        internalType: 'uint64',
+      },
+    ],
+    anonymous: false,
+  },
+  {
+    type: 'event',
     name: 'SubscriptionBilled',
     inputs: [
       {
@@ -3529,6 +4359,1426 @@ const ABI = [
     ],
     anonymous: false,
   },
+  {
+    type: 'event',
+    name: 'Unpaused',
+    inputs: [
+      {
+        name: 'account',
+        type: 'address',
+        indexed: false,
+        internalType: 'address',
+      },
+    ],
+    anonymous: false,
+  },
+  {
+    type: 'event',
+    name: 'Upgraded',
+    inputs: [
+      {
+        name: 'implementation',
+        type: 'address',
+        indexed: true,
+        internalType: 'address',
+      },
+    ],
+    anonymous: false,
+  },
+  {
+    type: 'error',
+    name: 'AccessControlBadConfirmation',
+    inputs: [],
+  },
+  {
+    type: 'error',
+    name: 'AccessControlUnauthorizedAccount',
+    inputs: [
+      {
+        name: 'account',
+        type: 'address',
+        internalType: 'address',
+      },
+      {
+        name: 'neededRole',
+        type: 'bytes32',
+        internalType: 'bytes32',
+      },
+    ],
+  },
+  {
+    type: 'error',
+    name: 'AddressEmptyCode',
+    inputs: [
+      {
+        name: 'target',
+        type: 'address',
+        internalType: 'address',
+      },
+    ],
+  },
+  {
+    type: 'error',
+    name: 'AggregationNotRequired',
+    inputs: [
+      {
+        name: 'serviceId',
+        type: 'uint64',
+        internalType: 'uint64',
+      },
+      {
+        name: 'jobIndex',
+        type: 'uint8',
+        internalType: 'uint8',
+      },
+    ],
+  },
+  {
+    type: 'error',
+    name: 'AggregationRequired',
+    inputs: [
+      {
+        name: 'serviceId',
+        type: 'uint64',
+        internalType: 'uint64',
+      },
+      {
+        name: 'jobIndex',
+        type: 'uint8',
+        internalType: 'uint8',
+      },
+    ],
+  },
+  {
+    type: 'error',
+    name: 'AggregationThresholdNotMet',
+    inputs: [
+      {
+        name: 'serviceId',
+        type: 'uint64',
+        internalType: 'uint64',
+      },
+      {
+        name: 'callId',
+        type: 'uint64',
+        internalType: 'uint64',
+      },
+      {
+        name: 'achieved',
+        type: 'uint256',
+        internalType: 'uint256',
+      },
+      {
+        name: 'required',
+        type: 'uint256',
+        internalType: 'uint256',
+      },
+    ],
+  },
+  {
+    type: 'error',
+    name: 'AlreadyApproved',
+    inputs: [
+      {
+        name: 'requestId',
+        type: 'uint64',
+        internalType: 'uint64',
+      },
+      {
+        name: 'operator',
+        type: 'address',
+        internalType: 'address',
+      },
+    ],
+  },
+  {
+    type: 'error',
+    name: 'BlueprintBinaryHashRequired',
+    inputs: [],
+  },
+  {
+    type: 'error',
+    name: 'BlueprintBinaryRequired',
+    inputs: [],
+  },
+  {
+    type: 'error',
+    name: 'BlueprintMembershipRequired',
+    inputs: [],
+  },
+  {
+    type: 'error',
+    name: 'BlueprintMetadataRequired',
+    inputs: [],
+  },
+  {
+    type: 'error',
+    name: 'BlueprintNotActive',
+    inputs: [
+      {
+        name: 'blueprintId',
+        type: 'uint64',
+        internalType: 'uint64',
+      },
+    ],
+  },
+  {
+    type: 'error',
+    name: 'BlueprintNotFound',
+    inputs: [
+      {
+        name: 'blueprintId',
+        type: 'uint64',
+        internalType: 'uint64',
+      },
+    ],
+  },
+  {
+    type: 'error',
+    name: 'BlueprintSourcesRequired',
+    inputs: [],
+  },
+  {
+    type: 'error',
+    name: 'CommitmentAboveMaximum',
+    inputs: [
+      {
+        name: 'asset',
+        type: 'address',
+        internalType: 'address',
+      },
+      {
+        name: 'committed',
+        type: 'uint16',
+        internalType: 'uint16',
+      },
+      {
+        name: 'maximum',
+        type: 'uint16',
+        internalType: 'uint16',
+      },
+    ],
+  },
+  {
+    type: 'error',
+    name: 'CommitmentBelowMinimum',
+    inputs: [
+      {
+        name: 'asset',
+        type: 'address',
+        internalType: 'address',
+      },
+      {
+        name: 'committed',
+        type: 'uint16',
+        internalType: 'uint16',
+      },
+      {
+        name: 'minimum',
+        type: 'uint16',
+        internalType: 'uint16',
+      },
+    ],
+  },
+  {
+    type: 'error',
+    name: 'DeadlineExpired',
+    inputs: [],
+  },
+  {
+    type: 'error',
+    name: 'DisputeWindowPassed',
+    inputs: [
+      {
+        name: 'slashId',
+        type: 'uint64',
+        internalType: 'uint64',
+      },
+    ],
+  },
+  {
+    type: 'error',
+    name: 'DuplicateOperatorKey',
+    inputs: [
+      {
+        name: 'blueprintId',
+        type: 'uint64',
+        internalType: 'uint64',
+      },
+      {
+        name: 'keyHash',
+        type: 'bytes32',
+        internalType: 'bytes32',
+      },
+    ],
+  },
+  {
+    type: 'error',
+    name: 'DuplicateOperatorQuote',
+    inputs: [
+      {
+        name: 'operator',
+        type: 'address',
+        internalType: 'address',
+      },
+    ],
+  },
+  {
+    type: 'error',
+    name: 'ECDSAInvalidSignature',
+    inputs: [],
+  },
+  {
+    type: 'error',
+    name: 'ECDSAInvalidSignatureLength',
+    inputs: [
+      {
+        name: 'length',
+        type: 'uint256',
+        internalType: 'uint256',
+      },
+    ],
+  },
+  {
+    type: 'error',
+    name: 'ECDSAInvalidSignatureS',
+    inputs: [
+      {
+        name: 's',
+        type: 'bytes32',
+        internalType: 'bytes32',
+      },
+    ],
+  },
+  {
+    type: 'error',
+    name: 'ERC1967InvalidImplementation',
+    inputs: [
+      {
+        name: 'implementation',
+        type: 'address',
+        internalType: 'address',
+      },
+    ],
+  },
+  {
+    type: 'error',
+    name: 'ERC1967NonPayable',
+    inputs: [],
+  },
+  {
+    type: 'error',
+    name: 'EnforcedPause',
+    inputs: [],
+  },
+  {
+    type: 'error',
+    name: 'ExitAlreadyScheduled',
+    inputs: [
+      {
+        name: 'serviceId',
+        type: 'uint64',
+        internalType: 'uint64',
+      },
+      {
+        name: 'operator',
+        type: 'address',
+        internalType: 'address',
+      },
+    ],
+  },
+  {
+    type: 'error',
+    name: 'ExitNotExecutable',
+    inputs: [
+      {
+        name: 'serviceId',
+        type: 'uint64',
+        internalType: 'uint64',
+      },
+      {
+        name: 'operator',
+        type: 'address',
+        internalType: 'address',
+      },
+      {
+        name: 'executeAfter',
+        type: 'uint64',
+        internalType: 'uint64',
+      },
+      {
+        name: 'currentTime',
+        type: 'uint64',
+        internalType: 'uint64',
+      },
+    ],
+  },
+  {
+    type: 'error',
+    name: 'ExitNotScheduled',
+    inputs: [
+      {
+        name: 'serviceId',
+        type: 'uint64',
+        internalType: 'uint64',
+      },
+      {
+        name: 'operator',
+        type: 'address',
+        internalType: 'address',
+      },
+    ],
+  },
+  {
+    type: 'error',
+    name: 'ExitTooEarly',
+    inputs: [
+      {
+        name: 'serviceId',
+        type: 'uint64',
+        internalType: 'uint64',
+      },
+      {
+        name: 'operator',
+        type: 'address',
+        internalType: 'address',
+      },
+      {
+        name: 'minCommitmentEnd',
+        type: 'uint64',
+        internalType: 'uint64',
+      },
+      {
+        name: 'currentTime',
+        type: 'uint64',
+        internalType: 'uint64',
+      },
+    ],
+  },
+  {
+    type: 'error',
+    name: 'ExpectedPause',
+    inputs: [],
+  },
+  {
+    type: 'error',
+    name: 'FailedCall',
+    inputs: [],
+  },
+  {
+    type: 'error',
+    name: 'ForceExitNotAllowed',
+    inputs: [
+      {
+        name: 'serviceId',
+        type: 'uint64',
+        internalType: 'uint64',
+      },
+    ],
+  },
+  {
+    type: 'error',
+    name: 'HashToPointFailed',
+    inputs: [],
+  },
+  {
+    type: 'error',
+    name: 'InstantSlashNotEnabled',
+    inputs: [],
+  },
+  {
+    type: 'error',
+    name: 'InsufficientEscrowBalance',
+    inputs: [
+      {
+        name: 'required',
+        type: 'uint256',
+        internalType: 'uint256',
+      },
+      {
+        name: 'available',
+        type: 'uint256',
+        internalType: 'uint256',
+      },
+    ],
+  },
+  {
+    type: 'error',
+    name: 'InsufficientOperators',
+    inputs: [
+      {
+        name: 'required',
+        type: 'uint32',
+        internalType: 'uint32',
+      },
+      {
+        name: 'provided',
+        type: 'uint32',
+        internalType: 'uint32',
+      },
+    ],
+  },
+  {
+    type: 'error',
+    name: 'InsufficientPayment',
+    inputs: [
+      {
+        name: 'required',
+        type: 'uint256',
+        internalType: 'uint256',
+      },
+      {
+        name: 'sent',
+        type: 'uint256',
+        internalType: 'uint256',
+      },
+    ],
+  },
+  {
+    type: 'error',
+    name: 'InsufficientPaymentForQuotes',
+    inputs: [
+      {
+        name: 'totalCost',
+        type: 'uint256',
+        internalType: 'uint256',
+      },
+      {
+        name: 'payment',
+        type: 'uint256',
+        internalType: 'uint256',
+      },
+    ],
+  },
+  {
+    type: 'error',
+    name: 'InsufficientStake',
+    inputs: [
+      {
+        name: 'operator',
+        type: 'address',
+        internalType: 'address',
+      },
+      {
+        name: 'required',
+        type: 'uint256',
+        internalType: 'uint256',
+      },
+      {
+        name: 'actual',
+        type: 'uint256',
+        internalType: 'uint256',
+      },
+    ],
+  },
+  {
+    type: 'error',
+    name: 'InvalidBLSSignature',
+    inputs: [],
+  },
+  {
+    type: 'error',
+    name: 'InvalidInitialization',
+    inputs: [],
+  },
+  {
+    type: 'error',
+    name: 'InvalidJobIndex',
+    inputs: [
+      {
+        name: 'jobIndex',
+        type: 'uint8',
+        internalType: 'uint8',
+      },
+    ],
+  },
+  {
+    type: 'error',
+    name: 'InvalidOperatorKey',
+    inputs: [],
+  },
+  {
+    type: 'error',
+    name: 'InvalidPaymentSplit',
+    inputs: [],
+  },
+  {
+    type: 'error',
+    name: 'InvalidPaymentToken',
+    inputs: [],
+  },
+  {
+    type: 'error',
+    name: 'InvalidQuoteSignature',
+    inputs: [
+      {
+        name: 'operator',
+        type: 'address',
+        internalType: 'address',
+      },
+    ],
+  },
+  {
+    type: 'error',
+    name: 'InvalidSecurityRequirement',
+    inputs: [],
+  },
+  {
+    type: 'error',
+    name: 'InvalidSlashAmount',
+    inputs: [],
+  },
+  {
+    type: 'error',
+    name: 'InvalidSlashConfig',
+    inputs: [],
+  },
+  {
+    type: 'error',
+    name: 'InvalidState',
+    inputs: [],
+  },
+  {
+    type: 'error',
+    name: 'JobAlreadyCompleted',
+    inputs: [
+      {
+        name: 'serviceId',
+        type: 'uint64',
+        internalType: 'uint64',
+      },
+      {
+        name: 'callId',
+        type: 'uint64',
+        internalType: 'uint64',
+      },
+    ],
+  },
+  {
+    type: 'error',
+    name: 'JobCallNotFound',
+    inputs: [
+      {
+        name: 'serviceId',
+        type: 'uint64',
+        internalType: 'uint64',
+      },
+      {
+        name: 'callId',
+        type: 'uint64',
+        internalType: 'uint64',
+      },
+    ],
+  },
+  {
+    type: 'error',
+    name: 'LengthMismatch',
+    inputs: [],
+  },
+  {
+    type: 'error',
+    name: 'MBSMRegistryNotSet',
+    inputs: [],
+  },
+  {
+    type: 'error',
+    name: 'ManagerRejected',
+    inputs: [
+      {
+        name: 'manager',
+        type: 'address',
+        internalType: 'address',
+      },
+    ],
+  },
+  {
+    type: 'error',
+    name: 'ManagerReverted',
+    inputs: [
+      {
+        name: 'manager',
+        type: 'address',
+        internalType: 'address',
+      },
+      {
+        name: 'reason',
+        type: 'bytes',
+        internalType: 'bytes',
+      },
+    ],
+  },
+  {
+    type: 'error',
+    name: 'MasterManagerUnavailable',
+    inputs: [],
+  },
+  {
+    type: 'error',
+    name: 'MaxBlueprintsPerOperatorExceeded',
+    inputs: [
+      {
+        name: 'operator',
+        type: 'address',
+        internalType: 'address',
+      },
+      {
+        name: 'maxAllowed',
+        type: 'uint32',
+        internalType: 'uint32',
+      },
+    ],
+  },
+  {
+    type: 'error',
+    name: 'MissingAssetCommitment',
+    inputs: [
+      {
+        name: 'asset',
+        type: 'address',
+        internalType: 'address',
+      },
+    ],
+  },
+  {
+    type: 'error',
+    name: 'NoOperators',
+    inputs: [],
+  },
+  {
+    type: 'error',
+    name: 'NoQuotes',
+    inputs: [],
+  },
+  {
+    type: 'error',
+    name: 'NoSecurityRequirements',
+    inputs: [],
+  },
+  {
+    type: 'error',
+    name: 'NotBlueprintOwner',
+    inputs: [
+      {
+        name: 'blueprintId',
+        type: 'uint64',
+        internalType: 'uint64',
+      },
+      {
+        name: 'caller',
+        type: 'address',
+        internalType: 'address',
+      },
+    ],
+  },
+  {
+    type: 'error',
+    name: 'NotInitializing',
+    inputs: [],
+  },
+  {
+    type: 'error',
+    name: 'NotPermittedCaller',
+    inputs: [
+      {
+        name: 'serviceId',
+        type: 'uint64',
+        internalType: 'uint64',
+      },
+      {
+        name: 'caller',
+        type: 'address',
+        internalType: 'address',
+      },
+    ],
+  },
+  {
+    type: 'error',
+    name: 'NotServiceOwner',
+    inputs: [
+      {
+        name: 'serviceId',
+        type: 'uint64',
+        internalType: 'uint64',
+      },
+      {
+        name: 'caller',
+        type: 'address',
+        internalType: 'address',
+      },
+    ],
+  },
+  {
+    type: 'error',
+    name: 'NotSlashCanceller',
+    inputs: [
+      {
+        name: 'slashId',
+        type: 'uint64',
+        internalType: 'uint64',
+      },
+      {
+        name: 'caller',
+        type: 'address',
+        internalType: 'address',
+      },
+    ],
+  },
+  {
+    type: 'error',
+    name: 'NotSlashDisputer',
+    inputs: [
+      {
+        name: 'slashId',
+        type: 'uint64',
+        internalType: 'uint64',
+      },
+      {
+        name: 'caller',
+        type: 'address',
+        internalType: 'address',
+      },
+    ],
+  },
+  {
+    type: 'error',
+    name: 'OperatorAlreadyRegistered',
+    inputs: [
+      {
+        name: 'blueprintId',
+        type: 'uint64',
+        internalType: 'uint64',
+      },
+      {
+        name: 'operator',
+        type: 'address',
+        internalType: 'address',
+      },
+    ],
+  },
+  {
+    type: 'error',
+    name: 'OperatorBondMismatch',
+    inputs: [
+      {
+        name: 'blueprintId',
+        type: 'uint64',
+        internalType: 'uint64',
+      },
+      {
+        name: 'required',
+        type: 'uint256',
+        internalType: 'uint256',
+      },
+      {
+        name: 'sent',
+        type: 'uint256',
+        internalType: 'uint256',
+      },
+    ],
+  },
+  {
+    type: 'error',
+    name: 'OperatorBondRefundFailed',
+    inputs: [
+      {
+        name: 'operator',
+        type: 'address',
+        internalType: 'address',
+      },
+      {
+        name: 'amount',
+        type: 'uint256',
+        internalType: 'uint256',
+      },
+    ],
+  },
+  {
+    type: 'error',
+    name: 'OperatorNotActive',
+    inputs: [
+      {
+        name: 'operator',
+        type: 'address',
+        internalType: 'address',
+      },
+    ],
+  },
+  {
+    type: 'error',
+    name: 'OperatorNotInService',
+    inputs: [
+      {
+        name: 'serviceId',
+        type: 'uint64',
+        internalType: 'uint64',
+      },
+      {
+        name: 'operator',
+        type: 'address',
+        internalType: 'address',
+      },
+    ],
+  },
+  {
+    type: 'error',
+    name: 'OperatorNotRegistered',
+    inputs: [
+      {
+        name: 'blueprintId',
+        type: 'uint64',
+        internalType: 'uint64',
+      },
+      {
+        name: 'operator',
+        type: 'address',
+        internalType: 'address',
+      },
+    ],
+  },
+  {
+    type: 'error',
+    name: 'PairingFailed',
+    inputs: [],
+  },
+  {
+    type: 'error',
+    name: 'PaymentFailed',
+    inputs: [],
+  },
+  {
+    type: 'error',
+    name: 'QuoteAlreadyUsed',
+    inputs: [
+      {
+        name: 'operator',
+        type: 'address',
+        internalType: 'address',
+      },
+    ],
+  },
+  {
+    type: 'error',
+    name: 'QuoteBlueprintMismatch',
+    inputs: [
+      {
+        name: 'operator',
+        type: 'address',
+        internalType: 'address',
+      },
+      {
+        name: 'expectedBlueprint',
+        type: 'uint64',
+        internalType: 'uint64',
+      },
+      {
+        name: 'quotedBlueprint',
+        type: 'uint64',
+        internalType: 'uint64',
+      },
+    ],
+  },
+  {
+    type: 'error',
+    name: 'QuoteExpired',
+    inputs: [
+      {
+        name: 'operator',
+        type: 'address',
+        internalType: 'address',
+      },
+      {
+        name: 'expiry',
+        type: 'uint64',
+        internalType: 'uint64',
+      },
+    ],
+  },
+  {
+    type: 'error',
+    name: 'QuoteTTLMismatch',
+    inputs: [
+      {
+        name: 'operator',
+        type: 'address',
+        internalType: 'address',
+      },
+      {
+        name: 'expectedTtl',
+        type: 'uint64',
+        internalType: 'uint64',
+      },
+      {
+        name: 'quotedTtl',
+        type: 'uint64',
+        internalType: 'uint64',
+      },
+    ],
+  },
+  {
+    type: 'error',
+    name: 'ReentrancyGuardReentrantCall',
+    inputs: [],
+  },
+  {
+    type: 'error',
+    name: 'ResultAlreadySubmitted',
+    inputs: [
+      {
+        name: 'serviceId',
+        type: 'uint64',
+        internalType: 'uint64',
+      },
+      {
+        name: 'callId',
+        type: 'uint64',
+        internalType: 'uint64',
+      },
+      {
+        name: 'operator',
+        type: 'address',
+        internalType: 'address',
+      },
+    ],
+  },
+  {
+    type: 'error',
+    name: 'SafeERC20FailedOperation',
+    inputs: [
+      {
+        name: 'token',
+        type: 'address',
+        internalType: 'address',
+      },
+    ],
+  },
+  {
+    type: 'error',
+    name: 'SchemaValidationFailed',
+    inputs: [
+      {
+        name: 'target',
+        type: 'uint8',
+        internalType: 'uint8',
+      },
+      {
+        name: 'refId',
+        type: 'uint64',
+        internalType: 'uint64',
+      },
+      {
+        name: 'auxId',
+        type: 'uint64',
+        internalType: 'uint64',
+      },
+      {
+        name: 'path',
+        type: 'uint256',
+        internalType: 'uint256',
+      },
+    ],
+  },
+  {
+    type: 'error',
+    name: 'ServiceExpired',
+    inputs: [
+      {
+        name: 'serviceId',
+        type: 'uint64',
+        internalType: 'uint64',
+      },
+    ],
+  },
+  {
+    type: 'error',
+    name: 'ServiceNotActive',
+    inputs: [
+      {
+        name: 'serviceId',
+        type: 'uint64',
+        internalType: 'uint64',
+      },
+    ],
+  },
+  {
+    type: 'error',
+    name: 'ServiceNotFound',
+    inputs: [
+      {
+        name: 'serviceId',
+        type: 'uint64',
+        internalType: 'uint64',
+      },
+    ],
+  },
+  {
+    type: 'error',
+    name: 'ServiceRequestAlreadyProcessed',
+    inputs: [
+      {
+        name: 'requestId',
+        type: 'uint64',
+        internalType: 'uint64',
+      },
+    ],
+  },
+  {
+    type: 'error',
+    name: 'ServiceRequestNotFound',
+    inputs: [
+      {
+        name: 'requestId',
+        type: 'uint64',
+        internalType: 'uint64',
+      },
+    ],
+  },
+  {
+    type: 'error',
+    name: 'SlashAlreadyCancelled',
+    inputs: [
+      {
+        name: 'slashId',
+        type: 'uint64',
+        internalType: 'uint64',
+      },
+    ],
+  },
+  {
+    type: 'error',
+    name: 'SlashAlreadyExecuted',
+    inputs: [
+      {
+        name: 'slashId',
+        type: 'uint64',
+        internalType: 'uint64',
+      },
+    ],
+  },
+  {
+    type: 'error',
+    name: 'SlashNotExecutable',
+    inputs: [
+      {
+        name: 'slashId',
+        type: 'uint64',
+        internalType: 'uint64',
+      },
+    ],
+  },
+  {
+    type: 'error',
+    name: 'SlashNotFound',
+    inputs: [
+      {
+        name: 'slashId',
+        type: 'uint64',
+        internalType: 'uint64',
+      },
+    ],
+  },
+  {
+    type: 'error',
+    name: 'SlashNotPending',
+    inputs: [
+      {
+        name: 'slashId',
+        type: 'uint64',
+        internalType: 'uint64',
+      },
+    ],
+  },
+  {
+    type: 'error',
+    name: 'TokenNotAllowed',
+    inputs: [
+      {
+        name: 'token',
+        type: 'address',
+        internalType: 'address',
+      },
+    ],
+  },
+  {
+    type: 'error',
+    name: 'TooManyOperators',
+    inputs: [
+      {
+        name: 'maximum',
+        type: 'uint32',
+        internalType: 'uint32',
+      },
+      {
+        name: 'provided',
+        type: 'uint32',
+        internalType: 'uint32',
+      },
+    ],
+  },
+  {
+    type: 'error',
+    name: 'UUPSUnauthorizedCallContext',
+    inputs: [],
+  },
+  {
+    type: 'error',
+    name: 'UUPSUnsupportedProxiableUUID',
+    inputs: [
+      {
+        name: 'slot',
+        type: 'bytes32',
+        internalType: 'bytes32',
+      },
+    ],
+  },
+  {
+    type: 'error',
+    name: 'Unauthorized',
+    inputs: [],
+  },
+  {
+    type: 'error',
+    name: 'UnsupportedFieldKind',
+    inputs: [
+      {
+        name: 'kind',
+        type: 'uint8',
+        internalType: 'uint8',
+      },
+    ],
+  },
+  {
+    type: 'error',
+    name: 'ZeroAddress',
+    inputs: [],
+  },
+,
+    {
+      "type": "function",
+      "name": "forceRemoveOperator",
+      "inputs": [
+        {
+          "name": "serviceId",
+          "type": "uint64",
+          "internalType": "uint64"
+        },
+        {
+          "name": "operator",
+          "type": "address",
+          "internalType": "address"
+        }
+      ],
+      "outputs": [],
+      "stateMutability": "nonpayable"
+    },
+    {
+      "type": "function",
+      "name": "getServiceSecurityCommitments",
+      "inputs": [
+        {
+          "name": "serviceId",
+          "type": "uint64",
+          "internalType": "uint64"
+        },
+        {
+          "name": "operator",
+          "type": "address",
+          "internalType": "address"
+        }
+      ],
+      "outputs": [
+        {
+          "name": "",
+          "type": "tuple[]",
+          "internalType": "struct Types.AssetSecurityCommitment[]",
+          "components": [
+            {
+              "name": "asset",
+              "type": "tuple",
+              "internalType": "struct Types.Asset",
+              "components": [
+                {
+                  "name": "kind",
+                  "type": "uint8",
+                  "internalType": "enum Types.AssetKind"
+                },
+                {
+                  "name": "token",
+                  "type": "address",
+                  "internalType": "address"
+                }
+              ]
+            },
+            {
+              "name": "exposureBps",
+              "type": "uint16",
+              "internalType": "uint16"
+            }
+          ]
+        }
+      ],
+      "stateMutability": "view"
+    },
+    {
+      "type": "function",
+      "name": "getServiceSecurityRequirements",
+      "inputs": [
+        {
+          "name": "serviceId",
+          "type": "uint64",
+          "internalType": "uint64"
+        }
+      ],
+      "outputs": [
+        {
+          "name": "",
+          "type": "tuple[]",
+          "internalType": "struct Types.AssetSecurityRequirement[]",
+          "components": [
+            {
+              "name": "asset",
+              "type": "tuple",
+              "internalType": "struct Types.Asset",
+              "components": [
+                {
+                  "name": "kind",
+                  "type": "uint8",
+                  "internalType": "enum Types.AssetKind"
+                },
+                {
+                  "name": "token",
+                  "type": "address",
+                  "internalType": "address"
+                }
+              ]
+            },
+            {
+              "name": "minExposureBps",
+              "type": "uint16",
+              "internalType": "uint16"
+            },
+            {
+              "name": "maxExposureBps",
+              "type": "uint16",
+              "internalType": "uint16"
+            }
+          ]
+        }
+      ],
+      "stateMutability": "view"
+    },
+    {
+      "type": "function",
+      "name": "getServiceTotalExposure",
+      "inputs": [
+        {
+          "name": "serviceId",
+          "type": "uint64",
+          "internalType": "uint64"
+        }
+      ],
+      "outputs": [
+        {
+          "name": "",
+          "type": "uint256",
+          "internalType": "uint256"
+        }
+      ],
+      "stateMutability": "view"
+    },
+    {
+      "type": "function",
+      "name": "joinServiceWithCommitments",
+      "inputs": [
+        {
+          "name": "serviceId",
+          "type": "uint64",
+          "internalType": "uint64"
+        },
+        {
+          "name": "exposureBps",
+          "type": "uint16",
+          "internalType": "uint16"
+        },
+        {
+          "name": "commitments",
+          "type": "tuple[]",
+          "internalType": "struct Types.AssetSecurityCommitment[]",
+          "components": [
+            {
+              "name": "asset",
+              "type": "tuple",
+              "internalType": "struct Types.Asset",
+              "components": [
+                {
+                  "name": "kind",
+                  "type": "uint8",
+                  "internalType": "enum Types.AssetKind"
+                },
+                {
+                  "name": "token",
+                  "type": "address",
+                  "internalType": "address"
+                }
+              ]
+            },
+            {
+              "name": "exposureBps",
+              "type": "uint16",
+              "internalType": "uint16"
+            }
+          ]
+        }
+      ],
+      "outputs": [],
+      "stateMutability": "nonpayable"
+    },
+    {
+      "type": "function",
+      "name": "setOperatorOnline",
+      "inputs": [
+        {
+          "name": "blueprintId",
+          "type": "uint64",
+          "internalType": "uint64"
+        },
+        {
+          "name": "online",
+          "type": "bool",
+          "internalType": "bool"
+        }
+      ],
+      "outputs": [],
+      "stateMutability": "nonpayable"
+    },
+    {
+      "type": "function",
+      "name": "submitJobs",
+      "inputs": [
+        {
+          "name": "serviceId",
+          "type": "uint64",
+          "internalType": "uint64"
+        },
+        {
+          "name": "jobIndices",
+          "type": "uint8[]",
+          "internalType": "uint8[]"
+        },
+        {
+          "name": "inputs",
+          "type": "bytes[]",
+          "internalType": "bytes[]"
+        }
+      ],
+      "outputs": [
+        {
+          "name": "callIds",
+          "type": "uint64[]",
+          "internalType": "uint64[]"
+        }
+      ],
+      "stateMutability": "payable"
+    }
 ] as const;
 
-export default ABI;
+export default TANGLE_ABI;
