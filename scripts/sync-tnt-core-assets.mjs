@@ -39,8 +39,8 @@ const writeAbiTs = (sourcePath, targetPath) => {
 const syncAbis = (tntCoreDir) => {
   const abiDir = resolve(tntCoreDir, 'bindings/abi');
   const mappings = [
-    { source: 'ITangle.json', target: 'libs/tangle-shared-ui/src/abi/tangle.ts' },
-    { source: 'MultiAssetDelegation.json', target: 'libs/tangle-shared-ui/src/abi/multiAssetDelegation.ts' },
+    { source: 'ITangleFull.json', target: 'libs/tangle-shared-ui/src/abi/tangle.ts' },
+    { source: 'IMultiAssetDelegation.json', target: 'libs/tangle-shared-ui/src/abi/multiAssetDelegation.ts' },
     { source: 'IOperatorStatusRegistry.json', target: 'libs/tangle-shared-ui/src/abi/operatorStatusRegistry.ts' },
     { source: 'IBlueprintServiceManager.json', target: 'libs/tangle-shared-ui/src/abi/blueprintServiceManager.ts' },
   ];
