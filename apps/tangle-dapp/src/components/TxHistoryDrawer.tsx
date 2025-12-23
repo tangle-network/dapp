@@ -196,7 +196,9 @@ const DetailRow: FC<DetailRowProps> = ({
   const isAddress =
     typeof value === 'string' &&
     (isEvmAddress(value) || isSubstrateAddress(value));
-  const isAmountKey = /amount|value|stake|deposit|delegation|shares/i.test(label);
+  const isAmountKey = /amount|value|stake|deposit|delegation|shares/i.test(
+    label,
+  );
   const isSharesKey = /shares/i.test(label);
 
   const formattedValue = useMemo(() => {

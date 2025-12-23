@@ -131,8 +131,7 @@ const ClaimCreditsButton = () => {
           </Typography>
         ) : null}
 
-        {data?.timeRemaining !== undefined &&
-        data.timeRemaining > BigInt(0) ? (
+        {data?.timeRemaining !== undefined && data.timeRemaining > BigInt(0) ? (
           <Typography
             variant="body2"
             className="text-mono-120 dark:text-mono-80"

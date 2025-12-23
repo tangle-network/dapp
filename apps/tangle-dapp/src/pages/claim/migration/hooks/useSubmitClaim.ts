@@ -131,10 +131,7 @@ const useSubmitClaim = () => {
   const submitClaim = useCallback(
     async (args: ClaimArgs) => {
       console.log('[useSubmitClaim] Starting claim submission...');
-      console.log(
-        '[useSubmitClaim] Contract address:',
-        migrationAddress,
-      );
+      console.log('[useSubmitClaim] Contract address:', migrationAddress);
       console.log('[useSubmitClaim] Args:', {
         ss58Address: args.ss58Address,
         amount: args.amount.toString(),

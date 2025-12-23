@@ -147,7 +147,14 @@ export default function useCredits() {
       timeRemaining,
       isClaimable: windowComplete && !alreadyClaimed,
     };
-  }, [claimData, creditsWindow, hasClaimed, proofValid, rootMatches, timeRemaining]);
+  }, [
+    claimData,
+    creditsWindow,
+    hasClaimed,
+    proofValid,
+    rootMatches,
+    timeRemaining,
+  ]);
 
   const rootMismatchError =
     claimData && onchainRoot && !rootMatches

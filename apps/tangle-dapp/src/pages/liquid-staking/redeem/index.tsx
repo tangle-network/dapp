@@ -329,7 +329,15 @@ const LiquidStakingRedeemForm: FC = () => {
         refetchRedeemRequests();
       }, 3000);
     },
-    [isReady, userAddress, selectedVault, executeRedeem, setValue, refetchPosition, refetchRedeemRequests],
+    [
+      isReady,
+      userAddress,
+      selectedVault,
+      executeRedeem,
+      setValue,
+      refetchPosition,
+      refetchRedeemRequests,
+    ],
   );
 
   return (
@@ -416,17 +424,6 @@ const LiquidStakingRedeemForm: FC = () => {
                   {formatUnits(position.balance, 18)}
                 </span>
               </div>
-              <div className="flex justify-between text-sm">
-                <span className="text-mono-100">
-                  ≈ Value in {vaultAsset?.metadata.symbol ?? 'Assets'}
-                </span>
-                <span className="font-medium">
-                  {formatUnits(
-                    position.balanceInAssets,
-                    vaultAsset?.metadata.decimals ?? 18,
-                  )}
-                </span>
-              </div>
             </div>
           )}
 
@@ -497,12 +494,6 @@ const LiquidStakingRedeemForm: FC = () => {
                   claimableByRequestId.get(req.id) ?? BigInt(0);
                 const isReadyToClaim = claimableShares > BigInt(0);
 
-                // Calculate approximate asset value for display
-                const approxAssetValue =
-                  position && position.balance > BigInt(0)
-                    ? (req.shares * position.balanceInAssets) / position.balance
-                    : BigInt(0);
-
                 return (
                   <div
                     key={req.id}
@@ -515,22 +506,6 @@ const LiquidStakingRedeemForm: FC = () => {
                           5,
                         )}{' '}
                         shares
-                        {approxAssetValue > BigInt(0) && (
-                          <span className="text-mono-120 dark:text-mono-100 font-normal">
-                            {' '}
-                            (
-                            {getRoundedAmountString(
-                              Number(
-                                formatUnits(
-                                  approxAssetValue,
-                                  vaultAsset?.metadata.decimals ?? 18,
-                                ),
-                              ),
-                              5,
-                            )}{' '}
-                            {vaultAsset?.metadata.symbol ?? ''})
-                          </span>
-                        )}
                       </Typography>
                       <Typography
                         variant="body3"
