@@ -306,6 +306,7 @@ const LiquidStakingDepositForm: FC = () => {
         setTxStep('depositing');
         await executeDeposit({
           vaultAddress: vault,
+          asset: vaultAsset.id,
           amount: amountBigInt,
           receiver: userAddress,
         });

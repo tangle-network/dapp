@@ -9,6 +9,8 @@ import LIQUID_DELEGATION_VAULT_ABI from '../../abi/liquidDelegationVault';
 
 export interface VaultDepositParams {
   vaultAddress: Address;
+  /** The underlying asset token address for proper symbol display in tx history */
+  asset: Address;
   amount: bigint;
   receiver: Address;
 }
@@ -38,6 +40,12 @@ export const useVaultDeposit = () => {
       args: [params.amount, params.receiver] as const,
     }),
     {
+      txName: 'liquid stake deposit',
+      txDetails: (params) =>
+        new Map([
+          ['Token', params.asset],
+          ['Amount', params.amount.toString()],
+        ]),
       getSuccessMessage: (_params) =>
         `Successfully deposited into liquid delegation vault`,
     },

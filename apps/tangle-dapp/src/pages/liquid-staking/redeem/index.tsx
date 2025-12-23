@@ -249,6 +249,7 @@ const LiquidStakingRedeemForm: FC = () => {
 
       await executeRedeem({
         vaultAddress: vault,
+        asset: selectedVault.asset,
         shares: sharesBigInt,
         controller: userAddress,
         owner: userAddress,
@@ -256,7 +257,7 @@ const LiquidStakingRedeemForm: FC = () => {
 
       setValue('amount', '', { shouldValidate: false });
     },
-    [isReady, userAddress, executeRedeem, setValue],
+    [isReady, userAddress, selectedVault, executeRedeem, setValue],
   );
 
   return (
@@ -479,6 +480,7 @@ const LiquidStakingRedeemForm: FC = () => {
                         if (!executeClaim || !userAddress) return;
                         await executeClaim({
                           vaultAddress: selectedVault.address,
+                          asset: selectedVault.asset,
                           shares: claimableShares,
                           receiver: userAddress,
                           controller: req.controller,
