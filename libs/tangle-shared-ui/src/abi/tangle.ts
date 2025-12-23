@@ -5551,234 +5551,233 @@ const TANGLE_ABI = [
     name: 'ZeroAddress',
     inputs: [],
   },
-,
-    {
-      "type": "function",
-      "name": "forceRemoveOperator",
-      "inputs": [
-        {
-          "name": "serviceId",
-          "type": "uint64",
-          "internalType": "uint64"
-        },
-        {
-          "name": "operator",
-          "type": "address",
-          "internalType": "address"
-        }
-      ],
-      "outputs": [],
-      "stateMutability": "nonpayable"
-    },
-    {
-      "type": "function",
-      "name": "getServiceSecurityCommitments",
-      "inputs": [
-        {
-          "name": "serviceId",
-          "type": "uint64",
-          "internalType": "uint64"
-        },
-        {
-          "name": "operator",
-          "type": "address",
-          "internalType": "address"
-        }
-      ],
-      "outputs": [
-        {
-          "name": "",
-          "type": "tuple[]",
-          "internalType": "struct Types.AssetSecurityCommitment[]",
-          "components": [
-            {
-              "name": "asset",
-              "type": "tuple",
-              "internalType": "struct Types.Asset",
-              "components": [
-                {
-                  "name": "kind",
-                  "type": "uint8",
-                  "internalType": "enum Types.AssetKind"
-                },
-                {
-                  "name": "token",
-                  "type": "address",
-                  "internalType": "address"
-                }
-              ]
-            },
-            {
-              "name": "exposureBps",
-              "type": "uint16",
-              "internalType": "uint16"
-            }
-          ]
-        }
-      ],
-      "stateMutability": "view"
-    },
-    {
-      "type": "function",
-      "name": "getServiceSecurityRequirements",
-      "inputs": [
-        {
-          "name": "serviceId",
-          "type": "uint64",
-          "internalType": "uint64"
-        }
-      ],
-      "outputs": [
-        {
-          "name": "",
-          "type": "tuple[]",
-          "internalType": "struct Types.AssetSecurityRequirement[]",
-          "components": [
-            {
-              "name": "asset",
-              "type": "tuple",
-              "internalType": "struct Types.Asset",
-              "components": [
-                {
-                  "name": "kind",
-                  "type": "uint8",
-                  "internalType": "enum Types.AssetKind"
-                },
-                {
-                  "name": "token",
-                  "type": "address",
-                  "internalType": "address"
-                }
-              ]
-            },
-            {
-              "name": "minExposureBps",
-              "type": "uint16",
-              "internalType": "uint16"
-            },
-            {
-              "name": "maxExposureBps",
-              "type": "uint16",
-              "internalType": "uint16"
-            }
-          ]
-        }
-      ],
-      "stateMutability": "view"
-    },
-    {
-      "type": "function",
-      "name": "getServiceTotalExposure",
-      "inputs": [
-        {
-          "name": "serviceId",
-          "type": "uint64",
-          "internalType": "uint64"
-        }
-      ],
-      "outputs": [
-        {
-          "name": "",
-          "type": "uint256",
-          "internalType": "uint256"
-        }
-      ],
-      "stateMutability": "view"
-    },
-    {
-      "type": "function",
-      "name": "joinServiceWithCommitments",
-      "inputs": [
-        {
-          "name": "serviceId",
-          "type": "uint64",
-          "internalType": "uint64"
-        },
-        {
-          "name": "exposureBps",
-          "type": "uint16",
-          "internalType": "uint16"
-        },
-        {
-          "name": "commitments",
-          "type": "tuple[]",
-          "internalType": "struct Types.AssetSecurityCommitment[]",
-          "components": [
-            {
-              "name": "asset",
-              "type": "tuple",
-              "internalType": "struct Types.Asset",
-              "components": [
-                {
-                  "name": "kind",
-                  "type": "uint8",
-                  "internalType": "enum Types.AssetKind"
-                },
-                {
-                  "name": "token",
-                  "type": "address",
-                  "internalType": "address"
-                }
-              ]
-            },
-            {
-              "name": "exposureBps",
-              "type": "uint16",
-              "internalType": "uint16"
-            }
-          ]
-        }
-      ],
-      "outputs": [],
-      "stateMutability": "nonpayable"
-    },
-    {
-      "type": "function",
-      "name": "setOperatorOnline",
-      "inputs": [
-        {
-          "name": "blueprintId",
-          "type": "uint64",
-          "internalType": "uint64"
-        },
-        {
-          "name": "online",
-          "type": "bool",
-          "internalType": "bool"
-        }
-      ],
-      "outputs": [],
-      "stateMutability": "nonpayable"
-    },
-    {
-      "type": "function",
-      "name": "submitJobs",
-      "inputs": [
-        {
-          "name": "serviceId",
-          "type": "uint64",
-          "internalType": "uint64"
-        },
-        {
-          "name": "jobIndices",
-          "type": "uint8[]",
-          "internalType": "uint8[]"
-        },
-        {
-          "name": "inputs",
-          "type": "bytes[]",
-          "internalType": "bytes[]"
-        }
-      ],
-      "outputs": [
-        {
-          "name": "callIds",
-          "type": "uint64[]",
-          "internalType": "uint64[]"
-        }
-      ],
-      "stateMutability": "payable"
-    }
+  {
+    type: 'function',
+    name: 'forceRemoveOperator',
+    inputs: [
+      {
+        name: 'serviceId',
+        type: 'uint64',
+        internalType: 'uint64',
+      },
+      {
+        name: 'operator',
+        type: 'address',
+        internalType: 'address',
+      },
+    ],
+    outputs: [],
+    stateMutability: 'nonpayable',
+  },
+  {
+    type: 'function',
+    name: 'getServiceSecurityCommitments',
+    inputs: [
+      {
+        name: 'serviceId',
+        type: 'uint64',
+        internalType: 'uint64',
+      },
+      {
+        name: 'operator',
+        type: 'address',
+        internalType: 'address',
+      },
+    ],
+    outputs: [
+      {
+        name: '',
+        type: 'tuple[]',
+        internalType: 'struct Types.AssetSecurityCommitment[]',
+        components: [
+          {
+            name: 'asset',
+            type: 'tuple',
+            internalType: 'struct Types.Asset',
+            components: [
+              {
+                name: 'kind',
+                type: 'uint8',
+                internalType: 'enum Types.AssetKind',
+              },
+              {
+                name: 'token',
+                type: 'address',
+                internalType: 'address',
+              },
+            ],
+          },
+          {
+            name: 'exposureBps',
+            type: 'uint16',
+            internalType: 'uint16',
+          },
+        ],
+      },
+    ],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
+    name: 'getServiceSecurityRequirements',
+    inputs: [
+      {
+        name: 'serviceId',
+        type: 'uint64',
+        internalType: 'uint64',
+      },
+    ],
+    outputs: [
+      {
+        name: '',
+        type: 'tuple[]',
+        internalType: 'struct Types.AssetSecurityRequirement[]',
+        components: [
+          {
+            name: 'asset',
+            type: 'tuple',
+            internalType: 'struct Types.Asset',
+            components: [
+              {
+                name: 'kind',
+                type: 'uint8',
+                internalType: 'enum Types.AssetKind',
+              },
+              {
+                name: 'token',
+                type: 'address',
+                internalType: 'address',
+              },
+            ],
+          },
+          {
+            name: 'minExposureBps',
+            type: 'uint16',
+            internalType: 'uint16',
+          },
+          {
+            name: 'maxExposureBps',
+            type: 'uint16',
+            internalType: 'uint16',
+          },
+        ],
+      },
+    ],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
+    name: 'getServiceTotalExposure',
+    inputs: [
+      {
+        name: 'serviceId',
+        type: 'uint64',
+        internalType: 'uint64',
+      },
+    ],
+    outputs: [
+      {
+        name: '',
+        type: 'uint256',
+        internalType: 'uint256',
+      },
+    ],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
+    name: 'joinServiceWithCommitments',
+    inputs: [
+      {
+        name: 'serviceId',
+        type: 'uint64',
+        internalType: 'uint64',
+      },
+      {
+        name: 'exposureBps',
+        type: 'uint16',
+        internalType: 'uint16',
+      },
+      {
+        name: 'commitments',
+        type: 'tuple[]',
+        internalType: 'struct Types.AssetSecurityCommitment[]',
+        components: [
+          {
+            name: 'asset',
+            type: 'tuple',
+            internalType: 'struct Types.Asset',
+            components: [
+              {
+                name: 'kind',
+                type: 'uint8',
+                internalType: 'enum Types.AssetKind',
+              },
+              {
+                name: 'token',
+                type: 'address',
+                internalType: 'address',
+              },
+            ],
+          },
+          {
+            name: 'exposureBps',
+            type: 'uint16',
+            internalType: 'uint16',
+          },
+        ],
+      },
+    ],
+    outputs: [],
+    stateMutability: 'nonpayable',
+  },
+  {
+    type: 'function',
+    name: 'setOperatorOnline',
+    inputs: [
+      {
+        name: 'blueprintId',
+        type: 'uint64',
+        internalType: 'uint64',
+      },
+      {
+        name: 'online',
+        type: 'bool',
+        internalType: 'bool',
+      },
+    ],
+    outputs: [],
+    stateMutability: 'nonpayable',
+  },
+  {
+    type: 'function',
+    name: 'submitJobs',
+    inputs: [
+      {
+        name: 'serviceId',
+        type: 'uint64',
+        internalType: 'uint64',
+      },
+      {
+        name: 'jobIndices',
+        type: 'uint8[]',
+        internalType: 'uint8[]',
+      },
+      {
+        name: 'inputs',
+        type: 'bytes[]',
+        internalType: 'bytes[]',
+      },
+    ],
+    outputs: [
+      {
+        name: 'callIds',
+        type: 'uint64[]',
+        internalType: 'uint64[]',
+      },
+    ],
+    stateMutability: 'payable',
+  },
 ] as const;
 
 export default TANGLE_ABI;
