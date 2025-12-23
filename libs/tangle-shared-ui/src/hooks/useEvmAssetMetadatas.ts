@@ -13,9 +13,13 @@ type TokenMetadata = {
 };
 
 const NATIVE_TOKEN_ADDRESS = zeroAddress.toLowerCase();
+const DEFAULT_CHAIN_ID = 1; // Fallback to Ethereum mainnet if chain ID unavailable
 
-const buildFallbackMetadata = (id: EvmAddress): TokenMetadata => {
-  const cached = getCachedTokenMetadata(id);
+const buildFallbackMetadata = (
+  chainId: number,
+  id: EvmAddress,
+): TokenMetadata => {
+  const cached = getCachedTokenMetadata(chainId, id);
   if (cached) {
     return { id, ...cached };
   }
@@ -89,13 +93,16 @@ export const useEvmAssetMetadatas = (
           }
         : null;
 
+      const chainId = viemPublicClient?.chain?.id ?? DEFAULT_CHAIN_ID;
+
       return ids.map((id) => {
         if (id.toLowerCase() === NATIVE_TOKEN_ADDRESS) {
-          return nativeMetadata ?? buildFallbackMetadata(id);
+          return nativeMetadata ?? buildFallbackMetadata(chainId, id);
         }
 
         return (
-          fetchedByLower.get(id.toLowerCase()) ?? buildFallbackMetadata(id)
+          fetchedByLower.get(id.toLowerCase()) ??
+          buildFallbackMetadata(chainId, id)
         );
       });
     },

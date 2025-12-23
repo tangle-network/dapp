@@ -1,8 +1,12 @@
 /**
  * Token metadata utilities and fallback cache.
  * Primary source is on-chain ERC20 calls, this provides fallback by symbol.
+ *
+ * IMPORTANT: All caches and lookups are chain-aware to prevent cross-chain
+ * metadata collisions when users switch between networks.
  */
 
+import EVMChainId from '@tangle-network/dapp-types/EVMChainId';
 import { Address } from 'viem';
 
 export interface TokenMetadata {
@@ -11,7 +15,7 @@ export interface TokenMetadata {
   decimals: number;
 }
 
-// Well-known token metadata by symbol
+// Well-known token metadata by symbol (symbols are chain-agnostic)
 const KNOWN_TOKENS: Record<string, TokenMetadata> = {
   ETH: { name: 'Ether', symbol: 'ETH', decimals: 18 },
   TNT: { name: 'Tangle Network Token', symbol: 'TNT', decimals: 18 },
@@ -27,46 +31,70 @@ const KNOWN_TOKENS: Record<string, TokenMetadata> = {
   swETH: { name: 'Swell ETH', symbol: 'swETH', decimals: 18 },
 };
 
-// Known token addresses -> symbol mapping (from local Anvil deployment)
-// These are deterministic when Anvil starts fresh (nonce 0) and broadcast cache is cleared
-// Addresses from tnt-core LocalTestnet.s.sol deployment (chain ID 31337)
-const KNOWN_TOKEN_ADDRESSES: Record<string, string> = {
-  '0x0165878a594ca255338adfa4d48449f69242eb8f': 'TNT',
-  '0x809d550fca64d94bd9f66e60752a544199cfac3d': 'USDC',
-  '0x4c5859f0f772848b2d91f1d83e2fe57935348029': 'USDT',
-  '0x1291be112d480055dafd8a610b7d1e203891c274': 'DAI',
-  '0x5f3f1dbd7b74c6b46e8c44f98792a1daf8d69154': 'WETH',
-  '0xb7278a61aa25c888815afc32ad3cc52ff24fe575': 'stETH',
-  '0xcd8a1c3ba11cf5ecfa6267617243239504a98d90': 'wstETH',
-  '0x82e01223d51eb87e16a03e24687edf0f294da6f1': 'EIGEN',
+// Known token addresses per chain: chainId -> lowercase address -> symbol
+// Each chain has its own address-to-symbol mapping since the same address
+// can represent different tokens on different chains.
+const KNOWN_TOKEN_ADDRESSES: Partial<
+  Record<EVMChainId, Record<string, string>>
+> = {
+  // Anvil Local (chain 31337) - deterministic addresses from tnt-core LocalTestnet.s.sol
+  [EVMChainId.AnvilLocal]: {
+    '0x0165878a594ca255338adfa4d48449f69242eb8f': 'TNT',
+    '0x809d550fca64d94bd9f66e60752a544199cfac3d': 'USDC',
+    '0x4c5859f0f772848b2d91f1d83e2fe57935348029': 'USDT',
+    '0x1291be112d480055dafd8a610b7d1e203891c274': 'DAI',
+    '0x5f3f1dbd7b74c6b46e8c44f98792a1daf8d69154': 'WETH',
+    '0xb7278a61aa25c888815afc32ad3cc52ff24fe575': 'stETH',
+    '0xcd8a1c3ba11cf5ecfa6267617243239504a98d90': 'wstETH',
+    '0x82e01223d51eb87e16a03e24687edf0f294da6f1': 'EIGEN',
+  },
+  // Add more chains as needed:
+  // [EVMChainId.TangleMainnetEVM]: { ... },
+  // [EVMChainId.Base]: { ... },
 };
 
-// Runtime cache: address -> metadata (populated from on-chain fetches)
+// Runtime cache: "chainId:address" -> metadata
+// Populated from on-chain ERC20 fetches, keyed by chain to prevent cross-chain collisions
 const metadataCache = new Map<string, TokenMetadata>();
 
 /**
+ * Build a cache key that includes chain ID to prevent cross-chain collisions.
+ */
+const buildCacheKey = (chainId: number, address: string): string =>
+  `${chainId}:${address.toLowerCase()}`;
+
+/**
  * Get token metadata by symbol (case-insensitive).
+ * Symbols are chain-agnostic (e.g., "USDC" metadata is the same across chains).
  */
 export const getTokenBySymbol = (symbol: string): TokenMetadata | undefined => {
   return KNOWN_TOKENS[symbol] ?? KNOWN_TOKENS[symbol.toUpperCase()];
 };
 
 /**
- * Get token metadata by address - checks runtime cache then known addresses.
+ * Get token metadata by chain ID and address.
+ * Checks runtime cache first, then known addresses for the specific chain.
+ *
+ * @param chainId - The EVM chain ID
+ * @param address - The token contract address
  */
 export const getCachedTokenMetadata = (
+  chainId: number,
   address: Address,
 ): TokenMetadata | undefined => {
-  const normalized = address.toLowerCase();
+  const cacheKey = buildCacheKey(chainId, address);
 
   // Check runtime cache first
-  const cached = metadataCache.get(normalized);
+  const cached = metadataCache.get(cacheKey);
   if (cached) return cached;
 
-  // Check known token addresses
-  const symbol = KNOWN_TOKEN_ADDRESSES[normalized];
-  if (symbol) {
-    return KNOWN_TOKENS[symbol];
+  // Check known token addresses for this specific chain
+  const chainAddresses = KNOWN_TOKEN_ADDRESSES[chainId as EVMChainId];
+  if (chainAddresses) {
+    const symbol = chainAddresses[address.toLowerCase()];
+    if (symbol) {
+      return KNOWN_TOKENS[symbol];
+    }
   }
 
   return undefined;
@@ -74,31 +102,42 @@ export const getCachedTokenMetadata = (
 
 /**
  * Cache token metadata after fetching from chain.
+ * The cache is keyed by chainId:address to prevent cross-chain collisions.
+ *
+ * @param chainId - The EVM chain ID
+ * @param address - The token contract address
+ * @param metadata - The token metadata to cache
  */
 export const cacheTokenMetadata = (
+  chainId: number,
   address: Address,
   metadata: TokenMetadata,
 ): void => {
-  metadataCache.set(address.toLowerCase(), metadata);
+  metadataCache.set(buildCacheKey(chainId, address), metadata);
 };
 
 /**
  * Try to resolve token metadata from cache or known tokens.
  * Returns undefined if not found - caller should fetch from chain.
+ *
+ * @param chainId - The EVM chain ID
+ * @param address - The token contract address
+ * @param symbol - Optional symbol hint for fallback lookup
  */
 export const resolveTokenMetadata = (
+  chainId: number,
   address: Address,
   symbol?: string,
 ): TokenMetadata | undefined => {
-  // Check address cache first
-  const cached = getCachedTokenMetadata(address);
+  // Check chain-aware address cache first
+  const cached = getCachedTokenMetadata(chainId, address);
   if (cached) return cached;
 
-  // Try symbol lookup if provided
+  // Try symbol lookup if provided (symbols are chain-agnostic)
   if (symbol) {
     const bySymbol = getTokenBySymbol(symbol);
     if (bySymbol) {
-      cacheTokenMetadata(address, bySymbol);
+      cacheTokenMetadata(chainId, address, bySymbol);
       return bySymbol;
     }
   }
