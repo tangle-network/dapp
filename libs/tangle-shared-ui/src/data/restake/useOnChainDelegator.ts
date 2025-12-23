@@ -55,43 +55,84 @@ export const useOnChainDelegator = (
         return null;
       }
 
+      const readDeposit = async (token: Address): Promise<DepositResult> => {
+        return (await publicClient.readContract({
+          address: contracts.multiAssetDelegation,
+          abi: MULTI_ASSET_DELEGATION_ABI,
+          functionName: 'getDeposit',
+          args: [address, token],
+        })) as DepositResult;
+      };
+
+      const resolveDeposits = async () => {
+        if (
+          publicClient.chain?.contracts?.multicall3?.address !== undefined &&
+          tokenAddresses.length > 0
+        ) {
+          try {
+            const results = await publicClient.multicall({
+              contracts: tokenAddresses.map((token) => ({
+                address: contracts.multiAssetDelegation,
+                abi: MULTI_ASSET_DELEGATION_ABI,
+                functionName: 'getDeposit' as const,
+                args: [address, token] as const,
+              })),
+              allowFailure: true,
+            });
+
+            const deposits = results.flatMap((result, index) => {
+              if (result.status !== 'success') {
+                return [];
+              }
+
+              return [
+                {
+                  token: tokenAddresses[index],
+                  deposit: result.result as DepositResult,
+                },
+              ];
+            });
+
+            if (deposits.length > 0) {
+              return deposits;
+            }
+          } catch {
+            // Fall back to individual calls below.
+          }
+        }
+
+        const settled = await Promise.allSettled(
+          tokenAddresses.map(async (token) => ({
+            token,
+            deposit: await readDeposit(token),
+          })),
+        );
+
+        return settled.flatMap((result) =>
+          result.status === 'fulfilled' ? [result.value] : [],
+        );
+      };
+
       // Read deposit info for each token
       const assetPositions: DelegatorAssetPosition[] = [];
       let totalDeposited = BigInt(0);
       let totalDelegated = BigInt(0);
 
-      // Use Promise.allSettled to handle individual failures gracefully
-      const results = await Promise.allSettled(
-        tokenAddresses.map(async (token) => {
-          const deposit = (await publicClient.readContract({
-            address: contracts.multiAssetDelegation,
-            abi: MULTI_ASSET_DELEGATION_ABI,
-            functionName: 'getDeposit',
-            args: [address, token],
-          })) as DepositResult;
+      const results = await resolveDeposits();
 
-          return { token, deposit };
-        }),
-      );
+      for (const { token, deposit } of results) {
+        if (deposit.amount > BigInt(0)) {
+          assetPositions.push({
+            id: `${address.toLowerCase()}-${token.toLowerCase()}`,
+            token,
+            totalDeposited: deposit.amount,
+            delegatedAmount: deposit.delegatedAmount,
+            lockedAmount: BigInt(0), // Not available from getDeposit
+            lastUpdatedAt: BigInt(Date.now()),
+          });
 
-      for (const result of results) {
-        if (result.status === 'fulfilled') {
-          const { token, deposit } = result.value;
-
-          // Only include positions with non-zero deposits
-          if (deposit.amount > BigInt(0)) {
-            assetPositions.push({
-              id: `${address.toLowerCase()}-${token.toLowerCase()}`,
-              token,
-              totalDeposited: deposit.amount,
-              delegatedAmount: deposit.delegatedAmount,
-              lockedAmount: BigInt(0), // Not available from getDeposit
-              lastUpdatedAt: BigInt(Date.now()),
-            });
-
-            totalDeposited += deposit.amount;
-            totalDelegated += deposit.delegatedAmount;
-          }
+          totalDeposited += deposit.amount;
+          totalDelegated += deposit.delegatedAmount;
         }
       }
 

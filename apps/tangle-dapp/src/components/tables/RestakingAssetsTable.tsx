@@ -6,9 +6,12 @@ import HeaderCell from '@tangle-network/tangle-shared-ui/components/tables/Heade
 import TableCellWrapper from '@tangle-network/tangle-shared-ui/components/tables/TableCellWrapper';
 import TableStatus from '@tangle-network/tangle-shared-ui/components/tables/TableStatus';
 import {
+  Avatar,
   AmountFormatStyle,
+  CopyWithTooltip,
   formatDisplayAmount,
   EMPTY_VALUE_PLACEHOLDER,
+  shortenHex,
 } from '@tangle-network/ui-components';
 import Button from '@tangle-network/ui-components/components/buttons/Button';
 import { Table } from '@tangle-network/ui-components/components/Table';
@@ -27,6 +30,7 @@ import { Link } from 'react-router';
 import type { RestakeAsset } from '@tangle-network/tangle-shared-ui/data/graphql/useRestakeAssets';
 import type { RestakingAsset } from '@tangle-network/tangle-shared-ui/data/graphql/useRestakingAssets';
 import type { Delegator } from '@tangle-network/tangle-shared-ui/data/graphql/useDelegator';
+import { getCachedTokenMetadata } from '@tangle-network/dapp-config/tokenMetadata';
 import { PagePath, QueryParamKey } from '../../types';
 
 interface Props {
@@ -49,6 +53,17 @@ interface RestakeAssetRow {
 }
 
 const COLUMN_HELPER = createColumnHelper<RestakeAssetRow>();
+const TABLE_ACTION_BUTTON_CLASS =
+  'uppercase body4 font-semibold transition-all duration-200 bg-purple-10 dark:bg-purple-120 text-purple-70 dark:text-purple-40 hover:bg-purple-20 dark:hover:bg-purple-110 border border-purple-30 dark:border-purple-100';
+
+const isFallbackSymbol = (symbol: string) =>
+  symbol.startsWith('0x') || symbol.includes('...');
+
+const resolveTokenIconSymbol = (symbol: string, address: Address) => {
+  const cached = getCachedTokenMetadata(address);
+  const candidate = cached?.symbol ?? symbol;
+  return isFallbackSymbol(candidate) ? null : candidate;
+};
 
 const getColumns = () => [
   COLUMN_HELPER.accessor('id', {
@@ -57,20 +72,50 @@ const getColumns = () => [
       <TableCellWrapper className="pl-3">
         <div className="flex items-center gap-3">
           <div className="flex items-center justify-center w-10 h-10">
-            <TokenIcon name={props.row.original.symbol} size="xl" />
+            {(() => {
+              const iconSymbol = resolveTokenIconSymbol(
+                props.row.original.symbol,
+                props.row.original.tokenAddress,
+              );
+
+              if (iconSymbol) {
+                return <TokenIcon name={iconSymbol} size="xl" />;
+              }
+
+              return (
+                <Avatar
+                  size="lg"
+                  value={props.row.original.tokenAddress}
+                  theme="ethereum"
+                />
+              );
+            })()}
           </div>
 
-          <div>
-            <Typography variant="h5" className="whitespace-nowrap">
-              {props.row.original.symbol}
-            </Typography>
+          <div className="flex flex-col min-w-0">
+            <div className="flex items-center gap-2 min-w-0">
+              <Typography variant="h5" className="whitespace-nowrap">
+                {props.row.original.symbol}
+              </Typography>
 
-            <Typography
-              variant="body3"
-              className="text-mono-120 dark:text-mono-100"
-            >
-              {props.row.original.name}
-            </Typography>
+              <Typography
+                variant="body3"
+                className="text-mono-120 dark:text-mono-100 truncate"
+              >
+                {props.row.original.name}
+              </Typography>
+            </div>
+
+            <div className="flex items-center gap-2 text-mono-120 dark:text-mono-100">
+              <Typography variant="body4" className="font-mono">
+                {shortenHex(props.row.original.tokenAddress)}
+              </Typography>
+              <CopyWithTooltip
+                textToCopy={props.row.original.tokenAddress}
+                isButton={false}
+                copyLabel="Copy address"
+              />
+            </div>
           </div>
         </div>
       </TableCellWrapper>
@@ -134,14 +179,18 @@ const getColumns = () => [
     id: 'actions',
     header: () => null,
     cell: ({ row }) => (
-      <TableCellWrapper removeRightBorder>
-        <div className="flex justify-center">
-          <Link
-            to={`${PagePath.RESTAKE_DEPOSIT}?${QueryParamKey.RESTAKE_ASSET_ID}=${row.original.tokenAddress}`}
+      <TableCellWrapper removeRightBorder className="p-3 justify-center">
+        <Link
+          to={`${PagePath.RESTAKE_DEPOSIT}?${QueryParamKey.RESTAKE_ASSET_ID}=${row.original.tokenAddress}`}
+        >
+          <Button
+            size="sm"
+            variant="utility"
+            className={TABLE_ACTION_BUTTON_CLASS}
           >
-            <Button size="sm">Deposit</Button>
-          </Link>
-        </div>
+            Deposit
+          </Button>
+        </Link>
       </TableCellWrapper>
     ),
   }),
@@ -211,7 +260,7 @@ export const RestakingAssetsTable: FC<Props> = ({
     ),
   );
 
-  if (isLoading) {
+  if (isLoading && tableData.length === 0) {
     return (
       <TableStatus
         title="Loading Restake Assets"

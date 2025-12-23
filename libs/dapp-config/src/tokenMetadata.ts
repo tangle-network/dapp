@@ -32,8 +32,18 @@ const KNOWN_TOKENS: Record<string, TokenMetadata> = {
 const KNOWN_TOKEN_ADDRESSES: Record<string, string> = {
   // TNT (bond asset) from tnt-core LocalTestnetSetup (Anvil 31337)
   '0x0165878a594ca255338adfa4d48449f69242eb8f': 'TNT',
+  // TNT (bond asset) from tnt-core LocalTestnetSetup (Anvil 31337 - current)
+  '0x5eb3bc0a489c5a8288765d2336659ebca68fcd00': 'TNT',
   // TNT (Base Sepolia)
   '0xa9ffe787eea7f385dac8481cd8bdc3d9194aeb5a': 'TNT',
+  // LocalTestnet mock assets (Anvil 31337 - current)
+  '0x367761085bf3c12e5da2df99ac6e1a824612b8fb': 'USDC',
+  '0x4c2f7092c2ae51d986befee378e50bd4db99c901': 'USDT',
+  '0x7a9ec1d04904907de0ed7b6839ccdd59c3716ac9': 'DAI',
+  '0x49fd2be640db2910c2fab69bb8531ab6e76127ff': 'WETH',
+  '0x4631bcabd6df18d94796344963cb60d44a4136b6': 'stETH',
+  '0x86a2ee8faf9a840f7a2c64ca3d51209f9a02081d': 'wstETH',
+  '0xa4899d35897033b927acfcf422bc745916139776': 'EIGEN',
   '0x4a679253410272dd5232b3ff7cf5dbb88f295319': 'USDC',
   '0x7a2088a1bfc9d81c55368ae168c2c02570cb814f': 'USDT',
   '0x09635f643e140090a9a8dcd712ed6285858cebef': 'DAI',
