@@ -63,7 +63,7 @@ const COLUMNS = [
   }),
   COLUMN_HELPER.accessor('balance', {
     header: () => (
-      <HeaderCell title="Shares" tooltip="Your liquid token balance" />
+      <HeaderCell title="Your Shares" tooltip="Your liquid token balance" />
     ),
     cell: (props) => {
       const formatted = formatUnits(props.getValue(), 18);

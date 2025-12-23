@@ -92,7 +92,7 @@ const COLUMNS = [
   COLUMN_HELPER.accessor('totalSupply', {
     header: () => (
       <HeaderCell
-        title="Shares"
+        title="Total Shares"
         tooltip="Total liquid token shares outstanding"
       />
     ),

@@ -10,7 +10,7 @@ import type { TextFieldInputProps } from '@tangle-network/ui-components/componen
 import { TransactionInputCard } from '@tangle-network/ui-components/components/TransactionInputCard';
 import { useModal } from '@tangle-network/ui-components/hooks/useModal';
 import { Typography } from '@tangle-network/ui-components/typography/Typography';
-import { FC, useCallback, useEffect, useMemo, useRef } from 'react';
+import { FC, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import { useSearchParams } from 'react-router';
 import { parseUnits, formatUnits, Address, isAddress } from 'viem';
@@ -33,6 +33,7 @@ import {
 import {
   useLiquidRedeemRequests,
   useRestakeAssets,
+  type LiquidRedeemRequest,
 } from '@tangle-network/tangle-shared-ui/data/graphql';
 import { TxStatus } from '@tangle-network/tangle-shared-ui/hooks/useContractWrite';
 import filterBy from '@tangle-network/tangle-shared-ui/utils/filterBy';
@@ -128,10 +129,51 @@ const LiquidStakingRedeemForm: FC = () => {
     return vaults.find((v) => v.address === vaultAddress) ?? null;
   }, [vaults, vaultAddress]);
 
-  const { position } = useVaultUserPosition(selectedVault?.address);
+  const { position, refetch: refetchPosition } = useVaultUserPosition(
+    selectedVault?.address,
+  );
 
-  const { data: redeemRequests = [], refetch: refetchRedeemRequests } =
+  const { data: indexerRedeemRequests = [], refetch: refetchRedeemRequests } =
     useLiquidRedeemRequests(userAddress, selectedVault?.address);
+
+  // Optimistic redeem requests that are shown immediately while waiting for the indexer
+  const [optimisticRequests, setOptimisticRequests] = useState<
+    LiquidRedeemRequest[]
+  >([]);
+
+  // Merge optimistic requests with indexer data, removing optimistic ones that have been indexed
+  const redeemRequests = useMemo(() => {
+    if (optimisticRequests.length === 0) {
+      return indexerRedeemRequests;
+    }
+
+    // Filter out optimistic requests that are now in the indexer data
+    // We match by shares amount and vault address since we don't have the real requestId yet
+    const pendingOptimistic = optimisticRequests.filter((opt) => {
+      // Check if this optimistic request has been indexed
+      const isIndexed = indexerRedeemRequests.some(
+        (req) =>
+          req.vaultAddress.toLowerCase() === opt.vaultAddress.toLowerCase() &&
+          req.shares === opt.shares &&
+          req.controller.toLowerCase() === opt.controller.toLowerCase(),
+      );
+      return !isIndexed;
+    });
+
+    // Update state if some optimistic requests have been indexed
+    if (pendingOptimistic.length !== optimisticRequests.length) {
+      // Use setTimeout to avoid state update during render
+      setTimeout(() => setOptimisticRequests(pendingOptimistic), 0);
+    }
+
+    // Prepend remaining optimistic requests to the list
+    return [...pendingOptimistic, ...indexerRedeemRequests];
+  }, [optimisticRequests, indexerRedeemRequests]);
+
+  // Clear optimistic requests when vault changes
+  useEffect(() => {
+    setOptimisticRequests([]);
+  }, [selectedVault?.address]);
 
   const claimableContracts = useMemo(() => {
     if (!selectedVault || redeemRequests.length === 0) return [];
@@ -179,6 +221,9 @@ const LiquidStakingRedeemForm: FC = () => {
       return { maxAmount: undefined, formattedMaxAmount: undefined };
     }
 
+    // position.balance already reflects the user's current share balance
+    // after any pending redeem requests (shares are burned immediately
+    // when requestRedeem is called in ERC-7540 vaults)
     const formatted = Number(formatUnits(position.balance, 18));
 
     return {
@@ -236,7 +281,7 @@ const LiquidStakingRedeemForm: FC = () => {
 
   const onSubmit = useCallback<SubmitHandler<RedeemFormFields>>(
     async ({ vaultAddress: vault, amount }) => {
-      if (!isReady || !userAddress) {
+      if (!isReady || !userAddress || !selectedVault) {
         return;
       }
 
@@ -255,9 +300,36 @@ const LiquidStakingRedeemForm: FC = () => {
         owner: userAddress,
       });
 
+      // Add optimistic redeem request immediately so UI updates without waiting for indexer
+      const optimisticRequest: LiquidRedeemRequest = {
+        id: `optimistic-${Date.now()}`,
+        vaultId: selectedVault.address.toLowerCase(),
+        vaultAddress: selectedVault.address,
+        controller: userAddress,
+        owner: userAddress,
+        requestId: BigInt(0), // Unknown until indexed
+        shares: sharesBigInt,
+        estimatedAssets: BigInt(0), // Will be calculated when indexed
+        requestedRound: BigInt(0),
+        claimed: false,
+        createdAt: BigInt(Math.floor(Date.now() / 1000)),
+        claimedAt: null,
+        txHash: '0x', // Unknown until indexed
+      };
+      setOptimisticRequests((prev) => [optimisticRequest, ...prev]);
+
       setValue('amount', '', { shouldValidate: false });
+
+      // Refetch user position to update the "Your Shares" display immediately
+      await refetchPosition();
+
+      // Refetch redeem requests after a short delay to allow the indexer to process
+      // the new transaction. The optimistic entry will be replaced once indexed.
+      setTimeout(() => {
+        refetchRedeemRequests();
+      }, 3000);
     },
-    [isReady, userAddress, selectedVault, executeRedeem, setValue],
+    [isReady, userAddress, selectedVault, executeRedeem, setValue, refetchPosition, refetchRedeemRequests],
   );
 
   return (
@@ -485,9 +557,10 @@ const LiquidStakingRedeemForm: FC = () => {
                           receiver: userAddress,
                           controller: req.controller,
                         });
+                        // Refetch both redeem requests and user position to update UI immediately
                         await Promise.all([
                           refetchRedeemRequests(),
-                          // The user's vault share balance changes; let the existing hooks refresh.
+                          refetchPosition(),
                         ]);
                       }}
                     >
