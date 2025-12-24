@@ -11,6 +11,7 @@ import { TransactionInputCard } from '@tangle-network/ui-components/components/T
 import { useModal } from '@tangle-network/ui-components/hooks/useModal';
 import { Typography } from '@tangle-network/ui-components/typography/Typography';
 import { FC, useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import useFormSetValue from '../../../hooks/useFormSetValue';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import { useSearchParams } from 'react-router';
 import { parseUnits, formatUnits, Address, isAddress } from 'viem';
@@ -72,16 +73,7 @@ const LiquidStakingRedeemForm: FC = () => {
     mode: 'onChange',
   });
 
-  const setValue = useCallback(
-    (...params: Parameters<typeof setFormValue>) => {
-      setFormValue(params[0], params[1], {
-        shouldDirty: true,
-        shouldValidate: true,
-        ...params[2],
-      });
-    },
-    [setFormValue],
-  );
+  const setValue = useFormSetValue(setFormValue);
 
   useEffect(() => {
     register('vaultAddress', { required: 'Vault is required' });
@@ -144,18 +136,36 @@ const LiquidStakingRedeemForm: FC = () => {
     LiquidRedeemRequest[]
   >([]);
 
+  // Ref to store timeout ID for cleanup
+  const refetchTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
   // Clean up optimistic requests when they appear in the indexer data
+  // Match by shares, controller, vault address, AND timestamp (within 60s tolerance)
+  // This prevents race conditions when multiple requests have the same share amount
   useEffect(() => {
+    const TIMESTAMP_TOLERANCE_SECONDS = BigInt(60);
+
     setOptimisticRequests((prev) =>
       prev.filter(
         (opt) =>
-          !indexerRedeemRequests.some(
-            (req) =>
-              req.vaultAddress.toLowerCase() ===
-                opt.vaultAddress.toLowerCase() &&
-              req.shares === opt.shares &&
-              req.controller.toLowerCase() === opt.controller.toLowerCase(),
-          ),
+          !indexerRedeemRequests.some((req) => {
+            const sameVault =
+              req.vaultAddress.toLowerCase() === opt.vaultAddress.toLowerCase();
+            const sameShares = req.shares === opt.shares;
+            const sameController =
+              req.controller.toLowerCase() === opt.controller.toLowerCase();
+
+            // Check if timestamps are within tolerance window
+            const timeDiff =
+              req.createdAt > opt.createdAt
+                ? req.createdAt - opt.createdAt
+                : opt.createdAt - req.createdAt;
+            const withinTimeWindow = timeDiff <= TIMESTAMP_TOLERANCE_SECONDS;
+
+            return (
+              sameVault && sameShares && sameController && withinTimeWindow
+            );
+          }),
       ),
     );
   }, [indexerRedeemRequests]);
@@ -175,15 +185,30 @@ const LiquidStakingRedeemForm: FC = () => {
     setOptimisticRequests([]);
   }, [selectedVault?.address]);
 
+  // Cleanup timeout on unmount
+  useEffect(() => {
+    return () => {
+      if (refetchTimeoutRef.current !== null) {
+        clearTimeout(refetchTimeoutRef.current);
+      }
+    };
+  }, []);
+
+  // Only check claimable status for indexed requests (not optimistic ones)
+  // Optimistic requests have fake IDs starting with "optimistic-" and requestId of 0
+  const indexedRequestsForClaimable = useMemo(() => {
+    return indexerRedeemRequests.filter((req) => req.requestId !== BigInt(0));
+  }, [indexerRedeemRequests]);
+
   const claimableContracts = useMemo(() => {
-    if (!selectedVault || redeemRequests.length === 0) return [];
-    return redeemRequests.map((req) => ({
+    if (!selectedVault || indexedRequestsForClaimable.length === 0) return [];
+    return indexedRequestsForClaimable.map((req) => ({
       address: selectedVault.address,
       abi: LIQUID_DELEGATION_VAULT_ABI,
       functionName: 'claimableRedeemRequest' as const,
       args: [req.requestId, req.controller] as const,
     }));
-  }, [redeemRequests, selectedVault]);
+  }, [indexedRequestsForClaimable, selectedVault]);
 
   const { data: claimableResults } = useReadContracts({
     contracts: claimableContracts,
@@ -199,12 +224,12 @@ const LiquidStakingRedeemForm: FC = () => {
     const map = new Map<string, bigint>();
     if (!claimableResults) return map;
     claimableResults.forEach((res, idx) => {
-      const req = redeemRequests[idx];
+      const req = indexedRequestsForClaimable[idx];
       if (!req || res?.status !== 'success') return;
       map.set(req.id, res.result as bigint);
     });
     return map;
-  }, [claimableResults, redeemRequests]);
+  }, [claimableResults, indexedRequestsForClaimable]);
 
   const vaultAsset = useMemo(() => {
     if (!selectedVault || !assets) {
@@ -327,8 +352,12 @@ const LiquidStakingRedeemForm: FC = () => {
 
       // Refetch redeem requests after a short delay to allow the indexer to process
       // the new transaction. The optimistic entry will be replaced once indexed.
-      setTimeout(() => {
+      if (refetchTimeoutRef.current !== null) {
+        clearTimeout(refetchTimeoutRef.current);
+      }
+      refetchTimeoutRef.current = setTimeout(() => {
         refetchRedeemRequests();
+        refetchTimeoutRef.current = null;
       }, 3000);
     },
     [
@@ -389,12 +418,13 @@ const LiquidStakingRedeemForm: FC = () => {
                   maxAmount={formattedMaxAmount}
                   tokenSymbol="shares"
                   tooltipBody="Available Shares"
-                  Icon={
-                    useRef({
+                  Icon={useMemo(
+                    () => ({
                       enabled: <LockUnlockLineIcon />,
                       disabled: <LockUnlockLineIcon />,
-                    }).current
-                  }
+                    }),
+                    [],
+                  )}
                   onAmountChange={(value) => {
                     setValue('amount', value, { shouldValidate: true });
                   }}

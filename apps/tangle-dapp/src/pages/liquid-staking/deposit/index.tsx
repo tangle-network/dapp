@@ -11,7 +11,8 @@ import type { TextFieldInputProps } from '@tangle-network/ui-components/componen
 import { TransactionInputCard } from '@tangle-network/ui-components/components/TransactionInputCard';
 import { useModal } from '@tangle-network/ui-components/hooks/useModal';
 import { Typography } from '@tangle-network/ui-components/typography/Typography';
-import { FC, useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { FC, useCallback, useEffect, useMemo, useState } from 'react';
+import useFormSetValue from '../../../hooks/useFormSetValue';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import { useSearchParams } from 'react-router';
 import { erc20Abi, parseUnits, formatUnits, Address, isAddress } from 'viem';
@@ -73,16 +74,7 @@ const LiquidStakingDepositForm: FC = () => {
     mode: 'onChange',
   });
 
-  const setValue = useCallback(
-    (...params: Parameters<typeof setFormValue>) => {
-      setFormValue(params[0], params[1], {
-        shouldDirty: true,
-        shouldValidate: true,
-        ...params[2],
-      });
-    },
-    [setFormValue],
-  );
+  const setValue = useFormSetValue(setFormValue);
 
   useEffect(() => {
     register('vaultAddress', { required: 'Vault is required' });
@@ -145,8 +137,6 @@ const LiquidStakingDepositForm: FC = () => {
 
   const spender = selectedVault?.address ?? null;
 
-  const approveLastErrorRef = useRef<Error | null>(null);
-
   const {
     status: approveTxStatus,
     execute: executeApproveTx,
@@ -161,9 +151,6 @@ const LiquidStakingDepositForm: FC = () => {
     }),
     {
       txName: 'approve',
-      onError: (error) => {
-        approveLastErrorRef.current = error;
-      },
       getSuccessMessage: () => 'Approval successful',
     },
   );
@@ -178,7 +165,6 @@ const LiquidStakingDepositForm: FC = () => {
         return false;
       }
 
-      approveLastErrorRef.current = null;
       const firstAttempt = await executeApproveTx({
         token: vaultAsset.id,
         spender,
@@ -189,18 +175,9 @@ const LiquidStakingDepositForm: FC = () => {
         return true;
       }
 
-      // TS will narrow `ref.current` to `null` after assignment, even though the
-      // async write may set it via `onError`. Widen it back for the post-attempt check.
-      const message =
-        (approveLastErrorRef.current as Error | null)?.message?.toLowerCase() ??
-        '';
-      const looksLikeNonZeroAllowanceIssue =
-        message.includes('non-zero') && message.includes('allowance');
-
-      if (!looksLikeNonZeroAllowanceIssue) {
-        return false;
-      }
-
+      // Some tokens (e.g., USDT) require resetting allowance to zero before
+      // setting a new value. Instead of fragile error message parsing, we always
+      // try the reset-to-zero pattern on failure - this is safe for all tokens.
       const zeroAttempt = await executeApproveTx({
         token: vaultAsset.id,
         spender,
@@ -378,12 +355,13 @@ const LiquidStakingDepositForm: FC = () => {
                 <TransactionInputCard.MaxAmountButton
                   maxAmount={formattedMaxAmount}
                   tooltipBody="Available Balance"
-                  Icon={
-                    useRef({
+                  Icon={useMemo(
+                    () => ({
                       enabled: <LockLineIcon />,
                       disabled: <LockFillIcon />,
-                    }).current
-                  }
+                    }),
+                    [],
+                  )}
                   onAmountChange={(value) => {
                     setValue('amount', value, { shouldValidate: true });
                   }}

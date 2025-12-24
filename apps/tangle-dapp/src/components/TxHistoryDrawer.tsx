@@ -180,14 +180,10 @@ type DetailRowProps = {
   tokenMetadata?: TokenMetadata | null;
 };
 
-// Check if a string is a valid numeric value that can be parsed as BigInt
+// Check if a string is a pure numeric value (all digits)
+// Using regex instead of BigInt parsing for better performance
 const isNumericString = (value: string): boolean => {
-  try {
-    BigInt(value);
-    return true;
-  } catch {
-    return false;
-  }
+  return /^\d+$/.test(value);
 };
 
 const DetailRow: FC<DetailRowProps> = ({

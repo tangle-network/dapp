@@ -17,6 +17,7 @@ import type { TextFieldInputProps } from '@tangle-network/ui-components/componen
 import { TransactionInputCard } from '@tangle-network/ui-components/components/TransactionInputCard';
 import { useModal } from '@tangle-network/ui-components/hooks/useModal';
 import { FC, useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import useFormSetValue from '../../../hooks/useFormSetValue';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import { Address, formatUnits, parseUnits } from 'viem';
 import { BN } from '@polkadot/util';
@@ -93,16 +94,7 @@ const RestakeDelegateForm: FC = () => {
     QueryParamKey.RESTAKE_OPERATOR,
   );
 
-  const setValue = useCallback(
-    (...params: Parameters<typeof setFormValue>) => {
-      setFormValue(params[0], params[1], {
-        shouldDirty: true,
-        shouldValidate: true,
-        ...params[2],
-      });
-    },
-    [setFormValue],
-  );
+  const setValue = useFormSetValue(setFormValue);
 
   useEffect(() => {
     register('assetId', { required: 'Asset is required' });

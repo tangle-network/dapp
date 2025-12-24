@@ -80,14 +80,6 @@ const buildCacheKey = (chainId: number, address: string): string =>
   `${chainId}:${address.toLowerCase()}`;
 
 /**
- * Get token metadata by symbol (case-insensitive).
- * Symbols are chain-agnostic (e.g., "USDC" metadata is the same across chains).
- */
-export const getTokenBySymbol = (symbol: string): TokenMetadata | undefined => {
-  return KNOWN_TOKENS[symbol] ?? KNOWN_TOKENS[symbol.toUpperCase()];
-};
-
-/**
  * Get token metadata by chain ID and address.
  * Checks runtime cache first, then known addresses for the specific chain.
  *
@@ -131,37 +123,3 @@ export const cacheTokenMetadata = (
 ): void => {
   metadataCache.set(buildCacheKey(chainId, address), metadata);
 };
-
-/**
- * Try to resolve token metadata from cache or known tokens.
- * Returns undefined if not found - caller should fetch from chain.
- *
- * @param chainId - The EVM chain ID
- * @param address - The token contract address
- * @param symbol - Optional symbol hint for fallback lookup
- */
-export const resolveTokenMetadata = (
-  chainId: number,
-  address: Address,
-  symbol?: string,
-): TokenMetadata | undefined => {
-  // Check chain-aware address cache first
-  const cached = getCachedTokenMetadata(chainId, address);
-  if (cached) return cached;
-
-  // Try symbol lookup if provided (symbols are chain-agnostic)
-  if (symbol) {
-    const bySymbol = getTokenBySymbol(symbol);
-    if (bySymbol) {
-      cacheTokenMetadata(chainId, address, bySymbol);
-      return bySymbol;
-    }
-  }
-
-  return undefined;
-};
-
-// Legacy exports for backward compatibility
-export type LocalTokenConfig = TokenMetadata & { address: Address };
-export const getKnownTokenMetadata = getCachedTokenMetadata;
-export const getTokenMetadataBySymbol = getTokenBySymbol;

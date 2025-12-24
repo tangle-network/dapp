@@ -11,6 +11,7 @@ import { TransactionInputCard } from '@tangle-network/ui-components/components/T
 import { useModal } from '@tangle-network/ui-components/hooks/useModal';
 import { Typography } from '@tangle-network/ui-components/typography/Typography';
 import { FC, useCallback, useEffect, useMemo, useState } from 'react';
+import useFormSetValue from '../../../hooks/useFormSetValue';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import { Address } from 'viem';
 import { useAccount } from 'wagmi';
@@ -87,16 +88,7 @@ const CreateVaultForm: FC = () => {
     },
   });
 
-  const setValue = useCallback(
-    (...params: Parameters<typeof setFormValue>) => {
-      setFormValue(params[0], params[1], {
-        shouldDirty: true,
-        shouldValidate: true,
-        ...params[2],
-      });
-    },
-    [setFormValue],
-  );
+  const setValue = useFormSetValue(setFormValue);
 
   useEffect(() => {
     register('operator', { required: 'Operator is required' });
@@ -231,13 +223,14 @@ const CreateVaultForm: FC = () => {
   const handleAllBlueprintsChange = useCallback(
     (checked: boolean) => {
       setUseAllBlueprints(checked);
+      setValue('useAllBlueprints', checked);
       if (checked) {
         setSelectedBlueprintIds([]);
       } else {
         openBlueprintModal();
       }
     },
-    [openBlueprintModal],
+    [openBlueprintModal, setValue],
   );
 
   const displayError = useMemo(() => {
