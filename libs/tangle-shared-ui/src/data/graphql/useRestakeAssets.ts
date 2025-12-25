@@ -455,7 +455,10 @@ export const useRestakeAssets = (options?: {
         (m) => m.id.toLowerCase() === restakingAsset.token.toLowerCase(),
       );
 
-      const fallbackMetadata = getCachedTokenMetadata(restakingAsset.token);
+      const fallbackMetadata = getCachedTokenMetadata(
+        chainId,
+        restakingAsset.token,
+      );
       const balance = balances?.get(restakingAsset.token) ?? BigInt(0);
       const tokenMetadata = metadata ??
         fallbackMetadata ?? {
@@ -486,6 +489,7 @@ export const useRestakeAssets = (options?: {
     nativeBalance,
     nativeSymbol,
     nativeDecimals,
+    chainId,
   ]);
 
   // Refetch function that refreshes all data

@@ -32,30 +32,28 @@ export const SP1_VERIFIER_GATEWAY = {
   baseMainnet: '0x397A5f7f3dBd538f23DE225B51f532c34448dA9B' as Address,
 };
 
-// Local Anvil deployment addresses (from tnt-core/indexer/config.yaml)
+// Local Anvil deployment addresses (from LocalTestnet.s.sol deployment)
 export const LOCAL_CONTRACTS: ContractAddresses = {
   tangle: '0xCf7Ed3AccA5a467e9e704C703E8D87F634fB0Fc9',
   multiAssetDelegation: '0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512',
   masterBlueprintServiceManager: '0xa513E6E4b8f2a923D98304ec87F64353C4D5C853',
-  operatorStatusRegistry: '0xDc64a140Aa3E981100a9becA4E685f962f0cF6C9',
-  rewardVaults: '0xc5a5C42992dECbae36851359345FE25997F5C42d',
-  inflationPool: '0xE6E340D132b5f46d1e472DebcD681B2aBc16e57E',
-  // Credits is deployed by tnt-core LocalTestnet, but the address is not deterministic across runs.
-  // Set `VITE_CREDITS_ADDRESS_31337` (or `VITE_CREDITS_ADDRESS`) to enable the credits UI.
-  credits: '0x0000000000000000000000000000000000000000',
-  liquidDelegationFactory: '0xCA8c8688914e0F7096c920146cd0Ad85cD7Ae8b9',
+  operatorStatusRegistry: '0x8f86403A4DE0BB5791fa46B8e795C547942fE4Cf',
+  rewardVaults: '0x21dF544947ba3E8b3c32561399E88B52Dc8b2823',
+  inflationPool: '0xD8a5a9b31c3C0232E196d518E89Fd8bF83AcAd43',
+  credits: '0x1fA02b2d6A771842690194Cf62D91bdd92BfE28d',
+  liquidDelegationFactory: '0x8F4ec854Dd12F1fe79500a1f53D0cbB30f9b6134',
 };
 
-// Base Sepolia testnet addresses (tnt-core v2 deployment)
+// Base Sepolia testnet addresses (local development)
 export const BASE_SEPOLIA_CONTRACTS: ContractAddresses = {
-  tangle: '0x1Be58d12620Ecc8Ba9D780fEEc2596510D75a933',
-  multiAssetDelegation: '0x787dd1De4099ff8C68bFac11B82E4Aed52c7F1e1',
+  tangle: '0x62281eac026f6c6a65708157e47151b964216303',
+  multiAssetDelegation: '0x96e682cc18874ec6cdb1b2a7f0a5f541e1fbaeb3',
   masterBlueprintServiceManager: '0x0000000000000000000000000000000000000000', // Not in base-sepolia manifest
-  operatorStatusRegistry: '0x20258c5e4CbA66D4819a06045fF00D15775E64fB',
-  rewardVaults: '0x2963a51FEC3E2cF51B19B848942D91296448a353',
-  inflationPool: '0xE620F87540724A0ceBDeE9796Dd8580e02DD4911',
-  credits: '0x758226E04478541FCdac605e1f235E2956259A10',
-  liquidDelegationFactory: '0x0000000000000000000000000000000000000000',
+  operatorStatusRegistry: '0x17746107e0b4cfaf4c96140f5e501bf10e740b65',
+  rewardVaults: '0x37979744708141ec1541b9b70faa7da8d0cf2d23',
+  inflationPool: '0x8152f13c37576e1a2cd74d18213105ecf816d5de',
+  credits: '0x0000000000000000000000000000000000000000', // Set via env or future deploys
+  liquidDelegationFactory: '0xF8e31cb472bc70500f08Cd84917E5A1912Ec8397',
 };
 
 // Base mainnet addresses (to be updated after deployment)
@@ -146,9 +144,9 @@ export const getContractsByChainId = (chainId: number): ContractAddresses => {
 // These are separate from the main restaking contracts
 
 export const BASE_SEPOLIA_MIGRATION: MigrationClaimAddresses = {
-  tntToken: '0xa9FfE787EEa7f385dAc8481Cd8bdc3d9194aEb5A',
-  migrationClaim: '0xD378D4ce9ed8CE23183Cc3AFe4d7991548E10C7B',
-  treasury: '0x89db5277A310C473d515891cafCD4E66b8A7F06F',
+  tntToken: '0x0000000000000000000000000000000000000000', // To be deployed
+  migrationClaim: '0x0000000000000000000000000000000000000000', // To be deployed
+  treasury: '0x0000000000000000000000000000000000000000', // To be set
 };
 
 export const BASE_MAINNET_MIGRATION: MigrationClaimAddresses = {

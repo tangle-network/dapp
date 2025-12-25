@@ -1,7 +1,8 @@
 import { calculateTypedChainId } from '@tangle-network/dapp-types/TypedChainId';
 import isDefined from '@tangle-network/dapp-types/utils/isDefined';
 import ListModal from '@tangle-network/tangle-shared-ui/components/ListModal';
-import { Card, Input } from '@tangle-network/ui-components';
+import { TokenIcon } from '@tangle-network/icons';
+import { Avatar, Card, Input, shortenHex } from '@tangle-network/ui-components';
 import Button from '@tangle-network/ui-components/components/buttons/Button';
 import { Modal } from '@tangle-network/ui-components/components/Modal';
 import { ModalContent } from '@tangle-network/ui-components/components/Modal/ModalContent';
@@ -10,6 +11,7 @@ import { TransactionInputCard } from '@tangle-network/ui-components/components/T
 import { useModal } from '@tangle-network/ui-components/hooks/useModal';
 import { Typography } from '@tangle-network/ui-components/typography/Typography';
 import { FC, useCallback, useEffect, useMemo, useState } from 'react';
+import useFormSetValue from '../../../hooks/useFormSetValue';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import { Address } from 'viem';
 import { useAccount } from 'wagmi';
@@ -31,9 +33,11 @@ import {
 } from '@tangle-network/tangle-shared-ui/data/graphql';
 import { TxStatus } from '@tangle-network/tangle-shared-ui/hooks/useContractWrite';
 import filterBy from '@tangle-network/tangle-shared-ui/utils/filterBy';
-import { formatUnits } from 'viem';
 import { Switcher } from '@tangle-network/ui-components/components/Switcher';
 import { CheckBox } from '@tangle-network/ui-components/components/CheckBox';
+import { BN } from '@polkadot/util';
+import OperatorListItem from '../../../components/Lists/OperatorListItem';
+import AssetListItem from '../../../components/Lists/AssetListItem';
 
 type CreateVaultFormFields = {
   operator: Address;
@@ -84,16 +88,7 @@ const CreateVaultForm: FC = () => {
     },
   });
 
-  const setValue = useCallback(
-    (...params: Parameters<typeof setFormValue>) => {
-      setFormValue(params[0], params[1], {
-        shouldDirty: true,
-        shouldValidate: true,
-        ...params[2],
-      });
-    },
-    [setFormValue],
-  );
+  const setValue = useFormSetValue(setFormValue);
 
   useEffect(() => {
     register('operator', { required: 'Operator is required' });
@@ -155,6 +150,11 @@ const CreateVaultForm: FC = () => {
     if (!selectedAsset || !assets) return null;
     return assets.get(selectedAsset) ?? null;
   }, [selectedAsset, assets]);
+
+  const selectedOperatorData = useMemo(() => {
+    if (!selectedOperator || !operators.length) return null;
+    return operators.find((op) => op.address === selectedOperator) ?? null;
+  }, [selectedOperator, operators]);
 
   const blueprintItems = useMemo(() => {
     return blueprints ?? [];
@@ -223,13 +223,14 @@ const CreateVaultForm: FC = () => {
   const handleAllBlueprintsChange = useCallback(
     (checked: boolean) => {
       setUseAllBlueprints(checked);
+      setValue('useAllBlueprints', checked);
       if (checked) {
         setSelectedBlueprintIds([]);
       } else {
         openBlueprintModal();
       }
     },
-    [openBlueprintModal],
+    [openBlueprintModal, setValue],
   );
 
   const displayError = useMemo(() => {
@@ -303,14 +304,31 @@ const CreateVaultForm: FC = () => {
                   {...(selectedOperator
                     ? {
                         renderBody: () => (
-                          <div className="flex flex-col">
-                            <span className="font-mono text-sm">
-                              {selectedOperator.slice(0, 8)}...
-                              {selectedOperator.slice(-6)}
-                            </span>
-                            <span className="text-xs text-mono-100">
-                              Operator
-                            </span>
+                          <div className="flex items-center gap-2">
+                            <Avatar
+                              size="md"
+                              theme="ethereum"
+                              value={selectedOperator}
+                            />
+                            <div className="flex flex-col">
+                              <Typography
+                                variant="h5"
+                                fw="bold"
+                                component="span"
+                                className="inline-block text-mono-200 dark:text-mono-40"
+                              >
+                                {shortenHex(selectedOperator)}
+                              </Typography>
+                              <Typography
+                                variant="body3"
+                                component="span"
+                                className="text-mono-120 dark:text-mono-100"
+                              >
+                                {selectedOperatorData
+                                  ? `${selectedOperatorData.delegationCount} total delegations`
+                                  : 'Operator'}
+                              </Typography>
+                            </div>
                           </div>
                         ),
                       }
@@ -327,13 +345,28 @@ const CreateVaultForm: FC = () => {
                   {...(selectedAssetData
                     ? {
                         renderBody: () => (
-                          <div className="flex flex-col">
-                            <span className="font-medium">
-                              {selectedAssetData.metadata.symbol}
-                            </span>
-                            <span className="text-xs text-mono-100">
-                              {selectedAssetData.metadata.name}
-                            </span>
+                          <div className="flex items-center gap-2">
+                            <TokenIcon
+                              name={selectedAssetData.metadata.symbol}
+                              size="lg"
+                            />
+                            <div className="flex flex-col">
+                              <Typography
+                                variant="h5"
+                                fw="bold"
+                                component="span"
+                                className="inline-block text-mono-200 dark:text-mono-40"
+                              >
+                                {selectedAssetData.metadata.symbol}
+                              </Typography>
+                              <Typography
+                                variant="body3"
+                                component="span"
+                                className="text-mono-120 dark:text-mono-100"
+                              >
+                                {selectedAssetData.metadata.name}
+                              </Typography>
+                            </div>
                           </div>
                         ),
                       }
@@ -438,17 +471,12 @@ const CreateVaultForm: FC = () => {
         descriptionWhenEmpty="No active operators found on this network."
         items={operators}
         isLoading={isLoadingOperators}
+        getItemKey={(item) => item.address}
         renderItem={(operator) => (
-          <div className="flex items-center justify-between w-full p-2">
-            <div className="flex flex-col">
-              <span className="font-mono text-sm">
-                {operator.address.slice(0, 10)}...{operator.address.slice(-8)}
-              </span>
-              <span className="text-xs text-mono-100">
-                {operator.delegationCount} delegations
-              </span>
-            </div>
-          </div>
+          <OperatorListItem
+            accountAddress={operator.address}
+            totalDelegations={operator.delegationCount}
+          />
         )}
       />
 
@@ -470,23 +498,15 @@ const CreateVaultForm: FC = () => {
         descriptionWhenEmpty="No restaking assets found on this network."
         items={assetList}
         isLoading={isLoadingAssets}
+        getItemKey={(item) => item.id}
         renderItem={(asset) => (
-          <div className="flex items-center justify-between w-full p-2">
-            <div className="flex flex-col">
-              <span className="font-medium">{asset.metadata.symbol}</span>
-              <span className="text-xs text-mono-100">
-                {asset.metadata.name}
-              </span>
-            </div>
-            <div className="flex flex-col items-end">
-              <span className="text-sm">
-                {asset.balance !== null
-                  ? formatUnits(asset.balance, asset.metadata.decimals)
-                  : '0'}
-              </span>
-              <span className="text-xs text-mono-100">Balance</span>
-            </div>
-          </div>
+          <AssetListItem
+            assetId={asset.id}
+            name={asset.metadata.name}
+            symbol={asset.metadata.symbol}
+            balance={new BN((asset.balance ?? BigInt(0)).toString())}
+            decimals={asset.metadata.decimals}
+          />
         )}
       />
 

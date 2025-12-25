@@ -22,7 +22,7 @@ import {
 } from 'react';
 import { twMerge } from 'tailwind-merge';
 import { Typography } from '../../typography';
-import { getRoundedAmountString, toFixed } from '../../utils';
+import { getRoundedAmountString, numberToString } from '../../utils';
 import { AdjustAmount } from '../BridgeInputs';
 import { Switcher } from '../Switcher';
 import { Tooltip, TooltipTrigger, TooltipBody } from '../Tooltip';
@@ -214,13 +214,11 @@ const TransactionMaxAmountButton = forwardRef<
     const onAmountChange = onAmountChangeProp ?? context.onAmountChange;
 
     const buttonCnt = useMemo(() => {
-      const amount =
-        typeof maxAmount === 'number'
-          ? toFixed(maxAmount, 5)
-          : EMPTY_VALUE_PLACEHOLDER;
-
+      // Pass raw amount to getRoundedAmountString which handles small amounts with "< 0.00001" format
       const formattedAmount =
-        typeof amount === 'number' ? getRoundedAmountString(amount, 5) : amount;
+        typeof maxAmount === 'number'
+          ? getRoundedAmountString(maxAmount, 5)
+          : EMPTY_VALUE_PLACEHOLDER;
 
       const tokenSym = tokenSymbol ?? '';
 
@@ -252,7 +250,7 @@ const TransactionMaxAmountButton = forwardRef<
             disabled={disabled}
             onClick={
               typeof maxAmount === 'number'
-                ? () => onAmountChange?.(`${toFixed(maxAmount, 5)}`)
+                ? () => onAmountChange?.(numberToString(maxAmount))
                 : undefined
             }
             Icon={

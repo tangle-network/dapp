@@ -4,6 +4,8 @@ import { ContractFunctionName, erc20Abi, PublicClient } from 'viem';
 import { z } from 'zod';
 import { cacheTokenMetadata } from '@tangle-network/dapp-config/tokenMetadata';
 
+const DEFAULT_CHAIN_ID = 1; // Fallback to Ethereum mainnet if chain ID unavailable
+
 type TokenMetadata = {
   id: EvmAddress;
   name: string;
@@ -119,8 +121,9 @@ const fetchErc20TokenMetadata = async (
           decimals: Number(decimalsResult.result),
         });
 
-        // Cache for future lookups
-        cacheTokenMetadata(id, {
+        // Cache for future lookups (chain-aware)
+        const chainId = viemPublicClient.chain?.id ?? DEFAULT_CHAIN_ID;
+        cacheTokenMetadata(chainId, id, {
           name: token.name,
           symbol: token.symbol,
           decimals: token.decimals,
@@ -187,8 +190,9 @@ const fetchErc20TokenMetadataWithIndividualCalls = async (
       };
       tokenMetadata[tokenAddress] = metadata;
 
-      // Cache for future lookups
-      cacheTokenMetadata(tokenAddress, {
+      // Cache for future lookups (chain-aware)
+      const chainId = viemPublicClient.chain?.id ?? DEFAULT_CHAIN_ID;
+      cacheTokenMetadata(chainId, tokenAddress, {
         name: nameResult,
         symbol: symbolResult,
         decimals: decimalsResult,

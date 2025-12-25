@@ -2,6 +2,7 @@ import { FC, useMemo } from 'react';
 import { BN } from '@polkadot/util';
 import { TokenIcon } from '@tangle-network/icons';
 import Spinner from '@tangle-network/icons/Spinner';
+import { useChainId } from 'wagmi';
 import HeaderCell from '@tangle-network/tangle-shared-ui/components/tables/HeaderCell';
 import TableCellWrapper from '@tangle-network/tangle-shared-ui/components/tables/TableCellWrapper';
 import TableStatus from '@tangle-network/tangle-shared-ui/components/tables/TableStatus';
@@ -59,13 +60,17 @@ const TABLE_ACTION_BUTTON_CLASS =
 const isFallbackSymbol = (symbol: string) =>
   symbol.startsWith('0x') || symbol.includes('...');
 
-const resolveTokenIconSymbol = (symbol: string, address: Address) => {
-  const cached = getCachedTokenMetadata(address);
+const resolveTokenIconSymbol = (
+  chainId: number,
+  symbol: string,
+  address: Address,
+) => {
+  const cached = getCachedTokenMetadata(chainId, address);
   const candidate = cached?.symbol ?? symbol;
   return isFallbackSymbol(candidate) ? null : candidate;
 };
 
-const getColumns = () => [
+const getColumns = (chainId: number) => [
   COLUMN_HELPER.accessor('id', {
     header: () => <HeaderCell title="Asset" />,
     cell: (props) => (
@@ -74,6 +79,7 @@ const getColumns = () => [
           <div className="flex items-center justify-center w-10 h-10">
             {(() => {
               const iconSymbol = resolveTokenIconSymbol(
+                chainId,
                 props.row.original.symbol,
                 props.row.original.tokenAddress,
               );
@@ -202,6 +208,8 @@ export const RestakingAssetsTable: FC<Props> = ({
   delegator,
   isLoading,
 }) => {
+  const chainId = useChainId();
+
   const protocolAssetMap = useMemo(() => {
     const map = new Map<string, RestakingAsset>();
     restakingAssets?.forEach((asset) => {
@@ -249,14 +257,14 @@ export const RestakingAssetsTable: FC<Props> = ({
       () =>
         ({
           data: tableData,
-          columns: getColumns(),
+          columns: getColumns(chainId),
           getCoreRowModel: getCoreRowModel(),
           getSortedRowModel: getSortedRowModel(),
           getPaginationRowModel: getPaginationRowModel(),
           autoResetPageIndex: false,
           enableSortingRemoval: false,
         }) satisfies TableOptions<RestakeAssetRow>,
-      [tableData],
+      [tableData, chainId],
     ),
   );
 

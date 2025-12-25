@@ -14,6 +14,7 @@ import { Table } from '@tangle-network/ui-components/components/Table';
 import { TableVariant } from '@tangle-network/ui-components/components/Table/types';
 import { Typography } from '@tangle-network/ui-components/typography/Typography';
 import pluralize from '@tangle-network/ui-components/utils/pluralize';
+import { getRoundedAmountString } from '@tangle-network/ui-components';
 import {
   createColumnHelper,
   getCoreRowModel,
@@ -62,16 +63,14 @@ const COLUMNS = [
   }),
   COLUMN_HELPER.accessor('balance', {
     header: () => (
-      <HeaderCell title="Shares" tooltip="Your liquid token balance" />
+      <HeaderCell title="Your Shares" tooltip="Your liquid token balance" />
     ),
     cell: (props) => {
       const formatted = formatUnits(props.getValue(), 18);
       return (
         <TableCellWrapper>
           <Typography variant="body1">
-            {Number(formatted).toLocaleString(undefined, {
-              maximumFractionDigits: 6,
-            })}
+            {getRoundedAmountString(Number(formatted), 5)}
           </Typography>
         </TableCellWrapper>
       );
@@ -97,9 +96,7 @@ const COLUMNS = [
       return (
         <TableCellWrapper>
           <Typography variant="body1">
-            {Number(formatted).toLocaleString(undefined, {
-              maximumFractionDigits: 6,
-            })}{' '}
+            {getRoundedAmountString(Number(formatted), 5)}{' '}
             {props.row.original.assetSymbol}
           </Typography>
         </TableCellWrapper>
@@ -121,9 +118,7 @@ const COLUMNS = [
             to={`${PagePath.LIQUID_STAKING_REDEEM}?vault=${row.original.vaultAddress}`}
             onClick={(e) => e.stopPropagation()}
           >
-            <Button variant="utility" className="uppercase body4">
-              Redeem
-            </Button>
+            <Button size="sm">Redeem</Button>
           </Link>
         </div>
       </TableCellWrapper>
@@ -202,7 +197,8 @@ const UserPositionsTable: FC = () => {
       const balance = balanceResult.result as bigint;
       if (balance <= BigInt(0)) return;
 
-      const assetInfo = assets?.get(vault.asset);
+      // Normalize to lowercase since indexer stores addresses in lowercase
+      const assetInfo = assets?.get(vault.asset.toLowerCase() as Address);
       const conversionResult = conversionResults?.[conversionIdx];
       conversionIdx++;
 

@@ -9,6 +9,8 @@ import LIQUID_DELEGATION_VAULT_ABI from '../../abi/liquidDelegationVault';
 
 export interface VaultRedeemParams {
   vaultAddress: Address;
+  /** The underlying asset token address for display in tx history */
+  asset: Address;
   shares: bigint;
   receiver: Address;
   controller: Address;
@@ -41,6 +43,12 @@ export const useVaultRedeem = () => {
       args: [params.shares, params.receiver, params.controller] as const,
     }),
     {
+      txName: 'liquid stake redeem',
+      txDetails: (params) =>
+        new Map([
+          ['Token', params.asset],
+          ['Shares', params.shares.toString()],
+        ]),
       getSuccessMessage: (_params) => `Successfully redeemed assets from vault`,
     },
   );

@@ -15,6 +15,7 @@ import { Table } from '@tangle-network/ui-components/components/Table';
 import { TableVariant } from '@tangle-network/ui-components/components/Table/types';
 import { Typography } from '@tangle-network/ui-components/typography/Typography';
 import pluralize from '@tangle-network/ui-components/utils/pluralize';
+import { getRoundedAmountString } from '@tangle-network/ui-components';
 import {
   createColumnHelper,
   getCoreRowModel,
@@ -35,8 +36,6 @@ const COLUMN_HELPER = createColumnHelper<VaultWithAssetInfo>();
 
 const shortenAddress = (address: Address) =>
   `${address.slice(0, 6)}...${address.slice(-4)}`;
-const TABLE_ACTION_BUTTON_CLASS =
-  'uppercase body4 font-semibold transition-all duration-200 bg-purple-10 dark:bg-purple-120 text-purple-70 dark:text-purple-40 hover:bg-purple-20 dark:hover:bg-purple-110 border border-purple-30 dark:border-purple-100';
 
 const COLUMNS = [
   COLUMN_HELPER.accessor('operator', {
@@ -78,9 +77,7 @@ const COLUMNS = [
       return (
         <TableCellWrapper>
           <Typography variant="body1">
-            {Number(formatted).toLocaleString(undefined, {
-              maximumFractionDigits: 4,
-            })}{' '}
+            {getRoundedAmountString(Number(formatted), 5)}{' '}
             {props.row.original.assetSymbol}
           </Typography>
         </TableCellWrapper>
@@ -95,7 +92,7 @@ const COLUMNS = [
   COLUMN_HELPER.accessor('totalSupply', {
     header: () => (
       <HeaderCell
-        title="Shares"
+        title="Total Shares"
         tooltip="Total liquid token shares outstanding"
       />
     ),
@@ -104,9 +101,7 @@ const COLUMNS = [
       return (
         <TableCellWrapper>
           <Typography variant="body1">
-            {Number(formatted).toLocaleString(undefined, {
-              maximumFractionDigits: 4,
-            })}
+            {getRoundedAmountString(Number(formatted), 5)}
           </Typography>
         </TableCellWrapper>
       );
@@ -116,19 +111,15 @@ const COLUMNS = [
     id: 'actions',
     header: () => null,
     cell: ({ row }) => (
-      <TableCellWrapper removeRightBorder className="p-3 justify-center">
-        <Link
-          to={`${PagePath.LIQUID_STAKING_DEPOSIT}?vault=${row.original.address}`}
-          onClick={(e) => e.stopPropagation()}
-        >
-          <Button
-            size="sm"
-            variant="utility"
-            className={TABLE_ACTION_BUTTON_CLASS}
+      <TableCellWrapper removeRightBorder>
+        <div className="flex items-center justify-end gap-2">
+          <Link
+            to={`${PagePath.LIQUID_STAKING_DEPOSIT}?vault=${row.original.address}`}
+            onClick={(e) => e.stopPropagation()}
           >
-            Deposit
-          </Button>
-        </Link>
+            <Button size="sm">Deposit</Button>
+          </Link>
+        </div>
       </TableCellWrapper>
     ),
     enableSorting: false,
@@ -144,7 +135,8 @@ const LiquidDelegationVaultsTable: FC = () => {
     if (!vaults) return null;
 
     return vaults.map((vault) => {
-      const assetInfo = assets?.get(vault.asset);
+      // Normalize to lowercase since indexer stores addresses in lowercase
+      const assetInfo = assets?.get(vault.asset.toLowerCase() as Address);
       return {
         ...vault,
         assetSymbol: assetInfo?.metadata.symbol ?? 'Unknown',

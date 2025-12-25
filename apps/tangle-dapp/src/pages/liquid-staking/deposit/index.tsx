@@ -2,6 +2,7 @@ import { calculateTypedChainId } from '@tangle-network/dapp-types/TypedChainId';
 import isDefined from '@tangle-network/dapp-types/utils/isDefined';
 import LockFillIcon from '@tangle-network/icons/LockFillIcon';
 import { LockLineIcon } from '@tangle-network/icons/LockLineIcon';
+import { TokenIcon } from '@tangle-network/icons';
 import ListModal from '@tangle-network/tangle-shared-ui/components/ListModal';
 import { Card } from '@tangle-network/ui-components';
 import Button from '@tangle-network/ui-components/components/buttons/Button';
@@ -10,9 +11,11 @@ import type { TextFieldInputProps } from '@tangle-network/ui-components/componen
 import { TransactionInputCard } from '@tangle-network/ui-components/components/TransactionInputCard';
 import { useModal } from '@tangle-network/ui-components/hooks/useModal';
 import { Typography } from '@tangle-network/ui-components/typography/Typography';
-import { FC, useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { FC, useCallback, useEffect, useMemo, useState } from 'react';
+import useFormSetValue from '../../../hooks/useFormSetValue';
 import { SubmitHandler, useForm } from 'react-hook-form';
-import { erc20Abi, parseUnits, formatUnits, Address } from 'viem';
+import { useSearchParams } from 'react-router';
+import { erc20Abi, parseUnits, formatUnits, Address, isAddress } from 'viem';
 import { useAccount, useChainId } from 'wagmi';
 import ErrorMessage from '../../../components/ErrorMessage';
 import ActionButtonBase from '../../../components/restaking/ActionButtonBase';
@@ -42,6 +45,7 @@ type DepositFormFields = {
 };
 
 const LiquidStakingDepositForm: FC = () => {
+  const [searchParams] = useSearchParams();
   const { address: userAddress } = useAccount();
   const chainId = useChainId();
   const _activeChain = useMemo(() => {
@@ -70,16 +74,7 @@ const LiquidStakingDepositForm: FC = () => {
     mode: 'onChange',
   });
 
-  const setValue = useCallback(
-    (...params: Parameters<typeof setFormValue>) => {
-      setFormValue(params[0], params[1], {
-        shouldDirty: true,
-        shouldValidate: true,
-        ...params[2],
-      });
-    },
-    [setFormValue],
-  );
+  const setValue = useFormSetValue(setFormValue);
 
   useEffect(() => {
     register('vaultAddress', { required: 'Vault is required' });
@@ -88,6 +83,23 @@ const LiquidStakingDepositForm: FC = () => {
   useEffect(() => {
     reset();
   }, [activeTypedChainId, reset]);
+
+  // Pre-select vault from URL query parameter
+  useEffect(() => {
+    const vaultParam = searchParams.get('vault');
+
+    if (!vaultParam || !vaults || !isAddress(vaultParam)) {
+      return;
+    }
+
+    const matchingVault = vaults.find(
+      (v) => v.address.toLowerCase() === vaultParam.toLowerCase(),
+    );
+
+    if (matchingVault) {
+      setValue('vaultAddress', matchingVault.address);
+    }
+  }, [searchParams, vaults, setValue]);
 
   const {
     status: vaultModalOpen,
@@ -117,12 +129,13 @@ const LiquidStakingDepositForm: FC = () => {
     if (!selectedVault || !assets) {
       return null;
     }
-    return assets.get(selectedVault.asset) ?? null;
+    // Normalize to lowercase since indexer stores addresses in lowercase
+    // but blockchain reads return checksummed (mixed-case) addresses
+    const normalizedAsset = selectedVault.asset.toLowerCase() as Address;
+    return assets.get(normalizedAsset) ?? null;
   }, [selectedVault, assets]);
 
   const spender = selectedVault?.address ?? null;
-
-  const approveLastErrorRef = useRef<Error | null>(null);
 
   const {
     status: approveTxStatus,
@@ -138,9 +151,6 @@ const LiquidStakingDepositForm: FC = () => {
     }),
     {
       txName: 'approve',
-      onError: (error) => {
-        approveLastErrorRef.current = error;
-      },
       getSuccessMessage: () => 'Approval successful',
     },
   );
@@ -155,7 +165,6 @@ const LiquidStakingDepositForm: FC = () => {
         return false;
       }
 
-      approveLastErrorRef.current = null;
       const firstAttempt = await executeApproveTx({
         token: vaultAsset.id,
         spender,
@@ -166,18 +175,9 @@ const LiquidStakingDepositForm: FC = () => {
         return true;
       }
 
-      // TS will narrow `ref.current` to `null` after assignment, even though the
-      // async write may set it via `onError`. Widen it back for the post-attempt check.
-      const message =
-        (approveLastErrorRef.current as Error | null)?.message?.toLowerCase() ??
-        '';
-      const looksLikeNonZeroAllowanceIssue =
-        message.includes('non-zero') && message.includes('allowance');
-
-      if (!looksLikeNonZeroAllowanceIssue) {
-        return false;
-      }
-
+      // Some tokens (e.g., USDT) require resetting allowance to zero before
+      // setting a new value. Instead of fragile error message parsing, we always
+      // try the reset-to-zero pattern on failure - this is safe for all tokens.
       const zeroAttempt = await executeApproveTx({
         token: vaultAsset.id,
         spender,
@@ -283,6 +283,7 @@ const LiquidStakingDepositForm: FC = () => {
         setTxStep('depositing');
         await executeDeposit({
           vaultAddress: vault,
+          asset: vaultAsset.id,
           amount: amountBigInt,
           receiver: userAddress,
         });
@@ -323,18 +324,29 @@ const LiquidStakingDepositForm: FC = () => {
                   {...(selectedVault
                     ? {
                         renderBody: () => (
-                          <div className="flex flex-col">
-                            <Typography variant="h5" fw="bold">
-                              {selectedVault.name} ({selectedVault.symbol})
-                            </Typography>
-                            <Typography
-                              variant="body3"
-                              className="text-mono-120 dark:text-mono-100"
-                            >
-                              {selectedVault.selectionMode === 0
-                                ? 'All blueprints'
-                                : `${selectedVault.blueprintIds.length} blueprints`}
-                            </Typography>
+                          <div className="flex items-center gap-2">
+                            <TokenIcon
+                              size="lg"
+                              name={
+                                vaultAsset?.metadata.symbol ??
+                                selectedVault.symbol
+                              }
+                            />
+                            <div className="flex flex-col">
+                              <Typography variant="h5" fw="bold">
+                                {vaultAsset?.metadata.symbol ??
+                                  selectedVault.symbol}{' '}
+                                Vault
+                              </Typography>
+                              <Typography
+                                variant="body3"
+                                className="text-mono-120 dark:text-mono-100"
+                              >
+                                {selectedVault.selectionMode === 0
+                                  ? 'All blueprints'
+                                  : `${selectedVault.blueprintIds.length} blueprints`}
+                              </Typography>
+                            </div>
                           </div>
                         ),
                       }
@@ -343,39 +355,25 @@ const LiquidStakingDepositForm: FC = () => {
                 <TransactionInputCard.MaxAmountButton
                   maxAmount={formattedMaxAmount}
                   tooltipBody="Available Balance"
-                  Icon={
-                    useRef({
+                  Icon={useMemo(
+                    () => ({
                       enabled: <LockLineIcon />,
                       disabled: <LockFillIcon />,
-                    }).current
-                  }
-                  onClick={() => {
-                    if (formattedMaxAmount !== undefined) {
-                      setValue('amount', formattedMaxAmount.toString(), {
-                        shouldValidate: true,
-                      });
-                    }
+                    }),
+                    [],
+                  )}
+                  onAmountChange={(value) => {
+                    setValue('amount', value, { shouldValidate: true });
                   }}
                 />
               </TransactionInputCard.Header>
 
               <TransactionInputCard.Body
                 customAmountProps={customAmountProps}
-                tokenSelectorProps={
-                  useRef({
-                    placeholder: <AssetPlaceholder />,
-                    isDisabled: true,
-                    ...(vaultAsset
-                      ? {
-                          renderBody: () => (
-                            <Typography variant="h5" fw="bold">
-                              {vaultAsset.metadata.symbol}
-                            </Typography>
-                          ),
-                        }
-                      : {}),
-                  }).current
-                }
+                tokenSelectorProps={{
+                  placeholder: <AssetPlaceholder />,
+                  isDisabled: true,
+                }}
               />
             </TransactionInputCard.Root>
 
@@ -471,7 +469,7 @@ const LiquidStakingDepositForm: FC = () => {
         isLoading={isLoadingVaults}
         getItemKey={(vault) => vault.address}
         renderItem={(vault) => {
-          const asset = assets?.get(vault.asset);
+          const asset = assets?.get(vault.asset.toLowerCase() as Address);
           const tvl = formatUnits(
             vault.totalAssets,
             asset?.metadata.decimals ?? 18,

@@ -28,6 +28,7 @@ import {
   Typography,
 } from '@tangle-network/ui-components';
 import { EvmAddress } from '@tangle-network/ui-components/types/address';
+import addCommasToNumber from '@tangle-network/ui-components/utils/addCommasToNumber';
 import {
   Modal,
   ModalContent,
@@ -80,22 +81,29 @@ const DetailRow: FC<DetailRowProps> = ({
   const isAddress =
     typeof value === 'string' &&
     (isEvmAddress(value) || isSubstrateAddress(value));
-  const isAmountKey = /amount|value|stake|deposit|delegation/i.test(label);
+  const isAmountKey = /amount|value|stake|deposit|delegation|shares/i.test(
+    label,
+  );
+  const isSharesKey = /shares/i.test(label);
 
   const formattedValue = useMemo(() => {
     if (typeof value === 'number') {
       // For amount keys, format with decimals; otherwise just add commas
       if (isAmountKey) {
         const decimals = tokenMetadata?.decimals ?? 18;
-        const symbol = tokenMetadata?.symbol ?? nativeTokenSymbol;
         const formatted = formatDisplayAmount(
           new BN(value),
           decimals,
           AmountFormatStyle.SHORT,
         );
+        // Shares don't need a symbol
+        if (isSharesKey) {
+          return formatted;
+        }
+        const symbol = tokenMetadata?.symbol ?? nativeTokenSymbol;
         return `${formatted} ${symbol}`;
       }
-      return value.toLocaleString();
+      return addCommasToNumber(value);
     }
 
     if (typeof value === 'string' && isEvmAddress(value)) {
@@ -110,12 +118,16 @@ const DetailRow: FC<DetailRowProps> = ({
       // For amount-related keys with numeric strings, format as token amounts
       if (isAmountKey && isNumericString(value)) {
         const decimals = tokenMetadata?.decimals ?? 18;
-        const symbol = tokenMetadata?.symbol ?? nativeTokenSymbol;
         const formatted = formatDisplayAmount(
           new BN(value),
           decimals,
           AmountFormatStyle.SHORT,
         );
+        // Shares don't need a symbol
+        if (isSharesKey) {
+          return formatted;
+        }
+        const symbol = tokenMetadata?.symbol ?? nativeTokenSymbol;
         return `${formatted} ${symbol}`;
       }
       return value;
@@ -123,14 +135,18 @@ const DetailRow: FC<DetailRowProps> = ({
 
     // BN value - format with decimals
     const decimals = tokenMetadata?.decimals ?? 18;
-    const symbol = tokenMetadata?.symbol ?? nativeTokenSymbol;
     const formatted = formatDisplayAmount(
       value,
       decimals,
       AmountFormatStyle.SHORT,
     );
+    // Shares don't need a symbol
+    if (isSharesKey) {
+      return formatted;
+    }
+    const symbol = tokenMetadata?.symbol ?? nativeTokenSymbol;
     return `${formatted} ${symbol}`;
-  }, [value, isAmountKey, tokenMetadata, nativeTokenSymbol]);
+  }, [value, isAmountKey, isSharesKey, tokenMetadata, nativeTokenSymbol]);
 
   const rawValue = useMemo(() => {
     if (BN.isBN(value)) {
@@ -183,6 +199,8 @@ const TxConfirmationModal: FC<Props> = ({
   const [activeHash, setActiveHash] = useState<string | null>(null);
 
   // Prevent reopening the modal for the same tx after a user dismisses it.
+  // Limit size to prevent unbounded memory growth.
+  const MAX_DISMISSED_HASHES = 100;
   const dismissedHashes = useRef<Set<string>>(new Set());
 
   const relevantTransactions = useMemo(() => {
@@ -241,17 +259,22 @@ const TxConfirmationModal: FC<Props> = ({
   }, [autoOpen, newestPending]);
 
   // Auto-close on success after a short delay.
+  // Capture tx.hash to ensure we only close if the same transaction is still active.
   useEffect(() => {
     if (!open || tx === null || tx.status !== 'finalized') {
       return;
     }
 
+    const currentHash = tx.hash;
     const timer = window.setTimeout(() => {
-      setOpen(false);
+      // Only close if the same transaction is still being displayed
+      if (activeHash === currentHash) {
+        setOpen(false);
+      }
     }, autoCloseSuccessMs);
 
     return () => window.clearTimeout(timer);
-  }, [autoCloseSuccessMs, open, tx]);
+  }, [autoCloseSuccessMs, open, tx, activeHash]);
 
   const explorerUrl = useMemo(() => {
     if (tx === null) {
@@ -268,6 +291,14 @@ const TxConfirmationModal: FC<Props> = ({
 
   const close = () => {
     if (activeHash !== null) {
+      // Limit dismissed hashes to prevent unbounded memory growth
+      if (dismissedHashes.current.size >= MAX_DISMISSED_HASHES) {
+        // Remove oldest entry (first item in Set iteration order)
+        const firstKey = dismissedHashes.current.values().next().value;
+        if (firstKey !== undefined) {
+          dismissedHashes.current.delete(firstKey);
+        }
+      }
       dismissedHashes.current.add(activeHash);
     }
     setOpen(false);
