@@ -147,6 +147,7 @@ const MigrationClaimPage: FC = () => {
     isConfirming,
     isConfirmed,
     error: submitError,
+    switchedToWalletMode,
   } = useSubmitClaim();
 
   // Validate recipient address
@@ -815,6 +816,30 @@ const MigrationClaimPage: FC = () => {
                   exit={{ opacity: 0, y: -10 }}
                   className="space-y-3"
                 >
+                  {switchedToWalletMode && (
+                    <div className="p-4 rounded-xl bg-orange-500/10 border border-orange-500/20">
+                      <div className="flex items-start gap-3">
+                        <Alert className="w-5 h-5 text-orange-400 flex-shrink-0 mt-0.5" />
+                        <div>
+                          <Typography
+                            variant="body2"
+                            fw="semibold"
+                            className="text-orange-400"
+                          >
+                            Wallet Mode Active
+                          </Typography>
+                          <Typography
+                            variant="body2"
+                            className="text-orange-400/80 mt-1"
+                          >
+                            The relayer is unavailable. You will pay gas fees
+                            directly from your wallet.
+                          </Typography>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+
                   {submitError && (
                     <div className="p-4 rounded-xl bg-red-500/10 border border-red-500/20">
                       <div className="flex items-start gap-3">
@@ -837,6 +862,7 @@ const MigrationClaimPage: FC = () => {
                       </div>
                     </div>
                   )}
+
                   <Button
                     isFullWidth
                     onClick={handleSubmitClaim}
@@ -845,7 +871,9 @@ const MigrationClaimPage: FC = () => {
                       isConfirming ? 'Confirming...' : 'Submitting...'
                     }
                   >
-                    Claim {Number(formattedAmount).toLocaleString()} TNT
+                    {switchedToWalletMode
+                      ? `Claim ${Number(formattedAmount).toLocaleString()} TNT (Pay Gas)`
+                      : `Claim ${Number(formattedAmount).toLocaleString()} TNT`}
                   </Button>
                 </motion.div>
               )}
