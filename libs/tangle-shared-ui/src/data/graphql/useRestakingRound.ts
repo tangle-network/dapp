@@ -4,11 +4,14 @@
  */
 
 import { useQuery } from '@tanstack/react-query';
+import { useAccount, useChainId } from 'wagmi';
 import {
   executeEnvioGraphQL,
   gql,
   EnvioNetwork,
+  getEnvioNetworkFromChainId,
 } from '../../utils/executeEnvioGraphQL';
+import useNetworkStore from '../../context/useNetworkStore';
 
 // Restaking round type
 export interface RestakingRound {
@@ -68,10 +71,15 @@ export const useRestakingRound = (options?: {
   enabled?: boolean;
 }) => {
   const { network, enabled = true } = options ?? {};
+  const chainId = useChainId();
+  const { isConnected } = useAccount();
+  const networkChainId = useNetworkStore((store) => store.network2?.evmChainId);
+  const activeChainId = isConnected ? chainId : (networkChainId ?? chainId);
+  const resolvedNetwork = network ?? getEnvioNetworkFromChainId(activeChainId);
 
   return useQuery({
-    queryKey: ['envio', 'restakingRound', network],
-    queryFn: () => fetchCurrentRound(network),
+    queryKey: ['envio', 'restakingRound', resolvedNetwork],
+    queryFn: () => fetchCurrentRound(resolvedNetwork),
     enabled,
     staleTime: 30_000, // 30 seconds
     refetchInterval: 60_000, // Refetch every minute

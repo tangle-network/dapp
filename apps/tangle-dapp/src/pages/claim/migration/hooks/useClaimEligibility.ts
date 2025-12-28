@@ -29,751 +29,751 @@ const MIGRATION_RPC_URL = import.meta.env.VITE_MIGRATION_RPC_URL as
 // TangleMigration contract ABI (partial - only functions we use)
 const TANGLE_MIGRATION_ABI = [
   {
-    "type": "constructor",
-    "inputs": [
+    type: 'constructor',
+    inputs: [
       {
-        "name": "_token",
-        "type": "address",
-        "internalType": "address"
+        name: '_token',
+        type: 'address',
+        internalType: 'address',
       },
       {
-        "name": "_merkleRoot",
-        "type": "bytes32",
-        "internalType": "bytes32"
+        name: '_merkleRoot',
+        type: 'bytes32',
+        internalType: 'bytes32',
       },
       {
-        "name": "_zkVerifier",
-        "type": "address",
-        "internalType": "address"
+        name: '_zkVerifier',
+        type: 'address',
+        internalType: 'address',
       },
       {
-        "name": "_owner",
-        "type": "address",
-        "internalType": "address"
-      }
+        name: '_owner',
+        type: 'address',
+        internalType: 'address',
+      },
     ],
-    "stateMutability": "nonpayable"
+    stateMutability: 'nonpayable',
   },
   {
-    "type": "function",
-    "name": "adminClaim",
-    "inputs": [
+    type: 'function',
+    name: 'adminClaim',
+    inputs: [
       {
-        "name": "pubkey",
-        "type": "bytes32",
-        "internalType": "bytes32"
+        name: 'pubkey',
+        type: 'bytes32',
+        internalType: 'bytes32',
       },
       {
-        "name": "amount",
-        "type": "uint256",
-        "internalType": "uint256"
+        name: 'amount',
+        type: 'uint256',
+        internalType: 'uint256',
       },
       {
-        "name": "merkleProof",
-        "type": "bytes32[]",
-        "internalType": "bytes32[]"
+        name: 'merkleProof',
+        type: 'bytes32[]',
+        internalType: 'bytes32[]',
       },
       {
-        "name": "recipient",
-        "type": "address",
-        "internalType": "address"
-      }
+        name: 'recipient',
+        type: 'address',
+        internalType: 'address',
+      },
     ],
-    "outputs": [],
-    "stateMutability": "nonpayable"
+    outputs: [],
+    stateMutability: 'nonpayable',
   },
   {
-    "type": "function",
-    "name": "adminClaimDeadline",
-    "inputs": [],
-    "outputs": [
+    type: 'function',
+    name: 'adminClaimDeadline',
+    inputs: [],
+    outputs: [
       {
-        "name": "",
-        "type": "uint256",
-        "internalType": "uint256"
-      }
+        name: '',
+        type: 'uint256',
+        internalType: 'uint256',
+      },
     ],
-    "stateMutability": "view"
+    stateMutability: 'view',
   },
   {
-    "type": "function",
-    "name": "claimDeadline",
-    "inputs": [],
-    "outputs": [
+    type: 'function',
+    name: 'claimDeadline',
+    inputs: [],
+    outputs: [
       {
-        "name": "",
-        "type": "uint256",
-        "internalType": "uint256"
-      }
+        name: '',
+        type: 'uint256',
+        internalType: 'uint256',
+      },
     ],
-    "stateMutability": "view"
+    stateMutability: 'view',
   },
   {
-    "type": "function",
-    "name": "claimWithZKProof",
-    "inputs": [
+    type: 'function',
+    name: 'claimWithZKProof',
+    inputs: [
       {
-        "name": "pubkey",
-        "type": "bytes32",
-        "internalType": "bytes32"
+        name: 'pubkey',
+        type: 'bytes32',
+        internalType: 'bytes32',
       },
       {
-        "name": "amount",
-        "type": "uint256",
-        "internalType": "uint256"
+        name: 'amount',
+        type: 'uint256',
+        internalType: 'uint256',
       },
       {
-        "name": "merkleProof",
-        "type": "bytes32[]",
-        "internalType": "bytes32[]"
+        name: 'merkleProof',
+        type: 'bytes32[]',
+        internalType: 'bytes32[]',
       },
       {
-        "name": "zkProof",
-        "type": "bytes",
-        "internalType": "bytes"
+        name: 'zkProof',
+        type: 'bytes',
+        internalType: 'bytes',
       },
       {
-        "name": "recipient",
-        "type": "address",
-        "internalType": "address"
-      }
+        name: 'recipient',
+        type: 'address',
+        internalType: 'address',
+      },
     ],
-    "outputs": [],
-    "stateMutability": "nonpayable"
+    outputs: [],
+    stateMutability: 'nonpayable',
   },
   {
-    "type": "function",
-    "name": "claimed",
-    "inputs": [
+    type: 'function',
+    name: 'claimed',
+    inputs: [
       {
-        "name": "",
-        "type": "bytes32",
-        "internalType": "bytes32"
-      }
+        name: '',
+        type: 'bytes32',
+        internalType: 'bytes32',
+      },
     ],
-    "outputs": [
+    outputs: [
       {
-        "name": "",
-        "type": "uint256",
-        "internalType": "uint256"
-      }
+        name: '',
+        type: 'uint256',
+        internalType: 'uint256',
+      },
     ],
-    "stateMutability": "view"
+    stateMutability: 'view',
   },
   {
-    "type": "function",
-    "name": "emergencyWithdraw",
-    "inputs": [
+    type: 'function',
+    name: 'emergencyWithdraw',
+    inputs: [
       {
-        "name": "_token",
-        "type": "address",
-        "internalType": "address"
+        name: '_token',
+        type: 'address',
+        internalType: 'address',
       },
       {
-        "name": "_amount",
-        "type": "uint256",
-        "internalType": "uint256"
-      }
+        name: '_amount',
+        type: 'uint256',
+        internalType: 'uint256',
+      },
     ],
-    "outputs": [],
-    "stateMutability": "nonpayable"
+    outputs: [],
+    stateMutability: 'nonpayable',
   },
   {
-    "type": "function",
-    "name": "getClaimedAmount",
-    "inputs": [
+    type: 'function',
+    name: 'getClaimedAmount',
+    inputs: [
       {
-        "name": "pubkey",
-        "type": "bytes32",
-        "internalType": "bytes32"
-      }
+        name: 'pubkey',
+        type: 'bytes32',
+        internalType: 'bytes32',
+      },
     ],
-    "outputs": [
+    outputs: [
       {
-        "name": "",
-        "type": "uint256",
-        "internalType": "uint256"
-      }
+        name: '',
+        type: 'uint256',
+        internalType: 'uint256',
+      },
     ],
-    "stateMutability": "view"
+    stateMutability: 'view',
   },
   {
-    "type": "function",
-    "name": "lockFactory",
-    "inputs": [],
-    "outputs": [
+    type: 'function',
+    name: 'lockFactory',
+    inputs: [],
+    outputs: [
       {
-        "name": "",
-        "type": "address",
-        "internalType": "contract TNTLockFactory"
-      }
+        name: '',
+        type: 'address',
+        internalType: 'contract TNTLockFactory',
+      },
     ],
-    "stateMutability": "view"
+    stateMutability: 'view',
   },
   {
-    "type": "function",
-    "name": "merkleRoot",
-    "inputs": [],
-    "outputs": [
+    type: 'function',
+    name: 'merkleRoot',
+    inputs: [],
+    outputs: [
       {
-        "name": "",
-        "type": "bytes32",
-        "internalType": "bytes32"
-      }
+        name: '',
+        type: 'bytes32',
+        internalType: 'bytes32',
+      },
     ],
-    "stateMutability": "view"
+    stateMutability: 'view',
   },
   {
-    "type": "function",
-    "name": "owner",
-    "inputs": [],
-    "outputs": [
+    type: 'function',
+    name: 'owner',
+    inputs: [],
+    outputs: [
       {
-        "name": "",
-        "type": "address",
-        "internalType": "address"
-      }
+        name: '',
+        type: 'address',
+        internalType: 'address',
+      },
     ],
-    "stateMutability": "view"
+    stateMutability: 'view',
   },
   {
-    "type": "function",
-    "name": "paused",
-    "inputs": [],
-    "outputs": [
+    type: 'function',
+    name: 'paused',
+    inputs: [],
+    outputs: [
       {
-        "name": "",
-        "type": "bool",
-        "internalType": "bool"
-      }
+        name: '',
+        type: 'bool',
+        internalType: 'bool',
+      },
     ],
-    "stateMutability": "view"
+    stateMutability: 'view',
   },
   {
-    "type": "function",
-    "name": "reduceAdminClaimDeadline",
-    "inputs": [
+    type: 'function',
+    name: 'reduceAdminClaimDeadline',
+    inputs: [
       {
-        "name": "_newDeadline",
-        "type": "uint256",
-        "internalType": "uint256"
-      }
+        name: '_newDeadline',
+        type: 'uint256',
+        internalType: 'uint256',
+      },
     ],
-    "outputs": [],
-    "stateMutability": "nonpayable"
+    outputs: [],
+    stateMutability: 'nonpayable',
   },
   {
-    "type": "function",
-    "name": "renounceOwnership",
-    "inputs": [],
-    "outputs": [],
-    "stateMutability": "nonpayable"
+    type: 'function',
+    name: 'renounceOwnership',
+    inputs: [],
+    outputs: [],
+    stateMutability: 'nonpayable',
   },
   {
-    "type": "function",
-    "name": "setClaimDeadline",
-    "inputs": [
+    type: 'function',
+    name: 'setClaimDeadline',
+    inputs: [
       {
-        "name": "_deadline",
-        "type": "uint256",
-        "internalType": "uint256"
-      }
+        name: '_deadline',
+        type: 'uint256',
+        internalType: 'uint256',
+      },
     ],
-    "outputs": [],
-    "stateMutability": "nonpayable"
+    outputs: [],
+    stateMutability: 'nonpayable',
   },
   {
-    "type": "function",
-    "name": "setLockConfig",
-    "inputs": [
+    type: 'function',
+    name: 'setLockConfig',
+    inputs: [
       {
-        "name": "_lockFactory",
-        "type": "address",
-        "internalType": "address"
+        name: '_lockFactory',
+        type: 'address',
+        internalType: 'address',
       },
       {
-        "name": "_unlockTimestamp",
-        "type": "uint64",
-        "internalType": "uint64"
+        name: '_unlockTimestamp',
+        type: 'uint64',
+        internalType: 'uint64',
       },
       {
-        "name": "_unlockedBps",
-        "type": "uint16",
-        "internalType": "uint16"
-      }
+        name: '_unlockedBps',
+        type: 'uint16',
+        internalType: 'uint16',
+      },
     ],
-    "outputs": [],
-    "stateMutability": "nonpayable"
+    outputs: [],
+    stateMutability: 'nonpayable',
   },
   {
-    "type": "function",
-    "name": "setMerkleRoot",
-    "inputs": [
+    type: 'function',
+    name: 'setMerkleRoot',
+    inputs: [
       {
-        "name": "_merkleRoot",
-        "type": "bytes32",
-        "internalType": "bytes32"
-      }
+        name: '_merkleRoot',
+        type: 'bytes32',
+        internalType: 'bytes32',
+      },
     ],
-    "outputs": [],
-    "stateMutability": "nonpayable"
+    outputs: [],
+    stateMutability: 'nonpayable',
   },
   {
-    "type": "function",
-    "name": "setPaused",
-    "inputs": [
+    type: 'function',
+    name: 'setPaused',
+    inputs: [
       {
-        "name": "_paused",
-        "type": "bool",
-        "internalType": "bool"
-      }
+        name: '_paused',
+        type: 'bool',
+        internalType: 'bool',
+      },
     ],
-    "outputs": [],
-    "stateMutability": "nonpayable"
+    outputs: [],
+    stateMutability: 'nonpayable',
   },
   {
-    "type": "function",
-    "name": "setZKVerifier",
-    "inputs": [
+    type: 'function',
+    name: 'setZKVerifier',
+    inputs: [
       {
-        "name": "_zkVerifier",
-        "type": "address",
-        "internalType": "address"
-      }
+        name: '_zkVerifier',
+        type: 'address',
+        internalType: 'address',
+      },
     ],
-    "outputs": [],
-    "stateMutability": "nonpayable"
+    outputs: [],
+    stateMutability: 'nonpayable',
   },
   {
-    "type": "function",
-    "name": "token",
-    "inputs": [],
-    "outputs": [
+    type: 'function',
+    name: 'token',
+    inputs: [],
+    outputs: [
       {
-        "name": "",
-        "type": "address",
-        "internalType": "contract IERC20"
-      }
+        name: '',
+        type: 'address',
+        internalType: 'contract IERC20',
+      },
     ],
-    "stateMutability": "view"
+    stateMutability: 'view',
   },
   {
-    "type": "function",
-    "name": "totalClaimed",
-    "inputs": [],
-    "outputs": [
+    type: 'function',
+    name: 'totalClaimed',
+    inputs: [],
+    outputs: [
       {
-        "name": "",
-        "type": "uint256",
-        "internalType": "uint256"
-      }
+        name: '',
+        type: 'uint256',
+        internalType: 'uint256',
+      },
     ],
-    "stateMutability": "view"
+    stateMutability: 'view',
   },
   {
-    "type": "function",
-    "name": "transferOwnership",
-    "inputs": [
+    type: 'function',
+    name: 'transferOwnership',
+    inputs: [
       {
-        "name": "newOwner",
-        "type": "address",
-        "internalType": "address"
-      }
+        name: 'newOwner',
+        type: 'address',
+        internalType: 'address',
+      },
     ],
-    "outputs": [],
-    "stateMutability": "nonpayable"
+    outputs: [],
+    stateMutability: 'nonpayable',
   },
   {
-    "type": "function",
-    "name": "unlockTimestamp",
-    "inputs": [],
-    "outputs": [
+    type: 'function',
+    name: 'unlockTimestamp',
+    inputs: [],
+    outputs: [
       {
-        "name": "",
-        "type": "uint64",
-        "internalType": "uint64"
-      }
+        name: '',
+        type: 'uint64',
+        internalType: 'uint64',
+      },
     ],
-    "stateMutability": "view"
+    stateMutability: 'view',
   },
   {
-    "type": "function",
-    "name": "unlockedBps",
-    "inputs": [],
-    "outputs": [
+    type: 'function',
+    name: 'unlockedBps',
+    inputs: [],
+    outputs: [
       {
-        "name": "",
-        "type": "uint16",
-        "internalType": "uint16"
-      }
+        name: '',
+        type: 'uint16',
+        internalType: 'uint16',
+      },
     ],
-    "stateMutability": "view"
+    stateMutability: 'view',
   },
   {
-    "type": "function",
-    "name": "verifyMerkleProof",
-    "inputs": [
+    type: 'function',
+    name: 'verifyMerkleProof',
+    inputs: [
       {
-        "name": "pubkey",
-        "type": "bytes32",
-        "internalType": "bytes32"
+        name: 'pubkey',
+        type: 'bytes32',
+        internalType: 'bytes32',
       },
       {
-        "name": "amount",
-        "type": "uint256",
-        "internalType": "uint256"
+        name: 'amount',
+        type: 'uint256',
+        internalType: 'uint256',
       },
       {
-        "name": "merkleProof",
-        "type": "bytes32[]",
-        "internalType": "bytes32[]"
-      }
+        name: 'merkleProof',
+        type: 'bytes32[]',
+        internalType: 'bytes32[]',
+      },
     ],
-    "outputs": [
+    outputs: [
       {
-        "name": "valid",
-        "type": "bool",
-        "internalType": "bool"
-      }
+        name: 'valid',
+        type: 'bool',
+        internalType: 'bool',
+      },
     ],
-    "stateMutability": "view"
+    stateMutability: 'view',
   },
   {
-    "type": "function",
-    "name": "zkVerifier",
-    "inputs": [],
-    "outputs": [
+    type: 'function',
+    name: 'zkVerifier',
+    inputs: [],
+    outputs: [
       {
-        "name": "",
-        "type": "address",
-        "internalType": "contract IZKVerifier"
-      }
+        name: '',
+        type: 'address',
+        internalType: 'contract IZKVerifier',
+      },
     ],
-    "stateMutability": "view"
+    stateMutability: 'view',
   },
   {
-    "type": "event",
-    "name": "AdminClaimDeadlineUpdated",
-    "inputs": [
+    type: 'event',
+    name: 'AdminClaimDeadlineUpdated',
+    inputs: [
       {
-        "name": "oldDeadline",
-        "type": "uint256",
-        "indexed": false,
-        "internalType": "uint256"
+        name: 'oldDeadline',
+        type: 'uint256',
+        indexed: false,
+        internalType: 'uint256',
       },
       {
-        "name": "newDeadline",
-        "type": "uint256",
-        "indexed": false,
-        "internalType": "uint256"
-      }
+        name: 'newDeadline',
+        type: 'uint256',
+        indexed: false,
+        internalType: 'uint256',
+      },
     ],
-    "anonymous": false
+    anonymous: false,
   },
   {
-    "type": "event",
-    "name": "AdminClaimed",
-    "inputs": [
+    type: 'event',
+    name: 'AdminClaimed',
+    inputs: [
       {
-        "name": "pubkey",
-        "type": "bytes32",
-        "indexed": true,
-        "internalType": "bytes32"
+        name: 'pubkey',
+        type: 'bytes32',
+        indexed: true,
+        internalType: 'bytes32',
       },
       {
-        "name": "recipient",
-        "type": "address",
-        "indexed": true,
-        "internalType": "address"
+        name: 'recipient',
+        type: 'address',
+        indexed: true,
+        internalType: 'address',
       },
       {
-        "name": "amount",
-        "type": "uint256",
-        "indexed": false,
-        "internalType": "uint256"
-      }
+        name: 'amount',
+        type: 'uint256',
+        indexed: false,
+        internalType: 'uint256',
+      },
     ],
-    "anonymous": false
+    anonymous: false,
   },
   {
-    "type": "event",
-    "name": "ClaimDeadlineUpdated",
-    "inputs": [
+    type: 'event',
+    name: 'ClaimDeadlineUpdated',
+    inputs: [
       {
-        "name": "oldDeadline",
-        "type": "uint256",
-        "indexed": false,
-        "internalType": "uint256"
+        name: 'oldDeadline',
+        type: 'uint256',
+        indexed: false,
+        internalType: 'uint256',
       },
       {
-        "name": "newDeadline",
-        "type": "uint256",
-        "indexed": false,
-        "internalType": "uint256"
-      }
+        name: 'newDeadline',
+        type: 'uint256',
+        indexed: false,
+        internalType: 'uint256',
+      },
     ],
-    "anonymous": false
+    anonymous: false,
   },
   {
-    "type": "event",
-    "name": "Claimed",
-    "inputs": [
+    type: 'event',
+    name: 'Claimed',
+    inputs: [
       {
-        "name": "pubkey",
-        "type": "bytes32",
-        "indexed": true,
-        "internalType": "bytes32"
+        name: 'pubkey',
+        type: 'bytes32',
+        indexed: true,
+        internalType: 'bytes32',
       },
       {
-        "name": "recipient",
-        "type": "address",
-        "indexed": true,
-        "internalType": "address"
+        name: 'recipient',
+        type: 'address',
+        indexed: true,
+        internalType: 'address',
       },
       {
-        "name": "amount",
-        "type": "uint256",
-        "indexed": false,
-        "internalType": "uint256"
+        name: 'amount',
+        type: 'uint256',
+        indexed: false,
+        internalType: 'uint256',
       },
       {
-        "name": "unlockedAmount",
-        "type": "uint256",
-        "indexed": false,
-        "internalType": "uint256"
+        name: 'unlockedAmount',
+        type: 'uint256',
+        indexed: false,
+        internalType: 'uint256',
       },
       {
-        "name": "lockedAmount",
-        "type": "uint256",
-        "indexed": false,
-        "internalType": "uint256"
+        name: 'lockedAmount',
+        type: 'uint256',
+        indexed: false,
+        internalType: 'uint256',
       },
       {
-        "name": "lock",
-        "type": "address",
-        "indexed": false,
-        "internalType": "address"
-      }
+        name: 'lock',
+        type: 'address',
+        indexed: false,
+        internalType: 'address',
+      },
     ],
-    "anonymous": false
+    anonymous: false,
   },
   {
-    "type": "event",
-    "name": "EmergencyWithdraw",
-    "inputs": [
+    type: 'event',
+    name: 'EmergencyWithdraw',
+    inputs: [
       {
-        "name": "token",
-        "type": "address",
-        "indexed": false,
-        "internalType": "address"
+        name: 'token',
+        type: 'address',
+        indexed: false,
+        internalType: 'address',
       },
       {
-        "name": "amount",
-        "type": "uint256",
-        "indexed": false,
-        "internalType": "uint256"
-      }
+        name: 'amount',
+        type: 'uint256',
+        indexed: false,
+        internalType: 'uint256',
+      },
     ],
-    "anonymous": false
+    anonymous: false,
   },
   {
-    "type": "event",
-    "name": "LockConfigUpdated",
-    "inputs": [
+    type: 'event',
+    name: 'LockConfigUpdated',
+    inputs: [
       {
-        "name": "lockFactory",
-        "type": "address",
-        "indexed": false,
-        "internalType": "address"
+        name: 'lockFactory',
+        type: 'address',
+        indexed: false,
+        internalType: 'address',
       },
       {
-        "name": "unlockTimestamp",
-        "type": "uint64",
-        "indexed": false,
-        "internalType": "uint64"
+        name: 'unlockTimestamp',
+        type: 'uint64',
+        indexed: false,
+        internalType: 'uint64',
       },
       {
-        "name": "unlockedBps",
-        "type": "uint16",
-        "indexed": false,
-        "internalType": "uint16"
-      }
+        name: 'unlockedBps',
+        type: 'uint16',
+        indexed: false,
+        internalType: 'uint16',
+      },
     ],
-    "anonymous": false
+    anonymous: false,
   },
   {
-    "type": "event",
-    "name": "MerkleRootUpdated",
-    "inputs": [
+    type: 'event',
+    name: 'MerkleRootUpdated',
+    inputs: [
       {
-        "name": "oldRoot",
-        "type": "bytes32",
-        "indexed": false,
-        "internalType": "bytes32"
+        name: 'oldRoot',
+        type: 'bytes32',
+        indexed: false,
+        internalType: 'bytes32',
       },
       {
-        "name": "newRoot",
-        "type": "bytes32",
-        "indexed": false,
-        "internalType": "bytes32"
-      }
+        name: 'newRoot',
+        type: 'bytes32',
+        indexed: false,
+        internalType: 'bytes32',
+      },
     ],
-    "anonymous": false
+    anonymous: false,
   },
   {
-    "type": "event",
-    "name": "OwnershipTransferred",
-    "inputs": [
+    type: 'event',
+    name: 'OwnershipTransferred',
+    inputs: [
       {
-        "name": "previousOwner",
-        "type": "address",
-        "indexed": true,
-        "internalType": "address"
+        name: 'previousOwner',
+        type: 'address',
+        indexed: true,
+        internalType: 'address',
       },
       {
-        "name": "newOwner",
-        "type": "address",
-        "indexed": true,
-        "internalType": "address"
-      }
+        name: 'newOwner',
+        type: 'address',
+        indexed: true,
+        internalType: 'address',
+      },
     ],
-    "anonymous": false
+    anonymous: false,
   },
   {
-    "type": "event",
-    "name": "Paused",
-    "inputs": [
+    type: 'event',
+    name: 'Paused',
+    inputs: [
       {
-        "name": "isPaused",
-        "type": "bool",
-        "indexed": false,
-        "internalType": "bool"
-      }
+        name: 'isPaused',
+        type: 'bool',
+        indexed: false,
+        internalType: 'bool',
+      },
     ],
-    "anonymous": false
+    anonymous: false,
   },
   {
-    "type": "event",
-    "name": "ZKVerifierUpdated",
-    "inputs": [
+    type: 'event',
+    name: 'ZKVerifierUpdated',
+    inputs: [
       {
-        "name": "oldVerifier",
-        "type": "address",
-        "indexed": false,
-        "internalType": "address"
+        name: 'oldVerifier',
+        type: 'address',
+        indexed: false,
+        internalType: 'address',
       },
       {
-        "name": "newVerifier",
-        "type": "address",
-        "indexed": false,
-        "internalType": "address"
-      }
+        name: 'newVerifier',
+        type: 'address',
+        indexed: false,
+        internalType: 'address',
+      },
     ],
-    "anonymous": false
+    anonymous: false,
   },
   {
-    "type": "error",
-    "name": "AdminClaimWindowClosed",
-    "inputs": []
+    type: 'error',
+    name: 'AdminClaimWindowClosed',
+    inputs: [],
   },
   {
-    "type": "error",
-    "name": "AlreadyClaimed",
-    "inputs": []
+    type: 'error',
+    name: 'AlreadyClaimed',
+    inputs: [],
   },
   {
-    "type": "error",
-    "name": "ClaimDeadlinePassed",
-    "inputs": []
+    type: 'error',
+    name: 'ClaimDeadlinePassed',
+    inputs: [],
   },
   {
-    "type": "error",
-    "name": "ClaimsPaused",
-    "inputs": []
+    type: 'error',
+    name: 'ClaimsPaused',
+    inputs: [],
   },
   {
-    "type": "error",
-    "name": "EmergencyWithdrawNotAllowed",
-    "inputs": []
+    type: 'error',
+    name: 'EmergencyWithdrawNotAllowed',
+    inputs: [],
   },
   {
-    "type": "error",
-    "name": "InvalidAdminClaimDeadline",
-    "inputs": []
+    type: 'error',
+    name: 'InvalidAdminClaimDeadline',
+    inputs: [],
   },
   {
-    "type": "error",
-    "name": "InvalidBps",
-    "inputs": []
+    type: 'error',
+    name: 'InvalidBps',
+    inputs: [],
   },
   {
-    "type": "error",
-    "name": "InvalidMerkleProof",
-    "inputs": []
+    type: 'error',
+    name: 'InvalidMerkleProof',
+    inputs: [],
   },
   {
-    "type": "error",
-    "name": "InvalidZKProof",
-    "inputs": []
+    type: 'error',
+    name: 'InvalidZKProof',
+    inputs: [],
   },
   {
-    "type": "error",
-    "name": "LockConfigLocked",
-    "inputs": []
+    type: 'error',
+    name: 'LockConfigLocked',
+    inputs: [],
   },
   {
-    "type": "error",
-    "name": "NoZKVerifier",
-    "inputs": []
+    type: 'error',
+    name: 'NoZKVerifier',
+    inputs: [],
   },
   {
-    "type": "error",
-    "name": "OwnableInvalidOwner",
-    "inputs": [
+    type: 'error',
+    name: 'OwnableInvalidOwner',
+    inputs: [
       {
-        "name": "owner",
-        "type": "address",
-        "internalType": "address"
-      }
-    ]
+        name: 'owner',
+        type: 'address',
+        internalType: 'address',
+      },
+    ],
   },
   {
-    "type": "error",
-    "name": "OwnableUnauthorizedAccount",
-    "inputs": [
+    type: 'error',
+    name: 'OwnableUnauthorizedAccount',
+    inputs: [
       {
-        "name": "account",
-        "type": "address",
-        "internalType": "address"
-      }
-    ]
+        name: 'account',
+        type: 'address',
+        internalType: 'address',
+      },
+    ],
   },
   {
-    "type": "error",
-    "name": "ReentrancyGuardReentrantCall",
-    "inputs": []
+    type: 'error',
+    name: 'ReentrancyGuardReentrantCall',
+    inputs: [],
   },
   {
-    "type": "error",
-    "name": "SafeERC20FailedOperation",
-    "inputs": [
+    type: 'error',
+    name: 'SafeERC20FailedOperation',
+    inputs: [
       {
-        "name": "token",
-        "type": "address",
-        "internalType": "address"
-      }
-    ]
+        name: 'token',
+        type: 'address',
+        internalType: 'address',
+      },
+    ],
   },
   {
-    "type": "error",
-    "name": "ZeroAddress",
-    "inputs": []
+    type: 'error',
+    name: 'ZeroAddress',
+    inputs: [],
   },
   {
-    "type": "error",
-    "name": "ZeroAmount",
-    "inputs": []
-  }
+    type: 'error',
+    name: 'ZeroAmount',
+    inputs: [],
+  },
 ] as const;
 
 /**
