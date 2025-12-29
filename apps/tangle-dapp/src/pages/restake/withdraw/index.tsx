@@ -781,7 +781,7 @@ const WithdrawRequestView: FC<WithdrawRequestViewProps> = ({
 
   return (
     <RestakeDetailCard.Root className={twMerge('!min-w-0', className)}>
-      <div className="flex items-center justify-between">
+      <div className="flex items-center justify-between gap-2">
         <RestakeDetailCard.Header
           title={
             withdrawRequests.length > 0

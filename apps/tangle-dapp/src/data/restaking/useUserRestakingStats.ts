@@ -19,7 +19,7 @@ export interface UserRestakingStats {
   totalDelegated: bigint;
   withdrawQueueAmount: bigint;
   withdrawableAmount: bigint;
-  pendingUnstakeAmount: bigint;
+  pendingUndelegateAmount: bigint;
 
   // Claimable Reward Value Card
   pendingRewards: bigint;
@@ -31,7 +31,7 @@ export interface UserRestakingStats {
     totalDelegated: string;
     withdrawQueueAmount: string;
     withdrawableAmount: string;
-    pendingUnstakeAmount: string;
+    pendingUndelegateAmount: string;
     pendingRewards: string;
     activeBalance: string;
   };
@@ -98,11 +98,11 @@ const useUserRestakingStats = () => {
       }
     }
 
-    // Calculate pending unstake amounts
-    let pendingUnstakeAmount = BigInt(0);
+    // Calculate pending undelegate amounts (note: unstakeRequests is the GraphQL field name)
+    let pendingUndelegateAmount = BigInt(0);
     for (const req of delegator.unstakeRequests) {
       if (req.status === 'PENDING') {
-        pendingUnstakeAmount += req.estimatedAmount;
+        pendingUndelegateAmount += req.estimatedAmount;
       }
     }
 
@@ -127,7 +127,7 @@ const useUserRestakingStats = () => {
       totalDelegated: delegator.totalDelegated,
       withdrawQueueAmount,
       withdrawableAmount,
-      pendingUnstakeAmount,
+      pendingUndelegateAmount,
       pendingRewards,
       activeBalance,
       formatted: {
@@ -135,7 +135,7 @@ const useUserRestakingStats = () => {
         totalDelegated: format(delegator.totalDelegated),
         withdrawQueueAmount: format(withdrawQueueAmount),
         withdrawableAmount: format(withdrawableAmount),
-        pendingUnstakeAmount: format(pendingUnstakeAmount),
+        pendingUndelegateAmount: format(pendingUndelegateAmount),
         pendingRewards: format(pendingRewards),
         activeBalance: format(activeBalance),
       },

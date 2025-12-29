@@ -65,8 +65,8 @@ export interface WithdrawRequest {
   executedAt: bigint | null;
 }
 
-// Unstake request
-export interface UnstakeRequest {
+// Undelegate request (mapped from GraphQL unstakeRequests)
+export interface UndelegateRequest {
   id: string;
   operatorId: Address;
   token: Address;
@@ -92,7 +92,7 @@ export interface Delegator {
   assetPositions: DelegatorAssetPosition[];
   delegations: DelegationPosition[];
   withdrawRequests: WithdrawRequest[];
-  unstakeRequests: UnstakeRequest[];
+  unstakeRequests: UndelegateRequest[];
 }
 
 // GraphQL query for delegator (Hasura uses _by_pk for single row queries)
@@ -383,8 +383,8 @@ export const useDelegatorWithdrawRequests = (
   };
 };
 
-// Hook to get delegator's pending unstake requests
-export const useDelegatorUnstakeRequests = (
+// Hook to get delegator's pending undelegate requests
+export const useDelegatorUndelegateRequests = (
   address: Address | undefined,
   options?: {
     network?: EnvioNetwork;

@@ -7,7 +7,7 @@ import formatMsDuration from '../../../utils/formatMsDuration';
 const Details: FC = () => {
   const { data: config } = useProtocolConfig();
 
-  const unstakePeriod = useMemo(() => {
+  const undelegatePeriod = useMemo(() => {
     if (!config) {
       return null;
     }
@@ -25,7 +25,7 @@ const Details: FC = () => {
       <DetailItem
         title="Undelegate period"
         tooltip="Waiting time between scheduling and executing an undelegation"
-        value={unstakePeriod}
+        value={undelegatePeriod}
       />
     </DetailsContainer>
   );

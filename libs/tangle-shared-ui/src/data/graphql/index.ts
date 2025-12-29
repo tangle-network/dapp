@@ -18,13 +18,13 @@ export {
   useDelegatorDeposits,
   useDelegatorDelegations,
   useDelegatorWithdrawRequests,
-  useDelegatorUnstakeRequests,
+  useDelegatorUndelegateRequests,
   useDelegatorCount,
   type Delegator,
   type DelegatorAssetPosition,
   type DelegationPosition,
   type WithdrawRequest,
-  type UnstakeRequest,
+  type UndelegateRequest,
   type RequestStatus,
   type LockDuration,
   type BlueprintSelectionMode,
@@ -65,7 +65,7 @@ export {
 export {
   useProtocolConfig,
   useWithdrawalDelay,
-  useUnstakeDelay,
+  useUndelegateDelay,
   type ProtocolConfig,
 } from './useProtocolConfig';
 

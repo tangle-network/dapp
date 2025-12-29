@@ -4,7 +4,7 @@ import { RestakeAction, RestakeTab } from '../../constants';
 import DepositForm from '../../pages/restake/deposit/DepositForm';
 import RestakeWithdrawForm from '../../pages/restake/withdraw';
 import RestakeDelegateForm from '../../pages/restake/delegate';
-import RestakeUnstakeForm from '../../pages/restake/unstake';
+import RestakeUndelegateForm from '../../pages/restake/undelegate';
 import BlueprintListing from '../../pages/blueprints/BlueprintListing';
 import { useNavigate } from 'react-router';
 import { PagePath } from '../../types';
@@ -76,7 +76,7 @@ const RestakeTabContentInner: FC<Props> = ({ tab }) => {
       case RestakeAction.DELEGATE:
         return <RestakeDelegateForm />;
       case RestakeAction.UNDELEGATE:
-        return <RestakeUnstakeForm />;
+        return <RestakeUndelegateForm />;
       case RestakeTab.VAULTS:
         return (
           <RestakingAssetsTable
