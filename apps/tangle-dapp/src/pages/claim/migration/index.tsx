@@ -783,7 +783,6 @@ const MigrationClaimPage: FC = () => {
                 >
                   {proofProgress && (
                     <div className="flex items-center justify-center gap-3 p-3 rounded-lg bg-blue-0 dark:bg-blue-120">
-                      <div className="w-4 h-4 border-2 border-blue-50 border-t-transparent rounded-full animate-spin" />
                       <Typography variant="body2" className="text-blue-50">
                         {proofProgress}
                       </Typography>
