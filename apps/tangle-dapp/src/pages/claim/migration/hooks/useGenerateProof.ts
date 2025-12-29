@@ -197,7 +197,7 @@ async function pollForProof(
   for (let attempt = 0; attempt < maxAttempts; attempt++) {
     await new Promise((resolve) => setTimeout(resolve, interval));
 
-    setProgress(`Waiting for proof... (${attempt + 1}/${maxAttempts})`);
+    setProgress(`Waiting for proof...`);
 
     const response = await fetch(`${PROVER_API_URL}/status/${jobId}`);
     const result = await response.json();
