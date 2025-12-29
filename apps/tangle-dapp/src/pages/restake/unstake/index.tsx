@@ -396,31 +396,39 @@ const RestakeUnstakeForm: FC = () => {
     tokenMetadatas,
   ]);
 
-  // Get pending unstake requests
+  // Get pending unstake requests (prefer on-chain data as source of truth, fall back to indexer)
   const unstakeRequests = useMemo(() => {
-    if (delegator?.unstakeRequests && delegator.unstakeRequests.length > 0) {
-      return delegator.unstakeRequests.filter((r) => r.status === 'PENDING');
+    // On-chain data is the source of truth - use it when available
+    if (
+      Array.isArray(onChainPendingUnstakes) &&
+      onChainPendingUnstakes.length > 0
+    ) {
+      const delay = protocolConfig?.delegationBondLessDelay ?? BigInt(0);
+      return (onChainPendingUnstakes as OnChainPendingUnstake[]).map(
+        (r, idx) => ({
+          id: `${r.operator.toLowerCase()}-${r.asset.token.toLowerCase()}-${r.requestedRound.toString()}-${idx}`,
+          operatorId: r.operator,
+          token: r.asset.token,
+          nonce: BigInt(0),
+          shares: r.shares,
+          estimatedAmount: r.shares,
+          requestedRound: r.requestedRound,
+          readyAtRound: r.requestedRound + delay,
+          status: 'PENDING' as const,
+          executedAt: null,
+        }),
+      ) satisfies UnstakeRequest[];
     }
 
-    if (!onChainPendingUnstakes) {
+    // If on-chain returns empty array, it means no pending requests (source of truth)
+    if (Array.isArray(onChainPendingUnstakes)) {
       return [];
     }
 
-    const delay = protocolConfig?.delegationBondLessDelay ?? BigInt(0);
-    return (onChainPendingUnstakes as OnChainPendingUnstake[]).map(
-      (r, idx) => ({
-        id: `${r.operator.toLowerCase()}-${r.asset.token.toLowerCase()}-${r.requestedRound.toString()}-${idx}`,
-        operatorId: r.operator,
-        token: r.asset.token,
-        nonce: BigInt(0),
-        shares: r.shares,
-        estimatedAmount: r.shares,
-        requestedRound: r.requestedRound,
-        readyAtRound: r.requestedRound + delay,
-        status: 'PENDING' as const,
-        executedAt: null,
-      }),
-    ) satisfies UnstakeRequest[];
+    // Fall back to indexer only when on-chain data is not yet available
+    return (
+      delegator?.unstakeRequests.filter((r) => r.status === 'PENDING') ?? []
+    );
   }, [
     delegator?.unstakeRequests,
     onChainPendingUnstakes,
