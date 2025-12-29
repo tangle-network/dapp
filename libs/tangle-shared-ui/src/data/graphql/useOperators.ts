@@ -5,11 +5,14 @@
 
 import { useQuery } from '@tanstack/react-query';
 import { Address } from 'viem';
+import { useAccount, useChainId } from 'wagmi';
 import {
   executeEnvioGraphQL,
   gql,
   EnvioNetwork,
+  getEnvioNetworkFromChainId,
 } from '../../utils/executeEnvioGraphQL';
+import useNetworkStore from '../../context/useNetworkStore';
 
 // Operator status enum matching the Envio schema
 export type RestakingOperatorStatus = 'ACTIVE' | 'LEAVING' | 'INACTIVE';
@@ -170,10 +173,15 @@ export const useOperators = (options?: {
     offset = 0,
     enabled = true,
   } = options ?? {};
+  const chainId = useChainId();
+  const { isConnected } = useAccount();
+  const networkChainId = useNetworkStore((store) => store.network2?.evmChainId);
+  const activeChainId = isConnected ? chainId : (networkChainId ?? chainId);
+  const resolvedNetwork = network ?? getEnvioNetworkFromChainId(activeChainId);
 
   return useQuery({
-    queryKey: ['envio', 'operators', network, status, limit, offset],
-    queryFn: () => fetchOperators(network, status, limit, offset),
+    queryKey: ['envio', 'operators', resolvedNetwork, status, limit, offset],
+    queryFn: () => fetchOperators(resolvedNetwork, status, limit, offset),
     enabled,
     staleTime: 30_000, // 30 seconds
     refetchInterval: 30_000,
@@ -188,12 +196,17 @@ export const useOperatorMap = (options?: {
   enabled?: boolean;
 }) => {
   const { network, status, enabled = true } = options ?? {};
+  const chainId = useChainId();
+  const { isConnected } = useAccount();
+  const networkChainId = useNetworkStore((store) => store.network2?.evmChainId);
+  const activeChainId = isConnected ? chainId : (networkChainId ?? chainId);
+  const resolvedNetwork = network ?? getEnvioNetworkFromChainId(activeChainId);
 
   return useQuery({
-    queryKey: ['envio', 'operatorMap', network, status],
+    queryKey: ['envio', 'operatorMap', resolvedNetwork, status],
     queryFn: async () => {
       // Use limit/offset for Hasura pagination
-      const operators = await fetchOperators(network, status, 1000, 0);
+      const operators = await fetchOperators(resolvedNetwork, status, 1000, 0);
       const map = new Map<Address, Operator>();
       for (const op of operators) {
         map.set(op.id as Address, op);
@@ -216,6 +229,11 @@ export const useOperator = (
   },
 ) => {
   const { network, enabled = true } = options ?? {};
+  const chainId = useChainId();
+  const { isConnected } = useAccount();
+  const networkChainId = useNetworkStore((store) => store.network2?.evmChainId);
+  const activeChainId = isConnected ? chainId : (networkChainId ?? chainId);
+  const resolvedNetwork = network ?? getEnvioNetworkFromChainId(activeChainId);
 
   const OPERATOR_QUERY = gql`
     query Operator($id: String!) {
@@ -236,13 +254,13 @@ export const useOperator = (
   `;
 
   return useQuery({
-    queryKey: ['envio', 'operator', address, network],
+    queryKey: ['envio', 'operator', address, resolvedNetwork],
     queryFn: async () => {
       if (!address) return null;
       const result = await executeEnvioGraphQL<
         { Operator_by_pk: OperatorsQueryResult['Operator'][number] | null },
         { id: string }
-      >(OPERATOR_QUERY, { id: address.toLowerCase() }, network);
+      >(OPERATOR_QUERY, { id: address.toLowerCase() }, resolvedNetwork);
 
       return result.data.Operator_by_pk
         ? parseOperator(result.data.Operator_by_pk)

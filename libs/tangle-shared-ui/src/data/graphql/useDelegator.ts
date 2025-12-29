@@ -6,13 +6,15 @@
 
 import { useQuery } from '@tanstack/react-query';
 import { Address } from 'viem';
-import { useChainId } from 'wagmi';
+import { useAccount, useChainId } from 'wagmi';
 import {
   executeEnvioGraphQL,
   gql,
   EnvioNetwork,
+  getEnvioNetworkFromChainId,
 } from '../../utils/executeEnvioGraphQL';
 import { useEnvioHealthCheckByChainId } from '../../utils/checkEnvioHealth';
+import useNetworkStore from '../../context/useNetworkStore';
 
 // Request status enum
 export type RequestStatus = 'PENDING' | 'READY' | 'EXECUTED' | 'CANCELLED';
@@ -278,22 +280,26 @@ export const useDelegator = (
 ) => {
   const { network, enabled = true } = options ?? {};
   const chainId = useChainId();
+  const { isConnected } = useAccount();
+  const networkChainId = useNetworkStore((store) => store.network2?.evmChainId);
+  const activeChainId = isConnected ? chainId : (networkChainId ?? chainId);
+  const resolvedNetwork = network ?? getEnvioNetworkFromChainId(activeChainId);
 
   // Check if indexer is healthy before querying
   const { data: isIndexerHealthy, isLoading: isCheckingHealth } =
-    useEnvioHealthCheckByChainId(chainId);
+    useEnvioHealthCheckByChainId(activeChainId);
 
   const healthCheckComplete = !isCheckingHealth;
   const shouldQuery = healthCheckComplete && isIndexerHealthy === true;
 
   const queryResult = useQuery({
-    queryKey: ['envio', 'delegator', address, network],
+    queryKey: ['envio', 'delegator', address, resolvedNetwork],
     queryFn: async () => {
       if (!address) return null;
       const result = await executeEnvioGraphQL<
         DelegatorQueryResult,
         { id: string }
-      >(DELEGATOR_QUERY, { id: address.toLowerCase() }, network);
+      >(DELEGATOR_QUERY, { id: address.toLowerCase() }, resolvedNetwork);
       return result.data.Delegator_by_pk
         ? parseDelegator(result.data.Delegator_by_pk)
         : null;
@@ -412,14 +418,19 @@ export const useDelegatorCount = (options?: {
   enabled?: boolean;
 }) => {
   const { network, enabled = true } = options ?? {};
+  const chainId = useChainId();
+  const { isConnected } = useAccount();
+  const networkChainId = useNetworkStore((store) => store.network2?.evmChainId);
+  const activeChainId = isConnected ? chainId : (networkChainId ?? chainId);
+  const resolvedNetwork = network ?? getEnvioNetworkFromChainId(activeChainId);
 
   return useQuery({
-    queryKey: ['envio', 'delegatorCount', network],
+    queryKey: ['envio', 'delegatorCount', resolvedNetwork],
     queryFn: async () => {
       const result = await executeEnvioGraphQL<
         DelegatorCountQueryResult,
         Record<string, never>
-      >(DELEGATOR_COUNT_QUERY, {}, network);
+      >(DELEGATOR_COUNT_QUERY, {}, resolvedNetwork);
       return result.data.Delegator?.length ?? 0;
     },
     enabled,

@@ -272,6 +272,10 @@ const useSubmitClaim = () => {
     ? relayerError
     : writeError || confirmError;
 
+  // Track if we switched from relayer to wallet mode (indicates relayer failure)
+  const switchedToWalletMode =
+    defaultSubmissionMode === 'relayer' && submissionMode === 'wallet';
+
   return {
     submitClaim,
     reset,
@@ -281,6 +285,9 @@ const useSubmitClaim = () => {
     isConfirmed: isConfirmedCombined,
     error: errorCombined,
     contractConfigured: !!migrationAddress,
+    submissionMode,
+    isRelayerConfigured: !!CLAIM_RELAYER_URL,
+    switchedToWalletMode,
   };
 };
 
