@@ -7,7 +7,8 @@ import RestakeDelegateForm from '../../pages/restake/delegate';
 import RestakeUndelegateForm from '../../pages/restake/undelegate';
 import BlueprintListing from '../../pages/blueprints/BlueprintListing';
 import { useNavigate } from 'react-router';
-import { PagePath } from '../../types';
+import { PagePath, QueryParamKey } from '../../types';
+import type { Address } from 'viem';
 import { NetworkGuard } from '../../components/NetworkGuard';
 import { RestakingAssetsTable } from '../../components/tables/RestakingAssetsTable';
 import { OperatorsTable } from '../../components/tables/OperatorsTable';
@@ -42,9 +43,14 @@ const RestakeTabContentInner: FC<Props> = ({ tab }) => {
   const context = useOptionalRestakeContext();
 
   // Must call useCallback before any conditional returns (React hooks rules)
-  const handleRestakeClicked = useCallback(() => {
-    navigate(PagePath.RESTAKE_DEPOSIT);
-  }, [navigate]);
+  const handleDelegateClicked = useCallback(
+    (operatorAddress: Address) => {
+      navigate(
+        `${PagePath.RESTAKE_DELEGATE}?${QueryParamKey.RESTAKE_OPERATOR}=${operatorAddress}`,
+      );
+    },
+    [navigate],
+  );
 
   // If context is not available (e.g., during HMR), show loading state
   if (!context) {
@@ -93,7 +99,7 @@ const RestakeTabContentInner: FC<Props> = ({ tab }) => {
           <OperatorsTable
             operatorMap={operatorMap}
             isLoading={isLoadingOperators}
-            onRestakeClicked={handleRestakeClicked}
+            onDelegateClicked={handleDelegateClicked}
           />
         );
       case RestakeTab.BLUEPRINTS:
