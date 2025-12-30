@@ -15,6 +15,7 @@ import {
 } from '../../utils/executeEnvioGraphQL';
 import { useEnvioHealthCheckByChainId } from '../../utils/checkEnvioHealth';
 import useNetworkStore from '../../context/useNetworkStore';
+import { parseAddressLowercase } from '../../utils/safeParseAddress';
 
 // Request status enum
 export type RequestStatus = 'PENDING' | 'READY' | 'EXECUTED' | 'CANCELLED';
@@ -212,12 +213,27 @@ interface DelegatorQueryResult {
   } | null;
 }
 
+/**
+ * Parses a string to Address, using lowercase normalization.
+ * Indexer data may have inconsistent casing, so we normalize to lowercase.
+ * Throws if the address is invalid to fail fast on bad data.
+ */
+const parseAddress = (value: string): Address => {
+  const parsed = parseAddressLowercase(value);
+
+  if (!parsed) {
+    throw new Error(`Invalid address from indexer: ${value}`);
+  }
+
+  return parsed;
+};
+
 // Parse delegator from GraphQL response
 const parseDelegator = (
   raw: NonNullable<DelegatorQueryResult['Delegator_by_pk']>,
 ): Delegator => ({
   id: raw.id,
-  address: raw.address as Address,
+  address: parseAddress(raw.address),
   totalDeposited: BigInt(raw.totalDeposited),
   totalDelegated: BigInt(raw.totalDelegated),
   createdAt: BigInt(raw.createdAt),
@@ -226,7 +242,7 @@ const parseDelegator = (
   unstakeNonce: BigInt(raw.unstakeNonce),
   assetPositions: raw.assetPositions.map((pos) => ({
     id: pos.id,
-    token: pos.token as Address,
+    token: parseAddress(pos.token),
     totalDeposited: BigInt(pos.totalDeposited),
     delegatedAmount: BigInt(pos.delegatedAmount),
     lockedAmount: BigInt(pos.lockedAmount),
@@ -234,8 +250,8 @@ const parseDelegator = (
   })),
   delegations: raw.delegations.map((del) => ({
     id: del.id,
-    operatorId: del.operator.id as Address,
-    token: del.token as Address,
+    operatorId: parseAddress(del.operator.id),
+    token: parseAddress(del.token),
     shares: BigInt(del.shares),
     lastKnownAmount: BigInt(del.lastKnownAmount),
     blueprintSelection: del.blueprintSelection,
@@ -247,7 +263,7 @@ const parseDelegator = (
   })),
   withdrawRequests: raw.withdrawRequests.map((req) => ({
     id: req.id,
-    token: req.token as Address,
+    token: parseAddress(req.token),
     nonce: BigInt(req.nonce),
     amount: BigInt(req.amount),
     requestedRound: BigInt(req.requestedRound),
@@ -257,8 +273,8 @@ const parseDelegator = (
   })),
   unstakeRequests: raw.unstakeRequests.map((req) => ({
     id: req.id,
-    operatorId: req.operator.id as Address,
-    token: req.token as Address,
+    operatorId: parseAddress(req.operator.id),
+    token: parseAddress(req.token),
     nonce: BigInt(req.nonce),
     shares: BigInt(req.shares),
     estimatedAmount: BigInt(req.estimatedAmount),

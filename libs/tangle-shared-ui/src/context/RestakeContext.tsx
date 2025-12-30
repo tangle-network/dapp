@@ -20,6 +20,7 @@ import {
 } from 'react';
 import { useAccount, useChainId } from 'wagmi';
 import { Address } from 'viem';
+import EVMChainId from '@tangle-network/dapp-types/EVMChainId';
 import { useEnvioHealthCheckByChainId } from '../utils/checkEnvioHealth';
 import {
   useRestakingAssets,
@@ -101,7 +102,8 @@ interface RestakeProviderProps {
 export const RestakeProvider: FC<RestakeProviderProps> = ({ children }) => {
   const chainId = useChainId();
   const { address: userAddress } = useAccount();
-  const isLocalDev = chainId === 84532 || chainId === 31337;
+  const isLocalDev =
+    chainId === EVMChainId.BaseSepolia || chainId === EVMChainId.AnvilLocal;
 
   // Check indexer health
   const { data: isHealthy, isLoading: isCheckingHealth } =
