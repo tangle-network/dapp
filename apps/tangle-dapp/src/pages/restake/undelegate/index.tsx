@@ -563,6 +563,7 @@ const RestakeUndelegateForm: FC = () => {
             <ExpandTableButton
               className="absolute top-0 -right-10 max-md:hidden"
               tooltipContent="Undelegate requests"
+              requestCount={undelegateRequests.length}
               onClick={() => setIsUndelegateRequestTableOpen(true)}
             />
           )}

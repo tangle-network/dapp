@@ -550,7 +550,8 @@ const RestakeWithdrawForm: FC = () => {
           {!isWithdrawRequestTableOpen && (
             <ExpandTableButton
               className="absolute top-0 -right-10 max-md:hidden"
-              tooltipContent="Withdrawal request"
+              tooltipContent="Withdrawal requests"
+              requestCount={withdrawRequests.length}
               onClick={() => setIsWithdrawRequestTableOpen(true)}
             />
           )}
