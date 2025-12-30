@@ -244,9 +244,9 @@ export const useWithdrawalDelay = () => {
 };
 
 /**
- * Hook to get unstake delay in human-readable format.
+ * Hook to get undelegate delay in human-readable format.
  */
-export const useUnstakeDelay = () => {
+export const useUndelegateDelay = () => {
   const { data: config, isLoading } = useProtocolConfig();
 
   if (isLoading || !config) {

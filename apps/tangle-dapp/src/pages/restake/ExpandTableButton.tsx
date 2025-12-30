@@ -16,6 +16,7 @@ enum NotificationVariant {
 export type ExpandTableButtonProps = ComponentProps<'button'> & {
   notificationVariant?: NotificationVariant;
   tooltipContent?: ReactNode;
+  requestCount?: number;
 };
 
 const COLOR_CLASSES = {
@@ -35,15 +36,24 @@ const COLOR_CLASSES = {
 export const ExpandTableButton: FC<ExpandTableButtonProps> = ({
   notificationVariant,
   tooltipContent,
+  requestCount,
   ...props
 }) => {
+  const showCount = requestCount !== undefined && requestCount > 0;
+
   return (
     <Tooltip>
       <TooltipTrigger asChild>
         <IconButton {...props}>
           <DoubleArrowRightIcon />
 
-          {notificationVariant && (
+          {showCount && (
+            <span className="absolute -top-1.5 -right-1.5 flex items-center justify-center min-w-[18px] h-[18px] px-1 text-[10px] font-semibold text-white bg-blue-500 rounded-full">
+              {requestCount > 99 ? '99+' : requestCount}
+            </span>
+          )}
+
+          {notificationVariant && !showCount && (
             <span className="absolute top-0 right-0 flex w-2 h-2 -mt-0.5 -mr-0.5">
               <span
                 className={twMerge(

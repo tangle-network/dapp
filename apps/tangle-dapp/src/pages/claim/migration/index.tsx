@@ -21,65 +21,13 @@ import { type Hex, formatUnits, isAddress, keccak256, toHex } from 'viem';
 import { twMerge } from 'tailwind-merge';
 import type { InjectedAccountWithMeta } from '@polkadot/extension-inject/types';
 import { AnimatePresence, motion } from 'framer-motion';
+import parseTransactionError from '@tangle-network/tangle-shared-ui/utils/parseTransactionError';
 import SubstrateWalletSelector from './components/SubstrateWalletSelector';
 import useClaimEligibility, {
   generateChallenge,
 } from './hooks/useClaimEligibility';
 import useGenerateProof from './hooks/useGenerateProof';
 import useSubmitClaim from './hooks/useSubmitClaim';
-
-// Parse transaction errors into user-friendly messages
-const parseTransactionError = (error: Error): string => {
-  const message = error.message || String(error);
-
-  // Common error patterns
-  if (message.includes('intrinsic gas too low')) {
-    return 'Transaction failed: Gas limit too low. Please try again.';
-  }
-  if (message.includes('insufficient funds')) {
-    return 'Insufficient funds to cover gas fees.';
-  }
-  if (message.includes('user rejected') || message.includes('User rejected')) {
-    return 'Transaction was rejected by user.';
-  }
-  if (message.includes('Failed to fetch')) {
-    return 'Network request failed. If you are using the local relayer, ensure `VITE_CLAIM_RELAYER_URL` is reachable from the browser.';
-  }
-  if (message.includes('nonce too low')) {
-    return 'Transaction nonce conflict. Please try again.';
-  }
-  if (message.includes('already claimed')) {
-    return 'This address has already claimed its allocation.';
-  }
-  if (message.includes('InvalidMerkleProof')) {
-    return 'Invalid Merkle proof for this account and amount. Double-check you selected the correct Polkadot account and you are using the correct migration proofs dataset for this network.';
-  }
-  if (message.includes('invalid proof')) {
-    return 'Invalid proof. Please regenerate and try again.';
-  }
-  if (message.includes('not in merkle tree')) {
-    return 'Address not found in the merkle tree.';
-  }
-  if (message.includes('claim period ended')) {
-    return 'The claim period has ended.';
-  }
-  if (message.includes('paused')) {
-    return 'Claims are currently paused.';
-  }
-
-  // Extract "Details:" section if present
-  const detailsMatch = message.match(/Details:\s*([^V]+?)(?:Version:|$)/);
-  if (detailsMatch) {
-    return detailsMatch[1].trim();
-  }
-
-  // Fallback: truncate long messages
-  if (message.length > 100) {
-    return 'Transaction failed. Please try again.';
-  }
-
-  return message;
-};
 
 enum ClaimStep {
   CONNECT_WALLETS = 0,

@@ -9,7 +9,7 @@ import { TableVariant } from '@tangle-network/ui-components/components/Table/typ
 interface Props {
   operatorMap: Map<Address, Operator> | null;
   isLoading: boolean;
-  onRestakeClicked: () => void;
+  onDelegateClicked: (operatorAddress: Address) => void;
 }
 
 const formatDelegationCount = (count: bigint | null | undefined): number => {
@@ -20,7 +20,7 @@ const formatDelegationCount = (count: bigint | null | undefined): number => {
 export const OperatorsTable: FC<Props> = ({
   operatorMap,
   isLoading,
-  onRestakeClicked,
+  onDelegateClicked,
 }) => {
   const data = useMemo<RestakeOperator[]>(() => {
     if (!operatorMap) return [];
@@ -49,18 +49,16 @@ export const OperatorsTable: FC<Props> = ({
       emptyTableProps={{
         title: 'No Operators Available',
         description: 'Be the first to register as a restaking operator.',
-        buttonText: 'Register as Operator',
-        buttonProps: { onClick: onRestakeClicked },
       }}
       tableProps={{
         variant: TableVariant.GLASS_OUTER,
       }}
-      RestakeOperatorAction={({ address: _address }) => (
+      RestakeOperatorAction={({ address }) => (
         <Button
           variant="secondary"
           size="sm"
           onClick={() => {
-            onRestakeClicked();
+            onDelegateClicked(address as Address);
           }}
           className="min-w-24"
         >

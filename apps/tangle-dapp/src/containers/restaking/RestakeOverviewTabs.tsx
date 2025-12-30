@@ -40,7 +40,7 @@ import { RestakeAction } from '../../constants';
 import BlueprintListing from '../../pages/blueprints/BlueprintListing';
 import RestakeDelegateForm from '../../pages/restake/delegate';
 import DepositForm from '../../pages/restake/deposit/DepositForm';
-import RestakeUnstakeForm from '../../pages/restake/unstake';
+import RestakeUndelegateForm from '../../pages/restake/undelegate';
 import RestakeWithdrawForm from '../../pages/restake/withdraw';
 import { PagePath, QueryParamKey } from '../../types';
 
@@ -87,7 +87,7 @@ const RestakeOverviewTabs: FC<Props> = ({
         ) : action === RestakeAction.DELEGATE ? (
           <RestakeDelegateForm />
         ) : action === RestakeAction.UNDELEGATE ? (
-          <RestakeUnstakeForm />
+          <RestakeUndelegateForm />
         ) : null}
       </TabContent>
 

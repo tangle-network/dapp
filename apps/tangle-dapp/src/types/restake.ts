@@ -58,7 +58,7 @@ export type EvmDelegationFormFields = {
   assetId: Address;
 };
 
-export type EvmUnstakeFormFields = EvmDelegationFormFields;
+export type EvmUndelegateFormFields = EvmDelegationFormFields;
 
 export type EvmWithdrawFormFields = {
   amount: string;

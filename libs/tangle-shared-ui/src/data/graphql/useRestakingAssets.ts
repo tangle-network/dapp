@@ -5,13 +5,14 @@
 
 import { useQuery } from '@tanstack/react-query';
 import { Address } from 'viem';
-import { useChainId } from 'wagmi';
+import { useAccount, useChainId } from 'wagmi';
 import {
   executeEnvioGraphQL,
   gql,
   EnvioNetwork,
   getEnvioNetworkFromChainId,
 } from '../../utils/executeEnvioGraphQL';
+import useNetworkStore from '../../context/useNetworkStore';
 import type { RestakingAsset } from '../restake/types';
 
 // Re-export for backwards compatibility
@@ -90,7 +91,10 @@ export const useRestakingAssets = (options?: {
 }) => {
   const { network, enabledOnly = true, enabled = true } = options ?? {};
   const chainId = useChainId();
-  const resolvedNetwork = network ?? getEnvioNetworkFromChainId(chainId);
+  const { isConnected } = useAccount();
+  const networkChainId = useNetworkStore((store) => store.network2?.evmChainId);
+  const activeChainId = isConnected ? chainId : (networkChainId ?? chainId);
+  const resolvedNetwork = network ?? getEnvioNetworkFromChainId(activeChainId);
 
   return useQuery({
     queryKey: ['envio', 'restakingAssets', resolvedNetwork, enabledOnly],
@@ -110,7 +114,10 @@ export const useRestakingAssetMap = (options?: {
 }) => {
   const { network, enabledOnly = true, enabled = true } = options ?? {};
   const chainId = useChainId();
-  const resolvedNetwork = network ?? getEnvioNetworkFromChainId(chainId);
+  const { isConnected } = useAccount();
+  const networkChainId = useNetworkStore((store) => store.network2?.evmChainId);
+  const activeChainId = isConnected ? chainId : (networkChainId ?? chainId);
+  const resolvedNetwork = network ?? getEnvioNetworkFromChainId(activeChainId);
 
   return useQuery({
     queryKey: ['envio', 'restakingAssetMap', resolvedNetwork, enabledOnly],

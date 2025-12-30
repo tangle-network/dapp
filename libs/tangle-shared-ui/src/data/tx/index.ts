@@ -9,11 +9,11 @@ export { useDepositTx, type DepositParams } from './useDepositTx';
 // Delegate
 export { useDelegateTx, type DelegateParams } from './useDelegateTx';
 
-// Undelegate (unstake)
+// Undelegate
 export {
-  useScheduleUnstakeTx,
-  useExecuteUnstakeTx,
-  type ScheduleUnstakeParams,
+  useScheduleUndelegateTx,
+  useExecuteUndelegateTx,
+  type ScheduleUndelegateParams,
 } from './useUndelegateTx';
 
 // Withdraw

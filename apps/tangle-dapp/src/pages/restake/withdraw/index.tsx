@@ -346,37 +346,41 @@ const RestakeWithdrawForm: FC = () => {
     },
   });
 
-  // Get pending withdraw requests (prefer indexer, but fall back to on-chain when it lags)
+  // Get pending withdraw requests (prefer on-chain data as source of truth, fall back to indexer)
   const withdrawRequests = useMemo(() => {
-    const fromIndexer =
-      delegator?.withdrawRequests.filter((r) => r.status === 'PENDING') ?? [];
-    if (fromIndexer.length > 0) {
-      return fromIndexer;
+    // On-chain data is the source of truth - use it when available
+    if (
+      Array.isArray(onChainPendingWithdrawals) &&
+      onChainPendingWithdrawals.length > 0
+    ) {
+      const delayRounds = protocolConfig?.leaveDelegatorsDelay ?? BigInt(0);
+      return (
+        onChainPendingWithdrawals as Array<{
+          asset: { kind: number; token: Address };
+          amount: bigint;
+          requestedRound: bigint;
+        }>
+      ).map((r, idx) => ({
+        id: `${r.asset.token.toLowerCase()}-${r.requestedRound.toString()}-${idx}`,
+        token: r.asset.token,
+        nonce: BigInt(0),
+        amount: r.amount,
+        requestedRound: r.requestedRound,
+        readyAtRound: r.requestedRound + delayRounds,
+        status: 'PENDING' as const,
+        executedAt: null,
+      })) satisfies WithdrawRequest[];
     }
 
-    if (!onChainPendingWithdrawals) {
+    // If on-chain returns empty array, it means no pending requests (source of truth)
+    if (Array.isArray(onChainPendingWithdrawals)) {
       return [];
     }
 
-    const delayRounds = protocolConfig?.leaveDelegatorsDelay ?? BigInt(0);
-    const requests = (
-      onChainPendingWithdrawals as Array<{
-        asset: { kind: number; token: Address };
-        amount: bigint;
-        requestedRound: bigint;
-      }>
-    ).map((r, idx) => ({
-      id: `${r.asset.token.toLowerCase()}-${r.requestedRound.toString()}-${idx}`,
-      token: r.asset.token,
-      nonce: BigInt(0),
-      amount: r.amount,
-      requestedRound: r.requestedRound,
-      readyAtRound: r.requestedRound + delayRounds,
-      status: 'PENDING' as const,
-      executedAt: null,
-    })) satisfies WithdrawRequest[];
-
-    return requests;
+    // Fall back to indexer only when on-chain data is not yet available
+    return (
+      delegator?.withdrawRequests.filter((r) => r.status === 'PENDING') ?? []
+    );
   }, [
     delegator?.withdrawRequests,
     onChainPendingWithdrawals,
@@ -546,7 +550,8 @@ const RestakeWithdrawForm: FC = () => {
           {!isWithdrawRequestTableOpen && (
             <ExpandTableButton
               className="absolute top-0 -right-10 max-md:hidden"
-              tooltipContent="Withdrawal request"
+              tooltipContent="Withdrawal requests"
+              requestCount={withdrawRequests.length}
               onClick={() => setIsWithdrawRequestTableOpen(true)}
             />
           )}
@@ -777,7 +782,7 @@ const WithdrawRequestView: FC<WithdrawRequestViewProps> = ({
 
   return (
     <RestakeDetailCard.Root className={twMerge('!min-w-0', className)}>
-      <div className="flex items-center justify-between">
+      <div className="flex items-center justify-between gap-2">
         <RestakeDetailCard.Header
           title={
             withdrawRequests.length > 0

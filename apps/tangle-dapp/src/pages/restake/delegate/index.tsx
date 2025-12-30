@@ -16,7 +16,7 @@ import { Modal } from '@tangle-network/ui-components/components/Modal';
 import type { TextFieldInputProps } from '@tangle-network/ui-components/components/TextField/types';
 import { TransactionInputCard } from '@tangle-network/ui-components/components/TransactionInputCard';
 import { useModal } from '@tangle-network/ui-components/hooks/useModal';
-import { FC, useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { FC, useCallback, useEffect, useMemo, useRef } from 'react';
 import useFormSetValue from '../../../hooks/useFormSetValue';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import { Address, formatUnits, parseUnits } from 'viem';
@@ -269,10 +269,6 @@ const RestakeDelegateForm: FC = () => {
     update: updateOperatorModal,
   } = useModal(false);
 
-  const [selectedAssetItem, setSelectedAssetItem] = useState<AssetItem | null>(
-    null,
-  );
-
   const depositedAssets = useMemo<AssetItem[]>(() => {
     if (!restakeAssets || !depositMap) {
       return [];
@@ -308,18 +304,27 @@ const RestakeDelegateForm: FC = () => {
       .filter((item): item is AssetItem => item !== null);
   }, [depositMap, restakeAssets, tokenAddresses]);
 
+  // Derive selectedAssetItem from depositedAssets to ensure it updates when metadata loads
+  const selectedAssetItem = useMemo(() => {
+    if (!selectedAssetId || depositedAssets.length === 0) {
+      return null;
+    }
+    return (
+      depositedAssets.find((asset) => asset.id === selectedAssetId) ?? null
+    );
+  }, [depositedAssets, selectedAssetId]);
+
+  // Auto-select first asset when available and none selected
   useEffect(() => {
-    if (depositedAssets.length > 0 && !selectedAssetItem) {
+    if (depositedAssets.length > 0 && !selectedAssetId) {
       const firstAsset = depositedAssets[0];
       setValue('assetId', firstAsset.id);
-      setSelectedAssetItem(firstAsset);
     }
-  }, [depositedAssets, setValue, selectedAssetItem]);
+  }, [depositedAssets, setValue, selectedAssetId]);
 
   const handleAssetSelect = useCallback(
     (asset: AssetItem) => {
       setValue('assetId', asset.id);
-      setSelectedAssetItem(asset);
       closeAssetModal();
     },
     [closeAssetModal, setValue],
@@ -427,7 +432,6 @@ const RestakeDelegateForm: FC = () => {
     setValue('amount', '', { shouldValidate: false });
     setValue('assetId', '' as Address, { shouldValidate: false });
     setValue('operatorAddress', '' as Address, { shouldValidate: false });
-    setSelectedAssetItem(null);
   }, [setValue]);
 
   const onSubmit = useCallback<SubmitHandler<EvmDelegationFormFields>>(

@@ -1,5 +1,5 @@
 /**
- * Hooks for undelegating (scheduling unstake) from an operator.
+ * Hooks for undelegating from an operator.
  * Replaces the Substrate-based useRestakeUndelegateTx hook.
  */
 
@@ -9,20 +9,20 @@ import MULTI_ASSET_DELEGATION_ABI from '../../abi/multiAssetDelegation';
 import { getContractsByChainId } from '@tangle-network/dapp-config/contracts';
 import { useChainId } from 'wagmi';
 
-export interface ScheduleUnstakeParams {
+export interface ScheduleUndelegateParams {
   operator: Address;
   token: Address;
   amount: bigint;
 }
 
 /**
- * Hook to schedule unstaking shares from an operator.
- * This initiates the unstaking process - shares will be available
- * for withdrawal after the unstaking delay (in rounds).
+ * Hook to schedule undelegation from an operator.
+ * This initiates the undelegation process - shares will be available
+ * for withdrawal after the undelegation delay (in rounds).
  *
  * @example
  * ```tsx
- * const { execute, status, error } = useScheduleUnstakeTx();
+ * const { execute, status, error } = useScheduleUndelegateTx();
  *
  * await execute({
  *   operator: '0x...',
@@ -31,13 +31,13 @@ export interface ScheduleUnstakeParams {
  * });
  * ```
  */
-export const useScheduleUnstakeTx = () => {
+export const useScheduleUndelegateTx = () => {
   const chainId = useChainId();
   const contracts = getContractsByChainId(chainId);
 
   return useContractWrite(
     MULTI_ASSET_DELEGATION_ABI,
-    (params: ScheduleUnstakeParams, _activeAddress) => ({
+    (params: ScheduleUndelegateParams, _activeAddress) => ({
       address: contracts.multiAssetDelegation,
       abi: MULTI_ASSET_DELEGATION_ABI,
       functionName: 'scheduleDelegatorUnstake' as const,
@@ -51,16 +51,16 @@ export const useScheduleUnstakeTx = () => {
           ['Token', params.token],
           ['Amount', params.amount.toString()],
         ]),
-      getSuccessMessage: () => 'Successfully scheduled unstake',
+      getSuccessMessage: () => 'Successfully scheduled undelegate',
     },
   );
 };
 
 /**
- * Hook to execute a scheduled unstake after the delay period.
+ * Hook to execute a scheduled undelegate after the delay period.
  * Call this after the readyAtRound has been reached.
  */
-export const useExecuteUnstakeTx = () => {
+export const useExecuteUndelegateTx = () => {
   const chainId = useChainId();
   const contracts = getContractsByChainId(chainId);
 
@@ -74,9 +74,9 @@ export const useExecuteUnstakeTx = () => {
     }),
     {
       txName: 'restake execute undelegate',
-      getSuccessMessage: () => 'Successfully executed unstake',
+      getSuccessMessage: () => 'Successfully executed undelegate',
     },
   );
 };
 
-export default useScheduleUnstakeTx;
+export default useScheduleUndelegateTx;

@@ -20,6 +20,7 @@ import {
 } from 'react';
 import { useAccount, useChainId } from 'wagmi';
 import { Address } from 'viem';
+import EVMChainId from '@tangle-network/dapp-types/EVMChainId';
 import { useEnvioHealthCheckByChainId } from '../utils/checkEnvioHealth';
 import {
   useRestakingAssets,
@@ -31,6 +32,7 @@ import {
   type RestakeAssetMap,
 } from '../data/graphql/useRestakeAssets';
 import { useDelegator, type Delegator } from '../data/graphql/useDelegator';
+import { useOnChainDelegator } from '../data/restake/useOnChainDelegator';
 import { useOperatorMap, type Operator } from '../data/graphql/useOperators';
 import {
   useProtocolConfig,
@@ -100,7 +102,8 @@ interface RestakeProviderProps {
 export const RestakeProvider: FC<RestakeProviderProps> = ({ children }) => {
   const chainId = useChainId();
   const { address: userAddress } = useAccount();
-  const isLocalDev = chainId === 84532 || chainId === 31337;
+  const isLocalDev =
+    chainId === EVMChainId.BaseSepolia || chainId === EVMChainId.AnvilLocal;
 
   // Check indexer health
   const { data: isHealthy, isLoading: isCheckingHealth } =
@@ -146,12 +149,56 @@ export const RestakeProvider: FC<RestakeProviderProps> = ({ children }) => {
     enabled: !isCheckingHealth,
   });
 
-  // Fetch delegator info (user's positions and pending requests)
+  // Get token addresses from assets for on-chain delegator query
+  const tokenAddresses = useMemo(() => {
+    return assetList.map((asset) => asset.id);
+  }, [assetList]);
+
+  // Fetch delegator info from GraphQL (for rich data like delegations, requests)
   const {
-    data: delegator,
-    isLoading: isLoadingDelegator,
-    refetch: refetchDelegator,
+    data: graphqlDelegator,
+    isLoading: isLoadingGraphqlDelegator,
+    refetch: refetchGraphqlDelegator,
   } = useDelegator(userAddress);
+
+  // ALWAYS fetch delegator deposit data from on-chain for accurate amounts
+  // The indexer may have stale delegatedAmount values
+  const {
+    data: onChainDelegator,
+    isLoading: isLoadingOnChainDelegator,
+    refetch: refetchOnChainDelegator,
+  } = useOnChainDelegator(userAddress, {
+    tokenAddresses,
+    enabled: !!userAddress && tokenAddresses.length > 0,
+  });
+
+  // Merge data: use on-chain for accurate deposit/delegation amounts,
+  // GraphQL for rich data (delegations, requests, etc.)
+  const delegator = useMemo<Delegator | null>(() => {
+    // If we have on-chain data, use it for asset positions (source of truth)
+    if (onChainDelegator) {
+      // If we also have GraphQL data, merge them
+      if (graphqlDelegator) {
+        return {
+          ...graphqlDelegator,
+          // Override with on-chain data for accurate amounts
+          assetPositions: onChainDelegator.assetPositions,
+          totalDeposited: onChainDelegator.totalDeposited,
+          totalDelegated: onChainDelegator.totalDelegated,
+        };
+      }
+      // Only on-chain data available
+      return onChainDelegator;
+    }
+    return graphqlDelegator ?? null;
+  }, [onChainDelegator, graphqlDelegator]);
+
+  const isLoadingDelegator =
+    isLoadingOnChainDelegator || isLoadingGraphqlDelegator;
+
+  const refetchDelegator = useCallback(async () => {
+    await Promise.all([refetchOnChainDelegator(), refetchGraphqlDelegator()]);
+  }, [refetchOnChainDelegator, refetchGraphqlDelegator]);
 
   // Fetch operators
   const {

@@ -3,8 +3,10 @@ import { EvmAddress } from '@tangle-network/ui-components/types/address';
 import { ContractFunctionName, erc20Abi, PublicClient } from 'viem';
 import { z } from 'zod';
 import { cacheTokenMetadata } from '@tangle-network/dapp-config/tokenMetadata';
+import EVMChainId from '@tangle-network/dapp-types/EVMChainId';
 
-const DEFAULT_CHAIN_ID = 1; // Fallback to Ethereum mainnet if chain ID unavailable
+/** Fallback to Ethereum mainnet if chain ID unavailable */
+const DEFAULT_CHAIN_ID = EVMChainId.EthereumMainNet;
 
 type TokenMetadata = {
   id: EvmAddress;

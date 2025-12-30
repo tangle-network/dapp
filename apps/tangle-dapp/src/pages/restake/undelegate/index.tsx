@@ -26,7 +26,7 @@ import RestakeDetailCard from '../../../components/RestakeDetailCard';
 import ActionButtonBase from '../../../components/restaking/ActionButtonBase';
 import { SUPPORTED_RESTAKE_DEPOSIT_TYPED_CHAIN_IDS } from '../../../constants/restake';
 import useActiveTypedChainId from '../../../hooks/useActiveTypedChainId';
-import type { EvmUnstakeFormFields } from '../../../types/restake';
+import type { EvmUndelegateFormFields } from '../../../types/restake';
 import decimalsToStep from '../../../utils/decimalsToStep';
 import { AnimatedTable } from '../AnimatedTable';
 import AssetPlaceholder from '../AssetPlaceholder';
@@ -40,11 +40,11 @@ import Details from './Details';
 import {
   useDelegator,
   useProtocolConfig,
-  type UnstakeRequest,
+  type UndelegateRequest,
 } from '@tangle-network/tangle-shared-ui/data/graphql';
 import {
-  useExecuteUnstakeTx,
-  useScheduleUnstakeTx,
+  useExecuteUndelegateTx,
+  useScheduleUndelegateTx,
 } from '@tangle-network/tangle-shared-ui/data/tx';
 import { TxStatus } from '@tangle-network/tangle-shared-ui/hooks/useContractWrite';
 import { useEvmAssetMetadatas } from '@tangle-network/tangle-shared-ui/hooks/useEvmAssetMetadatas';
@@ -73,10 +73,10 @@ type DelegationItem = {
   availableToUnstake: bigint; // amount available to schedule (safe max at current exchange rate)
 };
 
-const RestakeUnstakeForm: FC = () => {
+const RestakeUndelegateForm: FC = () => {
   const { address: userAddress } = useAccount();
   const chainId = useChainId();
-  const [isUnstakeRequestTableOpen, setIsUnstakeRequestTableOpen] =
+  const [isUndelegateRequestTableOpen, setIsUndelegateRequestTableOpen] =
     useState(false);
 
   const {
@@ -86,7 +86,7 @@ const RestakeUnstakeForm: FC = () => {
     setValue,
     formState: { errors, isValid, isSubmitting },
     watch,
-  } = useForm<EvmUnstakeFormFields>({
+  } = useForm<EvmUndelegateFormFields>({
     mode: 'onChange',
   });
 
@@ -242,7 +242,7 @@ const RestakeUnstakeForm: FC = () => {
     return Array.from(byKey.values());
   }, [delegator?.delegations, onChainDelegations]);
 
-  const pendingUnstakeSharesByDelegationKey = useMemo(() => {
+  const pendingUndelegateSharesByDelegationKey = useMemo(() => {
     const map = new Map<string, bigint>();
 
     if (delegator?.unstakeRequests && delegator.unstakeRequests.length > 0) {
@@ -264,7 +264,7 @@ const RestakeUnstakeForm: FC = () => {
     }
 
     return map;
-  }, [delegator?.unstakeRequests, onChainPendingUnstakes]);
+  }, [delegator?.unstakeRequests, onChainPendingUnstakes]); // Note: delegator.unstakeRequests is from GraphQL schema
 
   const operatorAddresses = useMemo(() => {
     if (delegationsForUi.length === 0) return [];
@@ -352,15 +352,15 @@ const RestakeUnstakeForm: FC = () => {
 
         if (!metadata) return null;
 
-        // Calculate available to unstake (shares minus pending unstakes)
-        const pendingUnstakes =
-          pendingUnstakeSharesByDelegationKey.get(
+        // Calculate available to undelegate (shares minus pending undelegates)
+        const pendingUndelegates =
+          pendingUndelegateSharesByDelegationKey.get(
             `${delegation.operatorId.toLowerCase()}-${delegation.token.toLowerCase()}`,
           ) ?? BigInt(0);
 
         const availableShares =
-          delegation.shares > pendingUnstakes
-            ? delegation.shares - pendingUnstakes
+          delegation.shares > pendingUndelegates
+            ? delegation.shares - pendingUndelegates
             : BigInt(0);
 
         // Only show delegations with available shares
@@ -391,36 +391,44 @@ const RestakeUnstakeForm: FC = () => {
       .filter((item): item is DelegationItem => item !== null);
   }, [
     delegationsForUi,
-    pendingUnstakeSharesByDelegationKey,
+    pendingUndelegateSharesByDelegationKey,
     operatorPoolMap,
     tokenMetadatas,
   ]);
 
-  // Get pending unstake requests
-  const unstakeRequests = useMemo(() => {
-    if (delegator?.unstakeRequests && delegator.unstakeRequests.length > 0) {
-      return delegator.unstakeRequests.filter((r) => r.status === 'PENDING');
+  // Get pending undelegate requests (prefer on-chain data as source of truth, fall back to indexer)
+  const undelegateRequests = useMemo(() => {
+    // On-chain data is the source of truth - use it when available
+    if (
+      Array.isArray(onChainPendingUnstakes) &&
+      onChainPendingUnstakes.length > 0
+    ) {
+      const delay = protocolConfig?.delegationBondLessDelay ?? BigInt(0);
+      return (onChainPendingUnstakes as OnChainPendingUnstake[]).map(
+        (r, idx) => ({
+          id: `${r.operator.toLowerCase()}-${r.asset.token.toLowerCase()}-${r.requestedRound.toString()}-${idx}`,
+          operatorId: r.operator,
+          token: r.asset.token,
+          nonce: BigInt(0),
+          shares: r.shares,
+          estimatedAmount: r.shares,
+          requestedRound: r.requestedRound,
+          readyAtRound: r.requestedRound + delay,
+          status: 'PENDING' as const,
+          executedAt: null,
+        }),
+      ) satisfies UndelegateRequest[];
     }
 
-    if (!onChainPendingUnstakes) {
+    // If on-chain returns empty array, it means no pending requests (source of truth)
+    if (Array.isArray(onChainPendingUnstakes)) {
       return [];
     }
 
-    const delay = protocolConfig?.delegationBondLessDelay ?? BigInt(0);
-    return (onChainPendingUnstakes as OnChainPendingUnstake[]).map(
-      (r, idx) => ({
-        id: `${r.operator.toLowerCase()}-${r.asset.token.toLowerCase()}-${r.requestedRound.toString()}-${idx}`,
-        operatorId: r.operator,
-        token: r.asset.token,
-        nonce: BigInt(0),
-        shares: r.shares,
-        estimatedAmount: r.shares,
-        requestedRound: r.requestedRound,
-        readyAtRound: r.requestedRound + delay,
-        status: 'PENDING' as const,
-        executedAt: null,
-      }),
-    ) satisfies UnstakeRequest[];
+    // Fall back to indexer only when on-chain data is not yet available (note: unstakeRequests is GraphQL field name)
+    return (
+      delegator?.unstakeRequests.filter((r) => r.status === 'PENDING') ?? []
+    );
   }, [
     delegator?.unstakeRequests,
     onChainPendingUnstakes,
@@ -475,15 +483,16 @@ const RestakeUnstakeForm: FC = () => {
             : undefined;
   })();
 
-  const { execute: executeScheduleUnstake, status: unstakeTxStatus } =
-    useScheduleUnstakeTx();
+  const { execute: executeScheduleUndelegate, status: undelegateTxStatus } =
+    useScheduleUndelegateTx();
 
-  const isTransacting = isSubmitting || unstakeTxStatus === TxStatus.PROCESSING;
+  const isTransacting =
+    isSubmitting || undelegateTxStatus === TxStatus.PROCESSING;
 
   const isReady =
     !isTransacting &&
     selectedDelegation !== null &&
-    executeScheduleUnstake !== null;
+    executeScheduleUndelegate !== null;
 
   const resetForm = useCallback(() => {
     setValue('amount', '', { shouldValidate: false });
@@ -506,7 +515,7 @@ const RestakeUnstakeForm: FC = () => {
     refetchOperatorRewardPools,
   ]);
 
-  const onSubmit = useCallback<SubmitHandler<EvmUnstakeFormFields>>(
+  const onSubmit = useCallback<SubmitHandler<EvmUndelegateFormFields>>(
     async ({ amount, assetId, operatorAddress }) => {
       if (!isReady || !selectedDelegation) {
         return;
@@ -515,7 +524,7 @@ const RestakeUnstakeForm: FC = () => {
       const amountBigInt = parseUnits(amount, selectedDelegation.tokenDecimals);
 
       try {
-        await executeScheduleUnstake({
+        await executeScheduleUndelegate({
           operator: operatorAddress,
           token: assetId,
           amount: amountBigInt,
@@ -527,7 +536,7 @@ const RestakeUnstakeForm: FC = () => {
       }
     },
     [
-      executeScheduleUnstake,
+      executeScheduleUndelegate,
       isReady,
       refreshAll,
       resetForm,
@@ -551,11 +560,12 @@ const RestakeUnstakeForm: FC = () => {
         <RestakeActionTabs />
 
         <Card withShadow tightPadding className="relative md:min-w-[512px]">
-          {!isUnstakeRequestTableOpen && (
+          {!isUndelegateRequestTableOpen && (
             <ExpandTableButton
               className="absolute top-0 -right-10 max-md:hidden"
-              tooltipContent="Unstake requests"
-              onClick={() => setIsUnstakeRequestTableOpen(true)}
+              tooltipContent="Undelegate requests"
+              requestCount={undelegateRequests.length}
+              onClick={() => setIsUndelegateRequestTableOpen(true)}
             />
           )}
 
@@ -682,7 +692,7 @@ const RestakeUnstakeForm: FC = () => {
                     isLoading={isTransacting || isLoading}
                     loadingText={loadingText}
                   >
-                    {displayError ?? 'Schedule Unstake'}
+                    {displayError ?? 'Schedule Undelegate'}
                   </Button>
                 );
               }}
@@ -692,21 +702,21 @@ const RestakeUnstakeForm: FC = () => {
       </div>
 
       <AnimatedTable
-        isTableOpen={isUnstakeRequestTableOpen}
+        isTableOpen={isUndelegateRequestTableOpen}
         className="hidden md:block"
       >
-        <UnstakeRequestsView
-          unstakeRequests={unstakeRequests}
+        <UndelegateRequestsView
+          undelegateRequests={undelegateRequests}
           tokenMetadatas={tokenMetadatas}
-          onClose={() => setIsUnstakeRequestTableOpen(false)}
+          onClose={() => setIsUndelegateRequestTableOpen(false)}
           onRefresh={refreshAll}
         />
       </AnimatedTable>
 
-      <UnstakeRequestsView
-        unstakeRequests={unstakeRequests}
+      <UndelegateRequestsView
+        undelegateRequests={undelegateRequests}
         tokenMetadatas={tokenMetadatas}
-        onClose={() => setIsUnstakeRequestTableOpen(false)}
+        onClose={() => setIsUndelegateRequestTableOpen(false)}
         onRefresh={refreshAll}
         className="md:hidden"
       />
@@ -716,9 +726,9 @@ const RestakeUnstakeForm: FC = () => {
         isOpen={isDelegationModalOpen}
         setIsOpen={setIsDelegationModalOpen}
         titleWhenEmpty="No Delegations Found"
-        descriptionWhenEmpty="You don't have any active delegations to unstake."
+        descriptionWhenEmpty="You don't have any active delegations to undelegate."
         items={delegationItems}
-        searchInputId="restake-unstake-delegation-search"
+        searchInputId="restake-undelegate-delegation-search"
         searchPlaceholder="Search delegations..."
         getItemKey={(item) => item.id}
         onSelect={handleDelegationSelect}
@@ -767,11 +777,11 @@ const RestakeUnstakeForm: FC = () => {
   );
 };
 
-export default RestakeUnstakeForm;
+export default RestakeUndelegateForm;
 
-// Unstake requests view component
-type UnstakeRequestsViewProps = {
-  unstakeRequests: UnstakeRequest[];
+// Undelegate requests view component
+type UndelegateRequestsViewProps = {
+  undelegateRequests: UndelegateRequest[];
   tokenMetadatas:
     | Array<{ id: EvmAddress; symbol: string; decimals: number }>
     | undefined;
@@ -780,8 +790,8 @@ type UnstakeRequestsViewProps = {
   className?: string;
 };
 
-const UnstakeRequestsView: FC<UnstakeRequestsViewProps> = ({
-  unstakeRequests,
+const UndelegateRequestsView: FC<UndelegateRequestsViewProps> = ({
+  undelegateRequests,
   tokenMetadatas,
   onClose,
   onRefresh,
@@ -789,36 +799,36 @@ const UnstakeRequestsView: FC<UnstakeRequestsViewProps> = ({
 }) => {
   const { data: config } = useProtocolConfig();
   const currentRound = config?.currentRound ?? BigInt(0);
-  const readyCount = unstakeRequests.filter(
+  const readyCount = undelegateRequests.filter(
     (r) => r.readyAtRound <= currentRound,
   ).length;
 
-  const { execute: executeUnstake, status: executeStatus } =
-    useExecuteUnstakeTx();
+  const { execute: executeUndelegate, status: executeStatus } =
+    useExecuteUndelegateTx();
   const isExecuting = executeStatus === TxStatus.PROCESSING;
 
   return (
     <RestakeDetailCard.Root className={twMerge('!min-w-0', className)}>
-      <div className="flex items-center justify-between">
+      <div className="flex items-center justify-between gap-2">
         <RestakeDetailCard.Header
           title={
-            unstakeRequests.length > 0
-              ? 'Unstake Requests'
-              : 'No Unstake Requests'
+            undelegateRequests.length > 0
+              ? 'Undelegate Requests'
+              : 'No Undelegate Requests'
           }
         />
 
         <div className="flex items-center gap-2">
-          {unstakeRequests.length > 0 && (
+          {undelegateRequests.length > 0 && (
             <Button
               size="sm"
               isDisabled={
-                readyCount === 0 || executeUnstake === null || isExecuting
+                readyCount === 0 || executeUndelegate === null || isExecuting
               }
               isLoading={isExecuting}
               onClick={async () => {
-                if (!executeUnstake) return;
-                await executeUnstake(undefined as void);
+                if (!executeUndelegate) return;
+                await executeUndelegate(undefined as void);
                 await onRefresh();
               }}
             >
@@ -832,9 +842,9 @@ const UnstakeRequestsView: FC<UnstakeRequestsViewProps> = ({
         </div>
       </div>
 
-      {unstakeRequests.length > 0 ? (
+      {undelegateRequests.length > 0 ? (
         <div className="space-y-2">
-          {unstakeRequests.map((request) => {
+          {undelegateRequests.map((request) => {
             const metadata = tokenMetadatas?.find(
               (m) => m.id.toLowerCase() === request.token.toLowerCase(),
             );
@@ -877,8 +887,8 @@ const UnstakeRequestsView: FC<UnstakeRequestsViewProps> = ({
           variant="body1"
           className="text-mono-120 dark:text-mono-100"
         >
-          Your requests will appear here after scheduling an unstake. Requests
-          can be executed after the waiting period.
+          Your requests will appear here after scheduling an undelegate.
+          Requests can be executed after the waiting period.
         </Typography>
       )}
     </RestakeDetailCard.Root>
