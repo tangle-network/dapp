@@ -486,7 +486,8 @@ const RestakeUndelegateForm: FC = () => {
   const { execute: executeScheduleUndelegate, status: undelegateTxStatus } =
     useScheduleUndelegateTx();
 
-  const isTransacting = isSubmitting || undelegateTxStatus === TxStatus.PROCESSING;
+  const isTransacting =
+    isSubmitting || undelegateTxStatus === TxStatus.PROCESSING;
 
   const isReady =
     !isTransacting &&
@@ -886,8 +887,8 @@ const UndelegateRequestsView: FC<UndelegateRequestsViewProps> = ({
           variant="body1"
           className="text-mono-120 dark:text-mono-100"
         >
-          Your requests will appear here after scheduling an undelegate. Requests
-          can be executed after the waiting period.
+          Your requests will appear here after scheduling an undelegate.
+          Requests can be executed after the waiting period.
         </Typography>
       )}
     </RestakeDetailCard.Root>
