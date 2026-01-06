@@ -1,0 +1,25 @@
+{
+  "epochId": "1",
+  "root": "0x573194fb391684e4863d727812079b5df367353a88268e8f3473ec0faecf678e",
+  "totalValue": "3000",
+  "entryCount": 2,
+  "startTs": "1767084038",
+  "endTs": "1767688838",
+  "epochSeconds": "604800",
+  "tntToken": "0x5eb3bc0a489c5a8288765d2336659ebca68fcd00",
+  "creditsPerTnt": "1",
+  "entries": {
+    "0x15d34aaf54267db7d7c367839aaf71a00a2c6a65": {
+      "amount": "1000",
+      "proof": [
+        "0x77cae3945c7ee93ef32d231aa007bf98eecc25ed440cf40263f8b987156321e4"
+      ]
+    },
+    "0x90f79bf6eb2c4f870365e785982e1f101e93b906": {
+      "amount": "2000",
+      "proof": [
+        "0xb1566ed9df667651f12a257e29b09690e01dc5f2488dd5c2fe8b16a95b7955f7"
+      ]
+    }
+  }
+}

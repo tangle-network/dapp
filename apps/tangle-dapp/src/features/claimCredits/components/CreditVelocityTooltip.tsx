@@ -1,4 +1,4 @@
-import { FC } from 'react';
+import { FC, useMemo } from 'react';
 import { InfoCircledIcon } from '@radix-ui/react-icons';
 import { Typography } from '@tangle-network/ui-components/typography/Typography';
 import {
@@ -26,7 +26,10 @@ const CreditVelocityTooltip: FC<Props> = ({
   currentAmount,
   tokenSymbol = 'TNT',
 }) => {
-  const creditsNeeded = getCreditsNeededForMinimum(currentAmount);
+  const creditsNeeded = useMemo(
+    () => getCreditsNeededForMinimum(currentAmount),
+    [currentAmount],
+  );
 
   // Convert decimal values to token units (multiply by 10^decimals) for BN
   const formattedMinimum = formatDisplayAmount(
@@ -38,6 +41,15 @@ const CreditVelocityTooltip: FC<Props> = ({
     TANGLE_TOKEN_DECIMALS,
     AmountFormatStyle.SHORT,
   );
+
+  // Format creditsNeeded to avoid floating-point display artifacts
+  const formattedCreditsNeeded = useMemo(() => {
+    if (creditsNeeded === 0) {
+      return '0';
+    }
+    // Format to max 4 decimal places, removing trailing zeros
+    return creditsNeeded.toFixed(4).replace(/\.?0+$/, '');
+  }, [creditsNeeded]);
 
   return (
     <Tooltip>
@@ -59,7 +71,8 @@ const CreditVelocityTooltip: FC<Props> = ({
             variant="body2"
             className="text-mono-120 dark:text-mono-80"
           >
-            You need {creditsNeeded} {tokenSymbol} more to reach the minimum.
+            You need {formattedCreditsNeeded} {tokenSymbol} more to reach the
+            minimum.
           </Typography>
         )}
       </TooltipBody>

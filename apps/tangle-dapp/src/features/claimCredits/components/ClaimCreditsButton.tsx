@@ -21,6 +21,10 @@ import useClaimCreditsTx from '../../../data/credits/useClaimCreditsTx';
 import { meetsMinimumClaimThreshold } from '../../../utils/creditConstraints';
 import CreditVelocityTooltip from './CreditVelocityTooltip';
 
+const SECONDS_PER_DAY = 86400;
+const SECONDS_PER_HOUR = 3600;
+const SECONDS_PER_MINUTE = 60;
+
 const ClaimCreditsButton = () => {
   const { data, error, refetch, isPending, isSupportedNetwork } = useCredits();
   const [offchainAccountId, setOffchainAccountId] = useState('');
@@ -44,9 +48,9 @@ const ClaimCreditsButton = () => {
     }
 
     const total = Number(data.timeRemaining);
-    const days = Math.floor(total / 86400);
-    const hours = Math.floor((total % 86400) / 3600);
-    const minutes = Math.floor((total % 3600) / 60);
+    const days = Math.floor(total / SECONDS_PER_DAY);
+    const hours = Math.floor((total % SECONDS_PER_DAY) / SECONDS_PER_HOUR);
+    const minutes = Math.floor((total % SECONDS_PER_HOUR) / SECONDS_PER_MINUTE);
     if (days > 0) return `${days}d ${hours}h`;
     if (hours > 0) return `${hours}h ${minutes}m`;
     return `${minutes}m`;
@@ -235,7 +239,15 @@ const CreditsButton = ({
     }
 
     if (execute === null || !credits || !epochId || !merkleProof) {
-      return null;
+      if (process.env.NODE_ENV === 'development') {
+        console.warn('Claim credits: Missing required data', {
+          hasExecute: execute !== null,
+          hasCredits: !!credits,
+          hasEpochId: !!epochId,
+          hasMerkleProof: !!merkleProof,
+        });
+      }
+      return;
     }
 
     try {
@@ -249,7 +261,9 @@ const CreditsButton = ({
       await refetchCredits();
       setOffchainAccountId('');
     } catch (error) {
-      console.error('Failed to claim credits:', error);
+      if (process.env.NODE_ENV === 'development') {
+        console.error('Failed to claim credits:', error);
+      }
     }
   }, [
     credits,
