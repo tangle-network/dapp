@@ -31,7 +31,6 @@ const ClaimCreditsButton = () => {
       return '0';
     }
 
-
     return data.amount.toString();
   }, [data]);
 

@@ -103,9 +103,13 @@ export default function useCredits() {
     address: creditsAddress as Address,
     abi: CREDITS_MERKLE_ABI,
     functionName: 'claimed',
-    args: claimData && activeEvmAddress ? [claimData.epochId, activeEvmAddress as Address] : undefined,
+    args:
+      claimData && activeEvmAddress
+        ? [claimData.epochId, activeEvmAddress as Address]
+        : undefined,
     query: {
-      enabled: isSupportedNetwork && claimData !== null && activeEvmAddress !== null,
+      enabled:
+        isSupportedNetwork && claimData !== null && activeEvmAddress !== null,
       staleTime: 10000,
       refetchInterval: 10000,
     },
