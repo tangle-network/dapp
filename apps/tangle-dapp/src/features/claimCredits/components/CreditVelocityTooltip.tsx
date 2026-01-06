@@ -28,14 +28,9 @@ const CreditVelocityTooltip: FC<Props> = ({
 }) => {
   const creditsNeeded = getCreditsNeededForMinimum(currentAmount);
 
+  // Convert decimal values to token units (multiply by 10^decimals) for BN
   const formattedMinimum = formatDisplayAmount(
-    new BN(MINIMUM_CLAIMABLE_CREDITS.toString()),
-    TANGLE_TOKEN_DECIMALS,
-    AmountFormatStyle.SHORT,
-  );
-
-  const formattedCreditsNeeded = formatDisplayAmount(
-    new BN(creditsNeeded.toString()),
+    new BN((BigInt(Math.round(MINIMUM_CLAIMABLE_CREDITS * 10 ** TANGLE_TOKEN_DECIMALS))).toString()),
     TANGLE_TOKEN_DECIMALS,
     AmountFormatStyle.SHORT,
   );
@@ -55,12 +50,12 @@ const CreditVelocityTooltip: FC<Props> = ({
           You need at least {formattedMinimum} {tokenSymbol} to claim credits.
         </Typography>
 
-        {creditsNeeded !== BigInt(0) && (
+        {creditsNeeded !== 0 && (
           <Typography
             variant="body2"
             className="text-mono-120 dark:text-mono-80"
           >
-            You need {formattedCreditsNeeded} {tokenSymbol} more to reach the
+            You need {creditsNeeded} {tokenSymbol} more to reach the
             minimum.
           </Typography>
         )}

@@ -1,11 +1,8 @@
-import { TANGLE_TOKEN_DECIMALS } from '@tangle-network/dapp-config';
-
 /**
- * Minimum claimable credit amount (0.01 tokens).
+ * Minimum claimable credit amount.
+ * Credits in the merkle tree are stored as raw amounts, not wei.
  */
-export const MINIMUM_CLAIMABLE_CREDITS = BigInt(
-  Math.pow(10, TANGLE_TOKEN_DECIMALS - 2),
-);
+export const MINIMUM_CLAIMABLE_CREDITS = 0.01;
 
 /**
  * Checks if the credit amount meets the minimum claimable threshold.
@@ -17,7 +14,7 @@ export const meetsMinimumClaimThreshold = (
     return false;
   }
 
-  return amount >= MINIMUM_CLAIMABLE_CREDITS;
+  return Number(amount) >= MINIMUM_CLAIMABLE_CREDITS;
 };
 
 /**
@@ -25,14 +22,15 @@ export const meetsMinimumClaimThreshold = (
  */
 export const getCreditsNeededForMinimum = (
   amount: bigint | null | undefined,
-): bigint => {
+): number => {
   if (!amount) {
     return MINIMUM_CLAIMABLE_CREDITS;
   }
 
-  if (amount >= MINIMUM_CLAIMABLE_CREDITS) {
-    return BigInt(0);
+  const numAmount = Number(amount);
+  if (numAmount >= MINIMUM_CLAIMABLE_CREDITS) {
+    return 0;
   }
 
-  return MINIMUM_CLAIMABLE_CREDITS - amount;
+  return MINIMUM_CLAIMABLE_CREDITS - numAmount;
 };
