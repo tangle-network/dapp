@@ -1,15 +1,14 @@
 import { CrossCircledIcon } from '@radix-ui/react-icons';
-import { TANGLE_TOKEN_DECIMALS } from '@tangle-network/dapp-config';
 import { Spinner } from '@tangle-network/icons';
 import { SparklingIcon } from '@tangle-network/icons';
 import { TxStatus } from '@tangle-network/tangle-shared-ui/hooks/useSubstrateTx';
-import { BN } from '@polkadot/util';
 import {
-  AmountFormatStyle,
   Button,
-  formatDisplayAmount,
   Typography,
   TextField,
+  Tooltip,
+  TooltipBody,
+  TooltipTrigger,
 } from '@tangle-network/ui-components';
 import {
   Dropdown,
@@ -22,6 +21,10 @@ import useClaimCreditsTx from '../../../data/credits/useClaimCreditsTx';
 import { meetsMinimumClaimThreshold } from '../../../utils/creditConstraints';
 import CreditVelocityTooltip from './CreditVelocityTooltip';
 
+const SECONDS_PER_DAY = 86400;
+const SECONDS_PER_HOUR = 3600;
+const SECONDS_PER_MINUTE = 60;
+
 const ClaimCreditsButton = () => {
   const { data, error, refetch, isPending, isSupportedNetwork } = useCredits();
   const [offchainAccountId, setOffchainAccountId] = useState('');
@@ -32,11 +35,7 @@ const ClaimCreditsButton = () => {
       return '0';
     }
 
-    return formatDisplayAmount(
-      new BN(data.amount.toString()),
-      TANGLE_TOKEN_DECIMALS,
-      AmountFormatStyle.SHORT,
-    );
+    return data.amount.toString();
   }, [data]);
 
   const meetsMinimumThreshold = useMemo(() => {
@@ -49,9 +48,9 @@ const ClaimCreditsButton = () => {
     }
 
     const total = Number(data.timeRemaining);
-    const days = Math.floor(total / 86400);
-    const hours = Math.floor((total % 86400) / 3600);
-    const minutes = Math.floor((total % 3600) / 60);
+    const days = Math.floor(total / SECONDS_PER_DAY);
+    const hours = Math.floor((total % SECONDS_PER_DAY) / SECONDS_PER_HOUR);
+    const minutes = Math.floor((total % SECONDS_PER_HOUR) / SECONDS_PER_MINUTE);
     if (days > 0) return `${days}d ${hours}h`;
     if (hours > 0) return `${hours}h ${minutes}m`;
     return `${minutes}m`;
@@ -71,31 +70,44 @@ const ClaimCreditsButton = () => {
     return error.message;
   }, [error]);
 
+  const buttonContent = (
+    <DropdownButton
+      disabled={isPending || error !== null || isUnavailable}
+      isHideArrowIcon={isPending || error !== null || isUnavailable}
+      icon={
+        isPending ? (
+          <Spinner size="lg" />
+        ) : error || isUnavailable ? (
+          <CrossCircledIcon className="size-6" />
+        ) : (
+          <SparklingIcon size="md" />
+        )
+      }
+    >
+      <span className="hidden sm:inline-block">
+        {isPending
+          ? 'Fetching credits...'
+          : isUnavailable
+            ? 'Credits unavailable'
+            : error
+              ? 'Error'
+              : formattedCredits}
+      </span>
+    </DropdownButton>
+  );
+
   return (
     <Dropdown>
-      <DropdownButton
-        disabled={isPending || error !== null || isUnavailable}
-        isHideArrowIcon={isPending || error !== null || isUnavailable}
-        icon={
-          isPending ? (
-            <Spinner size="lg" />
-          ) : error || isUnavailable ? (
-            <CrossCircledIcon className="size-6" />
-          ) : (
-            <SparklingIcon size="md" />
-          )
-        }
-      >
-        <span className="hidden sm:inline-block">
-          {isPending
-            ? 'Fetching credits...'
-            : isUnavailable
-              ? 'Credits unavailable'
-              : error
-                ? errorLabel
-                : formattedCredits}
-        </span>
-      </DropdownButton>
+      {error ? (
+        <Tooltip>
+          <TooltipTrigger asChild>{buttonContent}</TooltipTrigger>
+          <TooltipBody className="max-w-xs break-words">
+            {errorLabel}
+          </TooltipBody>
+        </Tooltip>
+      ) : (
+        buttonContent
+      )}
 
       <DropdownBody align="start" sideOffset={8} className="p-4 space-y-3">
         {isUnavailable ? (
@@ -227,7 +239,15 @@ const CreditsButton = ({
     }
 
     if (execute === null || !credits || !epochId || !merkleProof) {
-      return null;
+      if (process.env.NODE_ENV === 'development') {
+        console.warn('Claim credits: Missing required data', {
+          hasExecute: execute !== null,
+          hasCredits: !!credits,
+          hasEpochId: !!epochId,
+          hasMerkleProof: !!merkleProof,
+        });
+      }
+      return;
     }
 
     try {
@@ -241,7 +261,9 @@ const CreditsButton = ({
       await refetchCredits();
       setOffchainAccountId('');
     } catch (error) {
-      console.error('Failed to claim credits:', error);
+      if (process.env.NODE_ENV === 'development') {
+        console.error('Failed to claim credits:', error);
+      }
     }
   }, [
     credits,

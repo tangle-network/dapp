@@ -33,6 +33,9 @@ export const SP1_VERIFIER_GATEWAY = {
 };
 
 // Local Anvil deployment addresses (from LocalTestnet.s.sol deployment)
+// IMPORTANT: These are deterministic addresses based on deployer nonce when
+// running LocalTestnet.s.sol on a fresh Anvil. If running multiple times or
+// with a different deployer, addresses may differ.
 export const LOCAL_CONTRACTS: ContractAddresses = {
   tangle: '0xCf7Ed3AccA5a467e9e704C703E8D87F634fB0Fc9',
   multiAssetDelegation: '0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512',
@@ -40,7 +43,7 @@ export const LOCAL_CONTRACTS: ContractAddresses = {
   operatorStatusRegistry: '0x8f86403A4DE0BB5791fa46B8e795C547942fE4Cf',
   rewardVaults: '0x21dF544947ba3E8b3c32561399E88B52Dc8b2823',
   inflationPool: '0xD8a5a9b31c3C0232E196d518E89Fd8bF83AcAd43',
-  credits: '0x1fA02b2d6A771842690194Cf62D91bdd92BfE28d',
+  credits: '0x5081a39b8A5f0E35a8D959395a630b68B74Dd30f',
   liquidDelegationFactory: '0x8F4ec854Dd12F1fe79500a1f53D0cbB30f9b6134',
 };
 

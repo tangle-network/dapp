@@ -1,7 +1,7 @@
 import { useMemo } from 'react';
-import { useReadContract, useChainId } from 'wagmi';
+import { useChainId, useReadContract } from 'wagmi';
 import { useQuery } from '@tanstack/react-query';
-import { type Hex, zeroAddress } from 'viem';
+import { type Hex, type Address } from 'viem';
 import useEvmAddress from '@tangle-network/tangle-shared-ui/hooks/useEvmAddress';
 import CREDITS_MERKLE_ABI from '@tangle-network/tangle-shared-ui/abi/creditsMerkle';
 import {
@@ -84,7 +84,7 @@ export default function useCredits() {
     error: rootError,
     refetch: refetchRoot,
   } = useReadContract({
-    address: creditsAddress ?? zeroAddress,
+    address: creditsAddress as Address,
     abi: CREDITS_MERKLE_ABI,
     functionName: 'merkleRoots',
     args: claimData ? [claimData.epochId] : undefined,
@@ -100,16 +100,17 @@ export default function useCredits() {
     error: claimedError,
     refetch: refetchClaimed,
   } = useReadContract({
-    address: creditsAddress ?? zeroAddress,
+    address: creditsAddress as Address,
     abi: CREDITS_MERKLE_ABI,
     functionName: 'claimed',
     args:
       claimData && activeEvmAddress
-        ? [claimData.epochId, activeEvmAddress as `0x${string}`]
+        ? [claimData.epochId, activeEvmAddress as Address]
         : undefined,
     query: {
       enabled:
         isSupportedNetwork && claimData !== null && activeEvmAddress !== null,
+      staleTime: 10000,
       refetchInterval: 10000,
     },
   });
@@ -118,7 +119,7 @@ export default function useCredits() {
     if (!claimData || !onchainRoot) {
       return false;
     }
-    return claimData.root.toLowerCase() === (onchainRoot as Hex).toLowerCase();
+    return claimData.root.toLowerCase() === onchainRoot.toLowerCase();
   }, [claimData, onchainRoot]);
 
   const proofValid = useMemo(() => {
