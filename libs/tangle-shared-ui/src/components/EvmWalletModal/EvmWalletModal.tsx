@@ -24,12 +24,22 @@ const EvmWalletModal: FC<EvmWalletModalProps> = ({ isOpen, onClose }) => {
   const [connectingId, setConnectingId] = useState<string | null>(null);
 
   // Filter and deduplicate connectors
+  // Exclude Substrate-only wallets (they're only for the claim migration page)
   const availableConnectors = useMemo(() => {
     const seen = new Set<string>();
+    const substrateWalletNames = ['subwallet', 'talisman', 'polkadot'];
+
     return connectors.filter((connector) => {
       // Skip duplicates by name
       if (seen.has(connector.name)) return false;
       seen.add(connector.name);
+
+      // Skip Substrate wallets - they're only for claim migration page
+      const lowerName = connector.name.toLowerCase();
+      if (substrateWalletNames.some((name) => lowerName.includes(name))) {
+        return false;
+      }
+
       return true;
     });
   }, [connectors]);

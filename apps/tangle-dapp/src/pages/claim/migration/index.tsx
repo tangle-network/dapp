@@ -19,7 +19,10 @@ import { type FC, useCallback, useState, useMemo, useEffect } from 'react';
 import { useAccount, useChainId } from 'wagmi';
 import { type Hex, formatUnits, isAddress, keccak256, toHex } from 'viem';
 import { twMerge } from 'tailwind-merge';
-import type { InjectedAccountWithMeta } from '@polkadot/extension-inject/types';
+import type {
+  InjectedAccountWithMeta,
+  InjectedExtension,
+} from '@polkadot/extension-inject/types';
 import { AnimatePresence, motion } from 'framer-motion';
 import parseTransactionError from '@tangle-network/tangle-shared-ui/utils/parseTransactionError';
 import SubstrateWalletSelector from './components/SubstrateWalletSelector';
@@ -45,6 +48,8 @@ const MigrationClaimPage: FC = () => {
   // State
   const [substrateAccount, setSubstrateAccount] =
     useState<InjectedAccountWithMeta | null>(null);
+  const [substrateExtension, setSubstrateExtension] =
+    useState<InjectedExtension | null>(null);
   const [signature, setSignature] = useState<Hex | null>(null);
   const [currentStep, setCurrentStep] = useState<ClaimStep>(
     ClaimStep.CONNECT_WALLETS,
@@ -134,21 +139,24 @@ const MigrationClaimPage: FC = () => {
   );
 
   // Check if ready to proceed to signing
-  // Core requirements: eligibility loaded, user is eligible, hasn't claimed, has valid recipient
+  // Core requirements: eligibility loaded, user is eligible, hasn't claimed, has valid recipient, and extension ready
   const canSign = useMemo(() => {
     return (
       substrateAccount &&
+      substrateExtension &&
       !isLoadingEligibility &&
       eligibility.isEligible &&
       !eligibility.hasClaimed &&
       !eligibility.isPaused &&
       validRecipient
     );
-  }, [substrateAccount, isLoadingEligibility, eligibility, validRecipient]);
+  }, [substrateAccount, substrateExtension, isLoadingEligibility, eligibility, validRecipient]);
 
   // Handle signing the challenge
   const handleSignChallenge = useCallback(async () => {
-    if (!substrateAccount) return;
+    if (!substrateAccount || !substrateExtension) {
+      return;
+    }
 
     setCurrentStep(ClaimStep.SIGN_CHALLENGE);
 
@@ -157,14 +165,11 @@ const MigrationClaimPage: FC = () => {
       const challengeToSign =
         challenge || keccak256(toHex('dev-mode-challenge'));
 
-      const { web3FromAddress } = await import('@polkadot/extension-dapp');
-      const injector = await web3FromAddress(substrateAccount.address);
-
-      if (!injector.signer.signRaw) {
+      if (!substrateExtension.signer?.signRaw) {
         throw new Error('Signer does not support raw signing');
       }
 
-      const result = await injector.signer.signRaw({
+      const result = await substrateExtension.signer.signRaw({
         address: substrateAccount.address,
         data: challengeToSign,
         type: 'bytes',
@@ -180,7 +185,7 @@ const MigrationClaimPage: FC = () => {
       console.error('Failed to sign challenge:', err);
       setCurrentStep(ClaimStep.CHECK_ELIGIBILITY);
     }
-  }, [challenge, substrateAccount]);
+  }, [challenge, substrateAccount, substrateExtension]);
 
   const handleCopySignature = useCallback(() => {
     if (
@@ -569,6 +574,7 @@ const MigrationClaimPage: FC = () => {
                 <SubstrateWalletSelector
                   selectedAccount={substrateAccount}
                   onAccountSelect={handleAccountSelect}
+                  onExtensionChange={setSubstrateExtension}
                   disabled={currentStep >= ClaimStep.SIGN_CHALLENGE}
                 />
               </motion.div>
