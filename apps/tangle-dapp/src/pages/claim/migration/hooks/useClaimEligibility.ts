@@ -1058,7 +1058,9 @@ const useClaimEligibility = ({ ss58Address }: UseClaimEligibilityOptions) => {
         formattedBalance: '1,000',
         isPaused: false,
         unlockedBps: 1000, // Mock 10% unlocked for dev mode
-        unlockTimestamp: BigInt(Math.floor(Date.now() / 1000) + 180 * 24 * 60 * 60), // 180 days from now
+        unlockTimestamp: BigInt(
+          Math.floor(Date.now() / 1000) + 180 * 24 * 60 * 60,
+        ), // 180 days from now
       };
     }
 

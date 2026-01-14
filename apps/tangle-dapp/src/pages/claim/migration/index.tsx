@@ -171,7 +171,13 @@ const MigrationClaimPage: FC = () => {
       !eligibility.isPaused &&
       validRecipient
     );
-  }, [substrateAccount, substrateExtension, isLoadingEligibility, eligibility, validRecipient]);
+  }, [
+    substrateAccount,
+    substrateExtension,
+    isLoadingEligibility,
+    eligibility,
+    validRecipient,
+  ]);
 
   // Handle signing the challenge
   const handleSignChallenge = useCallback(async () => {
@@ -322,7 +328,10 @@ const MigrationClaimPage: FC = () => {
             >
               Claim Successful!
             </Typography>
-            <Typography variant="body1" className="text-mono-100 mb-4 text-center">
+            <Typography
+              variant="body1"
+              className="text-mono-100 mb-4 text-center"
+            >
               Your TNT tokens have been claimed successfully.
             </Typography>
 
@@ -342,7 +351,10 @@ const MigrationClaimPage: FC = () => {
                   </Typography>
                 </div>
                 <div className="flex justify-between items-center gap-4">
-                  <Typography variant="body2" className="text-mono-100 shrink-0">
+                  <Typography
+                    variant="body2"
+                    className="text-mono-100 shrink-0"
+                  >
                     Locked until{' '}
                     {new Date(
                       Number(eligibility.unlockTimestamp) * 1000,

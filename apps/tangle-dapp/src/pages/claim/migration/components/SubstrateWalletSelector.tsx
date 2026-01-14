@@ -120,7 +120,10 @@ const SubstrateWalletSelector: FC<Props> = ({
 
   // Convert InjectedAccount to InjectedAccountWithMeta
   const convertAccounts = useCallback(
-    (rawAccounts: InjectedAccount[], source: string): InjectedAccountWithMeta[] => {
+    (
+      rawAccounts: InjectedAccount[],
+      source: string,
+    ): InjectedAccountWithMeta[] => {
       return rawAccounts.map((account) => ({
         address: account.address,
         meta: {
@@ -181,7 +184,10 @@ const SubstrateWalletSelector: FC<Props> = ({
           return;
         }
 
-        const convertedAccounts = convertAccounts(rawAccounts, saved.walletName);
+        const convertedAccounts = convertAccounts(
+          rawAccounts,
+          saved.walletName,
+        );
         setAccounts(convertedAccounts);
         setConnectedWalletName(saved.walletName);
         setIsConnected(true);
