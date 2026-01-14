@@ -36,7 +36,7 @@ function ensureAccountsSubscribe(
           cb: (accounts: InjectedAccount[]) => void | Promise<void>,
         ): Unsubcall => {
           extension.accounts.get().then(cb).catch(console.error);
-          return () => {};
+          return Function.prototype as Unsubcall;
         },
       },
     };
