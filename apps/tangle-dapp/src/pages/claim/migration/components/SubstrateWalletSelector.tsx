@@ -1,15 +1,45 @@
-import { type InjectedAccountWithMeta } from '@polkadot/extension-inject/types';
-import { WalletLineIcon, ChevronDown } from '@tangle-network/icons';
+import type {
+  InjectedAccount,
+  InjectedAccountWithMeta,
+  InjectedExtension,
+} from '@polkadot/extension-inject/types';
+import { ChevronDown, WalletLineIcon } from '@tangle-network/icons';
+import {
+  PolkadotJsIcon,
+  SubWalletIcon,
+  TalismanIcon,
+} from '@tangle-network/icons/wallets';
 import { Avatar } from '@tangle-network/ui-components/components/Avatar';
 import { Typography } from '@tangle-network/ui-components/typography/Typography';
 import { shortenString } from '@tangle-network/ui-components/utils/shortenString';
-import { type FC, useCallback, useState } from 'react';
-import { twMerge } from 'tailwind-merge';
 import { AnimatePresence, motion } from 'framer-motion';
+import { type FC, useCallback, useEffect, useMemo, useState } from 'react';
+import { twMerge } from 'tailwind-merge';
+import { findSubstrateWallet } from '../utils/walletUtils';
+import SubstrateWalletModal, {
+  type SubstrateWalletName,
+} from './SubstrateWalletModal';
+
+const STORAGE_KEY = 'tangle-migration-claim-substrate-wallet';
+
+interface SavedConnection {
+  walletName: SubstrateWalletName;
+  accountAddress: string;
+}
+
+const WALLET_INFO: Record<
+  SubstrateWalletName,
+  { title: string; Icon: FC<{ className?: string }> }
+> = {
+  'polkadot-js': { title: 'Polkadot{.js}', Icon: PolkadotJsIcon },
+  talisman: { title: 'Talisman', Icon: TalismanIcon },
+  'subwallet-js': { title: 'SubWallet', Icon: SubWalletIcon },
+};
 
 interface Props {
   selectedAccount: InjectedAccountWithMeta | null;
   onAccountSelect: (account: InjectedAccountWithMeta | null) => void;
+  onExtensionChange?: (extension: InjectedExtension | null) => void;
   disabled?: boolean;
   className?: string;
 }
@@ -17,69 +47,169 @@ interface Props {
 const SubstrateWalletSelector: FC<Props> = ({
   selectedAccount,
   onAccountSelect,
+  onExtensionChange,
   disabled = false,
   className,
 }) => {
   const [accounts, setAccounts] = useState<InjectedAccountWithMeta[]>([]);
-  const [isConnecting, setIsConnecting] = useState(false);
   const [isConnected, setIsConnected] = useState(false);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [isWalletModalOpen, setIsWalletModalOpen] = useState(false);
+  const [connectedWalletName, setConnectedWalletName] =
+    useState<SubstrateWalletName | null>(null);
+  const [isReconnecting, setIsReconnecting] = useState(false);
 
-  const connectExtension = useCallback(async () => {
-    setIsConnecting(true);
-    setError(null);
+  const walletInfo = useMemo(() => {
+    if (!connectedWalletName) return null;
+    return WALLET_INFO[connectedWalletName];
+  }, [connectedWalletName]);
 
-    try {
-      const { web3Enable, web3Accounts } = await import(
-        '@polkadot/extension-dapp'
+  // Convert InjectedAccount to InjectedAccountWithMeta
+  const convertAccounts = useCallback(
+    (
+      rawAccounts: InjectedAccount[],
+      source: string,
+    ): InjectedAccountWithMeta[] => {
+      return rawAccounts.map((account) => ({
+        address: account.address,
+        meta: {
+          name: account.name,
+          source,
+          genesisHash: account.genesisHash,
+        },
+        type: account.type,
+      }));
+    },
+    [],
+  );
+
+  // localStorage helpers
+  const saveConnection = useCallback(
+    (walletName: SubstrateWalletName, accountAddress: string) => {
+      localStorage.setItem(
+        STORAGE_KEY,
+        JSON.stringify({ walletName, accountAddress }),
       );
+    },
+    [],
+  );
 
-      const extensions = await web3Enable('Tangle Migration Claim');
+  const clearConnection = useCallback(() => {
+    localStorage.removeItem(STORAGE_KEY);
+  }, []);
 
-      if (extensions.length === 0) {
-        throw new Error(
-          'No Polkadot wallet found. Please install Polkadot.js, Talisman, or SubWallet.',
-        );
-      }
-
-      const allAccounts = await web3Accounts();
-
-      if (allAccounts.length === 0) {
-        throw new Error(
-          'No accounts found. Please create or import an account in your wallet.',
-        );
-      }
-
-      setAccounts(allAccounts);
-      setIsConnected(true);
-
-      if (allAccounts.length === 1) {
-        onAccountSelect(allAccounts[0]);
-      }
-    } catch (err) {
-      console.error('Failed to connect extension:', err);
-      setError(err instanceof Error ? err.message : 'Failed to connect wallet');
-      setIsConnected(false);
-    } finally {
-      setIsConnecting(false);
+  const loadSavedConnection = useCallback((): SavedConnection | null => {
+    try {
+      const saved = localStorage.getItem(STORAGE_KEY);
+      return saved ? JSON.parse(saved) : null;
+    } catch {
+      return null;
     }
-  }, [onAccountSelect]);
+  }, []);
 
+  // Try to reconnect to saved wallet on mount
+  useEffect(() => {
+    const reconnect = async () => {
+      const saved = loadSavedConnection();
+      if (!saved) return;
+
+      // Check if wallet is still installed
+      if (!window.injectedWeb3?.[saved.walletName]) {
+        clearConnection();
+        return;
+      }
+
+      setIsReconnecting(true);
+
+      try {
+        const extension = await findSubstrateWallet(saved.walletName);
+        const rawAccounts = await extension.accounts.get();
+
+        if (rawAccounts.length === 0) {
+          clearConnection();
+          return;
+        }
+
+        const convertedAccounts = convertAccounts(
+          rawAccounts,
+          saved.walletName,
+        );
+        setAccounts(convertedAccounts);
+        setConnectedWalletName(saved.walletName);
+        setIsConnected(true);
+        onExtensionChange?.(extension);
+
+        // Restore previously selected account
+        const savedAccount = convertedAccounts.find(
+          (acc) => acc.address === saved.accountAddress,
+        );
+        if (savedAccount) {
+          onAccountSelect(savedAccount);
+        }
+      } catch (err) {
+        console.error('Failed to reconnect wallet:', err);
+        clearConnection();
+      } finally {
+        setIsReconnecting(false);
+      }
+    };
+
+    reconnect();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  // Handle wallet connection from modal
+  const handleWalletConnect = useCallback(
+    (
+      walletName: SubstrateWalletName,
+      rawAccounts: InjectedAccount[],
+      extension: InjectedExtension,
+    ) => {
+      const convertedAccounts = convertAccounts(rawAccounts, walletName);
+      setAccounts(convertedAccounts);
+      setConnectedWalletName(walletName);
+      setIsConnected(true);
+      setError(null);
+      onExtensionChange?.(extension);
+
+      // Auto-select if only one account
+      if (convertedAccounts.length === 1) {
+        onAccountSelect(convertedAccounts[0]);
+        saveConnection(walletName, convertedAccounts[0].address);
+      }
+    },
+    [convertAccounts, onAccountSelect, onExtensionChange, saveConnection],
+  );
+
+  // Handle account selection
   const handleAccountClick = useCallback(
     (account: InjectedAccountWithMeta) => {
       onAccountSelect(account);
       setIsDropdownOpen(false);
+      if (connectedWalletName) {
+        saveConnection(connectedWalletName, account.address);
+      }
     },
-    [onAccountSelect],
+    [connectedWalletName, onAccountSelect, saveConnection],
   );
 
+  // Handle disconnect
   const handleDisconnect = useCallback(() => {
     setIsConnected(false);
     setAccounts([]);
+    setConnectedWalletName(null);
     onAccountSelect(null);
+    onExtensionChange?.(null);
     setIsDropdownOpen(false);
-  }, [onAccountSelect]);
+    clearConnection();
+  }, [clearConnection, onAccountSelect, onExtensionChange]);
+
+  // Handle change wallet
+  const handleChangeWallet = useCallback(() => {
+    setIsDropdownOpen(false);
+    setIsWalletModalOpen(true);
+  }, []);
 
   // Not connected - show connect button
   if (!isConnected) {
@@ -98,8 +228,8 @@ const SubstrateWalletSelector: FC<Props> = ({
         )}
 
         <button
-          onClick={connectExtension}
-          disabled={disabled || isConnecting}
+          onClick={() => setIsWalletModalOpen(true)}
+          disabled={disabled || isReconnecting}
           className={twMerge(
             'w-full flex items-center gap-3 px-4 py-4 rounded-xl',
             'bg-gradient-to-r from-purple-500/10 to-blue-500/10',
@@ -109,7 +239,7 @@ const SubstrateWalletSelector: FC<Props> = ({
           )}
         >
           <div className="w-10 h-10 rounded-full bg-purple-500/20 flex items-center justify-center group-hover:bg-purple-500/30 transition-colors">
-            {isConnecting ? (
+            {isReconnecting ? (
               <div className="w-5 h-5 border-2 border-purple-400 border-t-transparent rounded-full animate-spin" />
             ) : (
               <WalletLineIcon className="w-5 h-5 text-purple-400" />
@@ -121,18 +251,26 @@ const SubstrateWalletSelector: FC<Props> = ({
               fw="semibold"
               className="text-mono-200 dark:text-mono-0"
             >
-              {isConnecting ? 'Connecting...' : 'Connect Polkadot Wallet'}
+              {isReconnecting ? 'Reconnecting...' : 'Connect Polkadot Wallet'}
             </Typography>
             <Typography variant="body2" className="text-mono-100 text-xs">
               Polkadot.js, Talisman, or SubWallet
             </Typography>
           </div>
         </button>
+
+        <SubstrateWalletModal
+          isOpen={isWalletModalOpen}
+          onClose={() => setIsWalletModalOpen(false)}
+          onWalletConnect={handleWalletConnect}
+        />
       </div>
     );
   }
 
   // Connected - show account selector
+  const WalletIcon = walletInfo?.Icon;
+
   return (
     <div className={twMerge('relative', className)}>
       <button
@@ -161,18 +299,29 @@ const SubstrateWalletSelector: FC<Props> = ({
               >
                 {selectedAccount.meta.name || 'Account'}
               </Typography>
-              <Typography
-                variant="body2"
-                className="text-mono-100 text-xs font-mono"
-              >
-                {shortenString(selectedAccount.address, 8)}
-              </Typography>
+              <div className="flex items-center gap-1.5">
+                <Typography
+                  variant="body2"
+                  className="text-mono-100 text-xs font-mono"
+                >
+                  {shortenString(selectedAccount.address, 8)}
+                </Typography>
+                {walletInfo && (
+                  <span className="text-mono-100 text-xs">
+                    • {walletInfo.title}
+                  </span>
+                )}
+              </div>
             </div>
           </>
         ) : (
           <>
             <div className="w-10 h-10 rounded-full bg-mono-100/20 flex items-center justify-center">
-              <WalletLineIcon className="w-5 h-5 text-mono-100" />
+              {WalletIcon ? (
+                <WalletIcon className="w-5 h-5" />
+              ) : (
+                <WalletLineIcon className="w-5 h-5 text-mono-100" />
+              )}
             </div>
             <Typography
               variant="body2"
@@ -238,17 +387,29 @@ const SubstrateWalletSelector: FC<Props> = ({
               ))}
             </div>
 
-            <div className="border-t border-mono-40 dark:border-mono-160 p-2">
+            <div className="border-t border-mono-40 dark:border-mono-160 p-2 space-y-1">
+              <button
+                onClick={handleChangeWallet}
+                className="w-full px-3 py-2 text-sm text-mono-100 hover:bg-mono-20 dark:hover:bg-mono-170 rounded-lg transition-colors text-left"
+              >
+                Change Wallet
+              </button>
               <button
                 onClick={handleDisconnect}
-                className="w-full px-3 py-2 text-sm text-red-400 hover:bg-red-500/10 rounded-lg transition-colors"
+                className="w-full px-3 py-2 text-sm text-red-400 hover:bg-red-500/10 rounded-lg transition-colors text-left"
               >
-                Disconnect Wallet
+                Disconnect
               </button>
             </div>
           </motion.div>
         )}
       </AnimatePresence>
+
+      <SubstrateWalletModal
+        isOpen={isWalletModalOpen}
+        onClose={() => setIsWalletModalOpen(false)}
+        onWalletConnect={handleWalletConnect}
+      />
     </div>
   );
 };

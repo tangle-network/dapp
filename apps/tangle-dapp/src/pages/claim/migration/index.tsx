@@ -3,6 +3,7 @@ import {
   CheckboxCircleFill,
   EditLine,
   Alert,
+  ExternalLinkLine,
 } from '@tangle-network/icons';
 import { Card, CopyWithTooltip } from '@tangle-network/ui-components';
 import Button from '@tangle-network/ui-components/components/buttons/Button';
@@ -15,13 +16,18 @@ import {
 } from '@tangle-network/ui-components/components/Tooltip';
 import { Typography } from '@tangle-network/ui-components/typography/Typography';
 import { EvmWalletModal } from '@tangle-network/tangle-shared-ui/components/EvmWalletModal';
+import { makeExplorerUrl } from '@tangle-network/api-provider-environment/transaction/utils/makeExplorerUrl';
 import { type FC, useCallback, useState, useMemo, useEffect } from 'react';
-import { useAccount, useChainId } from 'wagmi';
+import { useAccount, useChainId, useConfig } from 'wagmi';
 import { type Hex, formatUnits, isAddress, keccak256, toHex } from 'viem';
 import { twMerge } from 'tailwind-merge';
-import type { InjectedAccountWithMeta } from '@polkadot/extension-inject/types';
+import type {
+  InjectedAccountWithMeta,
+  InjectedExtension,
+} from '@polkadot/extension-inject/types';
 import { AnimatePresence, motion } from 'framer-motion';
 import parseTransactionError from '@tangle-network/tangle-shared-ui/utils/parseTransactionError';
+import formatTangleBalance from '../../../utils/formatTangleBalance';
 import SubstrateWalletSelector from './components/SubstrateWalletSelector';
 import useClaimEligibility, {
   generateChallenge,
@@ -41,10 +47,13 @@ enum ClaimStep {
 const MigrationClaimPage: FC = () => {
   const { address: evmAddress, isConnected } = useAccount();
   const chainId = useChainId();
+  const config = useConfig();
 
   // State
   const [substrateAccount, setSubstrateAccount] =
     useState<InjectedAccountWithMeta | null>(null);
+  const [substrateExtension, setSubstrateExtension] =
+    useState<InjectedExtension | null>(null);
   const [signature, setSignature] = useState<Hex | null>(null);
   const [currentStep, setCurrentStep] = useState<ClaimStep>(
     ClaimStep.CONNECT_WALLETS,
@@ -98,6 +107,23 @@ const MigrationClaimPage: FC = () => {
     switchedToWalletMode,
   } = useSubmitClaim();
 
+  // Generate explorer URL for the transaction based on connected chain
+  const explorerUrl = useMemo(() => {
+    if (!txHash) {
+      return null;
+    }
+
+    // Get the chain's block explorer URL from wagmi config
+    const chain = config.chains.find((c) => c.id === chainId);
+    const baseUrl = chain?.blockExplorers?.default?.url;
+
+    if (!baseUrl) {
+      return null;
+    }
+
+    return makeExplorerUrl(baseUrl, txHash, 'tx', 'web3');
+  }, [txHash, chainId, config.chains]);
+
   // Validate recipient address
   const isRecipientValid = useMemo(() => {
     return recipientAddress && isAddress(recipientAddress);
@@ -134,21 +160,30 @@ const MigrationClaimPage: FC = () => {
   );
 
   // Check if ready to proceed to signing
-  // Core requirements: eligibility loaded, user is eligible, hasn't claimed, has valid recipient
+  // Core requirements: eligibility loaded, user is eligible, hasn't claimed, has valid recipient, and extension ready
   const canSign = useMemo(() => {
     return (
       substrateAccount &&
+      substrateExtension &&
       !isLoadingEligibility &&
       eligibility.isEligible &&
       !eligibility.hasClaimed &&
       !eligibility.isPaused &&
       validRecipient
     );
-  }, [substrateAccount, isLoadingEligibility, eligibility, validRecipient]);
+  }, [
+    substrateAccount,
+    substrateExtension,
+    isLoadingEligibility,
+    eligibility,
+    validRecipient,
+  ]);
 
   // Handle signing the challenge
   const handleSignChallenge = useCallback(async () => {
-    if (!substrateAccount) return;
+    if (!substrateAccount || !substrateExtension) {
+      return;
+    }
 
     setCurrentStep(ClaimStep.SIGN_CHALLENGE);
 
@@ -157,14 +192,11 @@ const MigrationClaimPage: FC = () => {
       const challengeToSign =
         challenge || keccak256(toHex('dev-mode-challenge'));
 
-      const { web3FromAddress } = await import('@polkadot/extension-dapp');
-      const injector = await web3FromAddress(substrateAccount.address);
-
-      if (!injector.signer.signRaw) {
+      if (!substrateExtension.signer?.signRaw) {
         throw new Error('Signer does not support raw signing');
       }
 
-      const result = await injector.signer.signRaw({
+      const result = await substrateExtension.signer.signRaw({
         address: substrateAccount.address,
         data: challengeToSign,
         type: 'bytes',
@@ -180,7 +212,7 @@ const MigrationClaimPage: FC = () => {
       console.error('Failed to sign challenge:', err);
       setCurrentStep(ClaimStep.CHECK_ELIGIBILITY);
     }
-  }, [challenge, substrateAccount]);
+  }, [challenge, substrateAccount, substrateExtension]);
 
   const handleCopySignature = useCallback(() => {
     if (
@@ -262,6 +294,15 @@ const MigrationClaimPage: FC = () => {
     ? formatUnits(eligibility.amount, 18)
     : '0';
 
+  // Calculate unlocked and locked amounts for display
+  const unlockedAmount = eligibility.amount
+    ? (eligibility.amount * BigInt(eligibility.unlockedBps)) / BigInt(10000)
+    : BigInt(0);
+  const lockedAmount = eligibility.amount
+    ? eligibility.amount - unlockedAmount
+    : BigInt(0);
+  const hasLockSplit = eligibility.unlockedBps < 10000;
+
   // Render claim success
   if (isConfirmed) {
     return (
@@ -283,13 +324,57 @@ const MigrationClaimPage: FC = () => {
             <Typography
               variant="h4"
               fw="bold"
-              className="mb-2 text-mono-200 dark:text-mono-0"
+              className="mb-2 text-mono-200 dark:text-mono-0 text-center"
             >
               Claim Successful!
             </Typography>
-            <Typography variant="body1" className="text-mono-100 mb-4">
+            <Typography
+              variant="body1"
+              className="text-mono-100 mb-4 text-center"
+            >
               Your TNT tokens have been claimed successfully.
             </Typography>
+
+            {/* Unlock breakdown in success state */}
+            {hasLockSplit && eligibility.amount !== null && (
+              <div className="mb-4 p-4 rounded-lg bg-mono-20 dark:bg-mono-170 space-y-3 text-left">
+                <div className="flex justify-between items-center gap-4">
+                  <Typography variant="body2" className="text-mono-100">
+                    Sent to your wallet
+                  </Typography>
+                  <Typography
+                    variant="body2"
+                    fw="semibold"
+                    className="text-green-500 text-right"
+                  >
+                    {formatTangleBalance(unlockedAmount)} TNT
+                  </Typography>
+                </div>
+                <div className="flex justify-between items-center gap-4">
+                  <Typography
+                    variant="body2"
+                    className="text-mono-100 shrink-0"
+                  >
+                    Locked until{' '}
+                    {new Date(
+                      Number(eligibility.unlockTimestamp) * 1000,
+                    ).toLocaleDateString('en-US', {
+                      month: 'short',
+                      day: 'numeric',
+                      year: 'numeric',
+                    })}
+                  </Typography>
+                  <Typography
+                    variant="body2"
+                    fw="semibold"
+                    className="text-mono-120 dark:text-mono-80 text-right"
+                  >
+                    {formatTangleBalance(lockedAmount)} TNT
+                  </Typography>
+                </div>
+              </div>
+            )}
+
             <div className="p-3 rounded-lg bg-mono-20 dark:bg-mono-170 break-all flex items-center gap-2">
               <Typography
                 variant="body2"
@@ -300,6 +385,17 @@ const MigrationClaimPage: FC = () => {
 
               {txHash && (
                 <CopyWithTooltip textToCopy={txHash} isButton={false} />
+              )}
+
+              {explorerUrl && (
+                <a
+                  href={explorerUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-mono-100 hover:text-mono-200 dark:hover:text-mono-0 transition-colors"
+                >
+                  <ExternalLinkLine className="w-4 h-4 fill-current" />
+                </a>
               )}
             </div>
           </Card>
@@ -569,6 +665,7 @@ const MigrationClaimPage: FC = () => {
                 <SubstrateWalletSelector
                   selectedAccount={substrateAccount}
                   onAccountSelect={handleAccountSelect}
+                  onExtensionChange={setSubstrateExtension}
                   disabled={currentStep >= ClaimStep.SIGN_CHALLENGE}
                 />
               </motion.div>
@@ -660,10 +757,66 @@ const MigrationClaimPage: FC = () => {
                       >
                         {Number(formattedAmount).toLocaleString()} TNT
                       </Typography>
+
+                      {/* Unlock breakdown - only show if not 100% unlocked */}
+                      {eligibility.amount !== null &&
+                        eligibility.unlockedBps < 10000 && (
+                          <div className="mt-4 p-3 rounded-lg bg-mono-0/5 dark:bg-mono-200/5 space-y-2">
+                            <div className="flex justify-between items-center gap-4 text-sm">
+                              <Typography
+                                variant="body2"
+                                className="text-mono-100"
+                              >
+                                Available immediately
+                              </Typography>
+                              <Typography
+                                variant="body2"
+                                fw="semibold"
+                                className="text-green-400 text-right"
+                              >
+                                {formatTangleBalance(
+                                  (eligibility.amount *
+                                    BigInt(eligibility.unlockedBps)) /
+                                    BigInt(10000),
+                                )}{' '}
+                                TNT ({eligibility.unlockedBps / 100}%)
+                              </Typography>
+                            </div>
+                            <div className="flex justify-between items-center gap-4 text-sm">
+                              <Typography
+                                variant="body2"
+                                className="text-mono-100 shrink-0"
+                              >
+                                Locked until{' '}
+                                {new Date(
+                                  Number(eligibility.unlockTimestamp) * 1000,
+                                ).toLocaleDateString('en-US', {
+                                  month: 'short',
+                                  day: 'numeric',
+                                  year: 'numeric',
+                                })}
+                              </Typography>
+                              <Typography
+                                variant="body2"
+                                fw="semibold"
+                                className="text-mono-120 dark:text-mono-80 text-right"
+                              >
+                                {formatTangleBalance(
+                                  eligibility.amount -
+                                    (eligibility.amount *
+                                      BigInt(eligibility.unlockedBps)) /
+                                      BigInt(10000),
+                                )}{' '}
+                                TNT ({100 - eligibility.unlockedBps / 100}%)
+                              </Typography>
+                            </div>
+                          </div>
+                        )}
+
                       {eligibility.timeRemaining > BigInt(0) && (
                         <Typography
                           variant="body2"
-                          className="text-mono-100 mt-2"
+                          className="text-mono-100 mt-3"
                         >
                           {Math.floor(
                             Number(eligibility.timeRemaining) / 86400,
