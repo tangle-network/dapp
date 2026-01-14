@@ -2,7 +2,6 @@ import type {
   InjectedAccount,
   InjectedAccountWithMeta,
   InjectedExtension,
-  Unsubcall,
 } from '@polkadot/extension-inject/types';
 import { ChevronDown, WalletLineIcon } from '@tangle-network/icons';
 import {
@@ -16,11 +15,11 @@ import { shortenString } from '@tangle-network/ui-components/utils/shortenString
 import { AnimatePresence, motion } from 'framer-motion';
 import { type FC, useCallback, useEffect, useMemo, useState } from 'react';
 import { twMerge } from 'tailwind-merge';
+import { findSubstrateWallet } from '../utils/walletUtils';
 import SubstrateWalletModal, {
   type SubstrateWalletName,
 } from './SubstrateWalletModal';
 
-const APP_NAME = 'Tangle dApp';
 const STORAGE_KEY = 'tangle-migration-claim-substrate-wallet';
 
 interface SavedConnection {
@@ -36,58 +35,6 @@ const WALLET_INFO: Record<
   talisman: { title: 'Talisman', Icon: TalismanIcon },
   'subwallet-js': { title: 'SubWallet', Icon: SubWalletIcon },
 };
-
-/**
- * Ensures extension has accounts.subscribe method
- */
-function ensureAccountsSubscribe(
-  extension: InjectedExtension,
-): InjectedExtension {
-  if (!extension.accounts.subscribe) {
-    return {
-      ...extension,
-      accounts: {
-        ...extension.accounts,
-        subscribe: (
-          cb: (accounts: InjectedAccount[]) => void | Promise<void>,
-        ): Unsubcall => {
-          extension.accounts.get().then(cb).catch(console.error);
-          return Function.prototype as Unsubcall;
-        },
-      },
-    };
-  }
-  return extension;
-}
-
-/**
- * Find and connect to a substrate wallet
- */
-async function findSubstrateWallet(
-  walletName: string,
-): Promise<InjectedExtension> {
-  const extension = window.injectedWeb3?.[walletName];
-
-  if (extension === undefined) {
-    throw new Error(`${walletName} is not installed`);
-  }
-
-  if (extension.connect !== undefined) {
-    const ex = await extension.connect(APP_NAME);
-    return ensureAccountsSubscribe(ex);
-  }
-
-  if (extension.enable !== undefined) {
-    const injected = await extension.enable(APP_NAME);
-    return ensureAccountsSubscribe({
-      name: walletName,
-      version: extension.version || 'unknown',
-      ...injected,
-    });
-  }
-
-  throw new Error(`${walletName} does not support connect() or enable()`);
-}
 
 interface Props {
   selectedAccount: InjectedAccountWithMeta | null;
