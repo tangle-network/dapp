@@ -8,6 +8,7 @@ import { Address } from 'viem';
 import { useChainId, usePublicClient } from 'wagmi';
 import { getContractsByChainId } from '@tangle-network/dapp-config/contracts';
 import MULTI_ASSET_DELEGATION_ABI from '../../abi/multiAssetDelegation';
+import { CACHE_CONFIG } from '../../constants/cacheConfig';
 
 /**
  * Delegation mode enum matching the contract.
@@ -113,7 +114,7 @@ export const useCanDelegate = ({
       };
     },
     enabled: enabled && !!publicClient && !!operator && !!delegator,
-    staleTime: 30_000, // 30 seconds
+    staleTime: CACHE_CONFIG.DELEGATION.staleTime,
     retry: 2,
   });
 

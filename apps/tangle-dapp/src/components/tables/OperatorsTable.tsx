@@ -43,7 +43,8 @@ export const OperatorsTable: FC<Props> = ({
     if (!operatorMap) return [];
 
     return Array.from(operatorMap.values()).map((operator) => {
-      const info = delegationInfo.get(operator.id as Address);
+      // Normalize address to lowercase for consistent Map lookup
+      const info = delegationInfo.get(operator.id.toLowerCase() as Address);
       return {
         address: operator.id,
         identityName: undefined,

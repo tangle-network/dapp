@@ -9,6 +9,7 @@ import { useChainId, usePublicClient } from 'wagmi';
 import { getContractsByChainId } from '@tangle-network/dapp-config/contracts';
 import MULTI_ASSET_DELEGATION_ABI from '../../abi/multiAssetDelegation';
 import { DelegationMode } from './useCanDelegate';
+import { CACHE_CONFIG } from '../../constants/cacheConfig';
 
 export interface UseOperatorDelegationModesOptions {
   /** List of operator addresses to fetch delegation modes for */
@@ -90,7 +91,7 @@ export const useOperatorDelegationModes = ({
       return map;
     },
     enabled: enabled && !!publicClient && operators.length > 0,
-    staleTime: 60_000, // 1 minute
+    staleTime: CACHE_CONFIG.DELEGATION.staleTime,
     retry: 2,
   });
 

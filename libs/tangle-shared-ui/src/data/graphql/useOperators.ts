@@ -105,6 +105,16 @@ interface OperatorsQueryResult {
   }>;
 }
 
+// Safely parse a string to BigInt, returning null on invalid input
+const safeBigInt = (value: string | null): bigint | null => {
+  if (!value) return null;
+  try {
+    return BigInt(value);
+  } catch {
+    return null;
+  }
+};
+
 // Parse operator data from GraphQL response
 const parseOperator = (
   raw: OperatorsQueryResult['Operator'][number],
@@ -112,22 +122,14 @@ const parseOperator = (
   id: raw.id,
   ecdsaPublicKey: raw.ecdsaPublicKey,
   rpcAddress: raw.rpcAddress,
-  createdAt: raw.createdAt ? BigInt(raw.createdAt) : null,
-  updatedAt: raw.updatedAt ? BigInt(raw.updatedAt) : null,
+  createdAt: safeBigInt(raw.createdAt),
+  updatedAt: safeBigInt(raw.updatedAt),
   restakingStatus: raw.restakingStatus,
-  restakingStake: raw.restakingStake ? BigInt(raw.restakingStake) : null,
-  restakingDelegationCount: raw.restakingDelegationCount
-    ? BigInt(raw.restakingDelegationCount)
-    : null,
-  restakingLeavingRound: raw.restakingLeavingRound
-    ? BigInt(raw.restakingLeavingRound)
-    : null,
-  restakingScheduledUnstakeAmount: raw.restakingScheduledUnstakeAmount
-    ? BigInt(raw.restakingScheduledUnstakeAmount)
-    : null,
-  restakingScheduledUnstakeRound: raw.restakingScheduledUnstakeRound
-    ? BigInt(raw.restakingScheduledUnstakeRound)
-    : null,
+  restakingStake: safeBigInt(raw.restakingStake),
+  restakingDelegationCount: safeBigInt(raw.restakingDelegationCount),
+  restakingLeavingRound: safeBigInt(raw.restakingLeavingRound),
+  restakingScheduledUnstakeAmount: safeBigInt(raw.restakingScheduledUnstakeAmount),
+  restakingScheduledUnstakeRound: safeBigInt(raw.restakingScheduledUnstakeRound),
   delegationMode: raw.delegationMode,
 });
 
