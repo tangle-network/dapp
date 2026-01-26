@@ -90,26 +90,27 @@ export const useCanDelegateToOperators = ({
 
       const results = await Promise.allSettled(
         operators.map(async (operator) => {
-          const [canDelegate, delegationMode, isWhitelisted] = await Promise.all([
-            publicClient.readContract({
-              address: contracts.multiAssetDelegation,
-              abi: MULTI_ASSET_DELEGATION_ABI,
-              functionName: 'canDelegate',
-              args: [operator, delegator],
-            }) as Promise<boolean>,
-            publicClient.readContract({
-              address: contracts.multiAssetDelegation,
-              abi: MULTI_ASSET_DELEGATION_ABI,
-              functionName: 'getDelegationMode',
-              args: [operator],
-            }) as Promise<number>,
-            publicClient.readContract({
-              address: contracts.multiAssetDelegation,
-              abi: MULTI_ASSET_DELEGATION_ABI,
-              functionName: 'isWhitelisted',
-              args: [operator, delegator],
-            }) as Promise<boolean>,
-          ]);
+          const [canDelegate, delegationMode, isWhitelisted] =
+            await Promise.all([
+              publicClient.readContract({
+                address: contracts.multiAssetDelegation,
+                abi: MULTI_ASSET_DELEGATION_ABI,
+                functionName: 'canDelegate',
+                args: [operator, delegator],
+              }) as Promise<boolean>,
+              publicClient.readContract({
+                address: contracts.multiAssetDelegation,
+                abi: MULTI_ASSET_DELEGATION_ABI,
+                functionName: 'getDelegationMode',
+                args: [operator],
+              }) as Promise<number>,
+              publicClient.readContract({
+                address: contracts.multiAssetDelegation,
+                abi: MULTI_ASSET_DELEGATION_ABI,
+                functionName: 'isWhitelisted',
+                args: [operator, delegator],
+              }) as Promise<boolean>,
+            ]);
 
           return {
             operator,

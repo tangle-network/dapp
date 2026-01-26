@@ -48,7 +48,9 @@ export const OperatorsTable: FC<Props> = ({
         address: operator.id,
         identityName: undefined,
         concentrationPercentage: null,
-        restakersCount: formatDelegationCount(operator.restakingDelegationCount),
+        restakersCount: formatDelegationCount(
+          operator.restakingDelegationCount,
+        ),
         selfBondedAmount: operator.restakingStake ?? BigInt(0),
         tvlInUsd: null,
         vaultTokens: [],

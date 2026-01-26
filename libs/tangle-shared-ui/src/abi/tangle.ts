@@ -1,4252 +1,4252 @@
 // AUTO-GENERATED FROM tnt-core. DO NOT EDIT MANUALLY.
 const ABI = [
   {
-    "type": "function",
-    "name": "addPermittedCaller",
-    "inputs": [
+    type: 'function',
+    name: 'addPermittedCaller',
+    inputs: [
       {
-        "name": "serviceId",
-        "type": "uint64",
-        "internalType": "uint64"
+        name: 'serviceId',
+        type: 'uint64',
+        internalType: 'uint64',
       },
       {
-        "name": "caller",
-        "type": "address",
-        "internalType": "address"
-      }
+        name: 'caller',
+        type: 'address',
+        internalType: 'address',
+      },
     ],
-    "outputs": [],
-    "stateMutability": "nonpayable"
+    outputs: [],
+    stateMutability: 'nonpayable',
   },
   {
-    "type": "function",
-    "name": "approveService",
-    "inputs": [
+    type: 'function',
+    name: 'approveService',
+    inputs: [
       {
-        "name": "requestId",
-        "type": "uint64",
-        "internalType": "uint64"
+        name: 'requestId',
+        type: 'uint64',
+        internalType: 'uint64',
       },
       {
-        "name": "stakingPercent",
-        "type": "uint8",
-        "internalType": "uint8"
-      }
+        name: 'stakingPercent',
+        type: 'uint8',
+        internalType: 'uint8',
+      },
     ],
-    "outputs": [],
-    "stateMutability": "nonpayable"
+    outputs: [],
+    stateMutability: 'nonpayable',
   },
   {
-    "type": "function",
-    "name": "approveServiceWithBls",
-    "inputs": [
+    type: 'function',
+    name: 'approveServiceWithBls',
+    inputs: [
       {
-        "name": "requestId",
-        "type": "uint64",
-        "internalType": "uint64"
+        name: 'requestId',
+        type: 'uint64',
+        internalType: 'uint64',
       },
       {
-        "name": "stakingPercent",
-        "type": "uint8",
-        "internalType": "uint8"
+        name: 'stakingPercent',
+        type: 'uint8',
+        internalType: 'uint8',
       },
       {
-        "name": "blsPubkey",
-        "type": "uint256[4]",
-        "internalType": "uint256[4]"
-      }
+        name: 'blsPubkey',
+        type: 'uint256[4]',
+        internalType: 'uint256[4]',
+      },
     ],
-    "outputs": [],
-    "stateMutability": "nonpayable"
+    outputs: [],
+    stateMutability: 'nonpayable',
   },
   {
-    "type": "function",
-    "name": "approveServiceWithCommitments",
-    "inputs": [
+    type: 'function',
+    name: 'approveServiceWithCommitments',
+    inputs: [
       {
-        "name": "requestId",
-        "type": "uint64",
-        "internalType": "uint64"
+        name: 'requestId',
+        type: 'uint64',
+        internalType: 'uint64',
       },
       {
-        "name": "commitments",
-        "type": "tuple[]",
-        "internalType": "struct Types.AssetSecurityCommitment[]",
-        "components": [
+        name: 'commitments',
+        type: 'tuple[]',
+        internalType: 'struct Types.AssetSecurityCommitment[]',
+        components: [
           {
-            "name": "asset",
-            "type": "tuple",
-            "internalType": "struct Types.Asset",
-            "components": [
+            name: 'asset',
+            type: 'tuple',
+            internalType: 'struct Types.Asset',
+            components: [
               {
-                "name": "kind",
-                "type": "uint8",
-                "internalType": "enum Types.AssetKind"
+                name: 'kind',
+                type: 'uint8',
+                internalType: 'enum Types.AssetKind',
               },
               {
-                "name": "token",
-                "type": "address",
-                "internalType": "address"
-              }
-            ]
+                name: 'token',
+                type: 'address',
+                internalType: 'address',
+              },
+            ],
           },
           {
-            "name": "exposureBps",
-            "type": "uint16",
-            "internalType": "uint16"
-          }
-        ]
-      }
+            name: 'exposureBps',
+            type: 'uint16',
+            internalType: 'uint16',
+          },
+        ],
+      },
     ],
-    "outputs": [],
-    "stateMutability": "nonpayable"
+    outputs: [],
+    stateMutability: 'nonpayable',
   },
   {
-    "type": "function",
-    "name": "approveServiceWithCommitmentsAndBls",
-    "inputs": [
+    type: 'function',
+    name: 'approveServiceWithCommitmentsAndBls',
+    inputs: [
       {
-        "name": "requestId",
-        "type": "uint64",
-        "internalType": "uint64"
+        name: 'requestId',
+        type: 'uint64',
+        internalType: 'uint64',
       },
       {
-        "name": "commitments",
-        "type": "tuple[]",
-        "internalType": "struct Types.AssetSecurityCommitment[]",
-        "components": [
+        name: 'commitments',
+        type: 'tuple[]',
+        internalType: 'struct Types.AssetSecurityCommitment[]',
+        components: [
           {
-            "name": "asset",
-            "type": "tuple",
-            "internalType": "struct Types.Asset",
-            "components": [
+            name: 'asset',
+            type: 'tuple',
+            internalType: 'struct Types.Asset',
+            components: [
               {
-                "name": "kind",
-                "type": "uint8",
-                "internalType": "enum Types.AssetKind"
+                name: 'kind',
+                type: 'uint8',
+                internalType: 'enum Types.AssetKind',
               },
               {
-                "name": "token",
-                "type": "address",
-                "internalType": "address"
-              }
-            ]
+                name: 'token',
+                type: 'address',
+                internalType: 'address',
+              },
+            ],
           },
           {
-            "name": "exposureBps",
-            "type": "uint16",
-            "internalType": "uint16"
-          }
-        ]
+            name: 'exposureBps',
+            type: 'uint16',
+            internalType: 'uint16',
+          },
+        ],
       },
       {
-        "name": "blsPubkey",
-        "type": "uint256[4]",
-        "internalType": "uint256[4]"
-      }
+        name: 'blsPubkey',
+        type: 'uint256[4]',
+        internalType: 'uint256[4]',
+      },
     ],
-    "outputs": [],
-    "stateMutability": "nonpayable"
+    outputs: [],
+    stateMutability: 'nonpayable',
   },
   {
-    "type": "function",
-    "name": "billSubscription",
-    "inputs": [
+    type: 'function',
+    name: 'billSubscription',
+    inputs: [
       {
-        "name": "serviceId",
-        "type": "uint64",
-        "internalType": "uint64"
-      }
+        name: 'serviceId',
+        type: 'uint64',
+        internalType: 'uint64',
+      },
     ],
-    "outputs": [],
-    "stateMutability": "nonpayable"
+    outputs: [],
+    stateMutability: 'nonpayable',
   },
   {
-    "type": "function",
-    "name": "billSubscriptionBatch",
-    "inputs": [
+    type: 'function',
+    name: 'billSubscriptionBatch',
+    inputs: [
       {
-        "name": "serviceIds",
-        "type": "uint64[]",
-        "internalType": "uint64[]"
-      }
+        name: 'serviceIds',
+        type: 'uint64[]',
+        internalType: 'uint64[]',
+      },
     ],
-    "outputs": [
+    outputs: [
       {
-        "name": "totalBilled",
-        "type": "uint256",
-        "internalType": "uint256"
+        name: 'totalBilled',
+        type: 'uint256',
+        internalType: 'uint256',
       },
       {
-        "name": "billedCount",
-        "type": "uint256",
-        "internalType": "uint256"
-      }
+        name: 'billedCount',
+        type: 'uint256',
+        internalType: 'uint256',
+      },
     ],
-    "stateMutability": "nonpayable"
+    stateMutability: 'nonpayable',
   },
   {
-    "type": "function",
-    "name": "blueprintCount",
-    "inputs": [],
-    "outputs": [
+    type: 'function',
+    name: 'blueprintCount',
+    inputs: [],
+    outputs: [
       {
-        "name": "",
-        "type": "uint64",
-        "internalType": "uint64"
-      }
+        name: '',
+        type: 'uint64',
+        internalType: 'uint64',
+      },
     ],
-    "stateMutability": "view"
+    stateMutability: 'view',
   },
   {
-    "type": "function",
-    "name": "blueprintMasterRevision",
-    "inputs": [
+    type: 'function',
+    name: 'blueprintMasterRevision',
+    inputs: [
       {
-        "name": "blueprintId",
-        "type": "uint64",
-        "internalType": "uint64"
-      }
+        name: 'blueprintId',
+        type: 'uint64',
+        internalType: 'uint64',
+      },
     ],
-    "outputs": [
+    outputs: [
       {
-        "name": "",
-        "type": "uint32",
-        "internalType": "uint32"
-      }
+        name: '',
+        type: 'uint32',
+        internalType: 'uint32',
+      },
     ],
-    "stateMutability": "view"
+    stateMutability: 'view',
   },
   {
-    "type": "function",
-    "name": "blueprintMetadata",
-    "inputs": [
+    type: 'function',
+    name: 'blueprintMetadata',
+    inputs: [
       {
-        "name": "blueprintId",
-        "type": "uint64",
-        "internalType": "uint64"
-      }
+        name: 'blueprintId',
+        type: 'uint64',
+        internalType: 'uint64',
+      },
     ],
-    "outputs": [
+    outputs: [
       {
-        "name": "metadata",
-        "type": "tuple",
-        "internalType": "struct Types.BlueprintMetadata",
-        "components": [
+        name: 'metadata',
+        type: 'tuple',
+        internalType: 'struct Types.BlueprintMetadata',
+        components: [
           {
-            "name": "name",
-            "type": "string",
-            "internalType": "string"
+            name: 'name',
+            type: 'string',
+            internalType: 'string',
           },
           {
-            "name": "description",
-            "type": "string",
-            "internalType": "string"
+            name: 'description',
+            type: 'string',
+            internalType: 'string',
           },
           {
-            "name": "author",
-            "type": "string",
-            "internalType": "string"
+            name: 'author',
+            type: 'string',
+            internalType: 'string',
           },
           {
-            "name": "category",
-            "type": "string",
-            "internalType": "string"
+            name: 'category',
+            type: 'string',
+            internalType: 'string',
           },
           {
-            "name": "codeRepository",
-            "type": "string",
-            "internalType": "string"
+            name: 'codeRepository',
+            type: 'string',
+            internalType: 'string',
           },
           {
-            "name": "logo",
-            "type": "string",
-            "internalType": "string"
+            name: 'logo',
+            type: 'string',
+            internalType: 'string',
           },
           {
-            "name": "website",
-            "type": "string",
-            "internalType": "string"
+            name: 'website',
+            type: 'string',
+            internalType: 'string',
           },
           {
-            "name": "license",
-            "type": "string",
-            "internalType": "string"
+            name: 'license',
+            type: 'string',
+            internalType: 'string',
           },
           {
-            "name": "profilingData",
-            "type": "string",
-            "internalType": "string"
-          }
-        ]
+            name: 'profilingData',
+            type: 'string',
+            internalType: 'string',
+          },
+        ],
       },
       {
-        "name": "metadataUri",
-        "type": "string",
-        "internalType": "string"
-      }
+        name: 'metadataUri',
+        type: 'string',
+        internalType: 'string',
+      },
     ],
-    "stateMutability": "view"
+    stateMutability: 'view',
   },
   {
-    "type": "function",
-    "name": "blueprintOperatorCount",
-    "inputs": [
+    type: 'function',
+    name: 'blueprintOperatorCount',
+    inputs: [
       {
-        "name": "blueprintId",
-        "type": "uint64",
-        "internalType": "uint64"
-      }
+        name: 'blueprintId',
+        type: 'uint64',
+        internalType: 'uint64',
+      },
     ],
-    "outputs": [
+    outputs: [
       {
-        "name": "",
-        "type": "uint256",
-        "internalType": "uint256"
-      }
+        name: '',
+        type: 'uint256',
+        internalType: 'uint256',
+      },
     ],
-    "stateMutability": "view"
+    stateMutability: 'view',
   },
   {
-    "type": "function",
-    "name": "blueprintSources",
-    "inputs": [
+    type: 'function',
+    name: 'blueprintSources',
+    inputs: [
       {
-        "name": "blueprintId",
-        "type": "uint64",
-        "internalType": "uint64"
-      }
+        name: 'blueprintId',
+        type: 'uint64',
+        internalType: 'uint64',
+      },
     ],
-    "outputs": [
+    outputs: [
       {
-        "name": "sources",
-        "type": "tuple[]",
-        "internalType": "struct Types.BlueprintSource[]",
-        "components": [
+        name: 'sources',
+        type: 'tuple[]',
+        internalType: 'struct Types.BlueprintSource[]',
+        components: [
           {
-            "name": "kind",
-            "type": "uint8",
-            "internalType": "enum Types.BlueprintSourceKind"
+            name: 'kind',
+            type: 'uint8',
+            internalType: 'enum Types.BlueprintSourceKind',
           },
           {
-            "name": "container",
-            "type": "tuple",
-            "internalType": "struct Types.ImageRegistrySource",
-            "components": [
+            name: 'container',
+            type: 'tuple',
+            internalType: 'struct Types.ImageRegistrySource',
+            components: [
               {
-                "name": "registry",
-                "type": "string",
-                "internalType": "string"
+                name: 'registry',
+                type: 'string',
+                internalType: 'string',
               },
               {
-                "name": "image",
-                "type": "string",
-                "internalType": "string"
+                name: 'image',
+                type: 'string',
+                internalType: 'string',
               },
               {
-                "name": "tag",
-                "type": "string",
-                "internalType": "string"
-              }
-            ]
+                name: 'tag',
+                type: 'string',
+                internalType: 'string',
+              },
+            ],
           },
           {
-            "name": "wasm",
-            "type": "tuple",
-            "internalType": "struct Types.WasmSource",
-            "components": [
+            name: 'wasm',
+            type: 'tuple',
+            internalType: 'struct Types.WasmSource',
+            components: [
               {
-                "name": "runtime",
-                "type": "uint8",
-                "internalType": "enum Types.WasmRuntime"
+                name: 'runtime',
+                type: 'uint8',
+                internalType: 'enum Types.WasmRuntime',
               },
               {
-                "name": "fetcher",
-                "type": "uint8",
-                "internalType": "enum Types.BlueprintFetcherKind"
+                name: 'fetcher',
+                type: 'uint8',
+                internalType: 'enum Types.BlueprintFetcherKind',
               },
               {
-                "name": "artifactUri",
-                "type": "string",
-                "internalType": "string"
+                name: 'artifactUri',
+                type: 'string',
+                internalType: 'string',
               },
               {
-                "name": "entrypoint",
-                "type": "string",
-                "internalType": "string"
-              }
-            ]
+                name: 'entrypoint',
+                type: 'string',
+                internalType: 'string',
+              },
+            ],
           },
           {
-            "name": "native",
-            "type": "tuple",
-            "internalType": "struct Types.NativeSource",
-            "components": [
+            name: 'native',
+            type: 'tuple',
+            internalType: 'struct Types.NativeSource',
+            components: [
               {
-                "name": "fetcher",
-                "type": "uint8",
-                "internalType": "enum Types.BlueprintFetcherKind"
+                name: 'fetcher',
+                type: 'uint8',
+                internalType: 'enum Types.BlueprintFetcherKind',
               },
               {
-                "name": "artifactUri",
-                "type": "string",
-                "internalType": "string"
+                name: 'artifactUri',
+                type: 'string',
+                internalType: 'string',
               },
               {
-                "name": "entrypoint",
-                "type": "string",
-                "internalType": "string"
-              }
-            ]
+                name: 'entrypoint',
+                type: 'string',
+                internalType: 'string',
+              },
+            ],
           },
           {
-            "name": "testing",
-            "type": "tuple",
-            "internalType": "struct Types.TestingSource",
-            "components": [
+            name: 'testing',
+            type: 'tuple',
+            internalType: 'struct Types.TestingSource',
+            components: [
               {
-                "name": "cargoPackage",
-                "type": "string",
-                "internalType": "string"
+                name: 'cargoPackage',
+                type: 'string',
+                internalType: 'string',
               },
               {
-                "name": "cargoBin",
-                "type": "string",
-                "internalType": "string"
+                name: 'cargoBin',
+                type: 'string',
+                internalType: 'string',
               },
               {
-                "name": "basePath",
-                "type": "string",
-                "internalType": "string"
-              }
-            ]
+                name: 'basePath',
+                type: 'string',
+                internalType: 'string',
+              },
+            ],
           },
           {
-            "name": "binaries",
-            "type": "tuple[]",
-            "internalType": "struct Types.BlueprintBinary[]",
-            "components": [
+            name: 'binaries',
+            type: 'tuple[]',
+            internalType: 'struct Types.BlueprintBinary[]',
+            components: [
               {
-                "name": "arch",
-                "type": "uint8",
-                "internalType": "enum Types.BlueprintArchitecture"
+                name: 'arch',
+                type: 'uint8',
+                internalType: 'enum Types.BlueprintArchitecture',
               },
               {
-                "name": "os",
-                "type": "uint8",
-                "internalType": "enum Types.BlueprintOperatingSystem"
+                name: 'os',
+                type: 'uint8',
+                internalType: 'enum Types.BlueprintOperatingSystem',
               },
               {
-                "name": "name",
-                "type": "string",
-                "internalType": "string"
+                name: 'name',
+                type: 'string',
+                internalType: 'string',
               },
               {
-                "name": "sha256",
-                "type": "bytes32",
-                "internalType": "bytes32"
-              }
-            ]
-          }
-        ]
-      }
+                name: 'sha256',
+                type: 'bytes32',
+                internalType: 'bytes32',
+              },
+            ],
+          },
+        ],
+      },
     ],
-    "stateMutability": "view"
+    stateMutability: 'view',
   },
   {
-    "type": "function",
-    "name": "blueprintSupportedMemberships",
-    "inputs": [
+    type: 'function',
+    name: 'blueprintSupportedMemberships',
+    inputs: [
       {
-        "name": "blueprintId",
-        "type": "uint64",
-        "internalType": "uint64"
-      }
+        name: 'blueprintId',
+        type: 'uint64',
+        internalType: 'uint64',
+      },
     ],
-    "outputs": [
+    outputs: [
       {
-        "name": "memberships",
-        "type": "uint8[]",
-        "internalType": "enum Types.MembershipModel[]"
-      }
+        name: 'memberships',
+        type: 'uint8[]',
+        internalType: 'enum Types.MembershipModel[]',
+      },
     ],
-    "stateMutability": "view"
+    stateMutability: 'view',
   },
   {
-    "type": "function",
-    "name": "canScheduleExit",
-    "inputs": [
+    type: 'function',
+    name: 'canScheduleExit',
+    inputs: [
       {
-        "name": "serviceId",
-        "type": "uint64",
-        "internalType": "uint64"
+        name: 'serviceId',
+        type: 'uint64',
+        internalType: 'uint64',
       },
       {
-        "name": "operator",
-        "type": "address",
-        "internalType": "address"
-      }
+        name: 'operator',
+        type: 'address',
+        internalType: 'address',
+      },
     ],
-    "outputs": [
+    outputs: [
       {
-        "name": "canExit",
-        "type": "bool",
-        "internalType": "bool"
+        name: 'canExit',
+        type: 'bool',
+        internalType: 'bool',
       },
       {
-        "name": "reason",
-        "type": "string",
-        "internalType": "string"
-      }
+        name: 'reason',
+        type: 'string',
+        internalType: 'string',
+      },
     ],
-    "stateMutability": "view"
+    stateMutability: 'view',
   },
   {
-    "type": "function",
-    "name": "cancelExit",
-    "inputs": [
+    type: 'function',
+    name: 'cancelExit',
+    inputs: [
       {
-        "name": "serviceId",
-        "type": "uint64",
-        "internalType": "uint64"
-      }
+        name: 'serviceId',
+        type: 'uint64',
+        internalType: 'uint64',
+      },
     ],
-    "outputs": [],
-    "stateMutability": "nonpayable"
+    outputs: [],
+    stateMutability: 'nonpayable',
   },
   {
-    "type": "function",
-    "name": "cancelSlash",
-    "inputs": [
+    type: 'function',
+    name: 'cancelSlash',
+    inputs: [
       {
-        "name": "slashId",
-        "type": "uint64",
-        "internalType": "uint64"
+        name: 'slashId',
+        type: 'uint64',
+        internalType: 'uint64',
       },
       {
-        "name": "reason",
-        "type": "string",
-        "internalType": "string"
-      }
+        name: 'reason',
+        type: 'string',
+        internalType: 'string',
+      },
     ],
-    "outputs": [],
-    "stateMutability": "nonpayable"
+    outputs: [],
+    stateMutability: 'nonpayable',
   },
   {
-    "type": "function",
-    "name": "claimRewards",
-    "inputs": [],
-    "outputs": [],
-    "stateMutability": "nonpayable"
+    type: 'function',
+    name: 'claimRewards',
+    inputs: [],
+    outputs: [],
+    stateMutability: 'nonpayable',
   },
   {
-    "type": "function",
-    "name": "claimRewards",
-    "inputs": [
+    type: 'function',
+    name: 'claimRewards',
+    inputs: [
       {
-        "name": "token",
-        "type": "address",
-        "internalType": "address"
-      }
+        name: 'token',
+        type: 'address',
+        internalType: 'address',
+      },
     ],
-    "outputs": [],
-    "stateMutability": "nonpayable"
+    outputs: [],
+    stateMutability: 'nonpayable',
   },
   {
-    "type": "function",
-    "name": "claimRewardsAll",
-    "inputs": [],
-    "outputs": [],
-    "stateMutability": "nonpayable"
+    type: 'function',
+    name: 'claimRewardsAll',
+    inputs: [],
+    outputs: [],
+    stateMutability: 'nonpayable',
   },
   {
-    "type": "function",
-    "name": "claimRewardsBatch",
-    "inputs": [
+    type: 'function',
+    name: 'claimRewardsBatch',
+    inputs: [
       {
-        "name": "tokens",
-        "type": "address[]",
-        "internalType": "address[]"
-      }
+        name: 'tokens',
+        type: 'address[]',
+        internalType: 'address[]',
+      },
     ],
-    "outputs": [],
-    "stateMutability": "nonpayable"
+    outputs: [],
+    stateMutability: 'nonpayable',
   },
   {
-    "type": "function",
-    "name": "createBlueprint",
-    "inputs": [
+    type: 'function',
+    name: 'createBlueprint',
+    inputs: [
       {
-        "name": "definition",
-        "type": "tuple",
-        "internalType": "struct Types.BlueprintDefinition",
-        "components": [
+        name: 'definition',
+        type: 'tuple',
+        internalType: 'struct Types.BlueprintDefinition',
+        components: [
           {
-            "name": "metadataUri",
-            "type": "string",
-            "internalType": "string"
+            name: 'metadataUri',
+            type: 'string',
+            internalType: 'string',
           },
           {
-            "name": "manager",
-            "type": "address",
-            "internalType": "address"
+            name: 'manager',
+            type: 'address',
+            internalType: 'address',
           },
           {
-            "name": "masterManagerRevision",
-            "type": "uint32",
-            "internalType": "uint32"
+            name: 'masterManagerRevision',
+            type: 'uint32',
+            internalType: 'uint32',
           },
           {
-            "name": "hasConfig",
-            "type": "bool",
-            "internalType": "bool"
+            name: 'hasConfig',
+            type: 'bool',
+            internalType: 'bool',
           },
           {
-            "name": "config",
-            "type": "tuple",
-            "internalType": "struct Types.BlueprintConfig",
-            "components": [
+            name: 'config',
+            type: 'tuple',
+            internalType: 'struct Types.BlueprintConfig',
+            components: [
               {
-                "name": "membership",
-                "type": "uint8",
-                "internalType": "enum Types.MembershipModel"
+                name: 'membership',
+                type: 'uint8',
+                internalType: 'enum Types.MembershipModel',
               },
               {
-                "name": "pricing",
-                "type": "uint8",
-                "internalType": "enum Types.PricingModel"
+                name: 'pricing',
+                type: 'uint8',
+                internalType: 'enum Types.PricingModel',
               },
               {
-                "name": "minOperators",
-                "type": "uint32",
-                "internalType": "uint32"
+                name: 'minOperators',
+                type: 'uint32',
+                internalType: 'uint32',
               },
               {
-                "name": "maxOperators",
-                "type": "uint32",
-                "internalType": "uint32"
+                name: 'maxOperators',
+                type: 'uint32',
+                internalType: 'uint32',
               },
               {
-                "name": "subscriptionRate",
-                "type": "uint256",
-                "internalType": "uint256"
+                name: 'subscriptionRate',
+                type: 'uint256',
+                internalType: 'uint256',
               },
               {
-                "name": "subscriptionInterval",
-                "type": "uint64",
-                "internalType": "uint64"
+                name: 'subscriptionInterval',
+                type: 'uint64',
+                internalType: 'uint64',
               },
               {
-                "name": "eventRate",
-                "type": "uint256",
-                "internalType": "uint256"
-              }
-            ]
+                name: 'eventRate',
+                type: 'uint256',
+                internalType: 'uint256',
+              },
+            ],
           },
           {
-            "name": "metadata",
-            "type": "tuple",
-            "internalType": "struct Types.BlueprintMetadata",
-            "components": [
+            name: 'metadata',
+            type: 'tuple',
+            internalType: 'struct Types.BlueprintMetadata',
+            components: [
               {
-                "name": "name",
-                "type": "string",
-                "internalType": "string"
+                name: 'name',
+                type: 'string',
+                internalType: 'string',
               },
               {
-                "name": "description",
-                "type": "string",
-                "internalType": "string"
+                name: 'description',
+                type: 'string',
+                internalType: 'string',
               },
               {
-                "name": "author",
-                "type": "string",
-                "internalType": "string"
+                name: 'author',
+                type: 'string',
+                internalType: 'string',
               },
               {
-                "name": "category",
-                "type": "string",
-                "internalType": "string"
+                name: 'category',
+                type: 'string',
+                internalType: 'string',
               },
               {
-                "name": "codeRepository",
-                "type": "string",
-                "internalType": "string"
+                name: 'codeRepository',
+                type: 'string',
+                internalType: 'string',
               },
               {
-                "name": "logo",
-                "type": "string",
-                "internalType": "string"
+                name: 'logo',
+                type: 'string',
+                internalType: 'string',
               },
               {
-                "name": "website",
-                "type": "string",
-                "internalType": "string"
+                name: 'website',
+                type: 'string',
+                internalType: 'string',
               },
               {
-                "name": "license",
-                "type": "string",
-                "internalType": "string"
+                name: 'license',
+                type: 'string',
+                internalType: 'string',
               },
               {
-                "name": "profilingData",
-                "type": "string",
-                "internalType": "string"
-              }
-            ]
+                name: 'profilingData',
+                type: 'string',
+                internalType: 'string',
+              },
+            ],
           },
           {
-            "name": "jobs",
-            "type": "tuple[]",
-            "internalType": "struct Types.JobDefinition[]",
-            "components": [
+            name: 'jobs',
+            type: 'tuple[]',
+            internalType: 'struct Types.JobDefinition[]',
+            components: [
               {
-                "name": "name",
-                "type": "string",
-                "internalType": "string"
+                name: 'name',
+                type: 'string',
+                internalType: 'string',
               },
               {
-                "name": "description",
-                "type": "string",
-                "internalType": "string"
+                name: 'description',
+                type: 'string',
+                internalType: 'string',
               },
               {
-                "name": "metadataUri",
-                "type": "string",
-                "internalType": "string"
+                name: 'metadataUri',
+                type: 'string',
+                internalType: 'string',
               },
               {
-                "name": "paramsSchema",
-                "type": "bytes",
-                "internalType": "bytes"
+                name: 'paramsSchema',
+                type: 'bytes',
+                internalType: 'bytes',
               },
               {
-                "name": "resultSchema",
-                "type": "bytes",
-                "internalType": "bytes"
-              }
-            ]
+                name: 'resultSchema',
+                type: 'bytes',
+                internalType: 'bytes',
+              },
+            ],
           },
           {
-            "name": "registrationSchema",
-            "type": "bytes",
-            "internalType": "bytes"
+            name: 'registrationSchema',
+            type: 'bytes',
+            internalType: 'bytes',
           },
           {
-            "name": "requestSchema",
-            "type": "bytes",
-            "internalType": "bytes"
+            name: 'requestSchema',
+            type: 'bytes',
+            internalType: 'bytes',
           },
           {
-            "name": "sources",
-            "type": "tuple[]",
-            "internalType": "struct Types.BlueprintSource[]",
-            "components": [
+            name: 'sources',
+            type: 'tuple[]',
+            internalType: 'struct Types.BlueprintSource[]',
+            components: [
               {
-                "name": "kind",
-                "type": "uint8",
-                "internalType": "enum Types.BlueprintSourceKind"
+                name: 'kind',
+                type: 'uint8',
+                internalType: 'enum Types.BlueprintSourceKind',
               },
               {
-                "name": "container",
-                "type": "tuple",
-                "internalType": "struct Types.ImageRegistrySource",
-                "components": [
+                name: 'container',
+                type: 'tuple',
+                internalType: 'struct Types.ImageRegistrySource',
+                components: [
                   {
-                    "name": "registry",
-                    "type": "string",
-                    "internalType": "string"
+                    name: 'registry',
+                    type: 'string',
+                    internalType: 'string',
                   },
                   {
-                    "name": "image",
-                    "type": "string",
-                    "internalType": "string"
+                    name: 'image',
+                    type: 'string',
+                    internalType: 'string',
                   },
                   {
-                    "name": "tag",
-                    "type": "string",
-                    "internalType": "string"
-                  }
-                ]
+                    name: 'tag',
+                    type: 'string',
+                    internalType: 'string',
+                  },
+                ],
               },
               {
-                "name": "wasm",
-                "type": "tuple",
-                "internalType": "struct Types.WasmSource",
-                "components": [
+                name: 'wasm',
+                type: 'tuple',
+                internalType: 'struct Types.WasmSource',
+                components: [
                   {
-                    "name": "runtime",
-                    "type": "uint8",
-                    "internalType": "enum Types.WasmRuntime"
+                    name: 'runtime',
+                    type: 'uint8',
+                    internalType: 'enum Types.WasmRuntime',
                   },
                   {
-                    "name": "fetcher",
-                    "type": "uint8",
-                    "internalType": "enum Types.BlueprintFetcherKind"
+                    name: 'fetcher',
+                    type: 'uint8',
+                    internalType: 'enum Types.BlueprintFetcherKind',
                   },
                   {
-                    "name": "artifactUri",
-                    "type": "string",
-                    "internalType": "string"
+                    name: 'artifactUri',
+                    type: 'string',
+                    internalType: 'string',
                   },
                   {
-                    "name": "entrypoint",
-                    "type": "string",
-                    "internalType": "string"
-                  }
-                ]
+                    name: 'entrypoint',
+                    type: 'string',
+                    internalType: 'string',
+                  },
+                ],
               },
               {
-                "name": "native",
-                "type": "tuple",
-                "internalType": "struct Types.NativeSource",
-                "components": [
+                name: 'native',
+                type: 'tuple',
+                internalType: 'struct Types.NativeSource',
+                components: [
                   {
-                    "name": "fetcher",
-                    "type": "uint8",
-                    "internalType": "enum Types.BlueprintFetcherKind"
+                    name: 'fetcher',
+                    type: 'uint8',
+                    internalType: 'enum Types.BlueprintFetcherKind',
                   },
                   {
-                    "name": "artifactUri",
-                    "type": "string",
-                    "internalType": "string"
+                    name: 'artifactUri',
+                    type: 'string',
+                    internalType: 'string',
                   },
                   {
-                    "name": "entrypoint",
-                    "type": "string",
-                    "internalType": "string"
-                  }
-                ]
+                    name: 'entrypoint',
+                    type: 'string',
+                    internalType: 'string',
+                  },
+                ],
               },
               {
-                "name": "testing",
-                "type": "tuple",
-                "internalType": "struct Types.TestingSource",
-                "components": [
+                name: 'testing',
+                type: 'tuple',
+                internalType: 'struct Types.TestingSource',
+                components: [
                   {
-                    "name": "cargoPackage",
-                    "type": "string",
-                    "internalType": "string"
+                    name: 'cargoPackage',
+                    type: 'string',
+                    internalType: 'string',
                   },
                   {
-                    "name": "cargoBin",
-                    "type": "string",
-                    "internalType": "string"
+                    name: 'cargoBin',
+                    type: 'string',
+                    internalType: 'string',
                   },
                   {
-                    "name": "basePath",
-                    "type": "string",
-                    "internalType": "string"
-                  }
-                ]
+                    name: 'basePath',
+                    type: 'string',
+                    internalType: 'string',
+                  },
+                ],
               },
               {
-                "name": "binaries",
-                "type": "tuple[]",
-                "internalType": "struct Types.BlueprintBinary[]",
-                "components": [
+                name: 'binaries',
+                type: 'tuple[]',
+                internalType: 'struct Types.BlueprintBinary[]',
+                components: [
                   {
-                    "name": "arch",
-                    "type": "uint8",
-                    "internalType": "enum Types.BlueprintArchitecture"
+                    name: 'arch',
+                    type: 'uint8',
+                    internalType: 'enum Types.BlueprintArchitecture',
                   },
                   {
-                    "name": "os",
-                    "type": "uint8",
-                    "internalType": "enum Types.BlueprintOperatingSystem"
+                    name: 'os',
+                    type: 'uint8',
+                    internalType: 'enum Types.BlueprintOperatingSystem',
                   },
                   {
-                    "name": "name",
-                    "type": "string",
-                    "internalType": "string"
+                    name: 'name',
+                    type: 'string',
+                    internalType: 'string',
                   },
                   {
-                    "name": "sha256",
-                    "type": "bytes32",
-                    "internalType": "bytes32"
-                  }
-                ]
-              }
-            ]
+                    name: 'sha256',
+                    type: 'bytes32',
+                    internalType: 'bytes32',
+                  },
+                ],
+              },
+            ],
           },
           {
-            "name": "supportedMemberships",
-            "type": "uint8[]",
-            "internalType": "enum Types.MembershipModel[]"
-          }
-        ]
-      }
+            name: 'supportedMemberships',
+            type: 'uint8[]',
+            internalType: 'enum Types.MembershipModel[]',
+          },
+        ],
+      },
     ],
-    "outputs": [
+    outputs: [
       {
-        "name": "blueprintId",
-        "type": "uint64",
-        "internalType": "uint64"
-      }
+        name: 'blueprintId',
+        type: 'uint64',
+        internalType: 'uint64',
+      },
     ],
-    "stateMutability": "nonpayable"
+    stateMutability: 'nonpayable',
   },
   {
-    "type": "function",
-    "name": "createServiceFromQuotes",
-    "inputs": [
+    type: 'function',
+    name: 'createServiceFromQuotes',
+    inputs: [
       {
-        "name": "blueprintId",
-        "type": "uint64",
-        "internalType": "uint64"
+        name: 'blueprintId',
+        type: 'uint64',
+        internalType: 'uint64',
       },
       {
-        "name": "quotes",
-        "type": "tuple[]",
-        "internalType": "struct Types.SignedQuote[]",
-        "components": [
+        name: 'quotes',
+        type: 'tuple[]',
+        internalType: 'struct Types.SignedQuote[]',
+        components: [
           {
-            "name": "details",
-            "type": "tuple",
-            "internalType": "struct Types.QuoteDetails",
-            "components": [
+            name: 'details',
+            type: 'tuple',
+            internalType: 'struct Types.QuoteDetails',
+            components: [
               {
-                "name": "blueprintId",
-                "type": "uint64",
-                "internalType": "uint64"
+                name: 'blueprintId',
+                type: 'uint64',
+                internalType: 'uint64',
               },
               {
-                "name": "ttlBlocks",
-                "type": "uint64",
-                "internalType": "uint64"
+                name: 'ttlBlocks',
+                type: 'uint64',
+                internalType: 'uint64',
               },
               {
-                "name": "totalCost",
-                "type": "uint256",
-                "internalType": "uint256"
+                name: 'totalCost',
+                type: 'uint256',
+                internalType: 'uint256',
               },
               {
-                "name": "timestamp",
-                "type": "uint64",
-                "internalType": "uint64"
+                name: 'timestamp',
+                type: 'uint64',
+                internalType: 'uint64',
               },
               {
-                "name": "expiry",
-                "type": "uint64",
-                "internalType": "uint64"
+                name: 'expiry',
+                type: 'uint64',
+                internalType: 'uint64',
               },
               {
-                "name": "securityCommitments",
-                "type": "tuple[]",
-                "internalType": "struct Types.AssetSecurityCommitment[]",
-                "components": [
+                name: 'securityCommitments',
+                type: 'tuple[]',
+                internalType: 'struct Types.AssetSecurityCommitment[]',
+                components: [
                   {
-                    "name": "asset",
-                    "type": "tuple",
-                    "internalType": "struct Types.Asset",
-                    "components": [
+                    name: 'asset',
+                    type: 'tuple',
+                    internalType: 'struct Types.Asset',
+                    components: [
                       {
-                        "name": "kind",
-                        "type": "uint8",
-                        "internalType": "enum Types.AssetKind"
+                        name: 'kind',
+                        type: 'uint8',
+                        internalType: 'enum Types.AssetKind',
                       },
                       {
-                        "name": "token",
-                        "type": "address",
-                        "internalType": "address"
-                      }
-                    ]
+                        name: 'token',
+                        type: 'address',
+                        internalType: 'address',
+                      },
+                    ],
                   },
                   {
-                    "name": "exposureBps",
-                    "type": "uint16",
-                    "internalType": "uint16"
-                  }
-                ]
-              }
-            ]
+                    name: 'exposureBps',
+                    type: 'uint16',
+                    internalType: 'uint16',
+                  },
+                ],
+              },
+            ],
           },
           {
-            "name": "signature",
-            "type": "bytes",
-            "internalType": "bytes"
+            name: 'signature',
+            type: 'bytes',
+            internalType: 'bytes',
           },
           {
-            "name": "operator",
-            "type": "address",
-            "internalType": "address"
-          }
-        ]
+            name: 'operator',
+            type: 'address',
+            internalType: 'address',
+          },
+        ],
       },
       {
-        "name": "config",
-        "type": "bytes",
-        "internalType": "bytes"
+        name: 'config',
+        type: 'bytes',
+        internalType: 'bytes',
       },
       {
-        "name": "permittedCallers",
-        "type": "address[]",
-        "internalType": "address[]"
+        name: 'permittedCallers',
+        type: 'address[]',
+        internalType: 'address[]',
       },
       {
-        "name": "ttl",
-        "type": "uint64",
-        "internalType": "uint64"
-      }
+        name: 'ttl',
+        type: 'uint64',
+        internalType: 'uint64',
+      },
     ],
-    "outputs": [
+    outputs: [
       {
-        "name": "serviceId",
-        "type": "uint64",
-        "internalType": "uint64"
-      }
+        name: 'serviceId',
+        type: 'uint64',
+        internalType: 'uint64',
+      },
     ],
-    "stateMutability": "payable"
+    stateMutability: 'payable',
   },
   {
-    "type": "function",
-    "name": "deactivateBlueprint",
-    "inputs": [
+    type: 'function',
+    name: 'deactivateBlueprint',
+    inputs: [
       {
-        "name": "blueprintId",
-        "type": "uint64",
-        "internalType": "uint64"
-      }
+        name: 'blueprintId',
+        type: 'uint64',
+        internalType: 'uint64',
+      },
     ],
-    "outputs": [],
-    "stateMutability": "nonpayable"
+    outputs: [],
+    stateMutability: 'nonpayable',
   },
   {
-    "type": "function",
-    "name": "defaultTntMinExposureBps",
-    "inputs": [],
-    "outputs": [
+    type: 'function',
+    name: 'defaultTntMinExposureBps',
+    inputs: [],
+    outputs: [
       {
-        "name": "",
-        "type": "uint16",
-        "internalType": "uint16"
-      }
+        name: '',
+        type: 'uint16',
+        internalType: 'uint16',
+      },
     ],
-    "stateMutability": "view"
+    stateMutability: 'view',
   },
   {
-    "type": "function",
-    "name": "disputeSlash",
-    "inputs": [
+    type: 'function',
+    name: 'disputeSlash',
+    inputs: [
       {
-        "name": "slashId",
-        "type": "uint64",
-        "internalType": "uint64"
+        name: 'slashId',
+        type: 'uint64',
+        internalType: 'uint64',
       },
       {
-        "name": "reason",
-        "type": "string",
-        "internalType": "string"
-      }
+        name: 'reason',
+        type: 'string',
+        internalType: 'string',
+      },
     ],
-    "outputs": [],
-    "stateMutability": "nonpayable"
+    outputs: [],
+    stateMutability: 'nonpayable',
   },
   {
-    "type": "function",
-    "name": "executeExit",
-    "inputs": [
+    type: 'function',
+    name: 'executeExit',
+    inputs: [
       {
-        "name": "serviceId",
-        "type": "uint64",
-        "internalType": "uint64"
-      }
+        name: 'serviceId',
+        type: 'uint64',
+        internalType: 'uint64',
+      },
     ],
-    "outputs": [],
-    "stateMutability": "nonpayable"
+    outputs: [],
+    stateMutability: 'nonpayable',
   },
   {
-    "type": "function",
-    "name": "executeSlash",
-    "inputs": [
+    type: 'function',
+    name: 'executeSlash',
+    inputs: [
       {
-        "name": "slashId",
-        "type": "uint64",
-        "internalType": "uint64"
-      }
+        name: 'slashId',
+        type: 'uint64',
+        internalType: 'uint64',
+      },
     ],
-    "outputs": [
+    outputs: [
       {
-        "name": "actualSlashed",
-        "type": "uint256",
-        "internalType": "uint256"
-      }
+        name: 'actualSlashed',
+        type: 'uint256',
+        internalType: 'uint256',
+      },
     ],
-    "stateMutability": "nonpayable"
+    stateMutability: 'nonpayable',
   },
   {
-    "type": "function",
-    "name": "executeSlashBatch",
-    "inputs": [
+    type: 'function',
+    name: 'executeSlashBatch',
+    inputs: [
       {
-        "name": "slashIds",
-        "type": "uint64[]",
-        "internalType": "uint64[]"
-      }
+        name: 'slashIds',
+        type: 'uint64[]',
+        internalType: 'uint64[]',
+      },
     ],
-    "outputs": [
+    outputs: [
       {
-        "name": "totalSlashed",
-        "type": "uint256",
-        "internalType": "uint256"
+        name: 'totalSlashed',
+        type: 'uint256',
+        internalType: 'uint256',
       },
       {
-        "name": "executedCount",
-        "type": "uint256",
-        "internalType": "uint256"
-      }
+        name: 'executedCount',
+        type: 'uint256',
+        internalType: 'uint256',
+      },
     ],
-    "stateMutability": "nonpayable"
+    stateMutability: 'nonpayable',
   },
   {
-    "type": "function",
-    "name": "extendServiceFromQuotes",
-    "inputs": [
+    type: 'function',
+    name: 'extendServiceFromQuotes',
+    inputs: [
       {
-        "name": "serviceId",
-        "type": "uint64",
-        "internalType": "uint64"
+        name: 'serviceId',
+        type: 'uint64',
+        internalType: 'uint64',
       },
       {
-        "name": "quotes",
-        "type": "tuple[]",
-        "internalType": "struct Types.SignedQuote[]",
-        "components": [
+        name: 'quotes',
+        type: 'tuple[]',
+        internalType: 'struct Types.SignedQuote[]',
+        components: [
           {
-            "name": "details",
-            "type": "tuple",
-            "internalType": "struct Types.QuoteDetails",
-            "components": [
+            name: 'details',
+            type: 'tuple',
+            internalType: 'struct Types.QuoteDetails',
+            components: [
               {
-                "name": "blueprintId",
-                "type": "uint64",
-                "internalType": "uint64"
+                name: 'blueprintId',
+                type: 'uint64',
+                internalType: 'uint64',
               },
               {
-                "name": "ttlBlocks",
-                "type": "uint64",
-                "internalType": "uint64"
+                name: 'ttlBlocks',
+                type: 'uint64',
+                internalType: 'uint64',
               },
               {
-                "name": "totalCost",
-                "type": "uint256",
-                "internalType": "uint256"
+                name: 'totalCost',
+                type: 'uint256',
+                internalType: 'uint256',
               },
               {
-                "name": "timestamp",
-                "type": "uint64",
-                "internalType": "uint64"
+                name: 'timestamp',
+                type: 'uint64',
+                internalType: 'uint64',
               },
               {
-                "name": "expiry",
-                "type": "uint64",
-                "internalType": "uint64"
+                name: 'expiry',
+                type: 'uint64',
+                internalType: 'uint64',
               },
               {
-                "name": "securityCommitments",
-                "type": "tuple[]",
-                "internalType": "struct Types.AssetSecurityCommitment[]",
-                "components": [
+                name: 'securityCommitments',
+                type: 'tuple[]',
+                internalType: 'struct Types.AssetSecurityCommitment[]',
+                components: [
                   {
-                    "name": "asset",
-                    "type": "tuple",
-                    "internalType": "struct Types.Asset",
-                    "components": [
+                    name: 'asset',
+                    type: 'tuple',
+                    internalType: 'struct Types.Asset',
+                    components: [
                       {
-                        "name": "kind",
-                        "type": "uint8",
-                        "internalType": "enum Types.AssetKind"
+                        name: 'kind',
+                        type: 'uint8',
+                        internalType: 'enum Types.AssetKind',
                       },
                       {
-                        "name": "token",
-                        "type": "address",
-                        "internalType": "address"
-                      }
-                    ]
+                        name: 'token',
+                        type: 'address',
+                        internalType: 'address',
+                      },
+                    ],
                   },
                   {
-                    "name": "exposureBps",
-                    "type": "uint16",
-                    "internalType": "uint16"
-                  }
-                ]
-              }
-            ]
+                    name: 'exposureBps',
+                    type: 'uint16',
+                    internalType: 'uint16',
+                  },
+                ],
+              },
+            ],
           },
           {
-            "name": "signature",
-            "type": "bytes",
-            "internalType": "bytes"
+            name: 'signature',
+            type: 'bytes',
+            internalType: 'bytes',
           },
           {
-            "name": "operator",
-            "type": "address",
-            "internalType": "address"
-          }
-        ]
+            name: 'operator',
+            type: 'address',
+            internalType: 'address',
+          },
+        ],
       },
       {
-        "name": "extensionDuration",
-        "type": "uint64",
-        "internalType": "uint64"
-      }
+        name: 'extensionDuration',
+        type: 'uint64',
+        internalType: 'uint64',
+      },
     ],
-    "outputs": [],
-    "stateMutability": "payable"
+    outputs: [],
+    stateMutability: 'payable',
   },
   {
-    "type": "function",
-    "name": "forceExit",
-    "inputs": [
+    type: 'function',
+    name: 'forceExit',
+    inputs: [
       {
-        "name": "serviceId",
-        "type": "uint64",
-        "internalType": "uint64"
+        name: 'serviceId',
+        type: 'uint64',
+        internalType: 'uint64',
       },
       {
-        "name": "operator",
-        "type": "address",
-        "internalType": "address"
-      }
+        name: 'operator',
+        type: 'address',
+        internalType: 'address',
+      },
     ],
-    "outputs": [],
-    "stateMutability": "nonpayable"
+    outputs: [],
+    stateMutability: 'nonpayable',
   },
   {
-    "type": "function",
-    "name": "forceRemoveOperator",
-    "inputs": [
+    type: 'function',
+    name: 'forceRemoveOperator',
+    inputs: [
       {
-        "name": "serviceId",
-        "type": "uint64",
-        "internalType": "uint64"
+        name: 'serviceId',
+        type: 'uint64',
+        internalType: 'uint64',
       },
       {
-        "name": "operator",
-        "type": "address",
-        "internalType": "address"
-      }
+        name: 'operator',
+        type: 'address',
+        internalType: 'address',
+      },
     ],
-    "outputs": [],
-    "stateMutability": "nonpayable"
+    outputs: [],
+    stateMutability: 'nonpayable',
   },
   {
-    "type": "function",
-    "name": "fundService",
-    "inputs": [
+    type: 'function',
+    name: 'fundService',
+    inputs: [
       {
-        "name": "serviceId",
-        "type": "uint64",
-        "internalType": "uint64"
+        name: 'serviceId',
+        type: 'uint64',
+        internalType: 'uint64',
       },
       {
-        "name": "amount",
-        "type": "uint256",
-        "internalType": "uint256"
-      }
+        name: 'amount',
+        type: 'uint256',
+        internalType: 'uint256',
+      },
     ],
-    "outputs": [],
-    "stateMutability": "payable"
+    outputs: [],
+    stateMutability: 'payable',
   },
   {
-    "type": "function",
-    "name": "getBillableServices",
-    "inputs": [
+    type: 'function',
+    name: 'getBillableServices',
+    inputs: [
       {
-        "name": "serviceIds",
-        "type": "uint64[]",
-        "internalType": "uint64[]"
-      }
+        name: 'serviceIds',
+        type: 'uint64[]',
+        internalType: 'uint64[]',
+      },
     ],
-    "outputs": [
+    outputs: [
       {
-        "name": "billable",
-        "type": "uint64[]",
-        "internalType": "uint64[]"
-      }
+        name: 'billable',
+        type: 'uint64[]',
+        internalType: 'uint64[]',
+      },
     ],
-    "stateMutability": "view"
+    stateMutability: 'view',
   },
   {
-    "type": "function",
-    "name": "getBlueprint",
-    "inputs": [
+    type: 'function',
+    name: 'getBlueprint',
+    inputs: [
       {
-        "name": "blueprintId",
-        "type": "uint64",
-        "internalType": "uint64"
-      }
+        name: 'blueprintId',
+        type: 'uint64',
+        internalType: 'uint64',
+      },
     ],
-    "outputs": [
+    outputs: [
       {
-        "name": "",
-        "type": "tuple",
-        "internalType": "struct Types.Blueprint",
-        "components": [
+        name: '',
+        type: 'tuple',
+        internalType: 'struct Types.Blueprint',
+        components: [
           {
-            "name": "owner",
-            "type": "address",
-            "internalType": "address"
+            name: 'owner',
+            type: 'address',
+            internalType: 'address',
           },
           {
-            "name": "manager",
-            "type": "address",
-            "internalType": "address"
+            name: 'manager',
+            type: 'address',
+            internalType: 'address',
           },
           {
-            "name": "createdAt",
-            "type": "uint64",
-            "internalType": "uint64"
+            name: 'createdAt',
+            type: 'uint64',
+            internalType: 'uint64',
           },
           {
-            "name": "operatorCount",
-            "type": "uint32",
-            "internalType": "uint32"
+            name: 'operatorCount',
+            type: 'uint32',
+            internalType: 'uint32',
           },
           {
-            "name": "membership",
-            "type": "uint8",
-            "internalType": "enum Types.MembershipModel"
+            name: 'membership',
+            type: 'uint8',
+            internalType: 'enum Types.MembershipModel',
           },
           {
-            "name": "pricing",
-            "type": "uint8",
-            "internalType": "enum Types.PricingModel"
+            name: 'pricing',
+            type: 'uint8',
+            internalType: 'enum Types.PricingModel',
           },
           {
-            "name": "active",
-            "type": "bool",
-            "internalType": "bool"
-          }
-        ]
-      }
+            name: 'active',
+            type: 'bool',
+            internalType: 'bool',
+          },
+        ],
+      },
     ],
-    "stateMutability": "view"
+    stateMutability: 'view',
   },
   {
-    "type": "function",
-    "name": "getBlueprintConfig",
-    "inputs": [
+    type: 'function',
+    name: 'getBlueprintConfig',
+    inputs: [
       {
-        "name": "blueprintId",
-        "type": "uint64",
-        "internalType": "uint64"
-      }
+        name: 'blueprintId',
+        type: 'uint64',
+        internalType: 'uint64',
+      },
     ],
-    "outputs": [
+    outputs: [
       {
-        "name": "",
-        "type": "tuple",
-        "internalType": "struct Types.BlueprintConfig",
-        "components": [
+        name: '',
+        type: 'tuple',
+        internalType: 'struct Types.BlueprintConfig',
+        components: [
           {
-            "name": "membership",
-            "type": "uint8",
-            "internalType": "enum Types.MembershipModel"
+            name: 'membership',
+            type: 'uint8',
+            internalType: 'enum Types.MembershipModel',
           },
           {
-            "name": "pricing",
-            "type": "uint8",
-            "internalType": "enum Types.PricingModel"
+            name: 'pricing',
+            type: 'uint8',
+            internalType: 'enum Types.PricingModel',
           },
           {
-            "name": "minOperators",
-            "type": "uint32",
-            "internalType": "uint32"
+            name: 'minOperators',
+            type: 'uint32',
+            internalType: 'uint32',
           },
           {
-            "name": "maxOperators",
-            "type": "uint32",
-            "internalType": "uint32"
+            name: 'maxOperators',
+            type: 'uint32',
+            internalType: 'uint32',
           },
           {
-            "name": "subscriptionRate",
-            "type": "uint256",
-            "internalType": "uint256"
+            name: 'subscriptionRate',
+            type: 'uint256',
+            internalType: 'uint256',
           },
           {
-            "name": "subscriptionInterval",
-            "type": "uint64",
-            "internalType": "uint64"
+            name: 'subscriptionInterval',
+            type: 'uint64',
+            internalType: 'uint64',
           },
           {
-            "name": "eventRate",
-            "type": "uint256",
-            "internalType": "uint256"
-          }
-        ]
-      }
+            name: 'eventRate',
+            type: 'uint256',
+            internalType: 'uint256',
+          },
+        ],
+      },
     ],
-    "stateMutability": "view"
+    stateMutability: 'view',
   },
   {
-    "type": "function",
-    "name": "getBlueprintDefinition",
-    "inputs": [
+    type: 'function',
+    name: 'getBlueprintDefinition',
+    inputs: [
       {
-        "name": "blueprintId",
-        "type": "uint64",
-        "internalType": "uint64"
-      }
+        name: 'blueprintId',
+        type: 'uint64',
+        internalType: 'uint64',
+      },
     ],
-    "outputs": [
+    outputs: [
       {
-        "name": "definition",
-        "type": "tuple",
-        "internalType": "struct Types.BlueprintDefinition",
-        "components": [
+        name: 'definition',
+        type: 'tuple',
+        internalType: 'struct Types.BlueprintDefinition',
+        components: [
           {
-            "name": "metadataUri",
-            "type": "string",
-            "internalType": "string"
+            name: 'metadataUri',
+            type: 'string',
+            internalType: 'string',
           },
           {
-            "name": "manager",
-            "type": "address",
-            "internalType": "address"
+            name: 'manager',
+            type: 'address',
+            internalType: 'address',
           },
           {
-            "name": "masterManagerRevision",
-            "type": "uint32",
-            "internalType": "uint32"
+            name: 'masterManagerRevision',
+            type: 'uint32',
+            internalType: 'uint32',
           },
           {
-            "name": "hasConfig",
-            "type": "bool",
-            "internalType": "bool"
+            name: 'hasConfig',
+            type: 'bool',
+            internalType: 'bool',
           },
           {
-            "name": "config",
-            "type": "tuple",
-            "internalType": "struct Types.BlueprintConfig",
-            "components": [
+            name: 'config',
+            type: 'tuple',
+            internalType: 'struct Types.BlueprintConfig',
+            components: [
               {
-                "name": "membership",
-                "type": "uint8",
-                "internalType": "enum Types.MembershipModel"
+                name: 'membership',
+                type: 'uint8',
+                internalType: 'enum Types.MembershipModel',
               },
               {
-                "name": "pricing",
-                "type": "uint8",
-                "internalType": "enum Types.PricingModel"
+                name: 'pricing',
+                type: 'uint8',
+                internalType: 'enum Types.PricingModel',
               },
               {
-                "name": "minOperators",
-                "type": "uint32",
-                "internalType": "uint32"
+                name: 'minOperators',
+                type: 'uint32',
+                internalType: 'uint32',
               },
               {
-                "name": "maxOperators",
-                "type": "uint32",
-                "internalType": "uint32"
+                name: 'maxOperators',
+                type: 'uint32',
+                internalType: 'uint32',
               },
               {
-                "name": "subscriptionRate",
-                "type": "uint256",
-                "internalType": "uint256"
+                name: 'subscriptionRate',
+                type: 'uint256',
+                internalType: 'uint256',
               },
               {
-                "name": "subscriptionInterval",
-                "type": "uint64",
-                "internalType": "uint64"
+                name: 'subscriptionInterval',
+                type: 'uint64',
+                internalType: 'uint64',
               },
               {
-                "name": "eventRate",
-                "type": "uint256",
-                "internalType": "uint256"
-              }
-            ]
+                name: 'eventRate',
+                type: 'uint256',
+                internalType: 'uint256',
+              },
+            ],
           },
           {
-            "name": "metadata",
-            "type": "tuple",
-            "internalType": "struct Types.BlueprintMetadata",
-            "components": [
+            name: 'metadata',
+            type: 'tuple',
+            internalType: 'struct Types.BlueprintMetadata',
+            components: [
               {
-                "name": "name",
-                "type": "string",
-                "internalType": "string"
+                name: 'name',
+                type: 'string',
+                internalType: 'string',
               },
               {
-                "name": "description",
-                "type": "string",
-                "internalType": "string"
+                name: 'description',
+                type: 'string',
+                internalType: 'string',
               },
               {
-                "name": "author",
-                "type": "string",
-                "internalType": "string"
+                name: 'author',
+                type: 'string',
+                internalType: 'string',
               },
               {
-                "name": "category",
-                "type": "string",
-                "internalType": "string"
+                name: 'category',
+                type: 'string',
+                internalType: 'string',
               },
               {
-                "name": "codeRepository",
-                "type": "string",
-                "internalType": "string"
+                name: 'codeRepository',
+                type: 'string',
+                internalType: 'string',
               },
               {
-                "name": "logo",
-                "type": "string",
-                "internalType": "string"
+                name: 'logo',
+                type: 'string',
+                internalType: 'string',
               },
               {
-                "name": "website",
-                "type": "string",
-                "internalType": "string"
+                name: 'website',
+                type: 'string',
+                internalType: 'string',
               },
               {
-                "name": "license",
-                "type": "string",
-                "internalType": "string"
+                name: 'license',
+                type: 'string',
+                internalType: 'string',
               },
               {
-                "name": "profilingData",
-                "type": "string",
-                "internalType": "string"
-              }
-            ]
+                name: 'profilingData',
+                type: 'string',
+                internalType: 'string',
+              },
+            ],
           },
           {
-            "name": "jobs",
-            "type": "tuple[]",
-            "internalType": "struct Types.JobDefinition[]",
-            "components": [
+            name: 'jobs',
+            type: 'tuple[]',
+            internalType: 'struct Types.JobDefinition[]',
+            components: [
               {
-                "name": "name",
-                "type": "string",
-                "internalType": "string"
+                name: 'name',
+                type: 'string',
+                internalType: 'string',
               },
               {
-                "name": "description",
-                "type": "string",
-                "internalType": "string"
+                name: 'description',
+                type: 'string',
+                internalType: 'string',
               },
               {
-                "name": "metadataUri",
-                "type": "string",
-                "internalType": "string"
+                name: 'metadataUri',
+                type: 'string',
+                internalType: 'string',
               },
               {
-                "name": "paramsSchema",
-                "type": "bytes",
-                "internalType": "bytes"
+                name: 'paramsSchema',
+                type: 'bytes',
+                internalType: 'bytes',
               },
               {
-                "name": "resultSchema",
-                "type": "bytes",
-                "internalType": "bytes"
-              }
-            ]
+                name: 'resultSchema',
+                type: 'bytes',
+                internalType: 'bytes',
+              },
+            ],
           },
           {
-            "name": "registrationSchema",
-            "type": "bytes",
-            "internalType": "bytes"
+            name: 'registrationSchema',
+            type: 'bytes',
+            internalType: 'bytes',
           },
           {
-            "name": "requestSchema",
-            "type": "bytes",
-            "internalType": "bytes"
+            name: 'requestSchema',
+            type: 'bytes',
+            internalType: 'bytes',
           },
           {
-            "name": "sources",
-            "type": "tuple[]",
-            "internalType": "struct Types.BlueprintSource[]",
-            "components": [
+            name: 'sources',
+            type: 'tuple[]',
+            internalType: 'struct Types.BlueprintSource[]',
+            components: [
               {
-                "name": "kind",
-                "type": "uint8",
-                "internalType": "enum Types.BlueprintSourceKind"
+                name: 'kind',
+                type: 'uint8',
+                internalType: 'enum Types.BlueprintSourceKind',
               },
               {
-                "name": "container",
-                "type": "tuple",
-                "internalType": "struct Types.ImageRegistrySource",
-                "components": [
+                name: 'container',
+                type: 'tuple',
+                internalType: 'struct Types.ImageRegistrySource',
+                components: [
                   {
-                    "name": "registry",
-                    "type": "string",
-                    "internalType": "string"
+                    name: 'registry',
+                    type: 'string',
+                    internalType: 'string',
                   },
                   {
-                    "name": "image",
-                    "type": "string",
-                    "internalType": "string"
+                    name: 'image',
+                    type: 'string',
+                    internalType: 'string',
                   },
                   {
-                    "name": "tag",
-                    "type": "string",
-                    "internalType": "string"
-                  }
-                ]
+                    name: 'tag',
+                    type: 'string',
+                    internalType: 'string',
+                  },
+                ],
               },
               {
-                "name": "wasm",
-                "type": "tuple",
-                "internalType": "struct Types.WasmSource",
-                "components": [
+                name: 'wasm',
+                type: 'tuple',
+                internalType: 'struct Types.WasmSource',
+                components: [
                   {
-                    "name": "runtime",
-                    "type": "uint8",
-                    "internalType": "enum Types.WasmRuntime"
+                    name: 'runtime',
+                    type: 'uint8',
+                    internalType: 'enum Types.WasmRuntime',
                   },
                   {
-                    "name": "fetcher",
-                    "type": "uint8",
-                    "internalType": "enum Types.BlueprintFetcherKind"
+                    name: 'fetcher',
+                    type: 'uint8',
+                    internalType: 'enum Types.BlueprintFetcherKind',
                   },
                   {
-                    "name": "artifactUri",
-                    "type": "string",
-                    "internalType": "string"
+                    name: 'artifactUri',
+                    type: 'string',
+                    internalType: 'string',
                   },
                   {
-                    "name": "entrypoint",
-                    "type": "string",
-                    "internalType": "string"
-                  }
-                ]
+                    name: 'entrypoint',
+                    type: 'string',
+                    internalType: 'string',
+                  },
+                ],
               },
               {
-                "name": "native",
-                "type": "tuple",
-                "internalType": "struct Types.NativeSource",
-                "components": [
+                name: 'native',
+                type: 'tuple',
+                internalType: 'struct Types.NativeSource',
+                components: [
                   {
-                    "name": "fetcher",
-                    "type": "uint8",
-                    "internalType": "enum Types.BlueprintFetcherKind"
+                    name: 'fetcher',
+                    type: 'uint8',
+                    internalType: 'enum Types.BlueprintFetcherKind',
                   },
                   {
-                    "name": "artifactUri",
-                    "type": "string",
-                    "internalType": "string"
+                    name: 'artifactUri',
+                    type: 'string',
+                    internalType: 'string',
                   },
                   {
-                    "name": "entrypoint",
-                    "type": "string",
-                    "internalType": "string"
-                  }
-                ]
+                    name: 'entrypoint',
+                    type: 'string',
+                    internalType: 'string',
+                  },
+                ],
               },
               {
-                "name": "testing",
-                "type": "tuple",
-                "internalType": "struct Types.TestingSource",
-                "components": [
+                name: 'testing',
+                type: 'tuple',
+                internalType: 'struct Types.TestingSource',
+                components: [
                   {
-                    "name": "cargoPackage",
-                    "type": "string",
-                    "internalType": "string"
+                    name: 'cargoPackage',
+                    type: 'string',
+                    internalType: 'string',
                   },
                   {
-                    "name": "cargoBin",
-                    "type": "string",
-                    "internalType": "string"
+                    name: 'cargoBin',
+                    type: 'string',
+                    internalType: 'string',
                   },
                   {
-                    "name": "basePath",
-                    "type": "string",
-                    "internalType": "string"
-                  }
-                ]
+                    name: 'basePath',
+                    type: 'string',
+                    internalType: 'string',
+                  },
+                ],
               },
               {
-                "name": "binaries",
-                "type": "tuple[]",
-                "internalType": "struct Types.BlueprintBinary[]",
-                "components": [
+                name: 'binaries',
+                type: 'tuple[]',
+                internalType: 'struct Types.BlueprintBinary[]',
+                components: [
                   {
-                    "name": "arch",
-                    "type": "uint8",
-                    "internalType": "enum Types.BlueprintArchitecture"
+                    name: 'arch',
+                    type: 'uint8',
+                    internalType: 'enum Types.BlueprintArchitecture',
                   },
                   {
-                    "name": "os",
-                    "type": "uint8",
-                    "internalType": "enum Types.BlueprintOperatingSystem"
+                    name: 'os',
+                    type: 'uint8',
+                    internalType: 'enum Types.BlueprintOperatingSystem',
                   },
                   {
-                    "name": "name",
-                    "type": "string",
-                    "internalType": "string"
+                    name: 'name',
+                    type: 'string',
+                    internalType: 'string',
                   },
                   {
-                    "name": "sha256",
-                    "type": "bytes32",
-                    "internalType": "bytes32"
-                  }
-                ]
-              }
-            ]
+                    name: 'sha256',
+                    type: 'bytes32',
+                    internalType: 'bytes32',
+                  },
+                ],
+              },
+            ],
           },
           {
-            "name": "supportedMemberships",
-            "type": "uint8[]",
-            "internalType": "enum Types.MembershipModel[]"
-          }
-        ]
-      }
+            name: 'supportedMemberships',
+            type: 'uint8[]',
+            internalType: 'enum Types.MembershipModel[]',
+          },
+        ],
+      },
     ],
-    "stateMutability": "view"
+    stateMutability: 'view',
   },
   {
-    "type": "function",
-    "name": "getExecutableSlashes",
-    "inputs": [
+    type: 'function',
+    name: 'getExecutableSlashes',
+    inputs: [
       {
-        "name": "fromId",
-        "type": "uint64",
-        "internalType": "uint64"
+        name: 'fromId',
+        type: 'uint64',
+        internalType: 'uint64',
       },
       {
-        "name": "toId",
-        "type": "uint64",
-        "internalType": "uint64"
-      }
+        name: 'toId',
+        type: 'uint64',
+        internalType: 'uint64',
+      },
     ],
-    "outputs": [
+    outputs: [
       {
-        "name": "ids",
-        "type": "uint64[]",
-        "internalType": "uint64[]"
-      }
+        name: 'ids',
+        type: 'uint64[]',
+        internalType: 'uint64[]',
+      },
     ],
-    "stateMutability": "view"
+    stateMutability: 'view',
   },
   {
-    "type": "function",
-    "name": "getExitConfig",
-    "inputs": [
+    type: 'function',
+    name: 'getExitConfig',
+    inputs: [
       {
-        "name": "serviceId",
-        "type": "uint64",
-        "internalType": "uint64"
-      }
+        name: 'serviceId',
+        type: 'uint64',
+        internalType: 'uint64',
+      },
     ],
-    "outputs": [
+    outputs: [
       {
-        "name": "",
-        "type": "tuple",
-        "internalType": "struct Types.ExitConfig",
-        "components": [
+        name: '',
+        type: 'tuple',
+        internalType: 'struct Types.ExitConfig',
+        components: [
           {
-            "name": "minCommitmentDuration",
-            "type": "uint64",
-            "internalType": "uint64"
+            name: 'minCommitmentDuration',
+            type: 'uint64',
+            internalType: 'uint64',
           },
           {
-            "name": "exitQueueDuration",
-            "type": "uint64",
-            "internalType": "uint64"
+            name: 'exitQueueDuration',
+            type: 'uint64',
+            internalType: 'uint64',
           },
           {
-            "name": "forceExitAllowed",
-            "type": "bool",
-            "internalType": "bool"
-          }
-        ]
-      }
+            name: 'forceExitAllowed',
+            type: 'bool',
+            internalType: 'bool',
+          },
+        ],
+      },
     ],
-    "stateMutability": "view"
+    stateMutability: 'view',
   },
   {
-    "type": "function",
-    "name": "getExitRequest",
-    "inputs": [
+    type: 'function',
+    name: 'getExitRequest',
+    inputs: [
       {
-        "name": "serviceId",
-        "type": "uint64",
-        "internalType": "uint64"
+        name: 'serviceId',
+        type: 'uint64',
+        internalType: 'uint64',
       },
       {
-        "name": "operator",
-        "type": "address",
-        "internalType": "address"
-      }
+        name: 'operator',
+        type: 'address',
+        internalType: 'address',
+      },
     ],
-    "outputs": [
+    outputs: [
       {
-        "name": "",
-        "type": "tuple",
-        "internalType": "struct Types.ExitRequest",
-        "components": [
+        name: '',
+        type: 'tuple',
+        internalType: 'struct Types.ExitRequest',
+        components: [
           {
-            "name": "serviceId",
-            "type": "uint64",
-            "internalType": "uint64"
+            name: 'serviceId',
+            type: 'uint64',
+            internalType: 'uint64',
           },
           {
-            "name": "scheduledAt",
-            "type": "uint64",
-            "internalType": "uint64"
+            name: 'scheduledAt',
+            type: 'uint64',
+            internalType: 'uint64',
           },
           {
-            "name": "executeAfter",
-            "type": "uint64",
-            "internalType": "uint64"
+            name: 'executeAfter',
+            type: 'uint64',
+            internalType: 'uint64',
           },
           {
-            "name": "pending",
-            "type": "bool",
-            "internalType": "bool"
-          }
-        ]
-      }
+            name: 'pending',
+            type: 'bool',
+            internalType: 'bool',
+          },
+        ],
+      },
     ],
-    "stateMutability": "view"
+    stateMutability: 'view',
   },
   {
-    "type": "function",
-    "name": "getExitStatus",
-    "inputs": [
+    type: 'function',
+    name: 'getExitStatus',
+    inputs: [
       {
-        "name": "serviceId",
-        "type": "uint64",
-        "internalType": "uint64"
+        name: 'serviceId',
+        type: 'uint64',
+        internalType: 'uint64',
       },
       {
-        "name": "operator",
-        "type": "address",
-        "internalType": "address"
-      }
+        name: 'operator',
+        type: 'address',
+        internalType: 'address',
+      },
     ],
-    "outputs": [
+    outputs: [
       {
-        "name": "",
-        "type": "uint8",
-        "internalType": "enum Types.ExitStatus"
-      }
+        name: '',
+        type: 'uint8',
+        internalType: 'enum Types.ExitStatus',
+      },
     ],
-    "stateMutability": "view"
+    stateMutability: 'view',
   },
   {
-    "type": "function",
-    "name": "getJobCall",
-    "inputs": [
+    type: 'function',
+    name: 'getJobCall',
+    inputs: [
       {
-        "name": "serviceId",
-        "type": "uint64",
-        "internalType": "uint64"
+        name: 'serviceId',
+        type: 'uint64',
+        internalType: 'uint64',
       },
       {
-        "name": "callId",
-        "type": "uint64",
-        "internalType": "uint64"
-      }
+        name: 'callId',
+        type: 'uint64',
+        internalType: 'uint64',
+      },
     ],
-    "outputs": [
+    outputs: [
       {
-        "name": "",
-        "type": "tuple",
-        "internalType": "struct Types.JobCall",
-        "components": [
+        name: '',
+        type: 'tuple',
+        internalType: 'struct Types.JobCall',
+        components: [
           {
-            "name": "jobIndex",
-            "type": "uint8",
-            "internalType": "uint8"
+            name: 'jobIndex',
+            type: 'uint8',
+            internalType: 'uint8',
           },
           {
-            "name": "caller",
-            "type": "address",
-            "internalType": "address"
+            name: 'caller',
+            type: 'address',
+            internalType: 'address',
           },
           {
-            "name": "createdAt",
-            "type": "uint64",
-            "internalType": "uint64"
+            name: 'createdAt',
+            type: 'uint64',
+            internalType: 'uint64',
           },
           {
-            "name": "resultCount",
-            "type": "uint32",
-            "internalType": "uint32"
+            name: 'resultCount',
+            type: 'uint32',
+            internalType: 'uint32',
           },
           {
-            "name": "payment",
-            "type": "uint256",
-            "internalType": "uint256"
+            name: 'payment',
+            type: 'uint256',
+            internalType: 'uint256',
           },
           {
-            "name": "completed",
-            "type": "bool",
-            "internalType": "bool"
-          }
-        ]
-      }
+            name: 'completed',
+            type: 'bool',
+            internalType: 'bool',
+          },
+        ],
+      },
     ],
-    "stateMutability": "view"
+    stateMutability: 'view',
   },
   {
-    "type": "function",
-    "name": "getOperatorBlsPubkey",
-    "inputs": [
+    type: 'function',
+    name: 'getOperatorBlsPubkey',
+    inputs: [
       {
-        "name": "serviceId",
-        "type": "uint64",
-        "internalType": "uint64"
+        name: 'serviceId',
+        type: 'uint64',
+        internalType: 'uint64',
       },
       {
-        "name": "operator",
-        "type": "address",
-        "internalType": "address"
-      }
+        name: 'operator',
+        type: 'address',
+        internalType: 'address',
+      },
     ],
-    "outputs": [
+    outputs: [
       {
-        "name": "blsPubkey",
-        "type": "uint256[4]",
-        "internalType": "uint256[4]"
-      }
+        name: 'blsPubkey',
+        type: 'uint256[4]',
+        internalType: 'uint256[4]',
+      },
     ],
-    "stateMutability": "view"
+    stateMutability: 'view',
   },
   {
-    "type": "function",
-    "name": "getOperatorPreferences",
-    "inputs": [
+    type: 'function',
+    name: 'getOperatorPreferences',
+    inputs: [
       {
-        "name": "blueprintId",
-        "type": "uint64",
-        "internalType": "uint64"
+        name: 'blueprintId',
+        type: 'uint64',
+        internalType: 'uint64',
       },
       {
-        "name": "operator",
-        "type": "address",
-        "internalType": "address"
-      }
+        name: 'operator',
+        type: 'address',
+        internalType: 'address',
+      },
     ],
-    "outputs": [
+    outputs: [
       {
-        "name": "",
-        "type": "tuple",
-        "internalType": "struct Types.OperatorPreferences",
-        "components": [
+        name: '',
+        type: 'tuple',
+        internalType: 'struct Types.OperatorPreferences',
+        components: [
           {
-            "name": "ecdsaPublicKey",
-            "type": "bytes",
-            "internalType": "bytes"
+            name: 'ecdsaPublicKey',
+            type: 'bytes',
+            internalType: 'bytes',
           },
           {
-            "name": "rpcAddress",
-            "type": "string",
-            "internalType": "string"
-          }
-        ]
-      }
+            name: 'rpcAddress',
+            type: 'string',
+            internalType: 'string',
+          },
+        ],
+      },
     ],
-    "stateMutability": "view"
+    stateMutability: 'view',
   },
   {
-    "type": "function",
-    "name": "getOperatorPublicKey",
-    "inputs": [
+    type: 'function',
+    name: 'getOperatorPublicKey',
+    inputs: [
       {
-        "name": "blueprintId",
-        "type": "uint64",
-        "internalType": "uint64"
+        name: 'blueprintId',
+        type: 'uint64',
+        internalType: 'uint64',
       },
       {
-        "name": "operator",
-        "type": "address",
-        "internalType": "address"
-      }
+        name: 'operator',
+        type: 'address',
+        internalType: 'address',
+      },
     ],
-    "outputs": [
+    outputs: [
       {
-        "name": "",
-        "type": "bytes",
-        "internalType": "bytes"
-      }
+        name: '',
+        type: 'bytes',
+        internalType: 'bytes',
+      },
     ],
-    "stateMutability": "view"
+    stateMutability: 'view',
   },
   {
-    "type": "function",
-    "name": "getOperatorRegistration",
-    "inputs": [
+    type: 'function',
+    name: 'getOperatorRegistration',
+    inputs: [
       {
-        "name": "blueprintId",
-        "type": "uint64",
-        "internalType": "uint64"
+        name: 'blueprintId',
+        type: 'uint64',
+        internalType: 'uint64',
       },
       {
-        "name": "operator",
-        "type": "address",
-        "internalType": "address"
-      }
+        name: 'operator',
+        type: 'address',
+        internalType: 'address',
+      },
     ],
-    "outputs": [
+    outputs: [
       {
-        "name": "",
-        "type": "tuple",
-        "internalType": "struct Types.OperatorRegistration",
-        "components": [
+        name: '',
+        type: 'tuple',
+        internalType: 'struct Types.OperatorRegistration',
+        components: [
           {
-            "name": "registeredAt",
-            "type": "uint64",
-            "internalType": "uint64"
+            name: 'registeredAt',
+            type: 'uint64',
+            internalType: 'uint64',
           },
           {
-            "name": "updatedAt",
-            "type": "uint64",
-            "internalType": "uint64"
+            name: 'updatedAt',
+            type: 'uint64',
+            internalType: 'uint64',
           },
           {
-            "name": "active",
-            "type": "bool",
-            "internalType": "bool"
+            name: 'active',
+            type: 'bool',
+            internalType: 'bool',
           },
           {
-            "name": "online",
-            "type": "bool",
-            "internalType": "bool"
-          }
-        ]
-      }
+            name: 'online',
+            type: 'bool',
+            internalType: 'bool',
+          },
+        ],
+      },
     ],
-    "stateMutability": "view"
+    stateMutability: 'view',
   },
   {
-    "type": "function",
-    "name": "getOperatorTotalActiveServices",
-    "inputs": [
+    type: 'function',
+    name: 'getOperatorTotalActiveServices',
+    inputs: [
       {
-        "name": "operator",
-        "type": "address",
-        "internalType": "address"
-      }
+        name: 'operator',
+        type: 'address',
+        internalType: 'address',
+      },
     ],
-    "outputs": [
+    outputs: [
       {
-        "name": "count",
-        "type": "uint256",
-        "internalType": "uint256"
-      }
+        name: 'count',
+        type: 'uint256',
+        internalType: 'uint256',
+      },
     ],
-    "stateMutability": "view"
+    stateMutability: 'view',
   },
   {
-    "type": "function",
-    "name": "getService",
-    "inputs": [
+    type: 'function',
+    name: 'getService',
+    inputs: [
       {
-        "name": "serviceId",
-        "type": "uint64",
-        "internalType": "uint64"
-      }
+        name: 'serviceId',
+        type: 'uint64',
+        internalType: 'uint64',
+      },
     ],
-    "outputs": [
+    outputs: [
       {
-        "name": "",
-        "type": "tuple",
-        "internalType": "struct Types.Service",
-        "components": [
+        name: '',
+        type: 'tuple',
+        internalType: 'struct Types.Service',
+        components: [
           {
-            "name": "blueprintId",
-            "type": "uint64",
-            "internalType": "uint64"
+            name: 'blueprintId',
+            type: 'uint64',
+            internalType: 'uint64',
           },
           {
-            "name": "owner",
-            "type": "address",
-            "internalType": "address"
+            name: 'owner',
+            type: 'address',
+            internalType: 'address',
           },
           {
-            "name": "createdAt",
-            "type": "uint64",
-            "internalType": "uint64"
+            name: 'createdAt',
+            type: 'uint64',
+            internalType: 'uint64',
           },
           {
-            "name": "ttl",
-            "type": "uint64",
-            "internalType": "uint64"
+            name: 'ttl',
+            type: 'uint64',
+            internalType: 'uint64',
           },
           {
-            "name": "terminatedAt",
-            "type": "uint64",
-            "internalType": "uint64"
+            name: 'terminatedAt',
+            type: 'uint64',
+            internalType: 'uint64',
           },
           {
-            "name": "lastPaymentAt",
-            "type": "uint64",
-            "internalType": "uint64"
+            name: 'lastPaymentAt',
+            type: 'uint64',
+            internalType: 'uint64',
           },
           {
-            "name": "operatorCount",
-            "type": "uint32",
-            "internalType": "uint32"
+            name: 'operatorCount',
+            type: 'uint32',
+            internalType: 'uint32',
           },
           {
-            "name": "minOperators",
-            "type": "uint32",
-            "internalType": "uint32"
+            name: 'minOperators',
+            type: 'uint32',
+            internalType: 'uint32',
           },
           {
-            "name": "maxOperators",
-            "type": "uint32",
-            "internalType": "uint32"
+            name: 'maxOperators',
+            type: 'uint32',
+            internalType: 'uint32',
           },
           {
-            "name": "membership",
-            "type": "uint8",
-            "internalType": "enum Types.MembershipModel"
+            name: 'membership',
+            type: 'uint8',
+            internalType: 'enum Types.MembershipModel',
           },
           {
-            "name": "pricing",
-            "type": "uint8",
-            "internalType": "enum Types.PricingModel"
+            name: 'pricing',
+            type: 'uint8',
+            internalType: 'enum Types.PricingModel',
           },
           {
-            "name": "status",
-            "type": "uint8",
-            "internalType": "enum Types.ServiceStatus"
-          }
-        ]
-      }
+            name: 'status',
+            type: 'uint8',
+            internalType: 'enum Types.ServiceStatus',
+          },
+        ],
+      },
     ],
-    "stateMutability": "view"
+    stateMutability: 'view',
   },
   {
-    "type": "function",
-    "name": "getServiceEscrow",
-    "inputs": [
+    type: 'function',
+    name: 'getServiceEscrow',
+    inputs: [
       {
-        "name": "serviceId",
-        "type": "uint64",
-        "internalType": "uint64"
-      }
+        name: 'serviceId',
+        type: 'uint64',
+        internalType: 'uint64',
+      },
     ],
-    "outputs": [
+    outputs: [
       {
-        "name": "",
-        "type": "tuple",
-        "internalType": "struct PaymentLib.ServiceEscrow",
-        "components": [
+        name: '',
+        type: 'tuple',
+        internalType: 'struct PaymentLib.ServiceEscrow',
+        components: [
           {
-            "name": "token",
-            "type": "address",
-            "internalType": "address"
+            name: 'token',
+            type: 'address',
+            internalType: 'address',
           },
           {
-            "name": "balance",
-            "type": "uint256",
-            "internalType": "uint256"
+            name: 'balance',
+            type: 'uint256',
+            internalType: 'uint256',
           },
           {
-            "name": "totalDeposited",
-            "type": "uint256",
-            "internalType": "uint256"
+            name: 'totalDeposited',
+            type: 'uint256',
+            internalType: 'uint256',
           },
           {
-            "name": "totalReleased",
-            "type": "uint256",
-            "internalType": "uint256"
-          }
-        ]
-      }
+            name: 'totalReleased',
+            type: 'uint256',
+            internalType: 'uint256',
+          },
+        ],
+      },
     ],
-    "stateMutability": "view"
+    stateMutability: 'view',
   },
   {
-    "type": "function",
-    "name": "getServiceOperator",
-    "inputs": [
+    type: 'function',
+    name: 'getServiceOperator',
+    inputs: [
       {
-        "name": "serviceId",
-        "type": "uint64",
-        "internalType": "uint64"
+        name: 'serviceId',
+        type: 'uint64',
+        internalType: 'uint64',
       },
       {
-        "name": "operator",
-        "type": "address",
-        "internalType": "address"
-      }
+        name: 'operator',
+        type: 'address',
+        internalType: 'address',
+      },
     ],
-    "outputs": [
+    outputs: [
       {
-        "name": "",
-        "type": "tuple",
-        "internalType": "struct Types.ServiceOperator",
-        "components": [
+        name: '',
+        type: 'tuple',
+        internalType: 'struct Types.ServiceOperator',
+        components: [
           {
-            "name": "exposureBps",
-            "type": "uint16",
-            "internalType": "uint16"
+            name: 'exposureBps',
+            type: 'uint16',
+            internalType: 'uint16',
           },
           {
-            "name": "joinedAt",
-            "type": "uint64",
-            "internalType": "uint64"
+            name: 'joinedAt',
+            type: 'uint64',
+            internalType: 'uint64',
           },
           {
-            "name": "leftAt",
-            "type": "uint64",
-            "internalType": "uint64"
+            name: 'leftAt',
+            type: 'uint64',
+            internalType: 'uint64',
           },
           {
-            "name": "active",
-            "type": "bool",
-            "internalType": "bool"
-          }
-        ]
-      }
+            name: 'active',
+            type: 'bool',
+            internalType: 'bool',
+          },
+        ],
+      },
     ],
-    "stateMutability": "view"
+    stateMutability: 'view',
   },
   {
-    "type": "function",
-    "name": "getServiceOperators",
-    "inputs": [
+    type: 'function',
+    name: 'getServiceOperators',
+    inputs: [
       {
-        "name": "serviceId",
-        "type": "uint64",
-        "internalType": "uint64"
-      }
+        name: 'serviceId',
+        type: 'uint64',
+        internalType: 'uint64',
+      },
     ],
-    "outputs": [
+    outputs: [
       {
-        "name": "",
-        "type": "address[]",
-        "internalType": "address[]"
-      }
+        name: '',
+        type: 'address[]',
+        internalType: 'address[]',
+      },
     ],
-    "stateMutability": "view"
+    stateMutability: 'view',
   },
   {
-    "type": "function",
-    "name": "getServiceRequest",
-    "inputs": [
+    type: 'function',
+    name: 'getServiceRequest',
+    inputs: [
       {
-        "name": "requestId",
-        "type": "uint64",
-        "internalType": "uint64"
-      }
+        name: 'requestId',
+        type: 'uint64',
+        internalType: 'uint64',
+      },
     ],
-    "outputs": [
+    outputs: [
       {
-        "name": "",
-        "type": "tuple",
-        "internalType": "struct Types.ServiceRequest",
-        "components": [
+        name: '',
+        type: 'tuple',
+        internalType: 'struct Types.ServiceRequest',
+        components: [
           {
-            "name": "blueprintId",
-            "type": "uint64",
-            "internalType": "uint64"
+            name: 'blueprintId',
+            type: 'uint64',
+            internalType: 'uint64',
           },
           {
-            "name": "requester",
-            "type": "address",
-            "internalType": "address"
+            name: 'requester',
+            type: 'address',
+            internalType: 'address',
           },
           {
-            "name": "createdAt",
-            "type": "uint64",
-            "internalType": "uint64"
+            name: 'createdAt',
+            type: 'uint64',
+            internalType: 'uint64',
           },
           {
-            "name": "ttl",
-            "type": "uint64",
-            "internalType": "uint64"
+            name: 'ttl',
+            type: 'uint64',
+            internalType: 'uint64',
           },
           {
-            "name": "operatorCount",
-            "type": "uint32",
-            "internalType": "uint32"
+            name: 'operatorCount',
+            type: 'uint32',
+            internalType: 'uint32',
           },
           {
-            "name": "approvalCount",
-            "type": "uint32",
-            "internalType": "uint32"
+            name: 'approvalCount',
+            type: 'uint32',
+            internalType: 'uint32',
           },
           {
-            "name": "paymentToken",
-            "type": "address",
-            "internalType": "address"
+            name: 'paymentToken',
+            type: 'address',
+            internalType: 'address',
           },
           {
-            "name": "paymentAmount",
-            "type": "uint256",
-            "internalType": "uint256"
+            name: 'paymentAmount',
+            type: 'uint256',
+            internalType: 'uint256',
           },
           {
-            "name": "membership",
-            "type": "uint8",
-            "internalType": "enum Types.MembershipModel"
+            name: 'membership',
+            type: 'uint8',
+            internalType: 'enum Types.MembershipModel',
           },
           {
-            "name": "minOperators",
-            "type": "uint32",
-            "internalType": "uint32"
+            name: 'minOperators',
+            type: 'uint32',
+            internalType: 'uint32',
           },
           {
-            "name": "maxOperators",
-            "type": "uint32",
-            "internalType": "uint32"
+            name: 'maxOperators',
+            type: 'uint32',
+            internalType: 'uint32',
           },
           {
-            "name": "rejected",
-            "type": "bool",
-            "internalType": "bool"
-          }
-        ]
-      }
+            name: 'rejected',
+            type: 'bool',
+            internalType: 'bool',
+          },
+        ],
+      },
     ],
-    "stateMutability": "view"
+    stateMutability: 'view',
   },
   {
-    "type": "function",
-    "name": "getServiceRequestSecurityCommitments",
-    "inputs": [
+    type: 'function',
+    name: 'getServiceRequestSecurityCommitments',
+    inputs: [
       {
-        "name": "requestId",
-        "type": "uint64",
-        "internalType": "uint64"
+        name: 'requestId',
+        type: 'uint64',
+        internalType: 'uint64',
       },
       {
-        "name": "operator",
-        "type": "address",
-        "internalType": "address"
-      }
+        name: 'operator',
+        type: 'address',
+        internalType: 'address',
+      },
     ],
-    "outputs": [
+    outputs: [
       {
-        "name": "",
-        "type": "tuple[]",
-        "internalType": "struct Types.AssetSecurityCommitment[]",
-        "components": [
+        name: '',
+        type: 'tuple[]',
+        internalType: 'struct Types.AssetSecurityCommitment[]',
+        components: [
           {
-            "name": "asset",
-            "type": "tuple",
-            "internalType": "struct Types.Asset",
-            "components": [
+            name: 'asset',
+            type: 'tuple',
+            internalType: 'struct Types.Asset',
+            components: [
               {
-                "name": "kind",
-                "type": "uint8",
-                "internalType": "enum Types.AssetKind"
+                name: 'kind',
+                type: 'uint8',
+                internalType: 'enum Types.AssetKind',
               },
               {
-                "name": "token",
-                "type": "address",
-                "internalType": "address"
-              }
-            ]
+                name: 'token',
+                type: 'address',
+                internalType: 'address',
+              },
+            ],
           },
           {
-            "name": "exposureBps",
-            "type": "uint16",
-            "internalType": "uint16"
-          }
-        ]
-      }
+            name: 'exposureBps',
+            type: 'uint16',
+            internalType: 'uint16',
+          },
+        ],
+      },
     ],
-    "stateMutability": "view"
+    stateMutability: 'view',
   },
   {
-    "type": "function",
-    "name": "getServiceRequestSecurityRequirements",
-    "inputs": [
+    type: 'function',
+    name: 'getServiceRequestSecurityRequirements',
+    inputs: [
       {
-        "name": "requestId",
-        "type": "uint64",
-        "internalType": "uint64"
-      }
+        name: 'requestId',
+        type: 'uint64',
+        internalType: 'uint64',
+      },
     ],
-    "outputs": [
+    outputs: [
       {
-        "name": "",
-        "type": "tuple[]",
-        "internalType": "struct Types.AssetSecurityRequirement[]",
-        "components": [
+        name: '',
+        type: 'tuple[]',
+        internalType: 'struct Types.AssetSecurityRequirement[]',
+        components: [
           {
-            "name": "asset",
-            "type": "tuple",
-            "internalType": "struct Types.Asset",
-            "components": [
+            name: 'asset',
+            type: 'tuple',
+            internalType: 'struct Types.Asset',
+            components: [
               {
-                "name": "kind",
-                "type": "uint8",
-                "internalType": "enum Types.AssetKind"
+                name: 'kind',
+                type: 'uint8',
+                internalType: 'enum Types.AssetKind',
               },
               {
-                "name": "token",
-                "type": "address",
-                "internalType": "address"
-              }
-            ]
+                name: 'token',
+                type: 'address',
+                internalType: 'address',
+              },
+            ],
           },
           {
-            "name": "minExposureBps",
-            "type": "uint16",
-            "internalType": "uint16"
+            name: 'minExposureBps',
+            type: 'uint16',
+            internalType: 'uint16',
           },
           {
-            "name": "maxExposureBps",
-            "type": "uint16",
-            "internalType": "uint16"
-          }
-        ]
-      }
+            name: 'maxExposureBps',
+            type: 'uint16',
+            internalType: 'uint16',
+          },
+        ],
+      },
     ],
-    "stateMutability": "view"
+    stateMutability: 'view',
   },
   {
-    "type": "function",
-    "name": "getServiceSecurityCommitments",
-    "inputs": [
+    type: 'function',
+    name: 'getServiceSecurityCommitments',
+    inputs: [
       {
-        "name": "serviceId",
-        "type": "uint64",
-        "internalType": "uint64"
+        name: 'serviceId',
+        type: 'uint64',
+        internalType: 'uint64',
       },
       {
-        "name": "operator",
-        "type": "address",
-        "internalType": "address"
-      }
+        name: 'operator',
+        type: 'address',
+        internalType: 'address',
+      },
     ],
-    "outputs": [
+    outputs: [
       {
-        "name": "",
-        "type": "tuple[]",
-        "internalType": "struct Types.AssetSecurityCommitment[]",
-        "components": [
+        name: '',
+        type: 'tuple[]',
+        internalType: 'struct Types.AssetSecurityCommitment[]',
+        components: [
           {
-            "name": "asset",
-            "type": "tuple",
-            "internalType": "struct Types.Asset",
-            "components": [
+            name: 'asset',
+            type: 'tuple',
+            internalType: 'struct Types.Asset',
+            components: [
               {
-                "name": "kind",
-                "type": "uint8",
-                "internalType": "enum Types.AssetKind"
+                name: 'kind',
+                type: 'uint8',
+                internalType: 'enum Types.AssetKind',
               },
               {
-                "name": "token",
-                "type": "address",
-                "internalType": "address"
-              }
-            ]
+                name: 'token',
+                type: 'address',
+                internalType: 'address',
+              },
+            ],
           },
           {
-            "name": "exposureBps",
-            "type": "uint16",
-            "internalType": "uint16"
-          }
-        ]
-      }
+            name: 'exposureBps',
+            type: 'uint16',
+            internalType: 'uint16',
+          },
+        ],
+      },
     ],
-    "stateMutability": "view"
+    stateMutability: 'view',
   },
   {
-    "type": "function",
-    "name": "getServiceSecurityRequirements",
-    "inputs": [
+    type: 'function',
+    name: 'getServiceSecurityRequirements',
+    inputs: [
       {
-        "name": "serviceId",
-        "type": "uint64",
-        "internalType": "uint64"
-      }
+        name: 'serviceId',
+        type: 'uint64',
+        internalType: 'uint64',
+      },
     ],
-    "outputs": [
+    outputs: [
       {
-        "name": "",
-        "type": "tuple[]",
-        "internalType": "struct Types.AssetSecurityRequirement[]",
-        "components": [
+        name: '',
+        type: 'tuple[]',
+        internalType: 'struct Types.AssetSecurityRequirement[]',
+        components: [
           {
-            "name": "asset",
-            "type": "tuple",
-            "internalType": "struct Types.Asset",
-            "components": [
+            name: 'asset',
+            type: 'tuple',
+            internalType: 'struct Types.Asset',
+            components: [
               {
-                "name": "kind",
-                "type": "uint8",
-                "internalType": "enum Types.AssetKind"
+                name: 'kind',
+                type: 'uint8',
+                internalType: 'enum Types.AssetKind',
               },
               {
-                "name": "token",
-                "type": "address",
-                "internalType": "address"
-              }
-            ]
+                name: 'token',
+                type: 'address',
+                internalType: 'address',
+              },
+            ],
           },
           {
-            "name": "minExposureBps",
-            "type": "uint16",
-            "internalType": "uint16"
+            name: 'minExposureBps',
+            type: 'uint16',
+            internalType: 'uint16',
           },
           {
-            "name": "maxExposureBps",
-            "type": "uint16",
-            "internalType": "uint16"
-          }
-        ]
-      }
+            name: 'maxExposureBps',
+            type: 'uint16',
+            internalType: 'uint16',
+          },
+        ],
+      },
     ],
-    "stateMutability": "view"
+    stateMutability: 'view',
   },
   {
-    "type": "function",
-    "name": "getSlashProposal",
-    "inputs": [
+    type: 'function',
+    name: 'getSlashProposal',
+    inputs: [
       {
-        "name": "slashId",
-        "type": "uint64",
-        "internalType": "uint64"
-      }
+        name: 'slashId',
+        type: 'uint64',
+        internalType: 'uint64',
+      },
     ],
-    "outputs": [
+    outputs: [
       {
-        "name": "",
-        "type": "tuple",
-        "internalType": "struct SlashingLib.SlashProposal",
-        "components": [
+        name: '',
+        type: 'tuple',
+        internalType: 'struct SlashingLib.SlashProposal',
+        components: [
           {
-            "name": "serviceId",
-            "type": "uint64",
-            "internalType": "uint64"
+            name: 'serviceId',
+            type: 'uint64',
+            internalType: 'uint64',
           },
           {
-            "name": "operator",
-            "type": "address",
-            "internalType": "address"
+            name: 'operator',
+            type: 'address',
+            internalType: 'address',
           },
           {
-            "name": "proposer",
-            "type": "address",
-            "internalType": "address"
+            name: 'proposer',
+            type: 'address',
+            internalType: 'address',
           },
           {
-            "name": "slashBps",
-            "type": "uint16",
-            "internalType": "uint16"
+            name: 'slashBps',
+            type: 'uint16',
+            internalType: 'uint16',
           },
           {
-            "name": "effectiveSlashBps",
-            "type": "uint16",
-            "internalType": "uint16"
+            name: 'effectiveSlashBps',
+            type: 'uint16',
+            internalType: 'uint16',
           },
           {
-            "name": "evidence",
-            "type": "bytes32",
-            "internalType": "bytes32"
+            name: 'evidence',
+            type: 'bytes32',
+            internalType: 'bytes32',
           },
           {
-            "name": "proposedAt",
-            "type": "uint64",
-            "internalType": "uint64"
+            name: 'proposedAt',
+            type: 'uint64',
+            internalType: 'uint64',
           },
           {
-            "name": "executeAfter",
-            "type": "uint64",
-            "internalType": "uint64"
+            name: 'executeAfter',
+            type: 'uint64',
+            internalType: 'uint64',
           },
           {
-            "name": "status",
-            "type": "uint8",
-            "internalType": "enum SlashingLib.SlashStatus"
+            name: 'status',
+            type: 'uint8',
+            internalType: 'enum SlashingLib.SlashStatus',
           },
           {
-            "name": "disputeReason",
-            "type": "string",
-            "internalType": "string"
-          }
-        ]
-      }
+            name: 'disputeReason',
+            type: 'string',
+            internalType: 'string',
+          },
+        ],
+      },
     ],
-    "stateMutability": "view"
+    stateMutability: 'view',
   },
   {
-    "type": "function",
-    "name": "isOperatorRegistered",
-    "inputs": [
+    type: 'function',
+    name: 'isOperatorRegistered',
+    inputs: [
       {
-        "name": "blueprintId",
-        "type": "uint64",
-        "internalType": "uint64"
+        name: 'blueprintId',
+        type: 'uint64',
+        internalType: 'uint64',
       },
       {
-        "name": "operator",
-        "type": "address",
-        "internalType": "address"
-      }
+        name: 'operator',
+        type: 'address',
+        internalType: 'address',
+      },
     ],
-    "outputs": [
+    outputs: [
       {
-        "name": "",
-        "type": "bool",
-        "internalType": "bool"
-      }
+        name: '',
+        type: 'bool',
+        internalType: 'bool',
+      },
     ],
-    "stateMutability": "view"
+    stateMutability: 'view',
   },
   {
-    "type": "function",
-    "name": "isPermittedCaller",
-    "inputs": [
+    type: 'function',
+    name: 'isPermittedCaller',
+    inputs: [
       {
-        "name": "serviceId",
-        "type": "uint64",
-        "internalType": "uint64"
+        name: 'serviceId',
+        type: 'uint64',
+        internalType: 'uint64',
       },
       {
-        "name": "caller",
-        "type": "address",
-        "internalType": "address"
-      }
+        name: 'caller',
+        type: 'address',
+        internalType: 'address',
+      },
     ],
-    "outputs": [
+    outputs: [
       {
-        "name": "",
-        "type": "bool",
-        "internalType": "bool"
-      }
+        name: '',
+        type: 'bool',
+        internalType: 'bool',
+      },
     ],
-    "stateMutability": "view"
+    stateMutability: 'view',
   },
   {
-    "type": "function",
-    "name": "isServiceActive",
-    "inputs": [
+    type: 'function',
+    name: 'isServiceActive',
+    inputs: [
       {
-        "name": "serviceId",
-        "type": "uint64",
-        "internalType": "uint64"
-      }
+        name: 'serviceId',
+        type: 'uint64',
+        internalType: 'uint64',
+      },
     ],
-    "outputs": [
+    outputs: [
       {
-        "name": "",
-        "type": "bool",
-        "internalType": "bool"
-      }
+        name: '',
+        type: 'bool',
+        internalType: 'bool',
+      },
     ],
-    "stateMutability": "view"
+    stateMutability: 'view',
   },
   {
-    "type": "function",
-    "name": "isServiceOperator",
-    "inputs": [
+    type: 'function',
+    name: 'isServiceOperator',
+    inputs: [
       {
-        "name": "serviceId",
-        "type": "uint64",
-        "internalType": "uint64"
+        name: 'serviceId',
+        type: 'uint64',
+        internalType: 'uint64',
       },
       {
-        "name": "operator",
-        "type": "address",
-        "internalType": "address"
-      }
+        name: 'operator',
+        type: 'address',
+        internalType: 'address',
+      },
     ],
-    "outputs": [
+    outputs: [
       {
-        "name": "",
-        "type": "bool",
-        "internalType": "bool"
-      }
+        name: '',
+        type: 'bool',
+        internalType: 'bool',
+      },
     ],
-    "stateMutability": "view"
+    stateMutability: 'view',
   },
   {
-    "type": "function",
-    "name": "joinService",
-    "inputs": [
+    type: 'function',
+    name: 'joinService',
+    inputs: [
       {
-        "name": "serviceId",
-        "type": "uint64",
-        "internalType": "uint64"
+        name: 'serviceId',
+        type: 'uint64',
+        internalType: 'uint64',
       },
       {
-        "name": "exposureBps",
-        "type": "uint16",
-        "internalType": "uint16"
-      }
+        name: 'exposureBps',
+        type: 'uint16',
+        internalType: 'uint16',
+      },
     ],
-    "outputs": [],
-    "stateMutability": "nonpayable"
+    outputs: [],
+    stateMutability: 'nonpayable',
   },
   {
-    "type": "function",
-    "name": "joinServiceWithCommitments",
-    "inputs": [
+    type: 'function',
+    name: 'joinServiceWithCommitments',
+    inputs: [
       {
-        "name": "serviceId",
-        "type": "uint64",
-        "internalType": "uint64"
+        name: 'serviceId',
+        type: 'uint64',
+        internalType: 'uint64',
       },
       {
-        "name": "exposureBps",
-        "type": "uint16",
-        "internalType": "uint16"
+        name: 'exposureBps',
+        type: 'uint16',
+        internalType: 'uint16',
       },
       {
-        "name": "commitments",
-        "type": "tuple[]",
-        "internalType": "struct Types.AssetSecurityCommitment[]",
-        "components": [
+        name: 'commitments',
+        type: 'tuple[]',
+        internalType: 'struct Types.AssetSecurityCommitment[]',
+        components: [
           {
-            "name": "asset",
-            "type": "tuple",
-            "internalType": "struct Types.Asset",
-            "components": [
+            name: 'asset',
+            type: 'tuple',
+            internalType: 'struct Types.Asset',
+            components: [
               {
-                "name": "kind",
-                "type": "uint8",
-                "internalType": "enum Types.AssetKind"
+                name: 'kind',
+                type: 'uint8',
+                internalType: 'enum Types.AssetKind',
               },
               {
-                "name": "token",
-                "type": "address",
-                "internalType": "address"
-              }
-            ]
+                name: 'token',
+                type: 'address',
+                internalType: 'address',
+              },
+            ],
           },
           {
-            "name": "exposureBps",
-            "type": "uint16",
-            "internalType": "uint16"
-          }
-        ]
-      }
+            name: 'exposureBps',
+            type: 'uint16',
+            internalType: 'uint16',
+          },
+        ],
+      },
     ],
-    "outputs": [],
-    "stateMutability": "nonpayable"
+    outputs: [],
+    stateMutability: 'nonpayable',
   },
   {
-    "type": "function",
-    "name": "leaveService",
-    "inputs": [
+    type: 'function',
+    name: 'leaveService',
+    inputs: [
       {
-        "name": "serviceId",
-        "type": "uint64",
-        "internalType": "uint64"
-      }
+        name: 'serviceId',
+        type: 'uint64',
+        internalType: 'uint64',
+      },
     ],
-    "outputs": [],
-    "stateMutability": "nonpayable"
+    outputs: [],
+    stateMutability: 'nonpayable',
   },
   {
-    "type": "function",
-    "name": "maxBlueprintsPerOperator",
-    "inputs": [],
-    "outputs": [
+    type: 'function',
+    name: 'maxBlueprintsPerOperator',
+    inputs: [],
+    outputs: [
       {
-        "name": "",
-        "type": "uint32",
-        "internalType": "uint32"
-      }
+        name: '',
+        type: 'uint32',
+        internalType: 'uint32',
+      },
     ],
-    "stateMutability": "view"
+    stateMutability: 'view',
   },
   {
-    "type": "function",
-    "name": "mbsmRegistry",
-    "inputs": [],
-    "outputs": [
+    type: 'function',
+    name: 'mbsmRegistry',
+    inputs: [],
+    outputs: [
       {
-        "name": "",
-        "type": "address",
-        "internalType": "address"
-      }
+        name: '',
+        type: 'address',
+        internalType: 'address',
+      },
     ],
-    "stateMutability": "view"
+    stateMutability: 'view',
   },
   {
-    "type": "function",
-    "name": "metricsRecorder",
-    "inputs": [],
-    "outputs": [
+    type: 'function',
+    name: 'metricsRecorder',
+    inputs: [],
+    outputs: [
       {
-        "name": "",
-        "type": "address",
-        "internalType": "address"
-      }
+        name: '',
+        type: 'address',
+        internalType: 'address',
+      },
     ],
-    "stateMutability": "view"
+    stateMutability: 'view',
   },
   {
-    "type": "function",
-    "name": "operatorStatusRegistry",
-    "inputs": [],
-    "outputs": [
+    type: 'function',
+    name: 'operatorStatusRegistry',
+    inputs: [],
+    outputs: [
       {
-        "name": "",
-        "type": "address",
-        "internalType": "address"
-      }
+        name: '',
+        type: 'address',
+        internalType: 'address',
+      },
     ],
-    "stateMutability": "view"
+    stateMutability: 'view',
   },
   {
-    "type": "function",
-    "name": "pause",
-    "inputs": [],
-    "outputs": [],
-    "stateMutability": "nonpayable"
+    type: 'function',
+    name: 'pause',
+    inputs: [],
+    outputs: [],
+    stateMutability: 'nonpayable',
   },
   {
-    "type": "function",
-    "name": "paymentSplit",
-    "inputs": [],
-    "outputs": [
+    type: 'function',
+    name: 'paymentSplit',
+    inputs: [],
+    outputs: [
       {
-        "name": "developerBps",
-        "type": "uint16",
-        "internalType": "uint16"
+        name: 'developerBps',
+        type: 'uint16',
+        internalType: 'uint16',
       },
       {
-        "name": "protocolBps",
-        "type": "uint16",
-        "internalType": "uint16"
+        name: 'protocolBps',
+        type: 'uint16',
+        internalType: 'uint16',
       },
       {
-        "name": "operatorBps",
-        "type": "uint16",
-        "internalType": "uint16"
+        name: 'operatorBps',
+        type: 'uint16',
+        internalType: 'uint16',
       },
       {
-        "name": "stakerBps",
-        "type": "uint16",
-        "internalType": "uint16"
-      }
+        name: 'stakerBps',
+        type: 'uint16',
+        internalType: 'uint16',
+      },
     ],
-    "stateMutability": "view"
+    stateMutability: 'view',
   },
   {
-    "type": "function",
-    "name": "pendingRewards",
-    "inputs": [
+    type: 'function',
+    name: 'pendingRewards',
+    inputs: [
       {
-        "name": "account",
-        "type": "address",
-        "internalType": "address"
-      }
+        name: 'account',
+        type: 'address',
+        internalType: 'address',
+      },
     ],
-    "outputs": [
+    outputs: [
       {
-        "name": "",
-        "type": "uint256",
-        "internalType": "uint256"
-      }
+        name: '',
+        type: 'uint256',
+        internalType: 'uint256',
+      },
     ],
-    "stateMutability": "view"
+    stateMutability: 'view',
   },
   {
-    "type": "function",
-    "name": "pendingRewards",
-    "inputs": [
+    type: 'function',
+    name: 'pendingRewards',
+    inputs: [
       {
-        "name": "account",
-        "type": "address",
-        "internalType": "address"
+        name: 'account',
+        type: 'address',
+        internalType: 'address',
       },
       {
-        "name": "token",
-        "type": "address",
-        "internalType": "address"
-      }
+        name: 'token',
+        type: 'address',
+        internalType: 'address',
+      },
     ],
-    "outputs": [
+    outputs: [
       {
-        "name": "",
-        "type": "uint256",
-        "internalType": "uint256"
-      }
+        name: '',
+        type: 'uint256',
+        internalType: 'uint256',
+      },
     ],
-    "stateMutability": "view"
+    stateMutability: 'view',
   },
   {
-    "type": "function",
-    "name": "preRegister",
-    "inputs": [
+    type: 'function',
+    name: 'preRegister',
+    inputs: [
       {
-        "name": "blueprintId",
-        "type": "uint64",
-        "internalType": "uint64"
-      }
+        name: 'blueprintId',
+        type: 'uint64',
+        internalType: 'uint64',
+      },
     ],
-    "outputs": [],
-    "stateMutability": "nonpayable"
+    outputs: [],
+    stateMutability: 'nonpayable',
   },
   {
-    "type": "function",
-    "name": "priceOracle",
-    "inputs": [],
-    "outputs": [
+    type: 'function',
+    name: 'priceOracle',
+    inputs: [],
+    outputs: [
       {
-        "name": "",
-        "type": "address",
-        "internalType": "address"
-      }
+        name: '',
+        type: 'address',
+        internalType: 'address',
+      },
     ],
-    "stateMutability": "view"
+    stateMutability: 'view',
   },
   {
-    "type": "function",
-    "name": "proposeSlash",
-    "inputs": [
+    type: 'function',
+    name: 'proposeSlash',
+    inputs: [
       {
-        "name": "serviceId",
-        "type": "uint64",
-        "internalType": "uint64"
+        name: 'serviceId',
+        type: 'uint64',
+        internalType: 'uint64',
       },
       {
-        "name": "operator",
-        "type": "address",
-        "internalType": "address"
+        name: 'operator',
+        type: 'address',
+        internalType: 'address',
       },
       {
-        "name": "slashBps",
-        "type": "uint16",
-        "internalType": "uint16"
+        name: 'slashBps',
+        type: 'uint16',
+        internalType: 'uint16',
       },
       {
-        "name": "evidence",
-        "type": "bytes32",
-        "internalType": "bytes32"
-      }
+        name: 'evidence',
+        type: 'bytes32',
+        internalType: 'bytes32',
+      },
     ],
-    "outputs": [
+    outputs: [
       {
-        "name": "slashId",
-        "type": "uint64",
-        "internalType": "uint64"
-      }
+        name: 'slashId',
+        type: 'uint64',
+        internalType: 'uint64',
+      },
     ],
-    "stateMutability": "nonpayable"
+    stateMutability: 'nonpayable',
   },
   {
-    "type": "function",
-    "name": "registerOperator",
-    "inputs": [
+    type: 'function',
+    name: 'registerOperator',
+    inputs: [
       {
-        "name": "blueprintId",
-        "type": "uint64",
-        "internalType": "uint64"
+        name: 'blueprintId',
+        type: 'uint64',
+        internalType: 'uint64',
       },
       {
-        "name": "ecdsaPublicKey",
-        "type": "bytes",
-        "internalType": "bytes"
+        name: 'ecdsaPublicKey',
+        type: 'bytes',
+        internalType: 'bytes',
       },
       {
-        "name": "rpcAddress",
-        "type": "string",
-        "internalType": "string"
+        name: 'rpcAddress',
+        type: 'string',
+        internalType: 'string',
       },
       {
-        "name": "registrationInputs",
-        "type": "bytes",
-        "internalType": "bytes"
-      }
+        name: 'registrationInputs',
+        type: 'bytes',
+        internalType: 'bytes',
+      },
     ],
-    "outputs": [],
-    "stateMutability": "nonpayable"
+    outputs: [],
+    stateMutability: 'nonpayable',
   },
   {
-    "type": "function",
-    "name": "registerOperator",
-    "inputs": [
+    type: 'function',
+    name: 'registerOperator',
+    inputs: [
       {
-        "name": "blueprintId",
-        "type": "uint64",
-        "internalType": "uint64"
+        name: 'blueprintId',
+        type: 'uint64',
+        internalType: 'uint64',
       },
       {
-        "name": "ecdsaPublicKey",
-        "type": "bytes",
-        "internalType": "bytes"
+        name: 'ecdsaPublicKey',
+        type: 'bytes',
+        internalType: 'bytes',
       },
       {
-        "name": "rpcAddress",
-        "type": "string",
-        "internalType": "string"
-      }
+        name: 'rpcAddress',
+        type: 'string',
+        internalType: 'string',
+      },
     ],
-    "outputs": [],
-    "stateMutability": "nonpayable"
+    outputs: [],
+    stateMutability: 'nonpayable',
   },
   {
-    "type": "function",
-    "name": "rejectService",
-    "inputs": [
+    type: 'function',
+    name: 'rejectService',
+    inputs: [
       {
-        "name": "requestId",
-        "type": "uint64",
-        "internalType": "uint64"
-      }
+        name: 'requestId',
+        type: 'uint64',
+        internalType: 'uint64',
+      },
     ],
-    "outputs": [],
-    "stateMutability": "nonpayable"
+    outputs: [],
+    stateMutability: 'nonpayable',
   },
   {
-    "type": "function",
-    "name": "removePermittedCaller",
-    "inputs": [
+    type: 'function',
+    name: 'removePermittedCaller',
+    inputs: [
       {
-        "name": "serviceId",
-        "type": "uint64",
-        "internalType": "uint64"
+        name: 'serviceId',
+        type: 'uint64',
+        internalType: 'uint64',
       },
       {
-        "name": "caller",
-        "type": "address",
-        "internalType": "address"
-      }
+        name: 'caller',
+        type: 'address',
+        internalType: 'address',
+      },
     ],
-    "outputs": [],
-    "stateMutability": "nonpayable"
+    outputs: [],
+    stateMutability: 'nonpayable',
   },
   {
-    "type": "function",
-    "name": "requestService",
-    "inputs": [
+    type: 'function',
+    name: 'requestService',
+    inputs: [
       {
-        "name": "blueprintId",
-        "type": "uint64",
-        "internalType": "uint64"
+        name: 'blueprintId',
+        type: 'uint64',
+        internalType: 'uint64',
       },
       {
-        "name": "operators",
-        "type": "address[]",
-        "internalType": "address[]"
+        name: 'operators',
+        type: 'address[]',
+        internalType: 'address[]',
       },
       {
-        "name": "config",
-        "type": "bytes",
-        "internalType": "bytes"
+        name: 'config',
+        type: 'bytes',
+        internalType: 'bytes',
       },
       {
-        "name": "permittedCallers",
-        "type": "address[]",
-        "internalType": "address[]"
+        name: 'permittedCallers',
+        type: 'address[]',
+        internalType: 'address[]',
       },
       {
-        "name": "ttl",
-        "type": "uint64",
-        "internalType": "uint64"
+        name: 'ttl',
+        type: 'uint64',
+        internalType: 'uint64',
       },
       {
-        "name": "paymentToken",
-        "type": "address",
-        "internalType": "address"
+        name: 'paymentToken',
+        type: 'address',
+        internalType: 'address',
       },
       {
-        "name": "paymentAmount",
-        "type": "uint256",
-        "internalType": "uint256"
-      }
+        name: 'paymentAmount',
+        type: 'uint256',
+        internalType: 'uint256',
+      },
     ],
-    "outputs": [
+    outputs: [
       {
-        "name": "requestId",
-        "type": "uint64",
-        "internalType": "uint64"
-      }
+        name: 'requestId',
+        type: 'uint64',
+        internalType: 'uint64',
+      },
     ],
-    "stateMutability": "payable"
+    stateMutability: 'payable',
   },
   {
-    "type": "function",
-    "name": "requestServiceWithExposure",
-    "inputs": [
+    type: 'function',
+    name: 'requestServiceWithExposure',
+    inputs: [
       {
-        "name": "blueprintId",
-        "type": "uint64",
-        "internalType": "uint64"
+        name: 'blueprintId',
+        type: 'uint64',
+        internalType: 'uint64',
       },
       {
-        "name": "operators",
-        "type": "address[]",
-        "internalType": "address[]"
+        name: 'operators',
+        type: 'address[]',
+        internalType: 'address[]',
       },
       {
-        "name": "exposureBps",
-        "type": "uint16[]",
-        "internalType": "uint16[]"
+        name: 'exposureBps',
+        type: 'uint16[]',
+        internalType: 'uint16[]',
       },
       {
-        "name": "config",
-        "type": "bytes",
-        "internalType": "bytes"
+        name: 'config',
+        type: 'bytes',
+        internalType: 'bytes',
       },
       {
-        "name": "permittedCallers",
-        "type": "address[]",
-        "internalType": "address[]"
+        name: 'permittedCallers',
+        type: 'address[]',
+        internalType: 'address[]',
       },
       {
-        "name": "ttl",
-        "type": "uint64",
-        "internalType": "uint64"
+        name: 'ttl',
+        type: 'uint64',
+        internalType: 'uint64',
       },
       {
-        "name": "paymentToken",
-        "type": "address",
-        "internalType": "address"
+        name: 'paymentToken',
+        type: 'address',
+        internalType: 'address',
       },
       {
-        "name": "paymentAmount",
-        "type": "uint256",
-        "internalType": "uint256"
-      }
+        name: 'paymentAmount',
+        type: 'uint256',
+        internalType: 'uint256',
+      },
     ],
-    "outputs": [
+    outputs: [
       {
-        "name": "requestId",
-        "type": "uint64",
-        "internalType": "uint64"
-      }
+        name: 'requestId',
+        type: 'uint64',
+        internalType: 'uint64',
+      },
     ],
-    "stateMutability": "payable"
+    stateMutability: 'payable',
   },
   {
-    "type": "function",
-    "name": "requestServiceWithSecurity",
-    "inputs": [
+    type: 'function',
+    name: 'requestServiceWithSecurity',
+    inputs: [
       {
-        "name": "blueprintId",
-        "type": "uint64",
-        "internalType": "uint64"
+        name: 'blueprintId',
+        type: 'uint64',
+        internalType: 'uint64',
       },
       {
-        "name": "operators",
-        "type": "address[]",
-        "internalType": "address[]"
+        name: 'operators',
+        type: 'address[]',
+        internalType: 'address[]',
       },
       {
-        "name": "securityRequirements",
-        "type": "tuple[]",
-        "internalType": "struct Types.AssetSecurityRequirement[]",
-        "components": [
+        name: 'securityRequirements',
+        type: 'tuple[]',
+        internalType: 'struct Types.AssetSecurityRequirement[]',
+        components: [
           {
-            "name": "asset",
-            "type": "tuple",
-            "internalType": "struct Types.Asset",
-            "components": [
+            name: 'asset',
+            type: 'tuple',
+            internalType: 'struct Types.Asset',
+            components: [
               {
-                "name": "kind",
-                "type": "uint8",
-                "internalType": "enum Types.AssetKind"
+                name: 'kind',
+                type: 'uint8',
+                internalType: 'enum Types.AssetKind',
               },
               {
-                "name": "token",
-                "type": "address",
-                "internalType": "address"
-              }
-            ]
+                name: 'token',
+                type: 'address',
+                internalType: 'address',
+              },
+            ],
           },
           {
-            "name": "minExposureBps",
-            "type": "uint16",
-            "internalType": "uint16"
+            name: 'minExposureBps',
+            type: 'uint16',
+            internalType: 'uint16',
           },
           {
-            "name": "maxExposureBps",
-            "type": "uint16",
-            "internalType": "uint16"
-          }
-        ]
+            name: 'maxExposureBps',
+            type: 'uint16',
+            internalType: 'uint16',
+          },
+        ],
       },
       {
-        "name": "config",
-        "type": "bytes",
-        "internalType": "bytes"
+        name: 'config',
+        type: 'bytes',
+        internalType: 'bytes',
       },
       {
-        "name": "permittedCallers",
-        "type": "address[]",
-        "internalType": "address[]"
+        name: 'permittedCallers',
+        type: 'address[]',
+        internalType: 'address[]',
       },
       {
-        "name": "ttl",
-        "type": "uint64",
-        "internalType": "uint64"
+        name: 'ttl',
+        type: 'uint64',
+        internalType: 'uint64',
       },
       {
-        "name": "paymentToken",
-        "type": "address",
-        "internalType": "address"
+        name: 'paymentToken',
+        type: 'address',
+        internalType: 'address',
       },
       {
-        "name": "paymentAmount",
-        "type": "uint256",
-        "internalType": "uint256"
-      }
+        name: 'paymentAmount',
+        type: 'uint256',
+        internalType: 'uint256',
+      },
     ],
-    "outputs": [
+    outputs: [
       {
-        "name": "requestId",
-        "type": "uint64",
-        "internalType": "uint64"
-      }
+        name: 'requestId',
+        type: 'uint64',
+        internalType: 'uint64',
+      },
     ],
-    "stateMutability": "payable"
+    stateMutability: 'payable',
   },
   {
-    "type": "function",
-    "name": "rewardTokens",
-    "inputs": [
+    type: 'function',
+    name: 'rewardTokens',
+    inputs: [
       {
-        "name": "account",
-        "type": "address",
-        "internalType": "address"
-      }
+        name: 'account',
+        type: 'address',
+        internalType: 'address',
+      },
     ],
-    "outputs": [
+    outputs: [
       {
-        "name": "",
-        "type": "address[]",
-        "internalType": "address[]"
-      }
+        name: '',
+        type: 'address[]',
+        internalType: 'address[]',
+      },
     ],
-    "stateMutability": "view"
+    stateMutability: 'view',
   },
   {
-    "type": "function",
-    "name": "rewardVaults",
-    "inputs": [],
-    "outputs": [
+    type: 'function',
+    name: 'rewardVaults',
+    inputs: [],
+    outputs: [
       {
-        "name": "",
-        "type": "address",
-        "internalType": "address"
-      }
+        name: '',
+        type: 'address',
+        internalType: 'address',
+      },
     ],
-    "stateMutability": "view"
+    stateMutability: 'view',
   },
   {
-    "type": "function",
-    "name": "scheduleExit",
-    "inputs": [
+    type: 'function',
+    name: 'scheduleExit',
+    inputs: [
       {
-        "name": "serviceId",
-        "type": "uint64",
-        "internalType": "uint64"
-      }
+        name: 'serviceId',
+        type: 'uint64',
+        internalType: 'uint64',
+      },
     ],
-    "outputs": [],
-    "stateMutability": "nonpayable"
+    outputs: [],
+    stateMutability: 'nonpayable',
   },
   {
-    "type": "function",
-    "name": "serviceCount",
-    "inputs": [],
-    "outputs": [
+    type: 'function',
+    name: 'serviceCount',
+    inputs: [],
+    outputs: [
       {
-        "name": "",
-        "type": "uint64",
-        "internalType": "uint64"
-      }
+        name: '',
+        type: 'uint64',
+        internalType: 'uint64',
+      },
     ],
-    "stateMutability": "view"
+    stateMutability: 'view',
   },
   {
-    "type": "function",
-    "name": "serviceFeeDistributor",
-    "inputs": [],
-    "outputs": [
+    type: 'function',
+    name: 'serviceFeeDistributor',
+    inputs: [],
+    outputs: [
       {
-        "name": "",
-        "type": "address",
-        "internalType": "address"
-      }
+        name: '',
+        type: 'address',
+        internalType: 'address',
+      },
     ],
-    "stateMutability": "view"
+    stateMutability: 'view',
   },
   {
-    "type": "function",
-    "name": "setDefaultTntMinExposureBps",
-    "inputs": [
+    type: 'function',
+    name: 'setDefaultTntMinExposureBps',
+    inputs: [
       {
-        "name": "minExposureBps",
-        "type": "uint16",
-        "internalType": "uint16"
-      }
+        name: 'minExposureBps',
+        type: 'uint16',
+        internalType: 'uint16',
+      },
     ],
-    "outputs": [],
-    "stateMutability": "nonpayable"
+    outputs: [],
+    stateMutability: 'nonpayable',
   },
   {
-    "type": "function",
-    "name": "setMBSMRegistry",
-    "inputs": [
+    type: 'function',
+    name: 'setMBSMRegistry',
+    inputs: [
       {
-        "name": "registry",
-        "type": "address",
-        "internalType": "address"
-      }
+        name: 'registry',
+        type: 'address',
+        internalType: 'address',
+      },
     ],
-    "outputs": [],
-    "stateMutability": "nonpayable"
+    outputs: [],
+    stateMutability: 'nonpayable',
   },
   {
-    "type": "function",
-    "name": "setMaxBlueprintsPerOperator",
-    "inputs": [
+    type: 'function',
+    name: 'setMaxBlueprintsPerOperator',
+    inputs: [
       {
-        "name": "newMax",
-        "type": "uint32",
-        "internalType": "uint32"
-      }
+        name: 'newMax',
+        type: 'uint32',
+        internalType: 'uint32',
+      },
     ],
-    "outputs": [],
-    "stateMutability": "nonpayable"
+    outputs: [],
+    stateMutability: 'nonpayable',
   },
   {
-    "type": "function",
-    "name": "setMetricsRecorder",
-    "inputs": [
+    type: 'function',
+    name: 'setMetricsRecorder',
+    inputs: [
       {
-        "name": "recorder",
-        "type": "address",
-        "internalType": "address"
-      }
+        name: 'recorder',
+        type: 'address',
+        internalType: 'address',
+      },
     ],
-    "outputs": [],
-    "stateMutability": "nonpayable"
+    outputs: [],
+    stateMutability: 'nonpayable',
   },
   {
-    "type": "function",
-    "name": "setOperatorStatusRegistry",
-    "inputs": [
+    type: 'function',
+    name: 'setOperatorStatusRegistry',
+    inputs: [
       {
-        "name": "registry",
-        "type": "address",
-        "internalType": "address"
-      }
+        name: 'registry',
+        type: 'address',
+        internalType: 'address',
+      },
     ],
-    "outputs": [],
-    "stateMutability": "nonpayable"
+    outputs: [],
+    stateMutability: 'nonpayable',
   },
   {
-    "type": "function",
-    "name": "setPaymentSplit",
-    "inputs": [
+    type: 'function',
+    name: 'setPaymentSplit',
+    inputs: [
       {
-        "name": "split",
-        "type": "tuple",
-        "internalType": "struct Types.PaymentSplit",
-        "components": [
+        name: 'split',
+        type: 'tuple',
+        internalType: 'struct Types.PaymentSplit',
+        components: [
           {
-            "name": "developerBps",
-            "type": "uint16",
-            "internalType": "uint16"
+            name: 'developerBps',
+            type: 'uint16',
+            internalType: 'uint16',
           },
           {
-            "name": "protocolBps",
-            "type": "uint16",
-            "internalType": "uint16"
+            name: 'protocolBps',
+            type: 'uint16',
+            internalType: 'uint16',
           },
           {
-            "name": "operatorBps",
-            "type": "uint16",
-            "internalType": "uint16"
+            name: 'operatorBps',
+            type: 'uint16',
+            internalType: 'uint16',
           },
           {
-            "name": "stakerBps",
-            "type": "uint16",
-            "internalType": "uint16"
-          }
-        ]
-      }
+            name: 'stakerBps',
+            type: 'uint16',
+            internalType: 'uint16',
+          },
+        ],
+      },
     ],
-    "outputs": [],
-    "stateMutability": "nonpayable"
+    outputs: [],
+    stateMutability: 'nonpayable',
   },
   {
-    "type": "function",
-    "name": "setPriceOracle",
-    "inputs": [
+    type: 'function',
+    name: 'setPriceOracle',
+    inputs: [
       {
-        "name": "oracle",
-        "type": "address",
-        "internalType": "address"
-      }
+        name: 'oracle',
+        type: 'address',
+        internalType: 'address',
+      },
     ],
-    "outputs": [],
-    "stateMutability": "nonpayable"
+    outputs: [],
+    stateMutability: 'nonpayable',
   },
   {
-    "type": "function",
-    "name": "setRewardVaults",
-    "inputs": [
+    type: 'function',
+    name: 'setRewardVaults',
+    inputs: [
       {
-        "name": "vaults",
-        "type": "address",
-        "internalType": "address"
-      }
+        name: 'vaults',
+        type: 'address',
+        internalType: 'address',
+      },
     ],
-    "outputs": [],
-    "stateMutability": "nonpayable"
+    outputs: [],
+    stateMutability: 'nonpayable',
   },
   {
-    "type": "function",
-    "name": "setServiceFeeDistributor",
-    "inputs": [
+    type: 'function',
+    name: 'setServiceFeeDistributor',
+    inputs: [
       {
-        "name": "distributor",
-        "type": "address",
-        "internalType": "address"
-      }
+        name: 'distributor',
+        type: 'address',
+        internalType: 'address',
+      },
     ],
-    "outputs": [],
-    "stateMutability": "nonpayable"
+    outputs: [],
+    stateMutability: 'nonpayable',
   },
   {
-    "type": "function",
-    "name": "setSlashConfig",
-    "inputs": [
+    type: 'function',
+    name: 'setSlashConfig',
+    inputs: [
       {
-        "name": "disputeWindow",
-        "type": "uint64",
-        "internalType": "uint64"
+        name: 'disputeWindow',
+        type: 'uint64',
+        internalType: 'uint64',
       },
       {
-        "name": "instantSlashEnabled",
-        "type": "bool",
-        "internalType": "bool"
+        name: 'instantSlashEnabled',
+        type: 'bool',
+        internalType: 'bool',
       },
       {
-        "name": "maxSlashBps",
-        "type": "uint16",
-        "internalType": "uint16"
-      }
+        name: 'maxSlashBps',
+        type: 'uint16',
+        internalType: 'uint16',
+      },
     ],
-    "outputs": [],
-    "stateMutability": "nonpayable"
+    outputs: [],
+    stateMutability: 'nonpayable',
   },
   {
-    "type": "function",
-    "name": "setStaking",
-    "inputs": [
+    type: 'function',
+    name: 'setStaking',
+    inputs: [
       {
-        "name": "staking",
-        "type": "address",
-        "internalType": "address"
-      }
+        name: 'staking',
+        type: 'address',
+        internalType: 'address',
+      },
     ],
-    "outputs": [],
-    "stateMutability": "nonpayable"
+    outputs: [],
+    stateMutability: 'nonpayable',
   },
   {
-    "type": "function",
-    "name": "setTntPaymentDiscountBps",
-    "inputs": [
+    type: 'function',
+    name: 'setTntPaymentDiscountBps',
+    inputs: [
       {
-        "name": "discountBps",
-        "type": "uint16",
-        "internalType": "uint16"
-      }
+        name: 'discountBps',
+        type: 'uint16',
+        internalType: 'uint16',
+      },
     ],
-    "outputs": [],
-    "stateMutability": "nonpayable"
+    outputs: [],
+    stateMutability: 'nonpayable',
   },
   {
-    "type": "function",
-    "name": "setTntToken",
-    "inputs": [
+    type: 'function',
+    name: 'setTntToken',
+    inputs: [
       {
-        "name": "token",
-        "type": "address",
-        "internalType": "address"
-      }
+        name: 'token',
+        type: 'address',
+        internalType: 'address',
+      },
     ],
-    "outputs": [],
-    "stateMutability": "nonpayable"
+    outputs: [],
+    stateMutability: 'nonpayable',
   },
   {
-    "type": "function",
-    "name": "setTreasury",
-    "inputs": [
+    type: 'function',
+    name: 'setTreasury',
+    inputs: [
       {
-        "name": "treasury",
-        "type": "address",
-        "internalType": "address"
-      }
+        name: 'treasury',
+        type: 'address',
+        internalType: 'address',
+      },
     ],
-    "outputs": [],
-    "stateMutability": "nonpayable"
+    outputs: [],
+    stateMutability: 'nonpayable',
   },
   {
-    "type": "function",
-    "name": "submitAggregatedResult",
-    "inputs": [
+    type: 'function',
+    name: 'submitAggregatedResult',
+    inputs: [
       {
-        "name": "serviceId",
-        "type": "uint64",
-        "internalType": "uint64"
+        name: 'serviceId',
+        type: 'uint64',
+        internalType: 'uint64',
       },
       {
-        "name": "callId",
-        "type": "uint64",
-        "internalType": "uint64"
+        name: 'callId',
+        type: 'uint64',
+        internalType: 'uint64',
       },
       {
-        "name": "output",
-        "type": "bytes",
-        "internalType": "bytes"
+        name: 'output',
+        type: 'bytes',
+        internalType: 'bytes',
       },
       {
-        "name": "signerBitmap",
-        "type": "uint256",
-        "internalType": "uint256"
+        name: 'signerBitmap',
+        type: 'uint256',
+        internalType: 'uint256',
       },
       {
-        "name": "aggregatedSignature",
-        "type": "uint256[2]",
-        "internalType": "uint256[2]"
+        name: 'aggregatedSignature',
+        type: 'uint256[2]',
+        internalType: 'uint256[2]',
       },
       {
-        "name": "aggregatedPubkey",
-        "type": "uint256[4]",
-        "internalType": "uint256[4]"
-      }
+        name: 'aggregatedPubkey',
+        type: 'uint256[4]',
+        internalType: 'uint256[4]',
+      },
     ],
-    "outputs": [],
-    "stateMutability": "nonpayable"
+    outputs: [],
+    stateMutability: 'nonpayable',
   },
   {
-    "type": "function",
-    "name": "submitJob",
-    "inputs": [
+    type: 'function',
+    name: 'submitJob',
+    inputs: [
       {
-        "name": "serviceId",
-        "type": "uint64",
-        "internalType": "uint64"
+        name: 'serviceId',
+        type: 'uint64',
+        internalType: 'uint64',
       },
       {
-        "name": "jobIndex",
-        "type": "uint8",
-        "internalType": "uint8"
+        name: 'jobIndex',
+        type: 'uint8',
+        internalType: 'uint8',
       },
       {
-        "name": "inputs",
-        "type": "bytes",
-        "internalType": "bytes"
-      }
+        name: 'inputs',
+        type: 'bytes',
+        internalType: 'bytes',
+      },
     ],
-    "outputs": [
+    outputs: [
       {
-        "name": "callId",
-        "type": "uint64",
-        "internalType": "uint64"
-      }
+        name: 'callId',
+        type: 'uint64',
+        internalType: 'uint64',
+      },
     ],
-    "stateMutability": "payable"
+    stateMutability: 'payable',
   },
   {
-    "type": "function",
-    "name": "submitResult",
-    "inputs": [
+    type: 'function',
+    name: 'submitResult',
+    inputs: [
       {
-        "name": "serviceId",
-        "type": "uint64",
-        "internalType": "uint64"
+        name: 'serviceId',
+        type: 'uint64',
+        internalType: 'uint64',
       },
       {
-        "name": "callId",
-        "type": "uint64",
-        "internalType": "uint64"
+        name: 'callId',
+        type: 'uint64',
+        internalType: 'uint64',
       },
       {
-        "name": "result",
-        "type": "bytes",
-        "internalType": "bytes"
-      }
+        name: 'result',
+        type: 'bytes',
+        internalType: 'bytes',
+      },
     ],
-    "outputs": [],
-    "stateMutability": "nonpayable"
+    outputs: [],
+    stateMutability: 'nonpayable',
   },
   {
-    "type": "function",
-    "name": "submitResults",
-    "inputs": [
+    type: 'function',
+    name: 'submitResults',
+    inputs: [
       {
-        "name": "serviceId",
-        "type": "uint64",
-        "internalType": "uint64"
+        name: 'serviceId',
+        type: 'uint64',
+        internalType: 'uint64',
       },
       {
-        "name": "callIds",
-        "type": "uint64[]",
-        "internalType": "uint64[]"
+        name: 'callIds',
+        type: 'uint64[]',
+        internalType: 'uint64[]',
       },
       {
-        "name": "results",
-        "type": "bytes[]",
-        "internalType": "bytes[]"
-      }
+        name: 'results',
+        type: 'bytes[]',
+        internalType: 'bytes[]',
+      },
     ],
-    "outputs": [],
-    "stateMutability": "nonpayable"
+    outputs: [],
+    stateMutability: 'nonpayable',
   },
   {
-    "type": "function",
-    "name": "terminateService",
-    "inputs": [
+    type: 'function',
+    name: 'terminateService',
+    inputs: [
       {
-        "name": "serviceId",
-        "type": "uint64",
-        "internalType": "uint64"
-      }
+        name: 'serviceId',
+        type: 'uint64',
+        internalType: 'uint64',
+      },
     ],
-    "outputs": [],
-    "stateMutability": "nonpayable"
+    outputs: [],
+    stateMutability: 'nonpayable',
   },
   {
-    "type": "function",
-    "name": "tntPaymentDiscountBps",
-    "inputs": [],
-    "outputs": [
+    type: 'function',
+    name: 'tntPaymentDiscountBps',
+    inputs: [],
+    outputs: [
       {
-        "name": "",
-        "type": "uint16",
-        "internalType": "uint16"
-      }
+        name: '',
+        type: 'uint16',
+        internalType: 'uint16',
+      },
     ],
-    "stateMutability": "view"
+    stateMutability: 'view',
   },
   {
-    "type": "function",
-    "name": "tntToken",
-    "inputs": [],
-    "outputs": [
+    type: 'function',
+    name: 'tntToken',
+    inputs: [],
+    outputs: [
       {
-        "name": "",
-        "type": "address",
-        "internalType": "address"
-      }
+        name: '',
+        type: 'address',
+        internalType: 'address',
+      },
     ],
-    "stateMutability": "view"
+    stateMutability: 'view',
   },
   {
-    "type": "function",
-    "name": "transferBlueprint",
-    "inputs": [
+    type: 'function',
+    name: 'transferBlueprint',
+    inputs: [
       {
-        "name": "blueprintId",
-        "type": "uint64",
-        "internalType": "uint64"
+        name: 'blueprintId',
+        type: 'uint64',
+        internalType: 'uint64',
       },
       {
-        "name": "newOwner",
-        "type": "address",
-        "internalType": "address"
-      }
+        name: 'newOwner',
+        type: 'address',
+        internalType: 'address',
+      },
     ],
-    "outputs": [],
-    "stateMutability": "nonpayable"
+    outputs: [],
+    stateMutability: 'nonpayable',
   },
   {
-    "type": "function",
-    "name": "treasury",
-    "inputs": [],
-    "outputs": [
+    type: 'function',
+    name: 'treasury',
+    inputs: [],
+    outputs: [
       {
-        "name": "",
-        "type": "address",
-        "internalType": "address payable"
-      }
+        name: '',
+        type: 'address',
+        internalType: 'address payable',
+      },
     ],
-    "stateMutability": "view"
+    stateMutability: 'view',
   },
   {
-    "type": "function",
-    "name": "unpause",
-    "inputs": [],
-    "outputs": [],
-    "stateMutability": "nonpayable"
+    type: 'function',
+    name: 'unpause',
+    inputs: [],
+    outputs: [],
+    stateMutability: 'nonpayable',
   },
   {
-    "type": "function",
-    "name": "unregisterOperator",
-    "inputs": [
+    type: 'function',
+    name: 'unregisterOperator',
+    inputs: [
       {
-        "name": "blueprintId",
-        "type": "uint64",
-        "internalType": "uint64"
-      }
+        name: 'blueprintId',
+        type: 'uint64',
+        internalType: 'uint64',
+      },
     ],
-    "outputs": [],
-    "stateMutability": "nonpayable"
+    outputs: [],
+    stateMutability: 'nonpayable',
   },
   {
-    "type": "function",
-    "name": "updateBlueprint",
-    "inputs": [
+    type: 'function',
+    name: 'updateBlueprint',
+    inputs: [
       {
-        "name": "blueprintId",
-        "type": "uint64",
-        "internalType": "uint64"
+        name: 'blueprintId',
+        type: 'uint64',
+        internalType: 'uint64',
       },
       {
-        "name": "metadataUri",
-        "type": "string",
-        "internalType": "string"
-      }
+        name: 'metadataUri',
+        type: 'string',
+        internalType: 'string',
+      },
     ],
-    "outputs": [],
-    "stateMutability": "nonpayable"
+    outputs: [],
+    stateMutability: 'nonpayable',
   },
   {
-    "type": "function",
-    "name": "updateOperatorPreferences",
-    "inputs": [
+    type: 'function',
+    name: 'updateOperatorPreferences',
+    inputs: [
       {
-        "name": "blueprintId",
-        "type": "uint64",
-        "internalType": "uint64"
+        name: 'blueprintId',
+        type: 'uint64',
+        internalType: 'uint64',
       },
       {
-        "name": "ecdsaPublicKey",
-        "type": "bytes",
-        "internalType": "bytes"
+        name: 'ecdsaPublicKey',
+        type: 'bytes',
+        internalType: 'bytes',
       },
       {
-        "name": "rpcAddress",
-        "type": "string",
-        "internalType": "string"
-      }
+        name: 'rpcAddress',
+        type: 'string',
+        internalType: 'string',
+      },
     ],
-    "outputs": [],
-    "stateMutability": "nonpayable"
+    outputs: [],
+    stateMutability: 'nonpayable',
   },
   {
-    "type": "event",
-    "name": "BlueprintCreated",
-    "inputs": [
+    type: 'event',
+    name: 'BlueprintCreated',
+    inputs: [
       {
-        "name": "blueprintId",
-        "type": "uint64",
-        "indexed": true,
-        "internalType": "uint64"
+        name: 'blueprintId',
+        type: 'uint64',
+        indexed: true,
+        internalType: 'uint64',
       },
       {
-        "name": "owner",
-        "type": "address",
-        "indexed": true,
-        "internalType": "address"
+        name: 'owner',
+        type: 'address',
+        indexed: true,
+        internalType: 'address',
       },
       {
-        "name": "manager",
-        "type": "address",
-        "indexed": false,
-        "internalType": "address"
+        name: 'manager',
+        type: 'address',
+        indexed: false,
+        internalType: 'address',
       },
       {
-        "name": "metadataUri",
-        "type": "string",
-        "indexed": false,
-        "internalType": "string"
-      }
+        name: 'metadataUri',
+        type: 'string',
+        indexed: false,
+        internalType: 'string',
+      },
     ],
-    "anonymous": false
+    anonymous: false,
   },
   {
-    "type": "event",
-    "name": "BlueprintDeactivated",
-    "inputs": [
+    type: 'event',
+    name: 'BlueprintDeactivated',
+    inputs: [
       {
-        "name": "blueprintId",
-        "type": "uint64",
-        "indexed": true,
-        "internalType": "uint64"
-      }
+        name: 'blueprintId',
+        type: 'uint64',
+        indexed: true,
+        internalType: 'uint64',
+      },
     ],
-    "anonymous": false
+    anonymous: false,
   },
   {
-    "type": "event",
-    "name": "BlueprintTransferred",
-    "inputs": [
+    type: 'event',
+    name: 'BlueprintTransferred',
+    inputs: [
       {
-        "name": "blueprintId",
-        "type": "uint64",
-        "indexed": true,
-        "internalType": "uint64"
+        name: 'blueprintId',
+        type: 'uint64',
+        indexed: true,
+        internalType: 'uint64',
       },
       {
-        "name": "from",
-        "type": "address",
-        "indexed": true,
-        "internalType": "address"
+        name: 'from',
+        type: 'address',
+        indexed: true,
+        internalType: 'address',
       },
       {
-        "name": "to",
-        "type": "address",
-        "indexed": true,
-        "internalType": "address"
-      }
+        name: 'to',
+        type: 'address',
+        indexed: true,
+        internalType: 'address',
+      },
     ],
-    "anonymous": false
+    anonymous: false,
   },
   {
-    "type": "event",
-    "name": "BlueprintUpdated",
-    "inputs": [
+    type: 'event',
+    name: 'BlueprintUpdated',
+    inputs: [
       {
-        "name": "blueprintId",
-        "type": "uint64",
-        "indexed": true,
-        "internalType": "uint64"
+        name: 'blueprintId',
+        type: 'uint64',
+        indexed: true,
+        internalType: 'uint64',
       },
       {
-        "name": "metadataUri",
-        "type": "string",
-        "indexed": false,
-        "internalType": "string"
-      }
+        name: 'metadataUri',
+        type: 'string',
+        indexed: false,
+        internalType: 'string',
+      },
     ],
-    "anonymous": false
+    anonymous: false,
   },
   {
-    "type": "event",
-    "name": "JobCompleted",
-    "inputs": [
+    type: 'event',
+    name: 'JobCompleted',
+    inputs: [
       {
-        "name": "serviceId",
-        "type": "uint64",
-        "indexed": true,
-        "internalType": "uint64"
+        name: 'serviceId',
+        type: 'uint64',
+        indexed: true,
+        internalType: 'uint64',
       },
       {
-        "name": "callId",
-        "type": "uint64",
-        "indexed": true,
-        "internalType": "uint64"
-      }
+        name: 'callId',
+        type: 'uint64',
+        indexed: true,
+        internalType: 'uint64',
+      },
     ],
-    "anonymous": false
+    anonymous: false,
   },
   {
-    "type": "event",
-    "name": "JobResultSubmitted",
-    "inputs": [
+    type: 'event',
+    name: 'JobResultSubmitted',
+    inputs: [
       {
-        "name": "serviceId",
-        "type": "uint64",
-        "indexed": true,
-        "internalType": "uint64"
+        name: 'serviceId',
+        type: 'uint64',
+        indexed: true,
+        internalType: 'uint64',
       },
       {
-        "name": "callId",
-        "type": "uint64",
-        "indexed": true,
-        "internalType": "uint64"
+        name: 'callId',
+        type: 'uint64',
+        indexed: true,
+        internalType: 'uint64',
       },
       {
-        "name": "operator",
-        "type": "address",
-        "indexed": true,
-        "internalType": "address"
+        name: 'operator',
+        type: 'address',
+        indexed: true,
+        internalType: 'address',
       },
       {
-        "name": "result",
-        "type": "bytes",
-        "indexed": false,
-        "internalType": "bytes"
-      }
+        name: 'result',
+        type: 'bytes',
+        indexed: false,
+        internalType: 'bytes',
+      },
     ],
-    "anonymous": false
+    anonymous: false,
   },
   {
-    "type": "event",
-    "name": "JobSubmitted",
-    "inputs": [
+    type: 'event',
+    name: 'JobSubmitted',
+    inputs: [
       {
-        "name": "serviceId",
-        "type": "uint64",
-        "indexed": true,
-        "internalType": "uint64"
+        name: 'serviceId',
+        type: 'uint64',
+        indexed: true,
+        internalType: 'uint64',
       },
       {
-        "name": "callId",
-        "type": "uint64",
-        "indexed": true,
-        "internalType": "uint64"
+        name: 'callId',
+        type: 'uint64',
+        indexed: true,
+        internalType: 'uint64',
       },
       {
-        "name": "jobIndex",
-        "type": "uint8",
-        "indexed": true,
-        "internalType": "uint8"
+        name: 'jobIndex',
+        type: 'uint8',
+        indexed: true,
+        internalType: 'uint8',
       },
       {
-        "name": "caller",
-        "type": "address",
-        "indexed": false,
-        "internalType": "address"
+        name: 'caller',
+        type: 'address',
+        indexed: false,
+        internalType: 'address',
       },
       {
-        "name": "inputs",
-        "type": "bytes",
-        "indexed": false,
-        "internalType": "bytes"
-      }
+        name: 'inputs',
+        type: 'bytes',
+        indexed: false,
+        internalType: 'bytes',
+      },
     ],
-    "anonymous": false
+    anonymous: false,
   },
   {
-    "type": "event",
-    "name": "OperatorJoinedService",
-    "inputs": [
+    type: 'event',
+    name: 'OperatorJoinedService',
+    inputs: [
       {
-        "name": "serviceId",
-        "type": "uint64",
-        "indexed": true,
-        "internalType": "uint64"
+        name: 'serviceId',
+        type: 'uint64',
+        indexed: true,
+        internalType: 'uint64',
       },
       {
-        "name": "operator",
-        "type": "address",
-        "indexed": true,
-        "internalType": "address"
+        name: 'operator',
+        type: 'address',
+        indexed: true,
+        internalType: 'address',
       },
       {
-        "name": "exposureBps",
-        "type": "uint16",
-        "indexed": false,
-        "internalType": "uint16"
-      }
+        name: 'exposureBps',
+        type: 'uint16',
+        indexed: false,
+        internalType: 'uint16',
+      },
     ],
-    "anonymous": false
+    anonymous: false,
   },
   {
-    "type": "event",
-    "name": "OperatorLeftService",
-    "inputs": [
+    type: 'event',
+    name: 'OperatorLeftService',
+    inputs: [
       {
-        "name": "serviceId",
-        "type": "uint64",
-        "indexed": true,
-        "internalType": "uint64"
+        name: 'serviceId',
+        type: 'uint64',
+        indexed: true,
+        internalType: 'uint64',
       },
       {
-        "name": "operator",
-        "type": "address",
-        "indexed": true,
-        "internalType": "address"
-      }
+        name: 'operator',
+        type: 'address',
+        indexed: true,
+        internalType: 'address',
+      },
     ],
-    "anonymous": false
+    anonymous: false,
   },
   {
-    "type": "event",
-    "name": "OperatorPreferencesUpdated",
-    "inputs": [
+    type: 'event',
+    name: 'OperatorPreferencesUpdated',
+    inputs: [
       {
-        "name": "blueprintId",
-        "type": "uint64",
-        "indexed": true,
-        "internalType": "uint64"
+        name: 'blueprintId',
+        type: 'uint64',
+        indexed: true,
+        internalType: 'uint64',
       },
       {
-        "name": "operator",
-        "type": "address",
-        "indexed": true,
-        "internalType": "address"
+        name: 'operator',
+        type: 'address',
+        indexed: true,
+        internalType: 'address',
       },
       {
-        "name": "ecdsaPublicKey",
-        "type": "bytes",
-        "indexed": false,
-        "internalType": "bytes"
+        name: 'ecdsaPublicKey',
+        type: 'bytes',
+        indexed: false,
+        internalType: 'bytes',
       },
       {
-        "name": "rpcAddress",
-        "type": "string",
-        "indexed": false,
-        "internalType": "string"
-      }
+        name: 'rpcAddress',
+        type: 'string',
+        indexed: false,
+        internalType: 'string',
+      },
     ],
-    "anonymous": false
+    anonymous: false,
   },
   {
-    "type": "event",
-    "name": "OperatorRegistered",
-    "inputs": [
+    type: 'event',
+    name: 'OperatorRegistered',
+    inputs: [
       {
-        "name": "blueprintId",
-        "type": "uint64",
-        "indexed": true,
-        "internalType": "uint64"
+        name: 'blueprintId',
+        type: 'uint64',
+        indexed: true,
+        internalType: 'uint64',
       },
       {
-        "name": "operator",
-        "type": "address",
-        "indexed": true,
-        "internalType": "address"
+        name: 'operator',
+        type: 'address',
+        indexed: true,
+        internalType: 'address',
       },
       {
-        "name": "ecdsaPublicKey",
-        "type": "bytes",
-        "indexed": false,
-        "internalType": "bytes"
+        name: 'ecdsaPublicKey',
+        type: 'bytes',
+        indexed: false,
+        internalType: 'bytes',
       },
       {
-        "name": "rpcAddress",
-        "type": "string",
-        "indexed": false,
-        "internalType": "string"
-      }
+        name: 'rpcAddress',
+        type: 'string',
+        indexed: false,
+        internalType: 'string',
+      },
     ],
-    "anonymous": false
+    anonymous: false,
   },
   {
-    "type": "event",
-    "name": "OperatorUnregistered",
-    "inputs": [
+    type: 'event',
+    name: 'OperatorUnregistered',
+    inputs: [
       {
-        "name": "blueprintId",
-        "type": "uint64",
-        "indexed": true,
-        "internalType": "uint64"
+        name: 'blueprintId',
+        type: 'uint64',
+        indexed: true,
+        internalType: 'uint64',
       },
       {
-        "name": "operator",
-        "type": "address",
-        "indexed": true,
-        "internalType": "address"
-      }
+        name: 'operator',
+        type: 'address',
+        indexed: true,
+        internalType: 'address',
+      },
     ],
-    "anonymous": false
+    anonymous: false,
   },
   {
-    "type": "event",
-    "name": "RewardsClaimed",
-    "inputs": [
+    type: 'event',
+    name: 'RewardsClaimed',
+    inputs: [
       {
-        "name": "account",
-        "type": "address",
-        "indexed": true,
-        "internalType": "address"
+        name: 'account',
+        type: 'address',
+        indexed: true,
+        internalType: 'address',
       },
       {
-        "name": "token",
-        "type": "address",
-        "indexed": true,
-        "internalType": "address"
+        name: 'token',
+        type: 'address',
+        indexed: true,
+        internalType: 'address',
       },
       {
-        "name": "amount",
-        "type": "uint256",
-        "indexed": false,
-        "internalType": "uint256"
-      }
+        name: 'amount',
+        type: 'uint256',
+        indexed: false,
+        internalType: 'uint256',
+      },
     ],
-    "anonymous": false
+    anonymous: false,
   },
   {
-    "type": "event",
-    "name": "ServiceActivated",
-    "inputs": [
+    type: 'event',
+    name: 'ServiceActivated',
+    inputs: [
       {
-        "name": "serviceId",
-        "type": "uint64",
-        "indexed": true,
-        "internalType": "uint64"
+        name: 'serviceId',
+        type: 'uint64',
+        indexed: true,
+        internalType: 'uint64',
       },
       {
-        "name": "requestId",
-        "type": "uint64",
-        "indexed": true,
-        "internalType": "uint64"
+        name: 'requestId',
+        type: 'uint64',
+        indexed: true,
+        internalType: 'uint64',
       },
       {
-        "name": "blueprintId",
-        "type": "uint64",
-        "indexed": true,
-        "internalType": "uint64"
-      }
+        name: 'blueprintId',
+        type: 'uint64',
+        indexed: true,
+        internalType: 'uint64',
+      },
     ],
-    "anonymous": false
+    anonymous: false,
   },
   {
-    "type": "event",
-    "name": "ServiceApproved",
-    "inputs": [
+    type: 'event',
+    name: 'ServiceApproved',
+    inputs: [
       {
-        "name": "requestId",
-        "type": "uint64",
-        "indexed": true,
-        "internalType": "uint64"
+        name: 'requestId',
+        type: 'uint64',
+        indexed: true,
+        internalType: 'uint64',
       },
       {
-        "name": "operator",
-        "type": "address",
-        "indexed": true,
-        "internalType": "address"
-      }
+        name: 'operator',
+        type: 'address',
+        indexed: true,
+        internalType: 'address',
+      },
     ],
-    "anonymous": false
+    anonymous: false,
   },
   {
-    "type": "event",
-    "name": "ServiceRejected",
-    "inputs": [
+    type: 'event',
+    name: 'ServiceRejected',
+    inputs: [
       {
-        "name": "requestId",
-        "type": "uint64",
-        "indexed": true,
-        "internalType": "uint64"
+        name: 'requestId',
+        type: 'uint64',
+        indexed: true,
+        internalType: 'uint64',
       },
       {
-        "name": "operator",
-        "type": "address",
-        "indexed": true,
-        "internalType": "address"
-      }
+        name: 'operator',
+        type: 'address',
+        indexed: true,
+        internalType: 'address',
+      },
     ],
-    "anonymous": false
+    anonymous: false,
   },
   {
-    "type": "event",
-    "name": "ServiceRequested",
-    "inputs": [
+    type: 'event',
+    name: 'ServiceRequested',
+    inputs: [
       {
-        "name": "requestId",
-        "type": "uint64",
-        "indexed": true,
-        "internalType": "uint64"
+        name: 'requestId',
+        type: 'uint64',
+        indexed: true,
+        internalType: 'uint64',
       },
       {
-        "name": "blueprintId",
-        "type": "uint64",
-        "indexed": true,
-        "internalType": "uint64"
+        name: 'blueprintId',
+        type: 'uint64',
+        indexed: true,
+        internalType: 'uint64',
       },
       {
-        "name": "requester",
-        "type": "address",
-        "indexed": true,
-        "internalType": "address"
-      }
+        name: 'requester',
+        type: 'address',
+        indexed: true,
+        internalType: 'address',
+      },
     ],
-    "anonymous": false
+    anonymous: false,
   },
   {
-    "type": "event",
-    "name": "ServiceRequestedWithSecurity",
-    "inputs": [
+    type: 'event',
+    name: 'ServiceRequestedWithSecurity',
+    inputs: [
       {
-        "name": "requestId",
-        "type": "uint64",
-        "indexed": true,
-        "internalType": "uint64"
+        name: 'requestId',
+        type: 'uint64',
+        indexed: true,
+        internalType: 'uint64',
       },
       {
-        "name": "blueprintId",
-        "type": "uint64",
-        "indexed": true,
-        "internalType": "uint64"
+        name: 'blueprintId',
+        type: 'uint64',
+        indexed: true,
+        internalType: 'uint64',
       },
       {
-        "name": "requester",
-        "type": "address",
-        "indexed": true,
-        "internalType": "address"
-      }
+        name: 'requester',
+        type: 'address',
+        indexed: true,
+        internalType: 'address',
+      },
     ],
-    "anonymous": false
+    anonymous: false,
   },
   {
-    "type": "event",
-    "name": "ServiceTerminated",
-    "inputs": [
+    type: 'event',
+    name: 'ServiceTerminated',
+    inputs: [
       {
-        "name": "serviceId",
-        "type": "uint64",
-        "indexed": true,
-        "internalType": "uint64"
-      }
+        name: 'serviceId',
+        type: 'uint64',
+        indexed: true,
+        internalType: 'uint64',
+      },
     ],
-    "anonymous": false
+    anonymous: false,
   },
   {
-    "type": "event",
-    "name": "SlashExecuted",
-    "inputs": [
+    type: 'event',
+    name: 'SlashExecuted',
+    inputs: [
       {
-        "name": "serviceId",
-        "type": "uint64",
-        "indexed": true,
-        "internalType": "uint64"
+        name: 'serviceId',
+        type: 'uint64',
+        indexed: true,
+        internalType: 'uint64',
       },
       {
-        "name": "operator",
-        "type": "address",
-        "indexed": true,
-        "internalType": "address"
+        name: 'operator',
+        type: 'address',
+        indexed: true,
+        internalType: 'address',
       },
       {
-        "name": "amount",
-        "type": "uint256",
-        "indexed": false,
-        "internalType": "uint256"
-      }
+        name: 'amount',
+        type: 'uint256',
+        indexed: false,
+        internalType: 'uint256',
+      },
     ],
-    "anonymous": false
+    anonymous: false,
   },
   {
-    "type": "event",
-    "name": "SlashProposed",
-    "inputs": [
+    type: 'event',
+    name: 'SlashProposed',
+    inputs: [
       {
-        "name": "serviceId",
-        "type": "uint64",
-        "indexed": true,
-        "internalType": "uint64"
+        name: 'serviceId',
+        type: 'uint64',
+        indexed: true,
+        internalType: 'uint64',
       },
       {
-        "name": "operator",
-        "type": "address",
-        "indexed": true,
-        "internalType": "address"
+        name: 'operator',
+        type: 'address',
+        indexed: true,
+        internalType: 'address',
       },
       {
-        "name": "slashBps",
-        "type": "uint16",
-        "indexed": false,
-        "internalType": "uint16"
+        name: 'slashBps',
+        type: 'uint16',
+        indexed: false,
+        internalType: 'uint16',
       },
       {
-        "name": "evidence",
-        "type": "bytes32",
-        "indexed": false,
-        "internalType": "bytes32"
-      }
+        name: 'evidence',
+        type: 'bytes32',
+        indexed: false,
+        internalType: 'bytes32',
+      },
     ],
-    "anonymous": false
+    anonymous: false,
   },
   {
-    "type": "event",
-    "name": "SubscriptionBilled",
-    "inputs": [
+    type: 'event',
+    name: 'SubscriptionBilled',
+    inputs: [
       {
-        "name": "serviceId",
-        "type": "uint64",
-        "indexed": true,
-        "internalType": "uint64"
+        name: 'serviceId',
+        type: 'uint64',
+        indexed: true,
+        internalType: 'uint64',
       },
       {
-        "name": "amount",
-        "type": "uint256",
-        "indexed": false,
-        "internalType": "uint256"
+        name: 'amount',
+        type: 'uint256',
+        indexed: false,
+        internalType: 'uint256',
       },
       {
-        "name": "period",
-        "type": "uint64",
-        "indexed": false,
-        "internalType": "uint64"
-      }
+        name: 'period',
+        type: 'uint64',
+        indexed: false,
+        internalType: 'uint64',
+      },
     ],
-    "anonymous": false
-  }
+    anonymous: false,
+  },
 ] as const;
 
 export default ABI;

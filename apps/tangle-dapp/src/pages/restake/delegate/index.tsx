@@ -144,7 +144,10 @@ const RestakeDelegateForm: FC = () => {
       tokenAddresses.map((t) => t.toLowerCase()).sort(),
     ],
     queryFn: async () => {
-      const map = new Map<string, { amount: bigint; delegatedAmount: bigint }>();
+      const map = new Map<
+        string,
+        { amount: bigint; delegatedAmount: bigint }
+      >();
 
       if (!publicClient || !contracts || !userAddress) {
         return map;
@@ -556,7 +559,8 @@ const RestakeDelegateForm: FC = () => {
                                 >
                                   {shortenHex(selectedOperatorAddress)}
                                 </Typography>
-                                {selectedOperatorDelegationMode !== undefined && (
+                                {selectedOperatorDelegationMode !==
+                                  undefined && (
                                   <Chip
                                     color={
                                       selectedOperatorDelegationMode ===
