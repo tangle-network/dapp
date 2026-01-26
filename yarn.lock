@@ -14851,12 +14851,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/node@npm:18.19.86":
-  version: 18.19.86
-  resolution: "@types/node@npm:18.19.86"
+"@types/node@npm:25.0.10":
+  version: 25.0.10
+  resolution: "@types/node@npm:25.0.10"
   dependencies:
-    undici-types: "npm:~5.26.4"
-  checksum: 10c0/1017c4ba61661ab30e4b4a78040cb66980919549f56d85755326dcccbe7a0405be7d6be1b2a91bace8eaef0d2a24b63d4f104b381be7f957c2483e465d829690
+    undici-types: "npm:~7.16.0"
+  checksum: 10c0/9edc3c812b487c32c76eebac7c87acae1f69515a0bc3f6b545806d513eb9e918c3217bf751dc93da39f60e06bf1b0caa92258ef3a6dd6457124b2e761e54f61f
   languageName: node
   linkType: hard
 
@@ -34042,7 +34042,7 @@ __metadata:
     "@testing-library/react": "npm:16.3.0"
     "@types/jest": "npm:29.5.14"
     "@types/lodash": "npm:^4.17.16"
-    "@types/node": "npm:18.19.86"
+    "@types/node": "npm:25.0.10"
     "@types/react": "npm:18.3.20"
     "@types/react-dom": "npm:18.3.6"
     "@types/react-syntax-highlighter": "npm:^15.5.13"
@@ -35291,13 +35291,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"undici-types@npm:~5.26.4":
-  version: 5.26.5
-  resolution: "undici-types@npm:5.26.5"
-  checksum: 10c0/bb673d7876c2d411b6eb6c560e0c571eef4a01c1c19925175d16e3a30c4c428181fb8d7ae802a261f283e4166a0ac435e2f505743aa9e45d893f9a3df017b501
-  languageName: node
-  linkType: hard
-
 "undici-types@npm:~6.19.2":
   version: 6.19.8
   resolution: "undici-types@npm:6.19.8"
@@ -35309,6 +35302,13 @@ __metadata:
   version: 6.21.0
   resolution: "undici-types@npm:6.21.0"
   checksum: 10c0/c01ed51829b10aa72fc3ce64b747f8e74ae9b60eafa19a7b46ef624403508a54c526ffab06a14a26b3120d055e1104d7abe7c9017e83ced038ea5cf52f8d5e04
+  languageName: node
+  linkType: hard
+
+"undici-types@npm:~7.16.0":
+  version: 7.16.0
+  resolution: "undici-types@npm:7.16.0"
+  checksum: 10c0/3033e2f2b5c9f1504bdc5934646cb54e37ecaca0f9249c983f7b1fc2e87c6d18399ebb05dc7fd5419e02b2e915f734d872a65da2e3eeed1813951c427d33cc9a
   languageName: node
   linkType: hard
 
