@@ -128,8 +128,12 @@ const parseOperator = (
   restakingStake: safeBigInt(raw.restakingStake),
   restakingDelegationCount: safeBigInt(raw.restakingDelegationCount),
   restakingLeavingRound: safeBigInt(raw.restakingLeavingRound),
-  restakingScheduledUnstakeAmount: safeBigInt(raw.restakingScheduledUnstakeAmount),
-  restakingScheduledUnstakeRound: safeBigInt(raw.restakingScheduledUnstakeRound),
+  restakingScheduledUnstakeAmount: safeBigInt(
+    raw.restakingScheduledUnstakeAmount,
+  ),
+  restakingScheduledUnstakeRound: safeBigInt(
+    raw.restakingScheduledUnstakeRound,
+  ),
   delegationMode: raw.delegationMode,
 });
 
