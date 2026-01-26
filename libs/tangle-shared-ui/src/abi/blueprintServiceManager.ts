@@ -1,784 +1,784 @@
 // AUTO-GENERATED FROM tnt-core. DO NOT EDIT MANUALLY.
 const ABI = [
   {
-    type: 'function',
-    name: 'canJoin',
-    inputs: [
+    "type": "function",
+    "name": "canJoin",
+    "inputs": [
       {
-        name: 'serviceId',
-        type: 'uint64',
-        internalType: 'uint64',
+        "name": "serviceId",
+        "type": "uint64",
+        "internalType": "uint64"
       },
       {
-        name: 'operator',
-        type: 'address',
-        internalType: 'address',
-      },
+        "name": "operator",
+        "type": "address",
+        "internalType": "address"
+      }
     ],
-    outputs: [
+    "outputs": [
       {
-        name: 'allowed',
-        type: 'bool',
-        internalType: 'bool',
-      },
+        "name": "allowed",
+        "type": "bool",
+        "internalType": "bool"
+      }
     ],
-    stateMutability: 'view',
+    "stateMutability": "view"
   },
   {
-    type: 'function',
-    name: 'canLeave',
-    inputs: [
+    "type": "function",
+    "name": "canLeave",
+    "inputs": [
       {
-        name: 'serviceId',
-        type: 'uint64',
-        internalType: 'uint64',
+        "name": "serviceId",
+        "type": "uint64",
+        "internalType": "uint64"
       },
       {
-        name: 'operator',
-        type: 'address',
-        internalType: 'address',
-      },
+        "name": "operator",
+        "type": "address",
+        "internalType": "address"
+      }
     ],
-    outputs: [
+    "outputs": [
       {
-        name: 'allowed',
-        type: 'bool',
-        internalType: 'bool',
-      },
+        "name": "allowed",
+        "type": "bool",
+        "internalType": "bool"
+      }
     ],
-    stateMutability: 'view',
+    "stateMutability": "view"
   },
   {
-    type: 'function',
-    name: 'getAggregationThreshold',
-    inputs: [
+    "type": "function",
+    "name": "getAggregationThreshold",
+    "inputs": [
       {
-        name: 'serviceId',
-        type: 'uint64',
-        internalType: 'uint64',
+        "name": "serviceId",
+        "type": "uint64",
+        "internalType": "uint64"
       },
       {
-        name: 'jobIndex',
-        type: 'uint8',
-        internalType: 'uint8',
-      },
+        "name": "jobIndex",
+        "type": "uint8",
+        "internalType": "uint8"
+      }
     ],
-    outputs: [
+    "outputs": [
       {
-        name: 'thresholdBps',
-        type: 'uint16',
-        internalType: 'uint16',
+        "name": "thresholdBps",
+        "type": "uint16",
+        "internalType": "uint16"
       },
       {
-        name: 'thresholdType',
-        type: 'uint8',
-        internalType: 'uint8',
-      },
+        "name": "thresholdType",
+        "type": "uint8",
+        "internalType": "uint8"
+      }
     ],
-    stateMutability: 'view',
+    "stateMutability": "view"
   },
   {
-    type: 'function',
-    name: 'getExitConfig',
-    inputs: [
+    "type": "function",
+    "name": "getExitConfig",
+    "inputs": [
       {
-        name: 'serviceId',
-        type: 'uint64',
-        internalType: 'uint64',
-      },
+        "name": "serviceId",
+        "type": "uint64",
+        "internalType": "uint64"
+      }
     ],
-    outputs: [
+    "outputs": [
       {
-        name: 'useDefault',
-        type: 'bool',
-        internalType: 'bool',
+        "name": "useDefault",
+        "type": "bool",
+        "internalType": "bool"
       },
       {
-        name: 'minCommitmentDuration',
-        type: 'uint64',
-        internalType: 'uint64',
+        "name": "minCommitmentDuration",
+        "type": "uint64",
+        "internalType": "uint64"
       },
       {
-        name: 'exitQueueDuration',
-        type: 'uint64',
-        internalType: 'uint64',
+        "name": "exitQueueDuration",
+        "type": "uint64",
+        "internalType": "uint64"
       },
       {
-        name: 'forceExitAllowed',
-        type: 'bool',
-        internalType: 'bool',
-      },
+        "name": "forceExitAllowed",
+        "type": "bool",
+        "internalType": "bool"
+      }
     ],
-    stateMutability: 'view',
+    "stateMutability": "view"
   },
   {
-    type: 'function',
-    name: 'getHeartbeatInterval',
-    inputs: [
+    "type": "function",
+    "name": "getHeartbeatInterval",
+    "inputs": [
       {
-        name: 'serviceId',
-        type: 'uint64',
-        internalType: 'uint64',
-      },
+        "name": "serviceId",
+        "type": "uint64",
+        "internalType": "uint64"
+      }
     ],
-    outputs: [
+    "outputs": [
       {
-        name: 'useDefault',
-        type: 'bool',
-        internalType: 'bool',
+        "name": "useDefault",
+        "type": "bool",
+        "internalType": "bool"
       },
       {
-        name: 'interval',
-        type: 'uint64',
-        internalType: 'uint64',
-      },
+        "name": "interval",
+        "type": "uint64",
+        "internalType": "uint64"
+      }
     ],
-    stateMutability: 'view',
+    "stateMutability": "view"
   },
   {
-    type: 'function',
-    name: 'getHeartbeatThreshold',
-    inputs: [
+    "type": "function",
+    "name": "getHeartbeatThreshold",
+    "inputs": [
       {
-        name: 'serviceId',
-        type: 'uint64',
-        internalType: 'uint64',
-      },
+        "name": "serviceId",
+        "type": "uint64",
+        "internalType": "uint64"
+      }
     ],
-    outputs: [
+    "outputs": [
       {
-        name: 'useDefault',
-        type: 'bool',
-        internalType: 'bool',
+        "name": "useDefault",
+        "type": "bool",
+        "internalType": "bool"
       },
       {
-        name: 'threshold',
-        type: 'uint8',
-        internalType: 'uint8',
-      },
+        "name": "threshold",
+        "type": "uint8",
+        "internalType": "uint8"
+      }
     ],
-    stateMutability: 'view',
+    "stateMutability": "view"
   },
   {
-    type: 'function',
-    name: 'getMinOperatorStake',
-    inputs: [],
-    outputs: [
+    "type": "function",
+    "name": "getMinOperatorStake",
+    "inputs": [],
+    "outputs": [
       {
-        name: 'useDefault',
-        type: 'bool',
-        internalType: 'bool',
+        "name": "useDefault",
+        "type": "bool",
+        "internalType": "bool"
       },
       {
-        name: 'minStake',
-        type: 'uint256',
-        internalType: 'uint256',
-      },
+        "name": "minStake",
+        "type": "uint256",
+        "internalType": "uint256"
+      }
     ],
-    stateMutability: 'view',
+    "stateMutability": "view"
   },
   {
-    type: 'function',
-    name: 'getRequiredResultCount',
-    inputs: [
+    "type": "function",
+    "name": "getRequiredResultCount",
+    "inputs": [
       {
-        name: 'serviceId',
-        type: 'uint64',
-        internalType: 'uint64',
+        "name": "serviceId",
+        "type": "uint64",
+        "internalType": "uint64"
       },
       {
-        name: 'jobIndex',
-        type: 'uint8',
-        internalType: 'uint8',
-      },
+        "name": "jobIndex",
+        "type": "uint8",
+        "internalType": "uint8"
+      }
     ],
-    outputs: [
+    "outputs": [
       {
-        name: 'required',
-        type: 'uint32',
-        internalType: 'uint32',
-      },
+        "name": "required",
+        "type": "uint32",
+        "internalType": "uint32"
+      }
     ],
-    stateMutability: 'view',
+    "stateMutability": "view"
   },
   {
-    type: 'function',
-    name: 'getSlashingWindow',
-    inputs: [
+    "type": "function",
+    "name": "getSlashingWindow",
+    "inputs": [
       {
-        name: 'serviceId',
-        type: 'uint64',
-        internalType: 'uint64',
-      },
+        "name": "serviceId",
+        "type": "uint64",
+        "internalType": "uint64"
+      }
     ],
-    outputs: [
+    "outputs": [
       {
-        name: 'useDefault',
-        type: 'bool',
-        internalType: 'bool',
+        "name": "useDefault",
+        "type": "bool",
+        "internalType": "bool"
       },
       {
-        name: 'window',
-        type: 'uint64',
-        internalType: 'uint64',
-      },
+        "name": "window",
+        "type": "uint64",
+        "internalType": "uint64"
+      }
     ],
-    stateMutability: 'view',
+    "stateMutability": "view"
   },
   {
-    type: 'function',
-    name: 'onAggregatedResult',
-    inputs: [
+    "type": "function",
+    "name": "onAggregatedResult",
+    "inputs": [
       {
-        name: 'serviceId',
-        type: 'uint64',
-        internalType: 'uint64',
+        "name": "serviceId",
+        "type": "uint64",
+        "internalType": "uint64"
       },
       {
-        name: 'job',
-        type: 'uint8',
-        internalType: 'uint8',
+        "name": "job",
+        "type": "uint8",
+        "internalType": "uint8"
       },
       {
-        name: 'jobCallId',
-        type: 'uint64',
-        internalType: 'uint64',
+        "name": "jobCallId",
+        "type": "uint64",
+        "internalType": "uint64"
       },
       {
-        name: 'output',
-        type: 'bytes',
-        internalType: 'bytes',
+        "name": "output",
+        "type": "bytes",
+        "internalType": "bytes"
       },
       {
-        name: 'signerBitmap',
-        type: 'uint256',
-        internalType: 'uint256',
+        "name": "signerBitmap",
+        "type": "uint256",
+        "internalType": "uint256"
       },
       {
-        name: 'aggregatedSignature',
-        type: 'uint256[2]',
-        internalType: 'uint256[2]',
+        "name": "aggregatedSignature",
+        "type": "uint256[2]",
+        "internalType": "uint256[2]"
       },
       {
-        name: 'aggregatedPubkey',
-        type: 'uint256[4]',
-        internalType: 'uint256[4]',
-      },
+        "name": "aggregatedPubkey",
+        "type": "uint256[4]",
+        "internalType": "uint256[4]"
+      }
     ],
-    outputs: [],
-    stateMutability: 'nonpayable',
+    "outputs": [],
+    "stateMutability": "nonpayable"
   },
   {
-    type: 'function',
-    name: 'onApprove',
-    inputs: [
+    "type": "function",
+    "name": "onApprove",
+    "inputs": [
       {
-        name: 'operator',
-        type: 'address',
-        internalType: 'address',
+        "name": "operator",
+        "type": "address",
+        "internalType": "address"
       },
       {
-        name: 'requestId',
-        type: 'uint64',
-        internalType: 'uint64',
+        "name": "requestId",
+        "type": "uint64",
+        "internalType": "uint64"
       },
       {
-        name: 'restakingPercent',
-        type: 'uint8',
-        internalType: 'uint8',
-      },
+        "name": "stakingPercent",
+        "type": "uint8",
+        "internalType": "uint8"
+      }
     ],
-    outputs: [],
-    stateMutability: 'payable',
+    "outputs": [],
+    "stateMutability": "payable"
   },
   {
-    type: 'function',
-    name: 'onBlueprintCreated',
-    inputs: [
+    "type": "function",
+    "name": "onBlueprintCreated",
+    "inputs": [
       {
-        name: 'blueprintId',
-        type: 'uint64',
-        internalType: 'uint64',
+        "name": "blueprintId",
+        "type": "uint64",
+        "internalType": "uint64"
       },
       {
-        name: 'owner',
-        type: 'address',
-        internalType: 'address',
+        "name": "owner",
+        "type": "address",
+        "internalType": "address"
       },
       {
-        name: 'tangleCore',
-        type: 'address',
-        internalType: 'address',
-      },
+        "name": "tangleCore",
+        "type": "address",
+        "internalType": "address"
+      }
     ],
-    outputs: [],
-    stateMutability: 'nonpayable',
+    "outputs": [],
+    "stateMutability": "nonpayable"
   },
   {
-    type: 'function',
-    name: 'onExitCanceled',
-    inputs: [
+    "type": "function",
+    "name": "onExitCanceled",
+    "inputs": [
       {
-        name: 'serviceId',
-        type: 'uint64',
-        internalType: 'uint64',
+        "name": "serviceId",
+        "type": "uint64",
+        "internalType": "uint64"
       },
       {
-        name: 'operator',
-        type: 'address',
-        internalType: 'address',
-      },
+        "name": "operator",
+        "type": "address",
+        "internalType": "address"
+      }
     ],
-    outputs: [],
-    stateMutability: 'nonpayable',
+    "outputs": [],
+    "stateMutability": "nonpayable"
   },
   {
-    type: 'function',
-    name: 'onExitScheduled',
-    inputs: [
+    "type": "function",
+    "name": "onExitScheduled",
+    "inputs": [
       {
-        name: 'serviceId',
-        type: 'uint64',
-        internalType: 'uint64',
+        "name": "serviceId",
+        "type": "uint64",
+        "internalType": "uint64"
       },
       {
-        name: 'operator',
-        type: 'address',
-        internalType: 'address',
+        "name": "operator",
+        "type": "address",
+        "internalType": "address"
       },
       {
-        name: 'executeAfter',
-        type: 'uint64',
-        internalType: 'uint64',
-      },
+        "name": "executeAfter",
+        "type": "uint64",
+        "internalType": "uint64"
+      }
     ],
-    outputs: [],
-    stateMutability: 'nonpayable',
+    "outputs": [],
+    "stateMutability": "nonpayable"
   },
   {
-    type: 'function',
-    name: 'onJobCall',
-    inputs: [
+    "type": "function",
+    "name": "onJobCall",
+    "inputs": [
       {
-        name: 'serviceId',
-        type: 'uint64',
-        internalType: 'uint64',
+        "name": "serviceId",
+        "type": "uint64",
+        "internalType": "uint64"
       },
       {
-        name: 'job',
-        type: 'uint8',
-        internalType: 'uint8',
+        "name": "job",
+        "type": "uint8",
+        "internalType": "uint8"
       },
       {
-        name: 'jobCallId',
-        type: 'uint64',
-        internalType: 'uint64',
+        "name": "jobCallId",
+        "type": "uint64",
+        "internalType": "uint64"
       },
       {
-        name: 'inputs',
-        type: 'bytes',
-        internalType: 'bytes',
-      },
+        "name": "inputs",
+        "type": "bytes",
+        "internalType": "bytes"
+      }
     ],
-    outputs: [],
-    stateMutability: 'payable',
+    "outputs": [],
+    "stateMutability": "payable"
   },
   {
-    type: 'function',
-    name: 'onJobResult',
-    inputs: [
+    "type": "function",
+    "name": "onJobResult",
+    "inputs": [
       {
-        name: 'serviceId',
-        type: 'uint64',
-        internalType: 'uint64',
+        "name": "serviceId",
+        "type": "uint64",
+        "internalType": "uint64"
       },
       {
-        name: 'job',
-        type: 'uint8',
-        internalType: 'uint8',
+        "name": "job",
+        "type": "uint8",
+        "internalType": "uint8"
       },
       {
-        name: 'jobCallId',
-        type: 'uint64',
-        internalType: 'uint64',
+        "name": "jobCallId",
+        "type": "uint64",
+        "internalType": "uint64"
       },
       {
-        name: 'operator',
-        type: 'address',
-        internalType: 'address',
+        "name": "operator",
+        "type": "address",
+        "internalType": "address"
       },
       {
-        name: 'inputs',
-        type: 'bytes',
-        internalType: 'bytes',
+        "name": "inputs",
+        "type": "bytes",
+        "internalType": "bytes"
       },
       {
-        name: 'outputs',
-        type: 'bytes',
-        internalType: 'bytes',
-      },
+        "name": "outputs",
+        "type": "bytes",
+        "internalType": "bytes"
+      }
     ],
-    outputs: [],
-    stateMutability: 'payable',
+    "outputs": [],
+    "stateMutability": "payable"
   },
   {
-    type: 'function',
-    name: 'onOperatorJoined',
-    inputs: [
+    "type": "function",
+    "name": "onOperatorJoined",
+    "inputs": [
       {
-        name: 'serviceId',
-        type: 'uint64',
-        internalType: 'uint64',
+        "name": "serviceId",
+        "type": "uint64",
+        "internalType": "uint64"
       },
       {
-        name: 'operator',
-        type: 'address',
-        internalType: 'address',
+        "name": "operator",
+        "type": "address",
+        "internalType": "address"
       },
       {
-        name: 'exposureBps',
-        type: 'uint16',
-        internalType: 'uint16',
-      },
+        "name": "exposureBps",
+        "type": "uint16",
+        "internalType": "uint16"
+      }
     ],
-    outputs: [],
-    stateMutability: 'nonpayable',
+    "outputs": [],
+    "stateMutability": "nonpayable"
   },
   {
-    type: 'function',
-    name: 'onOperatorLeft',
-    inputs: [
+    "type": "function",
+    "name": "onOperatorLeft",
+    "inputs": [
       {
-        name: 'serviceId',
-        type: 'uint64',
-        internalType: 'uint64',
+        "name": "serviceId",
+        "type": "uint64",
+        "internalType": "uint64"
       },
       {
-        name: 'operator',
-        type: 'address',
-        internalType: 'address',
-      },
+        "name": "operator",
+        "type": "address",
+        "internalType": "address"
+      }
     ],
-    outputs: [],
-    stateMutability: 'nonpayable',
+    "outputs": [],
+    "stateMutability": "nonpayable"
   },
   {
-    type: 'function',
-    name: 'onRegister',
-    inputs: [
+    "type": "function",
+    "name": "onRegister",
+    "inputs": [
       {
-        name: 'operator',
-        type: 'address',
-        internalType: 'address',
+        "name": "operator",
+        "type": "address",
+        "internalType": "address"
       },
       {
-        name: 'registrationInputs',
-        type: 'bytes',
-        internalType: 'bytes',
-      },
+        "name": "registrationInputs",
+        "type": "bytes",
+        "internalType": "bytes"
+      }
     ],
-    outputs: [],
-    stateMutability: 'payable',
+    "outputs": [],
+    "stateMutability": "payable"
   },
   {
-    type: 'function',
-    name: 'onReject',
-    inputs: [
+    "type": "function",
+    "name": "onReject",
+    "inputs": [
       {
-        name: 'operator',
-        type: 'address',
-        internalType: 'address',
+        "name": "operator",
+        "type": "address",
+        "internalType": "address"
       },
       {
-        name: 'requestId',
-        type: 'uint64',
-        internalType: 'uint64',
-      },
+        "name": "requestId",
+        "type": "uint64",
+        "internalType": "uint64"
+      }
     ],
-    outputs: [],
-    stateMutability: 'nonpayable',
+    "outputs": [],
+    "stateMutability": "nonpayable"
   },
   {
-    type: 'function',
-    name: 'onRequest',
-    inputs: [
+    "type": "function",
+    "name": "onRequest",
+    "inputs": [
       {
-        name: 'requestId',
-        type: 'uint64',
-        internalType: 'uint64',
+        "name": "requestId",
+        "type": "uint64",
+        "internalType": "uint64"
       },
       {
-        name: 'requester',
-        type: 'address',
-        internalType: 'address',
+        "name": "requester",
+        "type": "address",
+        "internalType": "address"
       },
       {
-        name: 'operators',
-        type: 'address[]',
-        internalType: 'address[]',
+        "name": "operators",
+        "type": "address[]",
+        "internalType": "address[]"
       },
       {
-        name: 'requestInputs',
-        type: 'bytes',
-        internalType: 'bytes',
+        "name": "requestInputs",
+        "type": "bytes",
+        "internalType": "bytes"
       },
       {
-        name: 'ttl',
-        type: 'uint64',
-        internalType: 'uint64',
+        "name": "ttl",
+        "type": "uint64",
+        "internalType": "uint64"
       },
       {
-        name: 'paymentAsset',
-        type: 'address',
-        internalType: 'address',
+        "name": "paymentAsset",
+        "type": "address",
+        "internalType": "address"
       },
       {
-        name: 'paymentAmount',
-        type: 'uint256',
-        internalType: 'uint256',
-      },
+        "name": "paymentAmount",
+        "type": "uint256",
+        "internalType": "uint256"
+      }
     ],
-    outputs: [],
-    stateMutability: 'payable',
+    "outputs": [],
+    "stateMutability": "payable"
   },
   {
-    type: 'function',
-    name: 'onServiceInitialized',
-    inputs: [
+    "type": "function",
+    "name": "onServiceInitialized",
+    "inputs": [
       {
-        name: 'blueprintId',
-        type: 'uint64',
-        internalType: 'uint64',
+        "name": "blueprintId",
+        "type": "uint64",
+        "internalType": "uint64"
       },
       {
-        name: 'requestId',
-        type: 'uint64',
-        internalType: 'uint64',
+        "name": "requestId",
+        "type": "uint64",
+        "internalType": "uint64"
       },
       {
-        name: 'serviceId',
-        type: 'uint64',
-        internalType: 'uint64',
+        "name": "serviceId",
+        "type": "uint64",
+        "internalType": "uint64"
       },
       {
-        name: 'owner',
-        type: 'address',
-        internalType: 'address',
+        "name": "owner",
+        "type": "address",
+        "internalType": "address"
       },
       {
-        name: 'permittedCallers',
-        type: 'address[]',
-        internalType: 'address[]',
+        "name": "permittedCallers",
+        "type": "address[]",
+        "internalType": "address[]"
       },
       {
-        name: 'ttl',
-        type: 'uint64',
-        internalType: 'uint64',
-      },
+        "name": "ttl",
+        "type": "uint64",
+        "internalType": "uint64"
+      }
     ],
-    outputs: [],
-    stateMutability: 'nonpayable',
+    "outputs": [],
+    "stateMutability": "nonpayable"
   },
   {
-    type: 'function',
-    name: 'onServiceTermination',
-    inputs: [
+    "type": "function",
+    "name": "onServiceTermination",
+    "inputs": [
       {
-        name: 'serviceId',
-        type: 'uint64',
-        internalType: 'uint64',
+        "name": "serviceId",
+        "type": "uint64",
+        "internalType": "uint64"
       },
       {
-        name: 'owner',
-        type: 'address',
-        internalType: 'address',
-      },
+        "name": "owner",
+        "type": "address",
+        "internalType": "address"
+      }
     ],
-    outputs: [],
-    stateMutability: 'nonpayable',
+    "outputs": [],
+    "stateMutability": "nonpayable"
   },
   {
-    type: 'function',
-    name: 'onSlash',
-    inputs: [
+    "type": "function",
+    "name": "onSlash",
+    "inputs": [
       {
-        name: 'serviceId',
-        type: 'uint64',
-        internalType: 'uint64',
+        "name": "serviceId",
+        "type": "uint64",
+        "internalType": "uint64"
       },
       {
-        name: 'offender',
-        type: 'bytes',
-        internalType: 'bytes',
+        "name": "offender",
+        "type": "bytes",
+        "internalType": "bytes"
       },
       {
-        name: 'slashPercent',
-        type: 'uint8',
-        internalType: 'uint8',
-      },
+        "name": "slashPercent",
+        "type": "uint8",
+        "internalType": "uint8"
+      }
     ],
-    outputs: [],
-    stateMutability: 'nonpayable',
+    "outputs": [],
+    "stateMutability": "nonpayable"
   },
   {
-    type: 'function',
-    name: 'onUnappliedSlash',
-    inputs: [
+    "type": "function",
+    "name": "onUnappliedSlash",
+    "inputs": [
       {
-        name: 'serviceId',
-        type: 'uint64',
-        internalType: 'uint64',
+        "name": "serviceId",
+        "type": "uint64",
+        "internalType": "uint64"
       },
       {
-        name: 'offender',
-        type: 'bytes',
-        internalType: 'bytes',
+        "name": "offender",
+        "type": "bytes",
+        "internalType": "bytes"
       },
       {
-        name: 'slashPercent',
-        type: 'uint8',
-        internalType: 'uint8',
-      },
+        "name": "slashPercent",
+        "type": "uint8",
+        "internalType": "uint8"
+      }
     ],
-    outputs: [],
-    stateMutability: 'nonpayable',
+    "outputs": [],
+    "stateMutability": "nonpayable"
   },
   {
-    type: 'function',
-    name: 'onUnregister',
-    inputs: [
+    "type": "function",
+    "name": "onUnregister",
+    "inputs": [
       {
-        name: 'operator',
-        type: 'address',
-        internalType: 'address',
-      },
+        "name": "operator",
+        "type": "address",
+        "internalType": "address"
+      }
     ],
-    outputs: [],
-    stateMutability: 'nonpayable',
+    "outputs": [],
+    "stateMutability": "nonpayable"
   },
   {
-    type: 'function',
-    name: 'onUpdatePreferences',
-    inputs: [
+    "type": "function",
+    "name": "onUpdatePreferences",
+    "inputs": [
       {
-        name: 'operator',
-        type: 'address',
-        internalType: 'address',
+        "name": "operator",
+        "type": "address",
+        "internalType": "address"
       },
       {
-        name: 'newPreferences',
-        type: 'bytes',
-        internalType: 'bytes',
-      },
+        "name": "newPreferences",
+        "type": "bytes",
+        "internalType": "bytes"
+      }
     ],
-    outputs: [],
-    stateMutability: 'payable',
+    "outputs": [],
+    "stateMutability": "payable"
   },
   {
-    type: 'function',
-    name: 'queryDeveloperPaymentAddress',
-    inputs: [
+    "type": "function",
+    "name": "queryDeveloperPaymentAddress",
+    "inputs": [
       {
-        name: 'serviceId',
-        type: 'uint64',
-        internalType: 'uint64',
-      },
+        "name": "serviceId",
+        "type": "uint64",
+        "internalType": "uint64"
+      }
     ],
-    outputs: [
+    "outputs": [
       {
-        name: 'developerPaymentAddress',
-        type: 'address',
-        internalType: 'address payable',
-      },
+        "name": "developerPaymentAddress",
+        "type": "address",
+        "internalType": "address payable"
+      }
     ],
-    stateMutability: 'view',
+    "stateMutability": "view"
   },
   {
-    type: 'function',
-    name: 'queryDisputeOrigin',
-    inputs: [
+    "type": "function",
+    "name": "queryDisputeOrigin",
+    "inputs": [
       {
-        name: 'serviceId',
-        type: 'uint64',
-        internalType: 'uint64',
-      },
+        "name": "serviceId",
+        "type": "uint64",
+        "internalType": "uint64"
+      }
     ],
-    outputs: [
+    "outputs": [
       {
-        name: 'disputeOrigin',
-        type: 'address',
-        internalType: 'address',
-      },
+        "name": "disputeOrigin",
+        "type": "address",
+        "internalType": "address"
+      }
     ],
-    stateMutability: 'view',
+    "stateMutability": "view"
   },
   {
-    type: 'function',
-    name: 'queryIsPaymentAssetAllowed',
-    inputs: [
+    "type": "function",
+    "name": "queryIsPaymentAssetAllowed",
+    "inputs": [
       {
-        name: 'serviceId',
-        type: 'uint64',
-        internalType: 'uint64',
+        "name": "serviceId",
+        "type": "uint64",
+        "internalType": "uint64"
       },
       {
-        name: 'asset',
-        type: 'address',
-        internalType: 'address',
-      },
+        "name": "asset",
+        "type": "address",
+        "internalType": "address"
+      }
     ],
-    outputs: [
+    "outputs": [
       {
-        name: 'isAllowed',
-        type: 'bool',
-        internalType: 'bool',
-      },
+        "name": "isAllowed",
+        "type": "bool",
+        "internalType": "bool"
+      }
     ],
-    stateMutability: 'view',
+    "stateMutability": "view"
   },
   {
-    type: 'function',
-    name: 'querySlashingOrigin',
-    inputs: [
+    "type": "function",
+    "name": "querySlashingOrigin",
+    "inputs": [
       {
-        name: 'serviceId',
-        type: 'uint64',
-        internalType: 'uint64',
-      },
+        "name": "serviceId",
+        "type": "uint64",
+        "internalType": "uint64"
+      }
     ],
-    outputs: [
+    "outputs": [
       {
-        name: 'slashingOrigin',
-        type: 'address',
-        internalType: 'address',
-      },
+        "name": "slashingOrigin",
+        "type": "address",
+        "internalType": "address"
+      }
     ],
-    stateMutability: 'view',
+    "stateMutability": "view"
   },
   {
-    type: 'function',
-    name: 'requiresAggregation',
-    inputs: [
+    "type": "function",
+    "name": "requiresAggregation",
+    "inputs": [
       {
-        name: 'serviceId',
-        type: 'uint64',
-        internalType: 'uint64',
+        "name": "serviceId",
+        "type": "uint64",
+        "internalType": "uint64"
       },
       {
-        name: 'jobIndex',
-        type: 'uint8',
-        internalType: 'uint8',
-      },
+        "name": "jobIndex",
+        "type": "uint8",
+        "internalType": "uint8"
+      }
     ],
-    outputs: [
+    "outputs": [
       {
-        name: 'required',
-        type: 'bool',
-        internalType: 'bool',
-      },
+        "name": "required",
+        "type": "bool",
+        "internalType": "bool"
+      }
     ],
-    stateMutability: 'view',
-  },
+    "stateMutability": "view"
+  }
 ] as const;
 
 export default ABI;

@@ -9,7 +9,9 @@ import {
   Typography,
   isEvmAddress,
   shortenHex,
+  Chip,
 } from '@tangle-network/ui-components';
+import { DelegationMode } from '@tangle-network/tangle-shared-ui/data/restake/useCanDelegate';
 
 type Props = {
   /**
@@ -21,12 +23,34 @@ type Props = {
   accountAddress: EvmAddress | string;
   identity?: string | null;
   totalDelegations?: bigint | number | null;
+  /** Optional delegation mode for display */
+  delegationMode?: DelegationMode;
+  /** Whether the item is disabled (user cannot delegate to this operator) */
+  isDisabled?: boolean;
+};
+
+const getDelegationModeDisplay = (
+  mode: DelegationMode | undefined,
+): { label: string; color: 'green' | 'yellow' | 'dark-grey' } | null => {
+  if (mode === undefined) return null;
+
+  switch (mode) {
+    case DelegationMode.Open:
+      return { label: 'Open', color: 'green' };
+    case DelegationMode.Whitelist:
+      return { label: 'Whitelist', color: 'yellow' };
+    case DelegationMode.Disabled:
+    default:
+      return { label: 'Self Only', color: 'dark-grey' };
+  }
 };
 
 const OperatorListItem: FC<Props> = ({
   accountAddress,
   identity,
   totalDelegations,
+  delegationMode,
+  isDisabled,
 }) => {
   const createExplorerAccountUrl = useNetworkStore(
     (store) => store.network2.createExplorerAccountUrl,
@@ -40,9 +64,22 @@ const OperatorListItem: FC<Props> = ({
     return operatorAddress ? createExplorerAccountUrl(operatorAddress) : null;
   }, [createExplorerAccountUrl, operatorAddress]);
 
-  const leftUpperContent =
-    identity?.trim() ||
-    (operatorAddress ? shortenHex(operatorAddress) : 'Invalid operator');
+  const delegationModeDisplay = useMemo(
+    () => getDelegationModeDisplay(delegationMode),
+    [delegationMode],
+  );
+
+  const leftUpperContent = (
+    <span className="flex items-center gap-2">
+      {identity?.trim() ||
+        (operatorAddress ? shortenHex(operatorAddress) : 'Invalid operator')}
+      {delegationModeDisplay && (
+        <Chip color={delegationModeDisplay.color}>
+          {delegationModeDisplay.label}
+        </Chip>
+      )}
+    </span>
+  );
 
   const leftBottomContent = operatorAddress ? (
     explorerUrl ? (
@@ -72,6 +109,19 @@ const OperatorListItem: FC<Props> = ({
     )
   ) : null;
 
+  const getDisabledMessage = () => {
+    if (!isDisabled) return undefined;
+    if (delegationMode === DelegationMode.Disabled) {
+      return 'Not accepting delegations';
+    }
+    if (delegationMode === DelegationMode.Whitelist) {
+      return 'Not on whitelist';
+    }
+    return 'Cannot delegate';
+  };
+
+  const disabledMessage = getDisabledMessage();
+
   return (
     <LogoListItem
       logo={
@@ -92,10 +142,12 @@ const OperatorListItem: FC<Props> = ({
           : ''
       }
       rightBottomText={
-        totalDelegations !== null && totalDelegations !== undefined
+        disabledMessage ??
+        (totalDelegations !== null && totalDelegations !== undefined
           ? 'total delegations'
-          : undefined
+          : undefined)
       }
+      rightBottomClassName={disabledMessage ? 'text-red-500' : undefined}
     />
   );
 };
