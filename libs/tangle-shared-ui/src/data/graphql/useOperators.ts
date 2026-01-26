@@ -30,6 +30,8 @@ export interface Operator {
   restakingLeavingRound: bigint | null;
   restakingScheduledUnstakeAmount: bigint | null;
   restakingScheduledUnstakeRound: bigint | null;
+  /** Delegation mode: 0=Disabled, 1=Whitelist, 2=Open. Null is treated as 0 (Disabled). */
+  delegationMode: number | null;
 }
 
 // Query to fetch operators with status filter (Hasura uses PascalCase table names)
@@ -57,6 +59,7 @@ const OPERATORS_WITH_STATUS_QUERY = gql`
       restakingLeavingRound
       restakingScheduledUnstakeAmount
       restakingScheduledUnstakeRound
+      delegationMode
     }
   }
 `;
@@ -80,6 +83,7 @@ const OPERATORS_QUERY = gql`
       restakingLeavingRound
       restakingScheduledUnstakeAmount
       restakingScheduledUnstakeRound
+      delegationMode
     }
   }
 `;
@@ -97,6 +101,7 @@ interface OperatorsQueryResult {
     restakingLeavingRound: string | null;
     restakingScheduledUnstakeAmount: string | null;
     restakingScheduledUnstakeRound: string | null;
+    delegationMode: number | null;
   }>;
 }
 
@@ -123,6 +128,7 @@ const parseOperator = (
   restakingScheduledUnstakeRound: raw.restakingScheduledUnstakeRound
     ? BigInt(raw.restakingScheduledUnstakeRound)
     : null,
+  delegationMode: raw.delegationMode,
 });
 
 // Fetch operators from the indexer
@@ -249,6 +255,7 @@ export const useOperator = (
         restakingLeavingRound
         restakingScheduledUnstakeAmount
         restakingScheduledUnstakeRound
+        delegationMode
       }
     }
   `;

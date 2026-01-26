@@ -13,10 +13,14 @@ import { CheckboxCircleFill } from '@tangle-network/icons/CheckboxCircleFill';
 import {
   Avatar,
   Button,
+  Chip,
   IconWithTooltip,
   KeyValueWithButton,
   shortenString,
   Table,
+  Tooltip,
+  TooltipBody,
+  TooltipTrigger,
   Typography,
 } from '@tangle-network/ui-components';
 import { TableVariant } from '@tangle-network/ui-components/components/Table/types';
@@ -29,6 +33,7 @@ import TableCellWrapper from '../../../components/tables/TableCellWrapper';
 import type { TableStatusProps } from '../../../components/tables/TableStatus';
 import TableStatus from '../../../components/tables/TableStatus';
 import { RestakeOperator } from '../../../types';
+import { DelegationMode } from '../../../data/restake/useCanDelegate';
 import VaultsDropdown from './VaultsDropdown';
 
 const COLUMN_HELPER = createColumnHelper<RestakeOperator>();
@@ -149,6 +154,34 @@ const getStaticColumns = (
       </TableCellWrapper>
     ),
   }),
+  COLUMN_HELPER.accessor('delegationMode', {
+    header: () => 'Mode',
+    cell: (props) => {
+      const rawMode = props.getValue();
+      const mode: DelegationMode =
+        rawMode === DelegationMode.Open
+          ? DelegationMode.Open
+          : rawMode === DelegationMode.Whitelist
+            ? DelegationMode.Whitelist
+            : DelegationMode.Disabled;
+
+      const configMap: Record<
+        DelegationMode,
+        { label: string; color: 'green' | 'yellow' | 'dark-grey' }
+      > = {
+        [DelegationMode.Open]: { label: 'Open', color: 'green' },
+        [DelegationMode.Whitelist]: { label: 'Whitelist', color: 'yellow' },
+        [DelegationMode.Disabled]: { label: 'Self Only', color: 'dark-grey' },
+      };
+      const config = configMap[mode];
+
+      return (
+        <TableCellWrapper className="p-3">
+          <Chip color={config.color}>{config.label}</Chip>
+        </TableCellWrapper>
+      );
+    },
+  }),
   // For sorting purpose
   COLUMN_HELPER.accessor('isDelegated', {
     header: () => null,
@@ -217,29 +250,68 @@ const OperatorsTable: FC<Props> = ({
       COLUMN_HELPER.display({
         id: 'actions',
         header: () => null,
-        cell: (props) => (
-          <TableCellWrapper removeRightBorder className="p-3">
-            <div className="flex items-center justify-end flex-1 gap-2">
-              {RestakeOperatorAction ? (
+        cell: (props) => {
+          const { canDelegate, delegationMode } = props.row.original;
+          // canDelegate undefined means we don't have the info yet (backwards compat)
+          const isDisabled = canDelegate === false;
+
+          const getTooltipMessage = () => {
+            if (!isDisabled) return '';
+            const mode =
+              delegationMode === DelegationMode.Whitelist
+                ? DelegationMode.Whitelist
+                : DelegationMode.Disabled;
+            return mode === DelegationMode.Whitelist
+              ? 'You are not whitelisted by this operator'
+              : 'This operator is not accepting delegations';
+          };
+
+          const renderButton = () => {
+            if (isDisabled) {
+              return (
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <span>
+                      <Button
+                        variant="secondary"
+                        size="sm"
+                        className="min-w-24 opacity-50 cursor-not-allowed"
+                        isDisabled
+                      >
+                        Delegate
+                      </Button>
+                    </span>
+                  </TooltipTrigger>
+                  <TooltipBody>{getTooltipMessage()}</TooltipBody>
+                </Tooltip>
+              );
+            }
+
+            if (RestakeOperatorAction) {
+              return (
                 <RestakeOperatorAction address={props.row.original.address}>
-                  <Button
-                    variant="utility"
-                    className="uppercase body4 bg-blue-10 dark:bg-blue-120 text-blue-70 dark:text-blue-40 hover:bg-blue-20 dark:hover:bg-blue-110 border border-blue-30 dark:border-blue-100 transition-all duration-200 font-semibold"
-                  >
+                  <Button variant="secondary" size="sm" className="min-w-24">
                     Delegate
                   </Button>
                 </RestakeOperatorAction>
-              ) : (
-                <Button
-                  variant="utility"
-                  className="uppercase body4 bg-blue-10 dark:bg-blue-120 text-blue-70 dark:text-blue-40 hover:bg-blue-20 dark:hover:bg-blue-110 border border-blue-30 dark:border-blue-100 transition-all duration-200 font-semibold"
-                >
-                  Delegate
-                </Button>
-              )}
-            </div>
-          </TableCellWrapper>
-        ),
+              );
+            }
+
+            return (
+              <Button variant="secondary" size="sm" className="min-w-24">
+                Delegate
+              </Button>
+            );
+          };
+
+          return (
+            <TableCellWrapper removeRightBorder className="p-3">
+              <div className="flex items-center justify-end flex-1 gap-2">
+                {renderButton()}
+              </div>
+            </TableCellWrapper>
+          );
+        },
         enableSorting: false,
       }) satisfies ColumnDef<RestakeOperator>,
     ]);
