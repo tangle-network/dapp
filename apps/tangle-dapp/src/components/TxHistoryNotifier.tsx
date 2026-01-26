@@ -48,6 +48,19 @@ const TxHistoryNotifier = () => {
   // This prevents showing notifications for already-persisted transactions on page reload.
   const isInitialized = useRef(false);
 
+  // Reset initialization state when the active address changes.
+  // This prevents showing notifications for already-persisted transactions
+  // when switching accounts.
+  const lastActiveAddress = useRef(activeEvmAddress);
+
+  useEffect(() => {
+    if (lastActiveAddress.current !== activeEvmAddress) {
+      lastActiveAddress.current = activeEvmAddress;
+      lastNotifiedStatusByHash.current.clear();
+      isInitialized.current = false;
+    }
+  }, [activeEvmAddress]);
+
   useEffect(() => {
     if (relevantTransactions === null || network === undefined) {
       return;
