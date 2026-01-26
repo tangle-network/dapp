@@ -193,6 +193,46 @@ const getStaticColumns = (
       return aIsDelegated ? -1 : bIsDelegated ? 1 : 0;
     },
   }),
+  // For sorting by delegation mode priority: Open > Whitelist (whitelisted) > Whitelist (not whitelisted) > Disabled
+  COLUMN_HELPER.accessor('canDelegate', {
+    id: 'delegationPriority',
+    header: () => null,
+    cell: () => null,
+    sortingFn: (rowA, rowB) => {
+      const aCanDelegate = rowA.original.canDelegate ?? false;
+      const bCanDelegate = rowB.original.canDelegate ?? false;
+      const aMode = rowA.original.delegationMode ?? DelegationMode.Disabled;
+      const bMode = rowB.original.delegationMode ?? DelegationMode.Disabled;
+
+      // First, prioritize operators user can delegate to
+      if (aCanDelegate && !bCanDelegate) return -1;
+      if (!aCanDelegate && bCanDelegate) return 1;
+
+      // Among delegatable operators, sort by mode: Open > Whitelist
+      if (aCanDelegate && bCanDelegate) {
+        if (aMode === DelegationMode.Open && bMode !== DelegationMode.Open)
+          return -1;
+        if (aMode !== DelegationMode.Open && bMode === DelegationMode.Open)
+          return 1;
+      }
+
+      // Among non-delegatable operators, sort by mode: Whitelist > Disabled
+      if (!aCanDelegate && !bCanDelegate) {
+        if (
+          aMode === DelegationMode.Whitelist &&
+          bMode === DelegationMode.Disabled
+        )
+          return -1;
+        if (
+          aMode === DelegationMode.Disabled &&
+          bMode === DelegationMode.Whitelist
+        )
+          return 1;
+      }
+
+      return 0;
+    },
+  }),
   COLUMN_HELPER.accessor('vaultTokens', {
     header: () => 'Delegated Assets',
     cell: (props) => {
@@ -327,6 +367,10 @@ const OperatorsTable: FC<Props> = ({
     initialState: {
       sorting: [
         {
+          id: 'delegationPriority',
+          desc: false,
+        },
+        {
           id: 'isDelegated',
           desc: false,
         },
@@ -341,6 +385,7 @@ const OperatorsTable: FC<Props> = ({
       ],
       columnVisibility: {
         isDelegated: false,
+        delegationPriority: false,
       },
     },
     state: {
