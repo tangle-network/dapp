@@ -122,6 +122,10 @@ export type RestakeOperator = {
   }>;
   isDelegated: boolean;
   instanceCount: number;
+  /** Delegation mode: 0=Disabled, 1=Whitelist, 2=Open. Null/undefined treated as 0 (Disabled). */
+  delegationMode?: number | null;
+  /** Whether the current user can delegate to this operator */
+  canDelegate?: boolean;
 };
 
 /**

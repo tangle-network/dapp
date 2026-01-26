@@ -182,37 +182,6 @@ const ABI = [
   },
   {
     type: 'function',
-    name: 'decodeMetricPair',
-    inputs: [
-      {
-        name: 'payload',
-        type: 'bytes',
-        internalType: 'bytes',
-      },
-    ],
-    outputs: [
-      {
-        name: 'pair',
-        type: 'tuple',
-        internalType: 'struct OperatorStatusRegistry.MetricPair',
-        components: [
-          {
-            name: 'name',
-            type: 'string',
-            internalType: 'string',
-          },
-          {
-            name: 'value',
-            type: 'uint256',
-            internalType: 'uint256',
-          },
-        ],
-      },
-    ],
-    stateMutability: 'pure',
-  },
-  {
-    type: 'function',
     name: 'decodeMetricPairs',
     inputs: [
       {

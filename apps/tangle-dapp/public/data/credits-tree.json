@@ -3,10 +3,10 @@
   "root": "0x573194fb391684e4863d727812079b5df367353a88268e8f3473ec0faecf678e",
   "totalValue": "3000",
   "entryCount": 2,
-  "startTs": "1767084038",
-  "endTs": "1767688838",
+  "startTs": "1767697553",
+  "endTs": "1768302353",
   "epochSeconds": "604800",
-  "tntToken": "0x5eb3bc0a489c5a8288765d2336659ebca68fcd00",
+  "tntToken": "0x8f86403a4de0bb5791fa46b8e795c547942fe4cf",
   "creditsPerTnt": "1",
   "entries": {
     "0x15d34aaf54267db7d7c367839aaf71a00a2c6a65": {
