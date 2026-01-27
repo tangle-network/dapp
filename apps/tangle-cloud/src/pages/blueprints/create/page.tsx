@@ -403,10 +403,12 @@ const CreateBlueprintPage: FC = () => {
 
   if (isSuccess) {
     return (
-      <div className="text-center py-12">
-        <CheckboxCircleFill className="w-16 h-16 text-green-500 mx-auto mb-4" />
-        <Typography variant="h4">Blueprint Created!</Typography>
-        <Typography variant="body1" className="text-mono-100 mt-2 mb-6">
+      <div className="flex flex-col items-center justify-center py-12">
+        <CheckboxCircleFill className="w-16 h-16 text-green-500 mb-4" />
+        <Typography variant="h4" className="text-center">
+          Blueprint Created!
+        </Typography>
+        <Typography variant="body1" className="text-mono-100 mt-2 mb-6 text-center">
           Your blueprint has been created successfully.
         </Typography>
         <div className="flex gap-4 justify-center">

@@ -2,6 +2,7 @@ import { ArrowRightUp } from '@tangle-network/icons';
 import Button from '@tangle-network/ui-components/components/buttons/Button';
 import { Typography } from '@tangle-network/ui-components/typography/Typography';
 import { FC, ReactNode } from 'react';
+import { Link } from 'react-router-dom';
 import { twMerge } from 'tailwind-merge';
 import './top-banner.css';
 
@@ -10,6 +11,8 @@ export type RestakeBannerProps = {
   description: string;
   buttonText: string;
   buttonHref: string;
+  buttonVariant?: 'link' | 'secondary';
+  isExternalLink?: boolean;
   action?: ReactNode;
 };
 
@@ -18,8 +21,41 @@ const RestakeBanner: FC<RestakeBannerProps> = ({
   description,
   buttonText,
   buttonHref,
+  buttonVariant = 'link',
+  isExternalLink = true,
   action,
 }) => {
+  const buttonContent =
+    buttonVariant === 'link' ? (
+      <Button
+        className="hidden sm:inline-flex font-semibold text-blue-40 dark:text-blue-50 hover:text-blue-30 dark:hover:text-blue-30"
+        variant="link"
+        href={buttonHref}
+        target="_blank"
+        rightIcon={
+          <ArrowRightUp
+            size="lg"
+            className="fill-blue-40 dark:fill-blue-50 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5 hover:fill-blue-30 dark:hover:fill-blue-30"
+          />
+        }
+      >
+        {buttonText}
+      </Button>
+    ) : isExternalLink ? (
+      <Button
+        className="hidden sm:inline-flex"
+        variant={buttonVariant}
+        href={buttonHref}
+        target="_blank"
+      >
+        {buttonText}
+      </Button>
+    ) : (
+      <Link to={buttonHref} className="hidden sm:inline-flex">
+        <Button variant={buttonVariant}>{buttonText}</Button>
+      </Link>
+    );
+
   return (
     <div
       className={twMerge(
@@ -47,20 +83,7 @@ const RestakeBanner: FC<RestakeBannerProps> = ({
           </Typography>
         </div>
 
-        <Button
-          className="hidden sm:inline-flex font-semibold text-blue-40 dark:text-blue-50 hover:text-blue-30 dark:hover:text-blue-30"
-          variant="link"
-          href={buttonHref}
-          target="_blank"
-          rightIcon={
-            <ArrowRightUp
-              size="lg"
-              className="fill-blue-40 dark:fill-blue-50 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5 hover:fill-blue-30 dark:hover:fill-blue-30"
-            />
-          }
-        >
-          {buttonText}
-        </Button>
+        {buttonContent}
       </div>
 
       {action && <div className="flex-shrink-0">{action}</div>}
