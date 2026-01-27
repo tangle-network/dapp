@@ -2,9 +2,10 @@
  * Blueprint management page - view and manage owned blueprints.
  */
 
-import { FC, useState, useMemo } from 'react';
-import { useNavigate, Link } from 'react-router';
+import { FC, useState, useMemo, useCallback } from 'react';
+import { Link } from 'react-router';
 import { useAccount } from 'wagmi';
+import { useQueryClient } from '@tanstack/react-query';
 import {
   Button,
   Card,
@@ -26,7 +27,8 @@ import {
   useReactTable,
   flexRender,
 } from '@tanstack/react-table';
-import { AddLineIcon, EditLine } from '@tangle-network/icons';
+import { EditLine } from '@tangle-network/icons';
+import { PlusIcon } from '@radix-ui/react-icons';
 import {
   useBlueprintsByOwner,
   useDeactivateBlueprintTx,
@@ -41,19 +43,44 @@ import { isAddress } from 'viem';
 const columnHelper = createColumnHelper<OwnedBlueprint>();
 
 const ManageBlueprintsPage: FC = () => {
-  const navigate = useNavigate();
-  const { isConnected } = useAccount();
-  const {
-    data: blueprints,
-    isLoading,
-    error,
-    refetch,
-  } = useBlueprintsByOwner();
+  const { isConnected, address } = useAccount();
+  const queryClient = useQueryClient();
+  const { data: blueprints, isLoading, error } = useBlueprintsByOwner();
 
   const [selectedBlueprint, setSelectedBlueprint] =
     useState<OwnedBlueprint | null>(null);
   const [isDeactivateModalOpen, setIsDeactivateModalOpen] = useState(false);
   const [isTransferModalOpen, setIsTransferModalOpen] = useState(false);
+
+  // Optimistically update the blueprint status in the cache
+  const updateBlueprintInCache = useCallback(
+    (blueprintId: bigint, updates: Partial<OwnedBlueprint>) => {
+      queryClient.setQueryData<OwnedBlueprint[]>(
+        ['blueprints', 'byOwner', address, undefined],
+        (oldData) => {
+          if (!oldData) return oldData;
+          return oldData.map((bp) =>
+            bp.id === blueprintId ? { ...bp, ...updates } : bp,
+          );
+        },
+      );
+    },
+    [queryClient, address],
+  );
+
+  // Remove a blueprint from the cache (for transfers)
+  const removeBlueprintFromCache = useCallback(
+    (blueprintId: bigint) => {
+      queryClient.setQueryData<OwnedBlueprint[]>(
+        ['blueprints', 'byOwner', address, undefined],
+        (oldData) => {
+          if (!oldData) return oldData;
+          return oldData.filter((bp) => bp.id !== blueprintId);
+        },
+      );
+    },
+    [queryClient, address],
+  );
 
   const columns = useMemo(
     () => [
@@ -193,10 +220,11 @@ const ManageBlueprintsPage: FC = () => {
           </Typography>
         </div>
 
-        <Button onClick={() => navigate(PagePath.BLUEPRINTS_CREATE)}>
-          <AddLineIcon className="w-4 h-4 mr-2" />
-          Create Blueprint
-        </Button>
+        <Link to={PagePath.BLUEPRINTS_CREATE}>
+          <Button leftIcon={<PlusIcon className="w-4 h-4" />}>
+            Create Blueprint
+          </Button>
+        </Link>
       </div>
 
       {/* Blueprints Table */}
@@ -284,19 +312,15 @@ const ManageBlueprintsPage: FC = () => {
             )}
           </>
         ) : (
-          <div className="text-center py-12">
-            <EditLine className="w-12 h-12 text-mono-100 mx-auto mb-4" />
+          <div className="flex flex-col items-center justify-center py-12">
+            <EditLine className="w-12 h-12 text-mono-100 mb-4" />
             <Typography variant="h5" fw="semibold">
               No Blueprints Yet
             </Typography>
-            <Typography variant="body1" className="text-mono-100 mt-2 mb-6">
+            <Typography variant="body1" className="text-mono-100 mt-2">
               Create your first blueprint to start offering services on Tangle
               Network.
             </Typography>
-            <Button onClick={() => navigate(PagePath.BLUEPRINTS_CREATE)}>
-              <AddLineIcon className="w-4 h-4 mr-2" />
-              Create Blueprint
-            </Button>
           </div>
         )}
       </Card>
@@ -311,7 +335,8 @@ const ManageBlueprintsPage: FC = () => {
             setSelectedBlueprint(null);
           }}
           onSuccess={() => {
-            refetch();
+            // Optimistically update the blueprint status
+            updateBlueprintInCache(selectedBlueprint.id, { active: false });
             setIsDeactivateModalOpen(false);
             setSelectedBlueprint(null);
           }}
@@ -328,7 +353,8 @@ const ManageBlueprintsPage: FC = () => {
             setSelectedBlueprint(null);
           }}
           onSuccess={() => {
-            refetch();
+            // Optimistically remove the blueprint from the list
+            removeBlueprintFromCache(selectedBlueprint.id);
             setIsTransferModalOpen(false);
             setSelectedBlueprint(null);
           }}
@@ -351,15 +377,9 @@ const DeactivateModal: FC<DeactivateModalProps> = ({
   onClose,
   onSuccess,
 }) => {
-  const {
-    deactivateBlueprint,
-    status,
-    error,
-    reset: _reset,
-  } = useDeactivateBlueprintTx();
+  const { deactivateBlueprint, status } = useDeactivateBlueprintTx();
 
   const isSubmitting = status === 'pending';
-  const _isSuccess = status === 'success';
 
   const handleDeactivate = async () => {
     const hash = await deactivateBlueprint(blueprint.id);
@@ -381,12 +401,6 @@ const DeactivateModal: FC<DeactivateModalProps> = ({
             This will prevent new operators from registering and new services
             from being created. Existing services will continue to operate.
           </Typography>
-
-          {error && (
-            <div className="mt-4">
-              <ErrorMessage>{error.message}</ErrorMessage>
-            </div>
-          )}
         </ModalBody>
         <ModalFooter>
           <Button
@@ -424,12 +438,7 @@ const TransferModal: FC<TransferModalProps> = ({
 }) => {
   const [newOwner, setNewOwner] = useState('');
   const [validationError, setValidationError] = useState<string | null>(null);
-  const {
-    transferBlueprint,
-    status,
-    error,
-    reset: _resetTransfer,
-  } = useTransferBlueprintTx();
+  const { transferBlueprint, status } = useTransferBlueprintTx();
 
   const isSubmitting = status === 'pending';
 
@@ -469,6 +478,7 @@ const TransferModal: FC<TransferModalProps> = ({
             <Input
               id="newOwner"
               value={newOwner}
+              isControlled
               onChange={(v) => {
                 setNewOwner(v);
                 setValidationError(null);
@@ -480,12 +490,6 @@ const TransferModal: FC<TransferModalProps> = ({
           {validationError && (
             <div className="mt-4">
               <ErrorMessage>{validationError}</ErrorMessage>
-            </div>
-          )}
-
-          {error && (
-            <div className="mt-4">
-              <ErrorMessage>{error.message}</ErrorMessage>
             </div>
           )}
 

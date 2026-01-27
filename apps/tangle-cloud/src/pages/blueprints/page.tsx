@@ -1,7 +1,10 @@
 import { PlusIcon } from '@radix-ui/react-icons';
 import { RowSelectionState } from '@tanstack/table-core';
 import RestakeBanner from '@tangle-network/tangle-shared-ui/components/blueprints/RestakeBanner';
-import { useAllBlueprints } from '@tangle-network/tangle-shared-ui/data/graphql';
+import {
+  useAllBlueprints,
+  useBlueprintsByOwner,
+} from '@tangle-network/tangle-shared-ui/data/graphql';
 import Button from '@tangle-network/ui-components/components/buttons/Button';
 import {
   Modal,
@@ -35,14 +38,22 @@ const ROLE_DESCRIPTION = {
     'Select a Blueprint, customize settings, and deploy your decentralized service instance in minutes.',
 } satisfies Record<Role, string>;
 
+const HAS_BLUEPRINTS_TITLE = 'Manage Your Blueprints';
+const HAS_BLUEPRINTS_DESCRIPTION =
+  'View and manage your created blueprints, transfer ownership, or create new ones.';
+
 const Page: FC = () => {
   const navigate = useNavigate();
   const role = useRoleStore((store) => store.role);
   const [rowSelection, setRowSelection] = useState<RowSelectionState>({});
   const [isBlueprintModalOpen, setIsBlueprintModalOpen] = useState(false);
   const { blueprints, isLoading, error } = useAllBlueprints();
+  const { data: ownedBlueprints } = useBlueprintsByOwner();
 
   const { isOperator } = useOperatorInfo();
+
+  const hasOwnedBlueprints =
+    ownedBlueprints !== undefined && ownedBlueprints.length > 0;
 
   const selectedBlueprints = useMemo(() => {
     return (
@@ -77,10 +88,18 @@ const Page: FC = () => {
   return (
     <div className="space-y-5">
       <RestakeBanner
-        title={ROLE_TITLE[role]}
-        description={ROLE_DESCRIPTION[role]}
-        buttonHref={BLUEPRINT_DOCS_LINK}
-        buttonText="Get Started"
+        title={hasOwnedBlueprints ? HAS_BLUEPRINTS_TITLE : ROLE_TITLE[role]}
+        description={
+          hasOwnedBlueprints
+            ? HAS_BLUEPRINTS_DESCRIPTION
+            : ROLE_DESCRIPTION[role]
+        }
+        buttonHref={
+          hasOwnedBlueprints ? PagePath.BLUEPRINTS_MANAGE : BLUEPRINT_DOCS_LINK
+        }
+        buttonText={hasOwnedBlueprints ? 'Manage Blueprints' : 'Get Started'}
+        buttonVariant={hasOwnedBlueprints ? 'secondary' : 'link'}
+        isExternalLink={!hasOwnedBlueprints}
       />
 
       <div className="flex items-center justify-between">

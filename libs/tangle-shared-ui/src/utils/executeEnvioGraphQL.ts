@@ -8,6 +8,9 @@ export type EnvioNetwork = 'local' | 'testnet' | 'mainnet';
 
 // Envio indexer endpoints
 // Note: Hasura commonly serves GraphQL at /v1/graphql, but deployments may also expose it at /graphql.
+// TODO: Update testnet/mainnet endpoints when indexer is deployed to those environments.
+//       Currently only local is available. Set VITE_ENVIO_TESTNET_ENDPOINT or
+//       VITE_ENVIO_MAINNET_ENDPOINT environment variables when ready.
 const ENVIO_ENDPOINTS: Record<EnvioNetwork, string> = {
   local:
     import.meta.env.VITE_ENVIO_LOCAL_ENDPOINT ??
