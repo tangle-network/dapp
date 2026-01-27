@@ -10,8 +10,12 @@ import {
   useChainId,
   useAccount,
 } from 'wagmi';
-import { Address, encodeFunctionData, type Hash } from 'viem';
+import { Address, createPublicClient, encodeFunctionData, http, type Hash } from 'viem';
 import { getContractsByChainId } from '@tangle-network/dapp-config/contracts';
+import {
+  chainsConfig,
+  ChainId,
+} from '@tangle-network/dapp-config/chains/evm-chains';
 import TANGLE_ABI from '../../abi/tangle';
 import {
   executeEnvioGraphQL,
@@ -36,7 +40,7 @@ export interface JobDefinition {
   resultSchema: `0x${string}`; // bytes
 }
 
-// Blueprint configuration (matches ABI structure)
+// Blueprint configuration (matches contract structure - 7 fields)
 export interface BlueprintConfig {
   membership: number; // 0 = Fixed, 1 = Dynamic
   pricing: number; // 0 = PayOnce, 1 = Subscription, 2 = EventDriven
@@ -45,7 +49,6 @@ export interface BlueprintConfig {
   subscriptionRate: bigint; // Per interval charge
   subscriptionInterval: bigint; // In seconds
   eventRate: bigint; // Per job charge
-  operatorBond: bigint; // 0 = use global default
 }
 
 // Blueprint metadata (matches ABI structure)

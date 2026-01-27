@@ -51,6 +51,14 @@ interface JobForm {
   description: string;
 }
 
+// Binary form for each source
+interface BinaryForm {
+  arch: number; // BlueprintArchitecture enum (0-9)
+  os: number; // BlueprintOperatingSystem enum (0-4)
+  name: string;
+  sha256: string; // 0x + 64 hex chars
+}
+
 // Simplified source form
 interface SourceForm {
   kind: 'Container' | 'Wasm' | 'Native';
@@ -59,6 +67,7 @@ interface SourceForm {
   tag?: string;
   artifactUri?: string;
   entrypoint?: string;
+  binaries: BinaryForm[]; // At least 1 required per source
 }
 
 // Form state (simplified for user input)
@@ -82,7 +91,6 @@ interface FormState {
   subscriptionRate: string;
   subscriptionInterval: string;
   eventRate: string;
-  operatorBond: string;
   // Jobs
   jobs: JobForm[];
   // Schemas
@@ -110,7 +118,6 @@ const initialFormState: FormState = {
   subscriptionRate: '0',
   subscriptionInterval: '2592000',
   eventRate: '0',
-  operatorBond: '0',
   jobs: [],
   registrationSchema: '{}',
   requestSchema: '{}',
@@ -168,7 +175,12 @@ const formToDefinition = (
         cargoBin: '',
         basePath: '',
       },
-      binaries: [],
+      binaries: source.binaries.map((bin) => ({
+        arch: bin.arch,
+        os: bin.os,
+        name: bin.name,
+        sha256: bin.sha256 as `0x${string}`,
+      })),
     };
   });
 
@@ -185,7 +197,6 @@ const formToDefinition = (
       subscriptionRate: BigInt(form.subscriptionRate),
       subscriptionInterval: BigInt(form.subscriptionInterval),
       eventRate: BigInt(form.eventRate),
-      operatorBond: BigInt(form.operatorBond),
     },
     metadata: {
       name: form.name,
@@ -234,6 +245,16 @@ const CreateBlueprintPage: FC = () => {
           setValidationError('Blueprint name is required');
           return false;
         }
+        if (!form.metadataUri.trim()) {
+          setValidationError('Metadata URI is required');
+          return false;
+        }
+        if (!/^(ipfs:\/\/|https?:\/\/).+/.test(form.metadataUri.trim())) {
+          setValidationError(
+            'Metadata URI must start with ipfs://, https://, or http://',
+          );
+          return false;
+        }
         break;
       case Step.Configuration:
         if (form.minOperators < 1) {
@@ -248,12 +269,49 @@ const CreateBlueprintPage: FC = () => {
         }
         break;
       case Step.Jobs:
-        // Jobs are optional
+        if (form.jobs.length === 0) {
+          setValidationError('At least one job is required');
+          return false;
+        }
+        for (let i = 0; i < form.jobs.length; i++) {
+          if (!form.jobs[i].name.trim()) {
+            setValidationError(`Job ${i + 1} name is required`);
+            return false;
+          }
+        }
         break;
       case Step.Sources:
         if (form.sources.length === 0) {
           setValidationError('At least one source is required');
           return false;
+        }
+        for (let i = 0; i < form.sources.length; i++) {
+          const source = form.sources[i];
+          if (source.binaries.length === 0) {
+            setValidationError(`Source ${i + 1} must have at least one binary`);
+            return false;
+          }
+          for (let j = 0; j < source.binaries.length; j++) {
+            const bin = source.binaries[j];
+            if (!bin.sha256.trim()) {
+              setValidationError(
+                `Source ${i + 1}, Binary ${j + 1}: SHA256 hash is required`,
+              );
+              return false;
+            }
+            if (!/^0x[a-fA-F0-9]{64}$/.test(bin.sha256)) {
+              setValidationError(
+                `Source ${i + 1}, Binary ${j + 1}: SHA256 must be 0x + 64 hex characters`,
+              );
+              return false;
+            }
+            if (bin.sha256 === '0x' + '0'.repeat(64)) {
+              setValidationError(
+                `Source ${i + 1}, Binary ${j + 1}: SHA256 cannot be all zeros`,
+              );
+              return false;
+            }
+          }
         }
         break;
     }
@@ -307,7 +365,7 @@ const CreateBlueprintPage: FC = () => {
   const addSource = useCallback(() => {
     setForm((prev) => ({
       ...prev,
-      sources: [...prev.sources, { kind: 'Container' }],
+      sources: [...prev.sources, { kind: 'Container', binaries: [] }],
     }));
   }, []);
 
@@ -604,6 +662,22 @@ const BasicInfoStep: FC<StepProps> = ({ form, updateForm }) => (
 
     <div>
       <Typography variant="body2" className="mb-2">
+        Metadata URI *
+      </Typography>
+      <Input
+        id="metadataUri"
+        value={form.metadataUri}
+        onChange={(v) => updateForm('metadataUri', v)}
+        placeholder="ipfs://... or https://..."
+        isControlled
+      />
+      <Typography variant="body3" className="text-mono-100 mt-1">
+        Link to blueprint metadata JSON (must be accessible)
+      </Typography>
+    </div>
+
+    <div>
+      <Typography variant="body2" className="mb-2">
         Service Manager Contract (optional)
       </Typography>
       <Input
@@ -743,19 +817,6 @@ const ConfigurationStep: FC<StepProps> = ({ form, updateForm }) => (
         />
       </div>
     )}
-
-    <div>
-      <Typography variant="body2" className="mb-2">
-        Operator Bond (wei, 0 = use global default)
-      </Typography>
-      <Input
-        id="operatorBond"
-        value={form.operatorBond}
-        onChange={(v) => updateForm('operatorBond', v)}
-        placeholder="0"
-        isControlled
-      />
-    </div>
   </div>
 );
 
@@ -775,7 +836,7 @@ const JobsStep: FC<JobsStepProps> = ({
   <div className="space-y-4">
     <div className="flex items-center justify-between mb-4">
       <Typography variant="h5" fw="bold">
-        Job Definitions (Optional)
+        Job Definitions *
       </Typography>
       <Button variant="secondary" size="sm" onClick={addJob}>
         Add Job
@@ -783,9 +844,10 @@ const JobsStep: FC<JobsStepProps> = ({
     </div>
 
     {form.jobs.length === 0 ? (
-      <div className="text-center py-8 text-mono-100">
+      <div className="text-center py-8 text-mono-100 border border-dashed border-mono-60 dark:border-mono-140 rounded-lg">
         <Typography variant="body1">
-          No jobs defined yet. Jobs define the operations operators can perform.
+          At least one job is required. Jobs define the operations operators can
+          perform.
         </Typography>
       </div>
     ) : (
@@ -989,6 +1051,168 @@ const SourcesStep: FC<SourcesStepProps> = ({
                   </div>
                 </>
               )}
+
+              {/* Binaries Section - Required */}
+              <div className="mt-4 pt-4 border-t border-mono-60 dark:border-mono-140">
+                <div className="flex items-center justify-between mb-3">
+                  <Typography variant="body2" fw="semibold">
+                    Binaries *
+                  </Typography>
+                  <Button
+                    variant="utility"
+                    size="sm"
+                    onClick={() =>
+                      updateSource(index, {
+                        binaries: [
+                          ...source.binaries,
+                          { arch: 5, os: 1, name: '', sha256: '' },
+                        ],
+                      })
+                    }
+                  >
+                    Add Binary
+                  </Button>
+                </div>
+
+                {source.binaries.length === 0 ? (
+                  <Typography
+                    variant="body3"
+                    className="text-mono-100 text-center py-2"
+                  >
+                    At least one binary is required per source.
+                  </Typography>
+                ) : (
+                  <div className="space-y-3">
+                    {source.binaries.map((binary, binIndex) => (
+                      <div
+                        key={binIndex}
+                        className="p-3 bg-mono-20 dark:bg-mono-160 rounded-lg"
+                      >
+                        <div className="flex items-center justify-between mb-2">
+                          <Typography variant="body3" fw="semibold">
+                            Binary {binIndex + 1}
+                          </Typography>
+                          <Button
+                            variant="utility"
+                            size="sm"
+                            onClick={() =>
+                              updateSource(index, {
+                                binaries: source.binaries.filter(
+                                  (_, i) => i !== binIndex,
+                                ),
+                              })
+                            }
+                          >
+                            Remove
+                          </Button>
+                        </div>
+
+                        <div className="grid grid-cols-2 gap-2 mb-2">
+                          <div>
+                            <Typography variant="body3" className="mb-1">
+                              Architecture
+                            </Typography>
+                            <Select
+                              value={String(binary.arch)}
+                              onValueChange={(v) =>
+                                updateSource(index, {
+                                  binaries: source.binaries.map((b, i) =>
+                                    i === binIndex
+                                      ? { ...b, arch: Number(v) }
+                                      : b,
+                                  ),
+                                })
+                              }
+                            >
+                              <SelectTrigger className="w-full">
+                                <SelectValue />
+                              </SelectTrigger>
+                              <SelectContent>
+                                <SelectItem value="0">Wasm32</SelectItem>
+                                <SelectItem value="1">Wasm64</SelectItem>
+                                <SelectItem value="2">Wasi32</SelectItem>
+                                <SelectItem value="3">Wasi64</SelectItem>
+                                <SelectItem value="4">Amd32</SelectItem>
+                                <SelectItem value="5">Amd64</SelectItem>
+                                <SelectItem value="6">Arm32</SelectItem>
+                                <SelectItem value="7">Arm64</SelectItem>
+                                <SelectItem value="8">RiscV32</SelectItem>
+                                <SelectItem value="9">RiscV64</SelectItem>
+                              </SelectContent>
+                            </Select>
+                          </div>
+                          <div>
+                            <Typography variant="body3" className="mb-1">
+                              Operating System
+                            </Typography>
+                            <Select
+                              value={String(binary.os)}
+                              onValueChange={(v) =>
+                                updateSource(index, {
+                                  binaries: source.binaries.map((b, i) =>
+                                    i === binIndex
+                                      ? { ...b, os: Number(v) }
+                                      : b,
+                                  ),
+                                })
+                              }
+                            >
+                              <SelectTrigger className="w-full">
+                                <SelectValue />
+                              </SelectTrigger>
+                              <SelectContent>
+                                <SelectItem value="0">Unknown</SelectItem>
+                                <SelectItem value="1">Linux</SelectItem>
+                                <SelectItem value="2">Windows</SelectItem>
+                                <SelectItem value="3">MacOS</SelectItem>
+                                <SelectItem value="4">BSD</SelectItem>
+                              </SelectContent>
+                            </Select>
+                          </div>
+                        </div>
+
+                        <div className="mb-2">
+                          <Typography variant="body3" className="mb-1">
+                            Name
+                          </Typography>
+                          <Input
+                            id={`source-${index}-binary-${binIndex}-name`}
+                            value={binary.name}
+                            onChange={(v) =>
+                              updateSource(index, {
+                                binaries: source.binaries.map((b, i) =>
+                                  i === binIndex ? { ...b, name: v } : b,
+                                ),
+                              })
+                            }
+                            placeholder="my-binary"
+                            isControlled
+                          />
+                        </div>
+
+                        <div>
+                          <Typography variant="body3" className="mb-1">
+                            SHA256 Hash *
+                          </Typography>
+                          <Input
+                            id={`source-${index}-binary-${binIndex}-sha256`}
+                            value={binary.sha256}
+                            onChange={(v) =>
+                              updateSource(index, {
+                                binaries: source.binaries.map((b, i) =>
+                                  i === binIndex ? { ...b, sha256: v } : b,
+                                ),
+                              })
+                            }
+                            placeholder="0x + 64 hex characters"
+                            isControlled
+                          />
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
             </div>
           </div>
         ))}

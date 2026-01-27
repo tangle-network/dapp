@@ -551,11 +551,6 @@ const ABI = [
                 type: 'uint256',
                 internalType: 'uint256',
               },
-              {
-                name: 'operatorBond',
-                type: 'uint256',
-                internalType: 'uint256',
-              },
             ],
           },
           {
@@ -1289,11 +1284,6 @@ const ABI = [
             type: 'uint256',
             internalType: 'uint256',
           },
-          {
-            name: 'operatorBond',
-            type: 'uint256',
-            internalType: 'uint256',
-          },
         ],
       },
     ],
@@ -1372,11 +1362,6 @@ const ABI = [
               },
               {
                 name: 'eventRate',
-                type: 'uint256',
-                internalType: 'uint256',
-              },
-              {
-                name: 'operatorBond',
                 type: 'uint256',
                 internalType: 'uint256',
               },

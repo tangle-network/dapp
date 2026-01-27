@@ -3,7 +3,14 @@
  */
 
 import { useQuery } from '@tanstack/react-query';
-import { Address } from 'viem';
+import { Address, createPublicClient, http } from 'viem';
+import { useChainId, usePublicClient } from 'wagmi';
+import { getContractsByChainId } from '@tangle-network/dapp-config/contracts';
+import {
+  chainsConfig,
+  ChainId,
+} from '@tangle-network/dapp-config/chains/evm-chains';
+import TANGLE_ABI from '../../abi/tangle';
 import {
   executeEnvioGraphQL,
   EnvioNetwork,
