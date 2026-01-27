@@ -377,15 +377,9 @@ const DeactivateModal: FC<DeactivateModalProps> = ({
   onClose,
   onSuccess,
 }) => {
-  const {
-    deactivateBlueprint,
-    status,
-    error,
-    reset: _reset,
-  } = useDeactivateBlueprintTx();
+  const { deactivateBlueprint, status } = useDeactivateBlueprintTx();
 
   const isSubmitting = status === 'pending';
-  const _isSuccess = status === 'success';
 
   const handleDeactivate = async () => {
     const hash = await deactivateBlueprint(blueprint.id);
@@ -407,12 +401,6 @@ const DeactivateModal: FC<DeactivateModalProps> = ({
             This will prevent new operators from registering and new services
             from being created. Existing services will continue to operate.
           </Typography>
-
-          {error && (
-            <div className="mt-4">
-              <ErrorMessage>{error.message}</ErrorMessage>
-            </div>
-          )}
         </ModalBody>
         <ModalFooter>
           <Button
@@ -450,12 +438,7 @@ const TransferModal: FC<TransferModalProps> = ({
 }) => {
   const [newOwner, setNewOwner] = useState('');
   const [validationError, setValidationError] = useState<string | null>(null);
-  const {
-    transferBlueprint,
-    status,
-    error,
-    reset: _resetTransfer,
-  } = useTransferBlueprintTx();
+  const { transferBlueprint, status } = useTransferBlueprintTx();
 
   const isSubmitting = status === 'pending';
 
@@ -507,12 +490,6 @@ const TransferModal: FC<TransferModalProps> = ({
           {validationError && (
             <div className="mt-4">
               <ErrorMessage>{validationError}</ErrorMessage>
-            </div>
-          )}
-
-          {error && (
-            <div className="mt-4">
-              <ErrorMessage>{error.message}</ErrorMessage>
             </div>
           )}
 

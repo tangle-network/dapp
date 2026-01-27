@@ -10,17 +10,15 @@ import {
   useChainId,
   useAccount,
 } from 'wagmi';
-import { Address, createPublicClient, encodeFunctionData, http, type Hash } from 'viem';
+import { Address, createPublicClient, encodeFunctionData, http, zeroAddress, type Hash } from 'viem';
 import { getContractsByChainId } from '@tangle-network/dapp-config/contracts';
-import {
-  chainsConfig,
-  ChainId,
-} from '@tangle-network/dapp-config/chains/evm-chains';
+import { useSnackbar } from 'notistack';
 import TANGLE_ABI from '../../abi/tangle';
 import {
   executeEnvioGraphQL,
   EnvioNetwork,
 } from '../../utils/executeEnvioGraphQL';
+import isUserRejectionError from '../../utils/isUserRejectionError';
 
 // Pricing model for blueprints
 export type PricingModel = 'PayOnce' | 'Subscription' | 'EventDriven';
@@ -376,63 +374,94 @@ export const useUpdateBlueprintTx = () => {
  */
 export const useTransferBlueprintTx = () => {
   const [status, setStatus] = useState<TxStatus>('idle');
-  const [error, setError] = useState<Error | null>(null);
 
   const chainId = useChainId();
+  const { address: userAddress } = useAccount();
   const publicClient = usePublicClient();
   const { data: walletClient } = useWalletClient();
+  const { enqueueSnackbar } = useSnackbar();
 
   const reset = useCallback(() => {
     setStatus('idle');
-    setError(null);
   }, []);
 
   const transferBlueprint = useCallback(
     async (blueprintId: bigint, newOwner: Address): Promise<Hash | null> => {
-      if (!walletClient || !publicClient) {
-        setError(new Error('Wallet not connected'));
+      if (!walletClient || !publicClient || !userAddress) {
+        enqueueSnackbar('Wallet not connected', { variant: 'error' });
         setStatus('error');
         return null;
       }
 
       try {
         setStatus('pending');
-        setError(null);
 
-        const contracts = getContractsByChainId(chainId);
+        let contracts: ReturnType<typeof getContractsByChainId>;
+        try {
+          contracts = getContractsByChainId(chainId);
+        } catch {
+          throw new Error('Tangle contract not available on this network');
+        }
 
-        const data = encodeFunctionData({
+        const tangleAddress = contracts.tangle;
+        if (tangleAddress === zeroAddress) {
+          throw new Error('Tangle contract not available on this network');
+        }
+
+        // Simulate the contract call first to get better error messages
+        const { request } = await (publicClient as any).simulateContract({
+          address: tangleAddress,
           abi: TANGLE_ABI,
-          functionName: 'transferBlueprint',
-          args: [blueprintId, newOwner],
+          functionName: 'transferBlueprint' as const,
+          args: [blueprintId, newOwner] as const,
+          account: userAddress,
         });
 
-        const hash = await walletClient.sendTransaction({
-          to: contracts.tangle,
-          data,
-        });
+        const hash = await walletClient.writeContract(request);
 
-        await publicClient.waitForTransactionReceipt({ hash });
+        const receipt = await publicClient.waitForTransactionReceipt({ hash });
+
+        if (receipt.status === 'reverted') {
+          throw new Error('Transaction reverted');
+        }
 
         setStatus('success');
         return hash;
       } catch (err) {
-        const error =
-          err instanceof Error
-            ? err
-            : new Error('Failed to transfer blueprint');
-        setError(error);
+        // Handle user cancellation separately
+        if (isUserRejectionError(err)) {
+          enqueueSnackbar('Blueprint transfer cancelled', { variant: 'warning' });
+          setStatus('idle');
+          return null;
+        }
+
+        // Determine error message for known errors
+        let errorMessage = 'Failed to transfer blueprint. Please try again.';
+        if (err instanceof Error) {
+          if (err.message.includes('Failed to fetch') || err.message.includes('fetch failed')) {
+            errorMessage = 'Cannot connect to the network. Please check your connection.';
+          } else if (err.message.includes('NotBlueprintOwner')) {
+            errorMessage = 'You are not the owner of this blueprint.';
+          } else if (err.message.includes('BlueprintNotFound')) {
+            errorMessage = 'Blueprint not found.';
+          } else if (err.message.includes('BlueprintNotActive')) {
+            errorMessage = 'Blueprint is not active.';
+          } else if (err.message.includes('execution reverted')) {
+            errorMessage = 'Transaction failed. Please try again.';
+          }
+        }
+
+        enqueueSnackbar(errorMessage, { variant: 'error' });
         setStatus('error');
         return null;
       }
     },
-    [chainId, publicClient, walletClient],
+    [chainId, publicClient, walletClient, userAddress, enqueueSnackbar],
   );
 
   return {
     transferBlueprint,
     status,
-    error,
     reset,
   };
 };
@@ -442,63 +471,94 @@ export const useTransferBlueprintTx = () => {
  */
 export const useDeactivateBlueprintTx = () => {
   const [status, setStatus] = useState<TxStatus>('idle');
-  const [error, setError] = useState<Error | null>(null);
 
   const chainId = useChainId();
+  const { address: userAddress } = useAccount();
   const publicClient = usePublicClient();
   const { data: walletClient } = useWalletClient();
+  const { enqueueSnackbar } = useSnackbar();
 
   const reset = useCallback(() => {
     setStatus('idle');
-    setError(null);
   }, []);
 
   const deactivateBlueprint = useCallback(
     async (blueprintId: bigint): Promise<Hash | null> => {
-      if (!walletClient || !publicClient) {
-        setError(new Error('Wallet not connected'));
+      if (!walletClient || !publicClient || !userAddress) {
+        enqueueSnackbar('Wallet not connected', { variant: 'error' });
         setStatus('error');
         return null;
       }
 
       try {
         setStatus('pending');
-        setError(null);
 
-        const contracts = getContractsByChainId(chainId);
+        let contracts: ReturnType<typeof getContractsByChainId>;
+        try {
+          contracts = getContractsByChainId(chainId);
+        } catch {
+          throw new Error('Tangle contract not available on this network');
+        }
 
-        const data = encodeFunctionData({
+        const tangleAddress = contracts.tangle;
+        if (tangleAddress === zeroAddress) {
+          throw new Error('Tangle contract not available on this network');
+        }
+
+        // Simulate the contract call first to get better error messages
+        const { request } = await (publicClient as any).simulateContract({
+          address: tangleAddress,
           abi: TANGLE_ABI,
-          functionName: 'deactivateBlueprint',
-          args: [blueprintId],
+          functionName: 'deactivateBlueprint' as const,
+          args: [blueprintId] as const,
+          account: userAddress,
         });
 
-        const hash = await walletClient.sendTransaction({
-          to: contracts.tangle,
-          data,
-        });
+        const hash = await walletClient.writeContract(request);
 
-        await publicClient.waitForTransactionReceipt({ hash });
+        const receipt = await publicClient.waitForTransactionReceipt({ hash });
+
+        if (receipt.status === 'reverted') {
+          throw new Error('Transaction reverted');
+        }
 
         setStatus('success');
         return hash;
       } catch (err) {
-        const error =
-          err instanceof Error
-            ? err
-            : new Error('Failed to deactivate blueprint');
-        setError(error);
+        // Handle user cancellation separately
+        if (isUserRejectionError(err)) {
+          enqueueSnackbar('Blueprint deactivation cancelled', { variant: 'warning' });
+          setStatus('idle');
+          return null;
+        }
+
+        // Determine error message for known errors
+        let errorMessage = 'Failed to deactivate blueprint. Please try again.';
+        if (err instanceof Error) {
+          if (err.message.includes('Failed to fetch') || err.message.includes('fetch failed')) {
+            errorMessage = 'Cannot connect to the network. Please check your connection.';
+          } else if (err.message.includes('NotBlueprintOwner')) {
+            errorMessage = 'You are not the owner of this blueprint.';
+          } else if (err.message.includes('BlueprintNotFound')) {
+            errorMessage = 'Blueprint not found.';
+          } else if (err.message.includes('BlueprintNotActive')) {
+            errorMessage = 'Blueprint is already deactivated.';
+          } else if (err.message.includes('execution reverted')) {
+            errorMessage = 'Transaction failed. Please try again.';
+          }
+        }
+
+        enqueueSnackbar(errorMessage, { variant: 'error' });
         setStatus('error');
         return null;
       }
     },
-    [chainId, publicClient, walletClient],
+    [chainId, publicClient, walletClient, userAddress, enqueueSnackbar],
   );
 
   return {
     deactivateBlueprint,
     status,
-    error,
     reset,
   };
 };
