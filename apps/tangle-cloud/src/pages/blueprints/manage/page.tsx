@@ -2,9 +2,10 @@
  * Blueprint management page - view and manage owned blueprints.
  */
 
-import { FC, useState, useMemo } from 'react';
-import { useNavigate, Link } from 'react-router';
+import { FC, useState, useMemo, useCallback } from 'react';
+import { Link } from 'react-router';
 import { useAccount } from 'wagmi';
+import { useQueryClient } from '@tanstack/react-query';
 import {
   Button,
   Card,
@@ -26,7 +27,8 @@ import {
   useReactTable,
   flexRender,
 } from '@tanstack/react-table';
-import { AddLineIcon, EditLine } from '@tangle-network/icons';
+import { EditLine } from '@tangle-network/icons';
+import { PlusIcon } from '@radix-ui/react-icons';
 import {
   useBlueprintsByOwner,
   useDeactivateBlueprintTx,
@@ -41,8 +43,8 @@ import { isAddress } from 'viem';
 const columnHelper = createColumnHelper<OwnedBlueprint>();
 
 const ManageBlueprintsPage: FC = () => {
-  const navigate = useNavigate();
-  const { isConnected } = useAccount();
+  const { isConnected, address } = useAccount();
+  const queryClient = useQueryClient();
   const {
     data: blueprints,
     isLoading,
@@ -54,6 +56,36 @@ const ManageBlueprintsPage: FC = () => {
     useState<OwnedBlueprint | null>(null);
   const [isDeactivateModalOpen, setIsDeactivateModalOpen] = useState(false);
   const [isTransferModalOpen, setIsTransferModalOpen] = useState(false);
+
+  // Optimistically update the blueprint status in the cache
+  const updateBlueprintInCache = useCallback(
+    (blueprintId: bigint, updates: Partial<OwnedBlueprint>) => {
+      queryClient.setQueryData<OwnedBlueprint[]>(
+        ['blueprints', 'byOwner', address, undefined],
+        (oldData) => {
+          if (!oldData) return oldData;
+          return oldData.map((bp) =>
+            bp.id === blueprintId ? { ...bp, ...updates } : bp,
+          );
+        },
+      );
+    },
+    [queryClient, address],
+  );
+
+  // Remove a blueprint from the cache (for transfers)
+  const removeBlueprintFromCache = useCallback(
+    (blueprintId: bigint) => {
+      queryClient.setQueryData<OwnedBlueprint[]>(
+        ['blueprints', 'byOwner', address, undefined],
+        (oldData) => {
+          if (!oldData) return oldData;
+          return oldData.filter((bp) => bp.id !== blueprintId);
+        },
+      );
+    },
+    [queryClient, address],
+  );
 
   const columns = useMemo(
     () => [
@@ -193,10 +225,11 @@ const ManageBlueprintsPage: FC = () => {
           </Typography>
         </div>
 
-        <Button onClick={() => navigate(PagePath.BLUEPRINTS_CREATE)}>
-          <AddLineIcon className="w-4 h-4 mr-2" />
-          Create Blueprint
-        </Button>
+        <Link to={PagePath.BLUEPRINTS_CREATE}>
+          <Button leftIcon={<PlusIcon className="w-4 h-4" />}>
+            Create Blueprint
+          </Button>
+        </Link>
       </div>
 
       {/* Blueprints Table */}
@@ -311,9 +344,12 @@ const ManageBlueprintsPage: FC = () => {
             setSelectedBlueprint(null);
           }}
           onSuccess={() => {
-            refetch();
+            // Optimistically update the blueprint status
+            updateBlueprintInCache(selectedBlueprint.id, { active: false });
             setIsDeactivateModalOpen(false);
             setSelectedBlueprint(null);
+            // Also refetch in the background to sync with indexer
+            refetch();
           }}
         />
       )}
@@ -328,9 +364,12 @@ const ManageBlueprintsPage: FC = () => {
             setSelectedBlueprint(null);
           }}
           onSuccess={() => {
-            refetch();
+            // Optimistically remove the blueprint from the list
+            removeBlueprintFromCache(selectedBlueprint.id);
             setIsTransferModalOpen(false);
             setSelectedBlueprint(null);
+            // Also refetch in the background to sync with indexer
+            refetch();
           }}
         />
       )}
