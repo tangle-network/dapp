@@ -317,19 +317,15 @@ const ManageBlueprintsPage: FC = () => {
             )}
           </>
         ) : (
-          <div className="text-center py-12">
-            <EditLine className="w-12 h-12 text-mono-100 mx-auto mb-4" />
+          <div className="flex flex-col items-center justify-center py-12">
+            <EditLine className="w-12 h-12 text-mono-100 mb-4" />
             <Typography variant="h5" fw="semibold">
               No Blueprints Yet
             </Typography>
-            <Typography variant="body1" className="text-mono-100 mt-2 mb-6">
+            <Typography variant="body1" className="text-mono-100 mt-2">
               Create your first blueprint to start offering services on Tangle
               Network.
             </Typography>
-            <Button onClick={() => navigate(PagePath.BLUEPRINTS_CREATE)}>
-              <AddLineIcon className="w-4 h-4 mr-2" />
-              Create Blueprint
-            </Button>
           </div>
         )}
       </Card>
