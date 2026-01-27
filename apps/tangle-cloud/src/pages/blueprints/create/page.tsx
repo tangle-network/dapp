@@ -408,7 +408,10 @@ const CreateBlueprintPage: FC = () => {
         <Typography variant="h4" className="text-center">
           Blueprint Created!
         </Typography>
-        <Typography variant="body1" className="text-mono-100 mt-2 mb-6 text-center">
+        <Typography
+          variant="body1"
+          className="text-mono-100 mt-2 mb-6 text-center"
+        >
           Your blueprint has been created successfully.
         </Typography>
         <div className="flex gap-4 justify-center">

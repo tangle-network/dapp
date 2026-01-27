@@ -10,7 +10,14 @@ import {
   useChainId,
   useAccount,
 } from 'wagmi';
-import { Address, createPublicClient, encodeFunctionData, http, zeroAddress, type Hash } from 'viem';
+import {
+  Address,
+  createPublicClient,
+  encodeFunctionData,
+  http,
+  zeroAddress,
+  type Hash,
+} from 'viem';
 import { getContractsByChainId } from '@tangle-network/dapp-config/contracts';
 import { useSnackbar } from 'notistack';
 import TANGLE_ABI from '../../abi/tangle';
@@ -430,7 +437,9 @@ export const useTransferBlueprintTx = () => {
       } catch (err) {
         // Handle user cancellation separately
         if (isUserRejectionError(err)) {
-          enqueueSnackbar('Blueprint transfer cancelled', { variant: 'warning' });
+          enqueueSnackbar('Blueprint transfer cancelled', {
+            variant: 'warning',
+          });
           setStatus('idle');
           return null;
         }
@@ -438,8 +447,12 @@ export const useTransferBlueprintTx = () => {
         // Determine error message for known errors
         let errorMessage = 'Failed to transfer blueprint. Please try again.';
         if (err instanceof Error) {
-          if (err.message.includes('Failed to fetch') || err.message.includes('fetch failed')) {
-            errorMessage = 'Cannot connect to the network. Please check your connection.';
+          if (
+            err.message.includes('Failed to fetch') ||
+            err.message.includes('fetch failed')
+          ) {
+            errorMessage =
+              'Cannot connect to the network. Please check your connection.';
           } else if (err.message.includes('NotBlueprintOwner')) {
             errorMessage = 'You are not the owner of this blueprint.';
           } else if (err.message.includes('BlueprintNotFound')) {
@@ -527,7 +540,9 @@ export const useDeactivateBlueprintTx = () => {
       } catch (err) {
         // Handle user cancellation separately
         if (isUserRejectionError(err)) {
-          enqueueSnackbar('Blueprint deactivation cancelled', { variant: 'warning' });
+          enqueueSnackbar('Blueprint deactivation cancelled', {
+            variant: 'warning',
+          });
           setStatus('idle');
           return null;
         }
@@ -535,8 +550,12 @@ export const useDeactivateBlueprintTx = () => {
         // Determine error message for known errors
         let errorMessage = 'Failed to deactivate blueprint. Please try again.';
         if (err instanceof Error) {
-          if (err.message.includes('Failed to fetch') || err.message.includes('fetch failed')) {
-            errorMessage = 'Cannot connect to the network. Please check your connection.';
+          if (
+            err.message.includes('Failed to fetch') ||
+            err.message.includes('fetch failed')
+          ) {
+            errorMessage =
+              'Cannot connect to the network. Please check your connection.';
           } else if (err.message.includes('NotBlueprintOwner')) {
             errorMessage = 'You are not the owner of this blueprint.';
           } else if (err.message.includes('BlueprintNotFound')) {

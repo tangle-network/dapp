@@ -90,7 +90,9 @@ const Page: FC = () => {
       <RestakeBanner
         title={hasOwnedBlueprints ? HAS_BLUEPRINTS_TITLE : ROLE_TITLE[role]}
         description={
-          hasOwnedBlueprints ? HAS_BLUEPRINTS_DESCRIPTION : ROLE_DESCRIPTION[role]
+          hasOwnedBlueprints
+            ? HAS_BLUEPRINTS_DESCRIPTION
+            : ROLE_DESCRIPTION[role]
         }
         buttonHref={
           hasOwnedBlueprints ? PagePath.BLUEPRINTS_MANAGE : BLUEPRINT_DOCS_LINK
