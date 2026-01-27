@@ -45,12 +45,7 @@ const columnHelper = createColumnHelper<OwnedBlueprint>();
 const ManageBlueprintsPage: FC = () => {
   const { isConnected, address } = useAccount();
   const queryClient = useQueryClient();
-  const {
-    data: blueprints,
-    isLoading,
-    error,
-    refetch,
-  } = useBlueprintsByOwner();
+  const { data: blueprints, isLoading, error } = useBlueprintsByOwner();
 
   const [selectedBlueprint, setSelectedBlueprint] =
     useState<OwnedBlueprint | null>(null);
@@ -344,8 +339,6 @@ const ManageBlueprintsPage: FC = () => {
             updateBlueprintInCache(selectedBlueprint.id, { active: false });
             setIsDeactivateModalOpen(false);
             setSelectedBlueprint(null);
-            // Also refetch in the background to sync with indexer
-            refetch();
           }}
         />
       )}
@@ -364,8 +357,6 @@ const ManageBlueprintsPage: FC = () => {
             removeBlueprintFromCache(selectedBlueprint.id);
             setIsTransferModalOpen(false);
             setSelectedBlueprint(null);
-            // Also refetch in the background to sync with indexer
-            refetch();
           }}
         />
       )}
@@ -504,6 +495,7 @@ const TransferModal: FC<TransferModalProps> = ({
             <Input
               id="newOwner"
               value={newOwner}
+              isControlled
               onChange={(v) => {
                 setNewOwner(v);
                 setValidationError(null);
