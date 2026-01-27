@@ -10,12 +10,7 @@ import {
   useChainId,
   useAccount,
 } from 'wagmi';
-import {
-  Address,
-  encodeFunctionData,
-  zeroAddress,
-  type Hash,
-} from 'viem';
+import { Address, encodeFunctionData, zeroAddress, type Hash } from 'viem';
 import { getContractsByChainId } from '@tangle-network/dapp-config/contracts';
 import { useSnackbar } from 'notistack';
 import TANGLE_ABI from '../../abi/tangle';
