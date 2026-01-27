@@ -12,9 +12,7 @@ import {
 } from 'wagmi';
 import {
   Address,
-  createPublicClient,
   encodeFunctionData,
-  http,
   zeroAddress,
   type Hash,
 } from 'viem';
