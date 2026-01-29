@@ -51,34 +51,52 @@ const ManageBlueprintsPage: FC = () => {
   const [isDeactivateModalOpen, setIsDeactivateModalOpen] = useState(false);
   const [isTransferModalOpen, setIsTransferModalOpen] = useState(false);
 
-  // Optimistically update the blueprint status in the cache
-  const updateBlueprintInCache = useCallback(
-    (blueprintId: bigint, updates: Partial<OwnedBlueprint>) => {
-      queryClient.setQueryData<OwnedBlueprint[]>(
-        ['blueprints', 'byOwner', address, undefined],
-        (oldData) => {
-          if (!oldData) return oldData;
-          return oldData.map((bp) =>
-            bp.id === blueprintId ? { ...bp, ...updates } : bp,
-          );
-        },
-      );
-    },
-    [queryClient, address],
+  const cacheKey = useMemo(
+    () => ['blueprints', 'byOwner', address, undefined],
+    [address],
   );
 
-  // Remove a blueprint from the cache (for transfers)
-  const removeBlueprintFromCache = useCallback(
-    (blueprintId: bigint) => {
-      queryClient.setQueryData<OwnedBlueprint[]>(
-        ['blueprints', 'byOwner', address, undefined],
-        (oldData) => {
-          if (!oldData) return oldData;
-          return oldData.filter((bp) => bp.id !== blueprintId);
-        },
-      );
+  // Optimistically update the blueprint status in the cache, returning rollback function
+  const updateBlueprintInCache = useCallback(
+    (
+      blueprintId: bigint,
+      updates: Partial<OwnedBlueprint>,
+    ): (() => void) | null => {
+      const previousData = queryClient.getQueryData<OwnedBlueprint[]>(cacheKey);
+
+      queryClient.setQueryData<OwnedBlueprint[]>(cacheKey, (oldData) => {
+        if (!oldData) return oldData;
+        return oldData.map((bp) =>
+          bp.id === blueprintId ? { ...bp, ...updates } : bp,
+        );
+      });
+
+      // Return rollback function
+      if (previousData) {
+        return () => queryClient.setQueryData<OwnedBlueprint[]>(cacheKey, previousData);
+      }
+      return null;
     },
-    [queryClient, address],
+    [queryClient, cacheKey],
+  );
+
+  // Remove a blueprint from the cache (for transfers), returning rollback function
+  const removeBlueprintFromCache = useCallback(
+    (blueprintId: bigint): (() => void) | null => {
+      const previousData = queryClient.getQueryData<OwnedBlueprint[]>(cacheKey);
+
+      queryClient.setQueryData<OwnedBlueprint[]>(cacheKey, (oldData) => {
+        if (!oldData) return oldData;
+        return oldData.filter((bp) => bp.id !== blueprintId);
+      });
+
+      // Return rollback function
+      if (previousData) {
+        return () => queryClient.setQueryData<OwnedBlueprint[]>(cacheKey, previousData);
+      }
+      return null;
+    },
+    [queryClient, cacheKey],
   );
 
   const columns = useMemo(
@@ -327,9 +345,13 @@ const ManageBlueprintsPage: FC = () => {
             setIsDeactivateModalOpen(false);
             setSelectedBlueprint(null);
           }}
+          onOptimisticUpdate={() => {
+            // Apply optimistic update and return rollback function
+            return updateBlueprintInCache(selectedBlueprint.id, {
+              active: false,
+            });
+          }}
           onSuccess={() => {
-            // Optimistically update the blueprint status
-            updateBlueprintInCache(selectedBlueprint.id, { active: false });
             setIsDeactivateModalOpen(false);
             setSelectedBlueprint(null);
           }}
@@ -345,9 +367,11 @@ const ManageBlueprintsPage: FC = () => {
             setIsTransferModalOpen(false);
             setSelectedBlueprint(null);
           }}
+          onOptimisticUpdate={() => {
+            // Apply optimistic update and return rollback function
+            return removeBlueprintFromCache(selectedBlueprint.id);
+          }}
           onSuccess={() => {
-            // Optimistically remove the blueprint from the list
-            removeBlueprintFromCache(selectedBlueprint.id);
             setIsTransferModalOpen(false);
             setSelectedBlueprint(null);
           }}
@@ -361,6 +385,7 @@ interface DeactivateModalProps {
   blueprint: OwnedBlueprint;
   isOpen: boolean;
   onClose: () => void;
+  onOptimisticUpdate: () => (() => void) | null;
   onSuccess: () => void;
 }
 
@@ -368,6 +393,7 @@ const DeactivateModal: FC<DeactivateModalProps> = ({
   blueprint,
   isOpen,
   onClose,
+  onOptimisticUpdate,
   onSuccess,
 }) => {
   const { deactivateBlueprint, status } = useDeactivateBlueprintTx();
@@ -375,9 +401,17 @@ const DeactivateModal: FC<DeactivateModalProps> = ({
   const isSubmitting = status === 'pending';
 
   const handleDeactivate = async () => {
+    // Apply optimistic update immediately for instant UI feedback
+    const rollback = onOptimisticUpdate();
+
     const hash = await deactivateBlueprint(blueprint.id);
+
     if (hash) {
+      // Transaction succeeded, keep the optimistic update
       onSuccess();
+    } else {
+      // Transaction failed, rollback the optimistic update
+      rollback?.();
     }
   };
 
@@ -420,6 +454,7 @@ interface TransferModalProps {
   blueprint: OwnedBlueprint;
   isOpen: boolean;
   onClose: () => void;
+  onOptimisticUpdate: () => (() => void) | null;
   onSuccess: () => void;
 }
 
@@ -427,6 +462,7 @@ const TransferModal: FC<TransferModalProps> = ({
   blueprint,
   isOpen,
   onClose,
+  onOptimisticUpdate,
   onSuccess,
 }) => {
   const [newOwner, setNewOwner] = useState('');
@@ -445,12 +481,20 @@ const TransferModal: FC<TransferModalProps> = ({
       return;
     }
 
+    // Apply optimistic update immediately for instant UI feedback
+    const rollback = onOptimisticUpdate();
+
     const hash = await transferBlueprint(
       blueprint.id,
       newOwner as `0x${string}`,
     );
+
     if (hash) {
+      // Transaction succeeded, keep the optimistic update
       onSuccess();
+    } else {
+      // Transaction failed, rollback the optimistic update
+      rollback?.();
     }
   };
 
