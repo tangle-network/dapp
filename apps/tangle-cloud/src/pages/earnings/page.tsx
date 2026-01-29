@@ -3,7 +3,7 @@
  */
 
 import { FC, useMemo } from 'react';
-import { useNavigate, Link } from 'react-router';
+import { Link } from 'react-router';
 import { useAccount } from 'wagmi';
 import {
   Button,
@@ -35,7 +35,6 @@ import ErrorMessage from '../../components/ErrorMessage';
 const columnHelper = createColumnHelper<BlueprintEarnings>();
 
 const EarningsPage: FC = () => {
-  const navigate = useNavigate();
   const { isConnected } = useAccount();
   const { data, isLoading, error } = useDeveloperEarnings();
 
@@ -130,10 +129,6 @@ const EarningsPage: FC = () => {
             View earnings from your blueprints and services.
           </Typography>
         </div>
-
-        <Button onClick={() => navigate(PagePath.BLUEPRINTS_CREATE)}>
-          Create Blueprint
-        </Button>
       </div>
 
       {/* Summary Cards */}
@@ -296,13 +291,10 @@ const EarningsPage: FC = () => {
             <Typography variant="h5" fw="semibold">
               No Earnings Yet
             </Typography>
-            <Typography variant="body1" className="text-mono-100 mt-2 mb-6">
-              Create a blueprint and operators will earn rewards from their
-              services. You'll earn a share of all service fees.
+            <Typography variant="body1" className="text-mono-100 mt-2">
+              Create a blueprint using the CLI and operators will earn rewards
+              from their services. You'll earn a share of all service fees.
             </Typography>
-            <Button onClick={() => navigate(PagePath.BLUEPRINTS_CREATE)}>
-              Create Your First Blueprint
-            </Button>
           </div>
         )}
       </Card>

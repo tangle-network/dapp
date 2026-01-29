@@ -22,7 +22,7 @@ const BlueprintItemWrapper: FC<PropsWithChildren<{ id: bigint }>> = ({
 type Props = {
   rowSelection?: RowSelectionState;
   onRowSelectionChange?: Dispatch<SetStateAction<RowSelectionState>>;
-} & UseAllBlueprintsReturn;
+} & Omit<UseAllBlueprintsReturn, 'refetch'>;
 
 const BlueprintListing: FC<Props> = ({
   rowSelection,

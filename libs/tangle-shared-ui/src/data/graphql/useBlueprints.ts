@@ -330,6 +330,7 @@ export type UseAllBlueprintsReturn = {
   blueprints: Map<string, AppBlueprint>;
   isLoading: boolean;
   error: Error | null;
+  refetch: () => Promise<unknown>;
 };
 
 /**
@@ -341,12 +342,13 @@ export const useAllBlueprints = (options?: {
   activeOnly?: boolean;
   enabled?: boolean;
 }): UseAllBlueprintsReturn => {
-  const { blueprints, isLoading, error } = useBlueprintMap(options);
+  const { blueprints, isLoading, error, refetch } = useBlueprintMap(options);
 
   return {
     blueprints,
     isLoading,
     error: error ?? null,
+    refetch,
   };
 };
 
