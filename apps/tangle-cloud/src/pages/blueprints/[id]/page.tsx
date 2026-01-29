@@ -6,14 +6,10 @@ import { useBlueprintDetails } from '@tangle-network/tangle-shared-ui/data/graph
 import { ErrorFallback } from '@tangle-network/ui-components/components/ErrorFallback';
 import SkeletonLoader from '@tangle-network/ui-components/components/SkeletonLoader';
 import { Typography } from '@tangle-network/ui-components/typography/Typography';
-import { type FC, type PropsWithChildren, useMemo, useState } from 'react';
+import { type FC, type PropsWithChildren, useCallback, useMemo, useState } from 'react';
 import { Link, useNavigate, Navigate } from 'react-router-dom';
 import { PagePath, TangleDAppPagePath } from '../../../types';
-import ConfigureBlueprintModal from '../ConfigureBlueprintModal';
-import { Modal } from '@tangle-network/ui-components';
-import type { BlueprintFormResult } from '../ConfigureBlueprintModal/types';
-
-import { SessionStorageKey } from '../../../constants';
+import RegistrationDrawer from '../RegistrationDrawer';
 import useOperatorInfo from '@tangle-network/tangle-shared-ui/hooks/useOperatorInfo';
 import useParamWithSchema from '@tangle-network/tangle-shared-ui/hooks/useParamWithSchema';
 import { z } from 'zod';
@@ -32,10 +28,10 @@ const RestakeOperatorAction: FC<PropsWithChildren<{ address: string }>> = ({
 const Page = () => {
   const navigate = useNavigate();
   const id = useParamWithSchema('id', z.coerce.bigint());
-  const { result, isLoading, error } = useBlueprintDetails(id);
+  const { result, isLoading, error, refetch } = useBlueprintDetails(id);
   const { isOperator } = useOperatorInfo();
   const { address: userAddress } = useAccount();
-  const [isBlueprintModalOpen, setIsBlueprintModalOpen] = useState(false);
+  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
 
   // Check if the current user is registered as an operator for this blueprint
   const isRegistered = useMemo(() => {
@@ -47,6 +43,13 @@ const Page = () => {
       return operator.address.toLowerCase() === userAddress.toLowerCase();
     });
   }, [userAddress, result?.operators]);
+
+  const handleRegistrationComplete = useCallback(async () => {
+    setIsDrawerOpen(false);
+    // Wait for indexer to process, then refetch to get updated data
+    await new Promise((resolve) => setTimeout(resolve, 5000));
+    await refetch();
+  }, [refetch]);
 
   if (isLoading) {
     return (
@@ -62,23 +65,6 @@ const Page = () => {
     return <ErrorFallback title={error.name} />;
   }
 
-  const handleBlueprintFormSubmit = (formResult: BlueprintFormResult) => {
-    sessionStorage.setItem(
-      SessionStorageKey.BLUEPRINT_REGISTRATION_PARAMS,
-      JSON.stringify({
-        rpcUrl: formResult.rpcUrl,
-        selectedBlueprints: [
-          {
-            ...result.details,
-            id: result.details.id.toString(),
-          },
-        ],
-      }),
-    );
-
-    navigate(PagePath.BLUEPRINTS_REGISTRATION_REVIEW);
-  };
-
   return (
     <div className="space-y-10">
       <BlueprintHeader
@@ -92,7 +78,7 @@ const Page = () => {
           },
         }}
         registerBtnProps={{
-          onClick: () => setIsBlueprintModalOpen(true),
+          onClick: () => setIsDrawerOpen(true),
         }}
         isRegistered={isRegistered ?? false}
       />
@@ -111,13 +97,12 @@ const Page = () => {
         />
       </div>
 
-      <Modal open={isBlueprintModalOpen} onOpenChange={setIsBlueprintModalOpen}>
-        <ConfigureBlueprintModal
-          onOpenChange={setIsBlueprintModalOpen}
-          blueprints={[result.details]}
-          onSubmit={handleBlueprintFormSubmit}
-        />
-      </Modal>
+      <RegistrationDrawer
+        isOpen={isDrawerOpen}
+        onOpenChange={setIsDrawerOpen}
+        blueprints={[result.details]}
+        onRegistrationComplete={handleRegistrationComplete}
+      />
     </div>
   );
 };

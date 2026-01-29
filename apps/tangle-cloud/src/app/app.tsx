@@ -8,8 +8,6 @@ import InstancesPage from '../pages/instances/page';
 import ServiceDetailPage from '../pages/services/[id]/page';
 import Providers from './providers';
 import { PagePath } from '../types';
-import RegistrationReview from '../pages/registrationReview/page';
-import RegistrationLayout from '../pages/registrationReview/layout';
 import DeployPage from '../pages/blueprints/[id]/deploy/page';
 import OperatorsPage from '../pages/operators/page';
 import OperatorsLayout from '../pages/operators/layout';
@@ -103,13 +101,10 @@ const App: FC = () => {
             />
           </Route>
 
+          {/* Redirect old registration review page to blueprints */}
           <Route
             path={PagePath.BLUEPRINTS_REGISTRATION_REVIEW}
-            element={
-              <RegistrationLayout>
-                <RegistrationReview />
-              </RegistrationLayout>
-            }
+            element={<Navigate to={PagePath.BLUEPRINTS} replace />}
           />
 
           <Route
