@@ -807,6 +807,10 @@ export interface ClaimEligibility {
   formattedBalance: string | null;
   /** Whether claims are paused */
   isPaused: boolean;
+  /** Percentage unlocked immediately (basis points, 1000 = 10%) */
+  unlockedBps: number;
+  /** Timestamp when locked tokens become withdrawable */
+  unlockTimestamp: bigint;
 }
 
 interface UseClaimEligibilityOptions {
@@ -963,6 +967,40 @@ const useClaimEligibility = ({ ss58Address }: UseClaimEligibilityOptions) => {
     enabled: !!migrationAddress,
   });
 
+  // Get unlock configuration (percentage unlocked immediately)
+  const { data: unlockedBps, isLoading: isLoadingUnlockedBps } =
+    useQuery<number>({
+      queryKey: ['migration-unlocked-bps', migrationAddress],
+      queryFn: async () => {
+        if (!migrationAddress) return 10000; // Default 100% if not configured
+        const result = await publicClient.readContract({
+          address: migrationAddress,
+          abi: TANGLE_MIGRATION_ABI,
+          functionName: 'unlockedBps',
+        });
+        return Number(result);
+      },
+      enabled: !!migrationAddress,
+      staleTime: Infinity, // Lock config doesn't change after first claim
+    });
+
+  // Get unlock timestamp (when locked tokens become withdrawable)
+  const { data: unlockTimestamp, isLoading: isLoadingUnlockTimestamp } =
+    useQuery<bigint>({
+      queryKey: ['migration-unlock-timestamp', migrationAddress],
+      queryFn: async () => {
+        if (!migrationAddress) return BigInt(0);
+        const result = await publicClient.readContract({
+          address: migrationAddress,
+          abi: TANGLE_MIGRATION_ABI,
+          functionName: 'unlockTimestamp',
+        });
+        return result as bigint;
+      },
+      enabled: !!migrationAddress,
+      staleTime: Infinity, // Lock config doesn't change after first claim
+    });
+
   // Get merkle root for verification using viem directly
   const { data: merkleRoot } = useQuery<Hex | null>({
     queryKey: ['migration-merkle-root', migrationAddress],
@@ -1002,6 +1040,10 @@ const useClaimEligibility = ({ ss58Address }: UseClaimEligibilityOptions) => {
     const actualClaimedAmount = claimedAmount ?? BigInt(0);
     const hasClaimed = actualClaimedAmount > BigInt(0);
 
+    // Default lock config values
+    const actualUnlockedBps = unlockedBps ?? 10000; // 100% if not set
+    const actualUnlockTimestamp = unlockTimestamp ?? BigInt(0);
+
     // In dev mode without proofs, provide mock eligibility for UI testing
     if (isDevMode && !claimData && ss58Address) {
       const mockAmount = BigInt('1000000000000000000000'); // 1000 TNT
@@ -1015,6 +1057,10 @@ const useClaimEligibility = ({ ss58Address }: UseClaimEligibilityOptions) => {
         timeRemaining: BigInt(365 * 24 * 60 * 60), // 1 year
         formattedBalance: '1,000',
         isPaused: false,
+        unlockedBps: 1000, // Mock 10% unlocked for dev mode
+        unlockTimestamp: BigInt(
+          Math.floor(Date.now() / 1000) + 180 * 24 * 60 * 60,
+        ), // 180 days from now
       };
     }
 
@@ -1029,6 +1075,8 @@ const useClaimEligibility = ({ ss58Address }: UseClaimEligibilityOptions) => {
         timeRemaining,
         formattedBalance: null,
         isPaused: isPaused ?? false,
+        unlockedBps: actualUnlockedBps,
+        unlockTimestamp: actualUnlockTimestamp,
       };
     }
 
@@ -1044,6 +1092,8 @@ const useClaimEligibility = ({ ss58Address }: UseClaimEligibilityOptions) => {
       timeRemaining,
       formattedBalance,
       isPaused: isPaused ?? false,
+      unlockedBps: actualUnlockedBps,
+      unlockTimestamp: actualUnlockTimestamp,
     };
   }, [
     claimData,
@@ -1052,6 +1102,8 @@ const useClaimEligibility = ({ ss58Address }: UseClaimEligibilityOptions) => {
     isPaused,
     isDevMode,
     ss58Address,
+    unlockedBps,
+    unlockTimestamp,
   ]);
 
   // In dev mode, don't wait for contract reads since they're disabled anyway
@@ -1060,7 +1112,9 @@ const useClaimEligibility = ({ ss58Address }: UseClaimEligibilityOptions) => {
     : isLoadingProofs ||
       isLoadingClaimed ||
       isLoadingDeadline ||
-      isLoadingPaused;
+      isLoadingPaused ||
+      isLoadingUnlockedBps ||
+      isLoadingUnlockTimestamp;
 
   return {
     eligibility,

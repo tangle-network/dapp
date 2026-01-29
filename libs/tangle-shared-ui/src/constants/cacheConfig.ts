@@ -33,6 +33,12 @@ export const CACHE_CONFIG = {
     gcTime: 10 * 60 * 1000, // 10 minutes
   },
 
+  // Delegation permission checks (canDelegate, delegationMode, whitelist)
+  DELEGATION: {
+    staleTime: 30 * 1000, // 30 seconds
+    gcTime: 5 * 60 * 1000, // 5 minutes
+  },
+
   // Vault data (TVL, positions)
   VAULTS: {
     staleTime: 30 * 1000, // 30 seconds

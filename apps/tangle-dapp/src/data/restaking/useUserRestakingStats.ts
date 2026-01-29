@@ -1,17 +1,18 @@
 /**
  * Hook for fetching user restaking statistics.
- * Uses GraphQL for indexed data and contract calls for real-time rewards.
+ * Uses GraphQL for indexed data.
+ *
+ * NOTE: Rewards functionality has been moved to a separate RewardsManager contract.
+ * Pending rewards always returns 0 until the RewardsManager integration is implemented.
  */
 
 import { useMemo } from 'react';
-import { Address, formatUnits } from 'viem';
-import { useAccount, useReadContract, useChainId } from 'wagmi';
+import { formatUnits } from 'viem';
+import { useAccount } from 'wagmi';
 import {
   useDelegator,
   useCurrentRoundNumber,
 } from '@tangle-network/tangle-shared-ui/data/graphql';
-import { getContractsByChainId } from '@tangle-network/dapp-config/contracts';
-import MULTI_ASSET_DELEGATION_ABI from '@tangle-network/tangle-shared-ui/abi/multiAssetDelegation';
 
 export interface UserRestakingStats {
   // Total Value Restaked Card
@@ -39,7 +40,6 @@ export interface UserRestakingStats {
 
 const useUserRestakingStats = () => {
   const { address } = useAccount();
-  const chainId = useChainId();
 
   // Get current round from GraphQL
   const { data: currentRound } = useCurrentRoundNumber();
@@ -52,30 +52,9 @@ const useUserRestakingStats = () => {
     refetch: refetchDelegator,
   } = useDelegator(address);
 
-  // Get contracts for the current chain
-  let contracts: ReturnType<typeof getContractsByChainId> | null = null;
-  try {
-    contracts = getContractsByChainId(chainId);
-  } catch {
-    contracts = null;
-  }
-
-  // Get pending rewards from contract (real-time)
-  const {
-    data: pendingRewardsData,
-    isLoading: isRewardsLoading,
-    error: rewardsError,
-    refetch: refetchRewards,
-  } = useReadContract({
-    address: contracts?.multiAssetDelegation as Address,
-    abi: MULTI_ASSET_DELEGATION_ABI,
-    functionName: 'getPendingDelegatorRewards',
-    args: address ? [address] : undefined,
-    query: {
-      enabled: !!contracts && !!address,
-      refetchInterval: 15000, // Refresh every 15 seconds
-    },
-  });
+  // NOTE: Pending rewards from contract has been moved to RewardsManager.
+  // Currently returns 0 until RewardsManager integration is implemented.
+  const pendingRewardsData = BigInt(0);
 
   const stats = useMemo<UserRestakingStats | null>(() => {
     if (!delegator) {
@@ -143,14 +122,14 @@ const useUserRestakingStats = () => {
   }, [delegator, currentRound, pendingRewardsData]);
 
   const refetch = async () => {
-    await Promise.all([refetchDelegator(), refetchRewards()]);
+    await refetchDelegator();
   };
 
   return {
     data: stats,
-    isLoading: isDelegatorLoading || isRewardsLoading,
-    isError: !!delegatorError || !!rewardsError,
-    error: delegatorError || rewardsError,
+    isLoading: isDelegatorLoading,
+    isError: !!delegatorError,
+    error: delegatorError,
     refetch,
   };
 };

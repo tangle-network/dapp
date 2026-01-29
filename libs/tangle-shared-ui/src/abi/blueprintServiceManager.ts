@@ -283,7 +283,7 @@ const ABI = [
         internalType: 'uint64',
       },
       {
-        name: 'restakingPercent',
+        name: 'stakingPercent',
         type: 'uint8',
         internalType: 'uint8',
       },

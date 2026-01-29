@@ -43,7 +43,7 @@ export const LOCAL_CONTRACTS: ContractAddresses = {
   operatorStatusRegistry: '0x8f86403A4DE0BB5791fa46B8e795C547942fE4Cf',
   rewardVaults: '0x21dF544947ba3E8b3c32561399E88B52Dc8b2823',
   inflationPool: '0xD8a5a9b31c3C0232E196d518E89Fd8bF83AcAd43',
-  credits: '0x5081a39b8A5f0E35a8D959395a630b68B74Dd30f',
+  credits: '0x162A433068F51e18b7d13932F27e66a3f99E6890',
   liquidDelegationFactory: '0x8F4ec854Dd12F1fe79500a1f53D0cbB30f9b6134',
 };
 

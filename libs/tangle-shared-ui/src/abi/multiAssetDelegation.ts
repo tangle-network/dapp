@@ -119,8 +119,13 @@ const ABI = [
   },
   {
     type: 'function',
-    name: 'addBlueprint',
+    name: 'addBlueprintForOperator',
     inputs: [
+      {
+        name: 'operator',
+        type: 'address',
+        internalType: 'address',
+      },
       {
         name: 'blueprintId',
         type: 'uint64',
@@ -170,34 +175,32 @@ const ABI = [
   },
   {
     type: 'function',
-    name: 'claimDelegatorRewards',
-    inputs: [],
-    outputs: [
-      {
-        name: 'totalRewards',
-        type: 'uint256',
-        internalType: 'uint256',
-      },
-    ],
-    stateMutability: 'nonpayable',
-  },
-  {
-    type: 'function',
-    name: 'claimOperatorRewards',
-    inputs: [],
-    outputs: [],
-    stateMutability: 'nonpayable',
-  },
-  {
-    type: 'function',
-    name: 'claimOperatorRewardsTo',
+    name: 'canDelegate',
     inputs: [
       {
-        name: 'recipient',
+        name: 'operator',
         type: 'address',
-        internalType: 'address payable',
+        internalType: 'address',
+      },
+      {
+        name: 'delegator',
+        type: 'address',
+        internalType: 'address',
       },
     ],
+    outputs: [
+      {
+        name: '',
+        type: 'bool',
+        internalType: 'bool',
+      },
+    ],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
+    name: 'cancelCommissionChange',
+    inputs: [],
     outputs: [],
     stateMutability: 'nonpayable',
   },
@@ -478,6 +481,13 @@ const ABI = [
   },
   {
     type: 'function',
+    name: 'executeCommissionChange',
+    inputs: [],
+    outputs: [],
+    stateMutability: 'nonpayable',
+  },
+  {
+    type: 'function',
     name: 'executeDelegatorUnstake',
     inputs: [],
     outputs: [],
@@ -631,6 +641,25 @@ const ABI = [
         name: '',
         type: 'uint64[]',
         internalType: 'uint64[]',
+      },
+    ],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
+    name: 'getDelegationMode',
+    inputs: [
+      {
+        name: 'operator',
+        type: 'address',
+        internalType: 'address',
+      },
+    ],
+    outputs: [
+      {
+        name: '',
+        type: 'uint8',
+        internalType: 'enum Types.DelegationMode',
       },
     ],
     stateMutability: 'view',
@@ -805,6 +834,42 @@ const ABI = [
   },
   {
     type: 'function',
+    name: 'getOperatorDelegatedStakeForAsset',
+    inputs: [
+      {
+        name: 'operator',
+        type: 'address',
+        internalType: 'address',
+      },
+      {
+        name: 'asset',
+        type: 'tuple',
+        internalType: 'struct Types.Asset',
+        components: [
+          {
+            name: 'kind',
+            type: 'uint8',
+            internalType: 'enum Types.AssetKind',
+          },
+          {
+            name: 'token',
+            type: 'address',
+            internalType: 'address',
+          },
+        ],
+      },
+    ],
+    outputs: [
+      {
+        name: '',
+        type: 'uint256',
+        internalType: 'uint256',
+      },
+    ],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
     name: 'getOperatorDelegatorCount',
     inputs: [
       {
@@ -899,11 +964,6 @@ const ABI = [
         internalType: 'struct Types.OperatorRewardPool',
         components: [
           {
-            name: 'accRewardPerShare',
-            type: 'uint256',
-            internalType: 'uint256',
-          },
-          {
             name: 'totalShares',
             type: 'uint256',
             internalType: 'uint256',
@@ -912,11 +972,6 @@ const ABI = [
             name: 'totalAssets',
             type: 'uint256',
             internalType: 'uint256',
-          },
-          {
-            name: 'lastUpdateRound',
-            type: 'uint64',
-            internalType: 'uint64',
           },
         ],
       },
@@ -963,12 +1018,29 @@ const ABI = [
   },
   {
     type: 'function',
-    name: 'getPendingDelegatorRewards',
+    name: 'getOperatorStakeForAsset',
     inputs: [
       {
-        name: 'delegator',
+        name: 'operator',
         type: 'address',
         internalType: 'address',
+      },
+      {
+        name: 'asset',
+        type: 'tuple',
+        internalType: 'struct Types.Asset',
+        components: [
+          {
+            name: 'kind',
+            type: 'uint8',
+            internalType: 'enum Types.AssetKind',
+          },
+          {
+            name: 'token',
+            type: 'address',
+            internalType: 'address',
+          },
+        ],
       },
     ],
     outputs: [
@@ -982,19 +1054,18 @@ const ABI = [
   },
   {
     type: 'function',
-    name: 'getPendingOperatorRewards',
-    inputs: [
-      {
-        name: 'operator',
-        type: 'address',
-        internalType: 'address',
-      },
-    ],
+    name: 'getPendingCommissionChange',
+    inputs: [],
     outputs: [
       {
-        name: '',
-        type: 'uint256',
-        internalType: 'uint256',
+        name: 'pendingBps',
+        type: 'uint16',
+        internalType: 'uint16',
+      },
+      {
+        name: 'executeAfter',
+        type: 'uint64',
+        internalType: 'uint64',
       },
     ],
     stateMutability: 'view',
@@ -1243,6 +1314,16 @@ const ABI = [
             internalType: 'uint64',
           },
           {
+            name: 'assetHash',
+            type: 'bytes32',
+            internalType: 'bytes32',
+          },
+          {
+            name: 'slashBps',
+            type: 'uint16',
+            internalType: 'uint16',
+          },
+          {
             name: 'totalSlashed',
             type: 'uint256',
             internalType: 'uint256',
@@ -1295,6 +1376,24 @@ const ABI = [
   },
   {
     type: 'function',
+    name: 'increaseStakeWithAsset',
+    inputs: [
+      {
+        name: 'token',
+        type: 'address',
+        internalType: 'address',
+      },
+      {
+        name: 'amount',
+        type: 'uint256',
+        internalType: 'uint256',
+      },
+    ],
+    outputs: [],
+    stateMutability: 'nonpayable',
+  },
+  {
+    type: 'function',
     name: 'isOperator',
     inputs: [
       {
@@ -1337,6 +1436,30 @@ const ABI = [
     inputs: [
       {
         name: 'account',
+        type: 'address',
+        internalType: 'address',
+      },
+    ],
+    outputs: [
+      {
+        name: '',
+        type: 'bool',
+        internalType: 'bool',
+      },
+    ],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
+    name: 'isWhitelisted',
+    inputs: [
+      {
+        name: 'operator',
+        type: 'address',
+        internalType: 'address',
+      },
+      {
+        name: 'delegator',
         type: 'address',
         internalType: 'address',
       },
@@ -1415,57 +1538,6 @@ const ABI = [
   },
   {
     type: 'function',
-    name: 'notifyReward',
-    inputs: [
-      {
-        name: 'operator',
-        type: 'address',
-        internalType: 'address',
-      },
-      {
-        name: 'serviceId',
-        type: 'uint64',
-        internalType: 'uint64',
-      },
-      {
-        name: 'amount',
-        type: 'uint256',
-        internalType: 'uint256',
-      },
-    ],
-    outputs: [],
-    stateMutability: 'nonpayable',
-  },
-  {
-    type: 'function',
-    name: 'notifyRewardForBlueprint',
-    inputs: [
-      {
-        name: 'operator',
-        type: 'address',
-        internalType: 'address',
-      },
-      {
-        name: 'blueprintId',
-        type: 'uint64',
-        internalType: 'uint64',
-      },
-      {
-        name: 'serviceId',
-        type: 'uint64',
-        internalType: 'uint64',
-      },
-      {
-        name: 'amount',
-        type: 'uint256',
-        internalType: 'uint256',
-      },
-    ],
-    outputs: [],
-    stateMutability: 'nonpayable',
-  },
-  {
-    type: 'function',
     name: 'operatorAt',
     inputs: [
       {
@@ -1474,6 +1546,19 @@ const ABI = [
         internalType: 'uint256',
       },
     ],
+    outputs: [
+      {
+        name: '',
+        type: 'address',
+        internalType: 'address',
+      },
+    ],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
+    name: 'operatorBondToken',
+    inputs: [],
     outputs: [
       {
         name: '',
@@ -1515,6 +1600,35 @@ const ABI = [
     inputs: [],
     outputs: [],
     stateMutability: 'nonpayable',
+  },
+  {
+    type: 'function',
+    name: 'previewDelegatorUnstakeShares',
+    inputs: [
+      {
+        name: 'operator',
+        type: 'address',
+        internalType: 'address',
+      },
+      {
+        name: 'token',
+        type: 'address',
+        internalType: 'address',
+      },
+      {
+        name: 'amount',
+        type: 'uint256',
+        internalType: 'uint256',
+      },
+    ],
+    outputs: [
+      {
+        name: '',
+        type: 'uint256',
+        internalType: 'uint256',
+      },
+    ],
+    stateMutability: 'view',
   },
   {
     type: 'function',
@@ -1574,8 +1688,13 @@ const ABI = [
   },
   {
     type: 'function',
-    name: 'removeBlueprint',
+    name: 'removeBlueprintForOperator',
     inputs: [
+      {
+        name: 'operator',
+        type: 'address',
+        internalType: 'address',
+      },
       {
         name: 'blueprintId',
         type: 'uint64',
@@ -1757,6 +1876,50 @@ const ABI = [
   },
   {
     type: 'function',
+    name: 'setDelegationMode',
+    inputs: [
+      {
+        name: 'mode',
+        type: 'uint8',
+        internalType: 'enum Types.DelegationMode',
+      },
+    ],
+    outputs: [],
+    stateMutability: 'nonpayable',
+  },
+  {
+    type: 'function',
+    name: 'setDelegationWhitelist',
+    inputs: [
+      {
+        name: 'delegators',
+        type: 'address[]',
+        internalType: 'address[]',
+      },
+      {
+        name: 'approved',
+        type: 'bool',
+        internalType: 'bool',
+      },
+    ],
+    outputs: [],
+    stateMutability: 'nonpayable',
+  },
+  {
+    type: 'function',
+    name: 'setOperatorBondToken',
+    inputs: [
+      {
+        name: 'token',
+        type: 'address',
+        internalType: 'address',
+      },
+    ],
+    outputs: [],
+    stateMutability: 'nonpayable',
+  },
+  {
+    type: 'function',
     name: 'setOperatorCommission',
     inputs: [
       {
@@ -1809,6 +1972,19 @@ const ABI = [
   },
   {
     type: 'function',
+    name: 'setTangle',
+    inputs: [
+      {
+        name: 'tangle',
+        type: 'address',
+        internalType: 'address',
+      },
+    ],
+    outputs: [],
+    stateMutability: 'nonpayable',
+  },
+  {
+    type: 'function',
     name: 'slash',
     inputs: [
       {
@@ -1822,9 +1998,9 @@ const ABI = [
         internalType: 'uint64',
       },
       {
-        name: 'amount',
-        type: 'uint256',
-        internalType: 'uint256',
+        name: 'slashBps',
+        type: 'uint16',
+        internalType: 'uint16',
       },
       {
         name: 'evidence',
@@ -1861,9 +2037,9 @@ const ABI = [
         internalType: 'uint64',
       },
       {
-        name: 'amount',
-        type: 'uint256',
-        internalType: 'uint256',
+        name: 'slashBps',
+        type: 'uint16',
+        internalType: 'uint16',
       },
       {
         name: 'evidence',
@@ -1929,9 +2105,9 @@ const ABI = [
         ],
       },
       {
-        name: 'amount',
-        type: 'uint256',
-        internalType: 'uint256',
+        name: 'slashBps',
+        type: 'uint16',
+        internalType: 'uint16',
       },
       {
         name: 'evidence',
@@ -2465,44 +2641,6 @@ const ABI = [
   },
   {
     type: 'event',
-    name: 'RewardClaimed',
-    inputs: [
-      {
-        name: 'account',
-        type: 'address',
-        indexed: true,
-        internalType: 'address',
-      },
-      {
-        name: 'amount',
-        type: 'uint256',
-        indexed: false,
-        internalType: 'uint256',
-      },
-    ],
-    anonymous: false,
-  },
-  {
-    type: 'event',
-    name: 'RewardDistributed',
-    inputs: [
-      {
-        name: 'operator',
-        type: 'address',
-        indexed: true,
-        internalType: 'address',
-      },
-      {
-        name: 'amount',
-        type: 'uint256',
-        indexed: false,
-        internalType: 'uint256',
-      },
-    ],
-    anonymous: false,
-  },
-  {
-    type: 'event',
     name: 'RoundAdvanced',
     inputs: [
       {
@@ -2529,6 +2667,18 @@ const ABI = [
         type: 'uint64',
         indexed: true,
         internalType: 'uint64',
+      },
+      {
+        name: 'assetHash',
+        type: 'bytes32',
+        indexed: false,
+        internalType: 'bytes32',
+      },
+      {
+        name: 'slashBps',
+        type: 'uint16',
+        indexed: false,
+        internalType: 'uint16',
       },
       {
         name: 'totalSlashed',
@@ -2568,6 +2718,24 @@ const ABI = [
         internalType: 'uint64',
       },
       {
+        name: 'blueprintId',
+        type: 'uint64',
+        indexed: true,
+        internalType: 'uint64',
+      },
+      {
+        name: 'assetHash',
+        type: 'bytes32',
+        indexed: false,
+        internalType: 'bytes32',
+      },
+      {
+        name: 'slashBps',
+        type: 'uint16',
+        indexed: false,
+        internalType: 'uint16',
+      },
+      {
         name: 'operatorSlashed',
         type: 'uint256',
         indexed: false,
@@ -2580,7 +2748,7 @@ const ABI = [
         internalType: 'uint256',
       },
       {
-        name: 'newExchangeRate',
+        name: 'exchangeRateAfter',
         type: 'uint256',
         indexed: false,
         internalType: 'uint256',

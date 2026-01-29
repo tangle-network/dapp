@@ -7,6 +7,7 @@ import ListModal from '@tangle-network/tangle-shared-ui/components/ListModal';
 import {
   Avatar,
   Card,
+  Chip,
   isEvmAddress,
   shortenHex,
   Typography,
@@ -51,6 +52,10 @@ import { useDelegateTx } from '@tangle-network/tangle-shared-ui/data/tx';
 import { TxStatus } from '@tangle-network/tangle-shared-ui/hooks/useContractWrite';
 import MULTI_ASSET_DELEGATION_ABI from '@tangle-network/tangle-shared-ui/abi/multiAssetDelegation';
 import { getContractsByChainId } from '@tangle-network/dapp-config/contracts';
+import useCanDelegate, {
+  DelegationMode,
+} from '@tangle-network/tangle-shared-ui/data/restake/useCanDelegate';
+import useCanDelegateToOperators from '@tangle-network/tangle-shared-ui/data/restake/useCanDelegateToOperators';
 
 type AssetItem = {
   id: Address;
@@ -67,6 +72,8 @@ type OperatorItem = {
   stake: bigint;
   delegationCount: bigint;
   isActive: boolean;
+  delegationMode?: DelegationMode;
+  canDelegate?: boolean;
 };
 
 const RestakeDelegateForm: FC = () => {
@@ -126,8 +133,8 @@ const RestakeDelegateForm: FC = () => {
 
   const publicClient = usePublicClient({ chainId });
 
-  // Fetch deposit amounts from getDeposit
-  const { data: depositAmountMap, refetch: refetchDeposits } = useQuery({
+  // Fetch deposit data from getDeposit (includes both amount and delegatedAmount)
+  const { data: depositMap, refetch: refetchDeposits } = useQuery({
     queryKey: [
       'restake',
       'delegate',
@@ -137,7 +144,10 @@ const RestakeDelegateForm: FC = () => {
       tokenAddresses.map((t) => t.toLowerCase()).sort(),
     ],
     queryFn: async () => {
-      const map = new Map<string, bigint>();
+      const map = new Map<
+        string,
+        { amount: bigint; delegatedAmount: bigint }
+      >();
 
       if (!publicClient || !contracts || !userAddress) {
         return map;
@@ -152,14 +162,18 @@ const RestakeDelegateForm: FC = () => {
             args: [userAddress, token],
           })) as { amount: bigint; delegatedAmount: bigint };
 
-          return { token, amount: deposit.amount };
+          return {
+            token,
+            amount: deposit.amount,
+            delegatedAmount: deposit.delegatedAmount,
+          };
         }),
       );
 
       for (const result of results) {
         if (result.status === 'fulfilled') {
-          const { token, amount } = result.value;
-          map.set(token.toLowerCase(), amount);
+          const { token, amount, delegatedAmount } = result.value;
+          map.set(token.toLowerCase(), { amount, delegatedAmount });
         }
       }
 
@@ -176,63 +190,33 @@ const RestakeDelegateForm: FC = () => {
     retry: 2,
   });
 
-  // Fetch actual delegated amounts from getDelegations (getDeposit.delegatedAmount is not reliable)
-  const { data: delegatedAmountMap, refetch: refetchDelegations } = useQuery({
-    queryKey: ['restake', 'delegate', 'delegations', chainId, userAddress],
-    queryFn: async () => {
-      const map = new Map<string, bigint>();
-
-      if (!publicClient || !contracts || !userAddress) {
-        return map;
-      }
-
-      type DelegationInfo = {
-        operator: Address;
-        shares: bigint;
-        asset: { kind: number; token: Address };
-        selectionMode: number;
-      };
-
-      const delegations = (await publicClient.readContract({
-        address: contracts.multiAssetDelegation,
-        abi: MULTI_ASSET_DELEGATION_ABI,
-        functionName: 'getDelegations',
-        args: [userAddress],
-      })) as DelegationInfo[];
-
-      // Sum shares by token to get total delegated amount per token
-      for (const delegation of delegations) {
-        const tokenKey = delegation.asset.token.toLowerCase();
-        const existing = map.get(tokenKey) ?? BigInt(0);
-        map.set(tokenKey, existing + delegation.shares);
-      }
-
-      return map;
-    },
-    enabled:
-      Boolean(publicClient) && Boolean(contracts) && Boolean(userAddress),
-    staleTime: 2_000,
-    refetchInterval: 2_000,
-    refetchIntervalInBackground: true,
-    retry: 2,
-  });
-
-  // Combine deposit and delegation data
-  const depositMap = useMemo(() => {
-    const map = new Map<string, { amount: bigint; delegatedAmount: bigint }>();
-
-    if (!depositAmountMap) return map;
-
-    for (const [token, amount] of depositAmountMap.entries()) {
-      const delegatedAmount = delegatedAmountMap?.get(token) ?? BigInt(0);
-      map.set(token, { amount, delegatedAmount });
-    }
-
-    return map;
-  }, [depositAmountMap, delegatedAmountMap]);
-
   const { status: delegateTxStatus, execute: executeDelegateTx } =
     useDelegateTx();
+
+  // Get operator addresses for fetching delegation info
+  const operatorAddresses = useMemo(() => {
+    if (!operatorMap) return [];
+    return Array.from(operatorMap.keys());
+  }, [operatorMap]);
+
+  // Fetch delegation info (canDelegate, mode, whitelist status) for all operators
+  const { delegationInfo, isLoading: isLoadingDelegationInfo } =
+    useCanDelegateToOperators({
+      operators: operatorAddresses,
+      delegator: userAddress,
+      enabled: operatorAddresses.length > 0 && !!userAddress,
+    });
+
+  // Check if current user can delegate to the selected operator
+  const {
+    canDelegate,
+    delegationMode: selectedOperatorDelegationMode,
+    isLoading: isCheckingCanDelegate,
+  } = useCanDelegate({
+    operator: selectedOperatorAddress as Address | undefined,
+    delegator: userAddress,
+    enabled: !!selectedOperatorAddress && !!userAddress,
+  });
 
   useEffect(() => {
     if (
@@ -343,15 +327,56 @@ const RestakeDelegateForm: FC = () => {
   const operators = useMemo<OperatorItem[]>(() => {
     if (!operatorMap) return [];
 
-    return Array.from(operatorMap.entries())
+    const operatorList = Array.from(operatorMap.entries())
       .filter(([, op]) => op.restakingStatus === 'ACTIVE')
-      .map(([address, op]) => ({
-        address,
-        stake: op.restakingStake ?? BigInt(0),
-        delegationCount: op.restakingDelegationCount ?? BigInt(0),
-        isActive: true,
-      }));
-  }, [operatorMap]);
+      .map(([address, op]) => {
+        const info = delegationInfo.get(address);
+        return {
+          address,
+          stake: op.restakingStake ?? BigInt(0),
+          delegationCount: op.restakingDelegationCount ?? BigInt(0),
+          isActive: true,
+          delegationMode: info?.delegationMode,
+          canDelegate: info?.canDelegate,
+        };
+      });
+
+    // Sort operators: Open first, then Whitelist (whitelisted), then Self-only/non-whitelisted
+    return operatorList.sort((a, b) => {
+      const aCanDelegate = a.canDelegate ?? false;
+      const bCanDelegate = b.canDelegate ?? false;
+      const aMode = a.delegationMode ?? DelegationMode.Disabled;
+      const bMode = b.delegationMode ?? DelegationMode.Disabled;
+
+      // First, prioritize operators user can delegate to
+      if (aCanDelegate && !bCanDelegate) return -1;
+      if (!aCanDelegate && bCanDelegate) return 1;
+
+      // Among delegatable operators, sort by mode: Open > Whitelist
+      if (aCanDelegate && bCanDelegate) {
+        if (aMode === DelegationMode.Open && bMode !== DelegationMode.Open)
+          return -1;
+        if (aMode !== DelegationMode.Open && bMode === DelegationMode.Open)
+          return 1;
+      }
+
+      // Among non-delegatable operators, sort by mode: Whitelist > Disabled
+      if (!aCanDelegate && !bCanDelegate) {
+        if (
+          aMode === DelegationMode.Whitelist &&
+          bMode === DelegationMode.Disabled
+        )
+          return -1;
+        if (
+          aMode === DelegationMode.Disabled &&
+          bMode === DelegationMode.Whitelist
+        )
+          return 1;
+      }
+
+      return 0;
+    });
+  }, [delegationInfo, operatorMap]);
 
   const selectedOperator = useMemo(() => {
     if (!selectedOperatorAddress || !operatorMap) return null;
@@ -404,15 +429,38 @@ const RestakeDelegateForm: FC = () => {
   }, [maxAmount, register, selectedAssetItem]);
 
   const displayError = useMemo(() => {
-    return errors.operatorAddress !== undefined || !selectedOperatorAddress
-      ? 'Select Operator'
-      : errors.assetId !== undefined || !selectedAssetId
-        ? 'Select Asset'
-        : !amount
-          ? 'Enter Amount'
-          : errors.amount !== undefined
-            ? 'Invalid Amount'
-            : undefined;
+    if (errors.operatorAddress !== undefined || !selectedOperatorAddress) {
+      return 'Select Operator';
+    }
+
+    // Check delegation eligibility after operator is selected
+    if (isCheckingCanDelegate) {
+      return 'Checking eligibility...';
+    }
+
+    if (canDelegate === false) {
+      if (selectedOperatorDelegationMode === DelegationMode.Disabled) {
+        return 'Operator not accepting delegations';
+      }
+      if (selectedOperatorDelegationMode === DelegationMode.Whitelist) {
+        return 'Not on operator whitelist';
+      }
+      return 'Cannot delegate to this operator';
+    }
+
+    if (errors.assetId !== undefined || !selectedAssetId) {
+      return 'Select Asset';
+    }
+
+    if (!amount) {
+      return 'Enter Amount';
+    }
+
+    if (errors.amount !== undefined) {
+      return 'Invalid Amount';
+    }
+
+    return undefined;
   }, [
     errors.operatorAddress,
     errors.assetId,
@@ -420,13 +468,20 @@ const RestakeDelegateForm: FC = () => {
     selectedOperatorAddress,
     selectedAssetId,
     amount,
+    canDelegate,
+    selectedOperatorDelegationMode,
+    isCheckingCanDelegate,
   ]);
 
   const isTransacting =
     isSubmitting || delegateTxStatus === TxStatus.PROCESSING;
 
   const isReady =
-    !isTransacting && selectedAssetItem !== null && executeDelegateTx !== null;
+    !isTransacting &&
+    selectedAssetItem !== null &&
+    executeDelegateTx !== null &&
+    canDelegate !== false &&
+    !isCheckingCanDelegate;
 
   const resetForm = useCallback(() => {
     setValue('amount', '', { shouldValidate: false });
@@ -454,7 +509,7 @@ const RestakeDelegateForm: FC = () => {
           blueprintSelection: blueprintSelection.length > 0 ? 'FIXED' : 'ALL',
           blueprintIds: blueprintSelection.map((id) => BigInt(id)),
         });
-        await Promise.all([refetchDeposits(), refetchDelegations()]);
+        await refetchDeposits();
         resetForm();
       } catch (error) {
         console.error('Transaction failed:', error);
@@ -465,7 +520,6 @@ const RestakeDelegateForm: FC = () => {
       executeDelegateTx,
       isReady,
       refetchDeposits,
-      refetchDelegations,
       resetForm,
       selectedAssetItem,
     ],
@@ -496,23 +550,56 @@ const RestakeDelegateForm: FC = () => {
                               value={selectedOperatorAddress}
                             />
                             <div className="flex flex-col">
-                              <Typography
-                                variant="h5"
-                                fw="bold"
-                                component="span"
-                                className="inline-block text-mono-200 dark:text-mono-40"
-                              >
-                                {shortenHex(selectedOperatorAddress)}
-                              </Typography>
+                              <div className="flex items-center gap-2">
+                                <Typography
+                                  variant="h5"
+                                  fw="bold"
+                                  component="span"
+                                  className="inline-block text-mono-200 dark:text-mono-40"
+                                >
+                                  {shortenHex(selectedOperatorAddress)}
+                                </Typography>
+                                {selectedOperatorDelegationMode !==
+                                  undefined && (
+                                  <Chip
+                                    color={
+                                      selectedOperatorDelegationMode ===
+                                      DelegationMode.Open
+                                        ? 'green'
+                                        : selectedOperatorDelegationMode ===
+                                            DelegationMode.Whitelist
+                                          ? 'yellow'
+                                          : 'dark-grey'
+                                    }
+                                  >
+                                    {selectedOperatorDelegationMode ===
+                                    DelegationMode.Open
+                                      ? 'Open'
+                                      : selectedOperatorDelegationMode ===
+                                          DelegationMode.Whitelist
+                                        ? 'Whitelist'
+                                        : 'Self Only'}
+                                  </Chip>
+                                )}
+                              </div>
                               <Typography
                                 variant="body3"
                                 component="span"
-                                className="text-mono-120 dark:text-mono-100"
+                                className={
+                                  canDelegate === false
+                                    ? 'text-red-500'
+                                    : 'text-mono-120 dark:text-mono-100'
+                                }
                               >
-                                {typeof selectedOperator?.restakingDelegationCount ===
-                                'bigint'
-                                  ? `${selectedOperator.restakingDelegationCount.toString()} total delegations`
-                                  : 'Operator'}
+                                {canDelegate === false
+                                  ? selectedOperatorDelegationMode ===
+                                    DelegationMode.Disabled
+                                    ? 'Not accepting delegations'
+                                    : 'Not on whitelist'
+                                  : typeof selectedOperator?.restakingDelegationCount ===
+                                      'bigint'
+                                    ? `${selectedOperator.restakingDelegationCount.toString()} total delegations`
+                                    : 'Operator'}
                               </Typography>
                             </div>
                           </div>
@@ -643,15 +730,24 @@ const RestakeDelegateForm: FC = () => {
         titleWhenEmpty="No Operators Available"
         descriptionWhenEmpty="Looks like there aren't any registered operators in this network yet."
         items={operators}
+        isLoading={isLoadingDelegationInfo}
         searchInputId="restake-delegate-operator-search"
         searchPlaceholder="Search operators..."
         getItemKey={(item) => item.address}
         onSelect={handleOnSelectOperator}
         filterItem={(item, query) => filterBy(query, [item.address])}
-        renderItem={({ address, delegationCount }) => (
+        isItemDisabled={(item) => item.canDelegate === false}
+        renderItem={({
+          address,
+          delegationCount,
+          delegationMode,
+          canDelegate: itemCanDelegate,
+        }) => (
           <OperatorListItem
             accountAddress={address}
             totalDelegations={delegationCount}
+            delegationMode={delegationMode}
+            isDisabled={itemCanDelegate === false}
           />
         )}
       />

@@ -28,9 +28,32 @@ const ABI = [
         internalType: 'uint64',
       },
       {
-        name: 'restakingPercent',
+        name: 'stakingPercent',
         type: 'uint8',
         internalType: 'uint8',
+      },
+    ],
+    outputs: [],
+    stateMutability: 'nonpayable',
+  },
+  {
+    type: 'function',
+    name: 'approveServiceWithBls',
+    inputs: [
+      {
+        name: 'requestId',
+        type: 'uint64',
+        internalType: 'uint64',
+      },
+      {
+        name: 'stakingPercent',
+        type: 'uint8',
+        internalType: 'uint8',
+      },
+      {
+        name: 'blsPubkey',
+        type: 'uint256[4]',
+        internalType: 'uint256[4]',
       },
     ],
     outputs: [],
@@ -73,6 +96,53 @@ const ABI = [
             internalType: 'uint16',
           },
         ],
+      },
+    ],
+    outputs: [],
+    stateMutability: 'nonpayable',
+  },
+  {
+    type: 'function',
+    name: 'approveServiceWithCommitmentsAndBls',
+    inputs: [
+      {
+        name: 'requestId',
+        type: 'uint64',
+        internalType: 'uint64',
+      },
+      {
+        name: 'commitments',
+        type: 'tuple[]',
+        internalType: 'struct Types.AssetSecurityCommitment[]',
+        components: [
+          {
+            name: 'asset',
+            type: 'tuple',
+            internalType: 'struct Types.Asset',
+            components: [
+              {
+                name: 'kind',
+                type: 'uint8',
+                internalType: 'enum Types.AssetKind',
+              },
+              {
+                name: 'token',
+                type: 'address',
+                internalType: 'address',
+              },
+            ],
+          },
+          {
+            name: 'exposureBps',
+            type: 'uint16',
+            internalType: 'uint16',
+          },
+        ],
+      },
+      {
+        name: 'blsPubkey',
+        type: 'uint256[4]',
+        internalType: 'uint256[4]',
       },
     ],
     outputs: [],
@@ -477,6 +547,26 @@ const ABI = [
         name: 'token',
         type: 'address',
         internalType: 'address',
+      },
+    ],
+    outputs: [],
+    stateMutability: 'nonpayable',
+  },
+  {
+    type: 'function',
+    name: 'claimRewardsAll',
+    inputs: [],
+    outputs: [],
+    stateMutability: 'nonpayable',
+  },
+  {
+    type: 'function',
+    name: 'claimRewardsBatch',
+    inputs: [
+      {
+        name: 'tokens',
+        type: 'address[]',
+        internalType: 'address[]',
       },
     ],
     outputs: [],
@@ -1791,6 +1881,30 @@ const ABI = [
   },
   {
     type: 'function',
+    name: 'getOperatorBlsPubkey',
+    inputs: [
+      {
+        name: 'serviceId',
+        type: 'uint64',
+        internalType: 'uint64',
+      },
+      {
+        name: 'operator',
+        type: 'address',
+        internalType: 'address',
+      },
+    ],
+    outputs: [
+      {
+        name: 'blsPubkey',
+        type: 'uint256[4]',
+        internalType: 'uint256[4]',
+      },
+    ],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
     name: 'getOperatorPreferences',
     inputs: [
       {
@@ -1890,17 +2004,26 @@ const ABI = [
             type: 'bool',
             internalType: 'bool',
           },
-          {
-            name: 'bondAmount',
-            type: 'uint256',
-            internalType: 'uint256',
-          },
-          {
-            name: 'bondToken',
-            type: 'address',
-            internalType: 'address',
-          },
         ],
+      },
+    ],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
+    name: 'getOperatorTotalActiveServices',
+    inputs: [
+      {
+        name: 'operator',
+        type: 'address',
+        internalType: 'address',
+      },
+    ],
+    outputs: [
+      {
+        name: 'count',
+        type: 'uint256',
+        internalType: 'uint256',
       },
     ],
     stateMutability: 'view',
@@ -2397,14 +2520,14 @@ const ABI = [
             internalType: 'address',
           },
           {
-            name: 'amount',
-            type: 'uint256',
-            internalType: 'uint256',
+            name: 'slashBps',
+            type: 'uint16',
+            internalType: 'uint16',
           },
           {
-            name: 'effectiveAmount',
-            type: 'uint256',
-            internalType: 'uint256',
+            name: 'effectiveSlashBps',
+            type: 'uint16',
+            internalType: 'uint16',
           },
           {
             name: 'evidence',
@@ -2646,32 +2769,6 @@ const ABI = [
   },
   {
     type: 'function',
-    name: 'operatorBlueprintBond',
-    inputs: [],
-    outputs: [
-      {
-        name: '',
-        type: 'uint256',
-        internalType: 'uint256',
-      },
-    ],
-    stateMutability: 'view',
-  },
-  {
-    type: 'function',
-    name: 'operatorBondToken',
-    inputs: [],
-    outputs: [
-      {
-        name: '',
-        type: 'address',
-        internalType: 'address',
-      },
-    ],
-    stateMutability: 'view',
-  },
-  {
-    type: 'function',
     name: 'operatorStatusRegistry',
     inputs: [],
     outputs: [
@@ -2711,7 +2808,7 @@ const ABI = [
         internalType: 'uint16',
       },
       {
-        name: 'restakerBps',
+        name: 'stakerBps',
         type: 'uint16',
         internalType: 'uint16',
       },
@@ -2802,9 +2899,9 @@ const ABI = [
         internalType: 'address',
       },
       {
-        name: 'amount',
-        type: 'uint256',
-        internalType: 'uint256',
+        name: 'slashBps',
+        type: 'uint16',
+        internalType: 'uint16',
       },
       {
         name: 'evidence',
@@ -2847,7 +2944,7 @@ const ABI = [
       },
     ],
     outputs: [],
-    stateMutability: 'payable',
+    stateMutability: 'nonpayable',
   },
   {
     type: 'function',
@@ -2870,7 +2967,7 @@ const ABI = [
       },
     ],
     outputs: [],
-    stateMutability: 'payable',
+    stateMutability: 'nonpayable',
   },
   {
     type: 'function',
@@ -3091,6 +3188,25 @@ const ABI = [
   },
   {
     type: 'function',
+    name: 'rewardTokens',
+    inputs: [
+      {
+        name: 'account',
+        type: 'address',
+        internalType: 'address',
+      },
+    ],
+    outputs: [
+      {
+        name: '',
+        type: 'address[]',
+        internalType: 'address[]',
+      },
+    ],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
     name: 'rewardVaults',
     inputs: [],
     outputs: [
@@ -3195,32 +3311,6 @@ const ABI = [
   },
   {
     type: 'function',
-    name: 'setOperatorBlueprintBond',
-    inputs: [
-      {
-        name: 'newBond',
-        type: 'uint256',
-        internalType: 'uint256',
-      },
-    ],
-    outputs: [],
-    stateMutability: 'nonpayable',
-  },
-  {
-    type: 'function',
-    name: 'setOperatorBondAsset',
-    inputs: [
-      {
-        name: 'token',
-        type: 'address',
-        internalType: 'address',
-      },
-    ],
-    outputs: [],
-    stateMutability: 'nonpayable',
-  },
-  {
-    type: 'function',
     name: 'setOperatorStatusRegistry',
     inputs: [
       {
@@ -3257,7 +3347,7 @@ const ABI = [
             internalType: 'uint16',
           },
           {
-            name: 'restakerBps',
+            name: 'stakerBps',
             type: 'uint16',
             internalType: 'uint16',
           },
@@ -3273,19 +3363,6 @@ const ABI = [
     inputs: [
       {
         name: 'oracle',
-        type: 'address',
-        internalType: 'address',
-      },
-    ],
-    outputs: [],
-    stateMutability: 'nonpayable',
-  },
-  {
-    type: 'function',
-    name: 'setRestaking',
-    inputs: [
-      {
-        name: 'restaking',
         type: 'address',
         internalType: 'address',
       },
@@ -3344,12 +3421,12 @@ const ABI = [
   },
   {
     type: 'function',
-    name: 'setTntPaymentDiscountBps',
+    name: 'setStaking',
     inputs: [
       {
-        name: 'discountBps',
-        type: 'uint16',
-        internalType: 'uint16',
+        name: 'staking',
+        type: 'address',
+        internalType: 'address',
       },
     ],
     outputs: [],
@@ -3357,10 +3434,10 @@ const ABI = [
   },
   {
     type: 'function',
-    name: 'setTntRestakerFeeBps',
+    name: 'setTntPaymentDiscountBps',
     inputs: [
       {
-        name: 'feeBps',
+        name: 'discountBps',
         type: 'uint16',
         internalType: 'uint16',
       },
@@ -3523,19 +3600,6 @@ const ABI = [
   {
     type: 'function',
     name: 'tntPaymentDiscountBps',
-    inputs: [],
-    outputs: [
-      {
-        name: '',
-        type: 'uint16',
-        internalType: 'uint16',
-      },
-    ],
-    stateMutability: 'view',
-  },
-  {
-    type: 'function',
-    name: 'tntRestakerFeeBps',
     inputs: [],
     outputs: [
       {
@@ -3962,44 +4026,13 @@ const ABI = [
         internalType: 'address',
       },
       {
-        name: 'amount',
-        type: 'uint256',
-        indexed: false,
-        internalType: 'uint256',
-      },
-    ],
-    anonymous: false,
-  },
-  {
-    type: 'event',
-    name: 'RewardsDistributed',
-    inputs: [
-      {
-        name: 'serviceId',
-        type: 'uint64',
+        name: 'token',
+        type: 'address',
         indexed: true,
-        internalType: 'uint64',
+        internalType: 'address',
       },
       {
-        name: 'developerAmount',
-        type: 'uint256',
-        indexed: false,
-        internalType: 'uint256',
-      },
-      {
-        name: 'protocolAmount',
-        type: 'uint256',
-        indexed: false,
-        internalType: 'uint256',
-      },
-      {
-        name: 'operatorAmount',
-        type: 'uint256',
-        indexed: false,
-        internalType: 'uint256',
-      },
-      {
-        name: 'restakerAmount',
+        name: 'amount',
         type: 'uint256',
         indexed: false,
         internalType: 'uint256',
@@ -4117,47 +4150,6 @@ const ABI = [
         indexed: true,
         internalType: 'address',
       },
-      {
-        name: 'operators',
-        type: 'address[]',
-        indexed: false,
-        internalType: 'address[]',
-      },
-      {
-        name: 'securityRequirements',
-        type: 'tuple[]',
-        indexed: false,
-        internalType: 'struct Types.AssetSecurityRequirement[]',
-        components: [
-          {
-            name: 'asset',
-            type: 'tuple',
-            internalType: 'struct Types.Asset',
-            components: [
-              {
-                name: 'kind',
-                type: 'uint8',
-                internalType: 'enum Types.AssetKind',
-              },
-              {
-                name: 'token',
-                type: 'address',
-                internalType: 'address',
-              },
-            ],
-          },
-          {
-            name: 'minExposureBps',
-            type: 'uint16',
-            internalType: 'uint16',
-          },
-          {
-            name: 'maxExposureBps',
-            type: 'uint16',
-            internalType: 'uint16',
-          },
-        ],
-      },
     ],
     anonymous: false,
   },
@@ -4216,10 +4208,10 @@ const ABI = [
         internalType: 'address',
       },
       {
-        name: 'amount',
-        type: 'uint256',
+        name: 'slashBps',
+        type: 'uint16',
         indexed: false,
-        internalType: 'uint256',
+        internalType: 'uint16',
       },
       {
         name: 'evidence',
