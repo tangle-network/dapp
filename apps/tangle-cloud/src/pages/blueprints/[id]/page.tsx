@@ -6,7 +6,13 @@ import { useBlueprintDetails } from '@tangle-network/tangle-shared-ui/data/graph
 import { ErrorFallback } from '@tangle-network/ui-components/components/ErrorFallback';
 import SkeletonLoader from '@tangle-network/ui-components/components/SkeletonLoader';
 import { Typography } from '@tangle-network/ui-components/typography/Typography';
-import { type FC, type PropsWithChildren, useCallback, useMemo, useState } from 'react';
+import {
+  type FC,
+  type PropsWithChildren,
+  useCallback,
+  useMemo,
+  useState,
+} from 'react';
 import { Link, useNavigate, Navigate } from 'react-router-dom';
 import { PagePath, TangleDAppPagePath } from '../../../types';
 import pollWithBackoff from '../../../utils/pollWithBackoff';

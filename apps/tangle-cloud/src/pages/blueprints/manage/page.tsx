@@ -73,7 +73,8 @@ const ManageBlueprintsPage: FC = () => {
 
       // Return rollback function
       if (previousData) {
-        return () => queryClient.setQueryData<OwnedBlueprint[]>(cacheKey, previousData);
+        return () =>
+          queryClient.setQueryData<OwnedBlueprint[]>(cacheKey, previousData);
       }
       return null;
     },
@@ -92,7 +93,8 @@ const ManageBlueprintsPage: FC = () => {
 
       // Return rollback function
       if (previousData) {
-        return () => queryClient.setQueryData<OwnedBlueprint[]>(cacheKey, previousData);
+        return () =>
+          queryClient.setQueryData<OwnedBlueprint[]>(cacheKey, previousData);
       }
       return null;
     },
