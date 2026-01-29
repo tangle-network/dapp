@@ -16,6 +16,8 @@ import { FC, useCallback, useState } from 'react';
 import { useAccount, useWalletClient } from 'wagmi';
 import { hashMessage, recoverPublicKey } from 'viem';
 import { TangleDAppPagePath } from '../../../types';
+import { TxName } from '../../../constants';
+import useTxNotification from '../../../hooks/useTxNotification';
 import StepNavigation from './components/StepNavigation';
 import ConfigureStep from './steps/ConfigureStep';
 import ReviewStep from './steps/ReviewStep';
@@ -42,6 +44,7 @@ const RegistrationDrawer: FC<RegistrationDrawerProps> = ({
     useOperator(activeAccount);
   const { registerOperator, status: registerTxStatus } =
     useRegisterOperatorTx();
+  const { notifyProcessing, notifySuccess, notifyError } = useTxNotification();
 
   const isActiveOperator = operator?.restakingStatus === 'ACTIVE';
 
@@ -61,6 +64,7 @@ const RegistrationDrawer: FC<RegistrationDrawerProps> = ({
     }
 
     setIsSubmitting(true);
+    const totalBlueprints = blueprints.length;
 
     try {
       const rpcUrl = form.getValues('rpcUrl') || '';
@@ -75,8 +79,17 @@ const RegistrationDrawer: FC<RegistrationDrawerProps> = ({
 
       let successCount = 0;
 
-      for (const blueprint of blueprints) {
+      for (let i = 0; i < blueprints.length; i++) {
+        const blueprint = blueprints[i];
         const blueprintId = BigInt(blueprint.id);
+
+        // Show processing notification with step counter for multiple blueprints
+        notifyProcessing(
+          TxName.REGISTER_BLUEPRINT,
+          totalBlueprints > 1
+            ? { current: i + 1, total: totalBlueprints }
+            : undefined,
+        );
 
         // TODO: Encode registration args based on blueprint schema if needed
         // For now, pass empty bytes - works for blueprints without registration params
@@ -94,11 +107,21 @@ const RegistrationDrawer: FC<RegistrationDrawerProps> = ({
       }
 
       if (successCount > 0) {
+        const successMessage =
+          successCount === totalBlueprints
+            ? `Successfully registered for ${successCount} blueprint${successCount > 1 ? 's' : ''}`
+            : `Registered for ${successCount} of ${totalBlueprints} blueprints`;
+
+        notifySuccess(TxName.REGISTER_BLUEPRINT, null, successMessage);
         reset();
         onRegistrationComplete?.();
       }
     } catch (error) {
       console.error('Registration failed:', error);
+      notifyError(
+        TxName.REGISTER_BLUEPRINT,
+        error instanceof Error ? error : new Error('Registration failed'),
+      );
     } finally {
       setIsSubmitting(false);
     }
@@ -110,6 +133,9 @@ const RegistrationDrawer: FC<RegistrationDrawerProps> = ({
     registerOperator,
     reset,
     onRegistrationComplete,
+    notifyProcessing,
+    notifySuccess,
+    notifyError,
   ]);
 
   const handleNext = useCallback(async () => {
