@@ -6,15 +6,10 @@ import { useBlueprintDetails } from '@tangle-network/tangle-shared-ui/data/graph
 import { ErrorFallback } from '@tangle-network/ui-components/components/ErrorFallback';
 import SkeletonLoader from '@tangle-network/ui-components/components/SkeletonLoader';
 import { Typography } from '@tangle-network/ui-components/typography/Typography';
-import {
-  type FC,
-  type PropsWithChildren,
-  useCallback,
-  useMemo,
-  useState,
-} from 'react';
+import { type FC, type PropsWithChildren, useCallback, useMemo, useState } from 'react';
 import { Link, useNavigate, Navigate } from 'react-router-dom';
 import { PagePath, TangleDAppPagePath } from '../../../types';
+import pollWithBackoff from '../../../utils/pollWithBackoff';
 import RegistrationDrawer from '../RegistrationDrawer';
 import useOperatorInfo from '@tangle-network/tangle-shared-ui/hooks/useOperatorInfo';
 import useParamWithSchema from '@tangle-network/tangle-shared-ui/hooks/useParamWithSchema';
@@ -52,10 +47,22 @@ const Page = () => {
 
   const handleRegistrationComplete = useCallback(async () => {
     setIsDrawerOpen(false);
-    // Wait for indexer to process, then refetch to get updated data
-    await new Promise((resolve) => setTimeout(resolve, 5000));
-    await refetch();
-  }, [refetch]);
+
+    // Poll with exponential backoff until indexer reflects the new registration
+    await pollWithBackoff(async () => {
+      await refetch();
+
+      // Check if the user is now in the operators list
+      if (!result || !userAddress) {
+        return false;
+      }
+
+      return result.operators.some(
+        (operator) =>
+          operator.address.toLowerCase() === userAddress.toLowerCase(),
+      );
+    });
+  }, [refetch, userAddress, result]);
 
   if (isLoading) {
     return (

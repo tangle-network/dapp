@@ -14,6 +14,7 @@ import { FC, useCallback, useMemo, useState } from 'react';
 import { twMerge } from 'tailwind-merge';
 import useRoleStore, { Role } from '../../stores/roleStore';
 import { PagePath } from '../../types';
+import pollWithBackoff from '../../utils/pollWithBackoff';
 import BlueprintListing from './BlueprintListing';
 import RegistrationDrawer from './RegistrationDrawer';
 
@@ -55,12 +56,32 @@ const Page: FC = () => {
   const selectedBlueprintCount = Object.keys(selectedBlueprints).length;
 
   const handleRegistrationComplete = useCallback(async () => {
+    // Capture current operator counts before clearing selection
+    const previousCounts = new Map<string, number>();
+    for (const bp of selectedBlueprints) {
+      previousCounts.set(bp.id.toString(), bp.operatorsCount ?? 0);
+    }
+
     setRowSelection({});
     setIsDrawerOpen(false);
-    // Wait for indexer to process, then refetch to get updated operator counts
-    await new Promise((resolve) => setTimeout(resolve, 5000));
-    await refetch();
-  }, [refetch]);
+
+    // Poll with exponential backoff until indexer reflects the new registration
+    await pollWithBackoff(async () => {
+      await refetch();
+
+      // Check if any of the registered blueprints have increased operator count
+      for (const [id, previousCount] of previousCounts) {
+        const currentBlueprint = blueprints.get(id);
+        const currentCount = currentBlueprint?.operatorsCount ?? 0;
+
+        if (currentCount > previousCount) {
+          return true;
+        }
+      }
+
+      return false;
+    });
+  }, [refetch, selectedBlueprints, blueprints]);
 
   const handleRemoveBlueprint = useCallback((blueprintId: string) => {
     setRowSelection((prev) => {
