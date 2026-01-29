@@ -1,4 +1,3 @@
-import { PlusIcon } from '@radix-ui/react-icons';
 import { RowSelectionState } from '@tanstack/table-core';
 import RestakeBanner from '@tangle-network/tangle-shared-ui/components/blueprints/RestakeBanner';
 import {
@@ -15,7 +14,6 @@ import { BLUEPRINT_DOCS_LINK } from '@tangle-network/ui-components/constants/tan
 import pluralize from '@tangle-network/ui-components/utils/pluralize';
 import { AnimatePresence, motion } from 'framer-motion';
 import { FC, useCallback, useMemo, useState } from 'react';
-import { Link } from 'react-router-dom';
 import { twMerge } from 'tailwind-merge';
 import useRoleStore, { Role } from '../../stores/roleStore';
 import BlueprintListing from './BlueprintListing';
@@ -110,12 +108,6 @@ const Page: FC = () => {
         >
           Available Blueprints
         </Typography>
-
-        <Link to={PagePath.BLUEPRINTS_CREATE}>
-          <Button leftIcon={<PlusIcon className="w-4 h-4" />}>
-            Create Blueprint
-          </Button>
-        </Link>
       </div>
 
       <BlueprintListing

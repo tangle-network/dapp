@@ -28,7 +28,6 @@ import {
   flexRender,
 } from '@tanstack/react-table';
 import { EditLine } from '@tangle-network/icons';
-import { PlusIcon } from '@radix-ui/react-icons';
 import {
   useBlueprintsByOwner,
   useDeactivateBlueprintTx,
@@ -219,12 +218,6 @@ const ManageBlueprintsPage: FC = () => {
             View and manage blueprints you have created.
           </Typography>
         </div>
-
-        <Link to={PagePath.BLUEPRINTS_CREATE}>
-          <Button leftIcon={<PlusIcon className="w-4 h-4" />}>
-            Create Blueprint
-          </Button>
-        </Link>
       </div>
 
       {/* Blueprints Table */}

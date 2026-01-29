@@ -19,7 +19,8 @@ import RewardsPage from '../pages/rewards/page';
 import RewardsLayout from '../pages/rewards/layout';
 import EarningsPage from '../pages/earnings/page';
 import EarningsLayout from '../pages/earnings/layout';
-import CreateBlueprintPage from '../pages/blueprints/create/page';
+// TODO: Re-enable when blueprint creation UI is properly implemented
+// import CreateBlueprintPage from '../pages/blueprints/create/page';
 import ManageBlueprintsPage from '../pages/blueprints/manage/page';
 import NotFoundPage from '../pages/notFound';
 import { FC } from 'react';
@@ -63,6 +64,7 @@ const App: FC = () => {
               }
             />
 
+            {/* TODO: Re-enable when blueprint creation UI is properly implemented
             <Route
               path={PagePath.BLUEPRINTS_CREATE}
               element={
@@ -71,6 +73,7 @@ const App: FC = () => {
                 </BlueprintsLayout>
               }
             />
+            */}
 
             <Route
               path={PagePath.BLUEPRINTS_MANAGE}
