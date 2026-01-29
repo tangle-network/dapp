@@ -46,12 +46,10 @@ const Page: FC = () => {
     ownedBlueprints !== undefined && ownedBlueprints.length > 0;
 
   const selectedBlueprints = useMemo(() => {
-    return (
-      Object.keys(rowSelection)
-        .filter((blueprintId) => rowSelection[blueprintId])
-        .map((blueprintId) => blueprints.get(blueprintId))
-        .filter((blueprint) => blueprint !== undefined)
-    );
+    return Object.keys(rowSelection)
+      .filter((blueprintId) => rowSelection[blueprintId])
+      .map((blueprintId) => blueprints.get(blueprintId))
+      .filter((blueprint) => blueprint !== undefined);
   }, [blueprints, rowSelection]);
 
   const selectedBlueprintCount = Object.keys(selectedBlueprints).length;

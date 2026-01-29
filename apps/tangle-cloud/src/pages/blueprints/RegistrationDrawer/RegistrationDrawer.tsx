@@ -185,7 +185,10 @@ const RegistrationDrawer: FC<RegistrationDrawerProps> = ({
           />
 
           <div className="space-y-4">
-            <Typography variant="body2" className="text-mono-120 dark:text-mono-100">
+            <Typography
+              variant="body2"
+              className="text-mono-120 dark:text-mono-100"
+            >
               To become an active operator:
             </Typography>
 

@@ -44,10 +44,8 @@ const useRegistrationForm = ({
   // Sync blueprintConfigs when blueprints change (e.g., when removing a blueprint)
   useEffect(() => {
     const currentConfigs = form.getValues('blueprintConfigs');
-    const updatedConfigs: Record<
-      string,
-      { params: Record<string, unknown> }
-    > = {};
+    const updatedConfigs: Record<string, { params: Record<string, unknown> }> =
+      {};
 
     for (const blueprint of blueprints) {
       const blueprintId = blueprint.id.toString();

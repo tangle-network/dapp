@@ -10,7 +10,11 @@ type ReviewStepProps = {
   isSubmitting: boolean;
 };
 
-const ReviewStep: FC<ReviewStepProps> = ({ blueprints, form, isSubmitting }) => {
+const ReviewStep: FC<ReviewStepProps> = ({
+  blueprints,
+  form,
+  isSubmitting,
+}) => {
   const rpcUrl = form.watch('rpcUrl');
   const blueprintConfigs = form.watch('blueprintConfigs');
 

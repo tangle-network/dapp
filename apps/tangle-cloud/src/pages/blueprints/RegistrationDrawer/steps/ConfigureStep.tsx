@@ -44,8 +44,7 @@ const ConfigureStep: FC<ConfigureStepProps> = ({ blueprints, form }) => {
           variant="body2"
           className="text-mono-120 dark:text-mono-100"
         >
-          Configure your RPC URL and registration parameters for each
-          blueprint.
+          Configure your RPC URL and registration parameters for each blueprint.
         </Typography>
       </div>
 
