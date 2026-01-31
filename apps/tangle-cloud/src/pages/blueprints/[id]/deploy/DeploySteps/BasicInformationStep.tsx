@@ -92,7 +92,8 @@ export const BasicInformationStep: FC<BasicInformationStepProps> = ({
               variant="body2"
               className="text-mono-100 dark:text-mono-100"
             >
-              Use 0 for perpetual service, or minimum 3600 (1 hour). Max: 31536000 (365 days)
+              Use 0 for perpetual service, or minimum 3600 (1 hour). Max:
+              31536000 (365 days)
             </Typography>
             {errors?.instanceDuration && (
               <ErrorMessage>{errors.instanceDuration.message}</ErrorMessage>

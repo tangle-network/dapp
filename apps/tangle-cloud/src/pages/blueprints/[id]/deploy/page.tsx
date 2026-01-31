@@ -111,7 +111,8 @@ const DeployPage: FC = () => {
 
       // Get payment configuration
       const paymentToken = validatedData.paymentAsset?.id ?? zeroAddress;
-      const paymentDecimals = validatedData.paymentAsset?.metadata?.decimals ?? 18;
+      const paymentDecimals =
+        validatedData.paymentAsset?.metadata?.decimals ?? 18;
       const paymentAmount = parseUnits(
         validatedData.paymentAmount ?? '0',
         paymentDecimals,

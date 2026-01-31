@@ -80,11 +80,16 @@ const fetchServices = async (
   const where: string[] = [];
   if (options.owner) {
     console.log('[DEBUG fetchServices] owner input:', options.owner);
-    console.log('[DEBUG fetchServices] owner lowercase:', options.owner.toLowerCase());
+    console.log(
+      '[DEBUG fetchServices] owner lowercase:',
+      options.owner.toLowerCase(),
+    );
     where.push(`owner: { _eq: "${options.owner.toLowerCase()}" }`);
   }
   if (options.operator) {
-    where.push(`operators: { _contains: ["${options.operator.toLowerCase()}"] }`);
+    where.push(
+      `operators: { _contains: ["${options.operator.toLowerCase()}"] }`,
+    );
   }
   if (options.status) {
     where.push(`status: { _eq: "${options.status}" }`);
@@ -166,7 +171,9 @@ const fetchServiceRequests = async (
     where.push(`requester: { _eq: "${options.requester.toLowerCase()}" }`);
   }
   if (options.operator) {
-    where.push(`operatorCandidates: { _contains: ["${options.operator.toLowerCase()}"] }`);
+    where.push(
+      `operatorCandidates: { _contains: ["${options.operator.toLowerCase()}"] }`,
+    );
   }
   if (options.status) {
     where.push(`status: { _eq: "${options.status}" }`);
