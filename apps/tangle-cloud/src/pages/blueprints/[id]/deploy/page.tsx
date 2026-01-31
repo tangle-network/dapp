@@ -16,6 +16,7 @@ import {
   useServiceRequestTx,
   encodeServiceConfig,
   type ServiceRequestParams,
+  type AssetSecurityRequirement,
 } from '@tangle-network/tangle-shared-ui/data/graphql';
 import { Deployment } from './DeploySteps/Deployment';
 import { twMerge } from 'tailwind-merge';
@@ -23,7 +24,9 @@ import ErrorMessage from '../../../../components/ErrorMessage';
 import { z } from 'zod';
 import { PagePath } from '../../../../types';
 import useParamWithSchema from '@tangle-network/tangle-shared-ui/hooks/useParamWithSchema';
-import { zeroAddress } from 'viem';
+import { zeroAddress, parseUnits } from 'viem';
+import { TxName } from '../../../../constants';
+import useTxNotification from '../../../../hooks/useTxNotification';
 
 const DeployPage: FC = () => {
   const id = useParamWithSchema('id', z.coerce.bigint());
@@ -40,6 +43,8 @@ const DeployPage: FC = () => {
     isSuccess: serviceRequestSuccess,
     isPending: serviceRequestPending,
   } = useServiceRequestTx();
+
+  const { notifyProcessing, notifySuccess, notifyError } = useTxNotification();
 
   const {
     watch,
@@ -63,9 +68,11 @@ const DeployPage: FC = () => {
       setError,
       clearErrors,
       blueprint: blueprintResult?.details,
+      blueprintOperators: blueprintResult?.operators,
     }),
     [
       blueprintResult?.details,
+      blueprintResult?.operators,
       control,
       errors,
       setError,
@@ -104,10 +111,34 @@ const DeployPage: FC = () => {
 
       // Get payment configuration
       const paymentToken = validatedData.paymentAsset?.id ?? zeroAddress;
-      const paymentAmount = BigInt(validatedData.paymentAmount ?? '0');
+      const paymentDecimals = validatedData.paymentAsset?.metadata?.decimals ?? 18;
+      const paymentAmount = parseUnits(
+        validatedData.paymentAmount ?? '0',
+        paymentDecimals,
+      );
 
       // Encode service configuration from request args
       const config = encodeServiceConfig(validatedData.requestArgs ?? []);
+
+      // Build security requirements from assets and security commitments
+      // Convert percentages to basis points (multiply by 100)
+      let securityRequirements: AssetSecurityRequirement[] | undefined;
+      if (
+        validatedData.assets?.length > 0 &&
+        validatedData.securityCommitments?.length > 0
+      ) {
+        securityRequirements = validatedData.assets.map((asset, index) => {
+          const commitment = validatedData.securityCommitments[index];
+          return {
+            asset: {
+              kind: 1, // AssetKind.ERC20
+              token: asset.id,
+            },
+            minExposureBps: (commitment?.minExposurePercent ?? 0) * 100,
+            maxExposureBps: (commitment?.maxExposurePercent ?? 100) * 100,
+          };
+        });
+      }
 
       const params: ServiceRequestParams = {
         blueprintId: id ?? BigInt(0),
@@ -117,9 +148,18 @@ const DeployPage: FC = () => {
         ttl,
         paymentToken,
         paymentAmount,
+        securityRequirements,
       };
 
-      await serviceRequestTx(params);
+      notifyProcessing(TxName.DEPLOY_BLUEPRINT);
+
+      const result = await serviceRequestTx(params);
+
+      if (result.error) {
+        notifyError(TxName.DEPLOY_BLUEPRINT, result.error);
+      } else if (result.txHash) {
+        notifySuccess(TxName.DEPLOY_BLUEPRINT);
+      }
     } catch (error) {
       if (error instanceof z.ZodError) {
         error.errors.forEach((err) => {
@@ -128,11 +168,11 @@ const DeployPage: FC = () => {
             message: err.message,
           });
         });
-      } else if (error instanceof Error) {
-        setError('requestArgs', {
-          type: 'manual',
-          message: error.message,
-        });
+      } else {
+        notifyError(
+          TxName.DEPLOY_BLUEPRINT,
+          error instanceof Error ? error : new Error('Deployment failed'),
+        );
       }
     }
   };

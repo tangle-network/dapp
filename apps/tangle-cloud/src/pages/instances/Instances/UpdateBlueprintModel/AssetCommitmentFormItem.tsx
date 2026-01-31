@@ -38,13 +38,13 @@ export const AssetCommitmentFormItem: FC<AssetCommitmentFormItemProps> = ({
         />
         <div className="flex items-center gap-2">
           <LsTokenIcon
-            name={assetMetadata?.name ?? 'TNT'}
+            name={assetMetadata?.symbol ?? 'TNT'}
             hasRainbowBorder
             size="lg"
           />
 
           <Typography variant="h5" className="whitespace-nowrap">
-            {assetMetadata?.name ?? 'TNT'}
+            {assetMetadata?.name ?? 'Unknown'}
           </Typography>
         </div>
       </div>

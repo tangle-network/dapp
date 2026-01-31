@@ -409,8 +409,9 @@ const fetchBlueprintOperators = async (
   blueprintId: string,
   network?: EnvioNetwork,
 ): Promise<BlueprintOperator[]> => {
+  // Note: blueprintId in the GraphQL schema is type `numeric`, not `String`
   const query = `
-    query GetBlueprintOperators($blueprintId: String!) {
+    query GetBlueprintOperators($blueprintId: numeric!) {
       OperatorBlueprint(
         where: { blueprint: { blueprintId: { _eq: $blueprintId } } }
       ) {
@@ -436,8 +437,8 @@ const fetchBlueprintOperators = async (
           };
         }>;
       },
-      { blueprintId: string }
-    >(query, { blueprintId }, network);
+      { blueprintId: number }
+    >(query, { blueprintId: Number(blueprintId) }, network);
 
     return (result.data.OperatorBlueprint ?? []).map((ob) => ({
       address: ob.operator.id,

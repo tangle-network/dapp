@@ -75,19 +75,25 @@ export const BasicInformationStep: FC<BasicInformationStepProps> = ({
           </div>
 
           <div className="space-y-2">
-            <Label className={LabelClassName}>Instance Duration</Label>
+            <Label className={LabelClassName}>Instance Duration (TTL)</Label>
             <Input
               id="instanceDuration"
               isControlled
               inputClassName="placeholder:text-mono-80 dark:placeholder:text-mono-120 h-10"
-              placeholder="Enter instance duration"
+              placeholder="Enter instance duration in seconds"
               autoComplete="off"
               type="number"
-              min={1}
+              min={0}
               value={instanceDuration?.toString()}
-              rightIcon={<>Block(s)</>}
+              rightIcon={<>Seconds</>}
               onChange={(nextValue) => handleInstanceDurationChange(nextValue)}
             />
+            <Typography
+              variant="body2"
+              className="text-mono-100 dark:text-mono-100"
+            >
+              Use 0 for perpetual service, or minimum 3600 (1 hour). Max: 31536000 (365 days)
+            </Typography>
             {errors?.instanceDuration && (
               <ErrorMessage>{errors.instanceDuration.message}</ErrorMessage>
             )}

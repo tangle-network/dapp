@@ -91,6 +91,7 @@ export {
   type ServiceRequestParams,
   type ServiceRequestStatus,
   type ServiceRequestResult,
+  type AssetSecurityRequirement,
 } from './useServiceRequest';
 
 // Services/Instances

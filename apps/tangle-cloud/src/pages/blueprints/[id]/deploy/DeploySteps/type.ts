@@ -9,6 +9,7 @@ import {
 import { Blueprint } from '@tangle-network/tangle-shared-ui/types/blueprint';
 import { VaultToken } from '@tangle-network/tangle-shared-ui/types';
 import { Address } from 'viem';
+import { BlueprintOperator } from '@tangle-network/tangle-shared-ui/data/graphql';
 
 export const LabelClassName = 'text-mono-200 dark:text-mono-0 font-medium';
 
@@ -17,6 +18,7 @@ export type BaseDeployStepProps = {
   setValue: UseFormSetValue<DeployBlueprintSchema>;
   watch: UseFormWatch<DeployBlueprintSchema>;
   blueprint?: Blueprint;
+  blueprintOperators?: BlueprintOperator[];
   setError: UseFormSetError<DeployBlueprintSchema>;
   clearErrors: UseFormClearErrors<DeployBlueprintSchema>;
 };
