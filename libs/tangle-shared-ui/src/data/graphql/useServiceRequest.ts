@@ -9,12 +9,24 @@ import TangleABI from '../../abi/tangle';
 import { getContractsByChainId } from '@tangle-network/dapp-config/contracts';
 
 /**
+ * Asset kind for security requirements.
+ * Matches the Tangle contract's AssetKind enum.
+ */
+export enum AssetKind {
+  Native = 0,
+  ERC20 = 1,
+}
+
+/** Conversion factor from percentage to basis points (1% = 100 bps) */
+export const PERCENT_TO_BASIS_POINTS = 100;
+
+/**
  * Asset security requirement for requestServiceWithSecurity.
  * Exposure values are in basis points (1% = 100 bps).
  */
 export interface AssetSecurityRequirement {
   asset: {
-    kind: number; // AssetKind enum: 0 = Native, 1 = ERC20
+    kind: AssetKind;
     token: Address;
   };
   minExposureBps: number;

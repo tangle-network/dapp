@@ -15,6 +15,8 @@ import {
   useBlueprintDetails,
   useServiceRequestTx,
   encodeServiceConfig,
+  AssetKind,
+  PERCENT_TO_BASIS_POINTS,
   type ServiceRequestParams,
   type AssetSecurityRequirement,
 } from '@tangle-network/tangle-shared-ui/data/graphql';
@@ -122,7 +124,6 @@ const DeployPage: FC = () => {
       const config = encodeServiceConfig(validatedData.requestArgs ?? []);
 
       // Build security requirements from assets and security commitments
-      // Convert percentages to basis points (multiply by 100)
       let securityRequirements: AssetSecurityRequirement[] | undefined;
       if (
         validatedData.assets?.length > 0 &&
@@ -132,11 +133,13 @@ const DeployPage: FC = () => {
           const commitment = validatedData.securityCommitments[index];
           return {
             asset: {
-              kind: 1, // AssetKind.ERC20
+              kind: AssetKind.ERC20,
               token: asset.id,
             },
-            minExposureBps: (commitment?.minExposurePercent ?? 0) * 100,
-            maxExposureBps: (commitment?.maxExposurePercent ?? 100) * 100,
+            minExposureBps:
+              (commitment?.minExposurePercent ?? 0) * PERCENT_TO_BASIS_POINTS,
+            maxExposureBps:
+              (commitment?.maxExposurePercent ?? 100) * PERCENT_TO_BASIS_POINTS,
           };
         });
       }
