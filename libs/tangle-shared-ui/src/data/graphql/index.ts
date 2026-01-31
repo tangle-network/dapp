@@ -88,6 +88,8 @@ export {
 export {
   useServiceRequestTx,
   encodeServiceConfig,
+  AssetKind,
+  PERCENT_TO_BASIS_POINTS,
   type ServiceRequestParams,
   type ServiceRequestStatus,
   type ServiceRequestResult,

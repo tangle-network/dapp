@@ -79,11 +79,6 @@ const fetchServices = async (
 ): Promise<Service[]> => {
   const where: string[] = [];
   if (options.owner) {
-    console.log('[DEBUG fetchServices] owner input:', options.owner);
-    console.log(
-      '[DEBUG fetchServices] owner lowercase:',
-      options.owner.toLowerCase(),
-    );
     where.push(`owner: { _eq: "${options.owner.toLowerCase()}" }`);
   }
   if (options.operator) {
@@ -139,8 +134,6 @@ const fetchServices = async (
   if (result.errors?.length) {
     console.error('GraphQL errors:', result.errors);
   }
-
-  console.log('[DEBUG fetchServices] raw result:', result.data.Service);
 
   return (result.data.Service ?? []).map((s) => ({
     id: s.id,
