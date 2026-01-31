@@ -3,10 +3,23 @@
  */
 
 import { useCallback, useState } from 'react';
-import { Address, encodeFunctionData, parseEventLogs, zeroAddress } from 'viem';
+import { Address, parseEventLogs, zeroAddress } from 'viem';
 import { useAccount, usePublicClient, useWalletClient } from 'wagmi';
 import TangleABI from '../../abi/tangle';
 import { getContractsByChainId } from '@tangle-network/dapp-config/contracts';
+
+/**
+ * Asset security requirement for requestServiceWithSecurity.
+ * Exposure values are in basis points (1% = 100 bps).
+ */
+export interface AssetSecurityRequirement {
+  asset: {
+    kind: number; // AssetKind enum: 0 = Native, 1 = ERC20
+    token: Address;
+  };
+  minExposureBps: number;
+  maxExposureBps: number;
+}
 
 export interface ServiceRequestParams {
   blueprintId: bigint;
@@ -16,6 +29,11 @@ export interface ServiceRequestParams {
   ttl: bigint;
   paymentToken: Address;
   paymentAmount: bigint;
+  /**
+   * Optional security requirements for the service.
+   * When provided, requestServiceWithSecurity() is called instead of requestService().
+   */
+  securityRequirements?: AssetSecurityRequirement[];
 }
 
 export type ServiceRequestStatus = 'idle' | 'pending' | 'success' | 'error';
@@ -62,29 +80,59 @@ export const useServiceRequestTx = () => {
           throw new Error('Tangle contract not available on this network');
         }
 
-        // Request service via Tangle contract
+        // Determine which contract function to use based on security requirements
+        const hasSecurityRequirements =
+          params.securityRequirements && params.securityRequirements.length > 0;
+
         // Use type assertion to avoid "union type too complex" error from large ABI
-        const { request: simulateRequest } = await (
-          publicClient as any
-        ).simulateContract({
-          address: tangleAddress,
-          abi: TangleABI,
-          functionName: 'requestService' as const,
-          args: [
-            params.blueprintId,
-            params.operators,
-            params.config,
-            params.permittedCallers,
-            params.ttl,
-            params.paymentToken,
-            params.paymentAmount,
-          ] as const,
-          account: userAddress,
-          value:
-            params.paymentToken === zeroAddress
-              ? params.paymentAmount
-              : BigInt(0),
-        });
+        let simulateRequest;
+
+        if (hasSecurityRequirements) {
+          // Use requestServiceWithSecurity when security requirements are provided
+          const result = await (publicClient as any).simulateContract({
+            address: tangleAddress,
+            abi: TangleABI,
+            functionName: 'requestServiceWithSecurity' as const,
+            args: [
+              params.blueprintId,
+              params.operators,
+              params.securityRequirements,
+              params.config,
+              params.permittedCallers,
+              params.ttl,
+              params.paymentToken,
+              params.paymentAmount,
+            ] as const,
+            account: userAddress,
+            value:
+              params.paymentToken === zeroAddress
+                ? params.paymentAmount
+                : BigInt(0),
+          });
+          simulateRequest = result.request;
+        } else {
+          // Use requestService when no security requirements
+          const result = await (publicClient as any).simulateContract({
+            address: tangleAddress,
+            abi: TangleABI,
+            functionName: 'requestService' as const,
+            args: [
+              params.blueprintId,
+              params.operators,
+              params.config,
+              params.permittedCallers,
+              params.ttl,
+              params.paymentToken,
+              params.paymentAmount,
+            ] as const,
+            account: userAddress,
+            value:
+              params.paymentToken === zeroAddress
+                ? params.paymentAmount
+                : BigInt(0),
+          });
+          simulateRequest = result.request;
+        }
 
         const txHash = await walletClient.writeContract(simulateRequest);
 
@@ -146,29 +194,22 @@ export const useServiceRequestTx = () => {
 
 /**
  * Encode service configuration/request args for the requestService call.
- * This function should encode the request arguments based on the blueprint's schema.
+ * Contract expects TLV binary format. For blueprints with no request params,
+ * return empty bytes (0x). For blueprints with request params, throw an error
+ * as full TLV encoding is not yet implemented.
  */
 export const encodeServiceConfig = (requestArgs: unknown[]): `0x${string}` => {
-  // TODO: Implement proper encoding based on blueprint requestParams schema
-  // For now, return empty bytes
-  if (requestArgs.length === 0) {
+  // For blueprints with no request params, return empty bytes
+  if (!requestArgs || requestArgs.length === 0) {
     return '0x';
   }
 
-  // Basic encoding - this will need to be customized based on the blueprint
-  const encoded = encodeFunctionData({
-    abi: [
-      {
-        type: 'function',
-        name: 'config',
-        inputs: [{ type: 'bytes', name: 'data' }],
-      },
-    ],
-    functionName: 'config',
-    args: [JSON.stringify(requestArgs)],
-  });
-
-  return encoded;
+  // TODO: Implement full TLV encoding for blueprints with request params
+  // For now, throw error to prevent silent failures with incorrect encoding
+  throw new Error(
+    'Blueprints with request parameters are not yet supported. ' +
+      'Request argument encoding requires TLV binary format implementation.',
+  );
 };
 
 export default useServiceRequestTx;

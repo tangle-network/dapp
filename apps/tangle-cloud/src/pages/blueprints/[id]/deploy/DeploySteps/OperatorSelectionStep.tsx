@@ -21,7 +21,6 @@ import LsTokenIcon from '@tangle-network/tangle-shared-ui/components/LsTokenIcon
 import { OperatorTable } from './components/OperatorTable';
 import { DeployBlueprintSchema } from '../../../../../utils/validations/deployBlueprint';
 import {
-  useOperatorMap,
   useRestakeAssets,
   type RestakeAsset,
 } from '@tangle-network/tangle-shared-ui/data/graphql';
@@ -33,7 +32,7 @@ export const SelectOperatorsStep: FC<SelectOperatorsStepProps> = ({
   errors,
   setValue,
   watch,
-  blueprint: _blueprint,
+  blueprintOperators,
 }) => {
   const [rowSelection, setRowSelection] = useState<RowSelectionState>(
     watch(`operators`)?.reduce((acc, operator) => {
@@ -44,33 +43,22 @@ export const SelectOperatorsStep: FC<SelectOperatorsStepProps> = ({
 
   const [searchQuery, setSearchQuery] = useState('');
 
-  // Fetch operators from GraphQL indexer
-  const { data: operatorMap } = useOperatorMap();
-
   // Fetch restaking assets from GraphQL indexer
   const { assets: assetMap } = useRestakeAssets();
 
-  // Get operators registered for this blueprint
+  // Use operators registered for this blueprint from the parent component
   const operators = useMemo<OperatorSelectionTable[]>(() => {
-    if (!operatorMap) return [];
+    if (!blueprintOperators || blueprintOperators.length === 0) return [];
 
-    // For now, use all operators - blueprint filtering not yet available from indexer
-    const filteredOperators = Array.from(operatorMap.values());
-
-    return filteredOperators.map((operator) => {
-      // Calculate total stake value from restaking stake
-      const restakingStake = operator.restakingStake ?? BigInt(0);
-      // TODO: Get actual USD value from price feed
-      const totalStakeValue = 0;
-
+    return blueprintOperators.map((operator) => {
       return {
-        address: operator.id as Address,
-        identityName: undefined, // Not yet available from indexer
-        restakersCount: Number(operator.restakingDelegationCount ?? BigInt(0)),
-        vaultTokensInUsd: totalStakeValue,
-        selfBondedAmount: restakingStake,
-        vaultTokens: [], // TODO: Get from delegations when available
-        instanceCount: 0, // TODO: Get from services when available
+        address: operator.address as Address,
+        identityName: operator.identityName,
+        restakersCount: operator.restakersCount,
+        vaultTokensInUsd: operator.tvlInUsd ?? 0,
+        selfBondedAmount: operator.selfBondedAmount,
+        vaultTokens: operator.vaultTokens,
+        instanceCount: operator.instanceCount,
         uptime: 100, // TODO: Get from metrics
         pricing: {
           cpu: 0,
@@ -79,7 +67,7 @@ export const SelectOperatorsStep: FC<SelectOperatorsStepProps> = ({
         },
       };
     });
-  }, [operatorMap]);
+  }, [blueprintOperators]);
 
   const selectedAssets = watch('assets');
   const approvalModel = watch('approvalModel');
@@ -187,7 +175,7 @@ export const SelectOperatorsStep: FC<SelectOperatorsStepProps> = ({
                             .map((asset) => (
                               <div>
                                 <LsTokenIcon
-                                  name={asset.metadata?.name ?? 'TNT'}
+                                  name={asset.metadata?.symbol ?? 'TNT'}
                                   size="md"
                                 />
                               </div>
@@ -213,6 +201,8 @@ export const SelectOperatorsStep: FC<SelectOperatorsStepProps> = ({
             <SelectContent>
               {Children.toArray(
                 allAssets.map((asset) => {
+                  const name = asset.metadata.name || 'Unknown';
+                  const symbol = asset.metadata.symbol || 'TNT';
                   return (
                     <SelectCheckboxItem
                       onChange={(e) => onSelectAsset(asset, e.target.checked)}
@@ -223,13 +213,8 @@ export const SelectOperatorsStep: FC<SelectOperatorsStepProps> = ({
                       spacingClassName="ml-0"
                     >
                       <div className="flex items-center gap-2">
-                        <LsTokenIcon
-                          name={asset.metadata.name ?? 'TNT'}
-                          size="md"
-                        />
-                        <Typography variant="body1">
-                          {asset.metadata.name ?? 'TNT'}
-                        </Typography>
+                        <LsTokenIcon name={symbol} size="md" />
+                        <Typography variant="body1">{name}</Typography>
                       </div>
                     </SelectCheckboxItem>
                   );

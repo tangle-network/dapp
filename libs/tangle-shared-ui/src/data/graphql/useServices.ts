@@ -20,10 +20,8 @@ export interface Service {
   owner: Address;
   status: ServiceStatus;
   operators: Address[];
-  permittedCallers: Address[];
-  ttl: bigint;
   createdAt: bigint;
-  updatedAt: bigint;
+  terminatedAt: bigint | null;
 }
 
 // Service request from indexer
@@ -32,7 +30,7 @@ export interface ServiceRequest {
   requestId: bigint;
   blueprintId: bigint;
   requester: Address;
-  operators: Address[];
+  operatorCandidates: Address[];
   status: 'PENDING' | 'APPROVED' | 'REJECTED';
   createdAt: bigint;
 }
@@ -42,14 +40,16 @@ interface ServiceQueryResponse {
   Service: Array<{
     id: string;
     serviceId: string;
-    blueprintId: string;
+    blueprint_id: string;
     owner: string;
     status: string;
-    operators: string[];
-    permittedCallers: string[];
-    ttl: string;
     createdAt: string;
-    updatedAt: string;
+    terminatedAt: string | null;
+    serviceOperators: Array<{
+      operator: {
+        id: string;
+      };
+    }>;
   }>;
 }
 
@@ -57,9 +57,9 @@ interface ServiceRequestQueryResponse {
   ServiceRequest: Array<{
     id: string;
     requestId: string;
-    blueprintId: string;
+    blueprint_id: string;
     requester: string;
-    operators: string[];
+    operatorCandidates: string[];
     status: string;
     createdAt: string;
   }>;
@@ -79,16 +79,23 @@ const fetchServices = async (
 ): Promise<Service[]> => {
   const where: string[] = [];
   if (options.owner) {
-    where.push(`owner: { _eq: "${options.owner}" }`);
+    console.log('[DEBUG fetchServices] owner input:', options.owner);
+    console.log(
+      '[DEBUG fetchServices] owner lowercase:',
+      options.owner.toLowerCase(),
+    );
+    where.push(`owner: { _eq: "${options.owner.toLowerCase()}" }`);
   }
   if (options.operator) {
-    where.push(`operators: { _contains: ["${options.operator}"] }`);
+    where.push(
+      `operators: { _contains: ["${options.operator.toLowerCase()}"] }`,
+    );
   }
   if (options.status) {
     where.push(`status: { _eq: "${options.status}" }`);
   }
   if (options.blueprintId !== undefined) {
-    where.push(`blueprintId: { _eq: "${options.blueprintId}" }`);
+    where.push(`blueprint_id: { _eq: "${options.blueprintId}" }`);
   }
 
   const whereClause = where.length > 0 ? `where: { ${where.join(', ')} }` : '';
@@ -103,14 +110,16 @@ const fetchServices = async (
       ) {
         id
         serviceId
-        blueprintId
+        blueprint_id
         owner
         status
-        operators
-        permittedCallers
-        ttl
         createdAt
-        updatedAt
+        terminatedAt
+        serviceOperators {
+          operator {
+            id
+          }
+        }
       }
     }
   `;
@@ -131,17 +140,17 @@ const fetchServices = async (
     console.error('GraphQL errors:', result.errors);
   }
 
+  console.log('[DEBUG fetchServices] raw result:', result.data.Service);
+
   return (result.data.Service ?? []).map((s) => ({
     id: s.id,
     serviceId: BigInt(s.serviceId),
-    blueprintId: BigInt(s.blueprintId),
+    blueprintId: BigInt(s.blueprint_id),
     owner: s.owner as Address,
     status: s.status as ServiceStatus,
-    operators: s.operators as Address[],
-    permittedCallers: s.permittedCallers as Address[],
-    ttl: BigInt(s.ttl),
+    operators: s.serviceOperators.map((so) => so.operator.id as Address),
     createdAt: BigInt(s.createdAt),
-    updatedAt: BigInt(s.updatedAt),
+    terminatedAt: s.terminatedAt ? BigInt(s.terminatedAt) : null,
   }));
 };
 
@@ -159,16 +168,18 @@ const fetchServiceRequests = async (
 ): Promise<ServiceRequest[]> => {
   const where: string[] = [];
   if (options.requester) {
-    where.push(`requester: { _eq: "${options.requester}" }`);
+    where.push(`requester: { _eq: "${options.requester.toLowerCase()}" }`);
   }
   if (options.operator) {
-    where.push(`operators: { _contains: ["${options.operator}"] }`);
+    where.push(
+      `operatorCandidates: { _contains: ["${options.operator.toLowerCase()}"] }`,
+    );
   }
   if (options.status) {
     where.push(`status: { _eq: "${options.status}" }`);
   }
   if (options.blueprintId !== undefined) {
-    where.push(`blueprintId: { _eq: "${options.blueprintId}" }`);
+    where.push(`blueprint_id: { _eq: "${options.blueprintId}" }`);
   }
 
   const whereClause = where.length > 0 ? `where: { ${where.join(', ')} }` : '';
@@ -183,9 +194,9 @@ const fetchServiceRequests = async (
       ) {
         id
         requestId
-        blueprintId
+        blueprint_id
         requester
-        operators
+        operatorCandidates
         status
         createdAt
       }
@@ -211,9 +222,9 @@ const fetchServiceRequests = async (
   return (result.data.ServiceRequest ?? []).map((r) => ({
     id: r.id,
     requestId: BigInt(r.requestId),
-    blueprintId: BigInt(r.blueprintId),
+    blueprintId: BigInt(r.blueprint_id),
     requester: r.requester as Address,
-    operators: r.operators as Address[],
+    operatorCandidates: r.operatorCandidates as Address[],
     status: r.status as 'PENDING' | 'APPROVED' | 'REJECTED',
     createdAt: BigInt(r.createdAt),
   }));
@@ -314,7 +325,14 @@ export const useOperatorStats = (
   });
 
   return useQuery({
-    queryKey: ['envio', 'operatorStats', operator, network],
+    queryKey: [
+      'envio',
+      'operatorStats',
+      operator,
+      network,
+      activeServices?.length,
+      pendingRequests?.length,
+    ],
     queryFn: async () => {
       if (!operator) return null;
 
@@ -338,7 +356,7 @@ export const useOperatorStats = (
           }>;
         },
         { operator: string }
-      >(blueprintQuery, { operator }, network);
+      >(blueprintQuery, { operator: operator.toLowerCase() }, network);
 
       return {
         registeredBlueprints:

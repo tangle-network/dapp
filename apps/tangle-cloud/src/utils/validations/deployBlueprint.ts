@@ -40,7 +40,13 @@ export type AssetSchema = z.infer<typeof assetSchema>;
 export const deployBlueprintSchema = z
   .object({
     instanceName: z.string().min(1),
-    instanceDuration: z.number().min(1),
+    // TTL in seconds: 0 for perpetual, or minimum 3600 (1 hour), max 31536000 (365 days)
+    instanceDuration: z
+      .number()
+      .refine((val) => val === 0 || (val >= 3600 && val <= 31536000), {
+        message:
+          'Duration must be 0 (perpetual) or between 3600 (1 hour) and 31536000 (365 days) seconds',
+      }),
     permittedCallers: z.array(z.string()).transform((value, context) => {
       if (value.length === 0) {
         context.addIssue({

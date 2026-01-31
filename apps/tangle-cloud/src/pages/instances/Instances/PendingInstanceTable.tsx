@@ -231,10 +231,10 @@ export const PendingInstanceTable: FC<PendingInstanceTableProps> = ({
       );
     } else {
       baseColumns.push(
-        columnHelper.accessor('operators', {
+        columnHelper.accessor('operatorCandidates', {
           header: 'Operators',
           cell: (props) => {
-            const operators = props.row.original.operators;
+            const operators = props.row.original.operatorCandidates;
             return (
               <TableCellWrapper className="p-0 min-h-fit">
                 <div className="flex -space-x-2">

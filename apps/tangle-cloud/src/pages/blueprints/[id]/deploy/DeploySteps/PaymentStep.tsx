@@ -72,11 +72,12 @@ export const PaymentStep: FC<PaymentStepProps> = ({
                       asset.metadata.name && asset.metadata.name.trim() !== '',
                   )
                   .map((asset) => {
-                    const name = asset.metadata.name || 'TNT';
+                    const name = asset.metadata.name || 'Unknown';
+                    const symbol = asset.metadata.symbol || 'TNT';
                     return (
                       <SelectItem value={asset.id} id={asset.id}>
                         <div className="flex items-center gap-2">
-                          <LsTokenIcon name={name} size="md" />
+                          <LsTokenIcon name={symbol} size="md" />
                           <Typography variant="body1">{name}</Typography>
                         </div>
                       </SelectItem>
