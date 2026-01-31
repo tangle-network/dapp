@@ -30,7 +30,7 @@ export interface ServiceRequest {
   requestId: bigint;
   blueprintId: bigint;
   requester: Address;
-  operators: Address[];
+  operatorCandidates: Address[];
   status: 'PENDING' | 'APPROVED' | 'REJECTED';
   createdAt: bigint;
 }
@@ -57,9 +57,9 @@ interface ServiceRequestQueryResponse {
   ServiceRequest: Array<{
     id: string;
     requestId: string;
-    blueprintId: string;
+    blueprint_id: string;
     requester: string;
-    operators: string[];
+    operatorCandidates: string[];
     status: string;
     createdAt: string;
   }>;
@@ -90,7 +90,7 @@ const fetchServices = async (
     where.push(`status: { _eq: "${options.status}" }`);
   }
   if (options.blueprintId !== undefined) {
-    where.push(`blueprintId: { _eq: "${options.blueprintId}" }`);
+    where.push(`blueprint_id: { _eq: "${options.blueprintId}" }`);
   }
 
   const whereClause = where.length > 0 ? `where: { ${where.join(', ')} }` : '';
@@ -166,13 +166,13 @@ const fetchServiceRequests = async (
     where.push(`requester: { _eq: "${options.requester.toLowerCase()}" }`);
   }
   if (options.operator) {
-    where.push(`operators: { _contains: ["${options.operator.toLowerCase()}"] }`);
+    where.push(`operatorCandidates: { _contains: ["${options.operator.toLowerCase()}"] }`);
   }
   if (options.status) {
     where.push(`status: { _eq: "${options.status}" }`);
   }
   if (options.blueprintId !== undefined) {
-    where.push(`blueprintId: { _eq: "${options.blueprintId}" }`);
+    where.push(`blueprint_id: { _eq: "${options.blueprintId}" }`);
   }
 
   const whereClause = where.length > 0 ? `where: { ${where.join(', ')} }` : '';
@@ -187,9 +187,9 @@ const fetchServiceRequests = async (
       ) {
         id
         requestId
-        blueprintId
+        blueprint_id
         requester
-        operators
+        operatorCandidates
         status
         createdAt
       }
@@ -215,9 +215,9 @@ const fetchServiceRequests = async (
   return (result.data.ServiceRequest ?? []).map((r) => ({
     id: r.id,
     requestId: BigInt(r.requestId),
-    blueprintId: BigInt(r.blueprintId),
+    blueprintId: BigInt(r.blueprint_id),
     requester: r.requester as Address,
-    operators: r.operators as Address[],
+    operatorCandidates: r.operatorCandidates as Address[],
     status: r.status as 'PENDING' | 'APPROVED' | 'REJECTED',
     createdAt: BigInt(r.createdAt),
   }));
@@ -318,7 +318,14 @@ export const useOperatorStats = (
   });
 
   return useQuery({
-    queryKey: ['envio', 'operatorStats', operator, network],
+    queryKey: [
+      'envio',
+      'operatorStats',
+      operator,
+      network,
+      activeServices?.length,
+      pendingRequests?.length,
+    ],
     queryFn: async () => {
       if (!operator) return null;
 
