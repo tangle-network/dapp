@@ -17,9 +17,10 @@ export type ServiceRequestContext = {
 
 // Duration unit constants
 export const DURATION_UNITS = {
+  seconds: { label: 'Seconds', seconds: 1 },
+  minutes: { label: 'Minutes', seconds: 60 },
   hours: { label: 'Hours', seconds: 3600 },
   days: { label: 'Days', seconds: 86400 },
-  weeks: { label: 'Weeks', seconds: 604800 },
 } as const;
 
 export type DurationUnit = keyof typeof DURATION_UNITS;
@@ -38,17 +39,20 @@ export const fromSeconds = (
   seconds: number,
 ): { value: number; unit: DurationUnit } => {
   if (seconds === 0) {
-    return { value: 0, unit: 'hours' };
+    return { value: 0, unit: 'seconds' };
   }
 
-  // Try to find the best unit (prefer whole numbers)
-  if (seconds % DURATION_UNITS.weeks.seconds === 0) {
-    return { value: seconds / DURATION_UNITS.weeks.seconds, unit: 'weeks' };
-  }
+  // Try to find the best unit (prefer whole numbers, largest unit first)
   if (seconds % DURATION_UNITS.days.seconds === 0) {
     return { value: seconds / DURATION_UNITS.days.seconds, unit: 'days' };
   }
-  return { value: seconds / DURATION_UNITS.hours.seconds, unit: 'hours' };
+  if (seconds % DURATION_UNITS.hours.seconds === 0) {
+    return { value: seconds / DURATION_UNITS.hours.seconds, unit: 'hours' };
+  }
+  if (seconds % DURATION_UNITS.minutes.seconds === 0) {
+    return { value: seconds / DURATION_UNITS.minutes.seconds, unit: 'minutes' };
+  }
+  return { value: seconds, unit: 'seconds' };
 };
 
 // Get min/max values for a given unit
@@ -89,8 +93,8 @@ export const deployBlueprintSchema = z
     instanceName: z.string().min(1),
     // Duration value in the selected unit (hours/days/weeks)
     instanceDuration: z.number().min(0),
-    // Duration unit (defaults to hours)
-    durationUnit: z.enum(['hours', 'days', 'weeks']).default('hours'),
+    // Duration unit (defaults to seconds)
+    durationUnit: z.enum(['seconds', 'minutes', 'hours', 'days']).default('seconds'),
     permittedCallers: z.array(z.string()).transform((value, context) => {
       if (value.length === 0) {
         context.addIssue({

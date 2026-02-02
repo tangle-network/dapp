@@ -33,7 +33,7 @@ export const BasicInformationStep: FC<BasicInformationStepProps> = ({
   const permittedCallers = watch('permittedCallers');
   const instanceName = watch('instanceName');
   const instanceDuration = watch('instanceDuration');
-  const durationUnit = watch('durationUnit') ?? 'hours';
+  const durationUnit = watch('durationUnit') ?? 'seconds';
 
   const constraints = useMemo(
     () => getDurationConstraints(durationUnit),
@@ -131,7 +131,7 @@ export const BasicInformationStep: FC<BasicInformationStepProps> = ({
               className="text-mono-100 dark:text-mono-100"
             >
               Use 0 for perpetual service, or {constraints.min}-{constraints.max}{' '}
-              {durationUnit} (1 hour to 365 days)
+              {durationUnit}
             </Typography>
             {errors?.instanceDuration && (
               <ErrorMessage>{errors.instanceDuration.message}</ErrorMessage>

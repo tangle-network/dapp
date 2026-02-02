@@ -61,7 +61,7 @@ const DeployPage: FC = () => {
     // @ts-expect-error Two different types with this name exist, but they are unrelated.
     resolver: zodResolver(deployBlueprintSchema),
     defaultValues: {
-      durationUnit: 'hours',
+      durationUnit: 'seconds',
       instanceDuration: 0,
     },
   });
