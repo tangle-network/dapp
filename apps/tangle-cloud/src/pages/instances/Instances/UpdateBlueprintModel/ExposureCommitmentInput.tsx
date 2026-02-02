@@ -86,7 +86,7 @@ export const ExposureCommitmentInput: FC<ExposureCommitmentInputProps> = ({
       )}
     >
       {/* Asset info section */}
-      <div className="flex items-center gap-3 flex-shrink-0 min-w-[160px]">
+      <div className="flex items-center gap-3 flex-shrink-0 lg:w-[200px]">
         <LsTokenIcon
           name={displaySymbol}
           hasRainbowBorder

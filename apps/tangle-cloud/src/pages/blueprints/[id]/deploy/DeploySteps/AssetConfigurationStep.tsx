@@ -61,8 +61,12 @@ export const AssetConfigurationStep: FC<AssetConfigurationStepProps> = ({
 
     let errorMsg: string | null = null;
 
-    // TODO: Handle native asset validation when native asset support is added
-    if (minExposurePercent > maxExposurePercent) {
+    // Exposure percent must be at least 1% (contract rejects 0)
+    if (minExposurePercent < 1) {
+      errorMsg = 'Minimum exposure percent must be at least 1%';
+    } else if (maxExposurePercent < 1) {
+      errorMsg = 'Maximum exposure percent must be at least 1%';
+    } else if (minExposurePercent > maxExposurePercent) {
       errorMsg = 'Minimum exposure percent cannot exceed maximum';
     }
 

@@ -122,7 +122,7 @@ export const BasicInformationStep: FC<BasicInformationStepProps> = ({
                     }
                     className="flex-grow"
                     inputClassName="placeholder:text-mono-80 dark:placeholder:text-mono-120 h-10 w-full"
-                    placeholder="Enter permitted caller"
+                    placeholder="Enter wallet address (0x...)"
                     autoComplete="off"
                   />
                   <Button
@@ -146,8 +146,7 @@ export const BasicInformationStep: FC<BasicInformationStepProps> = ({
             variant="utility"
             onClick={() => {
               const newPermittedCaller = permittedCallers ?? [];
-              // Adding placeholder address that user will fill in
-              newPermittedCaller.push('0x' as Address);
+              newPermittedCaller.push('' as Address);
               setValue(`permittedCallers`, newPermittedCaller);
             }}
             className="mt-4"
