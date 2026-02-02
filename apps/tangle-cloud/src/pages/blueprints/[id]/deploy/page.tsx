@@ -8,6 +8,7 @@ import { useForm } from 'react-hook-form';
 import {
   DeployBlueprintSchema,
   deployBlueprintSchema,
+  toSeconds,
 } from '../../../../utils/validations/deployBlueprint';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useNavigate } from 'react-router';
@@ -113,7 +114,11 @@ const DeployPage: FC = () => {
       // Operators are already Address[] from the schema
       const operators = validatedData.operators ?? [];
       const permittedCallers = validatedData.permittedCallers ?? [];
-      const ttl = BigInt(validatedData.instanceDuration ?? 0);
+      const ttlInSeconds =
+        validatedData.instanceDuration === 0
+          ? 0
+          : toSeconds(validatedData.instanceDuration, validatedData.durationUnit);
+      const ttl = BigInt(ttlInSeconds);
 
       // Get payment configuration
       const paymentToken = validatedData.paymentAsset?.id ?? zeroAddress;
