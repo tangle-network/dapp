@@ -37,6 +37,7 @@ import { twMerge } from 'tailwind-merge';
 import { Address } from 'viem';
 import { useAccount } from 'wagmi';
 import { RestakeAction } from '../../constants';
+import { ClaimableRewardsCard } from '../../components/restaking';
 import BlueprintListing from '../../pages/blueprints/BlueprintListing';
 import RestakeDelegateForm from '../../pages/restake/delegate';
 import DepositForm from '../../pages/restake/deposit/DepositForm';
@@ -78,17 +79,27 @@ const RestakeOverviewTabs: FC<Props> = ({
     >
       <TabContent
         value={RestakeTab.RESTAKE}
-        className="flex justify-center md:min-w-[480px] mx-auto"
+        className="w-full max-w-5xl mx-auto"
       >
-        {action === RestakeAction.DEPOSIT ? (
-          <DepositForm />
-        ) : action === RestakeAction.WITHDRAW ? (
-          <RestakeWithdrawForm />
-        ) : action === RestakeAction.DELEGATE ? (
-          <RestakeDelegateForm />
-        ) : action === RestakeAction.UNDELEGATE ? (
-          <RestakeUndelegateForm />
-        ) : null}
+        <div className="grid grid-cols-1 lg:grid-cols-[1fr_340px] gap-6">
+          {/* Left column - Action forms */}
+          <div className="flex justify-center">
+            {action === RestakeAction.DEPOSIT ? (
+              <DepositForm />
+            ) : action === RestakeAction.WITHDRAW ? (
+              <RestakeWithdrawForm />
+            ) : action === RestakeAction.DELEGATE ? (
+              <RestakeDelegateForm />
+            ) : action === RestakeAction.UNDELEGATE ? (
+              <RestakeUndelegateForm />
+            ) : null}
+          </div>
+
+          {/* Right column - Rewards card */}
+          <div className="lg:pt-0">
+            <ClaimableRewardsCard />
+          </div>
+        </div>
       </TabContent>
 
       <TabContent value={RestakeTab.VAULTS}>

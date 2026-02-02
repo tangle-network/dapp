@@ -23,6 +23,7 @@ export enum PagePath {
   RESTAKE_VAULT = '/restake/vaults',
   RESTAKE_BLUEPRINT = '/restake/blueprints',
   RESTAKE_OPERATOR = '/restake/operators',
+  RESTAKE_REWARDS = '/restake/rewards',
   LIQUID_STAKING = '/liquid-staking',
   LIQUID_STAKING_DEPOSIT = '/liquid-staking/deposit',
   LIQUID_STAKING_REDEEM = '/liquid-staking/redeem',

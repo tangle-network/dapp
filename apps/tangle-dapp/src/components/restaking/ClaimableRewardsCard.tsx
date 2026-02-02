@@ -3,7 +3,7 @@
  * Follows EigenLayer-style dashboard design.
  */
 
-import { FC, useCallback, useState } from 'react';
+import { FC, useCallback, useMemo, useState } from 'react';
 import {
   Card,
   CardVariant,
@@ -11,10 +11,15 @@ import {
   Button,
   SkeletonLoader,
   EMPTY_VALUE_PLACEHOLDER,
+  InfoIconWithTooltip,
 } from '@tangle-network/ui-components';
 import { twMerge } from 'tailwind-merge';
 import useUserRestakingStats from '../../data/restaking/useUserRestakingStats';
-import useClaimDelegatorRewardsTx from '../../data/restaking/useClaimDelegatorRewardsTx';
+import {
+  usePendingRewards,
+  useClaimRewardsTx,
+  useExpectedRewards,
+} from '../../data/rewards';
 import { TxStatus } from '@tangle-network/tangle-shared-ui/hooks/useContractWrite';
 
 interface StatRowProps {
@@ -22,6 +27,7 @@ interface StatRowProps {
   value: string;
   symbol?: string;
   isLoading?: boolean;
+  tooltip?: string;
 }
 
 const StatRow: FC<StatRowProps> = ({
@@ -29,11 +35,16 @@ const StatRow: FC<StatRowProps> = ({
   value,
   symbol = 'TNT',
   isLoading,
+  tooltip,
 }) => (
   <div className="flex items-center justify-between py-2">
-    <Typography variant="body2" className="text-mono-100 dark:text-mono-100">
-      {label}
-    </Typography>
+    <div className="flex items-center gap-1">
+      <Typography variant="body2" className="text-mono-100 dark:text-mono-100">
+        {label}
+      </Typography>
+
+      {tooltip && <InfoIconWithTooltip content={tooltip} />}
+    </div>
 
     {isLoading ? (
       <SkeletonLoader className="h-5 w-20" />
@@ -51,29 +62,97 @@ const StatRow: FC<StatRowProps> = ({
 
 const ClaimableRewardsCard: FC = () => {
   const { data: stats, isLoading, refetch } = useUserRestakingStats();
-  const { execute: claimRewards, status, reset } = useClaimDelegatorRewardsTx();
+  const {
+    data: pendingRewardsData,
+    isLoading: isPendingRewardsLoading,
+    refetch: refetchPendingRewards,
+  } = usePendingRewards();
+  const {
+    data: expectedRewards,
+    isLoading: isExpectedRewardsLoading,
+    refetch: refetchExpectedRewards,
+  } = useExpectedRewards();
+  const { execute: claimRewards, status, reset } = useClaimRewardsTx();
   const [isClaiming, setIsClaiming] = useState(false);
 
   const hasRewards = stats && stats.pendingRewards > BigInt(0);
   const isClaimingTx = status === TxStatus.PROCESSING;
 
+  // Get the first vault with rewards for claiming (simplest case)
+  // In production, you might want to claim from all vaults
+  const claimableVault = useMemo(() => {
+    if (!pendingRewardsData?.vaults || pendingRewardsData.vaults.length === 0) {
+      return null;
+    }
+    return pendingRewardsData.vaults[0];
+  }, [pendingRewardsData]);
+
   const handleClaimRewards = useCallback(async () => {
-    if (!claimRewards || !hasRewards) {
+    if (!claimRewards || !hasRewards || !claimableVault) {
       return;
     }
 
     setIsClaiming(true);
     try {
-      await claimRewards();
+      // Claim from the first vault's operators
+      const operators = claimableVault.rewards.map((r) => r.operator);
+      await claimRewards({
+        asset: claimableVault.asset,
+        operators,
+      });
       // Wait a bit then refetch stats
       setTimeout(() => {
         refetch();
+        refetchPendingRewards();
+        refetchExpectedRewards();
         reset();
       }, 2000);
     } finally {
       setIsClaiming(false);
     }
-  }, [claimRewards, hasRewards, refetch, reset]);
+  }, [
+    claimRewards,
+    hasRewards,
+    claimableVault,
+    refetch,
+    refetchPendingRewards,
+    refetchExpectedRewards,
+    reset,
+  ]);
+
+  // Determine what to show for APY
+  const apyDisplay = useMemo(() => {
+    if (isExpectedRewardsLoading) {
+      return null; // Will show skeleton
+    }
+    if (!expectedRewards) {
+      return EMPTY_VALUE_PLACEHOLDER;
+    }
+    if (expectedRewards.hasNoStake) {
+      return '--';
+    }
+    if (expectedRewards.isPoolDepleted) {
+      return '0%';
+    }
+    return expectedRewards.formattedApyRange;
+  }, [expectedRewards, isExpectedRewardsLoading]);
+
+  // Determine what to show for upcoming rewards
+  const upcomingRewardsDisplay = useMemo(() => {
+    if (isExpectedRewardsLoading) {
+      return null; // Will show skeleton
+    }
+    if (!expectedRewards) {
+      return EMPTY_VALUE_PLACEHOLDER;
+    }
+    if (expectedRewards.hasNoStake) {
+      return '--';
+    }
+    if (expectedRewards.isPoolDepleted) {
+      return '0';
+    }
+    return expectedRewards.formattedProjectedNextEpoch;
+  }, [expectedRewards, isExpectedRewardsLoading]);
 
   return (
     <Card
@@ -92,7 +171,7 @@ const ClaimableRewardsCard: FC = () => {
             Claimable Reward Value
           </Typography>
 
-          {isLoading ? (
+          {isLoading || isPendingRewardsLoading ? (
             <SkeletonLoader className="h-10 w-32" />
           ) : (
             <Typography
@@ -108,21 +187,38 @@ const ClaimableRewardsCard: FC = () => {
           )}
         </div>
 
-        {/* APR indicator - placeholder for future indexer data */}
+        {/* APY indicator */}
         <div className="text-right">
-          <Typography
-            variant="body3"
-            className="text-mono-100 dark:text-mono-100"
-          >
-            Last 7D APR
-          </Typography>
-          <Typography
-            variant="body2"
-            fw="medium"
-            className="text-mono-120 dark:text-mono-80"
-          >
-            --
-          </Typography>
+          <div className="flex items-center gap-1 justify-end">
+            <Typography
+              variant="body3"
+              className="text-mono-100 dark:text-mono-100"
+            >
+              Est. APY
+            </Typography>
+
+            <InfoIconWithTooltip
+              content="Estimated based on current stake and pool allocation. Range reflects no lock (1.0x) to 6-month lock (1.6x) boost. Actual rewards may vary."
+            />
+          </div>
+
+          {isExpectedRewardsLoading ? (
+            <SkeletonLoader className="h-5 w-20 ml-auto" />
+          ) : (
+            <Typography
+              variant="body2"
+              fw="medium"
+              className={twMerge(
+                'text-mono-120 dark:text-mono-80',
+                apyDisplay !== '--' &&
+                  apyDisplay !== EMPTY_VALUE_PLACEHOLDER &&
+                  apyDisplay !== '0%' &&
+                  'text-green-50 dark:text-green-50',
+              )}
+            >
+              {apyDisplay}
+            </Typography>
+          )}
         </div>
       </div>
 
@@ -135,16 +231,24 @@ const ClaimableRewardsCard: FC = () => {
 
         <StatRow
           label="Upcoming rewards"
-          value="--"
-          symbol=""
-          isLoading={false}
+          value={upcomingRewardsDisplay ?? ''}
+          symbol={upcomingRewardsDisplay === '--' ? '' : 'TNT'}
+          isLoading={isExpectedRewardsLoading}
+          tooltip="Projected rewards for the next epoch based on your current stake share."
         />
       </div>
 
       <Button
         isFullWidth
         onClick={handleClaimRewards}
-        isDisabled={isLoading || !hasRewards || isClaimingTx || !claimRewards}
+        isDisabled={
+          isLoading ||
+          isPendingRewardsLoading ||
+          !hasRewards ||
+          isClaimingTx ||
+          !claimRewards ||
+          !claimableVault
+        }
         isLoading={isClaiming || isClaimingTx}
         className="mt-2"
       >

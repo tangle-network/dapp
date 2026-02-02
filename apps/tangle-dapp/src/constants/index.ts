@@ -135,6 +135,7 @@ export enum RestakeTab {
   VAULTS = 'vaults',
   OPERATORS = 'operators',
   BLUEPRINTS = 'blueprints',
+  REWARDS = 'rewards',
 }
 
 export enum RestakeAction {
