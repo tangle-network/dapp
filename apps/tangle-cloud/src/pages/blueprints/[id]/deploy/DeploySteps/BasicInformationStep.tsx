@@ -5,12 +5,24 @@ import {
   Card,
   Typography,
 } from '@tangle-network/ui-components';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@tangle-network/ui-components/components/select';
 import InstanceHeader from '../../../../../components/InstanceHeader';
 import ErrorMessage from '../../../../../components/ErrorMessage';
-import { Children, FC } from 'react';
+import { Children, FC, useMemo } from 'react';
 import { BasicInformationStepProps, LabelClassName } from './type';
 import { TrashIcon, PlusIcon } from '@radix-ui/react-icons';
 import type { Address } from 'viem';
+import {
+  DURATION_UNITS,
+  DurationUnit,
+  getDurationConstraints,
+} from '../../../../../utils/validations/deployBlueprint';
 
 export const BasicInformationStep: FC<BasicInformationStepProps> = ({
   errors,
@@ -21,6 +33,12 @@ export const BasicInformationStep: FC<BasicInformationStepProps> = ({
   const permittedCallers = watch('permittedCallers');
   const instanceName = watch('instanceName');
   const instanceDuration = watch('instanceDuration');
+  const durationUnit = watch('durationUnit') ?? 'hours';
+
+  const constraints = useMemo(
+    () => getDurationConstraints(durationUnit),
+    [durationUnit],
+  );
 
   const handleCallerChange = (index: number, value: string) => {
     const newCallers = [...permittedCallers];
@@ -38,7 +56,12 @@ export const BasicInformationStep: FC<BasicInformationStepProps> = ({
   };
 
   const handleInstanceDurationChange = (value: string) => {
-    setValue(`instanceDuration`, parseInt(value));
+    const numValue = value === '' ? 0 : parseInt(value, 10);
+    setValue(`instanceDuration`, isNaN(numValue) ? 0 : numValue);
+  };
+
+  const handleDurationUnitChange = (unit: DurationUnit) => {
+    setValue('durationUnit', unit);
   };
 
   return (
@@ -76,24 +99,39 @@ export const BasicInformationStep: FC<BasicInformationStepProps> = ({
 
           <div className="space-y-2">
             <Label className={LabelClassName}>Instance Duration (TTL)</Label>
-            <Input
-              id="instanceDuration"
-              isControlled
-              inputClassName="placeholder:text-mono-80 dark:placeholder:text-mono-120 h-10"
-              placeholder="Enter instance duration in seconds"
-              autoComplete="off"
-              type="number"
-              min={0}
-              value={instanceDuration?.toString()}
-              rightIcon={<>Seconds</>}
-              onChange={(nextValue) => handleInstanceDurationChange(nextValue)}
-            />
+            <div className="flex gap-2">
+              <Input
+                id="instanceDuration"
+                isControlled
+                inputClassName="placeholder:text-mono-80 dark:placeholder:text-mono-120 h-10"
+                placeholder="Enter duration"
+                autoComplete="off"
+                type="number"
+                min={0}
+                value={instanceDuration?.toString() ?? ''}
+                onChange={(nextValue) => handleInstanceDurationChange(nextValue)}
+                className="flex-1"
+              />
+
+              <Select value={durationUnit} onValueChange={handleDurationUnitChange}>
+                <SelectTrigger className="w-28 h-10">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  {Object.entries(DURATION_UNITS).map(([key, { label }]) => (
+                    <SelectItem key={key} value={key}>
+                      {label}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
             <Typography
               variant="body2"
               className="text-mono-100 dark:text-mono-100"
             >
-              Use 0 for perpetual service, or minimum 3600 (1 hour). Max:
-              31536000 (365 days)
+              Use 0 for perpetual service, or {constraints.min}-{constraints.max}{' '}
+              {durationUnit} (1 hour to 365 days)
             </Typography>
             {errors?.instanceDuration && (
               <ErrorMessage>{errors.instanceDuration.message}</ErrorMessage>

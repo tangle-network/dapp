@@ -15,6 +15,53 @@ export type ServiceRequestContext = {
   paymentAmount: bigint;
 };
 
+// Duration unit constants
+export const DURATION_UNITS = {
+  hours: { label: 'Hours', seconds: 3600 },
+  days: { label: 'Days', seconds: 86400 },
+  weeks: { label: 'Weeks', seconds: 604800 },
+} as const;
+
+export type DurationUnit = keyof typeof DURATION_UNITS;
+
+// Validation constraints in seconds
+const MIN_DURATION_SECONDS = 3600; // 1 hour
+const MAX_DURATION_SECONDS = 31536000; // 365 days
+
+// Convert duration value and unit to seconds
+export const toSeconds = (value: number, unit: DurationUnit): number => {
+  return value * DURATION_UNITS[unit].seconds;
+};
+
+// Convert seconds to a user-friendly duration (returns value and best-fit unit)
+export const fromSeconds = (
+  seconds: number,
+): { value: number; unit: DurationUnit } => {
+  if (seconds === 0) {
+    return { value: 0, unit: 'hours' };
+  }
+
+  // Try to find the best unit (prefer whole numbers)
+  if (seconds % DURATION_UNITS.weeks.seconds === 0) {
+    return { value: seconds / DURATION_UNITS.weeks.seconds, unit: 'weeks' };
+  }
+  if (seconds % DURATION_UNITS.days.seconds === 0) {
+    return { value: seconds / DURATION_UNITS.days.seconds, unit: 'days' };
+  }
+  return { value: seconds / DURATION_UNITS.hours.seconds, unit: 'hours' };
+};
+
+// Get min/max values for a given unit
+export const getDurationConstraints = (
+  unit: DurationUnit,
+): { min: number; max: number } => {
+  const unitSeconds = DURATION_UNITS[unit].seconds;
+  return {
+    min: Math.ceil(MIN_DURATION_SECONDS / unitSeconds),
+    max: Math.floor(MAX_DURATION_SECONDS / unitSeconds),
+  };
+};
+
 export const assetSchema = z.object({
   id: z.string().transform((value, ctx) => {
     // For EVM, asset IDs are token addresses
@@ -40,13 +87,10 @@ export type AssetSchema = z.infer<typeof assetSchema>;
 export const deployBlueprintSchema = z
   .object({
     instanceName: z.string().min(1),
-    // TTL in seconds: 0 for perpetual, or minimum 3600 (1 hour), max 31536000 (365 days)
-    instanceDuration: z
-      .number()
-      .refine((val) => val === 0 || (val >= 3600 && val <= 31536000), {
-        message:
-          'Duration must be 0 (perpetual) or between 3600 (1 hour) and 31536000 (365 days) seconds',
-      }),
+    // Duration value in the selected unit (hours/days/weeks)
+    instanceDuration: z.number().min(0),
+    // Duration unit (defaults to hours)
+    durationUnit: z.enum(['hours', 'days', 'weeks']).default('hours'),
     permittedCallers: z.array(z.string()).transform((value, context) => {
       if (value.length === 0) {
         context.addIssue({
@@ -159,6 +203,28 @@ export const deployBlueprintSchema = z
     paymentAmount: z.string().regex(/^\d*\.?\d*$/, 'Must be a valid number'),
   })
   .superRefine((schema, ctx) => {
+    // Validate duration: 0 for perpetual, or between 1 hour and 365 days
+    if (schema.instanceDuration !== 0) {
+      const durationInSeconds = toSeconds(
+        schema.instanceDuration,
+        schema.durationUnit,
+      );
+
+      if (
+        durationInSeconds < MIN_DURATION_SECONDS ||
+        durationInSeconds > MAX_DURATION_SECONDS
+      ) {
+        const constraints = getDurationConstraints(schema.durationUnit);
+        ctx.addIssue({
+          path: ['instanceDuration'],
+          code: z.ZodIssueCode.custom,
+          message: `Duration must be 0 (perpetual) or between ${constraints.min} and ${constraints.max} ${schema.durationUnit}`,
+        });
+
+        return z.NEVER;
+      }
+    }
+
     if (schema.approvalModel === 'Dynamic') {
       // If approval model is dynamic, `maxApproval` is required
       if (!schema.maxApproval) {
@@ -234,12 +300,18 @@ export const formatServiceRequestData = (
     data.paymentAsset.metadata.decimals,
   );
 
+  // Convert duration to seconds
+  const ttlInSeconds =
+    data.instanceDuration === 0
+      ? 0
+      : toSeconds(data.instanceDuration, data.durationUnit);
+
   return {
     blueprintId: BigInt(blueprintData.id),
     operators: data.operators as Address[],
     config,
     permittedCallers: data.permittedCallers as Address[],
-    ttl: BigInt(data.instanceDuration),
+    ttl: BigInt(ttlInSeconds),
     paymentToken: data.paymentAsset.id as Address,
     paymentAmount,
   };

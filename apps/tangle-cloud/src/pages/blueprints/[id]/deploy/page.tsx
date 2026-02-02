@@ -59,6 +59,10 @@ const DeployPage: FC = () => {
     mode: 'onChange',
     // @ts-expect-error Two different types with this name exist, but they are unrelated.
     resolver: zodResolver(deployBlueprintSchema),
+    defaultValues: {
+      durationUnit: 'hours',
+      instanceDuration: 0,
+    },
   });
 
   const commonProps = useMemo(
