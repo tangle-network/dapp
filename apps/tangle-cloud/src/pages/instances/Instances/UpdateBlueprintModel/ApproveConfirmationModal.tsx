@@ -23,6 +23,9 @@ import { TxStatus } from '@tangle-network/tangle-shared-ui/hooks/useContractWrit
 import addCommasToNumber from '@tangle-network/ui-components/utils/addCommasToNumber';
 import useServiceRequestSecurityRequirements from '../../../../data/services/useServiceRequestSecurityRequirements';
 import ExposureCommitmentInput from './ExposureCommitmentInput';
+import useEvmOperatorInfo from '../../../../hooks/useEvmOperatorInfo';
+import { useOperatorStakeByAsset } from '@tangle-network/tangle-shared-ui/data/restake/useOperatorDelegationsByAsset';
+import type { Address } from 'viem';
 
 // Service request with optional blueprint metadata
 interface ServiceRequestWithBlueprint extends ServiceRequest {
@@ -57,6 +60,9 @@ const ApproveConfirmationModal: FC<Props> = ({
 
   const { blueprints: allBlueprints } = useAllBlueprints();
 
+  // Get operator address for delegation query
+  const { operatorAddress } = useEvmOperatorInfo();
+
   // Query security requirements for this request
   const {
     data: requirements,
@@ -65,6 +71,23 @@ const ApproveConfirmationModal: FC<Props> = ({
     isSimpleCase,
     defaultTntRequirement,
   } = useServiceRequestSecurityRequirements(selectedRequest?.requestId);
+
+  // Build assets array from security requirements for stake query
+  const assetsToQuery = useMemo(() => {
+    if (!requirements || requirements.length === 0) {
+      return undefined;
+    }
+    return requirements.map((req) => ({
+      kind: req.asset.kind,
+      token: req.asset.token,
+    }));
+  }, [requirements]);
+
+  // Query operator's stake per asset from the contract for "tokens at risk" display
+  const { data: stakeByAsset, isLoading: isLoadingStake } = useOperatorStakeByAsset(
+    operatorAddress,
+    assetsToQuery,
+  );
 
   // Build initial commitments from requirements (default to minimum)
   const initialCommitments = useMemo(() => {
@@ -80,6 +103,19 @@ const ApproveConfirmationModal: FC<Props> = ({
     }
     return commitments;
   }, [requirements]);
+
+  // Helper to get operator's stake for a specific token address
+  const getStakeForAsset = useCallback(
+    (tokenAddress: Address): bigint | null => {
+      if (!stakeByAsset) {
+        return null;
+      }
+      const normalizedAddress = tokenAddress.toLowerCase() as Address;
+      const stake = stakeByAsset.get(normalizedAddress);
+      return stake?.totalStake ?? BigInt(0);
+    },
+    [stakeByAsset],
+  );
 
   const {
     register,
@@ -210,7 +246,7 @@ const ApproveConfirmationModal: FC<Props> = ({
           </Typography>
 
           {/* Loading state */}
-          {isLoadingRequirements && (
+          {(isLoadingRequirements || isLoadingStake) && (
             <div className="space-y-4">
               <SkeletonLoader className="h-24 w-full rounded-lg" />
               <SkeletonLoader className="h-24 w-full rounded-lg" />
@@ -218,7 +254,10 @@ const ApproveConfirmationModal: FC<Props> = ({
           )}
 
           {/* Simple approval mode: Only default TNT requirement */}
-          {!isLoadingRequirements && isSimpleCase && defaultTntRequirement && (
+          {!isLoadingRequirements &&
+            !isLoadingStake &&
+            isSimpleCase &&
+            defaultTntRequirement && (
             <div className="space-y-4">
               <div className="p-4 bg-mono-20 dark:bg-mono-160 rounded-lg">
                 <div className="flex items-center gap-3 mb-3">
@@ -285,7 +324,10 @@ const ApproveConfirmationModal: FC<Props> = ({
           )}
 
           {/* Commitments mode: Per-asset exposure inputs */}
-          {!isLoadingRequirements && hasCustomRequirements && requirements && (
+          {!isLoadingRequirements &&
+            !isLoadingStake &&
+            hasCustomRequirements &&
+            requirements && (
             <div className="space-y-4">
               <Typography
                 variant="body2"
@@ -325,6 +367,7 @@ const ApproveConfirmationModal: FC<Props> = ({
                         value={field.value ?? req.minExposureBps}
                         onChange={field.onChange}
                         errorMessage={fieldState.error?.message}
+                        delegatedAmount={getStakeForAsset(req.asset.token)}
                       />
                     )}
                   />
@@ -336,7 +379,9 @@ const ApproveConfirmationModal: FC<Props> = ({
       </ModalBody>
 
       <ModalFooterActions
-        isConfirmDisabled={!isValid || isSubmitting || isLoadingRequirements}
+        isConfirmDisabled={
+          !isValid || isSubmitting || isLoadingRequirements || isLoadingStake
+        }
         isProcessing={isSubmitting}
         confirmButtonText="Approve"
         onConfirm={handleSubmit(handleFormSubmit)}
