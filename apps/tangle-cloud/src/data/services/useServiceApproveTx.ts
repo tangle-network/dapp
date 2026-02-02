@@ -35,6 +35,14 @@ export interface CommitmentsApproveParams {
 export type ServiceApproveParams = SimpleApproveParams | CommitmentsApproveParams;
 
 /**
+ * Options for the useServiceApproveTx hook
+ */
+export interface UseServiceApproveTxOptions {
+  onSuccess?: () => void;
+  onError?: (error: Error) => void;
+}
+
+/**
  * Type guard to check if params include security commitments
  */
 const hasSecurityCommitments = (
@@ -73,7 +81,7 @@ const hasSecurityCommitments = (
  * });
  * ```
  */
-export const useServiceApproveTx = () => {
+export const useServiceApproveTx = (options?: UseServiceApproveTxOptions) => {
   const chainId = useChainId();
   const contracts = getContractsByChainId(chainId);
 
@@ -133,6 +141,8 @@ export const useServiceApproveTx = () => {
       },
       getSuccessMessage: (params) =>
         `Successfully approved service request #${params.requestId}`,
+      onSuccess: options?.onSuccess,
+      onError: options?.onError,
     },
   );
 

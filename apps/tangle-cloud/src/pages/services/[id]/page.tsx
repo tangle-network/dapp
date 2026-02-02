@@ -16,9 +16,11 @@ import {
 import { ArrowLeft } from '@tangle-network/icons';
 import {
   useServicesByOwner,
+  useServicesByOperator,
   useBlueprintDetails,
   useJobsByService,
 } from '@tangle-network/tangle-shared-ui/data/graphql';
+import useEvmOperatorInfo from '../../../hooks/useEvmOperatorInfo';
 import { twMerge } from 'tailwind-merge';
 import { JobSubmissionForm } from './JobSubmissionForm';
 import { JobHistoryTable } from './JobHistoryTable';
@@ -27,6 +29,11 @@ const ServiceDetailPage: FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const { address } = useAccount();
+  const {
+    isOperator,
+    operatorAddress,
+    isLoading: isLoadingOperatorInfo,
+  } = useEvmOperatorInfo();
 
   const serviceId = useMemo(() => {
     if (!id) return undefined;
@@ -37,14 +44,32 @@ const ServiceDetailPage: FC = () => {
     }
   }, [id]);
 
-  // Fetch user's services to find this one
-  const { data: services, isLoading: isLoadingServices } =
+  // Fetch services owned by user
+  const { data: ownedServices, isLoading: isLoadingOwned } =
     useServicesByOwner(address);
 
+  // Fetch services where user is an operator
+  const { data: operatorServices, isLoading: isLoadingOperator } =
+    useServicesByOperator(
+      isOperator ? (operatorAddress ?? undefined) : undefined,
+    );
+
+  const isLoadingServices =
+    isLoadingOwned || isLoadingOperator || isLoadingOperatorInfo;
+
   const service = useMemo(() => {
-    if (!services || !serviceId) return null;
-    return services.find((s) => s.serviceId === serviceId) ?? null;
-  }, [services, serviceId]);
+    if (serviceId === undefined) return null;
+
+    // Check owned services first
+    const owned = ownedServices?.find((s) => s.serviceId === serviceId);
+    if (owned) return owned;
+
+    // Then check operator services
+    const operated = operatorServices?.find((s) => s.serviceId === serviceId);
+    if (operated) return operated;
+
+    return null;
+  }, [ownedServices, operatorServices, serviceId]);
 
   // Fetch blueprint details for job definitions
   const { result: blueprintResult, isLoading: isLoadingBlueprint } =
@@ -55,7 +80,7 @@ const ServiceDetailPage: FC = () => {
 
   const isLoading = isLoadingServices || isLoadingBlueprint;
 
-  if (!serviceId) {
+  if (serviceId === undefined) {
     return (
       <div className="text-center py-12">
         <Typography variant="h4">Invalid Service ID</Typography>

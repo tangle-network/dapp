@@ -16,6 +16,14 @@ export interface ServiceRejectParams {
 }
 
 /**
+ * Options for the useServiceRejectTx hook
+ */
+export interface UseServiceRejectTxOptions {
+  onSuccess?: () => void;
+  onError?: (error: Error) => void;
+}
+
+/**
  * Hook for rejecting a service request.
  *
  * @example
@@ -27,7 +35,7 @@ export interface ServiceRejectParams {
  * });
  * ```
  */
-export const useServiceRejectTx = () => {
+export const useServiceRejectTx = (options?: UseServiceRejectTxOptions) => {
   const chainId = useChainId();
   const contracts = getContractsByChainId(chainId);
 
@@ -45,6 +53,8 @@ export const useServiceRejectTx = () => {
         new Map([['Request ID', params.requestId.toString()]]),
       getSuccessMessage: (params) =>
         `Successfully rejected service request #${params.requestId}`,
+      onSuccess: options?.onSuccess,
+      onError: options?.onError,
     },
   );
 

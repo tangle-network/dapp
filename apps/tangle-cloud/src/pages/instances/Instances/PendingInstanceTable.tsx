@@ -1,12 +1,4 @@
-import {
-  useMemo,
-  useState,
-  useCallback,
-  useEffect,
-  type FC,
-  Dispatch,
-  SetStateAction,
-} from 'react';
+import { useMemo, useState, useCallback, type FC, Dispatch, SetStateAction } from 'react';
 import {
   AccessorKeyColumnDef,
   createColumnHelper,
@@ -38,7 +30,6 @@ import ApproveConfirmationModel from './UpdateBlueprintModel/ApproveConfirmation
 import { ApprovalConfirmationFormFields } from '../../../types';
 import useServiceApproveTx from '../../../data/services/useServiceApproveTx';
 import useServiceRejectTx from '../../../data/services/useServiceRejectTx';
-import { TxStatus } from '@tangle-network/tangle-shared-ui/hooks/useContractWrite';
 
 // Service request with blueprint metadata
 interface ServiceRequestWithBlueprint extends ServiceRequest {
@@ -131,33 +122,20 @@ export const PendingInstanceTable: FC<PendingInstanceTableProps> = ({
 
   const isEmpty = requestsWithBlueprints.length === 0;
 
+  // Callback to handle successful transactions - refetch after delay to allow indexer to process
+  const handleTxSuccess = useCallback(() => {
+    setRefreshTrigger((prev) => prev + 1);
+    // Delay refetch to allow indexer to process the transaction
+    setTimeout(() => {
+      refetch();
+    }, 2000);
+  }, [setRefreshTrigger, refetch]);
+
   const { execute: rejectServiceRequest, status: rejectStatus } =
-    useServiceRejectTx();
+    useServiceRejectTx({ onSuccess: handleTxSuccess });
 
   const { execute: approveServiceRequest, status: approveStatus } =
-    useServiceApproveTx();
-
-  useEffect(() => {
-    if (approveStatus === TxStatus.COMPLETE) {
-      setRefreshTrigger((prev) => prev + 1);
-      // Delay refetch to allow indexer to process the transaction
-      const timer = setTimeout(() => {
-        refetch();
-      }, 2000);
-      return () => clearTimeout(timer);
-    }
-  }, [approveStatus, setRefreshTrigger, refetch]);
-
-  useEffect(() => {
-    if (rejectStatus === TxStatus.COMPLETE) {
-      setRefreshTrigger((prev) => prev + 1);
-      // Delay refetch to allow indexer to process the transaction
-      const timer = setTimeout(() => {
-        refetch();
-      }, 2000);
-      return () => clearTimeout(timer);
-    }
-  }, [rejectStatus, setRefreshTrigger, refetch]);
+    useServiceApproveTx({ onSuccess: handleTxSuccess });
 
   const columns = useMemo(() => {
     const baseColumns: AccessorKeyColumnDef<
