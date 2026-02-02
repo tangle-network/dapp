@@ -85,7 +85,7 @@ export const PendingInstanceTable: FC<PendingInstanceTableProps> = ({
   // Fetch blueprint metadata
   const { blueprints: blueprintMap } = useBlueprintMap();
 
-  // Combine requests with blueprint data
+  // Combine requests with blueprint data and compute operator's approval status
   const requestsWithBlueprints = useMemo<ServiceRequestWithBlueprint[]>(() => {
     if (!pendingRequests) return [];
 
@@ -94,6 +94,40 @@ export const PendingInstanceTable: FC<PendingInstanceTableProps> = ({
       blueprintData: blueprintMap?.get(request.blueprintId.toString()),
     }));
   }, [pendingRequests, blueprintMap]);
+
+  // Helper to check if current operator has approved a request
+  const hasOperatorApproved = useCallback(
+    (request: ServiceRequestWithBlueprint) => {
+      if (!operatorAddress) return false;
+      const normalizedOperator = operatorAddress.toLowerCase();
+      return request.approvedOperators?.some(
+        (addr) => addr.toLowerCase() === normalizedOperator,
+      );
+    },
+    [operatorAddress],
+  );
+
+  // Helper to check if current operator has rejected a request
+  const hasOperatorRejected = useCallback(
+    (request: ServiceRequestWithBlueprint) => {
+      if (!operatorAddress) return false;
+      const normalizedOperator = operatorAddress.toLowerCase();
+      return request.rejectedOperators?.some(
+        (addr) => addr.toLowerCase() === normalizedOperator,
+      );
+    },
+    [operatorAddress],
+  );
+
+  // Helper to get pending approval count
+  const getPendingApprovalCount = useCallback(
+    (request: ServiceRequestWithBlueprint) => {
+      const totalOperators = request.operatorCandidates?.length ?? 0;
+      const approvedCount = request.approvedOperators?.length ?? 0;
+      return totalOperators - approvedCount;
+    },
+    [],
+  );
 
   const isEmpty = requestsWithBlueprints.length === 0;
 
@@ -106,14 +140,22 @@ export const PendingInstanceTable: FC<PendingInstanceTableProps> = ({
   useEffect(() => {
     if (approveStatus === TxStatus.COMPLETE) {
       setRefreshTrigger((prev) => prev + 1);
-      refetch();
+      // Delay refetch to allow indexer to process the transaction
+      const timer = setTimeout(() => {
+        refetch();
+      }, 2000);
+      return () => clearTimeout(timer);
     }
   }, [approveStatus, setRefreshTrigger, refetch]);
 
   useEffect(() => {
     if (rejectStatus === TxStatus.COMPLETE) {
       setRefreshTrigger((prev) => prev + 1);
-      refetch();
+      // Delay refetch to allow indexer to process the transaction
+      const timer = setTimeout(() => {
+        refetch();
+      }, 2000);
+      return () => clearTimeout(timer);
     }
   }, [rejectStatus, setRefreshTrigger, refetch]);
 
@@ -200,6 +242,68 @@ export const PendingInstanceTable: FC<PendingInstanceTableProps> = ({
           id: 'actions',
           header: () => '',
           cell: (props) => {
+            const request = props.row.original;
+            const approved = hasOperatorApproved(request);
+            const rejected = hasOperatorRejected(request);
+            const pendingCount = getPendingApprovalCount(request);
+
+            // Operator has already approved
+            if (approved) {
+              return (
+                <TableCellWrapper removeRightBorder className="p-0 min-h-fit">
+                  <div className="flex flex-col items-end gap-1">
+                    <div className="flex items-center gap-1.5 text-green-500">
+                      <svg
+                        className="w-4 h-4"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M5 13l4 4L19 7"
+                        />
+                      </svg>
+                      <span className="text-sm font-medium">You approved</span>
+                    </div>
+                    {pendingCount > 0 && (
+                      <span className="text-xs text-mono-100 dark:text-mono-80">
+                        Waiting for {pendingCount} more{' '}
+                        {pendingCount === 1 ? 'operator' : 'operators'}
+                      </span>
+                    )}
+                  </div>
+                </TableCellWrapper>
+              );
+            }
+
+            // Operator has already rejected
+            if (rejected) {
+              return (
+                <TableCellWrapper removeRightBorder className="p-0 min-h-fit">
+                  <div className="flex items-center gap-1.5 text-red-500">
+                    <svg
+                      className="w-4 h-4"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M6 18L18 6M6 6l12 12"
+                      />
+                    </svg>
+                    <span className="text-sm font-medium">You rejected</span>
+                  </div>
+                </TableCellWrapper>
+              );
+            }
+
+            // Operator hasn't acted yet - show action buttons
             return (
               <TableCellWrapper removeRightBorder className="p-0 min-h-fit">
                 <div className="flex gap-2">
@@ -307,10 +411,19 @@ export const PendingInstanceTable: FC<PendingInstanceTableProps> = ({
     async (data: ApprovalConfirmationFormFields) => {
       if (!selectedRequest || !approveServiceRequest) return;
 
-      await approveServiceRequest({
-        requestId: selectedRequest.requestId,
-        restakingPercent: data.restakingPercent ?? 0,
-      });
+      // Check if we have security commitments (commitments mode)
+      if (data.securityCommitments && data.securityCommitments.length > 0) {
+        await approveServiceRequest({
+          requestId: selectedRequest.requestId,
+          securityCommitments: data.securityCommitments,
+        });
+      } else {
+        // Simple approval mode
+        await approveServiceRequest({
+          requestId: selectedRequest.requestId,
+          restakingPercent: data.restakingPercent ?? 0,
+        });
+      }
     },
     [selectedRequest, approveServiceRequest],
   );

@@ -31,7 +31,9 @@ export interface ServiceRequest {
   blueprintId: bigint;
   requester: Address;
   operatorCandidates: Address[];
-  status: 'PENDING' | 'APPROVED' | 'REJECTED';
+  approvedOperators: Address[];
+  rejectedOperators: Address[];
+  status: 'PENDING' | 'APPROVED' | 'REJECTED' | 'ACTIVATED';
   createdAt: bigint;
 }
 
@@ -45,11 +47,9 @@ interface ServiceQueryResponse {
     status: string;
     createdAt: string;
     terminatedAt: string | null;
-    serviceOperators: Array<{
-      operator: {
-        id: string;
-      };
-    }>;
+    request: {
+      operatorCandidates: string[];
+    } | null;
   }>;
 }
 
@@ -60,6 +60,8 @@ interface ServiceRequestQueryResponse {
     blueprint_id: string;
     requester: string;
     operatorCandidates: string[];
+    approvedOperators: string[];
+    rejectedOperators: string[];
     status: string;
     createdAt: string;
   }>;
@@ -82,8 +84,10 @@ const fetchServices = async (
     where.push(`owner: { _eq: "${options.owner.toLowerCase()}" }`);
   }
   if (options.operator) {
+    // Filter by operator via the request's operatorCandidates
+    // (serviceOperators relationship isn't reliably populated by indexer)
     where.push(
-      `operators: { _contains: ["${options.operator.toLowerCase()}"] }`,
+      `request: { operatorCandidates: { _contains: ["${options.operator.toLowerCase()}"] } }`,
     );
   }
   if (options.status) {
@@ -110,10 +114,8 @@ const fetchServices = async (
         status
         createdAt
         terminatedAt
-        serviceOperators {
-          operator {
-            id
-          }
+        request {
+          operatorCandidates
         }
       }
     }
@@ -141,7 +143,7 @@ const fetchServices = async (
     blueprintId: BigInt(s.blueprint_id),
     owner: s.owner as Address,
     status: s.status as ServiceStatus,
-    operators: s.serviceOperators.map((so) => so.operator.id as Address),
+    operators: (s.request?.operatorCandidates ?? []) as Address[],
     createdAt: BigInt(s.createdAt),
     terminatedAt: s.terminatedAt ? BigInt(s.terminatedAt) : null,
   }));
@@ -190,6 +192,8 @@ const fetchServiceRequests = async (
         blueprint_id
         requester
         operatorCandidates
+        approvedOperators
+        rejectedOperators
         status
         createdAt
       }
@@ -218,7 +222,9 @@ const fetchServiceRequests = async (
     blueprintId: BigInt(r.blueprint_id),
     requester: r.requester as Address,
     operatorCandidates: r.operatorCandidates as Address[],
-    status: r.status as 'PENDING' | 'APPROVED' | 'REJECTED',
+    approvedOperators: (r.approvedOperators ?? []) as Address[],
+    rejectedOperators: (r.rejectedOperators ?? []) as Address[],
+    status: r.status as 'PENDING' | 'APPROVED' | 'REJECTED' | 'ACTIVATED',
     createdAt: BigInt(r.createdAt),
   }));
 };

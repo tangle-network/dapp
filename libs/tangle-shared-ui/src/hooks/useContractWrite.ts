@@ -449,7 +449,11 @@ const useContractWrite = <
 
         if (receipt.status === 'success') {
           setStatus(TxStatus.COMPLETE);
-          setSuccessMessage(options?.getSuccessMessage?.(context) ?? null);
+          const successMsg =
+            options?.getSuccessMessage?.(context) ??
+            `${capitalize(txName)} successful`;
+          setSuccessMessage(successMsg);
+          enqueueSnackbar(successMsg, { variant: 'success' });
           options?.onSuccess?.(txResult, context);
 
           if (enableTxHistory && networkId !== undefined) {
@@ -459,6 +463,9 @@ const useContractWrite = <
           const revertError = new Error('Transaction reverted');
           setStatus(TxStatus.ERROR);
           setError(revertError);
+          enqueueSnackbar(`${capitalize(txName)} failed: Transaction reverted`, {
+            variant: 'error',
+          });
           options?.onError?.(revertError, context);
 
           if (enableTxHistory && networkId !== undefined) {
@@ -491,6 +498,9 @@ const useContractWrite = <
           : ensureError(possibleError);
         setStatus(TxStatus.ERROR);
         setError(error);
+        enqueueSnackbar(`${capitalize(txName)} failed: ${error.message}`, {
+          variant: 'error',
+        });
         options?.onError?.(error, context as TContext);
 
         if (
