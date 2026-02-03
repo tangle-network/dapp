@@ -25,9 +25,4 @@ export type { DistributionWeights, EpochInfoData } from './useEpochInfo';
 export { default as useExpectedRewards } from './useExpectedRewards';
 export type { ApyRange, ExpectedRewardsData } from './useExpectedRewards';
 
-export {
-  PRECISION,
-  TIME,
-  POLLING_INTERVALS,
-  APY_LIMITS,
-} from './constants';
+export { PRECISION, TIME, POLLING_INTERVALS, APY_LIMITS } from './constants';

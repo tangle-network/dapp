@@ -201,7 +201,8 @@ const useExpectedRewards = (options?: UseExpectedRewardsOptions) => {
         : 0;
     const projectedDailyRewards =
       epochsPerDay > 0
-        ? (projectedNextEpoch * BigInt(Math.floor(epochsPerDay * PRECISION.SCALE))) /
+        ? (projectedNextEpoch *
+            BigInt(Math.floor(epochsPerDay * PRECISION.SCALE))) /
           BigInt(PRECISION.SCALE)
         : BigInt(0);
 
