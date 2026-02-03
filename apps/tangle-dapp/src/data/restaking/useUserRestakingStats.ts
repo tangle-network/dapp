@@ -1,9 +1,6 @@
 /**
  * Hook for fetching user restaking statistics.
- * Uses GraphQL for indexed data.
- *
- * NOTE: Rewards functionality has been moved to a separate RewardsManager contract.
- * Pending rewards always returns 0 until the RewardsManager integration is implemented.
+ * Uses GraphQL for indexed data and RewardVaults for pending rewards.
  */
 
 import { useMemo } from 'react';
@@ -13,6 +10,7 @@ import {
   useDelegator,
   useCurrentRoundNumber,
 } from '@tangle-network/tangle-shared-ui/data/graphql';
+import usePendingRewards from '../rewards/usePendingRewards';
 
 export interface UserRestakingStats {
   // Total Value Restaked Card
@@ -52,9 +50,12 @@ const useUserRestakingStats = () => {
     refetch: refetchDelegator,
   } = useDelegator(address);
 
-  // NOTE: Pending rewards from contract has been moved to RewardsManager.
-  // Currently returns 0 until RewardsManager integration is implemented.
-  const pendingRewardsData = BigInt(0);
+  // Fetch pending rewards from RewardVaults contract
+  const {
+    data: pendingRewardsResult,
+    isLoading: isPendingRewardsLoading,
+    refetch: refetchPendingRewards,
+  } = usePendingRewards();
 
   const stats = useMemo<UserRestakingStats | null>(() => {
     if (!delegator) {
@@ -85,7 +86,8 @@ const useUserRestakingStats = () => {
       }
     }
 
-    const pendingRewards = (pendingRewardsData as bigint) ?? BigInt(0);
+    const pendingRewards =
+      pendingRewardsResult?.totalPendingRewards ?? BigInt(0);
 
     // Active balance is the delegated amount (earning rewards)
     const activeBalance = delegator.totalDelegated;
@@ -119,15 +121,15 @@ const useUserRestakingStats = () => {
         activeBalance: format(activeBalance),
       },
     };
-  }, [delegator, currentRound, pendingRewardsData]);
+  }, [delegator, currentRound, pendingRewardsResult]);
 
   const refetch = async () => {
-    await refetchDelegator();
+    await Promise.all([refetchDelegator(), refetchPendingRewards()]);
   };
 
   return {
     data: stats,
-    isLoading: isDelegatorLoading,
+    isLoading: isDelegatorLoading || isPendingRewardsLoading,
     isError: !!delegatorError,
     error: delegatorError,
     refetch,

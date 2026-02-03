@@ -6,6 +6,7 @@ import RestakeWithdrawForm from '../../pages/restake/withdraw';
 import RestakeDelegateForm from '../../pages/restake/delegate';
 import RestakeUndelegateForm from '../../pages/restake/undelegate';
 import BlueprintListing from '../../pages/blueprints/BlueprintListing';
+import { ClaimableRewardsCard } from '../../components/restaking';
 import { useNavigate } from 'react-router';
 import { PagePath, QueryParamKey } from '../../types';
 import type { Address } from 'viem';
@@ -18,6 +19,7 @@ import {
 } from '@tangle-network/tangle-shared-ui/context/RestakeContext';
 import { Typography } from '@tangle-network/ui-components';
 import Spinner from '@tangle-network/icons/Spinner';
+import { useAccount } from 'wagmi';
 
 type RestakeTabOrAction = RestakeTab | RestakeAction;
 
@@ -35,6 +37,34 @@ const LoadingSpinner: FC = () => (
     </div>
   </div>
 );
+
+const RewardsTabContent: FC = () => {
+  const { address } = useAccount();
+
+  if (!address) {
+    return (
+      <div className="flex flex-col items-center justify-center py-16 gap-4">
+        <Typography variant="h5" className="text-mono-120 dark:text-mono-80">
+          Connect your wallet to view rewards
+        </Typography>
+
+        <Typography
+          variant="body2"
+          className="text-mono-100 dark:text-mono-100"
+        >
+          You need to connect a wallet to see your claimable rewards and
+          projections.
+        </Typography>
+      </div>
+    );
+  }
+
+  return (
+    <div className="flex justify-center">
+      <ClaimableRewardsCard />
+    </div>
+  );
+};
 
 const RestakeTabContentInner: FC<Props> = ({ tab }) => {
   const navigate = useNavigate();
@@ -104,13 +134,26 @@ const RestakeTabContentInner: FC<Props> = ({ tab }) => {
         );
       case RestakeTab.BLUEPRINTS:
         return <BlueprintListing />;
+      case RestakeTab.REWARDS:
+        return <RewardsTabContent />;
     }
   };
+
+  // Check if this is an action tab (needs centered layout)
+  const isActionTab = Object.values(RestakeAction).includes(
+    tab as RestakeAction,
+  );
 
   return (
     <div className="space-y-9">
       <RestakeTabs />
-      {getRestakeTabContent(tab)}
+      {isActionTab ? (
+        <div className="flex justify-center max-w-5xl mx-auto">
+          {getRestakeTabContent(tab)}
+        </div>
+      ) : (
+        getRestakeTabContent(tab)
+      )}
     </div>
   );
 };

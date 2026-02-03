@@ -18,6 +18,8 @@ const getTabRoute = (tab: RestakeTab): PagePath => {
       return PagePath.RESTAKE_OPERATOR;
     case RestakeTab.BLUEPRINTS:
       return PagePath.RESTAKE_BLUEPRINT;
+    case RestakeTab.REWARDS:
+      return PagePath.RESTAKE_REWARDS;
   }
 };
 

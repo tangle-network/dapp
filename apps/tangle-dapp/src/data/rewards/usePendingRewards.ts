@@ -3,6 +3,7 @@ import { useReadContracts, useChainId, useAccount } from 'wagmi';
 import { Address } from 'viem';
 import { getContractsByChainId } from '@tangle-network/dapp-config/contracts';
 import REWARD_VAULTS_ABI from '@tangle-network/tangle-shared-ui/abi/rewardVaults';
+import { POLLING_INTERVALS } from './constants';
 
 export type PendingReward = {
   operator: Address;
@@ -88,7 +89,7 @@ const usePendingRewards = (options?: UsePendingRewardsOptions) => {
     contracts: enabled ? rewardContracts : [],
     query: {
       enabled: enabled && rewardContracts.length > 0,
-      refetchInterval: enabled ? 10000 : false, // Refresh every 10 seconds when enabled
+      refetchInterval: enabled ? POLLING_INTERVALS.PENDING_REWARDS : false,
     },
   });
 
