@@ -7,6 +7,7 @@ import { useMemo } from 'react';
 import { useReadContracts, useChainId } from 'wagmi';
 import { getContractsByChainId } from '@tangle-network/dapp-config/contracts';
 import INFLATION_POOL_ABI from '@tangle-network/tangle-shared-ui/abi/inflationPool';
+import { POLLING_INTERVALS } from './constants';
 
 export interface DistributionWeights {
   stakingBps: number;
@@ -92,7 +93,7 @@ const useEpochInfo = (options?: UseEpochInfoOptions) => {
         : [],
     query: {
       enabled: enabled && !!contracts,
-      refetchInterval: enabled ? 60000 : false, // Refresh every minute
+      refetchInterval: enabled ? POLLING_INTERVALS.EPOCH_INFO : false,
     },
   });
 

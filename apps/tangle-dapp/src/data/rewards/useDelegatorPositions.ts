@@ -8,6 +8,7 @@ import { useReadContracts, useChainId, useAccount } from 'wagmi';
 import { Address } from 'viem';
 import { getContractsByChainId } from '@tangle-network/dapp-config/contracts';
 import REWARD_VAULTS_ABI from '@tangle-network/tangle-shared-ui/abi/rewardVaults';
+import { POLLING_INTERVALS } from './constants';
 
 export enum LockDuration {
   None = 0,
@@ -120,7 +121,7 @@ const useDelegatorPositions = (options?: UseDelegatorPositionsOptions) => {
     contracts: enabled ? positionContracts : [],
     query: {
       enabled: enabled && positionContracts.length > 0,
-      refetchInterval: enabled ? 30000 : false,
+      refetchInterval: enabled ? POLLING_INTERVALS.DELEGATOR_POSITIONS : false,
     },
   });
 

@@ -8,6 +8,7 @@ import { useReadContract, useChainId } from 'wagmi';
 import { Address } from 'viem';
 import { getContractsByChainId } from '@tangle-network/dapp-config/contracts';
 import REWARD_VAULTS_ABI from '@tangle-network/tangle-shared-ui/abi/rewardVaults';
+import { POLLING_INTERVALS } from './constants';
 
 export interface VaultSummary {
   asset: Address;
@@ -52,7 +53,7 @@ const useVaultSummaries = (options?: UseVaultSummariesOptions) => {
     functionName: 'getAllVaultSummaries',
     query: {
       enabled: enabled && !!contracts,
-      refetchInterval: enabled ? 30000 : false, // Refresh every 30 seconds
+      refetchInterval: enabled ? POLLING_INTERVALS.VAULT_SUMMARIES : false,
     },
   });
 

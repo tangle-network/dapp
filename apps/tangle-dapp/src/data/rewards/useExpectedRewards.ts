@@ -5,6 +5,7 @@
 
 import { useMemo } from 'react';
 import { formatUnits } from 'viem';
+import Decimal from 'decimal.js';
 import usePendingRewards from './usePendingRewards';
 import useVaultSummaries from './useVaultSummaries';
 import useDelegatorPositions, {
@@ -12,6 +13,7 @@ import useDelegatorPositions, {
   LockDuration,
 } from './useDelegatorPositions';
 import useEpochInfo from './useEpochInfo';
+import { PRECISION, TIME, APY_LIMITS } from './constants';
 
 export interface ApyRange {
   min: number; // Base APY without lock bonus
@@ -56,6 +58,38 @@ interface UseExpectedRewardsOptions {
   enabled?: boolean;
 }
 
+/**
+ * Validates a bigint value is non-negative.
+ * @param value - The bigint value to validate
+ * @returns The original value if valid, or 0n if undefined or negative
+ */
+const validateBigInt = (value: bigint | undefined): bigint => {
+  if (value === undefined || value < BigInt(0)) {
+    return BigInt(0);
+  }
+  return value;
+};
+
+/**
+ * Validates a number is finite and non-negative.
+ * @param value - The number to validate
+ * @param defaultVal - Default value if invalid (default: 0)
+ * @returns The original value if valid, or the default value
+ */
+const validateNumber = (value: number | undefined, defaultVal = 0): number => {
+  if (value === undefined || !isFinite(value) || value < 0) {
+    return defaultVal;
+  }
+  return value;
+};
+
+/**
+ * Formats a bigint value to a human-readable string.
+ * @param value - The bigint value (in smallest unit, e.g., wei)
+ * @param decimals - Token decimals (default: 18)
+ * @returns Formatted string with up to 4 decimal places
+ * @example formatValue(BigInt("1234567890000000000")) // "1.2346"
+ */
 const formatValue = (value: bigint, decimals = 18): string => {
   const formatted = formatUnits(value, decimals);
   const num = parseFloat(formatted);
@@ -71,11 +105,17 @@ const formatValue = (value: bigint, decimals = 18): string => {
   });
 };
 
+/**
+ * Formats an APY percentage for display.
+ * @param apy - APY as percentage (e.g., 5.5 for 5.5%)
+ * @returns Formatted string with percent sign
+ * @example formatApy(5.5) // "5.50%"
+ */
 const formatApy = (apy: number): string => {
   if (apy === 0 || !isFinite(apy)) {
     return '0%';
   }
-  if (apy < 0.01) {
+  if (apy < APY_LIMITS.MIN_DISPLAY_APY) {
     return '< 0.01%';
   }
   return `${apy.toFixed(2)}%`;
@@ -114,25 +154,32 @@ const useExpectedRewards = (options?: UseExpectedRewardsOptions) => {
       return null;
     }
 
-    const pendingRewards = pendingRewardsData?.totalPendingRewards ?? BigInt(0);
+    const pendingRewards = validateBigInt(
+      pendingRewardsData?.totalPendingRewards,
+    );
     const hasRewards = pendingRewards > BigInt(0);
 
-    const userTotalBoostedScore =
-      delegatorPositions?.totalBoostedScore ?? BigInt(0);
-    const userTotalStaked = delegatorPositions?.totalStakedAmount ?? BigInt(0);
-    const currentMultiplier = delegatorPositions?.weightedAvgMultiplier ?? 1.0;
-    const vaultTotalScore = vaultSummaries?.totalScore ?? BigInt(0);
+    const userTotalBoostedScore = validateBigInt(
+      delegatorPositions?.totalBoostedScore,
+    );
+    const userTotalStaked = validateBigInt(
+      delegatorPositions?.totalStakedAmount,
+    );
+    const currentMultiplier = validateNumber(
+      delegatorPositions?.weightedAvgMultiplier,
+      1.0,
+    );
+    const vaultTotalScore = validateBigInt(vaultSummaries?.totalScore);
 
     const hasNoStake = userTotalStaked === BigInt(0);
     const isPoolDepleted = epochInfo.poolBalance === BigInt(0);
 
-    // Calculate user's share of the total vault score
+    // Calculate user's share of the total vault score using Decimal.js for precision
     let userShare = 0;
     if (vaultTotalScore > BigInt(0) && userTotalBoostedScore > BigInt(0)) {
-      // Use high precision calculation
-      userShare =
-        Number((userTotalBoostedScore * BigInt(1000000)) / vaultTotalScore) /
-        1000000;
+      userShare = new Decimal(userTotalBoostedScore.toString())
+        .div(vaultTotalScore.toString())
+        .toNumber();
     }
 
     // Calculate projected rewards for next epoch
@@ -141,19 +188,21 @@ const useExpectedRewards = (options?: UseExpectedRewardsOptions) => {
       // User's projected share of the staking budget
       projectedNextEpoch =
         (epochInfo.stakingBudgetPerEpoch *
-          BigInt(Math.floor(userShare * 1000000))) /
-        BigInt(1000000);
+          BigInt(Math.floor(userShare * PRECISION.STANDARD))) /
+        BigInt(PRECISION.STANDARD);
     }
 
     // Calculate projected daily rewards
     // Daily = projected per epoch * epochs per day
     const epochLengthSeconds = Number(epochInfo.epochLength);
     const epochsPerDay =
-      epochLengthSeconds > 0 ? 86400 / epochLengthSeconds : 0;
+      epochLengthSeconds >= TIME.MIN_EPOCH_LENGTH_SECONDS
+        ? TIME.SECONDS_PER_DAY / epochLengthSeconds
+        : 0;
     const projectedDailyRewards =
       epochsPerDay > 0
-        ? (projectedNextEpoch * BigInt(Math.floor(epochsPerDay * 100))) /
-          BigInt(100)
+        ? (projectedNextEpoch * BigInt(Math.floor(epochsPerDay * PRECISION.SCALE))) /
+          BigInt(PRECISION.SCALE)
         : BigInt(0);
 
     // Calculate APY range
@@ -167,14 +216,15 @@ const useExpectedRewards = (options?: UseExpectedRewardsOptions) => {
     ) {
       const yearlyProjectedRewards =
         (epochInfo.stakingBudgetPerEpoch *
-          BigInt(Math.floor(userShare * 1000000)) *
+          BigInt(Math.floor(userShare * PRECISION.STANDARD)) *
           BigInt(epochInfo.epochsPerYear)) /
-        BigInt(1000000);
+        BigInt(PRECISION.STANDARD);
 
       // APY = (yearly rewards / stake) * 100
       const apyBigInt =
-        (yearlyProjectedRewards * BigInt(10000)) / userTotalStaked;
-      baseApy = Number(apyBigInt) / 100;
+        (yearlyProjectedRewards * BigInt(PRECISION.BASIS_POINTS)) /
+        userTotalStaked;
+      baseApy = Number(apyBigInt) / PRECISION.SCALE;
     }
 
     // APY range accounts for lock multipliers
@@ -183,9 +233,11 @@ const useExpectedRewards = (options?: UseExpectedRewardsOptions) => {
     const baseApyNormalized =
       currentMultiplier > 0 ? baseApy / currentMultiplier : baseApy;
     const minApy =
-      baseApyNormalized * (LOCK_MULTIPLIERS[LockDuration.None] / 10000);
+      baseApyNormalized *
+      (LOCK_MULTIPLIERS[LockDuration.None] / PRECISION.BASIS_POINTS);
     const maxApy =
-      baseApyNormalized * (LOCK_MULTIPLIERS[LockDuration.SixMonths] / 10000);
+      baseApyNormalized *
+      (LOCK_MULTIPLIERS[LockDuration.SixMonths] / PRECISION.BASIS_POINTS);
 
     const estimatedApyRange: ApyRange = {
       min: minApy,
