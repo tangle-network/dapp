@@ -4,15 +4,24 @@
  */
 
 import { FC, useCallback, useMemo, useState } from 'react';
+import { Cross1Icon } from '@radix-ui/react-icons';
 import {
   Card,
   CardVariant,
+  IconButton,
   Typography,
   Button,
   SkeletonLoader,
   EMPTY_VALUE_PLACEHOLDER,
-  InfoIconWithTooltip,
+  Tooltip,
+  TooltipTrigger,
+  TooltipBody,
+  Accordion,
+  AccordionItem,
+  AccordionButton,
+  AccordionContent,
 } from '@tangle-network/ui-components';
+import { InformationLine } from '@tangle-network/icons';
 import { twMerge } from 'tailwind-merge';
 import useUserRestakingStats from '../../data/restaking/useUserRestakingStats';
 import {
@@ -21,6 +30,10 @@ import {
   useExpectedRewards,
 } from '../../data/rewards';
 import { TxStatus } from '@tangle-network/tangle-shared-ui/hooks/useContractWrite';
+import { ExpandTableButton } from '../../pages/restake/ExpandTableButton';
+import { AnimatedTable } from '../../pages/restake/AnimatedTable';
+import RestakeDetailCard from '../RestakeDetailCard';
+import PendingRewardsList from './PendingRewardsList';
 
 interface StatRowProps {
   label: string;
@@ -43,7 +56,14 @@ const StatRow: FC<StatRowProps> = ({
         {label}
       </Typography>
 
-      {tooltip && <InfoIconWithTooltip content={tooltip} />}
+      {tooltip && (
+        <Tooltip>
+          <TooltipTrigger className="cursor-help">
+            <InformationLine className="fill-mono-120 dark:fill-mono-100" />
+          </TooltipTrigger>
+          <TooltipBody className="max-w-[280px]">{tooltip}</TooltipBody>
+        </Tooltip>
+      )}
     </div>
 
     {isLoading ? (
@@ -74,33 +94,32 @@ const ClaimableRewardsCard: FC = () => {
   } = useExpectedRewards();
   const { execute: claimRewards, status, reset } = useClaimRewardsTx();
   const [isClaiming, setIsClaiming] = useState(false);
+  const [isRewardsListOpen, setIsRewardsListOpen] = useState(false);
 
   const hasRewards = stats && stats.pendingRewards > BigInt(0);
   const isClaimingTx = status === TxStatus.PROCESSING;
 
-  // Get the first vault with rewards for claiming (simplest case)
-  // In production, you might want to claim from all vaults
-  const claimableVault = useMemo(() => {
+  const claimableVaults = useMemo(() => {
     if (!pendingRewardsData?.vaults || pendingRewardsData.vaults.length === 0) {
-      return null;
+      return [];
     }
-    return pendingRewardsData.vaults[0];
+    return pendingRewardsData.vaults;
   }, [pendingRewardsData]);
 
   const handleClaimRewards = useCallback(async () => {
-    if (!claimRewards || !hasRewards || !claimableVault) {
+    if (!claimRewards || !hasRewards || claimableVaults.length === 0) {
       return;
     }
 
     setIsClaiming(true);
     try {
-      // Claim from the first vault's operators
-      const operators = claimableVault.rewards.map((r) => r.operator);
-      await claimRewards({
-        asset: claimableVault.asset,
-        operators,
-      });
-      // Wait a bit then refetch stats
+      for (const vault of claimableVaults) {
+        const operators = vault.rewards.map((r) => r.operator);
+        await claimRewards({
+          asset: vault.asset,
+          operators,
+        });
+      }
       setTimeout(() => {
         refetch();
         refetchPendingRewards();
@@ -113,17 +132,16 @@ const ClaimableRewardsCard: FC = () => {
   }, [
     claimRewards,
     hasRewards,
-    claimableVault,
+    claimableVaults,
     refetch,
     refetchPendingRewards,
     refetchExpectedRewards,
     reset,
   ]);
 
-  // Determine what to show for APY
   const apyDisplay = useMemo(() => {
     if (isExpectedRewardsLoading) {
-      return null; // Will show skeleton
+      return null;
     }
     if (!expectedRewards) {
       return EMPTY_VALUE_PLACEHOLDER;
@@ -137,10 +155,9 @@ const ClaimableRewardsCard: FC = () => {
     return expectedRewards.formattedApyRange;
   }, [expectedRewards, isExpectedRewardsLoading]);
 
-  // Determine what to show for upcoming rewards
   const upcomingRewardsDisplay = useMemo(() => {
     if (isExpectedRewardsLoading) {
-      return null; // Will show skeleton
+      return null;
     }
     if (!expectedRewards) {
       return EMPTY_VALUE_PLACEHOLDER;
@@ -155,106 +172,196 @@ const ClaimableRewardsCard: FC = () => {
   }, [expectedRewards, isExpectedRewardsLoading]);
 
   return (
-    <Card
-      variant={CardVariant.GLASS}
-      className={twMerge(
-        'p-6 flex flex-col gap-4',
-        'border border-mono-60 dark:border-mono-160',
-      )}
-    >
-      <div className="flex items-start justify-between">
-        <div>
-          <Typography
-            variant="body2"
-            className="text-mono-100 dark:text-mono-100 mb-1"
-          >
-            Claimable Reward Value
-          </Typography>
-
-          {isLoading || isPendingRewardsLoading ? (
-            <SkeletonLoader className="h-10 w-32" />
-          ) : (
-            <Typography
-              variant="h3"
-              fw="bold"
-              className={twMerge(
-                '!leading-tight',
-                hasRewards && 'text-green-50 dark:text-green-50',
-              )}
-            >
-              {stats?.formatted.pendingRewards ?? EMPTY_VALUE_PLACEHOLDER} TNT
-            </Typography>
+    <div className="grid items-start gap-4 max-md:grid-cols-1 md:auto-cols-auto md:grid-flow-col">
+      <div className="w-full md:min-w-[512px]">
+        <Card
+          variant={CardVariant.GLASS}
+          className={twMerge(
+            'relative p-6 flex flex-col gap-4',
+            'border border-mono-60 dark:border-mono-160',
           )}
-        </div>
+        >
+          {!isRewardsListOpen && claimableVaults.length > 0 && (
+            <ExpandTableButton
+              className="absolute top-3 -right-10 max-md:hidden"
+              tooltipContent="View rewards by vault"
+              requestCount={claimableVaults.length}
+              onClick={() => setIsRewardsListOpen(true)}
+            />
+          )}
 
-        {/* APY indicator */}
-        <div className="text-right">
-          <div className="flex items-center gap-1 justify-end">
-            <Typography
-              variant="body3"
-              className="text-mono-100 dark:text-mono-100"
-            >
-              Est. APY
-            </Typography>
+          <div className="flex items-start justify-between">
+            <div>
+              <Typography
+                variant="body2"
+                className="text-mono-100 dark:text-mono-100 mb-1"
+              >
+                Claimable Reward Value
+              </Typography>
 
-            <InfoIconWithTooltip
-              content="Estimated based on current stake and pool allocation. Range reflects no lock (1.0x) to 6-month lock (1.6x) boost. Actual rewards may vary."
+              {isLoading || isPendingRewardsLoading ? (
+                <SkeletonLoader className="h-10 w-32" />
+              ) : (
+                <Typography
+                  variant="h3"
+                  fw="bold"
+                  className={twMerge(
+                    '!leading-tight',
+                    hasRewards && 'text-green-50 dark:text-green-50',
+                  )}
+                >
+                  {stats?.formatted.pendingRewards ?? EMPTY_VALUE_PLACEHOLDER}{' '}
+                  TNT
+                </Typography>
+              )}
+            </div>
+
+            <div className="text-right">
+              <Typography
+                variant="body3"
+                className="text-mono-100 dark:text-mono-100"
+              >
+                Est. APY
+              </Typography>
+
+              {isExpectedRewardsLoading ? (
+                <SkeletonLoader className="h-5 w-20 ml-auto" />
+              ) : (
+                <Typography
+                  variant="body2"
+                  fw="medium"
+                  className={twMerge(
+                    'text-mono-120 dark:text-mono-80',
+                    apyDisplay !== '--' &&
+                      apyDisplay !== EMPTY_VALUE_PLACEHOLDER &&
+                      apyDisplay !== '0%' &&
+                      'text-green-50 dark:text-green-50',
+                  )}
+                >
+                  {apyDisplay}
+                </Typography>
+              )}
+            </div>
+          </div>
+
+          <div className="border-t border-mono-60 dark:border-mono-160 pt-3">
+            <StatRow
+              label="Active balance"
+              value={stats?.formatted.activeBalance ?? '0'}
+              isLoading={isLoading}
+            />
+
+            <StatRow
+              label="Upcoming rewards"
+              value={upcomingRewardsDisplay ?? ''}
+              symbol={upcomingRewardsDisplay === '--' ? '' : 'TNT'}
+              isLoading={isExpectedRewardsLoading}
+              tooltip="Estimated TNT rewards you'll receive in the next epoch (1 hour). Based on your current share of the staking pool."
             />
           </div>
 
-          {isExpectedRewardsLoading ? (
-            <SkeletonLoader className="h-5 w-20 ml-auto" />
+          <Button
+            isFullWidth
+            onClick={handleClaimRewards}
+            isDisabled={
+              isLoading ||
+              isPendingRewardsLoading ||
+              !hasRewards ||
+              isClaimingTx ||
+              !claimRewards ||
+              claimableVaults.length === 0
+            }
+            isLoading={isClaiming || isClaimingTx}
+            className="mt-2"
+          >
+            {isClaimingTx ? 'Claiming...' : 'Claim Rewards'}
+          </Button>
+        </Card>
+
+        <Card
+          variant={CardVariant.GLASS}
+          className="mt-4 p-0 border border-mono-60 dark:border-mono-160"
+        >
+          <Accordion type="single" collapsible>
+            <AccordionItem value="apy-explanation" className="border-none">
+              <AccordionButton className="px-4 py-1.5">
+                How is APY calculated?
+              </AccordionButton>
+              <AccordionContent className="px-4 pb-3">
+                <div className="space-y-3 text-sm">
+                  <div>
+                    <span className="font-medium text-mono-200 dark:text-mono-0">
+                      Formula:
+                    </span>
+                    <div className="mt-1 font-mono text-xs bg-mono-40 dark:bg-mono-170 rounded px-3 py-2">
+                      APY = (Your Share × Annual Rewards) ÷ Your Stake
+                    </div>
+                  </div>
+
+                  <div>
+                    <span className="font-medium text-mono-200 dark:text-mono-0">
+                      APY Range:
+                    </span>
+                    <ul className="mt-1 list-disc list-inside space-y-1 text-mono-120 dark:text-mono-100">
+                      <li>Lower value: No lock bonus (1.0x)</li>
+                      <li>Upper value: 6-month lock (1.6x boost)</li>
+                    </ul>
+                  </div>
+
+                  <div>
+                    <span className="font-medium text-mono-200 dark:text-mono-0">
+                      Lock Multipliers:
+                    </span>
+                    <div className="mt-1 grid grid-cols-2 gap-x-4 gap-y-1 text-xs text-mono-120 dark:text-mono-100">
+                      <span>No lock:</span>
+                      <span>1.0x</span>
+                      <span>1 month:</span>
+                      <span>1.1x</span>
+                      <span>3 months:</span>
+                      <span>1.4x</span>
+                      <span>6 months:</span>
+                      <span>1.6x</span>
+                    </div>
+                  </div>
+                </div>
+              </AccordionContent>
+            </AccordionItem>
+          </Accordion>
+        </Card>
+      </div>
+
+      <AnimatedTable
+        isTableOpen={isRewardsListOpen}
+        className="hidden md:block"
+      >
+        <RestakeDetailCard.Root className="!min-w-0">
+          <div className="flex items-center justify-between gap-2 mb-2">
+            <RestakeDetailCard.Header
+              title={
+                claimableVaults.length > 0
+                  ? 'Rewards by Vault'
+                  : 'No Pending Rewards'
+              }
+            />
+
+            <IconButton onClick={() => setIsRewardsListOpen(false)}>
+              <Cross1Icon />
+            </IconButton>
+          </div>
+
+          {claimableVaults.length > 0 ? (
+            <PendingRewardsList vaults={claimableVaults} />
           ) : (
             <Typography
-              variant="body2"
-              fw="medium"
-              className={twMerge(
-                'text-mono-120 dark:text-mono-80',
-                apyDisplay !== '--' &&
-                  apyDisplay !== EMPTY_VALUE_PLACEHOLDER &&
-                  apyDisplay !== '0%' &&
-                  'text-green-50 dark:text-green-50',
-              )}
+              variant="body1"
+              className="text-mono-120 dark:text-mono-100"
             >
-              {apyDisplay}
+              You don't have any pending rewards to claim.
             </Typography>
           )}
-        </div>
-      </div>
-
-      <div className="border-t border-mono-60 dark:border-mono-160 pt-3">
-        <StatRow
-          label="Active balance"
-          value={stats?.formatted.activeBalance ?? '0'}
-          isLoading={isLoading}
-        />
-
-        <StatRow
-          label="Upcoming rewards"
-          value={upcomingRewardsDisplay ?? ''}
-          symbol={upcomingRewardsDisplay === '--' ? '' : 'TNT'}
-          isLoading={isExpectedRewardsLoading}
-          tooltip="Projected rewards for the next epoch based on your current stake share."
-        />
-      </div>
-
-      <Button
-        isFullWidth
-        onClick={handleClaimRewards}
-        isDisabled={
-          isLoading ||
-          isPendingRewardsLoading ||
-          !hasRewards ||
-          isClaimingTx ||
-          !claimRewards ||
-          !claimableVault
-        }
-        isLoading={isClaiming || isClaimingTx}
-        className="mt-2"
-      >
-        {isClaimingTx ? 'Claiming...' : 'Claim Rewards'}
-      </Button>
-    </Card>
+        </RestakeDetailCard.Root>
+      </AnimatedTable>
+    </div>
   );
 };
 

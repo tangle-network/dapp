@@ -86,7 +86,8 @@ const useUserRestakingStats = () => {
       }
     }
 
-    const pendingRewards = pendingRewardsResult?.totalPendingRewards ?? BigInt(0);
+    const pendingRewards =
+      pendingRewardsResult?.totalPendingRewards ?? BigInt(0);
 
     // Active balance is the delegated amount (earning rewards)
     const activeBalance = delegator.totalDelegated;

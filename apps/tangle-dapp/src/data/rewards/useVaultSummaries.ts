@@ -11,15 +11,11 @@ import REWARD_VAULTS_ABI from '@tangle-network/tangle-shared-ui/abi/rewardVaults
 
 export interface VaultSummary {
   asset: Address;
-  apyBps: bigint;
   depositCap: bigint;
-  incentiveCap: bigint;
-  boostMultiplierBps: bigint;
   active: boolean;
   totalDeposits: bigint;
   totalScore: bigint;
   rewardsDistributed: bigint;
-  lastUpdateBlock: bigint;
   depositCapRemaining: bigint;
   utilizationBps: bigint;
 }

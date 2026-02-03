@@ -7,7 +7,10 @@ import { useMemo } from 'react';
 import { formatUnits } from 'viem';
 import usePendingRewards from './usePendingRewards';
 import useVaultSummaries from './useVaultSummaries';
-import useDelegatorPositions, { LOCK_MULTIPLIERS, LockDuration } from './useDelegatorPositions';
+import useDelegatorPositions, {
+  LOCK_MULTIPLIERS,
+  LockDuration,
+} from './useDelegatorPositions';
 import useEpochInfo from './useEpochInfo';
 
 export interface ApyRange {
@@ -114,7 +117,8 @@ const useExpectedRewards = (options?: UseExpectedRewardsOptions) => {
     const pendingRewards = pendingRewardsData?.totalPendingRewards ?? BigInt(0);
     const hasRewards = pendingRewards > BigInt(0);
 
-    const userTotalBoostedScore = delegatorPositions?.totalBoostedScore ?? BigInt(0);
+    const userTotalBoostedScore =
+      delegatorPositions?.totalBoostedScore ?? BigInt(0);
     const userTotalStaked = delegatorPositions?.totalStakedAmount ?? BigInt(0);
     const currentMultiplier = delegatorPositions?.weightedAvgMultiplier ?? 1.0;
     const vaultTotalScore = vaultSummaries?.totalScore ?? BigInt(0);
@@ -126,7 +130,9 @@ const useExpectedRewards = (options?: UseExpectedRewardsOptions) => {
     let userShare = 0;
     if (vaultTotalScore > BigInt(0) && userTotalBoostedScore > BigInt(0)) {
       // Use high precision calculation
-      userShare = Number((userTotalBoostedScore * BigInt(1000000)) / vaultTotalScore) / 1000000;
+      userShare =
+        Number((userTotalBoostedScore * BigInt(1000000)) / vaultTotalScore) /
+        1000000;
     }
 
     // Calculate projected rewards for next epoch
@@ -134,24 +140,31 @@ const useExpectedRewards = (options?: UseExpectedRewardsOptions) => {
     if (userShare > 0 && epochInfo.stakingBudgetPerEpoch > BigInt(0)) {
       // User's projected share of the staking budget
       projectedNextEpoch =
-        (epochInfo.stakingBudgetPerEpoch * BigInt(Math.floor(userShare * 1000000))) /
+        (epochInfo.stakingBudgetPerEpoch *
+          BigInt(Math.floor(userShare * 1000000))) /
         BigInt(1000000);
     }
 
     // Calculate projected daily rewards
     // Daily = projected per epoch * epochs per day
     const epochLengthSeconds = Number(epochInfo.epochLength);
-    const epochsPerDay = epochLengthSeconds > 0 ? 86400 / epochLengthSeconds : 0;
+    const epochsPerDay =
+      epochLengthSeconds > 0 ? 86400 / epochLengthSeconds : 0;
     const projectedDailyRewards =
       epochsPerDay > 0
-        ? (projectedNextEpoch * BigInt(Math.floor(epochsPerDay * 100))) / BigInt(100)
+        ? (projectedNextEpoch * BigInt(Math.floor(epochsPerDay * 100))) /
+          BigInt(100)
         : BigInt(0);
 
     // Calculate APY range
     // Base APY = (yearly rewards / stake value) * 100
     // Using staking budget per epoch * epochs per year as yearly rewards estimate
     let baseApy = 0;
-    if (userTotalStaked > BigInt(0) && epochInfo.epochsPerYear > 0 && userShare > 0) {
+    if (
+      userTotalStaked > BigInt(0) &&
+      epochInfo.epochsPerYear > 0 &&
+      userShare > 0
+    ) {
       const yearlyProjectedRewards =
         (epochInfo.stakingBudgetPerEpoch *
           BigInt(Math.floor(userShare * 1000000)) *
@@ -167,9 +180,12 @@ const useExpectedRewards = (options?: UseExpectedRewardsOptions) => {
     // APY range accounts for lock multipliers
     // Min: no lock bonus (1.0x), Max: 6-month lock (1.6x)
     // We divide by current multiplier to get the "base" APY, then multiply by lock multipliers
-    const baseApyNormalized = currentMultiplier > 0 ? baseApy / currentMultiplier : baseApy;
-    const minApy = baseApyNormalized * (LOCK_MULTIPLIERS[LockDuration.None] / 10000);
-    const maxApy = baseApyNormalized * (LOCK_MULTIPLIERS[LockDuration.SixMonths] / 10000);
+    const baseApyNormalized =
+      currentMultiplier > 0 ? baseApy / currentMultiplier : baseApy;
+    const minApy =
+      baseApyNormalized * (LOCK_MULTIPLIERS[LockDuration.None] / 10000);
+    const maxApy =
+      baseApyNormalized * (LOCK_MULTIPLIERS[LockDuration.SixMonths] / 10000);
 
     const estimatedApyRange: ApyRange = {
       min: minApy,
@@ -233,7 +249,10 @@ const useExpectedRewards = (options?: UseExpectedRewardsOptions) => {
   return {
     data,
     isLoading:
-      isPendingLoading || isVaultsLoading || isPositionsLoading || isEpochLoading,
+      isPendingLoading ||
+      isVaultsLoading ||
+      isPositionsLoading ||
+      isEpochLoading,
     isError: false, // Individual hooks handle their errors
     refetch,
   };

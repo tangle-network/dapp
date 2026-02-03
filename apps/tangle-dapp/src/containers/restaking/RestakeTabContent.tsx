@@ -60,7 +60,7 @@ const RewardsTabContent: FC = () => {
   }
 
   return (
-    <div className="max-w-md mx-auto">
+    <div className="flex justify-center">
       <ClaimableRewardsCard />
     </div>
   );
@@ -140,7 +140,9 @@ const RestakeTabContentInner: FC<Props> = ({ tab }) => {
   };
 
   // Check if this is an action tab (needs centered layout)
-  const isActionTab = Object.values(RestakeAction).includes(tab as RestakeAction);
+  const isActionTab = Object.values(RestakeAction).includes(
+    tab as RestakeAction,
+  );
 
   return (
     <div className="space-y-9">

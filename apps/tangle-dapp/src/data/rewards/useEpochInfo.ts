@@ -128,13 +128,7 @@ const useEpochInfo = (options?: UseEpochInfoOptions) => {
     const poolBalance = r3.result as bigint;
     const secondsUntilNextEpoch = r4.result as bigint;
     const isEpochReady = r5.result as boolean;
-    const weightsResult = r6.result as [
-      number,
-      number,
-      number,
-      number,
-      number,
-    ];
+    const weightsResult = r6.result as [number, number, number, number, number];
 
     const weights: DistributionWeights = {
       stakingBps: weightsResult[0],
@@ -147,9 +141,7 @@ const useEpochInfo = (options?: UseEpochInfoOptions) => {
     // Calculate epochs per year (365 days * 24 hours * 60 mins * 60 secs / epoch length)
     const SECONDS_PER_YEAR = BigInt(365 * 24 * 60 * 60);
     const epochsPerYear =
-      epochLength > BigInt(0)
-        ? Number(SECONDS_PER_YEAR / epochLength)
-        : 0;
+      epochLength > BigInt(0) ? Number(SECONDS_PER_YEAR / epochLength) : 0;
 
     // Calculate staking budget per epoch
     const stakingBudgetPerEpoch =

@@ -33,18 +33,18 @@ export const SP1_VERIFIER_GATEWAY = {
 };
 
 // Local Anvil deployment addresses (from LocalTestnet.s.sol deployment)
-// IMPORTANT: These are deterministic addresses based on deployer nonce when
-// running LocalTestnet.s.sol on a fresh Anvil. If running multiple times or
-// with a different deployer, addresses may differ.
+// IMPORTANT: These addresses are from broadcast/LocalTestnet.s.sol/31337/run-latest.json
+// When running start-local-dev.sh, addresses are deterministic.
+// Use proxy addresses for upgradeable contracts (check ERC1967Proxy transactions).
 export const LOCAL_CONTRACTS: ContractAddresses = {
-  tangle: '0xCf7Ed3AccA5a467e9e704C703E8D87F634fB0Fc9',
-  multiAssetDelegation: '0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512',
-  masterBlueprintServiceManager: '0xc351628eb244ec633d5f21fbd6621e1a683b1181',
-  operatorStatusRegistry: '0x8f86403a4de0bb5791fa46b8e795c547942fe4cf',
-  rewardVaults: '0x04c89607413713ec9775e14b954286519d836fef',
-  inflationPool: '0x21df544947ba3e8b3c32561399e88b52dc8b2823',
-  credits: '0x922d6956c99e12dfeb3224dea977d0939758a1fe',
-  liquidDelegationFactory: '0xc66ab83418c20a65c3f8e83b3d11c8c3a6097b6f',
+  tangle: '0xcf7ed3acca5a467e9e704c703e8d87f634fb0fc9', // Proxy
+  multiAssetDelegation: '0xe7f1725e7734ce288f8367e1bb143e90bb3f0512', // Proxy
+  masterBlueprintServiceManager: '0xc351628eb244ec633d5f21fbd6621e1a683b1181', // Proxy
+  operatorStatusRegistry: '0x17746107e0b4cfaf4c96140f5e501bf10e740b65', // Proxy
+  rewardVaults: '0x04c89607413713ec9775e14b954286519d836fef', // Proxy
+  inflationPool: '0x21df544947ba3e8b3c32561399e88b52dc8b2823', // Proxy
+  credits: '0x922d6956c99e12dfeb3224dea977d0939758a1fe', // Proxy
+  liquidDelegationFactory: '0xc66ab83418c20a65c3f8e83b3d11c8c3a6097b6f', // Direct
 };
 
 // Base Sepolia testnet addresses (local development)
