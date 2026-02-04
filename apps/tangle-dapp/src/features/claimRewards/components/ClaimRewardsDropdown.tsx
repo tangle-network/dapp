@@ -15,6 +15,7 @@ import { twMerge } from 'tailwind-merge';
 import usePendingRewards from '../../../data/rewards/usePendingRewards';
 import useClaimRewardsTx from '../../../data/rewards/useClaimRewardsTx';
 import { TxStatus } from '@tangle-network/tangle-shared-ui/hooks/useContractWrite';
+import PendingRewardsList from '../../../components/restaking/PendingRewardsList';
 
 const ClaimRewardsDropdownContent: FC = () => {
   const { isConnected } = useAccount();
@@ -49,7 +50,6 @@ const ClaimRewardsDropdownContent: FC = () => {
       return;
     }
 
-    // Claim rewards for each vault that has pending rewards
     for (const vault of rewardsData.vaults) {
       if (vault.totalPending > BigInt(0)) {
         setClaimingAsset(vault.asset);
@@ -63,13 +63,11 @@ const ClaimRewardsDropdownContent: FC = () => {
 
     setClaimingAsset(null);
     reset();
-    // Refetch rewards data after claiming
     setTimeout(() => {
       refetch();
     }, 2000);
   }, [rewardsData, claimRewards, reset, refetch]);
 
-  // Don't render if not connected
   if (!isConnected) {
     return null;
   }
@@ -99,7 +97,7 @@ const ClaimRewardsDropdownContent: FC = () => {
         )}
       </DropdownButton>
 
-      <DropdownBody className="min-w-[280px] p-4" sideOffset={8}>
+      <DropdownBody className="min-w-[320px] p-4" sideOffset={8}>
         <div className="flex flex-col gap-3">
           <Typography variant="h5" className="text-mono-200 dark:text-mono-0">
             Pending Rewards
@@ -134,27 +132,9 @@ const ClaimRewardsDropdownContent: FC = () => {
                 </Typography>
               </div>
 
-              {rewardsData?.vaults.map((vault) => (
-                <div
-                  key={vault.asset}
-                  className="flex items-center justify-between py-1"
-                >
-                  <Typography
-                    variant="body2"
-                    className="text-mono-100 dark:text-mono-100 truncate max-w-[120px]"
-                    title={vault.asset}
-                  >
-                    {vault.asset.slice(0, 6)}...{vault.asset.slice(-4)}
-                  </Typography>
-                  <Typography
-                    variant="body2"
-                    className="text-mono-200 dark:text-mono-0"
-                  >
-                    {parseFloat(formatUnits(vault.totalPending, 18)).toFixed(4)}{' '}
-                    TNT
-                  </Typography>
-                </div>
-              ))}
+              <div className="max-h-[280px] overflow-y-auto -mx-1 px-1">
+                <PendingRewardsList vaults={rewardsData?.vaults ?? []} />
+              </div>
 
               <Button
                 isFullWidth

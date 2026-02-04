@@ -53,6 +53,7 @@ export const useClaimRewardsTx = () => {
       };
     },
     {
+      txName: 'Claim rewards',
       getSuccessMessage: (_params) => `Successfully claimed rewards`,
     },
   );

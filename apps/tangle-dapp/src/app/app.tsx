@@ -91,6 +91,10 @@ function App() {
                 path={PagePath.RESTAKE_BLUEPRINT}
                 element={<RestakeTabContent tab={RestakeTab.BLUEPRINTS} />}
               />
+              <Route
+                path={PagePath.RESTAKE_REWARDS}
+                element={<RestakeTabContent tab={RestakeTab.REWARDS} />}
+              />
             </Route>
 
             <Route path={PagePath.LIQUID_STAKING}>

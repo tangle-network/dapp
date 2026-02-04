@@ -408,22 +408,7 @@ const REWARD_VAULTS_ABI = [
             internalType: 'address',
           },
           {
-            name: 'apyBps',
-            type: 'uint256',
-            internalType: 'uint256',
-          },
-          {
             name: 'depositCap',
-            type: 'uint256',
-            internalType: 'uint256',
-          },
-          {
-            name: 'incentiveCap',
-            type: 'uint256',
-            internalType: 'uint256',
-          },
-          {
-            name: 'boostMultiplierBps',
             type: 'uint256',
             internalType: 'uint256',
           },
@@ -444,11 +429,6 @@ const REWARD_VAULTS_ABI = [
           },
           {
             name: 'rewardsDistributed',
-            type: 'uint256',
-            internalType: 'uint256',
-          },
-          {
-            name: 'lastUpdateBlock',
             type: 'uint256',
             internalType: 'uint256',
           },
@@ -639,22 +619,7 @@ const REWARD_VAULTS_ABI = [
             internalType: 'address',
           },
           {
-            name: 'apyBps',
-            type: 'uint256',
-            internalType: 'uint256',
-          },
-          {
             name: 'depositCap',
-            type: 'uint256',
-            internalType: 'uint256',
-          },
-          {
-            name: 'incentiveCap',
-            type: 'uint256',
-            internalType: 'uint256',
-          },
-          {
-            name: 'boostMultiplierBps',
             type: 'uint256',
             internalType: 'uint256',
           },
@@ -675,11 +640,6 @@ const REWARD_VAULTS_ABI = [
           },
           {
             name: 'rewardsDistributed',
-            type: 'uint256',
-            internalType: 'uint256',
-          },
-          {
-            name: 'lastUpdateBlock',
             type: 'uint256',
             internalType: 'uint256',
           },

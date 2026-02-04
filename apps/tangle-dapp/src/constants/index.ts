@@ -133,6 +133,7 @@ export enum LockUnlocksAtKind {
 export enum RestakeTab {
   RESTAKE = 'restake',
   VAULTS = 'vaults',
+  REWARDS = 'rewards',
   OPERATORS = 'operators',
   BLUEPRINTS = 'blueprints',
 }
