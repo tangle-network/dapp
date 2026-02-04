@@ -68,7 +68,13 @@ export const useOperatorStakeByAsset = (
       assets?.map((a) => `${a.kind}:${a.token.toLowerCase()}`).sort(),
     ],
     queryFn: async (): Promise<Map<Address, OperatorStakeByAsset>> => {
-      if (!publicClient || !contracts || !operatorAddress || !assets || assets.length === 0) {
+      if (
+        !publicClient ||
+        !contracts ||
+        !operatorAddress ||
+        !assets ||
+        assets.length === 0
+      ) {
         return new Map();
       }
 
@@ -79,7 +85,8 @@ export const useOperatorStakeByAsset = (
       // - ERC20 (kind=1) with zero address: treat as native (edge case/fallback)
       // - ERC20 (kind=1) with real address: use as-is
       const normalizedAssets = assets.map((asset) => {
-        const isNativeAsset = asset.kind === ASSET_KIND_NATIVE || asset.token === zeroAddress;
+        const isNativeAsset =
+          asset.kind === ASSET_KIND_NATIVE || asset.token === zeroAddress;
 
         return {
           kind: isNativeAsset ? ASSET_KIND_NATIVE : asset.kind,
@@ -96,7 +103,10 @@ export const useOperatorStakeByAsset = (
               address: contracts.multiAssetDelegation,
               abi: MULTI_ASSET_DELEGATION_ABI,
               functionName: 'getOperatorStakeForAsset' as const,
-              args: [operatorAddress, { kind: asset.kind, token: asset.token }] as const,
+              args: [
+                operatorAddress,
+                { kind: asset.kind, token: asset.token },
+              ] as const,
             })),
             allowFailure: true,
           });

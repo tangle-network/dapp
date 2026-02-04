@@ -463,9 +463,12 @@ const useContractWrite = <
           const revertError = new Error('Transaction reverted');
           setStatus(TxStatus.ERROR);
           setError(revertError);
-          enqueueSnackbar(`${capitalize(txName)} failed: Transaction reverted`, {
-            variant: 'error',
-          });
+          enqueueSnackbar(
+            `${capitalize(txName)} failed: Transaction reverted`,
+            {
+              variant: 'error',
+            },
+          );
           options?.onError?.(revertError, context);
 
           if (enableTxHistory && networkId !== undefined) {
