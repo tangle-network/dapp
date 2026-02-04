@@ -2,6 +2,7 @@ import {
   useMemo,
   useState,
   useCallback,
+  useEffect,
   type FC,
   Dispatch,
   SetStateAction,
@@ -26,36 +27,32 @@ import TableCellWrapper from '@tangle-network/tangle-shared-ui/components/tables
 import { useChainId } from 'wagmi';
 import { chainsConfig } from '@tangle-network/dapp-config/chains';
 import {
-  usePendingServiceRequests,
+  useApprovedServiceRequests,
   useBlueprintMap,
   type ServiceRequest,
 } from '@tangle-network/tangle-shared-ui/data/graphql';
 import type { Blueprint } from '@tangle-network/tangle-shared-ui/types/blueprint';
 import useEvmOperatorInfo from '../../../hooks/useEvmOperatorInfo';
 import ServiceRequestDetailModal from './UpdateBlueprintModel/ServiceRequestDetailModal';
-import { ApprovalConfirmationFormFields } from '../../../types';
-import useServiceApproveTx from '../../../data/services/useServiceApproveTx';
-import useServiceRejectTx from '../../../data/services/useServiceRejectTx';
 
-// Service request with blueprint metadata
 interface ServiceRequestWithBlueprint extends ServiceRequest {
   blueprintData?: Blueprint;
 }
 
 const columnHelper = createColumnHelper<ServiceRequestWithBlueprint>();
 
-interface PendingInstanceTableProps {
+interface ApprovedInstanceTableProps {
   refreshTrigger: number;
   setRefreshTrigger: Dispatch<SetStateAction<number>>;
 }
 
-export const PendingInstanceTable: FC<PendingInstanceTableProps> = ({
-  setRefreshTrigger,
+export const ApprovedInstanceTable: FC<ApprovedInstanceTableProps> = ({
+  refreshTrigger,
+  setRefreshTrigger: _setRefreshTrigger,
 }) => {
   const chainId = useChainId();
   const { isOperator, operatorAddress } = useEvmOperatorInfo();
 
-  // Get chain config for explorer URLs
   const activeChain = useMemo(() => {
     return Object.values(chainsConfig).find((c) => c.id === chainId);
   }, [chainId]);
@@ -65,44 +62,33 @@ export const PendingInstanceTable: FC<PendingInstanceTableProps> = ({
   const [selectedRequest, setSelectedRequest] =
     useState<ServiceRequestWithBlueprint | null>(null);
 
-  // Fetch pending service requests for the operator
   const {
-    data: pendingRequests,
+    data: approvedRequests,
     isLoading,
     error,
     refetch,
-  } = usePendingServiceRequests(
+  } = useApprovedServiceRequests(
     isOperator ? (operatorAddress ?? undefined) : undefined,
   );
 
-  // Fetch blueprint metadata
+  // Refetch when refreshTrigger changes (e.g., after approve/reject in PendingInstanceTable)
+  useEffect(() => {
+    if (refreshTrigger > 0) {
+      refetch();
+    }
+  }, [refreshTrigger, refetch]);
+
   const { blueprints: blueprintMap } = useBlueprintMap();
 
-  // Combine requests with blueprint data and filter out requests where operator has already acted
   const requestsWithBlueprints = useMemo<ServiceRequestWithBlueprint[]>(() => {
-    if (!pendingRequests) return [];
+    if (!approvedRequests) return [];
 
-    const normalizedOperator = operatorAddress?.toLowerCase();
+    return approvedRequests.map((request) => ({
+      ...request,
+      blueprintData: blueprintMap?.get(request.blueprintId.toString()),
+    }));
+  }, [approvedRequests, blueprintMap]);
 
-    return pendingRequests
-      .filter((request) => {
-        if (!normalizedOperator) return true;
-        // Filter out requests where operator has already approved or rejected
-        const hasApproved = request.approvedOperators?.some(
-          (addr) => addr.toLowerCase() === normalizedOperator,
-        );
-        const hasRejected = request.rejectedOperators?.some(
-          (addr) => addr.toLowerCase() === normalizedOperator,
-        );
-        return !hasApproved && !hasRejected;
-      })
-      .map((request) => ({
-        ...request,
-        blueprintData: blueprintMap?.get(request.blueprintId.toString()),
-      }));
-  }, [pendingRequests, blueprintMap, operatorAddress]);
-
-  // Helper to check if current operator has approved a request
   const hasOperatorApproved = useCallback(
     (request: ServiceRequestWithBlueprint) => {
       if (!operatorAddress) return false;
@@ -114,7 +100,6 @@ export const PendingInstanceTable: FC<PendingInstanceTableProps> = ({
     [operatorAddress],
   );
 
-  // Helper to check if current operator has rejected a request
   const hasOperatorRejected = useCallback(
     (request: ServiceRequestWithBlueprint) => {
       if (!operatorAddress) return false;
@@ -126,32 +111,7 @@ export const PendingInstanceTable: FC<PendingInstanceTableProps> = ({
     [operatorAddress],
   );
 
-  // Helper to get pending approval count
-  const getPendingApprovalCount = useCallback(
-    (request: ServiceRequestWithBlueprint) => {
-      const totalOperators = request.operatorCandidates?.length ?? 0;
-      const approvedCount = request.approvedOperators?.length ?? 0;
-      return totalOperators - approvedCount;
-    },
-    [],
-  );
-
   const isEmpty = requestsWithBlueprints.length === 0;
-
-  // Callback to handle successful transactions - refetch after delay to allow indexer to process
-  const handleTxSuccess = useCallback(() => {
-    setRefreshTrigger((prev) => prev + 1);
-    // Delay refetch to allow indexer to process the transaction
-    setTimeout(() => {
-      refetch();
-    }, 2000);
-  }, [setRefreshTrigger, refetch]);
-
-  const { execute: rejectServiceRequest, status: rejectStatus } =
-    useServiceRejectTx({ onSuccess: handleTxSuccess });
-
-  const { execute: approveServiceRequest, status: approveStatus } =
-    useServiceApproveTx({ onSuccess: handleTxSuccess });
 
   const columns = useMemo(() => {
     const baseColumns: AccessorKeyColumnDef<
@@ -233,50 +193,39 @@ export const PendingInstanceTable: FC<PendingInstanceTableProps> = ({
           },
         }),
         columnHelper.accessor('requestId', {
-          id: 'actions',
-          header: () => '',
+          id: 'yourAction',
+          header: () => 'Your Action',
           cell: (props) => {
             const request = props.row.original;
             const approved = hasOperatorApproved(request);
             const rejected = hasOperatorRejected(request);
-            const pendingCount = getPendingApprovalCount(request);
 
-            // Operator has already approved
             if (approved) {
               return (
-                <TableCellWrapper removeRightBorder className="p-0 min-h-fit">
-                  <div className="flex flex-col items-end gap-1">
-                    <div className="flex items-center gap-1.5 text-green-500">
-                      <svg
-                        className="w-4 h-4"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={2}
-                          d="M5 13l4 4L19 7"
-                        />
-                      </svg>
-                      <span className="text-sm font-medium">You approved</span>
-                    </div>
-                    {pendingCount > 0 && (
-                      <span className="text-xs text-mono-100 dark:text-mono-80">
-                        Waiting for {pendingCount} more{' '}
-                        {pendingCount === 1 ? 'operator' : 'operators'}
-                      </span>
-                    )}
+                <TableCellWrapper className="p-0 min-h-fit">
+                  <div className="flex items-center gap-1.5 text-green-500">
+                    <svg
+                      className="w-4 h-4"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M5 13l4 4L19 7"
+                      />
+                    </svg>
+                    <span className="text-sm font-medium">You approved</span>
                   </div>
                 </TableCellWrapper>
               );
             }
 
-            // Operator has already rejected
             if (rejected) {
               return (
-                <TableCellWrapper removeRightBorder className="p-0 min-h-fit">
+                <TableCellWrapper className="p-0 min-h-fit">
                   <div className="flex items-center gap-1.5 text-red-500">
                     <svg
                       className="w-4 h-4"
@@ -297,7 +246,17 @@ export const PendingInstanceTable: FC<PendingInstanceTableProps> = ({
               );
             }
 
-            // Operator hasn't acted yet - show review button
+            return (
+              <TableCellWrapper className="p-0 min-h-fit">
+                <span className="text-sm text-mono-100">-</span>
+              </TableCellWrapper>
+            );
+          },
+        }),
+        columnHelper.accessor('requestId', {
+          id: 'actions',
+          header: () => '',
+          cell: (props) => {
             return (
               <TableCellWrapper removeRightBorder className="p-0 min-h-fit">
                 <Button
@@ -308,7 +267,7 @@ export const PendingInstanceTable: FC<PendingInstanceTableProps> = ({
                     setIsDetailModalOpen(true);
                   }}
                 >
-                  Review
+                  View Details
                 </Button>
               </TableCellWrapper>
             );
@@ -359,20 +318,14 @@ export const PendingInstanceTable: FC<PendingInstanceTableProps> = ({
     }
 
     return baseColumns;
-  }, [
-    isOperator,
-    activeChain,
-    hasOperatorApproved,
-    hasOperatorRejected,
-    getPendingApprovalCount,
-  ]);
+  }, [isOperator, activeChain, hasOperatorApproved, hasOperatorRejected]);
 
   const table = useReactTable({
     data: requestsWithBlueprints,
     columns,
     getCoreRowModel: getCoreRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
-    getRowId: (row) => `PendingServiceRequest-${row.requestId}`,
+    getRowId: (row) => `ApprovedServiceRequest-${row.requestId}`,
     autoResetPageIndex: false,
     enableSortingRemoval: false,
   });
@@ -382,37 +335,10 @@ export const PendingInstanceTable: FC<PendingInstanceTableProps> = ({
     setSelectedRequest(null);
   }, []);
 
-  const onConfirmReject = useCallback(async () => {
-    if (!selectedRequest || !rejectServiceRequest) return;
-
-    await rejectServiceRequest({
-      requestId: selectedRequest.requestId,
-    });
-  }, [selectedRequest, rejectServiceRequest]);
-
-  const onConfirmApprove = useCallback(
-    async (data: ApprovalConfirmationFormFields) => {
-      if (!selectedRequest || !approveServiceRequest) return;
-
-      if (data.securityCommitments && data.securityCommitments.length > 0) {
-        await approveServiceRequest({
-          requestId: selectedRequest.requestId,
-          securityCommitments: data.securityCommitments,
-        });
-      } else {
-        await approveServiceRequest({
-          requestId: selectedRequest.requestId,
-          restakingPercent: data.restakingPercent ?? 0,
-        });
-      }
-    },
-    [selectedRequest, approveServiceRequest],
-  );
-
   return (
     <>
       <TangleCloudTable<ServiceRequestWithBlueprint>
-        title={pluralize('Pending Request', !isEmpty)}
+        title={pluralize('Approved Request', !isEmpty)}
         data={requestsWithBlueprints}
         error={error}
         isLoading={isLoading}
@@ -424,15 +350,16 @@ export const PendingInstanceTable: FC<PendingInstanceTableProps> = ({
       <Modal open={isDetailModalOpen} onOpenChange={setIsDetailModalOpen}>
         <ServiceRequestDetailModal
           onClose={onCloseDetailModal}
-          onApprove={onConfirmApprove}
-          onReject={onConfirmReject}
+          onApprove={async () => undefined}
+          onReject={async () => undefined}
           selectedRequest={selectedRequest}
-          approveStatus={approveStatus}
-          rejectStatus={rejectStatus}
+          approveStatus="idle"
+          rejectStatus="idle"
+          viewOnly
         />
       </Modal>
     </>
   );
 };
 
-PendingInstanceTable.displayName = 'PendingInstanceTable';
+ApprovedInstanceTable.displayName = 'ApprovedInstanceTable';

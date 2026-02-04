@@ -8,6 +8,7 @@ import { useForm } from 'react-hook-form';
 import {
   DeployBlueprintSchema,
   deployBlueprintSchema,
+  toSeconds,
 } from '../../../../utils/validations/deployBlueprint';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useNavigate } from 'react-router';
@@ -59,6 +60,9 @@ const DeployPage: FC = () => {
     mode: 'onChange',
     // @ts-expect-error Two different types with this name exist, but they are unrelated.
     resolver: zodResolver(deployBlueprintSchema),
+    defaultValues: {
+      durationUnit: 'seconds',
+    },
   });
 
   const commonProps = useMemo(
@@ -103,13 +107,23 @@ const DeployPage: FC = () => {
   const onDeployBlueprint = async () => {
     try {
       clearErrors();
-      const validatedData = deployBlueprintSchema.parse(watch());
+      const formData = watch();
+      console.log('Form data before validation:', formData);
+      console.log('Current form errors:', errors);
+      const validatedData = deployBlueprintSchema.parse(formData);
 
       // Format the service request data for the Tangle contract
       // Operators are already Address[] from the schema
       const operators = validatedData.operators ?? [];
       const permittedCallers = validatedData.permittedCallers ?? [];
-      const ttl = BigInt(validatedData.instanceDuration ?? 0);
+      const ttlInSeconds =
+        validatedData.instanceDuration === 0
+          ? 0
+          : toSeconds(
+              validatedData.instanceDuration,
+              validatedData.durationUnit,
+            );
+      const ttl = BigInt(ttlInSeconds);
 
       // Get payment configuration
       const paymentToken = validatedData.paymentAsset?.id ?? zeroAddress;
@@ -166,7 +180,14 @@ const DeployPage: FC = () => {
       }
     } catch (error) {
       if (error instanceof z.ZodError) {
+        console.log('Zod validation errors:', error.errors);
         error.errors.forEach((err) => {
+          console.log(
+            'Setting error for field:',
+            err.path[0],
+            'message:',
+            err.message,
+          );
           setError(err.path[0] as keyof DeployBlueprintSchema, {
             type: 'manual',
             message: err.message,

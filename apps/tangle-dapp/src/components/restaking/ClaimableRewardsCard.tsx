@@ -274,7 +274,7 @@ const ClaimableRewardsCard: FC = () => {
             isLoading={isClaiming || isClaimingTx}
             className="mt-2"
           >
-            {isClaimingTx ? 'Claiming...' : 'Claim Rewards'}
+            {isClaimingTx ? 'Claiming...' : 'Claim All Rewards'}
           </Button>
         </Card>
 

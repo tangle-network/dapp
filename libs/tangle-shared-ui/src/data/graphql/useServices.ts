@@ -3,6 +3,7 @@
  */
 
 import { useQuery } from '@tanstack/react-query';
+import { useMemo } from 'react';
 import { Address } from 'viem';
 import {
   executeEnvioGraphQL,
@@ -31,8 +32,12 @@ export interface ServiceRequest {
   blueprintId: bigint;
   requester: Address;
   operatorCandidates: Address[];
-  status: 'PENDING' | 'APPROVED' | 'REJECTED';
+  approvedOperators: Address[];
+  rejectedOperators: Address[];
+  status: 'PENDING' | 'APPROVED' | 'REJECTED' | 'ACTIVATED';
   createdAt: bigint;
+  approvalCount: bigint;
+  securityRequirements: string | null;
 }
 
 // Raw response types
@@ -45,11 +50,9 @@ interface ServiceQueryResponse {
     status: string;
     createdAt: string;
     terminatedAt: string | null;
-    serviceOperators: Array<{
-      operator: {
-        id: string;
-      };
-    }>;
+    request: {
+      operatorCandidates: string[];
+    } | null;
   }>;
 }
 
@@ -60,8 +63,12 @@ interface ServiceRequestQueryResponse {
     blueprint_id: string;
     requester: string;
     operatorCandidates: string[];
+    approvedOperators: string[];
+    rejectedOperators: string[];
     status: string;
     createdAt: string;
+    approvalCount: string;
+    securityRequirements: string | null;
   }>;
 }
 
@@ -82,8 +89,10 @@ const fetchServices = async (
     where.push(`owner: { _eq: "${options.owner.toLowerCase()}" }`);
   }
   if (options.operator) {
+    // Filter by operator via the request's operatorCandidates
+    // (serviceOperators relationship isn't reliably populated by indexer)
     where.push(
-      `operators: { _contains: ["${options.operator.toLowerCase()}"] }`,
+      `request: { operatorCandidates: { _contains: ["${options.operator.toLowerCase()}"] } }`,
     );
   }
   if (options.status) {
@@ -110,10 +119,8 @@ const fetchServices = async (
         status
         createdAt
         terminatedAt
-        serviceOperators {
-          operator {
-            id
-          }
+        request {
+          operatorCandidates
         }
       }
     }
@@ -141,7 +148,7 @@ const fetchServices = async (
     blueprintId: BigInt(s.blueprint_id),
     owner: s.owner as Address,
     status: s.status as ServiceStatus,
-    operators: s.serviceOperators.map((so) => so.operator.id as Address),
+    operators: (s.request?.operatorCandidates ?? []) as Address[],
     createdAt: BigInt(s.createdAt),
     terminatedAt: s.terminatedAt ? BigInt(s.terminatedAt) : null,
   }));
@@ -190,8 +197,12 @@ const fetchServiceRequests = async (
         blueprint_id
         requester
         operatorCandidates
+        approvedOperators
+        rejectedOperators
         status
         createdAt
+        approvalCount
+        securityRequirements
       }
     }
   `;
@@ -218,8 +229,12 @@ const fetchServiceRequests = async (
     blueprintId: BigInt(r.blueprint_id),
     requester: r.requester as Address,
     operatorCandidates: r.operatorCandidates as Address[],
-    status: r.status as 'PENDING' | 'APPROVED' | 'REJECTED',
+    approvedOperators: (r.approvedOperators ?? []) as Address[],
+    rejectedOperators: (r.rejectedOperators ?? []) as Address[],
+    status: r.status as 'PENDING' | 'APPROVED' | 'REJECTED' | 'ACTIVATED',
     createdAt: BigInt(r.createdAt),
+    approvalCount: BigInt(r.approvalCount ?? '0'),
+    securityRequirements: r.securityRequirements,
   }));
 };
 
@@ -293,6 +308,67 @@ export const usePendingServiceRequests = (
     staleTime: 30_000,
   });
 };
+
+/**
+ * Hook to fetch service requests where the operator has already taken action.
+ * This includes requests with any status (PENDING, APPROVED, REJECTED) where
+ * the operator is in either approvedOperators or rejectedOperators arrays.
+ */
+export const useOperatorActedServiceRequests = (
+  operator: Address | undefined,
+  options?: {
+    network?: EnvioNetwork;
+    enabled?: boolean;
+  },
+) => {
+  const { network, enabled = true } = options ?? {};
+
+  // Fetch all requests for this operator in a single query (no status filter)
+  const allRequestsQuery = useQuery({
+    queryKey: ['envio', 'serviceRequests', 'all', operator, network],
+    queryFn: async () => {
+      if (!operator) return [];
+      // Fetch without status filter to get all requests in one API call
+      return fetchServiceRequests({ operator }, network);
+    },
+    enabled: enabled && !!operator,
+    staleTime: 30_000,
+  });
+
+  // Filter to only include requests where operator has acted (excluding ACTIVATED)
+  const filteredData = useMemo(() => {
+    if (!operator || !allRequestsQuery.data) return [];
+
+    const normalizedOperator = operator.toLowerCase();
+
+    // Filter to only include requests where operator has approved or rejected
+    // Exclude ACTIVATED requests as they are shown in the Running table
+    const actedRequests = allRequestsQuery.data.filter((request) => {
+      // Skip activated requests - they belong in Running table
+      if (request.status === 'ACTIVATED') return false;
+
+      const hasApproved = request.approvedOperators?.some(
+        (addr) => addr.toLowerCase() === normalizedOperator,
+      );
+      const hasRejected = request.rejectedOperators?.some(
+        (addr) => addr.toLowerCase() === normalizedOperator,
+      );
+      return hasApproved || hasRejected;
+    });
+
+    return actedRequests.sort((a, b) => Number(b.createdAt - a.createdAt));
+  }, [operator, allRequestsQuery.data]);
+
+  return {
+    data: filteredData,
+    isLoading: allRequestsQuery.isLoading,
+    error: allRequestsQuery.error,
+    refetch: allRequestsQuery.refetch,
+  };
+};
+
+// Keep the old export for backwards compatibility
+export const useApprovedServiceRequests = useOperatorActedServiceRequests;
 
 /**
  * Hook to fetch operator stats.

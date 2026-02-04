@@ -118,3 +118,5 @@ contracts/**/target/
 # Contracts - Generated migration data (large files)
 **/migration-proofs.json
 contracts/**/evm-claims.json
+
+docs/cloud-qa

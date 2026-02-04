@@ -1,11 +1,12 @@
-import { Typography, Input, Card, Label } from '@tangle-network/ui-components';
-import { FC, useEffect, useMemo, useState, Children } from 'react';
 import {
-  SelectOperatorsStepProps,
-  OperatorSelectionTable,
-  ApprovalModelLabel,
-  LabelClassName,
-} from './type';
+  Typography,
+  Input,
+  Card,
+  Chip,
+  SkeletonLoader,
+} from '@tangle-network/ui-components';
+import { FC, useEffect, useMemo, useState, Children } from 'react';
+import { SelectOperatorsStepProps, OperatorSelectionTable } from './type';
 import { RowSelectionState } from '@tanstack/react-table';
 import ErrorMessage from '../../../../../components/ErrorMessage';
 import {
@@ -14,16 +15,19 @@ import {
   SelectCheckboxItem,
   SelectTrigger,
   SelectValue,
-  SelectItem,
 } from '@tangle-network/ui-components/components/select';
 import { Search } from '@tangle-network/icons';
 import LsTokenIcon from '@tangle-network/tangle-shared-ui/components/LsTokenIcon';
 import { OperatorTable } from './components/OperatorTable';
-import { DeployBlueprintSchema } from '../../../../../utils/validations/deployBlueprint';
 import {
   useRestakeAssets,
   type RestakeAsset,
 } from '@tangle-network/tangle-shared-ui/data/graphql';
+import {
+  useBlueprintConfig,
+  getMembershipModelLabel,
+  MembershipModel,
+} from '@tangle-network/tangle-shared-ui/data/services';
 import { Address } from 'viem';
 
 const MAX_ASSET_TO_SHOW = 3;
@@ -32,6 +36,7 @@ export const SelectOperatorsStep: FC<SelectOperatorsStepProps> = ({
   errors,
   setValue,
   watch,
+  blueprint,
   blueprintOperators,
 }) => {
   const [rowSelection, setRowSelection] = useState<RowSelectionState>(
@@ -42,6 +47,10 @@ export const SelectOperatorsStep: FC<SelectOperatorsStepProps> = ({
   );
 
   const [searchQuery, setSearchQuery] = useState('');
+
+  // Fetch blueprint config from contract to get membership model settings
+  const { data: blueprintConfig, isLoading: isConfigLoading } =
+    useBlueprintConfig(blueprint?.id);
 
   // Fetch restaking assets from GraphQL indexer
   const { assets: assetMap } = useRestakeAssets();
@@ -70,8 +79,7 @@ export const SelectOperatorsStep: FC<SelectOperatorsStepProps> = ({
   }, [blueprintOperators]);
 
   const selectedAssets = watch('assets');
-  const approvalModel = watch('approvalModel');
-  const minApproval = watch('minApproval');
+  const selectedOperatorsCount = Object.keys(rowSelection).length;
 
   const tableData = useMemo(() => {
     if (!Array.isArray(selectedAssets) || selectedAssets.length === 0) {
@@ -115,38 +123,80 @@ export const SelectOperatorsStep: FC<SelectOperatorsStepProps> = ({
 
     setValue(`assets`, newSelectedAssets);
 
-    // Initialize security commitments
+    // Initialize security commitments (minExposurePercent must be >= 1 per schema)
     const securityCommitments = newSelectedAssets.map((selectedAsset) => {
       return {
         asset: selectedAsset.id,
-        minExposurePercent: 0,
+        minExposurePercent: 1,
         maxExposurePercent: 100,
       };
     });
     setValue(`securityCommitments`, securityCommitments);
   };
 
-  const onChangeApprovalModel = (
-    value: DeployBlueprintSchema['approvalModel'],
-  ) => {
-    let newMaxApproval: number | undefined;
-    let newMinApproval: number = minApproval;
+  // Calculate min approvals required based on blueprint config
+  // For Fixed: all operators must approve
+  // For Dynamic: use minOperators from blueprint config
+  const minApprovalsRequired = useMemo(() => {
+    if (!blueprintConfig) return null;
 
-    if (value === 'Dynamic') {
-      newMaxApproval = Object.keys(rowSelection).length;
-    } else {
-      newMaxApproval = undefined;
-      newMinApproval = Object.keys(rowSelection).length;
+    if (blueprintConfig.membership === MembershipModel.Fixed) {
+      // Fixed: all selected operators must approve
+      return selectedOperatorsCount > 0 ? selectedOperatorsCount : null;
     }
 
-    setValue(`approvalModel`, value);
-    setValue(`maxApproval`, newMaxApproval);
-    setValue(`minApproval`, newMinApproval);
-  };
+    // Dynamic: show blueprint's minOperators requirement
+    return blueprintConfig.minOperators;
+  }, [blueprintConfig, selectedOperatorsCount]);
 
-  const onChangeMinApproval = (value: DeployBlueprintSchema['minApproval']) => {
-    setValue(`minApproval`, value);
-  };
+  // Set approvalModel and minApproval in form state when config loads
+  useEffect(() => {
+    console.log('[OperatorSelectionStep] useEffect triggered', {
+      blueprintConfig,
+      selectedOperatorsCount,
+    });
+    if (!blueprintConfig) return;
+
+    const approvalModel =
+      blueprintConfig.membership === MembershipModel.Fixed
+        ? 'Fixed'
+        : 'Dynamic';
+    console.log(
+      '[OperatorSelectionStep] Setting approvalModel:',
+      approvalModel,
+    );
+    setValue('approvalModel', approvalModel);
+
+    if (approvalModel === 'Fixed') {
+      // For Fixed model, all selected operators must approve
+      if (selectedOperatorsCount > 0) {
+        console.log(
+          '[OperatorSelectionStep] Setting minApproval (Fixed):',
+          selectedOperatorsCount,
+        );
+        setValue('minApproval', selectedOperatorsCount);
+      }
+    } else {
+      // For Dynamic model, use blueprint's minOperators
+      // If maxOperators is 0 (unlimited), use selectedOperatorsCount or minOperators as fallback
+      const maxApproval =
+        blueprintConfig.maxOperators > 0
+          ? blueprintConfig.maxOperators
+          : selectedOperatorsCount > 0
+            ? selectedOperatorsCount
+            : blueprintConfig.minOperators;
+      console.log(
+        '[OperatorSelectionStep] Setting minApproval (Dynamic):',
+        blueprintConfig.minOperators,
+      );
+      console.log(
+        '[OperatorSelectionStep] Setting maxApproval (Dynamic):',
+        maxApproval,
+      );
+      setValue('minApproval', blueprintConfig.minOperators);
+      setValue('maxApproval', maxApproval);
+    }
+  }, [blueprintConfig, selectedOperatorsCount, setValue]);
 
   // Get all available assets for filtering
   const allAssets = useMemo<RestakeAsset[]>(() => {
@@ -276,43 +326,61 @@ export const SelectOperatorsStep: FC<SelectOperatorsStepProps> = ({
         <ErrorMessage>{errors?.operators?.message}</ErrorMessage>
       )}
 
-      <div className="mt-5 flex gap-4">
-        <div className="space-y-2 w-1/2">
-          <Label className={LabelClassName}>Approval Model:</Label>
-          <Select value={approvalModel} onValueChange={onChangeApprovalModel}>
-            <SelectTrigger className="h-10">
-              <SelectValue
-                className="text-[16px] leading-[30px]"
-                placeholder="Select an approval model"
-              />
-            </SelectTrigger>
-            <SelectContent>
-              {Children.toArray(
-                Object.entries(ApprovalModelLabel).map(([key, label]) => (
-                  <SelectItem value={key}>{label}</SelectItem>
-                )),
-              )}
-            </SelectContent>
-          </Select>
-          {errors?.approvalModel?.message && (
-            <ErrorMessage>{errors?.approvalModel?.message}</ErrorMessage>
-          )}
-        </div>
+      {/* Approval Settings - Read-only based on blueprint configuration */}
+      <div className="mt-5 p-4 bg-mono-20 dark:bg-mono-180 rounded-lg">
+        <Typography
+          variant="body1"
+          className="text-mono-120 dark:text-mono-100 mb-3"
+        >
+          Approval Requirements (defined by blueprint)
+        </Typography>
 
-        {approvalModel === 'Dynamic' && (
-          <div className="space-y-2 w-1/2">
-            <Label className={LabelClassName}>Approval Threshold:</Label>
-            <Input
-              value={minApproval?.toString()}
-              inputClassName="h-10"
-              onChange={(nextValue) => onChangeMinApproval(Number(nextValue))}
-              isControlled
-              type="number"
-              id="approval-threshold"
-            />
-            {errors?.minApproval?.message && (
-              <ErrorMessage>{errors?.minApproval?.message}</ErrorMessage>
-            )}
+        {isConfigLoading ? (
+          <div className="flex gap-8">
+            <SkeletonLoader className="h-5 w-40" />
+            <SkeletonLoader className="h-5 w-32" />
+          </div>
+        ) : (
+          <div className="flex gap-8">
+            <div className="flex items-center gap-2">
+              <span className="text-sm text-mono-140 dark:text-mono-80">
+                Membership Model:
+              </span>
+              <Chip
+                color={
+                  blueprintConfig?.membership === MembershipModel.Fixed
+                    ? 'blue'
+                    : 'purple'
+                }
+              >
+                {blueprintConfig
+                  ? getMembershipModelLabel(blueprintConfig.membership)
+                  : 'Loading...'}
+              </Chip>
+            </div>
+
+            <div className="flex items-center gap-2">
+              <span className="text-sm text-mono-140 dark:text-mono-80">
+                Min. Approvals Required:
+              </span>
+              <span className="text-sm font-semibold">
+                {minApprovalsRequired !== null ? (
+                  <>
+                    {minApprovalsRequired}
+                    {selectedOperatorsCount > 0 && (
+                      <span className="text-mono-100 dark:text-mono-120 font-normal">
+                        {' '}
+                        / {selectedOperatorsCount} selected
+                      </span>
+                    )}
+                  </>
+                ) : (
+                  <span className="text-mono-100 dark:text-mono-120 font-normal">
+                    Select operators to see requirements
+                  </span>
+                )}
+              </span>
+            </div>
           </div>
         )}
       </div>
