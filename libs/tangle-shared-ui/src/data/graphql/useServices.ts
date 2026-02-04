@@ -3,6 +3,7 @@
  */
 
 import { useQuery } from '@tanstack/react-query';
+import { useMemo } from 'react';
 import { Address } from 'viem';
 import {
   executeEnvioGraphQL,
@@ -35,6 +36,8 @@ export interface ServiceRequest {
   rejectedOperators: Address[];
   status: 'PENDING' | 'APPROVED' | 'REJECTED' | 'ACTIVATED';
   createdAt: bigint;
+  approvalCount: bigint;
+  securityRequirements: string | null;
 }
 
 // Raw response types
@@ -64,6 +67,8 @@ interface ServiceRequestQueryResponse {
     rejectedOperators: string[];
     status: string;
     createdAt: string;
+    approvalCount: string;
+    securityRequirements: string | null;
   }>;
 }
 
@@ -196,6 +201,8 @@ const fetchServiceRequests = async (
         rejectedOperators
         status
         createdAt
+        approvalCount
+        securityRequirements
       }
     }
   `;
@@ -226,6 +233,8 @@ const fetchServiceRequests = async (
     rejectedOperators: (r.rejectedOperators ?? []) as Address[],
     status: r.status as 'PENDING' | 'APPROVED' | 'REJECTED' | 'ACTIVATED',
     createdAt: BigInt(r.createdAt),
+    approvalCount: BigInt(r.approvalCount ?? '0'),
+    securityRequirements: r.securityRequirements,
   }));
 };
 
@@ -299,6 +308,67 @@ export const usePendingServiceRequests = (
     staleTime: 30_000,
   });
 };
+
+/**
+ * Hook to fetch service requests where the operator has already taken action.
+ * This includes requests with any status (PENDING, APPROVED, REJECTED) where
+ * the operator is in either approvedOperators or rejectedOperators arrays.
+ */
+export const useOperatorActedServiceRequests = (
+  operator: Address | undefined,
+  options?: {
+    network?: EnvioNetwork;
+    enabled?: boolean;
+  },
+) => {
+  const { network, enabled = true } = options ?? {};
+
+  // Fetch all requests for this operator in a single query (no status filter)
+  const allRequestsQuery = useQuery({
+    queryKey: ['envio', 'serviceRequests', 'all', operator, network],
+    queryFn: async () => {
+      if (!operator) return [];
+      // Fetch without status filter to get all requests in one API call
+      return fetchServiceRequests({ operator }, network);
+    },
+    enabled: enabled && !!operator,
+    staleTime: 30_000,
+  });
+
+  // Filter to only include requests where operator has acted (excluding ACTIVATED)
+  const filteredData = useMemo(() => {
+    if (!operator || !allRequestsQuery.data) return [];
+
+    const normalizedOperator = operator.toLowerCase();
+
+    // Filter to only include requests where operator has approved or rejected
+    // Exclude ACTIVATED requests as they are shown in the Running table
+    const actedRequests = allRequestsQuery.data.filter((request) => {
+      // Skip activated requests - they belong in Running table
+      if (request.status === 'ACTIVATED') return false;
+
+      const hasApproved = request.approvedOperators?.some(
+        (addr) => addr.toLowerCase() === normalizedOperator,
+      );
+      const hasRejected = request.rejectedOperators?.some(
+        (addr) => addr.toLowerCase() === normalizedOperator,
+      );
+      return hasApproved || hasRejected;
+    });
+
+    return actedRequests.sort((a, b) => Number(b.createdAt - a.createdAt));
+  }, [operator, allRequestsQuery.data]);
+
+  return {
+    data: filteredData,
+    isLoading: allRequestsQuery.isLoading,
+    error: allRequestsQuery.error,
+    refetch: allRequestsQuery.refetch,
+  };
+};
+
+// Keep the old export for backwards compatibility
+export const useApprovedServiceRequests = useOperatorActedServiceRequests;
 
 /**
  * Hook to fetch operator stats.

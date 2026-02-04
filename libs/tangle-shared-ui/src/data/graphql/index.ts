@@ -101,6 +101,8 @@ export {
   useServicesByOwner,
   useServicesByOperator,
   usePendingServiceRequests,
+  useApprovedServiceRequests,
+  useOperatorActedServiceRequests,
   useOperatorStats,
   type Service,
   type ServiceRequest,
