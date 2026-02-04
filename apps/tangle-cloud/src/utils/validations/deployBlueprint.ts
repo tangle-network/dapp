@@ -94,7 +94,9 @@ export const deployBlueprintSchema = z
     // Duration value in the selected unit (hours/days/weeks)
     instanceDuration: z.number().min(0),
     // Duration unit (defaults to seconds)
-    durationUnit: z.enum(['seconds', 'minutes', 'hours', 'days']).default('seconds'),
+    durationUnit: z
+      .enum(['seconds', 'minutes', 'hours', 'days'])
+      .default('seconds'),
     permittedCallers: z.array(z.string()).transform((value, context) => {
       if (value.length === 0) {
         context.addIssue({

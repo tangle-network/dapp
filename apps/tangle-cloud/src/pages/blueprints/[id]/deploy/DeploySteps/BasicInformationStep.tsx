@@ -56,8 +56,14 @@ export const BasicInformationStep: FC<BasicInformationStepProps> = ({
   };
 
   const handleInstanceDurationChange = (value: string) => {
-    const numValue = value === '' ? 0 : parseInt(value, 10);
-    setValue(`instanceDuration`, isNaN(numValue) ? 0 : numValue);
+    if (value === '') {
+      return;
+    }
+
+    const numValue = parseInt(value, 10);
+    if (!isNaN(numValue)) {
+      setValue('instanceDuration', numValue);
+    }
   };
 
   const handleDurationUnitChange = (unit: DurationUnit) => {
@@ -109,11 +115,16 @@ export const BasicInformationStep: FC<BasicInformationStepProps> = ({
                 type="number"
                 min={0}
                 value={instanceDuration?.toString() ?? ''}
-                onChange={(nextValue) => handleInstanceDurationChange(nextValue)}
+                onChange={(nextValue) =>
+                  handleInstanceDurationChange(nextValue)
+                }
                 className="flex-1"
               />
 
-              <Select value={durationUnit} onValueChange={handleDurationUnitChange}>
+              <Select
+                value={durationUnit}
+                onValueChange={handleDurationUnitChange}
+              >
                 <SelectTrigger className="w-28 h-10">
                   <SelectValue />
                 </SelectTrigger>
@@ -130,8 +141,8 @@ export const BasicInformationStep: FC<BasicInformationStepProps> = ({
               variant="body2"
               className="text-mono-100 dark:text-mono-100"
             >
-              Use 0 for perpetual service, or {constraints.min}-{constraints.max}{' '}
-              {durationUnit}
+              Use 0 for perpetual service, or {constraints.min}-
+              {constraints.max} {durationUnit}
             </Typography>
             {errors?.instanceDuration && (
               <ErrorMessage>{errors.instanceDuration.message}</ErrorMessage>

@@ -62,8 +62,12 @@ export const AssetRequirementFormItem: FC<
           <Typography variant="h5" className={cx(LabelClassName, 'truncate')}>
             {assetMetadata?.metadata.name ?? 'Unknown'}
           </Typography>
-          <Typography variant="body3" className={cx(LabelClassName, 'truncate')}>
-            {assetMetadata?.metadata.symbol ?? (assetId ? shortenString(assetId, 4) : 'Unknown')}
+          <Typography
+            variant="body3"
+            className={cx(LabelClassName, 'truncate')}
+          >
+            {assetMetadata?.metadata.symbol ??
+              (assetId ? shortenString(assetId, 4) : 'Unknown')}
           </Typography>
         </div>
       </div>

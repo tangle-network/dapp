@@ -62,7 +62,6 @@ const DeployPage: FC = () => {
     resolver: zodResolver(deployBlueprintSchema),
     defaultValues: {
       durationUnit: 'seconds',
-      instanceDuration: 0,
     },
   });
 
@@ -108,7 +107,10 @@ const DeployPage: FC = () => {
   const onDeployBlueprint = async () => {
     try {
       clearErrors();
-      const validatedData = deployBlueprintSchema.parse(watch());
+      const formData = watch();
+      console.log('Form data before validation:', formData);
+      console.log('Current form errors:', errors);
+      const validatedData = deployBlueprintSchema.parse(formData);
 
       // Format the service request data for the Tangle contract
       // Operators are already Address[] from the schema
@@ -117,7 +119,10 @@ const DeployPage: FC = () => {
       const ttlInSeconds =
         validatedData.instanceDuration === 0
           ? 0
-          : toSeconds(validatedData.instanceDuration, validatedData.durationUnit);
+          : toSeconds(
+              validatedData.instanceDuration,
+              validatedData.durationUnit,
+            );
       const ttl = BigInt(ttlInSeconds);
 
       // Get payment configuration
@@ -175,7 +180,14 @@ const DeployPage: FC = () => {
       }
     } catch (error) {
       if (error instanceof z.ZodError) {
+        console.log('Zod validation errors:', error.errors);
         error.errors.forEach((err) => {
+          console.log(
+            'Setting error for field:',
+            err.path[0],
+            'message:',
+            err.message,
+          );
           setError(err.path[0] as keyof DeployBlueprintSchema, {
             type: 'manual',
             message: err.message,
