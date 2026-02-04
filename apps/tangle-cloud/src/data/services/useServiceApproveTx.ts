@@ -32,7 +32,9 @@ export interface CommitmentsApproveParams {
   securityCommitments: ContractSecurityCommitment[];
 }
 
-export type ServiceApproveParams = SimpleApproveParams | CommitmentsApproveParams;
+export type ServiceApproveParams =
+  | SimpleApproveParams
+  | CommitmentsApproveParams;
 
 /**
  * Options for the useServiceApproveTx hook

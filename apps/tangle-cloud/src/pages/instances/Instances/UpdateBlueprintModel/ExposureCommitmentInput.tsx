@@ -81,7 +81,8 @@ export const ExposureCommitmentInput: FC<ExposureCommitmentInputProps> = ({
   const displayName =
     metadata?.name ?? (assetKind === 0 ? 'Native Token' : 'Unknown Token');
   const displaySymbol =
-    metadata?.symbol ?? (assetKind === 0 ? 'ETH' : shortenString(tokenAddress, 4));
+    metadata?.symbol ??
+    (assetKind === 0 ? 'ETH' : shortenString(tokenAddress, 4));
   const decimals = metadata?.decimals ?? 18;
 
   // Calculate tokens at risk based on exposure percentage
@@ -260,8 +261,7 @@ export const ExposureCommitmentInput: FC<ExposureCommitmentInputProps> = ({
                   variant="body3"
                   className="text-orange-600 dark:text-orange-400"
                 >
-                  You have no stake for this asset. Consider staking before
-                  approving.
+                  You have no stake for this asset.
                 </Typography>
               </div>
             </div>
