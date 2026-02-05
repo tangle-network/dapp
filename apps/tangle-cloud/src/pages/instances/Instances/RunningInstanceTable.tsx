@@ -2,7 +2,6 @@ import {
   useMemo,
   useState,
   useCallback,
-  useEffect,
   type FC,
   Dispatch,
   SetStateAction,
@@ -37,7 +36,6 @@ import type { Blueprint } from '@tangle-network/tangle-shared-ui/types/blueprint
 import useEvmOperatorInfo from '../../../hooks/useEvmOperatorInfo';
 import TerminateConfirmationModal from './UpdateBlueprintModel/TerminateConfirmationModal';
 import { useServiceTerminateTx } from '../../../data/services/useServiceTerminateTx';
-import { TxStatus } from '@tangle-network/tangle-shared-ui/hooks/useContractWrite';
 
 // Combined service with blueprint metadata
 interface ServiceWithBlueprint extends Service {
@@ -51,9 +49,7 @@ interface RunningInstanceTableProps {
   setRefreshTrigger: Dispatch<SetStateAction<number>>;
 }
 
-export const RunningInstanceTable: FC<RunningInstanceTableProps> = ({
-  setRefreshTrigger,
-}) => {
+export const RunningInstanceTable: FC<RunningInstanceTableProps> = () => {
   const { address: currentUserAddress } = useAccount();
   const { isOperator, operatorAddress } = useEvmOperatorInfo();
 
@@ -62,7 +58,6 @@ export const RunningInstanceTable: FC<RunningInstanceTableProps> = ({
     data: ownedServices,
     isLoading: isLoadingOwned,
     error: ownedError,
-    refetch: refetchOwned,
   } = useServicesByOwner(currentUserAddress, { status: 'ACTIVE' });
 
   // Fetch services where user is an operator
@@ -70,7 +65,6 @@ export const RunningInstanceTable: FC<RunningInstanceTableProps> = ({
     data: operatorServices,
     isLoading: isLoadingOperator,
     error: operatorError,
-    refetch: refetchOperator,
   } = useServicesByOperator(
     isOperator ? (operatorAddress ?? undefined) : undefined,
     { status: 'ACTIVE' },
@@ -116,14 +110,6 @@ export const RunningInstanceTable: FC<RunningInstanceTableProps> = ({
 
   const { execute: terminateServiceInstance, status: terminateStatus } =
     useServiceTerminateTx();
-
-  useEffect(() => {
-    if (terminateStatus === TxStatus.COMPLETE) {
-      setRefreshTrigger((prev) => prev + 1);
-      refetchOwned();
-      refetchOperator();
-    }
-  }, [terminateStatus, setRefreshTrigger, refetchOwned, refetchOperator]);
 
   const isEmpty = servicesWithBlueprints.length === 0;
 
