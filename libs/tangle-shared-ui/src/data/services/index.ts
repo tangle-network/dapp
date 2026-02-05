@@ -71,3 +71,38 @@ export {
   type RemovePermittedCallerParams,
   type UseRemovePermittedCallerTxOptions,
 } from './useRemovePermittedCallerTx';
+
+export {
+  useExitConfig,
+  type ExitConfig,
+  type UseExitConfigOptions,
+} from './useExitConfig';
+
+export {
+  useExitStatus,
+  ExitStatus,
+  getExitStatusLabel,
+  type UseExitStatusOptions,
+} from './useExitStatus';
+
+export {
+  useExitRequest,
+  type ExitRequest,
+  type UseExitRequestOptions,
+} from './useExitRequest';
+
+export {
+  useCanScheduleExit,
+  type CanScheduleExitResult,
+  type UseCanScheduleExitOptions,
+} from './useCanScheduleExit';
+
+export {
+  useServiceOperators,
+  type UseServiceOperatorsOptions,
+} from './useServiceOperators';
+
+export {
+  useIsServiceOperator,
+  type UseIsServiceOperatorOptions,
+} from './useIsServiceOperator';

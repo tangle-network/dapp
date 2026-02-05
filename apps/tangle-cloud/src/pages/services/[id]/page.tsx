@@ -23,6 +23,8 @@ import {
 import {
   useServiceDetails,
   useIsPermittedCaller,
+  useIsServiceOperator,
+  MembershipModel,
 } from '@tangle-network/tangle-shared-ui/data/services';
 import useEvmOperatorInfo from '../../../hooks/useEvmOperatorInfo';
 import { twMerge } from 'tailwind-merge';
@@ -30,6 +32,8 @@ import { JobSubmissionForm } from './JobSubmissionForm';
 import { JobHistoryTable } from './JobHistoryTable';
 import ServiceOnChainDetails from './ServiceOnChainDetails';
 import FundServiceModal from './FundServiceModal';
+import OperatorMembershipPanel from './OperatorMembershipPanel';
+import OperatorExitPanel from './OperatorExitPanel';
 
 const ServiceDetailPage: FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -94,6 +98,13 @@ const ServiceDetailPage: FC = () => {
   const { data: isPermittedCaller, isLoading: isLoadingPermission } =
     useIsPermittedCaller(serviceId, address);
 
+  // Check if current user is a service operator
+  const { data: isServiceOperator } = useIsServiceOperator(
+    serviceId,
+    operatorAddress ?? undefined,
+    { enabled: !!operatorAddress && isOperator },
+  );
+
   // Determine if user is the owner
   const isOwner = useMemo(() => {
     if (!address || !onChainDetails?.owner) return false;
@@ -102,6 +113,10 @@ const ServiceDetailPage: FC = () => {
 
   // User can submit jobs if they are the owner or a permitted caller
   const canSubmitJobs = isOwner || isPermittedCaller;
+
+  // Check if this is a dynamic membership service
+  const isDynamicService =
+    onChainDetails?.membership === MembershipModel.Dynamic;
 
   const isLoading = isLoadingServices || isLoadingBlueprint;
 
@@ -215,6 +230,27 @@ const ServiceDetailPage: FC = () => {
         }
         onFundClick={() => setIsFundModalOpen(true)}
       />
+
+      {/* Operator Membership Panel - Show for Dynamic services */}
+      {isDynamicService && service.status === 'ACTIVE' && (
+        <OperatorMembershipPanel
+          serviceId={serviceId}
+          isCurrentUserOperator={isServiceOperator ?? false}
+          serviceDetails={onChainDetails}
+        />
+      )}
+
+      {/* Operator Exit Panel - Show for operators in Dynamic services */}
+      {isDynamicService &&
+        service.status === 'ACTIVE' &&
+        isServiceOperator &&
+        operatorAddress && (
+          <OperatorExitPanel
+            serviceId={serviceId}
+            operatorAddress={operatorAddress}
+            isOwner={isOwner}
+          />
+        )}
 
       {/* Job Submission */}
       {service.status === 'ACTIVE' && blueprintResult?.details && (
