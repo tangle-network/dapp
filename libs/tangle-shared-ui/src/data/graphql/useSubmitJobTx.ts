@@ -3,6 +3,7 @@
  */
 
 import { useCallback, useState } from 'react';
+import { useQueryClient } from '@tanstack/react-query';
 import { usePublicClient, useWalletClient, useChainId } from 'wagmi';
 import { encodeFunctionData, type Hash } from 'viem';
 import { getContractsByChainId } from '@tangle-network/dapp-config/contracts';
@@ -13,7 +14,9 @@ export type SubmitJobStatus = 'idle' | 'pending' | 'success' | 'error';
 export interface SubmitJobParams {
   serviceId: bigint;
   jobIndex: number;
-  inputs: `0x${string}`; // Encoded job inputs
+  inputs: `0x${string}`;
+  /** Payment amount for native token (ETH). Set this when isNativeToken is true */
+  value?: bigint;
 }
 
 export interface UseSubmitJobTxReturn {
@@ -26,21 +29,8 @@ export interface UseSubmitJobTxReturn {
 /**
  * Hook to submit a job to a running service.
  *
- * @example
- * ```tsx
- * const { submitJob, status, error } = useSubmitJobTx();
- *
- * const handleSubmit = async () => {
- *   const hash = await submitJob({
- *     serviceId: BigInt(1),
- *     jobIndex: 0,
- *     inputs: '0x...' // Encoded inputs
- *   });
- *   if (hash) {
- *     console.log('Job submitted:', hash);
- *   }
- * };
- * ```
+ * For native token payments, include the `value` parameter.
+ * For ERC20 payments, ensure approval is done first (use useErc20Approval hook).
  */
 export const useSubmitJobTx = (): UseSubmitJobTxReturn => {
   const [status, setStatus] = useState<SubmitJobStatus>('idle');
@@ -49,6 +39,7 @@ export const useSubmitJobTx = (): UseSubmitJobTxReturn => {
   const chainId = useChainId();
   const publicClient = usePublicClient();
   const { data: walletClient } = useWalletClient();
+  const queryClient = useQueryClient();
 
   const reset = useCallback(() => {
     setStatus('idle');
@@ -76,14 +67,19 @@ export const useSubmitJobTx = (): UseSubmitJobTxReturn => {
           args: [params.serviceId, params.jobIndex, params.inputs],
         });
 
-        // Send the transaction
+        // Send the transaction with optional value for native token payments
         const hash = await walletClient.sendTransaction({
           to: contracts.tangle,
           data,
+          value: params.value,
         });
 
         // Wait for confirmation
         await publicClient.waitForTransactionReceipt({ hash });
+
+        // Invalidate job-related queries to refresh UI
+        queryClient.invalidateQueries({ queryKey: ['jobCalls'] });
+        queryClient.invalidateQueries({ queryKey: ['serviceEscrow'] });
 
         setStatus('success');
         return hash;
@@ -95,7 +91,7 @@ export const useSubmitJobTx = (): UseSubmitJobTxReturn => {
         return null;
       }
     },
-    [chainId, publicClient, walletClient],
+    [chainId, publicClient, walletClient, queryClient],
   );
 
   return {
