@@ -2,7 +2,7 @@
  * Service detail page - view service info and submit jobs.
  */
 
-import { FC, useMemo } from 'react';
+import { FC, useMemo, useState } from 'react';
 import { useParams, useNavigate } from 'react-router';
 import { useAccount } from 'wagmi';
 import {
@@ -13,17 +13,23 @@ import {
   SkeletonLoader,
   EMPTY_VALUE_PLACEHOLDER,
 } from '@tangle-network/ui-components';
-import { ArrowLeft } from '@tangle-network/icons';
+import { ArrowLeft, ShieldKeyholeLineIcon } from '@tangle-network/icons';
 import {
   useServicesByOwner,
   useServicesByOperator,
   useBlueprintDetails,
   useJobsByService,
 } from '@tangle-network/tangle-shared-ui/data/graphql';
+import {
+  useServiceDetails,
+  useIsPermittedCaller,
+} from '@tangle-network/tangle-shared-ui/data/services';
 import useEvmOperatorInfo from '../../../hooks/useEvmOperatorInfo';
 import { twMerge } from 'tailwind-merge';
 import { JobSubmissionForm } from './JobSubmissionForm';
 import { JobHistoryTable } from './JobHistoryTable';
+import ServiceOnChainDetails from './ServiceOnChainDetails';
+import FundServiceModal from './FundServiceModal';
 
 const ServiceDetailPage: FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -34,6 +40,8 @@ const ServiceDetailPage: FC = () => {
     operatorAddress,
     isLoading: isLoadingOperatorInfo,
   } = useEvmOperatorInfo();
+
+  const [isFundModalOpen, setIsFundModalOpen] = useState(false);
 
   const serviceId = useMemo(() => {
     if (!id) return undefined;
@@ -71,12 +79,29 @@ const ServiceDetailPage: FC = () => {
     return null;
   }, [ownedServices, operatorServices, serviceId]);
 
+  // Fetch on-chain service details to get owner
+  const { data: onChainDetails, isLoading: isLoadingOnChainDetails } =
+    useServiceDetails(serviceId);
+
   // Fetch blueprint details for job definitions
   const { result: blueprintResult, isLoading: isLoadingBlueprint } =
     useBlueprintDetails(service?.blueprintId);
 
   // Fetch job history
   const { data: jobs, isLoading: isLoadingJobs } = useJobsByService(serviceId);
+
+  // Check if user is permitted to submit jobs
+  const { data: isPermittedCaller, isLoading: isLoadingPermission } =
+    useIsPermittedCaller(serviceId, address);
+
+  // Determine if user is the owner
+  const isOwner = useMemo(() => {
+    if (!address || !onChainDetails?.owner) return false;
+    return onChainDetails.owner.toLowerCase() === address.toLowerCase();
+  }, [address, onChainDetails?.owner]);
+
+  // User can submit jobs if they are the owner or a permitted caller
+  const canSubmitJobs = isOwner || isPermittedCaller;
 
   const isLoading = isLoadingServices || isLoadingBlueprint;
 
@@ -180,16 +205,34 @@ const ServiceDetailPage: FC = () => {
         </div>
       </Card>
 
+      {/* On-Chain Service Details */}
+      <ServiceOnChainDetails
+        serviceId={serviceId}
+        blueprintId={
+          service.blueprintId !== undefined
+            ? BigInt(service.blueprintId)
+            : undefined
+        }
+        onFundClick={() => setIsFundModalOpen(true)}
+      />
+
       {/* Job Submission */}
       {service.status === 'ACTIVE' && blueprintResult?.details && (
         <Card variant={CardVariant.GLASS} className="p-6">
           <Typography variant="h5" fw="bold" className="mb-4">
             Submit Job
           </Typography>
-          <JobSubmissionForm
-            serviceId={serviceId}
-            blueprint={blueprintResult.details}
-          />
+
+          {isLoadingPermission || isLoadingOnChainDetails ? (
+            <SkeletonLoader className="h-32" />
+          ) : canSubmitJobs ? (
+            <JobSubmissionForm
+              serviceId={serviceId}
+              blueprint={blueprintResult.details}
+            />
+          ) : (
+            <PermissionDeniedMessage />
+          )}
         </Card>
       )}
 
@@ -200,6 +243,14 @@ const ServiceDetailPage: FC = () => {
         </Typography>
         <JobHistoryTable jobs={jobs ?? []} isLoading={isLoadingJobs} />
       </Card>
+
+      {/* Fund Service Modal */}
+      {isFundModalOpen && (
+        <FundServiceModal
+          serviceId={serviceId}
+          onClose={() => setIsFundModalOpen(false)}
+        />
+      )}
     </div>
   );
 };
@@ -219,6 +270,24 @@ const InfoItem: FC<{ label: string; value: React.ReactNode }> = ({
     ) : (
       value
     )}
+  </div>
+);
+
+const PermissionDeniedMessage: FC = () => (
+  <div className="flex flex-col items-center justify-center py-8 text-center">
+    <div className="p-4 rounded-full bg-yellow-500/20 mb-4">
+      <ShieldKeyholeLineIcon className="w-8 h-8 text-yellow-400" />
+    </div>
+    <Typography variant="h5" fw="semibold" className="mb-2">
+      Permission Required
+    </Typography>
+    <Typography variant="body2" className="text-mono-100 max-w-md">
+      You are not authorized to submit jobs to this service. Only the service
+      owner or addresses added as permitted callers can submit jobs.
+    </Typography>
+    <Typography variant="body3" className="text-mono-120 mt-4">
+      Contact the service owner to request access.
+    </Typography>
   </div>
 );
 

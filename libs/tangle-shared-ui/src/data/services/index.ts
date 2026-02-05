@@ -42,3 +42,32 @@ export {
   type ServiceEscrow,
   type UseServiceEscrowOptions,
 } from './useServiceEscrow';
+
+export {
+  useIsPermittedCaller,
+  type UseIsPermittedCallerOptions,
+} from './useIsPermittedCaller';
+
+export {
+  useFundServiceTx,
+  type FundServiceParams,
+  type UseFundServiceTxOptions,
+} from './useFundServiceTx';
+
+export {
+  useBillSubscriptionTx,
+  type BillSubscriptionParams,
+  type UseBillSubscriptionTxOptions,
+} from './useBillSubscriptionTx';
+
+export {
+  useAddPermittedCallerTx,
+  type AddPermittedCallerParams,
+  type UseAddPermittedCallerTxOptions,
+} from './useAddPermittedCallerTx';
+
+export {
+  useRemovePermittedCallerTx,
+  type RemovePermittedCallerParams,
+  type UseRemovePermittedCallerTxOptions,
+} from './useRemovePermittedCallerTx';
