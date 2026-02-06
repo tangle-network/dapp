@@ -2,7 +2,9 @@ import BackspaceDeleteFillIcon from '@tangle-network/icons/BackspaceDeleteFillIc
 import { Button, Input } from '@tangle-network/ui-components';
 import { FC } from 'react';
 
-import InputWrapper, { InputWrapperProps } from '@tangle-network/tangle-shared-ui/components/InputWrapper';
+import InputWrapper, {
+  InputWrapperProps,
+} from '@tangle-network/tangle-shared-ui/components/InputWrapper';
 
 export type TextInputProps = {
   id: string;
