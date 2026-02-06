@@ -1,6 +1,6 @@
 import { RestakeAssetId } from '@tangle-network/tangle-shared-ui/types';
 import { Input, Typography } from '@tangle-network/ui-components';
-import ErrorMessage from '../../../../components/ErrorMessage';
+import ErrorMessage from '@tangle-network/tangle-shared-ui/components/ErrorMessage';
 import { FC } from 'react';
 import { PrimitiveAssetMetadata } from '@tangle-network/tangle-shared-ui/types/restake';
 import LsTokenIcon from '@tangle-network/tangle-shared-ui/components/LsTokenIcon';

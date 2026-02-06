@@ -23,7 +23,7 @@ import {
 } from '@tangle-network/tangle-shared-ui/data/graphql';
 import { Deployment } from './DeploySteps/Deployment';
 import { twMerge } from 'tailwind-merge';
-import ErrorMessage from '../../../../components/ErrorMessage';
+import ErrorMessage from '@tangle-network/tangle-shared-ui/components/ErrorMessage';
 import { z } from 'zod';
 import { PagePath } from '../../../../types';
 import useParamWithSchema from '@tangle-network/tangle-shared-ui/hooks/useParamWithSchema';

@@ -6,7 +6,7 @@ import {
 } from '@tangle-network/ui-components';
 import { FC } from 'react';
 import LsTokenIcon from '@tangle-network/tangle-shared-ui/components/LsTokenIcon';
-import ErrorMessage from '../../../../../../components/ErrorMessage';
+import ErrorMessage from '@tangle-network/tangle-shared-ui/components/ErrorMessage';
 import cx from 'classnames';
 import { AssetSchema } from '../../../../../../utils/validations/deployBlueprint';
 import { LabelClassName } from '../type';

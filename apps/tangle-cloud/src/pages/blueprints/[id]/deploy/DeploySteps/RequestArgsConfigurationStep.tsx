@@ -1,7 +1,7 @@
 import React, { FC, useCallback, useState } from 'react';
 import { RequestArgsConfigurationStepProps } from './type';
 import { Card, Typography } from '@tangle-network/ui-components';
-import ErrorMessage from '../../../../../components/ErrorMessage';
+import ErrorMessage from '@tangle-network/tangle-shared-ui/components/ErrorMessage';
 
 export const RequestArgsConfigurationStep: FC<
   RequestArgsConfigurationStepProps

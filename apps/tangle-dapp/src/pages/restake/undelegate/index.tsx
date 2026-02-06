@@ -21,7 +21,7 @@ import { twMerge } from 'tailwind-merge';
 import { Address, formatUnits, parseUnits } from 'viem';
 import { BN } from '@polkadot/util';
 import { useAccount, useChainId } from 'wagmi';
-import ErrorMessage from '../../../components/ErrorMessage';
+import ErrorMessage from '@tangle-network/tangle-shared-ui/components/ErrorMessage';
 import RestakeDetailCard from '../../../components/RestakeDetailCard';
 import ActionButtonBase from '../../../components/restaking/ActionButtonBase';
 import { SUPPORTED_RESTAKE_DEPOSIT_TYPED_CHAIN_IDS } from '../../../constants/restake';

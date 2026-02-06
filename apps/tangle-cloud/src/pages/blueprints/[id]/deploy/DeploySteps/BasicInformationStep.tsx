@@ -13,7 +13,7 @@ import {
   SelectValue,
 } from '@tangle-network/ui-components/components/select';
 import InstanceHeader from '../../../../../components/InstanceHeader';
-import ErrorMessage from '../../../../../components/ErrorMessage';
+import ErrorMessage from '@tangle-network/tangle-shared-ui/components/ErrorMessage';
 import { Children, FC, useMemo } from 'react';
 import { BasicInformationStepProps, LabelClassName } from './type';
 import { TrashIcon, PlusIcon } from '@radix-ui/react-icons';

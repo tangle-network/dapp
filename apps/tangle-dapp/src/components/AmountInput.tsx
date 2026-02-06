@@ -5,8 +5,8 @@ import { Button, Input } from '@tangle-network/ui-components';
 import { FC, ReactNode, useCallback, useEffect, useMemo, useRef } from 'react';
 import { twMerge } from 'tailwind-merge';
 
-import useInputAmount from '../hooks/useInputAmount';
-import InputWrapper, { InputWrapperProps } from './InputWrapper';
+import useInputAmount from '@tangle-network/tangle-shared-ui/hooks/useInputAmount';
+import InputWrapper, { InputWrapperProps } from '@tangle-network/tangle-shared-ui/components/InputWrapper';
 
 export type AmountInputProps = {
   id: string;

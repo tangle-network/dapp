@@ -9,7 +9,7 @@ import {
 import { FC, ReactNode, useCallback, useEffect, useRef, useState } from 'react';
 import { twMerge } from 'tailwind-merge';
 
-import InputWrapper, { InputWrapperProps } from './InputWrapper';
+import InputWrapper, { InputWrapperProps } from '@tangle-network/tangle-shared-ui/components/InputWrapper';
 import { AddressType } from '../constants';
 
 export type AddressInputProps = {

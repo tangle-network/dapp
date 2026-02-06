@@ -20,7 +20,7 @@ import {
   type RewardEntry,
 } from '@tangle-network/tangle-shared-ui/data/graphql';
 import { twMerge } from 'tailwind-merge';
-import ErrorMessage from '../../components/ErrorMessage';
+import ErrorMessage from '@tangle-network/tangle-shared-ui/components/ErrorMessage';
 
 const RewardsPage: FC = () => {
   const { address: _address, isConnected } = useAccount();

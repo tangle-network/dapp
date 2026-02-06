@@ -2,7 +2,7 @@ import { Card, Typography, Button } from '@tangle-network/ui-components';
 import { Children, FC, useMemo, useState } from 'react';
 import { AssetConfigurationStepProps } from './type';
 import { AssetRequirementFormItem } from './components/AssetRequirementFormItem';
-import ErrorMessage from '../../../../../components/ErrorMessage';
+import ErrorMessage from '@tangle-network/tangle-shared-ui/components/ErrorMessage';
 import {
   useRestakeAssets,
   type RestakeAsset,

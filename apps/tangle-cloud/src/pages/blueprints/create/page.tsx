@@ -24,7 +24,7 @@ import {
   useCreateBlueprintTx,
   type BlueprintDefinition,
 } from '@tangle-network/tangle-shared-ui/data/graphql';
-import ErrorMessage from '../../../components/ErrorMessage';
+import ErrorMessage from '@tangle-network/tangle-shared-ui/components/ErrorMessage';
 import { PagePath } from '../../../types';
 import { zeroAddress, type Address, toHex } from 'viem';
 

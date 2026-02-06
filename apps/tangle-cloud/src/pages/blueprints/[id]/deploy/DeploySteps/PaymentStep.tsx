@@ -8,7 +8,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@tangle-network/ui-components/components/select';
-import ErrorMessage from '../../../../../components/ErrorMessage';
+import ErrorMessage from '@tangle-network/tangle-shared-ui/components/ErrorMessage';
 import LsTokenIcon from '@tangle-network/tangle-shared-ui/components/LsTokenIcon';
 import {
   useRestakeAssets,

@@ -18,7 +18,7 @@ import { Address, formatUnits, parseUnits } from 'viem';
 import { BN } from '@polkadot/util';
 import { useAccount, useBlockNumber, useChainId, usePublicClient } from 'wagmi';
 import { useQuery } from '@tanstack/react-query';
-import ErrorMessage from '../../../components/ErrorMessage';
+import ErrorMessage from '@tangle-network/tangle-shared-ui/components/ErrorMessage';
 import RestakeDetailCard from '../../../components/RestakeDetailCard';
 import ActionButtonBase from '../../../components/restaking/ActionButtonBase';
 import StyleContainer from '../../../components/restaking/StyleContainer';

@@ -24,7 +24,7 @@ import { Address, formatUnits, parseUnits } from 'viem';
 import { BN } from '@polkadot/util';
 import { useAccount, useChainId, usePublicClient } from 'wagmi';
 import { useQuery } from '@tanstack/react-query';
-import ErrorMessage from '../../../components/ErrorMessage';
+import ErrorMessage from '@tangle-network/tangle-shared-ui/components/ErrorMessage';
 import ActionButtonBase from '../../../components/restaking/ActionButtonBase';
 import BlueprintSelection from '../../../components/restaking/BlueprintSelection';
 import StyleContainer from '../../../components/restaking/StyleContainer';

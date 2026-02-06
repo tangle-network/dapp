@@ -14,7 +14,7 @@ import {
 import { useSubmitJobTx } from '@tangle-network/tangle-shared-ui/data/graphql';
 import type { Blueprint } from '@tangle-network/tangle-shared-ui/types/blueprint';
 import { type Hex } from 'viem';
-import ErrorMessage from '../../../components/ErrorMessage';
+import ErrorMessage from '@tangle-network/tangle-shared-ui/components/ErrorMessage';
 
 interface Props {
   serviceId: bigint;
