@@ -123,7 +123,6 @@ export {
   useSubmitJobTx,
   type SubmitJobParams,
   type SubmitJobStatus,
-  type UseSubmitJobTxReturn,
 } from './useSubmitJobTx';
 
 // Rewards

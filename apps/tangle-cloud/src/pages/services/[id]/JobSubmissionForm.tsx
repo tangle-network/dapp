@@ -34,7 +34,7 @@ interface Props {
 }
 
 export const JobSubmissionForm: FC<Props> = ({ serviceId, blueprint }) => {
-  const [selectedJobIndex, setSelectedJobIndex] = useState<number>(0);
+  const [selectedJobIndex, setSelectedJobIndex] = useState<number | ''>(0);
   const [inputJson, setInputJson] = useState<string>('');
   const [validationError, setValidationError] = useState<string | null>(null);
 
@@ -134,6 +134,11 @@ export const JobSubmissionForm: FC<Props> = ({ serviceId, blueprint }) => {
   const handleSubmit = useCallback(async () => {
     setValidationError(null);
 
+    if (selectedJobIndex === '') {
+      setValidationError('Please enter a job index');
+      return;
+    }
+
     // Validate JSON input
     let parsedInputs: unknown;
     try {
@@ -154,6 +159,11 @@ export const JobSubmissionForm: FC<Props> = ({ serviceId, blueprint }) => {
         .join('')}` as Hex;
     } catch {
       setValidationError('Failed to encode inputs');
+      return;
+    }
+
+    if (!submitJob) {
+      setValidationError('Wallet not connected');
       return;
     }
 
@@ -252,7 +262,7 @@ export const JobSubmissionForm: FC<Props> = ({ serviceId, blueprint }) => {
           </Typography>
 
           <Select
-            value={selectedJobIndex.toString()}
+            value={selectedJobIndex === '' ? undefined : selectedJobIndex.toString()}
             onValueChange={(v) => setSelectedJobIndex(Number(v))}
           >
             <SelectTrigger className="w-full">
@@ -279,8 +289,9 @@ export const JobSubmissionForm: FC<Props> = ({ serviceId, blueprint }) => {
             id="job-index"
             type="number"
             min={0}
-            value={selectedJobIndex.toString()}
-            onChange={(v) => setSelectedJobIndex(Number(v))}
+            isControlled
+            value={selectedJobIndex === '' ? '' : selectedJobIndex.toString()}
+            onChange={(v) => setSelectedJobIndex(v === '' ? '' : Number(v))}
             placeholder="Enter job index"
           />
         </div>
@@ -338,7 +349,15 @@ export const JobSubmissionForm: FC<Props> = ({ serviceId, blueprint }) => {
         </Button>
 
         {(isSuccess || error) && (
-          <Button variant="secondary" onClick={reset}>
+          <Button
+            variant="secondary"
+            onClick={() => {
+              reset();
+              setSelectedJobIndex('');
+              setInputJson('');
+              setValidationError(null);
+            }}
+          >
             Reset
           </Button>
         )}

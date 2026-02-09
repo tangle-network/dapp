@@ -9,6 +9,8 @@ import {
   EnvioNetwork,
 } from '../../utils/executeEnvioGraphQL';
 
+const ZERO_ADDRESS = '0x0000000000000000000000000000000000000000';
+
 // Job call status
 export type JobStatus = 'PENDING' | 'COMPLETED' | 'FAILED';
 
@@ -39,24 +41,25 @@ export interface JobResult {
 interface JobCallQueryResponse {
   JobCall: Array<{
     id: string;
-    serviceId: string;
+    service_id: string;
     callId: string;
     jobIndex: number;
-    submitter: string;
+    caller: string;
     inputs: string;
-    submittedAt: string;
+    createdAt: string;
     completed: boolean;
-    resultCount: number;
-    payment: string;
+    results: Array<{
+      id: string;
+    }>;
   }>;
 }
 
 interface JobResultQueryResponse {
   JobResult: Array<{
     id: string;
-    callId: string;
-    operator: string;
-    result: string;
+    jobCall_id: string;
+    operator_id: string | null;
+    output: string;
     submittedAt: string;
   }>;
 }
@@ -70,20 +73,21 @@ const fetchJobsByService = async (
   const query = `
     query GetJobsByService($serviceId: String!, $limit: Int!) {
       JobCall(
-        where: { serviceId: { _eq: $serviceId } }
-        order_by: { submittedAt: desc }
+        where: { service_id: { _eq: $serviceId } }
+        order_by: { createdAt: desc }
         limit: $limit
       ) {
         id
-        serviceId
+        service_id
         callId
         jobIndex
-        submitter
+        caller
         inputs
-        submittedAt
+        createdAt
         completed
-        resultCount
-        payment
+        results {
+          id
+        }
       }
     }
   `;
@@ -95,33 +99,33 @@ const fetchJobsByService = async (
 
   return (result.data.JobCall ?? []).map((job) => ({
     id: job.id,
-    serviceId: BigInt(job.serviceId),
+    serviceId: BigInt(job.service_id),
     callId: BigInt(job.callId),
     jobIndex: job.jobIndex,
-    submitter: job.submitter as Address,
+    submitter: job.caller as Address,
     inputs: job.inputs,
-    submittedAt: BigInt(job.submittedAt),
+    submittedAt: BigInt(job.createdAt),
     completed: job.completed,
-    resultCount: job.resultCount,
-    payment: BigInt(job.payment),
+    resultCount: job.results.length,
+    payment: BigInt(0),
   }));
 };
 
 // Fetch job results
 const fetchJobResults = async (
-  callId: bigint,
+  jobCallId: string,
   network?: EnvioNetwork,
 ): Promise<JobResult[]> => {
   const query = `
     query GetJobResults($callId: String!) {
       JobResult(
-        where: { callId: { _eq: $callId } }
+        where: { jobCall_id: { _eq: $callId } }
         order_by: { submittedAt: asc }
       ) {
         id
-        callId
-        operator
-        result
+        jobCall_id
+        operator_id
+        output
         submittedAt
       }
     }
@@ -130,13 +134,13 @@ const fetchJobResults = async (
   const result = await executeEnvioGraphQL<
     JobResultQueryResponse,
     { callId: string }
-  >(query, { callId: callId.toString() }, network);
+  >(query, { callId: jobCallId }, network);
 
   return (result.data.JobResult ?? []).map((res) => ({
     id: res.id,
-    callId: BigInt(res.callId),
-    operator: res.operator as Address,
-    result: res.result,
+    callId: BigInt(res.jobCall_id.split('-').pop() ?? '0'),
+    operator: (res.operator_id ?? ZERO_ADDRESS) as Address,
+    result: res.output,
     submittedAt: BigInt(res.submittedAt),
   }));
 };
@@ -170,7 +174,7 @@ export const useJobsByService = (
  * Hook to fetch results for a specific job call.
  */
 export const useJobResults = (
-  callId: bigint | undefined,
+  jobCallId: string | undefined,
   options?: {
     network?: EnvioNetwork;
     enabled?: boolean;
@@ -179,12 +183,12 @@ export const useJobResults = (
   const { network, enabled = true } = options ?? {};
 
   return useQuery({
-    queryKey: ['jobs', 'results', callId?.toString(), network],
+    queryKey: ['jobs', 'results', jobCallId, network],
     queryFn: async () => {
-      if (callId === undefined) return [];
-      return fetchJobResults(callId, network);
+      if (jobCallId === undefined) return [];
+      return fetchJobResults(jobCallId, network);
     },
-    enabled: enabled && callId !== undefined,
+    enabled: enabled && jobCallId !== undefined,
     staleTime: 10_000,
   });
 };

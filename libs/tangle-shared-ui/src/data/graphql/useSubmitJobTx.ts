@@ -1,12 +1,16 @@
 /**
  * Hook to submit a job to a service.
+ *
+ * For native token payments, include the `value` parameter.
+ * For ERC20 payments, ensure approval is done first (use useErc20Approval hook).
  */
 
-import { useCallback, useState } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
-import { usePublicClient, useWalletClient, useChainId } from 'wagmi';
-import { encodeFunctionData, type Hash } from 'viem';
+import { useChainId } from 'wagmi';
 import { getContractsByChainId } from '@tangle-network/dapp-config/contracts';
+import useContractWrite, {
+  TxStatus,
+} from '../../hooks/useContractWrite';
 import TANGLE_ABI from '../../abi/tangle';
 
 export type SubmitJobStatus = 'idle' | 'pending' | 'success' | 'error';
@@ -19,86 +23,65 @@ export interface SubmitJobParams {
   value?: bigint;
 }
 
-export interface UseSubmitJobTxReturn {
-  submitJob: (params: SubmitJobParams) => Promise<Hash | null>;
-  status: SubmitJobStatus;
-  error: Error | null;
-  reset: () => void;
-}
-
-/**
- * Hook to submit a job to a running service.
- *
- * For native token payments, include the `value` parameter.
- * For ERC20 payments, ensure approval is done first (use useErc20Approval hook).
- */
-export const useSubmitJobTx = (): UseSubmitJobTxReturn => {
-  const [status, setStatus] = useState<SubmitJobStatus>('idle');
-  const [error, setError] = useState<Error | null>(null);
-
+export const useSubmitJobTx = () => {
   const chainId = useChainId();
-  const publicClient = usePublicClient();
-  const { data: walletClient } = useWalletClient();
   const queryClient = useQueryClient();
 
-  const reset = useCallback(() => {
-    setStatus('idle');
-    setError(null);
-  }, []);
+  let contracts: ReturnType<typeof getContractsByChainId> | null = null;
+  try {
+    contracts = chainId ? getContractsByChainId(chainId) : null;
+  } catch {
+    contracts = null;
+  }
 
-  const submitJob = useCallback(
-    async (params: SubmitJobParams): Promise<Hash | null> => {
-      if (!walletClient || !publicClient) {
-        setError(new Error('Wallet not connected'));
-        setStatus('error');
-        return null;
-      }
+  const hook = useContractWrite(
+    TANGLE_ABI,
+    (params: SubmitJobParams, _activeAddress) => {
+      if (!contracts) return null;
 
-      try {
-        setStatus('pending');
-        setError(null);
-
-        const contracts = getContractsByChainId(chainId);
-
-        // Encode the submitJob call
-        const data = encodeFunctionData({
-          abi: TANGLE_ABI,
-          functionName: 'submitJob',
-          args: [params.serviceId, params.jobIndex, params.inputs],
-        });
-
-        // Send the transaction with optional value for native token payments
-        const hash = await walletClient.sendTransaction({
-          to: contracts.tangle,
-          data,
-          value: params.value,
-        });
-
-        // Wait for confirmation
-        await publicClient.waitForTransactionReceipt({ hash });
-
-        // Invalidate job-related queries to refresh UI
+      return {
+        address: contracts.tangle,
+        abi: TANGLE_ABI,
+        functionName: 'submitJob' as const,
+        args: [params.serviceId, params.jobIndex, params.inputs] as const,
+        value: params.value,
+      };
+    },
+    {
+      txName: 'submit job',
+      txDetails: (params) =>
+        new Map([
+          ['Service ID', params.serviceId.toString()],
+          ['Job Index', params.jobIndex.toString()],
+        ]),
+      getSuccessMessage: (params) =>
+        `Job submitted to service #${params.serviceId}`,
+      onSuccess: () => {
+        queryClient.invalidateQueries({ queryKey: ['jobs'] });
         queryClient.invalidateQueries({ queryKey: ['jobCalls'] });
         queryClient.invalidateQueries({ queryKey: ['serviceEscrow'] });
-
-        setStatus('success');
-        return hash;
-      } catch (err) {
-        const error =
-          err instanceof Error ? err : new Error('Failed to submit job');
-        setError(error);
-        setStatus('error');
-        return null;
-      }
+        setTimeout(() => {
+          void queryClient.invalidateQueries({ queryKey: ['jobs'] });
+        }, 2_000);
+      },
     },
-    [chainId, publicClient, walletClient, queryClient],
   );
 
+  // Map useContractWrite status to the existing SubmitJobStatus interface
+  const status: SubmitJobStatus =
+    hook.status === TxStatus.PROCESSING
+      ? 'pending'
+      : hook.status === TxStatus.COMPLETE
+        ? 'success'
+        : hook.status === TxStatus.ERROR
+          ? 'error'
+          : 'idle';
+
   return {
-    submitJob,
+    submitJob: hook.execute,
     status,
-    error,
-    reset,
+    error: hook.error,
+    reset: hook.reset,
   };
 };
 

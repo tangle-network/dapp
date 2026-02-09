@@ -27,7 +27,7 @@ interface Props {
 }
 
 export const JobResultsModal: FC<Props> = ({ job, onClose }) => {
-  const { data: results, isLoading } = useJobResults(job.callId);
+  const { data: results, isLoading } = useJobResults(job.id);
 
   return (
     <Modal open onOpenChange={(open) => !open && onClose()}>
