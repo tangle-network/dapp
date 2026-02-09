@@ -79,6 +79,7 @@ const fetchServices = async (
     operator?: Address;
     status?: ServiceStatus;
     blueprintId?: bigint;
+    serviceId?: bigint;
     limit?: number;
     offset?: number;
   },
@@ -100,6 +101,9 @@ const fetchServices = async (
   }
   if (options.blueprintId !== undefined) {
     where.push(`blueprint_id: { _eq: "${options.blueprintId}" }`);
+  }
+  if (options.serviceId !== undefined) {
+    where.push(`serviceId: { _eq: "${options.serviceId}" }`);
   }
 
   const whereClause = where.length > 0 ? `where: { ${where.join(', ')} }` : '';
@@ -439,6 +443,75 @@ export const useOperatorStats = (
     },
     enabled: enabled && !!operator,
     staleTime: 60_000,
+  });
+};
+
+/**
+ * Hook to fetch a single service by its serviceId.
+ * No owner/operator filter — visible to all users.
+ */
+export const useServiceById = (
+  serviceId: bigint | undefined,
+  options?: {
+    network?: EnvioNetwork;
+    enabled?: boolean;
+  },
+) => {
+  const { network, enabled = true } = options ?? {};
+
+  const query = useQuery({
+    queryKey: ['envio', 'services', 'byId', serviceId?.toString(), network],
+    queryFn: async () => {
+      if (serviceId === undefined) return null;
+      const services = await fetchServices({ serviceId, limit: 1 }, network);
+      return services[0] ?? null;
+    },
+    enabled: enabled && serviceId !== undefined,
+    staleTime: 30_000,
+  });
+
+  return query;
+};
+
+/**
+ * Hook to fetch all services with optional filters.
+ * No owner/operator filter — visible to all users.
+ */
+export const useAllServices = (
+  options?: {
+    status?: ServiceStatus;
+    blueprintId?: bigint;
+    limit?: number;
+    offset?: number;
+    network?: EnvioNetwork;
+    enabled?: boolean;
+  },
+) => {
+  const {
+    status,
+    blueprintId,
+    limit,
+    offset,
+    network,
+    enabled = true,
+  } = options ?? {};
+
+  return useQuery({
+    queryKey: [
+      'envio',
+      'services',
+      'all',
+      status,
+      blueprintId?.toString(),
+      limit,
+      offset,
+      network,
+    ],
+    queryFn: async () => {
+      return fetchServices({ status, blueprintId, limit, offset }, network);
+    },
+    enabled,
+    staleTime: 30_000,
   });
 };
 

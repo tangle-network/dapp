@@ -100,6 +100,8 @@ export {
 export {
   useServicesByOwner,
   useServicesByOperator,
+  useServiceById,
+  useAllServices,
   usePendingServiceRequests,
   useApprovedServiceRequests,
   useOperatorActedServiceRequests,
