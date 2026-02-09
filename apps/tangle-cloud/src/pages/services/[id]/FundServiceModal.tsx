@@ -234,6 +234,7 @@ const FundServiceModal: FC<Props> = ({ serviceId, onClose }) => {
                   type="text"
                   inputMode="decimal"
                   placeholder={`0.0 ${tokenSymbol}`}
+                  isControlled
                   value={amountInput}
                   onChange={(value) => {
                     setAmountInput(value);
@@ -303,7 +304,7 @@ const FundServiceModal: FC<Props> = ({ serviceId, onClose }) => {
           )}
         </ModalBody>
 
-        <ModalFooter>
+        <ModalFooter className="justify-end">
           <Button variant="secondary" onClick={onClose}>
             Cancel
           </Button>
@@ -318,7 +319,7 @@ const FundServiceModal: FC<Props> = ({ serviceId, onClose }) => {
                 ? 'Insufficient Balance'
                 : requiresApproval
                   ? 'Approval Required'
-                  : `Fund ${amountInput ? `${amountInput} ${tokenSymbol}` : 'Service'}`}
+                  : 'Fund'}
           </Button>
         </ModalFooter>
       </ModalContent>

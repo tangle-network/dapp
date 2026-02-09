@@ -134,9 +134,11 @@ const ServiceOnChainDetails: FC<Props> = ({
         <Typography variant="h5" fw="bold">
           Service Details
         </Typography>
-        <Button variant="secondary" size="sm" onClick={onFundClick}>
-          Fund Service
-        </Button>
+        {serviceDetails?.pricing === ServicePricingModel.Subscription && (
+          <Button variant="secondary" size="sm" onClick={onFundClick}>
+            Fund Service
+          </Button>
+        )}
       </div>
 
       {/* Row 1: TTL, Membership, Pricing, Payment Token */}
@@ -181,34 +183,36 @@ const ServiceOnChainDetails: FC<Props> = ({
         />
       </div>
 
-      {/* Row 2: Escrow Balance, Total Deposited, Total Released, Last Payment */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">
-        <DetailItem
-          label="Escrow Balance"
-          value={
-            <span className="text-green-400 font-semibold">
-              {formatAmount(escrow?.balance)} {tokenSymbol}
-            </span>
-          }
-          highlight
-        />
-        <DetailItem
-          label="Total Deposited"
-          value={`${formatAmount(escrow?.totalDeposited)} ${tokenSymbol}`}
-        />
-        <DetailItem
-          label="Total Released"
-          value={`${formatAmount(escrow?.totalReleased)} ${tokenSymbol}`}
-        />
-        <DetailItem
-          label="Last Payment"
-          value={
-            serviceDetails?.lastPaymentAt && serviceDetails.lastPaymentAt > BigInt(0)
-              ? formatCreatedAt(serviceDetails.lastPaymentAt)
-              : 'Never'
-          }
-        />
-      </div>
+      {/* Row 2: Escrow info (only for Subscription pricing) */}
+      {serviceDetails?.pricing === ServicePricingModel.Subscription && (
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">
+          <DetailItem
+            label="Escrow Balance"
+            value={
+              <span className="text-green-400 font-semibold">
+                {formatAmount(escrow?.balance)} {tokenSymbol}
+              </span>
+            }
+            highlight
+          />
+          <DetailItem
+            label="Total Deposited"
+            value={`${formatAmount(escrow?.totalDeposited)} ${tokenSymbol}`}
+          />
+          <DetailItem
+            label="Total Released"
+            value={`${formatAmount(escrow?.totalReleased)} ${tokenSymbol}`}
+          />
+          <DetailItem
+            label="Last Payment"
+            value={
+              serviceDetails?.lastPaymentAt && serviceDetails.lastPaymentAt > BigInt(0)
+                ? formatCreatedAt(serviceDetails.lastPaymentAt)
+                : 'Never'
+            }
+          />
+        </div>
+      )}
 
       {/* Row 3: Conditional rate info based on pricing model */}
       {serviceDetails?.pricing === ServicePricingModel.Subscription && (
