@@ -106,3 +106,8 @@ export {
   useIsServiceOperator,
   type UseIsServiceOperatorOptions,
 } from './useIsServiceOperator';
+
+export {
+  useBlueprintJobs,
+  type BlueprintJobDefinition,
+} from './useBlueprintJobs';

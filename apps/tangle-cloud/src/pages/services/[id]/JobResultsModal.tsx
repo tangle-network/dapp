@@ -12,6 +12,7 @@ import {
   Typography,
   Button,
   SkeletonLoader,
+  CopyWithTooltip,
   EMPTY_VALUE_PLACEHOLDER,
 } from '@tangle-network/ui-components';
 import {
@@ -80,8 +81,25 @@ export const JobResultsModal: FC<Props> = ({ job, onClose }) => {
             <Typography variant="h5" fw="semibold" className="mb-2">
               Input Data
             </Typography>
-            <div className="p-3 bg-mono-20 dark:bg-mono-170 rounded-lg font-mono text-sm overflow-x-auto">
-              {job.inputs || EMPTY_VALUE_PLACEHOLDER}
+
+            <div className="flex items-center gap-2 p-3 bg-mono-20 dark:bg-mono-170 rounded-lg">
+              <Typography
+                variant="body2"
+                className="font-mono text-sm flex-1 truncate"
+              >
+                {job.inputs
+                  ? `${job.inputs.slice(0, 10)}...${job.inputs.slice(-8)}`
+                  : EMPTY_VALUE_PLACEHOLDER}
+              </Typography>
+
+              {job.inputs && (
+                <CopyWithTooltip
+                  textToCopy={job.inputs}
+                  copyLabel="Copy raw input"
+                  iconSize="md"
+                  isButton={false}
+                />
+              )}
             </div>
           </div>
 
@@ -130,8 +148,25 @@ export const JobResultsModal: FC<Props> = ({ job, onClose }) => {
                       >
                         Result
                       </Typography>
-                      <div className="p-2 bg-mono-20 dark:bg-mono-180 rounded font-mono text-sm overflow-x-auto max-h-32">
-                        {result.result || EMPTY_VALUE_PLACEHOLDER}
+
+                      <div className="flex items-center gap-2 p-3 bg-mono-20 dark:bg-mono-170 rounded-lg">
+                        <Typography
+                          variant="body2"
+                          className="font-mono text-sm flex-1 truncate"
+                        >
+                          {result.result
+                            ? `${result.result.slice(0, 10)}...${result.result.slice(-8)}`
+                            : EMPTY_VALUE_PLACEHOLDER}
+                        </Typography>
+
+                        {result.result && (
+                          <CopyWithTooltip
+                            textToCopy={result.result}
+                            copyLabel="Copy raw result"
+                            iconSize="md"
+                            isButton={false}
+                          />
+                        )}
                       </div>
                     </div>
                   </div>

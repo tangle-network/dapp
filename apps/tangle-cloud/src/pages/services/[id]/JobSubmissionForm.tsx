@@ -19,8 +19,9 @@ import {
   useTokenMetadata,
   ServicePricingModel,
   getServicePricingModelLabel,
+  useBlueprintConfig,
+  useBlueprintJobs,
 } from '@tangle-network/tangle-shared-ui/data/services';
-import { useBlueprintConfig } from '@tangle-network/tangle-shared-ui/data/services';
 import useErc20Approval from '@tangle-network/tangle-shared-ui/hooks/useErc20Approval';
 import type { Blueprint } from '@tangle-network/tangle-shared-ui/types/blueprint';
 import { type Hex, formatUnits, zeroAddress } from 'viem';
@@ -128,14 +129,32 @@ export const JobSubmissionForm: FC<Props> = ({ serviceId, blueprint }) => {
     }
   }, [paymentInfo, nativeBalance, tokenBalance]);
 
-  // Get job definitions from blueprint
-  const jobs = blueprint.requestParams ?? [];
+  // Fetch job definitions from the contract
+  const { data: jobDefinitions, isLoading: isLoadingJobs } = useBlueprintJobs(
+    blueprint.id !== undefined ? BigInt(blueprint.id) : undefined,
+  );
 
   const handleSubmit = useCallback(async () => {
     setValidationError(null);
 
     if (selectedJobIndex === '') {
       setValidationError('Please enter a job index');
+      return;
+    }
+
+    if (
+      jobDefinitions &&
+      jobDefinitions.length > 0 &&
+      selectedJobIndex >= jobDefinitions.length
+    ) {
+      setValidationError(
+        `Invalid job index. This blueprint has ${jobDefinitions.length} job(s) (valid indices: 0–${jobDefinitions.length - 1})`,
+      );
+      return;
+    }
+
+    if (selectedJobIndex < 0 || selectedJobIndex > 255) {
+      setValidationError('Job index must be between 0 and 255');
       return;
     }
 
@@ -173,7 +192,7 @@ export const JobSubmissionForm: FC<Props> = ({ serviceId, blueprint }) => {
       inputs: encodedInputs,
       value: paymentInfo?.isNativeToken ? paymentInfo.amount : undefined,
     });
-  }, [serviceId, selectedJobIndex, inputJson, submitJob, paymentInfo]);
+  }, [serviceId, selectedJobIndex, inputJson, submitJob, paymentInfo, jobDefinitions]);
 
   const isSubmitting = status === 'pending';
   const isSuccess = status === 'success';
@@ -255,7 +274,15 @@ export const JobSubmissionForm: FC<Props> = ({ serviceId, blueprint }) => {
       )}
 
       {/* Job Selection */}
-      {jobs.length > 0 ? (
+      {isLoadingJobs ? (
+        <div>
+          <Typography variant="body2" className="mb-2">
+            Select Job
+          </Typography>
+
+          <div className="h-10 rounded-lg bg-mono-40 dark:bg-mono-160 animate-pulse" />
+        </div>
+      ) : jobDefinitions && jobDefinitions.length > 0 ? (
         <div>
           <Typography variant="body2" className="mb-2">
             Select Job
@@ -270,14 +297,20 @@ export const JobSubmissionForm: FC<Props> = ({ serviceId, blueprint }) => {
             </SelectTrigger>
 
             <SelectContent>
-              {jobs.map((job, index) => (
+              {jobDefinitions.map((job, index) => (
                 <SelectItem key={index} value={index.toString()}>
-                  Job {index}:{' '}
-                  {typeof job === 'object' ? JSON.stringify(job) : job}
+                  Job {index}: {job.name || `Unnamed Job`}
                 </SelectItem>
               ))}
             </SelectContent>
           </Select>
+
+          {selectedJobIndex !== '' &&
+            jobDefinitions[selectedJobIndex]?.description && (
+              <Typography variant="body3" className="text-mono-100 mt-1">
+                {jobDefinitions[selectedJobIndex].description}
+              </Typography>
+            )}
         </div>
       ) : (
         <div>
@@ -289,10 +322,11 @@ export const JobSubmissionForm: FC<Props> = ({ serviceId, blueprint }) => {
             id="job-index"
             type="number"
             min={0}
+            max={255}
             isControlled
             value={selectedJobIndex === '' ? '' : selectedJobIndex.toString()}
             onChange={(v) => setSelectedJobIndex(v === '' ? '' : Number(v))}
-            placeholder="Enter job index"
+            placeholder="Enter job index (0-255)"
           />
         </div>
       )}

@@ -37,7 +37,7 @@ const columns = [
     ),
   }),
   columnHelper.accessor('jobIndex', {
-    header: 'Job',
+    header: 'Job ID',
     cell: (info) => (
       <Typography variant="body2">Job {info.getValue()}</Typography>
     ),
@@ -54,7 +54,7 @@ const columns = [
     },
   }),
   columnHelper.accessor('submittedAt', {
-    header: 'Submitted',
+    header: 'Submitted At',
     cell: (info) => {
       const timestamp = info.getValue();
       return (
@@ -83,7 +83,7 @@ const columns = [
     },
   }),
   columnHelper.accessor('resultCount', {
-    header: 'Results',
+    header: '# Results',
     cell: (info) => <Typography variant="body2">{info.getValue()}</Typography>,
   }),
 ];
