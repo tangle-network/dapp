@@ -2,7 +2,7 @@
  * Hooks for fetching job data from the Envio indexer.
  */
 
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { Address } from 'viem';
 import {
   executeEnvioGraphQL,
@@ -10,6 +10,11 @@ import {
 } from '../../utils/executeEnvioGraphQL';
 
 const ZERO_ADDRESS = '0x0000000000000000000000000000000000000000';
+
+export const OPTIMISTIC_JOB_ID_PREFIX = 'optimistic:';
+const OPTIMISTIC_JOB_TTL_SECONDS = BigInt(120);
+const FAST_JOBS_REFETCH_INTERVAL_MS = 2_000;
+const DEFAULT_JOBS_REFETCH_INTERVAL_MS = 15_000;
 
 // Job call status
 export type JobStatus = 'PENDING' | 'COMPLETED' | 'FAILED';
@@ -145,6 +150,54 @@ const fetchJobResults = async (
   }));
 };
 
+export const isOptimisticJob = (job: JobCall): boolean =>
+  job.id.startsWith(OPTIMISTIC_JOB_ID_PREFIX);
+
+const sortJobsBySubmittedAtDesc = (jobs: JobCall[]): JobCall[] =>
+  [...jobs].sort((a, b) => {
+    if (a.submittedAt === b.submittedAt) return 0;
+    return a.submittedAt > b.submittedAt ? -1 : 1;
+  });
+
+const bigIntAbsDiff = (a: bigint, b: bigint): bigint =>
+  a > b ? a - b : b - a;
+
+/**
+ * Merge fetched jobs with any still-pending optimistic entries.
+ * Optimistic rows are dropped once the indexer returns a matching canonical row
+ * or after TTL expiry. Matching uses fuzzy criteria (same serviceId, jobIndex,
+ * submitter, and submittedAt within 60s) since the optimistic row doesn't know
+ * the real callId.
+ */
+const mergeFetchedWithOptimisticJobs = (
+  fetchedJobs: JobCall[],
+  cachedJobs: JobCall[] | undefined,
+): JobCall[] => {
+  if (!cachedJobs || cachedJobs.length === 0) return fetchedJobs;
+
+  const nowSeconds = BigInt(Math.floor(Date.now() / 1000));
+
+  const pendingOptimisticJobs = cachedJobs.filter((job) => {
+    if (!isOptimisticJob(job)) return false;
+    if (nowSeconds - job.submittedAt > OPTIMISTIC_JOB_TTL_SECONDS) return false;
+
+    // Fuzzy match: drop if a canonical row exists with same service, jobIndex,
+    // submitter, and submittedAt within 60 seconds
+    const hasCanonicalMatch = fetchedJobs.some(
+      (fetched) =>
+        fetched.serviceId === job.serviceId &&
+        fetched.jobIndex === job.jobIndex &&
+        fetched.submitter.toLowerCase() === job.submitter.toLowerCase() &&
+        bigIntAbsDiff(fetched.submittedAt, job.submittedAt) <= BigInt(60),
+    );
+    if (hasCanonicalMatch) return false;
+
+    return true;
+  });
+
+  return sortJobsBySubmittedAtDesc([...pendingOptimisticJobs, ...fetchedJobs]);
+};
+
 /**
  * Hook to fetch jobs for a service.
  */
@@ -157,16 +210,31 @@ export const useJobsByService = (
   },
 ) => {
   const { network, enabled = true, limit = 50 } = options ?? {};
+  const queryClient = useQueryClient();
+  const queryKey = [
+    'jobs',
+    'byService',
+    serviceId?.toString(),
+    network,
+    limit,
+  ] as const;
 
   return useQuery({
-    queryKey: ['jobs', 'byService', serviceId?.toString(), network, limit],
+    queryKey,
     queryFn: async () => {
       if (serviceId === undefined) return [];
-      return fetchJobsByService(serviceId, network, limit);
+      const fetchedJobs = await fetchJobsByService(serviceId, network, limit);
+      const cachedJobs = queryClient.getQueryData<JobCall[]>(queryKey);
+      return mergeFetchedWithOptimisticJobs(fetchedJobs, cachedJobs);
     },
     enabled: enabled && serviceId !== undefined,
-    staleTime: 10_000, // 10 seconds - jobs can change frequently
-    refetchInterval: 15_000, // Refresh every 15 seconds
+    staleTime: 10_000,
+    refetchInterval: (query) => {
+      const jobs = query.state.data as JobCall[] | undefined;
+      return jobs?.some(isOptimisticJob)
+        ? FAST_JOBS_REFETCH_INTERVAL_MS
+        : DEFAULT_JOBS_REFETCH_INTERVAL_MS;
+    },
   });
 };
 

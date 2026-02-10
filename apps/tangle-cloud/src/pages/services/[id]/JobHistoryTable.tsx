@@ -17,6 +17,7 @@ import {
   Button,
 } from '@tangle-network/ui-components';
 import type { JobCall } from '@tangle-network/tangle-shared-ui/data/graphql';
+import { isOptimisticJob } from '@tangle-network/tangle-shared-ui/data/graphql/useJobs';
 import { twMerge } from 'tailwind-merge';
 import { JobResultsModal } from './JobResultsModal';
 
@@ -30,11 +31,21 @@ const columnHelper = createColumnHelper<JobCall>();
 const columns = [
   columnHelper.accessor('callId', {
     header: 'Call ID',
-    cell: (info) => (
-      <Typography variant="body2" className="font-mono">
-        #{info.getValue().toString()}
-      </Typography>
-    ),
+    cell: (info) => {
+      const job = info.row.original;
+      if (isOptimisticJob(job)) {
+        return (
+          <span className="px-2 py-1 rounded text-xs bg-blue-500/20 text-blue-400 animate-pulse">
+            Confirming...
+          </span>
+        );
+      }
+      return (
+        <Typography variant="body2" className="font-mono">
+          #{info.getValue().toString()}
+        </Typography>
+      );
+    },
   }),
   columnHelper.accessor('jobIndex', {
     header: 'Job ID',
@@ -67,6 +78,14 @@ const columns = [
   columnHelper.accessor('completed', {
     header: 'Status',
     cell: (info) => {
+      const job = info.row.original;
+      if (isOptimisticJob(job)) {
+        return (
+          <span className="px-2 py-1 rounded text-xs bg-blue-500/20 text-blue-400 animate-pulse">
+            Confirming
+          </span>
+        );
+      }
       const completed = info.getValue();
       return (
         <span
