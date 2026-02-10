@@ -43,12 +43,7 @@ export const useCanScheduleExit = (
   return useQuery({
     queryKey: ['canScheduleExit', chainId, serviceId?.toString(), operator],
     queryFn: async (): Promise<CanScheduleExitResult> => {
-      if (
-        !publicClient ||
-        !contracts ||
-        serviceId === undefined ||
-        !operator
-      ) {
+      if (!publicClient || !contracts || serviceId === undefined || !operator) {
         return { canExit: false, reason: 'Missing required parameters' };
       }
 

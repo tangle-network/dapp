@@ -38,12 +38,7 @@ export const useIsPermittedCaller = (
   return useQuery({
     queryKey: ['isPermittedCaller', chainId, serviceId?.toString(), caller],
     queryFn: async (): Promise<boolean> => {
-      if (
-        !publicClient ||
-        !contracts ||
-        serviceId === undefined ||
-        !caller
-      ) {
+      if (!publicClient || !contracts || serviceId === undefined || !caller) {
         return false;
       }
 

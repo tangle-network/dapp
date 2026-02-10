@@ -74,7 +74,10 @@ const OperatorMembershipPanel: FC<Props> = ({
     if (!serviceDetails) return false;
 
     const currentCount = operators?.length ?? 0;
-    if (serviceDetails.maxOperators > 0 && currentCount >= serviceDetails.maxOperators) {
+    if (
+      serviceDetails.maxOperators > 0 &&
+      currentCount >= serviceDetails.maxOperators
+    ) {
       return false;
     }
 
@@ -141,7 +144,11 @@ const OperatorMembershipPanel: FC<Props> = ({
           <div className="p-4 rounded-lg bg-green-500/10 border border-green-500/20">
             <div className="flex items-center gap-2 mb-2">
               <div className="w-2 h-2 rounded-full bg-green-500" />
-              <Typography variant="body1" fw="semibold" className="text-green-400">
+              <Typography
+                variant="body1"
+                fw="semibold"
+                className="text-green-400"
+              >
                 Active Operator
               </Typography>
             </div>
@@ -184,7 +191,8 @@ const OperatorMembershipPanel: FC<Props> = ({
           {!canJoin && operators && serviceDetails && (
             <div className="p-4 rounded-lg bg-yellow-500/10 border border-yellow-500/20">
               <Typography variant="body2" className="text-yellow-400">
-                {operators.length >= serviceDetails.maxOperators && serviceDetails.maxOperators > 0
+                {operators.length >= serviceDetails.maxOperators &&
+                serviceDetails.maxOperators > 0
                   ? 'This service has reached its maximum operator capacity.'
                   : 'You cannot join this service at this time.'}
               </Typography>

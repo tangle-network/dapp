@@ -53,7 +53,8 @@ const FundServiceModal: FC<Props> = ({ serviceId, onClose }) => {
 
   const isLoading = isLoadingEscrow || isLoadingToken;
   const isNativeToken = escrow?.isNativeToken ?? true;
-  const tokenSymbol = tokenMetadata?.symbol ?? (isNativeToken ? 'ETH' : 'TOKEN');
+  const tokenSymbol =
+    tokenMetadata?.symbol ?? (isNativeToken ? 'ETH' : 'TOKEN');
   const tokenDecimals = tokenMetadata?.decimals ?? 18;
 
   // Parse input amount to bigint
@@ -175,7 +176,10 @@ const FundServiceModal: FC<Props> = ({ serviceId, onClose }) => {
     userBalance && parsedAmount > BigInt(0) && parsedAmount > userBalance.value;
 
   const requiresApproval =
-    !isNativeToken && needsApproval && !approvalSuccess && parsedAmount > BigInt(0);
+    !isNativeToken &&
+    needsApproval &&
+    !approvalSuccess &&
+    parsedAmount > BigInt(0);
 
   const canFund =
     parsedAmount > BigInt(0) &&
@@ -259,23 +263,29 @@ const FundServiceModal: FC<Props> = ({ serviceId, onClose }) => {
               )}
 
               {/* ERC20 Approval Section */}
-              {!isNativeToken && needsApproval && !approvalSuccess && parsedAmount > BigInt(0) && (
-                <div className="p-3 rounded-lg bg-yellow-500/20 border border-yellow-500/30">
-                  <Typography variant="body2" className="text-yellow-400 mb-2">
-                    You need to approve the contract to spend your tokens before
-                    funding.
-                  </Typography>
-                  <Button
-                    onClick={approve}
-                    isLoading={isApproving}
-                    isDisabled={isApproving}
-                    variant="secondary"
-                    size="sm"
-                  >
-                    {isApproving ? 'Approving...' : `Approve ${tokenSymbol}`}
-                  </Button>
-                </div>
-              )}
+              {!isNativeToken &&
+                needsApproval &&
+                !approvalSuccess &&
+                parsedAmount > BigInt(0) && (
+                  <div className="p-3 rounded-lg bg-yellow-500/20 border border-yellow-500/30">
+                    <Typography
+                      variant="body2"
+                      className="text-yellow-400 mb-2"
+                    >
+                      You need to approve the contract to spend your tokens
+                      before funding.
+                    </Typography>
+                    <Button
+                      onClick={approve}
+                      isLoading={isApproving}
+                      isDisabled={isApproving}
+                      variant="secondary"
+                      size="sm"
+                    >
+                      {isApproving ? 'Approving...' : `Approve ${tokenSymbol}`}
+                    </Button>
+                  </div>
+                )}
 
               {/* Approval Success */}
               {!isNativeToken && approvalSuccess && (
@@ -287,7 +297,9 @@ const FundServiceModal: FC<Props> = ({ serviceId, onClose }) => {
               )}
 
               {/* Validation Error */}
-              {validationError && <ErrorMessage>{validationError}</ErrorMessage>}
+              {validationError && (
+                <ErrorMessage>{validationError}</ErrorMessage>
+              )}
 
               {/* Transaction Error */}
               {fundError && <ErrorMessage>{fundError.message}</ErrorMessage>}

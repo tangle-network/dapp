@@ -192,7 +192,14 @@ export const JobSubmissionForm: FC<Props> = ({ serviceId, blueprint }) => {
       inputs: encodedInputs,
       value: paymentInfo?.isNativeToken ? paymentInfo.amount : undefined,
     });
-  }, [serviceId, selectedJobIndex, inputJson, submitJob, paymentInfo, jobDefinitions]);
+  }, [
+    serviceId,
+    selectedJobIndex,
+    inputJson,
+    submitJob,
+    paymentInfo,
+    jobDefinitions,
+  ]);
 
   const isSubmitting = status === 'pending';
   const isSuccess = status === 'success';
@@ -289,7 +296,9 @@ export const JobSubmissionForm: FC<Props> = ({ serviceId, blueprint }) => {
           </Typography>
 
           <Select
-            value={selectedJobIndex === '' ? undefined : selectedJobIndex.toString()}
+            value={
+              selectedJobIndex === '' ? undefined : selectedJobIndex.toString()
+            }
             onValueChange={(v) => setSelectedJobIndex(Number(v))}
           >
             <SelectTrigger className="w-full">

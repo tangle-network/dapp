@@ -41,10 +41,8 @@ export const AllServicesTable: FC = () => {
   const { blueprints: blueprintMap, isLoading: isLoadingBlueprints } =
     useBlueprintMap();
 
-  const {
-    data: operatorRegistrations,
-    isLoading: isLoadingRegistrations,
-  } = useOperatorRegistrations();
+  const { data: operatorRegistrations, isLoading: isLoadingRegistrations } =
+    useOperatorRegistrations();
 
   const isLoading =
     isLoadingServices || isLoadingBlueprints || isLoadingRegistrations;

@@ -60,12 +60,7 @@ export const useExitStatus = (
   return useQuery({
     queryKey: ['exitStatus', chainId, serviceId?.toString(), operator],
     queryFn: async (): Promise<ExitStatus> => {
-      if (
-        !publicClient ||
-        !contracts ||
-        serviceId === undefined ||
-        !operator
-      ) {
+      if (!publicClient || !contracts || serviceId === undefined || !operator) {
         return ExitStatus.None;
       }
 

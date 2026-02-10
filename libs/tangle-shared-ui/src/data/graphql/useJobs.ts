@@ -159,8 +159,7 @@ const sortJobsBySubmittedAtDesc = (jobs: JobCall[]): JobCall[] =>
     return a.submittedAt > b.submittedAt ? -1 : 1;
   });
 
-const bigIntAbsDiff = (a: bigint, b: bigint): bigint =>
-  a > b ? a - b : b - a;
+const bigIntAbsDiff = (a: bigint, b: bigint): bigint => (a > b ? a - b : b - a);
 
 /**
  * Merge fetched jobs with any still-pending optimistic entries.

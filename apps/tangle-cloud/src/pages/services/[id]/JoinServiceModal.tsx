@@ -36,10 +36,8 @@ type FormValues = {
 const JoinServiceModal: FC<Props> = ({ serviceId, onClose }) => {
   const { operatorAddress } = useEvmOperatorInfo();
 
-  const {
-    data: requirements,
-    isLoading: isLoadingRequirements,
-  } = useServiceSecurityRequirements(serviceId);
+  const { data: requirements, isLoading: isLoadingRequirements } =
+    useServiceSecurityRequirements(serviceId);
 
   const assetsToQuery = useMemo(() => {
     if (!requirements || requirements.length === 0) {

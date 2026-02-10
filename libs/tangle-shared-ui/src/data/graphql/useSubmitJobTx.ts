@@ -9,18 +9,14 @@ import { useQueryClient } from '@tanstack/react-query';
 import { type Address, zeroAddress } from 'viem';
 import { useAccount, useChainId } from 'wagmi';
 import { getContractsByChainId } from '@tangle-network/dapp-config/contracts';
-import useContractWrite, {
-  TxStatus,
-} from '../../hooks/useContractWrite';
+import useContractWrite, { TxStatus } from '../../hooks/useContractWrite';
 import TANGLE_ABI from '../../abi/tangle';
 import type { JobCall } from './useJobs';
 import { OPTIMISTIC_JOB_ID_PREFIX, isOptimisticJob } from './useJobs';
 
 export type SubmitJobStatus = 'idle' | 'pending' | 'success' | 'error';
 
-const JOBS_RECONCILE_BACKOFF_MS = [
-  1_000, 2_000, 4_000, 8_000, 16_000,
-] as const;
+const JOBS_RECONCILE_BACKOFF_MS = [1_000, 2_000, 4_000, 8_000, 16_000] as const;
 
 const sortJobsBySubmittedAtDesc = (jobs: JobCall[]): JobCall[] =>
   [...jobs].sort((a, b) => {
@@ -68,16 +64,16 @@ export const useSubmitJobTx = () => {
         .getQueriesData<JobCall[]>({ queryKey: jobsByServicePrefix })
         .some(([, jobs]) => (jobs ?? []).some(isOptimisticJob));
 
-      if (
-        !hasOptimistic ||
-        attempt >= JOBS_RECONCILE_BACKOFF_MS.length - 1
-      ) {
+      if (!hasOptimistic || attempt >= JOBS_RECONCILE_BACKOFF_MS.length - 1) {
         return;
       }
 
-      setTimeout(() => {
-        void runAttempt(attempt + 1);
-      }, JOBS_RECONCILE_BACKOFF_MS[attempt + 1]);
+      setTimeout(
+        () => {
+          void runAttempt(attempt + 1);
+        },
+        JOBS_RECONCILE_BACKOFF_MS[attempt + 1],
+      );
     };
 
     setTimeout(() => {

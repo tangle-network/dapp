@@ -477,16 +477,14 @@ export const useServiceById = (
  * Hook to fetch all services with optional filters.
  * No owner/operator filter — visible to all users.
  */
-export const useAllServices = (
-  options?: {
-    status?: ServiceStatus;
-    blueprintId?: bigint;
-    limit?: number;
-    offset?: number;
-    network?: EnvioNetwork;
-    enabled?: boolean;
-  },
-) => {
+export const useAllServices = (options?: {
+  status?: ServiceStatus;
+  blueprintId?: bigint;
+  limit?: number;
+  offset?: number;
+  network?: EnvioNetwork;
+  enabled?: boolean;
+}) => {
   const {
     status,
     blueprintId,

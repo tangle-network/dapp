@@ -83,10 +83,8 @@ const ServiceRequestDetailModal: FC<Props> = ({
     },
   );
 
-  const {
-    data: requirements,
-    isLoading: isLoadingRequirements,
-  } = useServiceRequestSecurityRequirements(selectedRequest?.requestId);
+  const { data: requirements, isLoading: isLoadingRequirements } =
+    useServiceRequestSecurityRequirements(selectedRequest?.requestId);
 
   const assetsToQuery = useMemo(() => {
     if (!requirements || requirements.length === 0) {
@@ -284,55 +282,53 @@ const ServiceRequestDetailModal: FC<Props> = ({
             </div>
           )}
 
-          {!isLoadingRequirements &&
-            !isLoadingStake &&
-            hasRequirements && (
-              <div className="space-y-4">
-                <Typography
-                  variant="body2"
-                  className="text-mono-100 dark:text-mono-100"
-                >
-                  Set your exposure percentage within the allowed bounds for
-                  each asset.
-                </Typography>
+          {!isLoadingRequirements && !isLoadingStake && hasRequirements && (
+            <div className="space-y-4">
+              <Typography
+                variant="body2"
+                className="text-mono-100 dark:text-mono-100"
+              >
+                Set your exposure percentage within the allowed bounds for each
+                asset.
+              </Typography>
 
-                {requirements.map((req) => {
-                  const key = req.asset.token.toLowerCase();
+              {requirements.map((req) => {
+                const key = req.asset.token.toLowerCase();
 
-                  return (
-                    <Controller
-                      key={key}
-                      name={`commitments.${key}`}
-                      control={control}
-                      defaultValue={req.minExposureBps}
-                      rules={{
-                        min: {
-                          value: req.minExposureBps,
-                          message: `Must be at least ${req.minExposureBps / 100}%`,
-                        },
-                        max: {
-                          value: req.maxExposureBps,
-                          message: `Cannot exceed ${req.maxExposureBps / 100}%`,
-                        },
-                      }}
-                      render={({ field, fieldState }) => (
-                        <ExposureCommitmentInput
-                          tokenAddress={req.asset.token}
-                          assetKind={req.asset.kind}
-                          metadata={req.metadata}
-                          minExposureBps={req.minExposureBps}
-                          maxExposureBps={req.maxExposureBps}
-                          value={field.value ?? req.minExposureBps}
-                          onChange={field.onChange}
-                          errorMessage={fieldState.error?.message}
-                          delegatedAmount={getStakeForAsset(req.asset.token)}
-                        />
-                      )}
-                    />
-                  );
-                })}
-              </div>
-            )}
+                return (
+                  <Controller
+                    key={key}
+                    name={`commitments.${key}`}
+                    control={control}
+                    defaultValue={req.minExposureBps}
+                    rules={{
+                      min: {
+                        value: req.minExposureBps,
+                        message: `Must be at least ${req.minExposureBps / 100}%`,
+                      },
+                      max: {
+                        value: req.maxExposureBps,
+                        message: `Cannot exceed ${req.maxExposureBps / 100}%`,
+                      },
+                    }}
+                    render={({ field, fieldState }) => (
+                      <ExposureCommitmentInput
+                        tokenAddress={req.asset.token}
+                        assetKind={req.asset.kind}
+                        metadata={req.metadata}
+                        minExposureBps={req.minExposureBps}
+                        maxExposureBps={req.maxExposureBps}
+                        value={field.value ?? req.minExposureBps}
+                        onChange={field.onChange}
+                        errorMessage={fieldState.error?.message}
+                        delegatedAmount={getStakeForAsset(req.asset.token)}
+                      />
+                    )}
+                  />
+                );
+              })}
+            </div>
+          )}
         </form>
       </ModalBody>
 

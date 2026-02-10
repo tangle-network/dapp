@@ -101,7 +101,8 @@ export const useServiceTerminateTx = (
           await queryClient.refetchQueries({ queryKey: ['envio', 'services'] });
 
           if (keepOptimisticRemoval) {
-            const serviceStillAppearsAsActive = removeFromActiveServiceQueries();
+            const serviceStillAppearsAsActive =
+              removeFromActiveServiceQueries();
             if (!serviceStillAppearsAsActive) {
               keepOptimisticRemoval = false;
             }

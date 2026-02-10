@@ -76,7 +76,8 @@ const ServiceOnChainDetails: FC<Props> = ({
   }
 
   const isNativeToken = escrow?.isNativeToken ?? true;
-  const tokenSymbol = tokenMetadata?.symbol ?? (isNativeToken ? 'ETH' : 'TOKEN');
+  const tokenSymbol =
+    tokenMetadata?.symbol ?? (isNativeToken ? 'ETH' : 'TOKEN');
   const tokenDecimals = tokenMetadata?.decimals ?? 18;
 
   const formatAmount = (amount: bigint | undefined): string => {
@@ -88,7 +89,9 @@ const ServiceOnChainDetails: FC<Props> = ({
     );
   };
 
-  const getMembershipLabel = (membership: MembershipModel | undefined): string => {
+  const getMembershipLabel = (
+    membership: MembershipModel | undefined,
+  ): string => {
     if (membership === undefined) return EMPTY_VALUE_PLACEHOLDER;
     return membership === MembershipModel.Fixed ? 'Fixed' : 'Dynamic';
   };
@@ -212,7 +215,8 @@ const ServiceOnChainDetails: FC<Props> = ({
           <DetailItem
             label="Last Payment"
             value={
-              serviceDetails?.lastPaymentAt && serviceDetails.lastPaymentAt > BigInt(0)
+              serviceDetails?.lastPaymentAt &&
+              serviceDetails.lastPaymentAt > BigInt(0)
                 ? formatCreatedAt(serviceDetails.lastPaymentAt)
                 : 'Never'
             }
@@ -223,7 +227,10 @@ const ServiceOnChainDetails: FC<Props> = ({
       {/* Row 3: Conditional rate info based on pricing model */}
       {serviceDetails?.pricing === ServicePricingModel.Subscription && (
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          <DetailItem label="Subscription Rate" value={formatSubscriptionRate()} />
+          <DetailItem
+            label="Subscription Rate"
+            value={formatSubscriptionRate()}
+          />
         </div>
       )}
 

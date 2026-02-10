@@ -3,9 +3,7 @@
  */
 
 import { useQueryClient } from '@tanstack/react-query';
-import useContractWrite, {
-  TxStatus,
-} from '../../hooks/useContractWrite';
+import useContractWrite, { TxStatus } from '../../hooks/useContractWrite';
 import TangleABI from '../../abi/tangle';
 import { getContractsByChainId } from '@tangle-network/dapp-config/contracts';
 import { useChainId } from 'wagmi';
@@ -47,7 +45,10 @@ export const useFundServiceTx = (options?: UseFundServiceTxOptions) => {
         details.set('Service ID', params.serviceId.toString());
         const decimals = params.tokenDecimals ?? 18;
         const symbol = params.tokenSymbol ?? 'tokens';
-        details.set('Amount', `${formatUnits(params.amount, decimals)} ${symbol}`);
+        details.set(
+          'Amount',
+          `${formatUnits(params.amount, decimals)} ${symbol}`,
+        );
         return details;
       },
       getSuccessMessage: (params) => {

@@ -45,12 +45,7 @@ export const useExitRequest = (
   return useQuery({
     queryKey: ['exitRequest', chainId, serviceId?.toString(), operator],
     queryFn: async (): Promise<ExitRequest | null> => {
-      if (
-        !publicClient ||
-        !contracts ||
-        serviceId === undefined ||
-        !operator
-      ) {
+      if (!publicClient || !contracts || serviceId === undefined || !operator) {
         return null;
       }
 

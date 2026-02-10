@@ -4,9 +4,13 @@
 
 import { useMemo } from 'react';
 import { Address } from 'viem';
-import { useServiceOperators, UseServiceOperatorsOptions } from './useServiceOperators';
+import {
+  useServiceOperators,
+  UseServiceOperatorsOptions,
+} from './useServiceOperators';
 
-export interface UseIsServiceOperatorOptions extends UseServiceOperatorsOptions {}
+export interface UseIsServiceOperatorOptions
+  extends UseServiceOperatorsOptions {}
 
 /**
  * Hook to check if an address is an operator for a service.
@@ -21,19 +25,19 @@ export const useIsServiceOperator = (
   operator: Address | undefined,
   options?: UseIsServiceOperatorOptions,
 ) => {
-  const { data: operators, isLoading, error, refetch } = useServiceOperators(
-    serviceId,
-    options,
-  );
+  const {
+    data: operators,
+    isLoading,
+    error,
+    refetch,
+  } = useServiceOperators(serviceId, options);
 
   const isOperator = useMemo(() => {
     if (!operators || !operator) {
       return false;
     }
 
-    return operators.some(
-      (op) => op.toLowerCase() === operator.toLowerCase(),
-    );
+    return operators.some((op) => op.toLowerCase() === operator.toLowerCase());
   }, [operators, operator]);
 
   return {
