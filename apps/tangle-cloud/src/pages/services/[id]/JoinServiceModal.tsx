@@ -1,8 +1,10 @@
 /**
  * Modal for joining a service as an operator.
+ * Renders an ExposureCommitmentInput slider per security requirement asset,
+ * then calls joinServiceWithCommitments with per-asset commitments.
  */
 
-import { FC, useState, useCallback, useMemo } from 'react';
+import { FC, useCallback, useMemo, useEffect } from 'react';
 import {
   Modal,
   ModalContent,
@@ -11,42 +13,135 @@ import {
   ModalFooter,
   Typography,
   Button,
-  Slider,
+  SkeletonLoader,
 } from '@tangle-network/ui-components';
-import { useJoinServiceTx } from '../../../data/services/useJoinServiceTx';
+import { useForm, Controller } from 'react-hook-form';
+import { useJoinServiceWithCommitmentsTx } from '../../../data/services/useJoinServiceWithCommitmentsTx';
+import { useServiceSecurityRequirements } from '../../../data/services/useServiceSecurityRequirements';
+import { useOperatorStakeByAsset } from '@tangle-network/tangle-shared-ui/data/restake/useOperatorDelegationsByAsset';
+import useEvmOperatorInfo from '../../../hooks/useEvmOperatorInfo';
+import { ExposureCommitmentInput } from '../../instances/Instances/UpdateBlueprintModel/ExposureCommitmentInput';
 import ErrorMessage from '../../../components/ErrorMessage';
+import type { Address } from 'viem';
 
 interface Props {
   serviceId: bigint;
   onClose: () => void;
 }
 
-const JoinServiceModal: FC<Props> = ({ serviceId, onClose }) => {
-  const [exposurePercent, setExposurePercent] = useState<number>(50);
+type FormValues = {
+  commitments: Record<string, number>;
+};
 
-  const exposureBps = useMemo(() => Math.round(exposurePercent * 100), [exposurePercent]);
+const JoinServiceModal: FC<Props> = ({ serviceId, onClose }) => {
+  const { operatorAddress } = useEvmOperatorInfo();
 
   const {
-    execute: executeJoin,
+    data: requirements,
+    isLoading: isLoadingRequirements,
+  } = useServiceSecurityRequirements(serviceId);
+
+  const assetsToQuery = useMemo(() => {
+    if (!requirements || requirements.length === 0) {
+      return undefined;
+    }
+    return requirements.map((req) => ({
+      kind: req.asset.kind,
+      token: req.asset.token,
+    }));
+  }, [requirements]);
+
+  const { data: stakeByAsset, isLoading: isLoadingStake } =
+    useOperatorStakeByAsset(operatorAddress, assetsToQuery);
+
+  const initialCommitments = useMemo(() => {
+    if (!requirements || requirements.length === 0) {
+      return {};
+    }
+
+    const commitments: Record<string, number> = {};
+    for (const req of requirements) {
+      const key = req.asset.token.toLowerCase();
+      commitments[key] = req.minExposureBps;
+    }
+    return commitments;
+  }, [requirements]);
+
+  const getStakeForAsset = useCallback(
+    (tokenAddress: Address): bigint | null => {
+      if (!stakeByAsset) {
+        return null;
+      }
+      const normalizedAddress = tokenAddress.toLowerCase() as Address;
+      const stake = stakeByAsset.get(normalizedAddress);
+      return stake?.totalStake ?? BigInt(0);
+    },
+    [stakeByAsset],
+  );
+
+  const {
+    handleSubmit,
+    control,
+    setValue,
+    formState: { isValid },
+  } = useForm<FormValues>({
+    mode: 'onChange',
+    defaultValues: {
+      commitments: {},
+    },
+  });
+
+  useEffect(() => {
+    if (Object.keys(initialCommitments).length > 0) {
+      setValue('commitments', initialCommitments);
+    }
+  }, [initialCommitments, setValue]);
+
+  const {
+    execute: executeJoinWithCommitments,
     isPending: isJoining,
-    isSuccess: joinSuccess,
-    error: joinError,
-  } = useJoinServiceTx({
+    error: txError,
+  } = useJoinServiceWithCommitmentsTx({
     onSuccess: () => {
       onClose();
     },
   });
 
-  const handleJoin = useCallback(async () => {
-    if (!executeJoin) return;
+  const handleFormSubmit = useCallback(
+    (data: FormValues) => {
+      if (!executeJoinWithCommitments || !requirements) {
+        return;
+      }
 
-    await executeJoin({
-      serviceId,
-      exposureBps,
-    });
-  }, [executeJoin, serviceId, exposureBps]);
+      const commitments = requirements.map((req) => {
+        const key = req.asset.token.toLowerCase();
+        const exposureBps = data.commitments[key] ?? req.minExposureBps;
 
-  const canJoin = exposurePercent > 0 && !isJoining;
+        return {
+          asset: {
+            kind: req.asset.kind,
+            token: req.asset.token,
+          },
+          exposureBps,
+        };
+      });
+
+      // Use the maximum of all minExposureBps as the overall exposureBps
+      const overallExposureBps = Math.max(
+        ...requirements.map((req) => req.minExposureBps),
+      );
+
+      executeJoinWithCommitments({
+        serviceId,
+        exposureBps: overallExposureBps,
+        commitments,
+      });
+    },
+    [requirements, executeJoinWithCommitments, serviceId],
+  );
+
+  const isLoading = isLoadingRequirements || isLoadingStake;
+  const hasRequirements = requirements && requirements.length > 0;
 
   return (
     <Modal open onOpenChange={(open) => !open && onClose()}>
@@ -54,71 +149,73 @@ const JoinServiceModal: FC<Props> = ({ serviceId, onClose }) => {
         <ModalHeader>Join Service #{serviceId.toString()}</ModalHeader>
 
         <ModalBody>
-          <div className="space-y-6">
+          <div className="space-y-4">
             <Typography variant="body2" className="text-mono-100">
-              Configure your exposure percentage for this service. This
-              determines how much of your staked assets are at risk for
-              slashing if you fail to perform your duties.
+              Configure your security commitment for this service. This
+              determines how much of your staked assets are at risk for slashing
+              if you fail to perform your duties.
             </Typography>
 
-            <div>
-              <div className="flex justify-between items-center mb-2">
-                <Typography variant="body2" fw="semibold">
-                  Exposure Percentage
-                </Typography>
-                <Typography variant="body1" fw="bold" className="text-blue-400">
-                  {exposurePercent.toFixed(1)}%
-                </Typography>
-              </div>
-
-              <Slider
-                value={[exposurePercent]}
-                onChange={(values) => setExposurePercent(values[0])}
-                min={0}
-                max={100}
-                step={0.1}
-              />
-
-              <div className="flex justify-between text-xs text-mono-100 mt-1">
-                <span>0%</span>
-                <span>100%</span>
-              </div>
-            </div>
-
-            <div className="p-4 rounded-lg bg-mono-20 dark:bg-mono-170">
-              <Typography variant="body2" className="text-mono-100 mb-2">
-                Exposure Summary
-              </Typography>
-              <div className="flex justify-between">
-                <span className="text-mono-100">Basis Points (BPS):</span>
-                <span className="font-semibold">{exposureBps}</span>
-              </div>
-              <Typography variant="body3" className="text-mono-120 mt-2">
-                Higher exposure means more of your stake is at risk, but may
-                qualify you for higher rewards.
-              </Typography>
-            </div>
-
-            {joinError && <ErrorMessage>{joinError.message}</ErrorMessage>}
-
-            {joinSuccess && (
-              <div className="p-3 rounded-lg bg-green-500/20 text-green-400">
-                <Typography variant="body2">
-                  Successfully joined service!
-                </Typography>
+            {isLoading && (
+              <div className="space-y-4">
+                <SkeletonLoader className="h-24 w-full rounded-lg" />
+                <SkeletonLoader className="h-24 w-full rounded-lg" />
               </div>
             )}
+
+            {!isLoading && hasRequirements && (
+              <div className="space-y-4">
+                {requirements.map((req) => {
+                  const key = req.asset.token.toLowerCase();
+
+                  return (
+                    <Controller
+                      key={key}
+                      name={`commitments.${key}`}
+                      control={control}
+                      defaultValue={req.minExposureBps}
+                      rules={{
+                        min: {
+                          value: req.minExposureBps,
+                          message: `Must be at least ${req.minExposureBps / 100}%`,
+                        },
+                        max: {
+                          value: req.maxExposureBps,
+                          message: `Cannot exceed ${req.maxExposureBps / 100}%`,
+                        },
+                      }}
+                      render={({ field, fieldState }) => (
+                        <ExposureCommitmentInput
+                          tokenAddress={req.asset.token}
+                          assetKind={req.asset.kind}
+                          metadata={req.metadata}
+                          minExposureBps={req.minExposureBps}
+                          maxExposureBps={req.maxExposureBps}
+                          value={field.value ?? req.minExposureBps}
+                          onChange={field.onChange}
+                          errorMessage={fieldState.error?.message}
+                          delegatedAmount={getStakeForAsset(req.asset.token)}
+                        />
+                      )}
+                    />
+                  );
+                })}
+              </div>
+            )}
+
+            {txError && <ErrorMessage>{txError.message}</ErrorMessage>}
           </div>
         </ModalBody>
 
         <ModalFooter>
-          <Button variant="secondary" onClick={onClose}>
+          <Button variant="secondary" onClick={onClose} isDisabled={isJoining}>
             Cancel
           </Button>
+
           <Button
-            onClick={handleJoin}
+            onClick={handleSubmit(handleFormSubmit)}
             isLoading={isJoining}
-            isDisabled={!canJoin}
+            isDisabled={!isValid || isJoining || isLoading || !hasRequirements}
           >
             {isJoining ? 'Joining...' : 'Join Service'}
           </Button>
