@@ -44,25 +44,41 @@ export const useServiceTerminateTx = (
       getSuccessMessage: (params) =>
         `Successfully terminated service #${params.serviceId}`,
       onSuccess: (_result, params) => {
+        const removeFromActiveServiceQueries = () => {
+          let serviceStillAppearsAsActive = false;
+          const serviceQueries = queryClient
+            .getQueryCache()
+            .findAll({ queryKey: ['envio', 'services'] });
+
+          for (const query of serviceQueries) {
+            const key = query.queryKey as unknown[];
+            const status = key[4];
+            if (status !== 'ACTIVE') continue;
+
+            queryClient.setQueryData(key, (old) => {
+              if (!Array.isArray(old)) return old;
+
+              const services = old as Service[];
+              const containsTerminatedService = services.some(
+                (service) => service.serviceId === params.serviceId,
+              );
+
+              if (!containsTerminatedService) return old;
+
+              serviceStillAppearsAsActive = true;
+              return services.filter(
+                (service) => service.serviceId !== params.serviceId,
+              );
+            });
+          }
+
+          return serviceStillAppearsAsActive;
+        };
+
         // Optimistically remove the service from any ACTIVE service lists so the
         // Running Instances table updates immediately, even before Envio indexes
         // the termination event.
-        const serviceQueries = queryClient
-          .getQueryCache()
-          .findAll({ queryKey: ['envio', 'services'] });
-
-        for (const query of serviceQueries) {
-          const key = query.queryKey as unknown[];
-          const status = key[4];
-          if (status !== 'ACTIVE') continue;
-
-          queryClient.setQueryData(key, (old) => {
-            if (!Array.isArray(old)) return old;
-            return (old as Service[]).filter(
-              (service) => service.serviceId !== params.serviceId,
-            );
-          });
-        }
+        removeFromActiveServiceQueries();
 
         // On-chain queries: safe to invalidate immediately.
         queryClient.invalidateQueries({ queryKey: ['serviceDetails'] });
@@ -79,15 +95,27 @@ export const useServiceTerminateTx = (
           refetchType: 'none',
         });
 
-        const refetchEnvio = () => {
-          void queryClient.refetchQueries({ queryKey: ['envio', 'services'] });
+        let keepOptimisticRemoval = true;
+
+        const refetchEnvio = async () => {
+          await queryClient.refetchQueries({ queryKey: ['envio', 'services'] });
+
+          if (keepOptimisticRemoval) {
+            const serviceStillAppearsAsActive = removeFromActiveServiceQueries();
+            if (!serviceStillAppearsAsActive) {
+              keepOptimisticRemoval = false;
+            }
+          }
+
           void queryClient.refetchQueries({
             queryKey: ['envio', 'operatorStats'],
           });
         };
 
         [2_000, 5_000, 10_000, 20_000].forEach((delayMs) => {
-          setTimeout(refetchEnvio, delayMs);
+          setTimeout(() => {
+            void refetchEnvio();
+          }, delayMs);
         });
 
         options?.onSuccess?.();
