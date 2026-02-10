@@ -13,7 +13,10 @@ import {
   EMPTY_VALUE_PLACEHOLDER,
   Chip,
 } from '@tangle-network/ui-components';
-import addCommasToNumber from '@tangle-network/ui-components/utils/addCommasToNumber';
+import {
+  AmountFormatStyle,
+  formatDisplayAmount,
+} from '@tangle-network/ui-components/utils/formatDisplayAmount';
 import {
   useServiceDetails,
   useServiceEscrow,
@@ -23,7 +26,7 @@ import {
   getServicePricingModelLabel,
 } from '@tangle-network/tangle-shared-ui/data/services';
 import { MembershipModel } from '@tangle-network/tangle-shared-ui/data/services/useServiceRequestDetails';
-import { formatUnits } from 'viem';
+import BN from 'bn.js';
 import { formatTtl, formatCreatedAt } from '../../../types/serviceRequest';
 
 interface Props {
@@ -78,8 +81,11 @@ const ServiceOnChainDetails: FC<Props> = ({
 
   const formatAmount = (amount: bigint | undefined): string => {
     if (amount === undefined) return EMPTY_VALUE_PLACEHOLDER;
-    const formatted = parseFloat(formatUnits(amount, tokenDecimals));
-    return addCommasToNumber(formatted.toFixed(4));
+    return formatDisplayAmount(
+      new BN(amount.toString()),
+      tokenDecimals,
+      AmountFormatStyle.SHORT,
+    );
   };
 
   const getMembershipLabel = (membership: MembershipModel | undefined): string => {

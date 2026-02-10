@@ -88,6 +88,15 @@ export const AccountStatsCard: FC<
       );
     }
 
+    // Show user's running services only for non-operators (operators already have it above)
+    if (!isActiveOperator) {
+      items.push({
+        title: 'Running Services',
+        children: userStatsData.runningServices,
+        tooltip: 'Services you deployed that are currently running',
+      });
+    }
+
     // Always show deployed services for all users
     items.push({
       title: 'Deployed Services',
