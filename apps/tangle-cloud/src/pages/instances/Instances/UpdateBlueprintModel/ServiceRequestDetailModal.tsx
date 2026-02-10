@@ -6,7 +6,6 @@ import {
   Typography,
   SkeletonLoader,
 } from '@tangle-network/ui-components';
-import LsTokenIcon from '@tangle-network/tangle-shared-ui/components/LsTokenIcon';
 import {
   ApprovalConfirmationFormFields,
   ContractSecurityCommitment,
@@ -52,7 +51,6 @@ type Props = {
 
 type FormValues = {
   requestId: bigint;
-  restakingPercent: number;
   commitments: Record<string, number>;
 };
 
@@ -88,9 +86,6 @@ const ServiceRequestDetailModal: FC<Props> = ({
   const {
     data: requirements,
     isLoading: isLoadingRequirements,
-    hasCustomRequirements,
-    isSimpleCase,
-    defaultTntRequirement,
   } = useServiceRequestSecurityRequirements(selectedRequest?.requestId);
 
   const assetsToQuery = useMemo(() => {
@@ -132,16 +127,14 @@ const ServiceRequestDetailModal: FC<Props> = ({
   );
 
   const {
-    register,
     handleSubmit,
     control,
     setValue,
-    formState: { errors, isValid },
+    formState: { isValid },
   } = useForm<FormValues>({
     mode: 'onChange',
     defaultValues: {
       requestId: selectedRequest?.requestId ?? BigInt(0),
-      restakingPercent: 0,
       commitments: {},
     },
   });
@@ -196,19 +189,12 @@ const ServiceRequestDetailModal: FC<Props> = ({
     (data: FormValues) => {
       const formattedData: ApprovalConfirmationFormFields = {
         requestId: Number(data.requestId),
+        securityCommitments: buildSecurityCommitments(data.commitments),
       };
-
-      if (hasCustomRequirements) {
-        formattedData.securityCommitments = buildSecurityCommitments(
-          data.commitments,
-        );
-      } else {
-        formattedData.restakingPercent = data.restakingPercent;
-      }
 
       return onApprove(formattedData);
     },
-    [hasCustomRequirements, buildSecurityCommitments, onApprove],
+    [buildSecurityCommitments, onApprove],
   );
 
   const handleApproveClick = useCallback(() => {
@@ -281,6 +267,8 @@ const ServiceRequestDetailModal: FC<Props> = ({
     </>
   );
 
+  const hasRequirements = requirements && requirements.length > 0;
+
   const renderApproveFormView = () => (
     <>
       <ModalBody>
@@ -298,86 +286,14 @@ const ServiceRequestDetailModal: FC<Props> = ({
 
           {!isLoadingRequirements &&
             !isLoadingStake &&
-            isSimpleCase &&
-            defaultTntRequirement && (
-              <div className="space-y-4">
-                <div className="p-4 bg-mono-20 dark:bg-mono-160 rounded-lg">
-                  <div className="flex items-center gap-3 mb-3">
-                    <LsTokenIcon
-                      name={defaultTntRequirement.metadata?.symbol ?? 'TNT'}
-                      hasRainbowBorder
-                      size="lg"
-                    />
-                    <div>
-                      <Typography
-                        variant="h5"
-                        className="text-mono-200 dark:text-mono-0"
-                      >
-                        {defaultTntRequirement.metadata?.name ??
-                          'Tangle Network Token'}
-                      </Typography>
-                      <Typography
-                        variant="body3"
-                        className="text-mono-100 dark:text-mono-100"
-                      >
-                        Default security requirement
-                      </Typography>
-                    </div>
-                  </div>
-
-                  <Typography
-                    variant="body2"
-                    className="text-mono-100 dark:text-mono-100 mb-4"
-                  >
-                    This service uses the default TNT security requirement.
-                    Enter your restaking percentage (
-                    {defaultTntRequirement.minExposureBps / 100}% -{' '}
-                    {defaultTntRequirement.maxExposureBps / 100}%).
-                  </Typography>
-
-                  <label className="text-sm text-mono-140 dark:text-mono-80">
-                    TNT Restaking Percentage
-                  </label>
-                  <input
-                    id="restakingPercent"
-                    type="number"
-                    min={defaultTntRequirement.minExposureBps / 100}
-                    max={defaultTntRequirement.maxExposureBps / 100}
-                    {...register('restakingPercent', {
-                      required: 'Restaking percentage is required',
-                      min: {
-                        value: defaultTntRequirement.minExposureBps / 100,
-                        message: `Must be at least ${defaultTntRequirement.minExposureBps / 100}%`,
-                      },
-                      max: {
-                        value: defaultTntRequirement.maxExposureBps / 100,
-                        message: `Cannot exceed ${defaultTntRequirement.maxExposureBps / 100}%`,
-                      },
-                    })}
-                    placeholder={`Enter percentage (${defaultTntRequirement.minExposureBps / 100}-${defaultTntRequirement.maxExposureBps / 100}%)`}
-                    className="w-full h-10 px-3 rounded-lg border border-mono-80 dark:border-mono-140 bg-mono-0 dark:bg-mono-180 text-mono-200 dark:text-mono-0 placeholder:text-mono-80 dark:placeholder:text-mono-120"
-                  />
-                  {errors.restakingPercent && (
-                    <p className="text-xs text-red-50">
-                      {errors.restakingPercent.message}
-                    </p>
-                  )}
-                </div>
-              </div>
-            )}
-
-          {!isLoadingRequirements &&
-            !isLoadingStake &&
-            hasCustomRequirements &&
-            requirements && (
+            hasRequirements && (
               <div className="space-y-4">
                 <Typography
                   variant="body2"
-                  className="text-mono-100 dark:text-mono-100 mb-4"
+                  className="text-mono-100 dark:text-mono-100"
                 >
-                  This service requires specific security commitments for each
-                  asset. Set your exposure percentage within the allowed bounds
-                  for each asset.
+                  Set your exposure percentage within the allowed bounds for
+                  each asset.
                 </Typography>
 
                 {requirements.map((req) => {
@@ -434,7 +350,11 @@ const ServiceRequestDetailModal: FC<Props> = ({
           onClick={handleSubmit(handleFormSubmit)}
           isLoading={isApproving}
           isDisabled={
-            !isValid || isApproving || isLoadingRequirements || isLoadingStake
+            !isValid ||
+            isApproving ||
+            isLoadingRequirements ||
+            isLoadingStake ||
+            !hasRequirements
           }
         >
           Confirm Approval

@@ -3,7 +3,7 @@
  */
 
 import { FC, useMemo, useState } from 'react';
-import { useParams, useNavigate } from 'react-router';
+import { useParams, useNavigate, Link } from 'react-router';
 import { useAccount } from 'wagmi';
 import {
   Button,
@@ -13,7 +13,11 @@ import {
   SkeletonLoader,
   EMPTY_VALUE_PLACEHOLDER,
 } from '@tangle-network/ui-components';
-import { ArrowLeft, ShieldKeyholeLineIcon } from '@tangle-network/icons';
+import {
+  ArrowLeft,
+  ExternalLinkLine,
+  ShieldKeyholeLineIcon,
+} from '@tangle-network/icons';
 import {
   useServiceById,
   useBlueprintDetails,
@@ -33,6 +37,7 @@ import ServiceOnChainDetails from './ServiceOnChainDetails';
 import FundServiceModal from './FundServiceModal';
 import OperatorMembershipPanel from './OperatorMembershipPanel';
 import OperatorExitPanel from './OperatorExitPanel';
+import { PagePath } from '../../../types';
 
 const ServiceDetailPage: FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -171,7 +176,25 @@ const ServiceDetailPage: FC = () => {
           />
           <InfoItem
             label="Blueprint"
-            value={blueprintResult?.details.name ?? EMPTY_VALUE_PLACEHOLDER}
+            value={
+              blueprintResult?.details.name ? (
+                <Link
+                  to={PagePath.BLUEPRINTS_DETAILS.replace(
+                    ':id',
+                    service.blueprintId.toString(),
+                  )}
+                  className="inline-flex items-center gap-1 text-blue-50 hover:text-blue-40 transition-colors"
+                >
+                  <Typography variant="body1" fw="semibold">
+                    {blueprintResult.details.name}
+                  </Typography>
+
+                  <ExternalLinkLine className="w-4 h-4" />
+                </Link>
+              ) : (
+                EMPTY_VALUE_PLACEHOLDER
+              )
+            }
           />
           <InfoItem
             label="Operators"
@@ -289,7 +312,7 @@ const PermissionDeniedMessage: FC = () => (
     <Typography variant="h5" fw="semibold" className="mb-2">
       Permission Required
     </Typography>
-    <Typography variant="body2" className="text-mono-100 max-w-md">
+    <Typography variant="body2" className="text-center text-mono-100 max-w-md">
       You are not authorized to submit jobs to this service. Only the service
       owner or addresses added as permitted callers can submit jobs.
     </Typography>
