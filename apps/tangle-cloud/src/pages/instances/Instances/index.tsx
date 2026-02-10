@@ -29,7 +29,7 @@ enum InstancesTab {
 }
 
 const InstancesTabIcon: ReactElement[] = [
-  <PlayFillIcon viewBox="0 0 16 16" className="w-4 h-4 !fill-blue-50" />,
+  <PlayFillIcon className="w-4 h-4 !fill-blue-50" />,
   <TimeLineIcon className="w-4 h-4 !fill-yellow-100" />,
   <CheckboxCircleLine className="w-4 h-4 !fill-green-50" />,
   <GlobalLine className="w-4 h-4 !fill-purple-50" />,

@@ -29,6 +29,7 @@ import {
   getExitStatusLabel,
 } from '@tangle-network/tangle-shared-ui/data/services';
 import { Address } from 'viem';
+import { useBlock } from 'wagmi';
 import { useScheduleExitTx } from '../../../data/services/useScheduleExitTx';
 import { useExecuteExitTx } from '../../../data/services/useExecuteExitTx';
 import { useCancelExitTx } from '../../../data/services/useCancelExitTx';
@@ -81,6 +82,15 @@ const OperatorExitPanel: FC<Props> = ({
     useCanScheduleExit(serviceId, operatorAddress);
   const { data: operators, isLoading: isLoadingOperators } =
     useServiceOperators(serviceId);
+  const { data: latestBlock } = useBlock({ watch: true });
+
+  // Compute offset between chain time and wall clock to handle
+  // environments where block.timestamp drifts from real time
+  // (e.g., local dev with evm_increaseTime).
+  const chainTimeOffset = useMemo(() => {
+    if (!latestBlock) return 0;
+    return Number(latestBlock.timestamp) - Math.floor(Date.now() / 1000);
+  }, [latestBlock?.number, latestBlock?.timestamp]);
 
   const isLoading =
     isLoadingConfig ||
@@ -128,11 +138,11 @@ const OperatorExitPanel: FC<Props> = ({
     return exitConfig.exitQueueDuration > BigInt(0);
   }, [exitConfig]);
 
-  const canExecuteNow = useMemo(() => {
-    if (!exitRequest || exitStatus !== ExitStatus.Scheduled) return false;
-    const now = BigInt(Math.floor(Date.now() / 1000));
-    return now >= exitRequest.executeAfter;
-  }, [exitRequest, exitStatus]);
+  const canExecuteNow =
+    exitRequest && exitStatus === ExitStatus.Scheduled
+      ? BigInt(Math.floor(Date.now() / 1000) + chainTimeOffset) >=
+        exitRequest.executeAfter
+      : false;
 
   useEffect(() => {
     if (
@@ -241,41 +251,42 @@ const OperatorExitPanel: FC<Props> = ({
         </div>
 
         {/* Current Exit Status */}
+        {exitStatus === ExitStatus.None && (
+          <div className="space-y-3">
+            {canScheduleExit?.canExit ? (
+              <div>
+                <Typography variant="body2" className="text-mono-100 mb-3">
+                  You can schedule an exit from this service. After
+                  scheduling, you will need to wait for the exit queue
+                  duration before executing your exit.
+                </Typography>
+                <Button
+                  onClick={handleScheduleExit}
+                  isLoading={isScheduling}
+                  isDisabled={isScheduling}
+                  leftIcon={<TimeLineIcon size="lg" />}
+                >
+                  Schedule Exit
+                </Button>
+              </div>
+            ) : (
+              <div className="p-3 rounded-lg bg-yellow-500/10 border border-yellow-500/20">
+                <Typography variant="body2" className="text-yellow-400">
+                  {canScheduleExit?.reason || 'You cannot schedule an exit at this time.'}
+                </Typography>
+              </div>
+            )}
+          </div>
+        )}
+
+        {exitStatus !== ExitStatus.None && exitStatus !== undefined && (
         <div className="p-4 rounded-lg border border-mono-60 dark:border-mono-140">
           <div className="flex items-center justify-between mb-2">
             <Typography variant="body2" fw="semibold">
               Your Exit Status
             </Typography>
-            <ExitStatusBadge status={exitStatus ?? ExitStatus.None} />
+            <ExitStatusBadge status={exitStatus} />
           </div>
-
-          {exitStatus === ExitStatus.None && (
-            <div className="space-y-3">
-              {canScheduleExit?.canExit ? (
-                <div>
-                  <Typography variant="body2" className="text-mono-100 mb-3">
-                    You can schedule an exit from this service. After
-                    scheduling, you will need to wait for the exit queue
-                    duration before executing your exit.
-                  </Typography>
-                  <Button
-                    onClick={handleScheduleExit}
-                    isLoading={isScheduling}
-                    isDisabled={isScheduling}
-                    leftIcon={<TimeLineIcon className="w-4 h-4" />}
-                  >
-                    Schedule Exit
-                  </Button>
-                </div>
-              ) : (
-                <div className="p-3 rounded-lg bg-yellow-500/10 border border-yellow-500/20">
-                  <Typography variant="body2" className="text-yellow-400">
-                    {canScheduleExit?.reason || 'You cannot schedule an exit at this time.'}
-                  </Typography>
-                </div>
-              )}
-            </div>
-          )}
 
           {exitStatus === ExitStatus.Scheduled && exitRequest && (
             <div className="space-y-3">
@@ -307,46 +318,56 @@ const OperatorExitPanel: FC<Props> = ({
 
               {canExecuteNow && (
                 <div className="p-3 rounded-lg bg-green-500/10 border border-green-500/20">
-                  <Typography variant="body2" className="text-green-400 mb-3">
+                  <Typography variant="body2" className="text-green-400">
                     Your exit is ready to execute!
                   </Typography>
+                </div>
+              )}
+
+              <div className="flex items-center gap-3">
+                {canExecuteNow && (
                   <Button
                     onClick={handleExecuteExit}
                     isLoading={isExecuting}
                     isDisabled={isExecuting}
-                    leftIcon={<PlayFillIcon className="w-4 h-4" />}
+                    leftIcon={<PlayFillIcon size="lg" />}
                   >
                     Execute Exit
                   </Button>
-                </div>
-              )}
+                )}
+
+                <Button
+                  variant="secondary"
+                  onClick={handleCancelExit}
+                  isLoading={isCanceling}
+                  isDisabled={isCanceling}
+                  leftIcon={<CloseCircleLineIcon size="lg" />}
+                >
+                  Cancel Exit
+                </Button>
+              </div>
+            </div>
+          )}
+
+          {exitStatus === ExitStatus.Executable && (
+            <div className="flex items-center gap-3 mt-2">
+              <Button
+                onClick={handleExecuteExit}
+                isLoading={isExecuting}
+                isDisabled={isExecuting}
+                leftIcon={<PlayFillIcon size="lg" />}
+              >
+                Execute Exit
+              </Button>
 
               <Button
                 variant="secondary"
                 onClick={handleCancelExit}
                 isLoading={isCanceling}
                 isDisabled={isCanceling}
-                leftIcon={<CloseCircleLineIcon className="w-4 h-4" />}
+                leftIcon={<CloseCircleLineIcon size="lg" />}
               >
                 Cancel Exit
-              </Button>
-            </div>
-          )}
-
-          {exitStatus === ExitStatus.Executable && (
-            <div className="space-y-3">
-              <div className="p-3 rounded-lg bg-green-500/10 border border-green-500/20">
-                <Typography variant="body2" className="text-green-400 mb-3">
-                  Your exit is ready to execute!
-                </Typography>
-              </div>
-              <Button
-                onClick={handleExecuteExit}
-                isLoading={isExecuting}
-                isDisabled={isExecuting}
-                leftIcon={<PlayFillIcon className="w-4 h-4" />}
-              >
-                Execute Exit
               </Button>
             </div>
           )}
@@ -359,6 +380,7 @@ const OperatorExitPanel: FC<Props> = ({
             </div>
           )}
         </div>
+        )}
 
         {/* Owner Force Exit Section */}
         {isOwner && exitConfig?.forceExitAllowed && operators && operators.length > 0 && (
@@ -420,8 +442,6 @@ const OperatorExitPanel: FC<Props> = ({
 const ExitStatusBadge: FC<{ status: ExitStatus }> = ({ status }) => {
   const getStatusStyle = () => {
     switch (status) {
-      case ExitStatus.None:
-        return 'bg-mono-60 text-mono-100';
       case ExitStatus.Scheduled:
         return 'bg-yellow-500/20 text-yellow-400';
       case ExitStatus.Executable:
