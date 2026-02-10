@@ -20,6 +20,7 @@ import { PagePath } from '../../../types';
 import {
   useAllServices,
   useBlueprintMap,
+  useOperatorRegistrations,
   type Service,
 } from '@tangle-network/tangle-shared-ui/data/graphql';
 import type { Blueprint } from '@tangle-network/tangle-shared-ui/types/blueprint';
@@ -40,16 +41,36 @@ export const AllServicesTable: FC = () => {
   const { blueprints: blueprintMap, isLoading: isLoadingBlueprints } =
     useBlueprintMap();
 
-  const isLoading = isLoadingServices || isLoadingBlueprints;
+  const {
+    data: operatorRegistrations,
+    isLoading: isLoadingRegistrations,
+  } = useOperatorRegistrations();
+
+  const isLoading =
+    isLoadingServices || isLoadingBlueprints || isLoadingRegistrations;
+
+  const registeredBlueprintIds = useMemo(() => {
+    if (!operatorRegistrations) return new Set<string>();
+
+    return new Set(
+      operatorRegistrations
+        .filter((reg) => reg.active)
+        .map((reg) => reg.blueprintId.toString()),
+    );
+  }, [operatorRegistrations]);
 
   const servicesWithBlueprints = useMemo<ServiceWithBlueprint[]>(() => {
     if (!allServices) return [];
 
-    return allServices.map((service) => ({
-      ...service,
-      blueprintData: blueprintMap?.get(service.blueprintId.toString()),
-    }));
-  }, [allServices, blueprintMap]);
+    return allServices
+      .filter((service) =>
+        registeredBlueprintIds.has(service.blueprintId.toString()),
+      )
+      .map((service) => ({
+        ...service,
+        blueprintData: blueprintMap?.get(service.blueprintId.toString()),
+      }));
+  }, [allServices, blueprintMap, registeredBlueprintIds]);
 
   const isEmpty = servicesWithBlueprints.length === 0;
 

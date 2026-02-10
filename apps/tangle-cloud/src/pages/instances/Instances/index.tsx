@@ -25,7 +25,7 @@ enum InstancesTab {
   RUNNING_INSTANCES = 'Running',
   PENDING_INSTANCES = 'Pending',
   APPROVED_INSTANCES = 'Approved',
-  ALL_SERVICES = 'All Services',
+  JOINABLE_SERVICES = 'Joinable',
 }
 
 const InstancesTabIcon: ReactElement[] = [
@@ -59,7 +59,7 @@ export const InstancesTabs: FC<InstancesTabsProps> = ({
 
   const availableTabs = shouldShowOperatorTabs
     ? Object.values(InstancesTab)
-    : [InstancesTab.RUNNING_INSTANCES, InstancesTab.ALL_SERVICES];
+    : [InstancesTab.RUNNING_INSTANCES, InstancesTab.JOINABLE_SERVICES];
 
   const availableIcons = shouldShowOperatorTabs
     ? InstancesTabIcon
@@ -113,7 +113,7 @@ export const InstancesTabs: FC<InstancesTabsProps> = ({
       )}
 
       <TabContent
-        value={InstancesTab.ALL_SERVICES}
+        value={InstancesTab.JOINABLE_SERVICES}
         className="flex justify-center mx-auto"
       >
         <AllServicesTable />

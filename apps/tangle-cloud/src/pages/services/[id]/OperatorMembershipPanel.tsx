@@ -18,6 +18,7 @@ import {
   ServiceContractDetails,
   MembershipModel,
 } from '@tangle-network/tangle-shared-ui/data/services';
+import { useOperatorRegistrations } from '@tangle-network/tangle-shared-ui/data/graphql';
 import useEvmOperatorInfo from '../../../hooks/useEvmOperatorInfo';
 import JoinServiceModal from './JoinServiceModal';
 import { useLeaveServiceTx } from '../../../data/services/useLeaveServiceTx';
@@ -33,8 +34,9 @@ const OperatorMembershipPanel: FC<Props> = ({
   isCurrentUserOperator,
   serviceDetails,
 }) => {
-  const { isOperator: isRegisteredOperator, operatorAddress } =
-    useEvmOperatorInfo();
+  const { isOperator: isRegisteredOperator } = useEvmOperatorInfo();
+
+  const { data: operatorRegistrations } = useOperatorRegistrations();
 
   const [isJoinModalOpen, setIsJoinModalOpen] = useState(false);
 
@@ -54,9 +56,20 @@ const OperatorMembershipPanel: FC<Props> = ({
   const isDynamicService =
     serviceDetails?.membership === MembershipModel.Dynamic;
 
+  const isRegisteredForBlueprint = useMemo(() => {
+    if (!operatorRegistrations || !serviceDetails) return false;
+
+    return operatorRegistrations.some(
+      (reg) =>
+        reg.active &&
+        reg.blueprintId.toString() === serviceDetails.blueprintId.toString(),
+    );
+  }, [operatorRegistrations, serviceDetails]);
+
   const canJoin = useMemo(() => {
     if (!isDynamicService) return false;
     if (!isRegisteredOperator) return false;
+    if (!isRegisteredForBlueprint) return false;
     if (isCurrentUserOperator) return false;
     if (!serviceDetails) return false;
 
@@ -69,6 +82,7 @@ const OperatorMembershipPanel: FC<Props> = ({
   }, [
     isDynamicService,
     isRegisteredOperator,
+    isRegisteredForBlueprint,
     isCurrentUserOperator,
     serviceDetails,
     operators,
@@ -115,6 +129,13 @@ const OperatorMembershipPanel: FC<Props> = ({
             Please register as an operator first.
           </Typography>
         </div>
+      ) : !isRegisteredForBlueprint && !isCurrentUserOperator ? (
+        <div className="p-4 rounded-lg bg-yellow-500/10 border border-yellow-500/20">
+          <Typography variant="body2" className="text-yellow-400">
+            You must be registered for this service&apos;s blueprint before you
+            can join. Please register for the blueprint first.
+          </Typography>
+        </div>
       ) : isCurrentUserOperator ? (
         <div className="space-y-4">
           <div className="p-4 rounded-lg bg-green-500/10 border border-green-500/20">
@@ -126,11 +147,6 @@ const OperatorMembershipPanel: FC<Props> = ({
             </div>
             <Typography variant="body2" className="text-mono-100">
               You are currently an operator of this service.
-              {operatorAddress && (
-                <span className="block mt-1 font-mono text-xs truncate">
-                  {operatorAddress}
-                </span>
-              )}
             </Typography>
           </div>
 
