@@ -34,7 +34,7 @@ import { useScheduleExitTx } from '../../../data/services/useScheduleExitTx';
 import { useExecuteExitTx } from '../../../data/services/useExecuteExitTx';
 import { useCancelExitTx } from '../../../data/services/useCancelExitTx';
 import { useForceExitTx } from '../../../data/services/useForceExitTx';
-import ErrorMessage from '../../../components/ErrorMessage';
+import ErrorMessage from '@tangle-network/tangle-shared-ui/components/ErrorMessage';
 
 interface Props {
   serviceId: bigint;

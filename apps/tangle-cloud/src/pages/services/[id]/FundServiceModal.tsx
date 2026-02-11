@@ -24,7 +24,7 @@ import useErc20Approval from '@tangle-network/tangle-shared-ui/hooks/useErc20App
 import { formatUnits, parseUnits } from 'viem';
 import { useAccount, useBalance, useChainId } from 'wagmi';
 import { getContractsByChainId } from '@tangle-network/dapp-config/contracts';
-import ErrorMessage from '../../../components/ErrorMessage';
+import ErrorMessage from '@tangle-network/tangle-shared-ui/components/ErrorMessage';
 
 interface Props {
   serviceId: bigint;

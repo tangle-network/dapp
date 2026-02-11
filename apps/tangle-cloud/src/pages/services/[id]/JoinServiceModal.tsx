@@ -21,7 +21,7 @@ import { useServiceSecurityRequirements } from '../../../data/services/useServic
 import { useOperatorStakeByAsset } from '@tangle-network/tangle-shared-ui/data/restake/useOperatorDelegationsByAsset';
 import useEvmOperatorInfo from '../../../hooks/useEvmOperatorInfo';
 import { ExposureCommitmentInput } from '../../instances/Instances/UpdateBlueprintModel/ExposureCommitmentInput';
-import ErrorMessage from '../../../components/ErrorMessage';
+import ErrorMessage from '@tangle-network/tangle-shared-ui/components/ErrorMessage';
 import type { Address } from 'viem';
 
 interface Props {
