@@ -67,6 +67,9 @@ const isUnsignedInt = (kind: BlueprintFieldKind): boolean => {
   );
 };
 
+/**
+ * Converts form input values to bigint for fixed-width integer encoding.
+ */
 const toBigInt = (value: FormFieldValue): bigint => {
   if (typeof value === 'bigint') {
     return value;
@@ -80,6 +83,10 @@ const toBigInt = (value: FormFieldValue): bigint => {
   throw new Error(`Cannot convert ${typeof value} to bigint`);
 };
 
+/**
+ * Decodes a hex string (`0x` prefix optional) into bytes.
+ * Throws if the input has odd length.
+ */
 const hexToBytes = (hex: string): Uint8Array => {
   const cleaned = hex.startsWith('0x') ? hex.slice(2) : hex;
   if (cleaned.length % 2 !== 0) {
@@ -92,6 +99,34 @@ const hexToBytes = (hex: string): Uint8Array => {
   return bytes;
 };
 
+/**
+ * Validates that an integer can be represented with the provided width/sign.
+ */
+const validateBigIntBounds = (
+  value: bigint,
+  byteSize: number,
+  signed: boolean,
+): void => {
+  const bits = BigInt(byteSize * 8);
+  const min = signed ? -(BigInt(1) << (bits - BigInt(1))) : BigInt(0);
+  const max = signed
+    ? (BigInt(1) << (bits - BigInt(1))) - BigInt(1)
+    : (BigInt(1) << bits) - BigInt(1);
+
+  if (value < min || value > max) {
+    const intType = `${signed ? 'int' : 'uint'}${byteSize * 8}`;
+    throw new Error(
+      `Integer ${value.toString()} is out of range for ${intType} (${min.toString()}..${max.toString()})`,
+    );
+  }
+};
+
+/**
+ * Encodes a bigint as big-endian bytes.
+ *
+ * Signed values are encoded using two's complement and are validated to fit
+ * in the declared width before conversion.
+ */
 const encodeBigIntBE = (
   value: bigint,
   byteSize: number,
@@ -99,6 +134,8 @@ const encodeBigIntBE = (
 ): Uint8Array => {
   const result = new Uint8Array(byteSize);
   const totalBits = BigInt(byteSize * 8);
+
+  validateBigIntBounds(value, byteSize, signed);
 
   let n = value;
   if (signed && n < BigInt(0)) {
@@ -114,6 +151,9 @@ const encodeBigIntBE = (
   return result;
 };
 
+/**
+ * Recursively encodes a schema field following TLV v2 payload semantics.
+ */
 const encodeField = (
   schema: SchemaField,
   value: FormFieldValue,
@@ -252,6 +292,9 @@ const encodeField = (
   throw new Error(`Unsupported field kind: ${kind}`);
 };
 
+/**
+ * Concatenates byte slices into one contiguous payload buffer.
+ */
 const concatBytes = (arrays: Uint8Array[]): Uint8Array => {
   const totalLength = arrays.reduce((sum, arr) => sum + arr.length, 0);
   const result = new Uint8Array(totalLength);
@@ -263,6 +306,9 @@ const concatBytes = (arrays: Uint8Array[]): Uint8Array => {
   return result;
 };
 
+/**
+ * Encodes root schema values into the final compact payload buffer.
+ */
 export const encodePayload = (
   schema: SchemaField[],
   values: FormFieldValue[],

@@ -23,6 +23,7 @@ import useEvmOperatorInfo from '../../../hooks/useEvmOperatorInfo';
 import { ExposureCommitmentInput } from '../../instances/Instances/UpdateBlueprintModel/ExposureCommitmentInput';
 import ErrorMessage from '@tangle-network/tangle-shared-ui/components/ErrorMessage';
 import type { Address } from 'viem';
+import { parseAddressLowercase } from '@tangle-network/tangle-shared-ui/utils/safeParseAddress';
 
 interface Props {
   serviceId: bigint;
@@ -31,6 +32,10 @@ interface Props {
 
 type FormValues = {
   commitments: Record<string, number>;
+};
+
+const toAssetMapKey = (tokenAddress: string): string => {
+  return parseAddressLowercase(tokenAddress) ?? tokenAddress.toLowerCase();
 };
 
 const JoinServiceModal: FC<Props> = ({ serviceId, onClose }) => {
@@ -59,7 +64,7 @@ const JoinServiceModal: FC<Props> = ({ serviceId, onClose }) => {
 
     const commitments: Record<string, number> = {};
     for (const req of requirements) {
-      const key = req.asset.token.toLowerCase();
+      const key = toAssetMapKey(req.asset.token);
       commitments[key] = req.minExposureBps;
     }
     return commitments;
@@ -70,7 +75,7 @@ const JoinServiceModal: FC<Props> = ({ serviceId, onClose }) => {
       if (!stakeByAsset) {
         return null;
       }
-      const normalizedAddress = tokenAddress.toLowerCase() as Address;
+      const normalizedAddress = toAssetMapKey(tokenAddress) as Address;
       const stake = stakeByAsset.get(normalizedAddress);
       return stake?.totalStake ?? BigInt(0);
     },
@@ -112,7 +117,7 @@ const JoinServiceModal: FC<Props> = ({ serviceId, onClose }) => {
       }
 
       const commitments = requirements.map((req) => {
-        const key = req.asset.token.toLowerCase();
+        const key = toAssetMapKey(req.asset.token);
         const exposureBps = data.commitments[key] ?? req.minExposureBps;
 
         return {
@@ -164,7 +169,7 @@ const JoinServiceModal: FC<Props> = ({ serviceId, onClose }) => {
             {!isLoading && hasRequirements && (
               <div className="space-y-4">
                 {requirements.map((req) => {
-                  const key = req.asset.token.toLowerCase();
+                  const key = toAssetMapKey(req.asset.token);
 
                   return (
                     <Controller

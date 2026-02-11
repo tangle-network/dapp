@@ -32,6 +32,7 @@ import {
   BlueprintInfoCard,
 } from '../../../../components/ServiceRequestDetails';
 import type { Address } from 'viem';
+import { parseAddressLowercase } from '@tangle-network/tangle-shared-ui/utils/safeParseAddress';
 
 interface ServiceRequestWithBlueprint extends ServiceRequest {
   blueprintData?: Blueprint;
@@ -52,6 +53,10 @@ type Props = {
 type FormValues = {
   requestId: bigint;
   commitments: Record<string, number>;
+};
+
+const toAssetMapKey = (tokenAddress: string): string => {
+  return parseAddressLowercase(tokenAddress) ?? tokenAddress.toLowerCase();
 };
 
 const ServiceRequestDetailModal: FC<Props> = ({
@@ -106,7 +111,7 @@ const ServiceRequestDetailModal: FC<Props> = ({
 
     const commitments: Record<string, number> = {};
     for (const req of requirements) {
-      const key = req.asset.token.toLowerCase();
+      const key = toAssetMapKey(req.asset.token);
       commitments[key] = req.minExposureBps;
     }
     return commitments;
@@ -117,7 +122,7 @@ const ServiceRequestDetailModal: FC<Props> = ({
       if (!stakeByAsset) {
         return null;
       }
-      const normalizedAddress = tokenAddress.toLowerCase() as Address;
+      const normalizedAddress = toAssetMapKey(tokenAddress) as Address;
       const stake = stakeByAsset.get(normalizedAddress);
       return stake?.totalStake ?? BigInt(0);
     },
@@ -168,7 +173,7 @@ const ServiceRequestDetailModal: FC<Props> = ({
       }
 
       return requirements.map((req) => {
-        const key = req.asset.token.toLowerCase();
+        const key = toAssetMapKey(req.asset.token);
         const exposureBps = commitments[key] ?? req.minExposureBps;
 
         return {
@@ -293,7 +298,7 @@ const ServiceRequestDetailModal: FC<Props> = ({
               </Typography>
 
               {requirements.map((req) => {
-                const key = req.asset.token.toLowerCase();
+                const key = toAssetMapKey(req.asset.token);
 
                 return (
                   <Controller

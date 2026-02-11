@@ -11,6 +11,7 @@ import {
   type FormFieldValue,
   type SchemaField,
 } from '@tangle-network/tangle-shared-ui/codec';
+import { isAddress } from 'viem';
 
 interface SchemaFieldInputProps {
   field: SchemaField;
@@ -139,6 +140,13 @@ export const SchemaFieldInput: FC<SchemaFieldInputProps> = ({
   }
 
   if (kind === BlueprintFieldKind.Address) {
+    const addressValue = (value as string) ?? '';
+    const trimmedAddress = addressValue.trim();
+    const addressError =
+      trimmedAddress.length > 0 && !isAddress(trimmedAddress)
+        ? 'Invalid EVM address format'
+        : undefined;
+
     return (
       <div className="py-1">
         <Typography variant="body2" className="mb-1">
@@ -148,9 +156,12 @@ export const SchemaFieldInput: FC<SchemaFieldInputProps> = ({
         <Input
           id={path}
           isControlled
-          value={(value as string) ?? ''}
+          value={addressValue}
           onChange={(v) => onChange(v)}
           placeholder="0x..."
+          isInvalid={!!addressError}
+          errorMessage={addressError}
+          aria-invalid={addressError ? 'true' : undefined}
         />
       </div>
     );

@@ -22,6 +22,9 @@ export interface UseServiceTerminateTxOptions {
   onError?: (error: Error) => void;
 }
 
+// Backoff windows for Envio reconciliation after terminateService.
+const ENVIO_REFETCH_BACKOFF_MS = [2_000, 5_000, 10_000, 20_000] as const;
+
 export const useServiceTerminateTx = (
   options?: UseServiceTerminateTxOptions,
 ) => {
@@ -113,7 +116,7 @@ export const useServiceTerminateTx = (
           });
         };
 
-        [2_000, 5_000, 10_000, 20_000].forEach((delayMs) => {
+        ENVIO_REFETCH_BACKOFF_MS.forEach((delayMs) => {
           setTimeout(() => {
             void refetchEnvio();
           }, delayMs);

@@ -30,6 +30,7 @@ import {
   MembershipModel,
   useBlueprintJobs,
 } from '@tangle-network/tangle-shared-ui/data/services';
+import { addressesEqual } from '@tangle-network/tangle-shared-ui/utils/safeParseAddress';
 import useEvmOperatorInfo from '../../../hooks/useEvmOperatorInfo';
 import { twMerge } from 'tailwind-merge';
 import { JobSubmissionForm } from './JobSubmissionForm';
@@ -93,7 +94,7 @@ const ServiceDetailPage: FC = () => {
   // Determine if user is the owner
   const isOwner = useMemo(() => {
     if (!address || !onChainDetails?.owner) return false;
-    return onChainDetails.owner.toLowerCase() === address.toLowerCase();
+    return addressesEqual(onChainDetails.owner, address);
   }, [address, onChainDetails?.owner]);
 
   // User can submit jobs if they are the owner or a permitted caller

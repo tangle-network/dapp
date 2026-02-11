@@ -28,6 +28,7 @@ import {
   ExitStatus,
   getExitStatusLabel,
 } from '@tangle-network/tangle-shared-ui/data/services';
+import { addressesEqual } from '@tangle-network/tangle-shared-ui/utils/safeParseAddress';
 import { Address } from 'viem';
 import { useBlock } from 'wagmi';
 import { useScheduleExitTx } from '../../../data/services/useScheduleExitTx';
@@ -416,10 +417,7 @@ const OperatorExitPanel: FC<Props> = ({
                   </Button>
                   <DropdownBody>
                     {operators
-                      .filter(
-                        (op) =>
-                          op.toLowerCase() !== operatorAddress.toLowerCase(),
-                      )
+                      .filter((op) => !addressesEqual(op, operatorAddress))
                       .map((op) => (
                         <DropdownMenuItem
                           key={op}

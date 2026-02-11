@@ -26,11 +26,13 @@ import {
 import useErc20Approval from '@tangle-network/tangle-shared-ui/hooks/useErc20Approval';
 import type { Blueprint } from '@tangle-network/tangle-shared-ui/types/blueprint';
 import {
+  BlueprintFieldKind,
   encodePayload,
   getDefaultValue,
   type FormFieldValue,
+  type SchemaField,
 } from '@tangle-network/tangle-shared-ui/codec';
-import { type Hex, formatUnits, zeroAddress } from 'viem';
+import { type Hex, formatUnits, isAddress, zeroAddress } from 'viem';
 import { useAccount, useBalance, useChainId } from 'wagmi';
 import { getContractsByChainId } from '@tangle-network/dapp-config/contracts';
 import ErrorMessage from '@tangle-network/tangle-shared-ui/components/ErrorMessage';
@@ -47,6 +49,108 @@ const bytesToHex = (bytes: Uint8Array): Hex => {
     .join('')}` as Hex;
 };
 
+const validateAddressField = (
+  field: SchemaField,
+  value: FormFieldValue,
+  path: string,
+): string | null => {
+  if (field.kind === BlueprintFieldKind.Address) {
+    if (typeof value !== 'string') {
+      return `Invalid EVM address for "${path}"`;
+    }
+
+    const normalized = value.trim();
+    if (!isAddress(normalized)) {
+      return `Invalid EVM address for "${path}"`;
+    }
+    return null;
+  }
+
+  if (field.kind === BlueprintFieldKind.Optional) {
+    const child = field.children[0];
+    if (!child) {
+      return null;
+    }
+
+    const optionalValue =
+      (value as { present?: boolean; inner?: FormFieldValue } | null) ?? null;
+
+    if (!optionalValue?.present) {
+      return null;
+    }
+
+    return validateAddressField(
+      child,
+      optionalValue.inner ?? null,
+      `${path}.value`,
+    );
+  }
+
+  if (
+    field.kind === BlueprintFieldKind.Array ||
+    field.kind === BlueprintFieldKind.List
+  ) {
+    const child = field.children[0];
+    if (!child || !Array.isArray(value)) {
+      return null;
+    }
+
+    const expectedLength =
+      field.kind === BlueprintFieldKind.Array
+        ? field.arrayLength
+        : value.length;
+    for (let i = 0; i < expectedLength; i++) {
+      const validationError = validateAddressField(
+        child,
+        value[i] ?? null,
+        `${path}[${i}]`,
+      );
+      if (validationError) {
+        return validationError;
+      }
+    }
+    return null;
+  }
+
+  if (field.kind === BlueprintFieldKind.Struct) {
+    const structValues = Array.isArray(value) ? value : [];
+    for (let i = 0; i < field.children.length; i++) {
+      const child = field.children[i];
+      const childPath = `${path}.${child.name || i}`;
+      const validationError = validateAddressField(
+        child,
+        structValues[i] ?? null,
+        childPath,
+      );
+      if (validationError) {
+        return validationError;
+      }
+    }
+  }
+
+  return null;
+};
+
+const validateAddressInputs = (
+  schema: SchemaField[],
+  values: FormFieldValue[],
+): string | null => {
+  for (let i = 0; i < schema.length; i++) {
+    const field = schema[i];
+    const fieldPath = field.name || `field_${i}`;
+    const validationError = validateAddressField(
+      field,
+      values[i] ?? null,
+      fieldPath,
+    );
+    if (validationError) {
+      return validationError;
+    }
+  }
+
+  return null;
+};
+
 export const JobSubmissionForm: FC<Props> = ({ serviceId, blueprint }) => {
   const [selectedJobIndex, setSelectedJobIndex] = useState<number | ''>(0);
   const [inputJson, setInputJson] = useState<string>('');
@@ -59,12 +163,21 @@ export const JobSubmissionForm: FC<Props> = ({ serviceId, blueprint }) => {
   const { submitJob, status, error, reset } = useSubmitJobTx();
 
   // Get contract address for approval
-  let contracts: ReturnType<typeof getContractsByChainId> | null = null;
-  try {
-    contracts = chainId ? getContractsByChainId(chainId) : null;
-  } catch {
-    contracts = null;
-  }
+  const contracts = useMemo(() => {
+    if (!chainId) {
+      return null;
+    }
+
+    try {
+      return getContractsByChainId(chainId);
+    } catch (contractError) {
+      console.error('Failed to resolve contracts by chain ID', {
+        chainId,
+        error: contractError,
+      });
+      return null;
+    }
+  }, [chainId]);
 
   // Fetch service details to get pricing model
   const { data: serviceDetails } = useServiceDetails(serviceId);
@@ -209,6 +322,15 @@ export const JobSubmissionForm: FC<Props> = ({ serviceId, blueprint }) => {
     let encodedInputs: Hex;
 
     if (hasSchema && !useRawJson) {
+      const addressValidationError = validateAddressInputs(
+        selectedSchema,
+        formValues,
+      );
+      if (addressValidationError) {
+        setValidationError(addressValidationError);
+        return;
+      }
+
       // Encode using TLV v2 schema codec
       try {
         const encoded = encodePayload(selectedSchema, formValues);

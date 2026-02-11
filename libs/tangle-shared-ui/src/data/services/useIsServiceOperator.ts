@@ -8,6 +8,7 @@ import {
   useServiceOperators,
   UseServiceOperatorsOptions,
 } from './useServiceOperators';
+import { addressesEqual } from '../../utils/safeParseAddress';
 
 export type UseIsServiceOperatorOptions = UseServiceOperatorsOptions;
 
@@ -36,7 +37,7 @@ export const useIsServiceOperator = (
       return false;
     }
 
-    return operators.some((op) => op.toLowerCase() === operator.toLowerCase());
+    return operators.some((op) => addressesEqual(op, operator));
   }, [operators, operator]);
 
   return {

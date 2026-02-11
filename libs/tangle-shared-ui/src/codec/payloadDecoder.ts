@@ -48,6 +48,10 @@ const isSigned = (kind: BlueprintFieldKind): boolean => {
   );
 };
 
+/**
+ * Decodes a fixed-width big-endian integer.
+ * Signed values are interpreted as two's-complement.
+ */
 const decodeBigIntBE = (
   data: Uint8Array,
   offset: number,
@@ -68,6 +72,9 @@ const decodeBigIntBE = (
   return n;
 };
 
+/**
+ * Formats bytes as a 0x-prefixed lowercase hex string.
+ */
 const bytesToHex = (bytes: Uint8Array): string => {
   return (
     '0x' +
@@ -77,6 +84,10 @@ const bytesToHex = (bytes: Uint8Array): string => {
   );
 };
 
+/**
+ * Recursively decodes a schema field from payload bytes while advancing cursor.
+ * `limit` is used by nested containers to enforce local boundaries.
+ */
 const decodeField = (
   schema: SchemaField,
   data: Uint8Array,
@@ -255,6 +266,10 @@ const decodeField = (
   throw new Error(`Unsupported field kind: ${kind}`);
 };
 
+/**
+ * Attempts to decode the entire payload for the provided root schema.
+ * Returns `null` on any structural mismatch or decode error.
+ */
 export const decodePayload = (
   schema: SchemaField[],
   payload: Uint8Array,
@@ -283,6 +298,10 @@ export const decodePayload = (
   }
 };
 
+/**
+ * Normalizes decoded addresses for stable display/comparison.
+ * Full EIP-55 checksumming is intentionally not applied here.
+ */
 const toChecksumAddress = (address: string): string => {
   // Simple lowercase address for now; full EIP-55 would require keccak
   return address.toLowerCase();
