@@ -9,6 +9,8 @@ import { zeroAddress } from 'viem';
 import { useChainId, usePublicClient } from 'wagmi';
 import { getContractsByChainId } from '@tangle-network/dapp-config/contracts';
 import TangleABI from '../../abi/tangle';
+import { parseSchema } from '../../codec';
+import type { SchemaField } from '../../codec';
 
 export interface BlueprintJobDefinition {
   name: string;
@@ -16,6 +18,12 @@ export interface BlueprintJobDefinition {
   metadataUri: string;
   paramsSchema: `0x${string}`;
   resultSchema: `0x${string}`;
+  hasParamsSchema: boolean;
+  hasResultSchema: boolean;
+  paramsSchemaParseError: string | null;
+  resultSchemaParseError: string | null;
+  parsedParamsSchema: SchemaField[];
+  parsedResultSchema: SchemaField[];
 }
 
 interface BlueprintDefinitionContractResponse {
@@ -74,13 +82,51 @@ export const useBlueprintJobs = (blueprintId: bigint | undefined) => {
         args: [blueprintId],
       })) as BlueprintDefinitionContractResponse;
 
-      return result.jobs.map((job) => ({
-        name: job.name,
-        description: job.description,
-        metadataUri: job.metadataUri,
-        paramsSchema: job.paramsSchema,
-        resultSchema: job.resultSchema,
-      }));
+      return result.jobs.map((job) => {
+        const hasParamsSchema =
+          !!job.paramsSchema && job.paramsSchema !== ('0x' as `0x${string}`);
+        const hasResultSchema =
+          !!job.resultSchema && job.resultSchema !== ('0x' as `0x${string}`);
+
+        let parsedParamsSchema: SchemaField[] = [];
+        let parsedResultSchema: SchemaField[] = [];
+        let paramsSchemaParseError: string | null = null;
+        let resultSchemaParseError: string | null = null;
+
+        if (hasParamsSchema) {
+          try {
+            parsedParamsSchema = parseSchema(job.paramsSchema);
+          } catch (e) {
+            paramsSchemaParseError =
+              e instanceof Error ? e.message : 'Unknown parse error';
+            console.warn('Failed to parse params schema:', e);
+          }
+        }
+
+        if (hasResultSchema) {
+          try {
+            parsedResultSchema = parseSchema(job.resultSchema);
+          } catch (e) {
+            resultSchemaParseError =
+              e instanceof Error ? e.message : 'Unknown parse error';
+            console.warn('Failed to parse result schema:', e);
+          }
+        }
+
+        return {
+          name: job.name,
+          description: job.description,
+          metadataUri: job.metadataUri,
+          paramsSchema: job.paramsSchema,
+          resultSchema: job.resultSchema,
+          hasParamsSchema,
+          hasResultSchema,
+          paramsSchemaParseError,
+          resultSchemaParseError,
+          parsedParamsSchema,
+          parsedResultSchema,
+        };
+      });
     },
     enabled:
       !!publicClient &&

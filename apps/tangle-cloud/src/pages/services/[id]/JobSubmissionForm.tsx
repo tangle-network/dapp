@@ -1,9 +1,10 @@
 /**
  * Form for submitting jobs to a service.
- * Handles payment display, balance validation, and ERC20 approval.
+ * Handles payment display, balance validation, ERC20 approval,
+ * and schema-driven dynamic form fields with proper TLV v2 encoding.
  */
 
-import { FC, useState, useCallback, useMemo } from 'react';
+import { FC, useState, useCallback, useMemo, useEffect } from 'react';
 import { Button, Typography, Input } from '@tangle-network/ui-components';
 import {
   Select,
@@ -24,19 +25,33 @@ import {
 } from '@tangle-network/tangle-shared-ui/data/services';
 import useErc20Approval from '@tangle-network/tangle-shared-ui/hooks/useErc20Approval';
 import type { Blueprint } from '@tangle-network/tangle-shared-ui/types/blueprint';
+import {
+  encodePayload,
+  getDefaultValue,
+  type FormFieldValue,
+} from '@tangle-network/tangle-shared-ui/codec';
 import { type Hex, formatUnits, zeroAddress } from 'viem';
 import { useAccount, useBalance, useChainId } from 'wagmi';
 import { getContractsByChainId } from '@tangle-network/dapp-config/contracts';
 import ErrorMessage from '../../../components/ErrorMessage';
+import { SchemaFieldInput } from './SchemaFieldInput';
 
 interface Props {
   serviceId: bigint;
   blueprint: Blueprint;
 }
 
+const bytesToHex = (bytes: Uint8Array): Hex => {
+  return `0x${Array.from(bytes)
+    .map((b) => b.toString(16).padStart(2, '0'))
+    .join('')}` as Hex;
+};
+
 export const JobSubmissionForm: FC<Props> = ({ serviceId, blueprint }) => {
   const [selectedJobIndex, setSelectedJobIndex] = useState<number | ''>(0);
   const [inputJson, setInputJson] = useState<string>('');
+  const [useRawJson, setUseRawJson] = useState(false);
+  const [formValues, setFormValues] = useState<FormFieldValue[]>([]);
   const [validationError, setValidationError] = useState<string | null>(null);
 
   const { address } = useAccount();
@@ -134,6 +149,39 @@ export const JobSubmissionForm: FC<Props> = ({ serviceId, blueprint }) => {
     blueprint.id !== undefined ? BigInt(blueprint.id) : undefined,
   );
 
+  // Get the current selected job's parsed schema
+  const selectedSchema = useMemo(() => {
+    if (
+      selectedJobIndex === '' ||
+      !jobDefinitions ||
+      selectedJobIndex >= jobDefinitions.length
+    ) {
+      return [];
+    }
+    return jobDefinitions[selectedJobIndex]?.parsedParamsSchema ?? [];
+  }, [selectedJobIndex, jobDefinitions]);
+
+  const hasSchema = selectedSchema.length > 0;
+
+  // Initialize form values when schema changes
+  useEffect(() => {
+    if (hasSchema) {
+      setFormValues(selectedSchema.map(getDefaultValue));
+    }
+  }, [hasSchema, selectedSchema]);
+
+  const handleFormValueChange = useCallback(
+    (index: number, value: FormFieldValue) => {
+      setFormValues((prev) => {
+        const updated = [...prev];
+        updated[index] = value;
+        return updated;
+      });
+      setValidationError(null);
+    },
+    [],
+  );
+
   const handleSubmit = useCallback(async () => {
     setValidationError(null);
 
@@ -148,7 +196,7 @@ export const JobSubmissionForm: FC<Props> = ({ serviceId, blueprint }) => {
       selectedJobIndex >= jobDefinitions.length
     ) {
       setValidationError(
-        `Invalid job index. This blueprint has ${jobDefinitions.length} job(s) (valid indices: 0–${jobDefinitions.length - 1})`,
+        `Invalid job index. This blueprint has ${jobDefinitions.length} job(s) (valid indices: 0\u2013${jobDefinitions.length - 1})`,
       );
       return;
     }
@@ -158,27 +206,38 @@ export const JobSubmissionForm: FC<Props> = ({ serviceId, blueprint }) => {
       return;
     }
 
-    // Validate JSON input
-    let parsedInputs: unknown;
-    try {
-      parsedInputs = inputJson.trim() ? JSON.parse(inputJson) : [];
-    } catch {
-      setValidationError('Invalid JSON format');
-      return;
-    }
-
-    // Encode inputs as bytes
     let encodedInputs: Hex;
-    try {
-      const jsonString = JSON.stringify(parsedInputs);
-      const encoder = new TextEncoder();
-      const bytes = encoder.encode(jsonString);
-      encodedInputs = `0x${Array.from(bytes)
-        .map((b) => b.toString(16).padStart(2, '0'))
-        .join('')}` as Hex;
-    } catch {
-      setValidationError('Failed to encode inputs');
-      return;
+
+    if (hasSchema && !useRawJson) {
+      // Encode using TLV v2 schema codec
+      try {
+        const encoded = encodePayload(selectedSchema, formValues);
+        encodedInputs = bytesToHex(encoded);
+      } catch (e) {
+        setValidationError(
+          `Failed to encode inputs: ${e instanceof Error ? e.message : String(e)}`,
+        );
+        return;
+      }
+    } else {
+      // Fallback: encode as UTF-8 JSON bytes
+      let parsedInputs: unknown;
+      try {
+        parsedInputs = inputJson.trim() ? JSON.parse(inputJson) : [];
+      } catch {
+        setValidationError('Invalid JSON format');
+        return;
+      }
+
+      try {
+        const jsonString = JSON.stringify(parsedInputs);
+        const encoder = new TextEncoder();
+        const bytes = encoder.encode(jsonString);
+        encodedInputs = bytesToHex(bytes);
+      } catch {
+        setValidationError('Failed to encode inputs');
+        return;
+      }
     }
 
     if (!submitJob) {
@@ -199,6 +258,10 @@ export const JobSubmissionForm: FC<Props> = ({ serviceId, blueprint }) => {
     submitJob,
     paymentInfo,
     jobDefinitions,
+    hasSchema,
+    useRawJson,
+    selectedSchema,
+    formValues,
   ]);
 
   const isSubmitting = status === 'pending';
@@ -299,7 +362,12 @@ export const JobSubmissionForm: FC<Props> = ({ serviceId, blueprint }) => {
             value={
               selectedJobIndex === '' ? undefined : selectedJobIndex.toString()
             }
-            onValueChange={(v) => setSelectedJobIndex(Number(v))}
+            onValueChange={(v) => {
+              setSelectedJobIndex(Number(v));
+              setUseRawJson(false);
+              setInputJson('');
+              setValidationError(null);
+            }}
           >
             <SelectTrigger className="w-full">
               <SelectValue placeholder="Select a job" />
@@ -340,25 +408,65 @@ export const JobSubmissionForm: FC<Props> = ({ serviceId, blueprint }) => {
         </div>
       )}
 
-      {/* Job Inputs */}
+      {/* Job Inputs - Schema-driven or JSON fallback */}
       <div>
-        <Typography variant="body2" className="mb-2">
-          Job Inputs (JSON)
-        </Typography>
+        {hasSchema && !useRawJson ? (
+          <>
+            <div className="flex items-center justify-between mb-2">
+              <Typography variant="body2">Job Inputs</Typography>
 
-        <textarea
-          className="w-full h-32 p-3 rounded-lg border border-mono-60 dark:border-mono-140 bg-mono-0 dark:bg-mono-180 font-mono text-sm resize-none focus:outline-none focus:ring-2 focus:ring-purple-500"
-          placeholder='Enter job inputs as JSON array, e.g., ["arg1", 123]'
-          value={inputJson}
-          onChange={(e) => {
-            setInputJson(e.target.value);
-            setValidationError(null);
-          }}
-        />
+              <button
+                type="button"
+                className="text-xs text-mono-100 hover:text-mono-0 dark:hover:text-mono-200 underline"
+                onClick={() => setUseRawJson(true)}
+              >
+                Advanced: Raw JSON
+              </button>
+            </div>
 
-        <Typography variant="body3" className="text-mono-100 mt-1">
-          Enter the arguments for this job as a JSON array
-        </Typography>
+            <div className="space-y-2 p-3 rounded-lg border border-mono-60 dark:border-mono-140">
+              {selectedSchema.map((field, i) => (
+                <SchemaFieldInput
+                  key={`${selectedJobIndex}-${i}`}
+                  field={field}
+                  value={formValues[i] ?? getDefaultValue(field)}
+                  onChange={(v) => handleFormValueChange(i, v)}
+                  path={field.name || `field_${i}`}
+                />
+              ))}
+            </div>
+          </>
+        ) : (
+          <>
+            <div className="flex items-center justify-between mb-2">
+              <Typography variant="body2">Job Inputs (JSON)</Typography>
+
+              {hasSchema && useRawJson && (
+                <button
+                  type="button"
+                  className="text-xs text-mono-100 hover:text-mono-0 dark:hover:text-mono-200 underline"
+                  onClick={() => setUseRawJson(false)}
+                >
+                  Use Form Fields
+                </button>
+              )}
+            </div>
+
+            <textarea
+              className="w-full h-32 p-3 rounded-lg border border-mono-60 dark:border-mono-140 bg-mono-0 dark:bg-mono-180 font-mono text-sm resize-none focus:outline-none focus:ring-2 focus:ring-purple-500"
+              placeholder='Enter job inputs as JSON array, e.g., ["arg1", 123]'
+              value={inputJson}
+              onChange={(e) => {
+                setInputJson(e.target.value);
+                setValidationError(null);
+              }}
+            />
+
+            <Typography variant="body3" className="text-mono-100 mt-1">
+              Enter the arguments for this job as a JSON array
+            </Typography>
+          </>
+        )}
       </div>
 
       {/* Errors */}
@@ -398,6 +506,8 @@ export const JobSubmissionForm: FC<Props> = ({ serviceId, blueprint }) => {
               reset();
               setSelectedJobIndex('');
               setInputJson('');
+              setFormValues([]);
+              setUseRawJson(false);
               setValidationError(null);
             }}
           >

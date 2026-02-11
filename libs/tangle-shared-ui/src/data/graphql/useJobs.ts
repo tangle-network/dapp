@@ -9,8 +9,6 @@ import {
   EnvioNetwork,
 } from '../../utils/executeEnvioGraphQL';
 
-const ZERO_ADDRESS = '0x0000000000000000000000000000000000000000';
-
 export const OPTIMISTIC_JOB_ID_PREFIX = 'optimistic:';
 const OPTIMISTIC_JOB_TTL_SECONDS = BigInt(120);
 const FAST_JOBS_REFETCH_INTERVAL_MS = 2_000;
@@ -37,7 +35,8 @@ export interface JobCall {
 export interface JobResult {
   id: string;
   callId: bigint;
-  operator: Address;
+  operator: Address | null;
+  aggregated: boolean;
   result: string; // Encoded result
   submittedAt: bigint;
 }
@@ -64,6 +63,7 @@ interface JobResultQueryResponse {
     id: string;
     jobCall_id: string;
     operator_id: string | null;
+    aggregated: boolean;
     output: string;
     submittedAt: string;
   }>;
@@ -130,6 +130,7 @@ const fetchJobResults = async (
         id
         jobCall_id
         operator_id
+        aggregated
         output
         submittedAt
       }
@@ -144,7 +145,8 @@ const fetchJobResults = async (
   return (result.data.JobResult ?? []).map((res) => ({
     id: res.id,
     callId: BigInt(res.jobCall_id.split('-').pop() ?? '0'),
-    operator: (res.operator_id ?? ZERO_ADDRESS) as Address,
+    operator: res.operator_id ? (res.operator_id as Address) : null,
+    aggregated: res.aggregated,
     result: res.output,
     submittedAt: BigInt(res.submittedAt),
   }));

@@ -28,6 +28,7 @@ import {
   useIsPermittedCaller,
   useIsServiceOperator,
   MembershipModel,
+  useBlueprintJobs,
 } from '@tangle-network/tangle-shared-ui/data/services';
 import useEvmOperatorInfo from '../../../hooks/useEvmOperatorInfo';
 import { twMerge } from 'tailwind-merge';
@@ -70,6 +71,13 @@ const ServiceDetailPage: FC = () => {
 
   // Fetch job history
   const { data: jobs, isLoading: isLoadingJobs } = useJobsByService(serviceId);
+
+  // Fetch blueprint job definitions (for schema-based decoding/encoding)
+  const { data: jobDefinitions } = useBlueprintJobs(
+    service?.blueprintId !== undefined
+      ? BigInt(service.blueprintId)
+      : undefined,
+  );
 
   // Check if user is permitted to submit jobs
   const { data: isPermittedCaller, isLoading: isLoadingPermission } =
@@ -272,7 +280,11 @@ const ServiceDetailPage: FC = () => {
         <Typography variant="h5" fw="bold" className="mb-4">
           Job History
         </Typography>
-        <JobHistoryTable jobs={jobs ?? []} isLoading={isLoadingJobs} />
+        <JobHistoryTable
+          jobs={jobs ?? []}
+          isLoading={isLoadingJobs}
+          jobDefinitions={jobDefinitions}
+        />
       </Card>
 
       {/* Fund Service Modal */}

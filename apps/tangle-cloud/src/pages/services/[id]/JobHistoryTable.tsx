@@ -2,7 +2,7 @@
  * Table showing job history for a service.
  */
 
-import { FC, useState } from 'react';
+import { FC, useMemo, useState } from 'react';
 import {
   createColumnHelper,
   getCoreRowModel,
@@ -18,17 +18,19 @@ import {
 } from '@tangle-network/ui-components';
 import type { JobCall } from '@tangle-network/tangle-shared-ui/data/graphql';
 import { isOptimisticJob } from '@tangle-network/tangle-shared-ui/data/graphql/useJobs';
+import type { BlueprintJobDefinition } from '@tangle-network/tangle-shared-ui/data/services';
 import { twMerge } from 'tailwind-merge';
 import { JobResultsModal } from './JobResultsModal';
 
 interface Props {
   jobs: JobCall[];
   isLoading: boolean;
+  jobDefinitions?: BlueprintJobDefinition[];
 }
 
 const columnHelper = createColumnHelper<JobCall>();
 
-const columns = [
+const makeColumns = (jobDefinitions?: BlueprintJobDefinition[]) => [
   columnHelper.accessor('callId', {
     header: 'Call ID',
     cell: (info) => {
@@ -49,9 +51,16 @@ const columns = [
   }),
   columnHelper.accessor('jobIndex', {
     header: 'Job ID',
-    cell: (info) => (
-      <Typography variant="body2">Job {info.getValue()}</Typography>
-    ),
+    cell: (info) => {
+      const index = info.getValue();
+      const jobName = jobDefinitions?.[index]?.name;
+      return (
+        <Typography variant="body2">
+          Job {index}
+          {jobName ? `: ${jobName}` : ''}
+        </Typography>
+      );
+    },
   }),
   columnHelper.accessor('submitter', {
     header: 'Submitter',
@@ -107,8 +116,14 @@ const columns = [
   }),
 ];
 
-export const JobHistoryTable: FC<Props> = ({ jobs, isLoading }) => {
+export const JobHistoryTable: FC<Props> = ({
+  jobs,
+  isLoading,
+  jobDefinitions,
+}) => {
   const [selectedJob, setSelectedJob] = useState<JobCall | null>(null);
+
+  const columns = useMemo(() => makeColumns(jobDefinitions), [jobDefinitions]);
 
   const table = useReactTable({
     data: jobs,
@@ -229,6 +244,7 @@ export const JobHistoryTable: FC<Props> = ({ jobs, isLoading }) => {
       {selectedJob && (
         <JobResultsModal
           job={selectedJob}
+          jobDefinition={jobDefinitions?.[selectedJob.jobIndex]}
           onClose={() => setSelectedJob(null)}
         />
       )}
