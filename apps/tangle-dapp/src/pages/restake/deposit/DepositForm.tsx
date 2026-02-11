@@ -18,7 +18,7 @@ import { SubmitHandler, useForm } from 'react-hook-form';
 import { erc20Abi, formatUnits, parseUnits, zeroAddress, Address } from 'viem';
 import { BN } from '@polkadot/util';
 import { useChainId } from 'wagmi';
-import ErrorMessage from '../../../components/ErrorMessage';
+import ErrorMessage from '@tangle-network/tangle-shared-ui/components/ErrorMessage';
 import ActionButtonBase from '../../../components/restaking/ActionButtonBase';
 import StyleContainer from '../../../components/restaking/StyleContainer';
 import { SUPPORTED_RESTAKE_DEPOSIT_TYPED_CHAIN_IDS } from '../../../constants/restake';

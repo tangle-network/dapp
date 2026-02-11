@@ -36,7 +36,7 @@ import {
 } from '@tangle-network/tangle-shared-ui/data/graphql';
 import { twMerge } from 'tailwind-merge';
 import { PagePath } from '../../../types';
-import ErrorMessage from '../../../components/ErrorMessage';
+import ErrorMessage from '@tangle-network/tangle-shared-ui/components/ErrorMessage';
 import { isAddress } from 'viem';
 
 const columnHelper = createColumnHelper<OwnedBlueprint>();

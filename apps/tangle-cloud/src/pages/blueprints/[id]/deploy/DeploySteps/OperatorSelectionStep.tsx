@@ -8,7 +8,7 @@ import {
 import { FC, useEffect, useMemo, useState, Children } from 'react';
 import { SelectOperatorsStepProps, OperatorSelectionTable } from './type';
 import { RowSelectionState } from '@tanstack/react-table';
-import ErrorMessage from '../../../../../components/ErrorMessage';
+import ErrorMessage from '@tangle-network/tangle-shared-ui/components/ErrorMessage';
 import {
   Select,
   SelectContent,

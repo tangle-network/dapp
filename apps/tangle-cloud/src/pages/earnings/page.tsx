@@ -30,7 +30,7 @@ import {
   type BlueprintEarnings,
 } from '@tangle-network/tangle-shared-ui/data/graphql';
 import { PagePath } from '../../types';
-import ErrorMessage from '../../components/ErrorMessage';
+import ErrorMessage from '@tangle-network/tangle-shared-ui/components/ErrorMessage';
 
 const columnHelper = createColumnHelper<BlueprintEarnings>();
 
