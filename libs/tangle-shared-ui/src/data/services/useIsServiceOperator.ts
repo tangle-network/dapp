@@ -9,8 +9,7 @@ import {
   UseServiceOperatorsOptions,
 } from './useServiceOperators';
 
-export interface UseIsServiceOperatorOptions
-  extends UseServiceOperatorsOptions {}
+export type UseIsServiceOperatorOptions = UseServiceOperatorsOptions;
 
 /**
  * Hook to check if an address is an operator for a service.
