@@ -24,6 +24,10 @@ import {
   useCreateBlueprintTx,
   type BlueprintDefinition,
 } from '@tangle-network/tangle-shared-ui/data/graphql';
+import {
+  parseSchemaJson,
+  encodeSchemaToHex,
+} from '@tangle-network/tangle-shared-ui/codec';
 import ErrorMessage from '@tangle-network/tangle-shared-ui/components/ErrorMessage';
 import { PagePath } from '../../../types';
 import { zeroAddress, type Address, toHex } from 'viem';
@@ -49,7 +53,32 @@ const STEP_LABELS = [
 interface JobForm {
   name: string;
   description: string;
+  paramsSchemaJson: string;
+  resultSchemaJson: string;
 }
+
+const DEFAULT_PARAMS_SCHEMA_JSON = JSON.stringify(
+  [{ kind: 'String', name: 'input' }],
+  null,
+  2,
+);
+
+const DEFAULT_RESULT_SCHEMA_JSON = JSON.stringify(
+  [{ kind: 'String', name: 'output' }],
+  null,
+  2,
+);
+
+const compileSchemaJsonToHex = (
+  schemaJson: string,
+  schemaLabel: string,
+): `0x${string}` => {
+  const fields = parseSchemaJson(schemaJson);
+  if (fields.length === 0) {
+    throw new Error(`${schemaLabel} must define at least one field`);
+  }
+  return encodeSchemaToHex(fields);
+};
 
 // Binary form for each source
 interface BinaryForm {
@@ -140,12 +169,18 @@ const formToDefinition = (
   const requestBytes = toHex(new TextEncoder().encode(form.requestSchema));
 
   // Convert jobs
-  const jobs = form.jobs.map((job) => ({
+  const jobs = form.jobs.map((job, index) => ({
     name: job.name,
     description: job.description,
     metadataUri: '',
-    paramsSchema: '0x' as `0x${string}`,
-    resultSchema: '0x' as `0x${string}`,
+    paramsSchema: compileSchemaJsonToHex(
+      job.paramsSchemaJson,
+      `Job ${index + 1} params schema`,
+    ),
+    resultSchema: compileSchemaJsonToHex(
+      job.resultSchemaJson,
+      `Job ${index + 1} result schema`,
+    ),
   }));
 
   // Convert sources
@@ -274,8 +309,37 @@ const CreateBlueprintPage: FC = () => {
           return false;
         }
         for (let i = 0; i < form.jobs.length; i++) {
-          if (!form.jobs[i].name.trim()) {
+          const job = form.jobs[i];
+          if (!job.name.trim()) {
             setValidationError(`Job ${i + 1} name is required`);
+            return false;
+          }
+
+          if (!job.paramsSchemaJson.trim()) {
+            setValidationError(`Job ${i + 1} params schema is required`);
+            return false;
+          }
+
+          if (!job.resultSchemaJson.trim()) {
+            setValidationError(`Job ${i + 1} result schema is required`);
+            return false;
+          }
+
+          try {
+            compileSchemaJsonToHex(
+              job.paramsSchemaJson,
+              `Job ${i + 1} params schema`,
+            );
+            compileSchemaJsonToHex(
+              job.resultSchemaJson,
+              `Job ${i + 1} result schema`,
+            );
+          } catch (error) {
+            setValidationError(
+              error instanceof Error
+                ? error.message
+                : `Job ${i + 1} schema is invalid`,
+            );
             return false;
           }
         }
@@ -331,15 +395,31 @@ const CreateBlueprintPage: FC = () => {
   const handleSubmit = useCallback(async () => {
     if (!validateStep() || !address) return;
 
-    const definition = formToDefinition(form, address);
-    await createBlueprint(definition);
+    try {
+      const definition = formToDefinition(form, address);
+      await createBlueprint(definition);
+    } catch (submitError) {
+      setValidationError(
+        submitError instanceof Error
+          ? submitError.message
+          : 'Failed to build blueprint definition',
+      );
+    }
   }, [form, address, createBlueprint, validateStep]);
 
   // Add job helper
   const addJob = useCallback(() => {
     setForm((prev) => ({
       ...prev,
-      jobs: [...prev.jobs, { name: '', description: '' }],
+      jobs: [
+        ...prev.jobs,
+        {
+          name: '',
+          description: '',
+          paramsSchemaJson: DEFAULT_PARAMS_SCHEMA_JSON,
+          resultSchemaJson: DEFAULT_RESULT_SCHEMA_JSON,
+        },
+      ],
     }));
   }, []);
 
@@ -901,6 +981,41 @@ const JobsStep: FC<JobsStepProps> = ({
                   isControlled
                 />
               </div>
+
+              <div>
+                <Typography variant="body3" className="mb-1">
+                  Params Schema (JSON)
+                </Typography>
+                <textarea
+                  className="w-full min-h-28 p-3 rounded-lg border border-mono-60 dark:border-mono-140 bg-mono-0 dark:bg-mono-180 font-mono text-sm resize-y focus:outline-none focus:ring-2 focus:ring-purple-500"
+                  value={job.paramsSchemaJson}
+                  onChange={(e) =>
+                    updateJob(index, { paramsSchemaJson: e.target.value })
+                  }
+                  placeholder='[{"kind":"String","name":"input"}]'
+                />
+              </div>
+
+              <div>
+                <Typography variant="body3" className="mb-1">
+                  Result Schema (JSON)
+                </Typography>
+                <textarea
+                  className="w-full min-h-28 p-3 rounded-lg border border-mono-60 dark:border-mono-140 bg-mono-0 dark:bg-mono-180 font-mono text-sm resize-y focus:outline-none focus:ring-2 focus:ring-purple-500"
+                  value={job.resultSchemaJson}
+                  onChange={(e) =>
+                    updateJob(index, { resultSchemaJson: e.target.value })
+                  }
+                  placeholder='[{"kind":"String","name":"output"}]'
+                />
+              </div>
+
+              <Typography variant="body3" className="text-mono-100">
+                Use an array of fields. Example:{' '}
+                <code className="font-mono text-xs">
+                  {`[{"kind":"Uint256","name":"value"}]`}
+                </code>
+              </Typography>
             </div>
           </div>
         ))}

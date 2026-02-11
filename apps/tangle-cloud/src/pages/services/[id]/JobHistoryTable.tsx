@@ -2,7 +2,7 @@
  * Table showing job history for a service.
  */
 
-import { FC, useState } from 'react';
+import { FC, useMemo, useState } from 'react';
 import {
   createColumnHelper,
   getCoreRowModel,
@@ -17,30 +17,50 @@ import {
   Button,
 } from '@tangle-network/ui-components';
 import type { JobCall } from '@tangle-network/tangle-shared-ui/data/graphql';
+import { isOptimisticJob } from '@tangle-network/tangle-shared-ui/data/graphql/useJobs';
+import type { BlueprintJobDefinition } from '@tangle-network/tangle-shared-ui/data/services';
 import { twMerge } from 'tailwind-merge';
 import { JobResultsModal } from './JobResultsModal';
 
 interface Props {
   jobs: JobCall[];
   isLoading: boolean;
+  jobDefinitions?: BlueprintJobDefinition[];
 }
 
 const columnHelper = createColumnHelper<JobCall>();
 
-const columns = [
+const makeColumns = (jobDefinitions?: BlueprintJobDefinition[]) => [
   columnHelper.accessor('callId', {
     header: 'Call ID',
-    cell: (info) => (
-      <Typography variant="body2" className="font-mono">
-        #{info.getValue().toString()}
-      </Typography>
-    ),
+    cell: (info) => {
+      const job = info.row.original;
+      if (isOptimisticJob(job)) {
+        return (
+          <span className="px-2 py-1 rounded text-xs bg-blue-500/20 text-blue-400 animate-pulse">
+            Confirming...
+          </span>
+        );
+      }
+      return (
+        <Typography variant="body2" className="font-mono">
+          #{info.getValue().toString()}
+        </Typography>
+      );
+    },
   }),
   columnHelper.accessor('jobIndex', {
-    header: 'Job',
-    cell: (info) => (
-      <Typography variant="body2">Job {info.getValue()}</Typography>
-    ),
+    header: 'Job ID',
+    cell: (info) => {
+      const index = info.getValue();
+      const jobName = jobDefinitions?.[index]?.name;
+      return (
+        <Typography variant="body2">
+          Job {index}
+          {jobName ? `: ${jobName}` : ''}
+        </Typography>
+      );
+    },
   }),
   columnHelper.accessor('submitter', {
     header: 'Submitter',
@@ -54,7 +74,7 @@ const columns = [
     },
   }),
   columnHelper.accessor('submittedAt', {
-    header: 'Submitted',
+    header: 'Submitted At',
     cell: (info) => {
       const timestamp = info.getValue();
       return (
@@ -67,6 +87,14 @@ const columns = [
   columnHelper.accessor('completed', {
     header: 'Status',
     cell: (info) => {
+      const job = info.row.original;
+      if (isOptimisticJob(job)) {
+        return (
+          <span className="px-2 py-1 rounded text-xs bg-blue-500/20 text-blue-400 animate-pulse">
+            Confirming
+          </span>
+        );
+      }
       const completed = info.getValue();
       return (
         <span
@@ -83,13 +111,19 @@ const columns = [
     },
   }),
   columnHelper.accessor('resultCount', {
-    header: 'Results',
+    header: '# Results',
     cell: (info) => <Typography variant="body2">{info.getValue()}</Typography>,
   }),
 ];
 
-export const JobHistoryTable: FC<Props> = ({ jobs, isLoading }) => {
+export const JobHistoryTable: FC<Props> = ({
+  jobs,
+  isLoading,
+  jobDefinitions,
+}) => {
   const [selectedJob, setSelectedJob] = useState<JobCall | null>(null);
+
+  const columns = useMemo(() => makeColumns(jobDefinitions), [jobDefinitions]);
 
   const table = useReactTable({
     data: jobs,
@@ -210,6 +244,7 @@ export const JobHistoryTable: FC<Props> = ({ jobs, isLoading }) => {
       {selectedJob && (
         <JobResultsModal
           job={selectedJob}
+          jobDefinition={jobDefinitions?.[selectedJob.jobIndex]}
           onClose={() => setSelectedJob(null)}
         />
       )}

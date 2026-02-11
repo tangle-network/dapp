@@ -1,11 +1,4 @@
-import {
-  useMemo,
-  useState,
-  useCallback,
-  type FC,
-  Dispatch,
-  SetStateAction,
-} from 'react';
+import { useMemo, type FC } from 'react';
 import {
   createColumnHelper,
   getCoreRowModel,
@@ -17,7 +10,6 @@ import {
   Button,
   EMPTY_VALUE_PLACEHOLDER,
   Typography,
-  Modal,
 } from '@tangle-network/ui-components';
 import pluralize from '@tangle-network/ui-components/utils/pluralize';
 import { TangleCloudTable } from '../../../components/tangleCloudTable/TangleCloudTable';
@@ -25,111 +17,60 @@ import { ChevronRight } from '@tangle-network/icons';
 import TableCellWrapper from '@tangle-network/tangle-shared-ui/components/tables/TableCellWrapper';
 import { Link } from 'react-router';
 import { PagePath } from '../../../types';
-import { useAccount } from 'wagmi';
 import {
-  useServicesByOwner,
-  useServicesByOperator,
+  useAllServices,
   useBlueprintMap,
+  useOperatorRegistrations,
   type Service,
 } from '@tangle-network/tangle-shared-ui/data/graphql';
 import type { Blueprint } from '@tangle-network/tangle-shared-ui/types/blueprint';
-import useEvmOperatorInfo from '../../../hooks/useEvmOperatorInfo';
-import TerminateConfirmationModal from './UpdateBlueprintModel/TerminateConfirmationModal';
-import { useServiceTerminateTx } from '../../../data/services/useServiceTerminateTx';
 
-// Combined service with blueprint metadata
 interface ServiceWithBlueprint extends Service {
   blueprintData?: Blueprint;
 }
 
 const columnHelper = createColumnHelper<ServiceWithBlueprint>();
 
-interface RunningInstanceTableProps {
-  refreshTrigger: number;
-  setRefreshTrigger: Dispatch<SetStateAction<number>>;
-}
-
-export const RunningInstanceTable: FC<RunningInstanceTableProps> = () => {
-  const { address: currentUserAddress } = useAccount();
-  const { isOperator, operatorAddress } = useEvmOperatorInfo();
-
-  // Fetch services owned by user
+export const AllServicesTable: FC = () => {
   const {
-    data: ownedServices,
-    isLoading: isLoadingOwned,
-    error: ownedError,
-  } = useServicesByOwner(currentUserAddress, { status: 'ACTIVE' });
+    data: allServices,
+    isLoading: isLoadingServices,
+    error,
+  } = useAllServices({ status: 'ACTIVE' });
 
-  // Fetch services where user is an operator
-  const {
-    data: operatorServices,
-    isLoading: isLoadingOperator,
-    error: operatorError,
-  } = useServicesByOperator(
-    isOperator ? (operatorAddress ?? undefined) : undefined,
-    { status: 'ACTIVE' },
-  );
-
-  // Fetch blueprint metadata
   const { blueprints: blueprintMap, isLoading: isLoadingBlueprints } =
     useBlueprintMap();
 
-  const isLoading = isLoadingOwned || isLoadingOperator || isLoadingBlueprints;
-  const error = ownedError || operatorError;
+  const { data: operatorRegistrations, isLoading: isLoadingRegistrations } =
+    useOperatorRegistrations();
 
-  // Combine and deduplicate services
+  const isLoading =
+    isLoadingServices || isLoadingBlueprints || isLoadingRegistrations;
+
+  const registeredBlueprintIds = useMemo(() => {
+    if (!operatorRegistrations) return new Set<string>();
+
+    return new Set(
+      operatorRegistrations
+        .filter((reg) => reg.active)
+        .map((reg) => reg.blueprintId.toString()),
+    );
+  }, [operatorRegistrations]);
+
   const servicesWithBlueprints = useMemo<ServiceWithBlueprint[]>(() => {
-    const serviceMap = new Map<string, ServiceWithBlueprint>();
+    if (!allServices) return [];
 
-    // Add owned services
-    ownedServices?.forEach((service) => {
-      const blueprintData = blueprintMap?.get(service.blueprintId.toString());
-      serviceMap.set(service.id, {
+    return allServices
+      .filter((service) =>
+        registeredBlueprintIds.has(service.blueprintId.toString()),
+      )
+      .map((service) => ({
         ...service,
-        blueprintData,
-      });
-    });
-
-    // Add operator services (dedupe by ID)
-    operatorServices?.forEach((service) => {
-      if (!serviceMap.has(service.id)) {
-        const blueprintData = blueprintMap?.get(service.blueprintId.toString());
-        serviceMap.set(service.id, {
-          ...service,
-          blueprintData,
-        });
-      }
-    });
-
-    return Array.from(serviceMap.values());
-  }, [ownedServices, operatorServices, blueprintMap]);
-
-  const [isTerminateModalOpen, setIsTerminateModalOpen] = useState(false);
-  const [selectedInstance, setSelectedInstance] =
-    useState<ServiceWithBlueprint | null>(null);
-
-  const { execute: terminateServiceInstance, status: terminateStatus } =
-    useServiceTerminateTx();
+        blueprintData: blueprintMap?.get(service.blueprintId.toString()),
+      }));
+  }, [allServices, blueprintMap, registeredBlueprintIds]);
 
   const isEmpty = servicesWithBlueprints.length === 0;
-
-  const handleTerminateClick = useCallback((instance: ServiceWithBlueprint) => {
-    setSelectedInstance(instance);
-    setIsTerminateModalOpen(true);
-  }, []);
-
-  const handleCloseTerminateModal = useCallback(() => {
-    setIsTerminateModalOpen(false);
-    setSelectedInstance(null);
-  }, []);
-
-  const handleConfirmTerminate = useCallback(async () => {
-    if (!selectedInstance || !terminateServiceInstance) return;
-
-    await terminateServiceInstance({
-      serviceId: selectedInstance.serviceId,
-    });
-  }, [selectedInstance, terminateServiceInstance]);
 
   const columns = useMemo(
     () => [
@@ -183,7 +124,7 @@ export const RunningInstanceTable: FC<RunningInstanceTableProps> = () => {
                     fw="bold"
                     className="text-blue-70 dark:text-blue-40 text-ellipsis whitespace-nowrap overflow-hidden"
                   >
-                    {service.serviceId
+                    {service.serviceId !== undefined
                       ? `Instance-${service.serviceId}`
                       : EMPTY_VALUE_PLACEHOLDER}
                   </Typography>
@@ -198,8 +139,6 @@ export const RunningInstanceTable: FC<RunningInstanceTableProps> = () => {
         header: () => '',
         cell: (props) => {
           const service = props.row.original;
-          const isOwner =
-            currentUserAddress?.toLowerCase() === service.owner.toLowerCase();
 
           return (
             <TableCellWrapper removeRightBorder className="p-3 min-h-fit">
@@ -217,7 +156,7 @@ export const RunningInstanceTable: FC<RunningInstanceTableProps> = () => {
                     variant="utility"
                     className="uppercase body4 bg-purple-10 dark:bg-purple-120 text-purple-70 dark:text-purple-40 hover:bg-purple-20 dark:hover:bg-purple-110 border border-purple-30 dark:border-purple-100 transition-all duration-200"
                   >
-                    Manage
+                    View
                   </Button>
                 </Link>
 
@@ -234,29 +173,16 @@ export const RunningInstanceTable: FC<RunningInstanceTableProps> = () => {
                     variant="utility"
                     className="uppercase body4 bg-blue-10 dark:bg-blue-120 text-blue-70 dark:text-blue-40 hover:bg-blue-20 dark:hover:bg-blue-110 border border-blue-30 dark:border-blue-100 transition-all duration-200"
                   >
-                    View
+                    Blueprint
                   </Button>
                 </Link>
-
-                {isOwner && (
-                  <Button
-                    variant="utility"
-                    className="uppercase body4 bg-red-10 dark:bg-red-120 text-red-70 dark:text-red-40 hover:bg-red-20 dark:hover:bg-red-110 border border-red-30 dark:border-red-100 transition-all duration-200"
-                    onClick={(event) => {
-                      event.stopPropagation();
-                      handleTerminateClick(service);
-                    }}
-                  >
-                    Terminate
-                  </Button>
-                )}
               </div>
             </TableCellWrapper>
           );
         },
       }),
     ],
-    [handleTerminateClick, currentUserAddress],
+    [],
   );
 
   const table = useReactTable({
@@ -264,34 +190,23 @@ export const RunningInstanceTable: FC<RunningInstanceTableProps> = () => {
     columns,
     getCoreRowModel: getCoreRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
-    getRowId: (row) => `RunningInstance-${row.blueprintId}-${row.serviceId}`,
+    getRowId: (row) => `AllService-${row.blueprintId}-${row.serviceId}`,
     autoResetPageIndex: false,
     enableSortingRemoval: false,
   });
 
   return (
-    <>
-      <TangleCloudTable<ServiceWithBlueprint>
-        title={pluralize('Running Instance', !isEmpty)}
-        data={servicesWithBlueprints}
-        error={error}
-        isLoading={isLoading}
-        tableProps={table}
-        tableConfig={{
-          tableClassName: 'min-w-[1000px]',
-        }}
-      />
-
-      <Modal open={isTerminateModalOpen} onOpenChange={setIsTerminateModalOpen}>
-        <TerminateConfirmationModal
-          onClose={handleCloseTerminateModal}
-          onConfirm={handleConfirmTerminate}
-          selectedInstance={selectedInstance}
-          status={terminateStatus}
-        />
-      </Modal>
-    </>
+    <TangleCloudTable<ServiceWithBlueprint>
+      title={pluralize('Service', !isEmpty)}
+      data={servicesWithBlueprints}
+      error={error}
+      isLoading={isLoading}
+      tableProps={table}
+      tableConfig={{
+        tableClassName: 'min-w-[1000px]',
+      }}
+    />
   );
 };
 
-RunningInstanceTable.displayName = 'RunningInstanceTable';
+AllServicesTable.displayName = 'AllServicesTable';

@@ -100,6 +100,8 @@ export {
 export {
   useServicesByOwner,
   useServicesByOperator,
+  useServiceById,
+  useAllServices,
   usePendingServiceRequests,
   useApprovedServiceRequests,
   useOperatorActedServiceRequests,
@@ -123,7 +125,6 @@ export {
   useSubmitJobTx,
   type SubmitJobParams,
   type SubmitJobStatus,
-  type UseSubmitJobTxReturn,
 } from './useSubmitJobTx';
 
 // Rewards

@@ -82,7 +82,7 @@ const Button = forwardRef<HTMLElement, ButtonProps>((props, ref) => {
       )}
       {isLoading ? (
         loadingText || (
-          <span className="opacity-0">
+          <span className="opacity-0 flex items-center">
             <ButtonContent {...contentProps} />
           </span>
         )

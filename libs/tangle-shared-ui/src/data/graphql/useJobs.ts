@@ -2,12 +2,17 @@
  * Hooks for fetching job data from the Envio indexer.
  */
 
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { Address } from 'viem';
 import {
   executeEnvioGraphQL,
   EnvioNetwork,
 } from '../../utils/executeEnvioGraphQL';
+
+export const OPTIMISTIC_JOB_ID_PREFIX = 'optimistic:';
+const OPTIMISTIC_JOB_TTL_SECONDS = BigInt(120);
+const FAST_JOBS_REFETCH_INTERVAL_MS = 2_000;
+const DEFAULT_JOBS_REFETCH_INTERVAL_MS = 15_000;
 
 // Job call status
 export type JobStatus = 'PENDING' | 'COMPLETED' | 'FAILED';
@@ -30,7 +35,8 @@ export interface JobCall {
 export interface JobResult {
   id: string;
   callId: bigint;
-  operator: Address;
+  operator: Address | null;
+  aggregated: boolean;
   result: string; // Encoded result
   submittedAt: bigint;
 }
@@ -39,24 +45,26 @@ export interface JobResult {
 interface JobCallQueryResponse {
   JobCall: Array<{
     id: string;
-    serviceId: string;
+    service_id: string;
     callId: string;
     jobIndex: number;
-    submitter: string;
+    caller: string;
     inputs: string;
-    submittedAt: string;
+    createdAt: string;
     completed: boolean;
-    resultCount: number;
-    payment: string;
+    results: Array<{
+      id: string;
+    }>;
   }>;
 }
 
 interface JobResultQueryResponse {
   JobResult: Array<{
     id: string;
-    callId: string;
-    operator: string;
-    result: string;
+    jobCall_id: string;
+    operator_id: string | null;
+    aggregated: boolean;
+    output: string;
     submittedAt: string;
   }>;
 }
@@ -70,20 +78,21 @@ const fetchJobsByService = async (
   const query = `
     query GetJobsByService($serviceId: String!, $limit: Int!) {
       JobCall(
-        where: { serviceId: { _eq: $serviceId } }
-        order_by: { submittedAt: desc }
+        where: { service_id: { _eq: $serviceId } }
+        order_by: { createdAt: desc }
         limit: $limit
       ) {
         id
-        serviceId
+        service_id
         callId
         jobIndex
-        submitter
+        caller
         inputs
-        submittedAt
+        createdAt
         completed
-        resultCount
-        payment
+        results {
+          id
+        }
       }
     }
   `;
@@ -95,33 +104,34 @@ const fetchJobsByService = async (
 
   return (result.data.JobCall ?? []).map((job) => ({
     id: job.id,
-    serviceId: BigInt(job.serviceId),
+    serviceId: BigInt(job.service_id),
     callId: BigInt(job.callId),
     jobIndex: job.jobIndex,
-    submitter: job.submitter as Address,
+    submitter: job.caller as Address,
     inputs: job.inputs,
-    submittedAt: BigInt(job.submittedAt),
+    submittedAt: BigInt(job.createdAt),
     completed: job.completed,
-    resultCount: job.resultCount,
-    payment: BigInt(job.payment),
+    resultCount: job.results.length,
+    payment: BigInt(0),
   }));
 };
 
 // Fetch job results
 const fetchJobResults = async (
-  callId: bigint,
+  jobCallId: string,
   network?: EnvioNetwork,
 ): Promise<JobResult[]> => {
   const query = `
     query GetJobResults($callId: String!) {
       JobResult(
-        where: { callId: { _eq: $callId } }
+        where: { jobCall_id: { _eq: $callId } }
         order_by: { submittedAt: asc }
       ) {
         id
-        callId
-        operator
-        result
+        jobCall_id
+        operator_id
+        aggregated
+        output
         submittedAt
       }
     }
@@ -130,15 +140,63 @@ const fetchJobResults = async (
   const result = await executeEnvioGraphQL<
     JobResultQueryResponse,
     { callId: string }
-  >(query, { callId: callId.toString() }, network);
+  >(query, { callId: jobCallId }, network);
 
   return (result.data.JobResult ?? []).map((res) => ({
     id: res.id,
-    callId: BigInt(res.callId),
-    operator: res.operator as Address,
-    result: res.result,
+    callId: BigInt(res.jobCall_id.split('-').pop() ?? '0'),
+    operator: res.operator_id ? (res.operator_id as Address) : null,
+    aggregated: res.aggregated,
+    result: res.output,
     submittedAt: BigInt(res.submittedAt),
   }));
+};
+
+export const isOptimisticJob = (job: JobCall): boolean =>
+  job.id.startsWith(OPTIMISTIC_JOB_ID_PREFIX);
+
+const sortJobsBySubmittedAtDesc = (jobs: JobCall[]): JobCall[] =>
+  [...jobs].sort((a, b) => {
+    if (a.submittedAt === b.submittedAt) return 0;
+    return a.submittedAt > b.submittedAt ? -1 : 1;
+  });
+
+const bigIntAbsDiff = (a: bigint, b: bigint): bigint => (a > b ? a - b : b - a);
+
+/**
+ * Merge fetched jobs with any still-pending optimistic entries.
+ * Optimistic rows are dropped once the indexer returns a matching canonical row
+ * or after TTL expiry. Matching uses fuzzy criteria (same serviceId, jobIndex,
+ * submitter, and submittedAt within 60s) since the optimistic row doesn't know
+ * the real callId.
+ */
+const mergeFetchedWithOptimisticJobs = (
+  fetchedJobs: JobCall[],
+  cachedJobs: JobCall[] | undefined,
+): JobCall[] => {
+  if (!cachedJobs || cachedJobs.length === 0) return fetchedJobs;
+
+  const nowSeconds = BigInt(Math.floor(Date.now() / 1000));
+
+  const pendingOptimisticJobs = cachedJobs.filter((job) => {
+    if (!isOptimisticJob(job)) return false;
+    if (nowSeconds - job.submittedAt > OPTIMISTIC_JOB_TTL_SECONDS) return false;
+
+    // Fuzzy match: drop if a canonical row exists with same service, jobIndex,
+    // submitter, and submittedAt within 60 seconds
+    const hasCanonicalMatch = fetchedJobs.some(
+      (fetched) =>
+        fetched.serviceId === job.serviceId &&
+        fetched.jobIndex === job.jobIndex &&
+        fetched.submitter.toLowerCase() === job.submitter.toLowerCase() &&
+        bigIntAbsDiff(fetched.submittedAt, job.submittedAt) <= BigInt(60),
+    );
+    if (hasCanonicalMatch) return false;
+
+    return true;
+  });
+
+  return sortJobsBySubmittedAtDesc([...pendingOptimisticJobs, ...fetchedJobs]);
 };
 
 /**
@@ -153,16 +211,31 @@ export const useJobsByService = (
   },
 ) => {
   const { network, enabled = true, limit = 50 } = options ?? {};
+  const queryClient = useQueryClient();
+  const queryKey = [
+    'jobs',
+    'byService',
+    serviceId?.toString(),
+    network,
+    limit,
+  ] as const;
 
   return useQuery({
-    queryKey: ['jobs', 'byService', serviceId?.toString(), network, limit],
+    queryKey,
     queryFn: async () => {
       if (serviceId === undefined) return [];
-      return fetchJobsByService(serviceId, network, limit);
+      const fetchedJobs = await fetchJobsByService(serviceId, network, limit);
+      const cachedJobs = queryClient.getQueryData<JobCall[]>(queryKey);
+      return mergeFetchedWithOptimisticJobs(fetchedJobs, cachedJobs);
     },
     enabled: enabled && serviceId !== undefined,
-    staleTime: 10_000, // 10 seconds - jobs can change frequently
-    refetchInterval: 15_000, // Refresh every 15 seconds
+    staleTime: 10_000,
+    refetchInterval: (query) => {
+      const jobs = query.state.data as JobCall[] | undefined;
+      return jobs?.some(isOptimisticJob)
+        ? FAST_JOBS_REFETCH_INTERVAL_MS
+        : DEFAULT_JOBS_REFETCH_INTERVAL_MS;
+    },
   });
 };
 
@@ -170,7 +243,7 @@ export const useJobsByService = (
  * Hook to fetch results for a specific job call.
  */
 export const useJobResults = (
-  callId: bigint | undefined,
+  jobCallId: string | undefined,
   options?: {
     network?: EnvioNetwork;
     enabled?: boolean;
@@ -179,12 +252,12 @@ export const useJobResults = (
   const { network, enabled = true } = options ?? {};
 
   return useQuery({
-    queryKey: ['jobs', 'results', callId?.toString(), network],
+    queryKey: ['jobs', 'results', jobCallId, network],
     queryFn: async () => {
-      if (callId === undefined) return [];
-      return fetchJobResults(callId, network);
+      if (jobCallId === undefined) return [];
+      return fetchJobResults(jobCallId, network);
     },
-    enabled: enabled && callId !== undefined,
+    enabled: enabled && jobCallId !== undefined,
     staleTime: 10_000,
   });
 };

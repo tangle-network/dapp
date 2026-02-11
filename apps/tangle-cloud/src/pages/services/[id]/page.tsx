@@ -2,8 +2,8 @@
  * Service detail page - view service info and submit jobs.
  */
 
-import { FC, useMemo } from 'react';
-import { useParams, useNavigate } from 'react-router';
+import { FC, useMemo, useState } from 'react';
+import { useParams, useNavigate, Link } from 'react-router';
 import { useAccount } from 'wagmi';
 import {
   Button,
@@ -13,27 +13,41 @@ import {
   SkeletonLoader,
   EMPTY_VALUE_PLACEHOLDER,
 } from '@tangle-network/ui-components';
-import { ArrowLeft } from '@tangle-network/icons';
 import {
-  useServicesByOwner,
-  useServicesByOperator,
+  ArrowLeft,
+  ExternalLinkLine,
+  ShieldKeyholeLineIcon,
+} from '@tangle-network/icons';
+import {
+  useServiceById,
   useBlueprintDetails,
   useJobsByService,
 } from '@tangle-network/tangle-shared-ui/data/graphql';
+import {
+  useServiceDetails,
+  useIsPermittedCaller,
+  useIsServiceOperator,
+  MembershipModel,
+  useBlueprintJobs,
+} from '@tangle-network/tangle-shared-ui/data/services';
+import { addressesEqual } from '@tangle-network/tangle-shared-ui/utils/safeParseAddress';
 import useEvmOperatorInfo from '../../../hooks/useEvmOperatorInfo';
 import { twMerge } from 'tailwind-merge';
 import { JobSubmissionForm } from './JobSubmissionForm';
 import { JobHistoryTable } from './JobHistoryTable';
+import ServiceOnChainDetails from './ServiceOnChainDetails';
+import FundServiceModal from './FundServiceModal';
+import OperatorMembershipPanel from './OperatorMembershipPanel';
+import OperatorExitPanel from './OperatorExitPanel';
+import { PagePath } from '../../../types';
 
 const ServiceDetailPage: FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const { address } = useAccount();
-  const {
-    isOperator,
-    operatorAddress,
-    isLoading: isLoadingOperatorInfo,
-  } = useEvmOperatorInfo();
+  const { isOperator, operatorAddress } = useEvmOperatorInfo();
+
+  const [isFundModalOpen, setIsFundModalOpen] = useState(false);
 
   const serviceId = useMemo(() => {
     if (!id) return undefined;
@@ -44,32 +58,13 @@ const ServiceDetailPage: FC = () => {
     }
   }, [id]);
 
-  // Fetch services owned by user
-  const { data: ownedServices, isLoading: isLoadingOwned } =
-    useServicesByOwner(address);
+  // Fetch service by ID (visible to all users)
+  const { data: service, isLoading: isLoadingServices } =
+    useServiceById(serviceId);
 
-  // Fetch services where user is an operator
-  const { data: operatorServices, isLoading: isLoadingOperator } =
-    useServicesByOperator(
-      isOperator ? (operatorAddress ?? undefined) : undefined,
-    );
-
-  const isLoadingServices =
-    isLoadingOwned || isLoadingOperator || isLoadingOperatorInfo;
-
-  const service = useMemo(() => {
-    if (serviceId === undefined) return null;
-
-    // Check owned services first
-    const owned = ownedServices?.find((s) => s.serviceId === serviceId);
-    if (owned) return owned;
-
-    // Then check operator services
-    const operated = operatorServices?.find((s) => s.serviceId === serviceId);
-    if (operated) return operated;
-
-    return null;
-  }, [ownedServices, operatorServices, serviceId]);
+  // Fetch on-chain service details to get owner
+  const { data: onChainDetails, isLoading: isLoadingOnChainDetails } =
+    useServiceDetails(serviceId);
 
   // Fetch blueprint details for job definitions
   const { result: blueprintResult, isLoading: isLoadingBlueprint } =
@@ -77,6 +72,37 @@ const ServiceDetailPage: FC = () => {
 
   // Fetch job history
   const { data: jobs, isLoading: isLoadingJobs } = useJobsByService(serviceId);
+
+  // Fetch blueprint job definitions (for schema-based decoding/encoding)
+  const { data: jobDefinitions } = useBlueprintJobs(
+    service?.blueprintId !== undefined
+      ? BigInt(service.blueprintId)
+      : undefined,
+  );
+
+  // Check if user is permitted to submit jobs
+  const { data: isPermittedCaller, isLoading: isLoadingPermission } =
+    useIsPermittedCaller(serviceId, address);
+
+  // Check if current user is a service operator
+  const { data: isServiceOperator } = useIsServiceOperator(
+    serviceId,
+    operatorAddress ?? undefined,
+    { enabled: !!operatorAddress && isOperator },
+  );
+
+  // Determine if user is the owner
+  const isOwner = useMemo(() => {
+    if (!address || !onChainDetails?.owner) return false;
+    return addressesEqual(onChainDetails.owner, address);
+  }, [address, onChainDetails?.owner]);
+
+  // User can submit jobs if they are the owner or a permitted caller
+  const canSubmitJobs = isOwner || isPermittedCaller;
+
+  // Check if this is a dynamic membership service
+  const isDynamicService =
+    onChainDetails?.membership === MembershipModel.Dynamic;
 
   const isLoading = isLoadingServices || isLoadingBlueprint;
 
@@ -106,7 +132,7 @@ const ServiceDetailPage: FC = () => {
       <div className="text-center py-12">
         <Typography variant="h4">Service Not Found</Typography>
         <Typography variant="body1" className="text-mono-100 mt-2">
-          This service may not exist or you may not have access to it.
+          This service does not exist or may have been removed.
         </Typography>
         <Button onClick={() => navigate('/instances')} className="mt-4">
           Back to Instances
@@ -159,7 +185,25 @@ const ServiceDetailPage: FC = () => {
           />
           <InfoItem
             label="Blueprint"
-            value={blueprintResult?.details.name ?? EMPTY_VALUE_PLACEHOLDER}
+            value={
+              blueprintResult?.details.name ? (
+                <Link
+                  to={PagePath.BLUEPRINTS_DETAILS.replace(
+                    ':id',
+                    service.blueprintId.toString(),
+                  )}
+                  className="inline-flex items-center gap-1 text-blue-50 hover:text-blue-40 transition-colors"
+                >
+                  <Typography variant="body1" fw="semibold">
+                    {blueprintResult.details.name}
+                  </Typography>
+
+                  <ExternalLinkLine className="w-4 h-4" />
+                </Link>
+              ) : (
+                EMPTY_VALUE_PLACEHOLDER
+              )
+            }
           />
           <InfoItem
             label="Operators"
@@ -180,16 +224,55 @@ const ServiceDetailPage: FC = () => {
         </div>
       </Card>
 
+      {/* On-Chain Service Details */}
+      <ServiceOnChainDetails
+        serviceId={serviceId}
+        blueprintId={
+          service.blueprintId !== undefined
+            ? BigInt(service.blueprintId)
+            : undefined
+        }
+        onFundClick={() => setIsFundModalOpen(true)}
+      />
+
+      {/* Operator Membership Panel - Show for Dynamic services */}
+      {isDynamicService && service.status === 'ACTIVE' && (
+        <OperatorMembershipPanel
+          serviceId={serviceId}
+          isCurrentUserOperator={isServiceOperator ?? false}
+          serviceDetails={onChainDetails}
+        />
+      )}
+
+      {/* Operator Exit Panel - Show for operators in Dynamic services */}
+      {isDynamicService &&
+        service.status === 'ACTIVE' &&
+        isServiceOperator &&
+        operatorAddress && (
+          <OperatorExitPanel
+            serviceId={serviceId}
+            operatorAddress={operatorAddress}
+            isOwner={isOwner}
+          />
+        )}
+
       {/* Job Submission */}
       {service.status === 'ACTIVE' && blueprintResult?.details && (
         <Card variant={CardVariant.GLASS} className="p-6">
           <Typography variant="h5" fw="bold" className="mb-4">
             Submit Job
           </Typography>
-          <JobSubmissionForm
-            serviceId={serviceId}
-            blueprint={blueprintResult.details}
-          />
+
+          {isLoadingPermission || isLoadingOnChainDetails ? (
+            <SkeletonLoader className="h-32" />
+          ) : canSubmitJobs ? (
+            <JobSubmissionForm
+              serviceId={serviceId}
+              blueprint={blueprintResult.details}
+            />
+          ) : (
+            <PermissionDeniedMessage />
+          )}
         </Card>
       )}
 
@@ -198,8 +281,20 @@ const ServiceDetailPage: FC = () => {
         <Typography variant="h5" fw="bold" className="mb-4">
           Job History
         </Typography>
-        <JobHistoryTable jobs={jobs ?? []} isLoading={isLoadingJobs} />
+        <JobHistoryTable
+          jobs={jobs ?? []}
+          isLoading={isLoadingJobs}
+          jobDefinitions={jobDefinitions}
+        />
       </Card>
+
+      {/* Fund Service Modal */}
+      {isFundModalOpen && (
+        <FundServiceModal
+          serviceId={serviceId}
+          onClose={() => setIsFundModalOpen(false)}
+        />
+      )}
     </div>
   );
 };
@@ -219,6 +314,24 @@ const InfoItem: FC<{ label: string; value: React.ReactNode }> = ({
     ) : (
       value
     )}
+  </div>
+);
+
+const PermissionDeniedMessage: FC = () => (
+  <div className="flex flex-col items-center justify-center py-8 text-center">
+    <div className="p-4 rounded-full bg-yellow-500/20 mb-4">
+      <ShieldKeyholeLineIcon className="w-8 h-8 text-yellow-400" />
+    </div>
+    <Typography variant="h5" fw="semibold" className="mb-2">
+      Permission Required
+    </Typography>
+    <Typography variant="body2" className="text-center text-mono-100 max-w-md">
+      You are not authorized to submit jobs to this service. Only the service
+      owner or addresses added as permitted callers can submit jobs.
+    </Typography>
+    <Typography variant="body3" className="text-mono-120 mt-4">
+      Contact the service owner to request access.
+    </Typography>
   </div>
 );
 

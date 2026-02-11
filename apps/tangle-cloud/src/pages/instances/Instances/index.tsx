@@ -3,6 +3,7 @@ import {
   PlayFillIcon,
   TimeLineIcon,
   CheckboxCircleLine,
+  GlobalLine,
 } from '@tangle-network/icons';
 import {
   FC,
@@ -16,6 +17,7 @@ import { TabContent } from '@tangle-network/ui-components';
 import { RunningInstanceTable } from './RunningInstanceTable';
 import { PendingInstanceTable } from './PendingInstanceTable';
 import { ApprovedInstanceTable } from './ApprovedInstanceTable';
+import { AllServicesTable } from './AllServicesTable';
 import useEvmOperatorInfo from '../../../hooks/useEvmOperatorInfo';
 import useOperatorStats from '../../../data/operators/useOperatorStats';
 
@@ -23,12 +25,14 @@ enum InstancesTab {
   RUNNING_INSTANCES = 'Running',
   PENDING_INSTANCES = 'Pending',
   APPROVED_INSTANCES = 'Approved',
+  JOINABLE_SERVICES = 'Joinable',
 }
 
 const InstancesTabIcon: ReactElement[] = [
-  <PlayFillIcon viewBox="0 0 16 16" className="w-4 h-4 !fill-blue-50" />,
+  <PlayFillIcon className="w-4 h-4 !fill-blue-50" />,
   <TimeLineIcon className="w-4 h-4 !fill-yellow-100" />,
   <CheckboxCircleLine className="w-4 h-4 !fill-green-50" />,
+  <GlobalLine className="w-4 h-4 !fill-purple-50" />,
 ] as const;
 
 interface InstancesTabsProps {
@@ -55,11 +59,11 @@ export const InstancesTabs: FC<InstancesTabsProps> = ({
 
   const availableTabs = shouldShowOperatorTabs
     ? Object.values(InstancesTab)
-    : [InstancesTab.RUNNING_INSTANCES];
+    : [InstancesTab.RUNNING_INSTANCES, InstancesTab.JOINABLE_SERVICES];
 
   const availableIcons = shouldShowOperatorTabs
     ? InstancesTabIcon
-    : [InstancesTabIcon[0]];
+    : [InstancesTabIcon[0], InstancesTabIcon[3]];
 
   const [selectedTab, setSelectedTab] = useState(
     InstancesTab.RUNNING_INSTANCES,
@@ -107,6 +111,13 @@ export const InstancesTabs: FC<InstancesTabsProps> = ({
           />
         </TabContent>
       )}
+
+      <TabContent
+        value={InstancesTab.JOINABLE_SERVICES}
+        className="flex justify-center mx-auto"
+      >
+        <AllServicesTable />
+      </TabContent>
     </TableAndChartTabs>
   );
 };

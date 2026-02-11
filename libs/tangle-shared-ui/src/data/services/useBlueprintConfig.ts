@@ -12,8 +12,9 @@ import { MembershipModel } from './useServiceRequestDetails';
 
 // Pricing model enum matching contract
 export enum PricingModel {
-  Fixed = 0,
-  Dynamic = 1,
+  PayOnce = 0,
+  Subscription = 1,
+  EventDriven = 2,
 }
 
 // Blueprint configuration from contract
@@ -116,6 +117,22 @@ export const getMembershipModelLabel = (
       return 'All operators must approve';
     case MembershipModel.Dynamic:
       return 'Minimum required approvals';
+    default:
+      return 'Unknown';
+  }
+};
+
+/**
+ * Get a human-readable label for a pricing model.
+ */
+export const getPricingModelLabel = (pricing: PricingModel): string => {
+  switch (pricing) {
+    case PricingModel.PayOnce:
+      return 'Pay Once';
+    case PricingModel.Subscription:
+      return 'Subscription';
+    case PricingModel.EventDriven:
+      return 'Per Job';
     default:
       return 'Unknown';
   }
