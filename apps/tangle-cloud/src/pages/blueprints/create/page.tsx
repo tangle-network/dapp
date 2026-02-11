@@ -1011,8 +1011,7 @@ const JobsStep: FC<JobsStepProps> = ({
               </div>
 
               <Typography variant="body3" className="text-mono-100">
-                Use an array of fields. Example:
-                {' '}
+                Use an array of fields. Example:{' '}
                 <code className="font-mono text-xs">
                   {`[{"kind":"Uint256","name":"value"}]`}
                 </code>

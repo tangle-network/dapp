@@ -10,4 +10,8 @@ export {
 export { parseSchema } from './schemaParser';
 export { encodePayload } from './payloadEncoder';
 export { decodePayload, formatDecodedValue } from './payloadDecoder';
-export { parseSchemaJson, encodeSchemaToHex, encodeSchemaFromJson } from './schemaJson';
+export {
+  parseSchemaJson,
+  encodeSchemaToHex,
+  encodeSchemaFromJson,
+} from './schemaJson';

@@ -47,7 +47,10 @@ const ensure = (condition: boolean, message: string): void => {
   }
 };
 
-const resolveKind = (kind: JsonSchemaNode['kind'], path: string): BlueprintFieldKind => {
+const resolveKind = (
+  kind: JsonSchemaNode['kind'],
+  path: string,
+): BlueprintFieldKind => {
   if (typeof kind === 'number') {
     ensure(
       Number.isInteger(kind) &&
@@ -58,9 +61,14 @@ const resolveKind = (kind: JsonSchemaNode['kind'], path: string): BlueprintField
     return kind as BlueprintFieldKind;
   }
 
-  ensure(typeof kind === 'string' && kind.length > 0, `${path}.kind is required`);
+  ensure(
+    typeof kind === 'string' && kind.length > 0,
+    `${path}.kind is required`,
+  );
 
-  const direct = (BlueprintFieldKind as unknown as Record<string, number>)[kind];
+  const direct = (BlueprintFieldKind as unknown as Record<string, number>)[
+    kind
+  ];
   if (typeof direct === 'number') {
     return direct as BlueprintFieldKind;
   }
@@ -86,7 +94,9 @@ const parseNode = (node: unknown, path: string): SchemaField => {
   const rawChildren = raw.children ?? [];
 
   ensure(
-    Number.isInteger(arrayLength) && arrayLength >= 0 && arrayLength <= MAX_UINT16,
+    Number.isInteger(arrayLength) &&
+      arrayLength >= 0 &&
+      arrayLength <= MAX_UINT16,
     `${path}.arrayLength must be an integer between 0 and ${MAX_UINT16}`,
   );
   ensure(Array.isArray(rawChildren), `${path}.children must be an array`);
@@ -99,7 +109,9 @@ const parseNode = (node: unknown, path: string): SchemaField => {
     kind,
     name,
     arrayLength,
-    children: rawChildren.map((child, i) => parseNode(child, `${path}.children[${i}]`)),
+    children: rawChildren.map((child, i) =>
+      parseNode(child, `${path}.children[${i}]`),
+    ),
   };
 };
 
@@ -125,7 +137,10 @@ const writeSchemaCompactLength = (out: number[], value: number): void => {
     out.push(0xc0 | (value >> 16), (value >> 8) & 0xff, value & 0xff);
     return;
   }
-  ensure(value <= 0x0fffffff, 'Compact length exceeds 4-byte schema encoding limit');
+  ensure(
+    value <= 0x0fffffff,
+    'Compact length exceeds 4-byte schema encoding limit',
+  );
   out.push(
     0xe0 | (value >> 24),
     (value >> 16) & 0xff,
@@ -148,7 +163,9 @@ const writeField = (out: number[], field: SchemaField, path: string): void => {
   writeSchemaCompactLength(out, nameBytes.length);
   out.push(...nameBytes);
 
-  field.children.forEach((child, i) => writeField(out, child, `${path}.children[${i}]`));
+  field.children.forEach((child, i) =>
+    writeField(out, child, `${path}.children[${i}]`),
+  );
 };
 
 const bytesToHex = (bytes: Uint8Array): `0x${string}` =>
@@ -167,7 +184,10 @@ export const parseSchemaJson = (schemaJson: string): SchemaField[] => {
     );
   }
 
-  ensure(Array.isArray(parsed), 'Schema root must be an array of field definitions');
+  ensure(
+    Array.isArray(parsed),
+    'Schema root must be an array of field definitions',
+  );
   const parsedArray = parsed as unknown[];
   ensure(
     parsedArray.length <= MAX_UINT16,
