@@ -163,6 +163,15 @@ export {
   type BlueprintSourceKind,
 } from './useBlueprintManagement';
 
+// Developer Payments (exact payout ledger)
+export {
+  useDeveloperPayments,
+  type DeveloperPaymentEvent,
+  type DeveloperTokenTotal,
+  type DeveloperBlueprintRollup,
+  type DeveloperPaymentsData,
+} from './useDeveloperPayments';
+
 // Developer Earnings
 export {
   useDeveloperEarnings,

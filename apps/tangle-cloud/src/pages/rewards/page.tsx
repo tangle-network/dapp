@@ -18,13 +18,18 @@ import {
   CheckBox,
   Typography,
   SkeletonLoader,
-  EMPTY_VALUE_PLACEHOLDER,
+  Avatar,
 } from '@tangle-network/ui-components';
+import { BN } from '@polkadot/util';
+import { TokenIcon } from '@tangle-network/icons';
+import {
+  AmountFormatStyle,
+  formatDisplayAmount,
+} from '@tangle-network/ui-components/utils/formatDisplayAmount';
 import {
   usePendingRewardsByToken,
   useRewardHistory,
   useClaimRewardsTx,
-  formatRewardAmount,
   type PendingRewardsByTokenEntry,
   type RewardClaimEntry,
 } from '@tangle-network/tangle-shared-ui/data/graphql';
@@ -32,11 +37,17 @@ import { useTokenMetadata } from '@tangle-network/tangle-shared-ui/data/services
 import ErrorMessage from '@tangle-network/tangle-shared-ui/components/ErrorMessage';
 import { chainsConfig } from '@tangle-network/dapp-config/chains';
 import {
-  getEnvioEndpoint,
+  TANGLE_MAINNET_EVM_EXPLORER_URL,
+  TANGLE_TESTNET_EVM_EXPLORER_URL,
+} from '@tangle-network/dapp-config/constants';
+import { getCachedTokenMetadata } from '@tangle-network/dapp-config/tokenMetadata';
+import {
   getEnvioNetworkFromChainId,
   type EnvioNetwork,
 } from '@tangle-network/tangle-shared-ui/utils/executeEnvioGraphQL';
+import EVMChainId from '@tangle-network/dapp-types/EVMChainId';
 import { Address, Hash, zeroAddress } from 'viem';
+import pollWithBackoff from '../../utils/pollWithBackoff';
 
 const getErrorMessage = (error: unknown): string => {
   return error instanceof Error ? error.message : 'Failed to load rewards data';
@@ -44,6 +55,19 @@ const getErrorMessage = (error: unknown): string => {
 
 const shortenAddress = (address: string): string => {
   return `${address.slice(0, 6)}...${address.slice(-4)}`;
+};
+
+const isFallbackSymbol = (symbol: string): boolean =>
+  symbol.startsWith('0x') || symbol.includes('...');
+
+const resolveTokenIconSymbol = (
+  chainId: number,
+  symbol: string,
+  address: Address,
+): string | null => {
+  const cached = getCachedTokenMetadata(chainId, address);
+  const candidate = isFallbackSymbol(symbol) ? (cached?.symbol ?? symbol) : symbol;
+  return isFallbackSymbol(candidate) ? null : candidate;
 };
 
 const inferNetworkFromEndpoint = (
@@ -79,45 +103,63 @@ const inferNetworkFromEndpoint = (
   return null;
 };
 
-interface ClaimFeedback {
-  modeLabel: string;
-  details: string;
-  txHash: Hash;
-}
+const getActiveChainConfig = (chainId: number) =>
+  chainsConfig[chainId] ??
+  Object.values(chainsConfig).find((chain) => chain.id === chainId);
+
+const getTxExplorerUrl = (chainId: number): string | undefined => {
+  const chainExplorerUrl = getActiveChainConfig(chainId)?.blockExplorers?.default?.url;
+  if (chainExplorerUrl) {
+    return chainExplorerUrl;
+  }
+
+  if (chainId === EVMChainId.TangleMainnetEVM) {
+    return TANGLE_MAINNET_EVM_EXPLORER_URL;
+  }
+
+  if (chainId === EVMChainId.TangleTestnetEVM) {
+    return TANGLE_TESTNET_EVM_EXPLORER_URL;
+  }
+
+  return undefined;
+};
+
+type ActiveClaimAction =
+  | { type: 'token'; token: Address }
+  | { type: 'selected' }
+  | { type: 'all' }
+  | null;
 
 const RewardsPage: FC = () => {
   const { isConnected } = useAccount();
   const chainId = useChainId();
-  const activeChain = chainsConfig[chainId];
-  const nativeSymbol = activeChain?.nativeCurrency?.symbol ?? 'ETH';
+  const activeChain = getActiveChainConfig(chainId);
   const resolvedNetwork = getEnvioNetworkFromChainId(chainId);
   const configuredEndpoint = import.meta.env.VITE_GRAPHQL_ENDPOINT as
     | string
     | undefined;
-  const indexerEndpoint = getEnvioEndpoint(resolvedNetwork);
-  const endpointNetwork = inferNetworkFromEndpoint(
-    configuredEndpoint ?? indexerEndpoint,
-  );
+  const endpointNetwork = inferNetworkFromEndpoint(configuredEndpoint);
   const hasLikelyEndpointMismatch =
     !!configuredEndpoint &&
     endpointNetwork !== null &&
     endpointNetwork !== resolvedNetwork;
-  const txExplorerUrl = activeChain?.blockExplorers?.default?.url;
+  const txExplorerUrl = getTxExplorerUrl(chainId);
 
   const {
     data: pendingRewards,
     isLoading: isLoadingPending,
     error: pendingRewardsError,
+    refetch: refetchPendingRewards,
   } = usePendingRewardsByToken();
 
   const {
     data: rewardHistory,
     isLoading: isLoadingHistory,
     error: rewardHistoryError,
+    refetch: refetchRewardHistory,
   } = useRewardHistory({ network: resolvedNetwork });
 
   const {
-    claimNative,
     claimToken,
     claimBatch,
     claimAllTokens,
@@ -129,33 +171,30 @@ const RewardsPage: FC = () => {
   const [selectedTokenSet, setSelectedTokenSet] = useState<Set<string>>(
     new Set(),
   );
-  const [claimFeedback, setClaimFeedback] = useState<ClaimFeedback | null>(
+  const [successfulClaimHash, setSuccessfulClaimHash] = useState<Hash | null>(
     null,
   );
+  const [activeClaimAction, setActiveClaimAction] =
+    useState<ActiveClaimAction>(null);
 
   const isClaiming = claimStatus === 'pending';
+  const activeClaimToken =
+    isClaiming && activeClaimAction?.type === 'token'
+      ? activeClaimAction.token
+      : null;
+  const isBulkClaiming =
+    isClaiming &&
+    (activeClaimAction?.type === 'selected' || activeClaimAction?.type === 'all');
   const isClaimSuccess = claimStatus === 'success';
   const pendingRows = useMemo(
     () => pendingRewards?.rewards ?? [],
     [pendingRewards],
   );
 
-  const pendingByToken = useMemo(() => {
-    return new Map(
-      pendingRows.map((row) => [row.token.toLowerCase(), row.pending]),
-    );
-  }, [pendingRows]);
-
   const selectedTokens = useMemo(
     () => pendingRows.filter((row) => selectedTokenSet.has(row.token.toLowerCase())),
     [pendingRows, selectedTokenSet],
   );
-  const selectedTotal = useMemo(
-    () => selectedTokens.reduce((total, row) => total + row.pending, BigInt(0)),
-    [selectedTokens],
-  );
-  const nativePending = pendingByToken.get(zeroAddress) ?? BigInt(0);
-
   useEffect(() => {
     if (pendingRows.length === 0) {
       setSelectedTokenSet(new Set());
@@ -196,66 +235,99 @@ const RewardsPage: FC = () => {
 
   const executeClaimAction = useCallback(
     async (
-      modeLabel: string,
-      details: string,
+      activeAction: Exclude<ActiveClaimAction, null>,
       claimFn: () => Promise<Hash | null>,
     ) => {
-      setClaimFeedback(null);
-      const hash = await claimFn();
-      if (hash) {
-        setClaimFeedback({
-          modeLabel,
-          details,
-          txHash: hash,
-        });
+      setSuccessfulClaimHash(null);
+      setActiveClaimAction(activeAction);
+
+      try {
+        const hash = await claimFn();
+        if (hash) {
+          setSuccessfulClaimHash(hash);
+        }
+      } finally {
+        setActiveClaimAction(null);
       }
     },
     [],
   );
 
-  const handleClaimNative = useCallback(async () => {
-    await executeClaimAction(
-      'Claim Native',
-      `Claimed ${formatRewardAmount(nativePending)} ${nativeSymbol}`,
-      claimNative,
-    );
-  }, [claimNative, executeClaimAction, nativePending, nativeSymbol]);
-
   const handleClaimToken = useCallback(
     async (token: Address) => {
-      const pending = pendingByToken.get(token.toLowerCase()) ?? BigInt(0);
       await executeClaimAction(
-        'Claim Token',
-        `Claimed ${formatRewardAmount(pending)} from ${shortenAddress(token)}`,
+        { type: 'token', token },
         () => claimToken(token),
       );
     },
-    [claimToken, executeClaimAction, pendingByToken],
+    [claimToken, executeClaimAction],
   );
 
   const handleClaimSelected = useCallback(async () => {
     const tokens = selectedTokens.map((row) => row.token);
     await executeClaimAction(
-      'Claim Selected',
-      `Claimed ${formatRewardAmount(selectedTotal)} across ${tokens.length} selected token(s)`,
+      { type: 'selected' },
       () => claimBatch(tokens),
     );
-  }, [claimBatch, executeClaimAction, selectedTokens, selectedTotal]);
+  }, [claimBatch, executeClaimAction, selectedTokens]);
 
   const handleClaimAll = useCallback(async () => {
-    const tokenCount = pendingRows.length;
-    const totalPending = pendingRewards?.totalPending ?? BigInt(0);
     await executeClaimAction(
-      'Claim All Tokens',
-      `Claimed ${formatRewardAmount(totalPending)} across ${tokenCount} token(s)`,
+      { type: 'all' },
       claimAllTokens,
     );
-  }, [claimAllTokens, executeClaimAction, pendingRewards, pendingRows.length]);
+  }, [claimAllTokens, executeClaimAction]);
 
   const handleResetClaimState = useCallback(() => {
-    setClaimFeedback(null);
+    setSuccessfulClaimHash(null);
     reset();
   }, [reset]);
+
+  useEffect(() => {
+    if (!isClaimSuccess || !successfulClaimHash) {
+      return;
+    }
+
+    let isCancelled = false;
+    const targetTxHash = successfulClaimHash.toLowerCase();
+
+    const syncClaimData = async () => {
+      await refetchPendingRewards();
+
+      await pollWithBackoff(
+        async () => {
+          if (isCancelled) {
+            return true;
+          }
+
+          const claimHistoryResult = await refetchRewardHistory();
+          return (claimHistoryResult.data ?? []).some(
+            (entry) => entry.txHash.toLowerCase() === targetTxHash,
+          );
+        },
+        {
+          initialDelay: 1500,
+          maxDelay: 6000,
+          maxTotalTime: 45000,
+        },
+      );
+
+      if (!isCancelled) {
+        await Promise.all([refetchPendingRewards(), refetchRewardHistory()]);
+      }
+    };
+
+    void syncClaimData();
+
+    return () => {
+      isCancelled = true;
+    };
+  }, [
+    isClaimSuccess,
+    successfulClaimHash,
+    refetchPendingRewards,
+    refetchRewardHistory,
+  ]);
 
   if (!isConnected) {
     return (
@@ -304,60 +376,10 @@ const RewardsPage: FC = () => {
         </Card>
       )}
 
-      {/* Rewards overview */}
-      <Card variant={CardVariant.GLASS} className="p-6">
-        <div className="flex items-center justify-between mb-4">
-          <Typography variant="h5" fw="bold">
-            Rewards Overview
-          </Typography>
-
-          {(isClaimSuccess || claimError) && (
-            <Button variant="utility" size="sm" onClick={handleResetClaimState}>
-              Reset
-            </Button>
-          )}
-        </div>
-
-        {isLoadingPending ? (
-          <SkeletonLoader className="h-24" />
-        ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div>
-              <Typography variant="body2" className="text-mono-100 mb-1">
-                Total Pending
-              </Typography>
-              <Typography variant="h3" fw="bold">
-                {pendingRewards !== undefined
-                  ? formatRewardAmount(pendingRewards.totalPending)
-                  : EMPTY_VALUE_PLACEHOLDER}{' '}
-                <span className="text-mono-100 text-lg">
-                  across {pendingRows.length} token(s)
-                </span>
-              </Typography>
-            </div>
-
-            <div className="text-right">
-              <Typography variant="body2" className="text-mono-100">
-                Active indexer endpoint
-              </Typography>
-              <Typography variant="body2" className="font-mono">
-                {indexerEndpoint}
-              </Typography>
-            </div>
-          </div>
-        )}
-
-        {pendingRewardsError && (
-          <div className="mt-4">
-            <ErrorMessage>{getErrorMessage(pendingRewardsError)}</ErrorMessage>
-          </div>
-        )}
-      </Card>
-
       {/* Pending rewards by token */}
       <Card variant={CardVariant.GLASS} className="p-6">
         <Typography variant="h5" fw="bold" className="mb-4">
-          Pending Rewards by Token
+          Pending Rewards by Asset
         </Typography>
 
         {isLoadingPending ? (
@@ -368,87 +390,48 @@ const RewardsPage: FC = () => {
         ) : pendingRewardsError ? (
           <ErrorMessage>Could not load pending rewards.</ErrorMessage>
         ) : pendingRewards?.rewards.length ? (
-          <PendingRewardsTable
-            rows={pendingRewards.rewards}
-            selectedTokenSet={selectedTokenSet}
-            onToggleToken={toggleTokenSelection}
-            onClaimToken={handleClaimToken}
-            isClaiming={isClaiming}
-          />
+          <>
+            <PendingRewardsTable
+              rows={pendingRewards.rewards}
+              selectedTokenSet={selectedTokenSet}
+              onToggleToken={toggleTokenSelection}
+              onClaimToken={handleClaimToken}
+              isClaiming={isClaiming}
+              activeClaimToken={activeClaimToken}
+              addressExplorerUrl={txExplorerUrl}
+            />
+
+            <div className="mt-4 flex items-center justify-between gap-3">
+              {(isClaimSuccess || claimError) && (
+                <Button variant="utility" size="sm" onClick={handleResetClaimState}>
+                  Reset
+                </Button>
+              )}
+
+              <Button
+                className="ml-auto"
+                onClick={
+                  selectedTokens.length > 0 ? handleClaimSelected : handleClaimAll
+                }
+                variant={selectedTokens.length > 0 ? 'secondary' : 'primary'}
+                isLoading={isBulkClaiming}
+                isDisabled={isClaiming || !pendingRewards.hasRewards}
+              >
+                {selectedTokens.length > 0
+                  ? `Claim Selected Assets (${selectedTokens.length})`
+                  : 'Claim All Assets'}
+              </Button>
+            </div>
+
+            {claimError && (
+              <div className="mt-4">
+                <ErrorMessage>{getErrorMessage(claimError)}</ErrorMessage>
+              </div>
+            )}
+          </>
         ) : (
           <div className="text-center py-6 text-mono-100">
             <Typography variant="body1">No pending rewards.</Typography>
-          </div>
-        )}
-      </Card>
-
-      {/* Claim actions */}
-      <Card variant={CardVariant.GLASS} className="p-6">
-        <Typography variant="h5" fw="bold" className="mb-4">
-          Claim Actions
-        </Typography>
-
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-          <Button
-            variant="secondary"
-            onClick={handleClaimNative}
-            isLoading={isClaiming}
-            isDisabled={isClaiming || nativePending === BigInt(0)}
-          >
-            Claim Native ({nativeSymbol})
-          </Button>
-
-          <Button
-            variant="secondary"
-            onClick={handleClaimSelected}
-            isLoading={isClaiming}
-            isDisabled={isClaiming || selectedTokens.length === 0}
-          >
-            Claim Selected ({selectedTokens.length})
-          </Button>
-
-          <Button
-            onClick={handleClaimAll}
-            isLoading={isClaiming}
-            isDisabled={isClaiming || !pendingRewards?.hasRewards}
-          >
-            Claim All Tokens
-          </Button>
-        </div>
-
-        <Typography variant="body2" className="text-mono-100 mt-3">
-          Selected total:{' '}
-          {selectedTokens.length > 0
-            ? `${formatRewardAmount(selectedTotal)} across ${selectedTokens.length} token(s)`
-            : 'No tokens selected'}
-        </Typography>
-
-        {isClaimSuccess && claimFeedback && (
-          <div className="mt-4 p-3 rounded-lg bg-green-500/20 text-green-300">
-            <Typography variant="body2" fw="semibold">
-              {claimFeedback.modeLabel} succeeded
-            </Typography>
-            <Typography variant="body2">{claimFeedback.details}</Typography>
-            {txExplorerUrl ? (
-              <a
-                href={`${txExplorerUrl}/tx/${claimFeedback.txHash}`}
-                target="_blank"
-                rel="noreferrer"
-                className="underline text-green-200 body2"
-              >
-                View transaction
-              </a>
-            ) : (
-              <Typography variant="body2" className="font-mono">
-                Tx: {claimFeedback.txHash}
-              </Typography>
-            )}
-          </div>
-        )}
-
-        {claimError && (
-          <div className="mt-4">
-            <ErrorMessage>{getErrorMessage(claimError)}</ErrorMessage>
           </div>
         )}
       </Card>
@@ -485,6 +468,8 @@ interface PendingRewardsTableProps {
   onToggleToken: (token: Address) => (event: ChangeEvent<HTMLInputElement>) => void;
   onClaimToken: (token: Address) => Promise<void>;
   isClaiming: boolean;
+  activeClaimToken: Address | null;
+  addressExplorerUrl?: string;
 }
 
 const PendingRewardsTable: FC<PendingRewardsTableProps> = ({
@@ -493,6 +478,8 @@ const PendingRewardsTable: FC<PendingRewardsTableProps> = ({
   onToggleToken,
   onClaimToken,
   isClaiming,
+  activeClaimToken,
+  addressExplorerUrl,
 }) => {
   return (
     <div className="overflow-x-auto">
@@ -503,13 +490,10 @@ const PendingRewardsTable: FC<PendingRewardsTableProps> = ({
               Select
             </th>
             <th className="text-left py-3 px-4 text-mono-100 font-medium">
-              Token
+              Asset
             </th>
             <th className="text-left py-3 px-4 text-mono-100 font-medium">
-              Address
-            </th>
-            <th className="text-left py-3 px-4 text-mono-100 font-medium">
-              Pending
+              Amount
             </th>
             <th className="text-left py-3 px-4 text-mono-100 font-medium">
               Action
@@ -527,23 +511,18 @@ const PendingRewardsTable: FC<PendingRewardsTableProps> = ({
                   id={`reward-token-${row.token}`}
                   isChecked={selectedTokenSet.has(row.token.toLowerCase())}
                   onChange={onToggleToken(row.token)}
+                  isDisabled={isClaiming}
                   spacingClassName="ml-0"
                 />
               </td>
               <td className="py-3 px-4">
-                <TokenBadge token={row.token} />
+                <PendingAssetCell
+                  token={row.token}
+                  addressExplorerUrl={addressExplorerUrl}
+                />
               </td>
               <td className="py-3 px-4">
-                <Typography variant="body2" className="font-mono">
-                  {row.token === zeroAddress
-                    ? '0x0000000000000000000000000000000000000000'
-                    : row.token}
-                </Typography>
-              </td>
-              <td className="py-3 px-4">
-                <Typography variant="body2" fw="semibold">
-                  {formatRewardAmount(row.pending)}
-                </Typography>
+                <PendingRewardAmountCell token={row.token} amount={row.pending} />
               </td>
               <td className="py-3 px-4">
                 <Button
@@ -552,10 +531,12 @@ const PendingRewardsTable: FC<PendingRewardsTableProps> = ({
                   onClick={() => {
                     void onClaimToken(row.token);
                   }}
-                  isLoading={isClaiming}
+                  isLoading={
+                    activeClaimToken?.toLowerCase() === row.token.toLowerCase()
+                  }
                   isDisabled={isClaiming || row.pending === BigInt(0)}
                 >
-                  Claim Token
+                  Claim Asset
                 </Button>
               </td>
             </tr>
@@ -563,6 +544,128 @@ const PendingRewardsTable: FC<PendingRewardsTableProps> = ({
         </tbody>
       </table>
     </div>
+  );
+};
+
+const PendingAssetCell: FC<{ token: Address; addressExplorerUrl?: string }> = ({
+  token,
+  addressExplorerUrl,
+}) => {
+  const chainId = useChainId();
+  const activeChain = getActiveChainConfig(chainId);
+  const cachedMetadata = getCachedTokenMetadata(chainId, token);
+  const { data: tokenMetadata, isLoading } = useTokenMetadata(token);
+  const symbol =
+    tokenMetadata?.symbol ??
+    cachedMetadata?.symbol ??
+    (token === zeroAddress
+      ? activeChain?.nativeCurrency?.symbol ?? 'NATIVE'
+      : 'TOKEN');
+  const tokenName =
+    token === zeroAddress
+      ? null
+      : cachedMetadata &&
+          cachedMetadata.symbol.toLowerCase() === symbol.toLowerCase()
+        ? cachedMetadata.name
+        : null;
+  const iconSymbol = resolveTokenIconSymbol(chainId, symbol, token);
+  const explorerAddressUrl = addressExplorerUrl
+    ? `${addressExplorerUrl}/address/${token}`
+    : null;
+
+  return (
+    <div className="flex items-center gap-3">
+      <div className="flex items-center justify-center w-9 h-9">
+        {iconSymbol ? (
+          <TokenIcon name={iconSymbol} size="xl" />
+        ) : (
+          <Avatar size="lg" value={token} theme="ethereum" />
+        )}
+      </div>
+
+      <div className="flex flex-col min-w-0">
+        <div className="flex items-center gap-2 min-w-0">
+          <Typography variant="body2" fw="semibold" className="whitespace-nowrap">
+            {isLoading ? 'Loading...' : symbol}
+          </Typography>
+          {tokenName && (
+            <Typography
+              variant="body3"
+              className="text-mono-120 dark:text-mono-100 truncate"
+            >
+              {tokenName}
+            </Typography>
+          )}
+        </div>
+
+        {explorerAddressUrl ? (
+          <a
+            href={explorerAddressUrl}
+            target="_blank"
+            rel="noreferrer"
+            className="underline body2 font-mono text-mono-120 dark:text-mono-100 w-fit"
+          >
+            {shortenAddress(token)}
+          </a>
+        ) : (
+          <Typography variant="body2" className="font-mono text-mono-100">
+            {shortenAddress(token)}
+          </Typography>
+        )}
+      </div>
+    </div>
+  );
+};
+
+const PendingRewardAmountCell: FC<{ token: Address; amount: bigint }> = ({
+  token,
+  amount,
+}) => {
+  const chainId = useChainId();
+  const activeChain = getActiveChainConfig(chainId);
+  const cachedMetadata = getCachedTokenMetadata(chainId, token);
+  const { data: tokenMetadata } = useTokenMetadata(token);
+  const decimals =
+    tokenMetadata?.decimals ??
+    cachedMetadata?.decimals ??
+    (token === zeroAddress
+      ? activeChain?.nativeCurrency?.decimals ?? 18
+      : 18);
+
+  return (
+    <Typography variant="body2" fw="semibold">
+      {formatDisplayAmount(
+        new BN(amount.toString()),
+        decimals,
+        AmountFormatStyle.SHORT,
+      )}
+    </Typography>
+  );
+};
+
+const RewardAmountCell: FC<{ token: Address; amount: bigint }> = ({
+  token,
+  amount,
+}) => {
+  const chainId = useChainId();
+  const activeChain = getActiveChainConfig(chainId);
+  const cachedMetadata = getCachedTokenMetadata(chainId, token);
+  const { data: tokenMetadata } = useTokenMetadata(token);
+  const decimals =
+    tokenMetadata?.decimals ??
+    cachedMetadata?.decimals ??
+    (token === zeroAddress
+      ? activeChain?.nativeCurrency?.decimals ?? 18
+      : 18);
+
+  return (
+    <Typography variant="body2" fw="semibold">
+      {formatDisplayAmount(
+        new BN(amount.toString()),
+        decimals,
+        AmountFormatStyle.SHORT,
+      )}
+    </Typography>
   );
 };
 
@@ -581,7 +684,7 @@ const RewardClaimsTable: FC<RewardClaimsTableProps> = ({
         <thead>
           <tr className="border-b border-mono-60 dark:border-mono-140">
             <th className="text-left py-3 px-4 text-mono-100 font-medium">
-              Token
+              Asset
             </th>
             <th className="text-left py-3 px-4 text-mono-100 font-medium">
               Amount
@@ -604,9 +707,7 @@ const RewardClaimsTable: FC<RewardClaimsTableProps> = ({
                 <TokenBadge token={entry.token} />
               </td>
               <td className="py-3 px-4">
-                <Typography variant="body2" fw="semibold">
-                  {formatRewardAmount(entry.amount)}
-                </Typography>
+                <RewardAmountCell token={entry.token} amount={entry.amount} />
               </td>
               <td className="py-3 px-4">
                 <Typography variant="body2">
@@ -642,12 +743,9 @@ const TokenBadge: FC<{ token: Address }> = ({ token }) => {
   const symbol = tokenMetadata?.symbol ?? (token === zeroAddress ? 'NATIVE' : 'TOKEN');
 
   return (
-    <div className="flex items-center gap-2">
+    <div className="flex items-center">
       <Typography variant="body2" fw="semibold">
         {isLoading ? 'Loading...' : symbol}
-      </Typography>
-      <Typography variant="body2" className="text-mono-100">
-        {token === zeroAddress ? '(native)' : '(ERC20)'}
       </Typography>
     </div>
   );

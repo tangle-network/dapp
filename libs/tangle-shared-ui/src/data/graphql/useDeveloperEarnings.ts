@@ -1,23 +1,22 @@
 /**
- * Hooks for developer earnings data.
+ * Backward-compatible developer earnings hook built from exact payout ledger data.
  *
- * Current product state:
- * - Developer payouts are direct on-chain transfers.
- * - Exact developer payout ledger is not yet indexed for frontend queries.
- * - This hook therefore reports an explicit `unavailable` state instead of
- *   returning estimated/fabricated earnings values.
+ * This wrapper keeps the existing hook API while sourcing values from
+ * `DeveloperPayment` indexer entities.
  */
 
-import { useQuery } from '@tanstack/react-query';
-import { useAccount, useChainId } from 'wagmi';
-import { Address, formatUnits } from 'viem';
+import { useMemo } from 'react';
+import { useChainId } from 'wagmi';
+import { Address } from 'viem';
 import {
-  executeEnvioGraphQL,
   EnvioNetwork,
   getEnvioNetworkFromChainId,
 } from '../../utils/executeEnvioGraphQL';
+import {
+  useDeveloperPayments,
+  formatEarningsAmount,
+} from './useDeveloperPayments';
 
-// Retained for forward compatibility with a future exact payout ledger.
 export interface BlueprintEarnings {
   blueprintId: bigint;
   blueprintName: string;
@@ -29,7 +28,6 @@ export interface BlueprintEarnings {
   lastEarningAt: bigint | null;
 }
 
-// Retained for forward compatibility with a future exact payout ledger.
 export interface EarningEvent {
   id: string;
   blueprintId: bigint;
@@ -40,7 +38,6 @@ export interface EarningEvent {
   type: 'subscription' | 'job' | 'registration';
 }
 
-// Retained for forward compatibility with a future exact payout ledger.
 export interface DeveloperEarningsSummary {
   totalEarned: bigint;
   pendingEarnings: bigint;
@@ -71,111 +68,62 @@ export type DeveloperEarningsData =
 
 export type DeveloperEarningsState = 'available' | 'unavailable' | 'error';
 
-interface OwnedBlueprintsResponse {
-  Blueprint: Array<{
-    blueprintId: string;
-  }>;
-}
-
-const throwIfGraphQLErrors = (
-  errors: Array<{ message: string }> | undefined,
-  context: string,
-) => {
-  if (!errors || errors.length === 0) {
-    return;
-  }
-
-  const message = errors.map((error) => error.message).join('; ');
-  throw new Error(`${context}: ${message}`);
-};
-
-const fetchDeveloperEarnings = async (
-  owner: Address,
-  network: EnvioNetwork,
-): Promise<DeveloperEarningsData> => {
-  const blueprintsQuery = `
-    query GetDeveloperBlueprints($owner: String!) {
-      Blueprint(where: { owner: { _eq: $owner } }) {
-        blueprintId
-      }
-    }
-  `;
-
-  const blueprintsResult = await executeEnvioGraphQL<
-    OwnedBlueprintsResponse,
-    { owner: string }
-  >(blueprintsQuery, { owner: owner.toLowerCase() }, network);
-
-  throwIfGraphQLErrors(
-    blueprintsResult.errors,
-    'Failed to fetch developer blueprints',
-  );
-
-  const blueprintIds = (blueprintsResult.data.Blueprint ?? []).map((blueprint) =>
-    BigInt(blueprint.blueprintId),
-  );
-
-  return {
-    state: 'unavailable',
-    reason: 'not_indexed',
-    message:
-      'Exact developer payout events are not indexed yet for earnings aggregation. Showing estimates is disabled to avoid misleading financial data.',
-    owner,
-    blueprintCount: blueprintIds.length,
-    blueprintIds,
-  };
-};
-
-/**
- * Hook to fetch developer earnings with truth-first state handling.
- */
 export const useDeveloperEarnings = (options?: {
   network?: EnvioNetwork;
   enabled?: boolean;
+  limit?: number;
 }) => {
-  const { network, enabled = true } = options ?? {};
-  const { address } = useAccount();
   const chainId = useChainId();
-  const resolvedNetwork = network ?? getEnvioNetworkFromChainId(chainId);
+  const resolvedNetwork =
+    options?.network ?? getEnvioNetworkFromChainId(chainId);
+  const query = useDeveloperPayments(options);
 
-  const query = useQuery({
-    queryKey: ['developer', 'earnings', address, resolvedNetwork],
-    queryFn: async () => {
-      if (!address) {
-        throw new Error('Wallet not connected');
-      }
+  const data = useMemo<DeveloperEarningsData | undefined>(() => {
+    if (!query.data) {
+      return undefined;
+    }
 
-      return fetchDeveloperEarnings(address, resolvedNetwork);
-    },
-    enabled: enabled && !!address,
-    staleTime: 60_000, // 1 minute
-  });
+    const blueprints: BlueprintEarnings[] = query.data.blueprintRollups.map(
+      (rollup) => ({
+        blueprintId: rollup.blueprintId,
+        blueprintName: `Blueprint #${rollup.blueprintId.toString()}`,
+        totalEarned: rollup.totalPaid,
+        pendingEarnings: BigInt(0),
+        claimedEarnings: rollup.totalPaid,
+        serviceCount: rollup.serviceCount,
+        jobCount: 0,
+        lastEarningAt: rollup.lastPaidAt,
+      }),
+    );
+
+    return {
+      state: 'available',
+      summary: {
+        totalEarned: query.data.totalPayoutAmount,
+        pendingEarnings: BigInt(0),
+        claimedEarnings: query.data.totalPayoutAmount,
+        blueprintCount: blueprints.length,
+        totalServiceCount: query.data.serviceCount,
+        totalJobCount: 0,
+      },
+      blueprints,
+    };
+  }, [query.data]);
 
   const state: DeveloperEarningsState = query.error
     ? 'error'
-    : (query.data?.state ?? 'unavailable');
+    : data
+      ? 'available'
+      : 'unavailable';
 
   return {
     ...query,
+    data,
     state,
     network: resolvedNetwork,
   };
 };
 
-/**
- * Format earnings amount for display.
- */
-export const formatEarningsAmount = (amount: bigint, decimals = 18): string => {
-  const formatted = formatUnits(amount, decimals);
-  const num = parseFloat(formatted);
-  if (num === 0) return '0';
-  if (num < 0.0001) return '< 0.0001';
-  if (num >= 1_000_000) return `${(num / 1_000_000).toFixed(2)}M`;
-  if (num >= 1_000) return `${(num / 1_000).toFixed(2)}K`;
-  return num.toLocaleString(undefined, {
-    maximumFractionDigits: 4,
-    minimumFractionDigits: 0,
-  });
-};
+export { formatEarningsAmount };
 
 export default useDeveloperEarnings;

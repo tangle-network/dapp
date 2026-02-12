@@ -4,21 +4,11 @@
 
 import { useCallback, useMemo, useState } from 'react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
-import {
-  usePublicClient,
-  useWalletClient,
-  useChainId,
-  useAccount,
-} from 'wagmi';
-import {
-  Address,
-  encodeFunctionData,
-  formatUnits,
-  Hash,
-  zeroAddress,
-} from 'viem';
+import { usePublicClient, useChainId, useAccount } from 'wagmi';
+import { Address, formatUnits, Hash, zeroAddress } from 'viem';
 import { getContractsByChainId } from '@tangle-network/dapp-config/contracts';
 import TANGLE_ABI from '../../abi/tangle';
+import useContractWrite, { TxStatus } from '../../hooks/useContractWrite';
 import {
   executeEnvioGraphQL,
   EnvioNetwork,
@@ -343,6 +333,27 @@ export interface UseClaimRewardsTxReturn {
   reset: () => void;
 }
 
+type ClaimExecutionMode = 'native' | 'token' | 'batch' | 'all';
+
+interface ClaimExecutionContext {
+  mode: ClaimExecutionMode;
+  tokenOrTokens?: Address | Address[];
+}
+
+const mapTxStatusToClaimStatus = (status: TxStatus): ClaimRewardsStatus => {
+  switch (status) {
+    case TxStatus.PROCESSING:
+      return 'pending';
+    case TxStatus.COMPLETE:
+      return 'success';
+    case TxStatus.ERROR:
+      return 'error';
+    case TxStatus.NOT_YET_INITIATED:
+    default:
+      return 'idle';
+  }
+};
+
 /**
  * Hook to claim pending rewards.
  *
@@ -358,19 +369,11 @@ export interface UseClaimRewardsTxReturn {
  * ```
  */
 export const useClaimRewardsTx = (): UseClaimRewardsTxReturn => {
-  const [status, setStatus] = useState<ClaimRewardsStatus>('idle');
-  const [error, setError] = useState<Error | null>(null);
+  const [fallbackError, setFallbackError] = useState<Error | null>(null);
 
   const chainId = useChainId();
   const queryClient = useQueryClient();
-  const publicClient = usePublicClient();
-  const { data: walletClient } = useWalletClient();
   const contracts = useMemo(() => getContracts(chainId), [chainId]);
-
-  const reset = useCallback(() => {
-    setStatus('idle');
-    setError(null);
-  }, []);
 
   const invalidateRewardsQueries = useCallback(async () => {
     await Promise.all([
@@ -380,78 +383,114 @@ export const useClaimRewardsTx = (): UseClaimRewardsTxReturn => {
     ]);
   }, [queryClient]);
 
+  const claimTx = useContractWrite(
+    TANGLE_ABI,
+    async (context: ClaimExecutionContext, _activeAddress) => {
+      if (!contracts) {
+        return null;
+      }
+
+      if (context.mode === 'token') {
+        const token = context.tokenOrTokens as Address | undefined;
+        if (!token) {
+          throw new Error('Token address is required for token claim');
+        }
+
+        return {
+          address: contracts.tangle,
+          abi: TANGLE_ABI,
+          functionName: 'claimRewards' as const,
+          args: [token] as const,
+        };
+      }
+
+      if (context.mode === 'batch') {
+        const tokens = context.tokenOrTokens as Address[] | undefined;
+        if (!tokens || tokens.length === 0) {
+          throw new Error('At least one token is required for batch claim');
+        }
+
+        return {
+          address: contracts.tangle,
+          abi: TANGLE_ABI,
+          functionName: 'claimRewardsBatch' as const,
+          args: [tokens] as const,
+        };
+      }
+
+      if (context.mode === 'all') {
+        return {
+          address: contracts.tangle,
+          abi: TANGLE_ABI,
+          functionName: 'claimRewardsAll' as const,
+          args: [] as const,
+        };
+      }
+
+      return {
+        address: contracts.tangle,
+        abi: TANGLE_ABI,
+        functionName: 'claimRewards' as const,
+        args: [] as const,
+      };
+    },
+    {
+      txName: 'claim rewards',
+      getSuccessMessage: (context) => {
+        if (context.mode === 'token') {
+          return 'Successfully claimed rewards for asset';
+        }
+
+        if (context.mode === 'batch') {
+          const tokens = context.tokenOrTokens as Address[] | undefined;
+          return `Successfully claimed rewards for ${tokens?.length ?? 0} asset(s)`;
+        }
+
+        if (context.mode === 'all') {
+          return 'Successfully claimed all rewards';
+        }
+
+        return 'Successfully claimed rewards';
+      },
+      onSuccess: () => {
+        void invalidateRewardsQueries();
+      },
+    },
+  );
+
   const executeClaim = useCallback(
     async (
-      mode: 'native' | 'token' | 'batch' | 'all',
+      mode: ClaimExecutionMode,
       tokenOrTokens?: Address | Address[],
     ): Promise<Hash | null> => {
-      if (!walletClient || !publicClient || !contracts) {
-        setError(new Error('Wallet not connected'));
-        setStatus('error');
+      setFallbackError(null);
+
+      if (!claimTx.execute) {
+        setFallbackError(new Error('Wallet not connected'));
         return null;
       }
 
       try {
-        setStatus('pending');
-        setError(null);
-
-        let data: `0x${string}`;
-        if (mode === 'token') {
-          const token = tokenOrTokens as Address | undefined;
-          if (!token) {
-            throw new Error('Token address is required for token claim');
-          }
-          data = encodeFunctionData({
-            abi: TANGLE_ABI,
-            functionName: 'claimRewards',
-            args: [token],
-          });
-        } else if (mode === 'batch') {
-          const tokens = tokenOrTokens as Address[] | undefined;
-          if (!tokens || tokens.length === 0) {
-            throw new Error('At least one token is required for batch claim');
-          }
-          data = encodeFunctionData({
-            abi: TANGLE_ABI,
-            functionName: 'claimRewardsBatch',
-            args: [tokens],
-          });
-        } else if (mode === 'all') {
-          data = encodeFunctionData({
-            abi: TANGLE_ABI,
-            functionName: 'claimRewardsAll',
-            args: [],
-          });
-        } else {
-          data = encodeFunctionData({
-            abi: TANGLE_ABI,
-            functionName: 'claimRewards',
-            args: [],
-          });
-        }
-
-        // Send the transaction
-        const hash = await walletClient.sendTransaction({
-          to: contracts.tangle,
-          data,
+        const result = await claimTx.execute({
+          mode,
+          tokenOrTokens,
         });
 
-        // Wait for confirmation
-        await publicClient.waitForTransactionReceipt({ hash });
-        await invalidateRewardsQueries();
-
-        setStatus('success');
-        return hash;
-      } catch (err) {
-        const error =
-          err instanceof Error ? err : new Error('Failed to claim rewards');
-        setError(error);
-        setStatus('error');
+        return result?.hash ?? null;
+      } catch (error) {
+        setFallbackError(
+          error instanceof Error ? error : new Error('Failed to claim rewards'),
+        );
         return null;
       }
     },
-    [contracts, invalidateRewardsQueries, publicClient, walletClient],
+    [claimTx],
   );
+
+  const reset = useCallback(() => {
+    setFallbackError(null);
+    claimTx.reset();
+  }, [claimTx]);
 
   const claimNative = useCallback(() => {
     return executeClaim('native');
@@ -492,8 +531,11 @@ export const useClaimRewardsTx = (): UseClaimRewardsTxReturn => {
     claimBatch,
     claimAllTokens,
     claimRewards,
-    status,
-    error,
+    status:
+      fallbackError !== null
+        ? 'error'
+        : mapTxStatusToClaimStatus(claimTx.status),
+    error: fallbackError ?? claimTx.error,
     reset,
   };
 };
