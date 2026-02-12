@@ -442,7 +442,7 @@ const RewardsPage: FC = () => {
           <RewardClaimsTable
             entries={rewardHistory}
             txExplorerUrl={txExplorerUrl}
-            showExplorerActions={showExplorerActions}
+            showExplorerActions={!!txExplorerUrl}
           />
         ) : (
           <div className="text-center py-6 text-mono-100">
