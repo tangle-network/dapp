@@ -98,7 +98,8 @@ const ServiceOnChainDetails: FC<Props> = ({
   const isSubscriptionService =
     serviceDetails?.pricing === ServicePricingModel.Subscription;
   const subscriptionRate = blueprintConfig?.subscriptionRate ?? BigInt(0);
-  const subscriptionInterval = blueprintConfig?.subscriptionInterval ?? BigInt(0);
+  const subscriptionInterval =
+    blueprintConfig?.subscriptionInterval ?? BigInt(0);
   const escrowBalance = escrow?.balance ?? BigInt(0);
   const hasSubscriptionConfig =
     subscriptionRate > BigInt(0) && subscriptionInterval > BigInt(0);
@@ -402,11 +403,7 @@ const ServiceOnChainDetails: FC<Props> = ({
                 </Typography>
               )}
               <div className="mt-2">
-                <Button
-                  variant="utility"
-                  size="sm"
-                  onClick={resetBillingState}
-                >
+                <Button variant="utility" size="sm" onClick={resetBillingState}>
                   Reset Billing State
                 </Button>
               </div>

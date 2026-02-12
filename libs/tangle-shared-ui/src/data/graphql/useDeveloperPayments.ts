@@ -119,7 +119,10 @@ const fetchDeveloperPaymentEvents = async (
     { account: string; limit: number }
   >(query, { account: account.toLowerCase(), limit }, network);
 
-  throwIfGraphQLErrors(result.errors, 'Failed to fetch developer payment events');
+  throwIfGraphQLErrors(
+    result.errors,
+    'Failed to fetch developer payment events',
+  );
 
   return (result.data.DeveloperPayment ?? []).map((entry) => ({
     id: entry.id,
@@ -264,7 +267,11 @@ export const useDeveloperPayments = (options?: {
         throw new Error('Wallet not connected');
       }
 
-      const events = await fetchDeveloperPaymentEvents(address, resolvedNetwork, limit);
+      const events = await fetchDeveloperPaymentEvents(
+        address,
+        resolvedNetwork,
+        limit,
+      );
       return aggregateDeveloperPayments(address, events);
     },
     enabled: enabled && !!address,

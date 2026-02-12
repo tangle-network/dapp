@@ -52,14 +52,16 @@ const resolveTokenIconSymbol = (
   address: Address,
 ): string | null => {
   const cached = getCachedTokenMetadata(chainId, address);
-  const candidate = isFallbackSymbol(symbol) ? (cached?.symbol ?? symbol) : symbol;
+  const candidate = isFallbackSymbol(symbol)
+    ? (cached?.symbol ?? symbol)
+    : symbol;
   return isFallbackSymbol(candidate) ? null : candidate;
 };
 
-const EarningsAssetCell: FC<{ token: Address; addressExplorerUrl?: string }> = ({
-  token,
-  addressExplorerUrl,
-}) => {
+const EarningsAssetCell: FC<{
+  token: Address;
+  addressExplorerUrl?: string;
+}> = ({ token, addressExplorerUrl }) => {
   const chainId = useChainId();
   const activeChain = getActiveChainConfig(chainId);
   const cachedMetadata = getCachedTokenMetadata(chainId, token);
@@ -68,11 +70,11 @@ const EarningsAssetCell: FC<{ token: Address; addressExplorerUrl?: string }> = (
     metadata?.symbol ??
     cachedMetadata?.symbol ??
     (token === zeroAddress
-      ? activeChain?.nativeCurrency?.symbol ?? 'NATIVE'
+      ? (activeChain?.nativeCurrency?.symbol ?? 'NATIVE')
       : 'TOKEN');
   const tokenName =
     token === zeroAddress
-      ? activeChain?.nativeCurrency?.name ?? null
+      ? (activeChain?.nativeCurrency?.name ?? null)
       : cachedMetadata &&
           cachedMetadata.symbol.toLowerCase() === symbol.toLowerCase()
         ? cachedMetadata.name
@@ -81,7 +83,8 @@ const EarningsAssetCell: FC<{ token: Address; addressExplorerUrl?: string }> = (
   const explorerAddressUrl = addressExplorerUrl
     ? `${addressExplorerUrl}/address/${token}`
     : null;
-  const showExplorerAction = isNonLocalEvmChain(chainId) && !!explorerAddressUrl;
+  const showExplorerAction =
+    isNonLocalEvmChain(chainId) && !!explorerAddressUrl;
 
   return (
     <div className="flex items-center gap-3">
@@ -95,7 +98,11 @@ const EarningsAssetCell: FC<{ token: Address; addressExplorerUrl?: string }> = (
 
       <div className="flex flex-col min-w-0">
         <div className="flex items-center gap-2 min-w-0">
-          <Typography variant="body2" fw="semibold" className="whitespace-nowrap">
+          <Typography
+            variant="body2"
+            fw="semibold"
+            className="whitespace-nowrap"
+          >
             {isLoading ? 'Loading...' : symbol}
           </Typography>
           {tokenName && (
@@ -143,7 +150,8 @@ const TokenAmount: FC<{
   const { data: metadata } = useTokenMetadata(token);
   const decimals = metadata?.decimals ?? 18;
   const symbol =
-    metadata?.symbol ?? (token.toLowerCase() === zeroAddress ? 'NATIVE' : 'TOKEN');
+    metadata?.symbol ??
+    (token.toLowerCase() === zeroAddress ? 'NATIVE' : 'TOKEN');
   const formattedAmount = formatEarningsAmount(amount, decimals);
 
   return (
@@ -165,13 +173,13 @@ const PayoutEventAmountCell: FC<{ token: Address; amount: bigint }> = ({
     metadata?.decimals ??
     cachedMetadata?.decimals ??
     (token === zeroAddress
-      ? activeChain?.nativeCurrency?.decimals ?? 18
+      ? (activeChain?.nativeCurrency?.decimals ?? 18)
       : 18);
   const symbol =
     metadata?.symbol ??
     cachedMetadata?.symbol ??
     (token === zeroAddress
-      ? activeChain?.nativeCurrency?.symbol ?? 'NATIVE'
+      ? (activeChain?.nativeCurrency?.symbol ?? 'NATIVE')
       : 'TOKEN');
   const iconSymbol = resolveTokenIconSymbol(chainId, symbol, token);
 
@@ -208,8 +216,12 @@ const EarningsByAssetsTable: FC<{
       <table className="w-full">
         <thead>
           <tr className="border-b border-mono-60 dark:border-mono-140">
-            <th className="text-left py-3 px-4 text-mono-100 font-medium">Asset</th>
-            <th className="text-left py-3 px-4 text-mono-100 font-medium">Amount</th>
+            <th className="text-left py-3 px-4 text-mono-100 font-medium">
+              Asset
+            </th>
+            <th className="text-left py-3 px-4 text-mono-100 font-medium">
+              Amount
+            </th>
             <th className="text-left py-3 px-4 text-mono-100 font-medium">
               Payout Events
             </th>
@@ -340,7 +352,11 @@ const EarningsPage: FC = () => {
                     </Button>
                   </Link>
                   {walletActivityUrl && (
-                    <a href={walletActivityUrl} target="_blank" rel="noreferrer">
+                    <a
+                      href={walletActivityUrl}
+                      target="_blank"
+                      rel="noreferrer"
+                    >
                       <Button size="sm">View Wallet Activity</Button>
                     </a>
                   )}

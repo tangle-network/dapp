@@ -160,9 +160,7 @@ export const usePendingRewards = (options?: {
 /**
  * Hook to fetch tokens that currently have pending rewards.
  */
-export const useRewardTokens = (options?: {
-  enabled?: boolean;
-}) => {
+export const useRewardTokens = (options?: { enabled?: boolean }) => {
   const { enabled = true } = options ?? {};
   const { address } = useAccount();
   const chainId = useChainId();
@@ -184,7 +182,9 @@ export const useRewardTokens = (options?: {
         args: [address],
       })) as Address[];
 
-      const deduped = new Map(tokens.map((token) => [token.toLowerCase(), token]));
+      const deduped = new Map(
+        tokens.map((token) => [token.toLowerCase(), token]),
+      );
       return [...deduped.values()];
     },
     enabled: enabled && !!address && !!publicClient && !!contracts,
@@ -234,8 +234,9 @@ export const usePendingRewardsByToken = (options?: {
         args: [address],
       })) as Address[];
 
-      const uniqueTokens = [...new Set(rewardTokens.map((token) => token.toLowerCase()))]
-        .map((token) => token as Address);
+      const uniqueTokens = [
+        ...new Set(rewardTokens.map((token) => token.toLowerCase())),
+      ].map((token) => token as Address);
 
       const tokenRewards = await Promise.all(
         uniqueTokens.map(async (token) => {
@@ -254,7 +255,9 @@ export const usePendingRewardsByToken = (options?: {
         }),
       );
 
-      const nonZeroRewards = tokenRewards.filter((entry) => entry.pending > BigInt(0));
+      const nonZeroRewards = tokenRewards.filter(
+        (entry) => entry.pending > BigInt(0),
+      );
       const hasNative = nonZeroRewards.some(
         (entry) => entry.token.toLowerCase() === zeroAddress,
       );

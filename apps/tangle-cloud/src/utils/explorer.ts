@@ -18,7 +18,8 @@ export const getActiveChainConfig = (chainId: number) =>
   Object.values(chainsConfig).find((chain) => chain.id === chainId);
 
 export const getTxExplorerUrl = (chainId: number): string | undefined => {
-  const chainExplorerUrl = getActiveChainConfig(chainId)?.blockExplorers?.default?.url;
+  const chainExplorerUrl =
+    getActiveChainConfig(chainId)?.blockExplorers?.default?.url;
   if (chainExplorerUrl) {
     return chainExplorerUrl;
   }

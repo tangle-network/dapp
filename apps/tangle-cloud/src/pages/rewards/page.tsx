@@ -70,7 +70,9 @@ const resolveTokenIconSymbol = (
   address: Address,
 ): string | null => {
   const cached = getCachedTokenMetadata(chainId, address);
-  const candidate = isFallbackSymbol(symbol) ? (cached?.symbol ?? symbol) : symbol;
+  const candidate = isFallbackSymbol(symbol)
+    ? (cached?.symbol ?? symbol)
+    : symbol;
   return isFallbackSymbol(candidate) ? null : candidate;
 };
 
@@ -167,7 +169,8 @@ const RewardsPage: FC = () => {
       : null;
   const isBulkClaiming =
     isClaiming &&
-    (activeClaimAction?.type === 'selected' || activeClaimAction?.type === 'all');
+    (activeClaimAction?.type === 'selected' ||
+      activeClaimAction?.type === 'all');
   const isClaimSuccess = claimStatus === 'success';
   const pendingRows = useMemo(
     () => pendingRewards?.rewards ?? [],
@@ -175,7 +178,10 @@ const RewardsPage: FC = () => {
   );
 
   const selectedTokens = useMemo(
-    () => pendingRows.filter((row) => selectedTokenSet.has(row.token.toLowerCase())),
+    () =>
+      pendingRows.filter((row) =>
+        selectedTokenSet.has(row.token.toLowerCase()),
+      ),
     [pendingRows, selectedTokenSet],
   );
   useEffect(() => {
@@ -238,9 +244,8 @@ const RewardsPage: FC = () => {
 
   const handleClaimToken = useCallback(
     async (token: Address) => {
-      await executeClaimAction(
-        { type: 'token', token },
-        () => claimToken(token),
+      await executeClaimAction({ type: 'token', token }, () =>
+        claimToken(token),
       );
     },
     [claimToken, executeClaimAction],
@@ -248,17 +253,11 @@ const RewardsPage: FC = () => {
 
   const handleClaimSelected = useCallback(async () => {
     const tokens = selectedTokens.map((row) => row.token);
-    await executeClaimAction(
-      { type: 'selected' },
-      () => claimBatch(tokens),
-    );
+    await executeClaimAction({ type: 'selected' }, () => claimBatch(tokens));
   }, [claimBatch, executeClaimAction, selectedTokens]);
 
   const handleClaimAll = useCallback(async () => {
-    await executeClaimAction(
-      { type: 'all' },
-      claimAllTokens,
-    );
+    await executeClaimAction({ type: 'all' }, claimAllTokens);
   }, [claimAllTokens, executeClaimAction]);
 
   const handleResetClaimState = useCallback(() => {
@@ -386,7 +385,11 @@ const RewardsPage: FC = () => {
 
             <div className="mt-4 flex items-center justify-between gap-3">
               {(isClaimSuccess || claimError) && (
-                <Button variant="utility" size="sm" onClick={handleResetClaimState}>
+                <Button
+                  variant="utility"
+                  size="sm"
+                  onClick={handleResetClaimState}
+                >
                   Reset
                 </Button>
               )}
@@ -394,7 +397,9 @@ const RewardsPage: FC = () => {
               <Button
                 className="ml-auto"
                 onClick={
-                  selectedTokens.length > 0 ? handleClaimSelected : handleClaimAll
+                  selectedTokens.length > 0
+                    ? handleClaimSelected
+                    : handleClaimAll
                 }
                 variant={selectedTokens.length > 0 ? 'secondary' : 'primary'}
                 isLoading={isBulkClaiming}
@@ -452,7 +457,9 @@ const RewardsPage: FC = () => {
 interface PendingRewardsTableProps {
   rows: PendingRewardsByTokenEntry[];
   selectedTokenSet: Set<string>;
-  onToggleToken: (token: Address) => (event: ChangeEvent<HTMLInputElement>) => void;
+  onToggleToken: (
+    token: Address,
+  ) => (event: ChangeEvent<HTMLInputElement>) => void;
   onClaimToken: (token: Address) => Promise<void>;
   isClaiming: boolean;
   activeClaimToken: Address | null;
@@ -509,7 +516,10 @@ const PendingRewardsTable: FC<PendingRewardsTableProps> = ({
                 />
               </td>
               <td className="py-3 px-4">
-                <PendingRewardAmountCell token={row.token} amount={row.pending} />
+                <PendingRewardAmountCell
+                  token={row.token}
+                  amount={row.pending}
+                />
               </td>
               <td className="py-3 px-4">
                 <Button
@@ -546,11 +556,11 @@ const PendingAssetCell: FC<{ token: Address; addressExplorerUrl?: string }> = ({
     tokenMetadata?.symbol ??
     cachedMetadata?.symbol ??
     (token === zeroAddress
-      ? activeChain?.nativeCurrency?.symbol ?? 'NATIVE'
+      ? (activeChain?.nativeCurrency?.symbol ?? 'NATIVE')
       : 'TOKEN');
   const tokenName =
     token === zeroAddress
-      ? activeChain?.nativeCurrency?.name ?? null
+      ? (activeChain?.nativeCurrency?.name ?? null)
       : cachedMetadata &&
           cachedMetadata.symbol.toLowerCase() === symbol.toLowerCase()
         ? cachedMetadata.name
@@ -559,7 +569,8 @@ const PendingAssetCell: FC<{ token: Address; addressExplorerUrl?: string }> = ({
   const explorerAddressUrl = addressExplorerUrl
     ? `${addressExplorerUrl}/address/${token}`
     : null;
-  const showExplorerAction = isNonLocalEvmChain(chainId) && !!explorerAddressUrl;
+  const showExplorerAction =
+    isNonLocalEvmChain(chainId) && !!explorerAddressUrl;
 
   return (
     <div className="flex items-center gap-3">
@@ -573,7 +584,11 @@ const PendingAssetCell: FC<{ token: Address; addressExplorerUrl?: string }> = ({
 
       <div className="flex flex-col min-w-0">
         <div className="flex items-center gap-2 min-w-0">
-          <Typography variant="body2" fw="semibold" className="whitespace-nowrap">
+          <Typography
+            variant="body2"
+            fw="semibold"
+            className="whitespace-nowrap"
+          >
             {isLoading ? 'Loading...' : symbol}
           </Typography>
           {tokenName && (
@@ -625,7 +640,7 @@ const PendingRewardAmountCell: FC<{ token: Address; amount: bigint }> = ({
     tokenMetadata?.decimals ??
     cachedMetadata?.decimals ??
     (token === zeroAddress
-      ? activeChain?.nativeCurrency?.decimals ?? 18
+      ? (activeChain?.nativeCurrency?.decimals ?? 18)
       : 18);
 
   return (
@@ -651,7 +666,7 @@ const RewardAmountCell: FC<{ token: Address; amount: bigint }> = ({
     tokenMetadata?.decimals ??
     cachedMetadata?.decimals ??
     (token === zeroAddress
-      ? activeChain?.nativeCurrency?.decimals ?? 18
+      ? (activeChain?.nativeCurrency?.decimals ?? 18)
       : 18);
 
   return (
@@ -717,7 +732,10 @@ const RewardClaimsTable: FC<RewardClaimsTableProps> = ({
               </td>
               <td className="py-3 px-4">
                 <div className="flex items-center gap-2 text-mono-100">
-                  <Typography variant="body2" className="font-mono text-mono-100">
+                  <Typography
+                    variant="body2"
+                    className="font-mono text-mono-100"
+                  >
                     {shortenTxHash(entry.txHash)}
                   </Typography>
                   <CopyWithTooltip
