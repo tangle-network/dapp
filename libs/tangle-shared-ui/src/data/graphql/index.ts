@@ -130,10 +130,15 @@ export {
 // Rewards
 export {
   usePendingRewards,
+  useRewardTokens,
+  usePendingRewardsByToken,
   useRewardHistory,
   useClaimRewardsTx,
   formatRewardAmount,
+  type RewardClaimEntry,
   type RewardEntry,
+  type PendingRewardsByTokenEntry,
+  type PendingRewardsByToken,
   type AggregatedRewards,
   type ClaimRewardsStatus,
   type UseClaimRewardsTxReturn,

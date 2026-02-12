@@ -22,12 +22,16 @@ import {
   useServiceEscrow,
   useBlueprintConfig,
   useTokenMetadata,
+  useBillSubscriptionTx,
   ServicePricingModel,
+  ServiceStatus,
   getServicePricingModelLabel,
 } from '@tangle-network/tangle-shared-ui/data/services';
 import { MembershipModel } from '@tangle-network/tangle-shared-ui/data/services/useServiceRequestDetails';
 import BN from 'bn.js';
 import { formatTtl, formatCreatedAt } from '../../../types/serviceRequest';
+import { useChainId } from 'wagmi';
+import { chainsConfig } from '@tangle-network/dapp-config/chains';
 
 interface Props {
   serviceId: bigint;
@@ -40,6 +44,8 @@ const ServiceOnChainDetails: FC<Props> = ({
   blueprintId,
   onFundClick,
 }) => {
+  const chainId = useChainId();
+  const activeChain = chainsConfig[chainId];
   const { data: serviceDetails, isLoading: isLoadingDetails } =
     useServiceDetails(serviceId);
   const { data: escrow, isLoading: isLoadingEscrow } =
@@ -49,6 +55,14 @@ const ServiceOnChainDetails: FC<Props> = ({
   const { data: tokenMetadata, isLoading: isLoadingToken } = useTokenMetadata(
     escrow?.token,
   );
+  const {
+    execute: executeBillSubscription,
+    isPending: isBillingPending,
+    isSuccess: isBillingSuccess,
+    error: billingError,
+    txHash: billingTxHash,
+    reset: resetBillingState,
+  } = useBillSubscriptionTx();
 
   const isLoading =
     isLoadingDetails || isLoadingEscrow || isLoadingConfig || isLoadingToken;
@@ -79,6 +93,43 @@ const ServiceOnChainDetails: FC<Props> = ({
   const tokenSymbol =
     tokenMetadata?.symbol ?? (isNativeToken ? 'ETH' : 'TOKEN');
   const tokenDecimals = tokenMetadata?.decimals ?? 18;
+  const explorerBaseUrl = activeChain?.blockExplorers?.default?.url;
+
+  const isSubscriptionService =
+    serviceDetails?.pricing === ServicePricingModel.Subscription;
+  const subscriptionRate = blueprintConfig?.subscriptionRate ?? BigInt(0);
+  const subscriptionInterval = blueprintConfig?.subscriptionInterval ?? BigInt(0);
+  const escrowBalance = escrow?.balance ?? BigInt(0);
+  const hasSubscriptionConfig =
+    subscriptionRate > BigInt(0) && subscriptionInterval > BigInt(0);
+  const hasEscrowForNextBill =
+    hasSubscriptionConfig && escrowBalance >= subscriptionRate;
+  const isServiceActive = serviceDetails?.status === ServiceStatus.Active;
+  const now = BigInt(Math.floor(Date.now() / 1000));
+  const lastPaymentAt = serviceDetails?.lastPaymentAt ?? BigInt(0);
+  const nextBillingAt =
+    hasSubscriptionConfig && serviceDetails
+      ? lastPaymentAt > BigInt(0)
+        ? lastPaymentAt + subscriptionInterval
+        : serviceDetails.createdAt
+      : null;
+  const isBillingDue =
+    hasSubscriptionConfig &&
+    nextBillingAt !== null &&
+    (lastPaymentAt === BigInt(0) || now >= nextBillingAt);
+  const canBillSubscription =
+    isSubscriptionService &&
+    isServiceActive &&
+    hasSubscriptionConfig &&
+    hasEscrowForNextBill &&
+    isBillingDue;
+
+  const handleBillSubscription = async () => {
+    if (!executeBillSubscription) {
+      return;
+    }
+    await executeBillSubscription({ serviceId });
+  };
 
   const formatAmount = (amount: bigint | undefined): string => {
     if (amount === undefined) return EMPTY_VALUE_PLACEHOLDER;
@@ -143,11 +194,23 @@ const ServiceOnChainDetails: FC<Props> = ({
         <Typography variant="h5" fw="bold">
           Service Details
         </Typography>
-        {serviceDetails?.pricing === ServicePricingModel.Subscription && (
-          <Button variant="secondary" size="sm" onClick={onFundClick}>
-            Fund Service
-          </Button>
-        )}
+        <div className="flex items-center gap-2">
+          {isSubscriptionService && (
+            <>
+              <Button variant="secondary" size="sm" onClick={onFundClick}>
+                Fund Service
+              </Button>
+              <Button
+                size="sm"
+                onClick={handleBillSubscription}
+                isLoading={isBillingPending}
+                isDisabled={isBillingPending || !canBillSubscription}
+              >
+                Bill Subscription
+              </Button>
+            </>
+          )}
+        </div>
       </div>
 
       {/* Row 1: TTL, Membership, Pricing, Payment Token */}
@@ -225,11 +288,41 @@ const ServiceOnChainDetails: FC<Props> = ({
       )}
 
       {/* Row 3: Conditional rate info based on pricing model */}
-      {serviceDetails?.pricing === ServicePricingModel.Subscription && (
+      {isSubscriptionService && (
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
           <DetailItem
             label="Subscription Rate"
             value={formatSubscriptionRate()}
+          />
+          <DetailItem
+            label="Billing Interval"
+            value={
+              hasSubscriptionConfig
+                ? formatTtl(subscriptionInterval)
+                : EMPTY_VALUE_PLACEHOLDER
+            }
+          />
+          <DetailItem
+            label="Next Bill Eligible At"
+            value={
+              nextBillingAt !== null
+                ? formatCreatedAt(nextBillingAt)
+                : EMPTY_VALUE_PLACEHOLDER
+            }
+          />
+          <DetailItem
+            label="Billability"
+            value={
+              <span
+                className={
+                  canBillSubscription
+                    ? 'text-green-400 font-semibold'
+                    : 'text-yellow-400 font-semibold'
+                }
+              >
+                {canBillSubscription ? 'Billable now' : 'Not billable yet'}
+              </span>
+            }
           />
         </div>
       )}
@@ -237,6 +330,88 @@ const ServiceOnChainDetails: FC<Props> = ({
       {serviceDetails?.pricing === ServicePricingModel.EventDriven && (
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
           <DetailItem label="Per Job Rate" value={formatEventRate()} />
+        </div>
+      )}
+
+      {isSubscriptionService && (
+        <div className="mt-4 p-4 rounded-lg bg-mono-20 dark:bg-mono-170">
+          <Typography variant="body2" className="text-mono-100">
+            Subscription rewards are generated when billing is triggered.
+          </Typography>
+
+          <div className="mt-3 grid grid-cols-1 md:grid-cols-2 gap-2">
+            <BillingCondition
+              label="Service is active"
+              ok={isServiceActive}
+              detail={
+                serviceDetails?.status !== undefined
+                  ? `Status: ${serviceDetails.status === ServiceStatus.Active ? 'Active' : 'Not Active'}`
+                  : null
+              }
+            />
+            <BillingCondition
+              label="Subscription config is set"
+              ok={hasSubscriptionConfig}
+              detail={
+                hasSubscriptionConfig
+                  ? `${formatAmount(subscriptionRate)} ${tokenSymbol} every ${formatTtl(subscriptionInterval)}`
+                  : 'Missing subscription rate or interval'
+              }
+            />
+            <BillingCondition
+              label="Escrow can cover next bill"
+              ok={hasEscrowForNextBill}
+              detail={`${formatAmount(escrowBalance)} / ${formatAmount(subscriptionRate)} ${tokenSymbol}`}
+            />
+            <BillingCondition
+              label="Billing window is due"
+              ok={isBillingDue}
+              detail={
+                nextBillingAt !== null
+                  ? `Eligible at ${formatCreatedAt(nextBillingAt)}`
+                  : null
+              }
+            />
+          </div>
+
+          {billingError && (
+            <div className="mt-3">
+              <Typography variant="body2" className="text-red-400">
+                Billing failed: {billingError.message}
+              </Typography>
+            </div>
+          )}
+
+          {isBillingSuccess && billingTxHash && (
+            <div className="mt-3">
+              <Typography variant="body2" className="text-green-400">
+                Subscription billed successfully.
+              </Typography>
+              {explorerBaseUrl ? (
+                <a
+                  href={`${explorerBaseUrl}/tx/${billingTxHash}`}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="underline body2 text-green-300"
+                >
+                  View transaction
+                </a>
+              ) : (
+                <Typography variant="body2" className="font-mono">
+                  Tx: {billingTxHash}
+                </Typography>
+              )}
+              <div className="mt-2">
+                <Button
+                  variant="utility"
+                  size="sm"
+                  onClick={resetBillingState}
+                >
+                  Reset Billing State
+                </Button>
+              </div>
+            </div>
+          )}
         </div>
       )}
     </Card>
@@ -248,6 +423,29 @@ interface DetailItemProps {
   value: React.ReactNode;
   highlight?: boolean;
 }
+
+const BillingCondition: FC<{
+  label: string;
+  ok: boolean;
+  detail: string | null;
+}> = ({ label, ok, detail }) => (
+  <div className="p-2 rounded border border-mono-60 dark:border-mono-140">
+    <Typography variant="body2" fw="semibold">
+      {label}
+    </Typography>
+    <Typography
+      variant="body2"
+      className={ok ? 'text-green-400' : 'text-yellow-400'}
+    >
+      {ok ? 'Yes' : 'No'}
+    </Typography>
+    {detail && (
+      <Typography variant="body3" className="text-mono-100 mt-1">
+        {detail}
+      </Typography>
+    )}
+  </div>
+);
 
 const DetailItem: FC<DetailItemProps> = ({ label, value, highlight }) => (
   <div

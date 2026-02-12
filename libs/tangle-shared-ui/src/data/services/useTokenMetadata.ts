@@ -5,6 +5,7 @@
 import { useQuery } from '@tanstack/react-query';
 import { Address, erc20Abi, zeroAddress } from 'viem';
 import { useChainId, usePublicClient } from 'wagmi';
+import { chainsConfig } from '@tangle-network/dapp-config/chains';
 
 export interface TokenMetadataResult {
   symbol: string;
@@ -30,6 +31,9 @@ export const useTokenMetadata = (
   const { enabled = true } = options ?? {};
   const chainId = useChainId();
   const publicClient = usePublicClient({ chainId });
+  const chainConfig = chainsConfig[chainId];
+  const nativeSymbol = chainConfig?.nativeCurrency?.symbol ?? 'ETH';
+  const nativeDecimals = chainConfig?.nativeCurrency?.decimals ?? 18;
 
   return useQuery({
     queryKey: ['tokenMetadata', chainId, tokenAddress],
@@ -37,8 +41,8 @@ export const useTokenMetadata = (
       // Native token (address(0) or undefined)
       if (!tokenAddress || tokenAddress === zeroAddress) {
         return {
-          symbol: 'ETH',
-          decimals: 18,
+          symbol: nativeSymbol,
+          decimals: nativeDecimals,
           isNative: true,
         };
       }

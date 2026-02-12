@@ -1,10 +1,14 @@
 /**
- * Developer earnings dashboard - view earnings from blueprints.
+ * Developer earnings dashboard.
+ *
+ * Trust-first behavior:
+ * - Never shows estimated/fabricated earnings.
+ * - Uses explicit data states: available, unavailable, error.
  */
 
-import { FC, useMemo } from 'react';
+import { FC } from 'react';
 import { Link } from 'react-router';
-import { useAccount } from 'wagmi';
+import { useAccount, useChainId } from 'wagmi';
 import {
   Button,
   Card,
@@ -13,98 +17,23 @@ import {
   SkeletonLoader,
 } from '@tangle-network/ui-components';
 import {
-  createColumnHelper,
-  getCoreRowModel,
-  getPaginationRowModel,
-  useReactTable,
-  flexRender,
-} from '@tanstack/react-table';
-import {
-  CoinsLineIcon,
-  LineChartIcon,
-  WalletLineIcon,
-} from '@tangle-network/icons';
-import {
   useDeveloperEarnings,
   formatEarningsAmount,
-  type BlueprintEarnings,
 } from '@tangle-network/tangle-shared-ui/data/graphql';
-import { PagePath } from '../../types';
+import { chainsConfig } from '@tangle-network/dapp-config/chains';
 import ErrorMessage from '@tangle-network/tangle-shared-ui/components/ErrorMessage';
-
-const columnHelper = createColumnHelper<BlueprintEarnings>();
+import { PagePath } from '../../types';
 
 const EarningsPage: FC = () => {
-  const { isConnected } = useAccount();
-  const { data, isLoading, error } = useDeveloperEarnings();
+  const { address, isConnected } = useAccount();
+  const chainId = useChainId();
+  const activeChain = chainsConfig[chainId];
 
-  const columns = useMemo(
-    () => [
-      columnHelper.accessor('blueprintName', {
-        header: 'Blueprint',
-        cell: (info) => (
-          <div>
-            <Typography variant="body1" fw="semibold">
-              {info.getValue()}
-            </Typography>
-            <Typography variant="body3" className="text-mono-100">
-              ID: {info.row.original.blueprintId.toString()}
-            </Typography>
-          </div>
-        ),
-      }),
-      columnHelper.accessor('totalEarned', {
-        header: 'Total Earned',
-        cell: (info) => (
-          <Typography variant="body1" fw="semibold">
-            {formatEarningsAmount(info.getValue())} TNT
-          </Typography>
-        ),
-      }),
-      columnHelper.accessor('serviceCount', {
-        header: 'Services',
-        cell: (info) => (
-          <Typography variant="body2">{info.getValue()}</Typography>
-        ),
-      }),
-      columnHelper.accessor('jobCount', {
-        header: 'Jobs Completed',
-        cell: (info) => (
-          <Typography variant="body2">{info.getValue()}</Typography>
-        ),
-      }),
-      columnHelper.display({
-        id: 'actions',
-        header: 'Actions',
-        cell: (info) => {
-          const blueprint = info.row.original;
-          return (
-            <Link
-              to={PagePath.BLUEPRINTS_DETAILS.replace(
-                ':id',
-                blueprint.blueprintId.toString(),
-              )}
-            >
-              <Button variant="utility" size="sm">
-                View Blueprint
-              </Button>
-            </Link>
-          );
-        },
-      }),
-    ],
-    [],
-  );
+  const { data, isLoading, error, state, network } = useDeveloperEarnings();
 
-  const table = useReactTable({
-    data: data?.blueprints ?? [],
-    columns,
-    getCoreRowModel: getCoreRowModel(),
-    getPaginationRowModel: getPaginationRowModel(),
-    initialState: {
-      pagination: { pageSize: 10 },
-    },
-  });
+  const explorerBaseUrl = activeChain?.blockExplorers?.default?.url;
+  const walletActivityUrl =
+    explorerBaseUrl && address ? `${explorerBaseUrl}/address/${address}` : null;
 
   if (!isConnected) {
     return (
@@ -119,221 +48,110 @@ const EarningsPage: FC = () => {
 
   return (
     <div className="space-y-6">
-      {/* Header */}
-      <div className="flex items-center justify-between">
-        <div>
-          <Typography variant="h4" fw="bold">
-            Developer Earnings
+      <div>
+        <Typography variant="h4" fw="bold">
+          Developer Earnings
+        </Typography>
+        <Typography variant="body2" className="text-mono-100">
+          Developer payouts are transferred directly on payment distribution and
+          can be routed by manager overrides.
+        </Typography>
+      </div>
+
+      {isLoading ? (
+        <Card variant={CardVariant.GLASS} className="p-6">
+          <SkeletonLoader className="h-8 w-56 mb-4" />
+          <SkeletonLoader className="h-6 w-full mb-2" />
+          <SkeletonLoader className="h-6 w-5/6" />
+        </Card>
+      ) : null}
+
+      {!isLoading && state === 'error' ? (
+        <Card variant={CardVariant.GLASS} className="p-6">
+          <Typography variant="h5" fw="bold" className="mb-3">
+            Could Not Load Earnings
+          </Typography>
+          <ErrorMessage>
+            {error instanceof Error
+              ? error.message
+              : 'Failed to load developer earnings state.'}
+          </ErrorMessage>
+          <Typography variant="body2" className="text-mono-100 mt-3">
+            This is a data loading failure, not a zero-earnings result.
+          </Typography>
+        </Card>
+      ) : null}
+
+      {!isLoading && state !== 'error' && data?.state === 'unavailable' ? (
+        <>
+          <Card variant={CardVariant.GLASS} className="p-6">
+            <Typography variant="h5" fw="bold" className="mb-3">
+              Earnings Data Unavailable
+            </Typography>
+            <Typography variant="body2" className="text-mono-100">
+              {data.message}
+            </Typography>
+            <Typography variant="body2" className="text-mono-100 mt-3">
+              Active chain: {activeChain?.name ?? `Chain ${chainId}`} ({chainId})
+              . Indexer network: {network}.
+            </Typography>
+            <Typography variant="body2" className="text-mono-100 mt-2">
+              Owned blueprints detected: {data.blueprintCount}
+            </Typography>
+            <Typography variant="body2" className="text-mono-100 mt-2">
+              Payout destination may be blueprint owner or a manager-defined
+              override address.
+            </Typography>
+
+            <div className="flex flex-wrap gap-3 mt-5">
+              <Link to={PagePath.BLUEPRINTS}>
+                <Button variant="secondary" size="sm">
+                  View Blueprints
+                </Button>
+              </Link>
+
+              {walletActivityUrl && (
+                <a href={walletActivityUrl} target="_blank" rel="noreferrer">
+                  <Button size="sm">View Wallet Activity</Button>
+                </a>
+              )}
+            </div>
+          </Card>
+
+          <Card variant={CardVariant.GLASS} className="p-6">
+            <Typography variant="h5" fw="bold" className="mb-3">
+              Temporary Verification Path
+            </Typography>
+            <Typography variant="body2" className="text-mono-100">
+              1. Review wallet inflows for direct payout transfers.
+            </Typography>
+            <Typography variant="body2" className="text-mono-100 mt-2">
+              2. Confirm blueprint manager payout overrides when applicable.
+            </Typography>
+            <Typography variant="body2" className="text-mono-100 mt-2">
+              3. Use service and reward pages for operational activity while
+              earnings ledger indexing is pending.
+            </Typography>
+          </Card>
+        </>
+      ) : null}
+
+      {!isLoading && state !== 'error' && data?.state === 'available' ? (
+        <Card variant={CardVariant.GLASS} className="p-6">
+          <Typography variant="h5" fw="bold" className="mb-3">
+            Earnings Summary
           </Typography>
           <Typography variant="body2" className="text-mono-100">
-            View earnings from your blueprints and services.
+            Total Earned: {formatEarningsAmount(data.summary.totalEarned)}
           </Typography>
-        </div>
-      </div>
-
-      {/* Summary Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <Card variant={CardVariant.GLASS} className="p-6">
-          <div className="flex items-center gap-4">
-            <div className="p-3 rounded-lg bg-green-500/20">
-              <CoinsLineIcon className="w-6 h-6 text-green-400" />
-            </div>
-            <div>
-              <Typography variant="body2" className="text-mono-100">
-                Total Earned
-              </Typography>
-              {isLoading ? (
-                <SkeletonLoader className="h-8 w-24" />
-              ) : (
-                <Typography variant="h4" fw="bold">
-                  {data?.summary
-                    ? formatEarningsAmount(data.summary.totalEarned)
-                    : '0'}{' '}
-                  TNT
-                </Typography>
-              )}
-            </div>
-          </div>
+          <Typography variant="body2" className="text-mono-100 mt-2">
+            Pending: {formatEarningsAmount(data.summary.pendingEarnings)}
+          </Typography>
+          <Typography variant="body2" className="text-mono-100 mt-2">
+            Claimed: {formatEarningsAmount(data.summary.claimedEarnings)}
+          </Typography>
         </Card>
-
-        <Card variant={CardVariant.GLASS} className="p-6">
-          <div className="flex items-center gap-4">
-            <div className="p-3 rounded-lg bg-purple-500/20">
-              <WalletLineIcon className="w-6 h-6 text-purple-400" />
-            </div>
-            <div>
-              <Typography variant="body2" className="text-mono-100">
-                Active Blueprints
-              </Typography>
-              {isLoading ? (
-                <SkeletonLoader className="h-8 w-16" />
-              ) : (
-                <Typography variant="h4" fw="bold">
-                  {data?.summary?.blueprintCount ?? 0}
-                </Typography>
-              )}
-            </div>
-          </div>
-        </Card>
-
-        <Card variant={CardVariant.GLASS} className="p-6">
-          <div className="flex items-center gap-4">
-            <div className="p-3 rounded-lg bg-blue-500/20">
-              <LineChartIcon className="w-6 h-6 text-blue-400" />
-            </div>
-            <div>
-              <Typography variant="body2" className="text-mono-100">
-                Total Services
-              </Typography>
-              {isLoading ? (
-                <SkeletonLoader className="h-8 w-16" />
-              ) : (
-                <Typography variant="h4" fw="bold">
-                  {data?.summary?.totalServiceCount ?? 0}
-                </Typography>
-              )}
-            </div>
-          </div>
-        </Card>
-      </div>
-
-      {/* Earnings by Blueprint */}
-      <Card variant={CardVariant.GLASS} className="p-6">
-        <Typography variant="h5" fw="bold" className="mb-4">
-          Earnings by Blueprint
-        </Typography>
-
-        {isLoading ? (
-          <div className="space-y-2">
-            <SkeletonLoader className="h-12" />
-            <SkeletonLoader className="h-12" />
-            <SkeletonLoader className="h-12" />
-          </div>
-        ) : error ? (
-          <ErrorMessage>{error.message}</ErrorMessage>
-        ) : data?.blueprints && data.blueprints.length > 0 ? (
-          <>
-            <div className="overflow-x-auto">
-              <table className="w-full">
-                <thead>
-                  {table.getHeaderGroups().map((headerGroup) => (
-                    <tr
-                      key={headerGroup.id}
-                      className="border-b border-mono-60 dark:border-mono-140"
-                    >
-                      {headerGroup.headers.map((header) => (
-                        <th
-                          key={header.id}
-                          className="text-left py-3 px-4 text-mono-100 font-medium"
-                        >
-                          {header.isPlaceholder
-                            ? null
-                            : flexRender(
-                                header.column.columnDef.header,
-                                header.getContext(),
-                              )}
-                        </th>
-                      ))}
-                    </tr>
-                  ))}
-                </thead>
-                <tbody>
-                  {table.getRowModel().rows.map((row) => (
-                    <tr
-                      key={row.id}
-                      className="border-b border-mono-40 dark:border-mono-160 hover:bg-mono-20 dark:hover:bg-mono-170"
-                    >
-                      {row.getVisibleCells().map((cell) => (
-                        <td key={cell.id} className="py-3 px-4">
-                          {flexRender(
-                            cell.column.columnDef.cell,
-                            cell.getContext(),
-                          )}
-                        </td>
-                      ))}
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-
-            {/* Pagination */}
-            {table.getPageCount() > 1 && (
-              <div className="flex items-center justify-between mt-4">
-                <Typography variant="body2" className="text-mono-100">
-                  Page {table.getState().pagination.pageIndex + 1} of{' '}
-                  {table.getPageCount()}
-                </Typography>
-                <div className="flex gap-2">
-                  <Button
-                    variant="utility"
-                    size="sm"
-                    onClick={() => table.previousPage()}
-                    isDisabled={!table.getCanPreviousPage()}
-                  >
-                    Previous
-                  </Button>
-                  <Button
-                    variant="utility"
-                    size="sm"
-                    onClick={() => table.nextPage()}
-                    isDisabled={!table.getCanNextPage()}
-                  >
-                    Next
-                  </Button>
-                </div>
-              </div>
-            )}
-          </>
-        ) : (
-          <div className="text-center py-12">
-            <CoinsLineIcon className="w-12 h-12 text-mono-100 mx-auto mb-4" />
-            <Typography variant="h5" fw="semibold">
-              No Earnings Yet
-            </Typography>
-            <Typography variant="body1" className="text-mono-100 mt-2">
-              Create a blueprint using the CLI and operators will earn rewards
-              from their services. You'll earn a share of all service fees.
-            </Typography>
-          </div>
-        )}
-      </Card>
-
-      {/* How Earnings Work */}
-      <Card variant={CardVariant.GLASS} className="p-6">
-        <Typography variant="h5" fw="bold" className="mb-4">
-          How Developer Earnings Work
-        </Typography>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <div>
-            <Typography variant="body1" fw="semibold" className="mb-2">
-              1. Create Blueprints
-            </Typography>
-            <Typography variant="body2" className="text-mono-100">
-              Define service blueprints that operators can register with. Set
-              pricing models and job definitions.
-            </Typography>
-          </div>
-          <div>
-            <Typography variant="body1" fw="semibold" className="mb-2">
-              2. Operators Register
-            </Typography>
-            <Typography variant="body2" className="text-mono-100">
-              Operators register with your blueprint and stake collateral.
-              Customers deploy services using your blueprint.
-            </Typography>
-          </div>
-          <div>
-            <Typography variant="body1" fw="semibold" className="mb-2">
-              3. Earn Fees
-            </Typography>
-            <Typography variant="body2" className="text-mono-100">
-              You earn a percentage of all service fees and job payments made to
-              services using your blueprint.
-            </Typography>
-          </div>
-        </div>
-      </Card>
+      ) : null}
     </div>
   );
 };
