@@ -2,17 +2,21 @@
  * Developer earnings page backed by exact payout ledger events.
  */
 
-import { FC } from 'react';
+import { FC, useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router';
 import { useAccount, useChainId } from 'wagmi';
 import { Address, zeroAddress } from 'viem';
 import {
+  Avatar,
   Card,
   CardVariant,
-  Typography,
-  SkeletonLoader,
   Button,
+  CopyWithTooltip,
+  Pagination,
+  SkeletonLoader,
+  Typography,
 } from '@tangle-network/ui-components';
+import { ExternalLinkLine, TokenIcon } from '@tangle-network/icons';
 import {
   useDeveloperPayments,
   formatEarningsAmount,
@@ -20,28 +24,113 @@ import {
 } from '@tangle-network/tangle-shared-ui/data/graphql';
 import { useTokenMetadata } from '@tangle-network/tangle-shared-ui/data/services';
 import ErrorMessage from '@tangle-network/tangle-shared-ui/components/ErrorMessage';
-import { chainsConfig } from '@tangle-network/dapp-config/chains';
+import { getCachedTokenMetadata } from '@tangle-network/dapp-config/tokenMetadata';
 import { PagePath } from '../../types';
+import {
+  getActiveChainConfig,
+  getTxExplorerUrl,
+  isNonLocalEvmChain,
+} from '../../utils/explorer';
 
 const shortenAddress = (address: string): string =>
   `${address.slice(0, 6)}...${address.slice(-4)}`;
 
+const shortenTxHash = (txHash: string): string =>
+  `${txHash.slice(0, 8)}...${txHash.slice(-4)}`;
+
 const formatTimestamp = (timestamp: bigint): string =>
   new Date(Number(timestamp) * 1000).toLocaleString();
 
-const TokenLabel: FC<{ token: Address }> = ({ token }) => {
+const PAYOUT_EVENTS_PAGE_SIZE = 10;
+
+const isFallbackSymbol = (symbol: string): boolean =>
+  symbol.startsWith('0x') || symbol.includes('...');
+
+const resolveTokenIconSymbol = (
+  chainId: number,
+  symbol: string,
+  address: Address,
+): string | null => {
+  const cached = getCachedTokenMetadata(chainId, address);
+  const candidate = isFallbackSymbol(symbol) ? (cached?.symbol ?? symbol) : symbol;
+  return isFallbackSymbol(candidate) ? null : candidate;
+};
+
+const EarningsAssetCell: FC<{ token: Address; addressExplorerUrl?: string }> = ({
+  token,
+  addressExplorerUrl,
+}) => {
+  const chainId = useChainId();
+  const activeChain = getActiveChainConfig(chainId);
+  const cachedMetadata = getCachedTokenMetadata(chainId, token);
   const { data: metadata, isLoading } = useTokenMetadata(token);
   const symbol =
-    metadata?.symbol ?? (token.toLowerCase() === zeroAddress ? 'NATIVE' : 'TOKEN');
+    metadata?.symbol ??
+    cachedMetadata?.symbol ??
+    (token === zeroAddress
+      ? activeChain?.nativeCurrency?.symbol ?? 'NATIVE'
+      : 'TOKEN');
+  const tokenName =
+    token === zeroAddress
+      ? activeChain?.nativeCurrency?.name ?? null
+      : cachedMetadata &&
+          cachedMetadata.symbol.toLowerCase() === symbol.toLowerCase()
+        ? cachedMetadata.name
+        : null;
+  const iconSymbol = resolveTokenIconSymbol(chainId, symbol, token);
+  const explorerAddressUrl = addressExplorerUrl
+    ? `${addressExplorerUrl}/address/${token}`
+    : null;
+  const showExplorerAction = isNonLocalEvmChain(chainId) && !!explorerAddressUrl;
 
   return (
-    <div className="flex items-center gap-2">
-      <Typography variant="body2" fw="semibold">
-        {isLoading ? 'Loading...' : symbol}
-      </Typography>
-      <Typography variant="body2" className="text-mono-100 font-mono">
-        {shortenAddress(token)}
-      </Typography>
+    <div className="flex items-center gap-3">
+      <div className="flex items-center justify-center w-9 h-9">
+        {iconSymbol ? (
+          <TokenIcon name={iconSymbol} size="xl" />
+        ) : (
+          <Avatar size="lg" value={token} theme="ethereum" />
+        )}
+      </div>
+
+      <div className="flex flex-col min-w-0">
+        <div className="flex items-center gap-2 min-w-0">
+          <Typography variant="body2" fw="semibold" className="whitespace-nowrap">
+            {isLoading ? 'Loading...' : symbol}
+          </Typography>
+          {tokenName && (
+            <Typography
+              variant="body3"
+              className="text-mono-120 dark:text-mono-100 truncate"
+            >
+              {tokenName}
+            </Typography>
+          )}
+        </div>
+
+        <div className="flex items-center gap-2">
+          <Typography variant="body2" className="font-mono text-mono-100">
+            {shortenAddress(token)}
+          </Typography>
+          <CopyWithTooltip
+            textToCopy={token}
+            copyLabel="Copy asset address"
+            isButton={false}
+            className="inline-flex text-mono-120 dark:text-mono-100"
+          />
+          {showExplorerAction && (
+            <a
+              href={explorerAddressUrl ?? undefined}
+              target="_blank"
+              rel="noreferrer"
+              className="text-mono-120 dark:text-mono-100"
+              aria-label="View asset address on block explorer"
+            >
+              <ExternalLinkLine className="w-4 h-4 !fill-current" />
+            </a>
+          )}
+        </div>
+      </div>
     </div>
   );
 };
@@ -55,15 +144,57 @@ const TokenAmount: FC<{
   const decimals = metadata?.decimals ?? 18;
   const symbol =
     metadata?.symbol ?? (token.toLowerCase() === zeroAddress ? 'NATIVE' : 'TOKEN');
+  const formattedAmount = formatEarningsAmount(amount, decimals);
 
   return (
     <Typography variant="body2" className={className}>
-      {formatEarningsAmount(amount, decimals)} {symbol}
+      {formattedAmount} {symbol}
     </Typography>
   );
 };
 
-const TokenTotalsStack: FC<{ rows: DeveloperTokenTotal[] }> = ({ rows }) => {
+const PayoutEventAmountCell: FC<{ token: Address; amount: bigint }> = ({
+  token,
+  amount,
+}) => {
+  const chainId = useChainId();
+  const activeChain = getActiveChainConfig(chainId);
+  const cachedMetadata = getCachedTokenMetadata(chainId, token);
+  const { data: metadata } = useTokenMetadata(token);
+  const decimals =
+    metadata?.decimals ??
+    cachedMetadata?.decimals ??
+    (token === zeroAddress
+      ? activeChain?.nativeCurrency?.decimals ?? 18
+      : 18);
+  const symbol =
+    metadata?.symbol ??
+    cachedMetadata?.symbol ??
+    (token === zeroAddress
+      ? activeChain?.nativeCurrency?.symbol ?? 'NATIVE'
+      : 'TOKEN');
+  const iconSymbol = resolveTokenIconSymbol(chainId, symbol, token);
+
+  return (
+    <div className="flex items-center gap-2">
+      <div className="flex items-center justify-center w-5 h-5">
+        {iconSymbol ? (
+          <TokenIcon name={iconSymbol} size="lg" />
+        ) : (
+          <Avatar size="sm" value={token} theme="ethereum" />
+        )}
+      </div>
+      <Typography variant="body2">
+        {formatEarningsAmount(amount, decimals)} {symbol}
+      </Typography>
+    </div>
+  );
+};
+
+const EarningsByAssetsTable: FC<{
+  rows: DeveloperTokenTotal[];
+  addressExplorerUrl?: string;
+}> = ({ rows, addressExplorerUrl }) => {
   if (rows.length === 0) {
     return (
       <Typography variant="body2" className="text-mono-100">
@@ -73,16 +204,39 @@ const TokenTotalsStack: FC<{ rows: DeveloperTokenTotal[] }> = ({ rows }) => {
   }
 
   return (
-    <div className="space-y-2">
-      {rows.map((row) => (
-        <div
-          key={row.token}
-          className="flex items-center justify-between gap-3 rounded-lg border border-mono-60 dark:border-mono-140 px-3 py-2"
-        >
-          <TokenLabel token={row.token} />
-          <TokenAmount token={row.token} amount={row.totalPaid} />
-        </div>
-      ))}
+    <div className="overflow-x-auto">
+      <table className="w-full">
+        <thead>
+          <tr className="border-b border-mono-60 dark:border-mono-140">
+            <th className="text-left py-3 px-4 text-mono-100 font-medium">Asset</th>
+            <th className="text-left py-3 px-4 text-mono-100 font-medium">Amount</th>
+            <th className="text-left py-3 px-4 text-mono-100 font-medium">
+              Payout Events
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          {rows.map((row) => (
+            <tr
+              key={row.token}
+              className="border-b border-mono-40 dark:border-mono-160"
+            >
+              <td className="py-3 px-4">
+                <EarningsAssetCell
+                  token={row.token}
+                  addressExplorerUrl={addressExplorerUrl}
+                />
+              </td>
+              <td className="py-3 px-4">
+                <TokenAmount token={row.token} amount={row.totalPaid} />
+              </td>
+              <td className="py-3 px-4">
+                <Typography variant="body2">{row.paymentCount}</Typography>
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
     </div>
   );
 };
@@ -90,12 +244,27 @@ const TokenTotalsStack: FC<{ rows: DeveloperTokenTotal[] }> = ({ rows }) => {
 const EarningsPage: FC = () => {
   const { address, isConnected } = useAccount();
   const chainId = useChainId();
-  const activeChain = chainsConfig[chainId];
-  const txExplorerUrl = activeChain?.blockExplorers?.default?.url;
+  const txExplorerUrl = getTxExplorerUrl(chainId);
+  const showExplorerActions = isNonLocalEvmChain(chainId);
+  const [eventsPageIndex, setEventsPageIndex] = useState(0);
   const walletActivityUrl =
     txExplorerUrl && address ? `${txExplorerUrl}/address/${address}` : null;
 
-  const { data, isLoading, error, network } = useDeveloperPayments();
+  const { data, isLoading, error } = useDeveloperPayments();
+  const events = useMemo(() => data?.events ?? [], [data?.events]);
+  const totalEventPages = Math.max(
+    1,
+    Math.ceil(events.length / PAYOUT_EVENTS_PAGE_SIZE),
+  );
+
+  useEffect(() => {
+    setEventsPageIndex((current) => Math.min(current, totalEventPages - 1));
+  }, [totalEventPages]);
+
+  const visibleEvents = useMemo(() => {
+    const start = eventsPageIndex * PAYOUT_EVENTS_PAGE_SIZE;
+    return events.slice(start, start + PAYOUT_EVENTS_PAGE_SIZE);
+  }, [events, eventsPageIndex]);
 
   if (!isConnected) {
     return (
@@ -119,22 +288,6 @@ const EarningsPage: FC = () => {
           payment distribution.
         </Typography>
       </div>
-
-      <Card variant={CardVariant.GLASS} className="p-6">
-        <Typography variant="h5" fw="bold" className="mb-3">
-          Data Correctness
-        </Typography>
-        <Typography variant="body2" className="text-mono-100">
-          Direct on-chain payout events.
-        </Typography>
-        <Typography variant="body2" className="text-mono-100 mt-2">
-          Includes manager payout overrides through emitted payout recipients.
-        </Typography>
-        <Typography variant="body2" className="text-mono-100 mt-3">
-          Active chain: {activeChain?.name ?? `Chain ${chainId}`} ({chainId}).
-          Indexer network: {network}.
-        </Typography>
-      </Card>
 
       {isLoading ? (
         <Card variant={CardVariant.GLASS} className="p-6">
@@ -162,62 +315,12 @@ const EarningsPage: FC = () => {
         <>
           <Card variant={CardVariant.GLASS} className="p-6">
             <Typography variant="h5" fw="bold" className="mb-4">
-              Earnings Summary
+              Earnings by Assets
             </Typography>
-
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
-              <div className="rounded-lg border border-mono-60 dark:border-mono-140 p-4">
-                <Typography variant="body2" className="text-mono-100 mb-2">
-                  Total Developer Payouts (by asset)
-                </Typography>
-                <TokenTotalsStack rows={data.tokenTotals} />
-              </div>
-
-              <div className="rounded-lg border border-mono-60 dark:border-mono-140 p-4">
-                <Typography variant="body2" className="text-mono-100 mb-2">
-                  Payout Addresses
-                </Typography>
-                <Typography variant="h5" fw="bold">
-                  {data.payoutAddresses.length}
-                </Typography>
-                <div className="mt-3 space-y-2">
-                  {data.payoutAddresses.length > 0 ? (
-                    data.payoutAddresses.map((recipient) => (
-                      <Typography
-                        key={recipient}
-                        variant="body2"
-                        className="font-mono text-mono-100"
-                      >
-                        {recipient}
-                      </Typography>
-                    ))
-                  ) : (
-                    <Typography variant="body2" className="text-mono-100">
-                      No payout recipients yet.
-                    </Typography>
-                  )}
-                </div>
-              </div>
-
-              <div className="rounded-lg border border-mono-60 dark:border-mono-140 p-4">
-                <Typography variant="body2" className="text-mono-100 mb-2">
-                  Services Generating Payouts
-                </Typography>
-                <Typography variant="h5" fw="bold">
-                  {data.serviceCount}
-                </Typography>
-                <Typography variant="body2" className="text-mono-100 mt-3">
-                  Blueprints: {data.blueprintRollups.length}
-                </Typography>
-                <Typography variant="body2" className="text-mono-100 mt-2">
-                  Total payout events: {data.events.length}
-                </Typography>
-                <Typography variant="body2" className="text-mono-100 mt-2">
-                  Aggregate payouts are asset-aware and derived from
-                  `PaymentDistributed`.
-                </Typography>
-              </div>
-            </div>
+            <EarningsByAssetsTable
+              rows={data.tokenTotals}
+              addressExplorerUrl={txExplorerUrl}
+            />
           </Card>
 
           <Card variant={CardVariant.GLASS} className="p-6">
@@ -225,7 +328,7 @@ const EarningsPage: FC = () => {
               Developer Payout Events
             </Typography>
 
-            {data.events.length === 0 ? (
+            {events.length === 0 ? (
               <div className="text-center py-6">
                 <Typography variant="body1" className="text-mono-100">
                   No developer payout events found for this wallet context.
@@ -252,19 +355,13 @@ const EarningsPage: FC = () => {
                         Date
                       </th>
                       <th className="text-left py-3 px-4 text-mono-100 font-medium">
+                        Amount
+                      </th>
+                      <th className="text-left py-3 px-4 text-mono-100 font-medium">
                         Blueprint
                       </th>
                       <th className="text-left py-3 px-4 text-mono-100 font-medium">
                         Service
-                      </th>
-                      <th className="text-left py-3 px-4 text-mono-100 font-medium">
-                        Recipient
-                      </th>
-                      <th className="text-left py-3 px-4 text-mono-100 font-medium">
-                        Asset
-                      </th>
-                      <th className="text-left py-3 px-4 text-mono-100 font-medium">
-                        Amount
                       </th>
                       <th className="text-left py-3 px-4 text-mono-100 font-medium">
                         Tx Hash
@@ -272,7 +369,7 @@ const EarningsPage: FC = () => {
                     </tr>
                   </thead>
                   <tbody>
-                    {data.events.map((entry) => (
+                    {visibleEvents.map((entry) => (
                       <tr
                         key={entry.id}
                         className="border-b border-mono-40 dark:border-mono-160"
@@ -283,123 +380,95 @@ const EarningsPage: FC = () => {
                           </Typography>
                         </td>
                         <td className="py-3 px-4">
-                          <Typography variant="body2">
+                          <PayoutEventAmountCell
+                            token={entry.token}
+                            amount={entry.amount}
+                          />
+                        </td>
+                        <td className="py-3 px-4">
+                          <Link
+                            to={PagePath.BLUEPRINTS_DETAILS.replace(
+                              ':id',
+                              entry.blueprintId.toString(),
+                            )}
+                            className="underline body2"
+                          >
                             #{entry.blueprintId.toString()}
-                          </Typography>
+                          </Link>
                         </td>
                         <td className="py-3 px-4">
-                          <Typography variant="body2">
+                          <Link
+                            to={PagePath.SERVICE_DETAILS.replace(
+                              ':id',
+                              entry.serviceId.toString(),
+                            )}
+                            className="underline body2"
+                          >
                             #{entry.serviceId.toString()}
-                          </Typography>
+                          </Link>
                         </td>
                         <td className="py-3 px-4">
-                          <Typography variant="body2" className="font-mono">
-                            {entry.recipient}
-                          </Typography>
-                        </td>
-                        <td className="py-3 px-4">
-                          <TokenLabel token={entry.token} />
-                        </td>
-                        <td className="py-3 px-4">
-                          <TokenAmount token={entry.token} amount={entry.amount} />
-                        </td>
-                        <td className="py-3 px-4">
-                          {txExplorerUrl ? (
-                            <a
-                              href={`${txExplorerUrl}/tx/${entry.txHash}`}
-                              target="_blank"
-                              rel="noreferrer"
-                              className="underline body2 font-mono"
+                          <div className="flex items-center gap-2 text-mono-100">
+                            <Typography
+                              variant="body2"
+                              className="font-mono text-mono-100"
                             >
-                              {`${entry.txHash.slice(0, 10)}...${entry.txHash.slice(-8)}`}
-                            </a>
-                          ) : (
-                            <Typography variant="body2" className="font-mono">
-                              {`${entry.txHash.slice(0, 10)}...${entry.txHash.slice(-8)}`}
+                              {shortenTxHash(entry.txHash)}
                             </Typography>
-                          )}
+                            <CopyWithTooltip
+                              textToCopy={entry.txHash}
+                              copyLabel="Copy tx hash"
+                              isButton={false}
+                              className="inline-flex text-mono-100"
+                              iconClassName="!fill-mono-100"
+                            />
+                            {showExplorerActions && txExplorerUrl && (
+                              <a
+                                href={`${txExplorerUrl}/tx/${entry.txHash}`}
+                                target="_blank"
+                                rel="noreferrer"
+                                className="text-mono-100"
+                                aria-label="View transaction on block explorer"
+                              >
+                                <ExternalLinkLine className="w-4 h-4 !fill-mono-100" />
+                              </a>
+                            )}
+                          </div>
                         </td>
                       </tr>
                     ))}
                   </tbody>
                 </table>
-              </div>
-            )}
-          </Card>
 
-          <Card variant={CardVariant.GLASS} className="p-6">
-            <Typography variant="h5" fw="bold" className="mb-4">
-              Blueprint-Level Rollups
-            </Typography>
-
-            {data.blueprintRollups.length === 0 ? (
-              <Typography variant="body1" className="text-mono-100">
-                No blueprint payout rollups yet.
-              </Typography>
-            ) : (
-              <div className="overflow-x-auto">
-                <table className="w-full">
-                  <thead>
-                    <tr className="border-b border-mono-60 dark:border-mono-140">
-                      <th className="text-left py-3 px-4 text-mono-100 font-medium">
-                        Blueprint
-                      </th>
-                      <th className="text-left py-3 px-4 text-mono-100 font-medium">
-                        Services
-                      </th>
-                      <th className="text-left py-3 px-4 text-mono-100 font-medium">
-                        Payments
-                      </th>
-                      <th className="text-left py-3 px-4 text-mono-100 font-medium">
-                        Last Payout
-                      </th>
-                      <th className="text-left py-3 px-4 text-mono-100 font-medium">
-                        Payout Scope
-                      </th>
-                      <th className="text-left py-3 px-4 text-mono-100 font-medium">
-                        Asset Breakdown
-                      </th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {data.blueprintRollups.map((rollup) => (
-                      <tr
-                        key={rollup.blueprintId.toString()}
-                        className="border-b border-mono-40 dark:border-mono-160"
-                      >
-                        <td className="py-3 px-4">
-                          <Typography variant="body2">
-                            #{rollup.blueprintId.toString()}
-                          </Typography>
-                        </td>
-                        <td className="py-3 px-4">
-                          <Typography variant="body2">{rollup.serviceCount}</Typography>
-                        </td>
-                        <td className="py-3 px-4">
-                          <Typography variant="body2">{rollup.paymentCount}</Typography>
-                        </td>
-                        <td className="py-3 px-4">
-                          <Typography variant="body2">
-                            {rollup.lastPaidAt
-                              ? formatTimestamp(rollup.lastPaidAt)
-                              : 'N/A'}
-                          </Typography>
-                        </td>
-                        <td className="py-3 px-4">
-                          <Typography variant="body2" className="text-mono-100">
-                            Payout data by asset
-                          </Typography>
-                          <Typography variant="body2" className="text-mono-100">
-                            {rollup.tokenTotals.length} asset(s)
-                          </Typography>
-                        </td>
-                        <td className="py-3 px-4">
-                          <TokenTotalsStack rows={rollup.tokenTotals} />
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
+                {totalEventPages > 1 && (
+                  <Pagination
+                    className="mt-2"
+                    title="events"
+                    itemsPerPage={PAYOUT_EVENTS_PAGE_SIZE}
+                    totalItems={events.length}
+                    totalPages={totalEventPages}
+                    page={eventsPageIndex + 1}
+                    canPreviousPage={eventsPageIndex > 0}
+                    previousPage={() => {
+                      setEventsPageIndex((current) => Math.max(current - 1, 0));
+                    }}
+                    canNextPage={eventsPageIndex < totalEventPages - 1}
+                    nextPage={() => {
+                      setEventsPageIndex((current) =>
+                        Math.min(current + 1, totalEventPages - 1),
+                      );
+                    }}
+                    setPageIndex={(updater) => {
+                      setEventsPageIndex((current) => {
+                        const next =
+                          typeof updater === 'function'
+                            ? updater(current)
+                            : updater;
+                        return Math.min(Math.max(next, 0), totalEventPages - 1);
+                      });
+                    }}
+                  />
+                )}
               </div>
             )}
           </Card>

@@ -16,12 +16,13 @@ import {
   Card,
   CardVariant,
   CheckBox,
+  CopyWithTooltip,
   Typography,
   SkeletonLoader,
   Avatar,
 } from '@tangle-network/ui-components';
 import { BN } from '@polkadot/util';
-import { TokenIcon } from '@tangle-network/icons';
+import { ExternalLinkLine, TokenIcon } from '@tangle-network/icons';
 import {
   AmountFormatStyle,
   formatDisplayAmount,
@@ -35,19 +36,18 @@ import {
 } from '@tangle-network/tangle-shared-ui/data/graphql';
 import { useTokenMetadata } from '@tangle-network/tangle-shared-ui/data/services';
 import ErrorMessage from '@tangle-network/tangle-shared-ui/components/ErrorMessage';
-import { chainsConfig } from '@tangle-network/dapp-config/chains';
-import {
-  TANGLE_MAINNET_EVM_EXPLORER_URL,
-  TANGLE_TESTNET_EVM_EXPLORER_URL,
-} from '@tangle-network/dapp-config/constants';
 import { getCachedTokenMetadata } from '@tangle-network/dapp-config/tokenMetadata';
 import {
   getEnvioNetworkFromChainId,
   type EnvioNetwork,
 } from '@tangle-network/tangle-shared-ui/utils/executeEnvioGraphQL';
-import EVMChainId from '@tangle-network/dapp-types/EVMChainId';
 import { Address, Hash, zeroAddress } from 'viem';
 import pollWithBackoff from '../../utils/pollWithBackoff';
+import {
+  getActiveChainConfig,
+  getTxExplorerUrl,
+  isNonLocalEvmChain,
+} from '../../utils/explorer';
 
 const getErrorMessage = (error: unknown): string => {
   return error instanceof Error ? error.message : 'Failed to load rewards data';
@@ -55,6 +55,10 @@ const getErrorMessage = (error: unknown): string => {
 
 const shortenAddress = (address: string): string => {
   return `${address.slice(0, 6)}...${address.slice(-4)}`;
+};
+
+const shortenTxHash = (txHash: string): string => {
+  return `${txHash.slice(0, 8)}...${txHash.slice(-4)}`;
 };
 
 const isFallbackSymbol = (symbol: string): boolean =>
@@ -101,27 +105,6 @@ const inferNetworkFromEndpoint = (
   }
 
   return null;
-};
-
-const getActiveChainConfig = (chainId: number) =>
-  chainsConfig[chainId] ??
-  Object.values(chainsConfig).find((chain) => chain.id === chainId);
-
-const getTxExplorerUrl = (chainId: number): string | undefined => {
-  const chainExplorerUrl = getActiveChainConfig(chainId)?.blockExplorers?.default?.url;
-  if (chainExplorerUrl) {
-    return chainExplorerUrl;
-  }
-
-  if (chainId === EVMChainId.TangleMainnetEVM) {
-    return TANGLE_MAINNET_EVM_EXPLORER_URL;
-  }
-
-  if (chainId === EVMChainId.TangleTestnetEVM) {
-    return TANGLE_TESTNET_EVM_EXPLORER_URL;
-  }
-
-  return undefined;
 };
 
 type ActiveClaimAction =
@@ -451,7 +434,11 @@ const RewardsPage: FC = () => {
         ) : rewardHistoryError ? (
           <ErrorMessage>Could not load claim history.</ErrorMessage>
         ) : rewardHistory?.length ? (
-          <RewardClaimsTable entries={rewardHistory} txExplorerUrl={txExplorerUrl} />
+          <RewardClaimsTable
+            entries={rewardHistory}
+            txExplorerUrl={txExplorerUrl}
+            showExplorerActions={showExplorerActions}
+          />
         ) : (
           <div className="text-center py-6 text-mono-100">
             <Typography variant="body1">No claim history yet.</Typography>
@@ -563,7 +550,7 @@ const PendingAssetCell: FC<{ token: Address; addressExplorerUrl?: string }> = ({
       : 'TOKEN');
   const tokenName =
     token === zeroAddress
-      ? null
+      ? activeChain?.nativeCurrency?.name ?? null
       : cachedMetadata &&
           cachedMetadata.symbol.toLowerCase() === symbol.toLowerCase()
         ? cachedMetadata.name
@@ -572,6 +559,7 @@ const PendingAssetCell: FC<{ token: Address; addressExplorerUrl?: string }> = ({
   const explorerAddressUrl = addressExplorerUrl
     ? `${addressExplorerUrl}/address/${token}`
     : null;
+  const showExplorerAction = isNonLocalEvmChain(chainId) && !!explorerAddressUrl;
 
   return (
     <div className="flex items-center gap-3">
@@ -598,20 +586,28 @@ const PendingAssetCell: FC<{ token: Address; addressExplorerUrl?: string }> = ({
           )}
         </div>
 
-        {explorerAddressUrl ? (
-          <a
-            href={explorerAddressUrl}
-            target="_blank"
-            rel="noreferrer"
-            className="underline body2 font-mono text-mono-120 dark:text-mono-100 w-fit"
-          >
-            {shortenAddress(token)}
-          </a>
-        ) : (
+        <div className="flex items-center gap-2">
           <Typography variant="body2" className="font-mono text-mono-100">
             {shortenAddress(token)}
           </Typography>
-        )}
+          <CopyWithTooltip
+            textToCopy={token}
+            copyLabel="Copy asset address"
+            isButton={false}
+            className="inline-flex text-mono-120 dark:text-mono-100"
+          />
+          {showExplorerAction && (
+            <a
+              href={explorerAddressUrl ?? undefined}
+              target="_blank"
+              rel="noreferrer"
+              className="text-mono-120 dark:text-mono-100"
+              aria-label="View asset address on block explorer"
+            >
+              <ExternalLinkLine className="w-4 h-4 !fill-current" />
+            </a>
+          )}
+        </div>
       </div>
     </div>
   );
@@ -672,11 +668,13 @@ const RewardAmountCell: FC<{ token: Address; amount: bigint }> = ({
 interface RewardClaimsTableProps {
   entries: RewardClaimEntry[];
   txExplorerUrl?: string;
+  showExplorerActions: boolean;
 }
 
 const RewardClaimsTable: FC<RewardClaimsTableProps> = ({
   entries,
   txExplorerUrl,
+  showExplorerActions,
 }) => {
   return (
     <div className="overflow-x-auto">
@@ -704,7 +702,10 @@ const RewardClaimsTable: FC<RewardClaimsTableProps> = ({
               className="border-b border-mono-40 dark:border-mono-160"
             >
               <td className="py-3 px-4">
-                <TokenBadge token={entry.token} />
+                <PendingAssetCell
+                  token={entry.token}
+                  addressExplorerUrl={txExplorerUrl}
+                />
               </td>
               <td className="py-3 px-4">
                 <RewardAmountCell token={entry.token} amount={entry.amount} />
@@ -715,38 +716,34 @@ const RewardClaimsTable: FC<RewardClaimsTableProps> = ({
                 </Typography>
               </td>
               <td className="py-3 px-4">
-                {txExplorerUrl ? (
-                  <a
-                    href={`${txExplorerUrl}/tx/${entry.txHash}`}
-                    target="_blank"
-                    rel="noreferrer"
-                    className="underline body2 font-mono"
-                  >
-                    {`${entry.txHash.slice(0, 10)}...${entry.txHash.slice(-8)}`}
-                  </a>
-                ) : (
-                  <Typography variant="body2" className="font-mono">
-                    {`${entry.txHash.slice(0, 10)}...${entry.txHash.slice(-8)}`}
+                <div className="flex items-center gap-2 text-mono-100">
+                  <Typography variant="body2" className="font-mono text-mono-100">
+                    {shortenTxHash(entry.txHash)}
                   </Typography>
-                )}
+                  <CopyWithTooltip
+                    textToCopy={entry.txHash}
+                    copyLabel="Copy tx hash"
+                    isButton={false}
+                    className="inline-flex text-mono-100"
+                    iconClassName="!fill-mono-100"
+                  />
+                  {showExplorerActions && txExplorerUrl && (
+                    <a
+                      href={`${txExplorerUrl}/tx/${entry.txHash}`}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="text-mono-100"
+                      aria-label="View transaction on block explorer"
+                    >
+                      <ExternalLinkLine className="w-4 h-4 !fill-mono-100" />
+                    </a>
+                  )}
+                </div>
               </td>
             </tr>
           ))}
         </tbody>
       </table>
-    </div>
-  );
-};
-
-const TokenBadge: FC<{ token: Address }> = ({ token }) => {
-  const { data: tokenMetadata, isLoading } = useTokenMetadata(token);
-  const symbol = tokenMetadata?.symbol ?? (token === zeroAddress ? 'NATIVE' : 'TOKEN');
-
-  return (
-    <div className="flex items-center">
-      <Typography variant="body2" fw="semibold">
-        {isLoading ? 'Loading...' : symbol}
-      </Typography>
     </div>
   );
 };
