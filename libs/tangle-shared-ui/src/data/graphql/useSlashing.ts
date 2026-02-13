@@ -37,12 +37,6 @@ export interface SlashProposal {
   disputeReason: string | null;
 }
 
-export interface SlashDisputeEligibility {
-  isEligible: boolean;
-  reason: 'NotPending' | 'DeadlinePassed' | null;
-  secondsUntilDeadline: number;
-}
-
 // Raw response from GraphQL
 interface SlashProposalsResponse {
   SlashProposal: Array<{
@@ -74,79 +68,6 @@ const parseSlashStatus = (status: string): SlashStatus => {
       return 'Pending';
   }
 };
-
-/**
- * Converts slash basis points (bps) to a percentage string.
- * Example: 250 => "2.5%"
- */
-export const formatSlashBps = (
-  bps: bigint | number,
-  maxFractionDigits = 2,
-): string => {
-  const value = typeof bps === 'bigint' ? Number(bps) : bps;
-  if (!Number.isFinite(value)) {
-    return '0%';
-  }
-
-  const percentage = value / 100;
-  return `${percentage.toLocaleString(undefined, {
-    minimumFractionDigits: 0,
-    maximumFractionDigits: maxFractionDigits,
-  })}%`;
-};
-
-/**
- * Returns seconds remaining until dispute deadline.
- * Positive: time left, 0/negative: deadline reached or passed.
- */
-export const getSlashDeadlineTimeRemainingSeconds = (
-  executeAfter: bigint,
-  nowUnixSeconds = Math.floor(Date.now() / 1000),
-): number => Number(executeAfter) - nowUnixSeconds;
-
-/**
- * Determines whether a slash is disputable right now.
- * Contract rule: status must be Pending and current time must be before executeAfter.
- */
-export const getSlashDisputeEligibility = (
-  slash: Pick<SlashProposal, 'status' | 'executeAfter'>,
-  nowUnixSeconds = Math.floor(Date.now() / 1000),
-): SlashDisputeEligibility => {
-  if (slash.status !== 'Pending') {
-    return {
-      isEligible: false,
-      reason: 'NotPending',
-      secondsUntilDeadline: getSlashDeadlineTimeRemainingSeconds(
-        slash.executeAfter,
-        nowUnixSeconds,
-      ),
-    };
-  }
-
-  const secondsUntilDeadline = getSlashDeadlineTimeRemainingSeconds(
-    slash.executeAfter,
-    nowUnixSeconds,
-  );
-
-  if (secondsUntilDeadline <= 0) {
-    return {
-      isEligible: false,
-      reason: 'DeadlinePassed',
-      secondsUntilDeadline,
-    };
-  }
-
-  return {
-    isEligible: true,
-    reason: null,
-    secondsUntilDeadline,
-  };
-};
-
-export const isSlashDisputeEligible = (
-  slash: Pick<SlashProposal, 'status' | 'executeAfter'>,
-  nowUnixSeconds = Math.floor(Date.now() / 1000),
-): boolean => getSlashDisputeEligibility(slash, nowUnixSeconds).isEligible;
 
 // Fetch slash proposals for an operator
 const fetchSlashProposals = async (
