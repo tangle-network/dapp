@@ -14,6 +14,7 @@ import {
   EnvioNetwork,
   getEnvioNetworkFromChainId,
 } from '../../utils/executeEnvioGraphQL';
+import { RewardClaimRow, mapRewardClaimRow } from './rewardClaimMapper';
 
 export interface RewardClaimEntry {
   id: string;
@@ -53,14 +54,7 @@ export interface AggregatedRewards {
 
 // Raw response from GraphQL
 interface RewardClaimsQueryResponse {
-  RewardClaim: Array<{
-    id: string;
-    account: string;
-    token: string;
-    amount: string;
-    claimedAt: string;
-    txHash: string;
-  }>;
+  RewardClaim: RewardClaimRow[];
 }
 
 const getContracts = (chainId: number) => {
@@ -111,14 +105,7 @@ const fetchRewardClaimsByAccount = async (
 
   throwIfGraphQLErrors(result.errors, 'Failed to fetch reward claims');
 
-  return (result.data.RewardClaim ?? []).map((claim) => ({
-    id: claim.id,
-    account: claim.account as Address,
-    token: claim.token as Address,
-    amount: BigInt(claim.amount),
-    claimedAt: BigInt(claim.claimedAt),
-    txHash: claim.txHash,
-  }));
+  return (result.data.RewardClaim ?? []).map(mapRewardClaimRow);
 };
 
 /**

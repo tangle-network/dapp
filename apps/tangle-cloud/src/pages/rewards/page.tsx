@@ -27,6 +27,7 @@ import {
   AmountFormatStyle,
   formatDisplayAmount,
 } from '@tangle-network/ui-components/utils/formatDisplayAmount';
+import { shortenHex } from '@tangle-network/ui-components/utils/shortenHex';
 import {
   usePendingRewardsByToken,
   useRewardHistory,
@@ -48,32 +49,10 @@ import {
   getTxExplorerUrl,
   isNonLocalEvmChain,
 } from '../../utils/explorer';
+import { resolveTokenIconSymbol } from '../../utils/tokenPresentation';
 
 const getErrorMessage = (error: unknown): string => {
   return error instanceof Error ? error.message : 'Failed to load rewards data';
-};
-
-const shortenAddress = (address: string): string => {
-  return `${address.slice(0, 6)}...${address.slice(-4)}`;
-};
-
-const shortenTxHash = (txHash: string): string => {
-  return `${txHash.slice(0, 8)}...${txHash.slice(-4)}`;
-};
-
-const isFallbackSymbol = (symbol: string): boolean =>
-  symbol.startsWith('0x') || symbol.includes('...');
-
-const resolveTokenIconSymbol = (
-  chainId: number,
-  symbol: string,
-  address: Address,
-): string | null => {
-  const cached = getCachedTokenMetadata(chainId, address);
-  const candidate = isFallbackSymbol(symbol)
-    ? (cached?.symbol ?? symbol)
-    : symbol;
-  return isFallbackSymbol(candidate) ? null : candidate;
 };
 
 const inferNetworkFromEndpoint = (
@@ -150,7 +129,6 @@ const RewardsPage: FC = () => {
     claimAllTokens,
     status: claimStatus,
     error: claimError,
-    reset,
   } = useClaimRewardsTx();
 
   const [selectedTokenSet, setSelectedTokenSet] = useState<Set<string>>(
@@ -259,11 +237,6 @@ const RewardsPage: FC = () => {
   const handleClaimAll = useCallback(async () => {
     await executeClaimAction({ type: 'all' }, claimAllTokens);
   }, [claimAllTokens, executeClaimAction]);
-
-  const handleResetClaimState = useCallback(() => {
-    setSuccessfulClaimHash(null);
-    reset();
-  }, [reset]);
 
   useEffect(() => {
     if (!isClaimSuccess || !successfulClaimHash) {
@@ -383,19 +356,8 @@ const RewardsPage: FC = () => {
               addressExplorerUrl={txExplorerUrl}
             />
 
-            <div className="mt-4 flex items-center justify-between gap-3">
-              {(isClaimSuccess || claimError) && (
-                <Button
-                  variant="utility"
-                  size="sm"
-                  onClick={handleResetClaimState}
-                >
-                  Reset
-                </Button>
-              )}
-
+            <div className="mt-4 flex items-center justify-end gap-3">
               <Button
-                className="ml-auto"
                 onClick={
                   selectedTokens.length > 0
                     ? handleClaimSelected
@@ -603,7 +565,7 @@ const PendingAssetCell: FC<{ token: Address; addressExplorerUrl?: string }> = ({
 
         <div className="flex items-center gap-2">
           <Typography variant="body2" className="font-mono text-mono-100">
-            {shortenAddress(token)}
+            {shortenHex(token)}
           </Typography>
           <CopyWithTooltip
             textToCopy={token}
@@ -736,7 +698,7 @@ const RewardClaimsTable: FC<RewardClaimsTableProps> = ({
                     variant="body2"
                     className="font-mono text-mono-100"
                   >
-                    {shortenTxHash(entry.txHash)}
+                    {shortenHex(entry.txHash, 6)}
                   </Typography>
                   <CopyWithTooltip
                     textToCopy={entry.txHash}

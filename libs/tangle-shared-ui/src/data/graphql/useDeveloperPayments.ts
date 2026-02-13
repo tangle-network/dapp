@@ -14,6 +14,10 @@ import {
   EnvioNetwork,
   getEnvioNetworkFromChainId,
 } from '../../utils/executeEnvioGraphQL';
+import {
+  DeveloperPaymentRow,
+  mapDeveloperPaymentRow,
+} from './developerPaymentMapper';
 
 export interface DeveloperPaymentEvent {
   id: string;
@@ -52,16 +56,7 @@ export interface DeveloperPaymentsData {
 }
 
 interface DeveloperPaymentsQueryResponse {
-  DeveloperPayment: Array<{
-    id: string;
-    serviceId: string;
-    blueprintId: string;
-    recipient: string;
-    token: string;
-    amount: string;
-    paidAt: string;
-    txHash: string;
-  }>;
+  DeveloperPayment: DeveloperPaymentRow[];
 }
 
 interface BlueprintAccumulator {
@@ -124,16 +119,7 @@ const fetchDeveloperPaymentEvents = async (
     'Failed to fetch developer payment events',
   );
 
-  return (result.data.DeveloperPayment ?? []).map((entry) => ({
-    id: entry.id,
-    serviceId: BigInt(entry.serviceId),
-    blueprintId: BigInt(entry.blueprintId),
-    recipient: entry.recipient as Address,
-    token: entry.token as Address,
-    amount: BigInt(entry.amount),
-    paidAt: BigInt(entry.paidAt),
-    txHash: entry.txHash,
-  }));
+  return (result.data.DeveloperPayment ?? []).map(mapDeveloperPaymentRow);
 };
 
 const toSortedTokenTotals = (
