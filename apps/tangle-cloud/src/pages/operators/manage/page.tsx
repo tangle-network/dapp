@@ -214,10 +214,7 @@ const Page: FC = () => {
       return '';
     }
 
-    const trimmedRpcAddress = newRpcAddress.trim();
-    return trimmedRpcAddress.length > 0
-      ? trimmedRpcAddress
-      : selectedRegistration.preferences.rpcAddress.trim();
+    return newRpcAddress.trim();
   }, [newRpcAddress, selectedRegistration]);
 
   const resolvedEcdsaPublicKey = useMemo(() => {
@@ -250,6 +247,32 @@ const Page: FC = () => {
     selectedRegistration,
     trimmedEcdsaPublicKey,
   ]);
+
+  const rpcAddressError = useMemo(() => {
+    if (!selectedRegistration) {
+      return null;
+    }
+
+    const trimmedRpcAddress = newRpcAddress.trim();
+    if (trimmedRpcAddress.length === 0) {
+      return 'RPC endpoint is required.';
+    }
+
+    try {
+      const url = new URL(trimmedRpcAddress);
+      const isAllowedProtocol = ['http:', 'https:', 'ws:', 'wss:'].includes(
+        url.protocol,
+      );
+
+      if (!isAllowedProtocol) {
+        return 'RPC endpoint must use http(s) or ws(s).';
+      }
+
+      return null;
+    } catch {
+      return 'Please enter a valid RPC endpoint URL.';
+    }
+  }, [newRpcAddress, selectedRegistration]);
 
   const activeServiceCountByBlueprint = useMemo(() => {
     const counts = new Map<string, number>();
@@ -330,25 +353,50 @@ const Page: FC = () => {
   const handleUpdatePreferences = useCallback(async () => {
     if (
       !selectedRegistration ||
+      rpcAddressError ||
       ecdsaPublicKeyError ||
       !resolvedEcdsaPublicKey
     )
       return;
 
+    const updatedBlueprintId = selectedRegistration.blueprintId;
+    const updatedRpcAddress = resolvedRpcAddress;
+    const updatedEcdsaPublicKey = resolvedEcdsaPublicKey as `0x${string}`;
+
     const result = await updatePreferences(selectedRegistration.blueprintId, {
-      ecdsaPublicKey: resolvedEcdsaPublicKey as `0x${string}`,
-      rpcAddress: resolvedRpcAddress,
+      ecdsaPublicKey: updatedEcdsaPublicKey,
+      rpcAddress: updatedRpcAddress,
     });
     if (result) {
+      queryClient.setQueriesData<OperatorRegistration[]>(
+        { queryKey: ['operator', 'registrations'] },
+        (existingRegistrations) => {
+          if (!existingRegistrations) {
+            return existingRegistrations;
+          }
+
+          return existingRegistrations.map((registration) =>
+            registration.blueprintId === updatedBlueprintId
+              ? {
+                  ...registration,
+                  preferences: {
+                    ...registration.preferences,
+                    rpcAddress: updatedRpcAddress,
+                    ecdsaPublicKey: updatedEcdsaPublicKey,
+                  },
+                }
+              : registration,
+          );
+        },
+      );
+
       setShowUpdateModal(false);
       setSelectedRegistration(null);
       setNewRpcAddress('');
       setNewEcdsaPublicKey('');
-      queryClient.invalidateQueries({
-        queryKey: ['operator', 'registrations'],
-      });
     }
   }, [
+    rpcAddressError,
     ecdsaPublicKeyError,
     queryClient,
     resolvedEcdsaPublicKey,
@@ -833,13 +881,19 @@ const Page: FC = () => {
                 </Typography>
                 <Input
                   id="rpcAddress"
+                  isControlled
                   value={newRpcAddress}
                   onChange={(v) => setNewRpcAddress(v)}
                   placeholder="https://your-node.example.com"
                 />
-                <Typography variant="body3" className="text-mono-100 mt-1">
-                  Leave empty to keep the current RPC endpoint.
-                </Typography>
+                {rpcAddressError ? (
+                  <Typography
+                    variant="body3"
+                    className="mt-1 !text-red-70 dark:!text-red-50"
+                  >
+                    {rpcAddressError}
+                  </Typography>
+                ) : null}
               </div>
               <div>
                 <Typography variant="body2" className="mb-1">
@@ -847,6 +901,7 @@ const Page: FC = () => {
                 </Typography>
                 <Input
                   id="ecdsaPublicKey"
+                  isControlled
                   value={newEcdsaPublicKey}
                   onChange={(v) => setNewEcdsaPublicKey(v)}
                   placeholder="0x... (65-byte uncompressed key)"
@@ -855,7 +910,10 @@ const Page: FC = () => {
                   Leave empty to keep your current key.
                 </Typography>
                 {ecdsaPublicKeyError ? (
-                  <Typography variant="body3" className="text-red-500 mt-1">
+                  <Typography
+                    variant="body3"
+                    className="mt-1 !text-red-70 dark:!text-red-50"
+                  >
                     {ecdsaPublicKeyError}
                   </Typography>
                 ) : null}
@@ -865,7 +923,10 @@ const Page: FC = () => {
           <ModalFooterActions
             hasCloseButton
             isConfirmDisabled={
-              updateStatus === 'pending' || !!ecdsaPublicKeyError || isNoopUpdate
+              updateStatus === 'pending' ||
+              !!rpcAddressError ||
+              !!ecdsaPublicKeyError ||
+              isNoopUpdate
             }
             isProcessing={updateStatus === 'pending'}
             confirmButtonText="Update"
