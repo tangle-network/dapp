@@ -23,6 +23,7 @@ import {
   useUpdateOperatorPreferencesTx,
   useSlashProposals,
   useDisputeSlashTx,
+  getSlashDisputeEligibility,
   formatSlashAmount,
   type OperatorRegistration,
   type SlashProposal,
@@ -39,6 +40,39 @@ import TableCellWrapper from '@tangle-network/tangle-shared-ui/components/tables
 
 const registrationColumnHelper = createColumnHelper<OperatorRegistration>();
 const slashColumnHelper = createColumnHelper<SlashProposal>();
+
+interface RegistrationActionState {
+  canUpdate: boolean;
+  canUnregister: boolean;
+  disableReason: string | null;
+}
+
+const getRegistrationActionState = (
+  registration: OperatorRegistration,
+  options?: { activeServiceCount?: number | null },
+): RegistrationActionState => {
+  if (!registration.active) {
+    return {
+      canUpdate: false,
+      canUnregister: false,
+      disableReason: 'Inactive',
+    };
+  }
+
+  if ((options?.activeServiceCount ?? 0) > 0) {
+    return {
+      canUpdate: true,
+      canUnregister: false,
+      disableReason: 'Blocked: Active Services',
+    };
+  }
+
+  return {
+    canUpdate: true,
+    canUnregister: true,
+    disableReason: null,
+  };
+};
 
 const Page: FC = () => {
   const { isConnected } = useAccount();
@@ -155,37 +189,48 @@ const Page: FC = () => {
       registrationColumnHelper.display({
         id: 'actions',
         header: () => '',
-        cell: (info) => (
-          <TableCellWrapper removeRightBorder className="p-3">
-            <div className="flex gap-2">
-              <Button
-                variant="utility"
-                size="sm"
-                className="uppercase body4 bg-blue-10 dark:bg-blue-120 text-blue-70 dark:text-blue-40 hover:bg-blue-20 dark:hover:bg-blue-110 border border-blue-30 dark:border-blue-100"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  setSelectedRegistration(info.row.original);
-                  setNewRpcAddress(info.row.original.preferences.rpcAddress);
-                  setShowUpdateModal(true);
-                }}
-              >
-                Update
-              </Button>
-              <Button
-                variant="utility"
-                size="sm"
-                className="uppercase body4 bg-red-10 dark:bg-red-120 text-red-70 dark:text-red-40 hover:bg-red-20 dark:hover:bg-red-110 border border-red-30 dark:border-red-100"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  setSelectedRegistration(info.row.original);
-                  setShowUnregisterModal(true);
-                }}
-              >
-                Unregister
-              </Button>
-            </div>
-          </TableCellWrapper>
-        ),
+        cell: (info) => {
+          const actionState = getRegistrationActionState(info.row.original);
+
+          return (
+            <TableCellWrapper removeRightBorder className="p-3">
+              <div className="flex gap-2">
+                <Button
+                  variant="utility"
+                  size="sm"
+                  disabled={!actionState.canUpdate}
+                  className="uppercase body4 bg-blue-10 dark:bg-blue-120 text-blue-70 dark:text-blue-40 hover:bg-blue-20 dark:hover:bg-blue-110 border border-blue-30 dark:border-blue-100 disabled:opacity-50 disabled:cursor-not-allowed"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setSelectedRegistration(info.row.original);
+                    setNewRpcAddress(info.row.original.preferences.rpcAddress);
+                    setShowUpdateModal(true);
+                  }}
+                >
+                  Update
+                </Button>
+                <Button
+                  variant="utility"
+                  size="sm"
+                  disabled={!actionState.canUnregister}
+                  className="uppercase body4 bg-red-10 dark:bg-red-120 text-red-70 dark:text-red-40 hover:bg-red-20 dark:hover:bg-red-110 border border-red-30 dark:border-red-100 disabled:opacity-50 disabled:cursor-not-allowed"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setSelectedRegistration(info.row.original);
+                    setShowUnregisterModal(true);
+                  }}
+                >
+                  Unregister
+                </Button>
+              </div>
+              {actionState.disableReason && (
+                <Typography variant="body3" className="text-mono-100 mt-1">
+                  {actionState.disableReason}
+                </Typography>
+              )}
+            </TableCellWrapper>
+          );
+        },
       }),
     ],
     [],
@@ -268,28 +313,47 @@ const Page: FC = () => {
       slashColumnHelper.display({
         id: 'actions',
         header: () => '',
-        cell: (info) => (
-          <TableCellWrapper removeRightBorder className="p-3">
-            {info.row.original.status === 'Pending' ? (
-              <Button
-                variant="utility"
-                size="sm"
-                className="uppercase body4 bg-yellow-10 dark:bg-yellow-120 text-yellow-70 dark:text-yellow-40 hover:bg-yellow-20 dark:hover:bg-yellow-110 border border-yellow-30 dark:border-yellow-100"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  setSelectedSlash(info.row.original);
-                  setShowDisputeModal(true);
-                }}
-              >
-                Dispute
-              </Button>
-            ) : (
-              <Typography variant="body3" className="text-mono-100">
-                {info.row.original.status === 'Disputed' ? 'Under review' : '-'}
-              </Typography>
-            )}
-          </TableCellWrapper>
-        ),
+        cell: (info) => {
+          const eligibility = getSlashDisputeEligibility(info.row.original);
+          const showDisputeButton = info.row.original.status === 'Pending';
+          const reasonText =
+            info.row.original.status === 'Disputed'
+              ? 'Under review'
+              : eligibility.reason === 'DeadlinePassed'
+                ? 'Dispute window closed'
+                : '-';
+
+          return (
+            <TableCellWrapper removeRightBorder className="p-3">
+              {showDisputeButton ? (
+                <>
+                  <Button
+                    variant="utility"
+                    size="sm"
+                    disabled={!eligibility.isEligible}
+                    className="uppercase body4 bg-yellow-10 dark:bg-yellow-120 text-yellow-70 dark:text-yellow-40 hover:bg-yellow-20 dark:hover:bg-yellow-110 border border-yellow-30 dark:border-yellow-100 disabled:opacity-50 disabled:cursor-not-allowed"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setSelectedSlash(info.row.original);
+                      setShowDisputeModal(true);
+                    }}
+                  >
+                    Dispute
+                  </Button>
+                  {!eligibility.isEligible && (
+                    <Typography variant="body3" className="text-mono-100 mt-1">
+                      {reasonText}
+                    </Typography>
+                  )}
+                </>
+              ) : (
+                <Typography variant="body3" className="text-mono-100">
+                  {reasonText}
+                </Typography>
+              )}
+            </TableCellWrapper>
+          );
+        },
       }),
     ],
     [],

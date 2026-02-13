@@ -197,6 +197,11 @@ export {
   useDisputeSlashTx,
   useCancelSlashTx,
   formatSlashAmount,
+  formatSlashBps,
+  getSlashDeadlineTimeRemainingSeconds,
+  getSlashDisputeEligibility,
+  isSlashDisputeEligible,
   type SlashProposal,
   type SlashStatus,
+  type SlashDisputeEligibility,
 } from './useSlashing';
