@@ -55,15 +55,28 @@ const ECDSA_PUBLIC_KEY_HEX_LENGTH = 132; // 65-byte key => "0x" + 130 hex chars
 
 const getRegistrationActionState = (
   registration: OperatorRegistration,
-  options?: { activeServiceCount?: number | null },
+  options?: {
+    activeServiceCount?: number | null;
+    isActiveServicePrecheckUnavailable?: boolean;
+  },
 ): RegistrationActionState => {
   const activeServiceCount = options?.activeServiceCount ?? 0;
+  const isActiveServicePrecheckUnavailable =
+    options?.isActiveServicePrecheckUnavailable ?? false;
 
   if (!registration.active) {
     return {
       canUpdate: false,
       canUnregister: false,
       disableReason: 'Inactive',
+    };
+  }
+
+  if (isActiveServicePrecheckUnavailable) {
+    return {
+      canUpdate: true,
+      canUnregister: false,
+      disableReason: 'Blocked: Service Precheck Unavailable',
     };
   }
 
@@ -162,7 +175,11 @@ const Page: FC = () => {
     error: slashError,
     refetch: refetchSlashProposals,
   } = useSlashProposals();
-  const { data: activeServices } = useServicesByOperator(address, {
+  const {
+    data: activeServices,
+    error: activeServicesError,
+    refetch: refetchActiveServices,
+  } = useServicesByOperator(address, {
     enabled: isConnected,
     status: 'ACTIVE',
   });
@@ -244,6 +261,7 @@ const Page: FC = () => {
 
     return counts;
   }, [activeServices]);
+  const isActiveServicePrecheckUnavailable = Boolean(activeServicesError);
 
   const selectedSlashEligibility = useMemo(() => {
     if (!selectedSlash) {
@@ -402,6 +420,7 @@ const Page: FC = () => {
             ) ?? 0;
           const actionState = getRegistrationActionState(info.row.original, {
             activeServiceCount,
+            isActiveServicePrecheckUnavailable,
           });
           const reasonColor = actionState.disableReason?.startsWith('Blocked')
             ? 'yellow'
@@ -456,7 +475,7 @@ const Page: FC = () => {
         },
       }),
     ],
-    [activeServiceCountByBlueprint],
+    [activeServiceCountByBlueprint, isActiveServicePrecheckUnavailable],
   );
 
   // Slash columns
@@ -688,6 +707,20 @@ const Page: FC = () => {
         </Card>
       ) : null}
 
+      {isActiveServicePrecheckUnavailable ? (
+        <Card className="p-4 border border-yellow-40 dark:border-yellow-110 bg-yellow-10 dark:bg-yellow-170">
+          <Typography variant="body2" className="text-mono-100">
+            Active service precheck is unavailable. Unregister actions are
+            temporarily disabled until indexer/service data can be fetched.
+          </Typography>
+          <div className="mt-3">
+            <Button variant="secondary" size="sm" onClick={() => void refetchActiveServices()}>
+              Retry Precheck
+            </Button>
+          </div>
+        </Card>
+      ) : null}
+
       {/* Registrations Table */}
       <TangleCloudTable
         title="Blueprint Registrations"
@@ -759,15 +792,24 @@ const Page: FC = () => {
               <Typography variant="body2" className="text-yellow-800 dark:text-yellow-30">
                 Unregister fails if active services &gt; 0.
               </Typography>
-              <Typography variant="body3" className="text-mono-110 mt-1">
-                Precheck: terminate all active services for this blueprint, then
-                refresh before confirming.
-              </Typography>
+              {isActiveServicePrecheckUnavailable ? (
+                <Typography variant="body3" className="text-red-500 mt-1">
+                  Active-service precheck is currently unavailable. Retry
+                  precheck before confirming unregister.
+                </Typography>
+              ) : (
+                <Typography variant="body3" className="text-mono-110 mt-1">
+                  Precheck: terminate all active services for this blueprint,
+                  then refresh before confirming.
+                </Typography>
+              )}
             </div>
           </ModalBody>
           <ModalFooterActions
             hasCloseButton
-            isConfirmDisabled={unregisterStatus === 'pending'}
+            isConfirmDisabled={
+              unregisterStatus === 'pending' || isActiveServicePrecheckUnavailable
+            }
             isProcessing={unregisterStatus === 'pending'}
             confirmButtonText="Unregister"
             onConfirm={handleUnregister}

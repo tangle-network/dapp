@@ -4,11 +4,14 @@
 
 import { useQuery } from '@tanstack/react-query';
 import { useMemo } from 'react';
+import { useAccount, useChainId } from 'wagmi';
 import { Address } from 'viem';
 import {
   executeEnvioGraphQL,
   EnvioNetwork,
+  getEnvioNetworkFromChainId,
 } from '../../utils/executeEnvioGraphQL';
+import useNetworkStore from '../../context/useNetworkStore';
 
 // Service status enum matching Tangle contract
 export type ServiceStatus = 'PENDING' | 'ACTIVE' | 'TERMINATED' | 'EXPIRED';
@@ -71,6 +74,15 @@ interface ServiceRequestQueryResponse {
     securityRequirements: string | null;
   }>;
 }
+
+const useResolvedEnvioNetwork = (network?: EnvioNetwork): EnvioNetwork => {
+  const chainId = useChainId();
+  const { isConnected } = useAccount();
+  const networkChainId = useNetworkStore((store) => store.network2?.evmChainId);
+  const activeChainId = isConnected ? chainId : (networkChainId ?? chainId);
+
+  return network ?? getEnvioNetworkFromChainId(activeChainId);
+};
 
 // Fetch services from GraphQL
 const fetchServices = async (
@@ -143,7 +155,11 @@ const fetchServices = async (
   );
 
   if (result.errors?.length) {
-    console.error('GraphQL errors:', result.errors);
+    throw new Error(
+      `Failed to fetch services: ${result.errors
+        .map((error) => error.message)
+        .join('; ')}`,
+    );
   }
 
   return (result.data.Service ?? []).map((s) => ({
@@ -224,7 +240,11 @@ const fetchServiceRequests = async (
   );
 
   if (result.errors?.length) {
-    console.error('GraphQL errors:', result.errors);
+    throw new Error(
+      `Failed to fetch service requests: ${result.errors
+        .map((error) => error.message)
+        .join('; ')}`,
+    );
   }
 
   return (result.data.ServiceRequest ?? []).map((r) => ({
@@ -254,12 +274,13 @@ export const useServicesByOwner = (
   },
 ) => {
   const { network, enabled = true, status } = options ?? {};
+  const resolvedNetwork = useResolvedEnvioNetwork(network);
 
   return useQuery({
-    queryKey: ['envio', 'services', 'owner', owner, status, network],
+    queryKey: ['envio', 'services', 'owner', owner, status, resolvedNetwork],
     queryFn: async () => {
       if (!owner) return [];
-      return fetchServices({ owner, status }, network);
+      return fetchServices({ owner, status }, resolvedNetwork);
     },
     enabled: enabled && !!owner,
     staleTime: 30_000,
@@ -278,12 +299,13 @@ export const useServicesByOperator = (
   },
 ) => {
   const { network, enabled = true, status } = options ?? {};
+  const resolvedNetwork = useResolvedEnvioNetwork(network);
 
   return useQuery({
-    queryKey: ['envio', 'services', 'operator', operator, status, network],
+    queryKey: ['envio', 'services', 'operator', operator, status, resolvedNetwork],
     queryFn: async () => {
       if (!operator) return [];
-      return fetchServices({ operator, status }, network);
+      return fetchServices({ operator, status }, resolvedNetwork);
     },
     enabled: enabled && !!operator,
     staleTime: 30_000,
@@ -301,12 +323,16 @@ export const usePendingServiceRequests = (
   },
 ) => {
   const { network, enabled = true } = options ?? {};
+  const resolvedNetwork = useResolvedEnvioNetwork(network);
 
   return useQuery({
-    queryKey: ['envio', 'serviceRequests', 'pending', operator, network],
+    queryKey: ['envio', 'serviceRequests', 'pending', operator, resolvedNetwork],
     queryFn: async () => {
       if (!operator) return [];
-      return fetchServiceRequests({ operator, status: 'PENDING' }, network);
+      return fetchServiceRequests(
+        { operator, status: 'PENDING' },
+        resolvedNetwork,
+      );
     },
     enabled: enabled && !!operator,
     staleTime: 30_000,
@@ -326,14 +352,15 @@ export const useOperatorActedServiceRequests = (
   },
 ) => {
   const { network, enabled = true } = options ?? {};
+  const resolvedNetwork = useResolvedEnvioNetwork(network);
 
   // Fetch all requests for this operator in a single query (no status filter)
   const allRequestsQuery = useQuery({
-    queryKey: ['envio', 'serviceRequests', 'all', operator, network],
+    queryKey: ['envio', 'serviceRequests', 'all', operator, resolvedNetwork],
     queryFn: async () => {
       if (!operator) return [];
       // Fetch without status filter to get all requests in one API call
-      return fetchServiceRequests({ operator }, network);
+      return fetchServiceRequests({ operator }, resolvedNetwork);
     },
     enabled: enabled && !!operator,
     staleTime: 30_000,
@@ -385,15 +412,16 @@ export const useOperatorStats = (
   },
 ) => {
   const { network, enabled = true } = options ?? {};
+  const resolvedNetwork = useResolvedEnvioNetwork(network);
 
   const { data: activeServices } = useServicesByOperator(operator, {
-    network,
+    network: resolvedNetwork,
     enabled,
     status: 'ACTIVE',
   });
 
   const { data: pendingRequests } = usePendingServiceRequests(operator, {
-    network,
+    network: resolvedNetwork,
     enabled,
   });
 
@@ -402,7 +430,7 @@ export const useOperatorStats = (
       'envio',
       'operatorStats',
       operator,
-      network,
+      resolvedNetwork,
       activeServices?.length,
       pendingRequests?.length,
     ],
@@ -429,7 +457,19 @@ export const useOperatorStats = (
           }>;
         },
         { operator: string }
-      >(blueprintQuery, { operator: operator.toLowerCase() }, network);
+      >(
+        blueprintQuery,
+        { operator: operator.toLowerCase() },
+        resolvedNetwork,
+      );
+
+      if (blueprintResult.errors?.length) {
+        throw new Error(
+          `Failed to fetch operator stats: ${blueprintResult.errors
+            .map((error) => error.message)
+            .join('; ')}`,
+        );
+      }
 
       return {
         registeredBlueprints:
@@ -458,12 +498,16 @@ export const useServiceById = (
   },
 ) => {
   const { network, enabled = true } = options ?? {};
+  const resolvedNetwork = useResolvedEnvioNetwork(network);
 
   const query = useQuery({
-    queryKey: ['envio', 'services', 'byId', serviceId?.toString(), network],
+    queryKey: ['envio', 'services', 'byId', serviceId?.toString(), resolvedNetwork],
     queryFn: async () => {
       if (serviceId === undefined) return null;
-      const services = await fetchServices({ serviceId, limit: 1 }, network);
+      const services = await fetchServices(
+        { serviceId, limit: 1 },
+        resolvedNetwork,
+      );
       return services[0] ?? null;
     },
     enabled: enabled && serviceId !== undefined,
@@ -493,6 +537,7 @@ export const useAllServices = (options?: {
     network,
     enabled = true,
   } = options ?? {};
+  const resolvedNetwork = useResolvedEnvioNetwork(network);
 
   return useQuery({
     queryKey: [
@@ -503,10 +548,13 @@ export const useAllServices = (options?: {
       blueprintId?.toString(),
       limit,
       offset,
-      network,
+      resolvedNetwork,
     ],
     queryFn: async () => {
-      return fetchServices({ status, blueprintId, limit, offset }, network);
+      return fetchServices(
+        { status, blueprintId, limit, offset },
+        resolvedNetwork,
+      );
     },
     enabled,
     staleTime: 30_000,
