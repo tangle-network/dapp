@@ -21,6 +21,7 @@ import {
   useOperatorRegistrations,
   useUnregisterOperatorTx,
   useUpdateOperatorPreferencesTx,
+  useServicesByOperator,
   useSlashProposals,
   useDisputeSlashTx,
   getSlashDisputeEligibility,
@@ -56,6 +57,8 @@ const getRegistrationActionState = (
   registration: OperatorRegistration,
   options?: { activeServiceCount?: number | null },
 ): RegistrationActionState => {
+  const activeServiceCount = options?.activeServiceCount ?? 0;
+
   if (!registration.active) {
     return {
       canUpdate: false,
@@ -64,11 +67,13 @@ const getRegistrationActionState = (
     };
   }
 
-  if ((options?.activeServiceCount ?? 0) > 0) {
+  if (activeServiceCount > 0) {
     return {
       canUpdate: true,
       canUnregister: false,
-      disableReason: 'Blocked: Active Services',
+      disableReason: `Blocked: ${activeServiceCount} Active Service${
+        activeServiceCount > 1 ? 's' : ''
+      }`,
     };
   }
 
@@ -130,7 +135,7 @@ const isValidEcdsaPublicKey = (value: string): boolean =>
   /^0x[0-9a-fA-F]+$/.test(value) && value.length === ECDSA_PUBLIC_KEY_HEX_LENGTH;
 
 const Page: FC = () => {
-  const { isConnected } = useAccount();
+  const { address, isConnected } = useAccount();
   const queryClient = useQueryClient();
   const [nowUnixSeconds, setNowUnixSeconds] = useState(() =>
     Math.floor(Date.now() / 1000),
@@ -157,6 +162,10 @@ const Page: FC = () => {
     error: slashError,
     refetch: refetchSlashProposals,
   } = useSlashProposals();
+  const { data: activeServices } = useServicesByOperator(address, {
+    enabled: isConnected,
+    status: 'ACTIVE',
+  });
 
   // Transaction hooks
   const { unregisterOperator, status: unregisterStatus } =
@@ -183,16 +192,58 @@ const Page: FC = () => {
   const trimmedDisputeReason = disputeReason.trim();
   const trimmedEcdsaPublicKey = newEcdsaPublicKey.trim();
 
-  const ecdsaPublicKeyError = useMemo(() => {
-    if (!trimmedEcdsaPublicKey) {
+  const resolvedRpcAddress = useMemo(() => {
+    if (!selectedRegistration) {
+      return '';
+    }
+
+    const trimmedRpcAddress = newRpcAddress.trim();
+    return trimmedRpcAddress.length > 0
+      ? trimmedRpcAddress
+      : selectedRegistration.preferences.rpcAddress.trim();
+  }, [newRpcAddress, selectedRegistration]);
+
+  const resolvedEcdsaPublicKey = useMemo(() => {
+    if (!selectedRegistration) {
       return null;
     }
-    if (!isValidEcdsaPublicKey(trimmedEcdsaPublicKey)) {
+
+    const nextKey =
+      trimmedEcdsaPublicKey || selectedRegistration.preferences.ecdsaPublicKey;
+
+    return nextKey.trim();
+  }, [selectedRegistration, trimmedEcdsaPublicKey]);
+
+  const ecdsaPublicKeyError = useMemo(() => {
+    if (!selectedRegistration || !resolvedEcdsaPublicKey) {
+      return null;
+    }
+
+    if (!isValidEcdsaPublicKey(resolvedEcdsaPublicKey)) {
+      if (!trimmedEcdsaPublicKey) {
+        return `Current ECDSA public key is invalid. Enter a valid 65-byte key (${ECDSA_PUBLIC_KEY_HEX_LENGTH} hex chars including 0x) to continue.`;
+      }
+
       return `ECDSA public key must be 65 bytes (${ECDSA_PUBLIC_KEY_HEX_LENGTH} hex chars including 0x).`;
     }
 
     return null;
-  }, [trimmedEcdsaPublicKey]);
+  }, [
+    resolvedEcdsaPublicKey,
+    selectedRegistration,
+    trimmedEcdsaPublicKey,
+  ]);
+
+  const activeServiceCountByBlueprint = useMemo(() => {
+    const counts = new Map<string, number>();
+
+    for (const service of activeServices ?? []) {
+      const blueprintId = service.blueprintId.toString();
+      counts.set(blueprintId, (counts.get(blueprintId) ?? 0) + 1);
+    }
+
+    return counts;
+  }, [activeServices]);
 
   const selectedSlashEligibility = useMemo(() => {
     if (!selectedSlash) {
@@ -234,11 +285,17 @@ const Page: FC = () => {
       return true;
     }
 
-    const rpcUnchanged =
-      newRpcAddress.trim() === selectedRegistration.preferences.rpcAddress.trim();
-    const keyUnchanged = trimmedEcdsaPublicKey.length === 0;
+    const currentRpcAddress = selectedRegistration.preferences.rpcAddress.trim();
+    const currentEcdsaKey =
+      selectedRegistration.preferences.ecdsaPublicKey.toLowerCase();
+
+    const rpcUnchanged = resolvedRpcAddress === currentRpcAddress;
+    const keyUnchanged =
+      trimmedEcdsaPublicKey.length === 0 ||
+      trimmedEcdsaPublicKey.toLowerCase() === currentEcdsaKey;
+
     return rpcUnchanged && keyUnchanged;
-  }, [newRpcAddress, selectedRegistration, trimmedEcdsaPublicKey]);
+  }, [resolvedRpcAddress, selectedRegistration, trimmedEcdsaPublicKey]);
 
   const handleUnregister = useCallback(async () => {
     if (!selectedRegistration) return;
@@ -253,12 +310,16 @@ const Page: FC = () => {
   }, [selectedRegistration, unregisterOperator, queryClient]);
 
   const handleUpdatePreferences = useCallback(async () => {
-    if (!selectedRegistration || ecdsaPublicKeyError) return;
+    if (
+      !selectedRegistration ||
+      ecdsaPublicKeyError ||
+      !resolvedEcdsaPublicKey
+    )
+      return;
 
-    const ecdsaPublicKey = (trimmedEcdsaPublicKey || '0x') as `0x${string}`;
     const result = await updatePreferences(selectedRegistration.blueprintId, {
-      ecdsaPublicKey,
-      rpcAddress: newRpcAddress.trim(),
+      ecdsaPublicKey: resolvedEcdsaPublicKey as `0x${string}`,
+      rpcAddress: resolvedRpcAddress,
     });
     if (result) {
       setShowUpdateModal(false);
@@ -271,10 +332,10 @@ const Page: FC = () => {
     }
   }, [
     ecdsaPublicKeyError,
-    newRpcAddress,
     queryClient,
+    resolvedEcdsaPublicKey,
+    resolvedRpcAddress,
     selectedRegistration,
-    trimmedEcdsaPublicKey,
     updatePreferences,
   ]);
 
@@ -335,7 +396,13 @@ const Page: FC = () => {
         id: 'actions',
         header: () => '',
         cell: (info) => {
-          const actionState = getRegistrationActionState(info.row.original);
+          const activeServiceCount =
+            activeServiceCountByBlueprint.get(
+              info.row.original.blueprintId.toString(),
+            ) ?? 0;
+          const actionState = getRegistrationActionState(info.row.original, {
+            activeServiceCount,
+          });
           const reasonColor = actionState.disableReason?.startsWith('Blocked')
             ? 'yellow'
             : 'dark-grey';
@@ -389,7 +456,7 @@ const Page: FC = () => {
         },
       }),
     ],
-    [],
+    [activeServiceCountByBlueprint],
   );
 
   // Slash columns
