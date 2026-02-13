@@ -9,12 +9,22 @@ export const TangleCloudTable = <T extends RowData>({
   title,
   data,
   isLoading,
+  error,
   loadingTableProps,
+  errorTableProps,
   emptyTableProps,
+  onRetry,
   tableConfig,
   tableProps,
 }: TangleCloudTableProps<T>) => {
   const isEmpty = data.length === 0;
+  const hasRetry = typeof onRetry === 'function';
+  const errorMessage = error?.message?.trim();
+  const diagnostics = errorMessage
+    ? errorMessage.length > 140
+      ? `${errorMessage.slice(0, 137)}...`
+      : errorMessage
+    : 'Indexer or network request failed.';
 
   if (isLoading) {
     return (
@@ -29,7 +39,31 @@ export const TangleCloudTable = <T extends RowData>({
         className={twMerge('w-full', loadingTableProps?.className)}
       />
     );
-  } else if (isEmpty) {
+  }
+
+  if (error) {
+    return (
+      <TableStatus
+        {...errorTableProps}
+        title={errorTableProps?.title ?? 'Unable to Load Data'}
+        description={
+          errorTableProps?.description ??
+          `We could not load the latest data. ${diagnostics}`
+        }
+        icon={errorTableProps?.icon ?? '⚠️'}
+        buttonText={
+          errorTableProps?.buttonText ?? (hasRetry ? 'Retry' : undefined)
+        }
+        buttonProps={
+          errorTableProps?.buttonProps ??
+          (hasRetry ? { onClick: () => void onRetry() } : undefined)
+        }
+        className={twMerge('w-full', errorTableProps?.className)}
+      />
+    );
+  }
+
+  if (isEmpty) {
     return (
       <TableStatus
         {...emptyTableProps}

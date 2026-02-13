@@ -149,11 +149,13 @@ const Page: FC = () => {
     data: registrations,
     isLoading: loadingRegistrations,
     error: registrationsError,
+    refetch: refetchRegistrations,
   } = useOperatorRegistrations();
   const {
     data: slashProposals,
     isLoading: loadingSlash,
     error: slashError,
+    refetch: refetchSlashProposals,
   } = useSlashProposals();
 
   // Transaction hooks
@@ -625,12 +627,19 @@ const Page: FC = () => {
         data={registrations ?? []}
         isLoading={loadingRegistrations}
         error={registrationsError}
+        onRetry={() => void refetchRegistrations()}
         tableProps={registrationTable}
         loadingTableProps={{
           title: 'Loading registrations...',
           description:
             'Please wait while we fetch your operator registrations.',
           icon: '🔄',
+        }}
+        errorTableProps={{
+          title: 'Failed to load registrations',
+          description:
+            'Indexer or network request failed while loading your registrations.',
+          icon: '⚠️',
         }}
         emptyTableProps={{
           title: 'No Registrations',
@@ -646,11 +655,18 @@ const Page: FC = () => {
         data={slashProposals ?? []}
         isLoading={loadingSlash}
         error={slashError}
+        onRetry={() => void refetchSlashProposals()}
         tableProps={slashTable}
         loadingTableProps={{
           title: 'Loading slash proposals...',
           description: 'Please wait while we fetch slashing proposals.',
           icon: '🔄',
+        }}
+        errorTableProps={{
+          title: 'Failed to load slash proposals',
+          description:
+            'Indexer or network request failed while loading slashing proposals.',
+          icon: '⚠️',
         }}
         emptyTableProps={{
           title: 'No Slash Proposals',
