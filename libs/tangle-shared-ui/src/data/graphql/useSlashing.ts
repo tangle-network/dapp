@@ -17,7 +17,9 @@ import {
   executeEnvioGraphQL,
   gql,
   EnvioNetwork,
+  getEnvioNetworkFromChainId,
 } from '../../utils/executeEnvioGraphQL';
+import useNetworkStore from '../../context/useNetworkStore';
 
 // Slash status enum
 export type SlashStatus = 'Pending' | 'Executed' | 'Cancelled' | 'Disputed';
@@ -28,6 +30,9 @@ export interface SlashProposal {
   serviceId: bigint;
   operator: Address;
   proposer: Address;
+  slashBps: bigint;
+  effectiveSlashBps: bigint;
+  // Backwards-compatible aliases. Slash values are in bps, not token units.
   amount: bigint;
   effectiveAmount: bigint;
   evidence: `0x${string}`;
@@ -51,8 +56,8 @@ interface SlashProposalsResponse {
     serviceId: string;
     operator: { id: string } | null;
     proposer: string;
-    amount: string;
-    effectiveAmount: string;
+    slashBps: string;
+    effectiveSlashBps: string;
     evidence: string;
     createdAt: string;
     executeAfter: string;
@@ -166,8 +171,8 @@ const fetchSlashProposals = async (
           id
         }
         proposer
-        amount
-        effectiveAmount
+        slashBps: amount
+        effectiveSlashBps: effectiveAmount
         evidence
         createdAt
         executeAfter
@@ -177,30 +182,40 @@ const fetchSlashProposals = async (
     }
   `;
 
-  try {
-    const result = await executeEnvioGraphQL<
-      SlashProposalsResponse,
-      { operator: string }
-    >(query, { operator: operator.toLowerCase() }, network);
+  const result = await executeEnvioGraphQL<
+    SlashProposalsResponse,
+    { operator: string }
+  >(query, { operator: operator.toLowerCase() }, network);
 
-    return (result.data.SlashProposal ?? []).map((sp) => ({
+  if (result.errors?.length) {
+    throw new Error(
+      `Failed to fetch slash proposals: ${result.errors
+        .map((error) => error.message)
+        .join('; ')}`,
+    );
+  }
+
+  return (result.data.SlashProposal ?? []).map((sp) => {
+    const slashBps = BigInt(sp.slashBps);
+    const effectiveSlashBps = BigInt(sp.effectiveSlashBps);
+
+    return {
       id: BigInt(sp.slashId),
       serviceId: BigInt(sp.serviceId),
       operator: (sp.operator?.id ??
         '0x0000000000000000000000000000000000000000') as Address,
       proposer: sp.proposer as Address,
-      amount: BigInt(sp.amount),
-      effectiveAmount: BigInt(sp.effectiveAmount),
+      slashBps,
+      effectiveSlashBps,
+      amount: slashBps,
+      effectiveAmount: effectiveSlashBps,
       evidence: sp.evidence as `0x${string}`,
       proposedAt: BigInt(sp.createdAt),
       executeAfter: BigInt(sp.executeAfter),
       status: parseSlashStatus(sp.status),
       disputeReason: sp.disputeReason,
-    }));
-  } catch (error) {
-    console.error('Failed to fetch slash proposals:', error);
-    return [];
-  }
+    };
+  });
 };
 
 /**
@@ -211,13 +226,17 @@ export const useSlashProposals = (options?: {
   enabled?: boolean;
 }) => {
   const { network, enabled = true } = options ?? {};
-  const { address } = useAccount();
+  const chainId = useChainId();
+  const { address, isConnected } = useAccount();
+  const networkChainId = useNetworkStore((store) => store.network2?.evmChainId);
+  const activeChainId = isConnected ? chainId : (networkChainId ?? chainId);
+  const resolvedNetwork = network ?? getEnvioNetworkFromChainId(activeChainId);
 
   return useQuery({
-    queryKey: ['slashing', 'proposals', address, network],
+    queryKey: ['slashing', 'proposals', resolvedNetwork, address],
     queryFn: async () => {
       if (!address) return [];
-      return fetchSlashProposals(address, network);
+      return fetchSlashProposals(address, resolvedNetwork);
     },
     enabled: enabled && !!address,
     staleTime: 30_000, // 30 seconds

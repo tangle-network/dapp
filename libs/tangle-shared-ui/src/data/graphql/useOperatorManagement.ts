@@ -17,7 +17,9 @@ import {
   executeEnvioGraphQL,
   gql,
   EnvioNetwork,
+  getEnvioNetworkFromChainId,
 } from '../../utils/executeEnvioGraphQL';
+import useNetworkStore from '../../context/useNetworkStore';
 
 // Operator preferences structure
 export interface OperatorPreferences {
@@ -84,55 +86,58 @@ const fetchOperatorRegistrations = async (
     }
   `;
 
-  try {
-    const result = await executeEnvioGraphQL<
-      OperatorRegistrationsResponse,
-      { operator: string }
-    >(query, { operator: operator.toLowerCase() }, network);
+  const result = await executeEnvioGraphQL<
+    OperatorRegistrationsResponse,
+    { operator: string }
+  >(query, { operator: operator.toLowerCase() }, network);
 
-    // Fetch metadata for each blueprint
-    const registrations = await Promise.all(
-      (result.data.OperatorRegistration ?? []).map(async (reg) => {
-        let blueprintName = `Blueprint #${reg.blueprint.blueprintId}`;
-
-        if (reg.blueprint.metadataUri) {
-          try {
-            let fetchUrl = reg.blueprint.metadataUri;
-            if (reg.blueprint.metadataUri.startsWith('ipfs://')) {
-              const cid = reg.blueprint.metadataUri.replace('ipfs://', '');
-              fetchUrl = `https://ipfs.io/ipfs/${cid}`;
-            }
-            const response = await fetch(fetchUrl, {
-              signal: AbortSignal.timeout(5000),
-            });
-            if (response.ok) {
-              const metadata = await response.json();
-              blueprintName = metadata.name ?? blueprintName;
-            }
-          } catch {
-            // Ignore metadata fetch errors
-          }
-        }
-
-        return {
-          blueprintId: BigInt(reg.blueprint.blueprintId),
-          blueprintName,
-          operator: reg.operator.id as Address,
-          registeredAt: reg.registeredAt ? BigInt(reg.registeredAt) : BigInt(0),
-          preferences: {
-            ecdsaPublicKey: (reg.ecdsaPublicKey ?? '0x') as `0x${string}`,
-            rpcAddress: reg.rpcAddress ?? '',
-          },
-          active: reg.status === 'ACTIVE',
-        };
-      }),
+  if (result.errors?.length) {
+    throw new Error(
+      `Failed to fetch operator registrations: ${result.errors
+        .map((error) => error.message)
+        .join('; ')}`,
     );
-
-    return registrations;
-  } catch (error) {
-    console.error('Failed to fetch operator registrations:', error);
-    return [];
   }
+
+  // Fetch metadata for each blueprint
+  const registrations = await Promise.all(
+    (result.data.OperatorRegistration ?? []).map(async (reg) => {
+      let blueprintName = `Blueprint #${reg.blueprint.blueprintId}`;
+
+      if (reg.blueprint.metadataUri) {
+        try {
+          let fetchUrl = reg.blueprint.metadataUri;
+          if (reg.blueprint.metadataUri.startsWith('ipfs://')) {
+            const cid = reg.blueprint.metadataUri.replace('ipfs://', '');
+            fetchUrl = `https://ipfs.io/ipfs/${cid}`;
+          }
+          const response = await fetch(fetchUrl, {
+            signal: AbortSignal.timeout(5000),
+          });
+          if (response.ok) {
+            const metadata = await response.json();
+            blueprintName = metadata.name ?? blueprintName;
+          }
+        } catch {
+          // Ignore metadata fetch errors
+        }
+      }
+
+      return {
+        blueprintId: BigInt(reg.blueprint.blueprintId),
+        blueprintName,
+        operator: reg.operator.id as Address,
+        registeredAt: reg.registeredAt ? BigInt(reg.registeredAt) : BigInt(0),
+        preferences: {
+          ecdsaPublicKey: (reg.ecdsaPublicKey ?? '0x') as `0x${string}`,
+          rpcAddress: reg.rpcAddress ?? '',
+        },
+        active: reg.status === 'ACTIVE',
+      };
+    }),
+  );
+
+  return registrations;
 };
 
 /**
@@ -143,13 +148,17 @@ export const useOperatorRegistrations = (options?: {
   enabled?: boolean;
 }) => {
   const { network, enabled = true } = options ?? {};
-  const { address } = useAccount();
+  const chainId = useChainId();
+  const { address, isConnected } = useAccount();
+  const networkChainId = useNetworkStore((store) => store.network2?.evmChainId);
+  const activeChainId = isConnected ? chainId : (networkChainId ?? chainId);
+  const resolvedNetwork = network ?? getEnvioNetworkFromChainId(activeChainId);
 
   return useQuery({
-    queryKey: ['operator', 'registrations', address, network],
+    queryKey: ['operator', 'registrations', resolvedNetwork, address],
     queryFn: async () => {
       if (!address) return [];
-      return fetchOperatorRegistrations(address, network);
+      return fetchOperatorRegistrations(address, resolvedNetwork);
     },
     enabled: enabled && !!address,
     staleTime: 60_000, // 1 minute
