@@ -2,7 +2,7 @@
  * Operator management page - view and manage blueprint registrations and slashing.
  */
 
-import { FC, useState, useMemo, useCallback } from 'react';
+import { FC, useState, useMemo, useCallback, useEffect } from 'react';
 import {
   Card,
   Typography,
@@ -24,8 +24,9 @@ import {
   useSlashProposals,
   useDisputeSlashTx,
   getSlashDisputeEligibility,
-  formatSlashAmount,
+  formatSlashBps,
   type OperatorRegistration,
+  type SlashStatus,
   type SlashProposal,
 } from '@tangle-network/tangle-shared-ui/data/graphql';
 import { shortenHex } from '@tangle-network/ui-components/utils/shortenHex';
@@ -37,6 +38,7 @@ import {
 } from '@tanstack/react-table';
 import { TangleCloudTable } from '../../../components/tangleCloudTable/TangleCloudTable';
 import TableCellWrapper from '@tangle-network/tangle-shared-ui/components/tables/TableCellWrapper';
+import ConnectWalletButton from '@tangle-network/tangle-shared-ui/components/ConnectWalletButton';
 
 const registrationColumnHelper = createColumnHelper<OperatorRegistration>();
 const slashColumnHelper = createColumnHelper<SlashProposal>();
@@ -46,6 +48,9 @@ interface RegistrationActionState {
   canUnregister: boolean;
   disableReason: string | null;
 }
+
+const MIN_DISPUTE_REASON_LENGTH = 20;
+const ECDSA_PUBLIC_KEY_HEX_LENGTH = 132; // 65-byte key => "0x" + 130 hex chars
 
 const getRegistrationActionState = (
   registration: OperatorRegistration,
@@ -74,9 +79,70 @@ const getRegistrationActionState = (
   };
 };
 
+const formatDateTime = (unixSeconds: bigint): string =>
+  new Date(Number(unixSeconds) * 1000).toLocaleString();
+
+const formatTimeRemaining = (secondsUntilDeadline: number): string => {
+  if (secondsUntilDeadline <= 0) {
+    return 'Expired';
+  }
+
+  const days = Math.floor(secondsUntilDeadline / 86_400);
+  const hours = Math.floor((secondsUntilDeadline % 86_400) / 3_600);
+  const minutes = Math.floor((secondsUntilDeadline % 3_600) / 60);
+  const seconds = secondsUntilDeadline % 60;
+
+  if (days > 0) {
+    return `${days}d ${hours}h ${minutes}m`;
+  }
+  if (hours > 0) {
+    return `${hours}h ${minutes}m`;
+  }
+  if (minutes > 0) {
+    return `${minutes}m ${seconds}s`;
+  }
+
+  return `${seconds}s`;
+};
+
+const getSlashStatusReason = (
+  status: SlashStatus,
+  deadlineReason: 'NotPending' | 'DeadlinePassed' | null,
+): string | null => {
+  if (status === 'Pending' && deadlineReason === 'DeadlinePassed') {
+    return 'Dispute window closed';
+  }
+
+  if (status === 'Disputed') {
+    return 'Under review';
+  }
+  if (status === 'Executed') {
+    return 'Already executed';
+  }
+  if (status === 'Cancelled') {
+    return 'Cancelled';
+  }
+
+  return null;
+};
+
+const isValidEcdsaPublicKey = (value: string): boolean =>
+  /^0x[0-9a-fA-F]+$/.test(value) && value.length === ECDSA_PUBLIC_KEY_HEX_LENGTH;
+
 const Page: FC = () => {
   const { isConnected } = useAccount();
   const queryClient = useQueryClient();
+  const [nowUnixSeconds, setNowUnixSeconds] = useState(() =>
+    Math.floor(Date.now() / 1000),
+  );
+
+  useEffect(() => {
+    const interval = window.setInterval(() => {
+      setNowUnixSeconds(Math.floor(Date.now() / 1000));
+    }, 1000);
+
+    return () => window.clearInterval(interval);
+  }, []);
 
   // Data hooks
   const {
@@ -109,7 +175,68 @@ const Page: FC = () => {
 
   // Form state
   const [newRpcAddress, setNewRpcAddress] = useState('');
+  const [newEcdsaPublicKey, setNewEcdsaPublicKey] = useState('');
   const [disputeReason, setDisputeReason] = useState('');
+
+  const trimmedDisputeReason = disputeReason.trim();
+  const trimmedEcdsaPublicKey = newEcdsaPublicKey.trim();
+
+  const ecdsaPublicKeyError = useMemo(() => {
+    if (!trimmedEcdsaPublicKey) {
+      return null;
+    }
+    if (!isValidEcdsaPublicKey(trimmedEcdsaPublicKey)) {
+      return `ECDSA public key must be 65 bytes (${ECDSA_PUBLIC_KEY_HEX_LENGTH} hex chars including 0x).`;
+    }
+
+    return null;
+  }, [trimmedEcdsaPublicKey]);
+
+  const selectedSlashEligibility = useMemo(() => {
+    if (!selectedSlash) {
+      return null;
+    }
+    return getSlashDisputeEligibility(selectedSlash, nowUnixSeconds);
+  }, [selectedSlash, nowUnixSeconds]);
+
+  const isDisputeReasonValid =
+    trimmedDisputeReason.length >= MIN_DISPUTE_REASON_LENGTH;
+  const canSubmitDispute =
+    !!selectedSlashEligibility?.isEligible && isDisputeReasonValid;
+
+  const pendingSlashProposals = useMemo(
+    () => (slashProposals ?? []).filter((slash) => slash.status === 'Pending'),
+    [slashProposals],
+  );
+
+  const nearestPendingSlash = useMemo(() => {
+    if (!pendingSlashProposals.length) {
+      return null;
+    }
+
+    return [...pendingSlashProposals].sort((a, b) => {
+      return Number(a.executeAfter) - Number(b.executeAfter);
+    })[0];
+  }, [pendingSlashProposals]);
+
+  const nearestPendingSlashEligibility = useMemo(() => {
+    if (!nearestPendingSlash) {
+      return null;
+    }
+
+    return getSlashDisputeEligibility(nearestPendingSlash, nowUnixSeconds);
+  }, [nearestPendingSlash, nowUnixSeconds]);
+
+  const isNoopUpdate = useMemo(() => {
+    if (!selectedRegistration) {
+      return true;
+    }
+
+    const rpcUnchanged =
+      newRpcAddress.trim() === selectedRegistration.preferences.rpcAddress.trim();
+    const keyUnchanged = trimmedEcdsaPublicKey.length === 0;
+    return rpcUnchanged && keyUnchanged;
+  }, [newRpcAddress, selectedRegistration, trimmedEcdsaPublicKey]);
 
   const handleUnregister = useCallback(async () => {
     if (!selectedRegistration) return;
@@ -124,31 +251,47 @@ const Page: FC = () => {
   }, [selectedRegistration, unregisterOperator, queryClient]);
 
   const handleUpdatePreferences = useCallback(async () => {
-    if (!selectedRegistration) return;
+    if (!selectedRegistration || ecdsaPublicKeyError) return;
+
+    const ecdsaPublicKey = (trimmedEcdsaPublicKey || '0x') as `0x${string}`;
     const result = await updatePreferences(selectedRegistration.blueprintId, {
-      ecdsaPublicKey: selectedRegistration.preferences.ecdsaPublicKey,
-      rpcAddress: newRpcAddress,
+      ecdsaPublicKey,
+      rpcAddress: newRpcAddress.trim(),
     });
     if (result) {
       setShowUpdateModal(false);
       setSelectedRegistration(null);
       setNewRpcAddress('');
+      setNewEcdsaPublicKey('');
       queryClient.invalidateQueries({
         queryKey: ['operator', 'registrations'],
       });
     }
-  }, [selectedRegistration, newRpcAddress, updatePreferences, queryClient]);
+  }, [
+    ecdsaPublicKeyError,
+    newRpcAddress,
+    queryClient,
+    selectedRegistration,
+    trimmedEcdsaPublicKey,
+    updatePreferences,
+  ]);
 
   const handleDispute = useCallback(async () => {
-    if (!selectedSlash || !disputeReason.trim()) return;
-    const result = await disputeSlash(selectedSlash.id, disputeReason);
+    if (!selectedSlash || !canSubmitDispute) return;
+    const result = await disputeSlash(selectedSlash.id, trimmedDisputeReason);
     if (result) {
       setShowDisputeModal(false);
       setSelectedSlash(null);
       setDisputeReason('');
       queryClient.invalidateQueries({ queryKey: ['slashing', 'proposals'] });
     }
-  }, [selectedSlash, disputeReason, disputeSlash, queryClient]);
+  }, [
+    canSubmitDispute,
+    selectedSlash,
+    trimmedDisputeReason,
+    disputeSlash,
+    queryClient,
+  ]);
 
   // Registration columns
   const registrationColumns = useMemo(
@@ -191,42 +334,53 @@ const Page: FC = () => {
         header: () => '',
         cell: (info) => {
           const actionState = getRegistrationActionState(info.row.original);
+          const reasonColor = actionState.disableReason?.startsWith('Blocked')
+            ? 'yellow'
+            : 'dark-grey';
+          const canShowActions =
+            actionState.canUpdate || actionState.canUnregister;
 
           return (
             <TableCellWrapper removeRightBorder className="p-3">
-              <div className="flex gap-2">
-                <Button
-                  variant="utility"
-                  size="sm"
-                  disabled={!actionState.canUpdate}
-                  className="uppercase body4 bg-blue-10 dark:bg-blue-120 text-blue-70 dark:text-blue-40 hover:bg-blue-20 dark:hover:bg-blue-110 border border-blue-30 dark:border-blue-100 disabled:opacity-50 disabled:cursor-not-allowed"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    setSelectedRegistration(info.row.original);
-                    setNewRpcAddress(info.row.original.preferences.rpcAddress);
-                    setShowUpdateModal(true);
-                  }}
-                >
-                  Update
-                </Button>
-                <Button
-                  variant="utility"
-                  size="sm"
-                  disabled={!actionState.canUnregister}
-                  className="uppercase body4 bg-red-10 dark:bg-red-120 text-red-70 dark:text-red-40 hover:bg-red-20 dark:hover:bg-red-110 border border-red-30 dark:border-red-100 disabled:opacity-50 disabled:cursor-not-allowed"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    setSelectedRegistration(info.row.original);
-                    setShowUnregisterModal(true);
-                  }}
-                >
-                  Unregister
-                </Button>
-              </div>
+              {canShowActions ? (
+                <div className="flex gap-2">
+                  {actionState.canUpdate ? (
+                    <Button
+                      variant="utility"
+                      size="sm"
+                      className="uppercase body4 bg-blue-10 dark:bg-blue-120 text-blue-70 dark:text-blue-40 hover:bg-blue-20 dark:hover:bg-blue-110 border border-blue-30 dark:border-blue-100"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setSelectedRegistration(info.row.original);
+                        setNewRpcAddress(
+                          info.row.original.preferences.rpcAddress,
+                        );
+                        setNewEcdsaPublicKey('');
+                        setShowUpdateModal(true);
+                      }}
+                    >
+                      Update
+                    </Button>
+                  ) : null}
+                  <Button
+                    variant="utility"
+                    size="sm"
+                    isDisabled={!actionState.canUnregister}
+                    className="uppercase body4 bg-red-10 dark:bg-red-120 text-red-70 dark:text-red-40 hover:bg-red-20 dark:hover:bg-red-110 border border-red-30 dark:border-red-100 disabled:opacity-50 disabled:cursor-not-allowed"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setSelectedRegistration(info.row.original);
+                      setShowUnregisterModal(true);
+                    }}
+                  >
+                    Unregister
+                  </Button>
+                </div>
+              ) : null}
               {actionState.disableReason && (
-                <Typography variant="body3" className="text-mono-100 mt-1">
-                  {actionState.disableReason}
-                </Typography>
+                <div className="mt-2">
+                  <Chip color={reasonColor}>{actionState.disableReason}</Chip>
+                </div>
               )}
             </TableCellWrapper>
           );
@@ -259,12 +413,32 @@ const Page: FC = () => {
           </TableCellWrapper>
         ),
       }),
-      slashColumnHelper.accessor('amount', {
-        header: () => 'Amount',
+      slashColumnHelper.accessor('slashBps', {
+        header: () => 'Slash %',
         cell: (info) => (
           <TableCellWrapper className="p-3">
             <Typography variant="body1" fw="semibold" className="text-red-500">
-              {formatSlashAmount(info.getValue())} TNT
+              {formatSlashBps(info.getValue())}
+            </Typography>
+          </TableCellWrapper>
+        ),
+      }),
+      slashColumnHelper.accessor('effectiveSlashBps', {
+        header: () => 'Effective Slash %',
+        cell: (info) => (
+          <TableCellWrapper className="p-3">
+            <Typography variant="body1" fw="semibold" className="text-red-500">
+              {formatSlashBps(info.getValue())}
+            </Typography>
+          </TableCellWrapper>
+        ),
+      }),
+      slashColumnHelper.accessor('evidence', {
+        header: () => 'Evidence',
+        cell: (info) => (
+          <TableCellWrapper className="p-3">
+            <Typography variant="body2" className="font-mono">
+              {shortenHex(info.getValue())}
             </Typography>
           </TableCellWrapper>
         ),
@@ -299,13 +473,9 @@ const Page: FC = () => {
       slashColumnHelper.accessor('executeAfter', {
         header: () => 'Execute After',
         cell: (info) => {
-          const timestamp = Number(info.getValue());
-          const date = new Date(timestamp * 1000);
           return (
             <TableCellWrapper className="p-3">
-              <Typography variant="body2">
-                {date.toLocaleDateString()}
-              </Typography>
+              <Typography variant="body2">{formatDateTime(info.getValue())}</Typography>
             </TableCellWrapper>
           );
         },
@@ -314,14 +484,10 @@ const Page: FC = () => {
         id: 'actions',
         header: () => '',
         cell: (info) => {
-          const eligibility = getSlashDisputeEligibility(info.row.original);
-          const showDisputeButton = info.row.original.status === 'Pending';
-          const reasonText =
-            info.row.original.status === 'Disputed'
-              ? 'Under review'
-              : eligibility.reason === 'DeadlinePassed'
-                ? 'Dispute window closed'
-                : '-';
+          const slash = info.row.original;
+          const eligibility = getSlashDisputeEligibility(slash, nowUnixSeconds);
+          const showDisputeButton = slash.status === 'Pending';
+          const reasonText = getSlashStatusReason(slash.status, eligibility.reason);
 
           return (
             <TableCellWrapper removeRightBorder className="p-3">
@@ -330,17 +496,18 @@ const Page: FC = () => {
                   <Button
                     variant="utility"
                     size="sm"
-                    disabled={!eligibility.isEligible}
+                    isDisabled={!eligibility.isEligible}
                     className="uppercase body4 bg-yellow-10 dark:bg-yellow-120 text-yellow-70 dark:text-yellow-40 hover:bg-yellow-20 dark:hover:bg-yellow-110 border border-yellow-30 dark:border-yellow-100 disabled:opacity-50 disabled:cursor-not-allowed"
                     onClick={(e) => {
                       e.stopPropagation();
-                      setSelectedSlash(info.row.original);
+                      setSelectedSlash(slash);
+                      setDisputeReason('');
                       setShowDisputeModal(true);
                     }}
                   >
                     Dispute
                   </Button>
-                  {!eligibility.isEligible && (
+                  {!eligibility.isEligible && reasonText && (
                     <Typography variant="body3" className="text-mono-100 mt-1">
                       {reasonText}
                     </Typography>
@@ -348,7 +515,7 @@ const Page: FC = () => {
                 </>
               ) : (
                 <Typography variant="body3" className="text-mono-100">
-                  {reasonText}
+                  {reasonText ?? '-'}
                 </Typography>
               )}
             </TableCellWrapper>
@@ -356,7 +523,7 @@ const Page: FC = () => {
         },
       }),
     ],
-    [],
+    [nowUnixSeconds],
   );
 
   // Tables
@@ -384,6 +551,9 @@ const Page: FC = () => {
           <Typography variant="body1" className="text-mono-100">
             Please connect your wallet to view your operator registrations.
           </Typography>
+          <div className="mt-4 flex justify-center">
+            <ConnectWalletButton />
+          </div>
         </Card>
       </div>
     );
@@ -412,7 +582,7 @@ const Page: FC = () => {
         </Card>
         <Card className="p-4">
           <Typography variant="body2" className="text-mono-100">
-            Total Blueprints
+            Registrations (All-Time)
           </Typography>
           <Typography variant="h4" className="mt-1">
             {registrations?.length ?? 0}
@@ -426,10 +596,28 @@ const Page: FC = () => {
             variant="h4"
             className={`mt-1 ${(slashProposals?.filter((s) => s.status === 'Pending').length ?? 0) > 0 ? 'text-red-500' : ''}`}
           >
-            {slashProposals?.filter((s) => s.status === 'Pending').length ?? 0}
+            {pendingSlashProposals.length}
           </Typography>
         </Card>
       </div>
+
+      {nearestPendingSlash && nearestPendingSlashEligibility ? (
+        <Card className="p-4 border border-yellow-40 dark:border-yellow-110 bg-yellow-10 dark:bg-yellow-170">
+          <Typography variant="body2" className="text-mono-100">
+            Nearest Dispute Deadline
+          </Typography>
+          <Typography variant="body1" fw="semibold" className="mt-1">
+            Slash #{nearestPendingSlash.id.toString()} expires at{' '}
+            {formatDateTime(nearestPendingSlash.executeAfter)}
+          </Typography>
+          <Typography variant="body2" className="text-mono-100 mt-1">
+            Time remaining:{' '}
+            {formatTimeRemaining(
+              nearestPendingSlashEligibility.secondsUntilDeadline,
+            )}
+          </Typography>
+        </Card>
+      ) : null}
 
       {/* Registrations Table */}
       <TangleCloudTable
@@ -481,9 +669,18 @@ const Page: FC = () => {
               <strong>{selectedRegistration?.blueprintName}</strong>?
             </Typography>
             <Typography variant="body2" className="text-mono-100 mt-2">
-              This will remove you as an operator from this blueprint. Any
-              pending jobs may be affected.
+              This action removes your operator registration from this
+              blueprint after chain checks pass.
             </Typography>
+            <div className="mt-3 p-3 rounded-lg border border-yellow-40 dark:border-yellow-110 bg-yellow-10 dark:bg-yellow-170">
+              <Typography variant="body2" className="text-yellow-800 dark:text-yellow-30">
+                Unregister fails if active services &gt; 0.
+              </Typography>
+              <Typography variant="body3" className="text-mono-110 mt-1">
+                Precheck: terminate all active services for this blueprint, then
+                refresh before confirming.
+              </Typography>
+            </div>
           </ModalBody>
           <ModalFooterActions
             hasCloseButton
@@ -515,12 +712,36 @@ const Page: FC = () => {
                   onChange={(v) => setNewRpcAddress(v)}
                   placeholder="https://your-node.example.com"
                 />
+                <Typography variant="body3" className="text-mono-100 mt-1">
+                  Leave empty to keep the current RPC endpoint.
+                </Typography>
+              </div>
+              <div>
+                <Typography variant="body2" className="mb-1">
+                  ECDSA Public Key (Optional Rotation)
+                </Typography>
+                <Input
+                  id="ecdsaPublicKey"
+                  value={newEcdsaPublicKey}
+                  onChange={(v) => setNewEcdsaPublicKey(v)}
+                  placeholder="0x... (65-byte uncompressed key)"
+                />
+                <Typography variant="body3" className="text-mono-100 mt-1">
+                  Leave empty to keep your current key.
+                </Typography>
+                {ecdsaPublicKeyError ? (
+                  <Typography variant="body3" className="text-red-500 mt-1">
+                    {ecdsaPublicKeyError}
+                  </Typography>
+                ) : null}
               </div>
             </div>
           </ModalBody>
           <ModalFooterActions
             hasCloseButton
-            isConfirmDisabled={updateStatus === 'pending'}
+            isConfirmDisabled={
+              updateStatus === 'pending' || !!ecdsaPublicKeyError || isNoopUpdate
+            }
             isProcessing={updateStatus === 'pending'}
             confirmButtonText="Update"
             onConfirm={handleUpdatePreferences}
@@ -537,21 +758,50 @@ const Page: FC = () => {
               Dispute slash proposal #{selectedSlash?.id.toString()}
             </Typography>
             <div className="p-3 bg-mono-20 dark:bg-mono-170 rounded-lg mb-4">
-              <div className="grid grid-cols-2 gap-2">
+              <div className="grid grid-cols-2 gap-x-2 gap-y-3">
                 <Typography variant="body3" className="text-mono-100">
-                  Amount:
+                  Slash %:
                 </Typography>
                 <Typography variant="body3" className="text-red-500">
                   {selectedSlash
-                    ? formatSlashAmount(selectedSlash.amount)
-                    : '0'}{' '}
-                  TNT
+                    ? formatSlashBps(selectedSlash.slashBps)
+                    : '-'}
+                </Typography>
+                <Typography variant="body3" className="text-mono-100">
+                  Effective Slash %:
+                </Typography>
+                <Typography variant="body3" className="text-red-500">
+                  {selectedSlash
+                    ? formatSlashBps(selectedSlash.effectiveSlashBps)
+                    : '-'}
+                </Typography>
+                <Typography variant="body3" className="text-mono-100">
+                  Dispute Deadline:
+                </Typography>
+                <Typography variant="body3">
+                  {selectedSlash ? formatDateTime(selectedSlash.executeAfter) : '-'}
+                </Typography>
+                <Typography variant="body3" className="text-mono-100">
+                  Time Remaining:
+                </Typography>
+                <Typography variant="body3">
+                  {selectedSlashEligibility
+                    ? formatTimeRemaining(
+                        selectedSlashEligibility.secondsUntilDeadline,
+                      )
+                    : '-'}
                 </Typography>
                 <Typography variant="body3" className="text-mono-100">
                   Proposer:
                 </Typography>
                 <Typography variant="body3" className="font-mono">
                   {selectedSlash ? shortenHex(selectedSlash.proposer) : '-'}
+                </Typography>
+                <Typography variant="body3" className="text-mono-100">
+                  Evidence:
+                </Typography>
+                <Typography variant="body3" className="font-mono break-all">
+                  {selectedSlash?.evidence ?? '-'}
                 </Typography>
               </div>
             </div>
@@ -566,13 +816,23 @@ const Page: FC = () => {
                 onChange={(e) => setDisputeReason(e.target.value)}
                 placeholder="Explain why this slash proposal is invalid..."
               />
+              <Typography variant="body3" className="text-mono-100 mt-1">
+                Minimum {MIN_DISPUTE_REASON_LENGTH} characters (
+                {trimmedDisputeReason.length}/{MIN_DISPUTE_REASON_LENGTH}).
+              </Typography>
+              {!selectedSlashEligibility?.isEligible ? (
+                <Typography variant="body3" className="text-red-500 mt-1">
+                  {getSlashStatusReason(
+                    selectedSlash?.status ?? 'Pending',
+                    selectedSlashEligibility?.reason ?? null,
+                  ) ?? 'Dispute is not available for this slash.'}
+                </Typography>
+              ) : null}
             </div>
           </ModalBody>
           <ModalFooterActions
             hasCloseButton
-            isConfirmDisabled={
-              disputeStatus === 'pending' || !disputeReason.trim()
-            }
+            isConfirmDisabled={disputeStatus === 'pending' || !canSubmitDispute}
             isProcessing={disputeStatus === 'pending'}
             confirmButtonText="Submit Dispute"
             onConfirm={handleDispute}
