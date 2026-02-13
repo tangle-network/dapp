@@ -8,6 +8,7 @@ import {
   RegistrationFormSchema,
   TOTAL_STEPS,
 } from './types';
+import { getMissingRegistrationParamIndices } from './registrationInputs';
 
 type UseRegistrationFormOptions = {
   blueprints: Blueprint[];
@@ -70,24 +71,33 @@ const useRegistrationForm = ({
         }
 
         const blueprintConfigs = form.getValues('blueprintConfigs');
+        const invalidBlueprints: string[] = [];
+
         for (const blueprint of blueprints) {
-          const requiredParamsCount = blueprint.registrationParams.length;
-
-          // If no params required, skip validation for this blueprint
-          if (requiredParamsCount === 0) {
-            continue;
-          }
-
           const config = blueprintConfigs[blueprint.id.toString()];
-          if (!config) {
-            return false;
-          }
+          const missingParamIndices = getMissingRegistrationParamIndices(
+            blueprint.registrationParams,
+            config?.params ?? {},
+          );
 
-          const providedParamsCount = Object.keys(config.params || {}).length;
-          if (providedParamsCount < requiredParamsCount) {
-            return false;
+          if (missingParamIndices.length > 0) {
+            invalidBlueprints.push(
+              `${blueprint.name}: ${missingParamIndices
+                .map((index) => `#${index + 1}`)
+                .join(', ')}`,
+            );
           }
         }
+
+        if (invalidBlueprints.length > 0) {
+          form.setError('blueprintConfigs', {
+            type: 'manual',
+            message: `Complete required params for: ${invalidBlueprints.join('; ')}`,
+          });
+          return false;
+        }
+
+        form.clearErrors('blueprintConfigs');
         return true;
       }
 

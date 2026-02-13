@@ -11,6 +11,10 @@ import {
 import { Typography } from '@tangle-network/ui-components/typography/Typography';
 import { FC, useCallback } from 'react';
 import { UseFormReturn } from 'react-hook-form';
+import {
+  getMissingRegistrationParamIndices,
+  upsertRegistrationParamValue,
+} from '../registrationInputs';
 import type { RegistrationFormSchema } from '../types';
 
 type ConfigureStepProps = {
@@ -22,16 +26,22 @@ const ConfigureStep: FC<ConfigureStepProps> = ({ blueprints, form }) => {
   const handleParamChange = useCallback(
     (blueprintId: string, paramId: string, value: unknown) => {
       const currentConfig = form.getValues(`blueprintConfigs.${blueprintId}`);
+      const currentParams = currentConfig?.params ?? {};
+      const nextParams = upsertRegistrationParamValue(
+        currentParams,
+        paramId,
+        value,
+      );
+
       form.setValue(`blueprintConfigs.${blueprintId}`, {
         ...currentConfig,
-        params: {
-          ...currentConfig?.params,
-          [paramId]: value,
-        },
+        params: nextParams,
       });
     },
     [form],
   );
+
+  const blueprintConfigError = form.formState.errors.blueprintConfigs;
 
   return (
     <div className="space-y-6">
@@ -67,9 +77,20 @@ const ConfigureStep: FC<ConfigureStepProps> = ({ blueprints, form }) => {
         )}
       />
 
+      {typeof blueprintConfigError?.message === 'string' && (
+        <Typography variant="body3" className="text-red-500">
+          {blueprintConfigError.message}
+        </Typography>
+      )}
+
       {blueprints.map((blueprint) => {
         const blueprintId = blueprint.id.toString();
         const hasParams = blueprint.registrationParams.length > 0;
+        const currentConfig = form.watch(`blueprintConfigs.${blueprintId}`);
+        const missingParamIndices = getMissingRegistrationParamIndices(
+          blueprint.registrationParams,
+          currentConfig?.params ?? {},
+        );
 
         if (!hasParams) {
           return null;
@@ -102,15 +123,21 @@ const ConfigureStep: FC<ConfigureStepProps> = ({ blueprints, form }) => {
                   {blueprint.registrationParams.length} parameter
                   {blueprint.registrationParams.length > 1 ? 's' : ''} required
                 </Typography>
+
+                {missingParamIndices.length > 0 && (
+                  <Typography variant="body3" className="text-red-500">
+                    Missing required params:{' '}
+                    {missingParamIndices
+                      .map((index) => `#${index + 1}`)
+                      .join(', ')}
+                  </Typography>
+                )}
               </div>
             </div>
 
             <div className="grid gap-4 sm:grid-cols-2">
               {blueprint.registrationParams.map((param, idx) => {
                 const paramId = idx.toString();
-                const currentConfig = form.watch(
-                  `blueprintConfigs.${blueprintId}`,
-                );
                 const value = currentConfig?.params?.[paramId];
 
                 return (

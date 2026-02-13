@@ -28,6 +28,7 @@ import {
   STEP_LABELS,
   TOTAL_STEPS,
 } from './types';
+import { encodeRegistrationInputs } from './registrationInputs';
 import useRegistrationForm from './useRegistrationForm';
 
 const RegistrationDrawer: FC<RegistrationDrawerProps> = ({
@@ -82,6 +83,9 @@ const RegistrationDrawer: FC<RegistrationDrawerProps> = ({
       for (let i = 0; i < blueprints.length; i++) {
         const blueprint = blueprints[i];
         const blueprintId = BigInt(blueprint.id);
+        const blueprintConfig = form.getValues(
+          `blueprintConfigs.${blueprint.id.toString()}`,
+        );
 
         // Show processing notification with step counter for multiple blueprints
         notifyProcessing(
@@ -91,9 +95,10 @@ const RegistrationDrawer: FC<RegistrationDrawerProps> = ({
             : undefined,
         );
 
-        // TODO: Encode registration args based on blueprint schema if needed
-        // For now, pass empty bytes - works for blueprints without registration params
-        const registrationArgs: `0x${string}` = '0x';
+        const registrationArgs = encodeRegistrationInputs(
+          blueprint.registrationParams,
+          blueprintConfig?.params ?? {},
+        );
 
         const txHash = await registerOperator(
           blueprintId,
