@@ -14,6 +14,9 @@ import {
   ModalHeader,
   ModalBody,
   ModalFooterActions,
+  Tooltip,
+  TooltipTrigger,
+  TooltipBody,
 } from '@tangle-network/ui-components';
 import { useQueryClient } from '@tanstack/react-query';
 import { useAccount } from 'wagmi';
@@ -340,13 +343,26 @@ const Page: FC = () => {
 
   const handleUnregister = useCallback(async () => {
     if (!selectedRegistration) return;
-    const result = await unregisterOperator(selectedRegistration.blueprintId);
+    const unregisteredBlueprintId = selectedRegistration.blueprintId;
+    const result = await unregisterOperator(unregisteredBlueprintId);
     if (result) {
+      queryClient.setQueriesData<OperatorRegistration[]>(
+        { queryKey: ['operator', 'registrations'] },
+        (existingRegistrations) => {
+          if (!existingRegistrations) {
+            return existingRegistrations;
+          }
+
+          return existingRegistrations.map((registration) =>
+            registration.blueprintId === unregisteredBlueprintId
+              ? { ...registration, active: false }
+              : registration,
+          );
+        },
+      );
+
       setShowUnregisterModal(false);
       setSelectedRegistration(null);
-      queryClient.invalidateQueries({
-        queryKey: ['operator', 'registrations'],
-      });
     }
   }, [selectedRegistration, unregisterOperator, queryClient]);
 
@@ -407,12 +423,32 @@ const Page: FC = () => {
 
   const handleDispute = useCallback(async () => {
     if (!selectedSlash || !canSubmitDispute) return;
-    const result = await disputeSlash(selectedSlash.id, trimmedDisputeReason);
+    const disputedSlashId = selectedSlash.id;
+    const disputeReason = trimmedDisputeReason;
+    const result = await disputeSlash(disputedSlashId, disputeReason);
     if (result) {
+      queryClient.setQueriesData<SlashProposal[]>(
+        { queryKey: ['slashing', 'proposals'] },
+        (existingProposals) => {
+          if (!existingProposals) {
+            return existingProposals;
+          }
+
+          return existingProposals.map((proposal) =>
+            proposal.id === disputedSlashId
+              ? {
+                  ...proposal,
+                  status: 'Disputed',
+                  disputeReason,
+                }
+              : proposal,
+          );
+        },
+      );
+
       setShowDisputeModal(false);
       setSelectedSlash(null);
       setDisputeReason('');
-      queryClient.invalidateQueries({ queryKey: ['slashing', 'proposals'] });
     }
   }, [
     canSubmitDispute,
@@ -428,12 +464,9 @@ const Page: FC = () => {
       registrationColumnHelper.accessor('blueprintName', {
         header: () => 'Blueprint',
         cell: (info) => (
-          <TableCellWrapper className="p-3">
+          <TableCellWrapper className="py-3 pr-3">
             <Typography variant="body1" fw="semibold">
               {info.getValue()}
-            </Typography>
-            <Typography variant="body3" className="text-mono-100">
-              ID: #{info.row.original.blueprintId.toString()}
             </Typography>
           </TableCellWrapper>
         ),
@@ -441,7 +474,7 @@ const Page: FC = () => {
       registrationColumnHelper.accessor('preferences.rpcAddress', {
         header: () => 'RPC Endpoint',
         cell: (info) => (
-          <TableCellWrapper className="p-3">
+          <TableCellWrapper className="py-3 pr-3">
             <Typography variant="body2" className="font-mono">
               {info.getValue() || '-'}
             </Typography>
@@ -451,10 +484,12 @@ const Page: FC = () => {
       registrationColumnHelper.accessor('active', {
         header: () => 'Status',
         cell: (info) => (
-          <TableCellWrapper className="p-3">
-            <Chip color={info.getValue() ? 'green' : 'yellow'}>
-              {info.getValue() ? 'Active' : 'Inactive'}
-            </Chip>
+          <TableCellWrapper className="py-3 pr-3">
+            <div className="mr-auto">
+              <Chip color={info.getValue() ? 'green' : 'yellow'}>
+                {info.getValue() ? 'Active' : 'Inactive'}
+              </Chip>
+            </div>
           </TableCellWrapper>
         ),
       }),
@@ -470,14 +505,27 @@ const Page: FC = () => {
             activeServiceCount,
             isActiveServicePrecheckUnavailable,
           });
-          const reasonColor = actionState.disableReason?.startsWith('Blocked')
-            ? 'yellow'
-            : 'dark-grey';
           const canShowActions =
             actionState.canUpdate || actionState.canUnregister;
 
+          const unregisterButton = (
+            <Button
+              variant="utility"
+              size="sm"
+              isDisabled={!actionState.canUnregister}
+              className="uppercase body4 bg-red-10 dark:bg-red-120 text-red-70 dark:text-red-40 hover:bg-red-20 dark:hover:bg-red-110 border border-red-30 dark:border-red-100 disabled:!opacity-100 disabled:!text-mono-100 disabled:!border-mono-100/30 disabled:!bg-transparent dark:disabled:!text-mono-100 dark:disabled:!border-mono-120 dark:disabled:!bg-mono-160 disabled:cursor-not-allowed"
+              onClick={(e) => {
+                e.stopPropagation();
+                setSelectedRegistration(info.row.original);
+                setShowUnregisterModal(true);
+              }}
+            >
+              Unregister
+            </Button>
+          );
+
           return (
-            <TableCellWrapper removeRightBorder className="p-3">
+            <TableCellWrapper removeRightBorder className="py-3 pr-3">
               {canShowActions ? (
                 <div className="flex gap-2">
                   {actionState.canUpdate ? (
@@ -498,26 +546,22 @@ const Page: FC = () => {
                       Update
                     </Button>
                   ) : null}
-                  <Button
-                    variant="utility"
-                    size="sm"
-                    isDisabled={!actionState.canUnregister}
-                    className="uppercase body4 bg-red-10 dark:bg-red-120 text-red-70 dark:text-red-40 hover:bg-red-20 dark:hover:bg-red-110 border border-red-30 dark:border-red-100 disabled:opacity-50 disabled:cursor-not-allowed"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      setSelectedRegistration(info.row.original);
-                      setShowUnregisterModal(true);
-                    }}
-                  >
-                    Unregister
-                  </Button>
+                  {!actionState.canUnregister && actionState.disableReason ? (
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <span className="cursor-not-allowed">
+                          {unregisterButton}
+                        </span>
+                      </TooltipTrigger>
+                      <TooltipBody>
+                        {actionState.disableReason}
+                      </TooltipBody>
+                    </Tooltip>
+                  ) : (
+                    unregisterButton
+                  )}
                 </div>
               ) : null}
-              {actionState.disableReason && (
-                <div className="mt-2">
-                  <Chip color={reasonColor}>{actionState.disableReason}</Chip>
-                </div>
-              )}
             </TableCellWrapper>
           );
         },
@@ -738,7 +782,7 @@ const Page: FC = () => {
       </div>
 
       {nearestPendingSlash && nearestPendingSlashEligibility ? (
-        <Card className="p-4 border border-yellow-40 dark:border-yellow-110 bg-yellow-10 dark:bg-yellow-170">
+        <Card className="p-4 border border-yellow-500/20 bg-yellow-500/10">
           <Typography variant="body2" className="text-mono-100">
             Nearest Dispute Deadline
           </Typography>
@@ -756,7 +800,7 @@ const Page: FC = () => {
       ) : null}
 
       {isActiveServicePrecheckUnavailable ? (
-        <Card className="p-4 border border-yellow-40 dark:border-yellow-110 bg-yellow-10 dark:bg-yellow-170">
+        <Card className="p-4 border border-yellow-500/20 bg-yellow-500/10">
           <Typography variant="body2" className="text-mono-100">
             Active service precheck is unavailable. Unregister actions are
             temporarily disabled until indexer/service data can be fetched.
@@ -836,28 +880,10 @@ const Page: FC = () => {
               This action removes your operator registration from this
               blueprint after chain checks pass.
             </Typography>
-            <div className="mt-3 p-3 rounded-lg border border-yellow-40 dark:border-yellow-110 bg-yellow-10 dark:bg-yellow-170">
-              <Typography variant="body2" className="text-yellow-800 dark:text-yellow-30">
-                Unregister fails if active services &gt; 0.
-              </Typography>
-              {isActiveServicePrecheckUnavailable ? (
-                <Typography variant="body3" className="text-red-500 mt-1">
-                  Active-service precheck is currently unavailable. Retry
-                  precheck before confirming unregister.
-                </Typography>
-              ) : (
-                <Typography variant="body3" className="text-mono-110 mt-1">
-                  Precheck: terminate all active services for this blueprint,
-                  then refresh before confirming.
-                </Typography>
-              )}
-            </div>
           </ModalBody>
           <ModalFooterActions
             hasCloseButton
-            isConfirmDisabled={
-              unregisterStatus === 'pending' || isActiveServicePrecheckUnavailable
-            }
+            isConfirmDisabled={unregisterStatus === 'pending'}
             isProcessing={unregisterStatus === 'pending'}
             confirmButtonText="Unregister"
             onConfirm={handleUnregister}

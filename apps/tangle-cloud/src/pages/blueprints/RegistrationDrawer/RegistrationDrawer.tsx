@@ -1,5 +1,8 @@
 import { useOperator } from '@tangle-network/tangle-shared-ui/data/graphql/useOperators';
-import { useRegisterOperatorTx } from '@tangle-network/tangle-shared-ui/data/graphql/useOperatorManagement';
+import {
+  type OperatorRegistration,
+  useRegisterOperatorTx,
+} from '@tangle-network/tangle-shared-ui/data/graphql/useOperatorManagement';
 import { Alert } from '@tangle-network/ui-components/components/Alert';
 import { Button } from '@tangle-network/ui-components/components/buttons';
 import {
@@ -13,8 +16,9 @@ import SkeletonLoader from '@tangle-network/ui-components/components/SkeletonLoa
 import SteppedProgress from '@tangle-network/ui-components/components/Progress/SteppedProgress';
 import { Typography } from '@tangle-network/ui-components/typography/Typography';
 import { FC, useCallback, useState } from 'react';
+import { useQueryClient } from '@tanstack/react-query';
 import { useAccount, useWalletClient } from 'wagmi';
-import { hashMessage, recoverPublicKey } from 'viem';
+import { Address, hashMessage, recoverPublicKey } from 'viem';
 import { TangleDAppPagePath } from '../../../types';
 import { TxName } from '../../../constants';
 import useTxNotification from '../../../hooks/useTxNotification';
@@ -39,6 +43,7 @@ const RegistrationDrawer: FC<RegistrationDrawerProps> = ({
   onRegistrationComplete,
 }) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const queryClient = useQueryClient();
   const { address: activeAccount } = useAccount();
   const { data: walletClient } = useWalletClient();
   const { data: operator, isLoading: isOperatorLoading } =
@@ -107,6 +112,52 @@ const RegistrationDrawer: FC<RegistrationDrawerProps> = ({
         );
 
         if (txHash) {
+          queryClient.setQueriesData<OperatorRegistration[]>(
+            { queryKey: ['operator', 'registrations'] },
+            (existingRegistrations) => {
+              const optimisticRegistration: OperatorRegistration = {
+                blueprintId,
+                blueprintName: blueprint.name ?? `Blueprint #${blueprint.id}`,
+                operator: activeAccount as Address,
+                registeredAt: BigInt(Math.floor(Date.now() / 1000)),
+                preferences: {
+                  ecdsaPublicKey: ecdsaPublicKey as `0x${string}`,
+                  rpcAddress: rpcUrl,
+                },
+                active: true,
+              };
+
+              if (!existingRegistrations) {
+                return [optimisticRegistration];
+              }
+
+              let foundMatchingRegistration = false;
+              const updatedRegistrations = existingRegistrations.map(
+                (registration) => {
+                  if (registration.blueprintId !== blueprintId) {
+                    return registration;
+                  }
+
+                  foundMatchingRegistration = true;
+                  return {
+                    ...registration,
+                    active: true,
+                    preferences: {
+                      ...registration.preferences,
+                      ecdsaPublicKey: ecdsaPublicKey as `0x${string}`,
+                      rpcAddress: rpcUrl,
+                    },
+                    registeredAt: optimisticRegistration.registeredAt,
+                  };
+                },
+              );
+
+              return foundMatchingRegistration
+                ? updatedRegistrations
+                : [optimisticRegistration, ...updatedRegistrations];
+            },
+          );
+
           successCount++;
         }
       }
@@ -138,6 +189,7 @@ const RegistrationDrawer: FC<RegistrationDrawerProps> = ({
     registerOperator,
     reset,
     onRegistrationComplete,
+    queryClient,
     notifyProcessing,
     notifySuccess,
     notifyError,

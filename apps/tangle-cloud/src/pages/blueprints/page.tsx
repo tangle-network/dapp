@@ -67,11 +67,18 @@ const Page: FC = () => {
 
     // Poll with exponential backoff until indexer reflects the new registration
     await pollWithBackoff(async () => {
-      await refetch();
+      const refetchResult = (await refetch()) as {
+        data?: typeof blueprints;
+      };
+      const latestBlueprints = refetchResult.data;
+
+      if (!latestBlueprints) {
+        return false;
+      }
 
       // Check if any of the registered blueprints have increased operator count
       for (const [id, previousCount] of previousCounts) {
-        const currentBlueprint = blueprints.get(id);
+        const currentBlueprint = latestBlueprints.get(id);
         const currentCount = currentBlueprint?.operatorsCount ?? 0;
 
         if (currentCount > previousCount) {
@@ -81,7 +88,7 @@ const Page: FC = () => {
 
       return false;
     });
-  }, [refetch, selectedBlueprints, blueprints]);
+  }, [refetch, selectedBlueprints]);
 
   const handleRemoveBlueprint = useCallback((blueprintId: string) => {
     setRowSelection((prev) => {
