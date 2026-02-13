@@ -17,8 +17,8 @@ export enum MembershipModel {
 
 // Asset kind enum matching contract
 export enum AssetKind {
-  Erc20 = 0,
-  Native = 1,
+  Native = 0,
+  Erc20 = 1,
 }
 
 // Asset structure from contract

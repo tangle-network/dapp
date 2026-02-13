@@ -130,10 +130,15 @@ export {
 // Rewards
 export {
   usePendingRewards,
+  useRewardTokens,
+  usePendingRewardsByToken,
   useRewardHistory,
   useClaimRewardsTx,
   formatRewardAmount,
+  type RewardClaimEntry,
   type RewardEntry,
+  type PendingRewardsByTokenEntry,
+  type PendingRewardsByToken,
   type AggregatedRewards,
   type ClaimRewardsStatus,
   type UseClaimRewardsTxReturn,
@@ -157,6 +162,15 @@ export {
   type MembershipModel,
   type BlueprintSourceKind,
 } from './useBlueprintManagement';
+
+// Developer Payments (exact payout ledger)
+export {
+  useDeveloperPayments,
+  type DeveloperPaymentEvent,
+  type DeveloperTokenTotal,
+  type DeveloperBlueprintRollup,
+  type DeveloperPaymentsData,
+} from './useDeveloperPayments';
 
 // Developer Earnings
 export {

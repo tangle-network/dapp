@@ -59,11 +59,6 @@ const formatDuration = (seconds: bigint): string => {
   return parts.length > 0 ? parts.join(' ') : '<1m';
 };
 
-const formatTimestamp = (timestamp: bigint): string => {
-  const date = new Date(Number(timestamp) * 1000);
-  return date.toLocaleString();
-};
-
 const OperatorExitPanel: FC<Props> = ({
   serviceId,
   operatorAddress,
@@ -298,13 +293,17 @@ const OperatorExitPanel: FC<Props> = ({
                   <div>
                     <span className="text-mono-100">Scheduled At:</span>
                     <span className="block font-semibold">
-                      {formatTimestamp(exitRequest.scheduledAt)}
+                      {new Date(
+                        Number(exitRequest.scheduledAt) * 1000,
+                      ).toLocaleString()}
                     </span>
                   </div>
                   <div>
                     <span className="text-mono-100">Execute After:</span>
                     <span className="block font-semibold">
-                      {formatTimestamp(exitRequest.executeAfter)}
+                      {new Date(
+                        Number(exitRequest.executeAfter) * 1000,
+                      ).toLocaleString()}
                     </span>
                   </div>
                 </div>
