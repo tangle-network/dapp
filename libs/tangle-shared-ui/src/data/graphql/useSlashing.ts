@@ -2,15 +2,9 @@
  * Hooks for slashing - view proposals, dispute, cancel.
  */
 
-import { useCallback, useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
-import {
-  usePublicClient,
-  useWalletClient,
-  useChainId,
-  useAccount,
-} from 'wagmi';
-import { Address, encodeFunctionData, type Hash } from 'viem';
+import { useChainId, useAccount } from 'wagmi';
+import { Address, type Hash } from 'viem';
 import { getContractsByChainId } from '@tangle-network/dapp-config/contracts';
 import TANGLE_ABI from '../../abi/tangle';
 import {
@@ -20,6 +14,9 @@ import {
   getEnvioNetworkFromChainId,
 } from '../../utils/executeEnvioGraphQL';
 import useNetworkStore from '../../context/useNetworkStore';
+import useContractWrite, {
+  TxStatus as ContractTxStatus,
+} from '../../hooks/useContractWrite';
 
 // Slash status enum
 export type SlashStatus = 'Pending' | 'Executed' | 'Cancelled' | 'Disputed';
@@ -246,67 +243,68 @@ export const useSlashProposals = (options?: {
 // Transaction status
 export type TxStatus = 'idle' | 'pending' | 'success' | 'error';
 
+interface SlashActionParams {
+  slashId: bigint;
+  reason: string;
+}
+
+const mapContractWriteStatus = (status: ContractTxStatus): TxStatus => {
+  switch (status) {
+    case ContractTxStatus.PROCESSING:
+      return 'pending';
+    case ContractTxStatus.COMPLETE:
+      return 'success';
+    case ContractTxStatus.ERROR:
+      return 'error';
+    default:
+      return 'idle';
+  }
+};
+
 /**
  * Hook to dispute a slash proposal.
  */
 export const useDisputeSlashTx = () => {
-  const [status, setStatus] = useState<TxStatus>('idle');
-  const [error, setError] = useState<Error | null>(null);
-
   const chainId = useChainId();
-  const publicClient = usePublicClient();
-  const { data: walletClient } = useWalletClient();
-
-  const reset = useCallback(() => {
-    setStatus('idle');
-    setError(null);
-  }, []);
-
-  const disputeSlash = useCallback(
-    async (slashId: bigint, reason: string): Promise<Hash | null> => {
-      if (!walletClient || !publicClient) {
-        setError(new Error('Wallet not connected'));
-        setStatus('error');
-        return null;
-      }
-
+  const hook = useContractWrite(
+    TANGLE_ABI,
+    (params: SlashActionParams) => {
+      let contracts: ReturnType<typeof getContractsByChainId>;
       try {
-        setStatus('pending');
-        setError(null);
-
-        const contracts = getContractsByChainId(chainId);
-
-        const data = encodeFunctionData({
-          abi: TANGLE_ABI,
-          functionName: 'disputeSlash',
-          args: [slashId, reason],
-        });
-
-        const hash = await walletClient.sendTransaction({
-          to: contracts.tangle,
-          data,
-        });
-
-        await publicClient.waitForTransactionReceipt({ hash });
-
-        setStatus('success');
-        return hash;
-      } catch (err) {
-        const error =
-          err instanceof Error ? err : new Error('Failed to dispute slash');
-        setError(error);
-        setStatus('error');
-        return null;
+        contracts = getContractsByChainId(chainId);
+      } catch {
+        throw new Error('Tangle contract not available on this network');
       }
+
+      return {
+        address: contracts.tangle,
+        abi: TANGLE_ABI,
+        functionName: 'disputeSlash' as const,
+        args: [params.slashId, params.reason] as const,
+      };
     },
-    [chainId, publicClient, walletClient],
+    {
+      txName: 'dispute slash',
+      txDetails: (params) =>
+        new Map([['Slash ID', params.slashId.toString()]]),
+      getSuccessMessage: (params) =>
+        `Slash #${params.slashId} disputed successfully`,
+    },
   );
+
+  const disputeSlash = async (
+    slashId: bigint,
+    reason: string,
+  ): Promise<Hash | null> => {
+    const result = await hook.execute?.({ slashId, reason });
+    return result?.hash ?? null;
+  };
 
   return {
     disputeSlash,
-    status,
-    error,
-    reset,
+    status: mapContractWriteStatus(hook.status),
+    error: hook.error,
+    reset: hook.reset,
   };
 };
 
@@ -314,63 +312,46 @@ export const useDisputeSlashTx = () => {
  * Hook to cancel a slash proposal (for proposers).
  */
 export const useCancelSlashTx = () => {
-  const [status, setStatus] = useState<TxStatus>('idle');
-  const [error, setError] = useState<Error | null>(null);
-
   const chainId = useChainId();
-  const publicClient = usePublicClient();
-  const { data: walletClient } = useWalletClient();
-
-  const reset = useCallback(() => {
-    setStatus('idle');
-    setError(null);
-  }, []);
-
-  const cancelSlash = useCallback(
-    async (slashId: bigint, reason: string): Promise<Hash | null> => {
-      if (!walletClient || !publicClient) {
-        setError(new Error('Wallet not connected'));
-        setStatus('error');
-        return null;
-      }
-
+  const hook = useContractWrite(
+    TANGLE_ABI,
+    (params: SlashActionParams) => {
+      let contracts: ReturnType<typeof getContractsByChainId>;
       try {
-        setStatus('pending');
-        setError(null);
-
-        const contracts = getContractsByChainId(chainId);
-
-        const data = encodeFunctionData({
-          abi: TANGLE_ABI,
-          functionName: 'cancelSlash',
-          args: [slashId, reason],
-        });
-
-        const hash = await walletClient.sendTransaction({
-          to: contracts.tangle,
-          data,
-        });
-
-        await publicClient.waitForTransactionReceipt({ hash });
-
-        setStatus('success');
-        return hash;
-      } catch (err) {
-        const error =
-          err instanceof Error ? err : new Error('Failed to cancel slash');
-        setError(error);
-        setStatus('error');
-        return null;
+        contracts = getContractsByChainId(chainId);
+      } catch {
+        throw new Error('Tangle contract not available on this network');
       }
+
+      return {
+        address: contracts.tangle,
+        abi: TANGLE_ABI,
+        functionName: 'cancelSlash' as const,
+        args: [params.slashId, params.reason] as const,
+      };
     },
-    [chainId, publicClient, walletClient],
+    {
+      txName: 'cancel slash',
+      txDetails: (params) =>
+        new Map([['Slash ID', params.slashId.toString()]]),
+      getSuccessMessage: (params) =>
+        `Slash #${params.slashId} cancelled successfully`,
+    },
   );
+
+  const cancelSlash = async (
+    slashId: bigint,
+    reason: string,
+  ): Promise<Hash | null> => {
+    const result = await hook.execute?.({ slashId, reason });
+    return result?.hash ?? null;
+  };
 
   return {
     cancelSlash,
-    status,
-    error,
-    reset,
+    status: mapContractWriteStatus(hook.status),
+    error: hook.error,
+    reset: hook.reset,
   };
 };
 

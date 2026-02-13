@@ -2,15 +2,9 @@
  * Hooks for operator management - registration, unregistration, preferences.
  */
 
-import { useCallback, useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
-import {
-  usePublicClient,
-  useWalletClient,
-  useChainId,
-  useAccount,
-} from 'wagmi';
-import { Address, encodeFunctionData, type Hash } from 'viem';
+import { useChainId, useAccount } from 'wagmi';
+import { Address, type Hash } from 'viem';
 import { getContractsByChainId } from '@tangle-network/dapp-config/contracts';
 import TANGLE_ABI from '../../abi/tangle';
 import {
@@ -20,6 +14,9 @@ import {
   getEnvioNetworkFromChainId,
 } from '../../utils/executeEnvioGraphQL';
 import useNetworkStore from '../../context/useNetworkStore';
+import useContractWrite, {
+  TxStatus as ContractTxStatus,
+} from '../../hooks/useContractWrite';
 
 // Operator preferences structure
 export interface OperatorPreferences {
@@ -168,78 +165,91 @@ export const useOperatorRegistrations = (options?: {
 // Transaction status
 export type TxStatus = 'idle' | 'pending' | 'success' | 'error';
 
+interface RegisterOperatorParams {
+  blueprintId: bigint;
+  preferences: OperatorPreferences;
+  registrationArgs: `0x${string}`;
+}
+
+interface UnregisterOperatorParams {
+  blueprintId: bigint;
+}
+
+interface UpdateOperatorPreferencesParams {
+  blueprintId: bigint;
+  preferences: OperatorPreferences;
+}
+
+const mapContractWriteStatus = (status: ContractTxStatus): TxStatus => {
+  switch (status) {
+    case ContractTxStatus.PROCESSING:
+      return 'pending';
+    case ContractTxStatus.COMPLETE:
+      return 'success';
+    case ContractTxStatus.ERROR:
+      return 'error';
+    default:
+      return 'idle';
+  }
+};
+
 /**
  * Hook to register as an operator for a blueprint.
  */
 export const useRegisterOperatorTx = () => {
-  const [status, setStatus] = useState<TxStatus>('idle');
-  const [error, setError] = useState<Error | null>(null);
-
   const chainId = useChainId();
-  const publicClient = usePublicClient();
-  const { data: walletClient } = useWalletClient();
-
-  const reset = useCallback(() => {
-    setStatus('idle');
-    setError(null);
-  }, []);
-
-  const registerOperator = useCallback(
-    async (
-      blueprintId: bigint,
-      preferences: OperatorPreferences,
-      registrationArgs: `0x${string}` = '0x',
-    ): Promise<Hash | null> => {
-      if (!walletClient || !publicClient) {
-        setError(new Error('Wallet not connected'));
-        setStatus('error');
-        return null;
-      }
-
+  const hook = useContractWrite(
+    TANGLE_ABI,
+    (params: RegisterOperatorParams) => {
+      let contracts: ReturnType<typeof getContractsByChainId>;
       try {
-        setStatus('pending');
-        setError(null);
-
-        const contracts = getContractsByChainId(chainId);
-
-        const data = encodeFunctionData({
-          abi: TANGLE_ABI,
-          functionName: 'registerOperator',
-          args: [
-            blueprintId,
-            preferences.ecdsaPublicKey,
-            preferences.rpcAddress,
-            registrationArgs,
-          ],
-        });
-
-        const hash = await walletClient.sendTransaction({
-          to: contracts.tangle,
-          data,
-        });
-
-        await publicClient.waitForTransactionReceipt({ hash });
-
-        setStatus('success');
-        return hash;
-      } catch (err) {
-        const error =
-          err instanceof Error
-            ? err
-            : new Error('Failed to register as operator');
-        setError(error);
-        setStatus('error');
-        return null;
+        contracts = getContractsByChainId(chainId);
+      } catch {
+        throw new Error('Tangle contract not available on this network');
       }
+
+      return {
+        address: contracts.tangle,
+        abi: TANGLE_ABI,
+        functionName: 'registerOperator' as const,
+        args: [
+          params.blueprintId,
+          params.preferences.ecdsaPublicKey,
+          params.preferences.rpcAddress,
+          params.registrationArgs,
+        ] as const,
+      };
     },
-    [chainId, publicClient, walletClient],
+    {
+      txName: 'register operator',
+      txDetails: (params) =>
+        new Map([
+          ['Blueprint ID', params.blueprintId.toString()],
+          ['RPC Endpoint', params.preferences.rpcAddress],
+        ]),
+      getSuccessMessage: (params) =>
+        `Operator registered for blueprint #${params.blueprintId}`,
+    },
   );
+
+  const registerOperator = async (
+    blueprintId: bigint,
+    preferences: OperatorPreferences,
+    registrationArgs: `0x${string}` = '0x',
+  ): Promise<Hash | null> => {
+    const result = await hook.execute?.({
+      blueprintId,
+      preferences,
+      registrationArgs,
+    });
+    return result?.hash ?? null;
+  };
 
   return {
     registerOperator,
-    status,
-    error,
-    reset,
+    status: mapContractWriteStatus(hook.status),
+    error: hook.error,
+    reset: hook.reset,
   };
 };
 
@@ -247,65 +257,43 @@ export const useRegisterOperatorTx = () => {
  * Hook to unregister from a blueprint.
  */
 export const useUnregisterOperatorTx = () => {
-  const [status, setStatus] = useState<TxStatus>('idle');
-  const [error, setError] = useState<Error | null>(null);
-
   const chainId = useChainId();
-  const publicClient = usePublicClient();
-  const { data: walletClient } = useWalletClient();
-
-  const reset = useCallback(() => {
-    setStatus('idle');
-    setError(null);
-  }, []);
-
-  const unregisterOperator = useCallback(
-    async (blueprintId: bigint): Promise<Hash | null> => {
-      if (!walletClient || !publicClient) {
-        setError(new Error('Wallet not connected'));
-        setStatus('error');
-        return null;
-      }
-
+  const hook = useContractWrite(
+    TANGLE_ABI,
+    (params: UnregisterOperatorParams) => {
+      let contracts: ReturnType<typeof getContractsByChainId>;
       try {
-        setStatus('pending');
-        setError(null);
-
-        const contracts = getContractsByChainId(chainId);
-
-        const data = encodeFunctionData({
-          abi: TANGLE_ABI,
-          functionName: 'unregisterOperator',
-          args: [blueprintId],
-        });
-
-        const hash = await walletClient.sendTransaction({
-          to: contracts.tangle,
-          data,
-        });
-
-        await publicClient.waitForTransactionReceipt({ hash });
-
-        setStatus('success');
-        return hash;
-      } catch (err) {
-        const error =
-          err instanceof Error
-            ? err
-            : new Error('Failed to unregister from blueprint');
-        setError(error);
-        setStatus('error');
-        return null;
+        contracts = getContractsByChainId(chainId);
+      } catch {
+        throw new Error('Tangle contract not available on this network');
       }
+
+      return {
+        address: contracts.tangle,
+        abi: TANGLE_ABI,
+        functionName: 'unregisterOperator' as const,
+        args: [params.blueprintId] as const,
+      };
     },
-    [chainId, publicClient, walletClient],
+    {
+      txName: 'unregister operator',
+      txDetails: (params) =>
+        new Map([['Blueprint ID', params.blueprintId.toString()]]),
+      getSuccessMessage: (params) =>
+        `Operator unregistered from blueprint #${params.blueprintId}`,
+    },
   );
+
+  const unregisterOperator = async (blueprintId: bigint): Promise<Hash | null> => {
+    const result = await hook.execute?.({ blueprintId });
+    return result?.hash ?? null;
+  };
 
   return {
     unregisterOperator,
-    status,
-    error,
-    reset,
+    status: mapContractWriteStatus(hook.status),
+    error: hook.error,
+    reset: hook.reset,
   };
 };
 
@@ -313,72 +301,53 @@ export const useUnregisterOperatorTx = () => {
  * Hook to update operator preferences for a blueprint.
  */
 export const useUpdateOperatorPreferencesTx = () => {
-  const [status, setStatus] = useState<TxStatus>('idle');
-  const [error, setError] = useState<Error | null>(null);
-
   const chainId = useChainId();
-  const publicClient = usePublicClient();
-  const { data: walletClient } = useWalletClient();
-
-  const reset = useCallback(() => {
-    setStatus('idle');
-    setError(null);
-  }, []);
-
-  const updatePreferences = useCallback(
-    async (
-      blueprintId: bigint,
-      preferences: OperatorPreferences,
-    ): Promise<Hash | null> => {
-      if (!walletClient || !publicClient) {
-        setError(new Error('Wallet not connected'));
-        setStatus('error');
-        return null;
-      }
-
+  const hook = useContractWrite(
+    TANGLE_ABI,
+    (params: UpdateOperatorPreferencesParams) => {
+      let contracts: ReturnType<typeof getContractsByChainId>;
       try {
-        setStatus('pending');
-        setError(null);
-
-        const contracts = getContractsByChainId(chainId);
-
-        const data = encodeFunctionData({
-          abi: TANGLE_ABI,
-          functionName: 'updateOperatorPreferences',
-          args: [
-            blueprintId,
-            preferences.ecdsaPublicKey,
-            preferences.rpcAddress,
-          ],
-        });
-
-        const hash = await walletClient.sendTransaction({
-          to: contracts.tangle,
-          data,
-        });
-
-        await publicClient.waitForTransactionReceipt({ hash });
-
-        setStatus('success');
-        return hash;
-      } catch (err) {
-        const error =
-          err instanceof Error
-            ? err
-            : new Error('Failed to update operator preferences');
-        setError(error);
-        setStatus('error');
-        return null;
+        contracts = getContractsByChainId(chainId);
+      } catch {
+        throw new Error('Tangle contract not available on this network');
       }
+
+      return {
+        address: contracts.tangle,
+        abi: TANGLE_ABI,
+        functionName: 'updateOperatorPreferences' as const,
+        args: [
+          params.blueprintId,
+          params.preferences.ecdsaPublicKey,
+          params.preferences.rpcAddress,
+        ] as const,
+      };
     },
-    [chainId, publicClient, walletClient],
+    {
+      txName: 'update operator preferences',
+      txDetails: (params) =>
+        new Map([
+          ['Blueprint ID', params.blueprintId.toString()],
+          ['RPC Endpoint', params.preferences.rpcAddress],
+        ]),
+      getSuccessMessage: (params) =>
+        `Preferences updated for blueprint #${params.blueprintId}`,
+    },
   );
+
+  const updatePreferences = async (
+    blueprintId: bigint,
+    preferences: OperatorPreferences,
+  ): Promise<Hash | null> => {
+    const result = await hook.execute?.({ blueprintId, preferences });
+    return result?.hash ?? null;
+  };
 
   return {
     updatePreferences,
-    status,
-    error,
-    reset,
+    status: mapContractWriteStatus(hook.status),
+    error: hook.error,
+    reset: hook.reset,
   };
 };
 
