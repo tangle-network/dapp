@@ -20,6 +20,11 @@ import useContractWrite, {
 
 // Slash status enum
 export type SlashStatus = 'Pending' | 'Executed' | 'Cancelled' | 'Disputed';
+export type SlashProposerRole =
+  | 'ServiceOwner'
+  | 'BlueprintOwner'
+  | 'SlashingOrigin'
+  | 'Unknown';
 
 // Slash proposal structure
 export interface SlashProposal {
@@ -27,6 +32,7 @@ export interface SlashProposal {
   serviceId: bigint;
   operator: Address;
   proposer: Address;
+  proposerRole: SlashProposerRole;
   slashBps: bigint;
   effectiveSlashBps: bigint;
   // Backwards-compatible aliases. Slash values are in bps, not token units.
@@ -37,6 +43,7 @@ export interface SlashProposal {
   executeAfter: bigint;
   status: SlashStatus;
   disputeReason: string | null;
+  cancelReason: string | null;
 }
 
 export interface SlashDisputeEligibility {
@@ -53,6 +60,17 @@ interface SlashProposalsResponse {
     serviceId: string;
     operator: { id: string } | null;
     proposer: string;
+    service:
+      | {
+          owner: string;
+          blueprint:
+            | {
+                owner: string;
+                manager: string | null;
+              }
+            | null;
+        }
+      | null;
     slashBps: string;
     effectiveSlashBps: string;
     evidence: string;
@@ -60,6 +78,7 @@ interface SlashProposalsResponse {
     executeAfter: string;
     status: string;
     disputeReason: string | null;
+    cancelReason: string | null;
   }>;
 }
 
@@ -75,6 +94,28 @@ const parseSlashStatus = (status: string): SlashStatus => {
     default:
       return 'Pending';
   }
+};
+
+const getSlashProposerRole = (
+  proposer: string,
+  service: SlashProposalsResponse['SlashProposal'][number]['service'],
+): SlashProposerRole => {
+  if (!service) {
+    return 'Unknown';
+  }
+
+  const proposerLower = proposer.toLowerCase();
+  if (proposerLower === service.owner.toLowerCase()) {
+    return 'ServiceOwner';
+  }
+
+  if (service.blueprint && proposerLower === service.blueprint.owner.toLowerCase()) {
+    return 'BlueprintOwner';
+  }
+
+  // If proposer is not service/blueprint owner, the contract auth model treats it
+  // as slashing-origin authority (manager or custom origin returned by manager).
+  return 'SlashingOrigin';
 };
 
 /**
@@ -168,6 +209,13 @@ const fetchSlashProposals = async (
           id
         }
         proposer
+        service {
+          owner
+          blueprint {
+            owner
+            manager
+          }
+        }
         slashBps: amount
         effectiveSlashBps: effectiveAmount
         evidence
@@ -175,6 +223,7 @@ const fetchSlashProposals = async (
         executeAfter
         status
         disputeReason
+        cancelReason
       }
     }
   `;
@@ -202,6 +251,7 @@ const fetchSlashProposals = async (
       operator: (sp.operator?.id ??
         '0x0000000000000000000000000000000000000000') as Address,
       proposer: sp.proposer as Address,
+      proposerRole: getSlashProposerRole(sp.proposer, sp.service),
       slashBps,
       effectiveSlashBps,
       amount: slashBps,
@@ -211,6 +261,7 @@ const fetchSlashProposals = async (
       executeAfter: BigInt(sp.executeAfter),
       status: parseSlashStatus(sp.status),
       disputeReason: sp.disputeReason,
+      cancelReason: sp.cancelReason,
     };
   });
 };

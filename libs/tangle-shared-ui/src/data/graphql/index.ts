@@ -203,6 +203,7 @@ export {
   getSlashDisputeEligibility,
   isSlashDisputeEligible,
   type SlashProposal,
+  type SlashProposerRole,
   type SlashStatus,
   type SlashDisputeEligibility,
 } from './useSlashing';

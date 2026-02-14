@@ -129,6 +129,11 @@ export const Table = <T extends RowData>({
                   <THeader
                     className={twMerge(getVariantThClass(variant), thClassName)}
                     key={header.id}
+                    style={
+                      header.column.columnDef.minSize
+                        ? { minWidth: header.column.columnDef.minSize }
+                        : undefined
+                    }
                     onClick={header.column.getToggleSortingHandler()}
                     title={
                       header.column.getCanSort()
@@ -195,6 +200,11 @@ export const Table = <T extends RowData>({
                         tdClassName,
                       )}
                       key={cell.id}
+                      style={
+                        cell.column.columnDef.minSize
+                          ? { minWidth: cell.column.columnDef.minSize }
+                          : undefined
+                      }
                     >
                       {flexRender(
                         cell.column.columnDef.cell,

@@ -17,6 +17,7 @@ import {
   Tooltip,
   TooltipTrigger,
   TooltipBody,
+  CopyWithTooltip,
 } from '@tangle-network/ui-components';
 import { useQueryClient } from '@tanstack/react-query';
 import { useAccount } from 'wagmi';
@@ -31,6 +32,7 @@ import {
   getSlashDisputeEligibility,
   formatSlashBps,
   type OperatorRegistration,
+  type SlashProposerRole,
   type SlashStatus,
   type SlashProposal,
 } from '@tangle-network/tangle-shared-ui/data/graphql';
@@ -155,9 +157,6 @@ const getSlashStatusReason = (
     return 'Dispute window closed';
   }
 
-  if (status === 'Disputed') {
-    return 'Under review';
-  }
   if (status === 'Executed') {
     return 'Already executed';
   }
@@ -166,6 +165,81 @@ const getSlashStatusReason = (
   }
 
   return null;
+};
+
+const decodeBytes32Ascii = (value: `0x${string}`): string | null => {
+  if (!value || value.length !== 66) {
+    return null;
+  }
+
+  const hex = value.slice(2).toLowerCase();
+  let decoded = '';
+
+  for (let i = 0; i < hex.length; i += 2) {
+    const byte = Number.parseInt(hex.slice(i, i + 2), 16);
+    if (!Number.isFinite(byte)) {
+      return null;
+    }
+    if (byte === 0) {
+      break;
+    }
+    if (byte < 32 || byte > 126) {
+      return null;
+    }
+    decoded += String.fromCharCode(byte);
+  }
+
+  const text = decoded.trim();
+  return text.length > 0 ? text : null;
+};
+
+const getSlashClaimContext = (slash: SlashProposal): string => {
+  const cancelReason = slash.cancelReason?.trim();
+  if (cancelReason) {
+    return `Cancel reason: ${cancelReason}`;
+  }
+
+  const evidenceText = decodeBytes32Ascii(slash.evidence);
+  if (evidenceText) {
+    return `Claim: ${evidenceText}`;
+  }
+
+  return 'No human-readable reason on-chain';
+};
+
+const getSlashDisputeMessage = (slash: SlashProposal): string | null => {
+  const disputeReason = slash.disputeReason?.trim();
+  return disputeReason ? disputeReason : null;
+};
+
+const getSlashProposerRoleLabel = (role: SlashProposerRole): string => {
+  if (role === 'ServiceOwner') {
+    return 'Service Owner';
+  }
+  if (role === 'BlueprintOwner') {
+    return 'Blueprint Owner';
+  }
+  if (role === 'SlashingOrigin') {
+    return 'Slashing Origin';
+  }
+
+  return 'Authorized Proposer';
+};
+
+const getSlashProposerRoleChipColor = (
+  role: SlashProposerRole,
+): 'green' | 'blue' | 'yellow' | 'dark-grey' => {
+  if (role === 'ServiceOwner') {
+    return 'green';
+  }
+  if (role === 'BlueprintOwner') {
+    return 'blue';
+  }
+  if (role === 'SlashingOrigin') {
+    return 'yellow';
+  }
+
+  return 'dark-grey';
 };
 
 const isValidEcdsaPublicKey = (value: string): boolean =>
@@ -224,6 +298,7 @@ const Page: FC = () => {
   const [showUnregisterModal, setShowUnregisterModal] = useState(false);
   const [showUpdateModal, setShowUpdateModal] = useState(false);
   const [showDisputeModal, setShowDisputeModal] = useState(false);
+  const [showDisputeMessageModal, setShowDisputeMessageModal] = useState(false);
 
   // Form state
   const [newRpcAddress, setNewRpcAddress] = useState('');
@@ -627,6 +702,7 @@ const Page: FC = () => {
     () => [
       slashColumnHelper.accessor('id', {
         header: () => 'ID',
+        minSize: 100,
         cell: (info) => (
           <TableCellWrapper className="py-3 pr-3">
             <Typography variant="body2">
@@ -637,6 +713,7 @@ const Page: FC = () => {
       }),
       slashColumnHelper.accessor('serviceId', {
         header: () => 'Service',
+        minSize: 120,
         cell: (info) => (
           <TableCellWrapper className="py-3 pr-3">
             <Typography variant="body2">
@@ -647,6 +724,7 @@ const Page: FC = () => {
       }),
       slashColumnHelper.accessor('slashBps', {
         header: () => 'Slash %',
+        minSize: 120,
         cell: (info) => (
           <TableCellWrapper className="py-3 pr-3">
             <Typography variant="body1" fw="semibold" className="text-red-500">
@@ -666,24 +744,48 @@ const Page: FC = () => {
         ),
       }),
       slashColumnHelper.accessor('evidence', {
-        header: () => 'Evidence',
-        cell: (info) => (
-          <TableCellWrapper className="py-3 pr-3">
-            <Typography variant="body2" className="font-mono">
-              {shortenHex(info.getValue())}
-            </Typography>
-          </TableCellWrapper>
-        ),
+        header: () => 'Claim Context',
+        cell: (info) => {
+          const slash = info.row.original;
+          const claimContext = getSlashClaimContext(slash);
+
+          return (
+            <TableCellWrapper className="py-3 pr-3">
+              <Typography
+                variant="body2"
+                className="max-w-[360px] truncate"
+                title={claimContext}
+              >
+                {claimContext}
+              </Typography>
+            </TableCellWrapper>
+          );
+        },
       }),
       slashColumnHelper.accessor('proposer', {
         header: () => 'Proposer',
-        cell: (info) => (
-          <TableCellWrapper className="py-3 pr-3">
-            <Typography variant="body2" className="font-mono">
-              {shortenHex(info.getValue())}
-            </Typography>
-          </TableCellWrapper>
-        ),
+        cell: (info) => {
+          const slash = info.row.original;
+
+          return (
+            <TableCellWrapper className="py-3 pr-3">
+              <div className="flex items-center gap-2 whitespace-nowrap">
+                <Typography variant="body2" className="font-mono whitespace-nowrap">
+                  {shortenHex(info.getValue())}
+                </Typography>
+                <CopyWithTooltip
+                  textToCopy={info.getValue()}
+                  isButton={false}
+                  iconSize="md"
+                  iconClassName="!fill-mono-160 dark:!fill-mono-80"
+                />
+                <Chip color={getSlashProposerRoleChipColor(slash.proposerRole)}>
+                  {getSlashProposerRoleLabel(slash.proposerRole)}
+                </Chip>
+              </div>
+            </TableCellWrapper>
+          );
+        },
       }),
       slashColumnHelper.accessor('status', {
         header: () => 'Status',
@@ -745,6 +847,21 @@ const Page: FC = () => {
                     </Typography>
                   )}
                 </>
+              ) : slash.status === 'Disputed' ? (
+                <div className="flex items-start">
+                  <Button
+                    variant="utility"
+                    size="sm"
+                    className="uppercase body4 bg-blue-10 dark:bg-blue-120 text-blue-70 dark:text-blue-40 hover:bg-blue-20 dark:hover:bg-blue-110 border border-blue-30 dark:border-blue-100 disabled:opacity-50 disabled:cursor-not-allowed"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setSelectedSlash(slash);
+                      setShowDisputeMessageModal(true);
+                    }}
+                  >
+                    View Dispute Reason
+                  </Button>
+                </div>
               ) : (
                 <Typography variant="body3" className="text-mono-100">
                   {reasonText ?? '-'}
@@ -905,6 +1022,10 @@ const Page: FC = () => {
         error={slashError}
         onRetry={() => void refetchSlashProposals()}
         tableProps={slashTable}
+        tableConfig={{
+          tdClassName: '!p-3 max-w-none whitespace-nowrap',
+          thClassName: 'whitespace-nowrap',
+        }}
         loadingTableProps={{
           title: 'Loading slash proposals...',
           description: 'Please wait while we fetch slashing proposals.',
@@ -1017,6 +1138,36 @@ const Page: FC = () => {
         </ModalContent>
       </Modal>
 
+      {/* Dispute Reason Modal */}
+      <Modal
+        open={showDisputeMessageModal}
+        onOpenChange={setShowDisputeMessageModal}
+      >
+        <ModalContent>
+          <ModalHeader>Dispute Reason</ModalHeader>
+          <ModalBody>
+            <Typography variant="body1" className="mb-2">
+              Slash proposal #{selectedSlash?.id.toString()}
+            </Typography>
+            <Typography variant="body2" className="text-mono-100 mb-2">
+              Submitted dispute reason:
+            </Typography>
+            <div className="rounded-lg border border-mono-40 dark:border-mono-140 p-3 bg-mono-20 dark:bg-mono-170">
+              <Typography variant="body2" className="whitespace-pre-wrap break-words">
+                {selectedSlash
+                  ? getSlashDisputeMessage(selectedSlash) ??
+                    'No dispute reason available for this proposal yet.'
+                  : '-'}
+              </Typography>
+            </div>
+          </ModalBody>
+          <ModalFooterActions
+            confirmButtonText="Close"
+            onConfirm={() => setShowDisputeMessageModal(false)}
+          />
+        </ModalContent>
+      </Modal>
+
       {/* Dispute Slash Modal */}
       <Modal open={showDisputeModal} onOpenChange={setShowDisputeModal}>
         <ModalContent>
@@ -1066,10 +1217,30 @@ const Page: FC = () => {
                   {selectedSlash ? shortenHex(selectedSlash.proposer) : '-'}
                 </Typography>
                 <Typography variant="body3" className="text-mono-100">
-                  Evidence:
+                  Proposer Role:
+                </Typography>
+                <Typography variant="body3">
+                  {selectedSlash
+                    ? getSlashProposerRoleLabel(selectedSlash.proposerRole)
+                    : '-'}
+                </Typography>
+                <Typography variant="body3" className="text-mono-100">
+                  Claim Context:
+                </Typography>
+                <Typography variant="body3" title={selectedSlash ? getSlashClaimContext(selectedSlash) : '-'}>
+                  {selectedSlash ? getSlashClaimContext(selectedSlash) : '-'}
+                </Typography>
+                <Typography variant="body3" className="text-mono-100">
+                  Evidence Hash:
                 </Typography>
                 <Typography variant="body3" className="font-mono break-all">
                   {selectedSlash?.evidence ?? '-'}
+                </Typography>
+                <Typography variant="body3" className="text-mono-100">
+                  Evidence Type:
+                </Typography>
+                <Typography variant="body3">
+                  On-chain commitment hash
                 </Typography>
               </div>
             </div>
