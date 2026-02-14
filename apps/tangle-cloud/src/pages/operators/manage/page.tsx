@@ -628,7 +628,7 @@ const Page: FC = () => {
       slashColumnHelper.accessor('id', {
         header: () => 'ID',
         cell: (info) => (
-          <TableCellWrapper className="p-3">
+          <TableCellWrapper className="py-3 pr-3">
             <Typography variant="body2">
               #{info.getValue().toString()}
             </Typography>
@@ -638,7 +638,7 @@ const Page: FC = () => {
       slashColumnHelper.accessor('serviceId', {
         header: () => 'Service',
         cell: (info) => (
-          <TableCellWrapper className="p-3">
+          <TableCellWrapper className="py-3 pr-3">
             <Typography variant="body2">
               #{info.getValue().toString()}
             </Typography>
@@ -648,7 +648,7 @@ const Page: FC = () => {
       slashColumnHelper.accessor('slashBps', {
         header: () => 'Slash %',
         cell: (info) => (
-          <TableCellWrapper className="p-3">
+          <TableCellWrapper className="py-3 pr-3">
             <Typography variant="body1" fw="semibold" className="text-red-500">
               {formatSlashBps(info.getValue())}
             </Typography>
@@ -658,7 +658,7 @@ const Page: FC = () => {
       slashColumnHelper.accessor('effectiveSlashBps', {
         header: () => 'Effective Slash %',
         cell: (info) => (
-          <TableCellWrapper className="p-3">
+          <TableCellWrapper className="py-3 pr-3">
             <Typography variant="body1" fw="semibold" className="text-red-500">
               {formatSlashBps(info.getValue())}
             </Typography>
@@ -668,7 +668,7 @@ const Page: FC = () => {
       slashColumnHelper.accessor('evidence', {
         header: () => 'Evidence',
         cell: (info) => (
-          <TableCellWrapper className="p-3">
+          <TableCellWrapper className="py-3 pr-3">
             <Typography variant="body2" className="font-mono">
               {shortenHex(info.getValue())}
             </Typography>
@@ -678,7 +678,7 @@ const Page: FC = () => {
       slashColumnHelper.accessor('proposer', {
         header: () => 'Proposer',
         cell: (info) => (
-          <TableCellWrapper className="p-3">
+          <TableCellWrapper className="py-3 pr-3">
             <Typography variant="body2" className="font-mono">
               {shortenHex(info.getValue())}
             </Typography>
@@ -696,7 +696,7 @@ const Page: FC = () => {
             Disputed: 'blue',
           } as const;
           return (
-            <TableCellWrapper className="p-3">
+            <TableCellWrapper className="py-3 pr-3">
               <Chip color={colorMap[status]}>{status}</Chip>
             </TableCellWrapper>
           );
@@ -706,7 +706,7 @@ const Page: FC = () => {
         header: () => 'Execute After',
         cell: (info) => {
           return (
-            <TableCellWrapper className="p-3">
+            <TableCellWrapper className="py-3 pr-3">
               <Typography variant="body2">{formatDateTime(info.getValue())}</Typography>
             </TableCellWrapper>
           );
@@ -722,14 +722,14 @@ const Page: FC = () => {
           const reasonText = getSlashStatusReason(slash.status, eligibility.reason);
 
           return (
-            <TableCellWrapper removeRightBorder className="p-3">
+            <TableCellWrapper removeRightBorder className="py-3 pr-3">
               {showDisputeButton ? (
                 <>
                   <Button
                     variant="utility"
                     size="sm"
                     isDisabled={!eligibility.isEligible}
-                    className="uppercase body4 bg-yellow-10 dark:bg-yellow-120 text-yellow-70 dark:text-yellow-40 hover:bg-yellow-20 dark:hover:bg-yellow-110 border border-yellow-30 dark:border-yellow-100 disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="uppercase body4 bg-blue-10 dark:bg-blue-120 text-blue-70 dark:text-blue-40 hover:bg-blue-20 dark:hover:bg-blue-110 border border-blue-30 dark:border-blue-100 disabled:opacity-50 disabled:cursor-not-allowed"
                     onClick={(e) => {
                       e.stopPropagation();
                       setSelectedSlash(slash);
@@ -834,15 +834,19 @@ const Page: FC = () => {
       </div>
 
       {nearestPendingSlash && nearestPendingSlashEligibility ? (
-        <Card className="p-4 border border-yellow-500/20 bg-yellow-500/10">
-          <Typography variant="body2" className="text-mono-100">
-            Nearest Dispute Deadline
-          </Typography>
-          <Typography variant="body1" fw="semibold" className="mt-1">
-            Slash #{nearestPendingSlash.id.toString()} expires at{' '}
+        <Card className="p-4 !border-yellow-400/30 !bg-yellow-500/15">
+          <div className="flex items-center gap-2 mb-2">
+            <div className="w-2 h-2 rounded-full bg-yellow-400 animate-pulse" />
+            <Typography variant="body2" fw="bold" className="text-yellow-400">
+              Nearest Dispute Deadline
+            </Typography>
+          </div>
+          <Typography variant="h5" fw="bold" className="text-mono-0">
+            Slash #{nearestPendingSlash.id.toString()}{' '}
+            <span className="font-normal text-mono-100">expires at</span>{' '}
             {formatDateTime(nearestPendingSlash.executeAfter)}
           </Typography>
-          <Typography variant="body2" className="text-mono-100 mt-1">
+          <Typography variant="body2" fw="semibold" className="text-yellow-300/80 mt-1.5">
             Time remaining:{' '}
             {formatTimeRemaining(
               nearestPendingSlashEligibility.secondsUntilDeadline,

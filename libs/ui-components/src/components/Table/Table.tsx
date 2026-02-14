@@ -87,6 +87,7 @@ export const Table = <T extends RowData>({
   ref,
   getExpandedRowContent,
   className,
+  titleElement,
   variant = TableVariant.DEFAULT,
   paginationLabelOverride,
   expandedRowClassName,
@@ -112,6 +113,7 @@ export const Table = <T extends RowData>({
       {...props}
       ref={ref}
     >
+      {titleElement}
       <div className={twMerge('w-full overflow-x-auto', tableWrapperClassName)}>
         <table
           className={twMerge(
