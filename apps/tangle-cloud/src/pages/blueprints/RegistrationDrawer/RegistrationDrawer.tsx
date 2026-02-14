@@ -1,5 +1,8 @@
 import { useOperator } from '@tangle-network/tangle-shared-ui/data/graphql/useOperators';
-import { useRegisterOperatorTx } from '@tangle-network/tangle-shared-ui/data/graphql/useOperatorManagement';
+import {
+  type OperatorRegistration,
+  useRegisterOperatorTx,
+} from '@tangle-network/tangle-shared-ui/data/graphql/useOperatorManagement';
 import { Alert } from '@tangle-network/ui-components/components/Alert';
 import { Button } from '@tangle-network/ui-components/components/buttons';
 import {
@@ -13,8 +16,9 @@ import SkeletonLoader from '@tangle-network/ui-components/components/SkeletonLoa
 import SteppedProgress from '@tangle-network/ui-components/components/Progress/SteppedProgress';
 import { Typography } from '@tangle-network/ui-components/typography/Typography';
 import { FC, useCallback, useState } from 'react';
+import { useQueryClient } from '@tanstack/react-query';
 import { useAccount, useWalletClient } from 'wagmi';
-import { hashMessage, recoverPublicKey } from 'viem';
+import { Address, hashMessage, recoverPublicKey } from 'viem';
 import { TangleDAppPagePath } from '../../../types';
 import { TxName } from '../../../constants';
 import useTxNotification from '../../../hooks/useTxNotification';
@@ -28,6 +32,7 @@ import {
   STEP_LABELS,
   TOTAL_STEPS,
 } from './types';
+import { encodeRegistrationInputs } from './registrationInputs';
 import useRegistrationForm from './useRegistrationForm';
 
 const RegistrationDrawer: FC<RegistrationDrawerProps> = ({
@@ -38,6 +43,7 @@ const RegistrationDrawer: FC<RegistrationDrawerProps> = ({
   onRegistrationComplete,
 }) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const queryClient = useQueryClient();
   const { address: activeAccount } = useAccount();
   const { data: walletClient } = useWalletClient();
   const { data: operator, isLoading: isOperatorLoading } =
@@ -82,6 +88,9 @@ const RegistrationDrawer: FC<RegistrationDrawerProps> = ({
       for (let i = 0; i < blueprints.length; i++) {
         const blueprint = blueprints[i];
         const blueprintId = BigInt(blueprint.id);
+        const blueprintConfig = form.getValues(
+          `blueprintConfigs.${blueprint.id.toString()}`,
+        );
 
         // Show processing notification with step counter for multiple blueprints
         notifyProcessing(
@@ -91,9 +100,10 @@ const RegistrationDrawer: FC<RegistrationDrawerProps> = ({
             : undefined,
         );
 
-        // TODO: Encode registration args based on blueprint schema if needed
-        // For now, pass empty bytes - works for blueprints without registration params
-        const registrationArgs: `0x${string}` = '0x';
+        const registrationArgs = encodeRegistrationInputs(
+          blueprint.registrationParams,
+          blueprintConfig?.params ?? {},
+        );
 
         const txHash = await registerOperator(
           blueprintId,
@@ -102,6 +112,52 @@ const RegistrationDrawer: FC<RegistrationDrawerProps> = ({
         );
 
         if (txHash) {
+          queryClient.setQueriesData<OperatorRegistration[]>(
+            { queryKey: ['operator', 'registrations'] },
+            (existingRegistrations) => {
+              const optimisticRegistration: OperatorRegistration = {
+                blueprintId,
+                blueprintName: blueprint.name ?? `Blueprint #${blueprint.id}`,
+                operator: activeAccount as Address,
+                registeredAt: BigInt(Math.floor(Date.now() / 1000)),
+                preferences: {
+                  ecdsaPublicKey: ecdsaPublicKey as `0x${string}`,
+                  rpcAddress: rpcUrl,
+                },
+                active: true,
+              };
+
+              if (!existingRegistrations) {
+                return [optimisticRegistration];
+              }
+
+              let foundMatchingRegistration = false;
+              const updatedRegistrations = existingRegistrations.map(
+                (registration) => {
+                  if (registration.blueprintId !== blueprintId) {
+                    return registration;
+                  }
+
+                  foundMatchingRegistration = true;
+                  return {
+                    ...registration,
+                    active: true,
+                    preferences: {
+                      ...registration.preferences,
+                      ecdsaPublicKey: ecdsaPublicKey as `0x${string}`,
+                      rpcAddress: rpcUrl,
+                    },
+                    registeredAt: optimisticRegistration.registeredAt,
+                  };
+                },
+              );
+
+              return foundMatchingRegistration
+                ? updatedRegistrations
+                : [optimisticRegistration, ...updatedRegistrations];
+            },
+          );
+
           successCount++;
         }
       }
@@ -133,6 +189,7 @@ const RegistrationDrawer: FC<RegistrationDrawerProps> = ({
     registerOperator,
     reset,
     onRegistrationComplete,
+    queryClient,
     notifyProcessing,
     notifySuccess,
     notifyError,

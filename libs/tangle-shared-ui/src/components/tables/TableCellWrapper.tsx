@@ -12,7 +12,7 @@ const TableCellWrapper: FC<
   return (
     <div
       className={twMerge(
-        'py-3 pr-3 flex min-h-[75px] items-center justify-between gap-3',
+        'w-full py-3 pr-3 flex min-h-[75px] items-center justify-between gap-3 relative',
         className,
       )}
     >
@@ -28,7 +28,7 @@ const TableCellWrapper: FC<
         children
       )}
       {!removeRightBorder && (
-        <div className="w-px h-[51px] bg-mono-60 dark:bg-mono-140 ml-auto" />
+        <div className="absolute right-0 top-1/2 -translate-y-1/2 w-px h-[51px] bg-mono-60 dark:bg-mono-140" />
       )}
     </div>
   );

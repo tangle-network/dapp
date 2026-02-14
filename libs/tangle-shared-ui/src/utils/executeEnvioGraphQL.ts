@@ -8,20 +8,13 @@ export type EnvioNetwork = 'local' | 'testnet' | 'mainnet';
 
 // Envio indexer endpoints
 // Note: Hasura commonly serves GraphQL at /v1/graphql, but deployments may also expose it at /graphql.
-// TODO: Update testnet/mainnet endpoints when indexer is deployed to those environments.
-//       Currently only local is available. Set VITE_ENVIO_TESTNET_ENDPOINT or
-//       VITE_ENVIO_MAINNET_ENDPOINT environment variables when ready.
-const ENVIO_ENDPOINTS: Record<EnvioNetwork, string> = {
-  local:
-    import.meta.env.VITE_ENVIO_LOCAL_ENDPOINT ??
-    'http://localhost:8080/v1/graphql',
-  testnet:
-    import.meta.env.VITE_ENVIO_TESTNET_ENDPOINT ??
-    'http://localhost:8080/v1/graphql',
-  mainnet:
-    import.meta.env.VITE_ENVIO_MAINNET_ENDPOINT ??
-    'http://localhost:8080/v1/graphql',
+const DEFAULT_LOCAL_ENDPOINT = 'http://localhost:8080/v1/graphql';
+const ENVIO_ENDPOINTS: Partial<Record<EnvioNetwork, string>> = {
+  local: import.meta.env.VITE_ENVIO_LOCAL_ENDPOINT,
+  testnet: import.meta.env.VITE_ENVIO_TESTNET_ENDPOINT,
+  mainnet: import.meta.env.VITE_ENVIO_MAINNET_ENDPOINT,
 };
+let hasWarnedLegacyEndpointFallback = false;
 
 // Get current network from environment
 export const getEnvioNetwork = (): EnvioNetwork => {
@@ -50,14 +43,34 @@ export const getEnvioNetworkFromChainId = (chainId: number): EnvioNetwork => {
 
 // Get the Envio endpoint for a given network
 export const getEnvioEndpoint = (network?: EnvioNetwork): string => {
-  // Backwards compatible override used throughout the repo/docs.
-  // If set, treat it as the single source of truth regardless of `network`.
-  const override = import.meta.env.VITE_GRAPHQL_ENDPOINT;
-  if (typeof override === 'string' && override.length > 0) {
-    return override;
+  const resolvedNetwork = network ?? getEnvioNetwork();
+  const networkEndpoint = ENVIO_ENDPOINTS[resolvedNetwork];
+  if (typeof networkEndpoint === 'string' && networkEndpoint.length > 0) {
+    return networkEndpoint;
   }
 
-  return ENVIO_ENDPOINTS[network ?? getEnvioNetwork()];
+  // Legacy fallback for existing deployments/docs still using one global endpoint.
+  // Prefer network-specific endpoints whenever possible.
+  const legacyOverride = import.meta.env.VITE_GRAPHQL_ENDPOINT;
+  if (typeof legacyOverride === 'string' && legacyOverride.length > 0) {
+    if (resolvedNetwork !== 'local' && !hasWarnedLegacyEndpointFallback) {
+      console.warn(
+        `Using VITE_GRAPHQL_ENDPOINT as fallback for ${resolvedNetwork}. ` +
+          'Set VITE_ENVIO_TESTNET_ENDPOINT / VITE_ENVIO_MAINNET_ENDPOINT to avoid chain/indexer drift.',
+      );
+      hasWarnedLegacyEndpointFallback = true;
+    }
+    return legacyOverride;
+  }
+
+  if (resolvedNetwork === 'local') {
+    return DEFAULT_LOCAL_ENDPOINT;
+  }
+
+  throw new Error(
+    `No Envio GraphQL endpoint configured for ${resolvedNetwork}. ` +
+      `Set VITE_ENVIO_${resolvedNetwork.toUpperCase()}_ENDPOINT.`,
+  );
 };
 
 // Type for GraphQL query documents

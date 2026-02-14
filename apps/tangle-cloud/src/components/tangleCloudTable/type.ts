@@ -9,7 +9,9 @@ export interface TangleCloudTableProps<T extends RowData> {
   isLoading: boolean;
   error: Error | null;
   loadingTableProps?: Partial<TableStatusProps>;
+  errorTableProps?: Partial<TableStatusProps>;
   emptyTableProps?: Partial<TableStatusProps>;
+  onRetry?: () => void | Promise<unknown>;
   tableConfig?: Partial<ComponentProps<typeof Table<T>>>;
   tableProps: ReturnType<typeof useReactTable<T>>;
 }

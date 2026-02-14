@@ -56,19 +56,22 @@ const Page = () => {
 
     // Poll with exponential backoff until indexer reflects the new registration
     await pollWithBackoff(async () => {
-      await refetch();
+      const refetchResult = (await refetch()) as {
+        data?: typeof result;
+      };
+      const latestResult = refetchResult.data;
 
       // Check if the user is now in the operators list
-      if (!result || !userAddress) {
+      if (!latestResult || !userAddress) {
         return false;
       }
 
-      return result.operators.some(
+      return latestResult.operators.some(
         (operator) =>
           operator.address.toLowerCase() === userAddress.toLowerCase(),
       );
     });
-  }, [refetch, userAddress, result]);
+  }, [refetch, userAddress]);
 
   if (isLoading) {
     return (
