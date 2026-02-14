@@ -4,8 +4,11 @@
 
 import { useQuery } from '@tanstack/react-query';
 import { useMemo } from 'react';
-import { useAccount, useChainId } from 'wagmi';
-import { Address } from 'viem';
+import { useAccount, useChainId, usePublicClient } from 'wagmi';
+import { Address, zeroAddress } from 'viem';
+import { getContractsByChainId } from '@tangle-network/dapp-config/contracts';
+import TangleABI from '../../abi/tangle';
+import { MembershipModel } from '../services/useServiceRequestDetails';
 import {
   executeEnvioGraphQL,
   EnvioNetwork,
@@ -558,6 +561,80 @@ export const useAllServices = (options?: {
     },
     enabled,
     staleTime: 30_000,
+  });
+};
+
+/**
+ * Hook to batch-fetch membership models for a list of service IDs via multicall.
+ * Returns a Map from serviceId string to MembershipModel.
+ */
+export const useActiveServiceMemberships = (
+  serviceIds: bigint[],
+  options?: { enabled?: boolean },
+) => {
+  const { enabled = true } = options ?? {};
+  const chainId = useChainId();
+  const publicClient = usePublicClient({ chainId });
+
+  let contracts: ReturnType<typeof getContractsByChainId> | null = null;
+  try {
+    contracts = chainId ? getContractsByChainId(chainId) : null;
+  } catch {
+    contracts = null;
+  }
+
+  const sortedServiceIds = useMemo(
+    () => [...serviceIds].sort((a, b) => (a < b ? -1 : a > b ? 1 : 0)),
+    [serviceIds],
+  );
+
+  const tangleAddress = contracts?.tangle;
+  const isReady =
+    !!publicClient &&
+    !!tangleAddress &&
+    tangleAddress !== zeroAddress &&
+    sortedServiceIds.length > 0;
+
+  return useQuery({
+    queryKey: [
+      'serviceMemberships',
+      chainId,
+      ...sortedServiceIds.map((id) => id.toString()),
+    ],
+    queryFn: async (): Promise<Map<string, MembershipModel>> => {
+      if (!publicClient || !tangleAddress || tangleAddress === zeroAddress) {
+        return new Map();
+      }
+
+      const results = await publicClient.multicall({
+        contracts: sortedServiceIds.map((serviceId) => ({
+          address: tangleAddress,
+          abi: TangleABI,
+          functionName: 'getService' as const,
+          args: [serviceId],
+        })),
+        allowFailure: true,
+      });
+
+      const memberships = new Map<string, MembershipModel>();
+
+      for (let i = 0; i < sortedServiceIds.length; i++) {
+        const result = results[i];
+        if (result.status === 'success' && result.result) {
+          const service = result.result as {
+            membership: number;
+          };
+          memberships.set(
+            sortedServiceIds[i].toString(),
+            service.membership as MembershipModel,
+          );
+        }
+      }
+
+      return memberships;
+    },
+    enabled: enabled && isReady,
+    staleTime: 60_000,
   });
 };
 

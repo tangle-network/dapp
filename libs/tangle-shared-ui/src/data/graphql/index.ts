@@ -106,6 +106,7 @@ export {
   useApprovedServiceRequests,
   useOperatorActedServiceRequests,
   useOperatorStats,
+  useActiveServiceMemberships,
   type Service,
   type ServiceRequest,
   type ServiceStatus,

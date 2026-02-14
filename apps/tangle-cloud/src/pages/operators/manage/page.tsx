@@ -25,6 +25,7 @@ import {
   useUnregisterOperatorTx,
   useUpdateOperatorPreferencesTx,
   useServicesByOperator,
+  useActiveServiceMemberships,
   useSlashProposals,
   useDisputeSlashTx,
   getSlashDisputeEligibility,
@@ -33,6 +34,7 @@ import {
   type SlashStatus,
   type SlashProposal,
 } from '@tangle-network/tangle-shared-ui/data/graphql';
+import { MembershipModel } from '@tangle-network/tangle-shared-ui/data/services';
 import { shortenHex } from '@tangle-network/ui-components/utils/shortenHex';
 import {
   createColumnHelper,
@@ -53,19 +55,28 @@ interface RegistrationActionState {
   disableReason: string | null;
 }
 
+interface BlueprintServiceBreakdown {
+  fixedCount: number;
+  dynamicCount: number;
+  totalCount: number;
+}
+
 const MIN_DISPUTE_REASON_LENGTH = 20;
 const ECDSA_PUBLIC_KEY_HEX_LENGTH = 132; // 65-byte key => "0x" + 130 hex chars
 
 const getRegistrationActionState = (
   registration: OperatorRegistration,
   options?: {
-    activeServiceCount?: number | null;
+    breakdown?: BlueprintServiceBreakdown | null;
     isActiveServicePrecheckUnavailable?: boolean;
+    isMembershipLoaded?: boolean;
   },
 ): RegistrationActionState => {
-  const activeServiceCount = options?.activeServiceCount ?? 0;
+  const breakdown = options?.breakdown ?? null;
+  const totalCount = breakdown?.totalCount ?? 0;
   const isActiveServicePrecheckUnavailable =
     options?.isActiveServicePrecheckUnavailable ?? false;
+  const isMembershipLoaded = options?.isMembershipLoaded ?? false;
 
   if (!registration.active) {
     return {
@@ -83,13 +94,23 @@ const getRegistrationActionState = (
     };
   }
 
-  if (activeServiceCount > 0) {
+  if (totalCount > 0) {
+    let disableReason: string;
+
+    if (!isMembershipLoaded || !breakdown) {
+      disableReason = `Blocked: ${totalCount} Active Service${totalCount > 1 ? 's' : ''}`;
+    } else if (breakdown.fixedCount > 0 && breakdown.dynamicCount > 0) {
+      disableReason = `Blocked: ${breakdown.fixedCount} Fixed, ${breakdown.dynamicCount} Dynamic — Fixed services require deployer termination`;
+    } else if (breakdown.fixedCount > 0) {
+      disableReason = `Blocked: ${breakdown.fixedCount} Fixed Service${breakdown.fixedCount > 1 ? 's' : ''} — Deployer must terminate`;
+    } else {
+      disableReason = `Blocked: ${breakdown.dynamicCount} Active Service${breakdown.dynamicCount > 1 ? 's' : ''} — Leave services to unregister`;
+    }
+
     return {
       canUpdate: true,
       canUnregister: false,
-      disableReason: `Blocked: ${activeServiceCount} Active Service${
-        activeServiceCount > 1 ? 's' : ''
-      }`,
+      disableReason,
     };
   }
 
@@ -277,16 +298,46 @@ const Page: FC = () => {
     }
   }, [newRpcAddress, selectedRegistration]);
 
-  const activeServiceCountByBlueprint = useMemo(() => {
-    const counts = new Map<string, number>();
+  const activeServiceIds = useMemo(
+    () => (activeServices ?? []).map((s) => s.serviceId),
+    [activeServices],
+  );
+
+  const { data: serviceMemberships } = useActiveServiceMemberships(
+    activeServiceIds,
+    {
+      enabled: isConnected && activeServiceIds.length > 0,
+    },
+  );
+
+  const isMembershipLoaded = serviceMemberships !== undefined;
+
+  const breakdownByBlueprint = useMemo(() => {
+    const map = new Map<string, BlueprintServiceBreakdown>();
 
     for (const service of activeServices ?? []) {
       const blueprintId = service.blueprintId.toString();
-      counts.set(blueprintId, (counts.get(blueprintId) ?? 0) + 1);
+      const existing = map.get(blueprintId) ?? {
+        fixedCount: 0,
+        dynamicCount: 0,
+        totalCount: 0,
+      };
+
+      existing.totalCount += 1;
+
+      const membership = serviceMemberships?.get(service.serviceId.toString());
+      if (membership === MembershipModel.Fixed) {
+        existing.fixedCount += 1;
+      } else if (membership === MembershipModel.Dynamic) {
+        existing.dynamicCount += 1;
+      }
+
+      map.set(blueprintId, existing);
     }
 
-    return counts;
-  }, [activeServices]);
+    return map;
+  }, [activeServices, serviceMemberships]);
+
   const isActiveServicePrecheckUnavailable = Boolean(activeServicesError);
 
   const selectedSlashEligibility = useMemo(() => {
@@ -497,13 +548,14 @@ const Page: FC = () => {
         id: 'actions',
         header: () => '',
         cell: (info) => {
-          const activeServiceCount =
-            activeServiceCountByBlueprint.get(
+          const breakdown =
+            breakdownByBlueprint.get(
               info.row.original.blueprintId.toString(),
-            ) ?? 0;
+            ) ?? null;
           const actionState = getRegistrationActionState(info.row.original, {
-            activeServiceCount,
+            breakdown,
             isActiveServicePrecheckUnavailable,
+            isMembershipLoaded,
           });
           const canShowActions =
             actionState.canUpdate || actionState.canUnregister;
@@ -547,9 +599,9 @@ const Page: FC = () => {
                     </Button>
                   ) : null}
                   {!actionState.canUnregister && actionState.disableReason ? (
-                    <Tooltip>
+                    <Tooltip delayDuration={0}>
                       <TooltipTrigger asChild>
-                        <span className="cursor-not-allowed">
+                        <span className="inline-flex cursor-not-allowed">
                           {unregisterButton}
                         </span>
                       </TooltipTrigger>
@@ -567,7 +619,7 @@ const Page: FC = () => {
         },
       }),
     ],
-    [activeServiceCountByBlueprint, isActiveServicePrecheckUnavailable],
+    [breakdownByBlueprint, isActiveServicePrecheckUnavailable, isMembershipLoaded],
   );
 
   // Slash columns
@@ -903,7 +955,7 @@ const Page: FC = () => {
             <div className="space-y-4">
               <div>
                 <Typography variant="body2" className="mb-1">
-                  RPC Endpoint
+                  RPC Endpoint <span className="text-red-70 dark:text-red-50">*</span>
                 </Typography>
                 <Input
                   id="rpcAddress"
