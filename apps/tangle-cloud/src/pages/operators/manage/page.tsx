@@ -243,7 +243,8 @@ const getSlashProposerRoleChipColor = (
 };
 
 const isValidEcdsaPublicKey = (value: string): boolean =>
-  /^0x[0-9a-fA-F]+$/.test(value) && value.length === ECDSA_PUBLIC_KEY_HEX_LENGTH;
+  /^0x[0-9a-fA-F]+$/.test(value) &&
+  value.length === ECDSA_PUBLIC_KEY_HEX_LENGTH;
 
 const Page: FC = () => {
   const { address, isConnected } = useAccount();
@@ -341,11 +342,7 @@ const Page: FC = () => {
     }
 
     return null;
-  }, [
-    resolvedEcdsaPublicKey,
-    selectedRegistration,
-    trimmedEcdsaPublicKey,
-  ]);
+  }, [resolvedEcdsaPublicKey, selectedRegistration, trimmedEcdsaPublicKey]);
 
   const rpcAddressError = useMemo(() => {
     if (!selectedRegistration) {
@@ -455,7 +452,8 @@ const Page: FC = () => {
       return true;
     }
 
-    const currentRpcAddress = selectedRegistration.preferences.rpcAddress.trim();
+    const currentRpcAddress =
+      selectedRegistration.preferences.rpcAddress.trim();
     const currentEcdsaKey =
       selectedRegistration.preferences.ecdsaPublicKey.toLowerCase();
 
@@ -680,9 +678,7 @@ const Page: FC = () => {
                           {unregisterButton}
                         </span>
                       </TooltipTrigger>
-                      <TooltipBody>
-                        {actionState.disableReason}
-                      </TooltipBody>
+                      <TooltipBody>{actionState.disableReason}</TooltipBody>
                     </Tooltip>
                   ) : (
                     unregisterButton
@@ -694,7 +690,11 @@ const Page: FC = () => {
         },
       }),
     ],
-    [breakdownByBlueprint, isActiveServicePrecheckUnavailable, isMembershipLoaded],
+    [
+      breakdownByBlueprint,
+      isActiveServicePrecheckUnavailable,
+      isMembershipLoaded,
+    ],
   );
 
   // Slash columns
@@ -770,7 +770,10 @@ const Page: FC = () => {
           return (
             <TableCellWrapper className="py-3 pr-3">
               <div className="flex items-center gap-2 whitespace-nowrap">
-                <Typography variant="body2" className="font-mono whitespace-nowrap">
+                <Typography
+                  variant="body2"
+                  className="font-mono whitespace-nowrap"
+                >
                   {shortenHex(info.getValue())}
                 </Typography>
                 <CopyWithTooltip
@@ -809,7 +812,9 @@ const Page: FC = () => {
         cell: (info) => {
           return (
             <TableCellWrapper className="py-3 pr-3">
-              <Typography variant="body2">{formatDateTime(info.getValue())}</Typography>
+              <Typography variant="body2">
+                {formatDateTime(info.getValue())}
+              </Typography>
             </TableCellWrapper>
           );
         },
@@ -821,7 +826,10 @@ const Page: FC = () => {
           const slash = info.row.original;
           const eligibility = getSlashDisputeEligibility(slash, nowUnixSeconds);
           const showDisputeButton = slash.status === 'Pending';
-          const reasonText = getSlashStatusReason(slash.status, eligibility.reason);
+          const reasonText = getSlashStatusReason(
+            slash.status,
+            eligibility.reason,
+          );
 
           return (
             <TableCellWrapper removeRightBorder className="py-3 pr-3">
@@ -963,7 +971,11 @@ const Page: FC = () => {
             <span className="font-normal text-mono-100">expires at</span>{' '}
             {formatDateTime(nearestPendingSlash.executeAfter)}
           </Typography>
-          <Typography variant="body2" fw="semibold" className="text-yellow-300/80 mt-1.5">
+          <Typography
+            variant="body2"
+            fw="semibold"
+            className="text-yellow-300/80 mt-1.5"
+          >
             Time remaining:{' '}
             {formatTimeRemaining(
               nearestPendingSlashEligibility.secondsUntilDeadline,
@@ -979,7 +991,11 @@ const Page: FC = () => {
             temporarily disabled until indexer/service data can be fetched.
           </Typography>
           <div className="mt-3">
-            <Button variant="secondary" size="sm" onClick={() => void refetchActiveServices()}>
+            <Button
+              variant="secondary"
+              size="sm"
+              onClick={() => void refetchActiveServices()}
+            >
               Retry Precheck
             </Button>
           </div>
@@ -1054,8 +1070,8 @@ const Page: FC = () => {
               <strong>{selectedRegistration?.blueprintName}</strong>?
             </Typography>
             <Typography variant="body2" className="text-mono-100 mt-2">
-              This action removes your operator registration from this
-              blueprint after chain checks pass.
+              This action removes your operator registration from this blueprint
+              after chain checks pass.
             </Typography>
           </ModalBody>
           <ModalFooterActions
@@ -1080,7 +1096,8 @@ const Page: FC = () => {
             <div className="space-y-4">
               <div>
                 <Typography variant="body2" className="mb-1">
-                  RPC Endpoint <span className="text-red-70 dark:text-red-50">*</span>
+                  RPC Endpoint{' '}
+                  <span className="text-red-70 dark:text-red-50">*</span>
                 </Typography>
                 <Input
                   id="rpcAddress"
@@ -1153,10 +1170,13 @@ const Page: FC = () => {
               Submitted dispute reason:
             </Typography>
             <div className="rounded-lg border border-mono-40 dark:border-mono-140 p-3 bg-mono-20 dark:bg-mono-170">
-              <Typography variant="body2" className="whitespace-pre-wrap break-words">
+              <Typography
+                variant="body2"
+                className="whitespace-pre-wrap break-words"
+              >
                 {selectedSlash
-                  ? getSlashDisputeMessage(selectedSlash) ??
-                    'No dispute reason available for this proposal yet.'
+                  ? (getSlashDisputeMessage(selectedSlash) ??
+                    'No dispute reason available for this proposal yet.')
                   : '-'}
               </Typography>
             </div>
@@ -1182,9 +1202,7 @@ const Page: FC = () => {
                   Slash %:
                 </Typography>
                 <Typography variant="body3" className="text-red-500">
-                  {selectedSlash
-                    ? formatSlashBps(selectedSlash.slashBps)
-                    : '-'}
+                  {selectedSlash ? formatSlashBps(selectedSlash.slashBps) : '-'}
                 </Typography>
                 <Typography variant="body3" className="text-mono-100">
                   Effective Slash %:
@@ -1198,7 +1216,9 @@ const Page: FC = () => {
                   Dispute Deadline:
                 </Typography>
                 <Typography variant="body3">
-                  {selectedSlash ? formatDateTime(selectedSlash.executeAfter) : '-'}
+                  {selectedSlash
+                    ? formatDateTime(selectedSlash.executeAfter)
+                    : '-'}
                 </Typography>
                 <Typography variant="body3" className="text-mono-100">
                   Time Remaining:
@@ -1227,7 +1247,12 @@ const Page: FC = () => {
                 <Typography variant="body3" className="text-mono-100">
                   Claim Context:
                 </Typography>
-                <Typography variant="body3" title={selectedSlash ? getSlashClaimContext(selectedSlash) : '-'}>
+                <Typography
+                  variant="body3"
+                  title={
+                    selectedSlash ? getSlashClaimContext(selectedSlash) : '-'
+                  }
+                >
                   {selectedSlash ? getSlashClaimContext(selectedSlash) : '-'}
                 </Typography>
                 <Typography variant="body3" className="text-mono-100">

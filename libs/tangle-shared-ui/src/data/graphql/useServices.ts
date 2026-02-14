@@ -305,7 +305,14 @@ export const useServicesByOperator = (
   const resolvedNetwork = useResolvedEnvioNetwork(network);
 
   return useQuery({
-    queryKey: ['envio', 'services', 'operator', operator, status, resolvedNetwork],
+    queryKey: [
+      'envio',
+      'services',
+      'operator',
+      operator,
+      status,
+      resolvedNetwork,
+    ],
     queryFn: async () => {
       if (!operator) return [];
       return fetchServices({ operator, status }, resolvedNetwork);
@@ -329,7 +336,13 @@ export const usePendingServiceRequests = (
   const resolvedNetwork = useResolvedEnvioNetwork(network);
 
   return useQuery({
-    queryKey: ['envio', 'serviceRequests', 'pending', operator, resolvedNetwork],
+    queryKey: [
+      'envio',
+      'serviceRequests',
+      'pending',
+      operator,
+      resolvedNetwork,
+    ],
     queryFn: async () => {
       if (!operator) return [];
       return fetchServiceRequests(
@@ -460,11 +473,7 @@ export const useOperatorStats = (
           }>;
         },
         { operator: string }
-      >(
-        blueprintQuery,
-        { operator: operator.toLowerCase() },
-        resolvedNetwork,
-      );
+      >(blueprintQuery, { operator: operator.toLowerCase() }, resolvedNetwork);
 
       if (blueprintResult.errors?.length) {
         throw new Error(
@@ -504,7 +513,13 @@ export const useServiceById = (
   const resolvedNetwork = useResolvedEnvioNetwork(network);
 
   const query = useQuery({
-    queryKey: ['envio', 'services', 'byId', serviceId?.toString(), resolvedNetwork],
+    queryKey: [
+      'envio',
+      'services',
+      'byId',
+      serviceId?.toString(),
+      resolvedNetwork,
+    ],
     queryFn: async () => {
       if (serviceId === undefined) return null;
       const services = await fetchServices(

@@ -60,17 +60,13 @@ interface SlashProposalsResponse {
     serviceId: string;
     operator: { id: string } | null;
     proposer: string;
-    service:
-      | {
-          owner: string;
-          blueprint:
-            | {
-                owner: string;
-                manager: string | null;
-              }
-            | null;
-        }
-      | null;
+    service: {
+      owner: string;
+      blueprint: {
+        owner: string;
+        manager: string | null;
+      } | null;
+    } | null;
     slashBps: string;
     effectiveSlashBps: string;
     evidence: string;
@@ -109,7 +105,10 @@ const getSlashProposerRole = (
     return 'ServiceOwner';
   }
 
-  if (service.blueprint && proposerLower === service.blueprint.owner.toLowerCase()) {
+  if (
+    service.blueprint &&
+    proposerLower === service.blueprint.owner.toLowerCase()
+  ) {
     return 'BlueprintOwner';
   }
 
@@ -336,8 +335,7 @@ export const useDisputeSlashTx = () => {
     },
     {
       txName: 'dispute slash',
-      txDetails: (params) =>
-        new Map([['Slash ID', params.slashId.toString()]]),
+      txDetails: (params) => new Map([['Slash ID', params.slashId.toString()]]),
       getSuccessMessage: (params) =>
         `Slash #${params.slashId} disputed successfully`,
     },
@@ -383,8 +381,7 @@ export const useCancelSlashTx = () => {
     },
     {
       txName: 'cancel slash',
-      txDetails: (params) =>
-        new Map([['Slash ID', params.slashId.toString()]]),
+      txDetails: (params) => new Map([['Slash ID', params.slashId.toString()]]),
       getSuccessMessage: (params) =>
         `Slash #${params.slashId} cancelled successfully`,
     },

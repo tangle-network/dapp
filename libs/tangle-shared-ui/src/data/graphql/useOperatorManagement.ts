@@ -284,7 +284,9 @@ export const useUnregisterOperatorTx = () => {
     },
   );
 
-  const unregisterOperator = async (blueprintId: bigint): Promise<Hash | null> => {
+  const unregisterOperator = async (
+    blueprintId: bigint,
+  ): Promise<Hash | null> => {
     const result = await hook.execute?.({ blueprintId });
     return result?.hash ?? null;
   };

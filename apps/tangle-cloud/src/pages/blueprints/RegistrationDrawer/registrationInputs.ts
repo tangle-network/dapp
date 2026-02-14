@@ -315,7 +315,11 @@ const hasRequiredValue = (
     }
 
     if (normalizedFieldType === 'Bool') {
-      return rawValue === 'true' || rawValue === 'false' || typeof rawValue === 'boolean';
+      return (
+        rawValue === 'true' ||
+        rawValue === 'false' ||
+        typeof rawValue === 'boolean'
+      );
     }
 
     if (isNumberType(normalizedFieldType)) {
@@ -462,5 +466,7 @@ export const encodeRegistrationInputs = (
   );
   const encodedPayload = encodePayload(schema, values);
 
-  return (encodedPayload.length > 0 ? toHex(encodedPayload) : '0x') as `0x${string}`;
+  return (
+    encodedPayload.length > 0 ? toHex(encodedPayload) : '0x'
+  ) as `0x${string}`;
 };
