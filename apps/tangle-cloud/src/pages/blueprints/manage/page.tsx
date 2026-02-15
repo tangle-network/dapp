@@ -2,7 +2,7 @@
  * Blueprint management page - view and manage owned blueprints.
  */
 
-import { FC, useState, useMemo, useCallback, useEffect } from 'react';
+import { FC, useState, useMemo, useCallback, useEffect, useRef } from 'react';
 import { Link } from 'react-router';
 import { useAccount } from 'wagmi';
 import { useQueryClient } from '@tanstack/react-query';
@@ -33,6 +33,8 @@ import {
   useDeactivateBlueprintTx,
   useTransferBlueprintTx,
   useUpdateBlueprintTx,
+  type Blueprint as EnvioBlueprint,
+  type BlueprintWithMetadata as EnvioBlueprintWithMetadata,
   type OwnedBlueprint,
 } from '@tangle-network/tangle-shared-ui/data/graphql';
 import { twMerge } from 'tailwind-merge';
@@ -42,6 +44,11 @@ import { isAddress } from 'viem';
 import pollWithBackoff from '../../../utils/pollWithBackoff';
 
 const columnHelper = createColumnHelper<OwnedBlueprint>();
+const METADATA_FETCH_TIMEOUT_MS = 5_000;
+// Keep owner list reconciliation long enough for indexer lag after on-chain tx.
+const BLUEPRINT_SYNC_POLL_MAX_TOTAL_TIME_MS = 120_000;
+// Cap retry spacing to avoid too sparse checks while waiting for sync.
+const BLUEPRINT_SYNC_POLL_MAX_DELAY_MS = 12_000;
 
 type BlueprintMetadataPreview = {
   name?: string;
@@ -107,6 +114,9 @@ const readString = (value: unknown): string | undefined => {
   return trimmed.length > 0 ? trimmed : undefined;
 };
 
+const isRecord = (value: unknown): value is Record<string, unknown> =>
+  typeof value === 'object' && value !== null && !Array.isArray(value);
+
 const resolveMetadataUri = (metadataUri: string): string => {
   if (!metadataUri.startsWith('ipfs://')) {
     return metadataUri;
@@ -143,34 +153,55 @@ const getMetadataUriValidationError = (metadataUri: string): string | null => {
 
 const fetchBlueprintMetadataPreview = async (
   metadataUri: string,
+  signal?: AbortSignal,
 ): Promise<BlueprintMetadataPreview> => {
   const fetchUrl = resolveMetadataUri(metadataUri);
+  const controller = new AbortController();
+  const timeoutId = setTimeout(
+    () => controller.abort(),
+    METADATA_FETCH_TIMEOUT_MS,
+  );
 
-  const response = await fetch(fetchUrl, {
-    signal: AbortSignal.timeout(5000),
-    cache: 'no-store',
-  });
+  const abortFromCaller = () => controller.abort();
+  signal?.addEventListener('abort', abortFromCaller, { once: true });
 
-  if (!response.ok) {
-    throw new Error(`Failed to fetch metadata: ${response.status}`);
+  try {
+    if (signal?.aborted) {
+      controller.abort();
+    }
+
+    const response = await fetch(fetchUrl, {
+      signal: controller.signal,
+      cache: 'no-store',
+    });
+
+    if (!response.ok) {
+      throw new Error(`Failed to fetch metadata: ${response.status}`);
+    }
+
+    const metadataJson: unknown = await response.json();
+    if (!isRecord(metadataJson)) {
+      throw new Error('Invalid metadata JSON payload');
+    }
+
+    return {
+      name: readString(metadataJson.name),
+      description: readString(metadataJson.description),
+      author: readString(metadataJson.author),
+      logo: readString(metadataJson.logo) ?? readString(metadataJson.image),
+      website:
+        readString(metadataJson.website) ?? readString(metadataJson.homepage),
+      codeRepository:
+        readString(metadataJson.codeRepository) ??
+        readString(metadataJson.codeUrl) ??
+        readString(metadataJson.repository),
+      docs:
+        readString(metadataJson.docs) ?? readString(metadataJson.documentation),
+    };
+  } finally {
+    clearTimeout(timeoutId);
+    signal?.removeEventListener('abort', abortFromCaller);
   }
-
-  const metadataJson = (await response.json()) as Record<string, unknown>;
-
-  return {
-    name: readString(metadataJson.name),
-    description: readString(metadataJson.description),
-    author: readString(metadataJson.author),
-    logo: readString(metadataJson.logo) ?? readString(metadataJson.image),
-    website:
-      readString(metadataJson.website) ?? readString(metadataJson.homepage),
-    codeRepository:
-      readString(metadataJson.codeRepository) ??
-      readString(metadataJson.codeUrl) ??
-      readString(metadataJson.repository),
-    docs:
-      readString(metadataJson.docs) ?? readString(metadataJson.documentation),
-  };
 };
 
 const ManageBlueprintsPage: FC = () => {
@@ -246,49 +277,81 @@ const ManageBlueprintsPage: FC = () => {
       preview: BlueprintMetadataPreview | null,
     ) => {
       const normalizedUri = metadataUri.trim();
+      const applyMetadataAcrossCaches = (
+        nextUri: string,
+        nextPreview: BlueprintMetadataPreview | null,
+      ) => {
+        queryClient.setQueryData<OwnedBlueprint[]>(cacheKey, (current) => {
+          if (!current) {
+            return current;
+          }
 
-      queryClient.setQueryData<OwnedBlueprint[]>(cacheKey, (current) => {
-        if (!current) {
-          return current;
-        }
+          return current.map((bp) =>
+            bp.id === blueprintId
+              ? applyBlueprintMetadataPreview(bp, nextUri, nextPreview)
+              : bp,
+          );
+        });
 
-        return current.map((bp) =>
-          bp.id === blueprintId
-            ? applyBlueprintMetadataPreview(bp, normalizedUri, preview)
-            : bp,
-        );
-      });
-
-      if (!preview) {
-        try {
-          const fetchedPreview =
-            await fetchBlueprintMetadataPreview(normalizedUri);
-          queryClient.setQueryData<OwnedBlueprint[]>(cacheKey, (current) => {
+        queryClient.setQueriesData<EnvioBlueprint[]>(
+          { queryKey: ['envio', 'blueprints'] },
+          (current) => {
             if (!current) {
               return current;
             }
 
             return current.map((bp) =>
-              bp.id === blueprintId
-                ? applyBlueprintMetadataPreview(
-                    bp,
-                    normalizedUri,
-                    fetchedPreview,
-                  )
+              bp.blueprintId === blueprintId
+                ? { ...bp, metadataUri: nextUri }
                 : bp,
             );
+          },
+        );
+
+        queryClient.setQueriesData<EnvioBlueprintWithMetadata[]>(
+          { queryKey: ['envio', 'blueprintsWithMetadata'] },
+          (current) => {
+            if (!current) {
+              return current;
+            }
+
+            return current.map((bp) =>
+              bp.blueprintId === blueprintId
+                ? {
+                    ...bp,
+                    metadataUri: nextUri,
+                    name: nextPreview?.name ?? bp.name,
+                    description: nextPreview?.description ?? bp.description,
+                    author: nextPreview?.author ?? bp.author,
+                    imageUrl: nextPreview?.logo ?? bp.imageUrl,
+                    website: nextPreview?.website ?? bp.website,
+                    codeUrl: nextPreview?.codeRepository ?? bp.codeUrl,
+                  }
+                : bp,
+            );
+          },
+        );
+      };
+
+      applyMetadataAcrossCaches(normalizedUri, preview);
+
+      if (!preview) {
+        try {
+          const fetchedPreview =
+            await fetchBlueprintMetadataPreview(normalizedUri);
+          applyMetadataAcrossCaches(normalizedUri, fetchedPreview);
+        } catch (error) {
+          console.warn('Failed to fetch metadata preview after blueprint update', {
+            operation: 'postSubmitPreviewFetch',
+            blueprintId: blueprintId.toString(),
+            metadataUri: normalizedUri,
+            error,
           });
-        } catch {
-          // Best-effort preview fetch. Polling below reconciles with indexer state.
         }
       }
 
       await Promise.all([
-        queryClient.invalidateQueries({ queryKey: ['blueprints', 'byOwner'] }),
-        queryClient.invalidateQueries({ queryKey: ['envio', 'blueprints'] }),
-        queryClient.invalidateQueries({
-          queryKey: ['envio', 'blueprintsWithMetadata'],
-        }),
+        queryClient.invalidateQueries({ queryKey: cacheKey }),
         queryClient.invalidateQueries({
           queryKey: ['envio', 'blueprint', blueprintId.toString()],
         }),
@@ -309,14 +372,14 @@ const ManageBlueprintsPage: FC = () => {
           );
         },
         {
-          maxTotalTime: 120_000,
-          maxDelay: 12_000,
+          maxTotalTime: BLUEPRINT_SYNC_POLL_MAX_TOTAL_TIME_MS,
+          maxDelay: BLUEPRINT_SYNC_POLL_MAX_DELAY_MS,
         },
       );
 
       if (!synced) {
         await queryClient.invalidateQueries({
-          queryKey: ['blueprints', 'byOwner'],
+          queryKey: cacheKey,
         });
       }
 
@@ -664,6 +727,7 @@ const UpdateMetadataModal: FC<UpdateMetadataModalProps> = ({
   const [previewData, setPreviewData] =
     useState<BlueprintMetadataPreview | null>(null);
   const [isLoadingPreview, setIsLoadingPreview] = useState(false);
+  const previewRequestAbortRef = useRef<AbortController | null>(null);
 
   const { updateBlueprint, status, error, reset } = useUpdateBlueprintTx();
   const isSubmitting = status === 'pending';
@@ -674,8 +738,14 @@ const UpdateMetadataModal: FC<UpdateMetadataModalProps> = ({
     trimmedUri.length > 0 && getMetadataUriValidationError(trimmedUri) === null;
   const isUnchanged = trimmedUri === (blueprint.metadataUri ?? '').trim();
 
+  const cancelInFlightPreviewRequest = useCallback(() => {
+    previewRequestAbortRef.current?.abort();
+    previewRequestAbortRef.current = null;
+  }, []);
+
   useEffect(() => {
     if (!isOpen) {
+      cancelInFlightPreviewRequest();
       return;
     }
 
@@ -684,7 +754,10 @@ const UpdateMetadataModal: FC<UpdateMetadataModalProps> = ({
     setPreviewData(null);
     setIsLoadingPreview(false);
     reset();
-  }, [blueprint.metadataUri, isOpen, reset]);
+    return () => {
+      cancelInFlightPreviewRequest();
+    };
+  }, [blueprint.metadataUri, isOpen, reset, cancelInFlightPreviewRequest]);
 
   const handleLoadPreview = async () => {
     const trimmedMetadataUri = metadataUri.trim();
@@ -693,17 +766,39 @@ const UpdateMetadataModal: FC<UpdateMetadataModalProps> = ({
       return;
     }
 
+    cancelInFlightPreviewRequest();
+    const previewAbortController = new AbortController();
+    previewRequestAbortRef.current = previewAbortController;
+
     setPreviewError(null);
     setIsLoadingPreview(true);
 
     try {
-      const metadata = await fetchBlueprintMetadataPreview(trimmedMetadataUri);
+      const metadata = await fetchBlueprintMetadataPreview(
+        trimmedMetadataUri,
+        previewAbortController.signal,
+      );
+      if (previewRequestAbortRef.current !== previewAbortController) {
+        return;
+      }
       setPreviewData(metadata);
-    } catch {
+    } catch (error) {
+      if (previewAbortController.signal.aborted) {
+        return;
+      }
       setPreviewData(null);
       setPreviewError('Unable to fetch metadata preview from this URI');
+      console.warn('Failed to load blueprint metadata preview', {
+        operation: 'loadMetadataPreview',
+        blueprintId: blueprint.id.toString(),
+        metadataUri: trimmedMetadataUri,
+        error,
+      });
     } finally {
-      setIsLoadingPreview(false);
+      if (previewRequestAbortRef.current === previewAbortController) {
+        previewRequestAbortRef.current = null;
+        setIsLoadingPreview(false);
+      }
     }
   };
 

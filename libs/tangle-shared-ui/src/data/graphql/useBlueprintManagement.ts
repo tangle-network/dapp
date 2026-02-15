@@ -152,6 +152,20 @@ interface BlueprintsByOwnerResponse {
   }>;
 }
 
+const METADATA_FETCH_TIMEOUT_MS = 5_000;
+
+const isRecord = (value: unknown): value is Record<string, unknown> =>
+  typeof value === 'object' && value !== null && !Array.isArray(value);
+
+const readString = (value: unknown): string | undefined => {
+  if (typeof value !== 'string') {
+    return undefined;
+  }
+
+  const trimmed = value.trim();
+  return trimmed.length > 0 ? trimmed : undefined;
+};
+
 // Fetch blueprints owned by an address
 const fetchBlueprintsByOwner = async (
   owner: Address,
@@ -195,29 +209,52 @@ const fetchBlueprintsByOwner = async (
               const cid = bp.metadataUri.replace('ipfs://', '');
               fetchUrl = `https://ipfs.io/ipfs/${cid}`;
             }
+            const controller = new AbortController();
+            const timeoutId = setTimeout(
+              () => controller.abort(),
+              METADATA_FETCH_TIMEOUT_MS,
+            );
             const response = await fetch(fetchUrl, {
-              signal: AbortSignal.timeout(5000),
+              signal: controller.signal,
               cache: 'no-store',
+            }).finally(() => {
+              clearTimeout(timeoutId);
             });
-            if (response.ok) {
-              const metadataJson = await response.json();
-              name = metadataJson.name ?? name;
-              description = metadataJson.description ?? '';
-              metadata = {
-                name: metadataJson.name,
-                description: metadataJson.description,
-                author: metadataJson.author,
-                logo: metadataJson.logo ?? metadataJson.image,
-                website: metadataJson.website ?? metadataJson.homepage,
-                codeRepository:
-                  metadataJson.codeRepository ??
-                  metadataJson.codeUrl ??
-                  metadataJson.repository,
-                docs: metadataJson.docs ?? metadataJson.documentation,
-              };
+
+            if (!response.ok) {
+              throw new Error(`Failed to fetch metadata: ${response.status}`);
             }
-          } catch {
-            // Ignore metadata fetch errors
+
+            const metadataJson: unknown = await response.json();
+            if (!isRecord(metadataJson)) {
+              throw new Error('Invalid metadata JSON payload');
+            }
+
+            name = readString(metadataJson.name) ?? name;
+            description = readString(metadataJson.description) ?? '';
+            metadata = {
+              name: readString(metadataJson.name),
+              description: readString(metadataJson.description),
+              author: readString(metadataJson.author),
+              logo: readString(metadataJson.logo) ?? readString(metadataJson.image),
+              website:
+                readString(metadataJson.website) ??
+                readString(metadataJson.homepage),
+              codeRepository:
+                readString(metadataJson.codeRepository) ??
+                readString(metadataJson.codeUrl) ??
+                readString(metadataJson.repository),
+              docs:
+                readString(metadataJson.docs) ??
+                readString(metadataJson.documentation),
+            };
+          } catch (error) {
+            console.warn('Failed to fetch owned blueprint metadata', {
+              operation: 'ownedBlueprintMetadataFetch',
+              blueprintId: bp.blueprintId,
+              metadataUri: bp.metadataUri,
+              error,
+            });
           }
         }
 
