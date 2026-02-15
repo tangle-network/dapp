@@ -7,6 +7,7 @@ import { Address } from 'viem';
 import {
   useServicesByOwner,
   usePendingServiceRequests,
+  useServiceRequestsByRequester,
 } from '@tangle-network/tangle-shared-ui/data/graphql';
 
 export interface UserStats {
@@ -37,27 +38,39 @@ export const useUserStats = (
     refetch: refetchPending,
   } = usePendingServiceRequests(userAddress);
 
+  // Fetch activated requests initiated by the user.
+  const {
+    data: activatedRequests,
+    isLoading: isLoadingActivatedRequests,
+    refetch: refetchActivatedRequests,
+  } = useServiceRequestsByRequester(userAddress, { status: 'ACTIVATED' });
+
   const result = useMemo<UserStats>(() => {
     const activeServices =
       ownedServices?.filter((s) => s.status === 'ACTIVE') ?? [];
     const allDeployed = ownedServices ?? [];
     const pendingCount = pendingRequests?.length ?? 0;
+    const consumedCount = activatedRequests?.length ?? 0;
 
     return {
       runningServices: activeServices.length,
       deployedServices: allDeployed.length,
       pendingServices: pendingCount,
-      consumedServices: 0, // TODO: Query services where user is a permitted caller
+      consumedServices: consumedCount,
     };
-  }, [ownedServices, pendingRequests]);
+  }, [ownedServices, pendingRequests, activatedRequests]);
 
   const refetch = async () => {
-    await Promise.all([refetchOwned(), refetchPending()]);
+    await Promise.all([
+      refetchOwned(),
+      refetchPending(),
+      refetchActivatedRequests(),
+    ]);
   };
 
   return {
     result,
-    isLoading: isLoadingOwned || isLoadingPending,
+    isLoading: isLoadingOwned || isLoadingPending || isLoadingActivatedRequests,
     refetch,
   };
 };

@@ -18,6 +18,7 @@ import { Link } from 'react-router';
 import { PagePath } from '../../../types';
 import useEvmOperatorInfo from '../../../hooks/useEvmOperatorInfo';
 import {
+  useOperatorRegistrations,
   useBlueprintsWithMetadata,
   type BlueprintWithMetadata,
 } from '@tangle-network/tangle-shared-ui/data/graphql';
@@ -30,18 +31,33 @@ export const RegisteredBlueprints: FC = () => {
   // Fetch all blueprints with metadata
   const {
     data: allBlueprints,
-    isLoading,
-    error,
+    isLoading: isLoadingBlueprints,
+    error: blueprintsError,
   } = useBlueprintsWithMetadata({ activeOnly: true });
 
-  // Filter to only show blueprints where the operator is registered
-  // For now, show all active blueprints as the filtering logic will depend on indexer data
+  const {
+    data: operatorRegistrations,
+    isLoading: isLoadingRegistrations,
+    error: registrationsError,
+  } = useOperatorRegistrations();
+
+  const isLoading = isLoadingBlueprints || isLoadingRegistrations;
+  const error = blueprintsError ?? registrationsError;
+
+  // Show only active blueprints where the current operator has an ACTIVE registration.
   const data = useMemo(() => {
-    if (!allBlueprints || !operatorAddress) return [];
-    // TODO: Filter to only show blueprints where operator is registered
-    // This requires additional indexer data for operator-blueprint relationships
-    return allBlueprints;
-  }, [allBlueprints, operatorAddress]);
+    if (!allBlueprints || !operatorAddress || !operatorRegistrations) return [];
+
+    const activeRegisteredBlueprintIds = new Set(
+      operatorRegistrations
+        .filter((registration) => registration.active)
+        .map((registration) => registration.blueprintId.toString()),
+    );
+
+    return allBlueprints.filter((blueprint) =>
+      activeRegisteredBlueprintIds.has(blueprint.blueprintId.toString()),
+    );
+  }, [allBlueprints, operatorAddress, operatorRegistrations]);
 
   const isEmpty = data.length === 0;
 

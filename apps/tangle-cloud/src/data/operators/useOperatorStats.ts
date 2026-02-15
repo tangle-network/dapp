@@ -13,7 +13,7 @@ export interface OperatorStats {
   registeredBlueprints: number;
   runningServices: number;
   pendingServices: number;
-  avgUptime: number;
+  avgUptime: number | null;
   deployedServices: number;
   publishedBlueprints: number;
 }
@@ -45,7 +45,7 @@ export const useOperatorStats = (
       registeredBlueprints: stats?.registeredBlueprints ?? 0,
       runningServices: stats?.runningServices ?? 0,
       pendingServices: stats?.pendingServices ?? 0,
-      avgUptime: stats?.avgUptime ?? 0,
+      avgUptime: stats?.avgUptime ?? null,
       deployedServices: stats?.deployedServices ?? 0,
       publishedBlueprints: stats?.publishedBlueprints ?? 0,
     };
