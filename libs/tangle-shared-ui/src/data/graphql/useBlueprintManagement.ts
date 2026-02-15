@@ -119,6 +119,16 @@ export interface OwnedBlueprint {
   description: string;
   owner: Address;
   manager: Address | null;
+  metadataUri: string | null;
+  metadata: {
+    name?: string;
+    description?: string;
+    author?: string;
+    logo?: string;
+    website?: string;
+    codeRepository?: string;
+    docs?: string;
+  };
   active: boolean;
   operatorCount: number;
   serviceCount: number;
@@ -173,6 +183,7 @@ const fetchBlueprintsByOwner = async (
       (result.data.Blueprint ?? []).map(async (bp) => {
         let name = 'Unknown Blueprint';
         let description = '';
+        let metadata: OwnedBlueprint['metadata'] = {};
 
         if (bp.metadataUri) {
           try {
@@ -185,9 +196,21 @@ const fetchBlueprintsByOwner = async (
               signal: AbortSignal.timeout(5000),
             });
             if (response.ok) {
-              const metadata = await response.json();
-              name = metadata.name ?? name;
-              description = metadata.description ?? '';
+              const metadataJson = await response.json();
+              name = metadataJson.name ?? name;
+              description = metadataJson.description ?? '';
+              metadata = {
+                name: metadataJson.name,
+                description: metadataJson.description,
+                author: metadataJson.author,
+                logo: metadataJson.logo ?? metadataJson.image,
+                website: metadataJson.website ?? metadataJson.homepage,
+                codeRepository:
+                  metadataJson.codeRepository ??
+                  metadataJson.codeUrl ??
+                  metadataJson.repository,
+                docs: metadataJson.docs ?? metadataJson.documentation,
+              };
             }
           } catch {
             // Ignore metadata fetch errors
@@ -200,6 +223,8 @@ const fetchBlueprintsByOwner = async (
           description,
           owner: bp.owner as Address,
           manager: bp.manager as Address | null,
+          metadataUri: bp.metadataUri,
+          metadata,
           active: bp.active,
           operatorCount: Number(bp.operatorCount),
           serviceCount: 0, // TODO: Get from indexer when available
