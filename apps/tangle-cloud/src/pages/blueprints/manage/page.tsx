@@ -2,7 +2,7 @@
  * Blueprint management page - view and manage owned blueprints.
  */
 
-import { FC, useState, useMemo, useCallback } from 'react';
+import { FC, useState, useMemo, useCallback, useEffect, useRef } from 'react';
 import { Link } from 'react-router';
 import { useAccount } from 'wagmi';
 import { useQueryClient } from '@tanstack/react-query';
@@ -32,24 +32,193 @@ import {
   useBlueprintsByOwner,
   useDeactivateBlueprintTx,
   useTransferBlueprintTx,
+  useUpdateBlueprintTx,
+  type Blueprint as EnvioBlueprint,
+  type BlueprintWithMetadata as EnvioBlueprintWithMetadata,
   type OwnedBlueprint,
 } from '@tangle-network/tangle-shared-ui/data/graphql';
 import { twMerge } from 'tailwind-merge';
 import { PagePath } from '../../../types';
 import ErrorMessage from '@tangle-network/tangle-shared-ui/components/ErrorMessage';
 import { isAddress } from 'viem';
+import pollWithBackoff from '../../../utils/pollWithBackoff';
 
 const columnHelper = createColumnHelper<OwnedBlueprint>();
+const METADATA_FETCH_TIMEOUT_MS = 5_000;
+// Keep owner list reconciliation long enough for indexer lag after on-chain tx.
+const BLUEPRINT_SYNC_POLL_MAX_TOTAL_TIME_MS = 120_000;
+// Cap retry spacing to avoid too sparse checks while waiting for sync.
+const BLUEPRINT_SYNC_POLL_MAX_DELAY_MS = 12_000;
+
+type BlueprintMetadataPreview = {
+  name?: string;
+  description?: string;
+  author?: string;
+  logo?: string;
+  website?: string;
+  codeRepository?: string;
+  docs?: string;
+};
+
+const applyBlueprintMetadataPreview = (
+  blueprint: OwnedBlueprint,
+  metadataUri: string,
+  preview: BlueprintMetadataPreview | null,
+): OwnedBlueprint => {
+  if (!preview) {
+    return {
+      ...blueprint,
+      metadataUri,
+    };
+  }
+
+  const nextMetadata = { ...blueprint.metadata };
+
+  if (preview.name !== undefined) {
+    nextMetadata.name = preview.name;
+  }
+  if (preview.description !== undefined) {
+    nextMetadata.description = preview.description;
+  }
+  if (preview.author !== undefined) {
+    nextMetadata.author = preview.author;
+  }
+  if (preview.logo !== undefined) {
+    nextMetadata.logo = preview.logo;
+  }
+  if (preview.website !== undefined) {
+    nextMetadata.website = preview.website;
+  }
+  if (preview.codeRepository !== undefined) {
+    nextMetadata.codeRepository = preview.codeRepository;
+  }
+  if (preview.docs !== undefined) {
+    nextMetadata.docs = preview.docs;
+  }
+
+  return {
+    ...blueprint,
+    metadataUri,
+    name: preview.name ?? blueprint.name,
+    description: preview.description ?? blueprint.description,
+    metadata: nextMetadata,
+  };
+};
+
+const readString = (value: unknown): string | undefined => {
+  if (typeof value !== 'string') {
+    return undefined;
+  }
+
+  const trimmed = value.trim();
+  return trimmed.length > 0 ? trimmed : undefined;
+};
+
+const isRecord = (value: unknown): value is Record<string, unknown> =>
+  typeof value === 'object' && value !== null && !Array.isArray(value);
+
+const resolveMetadataUri = (metadataUri: string): string => {
+  if (!metadataUri.startsWith('ipfs://')) {
+    return metadataUri;
+  }
+
+  const cid = metadataUri.replace('ipfs://', '');
+  return `https://ipfs.io/ipfs/${cid}`;
+};
+
+const getMetadataUriValidationError = (metadataUri: string): string | null => {
+  const trimmed = metadataUri.trim();
+
+  if (!trimmed) {
+    return 'Metadata URI is required';
+  }
+
+  if (!/^(ipfs:\/\/|https?:\/\/).+/i.test(trimmed)) {
+    return 'Metadata URI must start with ipfs://, https://, or http://';
+  }
+
+  if (/^https?:\/\//i.test(trimmed)) {
+    try {
+      const url = new URL(trimmed);
+      if (!['http:', 'https:'].includes(url.protocol)) {
+        return 'Metadata URI must use http(s) or ipfs:// protocol';
+      }
+    } catch {
+      return 'Please enter a valid metadata URI';
+    }
+  }
+
+  return null;
+};
+
+const fetchBlueprintMetadataPreview = async (
+  metadataUri: string,
+  signal?: AbortSignal,
+): Promise<BlueprintMetadataPreview> => {
+  const fetchUrl = resolveMetadataUri(metadataUri);
+  const controller = new AbortController();
+  const timeoutId = setTimeout(
+    () => controller.abort(),
+    METADATA_FETCH_TIMEOUT_MS,
+  );
+
+  const abortFromCaller = () => controller.abort();
+  signal?.addEventListener('abort', abortFromCaller, { once: true });
+
+  try {
+    if (signal?.aborted) {
+      controller.abort();
+    }
+
+    const response = await fetch(fetchUrl, {
+      signal: controller.signal,
+      cache: 'no-store',
+    });
+
+    if (!response.ok) {
+      throw new Error(`Failed to fetch metadata: ${response.status}`);
+    }
+
+    const metadataJson: unknown = await response.json();
+    if (!isRecord(metadataJson)) {
+      throw new Error('Invalid metadata JSON payload');
+    }
+
+    return {
+      name: readString(metadataJson.name),
+      description: readString(metadataJson.description),
+      author: readString(metadataJson.author),
+      logo: readString(metadataJson.logo) ?? readString(metadataJson.image),
+      website:
+        readString(metadataJson.website) ?? readString(metadataJson.homepage),
+      codeRepository:
+        readString(metadataJson.codeRepository) ??
+        readString(metadataJson.codeUrl) ??
+        readString(metadataJson.repository),
+      docs:
+        readString(metadataJson.docs) ?? readString(metadataJson.documentation),
+    };
+  } finally {
+    clearTimeout(timeoutId);
+    signal?.removeEventListener('abort', abortFromCaller);
+  }
+};
 
 const ManageBlueprintsPage: FC = () => {
   const { isConnected, address } = useAccount();
   const queryClient = useQueryClient();
-  const { data: blueprints, isLoading, error } = useBlueprintsByOwner();
+  const {
+    data: blueprints,
+    isLoading,
+    error,
+    refetch: refetchOwnedBlueprints,
+  } = useBlueprintsByOwner();
 
   const [selectedBlueprint, setSelectedBlueprint] =
     useState<OwnedBlueprint | null>(null);
   const [isDeactivateModalOpen, setIsDeactivateModalOpen] = useState(false);
   const [isTransferModalOpen, setIsTransferModalOpen] = useState(false);
+  const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false);
 
   const cacheKey = useMemo(
     () => ['blueprints', 'byOwner', address, undefined],
@@ -99,6 +268,127 @@ const ManageBlueprintsPage: FC = () => {
       return null;
     },
     [queryClient, cacheKey],
+  );
+
+  const handleUpdateMetadataSuccess = useCallback(
+    async (
+      blueprintId: bigint,
+      metadataUri: string,
+      preview: BlueprintMetadataPreview | null,
+    ) => {
+      const normalizedUri = metadataUri.trim();
+      const applyMetadataAcrossCaches = (
+        nextUri: string,
+        nextPreview: BlueprintMetadataPreview | null,
+      ) => {
+        queryClient.setQueryData<OwnedBlueprint[]>(cacheKey, (current) => {
+          if (!current) {
+            return current;
+          }
+
+          return current.map((bp) =>
+            bp.id === blueprintId
+              ? applyBlueprintMetadataPreview(bp, nextUri, nextPreview)
+              : bp,
+          );
+        });
+
+        queryClient.setQueriesData<EnvioBlueprint[]>(
+          { queryKey: ['envio', 'blueprints'] },
+          (current) => {
+            if (!current) {
+              return current;
+            }
+
+            return current.map((bp) =>
+              bp.blueprintId === blueprintId
+                ? { ...bp, metadataUri: nextUri }
+                : bp,
+            );
+          },
+        );
+
+        queryClient.setQueriesData<EnvioBlueprintWithMetadata[]>(
+          { queryKey: ['envio', 'blueprintsWithMetadata'] },
+          (current) => {
+            if (!current) {
+              return current;
+            }
+
+            return current.map((bp) =>
+              bp.blueprintId === blueprintId
+                ? {
+                    ...bp,
+                    metadataUri: nextUri,
+                    name: nextPreview?.name ?? bp.name,
+                    description: nextPreview?.description ?? bp.description,
+                    author: nextPreview?.author ?? bp.author,
+                    imageUrl: nextPreview?.logo ?? bp.imageUrl,
+                    website: nextPreview?.website ?? bp.website,
+                    codeUrl: nextPreview?.codeRepository ?? bp.codeUrl,
+                  }
+                : bp,
+            );
+          },
+        );
+      };
+
+      applyMetadataAcrossCaches(normalizedUri, preview);
+
+      if (!preview) {
+        try {
+          const fetchedPreview =
+            await fetchBlueprintMetadataPreview(normalizedUri);
+          applyMetadataAcrossCaches(normalizedUri, fetchedPreview);
+        } catch (error) {
+          console.warn(
+            'Failed to fetch metadata preview after blueprint update',
+            {
+              operation: 'postSubmitPreviewFetch',
+              blueprintId: blueprintId.toString(),
+              metadataUri: normalizedUri,
+              error,
+            },
+          );
+        }
+      }
+
+      await Promise.all([
+        queryClient.invalidateQueries({ queryKey: cacheKey }),
+        queryClient.invalidateQueries({
+          queryKey: ['envio', 'blueprint', blueprintId.toString()],
+        }),
+        queryClient.invalidateQueries({
+          queryKey: ['envio', 'blueprintDetails', blueprintId.toString()],
+        }),
+      ]);
+
+      const synced = await pollWithBackoff(
+        async () => {
+          const latest = await refetchOwnedBlueprints();
+          return (
+            latest.data?.some(
+              (bp) =>
+                bp.id === blueprintId &&
+                bp.metadataUri?.trim() === normalizedUri,
+            ) ?? false
+          );
+        },
+        {
+          maxTotalTime: BLUEPRINT_SYNC_POLL_MAX_TOTAL_TIME_MS,
+          maxDelay: BLUEPRINT_SYNC_POLL_MAX_DELAY_MS,
+        },
+      );
+
+      if (!synced) {
+        await queryClient.invalidateQueries({
+          queryKey: cacheKey,
+        });
+      }
+
+      await refetchOwnedBlueprints();
+    },
+    [cacheKey, queryClient, refetchOwnedBlueprints],
   );
 
   const columns = useMemo(
@@ -158,6 +448,10 @@ const ManageBlueprintsPage: FC = () => {
         header: 'Actions',
         cell: (info) => {
           const blueprint = info.row.original;
+          const isOwner =
+            address !== undefined &&
+            blueprint.owner.toLowerCase() === address.toLowerCase();
+
           return (
             <div className="flex gap-2">
               <Link
@@ -171,8 +465,19 @@ const ManageBlueprintsPage: FC = () => {
                 </Button>
               </Link>
 
-              {blueprint.active && (
+              {blueprint.active && isOwner && (
                 <>
+                  <Button
+                    variant="utility"
+                    size="sm"
+                    onClick={() => {
+                      setSelectedBlueprint(blueprint);
+                      setIsUpdateModalOpen(true);
+                    }}
+                  >
+                    Update Metadata
+                  </Button>
+
                   <Button
                     variant="utility"
                     size="sm"
@@ -202,7 +507,7 @@ const ManageBlueprintsPage: FC = () => {
         },
       }),
     ],
-    [],
+    [address],
   );
 
   const table = useReactTable({
@@ -338,6 +643,27 @@ const ManageBlueprintsPage: FC = () => {
         )}
       </Card>
 
+      {/* Update Metadata Modal */}
+      {selectedBlueprint && (
+        <UpdateMetadataModal
+          blueprint={selectedBlueprint}
+          isOpen={isUpdateModalOpen}
+          onClose={() => {
+            setIsUpdateModalOpen(false);
+            setSelectedBlueprint(null);
+          }}
+          onSuccess={async (metadataUri, metadataPreview) => {
+            await handleUpdateMetadataSuccess(
+              selectedBlueprint.id,
+              metadataUri,
+              metadataPreview,
+            );
+            setIsUpdateModalOpen(false);
+            setSelectedBlueprint(null);
+          }}
+        />
+      )}
+
       {/* Deactivate Modal */}
       {selectedBlueprint && (
         <DeactivateModal
@@ -380,6 +706,274 @@ const ManageBlueprintsPage: FC = () => {
         />
       )}
     </div>
+  );
+};
+
+interface UpdateMetadataModalProps {
+  blueprint: OwnedBlueprint;
+  isOpen: boolean;
+  onClose: () => void;
+  onSuccess: (
+    metadataUri: string,
+    metadataPreview: BlueprintMetadataPreview | null,
+  ) => Promise<void>;
+}
+
+const UpdateMetadataModal: FC<UpdateMetadataModalProps> = ({
+  blueprint,
+  isOpen,
+  onClose,
+  onSuccess,
+}) => {
+  const [metadataUri, setMetadataUri] = useState(blueprint.metadataUri ?? '');
+  const [previewError, setPreviewError] = useState<string | null>(null);
+  const [previewData, setPreviewData] =
+    useState<BlueprintMetadataPreview | null>(null);
+  const [isLoadingPreview, setIsLoadingPreview] = useState(false);
+  const previewRequestAbortRef = useRef<AbortController | null>(null);
+
+  const { updateBlueprint, status, error, reset } = useUpdateBlueprintTx();
+  const isSubmitting = status === 'pending';
+
+  const trimmedUri = metadataUri.trim();
+  const uriError = getMetadataUriValidationError(trimmedUri);
+  const hasValidUri =
+    trimmedUri.length > 0 && getMetadataUriValidationError(trimmedUri) === null;
+  const isUnchanged = trimmedUri === (blueprint.metadataUri ?? '').trim();
+
+  const cancelInFlightPreviewRequest = useCallback(() => {
+    previewRequestAbortRef.current?.abort();
+    previewRequestAbortRef.current = null;
+  }, []);
+
+  useEffect(() => {
+    if (!isOpen) {
+      cancelInFlightPreviewRequest();
+      return;
+    }
+
+    setMetadataUri(blueprint.metadataUri ?? '');
+    setPreviewError(null);
+    setPreviewData(null);
+    setIsLoadingPreview(false);
+    reset();
+    return () => {
+      cancelInFlightPreviewRequest();
+    };
+  }, [blueprint.metadataUri, isOpen, reset, cancelInFlightPreviewRequest]);
+
+  const handleLoadPreview = async () => {
+    const trimmedMetadataUri = metadataUri.trim();
+
+    if (getMetadataUriValidationError(trimmedMetadataUri)) {
+      return;
+    }
+
+    cancelInFlightPreviewRequest();
+    const previewAbortController = new AbortController();
+    previewRequestAbortRef.current = previewAbortController;
+
+    setPreviewError(null);
+    setIsLoadingPreview(true);
+
+    try {
+      const metadata = await fetchBlueprintMetadataPreview(
+        trimmedMetadataUri,
+        previewAbortController.signal,
+      );
+      if (previewRequestAbortRef.current !== previewAbortController) {
+        return;
+      }
+      setPreviewData(metadata);
+    } catch (error) {
+      if (previewAbortController.signal.aborted) {
+        return;
+      }
+      setPreviewData(null);
+      setPreviewError('Unable to fetch metadata preview from this URI');
+      console.warn('Failed to load blueprint metadata preview', {
+        operation: 'loadMetadataPreview',
+        blueprintId: blueprint.id.toString(),
+        metadataUri: trimmedMetadataUri,
+        error,
+      });
+    } finally {
+      if (previewRequestAbortRef.current === previewAbortController) {
+        previewRequestAbortRef.current = null;
+        setIsLoadingPreview(false);
+      }
+    }
+  };
+
+  const handleSubmit = async () => {
+    const trimmedMetadataUri = metadataUri.trim();
+
+    if (getMetadataUriValidationError(trimmedMetadataUri)) {
+      return;
+    }
+
+    const hash = await updateBlueprint(blueprint.id, trimmedMetadataUri);
+
+    if (hash) {
+      onClose();
+      await onSuccess(trimmedMetadataUri, previewData);
+    }
+  };
+
+  return (
+    <Modal open={isOpen} onOpenChange={(open) => !open && onClose()}>
+      <ModalContent>
+        <ModalHeader>Update Blueprint Metadata</ModalHeader>
+        <ModalBody>
+          <Typography variant="body1" className="mb-4">
+            Update metadata URI for <strong>{blueprint.name}</strong>.
+          </Typography>
+
+          <div>
+            <Typography variant="body2" className="mb-2">
+              Metadata URI
+            </Typography>
+            <Input
+              id="metadataUri"
+              value={metadataUri}
+              isControlled
+              onChange={(value) => {
+                setMetadataUri(value);
+                setPreviewError(null);
+              }}
+              placeholder="ipfs://... or https://..."
+            />
+            {(uriError || previewError || error?.message) && (
+              <div className="mt-1">
+                {uriError && <ErrorMessage>{uriError}</ErrorMessage>}
+                {previewError && <ErrorMessage>{previewError}</ErrorMessage>}
+                {error?.message && <ErrorMessage>{error.message}</ErrorMessage>}
+              </div>
+            )}
+          </div>
+
+          <div className="mt-4 flex gap-2">
+            <Button
+              variant="utility"
+              onClick={handleLoadPreview}
+              isLoading={isLoadingPreview}
+              isDisabled={isSubmitting || !hasValidUri}
+            >
+              {isLoadingPreview ? 'Loading Preview...' : 'Load Preview'}
+            </Button>
+          </div>
+
+          {previewData && (
+            <div className="mt-4 rounded border border-mono-60 dark:border-mono-140 p-4 space-y-2">
+              <Typography variant="body2" fw="semibold">
+                Metadata Preview
+              </Typography>
+
+              {previewData.logo && (
+                <img
+                  src={previewData.logo}
+                  alt={previewData.name ?? 'Blueprint logo'}
+                  className="h-14 w-14 rounded object-cover"
+                />
+              )}
+
+              <Typography variant="body3">
+                <strong>Name:</strong>{' '}
+                {previewData.name ?? EMPTY_VALUE_PLACEHOLDER}
+              </Typography>
+              <Typography variant="body3">
+                <strong>Description:</strong>{' '}
+                {previewData.description ?? EMPTY_VALUE_PLACEHOLDER}
+              </Typography>
+              <Typography variant="body3">
+                <strong>Author:</strong>{' '}
+                {previewData.author ?? EMPTY_VALUE_PLACEHOLDER}
+              </Typography>
+
+              <Typography variant="body3">
+                <strong>Website:</strong>{' '}
+                {previewData.website ? (
+                  <a
+                    href={previewData.website}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="text-blue-70 underline break-all"
+                  >
+                    {previewData.website}
+                  </a>
+                ) : (
+                  EMPTY_VALUE_PLACEHOLDER
+                )}
+              </Typography>
+
+              <Typography variant="body3">
+                <strong>Repository:</strong>{' '}
+                {previewData.codeRepository ? (
+                  <a
+                    href={previewData.codeRepository}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="text-blue-70 underline break-all"
+                  >
+                    {previewData.codeRepository}
+                  </a>
+                ) : (
+                  EMPTY_VALUE_PLACEHOLDER
+                )}
+              </Typography>
+
+              <Typography variant="body3">
+                <strong>Docs:</strong>{' '}
+                {previewData.docs ? (
+                  <a
+                    href={previewData.docs}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="text-blue-70 underline break-all"
+                  >
+                    {previewData.docs}
+                  </a>
+                ) : (
+                  EMPTY_VALUE_PLACEHOLDER
+                )}
+              </Typography>
+            </div>
+          )}
+
+          {!previewData && blueprint.metadata && (
+            <div className="mt-4 rounded border border-mono-60 dark:border-mono-140 p-4 space-y-2">
+              <Typography variant="body2" fw="semibold">
+                Current Metadata
+              </Typography>
+              <Typography variant="body3">
+                <strong>Name:</strong>{' '}
+                {blueprint.metadata.name ?? EMPTY_VALUE_PLACEHOLDER}
+              </Typography>
+              <Typography variant="body3">
+                <strong>Description:</strong>{' '}
+                {blueprint.metadata.description ?? EMPTY_VALUE_PLACEHOLDER}
+              </Typography>
+            </div>
+          )}
+        </ModalBody>
+        <ModalFooter>
+          <Button
+            variant="secondary"
+            onClick={onClose}
+            isDisabled={isSubmitting || isLoadingPreview}
+          >
+            Cancel
+          </Button>
+          <Button
+            onClick={handleSubmit}
+            isLoading={isSubmitting}
+            isDisabled={isLoadingPreview || !hasValidUri || isUnchanged}
+          >
+            {isSubmitting ? 'Updating...' : 'Update Metadata'}
+          </Button>
+        </ModalFooter>
+      </ModalContent>
+    </Modal>
   );
 };
 

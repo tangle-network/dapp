@@ -19,6 +19,9 @@ import {
   EnvioNetwork,
 } from '../../utils/executeEnvioGraphQL';
 import isUserRejectionError from '../../utils/isUserRejectionError';
+import useContractWrite, {
+  TxStatus as ContractTxStatus,
+} from '../../hooks/useContractWrite';
 
 // Pricing model for blueprints
 export type PricingModel = 'PayOnce' | 'Subscription' | 'EventDriven';
@@ -119,6 +122,16 @@ export interface OwnedBlueprint {
   description: string;
   owner: Address;
   manager: Address | null;
+  metadataUri: string | null;
+  metadata: {
+    name?: string;
+    description?: string;
+    author?: string;
+    logo?: string;
+    website?: string;
+    codeRepository?: string;
+    docs?: string;
+  };
   active: boolean;
   operatorCount: number;
   serviceCount: number;
@@ -138,6 +151,20 @@ interface BlueprintsByOwnerResponse {
     createdAt: string;
   }>;
 }
+
+const METADATA_FETCH_TIMEOUT_MS = 5_000;
+
+const isRecord = (value: unknown): value is Record<string, unknown> =>
+  typeof value === 'object' && value !== null && !Array.isArray(value);
+
+const readString = (value: unknown): string | undefined => {
+  if (typeof value !== 'string') {
+    return undefined;
+  }
+
+  const trimmed = value.trim();
+  return trimmed.length > 0 ? trimmed : undefined;
+};
 
 // Fetch blueprints owned by an address
 const fetchBlueprintsByOwner = async (
@@ -173,6 +200,7 @@ const fetchBlueprintsByOwner = async (
       (result.data.Blueprint ?? []).map(async (bp) => {
         let name = 'Unknown Blueprint';
         let description = '';
+        let metadata: OwnedBlueprint['metadata'] = {};
 
         if (bp.metadataUri) {
           try {
@@ -181,16 +209,53 @@ const fetchBlueprintsByOwner = async (
               const cid = bp.metadataUri.replace('ipfs://', '');
               fetchUrl = `https://ipfs.io/ipfs/${cid}`;
             }
+            const controller = new AbortController();
+            const timeoutId = setTimeout(
+              () => controller.abort(),
+              METADATA_FETCH_TIMEOUT_MS,
+            );
             const response = await fetch(fetchUrl, {
-              signal: AbortSignal.timeout(5000),
+              signal: controller.signal,
+              cache: 'no-store',
+            }).finally(() => {
+              clearTimeout(timeoutId);
             });
-            if (response.ok) {
-              const metadata = await response.json();
-              name = metadata.name ?? name;
-              description = metadata.description ?? '';
+
+            if (!response.ok) {
+              throw new Error(`Failed to fetch metadata: ${response.status}`);
             }
-          } catch {
-            // Ignore metadata fetch errors
+
+            const metadataJson: unknown = await response.json();
+            if (!isRecord(metadataJson)) {
+              throw new Error('Invalid metadata JSON payload');
+            }
+
+            name = readString(metadataJson.name) ?? name;
+            description = readString(metadataJson.description) ?? '';
+            metadata = {
+              name: readString(metadataJson.name),
+              description: readString(metadataJson.description),
+              author: readString(metadataJson.author),
+              logo:
+                readString(metadataJson.logo) ?? readString(metadataJson.image),
+              website:
+                readString(metadataJson.website) ??
+                readString(metadataJson.homepage),
+              codeRepository:
+                readString(metadataJson.codeRepository) ??
+                readString(metadataJson.codeUrl) ??
+                readString(metadataJson.repository),
+              docs:
+                readString(metadataJson.docs) ??
+                readString(metadataJson.documentation),
+            };
+          } catch (error) {
+            console.warn('Failed to fetch owned blueprint metadata', {
+              operation: 'ownedBlueprintMetadataFetch',
+              blueprintId: bp.blueprintId,
+              metadataUri: bp.metadataUri,
+              error,
+            });
           }
         }
 
@@ -200,6 +265,8 @@ const fetchBlueprintsByOwner = async (
           description,
           owner: bp.owner as Address,
           manager: bp.manager as Address | null,
+          metadataUri: bp.metadataUri,
+          metadata,
           active: bp.active,
           operatorCount: Number(bp.operatorCount),
           serviceCount: 0, // TODO: Get from indexer when available
@@ -305,65 +372,59 @@ export const useCreateBlueprintTx = () => {
   };
 };
 
+const mapContractTxStatus = (status: ContractTxStatus): TxStatus => {
+  switch (status) {
+    case ContractTxStatus.PROCESSING:
+      return 'pending';
+    case ContractTxStatus.COMPLETE:
+      return 'success';
+    case ContractTxStatus.ERROR:
+      return 'error';
+    default:
+      return 'idle';
+  }
+};
+
 /**
  * Hook to update blueprint metadata.
  */
 export const useUpdateBlueprintTx = () => {
-  const [status, setStatus] = useState<TxStatus>('idle');
-  const [error, setError] = useState<Error | null>(null);
-
   const chainId = useChainId();
-  const publicClient = usePublicClient();
-  const { data: walletClient } = useWalletClient();
 
-  const reset = useCallback(() => {
-    setStatus('idle');
-    setError(null);
-  }, []);
+  const {
+    execute,
+    status: contractStatus,
+    error,
+    reset,
+  } = useContractWrite(
+    TANGLE_ABI,
+    (params: { blueprintId: bigint; metadataUri: string }) => {
+      const contracts = getContractsByChainId(chainId);
+
+      return {
+        address: contracts.tangle,
+        abi: TANGLE_ABI,
+        functionName: 'updateBlueprint' as const,
+        args: [params.blueprintId, params.metadataUri] as const,
+      };
+    },
+    {
+      txName: 'update blueprint metadata',
+      getSuccessMessage: () => 'Blueprint metadata updated successfully',
+    },
+  );
 
   const updateBlueprint = useCallback(
     async (blueprintId: bigint, metadataUri: string): Promise<Hash | null> => {
-      if (!walletClient || !publicClient) {
-        setError(new Error('Wallet not connected'));
-        setStatus('error');
-        return null;
-      }
-
-      try {
-        setStatus('pending');
-        setError(null);
-
-        const contracts = getContractsByChainId(chainId);
-
-        const data = encodeFunctionData({
-          abi: TANGLE_ABI,
-          functionName: 'updateBlueprint',
-          args: [blueprintId, metadataUri],
-        });
-
-        const hash = await walletClient.sendTransaction({
-          to: contracts.tangle,
-          data,
-        });
-
-        await publicClient.waitForTransactionReceipt({ hash });
-
-        setStatus('success');
-        return hash;
-      } catch (err) {
-        const error =
-          err instanceof Error ? err : new Error('Failed to update blueprint');
-        setError(error);
-        setStatus('error');
-        return null;
-      }
+      const result = await execute?.({ blueprintId, metadataUri });
+      return result?.hash ?? null;
     },
-    [chainId, publicClient, walletClient],
+    [execute],
   );
 
   return {
     updateBlueprint,
-    status,
+    status: mapContractTxStatus(contractStatus),
     error,
     reset,
   };
