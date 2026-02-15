@@ -236,7 +236,8 @@ const fetchBlueprintsByOwner = async (
               name: readString(metadataJson.name),
               description: readString(metadataJson.description),
               author: readString(metadataJson.author),
-              logo: readString(metadataJson.logo) ?? readString(metadataJson.image),
+              logo:
+                readString(metadataJson.logo) ?? readString(metadataJson.image),
               website:
                 readString(metadataJson.website) ??
                 readString(metadataJson.homepage),

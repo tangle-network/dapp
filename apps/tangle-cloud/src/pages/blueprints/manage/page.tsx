@@ -341,12 +341,15 @@ const ManageBlueprintsPage: FC = () => {
             await fetchBlueprintMetadataPreview(normalizedUri);
           applyMetadataAcrossCaches(normalizedUri, fetchedPreview);
         } catch (error) {
-          console.warn('Failed to fetch metadata preview after blueprint update', {
-            operation: 'postSubmitPreviewFetch',
-            blueprintId: blueprintId.toString(),
-            metadataUri: normalizedUri,
-            error,
-          });
+          console.warn(
+            'Failed to fetch metadata preview after blueprint update',
+            {
+              operation: 'postSubmitPreviewFetch',
+              blueprintId: blueprintId.toString(),
+              metadataUri: normalizedUri,
+              error,
+            },
+          );
         }
       }
 
