@@ -103,6 +103,7 @@ export {
   useServiceById,
   useAllServices,
   usePendingServiceRequests,
+  useServiceRequestsByRequester,
   useApprovedServiceRequests,
   useOperatorActedServiceRequests,
   useOperatorStats,
@@ -110,6 +111,7 @@ export {
   type Service,
   type ServiceRequest,
   type ServiceStatus,
+  type OperatorStatsResult,
 } from './useServices';
 
 // Jobs
@@ -166,7 +168,10 @@ export {
 
 // Developer Payments (exact payout ledger)
 export {
+  DeveloperPaymentsQueryError,
   useDeveloperPayments,
+  type DeveloperPaymentsDiagnostics,
+  type DeveloperPaymentsSchemaStatus,
   type DeveloperPaymentEvent,
   type DeveloperTokenTotal,
   type DeveloperBlueprintRollup,

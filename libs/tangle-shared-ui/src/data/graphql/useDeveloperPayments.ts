@@ -12,6 +12,7 @@ import { Address, formatUnits } from 'viem';
 import {
   executeEnvioGraphQL,
   EnvioNetwork,
+  getEnvioEndpoint,
   getEnvioNetworkFromChainId,
 } from '../../utils/executeEnvioGraphQL';
 import {
@@ -45,8 +46,21 @@ export interface DeveloperBlueprintRollup {
   tokenTotals: DeveloperTokenTotal[];
 }
 
+export type DeveloperPaymentsSchemaStatus = 'supported' | 'unsupported';
+
+export interface DeveloperPaymentsDiagnostics {
+  expectedNetwork: EnvioNetwork;
+  endpoint: string;
+  endpointNetwork: EnvioNetwork | null;
+  hasLikelyEndpointMismatch: boolean;
+  schemaStatus: DeveloperPaymentsSchemaStatus | 'unknown';
+}
+
 export interface DeveloperPaymentsData {
   owner: Address;
+  schemaStatus: DeveloperPaymentsSchemaStatus;
+  unsupportedReason: string | null;
+  diagnostics: DeveloperPaymentsDiagnostics;
   events: DeveloperPaymentEvent[];
   totalPayoutAmount: bigint;
   tokenTotals: DeveloperTokenTotal[];
@@ -68,6 +82,85 @@ interface BlueprintAccumulator {
   tokenTotals: Map<string, DeveloperTokenTotal>;
 }
 
+export class DeveloperPaymentsQueryError extends Error {
+  readonly diagnostics: DeveloperPaymentsDiagnostics;
+  readonly cause?: unknown;
+
+  constructor(
+    message: string,
+    diagnostics: DeveloperPaymentsDiagnostics,
+    cause?: unknown,
+  ) {
+    super(message);
+    this.name = 'DeveloperPaymentsQueryError';
+    this.diagnostics = diagnostics;
+    this.cause = cause;
+  }
+}
+
+const inferNetworkFromEndpoint = (
+  endpoint: string | undefined,
+): EnvioNetwork | null => {
+  if (!endpoint) {
+    return null;
+  }
+
+  const normalized = endpoint.toLowerCase();
+  if (
+    normalized.includes('localhost') ||
+    normalized.includes('127.0.0.1') ||
+    normalized.includes('local')
+  ) {
+    return 'local';
+  }
+  if (
+    normalized.includes('testnet') ||
+    normalized.includes('sepolia') ||
+    normalized.includes('staging')
+  ) {
+    return 'testnet';
+  }
+  if (
+    normalized.includes('mainnet') ||
+    normalized.includes('prod') ||
+    normalized.includes('production')
+  ) {
+    return 'mainnet';
+  }
+
+  return null;
+};
+
+const buildDiagnostics = (
+  expectedNetwork: EnvioNetwork,
+  schemaStatus: DeveloperPaymentsDiagnostics['schemaStatus'],
+): DeveloperPaymentsDiagnostics => {
+  let endpoint = 'UNAVAILABLE';
+  try {
+    endpoint = getEnvioEndpoint(expectedNetwork);
+  } catch {
+    endpoint = 'UNAVAILABLE';
+  }
+
+  const endpointNetwork = inferNetworkFromEndpoint(endpoint);
+  return {
+    expectedNetwork,
+    endpoint,
+    endpointNetwork,
+    hasLikelyEndpointMismatch:
+      endpointNetwork !== null && endpointNetwork !== expectedNetwork,
+    schemaStatus,
+  };
+};
+
+const withSchemaStatus = (
+  diagnostics: DeveloperPaymentsDiagnostics,
+  schemaStatus: DeveloperPaymentsDiagnostics['schemaStatus'],
+): DeveloperPaymentsDiagnostics => ({
+  ...diagnostics,
+  schemaStatus,
+});
+
 const throwIfGraphQLErrors = (
   errors: Array<{ message: string }> | undefined,
   context: string,
@@ -78,6 +171,82 @@ const throwIfGraphQLErrors = (
 
   const message = errors.map((error) => error.message).join('; ');
   throw new Error(`${context}: ${message}`);
+};
+
+const isDeveloperPaymentSchemaUnavailable = (
+  errors: Array<{ message: string }> | undefined,
+): boolean => {
+  if (!errors?.length) {
+    return false;
+  }
+
+  return errors.some((error) => {
+    const message = error.message.toLowerCase();
+    return (
+      message.includes('developerpayment') &&
+      (message.includes('cannot query field') ||
+        message.includes('not found') ||
+        message.includes('does not exist') ||
+        message.includes('unknown type') ||
+        message.includes('query_root'))
+    );
+  });
+};
+
+const createUnsupportedSchemaData = (
+  owner: Address,
+  diagnostics: DeveloperPaymentsDiagnostics,
+): DeveloperPaymentsData => {
+  const mismatchHint = diagnostics.hasLikelyEndpointMismatch
+    ? ` Endpoint appears to target ${diagnostics.endpointNetwork ?? 'an unknown network'} while wallet chain expects ${diagnostics.expectedNetwork}.`
+    : '';
+
+  return {
+    owner,
+    schemaStatus: 'unsupported',
+    unsupportedReason:
+      'DeveloperPayment entity is unavailable on this indexer schema.' +
+      mismatchHint,
+    diagnostics,
+    events: [],
+    totalPayoutAmount: BigInt(0),
+    tokenTotals: [],
+    payoutAddresses: [],
+    serviceCount: 0,
+    blueprintRollups: [],
+  };
+};
+
+const assertDeveloperPaymentCapability = async (
+  network: EnvioNetwork,
+  diagnostics: DeveloperPaymentsDiagnostics,
+): Promise<DeveloperPaymentsDiagnostics> => {
+  const probeQuery = `
+    query DeveloperPaymentsCapabilityProbe {
+      DeveloperPayment(limit: 1) {
+        id
+      }
+    }
+  `;
+
+  const result = await executeEnvioGraphQL<
+    { DeveloperPayment: Array<{ id: string }> },
+    Record<string, never>
+  >(probeQuery, {}, network);
+
+  if (!result.errors?.length) {
+    return withSchemaStatus(diagnostics, 'supported');
+  }
+
+  if (isDeveloperPaymentSchemaUnavailable(result.errors)) {
+    return withSchemaStatus(diagnostics, 'unsupported');
+  }
+
+  const message = result.errors.map((error) => error.message).join('; ');
+  throw new DeveloperPaymentsQueryError(
+    `Failed to validate DeveloperPayment schema capability: ${message}`,
+    diagnostics,
+  );
 };
 
 const fetchDeveloperPaymentEvents = async (
@@ -136,6 +305,7 @@ const toSortedTokenTotals = (
 const aggregateDeveloperPayments = (
   owner: Address,
   events: DeveloperPaymentEvent[],
+  diagnostics: DeveloperPaymentsDiagnostics,
 ): DeveloperPaymentsData => {
   const tokenTotalsMap = new Map<string, DeveloperTokenTotal>();
   const payoutAddresses = new Set<string>();
@@ -224,6 +394,9 @@ const aggregateDeveloperPayments = (
 
   return {
     owner,
+    schemaStatus: 'supported',
+    unsupportedReason: null,
+    diagnostics,
     events,
     totalPayoutAmount,
     tokenTotals: toSortedTokenTotals(tokenTotalsMap),
@@ -253,12 +426,63 @@ export const useDeveloperPayments = (options?: {
         throw new Error('Wallet not connected');
       }
 
-      const events = await fetchDeveloperPaymentEvents(
-        address,
-        resolvedNetwork,
-        limit,
-      );
-      return aggregateDeveloperPayments(address, events);
+      const baseDiagnostics = buildDiagnostics(resolvedNetwork, 'unknown');
+      let capabilityDiagnostics: DeveloperPaymentsDiagnostics;
+      try {
+        capabilityDiagnostics = await assertDeveloperPaymentCapability(
+          resolvedNetwork,
+          baseDiagnostics,
+        );
+      } catch (error) {
+        if (error instanceof DeveloperPaymentsQueryError) {
+          throw error;
+        }
+
+        const message =
+          error instanceof Error
+            ? error.message
+            : 'Failed to validate DeveloperPayment schema capability';
+
+        throw new DeveloperPaymentsQueryError(message, baseDiagnostics, error);
+      }
+
+      if (capabilityDiagnostics.schemaStatus === 'unsupported') {
+        return createUnsupportedSchemaData(address, capabilityDiagnostics);
+      }
+
+      try {
+        const events = await fetchDeveloperPaymentEvents(
+          address,
+          resolvedNetwork,
+          limit,
+        );
+        return aggregateDeveloperPayments(
+          address,
+          events,
+          capabilityDiagnostics,
+        );
+      } catch (error) {
+        if (
+          error instanceof Error &&
+          isDeveloperPaymentSchemaUnavailable([{ message: error.message }])
+        ) {
+          return createUnsupportedSchemaData(
+            address,
+            withSchemaStatus(capabilityDiagnostics, 'unsupported'),
+          );
+        }
+
+        const message =
+          error instanceof Error
+            ? error.message
+            : 'Failed to fetch developer payment events';
+
+        throw new DeveloperPaymentsQueryError(
+          message,
+          capabilityDiagnostics,
+          error,
+        );
+      }
     },
     enabled: enabled && !!address,
     staleTime: 60_000,
