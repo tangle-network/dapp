@@ -50,7 +50,7 @@ export const TotalValueLockedTabs = () => {
     >
       <TabContent
         value={TotalValueLockedTab.TVL}
-        className="flex justify-center mx-auto"
+        className="flex justify-center mx-auto w-full"
       >
         {isLoading ? (
           <SkeletonLoader className="w-full h-48" />

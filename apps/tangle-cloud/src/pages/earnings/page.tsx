@@ -5,7 +5,10 @@
 import { FC, useEffect, useMemo, useState } from 'react';
 import { useAccount, useChainId } from 'wagmi';
 import { Typography } from '@tangle-network/ui-components';
-import { useDeveloperPayments } from '@tangle-network/tangle-shared-ui/data/graphql';
+import {
+  DeveloperPaymentsQueryError,
+  useDeveloperPayments,
+} from '@tangle-network/tangle-shared-ui/data/graphql';
 import { getTxExplorerUrl, isNonLocalEvmChain } from '../../utils/explorer';
 import EarningsAssetsCard from './components/EarningsAssetsCard';
 import EarningsErrorState from './components/EarningsErrorState';
@@ -24,6 +27,7 @@ const EarningsPage: FC = () => {
     txExplorerUrl && address ? `${txExplorerUrl}/address/${address}` : null;
 
   const { data, isLoading, error } = useDeveloperPayments();
+  const isUnsupportedSchema = data?.schemaStatus === 'unsupported';
   const events = useMemo(() => data?.events ?? [], [data?.events]);
   const totalEventPages = useMemo(
     () => Math.max(1, Math.ceil(events.length / PAYOUT_EVENTS_PAGE_SIZE)),
@@ -63,9 +67,27 @@ const EarningsPage: FC = () => {
       </div>
 
       {isLoading ? <EarningsLoadingState /> : null}
-      {!isLoading && error ? <EarningsErrorState error={error} /> : null}
+      {!isLoading && isUnsupportedSchema && data ? (
+        <EarningsErrorState
+          unsupportedSchemaMessage={
+            data.unsupportedReason ??
+            'DeveloperPayment entity is unavailable for this indexer schema.'
+          }
+          diagnostics={data.diagnostics}
+        />
+      ) : null}
+      {!isLoading && !isUnsupportedSchema && error ? (
+        <EarningsErrorState
+          error={error}
+          diagnostics={
+            error instanceof DeveloperPaymentsQueryError
+              ? error.diagnostics
+              : undefined
+          }
+        />
+      ) : null}
 
-      {!isLoading && !error && data ? (
+      {!isLoading && !isUnsupportedSchema && !error && data ? (
         <>
           <EarningsAssetsCard
             rows={data.tokenTotals}

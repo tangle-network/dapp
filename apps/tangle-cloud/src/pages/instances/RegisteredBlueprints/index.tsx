@@ -29,7 +29,7 @@ export const RegisteredBlueprintsTabs: FC = () => {
     >
       <TabContent
         value={RegisteredBlueprintsTab.REGISTERED_BLUEPRINTS}
-        className="flex justify-center mx-auto"
+        className="flex justify-center mx-auto w-full"
       >
         <RegisteredBlueprints />
       </TabContent>

@@ -80,7 +80,7 @@ export const InstancesTabs: FC<InstancesTabsProps> = ({
     >
       <TabContent
         value={InstancesTab.RUNNING_INSTANCES}
-        className="flex justify-center mx-auto"
+        className="flex justify-center mx-auto w-full"
       >
         <RunningInstanceTable
           refreshTrigger={refreshTrigger}
@@ -91,7 +91,7 @@ export const InstancesTabs: FC<InstancesTabsProps> = ({
       {shouldShowOperatorTabs && (
         <TabContent
           value={InstancesTab.PENDING_INSTANCES}
-          className="flex justify-center mx-auto"
+          className="flex justify-center mx-auto w-full"
         >
           <PendingInstanceTable
             refreshTrigger={refreshTrigger}
@@ -103,7 +103,7 @@ export const InstancesTabs: FC<InstancesTabsProps> = ({
       {shouldShowOperatorTabs && (
         <TabContent
           value={InstancesTab.APPROVED_INSTANCES}
-          className="flex justify-center mx-auto"
+          className="flex justify-center mx-auto w-full"
         >
           <ApprovedInstanceTable
             refreshTrigger={refreshTrigger}
@@ -114,7 +114,7 @@ export const InstancesTabs: FC<InstancesTabsProps> = ({
 
       <TabContent
         value={InstancesTab.JOINABLE_SERVICES}
-        className="flex justify-center mx-auto"
+        className="flex justify-center mx-auto w-full"
       >
         <AllServicesTable />
       </TabContent>

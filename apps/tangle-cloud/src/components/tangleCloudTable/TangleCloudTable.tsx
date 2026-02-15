@@ -6,7 +6,7 @@ import { TangleCloudTableProps } from './type';
 import { RowData } from '@tanstack/react-table';
 
 const GLASS_CONTAINER_CLASS =
-  'px-4 py-4 rounded-2xl overflow-hidden border border-mono-0 dark:border-mono-160 bg-[linear-gradient(180deg,rgba(255,255,255,0.20)0%,rgba(255,255,255,0.00)100%)] dark:bg-[linear-gradient(180deg,rgba(43,47,64,0.20)0%,rgba(43,47,64,0.00)100%)]';
+  'w-full px-4 py-4 rounded-2xl overflow-hidden border border-mono-0 dark:border-mono-160 bg-[linear-gradient(180deg,rgba(255,255,255,0.20)0%,rgba(255,255,255,0.00)100%)] dark:bg-[linear-gradient(180deg,rgba(43,47,64,0.20)0%,rgba(43,47,64,0.00)100%)]';
 
 export const TangleCloudTable = <T extends RowData>({
   title,

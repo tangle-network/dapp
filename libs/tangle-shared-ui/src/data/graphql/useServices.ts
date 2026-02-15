@@ -18,6 +18,11 @@ import useNetworkStore from '../../context/useNetworkStore';
 
 // Service status enum matching Tangle contract
 export type ServiceStatus = 'PENDING' | 'ACTIVE' | 'TERMINATED' | 'EXPIRED';
+export type ServiceRequestStatus =
+  | 'PENDING'
+  | 'APPROVED'
+  | 'REJECTED'
+  | 'ACTIVATED';
 
 // Service instance from indexer
 export interface Service {
@@ -40,7 +45,7 @@ export interface ServiceRequest {
   operatorCandidates: Address[];
   approvedOperators: Address[];
   rejectedOperators: Address[];
-  status: 'PENDING' | 'APPROVED' | 'REJECTED' | 'ACTIVATED';
+  status: ServiceRequestStatus;
   createdAt: bigint;
   approvalCount: bigint;
   securityRequirements: string | null;
@@ -182,7 +187,7 @@ const fetchServiceRequests = async (
   options: {
     requester?: Address;
     operator?: Address;
-    status?: 'PENDING' | 'APPROVED' | 'REJECTED';
+    status?: ServiceRequestStatus;
     blueprintId?: bigint;
     limit?: number;
     offset?: number;
@@ -258,7 +263,7 @@ const fetchServiceRequests = async (
     operatorCandidates: r.operatorCandidates as Address[],
     approvedOperators: (r.approvedOperators ?? []) as Address[],
     rejectedOperators: (r.rejectedOperators ?? []) as Address[],
-    status: r.status as 'PENDING' | 'APPROVED' | 'REJECTED' | 'ACTIVATED',
+    status: r.status as ServiceRequestStatus,
     createdAt: BigInt(r.createdAt),
     approvalCount: BigInt(r.approvalCount ?? '0'),
     securityRequirements: r.securityRequirements,
@@ -356,6 +361,87 @@ export const usePendingServiceRequests = (
 };
 
 /**
+ * Hook to fetch service requests by requester, with optional status filtering.
+ */
+export const useServiceRequestsByRequester = (
+  requester: Address | undefined,
+  options?: {
+    network?: EnvioNetwork;
+    enabled?: boolean;
+    status?: ServiceRequestStatus;
+  },
+) => {
+  const { network, enabled = true, status } = options ?? {};
+  const resolvedNetwork = useResolvedEnvioNetwork(network);
+
+  return useQuery({
+    queryKey: [
+      'envio',
+      'serviceRequests',
+      'requester',
+      requester,
+      status,
+      resolvedNetwork,
+    ],
+    queryFn: async () => {
+      if (!requester) return [];
+      return fetchServiceRequests({ requester, status }, resolvedNetwork);
+    },
+    enabled: enabled && !!requester,
+    staleTime: 30_000,
+  });
+};
+
+export interface OperatorStatsResult {
+  registeredBlueprints: number;
+  runningServices: number;
+  pendingServices: number;
+  avgUptime: number | null;
+  deployedServices: number;
+  publishedBlueprints: number;
+}
+
+interface OperatorStatsAggregateQueryResponse {
+  OperatorRegistration_aggregate: {
+    aggregate: {
+      count: number;
+    } | null;
+  } | null;
+  Service_aggregate: {
+    aggregate: {
+      count: number;
+    } | null;
+  } | null;
+  Blueprint_aggregate: {
+    aggregate: {
+      count: number;
+    } | null;
+  } | null;
+}
+
+interface OperatorStatsFallbackQueryResponse {
+  OperatorRegistration: Array<{ id: string }>;
+  Service: Array<{ id: string }>;
+  Blueprint: Array<{ id: string }>;
+}
+
+const isAggregateFieldUnavailable = (
+  errors: Array<{ message: string }> | undefined,
+): boolean => {
+  if (!errors?.length) {
+    return false;
+  }
+
+  return errors.some((error) => {
+    const message = error.message.toLowerCase();
+    return (
+      message.includes('_aggregate') &&
+      (message.includes('not found') || message.includes('cannot query field'))
+    );
+  });
+};
+
+/**
  * Hook to fetch service requests where the operator has already taken action.
  * This includes requests with any status (PENDING, APPROVED, REJECTED) where
  * the operator is in either approvedOperators or rejectedOperators arrays.
@@ -441,7 +527,7 @@ export const useOperatorStats = (
     enabled,
   });
 
-  return useQuery({
+  return useQuery<OperatorStatsResult | null>({
     queryKey: [
       'envio',
       'operatorStats',
@@ -453,44 +539,156 @@ export const useOperatorStats = (
     queryFn: async () => {
       if (!operator) return null;
 
-      // Query blueprint registrations
-      const blueprintQuery = `
-        query GetOperatorBlueprints($operator: String!) {
-          OperatorBlueprint(where: { operator: { id: { _eq: $operator } } }) {
-            id
-            blueprint {
-              blueprintId
+      const normalizedOperator = operator.toLowerCase();
+
+      // Canonical source for operator membership in blueprints:
+      // OperatorRegistration rows with status ACTIVE.
+      const operatorStatsAggregateQuery = `
+        query GetOperatorStats($operator: String!) {
+          OperatorRegistration_aggregate(
+            where: {
+              operator: { id: { _eq: $operator } }
+              status: { _eq: "ACTIVE" }
+            }
+          ) {
+            aggregate {
+              count
+            }
+          }
+          Service_aggregate(where: { owner: { _eq: $operator } }) {
+            aggregate {
+              count
+            }
+          }
+          Blueprint_aggregate(where: { owner: { _eq: $operator } }) {
+            aggregate {
+              count
             }
           }
         }
       `;
 
-      const blueprintResult = await executeEnvioGraphQL<
-        {
-          OperatorBlueprint: Array<{
-            id: string;
-            blueprint: { blueprintId: string };
-          }>;
-        },
+      const aggregateStatsResult = await executeEnvioGraphQL<
+        OperatorStatsAggregateQueryResponse,
         { operator: string }
-      >(blueprintQuery, { operator: operator.toLowerCase() }, resolvedNetwork);
+      >(
+        operatorStatsAggregateQuery,
+        { operator: normalizedOperator },
+        resolvedNetwork,
+      );
 
-      if (blueprintResult.errors?.length) {
+      if (!aggregateStatsResult.errors?.length) {
+        return {
+          registeredBlueprints:
+            aggregateStatsResult.data.OperatorRegistration_aggregate?.aggregate
+              ?.count ?? 0,
+          runningServices: activeServices?.length ?? 0,
+          pendingServices: pendingRequests?.length ?? 0,
+          avgUptime: null,
+          deployedServices:
+            aggregateStatsResult.data.Service_aggregate?.aggregate?.count ?? 0,
+          publishedBlueprints:
+            aggregateStatsResult.data.Blueprint_aggregate?.aggregate?.count ??
+            0,
+        };
+      }
+
+      if (!isAggregateFieldUnavailable(aggregateStatsResult.errors)) {
         throw new Error(
-          `Failed to fetch operator stats: ${blueprintResult.errors
+          `Failed to fetch operator stats: ${aggregateStatsResult.errors
             .map((error) => error.message)
             .join('; ')}`,
         );
       }
 
+      // Some indexer schemas/roles do not expose *_aggregate fields.
+      // Fallback to paginated row counting to keep stats available.
+      const fallbackPageSize = 1000;
+      const operatorStatsFallbackQuery = `
+        query GetOperatorStatsFallback(
+          $operator: String!
+          $limit: Int!
+          $offset: Int!
+        ) {
+          OperatorRegistration(
+            where: {
+              operator: { id: { _eq: $operator } }
+              status: { _eq: "ACTIVE" }
+            }
+            limit: $limit
+            offset: $offset
+          ) {
+            id
+          }
+          Service(
+            where: { owner: { _eq: $operator } }
+            limit: $limit
+            offset: $offset
+          ) {
+            id
+          }
+          Blueprint(
+            where: { owner: { _eq: $operator } }
+            limit: $limit
+            offset: $offset
+          ) {
+            id
+          }
+        }
+      `;
+
+      let offset = 0;
+      let registeredBlueprints = 0;
+      let deployedServices = 0;
+      let publishedBlueprints = 0;
+      let hasMore = true;
+
+      while (hasMore) {
+        const fallbackStatsResult = await executeEnvioGraphQL<
+          OperatorStatsFallbackQueryResponse,
+          { operator: string; limit: number; offset: number }
+        >(
+          operatorStatsFallbackQuery,
+          {
+            operator: normalizedOperator,
+            limit: fallbackPageSize,
+            offset,
+          },
+          resolvedNetwork,
+        );
+
+        if (fallbackStatsResult.errors?.length) {
+          throw new Error(
+            `Failed to fetch operator stats: ${fallbackStatsResult.errors
+              .map((error) => error.message)
+              .join('; ')}`,
+          );
+        }
+
+        const registrationChunkCount =
+          fallbackStatsResult.data.OperatorRegistration?.length ?? 0;
+        const serviceChunkCount = fallbackStatsResult.data.Service?.length ?? 0;
+        const blueprintChunkCount =
+          fallbackStatsResult.data.Blueprint?.length ?? 0;
+
+        registeredBlueprints += registrationChunkCount;
+        deployedServices += serviceChunkCount;
+        publishedBlueprints += blueprintChunkCount;
+
+        hasMore =
+          registrationChunkCount === fallbackPageSize ||
+          serviceChunkCount === fallbackPageSize ||
+          blueprintChunkCount === fallbackPageSize;
+        offset += fallbackPageSize;
+      }
+
       return {
-        registeredBlueprints:
-          blueprintResult.data.OperatorBlueprint?.length ?? 0,
+        registeredBlueprints,
         runningServices: activeServices?.length ?? 0,
         pendingServices: pendingRequests?.length ?? 0,
-        avgUptime: 0, // TODO: Calculate from metrics
-        deployedServices: 0, // TODO: Query owned services
-        publishedBlueprints: 0, // TODO: Query owned blueprints
+        avgUptime: null,
+        deployedServices,
+        publishedBlueprints,
       };
     },
     enabled: enabled && !!operator,
