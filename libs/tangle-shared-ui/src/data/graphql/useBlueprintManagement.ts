@@ -19,6 +19,9 @@ import {
   EnvioNetwork,
 } from '../../utils/executeEnvioGraphQL';
 import isUserRejectionError from '../../utils/isUserRejectionError';
+import useContractWrite, {
+  TxStatus as ContractTxStatus,
+} from '../../hooks/useContractWrite';
 
 // Pricing model for blueprints
 export type PricingModel = 'PayOnce' | 'Subscription' | 'EventDriven';
@@ -194,6 +197,7 @@ const fetchBlueprintsByOwner = async (
             }
             const response = await fetch(fetchUrl, {
               signal: AbortSignal.timeout(5000),
+              cache: 'no-store',
             });
             if (response.ok) {
               const metadataJson = await response.json();
@@ -330,65 +334,59 @@ export const useCreateBlueprintTx = () => {
   };
 };
 
+const mapContractTxStatus = (status: ContractTxStatus): TxStatus => {
+  switch (status) {
+    case ContractTxStatus.PROCESSING:
+      return 'pending';
+    case ContractTxStatus.COMPLETE:
+      return 'success';
+    case ContractTxStatus.ERROR:
+      return 'error';
+    default:
+      return 'idle';
+  }
+};
+
 /**
  * Hook to update blueprint metadata.
  */
 export const useUpdateBlueprintTx = () => {
-  const [status, setStatus] = useState<TxStatus>('idle');
-  const [error, setError] = useState<Error | null>(null);
-
   const chainId = useChainId();
-  const publicClient = usePublicClient();
-  const { data: walletClient } = useWalletClient();
 
-  const reset = useCallback(() => {
-    setStatus('idle');
-    setError(null);
-  }, []);
+  const {
+    execute,
+    status: contractStatus,
+    error,
+    reset,
+  } = useContractWrite(
+    TANGLE_ABI,
+    (params: { blueprintId: bigint; metadataUri: string }) => {
+      const contracts = getContractsByChainId(chainId);
+
+      return {
+        address: contracts.tangle,
+        abi: TANGLE_ABI,
+        functionName: 'updateBlueprint' as const,
+        args: [params.blueprintId, params.metadataUri] as const,
+      };
+    },
+    {
+      txName: 'update blueprint metadata',
+      getSuccessMessage: () => 'Blueprint metadata updated successfully',
+    },
+  );
 
   const updateBlueprint = useCallback(
     async (blueprintId: bigint, metadataUri: string): Promise<Hash | null> => {
-      if (!walletClient || !publicClient) {
-        setError(new Error('Wallet not connected'));
-        setStatus('error');
-        return null;
-      }
-
-      try {
-        setStatus('pending');
-        setError(null);
-
-        const contracts = getContractsByChainId(chainId);
-
-        const data = encodeFunctionData({
-          abi: TANGLE_ABI,
-          functionName: 'updateBlueprint',
-          args: [blueprintId, metadataUri],
-        });
-
-        const hash = await walletClient.sendTransaction({
-          to: contracts.tangle,
-          data,
-        });
-
-        await publicClient.waitForTransactionReceipt({ hash });
-
-        setStatus('success');
-        return hash;
-      } catch (err) {
-        const error =
-          err instanceof Error ? err : new Error('Failed to update blueprint');
-        setError(error);
-        setStatus('error');
-        return null;
-      }
+      const result = await execute?.({ blueprintId, metadataUri });
+      return result?.hash ?? null;
     },
-    [chainId, publicClient, walletClient],
+    [execute],
   );
 
   return {
     updateBlueprint,
-    status,
+    status: mapContractTxStatus(contractStatus),
     error,
     reset,
   };

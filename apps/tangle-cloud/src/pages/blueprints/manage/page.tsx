@@ -53,6 +53,51 @@ type BlueprintMetadataPreview = {
   docs?: string;
 };
 
+const applyBlueprintMetadataPreview = (
+  blueprint: OwnedBlueprint,
+  metadataUri: string,
+  preview: BlueprintMetadataPreview | null,
+): OwnedBlueprint => {
+  if (!preview) {
+    return {
+      ...blueprint,
+      metadataUri,
+    };
+  }
+
+  const nextMetadata = { ...blueprint.metadata };
+
+  if (preview.name !== undefined) {
+    nextMetadata.name = preview.name;
+  }
+  if (preview.description !== undefined) {
+    nextMetadata.description = preview.description;
+  }
+  if (preview.author !== undefined) {
+    nextMetadata.author = preview.author;
+  }
+  if (preview.logo !== undefined) {
+    nextMetadata.logo = preview.logo;
+  }
+  if (preview.website !== undefined) {
+    nextMetadata.website = preview.website;
+  }
+  if (preview.codeRepository !== undefined) {
+    nextMetadata.codeRepository = preview.codeRepository;
+  }
+  if (preview.docs !== undefined) {
+    nextMetadata.docs = preview.docs;
+  }
+
+  return {
+    ...blueprint,
+    metadataUri,
+    name: preview.name ?? blueprint.name,
+    description: preview.description ?? blueprint.description,
+    metadata: nextMetadata,
+  };
+};
+
 const readString = (value: unknown): string | undefined => {
   if (typeof value !== 'string') {
     return undefined;
@@ -103,6 +148,7 @@ const fetchBlueprintMetadataPreview = async (
 
   const response = await fetch(fetchUrl, {
     signal: AbortSignal.timeout(5000),
+    cache: 'no-store',
   });
 
   if (!response.ok) {
@@ -142,7 +188,6 @@ const ManageBlueprintsPage: FC = () => {
   const [isDeactivateModalOpen, setIsDeactivateModalOpen] = useState(false);
   const [isTransferModalOpen, setIsTransferModalOpen] = useState(false);
   const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false);
-  const [updateNotice, setUpdateNotice] = useState<string | null>(null);
 
   const cacheKey = useMemo(
     () => ['blueprints', 'byOwner', address, undefined],
@@ -195,8 +240,48 @@ const ManageBlueprintsPage: FC = () => {
   );
 
   const handleUpdateMetadataSuccess = useCallback(
-    async (blueprintId: bigint, metadataUri: string) => {
-      setUpdateNotice('Update submitted. Refreshing blueprint metadata...');
+    async (
+      blueprintId: bigint,
+      metadataUri: string,
+      preview: BlueprintMetadataPreview | null,
+    ) => {
+      const normalizedUri = metadataUri.trim();
+
+      queryClient.setQueryData<OwnedBlueprint[]>(cacheKey, (current) => {
+        if (!current) {
+          return current;
+        }
+
+        return current.map((bp) =>
+          bp.id === blueprintId
+            ? applyBlueprintMetadataPreview(bp, normalizedUri, preview)
+            : bp,
+        );
+      });
+
+      if (!preview) {
+        try {
+          const fetchedPreview =
+            await fetchBlueprintMetadataPreview(normalizedUri);
+          queryClient.setQueryData<OwnedBlueprint[]>(cacheKey, (current) => {
+            if (!current) {
+              return current;
+            }
+
+            return current.map((bp) =>
+              bp.id === blueprintId
+                ? applyBlueprintMetadataPreview(
+                    bp,
+                    normalizedUri,
+                    fetchedPreview,
+                  )
+                : bp,
+            );
+          });
+        } catch {
+          // Best-effort preview fetch. Polling below reconciles with indexer state.
+        }
+      }
 
       await Promise.all([
         queryClient.invalidateQueries({ queryKey: ['blueprints', 'byOwner'] }),
@@ -212,24 +297,32 @@ const ManageBlueprintsPage: FC = () => {
         }),
       ]);
 
-      const isUpdated = await pollWithBackoff(async () => {
-        const latest = await refetchOwnedBlueprints();
-        return (
-          latest.data?.some(
-            (bp) => bp.id === blueprintId && bp.metadataUri === metadataUri,
-          ) ?? false
-        );
-      });
+      const synced = await pollWithBackoff(
+        async () => {
+          const latest = await refetchOwnedBlueprints();
+          return (
+            latest.data?.some(
+              (bp) =>
+                bp.id === blueprintId &&
+                bp.metadataUri?.trim() === normalizedUri,
+            ) ?? false
+          );
+        },
+        {
+          maxTotalTime: 120_000,
+          maxDelay: 12_000,
+        },
+      );
 
-      if (isUpdated) {
-        setUpdateNotice('Blueprint metadata updated successfully.');
-      } else {
-        setUpdateNotice(
-          'Blueprint updated onchain. Metadata may take a moment to appear.',
-        );
+      if (!synced) {
+        await queryClient.invalidateQueries({
+          queryKey: ['blueprints', 'byOwner'],
+        });
       }
+
+      await refetchOwnedBlueprints();
     },
-    [queryClient, refetchOwnedBlueprints],
+    [cacheKey, queryClient, refetchOwnedBlueprints],
   );
 
   const columns = useMemo(
@@ -383,11 +476,6 @@ const ManageBlueprintsPage: FC = () => {
           <Typography variant="body2" className="text-mono-100">
             View and manage blueprints you have created.
           </Typography>
-          {updateNotice && (
-            <Typography variant="body3" className="text-blue-70 mt-2">
-              {updateNotice}
-            </Typography>
-          )}
         </div>
       </div>
 
@@ -498,8 +586,12 @@ const ManageBlueprintsPage: FC = () => {
             setIsUpdateModalOpen(false);
             setSelectedBlueprint(null);
           }}
-          onSuccess={async (metadataUri) => {
-            await handleUpdateMetadataSuccess(selectedBlueprint.id, metadataUri);
+          onSuccess={async (metadataUri, metadataPreview) => {
+            await handleUpdateMetadataSuccess(
+              selectedBlueprint.id,
+              metadataUri,
+              metadataPreview,
+            );
             setIsUpdateModalOpen(false);
             setSelectedBlueprint(null);
           }}
@@ -555,7 +647,10 @@ interface UpdateMetadataModalProps {
   blueprint: OwnedBlueprint;
   isOpen: boolean;
   onClose: () => void;
-  onSuccess: (metadataUri: string) => Promise<void>;
+  onSuccess: (
+    metadataUri: string,
+    metadataPreview: BlueprintMetadataPreview | null,
+  ) => Promise<void>;
 }
 
 const UpdateMetadataModal: FC<UpdateMetadataModalProps> = ({
@@ -565,15 +660,19 @@ const UpdateMetadataModal: FC<UpdateMetadataModalProps> = ({
   onSuccess,
 }) => {
   const [metadataUri, setMetadataUri] = useState(blueprint.metadataUri ?? '');
-  const [validationError, setValidationError] = useState<string | null>(null);
   const [previewError, setPreviewError] = useState<string | null>(null);
-  const [previewData, setPreviewData] = useState<BlueprintMetadataPreview | null>(
-    null,
-  );
+  const [previewData, setPreviewData] =
+    useState<BlueprintMetadataPreview | null>(null);
   const [isLoadingPreview, setIsLoadingPreview] = useState(false);
 
   const { updateBlueprint, status, error, reset } = useUpdateBlueprintTx();
   const isSubmitting = status === 'pending';
+
+  const trimmedUri = metadataUri.trim();
+  const uriError = getMetadataUriValidationError(trimmedUri);
+  const hasValidUri =
+    trimmedUri.length > 0 && getMetadataUriValidationError(trimmedUri) === null;
+  const isUnchanged = trimmedUri === (blueprint.metadataUri ?? '').trim();
 
   useEffect(() => {
     if (!isOpen) {
@@ -581,7 +680,6 @@ const UpdateMetadataModal: FC<UpdateMetadataModalProps> = ({
     }
 
     setMetadataUri(blueprint.metadataUri ?? '');
-    setValidationError(null);
     setPreviewError(null);
     setPreviewData(null);
     setIsLoadingPreview(false);
@@ -590,15 +688,11 @@ const UpdateMetadataModal: FC<UpdateMetadataModalProps> = ({
 
   const handleLoadPreview = async () => {
     const trimmedMetadataUri = metadataUri.trim();
-    const uriValidationError = getMetadataUriValidationError(trimmedMetadataUri);
 
-    if (uriValidationError) {
-      setValidationError(uriValidationError);
-      setPreviewData(null);
+    if (getMetadataUriValidationError(trimmedMetadataUri)) {
       return;
     }
 
-    setValidationError(null);
     setPreviewError(null);
     setIsLoadingPreview(true);
 
@@ -615,19 +709,16 @@ const UpdateMetadataModal: FC<UpdateMetadataModalProps> = ({
 
   const handleSubmit = async () => {
     const trimmedMetadataUri = metadataUri.trim();
-    const uriValidationError = getMetadataUriValidationError(trimmedMetadataUri);
 
-    if (uriValidationError) {
-      setValidationError(uriValidationError);
+    if (getMetadataUriValidationError(trimmedMetadataUri)) {
       return;
     }
-
-    setValidationError(null);
 
     const hash = await updateBlueprint(blueprint.id, trimmedMetadataUri);
 
     if (hash) {
-      await onSuccess(trimmedMetadataUri);
+      onClose();
+      await onSuccess(trimmedMetadataUri, previewData);
     }
   };
 
@@ -650,31 +741,25 @@ const UpdateMetadataModal: FC<UpdateMetadataModalProps> = ({
               isControlled
               onChange={(value) => {
                 setMetadataUri(value);
-                setValidationError(null);
                 setPreviewError(null);
               }}
               placeholder="ipfs://... or https://..."
             />
-            <Typography variant="body3" className="text-mono-100 mt-2">
-              Supports <code>ipfs://</code>, <code>https://</code>, or{' '}
-              <code>http://</code>.
-            </Typography>
+            {(uriError || previewError || error?.message) && (
+              <div className="mt-1">
+                {uriError && <ErrorMessage>{uriError}</ErrorMessage>}
+                {previewError && <ErrorMessage>{previewError}</ErrorMessage>}
+                {error?.message && <ErrorMessage>{error.message}</ErrorMessage>}
+              </div>
+            )}
           </div>
-
-          {(validationError || previewError || error?.message) && (
-            <div className="mt-4">
-              {validationError && <ErrorMessage>{validationError}</ErrorMessage>}
-              {previewError && <ErrorMessage>{previewError}</ErrorMessage>}
-              {error?.message && <ErrorMessage>{error.message}</ErrorMessage>}
-            </div>
-          )}
 
           <div className="mt-4 flex gap-2">
             <Button
               variant="utility"
               onClick={handleLoadPreview}
               isLoading={isLoadingPreview}
-              isDisabled={isSubmitting}
+              isDisabled={isSubmitting || !hasValidUri}
             >
               {isLoadingPreview ? 'Loading Preview...' : 'Load Preview'}
             </Button>
@@ -695,7 +780,8 @@ const UpdateMetadataModal: FC<UpdateMetadataModalProps> = ({
               )}
 
               <Typography variant="body3">
-                <strong>Name:</strong> {previewData.name ?? EMPTY_VALUE_PLACEHOLDER}
+                <strong>Name:</strong>{' '}
+                {previewData.name ?? EMPTY_VALUE_PLACEHOLDER}
               </Typography>
               <Typography variant="body3">
                 <strong>Description:</strong>{' '}
@@ -783,7 +869,7 @@ const UpdateMetadataModal: FC<UpdateMetadataModalProps> = ({
           <Button
             onClick={handleSubmit}
             isLoading={isSubmitting}
-            isDisabled={isLoadingPreview}
+            isDisabled={isLoadingPreview || !hasValidUri || isUnchanged}
           >
             {isSubmitting ? 'Updating...' : 'Update Metadata'}
           </Button>
