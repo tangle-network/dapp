@@ -82,10 +82,7 @@ export const InstancesTabs: FC<InstancesTabsProps> = ({
         value={InstancesTab.RUNNING_INSTANCES}
         className="flex justify-center mx-auto w-full"
       >
-        <RunningInstanceTable
-          refreshTrigger={refreshTrigger}
-          setRefreshTrigger={setRefreshTrigger}
-        />
+        <RunningInstanceTable />
       </TabContent>
 
       {shouldShowOperatorTabs && (
