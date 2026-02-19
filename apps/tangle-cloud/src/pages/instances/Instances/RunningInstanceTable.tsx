@@ -1,11 +1,4 @@
-import {
-  useMemo,
-  useState,
-  useCallback,
-  type FC,
-  Dispatch,
-  SetStateAction,
-} from 'react';
+import { useMemo, useState, useCallback, type FC } from 'react';
 import {
   createColumnHelper,
   getCoreRowModel,
@@ -44,12 +37,7 @@ interface ServiceWithBlueprint extends Service {
 
 const columnHelper = createColumnHelper<ServiceWithBlueprint>();
 
-interface RunningInstanceTableProps {
-  refreshTrigger: number;
-  setRefreshTrigger: Dispatch<SetStateAction<number>>;
-}
-
-export const RunningInstanceTable: FC<RunningInstanceTableProps> = () => {
+export const RunningInstanceTable: FC = () => {
   const { address: currentUserAddress } = useAccount();
   const { isOperator, operatorAddress } = useEvmOperatorInfo();
 
@@ -234,7 +222,7 @@ export const RunningInstanceTable: FC<RunningInstanceTableProps> = () => {
                     variant="utility"
                     className="uppercase body4 bg-blue-10 dark:bg-blue-120 text-blue-70 dark:text-blue-40 hover:bg-blue-20 dark:hover:bg-blue-110 border border-blue-30 dark:border-blue-100 transition-all duration-200"
                   >
-                    View
+                    Blueprint
                   </Button>
                 </Link>
 
