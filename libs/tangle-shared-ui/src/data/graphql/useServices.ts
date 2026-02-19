@@ -32,6 +32,7 @@ export interface Service {
   owner: Address;
   status: ServiceStatus;
   operators: Address[];
+  permittedCallers: Address[];
   createdAt: bigint;
   terminatedAt: bigint | null;
 }
@@ -63,6 +64,7 @@ interface ServiceQueryResponse {
     terminatedAt: string | null;
     request: {
       operatorCandidates: string[];
+      permittedCallers?: string[];
     } | null;
   }>;
 }
@@ -128,7 +130,7 @@ const fetchServices = async (
 
   const whereClause = where.length > 0 ? `where: { ${where.join(', ')} }` : '';
 
-  const query = `
+  const buildQuery = (includePermittedCallers: boolean) => `
     query GetServices($limit: Int!, $offset: Int!) {
       Service(
         limit: $limit
@@ -145,29 +147,54 @@ const fetchServices = async (
         terminatedAt
         request {
           operatorCandidates
+          ${includePermittedCallers ? 'permittedCallers' : ''}
         }
       }
     }
   `;
 
-  const result = await executeEnvioGraphQL<
+  const variables = {
+    limit: options.limit ?? 100,
+    offset: options.offset ?? 0,
+  };
+
+  let result = await executeEnvioGraphQL<
     ServiceQueryResponse,
     {
       limit: number;
       offset: number;
     }
-  >(
-    query,
-    { limit: options.limit ?? 100, offset: options.offset ?? 0 },
-    network,
-  );
+  >(buildQuery(true), variables, network);
 
   if (result.errors?.length) {
-    throw new Error(
-      `Failed to fetch services: ${result.errors
-        .map((error) => error.message)
-        .join('; ')}`,
+    const hasPermittedCallerSchemaError = result.errors.some((error) =>
+      error.message.toLowerCase().includes('permittedcallers'),
     );
+
+    if (!hasPermittedCallerSchemaError) {
+      throw new Error(
+        `Failed to fetch services: ${result.errors
+          .map((error) => error.message)
+          .join('; ')}`,
+      );
+    }
+
+    // Backward compatibility for indexers that don't expose `request.permittedCallers`.
+    result = await executeEnvioGraphQL<
+      ServiceQueryResponse,
+      {
+        limit: number;
+        offset: number;
+      }
+    >(buildQuery(false), variables, network);
+
+    if (result.errors?.length) {
+      throw new Error(
+        `Failed to fetch services: ${result.errors
+          .map((error) => error.message)
+          .join('; ')}`,
+      );
+    }
   }
 
   return (result.data.Service ?? []).map((s) => ({
@@ -177,6 +204,7 @@ const fetchServices = async (
     owner: s.owner as Address,
     status: s.status as ServiceStatus,
     operators: (s.request?.operatorCandidates ?? []) as Address[],
+    permittedCallers: (s.request?.permittedCallers ?? []) as Address[],
     createdAt: BigInt(s.createdAt),
     terminatedAt: s.terminatedAt ? BigInt(s.terminatedAt) : null,
   }));

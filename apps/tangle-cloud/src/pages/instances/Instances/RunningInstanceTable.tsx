@@ -234,7 +234,7 @@ export const RunningInstanceTable: FC<RunningInstanceTableProps> = () => {
                     variant="utility"
                     className="uppercase body4 bg-blue-10 dark:bg-blue-120 text-blue-70 dark:text-blue-40 hover:bg-blue-20 dark:hover:bg-blue-110 border border-blue-30 dark:border-blue-100 transition-all duration-200"
                   >
-                    View
+                    Blueprint
                   </Button>
                 </Link>
 
