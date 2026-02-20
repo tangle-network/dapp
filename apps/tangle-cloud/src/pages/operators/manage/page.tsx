@@ -1789,7 +1789,18 @@ const Page: FC = () => {
       </Modal>
 
       {/* Propose Slash Modal */}
-      <Modal open={showProposeModal} onOpenChange={setShowProposeModal}>
+      <Modal
+        open={showProposeModal}
+        onOpenChange={(open) => {
+          setShowProposeModal(open);
+          if (!open) {
+            setProposeServiceId('');
+            setProposeOperator('');
+            setProposeSlashBps('');
+            setProposeEvidence('');
+          }
+        }}
+      >
         <ModalContent>
           <ModalHeader>Create Slash Proposal</ModalHeader>
           <ModalBody>
