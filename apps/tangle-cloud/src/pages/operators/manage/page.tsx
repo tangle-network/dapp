@@ -60,9 +60,7 @@ import { TangleCloudTable } from '../../../components/tangleCloudTable/TangleClo
 import TableCellWrapper from '@tangle-network/tangle-shared-ui/components/tables/TableCellWrapper';
 import ConnectWalletButton from '@tangle-network/tangle-shared-ui/components/ConnectWalletButton';
 import {
-  PlayFillIcon,
   TimeLineIcon,
-  CheckboxCircleLine,
   GlobalLine,
 } from '@tangle-network/icons';
 
@@ -89,17 +87,13 @@ interface SlashSyncTarget {
 }
 
 enum SlashingTab {
-  PROPOSE = 'Propose',
-  ACTIVE = 'Active',
-  EXECUTABLE = 'Executable',
-  HISTORY = 'History',
+  MY_PROPOSALS = 'My Proposals',
+  AGAINST_ME = 'Against Me',
 }
 
 const SLASHING_TAB_ICONS: ReactElement[] = [
   <GlobalLine className="w-4 h-4 !fill-blue-50" />,
   <TimeLineIcon className="w-4 h-4 !fill-yellow-100" />,
-  <PlayFillIcon className="w-4 h-4 !fill-green-50" />,
-  <CheckboxCircleLine className="w-4 h-4 !fill-mono-120" />,
 ];
 const SLASHING_TABS = Object.values(SlashingTab);
 
@@ -371,7 +365,7 @@ const Page: FC = () => {
   // Slashing state
   const [selectedSlash, setSelectedSlash] = useState<SlashProposal | null>(null);
   const [selectedSlashingTab, setSelectedSlashingTab] = useState<SlashingTab>(
-    SlashingTab.PROPOSE,
+    SlashingTab.AGAINST_ME,
   );
   const [showDisputeModal, setShowDisputeModal] = useState(false);
   const [showDisputeMessageModal, setShowDisputeMessageModal] = useState(false);
@@ -441,17 +435,7 @@ const Page: FC = () => {
 
   const isActiveServicePrecheckUnavailable = Boolean(activeServicesError);
 
-  const pendingSlashProposals = useMemo(
-    () => (slashProposals ?? []).filter((slash) => slash.status === 'Pending'),
-    [slashProposals],
-  );
-
-  const disputedSlashProposals = useMemo(
-    () => (slashProposals ?? []).filter((slash) => slash.status === 'Disputed'),
-    [slashProposals],
-  );
-
-  const proposedByMe = useMemo(() => {
+  const myProposals = useMemo(() => {
     if (!address) {
       return [] as SlashProposal[];
     }
@@ -461,23 +445,30 @@ const Page: FC = () => {
     );
   }, [address, slashProposals]);
 
-  const executableDiscoveryRows = useMemo(() => {
-    return (slashProposals ?? []).filter(
-      (slash) => slash.status === 'Pending' || slash.status === 'Disputed',
-    );
-  }, [slashProposals]);
+  const againstMe = useMemo(() => {
+    if (!address) {
+      return [] as SlashProposal[];
+    }
 
-  const activeSlashRows = useMemo(
-    () => [...pendingSlashProposals, ...disputedSlashProposals],
-    [pendingSlashProposals, disputedSlashProposals],
+    return (slashProposals ?? []).filter(
+      (slash) => slash.operator.toLowerCase() === address.toLowerCase(),
+    );
+  }, [address, slashProposals]);
+
+  const myActiveProposalCount = useMemo(
+    () =>
+      myProposals.filter(
+        (slash) => slash.status === 'Pending' || slash.status === 'Disputed',
+      ).length,
+    [myProposals],
   );
 
-  const historyRows = useMemo(
+  const activeAgainstMeCount = useMemo(
     () =>
-      (slashProposals ?? []).filter(
-        (slash) => slash.status === 'Executed' || slash.status === 'Cancelled',
-      ),
-    [slashProposals],
+      againstMe.filter(
+        (slash) => slash.status === 'Pending' || slash.status === 'Disputed',
+      ).length,
+    [againstMe],
   );
 
   const selectedSlashEligibility = useMemo(() => {
@@ -507,14 +498,18 @@ const Page: FC = () => {
   }, [selectedSlash, nowUnixSeconds]);
 
   const nearestPendingSlash = useMemo(() => {
-    if (!pendingSlashProposals.length) {
+    const pendingAgainstMe = againstMe.filter(
+      (slash) => slash.status === 'Pending',
+    );
+
+    if (pendingAgainstMe.length === 0) {
       return null;
     }
 
-    return [...pendingSlashProposals].sort((a, b) => {
+    return [...pendingAgainstMe].sort((a, b) => {
       return Number(a.executeAfter) - Number(b.executeAfter);
     })[0];
-  }, [pendingSlashProposals]);
+  }, [againstMe]);
 
   const nearestPendingSlashEligibility = useMemo(() => {
     if (!nearestPendingSlash) {
@@ -937,7 +932,7 @@ const Page: FC = () => {
       setProposeSlashBps('');
       setProposeEvidence('');
       setShowProposeModal(false);
-      setSelectedSlashingTab(SlashingTab.ACTIVE);
+      setSelectedSlashingTab(SlashingTab.MY_PROPOSALS);
       await refreshSlashingData();
 
       for (let attempt = 0; attempt < 8; attempt += 1) {
@@ -1215,6 +1210,38 @@ const Page: FC = () => {
           </TableCellWrapper>
         ),
       }),
+      slashColumnHelper.display({
+        id: 'role',
+        header: () => 'Your Role',
+        minSize: 130,
+        cell: (info) => {
+          const slash = info.row.original;
+          const isProposer =
+            address &&
+            slash.proposer.toLowerCase() === address.toLowerCase();
+          const isOperator =
+            address &&
+            slash.operator.toLowerCase() === address.toLowerCase();
+
+          return (
+            <TableCellWrapper className="py-3 pr-3">
+              <div className="flex flex-col gap-1">
+                {isProposer && (
+                  <Chip color="blue">Proposer</Chip>
+                )}
+                {isOperator && (
+                  <Chip color="red">Slashed</Chip>
+                )}
+                {!isProposer && !isOperator && (
+                  <Typography variant="body3" className="text-mono-100">
+                    -
+                  </Typography>
+                )}
+              </div>
+            </TableCellWrapper>
+          );
+        },
+      }),
       slashColumnHelper.accessor('serviceId', {
         header: () => 'Service',
         minSize: 120,
@@ -1223,6 +1250,27 @@ const Page: FC = () => {
             <Typography variant="body2">
               #{info.getValue().toString()}
             </Typography>
+          </TableCellWrapper>
+        ),
+      }),
+      slashColumnHelper.accessor('operator', {
+        header: () => 'Operator',
+        cell: (info) => (
+          <TableCellWrapper className="py-3 pr-3">
+            <div className="flex items-center gap-2 whitespace-nowrap">
+              <Typography
+                variant="body2"
+                className="font-mono whitespace-nowrap"
+              >
+                {shortenHex(info.getValue())}
+              </Typography>
+              <CopyWithTooltip
+                textToCopy={info.getValue()}
+                isButton={false}
+                iconSize="md"
+                iconClassName="!fill-mono-160 dark:!fill-mono-80"
+              />
+            </div>
           </TableCellWrapper>
         ),
       }),
@@ -1484,29 +1532,15 @@ const Page: FC = () => {
     getPaginationRowModel: getPaginationRowModel(),
   });
 
-  const proposeQueueTable = useReactTable({
-    data: proposedByMe,
+  const myProposalsTable = useReactTable({
+    data: myProposals,
     columns: slashColumns,
     getCoreRowModel: getCoreRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
   });
 
-  const activeSlashTable = useReactTable({
-    data: activeSlashRows,
-    columns: slashColumns,
-    getCoreRowModel: getCoreRowModel(),
-    getPaginationRowModel: getPaginationRowModel(),
-  });
-
-  const executableSlashTable = useReactTable({
-    data: executableDiscoveryRows,
-    columns: slashColumns,
-    getCoreRowModel: getCoreRowModel(),
-    getPaginationRowModel: getPaginationRowModel(),
-  });
-
-  const historySlashTable = useReactTable({
-    data: historyRows,
+  const againstMeTable = useReactTable({
+    data: againstMe,
     columns: slashColumns,
     getCoreRowModel: getCoreRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
@@ -1544,19 +1578,19 @@ const Page: FC = () => {
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
         <Card className="p-4">
           <Typography variant="body2" className="text-mono-100">
-            Pending Slashes
+            Active Against You
           </Typography>
           <Typography variant="h4" className="mt-1">
-            {pendingSlashProposals.length}
+            {activeAgainstMeCount}
           </Typography>
         </Card>
 
         <Card className="p-4">
           <Typography variant="body2" className="text-mono-100">
-            Disputed Slashes
+            My Active Proposals
           </Typography>
           <Typography variant="h4" className="mt-1">
-            {disputedSlashProposals.length}
+            {myActiveProposalCount}
           </Typography>
         </Card>
 
@@ -1585,7 +1619,7 @@ const Page: FC = () => {
           <div className="flex items-center gap-2 mb-2">
             <div className="w-2 h-2 rounded-full bg-yellow-400 animate-pulse" />
             <Typography variant="body2" fw="bold" className="text-yellow-400">
-              Nearest Dispute Deadline
+              Nearest Dispute Deadline Against You
             </Typography>
           </div>
           <Typography variant="h5" fw="bold" className="text-mono-0">
@@ -1672,111 +1706,57 @@ const Page: FC = () => {
           className="space-y-5"
           enableAdvancedDivider
         >
-          <TabContent value={SlashingTab.PROPOSE}>
+          <TabContent value={SlashingTab.MY_PROPOSALS}>
             <TangleCloudTable
               title="Proposals Created By You"
               hideTitle
-              data={proposedByMe}
+              data={myProposals}
               isLoading={loadingSlash}
               error={slashError}
               onRetry={() => void refetchSlashProposals()}
-              tableProps={proposeQueueTable}
+              tableProps={myProposalsTable}
               tableConfig={{
                 tdClassName: '!p-3 max-w-none whitespace-nowrap',
                 thClassName: 'whitespace-nowrap',
               }}
               loadingTableProps={{
                 title: 'Loading proposals...',
-                description: 'Fetching slash proposals you proposed.',
+                description: 'Fetching slash proposals you created.',
                 icon: '🔄',
               }}
               emptyTableProps={{
                 title: 'No Proposals Yet',
                 description:
-                  'You have not proposed any slash in the current index scope.',
+                  'You have not proposed any slash proposals yet.',
                 icon: '🧾',
               }}
             />
           </TabContent>
 
-          <TabContent value={SlashingTab.ACTIVE}>
+          <TabContent value={SlashingTab.AGAINST_ME}>
             <TangleCloudTable
-              title="Active Slash Proposals"
+              title="Slashes Against You"
               hideTitle
-              data={activeSlashRows}
+              data={againstMe}
               isLoading={loadingSlash}
               error={slashError}
               onRetry={() => void refetchSlashProposals()}
-              tableProps={activeSlashTable}
+              tableProps={againstMeTable}
               tableConfig={{
                 tdClassName: '!p-3 max-w-none whitespace-nowrap',
                 thClassName: 'whitespace-nowrap',
               }}
               loadingTableProps={{
-                title: 'Loading active proposals...',
-                description: 'Fetching pending and disputed slash proposals.',
+                title: 'Loading slashes...',
+                description:
+                  'Fetching slash proposals where you are the targeted operator.',
                 icon: '🔄',
               }}
               emptyTableProps={{
-                title: 'No Active Proposals',
+                title: 'No Slashes Against You',
                 description:
-                  'There are no pending or disputed slash proposals currently.',
+                  'There are no slash proposals targeting your operator address.',
                 icon: '✅',
-              }}
-            />
-          </TabContent>
-
-          <TabContent value={SlashingTab.EXECUTABLE}>
-            <TangleCloudTable
-              title="Executable Discovery"
-              hideTitle
-              data={executableDiscoveryRows}
-              isLoading={loadingSlash}
-              error={slashError}
-              onRetry={() => void refetchSlashProposals()}
-              tableProps={executableSlashTable}
-              tableConfig={{
-                tdClassName: '!p-3 max-w-none whitespace-nowrap',
-                thClassName: 'whitespace-nowrap',
-              }}
-              loadingTableProps={{
-                title: 'Scanning executable slashes...',
-                description:
-                  'Discovering executable slash IDs and reasons for non-executable proposals.',
-                icon: '🔄',
-              }}
-              emptyTableProps={{
-                title: 'No Pending/Disputed Proposals',
-                description:
-                  'There are no proposals to evaluate for execution at this time.',
-                icon: '🔍',
-              }}
-            />
-          </TabContent>
-
-          <TabContent value={SlashingTab.HISTORY}>
-            <TangleCloudTable
-              title="Slash History"
-              hideTitle
-              data={historyRows}
-              isLoading={loadingSlash}
-              error={slashError}
-              onRetry={() => void refetchSlashProposals()}
-              tableProps={historySlashTable}
-              tableConfig={{
-                tdClassName: '!p-3 max-w-none whitespace-nowrap',
-                thClassName: 'whitespace-nowrap',
-              }}
-              loadingTableProps={{
-                title: 'Loading slash history...',
-                description: 'Fetching executed and cancelled slash proposals.',
-                icon: '🔄',
-              }}
-              emptyTableProps={{
-                title: 'No History Yet',
-                description:
-                  'No executed or cancelled slash proposals are available yet.',
-                icon: '📚',
               }}
             />
           </TabContent>
