@@ -2,14 +2,7 @@
  * Operator management page - blueprint registration and full slashing lifecycle.
  */
 
-import {
-  FC,
-  ReactElement,
-  useCallback,
-  useEffect,
-  useMemo,
-  useState,
-} from 'react';
+import { FC, useCallback, useMemo, useState } from 'react';
 import {
   Card,
   Typography,
@@ -25,11 +18,9 @@ import {
   TooltipTrigger,
   TooltipBody,
   CopyWithTooltip,
-  TabContent,
 } from '@tangle-network/ui-components';
-import { TableAndChartTabs } from '@tangle-network/ui-components/components/TableAndChartTabs';
 import { useQueryClient } from '@tanstack/react-query';
-import { useAccount, usePublicClient } from 'wagmi';
+import { useAccount } from 'wagmi';
 import {
   useOperatorRegistrations,
   useUnregisterOperatorTx,
@@ -48,15 +39,11 @@ import {
   getSlashActionPermissions,
   buildSlashTimeline,
   formatSlashBps,
-  toSlashEvidenceBytes32,
   type OperatorRegistration,
-  type SlashProposerRole,
-  type SlashStatus,
   type SlashProposal,
 } from '@tangle-network/tangle-shared-ui/data/graphql';
 import { MembershipModel } from '@tangle-network/tangle-shared-ui/data/services';
 import { shortenHex } from '@tangle-network/ui-components/utils/shortenHex';
-import { isAddress, type Address } from 'viem';
 import {
   createColumnHelper,
   getCoreRowModel,
@@ -66,11 +53,30 @@ import {
 import { TangleCloudTable } from '../../../components/tangleCloudTable/TangleCloudTable';
 import TableCellWrapper from '@tangle-network/tangle-shared-ui/components/tables/TableCellWrapper';
 import ConnectWalletButton from '@tangle-network/tangle-shared-ui/components/ConnectWalletButton';
+import { InformationLine } from '@tangle-network/icons';
 import {
-  TimeLineIcon,
-  GlobalLine,
-  InformationLine,
-} from '@tangle-network/icons';
+  ECDSA_PUBLIC_KEY_HEX_LENGTH,
+  MIN_CANCEL_REASON_LENGTH,
+  MIN_DISPUTE_REASON_LENGTH,
+  SlashingTab,
+} from './constants';
+import {
+  formatDateTime,
+  formatTimeRemaining,
+  getSlashProposerRoleChipColor,
+  getSlashProposerRoleLabel,
+  isValidEcdsaPublicKey,
+} from './utils';
+import useChainClock from './hooks/useChainClock';
+import useSlashProposalForm from './hooks/useSlashProposalForm';
+import useSlashActions from './hooks/useSlashActions';
+import SlashingSummaryCards from './components/SlashingSummaryCards';
+import SlashingTabsTable from './components/SlashingTabsTable';
+import ProposeSlashModal from './components/modals/ProposeSlashModal';
+import DisputeMessageModal from './components/modals/DisputeMessageModal';
+import DisputeSlashModal from './components/modals/DisputeSlashModal';
+import CancelSlashModal from './components/modals/CancelSlashModal';
+import TimelineModal from './components/modals/TimelineModal';
 
 const registrationColumnHelper = createColumnHelper<OperatorRegistration>();
 const slashColumnHelper = createColumnHelper<SlashProposal>();
@@ -86,28 +92,6 @@ interface BlueprintServiceBreakdown {
   dynamicCount: number;
   totalCount: number;
 }
-
-interface SlashSyncTarget {
-  slashId: bigint;
-  status: SlashStatus;
-  disputeReason?: string | null;
-  cancelReason?: string | null;
-}
-
-enum SlashingTab {
-  MY_PROPOSALS = 'My Proposals',
-  AGAINST_ME = 'Against Me',
-}
-
-const SLASHING_TAB_ICONS: ReactElement[] = [
-  <GlobalLine className="w-4 h-4 !fill-blue-50" />,
-  <TimeLineIcon className="w-4 h-4 !fill-yellow-100" />,
-];
-const SLASHING_TABS = Object.values(SlashingTab);
-
-const MIN_DISPUTE_REASON_LENGTH = 20;
-const MIN_CANCEL_REASON_LENGTH = 8;
-const ECDSA_PUBLIC_KEY_HEX_LENGTH = 132; // 65-byte key => "0x" + 130 hex chars
 
 const getRegistrationActionState = (
   registration: OperatorRegistration,
@@ -166,147 +150,10 @@ const getRegistrationActionState = (
   };
 };
 
-const formatDateTime = (unixSeconds: bigint): string =>
-  new Date(Number(unixSeconds) * 1000).toLocaleString();
-
-const formatTimeRemaining = (seconds: number): string => {
-  if (seconds <= 0) {
-    return 'Ready now';
-  }
-
-  const days = Math.floor(seconds / 86_400);
-  const hours = Math.floor((seconds % 86_400) / 3_600);
-  const minutes = Math.ceil((seconds % 3_600) / 60);
-
-  if (days > 0) {
-    return `${days}d ${hours}h`;
-  }
-  if (hours > 0) {
-    return `${hours}h ${minutes}m`;
-  }
-
-  return minutes <= 1 ? 'Less than a minute' : `${minutes} minutes`;
-};
-
-const sleep = (ms: number): Promise<void> =>
-  new Promise((resolve) => setTimeout(resolve, ms));
-
-const decodeBytes32Ascii = (value: `0x${string}`): string | null => {
-  if (!value || value.length !== 66) {
-    return null;
-  }
-
-  const hex = value.slice(2).toLowerCase();
-  let decoded = '';
-
-  for (let i = 0; i < hex.length; i += 2) {
-    const byte = Number.parseInt(hex.slice(i, i + 2), 16);
-    if (!Number.isFinite(byte)) {
-      return null;
-    }
-    if (byte === 0) {
-      break;
-    }
-    if (byte < 32 || byte > 126) {
-      return null;
-    }
-    decoded += String.fromCharCode(byte);
-  }
-
-  const text = decoded.trim();
-  return text.length > 0 ? text : null;
-};
-
-const getSlashClaimContext = (slash: SlashProposal): string => {
-  const cancelReason = slash.cancelReason?.trim();
-  if (cancelReason) {
-    return `Cancel reason: ${cancelReason}`;
-  }
-
-  const evidenceText = decodeBytes32Ascii(slash.evidence);
-  if (evidenceText) {
-    return `Claim: ${evidenceText}`;
-  }
-
-  return 'No human-readable reason on-chain';
-};
-
-const getSlashDisputeMessage = (slash: SlashProposal): string | null => {
-  const disputeReason = slash.disputeReason?.trim();
-  return disputeReason ? disputeReason : null;
-};
-
-const getSlashProposerRoleLabel = (role: SlashProposerRole): string => {
-  if (role === 'ServiceOwner') {
-    return 'Service Owner';
-  }
-  if (role === 'BlueprintOwner') {
-    return 'Blueprint Owner';
-  }
-  if (role === 'SlashingOrigin') {
-    return 'Slashing Origin';
-  }
-
-  return 'Authorized Proposer';
-};
-
-const getSlashProposerRoleChipColor = (
-  role: SlashProposerRole,
-): 'green' | 'blue' | 'yellow' | 'dark-grey' => {
-  if (role === 'ServiceOwner') {
-    return 'green';
-  }
-  if (role === 'BlueprintOwner') {
-    return 'blue';
-  }
-  if (role === 'SlashingOrigin') {
-    return 'yellow';
-  }
-
-  return 'dark-grey';
-};
-
-const isValidEcdsaPublicKey = (value: string): boolean =>
-  /^0x[0-9a-fA-F]+$/.test(value) &&
-  value.length === ECDSA_PUBLIC_KEY_HEX_LENGTH;
-
 const Page: FC = () => {
   const { address, isConnected } = useAccount();
   const queryClient = useQueryClient();
-  const publicClient = usePublicClient();
-  const [nowUnixSeconds, setNowUnixSeconds] = useState(() =>
-    Math.floor(Date.now() / 1000),
-  );
-
-  useEffect(() => {
-    let cancelled = false;
-
-    const fetchBlockTimestamp = async () => {
-      if (!publicClient) {
-        return;
-      }
-
-      try {
-        const block = await publicClient.getBlock({ blockTag: 'latest' });
-        if (!cancelled) {
-          setNowUnixSeconds(Number(block.timestamp));
-        }
-      } catch {
-        // Fallback to browser time if block fetch fails.
-        if (!cancelled) {
-          setNowUnixSeconds(Math.floor(Date.now() / 1000));
-        }
-      }
-    };
-
-    fetchBlockTimestamp();
-    const interval = window.setInterval(fetchBlockTimestamp, 5_000);
-
-    return () => {
-      cancelled = true;
-      window.clearInterval(interval);
-    };
-  }, [publicClient]);
+  const { nowUnixSeconds, clockError, refreshNow } = useChainClock();
 
   // Data hooks (registration)
   const {
@@ -379,15 +226,29 @@ const Page: FC = () => {
   const [disputeReason, setDisputeReason] = useState('');
   const [cancelReason, setCancelReason] = useState('');
 
-  // Propose form state
-  const [proposeServiceId, setProposeServiceId] = useState('');
-  const [proposeOperator, setProposeOperator] = useState('');
-  const [proposeSlashBps, setProposeSlashBps] = useState('');
-  const [proposeEvidence, setProposeEvidence] = useState('');
-
   const trimmedDisputeReason = disputeReason.trim();
   const trimmedCancelReason = cancelReason.trim();
   const trimmedEcdsaPublicKey = newEcdsaPublicKey.trim();
+
+  const {
+    proposeServiceId,
+    setProposeServiceId,
+    proposeOperator,
+    setProposeOperator,
+    proposeSlashBps,
+    setProposeSlashBps,
+    proposeEvidence,
+    setProposeEvidence,
+    selectedProposableService,
+    proposableServiceOptions,
+    evidenceNormalization,
+    proposeValidationError,
+    canSubmitPropose,
+    resetForm: resetProposeForm,
+  } = useSlashProposalForm({
+    proposableServices,
+    proposeStatus,
+  });
 
   const executableSlashIdSet = useMemo(() => {
     const set = new Set<string>();
@@ -479,6 +340,7 @@ const Page: FC = () => {
     if (!selectedSlash) {
       return null;
     }
+
     return getSlashDisputeEligibility(selectedSlash, nowUnixSeconds);
   }, [selectedSlash, nowUnixSeconds]);
 
@@ -498,6 +360,7 @@ const Page: FC = () => {
     if (!selectedSlash) {
       return [];
     }
+
     return buildSlashTimeline(selectedSlash, nowUnixSeconds);
   }, [selectedSlash, nowUnixSeconds]);
 
@@ -522,59 +385,6 @@ const Page: FC = () => {
 
     return getSlashDisputeEligibility(nearestPendingSlash, nowUnixSeconds);
   }, [nearestPendingSlash, nowUnixSeconds]);
-
-  const selectedProposableService = useMemo(() => {
-    if (!proposeServiceId) {
-      return null;
-    }
-
-    return (
-      (proposableServices ?? []).find(
-        (service) => service.serviceId.toString() === proposeServiceId,
-      ) ?? null
-    );
-  }, [proposableServices, proposeServiceId]);
-
-  const proposableServiceOptions = useMemo(() => {
-    return (proposableServices ?? []).map((service) => ({
-      value: service.serviceId.toString(),
-      label: `Service #${service.serviceId.toString()} • ${service.blueprintName}`,
-    }));
-  }, [proposableServices]);
-
-  const evidenceNormalization = useMemo(
-    () => toSlashEvidenceBytes32(proposeEvidence),
-    [proposeEvidence],
-  );
-
-  const proposeValidationError = useMemo(() => {
-    if (!proposeServiceId) {
-      return 'Select a service.';
-    }
-
-    if (!isAddress(proposeOperator)) {
-      return 'Please select an operator.';
-    }
-
-    const slashBps = Number(proposeSlashBps);
-    if (!Number.isInteger(slashBps) || slashBps <= 0 || slashBps > 10_000) {
-      return 'Slash BPS must be an integer between 1 and 10000.';
-    }
-
-    if (evidenceNormalization.error) {
-      return evidenceNormalization.error;
-    }
-
-    return null;
-  }, [
-    evidenceNormalization.error,
-    proposeOperator,
-    proposeServiceId,
-    proposeSlashBps,
-  ]);
-
-  const canSubmitPropose =
-    proposeValidationError === null && proposeStatus !== 'pending';
 
   const isDisputeReasonValid =
     trimmedDisputeReason.length >= MIN_DISPUTE_REASON_LENGTH;
@@ -665,162 +475,52 @@ const Page: FC = () => {
     return rpcUnchanged && keyUnchanged;
   }, [resolvedRpcAddress, selectedRegistration, trimmedEcdsaPublicKey]);
 
-  const patchSlashInCache = useCallback(
-    (slashId: bigint, updater: (proposal: SlashProposal) => SlashProposal) => {
-      queryClient.setQueriesData<SlashProposal[]>(
-        { queryKey: ['slashing', 'proposals'] },
-        (existingProposals) => {
-          if (!existingProposals) {
-            return existingProposals;
-          }
-
-          return existingProposals.map((proposal) =>
-            proposal.id === slashId ? updater(proposal) : proposal,
-          );
-        },
-      );
+  const {
+    actionError,
+    clearActionError,
+    handleProposeSlash,
+    handleDispute,
+    handleCancel,
+    handleExecuteSingle,
+  } = useSlashActions({
+    address,
+    nowUnixSeconds,
+    queryClient,
+    refetchSlashProposals: async () => {
+      const result = await refetchSlashProposals();
+      return { data: result.data };
     },
-    [queryClient],
-  );
-
-  const upsertSlashInCache = useCallback(
-    (slash: SlashProposal) => {
-      queryClient.setQueriesData<SlashProposal[]>(
-        { queryKey: ['slashing', 'proposals'] },
-        (existingProposals) => {
-          if (!existingProposals) {
-            return [slash];
-          }
-
-          const index = existingProposals.findIndex(
-            (proposal) => proposal.id === slash.id,
-          );
-
-          if (index === -1) {
-            return [slash, ...existingProposals];
-          }
-
-          const next = [...existingProposals];
-          next[index] = slash;
-          return next;
-        },
-      );
-    },
-    [queryClient],
-  );
-
-  const refreshSlashingData = useCallback(async () => {
-    await queryClient.invalidateQueries({ queryKey: ['slashing'] });
-    await refetchSlashProposals();
-    await refetchExecutableSlashes();
-  }, [queryClient, refetchExecutableSlashes, refetchSlashProposals]);
-
-  const applySlashSyncTargetToCache = useCallback(
-    (target: SlashSyncTarget) => {
-      patchSlashInCache(target.slashId, (proposal) => ({
-        ...proposal,
-        status: target.status,
-        disputeReason:
-          target.disputeReason !== undefined
-            ? target.disputeReason
-            : proposal.disputeReason,
-        cancelReason:
-          target.cancelReason !== undefined
-            ? target.cancelReason
-            : proposal.cancelReason,
-      }));
-    },
-    [patchSlashInCache],
-  );
-
-  const waitForSlashStatusSync = useCallback(
-    async (targets: SlashSyncTarget[]) => {
-      if (targets.length === 0) {
-        return;
-      }
-
-      targets.forEach((target) => {
-        applySlashSyncTargetToCache(target);
-      });
-
-      const matchesTarget = (
-        proposal: SlashProposal | undefined,
-        target: SlashSyncTarget,
-      ): boolean => {
-        if (!proposal || proposal.status !== target.status) {
-          return false;
-        }
-
-        if (target.disputeReason !== undefined) {
-          if (target.disputeReason === null) {
-            if (proposal.disputeReason !== null) {
-              return false;
-            }
-          } else {
-            const expectedDispute = target.disputeReason.trim();
-            const actualDispute = proposal.disputeReason?.trim() ?? '';
-            if (
-              expectedDispute.length > 0 &&
-              actualDispute !== expectedDispute
-            ) {
-              return false;
-            }
-          }
-        }
-
-        if (target.cancelReason !== undefined) {
-          if (target.cancelReason === null) {
-            if (proposal.cancelReason !== null) {
-              return false;
-            }
-          } else {
-            const expectedCancel = target.cancelReason.trim();
-            const actualCancel = proposal.cancelReason?.trim() ?? '';
-            if (expectedCancel.length > 0 && actualCancel !== expectedCancel) {
-              return false;
-            }
-          }
-        }
-
-        return true;
-      };
-
-      for (let attempt = 0; attempt < 8; attempt += 1) {
-        try {
-          const refreshed = await refetchSlashProposals();
-          const refreshedProposals = refreshed.data ?? [];
-          const allSynced = targets.every((target) => {
-            const proposal = refreshedProposals.find(
-              (item) => item.id === target.slashId,
-            );
-            return matchesTarget(proposal, target);
-          });
-
-          if (allSynced) {
-            break;
-          }
-        } catch {
-          // Keep optimistic cache values while waiting for indexer recovery.
-        }
-
-        targets.forEach((target) => {
-          applySlashSyncTargetToCache(target);
-        });
-
-        await sleep(1_000);
-      }
-
-      await refetchExecutableSlashes();
-    },
-    [
-      applySlashSyncTargetToCache,
-      refetchExecutableSlashes,
-      refetchSlashProposals,
-    ],
-  );
+    refetchExecutableSlashes,
+    proposeSlash,
+    disputeSlash,
+    cancelSlash,
+    executeSlash,
+    executableSlashIdSet,
+    selectedSlash,
+    canSubmitDispute,
+    canSubmitCancel,
+    trimmedDisputeReason,
+    trimmedCancelReason,
+    canSubmitPropose,
+    proposeServiceId,
+    proposeOperator,
+    proposeSlashBps,
+    evidenceValue: evidenceNormalization.value,
+    resetProposeForm,
+    setSelectedSlashingTab,
+    setShowProposeModal,
+    setShowDisputeModal,
+    setShowCancelModal,
+    setSelectedSlash,
+    setDisputeReason,
+    setCancelReason,
+  });
 
   const handleUnregister = useCallback(async () => {
-    if (!selectedRegistration) return;
+    if (!selectedRegistration) {
+      return;
+    }
+
     const unregisteredBlueprintId = selectedRegistration.blueprintId;
     const result = await unregisterOperator(unregisteredBlueprintId);
     if (result) {
@@ -899,157 +599,6 @@ const Page: FC = () => {
     selectedRegistration,
     updatePreferences,
   ]);
-
-  const handleProposeSlash = useCallback(async () => {
-    if (!canSubmitPropose || !evidenceNormalization.value) {
-      return;
-    }
-
-    const proposalStartedAt = BigInt(Math.floor(Date.now() / 1000));
-    const slashBps = Number(proposeSlashBps);
-    const operatorAddress = proposeOperator as Address;
-    const targetServiceId = BigInt(proposeServiceId);
-    const targetEvidence = evidenceNormalization.value.toLowerCase();
-    const proposerAddress = address?.toLowerCase() ?? null;
-    const result = await proposeSlash(
-      targetServiceId,
-      operatorAddress,
-      slashBps,
-      evidenceNormalization.value,
-    );
-
-    if (result) {
-      if (result.proposal) {
-        upsertSlashInCache(result.proposal);
-      }
-
-      setProposeServiceId('');
-      setProposeOperator('');
-      setProposeSlashBps('');
-      setProposeEvidence('');
-      setShowProposeModal(false);
-      setSelectedSlashingTab(SlashingTab.MY_PROPOSALS);
-      await refreshSlashingData();
-
-      for (let attempt = 0; attempt < 8; attempt += 1) {
-        const refreshed = await refetchSlashProposals();
-        const isVisible = (refreshed.data ?? []).some((proposal) => {
-          if (result.slashId !== undefined) {
-            return proposal.id === result.slashId;
-          }
-
-          return (
-            proposerAddress !== null &&
-            proposal.proposer.toLowerCase() === proposerAddress &&
-            proposal.serviceId === targetServiceId &&
-            proposal.operator.toLowerCase() === operatorAddress.toLowerCase() &&
-            proposal.slashBps === BigInt(slashBps) &&
-            proposal.evidence.toLowerCase() === targetEvidence &&
-            proposal.proposedAt >= proposalStartedAt - BigInt(5)
-          );
-        });
-
-        if (isVisible) {
-          break;
-        }
-
-        await sleep(1_000);
-      }
-    }
-  }, [
-    address,
-    canSubmitPropose,
-    evidenceNormalization.value,
-    proposeOperator,
-    proposeServiceId,
-    proposeSlashBps,
-    proposeSlash,
-    refetchSlashProposals,
-    refreshSlashingData,
-    upsertSlashInCache,
-  ]);
-
-  const handleDispute = useCallback(async () => {
-    if (!selectedSlash || !canSubmitDispute) return;
-    const disputedSlashId = selectedSlash.id;
-    const submittedDisputeReason = trimmedDisputeReason;
-    const result = await disputeSlash(disputedSlashId, submittedDisputeReason);
-    if (result) {
-      setShowDisputeModal(false);
-      setSelectedSlash(null);
-      setDisputeReason('');
-      await waitForSlashStatusSync([
-        {
-          slashId: disputedSlashId,
-          status: 'Disputed',
-          disputeReason: submittedDisputeReason,
-        },
-      ]);
-    }
-  }, [
-    canSubmitDispute,
-    disputeSlash,
-    selectedSlash,
-    trimmedDisputeReason,
-    waitForSlashStatusSync,
-  ]);
-
-  const handleCancel = useCallback(async () => {
-    if (!selectedSlash || !canSubmitCancel) return;
-    const cancelledSlashId = selectedSlash.id;
-    const submittedCancelReason = trimmedCancelReason;
-    const result = await cancelSlash(cancelledSlashId, submittedCancelReason);
-    if (result) {
-      setShowCancelModal(false);
-      setSelectedSlash(null);
-      setCancelReason('');
-      await waitForSlashStatusSync([
-        {
-          slashId: cancelledSlashId,
-          status: 'Cancelled',
-          cancelReason: submittedCancelReason,
-        },
-      ]);
-    }
-  }, [
-    cancelSlash,
-    canSubmitCancel,
-    selectedSlash,
-    trimmedCancelReason,
-    waitForSlashStatusSync,
-  ]);
-
-  const handleExecuteSingle = useCallback(
-    async (slash: SlashProposal) => {
-      const permissions = getSlashActionPermissions({
-        slash,
-        connectedAddress: address,
-        nowUnixSeconds,
-      });
-      const isExecutable = executableSlashIdSet.has(slash.id.toString());
-
-      if (!permissions.canExecute || !isExecutable) {
-        return;
-      }
-
-      const result = await executeSlash(slash.id);
-      if (result) {
-        await waitForSlashStatusSync([
-          {
-            slashId: slash.id,
-            status: 'Executed',
-          },
-        ]);
-      }
-    },
-    [
-      address,
-      executableSlashIdSet,
-      executeSlash,
-      nowUnixSeconds,
-      waitForSlashStatusSync,
-    ],
-  );
 
   // Registration columns
   const registrationColumns = useMemo(
@@ -1345,7 +894,7 @@ const Page: FC = () => {
           return (
             <TableCellWrapper removeRightBorder className="py-3 pr-3">
               <div className="flex flex-nowrap items-center gap-2 overflow-x-auto whitespace-nowrap pb-1">
-                {slash.status === 'Pending' && isSlashedOperator && (
+                {slash.status === 'Pending' && isSlashedOperator ? (
                   <Button
                     variant="utility"
                     size="sm"
@@ -1353,6 +902,7 @@ const Page: FC = () => {
                     className="uppercase body4 bg-blue-10 dark:bg-blue-120 text-blue-70 dark:text-blue-40 hover:bg-blue-20 dark:hover:bg-blue-110 border border-blue-30 dark:border-blue-100 disabled:opacity-50 disabled:cursor-not-allowed"
                     onClick={(event) => {
                       event.stopPropagation();
+                      clearActionError('dispute');
                       setSelectedSlash(slash);
                       setDisputeReason('');
                       setShowDisputeModal(true);
@@ -1360,66 +910,67 @@ const Page: FC = () => {
                   >
                     Dispute
                   </Button>
-                )}
+                ) : null}
 
                 {!isSlashedOperator &&
-                  (slash.status === 'Pending' ||
-                    slash.status === 'Disputed') && (
-                    <Button
-                      variant="utility"
-                      size="sm"
-                      isDisabled={!permissions.canCancel}
-                      className="uppercase body4 bg-red-10 dark:bg-red-120 text-red-70 dark:text-red-40 hover:bg-red-20 dark:hover:bg-red-110 border border-red-30 dark:border-red-100 disabled:opacity-50 disabled:cursor-not-allowed"
-                      onClick={(event) => {
-                        event.stopPropagation();
-                        setSelectedSlash(slash);
-                        setCancelReason('');
-                        setShowCancelModal(true);
-                      }}
-                    >
-                      Cancel
-                    </Button>
-                  )}
+                (slash.status === 'Pending' || slash.status === 'Disputed') ? (
+                  <Button
+                    variant="utility"
+                    size="sm"
+                    isDisabled={!permissions.canCancel}
+                    className="uppercase body4 bg-red-10 dark:bg-red-120 text-red-70 dark:text-red-40 hover:bg-red-20 dark:hover:bg-red-110 border border-red-30 dark:border-red-100 disabled:opacity-50 disabled:cursor-not-allowed"
+                    onClick={(event) => {
+                      event.stopPropagation();
+                      clearActionError('cancel');
+                      setSelectedSlash(slash);
+                      setCancelReason('');
+                      setShowCancelModal(true);
+                    }}
+                  >
+                    Cancel
+                  </Button>
+                ) : null}
 
                 {!isSlashedOperator &&
-                  (slash.status === 'Pending' || slash.status === 'Disputed') &&
-                  (() => {
-                    const executeButton = (
-                      <Button
-                        variant="utility"
-                        size="sm"
-                        isDisabled={!canExecute}
-                        className="uppercase body4 bg-green-10 dark:bg-green-120 text-green-70 dark:text-green-40 hover:bg-green-20 dark:hover:bg-green-110 border border-green-30 dark:border-green-100 disabled:opacity-50 disabled:cursor-not-allowed"
-                        onClick={(event) => {
-                          event.stopPropagation();
-                          void handleExecuteSingle(slash);
-                        }}
-                      >
-                        Execute
-                      </Button>
-                    );
-
-                    if (!canExecute) {
-                      const reason =
-                        executeDisabledReason ??
-                        (executionEligibility.reason === 'DisputeWindowOpen'
-                          ? `Ready in ${formatTimeRemaining(executionEligibility.secondsUntilExecutable)}`
-                          : 'Not executable yet');
-
-                      return (
-                        <Tooltip delayDuration={0}>
-                          <TooltipTrigger asChild>
-                            <span className="inline-flex cursor-not-allowed">
-                              {executeButton}
-                            </span>
-                          </TooltipTrigger>
-                          <TooltipBody>{reason}</TooltipBody>
-                        </Tooltip>
+                (slash.status === 'Pending' || slash.status === 'Disputed')
+                  ? (() => {
+                      const executeButton = (
+                        <Button
+                          variant="utility"
+                          size="sm"
+                          isDisabled={!canExecute}
+                          className="uppercase body4 bg-green-10 dark:bg-green-120 text-green-70 dark:text-green-40 hover:bg-green-20 dark:hover:bg-green-110 border border-green-30 dark:border-green-100 disabled:opacity-50 disabled:cursor-not-allowed"
+                          onClick={(event) => {
+                            event.stopPropagation();
+                            void handleExecuteSingle(slash);
+                          }}
+                        >
+                          Execute
+                        </Button>
                       );
-                    }
 
-                    return executeButton;
-                  })()}
+                      if (!canExecute) {
+                        const reason =
+                          executeDisabledReason ??
+                          (executionEligibility.reason === 'DisputeWindowOpen'
+                            ? `Ready in ${formatTimeRemaining(executionEligibility.secondsUntilExecutable)}`
+                            : 'Not executable yet');
+
+                        return (
+                          <Tooltip delayDuration={0}>
+                            <TooltipTrigger asChild>
+                              <span className="inline-flex cursor-not-allowed">
+                                {executeButton}
+                              </span>
+                            </TooltipTrigger>
+                            <TooltipBody>{reason}</TooltipBody>
+                          </Tooltip>
+                        );
+                      }
+
+                      return executeButton;
+                    })()
+                  : null}
 
                 <Button
                   variant="utility"
@@ -1434,7 +985,7 @@ const Page: FC = () => {
                   Timeline
                 </Button>
 
-                {slash.status === 'Disputed' && (
+                {slash.status === 'Disputed' ? (
                   <Button
                     variant="utility"
                     size="sm"
@@ -1447,14 +998,20 @@ const Page: FC = () => {
                   >
                     View Dispute
                   </Button>
-                )}
+                ) : null}
               </div>
             </TableCellWrapper>
           );
         },
       }),
     ],
-    [address, executableSlashIdSet, handleExecuteSingle, nowUnixSeconds],
+    [
+      address,
+      executableSlashIdSet,
+      handleExecuteSingle,
+      nowUnixSeconds,
+      clearActionError,
+    ],
   );
 
   const registrationTable = useReactTable({
@@ -1507,59 +1064,31 @@ const Page: FC = () => {
         </Typography>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <Card className="p-4">
-          <Typography variant="body2" className="text-mono-100">
-            Active Registrations
-          </Typography>
-          <Typography variant="h4" className="mt-1">
-            {registrations?.filter((registration) => registration.active)
-              .length ?? 0}
-          </Typography>
-        </Card>
+      <SlashingSummaryCards
+        activeRegistrationsCount={
+          registrations?.filter((registration) => registration.active).length ??
+          0
+        }
+        activeAgainstMeCount={activeAgainstMeCount}
+        myActiveProposalCount={myActiveProposalCount}
+        nearestPendingSlash={nearestPendingSlash}
+        nearestPendingSlashEligibility={nearestPendingSlashEligibility}
+      />
 
-        <Card className="p-4">
+      {clockError ? (
+        <Card className="p-4 border border-yellow-500/20 bg-yellow-500/10">
           <Typography variant="body2" className="text-mono-100">
-            Active Against You
+            {clockError}
           </Typography>
-          <Typography variant="h4" className="mt-1">
-            {activeAgainstMeCount}
-          </Typography>
-        </Card>
-
-        <Card className="p-4">
-          <Typography variant="body2" className="text-mono-100">
-            My Active Proposals
-          </Typography>
-          <Typography variant="h4" className="mt-1">
-            {myActiveProposalCount}
-          </Typography>
-        </Card>
-      </div>
-
-      {nearestPendingSlash && nearestPendingSlashEligibility ? (
-        <Card className="p-4 !border-yellow-400/30 !bg-yellow-500/15">
-          <div className="flex items-center gap-2 mb-2">
-            <div className="w-2 h-2 rounded-full bg-yellow-400 animate-pulse" />
-            <Typography variant="body2" fw="bold" className="text-yellow-400">
-              Nearest Dispute Deadline Against You
-            </Typography>
+          <div className="mt-3">
+            <Button
+              variant="secondary"
+              size="sm"
+              onClick={() => void refreshNow()}
+            >
+              Retry Block Clock
+            </Button>
           </div>
-          <Typography variant="h5" fw="bold" className="text-mono-0">
-            Slash #{nearestPendingSlash.id.toString()}{' '}
-            <span className="font-normal text-mono-100">expires at</span>{' '}
-            {formatDateTime(nearestPendingSlash.executeAfter)}
-          </Typography>
-          <Typography
-            variant="body2"
-            fw="semibold"
-            className="text-yellow-300/80 mt-1.5"
-          >
-            Time remaining:{' '}
-            {formatTimeRemaining(
-              nearestPendingSlashEligibility.secondsUntilDeadline,
-            )}
-          </Typography>
         </Card>
       ) : null}
 
@@ -1609,79 +1138,23 @@ const Page: FC = () => {
         }}
       />
 
-      <Card className="p-4 space-y-4">
-        <div className="flex items-center justify-between gap-3">
-          <Typography variant="h5" fw="bold">
-            Slashing Management
-          </Typography>
-          <Button variant="secondary" onClick={() => setShowProposeModal(true)}>
-            New Proposal
-          </Button>
-        </div>
-
-        <TableAndChartTabs
-          tabs={SLASHING_TABS}
-          icons={SLASHING_TAB_ICONS}
-          value={selectedSlashingTab}
-          onValueChange={(tab) => setSelectedSlashingTab(tab as SlashingTab)}
-          className="space-y-5"
-          enableAdvancedDivider
-        >
-          <TabContent value={SlashingTab.MY_PROPOSALS}>
-            <TangleCloudTable
-              title="Proposals Created By You"
-              hideTitle
-              data={myProposals}
-              isLoading={loadingSlash}
-              error={slashError}
-              onRetry={() => void refetchSlashProposals()}
-              tableProps={myProposalsTable}
-              tableConfig={{
-                tdClassName: '!px-4 !py-3.5 max-w-none whitespace-nowrap',
-                thClassName: 'whitespace-nowrap',
-              }}
-              loadingTableProps={{
-                title: 'Loading proposals...',
-                description: 'Fetching slash proposals you created.',
-                icon: '🔄',
-              }}
-              emptyTableProps={{
-                title: 'No Proposals Yet',
-                description: 'You have not proposed any slash proposals yet.',
-                icon: '🧾',
-              }}
-            />
-          </TabContent>
-
-          <TabContent value={SlashingTab.AGAINST_ME}>
-            <TangleCloudTable
-              title="Slashes Against You"
-              hideTitle
-              data={againstMe}
-              isLoading={loadingSlash}
-              error={slashError}
-              onRetry={() => void refetchSlashProposals()}
-              tableProps={againstMeTable}
-              tableConfig={{
-                tdClassName: '!px-4 !py-3.5 max-w-none whitespace-nowrap',
-                thClassName: 'whitespace-nowrap',
-              }}
-              loadingTableProps={{
-                title: 'Loading slashes...',
-                description:
-                  'Fetching slash proposals where you are the targeted operator.',
-                icon: '🔄',
-              }}
-              emptyTableProps={{
-                title: 'No Slashes Against You',
-                description:
-                  'There are no slash proposals targeting your operator address.',
-                icon: '✅',
-              }}
-            />
-          </TabContent>
-        </TableAndChartTabs>
-      </Card>
+      <SlashingTabsTable
+        selectedSlashingTab={selectedSlashingTab}
+        onSlashingTabChange={setSelectedSlashingTab}
+        onOpenProposeModal={() => {
+          clearActionError('propose');
+          setShowProposeModal(true);
+        }}
+        myProposals={myProposals}
+        againstMe={againstMe}
+        loadingSlash={loadingSlash}
+        slashError={slashError}
+        refetchSlashProposals={() => void refetchSlashProposals()}
+        myProposalsTable={myProposalsTable}
+        againstMeTable={againstMeTable}
+        executeError={actionError.execute}
+        onDismissExecuteError={() => clearActionError('execute')}
+      />
 
       {/* Unregister Modal */}
       <Modal open={showUnregisterModal} onOpenChange={setShowUnregisterModal}>
@@ -1778,377 +1251,90 @@ const Page: FC = () => {
         </ModalContent>
       </Modal>
 
-      {/* Propose Slash Modal */}
-      <Modal
+      <ProposeSlashModal
         open={showProposeModal}
         onOpenChange={(open) => {
           setShowProposeModal(open);
           if (!open) {
-            setProposeServiceId('');
-            setProposeOperator('');
-            setProposeSlashBps('');
-            setProposeEvidence('');
+            clearActionError('propose');
+            resetProposeForm();
           }
         }}
-      >
-        <ModalContent>
-          <ModalHeader>Create Slash Proposal</ModalHeader>
-          <ModalBody>
-            <div className="space-y-4">
-              {loadingProposableServices ? (
-                <Typography variant="body2" className="text-mono-100">
-                  Loading eligible services...
-                </Typography>
-              ) : null}
+        loadingProposableServices={loadingProposableServices}
+        proposableServicesCount={proposableServices?.length ?? 0}
+        proposableServiceOptions={proposableServiceOptions}
+        selectedProposableService={selectedProposableService}
+        proposeServiceId={proposeServiceId}
+        setProposeServiceId={setProposeServiceId}
+        proposeOperator={proposeOperator}
+        setProposeOperator={setProposeOperator}
+        proposeSlashBps={proposeSlashBps}
+        setProposeSlashBps={setProposeSlashBps}
+        proposeEvidence={proposeEvidence}
+        setProposeEvidence={setProposeEvidence}
+        proposeValidationError={proposeValidationError}
+        errorMessage={actionError.propose}
+        onDismissError={() => clearActionError('propose')}
+        canSubmitPropose={canSubmitPropose}
+        isSubmitting={proposeStatus === 'pending'}
+        onConfirm={() => void handleProposeSlash()}
+      />
 
-              {!loadingProposableServices &&
-              (proposableServices?.length ?? 0) === 0 ? (
-                <Typography variant="body2" className="text-mono-100">
-                  No active services where your account appears as service or
-                  blueprint owner.
-                </Typography>
-              ) : null}
-
-              {(proposableServices?.length ?? 0) > 0 ? (
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                  <div>
-                    <Typography variant="body3" className="mb-1">
-                      Service
-                    </Typography>
-                    <select
-                      className="w-full rounded-lg border border-mono-60 dark:border-mono-140 px-3 py-2 bg-mono-0 dark:bg-mono-200"
-                      value={proposeServiceId}
-                      onChange={(event) =>
-                        setProposeServiceId(event.target.value)
-                      }
-                    >
-                      <option value="">Select service</option>
-                      {proposableServiceOptions.map((option) => (
-                        <option key={option.value} value={option.value}>
-                          {option.label}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-
-                  <div>
-                    <Typography variant="body3" className="mb-1">
-                      Operator
-                    </Typography>
-                    <select
-                      className="w-full rounded-lg border border-mono-60 dark:border-mono-140 px-3 py-2 bg-mono-0 dark:bg-mono-200 disabled:opacity-50 disabled:cursor-not-allowed"
-                      value={proposeOperator}
-                      onChange={(event) =>
-                        setProposeOperator(event.target.value)
-                      }
-                      disabled={!selectedProposableService}
-                    >
-                      <option value="">
-                        {selectedProposableService
-                          ? 'Select operator'
-                          : 'Select a service first'}
-                      </option>
-                      {selectedProposableService?.operatorCandidates.map(
-                        (operatorAddress) => (
-                          <option key={operatorAddress} value={operatorAddress}>
-                            {operatorAddress}
-                          </option>
-                        ),
-                      )}
-                    </select>
-                  </div>
-
-                  <div>
-                    <Typography variant="body3" className="mb-1">
-                      Slash BPS (1 - 10000)
-                    </Typography>
-                    <Input
-                      id="propose-slash-bps"
-                      isControlled
-                      value={proposeSlashBps}
-                      onChange={(value) => setProposeSlashBps(value)}
-                      placeholder="e.g. 500 (5%)"
-                    />
-                  </div>
-
-                  <div>
-                    <Typography variant="body3" className="mb-1">
-                      Evidence (text or bytes32 hex)
-                    </Typography>
-                    <Input
-                      id="propose-evidence"
-                      isControlled
-                      value={proposeEvidence}
-                      onChange={(value) => setProposeEvidence(value)}
-                      placeholder="ipfs://... or 0x..."
-                    />
-                  </div>
-                </div>
-              ) : null}
-
-              {proposeValidationError ? (
-                <Typography variant="body3" className="!text-red-60">
-                  {proposeValidationError}
-                </Typography>
-              ) : null}
-            </div>
-          </ModalBody>
-          <ModalFooterActions
-            hasCloseButton
-            isConfirmDisabled={!canSubmitPropose}
-            isProcessing={proposeStatus === 'pending'}
-            confirmButtonText="Submit Proposal"
-            onConfirm={handleProposeSlash}
-          />
-        </ModalContent>
-      </Modal>
-
-      {/* Dispute Reason Modal */}
-      <Modal
+      <DisputeMessageModal
         open={showDisputeMessageModal}
         onOpenChange={setShowDisputeMessageModal}
-      >
-        <ModalContent>
-          <ModalHeader>Dispute Reason</ModalHeader>
-          <ModalBody>
-            <Typography variant="body1" className="mb-2">
-              Slash proposal #{selectedSlash?.id.toString()}
-            </Typography>
-            <Typography variant="body2" className="text-mono-100 mb-2">
-              Submitted dispute reason:
-            </Typography>
-            <div className="rounded-lg border border-mono-40 dark:border-mono-140 p-3 bg-mono-20 dark:bg-mono-170">
-              <Typography
-                variant="body2"
-                className="whitespace-pre-wrap break-words"
-              >
-                {selectedSlash
-                  ? (getSlashDisputeMessage(selectedSlash) ??
-                    'No dispute reason available for this proposal yet.')
-                  : '-'}
-              </Typography>
-            </div>
-          </ModalBody>
-          <ModalFooterActions
-            confirmButtonText="Close"
-            onConfirm={() => setShowDisputeMessageModal(false)}
-          />
-        </ModalContent>
-      </Modal>
+        selectedSlash={selectedSlash}
+      />
 
-      {/* Dispute Slash Modal */}
-      <Modal open={showDisputeModal} onOpenChange={setShowDisputeModal}>
-        <ModalContent>
-          <ModalHeader>Dispute Slash Proposal</ModalHeader>
-          <ModalBody>
-            <Typography variant="body1" className="mb-2">
-              Dispute slash proposal #{selectedSlash?.id.toString()}
-            </Typography>
-            <div className="p-3 bg-mono-20 dark:bg-mono-170 rounded-lg mb-4">
-              <div className="grid grid-cols-2 gap-x-2 gap-y-3">
-                <Typography variant="body3" className="text-mono-100">
-                  Slash %:
-                </Typography>
-                <Typography variant="body3" className="text-red-500">
-                  {selectedSlash ? formatSlashBps(selectedSlash.slashBps) : '-'}
-                </Typography>
-                <Typography variant="body3" className="text-mono-100">
-                  Effective Slash %:
-                </Typography>
-                <Typography variant="body3" className="text-red-500">
-                  {selectedSlash
-                    ? formatSlashBps(selectedSlash.effectiveSlashBps)
-                    : '-'}
-                </Typography>
-                <Typography variant="body3" className="text-mono-100">
-                  Dispute Deadline:
-                </Typography>
-                <Typography variant="body3">
-                  {selectedSlash
-                    ? formatDateTime(selectedSlash.executeAfter)
-                    : '-'}
-                </Typography>
-                <Typography variant="body3" className="text-mono-100">
-                  Time Remaining:
-                </Typography>
-                <Typography variant="body3">
-                  {selectedSlashEligibility
-                    ? formatTimeRemaining(
-                        selectedSlashEligibility.secondsUntilDeadline,
-                      )
-                    : '-'}
-                </Typography>
-                <Typography variant="body3" className="text-mono-100">
-                  Proposer:
-                </Typography>
-                <Typography variant="body3" className="font-mono">
-                  {selectedSlash ? shortenHex(selectedSlash.proposer) : '-'}
-                </Typography>
-                <Typography variant="body3" className="text-mono-100">
-                  Proposer Role:
-                </Typography>
-                <Typography variant="body3">
-                  {selectedSlash
-                    ? getSlashProposerRoleLabel(selectedSlash.proposerRole)
-                    : '-'}
-                </Typography>
-                <Typography variant="body3" className="text-mono-100">
-                  Claim Context:
-                </Typography>
-                <Typography
-                  variant="body3"
-                  title={
-                    selectedSlash ? getSlashClaimContext(selectedSlash) : '-'
-                  }
-                >
-                  {selectedSlash ? getSlashClaimContext(selectedSlash) : '-'}
-                </Typography>
-                <Typography variant="body3" className="text-mono-100">
-                  Evidence Hash:
-                </Typography>
-                <Typography variant="body3" className="font-mono break-all">
-                  {selectedSlash?.evidence ?? '-'}
-                </Typography>
-              </div>
-            </div>
-            <div>
-              <Typography variant="body2" className="mb-1">
-                Reason for Dispute
-              </Typography>
-              <textarea
-                className="w-full p-3 rounded-lg border border-mono-40 dark:border-mono-140 bg-mono-0 dark:bg-mono-180 text-sm resize-none focus:outline-none focus:ring-2 focus:ring-purple-500"
-                rows={4}
-                value={disputeReason}
-                onChange={(event) => setDisputeReason(event.target.value)}
-                placeholder="Explain why this slash proposal is invalid..."
-              />
-              <Typography variant="body3" className="text-mono-100 mt-1">
-                Minimum {MIN_DISPUTE_REASON_LENGTH} characters (
-                {trimmedDisputeReason.length}/{MIN_DISPUTE_REASON_LENGTH}).
-              </Typography>
-              {!selectedSlashPermissions?.canDispute ? (
-                <Typography variant="body3" className="text-red-500 mt-1">
-                  {selectedSlashPermissions?.disputeReason ??
-                    'Dispute is not available for this slash.'}
-                </Typography>
-              ) : null}
-            </div>
-          </ModalBody>
-          <ModalFooterActions
-            hasCloseButton
-            isConfirmDisabled={disputeStatus === 'pending' || !canSubmitDispute}
-            isProcessing={disputeStatus === 'pending'}
-            confirmButtonText="Submit Dispute"
-            onConfirm={handleDispute}
-          />
-        </ModalContent>
-      </Modal>
+      <DisputeSlashModal
+        open={showDisputeModal}
+        onOpenChange={(open) => {
+          setShowDisputeModal(open);
+          if (!open) {
+            clearActionError('dispute');
+          }
+        }}
+        selectedSlash={selectedSlash}
+        selectedSlashEligibility={selectedSlashEligibility}
+        selectedSlashPermissions={selectedSlashPermissions}
+        disputeReason={disputeReason}
+        onDisputeReasonChange={setDisputeReason}
+        minDisputeReasonLength={MIN_DISPUTE_REASON_LENGTH}
+        trimmedDisputeReasonLength={trimmedDisputeReason.length}
+        canSubmitDispute={canSubmitDispute}
+        isSubmitting={disputeStatus === 'pending'}
+        onConfirm={() => void handleDispute()}
+        errorMessage={actionError.dispute}
+        onDismissError={() => clearActionError('dispute')}
+      />
 
-      {/* Cancel Slash Modal */}
-      <Modal open={showCancelModal} onOpenChange={setShowCancelModal}>
-        <ModalContent>
-          <ModalHeader>Cancel Slash Proposal</ModalHeader>
-          <ModalBody>
-            <Typography variant="body1" className="mb-2">
-              Cancel slash proposal #{selectedSlash?.id.toString()}
-            </Typography>
-            <Typography variant="body2" className="text-mono-100 mb-2">
-              Admin-only action. Authorization is validated on-chain at
-              submission time.
-            </Typography>
-            <div>
-              <Typography variant="body2" className="mb-1">
-                Reason for cancellation
-              </Typography>
-              <textarea
-                className="w-full p-3 rounded-lg border border-mono-40 dark:border-mono-140 bg-mono-0 dark:bg-mono-180 text-sm resize-none focus:outline-none focus:ring-2 focus:ring-purple-500"
-                rows={4}
-                value={cancelReason}
-                onChange={(event) => setCancelReason(event.target.value)}
-                placeholder="Provide cancellation reason..."
-              />
-              <Typography variant="body3" className="text-mono-100 mt-1">
-                Minimum {MIN_CANCEL_REASON_LENGTH} characters (
-                {trimmedCancelReason.length}/{MIN_CANCEL_REASON_LENGTH}).
-              </Typography>
-              {!selectedSlashPermissions?.canCancel ? (
-                <Typography variant="body3" className="text-red-500 mt-1">
-                  {selectedSlashPermissions?.cancelReason ??
-                    'Cancellation is not available for this slash.'}
-                </Typography>
-              ) : null}
-            </div>
-          </ModalBody>
-          <ModalFooterActions
-            hasCloseButton
-            isConfirmDisabled={cancelStatus === 'pending' || !canSubmitCancel}
-            isProcessing={cancelStatus === 'pending'}
-            confirmButtonText="Cancel Slash"
-            onConfirm={handleCancel}
-          />
-        </ModalContent>
-      </Modal>
+      <CancelSlashModal
+        open={showCancelModal}
+        onOpenChange={(open) => {
+          setShowCancelModal(open);
+          if (!open) {
+            clearActionError('cancel');
+          }
+        }}
+        selectedSlash={selectedSlash}
+        selectedSlashPermissions={selectedSlashPermissions}
+        cancelReason={cancelReason}
+        onCancelReasonChange={setCancelReason}
+        minCancelReasonLength={MIN_CANCEL_REASON_LENGTH}
+        trimmedCancelReasonLength={trimmedCancelReason.length}
+        canSubmitCancel={canSubmitCancel}
+        isSubmitting={cancelStatus === 'pending'}
+        onConfirm={() => void handleCancel()}
+        errorMessage={actionError.cancel}
+        onDismissError={() => clearActionError('cancel')}
+      />
 
-      {/* Timeline Modal */}
-      <Modal open={showTimelineModal} onOpenChange={setShowTimelineModal}>
-        <ModalContent>
-          <ModalHeader>Slash Timeline</ModalHeader>
-          <ModalBody>
-            <Typography variant="body1" className="mb-3">
-              Slash proposal #{selectedSlash?.id.toString()}
-            </Typography>
-            <div className="space-y-3">
-              {selectedSlashTimeline
-                .filter(
-                  (stage) =>
-                    stage.state !== 'upcoming' && stage.state !== 'skipped',
-                )
-                .map((stage) => {
-                  const colorByState: Record<
-                    typeof stage.state,
-                    'green' | 'blue' | 'yellow' | 'dark-grey' | 'red'
-                  > = {
-                    done: 'green',
-                    current: 'blue',
-                    upcoming: 'yellow',
-                    skipped: 'dark-grey',
-                  };
-
-                  return (
-                    <div
-                      key={stage.key}
-                      className="flex items-start gap-3 rounded-lg border border-mono-40 dark:border-mono-140 p-3"
-                    >
-                      <Chip
-                        color={colorByState[stage.state]}
-                        className="min-w-[5.25rem] justify-center"
-                      >
-                        {stage.state.toUpperCase()}
-                      </Chip>
-                      <div className="space-y-1">
-                        <Typography variant="body2" fw="bold">
-                          {stage.label}
-                        </Typography>
-                        <Typography variant="body3" className="text-mono-100">
-                          {stage.description}
-                        </Typography>
-                        {stage.timestamp !== null && (
-                          <Typography variant="body3" className="text-mono-120">
-                            {formatDateTime(stage.timestamp)}
-                          </Typography>
-                        )}
-                      </div>
-                    </div>
-                  );
-                })}
-            </div>
-          </ModalBody>
-          <ModalFooterActions
-            confirmButtonText="Close"
-            onConfirm={() => setShowTimelineModal(false)}
-          />
-        </ModalContent>
-      </Modal>
+      <TimelineModal
+        open={showTimelineModal}
+        onOpenChange={setShowTimelineModal}
+        selectedSlash={selectedSlash}
+        timeline={selectedSlashTimeline}
+      />
     </div>
   );
 };
