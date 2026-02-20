@@ -436,10 +436,7 @@ export const getSlashActionPermissions = ({
 };
 
 export const buildSlashTimeline = (
-  slash: Pick<
-    SlashProposal,
-    'status' | 'proposedAt' | 'executeAfter' | 'disputeReason'
-  >,
+  slash: Pick<SlashProposal, 'status' | 'proposedAt' | 'executeAfter'>,
   nowUnixSeconds = Math.floor(Date.now() / 1000),
 ): SlashTimelineStage[] => {
   const disputeEligibility = getSlashDisputeEligibility(slash, nowUnixSeconds);
@@ -476,16 +473,18 @@ export const buildSlashTimeline = (
     state:
       slash.status === 'Disputed'
         ? 'current'
-        : slash.disputeReason && slash.disputeReason.trim().length > 0
-          ? 'done'
-          : slash.status === 'Cancelled' || slash.status === 'Executed'
-            ? 'skipped'
-            : 'upcoming',
+        : slash.status === 'Cancelled' || slash.status === 'Executed'
+          ? 'skipped'
+          : 'upcoming',
     timestamp: null,
     description:
       slash.status === 'Disputed'
-        ? 'Proposal is currently disputed.'
-        : 'No dispute recorded for this proposal.',
+        ? 'Proposal is currently under dispute.'
+        : slash.status === 'Cancelled'
+          ? 'Proposal was cancelled.'
+          : slash.status === 'Executed'
+            ? 'No dispute was filed before execution.'
+            : 'No dispute filed yet.',
   };
 
   const executed: SlashTimelineStage = {
@@ -496,9 +495,7 @@ export const buildSlashTimeline = (
         ? 'current'
         : slash.status === 'Cancelled'
           ? 'skipped'
-          : executionEligibility.isEligible
-            ? 'upcoming'
-            : 'upcoming',
+          : 'upcoming',
     timestamp: null,
     description:
       slash.status === 'Executed'
