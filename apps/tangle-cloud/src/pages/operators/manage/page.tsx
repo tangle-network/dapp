@@ -535,16 +535,6 @@ const Page: FC = () => {
     );
   }, [proposableServices, proposeServiceId]);
 
-  useEffect(() => {
-    if (!selectedProposableService) {
-      return;
-    }
-
-    const firstOperator = selectedProposableService.operatorCandidates[0];
-    if (firstOperator && proposeOperator.length === 0) {
-      setProposeOperator(firstOperator);
-    }
-  }, [selectedProposableService, proposeOperator.length]);
 
   const proposableServiceOptions = useMemo(() => {
     return (proposableServices ?? []).map((service) => ({
@@ -564,7 +554,7 @@ const Page: FC = () => {
     }
 
     if (!isAddress(proposeOperator)) {
-      return 'Operator must be a valid EVM address.';
+      return 'Please select an operator.';
     }
 
     const slashBps = Number(proposeSlashBps);
@@ -1825,7 +1815,7 @@ const Page: FC = () => {
                       Service
                     </Typography>
                     <select
-                      className="w-full rounded-lg border border-mono-60 dark:border-mono-140 px-3 py-2 bg-mono-0 dark:bg-mono-180"
+                      className="w-full rounded-lg border border-mono-60 dark:border-mono-140 px-3 py-2 bg-mono-0 dark:bg-mono-200"
                       value={proposeServiceId}
                       onChange={(event) =>
                         setProposeServiceId(event.target.value)
@@ -1844,36 +1834,30 @@ const Page: FC = () => {
                     <Typography variant="body3" className="mb-1">
                       Operator
                     </Typography>
-                    {selectedProposableService &&
-                    selectedProposableService.operatorCandidates.length > 0 ? (
-                      <select
-                        className="w-full rounded-lg border border-mono-60 dark:border-mono-140 px-3 py-2 bg-mono-0 dark:bg-mono-180"
-                        value={proposeOperator}
-                        onChange={(event) =>
-                          setProposeOperator(event.target.value)
-                        }
-                      >
-                        <option value="">Select operator</option>
-                        {selectedProposableService.operatorCandidates.map(
-                          (operatorAddress) => (
-                            <option
-                              key={operatorAddress}
-                              value={operatorAddress}
-                            >
-                              {operatorAddress}
-                            </option>
-                          ),
-                        )}
-                      </select>
-                    ) : (
-                      <Input
-                        id="propose-operator"
-                        isControlled
-                        value={proposeOperator}
-                        onChange={(value) => setProposeOperator(value)}
-                        placeholder="0x..."
-                      />
-                    )}
+                    <select
+                      className="w-full rounded-lg border border-mono-60 dark:border-mono-140 px-3 py-2 bg-mono-0 dark:bg-mono-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                      value={proposeOperator}
+                      onChange={(event) =>
+                        setProposeOperator(event.target.value)
+                      }
+                      disabled={!selectedProposableService}
+                    >
+                      <option value="">
+                        {selectedProposableService
+                          ? 'Select operator'
+                          : 'Select a service first'}
+                      </option>
+                      {selectedProposableService?.operatorCandidates.map(
+                        (operatorAddress) => (
+                          <option
+                            key={operatorAddress}
+                            value={operatorAddress}
+                          >
+                            {operatorAddress}
+                          </option>
+                        ),
+                      )}
+                    </select>
                   </div>
 
                   <div>
