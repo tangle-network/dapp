@@ -535,7 +535,6 @@ const Page: FC = () => {
     );
   }, [proposableServices, proposeServiceId]);
 
-
   const proposableServiceOptions = useMemo(() => {
     return (proposableServices ?? []).map((service) => ({
       value: service.serviceId.toString(),
@@ -1508,7 +1507,17 @@ const Page: FC = () => {
         </Typography>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <Card className="p-4">
+          <Typography variant="body2" className="text-mono-100">
+            Active Registrations
+          </Typography>
+          <Typography variant="h4" className="mt-1">
+            {registrations?.filter((registration) => registration.active)
+              .length ?? 0}
+          </Typography>
+        </Card>
+
         <Card className="p-4">
           <Typography variant="body2" className="text-mono-100">
             Active Against You
@@ -1524,25 +1533,6 @@ const Page: FC = () => {
           </Typography>
           <Typography variant="h4" className="mt-1">
             {myActiveProposalCount}
-          </Typography>
-        </Card>
-
-        <Card className="p-4">
-          <Typography variant="body2" className="text-mono-100">
-            Executable Now
-          </Typography>
-          <Typography variant="h4" className="mt-1">
-            {executableSlashIdSet.size}
-          </Typography>
-        </Card>
-
-        <Card className="p-4">
-          <Typography variant="body2" className="text-mono-100">
-            Active Registrations
-          </Typography>
-          <Typography variant="h4" className="mt-1">
-            {registrations?.filter((registration) => registration.active)
-              .length ?? 0}
           </Typography>
         </Card>
       </div>
@@ -1860,10 +1850,7 @@ const Page: FC = () => {
                       </option>
                       {selectedProposableService?.operatorCandidates.map(
                         (operatorAddress) => (
-                          <option
-                            key={operatorAddress}
-                            value={operatorAddress}
-                          >
+                          <option key={operatorAddress} value={operatorAddress}>
                             {operatorAddress}
                           </option>
                         ),
@@ -2112,7 +2099,10 @@ const Page: FC = () => {
             </Typography>
             <div className="space-y-3">
               {selectedSlashTimeline
-                .filter((stage) => stage.state !== 'upcoming')
+                .filter(
+                  (stage) =>
+                    stage.state !== 'upcoming' && stage.state !== 'skipped',
+                )
                 .map((stage) => {
                   const colorByState: Record<
                     typeof stage.state,
@@ -2129,7 +2119,10 @@ const Page: FC = () => {
                       key={stage.key}
                       className="flex items-start gap-3 rounded-lg border border-mono-40 dark:border-mono-140 p-3"
                     >
-                      <Chip color={colorByState[stage.state]}>
+                      <Chip
+                        color={colorByState[stage.state]}
+                        className="min-w-[5.25rem] justify-center"
+                      >
                         {stage.state.toUpperCase()}
                       </Chip>
                       <div className="space-y-1">
@@ -2139,11 +2132,11 @@ const Page: FC = () => {
                         <Typography variant="body3" className="text-mono-100">
                           {stage.description}
                         </Typography>
-                        <Typography variant="body3" className="text-mono-120">
-                          {stage.timestamp !== null
-                            ? formatDateTime(stage.timestamp)
-                            : 'Timestamp unavailable'}
-                        </Typography>
+                        {stage.timestamp !== null && (
+                          <Typography variant="body3" className="text-mono-120">
+                            {formatDateTime(stage.timestamp)}
+                          </Typography>
+                        )}
                       </div>
                     </div>
                   );
