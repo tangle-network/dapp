@@ -209,7 +209,8 @@ const getSlashProposerRole = (
   return 'SlashingOrigin';
 };
 
-const toHexByte = (value: number): string => value.toString(16).padStart(2, '0');
+const toHexByte = (value: number): string =>
+  value.toString(16).padStart(2, '0');
 
 /**
  * Normalize user evidence into bytes32:
@@ -338,8 +339,10 @@ export const getSlashExecutionEligibility = (
       isEligible: false,
       reason: 'Disputed',
       secondsUntilExecutable:
-        getSlashDeadlineTimeRemainingSeconds(slash.executeAfter, nowUnixSeconds) +
-        SLASH_EXECUTION_BUFFER_SECONDS,
+        getSlashDeadlineTimeRemainingSeconds(
+          slash.executeAfter,
+          nowUnixSeconds,
+        ) + SLASH_EXECUTION_BUFFER_SECONDS,
     };
   }
 
@@ -348,8 +351,10 @@ export const getSlashExecutionEligibility = (
       isEligible: false,
       reason: 'NotPending',
       secondsUntilExecutable:
-        getSlashDeadlineTimeRemainingSeconds(slash.executeAfter, nowUnixSeconds) +
-        SLASH_EXECUTION_BUFFER_SECONDS,
+        getSlashDeadlineTimeRemainingSeconds(
+          slash.executeAfter,
+          nowUnixSeconds,
+        ) + SLASH_EXECUTION_BUFFER_SECONDS,
     };
   }
 
@@ -403,7 +408,7 @@ export const getSlashActionPermissions = ({
   const canExecute = executionEligibility.isEligible;
   const executeReason = !canExecute
     ? executionEligibility.reason === 'DisputeWindowOpen'
-      ? `Dispute window still open (${executionEligibility.secondsUntilExecutable}s remaining).`
+      ? `Dispute window still open. Executable after ${new Date(Number(slash.executeAfter) * 1000).toLocaleString()}.`
       : executionEligibility.reason === 'Disputed'
         ? 'Disputed slashes cannot be executed.'
         : 'Slash is not pending.'
@@ -547,7 +552,10 @@ const toPrimitiveSlashProposal = (
   };
 };
 
-const buildSlashWhereClause = ({ scope, address }: SlashFilterOptions): string => {
+const buildSlashWhereClause = ({
+  scope,
+  address,
+}: SlashFilterOptions): string => {
   if (!address || scope === 'all') {
     return '';
   }
@@ -657,7 +665,9 @@ const fetchSlashProposals = async (
     );
   }
 
-  let proposals = (result.data.SlashProposal ?? []).map(toPrimitiveSlashProposal);
+  let proposals = (result.data.SlashProposal ?? []).map(
+    toPrimitiveSlashProposal,
+  );
 
   if (options.statuses && options.statuses.length > 0) {
     const allowed = new Set(options.statuses);
@@ -737,15 +747,21 @@ const normalizeOnChainSlashProposal = (
     proposal?.serviceId !== undefined
       ? BigInt(proposal.serviceId.toString())
       : BigInt(proposal?.[0]?.toString() ?? 0);
-  const operator = (proposal?.operator ?? proposal?.[1] ?? zeroAddress) as Address;
-  const proposer = (proposal?.proposer ?? proposal?.[2] ?? zeroAddress) as Address;
+  const operator = (proposal?.operator ??
+    proposal?.[1] ??
+    zeroAddress) as Address;
+  const proposer = (proposal?.proposer ??
+    proposal?.[2] ??
+    zeroAddress) as Address;
   const slashBps = BigInt(
     proposal?.slashBps?.toString() ?? proposal?.[3]?.toString() ?? 0,
   );
   const effectiveSlashBps = BigInt(
     proposal?.effectiveSlashBps?.toString() ?? proposal?.[4]?.toString() ?? 0,
   );
-  const evidence = (proposal?.evidence ?? proposal?.[5] ?? '0x') as `0x${string}`;
+  const evidence = (proposal?.evidence ??
+    proposal?.[5] ??
+    '0x') as `0x${string}`;
   const proposedAt = BigInt(
     proposal?.proposedAt?.toString() ?? proposal?.[6]?.toString() ?? 0,
   );
@@ -786,7 +802,12 @@ export const useSlashProposals = (options?: {
   address?: Address;
   statuses?: SlashStatus[];
 }) => {
-  const { network, enabled = true, scope = 'operator', statuses } = options ?? {};
+  const {
+    network,
+    enabled = true,
+    scope = 'operator',
+    statuses,
+  } = options ?? {};
   const chainId = useChainId();
   const { address, isConnected } = useAccount();
   const networkChainId = useNetworkStore((store) => store.network2?.evmChainId);
@@ -839,7 +860,12 @@ export const useProposableServices = (options?: {
   const resolvedAddress = options?.address ?? address;
 
   return useQuery({
-    queryKey: ['slashing', 'proposableServices', resolvedNetwork, resolvedAddress],
+    queryKey: [
+      'slashing',
+      'proposableServices',
+      resolvedNetwork,
+      resolvedAddress,
+    ],
     queryFn: async () => {
       if (!resolvedAddress) return [];
       return fetchProposableServices(resolvedAddress, resolvedNetwork);
@@ -1227,7 +1253,9 @@ export const useExecuteSlashBatchTx = () => {
     },
   );
 
-  const executeSlashBatch = async (slashIds: bigint[]): Promise<Hash | null> => {
+  const executeSlashBatch = async (
+    slashIds: bigint[],
+  ): Promise<Hash | null> => {
     if (slashIds.length === 0) {
       return null;
     }
