@@ -5,6 +5,7 @@ import { RowData, type useReactTable } from '@tanstack/react-table';
 
 export interface TangleCloudTableProps<T extends RowData> {
   title: string;
+  hideTitle?: boolean;
   data: T[];
   isLoading: boolean;
   error: Error | null;

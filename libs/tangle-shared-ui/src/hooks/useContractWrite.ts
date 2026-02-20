@@ -186,6 +186,11 @@ export interface TxResult {
   hash: Hash;
   status: 'success' | 'reverted';
   blockNumber: bigint;
+  /**
+   * Result returned by viem simulation for the executed function.
+   * Useful for non-view writes that return values (e.g. proposed slash ID).
+   */
+  simulatedResult?: unknown;
 }
 
 // Contract call configuration
@@ -364,6 +369,7 @@ const useContractWrite = <
         // This avoids wallet/provider-specific issues that can prevent the signing prompt.
         type WriteRequest = Parameters<typeof writeContract>[1];
         let request: WriteRequest | null = null;
+        let simulatedResult: unknown = undefined;
 
         try {
           const simulated = await simulateContract(publicClient, {
@@ -375,6 +381,7 @@ const useContractWrite = <
             account: activeAddress,
           });
           request = simulated.request as WriteRequest;
+          simulatedResult = simulated.result;
         } catch (simulateError) {
           // If simulation fails due to an RPC transport issue, fall back to sending directly.
           // This preserves the normal "wallet pops up" UX in local/dev environments.
@@ -443,6 +450,7 @@ const useContractWrite = <
           hash,
           status: receipt.status,
           blockNumber: receipt.blockNumber,
+          simulatedResult,
         };
 
         setResult(txResult);

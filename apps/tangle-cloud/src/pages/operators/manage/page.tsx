@@ -1,8 +1,8 @@
 /**
- * Operator management page - view and manage blueprint registrations and slashing.
+ * Operator management page - blueprint registration and full slashing lifecycle.
  */
 
-import { FC, useState, useMemo, useCallback, useEffect } from 'react';
+import { FC, useCallback, useMemo, useState } from 'react';
 import {
   Card,
   Typography,
@@ -29,11 +29,17 @@ import {
   useActiveServiceMemberships,
   useSlashProposals,
   useDisputeSlashTx,
+  useCancelSlashTx,
+  useProposeSlashTx,
+  useExecuteSlashTx,
+  useExecutableSlashes,
+  useProposableServices,
   getSlashDisputeEligibility,
+  getSlashExecutionEligibility,
+  getSlashActionPermissions,
+  buildSlashTimeline,
   formatSlashBps,
   type OperatorRegistration,
-  type SlashProposerRole,
-  type SlashStatus,
   type SlashProposal,
 } from '@tangle-network/tangle-shared-ui/data/graphql';
 import { MembershipModel } from '@tangle-network/tangle-shared-ui/data/services';
@@ -47,6 +53,30 @@ import {
 import { TangleCloudTable } from '../../../components/tangleCloudTable/TangleCloudTable';
 import TableCellWrapper from '@tangle-network/tangle-shared-ui/components/tables/TableCellWrapper';
 import ConnectWalletButton from '@tangle-network/tangle-shared-ui/components/ConnectWalletButton';
+import { InformationLine } from '@tangle-network/icons';
+import {
+  ECDSA_PUBLIC_KEY_HEX_LENGTH,
+  MIN_CANCEL_REASON_LENGTH,
+  MIN_DISPUTE_REASON_LENGTH,
+  SlashingTab,
+} from './constants';
+import {
+  formatDateTime,
+  formatTimeRemaining,
+  getSlashProposerRoleChipColor,
+  getSlashProposerRoleLabel,
+  isValidEcdsaPublicKey,
+} from './utils';
+import useChainClock from './hooks/useChainClock';
+import useSlashProposalForm from './hooks/useSlashProposalForm';
+import useSlashActions from './hooks/useSlashActions';
+import SlashingSummaryCards from './components/SlashingSummaryCards';
+import SlashingTabsTable from './components/SlashingTabsTable';
+import ProposeSlashModal from './components/modals/ProposeSlashModal';
+import DisputeMessageModal from './components/modals/DisputeMessageModal';
+import DisputeSlashModal from './components/modals/DisputeSlashModal';
+import CancelSlashModal from './components/modals/CancelSlashModal';
+import TimelineModal from './components/modals/TimelineModal';
 
 const registrationColumnHelper = createColumnHelper<OperatorRegistration>();
 const slashColumnHelper = createColumnHelper<SlashProposal>();
@@ -62,9 +92,6 @@ interface BlueprintServiceBreakdown {
   dynamicCount: number;
   totalCount: number;
 }
-
-const MIN_DISPUTE_REASON_LENGTH = 20;
-const ECDSA_PUBLIC_KEY_HEX_LENGTH = 132; // 65-byte key => "0x" + 130 hex chars
 
 const getRegistrationActionState = (
   registration: OperatorRegistration,
@@ -123,157 +150,18 @@ const getRegistrationActionState = (
   };
 };
 
-const formatDateTime = (unixSeconds: bigint): string =>
-  new Date(Number(unixSeconds) * 1000).toLocaleString();
-
-const formatTimeRemaining = (secondsUntilDeadline: number): string => {
-  if (secondsUntilDeadline <= 0) {
-    return 'Expired';
-  }
-
-  const days = Math.floor(secondsUntilDeadline / 86_400);
-  const hours = Math.floor((secondsUntilDeadline % 86_400) / 3_600);
-  const minutes = Math.floor((secondsUntilDeadline % 3_600) / 60);
-  const seconds = secondsUntilDeadline % 60;
-
-  if (days > 0) {
-    return `${days}d ${hours}h ${minutes}m`;
-  }
-  if (hours > 0) {
-    return `${hours}h ${minutes}m`;
-  }
-  if (minutes > 0) {
-    return `${minutes}m ${seconds}s`;
-  }
-
-  return `${seconds}s`;
-};
-
-const getSlashStatusReason = (
-  status: SlashStatus,
-  deadlineReason: 'NotPending' | 'DeadlinePassed' | null,
-): string | null => {
-  if (status === 'Pending' && deadlineReason === 'DeadlinePassed') {
-    return 'Dispute window closed';
-  }
-
-  if (status === 'Executed') {
-    return 'Already executed';
-  }
-  if (status === 'Cancelled') {
-    return 'Cancelled';
-  }
-
-  return null;
-};
-
-const decodeBytes32Ascii = (value: `0x${string}`): string | null => {
-  if (!value || value.length !== 66) {
-    return null;
-  }
-
-  const hex = value.slice(2).toLowerCase();
-  let decoded = '';
-
-  for (let i = 0; i < hex.length; i += 2) {
-    const byte = Number.parseInt(hex.slice(i, i + 2), 16);
-    if (!Number.isFinite(byte)) {
-      return null;
-    }
-    if (byte === 0) {
-      break;
-    }
-    if (byte < 32 || byte > 126) {
-      return null;
-    }
-    decoded += String.fromCharCode(byte);
-  }
-
-  const text = decoded.trim();
-  return text.length > 0 ? text : null;
-};
-
-const getSlashClaimContext = (slash: SlashProposal): string => {
-  const cancelReason = slash.cancelReason?.trim();
-  if (cancelReason) {
-    return `Cancel reason: ${cancelReason}`;
-  }
-
-  const evidenceText = decodeBytes32Ascii(slash.evidence);
-  if (evidenceText) {
-    return `Claim: ${evidenceText}`;
-  }
-
-  return 'No human-readable reason on-chain';
-};
-
-const getSlashDisputeMessage = (slash: SlashProposal): string | null => {
-  const disputeReason = slash.disputeReason?.trim();
-  return disputeReason ? disputeReason : null;
-};
-
-const getSlashProposerRoleLabel = (role: SlashProposerRole): string => {
-  if (role === 'ServiceOwner') {
-    return 'Service Owner';
-  }
-  if (role === 'BlueprintOwner') {
-    return 'Blueprint Owner';
-  }
-  if (role === 'SlashingOrigin') {
-    return 'Slashing Origin';
-  }
-
-  return 'Authorized Proposer';
-};
-
-const getSlashProposerRoleChipColor = (
-  role: SlashProposerRole,
-): 'green' | 'blue' | 'yellow' | 'dark-grey' => {
-  if (role === 'ServiceOwner') {
-    return 'green';
-  }
-  if (role === 'BlueprintOwner') {
-    return 'blue';
-  }
-  if (role === 'SlashingOrigin') {
-    return 'yellow';
-  }
-
-  return 'dark-grey';
-};
-
-const isValidEcdsaPublicKey = (value: string): boolean =>
-  /^0x[0-9a-fA-F]+$/.test(value) &&
-  value.length === ECDSA_PUBLIC_KEY_HEX_LENGTH;
-
 const Page: FC = () => {
   const { address, isConnected } = useAccount();
   const queryClient = useQueryClient();
-  const [nowUnixSeconds, setNowUnixSeconds] = useState(() =>
-    Math.floor(Date.now() / 1000),
-  );
+  const { nowUnixSeconds, clockError, refreshNow } = useChainClock();
 
-  useEffect(() => {
-    const interval = window.setInterval(() => {
-      setNowUnixSeconds(Math.floor(Date.now() / 1000));
-    }, 1000);
-
-    return () => window.clearInterval(interval);
-  }, []);
-
-  // Data hooks
+  // Data hooks (registration)
   const {
     data: registrations,
     isLoading: loadingRegistrations,
     error: registrationsError,
     refetch: refetchRegistrations,
   } = useOperatorRegistrations();
-  const {
-    data: slashProposals,
-    isLoading: loadingSlash,
-    error: slashError,
-    refetch: refetchSlashProposals,
-  } = useSlashProposals();
   const {
     data: activeServices,
     error: activeServicesError,
@@ -283,31 +171,230 @@ const Page: FC = () => {
     status: 'ACTIVE',
   });
 
-  // Transaction hooks
+  // Data hooks (slashing)
+  const {
+    data: slashProposals,
+    isLoading: loadingSlash,
+    error: slashError,
+    refetch: refetchSlashProposals,
+  } = useSlashProposals({
+    scope: 'all',
+    enabled: isConnected,
+  });
+  const { data: proposableServices, isLoading: loadingProposableServices } =
+    useProposableServices({
+      enabled: isConnected,
+    });
+  const { data: executableSlashIds, refetch: refetchExecutableSlashes } =
+    useExecutableSlashes({
+      enabled: isConnected,
+      proposals: slashProposals,
+    });
+
+  // Transaction hooks (registration)
   const { unregisterOperator, status: unregisterStatus } =
     useUnregisterOperatorTx();
   const { updatePreferences, status: updateStatus } =
     useUpdateOperatorPreferencesTx();
-  const { disputeSlash, status: disputeStatus } = useDisputeSlashTx();
 
-  // Modal state
+  // Transaction hooks (slashing)
+  const { proposeSlash, status: proposeStatus } = useProposeSlashTx();
+  const { disputeSlash, status: disputeStatus } = useDisputeSlashTx();
+  const { cancelSlash, status: cancelStatus } = useCancelSlashTx();
+  const { executeSlash } = useExecuteSlashTx();
+
+  // Registration modal state
   const [selectedRegistration, setSelectedRegistration] =
     useState<OperatorRegistration | null>(null);
+  const [showUnregisterModal, setShowUnregisterModal] = useState(false);
+  const [showUpdateModal, setShowUpdateModal] = useState(false);
+  const [newRpcAddress, setNewRpcAddress] = useState('');
+  const [newEcdsaPublicKey, setNewEcdsaPublicKey] = useState('');
+
+  // Slashing state
   const [selectedSlash, setSelectedSlash] = useState<SlashProposal | null>(
     null,
   );
-  const [showUnregisterModal, setShowUnregisterModal] = useState(false);
-  const [showUpdateModal, setShowUpdateModal] = useState(false);
+  const [selectedSlashingTab, setSelectedSlashingTab] = useState<SlashingTab>(
+    SlashingTab.MY_PROPOSALS,
+  );
   const [showDisputeModal, setShowDisputeModal] = useState(false);
   const [showDisputeMessageModal, setShowDisputeMessageModal] = useState(false);
-
-  // Form state
-  const [newRpcAddress, setNewRpcAddress] = useState('');
-  const [newEcdsaPublicKey, setNewEcdsaPublicKey] = useState('');
+  const [showCancelModal, setShowCancelModal] = useState(false);
+  const [showTimelineModal, setShowTimelineModal] = useState(false);
+  const [showProposeModal, setShowProposeModal] = useState(false);
   const [disputeReason, setDisputeReason] = useState('');
+  const [cancelReason, setCancelReason] = useState('');
 
   const trimmedDisputeReason = disputeReason.trim();
+  const trimmedCancelReason = cancelReason.trim();
   const trimmedEcdsaPublicKey = newEcdsaPublicKey.trim();
+
+  const {
+    proposeServiceId,
+    setProposeServiceId,
+    proposeOperator,
+    setProposeOperator,
+    proposeSlashBps,
+    setProposeSlashBps,
+    proposeEvidence,
+    setProposeEvidence,
+    selectedProposableService,
+    proposableServiceOptions,
+    evidenceNormalization,
+    proposeValidationError,
+    canSubmitPropose,
+    resetForm: resetProposeForm,
+  } = useSlashProposalForm({
+    proposableServices,
+    proposeStatus,
+  });
+
+  const executableSlashIdSet = useMemo(() => {
+    const set = new Set<string>();
+    for (const id of executableSlashIds ?? []) {
+      set.add(id.toString());
+    }
+    return set;
+  }, [executableSlashIds]);
+
+  const activeServiceIds = useMemo(
+    () => (activeServices ?? []).map((service) => service.serviceId),
+    [activeServices],
+  );
+
+  const { data: serviceMemberships } = useActiveServiceMemberships(
+    activeServiceIds,
+    {
+      enabled: isConnected && activeServiceIds.length > 0,
+    },
+  );
+
+  const isMembershipLoaded = serviceMemberships !== undefined;
+
+  const breakdownByBlueprint = useMemo(() => {
+    const map = new Map<string, BlueprintServiceBreakdown>();
+
+    for (const service of activeServices ?? []) {
+      const blueprintId = service.blueprintId.toString();
+      const existing = map.get(blueprintId) ?? {
+        fixedCount: 0,
+        dynamicCount: 0,
+        totalCount: 0,
+      };
+
+      existing.totalCount += 1;
+
+      const membership = serviceMemberships?.get(service.serviceId.toString());
+      if (membership === MembershipModel.Fixed) {
+        existing.fixedCount += 1;
+      } else if (membership === MembershipModel.Dynamic) {
+        existing.dynamicCount += 1;
+      }
+
+      map.set(blueprintId, existing);
+    }
+
+    return map;
+  }, [activeServices, serviceMemberships]);
+
+  const isActiveServicePrecheckUnavailable = Boolean(activeServicesError);
+
+  const myProposals = useMemo(() => {
+    if (!address) {
+      return [] as SlashProposal[];
+    }
+
+    return (slashProposals ?? []).filter(
+      (slash) => slash.proposer.toLowerCase() === address.toLowerCase(),
+    );
+  }, [address, slashProposals]);
+
+  const againstMe = useMemo(() => {
+    if (!address) {
+      return [] as SlashProposal[];
+    }
+
+    return (slashProposals ?? []).filter(
+      (slash) => slash.operator.toLowerCase() === address.toLowerCase(),
+    );
+  }, [address, slashProposals]);
+
+  const myActiveProposalCount = useMemo(
+    () =>
+      myProposals.filter(
+        (slash) => slash.status === 'Pending' || slash.status === 'Disputed',
+      ).length,
+    [myProposals],
+  );
+
+  const activeAgainstMeCount = useMemo(
+    () =>
+      againstMe.filter(
+        (slash) => slash.status === 'Pending' || slash.status === 'Disputed',
+      ).length,
+    [againstMe],
+  );
+
+  const selectedSlashEligibility = useMemo(() => {
+    if (!selectedSlash) {
+      return null;
+    }
+
+    return getSlashDisputeEligibility(selectedSlash, nowUnixSeconds);
+  }, [selectedSlash, nowUnixSeconds]);
+
+  const selectedSlashPermissions = useMemo(() => {
+    if (!selectedSlash) {
+      return null;
+    }
+
+    return getSlashActionPermissions({
+      slash: selectedSlash,
+      connectedAddress: address,
+      nowUnixSeconds,
+    });
+  }, [address, nowUnixSeconds, selectedSlash]);
+
+  const selectedSlashTimeline = useMemo(() => {
+    if (!selectedSlash) {
+      return [];
+    }
+
+    return buildSlashTimeline(selectedSlash, nowUnixSeconds);
+  }, [selectedSlash, nowUnixSeconds]);
+
+  const nearestPendingSlash = useMemo(() => {
+    const pendingAgainstMe = againstMe.filter(
+      (slash) => slash.status === 'Pending',
+    );
+
+    if (pendingAgainstMe.length === 0) {
+      return null;
+    }
+
+    return [...pendingAgainstMe].sort((a, b) => {
+      return Number(a.executeAfter) - Number(b.executeAfter);
+    })[0];
+  }, [againstMe]);
+
+  const nearestPendingSlashEligibility = useMemo(() => {
+    if (!nearestPendingSlash) {
+      return null;
+    }
+
+    return getSlashDisputeEligibility(nearestPendingSlash, nowUnixSeconds);
+  }, [nearestPendingSlash, nowUnixSeconds]);
+
+  const isDisputeReasonValid =
+    trimmedDisputeReason.length >= MIN_DISPUTE_REASON_LENGTH;
+  const canSubmitDispute =
+    !!selectedSlashPermissions?.canDispute && isDisputeReasonValid;
+
+  const isCancelReasonValid =
+    trimmedCancelReason.length >= MIN_CANCEL_REASON_LENGTH;
+  const canSubmitCancel =
+    !!selectedSlashPermissions?.canCancel && isCancelReasonValid;
 
   const resolvedRpcAddress = useMemo(() => {
     if (!selectedRegistration) {
@@ -370,83 +457,6 @@ const Page: FC = () => {
     }
   }, [newRpcAddress, selectedRegistration]);
 
-  const activeServiceIds = useMemo(
-    () => (activeServices ?? []).map((s) => s.serviceId),
-    [activeServices],
-  );
-
-  const { data: serviceMemberships } = useActiveServiceMemberships(
-    activeServiceIds,
-    {
-      enabled: isConnected && activeServiceIds.length > 0,
-    },
-  );
-
-  const isMembershipLoaded = serviceMemberships !== undefined;
-
-  const breakdownByBlueprint = useMemo(() => {
-    const map = new Map<string, BlueprintServiceBreakdown>();
-
-    for (const service of activeServices ?? []) {
-      const blueprintId = service.blueprintId.toString();
-      const existing = map.get(blueprintId) ?? {
-        fixedCount: 0,
-        dynamicCount: 0,
-        totalCount: 0,
-      };
-
-      existing.totalCount += 1;
-
-      const membership = serviceMemberships?.get(service.serviceId.toString());
-      if (membership === MembershipModel.Fixed) {
-        existing.fixedCount += 1;
-      } else if (membership === MembershipModel.Dynamic) {
-        existing.dynamicCount += 1;
-      }
-
-      map.set(blueprintId, existing);
-    }
-
-    return map;
-  }, [activeServices, serviceMemberships]);
-
-  const isActiveServicePrecheckUnavailable = Boolean(activeServicesError);
-
-  const selectedSlashEligibility = useMemo(() => {
-    if (!selectedSlash) {
-      return null;
-    }
-    return getSlashDisputeEligibility(selectedSlash, nowUnixSeconds);
-  }, [selectedSlash, nowUnixSeconds]);
-
-  const isDisputeReasonValid =
-    trimmedDisputeReason.length >= MIN_DISPUTE_REASON_LENGTH;
-  const canSubmitDispute =
-    !!selectedSlashEligibility?.isEligible && isDisputeReasonValid;
-
-  const pendingSlashProposals = useMemo(
-    () => (slashProposals ?? []).filter((slash) => slash.status === 'Pending'),
-    [slashProposals],
-  );
-
-  const nearestPendingSlash = useMemo(() => {
-    if (!pendingSlashProposals.length) {
-      return null;
-    }
-
-    return [...pendingSlashProposals].sort((a, b) => {
-      return Number(a.executeAfter) - Number(b.executeAfter);
-    })[0];
-  }, [pendingSlashProposals]);
-
-  const nearestPendingSlashEligibility = useMemo(() => {
-    if (!nearestPendingSlash) {
-      return null;
-    }
-
-    return getSlashDisputeEligibility(nearestPendingSlash, nowUnixSeconds);
-  }, [nearestPendingSlash, nowUnixSeconds]);
-
   const isNoopUpdate = useMemo(() => {
     if (!selectedRegistration) {
       return true;
@@ -465,8 +475,52 @@ const Page: FC = () => {
     return rpcUnchanged && keyUnchanged;
   }, [resolvedRpcAddress, selectedRegistration, trimmedEcdsaPublicKey]);
 
+  const {
+    actionError,
+    clearActionError,
+    handleProposeSlash,
+    handleDispute,
+    handleCancel,
+    handleExecuteSingle,
+  } = useSlashActions({
+    address,
+    nowUnixSeconds,
+    queryClient,
+    refetchSlashProposals: async () => {
+      const result = await refetchSlashProposals();
+      return { data: result.data };
+    },
+    refetchExecutableSlashes,
+    proposeSlash,
+    disputeSlash,
+    cancelSlash,
+    executeSlash,
+    executableSlashIdSet,
+    selectedSlash,
+    canSubmitDispute,
+    canSubmitCancel,
+    trimmedDisputeReason,
+    trimmedCancelReason,
+    canSubmitPropose,
+    proposeServiceId,
+    proposeOperator,
+    proposeSlashBps,
+    evidenceValue: evidenceNormalization.value,
+    resetProposeForm,
+    setSelectedSlashingTab,
+    setShowProposeModal,
+    setShowDisputeModal,
+    setShowCancelModal,
+    setSelectedSlash,
+    setDisputeReason,
+    setCancelReason,
+  });
+
   const handleUnregister = useCallback(async () => {
-    if (!selectedRegistration) return;
+    if (!selectedRegistration) {
+      return;
+    }
+
     const unregisteredBlueprintId = selectedRegistration.blueprintId;
     const result = await unregisterOperator(unregisteredBlueprintId);
     if (result) {
@@ -496,8 +550,9 @@ const Page: FC = () => {
       rpcAddressError ||
       ecdsaPublicKeyError ||
       !resolvedEcdsaPublicKey
-    )
+    ) {
       return;
+    }
 
     const updatedBlueprintId = selectedRegistration.blueprintId;
     const updatedRpcAddress = resolvedRpcAddress;
@@ -536,50 +591,13 @@ const Page: FC = () => {
       setNewEcdsaPublicKey('');
     }
   }, [
-    rpcAddressError,
     ecdsaPublicKeyError,
     queryClient,
     resolvedEcdsaPublicKey,
     resolvedRpcAddress,
+    rpcAddressError,
     selectedRegistration,
     updatePreferences,
-  ]);
-
-  const handleDispute = useCallback(async () => {
-    if (!selectedSlash || !canSubmitDispute) return;
-    const disputedSlashId = selectedSlash.id;
-    const disputeReason = trimmedDisputeReason;
-    const result = await disputeSlash(disputedSlashId, disputeReason);
-    if (result) {
-      queryClient.setQueriesData<SlashProposal[]>(
-        { queryKey: ['slashing', 'proposals'] },
-        (existingProposals) => {
-          if (!existingProposals) {
-            return existingProposals;
-          }
-
-          return existingProposals.map((proposal) =>
-            proposal.id === disputedSlashId
-              ? {
-                  ...proposal,
-                  status: 'Disputed',
-                  disputeReason,
-                }
-              : proposal,
-          );
-        },
-      );
-
-      setShowDisputeModal(false);
-      setSelectedSlash(null);
-      setDisputeReason('');
-    }
-  }, [
-    canSubmitDispute,
-    selectedSlash,
-    trimmedDisputeReason,
-    disputeSlash,
-    queryClient,
   ]);
 
   // Registration columns
@@ -639,8 +657,8 @@ const Page: FC = () => {
               size="sm"
               isDisabled={!actionState.canUnregister}
               className="uppercase body4 bg-red-10 dark:bg-red-120 text-red-70 dark:text-red-40 hover:bg-red-20 dark:hover:bg-red-110 border border-red-30 dark:border-red-100 disabled:!opacity-100 disabled:!text-mono-100 disabled:!border-mono-100/30 disabled:!bg-transparent dark:disabled:!text-mono-100 dark:disabled:!border-mono-120 dark:disabled:!bg-mono-160 disabled:cursor-not-allowed"
-              onClick={(e) => {
-                e.stopPropagation();
+              onClick={(event) => {
+                event.stopPropagation();
                 setSelectedRegistration(info.row.original);
                 setShowUnregisterModal(true);
               }}
@@ -658,8 +676,8 @@ const Page: FC = () => {
                       variant="utility"
                       size="sm"
                       className="uppercase body4 bg-blue-10 dark:bg-blue-120 text-blue-70 dark:text-blue-40 hover:bg-blue-20 dark:hover:bg-blue-110 border border-blue-30 dark:border-blue-100"
-                      onClick={(e) => {
-                        e.stopPropagation();
+                      onClick={(event) => {
+                        event.stopPropagation();
                         setSelectedRegistration(info.row.original);
                         setNewRpcAddress(
                           info.row.original.preferences.rpcAddress,
@@ -697,7 +715,7 @@ const Page: FC = () => {
     ],
   );
 
-  // Slash columns
+  // Slashing columns
   const slashColumns = useMemo(
     () => [
       slashColumnHelper.accessor('id', {
@@ -722,8 +740,43 @@ const Page: FC = () => {
           </TableCellWrapper>
         ),
       }),
+      slashColumnHelper.accessor('operator', {
+        header: () => 'Operator',
+        cell: (info) => (
+          <TableCellWrapper className="py-3 pr-3">
+            <div className="flex items-center gap-2 whitespace-nowrap">
+              <Typography
+                variant="body2"
+                className="font-mono whitespace-nowrap"
+              >
+                {shortenHex(info.getValue())}
+              </Typography>
+              <CopyWithTooltip
+                textToCopy={info.getValue()}
+                isButton={false}
+                iconSize="md"
+                iconClassName="!fill-mono-160 dark:!fill-mono-80"
+              />
+            </div>
+          </TableCellWrapper>
+        ),
+      }),
       slashColumnHelper.accessor('slashBps', {
-        header: () => 'Slash %',
+        header: () => (
+          <div className="flex items-center gap-1 !text-inherit">
+            Slash %
+            <Tooltip delayDuration={0}>
+              <TooltipTrigger asChild>
+                <span className="cursor-help">
+                  <InformationLine className="w-3.5 h-3.5 !fill-mono-120" />
+                </span>
+              </TooltipTrigger>
+              <TooltipBody className="max-w-[220px]">
+                The proposed slash percentage in basis points (100 bps = 1%).
+              </TooltipBody>
+            </Tooltip>
+          </div>
+        ),
         minSize: 120,
         cell: (info) => (
           <TableCellWrapper className="py-3 pr-3">
@@ -734,7 +787,23 @@ const Page: FC = () => {
         ),
       }),
       slashColumnHelper.accessor('effectiveSlashBps', {
-        header: () => 'Effective Slash %',
+        header: () => (
+          <div className="flex items-center gap-1 !text-inherit">
+            Effective Slash %
+            <Tooltip delayDuration={0}>
+              <TooltipTrigger asChild>
+                <span className="cursor-help">
+                  <InformationLine className="w-3.5 h-3.5 !fill-mono-120" />
+                </span>
+              </TooltipTrigger>
+              <TooltipBody className="max-w-[220px]">
+                The actual slash percentage applied after on-chain deductions
+                and adjustments.
+              </TooltipBody>
+            </Tooltip>
+          </div>
+        ),
+        minSize: 140,
         cell: (info) => (
           <TableCellWrapper className="py-3 pr-3">
             <Typography variant="body1" fw="semibold" className="text-red-500">
@@ -742,25 +811,6 @@ const Page: FC = () => {
             </Typography>
           </TableCellWrapper>
         ),
-      }),
-      slashColumnHelper.accessor('evidence', {
-        header: () => 'Claim Context',
-        cell: (info) => {
-          const slash = info.row.original;
-          const claimContext = getSlashClaimContext(slash);
-
-          return (
-            <TableCellWrapper className="py-3 pr-3">
-              <Typography
-                variant="body2"
-                className="max-w-[360px] truncate"
-                title={claimContext}
-              >
-                {claimContext}
-              </Typography>
-            </TableCellWrapper>
-          );
-        },
       }),
       slashColumnHelper.accessor('proposer', {
         header: () => 'Proposer',
@@ -809,39 +859,50 @@ const Page: FC = () => {
       }),
       slashColumnHelper.accessor('executeAfter', {
         header: () => 'Execute After',
-        cell: (info) => {
-          return (
-            <TableCellWrapper className="py-3 pr-3">
-              <Typography variant="body2">
-                {formatDateTime(info.getValue())}
-              </Typography>
-            </TableCellWrapper>
-          );
-        },
+        cell: (info) => (
+          <TableCellWrapper className="py-3 pr-3">
+            <Typography variant="body2">
+              {formatDateTime(info.getValue())}
+            </Typography>
+          </TableCellWrapper>
+        ),
       }),
       slashColumnHelper.display({
         id: 'actions',
         header: () => '',
         cell: (info) => {
           const slash = info.row.original;
-          const eligibility = getSlashDisputeEligibility(slash, nowUnixSeconds);
-          const showDisputeButton = slash.status === 'Pending';
-          const reasonText = getSlashStatusReason(
-            slash.status,
-            eligibility.reason,
+          const permissions = getSlashActionPermissions({
+            slash,
+            connectedAddress: address,
+            nowUnixSeconds,
+          });
+          const executionEligibility = getSlashExecutionEligibility(
+            slash,
+            nowUnixSeconds,
           );
+
+          const isSlashedOperator =
+            !!address && slash.operator.toLowerCase() === address.toLowerCase();
+          const isExecutable = executableSlashIdSet.has(slash.id.toString());
+          const canExecute = permissions.canExecute && isExecutable;
+          const executeDisabledReason = !canExecute
+            ? (permissions.executeReason ??
+              'Not executable per on-chain discovery.')
+            : null;
 
           return (
             <TableCellWrapper removeRightBorder className="py-3 pr-3">
-              {showDisputeButton ? (
-                <>
+              <div className="flex flex-nowrap items-center gap-2 overflow-x-auto whitespace-nowrap pb-1">
+                {slash.status === 'Pending' && isSlashedOperator ? (
                   <Button
                     variant="utility"
                     size="sm"
-                    isDisabled={!eligibility.isEligible}
+                    isDisabled={!permissions.canDispute}
                     className="uppercase body4 bg-blue-10 dark:bg-blue-120 text-blue-70 dark:text-blue-40 hover:bg-blue-20 dark:hover:bg-blue-110 border border-blue-30 dark:border-blue-100 disabled:opacity-50 disabled:cursor-not-allowed"
-                    onClick={(e) => {
-                      e.stopPropagation();
+                    onClick={(event) => {
+                      event.stopPropagation();
+                      clearActionError('dispute');
                       setSelectedSlash(slash);
                       setDisputeReason('');
                       setShowDisputeModal(true);
@@ -849,41 +910,110 @@ const Page: FC = () => {
                   >
                     Dispute
                   </Button>
-                  {!eligibility.isEligible && reasonText && (
-                    <Typography variant="body3" className="text-mono-100 mt-1">
-                      {reasonText}
-                    </Typography>
-                  )}
-                </>
-              ) : slash.status === 'Disputed' ? (
-                <div className="flex items-start">
+                ) : null}
+
+                {!isSlashedOperator &&
+                (slash.status === 'Pending' || slash.status === 'Disputed') ? (
                   <Button
                     variant="utility"
                     size="sm"
-                    className="uppercase body4 bg-blue-10 dark:bg-blue-120 text-blue-70 dark:text-blue-40 hover:bg-blue-20 dark:hover:bg-blue-110 border border-blue-30 dark:border-blue-100 disabled:opacity-50 disabled:cursor-not-allowed"
-                    onClick={(e) => {
-                      e.stopPropagation();
+                    isDisabled={!permissions.canCancel}
+                    className="uppercase body4 bg-red-10 dark:bg-red-120 text-red-70 dark:text-red-40 hover:bg-red-20 dark:hover:bg-red-110 border border-red-30 dark:border-red-100 disabled:opacity-50 disabled:cursor-not-allowed"
+                    onClick={(event) => {
+                      event.stopPropagation();
+                      clearActionError('cancel');
+                      setSelectedSlash(slash);
+                      setCancelReason('');
+                      setShowCancelModal(true);
+                    }}
+                  >
+                    Cancel
+                  </Button>
+                ) : null}
+
+                {!isSlashedOperator &&
+                (slash.status === 'Pending' || slash.status === 'Disputed')
+                  ? (() => {
+                      const executeButton = (
+                        <Button
+                          variant="utility"
+                          size="sm"
+                          isDisabled={!canExecute}
+                          className="uppercase body4 bg-green-10 dark:bg-green-120 text-green-70 dark:text-green-40 hover:bg-green-20 dark:hover:bg-green-110 border border-green-30 dark:border-green-100 disabled:opacity-50 disabled:cursor-not-allowed"
+                          onClick={(event) => {
+                            event.stopPropagation();
+                            void handleExecuteSingle(slash);
+                          }}
+                        >
+                          Execute
+                        </Button>
+                      );
+
+                      if (!canExecute) {
+                        const reason =
+                          executeDisabledReason ??
+                          (executionEligibility.reason === 'DisputeWindowOpen'
+                            ? `Ready in ${formatTimeRemaining(executionEligibility.secondsUntilExecutable)}`
+                            : 'Not executable yet');
+
+                        return (
+                          <Tooltip delayDuration={0}>
+                            <TooltipTrigger asChild>
+                              <span className="inline-flex cursor-not-allowed">
+                                {executeButton}
+                              </span>
+                            </TooltipTrigger>
+                            <TooltipBody>{reason}</TooltipBody>
+                          </Tooltip>
+                        );
+                      }
+
+                      return executeButton;
+                    })()
+                  : null}
+
+                <Button
+                  variant="utility"
+                  size="sm"
+                  className="uppercase body4"
+                  onClick={(event) => {
+                    event.stopPropagation();
+                    setSelectedSlash(slash);
+                    setShowTimelineModal(true);
+                  }}
+                >
+                  Timeline
+                </Button>
+
+                {slash.status === 'Disputed' ? (
+                  <Button
+                    variant="utility"
+                    size="sm"
+                    className="uppercase body4"
+                    onClick={(event) => {
+                      event.stopPropagation();
                       setSelectedSlash(slash);
                       setShowDisputeMessageModal(true);
                     }}
                   >
-                    View Dispute Reason
+                    View Dispute
                   </Button>
-                </div>
-              ) : (
-                <Typography variant="body3" className="text-mono-100">
-                  {reasonText ?? '-'}
-                </Typography>
-              )}
+                ) : null}
+              </div>
             </TableCellWrapper>
           );
         },
       }),
     ],
-    [nowUnixSeconds],
+    [
+      address,
+      executableSlashIdSet,
+      handleExecuteSingle,
+      nowUnixSeconds,
+      clearActionError,
+    ],
   );
 
-  // Tables
   const registrationTable = useReactTable({
     data: registrations ?? [],
     columns: registrationColumns,
@@ -891,8 +1021,15 @@ const Page: FC = () => {
     getPaginationRowModel: getPaginationRowModel(),
   });
 
-  const slashTable = useReactTable({
-    data: slashProposals ?? [],
+  const myProposalsTable = useReactTable({
+    data: myProposals,
+    columns: slashColumns,
+    getCoreRowModel: getCoreRowModel(),
+    getPaginationRowModel: getPaginationRowModel(),
+  });
+
+  const againstMeTable = useReactTable({
+    data: againstMe,
     columns: slashColumns,
     getCoreRowModel: getCoreRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
@@ -906,7 +1043,8 @@ const Page: FC = () => {
             Connect Your Wallet
           </Typography>
           <Typography variant="body1" className="text-mono-100">
-            Please connect your wallet to view your operator registrations.
+            Please connect your wallet to manage operator registrations and
+            slashing lifecycle actions.
           </Typography>
           <div className="mt-4 flex justify-center">
             <ConnectWalletButton />
@@ -918,69 +1056,39 @@ const Page: FC = () => {
 
   return (
     <div className="space-y-6">
-      {/* Header */}
       <div>
         <Typography variant="h4">Operator Management</Typography>
         <Typography variant="body1" className="text-mono-100 mt-1">
-          Manage your blueprint registrations, update preferences, and handle
-          slashing disputes.
+          Manage registrations and the full slash lifecycle: propose, dispute,
+          execute, batch-execute, and cancel.
         </Typography>
       </div>
 
-      {/* Summary Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <Card className="p-4">
-          <Typography variant="body2" className="text-mono-100">
-            Active Registrations
-          </Typography>
-          <Typography variant="h4" className="mt-1">
-            {registrations?.filter((r) => r.active).length ?? 0}
-          </Typography>
-        </Card>
-        <Card className="p-4">
-          <Typography variant="body2" className="text-mono-100">
-            Registrations (All-Time)
-          </Typography>
-          <Typography variant="h4" className="mt-1">
-            {registrations?.length ?? 0}
-          </Typography>
-        </Card>
-        <Card className="p-4">
-          <Typography variant="body2" className="text-mono-100">
-            Pending Slashes
-          </Typography>
-          <Typography
-            variant="h4"
-            className={`mt-1 ${(slashProposals?.filter((s) => s.status === 'Pending').length ?? 0) > 0 ? 'text-red-500' : ''}`}
-          >
-            {pendingSlashProposals.length}
-          </Typography>
-        </Card>
-      </div>
+      <SlashingSummaryCards
+        activeRegistrationsCount={
+          registrations?.filter((registration) => registration.active).length ??
+          0
+        }
+        activeAgainstMeCount={activeAgainstMeCount}
+        myActiveProposalCount={myActiveProposalCount}
+        nearestPendingSlash={nearestPendingSlash}
+        nearestPendingSlashEligibility={nearestPendingSlashEligibility}
+      />
 
-      {nearestPendingSlash && nearestPendingSlashEligibility ? (
-        <Card className="p-4 !border-yellow-400/30 !bg-yellow-500/15">
-          <div className="flex items-center gap-2 mb-2">
-            <div className="w-2 h-2 rounded-full bg-yellow-400 animate-pulse" />
-            <Typography variant="body2" fw="bold" className="text-yellow-400">
-              Nearest Dispute Deadline
-            </Typography>
+      {clockError ? (
+        <Card className="p-4 border border-yellow-500/20 bg-yellow-500/10">
+          <Typography variant="body2" className="text-mono-100">
+            {clockError}
+          </Typography>
+          <div className="mt-3">
+            <Button
+              variant="secondary"
+              size="sm"
+              onClick={() => void refreshNow()}
+            >
+              Retry Block Clock
+            </Button>
           </div>
-          <Typography variant="h5" fw="bold" className="text-mono-0">
-            Slash #{nearestPendingSlash.id.toString()}{' '}
-            <span className="font-normal text-mono-100">expires at</span>{' '}
-            {formatDateTime(nearestPendingSlash.executeAfter)}
-          </Typography>
-          <Typography
-            variant="body2"
-            fw="semibold"
-            className="text-yellow-300/80 mt-1.5"
-          >
-            Time remaining:{' '}
-            {formatTimeRemaining(
-              nearestPendingSlashEligibility.secondsUntilDeadline,
-            )}
-          </Typography>
         </Card>
       ) : null}
 
@@ -1002,7 +1110,6 @@ const Page: FC = () => {
         </Card>
       ) : null}
 
-      {/* Registrations Table */}
       <TangleCloudTable
         title="Blueprint Registrations"
         data={registrations ?? []}
@@ -1027,37 +1134,26 @@ const Page: FC = () => {
           description:
             'You are not registered as an operator for any blueprints.',
           icon: '📋',
+          className: 'before:!hidden',
         }}
       />
 
-      {/* Slashing Table */}
-      <TangleCloudTable
-        title="Slashing Proposals"
-        data={slashProposals ?? []}
-        isLoading={loadingSlash}
-        error={slashError}
-        onRetry={() => void refetchSlashProposals()}
-        tableProps={slashTable}
-        tableConfig={{
-          tdClassName: '!p-3 max-w-none whitespace-nowrap',
-          thClassName: 'whitespace-nowrap',
+      <SlashingTabsTable
+        selectedSlashingTab={selectedSlashingTab}
+        onSlashingTabChange={setSelectedSlashingTab}
+        onOpenProposeModal={() => {
+          clearActionError('propose');
+          setShowProposeModal(true);
         }}
-        loadingTableProps={{
-          title: 'Loading slash proposals...',
-          description: 'Please wait while we fetch slashing proposals.',
-          icon: '🔄',
-        }}
-        errorTableProps={{
-          title: 'Failed to load slash proposals',
-          description:
-            'Indexer or network request failed while loading slashing proposals.',
-          icon: '⚠️',
-        }}
-        emptyTableProps={{
-          title: 'No Slash Proposals',
-          description: 'No slashing proposals against your operator account.',
-          icon: '✅',
-        }}
+        myProposals={myProposals}
+        againstMe={againstMe}
+        loadingSlash={loadingSlash}
+        slashError={slashError}
+        refetchSlashProposals={() => void refetchSlashProposals()}
+        myProposalsTable={myProposalsTable}
+        againstMeTable={againstMeTable}
+        executeError={actionError.execute}
+        onDismissExecuteError={() => clearActionError('execute')}
       />
 
       {/* Unregister Modal */}
@@ -1103,7 +1199,7 @@ const Page: FC = () => {
                   id="rpcAddress"
                   isControlled
                   value={newRpcAddress}
-                  onChange={(v) => setNewRpcAddress(v)}
+                  onChange={(value) => setNewRpcAddress(value)}
                   placeholder="https://your-node.example.com"
                 />
                 {rpcAddressError ? (
@@ -1123,7 +1219,7 @@ const Page: FC = () => {
                   id="ecdsaPublicKey"
                   isControlled
                   value={newEcdsaPublicKey}
-                  onChange={(v) => setNewEcdsaPublicKey(v)}
+                  onChange={(value) => setNewEcdsaPublicKey(value)}
                   placeholder="0x... (65-byte uncompressed key)"
                 />
                 <Typography variant="body3" className="text-mono-100 mt-1">
@@ -1155,154 +1251,90 @@ const Page: FC = () => {
         </ModalContent>
       </Modal>
 
-      {/* Dispute Reason Modal */}
-      <Modal
+      <ProposeSlashModal
+        open={showProposeModal}
+        onOpenChange={(open) => {
+          setShowProposeModal(open);
+          if (!open) {
+            clearActionError('propose');
+            resetProposeForm();
+          }
+        }}
+        loadingProposableServices={loadingProposableServices}
+        proposableServicesCount={proposableServices?.length ?? 0}
+        proposableServiceOptions={proposableServiceOptions}
+        selectedProposableService={selectedProposableService}
+        proposeServiceId={proposeServiceId}
+        setProposeServiceId={setProposeServiceId}
+        proposeOperator={proposeOperator}
+        setProposeOperator={setProposeOperator}
+        proposeSlashBps={proposeSlashBps}
+        setProposeSlashBps={setProposeSlashBps}
+        proposeEvidence={proposeEvidence}
+        setProposeEvidence={setProposeEvidence}
+        proposeValidationError={proposeValidationError}
+        errorMessage={actionError.propose}
+        onDismissError={() => clearActionError('propose')}
+        canSubmitPropose={canSubmitPropose}
+        isSubmitting={proposeStatus === 'pending'}
+        onConfirm={() => void handleProposeSlash()}
+      />
+
+      <DisputeMessageModal
         open={showDisputeMessageModal}
         onOpenChange={setShowDisputeMessageModal}
-      >
-        <ModalContent>
-          <ModalHeader>Dispute Reason</ModalHeader>
-          <ModalBody>
-            <Typography variant="body1" className="mb-2">
-              Slash proposal #{selectedSlash?.id.toString()}
-            </Typography>
-            <Typography variant="body2" className="text-mono-100 mb-2">
-              Submitted dispute reason:
-            </Typography>
-            <div className="rounded-lg border border-mono-40 dark:border-mono-140 p-3 bg-mono-20 dark:bg-mono-170">
-              <Typography
-                variant="body2"
-                className="whitespace-pre-wrap break-words"
-              >
-                {selectedSlash
-                  ? (getSlashDisputeMessage(selectedSlash) ??
-                    'No dispute reason available for this proposal yet.')
-                  : '-'}
-              </Typography>
-            </div>
-          </ModalBody>
-          <ModalFooterActions
-            confirmButtonText="Close"
-            onConfirm={() => setShowDisputeMessageModal(false)}
-          />
-        </ModalContent>
-      </Modal>
+        selectedSlash={selectedSlash}
+      />
 
-      {/* Dispute Slash Modal */}
-      <Modal open={showDisputeModal} onOpenChange={setShowDisputeModal}>
-        <ModalContent>
-          <ModalHeader>Dispute Slash Proposal</ModalHeader>
-          <ModalBody>
-            <Typography variant="body1" className="mb-2">
-              Dispute slash proposal #{selectedSlash?.id.toString()}
-            </Typography>
-            <div className="p-3 bg-mono-20 dark:bg-mono-170 rounded-lg mb-4">
-              <div className="grid grid-cols-2 gap-x-2 gap-y-3">
-                <Typography variant="body3" className="text-mono-100">
-                  Slash %:
-                </Typography>
-                <Typography variant="body3" className="text-red-500">
-                  {selectedSlash ? formatSlashBps(selectedSlash.slashBps) : '-'}
-                </Typography>
-                <Typography variant="body3" className="text-mono-100">
-                  Effective Slash %:
-                </Typography>
-                <Typography variant="body3" className="text-red-500">
-                  {selectedSlash
-                    ? formatSlashBps(selectedSlash.effectiveSlashBps)
-                    : '-'}
-                </Typography>
-                <Typography variant="body3" className="text-mono-100">
-                  Dispute Deadline:
-                </Typography>
-                <Typography variant="body3">
-                  {selectedSlash
-                    ? formatDateTime(selectedSlash.executeAfter)
-                    : '-'}
-                </Typography>
-                <Typography variant="body3" className="text-mono-100">
-                  Time Remaining:
-                </Typography>
-                <Typography variant="body3">
-                  {selectedSlashEligibility
-                    ? formatTimeRemaining(
-                        selectedSlashEligibility.secondsUntilDeadline,
-                      )
-                    : '-'}
-                </Typography>
-                <Typography variant="body3" className="text-mono-100">
-                  Proposer:
-                </Typography>
-                <Typography variant="body3" className="font-mono">
-                  {selectedSlash ? shortenHex(selectedSlash.proposer) : '-'}
-                </Typography>
-                <Typography variant="body3" className="text-mono-100">
-                  Proposer Role:
-                </Typography>
-                <Typography variant="body3">
-                  {selectedSlash
-                    ? getSlashProposerRoleLabel(selectedSlash.proposerRole)
-                    : '-'}
-                </Typography>
-                <Typography variant="body3" className="text-mono-100">
-                  Claim Context:
-                </Typography>
-                <Typography
-                  variant="body3"
-                  title={
-                    selectedSlash ? getSlashClaimContext(selectedSlash) : '-'
-                  }
-                >
-                  {selectedSlash ? getSlashClaimContext(selectedSlash) : '-'}
-                </Typography>
-                <Typography variant="body3" className="text-mono-100">
-                  Evidence Hash:
-                </Typography>
-                <Typography variant="body3" className="font-mono break-all">
-                  {selectedSlash?.evidence ?? '-'}
-                </Typography>
-                <Typography variant="body3" className="text-mono-100">
-                  Evidence Type:
-                </Typography>
-                <Typography variant="body3">
-                  On-chain commitment hash
-                </Typography>
-              </div>
-            </div>
-            <div>
-              <Typography variant="body2" className="mb-1">
-                Reason for Dispute
-              </Typography>
-              <textarea
-                className="w-full p-3 rounded-lg border border-mono-40 dark:border-mono-140 bg-mono-0 dark:bg-mono-180 text-sm resize-none focus:outline-none focus:ring-2 focus:ring-purple-500"
-                rows={4}
-                value={disputeReason}
-                onChange={(e) => setDisputeReason(e.target.value)}
-                placeholder="Explain why this slash proposal is invalid..."
-              />
-              <Typography variant="body3" className="text-mono-100 mt-1">
-                Minimum {MIN_DISPUTE_REASON_LENGTH} characters (
-                {trimmedDisputeReason.length}/{MIN_DISPUTE_REASON_LENGTH}).
-              </Typography>
-              {!selectedSlashEligibility?.isEligible ? (
-                <Typography variant="body3" className="text-red-500 mt-1">
-                  {getSlashStatusReason(
-                    selectedSlash?.status ?? 'Pending',
-                    selectedSlashEligibility?.reason ?? null,
-                  ) ?? 'Dispute is not available for this slash.'}
-                </Typography>
-              ) : null}
-            </div>
-          </ModalBody>
-          <ModalFooterActions
-            hasCloseButton
-            isConfirmDisabled={disputeStatus === 'pending' || !canSubmitDispute}
-            isProcessing={disputeStatus === 'pending'}
-            confirmButtonText="Submit Dispute"
-            onConfirm={handleDispute}
-          />
-        </ModalContent>
-      </Modal>
+      <DisputeSlashModal
+        open={showDisputeModal}
+        onOpenChange={(open) => {
+          setShowDisputeModal(open);
+          if (!open) {
+            clearActionError('dispute');
+          }
+        }}
+        selectedSlash={selectedSlash}
+        selectedSlashEligibility={selectedSlashEligibility}
+        selectedSlashPermissions={selectedSlashPermissions}
+        disputeReason={disputeReason}
+        onDisputeReasonChange={setDisputeReason}
+        minDisputeReasonLength={MIN_DISPUTE_REASON_LENGTH}
+        trimmedDisputeReasonLength={trimmedDisputeReason.length}
+        canSubmitDispute={canSubmitDispute}
+        isSubmitting={disputeStatus === 'pending'}
+        onConfirm={() => void handleDispute()}
+        errorMessage={actionError.dispute}
+        onDismissError={() => clearActionError('dispute')}
+      />
+
+      <CancelSlashModal
+        open={showCancelModal}
+        onOpenChange={(open) => {
+          setShowCancelModal(open);
+          if (!open) {
+            clearActionError('cancel');
+          }
+        }}
+        selectedSlash={selectedSlash}
+        selectedSlashPermissions={selectedSlashPermissions}
+        cancelReason={cancelReason}
+        onCancelReasonChange={setCancelReason}
+        minCancelReasonLength={MIN_CANCEL_REASON_LENGTH}
+        trimmedCancelReasonLength={trimmedCancelReason.length}
+        canSubmitCancel={canSubmitCancel}
+        isSubmitting={cancelStatus === 'pending'}
+        onConfirm={() => void handleCancel()}
+        errorMessage={actionError.cancel}
+        onDismissError={() => clearActionError('cancel')}
+      />
+
+      <TimelineModal
+        open={showTimelineModal}
+        onOpenChange={setShowTimelineModal}
+        selectedSlash={selectedSlash}
+        timeline={selectedSlashTimeline}
+      />
     </div>
   );
 };

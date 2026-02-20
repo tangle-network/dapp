@@ -10,6 +10,7 @@ const GLASS_CONTAINER_CLASS =
 
 export const TangleCloudTable = <T extends RowData>({
   title,
+  hideTitle = false,
   data,
   isLoading,
   error,
@@ -28,17 +29,18 @@ export const TangleCloudTable = <T extends RowData>({
       ? `${errorMessage.slice(0, 137)}...`
       : errorMessage
     : 'Indexer or network request failed.';
+  const hasTitle = !hideTitle;
 
-  const titleElement = (
+  const titleElement = hasTitle ? (
     <Typography variant="h5" fw="bold">
       {title}
     </Typography>
-  );
+  ) : undefined;
 
   if (isLoading) {
     return (
       <div className={GLASS_CONTAINER_CLASS}>
-        {titleElement}
+        {hasTitle ? titleElement : null}
 
         <TableStatus
           {...loadingTableProps}
@@ -49,7 +51,8 @@ export const TangleCloudTable = <T extends RowData>({
           }
           icon={loadingTableProps?.icon ?? '🔄'}
           className={twMerge(
-            'w-full !border-0 !rounded-none !p-0 mt-3',
+            'w-full !border-0 !rounded-none !p-0',
+            hasTitle ? 'mt-3' : null,
             loadingTableProps?.className,
           )}
         />
@@ -60,7 +63,7 @@ export const TangleCloudTable = <T extends RowData>({
   if (error) {
     return (
       <div className={GLASS_CONTAINER_CLASS}>
-        {titleElement}
+        {hasTitle ? titleElement : null}
 
         <TableStatus
           {...errorTableProps}
@@ -78,7 +81,8 @@ export const TangleCloudTable = <T extends RowData>({
             (hasRetry ? { onClick: () => void onRetry() } : undefined)
           }
           className={twMerge(
-            'w-full !border-0 !rounded-none !p-0 mt-3',
+            'w-full !border-0 !rounded-none !p-0',
+            hasTitle ? 'mt-3' : null,
             errorTableProps?.className,
           )}
         />
@@ -89,7 +93,7 @@ export const TangleCloudTable = <T extends RowData>({
   if (isEmpty) {
     return (
       <div className={GLASS_CONTAINER_CLASS}>
-        {titleElement}
+        {hasTitle ? titleElement : null}
 
         <TableStatus
           {...emptyTableProps}
@@ -97,7 +101,8 @@ export const TangleCloudTable = <T extends RowData>({
           description={emptyTableProps?.description ?? 'No data found'}
           icon={emptyTableProps?.icon ?? '🔍'}
           className={twMerge(
-            'w-full !border-0 !rounded-none !p-0 mt-3',
+            'w-full !border-0 !rounded-none !p-0',
+            hasTitle ? 'mt-3' : null,
             emptyTableProps?.className,
           )}
         />
@@ -107,19 +112,22 @@ export const TangleCloudTable = <T extends RowData>({
 
   return (
     <Table
-      title={title}
+      title={hasTitle ? title : ''}
       variant={TableVariant.GLASS_OUTER}
       isPaginated
       {...tableConfig}
       tableProps={tableProps as any}
-      className={twMerge('w-full px-6 pt-4', tableConfig?.className)}
+      className={twMerge(
+        hasTitle ? 'w-full px-6 pt-4' : 'w-full px-6 pt-0',
+        tableConfig?.className,
+      )}
       tableClassName={tableConfig?.tableClassName}
       thClassName={tableConfig?.thClassName}
       tbodyClassName={tableConfig?.tbodyClassName}
       trClassName={twMerge('group overflow-hidden', tableConfig?.trClassName)}
       tdClassName={twMerge('!p-3 max-w-xs', tableConfig?.tdClassName)}
       paginationClassName={tableConfig?.paginationClassName}
-      titleElement={titleElement}
+      titleElement={hasTitle ? titleElement : undefined}
     />
   );
 };
