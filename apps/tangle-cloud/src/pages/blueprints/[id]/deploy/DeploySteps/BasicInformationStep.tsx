@@ -28,6 +28,8 @@ export const BasicInformationStep: FC<BasicInformationStepProps> = ({
   errors,
   setValue,
   watch,
+  setError,
+  clearErrors,
   blueprint,
 }) => {
   const permittedCallers = watch('permittedCallers');
@@ -39,6 +41,47 @@ export const BasicInformationStep: FC<BasicInformationStepProps> = ({
     () => getDurationConstraints(durationUnit),
     [durationUnit],
   );
+
+  const immediateDurationError = useMemo(() => {
+    if (typeof instanceDuration !== 'number') {
+      return undefined;
+    }
+
+    if (instanceDuration === 0) {
+      return undefined;
+    }
+
+    const unitConstraints = getDurationConstraints(durationUnit);
+    if (
+      instanceDuration < unitConstraints.min ||
+      instanceDuration > unitConstraints.max
+    ) {
+      return `Duration must be 0 (perpetual) or between ${unitConstraints.min} and ${unitConstraints.max} ${durationUnit}`;
+    }
+
+    return undefined;
+  }, [durationUnit, instanceDuration]);
+
+  const instanceDurationError =
+    immediateDurationError ?? errors?.instanceDuration?.message;
+
+  const validateInstanceDuration = (value: number, unit: DurationUnit) => {
+    if (value === 0) {
+      clearErrors('instanceDuration');
+      return;
+    }
+
+    const unitConstraints = getDurationConstraints(unit);
+    if (value < unitConstraints.min || value > unitConstraints.max) {
+      setError('instanceDuration', {
+        type: 'manual',
+        message: `Duration must be 0 (perpetual) or between ${unitConstraints.min} and ${unitConstraints.max} ${unit}`,
+      });
+      return;
+    }
+
+    clearErrors('instanceDuration');
+  };
 
   const handleCallerChange = (index: number, value: string) => {
     const newCallers = [...permittedCallers];
@@ -57,17 +100,33 @@ export const BasicInformationStep: FC<BasicInformationStepProps> = ({
 
   const handleInstanceDurationChange = (value: string) => {
     if (value === '') {
+      setValue('instanceDuration', undefined as unknown as number, {
+        shouldDirty: true,
+        shouldValidate: false,
+      });
+      clearErrors('instanceDuration');
       return;
     }
 
     const numValue = parseInt(value, 10);
     if (!isNaN(numValue)) {
-      setValue('instanceDuration', numValue);
+      setValue('instanceDuration', numValue, {
+        shouldDirty: true,
+        shouldValidate: true,
+      });
+      validateInstanceDuration(numValue, durationUnit);
     }
   };
 
   const handleDurationUnitChange = (unit: DurationUnit) => {
-    setValue('durationUnit', unit);
+    setValue('durationUnit', unit, {
+      shouldDirty: true,
+      shouldValidate: true,
+    });
+
+    if (typeof instanceDuration === 'number') {
+      validateInstanceDuration(instanceDuration, unit);
+    }
   };
 
   return (
@@ -109,11 +168,13 @@ export const BasicInformationStep: FC<BasicInformationStepProps> = ({
               <Input
                 id="instanceDuration"
                 isControlled
+                isInvalid={Boolean(instanceDurationError)}
                 inputClassName="placeholder:text-mono-80 dark:placeholder:text-mono-120 h-10"
                 placeholder="Enter duration"
                 autoComplete="off"
                 type="number"
                 min={0}
+                max={constraints.max}
                 value={instanceDuration?.toString() ?? ''}
                 onChange={(nextValue) =>
                   handleInstanceDurationChange(nextValue)
@@ -144,8 +205,8 @@ export const BasicInformationStep: FC<BasicInformationStepProps> = ({
               Use 0 for perpetual service, or {constraints.min}-
               {constraints.max} {durationUnit}
             </Typography>
-            {errors?.instanceDuration && (
-              <ErrorMessage>{errors.instanceDuration.message}</ErrorMessage>
+            {instanceDurationError && (
+              <ErrorMessage>{instanceDurationError}</ErrorMessage>
             )}
           </div>
         </div>

@@ -25,9 +25,9 @@ import {
 } from '@tangle-network/tangle-shared-ui/data/graphql';
 import {
   useBlueprintConfig,
-  getMembershipModelLabel,
   MembershipModel,
 } from '@tangle-network/tangle-shared-ui/data/services';
+import { getMembershipLabel } from '../../../../../types/serviceRequest';
 import { Address } from 'viem';
 
 const MAX_ASSET_TO_SHOW = 3;
@@ -337,7 +337,7 @@ export const SelectOperatorsStep: FC<SelectOperatorsStepProps> = ({
                 }
               >
                 {blueprintConfig
-                  ? getMembershipModelLabel(blueprintConfig.membership)
+                  ? getMembershipLabel(blueprintConfig.membership)
                   : 'Loading...'}
               </Chip>
             </div>
