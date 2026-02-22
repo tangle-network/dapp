@@ -111,3 +111,8 @@ export {
   useBlueprintJobs,
   type BlueprintJobDefinition,
 } from './useBlueprintJobs';
+
+export {
+  useBlueprintRequestSchema,
+  type BlueprintRequestSchemaResult,
+} from './useBlueprintRequestSchema';
