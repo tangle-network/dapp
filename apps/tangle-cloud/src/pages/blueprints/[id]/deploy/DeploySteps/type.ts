@@ -19,6 +19,9 @@ export type BaseDeployStepProps = {
   watch: UseFormWatch<DeployBlueprintSchema>;
   blueprint?: Blueprint;
   blueprintOperators?: BlueprintOperator[];
+  requestSchemaFieldCount?: number;
+  hasRequestSchema?: boolean;
+  requestSchemaParseError?: string | null;
   setError: UseFormSetError<DeployBlueprintSchema>;
   clearErrors: UseFormClearErrors<DeployBlueprintSchema>;
 };
