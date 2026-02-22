@@ -4,7 +4,7 @@
  */
 
 import { useQuery } from '@tanstack/react-query';
-import { Address, zeroAddress } from 'viem';
+import { Address, decodeFunctionData, zeroAddress } from 'viem';
 import { useChainId, usePublicClient } from 'wagmi';
 import { getContractsByChainId } from '@tangle-network/dapp-config/contracts';
 import TangleABI from '../../abi/tangle';
@@ -34,6 +34,12 @@ export interface AssetSecurityRequirement {
   maxExposureBps: number;
 }
 
+export type ServiceRequestVariant =
+  | 'basic'
+  | 'exposure'
+  | 'security'
+  | 'unknown';
+
 // Service request details from contract
 export interface ServiceRequestContractDetails {
   blueprintId: bigint;
@@ -49,6 +55,10 @@ export interface ServiceRequestContractDetails {
   maxOperators: number;
   rejected: boolean;
   securityRequirements: AssetSecurityRequirement[];
+  customSecurityRequirements: AssetSecurityRequirement[];
+  defaultTntRequirement: AssetSecurityRequirement | null;
+  requestVariant: ServiceRequestVariant;
+  requestedExposureBps: number[] | null;
 }
 
 // Raw contract response type - matches the ABI struct return
@@ -121,6 +131,8 @@ export const useServiceRequestDetails = (
 
       // Fetch security requirements
       let securityRequirements: AssetSecurityRequirement[] = [];
+      const customSecurityRequirements: AssetSecurityRequirement[] = [];
+      let defaultTntRequirement: AssetSecurityRequirement | null = null;
       try {
         const securityResult = (await publicClient.readContract({
           address: tangleAddress,
@@ -137,8 +149,112 @@ export const useServiceRequestDetails = (
           minExposureBps: req.minExposureBps,
           maxExposureBps: req.maxExposureBps,
         }));
+
+        // Separate default TNT requirement from custom security requirements.
+        // Default TNT requirement is present in basic/exposure flows and should not
+        // be displayed as "security mode" data in UI.
+        const [tntToken, defaultTntMinExposureBps] = await Promise.all([
+          publicClient
+            .readContract({
+              address: tangleAddress,
+              abi: TangleABI,
+              functionName: 'tntToken',
+              args: [],
+            })
+            .catch(() => zeroAddress),
+          publicClient
+            .readContract({
+              address: tangleAddress,
+              abi: TangleABI,
+              functionName: 'defaultTntMinExposureBps',
+              args: [],
+            })
+            .catch(() => 0),
+        ]);
+
+        const normalizedTntToken = (tntToken as Address).toLowerCase();
+        const defaultMinBps = Number(defaultTntMinExposureBps);
+
+        securityRequirements.forEach((requirement) => {
+          const isDefaultTntRequirement =
+            requirement.asset.kind === AssetKind.Erc20 &&
+            requirement.asset.token.toLowerCase() === normalizedTntToken &&
+            requirement.minExposureBps === defaultMinBps &&
+            requirement.maxExposureBps === 10_000;
+
+          if (isDefaultTntRequirement && defaultTntRequirement === null) {
+            defaultTntRequirement = requirement;
+            return;
+          }
+
+          customSecurityRequirements.push(requirement);
+        });
       } catch {
         // Security requirements may not exist for all requests
+      }
+
+      let requestVariant: ServiceRequestVariant = 'unknown';
+      let requestedExposureBps: number[] | null = null;
+
+      try {
+        // First check security-specific event path.
+        const securityEventLogs = await (publicClient as any).getLogs({
+          address: tangleAddress,
+          abi: TangleABI,
+          eventName: 'ServiceRequestedWithSecurity',
+          args: { requestId },
+          fromBlock: 0n,
+        });
+
+        let requestTxHash: `0x${string}` | undefined =
+          securityEventLogs?.[0]?.transactionHash;
+        if (requestTxHash) {
+          requestVariant = 'security';
+        }
+
+        // Basic/exposure both emit ServiceRequested.
+        if (!requestTxHash) {
+          const requestEventLogs = await (publicClient as any).getLogs({
+            address: tangleAddress,
+            abi: TangleABI,
+            eventName: 'ServiceRequested',
+            args: { requestId },
+            fromBlock: 0n,
+          });
+
+          requestTxHash = requestEventLogs?.[0]?.transactionHash;
+        }
+
+        if (requestTxHash) {
+          const tx = await publicClient.getTransaction({ hash: requestTxHash });
+          const decoded = decodeFunctionData({
+            abi: TangleABI,
+            data: tx.input,
+          });
+
+          switch (decoded.functionName) {
+            case 'requestServiceWithSecurity':
+              requestVariant = 'security';
+              break;
+            case 'requestServiceWithExposure': {
+              requestVariant = 'exposure';
+              const rawExposures = (decoded.args?.[2] as readonly unknown[]) ?? [];
+              requestedExposureBps = rawExposures.map((value) => Number(value));
+              break;
+            }
+            case 'requestService':
+              requestVariant = 'basic';
+              break;
+            default:
+              break;
+          }
+        }
+      } catch {
+        // Keep variant as unknown when tx lookup/decoding is unavailable.
+      }
+
+      if (requestVariant === 'unknown' && customSecurityRequirements.length > 0) {
+        requestVariant = 'security';
       }
 
       return {
@@ -155,6 +271,10 @@ export const useServiceRequestDetails = (
         maxOperators: requestResult.maxOperators,
         rejected: requestResult.rejected,
         securityRequirements,
+        customSecurityRequirements,
+        defaultTntRequirement,
+        requestVariant,
+        requestedExposureBps,
       };
     },
     enabled:

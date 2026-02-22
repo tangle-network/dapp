@@ -8,6 +8,7 @@ export {
   AssetKind,
   type Asset,
   type AssetSecurityRequirement,
+  type ServiceRequestVariant,
   type ServiceRequestContractDetails,
   type UseServiceRequestDetailsOptions,
 } from './useServiceRequestDetails';
