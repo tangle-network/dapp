@@ -5,7 +5,7 @@ import { AssetConfigurationStep } from './AssetConfigurationStep';
 import { SelectOperatorsStep } from './OperatorSelectionStep';
 import { RequestArgsConfigurationStep } from './RequestArgsConfigurationStep';
 import { PaymentStep } from './PaymentStep';
-import { AdvancedOptionsStep } from './AdvancedOptionsStep';
+import { RequestModeStep } from './RequestModeStep';
 
 export const Deployment: FC<BaseDeployStepProps> = (props) => {
   // In EVM mode, the minimum security requirement is handled differently
@@ -19,16 +19,13 @@ export const Deployment: FC<BaseDeployStepProps> = (props) => {
         {...props}
         minimumNativeSecurityRequirement={minimumNativeSecurityRequirement}
       />
+      <RequestModeStep {...props} />
       <AssetConfigurationStep
         {...props}
         minimumNativeSecurityRequirement={minimumNativeSecurityRequirement}
       />
       <RequestArgsConfigurationStep {...props} />
       <PaymentStep {...props} />
-      <AdvancedOptionsStep
-        {...props}
-        minimumNativeSecurityRequirement={minimumNativeSecurityRequirement}
-      />
     </>
   );
 };

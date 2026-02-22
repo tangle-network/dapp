@@ -5,20 +5,39 @@ import ErrorMessage from '@tangle-network/tangle-shared-ui/components/ErrorMessa
 
 export const RequestArgsConfigurationStep: FC<
   RequestArgsConfigurationStepProps
-> = ({ errors, setValue, watch: _watch, blueprint }) => {
+> = ({
+  errors,
+  setValue,
+  watch: _watch,
+  blueprint,
+  requestSchemaFieldCount,
+  hasRequestSchema,
+  requestSchemaParseError,
+}) => {
   const [jsonText, setJsonText] = useState<string>('');
+  const expectedArgsCount =
+    requestSchemaFieldCount ?? blueprint?.requestParams?.length ?? 0;
 
   const handleJsonChange = useCallback(
     (text: string) => {
       setJsonText(text);
+
+      if (text.trim() === '') {
+        setValue('requestArgs', []);
+        return;
+      }
+
       try {
         const parsed = JSON.parse(text);
-        // Only accept an array – that is what the pallet expects.
+
         if (Array.isArray(parsed)) {
           setValue('requestArgs', parsed as unknown[]);
+          return;
         }
+
+        setValue('requestArgs', null);
       } catch {
-        // Ignore parse errors; validation will show message.
+        setValue('requestArgs', null);
       }
     },
     [setValue],
@@ -44,19 +63,33 @@ export const RequestArgsConfigurationStep: FC<
         Request Arguments
       </Typography>
 
-      {!blueprint?.requestParams?.length ? (
+      {requestSchemaParseError && (
+        <ErrorMessage className="mb-4">
+          Failed to parse on-chain request schema: {requestSchemaParseError}
+        </ErrorMessage>
+      )}
+
+      {expectedArgsCount === 0 ? (
         <Typography variant="body1">No request arguments required.</Typography>
       ) : (
         <>
           <Typography variant="body2" className="mb-4">
             Paste or upload a JSON array representing the request arguments.
+            This blueprint expects exactly {expectedArgsCount} root argument(s).
           </Typography>
+
+          {hasRequestSchema === false && (
+            <ErrorMessage className="mb-4">
+              On-chain request schema is unavailable. Non-empty request
+              arguments cannot be encoded for this blueprint.
+            </ErrorMessage>
+          )}
 
           <textarea
             className="w-full min-h-[180px] bg-mono-0 dark:bg-mono-180 border border-mono-60 dark:border-mono-120 rounded-lg p-4 text-sm font-mono mb-4 resize-vertical text-mono-160 dark:text-mono-40 placeholder:text-mono-100 dark:placeholder:text-mono-100 focus:border-blue-50 dark:focus:border-blue-50 focus:ring-1 focus:ring-blue-50 dark:focus:ring-blue-50 transition-colors"
             value={jsonText}
             onChange={(e) => handleJsonChange(e.target.value)}
-            placeholder="Paste JSON array here"
+            placeholder={`Paste JSON array with ${expectedArgsCount} item(s)`}
           />
 
           <div className="mb-4">
