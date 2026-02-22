@@ -13,7 +13,6 @@ import { useMemo } from 'react';
 import type { EvmAddress } from '@tangle-network/ui-components/types/address';
 
 // Default TNT requirement constants (must match contract)
-const DEFAULT_TNT_MIN_EXPOSURE_BPS = 1000; // 10%
 const DEFAULT_TNT_MAX_EXPOSURE_BPS = 10000; // 100%
 const ASSET_KIND_ERC20 = 1;
 
@@ -105,6 +104,38 @@ export const useServiceRequestSecurityRequirements = (
     },
     enabled: publicClient !== undefined,
     staleTime: Infinity, // TNT token address doesn't change
+  });
+
+  // Query default TNT minimum exposure (bps) from contract.
+  const {
+    data: defaultTntMinExposureBps,
+    isLoading: isLoadingDefaultTntMinExposureBps,
+  } = useQuery({
+    queryKey: ['defaultTntMinExposureBps', chainId],
+    queryFn: async () => {
+      if (!publicClient) {
+        return 0;
+      }
+
+      try {
+        const result = await publicClient.readContract({
+          address: contracts.tangle,
+          abi: TANGLE_ABI,
+          functionName: 'defaultTntMinExposureBps',
+          args: [],
+        });
+
+        return Number(result);
+      } catch (error) {
+        console.warn(
+          '[useServiceRequestSecurityRequirements] Failed to fetch default TNT min exposure bps',
+          { error },
+        );
+        return 0;
+      }
+    },
+    enabled: publicClient !== undefined,
+    staleTime: Infinity,
   });
 
   // Query raw requirements from contract
@@ -199,7 +230,8 @@ export const useServiceRequestSecurityRequirements = (
       !requirementsWithMetadata ||
       requirementsWithMetadata.length !== 1 ||
       !tntTokenAddress ||
-      tntTokenAddress === zeroAddress
+      tntTokenAddress === zeroAddress ||
+      defaultTntMinExposureBps === undefined
     ) {
       return { isSimpleCase: false, defaultTntRequirement: null };
     }
@@ -208,18 +240,22 @@ export const useServiceRequestSecurityRequirements = (
     const isDefaultTnt =
       req.asset.kind === ASSET_KIND_ERC20 &&
       req.asset.token.toLowerCase() === tntTokenAddress.toLowerCase() &&
-      req.minExposureBps === DEFAULT_TNT_MIN_EXPOSURE_BPS &&
+      req.minExposureBps === defaultTntMinExposureBps &&
       req.maxExposureBps === DEFAULT_TNT_MAX_EXPOSURE_BPS;
 
     return {
       isSimpleCase: isDefaultTnt,
       defaultTntRequirement: isDefaultTnt ? req : null,
     };
-  }, [requirementsWithMetadata, tntTokenAddress]);
+  }, [requirementsWithMetadata, tntTokenAddress, defaultTntMinExposureBps]);
 
   return {
     data: requirementsWithMetadata,
-    isLoading: isLoadingRequirements || isLoadingMetadata || isLoadingTntToken,
+    isLoading:
+      isLoadingRequirements ||
+      isLoadingMetadata ||
+      isLoadingTntToken ||
+      isLoadingDefaultTntMinExposureBps,
     error: requirementsError as Error | null,
     hasCustomRequirements:
       requirementsWithMetadata !== undefined &&
