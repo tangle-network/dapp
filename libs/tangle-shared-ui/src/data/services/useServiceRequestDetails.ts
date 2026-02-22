@@ -4,7 +4,13 @@
  */
 
 import { useQuery } from '@tanstack/react-query';
-import { Address, decodeFunctionData, zeroAddress } from 'viem';
+import {
+  Address,
+  decodeFunctionData,
+  parseAbi,
+  parseAbiItem,
+  zeroAddress,
+} from 'viem';
 import { useChainId, usePublicClient } from 'wagmi';
 import { getContractsByChainId } from '@tangle-network/dapp-config/contracts';
 import TangleABI from '../../abi/tangle';
@@ -59,6 +65,7 @@ export interface ServiceRequestContractDetails {
   defaultTntRequirement: AssetSecurityRequirement | null;
   requestVariant: ServiceRequestVariant;
   requestedExposureBps: number[] | null;
+  requestedOperators: Address[] | null;
 }
 
 // Raw contract response type - matches the ABI struct return
@@ -82,6 +89,23 @@ type SecurityRequirementContractResponse = readonly {
   minExposureBps: number;
   maxExposureBps: number;
 }[];
+
+const SERVICE_REQUEST_FUNCTION_ABI = parseAbi([
+  'function requestService(uint64 blueprintId, address[] operators, bytes config, address[] permittedCallers, uint64 ttl, address paymentToken, uint256 paymentAmount)',
+  'function requestServiceWithExposure(uint64 blueprintId, address[] operators, uint16[] exposureBps, bytes config, address[] permittedCallers, uint64 ttl, address paymentToken, uint256 paymentAmount)',
+  'function requestServiceWithSecurity(uint64 blueprintId, address[] operators, ((uint8,address),uint16,uint16)[] securityRequirements, bytes config, address[] permittedCallers, uint64 ttl, address paymentToken, uint256 paymentAmount)',
+]);
+
+const REQUEST_SERVICE_SELECTOR = '0xa37b9286';
+const REQUEST_SERVICE_WITH_EXPOSURE_SELECTOR = '0x108a7d63';
+const REQUEST_SERVICE_WITH_SECURITY_SELECTOR = '0xec9f0fdd';
+
+const SERVICE_REQUESTED_EVENT = parseAbiItem(
+  'event ServiceRequested(uint64 indexed requestId, uint64 indexed blueprintId, address indexed requester)',
+);
+const SERVICE_REQUESTED_WITH_SECURITY_EVENT = parseAbiItem(
+  'event ServiceRequestedWithSecurity(uint64 indexed requestId, uint64 indexed blueprintId, address indexed requester)',
+);
 
 export interface UseServiceRequestDetailsOptions {
   enabled?: boolean;
@@ -195,58 +219,66 @@ export const useServiceRequestDetails = (
 
       let requestVariant: ServiceRequestVariant = 'unknown';
       let requestedExposureBps: number[] | null = null;
+      let requestedOperators: Address[] | null = null;
 
       try {
-        // First check security-specific event path.
-        const securityEventLogs = await (publicClient as any).getLogs({
+        const serviceRequestedLogs = await publicClient.getLogs({
           address: tangleAddress,
-          abi: TangleABI,
-          eventName: 'ServiceRequestedWithSecurity',
+          event: SERVICE_REQUESTED_EVENT,
           args: { requestId },
-          fromBlock: 0n,
+          fromBlock: BigInt(0),
+          toBlock: 'latest',
         });
 
         let requestTxHash: `0x${string}` | undefined =
-          securityEventLogs?.[0]?.transactionHash;
-        if (requestTxHash) {
-          requestVariant = 'security';
-        }
+          serviceRequestedLogs.at(-1)?.transactionHash;
 
-        // Basic/exposure both emit ServiceRequested.
+        // Fallback: security-specific event, if needed.
         if (!requestTxHash) {
-          const requestEventLogs = await (publicClient as any).getLogs({
+          const securityRequestedLogs = await publicClient.getLogs({
             address: tangleAddress,
-            abi: TangleABI,
-            eventName: 'ServiceRequested',
+            event: SERVICE_REQUESTED_WITH_SECURITY_EVENT,
             args: { requestId },
-            fromBlock: 0n,
+            fromBlock: BigInt(0),
+            toBlock: 'latest',
           });
-
-          requestTxHash = requestEventLogs?.[0]?.transactionHash;
+          requestTxHash = securityRequestedLogs.at(-1)?.transactionHash;
         }
 
         if (requestTxHash) {
           const tx = await publicClient.getTransaction({ hash: requestTxHash });
-          const decoded = decodeFunctionData({
-            abi: TangleABI,
-            data: tx.input,
-          });
+          const selector = tx.input.slice(0, 10).toLowerCase();
 
-          switch (decoded.functionName) {
-            case 'requestServiceWithSecurity':
+          switch (selector) {
+            case REQUEST_SERVICE_WITH_SECURITY_SELECTOR:
               requestVariant = 'security';
               break;
-            case 'requestServiceWithExposure': {
+            case REQUEST_SERVICE_WITH_EXPOSURE_SELECTOR: {
               requestVariant = 'exposure';
-              const rawExposures = (decoded.args?.[2] as readonly unknown[]) ?? [];
-              requestedExposureBps = rawExposures.map((value) => Number(value));
               break;
             }
-            case 'requestService':
+            case REQUEST_SERVICE_SELECTOR:
               requestVariant = 'basic';
               break;
             default:
               break;
+          }
+
+          try {
+            const decoded = decodeFunctionData({
+              abi: SERVICE_REQUEST_FUNCTION_ABI,
+              data: tx.input,
+            });
+
+            const rawOperators = (decoded.args?.[1] as readonly unknown[]) ?? [];
+            requestedOperators = rawOperators as Address[];
+
+            if (decoded.functionName === 'requestServiceWithExposure') {
+              const rawExposures = (decoded.args?.[2] as readonly unknown[]) ?? [];
+              requestedExposureBps = rawExposures.map((value) => Number(value));
+            }
+          } catch {
+            // Keep detected variant even if calldata argument decoding fails.
           }
         }
       } catch {
@@ -275,6 +307,7 @@ export const useServiceRequestDetails = (
         defaultTntRequirement,
         requestVariant,
         requestedExposureBps,
+        requestedOperators,
       };
     },
     enabled:
