@@ -2,6 +2,7 @@ import { FC } from 'react';
 import { Address } from 'viem';
 import { Typography } from '@tangle-network/ui-components';
 import { Divider } from '@tangle-network/ui-components';
+import { shortenString } from '@tangle-network/ui-components/utils/shortenString';
 import type {
   ServiceRequestContractDetails,
   AssetSecurityRequirement,
@@ -40,6 +41,11 @@ const formatBpsAsPercent = (bps: number): string => {
   return `${(bps / 100).toFixed(2)}%`;
 };
 
+type OperatorExposure = {
+  operatorLabel: string;
+  exposureBps: number;
+};
+
 const ServiceRequestSummary: FC<Props> = ({
   contractDetails,
   tokenSymbol,
@@ -57,11 +63,22 @@ const ServiceRequestSummary: FC<Props> = ({
   const hasSecurityRequirements = securityRequirements.length > 0;
   const requestVariant = contractDetails?.requestVariant ?? 'unknown';
   const requestedExposureBps = contractDetails?.requestedExposureBps ?? null;
+  const requestedOperators = contractDetails?.requestedOperators ?? null;
   const defaultTntRequirement = contractDetails?.defaultTntRequirement ?? null;
   const hasExposureValues =
     requestVariant === 'exposure' &&
     Array.isArray(requestedExposureBps) &&
     requestedExposureBps.length > 0;
+  const exposureRows: OperatorExposure[] = hasExposureValues
+    ? requestedExposureBps.map((exposureBps, index) => ({
+        operatorLabel: requestedOperators?.[index]
+          ? shortenString(requestedOperators[index], 8)
+          : operatorCandidates[index]
+            ? shortenString(operatorCandidates[index], 8)
+            : `Operator #${index + 1}`,
+        exposureBps,
+      }))
+    : [];
 
   return (
     <div className="space-y-4 mt-4 p-4 rounded-lg bg-mono-0 dark:bg-mono-190 border border-mono-40 dark:border-mono-160">
@@ -103,13 +120,25 @@ const ServiceRequestSummary: FC<Props> = ({
           </div>
 
           {hasExposureValues && (
-            <div className="flex items-start gap-2">
+            <div className="space-y-1">
               <span className="text-sm text-mono-140 dark:text-mono-80">
-                Requested Exposures:
+                Per-Operator Exposure (%):
               </span>
-              <span className="text-sm font-semibold">
-                {requestedExposureBps.map(formatBpsAsPercent).join(', ')}
-              </span>
+              <div className="space-y-1">
+                {exposureRows.map((entry, index) => (
+                  <div
+                    key={`${index}-${entry.operatorLabel}-${entry.exposureBps}`}
+                    className="flex items-center justify-between gap-3 text-sm"
+                  >
+                    <span className="text-mono-140 dark:text-mono-80">
+                      {entry.operatorLabel}
+                    </span>
+                    <span className="font-semibold">
+                      {formatBpsAsPercent(entry.exposureBps)}
+                    </span>
+                  </div>
+                ))}
+              </div>
             </div>
           )}
 
@@ -125,6 +154,22 @@ const ServiceRequestSummary: FC<Props> = ({
               </span>
             </div>
           )}
+
+          <div className="flex items-start gap-2">
+            <span className="text-sm text-mono-140 dark:text-mono-80">
+              Meaning:
+            </span>
+            <span className="text-sm font-semibold">
+              {requestVariant === 'basic' &&
+                'Uses default 100% operator exposure.'}
+              {requestVariant === 'exposure' &&
+                'Each operator has its own exposure percent (bps) while default TNT security requirements still apply.'}
+              {requestVariant === 'security' &&
+                'Operators must satisfy per-asset exposure bounds before approval.'}
+              {requestVariant === 'unknown' &&
+                'Variant could not be resolved from on-chain calldata.'}
+            </span>
+          </div>
         </div>
       </div>
 
