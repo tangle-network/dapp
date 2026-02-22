@@ -54,6 +54,7 @@ const DeployPage: FC = () => {
 
   const {
     watch,
+    getValues,
     setValue,
     control,
     formState: { errors },
@@ -66,7 +67,7 @@ const DeployPage: FC = () => {
     defaultValues: {
       durationUnit: 'seconds',
       requestMode: 'basic',
-      globalExposurePercent: 100,
+      operatorExposurePercents: {},
       assets: [],
       securityCommitments: [],
       requestArgs: [],
@@ -121,7 +122,7 @@ const DeployPage: FC = () => {
   const onDeployBlueprint = async () => {
     try {
       clearErrors();
-      const formData = watch();
+      const formData = getValues();
       const validatedData = deployBlueprintSchema.parse(formData);
 
       const operators = validatedData.operators ?? [];
@@ -166,10 +167,19 @@ const DeployPage: FC = () => {
       let securityRequirements: AssetSecurityRequirement[] | undefined;
 
       if (validatedData.requestMode === 'exposure') {
-        const exposurePercent = validatedData.globalExposurePercent ?? 100;
-        exposureBps = operators.map(
-          () => exposurePercent * PERCENT_TO_BASIS_POINTS,
-        );
+        const operatorExposurePercents = validatedData.operatorExposurePercents;
+        exposureBps = operators.map((operator, index) => {
+          const exposurePercent =
+            operatorExposurePercents[operator.toLowerCase()];
+
+          if (exposurePercent === undefined) {
+            throw new Error(
+              `Exposure percent is required for operator #${index + 1}`,
+            );
+          }
+
+          return exposurePercent * PERCENT_TO_BASIS_POINTS;
+        });
       } else if (
         validatedData.requestMode === 'security' &&
         validatedData.assets.length > 0 &&
@@ -216,7 +226,8 @@ const DeployPage: FC = () => {
     } catch (error) {
       if (error instanceof z.ZodError) {
         error.errors.forEach((err) => {
-          setError(err.path[0] as keyof DeployBlueprintSchema, {
+          const errorPath = err.path.join('.') as keyof DeployBlueprintSchema;
+          setError(errorPath, {
             type: 'manual',
             message: err.message,
           });

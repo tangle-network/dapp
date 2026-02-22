@@ -85,7 +85,17 @@ export const deployBlueprintSchema = z
       .enum(['seconds', 'minutes', 'hours', 'days'])
       .default('seconds'),
     requestMode: z.enum(['basic', 'exposure', 'security']).default('basic'),
-    globalExposurePercent: z.number().int().min(1).max(100).optional(),
+    operatorExposurePercents: z
+      .record(z.string(), z.number().int().min(1).max(100))
+      .default({})
+      .transform((value) => {
+        return Object.fromEntries(
+          Object.entries(value).map(([operator, percent]) => [
+            operator.toLowerCase(),
+            percent,
+          ]),
+        );
+      }),
     permittedCallers: z.array(z.string()).transform((value, context) => {
       if (value.length === 0) {
         context.addIssue({
@@ -171,11 +181,18 @@ export const deployBlueprintSchema = z
       }
     }
 
-    if (schema.requestMode === 'exposure' && !schema.globalExposurePercent) {
-      ctx.addIssue({
-        path: ['globalExposurePercent'],
-        code: z.ZodIssueCode.custom,
-        message: 'Global exposure percent is required for exposure mode',
+    if (schema.requestMode === 'exposure') {
+      schema.operators.forEach((operator, index) => {
+        const key = operator.toLowerCase();
+        const exposurePercent = schema.operatorExposurePercents[key];
+
+        if (exposurePercent === undefined) {
+          ctx.addIssue({
+            path: ['operatorExposurePercents', key],
+            code: z.ZodIssueCode.custom,
+            message: `Exposure percent is required for operator #${index + 1}`,
+          });
+        }
       });
     }
 
