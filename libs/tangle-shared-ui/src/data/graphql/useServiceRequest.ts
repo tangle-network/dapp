@@ -7,6 +7,7 @@ import { Address, parseEventLogs, zeroAddress } from 'viem';
 import { useAccount, usePublicClient, useWalletClient } from 'wagmi';
 import TangleABI from '../../abi/tangle';
 import { getContractsByChainId } from '@tangle-network/dapp-config/contracts';
+import { encodeRequestArgsFromJson, type SchemaField } from '../../codec';
 
 /**
  * Asset kind for security requirements.
@@ -19,6 +20,7 @@ export enum AssetKind {
 
 /** Conversion factor from percentage to basis points (1% = 100 bps) */
 export const PERCENT_TO_BASIS_POINTS = 100;
+const BPS_DENOMINATOR = 10_000;
 
 /**
  * Asset security requirement for requestServiceWithSecurity.
@@ -42,11 +44,106 @@ export interface ServiceRequestParams {
   paymentToken: Address;
   paymentAmount: bigint;
   /**
+   * Optional explicit operator exposure commitments for requestServiceWithExposure.
+   * Values are basis points (1% = 100, 100% = 10000).
+   */
+  exposureBps?: number[];
+  /**
    * Optional security requirements for the service.
    * When provided, requestServiceWithSecurity() is called instead of requestService().
    */
   securityRequirements?: AssetSecurityRequirement[];
 }
+
+export type ServiceRequestFunctionName =
+  | 'requestService'
+  | 'requestServiceWithExposure'
+  | 'requestServiceWithSecurity';
+
+const hasValues = <T>(value: T[] | undefined): value is T[] => {
+  return Array.isArray(value) && value.length > 0;
+};
+
+export const selectRequestFunction = (
+  params: ServiceRequestParams,
+): ServiceRequestFunctionName => {
+  if (hasValues(params.securityRequirements)) {
+    return 'requestServiceWithSecurity';
+  }
+
+  if (hasValues(params.exposureBps)) {
+    return 'requestServiceWithExposure';
+  }
+
+  return 'requestService';
+};
+
+export const validateServiceRequestParams = (
+  params: ServiceRequestParams,
+): void => {
+  const exposureBps = params.exposureBps ?? [];
+  const securityRequirements = params.securityRequirements ?? [];
+  const hasExposureBps = exposureBps.length > 0;
+  const hasSecurityRequirements = securityRequirements.length > 0;
+
+  if (hasExposureBps && hasSecurityRequirements) {
+    throw new Error(
+      'Exposure commitments and security requirements are mutually exclusive',
+    );
+  }
+
+  if (hasExposureBps) {
+    if (exposureBps.length !== params.operators.length) {
+      throw new Error(
+        `Exposure commitments length mismatch: expected ${params.operators.length}, got ${exposureBps.length}`,
+      );
+    }
+
+    exposureBps.forEach((exposureValue, index) => {
+      if (!Number.isInteger(exposureValue)) {
+        throw new Error(
+          `Exposure commitment at index ${index} must be an integer`,
+        );
+      }
+
+      if (exposureValue < 1 || exposureValue > BPS_DENOMINATOR) {
+        throw new Error(
+          `Exposure commitment at index ${index} must be between 1 and ${BPS_DENOMINATOR} bps`,
+        );
+      }
+    });
+  }
+
+  if (hasSecurityRequirements) {
+    securityRequirements.forEach((requirement, index) => {
+      if (
+        !Number.isInteger(requirement.minExposureBps) ||
+        !Number.isInteger(requirement.maxExposureBps)
+      ) {
+        throw new Error(
+          `Security requirement at index ${index} must use integer exposure values`,
+        );
+      }
+
+      if (
+        requirement.minExposureBps < 1 ||
+        requirement.minExposureBps > BPS_DENOMINATOR ||
+        requirement.maxExposureBps < 1 ||
+        requirement.maxExposureBps > BPS_DENOMINATOR
+      ) {
+        throw new Error(
+          `Security requirement at index ${index} must be between 1 and ${BPS_DENOMINATOR} bps`,
+        );
+      }
+
+      if (requirement.minExposureBps > requirement.maxExposureBps) {
+        throw new Error(
+          `Security requirement at index ${index} has minExposureBps greater than maxExposureBps`,
+        );
+      }
+    });
+  }
+};
 
 export type ServiceRequestStatus = 'idle' | 'pending' | 'success' | 'error';
 
@@ -80,6 +177,8 @@ export const useServiceRequestTx = () => {
       setResult({});
 
       try {
+        validateServiceRequestParams(params);
+
         let contracts: ReturnType<typeof getContractsByChainId>;
         try {
           contracts = getContractsByChainId(chainId);
@@ -92,15 +191,14 @@ export const useServiceRequestTx = () => {
           throw new Error('Tangle contract not available on this network');
         }
 
-        // Determine which contract function to use based on security requirements
-        const hasSecurityRequirements =
-          params.securityRequirements && params.securityRequirements.length > 0;
+        const requestFunction = selectRequestFunction(params);
+        const exposureBps = params.exposureBps ?? [];
+        const securityRequirements = params.securityRequirements ?? [];
 
         // Use type assertion to avoid "union type too complex" error from large ABI
         let simulateRequest;
 
-        if (hasSecurityRequirements) {
-          // Use requestServiceWithSecurity when security requirements are provided
+        if (requestFunction === 'requestServiceWithSecurity') {
           const result = await (publicClient as any).simulateContract({
             address: tangleAddress,
             abi: TangleABI,
@@ -108,7 +206,29 @@ export const useServiceRequestTx = () => {
             args: [
               params.blueprintId,
               params.operators,
-              params.securityRequirements,
+              securityRequirements,
+              params.config,
+              params.permittedCallers,
+              params.ttl,
+              params.paymentToken,
+              params.paymentAmount,
+            ] as const,
+            account: userAddress,
+            value:
+              params.paymentToken === zeroAddress
+                ? params.paymentAmount
+                : BigInt(0),
+          });
+          simulateRequest = result.request;
+        } else if (requestFunction === 'requestServiceWithExposure') {
+          const result = await (publicClient as any).simulateContract({
+            address: tangleAddress,
+            abi: TangleABI,
+            functionName: 'requestServiceWithExposure' as const,
+            args: [
+              params.blueprintId,
+              params.operators,
+              exposureBps,
               params.config,
               params.permittedCallers,
               params.ttl,
@@ -123,7 +243,6 @@ export const useServiceRequestTx = () => {
           });
           simulateRequest = result.request;
         } else {
-          // Use requestService when no security requirements
           const result = await (publicClient as any).simulateContract({
             address: tangleAddress,
             abi: TangleABI,
@@ -207,21 +326,24 @@ export const useServiceRequestTx = () => {
 /**
  * Encode service configuration/request args for the requestService call.
  * Contract expects TLV binary format. For blueprints with no request params,
- * return empty bytes (0x). For blueprints with request params, throw an error
- * as full TLV encoding is not yet implemented.
+ * return empty bytes (0x). For non-empty request params, a parsed request
+ * schema must be provided.
  */
-export const encodeServiceConfig = (requestArgs: unknown[]): `0x${string}` => {
-  // For blueprints with no request params, return empty bytes
+export const encodeServiceConfig = (
+  requestArgs: unknown[],
+  requestSchema?: SchemaField[],
+): `0x${string}` => {
   if (!requestArgs || requestArgs.length === 0) {
     return '0x';
   }
 
-  // TODO: Implement full TLV encoding for blueprints with request params
-  // For now, throw error to prevent silent failures with incorrect encoding
-  throw new Error(
-    'Blueprints with request parameters are not yet supported. ' +
-      'Request argument encoding requires TLV binary format implementation.',
-  );
+  if (!requestSchema || requestSchema.length === 0) {
+    throw new Error(
+      'Request arguments were provided, but request schema is unavailable',
+    );
+  }
+
+  return encodeRequestArgsFromJson(requestSchema, requestArgs);
 };
 
 export default useServiceRequestTx;
