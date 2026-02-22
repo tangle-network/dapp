@@ -11,6 +11,10 @@ export { parseSchema } from './schemaParser';
 export { encodePayload } from './payloadEncoder';
 export { decodePayload, formatDecodedValue } from './payloadDecoder';
 export {
+  encodeRequestArgsFromJson,
+  RequestArgsEncodingError,
+} from './requestArgsEncoder';
+export {
   parseSchemaJson,
   encodeSchemaToHex,
   encodeSchemaFromJson,
