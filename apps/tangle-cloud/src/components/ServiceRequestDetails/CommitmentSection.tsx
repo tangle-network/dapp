@@ -33,11 +33,11 @@ const formatRequestVariantLabel = (variant: ServiceRequestVariant): string => {
 const getRequestVariantTooltip = (variant: ServiceRequestVariant): string => {
   switch (variant) {
     case 'basic':
-      return 'Uses default 100% operator exposure.';
+      return 'All operators are assigned 100% exposure by default.';
     case 'exposure':
-      return 'Each operator has its own exposure percent (bps) while default TNT security requirements still apply.';
+      return 'The requester assigns a custom exposure percentage to each operator.';
     case 'security':
-      return 'Operators must satisfy per-asset exposure bounds before approval.';
+      return 'The requester defines per-asset security requirements with minimum and maximum exposure bounds. Operators must commit an exposure percentage for each required asset within those bounds to approve.';
     default:
       return 'Variant could not be resolved from on-chain calldata.';
   }
