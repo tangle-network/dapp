@@ -1,4 +1,8 @@
-import { Typography, Label, shortenString } from '@tangle-network/ui-components';
+import {
+  Typography,
+  Label,
+  shortenString,
+} from '@tangle-network/ui-components';
 import { FC, useMemo } from 'react';
 import LsTokenIcon from '@tangle-network/tangle-shared-ui/components/LsTokenIcon';
 import cx from 'classnames';

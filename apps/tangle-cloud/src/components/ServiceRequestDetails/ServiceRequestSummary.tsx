@@ -194,7 +194,9 @@ const ServiceRequestSummary: FC<Props> = ({
             <span className="text-sm font-semibold">
               {formatRequestVariantLabel(requestVariant)}
             </span>
-            <ModalSafeTooltip content={getRequestVariantTooltip(requestVariant)} />
+            <ModalSafeTooltip
+              content={getRequestVariantTooltip(requestVariant)}
+            />
           </div>
 
           {hasExposureValues && (
@@ -219,7 +221,6 @@ const ServiceRequestSummary: FC<Props> = ({
               </div>
             </div>
           )}
-
         </div>
       </div>
 

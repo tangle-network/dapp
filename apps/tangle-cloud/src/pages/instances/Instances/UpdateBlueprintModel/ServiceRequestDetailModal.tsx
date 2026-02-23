@@ -248,7 +248,12 @@ const ServiceRequestDetailModal: FC<Props> = ({
 
       return onApprove(formattedData);
     },
-    [buildSecurityCommitments, derivedSimpleRestakingPercent, hasCustomRequirements, onApprove],
+    [
+      buildSecurityCommitments,
+      derivedSimpleRestakingPercent,
+      hasCustomRequirements,
+      onApprove,
+    ],
   );
 
   const handleApproveClick = useCallback(() => {
@@ -336,79 +341,81 @@ const ServiceRequestDetailModal: FC<Props> = ({
             </div>
           )}
 
-          {!isLoadingRequirements && !isLoadingStake && hasCustomRequirements && (
-            <div className="space-y-4">
-              <Typography
-                variant="body2"
-                className="text-mono-100 dark:text-mono-100"
-              >
-                Set your exposure percentage within the allowed bounds for each
-                asset.
-              </Typography>
+          {!isLoadingRequirements &&
+            !isLoadingStake &&
+            hasCustomRequirements && (
+              <div className="space-y-4">
+                <Typography
+                  variant="body2"
+                  className="text-mono-100 dark:text-mono-100"
+                >
+                  Set your exposure percentage within the allowed bounds for
+                  each asset.
+                </Typography>
 
-              {requirements.map((req) => {
-                const key = toAssetMapKey(req.asset.token);
+                {requirements.map((req) => {
+                  const key = toAssetMapKey(req.asset.token);
 
-                return (
-                  <Controller
-                    key={key}
-                    name={`commitments.${key}`}
-                    control={control}
-                    defaultValue={req.minExposureBps}
-                    rules={{
-                      min: {
-                        value: req.minExposureBps,
-                        message: `Must be at least ${req.minExposureBps / 100}%`,
-                      },
-                      max: {
-                        value: req.maxExposureBps,
-                        message: `Cannot exceed ${req.maxExposureBps / 100}%`,
-                      },
-                    }}
-                    render={({ field, fieldState }) => (
-                      <ExposureCommitmentInput
-                        tokenAddress={req.asset.token}
-                        assetKind={req.asset.kind}
-                        metadata={req.metadata}
-                        minExposureBps={req.minExposureBps}
-                        maxExposureBps={req.maxExposureBps}
-                        value={field.value ?? req.minExposureBps}
-                        onChange={field.onChange}
-                        errorMessage={fieldState.error?.message}
-                        delegatedAmount={getStakeForAsset(req.asset.token)}
-                      />
+                  return (
+                    <Controller
+                      key={key}
+                      name={`commitments.${key}`}
+                      control={control}
+                      defaultValue={req.minExposureBps}
+                      rules={{
+                        min: {
+                          value: req.minExposureBps,
+                          message: `Must be at least ${req.minExposureBps / 100}%`,
+                        },
+                        max: {
+                          value: req.maxExposureBps,
+                          message: `Cannot exceed ${req.maxExposureBps / 100}%`,
+                        },
+                      }}
+                      render={({ field, fieldState }) => (
+                        <ExposureCommitmentInput
+                          tokenAddress={req.asset.token}
+                          assetKind={req.asset.kind}
+                          metadata={req.metadata}
+                          minExposureBps={req.minExposureBps}
+                          maxExposureBps={req.maxExposureBps}
+                          value={field.value ?? req.minExposureBps}
+                          onChange={field.onChange}
+                          errorMessage={fieldState.error?.message}
+                          delegatedAmount={getStakeForAsset(req.asset.token)}
+                        />
+                      )}
+                    />
+                  );
+                })}
+              </div>
+            )}
+
+          {!isLoadingRequirements &&
+            !isLoadingStake &&
+            !hasCustomRequirements && (
+              <div className="space-y-4">
+                <Typography
+                  variant="body2"
+                  className="text-center text-mono-100 dark:text-mono-100"
+                >
+                  Standard approval — no custom commitments required.
+                </Typography>
+
+                {defaultTntRequirement && (
+                  <StandardApprovalInfo
+                    tokenAddress={defaultTntRequirement.asset.token}
+                    assetKind={defaultTntRequirement.asset.kind}
+                    metadata={defaultTntRequirement.metadata}
+                    operatorExposureBps={derivedSimpleRestakingPercent * 100}
+                    securityCommitmentBps={defaultTntRequirement.minExposureBps}
+                    delegatedAmount={getStakeForAsset(
+                      defaultTntRequirement.asset.token,
                     )}
                   />
-                );
-              })}
-            </div>
-          )}
-
-          {!isLoadingRequirements && !isLoadingStake && !hasCustomRequirements && (
-            <div className="space-y-4">
-              <Typography
-                variant="body2"
-                className="text-center text-mono-100 dark:text-mono-100"
-              >
-                Standard approval — no custom commitments required.
-              </Typography>
-
-              {defaultTntRequirement && (
-                <StandardApprovalInfo
-                  tokenAddress={defaultTntRequirement.asset.token}
-                  assetKind={defaultTntRequirement.asset.kind}
-                  metadata={defaultTntRequirement.metadata}
-                  operatorExposureBps={derivedSimpleRestakingPercent * 100}
-                  securityCommitmentBps={
-                    defaultTntRequirement.minExposureBps
-                  }
-                  delegatedAmount={getStakeForAsset(
-                    defaultTntRequirement.asset.token,
-                  )}
-                />
-              )}
-            </div>
-          )}
+                )}
+              </div>
+            )}
         </form>
       </ModalBody>
 

@@ -270,11 +270,13 @@ export const useServiceRequestDetails = (
               data: tx.input,
             });
 
-            const rawOperators = (decoded.args?.[1] as readonly unknown[]) ?? [];
+            const rawOperators =
+              (decoded.args?.[1] as readonly unknown[]) ?? [];
             requestedOperators = rawOperators as Address[];
 
             if (decoded.functionName === 'requestServiceWithExposure') {
-              const rawExposures = (decoded.args?.[2] as readonly unknown[]) ?? [];
+              const rawExposures =
+                (decoded.args?.[2] as readonly unknown[]) ?? [];
               requestedExposureBps = rawExposures.map((value) => Number(value));
             }
           } catch {
@@ -285,7 +287,10 @@ export const useServiceRequestDetails = (
         // Keep variant as unknown when tx lookup/decoding is unavailable.
       }
 
-      if (requestVariant === 'unknown' && customSecurityRequirements.length > 0) {
+      if (
+        requestVariant === 'unknown' &&
+        customSecurityRequirements.length > 0
+      ) {
         requestVariant = 'security';
       }
 

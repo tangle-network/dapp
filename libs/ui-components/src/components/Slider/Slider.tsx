@@ -85,13 +85,25 @@ export const Slider = forwardRef<HTMLSpanElement, SliderProps>(
           </SliderPrimitive.Track>
 
           {value?.length === 1 && (
-            <SliderThumb hasLabel={hasLabel} value={value[0]} isDisabled={isDisabled} />
+            <SliderThumb
+              hasLabel={hasLabel}
+              value={value[0]}
+              isDisabled={isDisabled}
+            />
           )}
 
           {value?.length === 2 && (
             <>
-              <SliderThumb hasLabel={hasLabel} value={value[0]} isDisabled={isDisabled} />
-              <SliderThumb hasLabel={hasLabel} value={value[1]} isDisabled={isDisabled} />
+              <SliderThumb
+                hasLabel={hasLabel}
+                value={value[0]}
+                isDisabled={isDisabled}
+              />
+              <SliderThumb
+                hasLabel={hasLabel}
+                value={value[1]}
+                isDisabled={isDisabled}
+              />
             </>
           )}
         </SliderPrimitive.Root>
@@ -102,7 +114,11 @@ export const Slider = forwardRef<HTMLSpanElement, SliderProps>(
 
 /***** Internal components */
 
-function SliderThumb({ hasLabel, value, isDisabled }: SliderThumbProps & { isDisabled?: boolean }) {
+function SliderThumb({
+  hasLabel,
+  value,
+  isDisabled,
+}: SliderThumbProps & { isDisabled?: boolean }) {
   return (
     <SliderPrimitive.Thumb
       className={cx(

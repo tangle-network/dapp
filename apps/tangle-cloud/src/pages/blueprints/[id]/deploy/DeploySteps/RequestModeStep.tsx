@@ -369,46 +369,46 @@ export const RequestModeStep: FC<BaseDeployStepProps> = ({
             )}
 
             <div className="space-y-4">
-                {Children.toArray(
-                  (assets ?? []).map((asset, index) => {
-                    const minExposurePercentFormValue =
-                      securityCommitments?.at(index)?.minExposurePercent ?? 1;
-                    const maxExposurePercentFormValue =
-                      securityCommitments?.at(index)?.maxExposurePercent ?? 100;
+              {Children.toArray(
+                (assets ?? []).map((asset, index) => {
+                  const minExposurePercentFormValue =
+                    securityCommitments?.at(index)?.minExposurePercent ?? 1;
+                  const maxExposurePercentFormValue =
+                    securityCommitments?.at(index)?.maxExposurePercent ?? 100;
 
-                    return (
-                      <div className="flex flex-col lg:flex-row lg:items-start gap-3">
-                        <AssetRequirementFormItem
-                          assetId={asset.id}
-                          className="flex-1"
-                          assetMetadata={asset}
-                          minExposurePercent={minExposurePercentFormValue}
-                          maxExposurePercent={maxExposurePercentFormValue}
-                          onChangeExposurePercent={(value) =>
-                            onChangeExposurePercent(index, asset.id, value)
-                          }
-                          minExposurePercentErrorMsg={
-                            errors?.securityCommitments?.[index]
-                              ?.minExposurePercent?.message
-                          }
-                          maxExposurePercentErrorMsg={
-                            errors?.securityCommitments?.[index]
-                              ?.maxExposurePercent?.message
-                          }
-                        />
-                        <Button
-                          variant="utility"
-                          onClick={() => removeAsset(index)}
-                          className="self-start lg:self-center lg:mt-2 flex-shrink-0"
-                          size="sm"
-                        >
-                          <TrashIcon className="h-4 w-4" />
-                        </Button>
-                      </div>
-                    );
-                  }),
-                )}
-              </div>
+                  return (
+                    <div className="flex flex-col lg:flex-row lg:items-start gap-3">
+                      <AssetRequirementFormItem
+                        assetId={asset.id}
+                        className="flex-1"
+                        assetMetadata={asset}
+                        minExposurePercent={minExposurePercentFormValue}
+                        maxExposurePercent={maxExposurePercentFormValue}
+                        onChangeExposurePercent={(value) =>
+                          onChangeExposurePercent(index, asset.id, value)
+                        }
+                        minExposurePercentErrorMsg={
+                          errors?.securityCommitments?.[index]
+                            ?.minExposurePercent?.message
+                        }
+                        maxExposurePercentErrorMsg={
+                          errors?.securityCommitments?.[index]
+                            ?.maxExposurePercent?.message
+                        }
+                      />
+                      <Button
+                        variant="utility"
+                        onClick={() => removeAsset(index)}
+                        className="self-start lg:self-center lg:mt-2 flex-shrink-0"
+                        size="sm"
+                      >
+                        <TrashIcon className="h-4 w-4" />
+                      </Button>
+                    </div>
+                  );
+                }),
+              )}
+            </div>
           </div>
         )}
       </div>
