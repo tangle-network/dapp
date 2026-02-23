@@ -37,11 +37,9 @@ interface ExposureCommitmentInputProps {
   /** Operator's delegated amount for this asset (optional) */
   delegatedAmount?: bigint | null;
   /**
-   * Operator exposure in basis points (0-10000), set by the deployer.
-   * When provided, the tokens-at-risk calculation accounts for both
-   * operator exposure and the selected TNT commitment.
-   * Displayed as a read-only info line.
-   * Defaults to 10000 (100%) for WithSecurity approvals.
+   * Operator exposure in basis points (0-10000). When provided, displayed as
+   * a read-only info row. For WithExposure mode this is set per-operator by
+   * the deployer; for Basic and WithSecurity it is always 10000 (100%).
    */
   operatorExposureBps?: number;
 }
@@ -174,8 +172,8 @@ export const ExposureCommitmentInput: FC<ExposureCommitmentInputProps> = ({
 
       {/* Slider section */}
       <div className="flex-1 min-w-0">
-        {/* Operator exposure info (read-only, shown when not 100%) */}
-        {operatorExposureBps < 10000 && (
+        {/* Operator exposure info (read-only) */}
+        {operatorExposureBps !== undefined && (
           <div className="flex items-center justify-between mb-3 p-2 bg-mono-0 dark:bg-mono-180 rounded-lg">
             <Label className="text-mono-100 dark:text-mono-100">
               Operator Exposure
@@ -187,7 +185,9 @@ export const ExposureCommitmentInput: FC<ExposureCommitmentInputProps> = ({
             >
               {operatorExposureBps / 100}%
               <span className="text-mono-100 dark:text-mono-80 font-normal text-xs ml-1">
-                (set by deployer)
+                {operatorExposureBps < 10000
+                  ? '(set by deployer)'
+                  : '(protocol default)'}
               </span>
             </Typography>
           </div>

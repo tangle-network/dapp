@@ -1,15 +1,100 @@
-import { FC } from 'react';
+import { FC, useRef, useState } from 'react';
+import { createPortal } from 'react-dom';
+import { Address } from 'viem';
 import {
   Chip,
   SkeletonLoader,
   Typography,
 } from '@tangle-network/ui-components';
+import { InformationLine } from '@tangle-network/icons';
+import { shortenString } from '@tangle-network/ui-components/utils/shortenString';
 import {
   MembershipModel,
   getMembershipLabel,
   formatTtl,
   formatCreatedAt,
 } from '../../types/serviceRequest';
+import type { ServiceRequestVariant } from '@tangle-network/tangle-shared-ui/data/services';
+
+const formatRequestVariantLabel = (variant: ServiceRequestVariant): string => {
+  switch (variant) {
+    case 'basic':
+      return 'Basic';
+    case 'exposure':
+      return 'With Exposure';
+    case 'security':
+      return 'With Security';
+    default:
+      return 'Unknown';
+  }
+};
+
+const getRequestVariantTooltip = (variant: ServiceRequestVariant): string => {
+  switch (variant) {
+    case 'basic':
+      return 'Uses default 100% operator exposure.';
+    case 'exposure':
+      return 'Each operator has its own exposure percent (bps) while default TNT security requirements still apply.';
+    case 'security':
+      return 'Operators must satisfy per-asset exposure bounds before approval.';
+    default:
+      return 'Variant could not be resolved from on-chain calldata.';
+  }
+};
+
+const formatBpsAsPercent = (bps: number): string => {
+  return `${(bps / 100).toFixed(2)}%`;
+};
+
+const ModalSafeTooltip: FC<{ content: string }> = ({ content }) => {
+  const [isVisible, setIsVisible] = useState(false);
+  const triggerRef = useRef<HTMLSpanElement>(null);
+  const [coords, setCoords] = useState({ top: 0, left: 0 });
+
+  const handleMouseEnter = () => {
+    if (triggerRef.current) {
+      const rect = triggerRef.current.getBoundingClientRect();
+      setCoords({
+        top: rect.top - 8,
+        left: rect.left + rect.width / 2,
+      });
+    }
+    setIsVisible(true);
+  };
+
+  return (
+    <>
+      <span
+        ref={triggerRef}
+        onMouseEnter={handleMouseEnter}
+        onMouseLeave={() => setIsVisible(false)}
+        className="inline-flex items-center cursor-default text-mono-140 dark:text-mono-80"
+      >
+        <InformationLine />
+      </span>
+
+      {isVisible &&
+        createPortal(
+          <div
+            style={{
+              position: 'fixed',
+              top: coords.top,
+              left: coords.left,
+              transform: 'translate(-50%, -100%)',
+              zIndex: 9999,
+              pointerEvents: 'none',
+            }}
+            className="inline-flex items-center rounded px-3 py-2 bg-mono-20 dark:bg-mono-200 border border-mono-60 dark:border-mono-180 shadow-sm"
+          >
+            <span className="text-xs text-mono-140 dark:text-mono-80 font-normal text-center break-normal min-w-0 max-w-[250px]">
+              {content}
+            </span>
+          </div>,
+          document.body,
+        )}
+    </>
+  );
+};
 
 type Props = {
   ttl: bigint | undefined;
@@ -18,6 +103,10 @@ type Props = {
   minOperators: number | undefined;
   maxOperators: number | undefined;
   totalOperators: number;
+  requestVariant: ServiceRequestVariant;
+  requestedExposureBps: number[] | null;
+  requestedOperators: Address[] | null;
+  operatorCandidates: Address[];
   isLoading: boolean;
 };
 
@@ -28,13 +117,17 @@ const CommitmentSection: FC<Props> = ({
   minOperators,
   maxOperators: _maxOperators,
   totalOperators,
+  requestVariant,
+  requestedExposureBps,
+  requestedOperators,
+  operatorCandidates,
   isLoading,
 }) => {
   if (isLoading) {
     return (
       <div className="space-y-2">
         <Typography variant="h5" className="text-mono-200 dark:text-mono-0">
-          Commitment Details
+          Service Configuration
         </Typography>
 
         <div className="space-y-1">
@@ -56,10 +149,26 @@ const CommitmentSection: FC<Props> = ({
       ? totalOperators
       : (minOperators ?? totalOperators);
 
+  const hasExposureValues =
+    requestVariant === 'exposure' &&
+    Array.isArray(requestedExposureBps) &&
+    requestedExposureBps.length > 0;
+
+  const exposureRows = hasExposureValues
+    ? requestedExposureBps.map((exposureBps, index) => ({
+        operatorLabel: requestedOperators?.[index]
+          ? shortenString(requestedOperators[index], 8)
+          : operatorCandidates[index]
+            ? shortenString(operatorCandidates[index], 8)
+            : `Operator #${index + 1}`,
+        exposureBps,
+      }))
+    : [];
+
   return (
     <div className="space-y-2">
       <Typography variant="h5" className="text-mono-200 dark:text-mono-0">
-        Commitment Details
+        Service Configuration
       </Typography>
 
       <div className="space-y-1">
@@ -94,6 +203,39 @@ const CommitmentSection: FC<Props> = ({
           </span>
           <span className="text-sm font-semibold">{minApprovalsRequired}</span>
         </div>
+
+        <div className="flex items-center gap-2">
+          <span className="text-sm text-mono-140 dark:text-mono-80">
+            Request Type:
+          </span>
+          <span className="text-sm font-semibold">
+            {formatRequestVariantLabel(requestVariant)}
+          </span>
+          <ModalSafeTooltip content={getRequestVariantTooltip(requestVariant)} />
+        </div>
+
+        {hasExposureValues && (
+          <div className="space-y-1">
+            <span className="text-sm text-mono-140 dark:text-mono-80">
+              Per-Operator Exposure (%):
+            </span>
+            <div className="space-y-1">
+              {exposureRows.map((entry, index) => (
+                <div
+                  key={`${index}-${entry.operatorLabel}-${entry.exposureBps}`}
+                  className="flex items-center justify-between gap-3 text-sm"
+                >
+                  <span className="text-mono-140 dark:text-mono-80">
+                    {entry.operatorLabel}
+                  </span>
+                  <span className="font-semibold">
+                    {formatBpsAsPercent(entry.exposureBps)}
+                  </span>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );
