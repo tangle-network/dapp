@@ -180,33 +180,70 @@ export const RequestModeStep: FC<BaseDeployStepProps> = ({
       </Typography>
 
       <div className="flex flex-col gap-4">
-        <div>
-          <Typography variant="body3" className="mb-1">
-            Mode
-          </Typography>
-          <Select
-            value={requestMode}
-            onValueChange={(value) =>
-              setValue('requestMode', value as RequestMode, {
-                shouldDirty: true,
-                shouldTouch: true,
-                shouldValidate: true,
-              })
-            }
-          >
-            <SelectTrigger className="w-1/2">
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="basic">Basic</SelectItem>
-              <SelectItem value="exposure">With Exposure</SelectItem>
-              <SelectItem value="security">With Security</SelectItem>
-            </SelectContent>
-          </Select>
-          {errors?.requestMode?.message && (
-            <Typography variant="body3" className="text-red-500 mt-1">
-              {errors.requestMode.message}
+        <div className="flex items-end gap-4">
+          <div className="w-1/2">
+            <Typography variant="body3" className="mb-1">
+              Mode
             </Typography>
+            <Select
+              value={requestMode}
+              onValueChange={(value) =>
+                setValue('requestMode', value as RequestMode, {
+                  shouldDirty: true,
+                  shouldTouch: true,
+                  shouldValidate: true,
+                })
+              }
+            >
+              <SelectTrigger className="w-full">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="basic">Basic</SelectItem>
+                <SelectItem value="exposure">With Exposure</SelectItem>
+                <SelectItem value="security">With Security</SelectItem>
+              </SelectContent>
+            </Select>
+            {errors?.requestMode?.message && (
+              <Typography variant="body3" className="text-red-500 mt-1">
+                {errors.requestMode.message}
+              </Typography>
+            )}
+          </div>
+
+          {requestMode === 'security' && (
+            <div className="flex-1">
+              <Typography variant="body3" className="mb-1">
+                Add Asset Requirements
+              </Typography>
+              <Select
+                value={selectedAsset}
+                onValueChange={(value) => {
+                  addAsset(value as Address);
+                  setSelectedAsset('');
+                }}
+              >
+                <SelectTrigger className="w-full">
+                  <SelectValue placeholder="Select asset" />
+                </SelectTrigger>
+                <SelectContent>
+                  {Children.toArray(
+                    availableAssets.map((asset) => {
+                      const name = asset.metadata.name || 'Unknown';
+                      const symbol = asset.metadata.symbol || 'TNT';
+                      return (
+                        <SelectItem value={asset.id} id={asset.id}>
+                          <div className="flex items-center gap-2">
+                            <LsTokenIcon name={symbol} size="md" />
+                            <Typography variant="body1">{name}</Typography>
+                          </div>
+                        </SelectItem>
+                      );
+                    }),
+                  )}
+                </SelectContent>
+              </Select>
+            </div>
           )}
         </div>
 
@@ -330,39 +367,6 @@ export const RequestModeStep: FC<BaseDeployStepProps> = ({
             {errors?.securityCommitments?.message && (
               <ErrorMessage>{errors.securityCommitments.message}</ErrorMessage>
             )}
-
-            <div>
-              <Typography variant="body3" className="mb-1">
-                Add Asset Requirements
-              </Typography>
-              <Select
-                value={selectedAsset}
-                onValueChange={(value) => {
-                  addAsset(value as Address);
-                  setSelectedAsset('');
-                }}
-              >
-                <SelectTrigger className="w-1/2">
-                    <SelectValue placeholder="Select asset" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {Children.toArray(
-                      availableAssets.map((asset) => {
-                        const name = asset.metadata.name || 'Unknown';
-                        const symbol = asset.metadata.symbol || 'TNT';
-                        return (
-                          <SelectItem value={asset.id} id={asset.id}>
-                            <div className="flex items-center gap-2">
-                              <LsTokenIcon name={symbol} size="md" />
-                              <Typography variant="body1">{name}</Typography>
-                            </div>
-                          </SelectItem>
-                        );
-                      }),
-                    )}
-                </SelectContent>
-              </Select>
-            </div>
 
             <div className="space-y-4">
                 {Children.toArray(

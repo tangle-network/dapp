@@ -39,7 +39,7 @@ interface ExposureCommitmentInputProps {
 }
 
 /**
- * Single-value exposure commitment input for service approval.
+ * Interactive exposure commitment input for WithSecurity service approval.
  *
  * Displays:
  * - Asset icon and name
@@ -85,12 +85,12 @@ export const ExposureCommitmentInput: FC<ExposureCommitmentInputProps> = ({
     (assetKind === 0 ? 'ETH' : shortenString(tokenAddress, 4));
   const decimals = metadata?.decimals ?? 18;
 
-  // Calculate tokens at risk based on exposure percentage
+  // For WithSecurity, operator exposure is always 100% so value alone
+  // represents the effective risk in basis points.
   const tokensAtRisk = useMemo(() => {
     if (delegatedAmount === null || delegatedAmount === undefined) {
       return null;
     }
-    // tokensAtRisk = delegatedAmount * exposureBps / 10000
     return (delegatedAmount * BigInt(value)) / BigInt(10000);
   }, [delegatedAmount, value]);
 

@@ -25,6 +25,7 @@ import { TxStatus } from '@tangle-network/tangle-shared-ui/hooks/useContractWrit
 import addCommasToNumber from '@tangle-network/ui-components/utils/addCommasToNumber';
 import useServiceRequestSecurityRequirements from '../../../../data/services/useServiceRequestSecurityRequirements';
 import ExposureCommitmentInput from './ExposureCommitmentInput';
+import StandardApprovalInfo from './StandardApprovalInfo';
 import useEvmOperatorInfo from '../../../../hooks/useEvmOperatorInfo';
 import { useOperatorStakeByAsset } from '@tangle-network/tangle-shared-ui/data/restake/useOperatorDelegationsByAsset';
 import {
@@ -88,24 +89,37 @@ const ServiceRequestDetailModal: FC<Props> = ({
     },
   );
 
-  const { data: requirements, isLoading: isLoadingRequirements } =
-    useServiceRequestSecurityRequirements(selectedRequest?.requestId);
+  const {
+    data: requirements,
+    isLoading: isLoadingRequirements,
+    hasCustomRequirements,
+    defaultTntRequirement,
+  } = useServiceRequestSecurityRequirements(selectedRequest?.requestId);
 
   const assetsToQuery = useMemo(() => {
-    if (!requirements || requirements.length === 0) {
-      return undefined;
+    if (hasCustomRequirements && requirements && requirements.length > 0) {
+      return requirements.map((req) => ({
+        kind: req.asset.kind,
+        token: req.asset.token,
+      }));
     }
-    return requirements.map((req) => ({
-      kind: req.asset.kind,
-      token: req.asset.token,
-    }));
-  }, [requirements]);
+    // For simple case, query TNT stake for the read-only slider
+    if (defaultTntRequirement) {
+      return [
+        {
+          kind: defaultTntRequirement.asset.kind,
+          token: defaultTntRequirement.asset.token,
+        },
+      ];
+    }
+    return undefined;
+  }, [hasCustomRequirements, requirements, defaultTntRequirement]);
 
   const { data: stakeByAsset, isLoading: isLoadingStake } =
     useOperatorStakeByAsset(operatorAddress, assetsToQuery);
 
   const initialCommitments = useMemo(() => {
-    if (!requirements || requirements.length === 0) {
+    if (!hasCustomRequirements || !requirements || requirements.length === 0) {
       return {};
     }
 
@@ -115,7 +129,37 @@ const ServiceRequestDetailModal: FC<Props> = ({
       commitments[key] = req.minExposureBps;
     }
     return commitments;
-  }, [requirements]);
+  }, [hasCustomRequirements, requirements]);
+
+  const derivedSimpleRestakingPercent = useMemo(() => {
+    if (!contractDetails || !operatorAddress) {
+      return 100;
+    }
+
+    if (
+      contractDetails.requestVariant !== 'exposure' ||
+      !contractDetails.requestedOperators ||
+      !contractDetails.requestedExposureBps
+    ) {
+      return 100;
+    }
+
+    const index = contractDetails.requestedOperators.findIndex(
+      (operator) => operator.toLowerCase() === operatorAddress.toLowerCase(),
+    );
+
+    if (index < 0) {
+      return 100;
+    }
+
+    const exposureBps = contractDetails.requestedExposureBps[index];
+    if (typeof exposureBps !== 'number') {
+      return 100;
+    }
+
+    const derivedPercent = Math.round(exposureBps / 100);
+    return Math.max(0, Math.min(100, derivedPercent));
+  }, [contractDetails, operatorAddress]);
 
   const getStakeForAsset = useCallback(
     (tokenAddress: Address): bigint | null => {
@@ -192,12 +236,19 @@ const ServiceRequestDetailModal: FC<Props> = ({
     (data: FormValues) => {
       const formattedData: ApprovalConfirmationFormFields = {
         requestId: Number(data.requestId),
-        securityCommitments: buildSecurityCommitments(data.commitments),
       };
+
+      if (hasCustomRequirements) {
+        formattedData.securityCommitments = buildSecurityCommitments(
+          data.commitments,
+        );
+      } else {
+        formattedData.restakingPercent = derivedSimpleRestakingPercent;
+      }
 
       return onApprove(formattedData);
     },
-    [buildSecurityCommitments, onApprove],
+    [buildSecurityCommitments, derivedSimpleRestakingPercent, hasCustomRequirements, onApprove],
   );
 
   const handleApproveClick = useCallback(() => {
@@ -270,12 +321,10 @@ const ServiceRequestDetailModal: FC<Props> = ({
     </>
   );
 
-  const hasRequirements = requirements && requirements.length > 0;
-
   const renderApproveFormView = () => (
     <>
       <ModalBody>
-        <form onSubmit={handleSubmit(handleFormSubmit)} className="space-y-4">
+        <form onSubmit={handleSubmit(handleFormSubmit)}>
           <Typography variant="h4" className="text-center mb-3">
             Security Commitment
           </Typography>
@@ -287,7 +336,7 @@ const ServiceRequestDetailModal: FC<Props> = ({
             </div>
           )}
 
-          {!isLoadingRequirements && !isLoadingStake && hasRequirements && (
+          {!isLoadingRequirements && !isLoadingStake && hasCustomRequirements && (
             <div className="space-y-4">
               <Typography
                 variant="body2"
@@ -334,6 +383,32 @@ const ServiceRequestDetailModal: FC<Props> = ({
               })}
             </div>
           )}
+
+          {!isLoadingRequirements && !isLoadingStake && !hasCustomRequirements && (
+            <div className="space-y-4">
+              <Typography
+                variant="body2"
+                className="text-center text-mono-100 dark:text-mono-100"
+              >
+                Standard approval — no custom commitments required.
+              </Typography>
+
+              {defaultTntRequirement && (
+                <StandardApprovalInfo
+                  tokenAddress={defaultTntRequirement.asset.token}
+                  assetKind={defaultTntRequirement.asset.kind}
+                  metadata={defaultTntRequirement.metadata}
+                  operatorExposureBps={derivedSimpleRestakingPercent * 100}
+                  securityCommitmentBps={
+                    defaultTntRequirement.minExposureBps
+                  }
+                  delegatedAmount={getStakeForAsset(
+                    defaultTntRequirement.asset.token,
+                  )}
+                />
+              )}
+            </div>
+          )}
         </form>
       </ModalBody>
 
@@ -351,11 +426,10 @@ const ServiceRequestDetailModal: FC<Props> = ({
           onClick={handleSubmit(handleFormSubmit)}
           isLoading={isApproving}
           isDisabled={
-            !isValid ||
             isApproving ||
             isLoadingRequirements ||
             isLoadingStake ||
-            !hasRequirements
+            (hasCustomRequirements && !isValid)
           }
         >
           Confirm Approval
@@ -374,7 +448,9 @@ const ServiceRequestDetailModal: FC<Props> = ({
 
   const getModalDescription = () => {
     if (view === 'approve-form') {
-      return 'Set your security commitment to approve this request';
+      return hasCustomRequirements
+        ? 'Set your security commitment to approve this request'
+        : 'Approve this request using the standard approval flow';
     }
     if (viewOnly) {
       return 'View the service request details';

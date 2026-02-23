@@ -1,7 +1,9 @@
-import { FC } from 'react';
+import { FC, useRef, useState } from 'react';
+import { createPortal } from 'react-dom';
 import { Address } from 'viem';
 import { Typography } from '@tangle-network/ui-components';
 import { Divider } from '@tangle-network/ui-components';
+import { InformationLine } from '@tangle-network/icons';
 import { shortenString } from '@tangle-network/ui-components/utils/shortenString';
 import type {
   ServiceRequestContractDetails,
@@ -37,6 +39,19 @@ const formatRequestVariantLabel = (variant: ServiceRequestVariant): string => {
   }
 };
 
+const getRequestVariantTooltip = (variant: ServiceRequestVariant): string => {
+  switch (variant) {
+    case 'basic':
+      return 'Uses default 100% operator exposure.';
+    case 'exposure':
+      return 'Each operator has its own exposure percent (bps) while default TNT security requirements still apply.';
+    case 'security':
+      return 'Operators must satisfy per-asset exposure bounds before approval.';
+    default:
+      return 'Variant could not be resolved from on-chain calldata.';
+  }
+};
+
 const formatBpsAsPercent = (bps: number): string => {
   return `${(bps / 100).toFixed(2)}%`;
 };
@@ -44,6 +59,69 @@ const formatBpsAsPercent = (bps: number): string => {
 type OperatorExposure = {
   operatorLabel: string;
   exposureBps: number;
+};
+
+/**
+ * A tooltip that works inside Radix Dialog modals. The standard Radix Tooltip
+ * breaks inside modals because:
+ * 1. Radix Dialog sets `body.style.pointerEvents = "none"`, blocking hover events
+ *    on the portal-rendered tooltip content.
+ * 2. The `isDisablePortal` workaround renders inline but `Dialog.Content` has
+ *    `overflow: auto` which clips absolutely-positioned children.
+ *
+ * This implementation bypasses both issues by using a React portal with
+ * `position: fixed`, which is unaffected by overflow clipping, and tracking
+ * hover via native React events on the trigger element (inside the dialog,
+ * which retains pointer-events: auto).
+ */
+const ModalSafeTooltip: FC<{ content: string }> = ({ content }) => {
+  const [isVisible, setIsVisible] = useState(false);
+  const triggerRef = useRef<HTMLSpanElement>(null);
+  const [coords, setCoords] = useState({ top: 0, left: 0 });
+
+  const handleMouseEnter = () => {
+    if (triggerRef.current) {
+      const rect = triggerRef.current.getBoundingClientRect();
+      setCoords({
+        top: rect.top - 8,
+        left: rect.left + rect.width / 2,
+      });
+    }
+    setIsVisible(true);
+  };
+
+  return (
+    <>
+      <span
+        ref={triggerRef}
+        onMouseEnter={handleMouseEnter}
+        onMouseLeave={() => setIsVisible(false)}
+        className="inline-flex items-center cursor-default text-mono-140 dark:text-mono-80"
+      >
+        <InformationLine />
+      </span>
+
+      {isVisible &&
+        createPortal(
+          <div
+            style={{
+              position: 'fixed',
+              top: coords.top,
+              left: coords.left,
+              transform: 'translate(-50%, -100%)',
+              zIndex: 9999,
+              pointerEvents: 'none',
+            }}
+            className="inline-flex items-center rounded px-3 py-2 bg-mono-20 dark:bg-mono-200 border border-mono-60 dark:border-mono-180 shadow-sm"
+          >
+            <span className="text-xs text-mono-140 dark:text-mono-80 font-normal text-center break-normal min-w-0 max-w-[250px]">
+              {content}
+            </span>
+          </div>,
+          document.body,
+        )}
+    </>
+  );
 };
 
 const ServiceRequestSummary: FC<Props> = ({
@@ -64,7 +142,6 @@ const ServiceRequestSummary: FC<Props> = ({
   const requestVariant = contractDetails?.requestVariant ?? 'unknown';
   const requestedExposureBps = contractDetails?.requestedExposureBps ?? null;
   const requestedOperators = contractDetails?.requestedOperators ?? null;
-  const defaultTntRequirement = contractDetails?.defaultTntRequirement ?? null;
   const hasExposureValues =
     requestVariant === 'exposure' &&
     Array.isArray(requestedExposureBps) &&
@@ -117,6 +194,7 @@ const ServiceRequestSummary: FC<Props> = ({
             <span className="text-sm font-semibold">
               {formatRequestVariantLabel(requestVariant)}
             </span>
+            <ModalSafeTooltip content={getRequestVariantTooltip(requestVariant)} />
           </div>
 
           {hasExposureValues && (
@@ -142,34 +220,6 @@ const ServiceRequestSummary: FC<Props> = ({
             </div>
           )}
 
-          {defaultTntRequirement && (
-            <div className="flex items-start gap-2">
-              <span className="text-sm text-mono-140 dark:text-mono-80">
-                Default TNT Requirement:
-              </span>
-              <span className="text-sm font-semibold">
-                {formatBpsAsPercent(defaultTntRequirement.minExposureBps)} -
-                {' '}
-                {formatBpsAsPercent(defaultTntRequirement.maxExposureBps)}
-              </span>
-            </div>
-          )}
-
-          <div className="flex items-start gap-2">
-            <span className="text-sm text-mono-140 dark:text-mono-80">
-              Meaning:
-            </span>
-            <span className="text-sm font-semibold">
-              {requestVariant === 'basic' &&
-                'Uses default 100% operator exposure.'}
-              {requestVariant === 'exposure' &&
-                'Each operator has its own exposure percent (bps) while default TNT security requirements still apply.'}
-              {requestVariant === 'security' &&
-                'Operators must satisfy per-asset exposure bounds before approval.'}
-              {requestVariant === 'unknown' &&
-                'Variant could not be resolved from on-chain calldata.'}
-            </span>
-          </div>
         </div>
       </div>
 
