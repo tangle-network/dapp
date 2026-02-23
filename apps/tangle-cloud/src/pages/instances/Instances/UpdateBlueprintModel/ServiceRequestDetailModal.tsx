@@ -420,8 +420,7 @@ const ServiceRequestDetailModal: FC<Props> = ({
                           minExposureBps={defaultTntRequirement.minExposureBps}
                           maxExposureBps={defaultTntRequirement.maxExposureBps}
                           value={
-                            field.value ??
-                            defaultTntRequirement.minExposureBps
+                            field.value ?? defaultTntRequirement.minExposureBps
                           }
                           onChange={field.onChange}
                           errorMessage={fieldState.error?.message}
@@ -462,10 +461,7 @@ const ServiceRequestDetailModal: FC<Props> = ({
           onClick={handleSubmit(handleFormSubmit)}
           isLoading={isApproving}
           isDisabled={
-            isApproving ||
-            isLoadingRequirements ||
-            isLoadingStake ||
-            !isValid
+            isApproving || isLoadingRequirements || isLoadingStake || !isValid
           }
         >
           Confirm Approval

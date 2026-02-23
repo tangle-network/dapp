@@ -240,7 +240,9 @@ const CommitmentSection: FC<Props> = ({
           <span className="text-sm font-semibold">
             {formatRequestVariantLabel(requestVariant)}
           </span>
-          <ModalSafeTooltip content={getRequestVariantTooltip(requestVariant)} />
+          <ModalSafeTooltip
+            content={getRequestVariantTooltip(requestVariant)}
+          />
         </div>
 
         {hasExposureValues && (
