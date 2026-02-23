@@ -337,7 +337,8 @@ const ServiceRequestDetailModal: FC<Props> = ({
 
           {!isLoadingRequirements &&
             !isLoadingStake &&
-            hasCustomRequirements && (
+            hasCustomRequirements &&
+            requirements !== undefined && (
               <div className="space-y-4">
                 <Typography
                   variant="body2"
