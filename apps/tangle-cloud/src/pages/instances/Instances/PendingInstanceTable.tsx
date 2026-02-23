@@ -403,6 +403,7 @@ export const PendingInstanceTable: FC<PendingInstanceTableProps> = ({
         await approveServiceRequest({
           requestId: selectedRequest.requestId,
           restakingPercent: data.restakingPercent ?? 0,
+          tntExposureBps: data.tntExposureBps,
         });
       }
     },

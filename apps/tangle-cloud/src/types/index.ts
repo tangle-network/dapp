@@ -55,6 +55,8 @@ export type ApprovalConfirmationFormFields = {
   requestId: number;
   /** Simple approval mode: single percentage (0-100) for default TNT requirement */
   restakingPercent?: number;
+  /** TNT exposure in basis points (0-10000), when set calls 3-arg approveService overload */
+  tntExposureBps?: number;
   /** Commitments mode: per-asset exposure commitments matching contract format */
   securityCommitments?: ContractSecurityCommitment[];
 };

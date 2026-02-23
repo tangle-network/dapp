@@ -25,7 +25,6 @@ import { TxStatus } from '@tangle-network/tangle-shared-ui/hooks/useContractWrit
 import addCommasToNumber from '@tangle-network/ui-components/utils/addCommasToNumber';
 import useServiceRequestSecurityRequirements from '../../../../data/services/useServiceRequestSecurityRequirements';
 import ExposureCommitmentInput from './ExposureCommitmentInput';
-import StandardApprovalInfo from './StandardApprovalInfo';
 import useEvmOperatorInfo from '../../../../hooks/useEvmOperatorInfo';
 import { useOperatorStakeByAsset } from '@tangle-network/tangle-shared-ui/data/restake/useOperatorDelegationsByAsset';
 import {
@@ -54,6 +53,7 @@ type Props = {
 type FormValues = {
   requestId: bigint;
   commitments: Record<string, number>;
+  tntExposureBps: number;
 };
 
 const toAssetMapKey = (tokenAddress: string): string => {
@@ -183,6 +183,7 @@ const ServiceRequestDetailModal: FC<Props> = ({
     defaultValues: {
       requestId: selectedRequest?.requestId ?? BigInt(0),
       commitments: {},
+      tntExposureBps: 0,
     },
   });
 
@@ -191,6 +192,15 @@ const ServiceRequestDetailModal: FC<Props> = ({
       setValue('commitments', initialCommitments);
     }
   }, [initialCommitments, setValue]);
+
+  // Initialize tntExposureBps from default TNT requirement
+  useEffect(() => {
+    if (defaultTntRequirement && !hasCustomRequirements) {
+      setValue('tntExposureBps', defaultTntRequirement.minExposureBps, {
+        shouldValidate: true,
+      });
+    }
+  }, [defaultTntRequirement, hasCustomRequirements, setValue]);
 
   // Close modal on successful transaction
   useEffect(() => {
@@ -244,12 +254,16 @@ const ServiceRequestDetailModal: FC<Props> = ({
         );
       } else {
         formattedData.restakingPercent = derivedSimpleRestakingPercent;
+        if (defaultTntRequirement && data.tntExposureBps > 0) {
+          formattedData.tntExposureBps = data.tntExposureBps;
+        }
       }
 
       return onApprove(formattedData);
     },
     [
       buildSecurityCommitments,
+      defaultTntRequirement,
       derivedSimpleRestakingPercent,
       hasCustomRequirements,
       onApprove,
@@ -395,24 +409,59 @@ const ServiceRequestDetailModal: FC<Props> = ({
             !isLoadingStake &&
             !hasCustomRequirements && (
               <div className="space-y-4">
-                <Typography
-                  variant="body2"
-                  className="text-center text-mono-100 dark:text-mono-100"
-                >
-                  Standard approval — no custom commitments required.
-                </Typography>
+                {defaultTntRequirement ? (
+                  <>
+                    <Typography
+                      variant="body2"
+                      className="text-mono-100 dark:text-mono-100 text-center"
+                    >
+                      Standard approval — set your TNT security commitment.
+                    </Typography>
 
-                {defaultTntRequirement && (
-                  <StandardApprovalInfo
-                    tokenAddress={defaultTntRequirement.asset.token}
-                    assetKind={defaultTntRequirement.asset.kind}
-                    metadata={defaultTntRequirement.metadata}
-                    operatorExposureBps={derivedSimpleRestakingPercent * 100}
-                    securityCommitmentBps={defaultTntRequirement.minExposureBps}
-                    delegatedAmount={getStakeForAsset(
-                      defaultTntRequirement.asset.token,
-                    )}
-                  />
+                    <Controller
+                      name="tntExposureBps"
+                      control={control}
+                      defaultValue={defaultTntRequirement.minExposureBps}
+                      rules={{
+                        min: {
+                          value: defaultTntRequirement.minExposureBps,
+                          message: `Must be at least ${defaultTntRequirement.minExposureBps / 100}%`,
+                        },
+                        max: {
+                          value: defaultTntRequirement.maxExposureBps,
+                          message: `Cannot exceed ${defaultTntRequirement.maxExposureBps / 100}%`,
+                        },
+                      }}
+                      render={({ field, fieldState }) => (
+                        <ExposureCommitmentInput
+                          tokenAddress={defaultTntRequirement.asset.token}
+                          assetKind={defaultTntRequirement.asset.kind}
+                          metadata={defaultTntRequirement.metadata}
+                          minExposureBps={defaultTntRequirement.minExposureBps}
+                          maxExposureBps={defaultTntRequirement.maxExposureBps}
+                          value={
+                            field.value ??
+                            defaultTntRequirement.minExposureBps
+                          }
+                          onChange={field.onChange}
+                          errorMessage={fieldState.error?.message}
+                          delegatedAmount={getStakeForAsset(
+                            defaultTntRequirement.asset.token,
+                          )}
+                          operatorExposureBps={
+                            derivedSimpleRestakingPercent * 100
+                          }
+                        />
+                      )}
+                    />
+                  </>
+                ) : (
+                  <Typography
+                    variant="body2"
+                    className="text-center text-mono-100 dark:text-mono-100"
+                  >
+                    No custom commitments required.
+                  </Typography>
                 )}
               </div>
             )}
@@ -436,7 +485,7 @@ const ServiceRequestDetailModal: FC<Props> = ({
             isApproving ||
             isLoadingRequirements ||
             isLoadingStake ||
-            (hasCustomRequirements && !isValid)
+            !isValid
           }
         >
           Confirm Approval
@@ -455,8 +504,11 @@ const ServiceRequestDetailModal: FC<Props> = ({
 
   const getModalDescription = () => {
     if (view === 'approve-form') {
-      return hasCustomRequirements
-        ? 'Set your security commitment to approve this request'
+      if (hasCustomRequirements) {
+        return 'Set your security commitment to approve this request';
+      }
+      return defaultTntRequirement
+        ? 'Set your TNT exposure commitment to approve this request'
         : 'Approve this request using the standard approval flow';
     }
     if (viewOnly) {

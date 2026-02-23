@@ -22,6 +22,8 @@ export { TxStatus };
 export interface SimpleApproveParams {
   requestId: bigint;
   restakingPercent: number;
+  /** TNT exposure in basis points (0-10000). When > 0, calls the 3-arg approveService overload. */
+  tntExposureBps?: number;
 }
 
 /**
@@ -116,6 +118,20 @@ export const useServiceApproveTx = (options?: UseServiceApproveTxOptions) => {
         Math.max(0, simpleParams.restakingPercent ?? 0),
       );
 
+      // When tntExposureBps is set, use the 3-arg overload
+      if (simpleParams.tntExposureBps && simpleParams.tntExposureBps > 0) {
+        return {
+          address: contracts.tangle,
+          abi: TANGLE_ABI,
+          functionName: 'approveService' as const,
+          args: [
+            params.requestId,
+            restakingPercent,
+            simpleParams.tntExposureBps,
+          ] as const,
+        };
+      }
+
       return {
         address: contracts.tangle,
         abi: TANGLE_ABI,
@@ -137,6 +153,12 @@ export const useServiceApproveTx = (options?: UseServiceApproveTxOptions) => {
         } else {
           const simpleParams = params as SimpleApproveParams;
           details.set('Restaking Percent', `${simpleParams.restakingPercent}%`);
+          if (simpleParams.tntExposureBps && simpleParams.tntExposureBps > 0) {
+            details.set(
+              'TNT Exposure',
+              `${simpleParams.tntExposureBps / 100}%`,
+            );
+          }
         }
 
         return details;
