@@ -1,12 +1,13 @@
 import { FC, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
+import { Link } from 'react-router-dom';
 import { Address } from 'viem';
 import {
   Chip,
   SkeletonLoader,
   Typography,
 } from '@tangle-network/ui-components';
-import { InformationLine } from '@tangle-network/icons';
+import { ExternalLinkLine, InformationLine } from '@tangle-network/icons';
 import { shortenString } from '@tangle-network/ui-components/utils/shortenString';
 import {
   MembershipModel,
@@ -108,6 +109,9 @@ type Props = {
   requestedOperators: Address[] | null;
   operatorCandidates: Address[];
   isLoading: boolean;
+  blueprintId?: bigint;
+  blueprintName?: string;
+  currentOperator?: Address;
 };
 
 const CommitmentSection: FC<Props> = ({
@@ -122,6 +126,9 @@ const CommitmentSection: FC<Props> = ({
   requestedOperators,
   operatorCandidates,
   isLoading,
+  blueprintId,
+  currentOperator,
+  blueprintName,
 }) => {
   if (isLoading) {
     return (
@@ -155,14 +162,18 @@ const CommitmentSection: FC<Props> = ({
     requestedExposureBps.length > 0;
 
   const exposureRows = hasExposureValues
-    ? requestedExposureBps.map((exposureBps, index) => ({
-        operatorLabel: requestedOperators?.[index]
-          ? shortenString(requestedOperators[index], 8)
-          : operatorCandidates[index]
-            ? shortenString(operatorCandidates[index], 8)
-            : `Operator #${index + 1}`,
-        exposureBps,
-      }))
+    ? requestedExposureBps.map((exposureBps, index) => {
+        const rawAddress =
+          requestedOperators?.[index] ?? operatorCandidates[index];
+        const operatorLabel = rawAddress
+          ? shortenString(rawAddress, 6)
+          : `Operator #${index + 1}`;
+        const isCurrentOperator =
+          rawAddress !== undefined &&
+          currentOperator !== undefined &&
+          rawAddress.toLowerCase() === currentOperator.toLowerCase();
+        return { operatorLabel, exposureBps, isCurrentOperator };
+      })
     : [];
 
   return (
@@ -172,6 +183,24 @@ const CommitmentSection: FC<Props> = ({
       </Typography>
 
       <div className="space-y-1">
+        {blueprintId !== undefined && blueprintName && (
+          <div className="flex items-center gap-2">
+            <span className="text-sm text-mono-140 dark:text-mono-80">
+              Blueprint:
+            </span>
+
+            <Link
+              to={`/blueprints/${blueprintId}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-1 text-sm font-semibold text-blue-50 hover:text-blue-40 hover:underline"
+            >
+              {blueprintName}
+              <ExternalLinkLine className="w-3.5 h-3.5" />
+            </Link>
+          </div>
+        )}
+
         <div className="flex items-center gap-2">
           <span className="text-sm text-mono-140 dark:text-mono-80">
             Duration:
@@ -225,8 +254,13 @@ const CommitmentSection: FC<Props> = ({
                   key={`${index}-${entry.operatorLabel}-${entry.exposureBps}`}
                   className="flex items-center justify-between gap-3 text-sm"
                 >
-                  <span className="text-mono-140 dark:text-mono-80">
+                  <span className="inline-flex items-center gap-1.5 text-mono-140 dark:text-mono-80">
                     {entry.operatorLabel}
+                    {entry.isCurrentOperator && (
+                      <span className="text-blue-50 dark:text-blue-40">
+                        (You)
+                      </span>
+                    )}
                   </span>
                   <span className="font-semibold">
                     {formatBpsAsPercent(entry.exposureBps)}

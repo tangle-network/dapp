@@ -19,6 +19,8 @@ type Props = {
   rejectedOperators: Address[];
   currentOperator: Address | undefined;
   isLoading: boolean;
+  blueprintId?: bigint;
+  blueprintName?: string;
 };
 
 const ServiceRequestSummary: FC<Props> = ({
@@ -30,6 +32,8 @@ const ServiceRequestSummary: FC<Props> = ({
   rejectedOperators,
   currentOperator,
   isLoading,
+  blueprintId,
+  blueprintName,
 }) => {
   const securityRequirements: AssetSecurityRequirement[] =
     contractDetails?.customSecurityRequirements ??
@@ -39,16 +43,6 @@ const ServiceRequestSummary: FC<Props> = ({
 
   return (
     <div className="space-y-4 mt-4 p-4 rounded-lg bg-mono-0 dark:bg-mono-190 border border-mono-40 dark:border-mono-160">
-      <PaymentTermsSection
-        paymentToken={contractDetails?.paymentToken}
-        paymentAmount={contractDetails?.paymentAmount}
-        tokenSymbol={tokenSymbol}
-        tokenDecimals={tokenDecimals}
-        isLoading={isLoading}
-      />
-
-      <Divider />
-
       <CommitmentSection
         ttl={contractDetails?.ttl}
         createdAt={contractDetails?.createdAt}
@@ -60,6 +54,19 @@ const ServiceRequestSummary: FC<Props> = ({
         requestedExposureBps={contractDetails?.requestedExposureBps ?? null}
         requestedOperators={contractDetails?.requestedOperators ?? null}
         operatorCandidates={operatorCandidates}
+        isLoading={isLoading}
+        blueprintId={blueprintId}
+        blueprintName={blueprintName}
+        currentOperator={currentOperator}
+      />
+
+      <Divider />
+
+      <PaymentTermsSection
+        paymentToken={contractDetails?.paymentToken}
+        paymentAmount={contractDetails?.paymentAmount}
+        tokenSymbol={tokenSymbol}
+        tokenDecimals={tokenDecimals}
         isLoading={isLoading}
       />
 

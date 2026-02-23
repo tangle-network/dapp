@@ -12,10 +12,7 @@ import {
 } from '../../../../types';
 import { useForm, Controller } from 'react-hook-form';
 import { useEffect, FC, useMemo, useCallback, useState } from 'react';
-import {
-  useAllBlueprints,
-  type ServiceRequest,
-} from '@tangle-network/tangle-shared-ui/data/graphql';
+import { type ServiceRequest } from '@tangle-network/tangle-shared-ui/data/graphql';
 import {
   useServiceRequestDetails,
   useTokenMetadata,
@@ -27,10 +24,7 @@ import useServiceRequestSecurityRequirements from '../../../../data/services/use
 import ExposureCommitmentInput from './ExposureCommitmentInput';
 import useEvmOperatorInfo from '../../../../hooks/useEvmOperatorInfo';
 import { useOperatorStakeByAsset } from '@tangle-network/tangle-shared-ui/data/restake/useOperatorDelegationsByAsset';
-import {
-  ServiceRequestSummary,
-  BlueprintInfoCard,
-} from '../../../../components/ServiceRequestDetails';
+import { ServiceRequestSummary } from '../../../../components/ServiceRequestDetails';
 import type { Address } from 'viem';
 import { parseAddressLowercase } from '@tangle-network/tangle-shared-ui/utils/safeParseAddress';
 
@@ -74,7 +68,6 @@ const ServiceRequestDetailModal: FC<Props> = ({
   const isApproving = approveStatus === TxStatus.PROCESSING;
   const isRejecting = rejectStatus === TxStatus.PROCESSING;
 
-  const { blueprints: allBlueprints } = useAllBlueprints();
   const { operatorAddress } = useEvmOperatorInfo();
 
   const { data: contractDetails, isLoading: isLoadingContract } =
@@ -282,24 +275,9 @@ const ServiceRequestDetailModal: FC<Props> = ({
     return null;
   }
 
-  const blueprintStats = allBlueprints?.get(
-    selectedRequest.blueprintId.toString(),
-  );
-
-  const instancesCount = blueprintStats?.instancesCount ?? 0;
-  const operatorsCount = blueprintStats?.operatorsCount ?? 0;
-
   const renderDetailsView = () => (
     <>
-      <ModalBody>
-        <BlueprintInfoCard
-          name={selectedRequest.blueprintData?.name ?? ''}
-          author={selectedRequest.blueprintData?.author ?? ''}
-          description={selectedRequest.blueprintData?.description ?? ''}
-          instancesCount={instancesCount}
-          operatorsCount={operatorsCount}
-        />
-
+      <ModalBody className="overflow-y-auto flex-1 justify-start">
         <ServiceRequestSummary
           contractDetails={contractDetails}
           tokenSymbol={tokenMetadata?.symbol ?? 'ETH'}
@@ -309,11 +287,13 @@ const ServiceRequestDetailModal: FC<Props> = ({
           rejectedOperators={selectedRequest.rejectedOperators}
           currentOperator={operatorAddress ?? undefined}
           isLoading={isLoadingContract || isLoadingToken}
+          blueprintId={selectedRequest.blueprintId}
+          blueprintName={selectedRequest.blueprintData?.name}
         />
       </ModalBody>
 
       {!viewOnly && (
-        <div className="flex justify-end gap-3 p-6 pt-0">
+        <div className="flex justify-end gap-3 p-6 pt-4 shrink-0 bg-mono-0 dark:bg-mono-180">
           <Button
             variant="secondary"
             className="!bg-red-50 hover:!bg-red-70 !text-mono-0"
@@ -331,7 +311,7 @@ const ServiceRequestDetailModal: FC<Props> = ({
       )}
 
       {viewOnly && (
-        <div className="flex justify-end gap-3 p-6 pt-0">
+        <div className="flex justify-end gap-3 p-6 pt-4 shrink-0 bg-mono-0 dark:bg-mono-180">
           <Button variant="secondary" onClick={onClose}>
             Close
           </Button>
@@ -342,7 +322,7 @@ const ServiceRequestDetailModal: FC<Props> = ({
 
   const renderApproveFormView = () => (
     <>
-      <ModalBody>
+      <ModalBody className="overflow-y-auto flex-1 justify-start">
         <form onSubmit={handleSubmit(handleFormSubmit)}>
           <Typography variant="h4" className="text-center mb-3">
             Security Commitment
@@ -361,7 +341,7 @@ const ServiceRequestDetailModal: FC<Props> = ({
               <div className="space-y-4">
                 <Typography
                   variant="body2"
-                  className="text-mono-100 dark:text-mono-100"
+                  className="text-mono-100 dark:text-mono-100 text-center"
                 >
                   Set your exposure percentage within the allowed bounds for
                   each asset.
@@ -468,7 +448,7 @@ const ServiceRequestDetailModal: FC<Props> = ({
         </form>
       </ModalBody>
 
-      <div className="flex justify-between gap-3 p-6 pt-0">
+      <div className="flex justify-between gap-3 p-6 pt-4 shrink-0 bg-mono-0 dark:bg-mono-180">
         <Button
           variant="secondary"
           onClick={handleBackToDetails}
@@ -520,7 +500,7 @@ const ServiceRequestDetailModal: FC<Props> = ({
   return (
     <ModalContent
       size="lg"
-      onInteractOutside={(event) => event.preventDefault()}
+      className="overflow-hidden flex flex-col max-h-[85vh]"
       title={getModalTitle()}
       description={getModalDescription()}
     >
