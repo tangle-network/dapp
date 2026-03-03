@@ -36,7 +36,6 @@ Last updated: 2026-03-03
 | User | Staking route surface | `/staking/*` | Static route verification | Implemented (manual-required) |
 | User | Migration claim | `/claim/migration` | Hook/unit coverage + manual-required runtime verification | Partial |
 | User | Native staking lifecycle | `/native-staking` | Static + manual-required | Partial (deprioritized non-launch) |
-| User | Native restaking legacy alias | `/native-restaking` | Redirect verification | Implemented (manual-required) |
 | Customer | Blueprint discovery/details | `/blueprints`, `/blueprints/:id` | Lint/typecheck/build + static review | Implemented (manual-required) |
 | Customer | Deploy blueprint request | `/blueprints/:id/deploy` | Typecheck + targeted request-schema test + manual E2E | Implemented (manual-required) |
 | Customer | Service ACL/funding/job flow | `/services/:id` | Lint/typecheck/test/build + manual E2E | Implemented (manual-required) |
@@ -58,7 +57,8 @@ Last updated: 2026-03-03
 
 ### Current state
 - Canonical dApp routes are `/staking/*` and `/native-staking`.
-- Native legacy alias compatibility remains (`/native-restaking` -> `/native-staking`).
+- Native restaking route aliases are removed from canonical UI routing.
+- Native restaking contract/user-flow certification is explicitly out of launch scope.
 - Shared wrappers (`useStakingAssets`, `StakingContext`, `data/staking/*`) coexist with compatibility aliases where needed.
 - Operator indexer responses still expose protocol `restaking*` fields in parse boundaries for compatibility.
 
@@ -73,7 +73,7 @@ Last updated: 2026-03-03
 |---|---|
 | `yarn nx run-many --target=test --projects=tangle-dapp,tangle-cloud,tangle-shared-ui --skip-nx-cache` | Success |
 | `yarn nx run tangle-cloud:typecheck --skip-nx-cache` | Success |
-| `rg -n "LegacyNativeRestakingRedirect|PagePath\.STAKING|/native-staking|/native-restaking" apps/tangle-dapp/src/app/app.tsx apps/tangle-dapp/src/types/index.ts` | Confirms canonical `/native-staking` and legacy `/native-restaking` redirect |
+| `rg -n "/native-staking|PagePath\\.NATIVE_STAKING" apps/tangle-dapp/src/app/app.tsx apps/tangle-dapp/src/types/index.ts` | Confirms canonical native staking route surface |
 | `rg -n "TxHistoryDrawer|TxHistoryNotifier|TxConfirmationModal" apps/tangle-cloud/src/components apps/tangle-cloud/src -g'*.ts' -g'*.tsx'` | Confirms cloud tx timeline wiring |
 | `rg -n --no-heading "\.restaking(Status|Stake|DelegationCount|LeavingRound|ScheduledUnstakeAmount|ScheduledUnstakeRound)" apps libs -g'*.ts' -g'*.tsx'` | Confirms `restaking*` matches are in GraphQL parse boundaries |
 | `rg -n "getServiceRequestSecurityRequirements|getServiceSecurityRequirements|Unable to load security requirements" apps/tangle-cloud/src/data/services apps/tangle-cloud/src/pages -g'*.ts' -g'*.tsx'` | Confirms fail-closed contract read path and explicit UI error messaging |
@@ -82,5 +82,6 @@ Last updated: 2026-03-03
 ## Open Gaps
 - Migration claim still requires live wallet+relayer reliability validation.
 - Native staking pod lifecycle is deprioritized for launch and not release-certified.
+- Native restaking contract/user-flow coverage is intentionally excluded from launch certification.
 - Wallet-connected approve/join/leave/terminate journeys still require manual cross-chain runtime validation.
 - Current automated tests (7 files) do not provide broad end-to-end flow certification for the 300-story catalog.

@@ -54,7 +54,7 @@ Primary references:
 | Flow | Code Evidence | Validation Command(s) |
 |---|---|---|
 | EVM staking lifecycle | `apps/tangle-dapp/src/app/app.tsx`; `apps/tangle-dapp/src/pages/staking/*`; `libs/tangle-shared-ui/src/data/tx/*` | `yarn nx run-many --target=test --projects=tangle-dapp,tangle-cloud,tangle-shared-ui --skip-nx-cache` |
-| Native staking route + alias | `apps/tangle-dapp/src/types/index.ts`; `apps/tangle-dapp/src/app/app.tsx` | `rg -n "LegacyNativeRestakingRedirect|PagePath\.STAKING|/native-staking|/native-restaking" apps/tangle-dapp/src/app/app.tsx apps/tangle-dapp/src/types/index.ts` |
+| Native staking route surface | `apps/tangle-dapp/src/types/index.ts`; `apps/tangle-dapp/src/app/app.tsx` | `rg -n "/native-staking|PagePath\\.NATIVE_STAKING" apps/tangle-dapp/src/app/app.tsx apps/tangle-dapp/src/types/index.ts` |
 | Cloud tx history/notifier parity | `apps/tangle-cloud/src/components/TxHistoryDrawer.tsx`; `apps/tangle-cloud/src/components/TxHistoryNotifier.tsx`; `apps/tangle-cloud/src/components/Layout.tsx`; `apps/tangle-cloud/src/components/Header.tsx` | `rg -n "TxHistoryDrawer|TxHistoryNotifier|TxConfirmationModal" apps/tangle-cloud/src/components apps/tangle-cloud/src -g'*.ts' -g'*.tsx'`; `yarn nx run-many --target=test --projects=tangle-dapp,tangle-cloud,tangle-shared-ui --skip-nx-cache` |
 | Deploy request schema-aware encoding | `apps/tangle-cloud/src/pages/blueprints/[id]/deploy/page.tsx`; `apps/tangle-cloud/src/data/services/useBlueprintRequestSchema.ts`; `libs/tangle-shared-ui/src/data/graphql/encodeServiceConfig.ts` | `yarn nx run-many --target=test --projects=tangle-dapp,tangle-cloud,tangle-shared-ui --skip-nx-cache`; `yarn nx run tangle-cloud:typecheck --skip-nx-cache` |
 | Security requirements fail-closed path | `apps/tangle-cloud/src/data/services/useServiceRequestSecurityRequirements.ts`; `apps/tangle-cloud/src/data/services/useServiceSecurityRequirements.ts`; `apps/tangle-cloud/src/pages/instances/Instances/UpdateBlueprintModel/ServiceRequestDetailModal.tsx`; `apps/tangle-cloud/src/pages/services/[id]/JoinServiceModal.tsx` | `rg -n "getServiceRequestSecurityRequirements|getServiceSecurityRequirements|Unable to load security requirements" apps/tangle-cloud/src/data/services apps/tangle-cloud/src/pages -g'*.ts' -g'*.tsx'`; `yarn nx run tangle-cloud:typecheck --skip-nx-cache` |
@@ -65,7 +65,7 @@ Primary references:
 |---|---|
 | `yarn nx run-many --target=test --projects=tangle-dapp,tangle-cloud,tangle-shared-ui --skip-nx-cache` | Success (dapp: 2/2 files, cloud: 3/3 files, shared-ui: 2/2 files) |
 | `yarn nx run tangle-cloud:typecheck --skip-nx-cache` | Success |
-| `rg -n "LegacyNativeRestakingRedirect|PagePath\.STAKING|/native-staking|/native-restaking" apps/tangle-dapp/src/app/app.tsx apps/tangle-dapp/src/types/index.ts` | Confirms `/native-staking` canonical and `/native-restaking` redirect alias |
+| `rg -n "/native-staking|PagePath\\.NATIVE_STAKING" apps/tangle-dapp/src/app/app.tsx apps/tangle-dapp/src/types/index.ts` | Confirms `/native-staking` canonical route surface |
 | `rg -n "TxHistoryDrawer|TxHistoryNotifier|TxConfirmationModal" apps/tangle-cloud/src/components apps/tangle-cloud/src -g'*.ts' -g'*.tsx'` | Confirms notifier/drawer/modal wiring in cloud layout/header |
 | `rg -n --no-heading "\.restaking(Status|Stake|DelegationCount|LeavingRound|ScheduledUnstakeAmount|ScheduledUnstakeRound)" apps libs -g'*.ts' -g'*.tsx'` | Matches constrained to GraphQL parse boundaries (`useOperators`, `useBlueprints`) |
 | `rg -n "getServiceRequestSecurityRequirements|getServiceSecurityRequirements|Unable to load security requirements" apps/tangle-cloud/src/data/services apps/tangle-cloud/src/pages -g'*.ts' -g'*.tsx'` | Confirms fail-closed read hooks and explicit UI error messaging |
@@ -74,6 +74,7 @@ Primary references:
 ## Blockers to Claim 100% Complete
 - Migration claim is still partial for live wallet+relayer reliability (`/claim/migration`).
 - Native staking pod lifecycle is partial and deprioritized for launch.
+- Native restaking contract/user-flow coverage is intentionally excluded from launch certification.
 - No dedicated browser E2E harness (Playwright/Cypress) exists in this repo; wallet-connected critical paths remain manual.
 - Automated tests are narrow (7 test files total) compared with 300 documented stories.
 - Catalog legacy `[MANUAL_REQUIRED]` tags under-report manual dependence (30 tags) relative to stories carrying manual-path evidence (246).
