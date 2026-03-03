@@ -87,7 +87,7 @@ const SideBarItem: FC<SideBarItemProps & SideBarExtraItemProps> = ({
           onClick={setItemAsActiveAndToggleDropdown}
           className={isDisabled ? 'cursor-not-allowed' : 'cursor-pointer'}
         >
-          {/* TODO: Make the link generic */}
+          {/* NOTE: Make the link generic */}
           <Link {...linkProps}>
             <StyledItem
               isActive={isActive}

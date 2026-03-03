@@ -1,5 +1,4 @@
 import { useMemorizedValue } from '@tangle-network/ui-components';
-import { NetworkId } from '@tangle-network/ui-components/constants/networks';
 import { skipToken, useQuery } from '@tanstack/react-query';
 import { z } from 'zod';
 import useNetworkStore from '../../context/useNetworkStore';
@@ -14,13 +13,11 @@ export function useTokenPrices(tokenSymbolSetArg: Set<string> | null) {
 
   return useQuery({
     queryKey: ['tokenPrices', ...(tokenSymbolSet ?? []), network?.id],
-    queryFn:
-      // Only fetch token prices for TANGLE_MAINNET
-      tokenSymbolSet && network?.id === NetworkId.TANGLE_MAINNET
-        ? () => fetcher(tokenSymbolSet)
-        : skipToken,
+    queryFn: tokenSymbolSet ? () => fetcher(tokenSymbolSet) : skipToken,
     staleTime: CACHE_EXPIRY,
     initialData: getInitialData(),
+    refetchInterval: CACHE_EXPIRY,
+    refetchIntervalInBackground: true,
   });
 }
 

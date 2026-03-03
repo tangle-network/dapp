@@ -6,16 +6,30 @@ import { useMemo } from 'react';
 import { ReactQueryKey } from '../../../constants/reactQuery';
 import useNetworkStore from '@tangle-network/tangle-shared-ui/context/useNetworkStore';
 import { NetworkId } from '@tangle-network/ui-components/constants/networks';
-import type { NetworkType } from '@tangle-network/tangle-shared-ui/graphql/graphql';
+import type {
+  NetworkType,
+  TypedDocumentString,
+} from '@tangle-network/tangle-shared-ui/graphql/graphql';
 
-const GetAccountPointsQueryDocument = graphql(/* GraphQL */ `
+type GetAccountPointsQuery = {
+  account: {
+    id: string;
+    totalPoints: string;
+  } | null;
+};
+
+type GetAccountPointsQueryVariables = {
+  account: string;
+};
+
+const GetAccountPointsQueryDocument = graphql`
   query GetAccountPoints($account: String!) {
     account(id: $account) {
       id
       totalPoints
     }
   }
-`);
+` as TypedDocumentString<GetAccountPointsQuery, GetAccountPointsQueryVariables>;
 
 const fetcher = async (network: NetworkType, activeAccount: string | null) => {
   if (activeAccount === null) {

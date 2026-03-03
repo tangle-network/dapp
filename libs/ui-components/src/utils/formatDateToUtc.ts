@@ -8,7 +8,7 @@ import { UTCDateMini } from '@date-fns/utc';
  */
 export const formatDateToUtc = (dateArg: string | Date | null): string => {
   if (!dateArg) {
-    return 'TBD';
+    return 'N/A';
   }
 
   if (!isValid(dateArg)) {

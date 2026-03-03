@@ -9,7 +9,7 @@ export type StatsItemProps = ComponentProps<'div'> & {
   displayLabelBottom?: boolean;
   result: string | number | null;
   isLoading: boolean;
-  error: Error | null;
+  error?: Error;
   label: string;
   labelClassName?: string;
   valueClassName?: string;
@@ -47,7 +47,7 @@ export const StatsItem: FC<StatsItemProps> = ({
       >
         {error
           ? error.name
-          : result
+          : result !== null
             ? typeof result === 'number'
               ? addCommasToNumber(result)
               : result

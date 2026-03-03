@@ -16,15 +16,15 @@ export enum SubstrateLockId {
   DEMOCRACY = 'democrac',
   DELEGATE = 'delegate',
 
-  // TODO: Need to account for the other lock types.
+  // Catch-all lock id for runtime lock types not explicitly enumerated above.
   OTHER = '?other',
 }
 
 export enum StaticAssetPath {
-  RESTAKING_METHOD_INDEPENDENT_DARK = '/static/assets/restaking/method-independent-dark.svg',
-  RESTAKING_METHOD_SHARED_DARK = '/static/assets/restaking/method-shared-dark.svg',
-  RESTAKING_METHOD_INDEPENDENT_LIGHT = '/static/assets/restaking/method-independent-light.svg',
-  RESTAKING_METHOD_SHARED_LIGHT = '/static/assets/restaking/method-shared-light.svg',
+  STAKING_METHOD_INDEPENDENT_DARK = '/static/assets/staking/method-independent-dark.svg',
+  STAKING_METHOD_SHARED_DARK = '/static/assets/staking/method-shared-dark.svg',
+  STAKING_METHOD_INDEPENDENT_LIGHT = '/static/assets/staking/method-independent-light.svg',
+  STAKING_METHOD_SHARED_LIGHT = '/static/assets/staking/method-shared-light.svg',
 }
 
 export enum ChartColor {
@@ -52,7 +52,7 @@ export enum TxName {
   SETUP_NOMINATOR = 'setup nominator',
   UPDATE_NOMINATOR = 'update nominator',
   WITHDRAW_EVM_BALANCE = 'withdraw',
-  UPDATE_RESTAKE_PROFILE = 'update restake profile',
+  UPDATE_STAKING_PROFILE = 'update stake profile',
   LST_REBOND = 'cancel unstake request',
   LS_WITHDRAW_UNBONDED = 'withdraw unbonded tokens',
   LST_UPDATE_COMMISSION = 'update commission',
@@ -66,24 +66,24 @@ export enum TxName {
   LS_TANGLE_POOL_UPDATE_ROLES = 'update pool roles',
   LS_TANGLE_POOL_SET_STATE = 'set pool state',
   LS_TANGLE_POOL_UPDATE_NOMINATIONS = 'update pool nominations',
-  RESTAKE_JOIN_OPERATORS = 'join operators',
-  RESTAKE_DEPOSIT = 'restake deposit',
-  RESTAKE_DELEGATE = 'restake delegate',
-  RESTAKE_UNSTAKE = 'restake undelegate',
-  RESTAKE_WITHDRAW = 'restake withdraw',
-  RESTAKE_CANCEL_UNSTAKE = 'restake cancel undelegate',
-  RESTAKE_EXECUTE_UNSTAKE = 'restake execute undelegate',
-  RESTAKE_EXECUTE_WITHDRAW = 'restake execute withdraw',
-  RESTAKE_CANCEL_WITHDRAW = 'restake cancel withdraw',
+  STAKING_JOIN_OPERATORS = 'join operators',
+  STAKING_DEPOSIT = 'stake deposit',
+  STAKING_DELEGATE = 'stake delegate',
+  STAKING_UNSTAKE = 'stake undelegate',
+  STAKING_WITHDRAW = 'stake withdraw',
+  STAKING_CANCEL_UNSTAKE = 'stake cancel undelegate',
+  STAKING_EXECUTE_UNSTAKE = 'stake execute undelegate',
+  STAKING_EXECUTE_WITHDRAW = 'stake execute withdraw',
+  STAKING_CANCEL_WITHDRAW = 'stake cancel withdraw',
   CLAIM_REWARDS = 'claim rewards',
   CLAIM_CREDITS = 'claim credits',
   DEMOCRACY_UNLOCK = 'unlock democracy',
-  RESTAKE_NATIVE_DELEGATE = 'restake delegate nomination',
-  RESTAKE_NATIVE_UNSTAKE = 'restake undelegate native',
-  RESTAKE_NATIVE_UNSTAKE_EXECUTE = 'restake execute undelegate native',
-  RESTAKE_DEPOSITED_UNSTAKE_EXECUTE = 'restake execute undelegate deposited',
-  RESTAKE_NATIVE_UNSTAKE_CANCEL = 'restake cancel undelegate native',
-  RESTAKE_UNSTAKE_EXECUTE_ALL = 'restake execute all undelegate',
+  STAKING_NATIVE_DELEGATE = 'native staking delegate nomination',
+  STAKING_NATIVE_UNSTAKE = 'native staking undelegate',
+  STAKING_NATIVE_UNSTAKE_EXECUTE = 'native staking execute undelegate',
+  STAKING_DEPOSITED_UNSTAKE_EXECUTE = 'native staking execute undelegate deposited',
+  STAKING_NATIVE_UNSTAKE_CANCEL = 'native staking cancel undelegate',
+  STAKING_UNSTAKE_EXECUTE_ALL = 'native staking execute all undelegate',
 }
 
 export const PAYMENT_DESTINATION_OPTIONS: StakingRewardsDestinationDisplayText[] =
@@ -130,14 +130,15 @@ export enum LockUnlocksAtKind {
   BLOCK,
 }
 
-export enum RestakeTab {
-  RESTAKE = 'restake',
+export enum StakingTab {
+  STAKING = 'staking',
   VAULTS = 'vaults',
+  REWARDS = 'rewards',
   OPERATORS = 'operators',
   BLUEPRINTS = 'blueprints',
 }
 
-export enum RestakeAction {
+export enum StakingAction {
   DEPOSIT = 'deposit',
   DELEGATE = 'delegate',
   UNDELEGATE = 'undelegate',
@@ -149,6 +150,18 @@ export enum AddressType {
   SUBSTRATE,
   SOLANA,
   SUBSTRATE_OR_EVM,
+}
+
+export enum LiquidStakingTab {
+  STAKE = 'stake',
+  VAULTS = 'vaults',
+  POSITIONS = 'positions',
+}
+
+export enum LiquidStakingAction {
+  DEPOSIT = 'deposit',
+  REDEEM = 'redeem',
+  CREATE_VAULT = 'create-vault',
 }
 
 export const ERROR_NOT_ENOUGH_BALANCE = 'Not enough available balance';

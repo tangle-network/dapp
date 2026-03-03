@@ -3,6 +3,7 @@ import {
   Typography,
 } from '@tangle-network/ui-components';
 import { FC, ReactNode } from 'react';
+import { twMerge } from 'tailwind-merge';
 
 type Props = {
   logo: ReactNode;
@@ -11,6 +12,7 @@ type Props = {
   leftBottomContentTwo?: ReactNode | string;
   rightUpperText?: string | ReactNode;
   rightBottomText?: string;
+  rightBottomClassName?: string;
 };
 
 const LogoListItem: FC<Props> = ({
@@ -20,6 +22,7 @@ const LogoListItem: FC<Props> = ({
   leftBottomContentTwo,
   rightUpperText,
   rightBottomText,
+  rightBottomClassName,
 }) => {
   return (
     <>
@@ -85,7 +88,10 @@ const LogoListItem: FC<Props> = ({
           {rightBottomText !== undefined && (
             <Typography
               variant="body1"
-              className="block text-mono-120 dark:text-mono-100 dark:hover:text-mono-80"
+              className={twMerge(
+                'block text-mono-120 dark:text-mono-100 dark:hover:text-mono-80',
+                rightBottomClassName,
+              )}
             >
               {rightBottomText}
             </Typography>

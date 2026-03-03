@@ -9,7 +9,7 @@ import { createMonitoringBlueprint } from './utils/blueprintHelpers';
 import { Option, StorageKey, u64 } from '@polkadot/types';
 import { extractOperatorData } from './utils/blueprintHelpers';
 import { TanglePrimitivesServicesService } from '@polkadot/types/lookup';
-import useOperatorTVL from '../restake/useOperatorTvl';
+import useOperatorTVL from '../staking/useOperatorTvl';
 import { TanglePrimitivesServicesTypesOperatorPreferences } from '@polkadot/types/lookup';
 import { SubstrateAddress } from '@tangle-network/ui-components/types/address';
 import { AccountId32 } from '@polkadot/types/interfaces';

@@ -5,17 +5,25 @@ import {
   ModalFooterActions,
   ModalHeader,
 } from '@tangle-network/ui-components';
-import { MonitoringBlueprint } from '@tangle-network/tangle-shared-ui/data/blueprints/utils/type';
 import BlueprintItem from '@tangle-network/tangle-shared-ui/components/blueprints/BlueprintGallery/BlueprintItem';
-import { TxStatus } from '@tangle-network/tangle-shared-ui/hooks/useSubstrateTx';
+import { TxStatus } from '@tangle-network/tangle-shared-ui/hooks/useContractWrite';
 import { FC, useEffect } from 'react';
-import useAllBlueprints from '@tangle-network/tangle-shared-ui/data/blueprints/useAllBlueprints';
+import {
+  useAllBlueprints,
+  type Service,
+} from '@tangle-network/tangle-shared-ui/data/graphql';
+import type { Blueprint } from '@tangle-network/tangle-shared-ui/types/blueprint';
 import addCommasToNumber from '@tangle-network/ui-components/utils/addCommasToNumber';
+
+// Service with optional blueprint metadata
+interface ServiceWithBlueprint extends Service {
+  blueprintData?: Blueprint;
+}
 
 type Props = {
   onClose: () => void;
   onConfirm: () => Promise<void>;
-  selectedInstance: MonitoringBlueprint['services'][number] | null;
+  selectedInstance: ServiceWithBlueprint | null;
   status: TxStatus;
 };
 
@@ -38,50 +46,49 @@ const TerminateConfirmationModal: FC<Props> = ({
 
   // Don't load the modal until the instance prop is given.
   if (selectedInstance === null) {
-    return;
+    return null;
   }
 
-  const blueprintStats = allBlueprints.get(
-    selectedInstance.blueprint.toString(),
+  const blueprintStats = allBlueprints?.get(
+    selectedInstance.blueprintId.toString(),
   );
 
   const instancesCount = blueprintStats?.instancesCount ?? 0;
   const operatorsCount = blueprintStats?.operatorsCount ?? 0;
-  const restakersCount = blueprintStats?.restakersCount ?? 0;
+  const stakersCount = blueprintStats?.stakersCount ?? 0;
 
   return (
     <ModalContent
       size="lg"
       onInteractOutside={(event) => event.preventDefault()}
-      title={`Terminate Service Instance #${addCommasToNumber(selectedInstance.id)}`}
+      title={`Terminate Service Instance #${addCommasToNumber(Number(selectedInstance.serviceId))}`}
       description="Are you sure you want to terminate this service instance?"
     >
       <ModalHeader onClose={onClose} className="pb-4">
-        Terminate Service Instance #{addCommasToNumber(selectedInstance.id)}
+        Terminate Service Instance #
+        {addCommasToNumber(Number(selectedInstance.serviceId))}
       </ModalHeader>
 
       <ModalBody>
         <BlueprintItem
-          imgUrl={selectedInstance.blueprintData?.metadata.logo ?? ''}
+          imgUrl={selectedInstance.blueprintData?.imgUrl ?? ''}
           renderImage={(imageUrl) => {
             return (
               <img
                 src={imageUrl}
-                alt={selectedInstance.blueprintData?.metadata.name ?? ''}
+                alt={selectedInstance.blueprintData?.name ?? ''}
                 className="flex-shrink-0 bg-center rounded-full"
               />
             );
           }}
           instancesCount={instancesCount}
           operatorsCount={operatorsCount}
-          restakersCount={restakersCount}
+          stakersCount={stakersCount}
           isBoosted={false}
-          category={selectedInstance.blueprintData?.metadata.category ?? ''}
-          description={
-            selectedInstance.blueprintData?.metadata.description ?? ''
-          }
-          name={selectedInstance.blueprintData?.metadata.name ?? ''}
-          author={selectedInstance.blueprintData?.metadata.author ?? ''}
+          category={selectedInstance.blueprintData?.category ?? ''}
+          description={selectedInstance.blueprintData?.description ?? ''}
+          name={selectedInstance.blueprintData?.name ?? ''}
+          author={selectedInstance.blueprintData?.author ?? ''}
         />
 
         <Alert

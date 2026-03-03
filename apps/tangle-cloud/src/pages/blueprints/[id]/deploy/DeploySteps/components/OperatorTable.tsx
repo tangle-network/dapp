@@ -1,16 +1,11 @@
-import useNetworkStore from '@tangle-network/tangle-shared-ui/context/useNetworkStore';
 import {
   Avatar,
-  ExternalLinkIcon,
   CheckBox,
   EMPTY_VALUE_PLACEHOLDER,
   fuzzyFilter,
   KeyValueWithButton,
-  formatDisplayAmount,
-  AmountFormatStyle,
   Table,
   Typography,
-  toSubstrateAddress,
 } from '@tangle-network/ui-components';
 import { FC } from 'react';
 import { OperatorSelectionTable } from '../type';
@@ -22,13 +17,32 @@ import {
   useReactTable,
   getPaginationRowModel,
   TableOptions,
+  SortingFn,
 } from '@tanstack/react-table';
-import { sortByAddressOrIdentity } from '@tangle-network/tangle-shared-ui/components/tables/utils';
 import TableCellWrapper from '@tangle-network/tangle-shared-ui/components/tables/TableCellWrapper';
 import VaultsDropdown from '@tangle-network/tangle-shared-ui/components/tables/Operators/VaultsDropdown';
 import { TableVariant } from '@tangle-network/ui-components/components/Table/types';
-import { BN } from 'bn.js';
+import { formatUnits } from 'viem';
 import { TANGLE_TOKEN_DECIMALS } from '@tangle-network/dapp-config';
+
+// Local sort function for EVM address-based operator table
+const sortByAddressOrIdentity: SortingFn<OperatorSelectionTable> = (
+  rowA,
+  rowB,
+) => {
+  const { address: addressA, identityName: identityNameA } = rowA.original;
+  const { address: addressB, identityName: identityNameB } = rowB.original;
+
+  if (identityNameA && identityNameB) {
+    return identityNameA.localeCompare(identityNameB);
+  } else if (identityNameA) {
+    return -1;
+  } else if (identityNameB) {
+    return 1;
+  } else {
+    return addressA.localeCompare(addressB);
+  }
+};
 
 const COLUMN_HELPER = createColumnHelper<OperatorSelectionTable>();
 
@@ -40,23 +54,12 @@ type Props = Omit<
 };
 
 export const OperatorTable: FC<Props> = ({ tableData, ...tableProps }) => {
-  const activeNetwork = useNetworkStore().network;
-
   const columns = [
     COLUMN_HELPER.accessor('address', {
       header: () => 'Identity',
-      sortingFn: sortByAddressOrIdentity<OperatorSelectionTable>(),
+      sortingFn: sortByAddressOrIdentity,
       cell: (props) => {
-        const { address: rawAddress, identityName: identity } =
-          props.row.original;
-
-        const substrateAddress = toSubstrateAddress(
-          rawAddress,
-          activeNetwork.ss58Prefix,
-        );
-
-        const accountUrl =
-          activeNetwork.createExplorerAccountUrl(substrateAddress);
+        const { address, identityName: identity } = props.row.original;
 
         return (
           <TableCellWrapper className="pl-3 min-h-fit">
@@ -72,23 +75,16 @@ export const OperatorTable: FC<Props> = ({ tableData, ...tableProps }) => {
 
               <Avatar
                 sourceVariant="address"
-                value={substrateAddress}
-                theme="substrate"
+                value={address}
+                theme="ethereum"
                 size="md"
               />
 
               <div className="flex items-center">
                 <KeyValueWithButton
-                  keyValue={identity ? identity : substrateAddress}
+                  keyValue={identity ? identity : address}
                   size="sm"
                 />
-                {accountUrl && (
-                  <ExternalLinkIcon
-                    className="ml-1"
-                    href={accountUrl}
-                    target="_blank"
-                  />
-                )}
               </div>
             </div>
           </TableCellWrapper>
@@ -99,16 +95,13 @@ export const OperatorTable: FC<Props> = ({ tableData, ...tableProps }) => {
       header: () => 'Self-Bonded',
       cell: (props) => {
         const value = props.row.original.selfBondedAmount;
+        const formatted = formatUnits(value, TANGLE_TOKEN_DECIMALS);
+        const displayValue = Number(formatted).toLocaleString(undefined, {
+          maximumFractionDigits: 2,
+        });
         return (
           <TableCellWrapper className="pl-3 min-h-fit">
-            <Typography variant="body1">
-              {formatDisplayAmount(
-                new BN(value.toString()),
-                TANGLE_TOKEN_DECIMALS,
-                AmountFormatStyle.SHORT,
-              )}{' '}
-              TNT
-            </Typography>
+            <Typography variant="body1">{displayValue} TNT</Typography>
           </TableCellWrapper>
         );
       },
@@ -120,7 +113,6 @@ export const OperatorTable: FC<Props> = ({ tableData, ...tableProps }) => {
     }),
     COLUMN_HELPER.accessor('instanceCount', {
       header: () => 'Instances',
-      sortingFn: sortByAddressOrIdentity<OperatorSelectionTable>(),
       cell: (props) => {
         return (
           <TableCellWrapper className="pl-3 min-h-fit">
@@ -131,13 +123,13 @@ export const OperatorTable: FC<Props> = ({ tableData, ...tableProps }) => {
         );
       },
     }),
-    COLUMN_HELPER.accessor('restakersCount', {
-      header: () => 'Restakers',
+    COLUMN_HELPER.accessor('stakersCount', {
+      header: () => 'Stakers',
       cell: (props) => {
         return (
           <TableCellWrapper className="pl-3 min-h-fit">
             <Typography variant="body1">
-              {props.row.original.restakersCount}
+              {props.row.original.stakersCount}
             </Typography>
           </TableCellWrapper>
         );

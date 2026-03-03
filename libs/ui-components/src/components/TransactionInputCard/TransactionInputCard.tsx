@@ -22,7 +22,7 @@ import {
 } from 'react';
 import { twMerge } from 'tailwind-merge';
 import { Typography } from '../../typography';
-import { getRoundedAmountString, toFixed } from '../../utils';
+import { getRoundedAmountString, numberToString } from '../../utils';
 import { AdjustAmount } from '../BridgeInputs';
 import { Switcher } from '../Switcher';
 import { Tooltip, TooltipTrigger, TooltipBody } from '../Tooltip';
@@ -43,6 +43,15 @@ import { EMPTY_VALUE_PLACEHOLDER } from '../../constants';
 
 const TransactionInputCardContext =
   createContext<TransactionInputCardContextValue>({});
+
+const isPositiveDecimalString = (value: string): boolean => {
+  const trimmed = value.trim();
+  if (!/^\d+(\.\d+)?$/.test(trimmed)) {
+    return false;
+  }
+
+  return !/^0*(\.0+)?$/.test(trimmed);
+};
 
 const TransactionInputCardRoot = forwardRef<
   React.ElementRef<'div'>,
@@ -212,23 +221,37 @@ const TransactionMaxAmountButton = forwardRef<
     const accountType = accountTypeProp ?? context.accountType;
     const maxAmount = maxAmountProp ?? context.maxAmount;
     const onAmountChange = onAmountChangeProp ?? context.onAmountChange;
+    const maxAmountAsString = useMemo(() => {
+      if (typeof maxAmount === 'number') {
+        return numberToString(maxAmount);
+      }
+      if (typeof maxAmount === 'string') {
+        return maxAmount;
+      }
+      return null;
+    }, [maxAmount]);
 
     const buttonCnt = useMemo(() => {
-      const amount =
-        typeof maxAmount === 'number'
-          ? toFixed(maxAmount, 5)
-          : EMPTY_VALUE_PLACEHOLDER;
-
+      // Pass raw amount to getRoundedAmountString which handles small amounts with "< 0.00001" format
       const formattedAmount =
-        typeof amount === 'number' ? getRoundedAmountString(amount, 5) : amount;
+        typeof maxAmount === 'number'
+          ? getRoundedAmountString(maxAmount, 5)
+          : typeof maxAmount === 'string' && maxAmount.trim() !== ''
+            ? maxAmount
+            : EMPTY_VALUE_PLACEHOLDER;
 
       const tokenSym = tokenSymbol ?? '';
 
       return `${formattedAmount} ${tokenSym}`.trim();
     }, [maxAmount, tokenSymbol]);
 
-    const disabled =
-      disabledProp ?? (typeof maxAmount !== 'number' || maxAmount <= 0);
+    const hasMaxAmount =
+      typeof maxAmount === 'number'
+        ? maxAmount > 0
+        : typeof maxAmount === 'string'
+          ? isPositiveDecimalString(maxAmount)
+          : false;
+    const disabled = disabledProp ?? !hasMaxAmount;
 
     const { iconDisabledClassName, iconEnabledClassName } = useMemo(
       () =>
@@ -251,8 +274,8 @@ const TransactionMaxAmountButton = forwardRef<
             ref={ref}
             disabled={disabled}
             onClick={
-              typeof maxAmount === 'number'
-                ? () => onAmountChange?.(`${toFixed(maxAmount, 5)}`)
+              maxAmountAsString
+                ? () => onAmountChange?.(maxAmountAsString)
                 : undefined
             }
             Icon={

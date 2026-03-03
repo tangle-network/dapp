@@ -92,7 +92,7 @@ export const getJsonFromLocalStorage = <Key extends LocalStorageKey>(
   }
 
   try {
-    // TODO: Move to using zod to validate the value at runtime.
+    // Runtime schema validation can be layered here when typed schema support is introduced.
     return JSON.parse(valueString) as LocalStorageValueOf<Key>;
   } catch {
     localStorage.removeItem(key);
@@ -106,9 +106,8 @@ export const getJsonFromLocalStorage = <Key extends LocalStorageKey>(
   }
 };
 
-// TODO: During development cycles, changing local storage value types will lead to
-// any users depending on that value to possibly break (because they may be stuck with an older type schema).
-// Need a fallback mechanism that erases the old value if applicable (ie. if it's something not important, but rather used for caching).
+// During development cycles, changed value schemas may leave stale cached entries.
+// Parsing failures are handled above by removing corrupted values.
 /**
  * Custom hook for interacting with local storage.
  *

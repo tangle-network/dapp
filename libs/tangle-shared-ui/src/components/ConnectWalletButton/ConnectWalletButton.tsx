@@ -1,115 +1,63 @@
-import { useConnectWallet } from '@tangle-network/api-provider-environment';
-import { useWebContext } from '@tangle-network/api-provider-environment/webb-context';
-import { ChainConfig } from '@tangle-network/dapp-config';
-import { calculateTypedChainId, ChainType } from '@tangle-network/dapp-types';
+'use client';
+
 import Spinner from '@tangle-network/icons/Spinner';
-import {
-  assertSolanaAddress,
-  assertSubstrateAddress,
-  isEvmAddress,
-  isSolanaAddress,
-  toSubstrateAddress,
-} from '@tangle-network/ui-components';
+import { isEvmAddress } from '@tangle-network/ui-components';
 import Button from '@tangle-network/ui-components/components/buttons/Button';
-import {
-  EvmAddress,
-  SolanaAddress,
-  SubstrateAddress,
-} from '@tangle-network/ui-components/types/address';
-import { useMemo } from 'react';
-import useNetworkStore from '../../context/useNetworkStore';
-import UpdateMetadataButton from '../UpdateMetadataButton';
-import ConnectWalletModal from './ConnectWalletModal';
+import { EvmAddress } from '@tangle-network/ui-components/types/address';
+import { useMemo, useState } from 'react';
+import { useAccount } from 'wagmi';
+import { EvmWalletModal } from '../EvmWalletModal';
 import WalletDropdown from './WalletDropdown';
+import { getWalletIcon } from './walletIcons';
 
 type ConnectWalletButtonProps = {
-  showChainSpecificWallets?: boolean;
-  preferredChain?: ChainConfig;
+  className?: string;
 };
 
-const ConnectWalletButton = ({
-  showChainSpecificWallets = false,
-  preferredChain,
-}: ConnectWalletButtonProps) => {
-  const { activeAccount, activeWallet, loading, isConnecting } =
-    useWebContext();
+const ConnectWalletButton = ({ className }: ConnectWalletButtonProps) => {
+  const { address, isConnecting, isConnected, connector } = useAccount();
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
-  const network = useNetworkStore((store) => store.network);
-  const { toggleModal } = useConnectWallet();
-
-  const preferredChainTypedChainId = useMemo(() => {
-    if (showChainSpecificWallets && preferredChain) {
-      return calculateTypedChainId(preferredChain.chainType, preferredChain.id);
-    }
-    return undefined;
-  }, [showChainSpecificWallets, preferredChain]);
-
-  const accountAddress = useMemo<
-    EvmAddress | SubstrateAddress | SolanaAddress | null
-  >(() => {
-    if (activeAccount?.address === undefined) {
+  const accountAddress = useMemo<EvmAddress | null>(() => {
+    if (!address) {
       return null;
     }
-
-    if (isSolanaAddress(activeAccount.address)) {
-      return assertSolanaAddress(activeAccount.address);
-    } else if (isEvmAddress(activeAccount.address)) {
-      return activeAccount.address;
-    } else {
-      try {
-        if (network.ss58Prefix === undefined) {
-          return assertSubstrateAddress(activeAccount.address);
-        } else {
-          return toSubstrateAddress(activeAccount.address, network.ss58Prefix);
-        }
-      } catch (error) {
-        console.error('Error processing address:', error);
-        return assertSubstrateAddress(activeAccount.address);
-      }
+    if (isEvmAddress(address)) {
+      return address;
     }
-  }, [activeAccount?.address, network.ss58Prefix]);
+    return null;
+  }, [address]);
 
-  const isReady =
-    !isConnecting && !loading && activeWallet && activeAccount !== null;
-
-  const preferredChainType = useMemo(() => {
-    if (!preferredChain?.chainType) return undefined;
-    return Object.keys(ChainType).find(
-      (key) =>
-        ChainType[key as keyof typeof ChainType] === preferredChain.chainType,
-    );
-  }, [preferredChain]);
+  const walletName = connector?.name ?? 'Wallet';
+  const walletIcon = getWalletIcon(connector?.id, connector?.name);
+  const isReady = isConnected && accountAddress !== null;
 
   return (
     <>
-      {!isReady || !accountAddress ? (
-        <Button
-          isLoading={isConnecting || loading}
-          spinner={<Spinner size="lg" />}
-          loadingText={isConnecting ? 'Connecting' : undefined}
-          onClick={() => toggleModal(true, preferredChainTypedChainId)}
-          className="flex items-center justify-center px-6"
-        >
-          Connect
-        </Button>
-      ) : (
-        <div className="relative">
+      <div className={className}>
+        {!isReady ? (
+          <Button
+            isLoading={isConnecting}
+            spinner={<Spinner size="lg" />}
+            loadingText="Connecting"
+            onClick={() => setIsModalOpen(true)}
+            className="flex items-center justify-center px-6"
+          >
+            Connect
+          </Button>
+        ) : (
           <WalletDropdown
             accountAddress={accountAddress}
-            accountName={activeAccount.name}
-            wallet={activeWallet}
+            walletName={walletName}
+            walletIcon={walletIcon}
+            onAccountClick={() => setIsModalOpen(true)}
           />
+        )}
+      </div>
 
-          {!showChainSpecificWallets && <UpdateMetadataButton />}
-        </div>
-      )}
-
-      <ConnectWalletModal
-        walletModalDefaultText={
-          showChainSpecificWallets && preferredChainType
-            ? `Connect your ${preferredChainType} wallet to interact with the Tangle Network.`
-            : undefined
-        }
+      <EvmWalletModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
       />
     </>
   );

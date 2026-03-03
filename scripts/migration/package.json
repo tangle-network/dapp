@@ -1,0 +1,19 @@
+{
+  "name": "tangle-migration-scripts",
+  "version": "1.0.0",
+  "description": "Scripts for generating Tangle network migration snapshots and Merkle trees",
+  "type": "module",
+  "scripts": {
+    "snapshot": "tsx snapshot.ts",
+    "merkleize": "tsx merkleize-distribution.ts",
+    "merkleize:latest": "tsx merkleize-distribution.ts tangle_migration_snapshot_8116528.json"
+  },
+  "dependencies": {
+    "@openzeppelin/merkle-tree": "^1.0.5",
+    "@polkadot/api": "^10.11.1"
+  },
+  "devDependencies": {
+    "tsx": "^4.7.0",
+    "typescript": "^5.3.3"
+  }
+}

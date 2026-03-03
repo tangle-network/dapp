@@ -1,4 +1,2 @@
-export * from './BondMoreTxModal';
-export * from './DelegateTxContainer';
-export * from './KeyStatsContainer';
-export * from './UpdatePayeeTxContainer';
+// Container exports
+// Note: Most legacy Substrate containers have been removed in the v2 EVM migration

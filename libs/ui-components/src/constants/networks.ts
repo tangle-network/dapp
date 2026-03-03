@@ -32,8 +32,12 @@ export enum NetworkId {
   TANGLE_TESTNET,
   TANGLE_LOCAL_DEV,
   CUSTOM,
-  TANGLE_RESTAKING_PARACHAIN_LOCAL_DEV,
-  TANGLE_RESTAKING_PARACHAIN_TESTNET,
+  TANGLE_STAKING_PARACHAIN_LOCAL_DEV,
+  TANGLE_STAKING_PARACHAIN_TESTNET,
+  // EVM-only networks (for tangle-cloud)
+  ANVIL_LOCAL,
+  BASE,
+  BASE_SEPOLIA,
 }
 
 export type Network = {
@@ -185,9 +189,9 @@ export const TANGLE_LOCAL_DEV_NETWORK = {
   },
 } as const satisfies Network;
 
-export const TANGLE_RESTAKING_PARACHAIN_LOCAL_DEV_NETWORK = {
-  id: NetworkId.TANGLE_RESTAKING_PARACHAIN_LOCAL_DEV,
-  name: 'Tangle Restaking Parachain (Local)',
+export const TANGLE_STAKING_PARACHAIN_LOCAL_DEV_NETWORK = {
+  id: NetworkId.TANGLE_STAKING_PARACHAIN_LOCAL_DEV,
+  name: 'Tangle Staking Parachain (Local)',
   nodeType: 'parachain',
   tokenSymbol: 'TNT',
   wsRpcEndpoints: [TANGLE_LOCAL_WS_RPC_ENDPOINT],
@@ -198,9 +202,9 @@ export const TANGLE_RESTAKING_PARACHAIN_LOCAL_DEV_NETWORK = {
   createExplorerTxUrl: () => null,
 } as const satisfies Network;
 
-export const TANGLE_RESTAKING_PARACHAIN_TESTNET_NETWORK = {
-  id: NetworkId.TANGLE_RESTAKING_PARACHAIN_TESTNET,
-  name: 'Tangle Restaking Parachain (Testnet)',
+export const TANGLE_STAKING_PARACHAIN_TESTNET_NETWORK = {
+  id: NetworkId.TANGLE_STAKING_PARACHAIN_TESTNET,
+  name: 'Tangle Staking Parachain (Testnet)',
   nodeType: 'parachain',
   tokenSymbol: 'tTNT',
   wsRpcEndpoints: [TANGLE_TESTNET_WS_RPC_ENDPOINT],
@@ -213,12 +217,82 @@ export const TANGLE_RESTAKING_PARACHAIN_TESTNET_NETWORK = {
   createExplorerTxUrl: () => null,
 } as const satisfies Network;
 
+// EVM-only networks for tangle-cloud
+export const ANVIL_LOCAL_NETWORK = {
+  id: NetworkId.ANVIL_LOCAL,
+  evmChainId: EVMChainId.AnvilLocal,
+  name: 'Tangle Local',
+  tokenSymbol: 'tTNT',
+  nodeType: 'standalone',
+  wsRpcEndpoints: [],
+  httpRpcEndpoints: ['http://127.0.0.1:8545'],
+  polkadotJsDashboardUrl: '',
+  evmExplorerUrl: undefined,
+  createExplorerAccountUrl: () => null,
+  createExplorerTxUrl: () => null,
+} as const satisfies Network;
+
+export const BASE_NETWORK = {
+  id: NetworkId.BASE,
+  evmChainId: EVMChainId.Base,
+  name: 'Base',
+  tokenSymbol: 'TNT',
+  nodeType: 'standalone',
+  wsRpcEndpoints: [],
+  httpRpcEndpoints: ['https://mainnet.base.org'],
+  polkadotJsDashboardUrl: '',
+  evmExplorerUrl: 'https://basescan.org',
+  createExplorerAccountUrl: (
+    address: EvmAddress | SubstrateAddress | SolanaAddress,
+  ) => {
+    if (isEvmAddress(address)) {
+      return `https://basescan.org/address/${address}`;
+    }
+    return null;
+  },
+  createExplorerTxUrl: (isEvm: boolean, txHash: HexString) => {
+    if (isEvm) {
+      return `https://basescan.org/tx/${txHash}`;
+    }
+    return null;
+  },
+} as const satisfies Network;
+
+export const BASE_SEPOLIA_NETWORK = {
+  id: NetworkId.BASE_SEPOLIA,
+  evmChainId: EVMChainId.BaseSepolia,
+  name: 'Base Sepolia',
+  tokenSymbol: 'tTNT',
+  nodeType: 'standalone',
+  wsRpcEndpoints: [],
+  httpRpcEndpoints: ['https://sepolia.base.org'],
+  polkadotJsDashboardUrl: '',
+  evmExplorerUrl: 'https://sepolia.basescan.org',
+  createExplorerAccountUrl: (
+    address: EvmAddress | SubstrateAddress | SolanaAddress,
+  ) => {
+    if (isEvmAddress(address)) {
+      return `https://sepolia.basescan.org/address/${address}`;
+    }
+    return null;
+  },
+  createExplorerTxUrl: (isEvm: boolean, txHash: HexString) => {
+    if (isEvm) {
+      return `https://sepolia.basescan.org/tx/${txHash}`;
+    }
+    return null;
+  },
+} as const satisfies Network;
+
 export const NETWORK_MAP: Partial<Record<NetworkId, Network>> = {
   [NetworkId.TANGLE_MAINNET]: TANGLE_MAINNET_NETWORK,
   [NetworkId.TANGLE_TESTNET]: TANGLE_TESTNET_NATIVE_NETWORK,
   [NetworkId.TANGLE_LOCAL_DEV]: TANGLE_LOCAL_DEV_NETWORK,
-  [NetworkId.TANGLE_RESTAKING_PARACHAIN_LOCAL_DEV]:
-    TANGLE_RESTAKING_PARACHAIN_LOCAL_DEV_NETWORK,
-  [NetworkId.TANGLE_RESTAKING_PARACHAIN_TESTNET]:
-    TANGLE_RESTAKING_PARACHAIN_TESTNET_NETWORK,
+  [NetworkId.TANGLE_STAKING_PARACHAIN_LOCAL_DEV]:
+    TANGLE_STAKING_PARACHAIN_LOCAL_DEV_NETWORK,
+  [NetworkId.TANGLE_STAKING_PARACHAIN_TESTNET]:
+    TANGLE_STAKING_PARACHAIN_TESTNET_NETWORK,
+  [NetworkId.ANVIL_LOCAL]: ANVIL_LOCAL_NETWORK,
+  [NetworkId.BASE]: BASE_NETWORK,
+  [NetworkId.BASE_SEPOLIA]: BASE_SEPOLIA_NETWORK,
 };

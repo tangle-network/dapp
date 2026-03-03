@@ -3,7 +3,6 @@ import { Button, Typography } from '@tangle-network/ui-components';
 import capitalize from 'lodash/capitalize';
 import { useSnackbar } from 'notistack';
 import { useCallback } from 'react';
-import useAgnosticAccountInfo from './useAgnosticAccountInfo';
 import { type BaseTxName } from '../types';
 
 const SUCCESS_TIMEOUT = 10_000;
@@ -22,7 +21,6 @@ const useTxNotification = <TxName extends BaseTxName>(
   successMessageByTxName: Record<TxName, string>,
 ) => {
   const { enqueueSnackbar, closeSnackbar } = useSnackbar();
-  const { isEvm: isEvmActiveAccount } = useAgnosticAccountInfo();
 
   const notifySuccess = useCallback(
     (
@@ -31,21 +29,7 @@ const useTxNotification = <TxName extends BaseTxName>(
       successMessage?: string | null,
     ) => {
       closeSnackbar(makeKey(txName));
-
-      // TODO: Finish handling EVM accounts case.
-
-      // In case that the EVM account status is unavailable,
-      // default to not display the transaction explorer URL,
-      // since it is not possible to determine anymore. However,
-      // this allows the user to still see the success message if
-      // for example, they disconnect their account while the
-      // transaction is still processing.
-      const finalExplorerUrl =
-        explorerUrl === undefined ||
-        explorerUrl === null ||
-        isEvmActiveAccount === null
-          ? null
-          : explorerUrl;
+      const finalExplorerUrl = explorerUrl ?? null;
 
       // Currently using SnackbarProvider for managing NotificationStacked
       // For one-off configurations, must use enqueueSnackbar.
@@ -78,12 +62,7 @@ const useTxNotification = <TxName extends BaseTxName>(
         },
       );
     },
-    [
-      closeSnackbar,
-      enqueueSnackbar,
-      isEvmActiveAccount,
-      successMessageByTxName,
-    ],
+    [closeSnackbar, enqueueSnackbar, successMessageByTxName],
   );
 
   const notifyError = useCallback(

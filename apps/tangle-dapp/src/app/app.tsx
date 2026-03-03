@@ -1,7 +1,3 @@
-// Import global styles.
-import '@tangle-network/ui-components/tailwind.css';
-import '../styles.css';
-
 import { Navigate, Route, Routes } from 'react-router';
 import Layout from '../containers/Layout';
 import DashboardPage from '../pages/dashboard';
@@ -11,15 +7,18 @@ import BridgePage from '../pages/bridge';
 import ClaimPage from '../pages/claim';
 import ClaimLayout from '../pages/claim/layout';
 import ClaimSuccessPage from '../pages/claim/success';
-import LiquidStakingPage from '../pages/liquid-staking';
-import NominationPage from '../pages/nomination';
-import ValidatorDetailsPage from '../pages/nomination/[validatorAddress]';
-import NominationLayout from '../pages/nomination/layout';
+import MigrationClaimPage from '../pages/claim/migration';
 import NotFoundPage from '../pages/notFound';
 import { PagePath } from '../types';
 import Providers from './providers';
-import RestakeTabContent from '../containers/restaking/RestakeTabContent';
-import { RestakeAction, RestakeTab } from '../constants';
+import StakingTabContent from '../containers/staking/StakingTabContent';
+import LiquidStakingTabContent from '../containers/liquidStaking/LiquidStakingTabContent';
+import {
+  StakingAction,
+  StakingTab,
+  LiquidStakingAction,
+  LiquidStakingTab,
+} from '../constants';
 
 function App() {
   return (
@@ -42,14 +41,10 @@ function App() {
               />
             </Route>
 
-            <Route path={PagePath.NOMINATION} element={<NominationLayout />}>
-              <Route index element={<NominationPage />} />
-
-              <Route
-                path={PagePath.NOMINATION_VALIDATOR}
-                element={<ValidatorDetailsPage />}
-              />
-            </Route>
+            <Route
+              path={PagePath.CLAIM_MIGRATION}
+              element={<MigrationClaimPage />}
+            />
 
             <Route path={PagePath.BRIDGE} element={<BridgePage />} />
 
@@ -62,43 +57,83 @@ function App() {
               />
             </Route>
 
-            <Route
-              path={PagePath.LIQUID_STAKING}
-              element={<LiquidStakingPage />}
-            />
-
-            <Route path={PagePath.RESTAKE}>
+            <Route path={PagePath.STAKING}>
               <Route
                 index
-                element={<Navigate to={PagePath.RESTAKE_DEPOSIT} replace />}
+                element={<Navigate to={PagePath.STAKING_DEPOSIT} replace />}
               />
               <Route
-                path={PagePath.RESTAKE_DEPOSIT}
-                element={<RestakeTabContent tab={RestakeAction.DEPOSIT} />}
+                path={PagePath.STAKING_DEPOSIT}
+                element={<StakingTabContent tab={StakingAction.DEPOSIT} />}
               />
               <Route
-                path={PagePath.RESTAKE_DELEGATE}
-                element={<RestakeTabContent tab={RestakeAction.DELEGATE} />}
+                path={PagePath.STAKING_DELEGATE}
+                element={<StakingTabContent tab={StakingAction.DELEGATE} />}
               />
               <Route
-                path={PagePath.RESTAKE_UNDELEGATE}
-                element={<RestakeTabContent tab={RestakeAction.UNDELEGATE} />}
+                path={PagePath.STAKING_UNDELEGATE}
+                element={<StakingTabContent tab={StakingAction.UNDELEGATE} />}
               />
               <Route
-                path={PagePath.RESTAKE_WITHDRAW}
-                element={<RestakeTabContent tab={RestakeAction.WITHDRAW} />}
+                path={PagePath.STAKING_WITHDRAW}
+                element={<StakingTabContent tab={StakingAction.WITHDRAW} />}
               />
               <Route
-                path={PagePath.RESTAKE_VAULT}
-                element={<RestakeTabContent tab={RestakeTab.VAULTS} />}
+                path={PagePath.STAKING_VAULT}
+                element={<StakingTabContent tab={StakingTab.VAULTS} />}
               />
               <Route
-                path={PagePath.RESTAKE_OPERATOR}
-                element={<RestakeTabContent tab={RestakeTab.OPERATORS} />}
+                path={PagePath.STAKING_OPERATOR}
+                element={<StakingTabContent tab={StakingTab.OPERATORS} />}
               />
               <Route
-                path={PagePath.RESTAKE_BLUEPRINT}
-                element={<RestakeTabContent tab={RestakeTab.BLUEPRINTS} />}
+                path={PagePath.STAKING_BLUEPRINT}
+                element={<StakingTabContent tab={StakingTab.BLUEPRINTS} />}
+              />
+              <Route
+                path={PagePath.STAKING_REWARDS}
+                element={<StakingTabContent tab={StakingTab.REWARDS} />}
+              />
+            </Route>
+
+            <Route path={PagePath.LIQUID_STAKING}>
+              <Route
+                index
+                element={
+                  <Navigate to={PagePath.LIQUID_STAKING_DEPOSIT} replace />
+                }
+              />
+              <Route
+                path={PagePath.LIQUID_STAKING_DEPOSIT}
+                element={
+                  <LiquidStakingTabContent tab={LiquidStakingAction.DEPOSIT} />
+                }
+              />
+              <Route
+                path={PagePath.LIQUID_STAKING_REDEEM}
+                element={
+                  <LiquidStakingTabContent tab={LiquidStakingAction.REDEEM} />
+                }
+              />
+              <Route
+                path={PagePath.LIQUID_STAKING_CREATE_VAULT}
+                element={
+                  <LiquidStakingTabContent
+                    tab={LiquidStakingAction.CREATE_VAULT}
+                  />
+                }
+              />
+              <Route
+                path={PagePath.LIQUID_STAKING_VAULTS}
+                element={
+                  <LiquidStakingTabContent tab={LiquidStakingTab.VAULTS} />
+                }
+              />
+              <Route
+                path={PagePath.LIQUID_STAKING_POSITIONS}
+                element={
+                  <LiquidStakingTabContent tab={LiquidStakingTab.POSITIONS} />
+                }
               />
             </Route>
 

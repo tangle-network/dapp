@@ -1,3 +1,7 @@
+// Import global styles first.
+import '@tangle-network/ui-components/tailwind.css';
+import './styles.css';
+
 import { StrictMode } from 'react';
 import { BrowserRouter } from 'react-router';
 import * as ReactDOM from 'react-dom/client';

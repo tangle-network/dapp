@@ -17,7 +17,6 @@ const BlueprintItem: FC<Omit<BlueprintItemProps, 'id'>> = ({
   description,
   instancesCount,
   operatorsCount,
-  restakersCount: _restakersCount,
   isBoosted,
   renderImage,
   isSelected,
@@ -123,16 +122,16 @@ const BlueprintItem: FC<Omit<BlueprintItemProps, 'id'>> = ({
               {operatorsCount ?? EMPTY_VALUE_PLACEHOLDER}
             </Typography>
           </div>
-          {/* Hide restakers section */}
+          {/* Hidden stakers section */}
           {/* <div className="flex-1 space-y-2">
             <Typography
               variant="body2"
               className="text-mono-120 dark:text-mono-100"
             >
-              Restakers
+              Stakers
             </Typography>
             <Typography variant="h5">
-              {restakersCount ?? EMPTY_VALUE_PLACEHOLDER}
+              {stakersCount ?? EMPTY_VALUE_PLACEHOLDER}
             </Typography>
           </div> */}
         </div>

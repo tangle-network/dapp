@@ -85,7 +85,7 @@ yarn generate:release        # Review version bumps and changelog
 - `components/`: Reusable "dumb" components specific to the app
 - `containers/`: "Smart" components with business logic
 - `hooks/`: React hooks for infrastructure logic
-- `data/`: Data fetching hooks organized by domain (restaking, liquid staking, etc.)
+- `data/`: Data fetching hooks organized by domain (staking, liquid staking, etc.)
 - `pages/`: Route pages for react-router-dom
 - `abi/`: EVM ABI definitions for Substrate precompiles
 

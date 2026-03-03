@@ -1,17 +1,17 @@
-import { RestakeAssetId } from '@tangle-network/tangle-shared-ui/types';
+import { StakingAssetId } from '@tangle-network/tangle-shared-ui/types/staking';
 import { Input, Typography } from '@tangle-network/ui-components';
-import ErrorMessage from '../../../../components/ErrorMessage';
+import ErrorMessage from '@tangle-network/tangle-shared-ui/components/ErrorMessage';
 import { FC } from 'react';
-import { PrimitiveAssetMetadata } from '@tangle-network/tangle-shared-ui/types/restake';
+import { PrimitiveStakingAssetMetadata } from '@tangle-network/tangle-shared-ui/types/staking';
 import LsTokenIcon from '@tangle-network/tangle-shared-ui/components/LsTokenIcon';
 
 type AssetCommitmentFormItemProps = {
   index: number;
-  assetId?: RestakeAssetId;
+  assetId?: StakingAssetId;
   exposurePercent?: string;
   onChangeExposurePercent: (value: string) => void;
   exposurePercentErrorMsg?: string;
-  assetMetadata?: PrimitiveAssetMetadata | null;
+  assetMetadata?: PrimitiveStakingAssetMetadata | null;
   minExposurePercent?: string;
   maxExposurePercent?: string;
 };
@@ -38,13 +38,13 @@ export const AssetCommitmentFormItem: FC<AssetCommitmentFormItemProps> = ({
         />
         <div className="flex items-center gap-2">
           <LsTokenIcon
-            name={assetMetadata?.name ?? 'TNT'}
+            name={assetMetadata?.symbol ?? 'TNT'}
             hasRainbowBorder
             size="lg"
           />
 
           <Typography variant="h5" className="whitespace-nowrap">
-            {assetMetadata?.name ?? 'TNT'}
+            {assetMetadata?.name ?? 'Unknown'}
           </Typography>
         </div>
       </div>

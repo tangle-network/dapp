@@ -2,6 +2,11 @@ import { isEvmAddress } from '@tangle-network/ui-components';
 import { EvmAddress } from '@tangle-network/ui-components/types/address';
 import { ContractFunctionName, erc20Abi, PublicClient } from 'viem';
 import { z } from 'zod';
+import { cacheTokenMetadata } from '@tangle-network/dapp-config/tokenMetadata';
+import EVMChainId from '@tangle-network/dapp-types/EVMChainId';
+
+/** Fallback to Ethereum mainnet if chain ID unavailable */
+const DEFAULT_CHAIN_ID = EVMChainId.EthereumMainNet;
 
 type TokenMetadata = {
   id: EvmAddress;
@@ -48,6 +53,19 @@ const fetchErc20TokenMetadata = async (
 
   try {
     const results = await viemPublicClient.multicall({ contracts: calls });
+
+    // If everything failed, the most common cause is missing/broken multicall3 on this chain.
+    // Avoid spamming per-token logs and just fall back to individual calls.
+    if (results.every((r) => r.status === 'failure')) {
+      console.warn(
+        `Multicall returned failures for all ERC20 metadata reads (chain: ${viemPublicClient.chain?.name}); falling back to individual calls.`,
+      );
+      return fetchErc20TokenMetadataWithIndividualCalls(
+        viemPublicClient,
+        contractAddresses,
+      );
+    }
+
     const metadatas: TokenMetadata[] = [];
 
     for (
@@ -64,16 +82,35 @@ const fetchErc20TokenMetadata = async (
       const symbolResult = results[baseIndex + 1];
       const decimalsResult = results[baseIndex + 2];
 
-      // Report failures and skip this token.
-      if (nameResult?.error || symbolResult?.error || decimalsResult?.error) {
+      const hasFailure =
+        nameResult?.status === 'failure' ||
+        symbolResult?.status === 'failure' ||
+        decimalsResult?.status === 'failure';
+
+      // If multicall returns failures (including a broken multicall3), fall back to individual calls for this token.
+      if (hasFailure) {
         console.warn(
           `Failed to fetch complete ERC20 token metadata for address ${id} (chain: ${viemPublicClient.chain?.name})`,
           {
-            nameError: nameResult?.error,
-            symbolError: symbolResult?.error,
-            decimalsError: decimalsResult?.error,
+            nameError:
+              nameResult?.status === 'failure' ? nameResult.error : null,
+            symbolError:
+              symbolResult?.status === 'failure' ? symbolResult.error : null,
+            decimalsError:
+              decimalsResult?.status === 'failure'
+                ? decimalsResult.error
+                : null,
           },
         );
+
+        const fallback = await fetchErc20TokenMetadataWithIndividualCalls(
+          viemPublicClient,
+          [id],
+        );
+
+        if (fallback.length > 0) {
+          metadatas.push(fallback[0]);
+        }
 
         continue;
       }
@@ -84,6 +121,14 @@ const fetchErc20TokenMetadata = async (
           name: nameResult.result,
           symbol: symbolResult.result,
           decimals: Number(decimalsResult.result),
+        });
+
+        // Cache for future lookups (chain-aware)
+        const chainId = viemPublicClient.chain?.id ?? DEFAULT_CHAIN_ID;
+        cacheTokenMetadata(chainId, id, {
+          name: token.name,
+          symbol: token.symbol,
+          decimals: token.decimals,
         });
 
         metadatas.push(token);
@@ -102,7 +147,10 @@ const fetchErc20TokenMetadata = async (
       multicallError,
     );
 
-    return [];
+    return fetchErc20TokenMetadataWithIndividualCalls(
+      viemPublicClient,
+      contractAddresses,
+    );
   }
 };
 
@@ -136,12 +184,21 @@ const fetchErc20TokenMetadataWithIndividualCalls = async (
         }),
       ]);
 
-      tokenMetadata[tokenAddress] = {
+      const metadata = {
         id: tokenAddress,
         name: nameResult,
         symbol: symbolResult,
         decimals: decimalsResult,
       };
+      tokenMetadata[tokenAddress] = metadata;
+
+      // Cache for future lookups (chain-aware)
+      const chainId = viemPublicClient.chain?.id ?? DEFAULT_CHAIN_ID;
+      cacheTokenMetadata(chainId, tokenAddress, {
+        name: nameResult,
+        symbol: symbolResult,
+        decimals: decimalsResult,
+      });
     } catch (error) {
       console.error(
         `Error fetching metadata for token ${tokenAddress}:`,

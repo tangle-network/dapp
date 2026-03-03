@@ -1,19 +1,13 @@
-import { FC, useMemo } from 'react';
+import { FC } from 'react';
 import { BasicInformationStep } from './BasicInformationStep';
 import { BaseDeployStepProps } from './type';
-import { AssetConfigurationStep } from './AssetConfigurationStep';
 import { SelectOperatorsStep } from './OperatorSelectionStep';
 import { RequestArgsConfigurationStep } from './RequestArgsConfigurationStep';
 import { PaymentStep } from './PaymentStep';
-import useServiceMinimumNativeSecurityRequirement from '@tangle-network/tangle-shared-ui/data/blueprints/useServicePalletConfig';
+import { RequestModeStep } from './RequestModeStep';
 
 export const Deployment: FC<BaseDeployStepProps> = (props) => {
-  const { result: minimumNativeSecurityRequirementResult } =
-    useServiceMinimumNativeSecurityRequirement();
-
-  const minimumNativeSecurityRequirement = useMemo(() => {
-    return minimumNativeSecurityRequirementResult || 0;
-  }, [minimumNativeSecurityRequirementResult]);
+  const minimumNativeSecurityRequirement = 0;
 
   return (
     <>
@@ -22,10 +16,7 @@ export const Deployment: FC<BaseDeployStepProps> = (props) => {
         {...props}
         minimumNativeSecurityRequirement={minimumNativeSecurityRequirement}
       />
-      <AssetConfigurationStep
-        {...props}
-        minimumNativeSecurityRequirement={minimumNativeSecurityRequirement}
-      />
+      <RequestModeStep {...props} />
       <RequestArgsConfigurationStep {...props} />
       <PaymentStep {...props} />
     </>

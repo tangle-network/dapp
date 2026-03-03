@@ -71,8 +71,12 @@ export const Slider = forwardRef<HTMLSpanElement, SliderProps>(
           {...props}
           defaultValue={value}
           ref={ref}
+          disabled={isDisabled}
           aria-label="value"
-          className={'relative flex items-center w-full h-4 touch-none'}
+          className={cx(
+            'relative flex items-center w-full h-4 touch-none',
+            isDisabled && 'opacity-50',
+          )}
           value={value}
           onValueChange={onValueChange}
         >
@@ -81,13 +85,25 @@ export const Slider = forwardRef<HTMLSpanElement, SliderProps>(
           </SliderPrimitive.Track>
 
           {value?.length === 1 && (
-            <SliderThumb hasLabel={hasLabel} value={value[0]} />
+            <SliderThumb
+              hasLabel={hasLabel}
+              value={value[0]}
+              isDisabled={isDisabled}
+            />
           )}
 
           {value?.length === 2 && (
             <>
-              <SliderThumb hasLabel={hasLabel} value={value[0]} />
-              <SliderThumb hasLabel={hasLabel} value={value[1]} />
+              <SliderThumb
+                hasLabel={hasLabel}
+                value={value[0]}
+                isDisabled={isDisabled}
+              />
+              <SliderThumb
+                hasLabel={hasLabel}
+                value={value[1]}
+                isDisabled={isDisabled}
+              />
             </>
           )}
         </SliderPrimitive.Root>
@@ -98,13 +114,17 @@ export const Slider = forwardRef<HTMLSpanElement, SliderProps>(
 
 /***** Internal components */
 
-function SliderThumb({ hasLabel, value }: SliderThumbProps) {
+function SliderThumb({
+  hasLabel,
+  value,
+  isDisabled,
+}: SliderThumbProps & { isDisabled?: boolean }) {
   return (
     <SliderPrimitive.Thumb
       className={cx(
         'block relative h-4 w-4 rounded-full',
         'bg-blue dark:bg-blue-50',
-        'cursor-pointer',
+        isDisabled ? 'cursor-not-allowed' : 'cursor-pointer',
         'focus:outline-none dark:focus:outline-none',
         'focus-visible:outline-none dark:focus-visible:outline-none',
         'focus:ring',

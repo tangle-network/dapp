@@ -1,4 +1,4 @@
-import RestakeBanner from '@tangle-network/tangle-shared-ui/components/blueprints/RestakeBanner';
+import StakingBanner from '@tangle-network/tangle-shared-ui/components/blueprints/StakingBanner';
 import { FC } from 'react';
 
 import { BLUEPRINT_DOCS_LINK } from '@tangle-network/ui-components/constants/tangleDocs';
@@ -7,7 +7,7 @@ import BlueprintListing from './BlueprintListing';
 const BlueprintsPage: FC = () => {
   return (
     <div className="space-y-5">
-      <RestakeBanner
+      <StakingBanner
         title="Register Your First Blueprint"
         description="Select a Blueprint, customize settings, and register your decentralized service in minutes."
         buttonHref={BLUEPRINT_DOCS_LINK}

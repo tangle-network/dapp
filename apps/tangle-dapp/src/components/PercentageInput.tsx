@@ -5,7 +5,9 @@ import { Decimal } from 'decimal.js';
 import { FC, useCallback } from 'react';
 
 import useCustomInputValue from '../hooks/useCustomInputValue';
-import InputWrapper, { InputWrapperProps } from './InputWrapper';
+import InputWrapper, {
+  InputWrapperProps,
+} from '@tangle-network/tangle-shared-ui/components/InputWrapper';
 
 export type PercentageInputProps = {
   id: string;

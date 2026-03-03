@@ -1,158 +1,52 @@
-import {
-  CoinsLineIcon,
-  CoinsStackedLineIcon,
-  FaucetIcon,
-  GiftLineIcon,
-  LockUnlockLineIcon,
-  SendPlanLineIcon,
-} from '@tangle-network/icons';
-import useNetworkStore from '@tangle-network/tangle-shared-ui/context/useNetworkStore';
-import { FC, useMemo, useState } from 'react';
-
-import useActiveAccountAddress from '@tangle-network/tangle-shared-ui/hooks/useActiveAccountAddress';
-import useBalances from '@tangle-network/tangle-shared-ui/hooks/useBalances';
-import { TxStatus } from '@tangle-network/tangle-shared-ui/hooks/useSubstrateTx';
+import { FaucetIcon, SendPlanLineIcon } from '@tangle-network/icons';
+import { FC, useState } from 'react';
+import { useAccount, useBalance, useChainId } from 'wagmi';
 import { TANGLE_FAUCET_URL } from '@tangle-network/ui-components';
-import TransferTxModal from '../../containers/TransferTxModal';
-import useAirdropEligibility from '../../data/claims/useAirdropEligibility';
-import useTotalPayoutRewards from '../../data/nomination/useTotalPayoutRewards';
-import useVestingInfo from '../../data/vesting/useVestingInfo';
-import useVestTx from '../../data/vesting/useVestTx';
-import useNetworkFeatures from '../../hooks/useNetworkFeatures';
-import { NetworkFeature, PagePath, StaticSearchQueryPath } from '../../types';
-import formatTangleBalance from '../../utils/formatTangleBalance';
 import ActionItem from './ActionItem';
-import WithdrawEvmBalanceAction from './WithdrawEvmBalanceAction';
-import { ClaimCreditsModal } from '../../features/claimCredits';
+import TransferModal from './TransferModal';
 
 const Actions: FC = () => {
-  const { nativeTokenSymbol } = useNetworkStore();
-  const { execute: executeVestTx, status: vestTxStatus } = useVestTx();
-  const activeAccountAddress = useActiveAccountAddress();
-  const { transferable: transferableBalance } = useBalances();
+  const { address } = useAccount();
+  const chainId = useChainId();
+  const { data: balance } = useBalance({
+    address,
+    query: {
+      enabled: Boolean(address),
+    },
+  });
   const [isTransferModalOpen, setIsTransferModalOpen] = useState(false);
-  const [isCreditsModalOpen, setIsCreditsModalOpen] = useState(false);
-  const networkFeatures = useNetworkFeatures();
 
-  const { isEligible: isAirdropEligible } = useAirdropEligibility();
+  // Show faucet for testnet chains
+  const isTestnet = chainId === 31337 || chainId === 84532; // Anvil local or Base Sepolia
 
-  const { data } = useTotalPayoutRewards();
-
-  const isPayoutsAvailable = useMemo(() => {
-    return !data.isZero();
-  }, [data]);
-
-  const {
-    isVesting,
-    hasClaimableTokens: hasClaimableVestingTokens,
-    claimableAmount: claimableTokenAmount,
-  } = useVestingInfo();
-
-  const formattedClaimableTokenAmount =
-    claimableTokenAmount !== null
-      ? formatTangleBalance(claimableTokenAmount, nativeTokenSymbol)
-      : null;
+  // Check if user has balance for transfer button
+  const _hasBalance = balance && balance.value > BigInt(0);
 
   return (
-    <div className="flex items-center justify-start gap-4 overflow-x-auto">
-      <ActionItem
-        label="Send"
-        Icon={SendPlanLineIcon}
-        onClick={() => setIsTransferModalOpen(true)}
-        // Disable while no account is connected, or when the active
-        // account has no funds.
-        isDisabled={
-          activeAccountAddress === null ||
-          transferableBalance === null ||
-          transferableBalance.isZero()
-        }
-      />
-
-      <ActionItem
-        label="Nominate"
-        internalHref={StaticSearchQueryPath.NominationsTable}
-        Icon={CoinsStackedLineIcon}
-      />
-
-      {networkFeatures.includes(NetworkFeature.Faucet) && (
+    <>
+      <div className="flex items-center justify-start gap-4 overflow-x-auto">
         <ActionItem
-          label="Faucet"
-          tooltip="Request testnet assets from the Tangle Network Faucet"
-          Icon={FaucetIcon}
-          externalHref={TANGLE_FAUCET_URL}
+          label="Send"
+          Icon={SendPlanLineIcon}
+          onClick={() => setIsTransferModalOpen(true)}
+          isDisabled={!address}
         />
-      )}
 
-      <ActionItem
-        hasNotificationDot={isPayoutsAvailable}
-        isDisabled={!isPayoutsAvailable || activeAccountAddress === null}
-        label="Payouts"
-        Icon={CoinsLineIcon}
-        internalHref={StaticSearchQueryPath.PayoutsTable}
-        tooltip={
-          isPayoutsAvailable
-            ? 'You have payouts available. Click here to visit the Payouts page.'
-            : 'No payouts available.'
-        }
+        {isTestnet && (
+          <ActionItem
+            label="Faucet"
+            tooltip="Request testnet assets from the Tangle Network Faucet"
+            Icon={FaucetIcon}
+            externalHref={TANGLE_FAUCET_URL}
+          />
+        )}
+      </div>
+
+      <TransferModal
+        isOpen={isTransferModalOpen}
+        onClose={() => setIsTransferModalOpen(false)}
       />
-
-      {isAirdropEligible === null && isAirdropEligible && (
-        <ActionItem
-          label="Airdrop"
-          hasNotificationDot={isAirdropEligible !== null && isAirdropEligible}
-          isDisabled={!isAirdropEligible || activeAccountAddress === null}
-          Icon={GiftLineIcon}
-          internalHref={PagePath.CLAIM_AIRDROP}
-          tooltip={
-            <>
-              Congratulations, you are eligible for the Tangle Network airdrop!
-              Click here to visit the <strong>Claim Airdrop</strong> page.
-            </>
-          }
-        />
-      )}
-
-      {/* This is a special case, so hide it for most users if they're not vesting */}
-      {isVesting && (
-        <ActionItem
-          label="Unlock"
-          Icon={LockUnlockLineIcon}
-          onClick={executeVestTx !== null ? executeVestTx : undefined}
-          hasNotificationDot={hasClaimableVestingTokens}
-          isDisabled={
-            vestTxStatus === TxStatus.PROCESSING ||
-            !hasClaimableVestingTokens ||
-            executeVestTx === null
-          }
-          tooltip={
-            hasClaimableVestingTokens ? (
-              <>
-                There are <strong>{formattedClaimableTokenAmount}</strong>{' '}
-                vested tokens that are ready to be claimed. Use this action to
-                release them.
-              </>
-            ) : (
-              <>
-                There are vesting schedules in this account, but no tokens have
-                vested yet.
-              </>
-            )
-          }
-        />
-      )}
-
-      <WithdrawEvmBalanceAction />
-
-      <TransferTxModal
-        isModalOpen={isTransferModalOpen}
-        setIsModalOpen={setIsTransferModalOpen}
-      />
-
-      <ClaimCreditsModal
-        isOpen={isCreditsModalOpen}
-        setIsOpen={setIsCreditsModalOpen}
-      />
-    </div>
+    </>
   );
 };
 

@@ -5,6 +5,7 @@ const randPrimitiveBlueprint = (
   id: bigint,
 ): ReturnType<typeof toPrimitiveBlueprint> => {
   return {
+    id,
     metadata: {
       name: `Blueprint ${id.toString()}`,
       description: `Description for Blueprint ${id.toString()}`,
@@ -18,19 +19,6 @@ const randPrimitiveBlueprint = (
     jobs: [],
     registrationParams: [],
     requestParams: [],
-    gadget: {
-      sources: [
-        {
-          fetcher: {
-            ContainerImage: {
-              registry_: `https://example.com/registry-${id.toString()}`,
-              image: `https://example.com/image-${id.toString()}`,
-              tag: `latest`,
-            },
-          },
-        },
-      ],
-    },
   };
 };
 

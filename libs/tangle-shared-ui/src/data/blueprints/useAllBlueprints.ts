@@ -5,8 +5,8 @@ import { catchError, combineLatest, of, switchMap } from 'rxjs';
 import useNetworkStore from '../../context/useNetworkStore';
 import useApiRx from '../../hooks/useApiRx';
 import { TangleError, TangleErrorCode } from '../../types/error';
-import useOperatorTvl from '../restake/useOperatorTvl';
-import useRestakeOperatorMap from '../restake/useRestakeOperatorMap';
+import useOperatorTvl from '../staking/useOperatorTvl';
+import useStakingOperatorMap from '../staking/useStakingOperatorMap';
 import {
   createBlueprintObjects,
   extractBlueprintsData,
@@ -18,7 +18,7 @@ import { toPrimitiveService } from './utils/toPrimitiveService';
 
 const useAllBlueprints = () => {
   const rpcEndpoints = useNetworkStore((store) => store.network.wsRpcEndpoints);
-  const { result: operatorMap } = useRestakeOperatorMap();
+  const { result: operatorMap } = useStakingOperatorMap();
   const { operatorTvlByAsset } = useOperatorTvl();
 
   const { result, ...rest } = useApiRx(
@@ -56,7 +56,7 @@ const useAllBlueprints = () => {
                 blueprintEntries as any,
               );
 
-              // TODO: This can likely be optimized to reduce request count.
+              // NOTE: This can likely be optimized to reduce request count.
               const ownerIdentitiesMap = await fetchOwnerIdentities(
                 rpcEndpoints,
                 ownerSet,
@@ -82,7 +82,7 @@ const useAllBlueprints = () => {
                   optionalInstance.unwrap(),
                 );
 
-                // TODO: Use lodash to merge arrays.
+                // NOTE: Use lodash to merge arrays.
                 runningInstancesMap.set(instanceData.blueprint, [
                   ...(runningInstancesMap.get(instanceData.blueprint) ?? []),
                   {
@@ -94,7 +94,7 @@ const useAllBlueprints = () => {
 
               const {
                 blueprintOperatorMap,
-                blueprintRestakersMap,
+                blueprintStakersMap,
                 blueprintTVLMap,
               } = extractOperatorData(
                 operatorEntries as any,
@@ -106,7 +106,7 @@ const useAllBlueprints = () => {
               return createBlueprintObjects(
                 blueprintsMap,
                 blueprintOperatorMap,
-                blueprintRestakersMap,
+                blueprintStakersMap,
                 blueprintTVLMap,
                 ownerIdentitiesMap,
                 runningInstancesMap,

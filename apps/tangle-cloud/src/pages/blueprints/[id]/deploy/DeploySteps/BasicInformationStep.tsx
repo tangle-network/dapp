@@ -5,25 +5,87 @@ import {
   Card,
   Typography,
 } from '@tangle-network/ui-components';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@tangle-network/ui-components/components/select';
 import InstanceHeader from '../../../../../components/InstanceHeader';
-import ErrorMessage from '../../../../../components/ErrorMessage';
-import { Children, FC } from 'react';
+import ErrorMessage from '@tangle-network/tangle-shared-ui/components/ErrorMessage';
+import { Children, FC, useMemo } from 'react';
 import { BasicInformationStepProps, LabelClassName } from './type';
 import { TrashIcon, PlusIcon } from '@radix-ui/react-icons';
+import type { Address } from 'viem';
+import {
+  DURATION_UNITS,
+  DurationUnit,
+  getDurationConstraints,
+} from '../../../../../utils/validations/deployBlueprint';
 
 export const BasicInformationStep: FC<BasicInformationStepProps> = ({
   errors,
   setValue,
   watch,
+  setError,
+  clearErrors,
   blueprint,
 }) => {
   const permittedCallers = watch('permittedCallers');
   const instanceName = watch('instanceName');
   const instanceDuration = watch('instanceDuration');
+  const durationUnit = watch('durationUnit') ?? 'seconds';
+
+  const constraints = useMemo(
+    () => getDurationConstraints(durationUnit),
+    [durationUnit],
+  );
+
+  const immediateDurationError = useMemo(() => {
+    if (typeof instanceDuration !== 'number') {
+      return undefined;
+    }
+
+    if (instanceDuration === 0) {
+      return undefined;
+    }
+
+    const unitConstraints = getDurationConstraints(durationUnit);
+    if (
+      instanceDuration < unitConstraints.min ||
+      instanceDuration > unitConstraints.max
+    ) {
+      return `Duration must be 0 (perpetual) or between ${unitConstraints.min} and ${unitConstraints.max} ${durationUnit}`;
+    }
+
+    return undefined;
+  }, [durationUnit, instanceDuration]);
+
+  const instanceDurationError =
+    immediateDurationError ?? errors?.instanceDuration?.message;
+
+  const validateInstanceDuration = (value: number, unit: DurationUnit) => {
+    if (value === 0) {
+      clearErrors('instanceDuration');
+      return;
+    }
+
+    const unitConstraints = getDurationConstraints(unit);
+    if (value < unitConstraints.min || value > unitConstraints.max) {
+      setError('instanceDuration', {
+        type: 'manual',
+        message: `Duration must be 0 (perpetual) or between ${unitConstraints.min} and ${unitConstraints.max} ${unit}`,
+      });
+      return;
+    }
+
+    clearErrors('instanceDuration');
+  };
 
   const handleCallerChange = (index: number, value: string) => {
     const newCallers = [...permittedCallers];
-    newCallers[index] = value;
+    newCallers[index] = value as Address;
     setValue(`permittedCallers`, newCallers);
   };
 
@@ -37,7 +99,34 @@ export const BasicInformationStep: FC<BasicInformationStepProps> = ({
   };
 
   const handleInstanceDurationChange = (value: string) => {
-    setValue(`instanceDuration`, parseInt(value));
+    if (value === '') {
+      setValue('instanceDuration', undefined as unknown as number, {
+        shouldDirty: true,
+        shouldValidate: false,
+      });
+      clearErrors('instanceDuration');
+      return;
+    }
+
+    const numValue = parseInt(value, 10);
+    if (!isNaN(numValue)) {
+      setValue('instanceDuration', numValue, {
+        shouldDirty: true,
+        shouldValidate: true,
+      });
+      validateInstanceDuration(numValue, durationUnit);
+    }
+  };
+
+  const handleDurationUnitChange = (unit: DurationUnit) => {
+    setValue('durationUnit', unit, {
+      shouldDirty: true,
+      shouldValidate: true,
+    });
+
+    if (typeof instanceDuration === 'number') {
+      validateInstanceDuration(instanceDuration, unit);
+    }
   };
 
   return (
@@ -74,21 +163,50 @@ export const BasicInformationStep: FC<BasicInformationStepProps> = ({
           </div>
 
           <div className="space-y-2">
-            <Label className={LabelClassName}>Instance Duration</Label>
-            <Input
-              id="instanceDuration"
-              isControlled
-              inputClassName="placeholder:text-mono-80 dark:placeholder:text-mono-120 h-10"
-              placeholder="Enter instance duration"
-              autoComplete="off"
-              type="number"
-              min={1}
-              value={instanceDuration?.toString()}
-              rightIcon={<>Block(s)</>}
-              onChange={(nextValue) => handleInstanceDurationChange(nextValue)}
-            />
-            {errors?.instanceDuration && (
-              <ErrorMessage>{errors.instanceDuration.message}</ErrorMessage>
+            <Label className={LabelClassName}>Instance Duration (TTL)</Label>
+            <div className="flex gap-2">
+              <Input
+                id="instanceDuration"
+                isControlled
+                isInvalid={Boolean(instanceDurationError)}
+                inputClassName="placeholder:text-mono-80 dark:placeholder:text-mono-120 h-10"
+                placeholder="Enter duration"
+                autoComplete="off"
+                type="number"
+                min={0}
+                max={constraints.max}
+                value={instanceDuration?.toString() ?? ''}
+                onChange={(nextValue) =>
+                  handleInstanceDurationChange(nextValue)
+                }
+                className="flex-1"
+              />
+
+              <Select
+                value={durationUnit}
+                onValueChange={handleDurationUnitChange}
+              >
+                <SelectTrigger className="w-28 h-10">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  {Object.entries(DURATION_UNITS).map(([key, { label }]) => (
+                    <SelectItem key={key} value={key}>
+                      {label}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+            <Typography
+              variant="body2"
+              className="text-mono-100 dark:text-mono-100"
+            >
+              Use 0 for perpetual service, or {constraints.min}-
+              {constraints.max} {durationUnit}
+            </Typography>
+            {instanceDurationError && (
+              <ErrorMessage>{instanceDurationError}</ErrorMessage>
             )}
           </div>
         </div>
@@ -114,7 +232,7 @@ export const BasicInformationStep: FC<BasicInformationStepProps> = ({
                     }
                     className="flex-grow"
                     inputClassName="placeholder:text-mono-80 dark:placeholder:text-mono-120 h-10 w-full"
-                    placeholder="Enter permitted caller"
+                    placeholder="Enter wallet address (0x...)"
                     autoComplete="off"
                   />
                   <Button
@@ -138,8 +256,7 @@ export const BasicInformationStep: FC<BasicInformationStepProps> = ({
             variant="utility"
             onClick={() => {
               const newPermittedCaller = permittedCallers ?? [];
-              newPermittedCaller.push('');
-              // adding empty string to render the input field
+              newPermittedCaller.push('' as Address);
               setValue(`permittedCallers`, newPermittedCaller);
             }}
             className="mt-4"

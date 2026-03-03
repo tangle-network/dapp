@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
 
-// TODO: Simplify this into an utility function, or if it'll stay as a hook, provide more information explaining its purpose. Currently, it doesn't use any React hooks or context, so it would be better to have it as an utility function instead.
+// Hook wrapper keeps a stable memoized map for components that depend on referential equality.
 const useEntryMap = <Key, Value, MappedKey>(
   entries: Array<[Key, Value]> | null,
   mapKey: (key: Key) => MappedKey,

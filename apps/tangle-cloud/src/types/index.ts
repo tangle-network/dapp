@@ -1,38 +1,66 @@
-import { RestakeAssetId } from '@tangle-network/tangle-shared-ui/types';
 import { PrimitiveField } from '@tangle-network/tangle-shared-ui/types/blueprint';
 import { TANGLE_DAPP_URL } from '@tangle-network/ui-components/constants';
+import type { Address } from 'viem';
+
+export const TANGLE_DAPP_BASE_URL = TANGLE_DAPP_URL;
 
 export enum PagePath {
   HOME = '/',
   INSTANCES = '/instances',
+  SERVICE_DETAILS = '/services/:id',
   BLUEPRINTS = '/blueprints',
   BLUEPRINTS_DETAILS = '/blueprints/:id',
   BLUEPRINTS_DEPLOY = '/blueprints/:id/deploy',
+  BLUEPRINTS_CREATE = '/blueprints/create',
+  BLUEPRINTS_MANAGE = '/blueprints/manage',
   BLUEPRINTS_REGISTRATION_REVIEW = '/registration-review',
   OPERATORS = '/operators',
+  OPERATORS_MANAGE = '/operators/manage',
+  REWARDS = '/rewards',
+  EARNINGS = '/earnings',
   NOT_FOUND = '/404',
 }
 
 export enum TangleDAppPagePath {
-  RESTAKE_DEPOSIT = `${TANGLE_DAPP_URL}restake?vault={{vault}}`,
-  RESTAKE_DELEGATE = `${TANGLE_DAPP_URL}restake/delegate`,
-  RESTAKE_OPERATOR = `${TANGLE_DAPP_URL}restake/operators`,
+  STAKING = `${TANGLE_DAPP_URL}staking`,
+  STAKING_DEPOSIT = `${TANGLE_DAPP_URL}staking/deposit?vault={{vault}}`,
+  STAKING_DELEGATE = `${TANGLE_DAPP_URL}staking/delegate`,
+  STAKING_OPERATOR = `${TANGLE_DAPP_URL}staking/operators`,
 }
 
+/**
+ * Asset structure matching the contract's Asset struct.
+ * - kind: 0 = Native token, 1 = ERC20 token
+ * - token: The token address (zero address for native)
+ */
+export type ContractAsset = {
+  kind: number;
+  token: Address;
+};
+
+/**
+ * Security commitment structure matching the contract's AssetSecurityCommitment struct.
+ * Used when calling approveServiceWithCommitments.
+ */
+export type ContractSecurityCommitment = {
+  asset: ContractAsset;
+  exposureBps: number; // 0-10000 basis points
+};
+
+/**
+ * Form fields for the approval confirmation modal.
+ * Supports two approval modes:
+ * 1. Simple approval: Only stakingPercent is provided
+ * 2. Approval with commitments: securityCommitments array is provided
+ */
 export type ApprovalConfirmationFormFields = {
   requestId: number;
-  securityCommitment: SecurityCommitment[];
-};
-
-export type SecurityCommitment = {
-  assetId: RestakeAssetId;
-  exposurePercent: string;
-};
-
-export type SecurityRequirement = {
-  asset: RestakeAssetId;
-  minExposurePercent: number;
-  maxExposurePercent: number;
+  /** Simple approval mode: single percentage (0-100) for default TNT requirement */
+  stakingPercent?: number;
+  /** TNT exposure in basis points (0-10000), when set calls 3-arg approveService overload */
+  tntExposureBps?: number;
+  /** Commitments mode: per-asset exposure commitments matching contract format */
+  securityCommitments?: ContractSecurityCommitment[];
 };
 
 export type RegisterServiceFormFields = {

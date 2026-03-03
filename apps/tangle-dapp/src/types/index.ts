@@ -10,28 +10,41 @@ export enum PagePath {
   NOMINATION_VALIDATOR = '/nomination/:validatorAddress',
   CLAIM_AIRDROP = '/claim',
   CLAIM_AIRDROP_SUCCESS = '/claim/success',
+  CLAIM_MIGRATION = '/claim/migration',
   BRIDGE = '/bridge',
   BLUEPRINTS = '/blueprints',
   BLUEPRINTS_DETAILS = '/blueprints/:id',
   SERVICES = '/services',
-  RESTAKE = '/restake',
-  RESTAKE_DEPOSIT = '/restake/deposit',
-  RESTAKE_DELEGATE = '/restake/delegate',
-  RESTAKE_UNDELEGATE = '/restake/undelegate',
-  RESTAKE_WITHDRAW = '/restake/withdraw',
-  RESTAKE_VAULT = '/restake/vaults',
-  RESTAKE_BLUEPRINT = '/restake/blueprints',
-  RESTAKE_OPERATOR = '/restake/operators',
+  STAKING = '/staking',
+  STAKING_DEPOSIT = '/staking/deposit',
+  STAKING_DELEGATE = '/staking/delegate',
+  STAKING_UNDELEGATE = '/staking/undelegate',
+  STAKING_WITHDRAW = '/staking/withdraw',
+  STAKING_VAULT = '/staking/vaults',
+  STAKING_BLUEPRINT = '/staking/blueprints',
+  STAKING_OPERATOR = '/staking/operators',
+  STAKING_REWARDS = '/staking/rewards',
   LIQUID_STAKING = '/liquid-staking',
+  LIQUID_STAKING_DEPOSIT = '/liquid-staking/deposit',
+  LIQUID_STAKING_REDEEM = '/liquid-staking/redeem',
+  LIQUID_STAKING_CREATE_VAULT = '/liquid-staking/create-vault',
+  LIQUID_STAKING_VAULTS = '/liquid-staking/vaults',
+  LIQUID_STAKING_POSITIONS = '/liquid-staking/positions',
   NOT_FOUND = '/404',
 }
 
 export enum QueryParamKey {
   DELEGATIONS_AND_PAYOUTS_TAB = 'tab',
-  RESTAKE_VAULT = 'vault',
-  RESTAKE_ASSET_ID = 'assetId',
-  RESTAKE_OPERATOR = 'operator',
+  STAKING_VAULT = 'vault',
+  STAKING_ASSET_ID = 'assetId',
+  STAKING_OPERATOR = 'operator',
 }
+
+export const StakingQueryParamKey = {
+  VAULT: QueryParamKey.STAKING_VAULT,
+  ASSET_ID: QueryParamKey.STAKING_ASSET_ID,
+  OPERATOR: QueryParamKey.STAKING_OPERATOR,
+} as const;
 
 export type QueryParamKeyOf<Page extends PagePath> =
   Page extends PagePath.NOMINATION
@@ -58,7 +71,7 @@ export type NodeSpecification = {
   linuxKernel: string;
 };
 
-// TODO: As of now, the other reward destinations are disabled in Tangle. Confirm whether they'll be used in the future, otherwise adjust this accordingly.
+// Runtime currently enables `Staked` and `Stash`; the remaining variants stay for compatibility.
 export enum StakingRewardsDestination {
   STAKED,
   STASH,
@@ -132,7 +145,7 @@ export type InternalPath =
  * The values represent the user-facing UI display names
  * of the roles.
  */
-export enum RestakingService {
+export enum StakingService {
   ZK_SAAS_GROTH16 = 'ZkSaaS_Groth16',
   ZK_SAAS_MARLIN = 'ZkSaaS_Marlin',
   LIGHT_CLIENT_RELAYING = 'Light Client Relaying',
@@ -150,19 +163,19 @@ export enum RestakingService {
   TSS_WSTS_V2 = 'TSS_WSTS_V2',
 }
 
-export enum RestakingProfileType {
+export enum StakingProfileType {
   INDEPENDENT = 'Independent',
   SHARED = 'Shared',
 }
 
-export type DistributionDataType = Record<RestakingService, BN>;
+export type DistributionDataType = Record<StakingService, BN>;
 
 /**
  * There are phase 1 jobs in Substrate
  */
 export type Service = {
   id: string;
-  serviceType: RestakingService;
+  serviceType: StakingService;
   participants: string[];
   threshold?: number;
   jobsCount?: number;
@@ -180,7 +193,7 @@ export type ServiceJob = {
 
 export type JobType = {
   id?: number;
-  serviceType: RestakingService;
+  serviceType: StakingService;
   thresholds?: number;
   earnings?: number;
   expiration: number;

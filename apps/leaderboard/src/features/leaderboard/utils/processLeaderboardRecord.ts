@@ -1,198 +1,167 @@
 import { ZERO_BIG_INT } from '@tangle-network/dapp-config/constants';
-import type { IdentityType } from '@tangle-network/tangle-shared-ui/utils/polkadot/identity';
 import { NetworkType } from '@tangle-network/tangle-shared-ui/graphql/graphql';
-import { toBigInt } from '@tangle-network/ui-components';
 import find from 'lodash/find';
 import findLast from 'lodash/findLast';
 import { BadgeEnum } from '../constants';
-import type { LeaderboardAccountNodeType } from '../queries';
-import { Account, TestnetTaskCompletion } from '../types';
+import type { PointsHistory } from '../types';
+import type {
+  LeaderboardAccountNodeType,
+  DelegatorActivityData,
+} from '../queries';
+import { Account } from '../types';
 
-const calculateLastSevenDaysPoints = (record: LeaderboardAccountNodeType) => {
-  const firstSnapshot = find(record.snapshots.nodes, (snapshot) => {
-    return snapshot !== null;
-  });
+/**
+ * Activity data structure for badge determination
+ */
+export interface ActivityData {
+  delegator?: DelegatorActivityData;
+  isOperator: boolean;
+  blueprintCount: number;
+  serviceCount: number;
+  jobCallCount: number;
+}
 
-  const lastSnapshot = findLast(record.snapshots.nodes, (snapshot) => {
-    return snapshot !== null;
-  });
+const safeBigInt = (value: string | undefined | null): bigint => {
+  if (!value) {
+    return ZERO_BIG_INT;
+  }
+  try {
+    return BigInt(value);
+  } catch {
+    console.error('Failed to convert to bigint:', value);
+    return ZERO_BIG_INT;
+  }
+};
+
+const calculateLastSevenDaysPoints = (
+  record: LeaderboardAccountNodeType,
+): bigint => {
+  const snapshots = record.snapshots;
+
+  if (!snapshots || snapshots.length === 0) {
+    return ZERO_BIG_INT;
+  }
+
+  const firstSnapshot = find(snapshots, (snapshot) => snapshot !== null);
+  const lastSnapshot = findLast(snapshots, (snapshot) => snapshot !== null);
 
   if (!firstSnapshot || !lastSnapshot) {
     return ZERO_BIG_INT;
   }
 
-  const firstSnapshotTotalPointsResult = toBigInt(firstSnapshot.totalPoints);
+  const firstPoints = safeBigInt(firstSnapshot.totalPoints);
+  const lastPoints = safeBigInt(lastSnapshot.totalPoints);
 
-  const lastSnapshotTotalPointsResult = toBigInt(lastSnapshot.totalPoints);
-
-  if (
-    firstSnapshotTotalPointsResult.error !== null ||
-    lastSnapshotTotalPointsResult.error !== null
-  ) {
-    console.error(
-      'Failed to convert snapshot.totalPoints to bigint',
-      firstSnapshot,
-      lastSnapshot,
-    );
-
-    return ZERO_BIG_INT;
-  }
-
-  return (
-    lastSnapshotTotalPointsResult.result - firstSnapshotTotalPointsResult.result
-  );
+  return lastPoints - firstPoints;
 };
 
-const determineBadges = (record: LeaderboardAccountNodeType): BadgeEnum[] => {
+const determineBadges = (activity?: ActivityData): BadgeEnum[] => {
   const badges: BadgeEnum[] = [];
 
-  const hasDeposited = record.delegators?.nodes.find(
-    (node) => node?.deposits.totalCount && node.deposits.totalCount > 0,
-  );
+  if (!activity) {
+    return badges;
+  }
+
+  const { delegator, isOperator, blueprintCount, serviceCount, jobCallCount } =
+    activity;
+
+  // Check for deposits
+  const hasDeposited =
+    delegator?.assetPositions?.some(
+      (pos) => safeBigInt(pos.totalDeposited) > ZERO_BIG_INT,
+    ) ?? false;
 
   if (hasDeposited) {
-    badges.push(BadgeEnum.RESTAKE_DEPOSITOR);
+    badges.push(BadgeEnum.STAKE_DEPOSITOR);
   }
 
-  const hasDelegated = record.delegators?.nodes.find(
-    (node) => node?.delegations.totalCount && node.delegations.totalCount > 0,
-  );
+  // Check for delegations
+  const hasDelegated =
+    delegator?.delegations?.some(
+      (del) => safeBigInt(del.shares) > ZERO_BIG_INT,
+    ) ?? false;
 
   if (hasDelegated) {
-    badges.push(BadgeEnum.RESTAKE_DELEGATOR);
+    badges.push(BadgeEnum.STAKE_DELEGATOR);
   }
 
-  const hasLiquidStaked = record.lstPoolMembers.totalCount > 0;
-  if (hasLiquidStaked) {
+  // Check for liquid vault positions
+  const hasLiquidVault =
+    delegator?.liquidVaultPositions?.some(
+      (pos) => safeBigInt(pos.shares) > ZERO_BIG_INT,
+    ) ?? false;
+
+  if (hasLiquidVault) {
     badges.push(BadgeEnum.LIQUID_STAKER);
   }
 
-  const hasNativeRestaked = record.delegators?.nodes.find(
-    (node) =>
-      node?.delegations.nodes &&
-      node.delegations.nodes.find(
-        (delegation) =>
-          delegation?.assetId && delegation.assetId === `${ZERO_BIG_INT}`,
-      ),
-  );
-
-  if (hasNativeRestaked) {
-    badges.push(BadgeEnum.NATIVE_RESTAKER);
-  }
-
-  const isOperator = record.operators.totalCount > 0;
+  // Operator badge
   if (isOperator) {
     badges.push(BadgeEnum.OPERATOR);
   }
 
-  const isBlueprintOwner = record.blueprints.totalCount > 0;
-  if (isBlueprintOwner) {
+  // Blueprint owner badge
+  if (blueprintCount > 0) {
     badges.push(BadgeEnum.BLUEPRINT_OWNER);
   }
 
-  const isServiceProvider = record.services.totalCount > 0;
-  if (isServiceProvider) {
+  // Service provider badge
+  if (serviceCount > 0) {
     badges.push(BadgeEnum.SERVICE_PROVIDER);
   }
 
-  const isJobCaller = record.jobCalls.totalCount > 0;
-  if (isJobCaller) {
+  // Job caller badge
+  if (jobCallCount > 0) {
     badges.push(BadgeEnum.JOB_CALLER);
-  }
-
-  const isValidator = record.isValidator ?? false;
-  if (isValidator) {
-    badges.push(BadgeEnum.VALIDATOR);
-  }
-
-  const isNominator = record.isNominator ?? false;
-  if (isNominator) {
-    badges.push(BadgeEnum.NOMINATOR);
   }
 
   return badges;
 };
 
-const calculateActivityCounts = (record: LeaderboardAccountNodeType) => {
-  const depositCount = record.delegators?.nodes.reduce((acc, node) => {
-    if (!node) {
-      return acc;
-    }
-
-    return acc + node.deposits.totalCount;
-  }, 0);
-
-  const delegationCount = record.delegators?.nodes.reduce((acc, node) => {
-    if (!node) {
-      return acc;
-    }
-
-    return acc + node.delegations.totalCount;
-  }, 0);
-
-  return {
-    blueprintCount: record.blueprints.totalCount,
-    depositCount,
-    delegationCount,
-    liquidStakingPoolCount: record.lstPoolMembers.totalCount,
-    serviceCount: record.services.totalCount,
-    jobCallCount: record.jobCalls.totalCount,
-  };
-};
-
-const processTestnetTaskCompletion = (record: LeaderboardAccountNodeType) => {
-  const testnetTask = record.testnetTaskCompletions.nodes.find(
-    (node) => node !== null,
-  );
-
-  if (!testnetTask) {
-    return undefined;
+const calculateActivityCounts = (activity?: ActivityData) => {
+  if (!activity) {
+    return {
+      depositCount: 0,
+      delegationCount: 0,
+      liquidVaultPositionCount: 0,
+      blueprintCount: 0,
+      serviceCount: 0,
+      jobCallCount: 0,
+    };
   }
 
-  const testnetTaskCompletion: Omit<
-    TestnetTaskCompletion,
-    'completionPercentage'
-  > = {
-    depositedThreeAssets: !!testnetTask.hasDepositedThreeAssets,
-    delegatedAssets: !!testnetTask.hasDelegatedAssets,
-    liquidStaked: !!testnetTask.hasLiquidStaked,
-    nominated: !!testnetTask.hasNominated,
-    nativeRestaked: !!testnetTask.hasNativeRestaked,
-    bonus: !!testnetTask.hasBonusPoints,
-  };
+  const { delegator, blueprintCount, serviceCount, jobCallCount } = activity;
 
   return {
-    ...testnetTaskCompletion,
-    completionPercentage:
-      (Object.values(testnetTaskCompletion).filter(Boolean).length /
-        Object.keys(testnetTaskCompletion).length) *
-      100,
+    depositCount: delegator?.assetPositions?.length ?? 0,
+    delegationCount: delegator?.delegations?.length ?? 0,
+    liquidVaultPositionCount: delegator?.liquidVaultPositions?.length ?? 0,
+    blueprintCount,
+    serviceCount,
+    jobCallCount,
   };
 };
 
-const processPointsHistory = (record: LeaderboardAccountNodeType) => {
-  return record.snapshots.nodes
+const processPointsHistory = (
+  record: LeaderboardAccountNodeType,
+): PointsHistory[] => {
+  if (!record.snapshots) {
+    return [];
+  }
+
+  return record.snapshots
     .map((snapshot) => {
       if (!snapshot) {
         return null;
       }
 
-      const snapshotPointsResult = toBigInt(snapshot.totalPoints);
-
-      if (snapshotPointsResult.error !== null) {
-        console.error(
-          'Failed to convert snapshot.totalPoints to bigint',
-          snapshot,
-        );
-        return null;
-      }
-
       return {
-        blockNumber: snapshot.blockNumber,
-        points: snapshotPointsResult.result,
+        blockNumber: Number(snapshot.blockNumber),
+        timestamp: Number(snapshot.timestamp),
+        points: safeBigInt(snapshot.totalPoints),
       };
     })
-    .filter((item) => item !== null);
+    .filter((item): item is PointsHistory => item !== null);
 };
 
 export const processLeaderboardRecord = (
@@ -200,58 +169,40 @@ export const processLeaderboardRecord = (
   index: number,
   pageIndex: number,
   pageSize: number,
-  identity: IdentityType | null | undefined,
+  activity?: ActivityData,
+  network: NetworkType = 'MAINNET',
 ): Account | null => {
   if (!record) {
     return null;
   }
 
-  const totalPointsResult = toBigInt(record.totalPoints);
-
-  if (totalPointsResult.error !== null) {
-    console.error('Failed to convert totalPoints to bigint', record);
-    return null;
-  }
-
-  const totalMainnetPointsResult = toBigInt(record.totalMainnetPoints);
-
-  if (totalMainnetPointsResult.error !== null) {
-    console.error('Failed to convert totalMainnetPoints to bigint', record);
-    return null;
-  }
-
-  const totalTestnetPointsResult = toBigInt(record.totalTestnetPoints);
-
-  if (totalTestnetPointsResult.error !== null) {
-    console.error('Failed to convert totalTestnetPoints to bigint', record);
-    return null;
-  }
-
+  const totalPoints = safeBigInt(record.totalPoints);
+  const totalMainnetPoints = safeBigInt(record.totalMainnetPoints);
+  const totalTestnetPoints = safeBigInt(record.totalTestnetPoints);
   const lastSevenDays = calculateLastSevenDaysPoints(record);
-  const badges = determineBadges(record);
-  const activity = calculateActivityCounts(record);
-  const testnetTaskCompletion = processTestnetTaskCompletion(record);
+  const badges = determineBadges(activity);
+  const activityCounts = calculateActivityCounts(activity);
   const pointsHistory = processPointsHistory(record);
+
+  // updatedAt is a timestamp string from Envio
+  const updatedAtTimestamp = record.updatedAt
+    ? new Date(Number(record.updatedAt) * 1000)
+    : null;
 
   return {
     id: record.id,
     rank: pageIndex * pageSize + index + 1,
-    totalPoints: totalPointsResult.result,
+    totalPoints,
     pointsBreakdown: {
-      mainnet: totalMainnetPointsResult.result,
-      testnet: totalTestnetPointsResult.result,
+      mainnet: totalMainnetPoints,
+      testnet: totalTestnetPoints,
       lastSevenDays,
     },
     badges,
-    activity,
-    testnetTaskCompletion,
+    activity: activityCounts,
     pointsHistory,
-    createdAt: record.createdAt,
-    createdAtTimestamp: record.createdAtTimestamp,
-    lastUpdatedAt: record.lastUpdatedAt,
-    lastUpdatedAtTimestamp: record.lastUpdatedAtTimestamp,
-    identity,
-    // TODO: This should fetch from the API once the server supports multi-chain
-    network: 'TESTNET' as NetworkType,
+    updatedAt: Number(record.updatedAt) || 0,
+    updatedAtTimestamp,
+    network,
   } satisfies Account;
 };

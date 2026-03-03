@@ -13,7 +13,7 @@ export const APP_NAME = 'Tangle dApp';
 export const APP_SUBTITLE = 'Kickstarting Blockchain Innovation with MPC';
 
 export const APP_DESCRIPTION =
-  "Your portal to managing Tangle Network assets and upcoming AVS Blueprints in Tangle's modular restaking infrastructure.";
+  "Your portal to managing Tangle Network assets and upcoming AVS Blueprints in Tangle's modular staking infrastructure.";
 
 export const DEFAULT_OPENGRAPH_METADATA = {
   title: {

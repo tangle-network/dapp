@@ -1,45 +1,34 @@
 import {
   Typography,
-  assertSubstrateAddress,
   Input,
   Card,
-  Label,
+  Chip,
+  SkeletonLoader,
 } from '@tangle-network/ui-components';
 import { FC, useEffect, useMemo, useState, Children } from 'react';
-import {
-  SelectOperatorsStepProps,
-  OperatorSelectionTable,
-  ApprovalModelLabel,
-  LabelClassName,
-} from './type';
-import useRestakeOperatorMap from '@tangle-network/tangle-shared-ui/data/restake/useRestakeOperatorMap';
+import { SelectOperatorsStepProps, OperatorSelectionTable } from './type';
 import { RowSelectionState } from '@tanstack/react-table';
-import ErrorMessage from '../../../../../components/ErrorMessage';
-import useIdentities from '@tangle-network/tangle-shared-ui/hooks/useIdentities';
-import safeFormatUnits from '@tangle-network/tangle-shared-ui/utils/safeFormatUnits';
-import useOperatorsServices from '@tangle-network/tangle-shared-ui/data/blueprints/useOperatorsServices';
+import ErrorMessage from '@tangle-network/tangle-shared-ui/components/ErrorMessage';
 import {
   Select,
   SelectContent,
   SelectCheckboxItem,
   SelectTrigger,
   SelectValue,
-  SelectItem,
 } from '@tangle-network/ui-components/components/select';
-import { Search } from '@tangle-network/icons';
+import { Search, CheckLineIcon, Close } from '@tangle-network/icons';
 import LsTokenIcon from '@tangle-network/tangle-shared-ui/components/LsTokenIcon';
 import { OperatorTable } from './components/OperatorTable';
-import { DeployBlueprintSchema } from '../../../../../utils/validations/deployBlueprint';
 import {
-  OperatorDelegatorBond,
-  RestakeAsset,
-} from '@tangle-network/tangle-shared-ui/types/restake';
-import delegationsToVaultTokens from '@tangle-network/tangle-shared-ui/utils/restake/delegationsToVaultTokens';
-import useRestakeAssets from '@tangle-network/tangle-shared-ui/data/restake/useRestakeAssets';
-import useBlueprintRegisteredOperator from '@tangle-network/tangle-shared-ui/data/blueprints/useBlueprintRegisteredOperator';
-import { getOperatorPricing } from '../../../../../utils';
-import { NATIVE_ASSET_ID } from '@tangle-network/tangle-shared-ui/constants/restaking';
-import lodash from 'lodash';
+  useStakingAssets,
+  type StakingAsset,
+} from '@tangle-network/tangle-shared-ui/data/graphql';
+import {
+  useBlueprintConfig,
+  MembershipModel,
+} from '@tangle-network/tangle-shared-ui/data/services';
+import { getMembershipLabel } from '../../../../../types/serviceRequest';
+import { Address } from 'viem';
 
 const MAX_ASSET_TO_SHOW = 3;
 
@@ -47,8 +36,8 @@ export const SelectOperatorsStep: FC<SelectOperatorsStepProps> = ({
   errors,
   setValue,
   watch,
-  minimumNativeSecurityRequirement,
   blueprint,
+  blueprintOperators,
 }) => {
   const [rowSelection, setRowSelection] = useState<RowSelectionState>(
     watch(`operators`)?.reduce((acc, operator) => {
@@ -58,104 +47,40 @@ export const SelectOperatorsStep: FC<SelectOperatorsStepProps> = ({
   );
 
   const [searchQuery, setSearchQuery] = useState('');
-  const { assets } = useRestakeAssets();
 
-  const blueprintId = blueprint?.id;
+  // Fetch blueprint config from contract to get membership model settings
+  const { data: blueprintConfig, isLoading: isConfigLoading } =
+    useBlueprintConfig(blueprint?.id);
 
-  const { result: registeredOperators_ } =
-    useBlueprintRegisteredOperator(blueprintId);
+  // Fetch staking assets from GraphQL indexer
+  const { assets: assetMap } = useStakingAssets();
 
-  const registeredOperators = useMemo(() => {
-    return new Map(
-      registeredOperators_.map((operator) => [
-        operator.operatorAccount,
-        operator,
-      ]),
-    );
-  }, [registeredOperators_]);
-
-  const operatorAddresses = useMemo(
-    () =>
-      registeredOperators_.map((operator) =>
-        assertSubstrateAddress(operator.operatorAccount),
-      ),
-    [registeredOperators_],
-  );
-
-  const { result: operatorServicesMap } =
-    useOperatorsServices(operatorAddresses);
-
-  const { result: identities } = useIdentities(operatorAddresses);
-  const { result: restakeOperatorMap } = useRestakeOperatorMap();
-
+  // Use operators registered for this blueprint from the parent component
   const operators = useMemo<OperatorSelectionTable[]>(() => {
-    const filteredRestakeOperators = Array.from(
-      restakeOperatorMap.entries(),
-    ).filter(([address]) => registeredOperators.has(address));
+    if (!blueprintOperators || blueprintOperators.length === 0) return [];
 
-    return filteredRestakeOperators.map(
-      ([addressString, { delegations, restakersCount, stake }]) => {
-        const address = assertSubstrateAddress(addressString);
-        const operatorPreferences = registeredOperators.get(address);
-
-        // This case should not happen because we filter the operators in the restake operator map.
-        if (!operatorPreferences) {
-          throw new Error('Operator not found');
-        }
-
-        const registeredData = operatorPreferences.preferences;
-
-        return {
-          address,
-          identityName: identities.get(address)?.name ?? undefined,
-          restakersCount,
-          vaultTokensInUsd: delegations.reduce(
-            (acc: number, curr: OperatorDelegatorBond) => {
-              const asset = assets?.get(curr.assetId);
-
-              if (!asset) {
-                return acc;
-              }
-
-              const parsed = safeFormatUnits(
-                curr.amount,
-                asset.metadata.decimals,
-              );
-
-              if (parsed.success === false) {
-                return acc;
-              }
-
-              const currentPrice =
-                Number(parsed.value) * (asset.metadata.priceInUsd ?? 0);
-
-              return acc + currentPrice;
-            },
-            0,
-          ),
-          selfBondedAmount: stake,
-          vaultTokens:
-            assets === null
-              ? []
-              : delegationsToVaultTokens(delegations, assets),
-          instanceCount: operatorServicesMap.get(address)?.length ?? 0,
-          // TODO: Using GraphQL with im online pallet to get uptime of operator.
-          uptime: Math.round(Math.random() * 100),
-          pricing: getOperatorPricing(registeredData.priceTargets),
-        };
-      },
-    );
-  }, [
-    restakeOperatorMap,
-    registeredOperators,
-    identities,
-    assets,
-    operatorServicesMap,
-  ]);
+    return blueprintOperators.map((operator) => {
+      return {
+        address: operator.address as Address,
+        identityName: operator.identityName,
+        stakersCount: operator.stakersCount ?? 0,
+        vaultTokensInUsd: operator.tvlInUsd ?? 0,
+        selfBondedAmount: operator.selfBondedAmount,
+        vaultTokens: operator.vaultTokens,
+        instanceCount: operator.instanceCount,
+        pricing: {
+          cpu: 0,
+          mem: 0,
+          storage: 0,
+        },
+      };
+    });
+  }, [blueprintOperators]);
 
   const selectedAssets = watch('assets');
-  const approvalModel = watch('approvalModel');
-  const minApproval = watch('minApproval');
+  const requestMode = watch('requestMode') ?? 'basic';
+  const securityCommitments = watch('securityCommitments') ?? [];
+  const selectedOperatorsCount = Object.keys(rowSelection).length;
 
   const tableData = useMemo(() => {
     if (!Array.isArray(selectedAssets) || selectedAssets.length === 0) {
@@ -163,7 +88,7 @@ export const SelectOperatorsStep: FC<SelectOperatorsStepProps> = ({
     }
 
     const selectedSymbols = new Set(
-      selectedAssets.map((asset) => asset.metadata.symbol),
+      selectedAssets.map((asset) => asset.metadata?.symbol),
     );
 
     const filtered = operators.filter((operator) =>
@@ -175,93 +100,91 @@ export const SelectOperatorsStep: FC<SelectOperatorsStepProps> = ({
     return filtered.length > 0 ? filtered : operators;
   }, [operators, selectedAssets]);
 
-  // set the operators to the form value when the rowSelection changes
+  // Set the operators to the form value when the rowSelection changes
   useEffect(() => {
-    setValue(`operators`, Object.keys(rowSelection));
+    setValue(`operators`, Object.keys(rowSelection) as Address[]);
   }, [rowSelection, setValue]);
 
-  const onSelectAsset = (asset: RestakeAsset, isChecked: boolean) => {
+  const onSelectAsset = (asset: StakingAsset, isChecked: boolean) => {
     const selectedAssets_ = Array.from(selectedAssets ?? []);
     const newSelectedAssets = isChecked
       ? [
           ...selectedAssets_,
           {
             id: asset.id,
-            metadata: lodash.pick(asset.metadata, [
-              'symbol',
-              'assetId',
-              'vaultId',
-              'priceInUsd',
-              'name',
-              'decimals',
-              'details',
-              'status',
-              'deposit',
-              'isFrozen',
-            ]),
+            metadata: {
+              symbol: asset.metadata.symbol,
+              name: asset.metadata.name,
+              decimals: asset.metadata.decimals,
+              priceInUsd: null,
+            },
           },
         ]
       : selectedAssets.filter((selectedAsset) => selectedAsset.id !== asset.id);
 
     setValue(`assets`, newSelectedAssets);
 
-    // initialize security commitments
-    const securityCommitments = newSelectedAssets.map((asset) => {
-      const securityCommitment = {
-        asset: asset.id,
-        minExposurePercent: 0,
-        maxExposurePercent: 100,
-      };
-      if (asset.id === NATIVE_ASSET_ID) {
-        securityCommitment.minExposurePercent =
-          minimumNativeSecurityRequirement;
-      }
-      return securityCommitment;
-    });
-    setValue(`securityCommitments`, securityCommitments);
-
-    // Filter operators that are selected but don't have delegated assets in the selected assets
-    const selectedOperators = tableData
-      .filter((operator) => rowSelection[operator.address]) // selected operators
-      .filter((operator) =>
-        operator.vaultTokens?.every((vaultToken) =>
-          newSelectedAssets.every(
-            (selectedAsset) =>
-              selectedAsset.metadata.symbol !== vaultToken.symbol,
-          ),
-        ),
-      )
-      .map((operator) => operator.address);
-
-    const newRowSelection = selectedOperators.reduce((acc, operator) => {
-      acc[operator] = false;
-      return acc;
-    }, {} as RowSelectionState);
-
-    setRowSelection((prev) => ({ ...prev, ...newRowSelection }));
+    if (requestMode === 'security') {
+      const nextSecurityCommitments = newSelectedAssets.map((selectedAsset) => {
+        return {
+          asset: selectedAsset.id,
+          minExposurePercent: 1,
+          maxExposurePercent: 100,
+        };
+      });
+      setValue('securityCommitments', nextSecurityCommitments);
+    }
   };
 
-  const onChangeApprovalModel = (
-    value: DeployBlueprintSchema['approvalModel'],
-  ) => {
-    let newMaxApproval: number | undefined;
-    let newMinApproval: number = minApproval;
+  useEffect(() => {
+    const assetCount = selectedAssets?.length ?? 0;
 
-    if (value === 'Dynamic') {
-      newMaxApproval = Object.keys(rowSelection).length;
-    } else {
-      newMaxApproval = undefined;
-      newMinApproval = Object.keys(rowSelection).length;
+    if (requestMode !== 'security') {
+      if (securityCommitments.length > 0) {
+        setValue('securityCommitments', []);
+      }
+      return;
     }
 
-    setValue(`approvalModel`, value);
-    setValue(`maxApproval`, newMaxApproval);
-    setValue(`minApproval`, newMinApproval);
-  };
+    if (assetCount === 0) {
+      if (securityCommitments.length > 0) {
+        setValue('securityCommitments', []);
+      }
+      return;
+    }
 
-  const onChangeMinApproval = (value: DeployBlueprintSchema['minApproval']) => {
-    setValue(`minApproval`, value);
-  };
+    if (securityCommitments.length !== assetCount) {
+      setValue(
+        'securityCommitments',
+        (selectedAssets ?? []).map((asset) => ({
+          asset: asset.id,
+          minExposurePercent: 1,
+          maxExposurePercent: 100,
+        })),
+      );
+    }
+  }, [requestMode, securityCommitments.length, selectedAssets, setValue]);
+
+  // Calculate min approvals required based on blueprint config
+  // For Fixed: all operators must approve
+  // For Dynamic: use minOperators from blueprint config
+  const minApprovalsRequired = useMemo(() => {
+    if (!blueprintConfig) return null;
+
+    if (blueprintConfig.membership === MembershipModel.Fixed) {
+      // Fixed: all selected operators must approve
+      return selectedOperatorsCount > 0 ? selectedOperatorsCount : null;
+    }
+
+    // Dynamic: show blueprint's minOperators requirement
+    return blueprintConfig.minOperators;
+  }, [blueprintConfig, selectedOperatorsCount]);
+
+  // Get all available assets for filtering
+  const allAssets = useMemo<StakingAsset[]>(() => {
+    if (!assetMap) return [];
+    return Array.from(assetMap.values());
+  }, [assetMap]);
 
   return (
     <Card className="p-6">
@@ -284,7 +207,7 @@ export const SelectOperatorsStep: FC<SelectOperatorsStepProps> = ({
                             .map((asset) => (
                               <div>
                                 <LsTokenIcon
-                                  name={asset.metadata.name ?? 'TNT'}
+                                  name={asset.metadata?.symbol ?? 'TNT'}
                                   size="md"
                                 />
                               </div>
@@ -309,7 +232,9 @@ export const SelectOperatorsStep: FC<SelectOperatorsStepProps> = ({
 
             <SelectContent>
               {Children.toArray(
-                Array.from(assets?.values() ?? []).map((asset) => {
+                allAssets.map((asset) => {
+                  const name = asset.metadata.name || 'Unknown';
+                  const symbol = asset.metadata.symbol || 'TNT';
                   return (
                     <SelectCheckboxItem
                       onChange={(e) => onSelectAsset(asset, e.target.checked)}
@@ -320,13 +245,8 @@ export const SelectOperatorsStep: FC<SelectOperatorsStepProps> = ({
                       spacingClassName="ml-0"
                     >
                       <div className="flex items-center gap-2">
-                        <LsTokenIcon
-                          name={asset.metadata.name ?? 'TNT'}
-                          size="md"
-                        />
-                        <Typography variant="body1">
-                          {asset.metadata.name ?? 'TNT'}
-                        </Typography>
+                        <LsTokenIcon name={symbol} size="md" />
+                        <Typography variant="body1">{name}</Typography>
                       </div>
                     </SelectCheckboxItem>
                   );
@@ -388,42 +308,73 @@ export const SelectOperatorsStep: FC<SelectOperatorsStepProps> = ({
         <ErrorMessage>{errors?.operators?.message}</ErrorMessage>
       )}
 
-      <div className="mt-5 flex gap-4">
-        <div className="space-y-2 w-1/2">
-          <Label className={LabelClassName}>Approval Model:</Label>
-          <Select value={approvalModel} onValueChange={onChangeApprovalModel}>
-            <SelectTrigger className="h-10">
-              <SelectValue
-                className="text-[16px] leading-[30px]"
-                placeholder="Select an approval model"
-              />
-            </SelectTrigger>
-            <SelectContent>
-              {Children.toArray(
-                Object.entries(ApprovalModelLabel).map(([key, label]) => (
-                  <SelectItem value={key}>{label}</SelectItem>
-                )),
-              )}
-            </SelectContent>
-          </Select>
-          {errors?.approvalModel?.message && (
-            <ErrorMessage>{errors?.approvalModel?.message}</ErrorMessage>
-          )}
-        </div>
+      {/* Approval Settings - Read-only based on blueprint configuration */}
+      <div className="mt-5 p-4 bg-mono-20 dark:bg-mono-180 rounded-lg">
+        <Typography
+          variant="body1"
+          className="text-mono-120 dark:text-mono-100 mb-3"
+        >
+          Approval Requirements (defined by blueprint)
+        </Typography>
 
-        {approvalModel === 'Dynamic' && (
-          <div className="space-y-2 w-1/2">
-            <Label className={LabelClassName}>Approval Threshold:</Label>
-            <Input
-              value={minApproval?.toString()}
-              inputClassName="h-10"
-              onChange={(nextValue) => onChangeMinApproval(Number(nextValue))}
-              isControlled
-              type="number"
-              id="approval-threshold"
-            />
-            {errors?.minApproval?.message && (
-              <ErrorMessage>{errors?.minApproval?.message}</ErrorMessage>
+        {isConfigLoading ? (
+          <div className="flex gap-8">
+            <SkeletonLoader className="h-5 w-40" />
+            <SkeletonLoader className="h-5 w-32" />
+          </div>
+        ) : (
+          <div className="flex gap-8">
+            <div className="flex items-center gap-2">
+              <span className="text-sm text-mono-140 dark:text-mono-80">
+                Membership Model:
+              </span>
+              <Chip
+                color={
+                  blueprintConfig?.membership === MembershipModel.Fixed
+                    ? 'blue'
+                    : 'purple'
+                }
+              >
+                {blueprintConfig
+                  ? getMembershipLabel(blueprintConfig.membership)
+                  : 'Loading...'}
+              </Chip>
+            </div>
+
+            <div className="flex items-center gap-2">
+              <span className="text-sm text-mono-140 dark:text-mono-80">
+                Min. Approvals Required:
+              </span>
+              <span className="text-sm font-semibold">
+                {minApprovalsRequired !== null ? (
+                  minApprovalsRequired
+                ) : (
+                  <span className="text-mono-100 dark:text-mono-120 font-normal">
+                    Select operators to see requirements
+                  </span>
+                )}
+              </span>
+              {minApprovalsRequired !== null &&
+                (selectedOperatorsCount >= minApprovalsRequired ? (
+                  <span className="inline-flex items-center justify-center rounded-full bg-green-500/20 p-1 text-green-400">
+                    <CheckLineIcon className="size-4" />
+                  </span>
+                ) : (
+                  <span className="inline-flex items-center justify-center rounded-full bg-red-500/20 p-1 text-red-400">
+                    <Close className="size-4" />
+                  </span>
+                ))}
+            </div>
+
+            {selectedOperatorsCount > 0 && (
+              <div className="flex items-center gap-2">
+                <span className="text-sm text-mono-140 dark:text-mono-80">
+                  Selected Operators:
+                </span>
+                <span className="text-sm font-semibold">
+                  {selectedOperatorsCount}
+                </span>
+              </div>
             )}
           </div>
         )}

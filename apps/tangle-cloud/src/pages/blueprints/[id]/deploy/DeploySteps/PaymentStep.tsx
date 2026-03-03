@@ -8,26 +8,31 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@tangle-network/ui-components/components/select';
-import ErrorMessage from '../../../../../components/ErrorMessage';
+import ErrorMessage from '@tangle-network/tangle-shared-ui/components/ErrorMessage';
 import LsTokenIcon from '@tangle-network/tangle-shared-ui/components/LsTokenIcon';
-import { RestakeAsset } from '@tangle-network/tangle-shared-ui/types/restake';
-import assertRestakeAssetId from '@tangle-network/tangle-shared-ui/utils/assertRestakeAssetId';
-import useAssets from '@tangle-network/tangle-shared-ui/hooks/useAssets';
+import {
+  useStakingAssets,
+  type StakingAsset,
+} from '@tangle-network/tangle-shared-ui/data/graphql';
 
 export const PaymentStep: FC<PaymentStepProps> = ({
   errors,
   setValue,
   watch,
 }) => {
-  const { result: assets } = useAssets();
+  const { assets } = useStakingAssets();
+  const selectableAssets = (
+    Array.from(assets?.values() ?? []) as StakingAsset[]
+  ).filter((asset) => asset.metadata.name && asset.metadata.name.trim() !== '');
 
-  const onSelectAsset = (asset: RestakeAsset) => {
+  const onSelectAsset = (asset: StakingAsset) => {
     setValue('paymentAsset', {
       id: asset.id,
       metadata: {
-        ...asset.metadata,
-        deposit: asset.metadata.deposit ?? '',
-        isFrozen: asset.metadata.isFrozen ?? false,
+        name: asset.metadata.name,
+        symbol: asset.metadata.symbol,
+        decimals: asset.metadata.decimals,
+        priceInUsd: null,
       },
     });
   };
@@ -52,7 +57,9 @@ export const PaymentStep: FC<PaymentStepProps> = ({
           </Typography>
           <Select
             onValueChange={(assetId) => {
-              const asset = assets?.get(assertRestakeAssetId(assetId));
+              const asset = assets?.get(assetId as `0x${string}`) as
+                | StakingAsset
+                | undefined;
               if (asset) {
                 onSelectAsset(asset);
               }
@@ -64,22 +71,18 @@ export const PaymentStep: FC<PaymentStepProps> = ({
 
             <SelectContent>
               {Children.toArray(
-                Array.from(assets?.values() ?? [])
-                  .filter(
-                    (asset) =>
-                      asset.metadata.name && asset.metadata.name.trim() !== '',
-                  )
-                  .map((asset) => {
-                    const name = asset.metadata.name || 'TNT';
-                    return (
-                      <SelectItem value={asset.id} id={asset.id}>
-                        <div className="flex items-center gap-2">
-                          <LsTokenIcon name={name} size="md" />
-                          <Typography variant="body1">{name}</Typography>
-                        </div>
-                      </SelectItem>
-                    );
-                  }),
+                selectableAssets.map((asset) => {
+                  const name = asset.metadata.name || 'Unknown';
+                  const symbol = asset.metadata.symbol || 'TNT';
+                  return (
+                    <SelectItem value={asset.id} id={asset.id}>
+                      <div className="flex items-center gap-2">
+                        <LsTokenIcon name={symbol} size="md" />
+                        <Typography variant="body1">{name}</Typography>
+                      </div>
+                    </SelectItem>
+                  );
+                }),
               )}
             </SelectContent>
           </Select>

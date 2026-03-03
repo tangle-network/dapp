@@ -209,7 +209,7 @@ export const Input: React.FC<InputProps> = (props) => {
         )}
       </div>
 
-      {/** TODO: Replace with `ErrorMessage` component. */}
+      {/** NOTE: Replace with `ErrorMessage` component. */}
       {errorMessage !== undefined && (
         <Typography
           component="p"

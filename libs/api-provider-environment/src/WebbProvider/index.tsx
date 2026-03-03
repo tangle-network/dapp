@@ -19,7 +19,6 @@ import {
   type Wallet,
 } from '@tangle-network/dapp-config';
 import getWagmiConfig from '@tangle-network/dapp-config/wagmi-config';
-import { type WebbSolanaProvider } from '@tangle-network/solana-api-provider';
 import {
   WalletId,
   WebbError,
@@ -28,13 +27,11 @@ import {
 } from '@tangle-network/dapp-types';
 import WalletNotInstalledError from '@tangle-network/dapp-types/errors/WalletNotInstalledError';
 import type { Maybe, Nullable } from '@tangle-network/dapp-types/utils/types';
-import { WebbPolkadot } from '@tangle-network/polkadot-api-provider';
 import {
   ChainType,
   calculateTypedChainId,
 } from '@tangle-network/dapp-types/TypedChainId';
 import { WebbWeb3Provider } from '@tangle-network/web3-api-provider';
-import { createSolanaProvider } from '@tangle-network/solana-api-provider';
 import { useUIContext } from '@tangle-network/ui-components';
 import useWagmiHydration from '@tangle-network/ui-components/hooks/useWagmiHydration';
 import { useCallback, useEffect, useRef, useState, type FC } from 'react';
@@ -89,6 +86,16 @@ const WebbProviderInner: FC<WebbProviderInnerProps> = ({
   const { notificationApi } = useUIContext();
 
   const { connectAsync, connectors } = useConnect();
+
+  // Debug: Log available connectors
+  console.log(
+    '[WebbProvider] Available connectors:',
+    connectors.map((c) => ({
+      id: c.id,
+      name: c.name,
+      type: c.type,
+    })),
+  );
 
   const wagmiHydrated = useWagmiHydration();
 
@@ -221,11 +228,11 @@ const WebbProviderInner: FC<WebbProviderInnerProps> = ({
           break;
         case WebbErrorCodes.MetaMaskExtensionNotInstalled:
         case WebbErrorCodes.RainbowExtensionNotInstalled:
-        case WebbErrorCodes.PolkadotJSExtensionNotInstalled:
-        case WebbErrorCodes.TalismanExtensionNotInstalled:
-        case WebbErrorCodes.SubWalletExtensionNotInstalled:
-        case WebbErrorCodes.PhantomExtensionNotInstalled:
-          // TODO: Implement interactive feedback with new components from ui-components:
+          notificationApi({
+            variant: 'error',
+            message: 'Wallet extension is not installed',
+            secondaryMessage: errorMessage.message,
+          });
           break;
         case WebbErrorCodes.InsufficientProviderInterface:
           setActiveChain(undefined);
@@ -235,7 +242,7 @@ const WebbProviderInner: FC<WebbProviderInnerProps> = ({
         }
       }
     },
-    [setActiveChain],
+    [notificationApi, setActiveChain],
   );
 
   /**
@@ -248,8 +255,6 @@ const WebbProviderInner: FC<WebbProviderInnerProps> = ({
       _networkStorage?: NetworkStorage | undefined,
       abortSignal?: AbortSignal,
     ) => {
-      const nextTypedChainId = calculateTypedChainId(chain.chainType, chain.id);
-
       const sharedWalletConnectionPayload = {
         walletId: wallet.id,
         typedChainId: { chainId: chain.id, chainType: chain.chainType },
@@ -281,131 +286,71 @@ const WebbProviderInner: FC<WebbProviderInnerProps> = ({
         abortSignal?.throwIfAborted();
 
         switch (wallet.id) {
-          case WalletId.Phantom:
-            {
-              abortSignal?.throwIfAborted();
-
-              const webbSolanaProvider = await createSolanaProvider(
-                wallet.id,
-                chain.id,
-                apiConfig,
-              );
-
-              const providerUpdateHandler = async ([
-                updatedChainId,
-              ]: number[]) => {
-                const nextChain = Object.values(chains).find(
-                  (chain) =>
-                    chain.id === updatedChainId &&
-                    chain.chainType === ChainType.Solana,
-                );
-                const activeChain = nextChain ? nextChain : chain;
-
-                try {
-                  const newTypedChainId = calculateTypedChainId(
-                    ChainType.Solana,
-                    updatedChainId,
-                  );
-
-                  webbSolanaProvider.typedChainidSubject.next(newTypedChainId);
-
-                  setActiveWallet(wallet);
-                  setActiveChain(activeChain);
-
-                  appEvent.send('networkSwitched', [
-                    {
-                      chainType: activeChain.chainType,
-                      chainId: activeChain.id,
-                    },
-                    wallet.id,
-                  ]);
-                } catch (e) {
-                  setActiveChain(undefined);
-                  setActiveWallet(wallet);
-                  if (e instanceof WebbError) {
-                    catchWebbError(e);
-                  }
-                }
-              };
-
-              abortSignal?.throwIfAborted();
-
-              webbSolanaProvider.on('providerUpdate', providerUpdateHandler);
-
-              (webbSolanaProvider as WebbSolanaProvider).setChainListener();
-              (webbSolanaProvider as WebbSolanaProvider).setAccountListener();
-
-              abortSignal?.throwIfAborted();
-
-              appEvent.send('networkSwitched', [
-                {
-                  chainType: chain.chainType,
-                  chainId: chain.id,
-                },
-                wallet.id,
-              ]);
-
-              abortSignal?.throwIfAborted();
-
-              await setActiveApiWithAccounts(
-                webbSolanaProvider,
-                chain,
-                _networkStorage ?? networkStorage,
-              );
-
-              localActiveApi = webbSolanaProvider;
-            }
-            break;
-
-          case WalletId.Polkadot:
-          case WalletId.Talisman:
-          case WalletId.SubWallet:
-            {
-              abortSignal?.throwIfAborted();
-
-              const webSocketUrls = chain.rpcUrls.default.webSocket;
-              if (!webSocketUrls || webSocketUrls.length === 0) {
-                throw new Error(
-                  `No websocket urls found for chain ${chain.name}`,
-                );
-              }
-
-              abortSignal?.throwIfAborted();
-
-              const webbPolkadot = await WebbPolkadot.init(
-                applicationName,
-                Array.from(webSocketUrls),
-                apiConfig,
-                nextTypedChainId,
-                wallet,
-              );
-
-              abortSignal?.throwIfAborted();
-
-              await setActiveApiWithAccounts(
-                webbPolkadot,
-                chain,
-                _networkStorage ?? (await appNetworkStoragePromise),
-              );
-
-              localActiveApi = webbPolkadot;
-
-              appEvent.send('walletConnectionState', {
-                ...sharedWalletConnectionPayload,
-                status: 'sucess',
-              });
-            }
-            break;
-
           case WalletId.MetaMask:
           case WalletId.WalletConnectV2:
           case WalletId.Rainbow:
+          case WalletId.Coinbase:
+          case WalletId.Safe:
+          case WalletId.Talisman:
+          case WalletId.TrustWallet:
+          case WalletId.Keplr:
             {
               abortSignal?.throwIfAborted();
 
-              const connector = connectors.find((c) => c.id === wallet.rdns);
+              // Connector ID mapping for different wallet types
+              const connectorIdMap: Record<number, string> = {
+                [WalletId.Coinbase]: 'coinbaseWalletSDK',
+                [WalletId.Safe]: 'safe',
+                [WalletId.WalletConnectV2]: 'walletConnect',
+              };
+
+              // Find connector - try multiple matching strategies
+              let connector = connectors.find((c) => {
+                // 1. Match by rdns in connector id (EIP-6963 discovered wallets)
+                if (wallet.rdns && c.id === wallet.rdns) {
+                  return true;
+                }
+
+                // 2. Match by connector type for known connectors
+                const mappedId = connectorIdMap[wallet.id];
+                if (mappedId && c.id === mappedId) {
+                  return true;
+                }
+
+                // 3. For injected wallets, check if the connector has matching info
+                const connectorInfo = (c as { info?: { rdns?: string } }).info;
+                if (wallet.rdns && connectorInfo?.rdns === wallet.rdns) {
+                  return true;
+                }
+
+                // 4. Match MetaMask by name if rdns doesn't match
+                if (
+                  wallet.id === WalletId.MetaMask &&
+                  c.name.toLowerCase().includes('metamask')
+                ) {
+                  return true;
+                }
+
+                return false;
+              });
+
+              // 5. Fallback: use generic injected connector for injected wallets
+              const injectedWalletIds = [
+                WalletId.MetaMask,
+                WalletId.Rainbow,
+                WalletId.Talisman,
+                WalletId.TrustWallet,
+                WalletId.Keplr,
+              ];
+              if (!connector && injectedWalletIds.includes(wallet.id)) {
+                connector = connectors.find((c) => c.id === 'injected');
+              }
 
               if (!connector) {
+                logger.error(
+                  'Available connectors:',
+                  connectors.map((c) => ({ id: c.id, name: c.name })),
+                );
                 throw new WalletNotInstalledError(wallet.id);
               }
 
@@ -462,9 +407,11 @@ const WebbProviderInner: FC<WebbProviderInnerProps> = ({
                   ]);
                 } catch (e) {
                   /// set the chain to be undefined as this won't be usable
-                  // TODO mark the api as not ready
                   setActiveChain(undefined);
                   setActiveWallet(wallet);
+                  setActiveApi(undefined);
+                  setAccounts([]);
+                  setActiveAccount(null);
                   if (e instanceof WebbError) {
                     /// Catching the errors for the switcher from the event
                     catchWebbError(e);
@@ -573,7 +520,7 @@ const WebbProviderInner: FC<WebbProviderInnerProps> = ({
       }
     },
     // prettier-ignore
-    [activeApi, appEvent, applicationName, catchWebbError, connectAsync, connectors, notificationApi, setActiveApiWithAccounts, setActiveChain, setActiveWallet],
+    [activeApi, appEvent, catchWebbError, connectAsync, connectors, notificationApi, setActiveAccount, setActiveApiWithAccounts, setActiveChain, setActiveWallet],
   );
 
   /**
@@ -585,10 +532,6 @@ const WebbProviderInner: FC<WebbProviderInnerProps> = ({
 
       try {
         const provider = await switchChain(chain, wallet);
-        /** TODO: `networkStorage` can be `null` here.
-         * Suggestion: use `useRef` instead of `useState`
-         * for the `networkStorage` because state update asynchronous
-         * */
         const _networkStorage = await appNetworkStoragePromise;
         if (provider && _networkStorage) {
           await Promise.all([

@@ -2,7 +2,6 @@ import {
   useMemo,
   useState,
   useCallback,
-  useEffect,
   type FC,
   Dispatch,
   SetStateAction,
@@ -17,41 +16,33 @@ import {
 import {
   Avatar,
   Button,
-  Dropdown,
-  DropdownBody,
-  EMPTY_VALUE_PLACEHOLDER,
   Modal,
   Typography,
-  ValidatorIdentity,
-  toSubstrateAddress,
+  shortenString,
 } from '@tangle-network/ui-components';
 import pluralize from '@tangle-network/ui-components/utils/pluralize';
 import { TangleCloudTable } from '../../../components/tangleCloudTable/TangleCloudTable';
-import { ChevronDown } from '@tangle-network/icons';
 import TableCellWrapper from '@tangle-network/tangle-shared-ui/components/tables/TableCellWrapper';
-import { MonitoringServiceRequest } from '@tangle-network/tangle-shared-ui/data/blueprints/utils/type';
-import useNetworkStore from '@tangle-network/tangle-shared-ui/context/useNetworkStore';
+import { useChainId } from 'wagmi';
+import { chainsConfig } from '@tangle-network/dapp-config/chains';
 import {
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from '@radix-ui/react-dropdown-menu';
-import { NestedOperatorCell } from '../../../components/NestedOperatorCell';
-import addCommasToNumber from '@tangle-network/ui-components/utils/addCommasToNumber';
-import useAssetsMetadata from '@tangle-network/tangle-shared-ui/hooks/useAssetsMetadata';
-import RejectConfirmationModel from './UpdateBlueprintModel/RejectConfirmationModal';
-import ApproveConfirmationModel from './UpdateBlueprintModel/ApproveConfirmationModal';
+  usePendingServiceRequests,
+  useBlueprintMap,
+  type ServiceRequest,
+} from '@tangle-network/tangle-shared-ui/data/graphql';
+import type { Blueprint } from '@tangle-network/tangle-shared-ui/types/blueprint';
+import useEvmOperatorInfo from '../../../hooks/useEvmOperatorInfo';
+import ServiceRequestDetailModal from './UpdateBlueprintModel/ServiceRequestDetailModal';
 import { ApprovalConfirmationFormFields } from '../../../types';
-import usePendingServiceRequest from '@tangle-network/tangle-shared-ui/data/blueprints/usePendingServiceRequest';
-import useSubstrateAddress from '@tangle-network/tangle-shared-ui/hooks/useSubstrateAddress';
-import useIdentities from '@tangle-network/tangle-shared-ui/hooks/useIdentities';
-import useServicesRejectTx from '../../../data/services/useServicesRejectTx';
-import useServicesApproveTx from '../../../data/services/useServicesApproveTx';
-import useOperatorInfo from '@tangle-network/tangle-shared-ui/hooks/useOperatorInfo';
-import { isSubstrateAddress } from '@tangle-network/ui-components/utils/isSubstrateAddress';
-import { encodeAddress, blake2AsU8a } from '@polkadot/util-crypto';
-import { TxStatus } from '@tangle-network/tangle-shared-ui/hooks/useSubstrateTx';
+import useServiceApproveTx from '../../../data/services/useServiceApproveTx';
+import useServiceRejectTx from '../../../data/services/useServiceRejectTx';
 
-const columnHelper = createColumnHelper<MonitoringServiceRequest>();
+// Service request with blueprint metadata
+interface ServiceRequestWithBlueprint extends ServiceRequest {
+  blueprintData?: Blueprint;
+}
+
+const columnHelper = createColumnHelper<ServiceRequestWithBlueprint>();
 
 interface PendingInstanceTableProps {
   refreshTrigger: number;
@@ -59,92 +50,128 @@ interface PendingInstanceTableProps {
 }
 
 export const PendingInstanceTable: FC<PendingInstanceTableProps> = ({
-  refreshTrigger,
   setRefreshTrigger,
 }) => {
-  const { isOperator } = useOperatorInfo();
-  const operatorAccountAddress = useSubstrateAddress();
-  const network = useNetworkStore((store) => store.network);
+  const chainId = useChainId();
+  const { isOperator, operatorAddress } = useEvmOperatorInfo();
 
-  const [isRejectConfirmationModalOpen, setIsRejectConfirmationModalOpen] =
-    useState(false);
+  // Get chain config for explorer URLs
+  const activeChain = useMemo(() => {
+    return Object.values(chainsConfig).find((c) => c.id === chainId);
+  }, [chainId]);
 
-  const [isApproveConfirmationModalOpen, setIsApproveConfirmationModalOpen] =
-    useState(false);
+  const [isDetailModalOpen, setIsDetailModalOpen] = useState(false);
 
   const [selectedRequest, setSelectedRequest] =
-    useState<MonitoringServiceRequest | null>(null);
+    useState<ServiceRequestWithBlueprint | null>(null);
 
+  // Fetch pending service requests for the operator
   const {
-    blueprints: pendingBlueprints,
-    error,
+    data: pendingRequests,
     isLoading,
-  } = usePendingServiceRequest(operatorAccountAddress, refreshTrigger);
-
-  const { result: operatorIdentityMap } = useIdentities(
-    useMemo(() => {
-      const operatorMap = pendingBlueprints.flatMap((blueprint) => {
-        const approvedOperators = blueprint.approvedOperators ?? [];
-        const pendingOperators = blueprint.pendingOperators ?? [];
-        return [...approvedOperators, ...pendingOperators];
-      });
-      const operatorSet = new Set(operatorMap);
-      return Array.from(operatorSet);
-    }, [pendingBlueprints]),
+    error,
+    refetch,
+  } = usePendingServiceRequests(
+    isOperator ? (operatorAddress ?? undefined) : undefined,
   );
 
-  const { result: deployerIdentityMap } = useIdentities(
-    useMemo(() => {
-      const deployerAddresses = pendingBlueprints.map(
-        (blueprint) => blueprint.owner,
+  // Fetch blueprint metadata
+  const { blueprints: blueprintMap } = useBlueprintMap();
+
+  // Combine requests with blueprint data and filter out requests where operator has already acted
+  const requestsWithBlueprints = useMemo<ServiceRequestWithBlueprint[]>(() => {
+    if (!pendingRequests) return [];
+
+    const normalizedOperator = operatorAddress?.toLowerCase();
+
+    return pendingRequests
+      .filter((request) => {
+        if (!normalizedOperator) return true;
+        // Filter out requests where operator has already approved or rejected
+        const hasApproved = request.approvedOperators?.some(
+          (addr) => addr.toLowerCase() === normalizedOperator,
+        );
+        const hasRejected = request.rejectedOperators?.some(
+          (addr) => addr.toLowerCase() === normalizedOperator,
+        );
+        return !hasApproved && !hasRejected;
+      })
+      .map((request) => ({
+        ...request,
+        blueprintData: blueprintMap?.get(request.blueprintId.toString()),
+      }));
+  }, [pendingRequests, blueprintMap, operatorAddress]);
+
+  // Helper to check if current operator has approved a request
+  const hasOperatorApproved = useCallback(
+    (request: ServiceRequestWithBlueprint) => {
+      if (!operatorAddress) return false;
+      const normalizedOperator = operatorAddress.toLowerCase();
+      return request.approvedOperators?.some(
+        (addr) => addr.toLowerCase() === normalizedOperator,
       );
-      return Array.from(new Set(deployerAddresses));
-    }, [pendingBlueprints]),
+    },
+    [operatorAddress],
   );
+
+  // Helper to check if current operator has rejected a request
+  const hasOperatorRejected = useCallback(
+    (request: ServiceRequestWithBlueprint) => {
+      if (!operatorAddress) return false;
+      const normalizedOperator = operatorAddress.toLowerCase();
+      return request.rejectedOperators?.some(
+        (addr) => addr.toLowerCase() === normalizedOperator,
+      );
+    },
+    [operatorAddress],
+  );
+
+  // Helper to get pending approval count
+  const getPendingApprovalCount = useCallback(
+    (request: ServiceRequestWithBlueprint) => {
+      const totalOperators = request.operatorCandidates?.length ?? 0;
+      const approvedCount = request.approvedOperators?.length ?? 0;
+      return totalOperators - approvedCount;
+    },
+    [],
+  );
+
+  const isEmpty = requestsWithBlueprints.length === 0;
+
+  // Callback to handle successful transactions - refetch after delay to allow indexer to process
+  const handleTxSuccess = useCallback(() => {
+    setRefreshTrigger((prev) => prev + 1);
+    // Delay refetch to allow indexer to process the transaction
+    setTimeout(() => {
+      refetch();
+    }, 2000);
+  }, [setRefreshTrigger, refetch]);
 
   const { execute: rejectServiceRequest, status: rejectStatus } =
-    useServicesRejectTx();
+    useServiceRejectTx({ onSuccess: handleTxSuccess });
 
   const { execute: approveServiceRequest, status: approveStatus } =
-    useServicesApproveTx();
-
-  useEffect(() => {
-    if (approveStatus === TxStatus.COMPLETE) {
-      setRefreshTrigger((prev) => prev + 1);
-    }
-  }, [approveStatus, setRefreshTrigger]);
-
-  useEffect(() => {
-    if (rejectStatus === TxStatus.COMPLETE) {
-      setRefreshTrigger((prev) => prev + 1);
-    }
-  }, [rejectStatus, setRefreshTrigger]);
-
-  const isEmpty = pendingBlueprints.length === 0;
-
-  const assetIds = useMemo(() => {
-    return pendingBlueprints.flatMap((instance) =>
-      instance.securityRequirements.map((requirement) => requirement.asset),
-    );
-  }, [pendingBlueprints]);
-
-  const { result: assetsMetadata } = useAssetsMetadata(assetIds);
+    useServiceApproveTx({ onSuccess: handleTxSuccess });
 
   const columns = useMemo(() => {
-    const baseColumns: AccessorKeyColumnDef<MonitoringServiceRequest, any>[] = [
-      columnHelper.accessor('blueprint', {
+    const baseColumns: AccessorKeyColumnDef<
+      ServiceRequestWithBlueprint,
+      any
+    >[] = [
+      columnHelper.accessor('blueprintId', {
         header: () => 'Blueprint',
         enableSorting: false,
         cell: (props) => {
+          const request = props.row.original;
           return (
             <TableCellWrapper className="p-0 min-h-fit">
               <div className="flex items-center gap-2 overflow-hidden">
-                {props.row.original.blueprintData?.metadata?.logo ? (
+                {request.blueprintData?.imgUrl ? (
                   <Avatar
                     size="lg"
                     className="min-w-12"
-                    src={props.row.original.blueprintData?.metadata.logo}
-                    alt={props.row.original.blueprintData?.metadata?.name}
+                    src={request.blueprintData.imgUrl}
+                    alt={request.blueprintData?.name ?? 'Blueprint'}
                     sourceVariant="uri"
                   />
                 ) : (
@@ -152,24 +179,8 @@ export const PendingInstanceTable: FC<PendingInstanceTableProps> = ({
                     size="lg"
                     className="min-w-12"
                     sourceVariant="address"
-                    value={
-                      (props.row.original.blueprintData?.metadata?.author &&
-                      isSubstrateAddress(
-                        props.row.original.blueprintData.metadata.author,
-                      )
-                        ? props.row.original.blueprintData.metadata.author
-                        : null) ||
-                      (props.row.original.blueprintData?.metadata?.name
-                        ? encodeAddress(
-                            blake2AsU8a(
-                              props.row.original.blueprintData.metadata.name,
-                              256,
-                            ).slice(0, 32),
-                            42,
-                          )
-                        : undefined)
-                    }
-                    theme="substrate"
+                    value={request.requester}
+                    theme="ethereum"
                   />
                 )}
                 <Typography
@@ -177,7 +188,8 @@ export const PendingInstanceTable: FC<PendingInstanceTableProps> = ({
                   fw="bold"
                   className="!text-blue-50 text-ellipsis whitespace-nowrap overflow-hidden"
                 >
-                  {props.row.original.blueprintData?.metadata?.name}
+                  {request.blueprintData?.name ||
+                    `Blueprint ${request.blueprintId}`}
                 </Typography>
               </div>
             </TableCellWrapper>
@@ -188,69 +200,116 @@ export const PendingInstanceTable: FC<PendingInstanceTableProps> = ({
 
     if (isOperator) {
       baseColumns.push(
-        columnHelper.accessor('owner', {
+        columnHelper.accessor('requester', {
           header: () => 'Deployer',
           cell: (props) => {
-            const owner = props.row.original.owner;
-            const tangleFormatAddress = toSubstrateAddress(
-              owner,
-              network.ss58Prefix,
-            );
-            const ownerUrl =
-              network.createExplorerAccountUrl(tangleFormatAddress);
+            const requester = props.row.original.requester;
+            const explorerUrl = activeChain?.blockExplorers?.default?.url
+              ? `${activeChain.blockExplorers.default.url}/address/${requester}`
+              : undefined;
 
             return (
               <TableCellWrapper className="p-0 min-h-fit">
-                <ValidatorIdentity
-                  address={tangleFormatAddress}
-                  identityName={deployerIdentityMap?.get(owner)?.name ?? null}
-                  accountExplorerUrl={ownerUrl ?? undefined}
-                  avatarSize="md"
-                  textVariant="body1"
-                  textWeight="bold"
-                  showAddressInTooltip
-                />
-              </TableCellWrapper>
-            );
-          },
-        }),
-        columnHelper.accessor('ttl', {
-          header: () => 'Duration',
-          cell: (props) => {
-            return (
-              <TableCellWrapper className="p-0 min-h-fit">
-                {addCommasToNumber(props.row.original.ttl)} blocks
+                <div className="flex items-center gap-2">
+                  <Avatar size="md" value={requester} theme="ethereum" />
+                  <div>
+                    <Typography variant="body1" fw="bold">
+                      {shortenString(requester, 8)}
+                    </Typography>
+                    {explorerUrl && (
+                      <a
+                        href={explorerUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-xs text-blue-50 hover:underline"
+                      >
+                        View on Explorer
+                      </a>
+                    )}
+                  </div>
+                </div>
               </TableCellWrapper>
             );
           },
         }),
         columnHelper.accessor('requestId', {
+          id: 'actions',
           header: () => '',
           cell: (props) => {
+            const request = props.row.original;
+            const approved = hasOperatorApproved(request);
+            const rejected = hasOperatorRejected(request);
+            const pendingCount = getPendingApprovalCount(request);
+
+            // Operator has already approved
+            if (approved) {
+              return (
+                <TableCellWrapper removeRightBorder className="p-0 min-h-fit">
+                  <div className="flex flex-col items-end gap-1">
+                    <div className="flex items-center gap-1.5 text-green-500">
+                      <svg
+                        className="w-4 h-4"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M5 13l4 4L19 7"
+                        />
+                      </svg>
+                      <span className="text-sm font-medium">You approved</span>
+                    </div>
+                    {pendingCount > 0 && (
+                      <span className="text-xs text-mono-100 dark:text-mono-80">
+                        Waiting for {pendingCount} more{' '}
+                        {pendingCount === 1 ? 'operator' : 'operators'}
+                      </span>
+                    )}
+                  </div>
+                </TableCellWrapper>
+              );
+            }
+
+            // Operator has already rejected
+            if (rejected) {
+              return (
+                <TableCellWrapper removeRightBorder className="p-0 min-h-fit">
+                  <div className="flex items-center gap-1.5 text-red-500">
+                    <svg
+                      className="w-4 h-4"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M6 18L18 6M6 6l12 12"
+                      />
+                    </svg>
+                    <span className="text-sm font-medium">You rejected</span>
+                  </div>
+                </TableCellWrapper>
+              );
+            }
+
+            // Operator hasn't acted yet - show review button
             return (
               <TableCellWrapper removeRightBorder className="p-0 min-h-fit">
-                <div className="flex gap-2">
-                  <Button
-                    variant="utility"
-                    size="sm"
-                    onClick={() => {
-                      setIsApproveConfirmationModalOpen(true);
-                      setSelectedRequest(props.row.original);
-                    }}
-                  >
-                    Approve
-                  </Button>
-                  <Button
-                    variant="utility"
-                    size="sm"
-                    onClick={() => {
-                      setIsRejectConfirmationModalOpen(true);
-                      setSelectedRequest(props.row.original);
-                    }}
-                  >
-                    Reject
-                  </Button>
-                </div>
+                <Button
+                  variant="utility"
+                  size="sm"
+                  onClick={() => {
+                    setSelectedRequest(props.row.original);
+                    setIsDetailModalOpen(true);
+                  }}
+                >
+                  Review
+                </Button>
               </TableCellWrapper>
             );
           },
@@ -258,75 +317,40 @@ export const PendingInstanceTable: FC<PendingInstanceTableProps> = ({
       );
     } else {
       baseColumns.push(
-        columnHelper.accessor('approvedOperators', {
-          header: 'Approved Operators',
+        columnHelper.accessor('operatorCandidates', {
+          header: 'Operators',
           cell: (props) => {
+            const operators = props.row.original.operatorCandidates;
             return (
               <TableCellWrapper className="p-0 min-h-fit">
-                <NestedOperatorCell
-                  operators={props.row.original.approvedOperators}
-                  operatorIdentityMap={operatorIdentityMap}
-                />
+                <div className="flex -space-x-2">
+                  {operators.slice(0, 3).map((op) => (
+                    <Avatar
+                      key={op}
+                      size="sm"
+                      value={op}
+                      theme="ethereum"
+                      className="border-2 border-mono-0 dark:border-mono-200"
+                    />
+                  ))}
+                  {operators.length > 3 && (
+                    <div className="flex items-center justify-center w-6 h-6 text-xs bg-mono-80 rounded-full border-2 border-mono-0 dark:border-mono-200">
+                      +{operators.length - 3}
+                    </div>
+                  )}
+                </div>
               </TableCellWrapper>
             );
           },
         }),
-        columnHelper.accessor('pendingOperators', {
-          header: 'Pending Operators',
-          cell: (props) => {
-            return (
-              <TableCellWrapper className="p-0 min-h-fit">
-                <NestedOperatorCell
-                  operators={props.row.original.pendingOperators}
-                  operatorIdentityMap={operatorIdentityMap}
-                />
-              </TableCellWrapper>
-            );
-          },
-        }),
-        columnHelper.accessor('requestCreatedAtBlock', {
+        columnHelper.accessor('createdAt', {
           header: 'Created At',
           cell: (props) => {
-            return (
-              <TableCellWrapper className="p-0 min-h-fit">
-                {props.row.original.requestCreatedAtBlock ? (
-                  <>
-                    Block{' '}
-                    {addCommasToNumber(
-                      props.row.original.requestCreatedAtBlock,
-                    )}
-                  </>
-                ) : (
-                  EMPTY_VALUE_PLACEHOLDER
-                )}
-              </TableCellWrapper>
-            );
-          },
-        }),
-        columnHelper.accessor('requestId', {
-          header: '',
-          cell: () => {
+            const timestamp = props.row.original.createdAt;
+            const date = new Date(Number(timestamp) * 1000);
             return (
               <TableCellWrapper removeRightBorder className="p-0 min-h-fit">
-                <Dropdown>
-                  <DropdownMenuTrigger asChild>
-                    <Button
-                      variant="utility"
-                      className="uppercase body4 w-full"
-                      rightIcon={<ChevronDown className="!fill-blue-50" />}
-                    >
-                      Update
-                    </Button>
-                  </DropdownMenuTrigger>
-                  <DropdownBody className="mt-2" side="bottom" align="center">
-                    <DropdownMenuItem className="px-4 py-2 hover:bg-mono-170">
-                      Instance Duration
-                    </DropdownMenuItem>
-                    <DropdownMenuItem className="px-4 py-2 hover:bg-mono-170">
-                      Operators
-                    </DropdownMenuItem>
-                  </DropdownBody>
-                </Dropdown>
+                {date.toLocaleDateString()}
               </TableCellWrapper>
             );
           },
@@ -335,22 +359,28 @@ export const PendingInstanceTable: FC<PendingInstanceTableProps> = ({
     }
 
     return baseColumns;
-  }, [isOperator, network, operatorIdentityMap, deployerIdentityMap]);
+  }, [
+    isOperator,
+    activeChain,
+    hasOperatorApproved,
+    hasOperatorRejected,
+    getPendingApprovalCount,
+  ]);
 
   const table = useReactTable({
-    data: pendingBlueprints,
+    data: requestsWithBlueprints,
     columns,
     getCoreRowModel: getCoreRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
-    getRowId: (row) => `PendingServiceRequest-${row.blueprint.toString()}`,
+    getRowId: (row) => `PendingServiceRequest-${row.requestId}`,
     autoResetPageIndex: false,
     enableSortingRemoval: false,
   });
 
-  const onCloseBlueprintRejectModal = useCallback(() => {
-    setIsRejectConfirmationModalOpen(false);
+  const onCloseDetailModal = useCallback(() => {
+    setIsDetailModalOpen(false);
     setSelectedRequest(null);
-  }, [setIsRejectConfirmationModalOpen, setSelectedRequest]);
+  }, []);
 
   const onConfirmReject = useCallback(async () => {
     if (!selectedRequest || !rejectServiceRequest) return;
@@ -360,25 +390,31 @@ export const PendingInstanceTable: FC<PendingInstanceTableProps> = ({
     });
   }, [selectedRequest, rejectServiceRequest]);
 
-  const onCloseBlueprintApproveModal = useCallback(() => {
-    setIsApproveConfirmationModalOpen(false);
-    setSelectedRequest(null);
-  }, [setIsApproveConfirmationModalOpen, setSelectedRequest]);
-
   const onConfirmApprove = useCallback(
     async (data: ApprovalConfirmationFormFields) => {
       if (!selectedRequest || !approveServiceRequest) return;
 
-      await approveServiceRequest(data);
+      if (data.securityCommitments && data.securityCommitments.length > 0) {
+        await approveServiceRequest({
+          requestId: selectedRequest.requestId,
+          securityCommitments: data.securityCommitments,
+        });
+      } else {
+        await approveServiceRequest({
+          requestId: selectedRequest.requestId,
+          stakingPercent: data.stakingPercent ?? 0,
+          tntExposureBps: data.tntExposureBps,
+        });
+      }
     },
     [selectedRequest, approveServiceRequest],
   );
 
   return (
     <>
-      <TangleCloudTable<MonitoringServiceRequest>
-        title={pluralize('Running Instance', !isEmpty)}
-        data={pendingBlueprints}
+      <TangleCloudTable<ServiceRequestWithBlueprint>
+        title={pluralize('Pending Request', !isEmpty)}
+        data={requestsWithBlueprints}
         error={error}
         isLoading={isLoading}
         tableProps={table}
@@ -386,27 +422,14 @@ export const PendingInstanceTable: FC<PendingInstanceTableProps> = ({
           tableClassName: 'min-w-[1000px]',
         }}
       />
-      <Modal
-        open={isRejectConfirmationModalOpen}
-        onOpenChange={setIsRejectConfirmationModalOpen}
-      >
-        <RejectConfirmationModel
-          onClose={onCloseBlueprintRejectModal}
-          onConfirm={onConfirmReject}
+      <Modal open={isDetailModalOpen} onOpenChange={setIsDetailModalOpen}>
+        <ServiceRequestDetailModal
+          onClose={onCloseDetailModal}
+          onApprove={onConfirmApprove}
+          onReject={onConfirmReject}
           selectedRequest={selectedRequest}
-          status={rejectStatus}
-        />
-      </Modal>
-      <Modal
-        open={isApproveConfirmationModalOpen}
-        onOpenChange={setIsApproveConfirmationModalOpen}
-      >
-        <ApproveConfirmationModel
-          onClose={onCloseBlueprintApproveModal}
-          onConfirm={onConfirmApprove}
-          selectedRequest={selectedRequest}
-          assetsMetadata={assetsMetadata}
-          status={approveStatus}
+          approveStatus={approveStatus}
+          rejectStatus={rejectStatus}
         />
       </Modal>
     </>

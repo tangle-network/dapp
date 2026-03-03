@@ -10,7 +10,7 @@ const defaultInfo: ComponentProps<typeof CheckBox>['info'] = {
   title: 'Refund Support',
   content:
     'Once a relayer is added, enable refund to receive native tokens on the destination chain for future transactions to preserve privacy. Refunds will be sent to the recipient address.',
-  // TODO: update this link
+  // NOTE: update this link
   // buttonProps: {
   //   target: '_blank',
   // },

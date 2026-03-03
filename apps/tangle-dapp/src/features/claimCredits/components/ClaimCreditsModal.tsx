@@ -11,6 +11,7 @@ import {
 } from '@tangle-network/ui-components';
 import useNetworkStore from '@tangle-network/tangle-shared-ui/context/useNetworkStore';
 import { TxStatus } from '@tangle-network/tangle-shared-ui/hooks/useSubstrateTx';
+import { BN } from '@polkadot/util';
 import { TANGLE_TOKEN_DECIMALS } from '@tangle-network/dapp-config';
 import {
   AmountFormatStyle,
@@ -27,13 +28,17 @@ type Props = {
 };
 
 const ClaimCreditsModal: FC<Props> = ({ isOpen, setIsOpen }) => {
-  const { data, refetch, isPending } = useCredits();
+  const { data, refetch, isPending, isSupportedNetwork, error } = useCredits();
   const { execute, status } = useClaimCreditsTx();
   const [offchainAccountId, setOffchainAccountId] = useState('');
   const [inputError, setInputError] = useState('');
   const nativeTokenSymbol = useNetworkStore(
     (state) => state.network2?.tokenSymbol,
   );
+  const errorMessage =
+    error?.message === 'Credits root mismatch'
+      ? 'Credits data is out of sync. Please try again later.'
+      : error?.message;
 
   const handleClaimCredits = useCallback(async () => {
     if (!offchainAccountId.trim()) {
@@ -41,12 +46,14 @@ const ClaimCreditsModal: FC<Props> = ({ isOpen, setIsOpen }) => {
       return;
     }
 
-    if (!execute || !data?.amount) return;
+    if (!execute || !data?.amount || !data.epochId || !data.merkleProof) return;
 
     try {
       await execute({
+        epochId: data.epochId,
         amountToClaim: data.amount,
         offchainAccountId,
+        merkleProof: data.merkleProof,
       });
       await refetch();
       setIsOpen(false);
@@ -57,16 +64,17 @@ const ClaimCreditsModal: FC<Props> = ({ isOpen, setIsOpen }) => {
 
   const formattedAmount = data?.amount
     ? formatDisplayAmount(
-        data.amount,
+        new BN(data.amount.toString()),
         TANGLE_TOKEN_DECIMALS,
         AmountFormatStyle.SHORT,
       )
     : '0';
 
   const isLoading = status === TxStatus.PROCESSING;
-  const hasCredits = data?.amount && !data.amount.isZero();
+  const hasCredits =
+    data?.totalAmount !== undefined && data.totalAmount !== BigInt(0);
   const meetsMinimumThreshold = meetsMinimumClaimThreshold(data?.amount);
-  const canClaim = hasCredits && meetsMinimumThreshold;
+  const canClaim = hasCredits && meetsMinimumThreshold && !data?.hasClaimed;
 
   return (
     <Modal open={isOpen} onOpenChange={setIsOpen}>
@@ -76,10 +84,36 @@ const ClaimCreditsModal: FC<Props> = ({ isOpen, setIsOpen }) => {
         </ModalHeader>
 
         <ModalBody className="p-4 space-y-6">
-          {isPending ? (
+          {!isSupportedNetwork ? (
+            <>
+              <Typography variant="body1" ta="center">
+                Credits are not available on this network.
+              </Typography>
+              <Button
+                isFullWidth
+                variant="secondary"
+                onClick={() => setIsOpen(false)}
+              >
+                Close
+              </Button>
+            </>
+          ) : isPending ? (
             <Typography variant="body1" ta="center">
               Loading your available credits...
             </Typography>
+          ) : error ? (
+            <>
+              <Typography variant="body1" ta="center">
+                {errorMessage}
+              </Typography>
+              <Button
+                isFullWidth
+                variant="secondary"
+                onClick={() => setIsOpen(false)}
+              >
+                Close
+              </Button>
+            </>
           ) : hasCredits ? (
             <>
               <div className="flex flex-col items-center justify-center p-4 bg-glass dark:bg-glass_dark rounded-xl border border-mono-0 dark:border-mono-180">
@@ -103,6 +137,15 @@ const ClaimCreditsModal: FC<Props> = ({ isOpen, setIsOpen }) => {
                     className="text-yellow-600 dark:text-yellow-400 mt-2"
                   >
                     Minimum 0.01 {nativeTokenSymbol} required to claim
+                  </Typography>
+                )}
+
+                {data?.hasClaimed && (
+                  <Typography
+                    variant="body2"
+                    className="text-emerald-600 dark:text-emerald-400 mt-2"
+                  >
+                    Already claimed for this epoch.
                   </Typography>
                 )}
               </div>
@@ -136,7 +179,7 @@ const ClaimCreditsModal: FC<Props> = ({ isOpen, setIsOpen }) => {
 
               <Button
                 isFullWidth
-                isDisabled={!canClaim || isLoading}
+                isDisabled={!canClaim || isLoading || !execute}
                 isLoading={isLoading}
                 loadingText="Claiming credits..."
                 onClick={handleClaimCredits}

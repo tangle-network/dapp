@@ -1,3 +1,2 @@
-export { default as useEraCountSubscription } from './useEraCountSubscription';
-export { default as useSessionCountSubscription } from './useSessionCountSubscription';
-export * from './ValidatorTables';
+// Data hook exports
+// Note: Era and Session subscriptions are Substrate-only and deprecated

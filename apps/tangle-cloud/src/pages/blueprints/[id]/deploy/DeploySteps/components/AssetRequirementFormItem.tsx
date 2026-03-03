@@ -1,14 +1,19 @@
-import { RestakeAssetId } from '@tangle-network/tangle-shared-ui/types';
-import { Typography, Label, Slider } from '@tangle-network/ui-components';
+import {
+  Typography,
+  Label,
+  Slider,
+  shortenString,
+} from '@tangle-network/ui-components';
 import { FC } from 'react';
 import LsTokenIcon from '@tangle-network/tangle-shared-ui/components/LsTokenIcon';
-import ErrorMessage from '../../../../../../components/ErrorMessage';
+import ErrorMessage from '@tangle-network/tangle-shared-ui/components/ErrorMessage';
 import cx from 'classnames';
 import { AssetSchema } from '../../../../../../utils/validations/deployBlueprint';
 import { LabelClassName } from '../type';
+import type { Address } from 'viem';
 
 type BaseAssetRequirementFormItemProps = {
-  assetId?: RestakeAssetId;
+  assetId?: Address;
   assetMetadata?: AssetSchema | null;
   minExposurePercent?: number;
   maxExposurePercent?: number;
@@ -47,18 +52,22 @@ export const AssetRequirementFormItem: FC<
         className,
       )}
     >
-      <div className="flex items-center gap-3 flex-shrink-0">
+      <div className="flex items-center gap-3 flex-shrink-0 lg:w-[200px]">
         <LsTokenIcon
-          name={assetMetadata?.metadata.name ?? 'TNT'}
+          name={assetMetadata?.metadata.symbol ?? 'TNT'}
           hasRainbowBorder
           size="lg"
         />
-        <div>
-          <Typography variant="h5" className={LabelClassName}>
-            {assetMetadata?.metadata.name ?? 'TNT'}
+        <div className="min-w-0">
+          <Typography variant="h5" className={cx(LabelClassName, 'truncate')}>
+            {assetMetadata?.metadata.name ?? 'Unknown'}
           </Typography>
-          <Typography variant="body3" className={LabelClassName}>
-            Asset ID: {assetId}
+          <Typography
+            variant="body3"
+            className={cx(LabelClassName, 'truncate')}
+          >
+            {assetMetadata?.metadata.symbol ??
+              (assetId ? shortenString(assetId, 4) : 'Unknown')}
           </Typography>
         </div>
       </div>
@@ -75,7 +84,9 @@ export const AssetRequirementFormItem: FC<
           <div className="space-y-2">
             <Slider
               hasLabel
-              value={[minExposurePercent || 0, maxExposurePercent || 100]}
+              min={1}
+              max={100}
+              value={[minExposurePercent || 1, maxExposurePercent || 100]}
               onChange={(value) => {
                 if (!isViewOnly) {
                   props.onChangeExposurePercent(value);

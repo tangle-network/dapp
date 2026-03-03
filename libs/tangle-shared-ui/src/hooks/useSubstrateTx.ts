@@ -99,8 +99,6 @@ const useSubstrateTx = <Context = void>({
       );
       let tx: SubmittableExtrinsic<'promise', ISubmittableResult> | null;
 
-      // TODO: Consider resetting state here, before executing the tx. Or is it fine to keep the old state?
-
       // The transaction factory may throw an error if it encounters
       // a problem, such as invalid input data. Need to handle that case
       // gracefully here.
@@ -148,30 +146,34 @@ const useSubstrateTx = <Context = void>({
       });
 
       const handleStatusUpdate = (txStatus: ISubmittableResult) => {
-        // TODO: Handle pending, in-block, & finalized states appropriately.
-
-        // If the component is unmounted, or the transaction
-        // has not yet been included in a block, ignore the
-        // status update.
-        if (!isMountedRef.current || !txStatus.isInBlock) {
+        if (!isMountedRef.current) {
           return;
         }
 
-        patchTx(txHash, { status: 'inblock' });
-        setTxHash(txHash);
-        setTxBlockHash(txStatus.status.asInBlock.toHex());
+        if (txStatus.isInBlock) {
+          patchTx(txHash, { status: 'inblock' });
+          setTxHash(txHash);
+          setTxBlockHash(txStatus.status.asInBlock.toHex());
+        }
+
+        if (!txStatus.isFinalized) {
+          return;
+        }
 
         const error = extractErrorFromTxStatus(txStatus);
+        const isSuccessful = error === null;
 
-        setStatus(error === null ? TxStatus.COMPLETE : TxStatus.ERROR);
+        setStatus(isSuccessful ? TxStatus.COMPLETE : TxStatus.ERROR);
         setError(error);
 
-        if (error === null && getSuccessMessage !== undefined) {
+        if (isSuccessful && getSuccessMessage !== undefined) {
           setSuccessMessage(getSuccessMessage(context));
         }
 
-        if (error === null) {
+        if (isSuccessful) {
           patchTx(txHash, { status: 'finalized' });
+        } else {
+          patchTx(txHash, { status: 'failed', errorMessage: error.message });
         }
       };
 
@@ -235,7 +237,7 @@ const useSubstrateTx = <Context = void>({
 
 export default useSubstrateTx;
 
-// TODO: Merge this with `useSubstrateTx`.
+// This compatibility wrapper keeps notification behavior aligned while consumers migrate.
 export function useSubstrateTxWithNotification<
   Context = void,
   TxName extends BaseTxName = BaseTxName,
@@ -271,10 +273,7 @@ export function useSubstrateTxWithNotification<
 
   const execute = useCallback(
     (context: Context) => {
-      // TODO: Consider whether to change this to an assertion, since at this point the execute function shouldn't be null otherwise this function should not have been called.
-      if (execute_ === null) {
-        return;
-      }
+      assert(execute_ !== null, 'Substrate transaction executor is not ready');
 
       notifyProcessing(txName);
 

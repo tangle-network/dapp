@@ -1,12 +1,6 @@
 'use client';
 
 import { Root as DropdownRoot } from '@radix-ui/react-dropdown-menu';
-import { useWebContext } from '@tangle-network/api-provider-environment';
-import { ChainConfig, chainsPopulated } from '@tangle-network/dapp-config';
-import {
-  calculateTypedChainId,
-  ChainType,
-} from '@tangle-network/dapp-types/TypedChainId';
 import { Alert, ChainIcon, Spinner } from '@tangle-network/icons';
 import {
   DropdownBody,
@@ -16,47 +10,59 @@ import {
   TooltipTrigger,
   Typography,
 } from '@tangle-network/ui-components';
-import cx from 'classnames';
-import { type FC, useCallback, useMemo, useState } from 'react';
-import useNetworkStore from '../../context/useNetworkStore';
-import useSwitchNetwork from '../../hooks/useSwitchNetwork';
-import createCustomNetwork from '../../utils/createCustomNetwork';
-import { NetworkSelectorDropdown } from './NetworkSelectorDropdown';
 import {
   Network,
   NetworkId,
 } from '@tangle-network/ui-components/constants/networks';
+import cx from 'classnames';
+import { type FC, useCallback, useMemo, useState } from 'react';
+import { useAccount, useChainId, useSwitchChain } from 'wagmi';
+import useNetworkStore from '../../context/useNetworkStore';
+import { NetworkSelectorDropdown } from './NetworkSelectorDropdown';
+import createCustomNetwork from '../../utils/createCustomNetwork';
+import { notificationApi } from '@tangle-network/ui-components';
 
 type NetworkSelectionButtonProps = {
   disableChainSelection?: boolean;
-  preferredChain?: ChainConfig;
+  /**
+   * List of networks to display in the dropdown.
+   * Defaults to Tangle Mainnet, Testnet, and Local Dev networks.
+   */
+  networks?: Network[];
+  /**
+   * Whether to show the custom endpoint input.
+   * Defaults to true.
+   */
+  showCustomEndpoint?: boolean;
 };
 
 const NetworkSelectionButton: FC<NetworkSelectionButtonProps> = ({
   disableChainSelection = false,
-  preferredChain,
+  networks,
+  showCustomEndpoint,
 }) => {
-  const { activeChain, activeWallet, isConnecting, loading, switchChain } =
-    useWebContext();
+  const { isConnecting: isWalletConnecting, isConnected } = useAccount();
+  const chainId = useChainId();
+  const { switchChain, isPending: isSwitchingChain } = useSwitchChain();
 
   const network = useNetworkStore((store) => store.network2);
-  const { switchNetwork, isCustom } = useSwitchNetwork();
+  const setNetwork = useNetworkStore((store) => store.setNetwork);
 
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [switchingNetworkId, setSwitchingNetworkId] = useState<
     NetworkId | null | 'custom'
   >(null);
+  const [isCustom, setIsCustom] = useState(false);
 
-  // TODO: Handle switching network on EVM wallet here.
   const handleSwitchCustomNetwork = useCallback(
     async (customRpcEndpoint: string) => {
       setSwitchingNetworkId('custom');
-
-      await switchNetwork(createCustomNetwork(customRpcEndpoint), true);
-
+      const customNetwork = createCustomNetwork(customRpcEndpoint);
+      setNetwork(customNetwork);
+      setIsCustom(true);
       setSwitchingNetworkId(null);
     },
-    [switchNetwork],
+    [setNetwork],
   );
 
   const handleNetworkChange = useCallback(
@@ -64,83 +70,49 @@ const NetworkSelectionButton: FC<NetworkSelectionButtonProps> = ({
       event.preventDefault();
       setSwitchingNetworkId(newNetwork.id);
 
-      await switchNetwork(newNetwork, false);
+      // If connected and network has an EVM chain ID, switch the chain
+      if (isConnected && newNetwork.evmChainId && switchChain) {
+        try {
+          switchChain({ chainId: newNetwork.evmChainId });
+        } catch (error) {
+          console.error('Failed to switch chain:', error);
+          notificationApi({
+            variant: 'error',
+            message: 'Failed to switch network',
+          });
+        }
+      }
 
+      setNetwork(newNetwork);
+      setIsCustom(false);
       setIsDropdownOpen(false);
       setSwitchingNetworkId(null);
     },
-    [switchNetwork],
+    [isConnected, setNetwork, switchChain],
   );
 
-  const networkName = useMemo(
-    () => {
-      if (isConnecting) {
-        return 'Connecting';
-      }
+  const networkName = useMemo(() => {
+    if (isWalletConnecting || isSwitchingChain) {
+      return 'Connecting';
+    }
 
-      if (loading) {
-        return 'Loading';
-      }
+    return network?.name ?? 'Unknown Network';
+  }, [isWalletConnecting, isSwitchingChain, network?.name]);
 
-      const UNKNOWN_NETWORK = 'Unknown Network';
-
-      if (!activeWallet) {
-        return network?.name ?? UNKNOWN_NETWORK;
-      }
-
-      if (disableChainSelection) {
-        return activeChain?.name === 'Tangle Mainnet'
-          ? (activeChain?.name ?? network?.name ?? UNKNOWN_NETWORK)
-          : (activeChain?.displayName ??
-              activeChain?.name ??
-              network?.name ??
-              UNKNOWN_NETWORK);
-      }
-
-      return (
-        activeChain?.displayName ??
-        activeChain?.name ??
-        network?.name ??
-        UNKNOWN_NETWORK
-      );
-    },
-    // prettier-ignore
-    [isConnecting, loading, disableChainSelection, network?.name, activeWallet, activeChain?.displayName, activeChain?.name],
-  );
-
+  // Check if wallet is on wrong chain
   const isWrongEvmNetwork = useMemo(() => {
-    const isEvmWallet = activeWallet?.platform === 'EVM';
-
-    if (!isEvmWallet || preferredChain) {
+    if (!isConnected || !network?.evmChainId) {
       return false;
     }
-
-    return (
-      network?.evmChainId !== undefined &&
-      network.evmChainId !== activeChain?.id
-    );
-  }, [
-    activeChain?.id,
-    activeWallet?.platform,
-    network?.evmChainId,
-    preferredChain,
-  ]);
+    return network.evmChainId !== chainId;
+  }, [isConnected, network?.evmChainId, chainId]);
 
   const switchToCorrectEvmChain = useCallback(() => {
-    if (!activeWallet) {
+    if (!network?.evmChainId || !switchChain) {
       return;
     }
-
-    if (!network?.evmChainId) {
-      return;
-    }
-    const typedChainId = calculateTypedChainId(
-      ChainType.EVM,
-      network.evmChainId,
-    );
-    const targetChain = chainsPopulated[typedChainId];
-    switchChain(targetChain, activeWallet);
-  }, [activeWallet, network?.evmChainId, switchChain]);
+    switchChain({ chainId: network.evmChainId });
+  }, [network?.evmChainId, switchChain]);
 
   return (
     <div className="flex items-center gap-1">
@@ -160,15 +132,13 @@ const NetworkSelectionButton: FC<NetworkSelectionButtonProps> = ({
             </div>
           </TooltipTrigger>
 
-          <TooltipBody>
-            Switch to {preferredChain ? 'selected' : 'required'} network
-          </TooltipBody>
+          <TooltipBody>Switch to required network</TooltipBody>
         </Tooltip>
       )}
 
       <DropdownRoot open={isDropdownOpen} onOpenChange={setIsDropdownOpen}>
         <TriggerButton
-          isLoading={isConnecting || loading}
+          isLoading={isWalletConnecting || isSwitchingChain}
           networkName={networkName}
           className="overflow-hidden"
           disableChainSelection={disableChainSelection}
@@ -182,6 +152,8 @@ const NetworkSelectionButton: FC<NetworkSelectionButtonProps> = ({
             onSetCustomNetwork={handleSwitchCustomNetwork}
             onNetworkChange={handleNetworkChange}
             isNotConnectedToSelectedNetwork={isWrongEvmNetwork}
+            networks={networks}
+            showCustomEndpoint={showCustomEndpoint}
           />
         </DropdownBody>
       </DropdownRoot>

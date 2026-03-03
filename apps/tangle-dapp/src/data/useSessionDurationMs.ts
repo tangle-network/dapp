@@ -1,25 +1,20 @@
-import { useCallback, useMemo } from 'react';
-import useApi from '@tangle-network/tangle-shared-ui/hooks/useApi';
-import { BN } from '@polkadot/util';
+import { useProtocolConfig } from '@tangle-network/tangle-shared-ui/data/graphql';
+import { useMemo } from 'react';
 
-const useSessionDurationMs = () => {
-  const { result: epochDuration } = useApi(
-    useCallback((api) => api.consts.babe.epochDuration, []),
-  );
+/**
+ * Hook to get session/round duration in milliseconds using EVM protocol config.
+ */
+const useSessionDurationMs = (): number | null => {
+  const { data: config, isLoading } = useProtocolConfig();
 
-  const { result: babeExpectedBlockTime } = useApi(
-    useCallback((api) => api.consts.babe.expectedBlockTime, []),
-  );
-
-  const sessionTimeMs = useMemo(() => {
-    if (epochDuration == null || babeExpectedBlockTime === null) {
+  return useMemo(() => {
+    if (!config || isLoading || !config.isSupported) {
       return null;
     }
 
-    return new BN(epochDuration).mul(new BN(babeExpectedBlockTime)).toNumber();
-  }, [babeExpectedBlockTime, epochDuration]);
-
-  return sessionTimeMs;
+    // roundDuration is in seconds from the contract
+    return Number(config.roundDuration) * 1000;
+  }, [config, isLoading]);
 };
 
 export default useSessionDurationMs;

@@ -32,7 +32,17 @@ const useSearchParamsStore = () => {
     setBufferSearchParams(searchParams);
   }, [searchParams, setBufferSearchParams]);
 
-  // TODO: Sort params by name so that after each update, the URL search params don't "flicker" due to their positions changing.
+  const sortSearchParams = useCallback((params: URLSearchParams) => {
+    const sortedEntries = Array.from(params.entries()).sort(
+      ([leftKey, leftValue], [rightKey, rightValue]) => {
+        const byKey = leftKey.localeCompare(rightKey);
+        return byKey === 0 ? leftValue.localeCompare(rightValue) : byKey;
+      },
+    );
+
+    return new URLSearchParams(sortedEntries);
+  }, []);
+
   const updateSearchParam = useCallback(
     (key: string, value: string | undefined) => {
       if (bufferSearchParams === null) {
@@ -49,11 +59,13 @@ const useSearchParamsStore = () => {
         newSearchParams.set(key, value);
       }
 
-      setBufferSearchParams(newSearchParams);
+      const sortedSearchParams = sortSearchParams(newSearchParams);
 
-      return newSearchParams;
+      setBufferSearchParams(sortedSearchParams);
+
+      return sortedSearchParams;
     },
-    [bufferSearchParams, setBufferSearchParams],
+    [bufferSearchParams, setBufferSearchParams, sortSearchParams],
   );
 
   return { searchParams: bufferSearchParams, updateSearchParam };

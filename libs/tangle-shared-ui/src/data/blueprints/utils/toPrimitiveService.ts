@@ -1,12 +1,12 @@
 import { assertSubstrateAddress } from '@tangle-network/ui-components';
-import createRestakeAssetId from '../../../utils/createRestakeAssetId';
+import createStakingAssetId from '../../../utils/createStakingAssetId';
 import type { Service } from '@tangle-network/tangle-substrate-types';
 import {
   TanglePrimitivesServicesServiceServiceRequest,
   TanglePrimitivesServicesTypesApprovalState,
 } from '@polkadot/types/lookup';
 import { SubstrateAddress } from '@tangle-network/ui-components/types/address';
-import { RestakeAssetId } from '../../../types';
+import { StakingAssetId } from '../../../types';
 import { StorageKey, u64 } from '@polkadot/types';
 
 export function toPrimitiveService({
@@ -54,7 +54,7 @@ export function toPrimitiveServiceRequest(
     owner: assertSubstrateAddress(owner.toHuman()),
     securityRequirements: toPrimitiveSecurityRequirements(securityRequirements),
     ttl: ttl.toNumber(),
-    // TODO: toPrimitiveArgs(args)
+    // NOTE: toPrimitiveArgs(args)
     args: args,
     permittedCallers: permittedCallers.map((caller) =>
       assertSubstrateAddress(caller.toString()),
@@ -76,7 +76,7 @@ export function toPrimitiveOperatorsWithApprovalState(
       approvalStateValue:
         | undefined
         | {
-            asset: RestakeAssetId;
+            asset: StakingAssetId;
             exposurePercent: number;
           }[];
     } = {
@@ -93,7 +93,7 @@ export function toPrimitiveOperatorsWithApprovalState(
         result.approvalStateValue =
           approvalState.asApproved.securityCommitments.map((commitment) => {
             return {
-              asset: createRestakeAssetId(commitment.asset),
+              asset: createStakingAssetId(commitment.asset),
               exposurePercent: commitment.exposurePercent.toNumber(),
             };
           });
@@ -118,7 +118,7 @@ export function toPrimitiveOperatorSecurityCommitments(
         operator: assertSubstrateAddress(operatorId.toString()),
         securityCommitments: securityCommitments.map((commitment) => {
           return {
-            asset: createRestakeAssetId(commitment.asset),
+            asset: createStakingAssetId(commitment.asset),
             exposurePercent: commitment.exposurePercent.toNumber(),
           };
         }),
@@ -132,7 +132,7 @@ export function toPrimitiveSecurityRequirements(
 ) {
   return securityRequirements.map((requirement) => {
     return {
-      asset: createRestakeAssetId(requirement.asset),
+      asset: createStakingAssetId(requirement.asset),
       minExposurePercent: requirement.minExposurePercent.toNumber(),
       maxExposurePercent: requirement.maxExposurePercent.toNumber(),
     };

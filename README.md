@@ -9,7 +9,7 @@
 # Tangle Monorepo
 
 <p align="left">
-    <strong>Decentralized interfaces into the Tangle Network, featuring Tangle Network dApps for MPC-as-a-service restaking infrastructure.</strong>
+    <strong>Decentralized interfaces into the Tangle Network, featuring Tangle Network dApps for MPC-as-a-service staking infrastructure.</strong>
     <br />
 </p>
 
@@ -56,16 +56,14 @@ This repository makes use of yarn, nodejs, and requires version node v18.18.x. T
 <h2 id="libs"> Libraries </h2>
 
 - `abstract-api-provider`: a collection of base and abstract classes that unify the API across multiple providers.
-- `api-provider-environment`: contains the React context definitions, the app event, and functions for handling interactive feedback errors for the bridge app.
+- `api-provider-environment`: contains the React context definitions, the app event, and functions for handling interactive feedback errors.
 - `browser-utils`: contains all the browser utility functions, such as fetch with caching, download file and string, the customized logger class, get browser platform, and the storage factory function for interacting with local storage.
-- `dapp-config`: contains all configurations (chains, wallets, etc.) for the bridge dApp.
+- `dapp-config`: contains all configurations (chains, wallets, contracts, etc.) for the dApps.
 - `dapp-types`: contains all the sharable TypeScript types and interfaces across the apps.
 - `icons`: contains all the sharable icons across the apps.
-- `polkadot-api-provider`: the Substrate (or Polkadot) provider for the bridge.
-- `tailwind-preset`: the TailwindCSS preset for all the apps.
-- `tangle-shared-ui`: the library contains the logic and UI components that specialize in the Tangle Network.
+- `tangle-shared-ui`: the library contains the logic and UI components that specialize in the Tangle Network (hooks, GraphQL queries, etc.).
 - [ui-components](./libs/ui-components/README.md): a collection of reusable components for building interfaces quickly.
-- `web3-api-provider`: the EVM provider for the bridge.
+- `web3-api-provider`: the EVM provider for wallet connections and contract interactions.
 
 <div align="right"><a href="#table-of-contents">↑ Back to top ↑</a></div>
 

@@ -40,6 +40,11 @@ enum Step {
   SENDING_TX,
 }
 
+const CLAIM_SUCCESS_QUERY_PARAMS = {
+  TX_HASH: 'h',
+  RPC_ENDPOINT: 'rpcEndpoint',
+} as const;
+
 type Props = {
   claimInfo: ClaimInfoType;
   setIsClaiming: (isClaiming: boolean) => void;
@@ -151,7 +156,6 @@ const EligibleSection: FC<Props> = ({
 
       setStep(Step.SENDING_TX);
 
-      // TODO: This needs to be changed to use the new hooks.
       const tx = api.tx.claims.claimAttest(
         isEvmRecipient ? { EVM: recipient } : { Native: recipient }, // destAccount
         isEvmSigner ? { EVM: accountId } : { Native: accountId }, // signer
@@ -162,9 +166,11 @@ const EligibleSection: FC<Props> = ({
       const txReceiptHash = await sendTransaction(tx);
       const newSearchParams = new URLSearchParams(searchParams.toString());
 
-      // TODO: Need to centralize these search parameters in an enum, in case they ever change.
-      newSearchParams.set('h', txReceiptHash);
-      newSearchParams.set('rpcEndpoint', rpcEndpoints[0]);
+      newSearchParams.set(CLAIM_SUCCESS_QUERY_PARAMS.TX_HASH, txReceiptHash);
+      newSearchParams.set(
+        CLAIM_SUCCESS_QUERY_PARAMS.RPC_ENDPOINT,
+        rpcEndpoints[0],
+      );
 
       navigate(`claim/success?${newSearchParams.toString()}`, {
         preventScrollReset: false,

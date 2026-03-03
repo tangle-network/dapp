@@ -1,53 +1,78 @@
-import { useCallback } from 'react';
-import { toHex } from 'viem';
-import { TxName } from '../../constants';
-import useAgnosticTx from '@tangle-network/tangle-shared-ui/hooks/useAgnosticTx';
-import { EvmTxFactory } from '@tangle-network/tangle-shared-ui/hooks/useEvmPrecompileCall';
-import { SubstrateTxFactory } from '@tangle-network/tangle-shared-ui/hooks/useSubstrateTx';
-import { SUCCESS_MESSAGES } from '../../hooks/useTxNotification';
-import { BN } from '@polkadot/util';
-import { PrecompileAddress } from '@tangle-network/tangle-shared-ui/constants/evmPrecompiles';
-import CREDITS_PRECOMPILE_ABI from '@tangle-network/tangle-shared-ui/abi/credits';
+import { useMemo } from 'react';
+import { Address, Hex, keccak256, toHex, zeroAddress } from 'viem';
+import { useChainId } from 'wagmi';
+import useContractWrite, {
+  TxStatus as ContractTxStatus,
+} from '@tangle-network/tangle-shared-ui/hooks/useContractWrite';
+import { TxStatus as SubstrateTxStatus } from '@tangle-network/tangle-shared-ui/hooks/useSubstrateTx';
+import CREDITS_MERKLE_ABI from '@tangle-network/tangle-shared-ui/abi/creditsMerkle';
+import { resolveCreditsAddress } from './resolveCreditsAddress';
 
 type Context = {
-  amountToClaim: BN;
+  epochId: bigint;
+  amountToClaim: bigint;
   offchainAccountId: string;
+  merkleProof: Hex[];
 };
 
 const useClaimCreditsTx = () => {
-  const evmTxFactory: EvmTxFactory<
-    typeof CREDITS_PRECOMPILE_ABI,
-    'claim_credits',
-    Context
-  > = useCallback((context) => {
-    return {
-      functionName: 'claim_credits',
-      arguments: [
-        BigInt(context.amountToClaim.toString()),
-        toHex(new TextEncoder().encode(context.offchainAccountId)),
-      ],
-    };
-  }, []);
+  const chainId = useChainId();
+  const creditsAddress = resolveCreditsAddress(chainId);
+  const isSupportedNetwork = creditsAddress !== null;
 
-  const substrateTxFactory: SubstrateTxFactory<Context> = useCallback(
-    (api, _activeSubstrateAddress, context) => {
-      // Based on the pallet specification: api.tx.credits.claim_credits(origin, amount_to_claim, offchain_account_id)
-      return api.tx.credits.claimCredits(
+  const contractTx = useContractWrite(
+    CREDITS_MERKLE_ABI,
+    (context: Context) => ({
+      address: (creditsAddress ?? zeroAddress) as Address,
+      abi: CREDITS_MERKLE_ABI,
+      functionName: 'claim' as const,
+      args: [
+        context.epochId,
         context.amountToClaim,
-        context.offchainAccountId,
-      );
+        encodeOffchainAccountId(context.offchainAccountId),
+        context.merkleProof,
+      ] as const,
+    }),
+    {
+      txName: 'claim credits',
+      getSuccessMessage: () => 'Credits claimed successfully',
     },
-    [],
   );
 
-  return useAgnosticTx({
-    name: TxName.CLAIM_CREDITS,
-    abi: CREDITS_PRECOMPILE_ABI,
-    precompileAddress: PrecompileAddress.CREDITS,
-    evmTxFactory,
-    substrateTxFactory,
-    successMessageByTxName: SUCCESS_MESSAGES,
-  });
+  const mappedContractStatus = useMemo(() => {
+    switch (contractTx.status) {
+      case ContractTxStatus.NOT_YET_INITIATED:
+        return SubstrateTxStatus.NOT_YET_INITIATED;
+      case ContractTxStatus.PROCESSING:
+        return SubstrateTxStatus.PROCESSING;
+      case ContractTxStatus.COMPLETE:
+        return SubstrateTxStatus.COMPLETE;
+      case ContractTxStatus.ERROR:
+        return SubstrateTxStatus.ERROR;
+      default:
+        return SubstrateTxStatus.NOT_YET_INITIATED;
+    }
+  }, [contractTx.status]);
+
+  return {
+    ...contractTx,
+    status: mappedContractStatus,
+    execute: isSupportedNetwork ? contractTx.execute : null,
+  };
 };
 
 export default useClaimCreditsTx;
+
+const encodeOffchainAccountId = (value: string): Hex => {
+  const trimmed = value.trim();
+  if (!trimmed) {
+    return ('0x' + '00'.repeat(32)) as Hex;
+  }
+
+  const bytes = new TextEncoder().encode(trimmed);
+  if (bytes.length <= 32) {
+    return toHex(bytes, { size: 32 });
+  }
+
+  return keccak256(toHex(bytes));
+};

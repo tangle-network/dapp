@@ -1,8 +1,29 @@
-import { createClient, fallback, http } from 'viem';
-import { Config, cookieStorage, createConfig, createStorage } from 'wagmi';
+import { getDefaultConfig } from 'connectkit';
+import { createConfig, http } from 'wagmi';
 import { wagmiChains as chains } from './chains/evm';
 
-let config: Config<typeof chains>;
+// WalletConnect project ID - should be configured via env var in production
+const WALLETCONNECT_PROJECT_ID =
+  process.env.VITE_WALLETCONNECT_PROJECT_ID ??
+  process.env.NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID ??
+  '3e45c77c9b5d51c8dcf9db03f6c4f826'; // Tangle's WalletConnect project ID
+
+// Create config using ConnectKit's getDefaultConfig helper
+// This automatically sets up all popular wallets with EIP-6963 detection
+const config = createConfig(
+  getDefaultConfig({
+    appName: 'Tangle Network',
+    walletConnectProjectId: WALLETCONNECT_PROJECT_ID,
+    chains,
+    transports: chains.reduce(
+      (acc, chain) => {
+        acc[chain.id] = http();
+        return acc;
+      },
+      {} as Record<number, ReturnType<typeof http>>,
+    ),
+  }),
+);
 
 /**
  * Registers the wagmi config
@@ -15,36 +36,8 @@ declare module 'wagmi' {
   }
 }
 
-export type GetWagmiConfigParamsType = {
-  isSSR?: boolean;
-};
-
-export default function getWagmiConfig({
-  isSSR,
-}: GetWagmiConfigParamsType = {}) {
-  if (config === undefined) {
-    config = createConfig({
-      ...(typeof isSSR === 'boolean' ? { ssr: isSSR } : {}),
-      ...(isSSR === true
-        ? {
-            storage: createStorage({
-              storage: cookieStorage,
-            }),
-          }
-        : {}),
-      chains,
-      client: ({ chain }) => {
-        return createClient({
-          chain,
-          transport: fallback(
-            chain.rpcUrls.default.http.map((url) =>
-              http(url, { timeout: 60_000 }),
-            ),
-          ),
-        });
-      },
-    });
-  }
-
+export default function getWagmiConfig(_options?: { isSSR?: boolean }) {
   return config;
 }
+
+export { config };

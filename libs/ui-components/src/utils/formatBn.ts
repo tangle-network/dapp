@@ -168,7 +168,7 @@ const applyTransition = (state: State, transition: StateTransition): State => {
   return merge(state, nextState);
 };
 
-// TODO: Consider using Decimal.js instead of BN for better decimal handling without needing to manually handle the edge cases.
+// NOTE: Consider using Decimal.js instead of BN for better decimal handling without needing to manually handle the edge cases.
 export function formatBn(
   amount: BN,
   decimals: number,

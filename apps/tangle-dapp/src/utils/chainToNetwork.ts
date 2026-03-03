@@ -53,8 +53,7 @@ export default function chainToNetwork(typedChainId: number): Network {
     ...(chain.chainType === ChainType.EVM ? { evmChainId: chain.id } : {}),
     name: chain.name,
     tokenSymbol: 'tTNT',
-    // TODO: Find out the correct way to determine the node type for a chain,
-    // maybe the chain group property or something else.
+    // Custom chains default to standalone until chain-group metadata is available.
     nodeType: 'standalone',
     polkadotJsDashboardUrl: getPolkadotJsDashboardUrl(wsRpcEndpoint),
     createExplorerAccountUrl: () => null,

@@ -9,51 +9,59 @@ import {
   getSortedRowModel,
   useReactTable,
 } from '@tanstack/react-table';
-import { TANGLE_TOKEN_DECIMALS } from '@tangle-network/dapp-config';
 import { CheckboxCircleFill } from '@tangle-network/icons/CheckboxCircleFill';
 import {
-  AmountFormatStyle,
   Avatar,
   Button,
-  formatDisplayAmount,
+  Chip,
   IconWithTooltip,
   KeyValueWithButton,
   shortenString,
   Table,
+  Tooltip,
+  TooltipBody,
+  TooltipTrigger,
   Typography,
-  toSubstrateAddress,
 } from '@tangle-network/ui-components';
 import { TableVariant } from '@tangle-network/ui-components/components/Table/types';
 import pluralize from '@tangle-network/ui-components/utils/pluralize';
-import { BN } from 'bn.js';
 import type { ComponentProps, PropsWithChildren } from 'react';
 import { FC, useMemo } from 'react';
 import { twMerge } from 'tailwind-merge';
+import { formatUnits } from 'viem';
 import TableCellWrapper from '../../../components/tables/TableCellWrapper';
 import type { TableStatusProps } from '../../../components/tables/TableStatus';
 import TableStatus from '../../../components/tables/TableStatus';
-import { sortByAddressOrIdentity } from '../../../components/tables/utils';
-import useNetworkStore from '../../../context/useNetworkStore';
-import { RestakeOperator } from '../../../types';
+import { StakingOperator } from '../../../types';
+import { DelegationMode } from '../../../data/staking/useCanDelegate';
 import VaultsDropdown from './VaultsDropdown';
 
-const COLUMN_HELPER = createColumnHelper<RestakeOperator>();
+const COLUMN_HELPER = createColumnHelper<StakingOperator>();
+
+const formatAmount = (amount: bigint, decimals = 18): string => {
+  const formatted = formatUnits(amount, decimals);
+  const num = parseFloat(formatted);
+  if (num === 0) return '0';
+  if (num < 0.0001) return '< 0.0001';
+  if (num >= 1_000_000) return `${(num / 1_000_000).toFixed(2)}M`;
+  if (num >= 1_000) return `${(num / 1_000).toFixed(2)}K`;
+  return num.toLocaleString(undefined, {
+    maximumFractionDigits: 4,
+    minimumFractionDigits: 0,
+  });
+};
 
 const getStaticColumns = (
-  nativeTokenSymbol: string,
-  ss58Prefix: number,
-): ColumnDef<RestakeOperator, any>[] => [
+  tokenSymbol: string,
+): ColumnDef<StakingOperator, any>[] => [
   COLUMN_HELPER.accessor('address', {
     header: () => 'Identity',
-    sortingFn: sortByAddressOrIdentity<RestakeOperator>(),
     cell: (props) => {
       const {
-        address: rawAddress,
+        address,
         identityName: identity,
         isDelegated,
       } = props.row.original;
-
-      const address = toSubstrateAddress(rawAddress, ss58Prefix);
 
       return (
         <TableCellWrapper className="p-3">
@@ -61,7 +69,7 @@ const getStaticColumns = (
             <Avatar
               sourceVariant="address"
               value={address}
-              theme="substrate"
+              theme="ethereum"
               size="lg"
               className="shadow-sm"
             />
@@ -109,13 +117,9 @@ const getStaticColumns = (
             fw="semibold"
             className="text-mono-160 dark:text-mono-60"
           >
-            {formatDisplayAmount(
-              new BN(value.toString()),
-              TANGLE_TOKEN_DECIMALS,
-              AmountFormatStyle.SHORT,
-            )}{' '}
+            {formatAmount(value)}{' '}
             <span className="text-mono-120 dark:text-mono-100">
-              {nativeTokenSymbol}
+              {tokenSymbol}
             </span>
           </Typography>
         </TableCellWrapper>
@@ -136,8 +140,9 @@ const getStaticColumns = (
       </TableCellWrapper>
     ),
   }),
-  COLUMN_HELPER.accessor('restakersCount', {
-    header: () => 'Restakers',
+  COLUMN_HELPER.accessor((row) => row.stakersCount ?? 0, {
+    id: 'stakersCount',
+    header: () => 'Stakers',
     cell: (props) => (
       <TableCellWrapper className="p-3">
         <Typography
@@ -150,20 +155,34 @@ const getStaticColumns = (
       </TableCellWrapper>
     ),
   }),
-  // COLUMN_HELPER.accessor('blueprintCount', {
-  //   header: () => 'Blueprints',
-  //   cell: (props) => (
-  //     <TableCellWrapper>
-  //       <Typography
-  //         variant="body1"
-  //         fw="bold"
-  //         className="text-mono-200 dark:text-mono-0"
-  //       >
-  //         {props.getValue() ?? '-'}
-  //       </Typography>
-  //     </TableCellWrapper>
-  //   ),
-  // }),
+  COLUMN_HELPER.accessor('delegationMode', {
+    header: () => 'Mode',
+    cell: (props) => {
+      const rawMode = props.getValue();
+      const mode: DelegationMode =
+        rawMode === DelegationMode.Open
+          ? DelegationMode.Open
+          : rawMode === DelegationMode.Whitelist
+            ? DelegationMode.Whitelist
+            : DelegationMode.Disabled;
+
+      const configMap: Record<
+        DelegationMode,
+        { label: string; color: 'green' | 'yellow' | 'dark-grey' }
+      > = {
+        [DelegationMode.Open]: { label: 'Open', color: 'green' },
+        [DelegationMode.Whitelist]: { label: 'Whitelist', color: 'yellow' },
+        [DelegationMode.Disabled]: { label: 'Self Only', color: 'dark-grey' },
+      };
+      const config = configMap[mode];
+
+      return (
+        <TableCellWrapper className="p-3">
+          <Chip color={config.color}>{config.label}</Chip>
+        </TableCellWrapper>
+      );
+    },
+  }),
   // For sorting purpose
   COLUMN_HELPER.accessor('isDelegated', {
     header: () => null,
@@ -175,40 +194,46 @@ const getStaticColumns = (
       return aIsDelegated ? -1 : bIsDelegated ? 1 : 0;
     },
   }),
-  // Hidden now as we don't have price for testnet and TNT assets
-  /* COLUMN_HELPER.accessor('concentrationPercentage', {
-    header: () => 'Concentration',
-    cell: (props) => {
-      const value = props.getValue();
+  // For sorting by delegation mode priority: Open > Whitelist (whitelisted) > Whitelist (not whitelisted) > Disabled
+  COLUMN_HELPER.accessor('canDelegate', {
+    id: 'delegationPriority',
+    header: () => null,
+    cell: () => null,
+    sortingFn: (rowA, rowB) => {
+      const aCanDelegate = rowA.original.canDelegate ?? false;
+      const bCanDelegate = rowB.original.canDelegate ?? false;
+      const aMode = rowA.original.delegationMode ?? DelegationMode.Disabled;
+      const bMode = rowB.original.delegationMode ?? DelegationMode.Disabled;
 
-      return (
-        <TableCellWrapper>
-          <Typography
-            variant="body1"
-            fw="bold"
-            className="text-mono-200 dark:text-mono-0"
-          >
-            {typeof value !== 'number'
-              ? EMPTY_VALUE_PLACEHOLDER
-              : formatPercentage(value)}
-          </Typography>
-        </TableCellWrapper>
-      );
+      // First, prioritize operators user can delegate to
+      if (aCanDelegate && !bCanDelegate) return -1;
+      if (!aCanDelegate && bCanDelegate) return 1;
+
+      // Among delegatable operators, sort by mode: Open > Whitelist
+      if (aCanDelegate && bCanDelegate) {
+        if (aMode === DelegationMode.Open && bMode !== DelegationMode.Open)
+          return -1;
+        if (aMode !== DelegationMode.Open && bMode === DelegationMode.Open)
+          return 1;
+      }
+
+      // Among non-delegatable operators, sort by mode: Whitelist > Disabled
+      if (!aCanDelegate && !bCanDelegate) {
+        if (
+          aMode === DelegationMode.Whitelist &&
+          bMode === DelegationMode.Disabled
+        )
+          return -1;
+        if (
+          aMode === DelegationMode.Disabled &&
+          bMode === DelegationMode.Whitelist
+        )
+          return 1;
+      }
+
+      return 0;
     },
   }),
-  COLUMN_HELPER.accessor('tvlInUsd', {
-    header: () => 'TVL',
-    cell: (props) => (
-      <TableCellWrapper>
-        <Typography
-          variant="body1"
-          className="text-mono-120 dark:text-mono-100"
-        >
-          {getTVLToDisplay(props.getValue())}
-        </Typography>
-      </TableCellWrapper>
-    ),
-  }), */
   COLUMN_HELPER.accessor('vaultTokens', {
     header: () => 'Delegated Assets',
     cell: (props) => {
@@ -240,13 +265,14 @@ const getStaticColumns = (
 
 type Props = {
   isLoading?: boolean;
-  data?: RestakeOperator[];
+  data?: StakingOperator[];
   globalFilter?: string;
   onGlobalFilterChange?: (value: string) => void;
   loadingTableProps?: Partial<TableStatusProps>;
   emptyTableProps?: Partial<TableStatusProps>;
-  tableProps?: Partial<ComponentProps<typeof Table<RestakeOperator>>>;
-  RestakeOperatorAction?: React.FC<PropsWithChildren<{ address: string }>>;
+  tableProps?: Partial<ComponentProps<typeof Table<StakingOperator>>>;
+  StakingOperatorAction?: React.FC<PropsWithChildren<{ address: string }>>;
+  tokenSymbol?: string;
 };
 
 const OperatorsTable: FC<Props> = ({
@@ -257,50 +283,82 @@ const OperatorsTable: FC<Props> = ({
   tableProps,
   globalFilter,
   onGlobalFilterChange,
-  RestakeOperatorAction,
+  StakingOperatorAction,
+  tokenSymbol = 'ETH',
 }) => {
-  const nativeTokenSymbol = useNetworkStore(
-    (store) => store.network.tokenSymbol,
-  );
-
-  const ss58Prefix = useNetworkStore((store) => store.network.ss58Prefix);
+  const OperatorAction = StakingOperatorAction;
 
   const columns = useMemo(() => {
-    if (ss58Prefix === undefined) {
-      return [];
-    }
-
-    return getStaticColumns(nativeTokenSymbol, ss58Prefix).concat([
+    return getStaticColumns(tokenSymbol).concat([
       COLUMN_HELPER.display({
         id: 'actions',
         header: () => null,
-        cell: (props) => (
-          <TableCellWrapper removeRightBorder className="p-3">
-            <div className="flex items-center justify-end flex-1 gap-2">
-              {RestakeOperatorAction ? (
-                <RestakeOperatorAction address={props.row.original.address}>
-                  <Button
-                    variant="utility"
-                    className="uppercase body4 bg-blue-10 dark:bg-blue-120 text-blue-70 dark:text-blue-40 hover:bg-blue-20 dark:hover:bg-blue-110 border border-blue-30 dark:border-blue-100 transition-all duration-200 font-semibold"
-                  >
+        cell: (props) => {
+          const { canDelegate, delegationMode } = props.row.original;
+          // canDelegate undefined means we don't have the info yet (backwards compat)
+          const isDisabled = canDelegate === false;
+
+          const getTooltipMessage = () => {
+            if (!isDisabled) return '';
+            const mode =
+              delegationMode === DelegationMode.Whitelist
+                ? DelegationMode.Whitelist
+                : DelegationMode.Disabled;
+            return mode === DelegationMode.Whitelist
+              ? 'You are not whitelisted by this operator'
+              : 'This operator is not accepting delegations';
+          };
+
+          const renderButton = () => {
+            if (isDisabled) {
+              return (
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <span>
+                      <Button
+                        variant="secondary"
+                        size="sm"
+                        className="min-w-24 opacity-50 cursor-not-allowed"
+                        isDisabled
+                      >
+                        Delegate
+                      </Button>
+                    </span>
+                  </TooltipTrigger>
+                  <TooltipBody>{getTooltipMessage()}</TooltipBody>
+                </Tooltip>
+              );
+            }
+
+            if (OperatorAction) {
+              return (
+                <OperatorAction address={props.row.original.address}>
+                  <Button variant="secondary" size="sm" className="min-w-24">
                     Delegate
                   </Button>
-                </RestakeOperatorAction>
-              ) : (
-                <Button
-                  variant="utility"
-                  className="uppercase body4 bg-blue-10 dark:bg-blue-120 text-blue-70 dark:text-blue-40 hover:bg-blue-20 dark:hover:bg-blue-110 border border-blue-30 dark:border-blue-100 transition-all duration-200 font-semibold"
-                >
-                  Delegate
-                </Button>
-              )}
-            </div>
-          </TableCellWrapper>
-        ),
+                </OperatorAction>
+              );
+            }
+
+            return (
+              <Button variant="secondary" size="sm" className="min-w-24">
+                Delegate
+              </Button>
+            );
+          };
+
+          return (
+            <TableCellWrapper removeRightBorder className="p-3">
+              <div className="flex items-center justify-end flex-1 gap-2">
+                {renderButton()}
+              </div>
+            </TableCellWrapper>
+          );
+        },
         enableSorting: false,
-      }) satisfies ColumnDef<RestakeOperator>,
+      }) satisfies ColumnDef<StakingOperator>,
     ]);
-  }, [RestakeOperatorAction, nativeTokenSymbol, ss58Prefix]);
+  }, [OperatorAction, tokenSymbol]);
 
   const table = useReactTable({
     data,
@@ -312,6 +370,10 @@ const OperatorsTable: FC<Props> = ({
     initialState: {
       sorting: [
         {
+          id: 'delegationPriority',
+          desc: false,
+        },
+        {
           id: 'isDelegated',
           desc: false,
         },
@@ -320,12 +382,13 @@ const OperatorsTable: FC<Props> = ({
           desc: true,
         },
         {
-          id: 'restakersCount',
+          id: 'stakersCount',
           desc: true,
         },
       ],
       columnVisibility: {
         isDelegated: false,
+        delegationPriority: false,
       },
     },
     state: {

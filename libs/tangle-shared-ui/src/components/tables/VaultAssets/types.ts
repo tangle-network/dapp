@@ -1,8 +1,8 @@
 import type { BN } from '@polkadot/util';
-import type { RestakeAssetId } from '../../../types';
+import type { StakingAssetId } from '../../../types';
 
 export type VaultAssetData = {
-  id: RestakeAssetId;
+  id: StakingAssetId;
   name: string;
   symbol: string;
   decimals: number;
