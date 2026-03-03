@@ -144,6 +144,31 @@ log_success() { echo -e "${GREEN}[SUCCESS]${NC} $1"; }
 log_warn() { echo -e "${YELLOW}[WARN]${NC} $1"; }
 log_error() { echo -e "${RED}[ERROR]${NC} $1"; }
 
+resolve_forge_script_target() {
+    local modern="$1"
+    local legacy="$2"
+    local modern_path="$TNT_CORE_DIR/$modern"
+    local legacy_path="$TNT_CORE_DIR/$legacy"
+
+    if [[ -f "$modern_path" && -f "$legacy_path" ]]; then
+        log_warn "Found both modern and legacy forge scripts. Preferring modern path: $modern"
+        echo "$modern"
+        return 0
+    fi
+
+    if [[ -f "$modern_path" ]]; then
+        echo "$modern"
+        return 0
+    fi
+
+    if [[ -f "$legacy_path" ]]; then
+        echo "$legacy"
+        return 0
+    fi
+
+    return 1
+}
+
 ensure_docker_running() {
     if ! docker info >/dev/null 2>&1; then
         log_error "Docker daemon is not responding (Docker Desktop may be crashed or starting)."
@@ -638,6 +663,14 @@ deploy_contracts() {
     log_info "Deploying contracts..."
     cd "$TNT_CORE_DIR"
 
+    local localtestnet_script
+    if ! localtestnet_script="$(resolve_forge_script_target "script/LocalTestnet.s.sol" "script/v2/LocalTestnet.s.sol")"; then
+        log_error "Could not find LocalTestnet deployment script in tnt-core (checked script/LocalTestnet.s.sol and script/v2/LocalTestnet.s.sol)"
+        return 1
+    fi
+    local localtestnet_script_name
+    localtestnet_script_name="$(basename "$localtestnet_script")"
+
     local deployer_nonce=""
     local contract_code=""
     local forge_status=0
@@ -647,11 +680,11 @@ deploy_contracts() {
         # Clear forge broadcast cache to ensure deterministic addresses on fresh Anvil
         # (keeps compiled artifacts cached for faster subsequent runs)
         log_info "Clearing forge broadcast cache..."
-        rm -rf broadcast/LocalTestnet.s.sol/ 2>/dev/null || true
+        rm -rf "broadcast/$localtestnet_script_name/" 2>/dev/null || true
 
         log_info "Running LocalTestnet setup (attempt $attempt/2)..."
         set +e
-        forge script script/v2/LocalTestnet.s.sol:LocalTestnetSetup \
+        forge script "${localtestnet_script}:LocalTestnetSetup" \
             --rpc-url "http://127.0.0.1:$ANVIL_PORT" \
             --private-key "$ANVIL_PRIVATE_KEY" \
             --broadcast \
@@ -832,9 +865,17 @@ ensure_incentives_contracts() {
 }
 EOF
 
+    local full_deploy_script
+    if ! full_deploy_script="$(resolve_forge_script_target "script/FullDeploy.s.sol" "script/v2/FullDeploy.s.sol")"; then
+        log_warn "Could not find FullDeploy script in tnt-core (checked script/FullDeploy.s.sol and script/v2/FullDeploy.s.sol); skipping incentives deploy."
+        return 0
+    fi
+    local full_deploy_script_name
+    full_deploy_script_name="$(basename "$full_deploy_script")"
+
     (cd "$TNT_CORE_DIR" && \
       FULL_DEPLOY_CONFIG="$cfg_path" PRIVATE_KEY="$ANVIL_PRIVATE_KEY" \
-      forge script script/v2/FullDeploy.s.sol:FullDeploy \
+      forge script "${full_deploy_script}:FullDeploy" \
         --rpc-url "http://127.0.0.1:$ANVIL_PORT" \
         --broadcast \
         --non-interactive \
@@ -859,7 +900,7 @@ EOF
     # Best-effort: capture InflationPool proxy from Foundry broadcast artifacts.
     if command -v jq >/dev/null 2>&1; then
         local broadcast_file
-        broadcast_file="$(ls -t "$TNT_CORE_DIR/broadcast/FullDeploy.s.sol/"*/run-latest.json 2>/dev/null | head -1 || true)"
+        broadcast_file="$(ls -t "$TNT_CORE_DIR/broadcast/$full_deploy_script_name/"*/run-latest.json 2>/dev/null | head -1 || true)"
         if [[ -n "$broadcast_file" && -f "$broadcast_file" ]]; then
             local inflation_proxy
             inflation_proxy="$(jq -r '

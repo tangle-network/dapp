@@ -364,10 +364,11 @@ const main = async () => {
       const userDataDir =
         launchPlan.userDataDir ?? path.resolve('.agent-wallet-profile');
       fs.mkdirSync(userDataDir, { recursive: true });
+      const walletHeadless = Boolean(mergedConfig.headless);
 
       persistentContext = await chromium.launchPersistentContext(userDataDir, {
         channel: 'chromium',
-        headless: false,
+        headless: walletHeadless,
         args: launchPlan.browserArgs,
         viewport: launchPlan.viewport,
         ignoreHTTPSErrors: true,
