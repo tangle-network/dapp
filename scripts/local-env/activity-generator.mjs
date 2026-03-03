@@ -17,6 +17,7 @@
 import { createPublicClient, createWalletClient, http, parseEther, parseUnits, encodeFunctionData } from 'viem';
 import { privateKeyToAccount } from 'viem/accounts';
 import { anvil } from 'viem/chains';
+import { randomInt, randomUUID } from 'node:crypto';
 
 // Configuration
 const RPC_URL = process.env.RPC_URL || 'http://localhost:8545';
@@ -260,9 +261,12 @@ const getWalletClient = (privateKey) => {
 };
 
 // Utility functions
-const randomChoice = (arr) => arr[Math.floor(Math.random() * arr.length)];
-const randomAmount = (min, max) => parseEther(String(min + Math.random() * (max - min)));
-const randomTokenAmount = (min, max, decimals) => parseUnits(String(min + Math.random() * (max - min)), decimals);
+const randomFloat = () => randomInt(0, 1_000_000_000) / 1_000_000_000;
+const randomChoice = (arr) => arr[randomInt(arr.length)];
+const randomAmount = (min, max) =>
+  parseEther(String(min + randomFloat() * (max - min)));
+const randomTokenAmount = (min, max, decimals) =>
+  parseUnits(String(min + randomFloat() * (max - min)), decimals);
 const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms));
 
 // Activity generators
@@ -413,7 +417,7 @@ async function delegateNativeToOperator(accountIndex) {
       return false;
     }
 
-    const percentage = 0.1 + Math.random() * 0.4;
+    const percentage = 0.1 + randomFloat() * 0.4;
     const amount = BigInt(Math.floor(Number(available) * percentage));
 
     if (amount < parseEther('0.01')) {
@@ -471,7 +475,7 @@ async function delegateERC20ToOperator(accountIndex, tokenKey) {
       return false;
     }
 
-    const percentage = 0.1 + Math.random() * 0.4;
+    const percentage = 0.1 + randomFloat() * 0.4;
     const amount = BigInt(Math.floor(Number(available) * percentage));
 
     const minAmount = parseUnits('1', token.decimals);
@@ -584,7 +588,7 @@ async function submitJob(accountIndex) {
     const inputData = `0x${Buffer.from(JSON.stringify({
       timestamp: Date.now(),
       caller: account.address,
-      random: Math.random().toString(36).substring(7),
+      random: randomUUID().replace(/-/g, '').slice(0, 7),
     })).toString('hex')}`;
 
     const hash = await walletClient.writeContract({
@@ -669,7 +673,7 @@ async function runActivityCycle() {
   });
 
   const totalWeight = availableActivities.reduce((sum, a) => sum + a.weight, 0);
-  let random = Math.random() * totalWeight;
+  let random = randomFloat() * totalWeight;
   let selectedActivity = availableActivities[0].name;
 
   for (const activity of availableActivities) {
@@ -681,7 +685,7 @@ async function runActivityCycle() {
   }
 
   // Pick random account (skip account 0 which is the deployer)
-  const accountIndex = 1 + Math.floor(Math.random() * (ANVIL_ACCOUNTS.length - 1));
+  const accountIndex = 1 + randomInt(ANVIL_ACCOUNTS.length - 1);
 
   switch (selectedActivity) {
     case 'depositETH':
@@ -722,13 +726,13 @@ async function runActivityCycle() {
     case 'multiDeposit': {
       // Generate 3 random accounts, then deduplicate to prevent nonce collisions
       const rawAccounts = [1, 2, 3].map(() =>
-        1 + Math.floor(Math.random() * (ANVIL_ACCOUNTS.length - 1))
+        1 + randomInt(ANVIL_ACCOUNTS.length - 1)
       );
       const uniqueAccounts = [...new Set(rawAccounts)];
 
       // Mix of ETH and ERC20 deposits - each unique account processes sequentially
       await Promise.all(uniqueAccounts.map(async (idx) => {
-        if (Math.random() > 0.5 && state.tokensAvailable.length > 0) {
+        if (randomFloat() > 0.5 && state.tokensAvailable.length > 0) {
           const tokenKey = randomChoice(state.tokensAvailable);
           return depositERC20Token(idx, tokenKey);
         } else {
