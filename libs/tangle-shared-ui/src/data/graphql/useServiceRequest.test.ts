@@ -179,7 +179,9 @@ describe('encodeServiceConfig', () => {
       encodeServiceConfig([{ Array: [9, 8] }], [{ Array: [2, 'Uint16'] }]),
     );
 
-    expect(encodeServiceConfig([['alpha', true]], [{ Struct: ['String', 'Bool'] }])).toBe(
+    expect(
+      encodeServiceConfig([['alpha', true]], [{ Struct: ['String', 'Bool'] }]),
+    ).toBe(
       encodeServiceConfig(
         [{ Struct: ['alpha', 'true'] }],
         [{ Struct: ['String', 'Bool'] }],
@@ -339,7 +341,9 @@ describe('validateServiceRequestParams', () => {
           },
         ],
       }),
-    ).toThrow('Security requirement at index 0 must use integer exposure values');
+    ).toThrow(
+      'Security requirement at index 0 must use integer exposure values',
+    );
   });
 
   it('rejects out-of-range security exposures', () => {
@@ -354,7 +358,9 @@ describe('validateServiceRequestParams', () => {
           },
         ],
       }),
-    ).toThrow('Security requirement at index 0 must be between 1 and 10000 bps');
+    ).toThrow(
+      'Security requirement at index 0 must be between 1 and 10000 bps',
+    );
   });
 
   it('rejects security requirements where min exceeds max', () => {

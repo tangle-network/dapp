@@ -128,7 +128,11 @@ describe('useExecuteExitTx', () => {
     let capturedOptions: { onSuccess?: () => void } | undefined;
 
     mockUseContractWrite.mockImplementation(
-      (_abi: unknown, _factory: unknown, options: { onSuccess?: () => void }) => {
+      (
+        _abi: unknown,
+        _factory: unknown,
+        options: { onSuccess?: () => void },
+      ) => {
         capturedOptions = options;
         return createMockHookResult();
       },

@@ -125,11 +125,7 @@ describe('App', () => {
     ['/blueprints/create', 'blueprints-layout', 'create-blueprint-page'],
     ['/blueprints/manage', 'blueprints-layout', 'manage-blueprints-page'],
     ['/operators', 'operators-layout', 'operators-page'],
-    [
-      '/operators/manage',
-      'operators-manage-layout',
-      'operators-manage-page',
-    ],
+    ['/operators/manage', 'operators-manage-layout', 'operators-manage-page'],
     ['/rewards', 'rewards-layout', 'rewards-page'],
     ['/earnings', 'earnings-layout', 'earnings-page'],
   ])(
