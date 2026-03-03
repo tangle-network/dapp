@@ -30,6 +30,7 @@ import useParamWithSchema from '@tangle-network/tangle-shared-ui/hooks/useParamW
 import { zeroAddress, parseUnits } from 'viem';
 import { TxName } from '../../../../constants';
 import useTxNotification from '../../../../hooks/useTxNotification';
+import useBlueprintRequestSchema from '../../../../data/services/useBlueprintRequestSchema';
 
 const DeployPage: FC = () => {
   const id = useParamWithSchema('id', z.coerce.bigint());
@@ -46,8 +47,9 @@ const DeployPage: FC = () => {
     isSuccess: serviceRequestSuccess,
     isPending: serviceRequestPending,
   } = useServiceRequestTx();
+  const { data: blueprintRequestSchema } = useBlueprintRequestSchema(id);
 
-  const { notifyProcessing, notifySuccess, notifyError } = useTxNotification();
+  const { notifyProcessing, notifyError } = useTxNotification();
 
   const {
     watch,
@@ -75,10 +77,12 @@ const DeployPage: FC = () => {
       clearErrors,
       blueprint: blueprintResult?.details,
       blueprintOperators: blueprintResult?.operators,
+      requestArgsCount: blueprintRequestSchema?.parsedRequestSchema.length ?? 0,
     }),
     [
       blueprintResult?.details,
       blueprintResult?.operators,
+      blueprintRequestSchema?.parsedRequestSchema.length,
       control,
       errors,
       setError,
@@ -108,8 +112,6 @@ const DeployPage: FC = () => {
     try {
       clearErrors();
       const formData = watch();
-      console.log('Form data before validation:', formData);
-      console.log('Current form errors:', errors);
       const validatedData = deployBlueprintSchema.parse(formData);
 
       // Format the service request data for the Tangle contract
@@ -134,8 +136,17 @@ const DeployPage: FC = () => {
         paymentDecimals,
       );
 
+      if (blueprintRequestSchema?.requestSchemaParseError) {
+        throw new Error(
+          `Request schema parse failed: ${blueprintRequestSchema.requestSchemaParseError}`,
+        );
+      }
+
       // Encode service configuration from request args
-      const config = encodeServiceConfig(validatedData.requestArgs ?? []);
+      const config = encodeServiceConfig(
+        validatedData.requestArgs ?? [],
+        blueprintRequestSchema?.parsedRequestSchema,
+      );
 
       // Build security requirements from assets and security commitments
       let securityRequirements: AssetSecurityRequirement[] | undefined;
@@ -147,7 +158,10 @@ const DeployPage: FC = () => {
           const commitment = validatedData.securityCommitments[index];
           return {
             asset: {
-              kind: AssetKind.ERC20,
+              kind:
+                asset.id.toLowerCase() === zeroAddress.toLowerCase()
+                  ? AssetKind.Native
+                  : AssetKind.ERC20,
               token: asset.id,
             },
             minExposureBps:
@@ -174,25 +188,25 @@ const DeployPage: FC = () => {
       const result = await serviceRequestTx(params);
 
       if (result.error) {
-        notifyError(TxName.DEPLOY_BLUEPRINT, result.error);
-      } else if (result.txHash) {
-        notifySuccess(TxName.DEPLOY_BLUEPRINT);
+        return;
       }
     } catch (error) {
       if (error instanceof z.ZodError) {
-        console.log('Zod validation errors:', error.errors);
         error.errors.forEach((err) => {
-          console.log(
-            'Setting error for field:',
-            err.path[0],
-            'message:',
-            err.message,
-          );
           setError(err.path[0] as keyof DeployBlueprintSchema, {
             type: 'manual',
             message: err.message,
           });
         });
+      } else if (
+        error instanceof Error &&
+        error.message.toLowerCase().includes('request')
+      ) {
+        setError('requestArgs', {
+          type: 'manual',
+          message: error.message,
+        });
+        notifyError(TxName.DEPLOY_BLUEPRINT, error);
       } else {
         notifyError(
           TxName.DEPLOY_BLUEPRINT,

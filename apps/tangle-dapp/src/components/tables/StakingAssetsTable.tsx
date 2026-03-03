@@ -28,20 +28,22 @@ import {
 } from '@tanstack/react-table';
 import { Address } from 'viem';
 import { Link } from 'react-router';
-import type { RestakeAsset } from '@tangle-network/tangle-shared-ui/data/graphql/useRestakeAssets';
-import type { RestakingAsset } from '@tangle-network/tangle-shared-ui/data/graphql/useRestakingAssets';
+import type {
+  ProtocolStakingAsset,
+  StakingAsset,
+} from '@tangle-network/tangle-shared-ui/data/graphql';
 import type { Delegator } from '@tangle-network/tangle-shared-ui/data/graphql/useDelegator';
 import { getCachedTokenMetadata } from '@tangle-network/dapp-config/tokenMetadata';
 import { PagePath, QueryParamKey } from '../../types';
 
 interface Props {
-  assets: RestakeAsset[];
-  restakingAssets: RestakingAsset[];
+  assets: StakingAsset[];
+  stakingAssets: ProtocolStakingAsset[];
   delegator: Delegator | null;
   isLoading: boolean;
 }
 
-interface RestakeAssetRow {
+interface StakingAssetRow {
   id: Address;
   symbol: string;
   name: string;
@@ -53,7 +55,7 @@ interface RestakeAssetRow {
   tokenAddress: Address;
 }
 
-const COLUMN_HELPER = createColumnHelper<RestakeAssetRow>();
+const COLUMN_HELPER = createColumnHelper<StakingAssetRow>();
 const TABLE_ACTION_BUTTON_CLASS =
   'uppercase body4 font-semibold transition-all duration-200 bg-purple-10 dark:bg-purple-120 text-purple-70 dark:text-purple-40 hover:bg-purple-20 dark:hover:bg-purple-110 border border-purple-30 dark:border-purple-100';
 
@@ -187,7 +189,7 @@ const getColumns = (chainId: number) => [
     cell: ({ row }) => (
       <TableCellWrapper removeRightBorder className="p-3 justify-center">
         <Link
-          to={`${PagePath.RESTAKE_DEPOSIT}?${QueryParamKey.RESTAKE_ASSET_ID}=${row.original.tokenAddress}`}
+          to={`${PagePath.STAKING_DEPOSIT}?${QueryParamKey.STAKING_ASSET_ID}=${row.original.tokenAddress}`}
         >
           <Button
             size="sm"
@@ -202,23 +204,23 @@ const getColumns = (chainId: number) => [
   }),
 ];
 
-export const RestakingAssetsTable: FC<Props> = ({
+export const StakingAssetsTable: FC<Props> = ({
   assets,
-  restakingAssets,
+  stakingAssets,
   delegator,
   isLoading,
 }) => {
   const chainId = useChainId();
 
   const protocolAssetMap = useMemo(() => {
-    const map = new Map<string, RestakingAsset>();
-    restakingAssets?.forEach((asset) => {
+    const map = new Map<string, ProtocolStakingAsset>();
+    stakingAssets?.forEach((asset) => {
       map.set(asset.token.toLowerCase(), asset);
     });
     return map;
-  }, [restakingAssets]);
+  }, [stakingAssets]);
 
-  const tableData = useMemo<RestakeAssetRow[]>(() => {
+  const tableData = useMemo<StakingAssetRow[]>(() => {
     return assets.map((asset) => {
       const tokenKey = asset.id.toLowerCase();
       const position = delegator?.assetPositions.find(
@@ -263,7 +265,7 @@ export const RestakingAssetsTable: FC<Props> = ({
           getPaginationRowModel: getPaginationRowModel(),
           autoResetPageIndex: false,
           enableSortingRemoval: false,
-        }) satisfies TableOptions<RestakeAssetRow>,
+        }) satisfies TableOptions<StakingAssetRow>,
       [tableData, chainId],
     ),
   );
@@ -271,8 +273,8 @@ export const RestakingAssetsTable: FC<Props> = ({
   if (isLoading && tableData.length === 0) {
     return (
       <TableStatus
-        title="Loading Restake Assets"
-        description="Fetching available restake assets…"
+        title="Loading Stake Assets"
+        description="Fetching available stake assets…"
         icon={<Spinner size="lg" />}
       />
     );
@@ -281,8 +283,8 @@ export const RestakingAssetsTable: FC<Props> = ({
   if (tableData.length === 0) {
     return (
       <TableStatus
-        title="No Restake Assets"
-        description="No restaking assets are configured for this network."
+        title="No Stake Assets"
+        description="No staking assets are configured for this network."
       />
     );
   }
@@ -296,4 +298,4 @@ export const RestakingAssetsTable: FC<Props> = ({
   );
 };
 
-export default RestakingAssetsTable;
+export default StakingAssetsTable;

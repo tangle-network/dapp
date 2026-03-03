@@ -22,11 +22,11 @@ import useParamWithSchema from '@tangle-network/tangle-shared-ui/hooks/useParamW
 import { z } from 'zod';
 import { useAccount } from 'wagmi';
 
-const RestakeOperatorAction: FC<PropsWithChildren<{ address: string }>> = ({
+const StakingOperatorAction: FC<PropsWithChildren<{ address: string }>> = ({
   children,
 }) => {
   return (
-    <Link to={TangleDAppPagePath.RESTAKE_DELEGATE} target="_blank">
+    <Link to={TangleDAppPagePath.STAKING_DELEGATE} target="_blank">
       {children}
     </Link>
   );
@@ -113,7 +113,7 @@ const Page = () => {
         )}
 
         <OperatorsTable
-          RestakeOperatorAction={RestakeOperatorAction}
+          StakingOperatorAction={StakingOperatorAction}
           data={result.operators as any} // Type mismatch until OperatorsTable is updated for EVM
           isLoading={isLoading}
         />

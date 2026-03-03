@@ -11,7 +11,7 @@
 
 import capitalize from 'lodash/capitalize';
 import { useSnackbar } from 'notistack';
-import { useCallback, useState } from 'react';
+import { useCallback, useRef, useState } from 'react';
 import {
   Address,
   Hash,
@@ -224,7 +224,7 @@ export interface UseContractWriteOptions<TContext = void> {
   onError?: (error: Error, context: TContext) => void;
   getSuccessMessage?: (context: TContext) => string;
   /**
-   * Optional transaction name for the tx history store / UI (e.g. "restake deposit").
+   * Optional transaction name for the tx history store / UI (e.g. "stake deposit").
    * If omitted, falls back to the contract function name.
    */
   txName?: string;
@@ -276,6 +276,7 @@ const useContractWrite = <
   const [txHash, setTxHash] = useState<Hash | null>(null);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [result, setResult] = useState<TxResult | null>(null);
+  const submitLockRef = useRef(false);
 
   const { enqueueSnackbar } = useSnackbar();
   const activeAddress = useEvmAddress();
@@ -303,229 +304,273 @@ const useContractWrite = <
 
   const execute = useCallback(
     async (context: TContext): Promise<TxResult | null> => {
-      // Validation
-      if (activeAddress === null) {
-        console.warn('Cannot execute contract write: No active EVM address');
-        return null;
-      }
-
-      if (status === TxStatus.PROCESSING) {
+      if (submitLockRef.current) {
         console.warn(
           'Cannot execute contract write: Transaction already in progress',
         );
         return null;
       }
 
-      if (connectorClient === undefined) {
-        console.warn(
-          'Cannot execute contract write: Connector client not ready',
-        );
-        return null;
-      }
+      submitLockRef.current = true;
 
-      if (publicClient === undefined) {
-        console.warn(
-          'Cannot execute contract write: Public client not ready (check RPC config)',
-        );
-        return null;
-      }
+      const releaseSubmitLock = () => {
+        submitLockRef.current = false;
+      };
 
-      // Build the call config
-      const callConfig =
-        typeof factory === 'function'
-          ? await factory(context, activeAddress)
-          : factory;
-
-      if (callConfig === null) {
-        console.debug(
-          'Contract write factory returned null - dependencies not ready',
-        );
-        return null;
-      }
-
-      // Fast-fail with a helpful error if the target address is not a contract.
-      const bytecode = await publicClient.getBytecode({
-        address: callConfig.address,
-      });
-      if (bytecode === undefined || bytecode === null || bytecode === '0x') {
-        throw new Error(
-          `Target address ${callConfig.address} has no bytecode (wrong contract address for chain ${publicClient.chain?.id ?? 'unknown'})`,
-        );
-      }
-
-      // Reset state
-      setError(null);
-      setTxHash(null);
-      setResult(null);
-      setSuccessMessage(null);
-      setStatus(TxStatus.PROCESSING);
-
-      const enableTxHistory = options?.enableTxHistory !== false;
-      const txName = options?.txName ?? String(callConfig.functionName);
-
-      let submittedHash: Hash | null = null;
       try {
-        // Simulate the transaction first (via public RPC, not the wallet provider).
-        // This avoids wallet/provider-specific issues that can prevent the signing prompt.
-        type WriteRequest = Parameters<typeof writeContract>[1];
-        let request: WriteRequest | null = null;
-        let simulatedResult: unknown = undefined;
-
-        try {
-          const simulated = await simulateContract(publicClient, {
-            address: callConfig.address,
-            abi: abi as Abi,
-            functionName: callConfig.functionName as string,
-            args: callConfig.args as readonly unknown[],
-            value: callConfig.value,
-            account: activeAddress,
-          });
-          request = simulated.request as WriteRequest;
-          simulatedResult = simulated.result;
-        } catch (simulateError) {
-          // If simulation fails due to an RPC transport issue, fall back to sending directly.
-          // This preserves the normal "wallet pops up" UX in local/dev environments.
-          const message =
-            (simulateError as any)?.message ??
-            (simulateError as any)?.shortMessage ??
-            String(simulateError ?? '');
-          const looksLikeRpcFailure =
-            typeof message === 'string' &&
-            /rpc request failed|failed to fetch|networkerror|load failed/i.test(
-              message,
-            );
-
-          if (!looksLikeRpcFailure) {
-            throw simulateError;
-          }
-
-          request = null;
-        }
-
-        // Execute the transaction
-        const hash =
-          request !== null
-            ? await writeContract(connectorClient, request)
-            : await writeContract(connectorClient, {
-                address: callConfig.address,
-                abi: abi as Abi,
-                functionName: callConfig.functionName as string,
-                args: callConfig.args as readonly unknown[],
-                value: callConfig.value,
-                account: activeAddress,
-              });
-        submittedHash = hash;
-        setTxHash(hash);
-
-        if (enableTxHistory && networkId !== undefined) {
-          const details = toTxDetails(callConfig);
-          const extraDetails = options?.txDetails?.(context);
-          if (extraDetails) {
-            for (const [key, value] of extraDetails.entries()) {
-              details.set(key, value);
-            }
-          }
-
-          pushTx({
-            name: txName,
-            hash: hash as unknown as HexString,
-            origin: activeAddress,
-            network: networkId,
-            timestamp: Date.now(),
-            status: 'pending',
-            details,
-          });
-        }
-
-        // Ensure the pending state can render at least once before we patch to finalized/failed.
-        await new Promise((resolve) => setTimeout(resolve, 0));
-
-        // Wait for confirmation
-        const receipt = await waitForTransactionReceipt(publicClient, {
-          hash,
-          // TODO: Add configurable timeout
-        });
-
-        const txResult: TxResult = {
-          hash,
-          status: receipt.status,
-          blockNumber: receipt.blockNumber,
-          simulatedResult,
-        };
-
-        setResult(txResult);
-
-        if (receipt.status === 'success') {
-          setStatus(TxStatus.COMPLETE);
-          const successMsg =
-            options?.getSuccessMessage?.(context) ??
-            `${capitalize(txName)} successful`;
-          setSuccessMessage(successMsg);
-          enqueueSnackbar(successMsg, { variant: 'success' });
-          options?.onSuccess?.(txResult, context);
-
-          if (enableTxHistory && networkId !== undefined) {
-            patchTx(hash as unknown as HexString, { status: 'finalized' });
-          }
-        } else {
-          const revertError = new Error('Transaction reverted');
-          setStatus(TxStatus.ERROR);
-          setError(revertError);
-          enqueueSnackbar(
-            `${capitalize(txName)} failed: Transaction reverted`,
-            {
-              variant: 'error',
-            },
-          );
-          options?.onError?.(revertError, context);
-
-          if (enableTxHistory && networkId !== undefined) {
-            patchTx(hash as unknown as HexString, {
-              status: 'failed',
-              errorMessage: revertError.message,
-            });
-          }
-        }
-
-        return txResult;
-      } catch (possibleError) {
-        // Check for user cancellation first (before logging as error)
-        if (isUserRejectionError(possibleError)) {
-          enqueueSnackbar(`${capitalize(txName)} cancelled`, {
-            variant: 'warning',
-          });
-          setStatus(TxStatus.ERROR);
+        // Validation
+        if (activeAddress === null) {
+          console.warn('Cannot execute contract write: No active EVM address');
           return null;
         }
 
-        console.error('Contract write error:', possibleError);
-
-        const decodedCustomError = tryDecodeViemCustomError(
-          abi as Abi,
-          possibleError,
-        );
-        const error = decodedCustomError
-          ? new Error(`Execution reverted: ${decodedCustomError}`)
-          : ensureError(possibleError);
-        setStatus(TxStatus.ERROR);
-        setError(error);
-        enqueueSnackbar(`${capitalize(txName)} failed: ${error.message}`, {
-          variant: 'error',
-        });
-        options?.onError?.(error, context as TContext);
-
-        if (
-          enableTxHistory &&
-          submittedHash !== null &&
-          networkId !== undefined
-        ) {
-          patchTx(submittedHash as unknown as HexString, {
-            status: 'failed',
-            errorMessage: error.message,
-          });
+        if (status === TxStatus.PROCESSING) {
+          console.warn(
+            'Cannot execute contract write: Transaction already in progress',
+          );
+          return null;
         }
 
-        return null;
+        if (connectorClient === undefined) {
+          console.warn(
+            'Cannot execute contract write: Connector client not ready',
+          );
+          return null;
+        }
+
+        if (publicClient === undefined) {
+          console.warn(
+            'Cannot execute contract write: Public client not ready (check RPC config)',
+          );
+          return null;
+        }
+        const walletClient = connectorClient;
+        const rpcClient = publicClient;
+
+        const assertChainConsistency = (stage: string) => {
+          const walletChainId = walletClient.chain?.id;
+          const rpcChainId = rpcClient.chain?.id;
+
+          if (walletChainId === undefined || rpcChainId === undefined) {
+            throw new Error(
+              `Missing chain ID while ${stage} (wallet: ${walletChainId ?? 'unknown'}, RPC: ${rpcChainId ?? 'unknown'})`,
+            );
+          }
+
+          if (walletChainId !== rpcChainId) {
+            throw new Error(
+              `Wallet chain ${walletChainId} does not match RPC chain ${rpcChainId} while ${stage}`,
+            );
+          }
+        };
+
+        // Build the call config
+        const callConfig =
+          typeof factory === 'function'
+            ? await factory(context, activeAddress)
+            : factory;
+
+        if (callConfig === null) {
+          console.debug(
+            'Contract write factory returned null - dependencies not ready',
+          );
+          return null;
+        }
+
+        // Reset state
+        setError(null);
+        setTxHash(null);
+        setResult(null);
+        setSuccessMessage(null);
+        setStatus(TxStatus.PROCESSING);
+
+        const enableTxHistory = options?.enableTxHistory !== false;
+        const txName = options?.txName ?? String(callConfig.functionName);
+
+        let submittedHash: Hash | null = null;
+        try {
+          assertChainConsistency('simulating transaction');
+
+          // Fast-fail with a helpful error if the target address is not a contract.
+          const bytecode = await rpcClient.getBytecode({
+            address: callConfig.address,
+          });
+          if (
+            bytecode === undefined ||
+            bytecode === null ||
+            bytecode === '0x'
+          ) {
+            throw new Error(
+              `Target address ${callConfig.address} has no bytecode (wrong contract address for chain ${rpcClient.chain?.id ?? 'unknown'})`,
+            );
+          }
+
+          // Simulate the transaction first (via public RPC, not the wallet provider).
+          // This avoids wallet/provider-specific issues that can prevent the signing prompt.
+          type WriteRequest = Parameters<typeof writeContract>[1];
+          let request: WriteRequest | null = null;
+          let simulatedResult: unknown = undefined;
+
+          try {
+            const simulated = await simulateContract(rpcClient, {
+              address: callConfig.address,
+              abi: abi as Abi,
+              functionName: callConfig.functionName as string,
+              args: callConfig.args as readonly unknown[],
+              value: callConfig.value,
+              account: activeAddress,
+            });
+            request = simulated.request as WriteRequest;
+            simulatedResult = simulated.result;
+          } catch (simulateError) {
+            // If simulation fails due to an RPC transport issue, fall back to sending directly.
+            // This preserves the normal "wallet pops up" UX in local/dev environments.
+            const message =
+              (simulateError as any)?.message ??
+              (simulateError as any)?.shortMessage ??
+              String(simulateError ?? '');
+            const looksLikeRpcFailure =
+              typeof message === 'string' &&
+              /rpc request failed|failed to fetch|networkerror|load failed/i.test(
+                message,
+              );
+
+            if (!looksLikeRpcFailure) {
+              throw simulateError;
+            }
+
+            request = null;
+          }
+
+          // Execute the transaction
+          assertChainConsistency('submitting transaction');
+          const hash =
+            request !== null
+              ? await writeContract(walletClient, request)
+              : await writeContract(walletClient, {
+                  address: callConfig.address,
+                  abi: abi as Abi,
+                  functionName: callConfig.functionName as string,
+                  args: callConfig.args as readonly unknown[],
+                  value: callConfig.value,
+                  account: activeAddress,
+                });
+          submittedHash = hash;
+          setTxHash(hash);
+
+          if (enableTxHistory && networkId !== undefined) {
+            const details = toTxDetails(callConfig);
+            const extraDetails = options?.txDetails?.(context);
+            if (extraDetails) {
+              for (const [key, value] of extraDetails.entries()) {
+                details.set(key, value);
+              }
+            }
+
+            pushTx({
+              name: txName,
+              hash: hash as unknown as HexString,
+              origin: activeAddress,
+              network: networkId,
+              timestamp: Date.now(),
+              status: 'pending',
+              details,
+            });
+          }
+
+          // Ensure the pending state can render at least once before we patch to finalized/failed.
+          await new Promise((resolve) => setTimeout(resolve, 0));
+
+          // Wait for confirmation
+          assertChainConsistency('waiting for transaction receipt');
+          const receipt = await waitForTransactionReceipt(rpcClient, {
+            hash,
+            // TODO: Add configurable timeout
+          });
+
+          const txResult: TxResult = {
+            hash,
+            status: receipt.status,
+            blockNumber: receipt.blockNumber,
+            simulatedResult,
+          };
+
+          setResult(txResult);
+
+          if (receipt.status === 'success') {
+            setStatus(TxStatus.COMPLETE);
+            const successMsg =
+              options?.getSuccessMessage?.(context) ??
+              `${capitalize(txName)} successful`;
+            setSuccessMessage(successMsg);
+            enqueueSnackbar(successMsg, { variant: 'success' });
+            options?.onSuccess?.(txResult, context);
+
+            if (enableTxHistory && networkId !== undefined) {
+              patchTx(hash as unknown as HexString, { status: 'finalized' });
+            }
+          } else {
+            const revertError = new Error('Transaction reverted');
+            setStatus(TxStatus.ERROR);
+            setError(revertError);
+            enqueueSnackbar(
+              `${capitalize(txName)} failed: Transaction reverted`,
+              {
+                variant: 'error',
+              },
+            );
+            options?.onError?.(revertError, context);
+
+            if (enableTxHistory && networkId !== undefined) {
+              patchTx(hash as unknown as HexString, {
+                status: 'failed',
+                errorMessage: revertError.message,
+              });
+            }
+          }
+
+          return txResult;
+        } catch (possibleError) {
+          // Check for user cancellation first (before logging as error)
+          if (isUserRejectionError(possibleError)) {
+            enqueueSnackbar(`${capitalize(txName)} cancelled`, {
+              variant: 'warning',
+            });
+            setStatus(TxStatus.ERROR);
+            return null;
+          }
+
+          console.error('Contract write error:', possibleError);
+
+          const decodedCustomError = tryDecodeViemCustomError(
+            abi as Abi,
+            possibleError,
+          );
+          const error = decodedCustomError
+            ? new Error(`Execution reverted: ${decodedCustomError}`)
+            : ensureError(possibleError);
+          setStatus(TxStatus.ERROR);
+          setError(error);
+          enqueueSnackbar(`${capitalize(txName)} failed: ${error.message}`, {
+            variant: 'error',
+          });
+          options?.onError?.(error, context as TContext);
+
+          if (
+            enableTxHistory &&
+            submittedHash !== null &&
+            networkId !== undefined
+          ) {
+            patchTx(submittedHash as unknown as HexString, {
+              status: 'failed',
+              errorMessage: error.message,
+            });
+          }
+
+          return null;
+        }
+      } finally {
+        releaseSubmitLock();
       }
     },
     [

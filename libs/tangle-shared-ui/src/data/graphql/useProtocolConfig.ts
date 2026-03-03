@@ -7,6 +7,7 @@ import { useQuery } from '@tanstack/react-query';
 import { usePublicClient, useChainId } from 'wagmi';
 import MULTI_ASSET_DELEGATION_ABI from '../../abi/multiAssetDelegation';
 import { getContractsByChainId } from '@tangle-network/dapp-config/contracts';
+import { zeroAddress } from 'viem';
 
 // Protocol configuration
 export interface ProtocolConfig {
@@ -22,6 +23,70 @@ export interface ProtocolConfig {
   leaveOperatorsDelay: bigint;
 }
 
+const PROTOCOL_CONFIG_FUNCTIONS = [
+  'currentRound',
+  'roundDuration',
+  'delegationBondLessDelay',
+  'leaveDelegatorsDelay',
+  'leaveOperatorsDelay',
+] as const;
+
+type ProtocolConfigFunction = (typeof PROTOCOL_CONFIG_FUNCTIONS)[number];
+
+export type UnsupportedProtocolConfigReason =
+  | 'unknown_chain'
+  | 'missing_contract_address'
+  | 'missing_contract_bytecode'
+  | 'contract_read_failed';
+
+export type ProtocolConfigResult =
+  | ({ isSupported: true } & ProtocolConfig)
+  | {
+      isSupported: false;
+      reason: UnsupportedProtocolConfigReason;
+      contractAddress?: string;
+    };
+
+const asSupportedProtocolConfig = (
+  values: Map<ProtocolConfigFunction, bigint>,
+): ProtocolConfigResult | null => {
+  const currentRound = values.get('currentRound');
+  const roundDuration = values.get('roundDuration');
+  const delegationBondLessDelay = values.get('delegationBondLessDelay');
+  const leaveDelegatorsDelay = values.get('leaveDelegatorsDelay');
+  const leaveOperatorsDelay = values.get('leaveOperatorsDelay');
+
+  if (
+    currentRound === undefined ||
+    roundDuration === undefined ||
+    delegationBondLessDelay === undefined ||
+    leaveDelegatorsDelay === undefined ||
+    leaveOperatorsDelay === undefined
+  ) {
+    return null;
+  }
+
+  return {
+    isSupported: true,
+    currentRound,
+    roundDuration,
+    delegationBondLessDelay,
+    leaveDelegatorsDelay,
+    leaveOperatorsDelay,
+  };
+};
+
+const asUnsupportedProtocolConfig = (
+  reason: UnsupportedProtocolConfigReason,
+  contractAddress?: string,
+): ProtocolConfigResult => {
+  return {
+    isSupported: false,
+    reason,
+    contractAddress,
+  };
+};
+
 /**
  * Hook to fetch protocol configuration from the contract.
  *
@@ -33,188 +98,156 @@ export interface ProtocolConfig {
  * console.log(config?.leaveDelegatorsDelay); // Rounds until withdrawal is ready
  * ```
  */
-// Chain IDs where restaking contracts are deployed
-const RESTAKING_ENABLED_CHAINS = [31337]; // Only local for now
-
 export const useProtocolConfig = (options?: { enabled?: boolean }) => {
   const { enabled = true } = options ?? {};
   const publicClient = usePublicClient();
   const chainId = useChainId();
 
-  // Only fetch config on chains where contracts are deployed
-  const isRestakingChain = RESTAKING_ENABLED_CHAINS.includes(chainId);
-
-  return useQuery({
+  return useQuery<ProtocolConfigResult>({
     queryKey: ['protocolConfig', chainId, publicClient?.chain?.id],
     queryFn: async () => {
       if (!publicClient) {
         throw new Error('Public client not available');
       }
+      let contracts: ReturnType<typeof getContractsByChainId>;
 
-      if (!isRestakingChain) {
-        // Return default values for chains without restaking contracts
-        return {
-          currentRound: BigInt(0),
-          roundDuration: BigInt(7200), // 2 hours default
-          delegationBondLessDelay: BigInt(7),
-          leaveDelegatorsDelay: BigInt(7),
-          leaveOperatorsDelay: BigInt(7),
-        } satisfies ProtocolConfig;
+      try {
+        contracts = getContractsByChainId(chainId);
+      } catch {
+        return asUnsupportedProtocolConfig('unknown_chain');
       }
 
-      const contracts = getContractsByChainId(chainId);
-      const defaults = {
-        currentRound: BigInt(0),
-        roundDuration: BigInt(7200),
-        delegationBondLessDelay: BigInt(7),
-        leaveDelegatorsDelay: BigInt(7),
-        leaveOperatorsDelay: BigInt(7),
-      } satisfies ProtocolConfig;
+      const contractAddress = contracts.multiAssetDelegation;
+      if (contractAddress.toLowerCase() === zeroAddress) {
+        return asUnsupportedProtocolConfig(
+          'missing_contract_address',
+          contractAddress,
+        );
+      }
+
+      let bytecode: Awaited<ReturnType<typeof publicClient.getCode>>;
+      try {
+        bytecode = await publicClient.getCode({ address: contractAddress });
+      } catch {
+        return asUnsupportedProtocolConfig(
+          'contract_read_failed',
+          contractAddress,
+        );
+      }
+      if (!bytecode || bytecode === '0x') {
+        return asUnsupportedProtocolConfig(
+          'missing_contract_bytecode',
+          contractAddress,
+        );
+      }
 
       const readDirect = async (
-        functionName:
-          | 'currentRound'
-          | 'roundDuration'
-          | 'delegationBondLessDelay'
-          | 'leaveDelegatorsDelay'
-          | 'leaveOperatorsDelay',
+        functionName: ProtocolConfigFunction,
       ): Promise<bigint> => {
         return (await publicClient.readContract({
-          address: contracts.multiAssetDelegation,
+          address: contractAddress,
           abi: MULTI_ASSET_DELEGATION_ABI,
           functionName,
         })) as bigint;
       };
 
+      const readAllDirect = async (): Promise<ProtocolConfigResult | null> => {
+        const directResults = await Promise.allSettled(
+          PROTOCOL_CONFIG_FUNCTIONS.map((functionName) =>
+            readDirect(functionName),
+          ),
+        );
+        const values = new Map<ProtocolConfigFunction, bigint>();
+
+        directResults.forEach((result, index) => {
+          if (result.status === 'fulfilled') {
+            values.set(PROTOCOL_CONFIG_FUNCTIONS[index], result.value);
+          }
+        });
+
+        return asSupportedProtocolConfig(values);
+      };
+
       // If multicall3 isn't configured for this chain, fall back to individual calls.
       if (publicClient.chain?.contracts?.multicall3?.address === undefined) {
-        const [
-          currentRound,
-          roundDuration,
-          delegationBondLessDelay,
-          leaveDelegatorsDelay,
-          leaveOperatorsDelay,
-        ] = await Promise.allSettled([
-          readDirect('currentRound'),
-          readDirect('roundDuration'),
-          readDirect('delegationBondLessDelay'),
-          readDirect('leaveDelegatorsDelay'),
-          readDirect('leaveOperatorsDelay'),
-        ]);
+        const directConfig = await readAllDirect();
+        if (directConfig) {
+          return directConfig;
+        }
 
-        return {
-          currentRound:
-            currentRound.status === 'fulfilled'
-              ? currentRound.value
-              : defaults.currentRound,
-          roundDuration:
-            roundDuration.status === 'fulfilled'
-              ? roundDuration.value
-              : defaults.roundDuration,
-          delegationBondLessDelay:
-            delegationBondLessDelay.status === 'fulfilled'
-              ? delegationBondLessDelay.value
-              : defaults.delegationBondLessDelay,
-          leaveDelegatorsDelay:
-            leaveDelegatorsDelay.status === 'fulfilled'
-              ? leaveDelegatorsDelay.value
-              : defaults.leaveDelegatorsDelay,
-          leaveOperatorsDelay:
-            leaveOperatorsDelay.status === 'fulfilled'
-              ? leaveOperatorsDelay.value
-              : defaults.leaveOperatorsDelay,
-        } satisfies ProtocolConfig;
-      }
-
-      // Multicall to fetch all config values at once
-      const results = await publicClient.multicall({
-        contracts: [
-          {
-            address: contracts.multiAssetDelegation,
-            abi: MULTI_ASSET_DELEGATION_ABI,
-            functionName: 'currentRound',
-          },
-          {
-            address: contracts.multiAssetDelegation,
-            abi: MULTI_ASSET_DELEGATION_ABI,
-            functionName: 'roundDuration',
-          },
-          {
-            address: contracts.multiAssetDelegation,
-            abi: MULTI_ASSET_DELEGATION_ABI,
-            functionName: 'delegationBondLessDelay',
-          },
-          {
-            address: contracts.multiAssetDelegation,
-            abi: MULTI_ASSET_DELEGATION_ABI,
-            functionName: 'leaveDelegatorsDelay',
-          },
-          {
-            address: contracts.multiAssetDelegation,
-            abi: MULTI_ASSET_DELEGATION_ABI,
-            functionName: 'leaveOperatorsDelay',
-          },
-        ],
-      });
-
-      // Check for errors - only log in development
-      const errors = results.filter((r) => r.status === 'failure');
-      if (errors.length > 0 && process.env.NODE_ENV === 'development') {
-        console.debug(
-          'Failed to fetch some protocol config values (may not be deployed):',
-          errors.length,
+        return asUnsupportedProtocolConfig(
+          'contract_read_failed',
+          contractAddress,
         );
       }
 
-      // If multicall returned failures (e.g. broken multicall3), attempt direct reads for missing values.
-      const directResults = await Promise.allSettled(
-        [
-          results[0].status === 'failure' ? readDirect('currentRound') : null,
-          results[1].status === 'failure' ? readDirect('roundDuration') : null,
-          results[2].status === 'failure'
-            ? readDirect('delegationBondLessDelay')
-            : null,
-          results[3].status === 'failure'
-            ? readDirect('leaveDelegatorsDelay')
-            : null,
-          results[4].status === 'failure'
-            ? readDirect('leaveOperatorsDelay')
-            : null,
-        ].map((p) => p ?? Promise.resolve(null)),
-      );
+      // Multicall to fetch all config values at once
+      let results: Awaited<ReturnType<typeof publicClient.multicall>>;
+      try {
+        results = await publicClient.multicall({
+          contracts: PROTOCOL_CONFIG_FUNCTIONS.map((functionName) => ({
+            address: contractAddress,
+            abi: MULTI_ASSET_DELEGATION_ABI,
+            functionName,
+          })),
+        });
+      } catch {
+        const directConfig = await readAllDirect();
+        if (directConfig) {
+          return directConfig;
+        }
+        return asUnsupportedProtocolConfig(
+          'contract_read_failed',
+          contractAddress,
+        );
+      }
 
-      return {
-        currentRound:
-          results[0].status === 'success'
-            ? (results[0].result as bigint)
-            : directResults[0].status === 'fulfilled' && directResults[0].value
-              ? (directResults[0].value as bigint)
-              : defaults.currentRound,
-        roundDuration:
-          results[1].status === 'success'
-            ? (results[1].result as bigint)
-            : directResults[1].status === 'fulfilled' && directResults[1].value
-              ? (directResults[1].value as bigint)
-              : defaults.roundDuration,
-        delegationBondLessDelay:
-          results[2].status === 'success'
-            ? (results[2].result as bigint)
-            : directResults[2].status === 'fulfilled' && directResults[2].value
-              ? (directResults[2].value as bigint)
-              : defaults.delegationBondLessDelay,
-        leaveDelegatorsDelay:
-          results[3].status === 'success'
-            ? (results[3].result as bigint)
-            : directResults[3].status === 'fulfilled' && directResults[3].value
-              ? (directResults[3].value as bigint)
-              : defaults.leaveDelegatorsDelay,
-        leaveOperatorsDelay:
-          results[4].status === 'success'
-            ? (results[4].result as bigint)
-            : directResults[4].status === 'fulfilled' && directResults[4].value
-              ? (directResults[4].value as bigint)
-              : defaults.leaveOperatorsDelay,
-      } satisfies ProtocolConfig;
+      const values = new Map<ProtocolConfigFunction, bigint>();
+      const failedFunctions: ProtocolConfigFunction[] = [];
+      const typedResults = results as Array<
+        | { status: 'success'; result: bigint }
+        | { status: 'failure'; error: unknown }
+      >;
+
+      typedResults.forEach((result, index) => {
+        const functionName = PROTOCOL_CONFIG_FUNCTIONS[index];
+        if (result.status === 'success') {
+          values.set(functionName, result.result);
+          return;
+        }
+        failedFunctions.push(functionName);
+      });
+
+      // If multicall returned failures (e.g. broken multicall3), attempt direct reads for missing values.
+      if (failedFunctions.length > 0) {
+        const directFallbackResults = await Promise.allSettled(
+          failedFunctions.map((functionName) => readDirect(functionName)),
+        );
+
+        directFallbackResults.forEach((result, index) => {
+          if (result.status === 'fulfilled') {
+            values.set(failedFunctions[index], result.value);
+          }
+        });
+      }
+
+      const config = asSupportedProtocolConfig(values);
+      if (config) {
+        return config;
+      }
+
+      if (process.env.NODE_ENV === 'development') {
+        console.debug('Protocol config unsupported: read failures', {
+          chainId,
+          contractAddress,
+          failedFunctions,
+        });
+      }
+
+      return asUnsupportedProtocolConfig(
+        'contract_read_failed',
+        contractAddress,
+      );
     },
     enabled: enabled && !!publicClient,
     staleTime: 60_000, // 1 minute - config values rarely change
@@ -228,7 +261,7 @@ export const useProtocolConfig = (options?: { enabled?: boolean }) => {
 export const useWithdrawalDelay = () => {
   const { data: config, isLoading } = useProtocolConfig();
 
-  if (isLoading || !config) {
+  if (isLoading || !config || !config.isSupported) {
     return { delay: null, isLoading };
   }
 
@@ -249,7 +282,7 @@ export const useWithdrawalDelay = () => {
 export const useUndelegateDelay = () => {
   const { data: config, isLoading } = useProtocolConfig();
 
-  if (isLoading || !config) {
+  if (isLoading || !config || !config.isSupported) {
     return { delay: null, isLoading };
   }
 

@@ -3,36 +3,36 @@ import { Link, useLocation } from 'react-router';
 import { twMerge } from 'tailwind-merge';
 
 import { PagePath } from '../../types';
-import TabsList from '../../components/restaking/TabsList';
-import { RestakeTab, RestakeAction } from '../../constants';
+import TabsList from '../../components/staking/TabsList';
+import { StakingTab, StakingAction } from '../../constants';
 import { TabsRoot } from '@tangle-network/ui-components/components/Tabs';
 import { Typography } from '@tangle-network/ui-components/typography';
 
-const getTabRoute = (tab: RestakeTab): PagePath => {
+const getTabRoute = (tab: StakingTab): PagePath => {
   switch (tab) {
-    case RestakeTab.RESTAKE:
-      return PagePath.RESTAKE_DEPOSIT;
-    case RestakeTab.VAULTS:
-      return PagePath.RESTAKE_VAULT;
-    case RestakeTab.OPERATORS:
-      return PagePath.RESTAKE_OPERATOR;
-    case RestakeTab.BLUEPRINTS:
-      return PagePath.RESTAKE_BLUEPRINT;
-    case RestakeTab.REWARDS:
-      return PagePath.RESTAKE_REWARDS;
+    case StakingTab.STAKING:
+      return PagePath.STAKING_DEPOSIT;
+    case StakingTab.VAULTS:
+      return PagePath.STAKING_VAULT;
+    case StakingTab.OPERATORS:
+      return PagePath.STAKING_OPERATOR;
+    case StakingTab.BLUEPRINTS:
+      return PagePath.STAKING_BLUEPRINT;
+    case StakingTab.REWARDS:
+      return PagePath.STAKING_REWARDS;
   }
 };
 
-const RestakeTabs: FC = () => {
+const StakingTabs: FC = () => {
   const location = useLocation();
 
   const activeTab = useMemo(() => {
-    return Object.values(RestakeTab).find((tab) => {
-      const isRestakeAction = Object.values(RestakeAction).some((tabValue) =>
+    return Object.values(StakingTab).find((tab) => {
+      const isStakingAction = Object.values(StakingAction).some((tabValue) =>
         location.pathname.includes(tabValue),
       );
 
-      if (isRestakeAction && tab === RestakeTab.RESTAKE) {
+      if (isStakingAction && tab === StakingTab.STAKING) {
         return true;
       }
 
@@ -40,10 +40,18 @@ const RestakeTabs: FC = () => {
     });
   }, [location.pathname]);
 
+  const getTabLabel = (tab: StakingTab): string => {
+    if (tab === StakingTab.STAKING) {
+      return 'Stake';
+    }
+
+    return `${tab[0].toUpperCase()}${tab.substring(1)}`;
+  };
+
   return (
     <TabsRoot>
       <TabsList className="!bg-transparent space-x-8">
-        {Object.values(RestakeTab).map((tab, idx) => (
+        {Object.values(StakingTab).map((tab, idx) => (
           <Link
             to={getTabRoute(tab)}
             key={`${tab}-${idx}`}
@@ -55,7 +63,7 @@ const RestakeTabs: FC = () => {
             )}
           >
             <Typography variant="h5" fw="bold" className="!text-inherit">
-              {`${tab[0].toUpperCase()}${tab.substring(1)}`}
+              {getTabLabel(tab)}
             </Typography>
           </Link>
         ))}
@@ -64,4 +72,4 @@ const RestakeTabs: FC = () => {
   );
 };
 
-export default RestakeTabs;
+export default StakingTabs;

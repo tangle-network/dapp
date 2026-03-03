@@ -26,13 +26,14 @@ import addCommasToNumber from '@tangle-network/ui-components/utils/addCommasToNu
 import useServiceRequestSecurityRequirements from '../../../../data/services/useServiceRequestSecurityRequirements';
 import ExposureCommitmentInput from './ExposureCommitmentInput';
 import useEvmOperatorInfo from '../../../../hooks/useEvmOperatorInfo';
-import { useOperatorStakeByAsset } from '@tangle-network/tangle-shared-ui/data/restake/useOperatorDelegationsByAsset';
+import { useOperatorStakeByAsset } from '@tangle-network/tangle-shared-ui/data/staking';
 import {
   ServiceRequestSummary,
   BlueprintInfoCard,
 } from '../../../../components/ServiceRequestDetails';
 import type { Address } from 'viem';
 import { parseAddressLowercase } from '@tangle-network/tangle-shared-ui/utils/safeParseAddress';
+import ErrorMessage from '@tangle-network/tangle-shared-ui/components/ErrorMessage';
 
 interface ServiceRequestWithBlueprint extends ServiceRequest {
   blueprintData?: Blueprint;
@@ -88,8 +89,11 @@ const ServiceRequestDetailModal: FC<Props> = ({
     },
   );
 
-  const { data: requirements, isLoading: isLoadingRequirements } =
-    useServiceRequestSecurityRequirements(selectedRequest?.requestId);
+  const {
+    data: requirements,
+    isLoading: isLoadingRequirements,
+    error: requirementsError,
+  } = useServiceRequestSecurityRequirements(selectedRequest?.requestId);
 
   const assetsToQuery = useMemo(() => {
     if (!requirements || requirements.length === 0) {
@@ -254,7 +258,11 @@ const ServiceRequestDetailModal: FC<Props> = ({
             Reject
           </Button>
 
-          <Button variant="primary" onClick={handleApproveClick}>
+          <Button
+            variant="primary"
+            onClick={handleApproveClick}
+            isDisabled={isLoadingRequirements || requirementsError !== null}
+          >
             Approve
           </Button>
         </div>
@@ -334,6 +342,13 @@ const ServiceRequestDetailModal: FC<Props> = ({
               })}
             </div>
           )}
+
+          {!isLoadingRequirements && requirementsError && (
+            <ErrorMessage>
+              Unable to load security requirements from the contract. Verify
+              network selection and deployment addresses, then retry.
+            </ErrorMessage>
+          )}
         </form>
       </ModalBody>
 
@@ -355,6 +370,7 @@ const ServiceRequestDetailModal: FC<Props> = ({
             isApproving ||
             isLoadingRequirements ||
             isLoadingStake ||
+            requirementsError !== null ||
             !hasRequirements
           }
         >

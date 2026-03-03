@@ -11,13 +11,13 @@ import {
   shortenHex,
   Chip,
 } from '@tangle-network/ui-components';
-import { DelegationMode } from '@tangle-network/tangle-shared-ui/data/restake/useCanDelegate';
+import { DelegationMode } from '@tangle-network/tangle-shared-ui/data/staking/useCanDelegate';
 
 type Props = {
   /**
    * EVM operator address (H160).
    *
-   * This list item is used in the EVM restaking flow, so Substrate-style
+   * This list item is used in the EVM staking flow, so Substrate-style
    * formatting is intentionally avoided.
    */
   accountAddress: EvmAddress | string;

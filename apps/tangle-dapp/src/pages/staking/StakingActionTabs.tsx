@@ -4,37 +4,37 @@ import { useLocation } from 'react-router';
 import { twMerge } from 'tailwind-merge';
 
 import { PagePath } from '../../types';
-import TabListItem from '../../components/restaking/TabListItem';
-import TabsList from '../../components/restaking/TabsList';
-import { RestakeAction } from '../../constants';
+import TabListItem from '../../components/staking/TabListItem';
+import TabsList from '../../components/staking/TabsList';
+import { StakingAction } from '../../constants';
 
 type Props = PropsOf<'ul'>;
 
-const getTabRoute = (tab: RestakeAction): PagePath => {
+const getTabRoute = (tab: StakingAction): PagePath => {
   switch (tab) {
-    case RestakeAction.DEPOSIT:
-      return PagePath.RESTAKE_DEPOSIT;
-    case RestakeAction.DELEGATE:
-      return PagePath.RESTAKE_DELEGATE;
-    case RestakeAction.UNDELEGATE:
-      return PagePath.RESTAKE_UNDELEGATE;
-    case RestakeAction.WITHDRAW:
-      return PagePath.RESTAKE_WITHDRAW;
+    case StakingAction.DEPOSIT:
+      return PagePath.STAKING_DEPOSIT;
+    case StakingAction.DELEGATE:
+      return PagePath.STAKING_DELEGATE;
+    case StakingAction.UNDELEGATE:
+      return PagePath.STAKING_UNDELEGATE;
+    case StakingAction.WITHDRAW:
+      return PagePath.STAKING_WITHDRAW;
   }
 };
 
-const RestakeActionTabs: FC<Props> = (props) => {
+const StakingActionTabs: FC<Props> = (props) => {
   const location = useLocation();
 
   const activeTab = useMemo(() => {
-    return Object.values(RestakeAction).find(
+    return Object.values(StakingAction).find(
       (tab) => location.pathname === getTabRoute(tab),
     );
   }, [location.pathname]);
 
   return (
     <TabsList {...props} className={twMerge('mb-4', props.className)}>
-      {Object.values(RestakeAction).map((tab, idx) => (
+      {Object.values(StakingAction).map((tab, idx) => (
         <TabListItem
           href={getTabRoute(tab)}
           key={`${tab}-${idx}`}
@@ -42,7 +42,7 @@ const RestakeActionTabs: FC<Props> = (props) => {
           // Hide separator when the tab is directly previous to the active tab
           hideSeparator={
             activeTab &&
-            Object.values(RestakeAction).indexOf(activeTab) - 1 === idx
+            Object.values(StakingAction).indexOf(activeTab) - 1 === idx
           }
         >
           {`${tab[0].toUpperCase()}${tab.substring(1)}`}
@@ -52,4 +52,4 @@ const RestakeActionTabs: FC<Props> = (props) => {
   );
 };
 
-export default RestakeActionTabs;
+export default StakingActionTabs;

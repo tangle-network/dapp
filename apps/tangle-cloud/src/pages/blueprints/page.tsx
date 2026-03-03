@@ -1,5 +1,5 @@
 import { RowSelectionState } from '@tanstack/table-core';
-import RestakeBanner from '@tangle-network/tangle-shared-ui/components/blueprints/RestakeBanner';
+import StakingBanner from '@tangle-network/tangle-shared-ui/components/blueprints/StakingBanner';
 import {
   useAllBlueprints,
   useBlueprintsByOwner,
@@ -105,7 +105,7 @@ const Page: FC = () => {
 
   return (
     <div className="space-y-5">
-      <RestakeBanner
+      <StakingBanner
         title={hasOwnedBlueprints ? HAS_BLUEPRINTS_TITLE : ROLE_TITLE[role]}
         description={
           hasOwnedBlueprints

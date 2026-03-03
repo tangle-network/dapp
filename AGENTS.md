@@ -18,10 +18,11 @@
 
 ## Key code locations
 - App: `apps/tangle-dapp/` (Vite + React Router)
-- Restaking (EVM v2):
+- Staking (EVM v2):
   - GraphQL hooks: `libs/tangle-shared-ui/src/data/graphql/`
   - Tx hooks: `libs/tangle-shared-ui/src/data/tx/`
   - Write executor: `libs/tangle-shared-ui/src/hooks/useContractWrite.ts`
 - Seed scripts (Substrate dev):
   - `yarn script:setupServices` (create blueprints)
-  - `yarn script:setupRestaking` (LST/vault/operator fixtures)
+  - `yarn script:setupStaking` (LST/vault/operator staking fixtures)
+  - `yarn script:setupRestaking` (legacy alias)

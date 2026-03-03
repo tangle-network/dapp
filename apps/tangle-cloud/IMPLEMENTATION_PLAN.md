@@ -34,7 +34,7 @@ Based on comprehensive analysis of tnt-core smart contracts and current tangle-c
 | Priority | User Story | tnt-core Function | Status |
 |----------|------------|-------------------|--------|
 | ✅ | Register for blueprint | `registerOperator(blueprintId, ...)` | ✅ Done |
-| ✅ | Approve service request | `approveService(requestId, restakingPercent)` | ✅ Done |
+| ✅ | Approve service request | `approveService(requestId, commitments)` | ✅ Done |
 | ✅ | Reject service request | `rejectService(requestId)` | ✅ Done |
 | P0 | Submit job results | `submitResult(serviceId, callId, result)` | ❌ Missing |
 | P0 | View pending jobs | Job queue from indexer | ❌ Missing |
@@ -81,7 +81,7 @@ Based on comprehensive analysis of tnt-core smart contracts and current tangle-c
 
 ---
 
-### D. Delegators/Restakers (NEW ROLE - Not yet supported)
+### D. Delegators/Stakers (NEW ROLE - Not yet supported)
 
 | Priority | User Story | tnt-core Function | Status |
 |----------|------------|-------------------|--------|
@@ -97,9 +97,9 @@ Based on comprehensive analysis of tnt-core smart contracts and current tangle-c
 | P1 | View slashing impact | Slashing events | ❌ Missing |
 
 **Required Pages:**
-- `/restake` - Deposit/withdraw interface
-- `/restake/delegate` - Delegation management
-- `/restake/rewards` - Rewards dashboard
+- `/staking` - Deposit/withdraw interface
+- `/staking/delegate` - Delegation management
+- `/staking/rewards` - Rewards dashboard
 
 ---
 
@@ -118,7 +118,7 @@ Based on comprehensive analysis of tnt-core smart contracts and current tangle-c
    - Result submission form
    - Job completion status
 
-3. **Rewards Dashboard** (`/operator/rewards`, `/restake/rewards`)
+3. **Rewards Dashboard** (`/operator/rewards`, `/staking/rewards`)
    - Pending rewards display
    - Claim rewards button
    - Historical earnings
@@ -173,15 +173,15 @@ Based on comprehensive analysis of tnt-core smart contracts and current tangle-c
 
 ---
 
-### Phase 3: Delegator/Restaker Interface (P0) - 2 weeks
+### Phase 3: Delegator/Staker Interface (P0) - 2 weeks
 **Goal:** Enable staking and delegation
 
-1. **Restake Dashboard** (`/restake`)
+1. **Staking Dashboard** (`/staking`)
    - Deposit native/ERC20
    - View deposits and balances
    - Withdraw flow (schedule + execute)
 
-2. **Delegation Management** (`/restake/delegate`)
+2. **Delegation Management** (`/staking/delegate`)
    - Browse operators with stats
    - Delegate to operator
    - View active delegations
@@ -192,7 +192,7 @@ Based on comprehensive analysis of tnt-core smart contracts and current tangle-c
    - Fixed blueprint selection
 
 **New Hooks Required:**
-- `useDepositTx` - Deposit to restaking
+- `useDepositTx` - Deposit to staking
 - `useWithdrawTx` - Schedule/execute withdraw
 - `useDelegateTx` - Delegate to operator
 - `useUndelegateTx` - Undelegate from operator
@@ -278,7 +278,7 @@ Based on comprehensive analysis of tnt-core smart contracts and current tangle-c
 - Result submission (operators)
 - Rewards claiming (operators, delegators)
 - Blueprint creation (developers)
-- Deposit/withdraw/delegate (restakers)
+- Deposit/withdraw/delegate (stakers)
 
 ### Should Have (P1) - 3 weeks
 - Blueprint management (update, transfer, deactivate)
@@ -339,7 +339,7 @@ query DelegationsByOperator($operator: Address!) { ... }
 |-------|----------|--------------|
 | Phase 1 | 2 weeks | Job flow, rewards |
 | Phase 2 | 2 weeks | Blueprint creation |
-| Phase 3 | 2 weeks | Restaking/delegation |
+| Phase 3 | 2 weeks | Staking/delegation |
 | Phase 4 | 1 week | Operator settings |
 | Phase 5 | 1 week | Advanced deployment |
 | Phase 6 | 1 week | Dynamic membership, RFQ |

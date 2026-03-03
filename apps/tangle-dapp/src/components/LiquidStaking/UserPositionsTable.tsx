@@ -7,7 +7,7 @@ import HeaderCell from '@tangle-network/tangle-shared-ui/components/tables/Heade
 import TableCellWrapper from '@tangle-network/tangle-shared-ui/components/tables/TableCellWrapper';
 import TableStatus from '@tangle-network/tangle-shared-ui/components/tables/TableStatus';
 import { useLiquidDelegationVaults } from '@tangle-network/tangle-shared-ui/data/liquidDelegation';
-import { useRestakeAssets } from '@tangle-network/tangle-shared-ui/data/graphql';
+import { useStakingAssets } from '@tangle-network/tangle-shared-ui/data/graphql';
 import LIQUID_DELEGATION_VAULT_ABI from '@tangle-network/tangle-shared-ui/abi/liquidDelegationVault';
 import Button from '@tangle-network/ui-components/components/buttons/Button';
 import { Table } from '@tangle-network/ui-components/components/Table';
@@ -130,7 +130,7 @@ const COLUMNS = [
 const UserPositionsTable: FC = () => {
   const { address: userAddress } = useAccount();
   const { vaults, isLoading: isLoadingVaults } = useLiquidDelegationVaults();
-  const { assets } = useRestakeAssets();
+  const { assets } = useStakingAssets();
 
   // Build balance queries for all vaults
   const balanceContracts = useMemo(() => {

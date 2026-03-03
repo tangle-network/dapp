@@ -55,7 +55,7 @@ const TerminateConfirmationModal: FC<Props> = ({
 
   const instancesCount = blueprintStats?.instancesCount ?? 0;
   const operatorsCount = blueprintStats?.operatorsCount ?? 0;
-  const restakersCount = blueprintStats?.restakersCount ?? 0;
+  const stakersCount = blueprintStats?.stakersCount ?? 0;
 
   return (
     <ModalContent
@@ -83,7 +83,7 @@ const TerminateConfirmationModal: FC<Props> = ({
           }}
           instancesCount={instancesCount}
           operatorsCount={operatorsCount}
-          restakersCount={restakersCount}
+          stakersCount={stakersCount}
           isBoosted={false}
           category={selectedInstance.blueprintData?.category ?? ''}
           description={selectedInstance.blueprintData?.description ?? ''}

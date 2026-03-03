@@ -144,7 +144,7 @@ const DelegationCard: FC<DelegationCardProps> = ({ ownerAddress }) => {
             variant="body2"
             className="text-mono-120 dark:text-mono-80"
           >
-            Delegate your restaked ETH to an operator to earn rewards.
+            Delegate your staked ETH to an operator to earn rewards.
           </Typography>
 
           <div className="space-y-2">
@@ -217,7 +217,7 @@ const DelegationCard: FC<DelegationCardProps> = ({ ownerAddress }) => {
               variant="body3"
               className="text-yellow-600 dark:text-yellow-400"
             >
-              You need restaked shares to delegate. First verify your validator
+              You need staked shares to delegate. First verify your validator
               withdrawal credentials.
             </Typography>
           )}

@@ -10,9 +10,9 @@ import useContractWrite, {
   TxStatus,
 } from '@tangle-network/tangle-shared-ui/hooks/useContractWrite';
 import TANGLE_ABI from '@tangle-network/tangle-shared-ui/abi/tangle';
-import { getContractsByChainId } from '@tangle-network/dapp-config/contracts';
 import { useChainId } from 'wagmi';
 import type { ContractSecurityCommitment } from '../../types';
+import getContractsForChain from './getContractsForChain';
 
 export { TxStatus };
 
@@ -21,7 +21,7 @@ export { TxStatus };
  */
 export interface SimpleApproveParams {
   requestId: bigint;
-  restakingPercent: number;
+  stakingPercent: number;
 }
 
 /**
@@ -61,7 +61,7 @@ const hasSecurityCommitments = (
  * Hook for approving a service request.
  *
  * Uses the appropriate contract method based on provided parameters:
- * - `approveService` when only restakingPercent is provided (simple approval)
+ * - `approveService` when only stakingPercent is provided (simple approval)
  * - `approveServiceWithCommitments` when securityCommitments are provided
  *
  * @example
@@ -71,7 +71,7 @@ const hasSecurityCommitments = (
  * // Simple approval (no custom requirements)
  * await execute({
  *   requestId: 1n,
- *   restakingPercent: 50,
+ *   stakingPercent: 50,
  * });
  *
  * // Approval with commitments (custom requirements)
@@ -85,11 +85,15 @@ const hasSecurityCommitments = (
  */
 export const useServiceApproveTx = (options?: UseServiceApproveTxOptions) => {
   const chainId = useChainId();
-  const contracts = getContractsByChainId(chainId);
+  const contracts = getContractsForChain(chainId);
 
   const hook = useContractWrite(
     TANGLE_ABI,
     async (params: ServiceApproveParams, _activeAddress) => {
+      if (!contracts) {
+        return null;
+      }
+
       // Check if we have security commitments (commitments mode)
       if (hasSecurityCommitments(params)) {
         // Format commitments for the contract
@@ -111,16 +115,16 @@ export const useServiceApproveTx = (options?: UseServiceApproveTxOptions) => {
 
       // Simple approval mode
       const simpleParams = params as SimpleApproveParams;
-      const restakingPercent = Math.min(
+      const stakingPercent = Math.min(
         100,
-        Math.max(0, simpleParams.restakingPercent ?? 0),
+        Math.max(0, simpleParams.stakingPercent ?? 0),
       );
 
       return {
         address: contracts.tangle,
         abi: TANGLE_ABI,
         functionName: 'approveService' as const,
-        args: [params.requestId, restakingPercent] as const,
+        args: [params.requestId, stakingPercent] as const,
       };
     },
     {
@@ -136,7 +140,7 @@ export const useServiceApproveTx = (options?: UseServiceApproveTxOptions) => {
           );
         } else {
           const simpleParams = params as SimpleApproveParams;
-          details.set('Restaking Percent', `${simpleParams.restakingPercent}%`);
+          details.set('Staking Percent', `${simpleParams.stakingPercent}%`);
         }
 
         return details;

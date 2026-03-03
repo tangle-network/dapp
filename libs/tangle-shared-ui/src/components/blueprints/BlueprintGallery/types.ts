@@ -9,7 +9,7 @@ export type BlueprintItemProps = {
   description: string | null;
   instancesCount: number | null;
   operatorsCount: number | null;
-  restakersCount: number | null;
+  stakersCount?: number | null;
   tvl?: string | null;
   isBoosted?: boolean;
   category: string | null;

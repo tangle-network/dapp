@@ -18,7 +18,7 @@ import {
 import { useForm, Controller } from 'react-hook-form';
 import { useJoinServiceWithCommitmentsTx } from '../../../data/services/useJoinServiceWithCommitmentsTx';
 import { useServiceSecurityRequirements } from '../../../data/services/useServiceSecurityRequirements';
-import { useOperatorStakeByAsset } from '@tangle-network/tangle-shared-ui/data/restake/useOperatorDelegationsByAsset';
+import { useOperatorStakeByAsset } from '@tangle-network/tangle-shared-ui/data/staking';
 import useEvmOperatorInfo from '../../../hooks/useEvmOperatorInfo';
 import { ExposureCommitmentInput } from '../../instances/Instances/UpdateBlueprintModel/ExposureCommitmentInput';
 import ErrorMessage from '@tangle-network/tangle-shared-ui/components/ErrorMessage';
@@ -41,8 +41,11 @@ const toAssetMapKey = (tokenAddress: string): string => {
 const JoinServiceModal: FC<Props> = ({ serviceId, onClose }) => {
   const { operatorAddress } = useEvmOperatorInfo();
 
-  const { data: requirements, isLoading: isLoadingRequirements } =
-    useServiceSecurityRequirements(serviceId);
+  const {
+    data: requirements,
+    isLoading: isLoadingRequirements,
+    error: requirementsError,
+  } = useServiceSecurityRequirements(serviceId);
 
   const assetsToQuery = useMemo(() => {
     if (!requirements || requirements.length === 0) {
@@ -206,6 +209,13 @@ const JoinServiceModal: FC<Props> = ({ serviceId, onClose }) => {
               </div>
             )}
 
+            {!isLoading && requirementsError && (
+              <ErrorMessage>
+                Unable to load security requirements from the contract. Verify
+                network selection and deployment addresses, then retry.
+              </ErrorMessage>
+            )}
+
             {txError && <ErrorMessage>{txError.message}</ErrorMessage>}
           </div>
         </ModalBody>
@@ -218,7 +228,13 @@ const JoinServiceModal: FC<Props> = ({ serviceId, onClose }) => {
           <Button
             onClick={handleSubmit(handleFormSubmit)}
             isLoading={isJoining}
-            isDisabled={!isValid || isJoining || isLoading || !hasRequirements}
+            isDisabled={
+              !isValid ||
+              isJoining ||
+              isLoading ||
+              requirementsError !== null ||
+              !hasRequirements
+            }
           >
             {isJoining ? 'Joining...' : 'Join Service'}
           </Button>

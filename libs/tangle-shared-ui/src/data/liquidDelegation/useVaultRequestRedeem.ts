@@ -18,7 +18,7 @@ export interface VaultRequestRedeemParams {
 
 /**
  * Hook to request redemption from a LiquidDelegationVault.
- * Burns shares immediately and schedules unstake in the underlying restaking contract.
+ * Burns shares immediately and schedules unstake in the underlying staking contract.
  *
  * @example
  * ```tsx

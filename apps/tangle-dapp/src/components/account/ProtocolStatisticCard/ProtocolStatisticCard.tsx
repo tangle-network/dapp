@@ -1,7 +1,7 @@
 import { StatusIndicator } from '@tangle-network/icons';
 import { useOperators } from '@tangle-network/tangle-shared-ui/data/graphql/useOperators';
 import { useDelegatorCount } from '@tangle-network/tangle-shared-ui/data/graphql/useDelegator';
-import type { RestakingAsset } from '@tangle-network/tangle-shared-ui/data/graphql/useRestakingAssets';
+import type { ProtocolStakingAsset } from '@tangle-network/tangle-shared-ui/data/graphql';
 import {
   Card,
   CardVariant,
@@ -31,22 +31,22 @@ const formatLargeNumber = (num: number, decimals = 2): string => {
 type Props = {
   className?: string;
   isLoading: boolean;
-  restakingAssets: RestakingAsset[];
+  stakingAssets: ProtocolStakingAsset[];
   tvlData: { totalDeposits: bigint; assetCount: number } | null;
 };
 
 export const ProtocolStatisticCard: FC<Props> = ({
   className,
   isLoading,
-  restakingAssets,
+  stakingAssets,
   tvlData,
 }) => {
   const { data: operators, isLoading: isLoadingOperators } = useOperators({
     status: 'ACTIVE',
   });
 
-  // Get unique restaker (delegator) count
-  const { data: restakerCount, isLoading: isLoadingRestakers } =
+  // Get unique staker (delegator) count
+  const { data: stakerCount, isLoading: isLoadingStakers } =
     useDelegatorCount();
 
   // Calculate TVL display value
@@ -103,9 +103,9 @@ export const ProtocolStatisticCard: FC<Props> = ({
 
         <div className="grid grid-cols-3 gap-6 mt-auto">
           <StatsItem
-            label="Restakers"
-            result={restakerCount ?? null}
-            isLoading={isLoadingRestakers}
+            label="Stakers"
+            result={stakerCount ?? null}
+            isLoading={isLoadingStakers}
             displayLabelBottom
           />
 
@@ -118,7 +118,7 @@ export const ProtocolStatisticCard: FC<Props> = ({
 
           <StatsItem
             label="Assets"
-            result={restakingAssets.length}
+            result={stakingAssets.length}
             isLoading={isLoading}
             displayLabelBottom
           />

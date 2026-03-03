@@ -44,7 +44,7 @@ export default function randBlueprint(id: bigint) {
     description: randProductDescription(),
     instancesCount: randNumber({ min: 0, max: 100 }),
     operatorsCount: randNumber({ min: 1, max: 50 }),
-    restakersCount: randNumber({ min: 1, max: 50 }),
+    stakersCount: randNumber({ min: 1, max: 50 }),
     tvl: `$${randNumber({ min: 100, max: 1000000 }).toLocaleString()}`,
     isBoosted: randBoolean(),
     githubUrl: `https://github.com/tangle-network/${githubRepos[randNumber({ min: 0, max: githubRepos.length - 1 })]}`,

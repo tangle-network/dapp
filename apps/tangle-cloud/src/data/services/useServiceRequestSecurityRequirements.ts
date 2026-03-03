@@ -6,11 +6,11 @@
 import { useQuery } from '@tanstack/react-query';
 import { useChainId, usePublicClient } from 'wagmi';
 import { Address, zeroAddress } from 'viem';
-import { getContractsByChainId } from '@tangle-network/dapp-config/contracts';
 import TANGLE_ABI from '@tangle-network/tangle-shared-ui/abi/tangle';
 import { useEvmAssetMetadatas } from '@tangle-network/tangle-shared-ui/hooks/useEvmAssetMetadatas';
 import { useMemo } from 'react';
 import type { EvmAddress } from '@tangle-network/ui-components/types/address';
+import getContractsForChain from './getContractsForChain';
 
 // Default TNT requirement constants (must match contract)
 const DEFAULT_TNT_MIN_EXPOSURE_BPS = 1000; // 10%
@@ -67,7 +67,7 @@ interface UseServiceRequestSecurityRequirementsResult {
  * if (hasRequirements) {
  *   // Show per-asset commitment inputs
  * } else {
- *   // Show simple restaking percentage input
+ *   // Show simple staking percentage input
  * }
  * ```
  */
@@ -76,13 +76,13 @@ export const useServiceRequestSecurityRequirements = (
 ): UseServiceRequestSecurityRequirementsResult => {
   const chainId = useChainId();
   const publicClient = usePublicClient();
-  const contracts = getContractsByChainId(chainId);
+  const contracts = getContractsForChain(chainId);
 
   // Query TNT token address from contract
   const { data: tntTokenAddress, isLoading: isLoadingTntToken } = useQuery({
     queryKey: ['tntTokenAddress', chainId],
     queryFn: async () => {
-      if (!publicClient) {
+      if (!publicClient || !contracts || contracts.tangle === zeroAddress) {
         return null;
       }
 
@@ -103,7 +103,10 @@ export const useServiceRequestSecurityRequirements = (
         return null;
       }
     },
-    enabled: publicClient !== undefined,
+    enabled:
+      publicClient !== undefined &&
+      contracts !== null &&
+      contracts.tangle !== zeroAddress,
     staleTime: Infinity, // TNT token address doesn't change
   });
 
@@ -119,28 +122,29 @@ export const useServiceRequestSecurityRequirements = (
       chainId,
     ],
     queryFn: async () => {
-      if (!publicClient || requestId === undefined) {
+      if (
+        !publicClient ||
+        !contracts ||
+        contracts.tangle === zeroAddress ||
+        requestId === undefined
+      ) {
         return [];
       }
 
-      try {
-        const result = await publicClient.readContract({
-          address: contracts.tangle,
-          abi: TANGLE_ABI,
-          functionName: 'getServiceRequestSecurityRequirements',
-          args: [requestId],
-        });
+      const result = await publicClient.readContract({
+        address: contracts.tangle,
+        abi: TANGLE_ABI,
+        functionName: 'getServiceRequestSecurityRequirements',
+        args: [requestId],
+      });
 
-        return result as ContractSecurityRequirement[];
-      } catch (error) {
-        console.warn(
-          '[useServiceRequestSecurityRequirements] Failed to fetch requirements',
-          { requestId, error },
-        );
-        return [];
-      }
+      return result as ContractSecurityRequirement[];
     },
-    enabled: requestId !== undefined && publicClient !== undefined,
+    enabled:
+      requestId !== undefined &&
+      publicClient !== undefined &&
+      contracts !== null &&
+      contracts.tangle !== zeroAddress,
     staleTime: 30_000, // 30 seconds
   });
 

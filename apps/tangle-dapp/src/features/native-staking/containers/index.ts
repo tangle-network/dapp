@@ -1,1 +1,1 @@
-export { default as NativeRestakeContainer } from './NativeRestakeContainer';
+export { default as NativeStakingContainer } from './NativeStakingContainer';

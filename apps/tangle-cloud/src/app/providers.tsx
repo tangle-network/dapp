@@ -6,7 +6,6 @@ import { UIProvider } from '@tangle-network/ui-components';
 import {
   ANVIL_LOCAL_NETWORK,
   BASE_SEPOLIA_NETWORK,
-  BASE_NETWORK,
 } from '@tangle-network/ui-components/constants/networks';
 import useNetworkSync from '@tangle-network/tangle-shared-ui/hooks/useNetworkSync';
 import { IndexerStatusProvider } from '@tangle-network/tangle-shared-ui/context/IndexerStatusContext';
@@ -14,11 +13,7 @@ import { FC, type PropsWithChildren, useState } from 'react';
 import { WagmiProvider } from 'wagmi';
 
 // EVM networks available in tangle-cloud
-const TANGLE_CLOUD_NETWORKS = [
-  ANVIL_LOCAL_NETWORK,
-  BASE_SEPOLIA_NETWORK,
-  BASE_NETWORK,
-];
+const TANGLE_CLOUD_NETWORKS = [ANVIL_LOCAL_NETWORK, BASE_SEPOLIA_NETWORK];
 
 // Component to sync network store with wagmi chain
 const NetworkSync: FC<PropsWithChildren> = ({ children }) => {

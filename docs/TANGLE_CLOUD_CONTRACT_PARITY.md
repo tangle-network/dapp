@@ -217,7 +217,7 @@ apps/tangle-cloud/src/data/services/
 **🎉 MILESTONE:** After Flow 4, the core system works end-to-end!
 
 > **Nice-to-Have:**
-> - 4.4: Fix approval types to use `AssetSecurityCommitment[]` instead of `restakingPercent`
+> - 4.4: Fix approval types to use `AssetSecurityCommitment[]` instead of legacy `restakingPercent` (deprecated compatibility field)
 > - 4.5: Implement `approveServiceWithCommitments()` (approval with security commitments)
 > - 4.6: Update approval modal UI with commitment inputs
 >

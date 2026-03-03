@@ -44,7 +44,7 @@ export const useScheduleUndelegateTx = () => {
       args: [params.operator, params.token, params.amount] as const,
     }),
     {
-      txName: 'restake undelegate',
+      txName: 'stake undelegate',
       txDetails: (params) =>
         new Map([
           ['Operator', params.operator],
@@ -73,7 +73,7 @@ export const useExecuteUndelegateTx = () => {
       args: [] as const,
     }),
     {
-      txName: 'restake execute undelegate',
+      txName: 'stake execute undelegate',
       getSuccessMessage: () => 'Successfully executed undelegate',
     },
   );

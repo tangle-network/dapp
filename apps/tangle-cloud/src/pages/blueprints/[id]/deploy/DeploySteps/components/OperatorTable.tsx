@@ -123,13 +123,13 @@ export const OperatorTable: FC<Props> = ({ tableData, ...tableProps }) => {
         );
       },
     }),
-    COLUMN_HELPER.accessor('restakersCount', {
-      header: () => 'Restakers',
+    COLUMN_HELPER.accessor('stakersCount', {
+      header: () => 'Stakers',
       cell: (props) => {
         return (
           <TableCellWrapper className="pl-3 min-h-fit">
             <Typography variant="body1">
-              {props.row.original.restakersCount}
+              {props.row.original.stakersCount}
             </Typography>
           </TableCellWrapper>
         );

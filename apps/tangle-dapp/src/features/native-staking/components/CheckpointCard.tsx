@@ -1,4 +1,4 @@
-import { FC, useState } from 'react';
+import { FC, useCallback, useEffect, useState, type ChangeEvent } from 'react';
 import {
   Button,
   Card,
@@ -6,27 +6,135 @@ import {
   Typography,
 } from '@tangle-network/ui-components';
 import type { Address } from 'viem';
-import { usePodInfo, useStartCheckpoint } from '../hooks';
-import { gweiToEth } from '../types';
+import {
+  usePodInfo,
+  useStartCheckpoint,
+  useVerifyCheckpointProofs,
+} from '../hooks';
+import { CheckpointProofBundle, gweiToEth } from '../types';
 
 interface CheckpointCardProps {
   podAddress: Address;
 }
 
+const isHexString = (value: unknown): value is `0x${string}` =>
+  typeof value === 'string' && value.startsWith('0x') && value.length > 2;
+
+const isObjectRecord = (value: unknown): value is Record<string, unknown> =>
+  typeof value === 'object' && value !== null;
+
+const isCheckpointProofBundle = (
+  value: unknown,
+): value is CheckpointProofBundle => {
+  if (!isObjectRecord(value)) return false;
+
+  const { stateRootProof, balanceContainerProof, proofs } = value;
+  if (
+    !isObjectRecord(stateRootProof) ||
+    !isHexString(stateRootProof.beaconStateRoot) ||
+    !isHexString(stateRootProof.proof)
+  ) {
+    return false;
+  }
+
+  if (
+    !isObjectRecord(balanceContainerProof) ||
+    !isHexString(balanceContainerProof.balanceContainerRoot) ||
+    !isHexString(balanceContainerProof.proof)
+  ) {
+    return false;
+  }
+
+  if (!Array.isArray(proofs) || proofs.length === 0) return false;
+
+  return proofs.every(
+    (proof) =>
+      isObjectRecord(proof) &&
+      isHexString(proof.pubkeyHash) &&
+      isHexString(proof.balanceRoot) &&
+      isHexString(proof.proof),
+  );
+};
+
 const CheckpointCard: FC<CheckpointCardProps> = ({ podAddress }) => {
   const { data: podInfo, isLoading, refetch } = usePodInfo(podAddress);
-  const { startCheckpoint, isPending, isConfirming, isSuccess, error } =
-    useStartCheckpoint(podAddress);
+  const {
+    startCheckpoint,
+    isPending: isStartingCheckpoint,
+    isConfirming: isConfirmingStart,
+    isSuccess: isStartSuccess,
+    error: startError,
+  } = useStartCheckpoint(podAddress);
+  const {
+    verifyCheckpointProofs,
+    isPending: isSubmittingProofs,
+    isConfirming: isConfirmingProofs,
+    isSuccess: isProofSubmissionSuccess,
+    error: proofSubmissionError,
+  } = useVerifyCheckpointProofs(podAddress);
   const [revertIfNoBalance, setRevertIfNoBalance] = useState(false);
+  const [proofJson, setProofJson] = useState('');
+  const [parseError, setParseError] = useState<string | null>(null);
 
   const handleStartCheckpoint = () => {
     startCheckpoint(revertIfNoBalance);
   };
 
-  // Refetch after successful checkpoint start
-  if (isSuccess) {
-    setTimeout(() => refetch(), 2000);
-  }
+  const handleFileUpload = useCallback(
+    (event: ChangeEvent<HTMLInputElement>) => {
+      const file = event.target.files?.[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = (loadEvent) => {
+        const content = loadEvent.target?.result;
+        if (typeof content !== 'string') {
+          setParseError('Failed to parse uploaded file content.');
+          return;
+        }
+
+        setProofJson(content);
+        setParseError(null);
+      };
+      reader.onerror = () => {
+        setParseError('Failed to read uploaded file.');
+      };
+      reader.readAsText(file);
+    },
+    [],
+  );
+
+  const handleSubmitProofs = useCallback(() => {
+    if (!proofJson.trim()) {
+      setParseError('Upload or paste a checkpoint proof bundle first.');
+      return;
+    }
+
+    try {
+      const parsedJson: unknown = JSON.parse(proofJson);
+      if (!isCheckpointProofBundle(parsedJson)) {
+        setParseError(
+          'Invalid proof bundle format. Expected stateRootProof, balanceContainerProof, and proofs[].',
+        );
+        return;
+      }
+
+      setParseError(null);
+      verifyCheckpointProofs(parsedJson);
+    } catch {
+      setParseError('Invalid JSON format.');
+    }
+  }, [proofJson, verifyCheckpointProofs]);
+
+  useEffect(() => {
+    if (!isStartSuccess && !isProofSubmissionSuccess) return;
+
+    const timeoutId = setTimeout(() => {
+      void refetch();
+    }, 2000);
+
+    return () => clearTimeout(timeoutId);
+  }, [isStartSuccess, isProofSubmissionSuccess, refetch]);
 
   if (isLoading || !podInfo) {
     return (
@@ -122,10 +230,94 @@ const CheckpointCard: FC<CheckpointCardProps> = ({ podAddress }) => {
             </ol>
           </div>
 
-          {/* TODO: Add proof upload functionality */}
-          <Button variant="secondary" isDisabled>
-            Upload Checkpoint Proofs (Coming Soon)
-          </Button>
+          <div className="space-y-2">
+            <Typography variant="body2" fw="bold">
+              Upload Proof Bundle
+            </Typography>
+            <input
+              type="file"
+              accept=".json,application/json"
+              onChange={handleFileUpload}
+              className="block w-full text-sm text-mono-120 dark:text-mono-80
+                file:mr-4 file:py-2 file:px-4
+                file:rounded-lg file:border-0
+                file:text-sm file:font-medium
+                file:bg-blue-50 file:text-blue-700
+                dark:file:bg-blue-900/30 dark:file:text-blue-300
+                hover:file:bg-blue-100 dark:hover:file:bg-blue-900/50
+                cursor-pointer"
+            />
+          </div>
+
+          <div className="space-y-2">
+            <Typography variant="body2" className="text-mono-100">
+              Or paste JSON directly:
+            </Typography>
+            <textarea
+              value={proofJson}
+              onChange={(event) => {
+                setProofJson(event.target.value);
+                setParseError(null);
+              }}
+              placeholder='{"stateRootProof": {...}, "balanceContainerProof": {...}, "proofs": [...]}'
+              className="w-full h-32 p-3 text-sm font-mono rounded-lg border border-mono-40 dark:border-mono-140 bg-mono-0 dark:bg-mono-180 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+          </div>
+
+          {parseError && (
+            <div className="bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-300 p-3 rounded-lg">
+              <Typography variant="body2">{parseError}</Typography>
+            </div>
+          )}
+
+          {proofSubmissionError && (
+            <div className="bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-300 p-3 rounded-lg">
+              <Typography variant="body2">
+                Error:{' '}
+                {proofSubmissionError.message ||
+                  'Failed to submit checkpoint proofs'}
+              </Typography>
+            </div>
+          )}
+
+          {isProofSubmissionSuccess && (
+            <div className="bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-300 p-3 rounded-lg">
+              <Typography variant="body2">
+                Checkpoint proofs submitted successfully.
+              </Typography>
+            </div>
+          )}
+
+          <div className="flex gap-3">
+            <Button
+              variant="secondary"
+              onClick={() => {
+                setProofJson('');
+                setParseError(null);
+              }}
+              isDisabled={
+                (!proofJson && !parseError) ||
+                isSubmittingProofs ||
+                isConfirmingProofs
+              }
+            >
+              Clear
+            </Button>
+            <Button
+              isFullWidth
+              onClick={handleSubmitProofs}
+              isLoading={isSubmittingProofs || isConfirmingProofs}
+              isDisabled={
+                !proofJson.trim() || isSubmittingProofs || isConfirmingProofs
+              }
+            >
+              {isSubmittingProofs
+                ? 'Submitting...'
+                : isConfirmingProofs
+                  ? 'Confirming...'
+                  : 'Submit Checkpoint Proofs'}
+            </Button>
+          </div>
         </div>
       ) : (
         // No active checkpoint view
@@ -166,15 +358,15 @@ const CheckpointCard: FC<CheckpointCardProps> = ({ podAddress }) => {
             </label>
           </div>
 
-          {error && (
+          {startError && (
             <div className="bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-300 p-3 rounded-lg">
               <Typography variant="body2">
-                Error: {error.message || 'Failed to start checkpoint'}
+                Error: {startError.message || 'Failed to start checkpoint'}
               </Typography>
             </div>
           )}
 
-          {isSuccess && (
+          {isStartSuccess && (
             <div className="bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-300 p-3 rounded-lg">
               <Typography variant="body2">
                 Checkpoint started successfully!
@@ -185,12 +377,14 @@ const CheckpointCard: FC<CheckpointCardProps> = ({ podAddress }) => {
           <Button
             isFullWidth
             onClick={handleStartCheckpoint}
-            isLoading={isPending || isConfirming}
-            isDisabled={!canStartCheckpoint || isPending || isConfirming}
+            isLoading={isStartingCheckpoint || isConfirmingStart}
+            isDisabled={
+              !canStartCheckpoint || isStartingCheckpoint || isConfirmingStart
+            }
           >
-            {isPending
+            {isStartingCheckpoint
               ? 'Starting...'
-              : isConfirming
+              : isConfirmingStart
                 ? 'Confirming...'
                 : 'Start Checkpoint'}
           </Button>

@@ -1,8 +1,8 @@
 import { FC } from 'react';
-import { NativeRestakeContainer } from '../../features/native-restaking';
+import { NativeStakingContainer } from '../../features/native-staking';
 
-const NativeRestakePage: FC = () => {
-  return <NativeRestakeContainer />;
+const NativeStakingPage: FC = () => {
+  return <NativeStakingContainer />;
 };
 
-export default NativeRestakePage;
+export default NativeStakingPage;

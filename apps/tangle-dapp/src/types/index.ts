@@ -31,7 +31,6 @@ export enum PagePath {
   LIQUID_STAKING_VAULTS = '/liquid-staking/vaults',
   LIQUID_STAKING_POSITIONS = '/liquid-staking/positions',
   NATIVE_STAKING = '/native-staking',
-  NATIVE_STAKING_LEGACY = '/native-restaking', // Legacy deep-link alias
   NOT_FOUND = '/404',
 }
 

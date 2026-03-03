@@ -1,14 +1,14 @@
 import { FC, useCallback, useState } from 'react';
 import { Navigate, useParams } from 'react-router';
-import RestakeOverviewTabs from '../../containers/restaking/RestakeOverviewTabs';
+import StakingOverviewTabs from '../../containers/staking/StakingOverviewTabs';
 import { PagePath } from '../../types';
-import { RestakeAction } from '../../constants';
+import { StakingAction } from '../../constants';
 import isEnumValue from '../../utils/isEnumValue';
 
 // EVM hooks
 import { useOperatorMap } from '@tangle-network/tangle-shared-ui/data/graphql';
 
-const RestakePage: FC = () => {
+const StakingPage: FC = () => {
   const { action } = useParams();
   const [_refreshTrigger, setRefreshTrigger] = useState(0);
 
@@ -23,21 +23,21 @@ const RestakePage: FC = () => {
   }, [refetchOperators]);
 
   // If provided, make sure that the action parameter is valid.
-  if (action !== undefined && !isEnumValue(RestakeAction, action)) {
+  if (action !== undefined && !isEnumValue(StakingAction, action)) {
     return <Navigate to={PagePath.NOT_FOUND} />;
   } else if (action === undefined) {
-    return <Navigate to={PagePath.RESTAKE_DEPOSIT} />;
+    return <Navigate to={PagePath.STAKING_DEPOSIT} />;
   }
 
   return (
     <div className="space-y-7">
-      <RestakeOverviewTabs
+      <StakingOverviewTabs
         operatorMap={operatorMap ?? null}
-        action={action as RestakeAction}
+        action={action as StakingAction}
         onOperatorJoined={handleOperatorJoined}
       />
     </div>
   );
 };
 
-export default RestakePage;
+export default StakingPage;

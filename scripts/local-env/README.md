@@ -8,7 +8,7 @@ This directory contains scripts to run a fully simulatable local environment for
 |--------|-------------|
 | `start-local-env.sh` | Start Anvil, deploy TNT contracts, run indexer & claim relayer |
 | `deploy-migration.sh` | Deploy TangleMigration contracts for TNT token claims |
-| `activity-generator.mjs` | Generate simulated restaking activity |
+| `activity-generator.mjs` | Generate simulated staking activity |
 
 ## Prerequisites
 
@@ -36,7 +36,7 @@ This will:
 1. Start Anvil (local Ethereum node) on port 8545 with chain ID 31337
 2. Deploy all TNT contracts
 3. Deploy the migration contracts and copy proofs
-4. Register the TNT ERC20 as a restaking asset so it appears in the dApp
+4. Register the TNT ERC20 as a staking asset so it appears in the dApp
 5. Start the claim relayer for gasless migration claims (port 3001 by default)
 6. Start the Envio indexer with PostgreSQL
 7. Run initial activity generation
@@ -144,7 +144,7 @@ Other:
 
 The activity generator (`activity-generator.mjs`) simulates user activity:
 
-- **Deposits**: Native ETH deposits to the restaking protocol
+- **Deposits**: Native ETH deposits to the staking protocol
 - **Delegations**: Delegating deposited assets to operators
 - **Operator Registrations**: New operators joining the network
 
@@ -154,9 +154,9 @@ Activities are weighted:
 - 20% multi-deposits (batch)
 - 10% operator registrations
 
-## TNT as a Restaked Asset
+## TNT as a Staking Asset
 
-When `start-local-env.sh` runs (or when you resume a session) it automatically registers the TNT ERC20 token with the local `MultiAssetDelegation` contract. This ensures TNT shows up in the “Restake Assets” list inside the dApp and lets you restake the token immediately. If you redeploy contracts manually and need TNT again, rerun the local-env script (or `resume`) so it can re-register the asset.
+When `start-local-env.sh` runs (or when you resume a session) it automatically registers the TNT ERC20 token with the local `MultiAssetDelegation` contract. This ensures TNT shows up in the “Staking Assets” list inside the dApp and lets you stake the token immediately. If you redeploy contracts manually and need TNT again, rerun the local-env script (or `resume`) so it can re-register the asset.
 
 ## Querying the Indexer
 
@@ -171,7 +171,7 @@ curl http://localhost:8080/v1/graphql \
 # Get operators
 curl http://localhost:8080/v1/graphql \
   -H "Content-Type: application/json" \
-  -d '{"query": "{ operators { id restakingStake restakingStatus } }"}'
+  -d '{"query": "{ operators { id } }"}'
 
 # Get delegators with positions
 curl http://localhost:8080/v1/graphql \

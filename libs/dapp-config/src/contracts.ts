@@ -47,15 +47,15 @@ export const LOCAL_CONTRACTS: ContractAddresses = {
   liquidDelegationFactory: '0xc66ab83418c20a65c3f8e83b3d11c8c3a6097b6f', // Direct
 };
 
-// Base Sepolia testnet addresses (local development)
+// Base Sepolia testnet addresses (synced from tnt-core deployments/base-sepolia/latest.json)
 export const BASE_SEPOLIA_CONTRACTS: ContractAddresses = {
-  tangle: '0x62281eac026f6c6a65708157e47151b964216303',
-  multiAssetDelegation: '0x96e682cc18874ec6cdb1b2a7f0a5f541e1fbaeb3',
-  masterBlueprintServiceManager: '0x0000000000000000000000000000000000000000', // Not in base-sepolia manifest
-  operatorStatusRegistry: '0x17746107e0b4cfaf4c96140f5e501bf10e740b65',
-  rewardVaults: '0x37979744708141ec1541b9b70faa7da8d0cf2d23',
-  inflationPool: '0x8152f13c37576e1a2cd74d18213105ecf816d5de',
-  credits: '0x0000000000000000000000000000000000000000', // Set via env or future deploys
+  tangle: '0x1be58d12620ecc8ba9d780feec2596510d75a933',
+  multiAssetDelegation: '0x787dd1de4099ff8c68bfac11b82e4aed52c7f1e1',
+  masterBlueprintServiceManager: '0x1be58d12620ecc8ba9d780feec2596510d75a933', // Services are exposed on Tangle facets
+  operatorStatusRegistry: '0x20258c5e4cba66d4819a06045ff00d15775e64fb',
+  rewardVaults: '0x2963a51fec3e2cf51b19b848942d91296448a353',
+  inflationPool: '0xe620f87540724a0cebdee9796dd8580e02dd4911',
+  credits: '0x758226e04478541fcdac605e1f235e2956259a10',
   liquidDelegationFactory: '0xF8e31cb472bc70500f08Cd84917E5A1912Ec8397',
 };
 
@@ -95,8 +95,8 @@ export const ARBITRUM_ONE_CONTRACTS: ContractAddresses = {
   liquidDelegationFactory: '0x0000000000000000000000000000000000000000',
 };
 
-// Ethereum Mainnet - Only used for Native Restaking (ValidatorPod/ValidatorPodManager)
-// Regular restaking contracts are NOT deployed on Ethereum mainnet
+// Ethereum Mainnet - Only used for native staking (ValidatorPod/ValidatorPodManager)
+// Core staking/service contracts are not deployed on Ethereum mainnet
 export const ETHEREUM_MAINNET_CONTRACTS: ContractAddresses = {
   tangle: '0x0000000000000000000000000000000000000000',
   multiAssetDelegation: '0x0000000000000000000000000000000000000000',
@@ -108,8 +108,8 @@ export const ETHEREUM_MAINNET_CONTRACTS: ContractAddresses = {
   liquidDelegationFactory: '0x0000000000000000000000000000000000000000',
 };
 
-// Ethereum Holesky Testnet - Only used for Native Restaking (ValidatorPod/ValidatorPodManager)
-// Regular restaking contracts are NOT deployed on Holesky
+// Ethereum Holesky Testnet - Only used for native staking (ValidatorPod/ValidatorPodManager)
+// Core staking/service contracts are not deployed on Holesky
 export const ETHEREUM_HOLESKY_CONTRACTS: ContractAddresses = {
   tangle: '0x0000000000000000000000000000000000000000',
   multiAssetDelegation: '0x0000000000000000000000000000000000000000',
@@ -144,7 +144,7 @@ export const getContractsByChainId = (chainId: number): ContractAddresses => {
 };
 
 // Migration Claim contract addresses (to be updated after deployment)
-// These are separate from the main restaking contracts
+// These are separate from the main staking contracts
 
 export const BASE_SEPOLIA_MIGRATION: MigrationClaimAddresses = {
   tntToken: '0x0000000000000000000000000000000000000000', // To be deployed

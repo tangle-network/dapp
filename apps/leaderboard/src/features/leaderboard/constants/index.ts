@@ -1,6 +1,6 @@
 export enum BadgeEnum {
-  RESTAKE_DEPOSITOR = 'RESTAKE_DEPOSITOR',
-  RESTAKE_DELEGATOR = 'RESTAKE_DELEGATOR',
+  STAKE_DEPOSITOR = 'STAKE_DEPOSITOR',
+  STAKE_DELEGATOR = 'STAKE_DELEGATOR',
   LIQUID_STAKER = 'LIQUID_STAKER',
   OPERATOR = 'OPERATOR',
   BLUEPRINT_OWNER = 'BLUEPRINT_OWNER',
@@ -11,8 +11,8 @@ export enum BadgeEnum {
 export const BADGE_ICON_RECORD = {
   [BadgeEnum.LIQUID_STAKER]: '💧',
   [BadgeEnum.OPERATOR]: '🛠️',
-  [BadgeEnum.RESTAKE_DELEGATOR]: '💰',
-  [BadgeEnum.RESTAKE_DEPOSITOR]: '💸',
+  [BadgeEnum.STAKE_DELEGATOR]: '💰',
+  [BadgeEnum.STAKE_DEPOSITOR]: '💸',
   [BadgeEnum.BLUEPRINT_OWNER]: '🏗️',
   [BadgeEnum.SERVICE_PROVIDER]: '💻',
   [BadgeEnum.JOB_CALLER]: '💼',
@@ -20,30 +20,30 @@ export const BADGE_ICON_RECORD = {
 
 export enum RoleFilterEnum {
   OPERATOR = 'OPERATOR',
-  RESTAKER = 'RESTAKER',
+  STAKER = 'STAKER',
   DEVELOPER = 'DEVELOPER',
   CUSTOMER = 'CUSTOMER',
 }
 
 export const ROLE_FILTER_LABELS: Record<RoleFilterEnum, string> = {
   [RoleFilterEnum.OPERATOR]: 'Operator',
-  [RoleFilterEnum.RESTAKER]: 'Restaker',
+  [RoleFilterEnum.STAKER]: 'Staker',
   [RoleFilterEnum.DEVELOPER]: 'Developer',
   [RoleFilterEnum.CUSTOMER]: 'Customer',
 };
 
 export const ROLE_FILTER_ICONS: Record<RoleFilterEnum, string> = {
   [RoleFilterEnum.OPERATOR]: '🛠️',
-  [RoleFilterEnum.RESTAKER]: '💰',
+  [RoleFilterEnum.STAKER]: '💰',
   [RoleFilterEnum.DEVELOPER]: '🏗️',
   [RoleFilterEnum.CUSTOMER]: '💼',
 };
 
 export const ROLE_TO_BADGES: Record<RoleFilterEnum, BadgeEnum[]> = {
   [RoleFilterEnum.OPERATOR]: [BadgeEnum.OPERATOR],
-  [RoleFilterEnum.RESTAKER]: [
-    BadgeEnum.RESTAKE_DEPOSITOR,
-    BadgeEnum.RESTAKE_DELEGATOR,
+  [RoleFilterEnum.STAKER]: [
+    BadgeEnum.STAKE_DEPOSITOR,
+    BadgeEnum.STAKE_DELEGATOR,
     BadgeEnum.LIQUID_STAKER,
   ],
   [RoleFilterEnum.DEVELOPER]: [BadgeEnum.BLUEPRINT_OWNER],

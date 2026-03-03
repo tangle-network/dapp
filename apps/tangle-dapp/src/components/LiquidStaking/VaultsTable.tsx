@@ -9,7 +9,7 @@ import {
   useLiquidDelegationVaults,
   type LiquidDelegationVault,
 } from '@tangle-network/tangle-shared-ui/data/liquidDelegation';
-import { useRestakeAssets } from '@tangle-network/tangle-shared-ui/data/graphql';
+import { useStakingAssets } from '@tangle-network/tangle-shared-ui/data/graphql';
 import Button from '@tangle-network/ui-components/components/buttons/Button';
 import { Table } from '@tangle-network/ui-components/components/Table';
 import { TableVariant } from '@tangle-network/ui-components/components/Table/types';
@@ -128,7 +128,7 @@ const COLUMNS = [
 
 const LiquidDelegationVaultsTable: FC = () => {
   const { vaults, isLoading, error } = useLiquidDelegationVaults();
-  const { assets } = useRestakeAssets();
+  const { assets } = useStakingAssets();
 
   // Combine vault data with asset info
   const vaultsWithAssetInfo = useMemo<VaultWithAssetInfo[] | null>(() => {

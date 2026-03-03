@@ -138,7 +138,6 @@ interface SlashProposalsResponse {
 interface ProposableServicesResponse {
   Service: Array<{
     serviceId: string;
-    blueprint_id: string;
     owner: string;
     request: {
       operatorCandidates: string[];
@@ -691,7 +690,6 @@ const fetchProposableServices = async (
         order_by: { createdAt: desc }
       ) {
         serviceId
-        blueprint_id
         owner
         request {
           operatorCandidates
@@ -719,7 +717,7 @@ const fetchProposableServices = async (
   }
 
   return (response.data.Service ?? []).map((service) => {
-    const blueprintId = BigInt(service.blueprint_id);
+    const blueprintId = BigInt(service.blueprint?.blueprintId ?? '0');
 
     return {
       serviceId: BigInt(service.serviceId),

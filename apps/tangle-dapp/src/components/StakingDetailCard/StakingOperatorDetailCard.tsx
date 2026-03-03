@@ -7,7 +7,7 @@ import { Chip } from '@tangle-network/ui-components/components/Chip';
 import { KeyValueWithButton } from '@tangle-network/ui-components/components/KeyValueWithButton';
 import { shortenString } from '@tangle-network/ui-components/utils/shortenString';
 import { cloneElement, FC, ReactElement } from 'react';
-import RestakeDetailCard from './index';
+import StakingDetailCard from './index';
 import getDisplayValue from './utils';
 
 type Props = {
@@ -23,7 +23,7 @@ type Props = {
   location?: string;
 };
 
-const RestakeOperatorDetailCard: FC<Props> = ({
+const StakingOperatorDetailCard: FC<Props> = ({
   delegationCount,
   identityEmailLink,
   identityName,
@@ -36,8 +36,8 @@ const RestakeOperatorDetailCard: FC<Props> = ({
   location = 'Unknown',
 }) => {
   return (
-    <RestakeDetailCard.Root>
-      <RestakeDetailCard.Header
+    <StakingDetailCard.Root>
+      <StakingDetailCard.Header
         IconElement={
           <Avatar size="lg" value={operatorAccountId} theme="substrate" />
         }
@@ -51,15 +51,15 @@ const RestakeOperatorDetailCard: FC<Props> = ({
         descExternalLink={validatorExternalLink}
       />
 
-      <RestakeDetailCard.Body>
-        <RestakeDetailCard.Item title="Total Staked">
+      <StakingDetailCard.Body>
+        <StakingDetailCard.Item title="Total Staked">
           {getDisplayValue(totalStaked)}
-        </RestakeDetailCard.Item>
+        </StakingDetailCard.Item>
 
-        <RestakeDetailCard.Item title="Delegators">
+        <StakingDetailCard.Item title="Delegators">
           {getDisplayValue(delegationCount)}
-        </RestakeDetailCard.Item>
-      </RestakeDetailCard.Body>
+        </StakingDetailCard.Item>
+      </StakingDetailCard.Body>
 
       <div className="flex items-center justify-between">
         <div className="flex items-center self-start gap-2">
@@ -82,11 +82,11 @@ const RestakeOperatorDetailCard: FC<Props> = ({
           {location}
         </Chip>
       </div>
-    </RestakeDetailCard.Root>
+    </StakingDetailCard.Root>
   );
 };
 
-export default RestakeOperatorDetailCard;
+export default StakingOperatorDetailCard;
 
 const SocialLink: FC<{ href?: string; Icon: ReactElement }> = ({
   href,

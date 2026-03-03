@@ -8,7 +8,7 @@ const Details: FC = () => {
   const { data: config } = useProtocolConfig();
 
   const withdrawPeriod = useMemo(() => {
-    if (!config) {
+    if (!config || !config.isSupported) {
       return null;
     }
 

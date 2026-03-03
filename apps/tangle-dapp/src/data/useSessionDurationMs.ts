@@ -8,7 +8,7 @@ const useSessionDurationMs = (): number | null => {
   const { data: config, isLoading } = useProtocolConfig();
 
   return useMemo(() => {
-    if (!config || isLoading) {
+    if (!config || isLoading || !config.isSupported) {
       return null;
     }
 

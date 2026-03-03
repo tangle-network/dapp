@@ -8,7 +8,7 @@ import {
   Button,
 } from '@tangle-network/ui-components';
 import { useAccount } from 'wagmi';
-import { useRestakingOverview } from '@tangle-network/tangle-shared-ui/data/restake/useRestakingData';
+import { useStakingOverview } from '@tangle-network/tangle-shared-ui/data/staking';
 import { formatUnits } from 'viem';
 import { Link } from 'react-router';
 import { TangleDAppPagePath } from '../../../types';
@@ -25,8 +25,8 @@ export const TotalValueLockedTabs = () => {
   const [selectedTab, setSelectedTab] = useState(TotalValueLockedTab.TVL);
   const { isConnected } = useAccount();
 
-  // Use the unified restaking data hook
-  const { positions, isLoading } = useRestakingOverview();
+  // Use the primary staking data hook
+  const { positions, isLoading } = useStakingOverview();
 
   // Format positions for display
   const tvlData = positions.map((pos) => ({
@@ -71,9 +71,9 @@ export const TotalValueLockedTabs = () => {
             <Typography variant="body2" className="text-mono-80 text-center">
               Start by depositing assets to see your TVL
             </Typography>
-            <Link to={TangleDAppPagePath.RESTAKE}>
+            <Link to={TangleDAppPagePath.STAKING}>
               <Button variant="secondary" size="sm">
-                Go to Restake
+                Go to Stake
               </Button>
             </Link>
           </div>

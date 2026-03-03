@@ -17,13 +17,13 @@ import { useSearchParams } from 'react-router';
 import { parseUnits, formatUnits, Address, isAddress } from 'viem';
 import { useAccount, useReadContracts } from 'wagmi';
 import ErrorMessage from '@tangle-network/tangle-shared-ui/components/ErrorMessage';
-import ActionButtonBase from '../../../components/restaking/ActionButtonBase';
-import StyleContainer from '../../../components/restaking/StyleContainer';
-import { SUPPORTED_RESTAKE_DEPOSIT_TYPED_CHAIN_IDS } from '../../../constants/restake';
+import ActionButtonBase from '../../../components/staking/ActionButtonBase';
+import StyleContainer from '../../../components/staking/StyleContainer';
+import { SUPPORTED_STAKING_DEPOSIT_TYPED_CHAIN_IDS } from '../../../constants/staking';
 import useActiveTypedChainId from '../../../hooks/useActiveTypedChainId';
 import decimalsToStep from '../../../utils/decimalsToStep';
-import SupportedChainModal from '../../restake/SupportedChainModal';
-import useSwitchChain from '../../restake/useSwitchChain';
+import SupportedChainModal from '../../staking/SupportedChainModal';
+import useSwitchChain from '../../staking/useSwitchChain';
 import LiquidStakingActionTabs from '../LiquidStakingActionTabs';
 import {
   useLiquidDelegationVaults,
@@ -33,7 +33,7 @@ import {
 } from '@tangle-network/tangle-shared-ui/data/liquidDelegation';
 import {
   useLiquidRedeemRequests,
-  useRestakeAssets,
+  useStakingAssets,
   type LiquidRedeemRequest,
 } from '@tangle-network/tangle-shared-ui/data/graphql';
 import { TxStatus } from '@tangle-network/tangle-shared-ui/hooks/useContractWrite';
@@ -57,7 +57,7 @@ const LiquidStakingRedeemForm: FC = () => {
   const switchChain = useSwitchChain();
 
   const { vaults, isLoading: isLoadingVaults } = useLiquidDelegationVaults();
-  const { assets } = useRestakeAssets();
+  const { assets } = useStakingAssets();
   const { status: redeemStatus, execute: executeRedeem } =
     useVaultRequestRedeem();
   const { status: claimStatus, execute: executeClaim } = useVaultRedeem();
@@ -470,7 +470,7 @@ const LiquidStakingRedeemForm: FC = () => {
             {(isLoading, loadingText) => {
               const activeChainSupported =
                 isDefined(activeTypedChainId) &&
-                SUPPORTED_RESTAKE_DEPOSIT_TYPED_CHAIN_IDS.includes(
+                SUPPORTED_STAKING_DEPOSIT_TYPED_CHAIN_IDS.includes(
                   activeTypedChainId,
                 );
 

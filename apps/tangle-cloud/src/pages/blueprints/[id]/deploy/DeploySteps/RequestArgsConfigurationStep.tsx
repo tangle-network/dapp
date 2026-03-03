@@ -5,7 +5,7 @@ import ErrorMessage from '@tangle-network/tangle-shared-ui/components/ErrorMessa
 
 export const RequestArgsConfigurationStep: FC<
   RequestArgsConfigurationStepProps
-> = ({ errors, setValue, watch: _watch, blueprint }) => {
+> = ({ errors, setValue, watch: _watch, requestArgsCount }) => {
   const [jsonText, setJsonText] = useState<string>('');
 
   const handleJsonChange = useCallback(
@@ -44,12 +44,13 @@ export const RequestArgsConfigurationStep: FC<
         Request Arguments
       </Typography>
 
-      {!blueprint?.requestParams?.length ? (
+      {(requestArgsCount ?? 0) === 0 ? (
         <Typography variant="body1">No request arguments required.</Typography>
       ) : (
         <>
           <Typography variant="body2" className="mb-4">
-            Paste or upload a JSON array representing the request arguments.
+            Paste or upload a JSON array in the exact root-field order expected
+            by the blueprint request schema.
           </Typography>
 
           <textarea

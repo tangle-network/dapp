@@ -1,6 +1,6 @@
 /**
  * Hook to fetch delegator data from the Envio indexer.
- * Replaces the Substrate-based useRestakeDelegatorInfo hook.
+ * Replaces the Substrate-based useStakingDelegatorInfo hook.
  * Returns null if the indexer is unavailable.
  */
 
@@ -415,7 +415,7 @@ export const useDelegatorUndelegateRequests = (
   };
 };
 
-// Query to count all delegators (restakers)
+// Query to count all delegators (stakers)
 const DELEGATOR_COUNT_QUERY = gql`
   query DelegatorCount {
     Delegator {
@@ -428,7 +428,7 @@ interface DelegatorCountQueryResult {
   Delegator: Array<{ id: string }>;
 }
 
-// Hook to get the total count of unique restakers (delegators)
+// Hook to get the total count of unique stakers (delegators)
 export const useDelegatorCount = (options?: {
   network?: EnvioNetwork;
   enabled?: boolean;

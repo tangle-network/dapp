@@ -1,30 +1,30 @@
 import { ReactNode, useCallback, type FC } from 'react';
-import RestakeTabs from '../../pages/restake/RestakeTabs';
-import { RestakeAction, RestakeTab } from '../../constants';
-import DepositForm from '../../pages/restake/deposit/DepositForm';
-import RestakeWithdrawForm from '../../pages/restake/withdraw';
-import RestakeDelegateForm from '../../pages/restake/delegate';
-import RestakeUndelegateForm from '../../pages/restake/undelegate';
+import StakingTabs from '../../pages/staking/StakingTabs';
+import { StakingAction, StakingTab } from '../../constants';
+import DepositForm from '../../pages/staking/deposit/DepositForm';
+import StakingWithdrawForm from '../../pages/staking/withdraw';
+import StakingDelegateForm from '../../pages/staking/delegate';
+import StakingUndelegateForm from '../../pages/staking/undelegate';
 import BlueprintListing from '../../pages/blueprints/BlueprintListing';
-import { ClaimableRewardsCard } from '../../components/restaking';
+import { ClaimableRewardsCard } from '../../components/staking';
 import { useNavigate } from 'react-router';
 import { PagePath, QueryParamKey } from '../../types';
 import type { Address } from 'viem';
 import { NetworkGuard } from '../../components/NetworkGuard';
-import { RestakingAssetsTable } from '../../components/tables/RestakingAssetsTable';
+import { StakingAssetsTable } from '../../components/tables/StakingAssetsTable';
 import { OperatorsTable } from '../../components/tables/OperatorsTable';
 import {
-  RestakeProvider,
-  useOptionalRestakeContext,
-} from '@tangle-network/tangle-shared-ui/context/RestakeContext';
+  StakingProvider,
+  useOptionalStakingContext,
+} from '@tangle-network/tangle-shared-ui/context/StakingContext';
 import { Typography } from '@tangle-network/ui-components';
 import Spinner from '@tangle-network/icons/Spinner';
 import { useAccount } from 'wagmi';
 
-type RestakeTabOrAction = RestakeTab | RestakeAction;
+type StakingTabOrAction = StakingTab | StakingAction;
 
 type Props = {
-  tab: RestakeTabOrAction;
+  tab: StakingTabOrAction;
 };
 
 const LoadingSpinner: FC = () => (
@@ -32,7 +32,7 @@ const LoadingSpinner: FC = () => (
     <div className="flex flex-col items-center gap-4">
       <Spinner size="xl" />
       <Typography variant="body1" className="text-mono-120 dark:text-mono-80">
-        Loading restaking data...
+        Loading staking data...
       </Typography>
     </div>
   </div>
@@ -66,17 +66,17 @@ const RewardsTabContent: FC = () => {
   );
 };
 
-const RestakeTabContentInner: FC<Props> = ({ tab }) => {
+const StakingTabContentInner: FC<Props> = ({ tab }) => {
   const navigate = useNavigate();
 
   // Use optional context to handle HMR edge cases
-  const context = useOptionalRestakeContext();
+  const context = useOptionalStakingContext();
 
   // Must call useCallback before any conditional returns (React hooks rules)
   const handleDelegateClicked = useCallback(
     (operatorAddress: Address) => {
       navigate(
-        `${PagePath.RESTAKE_DELEGATE}?${QueryParamKey.RESTAKE_OPERATOR}=${operatorAddress}`,
+        `${PagePath.STAKING_DELEGATE}?${QueryParamKey.STAKING_OPERATOR}=${operatorAddress}`,
       );
     },
     [navigate],
@@ -86,45 +86,45 @@ const RestakeTabContentInner: FC<Props> = ({ tab }) => {
   if (!context) {
     return (
       <div className="space-y-9">
-        <RestakeTabs />
+        <StakingTabs />
         <LoadingSpinner />
       </div>
     );
   }
 
   const {
-    restakingAssets,
+    stakingAssets,
     assetList,
     delegator,
     operatorMap,
-    isLoadingRestakingAssets,
+    isLoadingStakingAssets,
     isLoadingAssets,
     isLoadingDelegator,
     isLoadingOperators,
   } = context;
 
-  const getRestakeTabContent = (action: RestakeTabOrAction): ReactNode => {
+  const getStakingTabContent = (action: StakingTabOrAction): ReactNode => {
     switch (action) {
-      case RestakeAction.DEPOSIT:
+      case StakingAction.DEPOSIT:
         return <DepositForm />;
-      case RestakeAction.WITHDRAW:
-        return <RestakeWithdrawForm />;
-      case RestakeAction.DELEGATE:
-        return <RestakeDelegateForm />;
-      case RestakeAction.UNDELEGATE:
-        return <RestakeUndelegateForm />;
-      case RestakeTab.VAULTS:
+      case StakingAction.WITHDRAW:
+        return <StakingWithdrawForm />;
+      case StakingAction.DELEGATE:
+        return <StakingDelegateForm />;
+      case StakingAction.UNDELEGATE:
+        return <StakingUndelegateForm />;
+      case StakingTab.VAULTS:
         return (
-          <RestakingAssetsTable
+          <StakingAssetsTable
             assets={assetList}
-            restakingAssets={restakingAssets ?? []}
+            stakingAssets={stakingAssets ?? []}
             delegator={delegator}
             isLoading={
-              isLoadingRestakingAssets || isLoadingAssets || isLoadingDelegator
+              isLoadingStakingAssets || isLoadingAssets || isLoadingDelegator
             }
           />
         );
-      case RestakeTab.OPERATORS:
+      case StakingTab.OPERATORS:
         return (
           <OperatorsTable
             operatorMap={operatorMap}
@@ -132,40 +132,40 @@ const RestakeTabContentInner: FC<Props> = ({ tab }) => {
             onDelegateClicked={handleDelegateClicked}
           />
         );
-      case RestakeTab.BLUEPRINTS:
+      case StakingTab.BLUEPRINTS:
         return <BlueprintListing />;
-      case RestakeTab.REWARDS:
+      case StakingTab.REWARDS:
         return <RewardsTabContent />;
     }
   };
 
   // Check if this is an action tab (needs centered layout)
-  const isActionTab = Object.values(RestakeAction).includes(
-    tab as RestakeAction,
+  const isActionTab = Object.values(StakingAction).includes(
+    tab as StakingAction,
   );
 
   return (
     <div className="space-y-9">
-      <RestakeTabs />
+      <StakingTabs />
       {isActionTab ? (
         <div className="flex justify-center max-w-5xl mx-auto">
-          {getRestakeTabContent(tab)}
+          {getStakingTabContent(tab)}
         </div>
       ) : (
-        getRestakeTabContent(tab)
+        getStakingTabContent(tab)
       )}
     </div>
   );
 };
 
-const RestakeTabContent: FC<Props> = ({ tab }) => {
+const StakingTabContent: FC<Props> = ({ tab }) => {
   return (
     <NetworkGuard>
-      <RestakeProvider>
-        <RestakeTabContentInner tab={tab} />
-      </RestakeProvider>
+      <StakingProvider>
+        <StakingTabContentInner tab={tab} />
+      </StakingProvider>
     </NetworkGuard>
   );
 };
 
-export default RestakeTabContent;
+export default StakingTabContent;

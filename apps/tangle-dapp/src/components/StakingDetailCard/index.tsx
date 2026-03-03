@@ -14,11 +14,11 @@ import { twMerge } from 'tailwind-merge';
 
 type ElementBase = string | JSXElementConstructor<any>;
 
-type RestakeDetailCardRootProps = ComponentProps<'div'>;
+type StakingDetailCardRootProps = ComponentProps<'div'>;
 
-const RestakeDetailCardRoot = forwardRef<
+const StakingDetailCardRoot = forwardRef<
   HTMLDivElement,
-  RestakeDetailCardRootProps
+  StakingDetailCardRootProps
 >(({ className, children, ...props }, ref) => {
   return (
     <div
@@ -34,9 +34,9 @@ const RestakeDetailCardRoot = forwardRef<
   );
 });
 
-RestakeDetailCardRoot.displayName = 'RestakeDetailCardRoot';
+StakingDetailCardRoot.displayName = 'StakingDetailCardRoot';
 
-type RestakeDetailCardHeaderProps<
+type StakingDetailCardHeaderProps<
   IconProps,
   RightElementProps,
   IconElement extends ElementBase = ElementBase,
@@ -49,7 +49,7 @@ type RestakeDetailCardHeaderProps<
   RightElement?: ReactElement<RightElementProps, RightElement>;
 };
 
-const RestakeDetailCardHeader = forwardRef(
+const StakingDetailCardHeader = forwardRef(
   <
     IconProps,
     RightElementProps,
@@ -64,7 +64,7 @@ const RestakeDetailCardHeader = forwardRef(
       RightElement,
       IconElement,
       ...props
-    }: RestakeDetailCardHeaderProps<
+    }: StakingDetailCardHeaderProps<
       IconProps,
       RightElementProps,
       IconEl,
@@ -128,13 +128,13 @@ const RestakeDetailCardHeader = forwardRef(
   },
 );
 
-RestakeDetailCardHeader.displayName = 'RestakeDetailCardHeader';
+StakingDetailCardHeader.displayName = 'StakingDetailCardHeader';
 
-type RestakeDetailCardBodyProps = ComponentProps<'div'>;
+type StakingDetailCardBodyProps = ComponentProps<'div'>;
 
-const RestakeDetailCardBody = forwardRef<
+const StakingDetailCardBody = forwardRef<
   HTMLDivElement,
-  RestakeDetailCardBodyProps
+  StakingDetailCardBodyProps
 >(({ className, children, ...props }, ref) => {
   return (
     <div
@@ -147,16 +147,16 @@ const RestakeDetailCardBody = forwardRef<
   );
 });
 
-RestakeDetailCardBody.displayName = 'RestakeDetailCardBody';
+StakingDetailCardBody.displayName = 'StakingDetailCardBody';
 
-type RestakeDetailCardItemProps = ComponentProps<'div'> & {
+type StakingDetailCardItemProps = ComponentProps<'div'> & {
   title: string;
   tooltip?: ReactNode;
 };
 
-const RestakeDetailCardItem = forwardRef<
+const StakingDetailCardItem = forwardRef<
   HTMLDivElement,
-  RestakeDetailCardItemProps
+  StakingDetailCardItemProps
 >(({ className, title, tooltip, children, ...props }, ref) => {
   return (
     <div {...props} className={twMerge('space-y-1 grow', className)} ref={ref}>
@@ -182,30 +182,30 @@ const RestakeDetailCardItem = forwardRef<
   );
 });
 
-RestakeDetailCardItem.displayName = 'RestakeDetailCardItem';
+StakingDetailCardItem.displayName = 'StakingDetailCardItem';
 
-const RestakeDetailCard = Object.assign(
+const StakingDetailCard = Object.assign(
   {},
   {
-    Root: RestakeDetailCardRoot,
-    Header: RestakeDetailCardHeader,
-    Body: RestakeDetailCardBody,
-    Item: RestakeDetailCardItem,
+    Root: StakingDetailCardRoot,
+    Header: StakingDetailCardHeader,
+    Body: StakingDetailCardBody,
+    Item: StakingDetailCardItem,
   },
 );
 
 export type {
-  RestakeDetailCardBodyProps,
-  RestakeDetailCardHeaderProps,
-  RestakeDetailCardItemProps,
-  RestakeDetailCardRootProps,
+  StakingDetailCardBodyProps,
+  StakingDetailCardHeaderProps,
+  StakingDetailCardItemProps,
+  StakingDetailCardRootProps,
 };
 
 export {
-  RestakeDetailCardBody,
-  RestakeDetailCardHeader,
-  RestakeDetailCardItem,
-  RestakeDetailCardRoot,
+  StakingDetailCardBody,
+  StakingDetailCardHeader,
+  StakingDetailCardItem,
+  StakingDetailCardRoot,
 };
 
-export default RestakeDetailCard;
+export default StakingDetailCard;

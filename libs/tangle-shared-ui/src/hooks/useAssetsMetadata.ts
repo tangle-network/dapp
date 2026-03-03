@@ -1,17 +1,17 @@
 import { isEvmAddress } from '@tangle-network/ui-components';
-import { EvmAddress } from '@tangle-network/ui-components/types/address';
+import type { EvmAddress } from '@tangle-network/ui-components/types/address';
 import { useCallback, useMemo } from 'react';
 import { map } from 'rxjs';
-import { RestakeAssetId } from '../types';
-import { PrimitiveAssetMetadata } from '../types/restake';
+import type { StakingAssetId } from '../types';
+import type { PrimitiveStakingAssetMetadata } from '../types/staking';
 import useApiRx from './useApiRx';
 import { useEvmAssetMetadatas } from './useEvmAssetMetadatas';
 
 const useAssetsMetadata = (
-  singleOrMultipleAssetIds: RestakeAssetId | RestakeAssetId[],
+  singleOrMultipleAssetIds: StakingAssetId | StakingAssetId[],
 ) => {
   const { evmAssetIds, nativeAssetIds } = useMemo(() => {
-    let assets: RestakeAssetId[] = [];
+    let assets: StakingAssetId[] = [];
     if (Array.isArray(singleOrMultipleAssetIds)) {
       assets = singleOrMultipleAssetIds;
     } else {
@@ -30,7 +30,7 @@ const useAssetsMetadata = (
       },
       {
         evmAssetIds: new Array<EvmAddress>(),
-        nativeAssetIds: new Array<RestakeAssetId>(),
+        nativeAssetIds: new Array<StakingAssetId>(),
       },
     );
 
@@ -78,8 +78,8 @@ const useAssetsMetadata = (
     }
 
     const assetsMetadataMap = new Map<
-      RestakeAssetId,
-      PrimitiveAssetMetadata | null
+      StakingAssetId,
+      PrimitiveStakingAssetMetadata | null
     >();
 
     if (nativeAssetMetadatas) {

@@ -72,7 +72,7 @@ const determineBadges = (activity?: ActivityData): BadgeEnum[] => {
     ) ?? false;
 
   if (hasDeposited) {
-    badges.push(BadgeEnum.RESTAKE_DEPOSITOR);
+    badges.push(BadgeEnum.STAKE_DEPOSITOR);
   }
 
   // Check for delegations
@@ -82,7 +82,7 @@ const determineBadges = (activity?: ActivityData): BadgeEnum[] => {
     ) ?? false;
 
   if (hasDelegated) {
-    badges.push(BadgeEnum.RESTAKE_DELEGATOR);
+    badges.push(BadgeEnum.STAKE_DELEGATOR);
   }
 
   // Check for liquid vault positions

@@ -33,15 +33,15 @@ export const TANGLE_MKT_URL = 'https://tangle.tools';
 export const TANGLE_PRESS_KIT_URL = 'https://www.tangle.tools/press-kit';
 export const TANGLE_DOCS_URL = 'https://docs.tangle.tools/';
 export const TANGLE_DOCS_STAKING_URL =
-  'https://docs.tangle.tools/restake/staking-intro';
+  'https://docs.tangle.tools/staking/introduction';
 export const TANGLE_DOCS_LIQUID_STAKING_URL =
-  'https://docs.tangle.tools/restake/lst-concepts';
+  'https://docs.tangle.tools/staking/liquid-staking/introduction';
 export const TANGLE_DOCS_LS_CREATE_POOL_URL =
-  'https://docs.tangle.tools/restake/create_a_pool/lst-pool-create-tangle';
+  'https://docs.tangle.tools/staking/liquid-staking/staking-flow';
 export const TANGLE_DOCS_LS_UPDATE_ROLES_URL =
-  'https://docs.tangle.tools/restake/create_a_pool/pool-roles#roles-in-a-liquid-staking-pool';
-export const TANGLE_DOCS_RESTAKING_URL =
-  'https://docs.tangle.tools/restake/restake-introduction';
+  'https://docs.tangle.tools/staking/liquid-staking/factory-and-discovery';
+export const TANGLE_DOCS_STAKING_CONCEPTS_URL =
+  'https://docs.tangle.tools/staking/how-staking-works';
 export const TANGLE_GITHUB_URL = 'https://github.com/tangle-network/tangle';
 
 export const WEBB_WHITEPAPER_URL = 'https://eprint.iacr.org/2023/260';

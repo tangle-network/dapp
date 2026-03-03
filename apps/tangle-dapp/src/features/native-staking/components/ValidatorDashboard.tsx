@@ -122,10 +122,10 @@ const ValidatorLookup: FC<{ podAddress: Address }> = ({ podAddress }) => {
               variant="body2"
               className="text-mono-120 dark:text-mono-80"
             >
-              Restaked Balance
+              Staked Balance
             </Typography>
             <Typography variant="body1" fw="bold">
-              {gweiToEth(validatorInfo.restakedBalanceGwei)} ETH
+              {gweiToEth(validatorInfo.stakedBalanceGwei)} ETH
             </Typography>
           </div>
 
@@ -209,10 +209,10 @@ const ValidatorDashboard: FC<ValidatorDashboardProps> = ({ podAddress }) => {
               variant="body2"
               className="text-mono-120 dark:text-mono-80"
             >
-              Total Restaked
+              Total Staked
             </Typography>
             <Typography variant="h5" fw="bold">
-              {gweiToEth(podInfo.totalRestakedBalanceGwei)} ETH
+              {gweiToEth(podInfo.totalStakedBalanceGwei)} ETH
             </Typography>
           </div>
           <div>
@@ -220,18 +220,18 @@ const ValidatorDashboard: FC<ValidatorDashboardProps> = ({ podAddress }) => {
               variant="body2"
               className="text-mono-120 dark:text-mono-80"
             >
-              Restake Status
+              Staking Status
             </Typography>
             <Typography
               variant="h5"
               fw="bold"
               className={
-                podInfo.hasRestaked
+                podInfo.isStaked
                   ? 'text-green-600 dark:text-green-400'
                   : 'text-yellow-600 dark:text-yellow-400'
               }
             >
-              {podInfo.hasRestaked ? 'Active' : 'Pending'}
+              {podInfo.isStaked ? 'Active' : 'Pending'}
             </Typography>
           </div>
         </div>

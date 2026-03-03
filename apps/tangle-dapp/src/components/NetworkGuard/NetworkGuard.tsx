@@ -8,13 +8,7 @@ import {
 } from '@tangle-network/ui-components';
 import { ChainIcon } from '@tangle-network/icons';
 import EVMChainId from '@tangle-network/dapp-types/EVMChainId';
-
-// Supported chain IDs for the main dApp features (restaking, liquid staking, dashboard)
-const SUPPORTED_CHAIN_IDS = [
-  EVMChainId.Base,
-  EVMChainId.BaseSepolia,
-  EVMChainId.AnvilLocal,
-] as const;
+import { SUPPORTED_STAKING_DEPOSIT_CHAIN_IDS } from '../../constants/staking';
 
 const getChainName = (chainId: number): string => {
   switch (chainId) {
@@ -37,6 +31,16 @@ const getChainName = (chainId: number): string => {
   }
 };
 
+const getChainIconName = (chainId: number): 'base' | 'tangle' => {
+  switch (chainId) {
+    case EVMChainId.Base:
+    case EVMChainId.BaseSepolia:
+      return 'base';
+    default:
+      return 'tangle';
+  }
+};
+
 interface NetworkGuardProps {
   children: ReactNode;
 }
@@ -48,9 +52,7 @@ const NetworkGuard: FC<NetworkGuardProps> = ({ children }) => {
 
   const isWrongNetwork = useMemo(() => {
     if (!isConnected) return false;
-    return !SUPPORTED_CHAIN_IDS.includes(
-      chainId as (typeof SUPPORTED_CHAIN_IDS)[number],
-    );
+    return !SUPPORTED_STAKING_DEPOSIT_CHAIN_IDS.includes(chainId);
   }, [isConnected, chainId]);
 
   const handleSwitchNetwork = useCallback(
@@ -100,37 +102,26 @@ const NetworkGuard: FC<NetworkGuardProps> = ({ children }) => {
           </Typography>
 
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 w-full max-w-lg mb-6">
-            <Button
-              isFullWidth
-              onClick={() => handleSwitchNetwork(EVMChainId.Base)}
-              isLoading={isSwitchingChain}
-              isDisabled={isSwitchingChain}
-              leftIcon={<ChainIcon name="base" size="md" />}
-            >
-              Base
-            </Button>
-
-            <Button
-              isFullWidth
-              variant="secondary"
-              onClick={() => handleSwitchNetwork(EVMChainId.BaseSepolia)}
-              isLoading={isSwitchingChain}
-              isDisabled={isSwitchingChain}
-              leftIcon={<ChainIcon name="base" size="md" />}
-            >
-              Base Sepolia
-            </Button>
-
-            <Button
-              isFullWidth
-              variant="secondary"
-              onClick={() => handleSwitchNetwork(EVMChainId.AnvilLocal)}
-              isLoading={isSwitchingChain}
-              isDisabled={isSwitchingChain}
-              leftIcon={<ChainIcon name="tangle" size="md" />}
-            >
-              Tangle Local
-            </Button>
+            {SUPPORTED_STAKING_DEPOSIT_CHAIN_IDS.map(
+              (supportedChainId, index) => (
+                <Button
+                  key={supportedChainId}
+                  isFullWidth
+                  variant={index === 0 ? undefined : 'secondary'}
+                  onClick={() => handleSwitchNetwork(supportedChainId)}
+                  isLoading={isSwitchingChain}
+                  isDisabled={isSwitchingChain}
+                  leftIcon={
+                    <ChainIcon
+                      name={getChainIconName(supportedChainId)}
+                      size="md"
+                    />
+                  }
+                >
+                  {getChainName(supportedChainId)}
+                </Button>
+              ),
+            )}
           </div>
 
           <div className="pt-4 border-t border-mono-60 dark:border-mono-160 w-full max-w-md">

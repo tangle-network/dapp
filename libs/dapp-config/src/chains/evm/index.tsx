@@ -31,7 +31,7 @@ export const wagmiChains = [
   anvilLocal, // Local development (Anvil on port 8545)
   base, // Base mainnet
   baseSepolia, // Base testnet
-  mainnet, // Ethereum mainnet (for native restaking)
+  mainnet, // Ethereum mainnet (for native staking)
   {
     ...holesky,
     // Override RPC URLs to prevent CORS issues
@@ -43,7 +43,7 @@ export const wagmiChains = [
         http: ['https://ethereum-holesky-rpc.publicnode.com'],
       },
     },
-  }, // Ethereum Holesky testnet (for native restaking)
+  }, // Ethereum Holesky testnet (for native staking)
 ] as const;
 
 export const chainsConfig = {

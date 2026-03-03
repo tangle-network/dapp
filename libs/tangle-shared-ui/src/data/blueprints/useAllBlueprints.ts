@@ -5,8 +5,8 @@ import { catchError, combineLatest, of, switchMap } from 'rxjs';
 import useNetworkStore from '../../context/useNetworkStore';
 import useApiRx from '../../hooks/useApiRx';
 import { TangleError, TangleErrorCode } from '../../types/error';
-import useOperatorTvl from '../restake/useOperatorTvl';
-import useRestakeOperatorMap from '../restake/useRestakeOperatorMap';
+import useOperatorTvl from '../staking/useOperatorTvl';
+import useStakingOperatorMap from '../staking/useStakingOperatorMap';
 import {
   createBlueprintObjects,
   extractBlueprintsData,
@@ -18,7 +18,7 @@ import { toPrimitiveService } from './utils/toPrimitiveService';
 
 const useAllBlueprints = () => {
   const rpcEndpoints = useNetworkStore((store) => store.network.wsRpcEndpoints);
-  const { result: operatorMap } = useRestakeOperatorMap();
+  const { result: operatorMap } = useStakingOperatorMap();
   const { operatorTvlByAsset } = useOperatorTvl();
 
   const { result, ...rest } = useApiRx(

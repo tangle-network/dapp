@@ -7,8 +7,8 @@ import useContractWrite, {
   TxStatus,
 } from '@tangle-network/tangle-shared-ui/hooks/useContractWrite';
 import TANGLE_ABI from '@tangle-network/tangle-shared-ui/abi/tangle';
-import { getContractsByChainId } from '@tangle-network/dapp-config/contracts';
 import { useChainId } from 'wagmi';
+import getContractsForChain from './getContractsForChain';
 
 export { TxStatus };
 
@@ -23,17 +23,23 @@ export interface UseCancelExitTxOptions {
 
 export const useCancelExitTx = (options?: UseCancelExitTxOptions) => {
   const chainId = useChainId();
-  const contracts = getContractsByChainId(chainId);
+  const contracts = getContractsForChain(chainId);
   const queryClient = useQueryClient();
 
   const hook = useContractWrite(
     TANGLE_ABI,
-    (params: CancelExitParams, _activeAddress) => ({
-      address: contracts.tangle,
-      abi: TANGLE_ABI,
-      functionName: 'cancelExit' as const,
-      args: [params.serviceId] as const,
-    }),
+    (params: CancelExitParams, _activeAddress) => {
+      if (!contracts) {
+        return null;
+      }
+
+      return {
+        address: contracts.tangle,
+        abi: TANGLE_ABI,
+        functionName: 'cancelExit' as const,
+        args: [params.serviceId] as const,
+      };
+    },
     {
       txName: 'cancel exit',
       txDetails: (params) =>

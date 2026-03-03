@@ -14,7 +14,7 @@ interface RoleFilterProps {
   isLoading?: boolean;
   roleCounts?: {
     operators: number;
-    restakers: number;
+    stakers: number;
     developers: number;
     customers: number;
   };
@@ -35,8 +35,8 @@ export const RoleFilter: FC<RoleFilterProps> = ({
     switch (role) {
       case RoleFilterEnum.OPERATOR:
         return roleCounts.operators;
-      case RoleFilterEnum.RESTAKER:
-        return roleCounts.restakers;
+      case RoleFilterEnum.STAKER:
+        return roleCounts.stakers;
       case RoleFilterEnum.DEVELOPER:
         return roleCounts.developers;
       case RoleFilterEnum.CUSTOMER:

@@ -67,7 +67,7 @@ const Metric: FC<MetricProps> = ({
 export interface TntBreakdownCardProps {
   symbol: string;
   walletValue: string;
-  restakedValue: string;
+  stakedValue: string;
   delegatedValue: string;
   availableValue: string;
   rewardsValue: string;
@@ -78,7 +78,7 @@ export interface TntBreakdownCardProps {
 const TntBreakdownCard: FC<TntBreakdownCardProps> = ({
   symbol,
   walletValue,
-  restakedValue,
+  stakedValue,
   delegatedValue,
   availableValue,
   rewardsValue,
@@ -103,10 +103,10 @@ const TntBreakdownCard: FC<TntBreakdownCardProps> = ({
         />
 
         <Metric
-          label="Your Restaked TNT"
-          value={restakedValue}
+          label="Your Staked TNT"
+          value={stakedValue}
           symbol={symbol}
-          helper="Total TNT currently deposited into restaking"
+          helper="Total TNT currently deposited into staking"
           isLoading={isLoading}
           subLabel="Delegated / Available"
           subValue={`${delegatedValue} / ${availableValue}`}

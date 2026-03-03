@@ -26,10 +26,10 @@ function validateQueryParam(
   switch (key) {
     case QueryParamKey.DELEGATIONS_AND_PAYOUTS_TAB:
       return z.nativeEnum(DelegationsAndPayoutsTab).safeParse(value).success;
-    case QueryParamKey.RESTAKE_OPERATOR:
-    case QueryParamKey.RESTAKE_VAULT:
+    case QueryParamKey.STAKING_OPERATOR:
+    case QueryParamKey.STAKING_VAULT:
       return z.string().safeParse(value).success;
-    case QueryParamKey.RESTAKE_ASSET_ID:
+    case QueryParamKey.STAKING_ASSET_ID:
       return isEvmAddress(value) || isTemplateBigInt(value);
   }
 }

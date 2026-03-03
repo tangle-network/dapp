@@ -9,7 +9,7 @@ import { SubstrateAddress } from '@tangle-network/ui-components/types/address';
 import assertSubstrateAddress from '@tangle-network/ui-components/utils/assertSubstrateAddress';
 import merge from 'lodash/merge';
 import type { Blueprint } from '../../../types/blueprint';
-import { OperatorMap } from '../../../types/restake';
+import { OperatorMap } from '../../../types/staking';
 import {
   getMultipleAccountInfo,
   IdentityType,
@@ -22,7 +22,7 @@ import {
   ServiceInstance,
 } from './type';
 import { randNumber } from '@ngneat/falso';
-import { RestakeAssetId } from '../../../types';
+import { StakingAssetId } from '../../../types';
 
 export const extractBlueprintsData = (
   blueprintEntries: [
@@ -63,7 +63,7 @@ export function extractOperatorData(
     Option<TanglePrimitivesServicesTypesOperatorPreferences>,
   ][],
   operatorMap: OperatorMap,
-  operatorTVLByAsset: Map<SubstrateAddress, Map<RestakeAssetId, number>>,
+  operatorTVLByAsset: Map<SubstrateAddress, Map<StakingAssetId, number>>,
   runningInstancesMap: Map<bigint, ServiceInstance[]>,
 ) {
   const blueprintOperatorMap = new Map<bigint, Set<SubstrateAddress>>();
@@ -121,7 +121,7 @@ export function extractOperatorData(
 function calculateBlueprintOperatorExposure(
   runningInstancesMap: Map<bigint, ServiceInstance[]>,
   blueprintId: bigint,
-  operatorTVLByAsset: Map<SubstrateAddress, Map<RestakeAssetId, number>>,
+  operatorTVLByAsset: Map<SubstrateAddress, Map<StakingAssetId, number>>,
 ) {
   const PERCENT_DIVISOR = 100;
 
@@ -243,7 +243,7 @@ export const createBlueprintObjects = (
       category: metadata.category,
       instancesCount,
       operatorsCount: blueprintOperatorMap.get(blueprintId)?.size ?? null,
-      restakersCount: blueprintRestakersMap.get(blueprintId)?.size ?? null,
+      stakersCount: blueprintRestakersMap.get(blueprintId)?.size ?? null,
       tvl: blueprintTVLMap.get(blueprintId)?.toLocaleString() ?? null,
       githubUrl: metadata.codeRepository,
       websiteUrl: metadata.website,
@@ -279,7 +279,7 @@ export function createMonitoringBlueprint(
   operatorBlueprint: OperatorBlueprint['blueprint'],
   operatorServices: OperatorBlueprint['services'],
   serviceInstances: ServiceInstance[],
-  operatorTVLByAsset: Map<SubstrateAddress, Map<RestakeAssetId, number>>,
+  operatorTVLByAsset: Map<SubstrateAddress, Map<StakingAssetId, number>>,
   runningInstancesMap: Map<bigint, ServiceInstance[]>,
   owner?: string,
 ): MonitoringBlueprint {

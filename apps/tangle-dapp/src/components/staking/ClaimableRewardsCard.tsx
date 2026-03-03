@@ -23,16 +23,16 @@ import {
 } from '@tangle-network/ui-components';
 import { InformationLine } from '@tangle-network/icons';
 import { twMerge } from 'tailwind-merge';
-import useUserRestakingStats from '../../data/restaking/useUserRestakingStats';
+import useUserStakingStats from '../../data/staking/useUserStakingStats';
 import {
   usePendingRewards,
   useClaimRewardsTx,
   useExpectedRewards,
 } from '../../data/rewards';
 import { TxStatus } from '@tangle-network/tangle-shared-ui/hooks/useContractWrite';
-import { ExpandTableButton } from '../../pages/restake/ExpandTableButton';
-import { AnimatedTable } from '../../pages/restake/AnimatedTable';
-import RestakeDetailCard from '../RestakeDetailCard';
+import { ExpandTableButton } from '../../pages/staking/ExpandTableButton';
+import { AnimatedTable } from '../../pages/staking/AnimatedTable';
+import StakingDetailCard from '../StakingDetailCard';
 import PendingRewardsList from './PendingRewardsList';
 
 interface StatRowProps {
@@ -81,7 +81,7 @@ const StatRow: FC<StatRowProps> = ({
 );
 
 const ClaimableRewardsCard: FC = () => {
-  const { data: stats, isLoading, refetch } = useUserRestakingStats();
+  const { data: stats, isLoading, refetch } = useUserStakingStats();
   const {
     data: pendingRewardsData,
     isLoading: isPendingRewardsLoading,
@@ -334,9 +334,9 @@ const ClaimableRewardsCard: FC = () => {
         isTableOpen={isRewardsListOpen}
         className="hidden md:block"
       >
-        <RestakeDetailCard.Root className="!min-w-0">
+        <StakingDetailCard.Root className="!min-w-0">
           <div className="flex items-center justify-between gap-2 mb-2">
-            <RestakeDetailCard.Header
+            <StakingDetailCard.Header
               title={
                 claimableVaults.length > 0
                   ? 'Rewards by Vault'
@@ -359,7 +359,7 @@ const ClaimableRewardsCard: FC = () => {
               You don't have any pending rewards to claim.
             </Typography>
           )}
-        </RestakeDetailCard.Root>
+        </StakingDetailCard.Root>
       </AnimatedTable>
     </div>
   );

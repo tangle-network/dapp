@@ -7,10 +7,10 @@ import useContractWrite, {
   TxStatus,
 } from '@tangle-network/tangle-shared-ui/hooks/useContractWrite';
 import TANGLE_ABI from '@tangle-network/tangle-shared-ui/abi/tangle';
-import { getContractsByChainId } from '@tangle-network/dapp-config/contracts';
 import { useChainId } from 'wagmi';
 import { Address } from 'viem';
 import { AssetKind } from '@tangle-network/tangle-shared-ui/data/services';
+import getContractsForChain from './getContractsForChain';
 
 export { TxStatus };
 
@@ -37,27 +37,33 @@ export const useJoinServiceWithCommitmentsTx = (
   options?: UseJoinServiceWithCommitmentsTxOptions,
 ) => {
   const chainId = useChainId();
-  const contracts = getContractsByChainId(chainId);
+  const contracts = getContractsForChain(chainId);
   const queryClient = useQueryClient();
 
   const hook = useContractWrite(
     TANGLE_ABI,
-    (params: JoinServiceWithCommitmentsParams, _activeAddress) => ({
-      address: contracts.tangle,
-      abi: TANGLE_ABI,
-      functionName: 'joinServiceWithCommitments' as const,
-      args: [
-        params.serviceId,
-        params.exposureBps,
-        params.commitments.map((c) => ({
-          asset: {
-            kind: c.asset.kind,
-            token: c.asset.token,
-          },
-          exposureBps: c.exposureBps,
-        })),
-      ] as const,
-    }),
+    (params: JoinServiceWithCommitmentsParams, _activeAddress) => {
+      if (!contracts) {
+        return null;
+      }
+
+      return {
+        address: contracts.tangle,
+        abi: TANGLE_ABI,
+        functionName: 'joinServiceWithCommitments' as const,
+        args: [
+          params.serviceId,
+          params.exposureBps,
+          params.commitments.map((c) => ({
+            asset: {
+              kind: c.asset.kind,
+              token: c.asset.token,
+            },
+            exposureBps: c.exposureBps,
+          })),
+        ] as const,
+      };
+    },
     {
       txName: 'join service with commitments',
       txDetails: (params) =>

@@ -18,7 +18,7 @@ const VALIDATOR_POD_MANAGER_ADDRESSES: Record<number, Address> = {
 };
 
 // Helper to check if contracts are deployed
-export const isNativeRestakingDeployed = (chainId: number): boolean => {
+export const isNativeStakingDeployed = (chainId: number): boolean => {
   return chainId in VALIDATOR_POD_MANAGER_ADDRESSES;
 };
 

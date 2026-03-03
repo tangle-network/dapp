@@ -9,7 +9,7 @@ const Details = memo(() => {
   const { data: config } = useProtocolConfig();
 
   const unstakePeriod = useMemo(() => {
-    if (!config) {
+    if (!config || !config.isSupported) {
       return null;
     }
 

@@ -69,7 +69,7 @@ export const useDelegateTx = () => {
       ] as const,
     }),
     {
-      txName: 'restake delegate',
+      txName: 'stake delegate',
       txDetails: (params) =>
         new Map([
           ['Operator', params.operator],

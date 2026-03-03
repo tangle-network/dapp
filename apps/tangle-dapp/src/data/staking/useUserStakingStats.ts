@@ -1,5 +1,5 @@
 /**
- * Hook for fetching user restaking statistics.
+ * Hook for fetching user staking statistics.
  * Uses GraphQL for indexed data and RewardVaults for pending rewards.
  */
 
@@ -12,8 +12,8 @@ import {
 } from '@tangle-network/tangle-shared-ui/data/graphql';
 import usePendingRewards from '../rewards/usePendingRewards';
 
-export interface UserRestakingStats {
-  // Total Value Restaked Card
+export interface UserStakingStats {
+  // Total Value Staked Card
   totalDeposited: bigint;
   totalDelegated: bigint;
   withdrawQueueAmount: bigint;
@@ -36,7 +36,7 @@ export interface UserRestakingStats {
   };
 }
 
-const useUserRestakingStats = () => {
+const useUserStakingStats = () => {
   const { address } = useAccount();
 
   // Get current round from GraphQL
@@ -57,7 +57,7 @@ const useUserRestakingStats = () => {
     refetch: refetchPendingRewards,
   } = usePendingRewards();
 
-  const stats = useMemo<UserRestakingStats | null>(() => {
+  const stats = useMemo<UserStakingStats | null>(() => {
     if (!delegator) {
       return null;
     }
@@ -136,4 +136,4 @@ const useUserRestakingStats = () => {
   };
 };
 
-export default useUserRestakingStats;
+export default useUserStakingStats;

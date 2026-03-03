@@ -35,8 +35,8 @@ const SIDEBAR_STATIC_ITEMS: SideBarItemProps[] = [
     subItems: [],
   },
   {
-    name: 'Restake',
-    href: PagePath.RESTAKE,
+    name: 'Stake',
+    href: PagePath.STAKING,
     isInternal: true,
     Icon: TokenSwapFill,
     subItems: [],
@@ -49,8 +49,8 @@ const SIDEBAR_STATIC_ITEMS: SideBarItemProps[] = [
     subItems: [],
   },
   {
-    name: 'Native Restake',
-    href: PagePath.NATIVE_RESTAKE,
+    name: 'Native Staking',
+    href: PagePath.NATIVE_STAKING,
     isInternal: true,
     Icon: CoinsStackedLineIcon,
     subItems: [],

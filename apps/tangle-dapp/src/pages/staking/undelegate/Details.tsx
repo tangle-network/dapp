@@ -8,7 +8,7 @@ const Details: FC = () => {
   const { data: config } = useProtocolConfig();
 
   const undelegatePeriod = useMemo(() => {
-    if (!config) {
+    if (!config || !config.isSupported) {
       return null;
     }
 

@@ -9,7 +9,7 @@
 # Tangle Monorepo
 
 <p align="left">
-    <strong>Decentralized interfaces into the Tangle Network, featuring Tangle Network dApps for MPC-as-a-service restaking infrastructure.</strong>
+    <strong>Decentralized interfaces into the Tangle Network, featuring Tangle Network dApps for MPC-as-a-service staking infrastructure.</strong>
     <br />
 </p>
 

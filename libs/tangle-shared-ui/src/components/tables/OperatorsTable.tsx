@@ -23,7 +23,7 @@ import TableStatus from './TableStatus';
 interface Props {
   operatorMap: Map<Address, Operator> | null;
   isLoading: boolean;
-  onRestakeClicked: () => void;
+  onStakeClicked?: (operatorAddress?: Address) => void;
 }
 
 const formatStake = (stake: bigint | null): string => {
@@ -72,8 +72,10 @@ const columnHelper = createColumnHelper<Operator>();
 export const OperatorsTable: FC<Props> = ({
   operatorMap,
   isLoading,
-  onRestakeClicked,
+  onStakeClicked,
 }) => {
+  const onManageStakeClick = onStakeClicked;
+
   const operators = useMemo(
     () => (operatorMap ? Array.from(operatorMap.values()) : []),
     [operatorMap],
@@ -116,8 +118,8 @@ export const OperatorsTable: FC<Props> = ({
           );
         },
       }),
-      columnHelper.accessor('restakingStake', {
-        header: () => 'Restaking Stake',
+      columnHelper.accessor('stakingStake', {
+        header: () => 'Staking Stake',
         cell: (info) => (
           <TableCellWrapper className="p-3">
             <Typography
@@ -130,7 +132,7 @@ export const OperatorsTable: FC<Props> = ({
           </TableCellWrapper>
         ),
       }),
-      columnHelper.accessor('restakingDelegationCount', {
+      columnHelper.accessor('stakingDelegationCount', {
         header: () => 'Delegations',
         cell: (info) => (
           <TableCellWrapper className="p-3">
@@ -144,7 +146,7 @@ export const OperatorsTable: FC<Props> = ({
           </TableCellWrapper>
         ),
       }),
-      columnHelper.accessor('restakingStatus', {
+      columnHelper.accessor('stakingStatus', {
         header: () => 'Status',
         cell: (info) => {
           const status = info.getValue();
@@ -168,7 +170,10 @@ export const OperatorsTable: FC<Props> = ({
         id: 'actions',
         header: () => null,
         cell: (info) => {
-          const isActive = info.row.original.restakingStatus === 'ACTIVE';
+          const isActive = info.row.original.stakingStatus === 'ACTIVE';
+          const operatorAddress = info.row.original.id
+            ? (info.row.original.id as Address)
+            : undefined;
           return (
             <TableCellWrapper removeRightBorder className="p-3">
               <div className="flex items-center justify-end flex-1 gap-2">
@@ -186,7 +191,7 @@ export const OperatorsTable: FC<Props> = ({
 
                 <Button
                   variant="utility"
-                  onClick={onRestakeClicked}
+                  onClick={() => onManageStakeClick?.(operatorAddress)}
                   isDisabled={!isActive}
                   className={twMerge(
                     'uppercase body4 font-semibold transition-all duration-200',
@@ -203,7 +208,7 @@ export const OperatorsTable: FC<Props> = ({
         },
       }),
     ],
-    [onRestakeClicked],
+    [onManageStakeClick],
   );
 
   const table = useReactTable({
@@ -232,7 +237,7 @@ export const OperatorsTable: FC<Props> = ({
         description="It looks like there are no operators running at the moment."
         icon="⚙️"
         buttonText="Register as Operator"
-        buttonProps={{ onClick: onRestakeClicked }}
+        buttonProps={{ onClick: () => onManageStakeClick?.() }}
       />
     );
   }

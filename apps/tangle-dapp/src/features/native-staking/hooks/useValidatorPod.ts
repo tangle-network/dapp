@@ -35,7 +35,7 @@ export const usePodInfo = (
   });
 
   const {
-    data: hasRestaked,
+    data: hasStakedRaw,
     isLoading: l2,
     refetch: r2,
   } = useReadContract({
@@ -57,7 +57,7 @@ export const usePodInfo = (
   });
 
   const {
-    data: totalRestakedBalanceGwei,
+    data: totalStakedBalanceRaw,
     isLoading: l4,
     refetch: r4,
   } = useReadContract({
@@ -171,10 +171,9 @@ export const usePodInfo = (
     return {
       address: podAddress,
       owner: podOwner as Address,
-      hasRestaked: (hasRestaked as boolean) ?? false,
+      isStaked: (hasStakedRaw as boolean) ?? false,
       activeValidatorCount: Number(activeValidatorCount ?? BigInt(0)),
-      totalRestakedBalanceGwei:
-        (totalRestakedBalanceGwei as bigint) ?? BigInt(0),
+      totalStakedBalanceGwei: (totalStakedBalanceRaw as bigint) ?? BigInt(0),
       beaconChainSlashingFactor:
         (beaconChainSlashingFactor as bigint) ?? BigInt(0),
       proofSubmitter:
@@ -193,9 +192,9 @@ export const usePodInfo = (
   }, [
     podAddress,
     podOwner,
-    hasRestaked,
+    hasStakedRaw,
     activeValidatorCount,
-    totalRestakedBalanceGwei,
+    totalStakedBalanceRaw,
     beaconChainSlashingFactor,
     proofSubmitter,
     withdrawalCredentials,
@@ -241,11 +240,11 @@ export const useValidatorInfo = (
 
   const validatorInfo = useMemo((): ValidatorInfo | null => {
     if (!data || !pubkeyHash) return null;
-    const [validatorIndex, restakedBalanceGwei, lastCheckpointedAt, status] =
+    const [validatorIndex, stakedBalanceGweiRaw, lastCheckpointedAt, status] =
       data as [number, bigint, bigint, number];
     return {
       validatorIndex,
-      restakedBalanceGwei,
+      stakedBalanceGwei: stakedBalanceGweiRaw,
       lastCheckpointedAt,
       status: status as ValidatorStatus,
       pubkeyHash,

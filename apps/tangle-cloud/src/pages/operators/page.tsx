@@ -6,6 +6,7 @@ import { useNavigate } from 'react-router';
 import { Button, Typography } from '@tangle-network/ui-components';
 import { PagePath } from '../../types';
 import { useAccount } from 'wagmi';
+import createStakeDelegateUrl from './createStakeDelegateUrl';
 
 const Page: FC = () => {
   const navigate = useNavigate();
@@ -17,9 +18,8 @@ const Page: FC = () => {
     ? new Map(operators.map((op) => [op.id as Address, op]))
     : null;
 
-  const handleRestakeClicked = useCallback(() => {
-    // TODO: Redirect to tangle-dapp restake/delegate page
-    console.log('Redirecting to restake/delegate page');
+  const handleStakeClicked = useCallback((operatorAddress?: Address) => {
+    window.location.assign(createStakeDelegateUrl(operatorAddress));
   }, []);
 
   return (
@@ -46,7 +46,7 @@ const Page: FC = () => {
       <OperatorsTable
         operatorMap={operatorMap}
         isLoading={isLoading}
-        onRestakeClicked={handleRestakeClicked}
+        onStakeClicked={handleStakeClicked}
       />
     </div>
   );

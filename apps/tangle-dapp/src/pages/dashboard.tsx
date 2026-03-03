@@ -1,4 +1,4 @@
-import { useRestakingOverview } from '@tangle-network/tangle-shared-ui/data/restake/useRestakingData';
+import { useStakingOverview } from '@tangle-network/tangle-shared-ui/data/staking/useStakingData';
 // import { useTokenUsdPrices } from '@tangle-network/tangle-shared-ui/data/tokenPrices/useTokenUsdPrices';
 import { EMPTY_VALUE_PLACEHOLDER } from '@tangle-network/ui-components';
 import { Typography } from '@tangle-network/ui-components/typography/Typography/Typography';
@@ -6,63 +6,63 @@ import { FC, useMemo, useCallback } from 'react';
 import { formatUnits } from 'viem';
 import AccountSummaryCard from '../components/account/AccountSummaryCard';
 import { ProtocolStatisticCard } from '../components/account/ProtocolStatisticCard';
-import { UserRestakingOverview } from '../components/restaking/UserRestakingOverview';
+import { UserStakingOverview } from '../components/staking/UserStakingOverview';
 import { NetworkGuard } from '../components/NetworkGuard';
 import TntBreakdownCard from '../components/account/TntBreakdownCard';
-import RestakingAssetsTable from '../components/tables/RestakingAssetsTable';
-import useUserRestakingStats from '../data/restaking/useUserRestakingStats';
+import StakingAssetsTable from '../components/tables/StakingAssetsTable';
+import useUserStakingStats from '../data/staking/useUserStakingStats';
 
 const DashboardPage: FC = () => {
-  // Use the unified restaking data hook
+  // Use the primary staking data hook
   const {
     assets,
     assetList,
-    restakingAssets,
+    stakingAssets,
     delegator: delegatorInfo,
     isLoading,
     isLoadingAssets,
     isLoadingDelegator,
     assetCount,
-  } = useRestakingOverview();
-  const { data: restakingStats, isLoading: isRestakingStatsLoading } =
-    useUserRestakingStats();
+  } = useStakingOverview();
+  const { data: stakingStats, isLoading: isStakingStatsLoading } =
+    useUserStakingStats();
 
   // const tokensForPricing = useMemo(() => {
-  //   if (restakingAssets === null || assets === null) {
+  //   if (stakingAssets === null || assets === null) {
   //     return null;
   //   }
 
-  //   return restakingAssets.map((asset) => {
+  //   return stakingAssets.map((asset) => {
   //     const meta = assets.get(asset.token);
   //     return {
   //       address: asset.token.toLowerCase() as `0x${string}`,
   //       symbol: meta?.metadata.symbol ?? null,
   //     };
   //   });
-  // }, [assets, restakingAssets]);
+  // }, [assets, stakingAssets]);
 
   // const { data: tokenUsdPrices } = useTokenUsdPrices(tokensForPricing);
 
   const protocolTvl = useMemo(() => {
-    if (!restakingAssets) {
+    if (!stakingAssets) {
       return BigInt(0);
     }
 
     let total = BigInt(0);
-    for (const asset of restakingAssets) {
+    for (const asset of stakingAssets) {
       total += asset.currentDeposits;
     }
 
     return total;
-  }, [restakingAssets]);
+  }, [stakingAssets]);
 
   // const protocolTvlUsd = useMemo(() => {
-  //   if (!restakingAssets || !assets) {
+  //   if (!stakingAssets || !assets) {
   //     return 0;
   //   }
 
   //   let total = 0;
-  //   for (const asset of restakingAssets) {
+  //   for (const asset of stakingAssets) {
   //     const meta = assets.get(asset.token);
   //     const decimals = meta?.metadata.decimals ?? 18;
   //     const priceUsd =
@@ -77,7 +77,7 @@ const DashboardPage: FC = () => {
   //   }
 
   //   return total;
-  // }, [assets, restakingAssets, tokenUsdPrices]);
+  // }, [assets, stakingAssets, tokenUsdPrices]);
 
   // Calculate TVL data for ProtocolStatisticCard
   const tvlData = useMemo(
@@ -107,11 +107,11 @@ const DashboardPage: FC = () => {
   }, [delegatorInfo, tntAsset]);
 
   const walletTnt = tntAsset?.balance ?? BigInt(0);
-  const restakedTnt = tntPosition?.totalDeposited ?? BigInt(0);
+  const stakedTnt = tntPosition?.totalDeposited ?? BigInt(0);
   const delegatedTnt = tntPosition?.delegatedAmount ?? BigInt(0);
-  const availableRestaked =
-    restakedTnt > delegatedTnt ? restakedTnt - delegatedTnt : BigInt(0);
-  const tntRewards = restakingStats?.pendingRewards ?? BigInt(0);
+  const availableStaked =
+    stakedTnt > delegatedTnt ? stakedTnt - delegatedTnt : BigInt(0);
+  const tntRewards = stakingStats?.pendingRewards ?? BigInt(0);
   const tntDecimals = tntAsset?.metadata.decimals ?? 18;
   const tntSymbol = tntAsset?.metadata.symbol ?? 'TNT';
 
@@ -135,16 +135,16 @@ const DashboardPage: FC = () => {
   const tntBreakdown = useMemo(
     () => ({
       wallet: formatTokenAmount(walletTnt, tntDecimals),
-      restaked: formatTokenAmount(restakedTnt, tntDecimals),
+      staked: formatTokenAmount(stakedTnt, tntDecimals),
       delegated: formatTokenAmount(delegatedTnt, tntDecimals),
-      available: formatTokenAmount(availableRestaked, tntDecimals),
+      available: formatTokenAmount(availableStaked, tntDecimals),
       rewards: formatTokenAmount(tntRewards, tntDecimals),
     }),
     [
       walletTnt,
-      restakedTnt,
+      stakedTnt,
       delegatedTnt,
-      availableRestaked,
+      availableStaked,
       tntRewards,
       tntDecimals,
       formatTokenAmount,
@@ -152,7 +152,7 @@ const DashboardPage: FC = () => {
   );
 
   const isTntBreakdownLoading =
-    isLoadingAssets || isLoadingDelegator || isRestakingStatsLoading;
+    isLoadingAssets || isLoadingDelegator || isStakingStatsLoading;
 
   return (
     <NetworkGuard>
@@ -162,7 +162,7 @@ const DashboardPage: FC = () => {
 
           <ProtocolStatisticCard
             isLoading={isLoading}
-            restakingAssets={restakingAssets ?? []}
+            stakingAssets={stakingAssets ?? []}
             tvlData={tvlData}
           />
         </div>
@@ -170,7 +170,7 @@ const DashboardPage: FC = () => {
         <TntBreakdownCard
           symbol={tntSymbol}
           walletValue={tntBreakdown.wallet}
-          restakedValue={tntBreakdown.restaked}
+          stakedValue={tntBreakdown.staked}
           delegatedValue={tntBreakdown.delegated}
           availableValue={tntBreakdown.available}
           rewardsValue={tntBreakdown.rewards}
@@ -181,19 +181,19 @@ const DashboardPage: FC = () => {
           Your Position
         </Typography>
 
-        <UserRestakingOverview
+        <UserStakingOverview
           delegator={delegatorInfo ?? null}
           assets={assets}
           isLoading={isLoadingDelegator || isLoadingAssets}
         />
 
         <Typography variant="h4" fw="bold">
-          Restake Assets
+          Stake Assets
         </Typography>
 
-        <RestakingAssetsTable
+        <StakingAssetsTable
           assets={assetList}
-          restakingAssets={restakingAssets ?? []}
+          stakingAssets={stakingAssets ?? []}
           delegator={delegatorInfo}
           isLoading={isLoading || isLoadingAssets || isLoadingDelegator}
         />

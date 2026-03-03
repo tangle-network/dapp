@@ -1,6 +1,6 @@
 import { isEvmAddress } from '@tangle-network/ui-components';
 import { EvmAddress } from '@tangle-network/ui-components/types/address';
-import { RestakeAssetId } from '../types';
+import { StakingAssetId } from '../types';
 
 export type AssetIdEnum =
   | {
@@ -10,7 +10,7 @@ export type AssetIdEnum =
       Erc20: EvmAddress;
     };
 
-const createAssetIdEnum = (assetId: RestakeAssetId): AssetIdEnum => {
+const createAssetIdEnum = (assetId: StakingAssetId): AssetIdEnum => {
   return isEvmAddress(assetId) ? { Erc20: assetId } : { Custom: assetId };
 };
 

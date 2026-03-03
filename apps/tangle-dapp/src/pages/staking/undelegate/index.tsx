@@ -22,16 +22,16 @@ import { Address, formatUnits, parseUnits } from 'viem';
 import { BN } from '@polkadot/util';
 import { useAccount, useChainId } from 'wagmi';
 import ErrorMessage from '@tangle-network/tangle-shared-ui/components/ErrorMessage';
-import RestakeDetailCard from '../../../components/RestakeDetailCard';
-import ActionButtonBase from '../../../components/restaking/ActionButtonBase';
-import { SUPPORTED_RESTAKE_DEPOSIT_TYPED_CHAIN_IDS } from '../../../constants/restake';
+import StakingDetailCard from '../../../components/StakingDetailCard';
+import ActionButtonBase from '../../../components/staking/ActionButtonBase';
+import { SUPPORTED_STAKING_DEPOSIT_TYPED_CHAIN_IDS } from '../../../constants/staking';
 import useActiveTypedChainId from '../../../hooks/useActiveTypedChainId';
-import type { EvmUndelegateFormFields } from '../../../types/restake';
+import type { EvmUndelegateFormFields } from '../../../types/staking';
 import decimalsToStep from '../../../utils/decimalsToStep';
 import { AnimatedTable } from '../AnimatedTable';
 import AssetPlaceholder from '../AssetPlaceholder';
 import { ExpandTableButton } from '../ExpandTableButton';
-import RestakeActionTabs from '../RestakeActionTabs';
+import StakingActionTabs from '../StakingActionTabs';
 import SupportedChainModal from '../SupportedChainModal';
 import useSwitchChain from '../useSwitchChain';
 import Details from './Details';
@@ -73,7 +73,15 @@ type DelegationItem = {
   availableToUnstake: bigint; // amount available to schedule (safe max at current exchange rate)
 };
 
-const RestakeUndelegateForm: FC = () => {
+const safeParseUnits = (value: string, decimals: number): bigint | null => {
+  try {
+    return parseUnits(value, decimals);
+  } catch {
+    return null;
+  }
+};
+
+const StakingUndelegateForm: FC = () => {
   const { address: userAddress } = useAccount();
   const chainId = useChainId();
   const [isUndelegateRequestTableOpen, setIsUndelegateRequestTableOpen] =
@@ -149,7 +157,7 @@ const RestakeUndelegateForm: FC = () => {
   const { data: onChainDelegations, refetch: refetchOnChainDelegations } =
     useResilientReadContract({
       queryKey: [
-        'restake',
+        'staking',
         'unstake',
         'delegations',
         chainId,
@@ -177,7 +185,7 @@ const RestakeUndelegateForm: FC = () => {
     refetch: refetchOnChainPendingUnstakes,
   } = useResilientReadContract({
     queryKey: [
-      'restake',
+      'staking',
       'unstake',
       'pendingUnstakes',
       chainId,
@@ -286,7 +294,7 @@ const RestakeUndelegateForm: FC = () => {
   const { data: operatorRewardPools, refetch: refetchOperatorRewardPools } =
     useResilientReadContracts({
       queryKey: [
-        'restake',
+        'staking',
         'unstake',
         'operatorRewardPools',
         chainId,
@@ -330,9 +338,6 @@ const RestakeUndelegateForm: FC = () => {
 
     return map;
   }, [operatorAddresses, operatorRewardPools]);
-
-  const [selectedDelegation, setSelectedDelegation] =
-    useState<DelegationItem | null>(null);
 
   const selectedAssetId = watch('assetId');
   const selectedOperatorAddress = watch('operatorAddress');
@@ -396,6 +401,21 @@ const RestakeUndelegateForm: FC = () => {
     tokenMetadatas,
   ]);
 
+  const selectedDelegation = useMemo(() => {
+    if (!selectedOperatorAddress || !selectedAssetId) {
+      return null;
+    }
+
+    const selectedKey = `${selectedOperatorAddress.toLowerCase()}-${selectedAssetId.toLowerCase()}`;
+    return (
+      delegationItems.find(
+        (item) =>
+          `${item.operatorAddress.toLowerCase()}-${item.token.toLowerCase()}` ===
+          selectedKey,
+      ) ?? null
+    );
+  }, [delegationItems, selectedAssetId, selectedOperatorAddress]);
+
   // Get pending undelegate requests (prefer on-chain data as source of truth, fall back to indexer)
   const undelegateRequests = useMemo(() => {
     // On-chain data is the source of truth - use it when available
@@ -403,7 +423,10 @@ const RestakeUndelegateForm: FC = () => {
       Array.isArray(onChainPendingUnstakes) &&
       onChainPendingUnstakes.length > 0
     ) {
-      const delay = protocolConfig?.delegationBondLessDelay ?? BigInt(0);
+      const delay =
+        protocolConfig?.isSupported === true
+          ? protocolConfig.delegationBondLessDelay
+          : BigInt(0);
       return (onChainPendingUnstakes as OnChainPendingUnstake[]).map(
         (r, idx) => ({
           id: `${r.operator.toLowerCase()}-${r.asset.token.toLowerCase()}-${r.requestedRound.toString()}-${idx}`,
@@ -429,25 +452,21 @@ const RestakeUndelegateForm: FC = () => {
     return (
       delegator?.unstakeRequests.filter((r) => r.status === 'PENDING') ?? []
     );
-  }, [
-    delegator?.unstakeRequests,
-    onChainPendingUnstakes,
-    protocolConfig?.delegationBondLessDelay,
-  ]);
+  }, [delegator?.unstakeRequests, onChainPendingUnstakes, protocolConfig]);
 
-  const { maxAmount, formattedMaxAmount } = useMemo(() => {
+  const { maxAmount, maxAmountInputValue } = useMemo(() => {
     if (!selectedDelegation) {
-      return { maxAmount: undefined, formattedMaxAmount: undefined };
+      return { maxAmount: undefined, maxAmountInputValue: undefined };
     }
 
     const maxAmountBigInt = selectedDelegation.availableToUnstake;
-    const formatted = Number(
-      formatUnits(maxAmountBigInt, selectedDelegation.tokenDecimals),
-    );
 
     return {
       maxAmount: maxAmountBigInt,
-      formattedMaxAmount: formatted,
+      maxAmountInputValue: formatUnits(
+        maxAmountBigInt,
+        selectedDelegation.tokenDecimals,
+      ),
     };
   }, [selectedDelegation]);
 
@@ -461,7 +480,11 @@ const RestakeUndelegateForm: FC = () => {
         required: 'Amount is required',
         validate: (value) => {
           if (!selectedDelegation) return 'Select a delegation first';
-          const parsed = parseUnits(value, selectedDelegation.tokenDecimals);
+          const parsed = safeParseUnits(
+            value,
+            selectedDelegation.tokenDecimals,
+          );
+          if (parsed === null) return 'Enter a valid amount';
           if (parsed <= BigInt(0)) return 'Amount must be greater than 0';
           if (maxAmount && parsed > maxAmount)
             return 'Exceeds available amount';
@@ -498,7 +521,6 @@ const RestakeUndelegateForm: FC = () => {
     setValue('amount', '', { shouldValidate: false });
     setValue('assetId', '' as Address, { shouldValidate: false });
     setValue('operatorAddress', '' as Address, { shouldValidate: false });
-    setSelectedDelegation(null);
   }, [setValue]);
 
   const refreshAll = useCallback(async () => {
@@ -521,7 +543,13 @@ const RestakeUndelegateForm: FC = () => {
         return;
       }
 
-      const amountBigInt = parseUnits(amount, selectedDelegation.tokenDecimals);
+      const amountBigInt = safeParseUnits(
+        amount,
+        selectedDelegation.tokenDecimals,
+      );
+      if (amountBigInt === null) {
+        return;
+      }
 
       try {
         await executeScheduleUndelegate({
@@ -548,7 +576,6 @@ const RestakeUndelegateForm: FC = () => {
     (item: DelegationItem) => {
       setValue('operatorAddress', item.operatorAddress);
       setValue('assetId', item.token);
-      setSelectedDelegation(item);
       closeDelegationModal();
     },
     [closeDelegationModal, setValue],
@@ -557,7 +584,7 @@ const RestakeUndelegateForm: FC = () => {
   return (
     <div className="grid items-start justify-center gap-4 max-md:grid-cols-1 md:auto-cols-auto md:grid-flow-col">
       <div>
-        <RestakeActionTabs />
+        <StakingActionTabs />
 
         <Card withShadow tightPadding className="relative md:min-w-[512px]">
           {!isUndelegateRequestTableOpen && (
@@ -613,7 +640,7 @@ const RestakeUndelegateForm: FC = () => {
                       : {})}
                   />
                   <TransactionInputCard.MaxAmountButton
-                    maxAmount={formattedMaxAmount}
+                    maxAmount={maxAmountInputValue}
                     tooltipBody="Available to Unstake"
                     Icon={
                       useRef({
@@ -621,13 +648,6 @@ const RestakeUndelegateForm: FC = () => {
                         disabled: <LockUnlockLineIcon />,
                       }).current
                     }
-                    onClick={() => {
-                      if (formattedMaxAmount !== undefined) {
-                        setValue('amount', formattedMaxAmount.toString(), {
-                          shouldValidate: true,
-                        });
-                      }
-                    }}
                   />
                 </TransactionInputCard.Header>
 
@@ -637,7 +657,8 @@ const RestakeUndelegateForm: FC = () => {
                     useRef({
                       placeholder: <AssetPlaceholder />,
                       isDisabled: true,
-                      ...(selectedDelegation && formattedMaxAmount !== undefined
+                      ...(selectedDelegation &&
+                      maxAmountInputValue !== undefined
                         ? {
                             renderBody: () => (
                               <div className="flex items-center gap-2">
@@ -666,7 +687,7 @@ const RestakeUndelegateForm: FC = () => {
               {(isLoading, loadingText) => {
                 const activeChainSupported =
                   isDefined(activeTypedChainId) &&
-                  SUPPORTED_RESTAKE_DEPOSIT_TYPED_CHAIN_IDS.includes(
+                  SUPPORTED_STAKING_DEPOSIT_TYPED_CHAIN_IDS.includes(
                     activeTypedChainId,
                   );
 
@@ -728,7 +749,7 @@ const RestakeUndelegateForm: FC = () => {
         titleWhenEmpty="No Delegations Found"
         descriptionWhenEmpty="You don't have any active delegations to undelegate."
         items={delegationItems}
-        searchInputId="restake-undelegate-delegation-search"
+        searchInputId="staking-undelegate-delegation-search"
         searchPlaceholder="Search delegations..."
         getItemKey={(item) => item.id}
         onSelect={handleDelegationSelect}
@@ -777,7 +798,7 @@ const RestakeUndelegateForm: FC = () => {
   );
 };
 
-export default RestakeUndelegateForm;
+export default StakingUndelegateForm;
 
 // Undelegate requests view component
 type UndelegateRequestsViewProps = {
@@ -798,7 +819,8 @@ const UndelegateRequestsView: FC<UndelegateRequestsViewProps> = ({
   className,
 }) => {
   const { data: config } = useProtocolConfig();
-  const currentRound = config?.currentRound ?? BigInt(0);
+  const currentRound =
+    config?.isSupported === true ? config.currentRound : BigInt(0);
   const readyCount = undelegateRequests.filter(
     (r) => r.readyAtRound <= currentRound,
   ).length;
@@ -808,9 +830,9 @@ const UndelegateRequestsView: FC<UndelegateRequestsViewProps> = ({
   const isExecuting = executeStatus === TxStatus.PROCESSING;
 
   return (
-    <RestakeDetailCard.Root className={twMerge('!min-w-0', className)}>
+    <StakingDetailCard.Root className={twMerge('!min-w-0', className)}>
       <div className="flex items-center justify-between gap-2">
-        <RestakeDetailCard.Header
+        <StakingDetailCard.Header
           title={
             undelegateRequests.length > 0
               ? 'Undelegate Requests'
@@ -891,6 +913,6 @@ const UndelegateRequestsView: FC<UndelegateRequestsViewProps> = ({
           Requests can be executed after the waiting period.
         </Typography>
       )}
-    </RestakeDetailCard.Root>
+    </StakingDetailCard.Root>
   );
 };

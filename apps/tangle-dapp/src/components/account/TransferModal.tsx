@@ -21,7 +21,7 @@ import TokenSelector from '@tangle-network/ui-components/components/TokenSelecto
 import { useModal } from '@tangle-network/ui-components/hooks/useModal';
 import ListModal from '@tangle-network/tangle-shared-ui/components/ListModal';
 import filterBy from '@tangle-network/tangle-shared-ui/utils/filterBy';
-import { useRestakeAssets } from '@tangle-network/tangle-shared-ui/data/graphql/useRestakeAssets';
+import { useStakingAssets } from '@tangle-network/tangle-shared-ui/data/graphql';
 
 interface TransferModalProps {
   isOpen: boolean;
@@ -65,7 +65,7 @@ const TransferModal: FC<TransferModalProps> = ({ isOpen, onClose }) => {
     assetList,
     isLoading: isLoadingAssets,
     refetchBalances,
-  } = useRestakeAssets();
+  } = useStakingAssets();
 
   // Form state
   const [selectedToken, setSelectedToken] = useState<TokenOption | null>(null);
@@ -90,7 +90,7 @@ const TransferModal: FC<TransferModalProps> = ({ isOpen, onClose }) => {
       });
     }
 
-    // Add ERC20 tokens from restaking assets
+    // Add ERC20 tokens from staking assets
     for (const asset of assetList) {
       if (asset.balance !== null) {
         options.push({

@@ -45,7 +45,9 @@ export interface JobResult {
 interface JobCallQueryResponse {
   JobCall: Array<{
     id: string;
-    service_id: string;
+    service: {
+      serviceId: string;
+    } | null;
     callId: string;
     jobIndex: number;
     caller: string;
@@ -61,8 +63,12 @@ interface JobCallQueryResponse {
 interface JobResultQueryResponse {
   JobResult: Array<{
     id: string;
-    jobCall_id: string;
-    operator_id: string | null;
+    jobCall: {
+      callId: string;
+    } | null;
+    operator: {
+      id: string;
+    } | null;
     aggregated: boolean;
     output: string;
     submittedAt: string;
@@ -78,12 +84,14 @@ const fetchJobsByService = async (
   const query = `
     query GetJobsByService($serviceId: String!, $limit: Int!) {
       JobCall(
-        where: { service_id: { _eq: $serviceId } }
+        where: { service: { serviceId: { _eq: $serviceId } } }
         order_by: { createdAt: desc }
         limit: $limit
       ) {
         id
-        service_id
+        service {
+          serviceId
+        }
         callId
         jobIndex
         caller
@@ -104,7 +112,7 @@ const fetchJobsByService = async (
 
   return (result.data.JobCall ?? []).map((job) => ({
     id: job.id,
-    serviceId: BigInt(job.service_id),
+    serviceId: BigInt(job.service?.serviceId ?? '0'),
     callId: BigInt(job.callId),
     jobIndex: job.jobIndex,
     submitter: job.caller as Address,
@@ -124,12 +132,16 @@ const fetchJobResults = async (
   const query = `
     query GetJobResults($callId: String!) {
       JobResult(
-        where: { jobCall_id: { _eq: $callId } }
+        where: { jobCall: { id: { _eq: $callId } } }
         order_by: { submittedAt: asc }
       ) {
         id
-        jobCall_id
-        operator_id
+        jobCall {
+          callId
+        }
+        operator {
+          id
+        }
         aggregated
         output
         submittedAt
@@ -144,8 +156,8 @@ const fetchJobResults = async (
 
   return (result.data.JobResult ?? []).map((res) => ({
     id: res.id,
-    callId: BigInt(res.jobCall_id.split('-').pop() ?? '0'),
-    operator: res.operator_id ? (res.operator_id as Address) : null,
+    callId: BigInt(res.jobCall?.callId ?? '0'),
+    operator: res.operator?.id ? (res.operator.id as Address) : null,
     aggregated: res.aggregated,
     result: res.output,
     submittedAt: BigInt(res.submittedAt),

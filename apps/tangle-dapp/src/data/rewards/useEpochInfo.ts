@@ -14,7 +14,7 @@ export interface DistributionWeights {
   operatorsBps: number;
   customersBps: number;
   developersBps: number;
-  restakersBps: number;
+  stakersBps: number;
 }
 
 export interface EpochInfoData {
@@ -136,7 +136,7 @@ const useEpochInfo = (options?: UseEpochInfoOptions) => {
       operatorsBps: weightsResult[1],
       customersBps: weightsResult[2],
       developersBps: weightsResult[3],
-      restakersBps: weightsResult[4],
+      stakersBps: weightsResult[4],
     };
 
     // Calculate epochs per year (365 days * 24 hours * 60 mins * 60 secs / epoch length)

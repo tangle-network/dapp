@@ -1,8 +1,8 @@
 import { isEvmAddress } from '@tangle-network/ui-components';
 import { z, ZodError } from 'zod';
-import { toPrimitiveArgsDataType } from '../toPrimitiveArgsDataType';
 import { Blueprint } from '@tangle-network/tangle-shared-ui/types/blueprint';
 import { parseUnits, Address } from 'viem';
+import { encodeServiceConfig } from '@tangle-network/tangle-shared-ui/data/graphql';
 
 // EVM service request context - compatible with useServiceRequestTx
 export type ServiceRequestContext = {
@@ -201,8 +201,8 @@ export const deployBlueprintSchema = z
     minApproval: z.number().min(1),
     maxApproval: z.number().min(1).optional(),
     /**
-     * @dev request args are too complex to validate, so we're just going to pass it through
-     * and use {toPrimitiveArgsDataType}@link{../index.ts} to convert it to the correct type
+     * @dev request args are too complex to validate in Zod.
+     * They are validated/encoded later against blueprint request schema using TLV codecs.
      */
     requestArgs: z.array(z.any()).nullable().optional(),
     paymentAsset: assetSchema,
@@ -293,12 +293,7 @@ export const formatServiceRequestData = (
         },
       ]);
     }
-    const requestArgs = toPrimitiveArgsDataType(
-      blueprintData.requestParams,
-      data.requestArgs,
-    );
-    // Encode the request args as bytes for the contract
-    config = JSON.stringify(requestArgs) as `0x${string}`;
+    config = encodeServiceConfig(data.requestArgs, blueprintData.requestParams);
   }
 
   const paymentAmount = parseUnits(

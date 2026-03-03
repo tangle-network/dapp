@@ -20,8 +20,8 @@ import { Search } from '@tangle-network/icons';
 import LsTokenIcon from '@tangle-network/tangle-shared-ui/components/LsTokenIcon';
 import { OperatorTable } from './components/OperatorTable';
 import {
-  useRestakeAssets,
-  type RestakeAsset,
+  useStakingAssets,
+  type StakingAsset,
 } from '@tangle-network/tangle-shared-ui/data/graphql';
 import {
   useBlueprintConfig,
@@ -52,8 +52,8 @@ export const SelectOperatorsStep: FC<SelectOperatorsStepProps> = ({
   const { data: blueprintConfig, isLoading: isConfigLoading } =
     useBlueprintConfig(blueprint?.id);
 
-  // Fetch restaking assets from GraphQL indexer
-  const { assets: assetMap } = useRestakeAssets();
+  // Fetch staking assets from GraphQL indexer
+  const { assets: assetMap } = useStakingAssets();
 
   // Use operators registered for this blueprint from the parent component
   const operators = useMemo<OperatorSelectionTable[]>(() => {
@@ -63,7 +63,7 @@ export const SelectOperatorsStep: FC<SelectOperatorsStepProps> = ({
       return {
         address: operator.address as Address,
         identityName: operator.identityName,
-        restakersCount: operator.restakersCount,
+        stakersCount: operator.stakersCount ?? 0,
         vaultTokensInUsd: operator.tvlInUsd ?? 0,
         selfBondedAmount: operator.selfBondedAmount,
         vaultTokens: operator.vaultTokens,
@@ -104,7 +104,7 @@ export const SelectOperatorsStep: FC<SelectOperatorsStepProps> = ({
     setValue(`operators`, Object.keys(rowSelection) as Address[]);
   }, [rowSelection, setValue]);
 
-  const onSelectAsset = (asset: RestakeAsset, isChecked: boolean) => {
+  const onSelectAsset = (asset: StakingAsset, isChecked: boolean) => {
     const selectedAssets_ = Array.from(selectedAssets ?? []);
     const newSelectedAssets = isChecked
       ? [
@@ -199,7 +199,7 @@ export const SelectOperatorsStep: FC<SelectOperatorsStepProps> = ({
   }, [blueprintConfig, selectedOperatorsCount, setValue]);
 
   // Get all available assets for filtering
-  const allAssets = useMemo<RestakeAsset[]>(() => {
+  const allAssets = useMemo<StakingAsset[]>(() => {
     if (!assetMap) return [];
     return Array.from(assetMap.values());
   }, [assetMap]);

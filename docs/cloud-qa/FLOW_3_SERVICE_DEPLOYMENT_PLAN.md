@@ -1,6 +1,6 @@
 # Flow 3: Service Deployment - Analysis and QA Plan
 
-> **Last Updated:** 2026-01-30
+> **Last Updated:** 2026-03-02
 > **Status:** ✅ Implementation Complete - Ready for QA
 > **Depends On:** Flow 1 (Blueprint Creation) ✅, Flow 2 (Operator Registration) ✅
 
@@ -29,7 +29,7 @@ This document contains a comprehensive analysis of the Service Deployment flow i
 | 1 | Operator filtering missing | Pass `blueprintOperators` from `useBlueprintDetails()` to `OperatorSelectionStep` | `type.ts`, `page.tsx`, `OperatorSelectionStep.tsx` |
 | 2 | TTL units mismatch | Changed label to "Seconds", updated validation (0 or 3600-31536000), added helper text | `BasicInformationStep.tsx`, `deployBlueprint.ts` |
 | 3 | Payment amount not formatted | Added `parseUnits()` with token decimals | `page.tsx` |
-| 4 | Config encoding wrong | Returns `0x` for empty args, throws error for non-empty (TLV not yet implemented) | `useServiceRequest.ts` |
+| 4 | Config encoding wrong | Uses schema-aware TLV encoding when request schema exists; keeps JSON-bytes fallback only for schema-less payloads | `useServiceRequest.ts`, `encodeServiceConfig.ts` |
 | 5 | Security requirements not sent | Added `AssetSecurityRequirement` type, calls `requestServiceWithSecurity()` when requirements provided | `useServiceRequest.ts`, `page.tsx`, `index.ts` |
 | 6 | GraphQL type mismatch (discovered during QA) | Fixed `blueprintId` type from `String!` to `numeric!` in `fetchBlueprintOperators` query | `useBlueprints.ts` |
 
@@ -47,10 +47,15 @@ This document contains a comprehensive analysis of the Service Deployment flow i
 
 ```
 libs/tangle-shared-ui/src/data/graphql/useServiceRequest.ts
-  ✅ Fixed config encoding (returns 0x for empty, throws for non-empty)
+  ✅ Re-export request config encoding from standalone utility
+  ✅ Parses requestId from both ServiceRequested and ServiceRequestedWithSecurity events
   ✅ Added AssetSecurityRequirement interface
   ✅ Added securityRequirements to ServiceRequestParams
   ✅ Calls requestServiceWithSecurity() when requirements provided
+
+libs/tangle-shared-ui/src/data/graphql/encodeServiceConfig.ts
+  ✅ Added schema-aware TLV payload encoding for request args using primitive request param types
+  ✅ Preserved legacy JSON-bytes fallback only for schema-less payloads
 
 libs/tangle-shared-ui/src/data/graphql/useBlueprints.ts
   ✅ Fixed blueprintId type in fetchBlueprintOperators (String! → numeric!)

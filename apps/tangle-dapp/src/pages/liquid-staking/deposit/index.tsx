@@ -18,21 +18,21 @@ import { useSearchParams } from 'react-router';
 import { erc20Abi, parseUnits, formatUnits, Address, isAddress } from 'viem';
 import { useAccount, useChainId } from 'wagmi';
 import ErrorMessage from '@tangle-network/tangle-shared-ui/components/ErrorMessage';
-import ActionButtonBase from '../../../components/restaking/ActionButtonBase';
-import StyleContainer from '../../../components/restaking/StyleContainer';
-import { SUPPORTED_RESTAKE_DEPOSIT_TYPED_CHAIN_IDS } from '../../../constants/restake';
+import ActionButtonBase from '../../../components/staking/ActionButtonBase';
+import StyleContainer from '../../../components/staking/StyleContainer';
+import { SUPPORTED_STAKING_DEPOSIT_TYPED_CHAIN_IDS } from '../../../constants/staking';
 import useActiveTypedChainId from '../../../hooks/useActiveTypedChainId';
 import decimalsToStep from '../../../utils/decimalsToStep';
-import AssetPlaceholder from '../../restake/AssetPlaceholder';
-import SupportedChainModal from '../../restake/SupportedChainModal';
-import useSwitchChain from '../../restake/useSwitchChain';
+import AssetPlaceholder from '../../staking/AssetPlaceholder';
+import SupportedChainModal from '../../staking/SupportedChainModal';
+import useSwitchChain from '../../staking/useSwitchChain';
 import LiquidStakingActionTabs from '../LiquidStakingActionTabs';
 import {
   useLiquidDelegationVaults,
   useVaultDeposit,
   type LiquidDelegationVault,
 } from '@tangle-network/tangle-shared-ui/data/liquidDelegation';
-import { useRestakeAssets } from '@tangle-network/tangle-shared-ui/data/graphql';
+import { useStakingAssets } from '@tangle-network/tangle-shared-ui/data/graphql';
 import { useContractWrite } from '@tangle-network/tangle-shared-ui/data/tx';
 import { TxStatus } from '@tangle-network/tangle-shared-ui/hooks/useContractWrite';
 import filterBy from '@tangle-network/tangle-shared-ui/utils/filterBy';
@@ -56,7 +56,7 @@ const LiquidStakingDepositForm: FC = () => {
   const switchChain = useSwitchChain();
 
   const { vaults, isLoading: isLoadingVaults } = useLiquidDelegationVaults();
-  const { assets, refetchBalances } = useRestakeAssets();
+  const { assets, refetchBalances } = useStakingAssets();
   const {
     status: depositStatus,
     execute: executeDeposit,
@@ -407,7 +407,7 @@ const LiquidStakingDepositForm: FC = () => {
             {(isLoading, loadingText) => {
               const activeChainSupported =
                 isDefined(activeTypedChainId) &&
-                SUPPORTED_RESTAKE_DEPOSIT_TYPED_CHAIN_IDS.includes(
+                SUPPORTED_STAKING_DEPOSIT_TYPED_CHAIN_IDS.includes(
                   activeTypedChainId,
                 );
 

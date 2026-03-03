@@ -4,9 +4,9 @@ import type { Address } from 'viem';
 import { useAccount } from 'wagmi';
 import type { Operator } from '@tangle-network/tangle-shared-ui/data/graphql/useOperators';
 import SharedOperatorsTable from '@tangle-network/tangle-shared-ui/components/tables/Operators';
-import type { RestakeOperator } from '@tangle-network/tangle-shared-ui/types/restake';
+import type { StakingOperator } from '@tangle-network/tangle-shared-ui/types/staking';
 import { TableVariant } from '@tangle-network/ui-components/components/Table/types';
-import { useCanDelegateToOperators } from '@tangle-network/tangle-shared-ui/data/restake/useCanDelegateToOperators';
+import { useCanDelegateToOperators } from '@tangle-network/tangle-shared-ui/data/staking/useCanDelegateToOperators';
 
 interface Props {
   operatorMap: Map<Address, Operator> | null;
@@ -39,7 +39,7 @@ export const OperatorsTable: FC<Props> = ({
     enabled: !!userAddress && operatorAddresses.length > 0,
   });
 
-  const data = useMemo<RestakeOperator[]>(() => {
+  const data = useMemo<StakingOperator[]>(() => {
     if (!operatorMap) return [];
 
     return Array.from(operatorMap.values()).map((operator) => {
@@ -49,10 +49,8 @@ export const OperatorsTable: FC<Props> = ({
         address: operator.id,
         identityName: undefined,
         concentrationPercentage: null,
-        restakersCount: formatDelegationCount(
-          operator.restakingDelegationCount,
-        ),
-        selfBondedAmount: operator.restakingStake ?? BigInt(0),
+        stakersCount: formatDelegationCount(operator.stakingDelegationCount),
+        selfBondedAmount: operator.stakingStake ?? BigInt(0),
         tvlInUsd: null,
         vaultTokens: [],
         isDelegated: false,
@@ -73,12 +71,12 @@ export const OperatorsTable: FC<Props> = ({
       }}
       emptyTableProps={{
         title: 'No Operators Available',
-        description: 'Be the first to register as a restaking operator.',
+        description: 'Be the first to register as a staking operator.',
       }}
       tableProps={{
         variant: TableVariant.GLASS_OUTER,
       }}
-      RestakeOperatorAction={({ address }) => (
+      StakingOperatorAction={({ address }) => (
         <Button
           variant="secondary"
           size="sm"

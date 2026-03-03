@@ -32,7 +32,7 @@ export interface LiquidRedeemRequest {
 const LIQUID_REDEEM_REQUESTS_QUERY = gql`
   query LiquidRedeemRequests($owner: String!) {
     LiquidRedeemRequest(
-      where: { owner_id: { _eq: $owner }, claimed: { _eq: false } }
+      where: { owner: { id: { _eq: $owner } }, claimed: { _eq: false } }
       order_by: { createdAt: desc }
     ) {
       id
@@ -60,9 +60,9 @@ const LIQUID_REDEEM_REQUESTS_BY_VAULT_QUERY = gql`
   query LiquidRedeemRequestsByVault($owner: String!, $vaultId: String!) {
     LiquidRedeemRequest(
       where: {
-        owner_id: { _eq: $owner }
+        owner: { id: { _eq: $owner } }
         claimed: { _eq: false }
-        vault_id: { _eq: $vaultId }
+        vault: { id: { _eq: $vaultId } }
       }
       order_by: { createdAt: desc }
     ) {

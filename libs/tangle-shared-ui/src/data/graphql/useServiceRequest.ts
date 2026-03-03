@@ -3,10 +3,12 @@
  */
 
 import { useCallback, useState } from 'react';
-import { Address, parseEventLogs, zeroAddress } from 'viem';
+import { Address, zeroAddress } from 'viem';
 import { useAccount, usePublicClient, useWalletClient } from 'wagmi';
 import TangleABI from '../../abi/tangle';
 import { getContractsByChainId } from '@tangle-network/dapp-config/contracts';
+import useContractWrite, { TxStatus } from '../../hooks/useContractWrite';
+export { encodeServiceConfig } from './encodeServiceConfig';
 
 /**
  * Asset kind for security requirements.
@@ -60,137 +62,143 @@ export interface ServiceRequestResult {
  * Hook to request a new service via the Tangle contract.
  */
 export const useServiceRequestTx = () => {
-  const { address: userAddress, chainId } = useAccount();
+  const { chainId } = useAccount();
   const publicClient = usePublicClient();
   const { data: walletClient } = useWalletClient();
 
-  const [status, setStatus] = useState<ServiceRequestStatus>('idle');
   const [result, setResult] = useState<ServiceRequestResult>({});
+
+  const hook = useContractWrite<
+    typeof TangleABI,
+    'requestService' | 'requestServiceWithSecurity',
+    ServiceRequestParams
+  >(
+    TangleABI,
+    async (params: ServiceRequestParams, _activeAddress) => {
+      if (!chainId) {
+        throw new Error('Wallet not connected');
+      }
+
+      let contracts: ReturnType<typeof getContractsByChainId>;
+      try {
+        contracts = getContractsByChainId(chainId);
+      } catch {
+        throw new Error('Tangle contract not available on this network');
+      }
+
+      const tangleAddress = contracts.tangle;
+      if (tangleAddress === zeroAddress) {
+        throw new Error('Tangle contract not available on this network');
+      }
+
+      const securityRequirements = params.securityRequirements ?? [];
+      const hasSecurityRequirements = securityRequirements.length > 0;
+
+      if (hasSecurityRequirements) {
+        return {
+          address: tangleAddress,
+          abi: TangleABI,
+          functionName: 'requestServiceWithSecurity' as const,
+          args: [
+            params.blueprintId,
+            params.operators,
+            securityRequirements,
+            params.config,
+            params.permittedCallers,
+            params.ttl,
+            params.paymentToken,
+            params.paymentAmount,
+          ] as const,
+          value:
+            params.paymentToken === zeroAddress
+              ? params.paymentAmount
+              : BigInt(0),
+        };
+      }
+
+      return {
+        address: tangleAddress,
+        abi: TangleABI,
+        functionName: 'requestService' as const,
+        args: [
+          params.blueprintId,
+          params.operators,
+          params.config,
+          params.permittedCallers,
+          params.ttl,
+          params.paymentToken,
+          params.paymentAmount,
+        ] as const,
+        value:
+          params.paymentToken === zeroAddress
+            ? params.paymentAmount
+            : BigInt(0),
+      };
+    },
+    {
+      txName: 'deploy blueprint',
+      txDetails: (params) =>
+        new Map([
+          ['Blueprint ID', params.blueprintId.toString()],
+          ['Operators', params.operators.length.toString()],
+          [
+            'Security Requirements',
+            params.securityRequirements?.length ? 'Custom' : 'Default',
+          ],
+        ]),
+      getSuccessMessage: (params) =>
+        `Successfully deployed blueprint #${params.blueprintId}`,
+    },
+  );
 
   const execute = useCallback(
     async (params: ServiceRequestParams): Promise<ServiceRequestResult> => {
-      if (!userAddress || !walletClient || !publicClient || !chainId) {
+      if (!walletClient || !publicClient || !chainId || hook.execute === null) {
         const error = new Error('Wallet not connected');
-        setStatus('error');
         setResult({ error });
         return { error };
       }
 
-      setStatus('pending');
       setResult({});
-
-      try {
-        let contracts: ReturnType<typeof getContractsByChainId>;
-        try {
-          contracts = getContractsByChainId(chainId);
-        } catch {
-          throw new Error('Tangle contract not available on this network');
-        }
-
-        const tangleAddress = contracts.tangle;
-        if (tangleAddress === zeroAddress) {
-          throw new Error('Tangle contract not available on this network');
-        }
-
-        // Determine which contract function to use based on security requirements
-        const hasSecurityRequirements =
-          params.securityRequirements && params.securityRequirements.length > 0;
-
-        // Use type assertion to avoid "union type too complex" error from large ABI
-        let simulateRequest;
-
-        if (hasSecurityRequirements) {
-          // Use requestServiceWithSecurity when security requirements are provided
-          const result = await (publicClient as any).simulateContract({
-            address: tangleAddress,
-            abi: TangleABI,
-            functionName: 'requestServiceWithSecurity' as const,
-            args: [
-              params.blueprintId,
-              params.operators,
-              params.securityRequirements,
-              params.config,
-              params.permittedCallers,
-              params.ttl,
-              params.paymentToken,
-              params.paymentAmount,
-            ] as const,
-            account: userAddress,
-            value:
-              params.paymentToken === zeroAddress
-                ? params.paymentAmount
-                : BigInt(0),
-          });
-          simulateRequest = result.request;
-        } else {
-          // Use requestService when no security requirements
-          const result = await (publicClient as any).simulateContract({
-            address: tangleAddress,
-            abi: TangleABI,
-            functionName: 'requestService' as const,
-            args: [
-              params.blueprintId,
-              params.operators,
-              params.config,
-              params.permittedCallers,
-              params.ttl,
-              params.paymentToken,
-              params.paymentAmount,
-            ] as const,
-            account: userAddress,
-            value:
-              params.paymentToken === zeroAddress
-                ? params.paymentAmount
-                : BigInt(0),
-          });
-          simulateRequest = result.request;
-        }
-
-        const txHash = await walletClient.writeContract(simulateRequest);
-
-        // Wait for transaction receipt
-        const receipt = await publicClient.waitForTransactionReceipt({
-          hash: txHash,
-        });
-
-        if (receipt.status === 'reverted') {
-          throw new Error('Transaction reverted');
-        }
-
-        let requestId: bigint | undefined;
-        try {
-          const parsed = parseEventLogs({
-            abi: TangleABI,
-            logs: receipt.logs,
-            eventName: 'ServiceRequested',
-          });
-          const event = parsed[0] as unknown as
-            | { args: { requestId: bigint } }
-            | undefined;
-          requestId = event?.args?.requestId;
-        } catch {
-          // If the event isn't present (or decoding fails), still return the txHash.
-        }
-
-        const successResult: ServiceRequestResult = { requestId, txHash };
-        setStatus('success');
-        setResult(successResult);
-        return successResult;
-      } catch (error) {
-        const err =
-          error instanceof Error ? error : new Error('Service request failed');
-        setStatus('error');
-        setResult({ error: err });
-        return { error: err };
+      const txResult = await hook.execute(params);
+      if (!txResult) {
+        const error = hook.error ?? new Error('Service request failed');
+        setResult({ error });
+        return { error };
       }
+
+      const simulatedResult = txResult.simulatedResult;
+      const requestId =
+        typeof simulatedResult === 'bigint'
+          ? simulatedResult
+          : Array.isArray(simulatedResult) &&
+              typeof simulatedResult[0] === 'bigint'
+            ? simulatedResult[0]
+            : undefined;
+
+      const successResult: ServiceRequestResult = {
+        requestId,
+        txHash: txResult.hash,
+      };
+      setResult(successResult);
+      return successResult;
     },
-    [userAddress, walletClient, publicClient, chainId],
+    [chainId, hook, publicClient, walletClient],
   );
 
   const reset = useCallback(() => {
-    setStatus('idle');
+    hook.reset();
     setResult({});
-  }, []);
+  }, [hook]);
+
+  const status: ServiceRequestStatus =
+    hook.status === TxStatus.NOT_YET_INITIATED
+      ? 'idle'
+      : hook.status === TxStatus.PROCESSING
+        ? 'pending'
+        : hook.status === TxStatus.COMPLETE
+          ? 'success'
+          : 'error';
 
   return {
     execute,
@@ -202,26 +210,6 @@ export const useServiceRequestTx = () => {
     isSuccess: status === 'success',
     isError: status === 'error',
   };
-};
-
-/**
- * Encode service configuration/request args for the requestService call.
- * Contract expects TLV binary format. For blueprints with no request params,
- * return empty bytes (0x). For blueprints with request params, throw an error
- * as full TLV encoding is not yet implemented.
- */
-export const encodeServiceConfig = (requestArgs: unknown[]): `0x${string}` => {
-  // For blueprints with no request params, return empty bytes
-  if (!requestArgs || requestArgs.length === 0) {
-    return '0x';
-  }
-
-  // TODO: Implement full TLV encoding for blueprints with request params
-  // For now, throw error to prevent silent failures with incorrect encoding
-  throw new Error(
-    'Blueprints with request parameters are not yet supported. ' +
-      'Request argument encoding requires TLV binary format implementation.',
-  );
 };
 
 export default useServiceRequestTx;

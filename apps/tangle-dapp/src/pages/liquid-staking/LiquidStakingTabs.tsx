@@ -3,7 +3,7 @@ import { Link, useLocation } from 'react-router';
 import { twMerge } from 'tailwind-merge';
 
 import { PagePath } from '../../types';
-import TabsList from '../../components/restaking/TabsList';
+import TabsList from '../../components/staking/TabsList';
 import { LiquidStakingTab, LiquidStakingAction } from '../../constants';
 import { TabsRoot } from '@tangle-network/ui-components/components/Tabs';
 import { Typography } from '@tangle-network/ui-components/typography';

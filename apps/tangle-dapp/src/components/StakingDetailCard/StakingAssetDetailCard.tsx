@@ -2,7 +2,7 @@ import { ArrowRightUp } from '@tangle-network/icons/ArrowRightUp';
 import { TokenIcon } from '@tangle-network/icons/TokenIcon';
 import Button from '@tangle-network/ui-components/components/buttons/Button';
 import { FC } from 'react';
-import RestakeDetailCard from './index';
+import StakingDetailCard from './index';
 import getDisplayValue from './utils';
 
 type Props = {
@@ -14,7 +14,7 @@ type Props = {
   tvl?: string | number;
 };
 
-const RestakeAssetDetailCard: FC<Props> = ({
+const StakingAssetDetailCard: FC<Props> = ({
   assetExternalLink,
   getAssetLink,
   limit,
@@ -23,8 +23,8 @@ const RestakeAssetDetailCard: FC<Props> = ({
   tvl,
 }) => {
   return (
-    <RestakeDetailCard.Root>
-      <RestakeDetailCard.Header
+    <StakingDetailCard.Root>
+      <StakingDetailCard.Header
         IconElement={
           <TokenIcon
             className="[border-image:var(--tangle-gradient-border)] p-1"
@@ -52,17 +52,17 @@ const RestakeAssetDetailCard: FC<Props> = ({
         descExternalLink={assetExternalLink}
       />
 
-      <RestakeDetailCard.Body>
-        <RestakeDetailCard.Item title="Total Value Locked">
+      <StakingDetailCard.Body>
+        <StakingDetailCard.Item title="Total Value Locked">
           {getDisplayValue(tvl)}
-        </RestakeDetailCard.Item>
+        </StakingDetailCard.Item>
 
-        <RestakeDetailCard.Item title="Current Limit">
+        <StakingDetailCard.Item title="Current Limit">
           {getDisplayValue(limit)}
-        </RestakeDetailCard.Item>
-      </RestakeDetailCard.Body>
-    </RestakeDetailCard.Root>
+        </StakingDetailCard.Item>
+      </StakingDetailCard.Body>
+    </StakingDetailCard.Root>
   );
 };
 
-export default RestakeAssetDetailCard;
+export default StakingAssetDetailCard;

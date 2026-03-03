@@ -15,7 +15,7 @@ import { twMerge } from 'tailwind-merge';
 import usePendingRewards from '../../../data/rewards/usePendingRewards';
 import useClaimRewardsTx from '../../../data/rewards/useClaimRewardsTx';
 import { TxStatus } from '@tangle-network/tangle-shared-ui/hooks/useContractWrite';
-import PendingRewardsList from '../../../components/restaking/PendingRewardsList';
+import PendingRewardsList from '../../../components/staking/PendingRewardsList';
 
 const ClaimRewardsDropdownContent: FC = () => {
   const { isConnected } = useAccount();

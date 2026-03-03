@@ -302,7 +302,7 @@ interface RoleAccountsResponse {
 
 export interface RoleAccountsData {
   operators: Set<string>;
-  restakers: Set<string>;
+  stakers: Set<string>;
   developers: Set<string>;
   customers: Set<string>;
 }
@@ -331,7 +331,7 @@ const fetchRoleAccounts = async (
 
   return {
     operators: new Set(result.data.Operator.map((o) => o.id.toLowerCase())),
-    restakers: new Set(result.data.Delegator.map((d) => d.id.toLowerCase())),
+    stakers: new Set(result.data.Delegator.map((d) => d.id.toLowerCase())),
     developers: new Set(
       result.data.Blueprint.map((b) => b.owner.toLowerCase()),
     ),
@@ -354,8 +354,8 @@ export const getAccountIdsForRoles = (
       case RoleFilterEnum.OPERATOR:
         roleAccounts.operators.forEach((id) => accountIds.add(id));
         break;
-      case RoleFilterEnum.RESTAKER:
-        roleAccounts.restakers.forEach((id) => accountIds.add(id));
+      case RoleFilterEnum.STAKER:
+        roleAccounts.stakers.forEach((id) => accountIds.add(id));
         break;
       case RoleFilterEnum.DEVELOPER:
         roleAccounts.developers.forEach((id) => accountIds.add(id));

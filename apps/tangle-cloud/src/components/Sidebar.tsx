@@ -12,13 +12,10 @@ import {
   SidebarTangleClosedIcon,
 } from '@tangle-network/ui-components/components/SideBar';
 import { TangleCloudLogo } from '@tangle-network/ui-components/components/TangleCloudLogo';
-import {
-  TANGLE_DAPP_URL,
-  TANGLE_DOCS_URL,
-} from '@tangle-network/ui-components/constants';
+import { TANGLE_DOCS_URL } from '@tangle-network/ui-components/constants';
 import { FC } from 'react';
 import { useLocation } from 'react-router';
-import { PagePath } from '../types';
+import { PagePath, TANGLE_DAPP_BASE_URL } from '../types';
 import {
   HomeFillIcon,
   GiftLineIcon,
@@ -69,7 +66,7 @@ const SIDEBAR_ITEMS: SideBarItemProps[] = [
   // External links
   {
     Icon: CommandFillIcon,
-    href: TANGLE_DAPP_URL,
+    href: TANGLE_DAPP_BASE_URL,
     isInternal: false,
     name: 'dApp',
     subItems: [],

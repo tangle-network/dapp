@@ -32,11 +32,11 @@ import { formatUnits } from 'viem';
 import TableCellWrapper from '../../../components/tables/TableCellWrapper';
 import type { TableStatusProps } from '../../../components/tables/TableStatus';
 import TableStatus from '../../../components/tables/TableStatus';
-import { RestakeOperator } from '../../../types';
-import { DelegationMode } from '../../../data/restake/useCanDelegate';
+import { StakingOperator } from '../../../types';
+import { DelegationMode } from '../../../data/staking/useCanDelegate';
 import VaultsDropdown from './VaultsDropdown';
 
-const COLUMN_HELPER = createColumnHelper<RestakeOperator>();
+const COLUMN_HELPER = createColumnHelper<StakingOperator>();
 
 const formatAmount = (amount: bigint, decimals = 18): string => {
   const formatted = formatUnits(amount, decimals);
@@ -53,7 +53,7 @@ const formatAmount = (amount: bigint, decimals = 18): string => {
 
 const getStaticColumns = (
   tokenSymbol: string,
-): ColumnDef<RestakeOperator, any>[] => [
+): ColumnDef<StakingOperator, any>[] => [
   COLUMN_HELPER.accessor('address', {
     header: () => 'Identity',
     cell: (props) => {
@@ -140,8 +140,9 @@ const getStaticColumns = (
       </TableCellWrapper>
     ),
   }),
-  COLUMN_HELPER.accessor('restakersCount', {
-    header: () => 'Restakers',
+  COLUMN_HELPER.accessor((row) => row.stakersCount ?? 0, {
+    id: 'stakersCount',
+    header: () => 'Stakers',
     cell: (props) => (
       <TableCellWrapper className="p-3">
         <Typography
@@ -264,13 +265,13 @@ const getStaticColumns = (
 
 type Props = {
   isLoading?: boolean;
-  data?: RestakeOperator[];
+  data?: StakingOperator[];
   globalFilter?: string;
   onGlobalFilterChange?: (value: string) => void;
   loadingTableProps?: Partial<TableStatusProps>;
   emptyTableProps?: Partial<TableStatusProps>;
-  tableProps?: Partial<ComponentProps<typeof Table<RestakeOperator>>>;
-  RestakeOperatorAction?: React.FC<PropsWithChildren<{ address: string }>>;
+  tableProps?: Partial<ComponentProps<typeof Table<StakingOperator>>>;
+  StakingOperatorAction?: React.FC<PropsWithChildren<{ address: string }>>;
   tokenSymbol?: string;
 };
 
@@ -282,9 +283,11 @@ const OperatorsTable: FC<Props> = ({
   tableProps,
   globalFilter,
   onGlobalFilterChange,
-  RestakeOperatorAction,
+  StakingOperatorAction,
   tokenSymbol = 'ETH',
 }) => {
+  const OperatorAction = StakingOperatorAction;
+
   const columns = useMemo(() => {
     return getStaticColumns(tokenSymbol).concat([
       COLUMN_HELPER.display({
@@ -327,13 +330,13 @@ const OperatorsTable: FC<Props> = ({
               );
             }
 
-            if (RestakeOperatorAction) {
+            if (OperatorAction) {
               return (
-                <RestakeOperatorAction address={props.row.original.address}>
+                <OperatorAction address={props.row.original.address}>
                   <Button variant="secondary" size="sm" className="min-w-24">
                     Delegate
                   </Button>
-                </RestakeOperatorAction>
+                </OperatorAction>
               );
             }
 
@@ -353,9 +356,9 @@ const OperatorsTable: FC<Props> = ({
           );
         },
         enableSorting: false,
-      }) satisfies ColumnDef<RestakeOperator>,
+      }) satisfies ColumnDef<StakingOperator>,
     ]);
-  }, [RestakeOperatorAction, tokenSymbol]);
+  }, [OperatorAction, tokenSymbol]);
 
   const table = useReactTable({
     data,
@@ -379,7 +382,7 @@ const OperatorsTable: FC<Props> = ({
           desc: true,
         },
         {
-          id: 'restakersCount',
+          id: 'stakersCount',
           desc: true,
         },
       ],

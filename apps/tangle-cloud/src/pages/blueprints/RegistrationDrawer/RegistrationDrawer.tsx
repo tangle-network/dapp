@@ -1,8 +1,5 @@
 import { useOperator } from '@tangle-network/tangle-shared-ui/data/graphql/useOperators';
-import {
-  type OperatorRegistration,
-  useRegisterOperatorTx,
-} from '@tangle-network/tangle-shared-ui/data/graphql/useOperatorManagement';
+import { type OperatorRegistration } from '@tangle-network/tangle-shared-ui/data/graphql/useOperatorManagement';
 import { Alert } from '@tangle-network/ui-components/components/Alert';
 import { Button } from '@tangle-network/ui-components/components/buttons';
 import {
@@ -22,6 +19,10 @@ import { Address, hashMessage, recoverPublicKey } from 'viem';
 import { TangleDAppPagePath } from '../../../types';
 import { TxName } from '../../../constants';
 import useTxNotification from '../../../hooks/useTxNotification';
+import {
+  TxStatus as BatchRegisterTxStatus,
+  useOperatorBatchRegisterTx,
+} from '../../../data/services/useOperatorRegisterTx';
 import StepNavigation from './components/StepNavigation';
 import ConfigureStep from './steps/ConfigureStep';
 import ReviewStep from './steps/ReviewStep';
@@ -48,11 +49,20 @@ const RegistrationDrawer: FC<RegistrationDrawerProps> = ({
   const { data: walletClient } = useWalletClient();
   const { data: operator, isLoading: isOperatorLoading } =
     useOperator(activeAccount);
-  const { registerOperator, status: registerTxStatus } =
-    useRegisterOperatorTx();
   const { notifyProcessing, notifySuccess, notifyError } = useTxNotification();
+  const { execute: batchRegisterOperator, status: batchRegisterStatus } =
+    useOperatorBatchRegisterTx({
+      onProgress: (progress) => {
+        notifyProcessing(
+          TxName.REGISTER_BLUEPRINT,
+          progress.total > 1
+            ? { current: progress.current, total: progress.total }
+            : undefined,
+        );
+      },
+    });
 
-  const isActiveOperator = operator?.restakingStatus === 'ACTIVE';
+  const isActiveOperator = operator?.stakingStatus === 'ACTIVE';
 
   const handleClose = useCallback(() => {
     onOpenChange(false);
@@ -83,95 +93,113 @@ const RegistrationDrawer: FC<RegistrationDrawerProps> = ({
         signature,
       });
 
-      let successCount = 0;
-
-      for (let i = 0; i < blueprints.length; i++) {
-        const blueprint = blueprints[i];
-        const blueprintId = BigInt(blueprint.id);
+      const registrations = blueprints.map((blueprint) => {
         const blueprintConfig = form.getValues(
           `blueprintConfigs.${blueprint.id.toString()}`,
         );
-
-        // Show processing notification with step counter for multiple blueprints
-        notifyProcessing(
-          TxName.REGISTER_BLUEPRINT,
-          totalBlueprints > 1
-            ? { current: i + 1, total: totalBlueprints }
-            : undefined,
-        );
-
         const registrationArgs = encodeRegistrationInputs(
           blueprint.registrationParams,
           blueprintConfig?.params ?? {},
         );
 
-        const txHash = await registerOperator(
-          blueprintId,
-          { ecdsaPublicKey, rpcAddress: rpcUrl },
+        return {
+          blueprintId: BigInt(blueprint.id),
           registrationArgs,
-        );
+        };
+      });
 
-        if (txHash) {
-          queryClient.setQueriesData<OperatorRegistration[]>(
-            { queryKey: ['operator', 'registrations'] },
-            (existingRegistrations) => {
-              const optimisticRegistration: OperatorRegistration = {
-                blueprintId,
+      const batchResult = await batchRegisterOperator({
+        ecdsaPublicKey,
+        rpcAddress: rpcUrl,
+        registrations,
+      });
+
+      if (batchResult === null) {
+        throw new Error('Failed to register for selected blueprints');
+      }
+
+      const { successfulBlueprintIds } = batchResult;
+      const successfulIds = new Set(
+        successfulBlueprintIds.map((blueprintId) => blueprintId.toString()),
+      );
+      const successfulBlueprints = blueprints.filter((blueprint) =>
+        successfulIds.has(blueprint.id.toString()),
+      );
+      const successCount = successfulBlueprints.length;
+
+      if (successCount === 0) {
+        throw new Error('Failed to register for selected blueprints');
+      }
+
+      const registeredAt = BigInt(Math.floor(Date.now() / 1000));
+      queryClient.setQueriesData<OperatorRegistration[]>(
+        { queryKey: ['operator', 'registrations'] },
+        (existingRegistrations) => {
+          const optimisticRegistrations = successfulBlueprints.map(
+            (blueprint) =>
+              ({
+                blueprintId: BigInt(blueprint.id),
                 blueprintName: blueprint.name ?? `Blueprint #${blueprint.id}`,
                 operator: activeAccount as Address,
-                registeredAt: BigInt(Math.floor(Date.now() / 1000)),
+                registeredAt,
                 preferences: {
                   ecdsaPublicKey: ecdsaPublicKey as `0x${string}`,
                   rpcAddress: rpcUrl,
                 },
                 active: true,
-              };
+              }) satisfies OperatorRegistration,
+          );
 
-              if (!existingRegistrations) {
-                return [optimisticRegistration];
+          if (!existingRegistrations) {
+            return optimisticRegistrations;
+          }
+
+          const registrationByBlueprintId = new Map<
+            string,
+            OperatorRegistration
+          >(
+            optimisticRegistrations.map((registration) => [
+              registration.blueprintId.toString(),
+              registration,
+            ]),
+          );
+
+          const mergedRegistrations = existingRegistrations.map(
+            (registration) => {
+              const optimisticRegistration = registrationByBlueprintId.get(
+                registration.blueprintId.toString(),
+              );
+              if (!optimisticRegistration) {
+                return registration;
               }
 
-              let foundMatchingRegistration = false;
-              const updatedRegistrations = existingRegistrations.map(
-                (registration) => {
-                  if (registration.blueprintId !== blueprintId) {
-                    return registration;
-                  }
-
-                  foundMatchingRegistration = true;
-                  return {
-                    ...registration,
-                    active: true,
-                    preferences: {
-                      ...registration.preferences,
-                      ecdsaPublicKey: ecdsaPublicKey as `0x${string}`,
-                      rpcAddress: rpcUrl,
-                    },
-                    registeredAt: optimisticRegistration.registeredAt,
-                  };
-                },
+              registrationByBlueprintId.delete(
+                registration.blueprintId.toString(),
               );
-
-              return foundMatchingRegistration
-                ? updatedRegistrations
-                : [optimisticRegistration, ...updatedRegistrations];
+              return {
+                ...registration,
+                active: true,
+                preferences: optimisticRegistration.preferences,
+                registeredAt,
+              };
             },
           );
 
-          successCount++;
-        }
-      }
+          return [
+            ...registrationByBlueprintId.values(),
+            ...mergedRegistrations,
+          ];
+        },
+      );
 
-      if (successCount > 0) {
-        const successMessage =
-          successCount === totalBlueprints
-            ? `Successfully registered for ${successCount} blueprint${successCount > 1 ? 's' : ''}`
-            : `Registered for ${successCount} of ${totalBlueprints} blueprints`;
+      const successMessage =
+        successCount === totalBlueprints
+          ? `Successfully registered for ${successCount} blueprint${successCount > 1 ? 's' : ''}`
+          : `Registered for ${successCount} of ${totalBlueprints} blueprints`;
 
-        notifySuccess(TxName.REGISTER_BLUEPRINT, null, successMessage);
-        reset();
-        onRegistrationComplete?.();
-      }
+      notifySuccess(TxName.REGISTER_BLUEPRINT, null, successMessage);
+      reset();
+      onRegistrationComplete?.();
     } catch (error) {
       console.error('Registration failed:', error);
       notifyError(
@@ -186,11 +214,10 @@ const RegistrationDrawer: FC<RegistrationDrawerProps> = ({
     walletClient,
     form,
     blueprints,
-    registerOperator,
+    batchRegisterOperator,
     reset,
     onRegistrationComplete,
     queryClient,
-    notifyProcessing,
     notifySuccess,
     notifyError,
   ]);
@@ -215,7 +242,10 @@ const RegistrationDrawer: FC<RegistrationDrawerProps> = ({
           <ReviewStep
             blueprints={blueprints}
             form={form}
-            isSubmitting={isSubmitting || registerTxStatus === 'pending'}
+            isSubmitting={
+              isSubmitting ||
+              batchRegisterStatus === BatchRegisterTxStatus.PROCESSING
+            }
           />
         );
       default:
@@ -271,7 +301,7 @@ const RegistrationDrawer: FC<RegistrationDrawerProps> = ({
 
             <Button
               as="a"
-              href={TangleDAppPagePath.RESTAKE_DELEGATE}
+              href={TangleDAppPagePath.STAKING_DELEGATE}
               target="_blank"
               rel="noopener noreferrer"
               className="w-full"
@@ -307,7 +337,10 @@ const RegistrationDrawer: FC<RegistrationDrawerProps> = ({
                 <StepNavigation
                   isFirstStep={isFirstStep}
                   isLastStep={isLastStep}
-                  isSubmitting={isSubmitting || registerTxStatus === 'pending'}
+                  isSubmitting={
+                    isSubmitting ||
+                    batchRegisterStatus === BatchRegisterTxStatus.PROCESSING
+                  }
                   onBack={goBack}
                   onNext={handleNext}
                   onSubmit={handleSubmit}

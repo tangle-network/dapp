@@ -76,7 +76,7 @@ export const useDepositTx = () => {
       };
     },
     {
-      txName: 'restake deposit',
+      txName: 'stake deposit',
       txDetails: (params) =>
         new Map([
           ['Token', params.token],

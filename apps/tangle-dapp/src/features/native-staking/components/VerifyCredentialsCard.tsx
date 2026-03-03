@@ -177,8 +177,7 @@ const VerifyCredentialsCard: FC<VerifyCredentialsCardProps> = ({
         {isSuccess && (
           <div className="bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-300 p-3 rounded-lg">
             <Typography variant="body2">
-              Credentials verified successfully! Your validators are now
-              restaked.
+              Credentials verified successfully! Your validators are now staked.
             </Typography>
           </div>
         )}

@@ -22,13 +22,13 @@ const ACTIVITY_POINT_INFO: Record<
   BadgeEnum,
   { label: string; description: string; activityKey: keyof Account['activity'] }
 > = {
-  [BadgeEnum.RESTAKE_DEPOSITOR]: {
+  [BadgeEnum.STAKE_DEPOSITOR]: {
     label: 'Deposits',
     description:
-      'Points earned from depositing assets into the restaking protocol',
+      'Points earned from depositing assets into the staking protocol',
     activityKey: 'depositCount',
   },
-  [BadgeEnum.RESTAKE_DELEGATOR]: {
+  [BadgeEnum.STAKE_DELEGATOR]: {
     label: 'Delegations',
     description: 'Points earned from delegating to operators',
     activityKey: 'delegationCount',
@@ -312,10 +312,10 @@ export const ExpandedInfo: React.FC<ExpandedInfoProps> = ({ row }) => {
     const badges: BadgeEnum[] = [];
 
     if (activityCounts.depositCount > 0) {
-      badges.push(BadgeEnum.RESTAKE_DEPOSITOR);
+      badges.push(BadgeEnum.STAKE_DEPOSITOR);
     }
     if (activityCounts.delegationCount > 0) {
-      badges.push(BadgeEnum.RESTAKE_DELEGATOR);
+      badges.push(BadgeEnum.STAKE_DELEGATOR);
     }
     if (activityCounts.liquidVaultPositionCount > 0) {
       badges.push(BadgeEnum.LIQUID_STAKER);
@@ -343,10 +343,10 @@ export const ExpandedInfo: React.FC<ExpandedInfoProps> = ({ row }) => {
       let count = 0;
 
       switch (badge) {
-        case BadgeEnum.RESTAKE_DEPOSITOR:
+        case BadgeEnum.STAKE_DEPOSITOR:
           count = activityCounts.depositCount;
           break;
-        case BadgeEnum.RESTAKE_DELEGATOR:
+        case BadgeEnum.STAKE_DELEGATOR:
           count = activityCounts.delegationCount;
           break;
         case BadgeEnum.LIQUID_STAKER:

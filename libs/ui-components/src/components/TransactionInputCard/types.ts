@@ -27,7 +27,7 @@ export type TransactionInputCardContextValue = {
   /**
    * The max amount of the transaction input card.
    */
-  maxAmount?: number | null;
+  maxAmount?: number | string | null;
 
   /**
    * The token symbol of the transaction input card.

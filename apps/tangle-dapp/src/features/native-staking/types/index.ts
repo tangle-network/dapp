@@ -8,7 +8,7 @@ export enum ValidatorStatus {
 
 export interface ValidatorInfo {
   validatorIndex: number;
-  restakedBalanceGwei: bigint;
+  stakedBalanceGwei: bigint;
   lastCheckpointedAt: bigint;
   status: ValidatorStatus;
   pubkeyHash: `0x${string}`;
@@ -25,9 +25,9 @@ export interface Checkpoint {
 export interface PodInfo {
   address: Address;
   owner: Address;
-  hasRestaked: boolean;
+  isStaked: boolean;
   activeValidatorCount: number;
-  totalRestakedBalanceGwei: bigint;
+  totalStakedBalanceGwei: bigint;
   beaconChainSlashingFactor: bigint;
   proofSubmitter: Address | null;
   withdrawalCredentials: `0x${string}`;
@@ -111,8 +111,8 @@ export interface StaleBalanceProofBundle {
   validatorProof: ValidatorFieldsProof;
 }
 
-// Native Restaking Tab types
-export enum NativeRestakeTab {
+// Native Staking tab types
+export enum NativeStakingTab {
   OVERVIEW = 'overview',
   VALIDATORS = 'validators',
   CHECKPOINT = 'checkpoint',

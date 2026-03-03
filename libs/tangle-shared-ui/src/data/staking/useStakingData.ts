@@ -1,6 +1,6 @@
 /**
- * Composite hook for fetching staking data.
- * Combines assets, delegator info, and unified loading/error states.
+ * Primary hook for staking data.
+ * Combines assets, delegator info, and shared loading/error states.
  */
 
 import { useMemo } from 'react';

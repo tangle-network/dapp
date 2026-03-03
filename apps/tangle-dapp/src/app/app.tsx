@@ -8,15 +8,15 @@ import ClaimPage from '../pages/claim';
 import ClaimLayout from '../pages/claim/layout';
 import ClaimSuccessPage from '../pages/claim/success';
 import MigrationClaimPage from '../pages/claim/migration';
-import NativeRestakePage from '../pages/native-restake';
+import NativeStakingPage from '../pages/native-staking';
 import NotFoundPage from '../pages/notFound';
 import { PagePath } from '../types';
 import Providers from './providers';
-import RestakeTabContent from '../containers/restaking/RestakeTabContent';
+import StakingTabContent from '../containers/staking/StakingTabContent';
 import LiquidStakingTabContent from '../containers/liquidStaking/LiquidStakingTabContent';
 import {
-  RestakeAction,
-  RestakeTab,
+  StakingAction,
+  StakingTab,
   LiquidStakingAction,
   LiquidStakingTab,
 } from '../constants';
@@ -58,42 +58,42 @@ function App() {
               />
             </Route>
 
-            <Route path={PagePath.RESTAKE}>
+            <Route path={PagePath.STAKING}>
               <Route
                 index
-                element={<Navigate to={PagePath.RESTAKE_DEPOSIT} replace />}
+                element={<Navigate to={PagePath.STAKING_DEPOSIT} replace />}
               />
               <Route
-                path={PagePath.RESTAKE_DEPOSIT}
-                element={<RestakeTabContent tab={RestakeAction.DEPOSIT} />}
+                path={PagePath.STAKING_DEPOSIT}
+                element={<StakingTabContent tab={StakingAction.DEPOSIT} />}
               />
               <Route
-                path={PagePath.RESTAKE_DELEGATE}
-                element={<RestakeTabContent tab={RestakeAction.DELEGATE} />}
+                path={PagePath.STAKING_DELEGATE}
+                element={<StakingTabContent tab={StakingAction.DELEGATE} />}
               />
               <Route
-                path={PagePath.RESTAKE_UNDELEGATE}
-                element={<RestakeTabContent tab={RestakeAction.UNDELEGATE} />}
+                path={PagePath.STAKING_UNDELEGATE}
+                element={<StakingTabContent tab={StakingAction.UNDELEGATE} />}
               />
               <Route
-                path={PagePath.RESTAKE_WITHDRAW}
-                element={<RestakeTabContent tab={RestakeAction.WITHDRAW} />}
+                path={PagePath.STAKING_WITHDRAW}
+                element={<StakingTabContent tab={StakingAction.WITHDRAW} />}
               />
               <Route
-                path={PagePath.RESTAKE_VAULT}
-                element={<RestakeTabContent tab={RestakeTab.VAULTS} />}
+                path={PagePath.STAKING_VAULT}
+                element={<StakingTabContent tab={StakingTab.VAULTS} />}
               />
               <Route
-                path={PagePath.RESTAKE_OPERATOR}
-                element={<RestakeTabContent tab={RestakeTab.OPERATORS} />}
+                path={PagePath.STAKING_OPERATOR}
+                element={<StakingTabContent tab={StakingTab.OPERATORS} />}
               />
               <Route
-                path={PagePath.RESTAKE_BLUEPRINT}
-                element={<RestakeTabContent tab={RestakeTab.BLUEPRINTS} />}
+                path={PagePath.STAKING_BLUEPRINT}
+                element={<StakingTabContent tab={StakingTab.BLUEPRINTS} />}
               />
               <Route
-                path={PagePath.RESTAKE_REWARDS}
-                element={<RestakeTabContent tab={RestakeTab.REWARDS} />}
+                path={PagePath.STAKING_REWARDS}
+                element={<StakingTabContent tab={StakingTab.REWARDS} />}
               />
             </Route>
 
@@ -139,8 +139,8 @@ function App() {
             </Route>
 
             <Route
-              path={PagePath.NATIVE_RESTAKE}
-              element={<NativeRestakePage />}
+              path={PagePath.NATIVE_STAKING}
+              element={<NativeStakingPage />}
             />
 
             <Route path="*" element={<NotFoundPage />} />

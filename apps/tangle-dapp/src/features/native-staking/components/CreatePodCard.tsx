@@ -30,7 +30,7 @@ const CreatePodCard: FC = () => {
           Create Validator Pod
         </Typography>
         <Typography variant="body1" className="text-mono-120 dark:text-mono-80">
-          Connect your wallet to create a validator pod for native restaking.
+          Connect your wallet to create a validator pod for native staking.
         </Typography>
       </Card>
     );
@@ -58,9 +58,9 @@ const CreatePodCard: FC = () => {
 
       <div className="space-y-4">
         <Typography variant="body1" className="text-mono-120 dark:text-mono-80">
-          Create a validator pod to restake your beacon chain ETH on Tangle.
-          Your pod will serve as the withdrawal credential target for your
-          Ethereum validators.
+          Create a validator pod to stake your beacon chain ETH on Tangle. Your
+          pod will serve as the withdrawal credential target for your Ethereum
+          validators.
         </Typography>
 
         <div className="bg-mono-20 dark:bg-mono-160 p-4 rounded-lg space-y-2">

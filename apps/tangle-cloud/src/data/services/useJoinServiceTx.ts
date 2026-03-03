@@ -7,8 +7,8 @@ import useContractWrite, {
   TxStatus,
 } from '@tangle-network/tangle-shared-ui/hooks/useContractWrite';
 import TANGLE_ABI from '@tangle-network/tangle-shared-ui/abi/tangle';
-import { getContractsByChainId } from '@tangle-network/dapp-config/contracts';
 import { useChainId } from 'wagmi';
+import getContractsForChain from './getContractsForChain';
 
 export { TxStatus };
 
@@ -24,17 +24,23 @@ export interface UseJoinServiceTxOptions {
 
 export const useJoinServiceTx = (options?: UseJoinServiceTxOptions) => {
   const chainId = useChainId();
-  const contracts = getContractsByChainId(chainId);
+  const contracts = getContractsForChain(chainId);
   const queryClient = useQueryClient();
 
   const hook = useContractWrite(
     TANGLE_ABI,
-    (params: JoinServiceParams, _activeAddress) => ({
-      address: contracts.tangle,
-      abi: TANGLE_ABI,
-      functionName: 'joinService' as const,
-      args: [params.serviceId, params.exposureBps] as const,
-    }),
+    (params: JoinServiceParams, _activeAddress) => {
+      if (!contracts) {
+        return null;
+      }
+
+      return {
+        address: contracts.tangle,
+        abi: TANGLE_ABI,
+        functionName: 'joinService' as const,
+        args: [params.serviceId, params.exposureBps] as const,
+      };
+    },
     {
       txName: 'join service',
       txDetails: (params) =>

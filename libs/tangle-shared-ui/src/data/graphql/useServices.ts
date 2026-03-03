@@ -16,13 +16,9 @@ import {
 } from '../../utils/executeEnvioGraphQL';
 import useNetworkStore from '../../context/useNetworkStore';
 
-// Service status enum matching Tangle contract
-export type ServiceStatus = 'PENDING' | 'ACTIVE' | 'TERMINATED' | 'EXPIRED';
-export type ServiceRequestStatus =
-  | 'PENDING'
-  | 'APPROVED'
-  | 'REJECTED'
-  | 'ACTIVATED';
+// Service status enums matching tnt-core indexer schema
+export type ServiceStatus = 'ACTIVE' | 'TERMINATED';
+export type ServiceRequestStatus = 'PENDING' | 'ACTIVATED' | 'CANCELLED';
 
 // Service instance from indexer
 export interface Service {
@@ -57,7 +53,9 @@ interface ServiceQueryResponse {
   Service: Array<{
     id: string;
     serviceId: string;
-    blueprint_id: string;
+    blueprint: {
+      blueprintId: string;
+    } | null;
     owner: string;
     status: string;
     createdAt: string;
@@ -66,6 +64,11 @@ interface ServiceQueryResponse {
       operatorCandidates: string[];
       permittedCallers?: string[];
     } | null;
+    serviceOperators: Array<{
+      operator: {
+        id: string;
+      } | null;
+    }>;
   }>;
 }
 
@@ -73,7 +76,9 @@ interface ServiceRequestQueryResponse {
   ServiceRequest: Array<{
     id: string;
     requestId: string;
-    blueprint_id: string;
+    blueprint: {
+      blueprintId: string;
+    } | null;
     requester: string;
     operatorCandidates: string[];
     approvedOperators: string[];
@@ -112,17 +117,15 @@ const fetchServices = async (
     where.push(`owner: { _eq: "${options.owner.toLowerCase()}" }`);
   }
   if (options.operator) {
-    // Filter by operator via the request's operatorCandidates
-    // (serviceOperators relationship isn't reliably populated by indexer)
     where.push(
-      `request: { operatorCandidates: { _contains: ["${options.operator.toLowerCase()}"] } }`,
+      `serviceOperators: { operator: { id: { _eq: "${options.operator.toLowerCase()}" } }, active: { _eq: true } }`,
     );
   }
   if (options.status) {
     where.push(`status: { _eq: "${options.status}" }`);
   }
   if (options.blueprintId !== undefined) {
-    where.push(`blueprint_id: { _eq: "${options.blueprintId}" }`);
+    where.push(`blueprint: { blueprintId: { _eq: "${options.blueprintId}" } }`);
   }
   if (options.serviceId !== undefined) {
     where.push(`serviceId: { _eq: "${options.serviceId}" }`);
@@ -140,7 +143,9 @@ const fetchServices = async (
       ) {
         id
         serviceId
-        blueprint_id
+        blueprint {
+          blueprintId
+        }
         owner
         status
         createdAt
@@ -148,6 +153,11 @@ const fetchServices = async (
         request {
           operatorCandidates
           ${includePermittedCallers ? 'permittedCallers' : ''}
+        }
+        serviceOperators(where: { active: { _eq: true } }) {
+          operator {
+            id
+          }
         }
       }
     }
@@ -197,17 +207,27 @@ const fetchServices = async (
     }
   }
 
-  return (result.data.Service ?? []).map((s) => ({
-    id: s.id,
-    serviceId: BigInt(s.serviceId),
-    blueprintId: BigInt(s.blueprint_id),
-    owner: s.owner as Address,
-    status: s.status as ServiceStatus,
-    operators: (s.request?.operatorCandidates ?? []) as Address[],
-    permittedCallers: (s.request?.permittedCallers ?? []) as Address[],
-    createdAt: BigInt(s.createdAt),
-    terminatedAt: s.terminatedAt ? BigInt(s.terminatedAt) : null,
-  }));
+  return (result.data.Service ?? []).map((s) => {
+    const activeServiceOperators = s.serviceOperators
+      .map((item) => item.operator?.id)
+      .filter((value): value is string => !!value)
+      .map((value) => value as Address);
+
+    return {
+      id: s.id,
+      serviceId: BigInt(s.serviceId),
+      blueprintId: BigInt(s.blueprint?.blueprintId ?? '0'),
+      owner: s.owner as Address,
+      status: s.status as ServiceStatus,
+      operators:
+        activeServiceOperators.length > 0
+          ? activeServiceOperators
+          : ((s.request?.operatorCandidates ?? []) as Address[]),
+      permittedCallers: (s.request?.permittedCallers ?? []) as Address[],
+      createdAt: BigInt(s.createdAt),
+      terminatedAt: s.terminatedAt ? BigInt(s.terminatedAt) : null,
+    };
+  });
 };
 
 // Fetch service requests from GraphQL
@@ -235,7 +255,7 @@ const fetchServiceRequests = async (
     where.push(`status: { _eq: "${options.status}" }`);
   }
   if (options.blueprintId !== undefined) {
-    where.push(`blueprint_id: { _eq: "${options.blueprintId}" }`);
+    where.push(`blueprint: { blueprintId: { _eq: "${options.blueprintId}" } }`);
   }
 
   const whereClause = where.length > 0 ? `where: { ${where.join(', ')} }` : '';
@@ -250,7 +270,9 @@ const fetchServiceRequests = async (
       ) {
         id
         requestId
-        blueprint_id
+        blueprint {
+          blueprintId
+        }
         requester
         operatorCandidates
         approvedOperators
@@ -286,7 +308,7 @@ const fetchServiceRequests = async (
   return (result.data.ServiceRequest ?? []).map((r) => ({
     id: r.id,
     requestId: BigInt(r.requestId),
-    blueprintId: BigInt(r.blueprint_id),
+    blueprintId: BigInt(r.blueprint?.blueprintId ?? '0'),
     requester: r.requester as Address,
     operatorCandidates: r.operatorCandidates as Address[],
     approvedOperators: (r.approvedOperators ?? []) as Address[],
@@ -471,7 +493,7 @@ const isAggregateFieldUnavailable = (
 
 /**
  * Hook to fetch service requests where the operator has already taken action.
- * This includes requests with any status (PENDING, APPROVED, REJECTED) where
+ * This includes requests where
  * the operator is in either approvedOperators or rejectedOperators arrays.
  */
 export const useOperatorActedServiceRequests = (

@@ -3,6 +3,7 @@
 ## Overview
 
 This document tracks the feature parity between the v1 Substrate-based dApp and the v2 EVM-based protocol.
+Canonical identifiers that include `Restake/Restaking` are kept verbatim only when they must match existing hook names, component paths, or GraphQL schema fields for compatibility and code search.
 
 ---
 
@@ -19,7 +20,7 @@ This document tracks the feature parity between the v1 Substrate-based dApp and 
 | **Join as Operator** | `useJoinOperatorsTx` | `MultiAssetDelegation.registerOperator()` | Per-blueprint registration |
 | **Operator Directory** | `useRestakeOperatorMap` | GraphQL: `operators` query | Address format change |
 | **Asset Balances** | `useRestakeAssetBalances` | GraphQL: `delegatorAssetPositions` | Token-based instead of assetId |
-| **Restaking Assets** | `useRestakeAssets` | GraphQL: `restakingAssets` | Same concept |
+| **Staking Assets** | `useRestakeAssets` | GraphQL: `restakingAssets` | Same concept |
 | **Current Round** | `useRestakeCurrentRound` | GraphQL: `restakingRounds` | Same concept |
 | **TVL Display** | `useRestakeAssetsTvl` | GraphQL: Aggregate from `restakingAssets.currentDeposits` | Same concept |
 | **Vault Overview** | Dashboard page | Dashboard page | Keep UI, update data source |
@@ -45,7 +46,7 @@ This document tracks the feature parity between the v1 Substrate-based dApp and 
 
 | Feature | V1 Implementation | Reason for Removal |
 |---------|------------------|-------------------|
-| **Traditional Staking** | `/nomination` page, 20+ hooks | Substrate staking pallet - replaced by restaking |
+| **Traditional Staking** | `/nomination` page, 20+ hooks | Substrate staking pallet - replaced by EVM staking/delegation flows |
 | **Validator Selection** | `useValidators`, validator tables | Substrate validator set - replaced by operator model |
 | **Nominator Stats** | `useNominations`, stats cards | Substrate nominators - replaced by delegators |
 | **Era Payouts** | `usePayoutStakersTx`, payouts table | Substrate era rewards - replaced by real-time rewards |
@@ -69,7 +70,7 @@ This document tracks the feature parity between the v1 Substrate-based dApp and 
 
 | V1 Hook | V2 Replacement | Query |
 |---------|---------------|-------|
-| `useRestakeOperatorMap` | `useOperatorMap` | `operators` with restaking fields |
+| `useRestakeOperatorMap` | `useOperatorMap` | `operators` with legacy `restaking*` schema fields (canonical names) |
 | `useRestakeDelegatorInfo` | `useDelegator` | `delegator` with positions |
 | `useRestakeDelegations` | `useDelegatorDelegations` | `delegationPositions` |
 | `useRestakeDeposits` | `useDelegatorDeposits` | `delegatorAssetPositions` |
@@ -102,9 +103,9 @@ This document tracks the feature parity between the v1 Substrate-based dApp and 
 - Account components: `Balance`, `AccountAddress`
 - Generic modals and cards
 
-### MIGRATE - Restaking Components (15+)
+### MIGRATE - Staking Components (15+)
 - `BlueprintSelection.tsx` - Add selection mode
-- `RestakeDetailCard/*` - Update data bindings
+- Detail card components (`RestakeDetailCard/*`, canonical path name) - Update data bindings
 - `UnstakeRequestTable.tsx` - Same concept
 - `WithdrawRequestTable.tsx` - Same concept
 - Operator selection components
@@ -123,11 +124,11 @@ This document tracks the feature parity between the v1 Substrate-based dApp and 
 ## Migration Phases
 
 ### Phase 4.1: tangle-dapp Migration
-1. Update restaking hooks to use new GraphQL hooks
+1. Update staking hooks to use new GraphQL hooks (keep canonical `useRestake*` identifiers where required)
 2. Update transaction hooks to use new contract calls
 3. Update UI components with new data bindings
 4. Remove nomination/LST pages and components
-5. Test all restaking flows
+5. Test all staking flows
 
 ### Phase 4.2: tangle-cloud Migration
 1. Update blueprint data to GraphQL

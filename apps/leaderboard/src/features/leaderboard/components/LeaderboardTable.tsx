@@ -205,7 +205,7 @@ export const LeaderboardTable = () => {
     if (!roleAccounts) return undefined;
     return {
       operators: roleAccounts.operators.size,
-      restakers: roleAccounts.restakers.size,
+      stakers: roleAccounts.stakers.size,
       developers: roleAccounts.developers.size,
       customers: roleAccounts.customers.size,
     };

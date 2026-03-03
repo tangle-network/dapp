@@ -4,8 +4,8 @@ import { useLocation } from 'react-router';
 import { twMerge } from 'tailwind-merge';
 
 import { PagePath } from '../../types';
-import TabListItem from '../../components/restaking/TabListItem';
-import TabsList from '../../components/restaking/TabsList';
+import TabListItem from '../../components/staking/TabListItem';
+import TabsList from '../../components/staking/TabsList';
 import { LiquidStakingAction } from '../../constants';
 
 type Props = PropsOf<'ul'>;

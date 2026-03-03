@@ -38,7 +38,6 @@ const BlueprintHeader: FC<BlueprintHeaderProps> = ({
     email,
     instancesCount,
     operatorsCount,
-    // restakersCount,
   } = blueprint;
 
   return (
@@ -152,10 +151,10 @@ const BlueprintHeader: FC<BlueprintHeaderProps> = ({
             label="Total Operators"
             value={operatorsCount?.toLocaleString()}
           />
-          {/* Hide restakers */}
+          {/* Hide stakers */}
           {/* <StatsItem
-            label="Total Restakers"
-            value={restakersCount?.toLocaleString()}
+            label="Total Stakers"
+            value={blueprint.stakersCount?.toLocaleString()}
           /> */}
         </div>
       </div>

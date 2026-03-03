@@ -19,6 +19,7 @@ export type BaseDeployStepProps = {
   watch: UseFormWatch<DeployBlueprintSchema>;
   blueprint?: Blueprint;
   blueprintOperators?: BlueprintOperator[];
+  requestArgsCount?: number;
   setError: UseFormSetError<DeployBlueprintSchema>;
   clearErrors: UseFormClearErrors<DeployBlueprintSchema>;
 };
@@ -44,6 +45,6 @@ export type OperatorSelectionTable = {
   selfBondedAmount: bigint;
   instanceCount?: number;
   uptime?: number;
-  restakersCount?: number;
+  stakersCount?: number;
   vaultTokens?: VaultToken[];
 };

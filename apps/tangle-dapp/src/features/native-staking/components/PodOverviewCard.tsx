@@ -109,12 +109,12 @@ const PodOverviewCard: FC<PodOverviewCardProps> = ({
       <div className="flex gap-2 mb-6">
         <span
           className={`px-3 py-1 rounded-full text-sm font-medium ${
-            podInfo.hasRestaked
+            podInfo.isStaked
               ? 'bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-300'
               : 'bg-yellow-100 dark:bg-yellow-900/30 text-yellow-700 dark:text-yellow-300'
           }`}
         >
-          {podInfo.hasRestaked ? 'Restaked' : 'Not Restaked'}
+          {podInfo.isStaked ? 'Staked' : 'Not Staked'}
         </span>
         {podInfo.checkpointActive && (
           <span className="px-3 py-1 rounded-full text-sm font-medium bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300">
@@ -131,8 +131,8 @@ const PodOverviewCard: FC<PodOverviewCardProps> = ({
       {/* Stats grid */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
         <StatItem
-          label="Total Restaked"
-          value={`${gweiToEth(podInfo.totalRestakedBalanceGwei)} ETH`}
+          label="Total Staked"
+          value={`${gweiToEth(podInfo.totalStakedBalanceGwei)} ETH`}
           subValue={`${podInfo.activeValidatorCount} active validator${podInfo.activeValidatorCount !== 1 ? 's' : ''}`}
         />
 

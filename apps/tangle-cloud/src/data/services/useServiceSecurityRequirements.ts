@@ -9,12 +9,12 @@
 import { useQuery } from '@tanstack/react-query';
 import { useChainId, usePublicClient } from 'wagmi';
 import { Address, zeroAddress } from 'viem';
-import { getContractsByChainId } from '@tangle-network/dapp-config/contracts';
 import TANGLE_ABI from '@tangle-network/tangle-shared-ui/abi/tangle';
 import { useEvmAssetMetadatas } from '@tangle-network/tangle-shared-ui/hooks/useEvmAssetMetadatas';
 import { useMemo } from 'react';
 import type { EvmAddress } from '@tangle-network/ui-components/types/address';
 import type { SecurityRequirementWithMetadata } from './useServiceRequestSecurityRequirements';
+import getContractsForChain from './getContractsForChain';
 
 // Default TNT requirement constants (must match contract)
 const DEFAULT_TNT_MIN_EXPOSURE_BPS = 1000; // 10%
@@ -56,13 +56,13 @@ export const useServiceSecurityRequirements = (
 ): UseServiceSecurityRequirementsResult => {
   const chainId = useChainId();
   const publicClient = usePublicClient();
-  const contracts = getContractsByChainId(chainId);
+  const contracts = getContractsForChain(chainId);
 
   // Query TNT token address from contract
   const { data: tntTokenAddress, isLoading: isLoadingTntToken } = useQuery({
     queryKey: ['tntTokenAddress', chainId],
     queryFn: async () => {
-      if (!publicClient) {
+      if (!publicClient || !contracts || contracts.tangle === zeroAddress) {
         return null;
       }
 
@@ -83,7 +83,10 @@ export const useServiceSecurityRequirements = (
         return null;
       }
     },
-    enabled: publicClient !== undefined,
+    enabled:
+      publicClient !== undefined &&
+      contracts !== null &&
+      contracts.tangle !== zeroAddress,
     staleTime: Infinity, // TNT token address doesn't change
   });
 
@@ -95,28 +98,29 @@ export const useServiceSecurityRequirements = (
   } = useQuery({
     queryKey: ['serviceSecurityRequirements', serviceId?.toString(), chainId],
     queryFn: async () => {
-      if (!publicClient || serviceId === undefined) {
+      if (
+        !publicClient ||
+        !contracts ||
+        contracts.tangle === zeroAddress ||
+        serviceId === undefined
+      ) {
         return [];
       }
 
-      try {
-        const result = await publicClient.readContract({
-          address: contracts.tangle,
-          abi: TANGLE_ABI,
-          functionName: 'getServiceSecurityRequirements',
-          args: [serviceId],
-        });
+      const result = await publicClient.readContract({
+        address: contracts.tangle,
+        abi: TANGLE_ABI,
+        functionName: 'getServiceSecurityRequirements',
+        args: [serviceId],
+      });
 
-        return result as ContractSecurityRequirement[];
-      } catch (error) {
-        console.warn(
-          '[useServiceSecurityRequirements] Failed to fetch requirements',
-          { serviceId, error },
-        );
-        return [];
-      }
+      return result as ContractSecurityRequirement[];
     },
-    enabled: serviceId !== undefined && publicClient !== undefined,
+    enabled:
+      serviceId !== undefined &&
+      publicClient !== undefined &&
+      contracts !== null &&
+      contracts.tangle !== zeroAddress,
     staleTime: 30_000, // 30 seconds
   });
 
