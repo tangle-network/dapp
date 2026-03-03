@@ -7,7 +7,7 @@ export abstract class Account<T = unknown> {
     public readonly address: string,
   ) {}
 
-  // TODO abstract create react element
+  // UI adapters provide a framework-specific avatar representation.
   abstract get avatar(): unknown;
 
   abstract get name(): string;

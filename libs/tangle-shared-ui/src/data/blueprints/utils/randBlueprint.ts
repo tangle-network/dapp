@@ -38,12 +38,13 @@ export default function randBlueprint(id: bigint) {
     id,
     name: randCompanyName(),
     author: randUserName(),
+    deployer: `0x${Array.from({ length: 40 }, () => Math.floor(Math.random() * 16).toString(16)).join('')}`,
     imgUrl: 'https://picsum.photos/600',
     category: categories[randNumber({ min: 0, max: categories.length - 1 })],
     description: randProductDescription(),
     instancesCount: randNumber({ min: 0, max: 100 }),
     operatorsCount: randNumber({ min: 1, max: 50 }),
-    restakersCount: randNumber({ min: 1, max: 50 }),
+    stakersCount: randNumber({ min: 1, max: 50 }),
     tvl: `$${randNumber({ min: 100, max: 1000000 }).toLocaleString()}`,
     isBoosted: randBoolean(),
     githubUrl: `https://github.com/tangle-network/${githubRepos[randNumber({ min: 0, max: githubRepos.length - 1 })]}`,
@@ -53,6 +54,9 @@ export default function randBlueprint(id: bigint) {
     registrationParams: Array.from(
       { length: randNumber({ min: 1, max: 5 }) },
       () => randFieldType(false),
+    ),
+    requestParams: Array.from({ length: randNumber({ min: 1, max: 3 }) }, () =>
+      randFieldType(false),
     ),
   } satisfies Blueprint;
 }

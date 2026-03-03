@@ -11,7 +11,14 @@ const graphqlDir = path.join(
   'graphql',
 );
 
-if (!fs.existsSync(graphqlDir)) {
+const requiredArtifacts = ['graphql.ts', 'index.ts'].map((filename) =>
+  path.join(graphqlDir, filename),
+);
+const hasCodegenArtifacts = requiredArtifacts.every((artifactPath) =>
+  fs.existsSync(artifactPath),
+);
+
+if (!hasCodegenArtifacts) {
   console.log('Running codegen...');
   // Run the codegen script in the root directory
   execSync('yarn codegen', {

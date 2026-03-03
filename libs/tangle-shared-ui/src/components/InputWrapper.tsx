@@ -68,7 +68,7 @@ const InputWrapper: FC<InputWrapperProps> = ({
     }
   }, [dropdownBody, setIsDropdownVisible]);
 
-  // TODO: Do not set error (or remove it if already set) if the input is disabled.
+  // NOTE: Do not set error (or remove it if already set) if the input is disabled.
   useEffect(() => {
     if (errorMessage !== undefined) {
       addError(id);

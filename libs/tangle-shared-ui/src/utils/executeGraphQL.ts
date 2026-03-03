@@ -11,7 +11,7 @@ export async function executeGraphQL<TResult, TVariables>(
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
-      Accept: 'application/graphql-response+json',
+      Accept: 'application/json',
     },
     body: JSON.stringify({
       query,
@@ -29,9 +29,15 @@ export async function executeGraphQL<TResult, TVariables>(
 const getGraphQLEndpointFromNetwork = (network: NetworkType) => {
   switch (network) {
     case 'MAINNET':
-      return 'https://mainnet-gql.tangle.tools/graphql';
+      return (
+        import.meta.env.VITE_ENVIO_MAINNET_ENDPOINT ||
+        'http://localhost:8080/v1/graphql'
+      );
     case 'TESTNET':
-      return 'https://testnet-gql.tangle.tools/graphql';
+      return (
+        import.meta.env.VITE_ENVIO_TESTNET_ENDPOINT ||
+        'http://localhost:8080/v1/graphql'
+      );
     default:
       throw new Error(`Invalid network: ${network}`);
   }

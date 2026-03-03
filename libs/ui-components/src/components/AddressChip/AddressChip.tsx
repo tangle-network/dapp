@@ -41,7 +41,7 @@ const AddressChip = forwardRef<HTMLSpanElement, AddressChipProps>(
             component="span"
             className="inline-block uppercase text-mono-120 dark:text-mono-60"
           >
-            {/* Eth: 0xXX...XX; Substrate: XXX...XXX, Not an Address: N/A */}
+            {/* Eth: 0xXX...XX; Substrate: NOTE...NOTE, Not an Address: N/A */}
             {isEthereumAddress(address)
               ? shortenHex(address, 2)
               : isSubstrateAddress(address) || isSolanaAddress(address)

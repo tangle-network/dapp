@@ -1,5 +1,5 @@
 import BlueprintGallery from '@tangle-network/tangle-shared-ui/components/blueprints/BlueprintGallery';
-import useAllBlueprints from '@tangle-network/tangle-shared-ui/data/blueprints/useAllBlueprints';
+import { useAllBlueprints } from '@tangle-network/tangle-shared-ui/data/graphql';
 import { FC, PropsWithChildren } from 'react';
 import { Link } from 'react-router';
 import { PagePath } from '../../types';

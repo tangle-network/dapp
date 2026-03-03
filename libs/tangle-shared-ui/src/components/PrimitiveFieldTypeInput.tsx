@@ -15,7 +15,7 @@ export interface PrimitiveFieldTypeInputProps {
   fieldType: PrimitiveFieldType;
   label?: string;
   id: string;
-  // TODO: Determine the type of value here
+  // NOTE: Determine the type of value here
   value?: any;
   onValueChange?: (id: string, newValue: any) => void;
   tabIndex?: number;
@@ -235,7 +235,7 @@ const PrimitiveFieldTypeInput: React.FC<PrimitiveFieldTypeInputProps> = ({
       <div>
         <Label>{label} (List)</Label>
 
-        {/* TODO: Question List */}
+        {/* NOTE: Question List */}
         {/* <FieldTypeInput
           id={`${id}.List`}
           value={value?.List}

@@ -1,15 +1,14 @@
-import { BN } from '@polkadot/util';
 import { CrossCircledIcon } from '@radix-ui/react-icons';
-import { TANGLE_TOKEN_DECIMALS } from '@tangle-network/dapp-config';
 import { Spinner } from '@tangle-network/icons';
 import { SparklingIcon } from '@tangle-network/icons';
 import { TxStatus } from '@tangle-network/tangle-shared-ui/hooks/useSubstrateTx';
 import {
-  AmountFormatStyle,
   Button,
-  formatDisplayAmount,
   Typography,
   TextField,
+  Tooltip,
+  TooltipBody,
+  TooltipTrigger,
 } from '@tangle-network/ui-components';
 import {
   Dropdown,
@@ -22,8 +21,12 @@ import useClaimCreditsTx from '../../../data/credits/useClaimCreditsTx';
 import { meetsMinimumClaimThreshold } from '../../../utils/creditConstraints';
 import CreditVelocityTooltip from './CreditVelocityTooltip';
 
+const SECONDS_PER_DAY = 86400;
+const SECONDS_PER_HOUR = 3600;
+const SECONDS_PER_MINUTE = 60;
+
 const ClaimCreditsButton = () => {
-  const { data, error, refetch, isPending } = useCredits();
+  const { data, error, refetch, isPending, isSupportedNetwork } = useCredits();
   const [offchainAccountId, setOffchainAccountId] = useState('');
   const [inputError, setInputError] = useState('');
 
@@ -32,47 +35,90 @@ const ClaimCreditsButton = () => {
       return '0';
     }
 
-    return formatDisplayAmount(
-      data.amount,
-      TANGLE_TOKEN_DECIMALS,
-      AmountFormatStyle.SHORT,
-    );
+    return data.amount.toString();
   }, [data]);
 
   const meetsMinimumThreshold = useMemo(() => {
     return meetsMinimumClaimThreshold(data?.amount);
   }, [data?.amount]);
 
-  // Hide if there's no data
-  if (data === undefined) {
-    return;
-  }
+  const formattedTimeRemaining = useMemo(() => {
+    if (!data?.timeRemaining || data.timeRemaining === BigInt(0)) {
+      return '';
+    }
+
+    const total = Number(data.timeRemaining);
+    const days = Math.floor(total / SECONDS_PER_DAY);
+    const hours = Math.floor((total % SECONDS_PER_DAY) / SECONDS_PER_HOUR);
+    const minutes = Math.floor((total % SECONDS_PER_HOUR) / SECONDS_PER_MINUTE);
+    if (days > 0) return `${days}d ${hours}h`;
+    if (hours > 0) return `${hours}h ${minutes}m`;
+    return `${minutes}m`;
+  }, [data?.timeRemaining]);
+
+  const isUnavailable = !isSupportedNetwork;
+  const errorLabel = useMemo(() => {
+    if (!error) {
+      return '';
+    }
+    if (error.message === 'Credits root mismatch') {
+      return 'Credits data out of sync';
+    }
+    if (error.message === 'Credits proof invalid') {
+      return 'Credits proof invalid';
+    }
+    return error.message;
+  }, [error]);
+
+  const buttonContent = (
+    <DropdownButton
+      disabled={isPending || error !== null || isUnavailable}
+      isHideArrowIcon={isPending || error !== null || isUnavailable}
+      icon={
+        isPending ? (
+          <Spinner size="lg" />
+        ) : error || isUnavailable ? (
+          <CrossCircledIcon className="size-6" />
+        ) : (
+          <SparklingIcon size="md" />
+        )
+      }
+    >
+      <span className="hidden sm:inline-block">
+        {isPending
+          ? 'Fetching credits...'
+          : isUnavailable
+            ? 'Credits unavailable'
+            : error
+              ? 'Error'
+              : formattedCredits}
+      </span>
+    </DropdownButton>
+  );
 
   return (
     <Dropdown>
-      <DropdownButton
-        disabled={isPending || error !== null}
-        isHideArrowIcon={isPending || error !== null}
-        icon={
-          isPending ? (
-            <Spinner size="lg" />
-          ) : error ? (
-            <CrossCircledIcon className="size-6" />
-          ) : (
-            <SparklingIcon size="md" />
-          )
-        }
-      >
-        <span className="hidden sm:inline-block">
-          {isPending
-            ? 'Fetching credits...'
-            : error
-              ? error.name
-              : formattedCredits}
-        </span>
-      </DropdownButton>
+      {error ? (
+        <Tooltip>
+          <TooltipTrigger asChild>{buttonContent}</TooltipTrigger>
+          <TooltipBody className="max-w-xs break-words">
+            {errorLabel}
+          </TooltipBody>
+        </Tooltip>
+      ) : (
+        buttonContent
+      )}
 
       <DropdownBody align="start" sideOffset={8} className="p-4 space-y-3">
+        {isUnavailable ? (
+          <Typography
+            variant="body2"
+            className="text-mono-120 dark:text-mono-80"
+          >
+            Credits are not available on this network.
+          </Typography>
+        ) : null}
+
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             <Typography variant="body1" fw="bold">
@@ -86,14 +132,35 @@ const ClaimCreditsButton = () => {
           </Typography>
         </div>
 
-        {data?.amount && !data.amount.isZero() && !meetsMinimumThreshold && (
+        {data?.amount !== undefined &&
+        data.amount !== BigInt(0) &&
+        !meetsMinimumThreshold ? (
           <Typography
             variant="body2"
             className="text-blue-600 dark:text-blue-400"
           >
             Minimum 0.01 required to claim
           </Typography>
-        )}
+        ) : null}
+
+        {data?.timeRemaining !== undefined && data.timeRemaining > BigInt(0) ? (
+          <Typography
+            variant="body2"
+            className="text-mono-120 dark:text-mono-80"
+          >
+            Epoch ends in {formattedTimeRemaining}. Claims unlock after the
+            epoch closes.
+          </Typography>
+        ) : null}
+
+        {data?.hasClaimed ? (
+          <Typography
+            variant="body2"
+            className="text-emerald-600 dark:text-emerald-400"
+          >
+            Already claimed for this epoch.
+          </Typography>
+        ) : null}
 
         <Typography variant="body2" fw="semibold" className="!text-muted">
           Associate your AI app account to claim these credits.
@@ -121,6 +188,11 @@ const ClaimCreditsButton = () => {
 
         <CreditsButton
           credits={data?.amount}
+          epochId={data?.epochId}
+          merkleProof={data?.merkleProof}
+          hasClaimed={data?.hasClaimed}
+          totalCredits={data?.totalAmount}
+          isClaimable={data?.isClaimable}
           offchainAccountId={offchainAccountId}
           setOffchainAccountId={setOffchainAccountId}
           setInputError={setInputError}
@@ -134,7 +206,12 @@ const ClaimCreditsButton = () => {
 export default ClaimCreditsButton;
 
 type CreditsButtonProps = {
-  credits?: BN;
+  credits?: bigint;
+  epochId?: bigint;
+  merkleProof?: `0x${string}`[];
+  hasClaimed?: boolean;
+  totalCredits?: bigint;
+  isClaimable?: boolean;
   offchainAccountId: string;
   setOffchainAccountId: (value: string) => void;
   setInputError: (value: string) => void;
@@ -143,6 +220,11 @@ type CreditsButtonProps = {
 
 const CreditsButton = ({
   credits,
+  epochId,
+  merkleProof,
+  hasClaimed,
+  totalCredits,
+  isClaimable,
   offchainAccountId,
   setOffchainAccountId,
   setInputError,
@@ -156,24 +238,38 @@ const CreditsButton = ({
       return;
     }
 
-    if (execute === null || !credits) {
-      return null;
+    if (execute === null || !credits || !epochId || !merkleProof) {
+      if (process.env.NODE_ENV === 'development') {
+        console.warn('Claim credits: Missing required data', {
+          hasExecute: execute !== null,
+          hasCredits: !!credits,
+          hasEpochId: !!epochId,
+          hasMerkleProof: !!merkleProof,
+        });
+      }
+      return;
     }
 
     try {
       await execute({
+        epochId,
         amountToClaim: credits,
         offchainAccountId,
+        merkleProof,
       });
 
       await refetchCredits();
       setOffchainAccountId('');
     } catch (error) {
-      console.error('Failed to claim credits:', error);
+      if (process.env.NODE_ENV === 'development') {
+        console.error('Failed to claim credits:', error);
+      }
     }
   }, [
     credits,
     execute,
+    epochId,
+    merkleProof,
     offchainAccountId,
     refetchCredits,
     setOffchainAccountId,
@@ -181,18 +277,22 @@ const CreditsButton = ({
   ]);
 
   const isLoading = useMemo(() => status === TxStatus.PROCESSING, [status]);
-  const hasCredits = useMemo(() => credits && !credits.isZero(), [credits]);
+  const hasCredits = useMemo(() => {
+    return totalCredits !== undefined && totalCredits !== BigInt(0);
+  }, [totalCredits]);
   const meetsMinimumThreshold = useMemo(() => {
     return meetsMinimumClaimThreshold(credits);
   }, [credits]);
   const canClaim = useMemo(() => {
-    return hasCredits && meetsMinimumThreshold;
-  }, [hasCredits, meetsMinimumThreshold]);
+    return hasCredits && meetsMinimumThreshold && !hasClaimed && isClaimable;
+  }, [hasClaimed, hasCredits, isClaimable, meetsMinimumThreshold]);
 
   return (
     <Button
       isFullWidth
-      isDisabled={!canClaim || isLoading || !offchainAccountId.trim()}
+      isDisabled={
+        !canClaim || isLoading || execute === null || !offchainAccountId.trim()
+      }
       onClick={handleClick}
       isLoading={isLoading}
     >

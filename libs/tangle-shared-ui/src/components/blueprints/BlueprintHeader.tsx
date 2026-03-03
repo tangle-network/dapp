@@ -38,7 +38,6 @@ const BlueprintHeader: FC<BlueprintHeaderProps> = ({
     email,
     instancesCount,
     operatorsCount,
-    // restakersCount,
   } = blueprint;
 
   return (
@@ -109,7 +108,7 @@ const BlueprintHeader: FC<BlueprintHeaderProps> = ({
                   >
                     {author}
                   </Typography>
-                  {/* TODO: to add link here */}
+                  {/* NOTE: to add link here */}
                   {/* <ExternalLinkIcon href /> */}
                 </div>
               </div>
@@ -152,10 +151,10 @@ const BlueprintHeader: FC<BlueprintHeaderProps> = ({
             label="Total Operators"
             value={operatorsCount?.toLocaleString()}
           />
-          {/* Hide restakers */}
+          {/* Hide stakers */}
           {/* <StatsItem
-            label="Total Restakers"
-            value={restakersCount?.toLocaleString()}
+            label="Total Stakers"
+            value={blueprint.stakersCount?.toLocaleString()}
           /> */}
         </div>
       </div>

@@ -2,29 +2,31 @@
 
 import BlueprintHeader from '@tangle-network/tangle-shared-ui/components/blueprints/BlueprintHeader';
 import OperatorsTable from '@tangle-network/tangle-shared-ui/components/tables/Operators';
-import useBlueprintDetails from '@tangle-network/tangle-shared-ui/data/restake/useBlueprintDetails';
+import { useBlueprintDetails } from '@tangle-network/tangle-shared-ui/data/graphql';
 import { ErrorFallback } from '@tangle-network/ui-components/components/ErrorFallback';
 import SkeletonLoader from '@tangle-network/ui-components/components/SkeletonLoader';
 import { Typography } from '@tangle-network/ui-components/typography/Typography';
-import { type FC, type PropsWithChildren, useMemo, useState } from 'react';
+import {
+  type FC,
+  type PropsWithChildren,
+  useCallback,
+  useMemo,
+  useState,
+} from 'react';
 import { Link, useNavigate, Navigate } from 'react-router-dom';
 import { PagePath, TangleDAppPagePath } from '../../../types';
-import ConfigureBlueprintModal from '../ConfigureBlueprintModal';
-import { Modal } from '@tangle-network/ui-components';
-import type { BlueprintFormResult } from '../ConfigureBlueprintModal/types';
-
-import { SessionStorageKey } from '../../../constants';
+import pollWithBackoff from '../../../utils/pollWithBackoff';
+import RegistrationDrawer from '../RegistrationDrawer';
 import useOperatorInfo from '@tangle-network/tangle-shared-ui/hooks/useOperatorInfo';
-import useNetworkStore from '@tangle-network/tangle-shared-ui/context/useNetworkStore';
-import { toSubstrateAddress } from '@tangle-network/ui-components';
 import useParamWithSchema from '@tangle-network/tangle-shared-ui/hooks/useParamWithSchema';
 import { z } from 'zod';
+import { useAccount } from 'wagmi';
 
-const RestakeOperatorAction: FC<PropsWithChildren<{ address: string }>> = ({
+const StakingOperatorAction: FC<PropsWithChildren<{ address: string }>> = ({
   children,
 }) => {
   return (
-    <Link to={TangleDAppPagePath.RESTAKE_DELEGATE} target="_blank">
+    <Link to={TangleDAppPagePath.STAKING_DELEGATE} target="_blank">
       {children}
     </Link>
   );
@@ -33,25 +35,43 @@ const RestakeOperatorAction: FC<PropsWithChildren<{ address: string }>> = ({
 const Page = () => {
   const navigate = useNavigate();
   const id = useParamWithSchema('id', z.coerce.bigint());
-  const { result, isLoading, error } = useBlueprintDetails(id);
-  const { isOperator, operatorAddress } = useOperatorInfo();
-  const ss58Prefix = useNetworkStore((store) => store.network.ss58Prefix);
-  const [isBlueprintModalOpen, setIsBlueprintModalOpen] = useState(false);
+  const { result, isLoading, error, refetch } = useBlueprintDetails(id);
+  const { isOperator } = useOperatorInfo();
+  const { address: userAddress } = useAccount();
+  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
 
+  // Check if the current user is registered as an operator for this blueprint
   const isRegistered = useMemo(() => {
-    if (operatorAddress === null || result?.operators === undefined) {
+    if (!userAddress || result?.operators === undefined) {
       return false;
     }
 
     return result.operators.some((operator) => {
-      try {
-        const opAddr = toSubstrateAddress(operator.address, ss58Prefix);
-        return opAddr === operatorAddress;
-      } catch {
+      return operator.address.toLowerCase() === userAddress.toLowerCase();
+    });
+  }, [userAddress, result?.operators]);
+
+  const handleRegistrationComplete = useCallback(async () => {
+    setIsDrawerOpen(false);
+
+    // Poll with exponential backoff until indexer reflects the new registration
+    await pollWithBackoff(async () => {
+      const refetchResult = (await refetch()) as {
+        data?: typeof result;
+      };
+      const latestResult = refetchResult.data;
+
+      // Check if the user is now in the operators list
+      if (!latestResult || !userAddress) {
         return false;
       }
+
+      return latestResult.operators.some(
+        (operator) =>
+          operator.address.toLowerCase() === userAddress.toLowerCase(),
+      );
     });
-  }, [operatorAddress, result?.operators, ss58Prefix]);
+  }, [refetch, userAddress]);
 
   if (isLoading) {
     return (
@@ -67,23 +87,6 @@ const Page = () => {
     return <ErrorFallback title={error.name} />;
   }
 
-  const handleBlueprintFormSubmit = (formResult: BlueprintFormResult) => {
-    sessionStorage.setItem(
-      SessionStorageKey.BLUEPRINT_REGISTRATION_PARAMS,
-      JSON.stringify({
-        rpcUrl: formResult.rpcUrl,
-        selectedBlueprints: [
-          {
-            ...result.details,
-            id: result.details.id.toString(),
-          },
-        ],
-      }),
-    );
-
-    navigate(PagePath.BLUEPRINTS_REGISTRATION_REVIEW);
-  };
-
   return (
     <div className="space-y-10">
       <BlueprintHeader
@@ -97,7 +100,7 @@ const Page = () => {
           },
         }}
         registerBtnProps={{
-          onClick: () => setIsBlueprintModalOpen(true),
+          onClick: () => setIsDrawerOpen(true),
         }}
         isRegistered={isRegistered ?? false}
       />
@@ -110,19 +113,18 @@ const Page = () => {
         )}
 
         <OperatorsTable
-          RestakeOperatorAction={RestakeOperatorAction}
-          data={result.operators}
+          StakingOperatorAction={StakingOperatorAction}
+          data={result.operators as any} // Type mismatch until OperatorsTable is updated for EVM
           isLoading={isLoading}
         />
       </div>
 
-      <Modal open={isBlueprintModalOpen} onOpenChange={setIsBlueprintModalOpen}>
-        <ConfigureBlueprintModal
-          onOpenChange={setIsBlueprintModalOpen}
-          blueprints={[result.details]}
-          onSubmit={handleBlueprintFormSubmit}
-        />
-      </Modal>
+      <RegistrationDrawer
+        isOpen={isDrawerOpen}
+        onOpenChange={setIsDrawerOpen}
+        blueprints={[result.details]}
+        onRegistrationComplete={handleRegistrationComplete}
+      />
     </div>
   );
 };

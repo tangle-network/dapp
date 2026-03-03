@@ -2,5 +2,7 @@ export * from './api-config';
 export * from './chains';
 export { default as chainsPopulated } from './chains/chainsPopulated';
 export * from './constants';
+export * from './contracts';
+export * from './tokenMetadata';
 export * from './utils';
 export * from './wallets';

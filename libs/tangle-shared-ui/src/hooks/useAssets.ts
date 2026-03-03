@@ -2,10 +2,10 @@ import useApiRx from './useApiRx';
 import { useCallback, useMemo } from 'react';
 import { catchError, map, of } from 'rxjs';
 import useAssetsMetadata from './useAssetsMetadata';
-import assertRestakeAssetId from '../utils/assertRestakeAssetId';
-import { RestakeAssetId } from '../types';
-import { RestakeAsset } from '../types/restake';
-import { NATIVE_ASSET_ID } from '../constants/restaking';
+import assertStakingAssetId from '../utils/assertStakingAssetId';
+import type { StakingAssetId } from '../types';
+import type { StakingAsset } from '../types/staking';
+import { NATIVE_ASSET_ID } from '../constants/staking';
 import useNetworkStore from '../context/useNetworkStore';
 import { TANGLE_TOKEN_DECIMALS } from '@tangle-network/dapp-config';
 
@@ -21,7 +21,7 @@ const useAssets = () => {
               const details = assetDetail.unwrap();
 
               return {
-                id: assertRestakeAssetId(assetId.args[0].toString()),
+                id: assertStakingAssetId(assetId.args[0].toString()),
                 accounts: details.accounts.toString(),
                 admin: details.admin.toString(),
                 approvals: details.approvals.toString(),
@@ -52,7 +52,7 @@ const useAssets = () => {
       return [];
     }
 
-    const ids: RestakeAssetId[] = [];
+    const ids: StakingAssetId[] = [];
 
     for (const asset of assets) {
       if (asset !== undefined) {
@@ -67,7 +67,7 @@ const useAssets = () => {
     useAssetsMetadata(assetIds);
 
   const assetsWithMetadata = useMemo(() => {
-    const assetsMetadataMap = new Map<RestakeAssetId, RestakeAsset>();
+    const assetsMetadataMap = new Map<StakingAssetId, StakingAsset>();
 
     assetIds?.forEach((assetId) => {
       if (assetId) {
@@ -83,7 +83,7 @@ const useAssets = () => {
             assetId: assetId,
             // @dev get all assets, so this is not exit
             vaultId: null,
-            // TODO: get price in usd
+            // Price data remains null until the shared price indexer feed is wired.
             priceInUsd: null,
           },
         });
@@ -101,7 +101,7 @@ const useAssets = () => {
         vaultId: null,
         priceInUsd: null,
       },
-    } satisfies RestakeAsset);
+    } satisfies StakingAsset);
 
     return assetsMetadataMap;
   }, [assetsMetadata, assetIds, nativeTokenSymbol]);

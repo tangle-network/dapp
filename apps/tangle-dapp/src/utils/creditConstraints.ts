@@ -1,39 +1,58 @@
-import { BN } from '@polkadot/util';
-import { TANGLE_TOKEN_DECIMALS } from '@tangle-network/dapp-config';
+/**
+ * Minimum claimable credit amount (in display units).
+ * Credits in the merkle tree are stored as raw amounts, not wei.
+ */
+export const MINIMUM_CLAIMABLE_CREDITS = 0.01;
 
 /**
- * Minimum claimable credit amount (0.01 tokens).
+ * Scale factor for credit precision (2 decimal places).
+ * Used to convert between display amounts and BigInt comparisons.
  */
-export const MINIMUM_CLAIMABLE_CREDITS = new BN(10).pow(
-  new BN(TANGLE_TOKEN_DECIMALS - 2),
+const CREDIT_SCALE = BigInt(100);
+
+/**
+ * Minimum claimable credits as BigInt (scaled by CREDIT_SCALE).
+ */
+const MINIMUM_CLAIMABLE_CREDITS_SCALED = BigInt(
+  Math.round(MINIMUM_CLAIMABLE_CREDITS * Number(CREDIT_SCALE)),
 );
 
 /**
  * Checks if the credit amount meets the minimum claimable threshold.
+ * Uses BigInt comparison to avoid precision loss with large values.
  */
 export const meetsMinimumClaimThreshold = (
-  amount: BN | null | undefined,
+  amount: bigint | null | undefined,
 ): boolean => {
-  if (!amount || amount.isZero()) {
+  if (!amount || amount === BigInt(0)) {
     return false;
   }
 
-  return amount.gte(MINIMUM_CLAIMABLE_CREDITS);
+  // Scale the amount for comparison to avoid floating-point precision issues
+  const scaledAmount = amount * CREDIT_SCALE;
+  return scaledAmount >= MINIMUM_CLAIMABLE_CREDITS_SCALED;
 };
 
 /**
  * Calculates how much more credits are needed to reach the minimum threshold.
+ * Returns 0 if the minimum threshold is already met.
  */
 export const getCreditsNeededForMinimum = (
-  amount: BN | null | undefined,
-): BN => {
+  amount: bigint | null | undefined,
+): number => {
   if (!amount) {
     return MINIMUM_CLAIMABLE_CREDITS;
   }
 
-  if (amount.gte(MINIMUM_CLAIMABLE_CREDITS)) {
-    return new BN(0);
+  // For display purposes, safe to convert to Number since credit amounts
+  // are raw amounts (not wei) and expected to be within safe integer range
+  const numAmount = Number(amount);
+
+  if (numAmount >= MINIMUM_CLAIMABLE_CREDITS) {
+    return 0;
   }
 
-  return MINIMUM_CLAIMABLE_CREDITS.sub(amount);
+  // Round to avoid floating-point precision artifacts
+  const scale = Number(CREDIT_SCALE);
+  return Math.round((MINIMUM_CLAIMABLE_CREDITS - numAmount) * scale) / scale;
 };

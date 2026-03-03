@@ -22,8 +22,6 @@ const parseChainUnits = (
   amountString: string,
   decimals: number,
 ): BN | ChainUnitParsingError => {
-  // TODO: Small bug remains for the special case when the whole part is 0. Example: '0.01' gets parsed as '0.1'! However, it works fine for inputs like `1.01`.
-
   let seenPeriod = false;
 
   const cleanAmount = amountString
@@ -45,6 +43,7 @@ const parseChainUnits = (
   }
 
   const [wholePart, fractionPart = ''] = cleanAmount.split('.');
+  const wholePartNormalized = wholePart === '' ? '0' : wholePart;
 
   // Check if the given amount has more decimal places than expected.
   if (fractionPart.length > decimals) {
@@ -58,7 +57,7 @@ const parseChainUnits = (
   const fractionPartPadded = fractionPart.padEnd(decimals, '0');
 
   // Unite the whole and fraction parts into a single string.
-  return new BN(`${wholePart}${fractionPartPadded}`);
+  return new BN(`${wholePartNormalized}${fractionPartPadded}`);
 };
 
 export default parseChainUnits;

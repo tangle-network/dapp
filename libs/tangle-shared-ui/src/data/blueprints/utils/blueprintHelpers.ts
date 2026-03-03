@@ -9,7 +9,7 @@ import { SubstrateAddress } from '@tangle-network/ui-components/types/address';
 import assertSubstrateAddress from '@tangle-network/ui-components/utils/assertSubstrateAddress';
 import merge from 'lodash/merge';
 import type { Blueprint } from '../../../types/blueprint';
-import { OperatorMap } from '../../../types/restake';
+import { OperatorMap } from '../../../types/staking';
 import {
   getMultipleAccountInfo,
   IdentityType,
@@ -22,7 +22,7 @@ import {
   ServiceInstance,
 } from './type';
 import { randNumber } from '@ngneat/falso';
-import { RestakeAssetId } from '../../../types';
+import { StakingAssetId } from '../../../types';
 
 export const extractBlueprintsData = (
   blueprintEntries: [
@@ -63,11 +63,11 @@ export function extractOperatorData(
     Option<TanglePrimitivesServicesTypesOperatorPreferences>,
   ][],
   operatorMap: OperatorMap,
-  operatorTVLByAsset: Map<SubstrateAddress, Map<RestakeAssetId, number>>,
+  operatorTVLByAsset: Map<SubstrateAddress, Map<StakingAssetId, number>>,
   runningInstancesMap: Map<bigint, ServiceInstance[]>,
 ) {
   const blueprintOperatorMap = new Map<bigint, Set<SubstrateAddress>>();
-  const blueprintRestakersMap = new Map<bigint, Set<string>>();
+  const blueprintStakersMap = new Map<bigint, Set<string>>();
   const blueprintTVLMap = new Map<bigint, number>();
 
   for (const [key, value] of operatorEntries) {
@@ -93,16 +93,16 @@ export function extractOperatorData(
     const operator = operatorMap.get(operatorAccount);
 
     if (operator !== undefined) {
-      const restakerSet = blueprintRestakersMap.get(blueprintId);
+      const stakerSet = blueprintStakersMap.get(blueprintId);
 
-      if (restakerSet === undefined) {
-        blueprintRestakersMap.set(
+      if (stakerSet === undefined) {
+        blueprintStakersMap.set(
           blueprintId,
           new Set(operator.delegations.map((d) => d.delegatorAccountId)),
         );
       } else {
         operator.delegations.forEach(({ delegatorAccountId }) => {
-          restakerSet.add(delegatorAccountId);
+          stakerSet.add(delegatorAccountId);
         });
       }
     }
@@ -115,13 +115,13 @@ export function extractOperatorData(
     blueprintTVLMap.set(blueprintId, operatorExposure);
   }
 
-  return { blueprintOperatorMap, blueprintRestakersMap, blueprintTVLMap };
+  return { blueprintOperatorMap, blueprintStakersMap, blueprintTVLMap };
 }
 
 function calculateBlueprintOperatorExposure(
   runningInstancesMap: Map<bigint, ServiceInstance[]>,
   blueprintId: bigint,
-  operatorTVLByAsset: Map<SubstrateAddress, Map<RestakeAssetId, number>>,
+  operatorTVLByAsset: Map<SubstrateAddress, Map<StakingAssetId, number>>,
 ) {
   const PERCENT_DIVISOR = 100;
 
@@ -217,9 +217,9 @@ export const createBlueprintObjects = (
   blueprintOperatorMap: ReturnType<
     typeof extractOperatorData
   >['blueprintOperatorMap'],
-  blueprintRestakersMap: ReturnType<
+  blueprintStakersMap: ReturnType<
     typeof extractOperatorData
-  >['blueprintRestakersMap'],
+  >['blueprintStakersMap'],
   blueprintTVLMap: ReturnType<typeof extractOperatorData>['blueprintTVLMap'],
   ownerIdentitiesMap: Awaited<ReturnType<typeof fetchOwnerIdentities>>,
   runningInstancesMap: Map<bigint, ServiceInstance[]>,
@@ -243,13 +243,13 @@ export const createBlueprintObjects = (
       category: metadata.category,
       instancesCount,
       operatorsCount: blueprintOperatorMap.get(blueprintId)?.size ?? null,
-      restakersCount: blueprintRestakersMap.get(blueprintId)?.size ?? null,
+      stakersCount: blueprintStakersMap.get(blueprintId)?.size ?? null,
       tvl: blueprintTVLMap.get(blueprintId)?.toLocaleString() ?? null,
       githubUrl: metadata.codeRepository,
       websiteUrl: metadata.website,
       twitterUrl: ownerIdentitiesMap.get(owner)?.twitter,
       email: ownerIdentitiesMap.get(owner)?.email,
-      // TODO: Determine `isBoosted` value.
+      // NOTE: Determine `isBoosted` value.
       isBoosted: false,
       requestParams: registrationParams,
     });
@@ -273,13 +273,13 @@ export const fetchOwnerIdentities = async (
   return ownerIdentitiesMap;
 };
 
-// TODO: implement full features of this function
+// NOTE: implement full features of this function
 export function createMonitoringBlueprint(
   blueprintId: OperatorBlueprint['blueprintId'],
   operatorBlueprint: OperatorBlueprint['blueprint'],
   operatorServices: OperatorBlueprint['services'],
   serviceInstances: ServiceInstance[],
-  operatorTVLByAsset: Map<SubstrateAddress, Map<RestakeAssetId, number>>,
+  operatorTVLByAsset: Map<SubstrateAddress, Map<StakingAssetId, number>>,
   runningInstancesMap: Map<bigint, ServiceInstance[]>,
   owner?: string,
 ): MonitoringBlueprint {
@@ -310,7 +310,7 @@ export function createMonitoringBlueprint(
     instanceCount: instanceCount,
     operatorsCount: totalOperator,
     tvl: tvl,
-    // TODO: get uptime from the graphql
+    // NOTE: get uptime from the graphql
     uptime: randNumber({ min: 0, max: 100 }),
     ...(owner && {
       metadata: {
@@ -324,15 +324,15 @@ export function createMonitoringBlueprint(
     return {
       ...service,
       blueprintData: blueprintData,
-      // TODO: get uptime from the graphql
+      // NOTE: get uptime from the graphql
       uptime: randNumber({ min: 0, max: 100 }),
-      // TODO
+      // NOTE
       earned: randNumber({ min: 0, max: 1000000 }),
-      // TODO
+      // NOTE
       earnedInUsd: randNumber({ min: 0, max: 1000000 }),
-      // TODO: get last active from the graphql
+      // NOTE: get last active from the graphql
       lastActive: new Date(),
-      // TODO: get last active from the graphql
+      // NOTE: get last active from the graphql
       createdAtBlock: randNumber({ min: 0, max: 10000 }),
     };
   });

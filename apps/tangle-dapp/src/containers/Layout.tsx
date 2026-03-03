@@ -8,9 +8,11 @@ import {
 } from '@tangle-network/ui-components/constants';
 import { type FC, type PropsWithChildren } from 'react';
 import { MobileSidebar, Sidebar } from '../components';
+import LocalEnvBanner from '../components/LocalEnvBanner';
+import TxHistoryNotifier from '../components/TxHistoryNotifier';
+import TxConfirmationModal from '@tangle-network/tangle-shared-ui/components/TxConfirmationModal';
 import DebugMetrics from './DebugMetrics';
 import TopNavigationPanel from './TopNavigationPanel';
-import BridgeTxQueueDropdown from '../features/bridge/components/BridgeTxQueueDropdown';
 
 const SOCIAL_LINK_OVERRIDES: Partial<
   Record<(typeof TANGLE_AVAILABLE_SOCIALS)[number], string>
@@ -38,18 +40,18 @@ const Layout: FC<PropsWithChildren<LayoutProps>> = ({
       <main className="flex-1 h-full overflow-y-auto scrollbar-hide">
         <div className="h-full max-w-[1448px] lg:px-10 md:px-8 px-4 m-auto flex flex-col justify-between">
           <div className="flex flex-col space-y-5 grow">
+            <TxHistoryNotifier />
+            <TxConfirmationModal />
+
             <div className="flex items-center justify-between py-6">
               <div className="flex items-center space-x-4 lg:space-x-0">
                 <MobileSidebar />
               </div>
 
-              <div className="flex items-center gap-2">
-                <TopNavigationPanel />
-
-                <BridgeTxQueueDropdown dropdownButtonClassName="h-[44px]" />
-              </div>
+              <TopNavigationPanel />
             </div>
 
+            {!import.meta.env.PROD && <LocalEnvBanner />}
             {children}
           </div>
 

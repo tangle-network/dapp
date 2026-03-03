@@ -1,4 +1,5 @@
 import { Footer } from '@tangle-network/ui-components/components/Footer';
+import TxConfirmationModal from '@tangle-network/tangle-shared-ui/components/TxConfirmationModal';
 import Sidebar from './Sidebar';
 import { FC, PropsWithChildren } from 'react';
 import {
@@ -7,6 +8,7 @@ import {
   TANGLE_SOCIAL_URLS_RECORD,
   TANGLE_TERMS_OF_SERVICE_URL,
 } from '@tangle-network/ui-components/constants';
+import TxHistoryNotifier from './TxHistoryNotifier';
 
 type Props = {
   isSidebarInitiallyExpanded?: boolean;
@@ -28,6 +30,9 @@ const Layout: FC<PropsWithChildren<Props>> = ({
       <Sidebar isExpandedByDefault={isSidebarInitiallyExpanded} />
 
       <div className="flex flex-col flex-1 min-h-screen overflow-y-auto scrollbar-hide">
+        <TxHistoryNotifier />
+        <TxConfirmationModal />
+
         <main className="flex-1">{children}</main>
 
         <Footer

@@ -2,6 +2,8 @@ import { binancePriceSource } from './sources/binance';
 import { coinbasePriceSource } from './sources/coinbase';
 import { coingeckoPriceSource } from './sources/coingecko';
 import { PriceSource } from './types';
+import axios from 'axios';
+import { z } from 'zod';
 
 // List of price sources to try in sequence
 const PRICE_SOURCES = [
@@ -53,6 +55,33 @@ export async function fetchTokenPrices(
       console.error(`Failed to fetch prices from ${source.id}:`, error);
       // Continue with next source
     }
+  }
+
+  // Final fallback: try Coinbase's public spot endpoint for arbitrary `SYMBOL-USD` pairs.
+  // This avoids HTML scraping while providing broader coverage than our curated token list.
+  if (remainingTokens.size > 0) {
+    const CoinbaseSpotSchema = z.object({
+      data: z.object({
+        amount: z.string(),
+      }),
+    });
+
+    const symbolList = Array.from(remainingTokens);
+    await Promise.all(
+      symbolList.map(async (symbol) => {
+        try {
+          const upper = symbol.toUpperCase();
+          const response = await axios.get(
+            `https://api.coinbase.com/v2/prices/${encodeURIComponent(upper)}-USD/spot`,
+          );
+          const parsed = CoinbaseSpotSchema.parse(response.data);
+          const price = Number(parsed.data.amount);
+          results.set(symbol, Number.isFinite(price) ? price : null);
+        } catch {
+          results.set(symbol, null);
+        }
+      }),
+    );
   }
 
   return results;

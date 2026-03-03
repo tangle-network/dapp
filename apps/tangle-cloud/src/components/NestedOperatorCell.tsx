@@ -9,24 +9,22 @@ import {
   shortenString,
   Typography,
 } from '@tangle-network/ui-components';
-import { Link } from 'react-router';
-import { ExternalLinkLine } from '@tangle-network/icons';
 import { Children, FC } from 'react';
-import useNetworkStore from '@tangle-network/tangle-shared-ui/context/useNetworkStore';
-import { IdentityType } from '@tangle-network/tangle-shared-ui/utils/polkadot/identity';
-import { SubstrateAddress } from '@tangle-network/ui-components/types/address';
+import { Address } from 'viem';
+
+type OperatorMetadata = {
+  name?: string;
+};
 
 type NestedOperatorCellProps = {
-  operators?: SubstrateAddress[];
-  operatorIdentityMap?: Map<SubstrateAddress, IdentityType | null>;
+  operators?: Address[];
+  operatorMetadataMap?: Map<Address, OperatorMetadata | null>;
 };
 
 export const NestedOperatorCell: FC<NestedOperatorCellProps> = ({
   operators,
-  operatorIdentityMap,
+  operatorMetadataMap,
 }) => {
-  const network = useNetworkStore((store) => store.network);
-
   if (!operators || !Array.isArray(operators) || operators.length === 0) {
     return EMPTY_VALUE_PLACEHOLDER;
   }
@@ -44,8 +42,8 @@ export const NestedOperatorCell: FC<NestedOperatorCellProps> = ({
               .map((operator) => (
                 <Avatar
                   sourceVariant="address"
-                  value={operator.toString()}
-                  theme="substrate"
+                  value={operator}
+                  theme="ethereum"
                   size="md"
                 />
               )),
@@ -56,7 +54,6 @@ export const NestedOperatorCell: FC<NestedOperatorCellProps> = ({
         {operators.length > 1 &&
           Children.toArray(
             operators.map((operator) => {
-              const explorerUrl = network.createExplorerAccountUrl(operator);
               return (
                 <DropdownMenuItem className="px-4 py-2 hover:bg-mono-170">
                   <div className="flex items-center gap-4">
@@ -64,29 +61,19 @@ export const NestedOperatorCell: FC<NestedOperatorCellProps> = ({
                       <div className="flex items-center gap-2">
                         <Avatar
                           sourceVariant="address"
-                          value={operator.toString()}
-                          theme="substrate"
+                          value={operator}
+                          theme="ethereum"
                           size="md"
                         />
                         <Typography variant="body3" fw="bold">
                           {shortenString(
-                            operatorIdentityMap?.get(operator)?.name ||
-                              operator.toString(),
+                            operatorMetadataMap?.get(operator)?.name ||
+                              operator,
                           )}
                         </Typography>
                       </div>
                       <KeyValueWithButton size="sm" keyValue={operator} />
                     </div>
-                    {explorerUrl && (
-                      <Link
-                        to={explorerUrl}
-                        target="_blank"
-                        rel="noreferrer"
-                        className="!text-inherit"
-                      >
-                        <ExternalLinkLine className="!fill-current" />
-                      </Link>
-                    )}
                   </div>
                 </DropdownMenuItem>
               );

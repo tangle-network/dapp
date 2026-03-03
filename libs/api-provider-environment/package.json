@@ -2,5 +2,6 @@
   "name": "@tangle-network/api-provider-environment",
   "version": "0.0.1",
   "type": "module",
+  "main": "./src/index.ts",
   "types": "./src/index.d.ts"
 }

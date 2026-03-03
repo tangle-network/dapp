@@ -2,6 +2,7 @@
   "name": "@tangle-network/ui-components",
   "version": "0.0.3",
   "type": "module",
+  "main": "./src/index.ts",
   "description": "Tangle UI Component Library",
   "sideEffects": false,
   "keywords": [

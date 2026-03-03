@@ -8,28 +8,49 @@ import {
   useReactTable,
 } from '@tanstack/react-table';
 import {
-  AmountFormatStyle,
   Button,
   CircularProgress,
   EMPTY_VALUE_PLACEHOLDER,
-  formatDisplayAmount,
   Typography,
 } from '@tangle-network/ui-components';
 import { TableStatusProps } from '@tangle-network/tangle-shared-ui/components/tables/TableStatus';
 import { ChevronDown } from '@tangle-network/icons';
 import pluralize from '@tangle-network/ui-components/utils/pluralize';
 import { TangleCloudTable } from '../../../components/tangleCloudTable';
-import type { RestakeVault } from '@tangle-network/tangle-shared-ui/data/restake/useRestakeVaults';
+import type { StakingVault } from '@tangle-network/tangle-shared-ui/types/staking';
 import TableCellWrapper from '@tangle-network/tangle-shared-ui/components/tables/TableCellWrapper';
 import LsTokenIcon from '@tangle-network/tangle-shared-ui/components/LsTokenIcon';
-import calculateBnRatio from '@tangle-network/ui-components/utils/calculateBnRatio';
 import formatPercentage from '@tangle-network/ui-components/utils/formatPercentage';
+import { formatUnits } from 'viem';
 import { twMerge } from 'tailwind-merge';
 import { TangleCloudTableProps } from '../../../components/tangleCloudTable/type';
 import { Link } from 'react-router';
 import { TangleDAppPagePath } from '../../../types';
+import type { BN } from '@polkadot/util';
 
-const COLUMN_HELPER = createColumnHelper<RestakeVault>();
+const toBigInt = (value: bigint | BN): bigint =>
+  typeof value === 'bigint' ? value : BigInt(value.toString());
+
+const formatAmount = (amount: bigint | BN, decimals: number): string => {
+  const formatted = formatUnits(toBigInt(amount), decimals);
+  const num = parseFloat(formatted);
+  if (num === 0) return '0';
+  if (num >= 1_000_000) return `${(num / 1_000_000).toFixed(2)}M`;
+  if (num >= 1_000) return `${(num / 1_000).toFixed(2)}K`;
+  return num.toLocaleString(undefined, {
+    maximumFractionDigits: 2,
+    minimumFractionDigits: 0,
+  });
+};
+
+const calculateRatio = (a: bigint | BN, b: bigint | BN): number => {
+  const aBigInt = toBigInt(a);
+  const bBigInt = toBigInt(b);
+  if (bBigInt === BigInt(0)) return 0;
+  return Number((aBigInt * BigInt(10000)) / bBigInt) / 10000;
+};
+
+const COLUMN_HELPER = createColumnHelper<StakingVault>();
 
 const getColumns = () => [
   COLUMN_HELPER.accessor('name', {
@@ -49,14 +70,6 @@ const getColumns = () => [
     ),
     sortDescFirst: true,
   }),
-  // TODO: Add APY column
-  // COLUMN_HELPER.accessor('apy', {
-  //   sortUndefined: 'last',
-  //   header: () => 'APY',
-  //   cell: (props) => {
-  //     return <TableCellWrapper>{fmtDeposits}</TableCellWrapper>;
-  //   },
-  // }),
   COLUMN_HELPER.accessor('totalDeposits', {
     sortUndefined: 'last',
     header: () => 'Deposits',
@@ -65,11 +78,7 @@ const getColumns = () => [
       const fmtDeposits =
         value === undefined
           ? EMPTY_VALUE_PLACEHOLDER
-          : formatDisplayAmount(
-              value,
-              props.row.original.decimals,
-              AmountFormatStyle.SHORT,
-            );
+          : formatAmount(value, props.row.original.decimals);
 
       return <TableCellWrapper>{fmtDeposits}</TableCellWrapper>;
     },
@@ -83,27 +92,19 @@ const getColumns = () => [
       const fmtTvl =
         tvl === undefined
           ? EMPTY_VALUE_PLACEHOLDER
-          : formatDisplayAmount(
-              tvl,
-              props.row.original.decimals,
-              AmountFormatStyle.SHORT,
-            );
+          : formatAmount(tvl, props.row.original.decimals);
 
       const depositCap = props.row.original.capacity;
 
       const fmtDepositCap =
         depositCap === undefined
           ? '∞'
-          : formatDisplayAmount(
-              depositCap,
-              props.row.original.decimals,
-              AmountFormatStyle.SHORT,
-            );
+          : formatAmount(depositCap, props.row.original.decimals);
 
       const capacityPercentage =
         tvl === undefined || depositCap === undefined
           ? null
-          : calculateBnRatio(tvl, depositCap);
+          : calculateRatio(tvl, depositCap);
 
       return (
         <TableCellWrapper removeRightBorder>
@@ -134,7 +135,7 @@ const getColumns = () => [
         <TableCellWrapper removeRightBorder>
           <div className="flex items-center justify-end flex-1 gap-2">
             <Link
-              to={TangleDAppPagePath.RESTAKE_DEPOSIT.replace(
+              to={TangleDAppPagePath.STAKING_DEPOSIT.replace(
                 '{{vault}}',
                 row.original.id.toString(),
               )}
@@ -172,12 +173,12 @@ const getColumns = () => [
 ];
 
 type Props = {
-  data: RestakeVault[];
+  data: StakingVault[];
   isLoading: boolean;
   error: Error | null;
   loadingTableProps?: Partial<TableStatusProps>;
   emptyTableProps?: Partial<TableStatusProps>;
-  tableConfig: TangleCloudTableProps<RestakeVault>['tableConfig'];
+  tableConfig: TangleCloudTableProps<StakingVault>['tableConfig'];
 };
 
 export const TotalValueLockedTable: FC<Props> = ({
@@ -203,7 +204,7 @@ export const TotalValueLockedTable: FC<Props> = ({
   });
 
   return (
-    <TangleCloudTable<RestakeVault>
+    <TangleCloudTable<StakingVault>
       title={pluralize('blueprint', data.length !== 1)}
       data={data}
       error={error}

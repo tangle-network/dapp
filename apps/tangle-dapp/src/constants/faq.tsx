@@ -70,7 +70,7 @@ const FAQ = [
     answer: (
       <>
         {
-          'Upon claiming, 5% of your airdropped TNT tokens will be immediately liquid. The remaining 95% will be locked for 2 years with a 1-month cliff, after which tokens will vest linearly on a monthly basis.\n\nThis means participants will receive a portion of their vested tokens each month until the full amount has been distributed over the two-year period. For the full details on the allocation, '
+          'Upon claiming, 10% of your airdropped TNT tokens are immediately liquid. The remaining 90% are locked in a cliff contract and become withdrawable after the unlock timestamp (default: 180 days after deployment). These parameters are configured on-chain before the first claim. For the full details on the allocation, '
         }
         <a href={ALLOCATION_DOCS_URL} target="_blank" rel="noopener noreferrer">
           see our documentation.

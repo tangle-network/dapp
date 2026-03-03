@@ -1,5 +1,10 @@
 import { TableAndChartTabs } from '@tangle-network/ui-components/components/TableAndChartTabs';
-import { PlayFillIcon, TimeLineIcon } from '@tangle-network/icons';
+import {
+  PlayFillIcon,
+  TimeLineIcon,
+  CheckboxCircleLine,
+  GlobalLine,
+} from '@tangle-network/icons';
 import {
   FC,
   ReactElement,
@@ -11,19 +16,23 @@ import {
 import { TabContent } from '@tangle-network/ui-components';
 import { RunningInstanceTable } from './RunningInstanceTable';
 import { PendingInstanceTable } from './PendingInstanceTable';
-import useOperatorInfo from '@tangle-network/tangle-shared-ui/hooks/useOperatorInfo';
-import { useOperatorStatsData } from '../../../data/operators/useOperatorStatsData';
-import useActiveAccountAddress from '@tangle-network/tangle-shared-ui/hooks/useActiveAccountAddress';
-import { isSubstrateAddress } from '@tangle-network/ui-components';
+import { ApprovedInstanceTable } from './ApprovedInstanceTable';
+import { AllServicesTable } from './AllServicesTable';
+import useEvmOperatorInfo from '../../../hooks/useEvmOperatorInfo';
+import useOperatorStats from '../../../data/operators/useOperatorStats';
 
 enum InstancesTab {
   RUNNING_INSTANCES = 'Running',
   PENDING_INSTANCES = 'Pending',
+  APPROVED_INSTANCES = 'Approved',
+  JOINABLE_SERVICES = 'Joinable',
 }
 
 const InstancesTabIcon: ReactElement[] = [
-  <PlayFillIcon viewBox="0 0 16 16" className="w-4 h-4 !fill-blue-50" />,
+  <PlayFillIcon className="w-4 h-4 !fill-blue-50" />,
   <TimeLineIcon className="w-4 h-4 !fill-yellow-100" />,
+  <CheckboxCircleLine className="w-4 h-4 !fill-green-50" />,
+  <GlobalLine className="w-4 h-4 !fill-purple-50" />,
 ] as const;
 
 interface InstancesTabsProps {
@@ -35,21 +44,10 @@ export const InstancesTabs: FC<InstancesTabsProps> = ({
   refreshTrigger,
   setRefreshTrigger,
 }) => {
-  const { isOperator } = useOperatorInfo();
-  const accountAddress = useActiveAccountAddress();
+  const { isOperator, operatorAddress } = useEvmOperatorInfo();
 
-  const { result: operatorStatsData } = useOperatorStatsData(
-    useMemo(() => {
-      if (
-        !accountAddress ||
-        !isOperator ||
-        !isSubstrateAddress(accountAddress)
-      ) {
-        return null;
-      }
-
-      return accountAddress;
-    }, [accountAddress, isOperator]),
+  const { result: operatorStatsData } = useOperatorStats(
+    isOperator ? (operatorAddress ?? undefined) : undefined,
     refreshTrigger,
   );
 
@@ -57,15 +55,15 @@ export const InstancesTabs: FC<InstancesTabsProps> = ({
     return operatorStatsData && operatorStatsData.registeredBlueprints > 0;
   }, [operatorStatsData]);
 
-  const shouldShowPendingTab = isOperator && hasRegisteredBlueprints;
+  const shouldShowOperatorTabs = isOperator && hasRegisteredBlueprints;
 
-  const availableTabs = shouldShowPendingTab
+  const availableTabs = shouldShowOperatorTabs
     ? Object.values(InstancesTab)
-    : [InstancesTab.RUNNING_INSTANCES];
+    : [InstancesTab.RUNNING_INSTANCES, InstancesTab.JOINABLE_SERVICES];
 
-  const availableIcons = shouldShowPendingTab
+  const availableIcons = shouldShowOperatorTabs
     ? InstancesTabIcon
-    : [InstancesTabIcon[0]];
+    : [InstancesTabIcon[0], InstancesTabIcon[3]];
 
   const [selectedTab, setSelectedTab] = useState(
     InstancesTab.RUNNING_INSTANCES,
@@ -82,18 +80,15 @@ export const InstancesTabs: FC<InstancesTabsProps> = ({
     >
       <TabContent
         value={InstancesTab.RUNNING_INSTANCES}
-        className="flex justify-center mx-auto"
+        className="flex justify-center mx-auto w-full"
       >
-        <RunningInstanceTable
-          refreshTrigger={refreshTrigger}
-          setRefreshTrigger={setRefreshTrigger}
-        />
+        <RunningInstanceTable />
       </TabContent>
 
-      {shouldShowPendingTab && (
+      {shouldShowOperatorTabs && (
         <TabContent
           value={InstancesTab.PENDING_INSTANCES}
-          className="flex justify-center mx-auto"
+          className="flex justify-center mx-auto w-full"
         >
           <PendingInstanceTable
             refreshTrigger={refreshTrigger}
@@ -101,6 +96,25 @@ export const InstancesTabs: FC<InstancesTabsProps> = ({
           />
         </TabContent>
       )}
+
+      {shouldShowOperatorTabs && (
+        <TabContent
+          value={InstancesTab.APPROVED_INSTANCES}
+          className="flex justify-center mx-auto w-full"
+        >
+          <ApprovedInstanceTable
+            refreshTrigger={refreshTrigger}
+            setRefreshTrigger={setRefreshTrigger}
+          />
+        </TabContent>
+      )}
+
+      <TabContent
+        value={InstancesTab.JOINABLE_SERVICES}
+        className="flex justify-center mx-auto w-full"
+      >
+        <AllServicesTable />
+      </TabContent>
     </TableAndChartTabs>
   );
 };

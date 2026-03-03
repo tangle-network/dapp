@@ -51,7 +51,7 @@ This project is Tangle dApp - a monorepo containing multiple dApp projects that 
 - `components/`: "Dumb", mostly re-usable components that are specific to Tangle dApp. Usually if a component is re-usable and generic enough to be used in other dApps, it should be placed within either `libs/tangle-shared-ui` or `libs/ui-components/`.
 - `containers/`: "Smart" React components with business logic that fetch, calculate or otherwise interact with stuff that isn't passed directly as props. These smart components usually reuse components from `components/` folder, and even other containers too.
 - `hooks/`: React hooks containing core infrastructure logic & functionality.
-- `data/`: React hooks containing data fetching logic, generally organized by their corresponding areas (such as restaking, liquid staking, etc.).
+- `data/`: React hooks containing data fetching logic, generally organized by their corresponding areas (such as staking, liquid staking, etc.).
 - `pages/`: Contains pages of the dApps, which are used by `react-router-dom`.
 - `abi/`: Contains EVM ABI definitions as a JS object, which is used when utilizing Viem to call Substrate precompiles. This is useful for when EVM accounts interact with our dApp and call extrinsics.
 

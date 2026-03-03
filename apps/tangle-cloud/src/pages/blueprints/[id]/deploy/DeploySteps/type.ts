@@ -7,8 +7,9 @@ import {
   UseFormWatch,
 } from 'react-hook-form';
 import { Blueprint } from '@tangle-network/tangle-shared-ui/types/blueprint';
-import { SubstrateAddress } from '@tangle-network/ui-components/types/address';
 import { VaultToken } from '@tangle-network/tangle-shared-ui/types';
+import { Address } from 'viem';
+import { BlueprintOperator } from '@tangle-network/tangle-shared-ui/data/graphql';
 
 export const LabelClassName = 'text-mono-200 dark:text-mono-0 font-medium';
 
@@ -17,6 +18,10 @@ export type BaseDeployStepProps = {
   setValue: UseFormSetValue<DeployBlueprintSchema>;
   watch: UseFormWatch<DeployBlueprintSchema>;
   blueprint?: Blueprint;
+  blueprintOperators?: BlueprintOperator[];
+  requestSchemaFieldCount?: number;
+  hasRequestSchema?: boolean;
+  requestSchemaParseError?: string | null;
   setError: UseFormSetError<DeployBlueprintSchema>;
   clearErrors: UseFormClearErrors<DeployBlueprintSchema>;
 };
@@ -36,20 +41,11 @@ export type RequestArgsConfigurationStepProps = BaseDeployStepProps;
 export type PaymentStepProps = BaseDeployStepProps;
 
 export type OperatorSelectionTable = {
-  address: SubstrateAddress;
+  address: Address;
   identityName?: string;
   vaultTokensInUsd?: number;
   selfBondedAmount: bigint;
   instanceCount?: number;
-  uptime?: number;
-  restakersCount?: number;
+  stakersCount?: number;
   vaultTokens?: VaultToken[];
 };
-
-export const ApprovalModelLabel: Record<
-  DeployBlueprintSchema['approvalModel'],
-  string
-> = {
-  Fixed: 'Require all operators to approve',
-  Dynamic: 'Minimum required approvals',
-} as const;

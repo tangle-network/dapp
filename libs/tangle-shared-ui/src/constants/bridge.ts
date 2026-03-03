@@ -17,7 +17,7 @@ import { assertEvmAddress } from '@tangle-network/ui-components';
 import { Abi, erc20Abi } from 'viem';
 import { BridgeChainsConfigType, BridgeToken } from '../types';
 
-// TODO: Include assertion logic, as the Abi type can't be directly imported from viem since the 'type' field clashes (string vs. 'function').
+// NOTE: Include assertion logic, as the Abi type can't be directly imported from viem since the 'type' field clashes (string vs. 'function').
 const assertAbi = (abi: unknown): Abi => abi as Abi;
 
 export const BRIDGE_TOKENS: Record<PresetTypedChainId, BridgeToken[]> = {

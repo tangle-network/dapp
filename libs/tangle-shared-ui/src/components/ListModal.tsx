@@ -35,6 +35,12 @@ export type ListModalProps<T> = {
   filterItem?: (item: T, searchQuery: string) => boolean;
 
   /**
+   * Provide a function to determine whether an item should be disabled (non-clickable with overlay).
+   * Disabled items will be shown with reduced opacity and cannot be selected.
+   */
+  isItemDisabled?: (item: T) => boolean;
+
+  /**
    * The items to display in the list.
    *
    * If `null`, `undefined`, or `false`, the list will display a loading state.
@@ -58,6 +64,7 @@ const ListModal = <T,>({
   getItemKey,
   onSelect,
   isLoading: isLoadingProp,
+  isItemDisabled,
 }: ListModalProps<T>) => {
   const [searchQuery, setSearchQuery] = useState('');
 
@@ -68,7 +75,8 @@ const ListModal = <T,>({
       return items;
     }
 
-    return items.toSorted(sorting);
+    // Avoid `Array.prototype.toSorted` for broader runtime compatibility.
+    return [...items].sort(sorting);
   }, [items, sorting]);
 
   const processedItems = useMemo(() => {
@@ -143,7 +151,7 @@ const ListModal = <T,>({
             <div className="h-full max-h-[448px] overflow-y-auto">
               <ScrollArea className="w-full h-full pt-4">
                 <ul>
-                  {/** TODO: Handle edge case where all processed items are omitted by returning null, and thus the list is actually empty. */}
+                  {/** NOTE: Handle edge case where all processed items are omitted by returning null, and thus the list is actually empty. */}
                   {processedItems.map((item, index) => {
                     const key =
                       getItemKey !== undefined
@@ -157,11 +165,18 @@ const ListModal = <T,>({
                       return null;
                     }
 
+                    const isDisabled = isItemDisabled?.(item) ?? false;
+
                     return (
                       <ListItem
                         key={key}
-                        onClick={() => onSelect(item)}
-                        className="w-full flex items-center gap-4 justify-between max-w-full min-h-[60px] py-3 cursor-pointer"
+                        onClick={isDisabled ? undefined : () => onSelect(item)}
+                        className={twMerge(
+                          'w-full flex items-center gap-4 justify-between max-w-full min-h-[60px] py-3',
+                          isDisabled
+                            ? 'opacity-50 cursor-not-allowed bg-mono-40/50 dark:bg-mono-180/50'
+                            : 'cursor-pointer',
+                        )}
                       >
                         {itemContent}
                       </ListItem>

@@ -31,7 +31,7 @@ const useSwitchNetwork = () => {
   const network = useNetworkStore((store) => store.network2);
   const setNetwork = useNetworkStore((store) => store.setNetwork);
 
-  // TODO: Should utilize the Zustand persistence middleware to cache this.
+  // Persistence is currently managed via local storage until store-level middleware is enabled.
   // in instead of manually handling it here.
   // if we set the network by calling `setNetwork`,
   // the new network won't be cached in local storage.
@@ -42,7 +42,7 @@ const useSwitchNetwork = () => {
     remove: removeCachedCustomRpcEndpoint,
   } = useLocalStorage(LocalStorageKey.CUSTOM_RPC_ENDPOINT);
 
-  // TODO: Should utilize the zustand middleware to cache this
+  // Persistence is currently managed via local storage until store-level middleware is enabled.
   // in instead of manually handling it here.
   // if we set the network by calling `setNetwork`,
   // the new network won't be cached in local storage.

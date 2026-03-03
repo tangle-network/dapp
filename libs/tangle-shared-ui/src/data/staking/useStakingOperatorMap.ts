@@ -1,0 +1,150 @@
+import type { Option, Vec } from '@polkadot/types';
+import type {
+  PalletMultiAssetDelegationOperatorDelegatorBond,
+  PalletMultiAssetDelegationOperatorOperatorBondLessRequest,
+  PalletMultiAssetDelegationOperatorOperatorStatus,
+} from '@polkadot/types/lookup';
+import isDefined from '@tangle-network/dapp-types/utils/isDefined';
+import { useCallback } from 'react';
+import { map, catchError, of } from 'rxjs';
+import useApiRx from '../../hooks/useApiRx';
+import { TangleError, TangleErrorCode } from '../../types/error';
+import { OperatorMetadata } from '../../types/staking';
+import createStakingAssetId from '../../utils/createStakingAssetId';
+import { assertSubstrateAddress } from '@tangle-network/ui-components';
+import { SubstrateAddress } from '@tangle-network/ui-components/types/address';
+
+const useStakingOperatorMap = (refreshTrigger?: number) => {
+  const { result, ...rest } = useApiRx(
+    useCallback(
+      (apiRx) => {
+        void refreshTrigger;
+        if (
+          !isDefined(apiRx?.query?.multiAssetDelegation?.operators?.entries)
+        ) {
+          return new TangleError(TangleErrorCode.FEATURE_NOT_SUPPORTED);
+        }
+
+        return apiRx.query.multiAssetDelegation.operators.entries().pipe(
+          catchError((error) => {
+            console.error('Error fetching operator map entries:', error);
+            return of([]);
+          }),
+          map((entries) => {
+            return entries.reduce(
+              (operatorsMap, [accountStorage, operatorMetadata], _index) => {
+                const accountId = accountStorage.args[0];
+                const accountIdStr = accountId.toString();
+
+                if (operatorMetadata.isNone) {
+                  return operatorsMap;
+                }
+
+                const operator = operatorMetadata.unwrap();
+
+                try {
+                  const { delegations, stakersCount } = toPrimitiveDelegations(
+                    operator.delegations,
+                  );
+
+                  const operatorMetadataPrimitive = {
+                    stake: operator.stake.toBigInt(),
+                    delegationCount: operator.delegationCount.toNumber(),
+                    bondLessRequest: toPrimitiveRequest(operator.request),
+                    delegations,
+                    stakersCount,
+                    status: toPrimitiveStatus(operator.status),
+                  } satisfies OperatorMetadata;
+
+                  operatorsMap.set(
+                    assertSubstrateAddress(accountIdStr),
+                    operatorMetadataPrimitive,
+                  );
+                } catch (e) {
+                  console.error(
+                    `Error processing operator ${accountIdStr}:`,
+                    e,
+                  );
+                }
+
+                return operatorsMap;
+              },
+              new Map<SubstrateAddress, OperatorMetadata>(),
+            );
+          }),
+        );
+      },
+      [refreshTrigger],
+    ),
+  );
+
+  return {
+    // Return an empty Map for API compatibility.
+    result: result ?? new Map<SubstrateAddress, OperatorMetadata>(),
+    ...rest,
+  };
+};
+
+/**
+ * @internal
+ */
+const toPrimitiveRequest = (
+  request: Option<PalletMultiAssetDelegationOperatorOperatorBondLessRequest>,
+): OperatorMetadata['bondLessRequest'] => {
+  if (request.isNone) return null;
+
+  const requestValue = request.unwrap();
+
+  return {
+    amount: requestValue.amount.toBigInt(),
+    requestTime: requestValue.requestTime.toNumber(),
+  };
+};
+
+/**
+ * @internal
+ */
+const toPrimitiveStatus = (
+  status: PalletMultiAssetDelegationOperatorOperatorStatus,
+): OperatorMetadata['status'] => {
+  if (status.type === 'Leaving') {
+    return {
+      Leaving: status.asLeaving.toNumber(),
+    };
+  }
+
+  return status.type;
+};
+
+/**
+ * @internal
+ */
+const toPrimitiveDelegations = (
+  delegations: Vec<PalletMultiAssetDelegationOperatorDelegatorBond>,
+): {
+  delegations: OperatorMetadata['delegations'];
+  stakersCount: number;
+} => {
+  const stakerSet = new Set<string>();
+
+  const primitiveDelegations = delegations.map(
+    ({ amount, asset, delegator }) => {
+      const delegatorAccountId = delegator.toString();
+
+      stakerSet.add(delegatorAccountId);
+
+      return {
+        amount: amount.toBigInt(),
+        delegatorAccountId,
+        assetId: createStakingAssetId(asset),
+      } satisfies OperatorMetadata['delegations'][number];
+    },
+  );
+
+  return {
+    delegations: primitiveDelegations,
+    stakersCount: stakerSet.size,
+  };
+};
+
+export default useStakingOperatorMap;

@@ -1,51 +1,52 @@
-import OperatorsTableContainer from '@tangle-network/tangle-shared-ui/components/Restaking/OperatorsTableContainer';
-import useRestakeDelegatorInfo from '@tangle-network/tangle-shared-ui/data/restake/useRestakeDelegatorInfo';
-import useRestakeOperatorMap from '@tangle-network/tangle-shared-ui/data/restake/useRestakeOperatorMap';
-import useRestakeTvl from '@tangle-network/tangle-shared-ui/data/restake/useRestakeTvl';
-import { DelegatorInfo } from '@tangle-network/tangle-shared-ui/types/restake';
-import { FC, useCallback, useEffect, useState } from 'react';
+import { useOperators } from '@tangle-network/tangle-shared-ui/data/graphql/useOperators';
+import { OperatorsTable } from '@tangle-network/tangle-shared-ui/components/tables/OperatorsTable';
+import { FC, useCallback } from 'react';
+import { Address } from 'viem';
+import { useNavigate } from 'react-router';
+import { Button, Typography } from '@tangle-network/ui-components';
+import { PagePath } from '../../types';
+import { useAccount } from 'wagmi';
+import createStakeDelegateUrl from './createStakeDelegateUrl';
 
 const Page: FC = () => {
-  const { result: delegatorInfo } = useRestakeDelegatorInfo();
+  const navigate = useNavigate();
+  const { isConnected } = useAccount();
+  const { data: operators, isLoading } = useOperators();
 
-  const [refreshTrigger, setRefreshTrigger] = useState(0);
+  // Convert operators to Map format expected by table
+  const operatorMap = operators
+    ? new Map(operators.map((op) => [op.id as Address, op]))
+    : null;
 
-  const handleOperatorJoined = useCallback(() => {
-    setTimeout(() => {
-      setRefreshTrigger((v) => v + 1);
-    }, 2000);
+  const handleStakeClicked = useCallback((operatorAddress?: Address) => {
+    window.location.assign(createStakeDelegateUrl(operatorAddress));
   }, []);
-  const {
-    result: operatorMap,
-    isLoading: isLoadingOperators,
-    error: operatorMapError,
-  } = useRestakeOperatorMap(refreshTrigger);
-  const { operatorConcentration, operatorTvl } = useRestakeTvl(
-    delegatorInfo as DelegatorInfo | null,
-  );
-
-  // TODO: Redirect to tangle-dapp restake/delegate page
-  const handleRestakeClicked = useCallback(() => {
-    console.log('Redirecting to restake/delegate page');
-  }, []);
-
-  useEffect(() => {
-    if (operatorMapError) {
-      console.error('Error fetching operator map:', operatorMapError);
-    }
-  }, [operatorMapError]);
 
   return (
     <div className="!mt-16">
-      <OperatorsTableContainer
-        onOperatorJoined={handleOperatorJoined}
-        operatorConcentration={operatorConcentration}
+      {/* Header with Manage Button */}
+      <div className="flex justify-between items-center mb-6 px-4 lg:px-0">
+        <div>
+          <Typography variant="h4">Operators</Typography>
+          <Typography variant="body2" className="text-mono-100 mt-1">
+            Browse operators in the network
+          </Typography>
+        </div>
+
+        {isConnected && (
+          <Button
+            variant="secondary"
+            onClick={() => navigate(PagePath.OPERATORS_MANAGE)}
+          >
+            Manage Registrations
+          </Button>
+        )}
+      </div>
+
+      <OperatorsTable
         operatorMap={operatorMap}
-        operatorTvl={operatorTvl}
-        onRestakeClicked={handleRestakeClicked}
-        onRestakeClickedPagePath=""
-        onRestakeClickedQueryParamKey=""
-        isLoading={isLoadingOperators}
+        isLoading={isLoading}
+        onStakeClicked={handleStakeClicked}
       />
     </div>
   );

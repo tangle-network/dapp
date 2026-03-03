@@ -2,6 +2,10 @@
 
 import { useEffect, useRef, useState } from 'react';
 
+// Default icons imported statically for fallback
+import DefaultChainIcon from './chains/default.svg';
+import DefaultTokenIcon from './tokens/default.svg';
+
 export interface DynamicSVGImportOptions {
   onCompleted?: (
     name: string,
@@ -16,6 +20,11 @@ export interface DynamicSVGImportOptions {
    */
   type?: 'token' | 'chain';
 }
+
+// Use import.meta.glob for Vite-native dynamic imports
+// This ensures all SVGs are discovered at build time
+const tokenIcons = import.meta.glob('./tokens/*.svg', { eager: false });
+const chainIcons = import.meta.glob('./chains/*.svg', { eager: false });
 
 /**
  * Hook for loading the actual cryptocurrency icon based on the token symbol (e.g. usdt, polkadot, ...)
@@ -34,9 +43,8 @@ export function useDynamicSVGImport(
   >();
 
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<Error>();
 
-  const { onCompleted, onError } = options;
+  const { onCompleted } = options;
 
   const normalizedName =
     typeof name === 'string' ? name.trim().toLowerCase() : 'placeholder';
@@ -63,27 +71,22 @@ export function useDynamicSVGImport(
           setImportedIcon(<Icon />);
           onCompleted?.(processingName, Icon);
         }
-      } catch (err) {
+      } catch {
         const isCurrentNameMatch = processingName === currentNameRef.current;
 
-        if (
-          (err as any).message.includes('Cannot find module') ||
-          (err as any).message.includes('Unknown variable dynamic import')
-        ) {
-          const mod = await getDefaultIcon(type);
-          const Icon = mod.default as unknown as React.FC<
-            React.SVGProps<SVGElement>
-          >;
+        // Fallback to default icon
+        const DefaultIcon =
+          type === 'token'
+            ? (DefaultTokenIcon as unknown as React.FC<
+                React.SVGProps<SVGElement>
+              >)
+            : (DefaultChainIcon as unknown as React.FC<
+                React.SVGProps<SVGElement>
+              >);
 
-          if (isCurrentNameMatch) {
-            setImportedIcon(<Icon />);
-            onCompleted?.(processingName, Icon);
-          }
-        } else {
-          if (isCurrentNameMatch) {
-            onError?.(err as any);
-            setError(err as Error);
-          }
+        if (isCurrentNameMatch) {
+          setImportedIcon(<DefaultIcon />);
+          onCompleted?.(processingName, DefaultIcon);
         }
       } finally {
         if (processingName === currentNameRef.current) {
@@ -93,26 +96,27 @@ export function useDynamicSVGImport(
     };
 
     importIcon().catch(console.error);
-  }, [normalizedName, onCompleted, onError, type]);
+  }, [normalizedName, onCompleted, type]);
 
-  return { error, loading, svgElement: importedIcon };
+  // Never returns an error since we always fall back to default icon
+  return {
+    error: undefined as Error | undefined,
+    loading,
+    svgElement: importedIcon,
+  };
 }
 
-function getIcon(
+async function getIcon(
   type: 'token' | 'chain',
   name: string,
-): Promise<typeof import('*.svg')> {
-  if (type === 'token') {
-    return import(`./tokens/${name}.svg`);
-  } else {
-    return import(`./chains/${name}.svg`);
-  }
-}
+): Promise<{ default: unknown }> {
+  const icons = type === 'token' ? tokenIcons : chainIcons;
+  const iconPath = `./${type === 'token' ? 'tokens' : 'chains'}/${name}.svg`;
 
-function getDefaultIcon(type: 'token' | 'chain') {
-  if (type === 'token') {
-    return import('./tokens/default.svg');
-  } else {
-    return import('./chains/default.svg');
+  const loader = icons[iconPath];
+  if (!loader) {
+    throw new Error(`Icon not found: ${iconPath}`);
   }
+
+  return loader() as Promise<{ default: unknown }>;
 }

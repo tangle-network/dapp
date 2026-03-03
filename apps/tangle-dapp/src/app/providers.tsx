@@ -1,16 +1,36 @@
-import {
-  AppEvent,
-  OFACFilterProvider,
-  WebbProvider,
-} from '@tangle-network/api-provider-environment';
+import { OFACFilterProvider } from '@tangle-network/api-provider-environment';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { config } from '@tangle-network/dapp-config/wagmi-config';
+import { DataSourceProvider } from '@tangle-network/tangle-shared-ui/context/DataSourceContext';
+import { IndexerStatusProvider } from '@tangle-network/tangle-shared-ui/context/IndexerStatusContext';
+import useNetworkSync from '@tangle-network/tangle-shared-ui/hooks/useNetworkSync';
 import { UIProvider } from '@tangle-network/ui-components';
-import { type PropsWithChildren, type ReactNode } from 'react';
-import type { State } from 'wagmi';
+import {
+  ANVIL_LOCAL_NETWORK,
+  BASE_SEPOLIA_NETWORK,
+  BASE_NETWORK,
+} from '@tangle-network/ui-components/constants/networks';
+import {
+  type FC,
+  type PropsWithChildren,
+  type ReactNode,
+  useState,
+} from 'react';
+import { WagmiProvider } from 'wagmi';
 import { z } from 'zod';
-import BridgeHyperlaneProvider from '../features/bridge/context/BridgeHyperlaneContext/BridgeHyperlaneProvider';
-import BridgeTxQueueProvider from '../features/bridge/context/BridgeTxQueueContext/BridgeTxQueueProvider';
 
-const appEvent = new AppEvent();
+// EVM networks available in tangle-dapp
+const TANGLE_DAPP_NETWORKS = [
+  ANVIL_LOCAL_NETWORK,
+  BASE_SEPOLIA_NETWORK,
+  BASE_NETWORK,
+];
+
+// Component to sync network store with wagmi chain
+const NetworkSync: FC<PropsWithChildren> = ({ children }) => {
+  useNetworkSync(TANGLE_DAPP_NETWORKS);
+  return children;
+};
 
 const envSchema = z.object({
   OFAC_REGIONS: z
@@ -21,14 +41,9 @@ const envSchema = z.object({
     .optional(),
 });
 
-type Props = {
-  wagmiInitialState?: State;
-};
+const Providers = ({ children }: PropsWithChildren): ReactNode => {
+  const [queryClient] = useState(() => new QueryClient());
 
-const Providers = ({
-  children,
-  wagmiInitialState,
-}: PropsWithChildren<Props>): ReactNode => {
   const {
     OFAC_COUNTRY_CODES: blockedCountryCodes,
     OFAC_REGIONS: blockedRegions,
@@ -36,21 +51,23 @@ const Providers = ({
 
   return (
     <UIProvider hasErrorBoundary>
-      <WebbProvider
-        appEvent={appEvent}
-        applicationName="Tangle dApp"
-        wagmiInitialState={wagmiInitialState}
-      >
-        <OFACFilterProvider
-          isActivated={process.env.NODE_ENV !== 'development'}
-          blockedRegions={blockedRegions}
-          blockedCountryCodes={blockedCountryCodes}
-        >
-          <BridgeHyperlaneProvider>
-            <BridgeTxQueueProvider>{children}</BridgeTxQueueProvider>
-          </BridgeHyperlaneProvider>
-        </OFACFilterProvider>
-      </WebbProvider>
+      <WagmiProvider config={config}>
+        <QueryClientProvider client={queryClient}>
+          <IndexerStatusProvider>
+            <NetworkSync>
+              <DataSourceProvider>
+                <OFACFilterProvider
+                  isActivated={process.env.NODE_ENV !== 'development'}
+                  blockedRegions={blockedRegions}
+                  blockedCountryCodes={blockedCountryCodes}
+                >
+                  {children}
+                </OFACFilterProvider>
+              </DataSourceProvider>
+            </NetworkSync>
+          </IndexerStatusProvider>
+        </QueryClientProvider>
+      </WagmiProvider>
     </UIProvider>
   );
 };

@@ -1,5 +1,5 @@
 import BlueprintGallery from '@tangle-network/tangle-shared-ui/components/blueprints/BlueprintGallery';
-import useAllBlueprints from '@tangle-network/tangle-shared-ui/data/blueprints/useAllBlueprints';
+import { type UseAllBlueprintsReturn } from '@tangle-network/tangle-shared-ui/data/graphql';
 import { RowSelectionState } from '@tanstack/table-core';
 import {
   ComponentProps,
@@ -22,7 +22,7 @@ const BlueprintItemWrapper: FC<PropsWithChildren<{ id: bigint }>> = ({
 type Props = {
   rowSelection?: RowSelectionState;
   onRowSelectionChange?: Dispatch<SetStateAction<RowSelectionState>>;
-} & ReturnType<typeof useAllBlueprints>;
+} & Omit<UseAllBlueprintsReturn, 'refetch'>;
 
 const BlueprintListing: FC<Props> = ({
   rowSelection,

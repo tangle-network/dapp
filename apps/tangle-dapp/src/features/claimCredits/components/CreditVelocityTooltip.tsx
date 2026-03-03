@@ -1,5 +1,4 @@
-import { FC } from 'react';
-import { BN } from '@polkadot/util';
+import { FC, useMemo } from 'react';
 import { InfoCircledIcon } from '@radix-ui/react-icons';
 import { Typography } from '@tangle-network/ui-components/typography/Typography';
 import {
@@ -12,13 +11,14 @@ import {
   formatDisplayAmount,
   AmountFormatStyle,
 } from '@tangle-network/ui-components';
+import { BN } from '@polkadot/util';
 import {
   getCreditsNeededForMinimum,
   MINIMUM_CLAIMABLE_CREDITS,
 } from '../../../utils/creditConstraints';
 
 type Props = {
-  currentAmount: BN | null | undefined;
+  currentAmount: bigint | null | undefined;
   tokenSymbol?: string;
 };
 
@@ -26,19 +26,30 @@ const CreditVelocityTooltip: FC<Props> = ({
   currentAmount,
   tokenSymbol = 'TNT',
 }) => {
-  const creditsNeeded = getCreditsNeededForMinimum(currentAmount);
+  const creditsNeeded = useMemo(
+    () => getCreditsNeededForMinimum(currentAmount),
+    [currentAmount],
+  );
 
+  // Convert decimal values to token units (multiply by 10^decimals) for BN
   const formattedMinimum = formatDisplayAmount(
-    MINIMUM_CLAIMABLE_CREDITS,
+    new BN(
+      BigInt(
+        Math.round(MINIMUM_CLAIMABLE_CREDITS * 10 ** TANGLE_TOKEN_DECIMALS),
+      ).toString(),
+    ),
     TANGLE_TOKEN_DECIMALS,
     AmountFormatStyle.SHORT,
   );
 
-  const formattedCreditsNeeded = formatDisplayAmount(
-    creditsNeeded,
-    TANGLE_TOKEN_DECIMALS,
-    AmountFormatStyle.SHORT,
-  );
+  // Format creditsNeeded to avoid floating-point display artifacts
+  const formattedCreditsNeeded = useMemo(() => {
+    if (creditsNeeded === 0) {
+      return '0';
+    }
+    // Format to max 4 decimal places, removing trailing zeros
+    return creditsNeeded.toFixed(4).replace(/\.?0+$/, '');
+  }, [creditsNeeded]);
 
   return (
     <Tooltip>
@@ -55,7 +66,7 @@ const CreditVelocityTooltip: FC<Props> = ({
           You need at least {formattedMinimum} {tokenSymbol} to claim credits.
         </Typography>
 
-        {!creditsNeeded.isZero() && (
+        {creditsNeeded !== 0 && (
           <Typography
             variant="body2"
             className="text-mono-120 dark:text-mono-80"

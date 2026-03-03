@@ -17,7 +17,9 @@ export default defineConfig({
     port: 4200,
     host: 'localhost',
     fs: {
-      allow: ['../..'],
+      // Nx can run Vite with a cwd different from `root`, so make this absolute.
+      // Needed for dynamic imports that resolve to `/@fs/.../node_modules/.vite/...`.
+      allow: [resolve(__dirname, '../..')],
     },
   },
   define: {
@@ -49,6 +51,8 @@ export default defineConfig({
     },
   },
   optimizeDeps: {
+    // These are dynamically imported (claims migration) and won't be picked up by static scanning.
+    include: ['@polkadot/extension-dapp'],
     esbuildOptions: {
       define: {
         global: 'globalThis',

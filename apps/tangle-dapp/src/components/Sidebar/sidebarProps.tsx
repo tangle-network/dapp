@@ -1,15 +1,12 @@
 import {
-  AppsLine,
-  CoinLine,
   DocumentationIcon,
   FaucetIcon,
-  // GiftLineIcon,
+  GiftLineIcon,
   GlobalLine,
   HomeFillIcon,
-  PolkadotJs,
   ShuffleLine,
   TokenSwapFill,
-  // WaterDropletIcon,
+  WaterDropletIcon,
 } from '@tangle-network/icons';
 import {
   MobileSidebarProps,
@@ -26,7 +23,6 @@ import {
 // import { PointsBanner } from '../../features/points/components/PointsBanner';
 import { NetworkFeature, PagePath } from '../../types';
 
-// TODO: This entire system of handling sidebar props can be improved in a more React-compliant manner. For now, leaving as is since it is not necessary.
 // Only show the services dropdown if on development mode.
 const SIDEBAR_STATIC_ITEMS: SideBarItemProps[] = [
   {
@@ -37,19 +33,19 @@ const SIDEBAR_STATIC_ITEMS: SideBarItemProps[] = [
     subItems: [],
   },
   {
-    name: 'Restake',
-    href: PagePath.RESTAKE,
+    name: 'Stake',
+    href: PagePath.STAKING,
     isInternal: true,
     Icon: TokenSwapFill,
     subItems: [],
   },
-  // {
-  //   name: 'Liquid Stake',
-  //   href: PagePath.LIQUID_STAKING,
-  //   isInternal: true,
-  //   Icon: WaterDropletIcon,
-  //   subItems: [],
-  // },
+  {
+    name: 'Liquid Stake',
+    href: PagePath.LIQUID_STAKING,
+    isInternal: true,
+    Icon: WaterDropletIcon,
+    subItems: [],
+  },
   {
     name: 'Bridge',
     href: PagePath.BRIDGE,
@@ -58,19 +54,12 @@ const SIDEBAR_STATIC_ITEMS: SideBarItemProps[] = [
     subItems: [],
   },
   {
-    name: 'Nomination',
-    href: PagePath.NOMINATION,
+    name: 'Claim TNT',
+    href: PagePath.CLAIM_MIGRATION,
     isInternal: true,
-    Icon: CoinLine,
+    Icon: GiftLineIcon,
     subItems: [],
   },
-  // {
-  //   name: 'Claim Airdrop',
-  //   href: PagePath.CLAIM_AIRDROP,
-  //   isInternal: true,
-  //   Icon: GiftLineIcon,
-  //   subItems: [],
-  // },
 ];
 
 const SIDEBAR_FOOTER: SideBarFooterType = {
@@ -81,13 +70,9 @@ const SIDEBAR_FOOTER: SideBarFooterType = {
 };
 
 export default function getSidebarProps({
-  polkadotJsDashboardUrl,
-  nativeExplorerUrl,
   evmExplorerUrl,
   networkFeatures,
 }: {
-  polkadotJsDashboardUrl: string;
-  nativeExplorerUrl?: string;
   evmExplorerUrl?: string;
   networkFeatures: readonly NetworkFeature[];
 }): MobileSidebarProps {
@@ -95,24 +80,6 @@ export default function getSidebarProps({
 
   const sideBarItems: SideBarItemProps[] = [
     ...SIDEBAR_STATIC_ITEMS,
-    {
-      Icon: PolkadotJs,
-      href: polkadotJsDashboardUrl,
-      isInternal: false,
-      name: 'Polkadot-JS',
-      subItems: [],
-    },
-    ...(nativeExplorerUrl
-      ? [
-          {
-            Icon: AppsLine,
-            href: nativeExplorerUrl,
-            isInternal: false,
-            name: 'Substrate Explorer',
-            subItems: [],
-          },
-        ]
-      : []),
     ...(evmExplorerUrl
       ? [
           {

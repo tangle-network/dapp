@@ -22,7 +22,7 @@ import useViemWalletClient, {
 import useAgnosticAccountInfo from './useAgnosticAccountInfo';
 import useNetworkStore from '../context/useNetworkStore';
 import ensureError from '../utils/ensureError';
-import RESTAKING_PRECOMPILE_ABI from '../abi/restaking';
+import STAKING_DELEGATION_PRECOMPILE_ABI from '../abi/stakingDelegation';
 import useEvmGasEstimate from './useEvmGasEstimate';
 import useEvmCallPermitNonce from './useEvmCallPermitNonce';
 
@@ -31,11 +31,11 @@ const DEADLINE_MINUTES = 30;
 const MAX_GAS_LIMIT = 60_000;
 
 const ALLOWED_CALLS: Partial<Record<PrecompileAddress, string[]>> = {
-  [PrecompileAddress.RESTAKING]: [
+  [PrecompileAddress.STAKING]: [
     'deposit',
     'delegate',
   ] as const satisfies ExtractAbiFunctionNames<
-    typeof RESTAKING_PRECOMPILE_ABI
+    typeof STAKING_DELEGATION_PRECOMPILE_ABI
   >[],
 };
 

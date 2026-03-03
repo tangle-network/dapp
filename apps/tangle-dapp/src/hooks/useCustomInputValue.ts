@@ -1,6 +1,6 @@
 import { KeyboardEventHandler, useCallback, useEffect, useState } from 'react';
 
-import cleanNumericInputString from '../utils/cleanNumericInputString';
+import cleanNumericInputString from '@tangle-network/tangle-shared-ui/utils/cleanNumericInputString';
 
 export type CustomInputValueProps<T> = {
   value?: T | null;

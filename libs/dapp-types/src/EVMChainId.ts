@@ -26,6 +26,15 @@ enum EVMChainId {
   BSC = 56,
   Bitlayer = 200901,
 
+  // Base testnets
+  BaseSepolia = 84532,
+
+  // Arbitrum testnets
+  ArbitrumSepolia = 421614,
+
+  // Local development
+  AnvilLocal = 31337,
+
   TangleLocalEVM = 3287,
   TangleTestnetEVM = 3799,
   TangleMainnetEVM = 5845,
