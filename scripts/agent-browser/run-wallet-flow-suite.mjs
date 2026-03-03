@@ -194,6 +194,10 @@ const options = parseArgs({
   options: {
     cases: { type: 'string' },
     config: { type: 'string' },
+    provider: { type: 'string' },
+    model: { type: 'string' },
+    'api-key': { type: 'string' },
+    'base-url': { type: 'string' },
     'dapp-base-url': { type: 'string' },
     'cloud-base-url': { type: 'string' },
     'blueprint-id': { type: 'string' },
@@ -222,6 +226,10 @@ Usage:
 Options:
   --cases <path>                  Cases module/JSON file (default: ${DEFAULT_CASES_PATH})
   --config <path>                 agent-browser-driver config file (default: ${DEFAULT_CONFIG_PATH})
+  --provider <name>               LLM provider override (openai/anthropic/google)
+  --model <name>                  LLM model override
+  --api-key <value>               LLM API key override
+  --base-url <url>                LLM base URL override (LiteLLM/local proxy/etc.)
   --dapp-base-url <url>           dApp base URL (default: http://localhost:4200)
   --cloud-base-url <url>          cloud base URL (default: http://localhost:4300)
   --blueprint-id <id>             Blueprint ID for flows requiring /blueprints/:id paths
@@ -260,6 +268,18 @@ const main = async () => {
   if (options['output-dir']) {
     runtimeOverrides.outputDir = options['output-dir'];
   }
+  if (options.provider) {
+    runtimeOverrides.provider = options.provider;
+  }
+  if (options.model) {
+    runtimeOverrides.model = options.model;
+  }
+  if (options['api-key']) {
+    runtimeOverrides.apiKey = options['api-key'];
+  }
+  if (options['base-url']) {
+    runtimeOverrides.baseUrl = options['base-url'];
+  }
   const walletExtensions = options['wallet-extension'] ?? [];
   const walletUserDataDir = options['wallet-user-data-dir'];
   if (walletExtensions.length > 0 || walletUserDataDir) {
@@ -297,6 +317,23 @@ const main = async () => {
   if (options.list) {
     return;
   }
+
+  const applyCaseRuntimeOverrides = (testCase) => {
+    const next = { ...testCase };
+    if (maxTurnsOverride !== undefined) {
+      next.maxTurns = maxTurnsOverride;
+    } else if (next.maxTurns === undefined && mergedConfig.maxTurns !== undefined) {
+      next.maxTurns = mergedConfig.maxTurns;
+    }
+
+    if (timeoutOverride !== undefined) {
+      next.timeoutMs = timeoutOverride;
+    } else if (next.timeoutMs === undefined && mergedConfig.timeoutMs !== undefined) {
+      next.timeoutMs = mergedConfig.timeoutMs;
+    }
+
+    return next;
+  };
 
   const driverModule = await loadAgentDriverModule();
   const playwrightModule = await loadPlaywright();
@@ -398,16 +435,21 @@ const main = async () => {
       process.env.ANTHROPIC_API_KEY ??
       process.env.GOOGLE_GENERATIVE_AI_API_KEY;
 
-    if (!apiKey) {
+    if (!apiKey && !mergedConfig.baseUrl) {
       throw new Error(
         'Missing LLM API key. Set OPENAI_API_KEY, ANTHROPIC_API_KEY, GOOGLE_GENERATIVE_AI_API_KEY, or configure apiKey in agent-browser-driver config.',
+      );
+    }
+    if (!apiKey && mergedConfig.baseUrl) {
+      log(
+        'warning: no API key provided; continuing because base-url is configured (use --api-key if your proxy requires auth).',
       );
     }
 
     const testRunner = new TestRunner({
       config: {
         ...toAgentConfig(mergedConfig),
-        apiKey,
+        apiKey: apiKey ?? 'local-dev-key',
         debug: Boolean(options.debug),
       },
       defaultTimeoutMs: mergedConfig.timeoutMs,
@@ -423,7 +465,9 @@ const main = async () => {
         ),
     });
 
-    const suite = await testRunner.runSuite(selectedCases);
+    const suite = await testRunner.runSuite(
+      selectedCases.map((testCase) => applyCaseRuntimeOverrides(testCase)),
+    );
 
     log(
       `Suite complete: passed=${suite.summary.passed} failed=${suite.summary.failed} skipped=${suite.summary.skipped}`,
