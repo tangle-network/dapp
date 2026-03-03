@@ -2,10 +2,10 @@ import { renderHook } from '@testing-library/react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { useServiceApproveTx } from './useServiceApproveTx';
 
-const { mockUseChainId, mockGetContractsForChain, mockUseContractWrite } =
+const { mockUseChainId, mockGetContractsByChainId, mockUseContractWrite } =
   vi.hoisted(() => ({
     mockUseChainId: vi.fn(),
-    mockGetContractsForChain: vi.fn(),
+    mockGetContractsByChainId: vi.fn(),
     mockUseContractWrite: vi.fn(),
   }));
 
@@ -13,8 +13,9 @@ vi.mock('wagmi', () => ({
   useChainId: () => mockUseChainId(),
 }));
 
-vi.mock('./getContractsForChain', () => ({
-  default: (chainId: number) => mockGetContractsForChain(chainId),
+vi.mock('@tangle-network/dapp-config/contracts', () => ({
+  getContractsByChainId: (chainId: number) =>
+    mockGetContractsByChainId(chainId),
 }));
 
 vi.mock('@tangle-network/tangle-shared-ui/hooks/useContractWrite', () => ({
@@ -34,7 +35,7 @@ describe('useServiceApproveTx', () => {
     vi.clearAllMocks();
 
     mockUseChainId.mockReturnValue(84532);
-    mockGetContractsForChain.mockReturnValue({
+    mockGetContractsByChainId.mockReturnValue({
       tangle: '0x1234567890123456789012345678901234567890',
     });
   });
@@ -144,7 +145,9 @@ describe('useServiceApproveTx', () => {
   });
 
   it('returns null tx config when contracts are unavailable for the active chain', async () => {
-    mockGetContractsForChain.mockReturnValue(null);
+    mockGetContractsByChainId.mockImplementation(() => {
+      throw new Error('unsupported chain');
+    });
 
     let capturedFactory:
       | ((params: any, activeAddress: any) => Promise<any>)

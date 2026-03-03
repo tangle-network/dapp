@@ -25,4 +25,3 @@
 - Seed scripts (Substrate dev):
   - `yarn script:setupServices` (create blueprints)
   - `yarn script:setupStaking` (LST/vault/operator staking fixtures)
-  - `yarn script:setupRestaking` (legacy alias)

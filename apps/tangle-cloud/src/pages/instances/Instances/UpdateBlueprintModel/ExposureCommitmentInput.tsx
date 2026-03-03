@@ -36,10 +36,16 @@ interface ExposureCommitmentInputProps {
   className?: string;
   /** Operator's delegated amount for this asset (optional) */
   delegatedAmount?: bigint | null;
+  /**
+   * Operator exposure in basis points (0-10000). When provided, displayed as
+   * a read-only info row. For WithExposure mode this is set per-operator by
+   * the deployer; for Basic and WithSecurity it is always 10000 (100%).
+   */
+  operatorExposureBps?: number;
 }
 
 /**
- * Single-value exposure commitment input for service approval.
+ * Interactive exposure commitment input for WithSecurity service approval.
  *
  * Displays:
  * - Asset icon and name
@@ -71,6 +77,7 @@ export const ExposureCommitmentInput: FC<ExposureCommitmentInputProps> = ({
   errorMessage,
   className,
   delegatedAmount,
+  operatorExposureBps = 10000,
 }) => {
   // Convert basis points to percentage for display
   const minPercent = minExposureBps / 100;
@@ -85,14 +92,19 @@ export const ExposureCommitmentInput: FC<ExposureCommitmentInputProps> = ({
     (assetKind === 0 ? 'ETH' : shortenString(tokenAddress, 4));
   const decimals = metadata?.decimals ?? 18;
 
-  // Calculate tokens at risk based on exposure percentage
+  // Effective risk accounts for both operator exposure and TNT commitment.
+  // For WithSecurity, operatorExposureBps defaults to 10000 (100%).
+  const effectiveRiskBps = useMemo(
+    () => Math.floor((operatorExposureBps * value) / 10000),
+    [operatorExposureBps, value],
+  );
+
   const tokensAtRisk = useMemo(() => {
     if (delegatedAmount === null || delegatedAmount === undefined) {
       return null;
     }
-    // tokensAtRisk = delegatedAmount * exposureBps / 10000
-    return (delegatedAmount * BigInt(value)) / BigInt(10000);
-  }, [delegatedAmount, value]);
+    return (delegatedAmount * BigInt(effectiveRiskBps)) / BigInt(10000);
+  }, [delegatedAmount, effectiveRiskBps]);
 
   // Format delegated amount for display
   const formattedDelegatedAmount = useMemo(() => {
@@ -160,6 +172,27 @@ export const ExposureCommitmentInput: FC<ExposureCommitmentInputProps> = ({
 
       {/* Slider section */}
       <div className="flex-1 min-w-0">
+        {/* Operator exposure info (read-only) */}
+        {operatorExposureBps !== undefined && (
+          <div className="flex items-center justify-between mb-3 p-2 bg-mono-0 dark:bg-mono-180 rounded-lg">
+            <Label className="text-mono-100 dark:text-mono-100">
+              Operator Exposure
+            </Label>
+            <Typography
+              variant="body2"
+              fw="bold"
+              className="text-mono-200 dark:text-mono-0"
+            >
+              {operatorExposureBps / 100}%
+              <span className="text-mono-100 dark:text-mono-80 font-normal text-xs ml-1">
+                {operatorExposureBps < 10000
+                  ? '(set by deployer)'
+                  : '(protocol default)'}
+              </span>
+            </Typography>
+          </div>
+        )}
+
         <div className="flex justify-between items-center mb-2">
           <Label className="text-mono-200 dark:text-mono-0">
             Your Exposure Commitment

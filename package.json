@@ -40,8 +40,7 @@
     "infra:base-sepolia": "./scripts/infra/start-infra.sh base-sepolia",
     "infra:base": "./scripts/infra/start-infra.sh base",
     "script:setupServices": "bun scripts/setupServices.ts",
-    "script:setupStaking": "bun scripts/setupRestaking.ts",
-    "script:setupRestaking": "bun scripts/setupRestaking.ts"
+    "script:setupStaking": "bun scripts/setupStaking.ts"
   },
   "resolutions": {
     "@polkadot/api": "^13.2.1",

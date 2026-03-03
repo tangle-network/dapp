@@ -10,7 +10,7 @@
  * - Validators: Actively validating
  * - Nominators: Staking via nomination
  * - Operators: Multi-asset delegation operators
- * - Delegators: Multi-asset delegation delegators/restakers
+ * - Delegators: Multi-asset delegation delegators (legacy term: restakers)
  * - Identity holders: On-chain identity set
  * - Claimers: Unclaimed genesis allocations
  */
@@ -29,7 +29,7 @@ const MULTIPLIERS = {
   validator: 1.0,      // Additional for validators
   nominator: 1.0,      // Additional for nominators
   operator: 1.0,       // Additional for operators
-  delegator: 1.0,      // Additional for delegators/restakers
+  delegator: 1.0,      // Additional for delegators (legacy term: restakers)
   identity: 1.0,       // Additional for identity holders
   claimer: 1.0,        // Additional for unclaimed balances
   lstMember: 1.0,      // Additional for LST pool members

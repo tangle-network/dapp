@@ -16,7 +16,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@tangle-network/ui-components/components/select';
-import { Search } from '@tangle-network/icons';
+import { Search, CheckLineIcon, Close } from '@tangle-network/icons';
 import LsTokenIcon from '@tangle-network/tangle-shared-ui/components/LsTokenIcon';
 import { OperatorTable } from './components/OperatorTable';
 import {
@@ -25,9 +25,9 @@ import {
 } from '@tangle-network/tangle-shared-ui/data/graphql';
 import {
   useBlueprintConfig,
-  getMembershipModelLabel,
   MembershipModel,
 } from '@tangle-network/tangle-shared-ui/data/services';
+import { getMembershipLabel } from '../../../../../types/serviceRequest';
 import { Address } from 'viem';
 
 const MAX_ASSET_TO_SHOW = 3;
@@ -79,6 +79,8 @@ export const SelectOperatorsStep: FC<SelectOperatorsStepProps> = ({
   }, [blueprintOperators]);
 
   const selectedAssets = watch('assets');
+  const requestMode = watch('requestMode') ?? 'basic';
+  const securityCommitments = watch('securityCommitments') ?? [];
   const selectedOperatorsCount = Object.keys(rowSelection).length;
 
   const tableData = useMemo(() => {
@@ -123,16 +125,46 @@ export const SelectOperatorsStep: FC<SelectOperatorsStepProps> = ({
 
     setValue(`assets`, newSelectedAssets);
 
-    // Initialize security commitments (minExposurePercent must be >= 1 per schema)
-    const securityCommitments = newSelectedAssets.map((selectedAsset) => {
-      return {
-        asset: selectedAsset.id,
-        minExposurePercent: 1,
-        maxExposurePercent: 100,
-      };
-    });
-    setValue(`securityCommitments`, securityCommitments);
+    if (requestMode === 'security') {
+      const nextSecurityCommitments = newSelectedAssets.map((selectedAsset) => {
+        return {
+          asset: selectedAsset.id,
+          minExposurePercent: 1,
+          maxExposurePercent: 100,
+        };
+      });
+      setValue('securityCommitments', nextSecurityCommitments);
+    }
   };
+
+  useEffect(() => {
+    const assetCount = selectedAssets?.length ?? 0;
+
+    if (requestMode !== 'security') {
+      if (securityCommitments.length > 0) {
+        setValue('securityCommitments', []);
+      }
+      return;
+    }
+
+    if (assetCount === 0) {
+      if (securityCommitments.length > 0) {
+        setValue('securityCommitments', []);
+      }
+      return;
+    }
+
+    if (securityCommitments.length !== assetCount) {
+      setValue(
+        'securityCommitments',
+        (selectedAssets ?? []).map((asset) => ({
+          asset: asset.id,
+          minExposurePercent: 1,
+          maxExposurePercent: 100,
+        })),
+      );
+    }
+  }, [requestMode, securityCommitments.length, selectedAssets, setValue]);
 
   // Calculate min approvals required based on blueprint config
   // For Fixed: all operators must approve
@@ -148,55 +180,6 @@ export const SelectOperatorsStep: FC<SelectOperatorsStepProps> = ({
     // Dynamic: show blueprint's minOperators requirement
     return blueprintConfig.minOperators;
   }, [blueprintConfig, selectedOperatorsCount]);
-
-  // Set approvalModel and minApproval in form state when config loads
-  useEffect(() => {
-    console.log('[OperatorSelectionStep] useEffect triggered', {
-      blueprintConfig,
-      selectedOperatorsCount,
-    });
-    if (!blueprintConfig) return;
-
-    const approvalModel =
-      blueprintConfig.membership === MembershipModel.Fixed
-        ? 'Fixed'
-        : 'Dynamic';
-    console.log(
-      '[OperatorSelectionStep] Setting approvalModel:',
-      approvalModel,
-    );
-    setValue('approvalModel', approvalModel);
-
-    if (approvalModel === 'Fixed') {
-      // For Fixed model, all selected operators must approve
-      if (selectedOperatorsCount > 0) {
-        console.log(
-          '[OperatorSelectionStep] Setting minApproval (Fixed):',
-          selectedOperatorsCount,
-        );
-        setValue('minApproval', selectedOperatorsCount);
-      }
-    } else {
-      // For Dynamic model, use blueprint's minOperators
-      // If maxOperators is 0 (unlimited), use selectedOperatorsCount or minOperators as fallback
-      const maxApproval =
-        blueprintConfig.maxOperators > 0
-          ? blueprintConfig.maxOperators
-          : selectedOperatorsCount > 0
-            ? selectedOperatorsCount
-            : blueprintConfig.minOperators;
-      console.log(
-        '[OperatorSelectionStep] Setting minApproval (Dynamic):',
-        blueprintConfig.minOperators,
-      );
-      console.log(
-        '[OperatorSelectionStep] Setting maxApproval (Dynamic):',
-        maxApproval,
-      );
-      setValue('minApproval', blueprintConfig.minOperators);
-      setValue('maxApproval', maxApproval);
-    }
-  }, [blueprintConfig, selectedOperatorsCount, setValue]);
 
   // Get all available assets for filtering
   const allAssets = useMemo<StakingAsset[]>(() => {
@@ -354,7 +337,7 @@ export const SelectOperatorsStep: FC<SelectOperatorsStepProps> = ({
                 }
               >
                 {blueprintConfig
-                  ? getMembershipModelLabel(blueprintConfig.membership)
+                  ? getMembershipLabel(blueprintConfig.membership)
                   : 'Loading...'}
               </Chip>
             </div>
@@ -365,22 +348,35 @@ export const SelectOperatorsStep: FC<SelectOperatorsStepProps> = ({
               </span>
               <span className="text-sm font-semibold">
                 {minApprovalsRequired !== null ? (
-                  <>
-                    {minApprovalsRequired}
-                    {selectedOperatorsCount > 0 && (
-                      <span className="text-mono-100 dark:text-mono-120 font-normal">
-                        {' '}
-                        / {selectedOperatorsCount} selected
-                      </span>
-                    )}
-                  </>
+                  minApprovalsRequired
                 ) : (
                   <span className="text-mono-100 dark:text-mono-120 font-normal">
                     Select operators to see requirements
                   </span>
                 )}
               </span>
+              {minApprovalsRequired !== null &&
+                (selectedOperatorsCount >= minApprovalsRequired ? (
+                  <span className="inline-flex items-center justify-center rounded-full bg-green-500/20 p-1 text-green-400">
+                    <CheckLineIcon className="size-4" />
+                  </span>
+                ) : (
+                  <span className="inline-flex items-center justify-center rounded-full bg-red-500/20 p-1 text-red-400">
+                    <Close className="size-4" />
+                  </span>
+                ))}
             </div>
+
+            {selectedOperatorsCount > 0 && (
+              <div className="flex items-center gap-2">
+                <span className="text-sm text-mono-140 dark:text-mono-80">
+                  Selected Operators:
+                </span>
+                <span className="text-sm font-semibold">
+                  {selectedOperatorsCount}
+                </span>
+              </div>
+            )}
           </div>
         )}
       </div>

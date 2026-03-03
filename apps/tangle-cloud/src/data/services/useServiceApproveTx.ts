@@ -10,9 +10,10 @@ import useContractWrite, {
   TxStatus,
 } from '@tangle-network/tangle-shared-ui/hooks/useContractWrite';
 import TANGLE_ABI from '@tangle-network/tangle-shared-ui/abi/tangle';
+import { getContractsByChainId } from '@tangle-network/dapp-config/contracts';
 import { useChainId } from 'wagmi';
+import { zeroAddress } from 'viem';
 import type { ContractSecurityCommitment } from '../../types';
-import getContractsForChain from './getContractsForChain';
 
 export { TxStatus };
 
@@ -22,6 +23,8 @@ export { TxStatus };
 export interface SimpleApproveParams {
   requestId: bigint;
   stakingPercent: number;
+  /** TNT exposure in basis points (0-10000). When > 0, calls the 3-arg approveService overload. */
+  tntExposureBps?: number;
 }
 
 /**
@@ -85,12 +88,17 @@ const hasSecurityCommitments = (
  */
 export const useServiceApproveTx = (options?: UseServiceApproveTxOptions) => {
   const chainId = useChainId();
-  const contracts = getContractsForChain(chainId);
+  let contracts: ReturnType<typeof getContractsByChainId> | null = null;
+  try {
+    contracts = getContractsByChainId(chainId);
+  } catch {
+    contracts = null;
+  }
 
   const hook = useContractWrite(
     TANGLE_ABI,
     async (params: ServiceApproveParams, _activeAddress) => {
-      if (!contracts) {
+      if (!contracts || contracts.tangle === zeroAddress) {
         return null;
       }
 
@@ -120,6 +128,20 @@ export const useServiceApproveTx = (options?: UseServiceApproveTxOptions) => {
         Math.max(0, simpleParams.stakingPercent ?? 0),
       );
 
+      // When tntExposureBps is set, use the 3-arg overload
+      if (simpleParams.tntExposureBps && simpleParams.tntExposureBps > 0) {
+        return {
+          address: contracts.tangle,
+          abi: TANGLE_ABI,
+          functionName: 'approveService' as const,
+          args: [
+            params.requestId,
+            stakingPercent,
+            simpleParams.tntExposureBps,
+          ] as const,
+        };
+      }
+
       return {
         address: contracts.tangle,
         abi: TANGLE_ABI,
@@ -141,6 +163,12 @@ export const useServiceApproveTx = (options?: UseServiceApproveTxOptions) => {
         } else {
           const simpleParams = params as SimpleApproveParams;
           details.set('Staking Percent', `${simpleParams.stakingPercent}%`);
+          if (simpleParams.tntExposureBps && simpleParams.tntExposureBps > 0) {
+            details.set(
+              'TNT Exposure',
+              `${simpleParams.tntExposureBps / 100}%`,
+            );
+          }
         }
 
         return details;

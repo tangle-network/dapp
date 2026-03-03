@@ -16,13 +16,15 @@ import {
   useBlueprintDetails,
   useServiceRequestTx,
   encodeServiceConfig,
+  validateServiceRequestParams,
   AssetKind,
   PERCENT_TO_BASIS_POINTS,
   type ServiceRequestParams,
   type AssetSecurityRequirement,
 } from '@tangle-network/tangle-shared-ui/data/graphql';
+import { useBlueprintRequestSchema } from '@tangle-network/tangle-shared-ui/data/services';
+import { RequestArgsEncodingError } from '@tangle-network/tangle-shared-ui/codec';
 import { Deployment } from './DeploySteps/Deployment';
-import { twMerge } from 'tailwind-merge';
 import ErrorMessage from '@tangle-network/tangle-shared-ui/components/ErrorMessage';
 import { z } from 'zod';
 import { PagePath } from '../../../../types';
@@ -30,7 +32,6 @@ import useParamWithSchema from '@tangle-network/tangle-shared-ui/hooks/useParamW
 import { zeroAddress, parseUnits } from 'viem';
 import { TxName } from '../../../../constants';
 import useTxNotification from '../../../../hooks/useTxNotification';
-import useBlueprintRequestSchema from '../../../../data/services/useBlueprintRequestSchema';
 
 const DeployPage: FC = () => {
   const id = useParamWithSchema('id', z.coerce.bigint());
@@ -47,12 +48,13 @@ const DeployPage: FC = () => {
     isSuccess: serviceRequestSuccess,
     isPending: serviceRequestPending,
   } = useServiceRequestTx();
-  const { data: blueprintRequestSchema } = useBlueprintRequestSchema(id);
+  const { data: requestSchema } = useBlueprintRequestSchema(id);
 
-  const { notifyProcessing, notifyError } = useTxNotification();
+  const { notifyProcessing, notifySuccess, notifyError } = useTxNotification();
 
   const {
     watch,
+    getValues,
     setValue,
     control,
     formState: { errors },
@@ -64,6 +66,11 @@ const DeployPage: FC = () => {
     resolver: zodResolver(deployBlueprintSchema),
     defaultValues: {
       durationUnit: 'seconds',
+      requestMode: 'basic',
+      operatorExposurePercents: {},
+      assets: [],
+      securityCommitments: [],
+      requestArgs: [],
     },
   });
 
@@ -77,18 +84,26 @@ const DeployPage: FC = () => {
       clearErrors,
       blueprint: blueprintResult?.details,
       blueprintOperators: blueprintResult?.operators,
-      requestArgsCount: blueprintRequestSchema?.parsedRequestSchema.length ?? 0,
+      requestSchemaFieldCount:
+        requestSchema?.parsedRequestSchema.length &&
+        requestSchema.parsedRequestSchema.length > 0
+          ? requestSchema.parsedRequestSchema.length
+          : undefined,
+      hasRequestSchema: requestSchema?.hasRequestSchema,
+      requestSchemaParseError: requestSchema?.requestSchemaParseError,
     }),
     [
       blueprintResult?.details,
       blueprintResult?.operators,
-      blueprintRequestSchema?.parsedRequestSchema.length,
       control,
       errors,
       setError,
       setValue,
       watch,
       clearErrors,
+      requestSchema?.parsedRequestSchema.length,
+      requestSchema?.hasRequestSchema,
+      requestSchema?.requestSchemaParseError,
     ],
   );
 
@@ -111,11 +126,9 @@ const DeployPage: FC = () => {
   const onDeployBlueprint = async () => {
     try {
       clearErrors();
-      const formData = watch();
+      const formData = getValues();
       const validatedData = deployBlueprintSchema.parse(formData);
 
-      // Format the service request data for the Tangle contract
-      // Operators are already Address[] from the schema
       const operators = validatedData.operators ?? [];
       const permittedCallers = validatedData.permittedCallers ?? [];
       const ttlInSeconds =
@@ -136,32 +149,73 @@ const DeployPage: FC = () => {
         paymentDecimals,
       );
 
-      if (blueprintRequestSchema?.requestSchemaParseError) {
+      if (!requestSchema) {
         throw new Error(
-          `Request schema parse failed: ${blueprintRequestSchema.requestSchemaParseError}`,
+          'Request schema is still loading. Please wait and try again.',
         );
       }
 
-      // Encode service configuration from request args
+      const requestArgs = validatedData.requestArgs ?? [];
+      const expectedRequestArgsCount =
+        requestSchema.parsedRequestSchema.length > 0
+          ? requestSchema.parsedRequestSchema.length
+          : (blueprintResult?.details?.requestParams?.length ?? 0);
+
+      if (requestArgs.length !== expectedRequestArgsCount) {
+        throw new Error(
+          `Request arguments length mismatch: expected ${expectedRequestArgsCount}, got ${requestArgs.length}`,
+        );
+      }
+
+      if (
+        requestSchema.requestSchemaParseError &&
+        expectedRequestArgsCount > 0
+      ) {
+        throw new Error(
+          `Failed to parse on-chain request schema: ${requestSchema.requestSchemaParseError}`,
+        );
+      }
+
+      if (!requestSchema.hasRequestSchema && requestArgs.length > 0) {
+        throw new Error(
+          'On-chain request schema is unavailable. Non-empty request arguments cannot be encoded for this blueprint.',
+        );
+      }
+
       const config = encodeServiceConfig(
-        validatedData.requestArgs ?? [],
-        blueprintRequestSchema?.parsedRequestSchema,
+        requestArgs,
+        requestSchema.hasRequestSchema
+          ? requestSchema.parsedRequestSchema
+          : undefined,
       );
 
-      // Build security requirements from assets and security commitments
+      let exposureBps: number[] | undefined;
       let securityRequirements: AssetSecurityRequirement[] | undefined;
-      if (
-        validatedData.assets?.length > 0 &&
-        validatedData.securityCommitments?.length > 0
+
+      if (validatedData.requestMode === 'exposure') {
+        const operatorExposurePercents = validatedData.operatorExposurePercents;
+        exposureBps = operators.map((operator, index) => {
+          const exposurePercent =
+            operatorExposurePercents[operator.toLowerCase()];
+
+          if (exposurePercent === undefined) {
+            throw new Error(
+              `Exposure percent is required for operator #${index + 1}`,
+            );
+          }
+
+          return exposurePercent * PERCENT_TO_BASIS_POINTS;
+        });
+      } else if (
+        validatedData.requestMode === 'security' &&
+        validatedData.assets.length > 0 &&
+        validatedData.securityCommitments.length > 0
       ) {
         securityRequirements = validatedData.assets.map((asset, index) => {
           const commitment = validatedData.securityCommitments[index];
           return {
             asset: {
-              kind:
-                asset.id.toLowerCase() === zeroAddress.toLowerCase()
-                  ? AssetKind.Native
-                  : AssetKind.ERC20,
+              kind: AssetKind.ERC20,
               token: asset.id,
             },
             minExposureBps:
@@ -180,32 +234,60 @@ const DeployPage: FC = () => {
         ttl,
         paymentToken,
         paymentAmount,
+        exposureBps,
         securityRequirements,
       };
+
+      validateServiceRequestParams(params);
 
       notifyProcessing(TxName.DEPLOY_BLUEPRINT);
 
       const result = await serviceRequestTx(params);
 
       if (result.error) {
-        return;
+        notifyError(TxName.DEPLOY_BLUEPRINT, result.error);
+      } else if (result.txHash) {
+        notifySuccess(TxName.DEPLOY_BLUEPRINT);
       }
     } catch (error) {
       if (error instanceof z.ZodError) {
         error.errors.forEach((err) => {
-          setError(err.path[0] as keyof DeployBlueprintSchema, {
+          const errorPath = err.path.join('.') as keyof DeployBlueprintSchema;
+          setError(errorPath, {
             type: 'manual',
             message: err.message,
           });
         });
       } else if (
-        error instanceof Error &&
-        error.message.toLowerCase().includes('request')
+        error instanceof RequestArgsEncodingError ||
+        (error instanceof Error &&
+          error.message.toLowerCase().includes('request schema'))
       ) {
         setError('requestArgs', {
           type: 'manual',
           message: error.message,
         });
+      } else if (error instanceof Error) {
+        const normalizedMessage = error.message.toLowerCase();
+
+        if (
+          normalizedMessage.includes('exposure') ||
+          normalizedMessage.includes('security requirement') ||
+          normalizedMessage.includes('mutually exclusive') ||
+          normalizedMessage.includes('length mismatch')
+        ) {
+          const field: keyof DeployBlueprintSchema = normalizedMessage.includes(
+            'security requirement',
+          )
+            ? 'securityCommitments'
+            : 'requestMode';
+
+          setError(field, {
+            type: 'manual',
+            message: error.message,
+          });
+        }
+
         notifyError(TxName.DEPLOY_BLUEPRINT, error);
       } else {
         notifyError(
@@ -220,13 +302,7 @@ const DeployPage: FC = () => {
     <>
       <Deployment {...commonProps} />
 
-      <div
-        className={twMerge(
-          'p-6 rounded-xl mt-4',
-          'flex items-center justify-end gap-5',
-          "bg-[url('/static/assets/blueprints/selected-blueprint-panel.png')]",
-        )}
-      >
+      <div className="flex items-center justify-end gap-5 mt-4">
         {Object.keys(errors).length > 0 && (
           <ErrorMessage>
             Error(s) on validation. Please check the form and try again.

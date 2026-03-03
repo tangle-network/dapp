@@ -1270,6 +1270,7 @@ start_activity_generator() {
     # Pass all configuration to activity generator
     RPC_URL=http://127.0.0.1:$ANVIL_PORT \
     TANGLE_ADDRESS="$TANGLE_PROXY" \
+    STAKING_ADDRESS="$RESTAKING_PROXY" \
     RESTAKING_ADDRESS="$RESTAKING_PROXY" \
     STATUS_REGISTRY_ADDRESS="$STATUS_REGISTRY" \
     USDC_ADDRESS="${USDC_ADDRESS:-}" \
@@ -1413,18 +1414,18 @@ restart_claim_relayer() {
     start_claim_relayer
 }
 
-ensure_tnt_restake_asset() {
+ensure_tnt_staking_asset() {
     if [[ -z "${TNT_TOKEN_ADDRESS:-}" || "${TNT_TOKEN_ADDRESS}" == "null" ]]; then
-        log_warn "Skipping TNT restake registration - TNT token address not found"
+        log_warn "Skipping TNT staking asset registration - TNT token address not found"
         return
     fi
 
     if [[ -z "${RESTAKING_PROXY:-}" ]]; then
-        log_warn "Skipping TNT restake registration - restaking proxy not set"
+        log_warn "Skipping TNT staking asset registration - staking proxy not set"
         return
     fi
 
-    log_info "Ensuring TNT token is enabled as a restaked asset..."
+    log_info "Ensuring TNT token is enabled as a staking asset..."
 
     local result
     set +e
@@ -1440,7 +1441,7 @@ import { privateKeyToAccount } from 'viem/accounts';
 import { defineChain } from 'viem';
 
 const rpcUrl = process.env.RPC_URL;
-const restaking = process.env.RESTAKING_ADDRESS;
+const staking = process.env.STAKING_ADDRESS || process.env.RESTAKING_ADDRESS;
 const tnt = process.env.TNT_ADDRESS;
 const chainId = Number(process.env.CHAIN_ID ?? '31337');
 const account = privateKeyToAccount(process.env.PRIVATE_KEY);
@@ -1488,7 +1489,7 @@ const abi = [
 const publicClient = createPublicClient({ chain, transport: http(rpcUrl) });
 
 const config = await publicClient.readContract({
-  address: restaking,
+  address: staking,
   abi,
   functionName: 'getAssetConfig',
   args: [tnt],
@@ -1501,7 +1502,7 @@ if (config.enabled) {
 
 const walletClient = createWalletClient({ account, chain, transport: http(rpcUrl) });
 const txHash = await walletClient.writeContract({
-  address: restaking,
+  address: staking,
   abi,
   functionName: 'enableAsset',
   args: [tnt, 0n, 0n, 0n, 10_000],
@@ -1515,14 +1516,14 @@ NODE
     set -e
 
     if [[ $status -ne 0 ]]; then
-        log_warn "Failed to ensure TNT restake asset: $result"
+        log_warn "Failed to ensure TNT staking asset: $result"
         return
     fi
 
     if [[ "$result" == *"already-enabled"* ]]; then
-        log_success "TNT already enabled as a restake asset"
+        log_success "TNT already enabled as a staking asset"
     else
-        log_success "TNT registered as a restake asset"
+        log_success "TNT registered as a staking asset"
     fi
 }
 
@@ -2287,7 +2288,7 @@ resume_session() {
     fi
 
     ensure_incentives_contracts
-    ensure_tnt_restake_asset
+    ensure_tnt_staking_asset
 
     log_success "Session resumed successfully!"
     echo ""
@@ -2335,7 +2336,7 @@ main() {
     deploy_contracts
     ensure_incentives_contracts
     deploy_migration_contracts
-    ensure_tnt_restake_asset
+    ensure_tnt_staking_asset
 
     # Save contract addresses for resume mode
     save_anvil_state

@@ -27,6 +27,7 @@ export const AssetConfigurationStep: FC<AssetConfigurationStepProps> = ({
   minimumNativeSecurityRequirement: _minimumNativeSecurityRequirement,
 }) => {
   const assets = watch('assets');
+  const requestMode = watch('requestMode') ?? 'basic';
   const { assets: allAssetsMap } = useStakingAssets();
   const securityCommitments = watch('securityCommitments');
 
@@ -125,14 +126,16 @@ export const AssetConfigurationStep: FC<AssetConfigurationStepProps> = ({
   const availableAssets = useMemo<StakingAsset[]>(() => {
     if (!allAssetsMap) return [];
     const selectedIds = new Set(assets?.map((a) => a.id));
-    const allAssets = Array.from(allAssetsMap.values()) as StakingAsset[];
-
-    return allAssets
+    return Array.from(allAssetsMap.values())
       .filter((asset) => !selectedIds.has(asset.id))
       .filter(
         (asset) => asset.metadata.name && asset.metadata.name.trim() !== '',
       );
   }, [allAssetsMap, assets]);
+
+  if (requestMode !== 'security') {
+    return null;
+  }
 
   return (
     <Card className="p-6 space-y-6">

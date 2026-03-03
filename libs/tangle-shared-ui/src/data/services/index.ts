@@ -8,6 +8,7 @@ export {
   AssetKind,
   type Asset,
   type AssetSecurityRequirement,
+  type ServiceRequestVariant,
   type ServiceRequestContractDetails,
   type UseServiceRequestDetailsOptions,
 } from './useServiceRequestDetails';
@@ -111,3 +112,8 @@ export {
   useBlueprintJobs,
   type BlueprintJobDefinition,
 } from './useBlueprintJobs';
+
+export {
+  useBlueprintRequestSchema,
+  type BlueprintRequestSchemaResult,
+} from './useBlueprintRequestSchema';

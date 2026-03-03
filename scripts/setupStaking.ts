@@ -15,7 +15,7 @@ const LST_AND_ASSET_AND_VAULT_ID = 1;
 (async () => {
   const api = await createApi();
 
-  // 1. Fund pallet account, otherwise restaking actions will fail with `Token.CannotCreate`.
+  // 1. Fund pallet account, otherwise staking actions will fail with `Token.CannotCreate`.
   await submitTx({
     description: 'fund pallet account',
     tx: api.tx.balances.transferAllowDeath(

@@ -1,5 +1,8 @@
 import { PrimitiveField } from '@tangle-network/tangle-shared-ui/types/blueprint';
+import { TANGLE_DAPP_URL } from '@tangle-network/ui-components/constants';
 import type { Address } from 'viem';
+
+export const TANGLE_DAPP_BASE_URL = TANGLE_DAPP_URL;
 
 export enum PagePath {
   HOME = '/',
@@ -18,44 +21,12 @@ export enum PagePath {
   NOT_FOUND = '/404',
 }
 
-const DEFAULT_TANGLE_DAPP_URL = 'https://app.tangle.tools/';
-
-const resolveTangleDAppUrl = (): string => {
-  const envUrl = import.meta.env.VITE_TANGLE_DAPP_URL?.trim();
-
-  if (!envUrl) {
-    return DEFAULT_TANGLE_DAPP_URL;
-  }
-
-  try {
-    const parsedUrl = new URL(envUrl);
-
-    parsedUrl.search = '';
-    parsedUrl.hash = '';
-
-    if (!parsedUrl.pathname.endsWith('/')) {
-      parsedUrl.pathname = `${parsedUrl.pathname}/`;
-    }
-
-    return parsedUrl.toString();
-  } catch {
-    return DEFAULT_TANGLE_DAPP_URL;
-  }
-};
-
-export const TANGLE_DAPP_BASE_URL = resolveTangleDAppUrl();
-
-const TANGLE_DAPP_STAKING_PATH = `${TANGLE_DAPP_BASE_URL}staking`;
-const TANGLE_DAPP_STAKING_DEPOSIT_PATH = `${TANGLE_DAPP_BASE_URL}staking?vault={{vault}}`;
-const TANGLE_DAPP_STAKING_DELEGATE_PATH = `${TANGLE_DAPP_BASE_URL}staking/delegate`;
-const TANGLE_DAPP_STAKING_OPERATOR_PATH = `${TANGLE_DAPP_BASE_URL}staking/operators`;
-
-export const TangleDAppPagePath = {
-  STAKING: TANGLE_DAPP_STAKING_PATH,
-  STAKING_DEPOSIT: TANGLE_DAPP_STAKING_DEPOSIT_PATH,
-  STAKING_DELEGATE: TANGLE_DAPP_STAKING_DELEGATE_PATH,
-  STAKING_OPERATOR: TANGLE_DAPP_STAKING_OPERATOR_PATH,
-} as const;
+export enum TangleDAppPagePath {
+  STAKING = `${TANGLE_DAPP_URL}staking`,
+  STAKING_DEPOSIT = `${TANGLE_DAPP_URL}staking/deposit?vault={{vault}}`,
+  STAKING_DELEGATE = `${TANGLE_DAPP_URL}staking/delegate`,
+  STAKING_OPERATOR = `${TANGLE_DAPP_URL}staking/operators`,
+}
 
 /**
  * Asset structure matching the contract's Asset struct.
@@ -86,6 +57,8 @@ export type ApprovalConfirmationFormFields = {
   requestId: number;
   /** Simple approval mode: single percentage (0-100) for default TNT requirement */
   stakingPercent?: number;
+  /** TNT exposure in basis points (0-10000), when set calls 3-arg approveService overload */
+  tntExposureBps?: number;
   /** Commitments mode: per-asset exposure commitments matching contract format */
   securityCommitments?: ContractSecurityCommitment[];
 };

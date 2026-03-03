@@ -1,4 +1,4 @@
-import { toHex } from 'viem';
+import { encodeEventTopics, toHex } from 'viem';
 import {
   BlueprintFieldKind,
   encodePayload,
@@ -7,6 +7,8 @@ import {
 } from '../../codec';
 import type { PrimitiveFieldType } from '../../types/blueprint';
 import { encodeServiceConfig } from './encodeServiceConfig';
+import TangleABI from '../../abi/tangle';
+import { extractServiceRequestIdFromLogs } from './useServiceRequest';
 
 describe('encodeServiceConfig', () => {
   it('returns empty bytes when no request args are provided', () => {
@@ -138,5 +140,57 @@ describe('encodeServiceConfig', () => {
     expect(() => encodeServiceConfig(['only-one'], requestParamTypes)).toThrow(
       'Request argument count mismatch',
     );
+  });
+});
+
+describe('extractServiceRequestIdFromLogs', () => {
+  const requester = '0x0000000000000000000000000000000000000001';
+  const eventLogs = (
+    eventName: 'ServiceRequested' | 'ServiceRequestedWithSecurity',
+    requestId: bigint,
+  ) => {
+    const topics = encodeEventTopics({
+      abi: TangleABI,
+      eventName,
+      args: {
+        requestId,
+        blueprintId: 7n,
+        requester,
+      },
+    });
+
+    return [
+      {
+        address: requester,
+        topics,
+        data: '0x',
+      },
+    ] as const;
+  };
+
+  it('extracts requestId from ServiceRequested logs', () => {
+    expect(
+      extractServiceRequestIdFromLogs(eventLogs('ServiceRequested', 11n)),
+    ).toBe(11n);
+  });
+
+  it('extracts requestId from ServiceRequestedWithSecurity logs', () => {
+    expect(
+      extractServiceRequestIdFromLogs(
+        eventLogs('ServiceRequestedWithSecurity', 22n),
+      ),
+    ).toBe(22n);
+  });
+
+  it('returns undefined when neither request event is present', () => {
+    expect(
+      extractServiceRequestIdFromLogs([
+        {
+          address: requester,
+          topics: [],
+          data: '0x',
+        },
+      ]),
+    ).toBeUndefined();
   });
 });

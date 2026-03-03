@@ -38,6 +38,29 @@ const ABI = [
   },
   {
     type: 'function',
+    name: 'approveService',
+    inputs: [
+      {
+        name: 'requestId',
+        type: 'uint64',
+        internalType: 'uint64',
+      },
+      {
+        name: 'stakingPercent',
+        type: 'uint8',
+        internalType: 'uint8',
+      },
+      {
+        name: 'tntExposureBps',
+        type: 'uint16',
+        internalType: 'uint16',
+      },
+    ],
+    outputs: [],
+    stateMutability: 'nonpayable',
+  },
+  {
+    type: 'function',
     name: 'approveServiceWithBls',
     inputs: [
       {
@@ -49,6 +72,34 @@ const ABI = [
         name: 'stakingPercent',
         type: 'uint8',
         internalType: 'uint8',
+      },
+      {
+        name: 'blsPubkey',
+        type: 'uint256[4]',
+        internalType: 'uint256[4]',
+      },
+    ],
+    outputs: [],
+    stateMutability: 'nonpayable',
+  },
+  {
+    type: 'function',
+    name: 'approveServiceWithBls',
+    inputs: [
+      {
+        name: 'requestId',
+        type: 'uint64',
+        internalType: 'uint64',
+      },
+      {
+        name: 'stakingPercent',
+        type: 'uint8',
+        internalType: 'uint8',
+      },
+      {
+        name: 'tntExposureBps',
+        type: 'uint16',
+        internalType: 'uint16',
       },
       {
         name: 'blsPubkey',
