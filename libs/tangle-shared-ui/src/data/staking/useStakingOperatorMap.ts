@@ -9,12 +9,12 @@ import { useCallback } from 'react';
 import { map, catchError, of } from 'rxjs';
 import useApiRx from '../../hooks/useApiRx';
 import { TangleError, TangleErrorCode } from '../../types/error';
-import { OperatorMetadata } from '../../types/restake';
-import createRestakeAssetId from '../../utils/createRestakeAssetId';
+import { OperatorMetadata } from '../../types/staking';
+import createStakingAssetId from '../../utils/createStakingAssetId';
 import { assertSubstrateAddress } from '@tangle-network/ui-components';
 import { SubstrateAddress } from '@tangle-network/ui-components/types/address';
 
-const useRestakeOperatorMap = (refreshTrigger?: number) => {
+const useStakingOperatorMap = (refreshTrigger?: number) => {
   const { result, ...rest } = useApiRx(
     useCallback(
       (apiRx) => {
@@ -43,15 +43,16 @@ const useRestakeOperatorMap = (refreshTrigger?: number) => {
                 const operator = operatorMetadata.unwrap();
 
                 try {
-                  const { delegations, restakersCount } =
-                    toPrimitiveDelegations(operator.delegations);
+                  const { delegations, stakersCount } = toPrimitiveDelegations(
+                    operator.delegations,
+                  );
 
                   const operatorMetadataPrimitive = {
                     stake: operator.stake.toBigInt(),
                     delegationCount: operator.delegationCount.toNumber(),
                     bondLessRequest: toPrimitiveRequest(operator.request),
                     delegations,
-                    restakersCount,
+                    stakersCount,
                     status: toPrimitiveStatus(operator.status),
                   } satisfies OperatorMetadata;
 
@@ -122,7 +123,7 @@ const toPrimitiveDelegations = (
   delegations: Vec<PalletMultiAssetDelegationOperatorDelegatorBond>,
 ): {
   delegations: OperatorMetadata['delegations'];
-  restakersCount: number;
+  stakersCount: number;
 } => {
   const restakerSet = new Set<string>();
 
@@ -135,15 +136,15 @@ const toPrimitiveDelegations = (
       return {
         amount: amount.toBigInt(),
         delegatorAccountId,
-        assetId: createRestakeAssetId(asset),
+        assetId: createStakingAssetId(asset),
       } satisfies OperatorMetadata['delegations'][number];
     },
   );
 
   return {
     delegations: primitiveDelegations,
-    restakersCount: restakerSet.size,
+    stakersCount: restakerSet.size,
   };
 };
 
-export default useRestakeOperatorMap;
+export default useStakingOperatorMap;

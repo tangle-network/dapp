@@ -32,7 +32,10 @@ export type StakingAssetConfig = ProtocolStakingAsset;
 
 const STAKING_ASSETS_QUERY = gql`
   query StakingAssets($enabled: Boolean) {
-    StakingAsset(where: { enabled: { _eq: $enabled } }, order_by: { createdAt: asc }) {
+    StakingAsset(
+      where: { enabled: { _eq: $enabled } }
+      order_by: { createdAt: asc }
+    ) {
       id
       token
       enabled
@@ -126,7 +129,10 @@ export const useProtocolStakingAssetMap = (options?: {
   return useQuery({
     queryKey: ['envio', 'stakingAssetMap', resolvedNetwork, enabledOnly],
     queryFn: async () => {
-      const assets = await fetchProtocolStakingAssets(resolvedNetwork, enabledOnly);
+      const assets = await fetchProtocolStakingAssets(
+        resolvedNetwork,
+        enabledOnly,
+      );
       const map = new Map<Address, ProtocolStakingAsset>();
       for (const asset of assets) {
         map.set(asset.token, asset);

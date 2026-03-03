@@ -90,7 +90,9 @@ const DepositForm: FC = () => {
   const directAssets = useStakingAssets({ enabled: !stakingContext });
 
   // Use context data if available, otherwise use direct fetch.
-  const rawAssets = stakingContext ? stakingContext.assets : directAssets.assets;
+  const rawAssets = stakingContext
+    ? stakingContext.assets
+    : directAssets.assets;
   const assets = (rawAssets ?? null) as Map<Address, StakingAsset> | null;
   const isLoadingAssets = stakingContext
     ? stakingContext.isLoadingAssets

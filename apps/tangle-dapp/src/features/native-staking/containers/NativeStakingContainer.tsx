@@ -19,12 +19,8 @@ import {
 } from '../components';
 import { useHasPod, useGetPod } from '../hooks';
 
-// Supported chain IDs for native restaking
-const NATIVE_RESTAKING_CHAIN_IDS = [
-  mainnet.id,
-  holesky.id,
-  foundry.id,
-] as const;
+// Supported chain IDs for native staking
+const NATIVE_STAKING_CHAIN_IDS = [mainnet.id, holesky.id, foundry.id] as const;
 
 const getChainName = (chainId: number): string => {
   switch (chainId) {
@@ -47,7 +43,7 @@ const getChainName = (chainId: number): string => {
   }
 };
 
-const NativeRestakeContainer: FC = () => {
+const NativeStakingContainer: FC = () => {
   const { address, isConnected } = useAccount();
   const chainId = useChainId();
   const { switchChain, isPending: isSwitchingChain } = useSwitchChain();
@@ -58,8 +54,8 @@ const NativeRestakeContainer: FC = () => {
 
   const isWrongNetwork = useMemo(() => {
     if (!isConnected) return false;
-    return !NATIVE_RESTAKING_CHAIN_IDS.includes(
-      chainId as (typeof NATIVE_RESTAKING_CHAIN_IDS)[number],
+    return !NATIVE_STAKING_CHAIN_IDS.includes(
+      chainId as (typeof NATIVE_STAKING_CHAIN_IDS)[number],
     );
   }, [isConnected, chainId]);
 
@@ -87,7 +83,7 @@ const NativeRestakeContainer: FC = () => {
               variant="body1"
               className="text-mono-120 dark:text-mono-80"
             >
-              Connect your wallet to view and manage your native restaking.
+              Connect your wallet to view and manage your native staking.
             </Typography>
           </div>
         </div>
@@ -126,7 +122,7 @@ const NativeRestakeContainer: FC = () => {
                 variant="body1"
                 className="text-mono-100 dark:text-mono-100 mb-6 max-w-md"
               >
-                Native restaking requires a supported network. Please switch to
+                Native staking requires a supported network. Please switch to
                 one of the supported networks to continue.
               </Typography>
 
@@ -205,16 +201,16 @@ const NativeRestakeContainer: FC = () => {
                 variant="body1"
                 className="text-mono-100 dark:text-mono-100 mb-6 max-w-md"
               >
-                Native restaking contracts are not yet deployed on{' '}
+                Native staking contracts are not yet deployed on{' '}
                 {getChainName(chainId)}. This feature will be available once the
                 ValidatorPodManager contract is deployed.
               </Typography>
 
               <div className="p-4 bg-mono-20 dark:bg-mono-160 rounded-lg w-full max-w-md">
                 <Typography variant="body2" className="text-mono-100">
-                  Native restaking allows you to restake your Ethereum beacon
-                  chain validators on Tangle Network to earn additional rewards
-                  while maintaining your validator duties.
+                  Native staking allows you to stake your Ethereum beacon chain
+                  validators on Tangle Network to earn additional rewards while
+                  maintaining your validator duties.
                 </Typography>
               </div>
             </div>
@@ -307,13 +303,13 @@ const NativeRestakeContainer: FC = () => {
     <div className="py-6">
       <div className="mb-8">
         <Typography variant="h3" fw="bold">
-          Native Restaking
+          Native Staking
         </Typography>
         <Typography
           variant="body1"
           className="text-mono-120 dark:text-mono-80 mt-2"
         >
-          Restake your beacon chain ETH validators on Tangle Network to earn
+          Stake your beacon chain ETH validators on Tangle Network to earn
           additional rewards.
         </Typography>
       </div>
@@ -323,4 +319,4 @@ const NativeRestakeContainer: FC = () => {
   );
 };
 
-export default NativeRestakeContainer;
+export default NativeStakingContainer;

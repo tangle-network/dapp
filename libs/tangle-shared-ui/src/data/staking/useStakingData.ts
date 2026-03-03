@@ -71,10 +71,12 @@ export const useStakingData = (
     return assetList.map((asset: StakingAsset) => asset.id);
   }, [assetList]);
 
-  const { data: protocolStakingAssets, refetch: refetchProtocolAssetsInternal } =
-    useProtocolStakingAssets({
-      enabled: enabled && isHealthy && !isCheckingHealth,
-    });
+  const {
+    data: protocolStakingAssets,
+    refetch: refetchProtocolAssetsInternal,
+  } = useProtocolStakingAssets({
+    enabled: enabled && isHealthy && !isCheckingHealth,
+  });
 
   const shouldFetchDelegator = enabled && (!requireWallet || isConnected);
   const {

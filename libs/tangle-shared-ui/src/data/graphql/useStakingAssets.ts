@@ -454,7 +454,8 @@ export const useStakingAssets = (options?: {
 
     for (const stakingConfig of stakingAssetConfigs) {
       const isNativeToken =
-        stakingConfig.token.toLowerCase() === NATIVE_TOKEN_ADDRESS.toLowerCase();
+        stakingConfig.token.toLowerCase() ===
+        NATIVE_TOKEN_ADDRESS.toLowerCase();
 
       if (isNativeToken) {
         assetMap.set(NATIVE_TOKEN_ADDRESS, {
@@ -476,7 +477,10 @@ export const useStakingAssets = (options?: {
         (m) => m.id.toLowerCase() === stakingConfig.token.toLowerCase(),
       );
 
-      const fallbackMetadata = getCachedTokenMetadata(chainId, stakingConfig.token);
+      const fallbackMetadata = getCachedTokenMetadata(
+        chainId,
+        stakingConfig.token,
+      );
       const balance = balances?.get(stakingConfig.token) ?? BigInt(0);
       const tokenMetadata = metadata ??
         fallbackMetadata ?? {
@@ -517,10 +521,9 @@ export const useStakingAssets = (options?: {
     }
 
     const map = new Map<Address, StakingAsset>();
-    for (const [token, asset] of (onChainResult.assets as Map<
-      Address,
-      LegacyAssetLike
-    >).entries()) {
+    for (const [token, asset] of (
+      onChainResult.assets as Map<Address, LegacyAssetLike>
+    ).entries()) {
       const normalized = normalizeAsset(asset);
       if (normalized) {
         map.set(token, normalized);

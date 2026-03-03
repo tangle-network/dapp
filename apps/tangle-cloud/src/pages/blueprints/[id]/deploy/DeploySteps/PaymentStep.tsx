@@ -21,10 +21,9 @@ export const PaymentStep: FC<PaymentStepProps> = ({
   watch,
 }) => {
   const { assets } = useStakingAssets();
-  const selectableAssets = (Array.from(assets?.values() ?? []) as StakingAsset[])
-    .filter(
-      (asset) => asset.metadata.name && asset.metadata.name.trim() !== '',
-    );
+  const selectableAssets = (
+    Array.from(assets?.values() ?? []) as StakingAsset[]
+  ).filter((asset) => asset.metadata.name && asset.metadata.name.trim() !== '');
 
   const onSelectAsset = (asset: StakingAsset) => {
     setValue('paymentAsset', {

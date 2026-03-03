@@ -140,7 +140,9 @@ const StakingWithdrawForm: FC = () => {
 
   const tokenMetadatas = useMemo(() => {
     if (!stakingAssets) return undefined;
-    const stakingAssetList = Array.from(stakingAssets.values()) as StakingAsset[];
+    const stakingAssetList = Array.from(
+      stakingAssets.values(),
+    ) as StakingAsset[];
 
     return stakingAssetList.map((asset) => ({
       id: asset.id as unknown as EvmAddress,
