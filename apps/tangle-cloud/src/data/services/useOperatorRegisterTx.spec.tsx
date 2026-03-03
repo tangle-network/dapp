@@ -29,7 +29,8 @@ vi.mock('wagmi', () => ({
 }));
 
 vi.mock('@tangle-network/dapp-config/contracts', () => ({
-  getContractsByChainId: (chainId: number) => mockGetContractsByChainId(chainId),
+  getContractsByChainId: (chainId: number) =>
+    mockGetContractsByChainId(chainId),
 }));
 
 vi.mock('@tangle-network/tangle-shared-ui/hooks/useContractWrite', () => ({

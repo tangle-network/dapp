@@ -45,7 +45,10 @@ describe('useServiceApproveTx', () => {
       | undefined;
 
     mockUseContractWrite.mockImplementation(
-      (_abi: unknown, factory: (params: any, activeAddress: any) => Promise<any>) => {
+      (
+        _abi: unknown,
+        factory: (params: any, activeAddress: any) => Promise<any>,
+      ) => {
         capturedFactory = factory;
         return {
           execute: vi.fn(),
@@ -90,7 +93,10 @@ describe('useServiceApproveTx', () => {
       | undefined;
 
     mockUseContractWrite.mockImplementation(
-      (_abi: unknown, factory: (params: any, activeAddress: any) => Promise<any>) => {
+      (
+        _abi: unknown,
+        factory: (params: any, activeAddress: any) => Promise<any>,
+      ) => {
         capturedFactory = factory;
         return {
           execute: vi.fn(),
@@ -145,7 +151,10 @@ describe('useServiceApproveTx', () => {
       | undefined;
 
     mockUseContractWrite.mockImplementation(
-      (_abi: unknown, factory: (params: any, activeAddress: any) => Promise<any>) => {
+      (
+        _abi: unknown,
+        factory: (params: any, activeAddress: any) => Promise<any>,
+      ) => {
         capturedFactory = factory;
         return {
           execute: vi.fn(),

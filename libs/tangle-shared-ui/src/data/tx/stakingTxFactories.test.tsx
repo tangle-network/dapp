@@ -16,7 +16,8 @@ jest.mock('wagmi', () => ({
 }));
 
 jest.mock('@tangle-network/dapp-config/contracts', () => ({
-  getContractsByChainId: (chainId: number) => mockGetContractsByChainId(chainId),
+  getContractsByChainId: (chainId: number) =>
+    mockGetContractsByChainId(chainId),
 }));
 
 jest.mock('../../hooks/useContractWrite', () => ({
@@ -159,7 +160,9 @@ describe('staking tx factories', () => {
       activeAddress,
     );
 
-    expect(executeUndelegateConfig.functionName).toBe('executeDelegatorUnstake');
+    expect(executeUndelegateConfig.functionName).toBe(
+      'executeDelegatorUnstake',
+    );
     expect(executeUndelegateConfig.args).toEqual([]);
 
     const scheduleWithdrawConfig = scheduleWithdrawFactory(
