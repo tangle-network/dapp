@@ -459,21 +459,27 @@ const main = async () => {
       screenshotInterval: mergedConfig.screenshotInterval,
       artifactSink: new FilesystemSink(outputDir),
       onTestStart: (testCase) => log(`start ${testCase.id} ${testCase.name}`),
-      onTestComplete: (result) =>
+      onTestComplete: (result) => {
+        const strictPass = Boolean(result.agentSuccess && result.verified);
         log(
-          `${result.verified ? 'pass' : 'fail'} ${result.testCase.id} verdict=${result.verdict} durationMs=${result.durationMs}`,
-        ),
+          `${strictPass ? 'pass' : 'fail'} ${result.testCase.id} verdict=${result.verdict} durationMs=${result.durationMs}`,
+        );
+      },
     });
 
     const suite = await testRunner.runSuite(
       selectedCases.map((testCase) => applyCaseRuntimeOverrides(testCase)),
     );
 
+    const strictPassed = suite.results.filter(
+      (result) => result.agentSuccess && result.verified,
+    ).length;
+    const strictFailed = suite.results.length - strictPassed;
     log(
-      `Suite complete: passed=${suite.summary.passed} failed=${suite.summary.failed} skipped=${suite.summary.skipped}`,
+      `Suite complete: passed=${strictPassed} failed=${strictFailed} skipped=${suite.summary.skipped}`,
     );
 
-    if (suite.summary.failed > 0 || suite.summary.skipped > 0) {
+    if (strictFailed > 0 || suite.summary.skipped > 0) {
       process.exitCode = 1;
     }
 
