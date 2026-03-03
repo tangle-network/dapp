@@ -1,4 +1,4 @@
-import { encodeEventTopics, toHex } from 'viem';
+import { encodeEventTopics, toHex, zeroAddress } from 'viem';
 import {
   BlueprintFieldKind,
   encodePayload,
@@ -9,6 +9,32 @@ import type { PrimitiveFieldType } from '../../types/blueprint';
 import { encodeServiceConfig } from './encodeServiceConfig';
 import TangleABI from '../../abi/tangle';
 import { extractServiceRequestIdFromLogs } from './extractServiceRequestIdFromLogs';
+import {
+  AssetKind,
+  selectRequestFunction,
+  validateServiceRequestParams,
+  type ServiceRequestParams,
+} from './useServiceRequest';
+
+jest.mock('wagmi', () => ({
+  useAccount: jest.fn(),
+  usePublicClient: jest.fn(),
+  useWalletClient: jest.fn(),
+}));
+
+const operatorOne = '0x00000000000000000000000000000000000000a1';
+const operatorTwo = '0x00000000000000000000000000000000000000a2';
+const erc20Token = '0x00000000000000000000000000000000000000b1';
+
+const buildBaseParams = (): ServiceRequestParams => ({
+  blueprintId: 7n,
+  operators: [operatorOne, operatorTwo],
+  config: '0x',
+  permittedCallers: [],
+  ttl: 3600n,
+  paymentToken: zeroAddress,
+  paymentAmount: 0n,
+});
 
 describe('encodeServiceConfig', () => {
   it('returns empty bytes when no request args are provided', () => {
@@ -134,11 +160,217 @@ describe('encodeServiceConfig', () => {
     expect(encodeServiceConfig(args, requestParamTypes)).toBe(expected);
   });
 
+  it('normalizes primitive bool and integer representations deterministically', () => {
+    expect(encodeServiceConfig([true, 42], ['Bool', 'Uint32'])).toBe(
+      encodeServiceConfig(['true', ' 42 '], ['Bool', 'Uint32']),
+    );
+  });
+
+  it('encodes wrapped and plain optional/list/array/struct forms equivalently', () => {
+    expect(encodeServiceConfig([null], [{ Optional: 'Uint16' }])).toBe(
+      encodeServiceConfig([{ Optional: null }], [{ Optional: 'Uint16' }]),
+    );
+
+    expect(encodeServiceConfig([[1, 2, 3]], [{ List: 'Uint16' }])).toBe(
+      encodeServiceConfig([{ List: [3, [1, 2, 3]] }], [{ List: 'Uint16' }]),
+    );
+
+    expect(encodeServiceConfig([[9, 8]], [{ Array: [2, 'Uint16'] }])).toBe(
+      encodeServiceConfig([{ Array: [9, 8] }], [{ Array: [2, 'Uint16'] }]),
+    );
+
+    expect(encodeServiceConfig([['alpha', true]], [{ Struct: ['String', 'Bool'] }])).toBe(
+      encodeServiceConfig(
+        [{ Struct: ['alpha', 'true'] }],
+        [{ Struct: ['String', 'Bool'] }],
+      ),
+    );
+  });
+
+  it('surfaces schema encoding validation failures with contextual error prefix', () => {
+    expect(() => encodeServiceConfig(['not-bool'], ['Bool'])).toThrow(
+      'Failed to encode request arguments against schema: Bool value must be true or false',
+    );
+  });
+
   it('throws when request arg count does not match schema', () => {
     const requestParamTypes: PrimitiveFieldType[] = ['String', 'Bool'];
 
     expect(() => encodeServiceConfig(['only-one'], requestParamTypes)).toThrow(
       'Request argument count mismatch',
+    );
+  });
+});
+
+describe('selectRequestFunction', () => {
+  it('selects requestService when neither exposure nor security is provided', () => {
+    expect(selectRequestFunction(buildBaseParams())).toBe('requestService');
+  });
+
+  it('selects requestServiceWithExposure when exposure commitments are provided', () => {
+    expect(
+      selectRequestFunction({
+        ...buildBaseParams(),
+        exposureBps: [100, 200],
+      }),
+    ).toBe('requestServiceWithExposure');
+  });
+
+  it('selects requestServiceWithSecurity when security requirements are provided', () => {
+    expect(
+      selectRequestFunction({
+        ...buildBaseParams(),
+        securityRequirements: [
+          {
+            asset: { kind: AssetKind.Native, token: zeroAddress },
+            minExposureBps: 100,
+            maxExposureBps: 1_000,
+          },
+        ],
+      }),
+    ).toBe('requestServiceWithSecurity');
+  });
+
+  it('prefers security request function when both arrays are populated', () => {
+    expect(
+      selectRequestFunction({
+        ...buildBaseParams(),
+        exposureBps: [100, 200],
+        securityRequirements: [
+          {
+            asset: { kind: AssetKind.ERC20, token: erc20Token },
+            minExposureBps: 100,
+            maxExposureBps: 1_000,
+          },
+        ],
+      }),
+    ).toBe('requestServiceWithSecurity');
+  });
+});
+
+describe('validateServiceRequestParams', () => {
+  it('accepts valid plain request params', () => {
+    expect(() => validateServiceRequestParams(buildBaseParams())).not.toThrow();
+  });
+
+  it('accepts valid exposure commitments when length matches operators', () => {
+    expect(() =>
+      validateServiceRequestParams({
+        ...buildBaseParams(),
+        exposureBps: [1, 10_000],
+      }),
+    ).not.toThrow();
+  });
+
+  it('accepts valid security requirements', () => {
+    expect(() =>
+      validateServiceRequestParams({
+        ...buildBaseParams(),
+        securityRequirements: [
+          {
+            asset: { kind: AssetKind.Native, token: zeroAddress },
+            minExposureBps: 100,
+            maxExposureBps: 100,
+          },
+          {
+            asset: { kind: AssetKind.ERC20, token: erc20Token },
+            minExposureBps: 250,
+            maxExposureBps: 900,
+          },
+        ],
+      }),
+    ).not.toThrow();
+  });
+
+  it('rejects simultaneous exposure commitments and security requirements', () => {
+    expect(() =>
+      validateServiceRequestParams({
+        ...buildBaseParams(),
+        exposureBps: [100, 200],
+        securityRequirements: [
+          {
+            asset: { kind: AssetKind.Native, token: zeroAddress },
+            minExposureBps: 100,
+            maxExposureBps: 500,
+          },
+        ],
+      }),
+    ).toThrow(
+      'Exposure commitments and security requirements are mutually exclusive',
+    );
+  });
+
+  it('rejects exposure commitment length mismatch', () => {
+    expect(() =>
+      validateServiceRequestParams({
+        ...buildBaseParams(),
+        exposureBps: [500],
+      }),
+    ).toThrow('Exposure commitments length mismatch: expected 2, got 1');
+  });
+
+  it('rejects non-integer exposure commitments', () => {
+    expect(() =>
+      validateServiceRequestParams({
+        ...buildBaseParams(),
+        exposureBps: [100, 99.5],
+      }),
+    ).toThrow('Exposure commitment at index 1 must be an integer');
+  });
+
+  it('rejects out-of-range exposure commitments', () => {
+    expect(() =>
+      validateServiceRequestParams({
+        ...buildBaseParams(),
+        exposureBps: [0, 500],
+      }),
+    ).toThrow('Exposure commitment at index 0 must be between 1 and 10000 bps');
+  });
+
+  it('rejects non-integer security exposures', () => {
+    expect(() =>
+      validateServiceRequestParams({
+        ...buildBaseParams(),
+        securityRequirements: [
+          {
+            asset: { kind: AssetKind.Native, token: zeroAddress },
+            minExposureBps: 1.1,
+            maxExposureBps: 100,
+          },
+        ],
+      }),
+    ).toThrow('Security requirement at index 0 must use integer exposure values');
+  });
+
+  it('rejects out-of-range security exposures', () => {
+    expect(() =>
+      validateServiceRequestParams({
+        ...buildBaseParams(),
+        securityRequirements: [
+          {
+            asset: { kind: AssetKind.ERC20, token: erc20Token },
+            minExposureBps: 100,
+            maxExposureBps: 10_001,
+          },
+        ],
+      }),
+    ).toThrow('Security requirement at index 0 must be between 1 and 10000 bps');
+  });
+
+  it('rejects security requirements where min exceeds max', () => {
+    expect(() =>
+      validateServiceRequestParams({
+        ...buildBaseParams(),
+        securityRequirements: [
+          {
+            asset: { kind: AssetKind.ERC20, token: erc20Token },
+            minExposureBps: 700,
+            maxExposureBps: 600,
+          },
+        ],
+      }),
+    ).toThrow(
+      'Security requirement at index 0 has minExposureBps greater than maxExposureBps',
     );
   });
 });
