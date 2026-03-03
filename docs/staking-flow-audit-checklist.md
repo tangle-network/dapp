@@ -67,20 +67,20 @@ Last updated: 2026-03-03
 - **Are all user flows complete?** **No.**
 - Current blockers are native staking lifecycle non-launch scope and lack of automated wallet/browser E2E certification for critical write paths.
 
-## Terminology Migration Status (Legacy Naming -> `staking`)
+## Terminology Status (Staking-Canonical)
 
 ### Current state
 - Canonical dApp launch routes are `/staking/*`; native staking is removed from launch navigation/routing.
-- Native restaking route aliases are removed from canonical UI routing.
-- Native restaking contract/user-flow certification is explicitly out of launch scope.
-- Shared wrappers (`useStakingAssets`, `StakingContext`, `data/staking/*`) coexist with compatibility aliases where needed.
-- Internal `restaking*` parse-boundary fields were removed from dApp/cloud runtime code.
+- Legacy native staking route aliases are removed from canonical UI routing.
+- Native staking contract/user-flow certification is explicitly out of launch scope.
+- Shared APIs use staking-first names (`useStakingAssets`, `StakingContext`, `data/staking/*`).
+- Internal legacy parse-boundary fields were removed from dApp/cloud runtime code.
 
 ### Current residuals (unavoidable protocol surfaces)
-- Remaining `restaking/restaked` terms are protocol/external surfaces only:
+- Remaining non-staking terms are external protocol/provider names only:
   - Native staking ABI/runtime fields in `apps/tangle-dapp/src/abi/validatorPod.ts` and `apps/tangle-dapp/src/features/native-staking/hooks/useValidatorPod.ts`
   - Inflation pool ABI fields in `libs/tangle-shared-ui/src/abi/inflationPool.ts`
-  - External token metadata slugs/names (`renzo-restaked-eth`, `Renzo Restaked ETH`) in token-price/bridge metadata
+  - External provider token identifiers (for example `renzo-restaked-eth`) in token-price/bridge metadata
 
 ## Verification Evidence (Executed In This Pass)
 
@@ -98,6 +98,6 @@ Last updated: 2026-03-03
 ## Open Gaps
 - Migration claim now uses fail-closed config checks and relayer receipt confirmation, but still requires manual live wallet/relayer sign-off.
 - Native staking pod lifecycle remains non-launch scope and is not release-certified (removed from launch-action backlog).
-- Native restaking contract/user-flow coverage is intentionally excluded from launch certification (removed from launch-action backlog).
+- Native staking contract/user-flow coverage is intentionally excluded from launch certification (removed from launch-action backlog).
 - Wallet-connected approve/join/leave/terminate journeys still require manual cross-chain runtime validation.
 - Wallet browser-agent suite is available (`yarn test:wallet-flows`), but deterministic CI certification is still limited because these flows depend on live wallet + chain + indexer state.

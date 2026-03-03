@@ -113,7 +113,7 @@ ACTIVITY_PID=""
 
 # Contract addresses (exported for activity generator)
 export TANGLE_PROXY=""
-export RESTAKING_PROXY=""
+export STAKING_PROXY=""
 export STATUS_REGISTRY=""
 export USDC_ADDRESS=""
 export USDT_ADDRESS=""
@@ -633,7 +633,7 @@ save_anvil_state() {
     # Save addresses
     cat > "$ADDRESSES_CACHE" << EOF
 export TANGLE_PROXY="$TANGLE_PROXY"
-export RESTAKING_PROXY="$RESTAKING_PROXY"
+export STAKING_PROXY="$STAKING_PROXY"
 export STATUS_REGISTRY="$STATUS_REGISTRY"
 export USDC_ADDRESS="$USDC_ADDRESS"
 export USDT_ADDRESS="$USDT_ADDRESS"
@@ -734,7 +734,7 @@ deploy_contracts() {
 
     # Deterministic addresses from Anvil
     export TANGLE_PROXY="0xCf7Ed3AccA5a467e9e704C703E8D87F634fB0Fc9"
-    export RESTAKING_PROXY="0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512"
+    export STAKING_PROXY="0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512"
     export STATUS_REGISTRY="0xDc64a140Aa3E981100a9becA4E685f962f0cF6C9"
 
     # Parse token addresses from deployment log
@@ -809,13 +809,13 @@ ensure_incentives_contracts() {
         return 0
     fi
 
-    if [[ -z "${RESTAKING_PROXY:-}" || -z "${TANGLE_PROXY:-}" || -z "${STATUS_REGISTRY:-}" ]]; then
+    if [[ -z "${STAKING_PROXY:-}" || -z "${TANGLE_PROXY:-}" || -z "${STATUS_REGISTRY:-}" ]]; then
         log_warn "Core contract addresses not set; skipping incentives check."
         return 0
     fi
 
     local rewards_manager
-    rewards_manager="$(cast call --rpc-url "http://127.0.0.1:$ANVIL_PORT" "$RESTAKING_PROXY" "rewardsManager()(address)" 2>/dev/null | tail -n 1 || true)"
+    rewards_manager="$(cast call --rpc-url "http://127.0.0.1:$ANVIL_PORT" "$STAKING_PROXY" "rewardsManager()(address)" 2>/dev/null | tail -n 1 || true)"
 
     if [[ -n "$rewards_manager" && "$rewards_manager" =~ ^0x[a-fA-F0-9]{40}$ && "$rewards_manager" != "0x0000000000000000000000000000000000000000" ]]; then
         local rm_code
@@ -849,11 +849,11 @@ ensure_incentives_contracts() {
   "core": {
     "deploy": false,
     "tangle": "$TANGLE_PROXY",
-    "restaking": "$RESTAKING_PROXY",
+    "staking": "$STAKING_PROXY",
     "statusRegistry": "$STATUS_REGISTRY",
     "operatorBondToken": "$tnt_token"
   },
-  "restakeAssets": [],
+  "stakeAssets": [],
   "incentives": {
     "deployMetrics": true,
     "deployRewardVaults": true,
@@ -881,7 +881,7 @@ EOF
         --non-interactive \
         --slow 2>&1 | tee /tmp/full-deploy.log || true)
 
-    rewards_manager="$(cast call --rpc-url "http://127.0.0.1:$ANVIL_PORT" "$RESTAKING_PROXY" "rewardsManager()(address)" 2>/dev/null | tail -n 1 || true)"
+    rewards_manager="$(cast call --rpc-url "http://127.0.0.1:$ANVIL_PORT" "$STAKING_PROXY" "rewardsManager()(address)" 2>/dev/null | tail -n 1 || true)"
     if [[ -n "$rewards_manager" && "$rewards_manager" =~ ^0x[a-fA-F0-9]{40}$ && "$rewards_manager" != "0x0000000000000000000000000000000000000000" ]]; then
         local rm_code
         rm_code="$(curl -s "http://127.0.0.1:$ANVIL_PORT" -X POST -H "Content-Type: application/json" \
@@ -1311,8 +1311,7 @@ start_activity_generator() {
     # Pass all configuration to activity generator
     RPC_URL=http://127.0.0.1:$ANVIL_PORT \
     TANGLE_ADDRESS="$TANGLE_PROXY" \
-    STAKING_ADDRESS="$RESTAKING_PROXY" \
-    RESTAKING_ADDRESS="$RESTAKING_PROXY" \
+    STAKING_ADDRESS="$STAKING_PROXY" \
     STATUS_REGISTRY_ADDRESS="$STATUS_REGISTRY" \
     USDC_ADDRESS="${USDC_ADDRESS:-}" \
     USDT_ADDRESS="${USDT_ADDRESS:-}" \
@@ -1461,7 +1460,7 @@ ensure_tnt_staking_asset() {
         return
     fi
 
-    if [[ -z "${RESTAKING_PROXY:-}" ]]; then
+    if [[ -z "${STAKING_PROXY:-}" ]]; then
         log_warn "Skipping TNT staking asset registration - staking proxy not set"
         return
     fi
@@ -1472,7 +1471,7 @@ ensure_tnt_staking_asset() {
     set +e
     result=$(
         RPC_URL="http://127.0.0.1:$ANVIL_PORT" \
-        RESTAKING_ADDRESS="$RESTAKING_PROXY" \
+        STAKING_ADDRESS="$STAKING_PROXY" \
         TNT_ADDRESS="$TNT_TOKEN_ADDRESS" \
         PRIVATE_KEY="0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80" \
         CHAIN_ID="$ANVIL_CHAIN_ID" \
@@ -1482,7 +1481,7 @@ import { privateKeyToAccount } from 'viem/accounts';
 import { defineChain } from 'viem';
 
 const rpcUrl = process.env.RPC_URL;
-const staking = process.env.STAKING_ADDRESS || process.env.RESTAKING_ADDRESS;
+const staking = process.env.STAKING_ADDRESS;
 const tnt = process.env.TNT_ADDRESS;
 const chainId = Number(process.env.CHAIN_ID ?? '31337');
 const account = privateKeyToAccount(process.env.PRIVATE_KEY);
@@ -1722,7 +1721,7 @@ show_addresses() {
     echo ""
     echo "Core Contracts:"
     echo "  - Tangle:              ${TANGLE_PROXY:-Not deployed}"
-    echo "  - MultiAssetDelegation: ${RESTAKING_PROXY:-Not deployed}"
+    echo "  - MultiAssetDelegation: ${STAKING_PROXY:-Not deployed}"
     echo "  - StatusRegistry:       ${STATUS_REGISTRY:-Not deployed}"
     echo ""
     echo "Migration Contracts:"

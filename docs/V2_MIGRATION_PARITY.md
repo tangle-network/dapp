@@ -3,7 +3,7 @@
 ## Overview
 
 This document tracks the feature parity between the v1 Substrate-based dApp and the v2 EVM-based protocol.
-Canonical identifiers that include `Restake/Restaking` are kept verbatim only when they must match existing hook names, component paths, or GraphQL schema fields for compatibility and code search.
+Use staking-canonical identifiers throughout this document.
 
 ---
 
@@ -13,16 +13,16 @@ Canonical identifiers that include `Restake/Restaking` are kept verbatim only wh
 
 | Feature | V1 Implementation | V2 Equivalent | Migration Notes |
 |---------|------------------|---------------|-----------------|
-| **Deposit Assets** | `useRestakeDepositTx` → `multiAssetDelegation.deposit()` | `MultiAssetDelegation.deposit(token, amount, lock)` | Add lock duration parameter |
-| **Delegate to Operator** | `useRestakeDelegateTx` → Substrate + EVM precompile | `MultiAssetDelegation.delegate(operator, token, amount, selectionMode, blueprintIds)` | Add blueprint selection |
-| **Undelegate** | `useRestakeUndelegateTx` → Schedule + Execute | `scheduleDelegatorUnstake()` → `executeDelegatorUnstake()` | Same pattern, round-based |
-| **Withdraw** | `useRestakeWithdrawTx` → Schedule + Execute | `scheduleWithdraw()` → `executeWithdraw()` | Same pattern, round-based |
+| **Deposit Assets** | `useStakingDepositTx` → `multiAssetDelegation.deposit()` | `MultiAssetDelegation.deposit(token, amount, lock)` | Add lock duration parameter |
+| **Delegate to Operator** | `useStakingDelegateTx` → Substrate + EVM precompile | `MultiAssetDelegation.delegate(operator, token, amount, selectionMode, blueprintIds)` | Add blueprint selection |
+| **Undelegate** | `useStakingUndelegateTx` → Schedule + Execute | `scheduleDelegatorUnstake()` → `executeDelegatorUnstake()` | Same pattern, round-based |
+| **Withdraw** | `useStakingWithdrawTx` → Schedule + Execute | `scheduleWithdraw()` → `executeWithdraw()` | Same pattern, round-based |
 | **Join as Operator** | `useJoinOperatorsTx` | `MultiAssetDelegation.registerOperator()` | Per-blueprint registration |
-| **Operator Directory** | `useRestakeOperatorMap` | GraphQL: `operators` query | Address format change |
-| **Asset Balances** | `useRestakeAssetBalances` | GraphQL: `delegatorAssetPositions` | Token-based instead of assetId |
-| **Staking Assets** | `useRestakeAssets` | GraphQL: `restakingAssets` | Same concept |
-| **Current Round** | `useRestakeCurrentRound` | GraphQL: `restakingRounds` | Same concept |
-| **TVL Display** | `useRestakeAssetsTvl` | GraphQL: Aggregate from `restakingAssets.currentDeposits` | Same concept |
+| **Operator Directory** | `useStakingOperatorMap` | GraphQL: `operators` query | Address format change |
+| **Asset Balances** | `useStakingAssetBalances` | GraphQL: `delegatorAssetPositions` | Token-based instead of assetId |
+| **Staking Assets** | `useStakingAssets` | GraphQL: `stakingAssets` | Same concept |
+| **Current Round** | `useStakingCurrentRound` | GraphQL: `stakingRounds` | Same concept |
+| **TVL Display** | `useStakingAssetsTvl` | GraphQL: Aggregate from `stakingAssets.currentDeposits` | Same concept |
 | **Vault Overview** | Dashboard page | Dashboard page | Keep UI, update data source |
 | **Token Transfer** | `useTransferTx` (agnostic) | EVM transfer | Already has EVM factory |
 | **Balance Queries** | `useTokenWalletFreeBalance` | Viem `getBalance()` | Standard EVM |
@@ -70,25 +70,25 @@ Canonical identifiers that include `Restake/Restaking` are kept verbatim only wh
 
 | V1 Hook | V2 Replacement | Query |
 |---------|---------------|-------|
-| `useRestakeOperatorMap` | `useOperatorMap` | `operators` with legacy `restaking*` schema fields (canonical names) |
-| `useRestakeDelegatorInfo` | `useDelegator` | `delegator` with positions |
-| `useRestakeDelegations` | `useDelegatorDelegations` | `delegationPositions` |
-| `useRestakeDeposits` | `useDelegatorDeposits` | `delegatorAssetPositions` |
-| `useRestakeAssets` | `useRestakingAssets` | `restakingAssets` |
-| `useRestakeCurrentRound` | `useRestakingRound` | `restakingRounds` |
-| `useRestakeVaults` | TBD | `rewardVaults` |
-| `useRestakeAssetsTvl` | Derive from assets | Aggregate `currentDeposits` |
+| `useStakingOperatorMap` | `useOperatorMap` | `operators` |
+| `useStakingDelegatorInfo` | `useDelegator` | `delegator` with positions |
+| `useStakingDelegations` | `useDelegatorDelegations` | `delegationPositions` |
+| `useStakingDeposits` | `useDelegatorDeposits` | `delegatorAssetPositions` |
+| `useStakingAssets` | `useStakingAssets` | `stakingAssets` |
+| `useStakingCurrentRound` | `useStakingRound` | `stakingRounds` |
+| `useStakingVaults` | TBD | `rewardVaults` |
+| `useStakingAssetsTvl` | Derive from assets | Aggregate `currentDeposits` |
 
 ### Transaction Hook Migration
 
 | V1 Hook | V2 Replacement | Contract Call |
 |---------|---------------|---------------|
-| `useRestakeDepositTx` | `useDepositTx` | `MultiAssetDelegation.deposit()` |
-| `useRestakeDelegateTx` | `useDelegateTx` | `MultiAssetDelegation.delegate()` |
-| `useRestakeUndelegateTx` | `useScheduleUnstakeTx` | `MultiAssetDelegation.scheduleDelegatorUnstake()` |
-| `useRestakeWithdrawTx` | `useScheduleWithdrawTx` | `MultiAssetDelegation.scheduleWithdraw()` |
-| `useRestakeWithdrawExecuteTx` | `useExecuteWithdrawTx` | `MultiAssetDelegation.executeWithdraw()` |
-| `useNativeRestakeUnstakeExecuteTx` | `useExecuteUnstakeTx` | `MultiAssetDelegation.executeDelegatorUnstake()` |
+| `useStakingDepositTx` | `useDepositTx` | `MultiAssetDelegation.deposit()` |
+| `useStakingDelegateTx` | `useDelegateTx` | `MultiAssetDelegation.delegate()` |
+| `useStakingUndelegateTx` | `useScheduleUnstakeTx` | `MultiAssetDelegation.scheduleDelegatorUnstake()` |
+| `useStakingWithdrawTx` | `useScheduleWithdrawTx` | `MultiAssetDelegation.scheduleWithdraw()` |
+| `useStakingWithdrawExecuteTx` | `useExecuteWithdrawTx` | `MultiAssetDelegation.executeWithdraw()` |
+| `useNativeStakingUnstakeExecuteTx` | `useExecuteUnstakeTx` | `MultiAssetDelegation.executeDelegatorUnstake()` |
 
 ---
 
@@ -105,7 +105,7 @@ Canonical identifiers that include `Restake/Restaking` are kept verbatim only wh
 
 ### MIGRATE - Staking Components (15+)
 - `BlueprintSelection.tsx` - Add selection mode
-- Detail card components (`RestakeDetailCard/*`, canonical path name) - Update data bindings
+- Detail card components (`StakingDetailCard/*`) - Update data bindings
 - `UnstakeRequestTable.tsx` - Same concept
 - `WithdrawRequestTable.tsx` - Same concept
 - Operator selection components
@@ -124,7 +124,7 @@ Canonical identifiers that include `Restake/Restaking` are kept verbatim only wh
 ## Migration Phases
 
 ### Phase 4.1: tangle-dapp Migration
-1. Update staking hooks to use new GraphQL hooks (keep canonical `useRestake*` identifiers where required)
+1. Update staking hooks to use staking-canonical GraphQL hooks
 2. Update transaction hooks to use new contract calls
 3. Update UI components with new data bindings
 4. Remove nomination/LST pages and components

@@ -97,7 +97,7 @@ const MULTIPLIERS = {
   validator: 1.0,      // Additional for validators
   nominator: 1.0,      // Additional for nominators
   operator: 1.0,       // Additional for operators
-  delegator: 1.0,      // Additional for delegators (legacy term: restakers)
+  delegator: 1.0,      // Additional for delegators
   identity: 1.0,       // Additional for identity holders
   claimer: 1.0,        // Additional for unclaimed balances
   lstMember: 1.0,      // Additional for LST pool members

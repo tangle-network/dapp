@@ -27,7 +27,6 @@ const CONTRACTS = {
   tangle: process.env.TANGLE_ADDRESS || '0xCf7Ed3AccA5a467e9e704C703E8D87F634fB0Fc9',
   multiAssetDelegation:
     process.env.STAKING_ADDRESS ||
-    process.env.RESTAKING_ADDRESS ||
     '0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512',
   statusRegistry: process.env.STATUS_REGISTRY_ADDRESS || '0xDc64a140Aa3E981100a9becA4E685f962f0cF6C9',
 };

@@ -98,7 +98,7 @@ Primary references:
 
 ## Backlog Triage
 - Full closeout triage is tracked in [../LAUNCH_BACKLOG_CLOSEOUT.md](../LAUNCH_BACKLOG_CLOSEOUT.md).
-- Native staking pod lifecycle and native restaking contract/user-flow certification are intentionally removed from launch-action backlog (non-launch scope).
+- Native staking pod lifecycle and native staking contract/user-flow certification are intentionally removed from launch-action backlog (non-launch scope).
 - Legacy `[MANUAL_REQUIRED]` tag counts are deprecated as gating input; launch gates now use `implementation_status` + launch board gate status.
 
 ## Notes
