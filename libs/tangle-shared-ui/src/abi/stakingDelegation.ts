@@ -1,6 +1,6 @@
 import { AbiFunction } from 'viem';
 
-const RESTAKING_PRECOMPILE_ABI = [
+const STAKING_DELEGATION_PRECOMPILE_ABI = [
   {
     inputs: [
       {
@@ -417,4 +417,4 @@ const RESTAKING_PRECOMPILE_ABI = [
   },
 ] as const satisfies AbiFunction[];
 
-export default RESTAKING_PRECOMPILE_ABI;
+export default STAKING_DELEGATION_PRECOMPILE_ABI;

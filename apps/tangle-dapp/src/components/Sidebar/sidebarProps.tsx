@@ -1,5 +1,4 @@
 import {
-  CoinsStackedLineIcon,
   DocumentationIcon,
   FaucetIcon,
   GiftLineIcon,
@@ -46,13 +45,6 @@ const SIDEBAR_STATIC_ITEMS: SideBarItemProps[] = [
     href: PagePath.LIQUID_STAKING,
     isInternal: true,
     Icon: WaterDropletIcon,
-    subItems: [],
-  },
-  {
-    name: 'Native Staking',
-    href: PagePath.NATIVE_STAKING,
-    isInternal: true,
-    Icon: CoinsStackedLineIcon,
     subItems: [],
   },
   {

@@ -8,8 +8,8 @@ import {
   Hex,
   AbiFunction as ViemAbiFunction,
 } from 'viem';
-import RESTAKING_PRECOMPILE_ABI from '../abi/restaking';
-import STAKING_PRECOMPILE_ABI from '../abi/staking';
+import STAKING_DELEGATION_PRECOMPILE_ABI from '../abi/stakingDelegation';
+import NATIVE_STAKING_PRECOMPILE_ABI from '../abi/staking';
 import VESTING_PRECOMPILE_ABI from '../abi/vesting';
 import BATCH_PRECOMPILE_ABI from '../abi/batch';
 import BALANCES_ERC20_PRECOMPILE_ABI from '../abi/balancesErc20';
@@ -19,12 +19,12 @@ import CREDITS_PRECOMPILE_ABI from '../abi/credits';
 import { assertEvmAddress } from '@tangle-network/ui-components';
 
 export enum Precompile {
-  STAKING,
+  NATIVE_STAKING,
   VESTING,
   BATCH,
   BALANCES_ERC20,
   LST,
-  RESTAKING,
+  STAKING,
   SERVICES,
   CREDITS,
 }
@@ -94,12 +94,12 @@ export type ExtractAbiFunctionNames<T extends ViemAbiFunction[]> =
 
 // See https://github.com/tangle-network/tangle/tree/main/precompiles for more details.
 export enum PrecompileAddress {
-  STAKING = '0x0000000000000000000000000000000000000800',
+  NATIVE_STAKING = '0x0000000000000000000000000000000000000800',
   VESTING = '0x0000000000000000000000000000000000000801',
   BATCH = '0x0000000000000000000000000000000000000804',
   BALANCES_ERC20 = '0x0000000000000000000000000000000000000802',
   LST = '0x0000000000000000000000000000000000000824',
-  RESTAKING = '0x0000000000000000000000000000000000000822',
+  STAKING = '0x0000000000000000000000000000000000000822',
   REWARDS = '0x0000000000000000000000000000000000000825',
   CALL_PERMIT = '0x0000000000000000000000000000000000000805',
   SERVICES = '0x0000000000000000000000000000000000000900',
@@ -114,8 +114,8 @@ export const getPrecompileAddress = (
   precompile: Precompile,
 ): PrecompileAddress => {
   switch (precompile) {
-    case Precompile.STAKING:
-      return PrecompileAddress.STAKING;
+    case Precompile.NATIVE_STAKING:
+      return PrecompileAddress.NATIVE_STAKING;
     case Precompile.VESTING:
       return PrecompileAddress.VESTING;
     case Precompile.BATCH:
@@ -124,8 +124,8 @@ export const getPrecompileAddress = (
       return PrecompileAddress.BALANCES_ERC20;
     case Precompile.LST:
       return PrecompileAddress.LST;
-    case Precompile.RESTAKING:
-      return PrecompileAddress.RESTAKING;
+    case Precompile.STAKING:
+      return PrecompileAddress.STAKING;
     case Precompile.SERVICES:
       return PrecompileAddress.SERVICES;
     case Precompile.CREDITS:
@@ -135,8 +135,8 @@ export const getPrecompileAddress = (
 
 export const getPrecompileAbi = (precompile: Precompile): AbiFunction[] => {
   switch (precompile) {
-    case Precompile.STAKING:
-      return STAKING_PRECOMPILE_ABI;
+    case Precompile.NATIVE_STAKING:
+      return NATIVE_STAKING_PRECOMPILE_ABI;
     case Precompile.VESTING:
       return VESTING_PRECOMPILE_ABI;
     case Precompile.BATCH:
@@ -145,8 +145,8 @@ export const getPrecompileAbi = (precompile: Precompile): AbiFunction[] => {
       return BALANCES_ERC20_PRECOMPILE_ABI;
     case Precompile.LST:
       return LST_PRECOMPILE_ABI;
-    case Precompile.RESTAKING:
-      return RESTAKING_PRECOMPILE_ABI;
+    case Precompile.STAKING:
+      return STAKING_DELEGATION_PRECOMPILE_ABI;
     case Precompile.SERVICES:
       return SERVICES_PRECOMPILE_ABI;
     case Precompile.CREDITS:

@@ -30,7 +30,6 @@ export enum PagePath {
   LIQUID_STAKING_CREATE_VAULT = '/liquid-staking/create-vault',
   LIQUID_STAKING_VAULTS = '/liquid-staking/vaults',
   LIQUID_STAKING_POSITIONS = '/liquid-staking/positions',
-  NATIVE_STAKING = '/native-staking',
   NOT_FOUND = '/404',
 }
 

@@ -8,7 +8,6 @@ import ClaimPage from '../pages/claim';
 import ClaimLayout from '../pages/claim/layout';
 import ClaimSuccessPage from '../pages/claim/success';
 import MigrationClaimPage from '../pages/claim/migration';
-import NativeStakingPage from '../pages/native-staking';
 import NotFoundPage from '../pages/notFound';
 import { PagePath } from '../types';
 import Providers from './providers';
@@ -137,11 +136,6 @@ function App() {
                 }
               />
             </Route>
-
-            <Route
-              path={PagePath.NATIVE_STAKING}
-              element={<NativeStakingPage />}
-            />
 
             <Route path="*" element={<NotFoundPage />} />
           </Routes>

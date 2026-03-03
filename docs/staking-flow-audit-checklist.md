@@ -35,7 +35,7 @@ Last updated: 2026-03-03
 | User | Staking rewards claim | `/staking/rewards` | Lint/typecheck/test/build + manual wallet E2E | Implemented (manual-required) |
 | User | Staking route surface | `/staking/*` | Static route verification | Implemented (manual-required) |
 | User | Migration claim | `/claim/migration` | Hook/unit coverage + manual-required runtime verification | Partial |
-| User | Native staking lifecycle | `/native-staking` | Static + manual-required | Partial (deprioritized non-launch) |
+| User | Native staking lifecycle | Hidden from launch UI (no route/sidebar exposure) | Static + manual-required | Partial (deprioritized non-launch) |
 | Customer | Blueprint discovery/details | `/blueprints`, `/blueprints/:id` | Lint/typecheck/build + static review | Implemented (manual-required) |
 | Customer | Deploy blueprint request | `/blueprints/:id/deploy` | Typecheck + targeted request-schema test + manual E2E | Implemented (manual-required) |
 | Customer | Service ACL/funding/job flow | `/services/:id` | Lint/typecheck/test/build + manual E2E | Implemented (manual-required) |
@@ -51,21 +51,22 @@ Last updated: 2026-03-03
 
 ## Strict Completeness Answer
 - **Are all user flows complete?** **No.**
-- Current blockers are migration claim partiality, native staking lifecycle deprioritization, and lack of automated wallet/browser E2E certification for critical write paths.
+- Current blockers are migration claim partiality, native staking lifecycle non-launch scope, and lack of automated wallet/browser E2E certification for critical write paths.
 
 ## Terminology Migration Status (Legacy Naming -> `staking`)
 
 ### Current state
-- Canonical dApp routes are `/staking/*` and `/native-staking`.
+- Canonical dApp launch routes are `/staking/*`; native staking is removed from launch navigation/routing.
 - Native restaking route aliases are removed from canonical UI routing.
 - Native restaking contract/user-flow certification is explicitly out of launch scope.
 - Shared wrappers (`useStakingAssets`, `StakingContext`, `data/staking/*`) coexist with compatibility aliases where needed.
-- Operator indexer responses still expose protocol `restaking*` fields in parse boundaries for compatibility.
+- Internal `restaking*` parse-boundary fields were removed from dApp/cloud runtime code.
 
 ### Current residuals (unavoidable protocol surfaces)
-- `restaking*` operator fields remain at GraphQL parse boundaries only:
-  - `libs/tangle-shared-ui/src/data/graphql/useOperators.ts`
-  - `libs/tangle-shared-ui/src/data/graphql/useBlueprints.ts`
+- Remaining `restaking/restaked` terms are protocol/external surfaces only:
+  - Native staking ABI/runtime fields in `apps/tangle-dapp/src/abi/validatorPod.ts` and `apps/tangle-dapp/src/features/native-staking/hooks/useValidatorPod.ts`
+  - Inflation pool ABI fields in `libs/tangle-shared-ui/src/abi/inflationPool.ts`
+  - External token metadata slugs/names (`renzo-restaked-eth`, `Renzo Restaked ETH`) in token-price/bridge metadata
 
 ## Verification Evidence (Executed In This Pass)
 
@@ -73,15 +74,15 @@ Last updated: 2026-03-03
 |---|---|
 | `yarn nx run-many --target=test --projects=tangle-dapp,tangle-cloud,tangle-shared-ui --skip-nx-cache` | Success |
 | `yarn nx run tangle-cloud:typecheck --skip-nx-cache` | Success |
-| `rg -n "/native-staking|PagePath\\.NATIVE_STAKING" apps/tangle-dapp/src/app/app.tsx apps/tangle-dapp/src/types/index.ts` | Confirms canonical native staking route surface |
+| `rg -n "/native-staking|PagePath\\.NATIVE_STAKING" apps/tangle-dapp/src/app/app.tsx apps/tangle-dapp/src/components/Sidebar/sidebarProps.tsx apps/tangle-dapp/src/types/index.ts` | No matches (native staking is hidden from launch UI) |
 | `rg -n "TxHistoryDrawer|TxHistoryNotifier|TxConfirmationModal" apps/tangle-cloud/src/components apps/tangle-cloud/src -g'*.ts' -g'*.tsx'` | Confirms cloud tx timeline wiring |
-| `rg -n --no-heading "\.restaking(Status|Stake|DelegationCount|LeavingRound|ScheduledUnstakeAmount|ScheduledUnstakeRound)" apps libs -g'*.ts' -g'*.tsx'` | Confirms `restaking*` matches are in GraphQL parse boundaries |
+| `rg -n --no-heading "\.restaking(Status|Stake|DelegationCount|LeavingRound|ScheduledUnstakeAmount|ScheduledUnstakeRound)" apps libs -g'*.ts' -g'*.tsx'` | No matches |
 | `rg -n "getServiceRequestSecurityRequirements|getServiceSecurityRequirements|Unable to load security requirements" apps/tangle-cloud/src/data/services apps/tangle-cloud/src/pages -g'*.ts' -g'*.tsx'` | Confirms fail-closed contract read path and explicit UI error messaging |
 | `rg --files | rg -i '(playwright|cypress|e2e|\.feature$)'` | No dedicated browser E2E harness found |
 
 ## Open Gaps
 - Migration claim still requires live wallet+relayer reliability validation.
-- Native staking pod lifecycle is deprioritized for launch and not release-certified.
+- Native staking pod lifecycle remains non-launch scope and is not release-certified.
 - Native restaking contract/user-flow coverage is intentionally excluded from launch certification.
 - Wallet-connected approve/join/leave/terminate journeys still require manual cross-chain runtime validation.
-- Current automated tests (7 files) do not provide broad end-to-end flow certification for the 300-story catalog.
+- Current automated tests (10 files) do not provide broad end-to-end flow certification for the 300-story catalog.
