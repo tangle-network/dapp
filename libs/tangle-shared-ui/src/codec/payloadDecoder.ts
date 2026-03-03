@@ -111,7 +111,10 @@ const decodeField = (
 
   // Fixed-size integer types (Uint8..Int256)
   if (isIntegerKind(kind)) {
-    const fixedSize = FIXED_SIZE_MAP[kind]!;
+    const fixedSize = FIXED_SIZE_MAP[kind];
+    if (fixedSize === undefined) {
+      throw new Error(`Unsupported integer kind: ${BlueprintFieldKind[kind]}`);
+    }
     if (cursor.offset + fixedSize > limit) {
       throw new Error(`Truncated ${BlueprintFieldKind[kind]}`);
     }

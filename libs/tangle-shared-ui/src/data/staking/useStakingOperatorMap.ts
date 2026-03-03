@@ -125,13 +125,13 @@ const toPrimitiveDelegations = (
   delegations: OperatorMetadata['delegations'];
   stakersCount: number;
 } => {
-  const restakerSet = new Set<string>();
+  const stakerSet = new Set<string>();
 
   const primitiveDelegations = delegations.map(
     ({ amount, asset, delegator }) => {
       const delegatorAccountId = delegator.toString();
 
-      restakerSet.add(delegatorAccountId);
+      stakerSet.add(delegatorAccountId);
 
       return {
         amount: amount.toBigInt(),
@@ -143,7 +143,7 @@ const toPrimitiveDelegations = (
 
   return {
     delegations: primitiveDelegations,
-    stakersCount: restakerSet.size,
+    stakersCount: stakerSet.size,
   };
 };
 

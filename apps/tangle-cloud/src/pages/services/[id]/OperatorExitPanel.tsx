@@ -92,7 +92,7 @@ const OperatorExitPanel: FC<Props> = ({
   const chainTimeOffset = useMemo(() => {
     if (!latestBlock) return 0;
     return Number(latestBlock.timestamp) - Math.floor(Date.now() / 1000);
-  }, [latestBlock?.number, latestBlock?.timestamp]);
+  }, [latestBlock]);
 
   const isLoading =
     isLoadingConfig ||

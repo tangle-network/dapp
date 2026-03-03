@@ -1,6 +1,6 @@
 /**
  * Hooks for undelegating from an operator.
- * Replaces the Substrate-based useRestakeUndelegateTx hook.
+ * Replaces the Substrate-based undelegation hook.
  */
 
 import { Address } from 'viem';

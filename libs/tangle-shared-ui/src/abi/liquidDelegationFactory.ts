@@ -4,7 +4,7 @@ const LIQUID_DELEGATION_FACTORY_ABI = [
   // View functions
   {
     inputs: [],
-    name: 'restaking',
+    name: 'staking',
     outputs: [{ internalType: 'address', name: '', type: 'address' }],
     stateMutability: 'view',
     type: 'function',

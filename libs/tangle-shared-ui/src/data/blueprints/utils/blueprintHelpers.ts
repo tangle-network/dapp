@@ -67,7 +67,7 @@ export function extractOperatorData(
   runningInstancesMap: Map<bigint, ServiceInstance[]>,
 ) {
   const blueprintOperatorMap = new Map<bigint, Set<SubstrateAddress>>();
-  const blueprintRestakersMap = new Map<bigint, Set<string>>();
+  const blueprintStakersMap = new Map<bigint, Set<string>>();
   const blueprintTVLMap = new Map<bigint, number>();
 
   for (const [key, value] of operatorEntries) {
@@ -93,16 +93,16 @@ export function extractOperatorData(
     const operator = operatorMap.get(operatorAccount);
 
     if (operator !== undefined) {
-      const restakerSet = blueprintRestakersMap.get(blueprintId);
+      const stakerSet = blueprintStakersMap.get(blueprintId);
 
-      if (restakerSet === undefined) {
-        blueprintRestakersMap.set(
+      if (stakerSet === undefined) {
+        blueprintStakersMap.set(
           blueprintId,
           new Set(operator.delegations.map((d) => d.delegatorAccountId)),
         );
       } else {
         operator.delegations.forEach(({ delegatorAccountId }) => {
-          restakerSet.add(delegatorAccountId);
+          stakerSet.add(delegatorAccountId);
         });
       }
     }
@@ -115,7 +115,7 @@ export function extractOperatorData(
     blueprintTVLMap.set(blueprintId, operatorExposure);
   }
 
-  return { blueprintOperatorMap, blueprintRestakersMap, blueprintTVLMap };
+  return { blueprintOperatorMap, blueprintStakersMap, blueprintTVLMap };
 }
 
 function calculateBlueprintOperatorExposure(
@@ -217,9 +217,9 @@ export const createBlueprintObjects = (
   blueprintOperatorMap: ReturnType<
     typeof extractOperatorData
   >['blueprintOperatorMap'],
-  blueprintRestakersMap: ReturnType<
+  blueprintStakersMap: ReturnType<
     typeof extractOperatorData
-  >['blueprintRestakersMap'],
+  >['blueprintStakersMap'],
   blueprintTVLMap: ReturnType<typeof extractOperatorData>['blueprintTVLMap'],
   ownerIdentitiesMap: Awaited<ReturnType<typeof fetchOwnerIdentities>>,
   runningInstancesMap: Map<bigint, ServiceInstance[]>,
@@ -243,7 +243,7 @@ export const createBlueprintObjects = (
       category: metadata.category,
       instancesCount,
       operatorsCount: blueprintOperatorMap.get(blueprintId)?.size ?? null,
-      stakersCount: blueprintRestakersMap.get(blueprintId)?.size ?? null,
+      stakersCount: blueprintStakersMap.get(blueprintId)?.size ?? null,
       tvl: blueprintTVLMap.get(blueprintId)?.toLocaleString() ?? null,
       githubUrl: metadata.codeRepository,
       websiteUrl: metadata.website,

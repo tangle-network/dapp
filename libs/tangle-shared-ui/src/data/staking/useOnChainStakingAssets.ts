@@ -1,5 +1,5 @@
 /**
- * On-chain fallback for discovering restakable assets when GraphQL indexer is unavailable.
+ * On-chain fallback for discovering staking assets when GraphQL indexer is unavailable.
  * NOTE: This is a minimal fallback - only supports native ETH when indexer is down.
  * For full asset support, the GraphQL indexer must be running.
  */
@@ -96,7 +96,7 @@ export const useOnChainStakingAssets = (options?: { enabled?: boolean }) => {
         decimals: 18,
       },
       balance: nativeBalance,
-      restakingInfo: {
+      stakingInfo: {
         id: NATIVE_TOKEN_ADDRESS,
         token: NATIVE_TOKEN_ADDRESS,
         enabled: nativeConfig?.enabled ?? true,

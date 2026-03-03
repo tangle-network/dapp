@@ -1,6 +1,6 @@
 /**
  * Hook to fetch protocol configuration from the MultiAssetDelegation contract.
- * Replaces the Substrate-based useRestakeConsts hook.
+ * Replaces the Substrate-based protocol constants hook.
  */
 
 import { useQuery } from '@tanstack/react-query';

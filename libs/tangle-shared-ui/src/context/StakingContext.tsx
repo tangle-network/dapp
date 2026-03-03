@@ -1,7 +1,7 @@
 /* eslint-disable react-refresh/only-export-components */
 
 /**
- * StakingContext - Unified state management for staking data.
+ * StakingContext - shared state management for staking data.
  *
  * This context provides a single source of truth for staking-related data,
  * hydrating state efficiently and sharing it across components.
@@ -222,7 +222,7 @@ export const StakingProvider: FC<StakingProviderProps> = ({ children }) => {
     return operatorMap ? Array.from(operatorMap.values()) : [];
   }, [operatorMap]);
 
-  // Unified refetch function
+  // Shared refetch function
   const refetchAll = useCallback(async () => {
     await Promise.all([
       refetchProtocolStakingAssets(),

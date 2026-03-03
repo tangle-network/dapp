@@ -26,8 +26,6 @@ export interface StakingDataState {
   assets: StakingAssetMap | null;
   assetList: StakingAsset[];
   stakingAssets: ProtocolStakingAsset[] | null;
-  /** @deprecated Legacy alias; use `stakingAssets`. */
-  restakingAssets: ProtocolStakingAsset[] | null;
 
   delegator: Delegator | null;
 
@@ -157,7 +155,6 @@ export const useStakingData = (
     assets,
     assetList,
     stakingAssets,
-    restakingAssets: stakingAssets,
     delegator: delegator ?? null,
     isLoading,
     isLoadingAssets,

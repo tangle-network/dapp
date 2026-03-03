@@ -1,4 +1,8 @@
-// TODO: This function checks if the connection can be established, but it doesn't check what kind of network the endpoint is connected to! This means that if a different network than expected (ie. Tangle Restaking Parachain vs. expected Tangle Local Testnet), the app will crash due to attempting to access storage queries or extrinsics that are not available on that network. However, this isn't a huge concern as of now since it only applies to custom RPC endpoints, usually used for testing purposes.
+// TODO: This function checks only that a connection can be established. It does
+// not verify the connected chain identity. If a different chain than expected
+// is used (for example a custom endpoint with incompatible modules), the app can
+// still fail when querying storage or extrinsics. This currently impacts custom
+// RPC endpoints used for local/testing scenarios.
 function testRpcEndpointConnection(rpcEndpoint: string): Promise<boolean> {
   return new Promise((resolve) => {
     try {

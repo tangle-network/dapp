@@ -32,8 +32,6 @@ export interface StakingAsset {
   metadata: TokenMetadata;
   balance: bigint | null;
   stakingInfo?: StakingAssetConfig;
-  /** @deprecated Legacy compatibility alias. Prefer `stakingInfo`. */
-  restakingInfo?: StakingAssetConfig;
 }
 
 export type StakingAssetMap = Map<Address, StakingAsset>;

@@ -1,6 +1,6 @@
 /**
  * Hook for delegating assets to an operator.
- * Replaces the Substrate-based useRestakeDelegateTx hook.
+ * Replaces the Substrate-based delegation hook.
  */
 
 import { Address } from 'viem';

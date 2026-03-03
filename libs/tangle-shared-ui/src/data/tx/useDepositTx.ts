@@ -1,6 +1,6 @@
 /**
  * Hook for depositing assets into the MultiAssetDelegation contract.
- * Replaces the Substrate-based useRestakeDepositTx hook.
+ * Replaces the Substrate-based deposit hook.
  */
 
 import { Address, zeroAddress } from 'viem';

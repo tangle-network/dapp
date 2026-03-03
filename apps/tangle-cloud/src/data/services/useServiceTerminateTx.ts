@@ -55,30 +55,31 @@ export const useServiceTerminateTx = (
       onSuccess: (_result, params) => {
         const removeFromActiveServiceQueries = () => {
           let serviceStillAppearsAsActive = false;
-          const serviceQueries = queryClient
+          const activeServiceKeys = queryClient
             .getQueryCache()
-            .findAll({ queryKey: ['envio', 'services'] });
+            .findAll({ queryKey: ['envio', 'services'] })
+            .map((query) => query.queryKey as unknown[])
+            .filter((key) => key[4] === 'ACTIVE');
 
-          for (const query of serviceQueries) {
-            const key = query.queryKey as unknown[];
-            const status = key[4];
-            if (status !== 'ACTIVE') continue;
+          for (const key of activeServiceKeys) {
+            const data = queryClient.getQueryData(key);
+            if (!Array.isArray(data)) {
+              continue;
+            }
 
-            queryClient.setQueryData(key, (old) => {
-              if (!Array.isArray(old)) return old;
+            const services = data as Service[];
+            const containsTerminatedService = services.some(
+              (service) => service.serviceId === params.serviceId,
+            );
+            if (!containsTerminatedService) {
+              continue;
+            }
 
-              const services = old as Service[];
-              const containsTerminatedService = services.some(
-                (service) => service.serviceId === params.serviceId,
-              );
-
-              if (!containsTerminatedService) return old;
-
-              serviceStillAppearsAsActive = true;
-              return services.filter(
-                (service) => service.serviceId !== params.serviceId,
-              );
-            });
+            serviceStillAppearsAsActive = true;
+            queryClient.setQueryData(
+              key,
+              services.filter((service) => service.serviceId !== params.serviceId),
+            );
           }
 
           return serviceStillAppearsAsActive;

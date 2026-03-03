@@ -49,8 +49,6 @@ export type StakingAsset = {
   metadata: StakingTokenMetadata;
   balance: bigint | null;
   stakingInfo: ProtocolStakingAssetConfig;
-  /** @deprecated Use `stakingInfo`. */
-  restakingInfo?: ProtocolStakingAssetConfig;
 };
 
 export type StakingAssetMap = Map<Address, StakingAsset>;
@@ -65,7 +63,6 @@ type LegacyAssetLike = {
   };
   balance?: bigint | null;
   stakingInfo?: ProtocolStakingAssetConfig;
-  restakingInfo?: ProtocolStakingAssetConfig;
 };
 
 const isNetworkishError = (error: unknown): boolean => {
@@ -87,7 +84,7 @@ const isZeroDataDecodeError = (error: unknown): boolean => {
 const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
 const normalizeAsset = (asset: LegacyAssetLike): StakingAsset | null => {
-  const stakingInfo = asset.stakingInfo ?? asset.restakingInfo;
+  const stakingInfo = asset.stakingInfo;
   if (!stakingInfo) {
     return null;
   }
@@ -110,7 +107,6 @@ const normalizeAsset = (asset: LegacyAssetLike): StakingAsset | null => {
     },
     balance: asset.balance ?? null,
     stakingInfo,
-    restakingInfo: stakingInfo,
   };
 };
 
@@ -468,7 +464,6 @@ export const useStakingAssets = (options?: {
           },
           balance: nativeBalance ?? null,
           stakingInfo: stakingConfig,
-          restakingInfo: stakingConfig,
         });
         continue;
       }
@@ -499,7 +494,6 @@ export const useStakingAssets = (options?: {
         },
         balance,
         stakingInfo: stakingConfig,
-        restakingInfo: stakingConfig,
       });
     }
 

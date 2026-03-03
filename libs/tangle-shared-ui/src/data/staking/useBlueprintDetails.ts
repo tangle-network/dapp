@@ -117,7 +117,7 @@ const useBlueprintDetails = (id?: bigint) => {
 
               const {
                 blueprintOperatorMap,
-                blueprintRestakersMap,
+                blueprintStakersMap,
                 blueprintTVLMap,
               } = extractOperatorData(
                 operatorEntries as any,
@@ -138,7 +138,7 @@ const useBlueprintDetails = (id?: bigint) => {
                 category: metadata.category,
                 instancesCount: runningInstancesMap.get(id)?.length ?? null,
                 operatorsCount: operatorsSet?.size ?? null,
-                stakersCount: blueprintRestakersMap.get(id)?.size ?? null,
+                stakersCount: blueprintStakersMap.get(id)?.size ?? null,
                 tvl: (() => {
                   const blueprintTVL = blueprintTVLMap.get(id);
 

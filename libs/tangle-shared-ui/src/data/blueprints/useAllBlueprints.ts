@@ -94,7 +94,7 @@ const useAllBlueprints = () => {
 
               const {
                 blueprintOperatorMap,
-                blueprintRestakersMap,
+                blueprintStakersMap,
                 blueprintTVLMap,
               } = extractOperatorData(
                 operatorEntries as any,
@@ -106,7 +106,7 @@ const useAllBlueprints = () => {
               return createBlueprintObjects(
                 blueprintsMap,
                 blueprintOperatorMap,
-                blueprintRestakersMap,
+                blueprintStakersMap,
                 blueprintTVLMap,
                 ownerIdentitiesMap,
                 runningInstancesMap,

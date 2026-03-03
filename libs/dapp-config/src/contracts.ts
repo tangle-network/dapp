@@ -134,9 +134,9 @@ export const getContractsByChainId = (chainId: number): ContractAddresses => {
       return ARBITRUM_SEPOLIA_CONTRACTS;
     case 42161: // Arbitrum One
       return ARBITRUM_ONE_CONTRACTS;
-    case 1: // Ethereum Mainnet (for Native Restaking only)
+    case 1: // Ethereum Mainnet (native staking only)
       return ETHEREUM_MAINNET_CONTRACTS;
-    case 17000: // Ethereum Holesky Testnet (for Native Restaking only)
+    case 17000: // Ethereum Holesky Testnet (native staking only)
       return ETHEREUM_HOLESKY_CONTRACTS;
     default:
       throw new Error(`Unknown chain ID: ${chainId}`);

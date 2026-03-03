@@ -1,6 +1,6 @@
 /**
  * Hooks for withdrawing assets from the MultiAssetDelegation contract.
- * Replaces the Substrate-based useRestakeWithdrawTx hook.
+ * Replaces the Substrate-based withdraw hook.
  */
 
 import { Address } from 'viem';
