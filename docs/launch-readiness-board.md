@@ -40,6 +40,8 @@ Generated: 2026-03-03
 
 Canonical machine-readable export: [launch-readiness-board.csv](./launch-readiness-board.csv)
 
+Wallet/browser sign-off suite (covers all `ready-manual-signoff` rows): `yarn test:wallet-flows`
+
 ## Governance Use (Go/No-Go)
 - Treat this board as the flow-level release gate source of truth for launch decisions.
 - Go condition for this launch: `blocked-partial=0` and all `ready-manual-signoff` rows have recorded manual sign-off evidence.

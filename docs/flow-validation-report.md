@@ -11,6 +11,7 @@ Primary references:
 - [staking-flow-audit-checklist.md](./staking-flow-audit-checklist.md)
 - [launch-readiness-board.md](./launch-readiness-board.md)
 - [launch-readiness-board.csv](./launch-readiness-board.csv)
+- [wallet-flow-suite.md](./wallet-flow-suite.md)
 - [../LAUNCH_BACKLOG_CLOSEOUT.md](../LAUNCH_BACKLOG_CLOSEOUT.md)
 
 ## Strict Status Taxonomy
@@ -84,7 +85,7 @@ Primary references:
 | `rg -n "/native-staking|PagePath\\.NATIVE_STAKING" apps/tangle-dapp/src/app/app.tsx apps/tangle-dapp/src/components/Sidebar/sidebarProps.tsx apps/tangle-dapp/src/types/index.ts` | No matches (native staking is not user-facing in launch UI) |
 | `rg -n "TxHistoryDrawer|TxHistoryNotifier|TxConfirmationModal" apps/tangle-cloud/src/components apps/tangle-cloud/src -g'*.ts' -g'*.tsx'` | Confirms notifier/drawer/modal wiring in cloud layout/header |
 | `rg -n "getServiceRequestSecurityRequirements|getServiceSecurityRequirements|Unable to load security requirements" apps/tangle-cloud/src/data/services apps/tangle-cloud/src/pages -g'*.ts' -g'*.tsx'` | Confirms fail-closed read hooks and explicit UI error messaging |
-| `rg --files | rg -i '(playwright|cypress|e2e|\.feature$)'` | No dedicated browser E2E harness found |
+| `yarn test:wallet-flows:list` | Confirms wallet-flow suite coverage for all `ready-manual-signoff` launch flows |
 | `wc -l docs/user-stories-validation-catalog.csv docs/launch-readiness-board.csv` | Confirms story catalog row count (`301`) and launch board row count (`20` incl. header) |
 | `rg -n ',ready-manual-signoff$' docs/launch-readiness-board.csv \| wc -l` | 18 |
 | `rg -n ',blocked-partial$' docs/launch-readiness-board.csv \| wc -l` | 0 |
@@ -92,7 +93,7 @@ Primary references:
 
 ## Blockers to Claim 100% Complete
 - Migration claim now uses fail-closed contract configuration and relayer receipt-confirmation semantics, but still requires manual live wallet/relayer sign-off.
-- No dedicated browser E2E harness (Playwright/Cypress) exists in this repo; wallet-connected critical paths remain manual sign-off gates.
+- Wallet/browser automation harness now exists (`yarn test:wallet-flows`), but live chain + indexer + wallet confirmations still keep these flows in `manual-required` launch state.
 - Automated tests are still narrow (10 test files total) compared with 300 documented stories.
 
 ## Backlog Triage

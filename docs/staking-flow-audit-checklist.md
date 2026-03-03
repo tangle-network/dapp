@@ -19,6 +19,7 @@ Last updated: 2026-03-03
 - Flow-level validation summary: [flow-validation-report.md](./flow-validation-report.md)
 - Launch gate board: [launch-readiness-board.md](./launch-readiness-board.md)
 - Launch gate board (CSV): [launch-readiness-board.csv](./launch-readiness-board.csv)
+- Wallet/browser launch suite: [wallet-flow-suite.md](./wallet-flow-suite.md)
 - Backlog closeout triage: [../LAUNCH_BACKLOG_CLOSEOUT.md](../LAUNCH_BACKLOG_CLOSEOUT.md)
 
 ## Strict Status Keys
@@ -88,7 +89,7 @@ Last updated: 2026-03-03
 | `rg -n "/native-staking|PagePath\\.NATIVE_STAKING" apps/tangle-dapp/src/app/app.tsx apps/tangle-dapp/src/components/Sidebar/sidebarProps.tsx apps/tangle-dapp/src/types/index.ts` | No matches (native staking is hidden from launch UI) |
 | `rg -n "TxHistoryDrawer|TxHistoryNotifier|TxConfirmationModal" apps/tangle-cloud/src/components apps/tangle-cloud/src -g'*.ts' -g'*.tsx'` | Confirms cloud tx timeline wiring |
 | `rg -n "getServiceRequestSecurityRequirements|getServiceSecurityRequirements|Unable to load security requirements" apps/tangle-cloud/src/data/services apps/tangle-cloud/src/pages -g'*.ts' -g'*.tsx'` | Confirms fail-closed contract read path and explicit UI error messaging |
-| `rg --files | rg -i '(playwright|cypress|e2e|\.feature$)'` | No dedicated browser E2E harness found |
+| `yarn test:wallet-flows:list` | Confirms wallet-flow suite coverage for all launch `ready-manual-signoff` gates |
 | `wc -l docs/user-stories-validation-catalog.csv docs/launch-readiness-board.csv` | Confirms story catalog row count (`301`) and launch board row count (`20` incl. header) |
 | `rg -n ',ready-manual-signoff$' docs/launch-readiness-board.csv \| wc -l` | 18 |
 | `rg -n ',blocked-partial$' docs/launch-readiness-board.csv \| wc -l` | 0 |
@@ -99,4 +100,4 @@ Last updated: 2026-03-03
 - Native staking pod lifecycle remains non-launch scope and is not release-certified (removed from launch-action backlog).
 - Native restaking contract/user-flow coverage is intentionally excluded from launch certification (removed from launch-action backlog).
 - Wallet-connected approve/join/leave/terminate journeys still require manual cross-chain runtime validation.
-- Current automated tests (10 files) do not provide broad end-to-end flow certification for the 300-story catalog.
+- Wallet browser-agent suite is available (`yarn test:wallet-flows`), but deterministic CI certification is still limited because these flows depend on live wallet + chain + indexer state.

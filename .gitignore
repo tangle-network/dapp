@@ -104,6 +104,8 @@ vitest.config.*.timestamp*
 
 # React Scan reports
 reports/
+agent-results/
+.agent-wallet-profile/
 .cursor/rules/nx-rules.mdc
 .github/instructions/nx.instructions.md
 
