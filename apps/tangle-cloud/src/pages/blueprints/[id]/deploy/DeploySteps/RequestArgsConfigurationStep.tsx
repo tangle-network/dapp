@@ -55,7 +55,8 @@ export const RequestArgsConfigurationStep: FC<
         setValue('requestArgs', []);
         setError('requestArgs', {
           type: 'manual',
-          message: 'Invalid JSON. Request arguments must be a valid JSON array.',
+          message:
+            'Invalid JSON. Request arguments must be a valid JSON array.',
         });
       }
     },
