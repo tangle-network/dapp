@@ -5,9 +5,9 @@
 </a>
 </div>
 
-# Tangle dApp
+# Tangle Cloud
 
-Frontend for Tangle staking and delegation experiences on EVM, including wallet connection, deposits/withdrawals, delegation management, and reward visibility.
+Operator and developer interface for the Tangle Operator Layer for AI services. This app covers blueprint registration, service deployment, service operations, operator flows, and related transaction tracking.
 
 ## Run Locally
 
@@ -30,19 +30,13 @@ Required baseline:
 3. Start app:
 
 ```bash
-yarn nx serve tangle-dapp
+yarn nx serve tangle-cloud
 ```
 
-Default URL: `http://localhost:4200`
+Default URL: `http://localhost:4201`
 
 ## Notes
 
 - Node.js: `>=18.18.x`
 - Package manager: `Yarn 4`
 - Protocol contracts/indexer source: sibling `../tnt-core`
-
-## Help
-
-- Docs: https://docs.tangle.tools/
-- Feedback: https://github.com/tangle-network/feedback/discussions/categories/dapp-feedback
-- Issues: https://github.com/tangle-network/dapp/issues/new/choose
