@@ -201,9 +201,7 @@ function useEvmPrecompileCall<
         const error = ensureError(possibleError);
         const normalizedError =
           error.name === 'WaitForTransactionReceiptTimeoutError' ||
-          /wait for transaction receipt|timed out|timeout/i.test(
-            error.message,
-          )
+          /wait for transaction receipt|timed out|timeout/i.test(error.message)
             ? getReceiptTimeoutError()
             : error;
 

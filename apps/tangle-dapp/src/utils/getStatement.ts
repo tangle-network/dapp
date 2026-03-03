@@ -46,7 +46,10 @@ function getStatement(
 ): Statement | null {
   const normalizedNetwork = network.trim().toLowerCase();
 
-  if (normalizedNetwork === 'polkadot' || normalizedNetwork === 'polkadot cc1') {
+  if (
+    normalizedNetwork === 'polkadot' ||
+    normalizedNetwork === 'polkadot cc1'
+  ) {
     return getPolkadot(isRegularStatement);
   }
 

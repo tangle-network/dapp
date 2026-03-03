@@ -120,7 +120,8 @@ const useWallet = () => {
           : substrateAccounts.find(
               (account) => account.address === persistedAccountAddress,
             );
-      const selectedDefaultAccount = defaultAccountFromStorage ?? defaultAccount;
+      const selectedDefaultAccount =
+        defaultAccountFromStorage ?? defaultAccount;
 
       const newProvider = extensions.find(
         (provider) => provider.name === selectedDefaultAccount.meta.source,

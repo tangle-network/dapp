@@ -169,9 +169,7 @@ const useInputAmount = ({
       }
 
       setAmount(newAmount);
-      setDisplayAmount_(
-        newAmount,
-      );
+      setDisplayAmount_(newAmount);
 
       return true;
     },

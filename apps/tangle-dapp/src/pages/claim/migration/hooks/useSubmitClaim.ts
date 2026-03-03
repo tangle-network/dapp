@@ -138,7 +138,10 @@ const useSubmitClaim = () => {
 
   useEffect(() => {
     if (relayerConfirmError) {
-      console.error('[useSubmitClaim] Relayer confirm error:', relayerConfirmError);
+      console.error(
+        '[useSubmitClaim] Relayer confirm error:',
+        relayerConfirmError,
+      );
     }
   }, [relayerConfirmError]);
 

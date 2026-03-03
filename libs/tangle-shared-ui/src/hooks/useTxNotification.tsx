@@ -62,11 +62,7 @@ const useTxNotification = <TxName extends BaseTxName>(
         },
       );
     },
-    [
-      closeSnackbar,
-      enqueueSnackbar,
-      successMessageByTxName,
-    ],
+    [closeSnackbar, enqueueSnackbar, successMessageByTxName],
   );
 
   const notifyError = useCallback(

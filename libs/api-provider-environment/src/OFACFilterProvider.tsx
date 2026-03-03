@@ -41,8 +41,9 @@ const shouldBlockRegion = (
 
   const blockedByState =
     normalizedState !== null &&
-    blockedRegions?.some((region) => region.toLowerCase() === normalizedState) ===
-      true;
+    blockedRegions?.some(
+      (region) => region.toLowerCase() === normalizedState,
+    ) === true;
 
   return blockedByCountry || blockedByState;
 };
@@ -117,7 +118,10 @@ const OFACFilterProvider: FC<PropsWithChildren<OFACFilterProviderProps>> = ({
       abortController?.abort();
     }, GEO_LOOKUP_TIMEOUT_MS);
 
-    const evaluateResult = (countryCode: string | null, state: string | null) => {
+    const evaluateResult = (
+      countryCode: string | null,
+      state: string | null,
+    ) => {
       if (
         shouldBlockRegion(
           countryCode,
@@ -140,9 +144,7 @@ const OFACFilterProvider: FC<PropsWithChildren<OFACFilterProviderProps>> = ({
     }
 
     fetch('https://geolocation-db.com/json/', {
-      ...(abortController !== null
-        ? { signal: abortController.signal }
-        : {}),
+      ...(abortController !== null ? { signal: abortController.signal } : {}),
     })
       .then((response) => response.json() as Promise<GeoLookupResponse>)
       .then((data) => {
