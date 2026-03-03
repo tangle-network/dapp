@@ -78,7 +78,9 @@ export const useServiceTerminateTx = (
             serviceStillAppearsAsActive = true;
             queryClient.setQueryData(
               key,
-              services.filter((service) => service.serviceId !== params.serviceId),
+              services.filter(
+                (service) => service.serviceId !== params.serviceId,
+              ),
             );
           }
 
