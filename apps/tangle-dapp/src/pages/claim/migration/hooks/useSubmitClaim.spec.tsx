@@ -98,6 +98,64 @@ describe('useSubmitClaim', () => {
     expect(fetchMock).toHaveBeenCalledTimes(1);
   });
 
+  it('throws when relayer response does not include txHash', async () => {
+    vi.stubEnv('VITE_CLAIM_RELAYER_URL', 'https://relayer.example');
+    vi.stubEnv(
+      'VITE_TANGLE_MIGRATION_ADDRESS',
+      '0x1234567890123456789012345678901234567890',
+    );
+
+    const fetchMock = vi.fn().mockResolvedValue({
+      ok: true,
+      json: async () => ({}),
+    });
+    global.fetch = fetchMock as any;
+
+    const useSubmitClaim = await loadHook();
+    const { result } = renderHook(() => useSubmitClaim());
+
+    await act(async () => {
+      await expect(result.current.submitClaim(baseArgs)).rejects.toThrow(
+        'Relayer response missing transaction hash',
+      );
+    });
+
+    expect(result.current.txHash).toBeNull();
+    expect(result.current.isConfirmed).toBe(false);
+    expect(mockWriteContractAsync).not.toHaveBeenCalled();
+  });
+
+  it('does not mark relayer submission as confirmed before receipt success', async () => {
+    vi.stubEnv('VITE_CLAIM_RELAYER_URL', 'https://relayer.example');
+    vi.stubEnv(
+      'VITE_TANGLE_MIGRATION_ADDRESS',
+      '0x1234567890123456789012345678901234567890',
+    );
+
+    mockUseWaitForTransactionReceipt.mockReturnValue({
+      isLoading: false,
+      isSuccess: false,
+      error: null,
+    });
+
+    const fetchMock = vi.fn().mockResolvedValue({
+      ok: true,
+      json: async () => ({ txHash: '0xfeed' }),
+    });
+    global.fetch = fetchMock as any;
+
+    const useSubmitClaim = await loadHook();
+    const { result } = renderHook(() => useSubmitClaim());
+
+    await act(async () => {
+      await result.current.submitClaim(baseArgs);
+    });
+
+    expect(result.current.txHash).toBe('0xfeed');
+    expect(result.current.isConfirmed).toBe(false);
+    expect(mockWriteContractAsync).not.toHaveBeenCalled();
+  });
+
   it('throws when migration contract is not configured', async () => {
     mockGetMigrationContractsByChainId.mockReturnValue(null);
 

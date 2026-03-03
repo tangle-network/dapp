@@ -71,7 +71,7 @@ export type NodeSpecification = {
   linuxKernel: string;
 };
 
-// TODO: As of now, the other reward destinations are disabled in Tangle. Confirm whether they'll be used in the future, otherwise adjust this accordingly.
+// Runtime currently enables `Staked` and `Stash`; the remaining variants stay for compatibility.
 export enum StakingRewardsDestination {
   STAKED,
   STASH,

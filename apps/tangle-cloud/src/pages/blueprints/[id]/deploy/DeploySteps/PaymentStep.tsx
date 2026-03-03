@@ -32,7 +32,7 @@ export const PaymentStep: FC<PaymentStepProps> = ({
         name: asset.metadata.name,
         symbol: asset.metadata.symbol,
         decimals: asset.metadata.decimals,
-        priceInUsd: null, // TODO: Add price feed
+        priceInUsd: null,
       },
     });
   };

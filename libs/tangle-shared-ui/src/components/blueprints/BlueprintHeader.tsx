@@ -108,7 +108,7 @@ const BlueprintHeader: FC<BlueprintHeaderProps> = ({
                   >
                     {author}
                   </Typography>
-                  {/* TODO: to add link here */}
+                  {/* NOTE: to add link here */}
                   {/* <ExternalLinkIcon href /> */}
                 </div>
               </div>

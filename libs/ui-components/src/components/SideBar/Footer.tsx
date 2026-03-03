@@ -21,7 +21,7 @@ export const SideBarFooter: FC<SideBarFooterProps> = ({
       )}
     >
       <div className="flex items-center justify-between group">
-        {/* TODO: Should make the link generic (not depending on react-router) */}
+        {/* NOTE: Should make the link generic (not depending on react-router) */}
         <Link to={href} target="_blank">
           <Icon
             width={24}
@@ -32,7 +32,7 @@ export const SideBarFooter: FC<SideBarFooterProps> = ({
 
         {isExpanded && (
           <div className={isExpanded ? 'pl-2' : ''}>
-            {/* TODO: Should make the link generic (not depending on react-router) */}
+            {/* NOTE: Should make the link generic (not depending on react-router) */}
             <Link to={href} target="_blank">
               <Typography
                 variant="body1"

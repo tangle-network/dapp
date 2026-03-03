@@ -151,7 +151,7 @@ const ListModal = <T,>({
             <div className="h-full max-h-[448px] overflow-y-auto">
               <ScrollArea className="w-full h-full pt-4">
                 <ul>
-                  {/** TODO: Handle edge case where all processed items are omitted by returning null, and thus the list is actually empty. */}
+                  {/** NOTE: Handle edge case where all processed items are omitted by returning null, and thus the list is actually empty. */}
                   {processedItems.map((item, index) => {
                     const key =
                       getItemKey !== undefined

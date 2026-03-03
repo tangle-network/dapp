@@ -85,7 +85,7 @@ export const Footer = forwardRef<HTMLElement, FooterProps>(
           // Normal Footer
           <div className="mx-auto w-[360px] md:w-[768px] lg:w-[1160px] px-2">
             <div className="flex flex-wrap justify-between gap-6 pb-6 md:gap-0">
-              {/* TODO: Should make the link generic (not depending on react-router) */}
+              {/* NOTE: Should make the link generic (not depending on react-router) */}
               <NavLink
                 className="block"
                 to={

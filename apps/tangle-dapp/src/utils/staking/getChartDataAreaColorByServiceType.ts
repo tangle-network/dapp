@@ -1,7 +1,7 @@
 import { ChartColor } from '../../constants';
 import { StakingService } from '../../types';
 
-// TODO: Update this to match the actual service types.
+// Keep this switch aligned with `StakingService` whenever runtime service types expand.
 export default function getChartDataAreaColorByServiceType(
   serviceType: StakingService,
 ): ChartColor {

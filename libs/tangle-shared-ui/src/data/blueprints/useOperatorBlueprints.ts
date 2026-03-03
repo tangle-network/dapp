@@ -6,7 +6,7 @@ import { OperatorBlueprint } from './utils/type';
  * Currently returns empty array as blueprint data is not yet available from EVM.
  */
 const useOperatorBlueprints = (_operatorAddress?: Address) => {
-  // TODO: Implement EVM-based blueprint fetching when available
+  // NOTE: Implement EVM-based blueprint fetching when available
   const error: Error | null = null;
 
   return {

@@ -21,6 +21,8 @@ import { EvmAddress } from '@tangle-network/ui-components/types/address';
 import useEvmTxRelayer, { isEvmTxRelayerEligible } from './useEvmTxRelayer';
 import useIsEvmTxRelayerCandidate from './useIsEvmTxRelayerCandidate';
 
+const RECEIPT_TIMEOUT_MS = 180_000;
+
 export type AbiBatchCall = {
   to: EvmAddress;
   value: 0;
@@ -68,6 +70,14 @@ function useEvmPrecompileCall<
     | PrecompileCall<Abi, FunctionName>,
   getSuccessMessage?: (context: Context) => string,
 ) {
+  const getReceiptTimeoutError = () => {
+    return new Error(
+      `Transaction submitted but confirmation timed out after ${Math.round(
+        RECEIPT_TIMEOUT_MS / 1000,
+      )} seconds`,
+    );
+  };
+
   const [status, setStatus] = useState(TxStatus.NOT_YET_INITIATED);
   const [error, setError] = useState<Error | null>(null);
   const [txHash, setTxHash] = useState<HexString | null>(null);
@@ -167,7 +177,7 @@ function useEvmPrecompileCall<
 
         const txReceipt = await waitForTransactionReceipt(connectorClient, {
           hash: newTxHash,
-          // TODO: Make use of the `timeout` parameter, and error handle if it fails due to timeout.
+          timeout: RECEIPT_TIMEOUT_MS,
         });
 
         console.debug(
@@ -189,9 +199,16 @@ function useEvmPrecompileCall<
         console.debug(possibleError);
 
         const error = ensureError(possibleError);
+        const normalizedError =
+          error.name === 'WaitForTransactionReceiptTimeoutError' ||
+          /wait for transaction receipt|timed out|timeout/i.test(
+            error.message,
+          )
+            ? getReceiptTimeoutError()
+            : error;
 
         setStatus(TxStatus.ERROR);
-        setError(error);
+        setError(normalizedError);
       }
     },
     [

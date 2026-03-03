@@ -1,7 +1,7 @@
 /**
- * TODO:
- * - Vault ID should has a better type than string.
- * - Amount should has a better type than string.
+ * Compatibility note:
+ * - `vaultId` is currently string-based to match runtime/indexer payloads.
+ * - Form `amount` values remain string-based until submit-time parsing.
  */
 
 import type { Address } from 'viem';

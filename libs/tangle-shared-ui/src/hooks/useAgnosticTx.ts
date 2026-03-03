@@ -85,7 +85,7 @@ function useAgnosticTx<
   name,
   getSuccessMessage,
   successMessageByTxName,
-  // TODO: Handle evmTxRelayerSubsidized
+  // Reserved for explicit relayer eligibility gating in a follow-up pass.
   isEvmTxRelayerSubsidized: _ = false,
 }: AgnosticTxOptions<Abi, FunctionName, Context, TxName>) {
   const [agnosticStatus, setAgnosticStatus] = useState(

@@ -16,7 +16,7 @@ export enum SubstrateLockId {
   DEMOCRACY = 'democrac',
   DELEGATE = 'delegate',
 
-  // TODO: Need to account for the other lock types.
+  // Catch-all lock id for runtime lock types not explicitly enumerated above.
   OTHER = '?other',
 }
 

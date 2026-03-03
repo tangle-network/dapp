@@ -4,8 +4,7 @@ import { useCallback } from 'react';
 
 import formatTangleBalance from '../utils/formatTangleBalance';
 
-// TODO: replace this function across files that convert BN
-// to formatted string with the native token symbol
+// Centralized formatter for native token amounts with the active network symbol.
 export default function useFormatNativeTokenAmount() {
   const { nativeTokenSymbol } = useNetworkStore();
 

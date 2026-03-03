@@ -8,7 +8,7 @@ import {
 import type { PrimitiveFieldType } from '../../types/blueprint';
 import { encodeServiceConfig } from './encodeServiceConfig';
 import TangleABI from '../../abi/tangle';
-import { extractServiceRequestIdFromLogs } from './useServiceRequest';
+import { extractServiceRequestIdFromLogs } from './extractServiceRequestIdFromLogs';
 
 describe('encodeServiceConfig', () => {
   it('returns empty bytes when no request args are provided', () => {

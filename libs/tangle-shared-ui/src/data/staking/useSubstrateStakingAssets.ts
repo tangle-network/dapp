@@ -152,10 +152,9 @@ const useSubstrateStakingAssets = () => {
           decimals: metadata.decimals,
           symbol: metadata.symbol,
           vaultId: assetVaultIds?.get(assetId) ?? null,
-          // TODO: Implement token price fetching.
+          // Price data is intentionally null until an indexer-backed price feed is available.
           priceInUsd: null,
           status: 'Live',
-          // TODO: Details?
         } satisfies StakingAssetMetadata,
       ];
     });
@@ -184,7 +183,7 @@ const useSubstrateStakingAssets = () => {
         assetId,
         details,
         vaultId,
-        // TODO: Implement price fetching.
+        // Price data is intentionally null until an indexer-backed price feed is available.
         priceInUsd: null,
         status: 'Live' as const,
       } satisfies StakingAssetMetadata;
@@ -192,8 +191,9 @@ const useSubstrateStakingAssets = () => {
       return [asset];
     });
 
-    // TODO: Balance should be what is locked in staking for native staking.
     // Insert the network's native asset to allow for native staking.
+    // Native balance currently represents transferable balance because locked-stake
+    // accounting is not exposed in this query path.
     const nativeNetworkAsset: StakingAssetMetadata = {
       name: nativeTokenSymbol,
       symbol: nativeTokenSymbol,
@@ -202,7 +202,7 @@ const useSubstrateStakingAssets = () => {
       details: undefined,
       vaultId: null,
       status: 'Live',
-      // TODO: Waiting for price fetching implementation.
+      // Price data is intentionally null until an indexer-backed price feed is available.
       priceInUsd: null,
     };
 
@@ -271,7 +271,8 @@ const useSubstrateStakingAssets = () => {
           decimals: TANGLE_TOKEN_DECIMALS,
           isFrozen: false,
           vaultId: null,
-          priceInUsd: null, // TODO: Get actual price
+          // Price data is intentionally null until an indexer-backed price feed is available.
+          priceInUsd: null,
           status: 'Live',
         },
         balance: nativeBalance || new BN(0),

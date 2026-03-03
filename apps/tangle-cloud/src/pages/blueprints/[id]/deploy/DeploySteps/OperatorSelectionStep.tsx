@@ -68,7 +68,6 @@ export const SelectOperatorsStep: FC<SelectOperatorsStepProps> = ({
         selfBondedAmount: operator.selfBondedAmount,
         vaultTokens: operator.vaultTokens,
         instanceCount: operator.instanceCount,
-        uptime: 100, // TODO: Get from metrics
         pricing: {
           cpu: 0,
           mem: 0,
@@ -117,7 +116,7 @@ export const SelectOperatorsStep: FC<SelectOperatorsStepProps> = ({
               symbol: asset.metadata.symbol,
               name: asset.metadata.name,
               decimals: asset.metadata.decimals,
-              priceInUsd: null, // TODO: Add price feed
+              priceInUsd: null,
             },
           },
         ]

@@ -2,7 +2,7 @@ import type { ChipColors } from '@tangle-network/ui-components';
 
 import { StakingService } from '../../types';
 
-// TODO: Update this to match the actual service types.
+// Keep this switch aligned with `StakingService` whenever runtime service types expand.
 function getChipColorOfServiceType(serviceType: StakingService): ChipColors {
   switch (serviceType) {
     case StakingService.ZK_SAAS_GROTH16:

@@ -4,7 +4,7 @@ import {
   web3EnablePromise,
 } from '@polkadot/extension-dapp';
 import useProviderStore from '../context/useProviderStore';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import {
   EvmAddress,
   SubstrateAddress,
@@ -19,6 +19,24 @@ import { EIP1193Provider } from 'viem';
 import { EthereumProvider } from '@walletconnect/ethereum-provider';
 import useEvmChain from './useEvmChain';
 import assert from 'assert';
+
+const LAST_CONNECTED_ACCOUNT_KEY = 'lastConnectedAccountAddress';
+
+const readLastConnectedAccountAddress = (): string | null => {
+  if (typeof window === 'undefined') {
+    return null;
+  }
+
+  return localStorage.getItem(LAST_CONNECTED_ACCOUNT_KEY);
+};
+
+const persistLastConnectedAccountAddress = (address: string) => {
+  if (typeof window === 'undefined') {
+    return;
+  }
+
+  localStorage.setItem(LAST_CONNECTED_ACCOUNT_KEY, address);
+};
 
 declare global {
   interface Window {
@@ -53,6 +71,7 @@ const useWallet = () => {
       }
 
       setActiveAccountAddress(newAccountAddress);
+      persistLastConnectedAccountAddress(newAccountAddress);
 
       return true;
     },
@@ -94,10 +113,17 @@ const useWallet = () => {
         return new Error('No accounts found in the connected wallet');
       }
 
-      // TODO: Obtain this from local storage, persist what was the last connected account.
+      const persistedAccountAddress = readLastConnectedAccountAddress();
+      const defaultAccountFromStorage =
+        persistedAccountAddress === null
+          ? undefined
+          : substrateAccounts.find(
+              (account) => account.address === persistedAccountAddress,
+            );
+      const selectedDefaultAccount = defaultAccountFromStorage ?? defaultAccount;
 
       const newProvider = extensions.find(
-        (provider) => provider.name === defaultAccount.meta.source,
+        (provider) => provider.name === selectedDefaultAccount.meta.source,
       );
 
       if (newProvider === undefined) {
@@ -131,7 +157,12 @@ const useWallet = () => {
         }),
       );
 
-      setActiveAccountAddress(assertSubstrateAddress(defaultAccount.address));
+      const selectedDefaultSubstrateAccount = assertSubstrateAddress(
+        selectedDefaultAccount.address,
+      );
+
+      setActiveAccountAddress(selectedDefaultSubstrateAccount);
+      persistLastConnectedAccountAddress(selectedDefaultSubstrateAccount);
       setIsConnecting(false);
 
       return true;
@@ -232,8 +263,16 @@ const useWallet = () => {
         meta: { source: 'EVM' },
       }));
 
-      // TODO: Obtain this from local storage, persist what was the last connected account.
-      const defaultAccount = assertEvmAddress(evmAccounts[0].address);
+      const persistedAccountAddress = readLastConnectedAccountAddress();
+      const defaultAccountCandidate =
+        persistedAccountAddress === null
+          ? undefined
+          : evmAccounts.find(
+              (account) => account.address === persistedAccountAddress,
+            );
+      const defaultAccount = assertEvmAddress(
+        (defaultAccountCandidate ?? evmAccounts[0]).address,
+      );
 
       setProvider({
         type: 'evm',
@@ -248,6 +287,7 @@ const useWallet = () => {
       );
 
       setActiveAccountAddress(defaultAccount);
+      persistLastConnectedAccountAddress(defaultAccount);
 
       return true;
     } catch (possibleError) {
@@ -273,12 +313,6 @@ const useWallet = () => {
   }, [accounts, activeAccountAddress]);
 
   const isConnected = activeAccount !== null;
-
-  // TODO: Debugging.
-  useEffect(() => {
-    console.debug('IS CONNECTING', isConnecting);
-    console.debug('ACCOUNT', activeAccount);
-  }, [activeAccount, isConnecting]);
 
   return {
     isConnected,

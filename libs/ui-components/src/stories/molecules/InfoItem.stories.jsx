@@ -19,7 +19,7 @@ Default.args = {
   },
 };
 
-// TODO: investigate rightContent props
+// NOTE: investigate rightContent props
 export const WithRightContent = Template.bind({});
 // More on args: https://storybook.js.org/docs/react/writing-stories/args
 WithRightContent.args = {

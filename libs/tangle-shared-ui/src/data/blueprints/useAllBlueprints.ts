@@ -56,7 +56,7 @@ const useAllBlueprints = () => {
                 blueprintEntries as any,
               );
 
-              // TODO: This can likely be optimized to reduce request count.
+              // NOTE: This can likely be optimized to reduce request count.
               const ownerIdentitiesMap = await fetchOwnerIdentities(
                 rpcEndpoints,
                 ownerSet,
@@ -82,7 +82,7 @@ const useAllBlueprints = () => {
                   optionalInstance.unwrap(),
                 );
 
-                // TODO: Use lodash to merge arrays.
+                // NOTE: Use lodash to merge arrays.
                 runningInstancesMap.set(instanceData.blueprint, [
                   ...(runningInstancesMap.get(instanceData.blueprint) ?? []),
                   {

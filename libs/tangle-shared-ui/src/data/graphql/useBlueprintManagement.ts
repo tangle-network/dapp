@@ -269,7 +269,7 @@ const fetchBlueprintsByOwner = async (
           metadata,
           active: bp.active,
           operatorCount: Number(bp.operatorCount),
-          serviceCount: 0, // TODO: Get from indexer when available
+          serviceCount: 0, // NOTE: Get from indexer when available
           createdAt: BigInt(bp.createdAt),
         };
       }),

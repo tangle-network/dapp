@@ -83,7 +83,7 @@ const useAssets = () => {
             assetId: assetId,
             // @dev get all assets, so this is not exit
             vaultId: null,
-            // TODO: get price in usd
+            // Price data remains null until the shared price indexer feed is wired.
             priceInUsd: null,
           },
         });

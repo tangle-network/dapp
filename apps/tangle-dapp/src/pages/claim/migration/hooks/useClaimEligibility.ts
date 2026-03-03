@@ -7,6 +7,7 @@ import {
   encodeAbiParameters,
   createPublicClient,
   http,
+  zeroAddress,
 } from 'viem';
 import { useChainId } from 'wagmi';
 import { getMigrationContractsByChainId } from '@tangle-network/dapp-config/contracts';
@@ -788,6 +789,22 @@ const PROOFS_URL =
 const ENV_MIGRATION_ADDRESS =
   (import.meta.env.VITE_TANGLE_MIGRATION_ADDRESS as Hex) || null;
 
+const isConfiguredAddress = (address?: Hex | null): address is Hex => {
+  return !!address && address.toLowerCase() !== zeroAddress;
+};
+
+const normalizeError = (value: unknown): Error | null => {
+  if (!value) {
+    return null;
+  }
+
+  if (value instanceof Error) {
+    return value;
+  }
+
+  return new Error(String(value));
+};
+
 export interface ClaimEligibility {
   /** Whether the SS58 address is eligible for a claim */
   isEligible: boolean;
@@ -853,8 +870,16 @@ const useClaimEligibility = ({ ss58Address }: UseClaimEligibilityOptions) => {
     if (!chainId) return null;
     return getMigrationContractsByChainId(chainId);
   }, [chainId]);
-  const migrationAddress =
-    ENV_MIGRATION_ADDRESS ?? migrationConfig?.migrationClaim ?? null;
+  const migrationAddress = useMemo(() => {
+    if (isConfiguredAddress(ENV_MIGRATION_ADDRESS)) {
+      return ENV_MIGRATION_ADDRESS;
+    }
+
+    const chainMigrationAddress = migrationConfig?.migrationClaim ?? null;
+    return isConfiguredAddress(chainMigrationAddress)
+      ? chainMigrationAddress
+      : null;
+  }, [migrationConfig]);
 
   const rpcUrl = useMemo(() => {
     if (MIGRATION_RPC_URL) return MIGRATION_RPC_URL;
@@ -888,19 +913,18 @@ const useClaimEligibility = ({ ss58Address }: UseClaimEligibilityOptions) => {
     data: proofsData,
     isLoading: isLoadingProofs,
     error: proofsError,
-  } = useQuery<MigrationProofsData | null>({
+  } = useQuery<MigrationProofsData, Error>({
     queryKey: ['migration-proofs'],
     queryFn: async () => {
-      try {
-        const response = await fetch(PROOFS_URL);
-        if (!response.ok) {
-          throw new Error('Failed to fetch migration proofs data');
-        }
-        const json = await response.text();
-        return loadMerkleTreeData(json);
-      } catch {
-        return null;
+      const response = await fetch(PROOFS_URL);
+      if (!response.ok) {
+        throw new Error(
+          `Failed to fetch migration proofs data from ${PROOFS_URL} (${response.status})`,
+        );
       }
+
+      const json = await response.text();
+      return loadMerkleTreeData(json);
     },
     staleTime: Infinity, // Proofs data is static
     gcTime: 24 * 60 * 60 * 1000, // Keep for 24 hours
@@ -910,50 +934,59 @@ const useClaimEligibility = ({ ss58Address }: UseClaimEligibilityOptions) => {
   // Check claimed amount on-chain using the pubkey (derived from SS58)
   // IMPORTANT: We use viem's publicClient directly because wagmi has routing issues
   // that cause it to return empty data even when the RPC works correctly.
-  const { data: claimedAmount, isLoading: isLoadingClaimed } = useQuery<bigint>(
-    {
-      queryKey: ['migration-claimed-amount', pubkeyFromSs58, migrationAddress],
-      queryFn: async () => {
-        if (!pubkeyFromSs58 || !migrationAddress) {
-          return BigInt(0);
-        }
-        const result = await publicClient.readContract({
-          address: migrationAddress,
-          abi: TANGLE_MIGRATION_ABI,
-          functionName: 'getClaimedAmount',
-          args: [pubkeyFromSs58],
-        });
-        return result as bigint;
-      },
-      enabled: !!pubkeyFromSs58 && !!migrationAddress,
-      // Always refetch on mount and window focus to ensure we have the latest claimed status
-      refetchOnMount: 'always',
-      refetchOnWindowFocus: 'always',
-      // Don't cache - always fetch fresh data for claim status
-      staleTime: 0,
-      gcTime: 0,
+  const {
+    data: claimedAmount,
+    isLoading: isLoadingClaimed,
+    error: claimedAmountError,
+  } = useQuery<bigint, Error>({
+    queryKey: ['migration-claimed-amount', pubkeyFromSs58, migrationAddress],
+    queryFn: async () => {
+      if (!pubkeyFromSs58 || !migrationAddress) {
+        return BigInt(0);
+      }
+      const result = await publicClient.readContract({
+        address: migrationAddress,
+        abi: TANGLE_MIGRATION_ABI,
+        functionName: 'getClaimedAmount',
+        args: [pubkeyFromSs58],
+      });
+      return result as bigint;
     },
-  );
+    enabled: !!pubkeyFromSs58 && !!migrationAddress,
+    // Always refetch on mount and window focus to ensure we have the latest claimed status
+    refetchOnMount: 'always',
+    refetchOnWindowFocus: 'always',
+    // Don't cache - always fetch fresh data for claim status
+    staleTime: 0,
+    gcTime: 0,
+  });
 
   // Get claim deadline using viem directly
-  const { data: claimDeadline, isLoading: isLoadingDeadline } =
-    useQuery<bigint>({
-      queryKey: ['migration-claim-deadline', migrationAddress],
-      queryFn: async () => {
-        if (!migrationAddress) return BigInt(0);
-        const result = await publicClient.readContract({
-          address: migrationAddress,
-          abi: TANGLE_MIGRATION_ABI,
-          functionName: 'claimDeadline',
-        });
-        return result as bigint;
-      },
-      enabled: !!migrationAddress,
-      refetchInterval: 60000, // Refresh every minute
-    });
+  const {
+    data: claimDeadline,
+    isLoading: isLoadingDeadline,
+    error: claimDeadlineError,
+  } = useQuery<bigint, Error>({
+    queryKey: ['migration-claim-deadline', migrationAddress],
+    queryFn: async () => {
+      if (!migrationAddress) return BigInt(0);
+      const result = await publicClient.readContract({
+        address: migrationAddress,
+        abi: TANGLE_MIGRATION_ABI,
+        functionName: 'claimDeadline',
+      });
+      return result as bigint;
+    },
+    enabled: !!migrationAddress,
+    refetchInterval: 60000, // Refresh every minute
+  });
 
   // Check if paused using viem directly
-  const { data: isPaused, isLoading: isLoadingPaused } = useQuery<boolean>({
+  const {
+    data: isPaused,
+    isLoading: isLoadingPaused,
+    error: isPausedError,
+  } = useQuery<boolean, Error>({
     queryKey: ['migration-paused', migrationAddress],
     queryFn: async () => {
       if (!migrationAddress) return false;
@@ -968,41 +1001,50 @@ const useClaimEligibility = ({ ss58Address }: UseClaimEligibilityOptions) => {
   });
 
   // Get unlock configuration (percentage unlocked immediately)
-  const { data: unlockedBps, isLoading: isLoadingUnlockedBps } =
-    useQuery<number>({
-      queryKey: ['migration-unlocked-bps', migrationAddress],
-      queryFn: async () => {
-        if (!migrationAddress) return 10000; // Default 100% if not configured
-        const result = await publicClient.readContract({
-          address: migrationAddress,
-          abi: TANGLE_MIGRATION_ABI,
-          functionName: 'unlockedBps',
-        });
-        return Number(result);
-      },
-      enabled: !!migrationAddress,
-      staleTime: Infinity, // Lock config doesn't change after first claim
-    });
+  const {
+    data: unlockedBps,
+    isLoading: isLoadingUnlockedBps,
+    error: unlockedBpsError,
+  } = useQuery<number, Error>({
+    queryKey: ['migration-unlocked-bps', migrationAddress],
+    queryFn: async () => {
+      if (!migrationAddress) return 10000; // Default 100% if not configured
+      const result = await publicClient.readContract({
+        address: migrationAddress,
+        abi: TANGLE_MIGRATION_ABI,
+        functionName: 'unlockedBps',
+      });
+      return Number(result);
+    },
+    enabled: !!migrationAddress,
+    staleTime: Infinity, // Lock config doesn't change after first claim
+  });
 
   // Get unlock timestamp (when locked tokens become withdrawable)
-  const { data: unlockTimestamp, isLoading: isLoadingUnlockTimestamp } =
-    useQuery<bigint>({
-      queryKey: ['migration-unlock-timestamp', migrationAddress],
-      queryFn: async () => {
-        if (!migrationAddress) return BigInt(0);
-        const result = await publicClient.readContract({
-          address: migrationAddress,
-          abi: TANGLE_MIGRATION_ABI,
-          functionName: 'unlockTimestamp',
-        });
-        return result as bigint;
-      },
-      enabled: !!migrationAddress,
-      staleTime: Infinity, // Lock config doesn't change after first claim
-    });
+  const {
+    data: unlockTimestamp,
+    isLoading: isLoadingUnlockTimestamp,
+    error: unlockTimestampError,
+  } = useQuery<bigint, Error>({
+    queryKey: ['migration-unlock-timestamp', migrationAddress],
+    queryFn: async () => {
+      if (!migrationAddress) return BigInt(0);
+      const result = await publicClient.readContract({
+        address: migrationAddress,
+        abi: TANGLE_MIGRATION_ABI,
+        functionName: 'unlockTimestamp',
+      });
+      return result as bigint;
+    },
+    enabled: !!migrationAddress,
+    staleTime: Infinity, // Lock config doesn't change after first claim
+  });
 
   // Get merkle root for verification using viem directly
-  const { data: merkleRoot } = useQuery<Hex | null>({
+  const { data: merkleRoot, error: merkleRootError } = useQuery<
+    Hex | null,
+    Error
+  >({
     queryKey: ['migration-merkle-root', migrationAddress],
     queryFn: async () => {
       if (!migrationAddress) return null;
@@ -1034,6 +1076,26 @@ const useClaimEligibility = ({ ss58Address }: UseClaimEligibilityOptions) => {
 
   // Dev mode - use mock data when contract not configured
   const isDevMode = !migrationAddress;
+
+  const eligibilityError = useMemo(() => {
+    return (
+      normalizeError(proofsError) ??
+      normalizeError(claimedAmountError) ??
+      normalizeError(claimDeadlineError) ??
+      normalizeError(isPausedError) ??
+      normalizeError(unlockedBpsError) ??
+      normalizeError(unlockTimestampError) ??
+      normalizeError(merkleRootError)
+    );
+  }, [
+    proofsError,
+    claimedAmountError,
+    claimDeadlineError,
+    isPausedError,
+    unlockedBpsError,
+    unlockTimestampError,
+    merkleRootError,
+  ]);
 
   // Build eligibility object
   const eligibility = useMemo((): ClaimEligibility => {
@@ -1119,7 +1181,7 @@ const useClaimEligibility = ({ ss58Address }: UseClaimEligibilityOptions) => {
   return {
     eligibility,
     isLoading,
-    error: proofsError,
+    error: eligibilityError,
     merkleRoot: merkleRoot ?? null,
     contractAddress: migrationAddress,
     contractConfigured: !!migrationAddress,

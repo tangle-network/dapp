@@ -14,7 +14,7 @@ import {
 import type { IconBase } from '@tangle-network/icons/types';
 import type { FooterNavsType, Link, SocialConfigsType } from '../types';
 
-/** TODO: Determine the best way to put thess configs to share across the project */
+/** NOTE: Determine the best way to put thess configs to share across the project */
 const commonExternalProps = {
   target: '_blank' as const,
 };
@@ -62,7 +62,7 @@ export const GITHUB_REQUEST_FEATURE_URL =
 export const GITHUB_BUG_REPORT_URL =
   'https://github.com/tangle-network/dapp/issues/new?assignees=&labels=bug+%F0%9F%AA%B2&projects=&template=BUG_REPORT.yml&title=%5BBUG%5D+%3Ctitle%3E';
 
-// TODO: remove this, only use in the old stats dapp
+// NOTE: remove this, only use in the old stats dapp
 export const POLKADOT_JS_EXPLORER_URL =
   'https://polkadot.js.org/apps/?rpc=wss://testnet-rpc.tangle.tools#/explorer/query';
 

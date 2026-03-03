@@ -228,7 +228,11 @@ const WebbProviderInner: FC<WebbProviderInnerProps> = ({
           break;
         case WebbErrorCodes.MetaMaskExtensionNotInstalled:
         case WebbErrorCodes.RainbowExtensionNotInstalled:
-          // TODO: Implement interactive feedback with new components from ui-components:
+          notificationApi({
+            variant: 'error',
+            message: 'Wallet extension is not installed',
+            secondaryMessage: errorMessage.message,
+          });
           break;
         case WebbErrorCodes.InsufficientProviderInterface:
           setActiveChain(undefined);
@@ -238,7 +242,7 @@ const WebbProviderInner: FC<WebbProviderInnerProps> = ({
         }
       }
     },
-    [setActiveChain],
+    [notificationApi, setActiveChain],
   );
 
   /**
@@ -403,9 +407,11 @@ const WebbProviderInner: FC<WebbProviderInnerProps> = ({
                   ]);
                 } catch (e) {
                   /// set the chain to be undefined as this won't be usable
-                  // TODO mark the api as not ready
                   setActiveChain(undefined);
                   setActiveWallet(wallet);
+                  setActiveApi(undefined);
+                  setAccounts([]);
+                  setActiveAccount(null);
                   if (e instanceof WebbError) {
                     /// Catching the errors for the switcher from the event
                     catchWebbError(e);
@@ -514,7 +520,7 @@ const WebbProviderInner: FC<WebbProviderInnerProps> = ({
       }
     },
     // prettier-ignore
-    [activeApi, appEvent, catchWebbError, connectAsync, connectors, notificationApi, setActiveApiWithAccounts, setActiveChain, setActiveWallet],
+    [activeApi, appEvent, catchWebbError, connectAsync, connectors, notificationApi, setActiveAccount, setActiveApiWithAccounts, setActiveChain, setActiveWallet],
   );
 
   /**
@@ -526,10 +532,6 @@ const WebbProviderInner: FC<WebbProviderInnerProps> = ({
 
       try {
         const provider = await switchChain(chain, wallet);
-        /** TODO: `networkStorage` can be `null` here.
-         * Suggestion: use `useRef` instead of `useState`
-         * for the `networkStorage` because state update asynchronous
-         * */
         const _networkStorage = await appNetworkStoragePromise;
         if (provider && _networkStorage) {
           await Promise.all([

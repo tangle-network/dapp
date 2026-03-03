@@ -23,7 +23,6 @@ import {
 // import { PointsBanner } from '../../features/points/components/PointsBanner';
 import { NetworkFeature, PagePath } from '../../types';
 
-// TODO: This entire system of handling sidebar props can be improved in a more React-compliant manner. For now, leaving as is since it is not necessary.
 // Only show the services dropdown if on development mode.
 const SIDEBAR_STATIC_ITEMS: SideBarItemProps[] = [
   {

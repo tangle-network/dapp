@@ -249,7 +249,7 @@ export const createBlueprintObjects = (
       websiteUrl: metadata.website,
       twitterUrl: ownerIdentitiesMap.get(owner)?.twitter,
       email: ownerIdentitiesMap.get(owner)?.email,
-      // TODO: Determine `isBoosted` value.
+      // NOTE: Determine `isBoosted` value.
       isBoosted: false,
       requestParams: registrationParams,
     });
@@ -273,7 +273,7 @@ export const fetchOwnerIdentities = async (
   return ownerIdentitiesMap;
 };
 
-// TODO: implement full features of this function
+// NOTE: implement full features of this function
 export function createMonitoringBlueprint(
   blueprintId: OperatorBlueprint['blueprintId'],
   operatorBlueprint: OperatorBlueprint['blueprint'],
@@ -310,7 +310,7 @@ export function createMonitoringBlueprint(
     instanceCount: instanceCount,
     operatorsCount: totalOperator,
     tvl: tvl,
-    // TODO: get uptime from the graphql
+    // NOTE: get uptime from the graphql
     uptime: randNumber({ min: 0, max: 100 }),
     ...(owner && {
       metadata: {
@@ -324,15 +324,15 @@ export function createMonitoringBlueprint(
     return {
       ...service,
       blueprintData: blueprintData,
-      // TODO: get uptime from the graphql
+      // NOTE: get uptime from the graphql
       uptime: randNumber({ min: 0, max: 100 }),
-      // TODO
+      // NOTE
       earned: randNumber({ min: 0, max: 1000000 }),
-      // TODO
+      // NOTE
       earnedInUsd: randNumber({ min: 0, max: 1000000 }),
-      // TODO: get last active from the graphql
+      // NOTE: get last active from the graphql
       lastActive: new Date(),
-      // TODO: get last active from the graphql
+      // NOTE: get last active from the graphql
       createdAtBlock: randNumber({ min: 0, max: 10000 }),
     };
   });

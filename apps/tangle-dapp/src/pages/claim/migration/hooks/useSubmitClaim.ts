@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import { type Hex } from 'viem';
+import { type Hex, zeroAddress } from 'viem';
 import {
   useAccount,
   useChainId,
@@ -20,6 +20,10 @@ const CLAIM_RELAYER_URL =
     /\/$/,
     '',
   ) || null;
+
+const isConfiguredAddress = (address?: Hex | null): address is Hex => {
+  return !!address && address.toLowerCase() !== zeroAddress;
+};
 
 // TangleMigration contract ABI (claimWithZKProof function)
 const TANGLE_MIGRATION_ABI = [
@@ -69,9 +73,20 @@ const useSubmitClaim = () => {
   const { address: userAddress } = useAccount();
   const chainId = useChainId();
   const migrationAddress = useMemo(() => {
-    if (ENV_MIGRATION_ADDRESS) return ENV_MIGRATION_ADDRESS;
-    if (!chainId) return null;
-    return getMigrationContractsByChainId(chainId)?.migrationClaim ?? null;
+    if (isConfiguredAddress(ENV_MIGRATION_ADDRESS)) {
+      return ENV_MIGRATION_ADDRESS;
+    }
+
+    if (!chainId) {
+      return null;
+    }
+
+    const chainMigrationAddress =
+      getMigrationContractsByChainId(chainId)?.migrationClaim ?? null;
+
+    return isConfiguredAddress(chainMigrationAddress)
+      ? chainMigrationAddress
+      : null;
   }, [chainId]);
   const defaultSubmissionMode: SubmissionMode = CLAIM_RELAYER_URL
     ? 'relayer'
@@ -100,6 +115,14 @@ const useSubmitClaim = () => {
     hash: txHash,
   });
 
+  const {
+    isLoading: isRelayerConfirming,
+    isSuccess: isRelayerConfirmed,
+    error: relayerConfirmError,
+  } = useWaitForTransactionReceipt({
+    hash: relayerTxHash ?? undefined,
+  });
+
   // Log state changes for debugging
   useEffect(() => {
     if (writeError) {
@@ -114,6 +137,12 @@ const useSubmitClaim = () => {
   }, [confirmError]);
 
   useEffect(() => {
+    if (relayerConfirmError) {
+      console.error('[useSubmitClaim] Relayer confirm error:', relayerConfirmError);
+    }
+  }, [relayerConfirmError]);
+
+  useEffect(() => {
     if (txHash) {
       console.log('[useSubmitClaim] Transaction submitted:', txHash);
     }
@@ -124,6 +153,15 @@ const useSubmitClaim = () => {
       console.log('[useSubmitClaim] Transaction confirmed!');
     }
   }, [isConfirmed]);
+
+  useEffect(() => {
+    if (!isRelayerConfirmed) {
+      return;
+    }
+
+    setRelayerSuccess(true);
+    console.log('[useSubmitClaim] Relayer transaction confirmed!');
+  }, [isRelayerConfirmed]);
 
   /**
    * Submit a claim transaction using claimWithZKProof
@@ -180,11 +218,15 @@ const useSubmitClaim = () => {
             txHash?: Hex;
           };
 
-          if (json.txHash) {
-            setRelayerTxHash(json.txHash);
+          if (!json.txHash) {
+            throw new Error('Relayer response missing transaction hash');
           }
-          setRelayerSuccess(true);
-          console.log('[useSubmitClaim] Relayer submission complete');
+
+          setRelayerTxHash(json.txHash);
+          console.log(
+            '[useSubmitClaim] Relayer submission accepted, waiting for confirmation:',
+            json.txHash,
+          );
           return;
         } catch (err) {
           const isNetworkError =
@@ -266,10 +308,12 @@ const useSubmitClaim = () => {
   const isSubmittingCombined = isRelayerMode
     ? isRelayerSubmitting
     : isWritePending;
-  const isConfirmingCombined = isRelayerMode ? false : isConfirming;
+  const isConfirmingCombined = isRelayerMode
+    ? isRelayerConfirming
+    : isConfirming;
   const isConfirmedCombined = isRelayerMode ? relayerSuccess : isConfirmed;
   const errorCombined = isRelayerMode
-    ? relayerError
+    ? relayerError || relayerConfirmError
     : writeError || confirmError;
 
   // Track if we switched from relayer to wallet mode (indicates relayer failure)

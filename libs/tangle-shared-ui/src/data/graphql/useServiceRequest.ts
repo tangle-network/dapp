@@ -3,10 +3,11 @@
  */
 
 import { useCallback, useState } from 'react';
-import { Address, parseEventLogs, zeroAddress } from 'viem';
+import { Address, zeroAddress } from 'viem';
 import { useAccount, usePublicClient, useWalletClient } from 'wagmi';
 import TangleABI from '../../abi/tangle';
 import { getContractsByChainId } from '@tangle-network/dapp-config/contracts';
+import { extractServiceRequestIdFromLogs } from './extractServiceRequestIdFromLogs';
 
 /**
  * Asset kind for security requirements.
@@ -151,42 +152,6 @@ export interface ServiceRequestResult {
   txHash?: `0x${string}`;
   error?: Error;
 }
-
-type ServiceRequestEventName =
-  | 'ServiceRequested'
-  | 'ServiceRequestedWithSecurity';
-
-export const extractServiceRequestIdFromLogs = (
-  logs: readonly unknown[],
-): bigint | undefined => {
-  const eventNames: ServiceRequestEventName[] = [
-    'ServiceRequested',
-    'ServiceRequestedWithSecurity',
-  ];
-
-  for (const eventName of eventNames) {
-    try {
-      const parsed = parseEventLogs({
-        abi: TangleABI,
-        logs: logs as Parameters<typeof parseEventLogs>[0]['logs'],
-        eventName,
-      });
-
-      const event = parsed[0] as unknown as
-        | { args: { requestId: bigint } }
-        | undefined;
-      const requestId = event?.args?.requestId;
-
-      if (requestId !== undefined) {
-        return requestId;
-      }
-    } catch {
-      // Best-effort parsing; fall through to other event variants.
-    }
-  }
-
-  return undefined;
-};
 
 /**
  * Hook to request a new service via the Tangle contract.

@@ -44,14 +44,15 @@ function getStatement(
   network: string,
   isRegularStatement?: boolean | null,
 ): Statement | null {
-  if (network === 'Polkadot' || network === 'Polkadot CC1') {
+  const normalizedNetwork = network.trim().toLowerCase();
+
+  if (normalizedNetwork === 'polkadot' || normalizedNetwork === 'polkadot cc1') {
     return getPolkadot(isRegularStatement);
   }
 
-  // TODO: This test is possibly fragile, and could be improved.
   if (
-    network.toLowerCase().includes('tangle') ||
-    network.toLowerCase().includes('local')
+    normalizedNetwork.startsWith('tangle') ||
+    normalizedNetwork.includes('local')
   ) {
     return getTangle(isRegularStatement);
   }

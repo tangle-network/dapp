@@ -43,6 +43,8 @@ export enum TxStatus {
   ERROR = 'ERROR',
 }
 
+const DEFAULT_RECEIPT_TIMEOUT_MS = 180_000;
+
 const tryDecodeViemCustomError = (
   abi: Abi,
   possibleError: unknown,
@@ -181,6 +183,28 @@ const isUserRejectionError = (error: unknown): boolean => {
   return false;
 };
 
+const isWaitForReceiptTimeoutError = (error: unknown): boolean => {
+  if (error === null || typeof error !== 'object') {
+    return false;
+  }
+
+  const candidate = error as {
+    name?: string;
+    message?: string;
+    shortMessage?: string;
+  };
+
+  if (candidate.name === 'WaitForTransactionReceiptTimeoutError') {
+    return true;
+  }
+
+  const message = candidate.shortMessage ?? candidate.message;
+  return (
+    typeof message === 'string' &&
+    /wait for transaction receipt|timed out|timeout/i.test(message)
+  );
+};
+
 // Transaction result
 export interface TxResult {
   hash: Hash;
@@ -239,6 +263,11 @@ export interface UseContractWriteOptions<TContext = void> {
    * Defaults to true.
    */
   enableTxHistory?: boolean;
+  /**
+   * Max time to wait for the transaction receipt before failing.
+   * Defaults to 180 seconds.
+   */
+  receiptTimeoutMs?: number;
 }
 
 /**
@@ -386,6 +415,8 @@ const useContractWrite = <
 
         const enableTxHistory = options?.enableTxHistory !== false;
         const txName = options?.txName ?? String(callConfig.functionName);
+        const receiptTimeoutMs =
+          options?.receiptTimeoutMs ?? DEFAULT_RECEIPT_TIMEOUT_MS;
 
         let submittedHash: Hash | null = null;
         try {
@@ -485,7 +516,7 @@ const useContractWrite = <
           assertChainConsistency('waiting for transaction receipt');
           const receipt = await waitForTransactionReceipt(rpcClient, {
             hash,
-            // TODO: Add configurable timeout
+            timeout: receiptTimeoutMs,
           });
 
           const txResult: TxResult = {
@@ -537,6 +568,37 @@ const useContractWrite = <
               variant: 'warning',
             });
             setStatus(TxStatus.ERROR);
+            return null;
+          }
+
+          if (isWaitForReceiptTimeoutError(possibleError)) {
+            const timeoutError = new Error(
+              `Transaction submitted but confirmation timed out after ${Math.round(
+                receiptTimeoutMs / 1000,
+              )} seconds`,
+            );
+
+            setStatus(TxStatus.ERROR);
+            setError(timeoutError);
+            enqueueSnackbar(
+              `${capitalize(txName)} failed: ${timeoutError.message}`,
+              {
+                variant: 'error',
+              },
+            );
+            options?.onError?.(timeoutError, context as TContext);
+
+            if (
+              enableTxHistory &&
+              submittedHash !== null &&
+              networkId !== undefined
+            ) {
+              patchTx(submittedHash as unknown as HexString, {
+                status: 'failed',
+                errorMessage: timeoutError.message,
+              });
+            }
+
             return null;
           }
 

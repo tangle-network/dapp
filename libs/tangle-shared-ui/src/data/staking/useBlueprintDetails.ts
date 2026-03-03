@@ -2,6 +2,8 @@
 
 import type { Option } from '@polkadot/types';
 import { TanglePrimitivesServicesTypesOperatorPreferences } from '@polkadot/types/lookup';
+import { decodeAddress } from '@polkadot/util-crypto';
+import { u8aToHex } from '@polkadot/util';
 import { ZERO_BIG_INT } from '@tangle-network/dapp-config';
 import { SubstrateAddress } from '@tangle-network/ui-components/types/address';
 import { useCallback } from 'react';
@@ -26,6 +28,14 @@ import useStakingOperatorMap from './useStakingOperatorMap';
 import { ServiceInstance } from '../blueprints/utils/type';
 import { toPrimitiveService } from '../blueprints/utils/toPrimitiveService';
 import useStakingTvl from './useStakingTvl';
+
+const normalizeSubstrateAddress = (address: SubstrateAddress): string => {
+  try {
+    return u8aToHex(decodeAddress(address));
+  } catch {
+    return address;
+  }
+};
 
 const useBlueprintDetails = (id?: bigint) => {
   const rpcEndpoints = useNetworkStore((store) => store.network.wsRpcEndpoints);
@@ -155,7 +165,7 @@ const useBlueprintDetails = (id?: bigint) => {
                 registrationParams,
                 requestParams,
                 deployer: owner,
-                // TODO: Determine `isBoosted` value.
+                // Protocol and indexer do not expose boosted state yet.
                 isBoosted: false,
               };
 
@@ -213,6 +223,10 @@ async function getBlueprintOperators(
     rpcEndpoints,
     operatorAccountArr,
   );
+  const normalizedActiveSubstrateAddress =
+    activeSubstrateAddress === null
+      ? null
+      : normalizeSubstrateAddress(activeSubstrateAddress);
 
   return operatorAccountArr.map((address, idx) => {
     const info = accountInfoArr[idx];
@@ -222,10 +236,11 @@ async function getBlueprintOperators(
     const selfBondedAmount = operatorMap.get(address)?.stake ?? ZERO_BIG_INT;
 
     const isDelegated =
-      activeSubstrateAddress !== null &&
+      normalizedActiveSubstrateAddress !== null &&
       delegations.some(
-        // TODO: We should implement a better way to compare addresses.
-        (delegate) => delegate.delegatorAccountId === activeSubstrateAddress,
+        (delegate) =>
+          normalizeSubstrateAddress(delegate.delegatorAccountId) ===
+          normalizedActiveSubstrateAddress,
       );
 
     const operatorsCount =

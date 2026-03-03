@@ -18,7 +18,7 @@ const LsTokenIcon: FC<LsTokenIconProps> = ({
   const { wrapperSizeClassName, iconSizeClassName, borderSize } =
     getSizeValues(size);
 
-  // TODO: Positioning of the logo is not 100% centered; a few pixels off. Avoid using absolute positioning for the logo to fix this.
+  // NOTE: Positioning of the logo is not 100% centered; a few pixels off. Avoid using absolute positioning for the logo to fix this.
   return (
     <div
       className={twMerge(

@@ -83,6 +83,7 @@ const MigrationClaimPage: FC = () => {
   const {
     eligibility,
     isLoading: isLoadingEligibility,
+    error: eligibilityError,
     contractAddress,
     contractConfigured,
   } = useClaimEligibility({
@@ -166,6 +167,7 @@ const MigrationClaimPage: FC = () => {
       substrateAccount &&
       substrateExtension &&
       !isLoadingEligibility &&
+      !eligibilityError &&
       eligibility.isEligible &&
       !eligibility.hasClaimed &&
       !eligibility.isPaused &&
@@ -175,6 +177,7 @@ const MigrationClaimPage: FC = () => {
     substrateAccount,
     substrateExtension,
     isLoadingEligibility,
+    eligibilityError,
     eligibility,
     validRecipient,
   ]);
@@ -499,6 +502,34 @@ const MigrationClaimPage: FC = () => {
                   >
                     Claims are currently paused.
                   </Typography>
+                </motion.div>
+              )}
+
+              {eligibilityError && (
+                <motion.div
+                  key="eligibility-error"
+                  initial={{ opacity: 0, height: 0 }}
+                  animate={{ opacity: 1, height: 'auto' }}
+                  className="p-4 rounded-xl bg-red-500/10 border border-red-500/20"
+                >
+                  <div className="flex items-start gap-3">
+                    <Alert className="w-5 h-5 text-red-400 flex-shrink-0 mt-0.5" />
+                    <div>
+                      <Typography
+                        variant="body2"
+                        fw="semibold"
+                        className="text-red-400"
+                      >
+                        Eligibility Check Failed
+                      </Typography>
+                      <Typography
+                        variant="body2"
+                        className="text-red-400/80 mt-1"
+                      >
+                        {eligibilityError.message}
+                      </Typography>
+                    </div>
+                  </div>
                 </motion.div>
               )}
             </AnimatePresence>
@@ -831,6 +862,7 @@ const MigrationClaimPage: FC = () => {
               {substrateAccount &&
                 !isLoadingEligibility &&
                 !eligibility.hasClaimed &&
+                !eligibilityError &&
                 !eligibility.isEligible && (
                   <motion.div
                     key="not-eligible"

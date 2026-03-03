@@ -10,7 +10,7 @@ import { VALIDATOR_POD_MANAGER_ABI } from '../../../abi/validatorPodManager';
 import type { PodOwnerInfo, OperatorInfo, Withdrawal } from '../types';
 
 // Contract addresses by chain ID
-// TODO: Add mainnet/testnet addresses when deployed
+// Mainnet/testnet addresses are intentionally omitted until those deployments are finalized.
 const VALIDATOR_POD_MANAGER_ADDRESSES: Record<number, Address> = {
   // 1: '0x...', // Ethereum Mainnet - not deployed yet
   // 17000: '0x...', // Holesky Testnet - not deployed yet

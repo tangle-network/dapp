@@ -70,9 +70,7 @@ export class WebbWeb3Provider
     const client = getPublicClient(wagmiConfig, { chainId });
 
     assert(client, WebbError.from(WebbErrorCodes.NoClientAvailable).message);
-
-    // TODO: Fix type casting here
-    this.publicClient = client as PublicClient<Transport, Chain>;
+    this.publicClient = client;
 
     this.unsubscribeFns = new Set();
 

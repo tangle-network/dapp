@@ -1,6 +1,9 @@
 # Migration Claim System - Implementation Plan
 
-> **Note:** The migration claim contracts, scripts, and merkle artifacts now live in `tnt-core/packages/migration-claim`. This document is retained for historical context and may be outdated.
+> **Status (2026-03-03): Archived for dapp launch backlog tracking.**
+> The migration claim contracts, scripts, and merkle artifacts now live in `tnt-core/packages/migration-claim`.
+> This file is retained for historical context only and is not a current action tracker for this repository.
+> Backlog triage source of truth: `LAUNCH_BACKLOG_CLOSEOUT.md`.
 
 ## Overview
 

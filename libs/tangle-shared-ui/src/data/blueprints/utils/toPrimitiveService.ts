@@ -54,7 +54,7 @@ export function toPrimitiveServiceRequest(
     owner: assertSubstrateAddress(owner.toHuman()),
     securityRequirements: toPrimitiveSecurityRequirements(securityRequirements),
     ttl: ttl.toNumber(),
-    // TODO: toPrimitiveArgs(args)
+    // NOTE: toPrimitiveArgs(args)
     args: args,
     permittedCallers: permittedCallers.map((caller) =>
       assertSubstrateAddress(caller.toString()),

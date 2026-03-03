@@ -46,7 +46,6 @@ export type OperatorSelectionTable = {
   vaultTokensInUsd?: number;
   selfBondedAmount: bigint;
   instanceCount?: number;
-  uptime?: number;
   stakersCount?: number;
   vaultTokens?: VaultToken[];
 };

@@ -9,6 +9,12 @@
 - Start from `.env.example` (Vite vars are `VITE_*`)
 - Set `VITE_GRAPHQL_ENDPOINT` to your Envio/Hasura GraphQL (local indexer or mainnet)
 - Optional: `VITE_WALLETCONNECT_PROJECT_ID` for WalletConnect
+- Migration claim flow (`/claim/migration`) requires:
+  - `VITE_MIGRATION_PROOFS_URL` (proof data JSON)
+  - `VITE_MIGRATION_RPC_URL` (RPC for migration reads)
+  - Optional `VITE_TANGLE_MIGRATION_ADDRESS` override (must be non-zero)
+  - Optional `VITE_CLAIM_RELAYER_URL` (otherwise wallet mode is used)
+  - Optional `VITE_SP1_PROVER_API_URL` and `VITE_MOCK_PROOF` for proof generation/testing
 
 ## Local protocol repo
 - `../tnt-core/` (sibling repo): protocol + claims migration contracts, gas relayer, indexer, etc.

@@ -70,14 +70,6 @@ const getColumns = () => [
     ),
     sortDescFirst: true,
   }),
-  // TODO: Add APY column
-  // COLUMN_HELPER.accessor('apy', {
-  //   sortUndefined: 'last',
-  //   header: () => 'APY',
-  //   cell: (props) => {
-  //     return <TableCellWrapper>{fmtDeposits}</TableCellWrapper>;
-  //   },
-  // }),
   COLUMN_HELPER.accessor('totalDeposits', {
     sortUndefined: 'last',
     header: () => 'Deposits',

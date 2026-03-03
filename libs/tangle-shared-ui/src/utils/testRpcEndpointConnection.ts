@@ -1,4 +1,4 @@
-// TODO: This function checks only that a connection can be established. It does
+// NOTE: This function checks only that a connection can be established. It does
 // not verify the connected chain identity. If a different chain than expected
 // is used (for example a custom endpoint with incompatible modules), the app can
 // still fail when querying storage or extrinsics. This currently impacts custom

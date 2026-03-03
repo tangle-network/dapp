@@ -29,6 +29,15 @@ import { type NotificationSteps } from '@tangle-network/tangle-shared-ui/hooks/u
 
 import useNetworkStore from '@tangle-network/tangle-shared-ui/context/useNetworkStore';
 
+const RECEIPT_TIMEOUT_MS = 180_000;
+
+const isReceiptTimeoutError = (error: Error): boolean => {
+  return (
+    error.name === 'WaitForTransactionReceiptTimeoutError' ||
+    /wait for transaction receipt|timed out|timeout/i.test(error.message)
+  );
+};
+
 export type ContractWriteOptions<
   Abi extends ViemAbi,
   FunctionName extends ContractFunctionName<Abi, 'nonpayable'>,
@@ -89,7 +98,6 @@ const useContractWrite = <Abi extends ViemAbi>(abi: Abi) => {
           address: options.address,
           functionName: options.functionName,
           account: activeEvmAddress20,
-          // TODO: Getting the type of `args` and `abi` right has proven quite difficult.
           abi: abi as ViemAbi,
           args: options.args as unknown[],
         });
@@ -98,26 +106,32 @@ const useContractWrite = <Abi extends ViemAbi>(abi: Abi) => {
 
         const txReceipt = await waitForTransactionReceipt(connectorClient, {
           hash: txHash,
-          // TODO: Make use of the `timeout` parameter, and error handle if it fails due to timeout.
+          timeout: RECEIPT_TIMEOUT_MS,
         });
 
-        if (txReceipt.status === 'success') {
-          const explorerUrl = createExplorerTxUrl(true, txHash);
+        const explorerUrl = createExplorerTxUrl(true, txHash);
 
+        if (txReceipt.status === 'success') {
           notifySuccess(options.txName, explorerUrl);
         } else {
-          // TODO: Improve UX by at least providing a link to the transaction hash. The idea is that if there was an error, it would have been caught by the try-catch, so this part here is sort of an 'unreachable' section.
           notifyError(
             options.txName,
-            `${options.txName} reverted, but no information about the error is known`,
+            `${options.txName} reverted. Explorer: ${explorerUrl ?? 'unavailable'}`,
           );
         }
 
         return txReceipt.status === 'success';
       } catch (possibleError) {
         const error = ensureError(possibleError);
+        const normalizedError = isReceiptTimeoutError(error)
+          ? new Error(
+              `Transaction confirmation timed out after ${Math.round(
+                RECEIPT_TIMEOUT_MS / 1000,
+              )} seconds`,
+            )
+          : error;
 
-        notifyError(options.txName, error);
+        notifyError(options.txName, normalizedError);
 
         return false;
       }

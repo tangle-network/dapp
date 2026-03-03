@@ -42,7 +42,7 @@ const Button = forwardRef<HTMLElement, ButtonProps>((props, ref) => {
     isLoading,
     leftIcon,
     loadingText,
-    // TODO: Icons don't inherit the color of the button's variant, they just stay white.
+    // NOTE: Icons don't inherit the color of the button's variant, they just stay white.
     rightIcon,
     size = 'md',
     spinner,
@@ -105,7 +105,7 @@ const Button = forwardRef<HTMLElement, ButtonProps>((props, ref) => {
 
   return (
     <Tooltip>
-      {/** TODO: Erroring due to need for `asChild`, but when `asChild` is passed, the tooltip doesn't appear. */}
+      {/** NOTE: Erroring due to need for `asChild`, but when `asChild` is passed, the tooltip doesn't appear. */}
       <TooltipTrigger>{button}</TooltipTrigger>
 
       <TooltipBody>{disabledTooltip}</TooltipBody>
