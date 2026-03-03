@@ -28,12 +28,17 @@ Optional wallet env vars:
   - `yarn test:wallet-flows:list`
 - Run all launch flows:
   - `yarn test:wallet-flows`
+- Run all launch flows in Docker + Xvfb (recommended on Linux hosts without a desktop session):
+  - `yarn test:wallet-flows:docker`
 - Run one flow:
   - `yarn test:wallet-flows --flow FLOW-001`
 - Run by persona:
   - `yarn test:wallet-flows --persona user`
 - Run service/blueprint-id-dependent flows with explicit ids:
   - `yarn test:wallet-flows --blueprint-id 1 --service-id 1`
+- Override LLM runtime directly from CLI:
+  - `yarn test:wallet-flows --provider openai --model gpt-4o --api-key $OPENAI_API_KEY`
+  - `yarn test:wallet-flows --base-url http://localhost:4000/v1 --api-key local-dev-key`
 
 ## Covered Launch Flows
 | Flow ID | Persona | Flow | Start Surface |
