@@ -10,7 +10,6 @@ import {
 } from '../../utils/executeEnvioGraphQL';
 import type { Blueprint as AppBlueprint } from '../../types/blueprint';
 
-// Raw Blueprint type from Envio indexer
 export interface Blueprint {
   id: string;
   blueprintId: bigint;
@@ -24,7 +23,6 @@ export interface Blueprint {
   serviceCount?: number;
 }
 
-// Blueprint with metadata fetched from URI
 export interface BlueprintWithMetadata extends Blueprint {
   name: string;
   description: string;
@@ -35,21 +33,20 @@ export interface BlueprintWithMetadata extends Blueprint {
   website: string | null;
 }
 
-// Convert BlueprintWithMetadata to app Blueprint type
 const toAppBlueprint = (bp: BlueprintWithMetadata): AppBlueprint => ({
   id: bp.blueprintId,
   name: bp.name,
   author: bp.author,
   deployer: bp.owner,
-  registrationParams: [], // Will be populated from on-chain data if needed
-  requestParams: [], // Will be populated from on-chain data if needed
+  registrationParams: [],
+  requestParams: [],
   imgUrl: bp.imageUrl,
   category: bp.category,
   description: bp.description,
   instancesCount: bp.serviceCount ?? null,
   operatorsCount: Number(bp.operatorCount),
-  restakersCount: null, // TODO: Query from indexer
-  tvl: null, // TODO: Calculate from indexer data
+  stakersCount: null,
+  tvl: null,
   isBoosted: false,
   githubUrl: bp.codeUrl,
   websiteUrl: bp.website,
@@ -57,7 +54,6 @@ const toAppBlueprint = (bp: BlueprintWithMetadata): AppBlueprint => ({
   email: null,
 });
 
-// Raw response from GraphQL
 interface BlueprintQueryResponse {
   Blueprint: Array<{
     id: string;
@@ -72,7 +68,6 @@ interface BlueprintQueryResponse {
   }>;
 }
 
-// Parse blueprint metadata from IPFS or other URI
 const fetchBlueprintMetadata = async (
   metadataUri: string | null,
 ): Promise<{
@@ -97,7 +92,6 @@ const fetchBlueprintMetadata = async (
   }
 
   try {
-    // Handle IPFS URIs
     let fetchUrl = metadataUri;
     if (metadataUri.startsWith('ipfs://')) {
       const cid = metadataUri.replace('ipfs://', '');
@@ -136,7 +130,6 @@ const fetchBlueprintMetadata = async (
   }
 };
 
-// Fetch blueprints from GraphQL
 const fetchBlueprints = async (
   network?: EnvioNetwork,
   activeOnly = true,
@@ -190,7 +183,6 @@ const fetchBlueprints = async (
   }));
 };
 
-// Fetch single blueprint by ID
 const fetchBlueprintById = async (
   blueprintId: string,
   network?: EnvioNetwork,
@@ -236,9 +228,6 @@ const fetchBlueprintById = async (
   };
 };
 
-/**
- * Hook to fetch all blueprints from the indexer.
- */
 export const useBlueprints = (options?: {
   network?: EnvioNetwork;
   activeOnly?: boolean;
@@ -259,14 +248,10 @@ export const useBlueprints = (options?: {
       return blueprints;
     },
     enabled,
-    staleTime: 60_000, // 1 minute
+    staleTime: 60_000,
   });
 };
 
-/**
- * Hook to fetch blueprints with metadata from their URIs.
- * This does an additional fetch for each blueprint's metadataUri.
- */
 export const useBlueprintsWithMetadata = (options?: {
   network?: EnvioNetwork;
   activeOnly?: boolean;
@@ -285,25 +270,18 @@ export const useBlueprintsWithMetadata = (options?: {
     queryFn: async () => {
       const blueprints = await fetchBlueprints(network, activeOnly, limit, 0);
 
-      // Fetch metadata for all blueprints in parallel
-      const blueprintsWithMetadata = await Promise.all(
+      return Promise.all(
         blueprints.map(async (bp): Promise<BlueprintWithMetadata> => {
           const metadata = await fetchBlueprintMetadata(bp.metadataUri);
           return { ...bp, ...metadata };
         }),
       );
-
-      return blueprintsWithMetadata;
     },
     enabled,
-    staleTime: 300_000, // 5 minutes - metadata doesn't change often
+    staleTime: 300_000,
   });
 };
 
-/**
- * Hook to fetch blueprints as a Map keyed by blueprint ID string.
- * Returns data in the format expected by existing components (app Blueprint type).
- */
 export const useBlueprintMap = (options?: {
   network?: EnvioNetwork;
   activeOnly?: boolean;
@@ -323,9 +301,6 @@ export const useBlueprintMap = (options?: {
   };
 };
 
-/**
- * Type for useAllBlueprints return value.
- */
 export type UseAllBlueprintsReturn = {
   blueprints: Map<string, AppBlueprint>;
   isLoading: boolean;
@@ -333,10 +308,6 @@ export type UseAllBlueprintsReturn = {
   refetch: () => Promise<unknown>;
 };
 
-/**
- * Hook to fetch all blueprints with metadata.
- * Returns data in the format expected by existing components.
- */
 export const useAllBlueprints = (options?: {
   network?: EnvioNetwork;
   activeOnly?: boolean;
@@ -352,9 +323,6 @@ export const useAllBlueprints = (options?: {
   };
 };
 
-/**
- * Hook to fetch a single blueprint by ID.
- */
 export const useBlueprint = (
   blueprintId: string | undefined,
   options?: {
@@ -380,12 +348,11 @@ export const useBlueprint = (
   });
 };
 
-// Operator info for blueprint details (compatible with RestakeOperator type)
 export interface BlueprintOperator {
-  address: string; // EVM address
+  address: string;
   identityName?: string;
   concentrationPercentage: number | null;
-  restakersCount: number;
+  stakersCount: number;
   selfBondedAmount: bigint;
   tvlInUsd: number | null;
   vaultTokens: Array<{
@@ -398,28 +365,28 @@ export interface BlueprintOperator {
   instanceCount: number;
 }
 
-// Blueprint details response
 export interface BlueprintDetailsResult {
   details: AppBlueprint;
   operators: BlueprintOperator[];
 }
 
-// Fetch operators registered for a blueprint
 const fetchBlueprintOperators = async (
   blueprintId: string,
   network?: EnvioNetwork,
 ): Promise<BlueprintOperator[]> => {
-  // Note: blueprintId in the GraphQL schema is type `numeric`, not `String`
   const query = `
     query GetBlueprintOperators($blueprintId: numeric!) {
       OperatorBlueprint(
-        where: { blueprint: { blueprintId: { _eq: $blueprintId } } }
+        where: {
+          blueprint: { blueprintId: { _eq: $blueprintId } }
+          active: { _eq: true }
+        }
       ) {
         operator {
           id
-          restakingDelegationCount
-          restakingStake
-          restakingStatus
+          stakingDelegationCount
+          stakingStake
+          stakingStatus
         }
       }
     }
@@ -431,9 +398,9 @@ const fetchBlueprintOperators = async (
         OperatorBlueprint: Array<{
           operator: {
             id: string;
-            restakingDelegationCount: string | null;
-            restakingStake: string | null;
-            restakingStatus: string | null;
+            stakingDelegationCount: string | null;
+            stakingStake: string | null;
+            stakingStatus: string | null;
           };
         }>;
       },
@@ -444,10 +411,10 @@ const fetchBlueprintOperators = async (
       address: ob.operator.id,
       identityName: undefined,
       concentrationPercentage: null,
-      restakersCount: Number(ob.operator.restakingDelegationCount ?? '0'),
-      selfBondedAmount: BigInt(ob.operator.restakingStake ?? '0'),
+      stakersCount: Number(ob.operator.stakingDelegationCount ?? '0'),
+      selfBondedAmount: BigInt(ob.operator.stakingStake ?? '0'),
       tvlInUsd: null,
-      vaultTokens: [], // Will be populated when we have delegation data
+      vaultTokens: [],
       isDelegated: false,
       instanceCount: 0,
     }));
@@ -457,9 +424,6 @@ const fetchBlueprintOperators = async (
   }
 };
 
-/**
- * Hook to fetch a single blueprint with its registered operators.
- */
 export const useBlueprintDetails = (
   blueprintId: bigint | undefined,
   options?: {

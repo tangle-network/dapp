@@ -19,25 +19,25 @@ import { erc20Abi, formatUnits, parseUnits, zeroAddress, Address } from 'viem';
 import { BN } from '@polkadot/util';
 import { useChainId } from 'wagmi';
 import ErrorMessage from '@tangle-network/tangle-shared-ui/components/ErrorMessage';
-import ActionButtonBase from '../../../components/restaking/ActionButtonBase';
-import StyleContainer from '../../../components/restaking/StyleContainer';
-import { SUPPORTED_RESTAKE_DEPOSIT_TYPED_CHAIN_IDS } from '../../../constants/restake';
+import ActionButtonBase from '../../../components/staking/ActionButtonBase';
+import StyleContainer from '../../../components/staking/StyleContainer';
+import { SUPPORTED_STAKING_DEPOSIT_TYPED_CHAIN_IDS } from '../../../constants/staking';
 import useActiveTypedChainId from '../../../hooks/useActiveTypedChainId';
-import { EvmDepositFormFields } from '../../../types/restake';
+import { EvmDepositFormFields } from '../../../types/staking';
 import { QueryParamKey } from '../../../types';
 import useQueryState from '../../../hooks/useQueryState';
 import decimalsToStep from '../../../utils/decimalsToStep';
 import AssetPlaceholder from '../AssetPlaceholder';
-import RestakeActionTabs from '../RestakeActionTabs';
+import StakingActionTabs from '../StakingActionTabs';
 import SupportedChainModal from '../SupportedChainModal';
 import useSwitchChain from '../useSwitchChain';
 import Details from './Details';
 import filterBy from '@tangle-network/tangle-shared-ui/utils/filterBy';
 import AssetListItem from '../../../components/Lists/AssetListItem';
 import { TxStatus } from '@tangle-network/tangle-shared-ui/hooks/useContractWrite';
-import type { RestakeAsset } from '@tangle-network/tangle-shared-ui/data/graphql';
-import { useOptionalRestakeContext } from '@tangle-network/tangle-shared-ui/context/RestakeContext';
-import { useRestakeAssets } from '@tangle-network/tangle-shared-ui/data/graphql';
+import type { StakingAsset } from '@tangle-network/tangle-shared-ui/data/graphql';
+import { useOptionalStakingContext } from '@tangle-network/tangle-shared-ui/context/StakingContext';
+import { useStakingAssets } from '@tangle-network/tangle-shared-ui/data/graphql';
 import {
   useContractWrite,
   useDepositTx,
@@ -46,11 +46,19 @@ import { chainsConfig } from '@tangle-network/dapp-config/chains';
 import { getContractsByChainId } from '@tangle-network/dapp-config/contracts';
 import type { LockDuration } from '@tangle-network/tangle-shared-ui/data/graphql/useDelegator';
 
+const safeParseUnits = (value: string, decimals: number): bigint | null => {
+  try {
+    return parseUnits(value, decimals);
+  } catch {
+    return null;
+  }
+};
+
 const getDefaultTypedChainId = (activeTypedChainId: number | null): number => {
   return isDefined(activeTypedChainId) &&
-    SUPPORTED_RESTAKE_DEPOSIT_TYPED_CHAIN_IDS.includes(activeTypedChainId)
+    SUPPORTED_STAKING_DEPOSIT_TYPED_CHAIN_IDS.includes(activeTypedChainId)
     ? activeTypedChainId
-    : SUPPORTED_RESTAKE_DEPOSIT_TYPED_CHAIN_IDS[0];
+    : SUPPORTED_STAKING_DEPOSIT_TYPED_CHAIN_IDS[0];
 };
 
 const DepositForm: FC = () => {
@@ -75,24 +83,21 @@ const DepositForm: FC = () => {
   const switchChain = useSwitchChain();
 
   // Read asset ID from URL query parameter
-  const [assetIdParam] = useQueryState(QueryParamKey.RESTAKE_ASSET_ID);
+  const [assetIdParam] = useQueryState(QueryParamKey.STAKING_ASSET_ID);
 
-  // Try to use context first (if within RestakeProvider), fall back to hook
-  const restakeContext = useOptionalRestakeContext();
-  const directAssets = useRestakeAssets({ enabled: !restakeContext });
+  // Try to use context first (if within StakingProvider), fall back to hook
+  const stakingContext = useOptionalStakingContext();
+  const directAssets = useStakingAssets({ enabled: !stakingContext });
 
-  // Use context data if available, otherwise use direct fetch
-  const {
-    assets,
-    isLoading: isLoadingAssets,
-    refetchBalances,
-  } = restakeContext
-    ? {
-        assets: restakeContext.assets,
-        isLoading: restakeContext.isLoadingAssets,
-        refetchBalances: restakeContext.refetchBalances,
-      }
-    : directAssets;
+  // Use context data if available, otherwise use direct fetch.
+  const rawAssets = stakingContext ? stakingContext.assets : directAssets.assets;
+  const assets = (rawAssets ?? null) as Map<Address, StakingAsset> | null;
+  const isLoadingAssets = stakingContext
+    ? stakingContext.isLoadingAssets
+    : directAssets.isLoading;
+  const refetchBalances = stakingContext
+    ? stakingContext.refetchBalances
+    : directAssets.refetchBalances;
 
   const {
     register,
@@ -140,7 +145,7 @@ const DepositForm: FC = () => {
     }
 
     // Fallback: select first asset with balance
-    const defaultAsset = Array.from(assets.values()).find(
+    const defaultAsset = (Array.from(assets.values()) as StakingAsset[]).find(
       ({ balance }) => balance !== null && balance > BigInt(0),
     );
 
@@ -165,12 +170,12 @@ const DepositForm: FC = () => {
     update: updateChainModal,
   } = useModal();
 
-  const allAssets = useMemo(() => {
+  const allAssets = useMemo<StakingAsset[]>(() => {
     if (assets === null) {
       return [];
     }
 
-    return Array.from(assets.values()).sort((a, b) => {
+    return (Array.from(assets.values()) as StakingAsset[]).sort((a, b) => {
       const aBalance = a.balance ?? BigInt(0);
       const bBalance = b.balance ?? BigInt(0);
 
@@ -194,18 +199,14 @@ const DepositForm: FC = () => {
     return assets.get(assetId) ?? null;
   }, [assetId, assets]);
 
-  const { maxAmount, formattedMaxAmount } = useMemo(() => {
+  const { maxAmount, maxAmountInputValue } = useMemo(() => {
     if (!asset || asset.balance === null) {
-      return { maxAmount: undefined, formattedMaxAmount: undefined };
+      return { maxAmount: undefined, maxAmountInputValue: undefined };
     }
-
-    const formatted = Number(
-      formatUnits(asset.balance, asset.metadata.decimals),
-    );
 
     return {
       maxAmount: asset.balance,
-      formattedMaxAmount: formatted,
+      maxAmountInputValue: formatUnits(asset.balance, asset.metadata.decimals),
     };
   }, [asset]);
 
@@ -253,7 +254,8 @@ const DepositForm: FC = () => {
         required: 'Amount is required',
         validate: (value) => {
           if (!asset) return 'Select an asset first';
-          const parsed = parseUnits(value, asset.metadata.decimals);
+          const parsed = safeParseUnits(value, asset.metadata.decimals);
+          if (parsed === null) return 'Enter a valid amount';
           if (parsed <= BigInt(0)) return 'Amount must be greater than 0';
           if (maxAmount && parsed > maxAmount) return 'Insufficient balance';
           return true;
@@ -273,7 +275,7 @@ const DepositForm: FC = () => {
   }, [errors.depositAssetId, errors.amount, assetId, amount]);
 
   const handleAssetSelection = useCallback(
-    (selectedAsset: RestakeAsset) => {
+    (selectedAsset: StakingAsset) => {
       setValue('depositAssetId', selectedAsset.id);
       closeTokenModal();
     },
@@ -344,7 +346,10 @@ const DepositForm: FC = () => {
         return;
       }
 
-      const amountBigInt = parseUnits(amount, asset.metadata.decimals);
+      const amountBigInt = safeParseUnits(amount, asset.metadata.decimals);
+      if (amountBigInt === null) {
+        return;
+      }
 
       if (amountBigInt <= BigInt(0)) {
         return;
@@ -408,7 +413,7 @@ const DepositForm: FC = () => {
 
   return (
     <StyleContainer>
-      <RestakeActionTabs />
+      <StakingActionTabs />
 
       <Card withShadow tightPadding className="relative md:min-w-[512px]">
         <form className="space-y-4" onSubmit={handleSubmit(onSubmit)}>
@@ -440,7 +445,7 @@ const DepositForm: FC = () => {
                     : {})}
                 />
                 <TransactionInputCard.MaxAmountButton
-                  maxAmount={formattedMaxAmount}
+                  maxAmount={maxAmountInputValue}
                   tooltipBody="Available Balance"
                   Icon={
                     useRef({
@@ -448,13 +453,6 @@ const DepositForm: FC = () => {
                       disabled: <LockFillIcon />,
                     }).current
                   }
-                  onClick={() => {
-                    if (formattedMaxAmount !== undefined) {
-                      setValue('amount', formattedMaxAmount.toString(), {
-                        shouldValidate: true,
-                      });
-                    }
-                  }}
                 />
               </TransactionInputCard.Header>
 
@@ -504,7 +502,7 @@ const DepositForm: FC = () => {
             {(isLoading, loadingText) => {
               const activeChainSupported =
                 isDefined(activeTypedChainId) &&
-                SUPPORTED_RESTAKE_DEPOSIT_TYPED_CHAIN_IDS.includes(
+                SUPPORTED_STAKING_DEPOSIT_TYPED_CHAIN_IDS.includes(
                   activeTypedChainId,
                 );
 
@@ -551,7 +549,7 @@ const DepositForm: FC = () => {
         </form>
       </Card>
 
-      <ListModal
+      <ListModal<StakingAsset>
         title="Select Asset"
         isOpen={tokenModalOpen}
         setIsOpen={updateTokenModal}
@@ -563,7 +561,7 @@ const DepositForm: FC = () => {
             assetItem.metadata.symbol,
           ])
         }
-        searchInputId="restake-deposit-assets-search"
+        searchInputId="staking-deposit-assets-search"
         searchPlaceholder="Search assets..."
         titleWhenEmpty="No Assets Found"
         descriptionWhenEmpty="It seems that there are no available assets on this account in this network yet. Please try again later."

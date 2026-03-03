@@ -19,17 +19,17 @@ import { BN } from '@polkadot/util';
 import { useAccount, useBlockNumber, useChainId, usePublicClient } from 'wagmi';
 import { useQuery } from '@tanstack/react-query';
 import ErrorMessage from '@tangle-network/tangle-shared-ui/components/ErrorMessage';
-import RestakeDetailCard from '../../../components/RestakeDetailCard';
-import ActionButtonBase from '../../../components/restaking/ActionButtonBase';
-import StyleContainer from '../../../components/restaking/StyleContainer';
-import { SUPPORTED_RESTAKE_DEPOSIT_TYPED_CHAIN_IDS } from '../../../constants/restake';
+import StakingDetailCard from '../../../components/StakingDetailCard';
+import ActionButtonBase from '../../../components/staking/ActionButtonBase';
+import StyleContainer from '../../../components/staking/StyleContainer';
+import { SUPPORTED_STAKING_DEPOSIT_TYPED_CHAIN_IDS } from '../../../constants/staking';
 import useActiveTypedChainId from '../../../hooks/useActiveTypedChainId';
-import type { EvmWithdrawFormFields } from '../../../types/restake';
+import type { EvmWithdrawFormFields } from '../../../types/staking';
 import decimalsToStep from '../../../utils/decimalsToStep';
 import { AnimatedTable } from '../AnimatedTable';
 import AssetPlaceholder from '../AssetPlaceholder';
 import { ExpandTableButton } from '../ExpandTableButton';
-import RestakeActionTabs from '../RestakeActionTabs';
+import StakingActionTabs from '../StakingActionTabs';
 import SupportedChainModal from '../SupportedChainModal';
 import useSwitchChain from '../useSwitchChain';
 import Details from './Details';
@@ -39,7 +39,8 @@ import { twMerge } from 'tailwind-merge';
 import {
   useDelegator,
   useProtocolConfig,
-  useRestakeAssets,
+  useStakingAssets,
+  type StakingAsset,
   type WithdrawRequest,
 } from '@tangle-network/tangle-shared-ui/data/graphql';
 import {
@@ -68,7 +69,15 @@ type AssetPositionItem = {
   availableToWithdraw: bigint; // min(available, free) at current lock state
 };
 
-const RestakeWithdrawForm: FC = () => {
+const safeParseUnits = (value: string, decimals: number): bigint | null => {
+  try {
+    return parseUnits(value, decimals);
+  } catch {
+    return null;
+  }
+};
+
+const StakingWithdrawForm: FC = () => {
   const { address: userAddress } = useAccount();
   const chainId = useChainId();
   const activeChain = useMemo(() => {
@@ -119,26 +128,27 @@ const RestakeWithdrawForm: FC = () => {
   // Fetch delegator data
   const { data: delegator, refetch: refetchDelegator } =
     useDelegator(userAddress);
-  const { assets: restakeAssets } = useRestakeAssets({
+  const { assets: stakingAssets } = useStakingAssets({
     enabled: Boolean(userAddress),
   });
 
-  // Get token addresses from enabled restake assets (on-chain contracts need this even if indexer lags)
+  // Get token addresses from enabled staking assets (on-chain contracts need this even if indexer lags)
   const tokenAddresses = useMemo(() => {
-    if (!restakeAssets) return [];
-    return Array.from(restakeAssets.keys()) as EvmAddress[];
-  }, [restakeAssets]);
+    if (!stakingAssets) return [];
+    return Array.from(stakingAssets.keys()) as EvmAddress[];
+  }, [stakingAssets]);
 
   const tokenMetadatas = useMemo(() => {
-    if (!restakeAssets) return undefined;
+    if (!stakingAssets) return undefined;
+    const stakingAssetList = Array.from(stakingAssets.values()) as StakingAsset[];
 
-    return Array.from(restakeAssets.values()).map((asset) => ({
+    return stakingAssetList.map((asset) => ({
       id: asset.id as unknown as EvmAddress,
       name: asset.metadata.name,
       symbol: asset.metadata.symbol,
       decimals: asset.metadata.decimals,
     }));
-  }, [restakeAssets]);
+  }, [stakingAssets]);
 
   const contracts = useMemo(() => {
     try {
@@ -153,7 +163,7 @@ const RestakeWithdrawForm: FC = () => {
   // Fetch deposit amounts from getDeposit
   const { data: depositAmountMap, refetch: refetchDeposits } = useQuery({
     queryKey: [
-      'restake',
+      'staking',
       'withdraw',
       'deposits',
       chainId,
@@ -202,7 +212,7 @@ const RestakeWithdrawForm: FC = () => {
 
   // Fetch actual delegated amounts from getDelegations (getDeposit.delegatedAmount is not reliable)
   const { data: delegatedAmountMap } = useQuery({
-    queryKey: ['restake', 'withdraw', 'delegations', chainId, userAddress],
+    queryKey: ['staking', 'withdraw', 'delegations', chainId, userAddress],
     queryFn: async () => {
       const map = new Map<string, bigint>();
 
@@ -260,7 +270,7 @@ const RestakeWithdrawForm: FC = () => {
   const { data: lockResults, refetch: refetchLocks } =
     useResilientReadContracts({
       queryKey: [
-        'restake',
+        'staking',
         'withdraw',
         'locks',
         chainId,
@@ -310,9 +320,6 @@ const RestakeWithdrawForm: FC = () => {
     return map;
   }, [currentBlockNumber, lockResults, tokenAddresses]);
 
-  const [selectedAssetPosition, setSelectedAssetPosition] =
-    useState<AssetPositionItem | null>(null);
-
   const selectedAssetId = watch('assetId');
   const amount = watch('amount');
 
@@ -323,7 +330,7 @@ const RestakeWithdrawForm: FC = () => {
     refetch: refetchOnChainWithdrawals,
   } = useResilientReadContract({
     queryKey: [
-      'restake',
+      'staking',
       'withdraw',
       'pendingWithdrawals',
       chainId,
@@ -353,7 +360,10 @@ const RestakeWithdrawForm: FC = () => {
       Array.isArray(onChainPendingWithdrawals) &&
       onChainPendingWithdrawals.length > 0
     ) {
-      const delayRounds = protocolConfig?.leaveDelegatorsDelay ?? BigInt(0);
+      const delayRounds =
+        protocolConfig?.isSupported === true
+          ? protocolConfig.leaveDelegatorsDelay
+          : BigInt(0);
       return (
         onChainPendingWithdrawals as Array<{
           asset: { kind: number; token: Address };
@@ -381,11 +391,7 @@ const RestakeWithdrawForm: FC = () => {
     return (
       delegator?.withdrawRequests.filter((r) => r.status === 'PENDING') ?? []
     );
-  }, [
-    delegator?.withdrawRequests,
-    onChainPendingWithdrawals,
-    protocolConfig?.leaveDelegatorsDelay,
-  ]);
+  }, [delegator?.withdrawRequests, onChainPendingWithdrawals, protocolConfig]);
 
   // Build asset position items with metadata
   const assetPositionItems = useMemo<AssetPositionItem[]>(() => {
@@ -432,21 +438,30 @@ const RestakeWithdrawForm: FC = () => {
     });
   }, [depositMap, lockedMap, tokenAddresses, tokenMetadatas]);
 
-  const { maxAmount, formattedMaxAmount } = useMemo(() => {
-    if (!selectedAssetPosition) {
-      return { maxAmount: undefined, formattedMaxAmount: undefined };
+  const selectedAssetPosition = useMemo(() => {
+    if (!selectedAssetId) {
+      return null;
     }
 
-    const formatted = Number(
-      formatUnits(
-        selectedAssetPosition.availableToWithdraw,
-        selectedAssetPosition.tokenDecimals,
-      ),
+    const selectedToken = selectedAssetId.toLowerCase();
+    return (
+      assetPositionItems.find(
+        (item) => item.token.toLowerCase() === selectedToken,
+      ) ?? null
     );
+  }, [assetPositionItems, selectedAssetId]);
+
+  const { maxAmount, maxAmountInputValue } = useMemo(() => {
+    if (!selectedAssetPosition) {
+      return { maxAmount: undefined, maxAmountInputValue: undefined };
+    }
 
     return {
       maxAmount: selectedAssetPosition.availableToWithdraw,
-      formattedMaxAmount: formatted,
+      maxAmountInputValue: formatUnits(
+        selectedAssetPosition.availableToWithdraw,
+        selectedAssetPosition.tokenDecimals,
+      ),
     };
   }, [selectedAssetPosition]);
 
@@ -460,7 +475,11 @@ const RestakeWithdrawForm: FC = () => {
         required: 'Amount is required',
         validate: (value) => {
           if (!selectedAssetPosition) return 'Select an asset first';
-          const parsed = parseUnits(value, selectedAssetPosition.tokenDecimals);
+          const parsed = safeParseUnits(
+            value,
+            selectedAssetPosition.tokenDecimals,
+          );
+          if (parsed === null) return 'Enter a valid amount';
           if (parsed <= BigInt(0)) return 'Amount must be greater than 0';
           if (maxAmount && parsed > maxAmount)
             return 'Exceeds available amount';
@@ -497,10 +516,13 @@ const RestakeWithdrawForm: FC = () => {
         return;
       }
 
-      const amountBigInt = parseUnits(
+      const amountBigInt = safeParseUnits(
         amount,
         selectedAssetPosition.tokenDecimals,
       );
+      if (amountBigInt === null) {
+        return;
+      }
 
       await executeScheduleWithdraw({
         token: assetId,
@@ -515,7 +537,6 @@ const RestakeWithdrawForm: FC = () => {
       ]);
       setFormValue('amount', '', { shouldValidate: false });
       setFormValue('assetId', '' as Address, { shouldValidate: false });
-      setSelectedAssetPosition(null);
     },
     [
       executeScheduleWithdraw,
@@ -535,7 +556,6 @@ const RestakeWithdrawForm: FC = () => {
         shouldDirty: true,
         shouldValidate: true,
       });
-      setSelectedAssetPosition(item);
       closeAssetModal();
     },
     [closeAssetModal, setFormValue],
@@ -544,7 +564,7 @@ const RestakeWithdrawForm: FC = () => {
   return (
     <div className="grid items-start justify-center gap-4 max-md:grid-cols-1 md:auto-cols-auto md:grid-flow-col">
       <StyleContainer>
-        <RestakeActionTabs />
+        <StakingActionTabs />
 
         <Card withShadow tightPadding className="relative md:min-w-[512px]">
           {!isWithdrawRequestTableOpen && (
@@ -585,7 +605,7 @@ const RestakeWithdrawForm: FC = () => {
                       : {})}
                   />
                   <TransactionInputCard.MaxAmountButton
-                    maxAmount={formattedMaxAmount}
+                    maxAmount={maxAmountInputValue}
                     tooltipBody="Available Balance"
                     Icon={
                       useRef({
@@ -593,13 +613,6 @@ const RestakeWithdrawForm: FC = () => {
                         disabled: <LockFillIcon />,
                       }).current
                     }
-                    onClick={() => {
-                      if (formattedMaxAmount !== undefined) {
-                        setFormValue('amount', formattedMaxAmount.toString(), {
-                          shouldValidate: true,
-                        });
-                      }
-                    }}
                   />
                 </TransactionInputCard.Header>
 
@@ -638,7 +651,7 @@ const RestakeWithdrawForm: FC = () => {
               {(isLoading, loadingText) => {
                 const activeChainSupported =
                   isDefined(activeTypedChainId) &&
-                  SUPPORTED_RESTAKE_DEPOSIT_TYPED_CHAIN_IDS.includes(
+                  SUPPORTED_STAKING_DEPOSIT_TYPED_CHAIN_IDS.includes(
                     activeTypedChainId,
                   );
 
@@ -714,7 +727,7 @@ const RestakeWithdrawForm: FC = () => {
         titleWhenEmpty="No Assets Available"
         descriptionWhenEmpty="You don't have any deposited assets available to withdraw."
         items={assetPositionItems}
-        searchInputId="restake-withdraw-asset-search"
+        searchInputId="staking-withdraw-asset-search"
         searchPlaceholder="Search assets..."
         getItemKey={(item) => item.id}
         onSelect={handleAssetSelect}
@@ -750,7 +763,7 @@ const RestakeWithdrawForm: FC = () => {
   );
 };
 
-export default RestakeWithdrawForm;
+export default StakingWithdrawForm;
 
 // Withdraw requests view component
 type WithdrawRequestViewProps = {
@@ -771,7 +784,8 @@ const WithdrawRequestView: FC<WithdrawRequestViewProps> = ({
   className,
 }) => {
   const { data: config } = useProtocolConfig();
-  const currentRound = config?.currentRound ?? BigInt(0);
+  const currentRound =
+    config?.isSupported === true ? config.currentRound : BigInt(0);
   const readyCount = withdrawRequests.filter(
     (r) => r.readyAtRound <= currentRound,
   ).length;
@@ -781,9 +795,9 @@ const WithdrawRequestView: FC<WithdrawRequestViewProps> = ({
   const isExecuting = executeStatus === TxStatus.PROCESSING;
 
   return (
-    <RestakeDetailCard.Root className={twMerge('!min-w-0', className)}>
+    <StakingDetailCard.Root className={twMerge('!min-w-0', className)}>
       <div className="flex items-center justify-between gap-2">
-        <RestakeDetailCard.Header
+        <StakingDetailCard.Header
           title={
             withdrawRequests.length > 0
               ? 'Withdrawal Requests'
@@ -856,6 +870,6 @@ const WithdrawRequestView: FC<WithdrawRequestViewProps> = ({
           can be executed after the waiting period.
         </Typography>
       )}
-    </RestakeDetailCard.Root>
+    </StakingDetailCard.Root>
   );
 };

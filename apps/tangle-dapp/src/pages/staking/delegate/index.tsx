@@ -25,18 +25,18 @@ import { BN } from '@polkadot/util';
 import { useAccount, useChainId, usePublicClient } from 'wagmi';
 import { useQuery } from '@tanstack/react-query';
 import ErrorMessage from '@tangle-network/tangle-shared-ui/components/ErrorMessage';
-import ActionButtonBase from '../../../components/restaking/ActionButtonBase';
-import BlueprintSelection from '../../../components/restaking/BlueprintSelection';
-import StyleContainer from '../../../components/restaking/StyleContainer';
-import { SUPPORTED_RESTAKE_DEPOSIT_TYPED_CHAIN_IDS } from '../../../constants/restake';
+import ActionButtonBase from '../../../components/staking/ActionButtonBase';
+import BlueprintSelection from '../../../components/staking/BlueprintSelection';
+import StyleContainer from '../../../components/staking/StyleContainer';
+import { SUPPORTED_STAKING_DEPOSIT_TYPED_CHAIN_IDS } from '../../../constants/staking';
 import useBlueprintStore from '../../../context/useBlueprintStore';
 import useActiveTypedChainId from '../../../hooks/useActiveTypedChainId';
 import useQueryState from '../../../hooks/useQueryState';
 import { QueryParamKey } from '../../../types';
-import type { EvmDelegationFormFields } from '../../../types/restake';
+import type { EvmDelegationFormFields } from '../../../types/staking';
 import decimalsToStep from '../../../utils/decimalsToStep';
 import AssetPlaceholder from '../AssetPlaceholder';
-import RestakeActionTabs from '../RestakeActionTabs';
+import StakingActionTabs from '../StakingActionTabs';
 import SupportedChainModal from '../SupportedChainModal';
 import useSwitchChain from '../useSwitchChain';
 import Details from './Details';
@@ -46,7 +46,8 @@ import OperatorListItem from '../../../components/Lists/OperatorListItem';
 
 import {
   useOperatorMap,
-  useRestakeAssets,
+  useStakingAssets,
+  type StakingAsset,
 } from '@tangle-network/tangle-shared-ui/data/graphql';
 import { useDelegateTx } from '@tangle-network/tangle-shared-ui/data/tx';
 import { TxStatus } from '@tangle-network/tangle-shared-ui/hooks/useContractWrite';
@@ -54,8 +55,8 @@ import MULTI_ASSET_DELEGATION_ABI from '@tangle-network/tangle-shared-ui/abi/mul
 import { getContractsByChainId } from '@tangle-network/dapp-config/contracts';
 import useCanDelegate, {
   DelegationMode,
-} from '@tangle-network/tangle-shared-ui/data/restake/useCanDelegate';
-import useCanDelegateToOperators from '@tangle-network/tangle-shared-ui/data/restake/useCanDelegateToOperators';
+} from '@tangle-network/tangle-shared-ui/data/staking/useCanDelegate';
+import useCanDelegateToOperators from '@tangle-network/tangle-shared-ui/data/staking/useCanDelegateToOperators';
 
 type AssetItem = {
   id: Address;
@@ -76,7 +77,15 @@ type OperatorItem = {
   canDelegate?: boolean;
 };
 
-const RestakeDelegateForm: FC = () => {
+const safeParseUnits = (value: string, decimals: number): bigint | null => {
+  try {
+    return parseUnits(value, decimals);
+  } catch {
+    return null;
+  }
+};
+
+const StakingDelegateForm: FC = () => {
   const { address: userAddress } = useAccount();
   const chainId = useChainId();
   const activeTypedChainId = useActiveTypedChainId();
@@ -98,7 +107,7 @@ const RestakeDelegateForm: FC = () => {
   const amount = watch('amount');
 
   const [operatorParam, setOperatorParam] = useQueryState(
-    QueryParamKey.RESTAKE_OPERATOR,
+    QueryParamKey.STAKING_OPERATOR,
   );
 
   const setValue = useFormSetValue(setFormValue);
@@ -112,16 +121,16 @@ const RestakeDelegateForm: FC = () => {
     reset();
   }, [activeTypedChainId, reset]);
 
-  const { assets: restakeAssets } = useRestakeAssets({
+  const { assets: stakingAssets } = useStakingAssets({
     enabled: Boolean(userAddress),
   });
   const { data: operatorMap } = useOperatorMap();
   const blueprintSelection = useBlueprintStore((store) => store.selection);
 
-  const tokenAddresses = useMemo(() => {
-    if (!restakeAssets) return [];
-    return Array.from(restakeAssets.keys());
-  }, [restakeAssets]);
+  const tokenAddresses = useMemo<Address[]>(() => {
+    if (!stakingAssets) return [];
+    return Array.from(stakingAssets.keys()) as Address[];
+  }, [stakingAssets]);
 
   const contracts = useMemo(() => {
     try {
@@ -136,7 +145,7 @@ const RestakeDelegateForm: FC = () => {
   // Fetch deposit data from getDeposit (includes both amount and delegatedAmount)
   const { data: depositMap, refetch: refetchDeposits } = useQuery({
     queryKey: [
-      'restake',
+      'staking',
       'delegate',
       'deposits',
       chainId,
@@ -196,7 +205,7 @@ const RestakeDelegateForm: FC = () => {
   // Get operator addresses for fetching delegation info
   const operatorAddresses = useMemo(() => {
     if (!operatorMap) return [];
-    return Array.from(operatorMap.keys());
+    return Array.from(operatorMap.keys()) as Address[];
   }, [operatorMap]);
 
   // Fetch delegation info (canDelegate, mode, whitelist status) for all operators
@@ -254,13 +263,13 @@ const RestakeDelegateForm: FC = () => {
   } = useModal(false);
 
   const depositedAssets = useMemo<AssetItem[]>(() => {
-    if (!restakeAssets || !depositMap) {
+    if (!stakingAssets || !depositMap) {
       return [];
     }
 
     return tokenAddresses
       .map((token) => {
-        const asset = restakeAssets.get(token);
+        const asset = stakingAssets.get(token) as StakingAsset | undefined;
         const deposit = depositMap.get(token.toLowerCase());
 
         if (!asset || !deposit) {
@@ -286,7 +295,7 @@ const RestakeDelegateForm: FC = () => {
         };
       })
       .filter((item): item is AssetItem => item !== null);
-  }, [depositMap, restakeAssets, tokenAddresses]);
+  }, [depositMap, stakingAssets, tokenAddresses]);
 
   // Derive selectedAssetItem from depositedAssets to ensure it updates when metadata loads
   const selectedAssetItem = useMemo(() => {
@@ -328,13 +337,13 @@ const RestakeDelegateForm: FC = () => {
     if (!operatorMap) return [];
 
     const operatorList = Array.from(operatorMap.entries())
-      .filter(([, op]) => op.restakingStatus === 'ACTIVE')
+      .filter(([, op]) => op.stakingStatus === 'ACTIVE')
       .map(([address, op]) => {
         const info = delegationInfo.get(address);
         return {
           address,
-          stake: op.restakingStake ?? BigInt(0),
-          delegationCount: op.restakingDelegationCount ?? BigInt(0),
+          stake: op.stakingStake ?? BigInt(0),
+          delegationCount: op.stakingDelegationCount ?? BigInt(0),
           isActive: true,
           delegationMode: info?.delegationMode,
           canDelegate: info?.canDelegate,
@@ -391,21 +400,17 @@ const RestakeDelegateForm: FC = () => {
     [closeOperatorModal, setValue],
   );
 
-  const { maxAmount, formattedMaxAmount } = useMemo(() => {
+  const { maxAmount, maxAmountInputValue } = useMemo(() => {
     if (!selectedAssetItem) {
-      return { maxAmount: undefined, formattedMaxAmount: undefined };
+      return { maxAmount: undefined, maxAmountInputValue: undefined };
     }
-
-    const formatted = Number(
-      formatUnits(
-        selectedAssetItem.availableBalance,
-        selectedAssetItem.decimals,
-      ),
-    );
 
     return {
       maxAmount: selectedAssetItem.availableBalance,
-      formattedMaxAmount: formatted,
+      maxAmountInputValue: formatUnits(
+        selectedAssetItem.availableBalance,
+        selectedAssetItem.decimals,
+      ),
     };
   }, [selectedAssetItem]);
 
@@ -419,7 +424,8 @@ const RestakeDelegateForm: FC = () => {
         required: 'Amount is required',
         validate: (value) => {
           if (!selectedAssetItem) return 'Select an asset first';
-          const parsed = parseUnits(value, selectedAssetItem.decimals);
+          const parsed = safeParseUnits(value, selectedAssetItem.decimals);
+          if (parsed === null) return 'Enter a valid amount';
           if (parsed <= BigInt(0)) return 'Amount must be greater than 0';
           if (maxAmount && parsed > maxAmount) return 'Insufficient balance';
           return true;
@@ -495,7 +501,10 @@ const RestakeDelegateForm: FC = () => {
         return;
       }
 
-      const amountBigInt = parseUnits(amount, selectedAssetItem.decimals);
+      const amountBigInt = safeParseUnits(amount, selectedAssetItem.decimals);
+      if (amountBigInt === null) {
+        return;
+      }
 
       if (amountBigInt <= BigInt(0)) {
         return;
@@ -527,7 +536,7 @@ const RestakeDelegateForm: FC = () => {
 
   return (
     <StyleContainer>
-      <RestakeActionTabs />
+      <StakingActionTabs />
 
       <Card withShadow tightPadding className="relative md:min-w-[512px]">
         <form className="space-y-4" onSubmit={handleSubmit(onSubmit)}>
@@ -596,9 +605,9 @@ const RestakeDelegateForm: FC = () => {
                                     DelegationMode.Disabled
                                     ? 'Not accepting delegations'
                                     : 'Not on whitelist'
-                                  : typeof selectedOperator?.restakingDelegationCount ===
+                                  : typeof selectedOperator?.stakingDelegationCount ===
                                       'bigint'
-                                    ? `${selectedOperator.restakingDelegationCount.toString()} total delegations`
+                                    ? `${selectedOperator.stakingDelegationCount.toString()} total delegations`
                                     : 'Operator'}
                               </Typography>
                             </div>
@@ -608,7 +617,7 @@ const RestakeDelegateForm: FC = () => {
                     : {})}
                 />
                 <TransactionInputCard.MaxAmountButton
-                  maxAmount={formattedMaxAmount}
+                  maxAmount={maxAmountInputValue}
                   tooltipBody="Available to Delegate"
                   Icon={
                     useRef({
@@ -616,13 +625,6 @@ const RestakeDelegateForm: FC = () => {
                       disabled: <LockUnlockLineIcon />,
                     }).current
                   }
-                  onClick={() => {
-                    if (formattedMaxAmount !== undefined) {
-                      setValue('amount', formattedMaxAmount.toString(), {
-                        shouldValidate: true,
-                      });
-                    }
-                  }}
                 />
               </TransactionInputCard.Header>
 
@@ -632,7 +634,7 @@ const RestakeDelegateForm: FC = () => {
                   useRef({
                     placeholder: <AssetPlaceholder />,
                     onClick: openAssetModal,
-                    ...(selectedAssetItem && formattedMaxAmount !== undefined
+                    ...(selectedAssetItem && maxAmountInputValue !== undefined
                       ? {
                           renderBody: () => (
                             <div className="flex items-center gap-2">
@@ -663,7 +665,7 @@ const RestakeDelegateForm: FC = () => {
             {(isLoading, loadingText) => {
               const activeChainSupported =
                 isDefined(activeTypedChainId) &&
-                SUPPORTED_RESTAKE_DEPOSIT_TYPED_CHAIN_IDS.includes(
+                SUPPORTED_STAKING_DEPOSIT_TYPED_CHAIN_IDS.includes(
                   activeTypedChainId,
                 );
 
@@ -704,7 +706,7 @@ const RestakeDelegateForm: FC = () => {
         titleWhenEmpty="No Assets Available"
         descriptionWhenEmpty="Have you made a deposit on this network yet?"
         items={depositedAssets}
-        searchInputId="restake-delegate-asset-search"
+        searchInputId="staking-delegate-asset-search"
         searchPlaceholder="Search assets..."
         getItemKey={(item) => item.id}
         onSelect={handleAssetSelect}
@@ -731,7 +733,7 @@ const RestakeDelegateForm: FC = () => {
         descriptionWhenEmpty="Looks like there aren't any registered operators in this network yet."
         items={operators}
         isLoading={isLoadingDelegationInfo}
-        searchInputId="restake-delegate-operator-search"
+        searchInputId="staking-delegate-operator-search"
         searchPlaceholder="Search operators..."
         getItemKey={(item) => item.address}
         onSelect={handleOnSelectOperator}
@@ -762,4 +764,4 @@ const RestakeDelegateForm: FC = () => {
   );
 };
 
-export default RestakeDelegateForm;
+export default StakingDelegateForm;

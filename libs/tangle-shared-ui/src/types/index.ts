@@ -52,11 +52,11 @@ export type VaultToken = {
   decimals: number;
 };
 
-export type RestakeOperator = {
+export type StakingOperator = {
   address: string;
   identityName?: string;
   selfBondedAmount: bigint;
-  restakersCount: number;
+  stakersCount?: number;
   concentrationPercentage: number | null;
   tvlInUsd: number | null;
   instanceCount?: number;
@@ -127,7 +127,7 @@ export type BridgeChainBalances = Partial<
   Record<PresetTypedChainId, BridgeTokenWithBalance[]>
 >;
 
-export type RestakeAssetId = string | EvmAddress;
+export type StakingAssetId = string | EvmAddress;
 
 export type TangleAssetId = { Custom: bigint } | { Erc20: EvmAddress };
 

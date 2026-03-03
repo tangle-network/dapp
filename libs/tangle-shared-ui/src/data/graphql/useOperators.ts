@@ -1,6 +1,5 @@
 /**
  * Hook to fetch operators from the Envio indexer.
- * Replaces the Substrate-based useRestakeOperatorMap hook.
  */
 
 import { useQuery } from '@tanstack/react-query';
@@ -14,75 +13,66 @@ import {
 } from '../../utils/executeEnvioGraphQL';
 import useNetworkStore from '../../context/useNetworkStore';
 
-// Operator status enum matching the Envio schema
-export type RestakingOperatorStatus = 'ACTIVE' | 'LEAVING' | 'INACTIVE';
+export type StakingOperatorStatus = 'ACTIVE' | 'LEAVING' | 'INACTIVE';
 
-// Operator type from the indexer
 export interface Operator {
   id: string;
   ecdsaPublicKey: string | null;
   rpcAddress: string | null;
   createdAt: bigint | null;
   updatedAt: bigint | null;
-  restakingStatus: RestakingOperatorStatus | null;
-  restakingStake: bigint | null;
-  restakingDelegationCount: bigint | null;
-  restakingLeavingRound: bigint | null;
-  restakingScheduledUnstakeAmount: bigint | null;
-  restakingScheduledUnstakeRound: bigint | null;
+  stakingStatus: StakingOperatorStatus | null;
+  stakingStake: bigint | null;
+  stakingDelegationCount: bigint | null;
+  stakingLeavingRound: bigint | null;
+  stakingScheduledUnstakeAmount: bigint | null;
+  stakingScheduledUnstakeRound: bigint | null;
   /** Delegation mode: 0=Disabled, 1=Whitelist, 2=Open. Null is treated as 0 (Disabled). */
   delegationMode: number | null;
 }
 
-// Query to fetch operators with status filter (Hasura uses PascalCase table names)
-// Note: restakingoperatorstatus is the Hasura enum type (lowercase)
 const OPERATORS_WITH_STATUS_QUERY = gql`
   query OperatorsWithStatus(
     $limit: Int
     $offset: Int
-    $status: restakingoperatorstatus!
+    $status: stakingoperatorstatus!
   ) {
     Operator(
       limit: $limit
       offset: $offset
-      where: { restakingStatus: { _eq: $status } }
-      order_by: { restakingStake: desc }
+      where: { stakingStatus: { _eq: $status } }
+      order_by: { stakingStake: desc }
     ) {
       id
       ecdsaPublicKey
       rpcAddress
       createdAt
       updatedAt
-      restakingStatus
-      restakingStake
-      restakingDelegationCount
-      restakingLeavingRound
-      restakingScheduledUnstakeAmount
-      restakingScheduledUnstakeRound
+      stakingStatus
+      stakingStake
+      stakingDelegationCount
+      stakingLeavingRound
+      stakingScheduledUnstakeAmount
+      stakingScheduledUnstakeRound
       delegationMode
     }
   }
 `;
 
-// Query to fetch all operators without status filter
 const OPERATORS_QUERY = gql`
   query Operators($limit: Int, $offset: Int) {
-    Operator(
-      limit: $limit
-      offset: $offset
-      order_by: { restakingStake: desc }
-    ) {
+    Operator(limit: $limit, offset: $offset, order_by: { stakingStake: desc }) {
       id
       ecdsaPublicKey
       rpcAddress
       createdAt
       updatedAt
-      restakingStatus
-      restakingStake
-      restakingDelegationCount
-      restakingLeavingRound
-      restakingScheduledUnstakeAmount
-      restakingScheduledUnstakeRound
+      stakingStatus
+      stakingStake
+      stakingDelegationCount
+      stakingLeavingRound
+      stakingScheduledUnstakeAmount
+      stakingScheduledUnstakeRound
       delegationMode
     }
   }
@@ -95,17 +85,16 @@ interface OperatorsQueryResult {
     rpcAddress: string | null;
     createdAt: string | null;
     updatedAt: string | null;
-    restakingStatus: RestakingOperatorStatus | null;
-    restakingStake: string | null;
-    restakingDelegationCount: string | null;
-    restakingLeavingRound: string | null;
-    restakingScheduledUnstakeAmount: string | null;
-    restakingScheduledUnstakeRound: string | null;
+    stakingStatus: StakingOperatorStatus | null;
+    stakingStake: string | null;
+    stakingDelegationCount: string | null;
+    stakingLeavingRound: string | null;
+    stakingScheduledUnstakeAmount: string | null;
+    stakingScheduledUnstakeRound: string | null;
     delegationMode: number | null;
   }>;
 }
 
-// Safely parse a string to BigInt, returning null on invalid input
 const safeBigInt = (value: string | null): bigint | null => {
   if (!value) return null;
   try {
@@ -115,7 +104,6 @@ const safeBigInt = (value: string | null): bigint | null => {
   }
 };
 
-// Parse operator data from GraphQL response
 const parseOperator = (
   raw: OperatorsQueryResult['Operator'][number],
 ): Operator => ({
@@ -124,35 +112,28 @@ const parseOperator = (
   rpcAddress: raw.rpcAddress,
   createdAt: safeBigInt(raw.createdAt),
   updatedAt: safeBigInt(raw.updatedAt),
-  restakingStatus: raw.restakingStatus,
-  restakingStake: safeBigInt(raw.restakingStake),
-  restakingDelegationCount: safeBigInt(raw.restakingDelegationCount),
-  restakingLeavingRound: safeBigInt(raw.restakingLeavingRound),
-  restakingScheduledUnstakeAmount: safeBigInt(
-    raw.restakingScheduledUnstakeAmount,
-  ),
-  restakingScheduledUnstakeRound: safeBigInt(
-    raw.restakingScheduledUnstakeRound,
-  ),
+  stakingStatus: raw.stakingStatus,
+  stakingStake: safeBigInt(raw.stakingStake),
+  stakingDelegationCount: safeBigInt(raw.stakingDelegationCount),
+  stakingLeavingRound: safeBigInt(raw.stakingLeavingRound),
+  stakingScheduledUnstakeAmount: safeBigInt(raw.stakingScheduledUnstakeAmount),
+  stakingScheduledUnstakeRound: safeBigInt(raw.stakingScheduledUnstakeRound),
   delegationMode: raw.delegationMode,
 });
 
-// Fetch operators from the indexer
 const fetchOperators = async (
   network?: EnvioNetwork,
-  status?: RestakingOperatorStatus,
+  status?: StakingOperatorStatus,
   limit?: number,
   offset?: number,
 ): Promise<Operator[]> => {
-  // Use the appropriate query based on whether status is provided
-  // Hasura's enum type doesn't accept null values, so we need separate queries
   if (status !== undefined) {
     const result = await executeEnvioGraphQL<
       OperatorsQueryResult,
       {
         limit?: number;
         offset?: number;
-        status: string;
+        status: StakingOperatorStatus;
       }
     >(OPERATORS_WITH_STATUS_QUERY, { limit, offset, status }, network);
 
@@ -170,10 +151,9 @@ const fetchOperators = async (
   return (result.data.Operator ?? []).map(parseOperator);
 };
 
-// Hook to fetch all operators
 export const useOperators = (options?: {
   network?: EnvioNetwork;
-  status?: RestakingOperatorStatus;
+  status?: StakingOperatorStatus;
   limit?: number;
   offset?: number;
   enabled?: boolean;
@@ -195,16 +175,15 @@ export const useOperators = (options?: {
     queryKey: ['envio', 'operators', resolvedNetwork, status, limit, offset],
     queryFn: () => fetchOperators(resolvedNetwork, status, limit, offset),
     enabled,
-    staleTime: 30_000, // 30 seconds
+    staleTime: 30_000,
     refetchInterval: 30_000,
     refetchIntervalInBackground: true,
   });
 };
 
-// Hook to fetch operators as a map (keyed by address)
 export const useOperatorMap = (options?: {
   network?: EnvioNetwork;
-  status?: RestakingOperatorStatus;
+  status?: StakingOperatorStatus;
   enabled?: boolean;
 }) => {
   const { network, status, enabled = true } = options ?? {};
@@ -217,7 +196,6 @@ export const useOperatorMap = (options?: {
   return useQuery({
     queryKey: ['envio', 'operatorMap', resolvedNetwork, status],
     queryFn: async () => {
-      // Use limit/offset for Hasura pagination
       const operators = await fetchOperators(resolvedNetwork, status, 1000, 0);
       const map = new Map<Address, Operator>();
       for (const op of operators) {
@@ -232,7 +210,6 @@ export const useOperatorMap = (options?: {
   });
 };
 
-// Hook to fetch a single operator by address (Hasura uses _by_pk for single row queries)
 export const useOperator = (
   address: Address | undefined,
   options?: {
@@ -255,12 +232,12 @@ export const useOperator = (
         rpcAddress
         createdAt
         updatedAt
-        restakingStatus
-        restakingStake
-        restakingDelegationCount
-        restakingLeavingRound
-        restakingScheduledUnstakeAmount
-        restakingScheduledUnstakeRound
+        stakingStatus
+        stakingStake
+        stakingDelegationCount
+        stakingLeavingRound
+        stakingScheduledUnstakeAmount
+        stakingScheduledUnstakeRound
         delegationMode
       }
     }

@@ -15,12 +15,12 @@ import useFormSetValue from '../../../hooks/useFormSetValue';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import { Address } from 'viem';
 import { useAccount } from 'wagmi';
-import ActionButtonBase from '../../../components/restaking/ActionButtonBase';
-import StyleContainer from '../../../components/restaking/StyleContainer';
-import { SUPPORTED_RESTAKE_DEPOSIT_TYPED_CHAIN_IDS } from '../../../constants/restake';
+import ActionButtonBase from '../../../components/staking/ActionButtonBase';
+import StyleContainer from '../../../components/staking/StyleContainer';
+import { SUPPORTED_STAKING_DEPOSIT_TYPED_CHAIN_IDS } from '../../../constants/staking';
 import useActiveTypedChainId from '../../../hooks/useActiveTypedChainId';
-import SupportedChainModal from '../../restake/SupportedChainModal';
-import useSwitchChain from '../../restake/useSwitchChain';
+import SupportedChainModal from '../../staking/SupportedChainModal';
+import useSwitchChain from '../../staking/useSwitchChain';
 import LiquidStakingActionTabs from '../LiquidStakingActionTabs';
 import {
   useCreateVault,
@@ -29,7 +29,8 @@ import {
 import {
   useBlueprintsWithMetadata,
   useOperatorMap,
-  useRestakeAssets,
+  useStakingAssets,
+  type StakingAsset,
 } from '@tangle-network/tangle-shared-ui/data/graphql';
 import { TxStatus } from '@tangle-network/tangle-shared-ui/hooks/useContractWrite';
 import filterBy from '@tangle-network/tangle-shared-ui/utils/filterBy';
@@ -56,7 +57,7 @@ const CreateVaultForm: FC = () => {
   const activeTypedChainId = useActiveTypedChainId();
   const switchChain = useSwitchChain();
 
-  const { assets, isLoading: isLoadingAssets } = useRestakeAssets();
+  const { assets, isLoading: isLoadingAssets } = useStakingAssets();
   const { data: operatorMap, isLoading: isLoadingOperators } = useOperatorMap();
   const {
     data: blueprints,
@@ -133,22 +134,22 @@ const CreateVaultForm: FC = () => {
     if (!operatorMap) return [];
 
     return Array.from(operatorMap.entries())
-      .filter(([, op]) => op.restakingStatus === 'ACTIVE')
+      .filter(([, op]) => op.stakingStatus === 'ACTIVE')
       .map(([address, op]) => ({
         address,
-        stake: op.restakingStake ?? BigInt(0),
-        delegationCount: Number(op.restakingDelegationCount ?? BigInt(0)),
+        stake: op.stakingStake ?? BigInt(0),
+        delegationCount: Number(op.stakingDelegationCount ?? BigInt(0)),
       }));
   }, [operatorMap]);
 
-  const assetList = useMemo(() => {
+  const assetList = useMemo<StakingAsset[]>(() => {
     if (!assets) return [];
-    return Array.from(assets.values());
+    return Array.from(assets.values()) as StakingAsset[];
   }, [assets]);
 
-  const selectedAssetData = useMemo(() => {
+  const selectedAssetData = useMemo<StakingAsset | null>(() => {
     if (!selectedAsset || !assets) return null;
-    return assets.get(selectedAsset) ?? null;
+    return (assets.get(selectedAsset) as StakingAsset | undefined) ?? null;
   }, [selectedAsset, assets]);
 
   const selectedOperatorData = useMemo(() => {
@@ -203,7 +204,7 @@ const CreateVaultForm: FC = () => {
   );
 
   const handleAssetSelection = useCallback(
-    (asset: { id: Address }) => {
+    (asset: StakingAsset) => {
       setValue('asset', asset.id);
       closeAssetModal();
     },
@@ -425,7 +426,7 @@ const CreateVaultForm: FC = () => {
             {(isLoading, loadingText) => {
               const activeChainSupported =
                 isDefined(activeTypedChainId) &&
-                SUPPORTED_RESTAKE_DEPOSIT_TYPED_CHAIN_IDS.includes(
+                SUPPORTED_STAKING_DEPOSIT_TYPED_CHAIN_IDS.includes(
                   activeTypedChainId,
                 );
 
@@ -480,7 +481,7 @@ const CreateVaultForm: FC = () => {
         )}
       />
 
-      <ListModal
+      <ListModal<StakingAsset>
         title="Select Asset"
         isOpen={assetModalOpen}
         setIsOpen={updateAssetModal}
@@ -495,7 +496,7 @@ const CreateVaultForm: FC = () => {
         searchInputId="create-vault-asset-search"
         searchPlaceholder="Search assets..."
         titleWhenEmpty="No Assets Found"
-        descriptionWhenEmpty="No restaking assets found on this network."
+        descriptionWhenEmpty="No staking assets found on this network."
         items={assetList}
         isLoading={isLoadingAssets}
         getItemKey={(item) => item.id}

@@ -17,7 +17,7 @@ import { TableStatusProps } from '@tangle-network/tangle-shared-ui/components/ta
 import { ChevronDown } from '@tangle-network/icons';
 import pluralize from '@tangle-network/ui-components/utils/pluralize';
 import { TangleCloudTable } from '../../../components/tangleCloudTable';
-import type { RestakeVault } from '@tangle-network/tangle-shared-ui/types/restake';
+import type { StakingVault } from '@tangle-network/tangle-shared-ui/types/staking';
 import TableCellWrapper from '@tangle-network/tangle-shared-ui/components/tables/TableCellWrapper';
 import LsTokenIcon from '@tangle-network/tangle-shared-ui/components/LsTokenIcon';
 import formatPercentage from '@tangle-network/ui-components/utils/formatPercentage';
@@ -26,9 +26,13 @@ import { twMerge } from 'tailwind-merge';
 import { TangleCloudTableProps } from '../../../components/tangleCloudTable/type';
 import { Link } from 'react-router';
 import { TangleDAppPagePath } from '../../../types';
+import type { BN } from '@polkadot/util';
 
-const formatAmount = (amount: bigint, decimals: number): string => {
-  const formatted = formatUnits(amount, decimals);
+const toBigInt = (value: bigint | BN): bigint =>
+  typeof value === 'bigint' ? value : BigInt(value.toString());
+
+const formatAmount = (amount: bigint | BN, decimals: number): string => {
+  const formatted = formatUnits(toBigInt(amount), decimals);
   const num = parseFloat(formatted);
   if (num === 0) return '0';
   if (num >= 1_000_000) return `${(num / 1_000_000).toFixed(2)}M`;
@@ -39,12 +43,14 @@ const formatAmount = (amount: bigint, decimals: number): string => {
   });
 };
 
-const calculateRatio = (a: bigint, b: bigint): number => {
-  if (b === BigInt(0)) return 0;
-  return Number((a * BigInt(10000)) / b) / 10000;
+const calculateRatio = (a: bigint | BN, b: bigint | BN): number => {
+  const aBigInt = toBigInt(a);
+  const bBigInt = toBigInt(b);
+  if (bBigInt === BigInt(0)) return 0;
+  return Number((aBigInt * BigInt(10000)) / bBigInt) / 10000;
 };
 
-const COLUMN_HELPER = createColumnHelper<RestakeVault>();
+const COLUMN_HELPER = createColumnHelper<StakingVault>();
 
 const getColumns = () => [
   COLUMN_HELPER.accessor('name', {
@@ -137,7 +143,7 @@ const getColumns = () => [
         <TableCellWrapper removeRightBorder>
           <div className="flex items-center justify-end flex-1 gap-2">
             <Link
-              to={TangleDAppPagePath.RESTAKE_DEPOSIT.replace(
+              to={TangleDAppPagePath.STAKING_DEPOSIT.replace(
                 '{{vault}}',
                 row.original.id.toString(),
               )}
@@ -175,12 +181,12 @@ const getColumns = () => [
 ];
 
 type Props = {
-  data: RestakeVault[];
+  data: StakingVault[];
   isLoading: boolean;
   error: Error | null;
   loadingTableProps?: Partial<TableStatusProps>;
   emptyTableProps?: Partial<TableStatusProps>;
-  tableConfig: TangleCloudTableProps<RestakeVault>['tableConfig'];
+  tableConfig: TangleCloudTableProps<StakingVault>['tableConfig'];
 };
 
 export const TotalValueLockedTable: FC<Props> = ({
@@ -206,7 +212,7 @@ export const TotalValueLockedTable: FC<Props> = ({
   });
 
   return (
-    <TangleCloudTable<RestakeVault>
+    <TangleCloudTable<StakingVault>
       title={pluralize('blueprint', data.length !== 1)}
       data={data}
       error={error}

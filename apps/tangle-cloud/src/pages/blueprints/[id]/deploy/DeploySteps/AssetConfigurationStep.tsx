@@ -4,8 +4,8 @@ import { AssetConfigurationStepProps } from './type';
 import { AssetRequirementFormItem } from './components/AssetRequirementFormItem';
 import ErrorMessage from '@tangle-network/tangle-shared-ui/components/ErrorMessage';
 import {
-  useRestakeAssets,
-  type RestakeAsset,
+  useStakingAssets,
+  type StakingAsset,
 } from '@tangle-network/tangle-shared-ui/data/graphql';
 import {
   Select,
@@ -27,7 +27,7 @@ export const AssetConfigurationStep: FC<AssetConfigurationStepProps> = ({
   minimumNativeSecurityRequirement: _minimumNativeSecurityRequirement,
 }) => {
   const assets = watch('assets');
-  const { assets: allAssetsMap } = useRestakeAssets();
+  const { assets: allAssetsMap } = useStakingAssets();
   const securityCommitments = watch('securityCommitments');
 
   const selectedAssets = useMemo(() => {
@@ -122,10 +122,12 @@ export const AssetConfigurationStep: FC<AssetConfigurationStepProps> = ({
     setValue('securityCommitments', nextSec);
   };
 
-  const availableAssets = useMemo<RestakeAsset[]>(() => {
+  const availableAssets = useMemo<StakingAsset[]>(() => {
     if (!allAssetsMap) return [];
     const selectedIds = new Set(assets?.map((a) => a.id));
-    return Array.from(allAssetsMap.values())
+    const allAssets = Array.from(allAssetsMap.values()) as StakingAsset[];
+
+    return allAssets
       .filter((asset) => !selectedIds.has(asset.id))
       .filter(
         (asset) => asset.metadata.name && asset.metadata.name.trim() !== '',

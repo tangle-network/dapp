@@ -1,6 +1,5 @@
 /**
  * GraphQL data hooks for the Envio indexer (v2 EVM).
- * These replace the Substrate-based RxJS hooks.
  */
 
 // Operators
@@ -9,7 +8,7 @@ export {
   useOperatorMap,
   useOperator,
   type Operator,
-  type RestakingOperatorStatus,
+  type StakingOperatorStatus,
 } from './useOperators';
 
 // Delegators
@@ -36,30 +35,38 @@ export {
   type LiquidRedeemRequest,
 } from './useLiquidRedeemRequests';
 
-// Restaking Assets
+// Protocol staking config assets
 export {
-  useRestakingAssets,
-  useRestakingAssetMap,
-  useRestakingAssetIds,
-  type RestakingAsset,
-} from './useRestakingAssets';
+  useProtocolStakingAssets,
+  useProtocolStakingAssetMap,
+  useProtocolStakingAssetIds,
+  useStakingAssetConfigs,
+  useStakingAssetConfigMap,
+  useStakingAssetConfigIds,
+  type ProtocolStakingAsset,
+  type StakingConfigAsset,
+  type StakingAssetConfig,
+} from './useProtocolStakingAssets';
 
-// Restaking Rounds
+// Protocol staking rounds
 export {
-  useRestakingRound,
+  useStakingRound,
   useCurrentRoundNumber,
-  type RestakingRound,
-} from './useRestakingRound';
+  type StakingRound,
+} from './useStakingRound';
 
-// Restake Assets with balances
+// Staking assets with balances
 export {
-  useRestakeAssets,
-  useRestakeAsset,
+  useStakingAssets,
+  useStakingAsset,
+  useNativeStakingBalance,
+  useSubstrateStakingAssets,
   useNativeBalance,
-  type RestakeAsset,
-  type RestakeAssetMap,
+  type StakingAsset,
+  type StakingAssetMap,
+  type StakingTokenMetadata,
   type TokenMetadata,
-} from './useRestakeAssets';
+} from './useStakingAssets';
 
 // Protocol Config
 export {
@@ -67,6 +74,8 @@ export {
   useWithdrawalDelay,
   useUndelegateDelay,
   type ProtocolConfig,
+  type ProtocolConfigResult,
+  type UnsupportedProtocolConfigReason,
 } from './useProtocolConfig';
 
 // Blueprints
@@ -166,7 +175,7 @@ export {
   type BlueprintSourceKind,
 } from './useBlueprintManagement';
 
-// Developer Payments (exact payout ledger)
+// Developer Payments
 export {
   DeveloperPaymentsQueryError,
   useDeveloperPayments,

@@ -3,7 +3,7 @@ import { TokenIcon } from '@tangle-network/icons';
 import Spinner from '@tangle-network/icons/Spinner';
 import {
   useDelegator,
-  useRestakingAssets,
+  useProtocolStakingAssets as useStakingAssets,
   type Operator,
 } from '@tangle-network/tangle-shared-ui/data/graphql';
 import HeaderCell from '@tangle-network/tangle-shared-ui/components/tables/HeaderCell';
@@ -36,17 +36,17 @@ import { type FC, useCallback, useMemo, useState } from 'react';
 import { twMerge } from 'tailwind-merge';
 import { Address } from 'viem';
 import { useAccount } from 'wagmi';
-import { RestakeAction } from '../../constants';
-import { ClaimableRewardsCard } from '../../components/restaking';
+import { StakingAction } from '../../constants';
+import { ClaimableRewardsCard } from '../../components/staking';
 import BlueprintListing from '../../pages/blueprints/BlueprintListing';
-import RestakeDelegateForm from '../../pages/restake/delegate';
-import DepositForm from '../../pages/restake/deposit/DepositForm';
-import RestakeUndelegateForm from '../../pages/restake/undelegate';
-import RestakeWithdrawForm from '../../pages/restake/withdraw';
+import StakingDelegateForm from '../../pages/staking/delegate';
+import DepositForm from '../../pages/staking/deposit/DepositForm';
+import StakingUndelegateForm from '../../pages/staking/undelegate';
+import StakingWithdrawForm from '../../pages/staking/withdraw';
 import { PagePath, QueryParamKey } from '../../types';
 
-enum RestakeTab {
-  RESTAKE = 'Restake',
+enum StakingTab {
+  STAKING = 'Stake',
   VAULTS = 'Vaults',
   OPERATORS = 'Operators',
   BLUEPRINTS = 'Blueprints',
@@ -54,44 +54,44 @@ enum RestakeTab {
 
 type Props = {
   operatorMap: Map<Address, Operator> | null;
-  action: RestakeAction;
+  action: StakingAction;
   onOperatorJoined?: () => void;
 };
 
-const RestakeOverviewTabs: FC<Props> = ({
+const StakingOverviewTabs: FC<Props> = ({
   operatorMap,
   action,
   onOperatorJoined,
 }) => {
-  const [tab, setTab] = useState(RestakeTab.RESTAKE);
+  const [tab, setTab] = useState(StakingTab.STAKING);
 
-  const handleRestakeClicked = useCallback(() => {
-    setTab(RestakeTab.RESTAKE);
+  const handleStakingClicked = useCallback(() => {
+    setTab(StakingTab.STAKING);
   }, []);
 
   return (
     <TableAndChartTabs
-      tabs={Object.values(RestakeTab)}
+      tabs={Object.values(StakingTab)}
       value={tab}
-      onValueChange={(tab) => setTab(tab as RestakeTab)}
+      onValueChange={(tab) => setTab(tab as StakingTab)}
       headerClassName="w-full"
       className="space-y-9"
     >
       <TabContent
-        value={RestakeTab.RESTAKE}
+        value={StakingTab.STAKING}
         className="w-full max-w-5xl mx-auto"
       >
         <div className="grid grid-cols-1 lg:grid-cols-[1fr_340px] gap-6">
           {/* Left column - Action forms */}
           <div className="flex justify-center">
-            {action === RestakeAction.DEPOSIT ? (
+            {action === StakingAction.DEPOSIT ? (
               <DepositForm />
-            ) : action === RestakeAction.WITHDRAW ? (
-              <RestakeWithdrawForm />
-            ) : action === RestakeAction.DELEGATE ? (
-              <RestakeDelegateForm />
-            ) : action === RestakeAction.UNDELEGATE ? (
-              <RestakeUndelegateForm />
+            ) : action === StakingAction.WITHDRAW ? (
+              <StakingWithdrawForm />
+            ) : action === StakingAction.DELEGATE ? (
+              <StakingDelegateForm />
+            ) : action === StakingAction.UNDELEGATE ? (
+              <StakingUndelegateForm />
             ) : null}
           </div>
 
@@ -102,26 +102,26 @@ const RestakeOverviewTabs: FC<Props> = ({
         </div>
       </TabContent>
 
-      <TabContent value={RestakeTab.VAULTS}>
+      <TabContent value={StakingTab.VAULTS}>
         <VaultTabContent />
       </TabContent>
 
-      <TabContent value={RestakeTab.OPERATORS}>
+      <TabContent value={StakingTab.OPERATORS}>
         <OperatorsTable
           operatorMap={operatorMap}
-          onRestakeClicked={handleRestakeClicked}
+          onStakingClicked={handleStakingClicked}
           onOperatorJoined={onOperatorJoined}
         />
       </TabContent>
 
-      <TabContent value={RestakeTab.BLUEPRINTS}>
+      <TabContent value={StakingTab.BLUEPRINTS}>
         <BlueprintListing />
       </TabContent>
     </TableAndChartTabs>
   );
 };
 
-export default RestakeOverviewTabs;
+export default StakingOverviewTabs;
 
 // Vault row type
 interface VaultRow {
@@ -133,6 +133,12 @@ interface VaultRow {
   userDeposit: bigint;
   rewardMultiplier: number;
 }
+
+type ProtocolStakingAssetLike = {
+  token: Address;
+  currentDeposits: bigint;
+  rewardMultiplierBps: number;
+};
 
 const VAULT_COLUMN_HELPER = createColumnHelper<VaultRow>();
 
@@ -216,18 +222,22 @@ const getVaultColumns = () => [
 const VaultTabContent: FC = () => {
   const { address: userAddress } = useAccount();
   const { data: delegator } = useDelegator(userAddress);
-  const { data: restakingAssets, isLoading: isLoadingAssets } =
-    useRestakingAssets();
+  const { data: stakingAssets, isLoading: isLoadingAssets } =
+    useStakingAssets();
+  const protocolStakingAssets = useMemo<ProtocolStakingAssetLike[]>(() => {
+    return (stakingAssets ?? []) as ProtocolStakingAssetLike[];
+  }, [stakingAssets]);
 
   // Get token addresses for metadata
-  const tokenAddresses =
-    restakingAssets?.map((a) => a.token as EvmAddress) ?? [];
+  const tokenAddresses = protocolStakingAssets.map(
+    (asset) => asset.token as EvmAddress,
+  );
   const { data: tokenMetadatas } = useEvmAssetMetadatas(tokenAddresses);
 
-  // Build vault data from restaking assets
+  // Build vault data from staking assets
   const vaults = useMemo<VaultRow[]>(() => {
-    if (!restakingAssets) return [];
-    return restakingAssets.map((asset) => {
+    if (protocolStakingAssets.length === 0) return [];
+    return protocolStakingAssets.map((asset) => {
       const metadata = tokenMetadatas?.find(
         (m) => m.id.toLowerCase() === asset.token.toLowerCase(),
       );
@@ -244,7 +254,7 @@ const VaultTabContent: FC = () => {
         rewardMultiplier: asset.rewardMultiplierBps / 10000,
       };
     });
-  }, [restakingAssets, tokenMetadatas, delegator]);
+  }, [protocolStakingAssets, tokenMetadatas, delegator]);
 
   const columns = useMemo(() => getVaultColumns(), []);
 
@@ -306,7 +316,7 @@ interface OperatorRow {
 
 const OPERATOR_COLUMN_HELPER = createColumnHelper<OperatorRow>();
 
-const getOperatorColumns = (onRestakeClicked: () => void) => [
+const getOperatorColumns = (onStakingClicked: () => void) => [
   OPERATOR_COLUMN_HELPER.accessor('id', {
     header: () => <HeaderCell title="Operator" />,
     cell: (props) => (
@@ -366,11 +376,11 @@ const getOperatorColumns = (onRestakeClicked: () => void) => [
           variant="utility"
           size="sm"
           onClick={() => {
-            onRestakeClicked();
+            onStakingClicked();
             window.history.pushState(
               {},
               '',
-              `${PagePath.RESTAKE_DELEGATE}?${QueryParamKey.RESTAKE_OPERATOR}=${props.row.original.id}`,
+              `${PagePath.STAKING_DELEGATE}?${QueryParamKey.STAKING_OPERATOR}=${props.row.original.id}`,
             );
           }}
         >
@@ -384,13 +394,13 @@ const getOperatorColumns = (onRestakeClicked: () => void) => [
 // EVM Operators table
 type OperatorsTableProps = {
   operatorMap: Map<Address, Operator> | null;
-  onRestakeClicked: () => void;
+  onStakingClicked: () => void;
   onOperatorJoined?: () => void;
 };
 
 const OperatorsTable: FC<OperatorsTableProps> = ({
   operatorMap,
-  onRestakeClicked,
+  onStakingClicked,
 }) => {
   const isLoading = operatorMap === null;
 
@@ -398,15 +408,15 @@ const OperatorsTable: FC<OperatorsTableProps> = ({
     if (!operatorMap) return [];
     return Array.from(operatorMap.values()).map((op) => ({
       id: op.id as Address,
-      status: op.restakingStatus ?? 'UNKNOWN',
-      stake: op.restakingStake ?? BigInt(0),
-      delegationCount: Number(op.restakingDelegationCount ?? 0),
+      status: op.stakingStatus ?? 'UNKNOWN',
+      stake: op.stakingStake ?? BigInt(0),
+      delegationCount: Number(op.stakingDelegationCount ?? 0),
     }));
   }, [operatorMap]);
 
   const columns = useMemo(
-    () => getOperatorColumns(onRestakeClicked),
-    [onRestakeClicked],
+    () => getOperatorColumns(onStakingClicked),
+    [onStakingClicked],
   );
 
   const table = useReactTable({
