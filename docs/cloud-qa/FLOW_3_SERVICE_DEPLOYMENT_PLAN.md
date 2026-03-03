@@ -106,7 +106,7 @@ apps/tangle-cloud/src/utils/validations/deployBlueprint.ts
 3. **Import test wallet** in browser (MetaMask):
    - Network: Add custom network
      - Name: Anvil Local
-     - RPC URL: http://127.0.0.1:8545
+     - RPC URL: 127.0.0.1:8545
      - Chain ID: 31337
      - Currency: ETH
    - Import account with private key: `0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80`

@@ -585,7 +585,7 @@ const fetchSlashProposals = async (
 
   const query = usesAddressFilter
     ? gql`
-        query GetSlashProposals($address: String!) {
+        query GetSlashProposalsByAddress($address: String!) {
           SlashProposal(
             ${whereClause}
             order_by: { createdAt: desc }
@@ -615,7 +615,7 @@ const fetchSlashProposals = async (
         }
       `
     : gql`
-        query GetSlashProposals {
+        query GetSlashProposalsAll {
           SlashProposal(order_by: { createdAt: desc }) {
             id
             slashId

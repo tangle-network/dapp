@@ -8,7 +8,7 @@ This guide details how to set up a local development environment for tangle-clou
 2. **Quick Start Only**: Use the automated script with pre-deployed test data
 3. **Full Manual Setup**: Complete manual control over everything
 
-> **Note**: For full operator functionality (running blueprints, submitting jobs), see the [LOCAL_E2E_TEST_PLAN.md](https://github.com/tangle-network/blueprint/blob/main/docs/cli-testing/LOCAL_E2E_TEST_PLAN.md) in the blueprint repo.
+> **Note**: For full operator functionality (running blueprints, submitting jobs), see the [CLI command testing tracker](https://github.com/tangle-network/blueprint/blob/main/docs/CLI_COMMAND_TESTING_TRACKER.md) in the blueprint repo.
 
 ---
 

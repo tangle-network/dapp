@@ -254,7 +254,7 @@ After deployment, you'll see addresses like:
    yarn start:tangle-dapp
    ```
 
-2. Navigate to: http://localhost:5173/claim/migration
+2. Navigate to: `localhost:5173/claim/migration`
 
 3. Test with any SS58 address from the proofs file:
    ```
@@ -291,5 +291,5 @@ VITE_MIGRATION_PROOFS_URL=/data/migration-proofs.json
 # 3. Start the dApp
 yarn start:tangle-dapp
 
-# 4. Test at http://localhost:5173/claim/migration
+# 4. Test at localhost:5173/claim/migration
 ```

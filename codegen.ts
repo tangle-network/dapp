@@ -1,5 +1,6 @@
 import type { CodegenConfig } from '@graphql-codegen/cli';
 import 'dotenv/config';
+import fs from 'node:fs';
 
 // Legacy Substrate indexer endpoint (to be removed in v2)
 export const LEGACY_GRAPHQL_ENDPOINT =
@@ -12,11 +13,15 @@ export const ENVIO_TESTNET_ENDPOINT =
 export const ENVIO_MAINNET_ENDPOINT =
   process.env.VITE_ENVIO_MAINNET_ENDPOINT ?? ENVIO_LOCAL_ENDPOINT;
 
-// Use local schema file for codegen (works without running indexer)
-// Override with VITE_GRAPHQL_ENDPOINT env var to use live endpoint
+// Prefer local checked-in schema when present; otherwise fall back to a live endpoint.
 const ENVIO_SCHEMA_FILE = './libs/tangle-shared-ui/src/graphql/envio.schema.graphql';
+const DEFAULT_MAINNET_ENDPOINT = 'https://mainnet-gql.tangle.tools/v1/graphql';
+const hasLocalSchemaFile = fs.existsSync(ENVIO_SCHEMA_FILE);
 const VITE_GRAPHQL_ENDPOINT =
-  process.env.VITE_GRAPHQL_ENDPOINT ?? ENVIO_SCHEMA_FILE;
+  process.env.VITE_GRAPHQL_ENDPOINT ??
+  (hasLocalSchemaFile
+    ? ENVIO_SCHEMA_FILE
+    : process.env.VITE_ENVIO_MAINNET_ENDPOINT ?? DEFAULT_MAINNET_ENDPOINT);
 
 console.log('VITE_GRAPHQL_ENDPOINT', VITE_GRAPHQL_ENDPOINT);
 
