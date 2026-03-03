@@ -328,6 +328,14 @@ const main = async () => {
   log(
     `Launch mode: wallet=${launchPlan.walletMode} headless=${launchPlan.headless} concurrency=${launchPlan.concurrency}`,
   );
+  for (const warning of launchPlan.warnings ?? []) {
+    log(`warning: ${warning}`);
+  }
+  if ((launchPlan.errors ?? []).length > 0) {
+    throw new Error(
+      `Browser launch preflight failed:\n- ${launchPlan.errors.join('\n- ')}`,
+    );
+  }
 
   let browser;
   let persistentContext;
@@ -364,11 +372,10 @@ const main = async () => {
       const userDataDir =
         launchPlan.userDataDir ?? path.resolve('.agent-wallet-profile');
       fs.mkdirSync(userDataDir, { recursive: true });
-      const walletHeadless = Boolean(mergedConfig.headless);
 
       persistentContext = await chromium.launchPersistentContext(userDataDir, {
         channel: 'chromium',
-        headless: walletHeadless,
+        headless: launchPlan.headless,
         args: launchPlan.browserArgs,
         viewport: launchPlan.viewport,
         ignoreHTTPSErrors: true,
@@ -403,6 +410,7 @@ const main = async () => {
         apiKey,
         debug: Boolean(options.debug),
       },
+      defaultTimeoutMs: mergedConfig.timeoutMs,
       driver: singletonDriver,
       driverFactory: launchPlan.concurrency > 1 ? createDriver : undefined,
       concurrency: launchPlan.concurrency,
