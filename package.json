@@ -9,7 +9,7 @@
   ],
   "private": true,
   "engines": {
-    "node": ">=18.12.x"
+    "node": ">=18.18.x"
   },
   "scripts": {
     "commit": "commit",
