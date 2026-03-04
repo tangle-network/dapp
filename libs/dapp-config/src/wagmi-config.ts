@@ -21,8 +21,11 @@ const config = createConfig(
     chains,
     transports: chains.reduce(
       (acc, chain) => {
-        const rpcUrl =
-          chain.rpcUrls.default.http[0] ?? chain.rpcUrls.public?.http?.[0];
+        const publicRpcUrl =
+          'public' in chain.rpcUrls
+            ? chain.rpcUrls.public?.http?.[0]
+            : undefined;
+        const rpcUrl = chain.rpcUrls.default.http[0] ?? publicRpcUrl;
         acc[chain.id] = typeof rpcUrl === 'string' ? http(rpcUrl) : http();
         return acc;
       },
