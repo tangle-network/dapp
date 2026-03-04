@@ -79,7 +79,10 @@ const useContractWrite = <Abi extends ViemAbi>(abi: Abi) => {
       try {
         let chain = connectorClient.chain;
         if (!chain && activeChainId !== undefined) {
-          const typedChainId = calculateTypedChainId(ChainType.EVM, activeChainId);
+          const typedChainId = calculateTypedChainId(
+            ChainType.EVM,
+            activeChainId,
+          );
           chain = chainsPopulated[typedChainId];
         }
 
