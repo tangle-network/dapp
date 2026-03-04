@@ -18,11 +18,9 @@ import {
   waitForTransactionReceipt,
   writeContract,
 } from 'viem/actions';
-import { mainnet, sepolia } from 'viem/chains';
 import { useConnectorClient } from 'wagmi';
 
 import { TxName } from '../../constants';
-import { IS_PRODUCTION_ENV } from '../../constants/env';
 import useEvmAddress20 from '@tangle-network/tangle-shared-ui/hooks/useEvmAddress';
 import useTxNotification from '../../hooks/useTxNotification';
 import { type NotificationSteps } from '@tangle-network/tangle-shared-ui/hooks/useTxNotification';
@@ -52,7 +50,8 @@ export type ContractWriteOptions<
 const useContractWrite = <Abi extends ViemAbi>(abi: Abi) => {
   const { data: connectorClient } = useConnectorClient();
   const activeEvmAddress20 = useEvmAddress20();
-  const { activeChain, activeWallet, switchChain } = useWebContext();
+  const { activeChain } = useWebContext();
+  const activeChainId = activeChain?.id;
   const { notifyProcessing, notifySuccess, notifyError } = useTxNotification();
 
   const createExplorerTxUrl = useNetworkStore(
@@ -75,26 +74,17 @@ const useContractWrite = <Abi extends ViemAbi>(abi: Abi) => {
         'Should not be able to call this function if there is no active EVM account',
       );
 
-      // On development, switch to the Sepolia chain if it's not already active.
-      // This is because there are dummy contracts deployed to Sepolia for testing.
-      if (
-        !IS_PRODUCTION_ENV &&
-        activeChain !== null &&
-        activeChain !== undefined &&
-        activeChain.id !== sepolia.id &&
-        activeWallet !== undefined
-      ) {
-        const typedChainId = calculateTypedChainId(ChainType.EVM, sepolia.id);
-        const targetChain = chainsPopulated[typedChainId];
-
-        await switchChain(targetChain, activeWallet);
-      }
-
       notifyProcessing(options.txName, options.notificationStep);
 
       try {
+        let chain = connectorClient.chain;
+        if (!chain && activeChainId !== undefined) {
+          const typedChainId = calculateTypedChainId(ChainType.EVM, activeChainId);
+          chain = chainsPopulated[typedChainId];
+        }
+
         const { request } = await simulateContract(connectorClient, {
-          chain: IS_PRODUCTION_ENV ? mainnet : sepolia,
+          ...(chain ? { chain } : {}),
           address: options.address,
           functionName: options.functionName,
           account: activeEvmAddress20,
@@ -138,15 +128,13 @@ const useContractWrite = <Abi extends ViemAbi>(abi: Abi) => {
     },
     [
       abi,
-      activeChain,
+      activeChainId,
       activeEvmAddress20,
-      activeWallet,
       connectorClient,
       createExplorerTxUrl,
       notifyError,
       notifyProcessing,
       notifySuccess,
-      switchChain,
     ],
   );
 

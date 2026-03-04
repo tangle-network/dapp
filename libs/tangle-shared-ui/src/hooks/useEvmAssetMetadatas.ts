@@ -1,6 +1,7 @@
 import { EvmAddress } from '@tangle-network/ui-components/types/address';
 import { useQuery } from '@tanstack/react-query';
 import { zeroAddress } from 'viem';
+import EVMChainId from '@tangle-network/dapp-types/EVMChainId';
 import { getCachedTokenMetadata } from '@tangle-network/dapp-config/tokenMetadata';
 import fetchErc20TokenMetadata from '../utils/fetchErc20TokenMetadata';
 import useViemPublicClient from './useViemPublicClient';
@@ -13,7 +14,7 @@ type TokenMetadata = {
 };
 
 const NATIVE_TOKEN_ADDRESS = zeroAddress.toLowerCase();
-const DEFAULT_CHAIN_ID = 1; // Fallback to Ethereum mainnet if chain ID unavailable
+const DEFAULT_CHAIN_ID = EVMChainId.AnvilLocal;
 
 const buildFallbackMetadata = (
   chainId: number,

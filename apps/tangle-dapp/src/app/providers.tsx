@@ -3,6 +3,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { config } from '@tangle-network/dapp-config/wagmi-config';
 import { DataSourceProvider } from '@tangle-network/tangle-shared-ui/context/DataSourceContext';
 import { IndexerStatusProvider } from '@tangle-network/tangle-shared-ui/context/IndexerStatusContext';
+import useLocalChainGuard from '@tangle-network/tangle-shared-ui/hooks/useLocalChainGuard';
 import useNetworkSync from '@tangle-network/tangle-shared-ui/hooks/useNetworkSync';
 import { UIProvider } from '@tangle-network/ui-components';
 import {
@@ -29,6 +30,11 @@ const TANGLE_DAPP_NETWORKS = [
 // Component to sync network store with wagmi chain
 const NetworkSync: FC<PropsWithChildren> = ({ children }) => {
   useNetworkSync(TANGLE_DAPP_NETWORKS);
+  useLocalChainGuard({
+    enabled:
+      import.meta.env.DEV && import.meta.env.VITE_FORCE_LOCAL_CHAIN === 'true',
+    targetChainId: ANVIL_LOCAL_NETWORK.evmChainId ?? 31337,
+  });
   return children;
 };
 
@@ -43,6 +49,12 @@ const envSchema = z.object({
 
 const Providers = ({ children }: PropsWithChildren): ReactNode => {
   const [queryClient] = useState(() => new QueryClient());
+  const reconnectOnMount = (() => {
+    const override = import.meta.env.VITE_WALLET_RECONNECT_ON_MOUNT;
+    if (override === 'true') return true;
+    if (override === 'false') return false;
+    return true;
+  })();
 
   const {
     OFAC_COUNTRY_CODES: blockedCountryCodes,
@@ -51,7 +63,7 @@ const Providers = ({ children }: PropsWithChildren): ReactNode => {
 
   return (
     <UIProvider hasErrorBoundary>
-      <WagmiProvider config={config}>
+      <WagmiProvider config={config} reconnectOnMount={reconnectOnMount}>
         <QueryClientProvider client={queryClient}>
           <IndexerStatusProvider>
             <NetworkSync>
