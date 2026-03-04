@@ -7,8 +7,10 @@ import {
 import { u8aToString } from '@polkadot/util';
 import { PrimitiveFieldType } from '../../../types/blueprint';
 
-type ServiceMetadata = TanglePrimitivesServicesServiceServiceBlueprint['metadata'];
-type JobDefinition = TanglePrimitivesServicesServiceServiceBlueprint['jobs'][number];
+type ServiceMetadata =
+  TanglePrimitivesServicesServiceServiceBlueprint['metadata'];
+type JobDefinition =
+  TanglePrimitivesServicesServiceServiceBlueprint['jobs'][number];
 
 export const toPrimitiveBlueprint = (
   id: bigint,
