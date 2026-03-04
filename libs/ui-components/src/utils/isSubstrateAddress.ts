@@ -18,8 +18,7 @@ export const isSubstrateAddress = (
 
   // Best-effort SS58/base58 format detection for UI display.
   const result =
-    !isEvmAddress(address) &&
-    /^[1-9A-HJ-NP-Za-km-z]{47,50}$/.test(address);
+    !isEvmAddress(address) && /^[1-9A-HJ-NP-Za-km-z]{47,50}$/.test(address);
 
   // Store result in cache
   addressCache.set(address, result);

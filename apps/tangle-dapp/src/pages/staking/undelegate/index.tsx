@@ -51,9 +51,7 @@ import type { EvmAddress } from '@tangle-network/ui-components/types/address';
 import ListModal from '@tangle-network/tangle-shared-ui/components/ListModal';
 import filterBy from '@tangle-network/tangle-shared-ui/utils/filterBy';
 import LogoListItem from '../../../components/Lists/LogoListItem';
-import {
-  AmountFormatStyle,
-} from '@tangle-network/ui-components';
+import { AmountFormatStyle } from '@tangle-network/ui-components';
 import MULTI_ASSET_DELEGATION_ABI from '@tangle-network/tangle-shared-ui/abi/multiAssetDelegation';
 import { getContractsByChainId } from '@tangle-network/dapp-config/contracts';
 import { useResilientReadContract } from '@tangle-network/tangle-shared-ui/hooks/useResilientReadContract';

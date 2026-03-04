@@ -30,9 +30,7 @@ const CreditVelocityTooltip: FC<Props> = ({
 
   // Convert decimal display minimum to raw token units.
   const formattedMinimum = formatTokenAmount(
-    BigInt(
-      Math.round(MINIMUM_CLAIMABLE_CREDITS * 10 ** TANGLE_TOKEN_DECIMALS),
-    ),
+    BigInt(Math.round(MINIMUM_CLAIMABLE_CREDITS * 10 ** TANGLE_TOKEN_DECIMALS)),
     TANGLE_TOKEN_DECIMALS,
     AmountFormatStyle.SHORT,
   );

@@ -43,9 +43,7 @@ export const formatDisplayAmount = (
   style: AmountFormatStyle,
   options?: FormatDisplayAmountOptions,
 ): string => {
-  const normalizedAmount = BN.isBN(amount)
-    ? amount
-    : new BN(amount.toString());
+  const normalizedAmount = BN.isBN(amount) ? amount : new BN(amount.toString());
 
   return formatBn(normalizedAmount, decimals, {
     includeCommas: true,
