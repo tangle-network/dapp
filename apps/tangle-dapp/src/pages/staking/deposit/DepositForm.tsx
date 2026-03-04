@@ -16,7 +16,6 @@ import { FC, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import useFormSetValue from '../../../hooks/useFormSetValue';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import { erc20Abi, formatUnits, parseUnits, zeroAddress, Address } from 'viem';
-import { BN } from '@polkadot/util';
 import { useChainId } from 'wagmi';
 import ErrorMessage from '@tangle-network/tangle-shared-ui/components/ErrorMessage';
 import ActionButtonBase from '../../../components/staking/ActionButtonBase';
@@ -573,7 +572,7 @@ const DepositForm: FC = () => {
             assetId={assetItem.id}
             name={assetItem.metadata.name}
             symbol={assetItem.metadata.symbol}
-            balance={new BN((assetItem.balance ?? BigInt(0)).toString())}
+            balance={assetItem.balance ?? BigInt(0)}
             decimals={assetItem.metadata.decimals}
           />
         )}

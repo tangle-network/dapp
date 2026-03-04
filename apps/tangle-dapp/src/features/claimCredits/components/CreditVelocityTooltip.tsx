@@ -7,15 +7,12 @@ import {
   TooltipTrigger,
 } from '@tangle-network/ui-components';
 import { TANGLE_TOKEN_DECIMALS } from '@tangle-network/dapp-config';
-import {
-  formatDisplayAmount,
-  AmountFormatStyle,
-} from '@tangle-network/ui-components';
-import { BN } from '@polkadot/util';
+import { AmountFormatStyle } from '@tangle-network/ui-components';
 import {
   getCreditsNeededForMinimum,
   MINIMUM_CLAIMABLE_CREDITS,
 } from '../../../utils/creditConstraints';
+import { formatTokenAmount } from '../../../utils/formatTokenAmount';
 
 type Props = {
   currentAmount: bigint | null | undefined;
@@ -31,12 +28,10 @@ const CreditVelocityTooltip: FC<Props> = ({
     [currentAmount],
   );
 
-  // Convert decimal values to token units (multiply by 10^decimals) for BN
-  const formattedMinimum = formatDisplayAmount(
-    new BN(
-      BigInt(
-        Math.round(MINIMUM_CLAIMABLE_CREDITS * 10 ** TANGLE_TOKEN_DECIMALS),
-      ).toString(),
+  // Convert decimal display minimum to raw token units.
+  const formattedMinimum = formatTokenAmount(
+    BigInt(
+      Math.round(MINIMUM_CLAIMABLE_CREDITS * 10 ** TANGLE_TOKEN_DECIMALS),
     ),
     TANGLE_TOKEN_DECIMALS,
     AmountFormatStyle.SHORT,

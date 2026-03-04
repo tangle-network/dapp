@@ -69,10 +69,10 @@ describe('App', () => {
     expect(screen.getByTestId('dashboard-page')).toBeTruthy();
   });
 
-  it('renders canonical claim route', () => {
+  it('renders canonical claim route', async () => {
     renderAt('/claim');
 
-    expect(screen.getByTestId('claim-migration-page')).toBeTruthy();
+    expect(await screen.findByTestId('claim-migration-page')).toBeTruthy();
   });
 
   it('renders bridge route', () => {
@@ -136,10 +136,10 @@ describe('App', () => {
     );
   });
 
-  it('redirects legacy claim migration route to canonical claim route', () => {
+  it('redirects legacy claim migration route to canonical claim route', async () => {
     renderAt('/claim/migration');
 
-    expect(screen.getByTestId('claim-migration-page')).toBeTruthy();
+    expect(await screen.findByTestId('claim-migration-page')).toBeTruthy();
   });
 
   it('renders not found for unsupported native staking route', () => {

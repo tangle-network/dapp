@@ -3,10 +3,7 @@
 import cx from 'classnames';
 import { createContext, forwardRef, useContext, useMemo } from 'react';
 import { twMerge } from 'tailwind-merge';
-import {
-  isEthereumAddress,
-  isAddress as isSubstrateAddress,
-} from '@polkadot/util-crypto';
+import { isAddress as isEvmAddress } from 'viem';
 
 import { Typography } from '../../typography';
 import {
@@ -16,7 +13,7 @@ import {
   InputFieldSlotProps,
 } from './types';
 import { Avatar } from '../Avatar';
-import { shortenHex, shortenString } from '../../utils';
+import { isSubstrateAddress, shortenHex, shortenString } from '../../utils';
 
 const InputFieldContext = createContext<InputFieldContextValue | undefined>(
   undefined,
@@ -108,7 +105,7 @@ const InputFieldInput = forwardRef<
   const inputValue = useMemo(
     () =>
       isAddressType
-        ? isEthereumAddress(String(value))
+        ? isEvmAddress(String(value))
           ? shortenHex(String(value), 10)
           : isSubstrateAddress(String(value))
             ? shortenString(String(value), 10)

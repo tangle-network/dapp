@@ -1,4 +1,4 @@
-import { isEthereumAddress } from '@polkadot/util-crypto';
+import { isAddress } from 'viem';
 import { EvmAddress } from '../types/address';
 
 // Cache to store results for previously checked addresses
@@ -17,7 +17,7 @@ export function isEvmAddress(
   }
 
   // 20-byte address is 40 characters long + 2 for the prefix.
-  const result = isEthereumAddress(address) && address.length === 42;
+  const result = isAddress(address) && address.length === 42;
 
   // Store result in cache
   addressCache.set(address, result);

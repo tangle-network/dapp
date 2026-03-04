@@ -1,10 +1,10 @@
+import { lazy, Suspense } from 'react';
 import { Navigate, Route, Routes } from 'react-router';
 import Layout from '../containers/Layout';
 import DashboardPage from '../pages/dashboard';
 import BlueprintsPage from '../pages/blueprints';
 import BlueprintDetailsPage from '../pages/blueprints/[id]';
 import BridgePage from '../pages/bridge';
-import MigrationClaimPage from '../pages/claim/migration';
 import NotFoundPage from '../pages/notFound';
 import { PagePath } from '../types';
 import Providers from './providers';
@@ -16,6 +16,9 @@ import {
   LiquidStakingAction,
   LiquidStakingTab,
 } from '../constants';
+import Spinner from '@tangle-network/icons/Spinner';
+
+const MigrationClaimPage = lazy(() => import('../pages/claim/migration'));
 
 function App() {
   return (
@@ -29,7 +32,20 @@ function App() {
               element={<DashboardPage />}
             />
 
-            <Route path={PagePath.CLAIM} element={<MigrationClaimPage />} />
+            <Route
+              path={PagePath.CLAIM}
+              element={
+                <Suspense
+                  fallback={
+                    <div className="flex items-center justify-center py-16">
+                      <Spinner size="xl" />
+                    </div>
+                  }
+                >
+                  <MigrationClaimPage />
+                </Suspense>
+              }
+            />
             <Route
               path={PagePath.CLAIM_MIGRATION}
               element={<Navigate to={PagePath.CLAIM} replace />}

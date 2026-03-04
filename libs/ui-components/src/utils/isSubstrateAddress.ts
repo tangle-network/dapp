@@ -1,5 +1,5 @@
-import { isAddress, isEthereumAddress } from '@polkadot/util-crypto';
 import { SubstrateAddress } from '../types/address';
+import { isEvmAddress } from './isEvmAddress20';
 
 // Cache to store results for previously checked addresses
 const addressCache = new Map<string, boolean>();
@@ -16,9 +16,10 @@ export const isSubstrateAddress = (
     }
   }
 
-  // It seems that `isAddress` returns true for EVM addresses.
-  // Check also that it is NOT an EVM address to prevent bugs.
-  const result = !isEthereumAddress(address) && isAddress(address);
+  // Best-effort SS58/base58 format detection for UI display.
+  const result =
+    !isEvmAddress(address) &&
+    /^[1-9A-HJ-NP-Za-km-z]{47,50}$/.test(address);
 
   // Store result in cache
   addressCache.set(address, result);

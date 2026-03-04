@@ -1,5 +1,4 @@
 import { FC, useMemo } from 'react';
-import { BN } from '@polkadot/util';
 import { TokenIcon } from '@tangle-network/icons';
 import Spinner from '@tangle-network/icons/Spinner';
 import { useChainId } from 'wagmi';
@@ -10,7 +9,6 @@ import {
   Avatar,
   AmountFormatStyle,
   CopyWithTooltip,
-  formatDisplayAmount,
   EMPTY_VALUE_PLACEHOLDER,
   shortenHex,
 } from '@tangle-network/ui-components';
@@ -35,6 +33,7 @@ import type {
 import type { Delegator } from '@tangle-network/tangle-shared-ui/data/graphql/useDelegator';
 import { getCachedTokenMetadata } from '@tangle-network/dapp-config/tokenMetadata';
 import { PagePath, QueryParamKey } from '../../types';
+import { formatTokenAmount } from '../../utils/formatTokenAmount';
 
 interface Props {
   assets: StakingAsset[];
@@ -48,10 +47,10 @@ interface StakingAssetRow {
   symbol: string;
   name: string;
   decimals: number;
-  wallet: BN;
-  deposited: BN;
-  delegated: BN;
-  protocolTvl: BN;
+  wallet: bigint;
+  deposited: bigint;
+  delegated: bigint;
+  protocolTvl: bigint;
   tokenAddress: Address;
 }
 
@@ -133,8 +132,8 @@ const getColumns = (chainId: number) => [
     header: () => <HeaderCell title="Wallet" />,
     cell: (props) => (
       <TableCellWrapper>
-        {props.getValue().gtn(0)
-          ? formatDisplayAmount(
+        {props.getValue() > BigInt(0)
+          ? formatTokenAmount(
               props.getValue(),
               props.row.original.decimals,
               AmountFormatStyle.SHORT,
@@ -147,8 +146,8 @@ const getColumns = (chainId: number) => [
     header: () => <HeaderCell title="Your Deposited" />,
     cell: (props) => (
       <TableCellWrapper>
-        {props.getValue().gtn(0)
-          ? formatDisplayAmount(
+        {props.getValue() > BigInt(0)
+          ? formatTokenAmount(
               props.getValue(),
               props.row.original.decimals,
               AmountFormatStyle.SHORT,
@@ -161,8 +160,8 @@ const getColumns = (chainId: number) => [
     header: () => <HeaderCell title="Your Delegated" />,
     cell: (props) => (
       <TableCellWrapper>
-        {props.getValue().gtn(0)
-          ? formatDisplayAmount(
+        {props.getValue() > BigInt(0)
+          ? formatTokenAmount(
               props.getValue(),
               props.row.original.decimals,
               AmountFormatStyle.SHORT,
@@ -175,7 +174,7 @@ const getColumns = (chainId: number) => [
     header: () => <HeaderCell title="TVL" />,
     cell: (props) => (
       <TableCellWrapper>
-        {formatDisplayAmount(
+        {formatTokenAmount(
           props.getValue(),
           props.row.original.decimals,
           AmountFormatStyle.SHORT,
@@ -228,17 +227,10 @@ export const StakingAssetsTable: FC<Props> = ({
       );
       const protocolAsset = protocolAssetMap.get(tokenKey);
 
-      const walletBalance = asset.balance ?? BigInt(0);
-      const wallet = new BN(walletBalance.toString());
-      const deposited = new BN(
-        (position?.totalDeposited ?? BigInt(0)).toString(),
-      );
-      const delegated = new BN(
-        (position?.delegatedAmount ?? BigInt(0)).toString(),
-      );
-      const protocolTvl = new BN(
-        (protocolAsset?.currentDeposits ?? BigInt(0)).toString(),
-      );
+      const wallet = asset.balance ?? BigInt(0);
+      const deposited = position?.totalDeposited ?? BigInt(0);
+      const delegated = position?.delegatedAmount ?? BigInt(0);
+      const protocolTvl = protocolAsset?.currentDeposits ?? BigInt(0);
 
       return {
         id: asset.id,

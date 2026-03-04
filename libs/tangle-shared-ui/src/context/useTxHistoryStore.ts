@@ -1,10 +1,9 @@
-import { BN } from '@polkadot/util';
-import { HexString } from '@polkadot/util/types';
 import { NetworkId } from '@tangle-network/ui-components/constants/networks';
 import {
   EvmAddress,
   SubstrateAddress,
 } from '@tangle-network/ui-components/types/address';
+import { Hex } from 'viem';
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import { BaseTxName } from '../types';
@@ -16,11 +15,11 @@ export type HistoryTxDetail =
   | number
   | EvmAddress
   | SubstrateAddress
-  | BN;
+  | bigint;
 
 export type HistoryTx<TxName extends BaseTxName = BaseTxName> = {
   name: TxName;
-  hash: HexString;
+  hash: Hex;
   origin: SubstrateAddress | EvmAddress;
   network: NetworkId;
   timestamp: number;
@@ -36,6 +35,7 @@ type SerializedHistoryTx = Omit<HistoryTx, 'details'> & {
 type SerializedHistoryTxDetail =
   | string
   | number
+  | { type: 'bigint'; value: string }
   | { type: 'BN'; value: string };
 
 const serializeTx = (tx: HistoryTx): SerializedHistoryTx => {
@@ -52,8 +52,8 @@ const serializeTx = (tx: HistoryTx): SerializedHistoryTx => {
   if (tx.details !== undefined) {
     serialized.details = {};
     for (const [key, value] of tx.details.entries()) {
-      if (BN.isBN(value)) {
-        serialized.details[key] = { type: 'BN', value: value.toString() };
+      if (typeof value === 'bigint') {
+        serialized.details[key] = { type: 'bigint', value: value.toString() };
       } else {
         serialized.details[key] = value as string | number;
       }
@@ -81,9 +81,9 @@ const deserializeTx = (serialized: SerializedHistoryTx): HistoryTx => {
         typeof value === 'object' &&
         value !== null &&
         'type' in value &&
-        value.type === 'BN'
+        (value.type === 'bigint' || value.type === 'BN')
       ) {
-        tx.details.set(key, new BN(value.value));
+        tx.details.set(key, BigInt(value.value));
       } else {
         tx.details.set(key, value as string | number);
       }
@@ -96,7 +96,7 @@ const deserializeTx = (serialized: SerializedHistoryTx): HistoryTx => {
 type StoreState = {
   transactions: HistoryTx[];
   pushTx: (transaction: HistoryTx) => void;
-  patchTx: (hash: HexString, patch: Omit<Partial<HistoryTx>, 'hash'>) => void;
+  patchTx: (hash: Hex, patch: Omit<Partial<HistoryTx>, 'hash'>) => void;
 };
 
 type PersistedState = {
@@ -117,7 +117,7 @@ const useTxHistoryStore = create<StoreState>()(
         set((state) => ({
           transactions: [...state.transactions, transaction],
         })),
-      patchTx: (hash: HexString, patch: Omit<Partial<HistoryTx>, 'hash'>) =>
+      patchTx: (hash: Hex, patch: Omit<Partial<HistoryTx>, 'hash'>) =>
         set((state) => ({
           transactions: state.transactions.map((tx) =>
             tx.hash === hash ? { ...tx, ...patch } : tx,

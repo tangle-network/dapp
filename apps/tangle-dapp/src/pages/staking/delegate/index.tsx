@@ -21,7 +21,6 @@ import { FC, useCallback, useEffect, useMemo, useRef } from 'react';
 import useFormSetValue from '../../../hooks/useFormSetValue';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import { Address, formatUnits, parseUnits } from 'viem';
-import { BN } from '@polkadot/util';
 import { useAccount, useChainId, usePublicClient } from 'wagmi';
 import { useQuery } from '@tanstack/react-query';
 import ErrorMessage from '@tangle-network/tangle-shared-ui/components/ErrorMessage';
@@ -718,7 +717,7 @@ const StakingDelegateForm: FC = () => {
             assetId={asset.id}
             name={asset.name}
             symbol={asset.symbol}
-            balance={new BN(asset.availableBalance.toString())}
+            balance={asset.availableBalance}
             decimals={asset.decimals}
             rightBottomText="Available"
           />
