@@ -2140,13 +2140,13 @@ const main = async () => {
       artifactSink: new FilesystemSink(outputDir),
       onTestStart: (testCase) => log(`start ${testCase.id} ${testCase.name}`),
       onTestComplete: (result) => {
-        const criteriaPass = Boolean(result.verified);
+        const criteriaPass = Boolean(result.verified && result.agentSuccess);
         log(
           `${criteriaPass ? 'pass' : 'fail'} ${result.testCase.id} verified=${result.verified} agentSuccess=${result.agentSuccess} verdict=${result.verdict} durationMs=${result.durationMs}`,
         );
-        if (criteriaPass && !result.agentSuccess) {
+        if (result.verified && !result.agentSuccess) {
           log(
-            `warning: ${result.testCase.id} met success criteria but agent ended unsuccessfully.`,
+            `warning: ${result.testCase.id} met criteria checks but agent ended unsuccessfully.`,
           );
         }
       },
@@ -2157,7 +2157,7 @@ const main = async () => {
     );
 
     const strictPassed = suite.results.filter((result) =>
-      Boolean(result.verified),
+      Boolean(result.verified && result.agentSuccess),
     ).length;
     const strictFailed = suite.results.length - strictPassed;
     log(

@@ -5704,7 +5704,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@hyperlane-xyz/sdk@npm:^5.6.2, @hyperlane-xyz/sdk@npm:^5.7.0":
+"@hyperlane-xyz/sdk@npm:^5.7.0":
   version: 5.7.0
   resolution: "@hyperlane-xyz/sdk@npm:5.7.0"
   dependencies:
@@ -5736,7 +5736,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@hyperlane-xyz/utils@npm:5.7.0, @hyperlane-xyz/utils@npm:^5.6.2, @hyperlane-xyz/utils@npm:^5.7.0":
+"@hyperlane-xyz/utils@npm:5.7.0, @hyperlane-xyz/utils@npm:^5.7.0":
   version: 5.7.0
   resolution: "@hyperlane-xyz/utils@npm:5.7.0"
   dependencies:
@@ -15680,17 +15680,6 @@ __metadata:
   resolution: "@tangle-network/dapp-types@workspace:libs/dapp-types"
   languageName: unknown
   linkType: soft
-
-"@tangle-network/evm-contract-metadata@npm:^1.3.0":
-  version: 1.3.0
-  resolution: "@tangle-network/evm-contract-metadata@npm:1.3.0"
-  dependencies:
-    "@hyperlane-xyz/sdk": "npm:^5.6.2"
-    "@hyperlane-xyz/utils": "npm:^5.6.2"
-    vite-plugin-dts: "npm:^4.3.0"
-  checksum: 10c0/ebc6d9e36b56d1590d923eae42453fbcc2ecfd866985fef78af097390551df87fd00f4bcc7864afe23a0c0b6feabaddc9aafbd5723a9984535aa3b053563b3ca
-  languageName: node
-  linkType: hard
 
 "@tangle-network/icons@workspace:libs/icons":
   version: 0.0.0-use.local
@@ -33759,7 +33748,6 @@ __metadata:
     "@swc/helpers": "npm:~0.5.17"
     "@swc/jest": "npm:~0.2.37"
     "@tailwindcss/forms": "npm:^0.5.10"
-    "@tangle-network/evm-contract-metadata": "npm:^1.3.0"
     "@tangle-network/tangle-substrate-types": "npm:^0.9.34"
     "@tanstack/match-sorter-utils": "npm:^8.19.4"
     "@tanstack/react-query": "npm:^5.87.0"
@@ -35626,7 +35614,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"vite-plugin-dts@npm:^4.3.0, vite-plugin-dts@npm:~4.5.3":
+"vite-plugin-dts@npm:~4.5.3":
   version: 4.5.3
   resolution: "vite-plugin-dts@npm:4.5.3"
   dependencies:
