@@ -64,7 +64,7 @@ yarn generate:release        # Review version bumps and changelog
 
 ### Tech Stack
 - **Frontend**: Vite, TypeScript, React, TailwindCSS
-- **Blockchain**: PolkadotJS with auto-generated types (`@tangle-network/tangle-substrate-types`)
+- **Blockchain**: EVM + PolkadotJS (metadata-driven runtime types)
 - **Build System**: Nx monorepo
 - **Styling**: TailwindCSS with custom preset
 

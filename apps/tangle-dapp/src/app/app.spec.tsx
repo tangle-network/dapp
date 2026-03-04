@@ -1,6 +1,6 @@
 import { render, screen } from '@testing-library/react';
 import type { PropsWithChildren } from 'react';
-import { MemoryRouter, Outlet } from 'react-router';
+import { MemoryRouter } from 'react-router';
 import {
   LiquidStakingAction,
   LiquidStakingTab,
@@ -33,22 +33,6 @@ vi.mock('../pages/blueprints/[id]', () => ({
 
 vi.mock('../pages/bridge', () => ({
   default: () => <div data-testid="bridge-page" />,
-}));
-
-vi.mock('../pages/claim', () => ({
-  default: () => <div data-testid="claim-page" />,
-}));
-
-vi.mock('../pages/claim/layout', () => ({
-  default: () => (
-    <div data-testid="claim-layout">
-      <Outlet />
-    </div>
-  ),
-}));
-
-vi.mock('../pages/claim/success', () => ({
-  default: () => <div data-testid="claim-success-page" />,
 }));
 
 vi.mock('../pages/claim/migration', () => ({
@@ -85,18 +69,10 @@ describe('App', () => {
     expect(screen.getByTestId('dashboard-page')).toBeTruthy();
   });
 
-  it('renders claim index route', () => {
+  it('renders canonical claim route', () => {
     renderAt('/claim');
 
-    expect(screen.getByTestId('claim-layout')).toBeTruthy();
-    expect(screen.getByTestId('claim-page')).toBeTruthy();
-  });
-
-  it('renders claim success route', () => {
-    renderAt('/claim/success');
-
-    expect(screen.getByTestId('claim-layout')).toBeTruthy();
-    expect(screen.getByTestId('claim-success-page')).toBeTruthy();
+    expect(screen.getByTestId('claim-migration-page')).toBeTruthy();
   });
 
   it('renders bridge route', () => {
@@ -160,7 +136,7 @@ describe('App', () => {
     );
   });
 
-  it('renders the claim migration route', () => {
+  it('redirects legacy claim migration route to canonical claim route', () => {
     renderAt('/claim/migration');
 
     expect(screen.getByTestId('claim-migration-page')).toBeTruthy();

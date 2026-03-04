@@ -9389,35 +9389,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@polkadot/typegen@npm:^13.2.1":
-  version: 13.2.1
-  resolution: "@polkadot/typegen@npm:13.2.1"
-  dependencies:
-    "@polkadot/api": "npm:13.2.1"
-    "@polkadot/api-augment": "npm:13.2.1"
-    "@polkadot/rpc-augment": "npm:13.2.1"
-    "@polkadot/rpc-provider": "npm:13.2.1"
-    "@polkadot/types": "npm:13.2.1"
-    "@polkadot/types-augment": "npm:13.2.1"
-    "@polkadot/types-codec": "npm:13.2.1"
-    "@polkadot/types-create": "npm:13.2.1"
-    "@polkadot/types-support": "npm:13.2.1"
-    "@polkadot/util": "npm:^13.1.1"
-    "@polkadot/util-crypto": "npm:^13.1.1"
-    "@polkadot/x-ws": "npm:^13.1.1"
-    handlebars: "npm:^4.7.8"
-    tslib: "npm:^2.7.0"
-    yargs: "npm:^17.7.2"
-  bin:
-    polkadot-types-chain-info: scripts/polkadot-types-chain-info.mjs
-    polkadot-types-from-chain: scripts/polkadot-types-from-chain.mjs
-    polkadot-types-from-defs: scripts/polkadot-types-from-defs.mjs
-    polkadot-types-internal-interfaces: scripts/polkadot-types-internal-interfaces.mjs
-    polkadot-types-internal-metadata: scripts/polkadot-types-internal-metadata.mjs
-  checksum: 10c0/b208e8fe3fd2cbbd03f82da15c4bc9a353678ce9510ece6c4a9c1376be355a808d7e58e39a9fe549212a0f928af9d8fa8e66e365ae185ec42c75a0673b4ba550
-  languageName: node
-  linkType: hard
-
 "@polkadot/types-augment@npm:10.13.1":
   version: 10.13.1
   resolution: "@polkadot/types-augment@npm:10.13.1"
@@ -15707,18 +15678,6 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@tangle-network/tangle-substrate-types@workspace:*, @tangle-network/tangle-substrate-types@workspace:libs/tangle-substrate-types":
-  version: 0.0.0-use.local
-  resolution: "@tangle-network/tangle-substrate-types@workspace:libs/tangle-substrate-types"
-  dependencies:
-    "@polkadot/api": "npm:^13.2.1"
-    "@polkadot/typegen": "npm:^13.2.1"
-    "@polkadot/types": "npm:^13.2.1"
-    ecpair: "npm:^2.1.0"
-    tiny-secp256k1: "npm:^2.2.3"
-  languageName: unknown
-  linkType: soft
-
 "@tangle-network/ui-components@workspace:libs/ui-components":
   version: 0.0.0-use.local
   resolution: "@tangle-network/ui-components@workspace:libs/ui-components"
@@ -19607,7 +19566,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"bs58check@npm:<3.0.0, bs58check@npm:^2.1.2":
+"bs58check@npm:^2.1.2":
   version: 2.1.2
   resolution: "bs58check@npm:2.1.2"
   dependencies:
@@ -22044,17 +22003,6 @@ __metadata:
     "@noble/curves": "npm:^1.9.7"
     "@noble/hashes": "npm:^1.8.0"
   checksum: 10c0/b4f562f3811722844a0fe25ed7e0fcee755be070b611d918c5d672327c660a675dd9e32cb596c87be05dfdd48dcbef90bb2b855e6e3266f9354505adf9e111e4
-  languageName: node
-  linkType: hard
-
-"ecpair@npm:^2.1.0":
-  version: 2.1.0
-  resolution: "ecpair@npm:2.1.0"
-  dependencies:
-    randombytes: "npm:^2.1.0"
-    typeforce: "npm:^1.18.0"
-    wif: "npm:^2.0.6"
-  checksum: 10c0/206a3c9af725416e6e91515278259319d88c880cf067c4e4d275fee5e746064cc5bc6279bdb2f87a9218ef25dd82921422d05e0952d4b41c8e91c070c504aa70
   languageName: node
   linkType: hard
 
@@ -33747,7 +33695,6 @@ __metadata:
     "@swc/helpers": "npm:~0.5.17"
     "@swc/jest": "npm:~0.2.37"
     "@tailwindcss/forms": "npm:^0.5.10"
-    "@tangle-network/tangle-substrate-types": "workspace:*"
     "@tanstack/match-sorter-utils": "npm:^8.19.4"
     "@tanstack/react-query": "npm:^5.87.0"
     "@tanstack/react-table": "npm:^8.21.3"
@@ -34056,15 +34003,6 @@ __metadata:
   version: 1.3.3
   resolution: "tiny-invariant@npm:1.3.3"
   checksum: 10c0/65af4a07324b591a059b35269cd696aba21bef2107f29b9f5894d83cc143159a204b299553435b03874ebb5b94d019afa8b8eff241c8a4cfee95872c2e1c1c4a
-  languageName: node
-  linkType: hard
-
-"tiny-secp256k1@npm:^2.2.3":
-  version: 2.2.3
-  resolution: "tiny-secp256k1@npm:2.2.3"
-  dependencies:
-    uint8array-tools: "npm:0.0.7"
-  checksum: 10c0/84ca5b88e90fc2a89b90814cec2394716393a9325f318ffede0cb99ff79aa4a63d609c76fc596727fd53192d9163ccaf690dc6817d3e571c625e3668d01177aa
   languageName: node
   linkType: hard
 
@@ -34703,13 +34641,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"typeforce@npm:^1.18.0":
-  version: 1.18.0
-  resolution: "typeforce@npm:1.18.0"
-  checksum: 10c0/011f57effd9ae6d3dd8bb249e09b4ecadb2c2a3f803b27f977ac8b7782834855930bff971ba549bcd5a8cedc8136d8a977c0b7e050cc67deded948181b7ba3e8
-  languageName: node
-  linkType: hard
-
 "typescript-eslint@npm:^8.30.1":
   version: 8.30.1
   resolution: "typescript-eslint@npm:8.30.1"
@@ -34833,13 +34764,6 @@ __metadata:
   version: 1.4.0
   resolution: "uint8array-extras@npm:1.4.0"
   checksum: 10c0/eaffd3388634b7e5e1496073b878dd19136043137d3e7e0d2a453e37f566a5a551e640819e1a6596c6df9b9d1f7b70884cc29db6a357bdd424811f3598d504dd
-  languageName: node
-  linkType: hard
-
-"uint8array-tools@npm:0.0.7":
-  version: 0.0.7
-  resolution: "uint8array-tools@npm:0.0.7"
-  checksum: 10c0/7d67aef80f3b6417c1dacc6505d5d82e3441bc6c1706b43698c5322e6fe7078a13a737efa8fcbd0884bd4b589511cc0a90cf4fe7cdd1b62b16007f1b0811ce36
   languageName: node
   linkType: hard
 
@@ -36438,15 +36362,6 @@ __metadata:
   bin:
     why-is-node-running: cli.js
   checksum: 10c0/1cde0b01b827d2cf4cb11db962f3958b9175d5d9e7ac7361d1a7b0e2dc6069a263e69118bd974c4f6d0a890ef4eedfe34cf3d5167ec14203dbc9a18620537054
-  languageName: node
-  linkType: hard
-
-"wif@npm:^2.0.6":
-  version: 2.0.6
-  resolution: "wif@npm:2.0.6"
-  dependencies:
-    bs58check: "npm:<3.0.0"
-  checksum: 10c0/9ff55fdde73226bbae6a08b68298b6d14bbc22fa4cefac11edaacb2317c217700f715b95dc4432917f73511ec983f1bc032d22c467703b136f4e6ca7dfa9f10b
   languageName: node
   linkType: hard
 

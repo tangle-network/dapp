@@ -1,15 +1,10 @@
-import type {
-  SpStakingExposurePage,
-  SpStakingPagedExposureMetadata,
-} from '@polkadot/types/lookup';
 import type { BN } from '@polkadot/util';
 
 export enum PagePath {
   DASHBOARD = '/',
   NOMINATION = '/nomination',
   NOMINATION_VALIDATOR = '/nomination/:validatorAddress',
-  CLAIM_AIRDROP = '/claim',
-  CLAIM_AIRDROP_SUCCESS = '/claim/success',
+  CLAIM = '/claim',
   CLAIM_MIGRATION = '/claim/migration',
   BRIDGE = '/bridge',
   BLUEPRINTS = '/blueprints',
@@ -217,8 +212,8 @@ export enum NetworkFeature {
 export type ExposureMap = Record<
   string,
   {
-    exposure: SpStakingExposurePage;
-    exposureMeta: SpStakingPagedExposureMetadata;
+    exposure: unknown;
+    exposureMeta: unknown;
   }
 >;
 

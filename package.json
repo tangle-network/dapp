@@ -158,7 +158,6 @@
     "@swc/helpers": "~0.5.17",
     "@swc/jest": "~0.2.37",
     "@tailwindcss/forms": "^0.5.10",
-    "@tangle-network/tangle-substrate-types": "workspace:*",
     "@tanstack/match-sorter-utils": "^8.19.4",
     "@tanstack/react-table": "^8.21.3",
     "@testing-library/dom": "^10.4.0",

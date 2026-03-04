@@ -4,9 +4,6 @@ import DashboardPage from '../pages/dashboard';
 import BlueprintsPage from '../pages/blueprints';
 import BlueprintDetailsPage from '../pages/blueprints/[id]';
 import BridgePage from '../pages/bridge';
-import ClaimPage from '../pages/claim';
-import ClaimLayout from '../pages/claim/layout';
-import ClaimSuccessPage from '../pages/claim/success';
 import MigrationClaimPage from '../pages/claim/migration';
 import NotFoundPage from '../pages/notFound';
 import { PagePath } from '../types';
@@ -32,18 +29,10 @@ function App() {
               element={<DashboardPage />}
             />
 
-            <Route path={PagePath.CLAIM_AIRDROP} element={<ClaimLayout />}>
-              <Route index element={<ClaimPage />} />
-
-              <Route
-                path={PagePath.CLAIM_AIRDROP_SUCCESS}
-                element={<ClaimSuccessPage />}
-              />
-            </Route>
-
+            <Route path={PagePath.CLAIM} element={<MigrationClaimPage />} />
             <Route
               path={PagePath.CLAIM_MIGRATION}
-              element={<MigrationClaimPage />}
+              element={<Navigate to={PagePath.CLAIM} replace />}
             />
 
             <Route path={PagePath.BRIDGE} element={<BridgePage />} />
