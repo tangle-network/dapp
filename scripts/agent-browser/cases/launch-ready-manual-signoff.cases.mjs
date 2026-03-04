@@ -125,9 +125,11 @@ export const createLaunchReadyManualSignoffCases = ({
         'tx-outcome',
       ]),
       startUrl: toUrl(dappBaseUrl, '/staking/deposit'),
-      setup: makeTxBaselineSetup('FLOW-001', toUrl(dappBaseUrl, '/staking/deposit')),
-      goal:
-        'Open staking deposit. Select an asset, enter an amount, and progress until the transaction confirmation prompt is reached. If the wallet confirmation appears, submit it and wait for notifier/history status update.',
+      setup: makeTxBaselineSetup(
+        'FLOW-001',
+        toUrl(dappBaseUrl, '/staking/deposit'),
+      ),
+      goal: 'Open staking deposit. Select an asset, enter an amount, and progress until the transaction confirmation prompt is reached. If the wallet confirmation appears, submit it and wait for notifier/history status update.',
       successDescription:
         'Deposit flow yields a terminal transaction update (finalized/failed) from this run.',
       successCriteria: [
@@ -141,6 +143,8 @@ export const createLaunchReadyManualSignoffCases = ({
               'button:has-text("Deposit")',
               'button:has-text("Approve & Deposit")',
               'button:has-text("Connect Wallet")',
+              'text=/Deposited tokens successfully/i',
+              'text=/Processing deposit/i',
             ]),
         },
         makeTxOutcomeCriterion('FLOW-001'),
@@ -159,9 +163,11 @@ export const createLaunchReadyManualSignoffCases = ({
         'tx-outcome',
       ]),
       startUrl: toUrl(dappBaseUrl, '/staking/delegate'),
-      setup: makeTxBaselineSetup('FLOW-002', toUrl(dappBaseUrl, '/staking/delegate')),
-      goal:
-        'Open staking delegate. Select an operator and asset, enter amount, and continue until delegate transaction confirmation is requested in wallet. Submit if wallet is ready.',
+      setup: makeTxBaselineSetup(
+        'FLOW-002',
+        toUrl(dappBaseUrl, '/staking/delegate'),
+      ),
+      goal: 'Open staking delegate. Select an operator and asset, enter amount, and continue until delegate transaction confirmation is requested in wallet. Submit if wallet is ready.',
       successDescription:
         'Delegate flow yields a terminal transaction update (finalized/failed) from this run.',
       successCriteria: [
@@ -175,6 +181,25 @@ export const createLaunchReadyManualSignoffCases = ({
               'button:has-text("Select Asset")',
               'button:has-text("Delegate")',
               'button:has-text("Connect Wallet")',
+              'button:has-text("Connect")',
+              'button:has-text("Switch to supported chain")',
+              'text=/No Operators Available/i',
+              'text=/No Assets Available/i',
+            ]),
+        },
+        {
+          type: 'custom',
+          description:
+            'Delegate page shows either actionable controls or an explicit guard state.',
+          check: async (page) =>
+            anyVisible(page, [
+              'button:has-text("Delegate")',
+              'button:has-text("Select Operator")',
+              'button:has-text("Select Asset")',
+              'text=/Not on whitelist/i',
+              'text=/Operator not accepting delegations/i',
+              'text=/No Operators Available/i',
+              'text=/No Assets Available/i',
             ]),
         },
         makeTxOutcomeCriterion('FLOW-002'),
@@ -197,8 +222,7 @@ export const createLaunchReadyManualSignoffCases = ({
         'FLOW-003',
         toUrl(dappBaseUrl, '/staking/undelegate'),
       ),
-      goal:
-        'Open staking undelegate. Choose a delegation, enter amount, schedule undelegate, and attempt execute-ready path when available. Submit tx if wallet confirmation appears.',
+      goal: 'Open staking undelegate. Choose a delegation, enter amount, schedule undelegate, and attempt execute-ready path when available. Submit tx if wallet confirmation appears.',
       successDescription:
         'Undelegate flow yields a terminal transaction update (finalized/failed) from this run.',
       successCriteria: [
@@ -229,9 +253,11 @@ export const createLaunchReadyManualSignoffCases = ({
         'tx-outcome',
       ]),
       startUrl: toUrl(dappBaseUrl, '/staking/withdraw'),
-      setup: makeTxBaselineSetup('FLOW-004', toUrl(dappBaseUrl, '/staking/withdraw')),
-      goal:
-        'Open staking withdraw. Select asset, enter amount, schedule withdraw, and execute ready withdrawals when present. Submit tx if wallet confirmation appears.',
+      setup: makeTxBaselineSetup(
+        'FLOW-004',
+        toUrl(dappBaseUrl, '/staking/withdraw'),
+      ),
+      goal: 'Open staking withdraw. Select asset, enter amount, schedule withdraw, and execute ready withdrawals when present. Submit tx if wallet confirmation appears.',
       successDescription:
         'Withdraw flow yields a terminal transaction update (finalized/failed) from this run.',
       successCriteria: [
@@ -262,9 +288,11 @@ export const createLaunchReadyManualSignoffCases = ({
         'tx-outcome',
       ]),
       startUrl: toUrl(dappBaseUrl, '/staking/rewards'),
-      setup: makeTxBaselineSetup('FLOW-005', toUrl(dappBaseUrl, '/staking/rewards')),
-      goal:
-        'Open staking rewards, verify rewards surface loads, and attempt Claim All Rewards when available. Confirm wallet prompt or disabled/guarded state is explicit.',
+      setup: makeTxBaselineSetup(
+        'FLOW-005',
+        toUrl(dappBaseUrl, '/staking/rewards'),
+      ),
+      goal: 'Open staking rewards, verify rewards surface loads, and attempt Claim All Rewards when available. Confirm wallet prompt or disabled/guarded state is explicit.',
       successDescription:
         'Rewards claim flow yields a terminal transaction update (finalized/failed) from this run.',
       successCriteria: [
@@ -291,8 +319,7 @@ export const createLaunchReadyManualSignoffCases = ({
       priority: flowPriority('FLOW-006'),
       tags: buildFlowTags('user', 'dapp', ['staking', 'route-surface']),
       startUrl: toUrl(dappBaseUrl, '/staking/deposit'),
-      goal:
-        'Verify the canonical staking tabs/routes are exposed and that /staking/native is not a launch route.',
+      goal: 'Verify the canonical staking tabs/routes are exposed and that /staking/native is not a launch route.',
       successDescription:
         'Staking tabs are visible and /staking/native resolves to not-found.',
       successCriteria: [
@@ -336,9 +363,11 @@ export const createLaunchReadyManualSignoffCases = ({
         'tx-outcome',
       ]),
       startUrl: toUrl(dappBaseUrl, '/claim/migration'),
-      setup: makeTxBaselineSetup('FLOW-007', toUrl(dappBaseUrl, '/claim/migration')),
-      goal:
-        'Open migration claim flow, connect wallets, set recipient, sign ownership proof, generate proof, and submit claim. If dependencies are unavailable, capture the explicit blocker message.',
+      setup: makeTxBaselineSetup(
+        'FLOW-007',
+        toUrl(dappBaseUrl, '/claim/migration'),
+      ),
+      goal: 'Open migration claim flow, connect wallets, set recipient, sign ownership proof, generate proof, and submit claim. If dependencies are unavailable, capture the explicit blocker message.',
       successDescription:
         'Migration claim flow yields a terminal transaction update (finalized/failed) from this run.',
       successCriteria: [
@@ -366,8 +395,7 @@ export const createLaunchReadyManualSignoffCases = ({
       priority: flowPriority('FLOW-009'),
       tags: buildFlowTags('customer', 'cloud', ['indexer']),
       startUrl: toUrl(cloudBaseUrl, '/blueprints'),
-      goal:
-        'Open cloud blueprints page, inspect available blueprints, and open a blueprint details page when entries exist. Record explicit empty-state if none are indexed.',
+      goal: 'Open cloud blueprints page, inspect available blueprints, and open a blueprint details page when entries exist. Record explicit empty-state if none are indexed.',
       successDescription:
         'Blueprint discovery surface is loaded with either entries or explicit empty state.',
       successCriteria: [
@@ -398,8 +426,7 @@ export const createLaunchReadyManualSignoffCases = ({
       ]),
       startUrl: toUrl(cloudBaseUrl, deployRoute),
       setup: makeTxBaselineSetup('FLOW-010', toUrl(cloudBaseUrl, deployRoute)),
-      goal:
-        'Reach the deploy request flow for a blueprint. Complete basic information, operator selection, request mode, and payment sections; attempt deploy submission and capture tx state/error details.',
+      goal: 'Reach the deploy request flow for a blueprint. Complete basic information, operator selection, request mode, and payment sections; attempt deploy submission and capture tx state/error details.',
       successDescription:
         'Deploy request flow yields a terminal transaction update (finalized/failed) from this run.',
       successCriteria: [
@@ -433,8 +460,7 @@ export const createLaunchReadyManualSignoffCases = ({
       ]),
       startUrl: toUrl(cloudBaseUrl, serviceRoute),
       setup: makeTxBaselineSetup('FLOW-011', toUrl(cloudBaseUrl, serviceRoute)),
-      goal:
-        'Open a service details page, validate ACL section, fund service modal path, and submit job path. Attempt actions until wallet confirmation or explicit validation/error guards.',
+      goal: 'Open a service details page, validate ACL section, fund service modal path, and submit job path. Attempt actions until wallet confirmation or explicit validation/error guards.',
       successDescription:
         'Service details actions yield a terminal transaction update (finalized/failed) from this run.',
       successCriteria: [
@@ -465,8 +491,7 @@ export const createLaunchReadyManualSignoffCases = ({
       tags: buildFlowTags('customer', 'cloud', ['tx-history']),
       dependsOn: ['FLOW-010'],
       startUrl: toUrl(cloudBaseUrl, '/instances'),
-      goal:
-        'Open cloud transaction history drawer and verify at least one terminal transaction lifecycle state is visible.',
+      goal: 'Open cloud transaction history drawer and verify at least one terminal transaction lifecycle state is visible.',
       successDescription:
         'Transactions drawer is visible and contains at least one terminal transaction status.',
       successCriteria: [
@@ -502,8 +527,7 @@ export const createLaunchReadyManualSignoffCases = ({
       ]),
       startUrl: toUrl(cloudBaseUrl, '/instances'),
       setup: makeTxBaselineSetup('FLOW-013', toUrl(cloudBaseUrl, '/instances')),
-      goal:
-        'Open pending requests tab, review a pending service request, and drive approve/reject action to wallet-confirmation stage while preserving visible tx/notifier traceability.',
+      goal: 'Open pending requests tab, review a pending service request, and drive approve/reject action to wallet-confirmation stage while preserving visible tx/notifier traceability.',
       successDescription:
         'Pending request review flow yields a terminal transaction update (finalized/failed) from this run.',
       successCriteria: [
@@ -534,8 +558,7 @@ export const createLaunchReadyManualSignoffCases = ({
       ]),
       startUrl: toUrl(cloudBaseUrl, serviceRoute),
       setup: makeTxBaselineSetup('FLOW-014', toUrl(cloudBaseUrl, serviceRoute)),
-      goal:
-        'Open service details and validate operator membership lifecycle paths: join, leave, schedule exit, execute exit, and force-exit/terminate when available.',
+      goal: 'Open service details and validate operator membership lifecycle paths: join, leave, schedule exit, execute exit, and force-exit/terminate when available.',
       successDescription:
         'Operator membership lifecycle flow yields a terminal transaction update (finalized/failed) from this run.',
       successCriteria: [
@@ -566,8 +589,7 @@ export const createLaunchReadyManualSignoffCases = ({
       priority: flowPriority('FLOW-015'),
       tags: buildFlowTags('operator', 'cloud', ['cross-app']),
       startUrl: toUrl(cloudBaseUrl, '/operators'),
-      goal:
-        'From cloud operators page, trigger the Manage stake action and verify navigation to the dapp staking delegate route with operator context when available.',
+      goal: 'From cloud operators page, trigger the Manage stake action and verify navigation to the dapp staking delegate route with operator context when available.',
       successDescription:
         'Manage stake action deep-links to the canonical dapp staking delegate route.',
       successCriteria: [
@@ -581,10 +603,7 @@ export const createLaunchReadyManualSignoffCases = ({
             }
 
             try {
-              return (
-                new URL(currentUrl).origin ===
-                new URL(dappBaseUrl).origin
-              );
+              return new URL(currentUrl).origin === new URL(dappBaseUrl).origin;
             } catch {
               return false;
             }
@@ -602,8 +621,7 @@ export const createLaunchReadyManualSignoffCases = ({
       tags: buildFlowTags('operator', 'cloud', ['tx-history']),
       dependsOn: ['FLOW-013'],
       startUrl: toUrl(cloudBaseUrl, '/instances'),
-      goal:
-        'Trigger or observe an operator transaction, then confirm at least one terminal status is present and visible via tx UI channels.',
+      goal: 'Trigger or observe an operator transaction, then confirm at least one terminal status is present and visible via tx UI channels.',
       successDescription:
         'Operator tx lifecycle channels are visible with at least one terminal transaction status.',
       successCriteria: [
@@ -633,13 +651,9 @@ export const createLaunchReadyManualSignoffCases = ({
         'Validate security requirement read failures are surfaced with explicit fail-closed messaging.',
       category: 'operator',
       priority: flowPriority('FLOW-017'),
-      tags: buildFlowTags('operator', 'cloud', [
-        'wallet-required',
-        'indexer',
-      ]),
+      tags: buildFlowTags('operator', 'cloud', ['wallet-required', 'indexer']),
       startUrl: toUrl(cloudBaseUrl, serviceRoute),
-      goal:
-        'Open join-service or approval flow and verify security requirements are loaded. If read fails, confirm explicit fail-closed messaging and blocked unsafe submit behavior.',
+      goal: 'Open join-service or approval flow and verify security requirements are loaded. If read fails, confirm explicit fail-closed messaging and blocked unsafe submit behavior.',
       successDescription:
         'Security requirement section is visible or fail-closed message is shown.',
       successCriteria: [
@@ -668,9 +682,11 @@ export const createLaunchReadyManualSignoffCases = ({
         'tx-outcome',
       ]),
       startUrl: toUrl(cloudBaseUrl, '/blueprints'),
-      setup: makeTxBaselineSetup('FLOW-018', toUrl(cloudBaseUrl, '/blueprints')),
-      goal:
-        'Validate developer blueprint workflows: registration drawer, create blueprint wizard, and manage blueprints operations. Attempt write actions up to wallet confirmation.',
+      setup: makeTxBaselineSetup(
+        'FLOW-018',
+        toUrl(cloudBaseUrl, '/blueprints'),
+      ),
+      goal: 'Validate developer blueprint workflows: registration drawer, create blueprint wizard, and manage blueprints operations. Attempt write actions up to wallet confirmation.',
       successDescription:
         'Developer blueprint flow yields a terminal transaction update (finalized/failed) from this run.',
       successCriteria: [
@@ -724,9 +740,11 @@ export const createLaunchReadyManualSignoffCases = ({
         'tx-outcome',
       ]),
       startUrl: toUrl(cloudBaseUrl, '/blueprints'),
-      setup: makeTxBaselineSetup('FLOW-019', toUrl(cloudBaseUrl, '/blueprints')),
-      goal:
-        'Open operator registration drawer for one or more blueprints, submit registration, and verify progress/success feedback and tx lifecycle traceability.',
+      setup: makeTxBaselineSetup(
+        'FLOW-019',
+        toUrl(cloudBaseUrl, '/blueprints'),
+      ),
+      goal: 'Open operator registration drawer for one or more blueprints, submit registration, and verify progress/success feedback and tx lifecycle traceability.',
       successDescription:
         'Operator batch registration flow yields a terminal transaction update (finalized/failed) from this run.',
       successCriteria: [

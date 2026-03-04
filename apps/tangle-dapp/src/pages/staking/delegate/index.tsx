@@ -124,7 +124,7 @@ const StakingDelegateForm: FC = () => {
   const { assets: stakingAssets } = useStakingAssets({
     enabled: Boolean(userAddress),
   });
-  const { data: operatorMap } = useOperatorMap();
+  const { data: operatorMap } = useOperatorMap({ status: 'ACTIVE' });
   const blueprintSelection = useBlueprintStore((store) => store.selection);
 
   const tokenAddresses = useMemo<Address[]>(() => {

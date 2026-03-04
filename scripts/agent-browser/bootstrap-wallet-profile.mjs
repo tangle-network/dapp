@@ -7,6 +7,21 @@ import { chromium } from 'playwright';
 const DEFAULT_MNEMONIC =
   'test test test test test test test test test test test junk';
 const DEFAULT_PASSWORD = 'TangleLocal123!';
+const parseBoolean = (value, fallback = false) => {
+  if (value === undefined) {
+    return fallback;
+  }
+
+  const normalized = String(value).trim().toLowerCase();
+  if (['1', 'true', 'yes', 'on'].includes(normalized)) {
+    return true;
+  }
+  if (['0', 'false', 'no', 'off'].includes(normalized)) {
+    return false;
+  }
+
+  return fallback;
+};
 
 const options = parseArgs({
   options: {
@@ -14,6 +29,7 @@ const options = parseArgs({
     'user-data-dir': { type: 'string' },
     mnemonic: { type: 'string' },
     password: { type: 'string' },
+    headless: { type: 'boolean' },
     help: { type: 'boolean', short: 'h' },
   },
   strict: true,
@@ -29,6 +45,7 @@ Options:
   --user-data-dir <path>     Persistent Chromium user data dir (default: ./.agent-wallet-profile)
   --mnemonic <phrase>        Seed phrase to import (default: anvil test mnemonic)
   --password <value>         Wallet password for unlock/import (default: ${DEFAULT_PASSWORD})
+  --headless                 Run bootstrap in headless mode
   -h, --help                 Show this help
 `);
   process.exit(0);
@@ -44,6 +61,10 @@ const userDataDir = path.resolve(
 );
 const mnemonic = (options.mnemonic ?? DEFAULT_MNEMONIC).trim();
 const password = options.password ?? DEFAULT_PASSWORD;
+const headless = parseBoolean(
+  options.headless ?? process.env.AGENT_BROWSER_HEADLESS,
+  false,
+);
 
 const log = (message) => console.log(`[wallet-bootstrap] ${message}`);
 
@@ -151,23 +172,27 @@ const fillRecoveryPhrase = async (page, phrase) => {
 
   await phraseInput.fill(phrase, { timeout: 5000 });
   await page.waitForTimeout(250);
-  const continueButton = await findFirstVisibleLocator(page, [
-    '[data-testid="import-srp-confirm"]',
-    'button:has-text("Continue")',
-  ], 800);
+  const continueButton = await findFirstVisibleLocator(
+    page,
+    ['[data-testid="import-srp-confirm"]', 'button:has-text("Continue")'],
+    800,
+  );
   if (continueButton) {
     const enabled = await continueButton.isEnabled().catch(() => true);
     if (!enabled) {
-      const fallbackInput = await findFirstVisibleLocator(page, [
-        '[data-testid="import-srp__srp-text-area"]',
-        'textarea',
-      ], 1500);
+      const fallbackInput = await findFirstVisibleLocator(
+        page,
+        ['[data-testid="import-srp__srp-text-area"]', 'textarea'],
+        1500,
+      );
       if (fallbackInput) {
         await typeIntoLocatorWithFallback(page, fallbackInput, phrase).catch(
           () => {},
         );
       }
-      const stillDisabled = await continueButton.isDisabled().catch(() => false);
+      const stillDisabled = await continueButton
+        .isDisabled()
+        .catch(() => false);
       if (stillDisabled && fallbackInput) {
         await fallbackInput
           .evaluate((el, nextValue) => {
@@ -222,7 +247,7 @@ const main = async () => {
 
   const context = await chromium.launchPersistentContext(userDataDir, {
     channel: 'chromium',
-    headless: false,
+    headless,
     args,
   });
 
@@ -265,7 +290,9 @@ const main = async () => {
       !initialUrl.includes('/onboarding/') &&
       !initialUrl.includes('/unlock')
     ) {
-      log(`Wallet home loaded (${initialUrl}); treating profile as initialized.`);
+      log(
+        `Wallet home loaded (${initialUrl}); treating profile as initialized.`,
+      );
       return;
     }
 
@@ -285,66 +312,65 @@ const main = async () => {
       }
     }
 
-    await clickFirstVisible(page, [
-      '[data-testid="onboarding-terms-checkbox"]',
-      'input[type="checkbox"]',
-    ], 4000);
-    await clickFirstVisible(page, [
-      '[data-testid="onboarding-get-started"]',
-      'button:has-text("Get started")',
-      'button:has-text("Get Started")',
-      'button:has-text("Start")',
-    ], 8000);
-
-    let selectedExistingWallet = await clickFirstVisible(page, [
-      '[data-testid="onboarding-import-wallet"]',
-      'button:has-text("I have an existing wallet")',
-      'button:has-text("Import wallet")',
-      'button:has-text("Import an existing wallet")',
-    ], 12000);
-    if (!selectedExistingWallet) {
-      await clickFirstVisible(page, [
+    await clickFirstVisible(
+      page,
+      ['[data-testid="onboarding-terms-checkbox"]', 'input[type="checkbox"]'],
+      4000,
+    );
+    await clickFirstVisible(
+      page,
+      [
         '[data-testid="onboarding-get-started"]',
         'button:has-text("Get started")',
         'button:has-text("Get Started")',
-      ], 8000);
-      selectedExistingWallet = await clickFirstVisible(page, [
-        '[data-testid="onboarding-import-wallet"]',
-        'button:has-text("I have an existing wallet")',
-        'button:has-text("Import wallet")',
-        'button:has-text("Import an existing wallet")',
-      ], 12000);
-    }
-    await clickFirstVisible(page, [
-      '[data-testid="metametrics-no-thanks"]',
-      'button:has-text("No thanks")',
-      'button:has-text("I agree")',
-    ], 4000);
-    await clickFirstVisible(page, [
-      '[data-testid="onboarding-import-with-srp"]',
-      '[data-testid="onboarding-import-srp"]',
-      '[data-testid="import-srp"]',
-      'button:has-text("Import using Secret Recovery Phrase")',
-      'button:has-text("Import Secret Recovery Phrase")',
-      'button:has-text("Secret Recovery Phrase")',
-      'text=/Secret Recovery Phrase/i',
-    ], 12000);
-    await clickFirstVisible(page, [
-      '[data-testid="metametrics-no-thanks"]',
-      'button:has-text("No thanks")',
-      'button:has-text("I agree")',
-    ], 4000);
+        'button:has-text("Start")',
+      ],
+      8000,
+    );
 
-    let phraseFilled = await fillRecoveryPhrase(page, mnemonic);
-    if (!phraseFilled) {
-      // Retry onboarding branch once if UI was still transitioning from splash/welcome.
-      await clickFirstVisible(page, [
+    let selectedExistingWallet = await clickFirstVisible(
+      page,
+      [
         '[data-testid="onboarding-import-wallet"]',
         'button:has-text("I have an existing wallet")',
         'button:has-text("Import wallet")',
         'button:has-text("Import an existing wallet")',
-      ], 10000);
-      await clickFirstVisible(page, [
+      ],
+      12000,
+    );
+    if (!selectedExistingWallet) {
+      await clickFirstVisible(
+        page,
+        [
+          '[data-testid="onboarding-get-started"]',
+          'button:has-text("Get started")',
+          'button:has-text("Get Started")',
+        ],
+        8000,
+      );
+      selectedExistingWallet = await clickFirstVisible(
+        page,
+        [
+          '[data-testid="onboarding-import-wallet"]',
+          'button:has-text("I have an existing wallet")',
+          'button:has-text("Import wallet")',
+          'button:has-text("Import an existing wallet")',
+        ],
+        12000,
+      );
+    }
+    await clickFirstVisible(
+      page,
+      [
+        '[data-testid="metametrics-no-thanks"]',
+        'button:has-text("No thanks")',
+        'button:has-text("I agree")',
+      ],
+      4000,
+    );
+    await clickFirstVisible(
+      page,
+      [
         '[data-testid="onboarding-import-with-srp"]',
         '[data-testid="onboarding-import-srp"]',
         '[data-testid="import-srp"]',
@@ -352,7 +378,45 @@ const main = async () => {
         'button:has-text("Import Secret Recovery Phrase")',
         'button:has-text("Secret Recovery Phrase")',
         'text=/Secret Recovery Phrase/i',
-      ], 10000);
+      ],
+      12000,
+    );
+    await clickFirstVisible(
+      page,
+      [
+        '[data-testid="metametrics-no-thanks"]',
+        'button:has-text("No thanks")',
+        'button:has-text("I agree")',
+      ],
+      4000,
+    );
+
+    let phraseFilled = await fillRecoveryPhrase(page, mnemonic);
+    if (!phraseFilled) {
+      // Retry onboarding branch once if UI was still transitioning from splash/welcome.
+      await clickFirstVisible(
+        page,
+        [
+          '[data-testid="onboarding-import-wallet"]',
+          'button:has-text("I have an existing wallet")',
+          'button:has-text("Import wallet")',
+          'button:has-text("Import an existing wallet")',
+        ],
+        10000,
+      );
+      await clickFirstVisible(
+        page,
+        [
+          '[data-testid="onboarding-import-with-srp"]',
+          '[data-testid="onboarding-import-srp"]',
+          '[data-testid="import-srp"]',
+          'button:has-text("Import using Secret Recovery Phrase")',
+          'button:has-text("Import Secret Recovery Phrase")',
+          'button:has-text("Secret Recovery Phrase")',
+          'text=/Secret Recovery Phrase/i',
+        ],
+        10000,
+      );
       phraseFilled = await fillRecoveryPhrase(page, mnemonic);
     }
     if (!phraseFilled) {
@@ -366,12 +430,15 @@ const main = async () => {
           fullPage: true,
         })
         .catch(() => {});
-      throw new Error('Unable to locate recovery phrase inputs on onboarding flow.');
+      throw new Error(
+        'Unable to locate recovery phrase inputs on onboarding flow.',
+      );
     }
-    await clickFirstEnabled(page, [
-      '[data-testid="import-srp-confirm"]',
-      'button:has-text("Continue")',
-    ], 8000);
+    await clickFirstEnabled(
+      page,
+      ['[data-testid="import-srp-confirm"]', 'button:has-text("Continue")'],
+      8000,
+    );
 
     const passwordFilled = await fillFirstVisible(
       page,
@@ -396,7 +463,9 @@ const main = async () => {
       const inputCount = await inputs.count();
       for (let index = 0; index < inputCount; index += 1) {
         const input = inputs.nth(index);
-        const visible = await input.isVisible({ timeout: 500 }).catch(() => false);
+        const visible = await input
+          .isVisible({ timeout: 500 })
+          .catch(() => false);
         if (!visible) continue;
         await input.fill(password, { timeout: 3000 }).catch(() => {});
       }
@@ -407,15 +476,19 @@ const main = async () => {
       'input[type="checkbox"]',
     ]);
 
-    const imported = await clickFirstEnabled(page, [
-      '[data-testid="create-password-import"]',
-      'button:has-text("Import my wallet")',
-      'button:has-text("Import")',
-      'button:has-text("Restore")',
-      'button:has-text("Create password")',
-      'button:has-text("Create Password")',
-      'button:has-text("Continue")',
-    ], 12000);
+    const imported = await clickFirstEnabled(
+      page,
+      [
+        '[data-testid="create-password-import"]',
+        'button:has-text("Import my wallet")',
+        'button:has-text("Import")',
+        'button:has-text("Restore")',
+        'button:has-text("Create password")',
+        'button:has-text("Create Password")',
+        'button:has-text("Continue")',
+      ],
+      12000,
+    );
     if (!imported && !(await waitForWalletReady(page))) {
       await dumpPageState(page, 'create-password-submit-not-found');
       await page
@@ -427,43 +500,53 @@ const main = async () => {
           fullPage: true,
         })
         .catch(() => {});
-      throw new Error('Unable to submit wallet import/create step during onboarding.');
+      throw new Error(
+        'Unable to submit wallet import/create step during onboarding.',
+      );
     }
 
     for (let attempt = 0; attempt < 5; attempt += 1) {
-      const advanced = await clickFirstEnabled(page, [
-        '[data-testid="metametrics-no-thanks"]',
-        '[data-testid="metametrics-i-agree"]',
-        '[data-testid="onboarding-complete-done"]',
-        '[data-testid="pin-extension-next"]',
-        '[data-testid="pin-extension-done"]',
-        'button:has-text("No thanks")',
-        'button:has-text("No Thanks")',
-        'button:has-text("I agree")',
-        'button:has-text("Next")',
-        'button:has-text("Done")',
-        'button:has-text("Got it")',
-        'button:has-text("Skip")',
-      ], 5000);
+      const advanced = await clickFirstEnabled(
+        page,
+        [
+          '[data-testid="metametrics-no-thanks"]',
+          '[data-testid="metametrics-i-agree"]',
+          '[data-testid="onboarding-complete-done"]',
+          '[data-testid="pin-extension-next"]',
+          '[data-testid="pin-extension-done"]',
+          'button:has-text("No thanks")',
+          'button:has-text("No Thanks")',
+          'button:has-text("I agree")',
+          'button:has-text("Next")',
+          'button:has-text("Done")',
+          'button:has-text("Got it")',
+          'button:has-text("Skip")',
+        ],
+        5000,
+      );
       if (!advanced) break;
       await page.waitForTimeout(500);
     }
 
     if (!(await waitForWalletReady(page))) {
       for (let attempt = 0; attempt < 8; attempt += 1) {
-        await clickFirstEnabled(page, [
-          '[data-testid="onboarding-complete-done"]',
-          '[data-testid="pin-extension-next"]',
-          '[data-testid="pin-extension-done"]',
-          'button:has-text("Done")',
-          'button:has-text("Next")',
-          'button:has-text("Got it")',
-          'button:has-text("Skip")',
-          '[role="button"]:has-text("Done")',
-          '[role="button"]:has-text("Next")',
-          '[role="button"]:has-text("Got it")',
-          '[role="button"]:has-text("Skip")',
-        ], 3000).catch(() => {});
+        await clickFirstEnabled(
+          page,
+          [
+            '[data-testid="onboarding-complete-done"]',
+            '[data-testid="pin-extension-next"]',
+            '[data-testid="pin-extension-done"]',
+            'button:has-text("Done")',
+            'button:has-text("Next")',
+            'button:has-text("Got it")',
+            'button:has-text("Skip")',
+            '[role="button"]:has-text("Done")',
+            '[role="button"]:has-text("Next")',
+            '[role="button"]:has-text("Got it")',
+            '[role="button"]:has-text("Skip")',
+          ],
+          3000,
+        ).catch(() => {});
         await page.waitForTimeout(300).catch(() => {});
       }
 
@@ -479,7 +562,9 @@ const main = async () => {
         const extensionPages = context
           .pages()
           .map((candidate) => candidate.url())
-          .filter((url) => url.startsWith(`chrome-extension://${extensionId}/`));
+          .filter((url) =>
+            url.startsWith(`chrome-extension://${extensionId}/`),
+          );
         const hasOnboardingPage = extensionPages.some((url) =>
           url.includes('/onboarding/'),
         );
@@ -514,7 +599,7 @@ const main = async () => {
 
 main().catch((error) => {
   console.error(
-    `[wallet-bootstrap] fatal: ${error instanceof Error ? error.stack ?? error.message : String(error)}`,
+    `[wallet-bootstrap] fatal: ${error instanceof Error ? (error.stack ?? error.message) : String(error)}`,
   );
   process.exit(1);
 });

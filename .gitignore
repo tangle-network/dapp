@@ -108,6 +108,8 @@ vitest.config.*.timestamp*
 reports/
 agent-results/
 .agent-wallet-profile/
+.agent-wallet-profile*/
+.wallet-extensions/
 .cursor/rules/nx-rules.mdc
 .github/instructions/nx.instructions.md
 
