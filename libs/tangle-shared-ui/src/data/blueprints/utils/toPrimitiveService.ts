@@ -1,13 +1,13 @@
 import { assertSubstrateAddress } from '@tangle-network/ui-components';
 import createStakingAssetId from '../../../utils/createStakingAssetId';
-import type { Service } from '@tangle-network/tangle-substrate-types';
-import {
+import type {
+  TanglePrimitivesServicesService,
   TanglePrimitivesServicesServiceServiceRequest,
   TanglePrimitivesServicesTypesApprovalState,
 } from '@polkadot/types/lookup';
 import { SubstrateAddress } from '@tangle-network/ui-components/types/address';
 import { StakingAssetId } from '../../../types';
-import { StorageKey, u64 } from '@polkadot/types';
+import type { StorageKey, u64 } from '@polkadot/types';
 
 export function toPrimitiveService({
   id,
@@ -18,7 +18,7 @@ export function toPrimitiveService({
   permittedCallers,
   ttl,
   membershipModel,
-}: Service) {
+}: TanglePrimitivesServicesService) {
   return {
     id: id.toBigInt(),
     blueprint: blueprint.toBigInt(),
@@ -110,7 +110,7 @@ export function toPrimitiveOperatorsWithApprovalState(
 }
 
 export function toPrimitiveOperatorSecurityCommitments(
-  operatorSecurityCommitments: Service['operatorSecurityCommitments'],
+  operatorSecurityCommitments: TanglePrimitivesServicesService['operatorSecurityCommitments'],
 ) {
   return operatorSecurityCommitments.map(
     ([operatorId, securityCommitments]) => {
@@ -128,7 +128,7 @@ export function toPrimitiveOperatorSecurityCommitments(
 }
 
 export function toPrimitiveSecurityRequirements(
-  securityRequirements: Service['securityRequirements'],
+  securityRequirements: TanglePrimitivesServicesService['securityRequirements'],
 ) {
   return securityRequirements.map((requirement) => {
     return {
@@ -140,7 +140,7 @@ export function toPrimitiveSecurityRequirements(
 }
 
 export function toPrimitiveMembershipModel(
-  membershipModel: Service['membershipModel'],
+  membershipModel: TanglePrimitivesServicesService['membershipModel'],
 ) {
   const membershipModelValue = {
     minOperators:

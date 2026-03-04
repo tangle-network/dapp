@@ -5,12 +5,9 @@ import {
 } from '@tangle-network/ui-components/types/address';
 
 import { PresetTypedChainId } from '@tangle-network/dapp-types';
-import {
-  EVMTokenBridgeEnum,
-  EVMTokenEnum,
-} from '@tangle-network/evm-contract-metadata';
 import { Decimal } from 'decimal.js';
 import { Abi, Address } from 'viem';
+import { EVMTokenBridgeEnum, EVMTokenEnum } from './bridge-metadata';
 
 export type TangleTokenSymbol = 'tTNT' | 'TNT';
 

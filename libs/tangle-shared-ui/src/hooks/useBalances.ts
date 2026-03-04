@@ -31,6 +31,19 @@ export type AccountBalances = {
   locked: BN | null;
 };
 
+type AccountInfoWithBalanceData = {
+  data: {
+    free: {
+      toBn: () => BN;
+      sub: (value: BN) => BN;
+    };
+    reserved?: BN;
+    frozen?: BN;
+    miscFrozen?: BN;
+    feeFrozen?: BN;
+  };
+};
+
 const useBalances = () => {
   const activeSubstrateAddress = useSubstrateAddress();
 
@@ -41,7 +54,8 @@ const useBalances = () => {
       }
 
       return api.query.system.account(activeSubstrateAddress).pipe(
-        map(({ data }) => {
+        map((accountInfo) => {
+          const { data } = accountInfo as unknown as AccountInfoWithBalanceData;
           // Note that without the null/undefined check, an error
           // reports that `num` is undefined for some reason. Might be
           // a gap in the type definitions of PolkadotJS.

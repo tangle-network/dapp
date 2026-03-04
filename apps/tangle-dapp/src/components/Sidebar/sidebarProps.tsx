@@ -55,7 +55,7 @@ const SIDEBAR_STATIC_ITEMS: SideBarItemProps[] = [
   },
   {
     name: 'Claim TNT',
-    href: PagePath.CLAIM_MIGRATION,
+    href: PagePath.CLAIM,
     isInternal: true,
     Icon: GiftLineIcon,
     subItems: [],

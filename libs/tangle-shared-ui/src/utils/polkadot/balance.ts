@@ -1,8 +1,17 @@
-import { PalletBalancesAccountData } from '@polkadot/types/lookup';
 import { BN, BN_ZERO, bnMax } from '@polkadot/util';
 
+type AccountBalanceData = {
+  free: {
+    sub: (value: BN) => BN;
+  };
+  reserved?: BN;
+  frozen?: BN;
+  miscFrozen?: BN;
+  feeFrozen?: BN;
+};
+
 export const calculateTransferableBalance = (
-  accInfo: PalletBalancesAccountData,
+  accInfo: AccountBalanceData,
 ): BN => {
   const maxFrozen = bnMax(
     accInfo.frozen ?? BN_ZERO,

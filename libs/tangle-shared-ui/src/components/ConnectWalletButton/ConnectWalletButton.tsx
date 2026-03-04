@@ -37,6 +37,7 @@ const ConnectWalletButton = ({ className }: ConnectWalletButtonProps) => {
       <div className={className}>
         {!isReady ? (
           <Button
+            data-testid="evm-connect-trigger"
             isLoading={isConnecting}
             spinner={<Spinner size="lg" />}
             loadingText="Connecting"

@@ -23,22 +23,36 @@ Optional wallet env vars:
 - `AGENT_WALLET_EXTENSION_PATHS=/abs/path/to/metamask,/abs/path/to/rabby`
 - `AGENT_WALLET_USER_DATA_DIR=/abs/path/to/.agent-wallet-profile`
 
+Notes:
+- `scripts/agent-browser/run-wallet-flow-suite-docker.sh` auto-loads `.env.local` (if present) before launching Docker.
+- Wallet-required flows fail fast when no wallet extension path/profile extension is available.
+
 ## Commands
 - List all covered launch flows:
   - `yarn test:wallet-flows:list`
+- List + filter flows:
+  - `yarn test:wallet-flows -- --list --flow FLOW-015`
 - Run all launch flows:
   - `yarn test:wallet-flows`
 - Run all launch flows in Docker + Xvfb (recommended on Linux hosts without a desktop session):
   - `yarn test:wallet-flows:docker`
 - Run one flow:
-  - `yarn test:wallet-flows --flow FLOW-001`
+  - `yarn test:wallet-flows -- --flow FLOW-001`
 - Run by persona:
-  - `yarn test:wallet-flows --persona user`
+  - `yarn test:wallet-flows -- --persona user`
 - Run service/blueprint-id-dependent flows with explicit ids:
-  - `yarn test:wallet-flows --blueprint-id 1 --service-id 1`
+  - `yarn test:wallet-flows -- --blueprint-id 1 --service-id 1`
 - Override LLM runtime directly from CLI:
-  - `yarn test:wallet-flows --provider openai --model gpt-4o --api-key $OPENAI_API_KEY`
-  - `yarn test:wallet-flows --base-url http://localhost:4000/v1 --api-key local-dev-key`
+  - `yarn test:wallet-flows -- --provider openai --model gpt-4o --api-key $OPENAI_API_KEY`
+  - `yarn test:wallet-flows -- --base-url http://localhost:4000/v1 --api-key local-dev-key`
+
+## Verification Semantics
+- Strict pass requires both:
+  - `agentSuccess=true`
+  - `verified=true` (all declared criteria pass)
+- `tx-outcome` flows require a new transaction terminal status (`finalized` or `failed`) in `tx-history` during that run.
+- `FLOW-012` depends on `FLOW-010`, and `FLOW-016` depends on `FLOW-013` to avoid false positives from empty tx history.
+- `FLOW-015` now requires navigation to dApp origin + `/staking/delegate`; cloud fallback UI no longer counts as pass.
 
 ## Covered Launch Flows
 | Flow ID | Persona | Flow | Start Surface |

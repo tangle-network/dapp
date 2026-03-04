@@ -1,6 +1,6 @@
-import { isEthereumAddress } from '@polkadot/util-crypto';
 import { EMPTY_VALUE_PLACEHOLDER } from '@tangle-network/ui-components/constants';
 import { Typography } from '@tangle-network/ui-components/typography/Typography';
+import { isEvmAddress } from '@tangle-network/ui-components/utils/isEvmAddress20';
 import { isSubstrateAddress } from '@tangle-network/ui-components/utils/isSubstrateAddress';
 import { shortenHex } from '@tangle-network/ui-components/utils/shortenHex';
 import { shortenString } from '@tangle-network/ui-components/utils/shortenString';
@@ -82,7 +82,7 @@ const BlueprintItem: FC<Omit<BlueprintItemProps, 'id'>> = ({
                 className="line-clamp-1 text-mono-120 dark:text-mono-100"
               >
                 {/* Author can be name or address */}
-                {isEthereumAddress(author)
+                {isEvmAddress(author)
                   ? shortenHex(author)
                   : isSubstrateAddress(author)
                     ? shortenString(author)
