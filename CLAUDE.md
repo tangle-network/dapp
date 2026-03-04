@@ -70,6 +70,25 @@ yarn generate:release        # Review version bumps and changelog
 
 ## Development Guidelines
 
+### Execution Posture (Senior IC / Tech Lead)
+- Default to ownership and execution. When a goal is clear, proceed immediately without asking permission to continue.
+- Prefer decisive action over proposal loops. Bring work to completion end-to-end (implementation, verification, reporting).
+- Escalate only for true external blockers (missing credentials, unavailable infrastructure, irreversible risk), and name the exact blocker.
+- Report status with concrete evidence (commands run, pass/fail, remaining gaps), not vague progress language.
+- For release-readiness tasks, drive to production-grade confidence: strict validation, explicit failure reasons, and concrete remediation steps.
+- Avoid “do you want me to…” phrasing when the expected next step is obvious from context.
+
+### Wallet Flow Reliability (agent-browser-driver)
+- Treat wallet E2E as environment-first: do not trust flow results until local chain + indexer + dApp are confirmed on the same network.
+- Minimum readiness gate before running wallet flows:
+  - `http://127.0.0.1:8545` responds to `eth_chainId` with `0x7a69` (31337)
+  - Hasura GraphQL endpoint is reachable (typically `http://localhost:8080/v1/graphql`)
+  - dApp is started with local indexer env (`VITE_ENVIO_MAINNET_ENDPOINT` and `VITE_ENVIO_TESTNET_ENDPOINT` pointing to local Hasura)
+- Use `scripts/local-env/start-local-env.sh` for deterministic local protocol state; if Docker ports are occupied (commonly `5433`), resolve port collisions first or set alternate `ENVIO_PG_PORT` / `HASURA_EXTERNAL_PORT`.
+- Wallet preflight failures (`no-provider`, connector timeout, chain mismatch) must be treated as blockers for strict launch validation; only allow non-strict continuation for exploratory debugging.
+- A suite result with `turns=0` is not valid evidence of agentic flow execution; treat it as runtime/LLM execution failure and fix provider/runtime conditions first.
+- For local wallet runs, prefer persistent seeded profile + automated prompt settling, and ensure funding checks are active for connected local accounts.
+
 ### Code Style
 - Use `const ... => {}` over `function ... () {}`
 - React components: `const Component: FC<Props> = ({ prop1, prop2 }) => { ... }`
