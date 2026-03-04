@@ -190,7 +190,11 @@ const printCaseList = (cases) => {
   }
 };
 
+const argv = process.argv.slice(2);
+const normalizedArgv = argv.filter((arg) => arg !== '--');
+
 const options = parseArgs({
+  args: normalizedArgv,
   options: {
     cases: { type: 'string' },
     config: { type: 'string' },
@@ -355,6 +359,44 @@ const main = async () => {
   const launchPlan = buildBrowserLaunchPlan(mergedConfig, {
     cwd: process.cwd(),
   });
+
+  const selectedWalletRequiredCases = selectedCases.filter((testCase) =>
+    (testCase.tags ?? []).includes('wallet-required'),
+  );
+  const hasWalletRequiredCases = selectedWalletRequiredCases.length > 0;
+  const resolvedUserDataDir =
+    launchPlan.userDataDir ?? path.resolve('.agent-wallet-profile');
+  const profileExtensionsDir = path.join(resolvedUserDataDir, 'Default', 'Extensions');
+  const profileHasExtensions =
+    fs.existsSync(profileExtensionsDir) &&
+    fs
+      .readdirSync(profileExtensionsDir, { withFileTypes: true })
+      .some((entry) => entry.isDirectory());
+
+  if (hasWalletRequiredCases && !launchPlan.walletMode) {
+    throw new Error(
+      `Selected flows include wallet-required cases (${selectedWalletRequiredCases
+        .map((testCase) => testCase.id)
+        .join(', ')}), but wallet mode is disabled.`,
+    );
+  }
+
+  if (
+    hasWalletRequiredCases &&
+    launchPlan.walletMode &&
+    launchPlan.extensionPaths.length === 0 &&
+    !profileHasExtensions
+  ) {
+    throw new Error(
+      [
+        'Selected flows require a wallet extension, but none is configured.',
+        `Wallet-required flow IDs: ${selectedWalletRequiredCases
+          .map((testCase) => testCase.id)
+          .join(', ')}`,
+        'Provide AGENT_WALLET_EXTENSION_PATHS/--wallet-extension or pre-seed extension data in AGENT_WALLET_USER_DATA_DIR/--wallet-user-data-dir.',
+      ].join('\n'),
+    );
+  }
 
   const outputDir = path.resolve(
     mergedConfig.outputDir ?? './agent-results/wallet-flows',

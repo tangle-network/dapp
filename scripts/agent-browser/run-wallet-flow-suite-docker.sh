@@ -12,6 +12,18 @@ WORKDIR="/work/dapp"
 echo "[wallet-flows:docker] image=${IMAGE}"
 echo "[wallet-flows:docker] workdir=${WORKDIR}"
 
+if [[ -f "${DAPP_DIR}/.env.local" ]]; then
+  set -a
+  # shellcheck disable=SC1091
+  source "${DAPP_DIR}/.env.local"
+  set +a
+fi
+
+ARGS=("$@")
+if [[ "${#ARGS[@]}" -gt 0 && "${ARGS[0]}" == "--" ]]; then
+  ARGS=("${ARGS[@]:1}")
+fi
+
 ENV_ARGS=()
 for name in OPENAI_API_KEY ANTHROPIC_API_KEY GOOGLE_GENERATIVE_AI_API_KEY LLM_BASE_URL AGENT_BROWSER_DRIVER_MODULE AGENT_BROWSER_PROVIDER AGENT_BROWSER_MODEL AGENT_BROWSER_TIMEOUT_MS AGENT_BROWSER_MAX_TURNS AGENT_BROWSER_OUTPUT_DIR AGENT_WALLET_EXTENSION_PATHS AGENT_WALLET_USER_DATA_DIR; do
   if [[ -n "${!name:-}" ]]; then
@@ -44,4 +56,4 @@ for _ in $(seq 1 50); do
   sleep 0.1
 done
 node scripts/agent-browser/run-wallet-flow-suite.mjs "$@"
-' _ "$@"
+' _ "${ARGS[@]}"
