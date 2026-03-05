@@ -18,7 +18,7 @@
 ## Follow-Up Status (Updated In `drew/process-and-app-audit`)
 
 - Addressed:
-  - leaderboard copy/meta removed legacy nomination/Substrate wording
+  - leaderboard copy/meta removed legacy terminology
   - leaderboard endpoint/query execution now uses shared Envio utility instead of ad-hoc fetch endpoint logic
   - leaderboard total count now comes from aggregate query with fallback pagination count
   - role-account query now runs only for selected roles and deduplicates developer/customer ids via `distinct_on`
@@ -57,12 +57,14 @@
 ### High
 
 1. Pagination count is incorrect in leaderboard
+
 - `totalCount` is set to the current page filtered length, not global count:
   - [leaderboardQuery.ts](/home/drew/code/dapp/apps/leaderboard/src/features/leaderboard/queries/leaderboardQuery.ts#L202)
 - Impact: pagination controls and UX can be incorrect on multi-page datasets.
 - Status: addressed in `drew/process-and-app-audit` (aggregate count + fallback).
 
 2. Role filtering query does unbounded full-table scans
+
 - Queries all `Operator`, filtered `Delegator`, all `Blueprint`, all `JobCall` with no paging/aggregation:
   - [leaderboardQuery.ts](/home/drew/code/dapp/apps/leaderboard/src/features/leaderboard/queries/leaderboardQuery.ts#L276)
 - Impact: slow queries and degraded UX as data grows.
@@ -71,15 +73,18 @@
 ### Medium
 
 3. Indexing “target” is synthetic (`latest + 1`)
+
 - [indexingProgressQuery.ts](/home/drew/code/dapp/apps/leaderboard/src/features/indexingProgress/queries/indexingProgressQuery.ts#L79)
 - Impact: “Synced” can be noisy/misleading.
 - Status: addressed in `drew/process-and-app-audit` (indicator now reports indexed block/activity, not synthetic sync).
 
 4. Leaderboard has zero automated tests
+
 - No `*.test.*`/`*.spec.*` files under `apps/leaderboard/src`.
 - Impact: regressions are likely to slip through.
 
 5. Team-account filter placeholder is not production-ready
+
 - Placeholder zero address only:
   - [leaderboardQuery.ts](/home/drew/code/dapp/apps/leaderboard/src/features/leaderboard/queries/leaderboardQuery.ts#L7)
 - Impact: internal accounts may appear in rankings.
@@ -88,12 +93,14 @@
 ### Low
 
 6. Product copy drift in leaderboard
-- Mentions “nominating” in hero copy:
+
+- Hero copy previously used legacy terms:
   - [index.tsx](/home/drew/code/dapp/apps/leaderboard/src/pages/index.tsx#L17)
 - Impact: terminology drift vs current EVM/operator-layer framing.
 - Status: addressed in `drew/process-and-app-audit`.
 
 7. Bundle size is high across apps
+
 - Build outputs include large chunks (notably `tangle-dapp` and `tangle-cloud`).
 - Impact: page-load/perf cost on slower clients.
 

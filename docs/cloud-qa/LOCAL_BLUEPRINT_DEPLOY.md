@@ -285,17 +285,17 @@ echo "Using broadcast file: $BROADCAST_FILE"
 
 # Extract proxy addresses (deployed in order: Staking, Tangle)
 PROXIES=$(jq -r '[.transactions[] | select(.contractName == "ERC1967Proxy") | .contractAddress] | .[]' "$BROADCAST_FILE")
-RESTAKING=$(echo "$PROXIES" | sed -n '1p')
+STAKING=$(echo "$PROXIES" | sed -n '1p')
 TANGLE=$(echo "$PROXIES" | sed -n '2p')
 STATUS_REGISTRY=$(jq -r '.transactions[] | select(.contractName == "OperatorStatusRegistry") | .contractAddress' "$BROADCAST_FILE" | head -1)
 
 echo "Contract addresses:"
 echo "  TANGLE: $TANGLE"
-echo "  RESTAKING: $RESTAKING"
+echo "  STAKING: $STAKING"
 echo "  STATUS_REGISTRY: $STATUS_REGISTRY"
 
 # Export for use in deployment
-export TANGLE RESTAKING STATUS_REGISTRY
+export TANGLE STAKING STATUS_REGISTRY
 ```
 
 ### Setup Keystore
@@ -324,7 +324,7 @@ WS_RPC_URL=ws://127.0.0.1:8546
 KEYSTORE_PATH=./deployer-keystore
 BLUEPRINT_KEYSTORE_URI=./deployer-keystore
 TANGLE_CONTRACT=$TANGLE
-RESTAKING_CONTRACT=$RESTAKING
+STAKING_CONTRACT=$STAKING
 STATUS_REGISTRY_CONTRACT=$STATUS_REGISTRY
 BLUEPRINT_ID=0
 SERVICE_ID=0
@@ -839,7 +839,7 @@ forge script script/v2/DeployContractsOnly.s.sol:DeployContractsOnly \
 
 # Save addresses (deterministic with Anvil)
 export TANGLE=0xCf7Ed3AccA5a467e9e704C703E8D87F634fB0Fc9
-export RESTAKING=0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512
+export STAKING=0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512
 export STATUS_REGISTRY=0x99bbA657f2BbC93c02D617f8bA121cB8Fc104Acf
 ```
 
@@ -877,7 +877,7 @@ WS_RPC_URL=ws://127.0.0.1:8546
 KEYSTORE_PATH=./deployer-keystore
 BLUEPRINT_KEYSTORE_URI=./deployer-keystore
 TANGLE_CONTRACT=$TANGLE
-RESTAKING_CONTRACT=$RESTAKING
+STAKING_CONTRACT=$STAKING
 STATUS_REGISTRY_CONTRACT=$STATUS_REGISTRY
 BLUEPRINT_ID=0
 SERVICE_ID=0
@@ -1103,7 +1103,7 @@ brew install jq  # macOS
 
 If `cargo tangle blueprint deploy` fails:
 1. Verify the HTTP server is running on port 8081
-2. Check that the contract addresses were exported correctly: `echo $TANGLE $RESTAKING $STATUS_REGISTRY`
+2. Check that the contract addresses were exported correctly: `echo $TANGLE $STAKING $STATUS_REGISTRY`
 3. Verify the settings.env file has correct values
 
 ### Full Manual Setup Issues
