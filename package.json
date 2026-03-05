@@ -43,7 +43,9 @@
     "script:setupStaking": "bun scripts/setupStaking.ts",
     "test:wallet-flows": "node ./scripts/agent-browser/run-wallet-flow-suite.mjs",
     "test:wallet-flows:list": "node ./scripts/agent-browser/run-wallet-flow-suite.mjs --list",
-    "test:wallet-flows:docker": "bash ./scripts/agent-browser/run-wallet-flow-suite-docker.sh"
+    "test:wallet-flows:docker": "bash ./scripts/agent-browser/run-wallet-flow-suite-docker.sh",
+    "test:wallet-flows:gate": "node ./scripts/agent-browser/check-release-gate.mjs",
+    "test:wallet-flows:gate:strict": "node ./scripts/agent-browser/check-release-gate.mjs --max-blocker-partial 0"
   },
   "resolutions": {
     "@polkadot/api": "^13.2.1",
