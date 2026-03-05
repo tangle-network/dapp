@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-This is the Tangle dApp monorepo - a collection of decentralized applications serving as the frontend for the Tangle Network, a Substrate-based cryptocurrency network in the Polkadot ecosystem. Tangle is a layer 1 for on-demand services where developers can build and monetize decentralized services using Tangle Blueprints.
+This is the Tangle dApp monorepo - a collection of decentralized applications for the Tangle Operator Layer for AI services, built on the TNT EVM protocol stack (`tnt-core`).
 
 The monorepo uses Nx for fast, extensible building with `apps/` containing interfaces and `libs/` containing shared code.
 
@@ -45,9 +45,9 @@ yarn generate:release        # Review version bumps and changelog
 ## Architecture & Key Concepts
 
 ### Applications (apps/)
-- **tangle-dapp**: Main dApp for managing Tangle Network assets and MPC services
-- **tangle-cloud**: Cloud interface for Tangle services  
-- **leaderboard**: Validator leaderboard application
+- **tangle-dapp**: Main dApp for staking, delegation, rewards, migration claims, and wallet flows
+- **tangle-cloud**: Operator/developer interface for blueprint and service lifecycle management
+- **leaderboard**: Points and participation leaderboard
 
 ### Libraries (libs/)
 - **abstract-api-provider**: Base classes unifying API across providers
@@ -64,7 +64,7 @@ yarn generate:release        # Review version bumps and changelog
 
 ### Tech Stack
 - **Frontend**: Vite, TypeScript, React, TailwindCSS
-- **Blockchain**: EVM + PolkadotJS (metadata-driven runtime types)
+- **Blockchain**: EVM-first (`viem`/`wagmi`) with limited PolkadotJS usage for migration-claim interoperability
 - **Build System**: Nx monorepo
 - **Styling**: TailwindCSS with custom preset
 
@@ -78,6 +78,13 @@ yarn generate:release        # Review version bumps and changelog
 - For release-readiness tasks, drive to production-grade confidence: strict validation, explicit failure reasons, and concrete remediation steps.
 - Avoid “do you want me to…” phrasing when the expected next step is obvious from context.
 - For launch-flow-impacting changes, follow `docs/harness-engineering-spec.md` and complete `docs/harness-engineering-checklist.md` before requesting merge.
+
+### Harness Release Process (Succinct)
+- Scope launch-impacting work to explicit flow IDs in `docs/launch-readiness-board.csv`.
+- Run harness suite: `yarn test:wallet-flows` and inspect `suite/report.json` + `suite/release-matrix.md`.
+- Enforce gate: `yarn test:wallet-flows:gate` (or `:strict` when required).
+- Critical flows (`FLOW-001,002,005,010,011,013,014,018,019`) must be `happy-path-pass` unless exception owner/ETA is documented.
+- Include matrix summary and gate output in PR using the harness section in `.github/PULL_REQUEST_TEMPLATE.md`.
 
 ### Wallet Flow Reliability (agent-browser-driver)
 - Treat wallet E2E as environment-first: do not trust flow results until local chain + indexer + dApp are confirmed on the same network.
@@ -112,7 +119,7 @@ yarn generate:release        # Review version bumps and changelog
 ### Important Notes
 - **Localize changes**: Keep changes isolated to relevant projects unless shared libraries are involved
 - **Package dependencies**: Don't assume packages exist - check imports or root `package.json` first
-- **Number handling**: For values > u32 from chain, use `BN` or `bigint`. For u32 or smaller, use `.toNumber()`
+- **Number handling**: Prefer `bigint`/`viem` primitives for chain values; avoid introducing new `BN` usage.
 - **Monorepo scope**: Avoid cross-project changes unless working with shared libs
 - **Storybook**: Considered legacy, avoid creating/modifying storybook files
 - **Testing**: No testing libraries currently used or planned
