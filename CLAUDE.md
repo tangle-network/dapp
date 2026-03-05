@@ -77,6 +77,7 @@ yarn generate:release        # Review version bumps and changelog
 - Report status with concrete evidence (commands run, pass/fail, remaining gaps), not vague progress language.
 - For release-readiness tasks, drive to production-grade confidence: strict validation, explicit failure reasons, and concrete remediation steps.
 - Avoid “do you want me to…” phrasing when the expected next step is obvious from context.
+- For launch-flow-impacting changes, follow `docs/harness-engineering-spec.md` and complete `docs/harness-engineering-checklist.md` before requesting merge.
 
 ### Wallet Flow Reliability (agent-browser-driver)
 - Treat wallet E2E as environment-first: do not trust flow results until local chain + indexer + dApp are confirmed on the same network.

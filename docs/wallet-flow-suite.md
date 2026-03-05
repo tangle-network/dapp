@@ -27,6 +27,8 @@ Optional wallet env vars:
 - `AGENT_WALLET_USER_DATA_DIR=/abs/path/to/.agent-wallet-profile`
 - `AGENT_STRICT_WALLET_PREFLIGHT=false` to allow non-blocking preflight (default is strict/fail-closed)
 - `AGENT_WALLET_ALLOW_HEADLESS=true` to force wallet runs in headless mode (default is headful for extension stability)
+- `AGENT_REQUIRE_AGENT_SUCCESS=true` to require agent narrative success for all flows
+- `AGENT_REQUIRE_AGENT_SUCCESS_FLOWS=FLOW-001,FLOW-002,...` to enforce agent-success gate for specific flows (defaults to critical tx flows)
 
 Notes:
 
@@ -57,9 +59,11 @@ Notes:
 
 - Default pass requires:
   - `verified=true` (all declared criteria pass)
-- Optional dual-gate mode (`AGENT_REQUIRE_AGENT_SUCCESS=true`) also requires:
-  - `agentSuccess=true`
-- Flow dependencies are expanded automatically (for example `FLOW-012` includes `FLOW-010`, `FLOW-016` includes `FLOW-013`).
+- Critical-flow dual gate is enabled by default for:
+  - `FLOW-001`, `FLOW-002`, `FLOW-005`, `FLOW-010`, `FLOW-011`, `FLOW-013`, `FLOW-014`, `FLOW-018`, `FLOW-019`
+  - these flows require both `verified=true` and `agentSuccess=true` unless overridden via `AGENT_REQUIRE_AGENT_SUCCESS_FLOWS`
+- Global strict mode (`AGENT_REQUIRE_AGENT_SUCCESS=true`) requires `agentSuccess=true` for every flow.
+- Flow dependencies are expanded automatically when defined in case metadata.
 - `tx-outcome` flows pass when either:
   - a new terminal transaction status (`finalized` or `failed`) is observed in current-run `tx-history`, or
   - an explicit non-actionable blocker state is visible (permissions, missing wallet dependency, empty inventory, etc.).
@@ -94,5 +98,10 @@ Notes:
 ## Artifacts and Exit Criteria
 
 - Artifacts are written to `agent-results/wallet-flows/` by default.
+- Runner also writes release matrix artifacts under `agent-results/.../suite/`:
+  - `release-matrix.json`
+  - `release-matrix.csv`
+  - `release-matrix.md`
+  - classification: `happy-path-pass`, `blocker-or-partial-pass`, `failed`
 - Runner exits non-zero when any case fails or is skipped.
 - Use generated report artifacts plus tx hashes/request ids as launch sign-off evidence.

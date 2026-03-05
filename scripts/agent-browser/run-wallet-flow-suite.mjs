@@ -11,6 +11,17 @@ const DEFAULT_CONFIG_PATH = 'agent-browser-driver.config.mjs';
 const LAUNCH_BOARD_PATH = 'docs/launch-readiness-board.csv';
 
 const log = (message) => console.log(`[wallet-flows] ${message}`);
+const DEFAULT_STRICT_AGENT_SUCCESS_FLOW_IDS = [
+  'FLOW-001',
+  'FLOW-002',
+  'FLOW-005',
+  'FLOW-010',
+  'FLOW-011',
+  'FLOW-013',
+  'FLOW-014',
+  'FLOW-018',
+  'FLOW-019',
+];
 const DEFAULT_WALLET_PASSWORD =
   process.env.AGENT_WALLET_PASSWORD ?? 'TangleLocal123!';
 const DEFAULT_WALLET_CHAIN_ID = Number(
@@ -1581,6 +1592,147 @@ const parseBooleanEnv = (value, fallback) => {
   return fallback;
 };
 
+const parseFlowIdList = (value, fallback = []) => {
+  if (value === undefined) {
+    return [...fallback];
+  }
+
+  const normalized = String(value).trim().toLowerCase();
+  if (normalized === '' || normalized === 'none' || normalized === 'off') {
+    return [];
+  }
+
+  return [...new Set(String(value).split(/[,\s]+/).map((entry) => entry.trim()))]
+    .filter(Boolean)
+    .map((entry) => entry.toUpperCase());
+};
+
+const toReleaseMatrixRows = (results, strictAgentSuccessFlowIds) =>
+  results.map((result) => {
+    const flowId = result.testCase?.id ?? 'UNKNOWN';
+    const requiresAgentSuccess =
+      strictAgentSuccessFlowIds.has(flowId) || false;
+    const strictPass = Boolean(
+      result.verified &&
+        (result.agentSuccess || (!requiresAgentSuccess && true)),
+    );
+    const classification = strictPass
+      ? result.agentSuccess
+        ? 'happy-path-pass'
+        : 'blocker-or-partial-pass'
+      : 'failed';
+
+    return {
+      flowId,
+      name: result.testCase?.name ?? '',
+      persona: result.testCase?.category ?? 'uncategorized',
+      tags: (result.testCase?.tags ?? []).join(','),
+      verified: Boolean(result.verified),
+      agentSuccess: Boolean(result.agentSuccess),
+      requiresAgentSuccess,
+      strictPass,
+      classification,
+      verdict: String(result.verdict ?? ''),
+      durationMs: Number(result.durationMs ?? 0),
+    };
+  });
+
+const writeReleaseMatrixArtifacts = (
+  outputDir,
+  suite,
+  strictAgentSuccessFlowIds,
+) => {
+  const suiteDir = path.join(outputDir, 'suite');
+  fs.mkdirSync(suiteDir, { recursive: true });
+
+  const rows = toReleaseMatrixRows(suite.results ?? [], strictAgentSuccessFlowIds);
+  const summary = {
+    total: rows.length,
+    happyPathPass: rows.filter(
+      (row) => row.classification === 'happy-path-pass',
+    ).length,
+    blockerOrPartialPass: rows.filter(
+      (row) => row.classification === 'blocker-or-partial-pass',
+    ).length,
+    failed: rows.filter((row) => row.classification === 'failed').length,
+  };
+
+  const jsonPath = path.join(suiteDir, 'release-matrix.json');
+  fs.writeFileSync(
+    jsonPath,
+    JSON.stringify(
+      {
+        generatedAt: new Date().toISOString(),
+        strictAgentSuccessFlowIds: [...strictAgentSuccessFlowIds],
+        summary,
+        rows,
+      },
+      null,
+      2,
+    ),
+  );
+
+  const csvHeader = [
+    'flow_id',
+    'name',
+    'persona',
+    'classification',
+    'strict_pass',
+    'verified',
+    'agent_success',
+    'requires_agent_success',
+    'duration_ms',
+    'verdict',
+  ];
+  const escapeCsv = (value) => `"${String(value ?? '').replaceAll('"', '""')}"`;
+  const csvBody = rows.map((row) =>
+    [
+      row.flowId,
+      row.name,
+      row.persona,
+      row.classification,
+      row.strictPass,
+      row.verified,
+      row.agentSuccess,
+      row.requiresAgentSuccess,
+      row.durationMs,
+      row.verdict,
+    ]
+      .map(escapeCsv)
+      .join(','),
+  );
+  const csvPath = path.join(suiteDir, 'release-matrix.csv');
+  fs.writeFileSync(csvPath, `${csvHeader.join(',')}\n${csvBody.join('\n')}\n`);
+
+  const mdRows = rows
+    .map(
+      (row) =>
+        `| ${row.flowId} | ${row.persona} | ${row.classification} | ${row.strictPass} | ${row.verified} | ${row.agentSuccess} | ${row.durationMs} |`,
+    )
+    .join('\n');
+  const mdPath = path.join(suiteDir, 'release-matrix.md');
+  fs.writeFileSync(
+    mdPath,
+    [
+      '# Release Matrix',
+      '',
+      `Generated: ${new Date().toISOString()}`,
+      '',
+      `- Total: ${summary.total}`,
+      `- Happy-path pass: ${summary.happyPathPass}`,
+      `- Blocker/partial pass: ${summary.blockerOrPartialPass}`,
+      `- Failed: ${summary.failed}`,
+      '',
+      '| Flow | Persona | Class | Strict Pass | Verified | Agent Success | Duration ms |',
+      '| --- | --- | --- | --- | --- | --- | --- |',
+      mdRows,
+      '',
+    ].join('\n'),
+  );
+
+  return { rows, summary, jsonPath, csvPath, mdPath };
+};
+
 const printCaseList = (cases) => {
   log(`Selected ${cases.length} cases:`);
   for (const testCase of cases) {
@@ -1862,6 +2014,12 @@ const main = async () => {
     process.env.AGENT_REQUIRE_AGENT_SUCCESS,
     false,
   );
+  const strictAgentSuccessFlowIds = new Set(
+    parseFlowIdList(
+      process.env.AGENT_REQUIRE_AGENT_SUCCESS_FLOWS,
+      DEFAULT_STRICT_AGENT_SUCCESS_FLOW_IDS,
+    ),
+  );
   const recycleWalletProfileOnPreflightFailure = parseBooleanEnv(
     process.env.AGENT_WALLET_PREFLIGHT_RECYCLE,
     false,
@@ -1947,7 +2105,9 @@ const main = async () => {
   log(
     `Wallet chain target: id=${runtimeWalletChain.id} hex=${runtimeWalletChain.hex} rpc=${runtimeWalletChain.rpcUrl}`,
   );
-  log(`Verification gate mode: require-agent-success=${requireAgentSuccess}`);
+  log(
+    `Verification gate mode: require-agent-success=${requireAgentSuccess} strict-flow-gate=[${[...strictAgentSuccessFlowIds].join(', ')}]`,
+  );
   for (const warning of launchPlan.warnings ?? []) {
     log(`warning: ${warning}`);
   }
@@ -2248,9 +2408,11 @@ const main = async () => {
       artifactSink: new FilesystemSink(outputDir),
       onTestStart: (testCase) => log(`start ${testCase.id} ${testCase.name}`),
       onTestComplete: (result) => {
+        const requiresAgentSuccessForFlow =
+          requireAgentSuccess || strictAgentSuccessFlowIds.has(result.testCase.id);
         const criteriaPass = Boolean(
           result.verified &&
-            (result.agentSuccess || requireAgentSuccess === false),
+            (result.agentSuccess || requiresAgentSuccessForFlow === false),
         );
         log(
           `${criteriaPass ? 'pass' : 'fail'} ${result.testCase.id} verified=${result.verified} agentSuccess=${result.agentSuccess} verdict=${result.verdict} durationMs=${result.durationMs}`,
@@ -2267,10 +2429,21 @@ const main = async () => {
       runnableCases.map((testCase) => applyCaseRuntimeOverrides(testCase)),
     );
 
+    const releaseMatrix = writeReleaseMatrixArtifacts(
+      outputDir,
+      suite,
+      strictAgentSuccessFlowIds,
+    );
+    log(
+      `Release matrix: happy-path=${releaseMatrix.summary.happyPathPass} blocker-or-partial=${releaseMatrix.summary.blockerOrPartialPass} failed=${releaseMatrix.summary.failed}`,
+    );
+
     const strictPassed = suite.results.filter((result) =>
       Boolean(
         result.verified &&
-          (result.agentSuccess || requireAgentSuccess === false),
+          (result.agentSuccess ||
+            (!requireAgentSuccess &&
+              !strictAgentSuccessFlowIds.has(result.testCase.id))),
       ),
     ).length;
     const strictFailed = suite.results.length - strictPassed;
