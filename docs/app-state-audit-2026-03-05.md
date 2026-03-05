@@ -15,6 +15,18 @@
 - `tangle-cloud`: healthy build/test state; indexer wiring uses shared Envio utilities and tx refresh patterns.
 - `leaderboard`: connected to `tnt-core` Envio schema and functional, but has correctness and scalability gaps that should be fixed before calling it production-grade.
 
+## Follow-Up Status (Updated In `drew/process-and-app-audit`)
+
+- Addressed:
+  - leaderboard copy/meta removed legacy nomination/Substrate wording
+  - leaderboard endpoint/query execution now uses shared Envio utility instead of ad-hoc fetch endpoint logic
+  - leaderboard total count now comes from aggregate query with fallback pagination count
+  - role-account query now runs only for selected roles and deduplicates developer/customer ids via `distinct_on`
+- Still open:
+  - leaderboard currently has no dedicated automated tests
+  - role-account filtering can still be expensive at very large scale (reduced but not eliminated)
+  - sync indicator still relies on `chain_metadata` availability in Hasura/Envio runtime
+
 ## Verification Evidence
 
 - `yarn nx test tangle-dapp` -> pass (`31` tests)
@@ -48,17 +60,20 @@
 - `totalCount` is set to the current page filtered length, not global count:
   - [leaderboardQuery.ts](/home/drew/code/dapp/apps/leaderboard/src/features/leaderboard/queries/leaderboardQuery.ts#L202)
 - Impact: pagination controls and UX can be incorrect on multi-page datasets.
+- Status: addressed in `drew/process-and-app-audit` (aggregate count + fallback).
 
 2. Role filtering query does unbounded full-table scans
 - Queries all `Operator`, filtered `Delegator`, all `Blueprint`, all `JobCall` with no paging/aggregation:
   - [leaderboardQuery.ts](/home/drew/code/dapp/apps/leaderboard/src/features/leaderboard/queries/leaderboardQuery.ts#L276)
 - Impact: slow queries and degraded UX as data grows.
+- Status: partially addressed in `drew/process-and-app-audit` (query only selected roles + `distinct_on` for developer/customer sources).
 
 ### Medium
 
 3. Indexing “target” is synthetic (`latest + 1`)
 - [indexingProgressQuery.ts](/home/drew/code/dapp/apps/leaderboard/src/features/indexingProgress/queries/indexingProgressQuery.ts#L79)
 - Impact: “Synced” can be noisy/misleading.
+- Status: addressed in `drew/process-and-app-audit` (indicator now reports indexed block/activity, not synthetic sync).
 
 4. Leaderboard has zero automated tests
 - No `*.test.*`/`*.spec.*` files under `apps/leaderboard/src`.
@@ -68,6 +83,7 @@
 - Placeholder zero address only:
   - [leaderboardQuery.ts](/home/drew/code/dapp/apps/leaderboard/src/features/leaderboard/queries/leaderboardQuery.ts#L7)
 - Impact: internal accounts may appear in rankings.
+- Status: partially addressed in `drew/process-and-app-audit` (supports env-configured exclusion list, still needs production values).
 
 ### Low
 
@@ -75,6 +91,7 @@
 - Mentions “nominating” in hero copy:
   - [index.tsx](/home/drew/code/dapp/apps/leaderboard/src/pages/index.tsx#L17)
 - Impact: terminology drift vs current EVM/operator-layer framing.
+- Status: addressed in `drew/process-and-app-audit`.
 
 7. Bundle size is high across apps
 - Build outputs include large chunks (notably `tangle-dapp` and `tangle-cloud`).
@@ -112,4 +129,3 @@
 
 - [ ] Update leaderboard hero copy to current protocol terminology.
 - [ ] Performance pass: chunking strategy + heavy icon/network asset lazy loading.
-

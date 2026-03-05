@@ -14,8 +14,8 @@ export default function IndexPage() {
         </Typography>
         <Typography variant="body1" className="!text-mono-120">
           Tangle leaderboard ranks contributors based on experience points (XP)
-          earned from network activities like staking, nominating, and running
-          services.{' '}
+          earned from network activities like staking, deploying blueprints, and
+          running services.{' '}
           <Button
             className="inline-flex"
             target="_blank"
