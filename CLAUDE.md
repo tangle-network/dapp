@@ -88,6 +88,22 @@ yarn generate:release        # Review version bumps and changelog
 - Wallet preflight failures (`no-provider`, connector timeout, chain mismatch) must be treated as blockers for strict launch validation; only allow non-strict continuation for exploratory debugging.
 - A suite result with `turns=0` is not valid evidence of agentic flow execution; treat it as runtime/LLM execution failure and fix provider/runtime conditions first.
 - For local wallet runs, prefer persistent seeded profile + automated prompt settling, and ensure funding checks are active for connected local accounts.
+- Distinguish `verified` vs `agentSuccess` in suite results:
+  - `verified=true` means flow criteria passed (tx outcome OR explicit blocker/empty-state criteria).
+  - `agentSuccess=true` means the agent reached its narrative goal without max-turn/timeout/tool dead-end.
+  - Launch-readiness reports must include both numbers; do not present `verified` alone as happy-path completion.
+- For strict launch gates, enable `AGENT_REQUIRE_AGENT_SUCCESS=true` and restrict blocker-based passing to explicitly approved flows only.
+- When flows are flaky because the agent drifts routes, re-validate on canonical routes before failing (for example `/instances`, `/services/:id`, `/claim/migration`).
+- Treat explicit migration claim dev/mock surfaces as blockers (for example: `Dev Mode: Contract not deployed`) rather than false failures.
+- Always rerun historically flaky flow IDs after criteria changes before claiming closure (current known flaky set: `FLOW-007`, `FLOW-013`, `FLOW-016`).
+
+### Wallet Flow Execution Defaults
+- Preferred local runner:
+  - `AGENT_WALLET_EXTENSION_PATHS=/work/dapp/.wallet-extensions/metamask-chrome-13.20.1`
+  - `AGENT_WALLET_USER_DATA_DIR=/work/dapp/.agent-wallet-profile-mm13201`
+  - run via `scripts/agent-browser/run-wallet-flow-suite-docker.sh` (Xvfb + extension support)
+- If wallet preflight is intermittent, keep profile stable first (`AGENT_WALLET_PREFLIGHT_RECYCLE=0`) and only enable recycle for recovery/debug.
+- A full-suite pass claim must be backed by `suite/report.json` summary and a list of any flows that passed via blocker/empty-state vs terminal tx.
 
 ### Code Style
 - Use `const ... => {}` over `function ... () {}`
@@ -118,7 +134,7 @@ yarn generate:release        # Review version bumps and changelog
 
 ### Branch Strategy
 - Main development branch: `develop`
-- Main branch for releases: `master`
+- Main branch for releases: `main`
 - Release PRs should start with `[RELEASE]` in title
 
 ### Prerequisites
