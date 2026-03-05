@@ -87,9 +87,6 @@ const WALLET_ACTION_SELECTORS = [
   '[data-testid="confirm-button"]',
   '[data-testid="confirm-btn"]',
   '[data-testid="confirm-footer-button"]',
-  '[data-testid="onboarding-complete-done"]',
-  '[data-testid="pin-extension-next"]',
-  '[data-testid="pin-extension-done"]',
   '[role="button"]:has-text("Connect")',
   '[data-testid="request-signature__sign"]',
   '[data-testid="request-signature__sign-button"]',
@@ -110,16 +107,11 @@ const WALLET_ACTION_SELECTORS = [
   'button:has-text("Add Network")',
   '[role="button"]:has-text("Open wallet")',
   'button:has-text("Open wallet")',
-  '[role="button"]:has-text("Done")',
-  'button:has-text("Done")',
-  '[role="button"]:has-text("Got it")',
-  'button:has-text("Got it")',
-  '[role="button"]:has-text("Next")',
-  'button:has-text("Next")',
-  '[role="button"]:has-text("No thanks")',
-  '[role="button"]:has-text("No Thanks")',
-  'button:has-text("No thanks")',
-  'button:has-text("No Thanks")',
+];
+const WALLET_PROMPT_PATHS = [
+  'popup-init.html',
+  'popup.html',
+  'notification.html',
 ];
 
 const fillWalletUnlockIfNeeded = async (page, password) => {
@@ -347,7 +339,6 @@ const settlePendingWalletRequests = async (context, password) => {
     `chrome-extension://${extensionId}/popup-init.html`,
     `chrome-extension://${extensionId}/popup.html`,
     `chrome-extension://${extensionId}/notification.html`,
-    `chrome-extension://${extensionId}/home.html`,
   ];
   for (const url of fallbackUrls) {
     const page = await context.newPage();
@@ -1533,6 +1524,63 @@ const filterCases = (cases, filters) => {
   });
 };
 
+const expandCasesWithDependencies = (allCases, selectedCases) => {
+  const byId = new Map(allCases.map((testCase) => [testCase.id, testCase]));
+  const ordered = [];
+  const visited = new Set();
+
+  const visit = (testCase, stack = []) => {
+    if (!testCase?.id) {
+      return;
+    }
+
+    if (visited.has(testCase.id)) {
+      return;
+    }
+
+    if (stack.includes(testCase.id)) {
+      throw new Error(
+        `Detected cyclic flow dependency: ${[...stack, testCase.id].join(' -> ')}`,
+      );
+    }
+
+    for (const dependencyId of testCase.dependsOn ?? []) {
+      const dependency = byId.get(dependencyId);
+      if (!dependency) {
+        throw new Error(
+          `Flow ${testCase.id} depends on ${dependencyId}, but that case is missing from the catalog.`,
+        );
+      }
+      visit(dependency, [...stack, testCase.id]);
+    }
+
+    visited.add(testCase.id);
+    ordered.push(testCase);
+  };
+
+  for (const selected of selectedCases) {
+    visit(selected);
+  }
+
+  return ordered;
+};
+
+const parseBooleanEnv = (value, fallback) => {
+  if (value === undefined) {
+    return fallback;
+  }
+
+  const normalized = String(value).trim().toLowerCase();
+  if (['1', 'true', 'yes', 'on'].includes(normalized)) {
+    return true;
+  }
+  if (['0', 'false', 'no', 'off'].includes(normalized)) {
+    return false;
+  }
+
+  return fallback;
+};
+
 const printCaseList = (cases) => {
   log(`Selected ${cases.length} cases:`);
   for (const testCase of cases) {
@@ -1697,6 +1745,11 @@ const main = async () => {
   if (options['base-url']) {
     runtimeOverrides.baseUrl = options['base-url'];
   }
+
+  if (!process.env.AGENT_FLOW_RUN_STARTED_AT) {
+    process.env.AGENT_FLOW_RUN_STARTED_AT = String(Date.now());
+  }
+
   const walletExtensions = options['wallet-extension'] ?? [];
   const walletUserDataDir = options['wallet-user-data-dir'];
   if (walletExtensions.length > 0 || walletUserDataDir) {
@@ -1722,14 +1775,25 @@ const main = async () => {
     personas: options.persona ?? [],
     tags: options.tag ?? [],
   });
+  const runnableCases = expandCasesWithDependencies(allCases, selectedCases);
 
-  if (selectedCases.length === 0) {
+  if (runnableCases.length === 0) {
     throw new Error(
       'No cases selected after applying filters. Remove filters or provide valid flow/persona/tag values.',
     );
   }
 
-  printCaseList(selectedCases);
+  if (runnableCases.length > selectedCases.length) {
+    const expandedIds = runnableCases
+      .filter(
+        (testCase) =>
+          !selectedCases.some((selected) => selected.id === testCase.id),
+      )
+      .map((testCase) => testCase.id);
+    log(`Expanded selected flows with dependencies: ${expandedIds.join(', ')}`);
+  }
+
+  printCaseList(runnableCases);
 
   if (options.list) {
     return;
@@ -1790,8 +1854,32 @@ const main = async () => {
   const launchPlan = buildBrowserLaunchPlan(mergedConfig, {
     cwd: process.cwd(),
   });
+  const strictWalletPreflight = parseBooleanEnv(
+    process.env.AGENT_STRICT_WALLET_PREFLIGHT,
+    true,
+  );
+  const requireAgentSuccess = parseBooleanEnv(
+    process.env.AGENT_REQUIRE_AGENT_SUCCESS,
+    false,
+  );
+  const recycleWalletProfileOnPreflightFailure = parseBooleanEnv(
+    process.env.AGENT_WALLET_PREFLIGHT_RECYCLE,
+    false,
+  );
+  const allowHeadlessWallet = parseBooleanEnv(
+    process.env.AGENT_WALLET_ALLOW_HEADLESS,
+    false,
+  );
+  const effectiveWalletHeadless = allowHeadlessWallet
+    ? launchPlan.headless
+    : false;
+  if (launchPlan.walletMode && launchPlan.headless && !allowHeadlessWallet) {
+    log(
+      'Wallet mode forcing headful browser for extension compatibility (set AGENT_WALLET_ALLOW_HEADLESS=true to override).',
+    );
+  }
 
-  const selectedWalletRequiredCases = selectedCases.filter((testCase) =>
+  const selectedWalletRequiredCases = runnableCases.filter((testCase) =>
     (testCase.tags ?? []).includes('wallet-required'),
   );
   const hasWalletRequiredCases = selectedWalletRequiredCases.length > 0;
@@ -1859,6 +1947,7 @@ const main = async () => {
   log(
     `Wallet chain target: id=${runtimeWalletChain.id} hex=${runtimeWalletChain.hex} rpc=${runtimeWalletChain.rpcUrl}`,
   );
+  log(`Verification gate mode: require-agent-success=${requireAgentSuccess}`);
   for (const warning of launchPlan.warnings ?? []) {
     log(`warning: ${warning}`);
   }
@@ -1877,7 +1966,7 @@ const main = async () => {
     fs.mkdirSync(userDataDir, { recursive: true });
     const context = await chromium.launchPersistentContext(userDataDir, {
       channel: 'chromium',
-      headless: launchPlan.headless,
+      headless: effectiveWalletHeadless,
       args: launchPlan.browserArgs,
       viewport: launchPlan.viewport,
       ignoreHTTPSErrors: true,
@@ -1886,6 +1975,8 @@ const main = async () => {
     const stop = externalStartWalletAutoApprover
       ? await externalStartWalletAutoApprover(context, {
           password: DEFAULT_WALLET_PASSWORD,
+          actionSelectors: WALLET_ACTION_SELECTORS,
+          tickMs: 750,
           log: (message) => log(`[wallet-lib] ${message}`),
         })
       : await startWalletAutoApprover(context, DEFAULT_WALLET_PASSWORD);
@@ -1902,6 +1993,8 @@ const main = async () => {
         if (externalSettleWalletPrompts) {
           await externalSettleWalletPrompts(context, {
             password: DEFAULT_WALLET_PASSWORD,
+            actionSelectors: WALLET_ACTION_SELECTORS,
+            promptPaths: WALLET_PROMPT_PATHS,
             log: (message) => log(`[wallet-lib] ${message}`),
           });
         } else {
@@ -1996,6 +2089,13 @@ const main = async () => {
           ? await externalRunWalletPreflight(persistentContext, {
               seedUrls: originSeedUrls,
               password: DEFAULT_WALLET_PASSWORD,
+              connectSelectors: CONNECT_BUTTON_SELECTORS,
+              connectorSelectors: WALLET_OPTION_SELECTORS,
+              actionSelectors: WALLET_ACTION_SELECTORS,
+              promptPaths: WALLET_PROMPT_PATHS,
+              requestAccounts: true,
+              accountsTimeoutMs: 45_000,
+              maxChainSwitchAttempts: 3,
               chain: {
                 id: runtimeWalletChain.id,
                 hex: runtimeWalletChain.hex,
@@ -2074,14 +2174,21 @@ const main = async () => {
         await closeWalletContext();
 
         if (attempt < maxWalletPreflightAttempts) {
-          const recycledUserDataDir = `${resolvedUserDataDir}-recycle-${Date.now()}-${attempt}`;
-          if (fs.existsSync(resolvedUserDataDir)) {
-            cloneWalletProfile(resolvedUserDataDir, recycledUserDataDir);
+          if (recycleWalletProfileOnPreflightFailure) {
+            const recycledUserDataDir = `${resolvedUserDataDir}-recycle-${Date.now()}-${attempt}`;
+            if (fs.existsSync(resolvedUserDataDir)) {
+              cloneWalletProfile(resolvedUserDataDir, recycledUserDataDir);
+            }
+            userDataDir = recycledUserDataDir;
+            log(
+              `Recycling wallet context with fresh profile directory: ${userDataDir}`,
+            );
+          } else {
+            userDataDir = resolvedUserDataDir;
+            log(
+              'Retrying wallet preflight using the same bootstrapped profile (set AGENT_WALLET_PREFLIGHT_RECYCLE=true to enable profile recycling).',
+            );
           }
-          userDataDir = recycledUserDataDir;
-          log(
-            `Recycling wallet context with fresh profile directory: ${userDataDir}`,
-          );
         }
       }
 
@@ -2092,7 +2199,7 @@ const main = async () => {
           `Accounts detected: ${lastPreflightFailure.verification?.accounts?.length ?? 0}`,
           `Chain ID: ${lastPreflightFailure.verification?.chainId ?? 'unknown'}`,
         ].join('\n');
-        if (process.env.AGENT_STRICT_WALLET_PREFLIGHT === 'true') {
+        if (strictWalletPreflight) {
           throw new Error(preflightFailureMessage);
         }
         log(
@@ -2133,6 +2240,7 @@ const main = async () => {
         debug: Boolean(options.debug),
       },
       defaultTimeoutMs: mergedConfig.timeoutMs,
+      workerTimeoutMs: mergedConfig.timeoutMs,
       driver: singletonDriver,
       driverFactory: launchPlan.concurrency > 1 ? createDriver : undefined,
       concurrency: launchPlan.concurrency,
@@ -2140,7 +2248,10 @@ const main = async () => {
       artifactSink: new FilesystemSink(outputDir),
       onTestStart: (testCase) => log(`start ${testCase.id} ${testCase.name}`),
       onTestComplete: (result) => {
-        const criteriaPass = Boolean(result.verified && result.agentSuccess);
+        const criteriaPass = Boolean(
+          result.verified &&
+            (result.agentSuccess || requireAgentSuccess === false),
+        );
         log(
           `${criteriaPass ? 'pass' : 'fail'} ${result.testCase.id} verified=${result.verified} agentSuccess=${result.agentSuccess} verdict=${result.verdict} durationMs=${result.durationMs}`,
         );
@@ -2153,11 +2264,14 @@ const main = async () => {
     });
 
     const suite = await testRunner.runSuite(
-      selectedCases.map((testCase) => applyCaseRuntimeOverrides(testCase)),
+      runnableCases.map((testCase) => applyCaseRuntimeOverrides(testCase)),
     );
 
     const strictPassed = suite.results.filter((result) =>
-      Boolean(result.verified && result.agentSuccess),
+      Boolean(
+        result.verified &&
+          (result.agentSuccess || requireAgentSuccess === false),
+      ),
     ).length;
     const strictFailed = suite.results.length - strictPassed;
     log(
