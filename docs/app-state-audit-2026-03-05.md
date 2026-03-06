@@ -40,17 +40,17 @@
 
 ### `leaderboard` is connected to `tnt-core` indexer entities
 
-- Leaderboard queries `PointsAccount` + `snapshots`: [leaderboardQuery.ts](/home/drew/code/dapp/apps/leaderboard/src/features/leaderboard/queries/leaderboardQuery.ts#L90)
-- Role filters query `Operator`, `Delegator`, `Blueprint`, `JobCall`: [leaderboardQuery.ts](/home/drew/code/dapp/apps/leaderboard/src/features/leaderboard/queries/leaderboardQuery.ts#L276)
+- Leaderboard queries `PointsAccount` + `snapshots`: [`apps/leaderboard/src/features/leaderboard/queries/leaderboardQuery.ts`](../apps/leaderboard/src/features/leaderboard/queries/leaderboardQuery.ts)
+- Role filters query `Operator`, `Delegator`, `Blueprint`, `JobCall`: [`apps/leaderboard/src/features/leaderboard/queries/leaderboardQuery.ts`](../apps/leaderboard/src/features/leaderboard/queries/leaderboardQuery.ts)
 - These entities/fields exist in `tnt-core` schema:
-  - `PointsAccount` / `PointsSnapshot`: [schema.graphql](/home/drew/code/tnt-core/indexer/schema.graphql#L798)
-  - `Operator`, `Blueprint`, `Service`, `JobCall`: [schema.graphql](/home/drew/code/tnt-core/indexer/schema.graphql#L193)
-  - `Delegator`: [schema.graphql](/home/drew/code/tnt-core/indexer/schema.graphql#L518)
+  - `PointsAccount` / `PointsSnapshot`: `tnt-core/indexer/schema.graphql`
+  - `Operator`, `Blueprint`, `Service`, `JobCall`: `tnt-core/indexer/schema.graphql`
+  - `Delegator`: `tnt-core/indexer/schema.graphql`
 
 ### Caveat
 
 - `chain_metadata` query in leaderboard sync chip is Hasura/Envio metadata-table dependent and not part of the app-level GraphQL schema contract:
-  - [indexingProgressQuery.ts](/home/drew/code/dapp/apps/leaderboard/src/features/indexingProgress/queries/indexingProgressQuery.ts#L13)
+  - [`apps/leaderboard/src/features/indexingProgress/queries/indexingProgressQuery.ts`](../apps/leaderboard/src/features/indexingProgress/queries/indexingProgressQuery.ts)
 
 ## Findings (Ordered by Severity)
 
@@ -59,14 +59,14 @@
 1. Pagination count is incorrect in leaderboard
 
 - `totalCount` is set to the current page filtered length, not global count:
-  - [leaderboardQuery.ts](/home/drew/code/dapp/apps/leaderboard/src/features/leaderboard/queries/leaderboardQuery.ts#L202)
+  - [`apps/leaderboard/src/features/leaderboard/queries/leaderboardQuery.ts`](../apps/leaderboard/src/features/leaderboard/queries/leaderboardQuery.ts)
 - Impact: pagination controls and UX can be incorrect on multi-page datasets.
 - Status: addressed in `drew/process-and-app-audit` (aggregate count + fallback).
 
 2. Role filtering query does unbounded full-table scans
 
 - Queries all `Operator`, filtered `Delegator`, all `Blueprint`, all `JobCall` with no paging/aggregation:
-  - [leaderboardQuery.ts](/home/drew/code/dapp/apps/leaderboard/src/features/leaderboard/queries/leaderboardQuery.ts#L276)
+  - [`apps/leaderboard/src/features/leaderboard/queries/leaderboardQuery.ts`](../apps/leaderboard/src/features/leaderboard/queries/leaderboardQuery.ts)
 - Impact: slow queries and degraded UX as data grows.
 - Status: partially addressed in `drew/process-and-app-audit` (query only selected roles + `distinct_on` for developer/customer sources).
 
@@ -74,7 +74,7 @@
 
 3. Indexing “target” is synthetic (`latest + 1`)
 
-- [indexingProgressQuery.ts](/home/drew/code/dapp/apps/leaderboard/src/features/indexingProgress/queries/indexingProgressQuery.ts#L79)
+- [`apps/leaderboard/src/features/indexingProgress/queries/indexingProgressQuery.ts`](../apps/leaderboard/src/features/indexingProgress/queries/indexingProgressQuery.ts)
 - Impact: “Synced” can be noisy/misleading.
 - Status: addressed in `drew/process-and-app-audit` (indicator now reports indexed block/activity, not synthetic sync).
 
@@ -86,7 +86,7 @@
 5. Team-account filter placeholder is not production-ready
 
 - Placeholder zero address only:
-  - [leaderboardQuery.ts](/home/drew/code/dapp/apps/leaderboard/src/features/leaderboard/queries/leaderboardQuery.ts#L7)
+  - [`apps/leaderboard/src/features/leaderboard/queries/leaderboardQuery.ts`](../apps/leaderboard/src/features/leaderboard/queries/leaderboardQuery.ts)
 - Impact: internal accounts may appear in rankings.
 - Status: partially addressed in `drew/process-and-app-audit` (supports env-configured exclusion list, still needs production values).
 
@@ -95,7 +95,7 @@
 6. Product copy drift in leaderboard
 
 - Hero copy previously used legacy terms:
-  - [index.tsx](/home/drew/code/dapp/apps/leaderboard/src/pages/index.tsx#L17)
+  - [`apps/leaderboard/src/pages/index.tsx`](../apps/leaderboard/src/pages/index.tsx)
 - Impact: terminology drift vs current EVM/operator-layer framing.
 - Status: addressed in `drew/process-and-app-audit`.
 
@@ -108,7 +108,7 @@
 
 - Shared visual system is consistent across apps (common UI provider/layout patterns).
 - `leaderboard` is structurally minimal (single index route):
-  - [app.tsx](/home/drew/code/dapp/apps/leaderboard/src/app/app.tsx#L19)
+  - [`apps/leaderboard/src/app/app.tsx`](../apps/leaderboard/src/app/app.tsx)
 - Immediate design quality opportunity is not style mismatch, but trust/clarity:
   - fix pagination truth
   - fix sync indicator semantics
