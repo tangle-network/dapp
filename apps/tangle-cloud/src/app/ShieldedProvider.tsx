@@ -1,0 +1,176 @@
+/* eslint-disable react-refresh/only-export-components */
+import {
+  createContext,
+  FC,
+  PropsWithChildren,
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
+import { useAccount } from 'wagmi';
+import { IndexedDbNoteStorage } from '../utils/payments/indexedDbNoteStorage';
+import useKeypair, { type ShieldedKeypair } from '../hooks/payments/useKeypair';
+import type { NoteData } from '../types/shielded';
+
+interface ShieldedContextValue {
+  keypair: ShieldedKeypair | null;
+  deriveKeypair: () => Promise<ShieldedKeypair | null>;
+  unlockKeypair: () => Promise<ShieldedKeypair | null>;
+  clearKeypair: () => void;
+  hasDerivedKeypair: boolean;
+  hasStoredKeypair: boolean;
+  isDerivingKeypair: boolean;
+  notes: NoteData[];
+  addNote: (note: NoteData) => Promise<void>;
+  removeNote: (note: NoteData) => Promise<void>;
+  importNotes: (serialized: string[]) => Promise<void>;
+  exportNotes: () => string[];
+  shieldedBalance: bigint;
+  isReady: boolean;
+}
+
+const ShieldedContext = createContext<ShieldedContextValue | null>(null);
+
+const serializeNote = (note: NoteData): string =>
+  JSON.stringify({ ...note, amount: note.amount.toString() });
+
+const deserializeNote = (raw: string): NoteData => {
+  const parsed = JSON.parse(raw);
+  return { ...parsed, amount: BigInt(parsed.amount) };
+};
+
+const noteKey = (n: NoteData) =>
+  `${n.privateKey}:${n.blinding}:${n.targetAnchor}`;
+
+export const ShieldedProvider: FC<PropsWithChildren> = ({ children }) => {
+  const { address } = useAccount();
+  const {
+    keypair,
+    deriveKeypair,
+    unlockKeypair,
+    clearKeypair,
+    isLoading: isDerivingKeypair,
+    hasDerivedKeypair,
+    hasStoredKeypair,
+  } = useKeypair();
+
+  const [notes, setNotes] = useState<NoteData[]>([]);
+  const [isReady, setIsReady] = useState(false);
+  const storageRef = useRef<IndexedDbNoteStorage | null>(null);
+  const notesRef = useRef(notes);
+  notesRef.current = notes;
+
+  useEffect(() => {
+    // Create per-address storage instance
+    storageRef.current = new IndexedDbNoteStorage(address);
+
+    const storage = storageRef.current;
+    const load = async () => {
+      try {
+        const raw = await storage.load();
+        setNotes(raw.map(deserializeNote));
+      } catch {
+        setNotes([]);
+      }
+      setIsReady(true);
+    };
+    load();
+  }, [address]);
+
+  const persist = useCallback(async (updated: NoteData[]) => {
+    if (storageRef.current) {
+      await storageRef.current.save(updated.map(serializeNote));
+    }
+    setNotes(updated);
+  }, []);
+
+  const addNote = useCallback(
+    async (note: NoteData) => {
+      await persist([...notesRef.current, note]);
+    },
+    [persist],
+  );
+
+  const removeNote = useCallback(
+    async (note: NoteData) => {
+      const key = noteKey(note);
+      await persist(notesRef.current.filter((n) => noteKey(n) !== key));
+    },
+    [persist],
+  );
+
+  const importNotes = useCallback(
+    async (serialized: string[]) => {
+      const imported = serialized.map(deserializeNote);
+      const existing = new Set(notesRef.current.map(noteKey));
+      const merged = [
+        ...notesRef.current,
+        ...imported.filter((n) => !existing.has(noteKey(n))),
+      ];
+      await persist(merged);
+    },
+    [persist],
+  );
+
+  const exportNotes = useCallback(
+    () => notesRef.current.map(serializeNote),
+    [],
+  );
+
+  const shieldedBalance = useMemo(
+    () => notes.reduce((sum, n) => sum + n.amount, 0n),
+    [notes],
+  );
+
+  const value = useMemo<ShieldedContextValue>(
+    () => ({
+      keypair,
+      deriveKeypair,
+      unlockKeypair,
+      clearKeypair,
+      hasDerivedKeypair,
+      hasStoredKeypair,
+      isDerivingKeypair,
+      notes,
+      addNote,
+      removeNote,
+      importNotes,
+      exportNotes,
+      shieldedBalance,
+      isReady,
+    }),
+    [
+      keypair,
+      deriveKeypair,
+      unlockKeypair,
+      clearKeypair,
+      hasDerivedKeypair,
+      hasStoredKeypair,
+      isDerivingKeypair,
+      notes,
+      addNote,
+      removeNote,
+      importNotes,
+      exportNotes,
+      shieldedBalance,
+      isReady,
+    ],
+  );
+
+  return (
+    <ShieldedContext.Provider value={value}>
+      {children}
+    </ShieldedContext.Provider>
+  );
+};
+
+export const useShieldedContext = (): ShieldedContextValue => {
+  const ctx = useContext(ShieldedContext);
+  if (!ctx) {
+    throw new Error('useShieldedContext must be used within ShieldedProvider');
+  }
+  return ctx;
+};

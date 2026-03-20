@@ -20,6 +20,9 @@ import EarningsLayout from '../pages/earnings/layout';
 import CreateBlueprintPage from '../pages/blueprints/create/page';
 import ManageBlueprintsPage from '../pages/blueprints/manage/page';
 import NotFoundPage from '../pages/notFound';
+import PaymentsLayout from '../pages/payments/layout';
+import PaymentsPoolPage from '../pages/payments/pool';
+import PaymentsCreditsPage from '../pages/payments/credits';
 import { FC } from 'react';
 
 const App: FC = () => {
@@ -137,6 +140,24 @@ const App: FC = () => {
               <EarningsLayout>
                 <EarningsPage />
               </EarningsLayout>
+            }
+          />
+
+          <Route
+            path={PagePath.PAYMENTS_POOL}
+            element={
+              <PaymentsLayout>
+                <PaymentsPoolPage />
+              </PaymentsLayout>
+            }
+          />
+
+          <Route
+            path={PagePath.PAYMENTS_CREDITS}
+            element={
+              <PaymentsLayout>
+                <PaymentsCreditsPage />
+              </PaymentsLayout>
             }
           />
 

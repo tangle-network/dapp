@@ -2,6 +2,7 @@
   "extends": "./tsconfig.json",
   "compilerOptions": {
     "outDir": "../../dist/out-tsc",
+    "target": "ES2020",
     "types": [
       "node",
       "../../node_modules/@nx/react/typings/cssmodule.d.ts",

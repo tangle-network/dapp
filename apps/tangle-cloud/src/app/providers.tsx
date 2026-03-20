@@ -12,6 +12,8 @@ import useNetworkSync from '@tangle-network/tangle-shared-ui/hooks/useNetworkSyn
 import { IndexerStatusProvider } from '@tangle-network/tangle-shared-ui/context/IndexerStatusContext';
 import { FC, type PropsWithChildren, useState } from 'react';
 import { WagmiProvider } from 'wagmi';
+import { ShieldedProvider } from './ShieldedProvider';
+import { CreditsProvider } from './CreditsProvider';
 
 // EVM networks available in tangle-cloud
 const TANGLE_CLOUD_NETWORKS = [ANVIL_LOCAL_NETWORK, BASE_SEPOLIA_NETWORK];
@@ -41,7 +43,11 @@ const Providers: FC<PropsWithChildren> = ({ children }) => {
       <WagmiProvider config={config} reconnectOnMount={reconnectOnMount}>
         <QueryClientProvider client={queryClient}>
           <IndexerStatusProvider>
-            <NetworkSync>{children}</NetworkSync>
+            <ShieldedProvider>
+              <CreditsProvider>
+                <NetworkSync>{children}</NetworkSync>
+              </CreditsProvider>
+            </ShieldedProvider>
           </IndexerStatusProvider>
         </QueryClientProvider>
       </WagmiProvider>
