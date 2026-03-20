@@ -1,12 +1,7 @@
-'use client';
-
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { config } from '@tangle-network/dapp-config/wagmi-config';
 import { UIProvider } from '@tangle-network/ui-components';
-import {
-  ANVIL_LOCAL_NETWORK,
-  BASE_SEPOLIA_NETWORK,
-} from '@tangle-network/ui-components/constants/networks';
+import { ANVIL_LOCAL_NETWORK } from '@tangle-network/ui-components/constants/networks';
 import useLocalChainGuard from '@tangle-network/tangle-shared-ui/hooks/useLocalChainGuard';
 import useNetworkSync from '@tangle-network/tangle-shared-ui/hooks/useNetworkSync';
 import { IndexerStatusProvider } from '@tangle-network/tangle-shared-ui/context/IndexerStatusContext';
@@ -14,9 +9,7 @@ import { FC, type PropsWithChildren, useState } from 'react';
 import { WagmiProvider } from 'wagmi';
 import { ShieldedProvider } from './ShieldedProvider';
 import { CreditsProvider } from './CreditsProvider';
-
-// EVM networks available in tangle-cloud
-const TANGLE_CLOUD_NETWORKS = [ANVIL_LOCAL_NETWORK, BASE_SEPOLIA_NETWORK];
+import { TANGLE_CLOUD_NETWORKS } from '../constants/networks';
 
 // Component to sync network store with wagmi chain
 const NetworkSync: FC<PropsWithChildren> = ({ children }) => {

@@ -1,16 +1,10 @@
 import NetworkSelectorDropdown from '@tangle-network/tangle-shared-ui/components/NetworkSelectorDropdown';
 import ConnectWalletButton from '@tangle-network/tangle-shared-ui/components/ConnectWalletButton';
 import ConnectionStatusButton from '@tangle-network/tangle-shared-ui/components/ConnectionStatusButton';
-import {
-  ANVIL_LOCAL_NETWORK,
-  BASE_SEPOLIA_NETWORK,
-} from '@tangle-network/ui-components/constants/networks';
 import { ComponentProps } from 'react';
 import { twMerge } from 'tailwind-merge';
 import TxHistoryDrawer from './TxHistoryDrawer';
-
-// EVM networks for tangle-cloud (same as in providers.tsx)
-const TANGLE_CLOUD_NETWORKS = [ANVIL_LOCAL_NETWORK, BASE_SEPOLIA_NETWORK];
+import { TANGLE_CLOUD_NETWORKS } from '../constants/networks';
 
 export default function Header({
   className,

@@ -1,14 +1,8 @@
 import { PropsWithChildren } from 'react';
-import Header from '../../components/Header';
+import PageLayout from '../../components/PageLayout';
 
 const Layout = ({ children }: PropsWithChildren) => {
-  return (
-    <div className="max-w-screen-xl px-4 mx-auto space-y-5 md:px-8 lg:px-10 relative">
-      <Header />
-
-      {children}
-    </div>
-  );
+  return <PageLayout>{children}</PageLayout>;
 };
 
 export default Layout;

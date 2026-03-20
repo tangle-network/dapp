@@ -1,4 +1,10 @@
 import { FC } from 'react';
+import {
+  Typography,
+  Card,
+  CardVariant,
+  SkeletonLoader,
+} from '@tangle-network/ui-components';
 import { useCreditsContext } from '../../app/CreditsProvider';
 import CreditAccountCard from '../../components/payments/CreditAccountCard';
 import useCreditAccountState from '../../data/payments/useCreditAccountState';
@@ -12,7 +18,6 @@ const CreditAccountWithState: FC<{
 }> = ({ commitment, label, onRemove }) => {
   const { data, isLoading } = useCreditAccountState(commitment as Hex);
 
-  // viem returns ABI-typed struct as an object with named fields
   let accountState: CreditAccountState | undefined;
   if (data && typeof data === 'object') {
     const d = data as Record<string, unknown>;
@@ -45,27 +50,36 @@ const CreditBalanceContainer: FC = () => {
 
   if (isLoading) {
     return (
-      <div className="flex items-center justify-center p-8">
-        <div className="w-6 h-6 border-2 rounded-full animate-spin border-mono-80 border-t-transparent" />
+      <div className="space-y-3">
+        <SkeletonLoader className="h-6 w-40" />
+        <SkeletonLoader className="h-4 w-64" />
+        <div className="grid gap-3 sm:grid-cols-2">
+          <SkeletonLoader className="h-32 rounded-xl" />
+          <SkeletonLoader className="h-32 rounded-xl" />
+        </div>
       </div>
     );
   }
 
   return (
     <div className="space-y-4">
-      <h2 className="text-lg font-semibold text-mono-200 dark:text-mono-0">
-        Credit Accounts
-      </h2>
+      <div>
+        <Typography variant="h5" fw="semibold">
+          Credit Accounts
+        </Typography>
 
-      <p className="text-sm text-mono-120 dark:text-mono-80">
-        Your anonymous credit accounts. Each shows on-chain balance and usage.
-      </p>
+        <Typography variant="body2" className="mt-1 text-mono-100">
+          Your anonymous credit accounts. Each shows on-chain balance and usage.
+        </Typography>
+      </div>
 
       {creditAccounts.length === 0 ? (
-        <div className="p-6 text-sm text-center border rounded-lg border-mono-40 dark:border-mono-160 text-mono-100">
-          No credit accounts yet. Fund one from the shielded pool to get
-          started.
-        </div>
+        <Card variant={CardVariant.DEFAULT} className="text-center py-8">
+          <Typography variant="body1" className="text-mono-100">
+            No credit accounts yet. Fund one from the shielded pool to get
+            started.
+          </Typography>
+        </Card>
       ) : (
         <div className="grid gap-3 sm:grid-cols-2">
           {creditAccounts.map((acct) => (

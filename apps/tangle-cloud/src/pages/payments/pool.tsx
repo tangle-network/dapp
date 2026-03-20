@@ -1,9 +1,10 @@
 import { FC, useState } from 'react';
-import { useAccount } from 'wagmi';
 import { formatUnits } from 'viem';
+import { Typography, Card, CardVariant } from '@tangle-network/ui-components';
 import DepositContainer from '../../containers/payments/DepositContainer';
 import WithdrawContainer from '../../containers/payments/WithdrawContainer';
 import { useShieldedContext } from '../../app/ShieldedProvider';
+import RequireWallet from '../../components/RequireWallet';
 import { TOKEN_DECIMALS } from '../../constants/payments';
 
 const enum PoolTab {
@@ -12,84 +13,83 @@ const enum PoolTab {
 }
 
 const PaymentsPoolPage: FC = () => {
-  const { address } = useAccount();
   const { shieldedBalance, notes } = useShieldedContext();
   const [activeTab, setActiveTab] = useState<PoolTab>(PoolTab.DEPOSIT);
 
   return (
-    <div className="px-6 py-8 space-y-6">
+    <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-bold text-mono-200 dark:text-mono-0">
+        <Typography variant="h4" fw="bold">
           Shielded Pool
-        </h1>
+        </Typography>
 
-        <p className="mt-1 text-mono-120 dark:text-mono-80">
+        <Typography variant="body1" className="mt-1 text-mono-100">
           Deposit tokens into the VAnchor shielded pool to gain privacy.
           Withdraw to a public address or fund anonymous credit accounts.
-        </p>
+        </Typography>
       </div>
 
-      <div className="flex gap-4">
-        <div className="flex-1 p-4 border rounded-xl border-mono-40 dark:border-mono-160 bg-mono-0 dark:bg-mono-200">
-          <span className="text-xs text-mono-100 dark:text-mono-100">
-            Shielded Balance
-          </span>
+      <RequireWallet
+        title="Connect to use the Shielded Pool"
+        description="A wallet connection is required to deposit and withdraw from the shielded pool."
+      >
+        <div className="flex gap-4">
+          <Card variant={CardVariant.DEFAULT} className="flex-1" tightPadding>
+            <Typography variant="body2" className="text-mono-100">
+              Shielded Balance
+            </Typography>
 
-          <p className="mt-1 text-xl font-bold text-mono-200 dark:text-mono-0">
-            {formatUnits(shieldedBalance, TOKEN_DECIMALS)}
-          </p>
+            <Typography variant="h4" fw="bold" className="mt-1">
+              {formatUnits(shieldedBalance, TOKEN_DECIMALS)}
+            </Typography>
+          </Card>
+
+          <Card variant={CardVariant.DEFAULT} className="flex-1" tightPadding>
+            <Typography variant="body2" className="text-mono-100">
+              Unspent Notes
+            </Typography>
+
+            <Typography variant="h4" fw="bold" className="mt-1">
+              {notes.length}
+            </Typography>
+          </Card>
         </div>
 
-        <div className="flex-1 p-4 border rounded-xl border-mono-40 dark:border-mono-160 bg-mono-0 dark:bg-mono-200">
-          <span className="text-xs text-mono-100 dark:text-mono-100">
-            Unspent Notes
-          </span>
-
-          <p className="mt-1 text-xl font-bold text-mono-200 dark:text-mono-0">
-            {notes.length}
-          </p>
+        <div
+          className="flex border-b border-mono-40 dark:border-mono-160"
+          role="tablist"
+        >
+          {(
+            [
+              [PoolTab.DEPOSIT, 'Deposit'],
+              [PoolTab.WITHDRAW, 'Withdraw'],
+            ] as const
+          ).map(([tab, label]) => (
+            <button
+              key={tab}
+              type="button"
+              role="tab"
+              aria-selected={activeTab === tab}
+              onClick={() => setActiveTab(tab)}
+              className={`px-4 py-2 text-sm font-medium border-b-2 transition-colors ${
+                activeTab === tab
+                  ? 'border-blue-50 text-blue-50'
+                  : 'border-transparent text-mono-100 hover:text-mono-200 dark:hover:text-mono-0'
+              }`}
+            >
+              {label}
+            </button>
+          ))}
         </div>
-      </div>
 
-      <div className="flex border-b border-mono-40 dark:border-mono-160">
-        <button
-          type="button"
-          onClick={() => setActiveTab(PoolTab.DEPOSIT)}
-          className={`px-4 py-2 text-sm font-medium border-b-2 transition-colors ${
-            activeTab === PoolTab.DEPOSIT
-              ? 'border-blue-50 text-blue-50'
-              : 'border-transparent text-mono-100 hover:text-mono-200 dark:hover:text-mono-0'
-          }`}
-        >
-          Deposit
-        </button>
-
-        <button
-          type="button"
-          onClick={() => setActiveTab(PoolTab.WITHDRAW)}
-          className={`px-4 py-2 text-sm font-medium border-b-2 transition-colors ${
-            activeTab === PoolTab.WITHDRAW
-              ? 'border-blue-50 text-blue-50'
-              : 'border-transparent text-mono-100 hover:text-mono-200 dark:hover:text-mono-0'
-          }`}
-        >
-          Withdraw
-        </button>
-      </div>
-
-      <div className="max-w-lg">
-        {!address ? (
-          <div className="p-6 text-center border rounded-xl border-mono-40 dark:border-mono-160">
-            <p className="text-sm text-mono-100">
-              Connect your wallet to use the shielded pool.
-            </p>
-          </div>
-        ) : activeTab === PoolTab.DEPOSIT ? (
-          <DepositContainer />
-        ) : (
-          <WithdrawContainer />
-        )}
-      </div>
+        <div className="max-w-lg" role="tabpanel">
+          {activeTab === PoolTab.DEPOSIT ? (
+            <DepositContainer />
+          ) : (
+            <WithdrawContainer />
+          )}
+        </div>
+      </RequireWallet>
     </div>
   );
 };

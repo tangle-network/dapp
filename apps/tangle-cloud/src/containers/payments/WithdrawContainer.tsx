@@ -1,28 +1,21 @@
-import { FC, useCallback, useMemo, useState } from 'react';
-import { useAccount } from 'wagmi';
+import { FC, useMemo, useState } from 'react';
 import { isAddress } from 'viem';
-import ProofProgressIndicator from '../../components/payments/ProofProgressIndicator';
+import {
+  Typography,
+  Alert,
+  Button,
+  Input,
+  Chip,
+} from '@tangle-network/ui-components';
 import AmountInput from '../../components/payments/AmountInput';
 import NoteCard from '../../components/payments/NoteCard';
 import { useShieldedContext } from '../../app/ShieldedProvider';
-import { ProofStage, type ProofProgress } from '../../types/shielded';
-import { getCircuitArtifactsForBrowser } from '../../utils/payments/sdkBridge';
-
-// TODO(sdk-link): When @tangle-network/shielded-sdk is added:
-//   import { ShieldedGatewayClient } from '@tangle-network/shielded-sdk'
-//   const { anchorProof, spentNotes, changeNote } =
-//     await client.buildShieldedWithdrawal({ keypair, amount, noteManager })
 
 const WithdrawContainer: FC = () => {
-  const { address } = useAccount();
-  const { notes, shieldedBalance, keypair, deriveKeypair } =
-    useShieldedContext();
+  const { notes, shieldedBalance } = useShieldedContext();
 
   const [amount, setAmount] = useState('');
   const [recipient, setRecipient] = useState('');
-  const [progress, setProgress] = useState<ProofProgress>({
-    stage: ProofStage.IDLE,
-  });
 
   const confirmedNotes = useMemo(
     () => notes.filter((n) => n.index !== undefined),
@@ -31,79 +24,42 @@ const WithdrawContainer: FC = () => {
 
   const isValidRecipient = recipient === '' || isAddress(recipient);
 
-  const handleWithdraw = useCallback(async () => {
-    if (!address || !amount || !recipient || !isAddress(recipient)) return;
-
-    let kp = keypair;
-    if (!kp) {
-      kp = await deriveKeypair();
-      if (!kp) return;
-    }
-
-    try {
-      setProgress({ stage: ProofStage.FETCHING_ARTIFACTS });
-      const artifacts = getCircuitArtifactsForBrowser(2, 8);
-
-      setProgress({
-        stage: ProofStage.GENERATING_PROOF,
-        message:
-          'SDK not yet linked — proof generation requires @tangle-network/shielded-sdk. ' +
-          `Artifacts: ${artifacts.wasmPath.split('/').pop()}`,
-      });
-
-      // When SDK is linked, the flow is:
-      // 1. noteManager.selectNotesFifo(chainId, poolAddress, parsedAmount)
-      // 2. client.buildShieldedWithdrawal({ keypair, amount, noteManager })
-      // 3. Submit anchorProof to VAnchor contract
-      // 4. Remove spent notes, add change note
-
-      setProgress({
-        stage: ProofStage.ERROR,
-        message: 'Link @tangle-network/shielded-sdk to enable withdrawals.',
-      });
-    } catch (err) {
-      setProgress({
-        stage: ProofStage.ERROR,
-        message: err instanceof Error ? err.message : 'Withdraw failed',
-      });
-    }
-  }, [address, amount, recipient, keypair, deriveKeypair]);
-
-  const isProcessing =
-    progress.stage !== ProofStage.IDLE &&
-    progress.stage !== ProofStage.DONE &&
-    progress.stage !== ProofStage.ERROR;
-
   return (
     <div className="space-y-4">
-      <h2 className="text-lg font-semibold text-mono-200 dark:text-mono-0">
-        Withdraw from Shielded Pool
-      </h2>
+      <div>
+        <Typography variant="h5" fw="semibold">
+          Withdraw from Shielded Pool
+        </Typography>
 
-      <p className="text-sm text-mono-120 dark:text-mono-80">
-        Withdraw shielded tokens to a public address. Notes are selected
-        automatically (FIFO). Change is returned as a new note.
-      </p>
+        <Typography variant="body2" className="mt-1 text-mono-100">
+          Withdraw shielded tokens to a public address. Notes are selected
+          automatically (FIFO). Change is returned as a new note.
+        </Typography>
+      </div>
 
       {confirmedNotes.length > 0 && (
-        <div className="space-y-1">
-          <span className="text-xs font-medium text-mono-140 dark:text-mono-80">
-            Available Notes ({confirmedNotes.length})
-          </span>
+        <div className="space-y-2">
+          <div className="flex items-center gap-2">
+            <Typography variant="body2" fw="semibold">
+              Available Notes
+            </Typography>
+
+            <Chip color="blue">{confirmedNotes.length}</Chip>
+          </div>
 
           <div className="flex flex-wrap gap-1">
             {confirmedNotes.slice(0, 5).map((note) => (
               <NoteCard
-                key={`${note.privateKey}:${note.blinding}`}
+                key={`${note.targetAnchor}:${note.blinding}`}
                 note={note}
                 compact
               />
             ))}
 
             {confirmedNotes.length > 5 && (
-              <span className="self-center text-xs text-mono-100">
+              <Typography variant="body3" className="self-center text-mono-100">
                 +{confirmedNotes.length - 5} more
-              </span>
+              </Typography>
             )}
           </div>
         </div>
@@ -115,51 +71,35 @@ const WithdrawContainer: FC = () => {
         balance={shieldedBalance}
         symbol="SHIELDED"
         label="Withdraw Amount"
-        disabled={isProcessing}
+        disabled
       />
 
       <div className="space-y-1">
-        <label className="text-sm font-medium text-mono-140 dark:text-mono-80">
+        <Typography variant="body2" fw="semibold" className="text-mono-120">
           Recipient Address
-        </label>
+        </Typography>
 
-        <input
-          type="text"
-          placeholder="0x..."
+        <Input
+          id="withdraw-recipient"
           value={recipient}
-          onChange={(e) => setRecipient(e.target.value)}
-          disabled={isProcessing}
-          className={`w-full p-3 text-sm font-mono border rounded-lg bg-mono-0 dark:bg-mono-200 outline-none text-mono-200 dark:text-mono-0 placeholder:text-mono-80 ${
-            !isValidRecipient
-              ? 'border-red-50'
-              : 'border-mono-40 dark:border-mono-160'
-          }`}
+          onChange={setRecipient}
+          isControlled
+          isInvalid={!isValidRecipient}
+          errorMessage={
+            !isValidRecipient ? 'Invalid Ethereum address' : undefined
+          }
+          inputClassName="font-mono"
         />
-
-        {!isValidRecipient && (
-          <p className="text-xs text-red-70 dark:text-red-50">
-            Invalid Ethereum address
-          </p>
-        )}
       </div>
 
-      <ProofProgressIndicator progress={progress} />
+      <Alert
+        type="info"
+        description="Withdrawals require @tangle-network/shielded-sdk for ZK proof generation and UTXO selection."
+      />
 
-      <button
-        type="button"
-        onClick={handleWithdraw}
-        disabled={
-          !address ||
-          !amount ||
-          !recipient ||
-          !isValidRecipient ||
-          isProcessing ||
-          confirmedNotes.length === 0
-        }
-        className="w-full px-4 py-3 text-sm font-semibold text-white rounded-lg bg-blue-50 hover:bg-blue-70 disabled:opacity-50 disabled:cursor-not-allowed"
-      >
-        {isProcessing ? 'Processing...' : 'Withdraw'}
-      </button>
+      <Button isFullWidth isDisabled disabledTooltip="SDK integration pending">
+        Withdraw
+      </Button>
     </div>
   );
 };

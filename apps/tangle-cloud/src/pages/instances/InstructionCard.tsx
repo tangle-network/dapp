@@ -1,5 +1,5 @@
 import { ComponentProps, createElement, type FC } from 'react';
-import { Link as RouterLink } from 'react-router-dom';
+import { Link as RouterLink } from 'react-router';
 import TangleCloudCard from '../../components/TangleCloudCard';
 import { Typography } from '@tangle-network/ui-components';
 import { CLOUD_INSTRUCTIONS } from '../../constants/cloudInstruction';

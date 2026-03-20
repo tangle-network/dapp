@@ -1,5 +1,3 @@
-'use client';
-
 import CommandFillIcon from '@tangle-network/icons/CommandFillIcon';
 import { DocumentationIcon } from '@tangle-network/icons/DocumentationIcon';
 import GlobalLine from '@tangle-network/icons/GlobalLine';

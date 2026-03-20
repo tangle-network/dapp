@@ -1,7 +1,8 @@
-import { FC, PropsWithChildren } from 'react';
+import { PropsWithChildren } from 'react';
+import PageLayout from '../../components/PageLayout';
 
-const PaymentsLayout: FC<PropsWithChildren> = ({ children }) => {
-  return children;
+const PaymentsLayout = ({ children }: PropsWithChildren) => {
+  return <PageLayout>{children}</PageLayout>;
 };
 
 export default PaymentsLayout;
