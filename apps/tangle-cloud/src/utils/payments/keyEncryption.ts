@@ -45,7 +45,7 @@ export const encryptData = async (
   combined.set(salt);
   combined.set(iv, SALT_LENGTH);
   combined.set(new Uint8Array(encrypted), SALT_LENGTH + IV_LENGTH);
-  return btoa(String.fromCharCode(...combined));
+  return btoa(Array.from(combined, (b) => String.fromCharCode(b)).join(''));
 };
 
 export const decryptData = async (

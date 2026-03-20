@@ -62,6 +62,8 @@ export const ShieldedProvider: FC<PropsWithChildren> = ({ children }) => {
   const storageRef = useRef<IndexedDbNoteStorage | null>(null);
   const notesRef = useRef(notes);
   notesRef.current = notes;
+  // Sequential write queue to prevent concurrent persist() from losing notes
+  const writeQueueRef = useRef<Promise<void>>(Promise.resolve());
 
   useEffect(() => {
     // Create per-address storage instance
@@ -80,38 +82,43 @@ export const ShieldedProvider: FC<PropsWithChildren> = ({ children }) => {
     load();
   }, [address]);
 
-  const persist = useCallback(async (updated: NoteData[]) => {
-    if (storageRef.current) {
-      await storageRef.current.save(updated.map(serializeNote));
-    }
-    setNotes(updated);
-  }, []);
+  const persist = useCallback(
+    (mutateFn: (current: NoteData[]) => NoteData[]) => {
+      writeQueueRef.current = writeQueueRef.current.then(async () => {
+        const updated = mutateFn(notesRef.current);
+        if (storageRef.current) {
+          await storageRef.current.save(updated.map(serializeNote));
+        }
+        setNotes(updated);
+      });
+      return writeQueueRef.current;
+    },
+    [],
+  );
 
   const addNote = useCallback(
-    async (note: NoteData) => {
-      await persist([...notesRef.current, note]);
-    },
+    (note: NoteData) => persist((current) => [...current, note]),
     [persist],
   );
 
   const removeNote = useCallback(
-    async (note: NoteData) => {
+    (note: NoteData) => {
       const key = noteKey(note);
-      await persist(notesRef.current.filter((n) => noteKey(n) !== key));
+      return persist((current) => current.filter((n) => noteKey(n) !== key));
     },
     [persist],
   );
 
   const importNotes = useCallback(
-    async (serialized: string[]) => {
-      const imported = serialized.map(deserializeNote);
-      const existing = new Set(notesRef.current.map(noteKey));
-      const merged = [
-        ...notesRef.current,
-        ...imported.filter((n) => !existing.has(noteKey(n))),
-      ];
-      await persist(merged);
-    },
+    (serialized: string[]) =>
+      persist((current) => {
+        const imported = serialized.map(deserializeNote);
+        const existing = new Set(current.map(noteKey));
+        return [
+          ...current,
+          ...imported.filter((n) => !existing.has(noteKey(n))),
+        ];
+      }),
     [persist],
   );
 

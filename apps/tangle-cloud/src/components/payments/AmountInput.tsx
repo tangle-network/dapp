@@ -60,7 +60,9 @@ const AmountInput: FC<Props> = ({
       {formattedBalance !== undefined && (
         <div className="flex items-center justify-between px-1">
           <span className="text-xs text-mono-100 dark:text-mono-100">
-            Balance: {Number(formattedBalance).toFixed(4)} {symbol}
+            Balance:{' '}
+            {formattedBalance.match(/^\d+\.?\d{0,4}/)?.[0] ?? formattedBalance}{' '}
+            {symbol}
           </span>
 
           <button

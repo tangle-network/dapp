@@ -131,9 +131,10 @@ const SpendAuthContainer: FC = () => {
       );
 
       // EIP-712 digest: \x19\x01 || domainSeparator || structHash
+      const EIP712_PREFIX = new Uint8Array([0x19, 0x01]);
       const digest = keccak256(
         concat([
-          toBytes('0x1901'),
+          EIP712_PREFIX,
           toBytes(domainSeparator as Hex),
           toBytes(structHash),
         ]),

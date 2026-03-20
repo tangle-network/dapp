@@ -1,5 +1,6 @@
 import { FC } from 'react';
 import { formatUnits } from 'viem';
+import { shortenHex } from '@tangle-network/ui-components/utils/shortenHex';
 import type { CreditAccountState } from '../../types/shielded';
 import { TOKEN_DECIMALS } from '../../constants/payments';
 
@@ -8,7 +9,6 @@ type Props = {
   label?: string;
   accountState?: CreditAccountState;
   isLoading?: boolean;
-  onWithdraw?: () => void;
   onDelete?: () => void;
 };
 
@@ -17,12 +17,8 @@ const CreditAccountCard: FC<Props> = ({
   label,
   accountState,
   isLoading,
-  onWithdraw,
   onDelete,
 }) => {
-  const truncateHex = (hex: string, chars = 8) =>
-    `${hex.slice(0, chars + 2)}...${hex.slice(-chars)}`;
-
   return (
     <div className="p-4 space-y-3 border rounded-lg border-mono-40 dark:border-mono-160 bg-mono-0 dark:bg-mono-200">
       <div className="flex items-center justify-between">
@@ -32,7 +28,7 @@ const CreditAccountCard: FC<Props> = ({
           </span>
 
           <p className="mt-0.5 font-mono text-xs text-mono-100 dark:text-mono-100">
-            {truncateHex(commitment)}
+            {shortenHex(commitment, 8)}
           </p>
         </div>
 
@@ -69,18 +65,8 @@ const CreditAccountCard: FC<Props> = ({
             </div>
           </div>
 
-          <div className="flex gap-2 pt-1">
-            {onWithdraw && accountState.balance > 0n && (
-              <button
-                type="button"
-                onClick={onWithdraw}
-                className="flex-1 px-3 py-1.5 text-xs font-medium text-blue-50 border border-blue-50 rounded hover:bg-blue-50/10"
-              >
-                Withdraw
-              </button>
-            )}
-
-            {onDelete && (
+          {onDelete && (
+            <div className="pt-1">
               <button
                 type="button"
                 onClick={onDelete}
@@ -88,8 +74,8 @@ const CreditAccountCard: FC<Props> = ({
               >
                 Remove
               </button>
-            )}
-          </div>
+            </div>
+          )}
         </div>
       )}
     </div>
