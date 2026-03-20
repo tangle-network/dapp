@@ -14780,11 +14780,11 @@ __metadata:
   linkType: hard
 
 "@storybook/core-server@npm:^8.6.12":
-  version: 8.6.12
-  resolution: "@storybook/core-server@npm:8.6.12"
+  version: 8.6.18
+  resolution: "@storybook/core-server@npm:8.6.18"
   peerDependencies:
     storybook: ^8.2.0 || ^8.3.0-0 || ^8.4.0-0 || ^8.5.0-0 || ^8.6.0-0
-  checksum: 10c0/cd4c1953920798b34f81323b64694090848ed7fb1ccf3a5ca469cc292e6b2fabb1e717ac98c51ed69cec0527fc02fd2b7e0ac776ed35b5e567900b07b5251ed0
+  checksum: 10c0/ed3aef1d0f1613b7fb0b40ed66e09c37b5ed3bf8356432718d6b6464da2f4df646317f927dfa4c23300b89a7d3b96fbbaf2593ae0055c8983d109790097837eb
   languageName: node
   linkType: hard
 
