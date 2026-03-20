@@ -1,4 +1,4 @@
-import { render, screen } from '@testing-library/react';
+import { render, screen, waitFor } from '@testing-library/react';
 import { type PropsWithChildren } from 'react';
 import { MemoryRouter } from 'react-router';
 import App from './app';
@@ -93,6 +93,20 @@ vi.mock('../pages/earnings/page', () => ({
   default: () => <div data-testid="earnings-page" />,
 }));
 
+vi.mock('../pages/payments/layout', () => ({
+  default: ({ children }: PropsWithChildren) => (
+    <div data-testid="payments-layout">{children}</div>
+  ),
+}));
+
+vi.mock('../pages/payments/pool', () => ({
+  default: () => <div data-testid="payments-pool-page" />,
+}));
+
+vi.mock('../pages/payments/credits', () => ({
+  default: () => <div data-testid="payments-credits-page" />,
+}));
+
 vi.mock('../pages/notFound', () => ({
   default: () => <div data-testid="not-found-page">Page Not Found</div>,
 }));
@@ -128,34 +142,44 @@ describe('App', () => {
     ['/operators/manage', 'operators-manage-layout', 'operators-manage-page'],
     ['/rewards', 'rewards-layout', 'rewards-page'],
     ['/earnings', 'earnings-layout', 'earnings-page'],
+    ['/payments/pool', 'payments-layout', 'payments-pool-page'],
+    ['/payments/credits', 'payments-layout', 'payments-credits-page'],
   ])(
     'renders cloud route %s with expected layout/page',
-    (path, layoutTestId, pageTestId) => {
+    async (path, layoutTestId, pageTestId) => {
       renderAt(path);
 
-      expect(screen.getByTestId(layoutTestId)).toBeTruthy();
-      expect(screen.getByTestId(pageTestId)).toBeTruthy();
+      await waitFor(() => {
+        expect(screen.getByTestId(layoutTestId)).toBeTruthy();
+        expect(screen.getByTestId(pageTestId)).toBeTruthy();
+      });
     },
   );
 
-  it('redirects legacy registration review route to blueprints', () => {
+  it('redirects legacy registration review route to blueprints', async () => {
     renderAt('/registration-review');
 
-    expect(screen.getByTestId('blueprints-layout')).toBeTruthy();
-    expect(screen.getByTestId('blueprints-page')).toBeTruthy();
+    await waitFor(() => {
+      expect(screen.getByTestId('blueprints-layout')).toBeTruthy();
+      expect(screen.getByTestId('blueprints-page')).toBeTruthy();
+    });
   });
 
-  it('renders the not found route without hanging', () => {
+  it('renders the not found route without hanging', async () => {
     renderAt('/route-that-does-not-exist');
 
-    expect(screen.getByTestId('not-found-page')).toBeTruthy();
-    expect(screen.getByText('Page Not Found')).toBeTruthy();
+    await waitFor(() => {
+      expect(screen.getByTestId('not-found-page')).toBeTruthy();
+      expect(screen.getByText('Page Not Found')).toBeTruthy();
+    });
   });
 
-  it('redirects root route to instances', () => {
+  it('redirects root route to instances', async () => {
     renderAt('/');
 
-    expect(screen.getByTestId('instances-layout')).toBeTruthy();
-    expect(screen.getByTestId('instances-page')).toBeTruthy();
+    await waitFor(() => {
+      expect(screen.getByTestId('instances-layout')).toBeTruthy();
+      expect(screen.getByTestId('instances-page')).toBeTruthy();
+    });
   });
 });
