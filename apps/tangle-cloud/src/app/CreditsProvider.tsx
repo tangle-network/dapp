@@ -17,9 +17,9 @@ import {
 } from '../utils/payments/indexedDbCreditStorage';
 import { keccak256, encodePacked, type Hex } from 'viem';
 import { generatePrivateKey, privateKeyToAccount } from 'viem/accounts';
+import { useShieldedContext } from './ShieldedProvider';
 
 interface CreditsContextValue {
-  // Credit account keys
   creditAccounts: StoredCreditKeys[];
   generateAndStoreCreditKeys: (label?: string) => Promise<StoredCreditKeys>;
   removeCreditAccount: (commitment: string) => Promise<void>;
@@ -29,13 +29,22 @@ interface CreditsContextValue {
 const CreditsContext = createContext<CreditsContextValue | null>(null);
 
 export const CreditsProvider: FC<PropsWithChildren> = ({ children }) => {
+  const { keypair } = useShieldedContext();
   const [creditAccounts, setCreditAccounts] = useState<StoredCreditKeys[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
+  // Derive encryption key from shielded keypair (if unlocked)
+  const encryptionKey = keypair
+    ? keccak256(
+        encodePacked(['string'], [keypair.privateKey + ':credit-encryption']),
+      )
+    : undefined;
+
+  // Reload credit keys when keypair unlocks (to decrypt private keys)
   useEffect(() => {
     const load = async () => {
       try {
-        const keys = await loadAllCreditKeys();
+        const keys = await loadAllCreditKeys(encryptionKey);
         setCreditAccounts(keys);
       } catch {
         setCreditAccounts([]);
@@ -43,7 +52,7 @@ export const CreditsProvider: FC<PropsWithChildren> = ({ children }) => {
       setIsLoading(false);
     };
     load();
-  }, []);
+  }, [encryptionKey]);
 
   const generateAndStoreCreditKeys = useCallback(
     async (label?: string): Promise<StoredCreditKeys> => {
@@ -67,11 +76,11 @@ export const CreditsProvider: FC<PropsWithChildren> = ({ children }) => {
         createdAt: Date.now(),
       };
 
-      await saveCreditKeys(keys);
+      await saveCreditKeys(keys, encryptionKey);
       setCreditAccounts((prev) => [...prev, keys]);
       return keys;
     },
-    [],
+    [encryptionKey],
   );
 
   const removeCreditAccount = useCallback(async (commitment: string) => {
