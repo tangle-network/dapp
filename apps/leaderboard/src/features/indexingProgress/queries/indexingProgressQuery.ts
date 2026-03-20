@@ -1,14 +1,19 @@
 import { BLOCK_TIME_MS } from '@tangle-network/dapp-config/constants/tangle';
 import { NetworkType } from '@tangle-network/tangle-shared-ui/graphql/graphql';
+import {
+  executeEnvioGraphQL,
+  type EnvioNetwork,
+} from '@tangle-network/tangle-shared-ui/utils/executeEnvioGraphQL';
 import { useQuery as _useQuery } from '@tanstack/react-query';
 import { INDEXING_PROGRESS_QUERY_KEY } from '../../../constants/query';
 
-interface IndexingMetadata {
-  lastProcessedHeight: number;
-  targetHeight: number;
+export interface IndexingMetadata {
+  firstEventBlockNumber: number;
+  latestProcessedBlock: number;
+  numEventsProcessed: number;
+  chainId: number;
 }
 
-// Envio chain_metadata query - uses the Envio-specific table
 const INDEXING_PROGRESS_QUERY = `
   query IndexingProgress {
     chain_metadata {
@@ -20,19 +25,6 @@ const INDEXING_PROGRESS_QUERY = `
   }
 `;
 
-const getEndpoint = (network: NetworkType): string => {
-  if (network === 'MAINNET') {
-    return (
-      import.meta.env.VITE_ENVIO_MAINNET_ENDPOINT ||
-      'http://localhost:8080/v1/graphql'
-    );
-  }
-  return (
-    import.meta.env.VITE_ENVIO_TESTNET_ENDPOINT ||
-    'http://localhost:8080/v1/graphql'
-  );
-};
-
 interface ChainMetadataRow {
   first_event_block_number: number;
   latest_processed_block: number;
@@ -40,30 +32,17 @@ interface ChainMetadataRow {
   chain_id: number;
 }
 
+const toEnvioNetwork = (network: NetworkType): EnvioNetwork => {
+  return network === 'MAINNET' ? 'mainnet' : 'testnet';
+};
+
 const fetcher = async (
   network: NetworkType,
 ): Promise<IndexingMetadata | null> => {
-  const endpoint = getEndpoint(network);
-
-  const response = await fetch(endpoint, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      Accept: 'application/json',
-    },
-    body: JSON.stringify({
-      query: INDEXING_PROGRESS_QUERY,
-    }),
-  });
-
-  if (!response.ok) {
-    throw new Error('Network response was not ok');
-  }
-
-  const result = (await response.json()) as {
-    data: { chain_metadata: ChainMetadataRow[] };
-    errors?: Array<{ message: string }>;
-  };
+  const result = await executeEnvioGraphQL<
+    { chain_metadata: ChainMetadataRow[] },
+    Record<string, never>
+  >(INDEXING_PROGRESS_QUERY, {}, toEnvioNetwork(network));
 
   if (result.errors?.length) {
     console.warn('GraphQL errors:', result.errors);
@@ -75,10 +54,11 @@ const fetcher = async (
     return null;
   }
 
-  // Envio tracks latest_processed_block, we estimate target as a bit ahead
   return {
-    lastProcessedHeight: metadata.latest_processed_block,
-    targetHeight: metadata.latest_processed_block + 1, // Estimate target
+    firstEventBlockNumber: metadata.first_event_block_number,
+    latestProcessedBlock: metadata.latest_processed_block,
+    numEventsProcessed: metadata.num_events_processed,
+    chainId: metadata.chain_id,
   };
 };
 

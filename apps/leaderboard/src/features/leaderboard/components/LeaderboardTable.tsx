@@ -26,7 +26,7 @@ import {
   useReactTable,
 } from '@tanstack/react-table';
 import cx from 'classnames';
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { twMerge } from 'tailwind-merge';
 import { useLatestTimestamp } from '../../../queries';
 import { SyncProgressIndicator } from '../../indexingProgress';
@@ -35,6 +35,7 @@ import {
   getAccountIdsForRoles,
   useLeaderboard,
   useRoleAccounts,
+  useRoleCounts,
 } from '../queries';
 import { Account } from '../types';
 import { createAccountExplorerUrl } from '../utils/createAccountExplorerUrl';
@@ -191,8 +192,10 @@ export const LeaderboardTable = () => {
     error: timestampError,
   } = useLatestTimestamp(networkTab);
 
+  const { data: roleCounts, isPending: isRoleCountsPending } =
+    useRoleCounts(networkTab);
   const { data: roleAccounts, isPending: isRoleAccountsPending } =
-    useRoleAccounts(networkTab);
+    useRoleAccounts(networkTab, selectedRoles);
 
   const roleFilteredAccountIds = useMemo(() => {
     if (selectedRoles.length === 0 || !roleAccounts) {
@@ -201,15 +204,11 @@ export const LeaderboardTable = () => {
     return getAccountIdsForRoles(roleAccounts, selectedRoles);
   }, [selectedRoles, roleAccounts]);
 
-  const roleCounts = useMemo(() => {
-    if (!roleAccounts) return undefined;
-    return {
-      operators: roleAccounts.operators.size,
-      stakers: roleAccounts.stakers.size,
-      developers: roleAccounts.developers.size,
-      customers: roleAccounts.customers.size,
-    };
-  }, [roleAccounts]);
+  useEffect(() => {
+    setPagination((prev) =>
+      prev.pageIndex === 0 ? prev : { ...prev, pageIndex: 0 },
+    );
+  }, [searchQuery, networkTab]);
 
   // Calculate timestamp for 7 days ago (Envio uses timestamps instead of block numbers)
   const timestampSevenDaysAgo = useMemo(() => {
@@ -317,6 +316,19 @@ export const LeaderboardTable = () => {
     roleFilteredAccountIds,
   ]);
 
+  const totalRecords = useMemo(() => {
+    const roleFilteringActive = selectedRoles.length > 0;
+    if (shouldUseClientSideFiltering || roleFilteringActive) {
+      return data.length;
+    }
+    return leaderboardData?.totalCount ?? data.length;
+  }, [
+    shouldUseClientSideFiltering,
+    selectedRoles.length,
+    data.length,
+    leaderboardData?.totalCount,
+  ]);
+
   const table = useReactTable({
     data,
     columns: COLUMNS,
@@ -326,7 +338,7 @@ export const LeaderboardTable = () => {
       expanded,
       pagination,
     },
-    rowCount: leaderboardData?.totalCount,
+    rowCount: totalRecords,
     onPaginationChange: setPagination,
     getCoreRowModel: getCoreRowModel(),
     onExpandedChange: setExpanded,
@@ -373,7 +385,10 @@ export const LeaderboardTable = () => {
           selectedRoles={selectedRoles}
           onRoleToggle={handleRoleToggle}
           onClearAll={handleClearRoles}
-          isLoading={isRoleAccountsPending}
+          isLoading={
+            isRoleCountsPending ||
+            (selectedRoles.length > 0 && isRoleAccountsPending)
+          }
           roleCounts={roleCounts}
         />
 
@@ -424,7 +439,7 @@ export const LeaderboardTable = () => {
           <Table
             tableProps={table}
             isPaginated
-            totalRecords={leaderboardData?.totalCount}
+            totalRecords={totalRecords}
             getExpandedRowContent={getExpandedRowContent}
             className={cx('dark:border-mono-180')}
             thClassName={cx('dark:border-mono-180')}
