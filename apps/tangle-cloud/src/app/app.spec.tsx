@@ -182,4 +182,13 @@ describe('App', () => {
       expect(screen.getByTestId('instances-page')).toBeTruthy();
     });
   });
+
+  it('redirects /payments to /payments/pool', async () => {
+    renderAt('/payments');
+
+    await waitFor(() => {
+      expect(screen.getByTestId('payments-layout')).toBeTruthy();
+      expect(screen.getByTestId('payments-pool-page')).toBeTruthy();
+    });
+  });
 });

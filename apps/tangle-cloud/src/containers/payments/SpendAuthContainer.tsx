@@ -14,6 +14,7 @@ import { useCreditsContext } from '../../app/CreditsProvider';
 import useCreditAccountState from '../../data/payments/useCreditAccountState';
 import useDomainSeparator from '../../data/payments/useDomainSeparator';
 import type { StoredCreditKeys } from '../../utils/payments/indexedDbCreditStorage';
+import { TOKEN_DECIMALS } from '../../constants/payments';
 
 const SPEND_TYPEHASH = keccak256(
   toBytes(
@@ -101,14 +102,21 @@ const SpendAuthContainer: FC = () => {
     setSignedAuth(null);
 
     try {
-      // Refetch to get latest nonce
+      // Refetch to get latest nonce — fail closed if read fails
       const { data: freshState } = await refetchAccount();
-      const nonce =
-        freshState && typeof freshState === 'object' && 'nonce' in freshState
-          ? BigInt((freshState as { nonce: bigint }).nonce)
-          : 0n;
+      if (
+        !freshState ||
+        typeof freshState !== 'object' ||
+        !('nonce' in freshState)
+      ) {
+        setError(
+          'Failed to read credit account state from chain. Cannot determine nonce.',
+        );
+        return;
+      }
+      const nonce = BigInt((freshState as { nonce: bigint }).nonce);
 
-      const parsedAmount = parseUnits(amount, 18);
+      const parsedAmount = parseUnits(amount, TOKEN_DECIMALS);
       const expiry = BigInt(Math.floor(Date.now() / 1000) + parsedExpiry * 60);
 
       // EIP-712 struct hash

@@ -1,14 +1,11 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { useAccount, useSignMessage } from 'wagmi';
 import { keccak256, toBytes } from 'viem';
 import { encryptData, decryptData } from '../../utils/payments/keyEncryption';
 
-// Single signature derives both the shielded key and the encryption key
-// via domain-separated hashing. No need for two prompts.
 const SIGN_MESSAGE =
   'Sign this message to access your Tangle shielded account. This signature is used locally and never sent to any server.';
 
-// Domain separation for key derivation vs. encryption
 const deriveShieldedKey = (signature: string): string =>
   keccak256(toBytes(signature + ':shielded-key'));
 
@@ -29,16 +26,21 @@ const useKeypair = () => {
   const [error, setError] = useState<string | null>(null);
   const [hasStoredKeypair, setHasStoredKeypair] = useState(false);
 
-  // Check storage on mount/address change
+  // Track current address to detect stale async completions
+  const addressRef = useRef(address);
+  addressRef.current = address;
+
   useEffect(() => {
     setKeypair(null);
+    setError(null);
     setHasStoredKeypair(
       !!address && localStorage.getItem(`${STORAGE_KEY}:${address}`) !== null,
     );
   }, [address]);
 
-  const signAndDerive = useCallback(async () => {
-    if (!address) {
+  const deriveKeypair = useCallback(async () => {
+    const callerAddress = address;
+    if (!callerAddress) {
       setError('Wallet not connected');
       return null;
     }
@@ -48,60 +50,82 @@ const useKeypair = () => {
 
     try {
       const signature = await signMessageAsync({ message: SIGN_MESSAGE });
+
+      // Guard: address changed while waiting for signature
+      if (addressRef.current !== callerAddress) return null;
+
       const privateKey = deriveShieldedKey(signature);
       const encInput = deriveEncryptionInput(signature);
-      return { privateKey, encInput, signature };
+      const kp: ShieldedKeypair = { privateKey };
+
+      try {
+        const encrypted = await encryptData(JSON.stringify(kp), encInput);
+        localStorage.setItem(`${STORAGE_KEY}:${callerAddress}`, encrypted);
+        if (addressRef.current === callerAddress) {
+          setHasStoredKeypair(true);
+        }
+      } catch {
+        // Encryption failed — usable in-memory only
+      }
+
+      if (addressRef.current === callerAddress) {
+        setKeypair(kp);
+        return kp;
+      }
+      return null;
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Signature rejected');
+      if (addressRef.current === callerAddress) {
+        setError(err instanceof Error ? err.message : 'Signature rejected');
+      }
       return null;
     } finally {
-      setIsLoading(false);
+      if (addressRef.current === callerAddress) {
+        setIsLoading(false);
+      }
     }
   }, [address, signMessageAsync]);
 
-  const deriveKeypair = useCallback(async () => {
-    const result = await signAndDerive();
-    if (!result || !address) return null;
-
-    const kp: ShieldedKeypair = { privateKey: result.privateKey };
-
-    try {
-      const encrypted = await encryptData(JSON.stringify(kp), result.encInput);
-      localStorage.setItem(`${STORAGE_KEY}:${address}`, encrypted);
-      setHasStoredKeypair(true);
-    } catch {
-      // Encryption failed — still usable in-memory for this session
-    }
-
-    setKeypair(kp);
-    return kp;
-  }, [address, signAndDerive]);
-
   const unlockKeypair = useCallback(async () => {
-    if (!address) return null;
+    const callerAddress = address;
+    if (!callerAddress) return null;
 
-    const stored = localStorage.getItem(`${STORAGE_KEY}:${address}`);
+    const stored = localStorage.getItem(`${STORAGE_KEY}:${callerAddress}`);
     if (!stored) return null;
 
-    const result = await signAndDerive();
-    if (!result) return null;
+    setIsLoading(true);
+    setError(null);
 
     try {
-      const decrypted = await decryptData(stored, result.encInput);
+      const signature = await signMessageAsync({ message: SIGN_MESSAGE });
+
+      if (addressRef.current !== callerAddress) return null;
+
+      const encInput = deriveEncryptionInput(signature);
+      const decrypted = await decryptData(stored, encInput);
       const parsed = JSON.parse(decrypted);
       if (!parsed?.privateKey || typeof parsed.privateKey !== 'string') {
         throw new Error('Invalid keypair data');
       }
-      const kp = parsed as ShieldedKeypair;
-      setKeypair(kp);
-      return kp;
-    } catch {
-      setError(
-        'Failed to unlock — data may be corrupted. Derive a new keypair.',
-      );
+
+      if (addressRef.current === callerAddress) {
+        const kp = parsed as ShieldedKeypair;
+        setKeypair(kp);
+        return kp;
+      }
       return null;
+    } catch {
+      if (addressRef.current === callerAddress) {
+        setError(
+          'Failed to unlock — data may be corrupted. Derive a new keypair.',
+        );
+      }
+      return null;
+    } finally {
+      if (addressRef.current === callerAddress) {
+        setIsLoading(false);
+      }
     }
-  }, [address, signAndDerive]);
+  }, [address, signMessageAsync]);
 
   const clearKeypair = useCallback(() => {
     if (address) {

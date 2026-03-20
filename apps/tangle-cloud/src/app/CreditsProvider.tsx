@@ -9,8 +9,9 @@ import {
   useMemo,
   useState,
 } from 'react';
+import { useAccount } from 'wagmi';
 import {
-  loadAllCreditKeys,
+  loadCreditKeysForAddress,
   saveCreditKeys,
   deleteCreditKeys,
   type StoredCreditKeys,
@@ -29,22 +30,34 @@ interface CreditsContextValue {
 const CreditsContext = createContext<CreditsContextValue | null>(null);
 
 export const CreditsProvider: FC<PropsWithChildren> = ({ children }) => {
+  const { address } = useAccount();
   const { keypair } = useShieldedContext();
   const [creditAccounts, setCreditAccounts] = useState<StoredCreditKeys[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
-  // Derive encryption key from shielded keypair (if unlocked)
   const encryptionKey = keypair
     ? keccak256(
         encodePacked(['string'], [keypair.privateKey + ':credit-encryption']),
       )
     : undefined;
 
-  // Reload credit keys when keypair unlocks (to decrypt private keys)
+  // Reload when address or encryption key changes
   useEffect(() => {
+    setCreditAccounts([]);
+    setIsLoading(true);
+
+    if (!address) {
+      setIsLoading(false);
+      return;
+    }
+
+    const currentAddress = address;
     const load = async () => {
       try {
-        const keys = await loadAllCreditKeys(encryptionKey);
+        const keys = await loadCreditKeysForAddress(
+          currentAddress,
+          encryptionKey,
+        );
         setCreditAccounts(keys);
       } catch {
         setCreditAccounts([]);
@@ -52,10 +65,12 @@ export const CreditsProvider: FC<PropsWithChildren> = ({ children }) => {
       setIsLoading(false);
     };
     load();
-  }, [encryptionKey]);
+  }, [address, encryptionKey]);
 
   const generateAndStoreCreditKeys = useCallback(
     async (label?: string): Promise<StoredCreditKeys> => {
+      if (!address) throw new Error('Wallet not connected');
+
       const privateKey = generatePrivateKey();
       const account = privateKeyToAccount(privateKey);
       const saltBytes = crypto.getRandomValues(new Uint8Array(32));
@@ -76,11 +91,11 @@ export const CreditsProvider: FC<PropsWithChildren> = ({ children }) => {
         createdAt: Date.now(),
       };
 
-      await saveCreditKeys(keys, encryptionKey);
+      await saveCreditKeys(keys, address, encryptionKey);
       setCreditAccounts((prev) => [...prev, keys]);
       return keys;
     },
-    [encryptionKey],
+    [address, encryptionKey],
   );
 
   const removeCreditAccount = useCallback(async (commitment: string) => {

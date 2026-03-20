@@ -1,7 +1,6 @@
 import { openDb, STORES } from './db';
 import { encryptData, decryptData } from './keyEncryption';
 
-// Public metadata — always readable without decryption
 export interface StoredCreditKeys {
   commitment: string;
   spendingPrivateKey: string;
@@ -11,10 +10,10 @@ export interface StoredCreditKeys {
   createdAt: number;
 }
 
-// On-disk format: private key encrypted, rest in clear
 interface EncryptedCreditRecord {
   commitment: string;
-  encryptedPrivateKey: string; // AES-GCM encrypted
+  owner: string; // wallet address — scoping key
+  encryptedPrivateKey: string;
   spendingPublicKey: string;
   salt: string;
   label?: string;
@@ -23,15 +22,17 @@ interface EncryptedCreditRecord {
 
 export const saveCreditKeys = async (
   keys: StoredCreditKeys,
+  ownerAddress: string,
   encryptionKey?: string,
 ): Promise<void> => {
   const db = await openDb();
 
   const record: EncryptedCreditRecord = {
     commitment: keys.commitment,
+    owner: ownerAddress.toLowerCase(),
     encryptedPrivateKey: encryptionKey
       ? await encryptData(keys.spendingPrivateKey, encryptionKey)
-      : keys.spendingPrivateKey, // Fallback: plaintext if no key (pre-unlock)
+      : '', // No encryption key = don't store private key at all
     spendingPublicKey: keys.spendingPublicKey,
     salt: keys.salt,
     label: keys.label,
@@ -48,11 +49,12 @@ export const saveCreditKeys = async (
   });
 };
 
-export const loadAllCreditKeys = async (
+export const loadCreditKeysForAddress = async (
+  ownerAddress: string,
   encryptionKey?: string,
 ): Promise<StoredCreditKeys[]> => {
   const db = await openDb();
-  const records: EncryptedCreditRecord[] = await new Promise(
+  const allRecords: EncryptedCreditRecord[] = await new Promise(
     (resolve, reject) => {
       const tx = db.transaction(STORES.CREDIT_KEYS, 'readonly');
       const store = tx.objectStore(STORES.CREDIT_KEYS);
@@ -63,18 +65,22 @@ export const loadAllCreditKeys = async (
     },
   );
 
+  // Filter to this wallet's records only
+  const owner = ownerAddress.toLowerCase();
+  const records = allRecords.filter((r) => r.owner === owner);
+
   const results: StoredCreditKeys[] = [];
   for (const record of records) {
     let privateKey = '';
-    if (encryptionKey) {
+    if (encryptionKey && record.encryptedPrivateKey) {
       try {
         privateKey = await decryptData(
           record.encryptedPrivateKey,
           encryptionKey,
         );
       } catch {
-        // Can't decrypt — either wrong key or stored in plaintext
-        privateKey = record.encryptedPrivateKey;
+        // Decryption failed — leave private key empty, don't expose ciphertext
+        privateKey = '';
       }
     }
 

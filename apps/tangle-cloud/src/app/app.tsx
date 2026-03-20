@@ -1,5 +1,5 @@
 import { Navigate, Route, Routes } from 'react-router';
-import { lazy, Suspense, type FC } from 'react';
+import { lazy, Suspense, type FC, type ReactNode } from 'react';
 import Layout from '../components/Layout';
 import Providers from './providers';
 import { PagePath } from '../types';
@@ -39,151 +39,119 @@ const PaymentsCreditsPage = lazy(() => import('../pages/payments/credits'));
 const NotFoundPage = lazy(() => import('../pages/notFound'));
 
 const PageFallback = () => (
-  <div className="max-w-screen-xl px-4 mx-auto mt-12 space-y-4 md:px-8 lg:px-10">
+  <div className="space-y-4 mt-4">
     <SkeletonLoader className="h-8 w-48" />
     <SkeletonLoader className="h-4 w-96" />
     <SkeletonLoader className="h-64 w-full rounded-xl" />
   </div>
 );
 
+// Wrap lazy page in layout + Suspense so layout (with Header) stays visible during load
+const withLayout = (LayoutCmp: FC<{ children: ReactNode }>, Page: FC) => (
+  <LayoutCmp>
+    <Suspense fallback={<PageFallback />}>
+      <Page />
+    </Suspense>
+  </LayoutCmp>
+);
+
 const App: FC = () => {
   return (
     <Providers>
       <Layout>
-        <Suspense fallback={<PageFallback />}>
-          <Routes>
+        <Routes>
+          <Route
+            path={PagePath.HOME}
+            element={<Navigate to={PagePath.INSTANCES} replace />}
+          />
+
+          <Route
+            path={PagePath.INSTANCES}
+            element={withLayout(InstancesLayout, InstancesPage)}
+          />
+
+          <Route
+            path={PagePath.SERVICE_DETAILS}
+            element={withLayout(InstancesLayout, ServiceDetailPage)}
+          />
+
+          <Route path={PagePath.BLUEPRINTS}>
             <Route
-              path={PagePath.HOME}
-              element={<Navigate to={PagePath.INSTANCES} replace />}
+              path={PagePath.BLUEPRINTS}
+              element={withLayout(BlueprintsLayout, BlueprintsPage)}
             />
 
             <Route
-              path={PagePath.INSTANCES}
-              element={
-                <InstancesLayout>
-                  <InstancesPage />
-                </InstancesLayout>
-              }
+              path={PagePath.BLUEPRINTS_CREATE}
+              element={withLayout(BlueprintsLayout, CreateBlueprintPage)}
             />
 
             <Route
-              path={PagePath.SERVICE_DETAILS}
-              element={
-                <InstancesLayout>
-                  <ServiceDetailPage />
-                </InstancesLayout>
-              }
-            />
-
-            <Route path={PagePath.BLUEPRINTS}>
-              <Route
-                path={PagePath.BLUEPRINTS}
-                element={
-                  <BlueprintsLayout>
-                    <BlueprintsPage />
-                  </BlueprintsLayout>
-                }
-              />
-
-              <Route
-                path={PagePath.BLUEPRINTS_CREATE}
-                element={
-                  <BlueprintsLayout>
-                    <CreateBlueprintPage />
-                  </BlueprintsLayout>
-                }
-              />
-
-              <Route
-                path={PagePath.BLUEPRINTS_MANAGE}
-                element={
-                  <BlueprintsLayout>
-                    <ManageBlueprintsPage />
-                  </BlueprintsLayout>
-                }
-              />
-
-              <Route
-                path={PagePath.BLUEPRINTS_DETAILS}
-                element={
-                  <BlueprintsLayout>
-                    <BlueprintDetailsPage />
-                  </BlueprintsLayout>
-                }
-              />
-
-              <Route
-                path={PagePath.BLUEPRINTS_DEPLOY}
-                element={
-                  <BlueprintsLayout>
-                    <DeployPage />
-                  </BlueprintsLayout>
-                }
-              />
-            </Route>
-
-            <Route
-              path={PagePath.BLUEPRINTS_REGISTRATION_REVIEW}
-              element={<Navigate to={PagePath.BLUEPRINTS} replace />}
+              path={PagePath.BLUEPRINTS_MANAGE}
+              element={withLayout(BlueprintsLayout, ManageBlueprintsPage)}
             />
 
             <Route
-              path={PagePath.OPERATORS}
-              element={
-                <OperatorsLayout>
-                  <OperatorsPage />
-                </OperatorsLayout>
-              }
+              path={PagePath.BLUEPRINTS_DETAILS}
+              element={withLayout(BlueprintsLayout, BlueprintDetailsPage)}
             />
 
             <Route
-              path={PagePath.OPERATORS_MANAGE}
-              element={
-                <OperatorsManageLayout>
-                  <OperatorsManagePage />
-                </OperatorsManageLayout>
-              }
+              path={PagePath.BLUEPRINTS_DEPLOY}
+              element={withLayout(BlueprintsLayout, DeployPage)}
             />
+          </Route>
 
-            <Route
-              path={PagePath.REWARDS}
-              element={
-                <RewardsLayout>
-                  <RewardsPage />
-                </RewardsLayout>
-              }
-            />
+          <Route
+            path={PagePath.BLUEPRINTS_REGISTRATION_REVIEW}
+            element={<Navigate to={PagePath.BLUEPRINTS} replace />}
+          />
 
-            <Route
-              path={PagePath.EARNINGS}
-              element={
-                <EarningsLayout>
-                  <EarningsPage />
-                </EarningsLayout>
-              }
-            />
+          <Route
+            path={PagePath.OPERATORS}
+            element={withLayout(OperatorsLayout, OperatorsPage)}
+          />
 
-            <Route
-              path={PagePath.PAYMENTS_POOL}
-              element={
-                <PaymentsLayout>
-                  <PaymentsPoolPage />
-                </PaymentsLayout>
-              }
-            />
+          <Route
+            path={PagePath.OPERATORS_MANAGE}
+            element={withLayout(OperatorsManageLayout, OperatorsManagePage)}
+          />
 
-            <Route
-              path={PagePath.PAYMENTS_CREDITS}
-              element={
-                <PaymentsLayout>
-                  <PaymentsCreditsPage />
-                </PaymentsLayout>
-              }
-            />
+          <Route
+            path={PagePath.REWARDS}
+            element={withLayout(RewardsLayout, RewardsPage)}
+          />
 
-            <Route path="*" element={<NotFoundPage />} />
-          </Routes>
-        </Suspense>
+          <Route
+            path={PagePath.EARNINGS}
+            element={withLayout(EarningsLayout, EarningsPage)}
+          />
+
+          {/* /payments → redirect to pool */}
+          <Route
+            path="/payments"
+            element={<Navigate to={PagePath.PAYMENTS_POOL} replace />}
+          />
+
+          <Route
+            path={PagePath.PAYMENTS_POOL}
+            element={withLayout(PaymentsLayout, PaymentsPoolPage)}
+          />
+
+          <Route
+            path={PagePath.PAYMENTS_CREDITS}
+            element={withLayout(PaymentsLayout, PaymentsCreditsPage)}
+          />
+
+          <Route
+            path="*"
+            element={
+              <Suspense fallback={<PageFallback />}>
+                <NotFoundPage />
+              </Suspense>
+            }
+          />
+        </Routes>
       </Layout>
     </Providers>
   );

@@ -66,18 +66,30 @@ export const ShieldedProvider: FC<PropsWithChildren> = ({ children }) => {
   const writeQueueRef = useRef<Promise<void>>(Promise.resolve());
 
   useEffect(() => {
-    // Create per-address storage instance
-    storageRef.current = new IndexedDbNoteStorage(address);
+    // Reset synchronously to prevent stale data flash
+    setNotes([]);
+    setIsReady(false);
+    // Flush the write queue so no pending writes leak to the new address
+    writeQueueRef.current = Promise.resolve();
 
+    storageRef.current = new IndexedDbNoteStorage(address);
     const storage = storageRef.current;
+
     const load = async () => {
       try {
         const raw = await storage.load();
-        setNotes(raw.map(deserializeNote));
+        // Guard: address changed during async load
+        if (storageRef.current === storage) {
+          setNotes(raw.map(deserializeNote));
+        }
       } catch {
-        setNotes([]);
+        if (storageRef.current === storage) {
+          setNotes([]);
+        }
       }
-      setIsReady(true);
+      if (storageRef.current === storage) {
+        setIsReady(true);
+      }
     };
     load();
   }, [address]);
