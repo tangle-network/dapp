@@ -5,12 +5,12 @@ import {
   TanglePrimitivesServicesServiceServiceBlueprint,
 } from '@polkadot/types/lookup';
 import { u8aToString } from '@polkadot/util';
-import type {
-  JobDefinition,
-  ServiceBlueprint,
-  ServiceMetadata,
-} from '@tangle-network/tangle-substrate-types';
 import { PrimitiveFieldType } from '../../../types/blueprint';
+
+type ServiceMetadata =
+  TanglePrimitivesServicesServiceServiceBlueprint['metadata'];
+type JobDefinition =
+  TanglePrimitivesServicesServiceServiceBlueprint['jobs'][number];
 
 export const toPrimitiveBlueprint = (
   id: bigint,
@@ -19,7 +19,7 @@ export const toPrimitiveBlueprint = (
     jobs,
     registrationParams,
     requestParams,
-  }: ServiceBlueprint | TanglePrimitivesServicesServiceServiceBlueprint,
+  }: TanglePrimitivesServicesServiceServiceBlueprint,
 ) => {
   return {
     id,

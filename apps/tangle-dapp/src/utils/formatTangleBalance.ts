@@ -1,18 +1,14 @@
-import { BN } from '@polkadot/util';
-import { ToBn } from '@polkadot/util/types';
 import { TANGLE_TOKEN_DECIMALS } from '@tangle-network/dapp-config/constants/tangle';
 import { TangleTokenSymbol } from '@tangle-network/tangle-shared-ui/types';
-import {
-  AmountFormatStyle,
-  formatDisplayAmount,
-} from '@tangle-network/ui-components';
+import { AmountFormatStyle } from '@tangle-network/ui-components';
+import { formatTokenAmount } from './formatTokenAmount';
 
 const formatTangleBalance = (
-  balance: BN | bigint | ToBn,
+  balance: bigint,
   tokenSymbol?: TangleTokenSymbol,
 ): string => {
-  const formattedAmount = formatDisplayAmount(
-    new BN(balance.toString()),
+  const formattedAmount = formatTokenAmount(
+    balance,
     TANGLE_TOKEN_DECIMALS,
     AmountFormatStyle.SHORT,
   );

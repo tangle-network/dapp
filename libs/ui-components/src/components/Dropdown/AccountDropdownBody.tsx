@@ -1,6 +1,5 @@
 'use client';
 
-import { isEthereumAddress } from '@polkadot/util-crypto';
 import { FC } from 'react';
 import { twMerge } from 'tailwind-merge';
 
@@ -9,7 +8,7 @@ import { Typography } from '../../typography/Typography';
 import { DropdownBody } from './DropdownBody';
 import DropdownMenuItem from './DropdownMenuItem';
 import { AccountDropdownBodyProps } from './types';
-import { isSubstrateAddress } from '../../utils';
+import { isEvmAddress, isSubstrateAddress } from '../../utils';
 import { ScrollArea } from '../ScrollArea';
 
 const AccountDropdownBody: FC<AccountDropdownBodyProps> = ({
@@ -34,7 +33,7 @@ const AccountDropdownBody: FC<AccountDropdownBodyProps> = ({
                 leftIcon={
                   <Avatar
                     theme={
-                      isEthereumAddress(address)
+                      isEvmAddress(address)
                         ? 'ethereum'
                         : isSubstrateAddress(address)
                           ? 'substrate'

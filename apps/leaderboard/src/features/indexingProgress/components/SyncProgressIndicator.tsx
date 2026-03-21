@@ -16,32 +16,12 @@ export const SyncProgressIndicator = ({
 }) => {
   const { data, error, isPending } = useIndexingProgress(network);
 
-  const progress = useMemo(() => {
-    if (!data?.lastProcessedHeight || !data?.targetHeight) {
-      return 0;
-    }
-
-    // Round to 2 decimal places
-    return (
-      Math.round((data.lastProcessedHeight / data.targetHeight) * 100 * 100) /
-      100
-    );
-  }, [data?.lastProcessedHeight, data?.targetHeight]);
-
-  const isSynced = useMemo(() => {
-    if (!data?.lastProcessedHeight || !data?.targetHeight) {
-      return false;
-    }
-
-    return data.lastProcessedHeight === data.targetHeight;
-  }, [data?.lastProcessedHeight, data?.targetHeight]);
-
   const displayContent = useMemo(() => {
     if (isPending) {
       return (
         <>
           <StatusIndicator variant="info" animated />
-          Loading indexing status...
+          Loading indexer activity...
         </>
       );
     }
@@ -50,53 +30,41 @@ export const SyncProgressIndicator = ({
       return (
         <>
           <CrossCircledIcon className="text-red-500" />
-          Error loading indexing status
+          Indexer status unavailable
+        </>
+      );
+    }
+
+    if (!data) {
+      return (
+        <>
+          <StatusIndicator variant="warning" />
+          No indexer metadata
         </>
       );
     }
 
     return (
       <>
-        <StatusIndicator
-          variant={isSynced ? 'success' : 'info'}
-          animated={!isSynced}
-        />
+        <StatusIndicator variant="info" animated />
         <span className="flex items-center gap-1">
-          {isSynced ? 'Synced' : 'Indexing'}
-
+          Indexed block
           <span className="inline-block">
-            {data?.lastProcessedHeight ? (
-              <SlidingNumber number={data.lastProcessedHeight} />
-            ) : (
-              EMPTY_VALUE_PLACEHOLDER
-            )}
+            <SlidingNumber number={data.latestProcessedBlock} />
           </span>
-
-          <span className="inline-block">of</span>
-
-          <span className="inline-block">
-            {data?.targetHeight ? (
-              <SlidingNumber number={data.targetHeight} />
-            ) : (
-              EMPTY_VALUE_PLACEHOLDER
-            )}
-          </span>
-
           <span className="items-center hidden sm:flex">
-            (<SlidingNumber number={progress} />
-            %)
+            ({' '}
+            {data.numEventsProcessed > 0 ? (
+              <SlidingNumber number={data.numEventsProcessed} />
+            ) : (
+              EMPTY_VALUE_PLACEHOLDER
+            )}{' '}
+            events)
           </span>
         </span>
       </>
     );
-  }, [
-    isPending,
-    error,
-    isSynced,
-    data?.lastProcessedHeight,
-    data?.targetHeight,
-    progress,
-  ]);
+  }, [isPending, error, data]);
 
   return (
     <Chip

@@ -1,15 +1,8 @@
-import type {
-  SpStakingExposurePage,
-  SpStakingPagedExposureMetadata,
-} from '@polkadot/types/lookup';
-import type { BN } from '@polkadot/util';
-
 export enum PagePath {
   DASHBOARD = '/',
   NOMINATION = '/nomination',
   NOMINATION_VALIDATOR = '/nomination/:validatorAddress',
-  CLAIM_AIRDROP = '/claim',
-  CLAIM_AIRDROP_SUCCESS = '/claim/success',
+  CLAIM = '/claim',
   CLAIM_MIGRATION = '/claim/migration',
   BRIDGE = '/bridge',
   BLUEPRINTS = '/blueprints',
@@ -168,7 +161,7 @@ export enum StakingProfileType {
   SHARED = 'Shared',
 }
 
-export type DistributionDataType = Record<StakingService, BN>;
+export type DistributionDataType = Record<StakingService, bigint>;
 
 /**
  * There are phase 1 jobs in Substrate
@@ -179,9 +172,9 @@ export type Service = {
   participants: string[];
   threshold?: number;
   jobsCount?: number;
-  earnings?: BN;
-  expirationBlock: BN;
-  ttlBlock: BN;
+  earnings?: bigint;
+  expirationBlock: bigint;
+  ttlBlock: bigint;
   permittedCaller?: string;
 };
 
@@ -217,8 +210,8 @@ export enum NetworkFeature {
 export type ExposureMap = Record<
   string,
   {
-    exposure: SpStakingExposurePage;
-    exposureMeta: SpStakingPagedExposureMetadata;
+    exposure: unknown;
+    exposureMeta: unknown;
   }
 >;
 

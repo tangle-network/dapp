@@ -1,7 +1,3 @@
-import type {
-  PalletIdentityLegacyIdentityInfo,
-  PalletIdentityRegistration,
-} from '@polkadot/types/lookup';
 import { getApiPromise } from './api';
 import { hexToString, isHex } from 'viem';
 import {
@@ -32,11 +28,23 @@ export const IDENTITY_ICONS_RECORD = {
   github: GithubFill,
 };
 
+type OptionLike<T = unknown> = {
+  isNone: boolean;
+  unwrap: () => T;
+  toString: () => string;
+};
+
+type IdentityInfoLike = Record<string, OptionLike>;
+
+type IdentityRegistrationLike = {
+  info: IdentityInfoLike;
+};
+
 export const extractDataFromIdentityInfo = (
-  info: PalletIdentityLegacyIdentityInfo,
+  info: IdentityInfoLike,
   type: IdentityDataType,
 ): string | null => {
-  const displayData = info[type];
+  const displayData = info[type] as OptionLike;
 
   if (displayData.isNone) {
     return null;
@@ -55,7 +63,7 @@ export const extractDataFromIdentityInfo = (
 };
 
 export const extractIdentityInfo = (
-  identityRegistration: PalletIdentityRegistration,
+  identityRegistration: IdentityRegistrationLike,
 ): IdentityType => {
   const info = identityRegistration.info;
   const name = extractDataFromIdentityInfo(info, IdentityDataType.NAME);
@@ -83,7 +91,9 @@ export async function getAccountInfo(
   address: string,
 ) {
   const api = await getApiPromise(rpcEndpoints);
-  const identityData = await api.query.identity.identityOf(address);
+  const identityData = (await api.query.identity.identityOf(
+    address,
+  )) as unknown as OptionLike<[IdentityRegistrationLike]>;
 
   if (identityData.isNone) {
     return null;
@@ -108,7 +118,9 @@ export async function getMultipleAccountInfo(
   addresses: string[],
 ): Promise<(IdentityType | null)[]> {
   const api = await getApiPromise(rpcEndpoints);
-  const identityData = await api.query.identity.identityOf.multi(addresses);
+  const identityData = (await api.query.identity.identityOf.multi(
+    addresses,
+  )) as unknown as Array<OptionLike<[IdentityRegistrationLike]>>;
 
   return identityData.map((data) => {
     if (data.isNone) {

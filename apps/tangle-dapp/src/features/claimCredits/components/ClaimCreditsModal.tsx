@@ -13,14 +13,12 @@ import useNetworkStore from '@tangle-network/tangle-shared-ui/context/useNetwork
 import { TxStatus } from '@tangle-network/tangle-shared-ui/hooks/useSubstrateTx';
 import { BN } from '@polkadot/util';
 import { TANGLE_TOKEN_DECIMALS } from '@tangle-network/dapp-config';
-import {
-  AmountFormatStyle,
-  formatDisplayAmount,
-} from '@tangle-network/ui-components';
+import { AmountFormatStyle } from '@tangle-network/ui-components';
 import useCredits from '../../../data/credits/useCredits';
 import useClaimCreditsTx from '../../../data/credits/useClaimCreditsTx';
 import { meetsMinimumClaimThreshold } from '../../../utils/creditConstraints';
 import CreditVelocityTooltip from './CreditVelocityTooltip';
+import { formatTokenAmount } from '../../../utils/formatTokenAmount';
 
 type Props = {
   isOpen: boolean;
@@ -63,8 +61,8 @@ const ClaimCreditsModal: FC<Props> = ({ isOpen, setIsOpen }) => {
   }, [offchainAccountId, execute, refetch, setIsOpen, data]);
 
   const formattedAmount = data?.amount
-    ? formatDisplayAmount(
-        new BN(data.amount.toString()),
+    ? formatTokenAmount(
+        data.amount,
         TANGLE_TOKEN_DECIMALS,
         AmountFormatStyle.SHORT,
       )

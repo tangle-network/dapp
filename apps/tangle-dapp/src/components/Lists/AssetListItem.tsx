@@ -3,7 +3,6 @@ import { ChainType } from '@tangle-network/dapp-types';
 import {
   AmountFormatStyle,
   CopyWithTooltip,
-  formatDisplayAmount,
   isEvmAddress,
   shortenHex,
   Typography,
@@ -11,14 +10,14 @@ import {
 import { makeExplorerUrl } from '@tangle-network/api-provider-environment/transaction/utils';
 import { useActiveChain } from '@tangle-network/api-provider-environment/hooks/useActiveChain';
 import LogoListItem from './LogoListItem';
-import { BN } from '@polkadot/util';
 import { getAssetLabelColorClasses } from '../../utils/getAssetLabelColorClasses';
+import { formatTokenAmount } from '../../utils/formatTokenAmount';
 
 type Props = {
   assetId: string;
   name?: string;
   symbol: string;
-  balance: BN;
+  balance: bigint;
   decimals: number;
   rightBottomText?: string;
   leftBottomContentTwo?: string;
@@ -39,7 +38,7 @@ const AssetListItem = ({
 }: Props) => {
   const activeChain = useActiveChain();
 
-  const fmtBalance = formatDisplayAmount(
+  const fmtBalance = formatTokenAmount(
     balance,
     decimals,
     AmountFormatStyle.SHORT,

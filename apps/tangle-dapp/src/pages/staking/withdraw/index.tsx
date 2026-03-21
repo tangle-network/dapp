@@ -15,7 +15,6 @@ import { Typography } from '@tangle-network/ui-components/typography/Typography'
 import { FC, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { type SubmitHandler, useForm } from 'react-hook-form';
 import { Address, formatUnits, parseUnits } from 'viem';
-import { BN } from '@polkadot/util';
 import { useAccount, useBlockNumber, useChainId, usePublicClient } from 'wagmi';
 import { useQuery } from '@tanstack/react-query';
 import ErrorMessage from '@tangle-network/tangle-shared-ui/components/ErrorMessage';
@@ -740,7 +739,7 @@ const StakingWithdrawForm: FC = () => {
           <AssetListItem
             assetId={item.token}
             symbol={item.tokenSymbol}
-            balance={new BN(item.availableToWithdraw.toString())}
+            balance={item.availableToWithdraw}
             decimals={item.tokenDecimals}
             rightBottomText="Available"
           />

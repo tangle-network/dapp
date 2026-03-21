@@ -8,14 +8,11 @@ import {
 } from '@hyperlane-xyz/sdk';
 import { ProtocolType } from '@hyperlane-xyz/utils';
 import { PresetTypedChainId } from '@tangle-network/dapp-types';
-import {
-  EVMTokenBridgeEnum,
-  EVMTokenEnum,
-} from '@tangle-network/evm-contract-metadata';
 
 import { assertEvmAddress } from '@tangle-network/ui-components';
 import { Abi, erc20Abi } from 'viem';
 import { BridgeChainsConfigType, BridgeToken } from '../types';
+import { EVMTokenBridgeEnum, EVMTokenEnum } from '../types/bridge-metadata';
 
 // NOTE: Include assertion logic, as the Abi type can't be directly imported from viem since the 'type' field clashes (string vs. 'function').
 const assertAbi = (abi: unknown): Abi => abi as Abi;

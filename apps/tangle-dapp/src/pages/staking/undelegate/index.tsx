@@ -19,7 +19,6 @@ import { FC, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { type SubmitHandler, useForm } from 'react-hook-form';
 import { twMerge } from 'tailwind-merge';
 import { Address, formatUnits, parseUnits } from 'viem';
-import { BN } from '@polkadot/util';
 import { useAccount, useChainId } from 'wagmi';
 import ErrorMessage from '@tangle-network/tangle-shared-ui/components/ErrorMessage';
 import StakingDetailCard from '../../../components/StakingDetailCard';
@@ -52,14 +51,12 @@ import type { EvmAddress } from '@tangle-network/ui-components/types/address';
 import ListModal from '@tangle-network/tangle-shared-ui/components/ListModal';
 import filterBy from '@tangle-network/tangle-shared-ui/utils/filterBy';
 import LogoListItem from '../../../components/Lists/LogoListItem';
-import {
-  AmountFormatStyle,
-  formatDisplayAmount,
-} from '@tangle-network/ui-components';
+import { AmountFormatStyle } from '@tangle-network/ui-components';
 import MULTI_ASSET_DELEGATION_ABI from '@tangle-network/tangle-shared-ui/abi/multiAssetDelegation';
 import { getContractsByChainId } from '@tangle-network/dapp-config/contracts';
 import { useResilientReadContract } from '@tangle-network/tangle-shared-ui/hooks/useResilientReadContract';
 import { useResilientReadContracts } from '@tangle-network/tangle-shared-ui/hooks/useResilientReadContracts';
+import { formatTokenAmount } from '../../../utils/formatTokenAmount';
 
 // Delegation item with metadata for selection
 type DelegationItem = {
@@ -757,8 +754,8 @@ const StakingUndelegateForm: FC = () => {
           filterBy(query, [item.operatorAddress, item.tokenSymbol])
         }
         renderItem={(item) => {
-          const fmtBalance = formatDisplayAmount(
-            new BN(item.availableToUnstake.toString()),
+          const fmtBalance = formatTokenAmount(
+            item.availableToUnstake,
             item.tokenDecimals,
             AmountFormatStyle.SHORT,
           );
