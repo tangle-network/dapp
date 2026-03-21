@@ -10,7 +10,7 @@ const PageLayout: FC<Props> = ({ children, className }) => {
   return (
     <div
       className={twMerge(
-        'max-w-screen-xl px-4 mx-auto space-y-5 md:px-8 lg:px-10',
+        'max-w-screen-xl px-4 mx-auto space-y-5 md:px-5',
         className,
       )}
     >

@@ -33,6 +33,7 @@ const useKeypair = () => {
   useEffect(() => {
     setKeypair(null);
     setError(null);
+    setIsLoading(false); // Cancel any stuck loading state from previous address
     setHasStoredKeypair(
       !!address && localStorage.getItem(`${STORAGE_KEY}:${address}`) !== null,
     );

@@ -98,10 +98,12 @@ export const ShieldedProvider: FC<PropsWithChildren> = ({ children }) => {
     (mutateFn: (current: NoteData[]) => NoteData[]) => {
       writeQueueRef.current = writeQueueRef.current.then(async () => {
         const updated = mutateFn(notesRef.current);
+        // Update ref synchronously so the next queued write sees this result
+        notesRef.current = updated;
+        setNotes(updated);
         if (storageRef.current) {
           await storageRef.current.save(updated.map(serializeNote));
         }
-        setNotes(updated);
       });
       return writeQueueRef.current;
     },

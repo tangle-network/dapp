@@ -40,6 +40,12 @@ export const openDb = (): Promise<IDBDatabase> => {
         dbPromise = null;
       };
 
+      // Handle schema upgrade from another tab
+      db.onversionchange = () => {
+        db.close();
+        dbPromise = null;
+      };
+
       resolve(db);
     };
 

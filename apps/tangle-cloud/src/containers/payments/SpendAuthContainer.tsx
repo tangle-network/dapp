@@ -74,6 +74,13 @@ const SpendAuthContainer: FC = () => {
       return;
     }
 
+    if (!selectedAccount.spendingPrivateKey || selectedAccount.isLocked) {
+      setError(
+        'This credit account is locked. Unlock your shielded keypair to sign authorizations.',
+      );
+      return;
+    }
+
     // Validate all numeric inputs
     const parsedServiceId = validateServiceId(serviceId);
     if (parsedServiceId === null) {

@@ -24,7 +24,7 @@ const AmountInput: FC<Props> = ({
     balance !== undefined ? formatUnits(balance, decimals) : undefined;
 
   const handleMax = useCallback(() => {
-    if (formattedBalance) {
+    if (formattedBalance !== undefined) {
       onChange(formattedBalance);
     }
   }, [formattedBalance, onChange]);
