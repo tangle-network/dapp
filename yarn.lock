@@ -15767,18 +15767,6 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@tangle-network/ui-components@workspace:libs/ui-components":
-  version: 0.0.0-use.local
-  resolution: "@tangle-network/ui-components@workspace:libs/ui-components"
-  languageName: unknown
-  linkType: soft
-
-"@tangle-network/web3-api-provider@workspace:libs/web3-api-provider":
-  version: 0.0.0-use.local
-  resolution: "@tangle-network/web3-api-provider@workspace:libs/web3-api-provider"
-  languageName: unknown
-  linkType: soft
-
 "@tanstack/match-sorter-utils@npm:^8.19.4":
   version: 8.19.4
   resolution: "@tanstack/match-sorter-utils@npm:8.19.4"
@@ -34895,20 +34883,6 @@ __metadata:
   version: 1.4.0
   resolution: "uint8array-extras@npm:1.4.0"
   checksum: 10c0/eaffd3388634b7e5e1496073b878dd19136043137d3e7e0d2a453e37f566a5a551e640819e1a6596c6df9b9d1f7b70884cc29db6a357bdd424811f3598d504dd
-  languageName: node
-  linkType: hard
-
-"uint8array-tools@npm:^0.0.8":
-  version: 0.0.8
-  resolution: "uint8array-tools@npm:0.0.8"
-  checksum: 10c0/ffc01a50aaed4ce7d9c30260b23465c79ffe6e4d0fe1ba4605611e59feabbaff81b42ddf7896a747f07aafcbb5a4252d1b39f2325bacb21454212c42c954d74d
-  languageName: node
-  linkType: hard
-
-"uint8array-tools@npm:^0.0.9":
-  version: 0.0.9
-  resolution: "uint8array-tools@npm:0.0.9"
-  checksum: 10c0/1f3692aa60f87b84ebd3254bea2024ee9b8c1dc226ac906a879190298c736b3c942a7a12d20996d179d3918a65d4613fc2494837e8959329ac0747e12a18f90c
   languageName: node
   linkType: hard
 
