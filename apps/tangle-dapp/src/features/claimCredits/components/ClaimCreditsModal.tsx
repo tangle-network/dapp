@@ -11,7 +11,6 @@ import {
 } from '@tangle-network/ui-components';
 import useNetworkStore from '@tangle-network/tangle-shared-ui/context/useNetworkStore';
 import { TxStatus } from '@tangle-network/tangle-shared-ui/hooks/useSubstrateTx';
-import { BN } from '@polkadot/util';
 import { TANGLE_TOKEN_DECIMALS } from '@tangle-network/dapp-config';
 import { AmountFormatStyle } from '@tangle-network/ui-components';
 import useCredits from '../../../data/credits/useCredits';
