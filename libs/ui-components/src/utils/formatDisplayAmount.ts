@@ -38,12 +38,14 @@ export enum AmountFormatStyle {
  * for UI display.
  */
 export const formatDisplayAmount = (
-  amount: BN,
+  amount: BN | bigint,
   decimals: number,
   style: AmountFormatStyle,
   options?: FormatDisplayAmountOptions,
 ): string => {
-  return formatBn(amount, decimals, {
+  const normalizedAmount = BN.isBN(amount) ? amount : new BN(amount.toString());
+
+  return formatBn(normalizedAmount, decimals, {
     includeCommas: true,
     withSi: style === AmountFormatStyle.SI ? true : undefined,
     fractionMaxLength:

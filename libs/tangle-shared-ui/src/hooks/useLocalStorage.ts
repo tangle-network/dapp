@@ -1,7 +1,7 @@
 'use client';
 
-import { HexString } from '@polkadot/util/types';
 import { useCallback, useEffect, useState } from 'react';
+import { Hex } from 'viem';
 
 import { BridgeQueueTxItem, TangleTokenSymbol } from '../types';
 import Optional from '../utils/Optional';
@@ -26,7 +26,7 @@ export type SubstrateWalletsMetadataEntry = {
 };
 
 export type SubstrateWalletsMetadataCache = Partial<
-  Record<HexString, SubstrateWalletsMetadataEntry>
+  Record<Hex, SubstrateWalletsMetadataEntry>
 >;
 
 export type TxQueueByAccount = Record<string, BridgeQueueTxItem[]>;

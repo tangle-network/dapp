@@ -1,6 +1,6 @@
 import { FC, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
-import { Link } from 'react-router-dom';
+import { Link } from 'react-router';
 import { Address } from 'viem';
 import {
   Chip,

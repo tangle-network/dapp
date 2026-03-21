@@ -36,7 +36,6 @@ import { TxStatus } from '@tangle-network/tangle-shared-ui/hooks/useContractWrit
 import filterBy from '@tangle-network/tangle-shared-ui/utils/filterBy';
 import { Switcher } from '@tangle-network/ui-components/components/Switcher';
 import { CheckBox } from '@tangle-network/ui-components/components/CheckBox';
-import { BN } from '@polkadot/util';
 import OperatorListItem from '../../../components/Lists/OperatorListItem';
 import AssetListItem from '../../../components/Lists/AssetListItem';
 
@@ -505,7 +504,7 @@ const CreateVaultForm: FC = () => {
             assetId={asset.id}
             name={asset.metadata.name}
             symbol={asset.metadata.symbol}
-            balance={new BN((asset.balance ?? BigInt(0)).toString())}
+            balance={asset.balance ?? BigInt(0)}
             decimals={asset.metadata.decimals}
           />
         )}

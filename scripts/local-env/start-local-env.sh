@@ -15,6 +15,15 @@
 
 set -euo pipefail
 
+# Keep Hasura endpoint variables in sync with the currently selected external port.
+set_hasura_endpoint_env() {
+    GRAPHQL_PORT="$HASURA_EXTERNAL_PORT"
+    HASURA_GRAPHQL_ENDPOINT="http://localhost:${GRAPHQL_PORT}/v1/metadata"
+    HASURA_QUERY_ENDPOINT="http://localhost:${GRAPHQL_PORT}/v1/graphql"
+    HASURA_HEALTH_ENDPOINT="http://localhost:${GRAPHQL_PORT}/healthz"
+    export GRAPHQL_PORT HASURA_EXTERNAL_PORT HASURA_GRAPHQL_ENDPOINT HASURA_QUERY_ENDPOINT HASURA_HEALTH_ENDPOINT
+}
+
 # Parse command line arguments
 RESUME_MODE=false
 CLEAN_MODE=false
@@ -47,7 +56,7 @@ esac
 ANVIL_PORT=8545
 ANVIL_CHAIN_ID=31337
 HASURA_EXTERNAL_PORT="${HASURA_EXTERNAL_PORT:-8080}"
-GRAPHQL_PORT="$HASURA_EXTERNAL_PORT"
+set_hasura_endpoint_env
 CLAIM_RELAYER_PORT=${CLAIM_RELAYER_PORT:-3001}
 ANVIL_STATE_INTERVAL="${ANVIL_STATE_INTERVAL:-5}"
 # Anvil's default deployer private key (account #0)
@@ -81,7 +90,7 @@ CLEAN_DOCKER="${CLEAN_DOCKER:-false}"
 STRICT_INDEXER_PORT="${STRICT_INDEXER_PORT:-false}"
 STRICT_PG_PORT="${STRICT_PG_PORT:-false}"
 STRICT_HASURA_PORT="${STRICT_HASURA_PORT:-false}"
-export ENVIO_PG_PORT ENVIO_INDEXER_PORT METRICS_PORT ENVIO_PG_USER ENVIO_PG_PASSWORD ENVIO_PG_DATABASE HASURA_EXTERNAL_PORT
+export ENVIO_PG_PORT ENVIO_INDEXER_PORT METRICS_PORT ENVIO_PG_USER ENVIO_PG_PASSWORD ENVIO_PG_DATABASE HASURA_EXTERNAL_PORT GRAPHQL_PORT HASURA_GRAPHQL_ENDPOINT HASURA_QUERY_ENDPOINT HASURA_HEALTH_ENDPOINT
 
 # Resolve script directory first
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
@@ -283,8 +292,7 @@ ensure_free_hasura_port() {
         local port=$((start_port + offset))
         if is_port_free "$port"; then
             HASURA_EXTERNAL_PORT="$port"
-            GRAPHQL_PORT="$port"
-            export HASURA_EXTERNAL_PORT
+            set_hasura_endpoint_env
             return 0
         fi
 
@@ -320,8 +328,7 @@ sync_ports_from_docker_compose() {
         hasura_port="$(echo "$hasura_mapping" | sed -E 's/.*:([0-9]+)$/\\1/')"
         if [[ "$hasura_port" =~ ^[0-9]+$ ]]; then
             HASURA_EXTERNAL_PORT="$hasura_port"
-            GRAPHQL_PORT="$hasura_port"
-            export HASURA_EXTERNAL_PORT
+            set_hasura_endpoint_env
         fi
     fi
 }
@@ -1016,7 +1023,10 @@ console.log(JSON.stringify({
         PRIVATE_KEY="$ANVIL_PRIVATE_KEY" \
         forge script script/DeployTangleMigration.s.sol:DeployTangleMigration \
             --rpc-url "http://127.0.0.1:$ANVIL_PORT" \
+            --private-key "$ANVIL_PRIVATE_KEY" \
             --broadcast \
+            --non-interactive \
+            --slow \
             --quiet \
             2>&1 | tee /tmp/migration-deploy.log || true
     }
@@ -1232,7 +1242,7 @@ start_indexer() {
     # Wait for Hasura to be ready before db-setup
     log_info "Waiting for Hasura to be ready..."
     for i in {1..30}; do
-        if curl -s "http://localhost:$GRAPHQL_PORT/healthz" | grep -q "OK" 2>/dev/null; then
+        if curl -s "$HASURA_HEALTH_ENDPOINT" | grep -q "OK" 2>/dev/null; then
             log_success "Hasura is ready"
             break
         fi
@@ -1241,7 +1251,13 @@ start_indexer() {
 
     # Run DB migrations (needed even if reusing containers)
     log_info "Running DB migrations..."
-    pnpm db-setup
+    env \
+        HASURA_EXTERNAL_PORT="$HASURA_EXTERNAL_PORT" \
+        GRAPHQL_PORT="$GRAPHQL_PORT" \
+        HASURA_GRAPHQL_ENDPOINT="$HASURA_GRAPHQL_ENDPOINT" \
+        HASURA_QUERY_ENDPOINT="$HASURA_QUERY_ENDPOINT" \
+        HASURA_HEALTH_ENDPOINT="$HASURA_HEALTH_ENDPOINT" \
+        pnpm db-setup
 
     # Clear chain progress (for fresh indexing from block 0)
     log_info "Clearing chain progress..."
@@ -1265,6 +1281,11 @@ start_indexer() {
         ENVIO_PG_USER="$ENVIO_PG_USER" \
         ENVIO_PG_PASSWORD="$ENVIO_PG_PASSWORD" \
         ENVIO_PG_DATABASE="$ENVIO_PG_DATABASE" \
+        HASURA_EXTERNAL_PORT="$HASURA_EXTERNAL_PORT" \
+        GRAPHQL_PORT="$GRAPHQL_PORT" \
+        HASURA_GRAPHQL_ENDPOINT="$HASURA_GRAPHQL_ENDPOINT" \
+        HASURA_QUERY_ENDPOINT="$HASURA_QUERY_ENDPOINT" \
+        HASURA_HEALTH_ENDPOINT="$HASURA_HEALTH_ENDPOINT" \
         TUI_OFF=true \
         pnpm start &
     INDEXER_PID=$!
@@ -1276,7 +1297,7 @@ start_indexer() {
     # Wait for Hasura
     log_info "Waiting for Hasura GraphQL schema..."
     for i in {1..60}; do
-        RESULT=$(curl -s "http://localhost:$GRAPHQL_PORT/v1/graphql" \
+        RESULT=$(curl -s "$HASURA_QUERY_ENDPOINT" \
             -H "Content-Type: application/json" \
             -d '{"query": "{ __schema { types { name } } }"}' 2>/dev/null)
         if echo "$RESULT" | grep -q "Operator"; then
@@ -1595,14 +1616,20 @@ restart_indexer() {
         # Wait for Hasura to be ready
         log_info "Waiting for Hasura to be ready..."
         for i in {1..30}; do
-            if curl -s "http://localhost:$GRAPHQL_PORT/healthz" | grep -q "OK" 2>/dev/null; then
+            if curl -s "$HASURA_HEALTH_ENDPOINT" | grep -q "OK" 2>/dev/null; then
                 log_success "Hasura is ready"
                 break
             fi
             sleep 1
         done
         # Run migrations
-        pnpm db-setup 2>/dev/null || true
+        env \
+            HASURA_EXTERNAL_PORT="$HASURA_EXTERNAL_PORT" \
+            GRAPHQL_PORT="$GRAPHQL_PORT" \
+            HASURA_GRAPHQL_ENDPOINT="$HASURA_GRAPHQL_ENDPOINT" \
+            HASURA_QUERY_ENDPOINT="$HASURA_QUERY_ENDPOINT" \
+            HASURA_HEALTH_ENDPOINT="$HASURA_HEALTH_ENDPOINT" \
+            pnpm db-setup 2>/dev/null || true
     else
         sync_ports_from_docker_compose
     fi
@@ -1618,6 +1645,11 @@ restart_indexer() {
         ENVIO_PG_USER="$ENVIO_PG_USER" \
         ENVIO_PG_PASSWORD="$ENVIO_PG_PASSWORD" \
         ENVIO_PG_DATABASE="$ENVIO_PG_DATABASE" \
+        HASURA_EXTERNAL_PORT="$HASURA_EXTERNAL_PORT" \
+        GRAPHQL_PORT="$GRAPHQL_PORT" \
+        HASURA_GRAPHQL_ENDPOINT="$HASURA_GRAPHQL_ENDPOINT" \
+        HASURA_QUERY_ENDPOINT="$HASURA_QUERY_ENDPOINT" \
+        HASURA_HEALTH_ENDPOINT="$HASURA_HEALTH_ENDPOINT" \
         TUI_OFF=true \
         pnpm start &
     INDEXER_PID=$!
@@ -1651,7 +1683,13 @@ docker_up() {
     sleep 3
     sync_ports_from_docker_compose
     # Run migrations
-    pnpm db-setup 2>/dev/null || true
+    env \
+        HASURA_EXTERNAL_PORT="$HASURA_EXTERNAL_PORT" \
+        GRAPHQL_PORT="$GRAPHQL_PORT" \
+        HASURA_GRAPHQL_ENDPOINT="$HASURA_GRAPHQL_ENDPOINT" \
+        HASURA_QUERY_ENDPOINT="$HASURA_QUERY_ENDPOINT" \
+        HASURA_HEALTH_ENDPOINT="$HASURA_HEALTH_ENDPOINT" \
+        pnpm db-setup 2>/dev/null || true
     cd "$SCRIPT_DIR"
 }
 
@@ -2269,16 +2307,22 @@ resume_session() {
         ensure_free_postgres_port
         ensure_free_hasura_port
         docker compose up -d --remove-orphans
+        sync_ports_from_docker_compose
         sleep 3
         # Wait for Hasura
         for i in {1..30}; do
-            if curl -s "http://localhost:$GRAPHQL_PORT/healthz" | grep -q "OK" 2>/dev/null; then
+            if curl -s "$HASURA_HEALTH_ENDPOINT" | grep -q "OK" 2>/dev/null; then
                 break
             fi
             sleep 1
         done
-        pnpm db-setup 2>/dev/null || true
-        sync_ports_from_docker_compose
+        env \
+            HASURA_EXTERNAL_PORT="$HASURA_EXTERNAL_PORT" \
+            GRAPHQL_PORT="$GRAPHQL_PORT" \
+            HASURA_GRAPHQL_ENDPOINT="$HASURA_GRAPHQL_ENDPOINT" \
+            HASURA_QUERY_ENDPOINT="$HASURA_QUERY_ENDPOINT" \
+            HASURA_HEALTH_ENDPOINT="$HASURA_HEALTH_ENDPOINT" \
+            pnpm db-setup 2>/dev/null || true
         log_success "Docker containers started"
     fi
     cd "$SCRIPT_DIR"
@@ -2299,6 +2343,11 @@ resume_session() {
             ENVIO_PG_USER="$ENVIO_PG_USER" \
             ENVIO_PG_PASSWORD="$ENVIO_PG_PASSWORD" \
             ENVIO_PG_DATABASE="$ENVIO_PG_DATABASE" \
+            HASURA_EXTERNAL_PORT="$HASURA_EXTERNAL_PORT" \
+            GRAPHQL_PORT="$GRAPHQL_PORT" \
+            HASURA_GRAPHQL_ENDPOINT="$HASURA_GRAPHQL_ENDPOINT" \
+            HASURA_QUERY_ENDPOINT="$HASURA_QUERY_ENDPOINT" \
+            HASURA_HEALTH_ENDPOINT="$HASURA_HEALTH_ENDPOINT" \
             TUI_OFF=true \
             pnpm start &
         INDEXER_PID=$!

@@ -94,6 +94,8 @@ const EvmWalletModal: FC<EvmWalletModalProps> = ({ isOpen, onClose }) => {
               return (
                 <button
                   key={connector.id}
+                  data-testid={`evm-wallet-option-${connector.id}`}
+                  data-wallet-name={connector.name}
                   onClick={() => handleConnect(connector)}
                   disabled={isPending}
                   className={twMerge(

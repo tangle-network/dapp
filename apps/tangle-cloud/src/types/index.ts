@@ -2,7 +2,12 @@ import { PrimitiveField } from '@tangle-network/tangle-shared-ui/types/blueprint
 import { TANGLE_DAPP_URL } from '@tangle-network/ui-components/constants';
 import type { Address } from 'viem';
 
-export const TANGLE_DAPP_BASE_URL = TANGLE_DAPP_URL;
+const ensureTrailingSlash = (url: string): string =>
+  url.endsWith('/') ? url : `${url}/`;
+
+export const TANGLE_DAPP_BASE_URL = ensureTrailingSlash(
+  import.meta.env.VITE_TANGLE_DAPP_URL || TANGLE_DAPP_URL,
+);
 
 export enum PagePath {
   HOME = '/',
@@ -18,15 +23,17 @@ export enum PagePath {
   OPERATORS_MANAGE = '/operators/manage',
   REWARDS = '/rewards',
   EARNINGS = '/earnings',
+  PAYMENTS_POOL = '/payments/pool',
+  PAYMENTS_CREDITS = '/payments/credits',
   NOT_FOUND = '/404',
 }
 
-export enum TangleDAppPagePath {
-  STAKING = `${TANGLE_DAPP_URL}staking`,
-  STAKING_DEPOSIT = `${TANGLE_DAPP_URL}staking/deposit?vault={{vault}}`,
-  STAKING_DELEGATE = `${TANGLE_DAPP_URL}staking/delegate`,
-  STAKING_OPERATOR = `${TANGLE_DAPP_URL}staking/operators`,
-}
+export const TangleDAppPagePath = {
+  STAKING: `${TANGLE_DAPP_BASE_URL}staking`,
+  STAKING_DEPOSIT: `${TANGLE_DAPP_BASE_URL}staking/deposit?vault={{vault}}`,
+  STAKING_DELEGATE: `${TANGLE_DAPP_BASE_URL}staking/delegate`,
+  STAKING_OPERATOR: `${TANGLE_DAPP_BASE_URL}staking/operators`,
+} as const;
 
 /**
  * Asset structure matching the contract's Asset struct.

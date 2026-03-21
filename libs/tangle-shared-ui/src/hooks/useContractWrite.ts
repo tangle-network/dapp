@@ -32,7 +32,6 @@ import ensureError from '../utils/ensureError';
 import useEvmAddress from './useEvmAddress';
 import useNetworkStore from '../context/useNetworkStore';
 import useTxHistoryStore from '../context/useTxHistoryStore';
-import type { HexString } from '@polkadot/util/types';
 import type { HistoryTxDetail } from '../context/useTxHistoryStore';
 
 // Transaction status enum
@@ -500,7 +499,7 @@ const useContractWrite = <
 
             pushTx({
               name: txName,
-              hash: hash as unknown as HexString,
+              hash,
               origin: activeAddress,
               network: networkId,
               timestamp: Date.now(),
@@ -538,7 +537,7 @@ const useContractWrite = <
             options?.onSuccess?.(txResult, context);
 
             if (enableTxHistory && networkId !== undefined) {
-              patchTx(hash as unknown as HexString, { status: 'finalized' });
+              patchTx(hash, { status: 'finalized' });
             }
           } else {
             const revertError = new Error('Transaction reverted');
@@ -553,7 +552,7 @@ const useContractWrite = <
             options?.onError?.(revertError, context);
 
             if (enableTxHistory && networkId !== undefined) {
-              patchTx(hash as unknown as HexString, {
+              patchTx(hash, {
                 status: 'failed',
                 errorMessage: revertError.message,
               });
@@ -593,7 +592,7 @@ const useContractWrite = <
               submittedHash !== null &&
               networkId !== undefined
             ) {
-              patchTx(submittedHash as unknown as HexString, {
+              patchTx(submittedHash, {
                 status: 'failed',
                 errorMessage: timeoutError.message,
               });
@@ -623,7 +622,7 @@ const useContractWrite = <
             submittedHash !== null &&
             networkId !== undefined
           ) {
-            patchTx(submittedHash as unknown as HexString, {
+            patchTx(submittedHash, {
               status: 'failed',
               errorMessage: error.message,
             });

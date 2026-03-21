@@ -4,7 +4,6 @@ import {
   ExternalLinkLine,
   Spinner,
 } from '@tangle-network/icons';
-import { BN } from '@polkadot/util';
 import useNetworkStore from '../../context/useNetworkStore';
 import useTxHistoryStore, {
   type HistoryTx,
@@ -92,7 +91,7 @@ const DetailRow: FC<DetailRowProps> = ({
       if (isAmountKey) {
         const decimals = tokenMetadata?.decimals ?? 18;
         const formatted = formatDisplayAmount(
-          new BN(value),
+          BigInt(Math.max(0, Math.trunc(value))),
           decimals,
           AmountFormatStyle.SHORT,
         );
@@ -119,7 +118,7 @@ const DetailRow: FC<DetailRowProps> = ({
       if (isAmountKey && isNumericString(value)) {
         const decimals = tokenMetadata?.decimals ?? 18;
         const formatted = formatDisplayAmount(
-          new BN(value),
+          BigInt(value),
           decimals,
           AmountFormatStyle.SHORT,
         );
@@ -133,7 +132,7 @@ const DetailRow: FC<DetailRowProps> = ({
       return value;
     }
 
-    // BN value - format with decimals
+    // bigint value - format with decimals
     const decimals = tokenMetadata?.decimals ?? 18;
     const formatted = formatDisplayAmount(
       value,
@@ -149,7 +148,7 @@ const DetailRow: FC<DetailRowProps> = ({
   }, [value, isAmountKey, isSharesKey, tokenMetadata, nativeTokenSymbol]);
 
   const rawValue = useMemo(() => {
-    if (BN.isBN(value)) {
+    if (typeof value === 'bigint') {
       return value.toString();
     }
 

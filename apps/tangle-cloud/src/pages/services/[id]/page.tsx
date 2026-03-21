@@ -369,7 +369,7 @@ const ServiceDetailPage: FC = () => {
     return (
       <div className="text-center py-12">
         <Typography variant="h4">Invalid Service ID</Typography>
-        <Button onClick={() => navigate('/instances')} className="mt-4">
+        <Button onClick={() => navigate(PagePath.INSTANCES)} className="mt-4">
           Back to Instances
         </Button>
       </div>
@@ -393,7 +393,7 @@ const ServiceDetailPage: FC = () => {
         <Typography variant="body1" className="text-mono-100 mt-2">
           This service does not exist or may have been removed.
         </Typography>
-        <Button onClick={() => navigate('/instances')} className="mt-4">
+        <Button onClick={() => navigate(PagePath.INSTANCES)} className="mt-4">
           Back to Instances
         </Button>
       </div>
@@ -407,7 +407,7 @@ const ServiceDetailPage: FC = () => {
         <Button
           variant="utility"
           isJustIcon
-          onClick={() => navigate('/instances')}
+          onClick={() => navigate(PagePath.INSTANCES)}
         >
           <ArrowLeft className="w-5 h-5" />
         </Button>

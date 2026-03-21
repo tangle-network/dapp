@@ -1,4 +1,3 @@
-import { isEthereumAddress } from '@polkadot/util-crypto';
 import { forwardRef } from 'react';
 import { twMerge } from 'tailwind-merge';
 import WalletLineIcon from '@tangle-network/icons/WalletLineIcon';
@@ -9,6 +8,7 @@ import { Typography } from '../../typography/Typography';
 import { Chip } from '../Chip';
 import SkeletonLoader from '../SkeletonLoader';
 import {
+  isEvmAddress,
   isSolanaAddress,
   isSubstrateAddress,
   shortenHex,
@@ -42,7 +42,7 @@ const AddressChip = forwardRef<HTMLSpanElement, AddressChipProps>(
             className="inline-block uppercase text-mono-120 dark:text-mono-60"
           >
             {/* Eth: 0xXX...XX; Substrate: NOTE...NOTE, Not an Address: N/A */}
-            {isEthereumAddress(address)
+            {isEvmAddress(address)
               ? shortenHex(address, 2)
               : isSubstrateAddress(address) || isSolanaAddress(address)
                 ? shortenString(address, 3)

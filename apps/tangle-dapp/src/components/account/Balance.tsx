@@ -1,13 +1,12 @@
-import { BN } from '@polkadot/util';
 import {
   AmountFormatStyle,
   EMPTY_VALUE_PLACEHOLDER,
-  formatDisplayAmount,
   InfoIconWithTooltip,
   Typography,
 } from '@tangle-network/ui-components';
 import { FC, useMemo } from 'react';
 import { useAccount, useBalance } from 'wagmi';
+import { formatTokenAmount } from '../../utils/formatTokenAmount';
 
 const Balance: FC = () => {
   const { address } = useAccount();
@@ -25,10 +24,8 @@ const Balance: FC = () => {
       return null;
     }
 
-    const balanceBn = new BN(nativeBalance.value.toString());
-
-    return formatDisplayAmount(
-      balanceBn,
+    return formatTokenAmount(
+      nativeBalance.value,
       nativeBalance.decimals,
       AmountFormatStyle.SHORT,
     );

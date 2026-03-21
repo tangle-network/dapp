@@ -21,7 +21,6 @@ import { FC, useCallback, useEffect, useMemo, useRef } from 'react';
 import useFormSetValue from '../../../hooks/useFormSetValue';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import { Address, formatUnits, parseUnits } from 'viem';
-import { BN } from '@polkadot/util';
 import { useAccount, useChainId, usePublicClient } from 'wagmi';
 import { useQuery } from '@tanstack/react-query';
 import ErrorMessage from '@tangle-network/tangle-shared-ui/components/ErrorMessage';
@@ -124,7 +123,7 @@ const StakingDelegateForm: FC = () => {
   const { assets: stakingAssets } = useStakingAssets({
     enabled: Boolean(userAddress),
   });
-  const { data: operatorMap } = useOperatorMap();
+  const { data: operatorMap } = useOperatorMap({ status: 'ACTIVE' });
   const blueprintSelection = useBlueprintStore((store) => store.selection);
 
   const tokenAddresses = useMemo<Address[]>(() => {
@@ -718,7 +717,7 @@ const StakingDelegateForm: FC = () => {
             assetId={asset.id}
             name={asset.name}
             symbol={asset.symbol}
-            balance={new BN(asset.availableBalance.toString())}
+            balance={asset.availableBalance}
             decimals={asset.decimals}
             rightBottomText="Available"
           />

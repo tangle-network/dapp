@@ -1,4 +1,3 @@
-import { BN } from '@polkadot/util';
 import * as Dialog from '@radix-ui/react-dialog';
 import {
   CheckboxCircleLine,
@@ -14,7 +13,6 @@ import {
   Button,
   Chip,
   CopyWithTooltip,
-  formatDisplayAmount,
   isEvmAddress,
   isSubstrateAddress,
   shortenHex,
@@ -34,6 +32,7 @@ import useTxHistoryStore, {
 import useEvmAddress from '@tangle-network/tangle-shared-ui/hooks/useEvmAddress';
 import { useEvmAssetMetadatas } from '@tangle-network/tangle-shared-ui/hooks/useEvmAssetMetadatas';
 import ExternalLink from './ExternalLink';
+import { formatTokenAmount } from '../utils/formatTokenAmount';
 
 const TxHistoryDrawer = () => {
   const activeEvmAddress = useEvmAddress();
@@ -203,12 +202,14 @@ const DetailRow: FC<DetailRowProps> = ({
   const isSharesKey = /shares/i.test(label);
 
   const formattedValue = useMemo(() => {
+    const decimals = tokenMetadata?.decimals ?? 18;
+
     if (typeof value === 'number') {
       // For amount keys, format with decimals; otherwise just add commas
       if (isAmountKey) {
-        const decimals = tokenMetadata?.decimals ?? 18;
-        const formatted = formatDisplayAmount(
-          new BN(value),
+        const rawAmount = BigInt(Math.max(0, Math.trunc(value)));
+        const formatted = formatTokenAmount(
+          rawAmount,
           decimals,
           AmountFormatStyle.SHORT,
         );
@@ -233,9 +234,8 @@ const DetailRow: FC<DetailRowProps> = ({
     if (typeof value === 'string') {
       // For amount-related keys with numeric strings, format as token amounts
       if (isAmountKey && isNumericString(value)) {
-        const decimals = tokenMetadata?.decimals ?? 18;
-        const formatted = formatDisplayAmount(
-          new BN(value),
+        const formatted = formatTokenAmount(
+          BigInt(value),
           decimals,
           AmountFormatStyle.SHORT,
         );
@@ -249,9 +249,7 @@ const DetailRow: FC<DetailRowProps> = ({
       return value;
     }
 
-    // BN value - format with decimals
-    const decimals = tokenMetadata?.decimals ?? 18;
-    const formatted = formatDisplayAmount(
+    const formatted = formatTokenAmount(
       value,
       decimals,
       AmountFormatStyle.SHORT,
@@ -265,7 +263,7 @@ const DetailRow: FC<DetailRowProps> = ({
   }, [value, isAmountKey, isSharesKey, tokenMetadata, nativeTokenSymbol]);
 
   const rawValue = useMemo(() => {
-    if (BN.isBN(value)) {
+    if (typeof value === 'bigint') {
       return value.toString();
     }
 

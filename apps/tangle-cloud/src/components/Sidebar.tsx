@@ -1,5 +1,3 @@
-'use client';
-
 import CommandFillIcon from '@tangle-network/icons/CommandFillIcon';
 import { DocumentationIcon } from '@tangle-network/icons/DocumentationIcon';
 import GlobalLine from '@tangle-network/icons/GlobalLine';
@@ -20,6 +18,7 @@ import {
   HomeFillIcon,
   GiftLineIcon,
   CoinsLineIcon,
+  ShieldKeyholeLineIcon,
 } from '@tangle-network/icons';
 
 type Props = {
@@ -61,6 +60,25 @@ const SIDEBAR_ITEMS: SideBarItemProps[] = [
     isInternal: true,
     Icon: CoinsLineIcon,
     subItems: [],
+  },
+
+  {
+    name: 'Payments',
+    href: PagePath.PAYMENTS_POOL,
+    isInternal: true,
+    Icon: ShieldKeyholeLineIcon,
+    subItems: [
+      {
+        name: 'Shielded Pool',
+        href: PagePath.PAYMENTS_POOL,
+        isInternal: true,
+      },
+      {
+        name: 'Credits',
+        href: PagePath.PAYMENTS_CREDITS,
+        isInternal: true,
+      },
+    ],
   },
 
   // External links

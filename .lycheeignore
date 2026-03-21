@@ -50,6 +50,10 @@ https://stats.tangle.tools
 # Something happened with conventional commits link, temporary disabled to fix the CI
 https://www.conventionalcommits.org/en/v1.0.0/
 
+# External sites that block bots or have intermittent Cloudflare errors
+https://www.tangle.tools/
+https://openai.com/index/harness-engineering/
+
 # Files
 /**/CHANGELOG.md
 

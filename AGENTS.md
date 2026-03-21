@@ -31,3 +31,8 @@
 - Seed scripts (Substrate dev):
   - `yarn script:setupServices` (create blueprints)
   - `yarn script:setupStaking` (LST/vault/operator staking fixtures)
+
+## Harness runbook
+- Operating spec: `docs/harness-engineering-spec.md`
+- Execution checklist: `docs/harness-engineering-checklist.md`
+- Wallet flow suite usage: `docs/wallet-flow-suite.md`
