@@ -23,6 +23,8 @@ export enum PagePath {
   OPERATORS_MANAGE = '/operators/manage',
   REWARDS = '/rewards',
   EARNINGS = '/earnings',
+  PAYMENTS_POOL = '/payments/pool',
+  PAYMENTS_CREDITS = '/payments/credits',
   NOT_FOUND = '/404',
 }
 

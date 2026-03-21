@@ -1,5 +1,3 @@
-'use client';
-
 import BlueprintHeader from '@tangle-network/tangle-shared-ui/components/blueprints/BlueprintHeader';
 import OperatorsTable from '@tangle-network/tangle-shared-ui/components/tables/Operators';
 import { useBlueprintDetails } from '@tangle-network/tangle-shared-ui/data/graphql';
@@ -13,7 +11,7 @@ import {
   useMemo,
   useState,
 } from 'react';
-import { Link, useNavigate, Navigate } from 'react-router-dom';
+import { Link, useNavigate, Navigate } from 'react-router';
 import { PagePath, TangleDAppPagePath } from '../../../types';
 import pollWithBackoff from '../../../utils/pollWithBackoff';
 import RegistrationDrawer from '../RegistrationDrawer';
