@@ -6,85 +6,60 @@ import {
   Button,
   Input,
 } from '@tangle-network/ui-components';
-import AmountInput from '../../components/payments/AmountInput';
-import ProofProgressIndicator from '../../components/payments/ProofProgressIndicator';
 import { useShieldedContext } from '../../app/ShieldedProvider';
 import { useCreditsContext } from '../../app/CreditsProvider';
-import { ProofStage, type ProofProgress } from '../../types/shielded';
 
 const FundCreditsContainer: FC = () => {
   const { address } = useAccount();
-  const { shieldedBalance, keypair, deriveKeypair } = useShieldedContext();
-  const { generateAndStoreCreditKeys, creditAccounts } = useCreditsContext();
+  const { hasDerivedKeypair } = useShieldedContext();
+  const { generateAndStoreCreditKeys, creditAccounts, isUnlocked } =
+    useCreditsContext();
 
-  const [amount, setAmount] = useState('');
   const [label, setLabel] = useState('');
-  const [progress, setProgress] = useState<ProofProgress>({
-    stage: ProofStage.IDLE,
-  });
+  const [isGenerating, setIsGenerating] = useState(false);
   const [fundedCommitment, setFundedCommitment] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
 
-  const handleFund = useCallback(async () => {
-    if (!address || !amount) return;
+  const handleGenerate = useCallback(async () => {
+    if (!address) return;
 
-    let kp = keypair;
-    if (!kp) {
-      kp = await deriveKeypair();
-      if (!kp) return;
-    }
+    setIsGenerating(true);
+    setError(null);
+    setFundedCommitment(null);
 
     try {
-      setProgress({
-        stage: ProofStage.FETCHING_ARTIFACTS,
-        message: 'Generating ephemeral credit account keys...',
-      });
-
       const creditKeys = await generateAndStoreCreditKeys(
         label || `Account ${creditAccounts.length + 1}`,
       );
-
       setFundedCommitment(creditKeys.commitment);
-      setProgress({
-        stage: ProofStage.DONE,
-        message:
-          'Credit keys generated and stored locally. ' +
-          'On-chain funding requires @tangle-network/shielded-sdk integration.',
-      });
-      setAmount('');
       setLabel('');
     } catch (err) {
-      setProgress({
-        stage: ProofStage.ERROR,
-        message: err instanceof Error ? err.message : 'Fund credits failed',
-      });
+      setError(err instanceof Error ? err.message : 'Failed to generate keys');
+    } finally {
+      setIsGenerating(false);
     }
-  }, [
-    address,
-    amount,
-    label,
-    keypair,
-    deriveKeypair,
-    generateAndStoreCreditKeys,
-    creditAccounts.length,
-  ]);
-
-  const isProcessing =
-    progress.stage !== ProofStage.IDLE &&
-    progress.stage !== ProofStage.DONE &&
-    progress.stage !== ProofStage.ERROR;
+  }, [address, label, generateAndStoreCreditKeys, creditAccounts.length]);
 
   return (
     <div className="space-y-4">
       <div>
         <Typography variant="h5" fw="semibold">
-          Fund Credit Account
+          Create Credit Account
         </Typography>
 
         <Typography variant="body2" className="mt-1 text-mono-100">
-          Create an anonymous prepaid credit account funded from your shielded
-          pool balance. One ZK proof enables many cheap pay-per-job signatures.
+          Generate an ephemeral keypair for anonymous credit payments. The keys
+          are encrypted and stored in your browser. On-chain funding requires
+          SDK integration.
         </Typography>
       </div>
+
+      {!hasDerivedKeypair && (
+        <Alert
+          type="warning"
+          description="Unlock your shielded keypair before creating credit accounts. Credit keys are encrypted using your shielded key."
+        />
+      )}
 
       <div className="space-y-1">
         <Typography variant="body2" fw="semibold" className="text-mono-120">
@@ -96,23 +71,14 @@ const FundCreditsContainer: FC = () => {
           value={label}
           onChange={setLabel}
           isControlled
-          isDisabled={isProcessing}
+          isDisabled={isGenerating || !isUnlocked}
         />
       </div>
 
-      <AmountInput
-        value={amount}
-        onChange={setAmount}
-        balance={shieldedBalance}
-        symbol="SHIELDED"
-        label="Fund Amount"
-        disabled={isProcessing}
-      />
-
-      <ProofProgressIndicator progress={progress} />
+      {error && <Alert type="error" description={error} />}
 
       {fundedCommitment && (
-        <Alert type="success" title="Credit keys stored locally">
+        <Alert type="success" title="Credit keys generated and stored">
           <Typography variant="mono2" className="mt-1 break-all">
             {fundedCommitment}
           </Typography>
@@ -121,12 +87,13 @@ const FundCreditsContainer: FC = () => {
 
       <Button
         isFullWidth
-        onClick={handleFund}
-        isDisabled={
-          !address || !amount || isProcessing || shieldedBalance === 0n
+        onClick={handleGenerate}
+        isDisabled={!address || !isUnlocked || isGenerating}
+        isLoading={isGenerating}
+        loadingText="Generating..."
+        disabledTooltip={
+          !isUnlocked ? 'Unlock your shielded keypair first' : undefined
         }
-        isLoading={isProcessing}
-        loadingText="Processing..."
       >
         Generate Credit Keys
       </Button>

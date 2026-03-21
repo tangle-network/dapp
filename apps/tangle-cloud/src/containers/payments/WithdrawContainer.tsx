@@ -12,7 +12,7 @@ import NoteCard from '../../components/payments/NoteCard';
 import { useShieldedContext } from '../../app/ShieldedProvider';
 
 const WithdrawContainer: FC = () => {
-  const { notes, shieldedBalance } = useShieldedContext();
+  const { notes } = useShieldedContext();
 
   const [amount, setAmount] = useState('');
   const [recipient, setRecipient] = useState('');
@@ -68,7 +68,7 @@ const WithdrawContainer: FC = () => {
       <AmountInput
         value={amount}
         onChange={setAmount}
-        balance={shieldedBalance}
+        balance={confirmedNotes.reduce((sum, n) => sum + n.amount, 0n)}
         symbol="SHIELDED"
         label="Withdraw Amount"
         disabled

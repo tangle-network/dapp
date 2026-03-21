@@ -3,16 +3,17 @@ import { encryptData, decryptData } from './keyEncryption';
 
 export interface StoredCreditKeys {
   commitment: string;
-  spendingPrivateKey: string;
+  spendingPrivateKey: string; // Empty if locked/undecryptable
   spendingPublicKey: string;
   salt: string;
   label?: string;
   createdAt: number;
+  isLocked: boolean; // True if private key could not be decrypted
 }
 
 interface EncryptedCreditRecord {
   commitment: string;
-  owner: string; // wallet address — scoping key
+  owner: string;
   encryptedPrivateKey: string;
   spendingPublicKey: string;
   salt: string;
@@ -23,16 +24,22 @@ interface EncryptedCreditRecord {
 export const saveCreditKeys = async (
   keys: StoredCreditKeys,
   ownerAddress: string,
-  encryptionKey?: string,
+  encryptionKey: string,
 ): Promise<void> => {
-  const db = await openDb();
+  if (!encryptionKey) {
+    throw new Error(
+      'Encryption key required to store credit keys. Unlock your shielded keypair first.',
+    );
+  }
 
+  const db = await openDb();
   const record: EncryptedCreditRecord = {
     commitment: keys.commitment,
     owner: ownerAddress.toLowerCase(),
-    encryptedPrivateKey: encryptionKey
-      ? await encryptData(keys.spendingPrivateKey, encryptionKey)
-      : '', // No encryption key = don't store private key at all
+    encryptedPrivateKey: await encryptData(
+      keys.spendingPrivateKey,
+      encryptionKey,
+    ),
     spendingPublicKey: keys.spendingPublicKey,
     salt: keys.salt,
     label: keys.label,
@@ -43,7 +50,6 @@ export const saveCreditKeys = async (
     const tx = db.transaction(STORES.CREDIT_KEYS, 'readwrite');
     const store = tx.objectStore(STORES.CREDIT_KEYS);
     const request = store.put(record);
-
     request.onsuccess = () => resolve();
     request.onerror = () => reject(request.error);
   });
@@ -59,28 +65,28 @@ export const loadCreditKeysForAddress = async (
       const tx = db.transaction(STORES.CREDIT_KEYS, 'readonly');
       const store = tx.objectStore(STORES.CREDIT_KEYS);
       const request = store.getAll();
-
       request.onsuccess = () => resolve(request.result ?? []);
       request.onerror = () => reject(request.error);
     },
   );
 
-  // Filter to this wallet's records only
   const owner = ownerAddress.toLowerCase();
   const records = allRecords.filter((r) => r.owner === owner);
 
   const results: StoredCreditKeys[] = [];
   for (const record of records) {
     let privateKey = '';
+    let isLocked = true;
+
     if (encryptionKey && record.encryptedPrivateKey) {
       try {
         privateKey = await decryptData(
           record.encryptedPrivateKey,
           encryptionKey,
         );
+        isLocked = false;
       } catch {
-        // Decryption failed — leave private key empty, don't expose ciphertext
-        privateKey = '';
+        // Decryption failed — mark as locked, don't expose ciphertext
       }
     }
 
@@ -91,19 +97,39 @@ export const loadCreditKeysForAddress = async (
       salt: record.salt,
       label: record.label,
       createdAt: record.createdAt,
+      isLocked,
     });
   }
 
   return results;
 };
 
-export const deleteCreditKeys = async (commitment: string): Promise<void> => {
+// Delete only verifies the record belongs to the caller's address
+export const deleteCreditKeys = async (
+  commitment: string,
+  ownerAddress: string,
+): Promise<void> => {
   const db = await openDb();
+
+  // Read-then-delete to verify ownership
+  const record: EncryptedCreditRecord | undefined = await new Promise(
+    (resolve, reject) => {
+      const tx = db.transaction(STORES.CREDIT_KEYS, 'readonly');
+      const store = tx.objectStore(STORES.CREDIT_KEYS);
+      const request = store.get(commitment);
+      request.onsuccess = () => resolve(request.result);
+      request.onerror = () => reject(request.error);
+    },
+  );
+
+  if (!record || record.owner !== ownerAddress.toLowerCase()) {
+    return; // Not found or not owned — no-op
+  }
+
   return new Promise((resolve, reject) => {
     const tx = db.transaction(STORES.CREDIT_KEYS, 'readwrite');
     const store = tx.objectStore(STORES.CREDIT_KEYS);
     const request = store.delete(commitment);
-
     request.onsuccess = () => resolve();
     request.onerror = () => reject(request.error);
   });

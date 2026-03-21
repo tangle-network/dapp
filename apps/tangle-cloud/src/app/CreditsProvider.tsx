@@ -7,6 +7,7 @@ import {
   useContext,
   useEffect,
   useMemo,
+  useRef,
   useState,
 } from 'react';
 import { useAccount } from 'wagmi';
@@ -25,6 +26,8 @@ interface CreditsContextValue {
   generateAndStoreCreditKeys: (label?: string) => Promise<StoredCreditKeys>;
   removeCreditAccount: (commitment: string) => Promise<void>;
   isLoading: boolean;
+  /** True when keypair is unlocked and credit keys are decryptable */
+  isUnlocked: boolean;
 }
 
 const CreditsContext = createContext<CreditsContextValue | null>(null);
@@ -35,34 +38,39 @@ export const CreditsProvider: FC<PropsWithChildren> = ({ children }) => {
   const [creditAccounts, setCreditAccounts] = useState<StoredCreditKeys[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
+  // Generation counter to detect stale async loads
+  const genRef = useRef(0);
+
   const encryptionKey = keypair
     ? keccak256(
         encodePacked(['string'], [keypair.privateKey + ':credit-encryption']),
       )
     : undefined;
 
-  // Reload when address or encryption key changes
   useEffect(() => {
     setCreditAccounts([]);
     setIsLoading(true);
+    const gen = ++genRef.current;
 
     if (!address) {
       setIsLoading(false);
       return;
     }
 
-    const currentAddress = address;
     const load = async () => {
       try {
-        const keys = await loadCreditKeysForAddress(
-          currentAddress,
-          encryptionKey,
-        );
-        setCreditAccounts(keys);
+        const keys = await loadCreditKeysForAddress(address, encryptionKey);
+        if (genRef.current === gen) {
+          setCreditAccounts(keys);
+        }
       } catch {
-        setCreditAccounts([]);
+        if (genRef.current === gen) {
+          setCreditAccounts([]);
+        }
       }
-      setIsLoading(false);
+      if (genRef.current === gen) {
+        setIsLoading(false);
+      }
     };
     load();
   }, [address, encryptionKey]);
@@ -70,6 +78,11 @@ export const CreditsProvider: FC<PropsWithChildren> = ({ children }) => {
   const generateAndStoreCreditKeys = useCallback(
     async (label?: string): Promise<StoredCreditKeys> => {
       if (!address) throw new Error('Wallet not connected');
+      if (!encryptionKey) {
+        throw new Error(
+          'Unlock your shielded keypair before generating credit keys',
+        );
+      }
 
       const privateKey = generatePrivateKey();
       const account = privateKeyToAccount(privateKey);
@@ -89,6 +102,7 @@ export const CreditsProvider: FC<PropsWithChildren> = ({ children }) => {
         salt,
         label,
         createdAt: Date.now(),
+        isLocked: false,
       };
 
       await saveCreditKeys(keys, address, encryptionKey);
@@ -98,12 +112,16 @@ export const CreditsProvider: FC<PropsWithChildren> = ({ children }) => {
     [address, encryptionKey],
   );
 
-  const removeCreditAccount = useCallback(async (commitment: string) => {
-    await deleteCreditKeys(commitment);
-    setCreditAccounts((prev) =>
-      prev.filter((k) => k.commitment !== commitment),
-    );
-  }, []);
+  const removeCreditAccount = useCallback(
+    async (commitment: string) => {
+      if (!address) return;
+      await deleteCreditKeys(commitment, address);
+      setCreditAccounts((prev) =>
+        prev.filter((k) => k.commitment !== commitment),
+      );
+    },
+    [address],
+  );
 
   const value = useMemo<CreditsContextValue>(
     () => ({
@@ -111,12 +129,14 @@ export const CreditsProvider: FC<PropsWithChildren> = ({ children }) => {
       generateAndStoreCreditKeys,
       removeCreditAccount,
       isLoading,
+      isUnlocked: !!encryptionKey,
     }),
     [
       creditAccounts,
       generateAndStoreCreditKeys,
       removeCreditAccount,
       isLoading,
+      encryptionKey,
     ],
   );
 
