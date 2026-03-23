@@ -133,7 +133,7 @@
     "@graphql-codegen/cli": "^5.0.5",
     "@nx/eslint": "20.8.0",
     "@nx/eslint-plugin": "20.8.0",
-    "@nx/jest": "20.8.0",
+    "@nx/jest": "22.6.1",
     "@nx/js": "20.8.0",
     "@nx/react": "20.8.0",
     "@nx/storybook": "20.8.0",
