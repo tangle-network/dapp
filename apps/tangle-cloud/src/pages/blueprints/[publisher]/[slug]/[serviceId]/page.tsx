@@ -3,6 +3,7 @@ import type { FC } from 'react';
 import useParamWithSchema from '@tangle-network/tangle-shared-ui/hooks/useParamWithSchema';
 import { z } from 'zod';
 import BlueprintAppServicePage from '../../../../../blueprintApps/components/BlueprintAppServicePage';
+import { renderCuratedBlueprintService } from '../../../../../blueprintApps/modules';
 import { getBlueprintAppByCanonicalSlug } from '../../../../../blueprintApps/registry';
 import { PagePath } from '../../../../../types';
 
@@ -18,6 +19,11 @@ const Page: FC = () => {
   const entry = getBlueprintAppByCanonicalSlug(`${publisher}/${slug}`);
   if (!entry) {
     return <Navigate to={PagePath.NOT_FOUND} replace />;
+  }
+
+  const curated = renderCuratedBlueprintService(entry, serviceId);
+  if (curated) {
+    return curated;
   }
 
   return <BlueprintAppServicePage entry={entry} serviceId={serviceId} />;

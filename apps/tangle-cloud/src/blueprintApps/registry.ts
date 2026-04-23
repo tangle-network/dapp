@@ -64,7 +64,7 @@ const entries = [
     slugPolicy: 'reserved',
     module: {
       moduleId: 'sandbox',
-      status: 'planned',
+      status: 'active',
     },
     manifest: {
       displayName: 'AI Agent Sandbox',
