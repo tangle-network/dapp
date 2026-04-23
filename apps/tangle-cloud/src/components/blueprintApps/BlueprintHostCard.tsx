@@ -93,8 +93,8 @@ const BlueprintHostCard = ({ blueprint, serviceId }: Props) => {
           value={
             blueprint.metadataVerification?.status === 'verified'
               ? 'Verified owner attestation'
-              : blueprint.metadataVerification?.reason ??
-                'Unverified metadata'
+              : (blueprint.metadataVerification?.reason ??
+                'Unverified metadata')
           }
         />
       </div>
@@ -158,10 +158,7 @@ const BlueprintHostCard = ({ blueprint, serviceId }: Props) => {
               <InfoBlock label="Icon" value={blueprintUi.theme.icon} />
             )}
             {blueprintUi.theme.accentColor && (
-              <InfoBlock
-                label="Accent"
-                value={blueprintUi.theme.accentColor}
-              />
+              <InfoBlock label="Accent" value={blueprintUi.theme.accentColor} />
             )}
             {blueprintUi.theme.secondaryColor && (
               <InfoBlock
@@ -256,8 +253,9 @@ const BlueprintHostCard = ({ blueprint, serviceId }: Props) => {
                 {action.fields && action.fields.length > 0 && (
                   <Typography variant="body2" className="text-mono-100">
                     {action.fields
-                      .map((field) =>
-                        `${field.label} (${field.input}${field.required ? ', required' : ''})`,
+                      .map(
+                        (field) =>
+                          `${field.label} (${field.input}${field.required ? ', required' : ''})`,
                       )
                       .join(' • ')}
                   </Typography>

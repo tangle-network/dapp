@@ -170,17 +170,21 @@ const fetchBlueprintMetadataPreview = async (
       controller.abort();
     }
 
-    const response = await fetch(resolveBlueprintMetadataFetchUrl(metadataUri), {
-      signal: controller.signal,
-      cache: 'no-store',
-    });
+    const response = await fetch(
+      resolveBlueprintMetadataFetchUrl(metadataUri),
+      {
+        signal: controller.signal,
+        cache: 'no-store',
+      },
+    );
 
     if (!response.ok) {
       throw new Error(`Failed to fetch metadata: ${response.status}`);
     }
 
     const metadataText = await response.text();
-    const { parsed, rawMetadata } = parseBlueprintMetadataJsonText(metadataText);
+    const { parsed, rawMetadata } =
+      parseBlueprintMetadataJsonText(metadataText);
     const metadataJson = rawMetadata;
     if (metadataJson === null) {
       throw new Error('Metadata payload must be a JSON object');
@@ -195,7 +199,8 @@ const fetchBlueprintMetadataPreview = async (
       codeRepository: parsed.codeUrl ?? undefined,
       docs:
         metadataJson !== null
-          ? readString(metadataJson.docs) ?? readString(metadataJson.documentation)
+          ? (readString(metadataJson.docs) ??
+            readString(metadataJson.documentation))
           : undefined,
       metadataHash: computeBlueprintMetadataPayloadHash(metadataJson),
     };
