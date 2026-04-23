@@ -47,6 +47,126 @@ export default defineConfig({
     commonjsOptions: {
       transformMixedEsModules: true,
     },
+    rollupOptions: {
+      output: {
+        manualChunks(id) {
+          if (id.includes('/node_modules/')) {
+            if (
+              id.includes('/react/') ||
+              id.includes('/react-dom/') ||
+              id.includes('/react-router/')
+            ) {
+              return 'vendor-react';
+            }
+
+            if (
+              id.includes('/wagmi/') ||
+              id.includes('/ox/')
+            ) {
+              return 'vendor-wallet-wagmi';
+            }
+
+            if (id.includes('/viem/')) {
+              return 'vendor-wallet-viem';
+            }
+
+            if (
+              id.includes('/@walletconnect/') ||
+              id.includes('/@web3modal/') ||
+              id.includes('/@reown/')
+            ) {
+              return 'vendor-wallet-connect';
+            }
+
+            if (
+              id.includes('/connectkit/') ||
+              id.includes('/@coinbase-wallet/') ||
+              id.includes('/cbw-sdk/') ||
+              id.includes('/@metamask/') ||
+              id.includes('/porto/')
+            ) {
+              return 'vendor-wallet-alt';
+            }
+
+            if (
+              id.includes('/@polkadot/')
+            ) {
+              return 'vendor-chain-polkadot';
+            }
+
+            if (
+              id.includes('/asn1.js/') ||
+              id.includes('/bn.js/')
+            ) {
+              return 'vendor-chain-crypto';
+            }
+
+            if (
+              id.includes('/zod/') ||
+              id.includes('/@hookform/') ||
+              id.includes('/react-hook-form/')
+            ) {
+              return 'vendor-forms';
+            }
+
+            if (
+              id.includes('/@tanstack/') ||
+              id.includes('/zustand/') ||
+              id.includes('/lodash/') ||
+              id.includes('/date-fns/')
+            ) {
+              return 'vendor-state-data';
+            }
+
+            if (
+              id.includes('/@radix-ui/') ||
+              id.includes('/framer-motion/') ||
+              id.includes('/recharts/')
+            ) {
+              return 'vendor-ui-runtime';
+            }
+
+            if (id.includes('/ethers/') || id.includes('/store/')) {
+              return 'vendor-interop';
+            }
+
+            return 'vendor-misc';
+          }
+
+          if (id.includes('/libs/tangle-shared-ui/')) {
+            return 'lib-tangle-shared-ui';
+          }
+
+          if (id.includes('/libs/ui-components/')) {
+            return 'lib-ui-components';
+          }
+
+          if (id.includes('/libs/icons/')) {
+            if (id.includes('/libs/icons/src/chains/')) {
+              return /\/chains\/[a-m]/i.test(id)
+                ? 'lib-icons-chains-a-m'
+                : 'lib-icons-chains-n-z';
+            }
+
+            if (id.includes('/libs/icons/src/tokens/')) {
+              return 'lib-icons-tokens';
+            }
+
+            if (id.includes('/libs/icons/src/wallets/')) {
+              return 'lib-icons-wallets';
+            }
+
+            return 'lib-icons-core';
+          }
+
+          if (id.includes('/libs/dapp-config/')) {
+            return 'lib-dapp-config';
+          }
+
+          return undefined;
+        },
+      },
+    },
   },
   optimizeDeps: {
     esbuildOptions: {

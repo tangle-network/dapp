@@ -1,0 +1,31 @@
+{
+  "name": "Local AI Training Blueprint",
+  "description": "Seeded local blueprint for Tangle Cloud development against Anvil and the TNT protocol.",
+  "author": "Tangle Local Dev",
+  "category": "AI",
+  "imageUrl": null,
+  "codeUrl": "https://github.com/tangle-network/tnt-core",
+  "website": "http://localhost:4300/blueprints/0",
+  "blueprintUi": {
+    "displayName": "Local AI Training Blueprint",
+    "description": "Local protocol-seeded blueprint used to validate generic and curated Tangle Cloud surfaces.",
+    "publisher": {
+      "name": "Tangle",
+      "namespace": "tangle",
+      "verified": true
+    },
+    "resources": {
+      "serviceLabel": "Training Service",
+      "itemLabel": "Job",
+      "itemRoute": "runs"
+    },
+    "surfaces": {
+      "genericOverview": true,
+      "serviceExplorer": true,
+      "actionsPanel": true,
+      "chat": false,
+      "metrics": true,
+      "resources": true
+    }
+  }
+}

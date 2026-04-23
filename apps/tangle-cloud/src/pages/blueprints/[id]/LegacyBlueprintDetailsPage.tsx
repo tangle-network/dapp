@@ -1,0 +1,126 @@
+import BlueprintHeader from '@tangle-network/tangle-shared-ui/components/blueprints/BlueprintHeader';
+import OperatorsTable from '@tangle-network/tangle-shared-ui/components/tables/Operators';
+import { useBlueprintDetails } from '@tangle-network/tangle-shared-ui/data/graphql';
+import { ErrorFallback } from '@tangle-network/ui-components/components/ErrorFallback';
+import SkeletonLoader from '@tangle-network/ui-components/components/SkeletonLoader';
+import { Typography } from '@tangle-network/ui-components/typography/Typography';
+import {
+  type FC,
+  type PropsWithChildren,
+  useCallback,
+  useMemo,
+  useState,
+} from 'react';
+import { Link, useNavigate, Navigate } from 'react-router';
+import { PagePath, TangleDAppPagePath } from '../../../types';
+import pollWithBackoff from '../../../utils/pollWithBackoff';
+import RegistrationDrawer from '../RegistrationDrawer';
+import useOperatorInfo from '@tangle-network/tangle-shared-ui/hooks/useOperatorInfo';
+import useParamWithSchema from '@tangle-network/tangle-shared-ui/hooks/useParamWithSchema';
+import { z } from 'zod';
+import { useAccount } from 'wagmi';
+
+const StakingOperatorAction: FC<PropsWithChildren<{ address: string }>> = ({
+  children,
+}) => {
+  return (
+    <Link to={TangleDAppPagePath.STAKING_DELEGATE} target="_blank">
+      {children}
+    </Link>
+  );
+};
+
+const LegacyBlueprintDetailsPage: FC = () => {
+  const navigate = useNavigate();
+  const id = useParamWithSchema('id', z.coerce.bigint());
+  const { result, isLoading, error, refetch } = useBlueprintDetails(id);
+  const { isOperator } = useOperatorInfo();
+  const { address: userAddress } = useAccount();
+  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+
+  const isRegistered = useMemo(() => {
+    if (!userAddress || result?.operators === undefined) {
+      return false;
+    }
+
+    return result.operators.some((operator) => {
+      return operator.address.toLowerCase() === userAddress.toLowerCase();
+    });
+  }, [userAddress, result?.operators]);
+
+  const handleRegistrationComplete = useCallback(async () => {
+    setIsDrawerOpen(false);
+
+    await pollWithBackoff(async () => {
+      const refetchResult = (await refetch()) as {
+        data?: typeof result;
+      };
+      const latestResult = refetchResult.data;
+
+      if (!latestResult || !userAddress) {
+        return false;
+      }
+
+      return latestResult.operators.some(
+        (operator) =>
+          operator.address.toLowerCase() === userAddress.toLowerCase(),
+      );
+    });
+  }, [refetch, userAddress]);
+
+  if (isLoading) {
+    return (
+      <div className="space-y-5">
+        <SkeletonLoader className="min-h-64" />
+        <SkeletonLoader className="min-h-52" />
+      </div>
+    );
+  } else if (id === undefined || result === null) {
+    return <Navigate to={PagePath.NOT_FOUND} />;
+  } else if (error) {
+    return <ErrorFallback title={error.name} />;
+  }
+
+  return (
+    <div className="space-y-10">
+      <BlueprintHeader
+        blueprint={result.details}
+        enableDeploy
+        enableRegister={isOperator && !isRegistered}
+        deployBtnProps={{
+          onClick: (e) => {
+            e.preventDefault();
+            navigate(PagePath.BLUEPRINTS_DEPLOY.replace(':id', `${id ?? ''}`));
+          },
+        }}
+        registerBtnProps={{
+          onClick: () => setIsDrawerOpen(true),
+        }}
+        isRegistered={isRegistered ?? false}
+      />
+
+      <div className="space-y-5">
+        {!isLoading && (
+          <Typography variant="h4" fw="bold">
+            Registered Operators
+          </Typography>
+        )}
+
+        <OperatorsTable
+          StakingOperatorAction={StakingOperatorAction}
+          data={result.operators as any}
+          isLoading={isLoading}
+        />
+      </div>
+
+      <RegistrationDrawer
+        isOpen={isDrawerOpen}
+        onOpenChange={setIsDrawerOpen}
+        blueprints={[result.details]}
+        onRegistrationComplete={handleRegistrationComplete}
+      />
+    </div>
+  );
+};
+
+export default LegacyBlueprintDetailsPage;

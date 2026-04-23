@@ -14,9 +14,9 @@ export default {
     extend: {
       backgroundImage: {
         glass:
-          'linear-gradient(180deg,rgba(255,255,255,0.85) 0%,rgba(255,255,255,0.30) 100%)',
+          'linear-gradient(180deg,rgba(255,255,255,0.94) 0%,rgba(255,255,255,0.74) 100%)',
         glass_dark:
-          'linear-gradient(180deg,rgba(43,47,64,0.85) 0%,rgba(43,47,64,0.30) 100%)',
+          'linear-gradient(180deg,rgba(43,47,64,0.94) 0%,rgba(43,47,64,0.78) 100%)',
       },
     },
   },

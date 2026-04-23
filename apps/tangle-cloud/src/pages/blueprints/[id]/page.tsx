@@ -19,6 +19,7 @@ import {
 import { PagePath } from '../../../types';
 import { useResolvedBlueprintViewFromIndexedBlueprint } from '../../../blueprintApps/useResolvedBlueprintView';
 import { TangleDAppPagePath } from '../../../types';
+import BlueprintHostCard from '../../../components/blueprintApps/BlueprintHostCard';
 
 const StakingOperatorAction: FC<PropsWithChildren<{ address: string }>> = ({
   children,
@@ -55,7 +56,6 @@ const Page: FC = () => {
     if (curated) {
       return curated;
     }
-
     return <BlueprintAppLandingPage entry={entry} />;
   }
 
@@ -80,6 +80,7 @@ const Page: FC = () => {
     return (
       <div className="space-y-8">
         <BlueprintAppLandingPage entry={toBlueprintAppEntry(resolvedView)} />
+        <BlueprintHostCard blueprint={blueprintDetails.details} />
 
         <Card className="rounded-3xl p-6">
           <section className="space-y-4">

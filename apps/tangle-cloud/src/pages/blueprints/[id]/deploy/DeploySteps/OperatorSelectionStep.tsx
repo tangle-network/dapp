@@ -39,11 +39,12 @@ export const SelectOperatorsStep: FC<SelectOperatorsStepProps> = ({
   blueprint,
   blueprintOperators,
 }) => {
+  const selectedOperators = watch('operators') ?? [];
   const [rowSelection, setRowSelection] = useState<RowSelectionState>(
-    watch(`operators`)?.reduce((acc, operator) => {
+    selectedOperators.reduce((acc, operator) => {
       acc[operator] = true;
       return acc;
-    }, {} as RowSelectionState) || {},
+    }, {} as RowSelectionState),
   );
 
   const [searchQuery, setSearchQuery] = useState('');
@@ -104,6 +105,27 @@ export const SelectOperatorsStep: FC<SelectOperatorsStepProps> = ({
   useEffect(() => {
     setValue(`operators`, Object.keys(rowSelection) as Address[]);
   }, [rowSelection, setValue]);
+
+  useEffect(() => {
+    if (selectedOperators.length === 0) {
+      return;
+    }
+
+    const nextSelection = selectedOperators.reduce((acc, operator) => {
+      acc[operator] = true;
+      return acc;
+    }, {} as RowSelectionState);
+
+    const currentKeys = Object.keys(rowSelection).filter((key) => rowSelection[key]);
+    const nextKeys = Object.keys(nextSelection);
+    const isSame =
+      currentKeys.length === nextKeys.length &&
+      nextKeys.every((key) => rowSelection[key]);
+
+    if (!isSame) {
+      setRowSelection(nextSelection);
+    }
+  }, [rowSelection, selectedOperators]);
 
   const onSelectAsset = (asset: StakingAsset, isChecked: boolean) => {
     const selectedAssets_ = Array.from(selectedAssets ?? []);

@@ -9,6 +9,8 @@ import {
   EnvioNetwork,
 } from '../../utils/executeEnvioGraphQL';
 import type { Blueprint as AppBlueprint } from '../../types/blueprint';
+import { parseBlueprintMetadataDocument } from '../../blueprintApps/authoring';
+import type { BlueprintUiContract } from '../../blueprintApps/types';
 
 export interface Blueprint {
   id: string;
@@ -32,6 +34,7 @@ export interface BlueprintWithMetadata extends Blueprint {
   codeUrl: string | null;
   website: string | null;
   rawMetadata: Record<string, unknown> | null;
+  blueprintUi: BlueprintUiContract | null;
 }
 
 const toAppBlueprint = (bp: BlueprintWithMetadata): AppBlueprint => ({
@@ -53,6 +56,8 @@ const toAppBlueprint = (bp: BlueprintWithMetadata): AppBlueprint => ({
   websiteUrl: bp.website,
   twitterUrl: null,
   email: null,
+  metadataUri: bp.metadataUri,
+  blueprintUi: bp.blueprintUi,
 });
 
 interface BlueprintQueryResponse {
@@ -80,6 +85,7 @@ const fetchBlueprintMetadata = async (
   codeUrl: string | null;
   website: string | null;
   rawMetadata: Record<string, unknown> | null;
+  blueprintUi: BlueprintUiContract | null;
 }> => {
   if (!metadataUri) {
     return {
@@ -91,6 +97,7 @@ const fetchBlueprintMetadata = async (
       codeUrl: null,
       website: null,
       rawMetadata: null,
+      blueprintUi: null,
     };
   }
 
@@ -109,17 +116,10 @@ const fetchBlueprintMetadata = async (
     }
 
     const metadata = await response.json();
+    const parsed = parseBlueprintMetadataDocument(metadata);
 
     return {
-      name: metadata.name ?? 'Onchain Blueprint',
-      description:
-        metadata.description ??
-        'Blueprint metadata published without a description',
-      author: metadata.author ?? 'Unspecified publisher',
-      category: metadata.category ?? 'Other',
-      imageUrl: metadata.image ?? metadata.imageUrl ?? null,
-      codeUrl: metadata.codeUrl ?? metadata.repository ?? null,
-      website: metadata.website ?? metadata.homepage ?? null,
+      ...parsed,
       rawMetadata:
         metadata && typeof metadata === 'object' && !Array.isArray(metadata)
           ? (metadata as Record<string, unknown>)
@@ -136,6 +136,7 @@ const fetchBlueprintMetadata = async (
       codeUrl: null,
       website: null,
       rawMetadata: null,
+      blueprintUi: null,
     };
   }
 };
