@@ -31,6 +31,7 @@ export interface BlueprintWithMetadata extends Blueprint {
   imageUrl: string | null;
   codeUrl: string | null;
   website: string | null;
+  rawMetadata: Record<string, unknown> | null;
 }
 
 const toAppBlueprint = (bp: BlueprintWithMetadata): AppBlueprint => ({
@@ -78,16 +79,18 @@ const fetchBlueprintMetadata = async (
   imageUrl: string | null;
   codeUrl: string | null;
   website: string | null;
+  rawMetadata: Record<string, unknown> | null;
 }> => {
   if (!metadataUri) {
     return {
-      name: 'Unknown Blueprint',
-      description: 'No metadata available',
-      author: 'Unknown',
+      name: 'Onchain Blueprint',
+      description: 'Metadata not published yet',
+      author: 'Unspecified publisher',
       category: 'Other',
       imageUrl: null,
       codeUrl: null,
       website: null,
+      rawMetadata: null,
     };
   }
 
@@ -108,24 +111,31 @@ const fetchBlueprintMetadata = async (
     const metadata = await response.json();
 
     return {
-      name: metadata.name ?? 'Unknown Blueprint',
-      description: metadata.description ?? 'No description',
-      author: metadata.author ?? 'Unknown',
+      name: metadata.name ?? 'Onchain Blueprint',
+      description:
+        metadata.description ??
+        'Blueprint metadata published without a description',
+      author: metadata.author ?? 'Unspecified publisher',
       category: metadata.category ?? 'Other',
       imageUrl: metadata.image ?? metadata.imageUrl ?? null,
       codeUrl: metadata.codeUrl ?? metadata.repository ?? null,
       website: metadata.website ?? metadata.homepage ?? null,
+      rawMetadata:
+        metadata && typeof metadata === 'object' && !Array.isArray(metadata)
+          ? (metadata as Record<string, unknown>)
+          : null,
     };
   } catch (error) {
     console.error('Failed to fetch blueprint metadata:', error);
     return {
-      name: 'Unknown Blueprint',
-      description: 'Failed to load metadata',
-      author: 'Unknown',
+      name: 'Onchain Blueprint',
+      description: 'Metadata endpoint unavailable',
+      author: 'Unspecified publisher',
       category: 'Other',
       imageUrl: null,
       codeUrl: null,
       website: null,
+      rawMetadata: null,
     };
   }
 };

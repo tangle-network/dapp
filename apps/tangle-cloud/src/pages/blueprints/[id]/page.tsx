@@ -1,24 +1,24 @@
-import BlueprintHeader from '@tangle-network/tangle-shared-ui/components/blueprints/BlueprintHeader';
-import OperatorsTable from '@tangle-network/tangle-shared-ui/components/tables/Operators';
-import { useBlueprintDetails } from '@tangle-network/tangle-shared-ui/data/graphql';
-import { ErrorFallback } from '@tangle-network/ui-components/components/ErrorFallback';
-import SkeletonLoader from '@tangle-network/ui-components/components/SkeletonLoader';
-import { Typography } from '@tangle-network/ui-components/typography/Typography';
 import {
-  type FC,
-  type PropsWithChildren,
-  useCallback,
-  useMemo,
-  useState,
-} from 'react';
-import { Link, useNavigate, Navigate } from 'react-router';
-import { PagePath, TangleDAppPagePath } from '../../../types';
-import pollWithBackoff from '../../../utils/pollWithBackoff';
-import RegistrationDrawer from '../RegistrationDrawer';
-import useOperatorInfo from '@tangle-network/tangle-shared-ui/hooks/useOperatorInfo';
+  useBlueprint,
+  useBlueprintDetails,
+} from '@tangle-network/tangle-shared-ui/data/graphql';
+import OperatorsTable from '@tangle-network/tangle-shared-ui/components/tables/Operators';
+import SkeletonLoader from '@tangle-network/ui-components/components/SkeletonLoader';
+import { Card, Typography } from '@tangle-network/ui-components';
+import { Navigate, Link } from 'react-router';
+import type { FC, PropsWithChildren } from 'react';
 import useParamWithSchema from '@tangle-network/tangle-shared-ui/hooks/useParamWithSchema';
 import { z } from 'zod';
-import { useAccount } from 'wagmi';
+import BlueprintAppLandingPage from '../../../blueprintApps/components/BlueprintAppLandingPage';
+import { renderCuratedBlueprintLanding } from '../../../blueprintApps/modules';
+import { getBlueprintAppBySlug } from '../../../blueprintApps/registry';
+import {
+  getBlueprintPath,
+  toBlueprintAppEntry,
+} from '../../../blueprintApps/resolver';
+import { PagePath } from '../../../types';
+import { useResolvedBlueprintViewFromIndexedBlueprint } from '../../../blueprintApps/useResolvedBlueprintView';
+import { TangleDAppPagePath } from '../../../types';
 
 const StakingOperatorAction: FC<PropsWithChildren<{ address: string }>> = ({
   children,
@@ -30,101 +30,80 @@ const StakingOperatorAction: FC<PropsWithChildren<{ address: string }>> = ({
   );
 };
 
-const Page = () => {
-  const navigate = useNavigate();
-  const id = useParamWithSchema('id', z.coerce.bigint());
-  const { result, isLoading, error, refetch } = useBlueprintDetails(id);
-  const { isOperator } = useOperatorInfo();
-  const { address: userAddress } = useAccount();
-  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
-
-  // Check if the current user is registered as an operator for this blueprint
-  const isRegistered = useMemo(() => {
-    if (!userAddress || result?.operators === undefined) {
-      return false;
-    }
-
-    return result.operators.some((operator) => {
-      return operator.address.toLowerCase() === userAddress.toLowerCase();
+const Page: FC = () => {
+  const id = useParamWithSchema('id', z.string().min(1));
+  const numericId = id && /^\d+$/.test(id) ? BigInt(id) : undefined;
+  const { data: blueprint, isLoading: isLoadingBlueprint } = useBlueprint(
+    numericId?.toString(),
+    {
+      enabled: numericId !== undefined,
+    },
+  );
+  const { result: blueprintDetails, isLoading: isLoadingDetails } =
+    useBlueprintDetails(numericId, {
+      enabled: numericId !== undefined,
     });
-  }, [userAddress, result?.operators]);
+  const resolvedView = useResolvedBlueprintViewFromIndexedBlueprint(blueprint);
+  const entry = id ? getBlueprintAppBySlug(id) : null;
 
-  const handleRegistrationComplete = useCallback(async () => {
-    setIsDrawerOpen(false);
-
-    // Poll with exponential backoff until indexer reflects the new registration
-    await pollWithBackoff(async () => {
-      const refetchResult = (await refetch()) as {
-        data?: typeof result;
-      };
-      const latestResult = refetchResult.data;
-
-      // Check if the user is now in the operators list
-      if (!latestResult || !userAddress) {
-        return false;
-      }
-
-      return latestResult.operators.some(
-        (operator) =>
-          operator.address.toLowerCase() === userAddress.toLowerCase(),
-      );
-    });
-  }, [refetch, userAddress]);
-
-  if (isLoading) {
-    return (
-      <div className="space-y-5">
-        <SkeletonLoader className="min-h-64" />
-
-        <SkeletonLoader className="min-h-52" />
-      </div>
-    );
-  } else if (id === undefined || result === null) {
-    return <Navigate to={PagePath.NOT_FOUND} />;
-  } else if (error) {
-    return <ErrorFallback title={error.name} />;
+  if (!id) {
+    return <Navigate to={PagePath.NOT_FOUND} replace />;
   }
 
-  return (
-    <div className="space-y-10">
-      <BlueprintHeader
-        blueprint={result.details}
-        enableDeploy
-        enableRegister={isOperator && !isRegistered}
-        deployBtnProps={{
-          onClick: (e) => {
-            e.preventDefault();
-            navigate(PagePath.BLUEPRINTS_DEPLOY.replace(':id', `${id ?? ''}`));
-          },
-        }}
-        registerBtnProps={{
-          onClick: () => setIsDrawerOpen(true),
-        }}
-        isRegistered={isRegistered ?? false}
-      />
+  if (entry) {
+    const curated = renderCuratedBlueprintLanding(entry);
+    if (curated) {
+      return curated;
+    }
 
-      <div className="space-y-5">
-        {!isLoading && (
-          <Typography variant="h4" fw="bold">
-            Registered Operators
-          </Typography>
-        )}
+    return <BlueprintAppLandingPage entry={entry} />;
+  }
 
-        <OperatorsTable
-          StakingOperatorAction={StakingOperatorAction}
-          data={result.operators as any} // Type mismatch until OperatorsTable is updated for EVM
-          isLoading={isLoading}
-        />
+  if (numericId !== undefined) {
+    if (isLoadingBlueprint || isLoadingDetails) {
+      return (
+        <div className="space-y-5">
+          <SkeletonLoader className="min-h-40" />
+          <SkeletonLoader className="min-h-52" />
+        </div>
+      );
+    }
+
+    if (!blueprint || !blueprintDetails || !resolvedView) {
+      return <Navigate to={PagePath.NOT_FOUND} replace />;
+    }
+
+    if (resolvedView.tier !== 'generic') {
+      return <Navigate to={getBlueprintPath(resolvedView)} replace />;
+    }
+
+    return (
+      <div className="space-y-8">
+        <BlueprintAppLandingPage entry={toBlueprintAppEntry(resolvedView)} />
+
+        <Card className="rounded-3xl p-6">
+          <section className="space-y-4">
+            <div className="flex items-center justify-between">
+              <Typography variant="h4" fw="bold">
+                Registered operators
+              </Typography>
+              <Typography variant="body2" className="text-mono-100">
+                {blueprintDetails.operators.length} indexed
+              </Typography>
+            </div>
+
+            <OperatorsTable
+              StakingOperatorAction={StakingOperatorAction}
+              data={blueprintDetails.operators as any}
+              isLoading={false}
+            />
+          </section>
+        </Card>
       </div>
+    );
+  }
 
-      <RegistrationDrawer
-        isOpen={isDrawerOpen}
-        onOpenChange={setIsDrawerOpen}
-        blueprints={[result.details]}
-        onRegistrationComplete={handleRegistrationComplete}
-      />
-    </div>
-  );
+  return <Navigate to={PagePath.NOT_FOUND} replace />;
 };
 
 export default Page;
