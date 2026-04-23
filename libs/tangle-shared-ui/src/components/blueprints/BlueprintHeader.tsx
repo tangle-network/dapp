@@ -43,11 +43,11 @@ const BlueprintHeader: FC<BlueprintHeaderProps> = ({
   return (
     <div
       className={twMerge(
-        'relative overflow-hidden rounded-xl space-y-3',
+        'relative overflow-hidden rounded-2xl space-y-3',
+        'border border-mono-60 dark:border-mono-170',
+        'bg-mono-0 dark:bg-mono-200',
         'shadow-[0px_4px_8px_0px_rgba(0,0,0,0.08)] dark:shadow-[0px_4px_8px_0px_rgba(0,0,0,0.20)]',
-        'bg-[linear-gradient(180deg,rgba(184,196,255,0.20)0%,rgba(236,239,255,0.20)100%),linear-gradient(180deg,rgba(255,255,255,0.50)0%,rgba(255,255,255,0.30)100%)]',
-        'dark:bg-[linear-gradient(180deg,rgba(17,22,50,0.20)0%,rgba(21,37,117,0.20)100%),linear-gradient(180deg,rgba(43,47,64,0.50)0%,rgba(43,47,64,0.30)100%)]',
-        'before:absolute before:inset-0 before:bg-cover before:bg-no-repeat before:opacity-30 before:pointer-events-none',
+        'before:absolute before:inset-0 before:bg-cover before:bg-no-repeat before:opacity-10 before:pointer-events-none',
         "before:bg-[url('/static/assets/blueprints/grid-bg.png')] dark:before:bg-[url('/static/assets/blueprints/grid-bg-dark.png')]",
       )}
     >

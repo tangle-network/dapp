@@ -1,3 +1,5 @@
+import type { BlueprintUiContract } from '../blueprintApps/types';
+
 // EVM-compatible blueprint types
 
 export const basePrimitiveTypeList = [
@@ -86,4 +88,6 @@ export type Blueprint = {
   websiteUrl?: string | null;
   twitterUrl?: string | null;
   email?: string | null;
+  metadataUri?: string | null;
+  blueprintUi?: BlueprintUiContract | null;
 };

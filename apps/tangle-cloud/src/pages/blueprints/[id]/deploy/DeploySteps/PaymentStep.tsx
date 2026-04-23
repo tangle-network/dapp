@@ -41,6 +41,8 @@ export const PaymentStep: FC<PaymentStepProps> = ({
     setValue('paymentAmount', nextValue);
   };
 
+  const selectedPaymentAssetId = watch('paymentAsset')?.id;
+
   return (
     <Card className="p-6">
       <Typography variant="h5" className="text-mono-200 dark:text-mono-0 mb-4">
@@ -56,6 +58,7 @@ export const PaymentStep: FC<PaymentStepProps> = ({
             Select Payment Asset
           </Typography>
           <Select
+            value={selectedPaymentAssetId}
             onValueChange={(assetId) => {
               const asset = assets?.get(assetId as `0x${string}`) as
                 | StakingAsset

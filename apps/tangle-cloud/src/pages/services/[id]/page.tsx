@@ -45,6 +45,7 @@ import FundServiceModal from './FundServiceModal';
 import OperatorMembershipPanel from './OperatorMembershipPanel';
 import OperatorExitPanel from './OperatorExitPanel';
 import { PagePath } from '../../../types';
+import BlueprintHostCard from '../../../components/blueprintApps/BlueprintHostCard';
 
 const validatePermittedCallerInput = ({
   value,
@@ -482,6 +483,13 @@ const ServiceDetailPage: FC = () => {
           />
         </div>
       </Card>
+
+      {blueprintResult?.details && (
+        <BlueprintHostCard
+          blueprint={blueprintResult.details}
+          serviceId={serviceId}
+        />
+      )}
 
       {/* On-Chain Service Details */}
       <ServiceOnChainDetails

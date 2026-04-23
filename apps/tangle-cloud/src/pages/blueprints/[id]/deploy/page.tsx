@@ -21,6 +21,7 @@ import {
   PERCENT_TO_BASIS_POINTS,
   type ServiceRequestParams,
   type AssetSecurityRequirement,
+  useStakingAssets,
 } from '@tangle-network/tangle-shared-ui/data/graphql';
 import { useBlueprintRequestSchema } from '@tangle-network/tangle-shared-ui/data/services';
 import { RequestArgsEncodingError } from '@tangle-network/tangle-shared-ui/codec';
@@ -32,6 +33,7 @@ import useParamWithSchema from '@tangle-network/tangle-shared-ui/hooks/useParamW
 import { zeroAddress, parseUnits } from 'viem';
 import { TxName } from '../../../../constants';
 import useTxNotification from '../../../../hooks/useTxNotification';
+import { useAccount } from 'wagmi';
 
 const DeployPage: FC = () => {
   const id = useParamWithSchema('id', z.coerce.bigint());
@@ -49,6 +51,8 @@ const DeployPage: FC = () => {
     isPending: serviceRequestPending,
   } = useServiceRequestTx();
   const { data: requestSchema } = useBlueprintRequestSchema(id);
+  const { assets } = useStakingAssets();
+  const { address } = useAccount();
 
   const { notifyProcessing, notifySuccess, notifyError } = useTxNotification();
 
@@ -65,12 +69,16 @@ const DeployPage: FC = () => {
     // @ts-expect-error Two different types with this name exist, but they are unrelated.
     resolver: zodResolver(deployBlueprintSchema),
     defaultValues: {
-      durationUnit: 'seconds',
+      durationUnit: 'hours',
+      instanceDuration: 24,
       requestMode: 'basic',
       operatorExposurePercents: {},
       assets: [],
       securityCommitments: [],
       requestArgs: [],
+      permittedCallers: [],
+      operators: [],
+      paymentAmount: '0',
     },
   });
 
@@ -114,6 +122,80 @@ const DeployPage: FC = () => {
       navigate(`${PagePath.BLUEPRINTS_DETAILS}`.replace(':id', id.toString()));
     }
   }, [serviceRequestSuccess, id, navigate]);
+
+  useEffect(() => {
+    if (!blueprintResult?.details) {
+      return;
+    }
+
+    const blueprintName = blueprintResult.details.name?.trim();
+    const currentName = getValues('instanceName')?.trim();
+    if (!currentName && blueprintName) {
+      setValue('instanceName', `${blueprintName} service`, {
+        shouldDirty: false,
+      });
+    }
+  }, [blueprintResult?.details, getValues, setValue]);
+
+  useEffect(() => {
+    if (!address) {
+      return;
+    }
+
+    const currentCallers = getValues('permittedCallers') ?? [];
+    if (currentCallers.length === 0) {
+      setValue('permittedCallers', [address], {
+        shouldDirty: false,
+      });
+    }
+  }, [address, getValues, setValue]);
+
+  useEffect(() => {
+    const currentOperators = getValues('operators') ?? [];
+    const availableOperators =
+      blueprintResult?.operators?.map((operator) => operator.address) ?? [];
+
+    if (
+      currentOperators.length === 0 &&
+      availableOperators.length > 0 &&
+      availableOperators.length <= 3
+    ) {
+      setValue('operators', availableOperators as `0x${string}`[], {
+        shouldDirty: false,
+      });
+    }
+  }, [blueprintResult?.operators, getValues, setValue]);
+
+  useEffect(() => {
+    const currentPaymentAsset = getValues('paymentAsset');
+    if (currentPaymentAsset?.id) {
+      return;
+    }
+
+    const firstAsset = Array.from(assets?.values() ?? []).find(
+      (asset) => asset.metadata.name && asset.metadata.name.trim() !== '',
+    );
+
+    if (!firstAsset) {
+      return;
+    }
+
+    setValue(
+      'paymentAsset',
+      {
+        id: firstAsset.id,
+        metadata: {
+          name: firstAsset.metadata.name,
+          symbol: firstAsset.metadata.symbol,
+          decimals: firstAsset.metadata.decimals,
+          priceInUsd: null,
+        },
+      },
+      {
+        shouldDirty: false,
+      },
+    );
+  }, [assets, getValues, setValue]);
 
   if (isBlueprintLoading) {
     return <SkeletonLoader className="min-h-64" />;

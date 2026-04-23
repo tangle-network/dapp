@@ -2376,27 +2376,38 @@ const main = async () => {
     const singletonDriver =
       launchPlan.concurrency <= 1 ? await createDriver() : undefined;
 
+    const provider = mergedConfig.provider ?? 'openai';
+    const providerAllowsNoApiKey = [
+      'codex-cli',
+      'claude-code',
+      'sandbox-backend',
+    ].includes(provider);
+
     const apiKey =
       mergedConfig.apiKey ??
-      process.env.OPENAI_API_KEY ??
-      process.env.ANTHROPIC_API_KEY ??
-      process.env.GOOGLE_GENERATIVE_AI_API_KEY;
+      (provider === 'anthropic' || provider === 'claude-code'
+        ? process.env.ANTHROPIC_API_KEY
+        : provider === 'google'
+          ? process.env.GOOGLE_GENERATIVE_AI_API_KEY
+          : process.env.OPENAI_API_KEY);
 
-    if (!apiKey && !mergedConfig.baseUrl) {
+    if (!apiKey && !mergedConfig.baseUrl && !providerAllowsNoApiKey) {
       throw new Error(
         'Missing LLM API key. Set OPENAI_API_KEY, ANTHROPIC_API_KEY, GOOGLE_GENERATIVE_AI_API_KEY, or configure apiKey in agent-browser-driver config.',
       );
     }
-    if (!apiKey && mergedConfig.baseUrl) {
+    if (!apiKey && (mergedConfig.baseUrl || providerAllowsNoApiKey)) {
       log(
-        'warning: no API key provided; continuing because base-url is configured (use --api-key if your proxy requires auth).',
+        providerAllowsNoApiKey
+          ? `warning: no API key provided; continuing because provider=${provider} does not require one.`
+          : 'warning: no API key provided; continuing because base-url is configured (use --api-key if your proxy requires auth).',
       );
     }
 
     const testRunner = new TestRunner({
       config: {
         ...toAgentConfig(mergedConfig),
-        apiKey: apiKey ?? 'local-dev-key',
+        ...(apiKey ? { apiKey } : {}),
         debug: Boolean(options.debug),
       },
       defaultTimeoutMs: mergedConfig.timeoutMs,
