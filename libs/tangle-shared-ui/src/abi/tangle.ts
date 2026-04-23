@@ -336,6 +336,11 @@ const ABI = [
         type: 'string',
         internalType: 'string',
       },
+      {
+        name: 'metadataHash',
+        type: 'bytes32',
+        internalType: 'bytes32',
+      },
     ],
     stateMutability: 'view',
   },
@@ -636,6 +641,11 @@ const ABI = [
             name: 'metadataUri',
             type: 'string',
             internalType: 'string',
+          },
+          {
+            name: 'metadataHash',
+            type: 'bytes32',
+            internalType: 'bytes32',
           },
           {
             name: 'manager',
@@ -1450,6 +1460,11 @@ const ABI = [
             name: 'metadataUri',
             type: 'string',
             internalType: 'string',
+          },
+          {
+            name: 'metadataHash',
+            type: 'bytes32',
+            internalType: 'bytes32',
           },
           {
             name: 'manager',
@@ -3739,6 +3754,11 @@ const ABI = [
         type: 'string',
         internalType: 'string',
       },
+      {
+        name: 'metadataHash',
+        type: 'bytes32',
+        internalType: 'bytes32',
+      },
     ],
     outputs: [],
     stateMutability: 'nonpayable',
@@ -3793,6 +3813,12 @@ const ABI = [
         type: 'string',
         indexed: false,
         internalType: 'string',
+      },
+      {
+        name: 'metadataHash',
+        type: 'bytes32',
+        indexed: false,
+        internalType: 'bytes32',
       },
     ],
     anonymous: false,
@@ -3850,6 +3876,12 @@ const ABI = [
         type: 'string',
         indexed: false,
         internalType: 'string',
+      },
+      {
+        name: 'metadataHash',
+        type: 'bytes32',
+        indexed: false,
+        internalType: 'bytes32',
       },
     ],
     anonymous: false,

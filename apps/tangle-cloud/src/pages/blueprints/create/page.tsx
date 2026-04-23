@@ -25,6 +25,11 @@ import {
   type BlueprintDefinition,
 } from '@tangle-network/tangle-shared-ui/data/graphql';
 import {
+  computeBlueprintMetadataPayloadHash,
+  isAllowedBlueprintMetadataUri,
+  requiresIpfsForBlueprintMetadata,
+} from '@tangle-network/tangle-shared-ui/blueprintApps/authoring';
+import {
   parseSchemaJson,
   encodeSchemaToHex,
 } from '@tangle-network/tangle-shared-ui/codec';
@@ -191,6 +196,18 @@ const initialFormState: FormState = {
   sources: [],
 };
 
+const buildMetadataDocument = (form: FormState) =>
+  buildBlueprintUiMetadataDocument({
+    name: form.name,
+    description: form.description,
+    category: form.category,
+    codeRepository: form.codeRepository,
+    logo: form.logo,
+    website: form.website,
+    author: form.author,
+    draft: form.uiDraft,
+  });
+
 // Convert form to ABI-compatible definition
 const formToDefinition = (
   form: FormState,
@@ -205,6 +222,7 @@ const formToDefinition = (
     new TextEncoder().encode(form.registrationSchema),
   );
   const requestBytes = toHex(new TextEncoder().encode(form.requestSchema));
+  const metadataDocument = buildMetadataDocument(form);
 
   // Convert jobs
   const jobs = form.jobs.map((job, index) => ({
@@ -259,6 +277,7 @@ const formToDefinition = (
 
   return {
     metadataUri: form.metadataUri,
+    metadataHash: computeBlueprintMetadataPayloadHash(metadataDocument),
     manager: (form.manager || zeroAddress) as Address,
     masterManagerRevision: 0,
     hasConfig: true,
@@ -292,20 +311,7 @@ const formToDefinition = (
 };
 
 const buildMetadataPreview = (form: FormState): string =>
-  JSON.stringify(
-    buildBlueprintUiMetadataDocument({
-      name: form.name,
-      description: form.description,
-      category: form.category,
-      codeRepository: form.codeRepository,
-      logo: form.logo,
-      website: form.website,
-      author: form.author,
-      draft: form.uiDraft,
-    }),
-    null,
-    2,
-  );
+  JSON.stringify(buildMetadataDocument(form), null, 2);
 
 const toggleBlueprintSurface = (
   draft: BlueprintUiAuthoringDraft,
@@ -359,6 +365,12 @@ const CreateBlueprintPage: FC = () => {
           );
           return false;
         }
+        if (!isAllowedBlueprintMetadataUri(form.metadataUri.trim())) {
+          setValidationError(
+            'Production hosted blueprints must publish metadata to an ipfs:// URI.',
+          );
+          return false;
+        }
         if (form.uiDraft.surfaces.length === 0) {
           setValidationError(
             'Select at least one shared host surface for blueprintUi metadata',
@@ -367,11 +379,9 @@ const CreateBlueprintPage: FC = () => {
         }
         if (
           form.uiDraft.externalAppUrl.trim() &&
-          !/^https?:\/\/.+/.test(form.uiDraft.externalAppUrl.trim())
+          !/^https:\/\/.+/.test(form.uiDraft.externalAppUrl.trim())
         ) {
-          setValidationError(
-            'External app URL must start with https:// or http://',
-          );
+          setValidationError('External app URL must start with https://');
           return false;
         }
         break;
@@ -868,6 +878,11 @@ const BasicInfoStep: FC<BasicInfoStepProps> = ({
       <Typography variant="body3" className="text-mono-100 mt-1">
         Publish the JSON preview below at this URI so cloud.tangle.tools can
         resolve your hosted blueprint surfaces and shared runtime metadata.
+        New SDK blueprints ship the same contract shape in
+        `metadata/blueprint-metadata.json`.
+        {requiresIpfsForBlueprintMetadata()
+          ? ' Production hosting only accepts ipfs:// metadata URIs.'
+          : ' Local development can still use https:// metadata previews.'}
       </Typography>
     </div>
 
@@ -892,7 +907,9 @@ const BasicInfoStep: FC<BasicInfoStepProps> = ({
           </Typography>
           <Typography variant="body3" className="text-mono-100 mt-1">
             This drives the shared hosted blueprint pages, generic service
-            surfaces, and optional safe link-out handoff for publisher apps.
+            surfaces, optional safe link-out handoff for publisher apps, and
+            richer tier-2 cards, forms, resource views, theming, and approved
+            modules when present in the published JSON.
           </Typography>
         </div>
         <Button variant="secondary" size="sm" onClick={onCopyMetadataPreview}>
@@ -1055,9 +1072,12 @@ const BasicInfoStep: FC<BasicInfoStepProps> = ({
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="link">Link out</SelectItem>
-              <SelectItem value="iframe">Embed in iframe</SelectItem>
             </SelectContent>
           </Select>
+          <Typography variant="body3" className="text-mono-100 mt-1">
+            Third-party iframe embedding is disabled. Publisher apps can only
+            open in a new tab after trust and provenance checks pass.
+          </Typography>
         </div>
       </div>
 
@@ -1732,6 +1752,8 @@ const ReviewStep: FC<{
           </Typography>
           <Typography variant="body3" className="text-mono-100 mt-1">
             This is the exact `blueprintUi` contract the shared host will parse.
+            Advanced tier-2 sections can be added directly to the JSON after
+            copying it out.
           </Typography>
         </div>
         <Button variant="secondary" size="sm" onClick={onCopyMetadataPreview}>

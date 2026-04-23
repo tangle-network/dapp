@@ -7,7 +7,11 @@ const splitEnvList = (value: string | undefined): string[] =>
     .filter(Boolean);
 
 const DEFAULT_RESERVED_SLUGS = ['trading', 'sandbox', 'training'];
-const DEFAULT_TRUSTED_EXTERNAL_APP_HOSTS = ['tangle.tools', 'tangle.network'];
+const DEFAULT_TRUSTED_EXTERNAL_APP_HOSTS = [
+  'cloud.tangle.tools',
+  'app.tangle.tools',
+  'apps.tangle.tools',
+];
 const DEFAULT_VERIFIED_PUBLISHERS = ['tangle', 'tangle-labs'];
 
 export const reservedBlueprintSlugs = new Set([
