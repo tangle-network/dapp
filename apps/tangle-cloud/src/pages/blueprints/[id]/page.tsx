@@ -10,6 +10,7 @@ import type { FC, PropsWithChildren } from 'react';
 import useParamWithSchema from '@tangle-network/tangle-shared-ui/hooks/useParamWithSchema';
 import { z } from 'zod';
 import BlueprintAppLandingPage from '../../../blueprintApps/components/BlueprintAppLandingPage';
+import { renderCuratedBlueprintLanding } from '../../../blueprintApps/modules';
 import { getBlueprintAppBySlug } from '../../../blueprintApps/registry';
 import {
   getBlueprintPath,
@@ -50,6 +51,11 @@ const Page: FC = () => {
   }
 
   if (entry) {
+    const curated = renderCuratedBlueprintLanding(entry);
+    if (curated) {
+      return curated;
+    }
+
     return <BlueprintAppLandingPage entry={entry} />;
   }
 

@@ -5,6 +5,10 @@ import { z } from 'zod';
 import BlueprintAppServicePage from '../../../../blueprintApps/components/BlueprintAppServicePage';
 import BlueprintAppLandingPage from '../../../../blueprintApps/components/BlueprintAppLandingPage';
 import {
+  renderCuratedBlueprintLanding,
+  renderCuratedBlueprintService,
+} from '../../../../blueprintApps/modules';
+import {
   getBlueprintAppByCanonicalSlug,
   getBlueprintAppBySlug,
   isLegacyBlueprintIdParam,
@@ -25,12 +29,22 @@ const Page: FC = () => {
       return <Navigate to={PagePath.NOT_FOUND} replace />;
     }
 
+    const curatedLanding = renderCuratedBlueprintLanding(scopedEntry);
+    if (curatedLanding) {
+      return curatedLanding;
+    }
+
     return <BlueprintAppLandingPage entry={scopedEntry} />;
   }
 
   const entry = getBlueprintAppBySlug(slug);
   if (!entry) {
     return <Navigate to={PagePath.NOT_FOUND} replace />;
+  }
+
+  const curated = renderCuratedBlueprintService(entry, serviceId);
+  if (curated) {
+    return curated;
   }
 
   return <BlueprintAppServicePage entry={entry} serviceId={serviceId} />;
