@@ -1,5 +1,19 @@
 import { buildBlueprintManifestFromMetadata } from './manifest';
 
+const verifiedMetadata = {
+  status: 'verified' as const,
+  productionReady: true,
+  source: 'ipfs' as const,
+  reason: 'verified',
+};
+
+const unverifiedMetadata = {
+  status: 'unverified' as const,
+  productionReady: false,
+  source: 'ipfs' as const,
+  reason: 'unverified',
+};
+
 describe('blueprint app manifest parsing', () => {
   it('falls back to generic protocol rendering when no app metadata exists', () => {
     const { entry, source } = buildBlueprintManifestFromMetadata({
@@ -19,6 +33,7 @@ describe('blueprint app manifest parsing', () => {
       imageUrl: null,
       codeUrl: null,
       website: null,
+      metadataVerification: unverifiedMetadata,
       rawMetadata: null,
     });
 
@@ -47,6 +62,7 @@ describe('blueprint app manifest parsing', () => {
       imageUrl: null,
       codeUrl: null,
       website: null,
+      metadataVerification: verifiedMetadata,
       rawMetadata: {
         blueprintUi: {
           slug: 'research-studio',
@@ -100,6 +116,7 @@ describe('blueprint app manifest parsing', () => {
       imageUrl: null,
       codeUrl: null,
       website: null,
+      metadataVerification: unverifiedMetadata,
       rawMetadata: {
         tangleCloud: {
           slug: 'external-trading',
@@ -112,11 +129,9 @@ describe('blueprint app manifest parsing', () => {
       },
     });
 
-    expect(entry.tier).toBe('external-app');
-    expect(entry.manifest.externalApp?.url).toBe(
-      'https://apps.acme.test/trading',
-    );
-    expect(entry.manifest.externalApp?.trust).toBe('restricted');
+    expect(entry.tier).toBe('generic');
+    expect(entry.manifest.externalApp).toBeUndefined();
+    expect(entry.manifest.description).toContain('unverified');
   });
 
   it('marks trusted Tangle external app hosts as trusted', () => {
@@ -137,8 +152,13 @@ describe('blueprint app manifest parsing', () => {
       imageUrl: null,
       codeUrl: null,
       website: null,
+      metadataVerification: verifiedMetadata,
       rawMetadata: {
         blueprintUi: {
+          publisher: {
+            namespace: 'tangle',
+            verification: 'verified',
+          },
           externalApp: {
             url: 'https://cloud.tangle.tools/blueprints/sandbox',
             mode: 'iframe',
@@ -147,6 +167,50 @@ describe('blueprint app manifest parsing', () => {
       },
     });
 
+    expect(entry.tier).toBe('external-app');
     expect(entry.manifest.externalApp?.trust).toBe('trusted');
+    expect(entry.manifest.externalApp?.mode).toBe('link');
+  });
+
+  it('falls back to protocol rendering when metadata is present but not verified', () => {
+    const { entry } = buildBlueprintManifestFromMetadata({
+      id: '11',
+      blueprintId: 11n,
+      owner: '0x0000000000000000000000000000000000000001',
+      manager: null,
+      metadataUri: 'ipfs://example',
+      active: true,
+      createdAt: 1n,
+      updatedAt: 1n,
+      operatorCount: 0n,
+      name: 'Secure Agent',
+      description: 'Protocol indexed blueprint',
+      author: 'Alice Labs',
+      category: 'AI',
+      imageUrl: null,
+      codeUrl: null,
+      website: null,
+      metadataVerification: {
+        status: 'invalid',
+        productionReady: false,
+        source: 'ipfs',
+        reason: 'signature mismatch',
+      },
+      rawMetadata: {
+        blueprintUi: {
+          slug: 'secure-agent',
+          surfaces: ['generic-overview', 'chat'],
+        },
+      },
+    });
+
+    expect(entry.tier).toBe('generic');
+    expect(entry.manifest.surfaces).toEqual([
+      'generic-overview',
+      'service-explorer',
+      'actions-panel',
+      'permissions',
+    ]);
+    expect(entry.manifest.description).toContain('signature mismatch');
   });
 });

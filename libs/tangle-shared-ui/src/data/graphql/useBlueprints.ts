@@ -9,8 +9,15 @@ import {
   EnvioNetwork,
 } from '../../utils/executeEnvioGraphQL';
 import type { Blueprint as AppBlueprint } from '../../types/blueprint';
-import { parseBlueprintMetadataDocument } from '../../blueprintApps/authoring';
-import type { BlueprintUiContract } from '../../blueprintApps/types';
+import {
+  parseBlueprintMetadataJsonText,
+  resolveBlueprintMetadataFetchUrl,
+  verifyBlueprintMetadataIntegrity,
+} from '../../blueprintApps/authoring';
+import type {
+  BlueprintMetadataVerification,
+  BlueprintUiContract,
+} from '../../blueprintApps/types';
 
 export interface Blueprint {
   id: string;
@@ -18,6 +25,7 @@ export interface Blueprint {
   owner: Address;
   manager: Address | null;
   metadataUri: string | null;
+  metadataHash: `0x${string}` | null;
   active: boolean;
   createdAt: bigint;
   updatedAt: bigint;
@@ -34,6 +42,7 @@ export interface BlueprintWithMetadata extends Blueprint {
   codeUrl: string | null;
   website: string | null;
   rawMetadata: Record<string, unknown> | null;
+  metadataVerification: BlueprintMetadataVerification;
   blueprintUi: BlueprintUiContract | null;
 }
 
@@ -57,6 +66,8 @@ const toAppBlueprint = (bp: BlueprintWithMetadata): AppBlueprint => ({
   twitterUrl: null,
   email: null,
   metadataUri: bp.metadataUri,
+  metadataHash: bp.metadataHash,
+  metadataVerification: bp.metadataVerification,
   blueprintUi: bp.blueprintUi,
 });
 
@@ -67,6 +78,7 @@ interface BlueprintQueryResponse {
     owner: string;
     manager: string | null;
     metadataUri: string | null;
+    metadataHash: `0x${string}` | null;
     active: boolean;
     createdAt: string;
     updatedAt: string;
@@ -74,8 +86,17 @@ interface BlueprintQueryResponse {
   }>;
 }
 
-const fetchBlueprintMetadata = async (
-  metadataUri: string | null,
+const fetchBlueprintMetadata = async ({
+  metadataUri,
+  metadataHash,
+  blueprintId,
+  owner,
+}: {
+  metadataUri: string | null;
+  metadataHash?: `0x${string}` | null;
+  blueprintId?: bigint;
+  owner?: Address;
+},
 ): Promise<{
   name: string;
   description: string;
@@ -85,6 +106,7 @@ const fetchBlueprintMetadata = async (
   codeUrl: string | null;
   website: string | null;
   rawMetadata: Record<string, unknown> | null;
+  metadataVerification: BlueprintMetadataVerification;
   blueprintUi: BlueprintUiContract | null;
 }> => {
   if (!metadataUri) {
@@ -97,33 +119,45 @@ const fetchBlueprintMetadata = async (
       codeUrl: null,
       website: null,
       rawMetadata: null,
+      metadataVerification: {
+        status: 'unverified',
+        productionReady: false,
+        source: 'missing',
+        reason: 'Metadata not published yet.',
+      },
       blueprintUi: null,
     };
   }
 
   try {
-    let fetchUrl = metadataUri;
-    if (metadataUri.startsWith('ipfs://')) {
-      const cid = metadataUri.replace('ipfs://', '');
-      fetchUrl = `https://ipfs.io/ipfs/${cid}`;
-    }
-
-    const response = await fetch(fetchUrl, {
+    const response = await fetch(resolveBlueprintMetadataFetchUrl(metadataUri), {
       signal: AbortSignal.timeout(5000),
     });
     if (!response.ok) {
       throw new Error(`Failed to fetch metadata: ${response.status}`);
     }
 
-    const metadata = await response.json();
-    const parsed = parseBlueprintMetadataDocument(metadata);
+    const metadataText = await response.text();
+    const { parsed, rawMetadata } =
+      parseBlueprintMetadataJsonText(metadataText);
+    const metadataVerification = await verifyBlueprintMetadataIntegrity({
+      rawMetadata,
+      metadataUri,
+      metadataHash,
+      blueprintId,
+      owner,
+    });
 
     return {
       ...parsed,
-      rawMetadata:
-        metadata && typeof metadata === 'object' && !Array.isArray(metadata)
-          ? (metadata as Record<string, unknown>)
-          : null,
+      rawMetadata,
+      metadataVerification,
+      blueprintUi:
+        metadataVerification.status === 'verified'
+          ? parsed.blueprintUi
+          : parsed.blueprintUi
+            ? { ...parsed.blueprintUi, externalApp: undefined, tier: 'generic' }
+            : null,
     };
   } catch (error) {
     console.error('Failed to fetch blueprint metadata:', error);
@@ -136,6 +170,12 @@ const fetchBlueprintMetadata = async (
       codeUrl: null,
       website: null,
       rawMetadata: null,
+      metadataVerification: {
+        status: 'invalid',
+        productionReady: false,
+        source: metadataUri.startsWith('ipfs://') ? 'ipfs' : 'http',
+        reason: 'Metadata endpoint unavailable or invalid.',
+      },
       blueprintUi: null,
     };
   }
@@ -160,6 +200,7 @@ const fetchBlueprints = async (
         owner
         manager
         metadataUri
+        metadataHash
         active
         createdAt
         updatedAt
@@ -187,6 +228,7 @@ const fetchBlueprints = async (
     owner: bp.owner as Address,
     manager: bp.manager as Address | null,
     metadataUri: bp.metadataUri,
+    metadataHash: bp.metadataHash,
     active: bp.active,
     createdAt: BigInt(bp.createdAt),
     updatedAt: BigInt(bp.updatedAt),
@@ -206,6 +248,7 @@ const fetchBlueprintById = async (
         owner
         manager
         metadataUri
+        metadataHash
         active
         createdAt
         updatedAt
@@ -232,6 +275,7 @@ const fetchBlueprintById = async (
     owner: bp.owner as Address,
     manager: bp.manager as Address | null,
     metadataUri: bp.metadataUri,
+    metadataHash: bp.metadataHash,
     active: bp.active,
     createdAt: BigInt(bp.createdAt),
     updatedAt: BigInt(bp.updatedAt),
@@ -283,7 +327,12 @@ export const useBlueprintsWithMetadata = (options?: {
 
       return Promise.all(
         blueprints.map(async (bp): Promise<BlueprintWithMetadata> => {
-          const metadata = await fetchBlueprintMetadata(bp.metadataUri);
+          const metadata = await fetchBlueprintMetadata({
+            metadataUri: bp.metadataUri,
+            metadataHash: bp.metadataHash,
+            blueprintId: bp.blueprintId,
+            owner: bp.owner as Address,
+          });
           return { ...bp, ...metadata };
         }),
       );
@@ -351,7 +400,12 @@ export const useBlueprint = (
       const blueprint = await fetchBlueprintById(blueprintId, network);
       if (!blueprint) return null;
 
-      const metadata = await fetchBlueprintMetadata(blueprint.metadataUri);
+      const metadata = await fetchBlueprintMetadata({
+        metadataUri: blueprint.metadataUri,
+        metadataHash: blueprint.metadataHash,
+        blueprintId: blueprint.blueprintId,
+        owner: blueprint.owner,
+      });
       return { ...blueprint, ...metadata } as BlueprintWithMetadata;
     },
     enabled: enabled && !!blueprintId,
@@ -454,7 +508,12 @@ export const useBlueprintDetails = (
       if (!blueprint) return null;
 
       const [metadata, operators] = await Promise.all([
-        fetchBlueprintMetadata(blueprint.metadataUri),
+        fetchBlueprintMetadata({
+          metadataUri: blueprint.metadataUri,
+          metadataHash: blueprint.metadataHash,
+          blueprintId: blueprint.blueprintId,
+          owner: blueprint.owner,
+        }),
         fetchBlueprintOperators(idString, network),
       ]);
 

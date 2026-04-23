@@ -164,6 +164,10 @@ function parsePermissions(
 
 function parseExternalApp(
   value: unknown,
+  options: {
+    publisherVerified: boolean;
+    metadataVerified: boolean;
+  },
 ): BlueprintExternalAppConfig | undefined {
   const record = readRecord(value);
   if (!record) {
@@ -190,16 +194,41 @@ function parseExternalApp(
   }
 
   const trust = isTrustedExternalAppHost(host) ? 'trusted' : 'restricted';
+  const requestedMode = mode as BlueprintExternalAppConfig['mode'];
+  const reasons: string[] = [];
+
+  if (requestedMode === 'iframe') {
+    reasons.push('Iframe embedding is disabled by policy; verified apps must open in a new tab.');
+  }
+
+  if (!options.publisherVerified) {
+    reasons.push('Publisher is not verified for advanced external app handoff.');
+  }
+
+  if (!options.metadataVerified) {
+    reasons.push(
+      'Metadata provenance was not verified against the onchain blueprint owner.',
+    );
+  }
 
   return {
     url,
-    mode: mode as BlueprintExternalAppConfig['mode'],
+    mode: 'link',
     label: readString(record.label) ?? undefined,
     host,
-    trust,
-    ...(trust === 'restricted'
+    trust:
+      trust === 'trusted' &&
+      options.publisherVerified &&
+      options.metadataVerified
+        ? 'trusted'
+        : 'restricted',
+    ...(trust === 'restricted' ||
+    !options.publisherVerified ||
+    !options.metadataVerified ||
+    requestedMode === 'iframe'
       ? {
           reason:
+            reasons[0] ??
             'External app host is not on the trusted Tangle allowlist yet.',
         }
       : {}),
@@ -240,7 +269,7 @@ export function buildBlueprintManifestFromMetadata(
   const publisherNamespace =
     readString(readRecord(manifestRoot?.publisher)?.namespace) ??
     sanitizeBlueprintSlugPart(blueprint.author);
-  const publisherVerified =
+  const publisherDeclaredVerified =
     readString(readRecord(manifestRoot?.publisher)?.verification) ===
     'verified';
   const requestedSlug =
@@ -255,10 +284,12 @@ export function buildBlueprintManifestFromMetadata(
     label: blueprint.author || 'Unknown publisher',
     namespace: publisherNamespace || undefined,
     visibility: 'third-party',
-    verification: publisherVerified
+    verification: publisherDeclaredVerified
       ? 'verified'
       : getPublisherVerificationForNamespace(publisherNamespace),
   };
+  const metadataVerified = blueprint.metadataVerification?.status === 'verified';
+  const publisherVerified = publisher.verification === 'verified';
   const slugPolicy = canPublisherClaimSlug(normalizedRequestedSlug, publisher)
     ? 'publisher-scoped'
     : 'public-requested';
@@ -275,21 +306,38 @@ export function buildBlueprintManifestFromMetadata(
       baseManifest.resources,
     ),
     permissions: parsePermissions(manifestRoot?.permissions),
-    externalApp: parseExternalApp(manifestRoot?.externalApp),
+    externalApp: parseExternalApp(manifestRoot?.externalApp, {
+      publisherVerified,
+      metadataVerified,
+    }),
   };
+
+  const allowDeclarativeTier =
+    manifestRoot !== null && blueprint.metadataVerification?.productionReady === true;
+  const trustedExternalApp =
+    manifest.externalApp?.trust === 'trusted' ? manifest.externalApp : undefined;
 
   const entry: BlueprintAppEntry = {
     slug: normalizedRequestedSlug,
     canonicalSlug: normalizedRequestedSlug,
     blueprintId: blueprint.blueprintId,
     publisher,
-    tier: manifest.externalApp
+    tier: trustedExternalApp
       ? 'external-app'
-      : manifestRoot
+      : allowDeclarativeTier
         ? 'declarative'
         : 'generic',
     slugPolicy,
-    manifest,
+    manifest: allowDeclarativeTier
+      ? {
+          ...manifest,
+          externalApp: trustedExternalApp,
+        }
+      : {
+          ...baseManifest,
+          description:
+            blueprint.metadataVerification?.reason ?? baseManifest.description,
+        },
   };
 
   entry.canonicalSlug = buildCanonicalBlueprintSlug(entry);

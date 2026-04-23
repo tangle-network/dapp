@@ -18,6 +18,10 @@ import {
   executeEnvioGraphQL,
   EnvioNetwork,
 } from '../../utils/executeEnvioGraphQL';
+import {
+  parseBlueprintMetadataJsonText,
+  resolveBlueprintMetadataFetchUrl,
+} from '../../blueprintApps/authoring';
 import isUserRejectionError from '../../utils/isUserRejectionError';
 import useContractWrite, {
   TxStatus as ContractTxStatus,
@@ -103,6 +107,7 @@ export type SupportedMemberships = number[];
 // Blueprint definition for creation (matches ABI structure)
 export interface BlueprintDefinition {
   metadataUri: string; // IPFS or HTTPS URL
+  metadataHash: `0x${string}`;
   manager: Address; // Service manager contract (address(0) for none)
   masterManagerRevision: number;
   hasConfig: boolean;
@@ -123,6 +128,7 @@ export interface OwnedBlueprint {
   owner: Address;
   manager: Address | null;
   metadataUri: string | null;
+  metadataHash?: `0x${string}` | null;
   metadata: {
     name?: string;
     description?: string;
@@ -146,6 +152,7 @@ interface BlueprintsByOwnerResponse {
     owner: string;
     manager: string | null;
     metadataUri: string | null;
+    metadataHash: `0x${string}` | null;
     active: boolean;
     operatorCount: string;
     createdAt: string;
@@ -153,9 +160,6 @@ interface BlueprintsByOwnerResponse {
 }
 
 const METADATA_FETCH_TIMEOUT_MS = 5_000;
-
-const isRecord = (value: unknown): value is Record<string, unknown> =>
-  typeof value === 'object' && value !== null && !Array.isArray(value);
 
 const readString = (value: unknown): string | undefined => {
   if (typeof value !== 'string') {
@@ -182,6 +186,7 @@ const fetchBlueprintsByOwner = async (
         owner
         manager
         metadataUri
+        metadataHash
         active
         operatorCount
         createdAt
@@ -204,20 +209,18 @@ const fetchBlueprintsByOwner = async (
 
         if (bp.metadataUri) {
           try {
-            let fetchUrl = bp.metadataUri;
-            if (bp.metadataUri.startsWith('ipfs://')) {
-              const cid = bp.metadataUri.replace('ipfs://', '');
-              fetchUrl = `https://ipfs.io/ipfs/${cid}`;
-            }
             const controller = new AbortController();
             const timeoutId = setTimeout(
               () => controller.abort(),
               METADATA_FETCH_TIMEOUT_MS,
             );
-            const response = await fetch(fetchUrl, {
+            const response = await fetch(
+              resolveBlueprintMetadataFetchUrl(bp.metadataUri),
+              {
               signal: controller.signal,
               cache: 'no-store',
-            }).finally(() => {
+              },
+            ).finally(() => {
               clearTimeout(timeoutId);
             });
 
@@ -225,29 +228,25 @@ const fetchBlueprintsByOwner = async (
               throw new Error(`Failed to fetch metadata: ${response.status}`);
             }
 
-            const metadataJson: unknown = await response.json();
-            if (!isRecord(metadataJson)) {
-              throw new Error('Invalid metadata JSON payload');
-            }
+            const metadataText = await response.text();
+            const { parsed, rawMetadata } =
+              parseBlueprintMetadataJsonText(metadataText);
+            const metadataJson = rawMetadata;
 
-            name = readString(metadataJson.name) ?? name;
-            description = readString(metadataJson.description) ?? '';
+            name = parsed.name ?? name;
+            description = parsed.description ?? '';
             metadata = {
-              name: readString(metadataJson.name),
-              description: readString(metadataJson.description),
-              author: readString(metadataJson.author),
-              logo:
-                readString(metadataJson.logo) ?? readString(metadataJson.image),
-              website:
-                readString(metadataJson.website) ??
-                readString(metadataJson.homepage),
-              codeRepository:
-                readString(metadataJson.codeRepository) ??
-                readString(metadataJson.codeUrl) ??
-                readString(metadataJson.repository),
+              name: parsed.name,
+              description: parsed.description,
+              author: parsed.author,
+              logo: parsed.imageUrl ?? undefined,
+              website: parsed.website ?? undefined,
+              codeRepository: parsed.codeUrl ?? undefined,
               docs:
-                readString(metadataJson.docs) ??
-                readString(metadataJson.documentation),
+                metadataJson !== null
+                  ? readString(metadataJson.docs) ??
+                    readString(metadataJson.documentation)
+                  : undefined,
             };
           } catch (error) {
             console.warn('Failed to fetch owned blueprint metadata', {
@@ -266,6 +265,7 @@ const fetchBlueprintsByOwner = async (
           owner: bp.owner as Address,
           manager: bp.manager as Address | null,
           metadataUri: bp.metadataUri,
+          metadataHash: bp.metadataHash,
           metadata,
           active: bp.active,
           operatorCount: Number(bp.operatorCount),
@@ -398,14 +398,18 @@ export const useUpdateBlueprintTx = () => {
     reset,
   } = useContractWrite(
     TANGLE_ABI,
-    (params: { blueprintId: bigint; metadataUri: string }) => {
+    (params: {
+      blueprintId: bigint;
+      metadataUri: string;
+      metadataHash: `0x${string}`;
+    }) => {
       const contracts = getContractsByChainId(chainId);
 
       return {
         address: contracts.tangle,
         abi: TANGLE_ABI,
         functionName: 'updateBlueprint' as const,
-        args: [params.blueprintId, params.metadataUri] as const,
+        args: [params.blueprintId, params.metadataUri, params.metadataHash] as const,
       };
     },
     {
@@ -415,8 +419,12 @@ export const useUpdateBlueprintTx = () => {
   );
 
   const updateBlueprint = useCallback(
-    async (blueprintId: bigint, metadataUri: string): Promise<Hash | null> => {
-      const result = await execute?.({ blueprintId, metadataUri });
+    async (
+      blueprintId: bigint,
+      metadataUri: string,
+      metadataHash: `0x${string}`,
+    ): Promise<Hash | null> => {
+      const result = await execute?.({ blueprintId, metadataUri, metadataHash });
       return result?.hash ?? null;
     },
     [execute],

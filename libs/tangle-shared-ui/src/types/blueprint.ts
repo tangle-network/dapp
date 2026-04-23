@@ -1,4 +1,7 @@
-import type { BlueprintUiContract } from '../blueprintApps/types';
+import type {
+  BlueprintMetadataVerification,
+  BlueprintUiContract,
+} from '../blueprintApps/types';
 
 // EVM-compatible blueprint types
 
@@ -89,5 +92,7 @@ export type Blueprint = {
   twitterUrl?: string | null;
   email?: string | null;
   metadataUri?: string | null;
+  metadataHash?: `0x${string}` | null;
+  metadataVerification?: BlueprintMetadataVerification | null;
   blueprintUi?: BlueprintUiContract | null;
 };

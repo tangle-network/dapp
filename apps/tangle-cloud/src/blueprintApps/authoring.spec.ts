@@ -25,23 +25,36 @@ describe('blueprint ui authoring', () => {
     expect(document).toEqual({
       name: 'Trading Agent',
       description: 'Automates strategy execution.',
-      category: 'Trading',
       author: 'Tangle',
-      codeRepository: 'https://github.com/tangle/trading-blueprint',
+      category: 'Trading',
+      image: null,
+      logo: null,
       website: 'https://tangle.tools',
+      codeRepository: 'https://github.com/tangle/trading-blueprint',
       blueprintUi: {
-        slug: 'trading',
-        publisher: {
-          namespace: 'tangle',
-        },
         displayName: 'Trading Agent',
-        tagline: 'Trading blueprint on Tangle',
         description: 'Automates strategy execution.',
-        surfaces: DEFAULT_BLUEPRINT_UI_DRAFT.surfaces,
+        requestedSlug: 'trading',
+        publisher: {
+          name: 'Tangle',
+          namespace: 'tangle',
+          verified: false,
+        },
         resources: {
-          serviceNoun: 'service',
-          resourceNoun: 'bot',
-          resourceRoute: 'bots',
+          serviceLabel: 'Service',
+          itemLabel: 'bot',
+          itemRoute: 'bots',
+        },
+        surfaces: {
+          genericOverview: true,
+          serviceExplorer: true,
+          serviceConsole: false,
+          actionsPanel: true,
+          resources: true,
+          chat: false,
+          vaults: false,
+          metrics: true,
+          permissions: false,
         },
       },
     });
@@ -61,8 +74,8 @@ describe('blueprint ui authoring', () => {
       ...DEFAULT_BLUEPRINT_UI_DRAFT,
       requestedSlug: 'trading',
       publisherNamespace: 'tangle',
-      serviceNoun: 'service',
-      resourceNoun: 'resource',
+      serviceNoun: 'Service',
+      resourceNoun: 'Resource',
       surfaces: ['chat', 'resources'],
     });
   });

@@ -37,6 +37,13 @@ import {
   type BlueprintWithMetadata as EnvioBlueprintWithMetadata,
   type OwnedBlueprint,
 } from '@tangle-network/tangle-shared-ui/data/graphql';
+import {
+  computeBlueprintMetadataPayloadHash,
+  parseBlueprintMetadataJsonText,
+  resolveBlueprintMetadataFetchUrl,
+  isAllowedBlueprintMetadataUri,
+  requiresIpfsForBlueprintMetadata,
+} from '@tangle-network/tangle-shared-ui/blueprintApps/authoring';
 import { twMerge } from 'tailwind-merge';
 import { PagePath } from '../../../types';
 import ErrorMessage from '@tangle-network/tangle-shared-ui/components/ErrorMessage';
@@ -58,6 +65,7 @@ type BlueprintMetadataPreview = {
   website?: string;
   codeRepository?: string;
   docs?: string;
+  metadataHash: `0x${string}`;
 };
 
 const applyBlueprintMetadataPreview = (
@@ -99,6 +107,7 @@ const applyBlueprintMetadataPreview = (
   return {
     ...blueprint,
     metadataUri,
+    metadataHash: preview.metadataHash,
     name: preview.name ?? blueprint.name,
     description: preview.description ?? blueprint.description,
     metadata: nextMetadata,
@@ -114,18 +123,6 @@ const readString = (value: unknown): string | undefined => {
   return trimmed.length > 0 ? trimmed : undefined;
 };
 
-const isRecord = (value: unknown): value is Record<string, unknown> =>
-  typeof value === 'object' && value !== null && !Array.isArray(value);
-
-const resolveMetadataUri = (metadataUri: string): string => {
-  if (!metadataUri.startsWith('ipfs://')) {
-    return metadataUri;
-  }
-
-  const cid = metadataUri.replace('ipfs://', '');
-  return `https://ipfs.io/ipfs/${cid}`;
-};
-
 const getMetadataUriValidationError = (metadataUri: string): string | null => {
   const trimmed = metadataUri.trim();
 
@@ -135,6 +132,10 @@ const getMetadataUriValidationError = (metadataUri: string): string | null => {
 
   if (!/^(ipfs:\/\/|https?:\/\/).+/i.test(trimmed)) {
     return 'Metadata URI must start with ipfs://, https://, or http://';
+  }
+
+  if (!isAllowedBlueprintMetadataUri(trimmed)) {
+    return 'Production hosted blueprints must publish metadata to an ipfs:// URI';
   }
 
   if (/^https?:\/\//i.test(trimmed)) {
@@ -155,7 +156,6 @@ const fetchBlueprintMetadataPreview = async (
   metadataUri: string,
   signal?: AbortSignal,
 ): Promise<BlueprintMetadataPreview> => {
-  const fetchUrl = resolveMetadataUri(metadataUri);
   const controller = new AbortController();
   const timeoutId = setTimeout(
     () => controller.abort(),
@@ -170,7 +170,7 @@ const fetchBlueprintMetadataPreview = async (
       controller.abort();
     }
 
-    const response = await fetch(fetchUrl, {
+    const response = await fetch(resolveBlueprintMetadataFetchUrl(metadataUri), {
       signal: controller.signal,
       cache: 'no-store',
     });
@@ -179,24 +179,25 @@ const fetchBlueprintMetadataPreview = async (
       throw new Error(`Failed to fetch metadata: ${response.status}`);
     }
 
-    const metadataJson: unknown = await response.json();
-    if (!isRecord(metadataJson)) {
-      throw new Error('Invalid metadata JSON payload');
+    const metadataText = await response.text();
+    const { parsed, rawMetadata } = parseBlueprintMetadataJsonText(metadataText);
+    const metadataJson = rawMetadata;
+    if (metadataJson === null) {
+      throw new Error('Metadata payload must be a JSON object');
     }
 
     return {
-      name: readString(metadataJson.name),
-      description: readString(metadataJson.description),
-      author: readString(metadataJson.author),
-      logo: readString(metadataJson.logo) ?? readString(metadataJson.image),
-      website:
-        readString(metadataJson.website) ?? readString(metadataJson.homepage),
-      codeRepository:
-        readString(metadataJson.codeRepository) ??
-        readString(metadataJson.codeUrl) ??
-        readString(metadataJson.repository),
+      name: parsed.name,
+      description: parsed.description,
+      author: parsed.author,
+      logo: parsed.imageUrl ?? undefined,
+      website: parsed.website ?? undefined,
+      codeRepository: parsed.codeUrl ?? undefined,
       docs:
-        readString(metadataJson.docs) ?? readString(metadataJson.documentation),
+        metadataJson !== null
+          ? readString(metadataJson.docs) ?? readString(metadataJson.documentation)
+          : undefined,
+      metadataHash: computeBlueprintMetadataPayloadHash(metadataJson),
     };
   } finally {
     clearTimeout(timeoutId);
@@ -302,7 +303,11 @@ const ManageBlueprintsPage: FC = () => {
 
             return current.map((bp) =>
               bp.blueprintId === blueprintId
-                ? { ...bp, metadataUri: nextUri }
+                ? {
+                    ...bp,
+                    metadataUri: nextUri,
+                    metadataHash: nextPreview?.metadataHash ?? bp.metadataHash,
+                  }
                 : bp,
             );
           },
@@ -320,6 +325,7 @@ const ManageBlueprintsPage: FC = () => {
                 ? {
                     ...bp,
                     metadataUri: nextUri,
+                    metadataHash: nextPreview?.metadataHash ?? bp.metadataHash,
                     name: nextPreview?.name ?? bp.name,
                     description: nextPreview?.description ?? bp.description,
                     author: nextPreview?.author ?? bp.author,
@@ -370,7 +376,8 @@ const ManageBlueprintsPage: FC = () => {
             latest.data?.some(
               (bp) =>
                 bp.id === blueprintId &&
-                bp.metadataUri?.trim() === normalizedUri,
+                bp.metadataUri?.trim() === normalizedUri &&
+                bp.metadataHash === (preview?.metadataHash ?? bp.metadataHash),
             ) ?? false
           );
         },
@@ -812,7 +819,19 @@ const UpdateMetadataModal: FC<UpdateMetadataModalProps> = ({
       return;
     }
 
-    const hash = await updateBlueprint(blueprint.id, trimmedMetadataUri);
+    const metadataHash = previewData?.metadataHash;
+    if (!metadataHash) {
+      setPreviewError(
+        'Load a valid metadata payload before publishing the onchain hash pin.',
+      );
+      return;
+    }
+
+    const hash = await updateBlueprint(
+      blueprint.id,
+      trimmedMetadataUri,
+      metadataHash,
+    );
 
     if (hash) {
       onClose();
@@ -843,6 +862,11 @@ const UpdateMetadataModal: FC<UpdateMetadataModalProps> = ({
               }}
               placeholder="ipfs://... or https://..."
             />
+            <Typography variant="body3" className="text-mono-100 mt-1">
+              {requiresIpfsForBlueprintMetadata()
+                ? 'Production hosted blueprints must keep metadata on ipfs:// content-addressed URIs.'
+                : 'Local development can still preview metadata from https:// endpoints.'}
+            </Typography>
             {(uriError || previewError || error?.message) && (
               <div className="mt-1">
                 {uriError && <ErrorMessage>{uriError}</ErrorMessage>}
