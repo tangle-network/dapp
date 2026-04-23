@@ -96,7 +96,7 @@
     "@radix-ui/react-tooltip": "^1.2.0",
     "@solana/wallet-adapter-react": "^0.15.39",
     "@solana/web3.js": "^1.98.0",
-    "@tangle-network/blueprint-ui": "file:../blueprint-ui/tangle-network-blueprint-ui-0.1.2.tgz",
+    "@tangle-network/blueprint-ui": "https://codeload.github.com/tangle-network/blueprint-ui/tar.gz/470fe863d19b0980ca51dde9eea43b90cecc6277",
     "@tanstack/react-query": "^5.87.0",
     "@walletconnect/ethereum-provider": "^2.19.2",
     "blo": "^2.0.0",

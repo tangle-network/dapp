@@ -15721,9 +15721,9 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@tangle-network/blueprint-ui@file:../blueprint-ui/tangle-network-blueprint-ui-0.1.2.tgz::locator=tangle-monorepo%40workspace%3A.":
+"@tangle-network/blueprint-ui@https://codeload.github.com/tangle-network/blueprint-ui/tar.gz/470fe863d19b0980ca51dde9eea43b90cecc6277":
   version: 0.1.2
-  resolution: "@tangle-network/blueprint-ui@file:../blueprint-ui/tangle-network-blueprint-ui-0.1.2.tgz#../blueprint-ui/tangle-network-blueprint-ui-0.1.2.tgz::hash=99341c&locator=tangle-monorepo%40workspace%3A."
+  resolution: "@tangle-network/blueprint-ui@https://codeload.github.com/tangle-network/blueprint-ui/tar.gz/470fe863d19b0980ca51dde9eea43b90cecc6277"
   peerDependencies:
     "@nanostores/react": ^0.7.0 || ^1.0.0
     "@radix-ui/react-dialog": ^1.1.0
@@ -15745,7 +15745,7 @@ __metadata:
     tailwind-merge: ^2.6.0 || ^3.2.0
     viem: ^2.31.0
     wagmi: ^2.19.0 || ^3.3.0
-  checksum: 10c0/5888b156fbfea9c72f3daa77fc185700c01218ab129d02240c42bb9bd48505190951eded298f67e1de271f5919742b3346b8f692e2558f3836cbd887d318b41a
+  checksum: 10c0/1525808e4c21c02c2181ff3e1f889dbe818c2ebb66d1ed1cefec47903b19912b773c4bdbab188509079305ef304d502d8a401a913ab0cbd1dc6211c9ed0c00fb
   languageName: node
   linkType: hard
 
@@ -33887,7 +33887,7 @@ __metadata:
     "@swc/helpers": "npm:~0.5.17"
     "@swc/jest": "npm:~0.2.37"
     "@tailwindcss/forms": "npm:^0.5.10"
-    "@tangle-network/blueprint-ui": "file:../blueprint-ui/tangle-network-blueprint-ui-0.1.2.tgz"
+    "@tangle-network/blueprint-ui": "https://codeload.github.com/tangle-network/blueprint-ui/tar.gz/470fe863d19b0980ca51dde9eea43b90cecc6277"
     "@tanstack/match-sorter-utils": "npm:^8.19.4"
     "@tanstack/react-query": "npm:^5.87.0"
     "@tanstack/react-table": "npm:^8.21.3"
