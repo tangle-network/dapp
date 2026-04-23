@@ -21,6 +21,18 @@ const BlueprintsPage = lazy(() => import('../pages/blueprints/page'));
 const BlueprintDetailsPage = lazy(
   () => import('../pages/blueprints/[id]/page'),
 );
+const BlueprintAppServicePage = lazy(
+  () => import('../pages/blueprints/[slug]/[serviceId]/page'),
+);
+const BlueprintScopedLandingPage = lazy(
+  () => import('../pages/blueprints/[publisher]/[slug]/page'),
+);
+const BlueprintScopedServicePage = lazy(
+  () => import('../pages/blueprints/[publisher]/[slug]/[serviceId]/page'),
+);
+const BlueprintProtocolServicePage = lazy(
+  () => import('../pages/blueprints/[id]/services/[serviceId]/page'),
+);
 const DeployPage = lazy(() => import('../pages/blueprints/[id]/deploy/page'));
 const CreateBlueprintPage = lazy(
   () => import('../pages/blueprints/create/page'),
@@ -94,6 +106,29 @@ const App: FC = () => {
             <Route
               path={PagePath.BLUEPRINTS_DETAILS}
               element={withLayout(BlueprintsLayout, BlueprintDetailsPage)}
+            />
+
+            <Route
+              path={PagePath.BLUEPRINTS_PROTOCOL_SERVICE}
+              element={withLayout(
+                BlueprintsLayout,
+                BlueprintProtocolServicePage,
+              )}
+            />
+
+            <Route
+              path={PagePath.BLUEPRINTS_APP_SERVICE}
+              element={withLayout(BlueprintsLayout, BlueprintAppServicePage)}
+            />
+
+            <Route
+              path={PagePath.BLUEPRINTS_APP_SCOPED}
+              element={withLayout(BlueprintsLayout, BlueprintScopedLandingPage)}
+            />
+
+            <Route
+              path={PagePath.BLUEPRINTS_APP_SCOPED_SERVICE}
+              element={withLayout(BlueprintsLayout, BlueprintScopedServicePage)}
             />
 
             <Route

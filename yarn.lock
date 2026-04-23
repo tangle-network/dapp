@@ -7681,6 +7681,16 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@nanostores/react@npm:^1.1.0":
+  version: 1.1.0
+  resolution: "@nanostores/react@npm:1.1.0"
+  peerDependencies:
+    nanostores: ^1.2.0
+    react: ">=18.0.0"
+  checksum: 10c0/512220967bb0f2d2c29680782676c8d14bafa61de05df695e3bfc54ad246ffb8a63fd1c5165c588da116edda47c94eaa9b085211e920a49e4bda118f3702cb7e
+  languageName: node
+  linkType: hard
+
 "@napi-rs/nice-android-arm-eabi@npm:1.0.1":
   version: 1.0.1
   resolution: "@napi-rs/nice-android-arm-eabi@npm:1.0.1"
@@ -11947,7 +11957,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@radix-ui/react-slot@npm:^1.2.3":
+"@radix-ui/react-slot@npm:^1.2.3, @radix-ui/react-slot@npm:^1.2.4":
   version: 1.2.4
   resolution: "@radix-ui/react-slot@npm:1.2.4"
   dependencies:
@@ -15711,6 +15721,34 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@tangle-network/blueprint-ui@file:../blueprint-ui/tangle-network-blueprint-ui-0.1.2.tgz::locator=tangle-monorepo%40workspace%3A.":
+  version: 0.1.2
+  resolution: "@tangle-network/blueprint-ui@file:../blueprint-ui/tangle-network-blueprint-ui-0.1.2.tgz#../blueprint-ui/tangle-network-blueprint-ui-0.1.2.tgz::hash=99341c&locator=tangle-monorepo%40workspace%3A."
+  peerDependencies:
+    "@nanostores/react": ^0.7.0 || ^1.0.0
+    "@radix-ui/react-dialog": ^1.1.0
+    "@radix-ui/react-select": ^2.1.0
+    "@radix-ui/react-separator": ^1.1.0
+    "@radix-ui/react-slot": ^1.2.0
+    "@radix-ui/react-tabs": ^1.1.0
+    "@radix-ui/react-tooltip": ^1.2.0
+    "@tanstack/react-query": ^5.0.0
+    blo: ^2.0.0
+    class-variance-authority: ^0.7.0
+    clsx: ^2.1.0
+    framer-motion: ^12.0.0
+    nanostores: ^0.10.0 || ^1.0.0
+    react: ^18.0.0 || ^19.0.0
+    react-dom: ^18.0.0 || ^19.0.0
+    react-router: ^7.0.0
+    sonner: ^2.0.0
+    tailwind-merge: ^2.6.0 || ^3.2.0
+    viem: ^2.31.0
+    wagmi: ^2.19.0 || ^3.3.0
+  checksum: 10c0/5888b156fbfea9c72f3daa77fc185700c01218ab129d02240c42bb9bd48505190951eded298f67e1de271f5919742b3346b8f692e2558f3836cbd887d318b41a
+  languageName: node
+  linkType: hard
+
 "@tangle-network/browser-utils@workspace:libs/browser-utils":
   version: 0.0.0-use.local
   resolution: "@tangle-network/browser-utils@workspace:libs/browser-utils"
@@ -19403,6 +19441,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"blo@npm:^2.0.0":
+  version: 2.0.0
+  resolution: "blo@npm:2.0.0"
+  checksum: 10c0/1d654f4a5852e0f2241fd17d1a9730dc7717b8d30b1b0fcf48878f8164648514f7b04dbc02721f7486f455fc900c0ef5a7dc8f81947c5f4be7a06d5b4aea7ccb
+  languageName: node
+  linkType: hard
+
 "bluebird@npm:^3.5.0":
   version: 3.7.2
   resolution: "bluebird@npm:3.7.2"
@@ -20280,6 +20325,15 @@ __metadata:
   version: 1.1.0
   resolution: "class-is@npm:1.1.0"
   checksum: 10c0/07241182c379a630c1841e99cd2301f0492d8f973f111f13b4487231f7cc28a1f1166670ce2dfcab91449155e6e107379eb9d15ba140e749a11d4fcba3883f52
+  languageName: node
+  linkType: hard
+
+"class-variance-authority@npm:^0.7.1":
+  version: 0.7.1
+  resolution: "class-variance-authority@npm:0.7.1"
+  dependencies:
+    clsx: "npm:^2.1.1"
+  checksum: 10c0/0f438cea22131808b99272de0fa933c2532d5659773bfec0c583de7b3f038378996d3350683426b8e9c74a6286699382106d71fbec52f0dd5fbb191792cccb5b
   languageName: node
   linkType: hard
 
@@ -28521,6 +28575,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"nanostores@npm:^1.3.0":
+  version: 1.3.0
+  resolution: "nanostores@npm:1.3.0"
+  checksum: 10c0/fab57ec59758457f34e32e6af6982bf0f69ec8c732999347170982e39b5beb0391c91d970177608ff613a733024a39f3a767de7a8e25e4bf7aeadbcb76f8a7f6
+  languageName: node
+  linkType: hard
+
 "natural-compare@npm:^1.4.0":
   version: 1.4.0
   resolution: "natural-compare@npm:1.4.0"
@@ -32898,6 +32959,16 @@ __metadata:
   languageName: node
   linkType: hard
 
+"sonner@npm:^2.0.7":
+  version: 2.0.7
+  resolution: "sonner@npm:2.0.7"
+  peerDependencies:
+    react: ^18.0.0 || ^19.0.0 || ^19.0.0-rc
+    react-dom: ^18.0.0 || ^19.0.0 || ^19.0.0-rc
+  checksum: 10c0/6966ab5e892ed6aab579a175e4a24f3b48747f0fc21cb68c3e33cb41caa7a0eebeb098c210545395e47a18d585eb8734ae7dd12d2bd18c8a3294a1ee73f997d9
+  languageName: node
+  linkType: hard
+
 "sort-keys-length@npm:^1.0.0":
   version: 1.0.1
   resolution: "sort-keys-length@npm:1.0.1"
@@ -33754,6 +33825,7 @@ __metadata:
     "@hyperlane-xyz/utils": "npm:^5.7.0"
     "@lifi/widget": "npm:^3.37.0"
     "@mysten/dapp-kit": "npm:^0.19.11"
+    "@nanostores/react": "npm:^1.1.0"
     "@ngneat/falso": "npm:^7.3.0"
     "@nx/eslint": "npm:20.8.0"
     "@nx/eslint-plugin": "npm:20.8.0"
@@ -33789,6 +33861,7 @@ __metadata:
     "@radix-ui/react-select": "npm:^2.1.7"
     "@radix-ui/react-separator": "npm:^1.1.3"
     "@radix-ui/react-slider": "npm:^1.2.4"
+    "@radix-ui/react-slot": "npm:^1.2.4"
     "@radix-ui/react-switch": "npm:^1.1.4"
     "@radix-ui/react-tabs": "npm:^1.1.4"
     "@radix-ui/react-tooltip": "npm:^1.2.0"
@@ -33814,6 +33887,7 @@ __metadata:
     "@swc/helpers": "npm:~0.5.17"
     "@swc/jest": "npm:~0.2.37"
     "@tailwindcss/forms": "npm:^0.5.10"
+    "@tangle-network/blueprint-ui": "file:../blueprint-ui/tangle-network-blueprint-ui-0.1.2.tgz"
     "@tanstack/match-sorter-utils": "npm:^8.19.4"
     "@tanstack/react-query": "npm:^5.87.0"
     "@tanstack/react-table": "npm:^8.21.3"
@@ -33832,8 +33906,11 @@ __metadata:
     "@vitest/ui": "npm:^3.1.1"
     "@walletconnect/ethereum-provider": "npm:^2.19.2"
     autoprefixer: "npm:^10.4.21"
+    blo: "npm:^2.0.0"
     chromatic: "npm:^11.28.0"
+    class-variance-authority: "npm:^0.7.1"
     classnames: "npm:^2.5.1"
+    clsx: "npm:^2.1.1"
     concurrently: "npm:^9.1.2"
     connectkit: "npm:^1.9.1"
     copy-to-clipboard: "npm:^3.3.3"
@@ -33859,6 +33936,7 @@ __metadata:
     jest-environment-node: "npm:^29.7.0"
     jsdom: "npm:~26.1.0"
     lodash: "npm:^4.17.21"
+    nanostores: "npm:^1.3.0"
     notistack: "npm:^3.0.2"
     numbro: "npm:^2.5.0"
     nx: "npm:20.8.0"
@@ -33883,6 +33961,7 @@ __metadata:
     recharts: "npm:^2.15.2"
     rollup: "npm:^4.40.0"
     rxjs: "npm:7.8.2"
+    sonner: "npm:^2.0.7"
     storybook: "npm:^8.6.12"
     swr: "npm:^2.3.3"
     tailwind-merge: "npm:^2.6.0"
