@@ -1045,7 +1045,8 @@ const BasicInfoStep: FC<BasicInfoStepProps> = ({
             onValueChange={(v) =>
               updateForm('uiDraft', {
                 ...form.uiDraft,
-                externalAppMode: v as BlueprintUiAuthoringDraft['externalAppMode'],
+                externalAppMode:
+                  v as BlueprintUiAuthoringDraft['externalAppMode'],
               })
             }
           >

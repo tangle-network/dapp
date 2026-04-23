@@ -16,7 +16,9 @@ import {
 export const Deployment: FC<BaseDeployStepProps> = (props) => {
   const minimumNativeSecurityRequirement = 0;
   const expectedRequestArgsCount =
-    props.requestSchemaFieldCount ?? props.blueprint?.requestParams?.length ?? 0;
+    props.requestSchemaFieldCount ??
+    props.blueprint?.requestParams?.length ??
+    0;
   const shouldShowAdvancedSummary =
     expectedRequestArgsCount > 0 || props.hasRequestSchema === false;
 

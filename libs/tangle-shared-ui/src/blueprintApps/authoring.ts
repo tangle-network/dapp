@@ -106,7 +106,10 @@ export const sanitizeBlueprintSlug = (value: string): string =>
 
 const normalizeResourceRoute = (value: unknown): BlueprintResourceRoute => {
   const route = readTrimmedString(value)?.toLowerCase();
-  if (route && RESOURCE_ROUTE_VALUES.includes(route as BlueprintResourceRoute)) {
+  if (
+    route &&
+    RESOURCE_ROUTE_VALUES.includes(route as BlueprintResourceRoute)
+  ) {
     return route as BlueprintResourceRoute;
   }
 
@@ -117,7 +120,8 @@ const normalizeSurfaces = (value: unknown): BlueprintUiSurface[] => {
   if (Array.isArray(value)) {
     const surfaces = value.filter(
       (entry): entry is BlueprintUiSurface =>
-        typeof entry === 'string' && SURFACE_VALUES.has(entry as BlueprintUiSurface),
+        typeof entry === 'string' &&
+        SURFACE_VALUES.has(entry as BlueprintUiSurface),
     );
 
     return Array.from(new Set(surfaces));
@@ -214,8 +218,7 @@ export const parseBlueprintUiContract = (
     canonicalSlug: buildCanonicalSlug(requestedSlug || undefined, publisher),
     publisher,
     resources: {
-      serviceLabel:
-        readTrimmedString(resourcesValue.serviceLabel) ?? 'Service',
+      serviceLabel: readTrimmedString(resourcesValue.serviceLabel) ?? 'Service',
       itemLabel: readTrimmedString(resourcesValue.itemLabel) ?? 'Resource',
       itemRoute: normalizeResourceRoute(resourcesValue.itemRoute),
     },
@@ -265,8 +268,7 @@ export const parseBlueprintMetadataDocument = (
       readNullableString(value.codeRepository) ??
       readNullableString(value.repository),
     website:
-      readNullableString(value.website) ??
-      readNullableString(value.homepage),
+      readNullableString(value.website) ?? readNullableString(value.homepage),
     blueprintUi: parseBlueprintUiContract(value.blueprintUi, {
       name,
       description,

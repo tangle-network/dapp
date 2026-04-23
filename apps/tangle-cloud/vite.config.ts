@@ -59,10 +59,7 @@ export default defineConfig({
               return 'vendor-react';
             }
 
-            if (
-              id.includes('/wagmi/') ||
-              id.includes('/ox/')
-            ) {
+            if (id.includes('/wagmi/') || id.includes('/ox/')) {
               return 'vendor-wallet-wagmi';
             }
 
@@ -88,16 +85,11 @@ export default defineConfig({
               return 'vendor-wallet-alt';
             }
 
-            if (
-              id.includes('/@polkadot/')
-            ) {
+            if (id.includes('/@polkadot/')) {
               return 'vendor-chain-polkadot';
             }
 
-            if (
-              id.includes('/asn1.js/') ||
-              id.includes('/bn.js/')
-            ) {
+            if (id.includes('/asn1.js/') || id.includes('/bn.js/')) {
               return 'vendor-chain-crypto';
             }
 

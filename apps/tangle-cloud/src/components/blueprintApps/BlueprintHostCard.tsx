@@ -1,5 +1,10 @@
 import type { Blueprint } from '@tangle-network/tangle-shared-ui/types/blueprint';
-import { Card, CardVariant, Typography, Button } from '@tangle-network/ui-components';
+import {
+  Card,
+  CardVariant,
+  Typography,
+  Button,
+} from '@tangle-network/ui-components';
 import { ExternalLinkLine } from '@tangle-network/icons';
 
 const SURFACE_LABELS: Record<
@@ -39,9 +44,7 @@ const BlueprintHostCard = ({ blueprint, serviceId }: Props) => {
           <Typography variant="h5" fw="bold">
             Hosted Blueprint Contract
           </Typography>
-          <Typography variant="body1">
-            {blueprintUi.displayName}
-          </Typography>
+          <Typography variant="body1">{blueprintUi.displayName}</Typography>
           <Typography variant="body2" className="text-mono-100 max-w-3xl">
             {blueprintUi.description}
           </Typography>
@@ -51,7 +54,11 @@ const BlueprintHostCard = ({ blueprint, serviceId }: Props) => {
           <Button
             variant="secondary"
             onClick={() =>
-              window.open(blueprintUi.externalApp?.url, '_blank', 'noopener,noreferrer')
+              window.open(
+                blueprintUi.externalApp?.url,
+                '_blank',
+                'noopener,noreferrer',
+              )
             }
           >
             <span className="inline-flex items-center gap-2">

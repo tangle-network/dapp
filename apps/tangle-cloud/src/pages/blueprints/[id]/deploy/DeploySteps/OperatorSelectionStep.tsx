@@ -116,7 +116,9 @@ export const SelectOperatorsStep: FC<SelectOperatorsStepProps> = ({
       return acc;
     }, {} as RowSelectionState);
 
-    const currentKeys = Object.keys(rowSelection).filter((key) => rowSelection[key]);
+    const currentKeys = Object.keys(rowSelection).filter(
+      (key) => rowSelection[key],
+    );
     const nextKeys = Object.keys(nextSelection);
     const isSame =
       currentKeys.length === nextKeys.length &&
