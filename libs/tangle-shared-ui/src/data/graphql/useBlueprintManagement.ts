@@ -217,8 +217,8 @@ const fetchBlueprintsByOwner = async (
             const response = await fetch(
               resolveBlueprintMetadataFetchUrl(bp.metadataUri),
               {
-              signal: controller.signal,
-              cache: 'no-store',
+                signal: controller.signal,
+                cache: 'no-store',
               },
             ).finally(() => {
               clearTimeout(timeoutId);
@@ -244,8 +244,8 @@ const fetchBlueprintsByOwner = async (
               codeRepository: parsed.codeUrl ?? undefined,
               docs:
                 metadataJson !== null
-                  ? readString(metadataJson.docs) ??
-                    readString(metadataJson.documentation)
+                  ? (readString(metadataJson.docs) ??
+                    readString(metadataJson.documentation))
                   : undefined,
             };
           } catch (error) {
@@ -409,7 +409,11 @@ export const useUpdateBlueprintTx = () => {
         address: contracts.tangle,
         abi: TANGLE_ABI,
         functionName: 'updateBlueprint' as const,
-        args: [params.blueprintId, params.metadataUri, params.metadataHash] as const,
+        args: [
+          params.blueprintId,
+          params.metadataUri,
+          params.metadataHash,
+        ] as const,
       };
     },
     {
@@ -424,7 +428,11 @@ export const useUpdateBlueprintTx = () => {
       metadataUri: string,
       metadataHash: `0x${string}`,
     ): Promise<Hash | null> => {
-      const result = await execute?.({ blueprintId, metadataUri, metadataHash });
+      const result = await execute?.({
+        blueprintId,
+        metadataUri,
+        metadataHash,
+      });
       return result?.hash ?? null;
     },
     [execute],

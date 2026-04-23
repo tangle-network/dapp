@@ -877,8 +877,8 @@ const BasicInfoStep: FC<BasicInfoStepProps> = ({
       />
       <Typography variant="body3" className="text-mono-100 mt-1">
         Publish the JSON preview below at this URI so cloud.tangle.tools can
-        resolve your hosted blueprint surfaces and shared runtime metadata.
-        New SDK blueprints ship the same contract shape in
+        resolve your hosted blueprint surfaces and shared runtime metadata. New
+        SDK blueprints ship the same contract shape in
         `metadata/blueprint-metadata.json`.
         {requiresIpfsForBlueprintMetadata()
           ? ' Production hosting only accepts ipfs:// metadata URIs.'

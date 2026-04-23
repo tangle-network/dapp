@@ -198,11 +198,15 @@ function parseExternalApp(
   const reasons: string[] = [];
 
   if (requestedMode === 'iframe') {
-    reasons.push('Iframe embedding is disabled by policy; verified apps must open in a new tab.');
+    reasons.push(
+      'Iframe embedding is disabled by policy; verified apps must open in a new tab.',
+    );
   }
 
   if (!options.publisherVerified) {
-    reasons.push('Publisher is not verified for advanced external app handoff.');
+    reasons.push(
+      'Publisher is not verified for advanced external app handoff.',
+    );
   }
 
   if (!options.metadataVerified) {
@@ -288,7 +292,8 @@ export function buildBlueprintManifestFromMetadata(
       ? 'verified'
       : getPublisherVerificationForNamespace(publisherNamespace),
   };
-  const metadataVerified = blueprint.metadataVerification?.status === 'verified';
+  const metadataVerified =
+    blueprint.metadataVerification?.status === 'verified';
   const publisherVerified = publisher.verification === 'verified';
   const slugPolicy = canPublisherClaimSlug(normalizedRequestedSlug, publisher)
     ? 'publisher-scoped'
@@ -313,9 +318,12 @@ export function buildBlueprintManifestFromMetadata(
   };
 
   const allowDeclarativeTier =
-    manifestRoot !== null && blueprint.metadataVerification?.productionReady === true;
+    manifestRoot !== null &&
+    blueprint.metadataVerification?.productionReady === true;
   const trustedExternalApp =
-    manifest.externalApp?.trust === 'trusted' ? manifest.externalApp : undefined;
+    manifest.externalApp?.trust === 'trusted'
+      ? manifest.externalApp
+      : undefined;
 
   const entry: BlueprintAppEntry = {
     slug: normalizedRequestedSlug,

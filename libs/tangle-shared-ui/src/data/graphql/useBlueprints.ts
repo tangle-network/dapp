@@ -96,8 +96,7 @@ const fetchBlueprintMetadata = async ({
   metadataHash?: `0x${string}` | null;
   blueprintId?: bigint;
   owner?: Address;
-},
-): Promise<{
+}): Promise<{
   name: string;
   description: string;
   author: string;
@@ -130,9 +129,12 @@ const fetchBlueprintMetadata = async ({
   }
 
   try {
-    const response = await fetch(resolveBlueprintMetadataFetchUrl(metadataUri), {
-      signal: AbortSignal.timeout(5000),
-    });
+    const response = await fetch(
+      resolveBlueprintMetadataFetchUrl(metadataUri),
+      {
+        signal: AbortSignal.timeout(5000),
+      },
+    );
     if (!response.ok) {
       throw new Error(`Failed to fetch metadata: ${response.status}`);
     }

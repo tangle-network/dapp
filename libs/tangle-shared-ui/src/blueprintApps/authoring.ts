@@ -142,8 +142,7 @@ const MODULE_SLOT_VALUES = new Set<BlueprintUiModuleSlot>([
   'resources',
 ]);
 
-const COLOR_PATTERN =
-  /^#(?:[0-9a-f]{3}|[0-9a-f]{6}|[0-9a-f]{8})$/i;
+const COLOR_PATTERN = /^#(?:[0-9a-f]{3}|[0-9a-f]{6}|[0-9a-f]{8})$/i;
 
 const MAX_METADATA_BYTES = 64 * 1024;
 const MAX_STRING_LENGTH = 240;
@@ -188,14 +187,6 @@ const readTrimmedString = (
   }
 
   return trimmed.slice(0, maxLength);
-};
-
-const readNullableString = (
-  value: unknown,
-  maxLength = MAX_STRING_LENGTH,
-): string | null => {
-  const trimmed = readTrimmedString(value, maxLength);
-  return trimmed ?? null;
 };
 
 const readStringArray = (
@@ -341,124 +332,118 @@ const parseTheme = (value: unknown): BlueprintUiTheme | undefined => {
   return Object.keys(theme).length > 0 ? theme : undefined;
 };
 
-const parseOverviewCards = (value: unknown): BlueprintUiOverviewCard[] | undefined => {
+const parseOverviewCards = (
+  value: unknown,
+): BlueprintUiOverviewCard[] | undefined => {
   if (!Array.isArray(value)) {
     return undefined;
   }
 
-  const cards = value
-    .slice(0, MAX_CARD_COUNT)
-    .flatMap((entry, index) => {
-      if (!isRecord(entry)) {
-        return [];
-      }
+  const cards = value.slice(0, MAX_CARD_COUNT).flatMap((entry, index) => {
+    if (!isRecord(entry)) {
+      return [];
+    }
 
-      const title = readTrimmedString(entry.title, 80);
-      const kind = readTrimmedString(entry.kind, 32)?.toLowerCase();
-      if (!title || !kind || !CARD_KIND_VALUES.has(kind as BlueprintUiCardKind)) {
-        return [];
-      }
+    const title = readTrimmedString(entry.title, 80);
+    const kind = readTrimmedString(entry.kind, 32)?.toLowerCase();
+    if (!title || !kind || !CARD_KIND_VALUES.has(kind as BlueprintUiCardKind)) {
+      return [];
+    }
 
-      const tone = readTrimmedString(entry.tone, 24)?.toLowerCase();
-      const links = Array.isArray(entry.links)
-        ? entry.links
-            .slice(0, MAX_CARD_LINK_COUNT)
-            .flatMap((link) => {
-              if (!isRecord(link)) {
-                return [];
-              }
+    const tone = readTrimmedString(entry.tone, 24)?.toLowerCase();
+    const links = Array.isArray(entry.links)
+      ? entry.links.slice(0, MAX_CARD_LINK_COUNT).flatMap((link) => {
+          if (!isRecord(link)) {
+            return [];
+          }
 
-              const label = readTrimmedString(link.label, 60);
-              const href = readTrimmedString(link.href, 2_048);
-              if (!label || !isValidHttpsUrl(href)) {
-                return [];
-              }
+          const label = readTrimmedString(link.label, 60);
+          const href = readTrimmedString(link.href, 2_048);
+          if (!label || !isValidHttpsUrl(href)) {
+            return [];
+          }
 
-              return [{ label, href }];
-            })
-        : undefined;
-      const items = readStringArray(entry.items, MAX_CARD_ITEM_COUNT, 120);
+          return [{ label, href }];
+        })
+      : undefined;
+    const items = readStringArray(entry.items, MAX_CARD_ITEM_COUNT, 120);
 
-      return [
-        {
-          id:
-            sanitizeBlueprintSlug(readTrimmedString(entry.id, 60) ?? '') ||
-            `card-${index + 1}`,
-          kind: kind as BlueprintUiCardKind,
-          title,
-          description: readTrimmedString(entry.description, 240),
-          value: readTrimmedString(entry.value, 80),
-          tone: CARD_TONE_VALUES.has(tone as BlueprintUiCardTone)
-            ? (tone as BlueprintUiCardTone)
-            : undefined,
-          ...(links && links.length > 0 ? { links } : {}),
-          ...(items.length > 0 ? { items } : {}),
-        } satisfies BlueprintUiOverviewCard,
-      ];
-    });
+    return [
+      {
+        id:
+          sanitizeBlueprintSlug(readTrimmedString(entry.id, 60) ?? '') ||
+          `card-${index + 1}`,
+        kind: kind as BlueprintUiCardKind,
+        title,
+        description: readTrimmedString(entry.description, 240),
+        value: readTrimmedString(entry.value, 80),
+        tone: CARD_TONE_VALUES.has(tone as BlueprintUiCardTone)
+          ? (tone as BlueprintUiCardTone)
+          : undefined,
+        ...(links && links.length > 0 ? { links } : {}),
+        ...(items.length > 0 ? { items } : {}),
+      } satisfies BlueprintUiOverviewCard,
+    ];
+  });
 
   return cards.length > 0 ? cards : undefined;
 };
 
-const parseActionFields = (value: unknown): BlueprintUiActionField[] | undefined => {
+const parseActionFields = (
+  value: unknown,
+): BlueprintUiActionField[] | undefined => {
   if (!Array.isArray(value)) {
     return undefined;
   }
 
-  const fields = value
-    .slice(0, MAX_ACTION_FIELD_COUNT)
-    .flatMap((entry) => {
-      if (!isRecord(entry)) {
-        return [];
-      }
+  const fields = value.slice(0, MAX_ACTION_FIELD_COUNT).flatMap((entry) => {
+    if (!isRecord(entry)) {
+      return [];
+    }
 
-      const key =
-        sanitizeBlueprintSlug(readTrimmedString(entry.key, 60) ?? '').replace(
-          /-/g,
-          '_',
-        );
-      const label = readTrimmedString(entry.label, 80);
-      const input = readTrimmedString(entry.input, 24)?.toLowerCase();
+    const key = sanitizeBlueprintSlug(
+      readTrimmedString(entry.key, 60) ?? '',
+    ).replace(/-/g, '_');
+    const label = readTrimmedString(entry.label, 80);
+    const input = readTrimmedString(entry.input, 24)?.toLowerCase();
 
-      if (
-        !key ||
-        !label ||
-        !input ||
-        !ACTION_FIELD_INPUT_VALUES.has(input as BlueprintUiActionFieldInput)
-      ) {
-        return [];
-      }
+    if (
+      !key ||
+      !label ||
+      !input ||
+      !ACTION_FIELD_INPUT_VALUES.has(input as BlueprintUiActionFieldInput)
+    ) {
+      return [];
+    }
 
-      const options = Array.isArray(entry.options)
-        ? entry.options
-            .slice(0, MAX_OPTION_COUNT)
-            .flatMap((option) => {
-              if (!isRecord(option)) {
-                return [];
-              }
+    const options = Array.isArray(entry.options)
+      ? entry.options.slice(0, MAX_OPTION_COUNT).flatMap((option) => {
+          if (!isRecord(option)) {
+            return [];
+          }
 
-              const optionLabel = readTrimmedString(option.label, 60);
-              const optionValue = readTrimmedString(option.value, 60);
-              if (!optionLabel || !optionValue) {
-                return [];
-              }
+          const optionLabel = readTrimmedString(option.label, 60);
+          const optionValue = readTrimmedString(option.value, 60);
+          if (!optionLabel || !optionValue) {
+            return [];
+          }
 
-              return [{ label: optionLabel, value: optionValue }];
-            })
-        : undefined;
+          return [{ label: optionLabel, value: optionValue }];
+        })
+      : undefined;
 
-      return [
-        {
-          key,
-          label,
-          input: input as BlueprintUiActionFieldInput,
-          required: entry.required === true,
-          placeholder: readTrimmedString(entry.placeholder, 120),
-          helpText: readTrimmedString(entry.helpText, 160),
-          ...(options && options.length > 0 ? { options } : {}),
-        } satisfies BlueprintUiActionField,
-      ];
-    });
+    return [
+      {
+        key,
+        label,
+        input: input as BlueprintUiActionFieldInput,
+        required: entry.required === true,
+        placeholder: readTrimmedString(entry.placeholder, 120),
+        helpText: readTrimmedString(entry.helpText, 160),
+        ...(options && options.length > 0 ? { options } : {}),
+      } satisfies BlueprintUiActionField,
+    ];
+  });
 
   return fields.length > 0 ? fields : undefined;
 };
@@ -468,44 +453,42 @@ const parseActions = (value: unknown): BlueprintUiAction[] | undefined => {
     return undefined;
   }
 
-  const actions = value
-    .slice(0, MAX_ACTION_COUNT)
-    .flatMap((entry, index) => {
-      if (!isRecord(entry)) {
-        return [];
-      }
+  const actions = value.slice(0, MAX_ACTION_COUNT).flatMap((entry, index) => {
+    if (!isRecord(entry)) {
+      return [];
+    }
 
-      const label = readTrimmedString(entry.label, 80);
-      const target = readTrimmedString(entry.target, 24)?.toLowerCase();
-      if (
-        !label ||
-        !target ||
-        !ACTION_TARGET_VALUES.has(target as BlueprintUiActionTarget)
-      ) {
-        return [];
-      }
+    const label = readTrimmedString(entry.label, 80);
+    const target = readTrimmedString(entry.target, 24)?.toLowerCase();
+    if (
+      !label ||
+      !target ||
+      !ACTION_TARGET_VALUES.has(target as BlueprintUiActionTarget)
+    ) {
+      return [];
+    }
 
-      const href = readTrimmedString(entry.href, 2_048);
-      const fields = parseActionFields(entry.fields);
+    const href = readTrimmedString(entry.href, 2_048);
+    const fields = parseActionFields(entry.fields);
 
-      if (!fields && !isValidHttpsUrl(href)) {
-        return [];
-      }
+    if (!fields && !isValidHttpsUrl(href)) {
+      return [];
+    }
 
-      return [
-        {
-          id:
-            sanitizeBlueprintSlug(readTrimmedString(entry.id, 60) ?? '') ||
-            `action-${index + 1}`,
-          label,
-          description: readTrimmedString(entry.description, 240),
-          target: target as BlueprintUiActionTarget,
-          submitLabel: readTrimmedString(entry.submitLabel, 60),
-          ...(isValidHttpsUrl(href) ? { href } : {}),
-          ...(fields ? { fields } : {}),
-        } satisfies BlueprintUiAction,
-      ];
-    });
+    return [
+      {
+        id:
+          sanitizeBlueprintSlug(readTrimmedString(entry.id, 60) ?? '') ||
+          `action-${index + 1}`,
+        label,
+        description: readTrimmedString(entry.description, 240),
+        target: target as BlueprintUiActionTarget,
+        submitLabel: readTrimmedString(entry.submitLabel, 60),
+        ...(isValidHttpsUrl(href) ? { href } : {}),
+        ...(fields ? { fields } : {}),
+      } satisfies BlueprintUiAction,
+    ];
+  });
 
   return actions.length > 0 ? actions : undefined;
 };
@@ -547,10 +530,9 @@ const parseResourceViews = (
                 return [];
               }
 
-              const key =
-                sanitizeBlueprintSlug(
-                  readTrimmedString(column.key, 60) ?? '',
-                ).replace(/-/g, '_');
+              const key = sanitizeBlueprintSlug(
+                readTrimmedString(column.key, 60) ?? '',
+              ).replace(/-/g, '_');
               const label = readTrimmedString(column.label, 60);
 
               if (!key || !label) {
@@ -588,7 +570,9 @@ const parseResourceViews = (
   return views.length > 0 ? views : undefined;
 };
 
-const parseModules = (value: unknown): BlueprintUiModuleBinding[] | undefined => {
+const parseModules = (
+  value: unknown,
+): BlueprintUiModuleBinding[] | undefined => {
   if (!Array.isArray(value)) {
     return undefined;
   }
@@ -616,8 +600,16 @@ const parseModules = (value: unknown): BlueprintUiModuleBinding[] | undefined =>
           module: moduleKey as BlueprintUiModuleKey,
           slot: slot as BlueprintUiModuleSlot,
           title: readTrimmedString(entry.title, 80),
-          metricKeys: readStringArray(entry.metricKeys, MAX_STRING_LIST_COUNT, 48),
-          eventKinds: readStringArray(entry.eventKinds, MAX_STRING_LIST_COUNT, 48),
+          metricKeys: readStringArray(
+            entry.metricKeys,
+            MAX_STRING_LIST_COUNT,
+            48,
+          ),
+          eventKinds: readStringArray(
+            entry.eventKinds,
+            MAX_STRING_LIST_COUNT,
+            48,
+          ),
         } satisfies BlueprintUiModuleBinding,
       ];
     })
@@ -699,7 +691,8 @@ const toCanonicalMetadataJson = (value: Record<string, unknown>): string =>
 
 export const computeBlueprintMetadataPayloadHash = (
   value: Record<string, unknown>,
-): Hex => keccak256(toHex(new TextEncoder().encode(toCanonicalMetadataJson(value))));
+): Hex =>
+  keccak256(toHex(new TextEncoder().encode(toCanonicalMetadataJson(value))));
 
 const parseBlueprintMetadataAttestation = (
   value: unknown,
@@ -825,7 +818,10 @@ export const verifyBlueprintMetadataIntegrity = async ({
     stripMetadataAttestation(rawMetadata),
   );
 
-  if (metadataHash && metadataHash.toLowerCase() !== payloadHash.toLowerCase()) {
+  if (
+    metadataHash &&
+    metadataHash.toLowerCase() !== payloadHash.toLowerCase()
+  ) {
     return buildDefaultMetadataVerification({
       metadataUri,
       status: 'invalid',
@@ -1073,7 +1069,9 @@ export const parseBlueprintMetadataJsonText = (
   };
 };
 
-export const resolveBlueprintMetadataFetchUrl = (metadataUri: string): string => {
+export const resolveBlueprintMetadataFetchUrl = (
+  metadataUri: string,
+): string => {
   if (!metadataUri.startsWith('ipfs://')) {
     return metadataUri;
   }
@@ -1140,7 +1138,9 @@ export const buildBlueprintUiMetadataDocument = ({
         metrics: draft.surfaces.includes('metrics'),
         permissions: draft.surfaces.includes('permissions'),
       },
-      externalApp: isValidHttpsUrl(readTrimmedString(draft.externalAppUrl, 2_048))
+      externalApp: isValidHttpsUrl(
+        readTrimmedString(draft.externalAppUrl, 2_048),
+      )
         ? {
             url: draft.externalAppUrl.trim(),
             mode: 'link',
