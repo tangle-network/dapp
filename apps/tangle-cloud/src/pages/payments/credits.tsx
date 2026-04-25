@@ -1,9 +1,15 @@
 import { FC, useState } from 'react';
-import { Typography } from '@tangle-network/ui-components';
+import {
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
+} from '@tangle-network/sandbox-ui/primitives';
 import FundCreditsContainer from '../../containers/payments/FundCreditsContainer';
 import SpendAuthContainer from '../../containers/payments/SpendAuthContainer';
 import CreditBalanceContainer from '../../containers/payments/CreditBalanceContainer';
 import RequireWallet from '../../components/RequireWallet';
+import PaymentProviders from '../../app/PaymentProviders';
 
 const enum CreditsTab {
   BALANCE = 'balance',
@@ -11,66 +17,73 @@ const enum CreditsTab {
   SPEND = 'spend',
 }
 
-const PaymentsCreditsPage: FC = () => {
+const PaymentsCreditsContent: FC = () => {
   const [activeTab, setActiveTab] = useState<CreditsTab>(CreditsTab.BALANCE);
 
   return (
     <div className="space-y-6">
       <div>
-        <Typography variant="h4" fw="bold">
+        <h1 className="font-display font-extrabold text-foreground text-3xl tracking-tight">
           Anonymous Credits
-        </Typography>
+        </h1>
 
-        <Typography variant="body1" className="mt-1 text-mono-100">
-          Fund prepaid credit accounts for private pay-per-use cloud services.
-          One ZK proof funds the account; cheap signatures authorize each job.
-        </Typography>
+        <p className="mt-2 max-w-2xl text-muted-foreground text-sm">
+          Fund prepaid credit accounts and authorize service usage without
+          sending a wallet transaction for every job.
+        </p>
       </div>
 
       <RequireWallet
-        title="Connect to manage Credits"
+        eyebrow="Credits"
+        title="Connect to manage credits"
         description="A wallet connection is required to fund and manage credit accounts."
+        checks={['Credit accounts', 'Fund account', 'Authorize spend']}
       >
-        <div
-          className="flex border-b border-mono-40 dark:border-mono-160"
-          role="tablist"
+        <Tabs
+          value={activeTab}
+          onValueChange={(tab: string) => setActiveTab(tab as CreditsTab)}
+          className="space-y-5"
         >
-          {(
-            [
-              [CreditsTab.BALANCE, 'Accounts'],
-              [CreditsTab.FUND, 'Fund'],
-              [CreditsTab.SPEND, 'Authorize'],
-            ] as const
-          ).map(([tab, label]) => (
-            <button
-              key={tab}
-              type="button"
-              role="tab"
-              aria-selected={activeTab === tab}
-              onClick={() => setActiveTab(tab)}
-              className={`px-4 py-2 text-sm font-medium border-b-2 transition-colors ${
-                activeTab === tab
-                  ? 'border-blue-50 text-blue-50'
-                  : 'border-transparent text-mono-100 hover:text-mono-200 dark:hover:text-mono-0'
-              }`}
+          <TabsList className="flex h-auto w-full justify-start rounded-lg border border-border bg-card p-1 shadow-[var(--shadow-card)]">
+            <TabsTrigger
+              value={CreditsTab.BALANCE}
+              className="rounded-md px-3 py-2 font-semibold text-sm data-[state=active]:bg-primary data-[state=active]:text-primary-foreground"
             >
-              {label}
-            </button>
-          ))}
-        </div>
+              Accounts
+            </TabsTrigger>
+            <TabsTrigger
+              value={CreditsTab.FUND}
+              className="rounded-md px-3 py-2 font-semibold text-sm data-[state=active]:bg-primary data-[state=active]:text-primary-foreground"
+            >
+              Fund
+            </TabsTrigger>
+            <TabsTrigger
+              value={CreditsTab.SPEND}
+              className="rounded-md px-3 py-2 font-semibold text-sm data-[state=active]:bg-primary data-[state=active]:text-primary-foreground"
+            >
+              Authorize
+            </TabsTrigger>
+          </TabsList>
 
-        <div className="max-w-2xl" role="tabpanel">
-          {activeTab === CreditsTab.BALANCE ? (
+          <TabsContent value={CreditsTab.BALANCE} className="max-w-2xl">
             <CreditBalanceContainer />
-          ) : activeTab === CreditsTab.FUND ? (
+          </TabsContent>
+          <TabsContent value={CreditsTab.FUND} className="max-w-2xl">
             <FundCreditsContainer />
-          ) : (
+          </TabsContent>
+          <TabsContent value={CreditsTab.SPEND} className="max-w-2xl">
             <SpendAuthContainer />
-          )}
-        </div>
+          </TabsContent>
+        </Tabs>
       </RequireWallet>
     </div>
   );
 };
+
+const PaymentsCreditsPage: FC = () => (
+  <PaymentProviders>
+    <PaymentsCreditsContent />
+  </PaymentProviders>
+);
 
 export default PaymentsCreditsPage;

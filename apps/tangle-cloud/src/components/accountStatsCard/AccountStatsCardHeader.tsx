@@ -1,9 +1,9 @@
 import { FC } from 'react';
-import { Typography } from '@tangle-network/ui-components';
 import { twMerge } from 'tailwind-merge';
 import { ExternalLinkLine } from '@tangle-network/icons';
 import { isPrimitive } from '@tangle-network/dapp-types';
 import { AccountStatsCardHeaderProps } from '.';
+import { Text } from '../sandbox/SandboxUi';
 
 export const AccountStatsCardHeader: FC<AccountStatsCardHeaderProps> = ({
   className,
@@ -24,27 +24,20 @@ export const AccountStatsCardHeader: FC<AccountStatsCardHeaderProps> = ({
 
         <div>
           {isPrimitive(title) && title !== null && title !== undefined ? (
-            <Typography
-              variant="h5"
-              fw="bold"
-              className="text-mono-200 dark:text-mono-0"
-            >
+            <Text variant="h5" fw="bold" className="text-foreground">
               {title}
-            </Typography>
+            </Text>
           ) : (
             title
           )}
 
-          <div className="flex items-center gap-0.5 text-mono-120 dark:text-mono-100">
+          <div className="flex items-center gap-0.5 text-muted-foreground">
             {isPrimitive(description) &&
             description !== null &&
             description !== undefined ? (
-              <Typography
-                variant="body3"
-                className="text-mono-120 dark:text-mono-100"
-              >
+              <Text variant="body3" className="text-muted-foreground">
                 {description}
-              </Typography>
+              </Text>
             ) : (
               description
             )}

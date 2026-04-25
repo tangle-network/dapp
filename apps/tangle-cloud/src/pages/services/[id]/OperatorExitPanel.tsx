@@ -2,17 +2,25 @@
  * Panel for managing operator exit queue for dynamic services.
  */
 
-import { FC, useState, useCallback, useMemo, useEffect } from 'react';
 import {
+  type ComponentProps,
+  type ElementType,
+  type FC,
+  type ReactNode,
+  useState,
+  useCallback,
+  useMemo,
+  useEffect,
+} from 'react';
+import {
+  Button as SandboxButton,
   Card,
-  CardVariant,
-  Typography,
-  Button,
-  SkeletonLoader,
-  Dropdown,
-  DropdownBody,
+  DropdownMenu,
+  DropdownMenuContent,
   DropdownMenuItem,
-} from '@tangle-network/ui-components';
+  DropdownMenuTrigger,
+  Skeleton,
+} from '@tangle-network/sandbox-ui/primitives';
 import {
   TimeLineIcon,
   PlayFillIcon,
@@ -42,6 +50,74 @@ interface Props {
   operatorAddress: Address;
   isOwner: boolean;
 }
+
+const CARD_SURFACE = 'sandbox' as const;
+
+type TextProps = ComponentProps<'p'> & {
+  variant?: 'h5' | 'body1' | 'body2' | 'body3';
+  fw?: 'bold' | 'semibold';
+};
+
+const Text: FC<TextProps> = ({
+  variant = 'body2',
+  fw,
+  className = '',
+  ...props
+}) => {
+  const Component = (variant === 'h5' ? 'h2' : 'p') as ElementType;
+  const variantClass =
+    variant === 'h5'
+      ? 'font-display text-xl text-foreground'
+      : variant === 'body1'
+        ? 'text-base text-foreground'
+        : variant === 'body3'
+          ? 'text-xs text-muted-foreground'
+          : 'text-sm text-foreground';
+  const weightClass =
+    fw === 'bold' ? 'font-bold' : fw === 'semibold' ? 'font-semibold' : '';
+
+  return (
+    <Component
+      className={[variantClass, weightClass, className]
+        .filter(Boolean)
+        .join(' ')}
+      {...props}
+    />
+  );
+};
+
+type ButtonProps = Omit<
+  ComponentProps<typeof SandboxButton>,
+  'variant' | 'size'
+> & {
+  variant?: ComponentProps<typeof SandboxButton>['variant'] | 'utility';
+  size?: ComponentProps<typeof SandboxButton>['size'];
+  isDisabled?: boolean;
+  isLoading?: boolean;
+  leftIcon?: ReactNode;
+};
+
+const Button: FC<ButtonProps> = ({
+  variant,
+  size,
+  isDisabled,
+  isLoading,
+  leftIcon,
+  disabled,
+  children,
+  ...props
+}) => (
+  <SandboxButton
+    variant={variant === 'utility' ? 'outline' : variant}
+    size={size}
+    disabled={disabled || isDisabled}
+    loading={isLoading}
+    {...props}
+  >
+    {leftIcon}
+    {children}
+  </SandboxButton>
+);
 
 const formatDuration = (seconds: bigint): string => {
   const totalSeconds = Number(seconds);
@@ -202,11 +278,11 @@ const OperatorExitPanel: FC<Props> = ({
 
   if (isLoading) {
     return (
-      <Card variant={CardVariant.GLASS} className="p-6">
-        <Typography variant="h5" fw="bold" className="mb-4">
+      <Card variant={CARD_SURFACE} className="p-6">
+        <Text variant="h5" fw="bold" className="mb-4">
           Exit Queue
-        </Typography>
-        <SkeletonLoader className="h-24" />
+        </Text>
+        <Skeleton className="h-24" />
       </Card>
     );
   }
@@ -214,37 +290,37 @@ const OperatorExitPanel: FC<Props> = ({
   const error = scheduleError || executeError || cancelError || forceExitError;
 
   return (
-    <Card variant={CardVariant.GLASS} className="p-6">
-      <Typography variant="h5" fw="bold" className="mb-4">
+    <Card variant={CARD_SURFACE} className="p-6">
+      <Text variant="h5" fw="bold" className="mb-4">
         Exit Queue
-      </Typography>
+      </Text>
 
       <div className="space-y-4">
         {/* Exit Config Info */}
         <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-          <div className="p-3 rounded-lg bg-mono-20 dark:bg-mono-170">
-            <Typography variant="body3" className="text-mono-100 mb-1">
+          <div className="p-3 rounded-lg bg-muted/40">
+            <Text variant="body3" className="text-muted-foreground mb-1">
               Exit Queue Duration
-            </Typography>
-            <Typography variant="body1" fw="semibold">
+            </Text>
+            <Text variant="body1" fw="semibold">
               {formatDuration(exitConfig?.exitQueueDuration ?? BigInt(0))}
-            </Typography>
+            </Text>
           </div>
-          <div className="p-3 rounded-lg bg-mono-20 dark:bg-mono-170">
-            <Typography variant="body3" className="text-mono-100 mb-1">
+          <div className="p-3 rounded-lg bg-muted/40">
+            <Text variant="body3" className="text-muted-foreground mb-1">
               Min Commitment
-            </Typography>
-            <Typography variant="body1" fw="semibold">
+            </Text>
+            <Text variant="body1" fw="semibold">
               {formatDuration(exitConfig?.minCommitmentDuration ?? BigInt(0))}
-            </Typography>
+            </Text>
           </div>
-          <div className="p-3 rounded-lg bg-mono-20 dark:bg-mono-170">
-            <Typography variant="body3" className="text-mono-100 mb-1">
+          <div className="p-3 rounded-lg bg-muted/40">
+            <Text variant="body3" className="text-muted-foreground mb-1">
               Force Exit Allowed
-            </Typography>
-            <Typography variant="body1" fw="semibold">
+            </Text>
+            <Text variant="body1" fw="semibold">
               {exitConfig?.forceExitAllowed ? 'Yes' : 'No'}
-            </Typography>
+            </Text>
           </div>
         </div>
 
@@ -253,11 +329,11 @@ const OperatorExitPanel: FC<Props> = ({
           <div className="space-y-3">
             {canScheduleExit?.canExit ? (
               <div>
-                <Typography variant="body2" className="text-mono-100 mb-3">
+                <Text variant="body2" className="text-muted-foreground mb-3">
                   You can schedule an exit from this service. After scheduling,
                   you will need to wait for the exit queue duration before
                   executing your exit.
-                </Typography>
+                </Text>
                 <Button
                   onClick={handleScheduleExit}
                   isLoading={isScheduling}
@@ -269,21 +345,21 @@ const OperatorExitPanel: FC<Props> = ({
               </div>
             ) : (
               <div className="p-3 rounded-lg bg-yellow-500/10 border border-yellow-500/20">
-                <Typography variant="body2" className="text-yellow-400">
+                <Text variant="body2" className="text-yellow-400">
                   {canScheduleExit?.reason ||
                     'You cannot schedule an exit at this time.'}
-                </Typography>
+                </Text>
               </div>
             )}
           </div>
         )}
 
         {exitStatus !== ExitStatus.None && exitStatus !== undefined && (
-          <div className="p-4 rounded-lg border border-mono-60 dark:border-mono-140">
+          <div className="p-4 rounded-lg border border-border">
             <div className="flex items-center justify-between mb-2">
-              <Typography variant="body2" fw="semibold">
+              <Text variant="body2" fw="semibold">
                 Your Exit Status
-              </Typography>
+              </Text>
               <ExitStatusBadge status={exitStatus} />
             </div>
 
@@ -291,7 +367,7 @@ const OperatorExitPanel: FC<Props> = ({
               <div className="space-y-3">
                 <div className="grid grid-cols-2 gap-4 text-sm">
                   <div>
-                    <span className="text-mono-100">Scheduled At:</span>
+                    <span className="text-muted-foreground">Scheduled At:</span>
                     <span className="block font-semibold">
                       {new Date(
                         Number(exitRequest.scheduledAt) * 1000,
@@ -299,7 +375,9 @@ const OperatorExitPanel: FC<Props> = ({
                     </span>
                   </div>
                   <div>
-                    <span className="text-mono-100">Execute After:</span>
+                    <span className="text-muted-foreground">
+                      Execute After:
+                    </span>
                     <span className="block font-semibold">
                       {new Date(
                         Number(exitRequest.executeAfter) * 1000,
@@ -309,22 +387,22 @@ const OperatorExitPanel: FC<Props> = ({
                 </div>
 
                 {!canExecuteNow && countdown && (
-                  <div className="p-3 rounded-lg bg-blue-500/10 border border-blue-500/20">
+                  <div className="p-3 rounded-lg bg-primary/10 border border-primary/20">
                     <div className="flex items-center gap-2">
-                      <TimeLineIcon className="w-4 h-4 text-blue-400" />
-                      <Typography variant="body2" className="text-blue-400">
+                      <TimeLineIcon className="w-4 h-4 text-primary" />
+                      <Text variant="body2" className="text-primary">
                         Time remaining:{' '}
                         <span className="font-semibold">{countdown}</span>
-                      </Typography>
+                      </Text>
                     </div>
                   </div>
                 )}
 
                 {canExecuteNow && (
                   <div className="p-3 rounded-lg bg-green-500/10 border border-green-500/20">
-                    <Typography variant="body2" className="text-green-400">
+                    <Text variant="body2" className="text-green-400">
                       Your exit is ready to execute!
-                    </Typography>
+                    </Text>
                   </div>
                 )}
 
@@ -378,9 +456,9 @@ const OperatorExitPanel: FC<Props> = ({
 
             {exitStatus === ExitStatus.Completed && (
               <div className="p-3 rounded-lg bg-green-500/10 border border-green-500/20">
-                <Typography variant="body2" className="text-green-400">
+                <Text variant="body2" className="text-green-400">
                   You have successfully exited this service.
-                </Typography>
+                </Text>
               </div>
             )}
           </div>
@@ -394,27 +472,25 @@ const OperatorExitPanel: FC<Props> = ({
             <div className="p-4 rounded-lg bg-red-500/5 border border-red-500/20">
               <div className="flex items-center gap-2 mb-3">
                 <AlertFill className="w-4 h-4 text-red-400" />
-                <Typography
-                  variant="body2"
-                  fw="semibold"
-                  className="text-red-400"
-                >
+                <Text variant="body2" fw="semibold" className="text-red-400">
                   Force Exit Operator (Owner Only)
-                </Typography>
+                </Text>
               </div>
-              <Typography variant="body3" className="text-mono-100 mb-3">
+              <Text variant="body3" className="text-muted-foreground mb-3">
                 As the service owner, you can force-exit an operator from this
                 service. Use this carefully as it will immediately remove the
                 operator.
-              </Typography>
+              </Text>
               <div className="flex gap-2 items-center">
-                <Dropdown>
-                  <Button variant="secondary" size="sm">
-                    {selectedOperatorForForceExit
-                      ? `${selectedOperatorForForceExit.slice(0, 6)}...${selectedOperatorForForceExit.slice(-4)}`
-                      : 'Select Operator'}
-                  </Button>
-                  <DropdownBody>
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button variant="secondary" size="sm">
+                      {selectedOperatorForForceExit
+                        ? `${selectedOperatorForForceExit.slice(0, 6)}...${selectedOperatorForForceExit.slice(-4)}`
+                        : 'Select Operator'}
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="start">
                     {operators
                       .filter((op) => !addressesEqual(op, operatorAddress))
                       .map((op) => (
@@ -425,8 +501,8 @@ const OperatorExitPanel: FC<Props> = ({
                           {`${op.slice(0, 10)}...${op.slice(-8)}`}
                         </DropdownMenuItem>
                       ))}
-                  </DropdownBody>
-                </Dropdown>
+                  </DropdownMenuContent>
+                </DropdownMenu>
                 <Button
                   variant="secondary"
                   size="sm"
@@ -455,9 +531,9 @@ const ExitStatusBadge: FC<{ status: ExitStatus }> = ({ status }) => {
       case ExitStatus.Executable:
         return 'bg-green-500/20 text-green-400';
       case ExitStatus.Completed:
-        return 'bg-blue-500/20 text-blue-400';
+        return 'bg-primary/20 text-primary';
       default:
-        return 'bg-mono-60 text-mono-100';
+        return 'bg-muted text-muted-foreground';
     }
   };
 

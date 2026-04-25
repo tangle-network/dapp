@@ -7,6 +7,10 @@ import {
   type Address,
   type Hex,
 } from 'viem';
+import {
+  isLocalPreviewHost,
+  rewriteLocalhostUrlForBrowser,
+} from '../utils/localPreview';
 import type {
   BlueprintMetadataAttestation,
   BlueprintMetadataVerification,
@@ -157,8 +161,6 @@ const MAX_RESOURCE_VIEW_COUNT = 6;
 const MAX_RESOURCE_COLUMN_COUNT = 8;
 const MAX_MODULE_COUNT = 8;
 const MAX_STRING_LIST_COUNT = 8;
-const LOCAL_HOSTNAMES = new Set(['localhost', '127.0.0.1', '0.0.0.0']);
-
 export const DEFAULT_BLUEPRINT_UI_DRAFT: BlueprintUiAuthoringDraft = {
   requestedSlug: '',
   publisherNamespace: '',
@@ -649,11 +651,15 @@ const toMetadataSource = (
 };
 
 const isLocalBlueprintHostRuntime = (): boolean => {
+  if (import.meta.env.VITE_FORCE_LOCAL_CHAIN === 'true') {
+    return true;
+  }
+
   if (typeof window === 'undefined') {
     return false;
   }
 
-  return LOCAL_HOSTNAMES.has(window.location.hostname);
+  return isLocalPreviewHost(window.location.hostname);
 };
 
 export const requiresIpfsForBlueprintMetadata = (): boolean =>
@@ -1073,7 +1079,7 @@ export const resolveBlueprintMetadataFetchUrl = (
   metadataUri: string,
 ): string => {
   if (!metadataUri.startsWith('ipfs://')) {
-    return metadataUri;
+    return rewriteLocalhostUrlForBrowser(metadataUri);
   }
 
   const cid = metadataUri.replace('ipfs://', '');

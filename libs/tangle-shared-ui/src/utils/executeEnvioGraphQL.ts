@@ -4,11 +4,14 @@
  */
 
 // Network type for Envio (simplified - just chain-based)
+import { getBrowserLocalServiceUrl } from './localPreview';
+
 export type EnvioNetwork = 'local' | 'testnet' | 'mainnet';
 
 // Envio indexer endpoints
 // Note: Hasura commonly serves GraphQL at /v1/graphql, but deployments may also expose it at /graphql.
-const DEFAULT_LOCAL_ENDPOINT = 'http://localhost:8080/v1/graphql';
+const getDefaultLocalEndpoint = () =>
+  getBrowserLocalServiceUrl(8080, '/v1/graphql');
 const ENVIO_ENDPOINTS: Partial<Record<EnvioNetwork, string>> = {
   local: import.meta.env.VITE_ENVIO_LOCAL_ENDPOINT,
   testnet: import.meta.env.VITE_ENVIO_TESTNET_ENDPOINT,
@@ -64,7 +67,7 @@ export const getEnvioEndpoint = (network?: EnvioNetwork): string => {
   }
 
   if (resolvedNetwork === 'local') {
-    return DEFAULT_LOCAL_ENDPOINT;
+    return getDefaultLocalEndpoint();
   }
 
   throw new Error(

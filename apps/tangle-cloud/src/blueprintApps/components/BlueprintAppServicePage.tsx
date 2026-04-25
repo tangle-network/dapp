@@ -1,4 +1,9 @@
-import { Button, Typography } from '@tangle-network/ui-components';
+import {
+  Badge,
+  Button,
+  Card,
+  CardContent,
+} from '@tangle-network/sandbox-ui/primitives';
 import type { FC } from 'react';
 import { Link } from 'react-router';
 import type { SchemaField } from '@tangle-network/tangle-shared-ui/codec';
@@ -79,294 +84,281 @@ const BlueprintAppServicePage: FC<Props> = ({
 }) => {
   const view = resolveBlueprintAppView(entry);
   const serviceConsolePath = PagePath.SERVICE_DETAILS.replace(':id', serviceId);
+  const serviceNoun = view.manifest.resources.serviceNoun;
+  const resourceNoun = view.manifest.resources.resourceNoun;
 
   return (
-    <div className="space-y-6">
-      <div className="rounded-3xl border border-mono-160/10 bg-mono-0/[0.04] p-6 md:p-8">
-        <div className="max-w-3xl space-y-4">
-          <div className="inline-flex rounded-full border border-mono-160/10 bg-mono-0/[0.05] px-3 py-1">
-            <Typography variant="body3" className="text-mono-80">
+    <div data-sandbox-ui className="space-y-6">
+      <Card variant="sandbox" className="overflow-hidden rounded-[32px]">
+        <CardContent className="relative p-6 md:p-8">
+          <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white/35 to-transparent" />
+          <div className="absolute -right-16 -top-20 h-56 w-56 rounded-full bg-[var(--brand-purple)]/20 blur-3xl" />
+
+          <div className="relative max-w-4xl space-y-5">
+            <Badge variant="sandbox" className="w-fit">
               {getBlueprintExperienceTierLabel(view.tier)}
-            </Typography>
-          </div>
+            </Badge>
 
-          <Typography variant="h2" fw="bold">
-            {view.manifest.displayName} service #{serviceId}
-          </Typography>
-          <Typography variant="body1" className="text-mono-80">
-            This is the service-level host surface for the {view.slug} blueprint
-            app. It is where the shell resolves public instance detail,
-            operator-backed resources, generic protocol surfaces, and any
-            approved module UI.
-          </Typography>
+            <div className="space-y-3">
+              <h1 className="font-display text-4xl font-extrabold leading-tight tracking-[-0.04em] text-white md:text-5xl">
+                {view.manifest.displayName} service #{serviceId}
+              </h1>
+              <p className="max-w-3xl text-base leading-7 text-white/70">
+                Manage this live {serviceNoun.toLowerCase()}: check access,
+                inspect callable jobs, review recent activity, and open the full
+                service console when you need to operate the instance.
+              </p>
+            </div>
 
-          <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-            <div className="rounded-2xl border border-mono-160/10 bg-mono-0/[0.04] p-4">
-              <Typography variant="body3" className="text-mono-80">
-                Route
-              </Typography>
-              <Typography variant="body2" className="text-mono-0 mt-1">
-                {getBlueprintServicePath(view, serviceId)}
-              </Typography>
+            <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+              <ServiceMetric
+                label="Route"
+                value={getBlueprintServicePath(view, serviceId)}
+              />
+              <ServiceMetric label="Resource" value={resourceNoun} />
+              <ServiceMetric label="Blueprint" value={view.slug} />
+              <ServiceMetric label="Service ID" value={serviceId} />
             </div>
-            <div className="rounded-2xl border border-mono-160/10 bg-mono-0/[0.04] p-4">
-              <Typography variant="body3" className="text-mono-80">
-                Resource
-              </Typography>
-              <Typography variant="body2" className="text-mono-0 mt-1">
-                {view.manifest.resources.resourceNoun}
-              </Typography>
+
+            <div className="flex flex-wrap gap-2">
+              {view.manifest.surfaces.map((surface) => (
+                <Badge key={surface} variant="sandbox">
+                  {getBlueprintSurfaceLabel(surface)}
+                </Badge>
+              ))}
             </div>
-            <div className="rounded-2xl border border-mono-160/10 bg-mono-0/[0.04] p-4">
-              <Typography variant="body3" className="text-mono-80">
-                Blueprint
-              </Typography>
-              <Typography variant="body2" className="text-mono-0 mt-1">
-                {view.slug}
-              </Typography>
-            </div>
-            <div className="rounded-2xl border border-mono-160/10 bg-mono-0/[0.04] p-4">
-              <Typography variant="body3" className="text-mono-80">
-                Service ID
-              </Typography>
-              <Typography variant="body2" className="text-mono-0 mt-1">
-                {serviceId}
-              </Typography>
+
+            <div className="flex flex-wrap gap-3 pt-2">
+              <Button asChild variant="secondary">
+                <Link to={getBlueprintPath(view)}>Blueprint homepage</Link>
+              </Button>
+              <Button asChild>
+                <Link to={serviceConsolePath}>Open service console</Link>
+              </Button>
+              <Button asChild variant="secondary">
+                <Link to="/instances">All services</Link>
+              </Button>
             </div>
           </div>
-
-          <div className="flex flex-wrap gap-2">
-            {view.manifest.surfaces.map((surface) => (
-              <span
-                key={surface}
-                className="rounded-full border border-mono-160/10 bg-mono-0/[0.05] px-3 py-1 text-xs text-mono-100"
-              >
-                {getBlueprintSurfaceLabel(surface)}
-              </span>
-            ))}
-          </div>
-
-          <div className="flex flex-wrap gap-3 pt-2">
-            <Link to={getBlueprintPath(view)}>
-              <Button variant="secondary">Blueprint homepage</Button>
-            </Link>
-            <Link to={serviceConsolePath}>
-              <Button>Open service console</Button>
-            </Link>
-            <Link to="/instances">
-              <Button variant="secondary">All services</Button>
-            </Link>
-          </div>
-        </div>
-      </div>
+        </CardContent>
+      </Card>
 
       <div className="grid gap-5 lg:grid-cols-3">
-        <section className="rounded-3xl border border-mono-160/10 bg-mono-0/[0.03] p-6">
-          <Typography variant="h4" fw="bold">
-            Public overview
-          </Typography>
-          <Typography variant="body2" className="mt-3 text-mono-100">
-            Show public metadata, operator set, uptime, permissions, and
-            discoverable resources for this service even when no custom app
-            module exists.
-          </Typography>
-        </section>
-
-        <section className="rounded-3xl border border-mono-160/10 bg-mono-0/[0.03] p-6">
-          <Typography variant="h4" fw="bold">
-            App surfaces
-          </Typography>
-          <Typography variant="body2" className="mt-3 text-mono-100">
-            Mount blueprint-specific routes under this service, like chat,
-            vaults, runs, bots, or agents, without creating a new website per
-            blueprint.
-          </Typography>
-        </section>
-
-        <section className="rounded-3xl border border-mono-160/10 bg-mono-0/[0.03] p-6">
-          <Typography variant="h4" fw="bold">
-            Extensibility boundary
-          </Typography>
-          <Typography variant="body2" className="mt-3 text-mono-100">
-            Resolve operator-backed APIs or external app handoff behind one host
-            surface later, instead of exposing raw IPs or forcing one subdomain
-            per blueprint.
-          </Typography>
-        </section>
+        <ServiceCard
+          title="Access"
+          description="See who owns the service, which wallets may call it, and how many operators are backing the instance."
+        />
+        <ServiceCard
+          title="Actions"
+          description="Submit supported blueprint jobs through the generic service console, even before a custom app module exists."
+        />
+        <ServiceCard
+          title="Activity"
+          description="Use recent indexed calls to tell whether the instance is idle, pending results, or actively producing output."
+        />
       </div>
 
       {(liveDetails ||
         (requestSchemaFields && requestSchemaFields.length > 0)) && (
         <div className="grid gap-5 lg:grid-cols-2">
           {liveDetails && (
-            <section className="rounded-3xl border border-mono-160/10 bg-mono-0/[0.03] p-6">
-              <Typography variant="h4" fw="bold">
-                Live service access
-              </Typography>
-              <div className="mt-4 grid gap-3 sm:grid-cols-2">
-                <div>
-                  <Typography variant="body3" className="text-mono-80">
-                    Status
-                  </Typography>
-                  <Typography variant="body2" className="mt-1 text-mono-0">
-                    {liveDetails.status}
-                  </Typography>
+            <Card variant="sandbox" className="rounded-3xl">
+              <CardContent className="p-6">
+                <h2 className="font-display text-2xl font-extrabold tracking-tight text-white">
+                  Live service access
+                </h2>
+                <div className="mt-4 grid gap-3 sm:grid-cols-2">
+                  <div>
+                    <p className="text-xs font-bold uppercase tracking-widest text-white/42">
+                      Status
+                    </p>
+                    <p className="mt-1 text-sm font-semibold text-white">
+                      {liveDetails.status}
+                    </p>
+                  </div>
+                  <div>
+                    <p className="text-xs font-bold uppercase tracking-widest text-white/42">
+                      Owner
+                    </p>
+                    <p className="mt-1 break-all text-sm font-semibold text-white">
+                      {liveDetails.owner}
+                    </p>
+                  </div>
+                  <div>
+                    <p className="text-xs font-bold uppercase tracking-widest text-white/42">
+                      Operators
+                    </p>
+                    <p className="mt-1 text-sm font-semibold text-white">
+                      {liveDetails.operators.length}
+                    </p>
+                  </div>
+                  <div>
+                    <p className="text-xs font-bold uppercase tracking-widest text-white/42">
+                      Permitted callers
+                    </p>
+                    <p className="mt-1 text-sm font-semibold text-white">
+                      {liveDetails.permittedCallers.length}
+                    </p>
+                  </div>
+                  <div className="sm:col-span-2">
+                    <p className="text-xs font-bold uppercase tracking-widest text-white/42">
+                      Connected wallet access
+                    </p>
+                    <p className="mt-1 text-sm font-semibold capitalize text-white">
+                      {liveDetails.viewerAccess ?? 'public'}
+                    </p>
+                  </div>
                 </div>
-                <div>
-                  <Typography variant="body3" className="text-mono-80">
-                    Owner
-                  </Typography>
-                  <Typography
-                    variant="body2"
-                    className="mt-1 text-mono-0 break-all"
-                  >
-                    {liveDetails.owner}
-                  </Typography>
-                </div>
-                <div>
-                  <Typography variant="body3" className="text-mono-80">
-                    Operators
-                  </Typography>
-                  <Typography variant="body2" className="mt-1 text-mono-0">
-                    {liveDetails.operators.length}
-                  </Typography>
-                </div>
-                <div>
-                  <Typography variant="body3" className="text-mono-80">
-                    Permitted callers
-                  </Typography>
-                  <Typography variant="body2" className="mt-1 text-mono-0">
-                    {liveDetails.permittedCallers.length}
-                  </Typography>
-                </div>
-                <div className="sm:col-span-2">
-                  <Typography variant="body3" className="text-mono-80">
-                    Connected wallet access
-                  </Typography>
-                  <Typography
-                    variant="body2"
-                    className="mt-1 text-mono-0 capitalize"
-                  >
-                    {liveDetails.viewerAccess ?? 'public'}
-                  </Typography>
-                </div>
-              </div>
-            </section>
+              </CardContent>
+            </Card>
           )}
 
           {requestSchemaFields && requestSchemaFields.length > 0 && (
-            <section className="rounded-3xl border border-mono-160/10 bg-mono-0/[0.03] p-6">
-              <Typography variant="h4" fw="bold">
-                Request schema
-              </Typography>
-              <div className="mt-4 flex flex-col gap-2">
-                {requestSchemaFields.map((field) => (
-                  <div
-                    key={`${field.name}-${field.kind}-${field.arrayLength}`}
-                    className="rounded-2xl border border-mono-160/10 bg-mono-0/[0.04] px-4 py-3"
-                  >
-                    <Typography variant="body2" className="text-mono-0">
-                      {formatSchemaField(field)}
-                    </Typography>
-                  </div>
-                ))}
-              </div>
-            </section>
+            <Card variant="sandbox" className="rounded-3xl">
+              <CardContent className="p-6">
+                <h2 className="font-display text-2xl font-extrabold tracking-tight text-white">
+                  Request schema
+                </h2>
+                <div className="mt-4 flex flex-col gap-2">
+                  {requestSchemaFields.map((field) => (
+                    <div
+                      key={`${field.name}-${field.kind}-${field.arrayLength}`}
+                      className="rounded-xl border border-white/10 bg-white/[0.04] px-4 py-3"
+                    >
+                      <p className="text-sm font-semibold text-white">
+                        {formatSchemaField(field)}
+                      </p>
+                    </div>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
           )}
         </div>
       )}
 
       {jobs && jobs.length > 0 && (
-        <section className="rounded-3xl border border-mono-160/10 bg-mono-0/[0.03] p-6">
-          <div className="flex items-center justify-between gap-3">
-            <div>
-              <Typography variant="h4" fw="bold">
-                Supported actions
-              </Typography>
-              <Typography variant="body2" className="mt-2 text-mono-100">
-                Generic host rendering for valid onchain jobs. Richer modules
-                can override this later, but every blueprint still gets an
-                actionable baseline.
-              </Typography>
-            </div>
-            <Link to={serviceConsolePath}>
-              <Button variant="secondary">Submit jobs</Button>
-            </Link>
-          </div>
-          <div className="mt-4 grid gap-4 xl:grid-cols-2">
-            {jobs.map((job, index) => (
-              <div
-                key={`${job.name}-${index}`}
-                className="rounded-2xl border border-mono-160/10 bg-mono-0/[0.04] p-4"
-              >
-                <Typography variant="body1" fw="semibold">
-                  {job.name || `Job #${index}`}
-                </Typography>
-                <Typography variant="body2" className="mt-2 text-mono-100">
-                  {job.description || 'No job description published.'}
-                </Typography>
-                <div className="mt-3 space-y-2">
-                  <Typography variant="body3" className="text-mono-80">
-                    Params:{' '}
-                    {job.hasParamsSchema ? job.parsedParamsSchema.length : 0}{' '}
-                    fields
-                  </Typography>
-                  <Typography variant="body3" className="text-mono-80">
-                    Result:{' '}
-                    {job.hasResultSchema ? job.parsedResultSchema.length : 0}{' '}
-                    fields
-                  </Typography>
-                </div>
+        <Card variant="sandbox" className="rounded-3xl">
+          <CardContent className="p-6">
+            <div className="flex items-center justify-between gap-3">
+              <div>
+                <h2 className="font-display text-2xl font-extrabold tracking-tight text-white">
+                  Supported actions
+                </h2>
+                <p className="mt-2 max-w-2xl text-sm leading-6 text-white/62">
+                  Valid onchain jobs are callable from the service console. A
+                  richer blueprint module can improve the form later, but the
+                  service remains operable now.
+                </p>
               </div>
-            ))}
-          </div>
-        </section>
+              <Button asChild variant="secondary">
+                <Link to={serviceConsolePath}>Submit jobs</Link>
+              </Button>
+            </div>
+            <div className="mt-4 grid gap-4 xl:grid-cols-2">
+              {jobs.map((job, index) => (
+                <div
+                  key={`${job.name}-${index}`}
+                  className="rounded-xl border border-white/10 bg-white/[0.04] p-4"
+                >
+                  <h3 className="font-display text-lg font-bold text-white">
+                    {job.name || `Job #${index}`}
+                  </h3>
+                  <p className="mt-2 text-sm leading-6 text-white/62">
+                    {job.description || 'No job description published.'}
+                  </p>
+                  <div className="mt-3 space-y-2">
+                    <p className="text-xs font-semibold text-white/50">
+                      Params:{' '}
+                      {job.hasParamsSchema ? job.parsedParamsSchema.length : 0}{' '}
+                      fields
+                    </p>
+                    <p className="text-xs font-semibold text-white/50">
+                      Result:{' '}
+                      {job.hasResultSchema ? job.parsedResultSchema.length : 0}{' '}
+                      fields
+                    </p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
       )}
 
       {recentCalls && recentCalls.length > 0 && (
-        <section className="rounded-3xl border border-mono-160/10 bg-mono-0/[0.03] p-6">
-          <div className="flex items-center justify-between gap-3">
-            <div>
-              <Typography variant="h4" fw="bold">
-                Recent service activity
-              </Typography>
-              <Typography variant="body2" className="mt-2 text-mono-100">
-                Indexed job traffic gives generic blueprint pages enough signal
-                to show whether a service is idle or actively being used.
-              </Typography>
-            </div>
-            <Link to={serviceConsolePath}>
-              <Button variant="secondary">Inspect history</Button>
-            </Link>
-          </div>
-          <div className="mt-4 flex flex-col gap-3">
-            {recentCalls.slice(0, 5).map((call) => (
-              <div
-                key={call.id}
-                className="rounded-2xl border border-mono-160/10 bg-mono-0/[0.04] px-4 py-3"
-              >
-                <div className="flex flex-wrap items-center justify-between gap-3">
-                  <Typography variant="body2" className="text-mono-0">
-                    Job #{call.jobIndex} · Call {call.callId.toString()}
-                  </Typography>
-                  <Typography variant="body3" className="text-mono-80">
-                    {call.completed ? 'Completed' : 'Pending'} ·{' '}
-                    {call.resultCount} result{call.resultCount === 1 ? '' : 's'}
-                  </Typography>
-                </div>
-                <Typography
-                  variant="body3"
-                  className="mt-2 text-mono-80 break-all"
-                >
-                  Submitter: {call.submitter}
-                </Typography>
+        <Card variant="sandbox" className="rounded-3xl">
+          <CardContent className="p-6">
+            <div className="flex items-center justify-between gap-3">
+              <div>
+                <h2 className="font-display text-2xl font-extrabold tracking-tight text-white">
+                  Recent service activity
+                </h2>
+                <p className="mt-2 max-w-2xl text-sm leading-6 text-white/62">
+                  Indexed job traffic gives generic blueprint pages enough
+                  signal to show whether a service is idle or actively being
+                  used.
+                </p>
               </div>
-            ))}
-          </div>
-        </section>
+              <Button asChild variant="secondary">
+                <Link to={serviceConsolePath}>Inspect history</Link>
+              </Button>
+            </div>
+            <div className="mt-4 flex flex-col gap-3">
+              {recentCalls.slice(0, 5).map((call) => (
+                <div
+                  key={call.id}
+                  className="rounded-xl border border-white/10 bg-white/[0.04] px-4 py-3"
+                >
+                  <div className="flex flex-wrap items-center justify-between gap-3">
+                    <p className="text-sm font-semibold text-white">
+                      Job #{call.jobIndex} · Call {call.callId.toString()}
+                    </p>
+                    <p className="text-xs font-semibold text-white/50">
+                      {call.completed ? 'Completed' : 'Pending'} ·{' '}
+                      {call.resultCount} result
+                      {call.resultCount === 1 ? '' : 's'}
+                    </p>
+                  </div>
+                  <p className="mt-2 break-all text-xs font-semibold text-white/50">
+                    Submitter: {call.submitter}
+                  </p>
+                </div>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
       )}
     </div>
   );
 };
+
+const ServiceMetric = ({ label, value }: { label: string; value: string }) => (
+  <div className="rounded-xl border border-white/10 bg-white/[0.04] p-4">
+    <p className="text-xs font-bold uppercase tracking-widest text-white/42">
+      {label}
+    </p>
+    <p className="mt-2 truncate text-sm font-semibold text-white" title={value}>
+      {value}
+    </p>
+  </div>
+);
+
+const ServiceCard = ({
+  title,
+  description,
+}: {
+  title: string;
+  description: string;
+}) => (
+  <Card variant="sandbox" className="rounded-3xl">
+    <CardContent className="space-y-3 p-6">
+      <h2 className="font-display text-xl font-extrabold tracking-tight text-white">
+        {title}
+      </h2>
+      <p className="text-sm leading-6 text-white/62">{description}</p>
+    </CardContent>
+  </Card>
+);
 
 export default BlueprintAppServicePage;

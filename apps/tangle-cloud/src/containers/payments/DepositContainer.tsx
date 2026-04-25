@@ -1,7 +1,7 @@
 import { FC, useState } from 'react';
 import { useAccount } from 'wagmi';
 import { type Address } from 'viem';
-import { Typography, Alert, Button } from '@tangle-network/ui-components';
+import { Alert, Button, Text } from '../../components/sandbox/SandboxUi';
 import AmountInput from '../../components/payments/AmountInput';
 import { useShieldedContext } from '../../app/ShieldedProvider';
 import useTokenBalance from '../../data/payments/useTokenBalance';
@@ -27,14 +27,14 @@ const DepositContainer: FC = () => {
   return (
     <div className="space-y-4">
       <div>
-        <Typography variant="h5" fw="semibold">
+        <Text variant="h5" fw="semibold">
           Deposit to Shielded Pool
-        </Typography>
+        </Text>
 
-        <Typography variant="body2" className="mt-1 text-mono-100">
+        <Text variant="body2" className="mt-1 text-muted-foreground">
           Move tokens from your public wallet into the shielded pool. A ZK proof
           will be generated and a shielded note stored in your browser.
-        </Typography>
+        </Text>
       </div>
 
       {!hasDerivedKeypair && (

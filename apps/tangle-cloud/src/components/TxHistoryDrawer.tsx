@@ -15,25 +15,41 @@ import useTxHistoryStore, {
 } from '@tangle-network/tangle-shared-ui/context/useTxHistoryStore';
 import useEvmAddress from '@tangle-network/tangle-shared-ui/hooks/useEvmAddress';
 import { useEvmAssetMetadatas } from '@tangle-network/tangle-shared-ui/hooks/useEvmAssetMetadatas';
-import {
-  Alert,
-  AmountFormatStyle,
-  Button,
-  Chip,
-  CopyWithTooltip,
-  formatDisplayAmount,
-  isEvmAddress,
-  isSubstrateAddress,
-  shortenHex,
-  shortenString,
-  Typography,
-} from '@tangle-network/ui-components';
-import { EvmAddress } from '@tangle-network/ui-components/types/address';
-import addCommasToNumber from '@tangle-network/ui-components/utils/addCommasToNumber';
+import { Alert, Button, Chip, Text } from './sandbox/SandboxUi';
 import { formatDistanceToNow } from 'date-fns';
 import { capitalize } from 'lodash';
 import { type FC, useMemo } from 'react';
 import { twMerge } from 'tailwind-merge';
+
+const addCommasToNumber = (value: number) => value.toLocaleString();
+const isEvmAddress = (value: string) => /^0x[a-fA-F0-9]{40}$/.test(value);
+const isSubstrateAddress = (value: string) =>
+  value.length >= 47 && value.length <= 50 && !value.startsWith('0x');
+const shortenHex = (value: string) =>
+  value.length > 14 ? `${value.slice(0, 8)}...${value.slice(-6)}` : value;
+const shortenString = (value: string) =>
+  value.length > 14 ? `${value.slice(0, 8)}...${value.slice(-6)}` : value;
+const formatDisplayAmount = (value: BN | bigint, decimals: number) => {
+  const raw = value.toString();
+  if (decimals <= 0) return addCommasToNumber(Number(raw));
+  const padded = raw.padStart(decimals + 1, '0');
+  const whole = padded.slice(0, -decimals);
+  const fraction = padded.slice(-decimals).replace(/0+$/, '').slice(0, 4);
+  return `${addCommasToNumber(Number(whole))}${fraction ? `.${fraction}` : ''}`;
+};
+
+const CopyValueButton: FC<{ value: string; label: string }> = ({
+  value,
+  label,
+}) => (
+  <button
+    type="button"
+    className="text-[11px] text-muted-foreground underline-offset-4 hover:text-foreground hover:underline"
+    onClick={() => void navigator.clipboard?.writeText(value)}
+  >
+    Copy {label}
+  </button>
+);
 
 const TxHistoryDrawer: FC = () => {
   const activeEvmAddress = useEvmAddress();
@@ -74,31 +90,16 @@ const TxHistoryDrawer: FC = () => {
       <Dialog.Root>
         <Dialog.Trigger asChild>
           <Button
-            variant="secondary"
+            variant="outline"
             className={twMerge(
-              'outline-none rounded-full border-2 py-2 px-4',
-              'bg-mono-0/10 border-mono-60 dark:border-mono-140',
-              'dark:bg-mono-0/5 dark:border-mono-140',
-              'hover:bg-mono-100/10 dark:hover:bg-mono-0/10',
-              'hover:border-mono-60 dark:hover:border-mono-140',
+              'h-11 gap-2 border-border bg-muted/30 px-3 font-bold text-foreground hover:bg-muted',
             )}
           >
-            <div className="flex items-center gap-1">
-              <ShuffleLine className="fill-mono-160 dark:fill-mono-0" />
-
-              <Typography
-                variant="body1"
-                fw="semibold"
-                className="text-mono-160 dark:text-mono-0"
-              >
-                Transactions{' '}
-                {inProgressCount !== null && (
-                  <Chip color="yellow">
-                    {addCommasToNumber(inProgressCount)}
-                  </Chip>
-                )}
-              </Typography>
-            </div>
+            <ShuffleLine className="fill-current" />
+            <span>Transactions</span>
+            {inProgressCount !== null && (
+              <Chip color="yellow">{addCommasToNumber(inProgressCount)}</Chip>
+            )}
           </Button>
         </Dialog.Trigger>
 
@@ -106,7 +107,7 @@ const TxHistoryDrawer: FC = () => {
           <Dialog.Overlay
             forceMount
             className={twMerge(
-              'fixed inset-0 z-20 bg-black/65 backdrop-blur-[1px]',
+              'fixed inset-0 z-[70] bg-black/65 backdrop-blur-[1px]',
               'animate-in duration-200 fade-in-0',
               'data-[state=open]:ease-out data-[state=closed]:ease-in',
             )}
@@ -115,8 +116,8 @@ const TxHistoryDrawer: FC = () => {
           <Dialog.Content
             forceMount
             className={twMerge(
-              'w-[400px] h-[calc(100%-16px)] outline-none overflow-auto py-6 px-4 z-50 rounded-xl',
-              'bg-mono-0 dark:bg-mono-200 fixed right-2 top-2 bottom-2',
+              'w-[400px] h-[calc(100%-16px)] outline-none overflow-auto py-6 px-4 z-[80] rounded-xl',
+              'bg-card text-card-foreground border border-border fixed right-2 top-2 bottom-2',
               'flex flex-col gap-6 justify-between',
               'data-[state=open]:animate-in data-[state=open]:ease-out data-[state=open]:duration-200',
               'data-[state=open]:slide-in-from-right-full',
@@ -131,13 +132,13 @@ const TxHistoryDrawer: FC = () => {
 
             <div className="space-y-3">
               <div className="flex items-center justify-between">
-                <Typography variant="h5">Transactions</Typography>
+                <Text variant="h5">Transactions</Text>
 
                 <Dialog.Close asChild>
                   <button
                     type="button"
                     aria-label="Close"
-                    className="text-mono-160 dark:text-mono-0 p-1 rounded-full hover:bg-mono-40 dark:hover:bg-mono-160 transition-colors"
+                    className="text-foreground p-1 rounded-full hover:bg-muted transition-colors"
                   >
                     <CloseCircleLineIcon size="lg" />
                   </button>
@@ -146,9 +147,9 @@ const TxHistoryDrawer: FC = () => {
 
               {relevantTransactions === null ||
               relevantTransactions.length === 0 ? (
-                <Typography variant="body2" className="text-mono-140">
+                <Text variant="body2" className="text-muted-foreground">
                   No transactions yet.
-                </Typography>
+                </Text>
               ) : (
                 relevantTransactions.map((tx) => (
                   <TransactionItem key={tx.hash} {...tx} />
@@ -198,11 +199,7 @@ const DetailRow: FC<DetailRowProps> = ({
     if (typeof value === 'number') {
       if (isAmountKey) {
         const decimals = tokenMetadata?.decimals ?? 18;
-        const formatted = formatDisplayAmount(
-          new BN(value),
-          decimals,
-          AmountFormatStyle.SHORT,
-        );
+        const formatted = formatDisplayAmount(new BN(value), decimals);
         if (isSharesKey) {
           return formatted;
         }
@@ -223,11 +220,7 @@ const DetailRow: FC<DetailRowProps> = ({
     if (typeof value === 'string') {
       if (isAmountKey && isNumericString(value)) {
         const decimals = tokenMetadata?.decimals ?? 18;
-        const formatted = formatDisplayAmount(
-          new BN(value),
-          decimals,
-          AmountFormatStyle.SHORT,
-        );
+        const formatted = formatDisplayAmount(new BN(value), decimals);
         if (isSharesKey) {
           return formatted;
         }
@@ -238,11 +231,7 @@ const DetailRow: FC<DetailRowProps> = ({
     }
 
     const decimals = tokenMetadata?.decimals ?? 18;
-    const formatted = formatDisplayAmount(
-      value,
-      decimals,
-      AmountFormatStyle.SHORT,
-    );
+    const formatted = formatDisplayAmount(value, decimals);
     if (isSharesKey) {
       return formatted;
     }
@@ -262,25 +251,18 @@ const DetailRow: FC<DetailRowProps> = ({
 
   return (
     <div className="flex items-center justify-between gap-2">
-      <span className="text-mono-120 dark:text-mono-100 text-[13px]">
-        {label}
-      </span>
+      <span className="text-muted-foreground text-[13px]">{label}</span>
       <div className="flex items-center gap-1.5">
         <span
           className={twMerge(
-            'text-mono-200 dark:text-mono-0 text-[13px]',
+            'text-foreground text-[13px]',
             isAddress && 'font-mono',
           )}
         >
           {formattedValue}
         </span>
         {shouldShowCopy && (
-          <CopyWithTooltip
-            textToCopy={rawValue}
-            copyLabel={`Copy ${label.toLowerCase()}`}
-            iconClassName="text-mono-100 dark:text-mono-80 !w-2 !h-2"
-            isButton={false}
-          />
+          <CopyValueButton value={rawValue} label={label.toLowerCase()} />
         )}
       </div>
     </div>
@@ -304,14 +286,14 @@ const TransactionItem: FC<HistoryTx> = ({
 
     const tokenValue = details.get('Token');
     if (typeof tokenValue === 'string' && isEvmAddress(tokenValue)) {
-      return tokenValue as EvmAddress;
+      return tokenValue as `0x${string}`;
     }
 
     return null;
   }, [details]);
 
   const { data: tokenMetadatas } = useEvmAssetMetadatas(
-    tokenAddress ? [tokenAddress] : null,
+    tokenAddress ? ([tokenAddress] as any) : null,
   );
 
   const tokenMetadata = useMemo(() => {
@@ -328,7 +310,7 @@ const TransactionItem: FC<HistoryTx> = ({
   }, [createExplorerTxUrl, hash]);
 
   return (
-    <div className="p-3 space-y-3 rounded-md bg-mono-20 dark:bg-mono-180">
+    <div className="p-3 space-y-3 rounded-md bg-muted/40">
       <div className="flex items-center justify-between gap-2">
         <div className="flex items-center justify-start gap-2">
           {status === 'finalized' ? (
@@ -342,23 +324,17 @@ const TransactionItem: FC<HistoryTx> = ({
             <Spinner />
           )}
 
-          <Typography variant="body1" className="dark:text-mono-0">
-            {capitalize(name)}
-          </Typography>
+          <Text variant="body1">{capitalize(name)}</Text>
         </div>
 
         {explorerLink !== null && (
           <Button
             variant="link"
             size="sm"
-            href={explorerLink.toString()}
-            target="_blank"
-            rel="noopener noreferrer"
-            rightIcon={
-              <ExternalLinkLine className="fill-current dark:fill-current" />
-            }
+            onClick={() => window.open(explorerLink.toString(), '_blank')}
           >
             Explorer
+            <ExternalLinkLine className="fill-current dark:fill-current" />
           </Button>
         )}
       </div>
@@ -378,15 +354,15 @@ const TransactionItem: FC<HistoryTx> = ({
       </div>
 
       {status === 'failed' && errorMessage !== undefined && (
-        <Alert type="error" size="sm" description={errorMessage} />
+        <Alert type="error" description={errorMessage} />
       )}
 
-      <hr className="dark:border-mono-160" />
+      <hr className="border-border" />
 
-      <Typography className="text-center text-mono-120" variant="body3">
+      <Text className="text-center text-muted-foreground" variant="body3">
         {status} &bull;{' '}
         {formatDistanceToNow(new Date(timestamp), { addSuffix: true })}
-      </Typography>
+      </Text>
     </div>
   );
 };

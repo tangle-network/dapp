@@ -4,21 +4,24 @@ import {
   SlashProposal,
   formatSlashBps,
 } from '@tangle-network/tangle-shared-ui/data/graphql';
-import { shortenHex } from '@tangle-network/ui-components/utils/shortenHex';
 import {
   Modal,
   ModalBody,
   ModalContent,
   ModalFooterActions,
   ModalHeader,
-  Typography,
-} from '@tangle-network/ui-components';
+  SlashTextarea,
+  Text,
+} from './SandboxModalPrimitives';
 import {
   formatDateTime,
   formatTimeRemaining,
   getSlashClaimContext,
   getSlashProposerRoleLabel,
 } from '../../utils';
+
+const shortenHex = (value: string) =>
+  value.length <= 12 ? value : `${value.slice(0, 6)}...${value.slice(-4)}`;
 
 interface DisputeSlashModalProps {
   open: boolean;
@@ -58,110 +61,106 @@ const DisputeSlashModal = ({
       <ModalContent>
         <ModalHeader>Dispute Slash Proposal</ModalHeader>
         <ModalBody>
-          <Typography variant="body1" className="mb-2">
+          <Text variant="body1" className="mb-2">
             Dispute slash proposal #{selectedSlash?.id.toString()}
-          </Typography>
-          <div className="p-3 bg-mono-20 dark:bg-mono-170 rounded-lg mb-4">
+          </Text>
+          <div className="p-3 bg-muted/40 rounded-lg mb-4">
             <div className="grid grid-cols-2 gap-x-2 gap-y-3">
-              <Typography variant="body3" className="text-mono-100">
+              <Text variant="body3" className="text-muted-foreground">
                 Slash %:
-              </Typography>
-              <Typography variant="body3" className="text-red-500">
+              </Text>
+              <Text variant="body3" className="text-red-500">
                 {selectedSlash ? formatSlashBps(selectedSlash.slashBps) : '-'}
-              </Typography>
-              <Typography variant="body3" className="text-mono-100">
+              </Text>
+              <Text variant="body3" className="text-muted-foreground">
                 Effective Slash %:
-              </Typography>
-              <Typography variant="body3" className="text-red-500">
+              </Text>
+              <Text variant="body3" className="text-red-500">
                 {selectedSlash
                   ? formatSlashBps(selectedSlash.effectiveSlashBps)
                   : '-'}
-              </Typography>
-              <Typography variant="body3" className="text-mono-100">
+              </Text>
+              <Text variant="body3" className="text-muted-foreground">
                 Dispute Deadline:
-              </Typography>
-              <Typography variant="body3">
+              </Text>
+              <Text variant="body3">
                 {selectedSlash
                   ? formatDateTime(selectedSlash.executeAfter)
                   : '-'}
-              </Typography>
-              <Typography variant="body3" className="text-mono-100">
+              </Text>
+              <Text variant="body3" className="text-muted-foreground">
                 Time Remaining:
-              </Typography>
-              <Typography variant="body3">
+              </Text>
+              <Text variant="body3">
                 {selectedSlashEligibility
                   ? formatTimeRemaining(
                       selectedSlashEligibility.secondsUntilDeadline,
                     )
                   : '-'}
-              </Typography>
-              <Typography variant="body3" className="text-mono-100">
+              </Text>
+              <Text variant="body3" className="text-muted-foreground">
                 Proposer:
-              </Typography>
-              <Typography variant="body3" className="font-mono">
+              </Text>
+              <Text variant="body3" className="font-mono">
                 {selectedSlash ? shortenHex(selectedSlash.proposer) : '-'}
-              </Typography>
-              <Typography variant="body3" className="text-mono-100">
+              </Text>
+              <Text variant="body3" className="text-muted-foreground">
                 Proposer Role:
-              </Typography>
-              <Typography variant="body3">
+              </Text>
+              <Text variant="body3">
                 {selectedSlash
                   ? getSlashProposerRoleLabel(selectedSlash.proposerRole)
                   : '-'}
-              </Typography>
-              <Typography variant="body3" className="text-mono-100">
+              </Text>
+              <Text variant="body3" className="text-muted-foreground">
                 Claim Context:
-              </Typography>
-              <Typography
+              </Text>
+              <Text
                 variant="body3"
                 title={
                   selectedSlash ? getSlashClaimContext(selectedSlash) : '-'
                 }
               >
                 {selectedSlash ? getSlashClaimContext(selectedSlash) : '-'}
-              </Typography>
-              <Typography variant="body3" className="text-mono-100">
+              </Text>
+              <Text variant="body3" className="text-muted-foreground">
                 Evidence Hash:
-              </Typography>
-              <Typography variant="body3" className="font-mono break-all">
+              </Text>
+              <Text variant="body3" className="font-mono break-all">
                 {selectedSlash?.evidence ?? '-'}
-              </Typography>
+              </Text>
             </div>
           </div>
           <div>
-            <Typography variant="body2" className="mb-1">
+            <Text variant="body2" className="mb-1">
               Reason for Dispute
-            </Typography>
-            <textarea
-              className="w-full p-3 rounded-lg border border-mono-40 dark:border-mono-140 bg-mono-0 dark:bg-mono-180 text-sm resize-none focus:outline-none focus:ring-2 focus:ring-purple-500"
+            </Text>
+            <SlashTextarea
               rows={4}
               value={disputeReason}
               onChange={(event) => onDisputeReasonChange(event.target.value)}
               placeholder="Explain why this slash proposal is invalid..."
             />
-            <Typography variant="body3" className="text-mono-100 mt-1">
+            <Text variant="body3" className="text-muted-foreground mt-1">
               Minimum {minDisputeReasonLength} characters (
               {trimmedDisputeReasonLength}/{minDisputeReasonLength}).
-            </Typography>
+            </Text>
             {!selectedSlashPermissions?.canDispute ? (
-              <Typography variant="body3" className="text-red-500 mt-1">
+              <Text variant="body3" className="text-red-500 mt-1">
                 {selectedSlashPermissions?.disputeReason ??
                   'Dispute is not available for this slash.'}
-              </Typography>
+              </Text>
             ) : null}
 
             {errorMessage ? (
               <div className="rounded-lg border border-red-500/30 bg-red-500/10 p-3 mt-3 space-y-2">
-                <Typography
-                  variant="body3"
-                  className="!text-red-70 dark:!text-red-50"
-                >
+                <Text variant="body3" className="!text-destructive">
                   {errorMessage}
-                </Typography>
+                </Text>
                 <div>
                   <button
                     type="button"
-                    className="text-xs underline text-red-70 dark:text-red-50"
+                    className="text-xs underline text-destructive"
                     onClick={onDismissError}
                   >
                     Dismiss

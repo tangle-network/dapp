@@ -4,7 +4,6 @@
 
 import { FC, useEffect, useMemo, useState } from 'react';
 import { useAccount, useChainId } from 'wagmi';
-import { Typography } from '@tangle-network/ui-components';
 import {
   DeveloperPaymentsQueryError,
   useDeveloperPayments,
@@ -14,6 +13,7 @@ import EarningsAssetsCard from './components/EarningsAssetsCard';
 import EarningsErrorState from './components/EarningsErrorState';
 import EarningsLoadingState from './components/EarningsLoadingState';
 import PayoutEventsCard from './components/PayoutEventsCard';
+import RequireWallet from '../../components/RequireWallet';
 
 const PAYOUT_EVENTS_PAGE_SIZE = 10;
 
@@ -45,11 +45,22 @@ const EarningsPage: FC = () => {
 
   if (!isConnected) {
     return (
-      <div className="text-center py-12">
-        <Typography variant="h4">Connect Wallet</Typography>
-        <Typography variant="body1" className="text-mono-100 mt-2">
-          Please connect your wallet to view earnings.
-        </Typography>
+      <div className="space-y-6">
+        <div>
+          <h1 className="font-display font-extrabold text-foreground text-3xl tracking-tight">
+            Publisher earnings
+          </h1>
+          <p className="mt-2 max-w-2xl text-muted-foreground text-sm">
+            Track blueprint payout totals and indexed payment events for the
+            connected publisher wallet.
+          </p>
+        </div>
+        <RequireWallet
+          eyebrow="Earnings"
+          title="Connect to view earnings"
+          description="Connect a wallet to load publisher balances and payout events."
+          checks={['Token totals', 'Payout events', 'Explorer links']}
+        />
       </div>
     );
   }
@@ -57,13 +68,12 @@ const EarningsPage: FC = () => {
   return (
     <div className="space-y-6">
       <div>
-        <Typography variant="h4" fw="bold">
-          Developer Earnings
-        </Typography>
-        <Typography variant="body2" className="text-mono-100 mt-1">
-          Earnings are derived from direct on-chain payout events indexed from
-          payment distribution.
-        </Typography>
+        <h1 className="font-display font-extrabold text-foreground text-3xl tracking-tight">
+          Publisher earnings
+        </h1>
+        <p className="mt-2 max-w-2xl text-muted-foreground text-sm">
+          Totals are derived from indexed on-chain payout events.
+        </p>
       </div>
 
       {isLoading ? <EarningsLoadingState /> : null}

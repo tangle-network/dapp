@@ -19,7 +19,9 @@ export interface EvmOperatorInfo {
  */
 const useEvmOperatorInfo = (): EvmOperatorInfo => {
   const { address } = useAccount();
-  const { data: operatorMap, isLoading } = useOperatorMap();
+  const { data: operatorMap, isLoading } = useOperatorMap({
+    enabled: !!address,
+  });
 
   const result = useMemo<EvmOperatorInfo>(() => {
     if (!address || !operatorMap) {

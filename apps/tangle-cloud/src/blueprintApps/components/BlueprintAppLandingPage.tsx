@@ -1,15 +1,12 @@
-import { Button, Card, Typography } from '@tangle-network/ui-components';
+import {
+  Badge,
+  Button,
+  Card,
+  CardContent,
+} from '@tangle-network/sandbox-ui/primitives';
 import type { FC } from 'react';
 import { Link } from 'react-router';
-import {
-  getBlueprintPublisherVerificationLabel,
-  getBlueprintExperienceTierLabel,
-  getExternalAppTrustLabel,
-  getBlueprintPath,
-  getBlueprintSlugPolicyLabel,
-  getBlueprintSurfaceLabel,
-  resolveBlueprintAppView,
-} from '../resolver';
+import { resolveBlueprintAppView } from '../resolver';
 import type { BlueprintAppEntry } from '../types';
 
 type Props = {
@@ -22,147 +19,108 @@ const BlueprintAppLandingPage: FC<Props> = ({ entry }) => {
     view.blueprintId !== undefined
       ? `/blueprints/${view.blueprintId.toString()}/deploy`
       : '/blueprints/create';
+  const serviceNoun = view.manifest.resources.serviceNoun;
+  const resourceNoun = view.manifest.resources.resourceNoun;
 
   return (
-    <div className="space-y-6">
-      <Card className="rounded-3xl p-6 md:p-8">
-        <div className="max-w-3xl space-y-4">
-          <div className="flex flex-wrap gap-2">
-            <div className="inline-flex rounded-full border border-mono-160/10 bg-mono-0/[0.05] px-3 py-1">
-              <Typography variant="body3" className="text-mono-80">
-                {getBlueprintExperienceTierLabel(view.tier)}
-              </Typography>
-            </div>
+    <div data-sandbox-ui className="space-y-6">
+      <Card variant="sandbox" className="overflow-hidden rounded-[32px]">
+        <CardContent className="relative p-6 md:p-8">
+          <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white/35 to-transparent" />
+          <div className="absolute -right-16 -top-20 h-56 w-56 rounded-full bg-[var(--brand-purple)]/20 blur-3xl" />
 
-            <div className="inline-flex rounded-full border border-mono-160/10 bg-mono-0/[0.05] px-3 py-1">
-              <Typography variant="body3" className="text-mono-80">
-                {getBlueprintSlugPolicyLabel(view.slugPolicy)}
-              </Typography>
-            </div>
-
-            <div className="inline-flex rounded-full border border-mono-160/10 bg-mono-0/[0.05] px-3 py-1">
-              <Typography variant="body3" className="text-mono-80">
-                {getBlueprintPublisherVerificationLabel(
-                  view.publisher.verification,
-                )}
-              </Typography>
-            </div>
-
-            {view.manifest.externalApp && (
-              <div className="inline-flex rounded-full border border-mono-160/10 bg-mono-0/[0.05] px-3 py-1">
-                <Typography variant="body3" className="text-mono-80">
-                  {getExternalAppTrustLabel(view.manifest.externalApp.trust)}
-                </Typography>
+          <div className="grid gap-6 lg:grid-cols-[1.2fr_0.8fr]">
+            <div className="max-w-3xl space-y-4">
+              <div className="space-y-2">
+                <h1 className="font-display text-4xl font-extrabold leading-tight tracking-[-0.04em] text-white md:text-5xl">
+                  {view.manifest.displayName}
+                </h1>
+                <p className="max-w-2xl text-base leading-7 text-white/70">
+                  {view.manifest.tagline}
+                </p>
               </div>
-            )}
-          </div>
 
-          <div className="space-y-2">
-            <Typography variant="h2" fw="bold">
-              {view.manifest.displayName}
-            </Typography>
-            <Typography variant="body1" className="text-mono-80 max-w-2xl">
-              {view.manifest.tagline}
-            </Typography>
-          </div>
+              <p className="max-w-3xl text-base leading-7 text-white/82">
+                {view.manifest.description}
+              </p>
 
-          <Typography variant="body1" className="text-mono-100 max-w-3xl">
-            {view.manifest.description}
-          </Typography>
-
-          <div className="flex flex-wrap gap-2 pt-1">
-            {view.manifest.surfaces.map((surface) => (
-              <span
-                key={surface}
-                className="rounded-full border border-mono-160/10 bg-mono-0/[0.05] px-3 py-1 text-xs text-mono-100"
-              >
-                {getBlueprintSurfaceLabel(surface)}
-              </span>
-            ))}
-          </div>
-
-          <div className="flex flex-wrap gap-3 pt-2">
-            <Link to={provisionPath}>
-              <Button>Provision {view.manifest.resources.serviceNoun}</Button>
-            </Link>
-            <Link to="/blueprints">
-              <Button variant="secondary">Browse all blueprints</Button>
-            </Link>
-            {view.manifest.externalApp &&
-              (view.manifest.externalApp.trust === 'trusted' ? (
-                <a
-                  href={view.manifest.externalApp.url}
-                  target="_blank"
-                  rel="noreferrer"
-                >
-                  <Button variant="secondary">
-                    {view.manifest.externalApp.label ?? 'Open external app'}
-                  </Button>
-                </a>
-              ) : (
-                <Button variant="secondary" isDisabled>
-                  External app pending trust review
+              <div className="flex flex-wrap gap-3 pt-2">
+                <Button asChild size="lg">
+                  <Link to={provisionPath}>Create {serviceNoun}</Link>
                 </Button>
-              ))}
+                <Button asChild variant="secondary" size="lg">
+                  <Link to="/blueprints">Browse blueprints</Link>
+                </Button>
+                {view.manifest.externalApp?.trust === 'trusted' && (
+                  <Button asChild variant="secondary" size="lg">
+                    <a
+                      href={view.manifest.externalApp.url}
+                      target="_blank"
+                      rel="noreferrer"
+                    >
+                      {view.manifest.externalApp.label ?? 'Publisher console'}
+                    </a>
+                  </Button>
+                )}
+              </div>
+            </div>
+
+            <div className="space-y-4 rounded-3xl border border-white/10 bg-white/[0.04] p-5">
+              <h2 className="font-display text-xl font-extrabold tracking-tight text-white">
+                Checkout path
+              </h2>
+              <div className="grid gap-3">
+                <Step index="1" title={`Configure the ${serviceNoun}`} />
+                <Step index="2" title="Choose registered operators" />
+                <Step index="3" title={`Track ${resourceNoun} output`} />
+              </div>
+            </div>
           </div>
-        </div>
+        </CardContent>
       </Card>
 
-      <div className="grid gap-5 lg:grid-cols-[1.2fr_0.8fr]">
-        <Card className="rounded-3xl p-6">
-          <section className="space-y-3">
-            <Typography variant="h4" fw="bold">
-              Blueprint root
-            </Typography>
-            <div className="space-y-3">
-              <Typography variant="body2" className="text-mono-100">
-                <span className="font-semibold text-mono-0">
-                  {getBlueprintPath(view)}
-                </span>{' '}
-                is the blueprint homepage: provisioning entrypoint, public
-                instance explorer, generic protocol UI, and the default
-                launchpad for this app.
-              </Typography>
-              <Typography variant="body2" className="text-mono-100">
-                <span className="font-semibold text-mono-0">
-                  {view.tier === 'generic'
-                    ? `${getBlueprintPath(view)}/services/:serviceId`
-                    : `${getBlueprintPath(view)}/:serviceId`}
-                </span>{' '}
-                resolves a live {view.manifest.resources.serviceNoun} instance,
-                with nested resource routes for{' '}
-                {view.manifest.resources.resourceNoun}
-                {view.manifest.resources.resourceNoun.endsWith('s') ? '' : 's'},
-                plus chat, vaults, and runtime-specific surfaces when declared.
-              </Typography>
-            </div>
-          </section>
-        </Card>
-
-        <Card className="rounded-3xl p-6">
-          <aside className="space-y-3">
-            <Typography variant="h4" fw="bold">
-              Trust contract
-            </Typography>
-            <Typography variant="body2" className="text-mono-100">
-              Published by {view.publisher.label}. Tangle Cloud always keeps a
-              protocol-controlled fallback UI, then layers declarative metadata,
-              curated modules, or external app handoff on top as the blueprint
-              earns more trust.
-            </Typography>
-            {view.manifest.externalApp?.trust === 'restricted' && (
-              <Typography variant="body2" className="text-mono-100">
-                External app handoff is withheld because{' '}
-                {view.manifest.externalApp.reason?.toLowerCase() ??
-                  'the host has not passed trust review yet'}
-                . The protocol-controlled surface stays available either way.
-              </Typography>
-            )}
-          </aside>
-        </Card>
+      <div className="grid gap-5 md:grid-cols-3">
+        <SummaryCard
+          title="Cloud service"
+          description={`Create a ${serviceNoun}, choose operators, and submit the service order.`}
+        />
+        <SummaryCard
+          title="Runtime visibility"
+          description={`Monitor ${resourceNoun} records, events, and operator output from the same page.`}
+        />
+        <SummaryCard
+          title="Safe checkout"
+          description="Approve service requests from your wallet without embedding third-party code in the flow."
+        />
       </div>
     </div>
   );
 };
+
+const Step = ({ index, title }: { index: string; title: string }) => (
+  <div className="flex items-center gap-3 rounded-xl border border-white/10 bg-white/[0.035] p-3">
+    <span className="grid h-7 w-7 place-items-center rounded-full bg-background text-xs font-bold text-foreground">
+      {index}
+    </span>
+    <p className="text-sm font-semibold text-white/78">{title}</p>
+  </div>
+);
+
+const SummaryCard = ({
+  title,
+  description,
+}: {
+  title: string;
+  description: string;
+}) => (
+  <Card variant="sandbox" className="rounded-3xl">
+    <CardContent className="space-y-3 p-6">
+      <Badge variant="sandbox" className="w-fit">
+        {title}
+      </Badge>
+      <p className="text-sm leading-6 text-white/66">{description}</p>
+    </CardContent>
+  </Card>
+);
 
 export default BlueprintAppLandingPage;

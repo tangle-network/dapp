@@ -1,46 +1,70 @@
-import { Footer } from '@tangle-network/ui-components/components/Footer';
 import TxConfirmationModal from '@tangle-network/tangle-shared-ui/components/TxConfirmationModal';
 import Sidebar from './Sidebar';
-import { FC, PropsWithChildren } from 'react';
-import {
-  bottomLinks,
-  TANGLE_PRIVACY_POLICY_URL,
-  TANGLE_SOCIAL_URLS_RECORD,
-  TANGLE_TERMS_OF_SERVICE_URL,
-} from '@tangle-network/ui-components/constants';
+import { FC, PropsWithChildren, useEffect, useState } from 'react';
 import TxHistoryNotifier from './TxHistoryNotifier';
+import Header from './Header';
+import { twMerge } from 'tailwind-merge';
 
 type Props = {
   isSidebarInitiallyExpanded?: boolean;
-};
-
-const BOTTOM_LINK_OVERRIDES: Partial<
-  Record<(typeof bottomLinks)[number]['name'], string>
-> = {
-  'Terms of Service': TANGLE_TERMS_OF_SERVICE_URL,
-  'Privacy Policy': TANGLE_PRIVACY_POLICY_URL,
 };
 
 const Layout: FC<PropsWithChildren<Props>> = ({
   children,
   isSidebarInitiallyExpanded,
 }) => {
-  return (
-    <div className="flex max-h-screen bg-tangle">
-      <Sidebar isExpandedByDefault={isSidebarInitiallyExpanded} />
+  const [theme, setTheme] = useState<'dark' | 'light'>(() =>
+    document.documentElement.classList.contains('dark') ? 'dark' : 'light',
+  );
+  const [isSidebarExpanded, setIsSidebarExpanded] = useState(() => {
+    if (isSidebarInitiallyExpanded !== undefined) {
+      return isSidebarInitiallyExpanded;
+    }
 
-      <div className="flex flex-col flex-1 min-h-screen overflow-y-auto scrollbar-hide">
+    const storedValue = window.localStorage.getItem(
+      'tangle-cloud-sidebar-expanded',
+    );
+
+    return storedValue === null ? true : storedValue === 'true';
+  });
+
+  useEffect(() => {
+    document.documentElement.classList.toggle('dark', theme === 'dark');
+    document.documentElement.style.colorScheme = theme;
+    document.documentElement.setAttribute('data-sandbox-ui', '');
+    document.documentElement.setAttribute(
+      'data-sandbox-theme',
+      theme === 'dark' ? 'tangle' : 'vault',
+    );
+    window.localStorage.setItem('tangle-cloud-theme', theme);
+  }, [theme]);
+
+  return (
+    <div
+      data-sandbox-ui
+      data-sandbox-theme={theme === 'dark' ? 'tangle' : 'vault'}
+      className="tangle-cloud-shell min-h-screen bg-tangle text-foreground"
+    >
+      <Sidebar
+        isExpandedByDefault={isSidebarExpanded}
+        onExpandedChange={setIsSidebarExpanded}
+      />
+      <Header
+        theme={theme}
+        onThemeChange={setTheme}
+        className={isSidebarExpanded ? 'lg:left-64' : 'lg:left-16'}
+      />
+
+      <div
+        className={twMerge(
+          'min-h-screen pt-14 transition-[padding-left] duration-200',
+          isSidebarExpanded ? 'lg:pl-64' : 'lg:pl-16',
+        )}
+      >
         <TxHistoryNotifier />
         <TxConfirmationModal />
 
         <main className="flex-1">{children}</main>
-
-        <Footer
-          socialsLinkOverrides={TANGLE_SOCIAL_URLS_RECORD}
-          bottomLinkOverrides={BOTTOM_LINK_OVERRIDES}
-          isMinimal
-          className="px-6 py-8"
-        />
       </div>
     </div>
   );

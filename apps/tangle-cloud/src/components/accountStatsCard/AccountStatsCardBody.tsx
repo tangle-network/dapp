@@ -1,5 +1,4 @@
 import { type FC } from 'react';
-import { Socials, StatsItem } from '@tangle-network/ui-components';
 import { AccountStatsCardBodyProps } from '.';
 import cx from 'classnames';
 
@@ -19,22 +18,21 @@ export const AccountStatsCardBody: FC<AccountStatsCardBodyProps> = ({
           const isTopRow = index < 2;
 
           return item ? (
-            <StatsItem
+            <div
               key={index}
-              className={cx('gap-0 border-mono-100 dark:border-mono-140 p-2', {
+              className={cx('gap-0 border-border p-2', {
                 'border-r': isLeftColumn,
                 'border-b': isTopRow,
                 'pl-5': !isLeftColumn,
               })}
-              title={item.title}
-              tooltip={item.tooltip}
             >
+              <p className="text-muted-foreground text-xs">{item.title}</p>
               {item.children}
-            </StatsItem>
+            </div>
           ) : (
             <div
               key={`placeholder-${index}`}
-              className={cx('border-mono-100 dark:border-mono-140 p-2', {
+              className={cx('border-border p-2', {
                 'border-r': isLeftColumn,
                 'border-b': isTopRow,
                 'pl-5': !isLeftColumn,
@@ -44,13 +42,21 @@ export const AccountStatsCardBody: FC<AccountStatsCardBodyProps> = ({
         })}
       </div>
 
-      <Socials
-        iconPlacement="end"
-        iconClassName="text-mono-0 dark:text-mono-100 bg-mono-100 dark:bg-mono-0/[20%] rounded-2xl py-1 px-2"
-        className="justify-start items-start flex-wrap space-x-0 gap-2 "
-        innerIconClassName="!w-1 !h-1 !fill-mono-0"
-        socialConfigs={socialLinks}
-      />
+      {socialLinks.length > 0 && (
+        <div className="flex flex-wrap items-start justify-start gap-2">
+          {socialLinks.map((link, index) => (
+            <a
+              key={`${link.name ?? 'social'}-${index}`}
+              href={link.href}
+              target="_blank"
+              rel="noreferrer"
+              className="rounded-full border border-border px-3 py-1 text-muted-foreground text-xs hover:text-foreground"
+            >
+              {link.name ?? 'Link'}
+            </a>
+          ))}
+        </div>
+      )}
     </div>
   );
 };

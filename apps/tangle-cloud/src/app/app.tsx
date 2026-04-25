@@ -3,7 +3,7 @@ import { lazy, Suspense, type FC, type ReactNode } from 'react';
 import Layout from '../components/Layout';
 import Providers from './providers';
 import { PagePath } from '../types';
-import { SkeletonLoader } from '@tangle-network/ui-components';
+import { Skeleton } from '@tangle-network/sandbox-ui/primitives';
 
 // Layouts (lightweight, no code splitting needed)
 import InstancesLayout from '../pages/instances/layout';
@@ -51,10 +51,10 @@ const PaymentsCreditsPage = lazy(() => import('../pages/payments/credits'));
 const NotFoundPage = lazy(() => import('../pages/notFound'));
 
 const PageFallback = () => (
-  <div className="space-y-4 mt-4">
-    <SkeletonLoader className="h-8 w-48" />
-    <SkeletonLoader className="h-4 w-96" />
-    <SkeletonLoader className="h-64 w-full rounded-xl" />
+  <div className="mt-4 space-y-4">
+    <Skeleton className="h-8 w-48 rounded-md" />
+    <Skeleton className="h-4 w-96 max-w-full rounded-md" />
+    <Skeleton className="h-64 w-full rounded-lg" />
   </div>
 );
 

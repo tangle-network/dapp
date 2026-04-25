@@ -3,20 +3,18 @@
  * pricing model, and membership configuration.
  */
 
-import { FC } from 'react';
 import {
+  type ComponentProps,
+  type ElementType,
+  type FC,
+  type ReactNode,
+} from 'react';
+import {
+  Badge,
+  Button as SandboxButton,
   Card,
-  CardVariant,
-  Typography,
-  SkeletonLoader,
-  Button,
-  EMPTY_VALUE_PLACEHOLDER,
-  Chip,
-} from '@tangle-network/ui-components';
-import {
-  AmountFormatStyle,
-  formatDisplayAmount,
-} from '@tangle-network/ui-components/utils/formatDisplayAmount';
+  Skeleton,
+} from '@tangle-network/sandbox-ui/primitives';
 import {
   useServiceDetails,
   useServiceEscrow,
@@ -28,16 +26,89 @@ import {
   getServicePricingModelLabel,
 } from '@tangle-network/tangle-shared-ui/data/services';
 import { MembershipModel } from '@tangle-network/tangle-shared-ui/data/services/useServiceRequestDetails';
-import BN from 'bn.js';
 import { formatTtl, formatCreatedAt } from '../../../types/serviceRequest';
 import { useChainId } from 'wagmi';
 import { chainsConfig } from '@tangle-network/dapp-config/chains';
+import { formatUnits } from 'viem';
 
 interface Props {
   serviceId: bigint;
   blueprintId: bigint | undefined;
   onFundClick: () => void;
 }
+
+const EMPTY_VALUE_PLACEHOLDER = '-';
+const CARD_SURFACE = 'sandbox' as const;
+
+type TextProps = ComponentProps<'p'> & {
+  variant?: 'h5' | 'body1' | 'body2' | 'body3';
+  fw?: 'bold' | 'semibold';
+};
+
+const Text: FC<TextProps> = ({
+  variant = 'body2',
+  fw,
+  className = '',
+  ...props
+}) => {
+  const Component = (variant === 'h5' ? 'h2' : 'p') as ElementType;
+  const variantClass =
+    variant === 'h5'
+      ? 'font-display text-xl text-foreground'
+      : variant === 'body1'
+        ? 'text-base text-foreground'
+        : variant === 'body3'
+          ? 'text-xs text-muted-foreground'
+          : 'text-sm text-foreground';
+  const weightClass =
+    fw === 'bold' ? 'font-bold' : fw === 'semibold' ? 'font-semibold' : '';
+
+  return (
+    <Component
+      className={[variantClass, weightClass, className]
+        .filter(Boolean)
+        .join(' ')}
+      {...props}
+    />
+  );
+};
+
+type ButtonProps = Omit<
+  ComponentProps<typeof SandboxButton>,
+  'variant' | 'size'
+> & {
+  variant?: ComponentProps<typeof SandboxButton>['variant'] | 'utility';
+  size?: ComponentProps<typeof SandboxButton>['size'];
+  isDisabled?: boolean;
+  isLoading?: boolean;
+};
+
+const Button: FC<ButtonProps> = ({
+  variant,
+  size,
+  isDisabled,
+  isLoading,
+  disabled,
+  ...props
+}) => (
+  <SandboxButton
+    variant={variant === 'utility' ? 'outline' : variant}
+    size={size}
+    disabled={disabled || isDisabled}
+    loading={isLoading}
+    {...props}
+  />
+);
+
+const Chip: FC<{ color?: string; children: ReactNode }> = ({
+  color,
+  children,
+}) => {
+  const variant =
+    color === 'green' ? 'success' : color === 'red' ? 'destructive' : 'outline';
+
+  return <Badge variant={variant}>{children}</Badge>;
+};
 
 const ServiceOnChainDetails: FC<Props> = ({
   serviceId,
@@ -69,21 +140,21 @@ const ServiceOnChainDetails: FC<Props> = ({
 
   if (isLoading) {
     return (
-      <Card variant={CardVariant.GLASS} className="p-6">
-        <Typography variant="h5" fw="bold" className="mb-4">
+      <Card variant={CARD_SURFACE} className="p-6">
+        <Text variant="h5" fw="bold" className="mb-4">
           Service Details
-        </Typography>
+        </Text>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          <SkeletonLoader className="h-16" />
-          <SkeletonLoader className="h-16" />
-          <SkeletonLoader className="h-16" />
-          <SkeletonLoader className="h-16" />
+          <Skeleton className="h-16" />
+          <Skeleton className="h-16" />
+          <Skeleton className="h-16" />
+          <Skeleton className="h-16" />
         </div>
         <div className="mt-4 grid grid-cols-2 md:grid-cols-4 gap-4">
-          <SkeletonLoader className="h-16" />
-          <SkeletonLoader className="h-16" />
-          <SkeletonLoader className="h-16" />
-          <SkeletonLoader className="h-16" />
+          <Skeleton className="h-16" />
+          <Skeleton className="h-16" />
+          <Skeleton className="h-16" />
+          <Skeleton className="h-16" />
         </div>
       </Card>
     );
@@ -134,11 +205,10 @@ const ServiceOnChainDetails: FC<Props> = ({
 
   const formatAmount = (amount: bigint | undefined): string => {
     if (amount === undefined) return EMPTY_VALUE_PLACEHOLDER;
-    return formatDisplayAmount(
-      new BN(amount.toString()),
-      tokenDecimals,
-      AmountFormatStyle.SHORT,
-    );
+    const formatted = Number(formatUnits(amount, tokenDecimals));
+    return Number.isFinite(formatted)
+      ? formatted.toLocaleString(undefined, { maximumFractionDigits: 4 })
+      : formatUnits(amount, tokenDecimals);
   };
 
   const getMembershipLabel = (
@@ -190,11 +260,11 @@ const ServiceOnChainDetails: FC<Props> = ({
   };
 
   return (
-    <Card variant={CardVariant.GLASS} className="p-6">
+    <Card variant={CARD_SURFACE} className="p-6">
       <div className="flex items-center justify-between mb-4">
-        <Typography variant="h5" fw="bold">
+        <Text variant="h5" fw="bold">
           Service Details
-        </Typography>
+        </Text>
         <div className="flex items-center gap-2">
           {isSubscriptionService && (
             <>
@@ -335,10 +405,10 @@ const ServiceOnChainDetails: FC<Props> = ({
       )}
 
       {isSubscriptionService && (
-        <div className="mt-4 p-4 rounded-lg bg-mono-20 dark:bg-mono-170">
-          <Typography variant="body2" className="text-mono-100">
+        <div className="mt-4 p-4 rounded-lg bg-muted/40">
+          <Text variant="body2" className="text-muted-foreground">
             Subscription rewards are generated when billing is triggered.
-          </Typography>
+          </Text>
 
           <div className="mt-3 grid grid-cols-1 md:grid-cols-2 gap-2">
             <BillingCondition
@@ -377,17 +447,17 @@ const ServiceOnChainDetails: FC<Props> = ({
 
           {billingError && (
             <div className="mt-3">
-              <Typography variant="body2" className="text-red-400">
+              <Text variant="body2" className="text-red-400">
                 Billing failed: {billingError.message}
-              </Typography>
+              </Text>
             </div>
           )}
 
           {isBillingSuccess && billingTxHash && (
             <div className="mt-3">
-              <Typography variant="body2" className="text-green-400">
+              <Text variant="body2" className="text-green-400">
                 Subscription billed successfully.
-              </Typography>
+              </Text>
               {explorerBaseUrl ? (
                 <a
                   href={`${explorerBaseUrl}/tx/${billingTxHash}`}
@@ -398,9 +468,9 @@ const ServiceOnChainDetails: FC<Props> = ({
                   View transaction
                 </a>
               ) : (
-                <Typography variant="body2" className="font-mono">
+                <Text variant="body2" className="font-mono">
                   Tx: {billingTxHash}
-                </Typography>
+                </Text>
               )}
               <div className="mt-2">
                 <Button variant="utility" size="sm" onClick={resetBillingState}>
@@ -417,7 +487,7 @@ const ServiceOnChainDetails: FC<Props> = ({
 
 interface DetailItemProps {
   label: string;
-  value: React.ReactNode;
+  value: ReactNode;
   highlight?: boolean;
 }
 
@@ -426,20 +496,17 @@ const BillingCondition: FC<{
   ok: boolean;
   detail: string | null;
 }> = ({ label, ok, detail }) => (
-  <div className="p-2 rounded border border-mono-60 dark:border-mono-140">
-    <Typography variant="body2" fw="semibold">
+  <div className="p-2 rounded border border-border">
+    <Text variant="body2" fw="semibold">
       {label}
-    </Typography>
-    <Typography
-      variant="body2"
-      className={ok ? 'text-green-400' : 'text-yellow-400'}
-    >
+    </Text>
+    <Text variant="body2" className={ok ? 'text-green-400' : 'text-yellow-400'}>
       {ok ? 'Yes' : 'No'}
-    </Typography>
+    </Text>
     {detail && (
-      <Typography variant="body3" className="text-mono-100 mt-1">
+      <Text variant="body3" className="text-muted-foreground mt-1">
         {detail}
-      </Typography>
+      </Text>
     )}
   </div>
 );
@@ -452,13 +519,13 @@ const DetailItem: FC<DetailItemProps> = ({ label, value, highlight }) => (
         : undefined
     }
   >
-    <Typography variant="body2" className="text-mono-100 mb-1">
+    <Text variant="body2" className="text-muted-foreground mb-1">
       {label}
-    </Typography>
+    </Text>
     {typeof value === 'string' ? (
-      <Typography variant="body1" fw="semibold">
+      <Text variant="body1" fw="semibold">
         {value}
-      </Typography>
+      </Text>
     ) : (
       value
     )}

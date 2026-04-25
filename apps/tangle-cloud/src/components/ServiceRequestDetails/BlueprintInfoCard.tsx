@@ -1,11 +1,9 @@
 import { FC } from 'react';
-import { Typography } from '@tangle-network/ui-components/typography/Typography';
-import { EMPTY_VALUE_PLACEHOLDER } from '@tangle-network/ui-components/constants';
 import { isEthereumAddress } from '@polkadot/util-crypto';
-import { shortenHex } from '@tangle-network/ui-components/utils/shortenHex';
-import { shortenString } from '@tangle-network/ui-components/utils/shortenString';
-import { isSubstrateAddress } from '@tangle-network/ui-components/utils/isSubstrateAddress';
 import { twMerge } from 'tailwind-merge';
+import { Text } from '../sandbox/SandboxUi';
+
+const EMPTY_VALUE_PLACEHOLDER = '-';
 
 type Props = {
   name: string;
@@ -15,6 +13,11 @@ type Props = {
   operatorsCount: number;
 };
 
+const shortenValue = (value: string, chars = 6) =>
+  value.length <= chars * 2 + 3
+    ? value
+    : `${value.slice(0, chars)}...${value.slice(-chars)}`;
+
 const BlueprintInfoCard: FC<Props> = ({
   name,
   author,
@@ -23,17 +26,14 @@ const BlueprintInfoCard: FC<Props> = ({
   operatorsCount,
 }) => {
   const formattedAuthor = isEthereumAddress(author)
-    ? shortenHex(author)
-    : isSubstrateAddress(author)
-      ? shortenString(author)
+    ? shortenValue(author)
+    : author.length > 24
+      ? shortenValue(author)
       : author;
 
   return (
     <div
-      className={twMerge(
-        'rounded-xl overflow-hidden',
-        'border border-mono-0 dark:border-mono-170',
-      )}
+      className={twMerge('rounded-xl overflow-hidden', 'border border-border')}
     >
       <div
         className={twMerge(
@@ -45,50 +45,38 @@ const BlueprintInfoCard: FC<Props> = ({
         )}
       >
         <div className="relative space-y-1">
-          <Typography variant="h4" className="text-mono-180 dark:text-mono-20">
+          <Text variant="h4" className="text-foreground">
             {name}
-          </Typography>
+          </Text>
 
-          <Typography
-            variant="body1"
-            className="text-mono-120 dark:text-mono-100"
-          >
+          <Text variant="body1" className="text-muted-foreground">
             {formattedAuthor}
-          </Typography>
+          </Text>
         </div>
 
-        <Typography
-          variant="body2"
-          className="relative text-mono-200 dark:text-mono-0"
-        >
+        <Text variant="body2" className="relative text-foreground">
           {description}
-        </Typography>
+        </Text>
 
         <div className="relative flex w-full gap-1 pt-4">
           <div className="flex-1 space-y-2">
-            <Typography
-              variant="body2"
-              className="text-mono-120 dark:text-mono-100"
-            >
+            <Text variant="body2" className="text-muted-foreground">
               Instances
-            </Typography>
+            </Text>
 
-            <Typography variant="h5">
+            <Text variant="h5">
               {instancesCount ?? EMPTY_VALUE_PLACEHOLDER}
-            </Typography>
+            </Text>
           </div>
 
           <div className="flex-1 space-y-2">
-            <Typography
-              variant="body2"
-              className="text-mono-120 dark:text-mono-100"
-            >
+            <Text variant="body2" className="text-muted-foreground">
               Operators
-            </Typography>
+            </Text>
 
-            <Typography variant="h5">
+            <Text variant="h5">
               {operatorsCount ?? EMPTY_VALUE_PLACEHOLDER}
-            </Typography>
+            </Text>
           </div>
         </div>
       </div>

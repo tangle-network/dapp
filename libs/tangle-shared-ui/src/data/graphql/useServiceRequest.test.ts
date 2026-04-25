@@ -1,4 +1,9 @@
-import { encodeEventTopics, toHex, zeroAddress } from 'viem';
+import {
+  encodeAbiParameters,
+  encodeEventTopics,
+  toHex,
+  zeroAddress,
+} from 'viem';
 import {
   BlueprintFieldKind,
   encodePayload,
@@ -396,12 +401,13 @@ describe('extractServiceRequestIdFromLogs', () => {
         requester,
       },
     });
+    const data = encodeAbiParameters([{ type: 'uint8' }], [0]);
 
     return [
       {
         address: requester,
         topics,
-        data: '0x',
+        data,
       },
     ] as const;
   };

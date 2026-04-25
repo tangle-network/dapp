@@ -1,20 +1,14 @@
 import { Children, FC, useEffect, useMemo, useState } from 'react';
 import {
-  Avatar,
   Button,
   Card,
-  Typography,
-  Slider,
-  Label,
-} from '@tangle-network/ui-components';
-import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@tangle-network/ui-components/components/select';
-import { shortenString } from '@tangle-network/ui-components/utils/shortenString';
+  Text,
+} from '../../../../../components/sandbox/SandboxUi';
 import ErrorMessage from '@tangle-network/tangle-shared-ui/components/ErrorMessage';
 import {
   useStakingAssets,
@@ -27,6 +21,11 @@ import type { Address } from 'viem';
 import { BaseDeployStepProps, LabelClassName } from './type';
 import { AssetRequirementFormItem } from './components/AssetRequirementFormItem';
 import { RequestMode } from '../../../../../utils/validations/deployBlueprint';
+
+const shortenString = (value: string, chars = 6) =>
+  value.length > chars * 2 + 3
+    ? `${value.slice(0, chars)}...${value.slice(-chars)}`
+    : value;
 
 const normalizeOperatorKey = (operator: string): string => {
   return operator.toLowerCase();
@@ -172,19 +171,19 @@ export const RequestModeStep: FC<BaseDeployStepProps> = ({
 
   return (
     <Card className="p-6">
-      <Typography variant="h5" className="text-mono-200 dark:text-mono-0 mb-2">
+      <Text variant="h5" className="mb-2">
         Request Mode
-      </Typography>
-      <Typography variant="body2" className="text-mono-100 mb-4">
+      </Text>
+      <Text variant="body2" className="text-muted-foreground mb-4">
         Select which contract request variant to use when deploying.
-      </Typography>
+      </Text>
 
       <div className="flex flex-col gap-4">
         <div className="flex items-end gap-4">
           <div className="w-1/2">
-            <Typography variant="body3" className="mb-1">
+            <Text variant="body3" className="mb-1">
               Mode
-            </Typography>
+            </Text>
             <Select
               value={requestMode}
               onValueChange={(value) =>
@@ -205,17 +204,17 @@ export const RequestModeStep: FC<BaseDeployStepProps> = ({
               </SelectContent>
             </Select>
             {errors?.requestMode?.message && (
-              <Typography variant="body3" className="text-red-500 mt-1">
+              <Text variant="body3" className="text-destructive mt-1">
                 {errors.requestMode.message}
-              </Typography>
+              </Text>
             )}
           </div>
 
           {requestMode === 'security' && (
             <div className="flex-1">
-              <Typography variant="body3" className="mb-1">
+              <Text variant="body3" className="mb-1">
                 Add Asset Requirements
-              </Typography>
+              </Text>
               <Select
                 value={selectedAsset}
                 onValueChange={(value) => {
@@ -235,7 +234,7 @@ export const RequestModeStep: FC<BaseDeployStepProps> = ({
                         <SelectItem value={asset.id} id={asset.id}>
                           <div className="flex items-center gap-2">
                             <LsTokenIcon name={symbol} size="md" />
-                            <Typography variant="body1">{name}</Typography>
+                            <Text variant="body1">{name}</Text>
                           </div>
                         </SelectItem>
                       );
@@ -250,15 +249,12 @@ export const RequestModeStep: FC<BaseDeployStepProps> = ({
         {requestMode === 'exposure' && (
           <div className="space-y-3">
             <div>
-              <Typography
-                variant="body3"
-                className={cx(LabelClassName, 'mb-0.5')}
-              >
+              <Text variant="body3" className={cx(LabelClassName, 'mb-0.5')}>
                 Per-Operator Exposure (%)
-              </Typography>
-              <Typography variant="body3" className="text-mono-100">
+              </Text>
+              <Text variant="body3" className="text-muted-foreground">
                 Set the exact exposure percent for each selected operator.
-              </Typography>
+              </Text>
             </div>
 
             {operators.length === 0 ? (
@@ -276,13 +272,13 @@ export const RequestModeStep: FC<BaseDeployStepProps> = ({
                     d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
                   />
                 </svg>
-                <Typography
+                <Text
                   variant="body2"
                   className="text-yellow-600 dark:text-yellow-400"
                 >
                   Select at least one operator to configure exposure
                   percentages.
-                </Typography>
+                </Text>
               </div>
             ) : (
               <div className="space-y-3">
@@ -296,51 +292,54 @@ export const RequestModeStep: FC<BaseDeployStepProps> = ({
                   return (
                     <div
                       key={operator}
-                      className="flex flex-col lg:flex-row lg:items-center gap-4 lg:gap-6 p-4 bg-mono-20 dark:bg-mono-160 rounded-lg"
+                      className="flex flex-col lg:flex-row lg:items-center gap-4 lg:gap-6 p-4 bg-muted/40 rounded-lg"
                     >
                       <div className="flex items-center gap-3 flex-shrink-0 lg:w-[200px]">
-                        <Avatar
-                          sourceVariant="address"
-                          value={operator}
-                          theme="ethereum"
-                          size="md"
-                        />
+                        <div className="flex h-10 w-10 items-center justify-center rounded-full border border-border bg-gradient-to-br from-primary/25 to-accent/25 font-mono text-xs text-foreground">
+                          {operator.slice(2, 4).toUpperCase()}
+                        </div>
                         <div className="min-w-0">
-                          <Typography
+                          <Text
                             variant="body4"
-                            className="text-mono-100 uppercase tracking-wide mb-0.5"
+                            className="text-muted-foreground uppercase tracking-wide mb-0.5"
                           >
                             Operator
-                          </Typography>
-                          <Typography
+                          </Text>
+                          <Text
                             variant="body2"
                             className={cx(LabelClassName, 'font-mono truncate')}
                           >
                             {shortenString(operator, 8)}
-                          </Typography>
+                          </Text>
                         </div>
                       </div>
 
                       <div className="flex-1 min-w-0">
-                        <Label className={cx(LabelClassName, 'mb-2 block')}>
+                        <label className={cx(LabelClassName, 'mb-2 block')}>
                           Set Exposure Percentage
-                        </Label>
+                        </label>
                         <div className="space-y-2">
-                          <Slider
-                            hasLabel
-                            min={1}
-                            max={100}
-                            value={[exposurePercent]}
-                            onChange={(value) => {
-                              const next = { ...operatorExposurePercents };
-                              next[key] = value[0];
-                              setValue('operatorExposurePercents', next, {
-                                shouldDirty: true,
-                                shouldTouch: true,
-                                shouldValidate: true,
-                              });
-                            }}
-                          />
+                          <div className="flex items-center gap-3">
+                            <input
+                              type="range"
+                              className="h-2 w-full cursor-pointer accent-primary"
+                              min={1}
+                              max={100}
+                              value={exposurePercent}
+                              onChange={(event) => {
+                                const next = { ...operatorExposurePercents };
+                                next[key] = Number(event.currentTarget.value);
+                                setValue('operatorExposurePercents', next, {
+                                  shouldDirty: true,
+                                  shouldTouch: true,
+                                  shouldValidate: true,
+                                });
+                              }}
+                            />
+                            <span className="w-12 text-right font-mono text-sm text-foreground">
+                              {exposurePercent}%
+                            </span>
+                          </div>
                           {exposureError && (
                             <ErrorMessage className="text-sm">
                               {exposureError}

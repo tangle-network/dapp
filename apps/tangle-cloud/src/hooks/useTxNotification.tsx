@@ -2,6 +2,7 @@ import { TxName } from '../constants';
 import useSharedTxNotification from '@tangle-network/tangle-shared-ui/hooks/useTxNotification';
 
 export const SUCCESS_MESSAGES: Record<TxName, string> = {
+  [TxName.PRE_REGISTER_BLUEPRINT]: 'Operator intent signaled',
   [TxName.REGISTER_BLUEPRINT]: 'Registered as operator successfully',
   [TxName.UNREGISTER_BLUEPRINT]: 'Unregistered from blueprint successfully',
   [TxName.REJECT_SERVICE_REQUEST]: 'Service request rejected',

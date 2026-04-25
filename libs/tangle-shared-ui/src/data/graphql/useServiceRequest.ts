@@ -18,6 +18,13 @@ export enum AssetKind {
   ERC20 = 1,
 }
 
+export enum ConfidentialityPolicy {
+  Any = 0,
+  TeeRequired = 1,
+  StandardRequired = 2,
+  TeePreferred = 3,
+}
+
 /** Conversion factor from percentage to basis points (1% = 100 bps) */
 export const PERCENT_TO_BASIS_POINTS = 100;
 const BPS_DENOMINATOR = 10_000;
@@ -43,6 +50,7 @@ export interface ServiceRequestParams {
   ttl: bigint;
   paymentToken: Address;
   paymentAmount: bigint;
+  confidentialityPolicy?: ConfidentialityPolicy;
   /**
    * Optional explicit operator exposure commitments for requestServiceWithExposure.
    * Values are basis points (1% = 100, 100% = 10000).
@@ -194,6 +202,8 @@ export const useServiceRequestTx = () => {
         const requestFunction = selectRequestFunction(params);
         const exposureBps = params.exposureBps ?? [];
         const securityRequirements = params.securityRequirements ?? [];
+        const confidentialityPolicy =
+          params.confidentialityPolicy ?? ConfidentialityPolicy.Any;
 
         // Use type assertion to avoid "union type too complex" error from large ABI
         let simulateRequest;
@@ -212,6 +222,7 @@ export const useServiceRequestTx = () => {
               params.ttl,
               params.paymentToken,
               params.paymentAmount,
+              confidentialityPolicy,
             ] as const,
             account: userAddress,
             value:
@@ -234,6 +245,7 @@ export const useServiceRequestTx = () => {
               params.ttl,
               params.paymentToken,
               params.paymentAmount,
+              confidentialityPolicy,
             ] as const,
             account: userAddress,
             value:
@@ -255,6 +267,7 @@ export const useServiceRequestTx = () => {
               params.ttl,
               params.paymentToken,
               params.paymentAmount,
+              confidentialityPolicy,
             ] as const,
             account: userAddress,
             value:

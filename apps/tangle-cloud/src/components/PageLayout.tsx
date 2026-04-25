@@ -1,6 +1,5 @@
 import { type FC, type PropsWithChildren } from 'react';
 import { twMerge } from 'tailwind-merge';
-import Header from './Header';
 
 type Props = PropsWithChildren<{
   className?: string;
@@ -10,12 +9,10 @@ const PageLayout: FC<Props> = ({ children, className }) => {
   return (
     <div
       className={twMerge(
-        'max-w-screen-xl px-4 mx-auto space-y-5 md:px-5',
+        'tangle-cloud-page max-w-screen-xl px-4 pt-8 pb-8 mx-auto space-y-5 md:px-5',
         className,
       )}
     >
-      <Header />
-
       {children}
     </div>
   );

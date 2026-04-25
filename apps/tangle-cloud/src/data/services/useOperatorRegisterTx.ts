@@ -37,6 +37,16 @@ export interface UseOperatorBatchRegisterTxOptions {
   }) => void;
 }
 
+export interface OperatorBatchPreRegisterParams {
+  blueprintIds: bigint[];
+}
+
+export interface OperatorBatchPreRegisterResult {
+  successfulBlueprintIds: bigint[];
+  failedBlueprintIds: bigint[];
+  txHashes: Hash[];
+}
+
 /**
  * Hook for batch registering as an operator for multiple blueprints.
  */
@@ -171,6 +181,136 @@ export const useOperatorBatchRegisterTx = (
     setTxHash(null);
     registerSingleHook.reset();
   }, [registerSingleHook]);
+
+  return {
+    execute,
+    status,
+    error,
+    reset,
+    txHash,
+    isSuccess: status === TxStatus.COMPLETE,
+    isPending: status === TxStatus.PROCESSING,
+  };
+};
+
+/**
+ * Hook for signaling operator intent before full blueprint registration.
+ *
+ * The protocol emits OperatorPreRegistered for indexers and Blueprint Managers.
+ * It does not write endpoint preferences or blueprint-specific registration
+ * inputs, so operators can follow up with full registration later.
+ */
+export const useOperatorBatchPreRegisterTx = (
+  options?: UseOperatorBatchRegisterTxOptions,
+) => {
+  const chainId = useChainId();
+  let contracts: ReturnType<typeof getContractsByChainId> | null = null;
+  try {
+    contracts = getContractsByChainId(chainId);
+  } catch {
+    contracts = null;
+  }
+  const [status, setStatus] = useState<TxStatus>(TxStatus.NOT_YET_INITIATED);
+  const [error, setError] = useState<Error | null>(null);
+  const [txHash, setTxHash] = useState<Hash | null>(null);
+
+  const preRegisterSingleHook = useContractWrite(
+    TANGLE_ABI,
+    (params: { blueprintId: bigint }) => {
+      if (!contracts || contracts.tangle === zeroAddress) {
+        return null;
+      }
+
+      return {
+        address: contracts.tangle,
+        abi: TANGLE_ABI,
+        functionName: 'preRegister' as const,
+        args: [params.blueprintId] as const,
+      };
+    },
+    {
+      txName: 'pre-register operator',
+      txDetails: (params) =>
+        new Map([['Blueprint ID', params.blueprintId.toString()]]),
+      getSuccessMessage: (params) =>
+        `Operator intent signaled for blueprint #${params.blueprintId}`,
+    },
+  );
+
+  const execute = async (
+    params: OperatorBatchPreRegisterParams,
+  ): Promise<OperatorBatchPreRegisterResult | null> => {
+    const { blueprintIds } = params;
+
+    if (blueprintIds.length === 0) {
+      setStatus(TxStatus.ERROR);
+      setError(new Error('At least one blueprint is required'));
+      return null;
+    }
+    if (!contracts || contracts.tangle === zeroAddress) {
+      setStatus(TxStatus.ERROR);
+      setError(new Error('Tangle contract not available on this network'));
+      return null;
+    }
+
+    setStatus(TxStatus.PROCESSING);
+    setError(null);
+    setTxHash(null);
+
+    const successfulBlueprintIds: bigint[] = [];
+    const failedBlueprintIds: bigint[] = [];
+    const txHashes: Hash[] = [];
+
+    for (let index = 0; index < blueprintIds.length; index++) {
+      const blueprintId = blueprintIds[index];
+      options?.onProgress?.({
+        current: index + 1,
+        total: blueprintIds.length,
+        blueprintId,
+      });
+
+      const result = await preRegisterSingleHook.execute?.({ blueprintId });
+
+      if (result?.hash) {
+        successfulBlueprintIds.push(blueprintId);
+        txHashes.push(result.hash);
+        setTxHash(result.hash);
+      } else {
+        failedBlueprintIds.push(blueprintId);
+      }
+    }
+
+    if (successfulBlueprintIds.length === 0) {
+      const noSuccessError =
+        preRegisterSingleHook.error ??
+        new Error('Failed to signal intent for all selected blueprints');
+      setStatus(TxStatus.ERROR);
+      setError(noSuccessError);
+      return null;
+    }
+
+    setStatus(TxStatus.COMPLETE);
+    if (failedBlueprintIds.length > 0) {
+      setError(
+        new Error(
+          `Signaled intent for ${successfulBlueprintIds.length} of ${blueprintIds.length} blueprints`,
+        ),
+      );
+    }
+
+    return {
+      successfulBlueprintIds,
+      failedBlueprintIds,
+      txHashes,
+    };
+  };
+
+  const reset = useCallback(() => {
+    setStatus(TxStatus.NOT_YET_INITIATED);
+    setError(null);
+    setTxHash(null);
+    preRegisterSingleHook.reset();
+  }, [preRegisterSingleHook]);
 
   return {
     execute,

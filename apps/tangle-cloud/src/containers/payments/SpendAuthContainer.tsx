@@ -189,23 +189,21 @@ const SpendAuthContainer: FC = () => {
 
   return (
     <div className="space-y-4">
-      <h2 className="text-lg font-semibold text-mono-200 dark:text-mono-0">
-        Authorize Spend
-      </h2>
+      <h2 className="text-lg font-semibold text-foreground">Authorize Spend</h2>
 
-      <p className="text-sm text-mono-120 dark:text-mono-80">
+      <p className="text-sm text-muted-foreground">
         Sign an off-chain EIP-712 spend authorization. No ZK proof needed — just
         a cheap signature from your ephemeral spending key.
       </p>
 
       {creditAccounts.length === 0 ? (
-        <div className="p-4 text-sm text-center border rounded-lg border-mono-40 dark:border-mono-160 text-mono-100">
+        <div className="p-4 text-sm text-center border rounded-lg border-border text-muted-foreground">
           No credit accounts. Fund one first from the shielded pool.
         </div>
       ) : (
         <>
           <div className="space-y-1">
-            <label className="text-sm font-medium text-mono-140 dark:text-mono-80">
+            <label className="text-sm font-medium text-muted-foreground">
               Credit Account
             </label>
 
@@ -218,7 +216,7 @@ const SpendAuthContainer: FC = () => {
                 setSelectedAccount(acct ?? null);
                 setSignedAuth(null);
               }}
-              className="w-full p-3 text-sm border rounded-lg border-mono-40 dark:border-mono-160 bg-mono-0 dark:bg-mono-200 text-mono-200 dark:text-mono-0"
+              className="w-full p-3 text-sm border rounded-lg border-border bg-card text-foreground"
             >
               <option value="">Select account...</option>
               {creditAccounts.map((acct) => (
@@ -231,7 +229,7 @@ const SpendAuthContainer: FC = () => {
 
           <div className="grid gap-3 sm:grid-cols-2">
             <div className="space-y-1">
-              <label className="text-sm font-medium text-mono-140 dark:text-mono-80">
+              <label className="text-sm font-medium text-muted-foreground">
                 Service ID
               </label>
 
@@ -240,12 +238,12 @@ const SpendAuthContainer: FC = () => {
                 placeholder="e.g. 1"
                 value={serviceId}
                 onChange={(e) => setServiceId(e.target.value)}
-                className="w-full p-3 text-sm border rounded-lg border-mono-40 dark:border-mono-160 bg-mono-0 dark:bg-mono-200 outline-none text-mono-200 dark:text-mono-0"
+                className="w-full p-3 text-sm border rounded-lg border-border bg-card outline-none text-foreground"
               />
             </div>
 
             <div className="space-y-1">
-              <label className="text-sm font-medium text-mono-140 dark:text-mono-80">
+              <label className="text-sm font-medium text-muted-foreground">
                 Job Index (0-255)
               </label>
 
@@ -254,13 +252,13 @@ const SpendAuthContainer: FC = () => {
                 placeholder="0"
                 value={jobIndex}
                 onChange={(e) => setJobIndex(e.target.value)}
-                className="w-full p-3 text-sm border rounded-lg border-mono-40 dark:border-mono-160 bg-mono-0 dark:bg-mono-200 outline-none text-mono-200 dark:text-mono-0"
+                className="w-full p-3 text-sm border rounded-lg border-border bg-card outline-none text-foreground"
               />
             </div>
           </div>
 
           <div className="space-y-1">
-            <label className="text-sm font-medium text-mono-140 dark:text-mono-80">
+            <label className="text-sm font-medium text-muted-foreground">
               Amount
             </label>
 
@@ -274,12 +272,12 @@ const SpendAuthContainer: FC = () => {
                   setAmount(e.target.value);
                 }
               }}
-              className="w-full p-3 text-sm border rounded-lg border-mono-40 dark:border-mono-160 bg-mono-0 dark:bg-mono-200 outline-none text-mono-200 dark:text-mono-0"
+              className="w-full p-3 text-sm border rounded-lg border-border bg-card outline-none text-foreground"
             />
           </div>
 
           <div className="space-y-1">
-            <label className="text-sm font-medium text-mono-140 dark:text-mono-80">
+            <label className="text-sm font-medium text-muted-foreground">
               Operator Address
             </label>
 
@@ -288,16 +286,14 @@ const SpendAuthContainer: FC = () => {
               placeholder="0x..."
               value={operator}
               onChange={(e) => setOperator(e.target.value)}
-              className={`w-full p-3 text-sm font-mono border rounded-lg bg-mono-0 dark:bg-mono-200 outline-none text-mono-200 dark:text-mono-0 ${
-                !isValidOperator
-                  ? 'border-red-50'
-                  : 'border-mono-40 dark:border-mono-160'
+              className={`w-full p-3 text-sm font-mono border rounded-lg bg-card outline-none text-foreground ${
+                !isValidOperator ? 'border-red-50' : 'border-border'
               }`}
             />
           </div>
 
           <div className="space-y-1">
-            <label className="text-sm font-medium text-mono-140 dark:text-mono-80">
+            <label className="text-sm font-medium text-muted-foreground">
               Expiry (minutes)
             </label>
 
@@ -305,7 +301,7 @@ const SpendAuthContainer: FC = () => {
               type="text"
               value={expiryMinutes}
               onChange={(e) => setExpiryMinutes(e.target.value)}
-              className="w-full p-3 text-sm border rounded-lg border-mono-40 dark:border-mono-160 bg-mono-0 dark:bg-mono-200 outline-none text-mono-200 dark:text-mono-0"
+              className="w-full p-3 text-sm border rounded-lg border-border bg-card outline-none text-foreground"
             />
           </div>
 
@@ -315,18 +311,18 @@ const SpendAuthContainer: FC = () => {
 
           {signedAuth && (
             <div className="space-y-2">
-              <span className="text-xs font-medium text-mono-140 dark:text-mono-80">
+              <span className="text-xs font-medium text-muted-foreground">
                 Signed Authorization (share with operator)
               </span>
 
-              <pre className="p-3 overflow-x-auto text-xs border rounded-lg border-mono-40 dark:border-mono-160 bg-mono-20 dark:bg-mono-180 text-mono-200 dark:text-mono-0">
+              <pre className="p-3 overflow-x-auto text-xs border rounded-lg border-border bg-muted/40 text-foreground">
                 {signedAuth}
               </pre>
 
               <button
                 type="button"
                 onClick={() => navigator.clipboard.writeText(signedAuth)}
-                className="text-xs font-medium text-blue-50 hover:underline"
+                className="text-xs font-medium text-primary hover:underline"
               >
                 Copy to clipboard
               </button>
@@ -344,7 +340,7 @@ const SpendAuthContainer: FC = () => {
               !isValidOperator ||
               !domainSeparator
             }
-            className="w-full px-4 py-3 text-sm font-semibold text-white rounded-lg bg-blue-50 hover:bg-blue-70 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="w-full px-4 py-3 text-sm font-semibold text-white rounded-lg bg-primary hover:bg-primary/80 disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {!domainSeparator
               ? 'Waiting for contract...'

@@ -1,10 +1,5 @@
 import { FC } from 'react';
-import {
-  Typography,
-  Card,
-  CardVariant,
-  SkeletonLoader,
-} from '@tangle-network/ui-components';
+import { Card, Skeleton, Text } from '../../components/sandbox/SandboxUi';
 import { useCreditsContext } from '../../app/CreditsProvider';
 import CreditAccountCard from '../../components/payments/CreditAccountCard';
 import useCreditAccountState from '../../data/payments/useCreditAccountState';
@@ -51,11 +46,11 @@ const CreditBalanceContainer: FC = () => {
   if (isLoading) {
     return (
       <div className="space-y-3">
-        <SkeletonLoader className="h-6 w-40" />
-        <SkeletonLoader className="h-4 w-64" />
+        <Skeleton className="h-6 w-40" />
+        <Skeleton className="h-4 w-64" />
         <div className="grid gap-3 sm:grid-cols-2">
-          <SkeletonLoader className="h-32 rounded-xl" />
-          <SkeletonLoader className="h-32 rounded-xl" />
+          <Skeleton className="h-32 rounded-xl" />
+          <Skeleton className="h-32 rounded-xl" />
         </div>
       </div>
     );
@@ -64,21 +59,21 @@ const CreditBalanceContainer: FC = () => {
   return (
     <div className="space-y-4">
       <div>
-        <Typography variant="h5" fw="semibold">
+        <Text variant="h5" fw="semibold">
           Credit Accounts
-        </Typography>
+        </Text>
 
-        <Typography variant="body2" className="mt-1 text-mono-100">
+        <Text variant="body2" className="mt-1 text-muted-foreground">
           Your anonymous credit accounts. Each shows on-chain balance and usage.
-        </Typography>
+        </Text>
       </div>
 
       {creditAccounts.length === 0 ? (
-        <Card variant={CardVariant.DEFAULT} className="text-center py-8">
-          <Typography variant="body1" className="text-mono-100">
+        <Card className="text-center py-8">
+          <Text variant="body1" className="text-muted-foreground">
             No credit accounts yet. Fund one from the shielded pool to get
             started.
-          </Typography>
+          </Text>
         </Card>
       ) : (
         <div className="grid gap-3 sm:grid-cols-2">

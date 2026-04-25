@@ -1,17 +1,14 @@
 import {
-  Label,
   Input,
   Button,
   Card,
-  Typography,
-} from '@tangle-network/ui-components';
-import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@tangle-network/ui-components/components/select';
+  Text,
+} from '../../../../../components/sandbox/SandboxUi';
 import InstanceHeader from '../../../../../components/InstanceHeader';
 import ErrorMessage from '@tangle-network/tangle-shared-ui/components/ErrorMessage';
 import { Children, FC, useMemo } from 'react';
@@ -137,21 +134,18 @@ export const BasicInformationStep: FC<BasicInformationStepProps> = ({
         githubPath={blueprint?.githubUrl}
       />
       <Card className="p-6">
-        <Typography
-          variant="h5"
-          className="text-mono-200 dark:text-mono-0 mb-4"
-        >
+        <Text variant="h5" className="mb-4">
           Basic Information
-        </Typography>
+        </Text>
 
         <div className="grid grid-cols-2 gap-8">
           <div className="space-y-2">
-            <Label className={LabelClassName}>Instance Name</Label>
+            <label className={LabelClassName}>Instance Name</label>
             <Input
               id="instanceName"
               autoFocus
               isControlled
-              inputClassName="placeholder:text-mono-80 dark:placeholder:text-mono-120 h-10"
+              inputClassName="placeholder:text-muted-foreground h-10"
               placeholder="Enter instance name"
               autoComplete="off"
               value={instanceName}
@@ -163,13 +157,13 @@ export const BasicInformationStep: FC<BasicInformationStepProps> = ({
           </div>
 
           <div className="space-y-2">
-            <Label className={LabelClassName}>Instance Duration (TTL)</Label>
+            <label className={LabelClassName}>Instance Duration (TTL)</label>
             <div className="flex gap-2">
               <Input
                 id="instanceDuration"
                 isControlled
                 isInvalid={Boolean(instanceDurationError)}
-                inputClassName="placeholder:text-mono-80 dark:placeholder:text-mono-120 h-10"
+                inputClassName="placeholder:text-muted-foreground h-10"
                 placeholder="Enter duration"
                 autoComplete="off"
                 type="number"
@@ -198,13 +192,10 @@ export const BasicInformationStep: FC<BasicInformationStepProps> = ({
                 </SelectContent>
               </Select>
             </div>
-            <Typography
-              variant="body2"
-              className="text-mono-100 dark:text-mono-100"
-            >
+            <Text variant="body2" className="text-muted-foreground">
               Use 0 for perpetual service, or {constraints.min}-
               {constraints.max} {durationUnit}
-            </Typography>
+            </Text>
             {instanceDurationError && (
               <ErrorMessage>{instanceDurationError}</ErrorMessage>
             )}
@@ -212,16 +203,16 @@ export const BasicInformationStep: FC<BasicInformationStepProps> = ({
         </div>
 
         <div className="mt-6 space-y-4">
-          <Label className={LabelClassName}>Permitted Callers</Label>
+          <label className={LabelClassName}>Permitted Callers</label>
           {errors?.['permittedCallers'] && (
             <ErrorMessage>{errors['permittedCallers'].message}</ErrorMessage>
           )}
           {Children.toArray(
             permittedCallers?.map((caller, index) => (
               <div className="pl-4">
-                <Label className={LabelClassName}>
+                <label className={LabelClassName}>
                   Permitted Caller {index + 1}:
-                </Label>
+                </label>
                 <div className="flex gap-2">
                   <Input
                     id={`permittedCallers-${index}`}
@@ -231,7 +222,7 @@ export const BasicInformationStep: FC<BasicInformationStepProps> = ({
                       handleCallerChange(index, nextValue)
                     }
                     className="flex-grow"
-                    inputClassName="placeholder:text-mono-80 dark:placeholder:text-mono-120 h-10 w-full"
+                    inputClassName="placeholder:text-muted-foreground h-10 w-full"
                     placeholder="Enter wallet address (0x...)"
                     autoComplete="off"
                   />

@@ -2,7 +2,13 @@
  * Table showing job history for a service.
  */
 
-import { FC, useMemo, useState } from 'react';
+import {
+  type ComponentProps,
+  type ElementType,
+  type FC,
+  useMemo,
+  useState,
+} from 'react';
 import {
   createColumnHelper,
   getCoreRowModel,
@@ -12,10 +18,9 @@ import {
   flexRender,
 } from '@tanstack/react-table';
 import {
-  Typography,
-  SkeletonLoader,
-  Button,
-} from '@tangle-network/ui-components';
+  Button as SandboxButton,
+  Skeleton,
+} from '@tangle-network/sandbox-ui/primitives';
 import type { JobCall } from '@tangle-network/tangle-shared-ui/data/graphql';
 import { isOptimisticJob } from '@tangle-network/tangle-shared-ui/data/graphql/useJobs';
 import type { BlueprintJobDefinition } from '@tangle-network/tangle-shared-ui/data/services';
@@ -30,6 +35,58 @@ interface Props {
 
 const columnHelper = createColumnHelper<JobCall>();
 
+type TextProps = ComponentProps<'p'> & {
+  variant?: 'body1' | 'body2';
+  fw?: 'semibold';
+};
+
+const Text: FC<TextProps> = ({
+  variant = 'body2',
+  fw,
+  className = '',
+  ...props
+}) => {
+  const Component = 'p' as ElementType;
+  const variantClass =
+    variant === 'body1'
+      ? 'text-base text-foreground'
+      : 'text-sm text-foreground';
+  const weightClass = fw === 'semibold' ? 'font-semibold' : '';
+
+  return (
+    <Component
+      className={[variantClass, weightClass, className]
+        .filter(Boolean)
+        .join(' ')}
+      {...props}
+    />
+  );
+};
+
+type ButtonProps = Omit<
+  ComponentProps<typeof SandboxButton>,
+  'variant' | 'size'
+> & {
+  variant?: ComponentProps<typeof SandboxButton>['variant'] | 'utility';
+  size?: ComponentProps<typeof SandboxButton>['size'];
+  isDisabled?: boolean;
+};
+
+const Button: FC<ButtonProps> = ({
+  variant,
+  size,
+  isDisabled,
+  disabled,
+  ...props
+}) => (
+  <SandboxButton
+    variant={variant === 'utility' ? 'outline' : variant}
+    size={size}
+    disabled={disabled || isDisabled}
+    {...props}
+  />
+);
+
 const makeColumns = (jobDefinitions?: BlueprintJobDefinition[]) => [
   columnHelper.accessor('callId', {
     header: 'Call ID',
@@ -37,15 +94,15 @@ const makeColumns = (jobDefinitions?: BlueprintJobDefinition[]) => [
       const job = info.row.original;
       if (isOptimisticJob(job)) {
         return (
-          <span className="px-2 py-1 rounded text-xs bg-blue-500/20 text-blue-400 animate-pulse">
+          <span className="px-2 py-1 rounded text-xs bg-primary/20 text-primary animate-pulse">
             Confirming...
           </span>
         );
       }
       return (
-        <Typography variant="body2" className="font-mono">
+        <Text variant="body2" className="font-mono">
           #{info.getValue().toString()}
-        </Typography>
+        </Text>
       );
     },
   }),
@@ -55,10 +112,10 @@ const makeColumns = (jobDefinitions?: BlueprintJobDefinition[]) => [
       const index = info.getValue();
       const jobName = jobDefinitions?.[index]?.name;
       return (
-        <Typography variant="body2">
+        <Text variant="body2">
           Job {index}
           {jobName ? `: ${jobName}` : ''}
-        </Typography>
+        </Text>
       );
     },
   }),
@@ -67,9 +124,9 @@ const makeColumns = (jobDefinitions?: BlueprintJobDefinition[]) => [
     cell: (info) => {
       const address = info.getValue();
       return (
-        <Typography variant="body2" className="font-mono">
+        <Text variant="body2" className="font-mono">
           {address.slice(0, 6)}...{address.slice(-4)}
-        </Typography>
+        </Text>
       );
     },
   }),
@@ -78,9 +135,9 @@ const makeColumns = (jobDefinitions?: BlueprintJobDefinition[]) => [
     cell: (info) => {
       const timestamp = info.getValue();
       return (
-        <Typography variant="body2">
+        <Text variant="body2">
           {new Date(Number(timestamp) * 1000).toLocaleString()}
-        </Typography>
+        </Text>
       );
     },
   }),
@@ -90,7 +147,7 @@ const makeColumns = (jobDefinitions?: BlueprintJobDefinition[]) => [
       const job = info.row.original;
       if (isOptimisticJob(job)) {
         return (
-          <span className="px-2 py-1 rounded text-xs bg-blue-500/20 text-blue-400 animate-pulse">
+          <span className="px-2 py-1 rounded text-xs bg-primary/20 text-primary animate-pulse">
             Confirming
           </span>
         );
@@ -112,7 +169,7 @@ const makeColumns = (jobDefinitions?: BlueprintJobDefinition[]) => [
   }),
   columnHelper.accessor('resultCount', {
     header: '# Results',
-    cell: (info) => <Typography variant="body2">{info.getValue()}</Typography>,
+    cell: (info) => <Text variant="body2">{info.getValue()}</Text>,
   }),
 ];
 
@@ -140,9 +197,9 @@ export const JobHistoryTable: FC<Props> = ({
   if (isLoading) {
     return (
       <div className="space-y-2">
-        <SkeletonLoader className="h-10" />
-        <SkeletonLoader className="h-10" />
-        <SkeletonLoader className="h-10" />
+        <Skeleton className="h-10" />
+        <Skeleton className="h-10" />
+        <Skeleton className="h-10" />
       </div>
     );
   }
@@ -150,9 +207,9 @@ export const JobHistoryTable: FC<Props> = ({
   if (jobs.length === 0) {
     return (
       <div className="text-center py-8">
-        <Typography variant="body1" className="text-mono-100">
+        <Text variant="body1" className="text-muted-foreground">
           No jobs submitted yet. Submit a job above to get started.
-        </Typography>
+        </Text>
       </div>
     );
   }
@@ -163,14 +220,11 @@ export const JobHistoryTable: FC<Props> = ({
         <table className="w-full">
           <thead>
             {table.getHeaderGroups().map((headerGroup) => (
-              <tr
-                key={headerGroup.id}
-                className="border-b border-mono-60 dark:border-mono-140"
-              >
+              <tr key={headerGroup.id} className="border-b border-border">
                 {headerGroup.headers.map((header) => (
                   <th
                     key={header.id}
-                    className="text-left py-3 px-4 text-mono-100 font-medium"
+                    className="text-left py-3 px-4 text-muted-foreground font-medium"
                   >
                     {header.isPlaceholder
                       ? null
@@ -180,7 +234,7 @@ export const JobHistoryTable: FC<Props> = ({
                         )}
                   </th>
                 ))}
-                <th className="text-left py-3 px-4 text-mono-100 font-medium">
+                <th className="text-left py-3 px-4 text-muted-foreground font-medium">
                   Actions
                 </th>
               </tr>
@@ -190,7 +244,7 @@ export const JobHistoryTable: FC<Props> = ({
             {table.getRowModel().rows.map((row) => (
               <tr
                 key={row.id}
-                className="border-b border-mono-40 dark:border-mono-160 hover:bg-mono-20 dark:hover:bg-mono-170"
+                className="border-b border-border hover:bg-muted/60"
               >
                 {row.getVisibleCells().map((cell) => (
                   <td key={cell.id} className="py-3 px-4">
@@ -215,10 +269,10 @@ export const JobHistoryTable: FC<Props> = ({
       {/* Pagination */}
       {table.getPageCount() > 1 && (
         <div className="flex items-center justify-between mt-4">
-          <Typography variant="body2" className="text-mono-100">
+          <Text variant="body2" className="text-muted-foreground">
             Page {table.getState().pagination.pageIndex + 1} of{' '}
             {table.getPageCount()}
-          </Typography>
+          </Text>
           <div className="flex gap-2">
             <Button
               variant="utility"

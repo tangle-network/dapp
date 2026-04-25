@@ -1,6 +1,7 @@
 import { PrimitiveField } from '@tangle-network/tangle-shared-ui/types/blueprint';
-import { TANGLE_DAPP_URL } from '@tangle-network/ui-components/constants';
 import type { Address } from 'viem';
+
+const TANGLE_DAPP_URL = 'https://app.tangle.tools';
 
 const ensureTrailingSlash = (url: string): string =>
   url.endsWith('/') ? url : `${url}/`;

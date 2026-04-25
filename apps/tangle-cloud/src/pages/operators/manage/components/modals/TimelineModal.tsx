@@ -9,8 +9,8 @@ import {
   ModalContent,
   ModalFooterActions,
   ModalHeader,
-  Typography,
-} from '@tangle-network/ui-components';
+  Text,
+} from './SandboxModalPrimitives';
 import { formatDateTime } from '../../utils';
 
 interface TimelineModalProps {
@@ -31,9 +31,9 @@ const TimelineModal = ({
       <ModalContent>
         <ModalHeader>Slash Timeline</ModalHeader>
         <ModalBody>
-          <Typography variant="body1" className="mb-3">
+          <Text variant="body1" className="mb-3">
             Slash proposal #{selectedSlash?.id.toString()}
-          </Typography>
+          </Text>
           <div className="space-y-3">
             {timeline
               .filter(
@@ -54,7 +54,7 @@ const TimelineModal = ({
                 return (
                   <div
                     key={stage.key}
-                    className="flex items-start gap-3 rounded-lg border border-mono-40 dark:border-mono-140 p-3"
+                    className="flex items-start gap-3 rounded-lg border border-border p-3"
                   >
                     <Chip
                       color={colorByState[stage.state]}
@@ -63,16 +63,16 @@ const TimelineModal = ({
                       {stage.state.toUpperCase()}
                     </Chip>
                     <div className="space-y-1">
-                      <Typography variant="body2" fw="bold">
+                      <Text variant="body2" fw="bold">
                         {stage.label}
-                      </Typography>
-                      <Typography variant="body3" className="text-mono-100">
+                      </Text>
+                      <Text variant="body3" className="text-muted-foreground">
                         {stage.description}
-                      </Typography>
+                      </Text>
                       {stage.timestamp !== null ? (
-                        <Typography variant="body3" className="text-mono-120">
+                        <Text variant="body3" className="text-muted-foreground">
                           {formatDateTime(stage.timestamp)}
-                        </Typography>
+                        </Text>
                       ) : null}
                     </div>
                   </div>

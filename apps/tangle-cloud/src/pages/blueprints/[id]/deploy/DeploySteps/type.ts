@@ -11,7 +11,7 @@ import { VaultToken } from '@tangle-network/tangle-shared-ui/types';
 import { Address } from 'viem';
 import { BlueprintOperator } from '@tangle-network/tangle-shared-ui/data/graphql';
 
-export const LabelClassName = 'text-mono-200 dark:text-mono-0 font-medium';
+export const LabelClassName = 'text-foreground font-medium';
 
 export type BaseDeployStepProps = {
   errors?: FieldErrors<DeployBlueprintSchema>;

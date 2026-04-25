@@ -1,32 +1,33 @@
 import { useOperator } from '@tangle-network/tangle-shared-ui/data/graphql/useOperators';
 import { type OperatorRegistration } from '@tangle-network/tangle-shared-ui/data/graphql/useOperatorManagement';
-import { Alert } from '@tangle-network/ui-components/components/Alert';
-import { Button } from '@tangle-network/ui-components/components/buttons';
 import {
-  Drawer,
-  DrawerCloseButton,
-  DrawerContent,
-  DrawerTitle,
-} from '@tangle-network/ui-components/components/Drawer';
-import { Form } from '@tangle-network/ui-components/components/form';
-import SkeletonLoader from '@tangle-network/ui-components/components/SkeletonLoader';
-import SteppedProgress from '@tangle-network/ui-components/components/Progress/SteppedProgress';
-import { Typography } from '@tangle-network/ui-components/typography/Typography';
+  Alert,
+  Button,
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogTitle,
+  Skeleton,
+  Text,
+} from '../../../components/sandbox/SandboxUi';
 import { FC, useCallback, useState } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
 import { useAccount, useWalletClient } from 'wagmi';
 import { Address, hashMessage, recoverPublicKey } from 'viem';
-import { TangleDAppPagePath } from '../../../types';
+import { Link } from 'react-router';
+import { PagePath } from '../../../types';
 import { TxName } from '../../../constants';
 import useTxNotification from '../../../hooks/useTxNotification';
 import {
   TxStatus as BatchRegisterTxStatus,
+  useOperatorBatchPreRegisterTx,
   useOperatorBatchRegisterTx,
 } from '../../../data/services/useOperatorRegisterTx';
 import StepNavigation from './components/StepNavigation';
 import ConfigureStep from './steps/ConfigureStep';
 import ReviewStep from './steps/ReviewStep';
 import SelectBlueprintsStep from './steps/SelectBlueprintsStep';
+import ConnectWalletButton from '@tangle-network/tangle-shared-ui/components/ConnectWalletButton';
 import {
   RegistrationDrawerProps,
   RegistrationStep,
@@ -36,6 +37,8 @@ import {
 import { encodeRegistrationInputs } from './registrationInputs';
 import useRegistrationForm from './useRegistrationForm';
 
+type RegistrationMode = 'intent' | 'full';
+
 const RegistrationDrawer: FC<RegistrationDrawerProps> = ({
   isOpen,
   onOpenChange,
@@ -44,6 +47,9 @@ const RegistrationDrawer: FC<RegistrationDrawerProps> = ({
   onRegistrationComplete,
 }) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isPreRegisterSubmitting, setIsPreRegisterSubmitting] = useState(false);
+  const [registrationMode, setRegistrationMode] =
+    useState<RegistrationMode>('intent');
   const queryClient = useQueryClient();
   const { address: activeAccount } = useAccount();
   const { data: walletClient } = useWalletClient();
@@ -55,6 +61,17 @@ const RegistrationDrawer: FC<RegistrationDrawerProps> = ({
       onProgress: (progress) => {
         notifyProcessing(
           TxName.REGISTER_BLUEPRINT,
+          progress.total > 1
+            ? { current: progress.current, total: progress.total }
+            : undefined,
+        );
+      },
+    });
+  const { execute: batchPreRegisterOperator, status: batchPreRegisterStatus } =
+    useOperatorBatchPreRegisterTx({
+      onProgress: (progress) => {
+        notifyProcessing(
+          TxName.PRE_REGISTER_BLUEPRINT,
           progress.total > 1
             ? { current: progress.current, total: progress.total }
             : undefined,
@@ -199,7 +216,7 @@ const RegistrationDrawer: FC<RegistrationDrawerProps> = ({
 
       notifySuccess(TxName.REGISTER_BLUEPRINT, null, successMessage);
       reset();
-      onRegistrationComplete?.();
+      await onRegistrationComplete?.({ expectOperatorCountChange: true });
     } catch (error) {
       console.error('Registration failed:', error);
       notifyError(
@@ -218,6 +235,56 @@ const RegistrationDrawer: FC<RegistrationDrawerProps> = ({
     reset,
     onRegistrationComplete,
     queryClient,
+    notifySuccess,
+    notifyError,
+  ]);
+
+  const handlePreRegister = useCallback(async () => {
+    if (!activeAccount || blueprints.length === 0) {
+      return;
+    }
+
+    setIsPreRegisterSubmitting(true);
+    const totalBlueprints = blueprints.length;
+
+    try {
+      const batchResult = await batchPreRegisterOperator({
+        blueprintIds: blueprints.map((blueprint) => BigInt(blueprint.id)),
+      });
+
+      if (batchResult === null) {
+        throw new Error('Failed to signal operator intent');
+      }
+
+      const successCount = batchResult.successfulBlueprintIds.length;
+
+      if (successCount === 0) {
+        throw new Error('Failed to signal operator intent');
+      }
+
+      const successMessage =
+        successCount === totalBlueprints
+          ? `Intent signaled for ${successCount} blueprint${successCount > 1 ? 's' : ''}`
+          : `Intent signaled for ${successCount} of ${totalBlueprints} blueprints`;
+
+      notifySuccess(TxName.PRE_REGISTER_BLUEPRINT, null, successMessage);
+      reset();
+      await onRegistrationComplete?.({ expectOperatorCountChange: false });
+    } catch (error) {
+      console.error('Pre-registration failed:', error);
+      notifyError(
+        TxName.PRE_REGISTER_BLUEPRINT,
+        error instanceof Error ? error : new Error('Pre-registration failed'),
+      );
+    } finally {
+      setIsPreRegisterSubmitting(false);
+    }
+  }, [
+    activeAccount,
+    blueprints,
+    batchPreRegisterOperator,
+    reset,
+    onRegistrationComplete,
     notifySuccess,
     notifyError,
   ]);
@@ -254,10 +321,24 @@ const RegistrationDrawer: FC<RegistrationDrawerProps> = ({
   };
 
   const renderGatedContent = () => {
+    if (!activeAccount) {
+      return (
+        <div className="flex-1 space-y-5 p-4">
+          <Alert
+            type="info"
+            title="Connect wallet"
+            description="Connect the operator wallet that will sign blueprint registrations."
+          />
+
+          <ConnectWalletButton />
+        </div>
+      );
+    }
+
     if (isOperatorLoading) {
       return (
         <div className="flex-1 p-4">
-          <SkeletonLoader className="h-32" />
+          <Skeleton className="h-32" />
         </div>
       );
     }
@@ -267,46 +348,145 @@ const RegistrationDrawer: FC<RegistrationDrawerProps> = ({
         <div className="flex-1 p-4 space-y-6">
           <Alert
             type="warning"
-            title="Operator Stake Required"
-            description="You must be a staked operator before registering for blueprints. Please deposit and delegate assets in the Tangle dApp first."
+            title="Active operator required"
+            description="This wallet is not active as an operator yet. Blueprint registration and preregistration both require an active operator account on the current network."
           />
 
           <div className="space-y-4">
-            <Typography
-              variant="body2"
-              className="text-mono-120 dark:text-mono-100"
-            >
-              To become an active operator:
-            </Typography>
+            <Text variant="body2" className="text-muted-foreground">
+              Stay in Cloud and verify the operator state before trying again:
+            </Text>
 
-            <ol className="list-decimal list-inside space-y-2 text-mono-120 dark:text-mono-100">
+            <ol className="list-decimal list-inside space-y-2 text-muted-foreground">
               <li>
-                <Typography variant="body2" component="span">
-                  Go to the Tangle dApp
-                </Typography>
+                <span className="text-sm">Confirm the connected wallet.</span>
               </li>
 
               <li>
-                <Typography variant="body2" component="span">
-                  Deposit and delegate your assets
-                </Typography>
+                <span className="text-sm">
+                  Check whether the wallet is listed as an operator.
+                </span>
               </li>
 
               <li>
-                <Typography variant="body2" component="span">
-                  Return here once your operator status is active
-                </Typography>
+                <span className="text-sm">
+                  Return here after the wallet is active on this network.
+                </span>
               </li>
             </ol>
 
+            <Button variant="sandbox" isFullWidth asChild>
+              <Link to={PagePath.OPERATORS}>View operators</Link>
+            </Button>
+          </div>
+        </div>
+      );
+    }
+
+    if (registrationMode === 'intent') {
+      return (
+        <div className="flex min-h-0 flex-1 flex-col">
+          <RegistrationModePicker
+            mode={registrationMode}
+            onModeChange={setRegistrationMode}
+          />
+
+          <div className="min-h-0 flex-1 overflow-y-auto p-4">
+            <div className="space-y-5">
+              <Alert
+                type="info"
+                title="Signal operator intent"
+                description="Preregistration emits an onchain intent event for Blueprint Managers and indexers. It does not publish your RPC endpoint or final registration inputs."
+              />
+
+              <div className="space-y-3">
+                <Text variant="body2" fw="bold">
+                  Selected blueprints ({blueprints.length})
+                </Text>
+
+                <div className="max-h-[360px] space-y-3 overflow-y-auto">
+                  {blueprints.map((blueprint) => (
+                    <div
+                      key={blueprint.id.toString()}
+                      className="rounded-lg border border-border bg-card/70 p-4"
+                    >
+                      <div className="flex items-start gap-3">
+                        {blueprint.imgUrl && (
+                          <img
+                            src={blueprint.imgUrl}
+                            width={40}
+                            height={40}
+                            alt={blueprint.name}
+                            className="shrink-0 rounded-full border border-border object-cover"
+                          />
+                        )}
+
+                        <div className="min-w-0 flex-1">
+                          <Text variant="body2" fw="bold" className="truncate">
+                            {blueprint.name}
+                          </Text>
+                          <Text
+                            variant="body3"
+                            className="mt-1 text-muted-foreground"
+                          >
+                            Blueprint #{blueprint.id.toString()}
+                            {blueprint.author ? ` - ${blueprint.author}` : ''}
+                          </Text>
+                        </div>
+
+                        {onRemoveBlueprint && (
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() =>
+                              onRemoveBlueprint(blueprint.id.toString())
+                            }
+                          >
+                            Remove
+                          </Button>
+                        )}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              <div className="rounded-lg border border-border bg-muted/30 p-4">
+                <Text variant="body2" fw="bold">
+                  What happens next
+                </Text>
+                <ul className="mt-3 list-disc space-y-2 pl-5 text-muted-foreground text-sm">
+                  <li>Your wallet sends `preRegister(blueprintId)`.</li>
+                  <li>The protocol emits `OperatorPreRegistered`.</li>
+                  <li>
+                    Blueprint Managers can listen for the event and start their
+                    offchain onboarding flow.
+                  </li>
+                  <li>
+                    Use full registration when you are ready to publish endpoint
+                    preferences and blueprint-specific inputs.
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+
+          <div className="shrink-0 border-t border-border p-4">
             <Button
-              as="a"
-              href={TangleDAppPagePath.STAKING_DELEGATE}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="w-full"
+              variant="sandbox"
+              isFullWidth
+              isLoading={
+                isPreRegisterSubmitting ||
+                batchPreRegisterStatus === BatchRegisterTxStatus.PROCESSING
+              }
+              isDisabled={
+                blueprints.length === 0 ||
+                isPreRegisterSubmitting ||
+                batchPreRegisterStatus === BatchRegisterTxStatus.PROCESSING
+              }
+              onClick={handlePreRegister}
             >
-              Go to Tangle dApp
+              Signal intent
             </Button>
           </div>
         </div>
@@ -315,58 +495,119 @@ const RegistrationDrawer: FC<RegistrationDrawerProps> = ({
 
     return (
       <>
-        <div className="shrink-0 px-4 py-3 border-b border-mono-80 dark:border-mono-160">
+        <RegistrationModePicker
+          mode={registrationMode}
+          onModeChange={setRegistrationMode}
+        />
+
+        <div className="shrink-0 px-4 py-3 border-b border-border">
           <div className="flex items-center justify-between mb-2">
-            <span className="text-sm text-mono-120 dark:text-mono-100">
+            <span className="text-sm text-muted-foreground">
               Step {step} of {TOTAL_STEPS}
             </span>
             <span className="text-sm font-medium">{STEP_LABELS[step]}</span>
           </div>
-          <SteppedProgress steps={TOTAL_STEPS} activeStep={step} />
+          <div className="grid grid-cols-3 gap-2">
+            {Array.from({ length: TOTAL_STEPS }).map((_, index) => (
+              <div
+                key={index}
+                className={[
+                  'h-1.5 rounded-full',
+                  index + 1 <= step ? 'bg-primary' : 'bg-muted',
+                ].join(' ')}
+              />
+            ))}
+          </div>
         </div>
 
         <div className="flex-1 min-h-0 overflow-y-auto">
-          <Form {...form}>
-            <form
-              className="flex flex-col min-h-full p-4"
-              onSubmit={(e) => e.preventDefault()}
-            >
-              <div>{renderStepContent()}</div>
+          <form
+            className="flex flex-col min-h-full p-4"
+            onSubmit={(e) => e.preventDefault()}
+          >
+            <div>{renderStepContent()}</div>
 
-              <div className="mt-auto pt-4 border-t border-mono-80 dark:border-mono-160">
-                <StepNavigation
-                  isFirstStep={isFirstStep}
-                  isLastStep={isLastStep}
-                  isSubmitting={
-                    isSubmitting ||
-                    batchRegisterStatus === BatchRegisterTxStatus.PROCESSING
-                  }
-                  onBack={goBack}
-                  onNext={handleNext}
-                  onSubmit={handleSubmit}
-                />
-              </div>
-            </form>
-          </Form>
+            <div className="mt-auto pt-4 border-t border-border">
+              <StepNavigation
+                isFirstStep={isFirstStep}
+                isLastStep={isLastStep}
+                isSubmitting={
+                  isSubmitting ||
+                  batchRegisterStatus === BatchRegisterTxStatus.PROCESSING
+                }
+                onBack={goBack}
+                onNext={handleNext}
+                onSubmit={handleSubmit}
+              />
+            </div>
+          </form>
         </div>
       </>
     );
   };
 
   return (
-    <Drawer open={isOpen} onOpenChange={onOpenChange}>
-      <DrawerContent className="!flex !flex-col">
-        <div className="shrink-0 flex items-center justify-between p-4 border-b border-mono-80 dark:border-mono-160">
-          <DrawerTitle className="text-lg font-bold">
+    <Dialog open={isOpen} onOpenChange={onOpenChange}>
+      <DialogContent className="fixed right-0 left-auto top-0 z-[80] h-screen max-h-screen w-full max-w-xl translate-x-0 translate-y-0 rounded-none border-y-0 border-r-0 p-0 sm:max-w-xl">
+        <div className="shrink-0 flex items-center justify-between p-4 border-b border-border">
+          <DialogTitle className="text-lg font-bold">
             Register as Operator
-          </DrawerTitle>
-          <DrawerCloseButton />
+          </DialogTitle>
+          <DialogDescription className="sr-only">
+            Register an active operator for one or more selected blueprints.
+          </DialogDescription>
+          <Button variant="ghost" size="icon" onClick={handleClose}>
+            <span aria-hidden>x</span>
+            <span className="sr-only">Close registration panel</span>
+          </Button>
         </div>
 
         {renderGatedContent()}
-      </DrawerContent>
-    </Drawer>
+      </DialogContent>
+    </Dialog>
   );
 };
 
 export default RegistrationDrawer;
+
+const RegistrationModePicker = ({
+  mode,
+  onModeChange,
+}: {
+  mode: RegistrationMode;
+  onModeChange: (mode: RegistrationMode) => void;
+}) => (
+  <div className="grid shrink-0 gap-2 border-b border-border p-4 sm:grid-cols-2">
+    <button
+      type="button"
+      className={[
+        'rounded-lg border p-4 text-left transition-colors',
+        mode === 'intent'
+          ? 'border-primary bg-primary/10 text-foreground'
+          : 'border-border bg-card/70 text-muted-foreground hover:bg-muted/40',
+      ].join(' ')}
+      onClick={() => onModeChange('intent')}
+    >
+      <span className="block text-sm font-semibold">Preregistration</span>
+      <span className="mt-1 block text-xs">
+        Signal intent first. Fast path for Blueprint Manager onboarding.
+      </span>
+    </button>
+
+    <button
+      type="button"
+      className={[
+        'rounded-lg border p-4 text-left transition-colors',
+        mode === 'full'
+          ? 'border-primary bg-primary/10 text-foreground'
+          : 'border-border bg-card/70 text-muted-foreground hover:bg-muted/40',
+      ].join(' ')}
+      onClick={() => onModeChange('full')}
+    >
+      <span className="block text-sm font-semibold">Full registration</span>
+      <span className="mt-1 block text-xs">
+        Publish endpoint preferences and blueprint registration inputs.
+      </span>
+    </button>
+  </div>
+);

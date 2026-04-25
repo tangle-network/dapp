@@ -5181,6 +5181,20 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@fontsource/geist-mono@npm:^5.2.7":
+  version: 5.2.7
+  resolution: "@fontsource/geist-mono@npm:5.2.7"
+  checksum: 10c0/7334f0e09fe5d2d0c59a11bc74720e095faa62a977c6fd75f3f2800894a8041c0d81384bd405b8730b05da63c30ae91ac2ae7dbcad9b02265fdb5a64f37aac06
+  languageName: node
+  linkType: hard
+
+"@fontsource/geist-sans@npm:^5.2.5":
+  version: 5.2.5
+  resolution: "@fontsource/geist-sans@npm:5.2.5"
+  checksum: 10c0/31f1da384a54eaf385f3261218d2971e075fc34306ad2e14f84f079aeabf2e6dbc7dddc23389037a8476fef467a1d94797a573f6a6e2c826b85badfed921cdb3
+  languageName: node
+  linkType: hard
+
 "@fragnova/api-augment@npm:0.1.0-spec-1.0.4-mainnet":
   version: 0.1.0-spec-1.0.4-mainnet
   resolution: "@fragnova/api-augment@npm:0.1.0-spec-1.0.4-mainnet"
@@ -36898,6 +36912,8 @@ __metadata:
     "@eslint/js": "npm:~9.24.0"
     "@ethersproject/abi": "npm:^5.8.0"
     "@ethersproject/providers": "npm:^5.8.0"
+    "@fontsource/geist-mono": "npm:^5.2.7"
+    "@fontsource/geist-sans": "npm:^5.2.5"
     "@graphql-codegen/cli": "npm:^5.0.5"
     "@hookform/resolvers": "npm:^5.0.1"
     "@hyperlane-xyz/registry": "npm:^6.2.0"

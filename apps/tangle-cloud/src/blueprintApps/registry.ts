@@ -18,10 +18,10 @@ const entries = [
       status: 'active',
     },
     manifest: {
-      displayName: 'AI Trading Arena',
-      tagline: 'Deploy, monitor, and operate autonomous trading agents.',
+      displayName: 'AI Trading',
+      tagline: 'Deploy and monitor trading agent services.',
       description:
-        'Provision strategy-driven trading agents, explore live service instances, and expose operator-backed trading surfaces through one shared shell.',
+        'Create a trading service, select operators, set strategy limits, and review execution records.',
       surfaces: [
         'generic-overview',
         'service-explorer',
@@ -68,10 +68,9 @@ const entries = [
     },
     manifest: {
       displayName: 'AI Agent Sandbox',
-      tagline:
-        'Run durable agent sandboxes with chat, terminal, and tool surfaces.',
+      tagline: 'Run agent sandboxes with terminal, chat, and tool access.',
       description:
-        'Launch interactive agent environments, inspect running sessions, and expose per-service sandboxes and agent resources from a common blueprint app host.',
+        'Create a sandbox service, attach operators, inspect sessions, and manage agent resources.',
       surfaces: [
         'generic-overview',
         'service-explorer',
@@ -110,11 +109,10 @@ const entries = [
       status: 'planned',
     },
     manifest: {
-      displayName: 'AI Training Studio',
-      tagline:
-        'Train, evaluate, and operate persistent AI training workflows on Tangle.',
+      displayName: 'AI Training',
+      tagline: 'Create and monitor distributed training runs.',
       description:
-        'Launch training services, review datasets and evaluation runs, and expose model-improvement workflows through the same blueprint host shell used by every other first-party app.',
+        'Create a training service, select operators, configure the method, and track checkpoints.',
       surfaces: [
         'generic-overview',
         'service-explorer',
@@ -165,10 +163,10 @@ export const protocolGenericBlueprintExperience = resolveBlueprintAppView({
     verification: 'verified',
   },
   manifest: {
-    displayName: 'Protocol-native blueprint UI',
-    tagline: 'Renderable fallback for any onchain blueprint and service.',
+    displayName: 'Blueprint service view',
+    tagline: 'Default controls for indexed blueprints and services.',
     description:
-      'Tangle Cloud should always be able to show a blueprint overview, service instances, permissions, operators, and generic interactions even when no custom blueprint app exists.',
+      'Shows blueprint details, operators, service instances, permissions, and request forms when no custom app is configured.',
     surfaces: [
       'generic-overview',
       'service-explorer',

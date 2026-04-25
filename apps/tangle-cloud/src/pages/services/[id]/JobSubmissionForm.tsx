@@ -4,15 +4,26 @@
  * and schema-driven dynamic form fields with proper TLV v2 encoding.
  */
 
-import { FC, useState, useCallback, useMemo, useEffect } from 'react';
-import { Button, Typography, Input } from '@tangle-network/ui-components';
 import {
+  type ComponentProps,
+  type ElementType,
+  type FC,
+  useState,
+  useCallback,
+  useMemo,
+  useEffect,
+} from 'react';
+import {
+  Button as SandboxButton,
+  Input as SandboxInput,
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@tangle-network/ui-components/components/select';
+  Skeleton,
+  Textarea,
+} from '@tangle-network/sandbox-ui/primitives';
 import { useSubmitJobTx } from '@tangle-network/tangle-shared-ui/data/graphql';
 import {
   useServiceDetails,
@@ -42,6 +53,72 @@ interface Props {
   serviceId: bigint;
   blueprint: Blueprint;
 }
+
+type TextProps = ComponentProps<'p'> & {
+  variant?: 'body2' | 'body3';
+};
+
+const Text: FC<TextProps> = ({
+  variant = 'body2',
+  className = '',
+  ...props
+}) => {
+  const Component = 'p' as ElementType;
+  const variantClass =
+    variant === 'body3'
+      ? 'text-xs text-muted-foreground'
+      : 'text-sm text-foreground';
+
+  return (
+    <Component
+      className={[variantClass, className].filter(Boolean).join(' ')}
+      {...props}
+    />
+  );
+};
+
+type ButtonProps = Omit<
+  ComponentProps<typeof SandboxButton>,
+  'variant' | 'size'
+> & {
+  variant?: ComponentProps<typeof SandboxButton>['variant'] | 'utility';
+  size?: ComponentProps<typeof SandboxButton>['size'];
+  isDisabled?: boolean;
+  isLoading?: boolean;
+};
+
+const Button: FC<ButtonProps> = ({
+  variant,
+  size,
+  isDisabled,
+  isLoading,
+  disabled,
+  ...props
+}) => (
+  <SandboxButton
+    variant={variant === 'utility' ? 'outline' : variant}
+    size={size}
+    disabled={disabled || isDisabled}
+    loading={isLoading}
+    {...props}
+  />
+);
+
+type InputProps = Omit<ComponentProps<typeof SandboxInput>, 'onChange'> & {
+  isControlled?: boolean;
+  onChange?: (value: string) => void;
+};
+
+const Input: FC<InputProps> = ({
+  isControlled: _isControlled,
+  onChange,
+  ...props
+}) => (
+  <SandboxInput
+    {...props}
+    onChange={(event) => onChange?.(event.currentTarget.value)}
+  />
+);
 
 const bytesToHex = (bytes: Uint8Array): Hex => {
   return `0x${Array.from(bytes)
@@ -404,25 +481,25 @@ export const JobSubmissionForm: FC<Props> = ({ serviceId, blueprint }) => {
     <div className="space-y-4">
       {/* Payment Info Banner */}
       {paymentInfo && (
-        <div className="p-3 rounded-lg bg-blue-500/20 border border-blue-500/30">
-          <Typography variant="body2" className="text-blue-400">
+        <div className="p-3 rounded-lg bg-primary/20 border border-primary/30">
+          <Text variant="body2" className="text-primary">
             <strong>Payment Required:</strong> This service uses per-job
             pricing. Each job costs{' '}
             <span className="font-mono">
               {paymentInfo.formattedAmount} {paymentInfo.tokenSymbol}
             </span>
-          </Typography>
+          </Text>
         </div>
       )}
 
       {/* Insufficient Balance Warning */}
       {insufficientBalance && (
         <div className="p-3 rounded-lg bg-red-500/20 border border-red-500/30">
-          <Typography variant="body2" className="text-red-400">
+          <Text variant="body2" className="text-red-400">
             <strong>Insufficient Balance:</strong> You need at least{' '}
             {paymentInfo?.formattedAmount} {paymentInfo?.tokenSymbol} to submit
             this job.
-          </Typography>
+          </Text>
         </div>
       )}
 
@@ -432,10 +509,10 @@ export const JobSubmissionForm: FC<Props> = ({ serviceId, blueprint }) => {
         needsApproval &&
         !approvalSuccess && (
           <div className="p-3 rounded-lg bg-yellow-500/20 border border-yellow-500/30">
-            <Typography variant="body2" className="text-yellow-400 mb-2">
+            <Text variant="body2" className="text-yellow-400 mb-2">
               <strong>Approval Required:</strong> You need to approve the
               contract to spend your tokens before submitting jobs.
-            </Typography>
+            </Text>
 
             <Button
               onClick={approve}
@@ -452,15 +529,15 @@ export const JobSubmissionForm: FC<Props> = ({ serviceId, blueprint }) => {
       {/* Approval Success */}
       {paymentInfo && !paymentInfo.isNativeToken && approvalSuccess && (
         <div className="p-3 rounded-lg bg-green-500/20 border border-green-500/30">
-          <Typography variant="body2" className="text-green-400">
+          <Text variant="body2" className="text-green-400">
             Token approved! You can now submit jobs.
-          </Typography>
+          </Text>
         </div>
       )}
 
       {/* Pricing Model Info */}
       {serviceDetails && (
-        <div className="text-sm text-mono-100">
+        <div className="text-sm text-muted-foreground">
           Pricing: {getServicePricingModelLabel(serviceDetails.pricing)}
         </div>
       )}
@@ -468,17 +545,17 @@ export const JobSubmissionForm: FC<Props> = ({ serviceId, blueprint }) => {
       {/* Job Selection */}
       {isLoadingJobs ? (
         <div>
-          <Typography variant="body2" className="mb-2">
+          <Text variant="body2" className="mb-2">
             Select Job
-          </Typography>
+          </Text>
 
-          <div className="h-10 rounded-lg bg-mono-40 dark:bg-mono-160 animate-pulse" />
+          <Skeleton className="h-10 rounded-lg" />
         </div>
       ) : jobDefinitions && jobDefinitions.length > 0 ? (
         <div>
-          <Typography variant="body2" className="mb-2">
+          <Text variant="body2" className="mb-2">
             Select Job
-          </Typography>
+          </Text>
 
           <Select
             value={
@@ -506,16 +583,16 @@ export const JobSubmissionForm: FC<Props> = ({ serviceId, blueprint }) => {
 
           {selectedJobIndex !== '' &&
             jobDefinitions[selectedJobIndex]?.description && (
-              <Typography variant="body3" className="text-mono-100 mt-1">
+              <Text variant="body3" className="text-muted-foreground mt-1">
                 {jobDefinitions[selectedJobIndex].description}
-              </Typography>
+              </Text>
             )}
         </div>
       ) : (
         <div>
-          <Typography variant="body2" className="mb-2">
+          <Text variant="body2" className="mb-2">
             Job Index
-          </Typography>
+          </Text>
 
           <Input
             id="job-index"
@@ -535,18 +612,18 @@ export const JobSubmissionForm: FC<Props> = ({ serviceId, blueprint }) => {
         {hasSchema && !useRawJson ? (
           <>
             <div className="flex items-center justify-between mb-2">
-              <Typography variant="body2">Job Inputs</Typography>
+              <Text variant="body2">Job Inputs</Text>
 
               <button
                 type="button"
-                className="text-xs text-mono-100 hover:text-mono-0 dark:hover:text-mono-200 underline"
+                className="text-xs text-muted-foreground hover:text-foreground underline"
                 onClick={() => setUseRawJson(true)}
               >
                 Advanced: Raw JSON
               </button>
             </div>
 
-            <div className="space-y-2 p-3 rounded-lg border border-mono-60 dark:border-mono-140">
+            <div className="space-y-2 p-3 rounded-lg border border-border">
               {selectedSchema.map((field, i) => (
                 <SchemaFieldInput
                   key={`${selectedJobIndex}-${i}`}
@@ -561,12 +638,12 @@ export const JobSubmissionForm: FC<Props> = ({ serviceId, blueprint }) => {
         ) : (
           <>
             <div className="flex items-center justify-between mb-2">
-              <Typography variant="body2">Job Inputs (JSON)</Typography>
+              <Text variant="body2">Job Inputs (JSON)</Text>
 
               {hasSchema && useRawJson && (
                 <button
                   type="button"
-                  className="text-xs text-mono-100 hover:text-mono-0 dark:hover:text-mono-200 underline"
+                  className="text-xs text-muted-foreground hover:text-foreground underline"
                   onClick={() => setUseRawJson(false)}
                 >
                   Use Form Fields
@@ -574,8 +651,8 @@ export const JobSubmissionForm: FC<Props> = ({ serviceId, blueprint }) => {
               )}
             </div>
 
-            <textarea
-              className="w-full h-32 p-3 rounded-lg border border-mono-60 dark:border-mono-140 bg-mono-0 dark:bg-mono-180 font-mono text-sm resize-none focus:outline-none focus:ring-2 focus:ring-purple-500"
+            <Textarea
+              className="w-full h-32 p-3 rounded-lg border border-border bg-background font-mono text-sm resize-none focus:outline-none focus:ring-2 focus:ring-ring"
               placeholder='Enter job inputs as JSON array, e.g., ["arg1", 123]'
               value={inputJson}
               onChange={(e) => {
@@ -584,9 +661,9 @@ export const JobSubmissionForm: FC<Props> = ({ serviceId, blueprint }) => {
               }}
             />
 
-            <Typography variant="body3" className="text-mono-100 mt-1">
+            <Text variant="body3" className="text-muted-foreground mt-1">
               Enter the arguments for this job as a JSON array
-            </Typography>
+            </Text>
           </>
         )}
       </div>
@@ -598,10 +675,10 @@ export const JobSubmissionForm: FC<Props> = ({ serviceId, blueprint }) => {
       {/* Success Message */}
       {isSuccess && (
         <div className="p-3 rounded-lg bg-green-500/20 text-green-400">
-          <Typography variant="body2">
+          <Text variant="body2">
             Job submitted successfully! Results will appear in the history
             below.
-          </Typography>
+          </Text>
         </div>
       )}
 

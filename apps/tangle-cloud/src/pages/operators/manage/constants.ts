@@ -7,7 +7,7 @@ export enum SlashingTab {
 }
 
 export const SLASHING_TAB_ICONS: ReactElement[] = [
-  createElement(GlobalLine, { className: 'w-4 h-4 !fill-blue-50' }),
+  createElement(GlobalLine, { className: 'w-4 h-4 !fill-primary' }),
   createElement(TimeLineIcon, { className: 'w-4 h-4 !fill-yellow-100' }),
 ];
 

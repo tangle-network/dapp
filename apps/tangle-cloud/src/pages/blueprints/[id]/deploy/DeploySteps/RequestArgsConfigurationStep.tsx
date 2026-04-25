@@ -1,6 +1,10 @@
 import React, { FC, useCallback, useState } from 'react';
 import { RequestArgsConfigurationStepProps } from './type';
-import { Card, Typography } from '@tangle-network/ui-components';
+import {
+  Card,
+  Text,
+  Textarea,
+} from '../../../../../components/sandbox/SandboxUi';
 import ErrorMessage from '@tangle-network/tangle-shared-ui/components/ErrorMessage';
 
 export const RequestArgsConfigurationStep: FC<
@@ -79,9 +83,9 @@ export const RequestArgsConfigurationStep: FC<
 
   return (
     <Card className="p-6">
-      <Typography variant="h5" className="text-mono-200 dark:text-mono-0 mb-4">
+      <Text variant="h5" className="mb-4">
         Request Arguments
-      </Typography>
+      </Text>
 
       {requestSchemaParseError && (
         <ErrorMessage className="mb-4">
@@ -90,13 +94,13 @@ export const RequestArgsConfigurationStep: FC<
       )}
 
       {expectedArgsCount === 0 ? (
-        <Typography variant="body1">No request arguments required.</Typography>
+        <Text variant="body1">No request arguments required.</Text>
       ) : (
         <>
-          <Typography variant="body2" className="mb-4">
+          <Text variant="body2" className="mb-4">
             Paste or upload a JSON array representing the request arguments.
             This blueprint expects exactly {expectedArgsCount} root argument(s).
-          </Typography>
+          </Text>
 
           {hasRequestSchema === false && (
             <ErrorMessage className="mb-4">
@@ -105,8 +109,8 @@ export const RequestArgsConfigurationStep: FC<
             </ErrorMessage>
           )}
 
-          <textarea
-            className="w-full min-h-[180px] bg-mono-0 dark:bg-mono-180 border border-mono-60 dark:border-mono-120 rounded-lg p-4 text-sm font-mono mb-4 resize-vertical text-mono-160 dark:text-mono-40 placeholder:text-mono-100 dark:placeholder:text-mono-100 focus:border-blue-50 dark:focus:border-blue-50 focus:ring-1 focus:ring-blue-50 dark:focus:ring-blue-50 transition-colors"
+          <Textarea
+            className="mb-4 min-h-[180px] w-full resize-y font-mono"
             value={jsonText}
             onChange={(e) => handleJsonChange(e.target.value)}
             placeholder={`Paste JSON array with ${expectedArgsCount} item(s)`}
@@ -117,7 +121,7 @@ export const RequestArgsConfigurationStep: FC<
               type="file"
               accept="application/json"
               onChange={handleFileUpload}
-              className="block w-full text-sm text-mono-140 dark:text-mono-60 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-medium file:bg-mono-40 dark:file:bg-mono-140 file:text-mono-160 dark:file:text-mono-40 hover:file:bg-mono-60 dark:hover:file:bg-mono-120 file:cursor-pointer cursor-pointer transition-colors"
+              className="block w-full cursor-pointer text-sm text-muted-foreground transition-colors file:mr-4 file:cursor-pointer file:rounded-lg file:border-0 file:bg-secondary file:px-4 file:py-2 file:text-sm file:font-medium file:text-secondary-foreground hover:file:bg-secondary/80"
             />
           </div>
         </>

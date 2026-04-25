@@ -17,10 +17,8 @@ import {
   Avatar,
   Button,
   Modal,
-  Typography,
-  shortenString,
-} from '@tangle-network/ui-components';
-import pluralize from '@tangle-network/ui-components/utils/pluralize';
+  Text,
+} from '../../../components/sandbox/SandboxUi';
 import { TangleCloudTable } from '../../../components/tangleCloudTable/TangleCloudTable';
 import TableCellWrapper from '@tangle-network/tangle-shared-ui/components/tables/TableCellWrapper';
 import { useChainId } from 'wagmi';
@@ -43,6 +41,12 @@ interface ServiceRequestWithBlueprint extends ServiceRequest {
 }
 
 const columnHelper = createColumnHelper<ServiceRequestWithBlueprint>();
+const pluralize = (word: string, plural: boolean) =>
+  plural ? `${word}s` : word;
+const shortenString = (value: string, chars = 6) =>
+  value.length > chars * 2 + 3
+    ? `${value.slice(0, chars)}...${value.slice(-chars)}`
+    : value;
 
 interface PendingInstanceTableProps {
   refreshTrigger: number;
@@ -183,14 +187,14 @@ export const PendingInstanceTable: FC<PendingInstanceTableProps> = ({
                     theme="ethereum"
                   />
                 )}
-                <Typography
+                <Text
                   variant="body1"
                   fw="bold"
-                  className="!text-blue-50 text-ellipsis whitespace-nowrap overflow-hidden"
+                  className="text-primary text-ellipsis whitespace-nowrap overflow-hidden"
                 >
                   {request.blueprintData?.name ||
                     `Blueprint ${request.blueprintId}`}
-                </Typography>
+                </Text>
               </div>
             </TableCellWrapper>
           );
@@ -213,15 +217,15 @@ export const PendingInstanceTable: FC<PendingInstanceTableProps> = ({
                 <div className="flex items-center gap-2">
                   <Avatar size="md" value={requester} theme="ethereum" />
                   <div>
-                    <Typography variant="body1" fw="bold">
+                    <Text variant="body1" fw="bold">
                       {shortenString(requester, 8)}
-                    </Typography>
+                    </Text>
                     {explorerUrl && (
                       <a
                         href={explorerUrl}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="text-xs text-blue-50 hover:underline"
+                        className="text-xs text-primary hover:underline"
                       >
                         View on Explorer
                       </a>
@@ -263,7 +267,7 @@ export const PendingInstanceTable: FC<PendingInstanceTableProps> = ({
                       <span className="text-sm font-medium">You approved</span>
                     </div>
                     {pendingCount > 0 && (
-                      <span className="text-xs text-mono-100 dark:text-mono-80">
+                      <span className="text-xs text-muted-foreground">
                         Waiting for {pendingCount} more{' '}
                         {pendingCount === 1 ? 'operator' : 'operators'}
                       </span>
@@ -330,11 +334,11 @@ export const PendingInstanceTable: FC<PendingInstanceTableProps> = ({
                       size="sm"
                       value={op}
                       theme="ethereum"
-                      className="border-2 border-mono-0 dark:border-mono-200"
+                      className="border-2 border-background"
                     />
                   ))}
                   {operators.length > 3 && (
-                    <div className="flex items-center justify-center w-6 h-6 text-xs bg-mono-80 rounded-full border-2 border-mono-0 dark:border-mono-200">
+                    <div className="flex items-center justify-center w-6 h-6 text-xs bg-muted rounded-full border-2 border-background">
                       +{operators.length - 3}
                     </div>
                   )}

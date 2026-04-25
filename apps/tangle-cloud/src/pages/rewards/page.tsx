@@ -14,20 +14,21 @@ import { useAccount, useChainId } from 'wagmi';
 import {
   Button,
   Card,
-  CardVariant,
-  CheckBox,
-  CopyWithTooltip,
-  Typography,
-  SkeletonLoader,
-  Avatar,
-} from '@tangle-network/ui-components';
+  CardContent,
+  Skeleton,
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@tangle-network/sandbox-ui/primitives';
 import { BN } from '@polkadot/util';
-import { ExternalLinkLine, TokenIcon } from '@tangle-network/icons';
 import {
-  AmountFormatStyle,
-  formatDisplayAmount,
-} from '@tangle-network/ui-components/utils/formatDisplayAmount';
-import { shortenHex } from '@tangle-network/ui-components/utils/shortenHex';
+  ExternalLinkLine,
+  FileCopyLine,
+  TokenIcon,
+} from '@tangle-network/icons';
 import {
   usePendingRewardsByToken,
   useRewardHistory,
@@ -50,6 +51,20 @@ import {
   isNonLocalEvmChain,
 } from '../../utils/explorer';
 import { resolveTokenIconSymbol } from '../../utils/tokenPresentation';
+import RequireWallet from '../../components/RequireWallet';
+
+const shortenHex = (value: string, chars = 6) =>
+  value.length > chars * 2 + 3
+    ? `${value.slice(0, chars)}...${value.slice(-chars)}`
+    : value;
+
+const formatDisplayAmount = (value: BN, decimals: number) => {
+  const raw = value.toString();
+  const padded = raw.padStart(decimals + 1, '0');
+  const whole = padded.slice(0, -decimals);
+  const fraction = padded.slice(-decimals).replace(/0+$/, '').slice(0, 4);
+  return `${Number(whole).toLocaleString()}${fraction ? `.${fraction}` : ''}`;
+};
 
 const getErrorMessage = (error: unknown): string => {
   return error instanceof Error ? error.message : 'Failed to load rewards data';
@@ -286,11 +301,21 @@ const RewardsPage: FC = () => {
 
   if (!isConnected) {
     return (
-      <div className="text-center py-12">
-        <Typography variant="h4">Connect Wallet</Typography>
-        <Typography variant="body1" className="text-mono-100 mt-2">
-          Please connect your wallet to view rewards.
-        </Typography>
+      <div className="space-y-6">
+        <div>
+          <h1 className="font-display font-extrabold text-foreground text-3xl tracking-tight">
+            Rewards
+          </h1>
+          <p className="mt-2 max-w-2xl text-muted-foreground text-sm">
+            Claim operator and delegator rewards from the active network.
+          </p>
+        </div>
+        <RequireWallet
+          eyebrow="Rewards"
+          title="Connect to view rewards"
+          description="Connect a wallet to read balances and prepare claim transactions."
+          checks={['Pending rewards', 'Claimable assets', 'Claim history']}
+        />
       </div>
     );
   }
@@ -299,118 +324,128 @@ const RewardsPage: FC = () => {
     <div className="space-y-6">
       {/* Header */}
       <div>
-        <Typography variant="h4" fw="bold">
+        <h1 className="font-display font-extrabold text-foreground text-3xl tracking-tight">
           Rewards
-        </Typography>
-        <Typography variant="body2" className="text-mono-100">
-          Pending rewards come directly from contract state. History below shows
-          on-chain claim events indexed by Envio.
-        </Typography>
+        </h1>
+        <p className="mt-2 max-w-2xl text-muted-foreground text-sm">
+          Pending balances come from contract state. Claim history comes from
+          indexed on-chain events.
+        </p>
       </div>
 
       {configuredEndpoint && (
         <Card
-          variant={CardVariant.GLASS}
-          className="p-4 border border-yellow-500/30"
+          variant="sandbox"
+          className="border-[var(--surface-warning-border)]"
         >
-          <Typography variant="body2" className="text-yellow-300">
-            Using a static GraphQL endpoint from `VITE_GRAPHQL_ENDPOINT`.
-          </Typography>
-          <Typography variant="body2" className="text-mono-80 mt-1">
-            Active chain: {activeChain?.name ?? `Chain ${chainId}`} ({chainId})
-            . Expected indexer network: {resolvedNetwork}. Endpoint:{' '}
-            {configuredEndpoint}
-          </Typography>
-          {hasLikelyEndpointMismatch && (
-            <Typography variant="body2" className="text-red-400 mt-2">
-              Endpoint appears to target `{endpointNetwork}` while wallet chain
-              expects `{resolvedNetwork}`. Rewards/claims data may be stale or
-              from a different chain.
-            </Typography>
-          )}
+          <CardContent className="p-4">
+            <p className="font-semibold text-[var(--surface-warning-text)] text-sm">
+              Using a static GraphQL endpoint from `VITE_GRAPHQL_ENDPOINT`.
+            </p>
+            <p className="mt-1 text-muted-foreground text-sm">
+              Active chain: {activeChain?.name ?? `Chain ${chainId}`} ({chainId}
+              ) . Expected indexer network: {resolvedNetwork}. Endpoint:{' '}
+              {configuredEndpoint}
+            </p>
+            {hasLikelyEndpointMismatch && (
+              <p className="mt-2 text-destructive text-sm">
+                Endpoint appears to target `{endpointNetwork}` while wallet
+                chain expects `{resolvedNetwork}`. Rewards/claims data may be
+                stale or from a different chain.
+              </p>
+            )}
+          </CardContent>
         </Card>
       )}
 
       {/* Pending rewards by token */}
-      <Card variant={CardVariant.GLASS} className="p-6">
-        <Typography variant="h5" fw="bold" className="mb-4">
-          Pending Rewards by Asset
-        </Typography>
+      <Card variant="sandbox">
+        <CardContent className="p-6">
+          <h2 className="mb-4 font-display font-bold text-foreground text-xl">
+            Pending Rewards by Asset
+          </h2>
 
-        {isLoadingPending ? (
-          <div className="space-y-2">
-            <SkeletonLoader className="h-16" />
-            <SkeletonLoader className="h-16" />
-          </div>
-        ) : pendingRewardsError ? (
-          <ErrorMessage>Could not load pending rewards.</ErrorMessage>
-        ) : pendingRewards?.rewards.length ? (
-          <>
-            <PendingRewardsTable
-              rows={pendingRewards.rewards}
-              selectedTokenSet={selectedTokenSet}
-              onToggleToken={toggleTokenSelection}
-              onClaimToken={handleClaimToken}
-              isClaiming={isClaiming}
-              activeClaimToken={activeClaimToken}
-              addressExplorerUrl={txExplorerUrl}
-            />
-
-            <div className="mt-4 flex items-center justify-end gap-3">
-              <Button
-                onClick={
-                  selectedTokens.length > 0
-                    ? handleClaimSelected
-                    : handleClaimAll
-                }
-                variant={selectedTokens.length > 0 ? 'secondary' : 'primary'}
-                isLoading={isBulkClaiming}
-                isDisabled={isClaiming || !pendingRewards.hasRewards}
-              >
-                {selectedTokens.length > 0
-                  ? `Claim Selected Assets (${selectedTokens.length})`
-                  : 'Claim All Assets'}
-              </Button>
+          {isLoadingPending ? (
+            <div className="space-y-2">
+              <Skeleton className="h-16 rounded-md" />
+              <Skeleton className="h-16 rounded-md" />
             </div>
+          ) : pendingRewardsError ? (
+            <ErrorMessage>Could not load pending rewards.</ErrorMessage>
+          ) : pendingRewards?.rewards.length ? (
+            <>
+              <PendingRewardsTable
+                rows={pendingRewards.rewards}
+                selectedTokenSet={selectedTokenSet}
+                onToggleToken={toggleTokenSelection}
+                onClaimToken={handleClaimToken}
+                isClaiming={isClaiming}
+                activeClaimToken={activeClaimToken}
+                addressExplorerUrl={txExplorerUrl}
+              />
 
-            {claimError && (
-              <div className="mt-4">
-                <ErrorMessage>{getErrorMessage(claimError)}</ErrorMessage>
+              <div className="mt-4 flex items-center justify-end gap-3">
+                <Button
+                  onClick={
+                    selectedTokens.length > 0
+                      ? handleClaimSelected
+                      : handleClaimAll
+                  }
+                  variant={selectedTokens.length > 0 ? 'outline' : 'sandbox'}
+                  loading={isBulkClaiming}
+                  disabled={isClaiming || !pendingRewards.hasRewards}
+                >
+                  {selectedTokens.length > 0
+                    ? `Claim Selected Assets (${selectedTokens.length})`
+                    : 'Claim All Assets'}
+                </Button>
               </div>
-            )}
-          </>
-        ) : (
-          <div className="text-center py-6 text-mono-100">
-            <Typography variant="body1">No pending rewards.</Typography>
-          </div>
-        )}
+
+              {claimError && (
+                <div className="mt-4">
+                  <ErrorMessage>{getErrorMessage(claimError)}</ErrorMessage>
+                </div>
+              )}
+            </>
+          ) : (
+            <div className="py-6 text-center">
+              <p className="text-muted-foreground text-sm">
+                No pending rewards.
+              </p>
+            </div>
+          )}
+        </CardContent>
       </Card>
 
       {/* Claim history */}
-      <Card variant={CardVariant.GLASS} className="p-6">
-        <Typography variant="h5" fw="bold" className="mb-4">
-          Claim History
-        </Typography>
+      <Card variant="sandbox">
+        <CardContent className="p-6">
+          <h2 className="mb-4 font-display font-bold text-foreground text-xl">
+            Claim History
+          </h2>
 
-        {isLoadingHistory ? (
-          <div className="space-y-2">
-            <SkeletonLoader className="h-16" />
-            <SkeletonLoader className="h-16" />
-            <SkeletonLoader className="h-16" />
-          </div>
-        ) : rewardHistoryError ? (
-          <ErrorMessage>Could not load claim history.</ErrorMessage>
-        ) : rewardHistory?.length ? (
-          <RewardClaimsTable
-            entries={rewardHistory}
-            txExplorerUrl={txExplorerUrl}
-            showExplorerActions={!!txExplorerUrl}
-          />
-        ) : (
-          <div className="text-center py-6 text-mono-100">
-            <Typography variant="body1">No claim history yet.</Typography>
-          </div>
-        )}
+          {isLoadingHistory ? (
+            <div className="space-y-2">
+              <Skeleton className="h-16 rounded-md" />
+              <Skeleton className="h-16 rounded-md" />
+              <Skeleton className="h-16 rounded-md" />
+            </div>
+          ) : rewardHistoryError ? (
+            <ErrorMessage>Could not load claim history.</ErrorMessage>
+          ) : rewardHistory?.length ? (
+            <RewardClaimsTable
+              entries={rewardHistory}
+              txExplorerUrl={txExplorerUrl}
+              showExplorerActions={!!txExplorerUrl}
+            />
+          ) : (
+            <div className="py-6 text-center">
+              <p className="text-muted-foreground text-sm">
+                No claim history yet.
+              </p>
+            </div>
+          )}
+        </CardContent>
       </Card>
     </div>
   );
@@ -439,69 +474,59 @@ const PendingRewardsTable: FC<PendingRewardsTableProps> = ({
 }) => {
   return (
     <div className="overflow-x-auto">
-      <table className="w-full">
-        <thead>
-          <tr className="border-b border-mono-60 dark:border-mono-140">
-            <th className="text-left py-3 px-4 text-mono-100 font-medium">
-              Select
-            </th>
-            <th className="text-left py-3 px-4 text-mono-100 font-medium">
-              Asset
-            </th>
-            <th className="text-left py-3 px-4 text-mono-100 font-medium">
-              Amount
-            </th>
-            <th className="text-left py-3 px-4 text-mono-100 font-medium">
-              Action
-            </th>
-          </tr>
-        </thead>
-        <tbody>
+      <Table>
+        <TableHeader>
+          <TableRow>
+            <TableHead>Select</TableHead>
+            <TableHead>Asset</TableHead>
+            <TableHead>Amount</TableHead>
+            <TableHead>Action</TableHead>
+          </TableRow>
+        </TableHeader>
+        <TableBody>
           {rows.map((row) => (
-            <tr
-              key={row.token}
-              className="border-b border-mono-40 dark:border-mono-160"
-            >
-              <td className="py-3 px-4">
-                <CheckBox
+            <TableRow key={row.token}>
+              <TableCell>
+                <input
+                  type="checkbox"
                   id={`reward-token-${row.token}`}
-                  isChecked={selectedTokenSet.has(row.token.toLowerCase())}
+                  checked={selectedTokenSet.has(row.token.toLowerCase())}
                   onChange={onToggleToken(row.token)}
-                  isDisabled={isClaiming}
-                  spacingClassName="ml-0"
+                  disabled={isClaiming}
+                  className="h-4 w-4 accent-[var(--brand-primary)]"
                 />
-              </td>
-              <td className="py-3 px-4">
+              </TableCell>
+              <TableCell>
                 <PendingAssetCell
                   token={row.token}
                   addressExplorerUrl={addressExplorerUrl}
                 />
-              </td>
-              <td className="py-3 px-4">
+              </TableCell>
+              <TableCell>
                 <PendingRewardAmountCell
                   token={row.token}
                   amount={row.pending}
                 />
-              </td>
-              <td className="py-3 px-4">
+              </TableCell>
+              <TableCell>
                 <Button
-                  variant="utility"
+                  variant="outline"
                   size="sm"
                   onClick={() => {
                     void onClaimToken(row.token);
                   }}
-                  isLoading={
+                  loading={
                     activeClaimToken?.toLowerCase() === row.token.toLowerCase()
                   }
-                  isDisabled={isClaiming || row.pending === BigInt(0)}
+                  disabled={isClaiming || row.pending === BigInt(0)}
                 >
                   Claim Asset
                 </Button>
-              </td>
-            </tr>
+              </TableCell>
+            </TableRow>
           ))}
-        </tbody>
-      </table>
+        </TableBody>
+      </Table>
     </div>
   );
 };
@@ -540,48 +565,38 @@ const PendingAssetCell: FC<{ token: Address; addressExplorerUrl?: string }> = ({
         {iconSymbol ? (
           <TokenIcon name={iconSymbol} size="xl" />
         ) : (
-          <Avatar size="lg" value={token} theme="ethereum" />
+          <span className="grid h-9 w-9 place-items-center rounded-md border border-border bg-muted font-mono text-foreground text-xs">
+            {token.slice(2, 4).toUpperCase()}
+          </span>
         )}
       </div>
 
       <div className="flex flex-col min-w-0">
         <div className="flex items-center gap-2 min-w-0">
-          <Typography
-            variant="body2"
-            fw="semibold"
-            className="whitespace-nowrap"
-          >
+          <span className="whitespace-nowrap font-semibold text-foreground text-sm">
             {isLoading ? 'Loading...' : symbol}
-          </Typography>
+          </span>
           {tokenName && (
-            <Typography
-              variant="body3"
-              className="text-mono-120 dark:text-mono-100 truncate"
-            >
+            <span className="truncate text-muted-foreground text-xs">
               {tokenName}
-            </Typography>
+            </span>
           )}
         </div>
 
         <div className="flex items-center gap-2">
-          <Typography variant="body2" className="font-mono text-mono-100">
+          <span className="font-mono text-muted-foreground text-xs">
             {shortenHex(token)}
-          </Typography>
-          <CopyWithTooltip
-            textToCopy={token}
-            copyLabel="Copy asset address"
-            isButton={false}
-            className="inline-flex text-mono-120 dark:text-mono-100"
-          />
+          </span>
+          <CopyIconButton value={token} label="Copy asset address" />
           {showExplorerAction && (
             <a
               href={explorerAddressUrl ?? undefined}
               target="_blank"
               rel="noreferrer"
-              className="text-mono-120 dark:text-mono-100"
+              className="text-muted-foreground transition-colors hover:text-primary"
               aria-label="View asset address on block explorer"
             >
-              <ExternalLinkLine className="w-4 h-4 !fill-current" />
+              <ExternalLinkLine className="h-4 w-4 fill-current" />
             </a>
           )}
         </div>
@@ -606,13 +621,9 @@ const PendingRewardAmountCell: FC<{ token: Address; amount: bigint }> = ({
       : 18);
 
   return (
-    <Typography variant="body2" fw="semibold">
-      {formatDisplayAmount(
-        new BN(amount.toString()),
-        decimals,
-        AmountFormatStyle.SHORT,
-      )}
-    </Typography>
+    <span className="font-semibold text-foreground text-sm">
+      {formatDisplayAmount(new BN(amount.toString()), decimals)}
+    </span>
   );
 };
 
@@ -632,13 +643,9 @@ const RewardAmountCell: FC<{ token: Address; amount: bigint }> = ({
       : 18);
 
   return (
-    <Typography variant="body2" fw="semibold">
-      {formatDisplayAmount(
-        new BN(amount.toString()),
-        decimals,
-        AmountFormatStyle.SHORT,
-      )}
-    </Typography>
+    <span className="font-semibold text-foreground text-sm">
+      {formatDisplayAmount(new BN(amount.toString()), decimals)}
+    </span>
   );
 };
 
@@ -655,77 +662,69 @@ const RewardClaimsTable: FC<RewardClaimsTableProps> = ({
 }) => {
   return (
     <div className="overflow-x-auto">
-      <table className="w-full">
-        <thead>
-          <tr className="border-b border-mono-60 dark:border-mono-140">
-            <th className="text-left py-3 px-4 text-mono-100 font-medium">
-              Asset
-            </th>
-            <th className="text-left py-3 px-4 text-mono-100 font-medium">
-              Amount
-            </th>
-            <th className="text-left py-3 px-4 text-mono-100 font-medium">
-              Date
-            </th>
-            <th className="text-left py-3 px-4 text-mono-100 font-medium">
-              Tx Hash
-            </th>
-          </tr>
-        </thead>
-        <tbody>
+      <Table>
+        <TableHeader>
+          <TableRow>
+            <TableHead>Asset</TableHead>
+            <TableHead>Amount</TableHead>
+            <TableHead>Date</TableHead>
+            <TableHead>Tx Hash</TableHead>
+          </TableRow>
+        </TableHeader>
+        <TableBody>
           {entries.map((entry) => (
-            <tr
-              key={entry.id}
-              className="border-b border-mono-40 dark:border-mono-160"
-            >
-              <td className="py-3 px-4">
+            <TableRow key={entry.id}>
+              <TableCell>
                 <PendingAssetCell
                   token={entry.token}
                   addressExplorerUrl={txExplorerUrl}
                 />
-              </td>
-              <td className="py-3 px-4">
+              </TableCell>
+              <TableCell>
                 <RewardAmountCell token={entry.token} amount={entry.amount} />
-              </td>
-              <td className="py-3 px-4">
-                <Typography variant="body2">
-                  {new Date(Number(entry.claimedAt) * 1000).toLocaleString()}
-                </Typography>
-              </td>
-              <td className="py-3 px-4">
-                <div className="flex items-center gap-2 text-mono-100">
-                  <Typography
-                    variant="body2"
-                    className="font-mono text-mono-100"
-                  >
+              </TableCell>
+              <TableCell>
+                {new Date(Number(entry.claimedAt) * 1000).toLocaleString()}
+              </TableCell>
+              <TableCell>
+                <div className="flex items-center gap-2 text-muted-foreground">
+                  <span className="font-mono text-xs">
                     {shortenHex(entry.txHash, 6)}
-                  </Typography>
-                  <CopyWithTooltip
-                    textToCopy={entry.txHash}
-                    copyLabel="Copy tx hash"
-                    isButton={false}
-                    className="inline-flex text-mono-100"
-                    iconClassName="!fill-mono-100"
-                  />
+                  </span>
+                  <CopyIconButton value={entry.txHash} label="Copy tx hash" />
                   {showExplorerActions && txExplorerUrl && (
                     <a
                       href={`${txExplorerUrl}/tx/${entry.txHash}`}
                       target="_blank"
                       rel="noreferrer"
-                      className="text-mono-100"
+                      className="text-muted-foreground transition-colors hover:text-primary"
                       aria-label="View transaction on block explorer"
                     >
-                      <ExternalLinkLine className="w-4 h-4 !fill-mono-100" />
+                      <ExternalLinkLine className="h-4 w-4 fill-current" />
                     </a>
                   )}
                 </div>
-              </td>
-            </tr>
+              </TableCell>
+            </TableRow>
           ))}
-        </tbody>
-      </table>
+        </TableBody>
+      </Table>
     </div>
   );
 };
 
 export default RewardsPage;
+
+const CopyIconButton: FC<{ value: string; label: string }> = ({
+  value,
+  label,
+}) => (
+  <button
+    type="button"
+    aria-label={label}
+    className="inline-flex text-muted-foreground transition-colors hover:text-primary"
+    onClick={() => void navigator.clipboard?.writeText(value)}
+  >
+    <FileCopyLine className="h-4 w-4 fill-current" />
+  </button>
+);

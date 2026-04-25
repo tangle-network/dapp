@@ -7,7 +7,7 @@ import { useAccount } from 'wagmi';
 import { useIsPermittedCaller } from '@tangle-network/tangle-shared-ui/data/services';
 import { useBlueprintRequestSchema } from '../../../../../data/services/useBlueprintRequestSchema';
 import { useBlueprintJobs } from '@tangle-network/tangle-shared-ui/data/services';
-import SkeletonLoader from '@tangle-network/ui-components/components/SkeletonLoader';
+import { Skeleton } from '../../../../../components/sandbox/SandboxUi';
 import type { FC } from 'react';
 import { Navigate } from 'react-router';
 import useParamWithSchema from '@tangle-network/tangle-shared-ui/hooks/useParamWithSchema';
@@ -41,8 +41,8 @@ const Page: FC = () => {
   if (isLoadingBlueprint || isLoadingService || isLoadingJobs) {
     return (
       <div className="space-y-5">
-        <SkeletonLoader className="min-h-40" />
-        <SkeletonLoader className="min-h-52" />
+        <Skeleton className="min-h-40" />
+        <Skeleton className="min-h-52" />
       </div>
     );
   }

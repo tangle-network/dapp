@@ -1,9 +1,10 @@
 import { FC, useEffect, useMemo } from 'react';
 import {
   Button,
-  ErrorFallback,
-  SkeletonLoader,
-} from '@tangle-network/ui-components';
+  Card,
+  Skeleton,
+  Text,
+} from '../../../../components/sandbox/SandboxUi';
 import { useForm } from 'react-hook-form';
 import {
   DeployBlueprintSchema,
@@ -34,6 +35,7 @@ import { zeroAddress, parseUnits } from 'viem';
 import { TxName } from '../../../../constants';
 import useTxNotification from '../../../../hooks/useTxNotification';
 import { useAccount } from 'wagmi';
+import RequireWallet from '../../../../components/RequireWallet';
 
 const DeployPage: FC = () => {
   const id = useParamWithSchema('id', z.coerce.bigint());
@@ -79,6 +81,7 @@ const DeployPage: FC = () => {
       permittedCallers: [],
       operators: [],
       paymentAmount: '0',
+      paymentMethod: 'shieldedCredits',
     },
   });
 
@@ -198,9 +201,16 @@ const DeployPage: FC = () => {
   }, [assets, getValues, setValue]);
 
   if (isBlueprintLoading) {
-    return <SkeletonLoader className="min-h-64" />;
+    return <Skeleton className="min-h-64" />;
   } else if (blueprintError) {
-    return <ErrorFallback title={blueprintError.name} />;
+    return (
+      <Card className="p-6">
+        <Text variant="h5">Unable to load blueprint</Text>
+        <Text variant="body2" className="mt-2 text-muted-foreground">
+          {blueprintError.name}
+        </Text>
+      </Card>
+    );
   } else if (blueprintResult === null) {
     return null;
   }
@@ -222,14 +232,18 @@ const DeployPage: FC = () => {
             );
       const ttl = BigInt(ttlInSeconds);
 
-      // Get payment configuration
-      const paymentToken = validatedData.paymentAsset?.id ?? zeroAddress;
+      const usesShieldedCredits =
+        validatedData.paymentMethod === 'shieldedCredits';
+      // Shielded credit checkout currently keeps service creation payment-neutral.
+      // Credit spend authorization is tied to the resulting service/job record.
+      const paymentToken = usesShieldedCredits
+        ? zeroAddress
+        : (validatedData.paymentAsset?.id ?? zeroAddress);
       const paymentDecimals =
         validatedData.paymentAsset?.metadata?.decimals ?? 18;
-      const paymentAmount = parseUnits(
-        validatedData.paymentAmount ?? '0',
-        paymentDecimals,
-      );
+      const paymentAmount = usesShieldedCredits
+        ? 0n
+        : parseUnits(validatedData.paymentAmount ?? '0', paymentDecimals);
 
       if (!requestSchema) {
         throw new Error(
@@ -381,20 +395,56 @@ const DeployPage: FC = () => {
   };
 
   return (
-    <>
-      <Deployment {...commonProps} />
+    <RequireWallet
+      title="Connect wallet to create an instance"
+      description="The checkout uses your wallet to select operators, set callers, configure payment, and submit the service request transaction."
+      eyebrow="Instance checkout"
+      checks={['Select operators', 'Authorize payment', 'Submit request']}
+    >
+      <div className="space-y-5">
+        <Card className="overflow-hidden border-border bg-card p-6 shadow-[var(--shadow-card)]">
+          <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
+            <div>
+              <p className="font-bold text-[10px] uppercase tracking-[0.2em] text-muted-foreground">
+                Service instance
+              </p>
+              <Text variant="h4" className="mt-2 text-foreground">
+                Create an instance of {blueprintResult.details.name}
+              </Text>
+              <Text
+                variant="body2"
+                className="mt-2 max-w-3xl text-muted-foreground"
+              >
+                Choose operators, configure request arguments, pick a payment
+                method, and submit the on-chain service request.
+              </Text>
+            </div>
 
-      <div className="flex items-center justify-end gap-5 mt-4">
-        {Object.keys(errors).length > 0 && (
-          <ErrorMessage>
-            Error(s) on validation. Please check the form and try again.
-          </ErrorMessage>
-        )}
-        <Button onClick={onDeployBlueprint} isLoading={serviceRequestPending}>
-          Deploy
-        </Button>
+            <div className="rounded-lg border border-border bg-muted/30 px-4 py-3">
+              <p className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
+                Blueprint ID
+              </p>
+              <p className="mt-1 font-mono text-sm text-foreground">
+                {id?.toString() ?? '-'}
+              </p>
+            </div>
+          </div>
+        </Card>
+
+        <Deployment {...commonProps} />
+
+        <div className="flex items-center justify-end gap-5 mt-4">
+          {Object.keys(errors).length > 0 && (
+            <ErrorMessage>
+              Error(s) on validation. Please check the form and try again.
+            </ErrorMessage>
+          )}
+          <Button onClick={onDeployBlueprint} isLoading={serviceRequestPending}>
+            Deploy
+          </Button>
+        </div>
       </div>
-    </>
+    </RequireWallet>
   );
 };
 

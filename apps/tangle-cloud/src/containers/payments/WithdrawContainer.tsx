@@ -1,12 +1,12 @@
 import { FC, useMemo, useState } from 'react';
 import { isAddress } from 'viem';
 import {
-  Typography,
   Alert,
   Button,
   Input,
   Chip,
-} from '@tangle-network/ui-components';
+  Text,
+} from '../../components/sandbox/SandboxUi';
 import AmountInput from '../../components/payments/AmountInput';
 import NoteCard from '../../components/payments/NoteCard';
 import { useShieldedContext } from '../../app/ShieldedProvider';
@@ -27,22 +27,22 @@ const WithdrawContainer: FC = () => {
   return (
     <div className="space-y-4">
       <div>
-        <Typography variant="h5" fw="semibold">
+        <Text variant="h5" fw="semibold">
           Withdraw from Shielded Pool
-        </Typography>
+        </Text>
 
-        <Typography variant="body2" className="mt-1 text-mono-100">
+        <Text variant="body2" className="mt-1 text-muted-foreground">
           Withdraw shielded tokens to a public address. Notes are selected
           automatically (FIFO). Change is returned as a new note.
-        </Typography>
+        </Text>
       </div>
 
       {confirmedNotes.length > 0 && (
         <div className="space-y-2">
           <div className="flex items-center gap-2">
-            <Typography variant="body2" fw="semibold">
+            <Text variant="body2" fw="semibold">
               Available Notes
-            </Typography>
+            </Text>
 
             <Chip color="blue">{confirmedNotes.length}</Chip>
           </div>
@@ -57,9 +57,12 @@ const WithdrawContainer: FC = () => {
             ))}
 
             {confirmedNotes.length > 5 && (
-              <Typography variant="body3" className="self-center text-mono-100">
+              <Text
+                variant="body3"
+                className="self-center text-muted-foreground"
+              >
                 +{confirmedNotes.length - 5} more
-              </Typography>
+              </Text>
             )}
           </div>
         </div>
@@ -75,9 +78,9 @@ const WithdrawContainer: FC = () => {
       />
 
       <div className="space-y-1">
-        <Typography variant="body2" fw="semibold" className="text-mono-120">
+        <Text variant="body2" fw="semibold" className="text-muted-foreground">
           Recipient Address
-        </Typography>
+        </Text>
 
         <Input
           id="withdraw-recipient"
