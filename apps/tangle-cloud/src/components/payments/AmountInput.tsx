@@ -31,11 +31,11 @@ const AmountInput: FC<Props> = ({
 
   return (
     <div className="space-y-1">
-      <label className="text-sm font-medium text-mono-140 dark:text-mono-80">
+      <label className="text-sm font-medium text-muted-foreground">
         {label}
       </label>
 
-      <div className="flex items-center gap-2 p-3 border rounded-lg border-mono-40 dark:border-mono-160 bg-mono-0 dark:bg-mono-200">
+      <div className="flex items-center gap-2 p-3 border rounded-lg border-border bg-card">
         <input
           type="text"
           inputMode="decimal"
@@ -49,17 +49,17 @@ const AmountInput: FC<Props> = ({
             }
           }}
           disabled={disabled}
-          className="flex-1 text-lg bg-transparent outline-none text-mono-200 dark:text-mono-0 placeholder:text-mono-80"
+          className="flex-1 text-lg bg-transparent outline-none text-foreground placeholder:text-muted-foreground"
         />
 
-        <span className="text-sm font-medium text-mono-120 dark:text-mono-80">
+        <span className="text-sm font-medium text-muted-foreground">
           {symbol}
         </span>
       </div>
 
       {formattedBalance !== undefined && (
         <div className="flex items-center justify-between px-1">
-          <span className="text-xs text-mono-100 dark:text-mono-100">
+          <span className="text-xs text-muted-foreground">
             Balance:{' '}
             {formattedBalance.match(/^\d+\.?\d{0,4}/)?.[0] ?? formattedBalance}{' '}
             {symbol}
@@ -69,7 +69,7 @@ const AmountInput: FC<Props> = ({
             type="button"
             onClick={handleMax}
             disabled={disabled}
-            className="text-xs font-medium text-blue-50 hover:text-blue-70 disabled:opacity-50"
+            className="text-xs font-medium text-primary hover:text-primary/80 disabled:opacity-50"
           >
             MAX
           </button>

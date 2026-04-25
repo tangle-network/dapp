@@ -2,23 +2,27 @@
  * Operator management page - blueprint registration and full slashing lifecycle.
  */
 
-import { FC, useCallback, useMemo, useState } from 'react';
 import {
+  type ComponentProps,
+  type ElementType,
+  type FC,
+  type ReactNode,
+  useCallback,
+  useMemo,
+  useState,
+} from 'react';
+import {
+  Badge,
+  Button as SandboxButton,
   Card,
-  Typography,
-  Button,
-  Chip,
-  Input,
-  Modal,
-  ModalContent,
-  ModalHeader,
-  ModalBody,
-  ModalFooterActions,
-  Tooltip,
-  TooltipTrigger,
-  TooltipBody,
-  CopyWithTooltip,
-} from '@tangle-network/ui-components';
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  Input as SandboxInput,
+} from '@tangle-network/sandbox-ui/primitives';
 import { useQueryClient } from '@tanstack/react-query';
 import { useAccount } from 'wagmi';
 import {
@@ -43,7 +47,6 @@ import {
   type SlashProposal,
 } from '@tangle-network/tangle-shared-ui/data/graphql';
 import { MembershipModel } from '@tangle-network/tangle-shared-ui/data/services';
-import { shortenHex } from '@tangle-network/ui-components/utils/shortenHex';
 import {
   createColumnHelper,
   getCoreRowModel,
@@ -52,7 +55,6 @@ import {
 } from '@tanstack/react-table';
 import { TangleCloudTable } from '../../../components/tangleCloudTable/TangleCloudTable';
 import TableCellWrapper from '@tangle-network/tangle-shared-ui/components/tables/TableCellWrapper';
-import ConnectWalletButton from '@tangle-network/tangle-shared-ui/components/ConnectWalletButton';
 import { InformationLine } from '@tangle-network/icons';
 import {
   ECDSA_PUBLIC_KEY_HEX_LENGTH,
@@ -77,6 +79,180 @@ import DisputeMessageModal from './components/modals/DisputeMessageModal';
 import DisputeSlashModal from './components/modals/DisputeSlashModal';
 import CancelSlashModal from './components/modals/CancelSlashModal';
 import TimelineModal from './components/modals/TimelineModal';
+import RequireWallet from '../../../components/RequireWallet';
+
+const shortenHex = (value: string, chars = 6) =>
+  value.length <= chars * 2 + 2
+    ? value
+    : `${value.slice(0, chars)}...${value.slice(-chars)}`;
+
+type TextProps = ComponentProps<'p'> & {
+  variant?: 'h4' | 'h5' | 'body1' | 'body2' | 'body3';
+  fw?: 'bold' | 'semibold';
+};
+
+const Text: FC<TextProps> = ({
+  variant = 'body2',
+  fw,
+  className = '',
+  ...props
+}) => {
+  const Component = (
+    variant === 'h4' ? 'h1' : variant === 'h5' ? 'h2' : 'p'
+  ) as ElementType;
+  const variantClass =
+    variant === 'h4'
+      ? 'font-display text-3xl tracking-tight text-foreground'
+      : variant === 'h5'
+        ? 'font-display text-xl text-foreground'
+        : variant === 'body1'
+          ? 'text-base text-foreground'
+          : variant === 'body3'
+            ? 'text-xs text-muted-foreground'
+            : 'text-sm text-foreground';
+  const weightClass =
+    fw === 'bold' ? 'font-bold' : fw === 'semibold' ? 'font-semibold' : '';
+
+  return (
+    <Component
+      className={[variantClass, weightClass, className]
+        .filter(Boolean)
+        .join(' ')}
+      {...props}
+    />
+  );
+};
+
+type ButtonProps = Omit<
+  ComponentProps<typeof SandboxButton>,
+  'variant' | 'size'
+> & {
+  variant?: ComponentProps<typeof SandboxButton>['variant'] | 'utility';
+  size?: ComponentProps<typeof SandboxButton>['size'];
+  isDisabled?: boolean;
+  isLoading?: boolean;
+};
+
+const Button: FC<ButtonProps> = ({
+  variant,
+  size,
+  isDisabled,
+  isLoading,
+  disabled,
+  ...props
+}) => (
+  <SandboxButton
+    variant={variant === 'utility' ? 'outline' : variant}
+    size={size}
+    disabled={disabled || isDisabled}
+    loading={isLoading}
+    {...props}
+  />
+);
+
+type InputProps = Omit<ComponentProps<typeof SandboxInput>, 'onChange'> & {
+  isControlled?: boolean;
+  onChange?: (value: string) => void;
+};
+
+const Input: FC<InputProps> = ({
+  isControlled: _isControlled,
+  onChange,
+  ...props
+}) => (
+  <SandboxInput
+    {...props}
+    onChange={(event) => onChange?.(event.currentTarget.value)}
+  />
+);
+
+const Chip: FC<{ color?: string; children: ReactNode }> = ({
+  color,
+  children,
+}) => {
+  const variant =
+    color === 'green' ? 'success' : color === 'red' ? 'destructive' : 'outline';
+
+  return <Badge variant={variant}>{children}</Badge>;
+};
+
+const Modal = Dialog;
+const ModalContent = DialogContent;
+
+const ModalHeader: FC<ComponentProps<'div'>> = ({ children, ...props }) => (
+  <DialogHeader {...props}>
+    <DialogTitle>{children}</DialogTitle>
+  </DialogHeader>
+);
+
+const ModalBody: FC<ComponentProps<'div'>> = ({ className = '', ...props }) => (
+  <div
+    className={['space-y-4', className].filter(Boolean).join(' ')}
+    {...props}
+  />
+);
+
+const ModalFooterActions: FC<{
+  hasCloseButton?: boolean;
+  isConfirmDisabled?: boolean;
+  isProcessing?: boolean;
+  confirmButtonText: string;
+  onConfirm: () => void | Promise<void>;
+}> = ({
+  hasCloseButton,
+  isConfirmDisabled,
+  isProcessing,
+  confirmButtonText,
+  onConfirm,
+}) => (
+  <DialogFooter>
+    {hasCloseButton && (
+      <DialogClose asChild>
+        <Button variant="secondary">Cancel</Button>
+      </DialogClose>
+    )}
+    <Button
+      disabled={isConfirmDisabled}
+      loading={isProcessing}
+      onClick={() => void onConfirm()}
+    >
+      {confirmButtonText}
+    </Button>
+  </DialogFooter>
+);
+
+const Tooltip: FC<{ children: ReactNode; delayDuration?: number }> = ({
+  children,
+}) => children;
+
+const TooltipTrigger: FC<{ children: ReactNode; asChild?: boolean }> = ({
+  children,
+}) => children;
+
+const TooltipBody: FC<ComponentProps<'span'>> = ({
+  className = '',
+  ...props
+}) => (
+  <span
+    className={['sr-only', className].filter(Boolean).join(' ')}
+    {...props}
+  />
+);
+
+const CopyWithTooltip: FC<{
+  textToCopy: string;
+  isButton?: boolean;
+  iconSize?: string;
+  iconClassName?: string;
+}> = ({ textToCopy }) => (
+  <button
+    type="button"
+    className="text-muted-foreground text-xs underline-offset-4 hover:text-foreground hover:underline"
+    onClick={() => void navigator.clipboard?.writeText(textToCopy)}
+  >
+    Copy
+  </button>
+);
 
 const registrationColumnHelper = createColumnHelper<OperatorRegistration>();
 const slashColumnHelper = createColumnHelper<SlashProposal>();
@@ -607,9 +783,9 @@ const Page: FC = () => {
         header: () => 'Blueprint',
         cell: (info) => (
           <TableCellWrapper className="py-3 pr-3">
-            <Typography variant="body1" fw="semibold">
+            <Text variant="body1" fw="semibold">
               {info.getValue()}
-            </Typography>
+            </Text>
           </TableCellWrapper>
         ),
       }),
@@ -617,9 +793,9 @@ const Page: FC = () => {
         header: () => 'RPC Endpoint',
         cell: (info) => (
           <TableCellWrapper className="py-3 pr-3">
-            <Typography variant="body2" className="font-mono">
+            <Text variant="body2" className="font-mono">
               {info.getValue() || '-'}
-            </Typography>
+            </Text>
           </TableCellWrapper>
         ),
       }),
@@ -656,7 +832,7 @@ const Page: FC = () => {
               variant="utility"
               size="sm"
               isDisabled={!actionState.canUnregister}
-              className="uppercase body4 bg-red-10 dark:bg-red-120 text-red-70 dark:text-red-40 hover:bg-red-20 dark:hover:bg-red-110 border border-red-30 dark:border-red-100 disabled:!opacity-100 disabled:!text-mono-100 disabled:!border-mono-100/30 disabled:!bg-transparent dark:disabled:!text-mono-100 dark:disabled:!border-mono-120 dark:disabled:!bg-mono-160 disabled:cursor-not-allowed"
+              className="uppercase body4 bg-destructive/10 text-destructive hover:bg-destructive/15 border border-destructive/20 disabled:!opacity-100 disabled:!text-muted-foreground disabled:!border-border disabled:!bg-transparent dark:disabled:!text-muted-foreground  disabled:cursor-not-allowed"
               onClick={(event) => {
                 event.stopPropagation();
                 setSelectedRegistration(info.row.original);
@@ -675,7 +851,7 @@ const Page: FC = () => {
                     <Button
                       variant="utility"
                       size="sm"
-                      className="uppercase body4 bg-blue-10 dark:bg-blue-120 text-blue-70 dark:text-blue-40 hover:bg-blue-20 dark:hover:bg-blue-110 border border-blue-30 dark:border-blue-100"
+                      className="uppercase body4 bg-primary/10 text-primary hover:bg-primary/15 border border-primary/20"
                       onClick={(event) => {
                         event.stopPropagation();
                         setSelectedRegistration(info.row.original);
@@ -723,9 +899,7 @@ const Page: FC = () => {
         minSize: 100,
         cell: (info) => (
           <TableCellWrapper className="py-3 pr-3">
-            <Typography variant="body2">
-              #{info.getValue().toString()}
-            </Typography>
+            <Text variant="body2">#{info.getValue().toString()}</Text>
           </TableCellWrapper>
         ),
       }),
@@ -734,9 +908,7 @@ const Page: FC = () => {
         minSize: 120,
         cell: (info) => (
           <TableCellWrapper className="py-3 pr-3">
-            <Typography variant="body2">
-              #{info.getValue().toString()}
-            </Typography>
+            <Text variant="body2">#{info.getValue().toString()}</Text>
           </TableCellWrapper>
         ),
       }),
@@ -745,17 +917,14 @@ const Page: FC = () => {
         cell: (info) => (
           <TableCellWrapper className="py-3 pr-3">
             <div className="flex items-center gap-2 whitespace-nowrap">
-              <Typography
-                variant="body2"
-                className="font-mono whitespace-nowrap"
-              >
+              <Text variant="body2" className="font-mono whitespace-nowrap">
                 {shortenHex(info.getValue())}
-              </Typography>
+              </Text>
               <CopyWithTooltip
                 textToCopy={info.getValue()}
                 isButton={false}
                 iconSize="md"
-                iconClassName="!fill-mono-160 dark:!fill-mono-80"
+                iconClassName="!fill-muted-foreground"
               />
             </div>
           </TableCellWrapper>
@@ -768,7 +937,7 @@ const Page: FC = () => {
             <Tooltip delayDuration={0}>
               <TooltipTrigger asChild>
                 <span className="cursor-help">
-                  <InformationLine className="w-3.5 h-3.5 !fill-mono-120" />
+                  <InformationLine className="w-3.5 h-3.5 !fill-muted-foreground" />
                 </span>
               </TooltipTrigger>
               <TooltipBody className="max-w-[220px]">
@@ -780,9 +949,9 @@ const Page: FC = () => {
         minSize: 120,
         cell: (info) => (
           <TableCellWrapper className="py-3 pr-3">
-            <Typography variant="body1" fw="semibold" className="text-red-500">
+            <Text variant="body1" fw="semibold" className="text-red-500">
               {formatSlashBps(info.getValue())}
-            </Typography>
+            </Text>
           </TableCellWrapper>
         ),
       }),
@@ -793,7 +962,7 @@ const Page: FC = () => {
             <Tooltip delayDuration={0}>
               <TooltipTrigger asChild>
                 <span className="cursor-help">
-                  <InformationLine className="w-3.5 h-3.5 !fill-mono-120" />
+                  <InformationLine className="w-3.5 h-3.5 !fill-muted-foreground" />
                 </span>
               </TooltipTrigger>
               <TooltipBody className="max-w-[220px]">
@@ -806,9 +975,9 @@ const Page: FC = () => {
         minSize: 140,
         cell: (info) => (
           <TableCellWrapper className="py-3 pr-3">
-            <Typography variant="body1" fw="semibold" className="text-red-500">
+            <Text variant="body1" fw="semibold" className="text-red-500">
               {formatSlashBps(info.getValue())}
-            </Typography>
+            </Text>
           </TableCellWrapper>
         ),
       }),
@@ -820,17 +989,14 @@ const Page: FC = () => {
           return (
             <TableCellWrapper className="py-3 pr-3">
               <div className="flex items-center gap-2 whitespace-nowrap">
-                <Typography
-                  variant="body2"
-                  className="font-mono whitespace-nowrap"
-                >
+                <Text variant="body2" className="font-mono whitespace-nowrap">
                   {shortenHex(info.getValue())}
-                </Typography>
+                </Text>
                 <CopyWithTooltip
                   textToCopy={info.getValue()}
                   isButton={false}
                   iconSize="md"
-                  iconClassName="!fill-mono-160 dark:!fill-mono-80"
+                  iconClassName="!fill-muted-foreground"
                 />
                 <Chip color={getSlashProposerRoleChipColor(slash.proposerRole)}>
                   {getSlashProposerRoleLabel(slash.proposerRole)}
@@ -861,9 +1027,7 @@ const Page: FC = () => {
         header: () => 'Execute After',
         cell: (info) => (
           <TableCellWrapper className="py-3 pr-3">
-            <Typography variant="body2">
-              {formatDateTime(info.getValue())}
-            </Typography>
+            <Text variant="body2">{formatDateTime(info.getValue())}</Text>
           </TableCellWrapper>
         ),
       }),
@@ -899,7 +1063,7 @@ const Page: FC = () => {
                     variant="utility"
                     size="sm"
                     isDisabled={!permissions.canDispute}
-                    className="uppercase body4 bg-blue-10 dark:bg-blue-120 text-blue-70 dark:text-blue-40 hover:bg-blue-20 dark:hover:bg-blue-110 border border-blue-30 dark:border-blue-100 disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="uppercase body4 bg-primary/10 text-primary hover:bg-primary/15 border border-primary/20 disabled:opacity-50 disabled:cursor-not-allowed"
                     onClick={(event) => {
                       event.stopPropagation();
                       clearActionError('dispute');
@@ -918,7 +1082,7 @@ const Page: FC = () => {
                     variant="utility"
                     size="sm"
                     isDisabled={!permissions.canCancel}
-                    className="uppercase body4 bg-red-10 dark:bg-red-120 text-red-70 dark:text-red-40 hover:bg-red-20 dark:hover:bg-red-110 border border-red-30 dark:border-red-100 disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="uppercase body4 bg-destructive/10 text-destructive hover:bg-destructive/15 border border-destructive/20 disabled:opacity-50 disabled:cursor-not-allowed"
                     onClick={(event) => {
                       event.stopPropagation();
                       clearActionError('cancel');
@@ -939,7 +1103,7 @@ const Page: FC = () => {
                           variant="utility"
                           size="sm"
                           isDisabled={!canExecute}
-                          className="uppercase body4 bg-green-10 dark:bg-green-120 text-green-70 dark:text-green-40 hover:bg-green-20 dark:hover:bg-green-110 border border-green-30 dark:border-green-100 disabled:opacity-50 disabled:cursor-not-allowed"
+                          className="uppercase body4 bg-emerald-500/10 text-emerald-400 hover:bg-emerald-500/15 border border-emerald-500/20 disabled:opacity-50 disabled:cursor-not-allowed"
                           onClick={(event) => {
                             event.stopPropagation();
                             void handleExecuteSingle(slash);
@@ -1037,19 +1201,22 @@ const Page: FC = () => {
 
   if (!isConnected) {
     return (
-      <div className="p-8">
-        <Card className="p-8 text-center">
-          <Typography variant="h4" className="mb-4">
-            Connect Your Wallet
-          </Typography>
-          <Typography variant="body1" className="text-mono-100">
-            Please connect your wallet to manage operator registrations and
-            slashing lifecycle actions.
-          </Typography>
-          <div className="mt-4 flex justify-center">
-            <ConnectWalletButton />
-          </div>
-        </Card>
+      <div className="space-y-6">
+        <div>
+          <Text variant="h4" fw="bold">
+            Operator management
+          </Text>
+          <Text variant="body1" className="text-muted-foreground mt-1">
+            Review operator registrations, disputes, and slash actions for the
+            connected wallet.
+          </Text>
+        </div>
+        <RequireWallet
+          eyebrow="Operator management"
+          title="Connect an operator wallet"
+          description="Connect a wallet to load registrations, disputes, and slash proposals."
+          checks={['Registrations', 'Disputes', 'Slash lifecycle']}
+        />
       </div>
     );
   }
@@ -1057,11 +1224,13 @@ const Page: FC = () => {
   return (
     <div className="space-y-6">
       <div>
-        <Typography variant="h4">Operator Management</Typography>
-        <Typography variant="body1" className="text-mono-100 mt-1">
-          Manage registrations and the full slash lifecycle: propose, dispute,
-          execute, batch-execute, and cancel.
-        </Typography>
+        <Text variant="h4" fw="bold">
+          Operator management
+        </Text>
+        <Text variant="body1" className="text-muted-foreground mt-1">
+          Review registrations, propose slash actions, dispute claims, execute
+          finalized slashes, or cancel proposals.
+        </Text>
       </div>
 
       <SlashingSummaryCards
@@ -1077,9 +1246,9 @@ const Page: FC = () => {
 
       {clockError ? (
         <Card className="p-4 border border-yellow-500/20 bg-yellow-500/10">
-          <Typography variant="body2" className="text-mono-100">
+          <Text variant="body2" className="text-muted-foreground">
             {clockError}
-          </Typography>
+          </Text>
           <div className="mt-3">
             <Button
               variant="secondary"
@@ -1094,10 +1263,10 @@ const Page: FC = () => {
 
       {isActiveServicePrecheckUnavailable ? (
         <Card className="p-4 border border-yellow-500/20 bg-yellow-500/10">
-          <Typography variant="body2" className="text-mono-100">
+          <Text variant="body2" className="text-muted-foreground">
             Active service precheck is unavailable. Unregister actions are
             temporarily disabled until indexer/service data can be fetched.
-          </Typography>
+          </Text>
           <div className="mt-3">
             <Button
               variant="secondary"
@@ -1161,14 +1330,14 @@ const Page: FC = () => {
         <ModalContent>
           <ModalHeader>Unregister from Blueprint</ModalHeader>
           <ModalBody>
-            <Typography variant="body1">
+            <Text variant="body1">
               Are you sure you want to unregister from{' '}
               <strong>{selectedRegistration?.blueprintName}</strong>?
-            </Typography>
-            <Typography variant="body2" className="text-mono-100 mt-2">
+            </Text>
+            <Text variant="body2" className="text-muted-foreground mt-2">
               This action removes your operator registration from this blueprint
               after chain checks pass.
-            </Typography>
+            </Text>
           </ModalBody>
           <ModalFooterActions
             hasCloseButton
@@ -1185,16 +1354,15 @@ const Page: FC = () => {
         <ModalContent>
           <ModalHeader>Update Operator Preferences</ModalHeader>
           <ModalBody>
-            <Typography variant="body1" className="mb-4">
+            <Text variant="body1" className="mb-4">
               Update your preferences for{' '}
               <strong>{selectedRegistration?.blueprintName}</strong>
-            </Typography>
+            </Text>
             <div className="space-y-4">
               <div>
-                <Typography variant="body2" className="mb-1">
-                  RPC Endpoint{' '}
-                  <span className="text-red-70 dark:text-red-50">*</span>
-                </Typography>
+                <Text variant="body2" className="mb-1">
+                  RPC Endpoint <span className="text-destructive">*</span>
+                </Text>
                 <Input
                   id="rpcAddress"
                   isControlled
@@ -1203,18 +1371,15 @@ const Page: FC = () => {
                   placeholder="https://your-node.example.com"
                 />
                 {rpcAddressError ? (
-                  <Typography
-                    variant="body3"
-                    className="mt-1 !text-red-70 dark:!text-red-50"
-                  >
+                  <Text variant="body3" className="mt-1 !text-destructive">
                     {rpcAddressError}
-                  </Typography>
+                  </Text>
                 ) : null}
               </div>
               <div>
-                <Typography variant="body2" className="mb-1">
+                <Text variant="body2" className="mb-1">
                   ECDSA Public Key (Optional Rotation)
-                </Typography>
+                </Text>
                 <Input
                   id="ecdsaPublicKey"
                   isControlled
@@ -1222,16 +1387,13 @@ const Page: FC = () => {
                   onChange={(value) => setNewEcdsaPublicKey(value)}
                   placeholder="0x... (65-byte uncompressed key)"
                 />
-                <Typography variant="body3" className="text-mono-100 mt-1">
+                <Text variant="body3" className="text-muted-foreground mt-1">
                   Leave empty to keep your current key.
-                </Typography>
+                </Text>
                 {ecdsaPublicKeyError ? (
-                  <Typography
-                    variant="body3"
-                    className="mt-1 !text-red-70 dark:!text-red-50"
-                  >
+                  <Text variant="body3" className="mt-1 !text-destructive">
                     {ecdsaPublicKeyError}
-                  </Typography>
+                  </Text>
                 ) : null}
               </div>
             </div>

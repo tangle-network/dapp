@@ -1,5 +1,5 @@
 import { StakingAssetId } from '@tangle-network/tangle-shared-ui/types/staking';
-import { Input, Typography } from '@tangle-network/ui-components';
+import { Input, Text } from '../../../../components/sandbox/SandboxUi';
 import ErrorMessage from '@tangle-network/tangle-shared-ui/components/ErrorMessage';
 import { FC } from 'react';
 import { PrimitiveStakingAssetMetadata } from '@tangle-network/tangle-shared-ui/types/staking';
@@ -43,9 +43,9 @@ export const AssetCommitmentFormItem: FC<AssetCommitmentFormItemProps> = ({
             size="lg"
           />
 
-          <Typography variant="h5" className="whitespace-nowrap">
+          <Text variant="h5" className="whitespace-nowrap">
             {assetMetadata?.name ?? 'Unknown'}
-          </Typography>
+          </Text>
         </div>
       </div>
 
@@ -55,7 +55,7 @@ export const AssetCommitmentFormItem: FC<AssetCommitmentFormItemProps> = ({
           isControlled
           rightIcon={<>%</>}
           value={exposurePercent ?? ''}
-          inputClassName="placeholder:text-mono-80 dark:placeholder:text-mono-120 h-10"
+          inputClassName="placeholder:text-muted-foreground h-10"
           placeholder="Enter exposure percentage to spend"
           onChange={onChangeExposurePercent}
           type="number"
@@ -63,10 +63,10 @@ export const AssetCommitmentFormItem: FC<AssetCommitmentFormItemProps> = ({
           min={minExposurePercent || 0}
           max={maxExposurePercent || 100}
         />
-        <Typography variant="para2" className="text-mono-80 dark:text-mono-120">
+        <Text variant="body3" className="text-muted-foreground">
           Min exposure: {minExposurePercent} ~ Max exposure:{' '}
           {maxExposurePercent}
-        </Typography>
+        </Text>
         {exposurePercentErrorMsg && (
           <ErrorMessage>{exposurePercentErrorMsg}</ErrorMessage>
         )}

@@ -1,21 +1,19 @@
 import {
-  Typography,
   Input,
   Card,
   Chip,
-  SkeletonLoader,
-} from '@tangle-network/ui-components';
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+  Skeleton,
+  Text,
+} from '../../../../../components/sandbox/SandboxUi';
 import { FC, useEffect, useMemo, useState, Children } from 'react';
 import { SelectOperatorsStepProps, OperatorSelectionTable } from './type';
 import { RowSelectionState } from '@tanstack/react-table';
 import ErrorMessage from '@tangle-network/tangle-shared-ui/components/ErrorMessage';
-import {
-  Select,
-  SelectContent,
-  SelectCheckboxItem,
-  SelectTrigger,
-  SelectValue,
-} from '@tangle-network/ui-components/components/select';
 import { Search, CheckLineIcon, Close } from '@tangle-network/icons';
 import LsTokenIcon from '@tangle-network/tangle-shared-ui/components/LsTokenIcon';
 import { OperatorTable } from './components/OperatorTable';
@@ -39,7 +37,11 @@ export const SelectOperatorsStep: FC<SelectOperatorsStepProps> = ({
   blueprint,
   blueprintOperators,
 }) => {
-  const selectedOperators = watch('operators') ?? [];
+  const watchedOperators = watch('operators');
+  const selectedOperators = useMemo(
+    () => watchedOperators ?? [],
+    [watchedOperators],
+  );
   const [rowSelection, setRowSelection] = useState<RowSelectionState>(
     selectedOperators.reduce((acc, operator) => {
       acc[operator] = true;
@@ -212,9 +214,9 @@ export const SelectOperatorsStep: FC<SelectOperatorsStepProps> = ({
 
   return (
     <Card className="p-6">
-      <Typography variant="h5" className="text-mono-200 dark:text-mono-0 mb-4">
+      <Text variant="h5" className="mb-4">
         Select Operators
-      </Typography>
+      </Text>
 
       <div className="flex justify-between mb-3">
         <div className="w-1/4">
@@ -238,14 +240,14 @@ export const SelectOperatorsStep: FC<SelectOperatorsStepProps> = ({
                             )),
                         )}
                         {selectedAssets?.length > MAX_ASSET_TO_SHOW && (
-                          <Typography variant="body1" className="ml-1">
+                          <Text variant="body1" className="ml-1">
                             ..
-                          </Typography>
+                          </Text>
                         )}
                       </div>
-                      <Typography variant="body1">
+                      <Text variant="body1">
                         {selectedAssets?.length} asset(s) selected
-                      </Typography>
+                      </Text>
                     </div>
                   ) : (
                     `Filter by asset(s)`
@@ -259,20 +261,35 @@ export const SelectOperatorsStep: FC<SelectOperatorsStepProps> = ({
                 allAssets.map((asset) => {
                   const name = asset.metadata.name || 'Unknown';
                   const symbol = asset.metadata.symbol || 'TNT';
+                  const isSelected = selectedAssets?.some(
+                    (selectedAsset) => selectedAsset.id === asset.id,
+                  );
                   return (
-                    <SelectCheckboxItem
-                      onChange={(e) => onSelectAsset(asset, e.target.checked)}
+                    <SelectItem
+                      value={asset.id}
                       id={asset.id}
-                      isChecked={selectedAssets?.some(
-                        (selectedAsset) => selectedAsset.id === asset.id,
-                      )}
-                      spacingClassName="ml-0"
+                      onClick={(event) => {
+                        event.preventDefault();
+                        onSelectAsset(asset, !isSelected);
+                      }}
                     >
                       <div className="flex items-center gap-2">
+                        <span
+                          className={[
+                            'flex h-4 w-4 items-center justify-center rounded border',
+                            isSelected
+                              ? 'border-primary bg-primary'
+                              : 'border-border',
+                          ].join(' ')}
+                        >
+                          {isSelected && (
+                            <CheckLineIcon className="size-3 text-primary-foreground" />
+                          )}
+                        </span>
                         <LsTokenIcon name={symbol} size="md" />
-                        <Typography variant="body1">{name}</Typography>
+                        <Text variant="body1">{name}</Text>
                       </div>
-                    </SelectCheckboxItem>
+                    </SelectItem>
                   );
                 }),
               )}
@@ -286,12 +303,10 @@ export const SelectOperatorsStep: FC<SelectOperatorsStepProps> = ({
 
         <div className="w-1/4">
           <Input
-            debounceTime={300}
             isControlled
             leftIcon={<Search />}
             id="deploy-operator-selection-search"
             placeholder="Search operator"
-            size="md"
             value={searchQuery}
             onChange={setSearchQuery}
             inputClassName="h-10"
@@ -333,23 +348,20 @@ export const SelectOperatorsStep: FC<SelectOperatorsStepProps> = ({
       )}
 
       {/* Approval Settings - Read-only based on blueprint configuration */}
-      <div className="mt-5 p-4 bg-mono-20 dark:bg-mono-180 rounded-lg">
-        <Typography
-          variant="body1"
-          className="text-mono-120 dark:text-mono-100 mb-3"
-        >
+      <div className="mt-5 p-4 bg-muted/40 rounded-lg">
+        <Text variant="body1" className="text-muted-foreground mb-3">
           Approval Requirements (defined by blueprint)
-        </Typography>
+        </Text>
 
         {isConfigLoading ? (
           <div className="flex gap-8">
-            <SkeletonLoader className="h-5 w-40" />
-            <SkeletonLoader className="h-5 w-32" />
+            <Skeleton className="h-5 w-40" />
+            <Skeleton className="h-5 w-32" />
           </div>
         ) : (
           <div className="flex gap-8">
             <div className="flex items-center gap-2">
-              <span className="text-sm text-mono-140 dark:text-mono-80">
+              <span className="text-sm text-muted-foreground">
                 Membership Model:
               </span>
               <Chip
@@ -366,14 +378,14 @@ export const SelectOperatorsStep: FC<SelectOperatorsStepProps> = ({
             </div>
 
             <div className="flex items-center gap-2">
-              <span className="text-sm text-mono-140 dark:text-mono-80">
+              <span className="text-sm text-muted-foreground">
                 Min. Approvals Required:
               </span>
               <span className="text-sm font-semibold">
                 {minApprovalsRequired !== null ? (
                   minApprovalsRequired
                 ) : (
-                  <span className="text-mono-100 dark:text-mono-120 font-normal">
+                  <span className="text-muted-foreground font-normal">
                     Select operators to see requirements
                   </span>
                 )}
@@ -392,7 +404,7 @@ export const SelectOperatorsStep: FC<SelectOperatorsStepProps> = ({
 
             {selectedOperatorsCount > 0 && (
               <div className="flex items-center gap-2">
-                <span className="text-sm text-mono-140 dark:text-mono-80">
+                <span className="text-sm text-muted-foreground">
                   Selected Operators:
                 </span>
                 <span className="text-sm font-semibold">

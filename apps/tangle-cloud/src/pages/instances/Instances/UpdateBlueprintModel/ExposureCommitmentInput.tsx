@@ -1,15 +1,19 @@
-import {
-  Typography,
-  Label,
-  Slider,
-  shortenString,
-} from '@tangle-network/ui-components';
+import { Text } from '../../../../components/sandbox/SandboxUi';
 import { FC, useMemo } from 'react';
 import LsTokenIcon from '@tangle-network/tangle-shared-ui/components/LsTokenIcon';
 import cx from 'classnames';
 import type { Address } from 'viem';
 import { formatUnits } from 'viem';
-import { formatTokenAmount } from '@tangle-network/ui-components/utils/formatTokenAmount';
+
+const shortenString = (value: string, chars = 6) =>
+  value.length > chars * 2 + 3
+    ? `${value.slice(0, chars)}...${value.slice(-chars)}`
+    : value;
+
+const formatTokenAmount = (value: string) =>
+  Number(value).toLocaleString(undefined, {
+    maximumFractionDigits: 4,
+  });
 
 interface ExposureCommitmentInputProps {
   /** Token address (or zero address for native) */
@@ -124,17 +128,10 @@ export const ExposureCommitmentInput: FC<ExposureCommitmentInputProps> = ({
     return formatTokenAmount(formatted);
   }, [tokensAtRisk, decimals]);
 
-  const handleSliderChange = (values: number[]) => {
-    // Single-thumb slider returns array with one value
-    const newPercent = values[0];
-    // Convert percentage back to basis points
-    onChange(Math.round(newPercent * 100));
-  };
-
   return (
     <div
       className={cx(
-        'flex flex-col lg:flex-row lg:items-center gap-4 lg:gap-6 p-4 bg-mono-20 dark:bg-mono-160 rounded-lg w-full',
+        'flex flex-col lg:flex-row lg:items-center gap-4 lg:gap-6 p-4 bg-muted/40 rounded-lg w-full',
         className,
       )}
     >
@@ -143,29 +140,20 @@ export const ExposureCommitmentInput: FC<ExposureCommitmentInputProps> = ({
         <LsTokenIcon name={displaySymbol} hasRainbowBorder size="lg" />
 
         <div className="min-w-0">
-          <Typography
-            variant="h5"
-            className="text-mono-200 dark:text-mono-0 truncate"
-          >
+          <Text variant="h5" className="truncate">
             {displayName}
-          </Typography>
+          </Text>
 
-          <Typography
-            variant="body3"
-            className="text-mono-100 dark:text-mono-100 truncate"
-          >
+          <Text variant="body3" className="text-muted-foreground truncate">
             {displaySymbol}
-          </Typography>
+          </Text>
 
           {delegatedAmount !== null &&
             delegatedAmount !== undefined &&
             delegatedAmount > BigInt(0) && (
-              <Typography
-                variant="body3"
-                className="text-mono-120 dark:text-mono-80"
-              >
+              <Text variant="body3" className="text-muted-foreground">
                 Your stake: {formattedDelegatedAmount} {displaySymbol}
-              </Typography>
+              </Text>
             )}
         </div>
       </div>
@@ -174,61 +162,50 @@ export const ExposureCommitmentInput: FC<ExposureCommitmentInputProps> = ({
       <div className="flex-1 min-w-0">
         {/* Operator exposure info (read-only) */}
         {operatorExposureBps !== undefined && (
-          <div className="flex items-center justify-between mb-3 p-2 bg-mono-0 dark:bg-mono-180 rounded-lg">
-            <Label className="text-mono-100 dark:text-mono-100">
-              Operator Exposure
-            </Label>
-            <Typography
-              variant="body2"
-              fw="bold"
-              className="text-mono-200 dark:text-mono-0"
-            >
+          <div className="flex items-center justify-between mb-3 p-2 bg-background rounded-lg">
+            <label className="text-muted-foreground">Operator Exposure</label>
+            <Text variant="body2" fw="bold" className="text-foreground">
               {operatorExposureBps / 100}%
-              <span className="text-mono-100 dark:text-mono-80 font-normal text-xs ml-1">
+              <span className="text-muted-foreground font-normal text-xs ml-1">
                 {operatorExposureBps < 10000
                   ? '(set by deployer)'
                   : '(protocol default)'}
               </span>
-            </Typography>
+            </Text>
           </div>
         )}
 
         <div className="flex justify-between items-center mb-2">
-          <Label className="text-mono-200 dark:text-mono-0">
+          <label className="text-foreground font-medium">
             Your Exposure Commitment
-          </Label>
-          <Typography
-            variant="body2"
-            className="text-mono-100 dark:text-mono-100"
-          >
+          </label>
+          <Text variant="body2" className="text-muted-foreground">
             Range: {minPercent}% - {maxPercent}%
-          </Typography>
+          </Text>
         </div>
 
         <div className="space-y-2">
-          <Slider
-            hasLabel
+          <input
+            type="range"
             min={minPercent}
             max={maxPercent}
             step={1}
-            value={[valuePercent]}
-            onChange={handleSliderChange}
-            className="w-full"
+            value={valuePercent}
+            onChange={(event) =>
+              onChange(Math.round(Number(event.currentTarget.value) * 100))
+            }
+            className="h-2 w-full cursor-pointer accent-primary"
           />
 
           {/* Current value display */}
           <div className="flex justify-between text-sm">
-            <span className="text-mono-100 dark:text-mono-100">
-              Min: {minPercent}%
-            </span>
+            <span className="text-muted-foreground">Min: {minPercent}%</span>
 
-            <span className="text-blue-50 font-medium">
+            <span className="text-primary font-medium">
               Selected: {valuePercent}%
             </span>
 
-            <span className="text-mono-100 dark:text-mono-100">
-              Max: {maxPercent}%
-            </span>
+            <span className="text-muted-foreground">Max: {maxPercent}%</span>
           </div>
         </div>
 
@@ -251,20 +228,17 @@ export const ExposureCommitmentInput: FC<ExposureCommitmentInputProps> = ({
               </svg>
 
               <div>
-                <Typography
+                <Text
                   variant="body2"
                   fw="bold"
                   className="text-yellow-600 dark:text-yellow-400"
                 >
                   Tokens at Risk: {formattedTokensAtRisk} {displaySymbol}
-                </Typography>
+                </Text>
 
-                <Typography
-                  variant="body3"
-                  className="text-mono-120 dark:text-mono-80 mt-1"
-                >
+                <Text variant="body3" className="text-muted-foreground mt-1">
                   This amount can be slashed if the service misbehaves.
-                </Typography>
+                </Text>
               </div>
             </div>
           </div>
@@ -290,20 +264,20 @@ export const ExposureCommitmentInput: FC<ExposureCommitmentInputProps> = ({
                   />
                 </svg>
 
-                <Typography
+                <Text
                   variant="body3"
                   className="text-orange-600 dark:text-orange-400"
                 >
                   You have no stake for this asset.
-                </Typography>
+                </Text>
               </div>
             </div>
           )}
 
         {errorMessage && (
-          <Typography variant="body3" className="mt-2 text-red-50">
+          <Text variant="body3" className="mt-2 text-destructive">
             {errorMessage}
-          </Typography>
+          </Text>
         )}
       </div>
     </div>

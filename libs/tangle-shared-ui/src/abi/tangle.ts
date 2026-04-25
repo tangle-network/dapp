@@ -3105,6 +3105,11 @@ const ABI = [
         type: 'uint256',
         internalType: 'uint256',
       },
+      {
+        name: 'confidentialityPolicy',
+        type: 'uint8',
+        internalType: 'enum Types.ConfidentialityPolicy',
+      },
     ],
     outputs: [
       {
@@ -3158,6 +3163,11 @@ const ABI = [
         name: 'paymentAmount',
         type: 'uint256',
         internalType: 'uint256',
+      },
+      {
+        name: 'confidentialityPolicy',
+        type: 'uint8',
+        internalType: 'enum Types.ConfidentialityPolicy',
       },
     ],
     outputs: [
@@ -3241,6 +3251,11 @@ const ABI = [
         name: 'paymentAmount',
         type: 'uint256',
         internalType: 'uint256',
+      },
+      {
+        name: 'confidentialityPolicy',
+        type: 'uint8',
+        internalType: 'enum Types.ConfidentialityPolicy',
       },
     ],
     outputs: [
@@ -3797,6 +3812,12 @@ const ABI = [
         internalType: 'uint64',
       },
       {
+        name: 'confidentiality',
+        type: 'uint8',
+        indexed: false,
+        internalType: 'enum Types.ConfidentialityPolicy',
+      },
+      {
         name: 'owner',
         type: 'address',
         indexed: true,
@@ -3832,6 +3853,12 @@ const ABI = [
         type: 'uint64',
         indexed: true,
         internalType: 'uint64',
+      },
+      {
+        name: 'confidentiality',
+        type: 'uint8',
+        indexed: false,
+        internalType: 'enum Types.ConfidentialityPolicy',
       },
     ],
     anonymous: false,
@@ -4208,6 +4235,12 @@ const ABI = [
         indexed: true,
         internalType: 'address',
       },
+      {
+        name: 'confidentiality',
+        type: 'uint8',
+        indexed: false,
+        internalType: 'enum Types.ConfidentialityPolicy',
+      },
     ],
     anonymous: false,
   },
@@ -4232,6 +4265,12 @@ const ABI = [
         type: 'address',
         indexed: true,
         internalType: 'address',
+      },
+      {
+        name: 'confidentiality',
+        type: 'uint8',
+        indexed: false,
+        internalType: 'enum Types.ConfidentialityPolicy',
       },
     ],
     anonymous: false,

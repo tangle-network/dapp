@@ -6,8 +6,8 @@ import {
   ModalContent,
   ModalFooterActions,
   ModalHeader,
-  Typography,
-} from '@tangle-network/ui-components';
+  Text,
+} from './SandboxModalPrimitives';
 
 interface ProposeSlashModalProps {
   open: boolean;
@@ -61,26 +61,26 @@ const ProposeSlashModal = ({
         <ModalBody>
           <div className="space-y-4">
             {loadingProposableServices ? (
-              <Typography variant="body2" className="text-mono-100">
+              <Text variant="body2" className="text-muted-foreground">
                 Loading eligible services...
-              </Typography>
+              </Text>
             ) : null}
 
             {!loadingProposableServices && proposableServicesCount === 0 ? (
-              <Typography variant="body2" className="text-mono-100">
+              <Text variant="body2" className="text-muted-foreground">
                 No active services where your account appears as service or
                 blueprint owner.
-              </Typography>
+              </Text>
             ) : null}
 
             {proposableServicesCount > 0 ? (
               <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                 <div>
-                  <Typography variant="body3" className="mb-1">
+                  <Text variant="body3" className="mb-1">
                     Service
-                  </Typography>
+                  </Text>
                   <select
-                    className="w-full rounded-lg border border-mono-60 dark:border-mono-140 px-3 py-2 bg-mono-0 dark:bg-mono-200"
+                    className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
                     value={proposeServiceId}
                     onChange={(event) =>
                       setProposeServiceId(event.target.value)
@@ -96,11 +96,11 @@ const ProposeSlashModal = ({
                 </div>
 
                 <div>
-                  <Typography variant="body3" className="mb-1">
+                  <Text variant="body3" className="mb-1">
                     Operator
-                  </Typography>
+                  </Text>
                   <select
-                    className="w-full rounded-lg border border-mono-60 dark:border-mono-140 px-3 py-2 bg-mono-0 dark:bg-mono-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm disabled:opacity-50 disabled:cursor-not-allowed"
                     value={proposeOperator}
                     onChange={(event) => setProposeOperator(event.target.value)}
                     disabled={!selectedProposableService}
@@ -121,9 +121,9 @@ const ProposeSlashModal = ({
                 </div>
 
                 <div>
-                  <Typography variant="body3" className="mb-1">
+                  <Text variant="body3" className="mb-1">
                     Slash BPS (1 - 10000)
-                  </Typography>
+                  </Text>
                   <Input
                     id="propose-slash-bps"
                     isControlled
@@ -134,9 +134,9 @@ const ProposeSlashModal = ({
                 </div>
 
                 <div>
-                  <Typography variant="body3" className="mb-1">
+                  <Text variant="body3" className="mb-1">
                     Evidence (text or bytes32 hex)
-                  </Typography>
+                  </Text>
                   <Input
                     id="propose-evidence"
                     isControlled
@@ -149,23 +149,20 @@ const ProposeSlashModal = ({
             ) : null}
 
             {proposeValidationError ? (
-              <Typography variant="body3" className="!text-red-60">
+              <Text variant="body3" className="!text-destructive">
                 {proposeValidationError}
-              </Typography>
+              </Text>
             ) : null}
 
             {errorMessage ? (
               <div className="rounded-lg border border-red-500/30 bg-red-500/10 p-3 space-y-2">
-                <Typography
-                  variant="body3"
-                  className="!text-red-70 dark:!text-red-50"
-                >
+                <Text variant="body3" className="!text-destructive">
                   {errorMessage}
-                </Typography>
+                </Text>
                 <div>
                   <button
                     type="button"
-                    className="text-xs underline text-red-70 dark:text-red-50"
+                    className="text-xs underline text-destructive"
                     onClick={onDismissError}
                   >
                     Dismiss

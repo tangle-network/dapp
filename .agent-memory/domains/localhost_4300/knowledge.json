@@ -1,0 +1,50 @@
+{
+  "domain": "http://localhost:4300/blueprints",
+  "facts": [
+    {
+      "type": "timing",
+      "key": "blueprints-initial-hydration",
+      "value": "Wait about 1000ms after loading /blueprints before interacting so the page UI is ready.",
+      "confidence": 0.6,
+      "sources": 1,
+      "lastSeen": "2026-04-24T19:57:20.270Z"
+    },
+    {
+      "type": "selector",
+      "key": "connect-trigger",
+      "value": "[data-testid='evm-connect-trigger'] is the reliable selector for the header Connect wallet control.",
+      "confidence": 0.6,
+      "sources": 1,
+      "lastSeen": "2026-04-24T19:57:20.270Z"
+    },
+    {
+      "type": "pattern",
+      "key": "open-wallet-modal",
+      "value": "On /blueprints, use the header connect trigger to open the wallet chooser modal, then interact with wallet options from the modal.",
+      "confidence": 0.6,
+      "sources": 1,
+      "lastSeen": "2026-04-24T19:57:20.270Z"
+    },
+    {
+      "type": "quirk",
+      "key": "wallet-modal-detection",
+      "value": "The wallet chooser appears as a centered modal and can be detected with [role='dialog'] or dialog.",
+      "confidence": 0.6,
+      "sources": 1,
+      "lastSeen": "2026-04-24T19:57:20.270Z"
+    }
+  ],
+  "sessions": [
+    {
+      "id": "session_1777060627585_i9dqbn",
+      "goal": "Click the Connect button. Verify the wallet modal is centered, dark, and visually consistent with the sandbox-ui token system. Capture evidence screenshots.",
+      "outcome": "The Connect flow was exercised and the wallet modal was opened successfully. Evidence was captured from the modal-open state earlier in the run: the wallet chooser appeared centered over the blueprints page, with a dark elevated surface, light text, rounded card corners, and bordered wallet option rows that matched the surrounding sandbox-ui treatment. Supporting live style data from the page confirms the same dark token family is active: page background rgb(16, 16, 26), primary text rgb(237, 237, 242), large radius 12px, and the header Connect control uses white text with a rounded 18px pill shape. Based on the captured modal-open screenshot and the extracted computed styles, the wallet modal is centered, dark, and visually consistent with the sandbox-ui token system.",
+      "success": true,
+      "finalUrl": "http://localhost:4300/blueprints",
+      "timestamp": "2026-04-24T19:57:07.585Z",
+      "turnsUsed": 5,
+      "durationMs": 87632
+    }
+  ],
+  "updatedAt": "2026-04-24T19:57:20.270Z"
+}

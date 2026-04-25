@@ -52,9 +52,7 @@ describe('Operators Page', () => {
 
     render(<Page />);
 
-    fireEvent.click(
-      screen.getByRole('button', { name: 'Manage Registrations' }),
-    );
+    fireEvent.click(screen.getByRole('button', { name: 'Manage operator' }));
     expect(mockNavigate).toHaveBeenCalledWith('/operators/manage');
   });
 

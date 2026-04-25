@@ -1,0 +1,818 @@
+#!/usr/bin/env node
+import { createServer } from 'node:http';
+import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
+import { basename, dirname, resolve } from 'node:path';
+import { fileURLToPath } from 'node:url';
+import {
+  createPublicClient,
+  createWalletClient,
+  getAddress,
+  http,
+  keccak256,
+  parseEventLogs,
+  toHex,
+  zeroAddress,
+} from 'viem';
+import { privateKeyToAccount } from 'viem/accounts';
+import { foundry } from 'viem/chains';
+
+const __dirname = dirname(fileURLToPath(import.meta.url));
+const DAPP_ROOT = resolve(__dirname, '../..');
+const GENERATED_DIR = resolve(__dirname, 'blueprint-ui-catalog/generated');
+
+const PORT = Number(process.env.BLUEPRINT_UI_CATALOG_PORT ?? 3337);
+const HOST = process.env.BLUEPRINT_UI_CATALOG_HOST ?? '127.0.0.1';
+const PUBLIC_HOST = process.env.BLUEPRINT_UI_CATALOG_PUBLIC_HOST ?? HOST;
+const PUBLIC_PORT = Number(
+  process.env.BLUEPRINT_UI_CATALOG_PUBLIC_PORT ?? PORT,
+);
+const RPC_URL = process.env.RPC_URL ?? 'http://127.0.0.1:8545';
+const TANGLE_ADDRESS = getAddress(
+  process.env.TANGLE_ADDRESS ?? '0xCf7Ed3AccA5a467e9e704C703E8D87F634fB0Fc9',
+);
+
+const DEPLOYER_KEY =
+  process.env.BLUEPRINT_UI_DEPLOYER_KEY ??
+  '0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80';
+const OPERATOR_KEYS = [
+  process.env.BLUEPRINT_UI_OPERATOR1_KEY ??
+    '0x59c6995e998f97a5a0044966f0945389dc9e86dae88c7a8412f4603b6b78690d',
+  process.env.BLUEPRINT_UI_OPERATOR2_KEY ??
+    '0x5de4111afa1a4b94908f83103eb1f1706367c2e68ca870fc3fb9a804cdab365a',
+];
+const OPERATOR_GOSSIP_KEYS = [
+  '0x040102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f202122232425262728292a2b2c2d2e2f303132333435363738393a3b3c3d3e3f40',
+  '0x044142434445464748494a4b4c4d4e4f505152535455565758595a5b5c5d5e5f606162636465666768696a6b6c6d6e6f707172737475767778797a7b7c7d7e7f80',
+];
+
+const BLUEPRINTS = [
+  ['ai-agent-sandbox', '/home/drew/code/ai-agent-sandbox-blueprint'],
+  ['ai-trading', '/home/drew/code/ai-trading-blueprints'],
+  ['llm-inference', '/home/drew/code/llm-inference-blueprint'],
+  ['voice-inference', '/home/drew/code/voice-inference-blueprint'],
+  ['embedding-inference', '/home/drew/code/embedding-inference-blueprint'],
+  ['distributed-inference', '/home/drew/code/distributed-inference-blueprint'],
+  ['avatar-inference', '/home/drew/code/avatar-inference-blueprint'],
+  ['image-generation', '/home/drew/code/image-gen-inference-blueprint'],
+  ['modal-inference', '/home/drew/code/modal-inference-blueprint'],
+  ['video-generation', '/home/drew/code/video-gen-inference-blueprint'],
+  ['distributed-training', '/home/drew/code/training-blueprint'],
+  ['vector-store', '/home/drew/code/vector-store-blueprint'],
+];
+
+const tangleAbi = [
+  {
+    type: 'function',
+    name: 'createBlueprint',
+    inputs: [
+      {
+        name: 'definition',
+        type: 'tuple',
+        components: [
+          { name: 'metadataUri', type: 'string' },
+          { name: 'metadataHash', type: 'bytes32' },
+          { name: 'manager', type: 'address' },
+          { name: 'masterManagerRevision', type: 'uint32' },
+          { name: 'hasConfig', type: 'bool' },
+          {
+            name: 'config',
+            type: 'tuple',
+            components: [
+              { name: 'membership', type: 'uint8' },
+              { name: 'pricing', type: 'uint8' },
+              { name: 'minOperators', type: 'uint32' },
+              { name: 'maxOperators', type: 'uint32' },
+              { name: 'subscriptionRate', type: 'uint256' },
+              { name: 'subscriptionInterval', type: 'uint64' },
+              { name: 'eventRate', type: 'uint256' },
+            ],
+          },
+          {
+            name: 'metadata',
+            type: 'tuple',
+            components: [
+              { name: 'name', type: 'string' },
+              { name: 'description', type: 'string' },
+              { name: 'author', type: 'string' },
+              { name: 'category', type: 'string' },
+              { name: 'codeRepository', type: 'string' },
+              { name: 'logo', type: 'string' },
+              { name: 'website', type: 'string' },
+              { name: 'license', type: 'string' },
+              { name: 'profilingData', type: 'string' },
+            ],
+          },
+          {
+            name: 'jobs',
+            type: 'tuple[]',
+            components: [
+              { name: 'name', type: 'string' },
+              { name: 'description', type: 'string' },
+              { name: 'metadataUri', type: 'string' },
+              { name: 'paramsSchema', type: 'bytes' },
+              { name: 'resultSchema', type: 'bytes' },
+            ],
+          },
+          { name: 'registrationSchema', type: 'bytes' },
+          { name: 'requestSchema', type: 'bytes' },
+          {
+            name: 'sources',
+            type: 'tuple[]',
+            components: [
+              { name: 'kind', type: 'uint8' },
+              {
+                name: 'container',
+                type: 'tuple',
+                components: [
+                  { name: 'registry', type: 'string' },
+                  { name: 'image', type: 'string' },
+                  { name: 'tag', type: 'string' },
+                ],
+              },
+              {
+                name: 'wasm',
+                type: 'tuple',
+                components: [
+                  { name: 'runtime', type: 'uint8' },
+                  { name: 'fetcher', type: 'uint8' },
+                  { name: 'artifactUri', type: 'string' },
+                  { name: 'entrypoint', type: 'string' },
+                ],
+              },
+              {
+                name: 'native',
+                type: 'tuple',
+                components: [
+                  { name: 'fetcher', type: 'uint8' },
+                  { name: 'artifactUri', type: 'string' },
+                  { name: 'entrypoint', type: 'string' },
+                ],
+              },
+              {
+                name: 'testing',
+                type: 'tuple',
+                components: [
+                  { name: 'cargoPackage', type: 'string' },
+                  { name: 'cargoBin', type: 'string' },
+                  { name: 'basePath', type: 'string' },
+                ],
+              },
+              {
+                name: 'binaries',
+                type: 'tuple[]',
+                components: [
+                  { name: 'arch', type: 'uint8' },
+                  { name: 'os', type: 'uint8' },
+                  { name: 'name', type: 'string' },
+                  { name: 'sha256', type: 'bytes32' },
+                ],
+              },
+            ],
+          },
+          { name: 'supportedMemberships', type: 'uint8[]' },
+        ],
+      },
+    ],
+    outputs: [{ name: 'blueprintId', type: 'uint64' }],
+    stateMutability: 'nonpayable',
+  },
+  {
+    type: 'function',
+    name: 'isOperatorRegistered',
+    inputs: [
+      { name: 'blueprintId', type: 'uint64' },
+      { name: 'operator', type: 'address' },
+    ],
+    outputs: [{ type: 'bool' }],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
+    name: 'updateBlueprint',
+    inputs: [
+      { name: 'blueprintId', type: 'uint64' },
+      { name: 'metadataUri', type: 'string' },
+      { name: 'metadataHash', type: 'bytes32' },
+    ],
+    outputs: [],
+    stateMutability: 'nonpayable',
+  },
+  {
+    type: 'function',
+    name: 'registerOperator',
+    inputs: [
+      { name: 'blueprintId', type: 'uint64' },
+      { name: 'ecdsaPublicKey', type: 'bytes' },
+      { name: 'rpcAddress', type: 'string' },
+    ],
+    outputs: [],
+    stateMutability: 'nonpayable',
+  },
+  {
+    type: 'function',
+    name: 'requestService',
+    inputs: [
+      { name: 'blueprintId', type: 'uint64' },
+      { name: 'operators', type: 'address[]' },
+      { name: 'config', type: 'bytes' },
+      { name: 'permittedCallers', type: 'address[]' },
+      { name: 'ttl', type: 'uint64' },
+      { name: 'paymentToken', type: 'address' },
+      { name: 'paymentAmount', type: 'uint256' },
+      { name: 'confidentialityPolicy', type: 'uint8' },
+    ],
+    outputs: [{ name: 'requestId', type: 'uint64' }],
+    stateMutability: 'payable',
+  },
+  {
+    type: 'function',
+    name: 'approveService',
+    inputs: [
+      { name: 'requestId', type: 'uint64' },
+      { name: 'stakingPercent', type: 'uint8' },
+    ],
+    outputs: [],
+    stateMutability: 'nonpayable',
+  },
+  {
+    type: 'event',
+    name: 'BlueprintCreated',
+    inputs: [
+      { name: 'blueprintId', type: 'uint64', indexed: true },
+      { name: 'owner', type: 'address', indexed: true },
+      { name: 'manager', type: 'address', indexed: false },
+      { name: 'metadataUri', type: 'string', indexed: false },
+      { name: 'metadataHash', type: 'bytes32', indexed: false },
+    ],
+  },
+  {
+    type: 'event',
+    name: 'ServiceRequested',
+    inputs: [
+      { name: 'requestId', type: 'uint64', indexed: true },
+      { name: 'blueprintId', type: 'uint64', indexed: true },
+      { name: 'requester', type: 'address', indexed: true },
+      { name: 'confidentiality', type: 'uint8', indexed: false },
+    ],
+  },
+  {
+    type: 'event',
+    name: 'ServiceActivated',
+    inputs: [
+      { name: 'serviceId', type: 'uint64', indexed: true },
+      { name: 'requestId', type: 'uint64', indexed: true },
+      { name: 'blueprintId', type: 'uint64', indexed: true },
+      { name: 'confidentiality', type: 'uint8', indexed: false },
+    ],
+  },
+];
+
+const command = process.argv[2] ?? 'help';
+
+const sortValue = (value) => {
+  if (Array.isArray(value)) return value.map(sortValue);
+  if (value && typeof value === 'object') {
+    return Object.keys(value)
+      .sort()
+      .reduce((result, key) => {
+        result[key] = sortValue(value[key]);
+        return result;
+      }, {});
+  }
+  return value;
+};
+
+const canonicalPayloadHash = (metadata) => {
+  const { integrity: _integrity, ...payload } = metadata;
+  return keccak256(
+    toHex(new TextEncoder().encode(JSON.stringify(sortValue(payload)))),
+  );
+};
+
+const attestationMessage = ({ blueprintId, owner, metadataUri, payloadHash }) =>
+  [
+    'Tangle Blueprint Metadata Attestation',
+    'schema: tangle-blueprint-metadata/v1',
+    `blueprintId: ${blueprintId.toString()}`,
+    `owner: ${owner.toLowerCase()}`,
+    `metadataUri: ${metadataUri}`,
+    `payloadHash: ${payloadHash}`,
+  ].join('\n');
+
+const hasMetadataImage = (metadata) =>
+  Boolean(metadata.image || metadata.imageUrl || metadata.logo);
+
+const generatedImageUri = (slug) =>
+  `http://${PUBLIC_HOST}:${PUBLIC_PORT}/${slug}.svg`;
+
+const withGeneratedImage = (slug, metadata) => {
+  if (hasMetadataImage(metadata)) {
+    return metadata;
+  }
+
+  return {
+    ...metadata,
+    image: generatedImageUri(slug),
+  };
+};
+
+const hashSlug = (slug) =>
+  Array.from(slug).reduce((hash, char) => {
+    return (hash * 33 + char.charCodeAt(0)) % 360;
+  }, 17);
+
+const generatedBlueprintSvg = (slug, metadata) => {
+  const hue = hashSlug(slug);
+  const name = String(metadata.name ?? slug)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;');
+  const initial = name.slice(0, 1).toUpperCase();
+
+  return `<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630" role="img" aria-label="${name}">
+  <defs>
+    <linearGradient id="bg" x1="0" x2="1" y1="0" y2="1">
+      <stop stop-color="hsl(${(hue + 230) % 360} 48% 10%)"/>
+      <stop offset="1" stop-color="hsl(${(hue + 285) % 360} 54% 7%)"/>
+    </linearGradient>
+    <radialGradient id="hot" cx="25%" cy="22%" r="55%">
+      <stop stop-color="hsl(${hue} 84% 62%)" stop-opacity=".55"/>
+      <stop offset="1" stop-color="hsl(${hue} 84% 62%)" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="cool" cx="76%" cy="20%" r="55%">
+      <stop stop-color="hsl(${(hue + 74) % 360} 86% 56%)" stop-opacity=".45"/>
+      <stop offset="1" stop-color="hsl(${(hue + 74) % 360} 86% 56%)" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <rect width="1200" height="630" fill="url(#bg)"/>
+  <rect width="1200" height="630" fill="url(#hot)"/>
+  <rect width="1200" height="630" fill="url(#cool)"/>
+  <path d="M120 405 C320 120 520 520 760 205 S1010 230 1100 420" fill="none" stroke="white" stroke-opacity=".34" stroke-width="6"/>
+  <path d="M150 270 C360 390 540 150 770 335 S1000 460 1110 250" fill="none" stroke="white" stroke-opacity=".18" stroke-width="5"/>
+  <g fill="white" opacity=".8">
+    <circle cx="250" cy="360" r="17"/><circle cx="515" cy="315" r="24"/><circle cx="760" cy="370" r="18"/><circle cx="990" cy="330" r="16"/>
+  </g>
+  <rect x="1010" y="460" width="110" height="110" rx="28" fill="black" fill-opacity=".22" stroke="white" stroke-opacity=".16"/>
+  <text x="1065" y="535" text-anchor="middle" fill="white" font-family="Inter, ui-sans-serif, system-ui, sans-serif" font-size="64" font-weight="900">${initial}</text>
+</svg>
+`;
+};
+
+const loadCatalog = () =>
+  BLUEPRINTS.map(([slug, repoPath]) => {
+    const sourcePath = resolve(repoPath, 'metadata/blueprint-metadata.json');
+    const sourceMetadata = JSON.parse(readFileSync(sourcePath, 'utf8'));
+    const metadata = withGeneratedImage(slug, sourceMetadata);
+    const metadataUri = `http://${PUBLIC_HOST}:${PUBLIC_PORT}/${slug}.json`;
+    return {
+      slug,
+      repoPath,
+      sourcePath,
+      outputPath: resolve(GENERATED_DIR, `${slug}.json`),
+      imageOutputPath: resolve(GENERATED_DIR, `${slug}.svg`),
+      metadata,
+      metadataUri,
+      payloadHash: canonicalPayloadHash(metadata),
+    };
+  });
+
+const prepare = () => {
+  mkdirSync(GENERATED_DIR, { recursive: true });
+  const catalog = loadCatalog();
+  for (const item of catalog) {
+    writeFileSync(
+      item.outputPath,
+      `${JSON.stringify(item.metadata, null, 2)}\n`,
+    );
+    if (item.metadata.image === generatedImageUri(item.slug)) {
+      writeFileSync(
+        item.imageOutputPath,
+        generatedBlueprintSvg(item.slug, item.metadata),
+      );
+    }
+  }
+  writeFileSync(
+    resolve(GENERATED_DIR, 'manifest.json'),
+    `${JSON.stringify(
+      catalog.map(
+        ({
+          slug,
+          repoPath,
+          sourcePath,
+          outputPath,
+          metadataUri,
+          payloadHash,
+          metadata,
+        }) => ({
+          slug,
+          repoPath,
+          sourcePath,
+          outputPath,
+          metadataUri,
+          payloadHash,
+          name: metadata.name,
+        }),
+      ),
+      null,
+      2,
+    )}\n`,
+  );
+  console.log(
+    `Prepared ${catalog.length} metadata documents in ${GENERATED_DIR}`,
+  );
+  return catalog;
+};
+
+const emptySource = (slug) => ({
+  kind: 2,
+  container: { registry: '', image: '', tag: '' },
+  wasm: { runtime: 0, fetcher: 0, artifactUri: '', entrypoint: '' },
+  native: {
+    fetcher: 0,
+    artifactUri: `file://${slug}`,
+    entrypoint: `metadata/blueprint-metadata.json`,
+  },
+  testing: { cargoPackage: '', cargoBin: '', basePath: '' },
+  binaries: [
+    {
+      arch: 5,
+      os: 1,
+      name: `${slug}-local-fixture`,
+      sha256:
+        '0x0000000000000000000000000000000000000000000000000000000000000001',
+    },
+  ],
+});
+
+const toJobDefinitions = (metadata) => {
+  const actions = metadata.blueprintUi?.actions ?? [];
+  const jobs = actions.slice(0, 8).map((action) => ({
+    name: action.id ?? action.label,
+    description: action.description ?? action.label,
+    metadataUri: '',
+    paramsSchema: '0x',
+    resultSchema: '0x',
+  }));
+  return jobs.length > 0
+    ? jobs
+    : [
+        {
+          name: 'provision',
+          description: 'Provision service',
+          metadataUri: '',
+          paramsSchema: '0x',
+          resultSchema: '0x',
+        },
+      ];
+};
+
+const toDefinition = (item) => ({
+  metadataUri: item.metadataUri,
+  metadataHash: item.payloadHash,
+  manager: zeroAddress,
+  masterManagerRevision: 0,
+  hasConfig: true,
+  config: {
+    membership: 1,
+    pricing: 0,
+    minOperators: 1,
+    maxOperators: 0,
+    subscriptionRate: 0n,
+    subscriptionInterval: 0n,
+    eventRate: 0n,
+  },
+  metadata: {
+    name: item.metadata.name,
+    description: item.metadata.description,
+    author: item.metadata.author,
+    category: item.metadata.category,
+    codeRepository: item.metadata.codeRepository ?? '',
+    logo: item.metadata.image ?? item.metadata.logo ?? '',
+    website: item.metadata.website ?? '',
+    license: item.metadata.license ?? 'MIT',
+    profilingData: '',
+  },
+  jobs: toJobDefinitions(item.metadata),
+  registrationSchema: '0x',
+  requestSchema: '0x',
+  sources: [emptySource(item.slug)],
+  supportedMemberships: [1],
+});
+
+const waitForHash = async (publicClient, hash) => {
+  console.log(`  tx: ${hash}`);
+  return publicClient.waitForTransactionReceipt({ hash });
+};
+
+const getBlueprintLogs = async (publicClient) => {
+  const logs = await publicClient.getLogs({
+    address: TANGLE_ADDRESS,
+    fromBlock: 0n,
+    toBlock: 'latest',
+  });
+  return parseEventLogs({
+    abi: tangleAbi,
+    logs,
+    eventName: 'BlueprintCreated',
+    strict: false,
+  });
+};
+
+const getServiceRequestLogs = async (publicClient) => {
+  const logs = await publicClient.getLogs({
+    address: TANGLE_ADDRESS,
+    fromBlock: 0n,
+    toBlock: 'latest',
+  });
+  return parseEventLogs({
+    abi: tangleAbi,
+    logs,
+    eventName: 'ServiceRequested',
+    strict: false,
+  });
+};
+
+const getServiceActivatedLogs = async (publicClient) => {
+  const logs = await publicClient.getLogs({
+    address: TANGLE_ADDRESS,
+    fromBlock: 0n,
+    toBlock: 'latest',
+  });
+  return parseEventLogs({
+    abi: tangleAbi,
+    logs,
+    eventName: 'ServiceActivated',
+    strict: false,
+  });
+};
+
+const signMetadata = async ({ item, blueprintId, ownerAccount }) => {
+  const signature = await ownerAccount.signMessage({
+    message: attestationMessage({
+      blueprintId,
+      owner: ownerAccount.address,
+      metadataUri: item.metadataUri,
+      payloadHash: item.payloadHash,
+    }),
+  });
+  const signed = {
+    ...item.metadata,
+    integrity: {
+      schema: 'tangle-blueprint-metadata/v1',
+      signer: ownerAccount.address,
+      signature,
+      payloadHash: item.payloadHash,
+      signedAt: new Date().toISOString(),
+    },
+  };
+  writeFileSync(item.outputPath, `${JSON.stringify(signed, null, 2)}\n`);
+};
+
+const seed = async () => {
+  const catalog = prepare();
+  const deployer = privateKeyToAccount(DEPLOYER_KEY);
+  const operators = OPERATOR_KEYS.map((key) => privateKeyToAccount(key));
+  const publicClient = createPublicClient({
+    chain: foundry,
+    transport: http(RPC_URL),
+  });
+  const deployerClient = createWalletClient({
+    account: deployer,
+    chain: foundry,
+    transport: http(RPC_URL),
+  });
+
+  try {
+    await publicClient.getBlockNumber();
+  } catch (error) {
+    throw new Error(
+      `Local Anvil RPC is not reachable at ${RPC_URL}. Start ./scripts/local-env/start-local-env.sh first.`,
+      { cause: error },
+    );
+  }
+
+  const createdLogs = await getBlueprintLogs(publicClient);
+  const byHash = new Map(
+    createdLogs.map((log) => [log.args.metadataHash.toLowerCase(), log]),
+  );
+  const serviceLogs = await getServiceRequestLogs(publicClient);
+  const requestsByBlueprint = new Map(
+    serviceLogs.map((log) => [log.args.blueprintId.toString(), log]),
+  );
+  const activatedLogs = await getServiceActivatedLogs(publicClient);
+  const activatedByRequest = new Map(
+    activatedLogs.map((log) => [log.args.requestId.toString(), log]),
+  );
+  const seeded = [];
+
+  for (const item of catalog) {
+    let created = byHash.get(item.payloadHash.toLowerCase());
+
+    if (!created) {
+      console.log(`Creating blueprint: ${item.metadata.name}`);
+      const hash = await deployerClient.writeContract({
+        address: TANGLE_ADDRESS,
+        abi: tangleAbi,
+        functionName: 'createBlueprint',
+        args: [toDefinition(item)],
+      });
+      const receipt = await waitForHash(publicClient, hash);
+      const logs = parseEventLogs({
+        abi: tangleAbi,
+        logs: receipt.logs,
+        eventName: 'BlueprintCreated',
+        strict: false,
+      });
+      created = logs[0];
+      if (!created) {
+        throw new Error(`Could not parse BlueprintCreated for ${item.slug}`);
+      }
+    } else {
+      console.log(
+        `Blueprint exists: ${item.metadata.name} #${created.args.blueprintId}`,
+      );
+    }
+
+    const blueprintId = created.args.blueprintId;
+    await signMetadata({ item, blueprintId, ownerAccount: deployer });
+
+    if (created.args.metadataUri !== item.metadataUri) {
+      console.log(`Updating metadata URI for ${item.slug} #${blueprintId}`);
+      try {
+        const hash = await deployerClient.writeContract({
+          address: TANGLE_ADDRESS,
+          abi: tangleAbi,
+          functionName: 'updateBlueprint',
+          args: [blueprintId, item.metadataUri, item.payloadHash],
+        });
+        await waitForHash(publicClient, hash);
+      } catch (error) {
+        console.warn(
+          `Could not update metadata URI for ${item.slug}; metadata may be locked. Continuing with signed local fixture.`,
+        );
+      }
+    }
+
+    for (const [index, operator] of operators.entries()) {
+      const registered = await publicClient.readContract({
+        address: TANGLE_ADDRESS,
+        abi: tangleAbi,
+        functionName: 'isOperatorRegistered',
+        args: [blueprintId, operator.address],
+      });
+      if (registered) continue;
+
+      console.log(
+        `Registering operator ${index + 1} for ${item.slug} #${blueprintId}`,
+      );
+      const wallet = createWalletClient({
+        account: operator,
+        chain: foundry,
+        transport: http(RPC_URL),
+      });
+      const hash = await wallet.writeContract({
+        address: TANGLE_ADDRESS,
+        abi: tangleAbi,
+        functionName: 'registerOperator',
+        args: [
+          blueprintId,
+          OPERATOR_GOSSIP_KEYS[index],
+          `http://operator${index + 1}.local:8545`,
+        ],
+      });
+      await waitForHash(publicClient, hash);
+    }
+
+    let requestId = requestsByBlueprint.get(blueprintId.toString())?.args
+      .requestId;
+
+    if (requestId === undefined) {
+      console.log(
+        `Requesting + approving service for ${item.slug} #${blueprintId}`,
+      );
+      const requestHash = await deployerClient.writeContract({
+        address: TANGLE_ADDRESS,
+        abi: tangleAbi,
+        functionName: 'requestService',
+        args: [
+          blueprintId,
+          [operators[0].address],
+          '0x',
+          [],
+          0n,
+          zeroAddress,
+          0n,
+          0,
+        ],
+        value: 0n,
+      });
+      const requestReceipt = await waitForHash(publicClient, requestHash);
+      const requestLogs = parseEventLogs({
+        abi: tangleAbi,
+        logs: requestReceipt.logs,
+        eventName: 'ServiceRequested',
+        strict: false,
+      });
+      requestId = requestLogs[0]?.args.requestId;
+      if (requestId === undefined) {
+        throw new Error(`Could not parse ServiceRequested for ${item.slug}`);
+      }
+    }
+
+    if (!activatedByRequest.has(requestId.toString())) {
+      console.log(`Approving service request ${requestId} for ${item.slug}`);
+      const operatorWallet = createWalletClient({
+        account: operators[0],
+        chain: foundry,
+        transport: http(RPC_URL),
+      });
+      const approveHash = await operatorWallet.writeContract({
+        address: TANGLE_ADDRESS,
+        abi: tangleAbi,
+        functionName: 'approveService',
+        args: [requestId, 0],
+      });
+      await waitForHash(publicClient, approveHash);
+    }
+
+    seeded.push({
+      slug: item.slug,
+      blueprintId: blueprintId.toString(),
+      metadataUri: item.metadataUri,
+      payloadHash: item.payloadHash,
+    });
+  }
+
+  writeFileSync(
+    resolve(GENERATED_DIR, 'seeded.json'),
+    `${JSON.stringify({ tangle: TANGLE_ADDRESS, rpcUrl: RPC_URL, seeded }, null, 2)}\n`,
+  );
+  console.log(`Seeded ${seeded.length} Tier 2 blueprint UI fixtures.`);
+};
+
+const serve = ({ prepareFirst = true } = {}) => {
+  if (prepareFirst && !existsSync(resolve(GENERATED_DIR, 'manifest.json'))) {
+    prepare();
+  }
+  const server = createServer((request, response) => {
+    const url = new URL(request.url ?? '/', `http://${HOST}:${PORT}`);
+    const pathname = url.pathname === '/' ? '/manifest.json' : url.pathname;
+    const fileName = basename(pathname);
+    const filePath = resolve(GENERATED_DIR, fileName);
+    const isJson = fileName.endsWith('.json');
+    const isSvg = fileName.endsWith('.svg');
+    if (!filePath.startsWith(GENERATED_DIR) || (!isJson && !isSvg)) {
+      response.writeHead(404);
+      response.end('not found');
+      return;
+    }
+    try {
+      const body = readFileSync(filePath);
+      response.writeHead(200, {
+        'Content-Type': isSvg
+          ? 'image/svg+xml; charset=utf-8'
+          : 'application/json; charset=utf-8',
+        'Access-Control-Allow-Origin': '*',
+        'Cache-Control': 'no-store',
+      });
+      response.end(body);
+    } catch {
+      response.writeHead(404);
+      response.end('not found');
+    }
+  });
+  server.listen(PORT, HOST, () => {
+    console.log(`Serving blueprint UI metadata at http://${HOST}:${PORT}/`);
+  });
+};
+
+const help = () => {
+  console.log(`Usage: node scripts/local-env/blueprint-ui-catalog.mjs <command>
+
+Commands:
+  prepare  Copy repo metadata into the local generated catalog
+  seed     Register local blueprints, operators, one service, and signed metadata
+  serve    Serve generated metadata with CORS for tangle-cloud local dev
+  up       Run seed, then serve
+
+Run after ./scripts/local-env/start-local-env.sh has deployed local contracts.
+Open tangle-cloud against Localhost 8545 and http://localhost:8080/v1/graphql.`);
+};
+
+try {
+  if (command === 'prepare') {
+    prepare();
+  } else if (command === 'seed') {
+    await seed();
+  } else if (command === 'serve') {
+    serve();
+  } else if (command === 'up') {
+    await seed();
+    serve({ prepareFirst: false });
+  } else {
+    help();
+  }
+} catch (error) {
+  console.error(error instanceof Error ? error.message : error);
+  process.exit(1);
+}

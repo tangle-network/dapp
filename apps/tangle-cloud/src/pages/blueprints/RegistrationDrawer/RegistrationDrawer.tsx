@@ -1,17 +1,15 @@
 import { useOperator } from '@tangle-network/tangle-shared-ui/data/graphql/useOperators';
 import { type OperatorRegistration } from '@tangle-network/tangle-shared-ui/data/graphql/useOperatorManagement';
-import { Alert } from '@tangle-network/ui-components/components/Alert';
-import { Button } from '@tangle-network/ui-components/components/buttons';
 import {
-  Drawer,
-  DrawerCloseButton,
-  DrawerContent,
-  DrawerTitle,
-} from '@tangle-network/ui-components/components/Drawer';
-import { Form } from '@tangle-network/ui-components/components/form';
-import SkeletonLoader from '@tangle-network/ui-components/components/SkeletonLoader';
-import SteppedProgress from '@tangle-network/ui-components/components/Progress/SteppedProgress';
-import { Typography } from '@tangle-network/ui-components/typography/Typography';
+  Alert,
+  Button,
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogTitle,
+  Skeleton,
+  Text,
+} from '../../../components/sandbox/SandboxUi';
 import { FC, useCallback, useState } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
 import { useAccount, useWalletClient } from 'wagmi';
@@ -27,6 +25,7 @@ import StepNavigation from './components/StepNavigation';
 import ConfigureStep from './steps/ConfigureStep';
 import ReviewStep from './steps/ReviewStep';
 import SelectBlueprintsStep from './steps/SelectBlueprintsStep';
+import ConnectWalletButton from '@tangle-network/tangle-shared-ui/components/ConnectWalletButton';
 import {
   RegistrationDrawerProps,
   RegistrationStep,
@@ -254,10 +253,24 @@ const RegistrationDrawer: FC<RegistrationDrawerProps> = ({
   };
 
   const renderGatedContent = () => {
+    if (!activeAccount) {
+      return (
+        <div className="flex-1 space-y-5 p-4">
+          <Alert
+            type="info"
+            title="Connect wallet"
+            description="Connect the operator wallet that will sign blueprint registrations."
+          />
+
+          <ConnectWalletButton />
+        </div>
+      );
+    }
+
     if (isOperatorLoading) {
       return (
         <div className="flex-1 p-4">
-          <SkeletonLoader className="h-32" />
+          <Skeleton className="h-32" />
         </div>
       );
     }
@@ -272,42 +285,36 @@ const RegistrationDrawer: FC<RegistrationDrawerProps> = ({
           />
 
           <div className="space-y-4">
-            <Typography
-              variant="body2"
-              className="text-mono-120 dark:text-mono-100"
-            >
+            <Text variant="body2" className="text-muted-foreground">
               To become an active operator:
-            </Typography>
+            </Text>
 
-            <ol className="list-decimal list-inside space-y-2 text-mono-120 dark:text-mono-100">
+            <ol className="list-decimal list-inside space-y-2 text-muted-foreground">
               <li>
-                <Typography variant="body2" component="span">
-                  Go to the Tangle dApp
-                </Typography>
+                <span className="text-sm">Go to the Tangle dApp</span>
               </li>
 
               <li>
-                <Typography variant="body2" component="span">
+                <span className="text-sm">
                   Deposit and delegate your assets
-                </Typography>
+                </span>
               </li>
 
               <li>
-                <Typography variant="body2" component="span">
+                <span className="text-sm">
                   Return here once your operator status is active
-                </Typography>
+                </span>
               </li>
             </ol>
 
-            <Button
-              as="a"
+            <a
               href={TangleDAppPagePath.STAKING_DELEGATE}
               target="_blank"
               rel="noopener noreferrer"
-              className="w-full"
+              className="inline-flex h-10 w-full items-center justify-center rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90"
             >
               Go to Tangle dApp
-            </Button>
+            </a>
           </div>
         </div>
       );
@@ -315,57 +322,70 @@ const RegistrationDrawer: FC<RegistrationDrawerProps> = ({
 
     return (
       <>
-        <div className="shrink-0 px-4 py-3 border-b border-mono-80 dark:border-mono-160">
+        <div className="shrink-0 px-4 py-3 border-b border-border">
           <div className="flex items-center justify-between mb-2">
-            <span className="text-sm text-mono-120 dark:text-mono-100">
+            <span className="text-sm text-muted-foreground">
               Step {step} of {TOTAL_STEPS}
             </span>
             <span className="text-sm font-medium">{STEP_LABELS[step]}</span>
           </div>
-          <SteppedProgress steps={TOTAL_STEPS} activeStep={step} />
+          <div className="grid grid-cols-3 gap-2">
+            {Array.from({ length: TOTAL_STEPS }).map((_, index) => (
+              <div
+                key={index}
+                className={[
+                  'h-1.5 rounded-full',
+                  index + 1 <= step ? 'bg-primary' : 'bg-muted',
+                ].join(' ')}
+              />
+            ))}
+          </div>
         </div>
 
         <div className="flex-1 min-h-0 overflow-y-auto">
-          <Form {...form}>
-            <form
-              className="flex flex-col min-h-full p-4"
-              onSubmit={(e) => e.preventDefault()}
-            >
-              <div>{renderStepContent()}</div>
+          <form
+            className="flex flex-col min-h-full p-4"
+            onSubmit={(e) => e.preventDefault()}
+          >
+            <div>{renderStepContent()}</div>
 
-              <div className="mt-auto pt-4 border-t border-mono-80 dark:border-mono-160">
-                <StepNavigation
-                  isFirstStep={isFirstStep}
-                  isLastStep={isLastStep}
-                  isSubmitting={
-                    isSubmitting ||
-                    batchRegisterStatus === BatchRegisterTxStatus.PROCESSING
-                  }
-                  onBack={goBack}
-                  onNext={handleNext}
-                  onSubmit={handleSubmit}
-                />
-              </div>
-            </form>
-          </Form>
+            <div className="mt-auto pt-4 border-t border-border">
+              <StepNavigation
+                isFirstStep={isFirstStep}
+                isLastStep={isLastStep}
+                isSubmitting={
+                  isSubmitting ||
+                  batchRegisterStatus === BatchRegisterTxStatus.PROCESSING
+                }
+                onBack={goBack}
+                onNext={handleNext}
+                onSubmit={handleSubmit}
+              />
+            </div>
+          </form>
         </div>
       </>
     );
   };
 
   return (
-    <Drawer open={isOpen} onOpenChange={onOpenChange}>
-      <DrawerContent className="!flex !flex-col">
-        <div className="shrink-0 flex items-center justify-between p-4 border-b border-mono-80 dark:border-mono-160">
-          <DrawerTitle className="text-lg font-bold">
+    <Dialog open={isOpen} onOpenChange={onOpenChange}>
+      <DialogContent className="fixed right-0 left-auto top-0 z-[80] h-screen max-h-screen w-full max-w-xl translate-x-0 translate-y-0 rounded-none border-y-0 border-r-0 p-0 sm:max-w-xl">
+        <div className="shrink-0 flex items-center justify-between p-4 border-b border-border">
+          <DialogTitle className="text-lg font-bold">
             Register as Operator
-          </DrawerTitle>
-          <DrawerCloseButton />
+          </DialogTitle>
+          <DialogDescription className="sr-only">
+            Register an active operator for one or more selected blueprints.
+          </DialogDescription>
+          <Button variant="ghost" size="icon" onClick={handleClose}>
+            x
+          </Button>
         </div>
 
         {renderGatedContent()}
-      </DrawerContent>
-    </Drawer>
+      </DialogContent>
+    </Dialog>
   );
 };
 

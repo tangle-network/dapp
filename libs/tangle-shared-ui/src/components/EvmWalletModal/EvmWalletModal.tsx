@@ -2,13 +2,14 @@
 
 import Spinner from '@tangle-network/icons/Spinner';
 import {
-  Modal,
-  ModalContent,
-  ModalHeader,
-} from '@tangle-network/ui-components/components/Modal';
-import { Typography } from '@tangle-network/ui-components/typography/Typography';
+  Button,
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from '@tangle-network/sandbox-ui/primitives';
 import { type FC, useCallback, useMemo, useState } from 'react';
-import { twMerge } from 'tailwind-merge';
 import { Connector, useAccount, useConnect, useDisconnect } from 'wagmi';
 import { getWalletIcon } from '../ConnectWalletButton/walletIcons';
 
@@ -73,20 +74,23 @@ const EvmWalletModal: FC<EvmWalletModalProps> = ({ isOpen, onClose }) => {
   }, [disconnect, onClose]);
 
   return (
-    <Modal open={isOpen} onOpenChange={(open) => !open && onClose()}>
-      <ModalContent
-        size="sm"
-        title="Connect Wallet"
-        description="Connect your EVM wallet"
-        className="p-0"
+    <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
+      <DialogContent
+        variant="sandbox"
+        className="tangle-wallet-modal w-[calc(100vw-2rem)] max-w-[440px] overflow-hidden border-border bg-card p-0 text-foreground shadow-[var(--shadow-dropdown)]"
       >
-        <ModalHeader className="px-6 pt-6 pb-4 border-b border-mono-40 dark:border-mono-160">
-          Connect Wallet
-        </ModalHeader>
+        <DialogHeader className="border-border border-b px-5 pb-4 pt-5 text-left">
+          <DialogTitle className="font-display font-extrabold text-2xl text-foreground leading-none tracking-tight">
+            Connect wallet
+          </DialogTitle>
+          <DialogDescription className="mt-2 max-w-sm text-muted-foreground text-sm leading-5">
+            Choose an EVM wallet for checkout, operator actions, and account
+            state.
+          </DialogDescription>
+        </DialogHeader>
 
-        <div className="p-4">
-          {/* Available wallet connections */}
-          <div className="space-y-2">
+        <div className="p-3">
+          <div className="space-y-2.5">
             {availableConnectors.map((connector) => {
               const isConnecting = connectingId === connector.id && isPending;
               const walletIcon = getWalletIcon(connector.id, connector.name);
@@ -98,59 +102,53 @@ const EvmWalletModal: FC<EvmWalletModalProps> = ({ isOpen, onClose }) => {
                   data-wallet-name={connector.name}
                   onClick={() => handleConnect(connector)}
                   disabled={isPending}
-                  className={twMerge(
-                    'w-full flex items-center gap-3 px-4 py-3 rounded-xl',
-                    'bg-mono-20 dark:bg-mono-170',
-                    'hover:bg-mono-40 dark:hover:bg-mono-160',
-                    'transition-colors duration-150',
-                    'disabled:opacity-50 disabled:cursor-not-allowed',
-                  )}
+                  className="group flex min-h-16 w-full items-center gap-3 rounded-lg border border-border bg-muted/30 px-4 py-3 text-left transition hover:border-primary hover:bg-muted/60 disabled:cursor-not-allowed disabled:opacity-50"
                 >
-                  <div className="w-10 h-10 rounded-lg bg-mono-0 dark:bg-mono-180 flex items-center justify-center overflow-hidden">
+                  <div className="flex h-11 w-11 shrink-0 items-center justify-center overflow-hidden rounded-md border border-border bg-card shadow-[var(--shadow-card)]">
                     {walletIcon}
                   </div>
 
-                  <Typography
-                    variant="body1"
-                    fw="semibold"
-                    className="flex-1 text-left text-mono-200 dark:text-mono-0"
-                  >
-                    {connector.name}
-                  </Typography>
+                  <div className="min-w-0 flex-1">
+                    <span className="block truncate font-display font-bold text-foreground text-base">
+                      {connector.name}
+                    </span>
+                    <span className="mt-0.5 block text-muted-foreground text-xs">
+                      Connect with {connector.name}
+                    </span>
+                  </div>
 
                   {isConnecting && (
-                    <Spinner size="md" className="text-mono-100" />
+                    <Spinner size="md" className="text-muted-foreground" />
                   )}
                 </button>
               );
             })}
           </div>
 
-          {/* Error Message */}
           {error && (
-            <div className="mt-4 p-3 rounded-lg bg-red-500/10 border border-red-500/20">
-              <Typography variant="body2" className="text-red-500 text-center">
+            <div className="mt-4 rounded-2xl border border-[var(--surface-danger-border)] bg-[var(--surface-danger-bg)] p-3">
+              <p className="text-center text-sm font-semibold text-[var(--surface-danger-text)]">
                 {error.message.includes('rejected')
                   ? 'Connection rejected by user'
                   : 'Failed to connect. Please try again.'}
-              </Typography>
+              </p>
             </div>
           )}
 
-          {/* Disconnect Button (if connected) */}
           {isConnected && (
-            <div className="mt-4 pt-4 border-t border-mono-40 dark:border-mono-160">
-              <button
+            <div className="mt-4 border-border border-t pt-4">
+              <Button
+                variant="destructive"
+                className="w-full rounded-md"
                 onClick={handleDisconnect}
-                className="w-full px-4 py-2 text-sm text-red-500 hover:bg-red-500/10 rounded-lg transition-colors"
               >
-                Disconnect Wallet
-              </button>
+                Disconnect wallet
+              </Button>
             </div>
           )}
         </div>
-      </ModalContent>
-    </Modal>
+      </DialogContent>
+    </Dialog>
   );
 };
 

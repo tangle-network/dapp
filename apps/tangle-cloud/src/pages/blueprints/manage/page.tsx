@@ -2,24 +2,30 @@
  * Blueprint management page - view and manage owned blueprints.
  */
 
-import { FC, useState, useMemo, useCallback, useEffect, useRef } from 'react';
+import {
+  type ComponentProps,
+  type ElementType,
+  type FC,
+  useState,
+  useMemo,
+  useCallback,
+  useEffect,
+  useRef,
+} from 'react';
 import { Link } from 'react-router';
 import { useAccount } from 'wagmi';
 import { useQueryClient } from '@tanstack/react-query';
 import {
-  Button,
+  Button as SandboxButton,
   Card,
-  CardVariant,
-  Typography,
-  SkeletonLoader,
-  EMPTY_VALUE_PLACEHOLDER,
-  Modal,
-  ModalContent,
-  ModalHeader,
-  ModalBody,
-  ModalFooter,
-  Input,
-} from '@tangle-network/ui-components';
+  Dialog,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  Input as SandboxInput,
+  Skeleton,
+} from '@tangle-network/sandbox-ui/primitives';
 import {
   createColumnHelper,
   getCoreRowModel,
@@ -49,8 +55,11 @@ import { PagePath } from '../../../types';
 import ErrorMessage from '@tangle-network/tangle-shared-ui/components/ErrorMessage';
 import { isAddress } from 'viem';
 import pollWithBackoff from '../../../utils/pollWithBackoff';
+import RequireWallet from '../../../components/RequireWallet';
 
 const columnHelper = createColumnHelper<OwnedBlueprint>();
+const EMPTY_VALUE_PLACEHOLDER = '-';
+const CARD_SURFACE = 'sandbox' as const;
 const METADATA_FETCH_TIMEOUT_MS = 5_000;
 // Keep owner list reconciliation long enough for indexer lag after on-chain tx.
 const BLUEPRINT_SYNC_POLL_MAX_TOTAL_TIME_MS = 120_000;
@@ -67,6 +76,104 @@ type BlueprintMetadataPreview = {
   docs?: string;
   metadataHash: `0x${string}`;
 };
+
+type TextProps = ComponentProps<'p'> & {
+  variant?: 'h4' | 'h5' | 'body1' | 'body2' | 'body3';
+  fw?: 'bold' | 'semibold';
+};
+
+const Text: FC<TextProps> = ({
+  variant = 'body2',
+  fw,
+  className = '',
+  ...props
+}) => {
+  const Component = (
+    variant === 'h4' ? 'h1' : variant === 'h5' ? 'h2' : 'p'
+  ) as ElementType;
+  const variantClass =
+    variant === 'h4'
+      ? 'font-display text-3xl tracking-tight text-foreground'
+      : variant === 'h5'
+        ? 'font-display text-xl text-foreground'
+        : variant === 'body1'
+          ? 'text-base text-foreground'
+          : variant === 'body3'
+            ? 'text-xs text-muted-foreground'
+            : 'text-sm text-foreground';
+  const weightClass =
+    fw === 'bold' ? 'font-bold' : fw === 'semibold' ? 'font-semibold' : '';
+
+  return (
+    <Component
+      className={[variantClass, weightClass, className]
+        .filter(Boolean)
+        .join(' ')}
+      {...props}
+    />
+  );
+};
+
+type ButtonProps = Omit<
+  ComponentProps<typeof SandboxButton>,
+  'variant' | 'size'
+> & {
+  variant?: ComponentProps<typeof SandboxButton>['variant'] | 'utility';
+  size?: ComponentProps<typeof SandboxButton>['size'];
+  isDisabled?: boolean;
+  isLoading?: boolean;
+};
+
+const Button: FC<ButtonProps> = ({
+  variant,
+  size,
+  isDisabled,
+  isLoading,
+  disabled,
+  ...props
+}) => (
+  <SandboxButton
+    variant={variant === 'utility' ? 'outline' : variant}
+    size={size}
+    disabled={disabled || isDisabled}
+    loading={isLoading}
+    {...props}
+  />
+);
+
+type InputProps = Omit<ComponentProps<typeof SandboxInput>, 'onChange'> & {
+  isControlled?: boolean;
+  onChange?: (value: string) => void;
+};
+
+const Input: FC<InputProps> = ({
+  isControlled: _isControlled,
+  onChange,
+  ...props
+}) => (
+  <SandboxInput
+    {...props}
+    onChange={(event) => onChange?.(event.currentTarget.value)}
+  />
+);
+
+const Modal = Dialog;
+const ModalContent = DialogContent;
+
+const ModalHeader: FC<ComponentProps<'div'>> = ({ children, ...props }) => (
+  <DialogHeader {...props}>
+    <DialogTitle>{children}</DialogTitle>
+  </DialogHeader>
+);
+
+const ModalBody: FC<ComponentProps<'div'>> = ({ className = '', ...props }) => (
+  <div
+    className={['space-y-4', className].filter(Boolean).join(' ')}
+    {...props}
+  />
+);
+
+const ModalFooter = DialogFooter;
 
 const applyBlueprintMetadataPreview = (
   blueprint: OwnedBlueprint,
@@ -409,12 +516,12 @@ const ManageBlueprintsPage: FC = () => {
         header: 'Blueprint',
         cell: (info) => (
           <div>
-            <Typography variant="body1" fw="semibold">
+            <Text variant="body1" fw="semibold">
               {info.getValue()}
-            </Typography>
-            <Typography variant="body3" className="text-mono-100">
+            </Text>
+            <Text variant="body3" className="text-muted-foreground">
               ID: {info.row.original.id.toString()}
-            </Typography>
+            </Text>
           </div>
         ),
       }),
@@ -435,24 +542,22 @@ const ManageBlueprintsPage: FC = () => {
       }),
       columnHelper.accessor('operatorCount', {
         header: 'Operators',
-        cell: (info) => (
-          <Typography variant="body2">{info.getValue()}</Typography>
-        ),
+        cell: (info) => <Text variant="body2">{info.getValue()}</Text>,
       }),
       columnHelper.accessor('serviceCount', {
         header: 'Services',
         cell: (info) => (
-          <Typography variant="body2">
+          <Text variant="body2">
             {info.getValue() ?? EMPTY_VALUE_PLACEHOLDER}
-          </Typography>
+          </Text>
         ),
       }),
       columnHelper.accessor('createdAt', {
         header: 'Created',
         cell: (info) => (
-          <Typography variant="body2">
+          <Text variant="body2">
             {new Date(Number(info.getValue()) * 1000).toLocaleDateString()}
-          </Typography>
+          </Text>
         ),
       }),
       columnHelper.display({
@@ -534,11 +639,22 @@ const ManageBlueprintsPage: FC = () => {
 
   if (!isConnected) {
     return (
-      <div className="text-center py-12">
-        <Typography variant="h4">Connect Wallet</Typography>
-        <Typography variant="body1" className="text-mono-100 mt-2">
-          Please connect your wallet to manage blueprints.
-        </Typography>
+      <div className="space-y-6">
+        <div>
+          <Text variant="h4" fw="bold">
+            My Blueprints
+          </Text>
+          <Text variant="body2" className="text-muted-foreground">
+            Update metadata, transfer ownership, or deactivate blueprints owned
+            by the connected wallet.
+          </Text>
+        </div>
+        <RequireWallet
+          eyebrow="Manage blueprints"
+          title="Connect a publisher wallet"
+          description="A wallet connection is required to load owned blueprints and prepare owner-only updates."
+          checks={['Owned blueprints', 'Metadata updates', 'Ownership actions']}
+        />
       </div>
     );
   }
@@ -548,22 +664,22 @@ const ManageBlueprintsPage: FC = () => {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <Typography variant="h4" fw="bold">
+          <Text variant="h4" fw="bold">
             My Blueprints
-          </Typography>
-          <Typography variant="body2" className="text-mono-100">
+          </Text>
+          <Text variant="body2" className="text-muted-foreground">
             View and manage blueprints you have created.
-          </Typography>
+          </Text>
         </div>
       </div>
 
       {/* Blueprints Table */}
-      <Card variant={CardVariant.GLASS} className="p-6">
+      <Card variant={CARD_SURFACE} className="p-6">
         {isLoading ? (
           <div className="space-y-2">
-            <SkeletonLoader className="h-12" />
-            <SkeletonLoader className="h-12" />
-            <SkeletonLoader className="h-12" />
+            <Skeleton className="h-12" />
+            <Skeleton className="h-12" />
+            <Skeleton className="h-12" />
           </div>
         ) : error ? (
           <ErrorMessage>{error.message}</ErrorMessage>
@@ -573,14 +689,11 @@ const ManageBlueprintsPage: FC = () => {
               <table className="w-full">
                 <thead>
                   {table.getHeaderGroups().map((headerGroup) => (
-                    <tr
-                      key={headerGroup.id}
-                      className="border-b border-mono-60 dark:border-mono-140"
-                    >
+                    <tr key={headerGroup.id} className="border-b border-border">
                       {headerGroup.headers.map((header) => (
                         <th
                           key={header.id}
-                          className="text-left py-3 px-4 text-mono-100 font-medium"
+                          className="text-left py-3 px-4 text-muted-foreground font-medium"
                         >
                           {header.isPlaceholder
                             ? null
@@ -597,7 +710,7 @@ const ManageBlueprintsPage: FC = () => {
                   {table.getRowModel().rows.map((row) => (
                     <tr
                       key={row.id}
-                      className="border-b border-mono-40 dark:border-mono-160 hover:bg-mono-20 dark:hover:bg-mono-170"
+                      className="border-b border-border hover:bg-muted/60"
                     >
                       {row.getVisibleCells().map((cell) => (
                         <td key={cell.id} className="py-3 px-4">
@@ -616,10 +729,10 @@ const ManageBlueprintsPage: FC = () => {
             {/* Pagination */}
             {table.getPageCount() > 1 && (
               <div className="flex items-center justify-between mt-4">
-                <Typography variant="body2" className="text-mono-100">
+                <Text variant="body2" className="text-muted-foreground">
                   Page {table.getState().pagination.pageIndex + 1} of{' '}
                   {table.getPageCount()}
-                </Typography>
+                </Text>
                 <div className="flex gap-2">
                   <Button
                     variant="utility"
@@ -643,14 +756,14 @@ const ManageBlueprintsPage: FC = () => {
           </>
         ) : (
           <div className="flex flex-col items-center justify-center py-12">
-            <EditLine className="w-12 h-12 text-mono-100 mb-4" />
-            <Typography variant="h5" fw="semibold">
+            <EditLine className="w-12 h-12 text-muted-foreground mb-4" />
+            <Text variant="h5" fw="semibold">
               No Blueprints Yet
-            </Typography>
-            <Typography variant="body1" className="text-mono-100 mt-2">
+            </Text>
+            <Text variant="body1" className="text-muted-foreground mt-2">
               Create your first blueprint to start offering services on Tangle
               Network.
-            </Typography>
+            </Text>
           </div>
         )}
       </Card>
@@ -849,14 +962,14 @@ const UpdateMetadataModal: FC<UpdateMetadataModalProps> = ({
       <ModalContent>
         <ModalHeader>Update Blueprint Metadata</ModalHeader>
         <ModalBody>
-          <Typography variant="body1" className="mb-4">
+          <Text variant="body1" className="mb-4">
             Update metadata URI for <strong>{blueprint.name}</strong>.
-          </Typography>
+          </Text>
 
           <div>
-            <Typography variant="body2" className="mb-2">
+            <Text variant="body2" className="mb-2">
               Metadata URI
-            </Typography>
+            </Text>
             <Input
               id="metadataUri"
               value={metadataUri}
@@ -867,11 +980,11 @@ const UpdateMetadataModal: FC<UpdateMetadataModalProps> = ({
               }}
               placeholder="ipfs://... or https://..."
             />
-            <Typography variant="body3" className="text-mono-100 mt-1">
+            <Text variant="body3" className="text-muted-foreground mt-1">
               {requiresIpfsForBlueprintMetadata()
                 ? 'Production hosted blueprints must keep metadata on ipfs:// content-addressed URIs.'
                 : 'Local development can still preview metadata from https:// endpoints.'}
-            </Typography>
+            </Text>
             {(uriError || previewError || error?.message) && (
               <div className="mt-1">
                 {uriError && <ErrorMessage>{uriError}</ErrorMessage>}
@@ -893,10 +1006,10 @@ const UpdateMetadataModal: FC<UpdateMetadataModalProps> = ({
           </div>
 
           {previewData && (
-            <div className="mt-4 rounded border border-mono-60 dark:border-mono-140 p-4 space-y-2">
-              <Typography variant="body2" fw="semibold">
+            <div className="mt-4 rounded border border-border p-4 space-y-2">
+              <Text variant="body2" fw="semibold">
                 Metadata Preview
-              </Typography>
+              </Text>
 
               {previewData.logo && (
                 <img
@@ -906,82 +1019,82 @@ const UpdateMetadataModal: FC<UpdateMetadataModalProps> = ({
                 />
               )}
 
-              <Typography variant="body3">
+              <Text variant="body3">
                 <strong>Name:</strong>{' '}
                 {previewData.name ?? EMPTY_VALUE_PLACEHOLDER}
-              </Typography>
-              <Typography variant="body3">
+              </Text>
+              <Text variant="body3">
                 <strong>Description:</strong>{' '}
                 {previewData.description ?? EMPTY_VALUE_PLACEHOLDER}
-              </Typography>
-              <Typography variant="body3">
+              </Text>
+              <Text variant="body3">
                 <strong>Author:</strong>{' '}
                 {previewData.author ?? EMPTY_VALUE_PLACEHOLDER}
-              </Typography>
+              </Text>
 
-              <Typography variant="body3">
+              <Text variant="body3">
                 <strong>Website:</strong>{' '}
                 {previewData.website ? (
                   <a
                     href={previewData.website}
                     target="_blank"
                     rel="noreferrer"
-                    className="text-blue-70 underline break-all"
+                    className="text-primary underline break-all"
                   >
                     {previewData.website}
                   </a>
                 ) : (
                   EMPTY_VALUE_PLACEHOLDER
                 )}
-              </Typography>
+              </Text>
 
-              <Typography variant="body3">
+              <Text variant="body3">
                 <strong>Repository:</strong>{' '}
                 {previewData.codeRepository ? (
                   <a
                     href={previewData.codeRepository}
                     target="_blank"
                     rel="noreferrer"
-                    className="text-blue-70 underline break-all"
+                    className="text-primary underline break-all"
                   >
                     {previewData.codeRepository}
                   </a>
                 ) : (
                   EMPTY_VALUE_PLACEHOLDER
                 )}
-              </Typography>
+              </Text>
 
-              <Typography variant="body3">
+              <Text variant="body3">
                 <strong>Docs:</strong>{' '}
                 {previewData.docs ? (
                   <a
                     href={previewData.docs}
                     target="_blank"
                     rel="noreferrer"
-                    className="text-blue-70 underline break-all"
+                    className="text-primary underline break-all"
                   >
                     {previewData.docs}
                   </a>
                 ) : (
                   EMPTY_VALUE_PLACEHOLDER
                 )}
-              </Typography>
+              </Text>
             </div>
           )}
 
           {!previewData && blueprint.metadata && (
-            <div className="mt-4 rounded border border-mono-60 dark:border-mono-140 p-4 space-y-2">
-              <Typography variant="body2" fw="semibold">
+            <div className="mt-4 rounded border border-border p-4 space-y-2">
+              <Text variant="body2" fw="semibold">
                 Current Metadata
-              </Typography>
-              <Typography variant="body3">
+              </Text>
+              <Text variant="body3">
                 <strong>Name:</strong>{' '}
                 {blueprint.metadata.name ?? EMPTY_VALUE_PLACEHOLDER}
-              </Typography>
-              <Typography variant="body3">
+              </Text>
+              <Text variant="body3">
                 <strong>Description:</strong>{' '}
                 {blueprint.metadata.description ?? EMPTY_VALUE_PLACEHOLDER}
-              </Typography>
+              </Text>
             </div>
           )}
         </ModalBody>
@@ -1045,14 +1158,14 @@ const DeactivateModal: FC<DeactivateModalProps> = ({
       <ModalContent>
         <ModalHeader>Deactivate Blueprint</ModalHeader>
         <ModalBody>
-          <Typography variant="body1">
+          <Text variant="body1">
             Are you sure you want to deactivate{' '}
             <strong>{blueprint.name}</strong>?
-          </Typography>
-          <Typography variant="body2" className="text-mono-100 mt-2">
+          </Text>
+          <Text variant="body2" className="text-muted-foreground mt-2">
             This will prevent new operators from registering and new services
             from being created. Existing services will continue to operate.
-          </Typography>
+          </Text>
         </ModalBody>
         <ModalFooter>
           <Button
@@ -1128,15 +1241,15 @@ const TransferModal: FC<TransferModalProps> = ({
       <ModalContent>
         <ModalHeader>Transfer Blueprint</ModalHeader>
         <ModalBody>
-          <Typography variant="body1" className="mb-4">
+          <Text variant="body1" className="mb-4">
             Transfer ownership of <strong>{blueprint.name}</strong> to another
             address.
-          </Typography>
+          </Text>
 
           <div>
-            <Typography variant="body2" className="mb-2">
+            <Text variant="body2" className="mb-2">
               New Owner Address
-            </Typography>
+            </Text>
             <Input
               id="newOwner"
               value={newOwner}
@@ -1155,10 +1268,10 @@ const TransferModal: FC<TransferModalProps> = ({
             </div>
           )}
 
-          <Typography variant="body3" className="text-mono-100 mt-4">
+          <Text variant="body3" className="text-muted-foreground mt-4">
             Warning: This action cannot be undone. You will lose ownership of
             this blueprint.
-          </Typography>
+          </Text>
         </ModalBody>
         <ModalFooter>
           <Button

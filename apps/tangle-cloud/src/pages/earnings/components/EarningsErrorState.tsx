@@ -1,5 +1,5 @@
 import { FC } from 'react';
-import { Card, CardVariant, Typography } from '@tangle-network/ui-components';
+import { Card, CardContent } from '@tangle-network/sandbox-ui/primitives';
 import ErrorMessage from '@tangle-network/tangle-shared-ui/components/ErrorMessage';
 import { type DeveloperPaymentsDiagnostics } from '@tangle-network/tangle-shared-ui/data/graphql';
 
@@ -18,37 +18,35 @@ const EarningsErrorState: FC<EarningsErrorStateProps> = ({
   const hasMismatch = diagnostics?.hasLikelyEndpointMismatch === true;
 
   return (
-    <Card variant={CardVariant.GLASS} className="p-6">
-      <Typography variant="h5" fw="bold" className="mb-3">
-        {isUnsupportedSchema
-          ? 'Earnings Unavailable on Current Indexer Schema'
-          : 'Could Not Load Earnings'}
-      </Typography>
+    <Card variant="sandbox">
+      <CardContent className="p-6">
+        <h2 className="mb-3 font-display font-bold text-foreground text-xl">
+          {isUnsupportedSchema
+            ? 'Earnings Unavailable on Current Indexer Schema'
+            : 'Could Not Load Earnings'}
+        </h2>
 
-      <ErrorMessage>
-        {isUnsupportedSchema
-          ? unsupportedSchemaMessage
-          : error instanceof Error
-            ? error.message
-            : 'Failed to load developer payouts.'}
-      </ErrorMessage>
+        <ErrorMessage>
+          {isUnsupportedSchema
+            ? unsupportedSchemaMessage
+            : error instanceof Error
+              ? error.message
+              : 'Failed to load developer payouts.'}
+        </ErrorMessage>
 
-      {diagnostics && (
-        <div className="mt-4 space-y-1">
-          <Typography variant="body2" className="text-mono-100">
-            Expected indexer network: {diagnostics.expectedNetwork}
-          </Typography>
-          <Typography variant="body2" className="text-mono-100 break-all">
-            Endpoint: {diagnostics.endpoint}
-          </Typography>
-          {hasMismatch && (
-            <Typography variant="body2" className="text-red-400">
-              Endpoint appears to target `{diagnostics.endpointNetwork}` while
-              wallet chain expects `{diagnostics.expectedNetwork}`.
-            </Typography>
-          )}
-        </div>
-      )}
+        {diagnostics && (
+          <div className="mt-4 space-y-1 text-muted-foreground text-sm">
+            <p>Expected indexer network: {diagnostics.expectedNetwork}</p>
+            <p className="break-all">Endpoint: {diagnostics.endpoint}</p>
+            {hasMismatch && (
+              <p className="text-destructive">
+                Endpoint appears to target `{diagnostics.endpointNetwork}` while
+                wallet chain expects `{diagnostics.expectedNetwork}`.
+              </p>
+            )}
+          </div>
+        )}
+      </CardContent>
     </Card>
   );
 };

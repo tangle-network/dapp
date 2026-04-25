@@ -3,19 +3,23 @@
  * Decodes input/result payloads using TLV v2 schema when available.
  */
 
-import { FC, useMemo, useState, type ReactNode } from 'react';
 import {
-  Modal,
-  ModalContent,
-  ModalHeader,
-  ModalBody,
-  ModalFooter,
-  Typography,
+  type ComponentProps,
+  type ElementType,
+  type FC,
+  useMemo,
+  useState,
+  type ReactNode,
+} from 'react';
+import {
   Button,
-  SkeletonLoader,
-  CopyWithTooltip,
-  EMPTY_VALUE_PLACEHOLDER,
-} from '@tangle-network/ui-components';
+  Dialog,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  Skeleton,
+} from '@tangle-network/sandbox-ui/primitives';
 import {
   useJobResults,
   type JobCall,
@@ -29,6 +33,82 @@ import {
   type SchemaField,
 } from '@tangle-network/tangle-shared-ui/codec';
 import { twMerge } from 'tailwind-merge';
+
+const EMPTY_VALUE_PLACEHOLDER = '-';
+
+type TextProps = ComponentProps<'p'> & {
+  variant?: 'h5' | 'body1' | 'body2' | 'body3';
+  fw?: 'bold' | 'semibold';
+};
+
+const Text: FC<TextProps> = ({
+  variant = 'body2',
+  fw,
+  className = '',
+  ...props
+}) => {
+  const Component = (variant === 'h5' ? 'h2' : 'p') as ElementType;
+  const variantClass =
+    variant === 'h5'
+      ? 'font-display text-xl text-foreground'
+      : variant === 'body1'
+        ? 'text-base text-foreground'
+        : variant === 'body3'
+          ? 'text-xs text-muted-foreground'
+          : 'text-sm text-foreground';
+  const weightClass =
+    fw === 'bold' ? 'font-bold' : fw === 'semibold' ? 'font-semibold' : '';
+
+  return (
+    <Component
+      className={[variantClass, weightClass, className]
+        .filter(Boolean)
+        .join(' ')}
+      {...props}
+    />
+  );
+};
+
+const Modal = Dialog;
+
+const ModalContent: FC<
+  ComponentProps<typeof DialogContent> & { size?: string }
+> = ({ size: _size, ...props }) => (
+  <DialogContent
+    className="max-h-[85vh] overflow-y-auto sm:max-w-3xl"
+    {...props}
+  />
+);
+
+const ModalHeader: FC<ComponentProps<'div'>> = ({ children, ...props }) => (
+  <DialogHeader {...props}>
+    <DialogTitle>{children}</DialogTitle>
+  </DialogHeader>
+);
+
+const ModalBody: FC<ComponentProps<'div'>> = ({ className = '', ...props }) => (
+  <div
+    className={['space-y-4', className].filter(Boolean).join(' ')}
+    {...props}
+  />
+);
+
+const ModalFooter = DialogFooter;
+
+const CopyWithTooltip: FC<{
+  textToCopy: string;
+  copyLabel?: string;
+  iconSize?: string;
+  isButton?: boolean;
+}> = ({ textToCopy, copyLabel = 'Copy' }) => (
+  <button
+    type="button"
+    className="text-muted-foreground text-xs underline-offset-4 hover:text-foreground hover:underline"
+    onClick={() => void navigator.clipboard?.writeText(textToCopy)}
+  >
+    {copyLabel}
+  </button>
+);
 
 interface Props {
   job: JobCall;
@@ -141,17 +221,14 @@ const DecodedFieldsDisplay: FC<{ fields: NamedDecodedField[] }> = ({
 }) => (
   <div className="space-y-2">
     {fields.map((field, i) => (
-      <div
-        key={i}
-        className="flex flex-col gap-0.5 p-2 bg-mono-0 dark:bg-mono-180 rounded"
-      >
-        <Typography variant="body3" className="text-mono-100">
+      <div key={i} className="flex flex-col gap-0.5 p-2 bg-background rounded">
+        <Text variant="body3" className="text-muted-foreground">
           {field.name || `Field ${i}`}
-        </Typography>
+        </Text>
 
-        <Typography variant="body2" className="font-mono text-sm break-all">
+        <Text variant="body2" className="font-mono text-sm break-all">
           {formatDecodedValue(field.value)}
-        </Typography>
+        </Text>
       </div>
     ))}
   </div>
@@ -162,7 +239,7 @@ const PayloadContainer: FC<{
   copyText?: string | null;
   copyLabel: string;
 }> = ({ children, copyText, copyLabel }) => (
-  <div className="p-3 bg-mono-20 dark:bg-mono-170 rounded-lg">
+  <div className="p-3 bg-muted/40 rounded-lg">
     <div className="flex items-start gap-2">
       <div className="flex-1 min-w-0">{children}</div>
       {copyText && (
@@ -182,23 +259,23 @@ const PayloadContainer: FC<{
 const RawPayloadDisplay: FC<{
   hex: string | null | undefined;
 }> = ({ hex }) => (
-  <Typography
+  <Text
     variant="body2"
     className="font-mono text-sm break-all whitespace-pre-wrap"
   >
     {hex ?? EMPTY_VALUE_PLACEHOLDER}
-  </Typography>
+  </Text>
 );
 
 const BestEffortPayloadDisplay: FC<{ payload: BestEffortPayload }> = ({
   payload,
 }) => (
-  <Typography
+  <Text
     variant="body2"
     className="font-mono text-sm break-all whitespace-pre-wrap"
   >
     {payload.value || EMPTY_VALUE_PLACEHOLDER}
-  </Typography>
+  </Text>
 );
 
 const SchemaStateNotice: FC<{
@@ -232,13 +309,13 @@ const SchemaStateNotice: FC<{
 
   return (
     <div className="mb-2 p-2 rounded bg-yellow-500/10 border border-yellow-500/20">
-      <Typography variant="body3" className="text-yellow-300">
+      <Text variant="body3" className="text-yellow-300">
         {message}
-      </Typography>
+      </Text>
       {parseError && state === 'SCHEMA_PARSE_FAILED' && (
-        <Typography variant="body3" className="text-yellow-200/80 mt-1">
+        <Text variant="body3" className="text-yellow-200/80 mt-1">
           Parse error: {parseError}
-        </Typography>
+        </Text>
       )}
     </div>
   );
@@ -248,7 +325,7 @@ const ViewModeToggle: FC<{
   mode: PayloadViewMode;
   onChange: (mode: PayloadViewMode) => void;
 }> = ({ mode, onChange }) => (
-  <div className="inline-flex rounded-md border border-mono-60 dark:border-mono-140 overflow-hidden">
+  <div className="inline-flex rounded-md border border-border overflow-hidden">
     {(['decoded', 'raw'] as const).map((candidate) => (
       <button
         key={candidate}
@@ -256,8 +333,8 @@ const ViewModeToggle: FC<{
         className={twMerge(
           'px-3 py-1 text-xs capitalize',
           mode === candidate
-            ? 'bg-mono-60 dark:bg-mono-140 text-mono-0 dark:text-mono-200'
-            : 'bg-mono-20 dark:bg-mono-170 text-mono-100 hover:text-mono-0 dark:hover:text-mono-200',
+            ? 'bg-primary text-primary-foreground'
+            : 'bg-muted/40 text-muted-foreground hover:text-foreground',
         )}
         onClick={() => onChange(candidate)}
       >
@@ -355,20 +432,20 @@ export const JobResultsModal: FC<Props> = ({ job, jobDefinition, onClose }) => {
         <ModalHeader>{headerTitle}</ModalHeader>
         <ModalBody>
           {/* Job Info */}
-          <div className="grid grid-cols-2 gap-4 mb-6 p-4 bg-mono-20 dark:bg-mono-170 rounded-lg">
+          <div className="grid grid-cols-2 gap-4 mb-6 p-4 bg-muted/40 rounded-lg">
             <div>
-              <Typography variant="body3" className="text-mono-100">
+              <Text variant="body3" className="text-muted-foreground">
                 Job Index
-              </Typography>
-              <Typography variant="body1" fw="semibold">
+              </Text>
+              <Text variant="body1" fw="semibold">
                 {job.jobIndex}
                 {jobName ? ` (${jobName})` : ''}
-              </Typography>
+              </Text>
             </div>
             <div>
-              <Typography variant="body3" className="text-mono-100">
+              <Text variant="body3" className="text-muted-foreground">
                 Status
-              </Typography>
+              </Text>
               <span
                 className={twMerge(
                   'px-2 py-1 rounded text-xs inline-block',
@@ -381,26 +458,26 @@ export const JobResultsModal: FC<Props> = ({ job, jobDefinition, onClose }) => {
               </span>
             </div>
             <div>
-              <Typography variant="body3" className="text-mono-100">
+              <Text variant="body3" className="text-muted-foreground">
                 Submitted
-              </Typography>
-              <Typography variant="body1">
+              </Text>
+              <Text variant="body1">
                 {new Date(Number(job.submittedAt) * 1000).toLocaleString()}
-              </Typography>
+              </Text>
             </div>
             <div>
-              <Typography variant="body3" className="text-mono-100">
+              <Text variant="body3" className="text-muted-foreground">
                 Results Received
-              </Typography>
-              <Typography variant="body1">{job.resultCount}</Typography>
+              </Text>
+              <Text variant="body1">{job.resultCount}</Text>
             </div>
           </div>
 
           {/* Input Data */}
           <div className="mb-6">
-            <Typography variant="h5" fw="semibold" className="mb-2">
+            <Text variant="h5" fw="semibold" className="mb-2">
               Input Data
-            </Typography>
+            </Text>
 
             <PayloadSection
               payloadHex={job.inputs}
@@ -416,13 +493,13 @@ export const JobResultsModal: FC<Props> = ({ job, jobDefinition, onClose }) => {
 
           {/* Results */}
           <div>
-            <Typography variant="h5" fw="semibold" className="mb-2">
+            <Text variant="h5" fw="semibold" className="mb-2">
               Operator Results
-            </Typography>
+            </Text>
             {isLoading ? (
               <div className="space-y-2">
-                <SkeletonLoader className="h-16" />
-                <SkeletonLoader className="h-16" />
+                <Skeleton className="h-16" />
+                <Skeleton className="h-16" />
               </div>
             ) : results && results.length > 0 ? (
               <div className="space-y-3">
@@ -443,10 +520,10 @@ export const JobResultsModal: FC<Props> = ({ job, jobDefinition, onClose }) => {
                 ))}
               </div>
             ) : (
-              <div className="text-center py-6 text-mono-100">
-                <Typography variant="body1">
+              <div className="text-center py-6 text-muted-foreground">
+                <Text variant="body1">
                   No results received yet. Operators are processing this job.
-                </Typography>
+                </Text>
               </div>
             )}
           </div>
@@ -480,33 +557,33 @@ const OperatorResultCard: FC<{
   });
 
   return (
-    <div className="p-4 border border-mono-60 dark:border-mono-140 rounded-lg">
+    <div className="p-4 border border-border rounded-lg">
       <div className="flex justify-between items-start mb-2">
         <div>
-          <Typography variant="body3" className="text-mono-100">
+          <Text variant="body3" className="text-muted-foreground">
             {result.aggregated ? 'Source' : 'Operator'}
-          </Typography>
-          <Typography variant="body2" className="font-mono">
+          </Text>
+          <Text variant="body2" className="font-mono">
             {result.aggregated
               ? 'Aggregated Result'
               : result.operator
                 ? `${result.operator.slice(0, 10)}...${result.operator.slice(-8)}`
                 : EMPTY_VALUE_PLACEHOLDER}
-          </Typography>
+          </Text>
         </div>
         <div className="text-right">
-          <Typography variant="body3" className="text-mono-100">
+          <Text variant="body3" className="text-muted-foreground">
             Submitted
-          </Typography>
-          <Typography variant="body2">
+          </Text>
+          <Text variant="body2">
             {new Date(Number(result.submittedAt) * 1000).toLocaleString()}
-          </Typography>
+          </Text>
         </div>
       </div>
       <div>
-        <Typography variant="body3" className="text-mono-100 mb-1">
+        <Text variant="body3" className="text-muted-foreground mb-1">
           {result.aggregated ? 'Aggregated Output' : 'Result'}
-        </Typography>
+        </Text>
 
         <PayloadSection
           payloadHex={result.result}

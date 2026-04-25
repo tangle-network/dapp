@@ -4,7 +4,7 @@ import {
   ModalContent,
   ModalFooterActions,
   ModalHeader,
-} from '@tangle-network/ui-components';
+} from '../../../../components/sandbox/SandboxUi';
 import BlueprintItem from '@tangle-network/tangle-shared-ui/components/blueprints/BlueprintGallery/BlueprintItem';
 import { TxStatus } from '@tangle-network/tangle-shared-ui/hooks/useContractWrite';
 import { FC, useEffect } from 'react';
@@ -13,7 +13,8 @@ import {
   type Service,
 } from '@tangle-network/tangle-shared-ui/data/graphql';
 import type { Blueprint } from '@tangle-network/tangle-shared-ui/types/blueprint';
-import addCommasToNumber from '@tangle-network/ui-components/utils/addCommasToNumber';
+
+const addCommasToNumber = (value: number) => value.toLocaleString();
 
 // Service with optional blueprint metadata
 interface ServiceWithBlueprint extends Service {

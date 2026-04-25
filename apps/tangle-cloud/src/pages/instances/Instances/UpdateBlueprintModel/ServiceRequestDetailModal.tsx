@@ -3,9 +3,9 @@ import {
   ModalBody,
   ModalContent,
   ModalHeader,
-  Typography,
-  SkeletonLoader,
-} from '@tangle-network/ui-components';
+  Skeleton,
+  Text,
+} from '../../../../components/sandbox/SandboxUi';
 import {
   ApprovalConfirmationFormFields,
   ContractSecurityCommitment,
@@ -19,7 +19,6 @@ import {
 } from '@tangle-network/tangle-shared-ui/data/services';
 import type { Blueprint } from '@tangle-network/tangle-shared-ui/types/blueprint';
 import { TxStatus } from '@tangle-network/tangle-shared-ui/hooks/useContractWrite';
-import addCommasToNumber from '@tangle-network/ui-components/utils/addCommasToNumber';
 import useServiceRequestSecurityRequirements from '../../../../data/services/useServiceRequestSecurityRequirements';
 import ExposureCommitmentInput from './ExposureCommitmentInput';
 import useEvmOperatorInfo from '../../../../hooks/useEvmOperatorInfo';
@@ -49,6 +48,8 @@ type FormValues = {
   commitments: Record<string, number>;
   tntExposureBps: number;
 };
+
+const addCommasToNumber = (value: number) => value.toLocaleString();
 
 const toAssetMapKey = (tokenAddress: string): string => {
   return parseAddressLowercase(tokenAddress) ?? tokenAddress.toLowerCase();
@@ -293,10 +294,10 @@ const ServiceRequestDetailModal: FC<Props> = ({
       </ModalBody>
 
       {!viewOnly && (
-        <div className="flex justify-end gap-3 p-6 pt-4 shrink-0 bg-mono-0 dark:bg-mono-180">
+        <div className="flex justify-end gap-3 p-6 pt-4 shrink-0 bg-background">
           <Button
             variant="secondary"
-            className="!bg-red-50 hover:!bg-red-70 !text-mono-0"
+            className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
             onClick={onReject}
             isLoading={isRejecting}
             isDisabled={isRejecting}
@@ -311,7 +312,7 @@ const ServiceRequestDetailModal: FC<Props> = ({
       )}
 
       {viewOnly && (
-        <div className="flex justify-end gap-3 p-6 pt-4 shrink-0 bg-mono-0 dark:bg-mono-180">
+        <div className="flex justify-end gap-3 p-6 pt-4 shrink-0 bg-background">
           <Button variant="secondary" onClick={onClose}>
             Close
           </Button>
@@ -324,14 +325,14 @@ const ServiceRequestDetailModal: FC<Props> = ({
     <>
       <ModalBody className="overflow-y-auto flex-1 justify-start">
         <form onSubmit={handleSubmit(handleFormSubmit)}>
-          <Typography variant="h4" className="text-center mb-3">
+          <Text variant="h4" className="text-center mb-3">
             Security Commitment
-          </Typography>
+          </Text>
 
           {(isLoadingRequirements || isLoadingStake) && (
             <div className="space-y-4">
-              <SkeletonLoader className="h-24 w-full rounded-lg" />
-              <SkeletonLoader className="h-24 w-full rounded-lg" />
+              <Skeleton className="h-24 w-full rounded-lg" />
+              <Skeleton className="h-24 w-full rounded-lg" />
             </div>
           )}
 
@@ -340,13 +341,13 @@ const ServiceRequestDetailModal: FC<Props> = ({
             hasCustomRequirements &&
             requirements !== undefined && (
               <div className="space-y-4">
-                <Typography
+                <Text
                   variant="body2"
-                  className="text-mono-100 dark:text-mono-100 text-center"
+                  className="text-muted-foreground text-center"
                 >
                   Set your exposure percentage within the allowed bounds for
                   each asset.
-                </Typography>
+                </Text>
 
                 {requirements.map((req) => {
                   const key = toAssetMapKey(req.asset.token);
@@ -392,12 +393,12 @@ const ServiceRequestDetailModal: FC<Props> = ({
               <div className="space-y-4">
                 {defaultTntRequirement ? (
                   <>
-                    <Typography
+                    <Text
                       variant="body2"
-                      className="text-mono-100 dark:text-mono-100 text-center"
+                      className="text-muted-foreground text-center"
                     >
                       Standard approval — set your TNT security commitment.
-                    </Typography>
+                    </Text>
 
                     <Controller
                       name="tntExposureBps"
@@ -436,19 +437,19 @@ const ServiceRequestDetailModal: FC<Props> = ({
                     />
                   </>
                 ) : (
-                  <Typography
+                  <Text
                     variant="body2"
-                    className="text-center text-mono-100 dark:text-mono-100"
+                    className="text-center text-muted-foreground"
                   >
                     No custom commitments required.
-                  </Typography>
+                  </Text>
                 )}
               </div>
             )}
         </form>
       </ModalBody>
 
-      <div className="flex justify-between gap-3 p-6 pt-4 shrink-0 bg-mono-0 dark:bg-mono-180">
+      <div className="flex justify-between gap-3 p-6 pt-4 shrink-0 bg-background">
         <Button
           variant="secondary"
           onClick={handleBackToDetails}

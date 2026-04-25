@@ -1,5 +1,5 @@
 import type { Blueprint } from '@tangle-network/tangle-shared-ui/types/blueprint';
-import { Typography } from '@tangle-network/ui-components/typography/Typography';
+import { Text } from '../../../../components/sandbox/SandboxUi';
 import { FC } from 'react';
 import { UseFormReturn } from 'react-hook-form';
 import type { RegistrationFormSchema } from '../types';
@@ -21,36 +21,30 @@ const ReviewStep: FC<ReviewStepProps> = ({
   return (
     <div className="space-y-6">
       <div>
-        <Typography variant="h5" fw="bold" className="mb-2">
+        <Text variant="h5" fw="bold" className="mb-2">
           Review Registration
-        </Typography>
+        </Text>
 
-        <Typography
-          variant="body2"
-          className="text-mono-120 dark:text-mono-100"
-        >
+        <Text variant="body2" className="text-muted-foreground">
           Review your registration details before submitting.
-        </Typography>
+        </Text>
       </div>
 
       {rpcUrl && (
-        <div className="p-4 bg-mono-40 dark:bg-mono-160 rounded-lg">
-          <Typography
-            variant="body3"
-            className="text-mono-120 dark:text-mono-100 mb-1"
-          >
+        <div className="p-4 bg-muted/40 rounded-lg">
+          <Text variant="body3" className="text-muted-foreground mb-1">
             RPC URL
-          </Typography>
-          <Typography variant="body2" fw="bold" className="break-all">
+          </Text>
+          <Text variant="body2" fw="bold" className="break-all">
             {rpcUrl}
-          </Typography>
+          </Text>
         </div>
       )}
 
       <div className="space-y-3">
-        <Typography variant="body2" fw="bold">
+        <Text variant="body2" fw="bold">
           Blueprints ({blueprints.length})
-        </Typography>
+        </Text>
 
         <div className="space-y-3 max-h-[250px] overflow-y-auto">
           {blueprints.map((blueprint) => {
@@ -61,7 +55,7 @@ const ReviewStep: FC<ReviewStepProps> = ({
             return (
               <div
                 key={blueprintId}
-                className="p-4 border border-mono-80 dark:border-mono-160 rounded-lg"
+                className="p-4 border border-border rounded-lg bg-card/70"
               >
                 <div className="flex items-center gap-3">
                   {blueprint.imgUrl && (
@@ -75,25 +69,19 @@ const ReviewStep: FC<ReviewStepProps> = ({
                   )}
 
                   <div className="flex-1 min-w-0">
-                    <Typography variant="body2" fw="bold" className="truncate">
+                    <Text variant="body2" fw="bold" className="truncate">
                       {blueprint.name}
-                    </Typography>
-                    <Typography
-                      variant="body3"
-                      className="text-mono-120 dark:text-mono-100"
-                    >
+                    </Text>
+                    <Text variant="body3" className="text-muted-foreground">
                       {blueprint.author}
-                    </Typography>
+                    </Text>
                   </div>
 
                   {paramsCount > 0 && (
                     <div className="text-right">
-                      <Typography
-                        variant="body3"
-                        className="text-mono-120 dark:text-mono-100"
-                      >
+                      <Text variant="body3" className="text-muted-foreground">
                         {paramsCount} param{paramsCount > 1 ? 's' : ''}
-                      </Typography>
+                      </Text>
                     </div>
                   )}
                 </div>
@@ -104,13 +92,10 @@ const ReviewStep: FC<ReviewStepProps> = ({
       </div>
 
       {isSubmitting && (
-        <Typography
-          variant="body2"
-          className="text-mono-120 dark:text-mono-100 text-center"
-        >
+        <Text variant="body2" className="text-muted-foreground text-center">
           Registering as operator for {blueprints.length} blueprint
           {blueprints.length > 1 ? 's' : ''}...
-        </Typography>
+        </Text>
       )}
     </div>
   );

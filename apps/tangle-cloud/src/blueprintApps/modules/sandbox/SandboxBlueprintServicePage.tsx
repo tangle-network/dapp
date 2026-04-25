@@ -12,13 +12,16 @@ import {
   useServiceById,
 } from '@tangle-network/tangle-shared-ui/data/graphql';
 import { useIsPermittedCaller } from '@tangle-network/tangle-shared-ui/data/services';
-import { Button, Card, Typography } from '@tangle-network/ui-components';
+import {
+  Button,
+  Card,
+  CardContent,
+} from '@tangle-network/sandbox-ui/primitives';
 import { useAccount } from 'wagmi';
 import type { JobCall } from '@tangle-network/tangle-shared-ui/data/graphql';
 import type { BlueprintAppEntry } from '../../types';
 import { getBlueprintPath, resolveBlueprintAppView } from '../../resolver';
 import { PagePath } from '../../../types';
-import SandboxUiStyles from './SandboxUiStyles';
 
 type Props = {
   entry: BlueprintAppEntry;
@@ -89,7 +92,6 @@ const SandboxBlueprintServicePage: FC<Props> = ({ entry, serviceId }) => {
 
   return (
     <div data-sandbox-ui className="space-y-6">
-      <SandboxUiStyles />
       {sandbox && (
         <SandboxCard
           sandbox={sandbox}
@@ -112,10 +114,7 @@ const SandboxBlueprintServicePage: FC<Props> = ({ entry, serviceId }) => {
       />
 
       <div className="grid gap-6 xl:grid-cols-[minmax(0,1.4fr)_minmax(320px,0.9fr)]">
-        <Card
-          id="sandbox-service-details"
-          className="rounded-[28px] border-white/8 bg-[var(--depth-2)] p-6 shadow-[var(--shadow-card)]"
-        >
+        <Card id="sandbox-service-details" variant="sandbox" className="p-6">
           <div className="grid gap-4 md:grid-cols-2">
             <InfoPanel
               label="Access"
@@ -152,66 +151,67 @@ const SandboxBlueprintServicePage: FC<Props> = ({ entry, serviceId }) => {
           </div>
         </Card>
 
-        <Card className="rounded-[28px] border-white/8 bg-[var(--depth-2)] p-6 shadow-[var(--shadow-card)]">
-          <div className="space-y-4">
-            <div>
-              <Typography variant="h5" fw="bold" className="text-white">
-                Recent sandbox activity
-              </Typography>
-              <Typography variant="body2" className="mt-2 text-white/65">
-                Indexed calls for this service from the shared protocol data
-                plane.
-              </Typography>
-            </div>
+        <Card variant="sandbox">
+          <CardContent className="p-6">
+            <div className="space-y-4">
+              <div>
+                <h2 className="font-display font-bold text-foreground text-xl">
+                  Recent sandbox activity
+                </h2>
+                <p className="mt-2 text-muted-foreground text-sm leading-relaxed">
+                  Indexed calls for this service from the shared protocol data
+                  plane.
+                </p>
+              </div>
 
-            <div className="space-y-3">
-              {recentCalls.length > 0 ? (
-                recentCalls.slice(0, 6).map((call: JobCall) => (
-                  <div
-                    key={call.id}
-                    className="rounded-2xl border border-white/8 bg-[var(--depth-3)] p-4"
-                  >
-                    <div className="flex items-start justify-between gap-4">
-                      <div>
-                        <Typography variant="body1" className="text-white">
-                          Call #{call.callId.toString()}
-                        </Typography>
-                        <Typography
-                          variant="body2"
-                          className="mt-1 text-white/62"
-                        >
-                          Job {call.jobIndex} ·{' '}
-                          {call.completed
-                            ? `${call.resultCount} result${call.resultCount === 1 ? '' : 's'}`
-                            : 'Pending execution'}
-                        </Typography>
+              <div className="space-y-3">
+                {recentCalls.length > 0 ? (
+                  recentCalls.slice(0, 6).map((call: JobCall) => (
+                    <div
+                      key={call.id}
+                      className="rounded-lg border border-border bg-muted/30 p-4"
+                    >
+                      <div className="flex items-start justify-between gap-4">
+                        <div>
+                          <p className="font-medium text-foreground text-sm">
+                            Call #{call.callId.toString()}
+                          </p>
+                          <p className="mt-1 text-muted-foreground text-sm">
+                            Job {call.jobIndex} ·{' '}
+                            {call.completed
+                              ? `${call.resultCount} result${call.resultCount === 1 ? '' : 's'}`
+                              : 'Pending execution'}
+                          </p>
+                        </div>
+                        <span className="text-muted-foreground text-xs">
+                          {new Date(
+                            Number(call.submittedAt) * 1000,
+                          ).toLocaleString()}
+                        </span>
                       </div>
-                      <Typography variant="body3" className="text-white/55">
-                        {new Date(
-                          Number(call.submittedAt) * 1000,
-                        ).toLocaleString()}
-                      </Typography>
                     </div>
+                  ))
+                ) : (
+                  <div className="rounded-lg border border-dashed border-border bg-muted/30 p-5">
+                    <p className="text-muted-foreground text-sm">
+                      No job activity indexed for this service yet.
+                    </p>
                   </div>
-                ))
-              ) : (
-                <div className="rounded-2xl border border-dashed border-white/10 bg-[var(--depth-3)] p-5">
-                  <Typography variant="body2" className="text-white/60">
-                    No job activity indexed for this service yet.
-                  </Typography>
-                </div>
-              )}
-            </div>
+                )}
+              </div>
 
-            <div className="flex flex-wrap gap-3 pt-2">
-              <Link to={PagePath.SERVICE_DETAILS.replace(':id', serviceId)}>
-                <Button>Open protocol service console</Button>
-              </Link>
-              <Link to={getBlueprintPath(view)}>
-                <Button variant="secondary">Back to sandbox blueprint</Button>
-              </Link>
+              <div className="flex flex-wrap gap-3 pt-2">
+                <Link to={PagePath.SERVICE_DETAILS.replace(':id', serviceId)}>
+                  <Button variant="sandbox">
+                    Open protocol service console
+                  </Button>
+                </Link>
+                <Link to={getBlueprintPath(view)}>
+                  <Button variant="outline">Back to sandbox blueprint</Button>
+                </Link>
+              </div>
             </div>
-          </div>
+          </CardContent>
         </Card>
       </div>
     </div>

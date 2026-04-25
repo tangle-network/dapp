@@ -3,16 +3,21 @@ import { Link } from 'react-router';
 import { useChainId } from 'wagmi';
 import { Address, zeroAddress } from 'viem';
 import {
-  Avatar,
   Button,
   Card,
-  CardVariant,
-  CopyWithTooltip,
-  Pagination,
-  Typography,
-} from '@tangle-network/ui-components';
-import { ExternalLinkLine, TokenIcon } from '@tangle-network/icons';
-import { shortenHex } from '@tangle-network/ui-components/utils/shortenHex';
+  CardContent,
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@tangle-network/sandbox-ui/primitives';
+import {
+  ExternalLinkLine,
+  FileCopyLine,
+  TokenIcon,
+} from '@tangle-network/icons';
 import { type DeveloperPaymentEvent } from '@tangle-network/tangle-shared-ui/data/graphql';
 import { useTokenMetadata } from '@tangle-network/tangle-shared-ui/data/services';
 import { getCachedTokenMetadata } from '@tangle-network/dapp-config/tokenMetadata';
@@ -20,6 +25,11 @@ import { PagePath } from '../../../types';
 import { getActiveChainConfig } from '../../../utils/explorer';
 import { resolveTokenIconSymbol } from '../../../utils/tokenPresentation';
 import { formatEarningsAmount } from '@tangle-network/tangle-shared-ui/data/graphql';
+
+const shortenHex = (value: string, chars = 6) =>
+  value.length > chars * 2 + 3
+    ? `${value.slice(0, chars)}...${value.slice(-chars)}`
+    : value;
 
 interface PayoutEventsCardProps {
   events: DeveloperPaymentEvent[];
@@ -61,12 +71,14 @@ const PayoutEventAmountCell: FC<{ token: Address; amount: bigint }> = ({
         {iconSymbol ? (
           <TokenIcon name={iconSymbol} size="lg" />
         ) : (
-          <Avatar size="sm" value={token} theme="ethereum" />
+          <span className="grid h-5 w-5 place-items-center rounded border border-border bg-muted font-mono text-[9px] text-foreground">
+            {token.slice(2, 4).toUpperCase()}
+          </span>
         )}
       </div>
-      <Typography variant="body2">
+      <span>
         {formatEarningsAmount(amount, decimals)} {symbol}
-      </Typography>
+      </span>
     </div>
   );
 };
@@ -83,154 +95,158 @@ const PayoutEventsCard: FC<PayoutEventsCardProps> = ({
   pageSize,
 }) => {
   return (
-    <Card variant={CardVariant.GLASS} className="p-6">
-      <Typography variant="h5" fw="bold" className="mb-4">
-        Developer Payout Events
-      </Typography>
+    <Card variant="sandbox">
+      <CardContent className="p-6">
+        <h2 className="mb-4 font-display font-bold text-foreground text-xl">
+          Developer Payout Events
+        </h2>
 
-      {events.length === 0 ? (
-        <div className="text-center py-6">
-          <Typography variant="body1" className="text-mono-100">
-            No developer payout events found for this wallet context.
-          </Typography>
-          <div className="flex flex-wrap gap-3 justify-center mt-4">
-            <Link to={PagePath.BLUEPRINTS}>
-              <Button variant="secondary" size="sm">
-                View Blueprints
+        {events.length === 0 ? (
+          <div className="py-6 text-center">
+            <p className="text-muted-foreground text-sm">
+              No developer payout events found for this wallet context.
+            </p>
+            <div className="mt-4 flex flex-wrap justify-center gap-3">
+              <Button variant="outline" size="sm" asChild>
+                <Link to={PagePath.BLUEPRINTS}>View Blueprints</Link>
               </Button>
-            </Link>
-            {walletActivityUrl && (
-              <a href={walletActivityUrl} target="_blank" rel="noreferrer">
-                <Button size="sm">View Wallet Activity</Button>
-              </a>
+              {walletActivityUrl && (
+                <Button size="sm" asChild>
+                  <a href={walletActivityUrl} target="_blank" rel="noreferrer">
+                    View Wallet Activity
+                  </a>
+                </Button>
+              )}
+            </div>
+          </div>
+        ) : (
+          <div className="overflow-x-auto">
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Date</TableHead>
+                  <TableHead>Amount</TableHead>
+                  <TableHead>Blueprint</TableHead>
+                  <TableHead>Service</TableHead>
+                  <TableHead>Tx Hash</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {visibleEvents.map((entry) => (
+                  <TableRow key={entry.id}>
+                    <TableCell>
+                      {new Date(Number(entry.paidAt) * 1000).toLocaleString()}
+                    </TableCell>
+                    <TableCell>
+                      <PayoutEventAmountCell
+                        token={entry.token}
+                        amount={entry.amount}
+                      />
+                    </TableCell>
+                    <TableCell>
+                      <Link
+                        to={PagePath.BLUEPRINTS_DETAILS.replace(
+                          ':id',
+                          entry.blueprintId.toString(),
+                        )}
+                        className="text-primary underline"
+                      >
+                        #{entry.blueprintId.toString()}
+                      </Link>
+                    </TableCell>
+                    <TableCell>
+                      <Link
+                        to={PagePath.SERVICE_DETAILS.replace(
+                          ':id',
+                          entry.serviceId.toString(),
+                        )}
+                        className="text-primary underline"
+                      >
+                        #{entry.serviceId.toString()}
+                      </Link>
+                    </TableCell>
+                    <TableCell>
+                      <div className="flex items-center gap-2 text-muted-foreground">
+                        <span className="font-mono text-xs">
+                          {shortenHex(entry.txHash, 6)}
+                        </span>
+                        <CopyIconButton
+                          value={entry.txHash}
+                          label="Copy tx hash"
+                        />
+                        {showExplorerActions && txExplorerUrl && (
+                          <a
+                            href={`${txExplorerUrl}/tx/${entry.txHash}`}
+                            target="_blank"
+                            rel="noreferrer"
+                            className="text-muted-foreground transition-colors hover:text-primary"
+                            aria-label="View transaction on block explorer"
+                          >
+                            <ExternalLinkLine className="h-4 w-4 fill-current" />
+                          </a>
+                        )}
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+
+            {totalEventPages > 1 && (
+              <div className="mt-4 flex items-center justify-between gap-3 border-border border-t pt-4 text-muted-foreground text-sm">
+                <span>
+                  Showing {eventsPageIndex * pageSize + 1}-
+                  {Math.min((eventsPageIndex + 1) * pageSize, events.length)} of{' '}
+                  {events.length} events
+                </span>
+                <div className="flex items-center gap-2">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    disabled={eventsPageIndex === 0}
+                    onClick={() => {
+                      setEventsPageIndex((current) => Math.max(current - 1, 0));
+                    }}
+                  >
+                    Previous
+                  </Button>
+                  <span className="font-mono text-xs">
+                    {eventsPageIndex + 1}/{totalEventPages}
+                  </span>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    disabled={eventsPageIndex >= totalEventPages - 1}
+                    onClick={() => {
+                      setEventsPageIndex((current) =>
+                        Math.min(current + 1, totalEventPages - 1),
+                      );
+                    }}
+                  >
+                    Next
+                  </Button>
+                </div>
+              </div>
             )}
           </div>
-        </div>
-      ) : (
-        <div className="overflow-x-auto">
-          <table className="w-full">
-            <thead>
-              <tr className="border-b border-mono-60 dark:border-mono-140">
-                <th className="text-left py-3 px-4 text-mono-100 font-medium">
-                  Date
-                </th>
-                <th className="text-left py-3 px-4 text-mono-100 font-medium">
-                  Amount
-                </th>
-                <th className="text-left py-3 px-4 text-mono-100 font-medium">
-                  Blueprint
-                </th>
-                <th className="text-left py-3 px-4 text-mono-100 font-medium">
-                  Service
-                </th>
-                <th className="text-left py-3 px-4 text-mono-100 font-medium">
-                  Tx Hash
-                </th>
-              </tr>
-            </thead>
-            <tbody>
-              {visibleEvents.map((entry) => (
-                <tr
-                  key={entry.id}
-                  className="border-b border-mono-40 dark:border-mono-160"
-                >
-                  <td className="py-3 px-4">
-                    <Typography variant="body2">
-                      {new Date(Number(entry.paidAt) * 1000).toLocaleString()}
-                    </Typography>
-                  </td>
-                  <td className="py-3 px-4">
-                    <PayoutEventAmountCell
-                      token={entry.token}
-                      amount={entry.amount}
-                    />
-                  </td>
-                  <td className="py-3 px-4">
-                    <Link
-                      to={PagePath.BLUEPRINTS_DETAILS.replace(
-                        ':id',
-                        entry.blueprintId.toString(),
-                      )}
-                      className="underline body2"
-                    >
-                      #{entry.blueprintId.toString()}
-                    </Link>
-                  </td>
-                  <td className="py-3 px-4">
-                    <Link
-                      to={PagePath.SERVICE_DETAILS.replace(
-                        ':id',
-                        entry.serviceId.toString(),
-                      )}
-                      className="underline body2"
-                    >
-                      #{entry.serviceId.toString()}
-                    </Link>
-                  </td>
-                  <td className="py-3 px-4">
-                    <div className="flex items-center gap-2 text-mono-100">
-                      <Typography
-                        variant="body2"
-                        className="font-mono text-mono-100"
-                      >
-                        {shortenHex(entry.txHash, 6)}
-                      </Typography>
-                      <CopyWithTooltip
-                        textToCopy={entry.txHash}
-                        copyLabel="Copy tx hash"
-                        isButton={false}
-                        className="inline-flex text-mono-100"
-                        iconClassName="!fill-mono-100"
-                      />
-                      {showExplorerActions && txExplorerUrl && (
-                        <a
-                          href={`${txExplorerUrl}/tx/${entry.txHash}`}
-                          target="_blank"
-                          rel="noreferrer"
-                          className="text-mono-100"
-                          aria-label="View transaction on block explorer"
-                        >
-                          <ExternalLinkLine className="w-4 h-4 !fill-mono-100" />
-                        </a>
-                      )}
-                    </div>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-
-          {totalEventPages > 1 && (
-            <Pagination
-              className="mt-2"
-              title="events"
-              itemsPerPage={pageSize}
-              totalItems={events.length}
-              totalPages={totalEventPages}
-              page={eventsPageIndex + 1}
-              canPreviousPage={eventsPageIndex > 0}
-              previousPage={() => {
-                setEventsPageIndex((current) => Math.max(current - 1, 0));
-              }}
-              canNextPage={eventsPageIndex < totalEventPages - 1}
-              nextPage={() => {
-                setEventsPageIndex((current) =>
-                  Math.min(current + 1, totalEventPages - 1),
-                );
-              }}
-              setPageIndex={(updater) => {
-                setEventsPageIndex((current) => {
-                  const next =
-                    typeof updater === 'function' ? updater(current) : updater;
-                  return Math.min(Math.max(next, 0), totalEventPages - 1);
-                });
-              }}
-            />
-          )}
-        </div>
-      )}
+        )}
+      </CardContent>
     </Card>
   );
 };
 
 export default PayoutEventsCard;
+
+const CopyIconButton: FC<{ value: string; label: string }> = ({
+  value,
+  label,
+}) => (
+  <button
+    type="button"
+    aria-label={label}
+    className="inline-flex text-muted-foreground transition-colors hover:text-primary"
+    onClick={() => void navigator.clipboard?.writeText(value)}
+  >
+    <FileCopyLine className="h-4 w-4 fill-current" />
+  </button>
+);

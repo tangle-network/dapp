@@ -91,20 +91,20 @@ type SecurityRequirementContractResponse = readonly {
 }[];
 
 const SERVICE_REQUEST_FUNCTION_ABI = parseAbi([
-  'function requestService(uint64 blueprintId, address[] operators, bytes config, address[] permittedCallers, uint64 ttl, address paymentToken, uint256 paymentAmount)',
-  'function requestServiceWithExposure(uint64 blueprintId, address[] operators, uint16[] exposureBps, bytes config, address[] permittedCallers, uint64 ttl, address paymentToken, uint256 paymentAmount)',
-  'function requestServiceWithSecurity(uint64 blueprintId, address[] operators, ((uint8,address),uint16,uint16)[] securityRequirements, bytes config, address[] permittedCallers, uint64 ttl, address paymentToken, uint256 paymentAmount)',
+  'function requestService(uint64 blueprintId, address[] operators, bytes config, address[] permittedCallers, uint64 ttl, address paymentToken, uint256 paymentAmount, uint8 confidentialityPolicy)',
+  'function requestServiceWithExposure(uint64 blueprintId, address[] operators, uint16[] exposureBps, bytes config, address[] permittedCallers, uint64 ttl, address paymentToken, uint256 paymentAmount, uint8 confidentialityPolicy)',
+  'function requestServiceWithSecurity(uint64 blueprintId, address[] operators, ((uint8,address),uint16,uint16)[] securityRequirements, bytes config, address[] permittedCallers, uint64 ttl, address paymentToken, uint256 paymentAmount, uint8 confidentialityPolicy)',
 ]);
 
-const REQUEST_SERVICE_SELECTOR = '0xa37b9286';
-const REQUEST_SERVICE_WITH_EXPOSURE_SELECTOR = '0x108a7d63';
-const REQUEST_SERVICE_WITH_SECURITY_SELECTOR = '0xec9f0fdd';
+const REQUEST_SERVICE_SELECTOR = '0xc841e26e';
+const REQUEST_SERVICE_WITH_EXPOSURE_SELECTOR = '0x327d6898';
+const REQUEST_SERVICE_WITH_SECURITY_SELECTOR = '0x4c540ec1';
 
 const SERVICE_REQUESTED_EVENT = parseAbiItem(
-  'event ServiceRequested(uint64 indexed requestId, uint64 indexed blueprintId, address indexed requester)',
+  'event ServiceRequested(uint64 indexed requestId, uint64 indexed blueprintId, address indexed requester, uint8 confidentiality)',
 );
 const SERVICE_REQUESTED_WITH_SECURITY_EVENT = parseAbiItem(
-  'event ServiceRequestedWithSecurity(uint64 indexed requestId, uint64 indexed blueprintId, address indexed requester)',
+  'event ServiceRequestedWithSecurity(uint64 indexed requestId, uint64 indexed blueprintId, address indexed requester, uint8 confidentiality)',
 );
 
 export interface UseServiceRequestDetailsOptions {

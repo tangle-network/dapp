@@ -1,5 +1,5 @@
 import type { Blueprint } from '@tangle-network/tangle-shared-ui/types/blueprint';
-import { Typography } from '@tangle-network/ui-components/typography/Typography';
+import { Text } from '../../../../components/sandbox/SandboxUi';
 import { FC, ReactNode } from 'react';
 import { twMerge } from 'tailwind-merge';
 
@@ -21,7 +21,7 @@ const BlueprintCard: FC<BlueprintCardProps> = ({
   return (
     <div
       className={twMerge(
-        'flex items-center gap-3 p-4 border border-mono-80 dark:border-mono-160 rounded-lg',
+        'flex items-center gap-3 p-4 border border-border rounded-lg bg-card/70',
         className,
       )}
     >
@@ -36,20 +36,17 @@ const BlueprintCard: FC<BlueprintCardProps> = ({
       )}
 
       <div className="flex-1 min-w-0">
-        <Typography
+        <Text
           variant={compact ? 'body2' : 'body1'}
           fw="bold"
           className="truncate"
         >
           {blueprint.name}
-        </Typography>
+        </Text>
 
-        <Typography
-          variant="body3"
-          className="text-mono-120 dark:text-mono-100 truncate"
-        >
+        <Text variant="body3" className="text-muted-foreground truncate">
           {blueprint.author}
-        </Typography>
+        </Text>
       </div>
 
       {action && <div className="shrink-0">{action}</div>}

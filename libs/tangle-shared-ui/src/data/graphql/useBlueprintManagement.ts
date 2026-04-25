@@ -17,7 +17,9 @@ import TANGLE_ABI from '../../abi/tangle';
 import {
   executeEnvioGraphQL,
   EnvioNetwork,
+  getEnvioNetworkFromChainId,
 } from '../../utils/executeEnvioGraphQL';
+import useNetworkStore from '../../context/useNetworkStore';
 import {
   parseBlueprintMetadataJsonText,
   resolveBlueprintMetadataFetchUrl,
@@ -290,13 +292,17 @@ export const useBlueprintsByOwner = (options?: {
   enabled?: boolean;
 }) => {
   const { network, enabled = true } = options ?? {};
-  const { address } = useAccount();
+  const { address, isConnected } = useAccount();
+  const chainId = useChainId();
+  const networkChainId = useNetworkStore((store) => store.network2?.evmChainId);
+  const activeChainId = isConnected ? chainId : (networkChainId ?? chainId);
+  const resolvedNetwork = network ?? getEnvioNetworkFromChainId(activeChainId);
 
   return useQuery({
-    queryKey: ['blueprints', 'byOwner', address, network],
+    queryKey: ['blueprints', 'byOwner', address, resolvedNetwork, activeChainId],
     queryFn: async () => {
       if (!address) return [];
-      return fetchBlueprintsByOwner(address, network);
+      return fetchBlueprintsByOwner(address, resolvedNetwork);
     },
     enabled: enabled && !!address,
     staleTime: 60_000, // 1 minute

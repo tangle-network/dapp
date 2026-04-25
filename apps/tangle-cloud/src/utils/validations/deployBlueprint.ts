@@ -1,6 +1,7 @@
-import { isEvmAddress } from '@tangle-network/ui-components';
 import { z } from 'zod';
 import { Address } from 'viem';
+
+const isEvmAddress = (value: string) => /^0x[a-fA-F0-9]{40}$/.test(value);
 
 // Duration unit constants
 export const DURATION_UNITS = {
@@ -12,6 +13,7 @@ export const DURATION_UNITS = {
 
 export type DurationUnit = keyof typeof DURATION_UNITS;
 export type RequestMode = 'basic' | 'exposure' | 'security';
+export type PaymentMethod = 'shieldedCredits' | 'publicWallet';
 
 // Validation constraints in seconds
 const MIN_DURATION_SECONDS = 3600; // 1 hour
@@ -85,6 +87,10 @@ export const deployBlueprintSchema = z
       .enum(['seconds', 'minutes', 'hours', 'days'])
       .default('seconds'),
     requestMode: z.enum(['basic', 'exposure', 'security']).default('basic'),
+    paymentMethod: z
+      .enum(['shieldedCredits', 'publicWallet'])
+      .default('shieldedCredits'),
+    creditCommitment: z.string().optional(),
     operatorExposurePercents: z
       .record(z.string(), z.number().int().min(1).max(100))
       .default({})
@@ -157,10 +163,29 @@ export const deployBlueprintSchema = z
       )
       .default([]),
     requestArgs: z.array(z.any()).default([]),
-    paymentAsset: assetSchema,
+    paymentAsset: assetSchema.optional(),
     paymentAmount: z.string().regex(/^\d*\.?\d*$/, 'Must be a valid number'),
   })
   .superRefine((schema, ctx) => {
+    if (
+      schema.paymentMethod === 'shieldedCredits' &&
+      !schema.creditCommitment
+    ) {
+      ctx.addIssue({
+        path: ['creditCommitment'],
+        code: z.ZodIssueCode.custom,
+        message: 'Select or create a credit account',
+      });
+    }
+
+    if (schema.paymentMethod === 'publicWallet' && !schema.paymentAsset) {
+      ctx.addIssue({
+        path: ['paymentAsset'],
+        code: z.ZodIssueCode.custom,
+        message: 'Select a payment asset',
+      });
+    }
+
     // Validate duration: 0 for perpetual, or between 1 hour and 365 days
     if (schema.instanceDuration !== 0) {
       const durationInSeconds = toSeconds(

@@ -1,16 +1,15 @@
-import { DropdownBody } from '@tangle-network/ui-components/components/Dropdown/DropdownBody';
 import {
-  Avatar,
-  Dropdown,
-  DropdownButton,
+  DropdownMenu,
+  DropdownMenuContent,
   DropdownMenuItem,
-  EMPTY_VALUE_PLACEHOLDER,
-  KeyValueWithButton,
-  shortenString,
-  Typography,
-} from '@tangle-network/ui-components';
+  DropdownMenuTrigger,
+  Button,
+  Text,
+} from './sandbox/SandboxUi';
 import { Children, FC } from 'react';
 import { Address } from 'viem';
+
+const EMPTY_VALUE_PLACEHOLDER = '-';
 
 type OperatorMetadata = {
   name?: string;
@@ -21,6 +20,17 @@ type NestedOperatorCellProps = {
   operatorMetadataMap?: Map<Address, OperatorMetadata | null>;
 };
 
+const shortenString = (value: string, chars = 6) =>
+  value.length <= chars * 2 + 3
+    ? value
+    : `${value.slice(0, chars)}...${value.slice(-chars)}`;
+
+const OperatorAvatar = ({ operator }: { operator: Address }) => (
+  <span className="flex h-7 w-7 items-center justify-center rounded-full bg-muted font-mono text-[10px] text-muted-foreground">
+    {operator.slice(2, 4).toUpperCase()}
+  </span>
+);
+
 export const NestedOperatorCell: FC<NestedOperatorCellProps> = ({
   operators,
   operatorMetadataMap,
@@ -30,56 +40,51 @@ export const NestedOperatorCell: FC<NestedOperatorCellProps> = ({
   }
 
   return (
-    <Dropdown>
-      <DropdownButton
-        isHideArrowIcon={operators.length <= 1}
-        className="min-w-[auto] border-none !bg-transparent pl-0 w-full"
-      >
-        <div className="flex items-center gap-2">
-          {Children.toArray(
-            operators
-              .slice(0, 3)
-              .map((operator) => (
-                <Avatar
-                  sourceVariant="address"
-                  value={operator}
-                  theme="ethereum"
-                  size="md"
-                />
-              )),
-          )}
-        </div>
-      </DropdownButton>
-      <DropdownBody className="mt-2" side="bottom" align="center">
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <Button variant="ghost" className="min-w-[auto] justify-start pl-0">
+          <div className="flex items-center gap-2">
+            {Children.toArray(
+              operators
+                .slice(0, 3)
+                .map((operator) => <OperatorAvatar operator={operator} />),
+            )}
+          </div>
+        </Button>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent className="mt-2" side="bottom" align="center">
         {operators.length > 1 &&
           Children.toArray(
             operators.map((operator) => {
               return (
-                <DropdownMenuItem className="px-4 py-2 hover:bg-mono-170">
+                <DropdownMenuItem className="px-4 py-2">
                   <div className="flex items-center gap-4">
                     <div>
                       <div className="flex items-center gap-2">
-                        <Avatar
-                          sourceVariant="address"
-                          value={operator}
-                          theme="ethereum"
-                          size="md"
-                        />
-                        <Typography variant="body3" fw="bold">
+                        <OperatorAvatar operator={operator} />
+                        <Text variant="body3" fw="bold">
                           {shortenString(
                             operatorMetadataMap?.get(operator)?.name ||
                               operator,
                           )}
-                        </Typography>
+                        </Text>
                       </div>
-                      <KeyValueWithButton size="sm" keyValue={operator} />
+                      <button
+                        type="button"
+                        className="mt-1 font-mono text-muted-foreground text-xs underline-offset-4 hover:text-foreground hover:underline"
+                        onClick={() =>
+                          void navigator.clipboard?.writeText(operator)
+                        }
+                      >
+                        {shortenString(operator, 8)}
+                      </button>
                     </div>
                   </div>
                 </DropdownMenuItem>
               );
             }),
           )}
-      </DropdownBody>
-    </Dropdown>
+      </DropdownMenuContent>
+    </DropdownMenu>
   );
 };

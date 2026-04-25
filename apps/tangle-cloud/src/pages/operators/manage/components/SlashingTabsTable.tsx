@@ -1,14 +1,16 @@
 import { SlashProposal } from '@tangle-network/tangle-shared-ui/data/graphql';
 import {
-  Button,
+  Button as SandboxButton,
   Card,
-  TabContent,
-  Typography,
-} from '@tangle-network/ui-components';
-import { TableAndChartTabs } from '@tangle-network/ui-components/components/TableAndChartTabs';
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
+} from '@tangle-network/sandbox-ui/primitives';
 import { useReactTable } from '@tanstack/react-table';
+import type { ComponentProps, FC } from 'react';
 import { TangleCloudTable } from '../../../../components/tangleCloudTable/TangleCloudTable';
-import { SLASHING_TAB_ICONS, SLASHING_TABS, SlashingTab } from '../constants';
+import { SLASHING_TABS, SlashingTab } from '../constants';
 
 interface SlashingTabsTableProps {
   selectedSlashingTab: SlashingTab;
@@ -24,6 +26,22 @@ interface SlashingTabsTableProps {
   executeError: string | null;
   onDismissExecuteError: () => void;
 }
+
+type ButtonProps = Omit<
+  ComponentProps<typeof SandboxButton>,
+  'variant' | 'size'
+> & {
+  variant?: ComponentProps<typeof SandboxButton>['variant'] | 'utility';
+  size?: ComponentProps<typeof SandboxButton>['size'];
+};
+
+const Button: FC<ButtonProps> = ({ variant, size, ...props }) => (
+  <SandboxButton
+    variant={variant === 'utility' ? 'outline' : variant}
+    size={size}
+    {...props}
+  />
+);
 
 const SlashingTabsTable = ({
   selectedSlashingTab,
@@ -42,9 +60,9 @@ const SlashingTabsTable = ({
   return (
     <Card className="p-4 space-y-4">
       <div className="flex items-center justify-between gap-3">
-        <Typography variant="h5" fw="bold">
+        <h2 className="font-display font-bold text-foreground text-xl">
           Slashing Management
-        </Typography>
+        </h2>
         <Button variant="secondary" onClick={onOpenProposeModal}>
           New Proposal
         </Button>
@@ -53,12 +71,7 @@ const SlashingTabsTable = ({
       {executeError ? (
         <Card className="p-3 border border-red-500/30 bg-red-500/10">
           <div className="flex items-center justify-between gap-3">
-            <Typography
-              variant="body2"
-              className="text-red-70 dark:text-red-50"
-            >
-              {executeError}
-            </Typography>
+            <p className="text-destructive text-sm">{executeError}</p>
             <Button variant="utility" size="sm" onClick={onDismissExecuteError}>
               Dismiss
             </Button>
@@ -66,15 +79,20 @@ const SlashingTabsTable = ({
         </Card>
       ) : null}
 
-      <TableAndChartTabs
-        tabs={SLASHING_TABS}
-        icons={SLASHING_TAB_ICONS}
+      <Tabs
         value={selectedSlashingTab}
         onValueChange={(tab) => onSlashingTabChange(tab as SlashingTab)}
         className="space-y-5"
-        enableAdvancedDivider
       >
-        <TabContent value={SlashingTab.MY_PROPOSALS}>
+        <TabsList>
+          {SLASHING_TABS.map((tab) => (
+            <TabsTrigger key={tab} value={tab}>
+              {tab}
+            </TabsTrigger>
+          ))}
+        </TabsList>
+
+        <TabsContent value={SlashingTab.MY_PROPOSALS}>
           <TangleCloudTable
             title="Proposals Created By You"
             hideTitle
@@ -98,9 +116,9 @@ const SlashingTabsTable = ({
               icon: '🧾',
             }}
           />
-        </TabContent>
+        </TabsContent>
 
-        <TabContent value={SlashingTab.AGAINST_ME}>
+        <TabsContent value={SlashingTab.AGAINST_ME}>
           <TangleCloudTable
             title="Slashes Against You"
             hideTitle
@@ -126,8 +144,8 @@ const SlashingTabsTable = ({
               icon: '✅',
             }}
           />
-        </TabContent>
-      </TableAndChartTabs>
+        </TabsContent>
+      </Tabs>
     </Card>
   );
 };

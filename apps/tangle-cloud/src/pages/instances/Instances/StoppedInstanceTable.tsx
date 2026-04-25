@@ -5,13 +5,7 @@ import {
   getPaginationRowModel,
   useReactTable,
 } from '@tanstack/react-table';
-import {
-  Avatar,
-  Button,
-  EMPTY_VALUE_PLACEHOLDER,
-  Typography,
-} from '@tangle-network/ui-components';
-import pluralize from '@tangle-network/ui-components/utils/pluralize';
+import { Avatar, Button, Text } from '../../../components/sandbox/SandboxUi';
 import { TangleCloudTable } from '../../../components/tangleCloudTable/TangleCloudTable';
 import { ChevronRight } from '@tangle-network/icons';
 import TableCellWrapper from '@tangle-network/tangle-shared-ui/components/tables/TableCellWrapper';
@@ -30,7 +24,11 @@ interface ServiceWithBlueprint extends Service {
   blueprintData?: Blueprint;
 }
 
+const EMPTY_VALUE_PLACEHOLDER = '-';
+
 const columnHelper = createColumnHelper<ServiceWithBlueprint>();
+const pluralize = (word: string, plural: boolean) =>
+  plural ? `${word}s` : word;
 
 export const StoppedInstanceTable: FC = () => {
   const { isOperator, operatorAddress } = useEvmOperatorInfo();
@@ -88,34 +86,33 @@ export const StoppedInstanceTable: FC = () => {
                   />
                 )}
                 <div className="w-4/12">
-                  <Typography
+                  <Text
                     variant="body1"
                     fw="bold"
-                    className="!text-blue-50 text-ellipsis whitespace-nowrap overflow-hidden"
+                    className="text-primary text-ellipsis whitespace-nowrap overflow-hidden"
                   >
                     {service.blueprintData?.author || ''}
-                  </Typography>
-                  <Typography
+                  </Text>
+                  <Text
                     variant="body2"
-                    fw="normal"
-                    className="!text-mono-100 text-ellipsis whitespace-nowrap overflow-hidden"
+                    className="text-muted-foreground text-ellipsis whitespace-nowrap overflow-hidden"
                   >
                     {service.blueprintData?.name || ''}
-                  </Typography>
+                  </Text>
                 </div>
                 <div>
                   <ChevronRight className="w-6 h-6" />
                 </div>
                 <div className="w-4/12">
-                  <Typography
+                  <Text
                     variant="body1"
                     fw="bold"
-                    className="!text-blue-50 text-ellipsis whitespace-nowrap overflow-hidden"
+                    className="text-primary text-ellipsis whitespace-nowrap overflow-hidden"
                   >
                     {service.serviceId
                       ? `Instance-${service.serviceId}`
                       : EMPTY_VALUE_PLACEHOLDER}
-                  </Typography>
+                  </Text>
                 </div>
               </div>
             </TableCellWrapper>

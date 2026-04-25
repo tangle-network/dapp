@@ -1,12 +1,6 @@
 import { FC, useMemo } from 'react';
 import { Address } from 'viem';
-import {
-  Avatar,
-  Chip,
-  SkeletonLoader,
-  Typography,
-} from '@tangle-network/ui-components';
-import { shortenString } from '@tangle-network/ui-components/utils/shortenString';
+import { Chip, Skeleton, Text } from '../sandbox/SandboxUi';
 import {
   OperatorApprovalStatus,
   OperatorWithStatus,
@@ -20,6 +14,11 @@ type Props = {
   currentOperator: Address | undefined;
   isLoading: boolean;
 };
+
+const shortenString = (value: string, chars = 6) =>
+  value.length <= chars * 2 + 3
+    ? value
+    : `${value.slice(0, chars)}...${value.slice(-chars)}`;
 
 const getStatusColor = (status: OperatorApprovalStatus) => {
   switch (status) {
@@ -78,15 +77,15 @@ const OperatorStatusSection: FC<Props> = ({
   if (isLoading) {
     return (
       <div className="space-y-2">
-        <Typography variant="h5" className="text-mono-200 dark:text-mono-0">
+        <Text variant="h5" className="text-foreground">
           Operator Status
-        </Typography>
+        </Text>
 
-        <SkeletonLoader className="h-5 w-32 mb-2" />
+        <Skeleton className="h-5 w-32 mb-2" />
 
         <div className="space-y-2">
-          <SkeletonLoader className="h-10 w-full" />
-          <SkeletonLoader className="h-10 w-full" />
+          <Skeleton className="h-10 w-full" />
+          <Skeleton className="h-10 w-full" />
         </div>
       </div>
     );
@@ -96,14 +95,12 @@ const OperatorStatusSection: FC<Props> = ({
 
   return (
     <div className="space-y-2">
-      <Typography variant="h5" className="text-mono-200 dark:text-mono-0">
+      <Text variant="h5" className="text-foreground">
         Operator Status
-      </Typography>
+      </Text>
 
       <div className="flex items-center gap-2 mb-2">
-        <span className="text-sm text-mono-140 dark:text-mono-80">
-          Progress:
-        </span>
+        <span className="text-sm text-muted-foreground">Progress:</span>
 
         <span className="text-sm font-semibold">
           {approvalCount}/{totalOperators} operators approved
@@ -120,26 +117,21 @@ const OperatorStatusSection: FC<Props> = ({
               key={address}
               className={`flex items-center justify-between p-2 rounded-lg ${
                 isCurrentOperator
-                  ? 'bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800'
-                  : 'bg-mono-20 dark:bg-mono-180'
+                  ? 'bg-primary/10 border border-primary/20'
+                  : 'bg-muted/40'
               }`}
             >
               <div className="flex items-center gap-2">
-                <Avatar
-                  sourceVariant="address"
-                  value={address}
-                  size="sm"
-                  theme="substrate"
-                />
+                <span className="flex h-7 w-7 items-center justify-center rounded-full bg-muted font-mono text-[10px] text-muted-foreground">
+                  {address.slice(2, 4).toUpperCase()}
+                </span>
 
                 <span className="text-sm font-mono">
                   {shortenString(address, 6)}
                 </span>
 
                 {isCurrentOperator && (
-                  <span className="text-xs text-blue-600 dark:text-blue-400">
-                    (You)
-                  </span>
+                  <span className="text-xs text-primary">(You)</span>
                 )}
               </div>
 

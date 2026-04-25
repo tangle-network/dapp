@@ -36,14 +36,14 @@ const ProofProgressIndicator: FC<Props> = ({ progress }) => {
   }
 
   return (
-    <div className="p-4 space-y-3 border rounded-lg border-mono-40 dark:border-mono-160">
+    <div className="p-4 space-y-3 border rounded-lg border-border">
       <div className="flex items-center justify-between">
-        <span className="text-sm font-medium text-mono-200 dark:text-mono-0">
+        <span className="text-sm font-medium text-foreground">
           {STAGE_LABELS[progress.stage]}
         </span>
 
         {isActive && (
-          <div className="w-4 h-4 border-2 rounded-full animate-spin border-blue-50 dark:border-blue-50 border-t-transparent" />
+          <div className="w-4 h-4 border-2 rounded-full animate-spin border-primary border-t-transparent" />
         )}
 
         {progress.stage === ProofStage.DONE && (
@@ -62,10 +62,10 @@ const ProofProgressIndicator: FC<Props> = ({ progress }) => {
               key={stage}
               className={`h-1 flex-1 rounded-full transition-colors ${
                 i < currentIndex
-                  ? 'bg-blue-50'
+                  ? 'bg-primary'
                   : i === currentIndex
-                    ? 'bg-blue-50 animate-pulse'
-                    : 'bg-mono-40 dark:bg-mono-160'
+                    ? 'bg-primary animate-pulse'
+                    : 'bg-muted'
               }`}
             />
           ))}
@@ -73,9 +73,7 @@ const ProofProgressIndicator: FC<Props> = ({ progress }) => {
       )}
 
       {progress.message && (
-        <p className="text-xs text-mono-100 dark:text-mono-100">
-          {progress.message}
-        </p>
+        <p className="text-xs text-muted-foreground">{progress.message}</p>
       )}
     </div>
   );

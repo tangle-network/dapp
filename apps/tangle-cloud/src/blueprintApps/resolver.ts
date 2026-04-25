@@ -53,8 +53,8 @@ export function getProtocolGenericExperienceCopy(): {
   description: string;
 } {
   return {
-    title: 'Protocol-wide fallback',
+    title: 'Default blueprint view',
     description:
-      'Every blueprint should get a Tangle-controlled overview and service UI even when no custom app module exists. Declarative manifests and curated modules build on top of this fallback, not instead of it.',
+      'Shows blueprint details, operators, service instances, permissions, and request forms when no custom app is configured.',
   };
 }

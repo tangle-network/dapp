@@ -1,7 +1,6 @@
 import { useEffect, useRef } from 'react';
 import { useAccount, useChainId, useSwitchChain } from 'wagmi';
-
-const DEFAULT_LOCAL_HOSTNAMES = new Set(['localhost', '127.0.0.1']);
+import { isLocalPreviewHost } from '../utils/localPreview';
 
 type UseLocalChainGuardOptions = {
   enabled?: boolean;
@@ -30,7 +29,10 @@ const useLocalChainGuard = ({
       return;
     }
 
-    if (!DEFAULT_LOCAL_HOSTNAMES.has(window.location.hostname)) {
+    if (
+      import.meta.env.VITE_FORCE_LOCAL_CHAIN !== 'true' &&
+      !isLocalPreviewHost(window.location.hostname)
+    ) {
       return;
     }
 

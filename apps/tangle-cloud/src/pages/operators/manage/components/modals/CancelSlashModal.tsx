@@ -8,8 +8,9 @@ import {
   ModalContent,
   ModalFooterActions,
   ModalHeader,
-  Typography,
-} from '@tangle-network/ui-components';
+  SlashTextarea,
+  Text,
+} from './SandboxModalPrimitives';
 
 interface CancelSlashModalProps {
   open: boolean;
@@ -47,47 +48,43 @@ const CancelSlashModal = ({
       <ModalContent>
         <ModalHeader>Cancel Slash Proposal</ModalHeader>
         <ModalBody>
-          <Typography variant="body1" className="mb-2">
+          <Text variant="body1" className="mb-2">
             Cancel slash proposal #{selectedSlash?.id.toString()}
-          </Typography>
-          <Typography variant="body2" className="text-mono-100 mb-2">
+          </Text>
+          <Text variant="body2" className="text-muted-foreground mb-2">
             Admin-only action. Authorization is validated on-chain at submission
             time.
-          </Typography>
+          </Text>
           <div>
-            <Typography variant="body2" className="mb-1">
+            <Text variant="body2" className="mb-1">
               Reason for cancellation
-            </Typography>
-            <textarea
-              className="w-full p-3 rounded-lg border border-mono-40 dark:border-mono-140 bg-mono-0 dark:bg-mono-180 text-sm resize-none focus:outline-none focus:ring-2 focus:ring-purple-500"
+            </Text>
+            <SlashTextarea
               rows={4}
               value={cancelReason}
               onChange={(event) => onCancelReasonChange(event.target.value)}
               placeholder="Provide cancellation reason..."
             />
-            <Typography variant="body3" className="text-mono-100 mt-1">
+            <Text variant="body3" className="text-muted-foreground mt-1">
               Minimum {minCancelReasonLength} characters (
               {trimmedCancelReasonLength}/{minCancelReasonLength}).
-            </Typography>
+            </Text>
             {!selectedSlashPermissions?.canCancel ? (
-              <Typography variant="body3" className="text-red-500 mt-1">
+              <Text variant="body3" className="text-red-500 mt-1">
                 {selectedSlashPermissions?.cancelReason ??
                   'Cancellation is not available for this slash.'}
-              </Typography>
+              </Text>
             ) : null}
 
             {errorMessage ? (
               <div className="rounded-lg border border-red-500/30 bg-red-500/10 p-3 mt-3 space-y-2">
-                <Typography
-                  variant="body3"
-                  className="!text-red-70 dark:!text-red-50"
-                >
+                <Text variant="body3" className="!text-destructive">
                   {errorMessage}
-                </Typography>
+                </Text>
                 <div>
                   <button
                     type="button"
-                    className="text-xs underline text-red-70 dark:text-red-50"
+                    className="text-xs underline text-destructive"
                     onClick={onDismissError}
                   >
                     Dismiss
