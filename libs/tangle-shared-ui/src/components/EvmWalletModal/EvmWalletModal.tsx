@@ -74,7 +74,7 @@ const EvmWalletModal: FC<EvmWalletModalProps> = ({ isOpen, onClose }) => {
   }, [disconnect, onClose]);
 
   return (
-    <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
+    <Dialog open={isOpen} onOpenChange={(open: boolean) => !open && onClose()}>
       <DialogContent
         variant="sandbox"
         className="tangle-wallet-modal w-[calc(100vw-2rem)] max-w-[440px] overflow-hidden border-border bg-card p-0 text-foreground shadow-[var(--shadow-dropdown)]"
