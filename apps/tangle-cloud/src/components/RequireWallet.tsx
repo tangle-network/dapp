@@ -15,7 +15,11 @@ const RequireWallet: FC<Props> = ({
   title = 'Connect wallet',
   description = 'Connect your wallet to access this feature.',
   eyebrow = 'Wallet',
-  checks = ['Read account state', 'Prepare transactions', 'Submit on-chain actions'],
+  checks = [
+    'Read account state',
+    'Prepare transactions',
+    'Submit on-chain actions',
+  ],
 }) => {
   const { address } = useAccount();
 

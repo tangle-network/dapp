@@ -299,7 +299,13 @@ export const useBlueprintsByOwner = (options?: {
   const resolvedNetwork = network ?? getEnvioNetworkFromChainId(activeChainId);
 
   return useQuery({
-    queryKey: ['blueprints', 'byOwner', address, resolvedNetwork, activeChainId],
+    queryKey: [
+      'blueprints',
+      'byOwner',
+      address,
+      resolvedNetwork,
+      activeChainId,
+    ],
     queryFn: async () => {
       if (!address) return [];
       return fetchBlueprintsByOwner(address, resolvedNetwork);

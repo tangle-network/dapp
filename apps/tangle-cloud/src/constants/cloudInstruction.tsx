@@ -5,14 +5,16 @@ import { PagePath } from '../types';
 export const CLOUD_INSTRUCTIONS = [
   {
     title: 'Register operator capacity',
-    description: 'Attach an operator to blueprints and serve customer requests.',
+    description:
+      'Attach an operator to blueprints and serve customer requests.',
     icon: GlobalLine,
     to: PagePath.OPERATORS,
     external: false,
   },
   {
     title: 'Deploy an instance',
-    description: 'Choose a blueprint, select operators, and submit the service order.',
+    description:
+      'Choose a blueprint, select operators, and submit the service order.',
     icon: GridFillIcon,
     to: PagePath.BLUEPRINTS,
     external: false,

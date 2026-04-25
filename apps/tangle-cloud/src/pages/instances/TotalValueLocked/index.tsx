@@ -45,11 +45,7 @@ export const TotalValueLockedTabs = () => {
       <TabsContent value={TotalValueLockedTab.TVL} className="w-full">
         <Card variant="sandbox">
           <CardContent className="p-5">
-            {!isConnected ? (
-              <DisconnectedTvlState />
-            ) : (
-              <ConnectedTvlState />
-            )}
+            {!isConnected ? <DisconnectedTvlState /> : <ConnectedTvlState />}
           </CardContent>
         </Card>
       </TabsContent>

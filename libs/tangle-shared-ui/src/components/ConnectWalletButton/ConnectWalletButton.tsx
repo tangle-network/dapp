@@ -44,7 +44,9 @@ const ConnectWalletButton = ({ className }: ConnectWalletButtonProps) => {
             {isConnecting ? 'Connecting' : 'Connect'}
           </Button>
         ) : (
-          <Suspense fallback={<ConnectedWalletFallback address={accountAddress} />}>
+          <Suspense
+            fallback={<ConnectedWalletFallback address={accountAddress} />}
+          >
             <WalletDropdown
               accountAddress={accountAddress}
               walletName={walletName}

@@ -68,8 +68,7 @@ const entries = [
     },
     manifest: {
       displayName: 'AI Agent Sandbox',
-      tagline:
-        'Run agent sandboxes with terminal, chat, and tool access.',
+      tagline: 'Run agent sandboxes with terminal, chat, and tool access.',
       description:
         'Create a sandbox service, attach operators, inspect sessions, and manage agent resources.',
       surfaces: [
