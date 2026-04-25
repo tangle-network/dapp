@@ -93,40 +93,65 @@ const Page: FC = () => {
     setSearchParams,
   ]);
 
-  const handleRegistrationComplete = useCallback(async () => {
-    // Capture current operator counts before clearing selection
-    const previousCounts = new Map<string, number>();
-    for (const bp of selectedBlueprints) {
-      previousCounts.set(bp.id.toString(), bp.operatorsCount ?? 0);
-    }
-
-    setRowSelection({});
-    setIsDrawerOpen(false);
-
-    // Poll with exponential backoff until indexer reflects the new registration
-    await pollWithBackoff(async () => {
-      const refetchResult = (await refetch()) as {
-        data?: typeof blueprints;
-      };
-      const latestBlueprints = refetchResult.data;
-
-      if (!latestBlueprints) {
-        return false;
+  const handleRegistrationComplete = useCallback(
+    async (options?: { expectOperatorCountChange?: boolean }) => {
+      // Capture current operator counts before clearing selection.
+      const previousCounts = new Map<string, number>();
+      for (const bp of selectedBlueprints) {
+        previousCounts.set(bp.id.toString(), bp.operatorsCount ?? 0);
       }
 
-      // Check if any of the registered blueprints have increased operator count
-      for (const [id, previousCount] of previousCounts) {
-        const currentBlueprint = latestBlueprints.get(id);
-        const currentCount = currentBlueprint?.operatorsCount ?? 0;
+      setRowSelection({});
+      setIsDrawerOpen(false);
 
-        if (currentCount > previousCount) {
-          return true;
+      // Pre-registration emits an intent event but does not change the operator
+      // count, so polling the indexed operator count would only delay the UI.
+      if (options?.expectOperatorCountChange === false) {
+        return;
+      }
+
+      // Poll with exponential backoff until indexer reflects the new registration
+      await pollWithBackoff(async () => {
+        const refetchResult = (await refetch()) as {
+          data?: typeof blueprints;
+        };
+        const latestBlueprints = refetchResult.data;
+
+        if (!latestBlueprints) {
+          return false;
+        }
+
+        // Check if any of the registered blueprints have increased operator count
+        for (const [id, previousCount] of previousCounts) {
+          const currentBlueprint = latestBlueprints.get(id);
+          const currentCount = currentBlueprint?.operatorsCount ?? 0;
+
+          if (currentCount > previousCount) {
+            return true;
+          }
+        }
+
+        return false;
+      });
+    },
+    [refetch, selectedBlueprints],
+  );
+
+  const handleRegistrationOpenChange = useCallback(
+    (nextIsOpen: boolean) => {
+      setIsDrawerOpen(nextIsOpen);
+
+      if (!nextIsOpen) {
+        setRowSelection({});
+        if (requestedRegistrationId) {
+          const nextParams = new URLSearchParams(searchParams);
+          nextParams.delete('register');
+          setSearchParams(nextParams, { replace: true });
         }
       }
-
-      return false;
-    });
-  }, [refetch, selectedBlueprints]);
+    },
+    [requestedRegistrationId, searchParams, setSearchParams],
+  );
 
   const handleRemoveBlueprint = useCallback((blueprintId: string) => {
     setRowSelection((prev) => {
@@ -263,7 +288,7 @@ const Page: FC = () => {
 
       <RegistrationDrawer
         isOpen={isDrawerOpen}
-        onOpenChange={setIsDrawerOpen}
+        onOpenChange={handleRegistrationOpenChange}
         blueprints={selectedBlueprints}
         onRemoveBlueprint={handleRemoveBlueprint}
         onRegistrationComplete={handleRegistrationComplete}
