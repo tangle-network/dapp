@@ -9397,6 +9397,19 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@pierre/trees@npm:1.0.0-beta.3":
+  version: 1.0.0-beta.3
+  resolution: "@pierre/trees@npm:1.0.0-beta.3"
+  dependencies:
+    preact: "npm:11.0.0-beta.0"
+    preact-render-to-string: "npm:6.6.5"
+  peerDependencies:
+    react: ^18.3.1 || ^19.0.0
+    react-dom: ^18.3.1 || ^19.0.0
+  checksum: 10c0/cd7fe454e03e9596805fc4ec4001b5288795846abf93819865263bada65c9676cb60c2892cebb5b834f6c1a42fe5c7b517517c80b1b4fce7216eff3eb84dee13
+  languageName: node
+  linkType: hard
+
 "@pivanov/utils@npm:0.0.2":
   version: 0.0.2
   resolution: "@pivanov/utils@npm:0.0.2"
@@ -16709,9 +16722,9 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@tangle-network/blueprint-ui@https://codeload.github.com/tangle-network/blueprint-ui/tar.gz/470fe863d19b0980ca51dde9eea43b90cecc6277":
+"@tangle-network/blueprint-ui@npm:^0.1.2":
   version: 0.1.2
-  resolution: "@tangle-network/blueprint-ui@https://codeload.github.com/tangle-network/blueprint-ui/tar.gz/470fe863d19b0980ca51dde9eea43b90cecc6277"
+  resolution: "@tangle-network/blueprint-ui@npm:0.1.2"
   peerDependencies:
     "@nanostores/react": ^0.7.0 || ^1.0.0
     "@radix-ui/react-dialog": ^1.1.0
@@ -16733,7 +16746,19 @@ __metadata:
     tailwind-merge: ^2.6.0 || ^3.2.0
     viem: ^2.31.0
     wagmi: ^2.19.0 || ^3.3.0
-  checksum: 10c0/1525808e4c21c02c2181ff3e1f889dbe818c2ebb66d1ed1cefec47903b19912b773c4bdbab188509079305ef304d502d8a401a913ab0cbd1dc6211c9ed0c00fb
+  checksum: 10c0/606b518a1fe3bdf4b544d734659f18fdf78cc08320fa06ff9721e4cadc06ea0b123a2c68661a529f798f1478918c8550ed391350a8d0401fcc150cd459f977f6
+  languageName: node
+  linkType: hard
+
+"@tangle-network/brand@npm:^0.2.0":
+  version: 0.2.0
+  resolution: "@tangle-network/brand@npm:0.2.0"
+  peerDependencies:
+    react: ">=18"
+  peerDependenciesMeta:
+    react:
+      optional: true
+  checksum: 10c0/4d9c08d1df354534f258a704c46817f047a6f0e80e63d9cdb358139f33a13ae59a6584e1d60fb2f7cd97fdd014af31b2f4a236d9ca7a926239bbbff82f659935
   languageName: node
   linkType: hard
 
@@ -16769,11 +16794,12 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@tangle-network/sandbox-ui@npm:^0.10.2":
-  version: 0.10.9
-  resolution: "@tangle-network/sandbox-ui@npm:0.10.9"
+"@tangle-network/sandbox-ui@npm:^0.13.0":
+  version: 0.13.0
+  resolution: "@tangle-network/sandbox-ui@npm:0.13.0"
   dependencies:
     "@nanostores/react": "npm:^1.1.0"
+    "@pierre/trees": "npm:1.0.0-beta.3"
     "@radix-ui/react-avatar": "npm:^1.1.0"
     "@radix-ui/react-collapsible": "npm:^1.1.0"
     "@radix-ui/react-dialog": "npm:^1.1.0"
@@ -16798,6 +16824,7 @@ __metadata:
     tailwind-merge: "npm:^3.0.2"
     turndown: "npm:^7.2.2"
   peerDependencies:
+    "@tangle-network/brand": ^0.2.0
     react: ^18 || ^19
     react-dom: ^18 || ^19
   peerDependenciesMeta:
@@ -16827,7 +16854,7 @@ __metadata:
       optional: true
     yjs:
       optional: true
-  checksum: 10c0/a7a32da56d403717d01ffad17a01c40bf1ac2e53332ec448541c4e1ee7f781eb2a5a382fef5dc46bfb95bcd27af80248accaa9b489a04c7945ca1829d3e2ad47
+  checksum: 10c0/623453fff442af406f095ca60bb00cd8bd3b7bee35189065a9e96bdf2fd8e7eb57dfa8b73ec7eb5e4b5457346ea2f7817f1c50f7834babb39c2915ecc722a903
   languageName: node
   linkType: hard
 
@@ -33549,10 +33576,26 @@ __metadata:
   languageName: node
   linkType: hard
 
+"preact-render-to-string@npm:6.6.5":
+  version: 6.6.5
+  resolution: "preact-render-to-string@npm:6.6.5"
+  peerDependencies:
+    preact: ">=10 || >= 11.0.0-0"
+  checksum: 10c0/1cb0bd147a88899c3cf3f458d87173bf57d6b44aded92dd9bb1ea63e82915b1dc328ec12949b8e6868fbcc711d9993669b55172b7429d21c1740faad3578399b
+  languageName: node
+  linkType: hard
+
 "preact@npm:10.24.2":
   version: 10.24.2
   resolution: "preact@npm:10.24.2"
   checksum: 10c0/d1d22c5e1abc10eb8f83501857ef22c54a3fda2d20449d06f5b3c7d5ae812bd702c16c05b672138b8906504f9c893e072e9cebcbcada8cac320edf36265788fb
+  languageName: node
+  linkType: hard
+
+"preact@npm:11.0.0-beta.0":
+  version: 11.0.0-beta.0
+  resolution: "preact@npm:11.0.0-beta.0"
+  checksum: 10c0/250f960b12e6720a5a5cfc629290ea8c1e14059f88f6c2c6000a47defcc6ec52b521d1c11af59947685288200045eb7c829fd6fbbe4fac84606510c8772db8ec
   languageName: node
   linkType: hard
 
@@ -36983,8 +37026,9 @@ __metadata:
     "@swc/helpers": "npm:~0.5.17"
     "@swc/jest": "npm:~0.2.37"
     "@tailwindcss/forms": "npm:^0.5.10"
-    "@tangle-network/blueprint-ui": "https://codeload.github.com/tangle-network/blueprint-ui/tar.gz/470fe863d19b0980ca51dde9eea43b90cecc6277"
-    "@tangle-network/sandbox-ui": "npm:^0.10.2"
+    "@tangle-network/blueprint-ui": "npm:^0.1.2"
+    "@tangle-network/brand": "npm:^0.2.0"
+    "@tangle-network/sandbox-ui": "npm:^0.13.0"
     "@tanstack/match-sorter-utils": "npm:^8.19.4"
     "@tanstack/react-query": "npm:^5.87.0"
     "@tanstack/react-table": "npm:^8.21.3"

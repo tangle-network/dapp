@@ -1,4 +1,15 @@
-/* Cloud consumes sandbox-ui as the design-token source of truth. */
+/* Tangle Cloud styles.
+ * Brand tokens come from @tangle-network/brand (single source of truth across
+ * tangle-website, sandbox-ui, evals, agent-builder, and product surfaces).
+ * Tangle Cloud-specific classes and theme overrides cascade below. */
+@import '@tangle-network/brand/styles/tokens.css';
+/* Brand globals.css requires `@tailwind base` upstream of it; tangle-cloud
+ * relies on the workspace ui-components preset for that, so import tokens
+ * only and let the workspace preset provide base/utilities layers. */
+
+/* Local font aliases — keep Geist Sans as the default until Outfit/Manrope
+ * fontsource packages are landed; brand tokens.css defines the brand-canonical
+ * font stacks via --font-sans/--font-display/--font-mono. */
 :root,
 [data-sandbox-ui] {
   --font-sans: 'Geist Sans', ui-sans-serif, system-ui, sans-serif;
