@@ -15,9 +15,9 @@ export const InstructionCard: FC<InstructionCardProps> = ({ rootProps }) => {
       <div className="flex flex-col gap-4">
         <div>
           <Badge variant="outline">Next steps</Badge>
-          <h2 className="mt-3 font-display font-bold text-foreground text-xl tracking-tight">
+          <div className="mt-3 font-display font-bold text-foreground text-lg tracking-tight">
             Quick Actions
-          </h2>
+          </div>
         </div>
 
         <div className="flex flex-col gap-3">

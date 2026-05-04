@@ -263,6 +263,29 @@ export const RunningInstanceTable: FC = () => {
         tableConfig={{
           tableClassName: 'min-w-[1000px]',
         }}
+        emptyTableProps={{
+          icon: 'Instances',
+          title: 'No running instances',
+          description: currentUserAddress
+            ? 'Deploy a blueprint to create a service instance, then monitor operator approvals, jobs, and lifecycle events here.'
+            : 'Connect a wallet to load your service instances, then deploy a blueprint when you are ready.',
+          buttonText: currentUserAddress
+            ? 'Browse Blueprints'
+            : 'Connect Wallet',
+          buttonProps: {
+            onClick: () => {
+              if (currentUserAddress) {
+                window.location.assign('/blueprints');
+                return;
+              }
+
+              const connectButton = document.querySelector<HTMLButtonElement>(
+                '[data-testid="evm-connect-trigger"]',
+              );
+              connectButton?.click();
+            },
+          },
+        }}
       />
 
       <Modal open={isTerminateModalOpen} onOpenChange={setIsTerminateModalOpen}>

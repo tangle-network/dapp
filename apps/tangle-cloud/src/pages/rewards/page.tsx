@@ -302,36 +302,69 @@ const RewardsPage: FC = () => {
   if (!isConnected) {
     return (
       <div className="space-y-6">
-        <div>
-          <h1 className="font-display font-extrabold text-foreground text-3xl tracking-tight">
-            Rewards
-          </h1>
-          <p className="mt-2 max-w-2xl text-muted-foreground text-sm">
-            Claim operator and delegator rewards from the active network.
-          </p>
-        </div>
+        <Card
+          variant="sandbox"
+          className="cloud-hero-card cloud-compact-header overflow-hidden border-border bg-card shadow-[var(--shadow-card)]"
+        >
+          <CardContent className="relative p-4 md:p-5">
+            <div className="pointer-events-none absolute inset-0 opacity-70 [background:radial-gradient(circle_at_12%_8%,rgba(99,102,241,0.18),transparent_32%),radial-gradient(circle_at_86%_12%,rgba(16,185,129,0.10),transparent_28%)]" />
+            <div className="relative grid gap-5 xl:grid-cols-[minmax(0,1fr)_420px] xl:items-center">
+              <div>
+                <h1 className="font-display font-extrabold text-3xl text-foreground leading-[1.05] tracking-[-0.035em] sm:text-4xl">
+                  Rewards
+                </h1>
+                <p className="mt-3 max-w-2xl text-muted-foreground text-sm leading-relaxed">
+                  Claim operator and delegator rewards from the active network.
+                </p>
+              </div>
+
+              <div className="grid grid-cols-3 gap-2">
+                <HeroMetric label="Balances" value="Indexed" />
+                <HeroMetric label="Claims" value="On-chain" />
+                <HeroMetric label="History" value="Auditable" />
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
         <RequireWallet
           eyebrow="Rewards"
-          title="Connect to view rewards"
-          description="Connect a wallet to read balances and prepare claim transactions."
+          title="Connect to load rewards"
+          description="Load pending balances, claimable assets, and claim history for the connected account."
           checks={['Pending rewards', 'Claimable assets', 'Claim history']}
         />
+        <RewardsPreviewPanel />
       </div>
     );
   }
 
   return (
     <div className="space-y-6">
-      {/* Header */}
-      <div>
-        <h1 className="font-display font-extrabold text-foreground text-3xl tracking-tight">
-          Rewards
-        </h1>
-        <p className="mt-2 max-w-2xl text-muted-foreground text-sm">
-          Pending balances come from contract state. Claim history comes from
-          indexed on-chain events.
-        </p>
-      </div>
+      <Card
+        variant="sandbox"
+        className="cloud-hero-card cloud-compact-header overflow-hidden border-border bg-card shadow-[var(--shadow-card)]"
+      >
+        <CardContent className="relative p-4 md:p-5">
+          <div className="pointer-events-none absolute inset-0 opacity-70 [background:radial-gradient(circle_at_12%_8%,rgba(99,102,241,0.18),transparent_32%),radial-gradient(circle_at_86%_12%,rgba(16,185,129,0.10),transparent_28%)]" />
+          <div className="relative grid gap-5 xl:grid-cols-[minmax(0,1fr)_420px] xl:items-center">
+            <div>
+              <h1 className="font-display font-extrabold text-3xl text-foreground leading-[1.05] tracking-[-0.035em] sm:text-4xl">
+                Rewards
+              </h1>
+              <p className="mt-3 max-w-2xl text-muted-foreground text-sm leading-relaxed">
+                Pending balances come from contract state. Claim history comes
+                from indexed on-chain events.
+              </p>
+            </div>
+
+            <div className="grid grid-cols-3 gap-2">
+              <HeroMetric label="Balances" value="Live" />
+              <HeroMetric label="Claims" value="Signed" />
+              <HeroMetric label="History" value="Indexed" />
+            </div>
+          </div>
+        </CardContent>
+      </Card>
 
       {configuredEndpoint && (
         <Card
@@ -361,7 +394,7 @@ const RewardsPage: FC = () => {
       {/* Pending rewards by token */}
       <Card variant="sandbox">
         <CardContent className="p-6">
-          <h2 className="mb-4 font-display font-bold text-foreground text-xl">
+          <h2 className="mb-4 font-display font-bold text-foreground text-lg">
             Pending Rewards by Asset
           </h2>
 
@@ -420,7 +453,7 @@ const RewardsPage: FC = () => {
       {/* Claim history */}
       <Card variant="sandbox">
         <CardContent className="p-6">
-          <h2 className="mb-4 font-display font-bold text-foreground text-xl">
+          <h2 className="mb-4 font-display font-bold text-foreground text-lg">
             Claim History
           </h2>
 
@@ -530,6 +563,89 @@ const PendingRewardsTable: FC<PendingRewardsTableProps> = ({
     </div>
   );
 };
+
+const RewardsPreviewPanel = () => (
+  <Card variant="sandbox" className="border-border bg-card">
+    <CardContent className="space-y-5 p-5">
+      <div className="grid gap-4 md:grid-cols-3">
+        <PreviewItem
+          label="Pending"
+          title="Reward balances"
+          description="Token balances available to claim after indexing catches up."
+        />
+        <PreviewItem
+          label="Action"
+          title="Claim transactions"
+          description="Claim one asset, selected assets, or every claimable balance."
+        />
+        <PreviewItem
+          label="Audit"
+          title="Claim history"
+          description="Indexed transaction history with explorer links where available."
+        />
+      </div>
+
+      <div className="overflow-hidden rounded-xl border border-border bg-background/40">
+        <div className="grid grid-cols-[1fr_1fr_1fr_1fr] border-border border-b px-4 py-3 font-semibold text-muted-foreground text-[10px] uppercase tracking-wider">
+          <span>Asset</span>
+          <span>Claimable</span>
+          <span>Action</span>
+          <span>History</span>
+        </div>
+        {[
+          ['TNT', 'Connect wallet', 'Claim token', 'Locked'],
+          ['USDC', 'Connect wallet', 'Claim selected', 'Locked'],
+          ['ETH', 'Connect wallet', 'Claim all', 'Locked'],
+        ].map(([asset, amount, action, history]) => (
+          <div
+            key={asset}
+            className="grid grid-cols-[1fr_1fr_1fr_1fr] border-border border-b px-4 py-3 text-sm last:border-b-0"
+          >
+            <span className="font-semibold text-foreground">{asset}</span>
+            <span className="text-muted-foreground">{amount}</span>
+            <span className="text-muted-foreground">{action}</span>
+            <span className="font-semibold text-muted-foreground">
+              {history}
+            </span>
+          </div>
+        ))}
+      </div>
+    </CardContent>
+  </Card>
+);
+
+const PreviewItem = ({
+  label,
+  title,
+  description,
+}: {
+  label: string;
+  title: string;
+  description: string;
+}) => (
+  <div className="rounded-xl border border-border bg-muted/30 p-4">
+    <p className="font-semibold text-muted-foreground text-[10px] uppercase tracking-wider">
+      {label}
+    </p>
+    <div className="mt-2 font-display font-bold text-foreground text-base">
+      {title}
+    </div>
+    <p className="mt-2 text-muted-foreground text-sm leading-relaxed">
+      {description}
+    </p>
+  </div>
+);
+
+const HeroMetric = ({ label, value }: { label: string; value: string }) => (
+  <div className="rounded-md border border-border bg-card/70 p-2.5">
+    <p className="font-medium text-muted-foreground text-[10px] uppercase tracking-wider">
+      {label}
+    </p>
+    <p className="mt-0.5 font-display font-bold text-foreground text-base">
+      {value}
+    </p>
+  </div>
+);
 
 const PendingAssetCell: FC<{ token: Address; addressExplorerUrl?: string }> = ({
   token,

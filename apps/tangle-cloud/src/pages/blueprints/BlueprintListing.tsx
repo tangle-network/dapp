@@ -256,104 +256,104 @@ const BlueprintListing: FC<Props> = ({
 
   return (
     <div className="space-y-5">
-      <Card variant="sandbox" className="border-border bg-card">
+      <Card
+        variant="sandbox"
+        className="catalog-controls border-border bg-card"
+      >
         <CardContent className="space-y-4 p-4 md:p-5">
-          <div className="grid gap-3 xl:grid-cols-[1fr_auto_auto] xl:items-center">
+          <div className="grid gap-4 xl:grid-cols-[minmax(360px,1fr)_auto_auto] xl:items-center">
             <Input
               value={searchQuery}
               onChange={setSearchQuery}
               leftIcon={<Search className="h-4 w-4 fill-current" />}
               placeholder="Search blueprints, services, publishers, or IDs"
               className="w-full"
-              inputClassName="h-12 bg-background text-base"
+              inputClassName="h-11 bg-background text-sm"
             />
 
-            <div className="flex flex-wrap gap-2">
-              <FilterPill
-                isActive={audienceFilter === 'all'}
-                onClick={() => setAudienceFilter('all')}
+            <label className="grid gap-1">
+              <span className="font-semibold text-muted-foreground text-[10px] uppercase tracking-wider">
+                Availability
+              </span>
+              <select
+                value={audienceFilter}
+                onChange={(event) =>
+                  setAudienceFilter(event.currentTarget.value as AudienceFilter)
+                }
+                className="h-10 min-w-40 rounded-md border border-border bg-background px-3 font-semibold text-foreground text-sm outline-none transition-colors hover:bg-muted focus:border-primary"
+              >
+                <option value="all">All availability</option>
+                <option value="customers">Has operators</option>
+                <option value="operators">Needs capacity</option>
+              </select>
+            </label>
+
+            <label className="grid gap-1">
+              <span className="font-semibold text-muted-foreground text-[10px] uppercase tracking-wider">
+                Source
+              </span>
+              <select
+                value={manifestFilter}
+                onChange={(event) =>
+                  setManifestFilter(event.currentTarget.value as ManifestFilter)
+                }
+                className="h-10 min-w-36 rounded-md border border-border bg-background px-3 font-semibold text-foreground text-sm outline-none transition-colors hover:bg-muted focus:border-primary"
+              >
+                <option value="all">All sources</option>
+                <option value="verified">Pinned source</option>
+                <option value="fallback">Chain-only</option>
+              </select>
+            </label>
+          </div>
+
+          <div className="flex flex-col gap-3 border-border border-t pt-4 lg:flex-row lg:items-center lg:justify-between">
+            <div className="chip-row flex gap-2 overflow-x-auto pb-0.5">
+              <span className="hidden shrink-0 items-center pr-1 font-semibold text-muted-foreground text-[10px] uppercase tracking-wider sm:inline-flex">
+                Category
+              </span>
+              <CategoryPill
+                isActive={selectedCategory === ALL_CATEGORIES}
+                onClick={() => setSelectedCategory(ALL_CATEGORIES)}
               >
                 All
-              </FilterPill>
-              <FilterPill
-                isActive={audienceFilter === 'customers'}
-                onClick={() => setAudienceFilter('customers')}
-              >
-                Has operators
-              </FilterPill>
-              <FilterPill
-                isActive={audienceFilter === 'operators'}
-                onClick={() => setAudienceFilter('operators')}
-              >
-                Needs capacity
-              </FilterPill>
-            </div>
-
-            <div className="flex flex-wrap gap-2 xl:justify-end">
-              <FilterPill
-                isActive={manifestFilter === 'all'}
-                onClick={() => setManifestFilter('all')}
-              >
-                All sources
-              </FilterPill>
-              <FilterPill
-                isActive={manifestFilter === 'verified'}
-                onClick={() => setManifestFilter('verified')}
-              >
-                Pinned
-              </FilterPill>
-              <FilterPill
-                isActive={manifestFilter === 'fallback'}
-                onClick={() => setManifestFilter('fallback')}
-              >
-                Chain-only
-              </FilterPill>
-            </div>
-          </div>
-
-          <div className="flex gap-2 overflow-x-auto pb-1">
-            <CategoryPill
-              isActive={selectedCategory === ALL_CATEGORIES}
-              onClick={() => setSelectedCategory(ALL_CATEGORIES)}
-            >
-              {ALL_CATEGORIES}
-              <span className="ml-2 text-muted-foreground">
-                {blueprintItems.length}
-              </span>
-            </CategoryPill>
-            {categories.map(({ category, count }) => (
-              <CategoryPill
-                key={category}
-                isActive={selectedCategory === category}
-                onClick={() => setSelectedCategory(category)}
-              >
-                {category}
-                <span className="ml-2 text-muted-foreground">{count}</span>
+                <span className="rounded-full bg-background/70 px-2 py-0.5 font-mono text-[10px] text-foreground">
+                  {blueprintItems.length}
+                </span>
               </CategoryPill>
-            ))}
-          </div>
+              {categories.map(({ category, count }) => (
+                <CategoryPill
+                  key={category}
+                  isActive={selectedCategory === category}
+                  onClick={() => setSelectedCategory(category)}
+                >
+                  {category.replace(/^AI /, '')}
+                  <span className="rounded-full bg-background/70 px-2 py-0.5 font-mono text-[10px] text-foreground">
+                    {count}
+                  </span>
+                </CategoryPill>
+              ))}
+            </div>
 
-          <div className="flex flex-col gap-2 text-muted-foreground text-sm sm:flex-row sm:items-center sm:justify-between">
-            <span>
-              {filteredBlueprints.length} of {blueprintItems.length}{' '}
-              {pluralize('blueprint', blueprintItems.length)} match
-            </span>
-
-            {hasActiveFilters && (
-              <Button
-                variant="ghost"
-                size="sm"
-                className="self-start sm:self-auto"
-                onClick={() => {
-                  setSearchQuery('');
-                  setSelectedCategory(ALL_CATEGORIES);
-                  setAudienceFilter('all');
-                  setManifestFilter('all');
-                }}
-              >
-                Clear filters
-              </Button>
-            )}
+            <div className="flex shrink-0 items-center gap-3 text-muted-foreground text-xs">
+              <span className="text-muted-foreground text-xs">
+                {filteredBlueprints.length} matches
+              </span>
+              {hasActiveFilters && (
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="h-8 px-2"
+                  onClick={() => {
+                    setSearchQuery('');
+                    setSelectedCategory(ALL_CATEGORIES);
+                    setAudienceFilter('all');
+                    setManifestFilter('all');
+                  }}
+                >
+                  Clear
+                </Button>
+              )}
+            </div>
           </div>
         </CardContent>
       </Card>
@@ -361,9 +361,9 @@ const BlueprintListing: FC<Props> = ({
       {filteredBlueprints.length === 0 ? (
         <Card variant="sandbox">
           <CardContent className="flex min-h-52 flex-col items-center justify-center p-8 text-center">
-            <h2 className="font-display font-bold text-foreground text-xl">
+            <h3 className="font-display font-bold text-foreground text-lg">
               No blueprints match these filters
-            </h2>
+            </h3>
             <p className="mt-2 max-w-md text-muted-foreground text-sm">
               Try a broader category, remove the source filter, or search by the
               blueprint name, publisher, or protocol ID.
@@ -371,7 +371,7 @@ const BlueprintListing: FC<Props> = ({
           </CardContent>
         </Card>
       ) : (
-        <div className="grid grid-cols-1 gap-5 md:grid-cols-2 xl:grid-cols-3">
+        <div className="results-grid grid grid-cols-1 gap-5 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
           {visibleBlueprints.map((blueprint) => (
             <BlueprintCard
               key={blueprint.id.toString()}
@@ -390,7 +390,7 @@ const BlueprintListing: FC<Props> = ({
         </div>
       )}
 
-      <div className="flex flex-col gap-3 border-border border-t pt-5 text-muted-foreground text-sm sm:flex-row sm:items-center sm:justify-between">
+      <div className="flex flex-col gap-3 border-border border-t pt-4 text-muted-foreground text-sm sm:flex-row sm:items-center sm:justify-between">
         <span>
           Showing{' '}
           {filteredBlueprints.length === 0 ? 0 : safePage * PAGE_SIZE + 1}-
@@ -455,17 +455,21 @@ const BlueprintCard = ({
     : 'Chain-only';
   const category = getBlueprintCategory(blueprint);
   const operatorCount = blueprint.operatorsCount ?? 0;
+  const hasOperators = operatorCount > 0;
   const capacityLabel =
     operatorCount === 0
       ? 'No operators'
       : `${operatorCount} ${pluralize('operator', operatorCount)}`;
+  const deploymentState = hasOperators
+    ? 'Ready to instance'
+    : 'Needs operator capacity';
   const displayName = formatBlueprintName(blueprint.name);
   return (
     <Card
       variant="sandbox"
       hover
       className={twMerge(
-        'group relative min-h-[410px] overflow-hidden border-border bg-card shadow-[var(--shadow-card)]',
+        'blueprint-card group relative min-h-[410px] overflow-hidden border-border bg-card shadow-[var(--shadow-card)]',
         isSelected && 'border-primary shadow-[var(--shadow-accent)]',
       )}
     >
@@ -475,16 +479,16 @@ const BlueprintCard = ({
         aria-label={`Open ${blueprint.name}`}
       />
 
-      <CardContent className="relative flex h-full min-h-[410px] flex-col p-4">
-        <BlueprintVisual blueprint={blueprint} category={category} />
+      <CardContent className="relative flex h-full min-h-[410px] flex-col p-5">
+        <BlueprintVisual blueprint={blueprint} category={category} compact />
 
         <div className="mt-4">
           <p className="font-semibold text-[10px] text-muted-foreground uppercase tracking-[0.18em]">
             {category}
           </p>
-          <h2 className="mt-1 line-clamp-1 font-display font-extrabold text-foreground text-2xl tracking-tight">
+          <h3 className="mt-1 line-clamp-1 font-display font-extrabold text-foreground text-xl tracking-tight">
             {displayName}
-          </h2>
+          </h3>
         </div>
 
         {isSelectable && (
@@ -506,12 +510,49 @@ const BlueprintCard = ({
           <span className="rounded-full border border-border bg-muted/40 px-2.5 py-1 font-semibold text-[10px] text-muted-foreground uppercase tracking-wider">
             {capacityLabel}
           </span>
+          <span
+            className={twMerge(
+              'rounded-full border px-2.5 py-1 font-semibold text-[10px] uppercase tracking-wider',
+              hasOperators
+                ? 'border-emerald-500/30 bg-emerald-500/10 text-emerald-300'
+                : 'border-amber-500/30 bg-amber-500/10 text-amber-300',
+            )}
+          >
+            {deploymentState}
+          </span>
           <span className="rounded-full border border-border bg-muted/40 px-2.5 py-1 font-semibold text-[10px] text-muted-foreground uppercase tracking-wider">
             {manifestStatus}
           </span>
         </div>
 
-        <p className="mt-4 line-clamp-4 flex-1 text-muted-foreground text-sm leading-relaxed">
+        <div className="mt-4 grid grid-cols-3 gap-2 rounded-lg border border-border bg-muted/20 p-3">
+          <div className="min-w-0">
+            <p className="font-semibold text-muted-foreground text-[10px] uppercase tracking-wider">
+              Publisher
+            </p>
+            <p className="mt-1 truncate font-mono text-foreground text-xs">
+              {shortenIdentity(blueprint.author)}
+            </p>
+          </div>
+          <div className="min-w-0">
+            <p className="font-semibold text-muted-foreground text-[10px] uppercase tracking-wider">
+              Source
+            </p>
+            <p className="mt-1 truncate text-foreground text-xs">
+              {manifestStatus}
+            </p>
+          </div>
+          <div className="min-w-0">
+            <p className="font-semibold text-muted-foreground text-[10px] uppercase tracking-wider">
+              Next step
+            </p>
+            <p className="mt-1 truncate text-foreground text-xs">
+              {hasOperators ? 'Review checkout' : 'Register capacity'}
+            </p>
+          </div>
+        </div>
+
+        <p className="mt-4 line-clamp-2 flex-1 text-muted-foreground text-sm leading-relaxed">
           {description}
         </p>
 
@@ -521,51 +562,99 @@ const BlueprintCard = ({
           <BlueprintMetric label="ID" value={blueprint.id.toString()} />
         </div>
 
-        <div className="mt-5 flex items-end justify-between gap-3">
-          <div className="min-w-0">
-            <p className="text-muted-foreground text-[10px] uppercase tracking-wider">
-              Publisher
-            </p>
-            <p className="truncate font-mono text-muted-foreground text-xs">
-              {shortenIdentity(blueprint.author)}
-            </p>
+        <div className="mt-5 flex flex-col gap-3 border-border border-t pt-4">
+          <div className="grid grid-cols-2 gap-3 rounded-lg border border-border bg-muted/20 p-3">
+            <div className="min-w-0">
+              <p className="font-semibold text-muted-foreground text-[10px] uppercase tracking-wider">
+                Wallet approval
+              </p>
+              <p className="mt-1 truncate text-foreground text-xs">
+                After review
+              </p>
+            </div>
+            <div className="min-w-0">
+              <p className="font-semibold text-muted-foreground text-[10px] uppercase tracking-wider">
+                Source
+              </p>
+              <p className="mt-1 truncate text-foreground text-xs">
+                {manifestStatus}
+              </p>
+            </div>
           </div>
 
-          <div className="relative z-20 flex shrink-0 items-center gap-2">
+          <div className="actions relative z-20 grid grid-cols-2 gap-2">
+            {hasOperators ? (
+              <>
+                <Link
+                  to={`${blueprintHref}/deploy`}
+                  className="primary rounded-md bg-primary px-3 py-3 text-center font-bold text-primary-foreground text-sm transition-colors hover:bg-primary/90"
+                >
+                  Create instance
+                </Link>
+                <RegisterCapacityButton
+                  blueprint={blueprint}
+                  onRegister={onRegister}
+                />
+              </>
+            ) : (
+              <>
+                <RegisterCapacityButton
+                  blueprint={blueprint}
+                  onRegister={onRegister}
+                  isPrimary
+                />
+                <Link
+                  to={blueprintHref}
+                  className="rounded-md border border-border bg-transparent px-3 py-3 text-center font-semibold text-muted-foreground text-sm transition-colors hover:bg-muted hover:text-foreground"
+                >
+                  View details
+                </Link>
+              </>
+            )}
             {blueprint.githubUrl && (
               <a
                 href={blueprint.githubUrl}
                 target="_blank"
                 rel="noreferrer"
-                className="relative z-20 rounded-md border border-border px-3 py-2 font-semibold text-muted-foreground text-xs transition-colors hover:bg-muted hover:text-foreground"
+                className="secondary-link relative z-20 col-span-2 rounded-md px-3 py-2 text-center font-semibold text-muted-foreground text-xs transition-colors hover:bg-muted hover:text-foreground"
                 onClick={(event) => event.stopPropagation()}
               >
-                GitHub
+                Source on GitHub
               </a>
             )}
-            <button
-              type="button"
-              className="rounded-md border border-border px-3 py-2 font-semibold text-muted-foreground text-xs transition-colors hover:bg-muted hover:text-foreground"
-              onClick={(event) => {
-                event.preventDefault();
-                event.stopPropagation();
-                onRegister?.(blueprint);
-              }}
-            >
-              Register
-            </button>
-            <Link
-              to={`${blueprintHref}/deploy`}
-              className="rounded-md bg-primary px-3 py-2 font-semibold text-primary-foreground text-xs transition-colors hover:bg-primary/90"
-            >
-              Instance
-            </Link>
           </div>
         </div>
       </CardContent>
     </Card>
   );
 };
+
+const RegisterCapacityButton = ({
+  blueprint,
+  onRegister,
+  isPrimary = false,
+}: {
+  blueprint: Blueprint;
+  onRegister?: (blueprint: Blueprint) => void;
+  isPrimary?: boolean;
+}) => (
+  <button
+    type="button"
+    className={twMerge(
+      'rounded-md px-3 py-3 font-semibold text-sm transition-colors',
+      isPrimary
+        ? 'bg-primary text-primary-foreground hover:bg-primary/90'
+        : 'border border-border bg-transparent text-muted-foreground hover:bg-muted hover:text-foreground',
+    )}
+    onClick={(event) => {
+      event.preventDefault();
+      event.stopPropagation();
+      onRegister?.(blueprint);
+    }}
+  >
+    Register capacity
+  </button>
+);
 
 const BlueprintMetric = ({
   label,
@@ -584,29 +673,6 @@ const BlueprintMetric = ({
   </div>
 );
 
-const FilterPill = ({
-  isActive,
-  onClick,
-  children,
-}: {
-  isActive: boolean;
-  onClick: () => void;
-  children: ReactNode;
-}) => (
-  <button
-    type="button"
-    onClick={onClick}
-    className={twMerge(
-      'h-10 rounded-md border px-3 font-semibold text-sm transition-colors',
-      isActive
-        ? 'border-primary bg-primary text-primary-foreground'
-        : 'border-border bg-muted/30 text-muted-foreground hover:bg-muted hover:text-foreground',
-    )}
-  >
-    {children}
-  </button>
-);
-
 const CategoryPill = ({
   isActive,
   onClick,
@@ -620,7 +686,7 @@ const CategoryPill = ({
     type="button"
     onClick={onClick}
     className={twMerge(
-      'shrink-0 rounded-full border px-3 py-2 font-semibold text-xs transition-colors',
+      'inline-flex h-8 shrink-0 items-center gap-2 rounded-full border px-3 font-semibold text-xs transition-colors',
       isActive
         ? 'border-primary bg-primary text-primary-foreground'
         : 'border-border bg-background text-muted-foreground hover:bg-muted hover:text-foreground',

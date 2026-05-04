@@ -17,7 +17,7 @@ import { Link } from 'react-router';
 import { TangleDAppPagePath } from '../../../types';
 
 enum TotalValueLockedTab {
-  TVL = 'Total Value Locked',
+  TVL = 'tvl',
 }
 
 export const TotalValueLockedTabs = () => {
@@ -54,13 +54,32 @@ export const TotalValueLockedTabs = () => {
 };
 
 const DisconnectedTvlState = () => (
-  <div className="flex flex-col items-center justify-center gap-2 py-8 text-center">
-    <h2 className="font-display font-bold text-foreground text-lg">
-      Connect wallet to view your TVL
-    </h2>
-    <p className="text-muted-foreground text-sm">
-      Connect your wallet to see your deposited assets.
-    </p>
+  <div className="grid min-h-56 gap-4 rounded-xl border border-dashed border-border bg-muted/30 p-6 md:grid-cols-[1fr_260px] md:items-center">
+    <div>
+      <p className="font-semibold text-muted-foreground text-xs uppercase tracking-wider">
+        Wallet required
+      </p>
+      <div className="mt-2 font-display font-bold text-foreground text-lg">
+        Connect to load locked value
+      </div>
+      <p className="mt-2 max-w-xl text-muted-foreground text-sm leading-relaxed">
+        Deposits, running services, and operator exposure are shown from the
+        connected account.
+      </p>
+    </div>
+    <div className="grid grid-cols-2 gap-2">
+      {['Deposits', 'Services', 'Exposure', 'Claims'].map((label) => (
+        <div
+          key={label}
+          className="rounded-lg border border-border bg-card/80 p-3"
+        >
+          <p className="text-muted-foreground text-[10px] uppercase tracking-wider">
+            {label}
+          </p>
+          <p className="mt-1 font-semibold text-foreground text-sm">Locked</p>
+        </div>
+      ))}
+    </div>
   </div>
 );
 
@@ -83,9 +102,9 @@ const ConnectedTvlState = () => {
   if (tvlData.length === 0) {
     return (
       <div className="flex flex-col items-center justify-center gap-3 py-8 text-center">
-        <h2 className="font-display font-bold text-foreground text-lg">
+        <h3 className="font-display font-bold text-foreground text-lg">
           No deposits found
-        </h2>
+        </h3>
         <p className="text-muted-foreground text-sm">
           Start by depositing assets to see your TVL.
         </p>

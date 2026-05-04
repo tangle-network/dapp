@@ -91,12 +91,14 @@ const TxHistoryDrawer: FC = () => {
         <Dialog.Trigger asChild>
           <Button
             variant="outline"
+            aria-label="Transactions"
+            title="Transactions"
             className={twMerge(
               'h-11 gap-2 border-border bg-muted/30 px-3 font-bold text-foreground hover:bg-muted',
             )}
           >
             <ShuffleLine className="fill-current" />
-            <span>Transactions</span>
+            <span className="sr-only">Transactions</span>
             {inProgressCount !== null && (
               <Chip color="yellow">{addCommasToNumber(inProgressCount)}</Chip>
             )}

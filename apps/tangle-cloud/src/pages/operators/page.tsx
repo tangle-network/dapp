@@ -48,27 +48,27 @@ const Page: FC = () => {
   }, []);
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-6">
       <Card
         variant="sandbox"
-        className="overflow-hidden border-border bg-card shadow-[var(--shadow-card)]"
+        className="cloud-hero-card cloud-compact-header overflow-hidden border-border bg-card shadow-[var(--shadow-card)]"
       >
-        <CardContent className="relative p-6 md:p-8">
+        <CardContent className="relative p-4 md:p-5">
           <div className="pointer-events-none absolute inset-0 opacity-70 [background:radial-gradient(circle_at_10%_8%,rgba(99,102,241,0.16),transparent_32%),radial-gradient(circle_at_86%_18%,rgba(16,185,129,0.12),transparent_28%)]" />
 
-          <div className="relative grid gap-8 xl:grid-cols-[1fr_420px] xl:items-end">
+          <div className="relative grid gap-5 xl:grid-cols-[minmax(0,1fr)_420px] xl:items-center">
             <div>
-              <h1 className="font-display font-extrabold text-4xl text-foreground leading-[0.92] tracking-[-0.05em] sm:text-5xl lg:text-6xl">
+              <h1 className="font-display font-extrabold text-3xl text-foreground leading-[1.05] tracking-[-0.035em] sm:text-4xl">
                 Operators
               </h1>
-              <p className="mt-5 max-w-2xl text-muted-foreground text-sm leading-relaxed sm:text-base">
+              <p className="mt-3 max-w-2xl text-muted-foreground text-sm leading-relaxed">
                 Inspect registered operators, delegation mode, stake, and RPC
                 availability.
               </p>
             </div>
 
-            <div className="rounded-lg border border-border bg-muted/30 p-4 shadow-[var(--shadow-card)]">
-              <div className="grid grid-cols-3 gap-3">
+            <div className="grid gap-3 rounded-lg border border-border bg-muted/20 p-3 shadow-[var(--shadow-card)] sm:grid-cols-[1fr_auto] sm:items-center xl:grid-cols-1">
+              <div className="grid grid-cols-3 gap-2">
                 <OperatorSummaryMetric
                   label="Operators"
                   value={operatorList.length.toLocaleString()}
@@ -83,7 +83,7 @@ const Page: FC = () => {
                 />
               </div>
 
-              <div className="mt-5 flex flex-col gap-2 sm:flex-row xl:flex-col">
+              <div className="flex flex-col gap-2 sm:flex-row xl:flex-col">
                 <Button
                   variant="sandbox"
                   className="flex-1"
@@ -107,11 +107,11 @@ const Page: FC = () => {
         </CardContent>
       </Card>
 
-      <div className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
+      <div className="flex flex-col gap-2 border-border border-b pb-3 sm:flex-row sm:items-end sm:justify-between">
         <div>
-          <h2 className="font-display font-extrabold text-2xl text-foreground tracking-tight">
+          <div className="font-display font-bold text-foreground text-base tracking-tight">
             Operator registry
-          </h2>
+          </div>
           <p className="mt-1 text-muted-foreground text-sm">
             Search by address, RPC endpoint, status, or delegation mode.
           </p>
@@ -193,7 +193,7 @@ const OperatorsPanel = ({
               value={searchQuery}
               onChange={(event) => setSearchQuery(event.currentTarget.value)}
               placeholder="Search operators"
-              className="h-12 bg-background pl-10 text-base"
+              className="h-11 bg-background pl-10 text-sm shadow-[inset_0_1px_0_rgba(255,255,255,0.03)]"
             />
           </div>
           <div className="text-muted-foreground text-sm">
@@ -207,9 +207,9 @@ const OperatorsPanel = ({
           {operators.length === 0 ? (
             <div className="flex min-h-44 flex-col items-center justify-center rounded-lg border border-dashed border-border bg-muted/30 p-8 text-center">
               <Badge variant="outline">Empty</Badge>
-              <h2 className="mt-4 font-display font-bold text-foreground text-lg">
+              <h3 className="mt-4 font-display font-bold text-foreground text-lg">
                 No operators indexed
-              </h2>
+              </h3>
               <p className="mt-2 text-muted-foreground text-sm">
                 Try another network or wait for the indexer to sync.
               </p>
@@ -217,9 +217,9 @@ const OperatorsPanel = ({
           ) : filteredOperators.length === 0 ? (
             <div className="flex min-h-44 flex-col items-center justify-center rounded-lg border border-dashed border-border bg-muted/30 p-8 text-center">
               <Badge variant="outline">No match</Badge>
-              <h2 className="mt-4 font-display font-bold text-foreground text-lg">
+              <h3 className="mt-4 font-display font-bold text-foreground text-lg">
                 No operators match this search
-              </h2>
+              </h3>
               <p className="mt-2 text-muted-foreground text-sm">
                 Try an address fragment, RPC host, status, or public key.
               </p>
@@ -257,7 +257,7 @@ const OperatorRow = ({
   const delegationMode = getDelegationModeLabel(operator.delegationMode);
 
   return (
-    <div className="group relative grid gap-4 p-4 transition-colors hover:bg-muted/30 md:grid-cols-[minmax(0,1fr)_420px] md:items-center">
+    <div className="operator-row group relative grid gap-4 p-4 transition-colors hover:bg-muted/30 xl:grid-cols-[minmax(0,1fr)_560px] xl:items-center">
       <div
         className="absolute inset-y-3 left-0 w-1 rounded-r-full bg-[var(--operator-accent)]"
         style={getOperatorAccent(address)}
@@ -268,9 +268,9 @@ const OperatorRow = ({
 
         <div className="min-w-0">
           <div className="flex flex-wrap items-center gap-2">
-            <h2 className="truncate font-display font-extrabold text-foreground text-xl tracking-tight">
+            <p className="truncate font-display font-bold text-foreground text-base tracking-tight">
               {shortenAddress(address)}
-            </h2>
+            </p>
             <Badge
               variant={status === 'ACTIVE' ? 'success' : 'outline'}
               dot={status === 'ACTIVE'}
@@ -288,8 +288,8 @@ const OperatorRow = ({
         </div>
       </div>
 
-      <div className="grid gap-3 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-center">
-        <div className="grid grid-cols-3 gap-3">
+      <div className="grid gap-3 lg:grid-cols-[minmax(0,1fr)_auto] lg:items-center">
+        <div className="grid grid-cols-3 gap-2">
           <OperatorMetric
             label="Stake"
             value={formatStake(operator.stakingStake)}
@@ -301,11 +301,11 @@ const OperatorRow = ({
           <OperatorMetric label="Mode" value={delegationMode} />
         </div>
 
-        <div className="flex gap-2 sm:col-span-1 sm:justify-end">
+        <div className="flex gap-2 lg:col-span-1 lg:justify-end">
           <Button
             variant="sandbox"
             size="sm"
-            className="min-w-24"
+            className="min-w-24 text-primary-foreground"
             onClick={() => onStakeClicked(address)}
           >
             Stake
@@ -326,10 +326,10 @@ const OperatorRow = ({
 
 const OperatorMetric = ({ label, value }: { label: string; value: string }) => (
   <div className="rounded-md border border-border bg-card/60 p-3">
-    <p className="font-medium text-muted-foreground text-[10px] uppercase tracking-wider">
+    <p className="truncate font-medium text-muted-foreground text-[10px] uppercase tracking-wider">
       {label}
     </p>
-    <p className="mt-1 truncate font-display font-bold text-foreground text-base">
+    <p className="mt-1 truncate font-display font-bold text-foreground text-sm">
       {value}
     </p>
   </div>
@@ -342,11 +342,11 @@ const OperatorSummaryMetric = ({
   label: string;
   value: string;
 }) => (
-  <div className="rounded-md border border-border bg-card/70 p-3">
+  <div className="rounded-md border border-border bg-card/70 p-2.5">
     <p className="font-medium text-muted-foreground text-[10px] uppercase tracking-wider">
       {label}
     </p>
-    <p className="mt-1 font-display font-extrabold text-foreground text-xl">
+    <p className="mt-0.5 font-display font-extrabold text-foreground text-base">
       {value}
     </p>
   </div>
@@ -354,7 +354,7 @@ const OperatorSummaryMetric = ({
 
 const OperatorIdenticon = ({ address }: { address: string }) => (
   <div
-    className="grid h-14 w-14 shrink-0 place-items-center rounded-lg border border-border font-display font-extrabold text-white shadow-[var(--shadow-card)]"
+    className="grid h-14 w-14 shrink-0 place-items-center rounded-lg border border-border bg-slate-950 font-display font-extrabold text-white shadow-[var(--shadow-card)]"
     style={getOperatorIdenticonStyle(address)}
   >
     {address.slice(2, 4).toUpperCase()}
@@ -384,7 +384,8 @@ const hashAddress = (address: string) =>
 const getOperatorIdenticonStyle = (address: string) => {
   const hue = hashAddress(address);
   return {
-    background: `linear-gradient(135deg, hsl(${hue} 82% 58%), hsl(${(hue + 42) % 360} 82% 50%))`,
+    backgroundColor: '#111827',
+    backgroundImage: `linear-gradient(135deg, hsl(${hue} 82% 40%), hsl(${(hue + 42) % 360} 82% 32%))`,
   };
 };
 

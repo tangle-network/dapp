@@ -13,9 +13,14 @@ const Layout: FC<PropsWithChildren<Props>> = ({
   children,
   isSidebarInitiallyExpanded,
 }) => {
-  const [theme, setTheme] = useState<'dark' | 'light'>(() =>
-    document.documentElement.classList.contains('dark') ? 'dark' : 'light',
-  );
+  const [theme, setTheme] = useState<'dark' | 'light'>(() => {
+    const storedTheme = window.localStorage.getItem('tangle-cloud-theme');
+    if (storedTheme === 'dark' || storedTheme === 'light') {
+      return storedTheme;
+    }
+
+    return 'dark';
+  });
   const [isSidebarExpanded, setIsSidebarExpanded] = useState(() => {
     if (isSidebarInitiallyExpanded !== undefined) {
       return isSidebarInitiallyExpanded;

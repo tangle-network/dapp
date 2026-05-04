@@ -196,6 +196,12 @@ export const AllServicesTable: FC = () => {
       tableConfig={{
         tableClassName: 'min-w-[1000px]',
       }}
+      emptyTableProps={{
+        icon: 'Network',
+        title: 'No joinable services',
+        description:
+          'When operators publish service capacity or customers request instances that need operators, those services appear here.',
+      }}
     />
   );
 };

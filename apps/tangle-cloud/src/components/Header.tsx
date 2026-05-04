@@ -45,6 +45,10 @@ export default function Header({
 }) {
   const pathname = useLocation().pathname;
   const breadcrumbs = useMemo(() => getHeaderBreadcrumbs(pathname), [pathname]);
+  const hasContextualConnect =
+    pathname.startsWith('/rewards') ||
+    pathname.startsWith('/earnings') ||
+    pathname.startsWith('/instances');
 
   return (
     <header
@@ -84,7 +88,9 @@ export default function Header({
 
         <ThemeToggle theme={theme} onThemeChange={onThemeChange} />
 
-        <ConnectWalletButton className="tangle-cloud-wallet-action" />
+        {!hasContextualConnect && (
+          <ConnectWalletButton className="tangle-cloud-wallet-action" />
+        )}
       </div>
     </header>
   );
