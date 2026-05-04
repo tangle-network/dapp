@@ -36867,14 +36867,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"tailwind-merge@npm:^2.6.0":
-  version: 2.6.0
-  resolution: "tailwind-merge@npm:2.6.0"
-  checksum: 10c0/fc8a5535524de9f4dacf1c16ab298581c7bb757d68a95faaf28942b1c555a619bba9d4c6726fe83986e44973b315410c1a5226e5354c30ba82353bd6d2288fa5
-  languageName: node
-  linkType: hard
-
-"tailwind-merge@npm:^3.0.2":
+"tailwind-merge@npm:^3.0.2, tailwind-merge@npm:^3.5.0":
   version: 3.5.0
   resolution: "tailwind-merge@npm:3.5.0"
   checksum: 10c0/4dc588f5b5296ba3f38e1ebb41f02b6d24a8c5bb45e44b33748c118fb4b5767dd0efc464431ca3e75404056b618b5f67bec3708158baa65fed8a2fc9201e0c53
@@ -37105,7 +37098,7 @@ __metadata:
     sonner: "npm:^2.0.7"
     storybook: "npm:^8.6.12"
     swr: "npm:^2.3.3"
-    tailwind-merge: "npm:^2.6.0"
+    tailwind-merge: "npm:^3.5.0"
     tailwind-scrollbar: "npm:^3.1.0"
     tailwindcss: "npm:^3.4.17"
     tailwindcss-animate: "npm:^1.0.7"

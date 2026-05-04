@@ -222,7 +222,7 @@
     "react-scan": "^0.3.3",
     "rollup": "^4.40.0",
     "storybook": "^8.6.12",
-    "tailwind-merge": "^2.6.0",
+    "tailwind-merge": "^3.5.0",
     "tailwind-scrollbar": "^3.1.0",
     "tailwindcss": "^3.4.17",
     "tailwindcss-animate": "^1.0.7",
