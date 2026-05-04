@@ -57,7 +57,7 @@ export const BlueprintVisual = ({
         <GeneratedBlueprintDiagram name={displayName} category={category} />
       )}
 
-      <div className="absolute bottom-4 right-4 grid h-10 w-10 shrink-0 place-items-center rounded-lg border border-white/15 bg-black/25 font-display font-extrabold text-white backdrop-blur">
+      <div className="tangle-cloud-visual-badge absolute bottom-4 right-4 grid h-10 w-10 shrink-0 place-items-center rounded-lg border border-white/20 bg-slate-950 font-display font-extrabold text-white shadow-[0_10px_24px_rgba(0,0,0,0.35)]">
         {displayName.slice(0, 1).toUpperCase()}
       </div>
     </div>

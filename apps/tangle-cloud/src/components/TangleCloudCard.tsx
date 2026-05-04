@@ -9,7 +9,7 @@ const TangleCloudCard: FC<TangleCloudCardProps> = ({ children, className }) => {
     <Card
       variant="sandbox"
       className={twMerge(
-        'relative z-0 w-full overflow-hidden transition-shadow duration-300 xl:w-1/2',
+        'relative z-0 w-full overflow-hidden transition-shadow duration-300',
         'border-border bg-card shadow-[var(--shadow-card)] hover:shadow-[var(--shadow-hover)]',
         className,
       )}

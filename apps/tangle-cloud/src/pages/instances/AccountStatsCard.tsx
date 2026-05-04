@@ -8,6 +8,7 @@ import {
 } from '@tangle-network/sandbox-ui/primitives';
 import { ExternalLinkLine } from '@tangle-network/icons';
 import { useAccount, useChainId } from 'wagmi';
+import ConnectWalletButton from '@tangle-network/tangle-shared-ui/components/ConnectWalletButton';
 import { chainsConfig } from '@tangle-network/dapp-config/chains';
 import useEvmOperatorInfo from '../../hooks/useEvmOperatorInfo';
 import useOperatorStats from '../../data/operators/useOperatorStats';
@@ -110,11 +111,65 @@ export const AccountStatsCard: FC<AccountStatsCardProps> = (props) => {
     return items;
   }, [operatorStatsData, userStatsData, isOperator]);
 
+  if (!accountAddress) {
+    return (
+      <Card
+        variant="sandbox"
+        className={twMerge(
+          'w-full border-border bg-card shadow-[var(--shadow-card)]',
+          rootProps?.className,
+        )}
+      >
+        <CardContent className="grid gap-6 p-5 md:grid-cols-[1fr_220px] md:p-6">
+          <div className="flex min-w-0 gap-4">
+            <Avatar className="h-12 w-12 border border-border bg-muted">
+              <AvatarFallback className="font-display font-bold text-foreground">
+                TC
+              </AvatarFallback>
+            </Avatar>
+
+            <div className="min-w-0">
+              <p className="font-semibold text-muted-foreground text-xs uppercase tracking-wider">
+                Account
+              </p>
+              <div className="mt-2 font-display font-bold text-foreground text-lg tracking-tight">
+                Wallet required
+              </div>
+              <p className="mt-2 max-w-xl text-muted-foreground text-sm leading-relaxed">
+                Connect to load deployed services, operator registrations, and
+                account-scoped lifecycle events.
+              </p>
+              <div className="mt-5">
+                <ConnectWalletButton className="tangle-cloud-wallet-action" />
+              </div>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-2 gap-2">
+            {['Services', 'Approvals', 'Jobs', 'Balances'].map((label) => (
+              <div
+                key={label}
+                className="rounded-lg border border-border bg-muted/30 p-3"
+              >
+                <p className="text-muted-foreground text-[10px] uppercase tracking-wider">
+                  {label}
+                </p>
+                <p className="mt-1 font-semibold text-foreground text-sm">
+                  Locked
+                </p>
+              </div>
+            ))}
+          </div>
+        </CardContent>
+      </Card>
+    );
+  }
+
   return (
     <Card
       variant="sandbox"
       className={twMerge(
-        'w-full border-border bg-card shadow-[var(--shadow-card)] xl:w-1/2',
+        'w-full border-border bg-card shadow-[var(--shadow-card)]',
         rootProps?.className,
       )}
     >
@@ -129,9 +184,9 @@ export const AccountStatsCard: FC<AccountStatsCardProps> = (props) => {
               </AvatarFallback>
             </Avatar>
             <div className="min-w-0">
-              <h2 className="truncate font-display font-bold text-foreground text-xl tracking-tight">
+              <div className="truncate font-display font-bold text-foreground text-lg tracking-tight">
                 {identityName}
-              </h2>
+              </div>
               <div className="mt-1 flex items-center gap-2 text-muted-foreground text-xs">
                 <span className="truncate font-mono">
                   {accountAddress ?? 'Connect a wallet to see your account'}

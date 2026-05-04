@@ -397,9 +397,9 @@ const DeployPage: FC = () => {
   return (
     <RequireWallet
       title="Connect wallet to create an instance"
-      description="The checkout uses your wallet to select operators, set callers, configure payment, and submit the service request transaction."
+      description="Connect to review operators, payment, permitted callers, and the service request transaction before anything is submitted."
       eyebrow="Instance checkout"
-      checks={['Select operators', 'Authorize payment', 'Submit request']}
+      checks={['Review operators', 'Confirm payment', 'Submit request']}
     >
       <div className="space-y-5">
         <Card className="overflow-hidden border-border bg-card p-6 shadow-[var(--shadow-card)]">
@@ -415,18 +415,49 @@ const DeployPage: FC = () => {
                 variant="body2"
                 className="mt-2 max-w-3xl text-muted-foreground"
               >
-                Choose operators, configure request arguments, pick a payment
-                method, and submit the on-chain service request.
+                Create a running service from this blueprint. The checkout keeps
+                the commitment explicit: operators, request arguments, payment,
+                permitted callers, and TTL are reviewed before the wallet
+                transaction.
               </Text>
             </div>
 
-            <div className="rounded-lg border border-border bg-muted/30 px-4 py-3">
-              <p className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
-                Blueprint ID
+            <div className="grid gap-2 rounded-lg border border-border bg-muted/30 p-3 sm:grid-cols-3 md:min-w-[420px]">
+              <CheckoutMetric label="Blueprint" value={id?.toString() ?? '-'} />
+              <CheckoutMetric
+                label="Operators"
+                value={(blueprintResult.operators?.length ?? 0).toString()}
+              />
+              <CheckoutMetric
+                label="Schema"
+                value={
+                  requestSchema?.hasRequestSchema
+                    ? `${requestSchema.parsedRequestSchema.length} args`
+                    : 'No args'
+                }
+              />
+            </div>
+          </div>
+        </Card>
+
+        <Card className="border-border bg-card p-4 shadow-[var(--shadow-card)]">
+          <div className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_320px] lg:items-center">
+            <div>
+              <p className="font-bold text-[10px] uppercase tracking-[0.2em] text-muted-foreground">
+                Review before wallet approval
               </p>
-              <p className="mt-1 font-mono text-sm text-foreground">
-                {id?.toString() ?? '-'}
-              </p>
+              <Text variant="body2" className="mt-2 text-muted-foreground">
+                Shielded credits keep service creation payment-neutral on-chain
+                until credit spend is attached to the resulting service or job
+                record. Token payment remains available when selected.
+              </Text>
+            </div>
+            <div className="grid grid-cols-2 gap-2">
+              <CheckoutMetric
+                label="Default payment"
+                value="Shielded credits"
+              />
+              <CheckoutMetric label="Default caller" value="Your wallet" />
             </div>
           </div>
         </Card>
@@ -440,7 +471,7 @@ const DeployPage: FC = () => {
             </ErrorMessage>
           )}
           <Button onClick={onDeployBlueprint} isLoading={serviceRequestPending}>
-            Deploy
+            Create instance
           </Button>
         </div>
       </div>
@@ -449,3 +480,12 @@ const DeployPage: FC = () => {
 };
 
 export default DeployPage;
+
+const CheckoutMetric = ({ label, value }: { label: string; value: string }) => (
+  <div className="rounded-md border border-border bg-muted/30 p-3">
+    <p className="font-semibold text-[10px] uppercase tracking-wider text-muted-foreground">
+      {label}
+    </p>
+    <p className="mt-1 truncate font-mono text-sm text-foreground">{value}</p>
+  </div>
+);

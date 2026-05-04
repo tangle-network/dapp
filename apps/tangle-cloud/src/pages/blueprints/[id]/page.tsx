@@ -107,13 +107,18 @@ const BlueprintDetailHero = ({
     blueprint.metadataVerification?.status === 'verified'
       ? 'Pinned source'
       : 'Chain-only source';
+  const canCreateInstance = operatorCount > 0;
+  const registerPath = `${PagePath.BLUEPRINTS}?register=${blueprint.id.toString()}`;
   const metadataItems = [
+    [
+      'Availability',
+      canCreateInstance ? 'Operators online' : 'Needs operators',
+    ],
+    ['Payment', 'Selected at checkout'],
+    ['Callers', 'Wallet-scoped by default'],
+    ['Source', metadataStatus],
     ['Blueprint ID', blueprint.id.toString()],
-    ['Publisher', blueprint.author],
-    ['Deployer', blueprint.deployer],
-    ['Metadata', metadataStatus],
-    ['Source', blueprint.metadataUri ?? 'Not published'],
-    ['Hash', blueprint.metadataHash ?? 'Not pinned'],
+    ['Publisher', shortenIdentity(blueprint.author)],
   ];
 
   return (
@@ -152,15 +157,37 @@ const BlueprintDetailHero = ({
                 'Deploy a service instance when operators are available, or register operator capacity for this blueprint.'}
             </p>
 
+            <div className="mt-6 grid gap-3 sm:grid-cols-3">
+              <LaunchFact
+                label="Instance path"
+                value={
+                  canCreateInstance
+                    ? 'Create a service request'
+                    : 'Operator capacity required'
+                }
+              />
+              <LaunchFact
+                label="Payment"
+                value="Shielded credits or token payment"
+              />
+              <LaunchFact label="Trust" value={metadataStatus} />
+            </div>
+
             <div className="mt-6 flex flex-wrap gap-3">
-              <Button variant="sandbox" size="lg" asChild>
-                <Link to={provisionPath}>Create instance</Link>
-              </Button>
+              {canCreateInstance ? (
+                <Button variant="sandbox" size="lg" asChild>
+                  <Link to={provisionPath}>Create instance</Link>
+                </Button>
+              ) : (
+                <Button variant="sandbox" size="lg" asChild>
+                  <Link to={registerPath}>Register operator capacity</Link>
+                </Button>
+              )}
               <Button variant="outline" size="lg" asChild>
-                <Link
-                  to={`${PagePath.BLUEPRINTS}?register=${blueprint.id.toString()}`}
-                >
-                  Register as operator
+                <Link to={canCreateInstance ? registerPath : provisionPath}>
+                  {canCreateInstance
+                    ? 'Register as operator'
+                    : 'Review checkout'}
                 </Link>
               </Button>
               {blueprint.githubUrl && (
@@ -184,10 +211,10 @@ const BlueprintDetailHero = ({
           <div className="flex items-center justify-between gap-3 border-border border-b pb-4">
             <div>
               <h2 className="font-display font-extrabold text-foreground text-xl">
-                Metadata
+                Launch facts
               </h2>
               <p className="mt-1 text-muted-foreground text-sm">
-                Indexed fields used by checkout and operator registration.
+                What matters before you create an instance or register capacity.
               </p>
             </div>
             {blueprint.websiteUrl && (
@@ -214,11 +241,33 @@ const BlueprintDetailHero = ({
               </div>
             ))}
           </dl>
+
+          <div className="mt-5 rounded-lg border border-border bg-muted/20 p-4">
+            <h3 className="font-display font-bold text-foreground text-base">
+              Before you commit
+            </h3>
+            <ul className="mt-3 space-y-2 text-muted-foreground text-sm">
+              <li>Operators execute the service instance.</li>
+              <li>
+                Checkout shows selected operators, callers, payment, and TTL.
+              </li>
+              <li>Wallet approval submits the on-chain service request.</li>
+            </ul>
+          </div>
         </CardContent>
       </Card>
     </section>
   );
 };
+
+const LaunchFact = ({ label, value }: { label: string; value: string }) => (
+  <div className="rounded-lg border border-border bg-muted/25 p-3">
+    <p className="font-semibold text-muted-foreground text-[10px] uppercase tracking-wider">
+      {label}
+    </p>
+    <p className="mt-1 text-foreground text-sm">{value}</p>
+  </div>
+);
 
 const RegisteredOperatorsPanel = ({
   operators,

@@ -179,13 +179,17 @@ const Sidebar: FC<Props> = ({ isExpandedByDefault, onExpandedChange }) => {
 const SidebarBrand = ({ isExpanded }: { isExpanded: boolean }) => (
   <Link
     to={PagePath.INSTANCES}
+    aria-label="Tangle Cloud"
     className={
       isExpanded
         ? 'mb-4 flex h-14 items-center gap-3 px-4 text-foreground'
         : 'flex h-14 items-center justify-center text-foreground'
     }
   >
-    <span className="grid h-9 w-9 place-items-center rounded-md transition-colors hover:bg-muted/50">
+    <span
+      aria-hidden="true"
+      className="grid h-9 w-9 place-items-center rounded-md transition-colors hover:bg-muted/50"
+    >
       <TangleKnot size={22} className="text-primary" />
     </span>
     {isExpanded && (
@@ -267,7 +271,7 @@ const SidebarLink = ({
     'group flex items-center gap-3 rounded-md text-sm font-semibold transition-colors',
     isExpanded ? 'min-h-11 justify-start px-3' : 'h-11 w-12 justify-center',
     isActive
-      ? 'bg-muted text-foreground'
+      ? 'bg-primary text-primary-foreground shadow-[var(--shadow-accent)]'
       : 'text-muted-foreground hover:bg-muted/60 hover:text-foreground',
   ].join(' ');
   const content = (
@@ -280,7 +284,12 @@ const SidebarLink = ({
   return (
     <div>
       {item.isInternal ? (
-        <Link to={item.href} className={className} onClick={onNavigate}>
+        <Link
+          to={item.href}
+          className={className}
+          aria-current={isActive ? 'page' : undefined}
+          onClick={onNavigate}
+        >
           {content}
         </Link>
       ) : (

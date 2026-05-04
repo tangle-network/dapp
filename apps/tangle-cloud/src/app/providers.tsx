@@ -4,7 +4,7 @@ import useLocalChainGuard from '@tangle-network/tangle-shared-ui/hooks/useLocalC
 import useNetworkSync from '@tangle-network/tangle-shared-ui/hooks/useNetworkSync';
 import { IndexerStatusProvider } from '@tangle-network/tangle-shared-ui/context/IndexerStatusContext';
 import { isLocalPreviewHost } from '@tangle-network/tangle-shared-ui/utils/localPreview';
-import { FC, type PropsWithChildren, useState } from 'react';
+import { FC, type PropsWithChildren, useEffect, useState } from 'react';
 import { WagmiProvider } from 'wagmi';
 import {
   ANVIL_LOCAL_NETWORK,
@@ -21,6 +21,27 @@ const NetworkSync: FC<PropsWithChildren> = ({ children }) => {
     targetChainId: ANVIL_LOCAL_NETWORK.evmChainId ?? 31337,
   });
   return children;
+};
+
+const ToastAccessibilityPatch = () => {
+  useEffect(() => {
+    const applyRole = () => {
+      document
+        .querySelectorAll('[aria-label="Notifications"]')
+        .forEach((element) => {
+          if (element instanceof HTMLElement && !element.getAttribute('role')) {
+            element.setAttribute('role', 'status');
+          }
+        });
+    };
+
+    applyRole();
+    const observer = new MutationObserver(applyRole);
+    observer.observe(document.body, { childList: true, subtree: true });
+    return () => observer.disconnect();
+  }, []);
+
+  return null;
 };
 
 const Providers: FC<PropsWithChildren> = ({ children }) => {
@@ -40,6 +61,7 @@ const Providers: FC<PropsWithChildren> = ({ children }) => {
       <QueryClientProvider client={queryClient}>
         <IndexerStatusProvider>
           <ToastProvider>
+            <ToastAccessibilityPatch />
             <NetworkSync>
               <PaymentProviders>{children}</PaymentProviders>
             </NetworkSync>

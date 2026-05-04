@@ -95,7 +95,7 @@ export const TangleCloudTable = <T extends RowData>({
         {hasTitle ? <TableTitle>{title}</TableTitle> : null}
         <TableStatus
           {...emptyTableProps}
-          title={emptyTableProps?.title ?? 'No data'}
+          title={emptyTableProps?.title ?? `No ${title.toLowerCase()} yet`}
           description={
             emptyTableProps?.description ?? 'There is no indexed data yet.'
           }
@@ -229,7 +229,9 @@ const TableShell = ({
 );
 
 const TableTitle = ({ children }: { children: React.ReactNode }) => (
-  <h2 className="font-display font-bold text-foreground text-xl">{children}</h2>
+  <div className="font-display font-bold text-foreground text-lg">
+    {children}
+  </div>
 );
 
 const TableStatus = ({
@@ -242,7 +244,7 @@ const TableStatus = ({
 }: TableStatusProps) => (
   <div
     className={twMerge(
-      'flex min-h-44 flex-col items-center justify-center rounded-lg border border-dashed border-border bg-muted/30 p-8 text-center',
+      'flex min-h-56 flex-col items-center justify-center rounded-xl border border-dashed border-border bg-muted/30 p-8 text-center',
       className,
     )}
   >
