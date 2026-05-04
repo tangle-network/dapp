@@ -16,6 +16,7 @@ import type { Blueprint } from '@tangle-network/tangle-shared-ui/types/blueprint
 import useParamWithSchema from '@tangle-network/tangle-shared-ui/hooks/useParamWithSchema';
 import { z } from 'zod';
 import BlueprintAppLandingPage from '../../../blueprintApps/components/BlueprintAppLandingPage';
+import BlueprintHostCard from '../../../components/blueprintApps/BlueprintHostCard';
 import { renderCuratedBlueprintLanding } from '../../../blueprintApps/modules';
 import { getBlueprintAppBySlug } from '../../../blueprintApps/registry';
 import { getBlueprintPath } from '../../../blueprintApps/resolver';
@@ -72,6 +73,32 @@ const Page: FC = () => {
       resolvedView.tier === 'external-app'
     ) {
       return <Navigate to={getBlueprintPath(resolvedView)} replace />;
+    }
+
+    // Declarative tier: render the per-app surface manifest (theme, overview
+    // cards, actions, resource views, modules) instead of the protocol-generic
+    // hero. Falls back to BlueprintDetailHero whenever the manifest is absent
+    // or shallow (no actions and no resourceViews populated).
+    const manifest = blueprintDetails.details.blueprintUi;
+    const hasDeclarativeSurface =
+      resolvedView.tier === 'declarative' &&
+      manifest != null &&
+      ((manifest.actions?.length ?? 0) > 0 ||
+        (manifest.resourceViews?.length ?? 0) > 0 ||
+        (manifest.overviewCards?.length ?? 0) > 0);
+
+    if (hasDeclarativeSurface) {
+      return (
+        <div className="space-y-8">
+          <BlueprintHostCard
+            blueprint={blueprintDetails.details}
+            operatorCount={blueprintDetails.operators.length}
+            provisionPath={`/blueprints/${numericId.toString()}/deploy`}
+          />
+
+          <RegisteredOperatorsPanel operators={blueprintDetails.operators} />
+        </div>
+      );
     }
 
     return (
