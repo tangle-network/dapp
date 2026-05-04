@@ -20,13 +20,13 @@ End-state acceptance:
 
 ## Layered architecture
 
-| Layer | Repo | Role in app store |
-| --- | --- | --- |
-| Contracts | [tnt-core](https://github.com/tangle-network/tnt-core) | `MBSMRegistry` (versioned/pinned per blueprint), `ServicesApprovals` BLS+commitment paths (TEE attestation rides as `OperatorSecurityCommitment`), `AppRegistry` (publisher namespace + verified flag + per-app metadata pointer + version pin) — *AppRegistry is greenfield, not yet written* |
-| Sandbox runtime + TEE | [ai-agent-sandbox-blueprint](https://github.com/tangle-network/ai-agent-sandbox-blueprint) | Sidecar attestation, nonce binding, capability plumbing (`SIDECAR_CAPABILITIES`), runtime backends (Docker / Firecracker / TEE: AWS Nitro, Phala, GCP CC, Azure SKR, Direct TDX) — **TEE chain-of-trust shipped** |
-| Shared UI library | [blueprint-ui](https://github.com/tangle-network/blueprint-ui) | Chain/Web3 components, ABI exports, job utils, generic protocol surfaces — **needs npm publication** |
-| Sandbox UI library | `@tangle-network/sandbox-ui` (npm) | Sandbox-specific components — at v0.10.2 on npm; dApp pinned to ^0.6.1 (gap) |
-| Storefront | [dapp](https://github.com/tangle-network/dapp) (`apps/tangle-cloud/`) | Catalog, deploy checkout, instance lifecycle, earnings/rewards/operators surfaces; needs surface-driven app rendering |
+| Layer                 | Repo                                                                                       | Role in app store                                                                                                                                                                                                                                                                                     |
+| --------------------- | ------------------------------------------------------------------------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Contracts             | [tnt-core](https://github.com/tangle-network/tnt-core)                                     | `MBSMRegistry` (versioned/pinned per blueprint), `ServicesApprovals` BLS+commitment paths, `TeeAttestationCommitment` (operator commits to backend + measurement + nonce at approval). AppRegistry was scoped and **deferred to v2** until external publisher demand exists — see Workstream B below. |
+| Sandbox runtime + TEE | [ai-agent-sandbox-blueprint](https://github.com/tangle-network/ai-agent-sandbox-blueprint) | Sidecar attestation, nonce binding, capability plumbing (`SIDECAR_CAPABILITIES`), runtime backends (Docker / Firecracker / TEE: AWS Nitro, Phala, GCP CC, Azure SKR, Direct TDX) — **TEE chain-of-trust shipped**                                                                                     |
+| Shared UI library     | [blueprint-ui](https://github.com/tangle-network/blueprint-ui)                             | Chain/Web3 components, ABI exports, job utils, generic protocol surfaces — **needs npm publication**                                                                                                                                                                                                  |
+| Sandbox UI library    | `@tangle-network/sandbox-ui` (npm)                                                         | Sandbox-specific components — at v0.10.2 on npm; dApp pinned to ^0.6.1 (gap)                                                                                                                                                                                                                          |
+| Storefront            | [dapp](https://github.com/tangle-network/dapp) (`apps/tangle-cloud/`)                      | Catalog, deploy checkout, instance lifecycle, earnings/rewards/operators surfaces; needs surface-driven app rendering                                                                                                                                                                                 |
 
 ---
 
@@ -89,27 +89,32 @@ The tier-2 schema (PR-B) defines `theme`, `overviewCards`, `actions`, `resourceV
 
 ---
 
-## Workstream B — App registry contract (tnt-core, greenfield)
+## Workstream B — App registry contract (DEFERRED to v2)
 
-Today there's no on-chain enumeration of "apps" — only blueprints. Surface manifests live in IPFS metadata pointers; nothing binds publisher → namespace → app version.
+**Status: deferred.** A first draft of `AppRegistry.sol` shipped in [tnt-core PR #117](https://github.com/tangle-network/tnt-core/pull/117) was cut after review. The contract added publisher namespaces, version pinning, and governance-verified/revoke flags — all real concerns in a multi-publisher world, none of which the current single-publisher state actually exercises.
 
-### Acceptance
+### Why deferred
 
-- [ ] `src/registry/AppRegistry.sol` (new): publisher namespaces (one address → many namespaces), verified flag (governance-set), per-app metadata pointer (CID hash), version pin per `blueprintId`.
-- [ ] `publishApp(namespace, appId, blueprintId, metadataCid, version)` with publisher-only auth.
-- [ ] `pinAppVersion(appId, version)` — moves the live pointer; previous versions remain queryable for instance history.
-- [ ] `getApp(appId) → (namespace, blueprintId, livePointer, verified)` and `listApps(namespace)` views.
-- [ ] Events: `AppPublished`, `AppVersionPinned`, `AppVerified`, `AppRevoked`.
-- [ ] Storage uses dynamic-keyed mappings only (no fixed arrays); upgradable via MBSMRegistry pattern.
-- [ ] Foundry tests: publish, pin, revoke, namespace ownership transfer, verified-only filter, gas regression baseline.
-- [ ] Integration test: dApp catalog query returns published apps and renders their surface manifests.
-- [ ] Indexer coverage: Envio/Hasura schema for `AppPublished`/`AppVersionPinned` so dApp can paginate without on-chain calls.
+The customer experience does not depend on an on-chain `appId`. They click a catalog entry, configure args, submit a service request, watch operators provision instances. The catalog can be:
 
-### Risks
+- a frontend-curated list (today: `apps/tangle-cloud/src/blueprintApps/registry.ts`), OR
+- an on-chain registry the frontend reads.
 
-- **Namespace squatting**: governance-only verified flag mitigates surface-level abuse. Add namespace registration fee to deter unbounded squats.
-- **Metadata churn**: pin moves are visible. Add a `frozenAt` flag to mark immutable historical versions for audit/forensics.
-- **Cross-chain replay**: if AppRegistry deploys on multiple chains, namespaces must be chain-keyed or globally coordinated. Recommend single-chain (mainnet) registry with off-chain mirroring.
+Both produce the same customer flow. The on-chain version only adds value when:
+
+1. **Multiple third-party publishers exist** and need stable, non-squattable namespaces.
+2. **Permissionless app discovery** is required (frontend curation is unacceptable).
+3. **On-chain governance verify/revoke** must be verifiable independently of the frontend.
+
+None of those hold today. Tangle is effectively the only publisher. The frontend curated registry is sufficient and ships immediately.
+
+### Reactivation trigger
+
+Open this workstream when **at least 2 third-party publishers** request stable namespaces, OR when a partner integration requires permissionless on-chain app discovery (e.g., a third-party UI consuming the catalog without trusting Tangle's frontend).
+
+### What ships in the meantime
+
+Publisher branding + surface manifests continue to live in the blueprint's IPFS metadata URI, verified via the metadata-hash pinning that already shipped in #3158. New Tangle products land as new entries in the frontend curated registry.
 
 ---
 
@@ -189,30 +194,28 @@ Nitro is wired but untested against a real AWS account. Direct TDX is local-only
 └──────────┬─────────┘                    └────────────┬─────────────┘
            ▼                                            ▼
 ┌────────────────────┐                    ┌──────────────────────────┐
-│ B   AppRegistry    │ ◄──────────────────│ surface manifest stable  │
-│     contract       │                    └──────────────────────────┘
-└──────────┬─────────┘
-           ▼
-┌────────────────────┐
-│ C   TEE commitment │ ◄── tnt-core PR #115 must merge first (commitment plumbing)
-│     in approvals   │
+│ C   TEE commitment │ ◄──────────────────│ surface manifest stable  │
+│     in approvals   │                    └──────────────────────────┘
+│  (PR #117)         │
 └──────────┬─────────┘
            ▼
 ┌────────────────────┐
 │ E   Production TEE │
 │     validation     │
 └────────────────────┘
+
+(B  AppRegistry  ─── deferred to v2; gated on external publisher demand)
 ```
 
-| Workstream | Blocked by | Effort | Owner | Target |
-| --- | --- | --- | --- | --- |
-| PR-A (cross-page UX) | — | shipping today | drew | this week |
-| PR-B (tier-2 schema) | — | shipping today | drew | this week |
-| A3 surface rendering | PR-B | 5–7 d | TBD | +2 w |
-| D npm publish + sandbox-ui upgrade | — | 2–3 d | TBD | +1 w |
-| B AppRegistry contract | PR-B + tnt-core #115 | 7–10 d | TBD | +3 w |
-| C TEE commitment | tnt-core #115 + B | 7–10 d | TBD | +5 w |
-| E production TEE validation | C | 5–7 d | TBD | +6 w |
+| Workstream                                                                        | Blocked by                | Effort             | Owner | Target |
+| --------------------------------------------------------------------------------- | ------------------------- | ------------------ | ----- | ------ |
+| PR-A (cross-page UX)                                                              | —                         | shipped            | drew  | done   |
+| PR-B (tier-2 schema)                                                              | —                         | shipped            | drew  | done   |
+| A3 surface rendering                                                              | PR-B                      | 5–7 d              | TBD   | +2 w   |
+| D npm publish + sandbox-ui upgrade                                                | —                         | shipped (PR #3164) | drew  | done   |
+| C TEE commitment ([PR #117](https://github.com/tangle-network/tnt-core/pull/117)) | tnt-core #115 (merged)    | shipped            | drew  | done   |
+| E production TEE validation                                                       | C                         | 5–7 d              | TBD   | +6 w   |
+| **B AppRegistry contract**                                                        | external publisher demand | **deferred**       | —     | v2     |
 
 ---
 
@@ -235,18 +238,18 @@ Per `docs/harness-engineering-spec.md` and `docs/launch-readiness-board.csv`:
 
 ## Risk register (top 10)
 
-| # | Risk | Severity | Mitigation |
-| --- | --- | --- | --- |
-| 1 | Schema drift between dApp render and on-chain manifest | High | Pin `blueprintUi.schemaVersion`; reject unknown majors; emit `SchemaMismatch` event |
-| 2 | Surface XSS via author-controlled labels | High | Plain-text only; URL allowlist; CSP review |
-| 3 | TEE root-CA rotation breaks live deploys | High | Backend root-CA setter behind governance; runbook + alerting |
-| 4 | DCAP verifier gas blow-up | Medium | Precompile or off-chain verify with on-chain anchor |
-| 5 | Namespace squatting in AppRegistry | Medium | Verified flag + small registration fee + governance revoke |
-| 6 | sandbox-ui 0.6 → 0.10 prop breakage in dApp | Medium | Adapter layer + visual regression run before merge |
-| 7 | Indexer schema lag for new events | Medium | Envio schema PR coupled to contract PR; CI asserts both ship together |
-| 8 | Operator UX divergence (operator vs customer surfaces) | Medium | One source-of-truth manifest, two render modes; snapshot parity tests |
-| 9 | Auth-path GC perf at scale (22.8 µs @ 10k) | Low | Lazy-GC threshold + bench regression gate (workstream E) |
-| 10 | Direct TDX hard-rejected leaves blueprints stranded | Low | dApp-level error explaining; suggest Phala/Nitro alternative path |
+| #   | Risk                                                   | Severity | Mitigation                                                                          |
+| --- | ------------------------------------------------------ | -------- | ----------------------------------------------------------------------------------- |
+| 1   | Schema drift between dApp render and on-chain manifest | High     | Pin `blueprintUi.schemaVersion`; reject unknown majors; emit `SchemaMismatch` event |
+| 2   | Surface XSS via author-controlled labels               | High     | Plain-text only; URL allowlist; CSP review                                          |
+| 3   | TEE root-CA rotation breaks live deploys               | High     | Backend root-CA setter behind governance; runbook + alerting                        |
+| 4   | DCAP verifier gas blow-up                              | Medium   | Precompile or off-chain verify with on-chain anchor                                 |
+| 5   | Namespace squatting if AppRegistry ships prematurely   | Medium   | Workstream B is deferred; revisit once external publisher demand exists             |
+| 6   | sandbox-ui 0.6 → 0.10 prop breakage in dApp            | Medium   | Adapter layer + visual regression run before merge                                  |
+| 7   | Indexer schema lag for new events                      | Medium   | Envio schema PR coupled to contract PR; CI asserts both ship together               |
+| 8   | Operator UX divergence (operator vs customer surfaces) | Medium   | One source-of-truth manifest, two render modes; snapshot parity tests               |
+| 9   | Auth-path GC perf at scale (22.8 µs @ 10k)             | Low      | Lazy-GC threshold + bench regression gate (workstream E)                            |
+| 10  | Direct TDX hard-rejected leaves blueprints stranded    | Low      | dApp-level error explaining; suggest Phala/Nitro alternative path                   |
 
 ---
 
@@ -254,20 +257,22 @@ Per `docs/harness-engineering-spec.md` and `docs/launch-readiness-board.csv`:
 
 The program is done when **all of the following are true** simultaneously:
 
-1. AppRegistry deployed on mainnet with at least one verified publisher (Tangle).
-2. ≥ 5 published apps in the curated catalog, each with a non-trivial surface manifest.
-3. TEE-required deploy + attestation reject paths covered in wallet-flow harness as critical FLOW IDs and consistently green.
-4. `@tangle-network/blueprint-ui` and `@tangle-network/sandbox-ui` on npm; dApp `package.json` is tarball-free.
-5. Real AWS Nitro and Phala production deploys validated end-to-end with documented runbooks.
-6. Auth-path bench regression gate passes (`resolve_bearer` < 1 µs @ 10k sessions).
-7. `docs/launch-readiness-board.csv` shows green for all `FLOW-APP-*` IDs and all critical FLOW IDs.
-8. Operator-facing app registration mirrors customer-facing app deploy 1:1 in surface coverage.
+1. ≥ 5 apps in the curated catalog (frontend registry), each with a non-trivial surface manifest pinned via blueprint metadata hash.
+2. TEE-required deploy + attestation reject paths covered in wallet-flow harness as critical FLOW IDs and consistently green.
+3. `@tangle-network/blueprint-ui` and `@tangle-network/sandbox-ui` on npm; dApp `package.json` is tarball-free.
+4. Real AWS Nitro and Phala production deploys validated end-to-end with documented runbooks.
+5. Auth-path bench regression gate passes (`resolve_bearer` < 1 µs @ 10k sessions).
+6. `docs/launch-readiness-board.csv` shows green for all `FLOW-APP-*` IDs and all critical FLOW IDs.
+7. Operator-facing app registration mirrors customer-facing app deploy 1:1 in surface coverage.
+
+AppRegistry deployment is **NOT** a v1 done predicate. It activates as a v2 workstream once external publisher demand justifies the on-chain surface.
 
 ---
 
 ## What's NOT in scope (deferred)
 
+- **AppRegistry contract** — deferred to v2 (Workstream B). Frontend curated registry covers v1.
 - Marketplace-style discovery features (rankings, reviews, install counts) — phase 2.
-- Cross-chain AppRegistry — single-chain mainnet authoritative, others mirror.
+- Cross-chain AppRegistry — implied deferred along with AppRegistry itself.
 - Author monetization splits — orthogonal to publishing primitives; tracked separately.
 - Direct TDX DCAP support — until upstream tooling matures, hard-rejected.
