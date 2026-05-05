@@ -1057,7 +1057,7 @@ const ABI = [
       },
     ],
     outputs: [],
-    stateMutability: 'nonpayable',
+    stateMutability: 'payable',
   },
   {
     type: 'function',
@@ -1113,6 +1113,19 @@ const ABI = [
         internalType: 'uint256',
       },
     ],
+    stateMutability: 'nonpayable',
+  },
+  {
+    type: 'function',
+    name: 'expireServiceRequest',
+    inputs: [
+      {
+        name: 'requestId',
+        type: 'uint64',
+        internalType: 'uint64',
+      },
+    ],
+    outputs: [],
     stateMutability: 'nonpayable',
   },
   {
@@ -2459,6 +2472,11 @@ const ABI = [
             internalType: 'bool',
           },
           {
+            name: 'activated',
+            type: 'bool',
+            internalType: 'bool',
+          },
+          {
             name: 'confidentiality',
             type: 'uint8',
             internalType: 'enum Types.ConfidentialityPolicy',
@@ -2780,6 +2798,26 @@ const ABI = [
             name: 'disputeReason',
             type: 'string',
             internalType: 'string',
+          },
+          {
+            name: 'disputer',
+            type: 'address',
+            internalType: 'address',
+          },
+          {
+            name: 'disputeBond',
+            type: 'uint256',
+            internalType: 'uint256',
+          },
+          {
+            name: 'disputedAt',
+            type: 'uint64',
+            internalType: 'uint64',
+          },
+          {
+            name: 'disputeDeadline',
+            type: 'uint64',
+            internalType: 'uint64',
           },
         ],
       },
@@ -3731,6 +3769,21 @@ const ABI = [
       },
       {
         name: 'maxSlashBps',
+        type: 'uint16',
+        internalType: 'uint16',
+      },
+      {
+        name: 'disputeResolutionDeadline',
+        type: 'uint64',
+        internalType: 'uint64',
+      },
+      {
+        name: 'disputeBond',
+        type: 'uint256',
+        internalType: 'uint256',
+      },
+      {
+        name: 'maxPendingSlashesPerOperator',
         type: 'uint16',
         internalType: 'uint16',
       },
