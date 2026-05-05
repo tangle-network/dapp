@@ -1,6 +1,6 @@
 import { renderHook } from '@testing-library/react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { useServiceApproveTx } from './useServiceApproveTx';
+import { TeeBackend, useServiceApproveTx } from './useServiceApproveTx';
 
 const { mockUseChainId, mockGetContractsByChainId, mockUseContractWrite } =
   vi.hoisted(() => ({
@@ -120,7 +120,7 @@ describe('useServiceApproveTx', () => {
     const blsPubkey = [1n, 2n, 3n, 4n] as const;
     const blsPopSignature = [5n, 6n] as const;
     const tee = {
-      backend: 2,
+      backend: TeeBackend.AwsNitro,
       expectedMeasurement:
         '0x1111111111111111111111111111111111111111111111111111111111111111' as const,
       nonceBinding:
