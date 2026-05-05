@@ -18,10 +18,24 @@ import type { ContractSecurityCommitment } from '../../types';
 
 export { TxStatus };
 
+/**
+ * Vendor-mediated TEE backends accepted by `approveService`. The on-chain enum
+ * also defines `Unset = 0` (rejected as a misconfiguration sentinel) and
+ * `DirectTdx = 5` (rejected — vendor-mediated backends only). We omit both
+ * here so the type system makes invalid backends unrepresentable.
+ */
+export const TeeBackend = {
+  Phala: 1,
+  AwsNitro: 2,
+  GcpConfidential: 3,
+  AzureSkr: 4,
+} as const;
+
+export type TeeBackendValue = (typeof TeeBackend)[keyof typeof TeeBackend];
+
 /** A TEE attestation commitment matching `Types.TeeAttestationCommitment`. */
 export interface TeeAttestationCommitment {
-  /** Backend enum index — Unset=0, Phala=1, AwsNitro=2, GcpConfidential=3, AzureSkr=4, DirectTdx=5 (rejected on-chain). */
-  backend: number;
+  backend: TeeBackendValue;
   expectedMeasurement: `0x${string}`;
   /** Must equal `teeNonceFor(requestId)` exposed by the Tangle contract. */
   nonceBinding: `0x${string}`;
