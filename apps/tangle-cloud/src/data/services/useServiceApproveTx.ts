@@ -1,9 +1,10 @@
 /**
  * EVM hook for approving a service request via the Tangle contract.
  *
- * Supports two approval modes:
- * - Simple approval: When no custom security requirements exist
- * - Approval with commitments: When custom asset requirements are defined
+ * Uses the unified `approveService(ApprovalParams)` entrypoint introduced in
+ * tnt-core PR #119. Optional capabilities (security commitments, BLS pubkey,
+ * TEE attestation commitments) are opt-in via empty/zero fields on the params
+ * struct.
  */
 
 import useContractWrite, {
@@ -17,67 +18,52 @@ import type { ContractSecurityCommitment } from '../../types';
 
 export { TxStatus };
 
-/**
- * Parameters for simple approval (no custom requirements)
- */
-export interface SimpleApproveParams {
-  requestId: bigint;
-  stakingPercent: number;
-  /** TNT exposure in basis points (0-10000). When > 0, calls the 3-arg approveService overload. */
-  tntExposureBps?: number;
+/** A TEE attestation commitment matching `Types.TeeAttestationCommitment`. */
+export interface TeeAttestationCommitment {
+  /** Backend enum index — Unset=0, Phala=1, AwsNitro=2, GcpConfidential=3, AzureSkr=4, DirectTdx=5 (rejected on-chain). */
+  backend: number;
+  expectedMeasurement: `0x${string}`;
+  /** Must equal `teeNonceFor(requestId)` exposed by the Tangle contract. */
+  nonceBinding: `0x${string}`;
+  /** Unix seconds; `0` means no expiry. Must be ≤ now + 90 days when non-zero. */
+  expiresAt: bigint;
 }
 
 /**
- * Parameters for approval with commitments (custom requirements)
+ * Parameters for `useServiceApproveTx`. All optional fields default to empty
+ * arrays / zero values, which the contract treats as opt-out.
  */
-export interface CommitmentsApproveParams {
+export interface ServiceApproveParams {
   requestId: bigint;
-  securityCommitments: ContractSecurityCommitment[];
+  /** When omitted, approval implies no per-asset commitments (must be acceptable for the request). */
+  securityCommitments?: ContractSecurityCommitment[];
+  /** BLS G2 pubkey [x0, x1, y0, y1]. Default `[0,0,0,0]` opts out of BLS aggregation. */
+  blsPubkey?: readonly [bigint, bigint, bigint, bigint];
+  /** BLS G1 PoP signature; only validated when `blsPubkey` is non-zero. */
+  blsPopSignature?: readonly [bigint, bigint];
+  /** TEE attestation profiles. Default `[]` opts out of TEE binding for this approval. */
+  teeCommitments?: TeeAttestationCommitment[];
 }
 
-export type ServiceApproveParams =
-  | SimpleApproveParams
-  | CommitmentsApproveParams;
-
-/**
- * Options for the useServiceApproveTx hook
- */
 export interface UseServiceApproveTxOptions {
   onSuccess?: () => void;
   onError?: (error: Error) => void;
 }
 
-/**
- * Type guard to check if params include security commitments
- */
-const hasSecurityCommitments = (
-  params: ServiceApproveParams,
-): params is CommitmentsApproveParams => {
-  return (
-    'securityCommitments' in params &&
-    Array.isArray(params.securityCommitments) &&
-    params.securityCommitments.length > 0
-  );
-};
+const ZERO_BLS_PUBKEY = [0n, 0n, 0n, 0n] as const;
+const ZERO_BLS_POP = [0n, 0n] as const;
 
 /**
- * Hook for approving a service request.
- *
- * Uses the appropriate contract method based on provided parameters:
- * - `approveService` when only stakingPercent is provided (simple approval)
- * - `approveServiceWithCommitments` when securityCommitments are provided
+ * Hook for approving a service request via the unified `approveService` entrypoint.
  *
  * @example
  * ```tsx
- * const { execute, status, error } = useServiceApproveTx();
+ * const { execute } = useServiceApproveTx();
  *
- * // Simple approval (no custom requirements)
- * await execute({
- *   requestId: 1n,
- *   stakingPercent: 50,
- * });
+ * // Minimal approval (no commitments, no BLS, no TEE).
+ * await execute({ requestId: 1n });
  *
- * // Approval with commitments (custom requirements)
+ * // With per-asset security commitments.
  * await execute({
  *   requestId: 1n,
  *   securityCommitments: [
@@ -102,51 +88,33 @@ export const useServiceApproveTx = (options?: UseServiceApproveTxOptions) => {
         return null;
       }
 
-      // Check if we have security commitments (commitments mode)
-      if (hasSecurityCommitments(params)) {
-        // Format commitments for the contract
-        const commitments = params.securityCommitments.map((c) => ({
-          asset: {
-            kind: c.asset.kind,
-            token: c.asset.token,
-          },
+      const securityCommitments = (params.securityCommitments ?? []).map(
+        (c) => ({
+          asset: { kind: c.asset.kind, token: c.asset.token },
           exposureBps: c.exposureBps,
-        }));
-
-        return {
-          address: contracts.tangle,
-          abi: TANGLE_ABI,
-          functionName: 'approveServiceWithCommitments' as const,
-          args: [params.requestId, commitments] as const,
-        };
-      }
-
-      // Simple approval mode
-      const simpleParams = params as SimpleApproveParams;
-      const stakingPercent = Math.min(
-        100,
-        Math.max(0, simpleParams.stakingPercent ?? 0),
+        }),
       );
 
-      // When tntExposureBps is set, use the 3-arg overload
-      if (simpleParams.tntExposureBps && simpleParams.tntExposureBps > 0) {
-        return {
-          address: contracts.tangle,
-          abi: TANGLE_ABI,
-          functionName: 'approveService' as const,
-          args: [
-            params.requestId,
-            stakingPercent,
-            simpleParams.tntExposureBps,
-          ] as const,
-        };
-      }
+      const teeCommitments = (params.teeCommitments ?? []).map((c) => ({
+        backend: c.backend,
+        expectedMeasurement: c.expectedMeasurement,
+        nonceBinding: c.nonceBinding,
+        expiresAt: c.expiresAt,
+      }));
+
+      const approvalParams = {
+        requestId: params.requestId,
+        securityCommitments,
+        blsPubkey: params.blsPubkey ?? ZERO_BLS_PUBKEY,
+        blsPopSignature: params.blsPopSignature ?? ZERO_BLS_POP,
+        teeCommitments,
+      } as const;
 
       return {
         address: contracts.tangle,
         abi: TANGLE_ABI,
         functionName: 'approveService' as const,
-        args: [params.requestId, stakingPercent] as const,
+        args: [approvalParams] as const,
       };
     },
     {
@@ -154,23 +122,20 @@ export const useServiceApproveTx = (options?: UseServiceApproveTxOptions) => {
       txDetails: (params) => {
         const details = new Map<string, string>();
         details.set('Request ID', params.requestId.toString());
-
-        if (hasSecurityCommitments(params)) {
-          details.set(
-            'Commitments',
-            `${params.securityCommitments.length} asset(s)`,
-          );
-        } else {
-          const simpleParams = params as SimpleApproveParams;
-          details.set('Staking Percent', `${simpleParams.stakingPercent}%`);
-          if (simpleParams.tntExposureBps && simpleParams.tntExposureBps > 0) {
-            details.set(
-              'TNT Exposure',
-              `${simpleParams.tntExposureBps / 100}%`,
-            );
-          }
+        const commitmentCount = params.securityCommitments?.length ?? 0;
+        if (commitmentCount > 0) {
+          details.set('Commitments', `${commitmentCount} asset(s)`);
         }
-
+        const teeCount = params.teeCommitments?.length ?? 0;
+        if (teeCount > 0) {
+          details.set('TEE Profiles', `${teeCount}`);
+        }
+        const blsActive = (params.blsPubkey ?? ZERO_BLS_PUBKEY).some(
+          (v) => v !== 0n,
+        );
+        if (blsActive) {
+          details.set('BLS', 'registered');
+        }
         return details;
       },
       getSuccessMessage: (params) =>

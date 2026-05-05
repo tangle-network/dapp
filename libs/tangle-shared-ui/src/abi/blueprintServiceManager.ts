@@ -179,6 +179,30 @@ const ABI = [
   },
   {
     type: 'function',
+    name: 'getNonPaymentTerminationPolicy',
+    inputs: [
+      {
+        name: 'serviceId',
+        type: 'uint64',
+        internalType: 'uint64',
+      },
+    ],
+    outputs: [
+      {
+        name: 'useDefault',
+        type: 'bool',
+        internalType: 'bool',
+      },
+      {
+        name: 'graceIntervals',
+        type: 'uint64',
+        internalType: 'uint64',
+      },
+    ],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
     name: 'getRequiredResultCount',
     inputs: [
       {

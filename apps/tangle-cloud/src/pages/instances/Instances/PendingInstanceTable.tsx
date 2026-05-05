@@ -398,18 +398,19 @@ export const PendingInstanceTable: FC<PendingInstanceTableProps> = ({
     async (data: ApprovalConfirmationFormFields) => {
       if (!selectedRequest || !approveServiceRequest) return;
 
-      if (data.securityCommitments && data.securityCommitments.length > 0) {
-        await approveServiceRequest({
-          requestId: selectedRequest.requestId,
-          securityCommitments: data.securityCommitments,
-        });
-      } else {
-        await approveServiceRequest({
-          requestId: selectedRequest.requestId,
-          stakingPercent: data.stakingPercent ?? 0,
-          tntExposureBps: data.tntExposureBps,
-        });
-      }
+      // The unified `approveService` entrypoint derives the staking percent
+      // on-chain from `securityCommitments[0].exposureBps` (or defaults to 100%
+      // when no commitments are supplied). The form's `stakingPercent` /
+      // `tntExposureBps` inputs are no longer wired to a separate calldata
+      // field — operators that want to pin a non-default exposure must do so
+      // through `securityCommitments`.
+      await approveServiceRequest({
+        requestId: selectedRequest.requestId,
+        securityCommitments:
+          data.securityCommitments && data.securityCommitments.length > 0
+            ? data.securityCommitments
+            : undefined,
+      });
     },
     [selectedRequest, approveServiceRequest],
   );
