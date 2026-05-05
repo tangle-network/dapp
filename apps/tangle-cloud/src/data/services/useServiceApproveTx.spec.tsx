@@ -30,6 +30,8 @@ vi.mock('@tangle-network/tangle-shared-ui/hooks/useContractWrite', () => ({
 
 describe('useServiceApproveTx', () => {
   const activeAddress = '0xabc0000000000000000000000000000000000000';
+  const ZERO_BLS_PUBKEY = [0n, 0n, 0n, 0n] as const;
+  const ZERO_BLS_POP = [0n, 0n] as const;
 
   beforeEach(() => {
     vi.clearAllMocks();
@@ -40,17 +42,13 @@ describe('useServiceApproveTx', () => {
     });
   });
 
-  it('uses approveService and clamps staking percent bounds for simple approvals', async () => {
-    let capturedFactory:
-      | ((params: any, activeAddress: any) => Promise<any>)
-      | undefined;
-
+  const captureFactory = (): {
+    factory: () => (params: any, addr: any) => Promise<any>;
+  } => {
+    let captured: ((params: any, addr: any) => Promise<any>) | undefined;
     mockUseContractWrite.mockImplementation(
-      (
-        _abi: unknown,
-        factory: (params: any, activeAddress: any) => Promise<any>,
-      ) => {
-        capturedFactory = factory;
+      (_abi: unknown, factory: (params: any, addr: any) => Promise<any>) => {
+        captured = factory;
         return {
           execute: vi.fn(),
           status: 'NOT_YET_INITIATED',
@@ -62,58 +60,34 @@ describe('useServiceApproveTx', () => {
         };
       },
     );
-
     renderHook(() => useServiceApproveTx());
+    return {
+      factory: () => {
+        if (!captured) throw new Error('factory not captured');
+        return captured;
+      },
+    };
+  };
 
-    const clampedLow = await capturedFactory?.(
+  it('builds the unified ApprovalParams with empty optional fields when only requestId is given', async () => {
+    const factory = captureFactory().factory();
+    const config = await factory({ requestId: 1n }, activeAddress);
+
+    expect(config.functionName).toBe('approveService');
+    expect(config.args).toEqual([
       {
         requestId: 1n,
-        stakingPercent: -5,
+        securityCommitments: [],
+        blsPubkey: ZERO_BLS_PUBKEY,
+        blsPopSignature: ZERO_BLS_POP,
+        teeCommitments: [],
       },
-      activeAddress,
-    );
-
-    expect(clampedLow.functionName).toBe('approveService');
-    expect(clampedLow.args).toEqual([1n, 0]);
-
-    const clampedHigh = await capturedFactory?.(
-      {
-        requestId: 2n,
-        stakingPercent: 150,
-      },
-      activeAddress,
-    );
-
-    expect(clampedHigh.functionName).toBe('approveService');
-    expect(clampedHigh.args).toEqual([2n, 100]);
+    ]);
   });
 
-  it('uses approveServiceWithCommitments when security commitments are provided', async () => {
-    let capturedFactory:
-      | ((params: any, activeAddress: any) => Promise<any>)
-      | undefined;
-
-    mockUseContractWrite.mockImplementation(
-      (
-        _abi: unknown,
-        factory: (params: any, activeAddress: any) => Promise<any>,
-      ) => {
-        capturedFactory = factory;
-        return {
-          execute: vi.fn(),
-          status: 'NOT_YET_INITIATED',
-          error: null,
-          reset: vi.fn(),
-          txHash: null,
-          isSuccess: false,
-          isLoading: false,
-        };
-      },
-    );
-
-    renderHook(() => useServiceApproveTx());
-
-    const config = await capturedFactory?.(
+  it('passes per-asset security commitments through unchanged', async () => {
+    const factory = captureFactory().factory();
+    const config = await factory(
       {
         requestId: 9n,
         securityCommitments: [
@@ -129,19 +103,48 @@ describe('useServiceApproveTx', () => {
       activeAddress,
     );
 
-    expect(config.functionName).toBe('approveServiceWithCommitments');
-    expect(config.args).toEqual([
-      9n,
-      [
-        {
-          asset: {
-            kind: 1,
-            token: '0x9999999999999999999999999999999999999999',
-          },
-          exposureBps: 7500,
+    expect(config.functionName).toBe('approveService');
+    expect(config.args[0].securityCommitments).toEqual([
+      {
+        asset: {
+          kind: 1,
+          token: '0x9999999999999999999999999999999999999999',
         },
-      ],
+        exposureBps: 7500,
+      },
     ]);
+  });
+
+  it('threads BLS and TEE fields when supplied (opt-in capabilities)', async () => {
+    const factory = captureFactory().factory();
+    const blsPubkey = [1n, 2n, 3n, 4n] as const;
+    const blsPopSignature = [5n, 6n] as const;
+    const tee = {
+      backend: 2,
+      expectedMeasurement:
+        '0x1111111111111111111111111111111111111111111111111111111111111111' as const,
+      nonceBinding:
+        '0x2222222222222222222222222222222222222222222222222222222222222222' as const,
+      expiresAt: 0n,
+    };
+
+    const config = await factory(
+      {
+        requestId: 3n,
+        blsPubkey,
+        blsPopSignature,
+        teeCommitments: [tee],
+      },
+      activeAddress,
+    );
+
+    expect(config.args[0]).toEqual({
+      requestId: 3n,
+      securityCommitments: [],
+      blsPubkey,
+      blsPopSignature,
+      teeCommitments: [tee],
+    });
   });
 
   it('returns null tx config when contracts are unavailable for the active chain', async () => {
@@ -149,38 +152,8 @@ describe('useServiceApproveTx', () => {
       throw new Error('unsupported chain');
     });
 
-    let capturedFactory:
-      | ((params: any, activeAddress: any) => Promise<any>)
-      | undefined;
-
-    mockUseContractWrite.mockImplementation(
-      (
-        _abi: unknown,
-        factory: (params: any, activeAddress: any) => Promise<any>,
-      ) => {
-        capturedFactory = factory;
-        return {
-          execute: vi.fn(),
-          status: 'NOT_YET_INITIATED',
-          error: null,
-          reset: vi.fn(),
-          txHash: null,
-          isSuccess: false,
-          isLoading: false,
-        };
-      },
-    );
-
-    renderHook(() => useServiceApproveTx());
-
-    const config = await capturedFactory?.(
-      {
-        requestId: 1n,
-        stakingPercent: 50,
-      },
-      activeAddress,
-    );
-
+    const factory = captureFactory().factory();
+    const config = await factory({ requestId: 1n }, activeAddress);
     expect(config).toBeNull();
   });
 });
