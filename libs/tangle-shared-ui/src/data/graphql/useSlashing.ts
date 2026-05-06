@@ -1162,7 +1162,7 @@ export const useProposeSlashTx = () => {
 export const useDisputeSlashTx = () => {
   const chainId = useChainId();
   const { data: slashConfig } = useSlashConfig();
-  const disputeBond = slashConfig?.disputeBond ?? 0n;
+  const disputeBond = slashConfig?.disputeBond ?? BigInt(0);
 
   const hook = useContractWrite(
     TANGLE_ABI,
@@ -1179,7 +1179,7 @@ export const useDisputeSlashTx = () => {
         abi: TANGLE_ABI,
         functionName: 'disputeSlash' as const,
         args: [params.slashId, params.reason] as const,
-        value: disputeBond > 0n ? disputeBond : undefined,
+        value: disputeBond > BigInt(0) ? disputeBond : undefined,
       };
     },
     {
