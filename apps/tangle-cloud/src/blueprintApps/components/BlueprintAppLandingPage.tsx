@@ -8,13 +8,21 @@ import type { FC } from 'react';
 import { Link } from 'react-router';
 import { resolveBlueprintAppView } from '../resolver';
 import type { BlueprintAppEntry } from '../types';
+import type { TangleBlueprintAppEntry } from '../manifest';
+import BlueprintAppFrameHost from './BlueprintAppFrameHost';
 
 type Props = {
-  entry: BlueprintAppEntry;
+  entry: BlueprintAppEntry | TangleBlueprintAppEntry;
 };
 
 const BlueprintAppLandingPage: FC<Props> = ({ entry }) => {
   const view = resolveBlueprintAppView(entry);
+  const iframeConfig =
+    'iframe' in entry &&
+    view.manifest.externalApp?.mode === 'iframe' &&
+    view.manifest.externalApp?.trust === 'trusted'
+      ? entry.iframe
+      : undefined;
   const provisionPath =
     view.blueprintId !== undefined
       ? `/blueprints/${view.blueprintId.toString()}/deploy`
@@ -78,6 +86,17 @@ const BlueprintAppLandingPage: FC<Props> = ({ entry }) => {
           </div>
         </CardContent>
       </Card>
+
+      {iframeConfig && (
+        <Card variant="sandbox" className="overflow-hidden rounded-3xl">
+          <CardContent className="p-0">
+            <BlueprintAppFrameHost
+              config={iframeConfig}
+              appDisplayName={view.manifest.displayName}
+            />
+          </CardContent>
+        </Card>
+      )}
 
       <div className="grid gap-5 md:grid-cols-3">
         <SummaryCard

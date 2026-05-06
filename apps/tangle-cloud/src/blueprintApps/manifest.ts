@@ -18,7 +18,14 @@ import {
   isTrustedExternalAppHost,
   sanitizeBlueprintSlugPart,
 } from './resolver';
-import { getPublisherVerificationForNamespace } from './policy';
+import {
+  getPublisherVerificationForNamespace,
+  isIframeAllowedHost,
+  isIframeAppsEnabled,
+  isIframeEligiblePublisher,
+} from './policy';
+import type { BlueprintIframeConfig } from './iframe/types';
+import { parseIframePolicy } from './iframe/manifest';
 
 const SURFACE_VALUES = new Set<BlueprintUiSurface>([
   'generic-overview',
@@ -165,13 +172,17 @@ function parsePermissions(
 function parseExternalApp(
   value: unknown,
   options: {
+    publisherNamespace?: string;
     publisherVerified: boolean;
     metadataVerified: boolean;
   },
-): BlueprintExternalAppConfig | undefined {
+): {
+  externalApp: BlueprintExternalAppConfig | undefined;
+  iframe: BlueprintIframeConfig | undefined;
+} {
   const record = readRecord(value);
   if (!record) {
-    return undefined;
+    return { externalApp: undefined, iframe: undefined };
   }
 
   const url = readString(record.url);
@@ -183,66 +194,104 @@ function parseExternalApp(
     !EXTERNAL_APP_MODE_VALUES.has(mode) ||
     !/^https:\/\//.test(url)
   ) {
-    return undefined;
+    return { externalApp: undefined, iframe: undefined };
   }
 
   let host: string;
   try {
     host = new URL(url).hostname;
   } catch {
-    return undefined;
+    return { externalApp: undefined, iframe: undefined };
   }
 
-  const trust = isTrustedExternalAppHost(host) ? 'trusted' : 'restricted';
   const requestedMode = mode as BlueprintExternalAppConfig['mode'];
+  const linkTrusted =
+    isTrustedExternalAppHost(host) &&
+    options.publisherVerified &&
+    options.metadataVerified;
+
+  const iframeAllowed =
+    isIframeAppsEnabled &&
+    requestedMode === 'iframe' &&
+    options.metadataVerified &&
+    options.publisherVerified &&
+    isIframeEligiblePublisher(options.publisherNamespace) &&
+    isIframeAllowedHost(host);
+
   const reasons: string[] = [];
-
-  if (requestedMode === 'iframe') {
-    reasons.push(
-      'Iframe embedding is disabled by policy; verified apps must open in a new tab.',
-    );
+  if (requestedMode === 'iframe' && !iframeAllowed) {
+    if (!isIframeAppsEnabled) {
+      reasons.push(
+        'Iframe embedding is currently disabled by ops kill switch.',
+      );
+    } else if (!isIframeEligiblePublisher(options.publisherNamespace)) {
+      reasons.push(
+        'Publisher is not on the iframe-eligible allowlist; embedded mode is restricted to first-party Tangle apps.',
+      );
+    } else if (!isIframeAllowedHost(host)) {
+      reasons.push(
+        'Host is not on the iframe-allowed suffix list; embedded mode is restricted to *.blueprint.tangle.tools / *.blueprint.tangle.sh.',
+      );
+    } else {
+      reasons.push(
+        'Iframe embedding is disabled by policy; verified apps must open in a new tab.',
+      );
+    }
   }
-
   if (!options.publisherVerified) {
     reasons.push(
       'Publisher is not verified for advanced external app handoff.',
     );
   }
-
   if (!options.metadataVerified) {
     reasons.push(
       'Metadata provenance was not verified against the onchain blueprint owner.',
     );
   }
 
+  // Parse iframe-specific safety policy (contract + chain allowlist) only
+  // when we are actually going to render iframe mode. The parser still runs
+  // when iframeAllowed=false so callers can introspect what would have been
+  // approved, but we never expose it on the manifest in that case.
+  const iframePolicy = iframeAllowed ? parseIframePolicy(record) : undefined;
+  const iframeRenderable =
+    iframeAllowed && iframePolicy !== undefined ? iframePolicy : undefined;
+
+  const effectiveMode: BlueprintExternalAppConfig['mode'] = iframeRenderable
+    ? 'iframe'
+    : 'link';
+  const effectiveTrust: BlueprintExternalAppConfig['trust'] =
+    iframeRenderable || linkTrusted ? 'trusted' : 'restricted';
+
   return {
-    url,
-    mode: 'link',
-    label: readString(record.label) ?? undefined,
-    host,
-    trust:
-      trust === 'trusted' &&
-      options.publisherVerified &&
-      options.metadataVerified
-        ? 'trusted'
-        : 'restricted',
-    ...(trust === 'restricted' ||
-    !options.publisherVerified ||
-    !options.metadataVerified ||
-    requestedMode === 'iframe'
-      ? {
-          reason:
-            reasons[0] ??
-            'External app host is not on the trusted Tangle allowlist yet.',
-        }
-      : {}),
+    externalApp: {
+      url,
+      mode: effectiveMode,
+      label: readString(record.label) ?? undefined,
+      host,
+      trust: effectiveTrust,
+      ...(effectiveTrust === 'restricted' || reasons.length > 0
+        ? {
+            reason:
+              reasons[0] ??
+              'External app host is not on the trusted Tangle allowlist yet.',
+          }
+        : {}),
+    },
+    iframe: iframeRenderable,
   };
 }
+
+// Local extension. Upstream BlueprintAppEntry lives in @tangle-network/blueprint-ui
+// and we don't want to widen its public surface for an iframe-only field.
+export type TangleBlueprintAppEntry = BlueprintAppEntry & {
+  iframe?: BlueprintIframeConfig;
+};
 
 export function buildBlueprintManifestFromMetadata(
   blueprint: BlueprintWithMetadata,
 ): {
-  entry: BlueprintAppEntry;
+  entry: TangleBlueprintAppEntry;
   source: 'generic' | 'metadata';
 } {
   const baseSurfaces: BlueprintUiSurface[] = [
@@ -311,11 +360,14 @@ export function buildBlueprintManifestFromMetadata(
       baseManifest.resources,
     ),
     permissions: parsePermissions(manifestRoot?.permissions),
-    externalApp: parseExternalApp(manifestRoot?.externalApp, {
-      publisherVerified,
-      metadataVerified,
-    }),
   };
+
+  const externalAppParsed = parseExternalApp(manifestRoot?.externalApp, {
+    publisherNamespace: publisherNamespace || undefined,
+    publisherVerified,
+    metadataVerified,
+  });
+  manifest.externalApp = externalAppParsed.externalApp;
 
   const allowDeclarativeTier =
     manifestRoot !== null &&
@@ -325,7 +377,14 @@ export function buildBlueprintManifestFromMetadata(
       ? manifest.externalApp
       : undefined;
 
-  const entry: BlueprintAppEntry = {
+  // Iframe config is exposed only when the externalApp survived gating with
+  // mode='iframe'. parseExternalApp already enforces that.
+  const iframeConfig =
+    trustedExternalApp?.mode === 'iframe'
+      ? externalAppParsed.iframe
+      : undefined;
+
+  const entry: TangleBlueprintAppEntry = {
     slug: normalizedRequestedSlug,
     canonicalSlug: normalizedRequestedSlug,
     blueprintId: blueprint.blueprintId,
@@ -346,6 +405,7 @@ export function buildBlueprintManifestFromMetadata(
           description:
             blueprint.metadataVerification?.reason ?? baseManifest.description,
         },
+    ...(iframeConfig ? { iframe: iframeConfig } : {}),
   };
 
   entry.canonicalSlug = buildCanonicalBlueprintSlug(entry);

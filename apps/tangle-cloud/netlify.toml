@@ -7,3 +7,28 @@
   # If the CHANGELOG.md file has changed, continue the build process,
   # Otherwise, stop the build process
   ignore = "[ \"$BRANCH\" != \"master\" ] && exit 1 || git diff --quiet $CACHED_COMMIT_REF $COMMIT_REF -- apps/tangle-cloud/CHANGELOG.md && exit 0 || exit 1"
+
+# ─── Security headers ───────────────────────────────────────────────────
+#
+# Scope is intentionally narrow: we set ONLY the headers needed to harden
+# the iframe blueprint-apps surface. We do NOT set default-src / script-src
+# / connect-src here because the dapp's wallet, RPC, and IPFS connections
+# require a permissive baseline that would be brittle to enumerate.
+#
+# - frame-src: allowlists which origins are permitted to be loaded as
+#   iframe sources by the dapp. Belt-and-braces with the in-app gating in
+#   policy.ts. Update both in tandem when adding a new iframe-eligible host.
+# - frame-ancestors 'self': prevents the dapp itself from being framed by
+#   an attacker page (clickjacking).
+# - Permissions-Policy: denies sensitive Web APIs by default for the dapp
+#   and any nested iframes. Each iframe element ALSO sets allow="" for
+#   defence-in-depth.
+# - X-Frame-Options: redundant with frame-ancestors on modern browsers but
+#   still required by some legacy mobile webviews.
+[[headers]]
+  for = "/*"
+  [headers.values]
+    Content-Security-Policy = "frame-src 'self' https://cloud.tangle.tools https://app.tangle.tools https://apps.tangle.tools https://*.blueprint.tangle.tools https://*.blueprint.tangle.sh; frame-ancestors 'self'"
+    Permissions-Policy = "camera=(), microphone=(), geolocation=(), payment=(), usb=(), bluetooth=(), accelerometer=(), gyroscope=(), magnetometer=(), midi=(), serial=()"
+    X-Frame-Options = "SAMEORIGIN"
+    Referrer-Policy = "strict-origin-when-cross-origin"
