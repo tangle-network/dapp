@@ -16,7 +16,7 @@ const useCurrentTypedChainId = (): number | undefined => {
         if (nextTypedChainId !== typedChainIdSub.getValue()) {
           typedChainIdSub.next(nextTypedChainId);
         }
-      }
+      },
     );
 
     return () => {

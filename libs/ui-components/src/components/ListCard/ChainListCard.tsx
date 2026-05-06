@@ -138,7 +138,7 @@ const ChainListCard = forwardRef<HTMLDivElement, ChainListCardProps>(
       }
 
       const currentActiveChainIndex = filteredChains.findIndex(
-        (chain) => chain.name === currentActiveChain
+        (chain) => chain.name === currentActiveChain,
       );
 
       if (currentActiveChainIndex === -1) {
