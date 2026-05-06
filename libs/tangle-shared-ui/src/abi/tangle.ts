@@ -2735,6 +2735,51 @@ const ABI = [
   },
   {
     type: 'function',
+    name: 'getSlashConfig',
+    inputs: [],
+    outputs: [
+      {
+        name: '',
+        type: 'tuple',
+        internalType: 'struct SlashingLib.SlashConfig',
+        components: [
+          {
+            name: 'disputeWindow',
+            type: 'uint64',
+            internalType: 'uint64',
+          },
+          {
+            name: 'instantSlashEnabled',
+            type: 'bool',
+            internalType: 'bool',
+          },
+          {
+            name: 'maxSlashBps',
+            type: 'uint16',
+            internalType: 'uint16',
+          },
+          {
+            name: 'disputeResolutionDeadline',
+            type: 'uint64',
+            internalType: 'uint64',
+          },
+          {
+            name: 'disputeBond',
+            type: 'uint256',
+            internalType: 'uint256',
+          },
+          {
+            name: 'maxPendingSlashesPerOperator',
+            type: 'uint16',
+            internalType: 'uint16',
+          },
+        ],
+      },
+    ],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
     name: 'getSlashProposal',
     inputs: [
       {
