@@ -1,3 +1,1 @@
-declare module 'circomlibjs';
-
-declare module 'snarkjs';
+export type WebbProviderType = 'web3' | 'polkadot' | 'solana';

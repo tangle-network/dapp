@@ -1,13 +1,17 @@
-import React, { cloneElement, useMemo } from 'react';
-import { Spinner } from './Spinner';
-import { useDynamicSVGImport } from './hooks/useDynamicSVGImport';
+import { cloneElement, useMemo } from 'react';
+import Spinner from './Spinner';
+import StatusIndicator from './StatusIndicator/StatusIndicator';
+import { StatusIndicatorProps } from './StatusIndicator/types';
+import { useDynamicSVGImport } from './useDynamicSVGImport';
 import { TokenIconBase } from './types';
 import { getIconSizeInPixel } from './utils';
 
-export const ChainIcon: React.FC<TokenIconBase & { isActive?: boolean }> = ({
-  isActive,
-  ...props
-}) => {
+export const ChainIcon: React.FC<
+  TokenIconBase & {
+    status?: StatusIndicatorProps['variant'];
+    spinnerSize?: TokenIconBase['size'];
+  }
+> = ({ status, spinnerSize, ...props }) => {
   const {
     className,
     name: nameProp,
@@ -17,10 +21,13 @@ export const ChainIcon: React.FC<TokenIconBase & { isActive?: boolean }> = ({
     ...restProps
   } = props;
 
-  const name = useMemo(
-    () => nameProp.toLowerCase().replaceAll(' ', '-'),
-    [nameProp]
-  );
+  const name = useMemo(() => {
+    const chainName = nameProp?.toLowerCase() || '';
+    if (chainName.includes('tangle') && !chainName.includes('transparent')) {
+      return 'tangle';
+    }
+    return chainName.replace(/\s/g, '-');
+  }, [nameProp]);
 
   const { svgElement, error, loading } = useDynamicSVGImport(name, {
     onCompleted,
@@ -33,22 +40,31 @@ export const ChainIcon: React.FC<TokenIconBase & { isActive?: boolean }> = ({
   }
 
   if (loading) {
-    return <Spinner {...props} />;
+    return <Spinner {...props} size={spinnerSize} />;
   }
 
   if (svgElement) {
     const sizeInPx = getIconSizeInPixel(size);
-    const props: React.SVGProps<SVGSVGElement> = {
+    const sizeInNumber = parseInt(sizeInPx);
+    const props: React.SVGProps<SVGElement> = {
       className,
-      width: parseInt(sizeInPx),
-      height: parseInt(sizeInPx),
+      width: sizeInNumber,
+      height: sizeInNumber,
       ...restProps,
     };
 
-    return isActive ? (
+    return typeof status !== 'undefined' ? (
       <div className="relative">
         {cloneElement(svgElement, props)}
-        <span className="inline-block absolute w-1.5 h-1.5 bg-green-50 dark:bg-green-40 rounded-full top-0 right-0" />
+        <StatusIndicator
+          variant={status}
+          size={sizeInNumber / 2}
+          className="absolute inline-block"
+          style={{
+            top: -(sizeInNumber / 4),
+            right: -(sizeInNumber / 4),
+          }}
+        />
       </div>
     ) : (
       cloneElement(svgElement, props)

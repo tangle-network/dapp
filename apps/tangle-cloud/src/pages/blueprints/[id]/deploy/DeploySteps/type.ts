@@ -1,0 +1,51 @@
+import { DeployBlueprintSchema } from '../../../../../utils/validations/deployBlueprint';
+import {
+  FieldErrors,
+  UseFormSetError,
+  UseFormClearErrors,
+  UseFormSetValue,
+  UseFormWatch,
+} from 'react-hook-form';
+import { Blueprint } from '@tangle-network/tangle-shared-ui/types/blueprint';
+import { VaultToken } from '@tangle-network/tangle-shared-ui/types';
+import { Address } from 'viem';
+import { BlueprintOperator } from '@tangle-network/tangle-shared-ui/data/graphql';
+
+export const LabelClassName = 'text-foreground font-medium';
+
+export type BaseDeployStepProps = {
+  errors?: FieldErrors<DeployBlueprintSchema>;
+  setValue: UseFormSetValue<DeployBlueprintSchema>;
+  watch: UseFormWatch<DeployBlueprintSchema>;
+  blueprint?: Blueprint;
+  blueprintOperators?: BlueprintOperator[];
+  requestSchemaFieldCount?: number;
+  hasRequestSchema?: boolean;
+  requestSchemaParseError?: string | null;
+  setError: UseFormSetError<DeployBlueprintSchema>;
+  clearErrors: UseFormClearErrors<DeployBlueprintSchema>;
+};
+
+export type BasicInformationStepProps = BaseDeployStepProps;
+
+export type SelectOperatorsStepProps = BaseDeployStepProps & {
+  minimumNativeSecurityRequirement: number;
+};
+
+export type AssetConfigurationStepProps = BaseDeployStepProps & {
+  minimumNativeSecurityRequirement: number;
+};
+
+export type RequestArgsConfigurationStepProps = BaseDeployStepProps;
+
+export type PaymentStepProps = BaseDeployStepProps;
+
+export type OperatorSelectionTable = {
+  address: Address;
+  identityName?: string;
+  vaultTokensInUsd?: number;
+  selfBondedAmount: bigint;
+  instanceCount?: number;
+  stakersCount?: number;
+  vaultTokens?: VaultToken[];
+};

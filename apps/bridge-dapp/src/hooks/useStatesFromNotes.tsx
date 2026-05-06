@@ -46,7 +46,7 @@ const useStatesFromNotes = () => {
     const notes = allNotes
       .get(currentResourceId.toString())
       ?.filter(
-        (note) => note.note.tokenSymbol === fungibleCurrency?.view?.symbol
+        (note) => note.note.tokenSymbol === fungibleCurrency?.view?.symbol,
       );
 
     return notes ?? [];
@@ -66,7 +66,7 @@ const useStatesFromNotes = () => {
 
         return accumulatedBalance.add(newNote.note.amount);
       },
-      BigNumber.from(0)
+      BigNumber.from(0),
     );
 
     return Number(ethers.utils.formatUnits(amountBN, tokenDecimals));
@@ -84,7 +84,7 @@ const useStatesFromNotes = () => {
       .filter((asset) =>
         fungibleCurrency
           ? asset.fungibleTokenSymbol === fungibleCurrency.view.symbol
-          : true
+          : true,
       )
       .map((asset) => asset.rawChain);
   }, [availableAmountFromNotes, fungibleCurrency, shieldedAssets]);
@@ -99,7 +99,7 @@ const useStatesFromNotes = () => {
         const resourceId = ResourceId.fromBytes(hexToU8a(resourceIdHex));
         const typedChainId = calculateTypedChainId(
           resourceId.chainType,
-          resourceId.chainId
+          resourceId.chainId,
         );
 
         const fungibleCurrencies = apiConfig.getCurrenciesBy({
@@ -124,11 +124,11 @@ const useStatesFromNotes = () => {
 
         return acc;
       },
-      new Set<number>()
+      new Set<number>(),
     );
 
     const res = Currency.fromArray(
-      Array.from(avaiFungibleIdSet).map((id) => apiConfig.currencies[id])
+      Array.from(avaiFungibleIdSet).map((id) => apiConfig.currencies[id]),
     );
 
     const defaultFungible =
@@ -171,7 +171,7 @@ const useStatesFromNotes = () => {
       symbol:
         getNativeCurrencyFromConfig(
           apiConfig.currencies,
-          calculateTypedChainId(activeChain.chainType, activeChain.chainId)
+          calculateTypedChainId(activeChain.chainType, activeChain.chainId),
         )?.symbol ?? 'Unknown',
     };
 
@@ -183,7 +183,7 @@ const useStatesFromNotes = () => {
         chains={chainsFromNotes.map((chain) => {
           const currency = getNativeCurrencyFromConfig(
             apiConfig.currencies,
-            calculateTypedChainId(chain.chainType, chain.chainId)
+            calculateTypedChainId(chain.chainType, chain.chainId),
           );
           if (!currency) {
             console.error('No currency found for chain', chain.name);
@@ -196,7 +196,7 @@ const useStatesFromNotes = () => {
           };
         })}
         value={activeChainType}
-      />
+      />,
     );
   }, [
     activeChain,

@@ -1,25 +1,25 @@
-import { DynamicSVGImportOptions } from './hooks';
+import { ComponentProps } from 'react';
+import type { DynamicSVGImportOptions } from './useDynamicSVGImport';
 
-type SVGBase = Omit<React.SVGProps<SVGSVGElement>, 'path' | 'd'>;
+type SVGBase = Omit<ComponentProps<'svg'>, 'path' | 'd' | 'onError'>;
 
-export type IconSize = 'md' | 'lg' | 'xl';
+export type IconSize = 'md' | 'lg' | 'xl' | '2xl';
 
 /**
- * Base interface for Webb Icon
+ * Base interface for Icon
  */
 export interface IconBase extends SVGBase {
   /**
    * The icon size, possible values: `md` (16px), `lg` (24px), `xl` (48px)
    * @default "md"
    */
-
   size?: IconSize;
 
   darkMode?: boolean;
 }
 
 /**
- * Base interface for Web Token Icon
+ * Base interface for Token Icon
  */
 export interface TokenIconBase
   extends Omit<IconBase, 'darkMode' | 'type'>,
@@ -27,5 +27,5 @@ export interface TokenIconBase
   /**
    * The symbol for the cryptocurrency to get the icon
    */
-  name: string;
+  name?: string;
 }

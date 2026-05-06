@@ -1,0 +1,74 @@
+import { graphql } from '@tangle-network/tangle-shared-ui/graphql';
+import useSubstrateAddress from '@tangle-network/tangle-shared-ui/hooks/useSubstrateAddress';
+import { executeGraphQL } from '@tangle-network/tangle-shared-ui/utils/executeGraphQL';
+import { useQuery } from '@tanstack/react-query';
+import { useMemo } from 'react';
+import { ReactQueryKey } from '../../../constants/reactQuery';
+import useNetworkStore from '@tangle-network/tangle-shared-ui/context/useNetworkStore';
+import { NetworkId } from '@tangle-network/ui-components/constants/networks';
+import type {
+  NetworkType,
+  TypedDocumentString,
+} from '@tangle-network/tangle-shared-ui/graphql/graphql';
+
+type GetAccountPointsQuery = {
+  account: {
+    id: string;
+    totalPoints: string;
+  } | null;
+};
+
+type GetAccountPointsQueryVariables = {
+  account: string;
+};
+
+const GetAccountPointsQueryDocument = graphql`
+  query GetAccountPoints($account: String!) {
+    account(id: $account) {
+      id
+      totalPoints
+    }
+  }
+` as TypedDocumentString<GetAccountPointsQuery, GetAccountPointsQueryVariables>;
+
+const fetcher = async (network: NetworkType, activeAccount: string | null) => {
+  if (activeAccount === null) {
+    return null;
+  }
+
+  const result = await executeGraphQL(network, GetAccountPointsQueryDocument, {
+    account: activeAccount,
+  });
+
+  return result.data;
+};
+
+export default function useActiveAccountPoints() {
+  const network = useNetworkStore((state) => state.network);
+  const activeAccount = useSubstrateAddress(false);
+
+  const { data: accountPointsResponse, ...rest } = useQuery({
+    queryKey: [ReactQueryKey.GetAccountPoints, activeAccount],
+    queryFn: () =>
+      fetcher(
+        (network.id === NetworkId.TANGLE_MAINNET
+          ? 'MAINNET'
+          : 'TESTNET') as NetworkType,
+        activeAccount,
+      ),
+    retry: 10,
+    refetchInterval: 6000,
+  });
+
+  const data = useMemo(() => {
+    const points = accountPointsResponse?.account?.totalPoints;
+
+    if (!points) {
+      return;
+    }
+
+    return points;
+  }, [accountPointsResponse]);
+
+  return { data, ...rest };
+}

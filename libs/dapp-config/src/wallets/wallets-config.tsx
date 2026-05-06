@@ -1,18 +1,28 @@
-import { SupportedBrowsers } from '@webb-tools/browser-utils/platform';
-import { PresetTypedChainId } from '@webb-tools/dapp-types';
-import { WalletId } from '@webb-tools/dapp-types/WalletId';
-
+import { SupportedBrowsers } from '@tangle-network/browser-utils/platform';
+import { PresetTypedChainId } from '@tangle-network/dapp-types';
+import { WalletId } from '@tangle-network/dapp-types/WalletId';
 import {
+  CoinbaseIcon,
+  KeplrIcon,
   MetaMaskIcon,
-  PolkadotJsIcon,
-  SubWalletIcon,
+  RainbowIcon,
+  SafeIcon,
   TalismanIcon,
+  TrustWalletIcon,
   WalletConnectIcon,
-} from '@webb-tools/icons';
-import { WalletConfig } from '.';
+} from '@tangle-network/icons/wallets';
+import type { WalletConfig } from './wallet-config.interface';
 
 const ANY_EVM = [
   PresetTypedChainId.EthereumMainNet,
+  PresetTypedChainId.TangleMainnetEVM,
+
+  PresetTypedChainId.Arbitrum,
+  PresetTypedChainId.Base,
+  PresetTypedChainId.BSC,
+  PresetTypedChainId.Linea,
+  PresetTypedChainId.Optimism,
+  PresetTypedChainId.Polygon,
 
   // Testnet
   PresetTypedChainId.Goerli,
@@ -25,60 +35,28 @@ const ANY_EVM = [
   PresetTypedChainId.PolygonTestnet,
   PresetTypedChainId.MoonbaseAlpha,
   PresetTypedChainId.AvalancheFuji,
-  PresetTypedChainId.ScrollAlpha,
-
-  // Self hosted
-  PresetTypedChainId.HermesOrbit,
-  PresetTypedChainId.AthenaOrbit,
-  PresetTypedChainId.DemeterOrbit,
+  PresetTypedChainId.ScrollSepolia,
+  PresetTypedChainId.TangleTestnetEVM,
+  PresetTypedChainId.Holesky,
 
   // Localnet
+  PresetTypedChainId.TangleLocalEVM,
   PresetTypedChainId.HermesLocalnet,
   PresetTypedChainId.AthenaLocalnet,
   PresetTypedChainId.DemeterLocalnet,
 ];
 
-const ANY_SUBSTRATE = [
-  PresetTypedChainId.LocalTangleStandalone,
-  PresetTypedChainId.DkgSubstrateStandalone,
-  PresetTypedChainId.ProtocolSubstrateStandalone,
-  PresetTypedChainId.Kusama,
-  PresetTypedChainId.Polkadot,
-];
-
-export const walletsConfig: Record<number, WalletConfig> = {
-  [WalletId.Polkadot]: {
-    id: WalletId.Polkadot,
-    Logo: <PolkadotJsIcon />,
-    name: 'polkadot-js',
-    title: `PolkadotJS Extension`,
-    platform: 'Substrate',
-    enabled: true,
-    async detect() {
-      return true;
-    },
-    supportedChainIds: [...ANY_SUBSTRATE],
-    homeLink: 'https://polkadot.js.org/extension',
-    installLinks: {
-      [SupportedBrowsers.FireFox]:
-        'https://addons.mozilla.org/firefox/addon/polkadot-js-extension/',
-      [SupportedBrowsers.Chrome]:
-        'https://chrome.google.com/webstore/detail/polkadot%7Bjs%7D-extension/mopnmbcafieddcagagdcbnhejhlodfdd',
-    },
-  },
+export const WALLET_CONFIG: Record<WalletId, WalletConfig> = {
   [WalletId.MetaMask]: {
     id: WalletId.MetaMask,
     Logo: <MetaMaskIcon />,
-    name: 'metamask',
-    title: `MetaMask`,
+    name: 'MetaMask',
+    title: 'MetaMask',
+    rdns: 'io.metamask',
     platform: 'EVM',
     enabled: true,
-    detect() {
-      const hasWeb3 = typeof (window as any).web3 !== 'undefined';
-      if (hasWeb3) {
-        return (window as any).web3.__isMetaMaskShim__ as boolean;
-      }
-      return false;
+    async detect() {
+      return true;
     },
     supportedChainIds: [...ANY_EVM],
     homeLink: 'https://metamask.io/',
@@ -89,55 +67,132 @@ export const walletsConfig: Record<number, WalletConfig> = {
         'https://chrome.google.com/webstore/detail/metamask/nkbihfbeogaeaoehlefnkodbefgpgknn?hl=en',
     },
   },
-  [WalletId.WalletConnectV1]: {
-    id: WalletId.WalletConnectV1,
+  [WalletId.WalletConnectV2]: {
+    id: WalletId.WalletConnectV2,
     Logo: <WalletConnectIcon />,
-    name: 'wallet connect',
-    title: `Wallet Connect`,
+    name: 'WalletConnect',
+    title: 'WalletConnect',
+    rdns: 'walletConnect',
     platform: 'EVM',
     enabled: true,
-    detect() {
+    async detect() {
       return true;
     },
     supportedChainIds: [...ANY_EVM],
     homeLink: 'https://walletconnect.com/',
   },
+  [WalletId.Rainbow]: {
+    id: WalletId.Rainbow,
+    Logo: <RainbowIcon />,
+    name: 'Rainbow',
+    title: 'Rainbow',
+    rdns: 'me.rainbow',
+    platform: 'EVM',
+    enabled: true,
+    async detect() {
+      return true;
+    },
+    supportedChainIds: [...ANY_EVM],
+    homeLink: 'https://rainbow.me/',
+    installLinks: {
+      [SupportedBrowsers.FireFox]:
+        'https://addons.mozilla.org/en-US/firefox/addon/rainbow-extension/',
+      [SupportedBrowsers.Chrome]:
+        'https://chrome.google.com/webstore/detail/rainbow/opfgelmcmbiajamepnmloijbpoleiama',
+    },
+  },
+  [WalletId.Coinbase]: {
+    id: WalletId.Coinbase,
+    Logo: <CoinbaseIcon />,
+    name: 'Coinbase Wallet',
+    title: 'Coinbase Wallet',
+    rdns: 'com.coinbase.wallet',
+    platform: 'EVM',
+    enabled: true,
+    async detect() {
+      return true;
+    },
+    supportedChainIds: [...ANY_EVM],
+    homeLink: 'https://www.coinbase.com/wallet',
+    installLinks: {
+      [SupportedBrowsers.FireFox]:
+        'https://addons.mozilla.org/en-US/firefox/addon/coinbase-wallet-extension/',
+      [SupportedBrowsers.Chrome]:
+        'https://chrome.google.com/webstore/detail/coinbase-wallet-extension/hnfanknocfeofbddgcijnmhnfnkdnaad',
+    },
+  },
+  [WalletId.Safe]: {
+    id: WalletId.Safe,
+    Logo: <SafeIcon />,
+    name: 'Safe',
+    title: 'Safe Wallet',
+    rdns: 'safe',
+    platform: 'EVM',
+    enabled: true,
+    async detect() {
+      return true;
+    },
+    supportedChainIds: [...ANY_EVM],
+    homeLink: 'https://safe.global/',
+  },
   [WalletId.Talisman]: {
     id: WalletId.Talisman,
     Logo: <TalismanIcon />,
-    name: 'talisman',
+    name: 'Talisman',
     title: 'Talisman',
-    platform: 'Substrate',
+    rdns: 'xyz.talisman',
+    platform: 'EVM',
     enabled: true,
-    detect() {
+    async detect() {
       return true;
     },
-    supportedChainIds: [...ANY_SUBSTRATE],
+    supportedChainIds: [...ANY_EVM],
     homeLink: 'https://talisman.xyz/',
     installLinks: {
       [SupportedBrowsers.FireFox]:
-        'https://addons.mozilla.org/firefox/addon/talisman-wallet-extension/',
+        'https://addons.mozilla.org/en-US/firefox/addon/talisman-wallet-extension/',
       [SupportedBrowsers.Chrome]:
         'https://chrome.google.com/webstore/detail/talisman-polkadot-wallet/fijngjgcjhjmmpcmkeiomlglpeiijkld',
     },
   },
-  [WalletId.SubWallet]: {
-    id: WalletId.SubWallet,
-    Logo: <SubWalletIcon />,
-    name: 'subwallet-js',
-    title: 'SubWallet',
-    platform: 'Substrate',
+  [WalletId.TrustWallet]: {
+    id: WalletId.TrustWallet,
+    Logo: <TrustWalletIcon />,
+    name: 'Trust Wallet',
+    title: 'Trust Wallet',
+    rdns: 'com.trustwallet.app',
+    platform: 'EVM',
     enabled: true,
-    detect() {
+    async detect() {
       return true;
     },
-    supportedChainIds: [...ANY_SUBSTRATE],
-    homeLink: 'https://www.subwallet.app/',
+    supportedChainIds: [...ANY_EVM],
+    homeLink: 'https://trustwallet.com/',
     installLinks: {
       [SupportedBrowsers.Chrome]:
-        'https://chrome.google.com/webstore/detail/subwallet-polkadot-extens/onhogfjeacnfoofkfgppdlbmlmnplgbn',
+        'https://chrome.google.com/webstore/detail/trust-wallet/egjidjbpglichdcondbcbdnbeeppgdph',
       [SupportedBrowsers.FireFox]:
-        'https://addons.mozilla.org/firefox/addon/subwallet/',
+        'https://addons.mozilla.org/en-US/firefox/addon/trust-wallet/',
+    },
+  },
+  [WalletId.Keplr]: {
+    id: WalletId.Keplr,
+    Logo: <KeplrIcon />,
+    name: 'Keplr',
+    title: 'Keplr',
+    rdns: 'app.keplr',
+    platform: 'EVM',
+    enabled: true,
+    async detect() {
+      return true;
+    },
+    supportedChainIds: [...ANY_EVM],
+    homeLink: 'https://www.keplr.app/',
+    installLinks: {
+      [SupportedBrowsers.Chrome]:
+        'https://chrome.google.com/webstore/detail/keplr/dmkamcknogkgcdfhhbddcghachkejeap',
+      [SupportedBrowsers.FireFox]:
+        'https://addons.mozilla.org/en-US/firefox/addon/keplr/',
     },
   },
 };

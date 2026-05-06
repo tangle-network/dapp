@@ -1,8 +1,9 @@
-export enum EVMChainId {
+enum EVMChainId {
   /* Default EVM Chains on MetaMask */
   EthereumMainNet = 1,
   Goerli = 5,
   Sepolia = 11155111,
+  Holesky = 17000,
   Ganache = 1337,
 
   /* Added EVM Chains on MetaMask */
@@ -15,17 +16,33 @@ export enum EVMChainId {
   PolygonTestnet = 80001,
   MoonbaseAlpha = 1287,
   AvalancheFuji = 43113,
-  ScrollAlpha = 534353,
+  ScrollSepolia = 534351,
 
-  /** Self hosted EVM */
-  AthenaOrbit = 5001,
-  HermesOrbit = 5002,
-  DemeterOrbit = 5003,
+  Polygon = 137,
+  Arbitrum = 42161,
+  Optimism = 10,
+  Linea = 59144,
+  Base = 8453,
+  BSC = 56,
+  Bitlayer = 200901,
+
+  // Base testnets
+  BaseSepolia = 84532,
+
+  // Arbitrum testnets
+  ArbitrumSepolia = 421614,
+
+  // Local development
+  AnvilLocal = 31337,
+
+  TangleLocalEVM = 3287,
+  TangleTestnetEVM = 3799,
+  TangleMainnetEVM = 5845,
 
   /** Local EVM */
-  HermesLocalnet = 5004,
-  AthenaLocalnet = 5005,
-  DemeterLocalnet = 5006,
+  HermesLocalnet = 3884533462,
+  AthenaLocalnet = 3884533461,
+  DemeterLocalnet = 3884533463,
 }
 
 export default EVMChainId;

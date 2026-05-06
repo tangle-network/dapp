@@ -1,0 +1,13 @@
+{
+  "name": "@tangle-network/leaderboard",
+  "version": "0.0.5",
+  "license": "Apache-2.0",
+  "type": "module",
+  "scripts": {
+    "local:start": "./scripts/start-local-env.sh",
+    "local:activity": "node scripts/activity-generator.mjs"
+  },
+  "dependencies": {
+    "viem": "^2.41.2"
+  }
+}

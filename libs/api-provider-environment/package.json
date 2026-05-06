@@ -1,5 +1,7 @@
 {
-  "name": "@webb-tools/api-provider-environment",
+  "name": "@tangle-network/api-provider-environment",
   "version": "0.0.1",
-  "main": "./src/index.js"
+  "type": "module",
+  "main": "./src/index.ts",
+  "types": "./src/index.d.ts"
 }

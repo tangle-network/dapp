@@ -32,23 +32,62 @@ export function getFillColor(darkMode?: boolean) {
   }
 }
 
-/**
- * Get the icon size in pixel based on text
- * @param size Represent the icon size in text
- * @returns The icon in pixel
- */
 export function getIconSizeInPixel(size: IconSize) {
   switch (size) {
-    case 'xl': {
+    case '2xl':
       return '48px' as const;
+    case 'xl':
+      return '40px' as const;
+    case 'lg':
+      return '24px' as const;
+    case 'md':
+      return '16px' as const;
+    default: {
+      throw new Error('Unknown icon size');
+    }
+  }
+}
+
+export function getFlexBasic(size: IconSize = 'md') {
+  switch (size) {
+    case '2xl': {
+      return 'basis-12' as const;
+    }
+
+    case 'xl': {
+      return 'basis-10' as const;
     }
 
     case 'lg': {
-      return '32px' as const;
+      return 'basis-6' as const;
     }
 
     case 'md': {
-      return '16px' as const;
+      return 'basis-4' as const;
+    }
+
+    default: {
+      throw new Error('Unknown icon size');
+    }
+  }
+}
+
+export function getMinSizeClassName(size: IconSize) {
+  switch (size) {
+    case 'md': {
+      return 'min-w-4 min-h-4' as const;
+    }
+
+    case 'lg': {
+      return 'min-w-6 min-h-6' as const;
+    }
+
+    case 'xl': {
+      return 'min-w-10 min-h-10' as const;
+    }
+
+    case '2xl': {
+      return 'min-w-12 min-h-12' as const;
     }
 
     default: {

@@ -1,0 +1,248 @@
+export enum PagePath {
+  DASHBOARD = '/',
+  NOMINATION = '/nomination',
+  NOMINATION_VALIDATOR = '/nomination/:validatorAddress',
+  CLAIM = '/claim',
+  CLAIM_MIGRATION = '/claim/migration',
+  BRIDGE = '/bridge',
+  BLUEPRINTS = '/blueprints',
+  BLUEPRINTS_DETAILS = '/blueprints/:id',
+  SERVICES = '/services',
+  STAKING = '/staking',
+  STAKING_DEPOSIT = '/staking/deposit',
+  STAKING_DELEGATE = '/staking/delegate',
+  STAKING_UNDELEGATE = '/staking/undelegate',
+  STAKING_WITHDRAW = '/staking/withdraw',
+  STAKING_VAULT = '/staking/vaults',
+  STAKING_BLUEPRINT = '/staking/blueprints',
+  STAKING_OPERATOR = '/staking/operators',
+  STAKING_REWARDS = '/staking/rewards',
+  LIQUID_STAKING = '/liquid-staking',
+  LIQUID_STAKING_DEPOSIT = '/liquid-staking/deposit',
+  LIQUID_STAKING_REDEEM = '/liquid-staking/redeem',
+  LIQUID_STAKING_CREATE_VAULT = '/liquid-staking/create-vault',
+  LIQUID_STAKING_VAULTS = '/liquid-staking/vaults',
+  LIQUID_STAKING_POSITIONS = '/liquid-staking/positions',
+  NOT_FOUND = '/404',
+}
+
+export enum QueryParamKey {
+  DELEGATIONS_AND_PAYOUTS_TAB = 'tab',
+  STAKING_VAULT = 'vault',
+  STAKING_ASSET_ID = 'assetId',
+  STAKING_OPERATOR = 'operator',
+}
+
+export const StakingQueryParamKey = {
+  VAULT: QueryParamKey.STAKING_VAULT,
+  ASSET_ID: QueryParamKey.STAKING_ASSET_ID,
+  OPERATOR: QueryParamKey.STAKING_OPERATOR,
+} as const;
+
+export type QueryParamKeyOf<Page extends PagePath> =
+  Page extends PagePath.NOMINATION
+    ? QueryParamKey.DELEGATIONS_AND_PAYOUTS_TAB
+    : never;
+
+export type QueryParamValueOf<Key extends QueryParamKey> =
+  Key extends QueryParamKey.DELEGATIONS_AND_PAYOUTS_TAB
+    ? DelegationsAndPayoutsTab
+    : never;
+
+export enum DelegationsAndPayoutsTab {
+  NOMINATIONS = 'Nominations',
+  PAYOUTS = 'Payouts',
+}
+
+export type NodeSpecification = {
+  os: string;
+  version: string;
+  cpuCores: number;
+  memory: number;
+  isVirtualMachine: boolean;
+  linuxDistribution: string;
+  linuxKernel: string;
+};
+
+// Runtime currently enables `Staked` and `Stash`; the remaining variants stay for compatibility.
+export enum StakingRewardsDestination {
+  STAKED,
+  STASH,
+  CONTROLLER,
+  ACCOUNT,
+  NONE,
+}
+
+export enum StakingRewardsDestinationDisplayText {
+  STAKED = 'Staked (increase stake)',
+  STASH = 'Stash (do not increase stake)',
+  CONTROLLER = 'Controller Account',
+  ACCOUNT = 'Specific Account',
+  NONE = 'None',
+}
+
+/**
+ * Utility type to remove trailing slash from a string.
+ *
+ * This is useful for constructing query param paths, as the
+ * root path (`/`) should not have a trailing slash, but all
+ * other paths should.
+ */
+type RemoveTrailingSlash<T extends string> = T extends `${infer U}/` ? U : T;
+
+/**
+ * Utility type to construct a query param path from a page path
+ * and query param key/value in a strongly statically typed way.
+ */
+type SearchQueryPathOf<
+  Page extends PagePath,
+  Key extends QueryParamKeyOf<Page>,
+  Value extends QueryParamValueOf<Key>,
+> = `${RemoveTrailingSlash<Page>}/?${Key}=${Value}`;
+
+/**
+ * Enum-like constant object containing the different paths
+ * static search query key & value paths that can be linked to
+ * directly.
+ *
+ * All paths are constructed using the {@link SearchQueryPathOf} utility
+ * type, which ensures that the query param key and value are
+ * statically typed and match the query param key and value types
+ * for the given page.
+ *
+ * For example, `/account?tab=overview`.
+ */
+export const StaticSearchQueryPath: {
+  NominationsTable: SearchQueryPathOf<
+    PagePath.NOMINATION,
+    QueryParamKey.DELEGATIONS_AND_PAYOUTS_TAB,
+    DelegationsAndPayoutsTab.NOMINATIONS
+  >;
+  PayoutsTable: SearchQueryPathOf<
+    PagePath.NOMINATION,
+    QueryParamKey.DELEGATIONS_AND_PAYOUTS_TAB,
+    DelegationsAndPayoutsTab.PAYOUTS
+  >;
+} = {
+  NominationsTable: `${PagePath.NOMINATION}/?${QueryParamKey.DELEGATIONS_AND_PAYOUTS_TAB}=${DelegationsAndPayoutsTab.NOMINATIONS}`,
+  PayoutsTable: `${PagePath.NOMINATION}/?${QueryParamKey.DELEGATIONS_AND_PAYOUTS_TAB}=${DelegationsAndPayoutsTab.PAYOUTS}`,
+} as const;
+
+export type InternalPath =
+  | PagePath
+  | (typeof StaticSearchQueryPath)[keyof typeof StaticSearchQueryPath];
+
+/**
+ * Also referred to as a `role` in Substrate.
+ *
+ * The values represent the user-facing UI display names
+ * of the roles.
+ */
+export enum StakingService {
+  ZK_SAAS_GROTH16 = 'ZkSaaS_Groth16',
+  ZK_SAAS_MARLIN = 'ZkSaaS_Marlin',
+  LIGHT_CLIENT_RELAYING = 'Light Client Relaying',
+  TSS_SILENT_SHARD_DKLS23SECP256K1 = 'TSS_SilentShardDKLS23Secp256k1',
+  TSS_DFNS_CGGMP21SECP256K1 = 'TSS_DfnsCGGMP21Secp256k1',
+  TSS_DFNS_CGGMP21SECP256R1 = 'TSS_DfnsCGGMP21Secp256r1',
+  TSS_DFNS_CGGMP21STARK = 'TSS_DfnsCGGMP21Stark',
+  TSS_ZCASH_FROST_P256 = 'TSS_ZcashFrostP256',
+  TSS_ZCASH_FROST_P384 = 'TSS_ZcashFrostP384',
+  TSS_ZCASH_FROST_SECP256K1 = 'TSS_ZcashFrostSecp256k1',
+  TSS_ZCASH_FROST_RISTRETTO255 = 'TSS_ZcashFrostRistretto255',
+  TSS_ZCASH_FROST_ED25519 = 'TSS_ZcashFrostEd25519',
+  TSS_GENNARO_DKG_BLS381 = 'TSS_GennaroDKGBls381',
+  TSS_ZCASH_FROST_ED448 = 'TSS_ZcashFrostEd448',
+  TSS_WSTS_V2 = 'TSS_WSTS_V2',
+}
+
+export enum StakingProfileType {
+  INDEPENDENT = 'Independent',
+  SHARED = 'Shared',
+}
+
+export type DistributionDataType = Record<StakingService, bigint>;
+
+/**
+ * There are phase 1 jobs in Substrate
+ */
+export type Service = {
+  id: string;
+  serviceType: StakingService;
+  participants: string[];
+  threshold?: number;
+  jobsCount?: number;
+  earnings?: bigint;
+  expirationBlock: bigint;
+  ttlBlock: bigint;
+  permittedCaller?: string;
+};
+
+export type ServiceJob = {
+  id: string;
+  txHash: string;
+  timestamp: Date;
+};
+
+export type JobType = {
+  id?: number;
+  serviceType: StakingService;
+  thresholds?: number;
+  earnings?: number;
+  expiration: number;
+};
+
+export type ServiceParticipant = {
+  address: string;
+  identity?: string | null;
+  twitter?: string | null;
+  discord?: string | null;
+  email?: string | null;
+  web?: string | null;
+};
+
+export enum NetworkFeature {
+  Faucet,
+  EraStakersOverview,
+  LsPools,
+}
+
+export type ExposureMap = Record<
+  string,
+  {
+    exposure: unknown;
+    exposureMeta: unknown;
+  }
+>;
+
+export type GetSuccessMessageFn<Context> = (context: Context) => string;
+
+/**
+ * Transaction states for payout processing
+ */
+export enum PayoutTxState {
+  /**
+   * Transaction is not active
+   */
+  IDLE = 'idle',
+  /**
+   * Transaction is being executed
+   */
+  PROCESSING = 'processing',
+  /**
+   * Waiting for confirmation
+   */
+  WAITING = 'waiting',
+  /**
+   * Current chunk succeeded
+   */
+  SUCCESS = 'success',
+  /**
+   * Transaction error
+   */
+  ERROR = 'error',
+  /**
+   * All chunks completed
+   */
+  COMPLETED = 'completed',
+}

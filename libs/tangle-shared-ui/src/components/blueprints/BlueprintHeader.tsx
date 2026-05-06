@@ -1,0 +1,183 @@
+import { GithubFill } from '@tangle-network/icons';
+import Button from '@tangle-network/ui-components/components/buttons/Button';
+import { SocialChip } from '@tangle-network/ui-components/components/SocialChip';
+import { EMPTY_VALUE_PLACEHOLDER } from '@tangle-network/ui-components/constants';
+import { Typography } from '@tangle-network/ui-components/typography/Typography';
+import { ComponentProps, FC } from 'react';
+import { twMerge } from 'tailwind-merge';
+import type { Blueprint } from '../../types/blueprint';
+import BoostedChip from './BoostedChip';
+import RegisteredChip from './RegisteredChip';
+
+interface BlueprintHeaderProps {
+  blueprint: Blueprint;
+  enableRegister?: boolean;
+  registerBtnProps?: ComponentProps<typeof Button>;
+  enableDeploy?: boolean;
+  deployBtnProps?: ComponentProps<typeof Button>;
+  isRegistered: boolean;
+}
+
+const BlueprintHeader: FC<BlueprintHeaderProps> = ({
+  blueprint,
+  enableDeploy,
+  enableRegister,
+  registerBtnProps,
+  deployBtnProps,
+  isRegistered,
+}) => {
+  const {
+    isBoosted,
+    imgUrl,
+    name,
+    githubUrl,
+    author,
+    description,
+    websiteUrl,
+    twitterUrl,
+    email,
+    instancesCount,
+    operatorsCount,
+  } = blueprint;
+
+  return (
+    <div
+      className={twMerge(
+        'relative overflow-hidden rounded-2xl space-y-3',
+        'border border-mono-60 dark:border-mono-170',
+        'bg-mono-0 dark:bg-mono-200',
+        'shadow-[0px_4px_8px_0px_rgba(0,0,0,0.08)] dark:shadow-[0px_4px_8px_0px_rgba(0,0,0,0.20)]',
+        'before:absolute before:inset-0 before:bg-cover before:bg-no-repeat before:opacity-10 before:pointer-events-none',
+        "before:bg-[url('/static/assets/blueprints/grid-bg.png')] dark:before:bg-[url('/static/assets/blueprints/grid-bg-dark.png')]",
+      )}
+    >
+      {isBoosted && (
+        <div
+          className={twMerge(
+            'h-2 bg-[linear-gradient(to_right,hsla(230,64%,52%,0.8)0%,hsla(230,87%,74%,0.8)40%,hsla(242,100%,93%,0.8)100%)]',
+            'dark:bg-[linear-gradient(to_right,hsla(231,49%,13%,0.8)0%,hsla(242,67%,55%,0.8)40%,hsla(242,93%,65%,0.8)100%)]',
+          )}
+        />
+      )}
+
+      <div className="px-8 py-6 space-y-4">
+        <div className="flex flex-col gap-4 pb-4 border-b md:flex-row border-mono-60 dark:border-mono-160">
+          <div className="flex flex-1 gap-3">
+            {imgUrl && (
+              <div className="flex gap-3">
+                <div className="flex-shrink-0 w-20 h-20 overflow-hidden rounded-full">
+                  <img
+                    src={imgUrl}
+                    width={80}
+                    height={80}
+                    alt={name}
+                    className="bg-center aspect-square"
+                  />
+                </div>
+              </div>
+            )}
+            <div className="space-y-4">
+              <div>
+                <div className="flex items-center gap-4">
+                  <div className="flex items-center gap-1">
+                    <Typography variant="h4" fw="bold">
+                      {name}
+                    </Typography>
+                    {githubUrl && (
+                      <a
+                        href={githubUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        <GithubFill
+                          size="lg"
+                          className="!fill-mono-200 dark:!fill-mono-0 hover:!fill-mono-120 dark:hover:!fill-mono-80"
+                        />
+                      </a>
+                    )}
+                  </div>
+                  <div className="flex items-center gap-1">
+                    {isBoosted && <BoostedChip />}
+                    {isRegistered && <RegisteredChip />}
+                  </div>
+                </div>
+                <div className="flex items-center">
+                  <Typography
+                    variant="body2"
+                    className="line-clamp-1 text-mono-120 dark:text-mono-100"
+                  >
+                    {author}
+                  </Typography>
+                  {/* NOTE: to add link here */}
+                  {/* <ExternalLinkIcon href /> */}
+                </div>
+              </div>
+              <div className="flex gap-2">
+                {enableDeploy && (
+                  <Button variant="primary" {...deployBtnProps}>
+                    Deploy
+                  </Button>
+                )}
+                {enableRegister && (
+                  <Button variant="secondary" {...registerBtnProps}>
+                    Register
+                  </Button>
+                )}
+              </div>
+            </div>
+          </div>
+
+          <div className="flex flex-col justify-between flex-1 gap-3 md:items-end">
+            <Typography
+              variant="body1"
+              className="line-clamp-3 text-mono-120 dark:text-mono-100 group-hover:text-mono-200 dark:group-hover:text-mono-0"
+            >
+              {description}
+            </Typography>
+            <div className="flex items-center gap-2">
+              {websiteUrl && <SocialChip href={websiteUrl} type="website" />}
+              {twitterUrl && <SocialChip href={twitterUrl} type="twitter" />}
+              {email && <SocialChip href={`mailto:${email}`} type="email" />}
+            </div>
+          </div>
+        </div>
+
+        <div className="grid grid-cols-3 gap-4">
+          <StatsItem
+            label="Total Instances"
+            value={instancesCount?.toLocaleString()}
+          />
+          <StatsItem
+            label="Total Operators"
+            value={operatorsCount?.toLocaleString()}
+          />
+          {/* Hide stakers */}
+          {/* <StatsItem
+            label="Total Stakers"
+            value={blueprint.stakersCount?.toLocaleString()}
+          /> */}
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default BlueprintHeader;
+
+interface StatsItemProps {
+  label: string;
+  value: string | number | null | undefined;
+}
+
+const StatsItem: FC<StatsItemProps> = ({ label, value }) => {
+  return (
+    <div className="space-y-2">
+      <Typography variant="h5" className="text-mono-120 dark:text-mono-100">
+        {label}
+      </Typography>
+      <Typography variant="h4" fw="bold">
+        {value ?? EMPTY_VALUE_PLACEHOLDER}
+      </Typography>
+    </div>
+  );
+};

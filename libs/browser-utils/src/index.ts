@@ -1,6 +1,4 @@
-export * from './download';
-export * from './platform';
-export * from './retry-promise';
-export * from './storage';
+export { default as isBrowser } from './isBrowser';
 export * from './logger';
-export * from './promise-utils';
+export * from './platform';
+export * from './storage';

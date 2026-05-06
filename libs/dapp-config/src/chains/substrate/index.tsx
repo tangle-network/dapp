@@ -1,68 +1,177 @@
-import { PresetTypedChainId, SubstrateChainId } from '@webb-tools/dapp-types';
-import KSMLogo from '@webb-tools/logos/chains/KusamaLogo';
-import DOTLogo from '@webb-tools/logos/chains/PolkadotLogo';
-import WEBBLogo from '@webb-tools/logos/chains/WebbLogo';
-import { ChainType } from '@webb-tools/sdk-core';
-
+import {
+  PresetTypedChainId,
+  SubstrateChainId,
+} from '@tangle-network/dapp-types';
+import { ChainType } from '@tangle-network/dapp-types/TypedChainId';
+import {
+  TANGLE_LOCAL_WS_RPC_ENDPOINT,
+  TANGLE_MAINNET_NATIVE_EXPLORER_URL,
+  TANGLE_MAINNET_NATIVE_TOKEN_SYMBOL,
+  TANGLE_MAINNET_WS_RPC_ENDPOINT,
+  TANGLE_TESTNET_ARCHIVE_RPC_ENDPOINT,
+  TANGLE_TESTNET_NATIVE_EXPLORER_URL,
+  TANGLE_TESTNET_NATIVE_TOKEN_SYMBOL,
+  TANGLE_TESTNET_WS_RPC_ENDPOINT,
+  TANGLE_TOKEN_DECIMALS,
+} from '../../constants/tangle';
 import { ChainConfig } from '../chain-config.interface';
 
-function populateBlockExplorerStub(connString: string): string {
-  const params = new URLSearchParams({
-    rpc: connString,
-  });
-  const url = new URL(
-    `?${params.toString()}`,
-    'https://polkadot.js.org/apps/'
-  ).toString();
-  return url + '#';
-}
-
 // All substrate chains temporary use in `development` environment now
-export const chainsConfig: Record<number, ChainConfig> = {
-  [PresetTypedChainId.ProtocolSubstrateStandalone]: {
+export const chainsConfig = {
+  [PresetTypedChainId.TangleMainnetNative]: {
     chainType: ChainType.Substrate,
-    group: 'webb',
-    tag: 'dev',
-    chainId: SubstrateChainId.ProtocolSubstrateStandalone,
-    logo: WEBBLogo,
-    url: 'ws://127.0.0.1:9944',
-    blockExplorerStub: populateBlockExplorerStub('ws://127.0.0.1:9944'),
-    name: 'Substrate',
+    group: 'tangle',
+    tag: 'live',
+    id: SubstrateChainId.TangleMainnetNative,
+    name: 'Tangle Mainnet',
+    nativeCurrency: {
+      name: 'Tangle Mainnet Token',
+      symbol: TANGLE_MAINNET_NATIVE_TOKEN_SYMBOL,
+      decimals: TANGLE_TOKEN_DECIMALS,
+    },
+    blockExplorers: {
+      default: {
+        name: 'Tangle Explorer',
+        url: TANGLE_MAINNET_NATIVE_EXPLORER_URL,
+      },
+    },
+    rpcUrls: {
+      default: {
+        http: [],
+        webSocket: [TANGLE_MAINNET_WS_RPC_ENDPOINT],
+      },
+    },
+  },
+
+  [PresetTypedChainId.TangleTestnetNative]: {
+    chainType: ChainType.Substrate,
+    group: 'tangle',
+    tag: 'test',
+    id: SubstrateChainId.TangleTestnetNative,
+    name: 'Tangle Testnet',
+    nativeCurrency: {
+      name: 'Tangle',
+      symbol: TANGLE_TESTNET_NATIVE_TOKEN_SYMBOL,
+      decimals: TANGLE_TOKEN_DECIMALS,
+    },
+    blockExplorers: {
+      default: {
+        name: 'Tangle Explorer',
+        url: TANGLE_TESTNET_NATIVE_EXPLORER_URL,
+      },
+    },
+    rpcUrls: {
+      default: {
+        http: [],
+        webSocket: [
+          TANGLE_TESTNET_WS_RPC_ENDPOINT,
+          TANGLE_TESTNET_ARCHIVE_RPC_ENDPOINT,
+        ],
+      },
+    },
     env: ['development'],
   },
-  [PresetTypedChainId.LocalTangleStandalone]: {
+
+  [PresetTypedChainId.TangleLocalNative]: {
     chainType: ChainType.Substrate,
-    group: 'webb',
+    group: 'tangle',
     tag: 'dev',
-    chainId: SubstrateChainId.LocalTangleStandalone,
-    logo: WEBBLogo,
-    url: 'ws://127.0.0.1:9944',
-    blockExplorerStub: populateBlockExplorerStub('ws://127.0.0.1:9944'),
-    name: 'Tangle',
-    env: ['development'],
+    id: SubstrateChainId.TangleLocalNative,
+    name: 'Tangle Local',
+    nativeCurrency: {
+      name: 'Local Tangle Token',
+      symbol: 'tTNT',
+      decimals: 18,
+    },
+    blockExplorers: {
+      default: {
+        name: 'Local Tangle Explorer',
+        url: 'https://polkadot.js.org/apps/?rpc=ws://127.0.0.1:9944#/explorer',
+      },
+    },
+    rpcUrls: {
+      default: {
+        http: [],
+        webSocket: [TANGLE_LOCAL_WS_RPC_ENDPOINT],
+      },
+    },
   },
+
   [PresetTypedChainId.Kusama]: {
     chainType: ChainType.KusamaRelayChain,
-    group: 'webb',
-    tag: 'live',
-    chainId: SubstrateChainId.Kusama,
-    logo: KSMLogo,
-    url: 'wss://kusama-rpc.polkadot.io',
-    blockExplorerStub: populateBlockExplorerStub(
-      'wss://kusama-rpc.polkadot.io'
-    ),
+    id: SubstrateChainId.Kusama,
     name: 'Kusama',
+    group: 'kusama',
+    tag: 'live',
+    nativeCurrency: {
+      name: 'Kusama',
+      symbol: 'KSM',
+      decimals: 12,
+    },
+    blockExplorers: {
+      default: {
+        name: 'Kusama Explorer',
+        url: 'https://kusama.statescan.io/',
+      },
+    },
+    rpcUrls: {
+      default: {
+        http: [],
+        webSocket: ['wss://kusama-rpc.polkadot.io'],
+      },
+    },
     env: ['development'],
   },
+
   [PresetTypedChainId.Polkadot]: {
     chainType: ChainType.PolkadotRelayChain,
-    group: 'webb',
-    tag: 'live',
-    chainId: SubstrateChainId.Polkadot,
-    logo: DOTLogo,
-    url: 'wss://rpc.polkadot.io',
-    blockExplorerStub: populateBlockExplorerStub('wss://rpc.polkadot.io'),
+    id: SubstrateChainId.Polkadot,
     name: 'Polkadot',
+    group: 'polkadot',
+    tag: 'live',
+    nativeCurrency: {
+      name: 'Polkadot',
+      symbol: 'DOT',
+      decimals: 10,
+    },
+    blockExplorers: {
+      default: {
+        name: 'Polkadot Explorer',
+        url: 'https://polkadot.statescan.io/',
+      },
+    },
+    rpcUrls: {
+      default: {
+        http: [],
+        webSocket: ['wss://rpc.polkadot.io'],
+      },
+    },
     env: ['development'],
   },
-};
+
+  [PresetTypedChainId.RococoPhala]: {
+    chainType: ChainType.Substrate,
+    id: SubstrateChainId.RococoPhala,
+    name: 'Rococo Phala',
+    group: 'phala',
+    tag: 'test',
+    nativeCurrency: {
+      name: 'Phala',
+      symbol: 'PHA',
+      decimals: 6,
+    },
+    blockExplorers: {
+      default: {
+        name: 'Phala Explorer',
+        url: 'https://polkadot.js.org/apps/?rpc=wss://rococo.phala.network#/explorer',
+      },
+    },
+    rpcUrls: {
+      default: {
+        http: [],
+        webSocket: ['wss://rhala-node.phala.network/ws'],
+      },
+    },
+    env: ['development'],
+  },
+} as const satisfies Record<number, ChainConfig>;

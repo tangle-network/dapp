@@ -1,15 +1,18 @@
-// Copyright 2022 @webb-tools/
+// Copyright 2024 @tangle-network/
 // SPDX-License-Identifier: Apache-2.0
 
 export abstract class Account<T = unknown> {
-  constructor(protected readonly _inner: T, public readonly address: string) {}
+  constructor(
+    protected readonly _inner: T,
+    public readonly address: string,
+  ) {}
 
-  // TODO abstract create react element
+  // UI adapters provide a framework-specific avatar representation.
   abstract get avatar(): unknown;
 
   abstract get name(): string;
 
-  protected get inner() {
+  get inner() {
     return this._inner;
   }
 }
@@ -35,7 +38,7 @@ export abstract class AccountsAdapter<T = unknown, K = unknown> {
 
   abstract setActiveAccount(account: Account): PromiseOrT<void>;
 
-  protected get inner() {
+  get inner() {
     return this._inner;
   }
 }

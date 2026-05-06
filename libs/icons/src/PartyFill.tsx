@@ -1,5 +1,5 @@
-import { IconSize } from '@webb-tools/icons/types';
-import { getIconSizeInPixel } from '@webb-tools/icons/utils';
+import { IconSize } from './types';
+import { getIconSizeInPixel } from './utils';
 
 export const PartyFill: React.FC<{ size?: IconSize; maxWidth?: number }> = ({
   size = 'md',
@@ -8,6 +8,7 @@ export const PartyFill: React.FC<{ size?: IconSize; maxWidth?: number }> = ({
   const imageSize = getIconSizeInPixel(size);
   return (
     <img
+      alt="Party Fill"
       style={{
         maxWidth: imageSize,
         ...props,

@@ -1,115 +1,82 @@
-import {
+'use client';
+
+import type {
   Account,
-  Bridge,
-  Transaction,
   WebbApiProvider,
-} from '@webb-tools/abstract-api-provider';
-import { ApiConfig, Chain, Wallet } from '@webb-tools/dapp-config';
-import { InteractiveFeedback } from '@webb-tools/dapp-types';
-import { NoteManager } from '@webb-tools/note-manager';
-import React from 'react';
-import { AppEvent, TAppEvent } from '../app-event';
-import { TransactionQueueApi } from '../transaction';
+} from '@tangle-network/abstract-api-provider';
+import {
+  ApiConfig,
+  type Chain,
+  type Wallet,
+} from '@tangle-network/dapp-config';
+import type { Maybe, Nullable } from '@tangle-network/dapp-types/utils/types';
+import { AppEvent, type TAppEvent } from '../app-event';
+import { createContext, useContext } from 'react';
 
-export interface WebbContextState<T = unknown> {
+export interface WebbContextState {
+  /** Whether the app is loading */
   loading: boolean;
+
+  /** All pre-configured wallets */
   wallets: Record<number, Wallet>;
+
+  /** All pre-configured chains */
   chains: Record<number, Chain>;
-  activeApi?: WebbApiProvider<T>;
+
+  activeApi?: WebbApiProvider;
+
   activeWallet?: Wallet;
-  activeChain?: Chain;
-  noteManager: NoteManager | null;
 
-  loginNoteAccount(key: string): Promise<NoteManager | null>;
+  /**
+   * - `undefined` means no chain is active
+   * - `null` means the active chain is unsupported
+   * - `Chain` means the active chain is supported
+   */
+  activeChain?: Nullable<Maybe<Chain>>;
 
-  logoutNoteAccount(): Promise<void>;
-
-  purgeNoteAccount(): Promise<void>;
-
+  /** All pre-configured & on-chain data */
   apiConfig: ApiConfig;
+
   accounts: Account[];
-  activeAccount: Account | null;
+
+  activeAccount: Nullable<Account>;
+
+  /** Whether the app is connecting */
   isConnecting: boolean;
 
+  /** Set the active account and store it in local storage */
   setActiveAccount<T extends Account>(account: T): Promise<void>;
 
   inactivateApi(): Promise<void>;
 
-  switchChain(
-    chain: Chain,
-    wallet: Wallet,
-    bridge?: Bridge
-  ): Promise<WebbApiProvider<T> | null>;
+  switchChain(chain: Chain, wallet: Wallet): Promise<Nullable<WebbApiProvider>>;
 
-  activeFeedback: InteractiveFeedback | null;
-  registerInteractiveFeedback: (
-    interactiveFeedback: InteractiveFeedback
-  ) => void;
+  appName: string;
+
   appEvent: TAppEvent;
-
-  txQueue: TransactionQueueApi;
 }
 
-export const WebbContext = React.createContext<WebbContextState>({
+export const WebbContext = createContext<WebbContextState>({
   chains: {},
   accounts: [],
   loading: true,
   activeAccount: null,
-  noteManager: null,
-  loginNoteAccount(key: string) {
-    return Promise.resolve(null);
-  },
-  logoutNoteAccount() {
-    return Promise.resolve();
-  },
-  purgeNoteAccount() {
-    return Promise.resolve();
-  },
   isConnecting: false,
-  setActiveAccount<T extends Account>(account: T): Promise<void> {
+  setActiveAccount() {
     return Promise.resolve();
   },
-  switchChain(chain, wallet) {
+  switchChain() {
     return Promise.resolve(null);
   },
-  inactivateApi(): Promise<void> {
+  inactivateApi() {
     return Promise.resolve();
   },
   wallets: {},
-  activeFeedback: null,
   apiConfig: ApiConfig.init({}),
-  registerInteractiveFeedback: (interactiveFeedback: InteractiveFeedback) => {
-    return;
-  },
+  appName: '',
   appEvent: new AppEvent(),
-  txQueue: {
-    txQueue: [],
-    currentTxId: null,
-    txPayloads: [],
-    api: {
-      startNewTransaction() {
-        return;
-      },
-      cancelTransaction(_id: string) {
-        return;
-      },
-      dismissTransaction(_id: string) {
-        return;
-      },
-      registerTransaction(_tx: Transaction<any>) {
-        return;
-      },
-      getLatestTransaction(_name: 'Deposit' | 'Withdraw' | 'Transfer') {
-        return null;
-      },
-    },
-  },
 });
 
-export const useWebContext = <T = unknown>() => {
-  return React.useContext(WebbContext) as WebbContextState<T>;
-};
-export const useApiConfig = () => {
-  const { apiConfig } = useWebContext();
-  return apiConfig;
+export const useWebContext = () => {
+  return useContext(WebbContext);
 };

@@ -4,7 +4,8 @@ import { IconBase } from './types';
 export const ArrowRight = (props: IconBase) => {
   return createIcon({
     ...props,
-    d: 'M16.172 11L10.808 5.63605L12.222 4.22205L20 12L12.222 19.778L10.808 18.364L16.172 13H4V11H16.172Z',
+    viewBox: '0 0 24 25',
+    d: 'M16.172 11.5l-5.364-5.363 1.414-1.414L20 12.5l-7.778 7.778-1.414-1.414 5.364-5.364H4v-2h12.172z',
     displayName: 'ArrowRight',
   });
 };

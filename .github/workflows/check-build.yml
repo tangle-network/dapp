@@ -1,10 +1,10 @@
-name: build 🏗️
+name: 'Build 🏗️'
 
 on:
   pull_request:
-    branches: [develop, staging, master]
+    branches: [develop, staging, master, feature/**]
   push:
-    branches: [develop, staging, master]
+    branches: [develop, staging, master, feature/**]
 
   workflow_dispatch:
 
@@ -14,38 +14,33 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        node-version: [18.x]
+        node-version: ['>=18.18.x']
     steps:
       - name: Cancel Previous Runs
-        uses: styfle/cancel-workflow-action@0.11.0
+        uses: styfle/cancel-workflow-action@0.13.1
         with:
           access_token: ${{ secrets.GITHUB_TOKEN }}
-      - uses: actions/checkout@v3
+
+      - uses: actions/checkout@v4
+
+      - name: Enable corepack
+        run: |
+          corepack enable
+
       - name: Use Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v6.4.0
         with:
           node-version: ${{ matrix.node-version }}
-      - name: create env file
-        run: |
-          touch .env
-          echo PRIVACY_POLICY_PAGE_ID=${{ secrets.PRIVACY_POLICY_PAGE_ID }} >> .env
-          echo TERMS_AND_CONDITIONS_PAGE_ID=${{ secrets.TERMS_AND_CONDITIONS_PAGE_ID }} >> .env
-          echo NOTION_TOKEN_V2=${{ secrets.NOTION_TOKEN_V2 }} >> .env
-          echo NOTION_ACTIVE_USER=${{ secrets.NOTION_ACTIVE_USER }} >> .env
-          echo NX_BRIDGE_APP_DOMAIN=${{ secrets.NX_BRIDGE_APP_DOMAIN }} >> .env
-          echo NOTION_BLOG_INTEGRATION_POSTS_DATABASE_ID=${{ secrets.NOTION_BLOG_INTEGRATION_POSTS_DATABASE_ID }} >> .env
-          echo NOTION_BLOG_INTEGRATION_TOKEN=${{ secrets.NOTION_BLOG_INTEGRATION_TOKEN }} >> .env
-          echo NOTION_BLOG_INTEGRATION_VIDEOS_DATABASE_ID=${{ secrets.NOTION_BLOG_INTEGRATION_VIDEOS_DATABASE_ID }} >> .env
-          echo NEXT_PUBLIC_APP_URL=${{ secrets.NEXT_PUBLIC_APP_URL }} >> .env
-          echo NEXT_PUBLIC_FAUCET_BACKEND_URL=${{ secrets.NEXT_PUBLIC_FAUCET_BACKEND_URL }} >> .env
-          echo NEXT_PUBLIC_TWITTER_CLIENT_ID=${{ secrets.NEXT_PUBLIC_TWITTER_CLIENT_ID }} >> .env
-          echo TWITTER_CLIENT_SECRET=${{ secrets.TWITTER_CLIENT_SECRET }} >> .env
+          cache: yarn
 
       - name: Install deps
         run: yarn install
 
-      - name: Generate stats-dapp codegen
-        run: yarn gql:codegen
-
       - name: build
-        run: yarn nx run-many --all --target=build
+        run: |
+          yarn nx run-many --all --target=build
+
+        # Fix: JavaScript heap out of memory
+        # https://github.com/actions/runner-images/issues/70#issuecomment-1191708172
+        env:
+          NODE_OPTIONS: '--max_old_space_size=4096'

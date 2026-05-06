@@ -1,1 +1,1 @@
-export * from './getNativeCurrencyFromConfig';
+export { default as ensureHex } from './ensureHex';

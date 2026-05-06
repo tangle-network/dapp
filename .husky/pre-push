@@ -1,0 +1,10 @@
+# .husky/pre-push
+
+echo "*****Running linting & formatting******"
+yarn concurrently "yarn run lint" "yarn run format:check"
+
+echo "*****Running testing******"
+yarn run test
+
+echo "*****Running building******"
+yarn run build

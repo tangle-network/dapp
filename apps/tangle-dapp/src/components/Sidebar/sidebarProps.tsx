@@ -1,0 +1,127 @@
+import {
+  DocumentationIcon,
+  FaucetIcon,
+  GiftLineIcon,
+  GlobalLine,
+  HomeFillIcon,
+  ShuffleLine,
+  TokenSwapFill,
+  WaterDropletIcon,
+} from '@tangle-network/icons';
+import {
+  MobileSidebarProps,
+  SideBarFooterType,
+  SideBarItemProps,
+  TangleLogo,
+} from '@tangle-network/ui-components';
+import { SidebarTangleClosedIcon } from '@tangle-network/ui-components/components';
+import {
+  TANGLE_DOCS_URL,
+  TANGLE_FAUCET_URL,
+  TANGLE_MKT_URL,
+} from '@tangle-network/ui-components/constants';
+// import { PointsBanner } from '../../features/points/components/PointsBanner';
+import { NetworkFeature, PagePath } from '../../types';
+
+// Only show the services dropdown if on development mode.
+const SIDEBAR_STATIC_ITEMS: SideBarItemProps[] = [
+  {
+    name: 'Dashboard',
+    href: PagePath.DASHBOARD,
+    isInternal: true,
+    Icon: HomeFillIcon,
+    subItems: [],
+  },
+  {
+    name: 'Stake',
+    href: PagePath.STAKING,
+    isInternal: true,
+    Icon: TokenSwapFill,
+    subItems: [],
+  },
+  {
+    name: 'Liquid Stake',
+    href: PagePath.LIQUID_STAKING,
+    isInternal: true,
+    Icon: WaterDropletIcon,
+    subItems: [],
+  },
+  {
+    name: 'Bridge',
+    href: PagePath.BRIDGE,
+    isInternal: true,
+    Icon: ShuffleLine,
+    subItems: [],
+  },
+  {
+    name: 'Claim TNT',
+    href: PagePath.CLAIM,
+    isInternal: true,
+    Icon: GiftLineIcon,
+    subItems: [],
+  },
+];
+
+const SIDEBAR_FOOTER: SideBarFooterType = {
+  Icon: DocumentationIcon,
+  href: TANGLE_DOCS_URL,
+  isInternal: false,
+  name: 'Docs',
+};
+
+export default function getSidebarProps({
+  evmExplorerUrl,
+  networkFeatures,
+}: {
+  evmExplorerUrl?: string;
+  networkFeatures: readonly NetworkFeature[];
+}): MobileSidebarProps {
+  const isProductionEnv = import.meta.env.PROD;
+
+  const sideBarItems: SideBarItemProps[] = [
+    ...SIDEBAR_STATIC_ITEMS,
+    ...(evmExplorerUrl
+      ? [
+          {
+            Icon: GlobalLine,
+            href: evmExplorerUrl,
+            isInternal: false,
+            name: 'EVM Explorer',
+            subItems: [],
+          },
+        ]
+      : []),
+    ...(networkFeatures.includes(NetworkFeature.Faucet)
+      ? [
+          {
+            name: 'Testnet Faucet',
+            href: TANGLE_FAUCET_URL,
+            isInternal: false,
+            Icon: FaucetIcon,
+            subItems: [],
+          },
+        ]
+      : []),
+  ];
+
+  // Filter the sidebar items based on the current environment.
+  // This is useful to keep development-only items hidden in production.
+  const items = sideBarItems.filter((item) => {
+    return (
+      item.hideInProduction === undefined ||
+      !item.hideInProduction ||
+      !isProductionEnv
+    );
+  });
+
+  return {
+    ClosedLogo: SidebarTangleClosedIcon,
+    Logo: TangleLogo,
+    footer: {
+      ...SIDEBAR_FOOTER,
+      // extraContent: <PointsBanner />,
+    },
+    items,
+    logoLink: TANGLE_MKT_URL,
+  } satisfies MobileSidebarProps;
+}

@@ -1,52 +1,100 @@
-// Copyright 2022 @webb-tools/
+// Copyright 2024 @tangle-network/
 // SPDX-License-Identifier: Apache-2.0
 
-// list of know error codes of the dApp
+/* List of know error codes of the dApp */
 export enum WebbErrorCodes {
-  // Api is not ready
+  /* Api is not ready */
   ApiNotReady,
-  // No currency is available
+  /* No currency is available */
   NoCurrencyAvailable,
-  // No fungible token is available
+  /* No fungible token is available */
   NoFungibleTokenAvailable,
-  // Unsupported chain is switch via the extension
+  /* No fungible token is available */
+  NoWrappableTokenAvailable,
+  /* No signRaw function for this injector */
+  NoSignRaw,
+  /* Unsupported provider */
+  UnsupportedProvider,
+  /* Unsupported chain is switch via the extension */
   UnsupportedChain,
-  // Unselected chain is a mismatch between provider and application
+  /* Unsupported wallet */
+  UnsupportedWallet,
+  /* Unselected chain is a mismatch between provider and application */
   UnselectedChain,
-  // No accounts are available
+  /* Unsupported browser */
+  UnsupportedBrowser,
+  /* No accounts are available */
   NoAccountAvailable,
-  // No active bridge
+  /* No active bridge */
   NoActiveBridge,
-  // Failed to parse deposit note
+  /* Missing endpoints in the configuration */
+  NoEndpointsConfigured,
+  /* No claims pallet found */
+  NoClaimsPalletFound,
+  /** No client available */
+  NoClientAvailable,
+  /** No switch chain method found */
+  NoSwitchChainMethod,
+  /* Failed to parse deposit note */
   NoteParsingFailure,
-  // PolkaDot extension not installed
-  PolkaDotExtensionNotInstalled,
-  // Talisman extension not installed
+  /* Polkadot{.js} extension not installed */
+  PolkadotJSExtensionNotInstalled,
+  /* Talisman extension not installed */
   TalismanExtensionNotInstalled,
-  // SubWallet extension not installed
+  /* SubWallet extension not installed */
   SubWalletExtensionNotInstalled,
-  // MetaMasK extension not installed
+  /* MetaMasK extension not installed */
   MetaMaskExtensionNotInstalled,
-  // Unknown wallet
+  /* Rainbow extension not installed */
+  RainbowExtensionNotInstalled,
+  /* Phantom extension not installed */
+  PhantomExtensionNotInstalled,
+  /* Unknown wallet */
   UnknownWallet,
-  // Runtime Error on the provider
+  /* Runtime Error on the provider */
   InsufficientProviderInterface,
-  // EVM session already ended
+  /* EVM session already ended */
   EVMSessionAlreadyEnded,
-  // Relayer does not support the functionality
-  NoRelayerSupport,
-  // Relayer is not operating properly (sending bad leaves, etc.)
-  RelayerMisbehaving,
-  // Failed to parse the chainId
+  /* Failed to parse the chainId */
   ChainIdTypeUnformatted,
-  // Invalid amount to withdraw,
+  /* Invalid amount to withdraw, */
   AmountToWithdrawExceedsTheDepositedAmount,
-  // Transaction is cancelled
+  /* Transaction is cancelled */
   TransactionCancelled,
-  // There is a transaction in progress
+  /* There is a transaction in progress */
   TransactionInProgress,
-  // Insufficient disk space
+  /* Not implemented */
+  NotImplemented,
+  //* The anchor identifier is not found */
+  AnchorIdNotFound,
+  /* Insufficient disk space */
   InsufficientDiskSpace,
+  /* Invalid arguments */
+  InvalidArguments,
+  /* No connector configured for the wallet */
+  NoConnectorConfigured,
+  /* Relayer has not yet relayed the commitment to the destination chain */
+  CommitmentNotInTree,
+  /* Switch account failed */
+  SwitchAccountFailed,
+  /* Switch chain failed */
+  SwitchChainFailed,
+  /* Failed to send the transaction */
+  FailedToSendTx,
+  /** Failed to connect wallet */
+  FailedToConnectWallet,
+  /* Failed to disconnect the wallet */
+  FailedToDisconnect,
+  /* Key pair not found */
+  KeyPairNotFound,
+  /* Notes are not ready */
+  NotesNotReady,
+  /* Invalid amount */
+  InvalidAmount,
+  /** Invalid or unhandled enum value */
+  InvalidEnumValue,
+  /* Unknown error */
+  UnknownError,
 }
 
 // An Error message with error metadata
@@ -54,13 +102,6 @@ type WebbErrorMessage = {
   message: string;
   code: WebbErrorCodes;
 };
-
-const NOT_INSTALLED_WALLET_ERROR_CODES = [
-  WebbErrorCodes.PolkaDotExtensionNotInstalled,
-  WebbErrorCodes.TalismanExtensionNotInstalled,
-  WebbErrorCodes.SubWalletExtensionNotInstalled,
-  WebbErrorCodes.MetaMaskExtensionNotInstalled,
-];
 
 // WebbError an Error class to throw errors and catch them with type
 export class WebbError extends Error {
@@ -100,10 +141,28 @@ export class WebbError extends Error {
           message: 'No fungible token is available',
         };
 
+      case WebbErrorCodes.NoWrappableTokenAvailable:
+        return {
+          code,
+          message: 'No wrappable token is available',
+        };
+
+      case WebbErrorCodes.UnsupportedProvider:
+        return {
+          code,
+          message: 'Unsupported provider',
+        };
+
       case WebbErrorCodes.UnsupportedChain:
         return {
           code,
-          message: 'you have switched to unsupported chain',
+          message: 'You have switched to unsupported chain',
+        };
+
+      case WebbErrorCodes.UnsupportedWallet:
+        return {
+          code,
+          message: 'You have selected unsupported wallet',
         };
 
       case WebbErrorCodes.UnselectedChain:
@@ -112,10 +171,22 @@ export class WebbError extends Error {
           message: 'User did not select the chain',
         };
 
+      case WebbErrorCodes.UnsupportedBrowser:
+        return {
+          code,
+          message: 'Unsupported browser',
+        };
+
       case WebbErrorCodes.NoAccountAvailable:
         return {
           code,
           message: 'No account available',
+        };
+
+      case WebbErrorCodes.NoSignRaw:
+        return {
+          code,
+          message: 'No `signRaw` function for this injector',
         };
 
       case WebbErrorCodes.NoteParsingFailure:
@@ -124,28 +195,40 @@ export class WebbError extends Error {
           message: 'Failed to parse deposit note',
         };
 
-      case WebbErrorCodes.PolkaDotExtensionNotInstalled:
+      case WebbErrorCodes.PolkadotJSExtensionNotInstalled:
         return {
           code,
-          message: 'PolkaDot extension no installed',
+          message: 'PolkadotJS extension not installed',
         };
 
       case WebbErrorCodes.TalismanExtensionNotInstalled:
         return {
           code,
-          message: 'Talisman extension no installed',
+          message: 'Talisman extension not installed',
         };
 
       case WebbErrorCodes.SubWalletExtensionNotInstalled:
         return {
           code: WebbErrorCodes.SubWalletExtensionNotInstalled,
-          message: 'SubWallet extension no installed',
+          message: 'SubWallet extension not installed',
         };
 
       case WebbErrorCodes.MetaMaskExtensionNotInstalled:
         return {
           code,
-          message: 'MetaMask extension no installed',
+          message: 'MetaMask extension not installed',
+        };
+
+      case WebbErrorCodes.RainbowExtensionNotInstalled:
+        return {
+          code,
+          message: 'Rainbow extension not installed',
+        };
+
+      case WebbErrorCodes.PhantomExtensionNotInstalled:
+        return {
+          code,
+          message: 'Phantom extension not installed',
         };
 
       case WebbErrorCodes.UnknownWallet:
@@ -165,19 +248,6 @@ export class WebbError extends Error {
           code,
           message:
             "Attempt to end session and it' already ended or unknown error",
-        };
-
-      case WebbErrorCodes.NoRelayerSupport:
-        return {
-          code,
-          message:
-            'Attempt to use a relayer which does not support the functionality',
-        };
-
-      case WebbErrorCodes.RelayerMisbehaving:
-        return {
-          code,
-          message: 'The selected relayer is not operating properly',
         };
 
       case WebbErrorCodes.ChainIdTypeUnformatted:
@@ -216,10 +286,119 @@ export class WebbError extends Error {
           message: `No currency is available`,
         };
 
+      case WebbErrorCodes.NoEndpointsConfigured:
+        return {
+          code,
+          message: `Missing endpoints in the configuration`,
+        };
+
+      case WebbErrorCodes.NoClaimsPalletFound:
+        return {
+          code,
+          message: `No claims pallet found`,
+        };
+
+      case WebbErrorCodes.NoClientAvailable:
+        return {
+          code,
+          message: `No client available`,
+        };
+
+      case WebbErrorCodes.NoSwitchChainMethod:
+        return {
+          code,
+          message: `No switch chain method found`,
+        };
+
+      case WebbErrorCodes.AnchorIdNotFound:
+        return {
+          code,
+          message: `Not found the anchor identifier`,
+        };
+
+      case WebbErrorCodes.NotImplemented:
+        return {
+          code,
+          message: `Not implemented`,
+        };
+
       case WebbErrorCodes.InsufficientDiskSpace:
         return {
           code,
           message: `Insufficient disk space, please make sure you have at least 500MB of free space`,
+        };
+
+      case WebbErrorCodes.InvalidArguments:
+        return {
+          code,
+          message: `Invalid arguments`,
+        };
+
+      case WebbErrorCodes.NoConnectorConfigured:
+        return {
+          code,
+          message: `No connector configured for the wallet`,
+        };
+
+      case WebbErrorCodes.CommitmentNotInTree:
+        return {
+          code,
+          message: `Relayer has not yet relayed the commitment to the destination chain`,
+        };
+
+      case WebbErrorCodes.SwitchAccountFailed:
+        return {
+          code,
+          message: 'Failed to switch account',
+        };
+
+      case WebbErrorCodes.SwitchChainFailed:
+        return {
+          code,
+          message: 'Failed to switch chain',
+        };
+
+      case WebbErrorCodes.FailedToSendTx:
+        return {
+          code,
+          message: 'Failed to send the transaction',
+        };
+
+      case WebbErrorCodes.KeyPairNotFound:
+        return {
+          code,
+          message: 'Key pair not found',
+        };
+
+      case WebbErrorCodes.NotesNotReady:
+        return {
+          code,
+          message:
+            'Some of the notes are not ready, maybe waiting for 5-20 minutes and try again',
+        };
+
+      case WebbErrorCodes.InvalidAmount:
+        return {
+          code,
+          message: 'Invalid amount',
+        };
+
+      case WebbErrorCodes.FailedToConnectWallet:
+        return {
+          code,
+          message: 'Failed to connect wallet',
+        };
+
+      case WebbErrorCodes.FailedToDisconnect:
+        return {
+          code,
+          message: 'Failed to disconnect',
+        };
+
+      case WebbErrorCodes.InvalidEnumValue:
+        return {
+          code,
+          message: 'Invalid or unhandled enum value',
         };
 
       default:
@@ -228,10 +407,6 @@ export class WebbError extends Error {
           message: 'Unknown error',
         };
     }
-  }
-
-  static isWalletNotInstalledError(error: WebbError) {
-    return NOT_INSTALLED_WALLET_ERROR_CODES.includes(error.code);
   }
 
   // Coercion to sting

@@ -3,9 +3,16 @@
   // Ref: https://github.com/tailwindlabs/tailwindcss/issues/7553#issuecomment-917271069
   "tailwindCSS.experimental.classRegex": [
     ["/\\*tw\\*/ ([^;]*);", "'([^']*)'"],
-    ["cx\\(([^)]*)\\)", "'([^']*)'"],
-    ["twMerge\\(([^)]*)\\)", "'([^']*)'"]
+    ["cx\\(([^)]*)\\)", "(?:'|\"|`)([^']*)(?:'|\"|`)"],
+    ["twMerge\\(([^)]*)\\)", "(?:'|\"|`)([^']*)(?:'|\"|`)"]
   ],
   "typescript.tsdk": "./node_modules/typescript/lib",
-  "typescript.enablePromptUseWorkspaceTsdk": true
+  "typescript.enablePromptUseWorkspaceTsdk": true,
+  // https://github.com/tailwindlabs/tailwindcss/discussions/5258#discussioncomment-1979394
+  "css.customData": [".vscode/tailwind.json"],
+  "files.associations": {
+    "*.css": "tailwindcss"
+  },
+  "eslint.useFlatConfig": true,
+  "nxConsole.generateAiAgentRules": true
 }

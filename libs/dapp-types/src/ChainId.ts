@@ -1,35 +1,38 @@
-// Copyright 2022 @webb-tools/
+// Copyright 2024 @tangle-network/
 // SPDX-License-Identifier: Apache-2.0
 
-import { calculateTypedChainId, ChainType } from '@webb-tools/sdk-core';
+import { calculateTypedChainId, ChainType } from './TypedChainId';
 
 import EVMChainId from './EVMChainId';
 import SubstrateChainId from './SubstrateChainId';
+import SolanaChainId from './SolanaChainId';
 
 export interface TypedChainId {
   chainType: ChainType;
-  chainId: EVMChainId | SubstrateChainId;
+  chainId: EVMChainId | SubstrateChainId | SolanaChainId;
 }
 
 // Pre-calculated TypedChainId values that are supported in the dapp
 export enum PresetTypedChainId {
   EthereumMainNet = calculateTypedChainId(
     ChainType.EVM,
-    EVMChainId.EthereumMainNet
+    EVMChainId.EthereumMainNet,
   ),
 
   Goerli = calculateTypedChainId(ChainType.EVM, EVMChainId.Goerli),
 
   Sepolia = calculateTypedChainId(ChainType.EVM, EVMChainId.Sepolia),
 
+  Holesky = calculateTypedChainId(ChainType.EVM, EVMChainId.Holesky),
+
   HarmonyTestnet1 = calculateTypedChainId(
     ChainType.EVM,
-    EVMChainId.HarmonyTestnet1
+    EVMChainId.HarmonyTestnet1,
   ),
 
   HarmonyTestnet0 = calculateTypedChainId(
     ChainType.EVM,
-    EVMChainId.HarmonyTestnet0
+    EVMChainId.HarmonyTestnet0,
   ),
 
   Ganache = calculateTypedChainId(ChainType.EVM, EVMChainId.Ganache),
@@ -38,76 +41,132 @@ export enum PresetTypedChainId {
 
   OptimismTestnet = calculateTypedChainId(
     ChainType.EVM,
-    EVMChainId.OptimismTestnet
+    EVMChainId.OptimismTestnet,
   ),
 
   ArbitrumTestnet = calculateTypedChainId(
     ChainType.EVM,
-    EVMChainId.ArbitrumTestnet
+    EVMChainId.ArbitrumTestnet,
   ),
 
   PolygonTestnet = calculateTypedChainId(
     ChainType.EVM,
-    EVMChainId.PolygonTestnet
+    EVMChainId.PolygonTestnet,
   ),
 
-  ProtocolSubstrateStandalone = calculateTypedChainId(
+  TangleMainnetNative = calculateTypedChainId(
     ChainType.Substrate,
-    SubstrateChainId.ProtocolSubstrateStandalone
+    SubstrateChainId.TangleMainnetNative,
   ),
 
-  LocalTangleStandalone = calculateTypedChainId(
+  TangleTestnetNative = calculateTypedChainId(
     ChainType.Substrate,
-    SubstrateChainId.LocalTangleStandalone
+    SubstrateChainId.TangleTestnetNative,
   ),
 
-  DkgSubstrateStandalone = calculateTypedChainId(
+  TangleLocalNative = calculateTypedChainId(
     ChainType.Substrate,
-    SubstrateChainId.ProtocolSubstrateStandalone
+    SubstrateChainId.TangleLocalNative,
   ),
 
   Kusama = calculateTypedChainId(
     ChainType.KusamaRelayChain,
-    SubstrateChainId.Kusama
+    SubstrateChainId.Kusama,
   ),
 
   Polkadot = calculateTypedChainId(
     ChainType.PolkadotRelayChain,
-    SubstrateChainId.Polkadot
+    SubstrateChainId.Polkadot,
+  ),
+
+  RococoPhala = calculateTypedChainId(
+    ChainType.Substrate,
+    SubstrateChainId.RococoPhala,
   ),
 
   MoonbaseAlpha = calculateTypedChainId(
     ChainType.EVM,
-    EVMChainId.MoonbaseAlpha
+    EVMChainId.MoonbaseAlpha,
   ),
 
   AvalancheFuji = calculateTypedChainId(
     ChainType.EVM,
-    EVMChainId.AvalancheFuji
+    EVMChainId.AvalancheFuji,
   ),
 
-  ScrollAlpha = calculateTypedChainId(ChainType.EVM, EVMChainId.ScrollAlpha),
+  ScrollSepolia = calculateTypedChainId(
+    ChainType.EVM,
+    EVMChainId.ScrollSepolia,
+  ),
 
-  // Self hosted chains
-  HermesOrbit = calculateTypedChainId(ChainType.EVM, EVMChainId.HermesOrbit),
-  AthenaOrbit = calculateTypedChainId(ChainType.EVM, EVMChainId.AthenaOrbit),
-  DemeterOrbit = calculateTypedChainId(ChainType.EVM, EVMChainId.DemeterOrbit),
+  Polygon = calculateTypedChainId(ChainType.EVM, EVMChainId.Polygon),
+
+  Arbitrum = calculateTypedChainId(ChainType.EVM, EVMChainId.Arbitrum),
+
+  Optimism = calculateTypedChainId(ChainType.EVM, EVMChainId.Optimism),
+
+  Linea = calculateTypedChainId(ChainType.EVM, EVMChainId.Linea),
+
+  Base = calculateTypedChainId(ChainType.EVM, EVMChainId.Base),
+
+  BaseSepolia = calculateTypedChainId(ChainType.EVM, EVMChainId.BaseSepolia),
+
+  ArbitrumSepolia = calculateTypedChainId(
+    ChainType.EVM,
+    EVMChainId.ArbitrumSepolia,
+  ),
+
+  AnvilLocal = calculateTypedChainId(ChainType.EVM, EVMChainId.AnvilLocal),
+
+  BSC = calculateTypedChainId(ChainType.EVM, EVMChainId.BSC),
+
+  Bitlayer = calculateTypedChainId(ChainType.EVM, EVMChainId.Bitlayer),
 
   // Localnets
   HermesLocalnet = calculateTypedChainId(
     ChainType.EVM,
-    EVMChainId.HermesLocalnet
+    EVMChainId.HermesLocalnet,
   ),
 
   AthenaLocalnet = calculateTypedChainId(
     ChainType.EVM,
-    EVMChainId.AthenaLocalnet
+    EVMChainId.AthenaLocalnet,
   ),
 
   DemeterLocalnet = calculateTypedChainId(
     ChainType.EVM,
-    EVMChainId.DemeterLocalnet
+    EVMChainId.DemeterLocalnet,
+  ),
+
+  TangleLocalEVM = calculateTypedChainId(
+    ChainType.EVM,
+    EVMChainId.TangleLocalEVM,
+  ),
+
+  TangleTestnetEVM = calculateTypedChainId(
+    ChainType.EVM,
+    EVMChainId.TangleTestnetEVM,
+  ),
+
+  TangleMainnetEVM = calculateTypedChainId(
+    ChainType.EVM,
+    EVMChainId.TangleMainnetEVM,
+  ),
+
+  SolanaMainnet = calculateTypedChainId(
+    ChainType.Solana,
+    SolanaChainId.SolanaMainnet,
+  ),
+
+  SolanaTestnet = calculateTypedChainId(
+    ChainType.Solana,
+    SolanaChainId.SolanaTestnet,
+  ),
+
+  SolanaDevnet = calculateTypedChainId(
+    ChainType.Solana,
+    SolanaChainId.SolanaDevnet,
   ),
 }
 
-export { EVMChainId, SubstrateChainId };
+export { EVMChainId, SubstrateChainId, SolanaChainId };

@@ -1,0 +1,89 @@
+import {
+  createColumnHelper,
+  getCoreRowModel,
+  useReactTable,
+} from '@tanstack/react-table';
+import {
+  Dropdown,
+  DropdownBasicButton,
+  DropdownBody,
+} from '@tangle-network/ui-components/components/Dropdown';
+import { Table } from '@tangle-network/ui-components/components/Table';
+import { Typography } from '@tangle-network/ui-components/typography/Typography';
+import cx from 'classnames';
+import { FC } from 'react';
+import { formatUnits } from 'viem';
+
+import { VaultToken } from '../../../types';
+import LsTokenIcon from '../../LsTokenIcon';
+
+const COLUMN_HELPER = createColumnHelper<VaultToken>();
+
+const formatAmount = (amount: bigint, decimals: number): string => {
+  const formatted = formatUnits(amount, decimals);
+  const num = parseFloat(formatted);
+  if (num === 0) return '0';
+  if (num < 0.0001) return '< 0.0001';
+  return num.toLocaleString(undefined, {
+    maximumFractionDigits: 4,
+    minimumFractionDigits: 0,
+  });
+};
+
+const COLUMNS = [
+  COLUMN_HELPER.accessor('name', {
+    header: () => <Typography variant="body2">Token</Typography>,
+    cell: (props) => (
+      <div className="flex items-center gap-2">
+        <LsTokenIcon name={props.row.original.symbol} />
+
+        <Typography variant="body1">{props.getValue()}</Typography>
+      </div>
+    ),
+  }),
+  COLUMN_HELPER.accessor('amount', {
+    header: () => (
+      <Typography variant="body2" ta="right">
+        Amount
+      </Typography>
+    ),
+    cell: (props) => {
+      const value = props.getValue();
+      const decimals = props.row.original.decimals;
+
+      return (
+        <Typography variant="body1" ta="right">
+          {formatAmount(value, decimals)}
+        </Typography>
+      );
+    },
+  }),
+];
+
+const VaultsDropdown: FC<{ vaultTokens: VaultToken[] }> = ({ vaultTokens }) => {
+  const table = useReactTable({
+    columns: COLUMNS,
+    data: vaultTokens,
+    getCoreRowModel: getCoreRowModel(),
+  });
+
+  return (
+    <Dropdown>
+      <DropdownBasicButton className="flex items-center -space-x-2">
+        {vaultTokens.map(({ name, symbol }, idx) => (
+          <LsTokenIcon key={`${name}-${symbol}-${idx}`} name={symbol} />
+        ))}
+      </DropdownBasicButton>
+
+      <DropdownBody isPortal className="mt-2 bg-mono-0 dark:bg-mono-200">
+        <Table
+          tableProps={table}
+          thClassName={cx('px-0 py-3 first:pl-5 last:pr-5')}
+          tdClassName={cx('border-t-0 px-0 py-3 first:pl-5 last:pr-5')}
+        />
+      </DropdownBody>
+    </Dropdown>
+  );
+};
+
+export default VaultsDropdown;

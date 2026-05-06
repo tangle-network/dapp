@@ -1,225 +1,211 @@
-// Copyright 2022 @webb-tools/
+// Copyright 2024 @tangle-network/
 // SPDX-License-Identifier: Apache-2.0
 
-// The extra evm rpc urls are from https://github.com/DefiLlama/chainlist
+import { PresetTypedChainId } from '@tangle-network/dapp-types/ChainId';
+import { ChainType } from '@tangle-network/dapp-types/TypedChainId';
+import {
+  mainnet,
+  arbitrumGoerli,
+  avalancheFuji,
+  goerli,
+  holesky,
+  moonbaseAlpha,
+  optimismGoerli,
+  polygonMumbai,
+  scrollSepolia,
+  sepolia,
+  polygon,
+  arbitrum,
+  optimism,
+  linea,
+  base,
+  baseSepolia,
+  bsc,
+  bitlayer,
+} from 'viem/chains';
+import type { ChainConfig } from '../chain-config.interface';
+import anvilLocal from './customChains/anvilLocal';
 
-import { EVMChainId, PresetTypedChainId } from '@webb-tools/dapp-types';
-import ArbitrumLogo from '@webb-tools/logos/chains/ArbitrumLogo';
-import GanacheLogo from '@webb-tools/logos/chains/GanacheLogo';
-import { MoonbeamLogo } from '@webb-tools/logos/chains/MoonbeamLogo';
-import OptimismLogo from '@webb-tools/logos/chains/OptimismLogo';
-import PolygonLogo from '@webb-tools/logos/chains/PolygonLogo';
-import EtherLogo from '@webb-tools/logos/Eth';
-import { ChainType } from '@webb-tools/sdk-core';
+// Primary chains for development and production
+export const wagmiChains = [
+  anvilLocal, // Local development (Anvil on port 8545)
+  base, // Base mainnet
+  baseSepolia, // Base testnet
+  mainnet, // Ethereum mainnet (for native staking)
+  {
+    ...holesky,
+    // Override RPC URLs to prevent CORS issues
+    rpcUrls: {
+      default: {
+        http: ['https://ethereum-holesky-rpc.publicnode.com'],
+      },
+      public: {
+        http: ['https://ethereum-holesky-rpc.publicnode.com'],
+      },
+    },
+  }, // Ethereum Holesky testnet (for native staking)
+] as const;
 
-import { ChainConfig } from '../chain-config.interface';
+export const chainsConfig = {
+  [PresetTypedChainId.EthereumMainNet]: {
+    ...mainnet,
+    chainType: ChainType.EVM,
+    group: 'ethereum',
+    tag: 'live',
+    displayName: 'Ethereum',
+  } satisfies ChainConfig,
 
-export const chainsConfig: Record<number, ChainConfig> = {
+  [PresetTypedChainId.Polygon]: {
+    ...polygon,
+    chainType: ChainType.EVM,
+    group: 'polygon',
+    tag: 'live',
+    displayName: 'Polygon',
+  } satisfies ChainConfig,
+
+  [PresetTypedChainId.Arbitrum]: {
+    ...arbitrum,
+    chainType: ChainType.EVM,
+    group: 'arbitrum',
+    tag: 'live',
+    displayName: 'Arbitrum',
+  } satisfies ChainConfig,
+
+  [PresetTypedChainId.Optimism]: {
+    ...optimism,
+    chainType: ChainType.EVM,
+    group: 'optimism',
+    tag: 'live',
+    displayName: 'Optimism',
+  } satisfies ChainConfig,
+
+  [PresetTypedChainId.Linea]: {
+    ...linea,
+    chainType: ChainType.EVM,
+    group: 'linea',
+    tag: 'live',
+    displayName: 'Linea',
+  } satisfies ChainConfig,
+
+  [PresetTypedChainId.Base]: {
+    ...base,
+    chainType: ChainType.EVM,
+    group: 'base',
+    tag: 'live',
+    displayName: 'Base',
+  } satisfies ChainConfig,
+
+  [PresetTypedChainId.BSC]: {
+    ...bsc,
+    chainType: ChainType.EVM,
+    group: 'bsc',
+    tag: 'live',
+    displayName: 'BSC',
+  } satisfies ChainConfig,
+
+  [PresetTypedChainId.Bitlayer]: {
+    ...bitlayer,
+    chainType: ChainType.EVM,
+    group: 'bitlayer',
+    tag: 'live',
+    displayName: 'Bitlayer',
+  } satisfies ChainConfig,
+
   // Testnet
   [PresetTypedChainId.Goerli]: {
+    ...goerli,
     chainType: ChainType.EVM,
-    group: 'eth',
-    chainId: EVMChainId.Goerli,
-    name: 'Goerli',
-    base: 'ethereum',
-    url: 'https://goerli.infura.io/v3/e54b7176271840f9ba62e842ff5d6db4',
-    evmRpcUrls: [
-      'https://goerli.infura.io/v3/e54b7176271840f9ba62e842ff5d6db4',
-      'https://goerli.infura.io/v3',
-      'https://rpc.ankr.com/eth_goerli',
-      'https://eth-goerli.g.alchemy.com/v2',
-    ],
-    blockExplorerStub: 'https://goerli.etherscan.io',
-    logo: EtherLogo,
+    group: 'ethereum',
     tag: 'test',
-  },
+  } satisfies ChainConfig,
+
   [PresetTypedChainId.OptimismTestnet]: {
+    ...optimismGoerli,
     chainType: ChainType.EVM,
-    group: 'eth',
-    chainId: EVMChainId.OptimismTestnet,
-    name: 'Optimism Goerli',
-    base: 'optimism',
-    url: 'https://goerli.optimism.io',
-    evmRpcUrls: [
-      'https://goerli.optimism.io',
-      'https://endpoints.omniatech.io/v1/op/goerli/public',
-      'https://optimism-goerli.infura.io/v3',
-      'https://opt-goerli.g.alchemy.com/v2/demo',
-    ],
-    blockExplorerStub: 'https://blockscout.com/optimism/goerli',
-    logo: OptimismLogo,
+    group: 'optimism',
     tag: 'test',
-  },
+  } satisfies ChainConfig,
+
   [PresetTypedChainId.ArbitrumTestnet]: {
+    ...arbitrumGoerli,
     chainType: ChainType.EVM,
-    group: 'eth',
-    chainId: EVMChainId.ArbitrumTestnet,
-    name: 'Arbitrum Goerli',
-    base: 'arbitrum',
-    url: 'https://goerli-rollup.arbitrum.io/rpc',
-    evmRpcUrls: [
-      'https://goerli-rollup.arbitrum.io/rpc',
-      'https://arbitrum-goerli.infura.io/v3',
-      'https://arb-goerli.g.alchemy.com/v2',
-    ],
-    blockExplorerStub: 'https://goerli.arbiscan.io/',
-    logo: ArbitrumLogo,
+    group: 'arbitrum',
     tag: 'test',
-  },
+  } satisfies ChainConfig,
+
   [PresetTypedChainId.PolygonTestnet]: {
+    ...polygonMumbai,
     chainType: ChainType.EVM,
-    group: 'matic',
-    chainId: EVMChainId.PolygonTestnet,
-    name: 'Polygon Mumbai',
-    base: 'polygon',
+    group: 'polygon',
     tag: 'test',
-    url: 'https://matic-mumbai.chainstacklabs.com/',
-    evmRpcUrls: [
-      'https://matic-mumbai.chainstacklabs.com/',
-      'https://polygon-mumbai.infura.io/v3',
-      'https://polygon-mumbai.g.alchemy.com/v2',
-    ],
-    blockExplorerStub: 'https://mumbai.polygonscan.com/',
-    logo: PolygonLogo,
-  },
+  } satisfies ChainConfig,
+
   [PresetTypedChainId.MoonbaseAlpha]: {
+    ...moonbaseAlpha,
     chainType: ChainType.EVM,
-    group: 'eth',
-    chainId: EVMChainId.MoonbaseAlpha,
-    name: 'Moonbase Alpha',
-    base: 'moonbeam',
+    group: 'moonbeam',
     tag: 'test',
-    url: 'https://moonbeam-alpha.api.onfinality.io/public',
-    evmRpcUrls: [
-      'https://moonbeam-alpha.api.onfinality.io/public',
-      'https://rpc.api.moonbase.moonbeam.network',
-      'https://rpc.testnet.moonbeam.network	',
-    ],
-    blockExplorerStub: 'https://moonbase.moonscan.io/',
-    logo: MoonbeamLogo,
-  },
+  } satisfies ChainConfig,
+
   [PresetTypedChainId.Sepolia]: {
+    ...sepolia,
     chainType: ChainType.EVM,
-    group: 'eth',
-    chainId: EVMChainId.Sepolia,
-    name: 'Sepolia',
-    base: 'ethereum',
+    group: 'ethereum',
     tag: 'test',
-    url: 'https://rpc.sepolia.org',
-    blockExplorerStub: 'https://sepolia.etherscan.io/',
-    evmRpcUrls: [
-      'https://rpc.sepolia.org',
-      'https://sepolia.infura.io/v3',
-      'https://endpoints.omniatech.io/v1/eth/sepolia/public',
-      'https://ethereum-sepolia.blockpi.network/v1/rpc/public',
-    ],
-    logo: EtherLogo,
+    // NOTE: override the default rpcUrls provided by viem.sh to prevent being blocked by CORS policy
+    rpcUrls: {
+      default: {
+        http: ['https://ethereum-sepolia-rpc.publicnode.com'],
+      },
+      public: {
+        http: ['https://ethereum-sepolia-rpc.publicnode.com'],
+      },
+    },
   },
+
+  [PresetTypedChainId.Holesky]: {
+    ...holesky,
+    chainType: ChainType.EVM,
+    group: 'ethereum',
+    tag: 'test',
+    // NOTE: override the default rpcUrls provided by viem.sh to prevent being blocked by CORS policy
+    rpcUrls: {
+      default: {
+        http: ['https://ethereum-holesky-rpc.publicnode.com'],
+      },
+      public: {
+        http: ['https://ethereum-holesky-rpc.publicnode.com'],
+      },
+    },
+  } satisfies ChainConfig,
+
   [PresetTypedChainId.AvalancheFuji]: {
+    ...avalancheFuji,
     chainType: ChainType.EVM,
-    group: 'eth',
-    chainId: EVMChainId.AvalancheFuji,
-    name: 'Avalanche Fuji',
-    base: 'avalanche',
+    group: 'avalanche',
     tag: 'test',
-    url: 'https://api.avax-test.network/ext/bc/C/rpc',
-    blockExplorerStub: 'https://testnet.snowtrace.io/',
-    evmRpcUrls: [
-      'https://api.avax-test.network/ext/bc/C/rpc',
-      'https://rpc.ankr.com/avalanche_fuji',
-      'https://ava-testnet.public.blastapi.io/ext/bc/C/rpc',
-    ],
-    logo: EtherLogo,
-  },
-  [PresetTypedChainId.ScrollAlpha]: {
-    chainType: ChainType.EVM,
-    group: 'eth',
-    chainId: EVMChainId.ScrollAlpha,
-    name: 'Scroll Alpha',
-    base: 'scroll',
-    tag: 'test',
-    url: 'https://alpha-rpc.scroll.io/l2',
-    blockExplorerStub: 'https://blockscout.scroll.io/',
-    evmRpcUrls: ['https://alpha-rpc.scroll.io/l2'],
-    logo: EtherLogo,
-  },
+  } satisfies ChainConfig,
 
-  // Self hosted chains
-  [PresetTypedChainId.HermesOrbit]: {
+  [PresetTypedChainId.ScrollSepolia]: {
+    ...scrollSepolia,
     chainType: ChainType.EVM,
-    group: 'eth',
-    chainId: EVMChainId.HermesOrbit,
-    name: 'Hermes Orbit',
-    base: 'webb-dev',
+    group: 'scroll',
     tag: 'test',
-    url: 'https://hermes-testnet.webb.tools',
-    evmRpcUrls: ['https://hermes-testnet.webb.tools'],
-    blockExplorerStub: 'https://hermes-explorer.webb.tools',
-    logo: GanacheLogo,
-    env: ['development', 'test'],
-  },
-  [PresetTypedChainId.AthenaOrbit]: {
-    chainType: ChainType.EVM,
-    group: 'eth',
-    chainId: EVMChainId.AthenaOrbit,
-    name: 'Athena Orbit',
-    base: 'webb-dev',
-    tag: 'test',
-    url: 'https://athena-testnet.webb.tools',
-    evmRpcUrls: ['https://athena-testnet.webb.tools'],
-    blockExplorerStub: 'https://athena-explorer.webb.tools',
-    logo: GanacheLogo,
-    env: ['development', 'test'],
-  },
-  [PresetTypedChainId.DemeterOrbit]: {
-    chainType: ChainType.EVM,
-    group: 'eth',
-    chainId: EVMChainId.DemeterOrbit,
-    name: 'Demeter Orbit',
-    base: 'webb-dev',
-    tag: 'test',
-    url: 'https://demeter-testnet.webb.tools',
-    evmRpcUrls: ['https://demeter-testnet.webb.tools'],
-    blockExplorerStub: 'https://demeter-explorer.webb.tools',
-    logo: GanacheLogo,
-    env: ['development', 'test'],
-  },
+  } satisfies ChainConfig,
 
-  // Localnet
-  [PresetTypedChainId.HermesLocalnet]: {
+  [PresetTypedChainId.BaseSepolia]: {
+    ...baseSepolia,
     chainType: ChainType.EVM,
-    group: 'eth',
-    chainId: EVMChainId.HermesLocalnet,
-    name: 'Hermes',
-    base: 'webb-dev',
-    tag: 'dev',
-    url: 'http://127.0.0.1:5004',
-    evmRpcUrls: ['http://127.0.0.1:5004'],
-    logo: GanacheLogo,
-    env: ['development'],
-  },
-  [PresetTypedChainId.AthenaLocalnet]: {
+    group: 'base',
+    tag: 'test',
+    displayName: 'Base Sepolia',
+  } satisfies ChainConfig,
+
+  [PresetTypedChainId.AnvilLocal]: {
+    ...anvilLocal,
     chainType: ChainType.EVM,
-    group: 'eth',
-    chainId: EVMChainId.AthenaLocalnet,
-    name: 'Athena',
-    base: 'webb-dev',
+    group: 'webb-dev',
     tag: 'dev',
-    url: 'http://127.0.0.1:5005',
-    evmRpcUrls: ['http://127.0.0.1:5005'],
-    logo: GanacheLogo,
-    env: ['development'],
-  },
-  [PresetTypedChainId.DemeterLocalnet]: {
-    chainType: ChainType.EVM,
-    group: 'eth',
-    chainId: EVMChainId.DemeterLocalnet,
-    name: 'Demeter',
-    base: 'webb-dev',
-    tag: 'dev',
-    url: 'http://127.0.0.1:5006',
-    evmRpcUrls: ['http://127.0.0.1:5006'],
-    logo: GanacheLogo,
-    env: ['development'],
-  },
-};
+    displayName: 'Anvil Local',
+  } satisfies ChainConfig,
+} as const satisfies Record<PresetTypedChainId, ChainConfig>;

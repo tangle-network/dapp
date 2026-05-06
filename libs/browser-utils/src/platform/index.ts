@@ -1,1 +1,2 @@
-export * from './get-platform-metadata';
+export * from './getPlatformMetaData';
+export { default as getPlatformMetaData } from './getPlatformMetaData';

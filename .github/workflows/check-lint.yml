@@ -1,8 +1,8 @@
-name: clean 🧹
+name: 'Clean 🧹'
 
 on:
   pull_request:
-    branches: [develop, staging, master]
+    branches: [develop, staging, master, feature/**]
 
   workflow_dispatch:
 
@@ -12,17 +12,25 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        node-version: [18.x]
+        node-version: ['>=18.18.x']
     steps:
       - name: Cancel Previous Runs
-        uses: styfle/cancel-workflow-action@0.11.0
+        uses: styfle/cancel-workflow-action@0.13.1
         with:
           access_token: ${{ secrets.GITHUB_TOKEN }}
-      - uses: actions/checkout@v3
+
+      - uses: actions/checkout@v4
+
+      - name: Enable corepack
+        run: |
+          corepack enable
+
       - name: Use Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v6.4.0
         with:
           node-version: ${{ matrix.node-version }}
+          cache: yarn
+
       - name: lint
         run: |
           yarn install
@@ -34,17 +42,25 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        node-version: [18.x]
+        node-version: ['>=18.18.x']
     steps:
       - name: Cancel Previous Runs
-        uses: styfle/cancel-workflow-action@0.11.0
+        uses: styfle/cancel-workflow-action@0.13.1
         with:
           access_token: ${{ secrets.GITHUB_TOKEN }}
-      - uses: actions/checkout@v3
+
+      - uses: actions/checkout@v4
+
+      - name: Enable corepack
+        run: |
+          corepack enable
+
       - name: Use Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v6.4.0
         with:
           node-version: ${{ matrix.node-version }}
+          cache: yarn
+
       - name: prettier
         run: |
           yarn install
@@ -55,13 +71,17 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Cancel Previous Runs
-        uses: styfle/cancel-workflow-action@0.11.0
+        uses: styfle/cancel-workflow-action@0.13.1
         with:
           access_token: ${{ secrets.GITHUB_TOKEN }}
-      - uses: actions/checkout@v3
+
+      - uses: actions/checkout@v4
+
       - name: Link Checker
-        uses: lycheeverse/lychee-action@v1.5.4
+        uses: lycheeverse/lychee-action@v2.5.0
         with:
+          # Ignore the README.md file as some social sharing links are not valid
+          args: --verbose --no-progress --exclude-path 'README.md' './**/*.md' './**/*.html' './**/*.rst'
           fail: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

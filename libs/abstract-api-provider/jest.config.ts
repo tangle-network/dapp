@@ -1,7 +1,6 @@
-/* eslint-disable */
 export default {
   displayName: 'abstract-api-provider',
-  preset: '../../jest.preset.js',
+  preset: '../../jest.preset.cjs',
   globals: {
     'ts-jest': {
       tsconfig: '<rootDir>/tsconfig.spec.json',

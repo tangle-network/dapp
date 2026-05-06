@@ -1,4 +1,5 @@
+export { default as OFACFilterProvider } from './OFACFilterProvider';
 export * from './WebbProvider';
 export * from './app-event';
-export * from './error';
 export * from './webb-context';
+export * from './ConnectWallet';

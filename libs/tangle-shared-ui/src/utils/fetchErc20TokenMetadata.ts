@@ -1,0 +1,214 @@
+import { isEvmAddress } from '@tangle-network/ui-components';
+import { EvmAddress } from '@tangle-network/ui-components/types/address';
+import { ContractFunctionName, erc20Abi, PublicClient } from 'viem';
+import { z } from 'zod';
+import { cacheTokenMetadata } from '@tangle-network/dapp-config/tokenMetadata';
+import EVMChainId from '@tangle-network/dapp-types/EVMChainId';
+
+/** Fallback to Ethereum mainnet if chain ID unavailable */
+const DEFAULT_CHAIN_ID = EVMChainId.EthereumMainNet;
+
+type TokenMetadata = {
+  id: EvmAddress;
+  name: string;
+  symbol: string;
+  decimals: number;
+};
+
+const TokenMetadataSchema = z.object({
+  id: z.custom<EvmAddress>(
+    (value) => typeof value === 'string' && isEvmAddress(value),
+    { message: 'Invalid Ethereum address format' },
+  ),
+  name: z.string(),
+  symbol: z.string(),
+  decimals: z.number(),
+});
+
+const fetchErc20TokenMetadata = async (
+  viemPublicClient: PublicClient,
+  contractAddresses: EvmAddress[],
+): Promise<TokenMetadata[]> => {
+  // If the chain does not have a multicall3 contract, fallback to individual readContract calls.
+  if (viemPublicClient.chain?.contracts?.multicall3?.address === undefined) {
+    return fetchErc20TokenMetadataWithIndividualCalls(
+      viemPublicClient,
+      contractAddresses,
+    );
+  }
+
+  const functionNames = [
+    'name',
+    'symbol',
+    'decimals',
+  ] as const satisfies ContractFunctionName<typeof erc20Abi, 'view'>[];
+
+  const calls = contractAddresses.flatMap((address) =>
+    functionNames.map((functionName) => ({
+      address,
+      abi: erc20Abi,
+      functionName,
+    })),
+  );
+
+  try {
+    const results = await viemPublicClient.multicall({ contracts: calls });
+
+    // If everything failed, the most common cause is missing/broken multicall3 on this chain.
+    // Avoid spamming per-token logs and just fall back to individual calls.
+    if (results.every((r) => r.status === 'failure')) {
+      console.warn(
+        `Multicall returned failures for all ERC20 metadata reads (chain: ${viemPublicClient.chain?.name}); falling back to individual calls.`,
+      );
+      return fetchErc20TokenMetadataWithIndividualCalls(
+        viemPublicClient,
+        contractAddresses,
+      );
+    }
+
+    const metadatas: TokenMetadata[] = [];
+
+    for (
+      let addressIndex = 0;
+      addressIndex < contractAddresses.length;
+      addressIndex++
+    ) {
+      const id = contractAddresses[addressIndex];
+
+      // Calculate the starting index for this address's results.
+      const baseIndex = addressIndex * functionNames.length;
+
+      const nameResult = results[baseIndex];
+      const symbolResult = results[baseIndex + 1];
+      const decimalsResult = results[baseIndex + 2];
+
+      const hasFailure =
+        nameResult?.status === 'failure' ||
+        symbolResult?.status === 'failure' ||
+        decimalsResult?.status === 'failure';
+
+      // If multicall returns failures (including a broken multicall3), fall back to individual calls for this token.
+      if (hasFailure) {
+        console.warn(
+          `Failed to fetch complete ERC20 token metadata for address ${id} (chain: ${viemPublicClient.chain?.name})`,
+          {
+            nameError:
+              nameResult?.status === 'failure' ? nameResult.error : null,
+            symbolError:
+              symbolResult?.status === 'failure' ? symbolResult.error : null,
+            decimalsError:
+              decimalsResult?.status === 'failure'
+                ? decimalsResult.error
+                : null,
+          },
+        );
+
+        const fallback = await fetchErc20TokenMetadataWithIndividualCalls(
+          viemPublicClient,
+          [id],
+        );
+
+        if (fallback.length > 0) {
+          metadatas.push(fallback[0]);
+        }
+
+        continue;
+      }
+
+      try {
+        const token = TokenMetadataSchema.parse({
+          id,
+          name: nameResult.result,
+          symbol: symbolResult.result,
+          decimals: Number(decimalsResult.result),
+        });
+
+        // Cache for future lookups (chain-aware)
+        const chainId = viemPublicClient.chain?.id ?? DEFAULT_CHAIN_ID;
+        cacheTokenMetadata(chainId, id, {
+          name: token.name,
+          symbol: token.symbol,
+          decimals: token.decimals,
+        });
+
+        metadatas.push(token);
+      } catch (parseError) {
+        console.warn(
+          `Failed to validate ERC20 token metadata for address ${id}`,
+          parseError,
+        );
+      }
+    }
+
+    return metadatas;
+  } catch (multicallError) {
+    console.error(
+      `Multicall failed for ERC20 tokens (chain: ${viemPublicClient.chain?.name})`,
+      multicallError,
+    );
+
+    return fetchErc20TokenMetadataWithIndividualCalls(
+      viemPublicClient,
+      contractAddresses,
+    );
+  }
+};
+
+export default fetchErc20TokenMetadata;
+
+const fetchErc20TokenMetadataWithIndividualCalls = async (
+  viemPublicClient: PublicClient,
+  contractAddresses: EvmAddress[],
+): Promise<TokenMetadata[]> => {
+  // Fallback to individual readContract calls
+  const tokenMetadata: Record<string, TokenMetadata> = {};
+
+  // Create promises for all token metadata
+  const promises = contractAddresses.flatMap(async (tokenAddress) => {
+    try {
+      const [nameResult, symbolResult, decimalsResult] = await Promise.all([
+        viemPublicClient.readContract({
+          address: tokenAddress,
+          abi: erc20Abi,
+          functionName: 'name',
+        }),
+        viemPublicClient.readContract({
+          address: tokenAddress,
+          abi: erc20Abi,
+          functionName: 'symbol',
+        }),
+        viemPublicClient.readContract({
+          address: tokenAddress,
+          abi: erc20Abi,
+          functionName: 'decimals',
+        }),
+      ]);
+
+      const metadata = {
+        id: tokenAddress,
+        name: nameResult,
+        symbol: symbolResult,
+        decimals: decimalsResult,
+      };
+      tokenMetadata[tokenAddress] = metadata;
+
+      // Cache for future lookups (chain-aware)
+      const chainId = viemPublicClient.chain?.id ?? DEFAULT_CHAIN_ID;
+      cacheTokenMetadata(chainId, tokenAddress, {
+        name: nameResult,
+        symbol: symbolResult,
+        decimals: decimalsResult,
+      });
+    } catch (error) {
+      console.error(
+        `Error fetching metadata for token ${tokenAddress}:`,
+        error,
+      );
+    }
+  });
+
+  // Wait for all promises to resolve
+  await Promise.allSettled(promises);
+
+  return Object.values(tokenMetadata);
+};

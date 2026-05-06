@@ -1,37 +1,61 @@
-// Copyright 2022 @webb-tools/
+// Copyright 2024 @tangle-network/
 // SPDX-License-Identifier: Apache-2.0
 
-import { ChainType } from '@webb-tools/sdk-core';
+import { ChainType } from '@tangle-network/dapp-types/TypedChainId';
+import type { Chain } from 'viem/chains';
 
-import { AppEnvironment } from '../types';
+import type { AppEnvironment } from '../types';
 
-export type ChainBase =
-  | 'polygon'
+export type ChainGroup =
+  | 'arbitrum'
+  | 'athena'
+  | 'avalanche'
+  | 'cosmos'
   | 'ethereum'
-  | 'optimism'
   | 'kusama'
   | 'moonbeam'
+  | 'optimism'
+  | 'orbit'
+  | 'phala'
   | 'polkadot'
-  | 'arbitrum'
-  | 'avalanche'
-  | 'tangle'
+  | 'polygon'
   | 'scroll'
-  | 'webb-dev';
+  | 'tangle'
+  | 'bsc'
+  | 'base'
+  | 'linea'
+  | 'webb-dev'
+  | 'solana'
+  | 'bitlayer';
 
-export interface ChainConfig {
+/**
+ * The extended chain interface that includes the chain type and group
+ */
+export type ChainExtension = {
+  /**
+   * The display name of the chain
+   */
+  displayName?: string;
+
+  /**
+   * The type of chain (e.g EVM, Substrate, etc)
+   */
   chainType: ChainType;
-  name: string;
-  base?: ChainBase;
-  group: string;
-  chainId: number;
+
+  /**
+   * The group of the chain (e.g Ethereum, Polkadot, etc)
+   */
+  group: ChainGroup;
+
+  /**
+   * The tag indicating the network (e.g dev, test, live)
+   */
   tag: 'dev' | 'test' | 'live';
-  url: string;
-  evmRpcUrls?: string[];
-  blockExplorerStub?: string;
-  logo: React.ComponentType | React.ElementType;
 
   /**
    * The supported environments for this chain (defaults to all)
    */
   env?: AppEnvironment[];
-}
+};
+
+export type ChainConfig = Chain & ChainExtension;

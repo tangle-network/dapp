@@ -1,14 +1,24 @@
-// Copyright 2022 @webb-tools/
+// Copyright 2024 @tangle-network/
 // SPDX-License-Identifier: Apache-2.0
 
 import {
   Account,
   AccountsAdapter,
-  PromiseOrT,
-} from '@webb-tools/abstract-api-provider/account';
-import { Eth } from 'web3-eth';
+  type PromiseOrT,
+} from '@tangle-network/abstract-api-provider/account';
+import getWagmiConfig from '@tangle-network/dapp-config/wagmi-config';
+import type { Address, JsonRpcAccount } from 'viem';
+import type { Connector } from 'wagmi';
+import { getAccount } from 'wagmi/actions';
 
-export class Web3Account extends Account<Eth> {
+export class Web3Account extends Account<JsonRpcAccount> {
+  constructor(
+    public readonly _inner: JsonRpcAccount,
+    public readonly address: Address,
+  ) {
+    super(_inner, address);
+  }
+
   get avatar() {
     return '';
   }
@@ -18,23 +28,38 @@ export class Web3Account extends Account<Eth> {
   }
 }
 
-export class Web3Accounts extends AccountsAdapter<Eth> {
-  providerName = 'Eth';
+export class Web3Accounts extends AccountsAdapter<Connector, JsonRpcAccount> {
+  providerName = 'Web3';
 
   async accounts() {
-    const accounts = await this._inner.getAccounts();
+    const addresses = await this.inner.getAccounts();
 
-    return accounts.map((address) => new Web3Account(this.inner, address));
+    return addresses.map(
+      (address) =>
+        new Web3Account(
+          { type: 'json-rpc', address } satisfies JsonRpcAccount,
+          address,
+        ),
+    );
   }
 
   get activeOrDefault() {
-    const defaultAccount = this.inner.defaultAccount;
+    const defaultAccount = getAccount(getWagmiConfig());
 
-    return defaultAccount ? new Web3Account(this.inner, defaultAccount) : null;
+    if (!defaultAccount.address) {
+      return null;
+    }
+
+    return new Web3Account(
+      {
+        type: 'json-rpc',
+        address: defaultAccount.address,
+      } satisfies JsonRpcAccount,
+      defaultAccount.address,
+    );
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  setActiveAccount(account: Account): PromiseOrT<void> {
-    return undefined;
+  setActiveAccount(_nextAccount: Account): PromiseOrT<void> {
+    return;
   }
 }
