@@ -87,6 +87,15 @@ const App: FC = () => {
             element={withLayout(InstancesLayout, ServiceDetailPage)}
           />
 
+          <Route
+            path={PagePath.SERVICE_DETAILS}
+            element={
+              <InstancesLayout>
+                <ServiceDetailPage />
+              </InstancesLayout>
+            }
+          />
+
           <Route path={PagePath.BLUEPRINTS}>
             <Route
               path={PagePath.BLUEPRINTS}
@@ -101,6 +110,24 @@ const App: FC = () => {
             <Route
               path={PagePath.BLUEPRINTS_MANAGE}
               element={withLayout(BlueprintsLayout, ManageBlueprintsPage)}
+            />
+
+            <Route
+              path={PagePath.BLUEPRINTS_CREATE}
+              element={
+                <BlueprintsLayout>
+                  <CreateBlueprintPage />
+                </BlueprintsLayout>
+              }
+            />
+
+            <Route
+              path={PagePath.BLUEPRINTS_MANAGE}
+              element={
+                <BlueprintsLayout>
+                  <ManageBlueprintsPage />
+                </BlueprintsLayout>
+              }
             />
 
             <Route
@@ -137,6 +164,7 @@ const App: FC = () => {
             />
           </Route>
 
+          {/* Redirect old registration review page to blueprints */}
           <Route
             path={PagePath.BLUEPRINTS_REGISTRATION_REVIEW}
             element={<Navigate to={PagePath.BLUEPRINTS} replace />}
