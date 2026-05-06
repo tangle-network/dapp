@@ -871,6 +871,32 @@ export const useProposableServices = (options?: {
 };
 
 /**
+ * Reads the active slashing configuration from the Tangle contract.
+ * Exposes disputeBond so callers can attach msg.value when disputing.
+ */
+export const useSlashConfig = (options?: { enabled?: boolean }) => {
+  const { enabled = true } = options ?? {};
+  const chainId = useChainId();
+  const publicClient = usePublicClient();
+
+  return useQuery({
+    queryKey: ['slashing', 'config', chainId],
+    queryFn: async () => {
+      if (!publicClient) throw new Error('Public client not available');
+      const contracts = getContractsByChainId(chainId);
+      return publicClient.readContract({
+        address: contracts.tangle,
+        abi: TANGLE_ABI,
+        functionName: 'getSlashConfig',
+        args: [],
+      });
+    },
+    enabled: enabled && !!publicClient,
+    staleTime: 60_000,
+  });
+};
+
+/**
  * Reads an on-chain slash proposal directly from the Tangle contract.
  */
 export const useSlashProposalDetails = (
@@ -1130,9 +1156,14 @@ export const useProposeSlashTx = () => {
 
 /**
  * Hook to dispute a slash proposal.
+ * Automatically reads disputeBond from the active SlashConfig and forwards
+ * it as msg.value — required when the admin has set a non-zero bond.
  */
 export const useDisputeSlashTx = () => {
   const chainId = useChainId();
+  const { data: slashConfig } = useSlashConfig();
+  const disputeBond = slashConfig?.disputeBond ?? BigInt(0);
+
   const hook = useContractWrite(
     TANGLE_ABI,
     (params: SlashReasonParams) => {
@@ -1148,6 +1179,7 @@ export const useDisputeSlashTx = () => {
         abi: TANGLE_ABI,
         functionName: 'disputeSlash' as const,
         args: [params.slashId, params.reason] as const,
+        value: disputeBond > BigInt(0) ? disputeBond : undefined,
       };
     },
     {
@@ -1168,6 +1200,7 @@ export const useDisputeSlashTx = () => {
 
   return {
     disputeSlash,
+    disputeBond,
     status: mapContractWriteStatus(hook.status),
     error: hook.error,
     reset: hook.reset,
