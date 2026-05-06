@@ -8,7 +8,6 @@ import {
 import values from 'lodash/values';
 import { ChainConfig } from './chains/chain-config.interface';
 import { WalletConfig } from './wallets/wallet-config.interface';
-import { CurrencyRole, CurrencyType } from '@webb-tools/dapp-types';
 
 export type Chain = ChainConfig & {
   wallets: Array<Wallet['id']>;
@@ -66,18 +65,5 @@ export class ApiConfig {
         : values(this.wallets);
 
     return wallets;
-  }
-
-  getCurrenciesBy(opts: { role?: CurrencyRole; type?: CurrencyType }) {
-    const currencies = Object.values(this.currencies).filter((currency) => {
-      if (opts.role && currency.role !== opts.role) {
-        return false;
-      }
-      if (opts.type && currency.type !== opts.type) {
-        return false;
-      }
-      return true;
-    });
-    return currencies;
   }
 }
