@@ -1,3 +1,4 @@
+/* eslint-disable no-restricted-globals */
 // Worker to create a merkle tree
 
 import { MerkleTree } from '@webb-tools/sdk-core';
