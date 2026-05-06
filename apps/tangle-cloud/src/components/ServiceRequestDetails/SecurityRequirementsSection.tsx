@@ -1,9 +1,8 @@
 import { FC, useMemo } from 'react';
 import { zeroAddress } from 'viem';
-import { SkeletonLoader, Typography } from '@tangle-network/ui-components';
+import { Skeleton, Text } from '../sandbox/SandboxUi';
 import type { AssetSecurityRequirement } from '@tangle-network/tangle-shared-ui/data/services';
 import { useEvmAssetMetadatas } from '@tangle-network/tangle-shared-ui/hooks/useEvmAssetMetadatas';
-import type { EvmAddress } from '@tangle-network/ui-components/types/address';
 
 type Props = {
   securityRequirements: AssetSecurityRequirement[];
@@ -19,7 +18,9 @@ const SecurityRequirementsSection: FC<Props> = ({
   isLoading,
 }) => {
   // Extract token addresses for metadata resolution
-  const tokenAddresses = useMemo(() => {
+  const tokenAddresses = useMemo<
+    Parameters<typeof useEvmAssetMetadatas>[0]
+  >(() => {
     if (securityRequirements.length === 0) {
       return null;
     }
@@ -27,8 +28,8 @@ const SecurityRequirementsSection: FC<Props> = ({
       // For native token (kind=0), use zero address for metadata lookup
       // For ERC20 (kind=1), use the token address
       const addr = req.asset.kind === 0 ? zeroAddress : req.asset.token;
-      return addr as EvmAddress;
-    });
+      return addr;
+    }) as Parameters<typeof useEvmAssetMetadatas>[0];
   }, [securityRequirements]);
 
   // Fetch token metadata
@@ -52,11 +53,11 @@ const SecurityRequirementsSection: FC<Props> = ({
   if (isLoading || isLoadingMetadata) {
     return (
       <div className="space-y-2">
-        <Typography variant="h5" className="text-mono-200 dark:text-mono-0">
+        <Text variant="h5" className="text-foreground">
           Security Requirements
-        </Typography>
+        </Text>
 
-        <SkeletonLoader className="h-10 w-full" />
+        <Skeleton className="h-10 w-full" />
       </div>
     );
   }
@@ -67,21 +68,21 @@ const SecurityRequirementsSection: FC<Props> = ({
 
   return (
     <div className="space-y-2">
-      <Typography variant="h5" className="text-mono-200 dark:text-mono-0">
+      <Text variant="h5" className="text-foreground">
         Security Requirements
-      </Typography>
+      </Text>
 
       <div className="space-y-2">
         {securityRequirements.map((req, index) => (
           <div
             key={index}
-            className="flex items-center justify-between p-2 rounded-lg bg-mono-20 dark:bg-mono-180"
+            className="flex items-center justify-between p-2 rounded-lg bg-muted/40"
           >
             <span className="text-sm font-semibold">
               {getAssetLabel(index)}
             </span>
 
-            <span className="text-sm text-mono-140 dark:text-mono-80">
+            <span className="text-sm text-muted-foreground">
               {formatBps(req.minExposureBps)} - {formatBps(req.maxExposureBps)}
             </span>
           </div>

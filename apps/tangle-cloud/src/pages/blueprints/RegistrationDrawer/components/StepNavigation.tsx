@@ -1,4 +1,4 @@
-import Button from '@tangle-network/ui-components/components/buttons/Button';
+import { Button } from '../../../../components/sandbox/SandboxUi';
 import { FC } from 'react';
 
 type StepNavigationProps = {
@@ -21,7 +21,7 @@ const StepNavigation: FC<StepNavigationProps> = ({
   onSubmit,
 }) => {
   return (
-    <div className="flex gap-4 pt-4 border-t border-mono-80 dark:border-mono-160">
+    <div className="flex gap-4 pt-4 border-t border-border">
       <Button
         variant="secondary"
         isFullWidth

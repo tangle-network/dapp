@@ -35,5 +35,7 @@ export type RegistrationDrawerProps = {
   onOpenChange: (isOpen: boolean) => void;
   blueprints: Blueprint[];
   onRemoveBlueprint?: (blueprintId: string) => void;
-  onRegistrationComplete?: () => void;
+  onRegistrationComplete?: (options?: {
+    expectOperatorCountChange?: boolean;
+  }) => void | Promise<void>;
 };

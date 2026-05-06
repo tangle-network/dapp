@@ -3,6 +3,7 @@
  * These are displayed to users in processing/success/error notifications.
  */
 export enum TxName {
+  PRE_REGISTER_BLUEPRINT = 'pre-register blueprint',
   REGISTER_BLUEPRINT = 'register blueprint',
   UNREGISTER_BLUEPRINT = 'unregister blueprint',
   REJECT_SERVICE_REQUEST = 'reject service request',

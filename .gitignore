@@ -107,6 +107,7 @@ vitest.config.*.timestamp*
 # React Scan reports
 reports/
 agent-results/
+audit-results/
 .agent-wallet-profile/
 .agent-wallet-profile*/
 .wallet-extensions/
@@ -126,3 +127,4 @@ contracts/**/target/
 contracts/**/evm-claims.json
 
 docs/cloud-qa
+scripts/local-env/blueprint-ui-catalog/generated/

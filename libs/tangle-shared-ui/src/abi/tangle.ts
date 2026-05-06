@@ -23,177 +23,82 @@ const ABI = [
     name: 'approveService',
     inputs: [
       {
-        name: 'requestId',
-        type: 'uint64',
-        internalType: 'uint64',
-      },
-      {
-        name: 'stakingPercent',
-        type: 'uint8',
-        internalType: 'uint8',
-      },
-    ],
-    outputs: [],
-    stateMutability: 'nonpayable',
-  },
-  {
-    type: 'function',
-    name: 'approveService',
-    inputs: [
-      {
-        name: 'requestId',
-        type: 'uint64',
-        internalType: 'uint64',
-      },
-      {
-        name: 'stakingPercent',
-        type: 'uint8',
-        internalType: 'uint8',
-      },
-      {
-        name: 'tntExposureBps',
-        type: 'uint16',
-        internalType: 'uint16',
-      },
-    ],
-    outputs: [],
-    stateMutability: 'nonpayable',
-  },
-  {
-    type: 'function',
-    name: 'approveServiceWithBls',
-    inputs: [
-      {
-        name: 'requestId',
-        type: 'uint64',
-        internalType: 'uint64',
-      },
-      {
-        name: 'stakingPercent',
-        type: 'uint8',
-        internalType: 'uint8',
-      },
-      {
-        name: 'blsPubkey',
-        type: 'uint256[4]',
-        internalType: 'uint256[4]',
-      },
-    ],
-    outputs: [],
-    stateMutability: 'nonpayable',
-  },
-  {
-    type: 'function',
-    name: 'approveServiceWithBls',
-    inputs: [
-      {
-        name: 'requestId',
-        type: 'uint64',
-        internalType: 'uint64',
-      },
-      {
-        name: 'stakingPercent',
-        type: 'uint8',
-        internalType: 'uint8',
-      },
-      {
-        name: 'tntExposureBps',
-        type: 'uint16',
-        internalType: 'uint16',
-      },
-      {
-        name: 'blsPubkey',
-        type: 'uint256[4]',
-        internalType: 'uint256[4]',
-      },
-    ],
-    outputs: [],
-    stateMutability: 'nonpayable',
-  },
-  {
-    type: 'function',
-    name: 'approveServiceWithCommitments',
-    inputs: [
-      {
-        name: 'requestId',
-        type: 'uint64',
-        internalType: 'uint64',
-      },
-      {
-        name: 'commitments',
-        type: 'tuple[]',
-        internalType: 'struct Types.AssetSecurityCommitment[]',
+        name: 'params',
+        type: 'tuple',
+        internalType: 'struct Types.ApprovalParams',
         components: [
           {
-            name: 'asset',
-            type: 'tuple',
-            internalType: 'struct Types.Asset',
+            name: 'requestId',
+            type: 'uint64',
+            internalType: 'uint64',
+          },
+          {
+            name: 'securityCommitments',
+            type: 'tuple[]',
+            internalType: 'struct Types.AssetSecurityCommitment[]',
             components: [
               {
-                name: 'kind',
-                type: 'uint8',
-                internalType: 'enum Types.AssetKind',
+                name: 'asset',
+                type: 'tuple',
+                internalType: 'struct Types.Asset',
+                components: [
+                  {
+                    name: 'kind',
+                    type: 'uint8',
+                    internalType: 'enum Types.AssetKind',
+                  },
+                  {
+                    name: 'token',
+                    type: 'address',
+                    internalType: 'address',
+                  },
+                ],
               },
               {
-                name: 'token',
-                type: 'address',
-                internalType: 'address',
+                name: 'exposureBps',
+                type: 'uint16',
+                internalType: 'uint16',
               },
             ],
           },
           {
-            name: 'exposureBps',
-            type: 'uint16',
-            internalType: 'uint16',
+            name: 'blsPubkey',
+            type: 'uint256[4]',
+            internalType: 'uint256[4]',
           },
-        ],
-      },
-    ],
-    outputs: [],
-    stateMutability: 'nonpayable',
-  },
-  {
-    type: 'function',
-    name: 'approveServiceWithCommitmentsAndBls',
-    inputs: [
-      {
-        name: 'requestId',
-        type: 'uint64',
-        internalType: 'uint64',
-      },
-      {
-        name: 'commitments',
-        type: 'tuple[]',
-        internalType: 'struct Types.AssetSecurityCommitment[]',
-        components: [
           {
-            name: 'asset',
-            type: 'tuple',
-            internalType: 'struct Types.Asset',
+            name: 'blsPopSignature',
+            type: 'uint256[2]',
+            internalType: 'uint256[2]',
+          },
+          {
+            name: 'teeCommitments',
+            type: 'tuple[]',
+            internalType: 'struct Types.TeeAttestationCommitment[]',
             components: [
               {
-                name: 'kind',
+                name: 'backend',
                 type: 'uint8',
-                internalType: 'enum Types.AssetKind',
+                internalType: 'enum Types.TeeBackend',
               },
               {
-                name: 'token',
-                type: 'address',
-                internalType: 'address',
+                name: 'expectedMeasurement',
+                type: 'bytes32',
+                internalType: 'bytes32',
+              },
+              {
+                name: 'nonceBinding',
+                type: 'bytes32',
+                internalType: 'bytes32',
+              },
+              {
+                name: 'expiresAt',
+                type: 'uint64',
+                internalType: 'uint64',
               },
             ],
           },
-          {
-            name: 'exposureBps',
-            type: 'uint16',
-            internalType: 'uint16',
-          },
         ],
-      },
-      {
-        name: 'blsPubkey',
-        type: 'uint256[4]',
-        internalType: 'uint256[4]',
       },
     ],
     outputs: [],
@@ -235,6 +140,30 @@ const ABI = [
       },
     ],
     stateMutability: 'nonpayable',
+  },
+  {
+    type: 'function',
+    name: 'blsPopMessage',
+    inputs: [
+      {
+        name: 'operator',
+        type: 'address',
+        internalType: 'address',
+      },
+      {
+        name: 'blsPubkey',
+        type: 'uint256[4]',
+        internalType: 'uint256[4]',
+      },
+    ],
+    outputs: [
+      {
+        name: '',
+        type: 'bytes',
+        internalType: 'bytes',
+      },
+    ],
+    stateMutability: 'view',
   },
   {
     type: 'function',
@@ -335,6 +264,11 @@ const ABI = [
         name: 'metadataUri',
         type: 'string',
         internalType: 'string',
+      },
+      {
+        name: 'metadataHash',
+        type: 'bytes32',
+        internalType: 'bytes32',
       },
     ],
     stateMutability: 'view',
@@ -636,6 +570,11 @@ const ABI = [
             name: 'metadataUri',
             type: 'string',
             internalType: 'string',
+          },
+          {
+            name: 'metadataHash',
+            type: 'bytes32',
+            internalType: 'bytes32',
           },
           {
             name: 'manager',
@@ -957,6 +896,11 @@ const ABI = [
             internalType: 'struct Types.QuoteDetails',
             components: [
               {
+                name: 'requester',
+                type: 'address',
+                internalType: 'address',
+              },
+              {
                 name: 'blueprintId',
                 type: 'uint64',
                 internalType: 'uint64',
@@ -980,6 +924,11 @@ const ABI = [
                 name: 'expiry',
                 type: 'uint64',
                 internalType: 'uint64',
+              },
+              {
+                name: 'confidentiality',
+                type: 'uint8',
+                internalType: 'enum Types.ConfidentialityPolicy',
               },
               {
                 name: 'securityCommitments',
@@ -1007,6 +956,23 @@ const ABI = [
                     name: 'exposureBps',
                     type: 'uint16',
                     internalType: 'uint16',
+                  },
+                ],
+              },
+              {
+                name: 'resourceCommitments',
+                type: 'tuple[]',
+                internalType: 'struct Types.ResourceCommitment[]',
+                components: [
+                  {
+                    name: 'kind',
+                    type: 'uint8',
+                    internalType: 'uint8',
+                  },
+                  {
+                    name: 'count',
+                    type: 'uint64',
+                    internalType: 'uint64',
                   },
                 ],
               },
@@ -1091,7 +1057,7 @@ const ABI = [
       },
     ],
     outputs: [],
-    stateMutability: 'nonpayable',
+    stateMutability: 'payable',
   },
   {
     type: 'function',
@@ -1151,6 +1117,19 @@ const ABI = [
   },
   {
     type: 'function',
+    name: 'expireServiceRequest',
+    inputs: [
+      {
+        name: 'requestId',
+        type: 'uint64',
+        internalType: 'uint64',
+      },
+    ],
+    outputs: [],
+    stateMutability: 'nonpayable',
+  },
+  {
+    type: 'function',
     name: 'extendServiceFromQuotes',
     inputs: [
       {
@@ -1168,6 +1147,11 @@ const ABI = [
             type: 'tuple',
             internalType: 'struct Types.QuoteDetails',
             components: [
+              {
+                name: 'requester',
+                type: 'address',
+                internalType: 'address',
+              },
               {
                 name: 'blueprintId',
                 type: 'uint64',
@@ -1192,6 +1176,11 @@ const ABI = [
                 name: 'expiry',
                 type: 'uint64',
                 internalType: 'uint64',
+              },
+              {
+                name: 'confidentiality',
+                type: 'uint8',
+                internalType: 'enum Types.ConfidentialityPolicy',
               },
               {
                 name: 'securityCommitments',
@@ -1219,6 +1208,23 @@ const ABI = [
                     name: 'exposureBps',
                     type: 'uint16',
                     internalType: 'uint16',
+                  },
+                ],
+              },
+              {
+                name: 'resourceCommitments',
+                type: 'tuple[]',
+                internalType: 'struct Types.ResourceCommitment[]',
+                components: [
+                  {
+                    name: 'kind',
+                    type: 'uint8',
+                    internalType: 'uint8',
+                  },
+                  {
+                    name: 'count',
+                    type: 'uint64',
+                    internalType: 'uint64',
                   },
                 ],
               },
@@ -1450,6 +1456,11 @@ const ABI = [
             name: 'metadataUri',
             type: 'string',
             internalType: 'string',
+          },
+          {
+            name: 'metadataHash',
+            type: 'bytes32',
+            internalType: 'bytes32',
           },
           {
             name: 'manager',
@@ -1746,6 +1757,37 @@ const ABI = [
   },
   {
     type: 'function',
+    name: 'getBlueprintResourceRequirements',
+    inputs: [
+      {
+        name: 'blueprintId',
+        type: 'uint64',
+        internalType: 'uint64',
+      },
+    ],
+    outputs: [
+      {
+        name: '',
+        type: 'tuple[]',
+        internalType: 'struct Types.ResourceCommitment[]',
+        components: [
+          {
+            name: 'kind',
+            type: 'uint8',
+            internalType: 'uint8',
+          },
+          {
+            name: 'count',
+            type: 'uint64',
+            internalType: 'uint64',
+          },
+        ],
+      },
+    ],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
     name: 'getExecutableSlashes',
     inputs: [
       {
@@ -1925,7 +1967,89 @@ const ABI = [
             type: 'bool',
             internalType: 'bool',
           },
+          {
+            name: 'isRFQ',
+            type: 'bool',
+            internalType: 'bool',
+          },
         ],
+      },
+    ],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
+    name: 'getJobEventRate',
+    inputs: [
+      {
+        name: 'blueprintId',
+        type: 'uint64',
+        internalType: 'uint64',
+      },
+      {
+        name: 'jobIndex',
+        type: 'uint8',
+        internalType: 'uint8',
+      },
+    ],
+    outputs: [
+      {
+        name: 'rate',
+        type: 'uint256',
+        internalType: 'uint256',
+      },
+    ],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
+    name: 'getJobQuotedOperators',
+    inputs: [
+      {
+        name: 'serviceId',
+        type: 'uint64',
+        internalType: 'uint64',
+      },
+      {
+        name: 'callId',
+        type: 'uint64',
+        internalType: 'uint64',
+      },
+    ],
+    outputs: [
+      {
+        name: '',
+        type: 'address[]',
+        internalType: 'address[]',
+      },
+    ],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
+    name: 'getJobQuotedPrice',
+    inputs: [
+      {
+        name: 'serviceId',
+        type: 'uint64',
+        internalType: 'uint64',
+      },
+      {
+        name: 'callId',
+        type: 'uint64',
+        internalType: 'uint64',
+      },
+      {
+        name: 'operator',
+        type: 'address',
+        internalType: 'address',
+      },
+    ],
+    outputs: [
+      {
+        name: '',
+        type: 'uint256',
+        internalType: 'uint256',
       },
     ],
     stateMutability: 'view',
@@ -2155,6 +2279,11 @@ const ABI = [
             type: 'uint8',
             internalType: 'enum Types.ServiceStatus',
           },
+          {
+            name: 'confidentiality',
+            type: 'uint8',
+            internalType: 'enum Types.ConfidentialityPolicy',
+          },
         ],
       },
     ],
@@ -2342,6 +2471,47 @@ const ABI = [
             type: 'bool',
             internalType: 'bool',
           },
+          {
+            name: 'activated',
+            type: 'bool',
+            internalType: 'bool',
+          },
+          {
+            name: 'confidentiality',
+            type: 'uint8',
+            internalType: 'enum Types.ConfidentialityPolicy',
+          },
+        ],
+      },
+    ],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
+    name: 'getServiceRequestResourceRequirements',
+    inputs: [
+      {
+        name: 'requestId',
+        type: 'uint64',
+        internalType: 'uint64',
+      },
+    ],
+    outputs: [
+      {
+        name: '',
+        type: 'tuple[]',
+        internalType: 'struct Types.ResourceCommitment[]',
+        components: [
+          {
+            name: 'kind',
+            type: 'uint8',
+            internalType: 'uint8',
+          },
+          {
+            name: 'count',
+            type: 'uint64',
+            internalType: 'uint64',
+          },
         ],
       },
     ],
@@ -2445,6 +2615,30 @@ const ABI = [
   },
   {
     type: 'function',
+    name: 'getServiceResourceCommitmentHash',
+    inputs: [
+      {
+        name: 'serviceId',
+        type: 'uint64',
+        internalType: 'uint64',
+      },
+      {
+        name: 'operator',
+        type: 'address',
+        internalType: 'address',
+      },
+    ],
+    outputs: [
+      {
+        name: '',
+        type: 'bytes32',
+        internalType: 'bytes32',
+      },
+    ],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
     name: 'getServiceSecurityCommitments',
     inputs: [
       {
@@ -2541,6 +2735,51 @@ const ABI = [
   },
   {
     type: 'function',
+    name: 'getSlashConfig',
+    inputs: [],
+    outputs: [
+      {
+        name: '',
+        type: 'tuple',
+        internalType: 'struct SlashingLib.SlashConfig',
+        components: [
+          {
+            name: 'disputeWindow',
+            type: 'uint64',
+            internalType: 'uint64',
+          },
+          {
+            name: 'instantSlashEnabled',
+            type: 'bool',
+            internalType: 'bool',
+          },
+          {
+            name: 'maxSlashBps',
+            type: 'uint16',
+            internalType: 'uint16',
+          },
+          {
+            name: 'disputeResolutionDeadline',
+            type: 'uint64',
+            internalType: 'uint64',
+          },
+          {
+            name: 'disputeBond',
+            type: 'uint256',
+            internalType: 'uint256',
+          },
+          {
+            name: 'maxPendingSlashesPerOperator',
+            type: 'uint16',
+            internalType: 'uint16',
+          },
+        ],
+      },
+    ],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
     name: 'getSlashProposal',
     inputs: [
       {
@@ -2605,7 +2844,51 @@ const ABI = [
             type: 'string',
             internalType: 'string',
           },
+          {
+            name: 'disputer',
+            type: 'address',
+            internalType: 'address',
+          },
+          {
+            name: 'disputeBond',
+            type: 'uint256',
+            internalType: 'uint256',
+          },
+          {
+            name: 'disputedAt',
+            type: 'uint64',
+            internalType: 'uint64',
+          },
+          {
+            name: 'disputeDeadline',
+            type: 'uint64',
+            internalType: 'uint64',
+          },
         ],
+      },
+    ],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
+    name: 'getTeeCommitmentRoot',
+    inputs: [
+      {
+        name: 'serviceId',
+        type: 'uint64',
+        internalType: 'uint64',
+      },
+      {
+        name: 'operator',
+        type: 'address',
+        internalType: 'address',
+      },
+    ],
+    outputs: [
+      {
+        name: '',
+        type: 'bytes32',
+        internalType: 'bytes32',
       },
     ],
     stateMutability: 'view',
@@ -3090,6 +3373,11 @@ const ABI = [
         type: 'uint256',
         internalType: 'uint256',
       },
+      {
+        name: 'confidentiality',
+        type: 'uint8',
+        internalType: 'enum Types.ConfidentialityPolicy',
+      },
     ],
     outputs: [
       {
@@ -3143,6 +3431,11 @@ const ABI = [
         name: 'paymentAmount',
         type: 'uint256',
         internalType: 'uint256',
+      },
+      {
+        name: 'confidentiality',
+        type: 'uint8',
+        internalType: 'enum Types.ConfidentialityPolicy',
       },
     ],
     outputs: [
@@ -3227,6 +3520,11 @@ const ABI = [
         type: 'uint256',
         internalType: 'uint256',
       },
+      {
+        name: 'confidentiality',
+        type: 'uint8',
+        internalType: 'enum Types.ConfidentialityPolicy',
+      },
     ],
     outputs: [
       {
@@ -3310,12 +3608,65 @@ const ABI = [
   },
   {
     type: 'function',
+    name: 'setBlueprintResourceRequirements',
+    inputs: [
+      {
+        name: 'blueprintId',
+        type: 'uint64',
+        internalType: 'uint64',
+      },
+      {
+        name: 'requirements',
+        type: 'tuple[]',
+        internalType: 'struct Types.ResourceCommitment[]',
+        components: [
+          {
+            name: 'kind',
+            type: 'uint8',
+            internalType: 'uint8',
+          },
+          {
+            name: 'count',
+            type: 'uint64',
+            internalType: 'uint64',
+          },
+        ],
+      },
+    ],
+    outputs: [],
+    stateMutability: 'nonpayable',
+  },
+  {
+    type: 'function',
     name: 'setDefaultTntMinExposureBps',
     inputs: [
       {
         name: 'minExposureBps',
         type: 'uint16',
         internalType: 'uint16',
+      },
+    ],
+    outputs: [],
+    stateMutability: 'nonpayable',
+  },
+  {
+    type: 'function',
+    name: 'setJobEventRates',
+    inputs: [
+      {
+        name: 'blueprintId',
+        type: 'uint64',
+        internalType: 'uint64',
+      },
+      {
+        name: 'jobIndexes',
+        type: 'uint8[]',
+        internalType: 'uint8[]',
+      },
+      {
+        name: 'rates',
+        type: 'uint256[]',
+        internalType: 'uint256[]',
       },
     ],
     outputs: [],
@@ -3466,6 +3817,21 @@ const ABI = [
         type: 'uint16',
         internalType: 'uint16',
       },
+      {
+        name: 'disputeResolutionDeadline',
+        type: 'uint64',
+        internalType: 'uint64',
+      },
+      {
+        name: 'disputeBond',
+        type: 'uint256',
+        internalType: 'uint256',
+      },
+      {
+        name: 'maxPendingSlashesPerOperator',
+        type: 'uint16',
+        internalType: 'uint16',
+      },
     ],
     outputs: [],
     stateMutability: 'nonpayable',
@@ -3591,6 +3957,89 @@ const ABI = [
   },
   {
     type: 'function',
+    name: 'submitJobFromQuote',
+    inputs: [
+      {
+        name: 'serviceId',
+        type: 'uint64',
+        internalType: 'uint64',
+      },
+      {
+        name: 'jobIndex',
+        type: 'uint8',
+        internalType: 'uint8',
+      },
+      {
+        name: 'inputs',
+        type: 'bytes',
+        internalType: 'bytes',
+      },
+      {
+        name: 'quotes',
+        type: 'tuple[]',
+        internalType: 'struct Types.SignedJobQuote[]',
+        components: [
+          {
+            name: 'details',
+            type: 'tuple',
+            internalType: 'struct Types.JobQuoteDetails',
+            components: [
+              {
+                name: 'serviceId',
+                type: 'uint64',
+                internalType: 'uint64',
+              },
+              {
+                name: 'jobIndex',
+                type: 'uint8',
+                internalType: 'uint8',
+              },
+              {
+                name: 'price',
+                type: 'uint256',
+                internalType: 'uint256',
+              },
+              {
+                name: 'timestamp',
+                type: 'uint64',
+                internalType: 'uint64',
+              },
+              {
+                name: 'expiry',
+                type: 'uint64',
+                internalType: 'uint64',
+              },
+              {
+                name: 'confidentiality',
+                type: 'uint8',
+                internalType: 'uint8',
+              },
+            ],
+          },
+          {
+            name: 'signature',
+            type: 'bytes',
+            internalType: 'bytes',
+          },
+          {
+            name: 'operator',
+            type: 'address',
+            internalType: 'address',
+          },
+        ],
+      },
+    ],
+    outputs: [
+      {
+        name: 'callId',
+        type: 'uint64',
+        internalType: 'uint64',
+      },
+    ],
+    stateMutability: 'payable',
+  },
+  {
+    type: 'function',
     name: 'submitResult',
     inputs: [
       {
@@ -3637,7 +4086,39 @@ const ABI = [
   },
   {
     type: 'function',
+    name: 'teeNonceFor',
+    inputs: [
+      {
+        name: 'requestId',
+        type: 'uint64',
+        internalType: 'uint64',
+      },
+    ],
+    outputs: [
+      {
+        name: '',
+        type: 'bytes32',
+        internalType: 'bytes32',
+      },
+    ],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
     name: 'terminateService',
+    inputs: [
+      {
+        name: 'serviceId',
+        type: 'uint64',
+        internalType: 'uint64',
+      },
+    ],
+    outputs: [],
+    stateMutability: 'nonpayable',
+  },
+  {
+    type: 'function',
+    name: 'terminateServiceForNonPayment',
     inputs: [
       {
         name: 'serviceId',
@@ -3739,6 +4220,11 @@ const ABI = [
         type: 'string',
         internalType: 'string',
       },
+      {
+        name: 'metadataHash',
+        type: 'bytes32',
+        internalType: 'bytes32',
+      },
     ],
     outputs: [],
     stateMutability: 'nonpayable',
@@ -3761,6 +4247,19 @@ const ABI = [
         name: 'rpcAddress',
         type: 'string',
         internalType: 'string',
+      },
+    ],
+    outputs: [],
+    stateMutability: 'nonpayable',
+  },
+  {
+    type: 'function',
+    name: 'withdrawRemainingEscrow',
+    inputs: [
+      {
+        name: 'serviceId',
+        type: 'uint64',
+        internalType: 'uint64',
       },
     ],
     outputs: [],
@@ -3794,6 +4293,12 @@ const ABI = [
         indexed: false,
         internalType: 'string',
       },
+      {
+        name: 'metadataHash',
+        type: 'bytes32',
+        indexed: false,
+        internalType: 'bytes32',
+      },
     ],
     anonymous: false,
   },
@@ -3806,6 +4311,25 @@ const ABI = [
         type: 'uint64',
         indexed: true,
         internalType: 'uint64',
+      },
+    ],
+    anonymous: false,
+  },
+  {
+    type: 'event',
+    name: 'BlueprintResourceRequirementsSet',
+    inputs: [
+      {
+        name: 'blueprintId',
+        type: 'uint64',
+        indexed: true,
+        internalType: 'uint64',
+      },
+      {
+        name: 'count',
+        type: 'uint256',
+        indexed: false,
+        internalType: 'uint256',
       },
     ],
     anonymous: false,
@@ -3850,6 +4374,12 @@ const ABI = [
         type: 'string',
         indexed: false,
         internalType: 'string',
+      },
+      {
+        name: 'metadataHash',
+        type: 'bytes32',
+        indexed: false,
+        internalType: 'bytes32',
       },
     ],
     anonymous: false,
@@ -3931,6 +4461,55 @@ const ABI = [
         type: 'address',
         indexed: false,
         internalType: 'address',
+      },
+      {
+        name: 'inputs',
+        type: 'bytes',
+        indexed: false,
+        internalType: 'bytes',
+      },
+    ],
+    anonymous: false,
+  },
+  {
+    type: 'event',
+    name: 'JobSubmittedFromQuote',
+    inputs: [
+      {
+        name: 'serviceId',
+        type: 'uint64',
+        indexed: true,
+        internalType: 'uint64',
+      },
+      {
+        name: 'callId',
+        type: 'uint64',
+        indexed: true,
+        internalType: 'uint64',
+      },
+      {
+        name: 'jobIndex',
+        type: 'uint8',
+        indexed: false,
+        internalType: 'uint8',
+      },
+      {
+        name: 'caller',
+        type: 'address',
+        indexed: false,
+        internalType: 'address',
+      },
+      {
+        name: 'quotedOperators',
+        type: 'address[]',
+        indexed: false,
+        internalType: 'address[]',
+      },
+      {
+        name: 'totalPrice',
+        type: 'uint256',
+        indexed: false,
+        internalType: 'uint256',
       },
       {
         name: 'inputs',
@@ -4049,6 +4628,43 @@ const ABI = [
   },
   {
     type: 'event',
+    name: 'OperatorRewardAccrued',
+    inputs: [
+      {
+        name: 'serviceId',
+        type: 'uint64',
+        indexed: true,
+        internalType: 'uint64',
+      },
+      {
+        name: 'operator',
+        type: 'address',
+        indexed: true,
+        internalType: 'address',
+      },
+      {
+        name: 'token',
+        type: 'address',
+        indexed: true,
+        internalType: 'address',
+      },
+      {
+        name: 'blueprintId',
+        type: 'uint64',
+        indexed: false,
+        internalType: 'uint64',
+      },
+      {
+        name: 'amount',
+        type: 'uint256',
+        indexed: false,
+        internalType: 'uint256',
+      },
+    ],
+    anonymous: false,
+  },
+  {
+    type: 'event',
     name: 'OperatorUnregistered',
     inputs: [
       {
@@ -4062,6 +4678,67 @@ const ABI = [
         type: 'address',
         indexed: true,
         internalType: 'address',
+      },
+    ],
+    anonymous: false,
+  },
+  {
+    type: 'event',
+    name: 'PaymentDistributed',
+    inputs: [
+      {
+        name: 'serviceId',
+        type: 'uint64',
+        indexed: true,
+        internalType: 'uint64',
+      },
+      {
+        name: 'blueprintId',
+        type: 'uint64',
+        indexed: true,
+        internalType: 'uint64',
+      },
+      {
+        name: 'token',
+        type: 'address',
+        indexed: true,
+        internalType: 'address',
+      },
+      {
+        name: 'grossAmount',
+        type: 'uint256',
+        indexed: false,
+        internalType: 'uint256',
+      },
+      {
+        name: 'developerRecipient',
+        type: 'address',
+        indexed: false,
+        internalType: 'address',
+      },
+      {
+        name: 'developerAmount',
+        type: 'uint256',
+        indexed: false,
+        internalType: 'uint256',
+      },
+      {
+        name: 'protocolAmount',
+        type: 'uint256',
+        indexed: false,
+        internalType: 'uint256',
+      },
+      {
+        name: 'operatorPoolAmount',
+        type: 'uint256',
+        indexed: false,
+        internalType: 'uint256',
+      },
+      {
+        name: 'stakerPoolAmount',
+        type: 'uint256',
+        indexed: false,
+        internalType: 'uint256',
       },
     ],
     anonymous: false,
@@ -4112,6 +4789,12 @@ const ABI = [
         type: 'uint64',
         indexed: true,
         internalType: 'uint64',
+      },
+      {
+        name: 'confidentiality',
+        type: 'uint8',
+        indexed: false,
+        internalType: 'enum Types.ConfidentialityPolicy',
       },
     ],
     anonymous: false,
@@ -4176,6 +4859,12 @@ const ABI = [
         indexed: true,
         internalType: 'address',
       },
+      {
+        name: 'confidentiality',
+        type: 'uint8',
+        indexed: false,
+        internalType: 'enum Types.ConfidentialityPolicy',
+      },
     ],
     anonymous: false,
   },
@@ -4201,6 +4890,12 @@ const ABI = [
         indexed: true,
         internalType: 'address',
       },
+      {
+        name: 'confidentiality',
+        type: 'uint8',
+        indexed: false,
+        internalType: 'enum Types.ConfidentialityPolicy',
+      },
     ],
     anonymous: false,
   },
@@ -4213,6 +4908,49 @@ const ABI = [
         type: 'uint64',
         indexed: true,
         internalType: 'uint64',
+      },
+    ],
+    anonymous: false,
+  },
+  {
+    type: 'event',
+    name: 'ServiceTerminatedForNonPayment',
+    inputs: [
+      {
+        name: 'serviceId',
+        type: 'uint64',
+        indexed: true,
+        internalType: 'uint64',
+      },
+      {
+        name: 'triggeredBy',
+        type: 'address',
+        indexed: true,
+        internalType: 'address',
+      },
+      {
+        name: 'dueAt',
+        type: 'uint64',
+        indexed: false,
+        internalType: 'uint64',
+      },
+      {
+        name: 'graceEndsAt',
+        type: 'uint64',
+        indexed: false,
+        internalType: 'uint64',
+      },
+      {
+        name: 'requiredAmount',
+        type: 'uint256',
+        indexed: false,
+        internalType: 'uint256',
+      },
+      {
+        name: 'escrowBalance',
+        type: 'uint256',
+        indexed: false,
+        internalType: 'uint256',
       },
     ],
     anonymous: false,

@@ -1,0 +1,17 @@
+{
+  "runId": "run_1777107192463_jt344j",
+  "status": "failed",
+  "goal": "You are a senior staff product designer reviewing Tangle Cloud. Visit the visible pages if needed. Give concrete changes that would move this from 6/10 to 8+/10. Be specific about layout, hierarchy, copy, and what to delete or move. Do not be polite; focus on what is blocking premium cloud-console quality.",
+  "domain": "localhost",
+  "startUrl": "http://localhost:4301/blueprints",
+  "startedAt": "2026-04-25T08:53:13.744Z",
+  "updatedAt": "2026-04-25T08:56:12.734Z",
+  "artifactPaths": [],
+  "turnCount": 8,
+  "currentUrl": "http://localhost:4301/earnings",
+  "success": false,
+  "finalUrl": "http://localhost:4301/earnings",
+  "summary": "Max turns (8) reached",
+  "reason": "Max turns (8) reached",
+  "completedAt": "2026-04-25T08:56:12.734Z"
+}

@@ -2,13 +2,8 @@ import { FC, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { Link } from 'react-router';
 import { Address } from 'viem';
-import {
-  Chip,
-  SkeletonLoader,
-  Typography,
-} from '@tangle-network/ui-components';
 import { ExternalLinkLine, InformationLine } from '@tangle-network/icons';
-import { shortenString } from '@tangle-network/ui-components/utils/shortenString';
+import { Chip, Skeleton, Text } from '../sandbox/SandboxUi';
 import {
   MembershipModel,
   getMembershipLabel,
@@ -29,6 +24,11 @@ const formatRequestVariantLabel = (variant: ServiceRequestVariant): string => {
       return 'Unknown';
   }
 };
+
+const shortenString = (value: string, chars = 6) =>
+  value.length <= chars * 2 + 3
+    ? value
+    : `${value.slice(0, chars)}...${value.slice(-chars)}`;
 
 const getRequestVariantTooltip = (variant: ServiceRequestVariant): string => {
   switch (variant) {
@@ -69,7 +69,7 @@ const ModalSafeTooltip: FC<{ content: string }> = ({ content }) => {
         ref={triggerRef}
         onMouseEnter={handleMouseEnter}
         onMouseLeave={() => setIsVisible(false)}
-        className="inline-flex items-center cursor-default text-mono-140 dark:text-mono-80"
+        className="inline-flex items-center cursor-default text-muted-foreground"
       >
         <InformationLine />
       </span>
@@ -85,9 +85,9 @@ const ModalSafeTooltip: FC<{ content: string }> = ({ content }) => {
               zIndex: 9999,
               pointerEvents: 'none',
             }}
-            className="inline-flex items-center rounded px-3 py-2 bg-mono-20 dark:bg-mono-200 border border-mono-60 dark:border-mono-180 shadow-sm"
+            className="inline-flex items-center rounded px-3 py-2 bg-popover border border-border shadow-sm"
           >
-            <span className="text-xs text-mono-140 dark:text-mono-80 font-normal text-center break-normal min-w-0 max-w-[250px]">
+            <span className="text-xs text-muted-foreground font-normal text-center break-normal min-w-0 max-w-[250px]">
               {content}
             </span>
           </div>,
@@ -133,14 +133,14 @@ const CommitmentSection: FC<Props> = ({
   if (isLoading) {
     return (
       <div className="space-y-2">
-        <Typography variant="h5" className="text-mono-200 dark:text-mono-0">
+        <Text variant="h5" className="text-foreground">
           Service Configuration
-        </Typography>
+        </Text>
 
         <div className="space-y-1">
-          <SkeletonLoader className="h-5 w-36" />
-          <SkeletonLoader className="h-5 w-32" />
-          <SkeletonLoader className="h-5 w-28" />
+          <Skeleton className="h-5 w-36" />
+          <Skeleton className="h-5 w-32" />
+          <Skeleton className="h-5 w-28" />
         </div>
       </div>
     );
@@ -178,22 +178,20 @@ const CommitmentSection: FC<Props> = ({
 
   return (
     <div className="space-y-2">
-      <Typography variant="h5" className="text-mono-200 dark:text-mono-0">
+      <Text variant="h5" className="text-foreground">
         Service Configuration
-      </Typography>
+      </Text>
 
       <div className="space-y-1">
         {blueprintId !== undefined && blueprintName && (
           <div className="flex items-center gap-2">
-            <span className="text-sm text-mono-140 dark:text-mono-80">
-              Blueprint:
-            </span>
+            <span className="text-sm text-muted-foreground">Blueprint:</span>
 
             <Link
               to={`/blueprints/${blueprintId}`}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-1 text-sm font-semibold text-blue-50 hover:text-blue-40 hover:underline"
+              className="inline-flex items-center gap-1 text-sm font-semibold text-primary hover:text-primary/80 hover:underline"
             >
               {blueprintName}
               <ExternalLinkLine className="w-3.5 h-3.5" />
@@ -202,23 +200,17 @@ const CommitmentSection: FC<Props> = ({
         )}
 
         <div className="flex items-center gap-2">
-          <span className="text-sm text-mono-140 dark:text-mono-80">
-            Duration:
-          </span>
+          <span className="text-sm text-muted-foreground">Duration:</span>
           <span className="text-sm font-semibold">{durationText}</span>
         </div>
 
         <div className="flex items-center gap-2">
-          <span className="text-sm text-mono-140 dark:text-mono-80">
-            Created:
-          </span>
+          <span className="text-sm text-muted-foreground">Created:</span>
           <span className="text-sm font-semibold">{createdText}</span>
         </div>
 
         <div className="flex items-center gap-2">
-          <span className="text-sm text-mono-140 dark:text-mono-80">
-            Membership:
-          </span>
+          <span className="text-sm text-muted-foreground">Membership:</span>
           <Chip
             color={membership === MembershipModel.Fixed ? 'blue' : 'purple'}
           >
@@ -227,16 +219,14 @@ const CommitmentSection: FC<Props> = ({
         </div>
 
         <div className="flex items-center gap-2">
-          <span className="text-sm text-mono-140 dark:text-mono-80">
+          <span className="text-sm text-muted-foreground">
             Min. Approvals Required:
           </span>
           <span className="text-sm font-semibold">{minApprovalsRequired}</span>
         </div>
 
         <div className="flex items-center gap-2">
-          <span className="text-sm text-mono-140 dark:text-mono-80">
-            Request Type:
-          </span>
+          <span className="text-sm text-muted-foreground">Request Type:</span>
           <span className="text-sm font-semibold">
             {formatRequestVariantLabel(requestVariant)}
           </span>
@@ -247,7 +237,7 @@ const CommitmentSection: FC<Props> = ({
 
         {hasExposureValues && (
           <div className="space-y-1">
-            <span className="text-sm text-mono-140 dark:text-mono-80">
+            <span className="text-sm text-muted-foreground">
               Per-Operator Exposure (%):
             </span>
             <div className="space-y-1">
@@ -256,12 +246,10 @@ const CommitmentSection: FC<Props> = ({
                   key={`${index}-${entry.operatorLabel}-${entry.exposureBps}`}
                   className="flex items-center justify-between gap-3 text-sm"
                 >
-                  <span className="inline-flex items-center gap-1.5 text-mono-140 dark:text-mono-80">
+                  <span className="inline-flex items-center gap-1.5 text-muted-foreground">
                     {entry.operatorLabel}
                     {entry.isCurrentOperator && (
-                      <span className="text-blue-50 dark:text-blue-40">
-                        (You)
-                      </span>
+                      <span className="text-primary">(You)</span>
                     )}
                   </span>
                   <span className="font-semibold">

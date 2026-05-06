@@ -10,26 +10,29 @@ import {
 import {
   Button,
   CircularProgress,
-  EMPTY_VALUE_PLACEHOLDER,
-  Typography,
-} from '@tangle-network/ui-components';
-import { TableStatusProps } from '@tangle-network/tangle-shared-ui/components/tables/TableStatus';
+  Text,
+} from '../../../components/sandbox/SandboxUi';
 import { ChevronDown } from '@tangle-network/icons';
-import pluralize from '@tangle-network/ui-components/utils/pluralize';
 import { TangleCloudTable } from '../../../components/tangleCloudTable';
 import type { StakingVault } from '@tangle-network/tangle-shared-ui/types/staking';
 import TableCellWrapper from '@tangle-network/tangle-shared-ui/components/tables/TableCellWrapper';
 import LsTokenIcon from '@tangle-network/tangle-shared-ui/components/LsTokenIcon';
-import formatPercentage from '@tangle-network/ui-components/utils/formatPercentage';
 import { formatUnits } from 'viem';
 import { twMerge } from 'tailwind-merge';
-import { TangleCloudTableProps } from '../../../components/tangleCloudTable/type';
+import type {
+  TableStatusProps,
+  TangleCloudTableProps,
+} from '../../../components/tangleCloudTable/type';
 import { Link } from 'react-router';
 import { TangleDAppPagePath } from '../../../types';
 import type { BN } from '@polkadot/util';
 
 const toBigInt = (value: bigint | BN): bigint =>
   typeof value === 'bigint' ? value : BigInt(value.toString());
+const pluralize = (word: string, plural: boolean) =>
+  plural ? `${word}s` : word;
+const formatPercentage = (value: number) =>
+  `${(value * 100).toLocaleString(undefined, { maximumFractionDigits: 2 })}%`;
 
 const formatAmount = (amount: bigint | BN, decimals: number): string => {
   const formatted = formatUnits(toBigInt(amount), decimals);
@@ -50,6 +53,8 @@ const calculateRatio = (a: bigint | BN, b: bigint | BN): number => {
   return Number((aBigInt * BigInt(10000)) / bBigInt) / 10000;
 };
 
+const EMPTY_VALUE_PLACEHOLDER = '-';
+
 const COLUMN_HELPER = createColumnHelper<StakingVault>();
 
 const getColumns = () => [
@@ -62,9 +67,9 @@ const getColumns = () => [
             name={props.row.original.representAssetSymbol}
             size="lg"
           />
-          <Typography variant="h5" className="whitespace-nowrap">
+          <Text variant="h5" className="whitespace-nowrap">
             {props.getValue()}
-          </Typography>
+          </Text>
         </div>
       </TableCellWrapper>
     ),
@@ -117,11 +122,11 @@ const getColumns = () => [
               />
             )}
 
-            <Typography variant="body1" className="dark:text-mono-0">
+            <Text variant="body1">
               {fmtTvl === null
                 ? `${fmtDepositCap}`
                 : `${fmtTvl} | ${fmtDepositCap}`}
-            </Typography>
+            </Text>
           </div>
         </TableCellWrapper>
       );
@@ -215,9 +220,8 @@ export const TotalValueLockedTable: FC<Props> = ({
       tableConfig={{
         tableClassName: 'min-w-[1000px]',
         expandedRowClassName: twMerge(
-          'bg-mono-0 dark:bg-mono-180',
-          'peer-[&[data-expanded="true"]:hover]:bg-mono-20',
-          'peer-[&[data-expanded="true"]:hover]:dark:bg-mono-170',
+          'bg-background',
+          'peer-[&[data-expanded="true"]:hover]:bg-muted/40',
         ),
         ...tableConfig,
       }}

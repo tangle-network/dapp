@@ -2,8 +2,7 @@ import { AccountStatsCardHeader } from './AccountStatsCardHeader';
 import { AccountStatsCardBody } from './AccountStatsCardBody';
 import TangleCloudCard from '../TangleCloudCard';
 import { ComponentProps, PropsWithChildren, ReactNode } from 'react';
-import { SocialsProps } from '@tangle-network/ui-components/components/Socials/types';
-import { StatsItemProps } from '@tangle-network/ui-components/components/Stats/types';
+
 const AccountStatsDetailCard = Object.assign(
   {},
   {
@@ -23,9 +22,15 @@ type AccountStatsCardHeaderProps = ComponentProps<'div'> & {
 
 type AccountStatsCardBodyProps = PropsWithChildren<{
   className?: string;
-  socialLinks?: SocialsProps['socialConfigs'];
+  socialLinks?: Array<{ name?: string; href: string }>;
 
-  statsItems?: StatsItemProps[];
+  statsItems?: Array<{
+    title: string | ReactNode;
+    tooltip?: string | ReactNode;
+    className?: string;
+    children: ReactNode | null;
+    isError?: boolean;
+  }>;
 }>;
 
 type AccountStatsCardProps = {

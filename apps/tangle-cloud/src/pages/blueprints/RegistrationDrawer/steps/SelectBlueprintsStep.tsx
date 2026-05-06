@@ -1,7 +1,6 @@
 import { Close } from '@tangle-network/icons';
 import type { Blueprint } from '@tangle-network/tangle-shared-ui/types/blueprint';
-import IconButton from '@tangle-network/ui-components/components/buttons/IconButton';
-import { Typography } from '@tangle-network/ui-components/typography/Typography';
+import { Button, Text } from '../../../../components/sandbox/SandboxUi';
 import { FC } from 'react';
 import BlueprintCard from '../components/BlueprintCard';
 
@@ -17,18 +16,15 @@ const SelectBlueprintsStep: FC<SelectBlueprintsStepProps> = ({
   return (
     <div className="space-y-4">
       <div>
-        <Typography variant="h5" fw="bold" className="mb-2">
+        <Text variant="h5" fw="bold" className="mb-2">
           Selected Blueprints
-        </Typography>
+        </Text>
 
-        <Typography
-          variant="body2"
-          className="text-mono-120 dark:text-mono-100"
-        >
+        <Text variant="body2" className="text-muted-foreground">
           You have selected {blueprints.length} blueprint
           {blueprints.length > 1 ? 's' : ''} to register as an operator. Review
           your selection and proceed to configure settings.
-        </Typography>
+        </Text>
       </div>
 
       <div className="space-y-3 max-h-[400px] overflow-y-auto">
@@ -38,21 +34,23 @@ const SelectBlueprintsStep: FC<SelectBlueprintsStepProps> = ({
             blueprint={blueprint}
             action={
               onRemoveBlueprint && (
-                <IconButton
+                <Button
+                  variant="ghost"
+                  size="icon"
                   onClick={() => onRemoveBlueprint(blueprint.id.toString())}
                 >
                   <Close size="md" />
-                </IconButton>
+                </Button>
               )
             }
           />
         ))}
       </div>
 
-      <Typography variant="body3" className="text-mono-120 dark:text-mono-100">
+      <Text variant="body3" className="text-muted-foreground">
         In the next step, you will configure your RPC URL and any required
         registration parameters for each blueprint.
-      </Typography>
+      </Text>
     </div>
   );
 };

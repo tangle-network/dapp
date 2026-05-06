@@ -517,6 +517,7 @@ export const useOperators = (options?: {
   limit?: number;
   offset?: number;
   enabled?: boolean;
+  fallbackToOnChain?: boolean;
 }) => {
   const {
     network,
@@ -524,6 +525,7 @@ export const useOperators = (options?: {
     limit = 100,
     offset = 0,
     enabled = true,
+    fallbackToOnChain = true,
   } = options ?? {};
   const chainId = useChainId();
   const { isConnected } = useAccount();
@@ -550,7 +552,12 @@ export const useOperators = (options?: {
           limit,
           offset,
         );
-        if (operators.length === 0 && publicClient && status !== 'INACTIVE') {
+        if (
+          fallbackToOnChain &&
+          operators.length === 0 &&
+          publicClient &&
+          status !== 'INACTIVE'
+        ) {
           try {
             const onChainOperators = await fetchOnChainOperators({
               publicClient,
@@ -572,7 +579,7 @@ export const useOperators = (options?: {
         }
         return operators;
       } catch {
-        if (!publicClient) {
+        if (!fallbackToOnChain || !publicClient) {
           throw new Error(
             'Operators unavailable: indexer query failed and no public client is configured.',
           );

@@ -1,7 +1,26 @@
-import { type Table } from '@tangle-network/ui-components';
-import { TableStatusProps } from '@tangle-network/tangle-shared-ui/components/tables/TableStatus';
-import { ComponentProps } from 'react';
 import { RowData, type useReactTable } from '@tanstack/react-table';
+import type { ButtonProps } from '@tangle-network/sandbox-ui/primitives';
+import type React from 'react';
+
+export type TableStatusProps = {
+  icon?: React.ReactNode;
+  title: string;
+  description: string;
+  buttonText?: string;
+  buttonProps?: ButtonProps;
+  className?: string;
+};
+
+export type TangleCloudTableConfig = {
+  className?: string;
+  tableClassName?: string;
+  thClassName?: string;
+  tbodyClassName?: string;
+  trClassName?: string;
+  tdClassName?: string;
+  paginationClassName?: string;
+  expandedRowClassName?: string;
+};
 
 export interface TangleCloudTableProps<T extends RowData> {
   title: string;
@@ -13,6 +32,6 @@ export interface TangleCloudTableProps<T extends RowData> {
   errorTableProps?: Partial<TableStatusProps>;
   emptyTableProps?: Partial<TableStatusProps>;
   onRetry?: () => void | Promise<unknown>;
-  tableConfig?: Partial<ComponentProps<typeof Table<T>>>;
+  tableConfig?: TangleCloudTableConfig;
   tableProps: ReturnType<typeof useReactTable<T>>;
 }

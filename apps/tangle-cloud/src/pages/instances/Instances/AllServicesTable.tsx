@@ -5,13 +5,7 @@ import {
   getPaginationRowModel,
   useReactTable,
 } from '@tanstack/react-table';
-import {
-  Avatar,
-  Button,
-  EMPTY_VALUE_PLACEHOLDER,
-  Typography,
-} from '@tangle-network/ui-components';
-import pluralize from '@tangle-network/ui-components/utils/pluralize';
+import { Avatar, Button, Text } from '../../../components/sandbox/SandboxUi';
 import { TangleCloudTable } from '../../../components/tangleCloudTable/TangleCloudTable';
 import { ChevronRight } from '@tangle-network/icons';
 import TableCellWrapper from '@tangle-network/tangle-shared-ui/components/tables/TableCellWrapper';
@@ -29,7 +23,11 @@ interface ServiceWithBlueprint extends Service {
   blueprintData?: Blueprint;
 }
 
+const EMPTY_VALUE_PLACEHOLDER = '-';
+
 const columnHelper = createColumnHelper<ServiceWithBlueprint>();
+const pluralize = (word: string, plural: boolean) =>
+  plural ? `${word}s` : word;
 
 export const AllServicesTable: FC = () => {
   const {
@@ -100,34 +98,33 @@ export const AllServicesTable: FC = () => {
                   />
                 )}
                 <div className="w-4/12">
-                  <Typography
+                  <Text
                     variant="body1"
                     fw="bold"
-                    className="text-mono-200 dark:text-mono-0 text-ellipsis whitespace-nowrap overflow-hidden"
+                    className="text-ellipsis whitespace-nowrap overflow-hidden"
                   >
                     {service.blueprintData?.author || ''}
-                  </Typography>
-                  <Typography
+                  </Text>
+                  <Text
                     variant="body2"
-                    fw="normal"
-                    className="text-mono-140 dark:text-mono-80 text-ellipsis whitespace-nowrap overflow-hidden"
+                    className="text-muted-foreground text-ellipsis whitespace-nowrap overflow-hidden"
                   >
                     {service.blueprintData?.name || ''}
-                  </Typography>
+                  </Text>
                 </div>
                 <div>
-                  <ChevronRight className="w-6 h-6 text-mono-120 dark:text-mono-100" />
+                  <ChevronRight className="w-6 h-6 text-muted-foreground" />
                 </div>
                 <div className="w-4/12">
-                  <Typography
+                  <Text
                     variant="body1"
                     fw="bold"
-                    className="text-blue-70 dark:text-blue-40 text-ellipsis whitespace-nowrap overflow-hidden"
+                    className="text-primary text-ellipsis whitespace-nowrap overflow-hidden"
                   >
                     {service.serviceId !== undefined
                       ? `Instance-${service.serviceId}`
                       : EMPTY_VALUE_PLACEHOLDER}
-                  </Typography>
+                  </Text>
                 </div>
               </div>
             </TableCellWrapper>
@@ -152,10 +149,7 @@ export const AllServicesTable: FC = () => {
                     event.stopPropagation();
                   }}
                 >
-                  <Button
-                    variant="utility"
-                    className="uppercase body4 bg-purple-10 dark:bg-purple-120 text-purple-70 dark:text-purple-40 hover:bg-purple-20 dark:hover:bg-purple-110 border border-purple-30 dark:border-purple-100 transition-all duration-200"
-                  >
+                  <Button variant="utility" className="uppercase body4">
                     View
                   </Button>
                 </Link>
@@ -169,10 +163,7 @@ export const AllServicesTable: FC = () => {
                     event.stopPropagation();
                   }}
                 >
-                  <Button
-                    variant="utility"
-                    className="uppercase body4 bg-blue-10 dark:bg-blue-120 text-blue-70 dark:text-blue-40 hover:bg-blue-20 dark:hover:bg-blue-110 border border-blue-30 dark:border-blue-100 transition-all duration-200"
-                  >
+                  <Button variant="utility" className="uppercase body4">
                     Blueprint
                   </Button>
                 </Link>
@@ -204,6 +195,12 @@ export const AllServicesTable: FC = () => {
       tableProps={table}
       tableConfig={{
         tableClassName: 'min-w-[1000px]',
+      }}
+      emptyTableProps={{
+        icon: 'Network',
+        title: 'No joinable services',
+        description:
+          'When operators publish service capacity or customers request instances that need operators, those services appear here.',
       }}
     />
   );

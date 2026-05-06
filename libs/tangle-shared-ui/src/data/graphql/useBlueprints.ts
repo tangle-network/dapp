@@ -4,11 +4,75 @@
 
 import { useQuery } from '@tanstack/react-query';
 import { Address } from 'viem';
+import { useAccount, useChainId } from 'wagmi';
 import {
   executeEnvioGraphQL,
   EnvioNetwork,
+  getEnvioNetworkFromChainId,
 } from '../../utils/executeEnvioGraphQL';
+import useNetworkStore from '../../context/useNetworkStore';
 import type { Blueprint as AppBlueprint } from '../../types/blueprint';
+import {
+  parseBlueprintMetadataJsonText,
+  resolveBlueprintMetadataFetchUrl,
+  verifyBlueprintMetadataIntegrity,
+} from '../../blueprintApps/authoring';
+import type {
+  BlueprintMetadataVerification,
+  BlueprintUiContract,
+} from '../../blueprintApps/types';
+
+const unavailableMetadata = (
+  metadataUri: string | null,
+): {
+  name: string;
+  description: string;
+  author: string;
+  category: string;
+  imageUrl: string | null;
+  codeUrl: string | null;
+  website: string | null;
+  rawMetadata: Record<string, unknown> | null;
+  metadataVerification: BlueprintMetadataVerification;
+  blueprintUi: BlueprintUiContract | null;
+} => ({
+  name: 'Onchain Blueprint',
+  description: metadataUri
+    ? 'Metadata endpoint unavailable'
+    : 'Metadata not published yet',
+  author: 'Unspecified publisher',
+  category: 'Other',
+  imageUrl: null,
+  codeUrl: null,
+  website: null,
+  rawMetadata: null,
+  metadataVerification: {
+    status: metadataUri ? 'invalid' : 'unverified',
+    productionReady: false,
+    source: metadataUri?.startsWith('ipfs://')
+      ? 'ipfs'
+      : metadataUri
+        ? 'http'
+        : 'missing',
+    reason: metadataUri
+      ? 'Metadata endpoint unavailable or invalid.'
+      : 'Metadata not published yet.',
+  },
+  blueprintUi: null,
+});
+
+const isBareHttpMetadataEndpoint = (metadataUri: string): boolean => {
+  if (metadataUri.startsWith('ipfs://')) {
+    return false;
+  }
+
+  try {
+    const url = new URL(metadataUri);
+    return url.pathname === '/' && url.search === '' && url.hash === '';
+  } catch {
+    return false;
+  }
+};
 
 export interface Blueprint {
   id: string;
@@ -16,6 +80,7 @@ export interface Blueprint {
   owner: Address;
   manager: Address | null;
   metadataUri: string | null;
+  metadataHash: `0x${string}` | null;
   active: boolean;
   createdAt: bigint;
   updatedAt: bigint;
@@ -31,6 +96,9 @@ export interface BlueprintWithMetadata extends Blueprint {
   imageUrl: string | null;
   codeUrl: string | null;
   website: string | null;
+  rawMetadata: Record<string, unknown> | null;
+  metadataVerification: BlueprintMetadataVerification;
+  blueprintUi: BlueprintUiContract | null;
 }
 
 const toAppBlueprint = (bp: BlueprintWithMetadata): AppBlueprint => ({
@@ -52,7 +120,23 @@ const toAppBlueprint = (bp: BlueprintWithMetadata): AppBlueprint => ({
   websiteUrl: bp.website,
   twitterUrl: null,
   email: null,
+  metadataUri: bp.metadataUri,
+  metadataHash: bp.metadataHash,
+  metadataVerification: bp.metadataVerification,
+  blueprintUi: bp.blueprintUi,
 });
+
+const useResolvedEnvioNetwork = (network?: EnvioNetwork) => {
+  const chainId = useChainId();
+  const { isConnected } = useAccount();
+  const networkChainId = useNetworkStore((store) => store.network2?.evmChainId);
+  const activeChainId = isConnected ? chainId : (networkChainId ?? chainId);
+
+  return {
+    activeChainId,
+    resolvedNetwork: network ?? getEnvioNetworkFromChainId(activeChainId),
+  };
+};
 
 interface BlueprintQueryResponse {
   Blueprint: Array<{
@@ -61,6 +145,7 @@ interface BlueprintQueryResponse {
     owner: string;
     manager: string | null;
     metadataUri: string | null;
+    metadataHash: `0x${string}` | null;
     active: boolean;
     createdAt: string;
     updatedAt: string;
@@ -68,9 +153,17 @@ interface BlueprintQueryResponse {
   }>;
 }
 
-const fetchBlueprintMetadata = async (
-  metadataUri: string | null,
-): Promise<{
+const fetchBlueprintMetadata = async ({
+  metadataUri,
+  metadataHash,
+  blueprintId,
+  owner,
+}: {
+  metadataUri: string | null;
+  metadataHash?: `0x${string}` | null;
+  blueprintId?: bigint;
+  owner?: Address;
+}): Promise<{
   name: string;
   description: string;
   author: string;
@@ -78,55 +171,54 @@ const fetchBlueprintMetadata = async (
   imageUrl: string | null;
   codeUrl: string | null;
   website: string | null;
+  rawMetadata: Record<string, unknown> | null;
+  metadataVerification: BlueprintMetadataVerification;
+  blueprintUi: BlueprintUiContract | null;
 }> => {
   if (!metadataUri) {
-    return {
-      name: 'Unknown Blueprint',
-      description: 'No metadata available',
-      author: 'Unknown',
-      category: 'Other',
-      imageUrl: null,
-      codeUrl: null,
-      website: null,
-    };
+    return unavailableMetadata(metadataUri);
+  }
+
+  if (isBareHttpMetadataEndpoint(metadataUri)) {
+    return unavailableMetadata(metadataUri);
   }
 
   try {
-    let fetchUrl = metadataUri;
-    if (metadataUri.startsWith('ipfs://')) {
-      const cid = metadataUri.replace('ipfs://', '');
-      fetchUrl = `https://ipfs.io/ipfs/${cid}`;
-    }
-
-    const response = await fetch(fetchUrl, {
-      signal: AbortSignal.timeout(5000),
-    });
+    const response = await fetch(
+      resolveBlueprintMetadataFetchUrl(metadataUri),
+      {
+        signal: AbortSignal.timeout(5000),
+      },
+    );
     if (!response.ok) {
       throw new Error(`Failed to fetch metadata: ${response.status}`);
     }
 
-    const metadata = await response.json();
+    const metadataText = await response.text();
+    const { parsed, rawMetadata } =
+      parseBlueprintMetadataJsonText(metadataText);
+    const metadataVerification = await verifyBlueprintMetadataIntegrity({
+      rawMetadata,
+      metadataUri,
+      metadataHash,
+      blueprintId,
+      owner,
+    });
 
     return {
-      name: metadata.name ?? 'Unknown Blueprint',
-      description: metadata.description ?? 'No description',
-      author: metadata.author ?? 'Unknown',
-      category: metadata.category ?? 'Other',
-      imageUrl: metadata.image ?? metadata.imageUrl ?? null,
-      codeUrl: metadata.codeUrl ?? metadata.repository ?? null,
-      website: metadata.website ?? metadata.homepage ?? null,
+      ...parsed,
+      rawMetadata,
+      metadataVerification,
+      blueprintUi:
+        metadataVerification.status === 'verified'
+          ? parsed.blueprintUi
+          : parsed.blueprintUi
+            ? { ...parsed.blueprintUi, externalApp: undefined, tier: 'generic' }
+            : null,
     };
   } catch (error) {
     console.error('Failed to fetch blueprint metadata:', error);
-    return {
-      name: 'Unknown Blueprint',
-      description: 'Failed to load metadata',
-      author: 'Unknown',
-      category: 'Other',
-      imageUrl: null,
-      codeUrl: null,
-      website: null,
-    };
+    return unavailableMetadata(metadataUri);
   }
 };
 
@@ -149,6 +241,7 @@ const fetchBlueprints = async (
         owner
         manager
         metadataUri
+        metadataHash
         active
         createdAt
         updatedAt
@@ -176,6 +269,7 @@ const fetchBlueprints = async (
     owner: bp.owner as Address,
     manager: bp.manager as Address | null,
     metadataUri: bp.metadataUri,
+    metadataHash: bp.metadataHash,
     active: bp.active,
     createdAt: BigInt(bp.createdAt),
     updatedAt: BigInt(bp.updatedAt),
@@ -195,6 +289,7 @@ const fetchBlueprintById = async (
         owner
         manager
         metadataUri
+        metadataHash
         active
         createdAt
         updatedAt
@@ -221,6 +316,7 @@ const fetchBlueprintById = async (
     owner: bp.owner as Address,
     manager: bp.manager as Address | null,
     metadataUri: bp.metadataUri,
+    metadataHash: bp.metadataHash,
     active: bp.active,
     createdAt: BigInt(bp.createdAt),
     updatedAt: BigInt(bp.updatedAt),
@@ -240,11 +336,24 @@ export const useBlueprints = (options?: {
     enabled = true,
     limit = 100,
   } = options ?? {};
+  const { activeChainId, resolvedNetwork } = useResolvedEnvioNetwork(network);
 
   return useQuery({
-    queryKey: ['envio', 'blueprints', network, activeOnly, limit],
+    queryKey: [
+      'envio',
+      'blueprints',
+      resolvedNetwork,
+      activeChainId,
+      activeOnly,
+      limit,
+    ],
     queryFn: async () => {
-      const blueprints = await fetchBlueprints(network, activeOnly, limit, 0);
+      const blueprints = await fetchBlueprints(
+        resolvedNetwork,
+        activeOnly,
+        limit,
+        0,
+      );
       return blueprints;
     },
     enabled,
@@ -264,15 +373,33 @@ export const useBlueprintsWithMetadata = (options?: {
     enabled = true,
     limit = 100,
   } = options ?? {};
+  const { activeChainId, resolvedNetwork } = useResolvedEnvioNetwork(network);
 
   return useQuery({
-    queryKey: ['envio', 'blueprintsWithMetadata', network, activeOnly, limit],
+    queryKey: [
+      'envio',
+      'blueprintsWithMetadata',
+      resolvedNetwork,
+      activeChainId,
+      activeOnly,
+      limit,
+    ],
     queryFn: async () => {
-      const blueprints = await fetchBlueprints(network, activeOnly, limit, 0);
+      const blueprints = await fetchBlueprints(
+        resolvedNetwork,
+        activeOnly,
+        limit,
+        0,
+      );
 
       return Promise.all(
         blueprints.map(async (bp): Promise<BlueprintWithMetadata> => {
-          const metadata = await fetchBlueprintMetadata(bp.metadataUri);
+          const metadata = await fetchBlueprintMetadata({
+            metadataUri: bp.metadataUri,
+            metadataHash: bp.metadataHash,
+            blueprintId: bp.blueprintId,
+            owner: bp.owner as Address,
+          });
           return { ...bp, ...metadata };
         }),
       );
@@ -331,16 +458,28 @@ export const useBlueprint = (
   },
 ) => {
   const { network, enabled = true } = options ?? {};
+  const { activeChainId, resolvedNetwork } = useResolvedEnvioNetwork(network);
 
   return useQuery({
-    queryKey: ['envio', 'blueprint', blueprintId, network],
+    queryKey: [
+      'envio',
+      'blueprint',
+      blueprintId,
+      resolvedNetwork,
+      activeChainId,
+    ],
     queryFn: async () => {
       if (!blueprintId) return null;
 
-      const blueprint = await fetchBlueprintById(blueprintId, network);
+      const blueprint = await fetchBlueprintById(blueprintId, resolvedNetwork);
       if (!blueprint) return null;
 
-      const metadata = await fetchBlueprintMetadata(blueprint.metadataUri);
+      const metadata = await fetchBlueprintMetadata({
+        metadataUri: blueprint.metadataUri,
+        metadataHash: blueprint.metadataHash,
+        blueprintId: blueprint.blueprintId,
+        owner: blueprint.owner,
+      });
       return { ...blueprint, ...metadata } as BlueprintWithMetadata;
     },
     enabled: enabled && !!blueprintId,
@@ -432,19 +571,31 @@ export const useBlueprintDetails = (
   },
 ) => {
   const { network, enabled = true } = options ?? {};
+  const { activeChainId, resolvedNetwork } = useResolvedEnvioNetwork(network);
 
   const { data, isLoading, error, refetch } = useQuery({
-    queryKey: ['envio', 'blueprintDetails', blueprintId?.toString(), network],
+    queryKey: [
+      'envio',
+      'blueprintDetails',
+      blueprintId?.toString(),
+      resolvedNetwork,
+      activeChainId,
+    ],
     queryFn: async (): Promise<BlueprintDetailsResult | null> => {
       if (blueprintId === undefined) return null;
 
       const idString = blueprintId.toString();
-      const blueprint = await fetchBlueprintById(idString, network);
+      const blueprint = await fetchBlueprintById(idString, resolvedNetwork);
       if (!blueprint) return null;
 
       const [metadata, operators] = await Promise.all([
-        fetchBlueprintMetadata(blueprint.metadataUri),
-        fetchBlueprintOperators(idString, network),
+        fetchBlueprintMetadata({
+          metadataUri: blueprint.metadataUri,
+          metadataHash: blueprint.metadataHash,
+          blueprintId: blueprint.blueprintId,
+          owner: blueprint.owner,
+        }),
+        fetchBlueprintOperators(idString, resolvedNetwork),
       ]);
 
       const blueprintWithMetadata = { ...blueprint, ...metadata };

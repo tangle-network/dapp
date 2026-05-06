@@ -11,7 +11,10 @@ type UseOperatorInfo = {
 
 const useOperatorInfo = (): UseOperatorInfo => {
   const { address } = useAccount();
-  const { data: operators, isLoading } = useOperators();
+  const { data: operators, isLoading } = useOperators({
+    enabled: !!address,
+    fallbackToOnChain: false,
+  });
 
   const result = useMemo(() => {
     if (!address || !operators) {

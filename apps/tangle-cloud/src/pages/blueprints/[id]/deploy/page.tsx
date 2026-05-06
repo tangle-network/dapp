@@ -1,9 +1,10 @@
 import { FC, useEffect, useMemo } from 'react';
 import {
   Button,
-  ErrorFallback,
-  SkeletonLoader,
-} from '@tangle-network/ui-components';
+  Card,
+  Skeleton,
+  Text,
+} from '../../../../components/sandbox/SandboxUi';
 import { useForm } from 'react-hook-form';
 import {
   DeployBlueprintSchema,
@@ -21,6 +22,7 @@ import {
   PERCENT_TO_BASIS_POINTS,
   type ServiceRequestParams,
   type AssetSecurityRequirement,
+  useStakingAssets,
 } from '@tangle-network/tangle-shared-ui/data/graphql';
 import { useBlueprintRequestSchema } from '@tangle-network/tangle-shared-ui/data/services';
 import { RequestArgsEncodingError } from '@tangle-network/tangle-shared-ui/codec';
@@ -32,6 +34,8 @@ import useParamWithSchema from '@tangle-network/tangle-shared-ui/hooks/useParamW
 import { zeroAddress, parseUnits } from 'viem';
 import { TxName } from '../../../../constants';
 import useTxNotification from '../../../../hooks/useTxNotification';
+import { useAccount } from 'wagmi';
+import RequireWallet from '../../../../components/RequireWallet';
 
 const DeployPage: FC = () => {
   const id = useParamWithSchema('id', z.coerce.bigint());
@@ -49,6 +53,8 @@ const DeployPage: FC = () => {
     isPending: serviceRequestPending,
   } = useServiceRequestTx();
   const { data: requestSchema } = useBlueprintRequestSchema(id);
+  const { assets } = useStakingAssets();
+  const { address } = useAccount();
 
   const { notifyProcessing, notifySuccess, notifyError } = useTxNotification();
 
@@ -65,12 +71,17 @@ const DeployPage: FC = () => {
     // @ts-expect-error Two different types with this name exist, but they are unrelated.
     resolver: zodResolver(deployBlueprintSchema),
     defaultValues: {
-      durationUnit: 'seconds',
+      durationUnit: 'hours',
+      instanceDuration: 24,
       requestMode: 'basic',
       operatorExposurePercents: {},
       assets: [],
       securityCommitments: [],
       requestArgs: [],
+      permittedCallers: [],
+      operators: [],
+      paymentAmount: '0',
+      paymentMethod: 'shieldedCredits',
     },
   });
 
@@ -115,10 +126,91 @@ const DeployPage: FC = () => {
     }
   }, [serviceRequestSuccess, id, navigate]);
 
+  useEffect(() => {
+    if (!blueprintResult?.details) {
+      return;
+    }
+
+    const blueprintName = blueprintResult.details.name?.trim();
+    const currentName = getValues('instanceName')?.trim();
+    if (!currentName && blueprintName) {
+      setValue('instanceName', `${blueprintName} service`, {
+        shouldDirty: false,
+      });
+    }
+  }, [blueprintResult?.details, getValues, setValue]);
+
+  useEffect(() => {
+    if (!address) {
+      return;
+    }
+
+    const currentCallers = getValues('permittedCallers') ?? [];
+    if (currentCallers.length === 0) {
+      setValue('permittedCallers', [address], {
+        shouldDirty: false,
+      });
+    }
+  }, [address, getValues, setValue]);
+
+  useEffect(() => {
+    const currentOperators = getValues('operators') ?? [];
+    const availableOperators =
+      blueprintResult?.operators?.map((operator) => operator.address) ?? [];
+
+    if (
+      currentOperators.length === 0 &&
+      availableOperators.length > 0 &&
+      availableOperators.length <= 3
+    ) {
+      setValue('operators', availableOperators as `0x${string}`[], {
+        shouldDirty: false,
+      });
+    }
+  }, [blueprintResult?.operators, getValues, setValue]);
+
+  useEffect(() => {
+    const currentPaymentAsset = getValues('paymentAsset');
+    if (currentPaymentAsset?.id) {
+      return;
+    }
+
+    const firstAsset = Array.from(assets?.values() ?? []).find(
+      (asset) => asset.metadata.name && asset.metadata.name.trim() !== '',
+    );
+
+    if (!firstAsset) {
+      return;
+    }
+
+    setValue(
+      'paymentAsset',
+      {
+        id: firstAsset.id,
+        metadata: {
+          name: firstAsset.metadata.name,
+          symbol: firstAsset.metadata.symbol,
+          decimals: firstAsset.metadata.decimals,
+          priceInUsd: null,
+        },
+      },
+      {
+        shouldDirty: false,
+      },
+    );
+  }, [assets, getValues, setValue]);
+
   if (isBlueprintLoading) {
-    return <SkeletonLoader className="min-h-64" />;
+    return <Skeleton className="min-h-64" />;
   } else if (blueprintError) {
-    return <ErrorFallback title={blueprintError.name} />;
+    return (
+      <Card className="p-6">
+        <Text variant="h5">Unable to load blueprint</Text>
+        <Text variant="body2" className="mt-2 text-muted-foreground">
+          {blueprintError.name}
+        </Text>
+      </Card>
+    );
   } else if (blueprintResult === null) {
     return null;
   }
@@ -140,14 +232,18 @@ const DeployPage: FC = () => {
             );
       const ttl = BigInt(ttlInSeconds);
 
-      // Get payment configuration
-      const paymentToken = validatedData.paymentAsset?.id ?? zeroAddress;
+      const usesShieldedCredits =
+        validatedData.paymentMethod === 'shieldedCredits';
+      // Shielded credit checkout currently keeps service creation payment-neutral.
+      // Credit spend authorization is tied to the resulting service/job record.
+      const paymentToken = usesShieldedCredits
+        ? zeroAddress
+        : (validatedData.paymentAsset?.id ?? zeroAddress);
       const paymentDecimals =
         validatedData.paymentAsset?.metadata?.decimals ?? 18;
-      const paymentAmount = parseUnits(
-        validatedData.paymentAmount ?? '0',
-        paymentDecimals,
-      );
+      const paymentAmount = usesShieldedCredits
+        ? 0n
+        : parseUnits(validatedData.paymentAmount ?? '0', paymentDecimals);
 
       if (!requestSchema) {
         throw new Error(
@@ -299,21 +395,97 @@ const DeployPage: FC = () => {
   };
 
   return (
-    <>
-      <Deployment {...commonProps} />
+    <RequireWallet
+      title="Connect wallet to create an instance"
+      description="Connect to review operators, payment, permitted callers, and the service request transaction before anything is submitted."
+      eyebrow="Instance checkout"
+      checks={['Review operators', 'Confirm payment', 'Submit request']}
+    >
+      <div className="space-y-5">
+        <Card className="overflow-hidden border-border bg-card p-6 shadow-[var(--shadow-card)]">
+          <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
+            <div>
+              <p className="font-bold text-[10px] uppercase tracking-[0.2em] text-muted-foreground">
+                Service instance
+              </p>
+              <Text variant="h4" className="mt-2 text-foreground">
+                Create an instance of {blueprintResult.details.name}
+              </Text>
+              <Text
+                variant="body2"
+                className="mt-2 max-w-3xl text-muted-foreground"
+              >
+                Create a running service from this blueprint. The checkout keeps
+                the commitment explicit: operators, request arguments, payment,
+                permitted callers, and TTL are reviewed before the wallet
+                transaction.
+              </Text>
+            </div>
 
-      <div className="flex items-center justify-end gap-5 mt-4">
-        {Object.keys(errors).length > 0 && (
-          <ErrorMessage>
-            Error(s) on validation. Please check the form and try again.
-          </ErrorMessage>
-        )}
-        <Button onClick={onDeployBlueprint} isLoading={serviceRequestPending}>
-          Deploy
-        </Button>
+            <div className="grid gap-2 rounded-lg border border-border bg-muted/30 p-3 sm:grid-cols-3 md:min-w-[420px]">
+              <CheckoutMetric label="Blueprint" value={id?.toString() ?? '-'} />
+              <CheckoutMetric
+                label="Operators"
+                value={(blueprintResult.operators?.length ?? 0).toString()}
+              />
+              <CheckoutMetric
+                label="Schema"
+                value={
+                  requestSchema?.hasRequestSchema
+                    ? `${requestSchema.parsedRequestSchema.length} args`
+                    : 'No args'
+                }
+              />
+            </div>
+          </div>
+        </Card>
+
+        <Card className="border-border bg-card p-4 shadow-[var(--shadow-card)]">
+          <div className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_320px] lg:items-center">
+            <div>
+              <p className="font-bold text-[10px] uppercase tracking-[0.2em] text-muted-foreground">
+                Review before wallet approval
+              </p>
+              <Text variant="body2" className="mt-2 text-muted-foreground">
+                Shielded credits keep service creation payment-neutral on-chain
+                until credit spend is attached to the resulting service or job
+                record. Token payment remains available when selected.
+              </Text>
+            </div>
+            <div className="grid grid-cols-2 gap-2">
+              <CheckoutMetric
+                label="Default payment"
+                value="Shielded credits"
+              />
+              <CheckoutMetric label="Default caller" value="Your wallet" />
+            </div>
+          </div>
+        </Card>
+
+        <Deployment {...commonProps} />
+
+        <div className="flex items-center justify-end gap-5 mt-4">
+          {Object.keys(errors).length > 0 && (
+            <ErrorMessage>
+              Error(s) on validation. Please check the form and try again.
+            </ErrorMessage>
+          )}
+          <Button onClick={onDeployBlueprint} isLoading={serviceRequestPending}>
+            Create instance
+          </Button>
+        </div>
       </div>
-    </>
+    </RequireWallet>
   );
 };
 
 export default DeployPage;
+
+const CheckoutMetric = ({ label, value }: { label: string; value: string }) => (
+  <div className="rounded-md border border-border bg-muted/30 p-3">
+    <p className="font-semibold text-[10px] uppercase tracking-wider text-muted-foreground">
+      {label}
+    </p>
+    <p className="mt-1 truncate font-mono text-sm text-foreground">{value}</p>
+  </div>
+);

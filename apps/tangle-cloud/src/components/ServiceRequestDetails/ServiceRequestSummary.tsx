@@ -1,6 +1,5 @@
 import { FC } from 'react';
 import { Address } from 'viem';
-import { Divider } from '@tangle-network/ui-components';
 import type {
   ServiceRequestContractDetails,
   AssetSecurityRequirement,
@@ -9,6 +8,8 @@ import PaymentTermsSection from './PaymentTermsSection';
 import CommitmentSection from './CommitmentSection';
 import OperatorStatusSection from './OperatorStatusSection';
 import SecurityRequirementsSection from './SecurityRequirementsSection';
+
+const Divider = () => <div className="h-px w-full bg-border" />;
 
 type Props = {
   contractDetails: ServiceRequestContractDetails | null | undefined;
@@ -42,7 +43,7 @@ const ServiceRequestSummary: FC<Props> = ({
   const hasSecurityRequirements = securityRequirements.length > 0;
 
   return (
-    <div className="space-y-4 mt-4 p-4 rounded-lg bg-mono-0 dark:bg-mono-190 border border-mono-40 dark:border-mono-160">
+    <div className="space-y-4 mt-4 p-4 rounded-lg bg-card border border-border">
       <CommitmentSection
         ttl={contractDetails?.ttl}
         createdAt={contractDetails?.createdAt}

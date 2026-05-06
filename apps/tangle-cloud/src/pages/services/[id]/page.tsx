@@ -2,19 +2,24 @@
  * Service detail page - view service info and submit jobs.
  */
 
-import { FC, useCallback, useEffect, useMemo, useState } from 'react';
+import {
+  type ComponentProps,
+  type ElementType,
+  type FC,
+  type ReactNode,
+  useCallback,
+  useEffect,
+  useMemo,
+  useState,
+} from 'react';
 import { useParams, useNavigate, Link } from 'react-router';
 import { useAccount } from 'wagmi';
 import {
-  Button,
+  Button as SandboxButton,
   Card,
-  CardVariant,
-  Input,
-  Typography,
-  SkeletonLoader,
-  EMPTY_VALUE_PLACEHOLDER,
-} from '@tangle-network/ui-components';
-import { shortenHex } from '@tangle-network/ui-components/utils/shortenHex';
+  Input as SandboxInput,
+  Skeleton,
+} from '@tangle-network/sandbox-ui/primitives';
 import {
   ArrowLeft,
   ExternalLinkLine,
@@ -45,6 +50,112 @@ import FundServiceModal from './FundServiceModal';
 import OperatorMembershipPanel from './OperatorMembershipPanel';
 import OperatorExitPanel from './OperatorExitPanel';
 import { PagePath } from '../../../types';
+import BlueprintHostCard from '../../../components/blueprintApps/BlueprintHostCard';
+
+const EMPTY_VALUE_PLACEHOLDER = '-';
+const CARD_SURFACE = 'sandbox' as const;
+
+const shortenHex = (value: string, chars = 6) =>
+  value.length <= chars * 2 + 2
+    ? value
+    : `${value.slice(0, chars)}...${value.slice(-chars)}`;
+
+type TextProps = ComponentProps<'p'> & {
+  variant?: 'h4' | 'h5' | 'body1' | 'body2' | 'body3';
+  fw?: 'bold' | 'semibold';
+};
+
+const Text: FC<TextProps> = ({
+  variant = 'body2',
+  fw,
+  className = '',
+  ...props
+}) => {
+  const Component = (
+    variant === 'h4' ? 'h1' : variant === 'h5' ? 'h2' : 'p'
+  ) as ElementType;
+  const variantClass =
+    variant === 'h4'
+      ? 'font-display text-3xl tracking-tight text-foreground'
+      : variant === 'h5'
+        ? 'font-display text-xl text-foreground'
+        : variant === 'body1'
+          ? 'text-base text-foreground'
+          : variant === 'body3'
+            ? 'text-xs text-muted-foreground'
+            : 'text-sm text-foreground';
+  const weightClass =
+    fw === 'bold' ? 'font-bold' : fw === 'semibold' ? 'font-semibold' : '';
+
+  return (
+    <Component
+      className={[variantClass, weightClass, className]
+        .filter(Boolean)
+        .join(' ')}
+      {...props}
+    />
+  );
+};
+
+type ButtonProps = Omit<
+  ComponentProps<typeof SandboxButton>,
+  'variant' | 'size'
+> & {
+  variant?: ComponentProps<typeof SandboxButton>['variant'] | 'utility';
+  size?: ComponentProps<typeof SandboxButton>['size'];
+  isDisabled?: boolean;
+  isLoading?: boolean;
+  isJustIcon?: boolean;
+};
+
+const Button: FC<ButtonProps> = ({
+  variant,
+  size,
+  isDisabled,
+  isLoading,
+  isJustIcon,
+  disabled,
+  ...props
+}) => (
+  <SandboxButton
+    variant={variant === 'utility' ? 'outline' : variant}
+    size={isJustIcon ? 'icon' : size}
+    disabled={disabled || isDisabled}
+    loading={isLoading}
+    {...props}
+  />
+);
+
+type InputProps = Omit<ComponentProps<typeof SandboxInput>, 'onChange'> & {
+  isControlled?: boolean;
+  isInvalid?: boolean;
+  errorMessage?: string;
+  inputClassName?: string;
+  onChange?: (value: string) => void;
+};
+
+const Input: FC<InputProps> = ({
+  isControlled: _isControlled,
+  isInvalid,
+  errorMessage,
+  inputClassName,
+  className = '',
+  onChange,
+  ...props
+}) => (
+  <div className={className}>
+    <SandboxInput
+      {...props}
+      className={[inputClassName, isInvalid ? 'border-destructive' : '']
+        .filter(Boolean)
+        .join(' ')}
+      onChange={(event) => onChange?.(event.currentTarget.value)}
+    />
+    {errorMessage && (
+      <p className="mt-1 text-destructive text-xs">{errorMessage}</p>
+    )}
+  </div>
+);
 
 const validatePermittedCallerInput = ({
   value,
@@ -368,7 +479,7 @@ const ServiceDetailPage: FC = () => {
   if (serviceId === undefined) {
     return (
       <div className="text-center py-12">
-        <Typography variant="h4">Invalid Service ID</Typography>
+        <Text variant="h4">Invalid Service ID</Text>
         <Button onClick={() => navigate(PagePath.INSTANCES)} className="mt-4">
           Back to Instances
         </Button>
@@ -379,9 +490,9 @@ const ServiceDetailPage: FC = () => {
   if (isLoading) {
     return (
       <div className="space-y-6">
-        <SkeletonLoader className="h-12 w-64" />
-        <SkeletonLoader className="h-48" />
-        <SkeletonLoader className="h-64" />
+        <Skeleton className="h-12 w-64" />
+        <Skeleton className="h-48" />
+        <Skeleton className="h-64" />
       </div>
     );
   }
@@ -389,10 +500,10 @@ const ServiceDetailPage: FC = () => {
   if (!service) {
     return (
       <div className="text-center py-12">
-        <Typography variant="h4">Service Not Found</Typography>
-        <Typography variant="body1" className="text-mono-100 mt-2">
+        <Text variant="h4">Service Not Found</Text>
+        <Text variant="body1" className="text-muted-foreground mt-2">
           This service does not exist or may have been removed.
-        </Typography>
+        </Text>
         <Button onClick={() => navigate(PagePath.INSTANCES)} className="mt-4">
           Back to Instances
         </Button>
@@ -412,20 +523,20 @@ const ServiceDetailPage: FC = () => {
           <ArrowLeft className="w-5 h-5" />
         </Button>
         <div>
-          <Typography variant="h4" fw="bold">
+          <Text variant="h4" fw="bold">
             Service #{serviceId.toString()}
-          </Typography>
-          <Typography variant="body2" className="text-mono-100">
+          </Text>
+          <Text variant="body2" className="text-muted-foreground">
             {blueprintResult?.details.name ?? 'Loading...'}
-          </Typography>
+          </Text>
         </div>
       </div>
 
       {/* Service Info Card */}
-      <Card variant={CardVariant.GLASS} className="p-6">
-        <Typography variant="h5" fw="bold" className="mb-4">
+      <Card variant={CARD_SURFACE} className="p-6">
+        <Text variant="h5" fw="bold" className="mb-4">
           Service Information
-        </Typography>
+        </Text>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
           <InfoItem
             label="Status"
@@ -435,7 +546,7 @@ const ServiceDetailPage: FC = () => {
                   'px-2 py-1 rounded text-sm',
                   service.status === 'ACTIVE'
                     ? 'bg-green-500/20 text-green-400'
-                    : 'bg-mono-100/20 text-mono-100',
+                    : 'bg-muted text-muted-foreground',
                 )}
               >
                 {service.status}
@@ -451,11 +562,11 @@ const ServiceDetailPage: FC = () => {
                     ':id',
                     service.blueprintId.toString(),
                   )}
-                  className="inline-flex items-center gap-1 text-blue-50 hover:text-blue-40 transition-colors"
+                  className="inline-flex items-center gap-1 text-primary hover:text-primary/80 transition-colors"
                 >
-                  <Typography variant="body1" fw="semibold">
+                  <Text variant="body1" fw="semibold">
                     {blueprintResult.details.name}
-                  </Typography>
+                  </Text>
 
                   <ExternalLinkLine className="w-4 h-4" />
                 </Link>
@@ -483,6 +594,13 @@ const ServiceDetailPage: FC = () => {
         </div>
       </Card>
 
+      {blueprintResult?.details && (
+        <BlueprintHostCard
+          blueprint={blueprintResult.details}
+          serviceId={serviceId}
+        />
+      )}
+
       {/* On-Chain Service Details */}
       <ServiceOnChainDetails
         serviceId={serviceId}
@@ -495,26 +613,26 @@ const ServiceDetailPage: FC = () => {
       />
 
       {/* Permitted Callers Management */}
-      <Card variant={CardVariant.GLASS} className="p-6 space-y-4">
+      <Card variant={CARD_SURFACE} className="p-6 space-y-4">
         <div className="space-y-1">
-          <Typography variant="h5" fw="bold">
+          <Text variant="h5" fw="bold">
             Service Settings: Permitted Callers
-          </Typography>
-          <Typography variant="body2" className="text-mono-100">
+          </Text>
+          <Text variant="body2" className="text-muted-foreground">
             Manage which addresses can submit jobs to this service at runtime.
-          </Typography>
+          </Text>
         </div>
 
         {isLoadingOnChainDetails || isLoadingServices ? (
           <div className="space-y-3">
-            <SkeletonLoader className="h-10" />
-            <SkeletonLoader className="h-14" />
-            <SkeletonLoader className="h-14" />
+            <Skeleton className="h-10" />
+            <Skeleton className="h-14" />
+            <Skeleton className="h-14" />
           </div>
         ) : (
           <>
-            <div className="rounded-lg border border-mono-60 dark:border-mono-140 p-3">
-              <Typography variant="body2" className="text-mono-100">
+            <div className="rounded-lg border border-border p-3">
+              <Text variant="body2" className="text-muted-foreground">
                 Connected account access:{' '}
                 <span
                   className={
@@ -525,31 +643,31 @@ const ServiceDetailPage: FC = () => {
                 >
                   {canSubmitJobs ? 'Allowed' : 'Not allowed'}
                 </span>
-              </Typography>
+              </Text>
             </div>
 
             <div className="space-y-2">
-              <Typography variant="body2" className="text-mono-100">
+              <Text variant="body2" className="text-muted-foreground">
                 Current permitted callers
-              </Typography>
+              </Text>
               {permittedCallers.length === 0 ? (
-                <Typography variant="body2" className="text-mono-120">
+                <Text variant="body2" className="text-muted-foreground">
                   No permitted callers configured.
-                </Typography>
+                </Text>
               ) : (
                 <div className="space-y-2">
                   {permittedCallers.map((caller) => (
                     <div
                       key={caller}
-                      className="flex items-center justify-between gap-3 rounded-lg border border-mono-60 dark:border-mono-140 px-3 py-2"
+                      className="flex items-center justify-between gap-3 rounded-lg border border-border px-3 py-2"
                     >
                       <div className="flex items-center gap-2">
-                        <Typography variant="body2" className="font-mono">
+                        <Text variant="body2" className="font-mono">
                           {shortenHex(caller, 6)}
-                        </Typography>
+                        </Text>
                         {onChainDetails?.owner &&
                           addressesEqual(caller, onChainDetails.owner) && (
-                            <span className="px-2 py-0.5 rounded bg-blue-20 dark:bg-blue-110 text-blue-70 dark:text-blue-30 text-xs font-semibold">
+                            <span className="px-2 py-0.5 rounded bg-primary/10 text-primary text-xs font-semibold">
                               Owner
                             </span>
                           )}
@@ -585,9 +703,9 @@ const ServiceDetailPage: FC = () => {
 
             {isOwner ? (
               <div className="space-y-2">
-                <Typography variant="body2" className="text-mono-100">
+                <Text variant="body2" className="text-muted-foreground">
                   Add permitted caller
-                </Typography>
+                </Text>
                 <div className="flex flex-col md:flex-row gap-2">
                   <Input
                     id="permitted-caller-input"
@@ -614,21 +732,21 @@ const ServiceDetailPage: FC = () => {
               </div>
             ) : (
               <div className="space-y-2">
-                <Typography variant="body2" className="text-mono-100">
+                <Text variant="body2" className="text-muted-foreground">
                   Add permitted caller
-                </Typography>
+                </Text>
                 <div className="p-4 rounded-lg bg-yellow-500/10 border border-yellow-500/20">
-                  <Typography variant="body2" className="text-yellow-400">
+                  <Text variant="body2" className="text-yellow-400">
                     Only the service owner can add or remove permitted callers.
-                  </Typography>
+                  </Text>
                 </div>
               </div>
             )}
 
             {activeAclError && (
-              <Typography variant="body2" className="text-red-400">
+              <Text variant="body2" className="text-red-400">
                 ACL update failed: {activeAclError.message}
-              </Typography>
+              </Text>
             )}
           </>
         )}
@@ -657,13 +775,13 @@ const ServiceDetailPage: FC = () => {
 
       {/* Job Submission */}
       {service.status === 'ACTIVE' && blueprintResult?.details && (
-        <Card variant={CardVariant.GLASS} className="p-6">
-          <Typography variant="h5" fw="bold" className="mb-4">
+        <Card variant={CARD_SURFACE} className="p-6">
+          <Text variant="h5" fw="bold" className="mb-4">
             Submit Job
-          </Typography>
+          </Text>
 
           {isLoadingPermission || isLoadingOnChainDetails ? (
-            <SkeletonLoader className="h-32" />
+            <Skeleton className="h-32" />
           ) : canSubmitJobs ? (
             <JobSubmissionForm
               serviceId={serviceId}
@@ -676,10 +794,10 @@ const ServiceDetailPage: FC = () => {
       )}
 
       {/* Job History */}
-      <Card variant={CardVariant.GLASS} className="p-6">
-        <Typography variant="h5" fw="bold" className="mb-4">
+      <Card variant={CARD_SURFACE} className="p-6">
+        <Text variant="h5" fw="bold" className="mb-4">
           Job History
-        </Typography>
+        </Text>
         <JobHistoryTable
           jobs={jobs ?? []}
           isLoading={isLoadingJobs}
@@ -698,18 +816,18 @@ const ServiceDetailPage: FC = () => {
   );
 };
 
-const InfoItem: FC<{ label: string; value: React.ReactNode }> = ({
+const InfoItem: FC<{ label: string; value: ReactNode }> = ({
   label,
   value,
 }) => (
   <div>
-    <Typography variant="body2" className="text-mono-100 mb-1">
+    <Text variant="body2" className="text-muted-foreground mb-1">
       {label}
-    </Typography>
+    </Text>
     {typeof value === 'string' ? (
-      <Typography variant="body1" fw="semibold">
+      <Text variant="body1" fw="semibold">
         {value}
-      </Typography>
+      </Text>
     ) : (
       value
     )}
@@ -721,16 +839,19 @@ const PermissionDeniedMessage: FC = () => (
     <div className="p-4 rounded-full bg-yellow-500/20 mb-4">
       <ShieldKeyholeLineIcon className="w-8 h-8 text-yellow-400" />
     </div>
-    <Typography variant="h5" fw="semibold" className="mb-2">
+    <Text variant="h5" fw="semibold" className="mb-2">
       Permission Required
-    </Typography>
-    <Typography variant="body2" className="text-center text-mono-100 max-w-md">
+    </Text>
+    <Text
+      variant="body2"
+      className="text-center text-muted-foreground max-w-md"
+    >
       You are not authorized to submit jobs to this service. Only the service
       owner or addresses added as permitted callers can submit jobs.
-    </Typography>
-    <Typography variant="body3" className="text-mono-120 mt-4">
+    </Text>
+    <Text variant="body3" className="text-muted-foreground mt-4">
       Contact the service owner to request access.
-    </Typography>
+    </Text>
   </div>
 );
 

@@ -1,11 +1,6 @@
 import { FC, useCallback, useState } from 'react';
 import { useAccount } from 'wagmi';
-import {
-  Typography,
-  Alert,
-  Button,
-  Input,
-} from '@tangle-network/ui-components';
+import { Alert, Button, Input, Text } from '../../components/sandbox/SandboxUi';
 import { useShieldedContext } from '../../app/ShieldedProvider';
 import { useCreditsContext } from '../../app/CreditsProvider';
 
@@ -43,15 +38,15 @@ const FundCreditsContainer: FC = () => {
   return (
     <div className="space-y-4">
       <div>
-        <Typography variant="h5" fw="semibold">
+        <Text variant="h5" fw="semibold">
           Create Credit Account
-        </Typography>
+        </Text>
 
-        <Typography variant="body2" className="mt-1 text-mono-100">
+        <Text variant="body2" className="mt-1 text-muted-foreground">
           Generate an ephemeral keypair for anonymous credit payments. The keys
           are encrypted and stored in your browser. On-chain funding requires
           SDK integration.
-        </Typography>
+        </Text>
       </div>
 
       {!hasDerivedKeypair && (
@@ -62,9 +57,9 @@ const FundCreditsContainer: FC = () => {
       )}
 
       <div className="space-y-1">
-        <Typography variant="body2" fw="semibold" className="text-mono-120">
+        <Text variant="body2" fw="semibold" className="text-muted-foreground">
           Account Label (optional)
-        </Typography>
+        </Text>
 
         <Input
           id="credit-label"
@@ -79,9 +74,9 @@ const FundCreditsContainer: FC = () => {
 
       {fundedCommitment && (
         <Alert type="success" title="Credit keys generated and stored">
-          <Typography variant="mono2" className="mt-1 break-all">
+          <Text variant="body3" className="mt-1 break-all font-mono">
             {fundedCommitment}
-          </Typography>
+          </Text>
         </Alert>
       )}
 

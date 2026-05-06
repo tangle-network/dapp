@@ -2,9 +2,17 @@
  * Recursive component that renders form fields based on a TLV v2 SchemaField.
  */
 
-import { FC, useCallback, useMemo } from 'react';
-import { Button, Input, Typography } from '@tangle-network/ui-components';
-import { CheckBox } from '@tangle-network/ui-components/components/CheckBox';
+import {
+  type ComponentProps,
+  type ElementType,
+  type FC,
+  useCallback,
+  useMemo,
+} from 'react';
+import {
+  Button as SandboxButton,
+  Input as SandboxInput,
+} from '@tangle-network/sandbox-ui/primitives';
 import {
   BlueprintFieldKind,
   getDefaultValue,
@@ -19,6 +27,77 @@ interface SchemaFieldInputProps {
   onChange: (value: FormFieldValue) => void;
   path: string;
 }
+
+type TextProps = ComponentProps<'p'> & {
+  variant?: 'body2' | 'body3';
+  fw?: 'semibold';
+};
+
+const Text: FC<TextProps> = ({
+  variant = 'body2',
+  fw,
+  className = '',
+  ...props
+}) => {
+  const Component = 'p' as ElementType;
+  const variantClass =
+    variant === 'body3'
+      ? 'text-xs text-muted-foreground'
+      : 'text-sm text-foreground';
+  const weightClass = fw === 'semibold' ? 'font-semibold' : '';
+
+  return (
+    <Component
+      className={[variantClass, weightClass, className]
+        .filter(Boolean)
+        .join(' ')}
+      {...props}
+    />
+  );
+};
+
+type InputProps = Omit<ComponentProps<typeof SandboxInput>, 'onChange'> & {
+  isControlled?: boolean;
+  isInvalid?: boolean;
+  errorMessage?: string;
+  onChange?: (value: string) => void;
+};
+
+const Input: FC<InputProps> = ({
+  isControlled: _isControlled,
+  isInvalid,
+  errorMessage,
+  className = '',
+  onChange,
+  ...props
+}) => (
+  <div className={className}>
+    <SandboxInput
+      {...props}
+      className={isInvalid ? 'border-destructive' : undefined}
+      onChange={(event) => onChange?.(event.currentTarget.value)}
+    />
+    {errorMessage && (
+      <p className="mt-1 text-destructive text-xs">{errorMessage}</p>
+    )}
+  </div>
+);
+
+type ButtonProps = Omit<
+  ComponentProps<typeof SandboxButton>,
+  'variant' | 'size'
+> & {
+  variant?: ComponentProps<typeof SandboxButton>['variant'] | 'utility';
+  size?: ComponentProps<typeof SandboxButton>['size'];
+};
+
+const Button: FC<ButtonProps> = ({ variant, size, ...props }) => (
+  <SandboxButton
+    variant={variant === 'utility' ? 'outline' : variant}
+    size={size}
+    {...props}
+  />
+);
 
 const kindLabel = (kind: BlueprintFieldKind): string => {
   return BlueprintFieldKind[kind] ?? `Kind(${kind})`;
@@ -79,9 +158,9 @@ export const SchemaFieldInput: FC<SchemaFieldInputProps> = ({
   if (kind === BlueprintFieldKind.Void) {
     return (
       <div className="py-1">
-        <Typography variant="body3" className="text-mono-100">
+        <Text variant="body3" className="text-muted-foreground">
           {label} (void)
-        </Typography>
+        </Text>
       </div>
     );
   }
@@ -89,12 +168,14 @@ export const SchemaFieldInput: FC<SchemaFieldInputProps> = ({
   if (kind === BlueprintFieldKind.Bool) {
     return (
       <div className="flex items-center gap-2 py-1">
-        <CheckBox
-          isChecked={value === true}
+        <input
+          type="checkbox"
+          className="h-4 w-4 rounded border-border accent-primary"
+          checked={value === true}
           onChange={() => onChange(!value)}
         />
 
-        <Typography variant="body2">{label}</Typography>
+        <Text variant="body2">{label}</Text>
       </div>
     );
   }
@@ -103,10 +184,12 @@ export const SchemaFieldInput: FC<SchemaFieldInputProps> = ({
     const bounds = getIntBounds(kind);
     return (
       <div className="py-1">
-        <Typography variant="body2" className="mb-1">
+        <Text variant="body2" className="mb-1">
           {label}{' '}
-          <span className="text-mono-100 text-xs">({kindLabel(kind)})</span>
-        </Typography>
+          <span className="text-muted-foreground text-xs">
+            ({kindLabel(kind)})
+          </span>
+        </Text>
 
         <Input
           id={path}
@@ -123,10 +206,12 @@ export const SchemaFieldInput: FC<SchemaFieldInputProps> = ({
   if (isBigInt(kind)) {
     return (
       <div className="py-1">
-        <Typography variant="body2" className="mb-1">
+        <Text variant="body2" className="mb-1">
           {label}{' '}
-          <span className="text-mono-100 text-xs">({kindLabel(kind)})</span>
-        </Typography>
+          <span className="text-muted-foreground text-xs">
+            ({kindLabel(kind)})
+          </span>
+        </Text>
 
         <Input
           id={path}
@@ -149,9 +234,10 @@ export const SchemaFieldInput: FC<SchemaFieldInputProps> = ({
 
     return (
       <div className="py-1">
-        <Typography variant="body2" className="mb-1">
-          {label} <span className="text-mono-100 text-xs">(Address)</span>
-        </Typography>
+        <Text variant="body2" className="mb-1">
+          {label}{' '}
+          <span className="text-muted-foreground text-xs">(Address)</span>
+        </Text>
 
         <Input
           id={path}
@@ -175,12 +261,12 @@ export const SchemaFieldInput: FC<SchemaFieldInputProps> = ({
       kind === BlueprintFieldKind.Bytes32 ? 32 : field.arrayLength;
     return (
       <div className="py-1">
-        <Typography variant="body2" className="mb-1">
+        <Text variant="body2" className="mb-1">
           {label}{' '}
-          <span className="text-mono-100 text-xs">
+          <span className="text-muted-foreground text-xs">
             ({kindLabel(kind)}, {expectedLen} bytes)
           </span>
-        </Typography>
+        </Text>
 
         <Input
           id={path}
@@ -196,9 +282,10 @@ export const SchemaFieldInput: FC<SchemaFieldInputProps> = ({
   if (kind === BlueprintFieldKind.String) {
     return (
       <div className="py-1">
-        <Typography variant="body2" className="mb-1">
-          {label} <span className="text-mono-100 text-xs">(String)</span>
-        </Typography>
+        <Text variant="body2" className="mb-1">
+          {label}{' '}
+          <span className="text-muted-foreground text-xs">(String)</span>
+        </Text>
 
         <Input
           id={path}
@@ -214,9 +301,10 @@ export const SchemaFieldInput: FC<SchemaFieldInputProps> = ({
   if (kind === BlueprintFieldKind.Bytes) {
     return (
       <div className="py-1">
-        <Typography variant="body2" className="mb-1">
-          {label} <span className="text-mono-100 text-xs">(Bytes, hex)</span>
-        </Typography>
+        <Text variant="body2" className="mb-1">
+          {label}{' '}
+          <span className="text-muted-foreground text-xs">(Bytes, hex)</span>
+        </Text>
 
         <Input
           id={path}
@@ -236,10 +324,12 @@ export const SchemaFieldInput: FC<SchemaFieldInputProps> = ({
     const childSchema = field.children[0];
 
     return (
-      <div className="py-1 pl-3 border-l-2 border-mono-60 dark:border-mono-140">
+      <div className="py-1 pl-3 border-l-2 border-border">
         <div className="flex items-center gap-2 mb-1">
-          <CheckBox
-            isChecked={optVal.present}
+          <input
+            type="checkbox"
+            className="h-4 w-4 rounded border-border accent-primary"
+            checked={optVal.present}
             onChange={() => {
               if (optVal.present) {
                 onChange({ present: false });
@@ -252,9 +342,10 @@ export const SchemaFieldInput: FC<SchemaFieldInputProps> = ({
             }}
           />
 
-          <Typography variant="body2">
-            {label} <span className="text-mono-100 text-xs">(Optional)</span>
-          </Typography>
+          <Text variant="body2">
+            {label}{' '}
+            <span className="text-muted-foreground text-xs">(Optional)</span>
+          </Text>
         </div>
 
         {optVal.present && childSchema && (
@@ -307,9 +398,9 @@ export const SchemaFieldInput: FC<SchemaFieldInputProps> = ({
 
   return (
     <div className="py-1">
-      <Typography variant="body2" className="text-yellow-400">
+      <Text variant="body2" className="text-yellow-400">
         Unsupported field kind: {kindLabel(kind)}
-      </Typography>
+      </Text>
     </div>
   );
 };
@@ -343,13 +434,13 @@ const ArrayFieldInput: FC<SchemaFieldInputProps & { label: string }> = ({
   }
 
   return (
-    <div className="py-1 pl-3 border-l-2 border-mono-60 dark:border-mono-140">
-      <Typography variant="body2" className="mb-1">
+    <div className="py-1 pl-3 border-l-2 border-border">
+      <Text variant="body2" className="mb-1">
         {label}{' '}
-        <span className="text-mono-100 text-xs">
+        <span className="text-muted-foreground text-xs">
           (Array[{field.arrayLength}])
         </span>
-      </Typography>
+      </Text>
 
       {Array.from({ length: field.arrayLength }, (_, i) => (
         <SchemaFieldInput
@@ -406,13 +497,13 @@ const ListFieldInput: FC<SchemaFieldInputProps & { label: string }> = ({
   }
 
   return (
-    <div className="py-1 pl-3 border-l-2 border-mono-60 dark:border-mono-140">
-      <Typography variant="body2" className="mb-1">
+    <div className="py-1 pl-3 border-l-2 border-border">
+      <Text variant="body2" className="mb-1">
         {label}{' '}
-        <span className="text-mono-100 text-xs">
+        <span className="text-muted-foreground text-xs">
           (List, {elements.length} items)
         </span>
-      </Typography>
+      </Text>
 
       {elements.map((el, i) => (
         <div key={i} className="flex items-start gap-2">
@@ -465,10 +556,10 @@ const StructFieldInput: FC<SchemaFieldInputProps & { label: string }> = ({
   );
 
   return (
-    <div className="py-1 pl-3 border-l-2 border-mono-60 dark:border-mono-140">
-      <Typography variant="body2" className="mb-1">
-        {label} <span className="text-mono-100 text-xs">(Struct)</span>
-      </Typography>
+    <div className="py-1 pl-3 border-l-2 border-border">
+      <Text variant="body2" className="mb-1">
+        {label} <span className="text-muted-foreground text-xs">(Struct)</span>
+      </Text>
 
       {field.children.map((child, i) => (
         <SchemaFieldInput

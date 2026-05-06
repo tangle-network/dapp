@@ -3,9 +3,9 @@ import {
   ModalBody,
   ModalContent,
   ModalHeader,
-  Typography,
-  SkeletonLoader,
-} from '@tangle-network/ui-components';
+  Skeleton,
+  Text,
+} from '../../../../components/sandbox/SandboxUi';
 import {
   ApprovalConfirmationFormFields,
   ContractSecurityCommitment,
@@ -19,7 +19,6 @@ import {
 } from '@tangle-network/tangle-shared-ui/data/services';
 import type { Blueprint } from '@tangle-network/tangle-shared-ui/types/blueprint';
 import { TxStatus } from '@tangle-network/tangle-shared-ui/hooks/useContractWrite';
-import addCommasToNumber from '@tangle-network/ui-components/utils/addCommasToNumber';
 import useServiceRequestSecurityRequirements from '../../../../data/services/useServiceRequestSecurityRequirements';
 import ExposureCommitmentInput from './ExposureCommitmentInput';
 import useEvmOperatorInfo from '../../../../hooks/useEvmOperatorInfo';
@@ -47,8 +46,9 @@ type Props = {
 type FormValues = {
   requestId: bigint;
   commitments: Record<string, number>;
-  tntExposureBps: number;
 };
+
+const addCommasToNumber = (value: number) => value.toLocaleString();
 
 const toAssetMapKey = (tokenAddress: string): string => {
   return parseAddressLowercase(tokenAddress) ?? tokenAddress.toLowerCase();
@@ -111,18 +111,24 @@ const ServiceRequestDetailModal: FC<Props> = ({
   const { data: stakeByAsset, isLoading: isLoadingStake } =
     useOperatorStakeByAsset(operatorAddress, assetsToQuery);
 
+  // Seed the commitment record from every requirement on the request — including
+  // the default-TNT one when present. The contract's unified `approveService`
+  // entrypoint accepts an explicit per-asset commitment array; sending the
+  // operator's actual slider value (rather than dropping it and relying on
+  // on-chain auto-fill at the minimum) is what lets operators commit above
+  // `minExposureBps` from this UI.
   const initialCommitments = useMemo(() => {
-    if (!hasCustomRequirements || !requirements || requirements.length === 0) {
-      return {};
-    }
-
     const commitments: Record<string, number> = {};
-    for (const req of requirements) {
-      const key = toAssetMapKey(req.asset.token);
-      commitments[key] = req.minExposureBps;
+    if (requirements && requirements.length > 0) {
+      for (const req of requirements) {
+        commitments[toAssetMapKey(req.asset.token)] = req.minExposureBps;
+      }
+    } else if (defaultTntRequirement) {
+      commitments[toAssetMapKey(defaultTntRequirement.asset.token)] =
+        defaultTntRequirement.minExposureBps;
     }
     return commitments;
-  }, [hasCustomRequirements, requirements]);
+  }, [requirements, defaultTntRequirement]);
 
   const derivedSimpleStakingPercent = useMemo(() => {
     if (!contractDetails || !operatorAddress) {
@@ -176,7 +182,6 @@ const ServiceRequestDetailModal: FC<Props> = ({
     defaultValues: {
       requestId: selectedRequest?.requestId ?? BigInt(0),
       commitments: {},
-      tntExposureBps: 0,
     },
   });
 
@@ -185,15 +190,6 @@ const ServiceRequestDetailModal: FC<Props> = ({
       setValue('commitments', initialCommitments);
     }
   }, [initialCommitments, setValue]);
-
-  // Initialize tntExposureBps from default TNT requirement
-  useEffect(() => {
-    if (defaultTntRequirement && !hasCustomRequirements) {
-      setValue('tntExposureBps', defaultTntRequirement.minExposureBps, {
-        shouldValidate: true,
-      });
-    }
-  }, [defaultTntRequirement, hasCustomRequirements, setValue]);
 
   // Close modal on successful transaction
   useEffect(() => {
@@ -215,52 +211,35 @@ const ServiceRequestDetailModal: FC<Props> = ({
 
   const buildSecurityCommitments = useCallback(
     (commitments: Record<string, number>): ContractSecurityCommitment[] => {
-      if (!requirements || requirements.length === 0) {
-        return [];
-      }
+      // Map every active requirement (custom set OR the default-TNT) into a
+      // per-asset commitment using the operator's slider value, falling back
+      // to the requirement's `minExposureBps` only if the slider is unset.
+      const sourceRequirements =
+        requirements && requirements.length > 0
+          ? requirements
+          : defaultTntRequirement
+            ? [defaultTntRequirement]
+            : [];
 
-      return requirements.map((req) => {
-        const key = toAssetMapKey(req.asset.token);
-        const exposureBps = commitments[key] ?? req.minExposureBps;
-
-        return {
-          asset: {
-            kind: req.asset.kind,
-            token: req.asset.token,
-          },
-          exposureBps,
-        };
-      });
+      return sourceRequirements.map((req) => ({
+        asset: { kind: req.asset.kind, token: req.asset.token },
+        exposureBps:
+          commitments[toAssetMapKey(req.asset.token)] ?? req.minExposureBps,
+      }));
     },
-    [requirements],
+    [requirements, defaultTntRequirement],
   );
 
   const handleFormSubmit = useCallback(
     (data: FormValues) => {
-      const formattedData: ApprovalConfirmationFormFields = {
+      const securityCommitments = buildSecurityCommitments(data.commitments);
+      return onApprove({
         requestId: Number(data.requestId),
-      };
-
-      if (hasCustomRequirements) {
-        formattedData.securityCommitments = buildSecurityCommitments(
-          data.commitments,
-        );
-      } else {
-        formattedData.stakingPercent = derivedSimpleStakingPercent;
-        if (defaultTntRequirement && data.tntExposureBps > 0) {
-          formattedData.tntExposureBps = data.tntExposureBps;
-        }
-      }
-
-      return onApprove(formattedData);
+        securityCommitments:
+          securityCommitments.length > 0 ? securityCommitments : undefined,
+      });
     },
-    [
-      buildSecurityCommitments,
-      defaultTntRequirement,
-      derivedSimpleStakingPercent,
-      hasCustomRequirements,
-      onApprove,
-    ],
+    [buildSecurityCommitments, onApprove],
   );
 
   const handleApproveClick = useCallback(() => {
@@ -293,10 +272,10 @@ const ServiceRequestDetailModal: FC<Props> = ({
       </ModalBody>
 
       {!viewOnly && (
-        <div className="flex justify-end gap-3 p-6 pt-4 shrink-0 bg-mono-0 dark:bg-mono-180">
+        <div className="flex justify-end gap-3 p-6 pt-4 shrink-0 bg-background">
           <Button
             variant="secondary"
-            className="!bg-red-50 hover:!bg-red-70 !text-mono-0"
+            className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
             onClick={onReject}
             isLoading={isRejecting}
             isDisabled={isRejecting}
@@ -311,7 +290,7 @@ const ServiceRequestDetailModal: FC<Props> = ({
       )}
 
       {viewOnly && (
-        <div className="flex justify-end gap-3 p-6 pt-4 shrink-0 bg-mono-0 dark:bg-mono-180">
+        <div className="flex justify-end gap-3 p-6 pt-4 shrink-0 bg-background">
           <Button variant="secondary" onClick={onClose}>
             Close
           </Button>
@@ -324,131 +303,105 @@ const ServiceRequestDetailModal: FC<Props> = ({
     <>
       <ModalBody className="overflow-y-auto flex-1 justify-start">
         <form onSubmit={handleSubmit(handleFormSubmit)}>
-          <Typography variant="h4" className="text-center mb-3">
+          <Text variant="h4" className="text-center mb-3">
             Security Commitment
-          </Typography>
+          </Text>
 
           {(isLoadingRequirements || isLoadingStake) && (
             <div className="space-y-4">
-              <SkeletonLoader className="h-24 w-full rounded-lg" />
-              <SkeletonLoader className="h-24 w-full rounded-lg" />
+              <Skeleton className="h-24 w-full rounded-lg" />
+              <Skeleton className="h-24 w-full rounded-lg" />
             </div>
           )}
 
           {!isLoadingRequirements &&
             !isLoadingStake &&
-            hasCustomRequirements &&
-            requirements !== undefined && (
-              <div className="space-y-4">
-                <Typography
-                  variant="body2"
-                  className="text-mono-100 dark:text-mono-100 text-center"
-                >
-                  Set your exposure percentage within the allowed bounds for
-                  each asset.
-                </Typography>
+            (() => {
+              // Unified rendering: every requirement on the request — custom or
+              // the default-TNT one — becomes a single per-asset slider bound to
+              // `commitments.${tokenKey}`. The contract's unified
+              // `approveService(ApprovalParams)` accepts the resulting array
+              // directly, so the operator's slider value is no longer dropped
+              // for the default-TNT case.
+              const renderable =
+                requirements && requirements.length > 0
+                  ? requirements
+                  : defaultTntRequirement
+                    ? [defaultTntRequirement]
+                    : [];
 
-                {requirements.map((req) => {
-                  const key = toAssetMapKey(req.asset.token);
-
-                  return (
-                    <Controller
-                      key={key}
-                      name={`commitments.${key}`}
-                      control={control}
-                      defaultValue={req.minExposureBps}
-                      rules={{
-                        min: {
-                          value: req.minExposureBps,
-                          message: `Must be at least ${req.minExposureBps / 100}%`,
-                        },
-                        max: {
-                          value: req.maxExposureBps,
-                          message: `Cannot exceed ${req.maxExposureBps / 100}%`,
-                        },
-                      }}
-                      render={({ field, fieldState }) => (
-                        <ExposureCommitmentInput
-                          tokenAddress={req.asset.token}
-                          assetKind={req.asset.kind}
-                          metadata={req.metadata}
-                          minExposureBps={req.minExposureBps}
-                          maxExposureBps={req.maxExposureBps}
-                          value={field.value ?? req.minExposureBps}
-                          onChange={field.onChange}
-                          errorMessage={fieldState.error?.message}
-                          delegatedAmount={getStakeForAsset(req.asset.token)}
-                        />
-                      )}
-                    />
-                  );
-                })}
-              </div>
-            )}
-
-          {!isLoadingRequirements &&
-            !isLoadingStake &&
-            !hasCustomRequirements && (
-              <div className="space-y-4">
-                {defaultTntRequirement ? (
-                  <>
-                    <Typography
-                      variant="body2"
-                      className="text-mono-100 dark:text-mono-100 text-center"
-                    >
-                      Standard approval — set your TNT security commitment.
-                    </Typography>
-
-                    <Controller
-                      name="tntExposureBps"
-                      control={control}
-                      defaultValue={defaultTntRequirement.minExposureBps}
-                      rules={{
-                        min: {
-                          value: defaultTntRequirement.minExposureBps,
-                          message: `Must be at least ${defaultTntRequirement.minExposureBps / 100}%`,
-                        },
-                        max: {
-                          value: defaultTntRequirement.maxExposureBps,
-                          message: `Cannot exceed ${defaultTntRequirement.maxExposureBps / 100}%`,
-                        },
-                      }}
-                      render={({ field, fieldState }) => (
-                        <ExposureCommitmentInput
-                          tokenAddress={defaultTntRequirement.asset.token}
-                          assetKind={defaultTntRequirement.asset.kind}
-                          metadata={defaultTntRequirement.metadata}
-                          minExposureBps={defaultTntRequirement.minExposureBps}
-                          maxExposureBps={defaultTntRequirement.maxExposureBps}
-                          value={
-                            field.value ?? defaultTntRequirement.minExposureBps
-                          }
-                          onChange={field.onChange}
-                          errorMessage={fieldState.error?.message}
-                          delegatedAmount={getStakeForAsset(
-                            defaultTntRequirement.asset.token,
-                          )}
-                          operatorExposureBps={
-                            derivedSimpleStakingPercent * 100
-                          }
-                        />
-                      )}
-                    />
-                  </>
-                ) : (
-                  <Typography
+              if (renderable.length === 0) {
+                return (
+                  <Text
                     variant="body2"
-                    className="text-center text-mono-100 dark:text-mono-100"
+                    className="text-center text-muted-foreground"
                   >
-                    No custom commitments required.
-                  </Typography>
-                )}
-              </div>
-            )}
+                    No security commitments required for this request.
+                  </Text>
+                );
+              }
+
+              return (
+                <div className="space-y-4">
+                  <Text
+                    variant="body2"
+                    className="text-muted-foreground text-center"
+                  >
+                    Set your exposure percentage within the allowed bounds for
+                    each asset.
+                  </Text>
+
+                  {renderable.map((req) => {
+                    const key = toAssetMapKey(req.asset.token);
+                    const isDefaultTnt =
+                      !hasCustomRequirements &&
+                      defaultTntRequirement !== null &&
+                      toAssetMapKey(defaultTntRequirement.asset.token) === key;
+
+                    return (
+                      <Controller
+                        key={key}
+                        name={`commitments.${key}`}
+                        control={control}
+                        defaultValue={req.minExposureBps}
+                        rules={{
+                          min: {
+                            value: req.minExposureBps,
+                            message: `Must be at least ${req.minExposureBps / 100}%`,
+                          },
+                          max: {
+                            value: req.maxExposureBps,
+                            message: `Cannot exceed ${req.maxExposureBps / 100}%`,
+                          },
+                        }}
+                        render={({ field, fieldState }) => (
+                          <ExposureCommitmentInput
+                            tokenAddress={req.asset.token}
+                            assetKind={req.asset.kind}
+                            metadata={req.metadata}
+                            minExposureBps={req.minExposureBps}
+                            maxExposureBps={req.maxExposureBps}
+                            value={field.value ?? req.minExposureBps}
+                            onChange={field.onChange}
+                            errorMessage={fieldState.error?.message}
+                            delegatedAmount={getStakeForAsset(req.asset.token)}
+                            operatorExposureBps={
+                              isDefaultTnt
+                                ? derivedSimpleStakingPercent * 100
+                                : undefined
+                            }
+                          />
+                        )}
+                      />
+                    );
+                  })}
+                </div>
+              );
+            })()}
         </form>
       </ModalBody>
 
-      <div className="flex justify-between gap-3 p-6 pt-4 shrink-0 bg-mono-0 dark:bg-mono-180">
+      <div className="flex justify-between gap-3 p-6 pt-4 shrink-0 bg-background">
         <Button
           variant="secondary"
           onClick={handleBackToDetails}

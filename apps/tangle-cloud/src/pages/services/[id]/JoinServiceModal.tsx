@@ -11,10 +11,10 @@ import {
   ModalHeader,
   ModalBody,
   ModalFooter,
-  Typography,
   Button,
-  SkeletonLoader,
-} from '@tangle-network/ui-components';
+  Skeleton,
+  Text,
+} from '../../../components/sandbox/SandboxUi';
 import { useForm, Controller } from 'react-hook-form';
 import { useJoinServiceWithCommitmentsTx } from '../../../data/services/useJoinServiceWithCommitmentsTx';
 import { useServiceSecurityRequirements } from '../../../data/services/useServiceSecurityRequirements';
@@ -156,16 +156,16 @@ const JoinServiceModal: FC<Props> = ({ serviceId, onClose }) => {
 
         <ModalBody>
           <div className="space-y-4">
-            <Typography variant="body2" className="text-mono-100">
+            <Text variant="body2" className="text-muted-foreground">
               Configure your security commitment for this service. This
               determines how much of your staked assets are at risk for slashing
               if you fail to perform your duties.
-            </Typography>
+            </Text>
 
             {isLoading && (
               <div className="space-y-4">
-                <SkeletonLoader className="h-24 w-full rounded-lg" />
-                <SkeletonLoader className="h-24 w-full rounded-lg" />
+                <Skeleton className="h-24 w-full rounded-lg" />
+                <Skeleton className="h-24 w-full rounded-lg" />
               </div>
             )}
 

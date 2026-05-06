@@ -2,28 +2,36 @@
  * Blueprint creation wizard - multi-step form for creating new blueprints.
  */
 
-import { FC, useState, useCallback } from 'react';
+import {
+  type ComponentProps,
+  type ElementType,
+  type FC,
+  useState,
+  useCallback,
+  useMemo,
+} from 'react';
 import { useNavigate } from 'react-router';
 import { useAccount } from 'wagmi';
 import {
-  Button,
+  Button as SandboxButton,
   Card,
-  CardVariant,
-  Typography,
-  Input,
-} from '@tangle-network/ui-components';
-import {
+  Input as SandboxInput,
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@tangle-network/ui-components/components/select';
+} from '@tangle-network/sandbox-ui/primitives';
 import { ArrowLeft, CheckboxCircleFill } from '@tangle-network/icons';
 import {
   useCreateBlueprintTx,
   type BlueprintDefinition,
 } from '@tangle-network/tangle-shared-ui/data/graphql';
+import {
+  computeBlueprintMetadataPayloadHash,
+  isAllowedBlueprintMetadataUri,
+  requiresIpfsForBlueprintMetadata,
+} from '@tangle-network/tangle-shared-ui/blueprintApps/authoring';
 import {
   parseSchemaJson,
   encodeSchemaToHex,
@@ -31,6 +39,100 @@ import {
 import ErrorMessage from '@tangle-network/tangle-shared-ui/components/ErrorMessage';
 import { PagePath } from '../../../types';
 import { zeroAddress, type Address, toHex } from 'viem';
+import {
+  buildBlueprintUiMetadataDocument,
+  DEFAULT_BLUEPRINT_UI_DRAFT,
+  type BlueprintUiAuthoringDraft,
+} from '../../../blueprintApps/authoring';
+import type {
+  BlueprintResourceRoute,
+  BlueprintUiSurface,
+} from '../../../blueprintApps/types';
+import RequireWallet from '../../../components/RequireWallet';
+
+const CARD_SURFACE = 'sandbox' as const;
+
+type TextProps = ComponentProps<'p'> & {
+  variant?: 'h4' | 'h5' | 'body1' | 'body2' | 'body3';
+  fw?: 'bold' | 'semibold';
+};
+
+const Text: FC<TextProps> = ({
+  variant = 'body2',
+  fw,
+  className = '',
+  ...props
+}) => {
+  const Component = (
+    variant === 'h4' ? 'h1' : variant === 'h5' ? 'h2' : 'p'
+  ) as ElementType;
+  const variantClass =
+    variant === 'h4'
+      ? 'font-display text-3xl tracking-tight text-foreground'
+      : variant === 'h5'
+        ? 'font-display text-xl text-foreground'
+        : variant === 'body1'
+          ? 'text-base text-foreground'
+          : variant === 'body3'
+            ? 'text-xs text-muted-foreground'
+            : 'text-sm text-foreground';
+  const weightClass =
+    fw === 'bold' ? 'font-bold' : fw === 'semibold' ? 'font-semibold' : '';
+
+  return (
+    <Component
+      className={[variantClass, weightClass, className]
+        .filter(Boolean)
+        .join(' ')}
+      {...props}
+    />
+  );
+};
+
+type ButtonProps = Omit<
+  ComponentProps<typeof SandboxButton>,
+  'variant' | 'size'
+> & {
+  variant?: ComponentProps<typeof SandboxButton>['variant'] | 'utility';
+  size?: ComponentProps<typeof SandboxButton>['size'];
+  isDisabled?: boolean;
+  isLoading?: boolean;
+  isJustIcon?: boolean;
+};
+
+const Button: FC<ButtonProps> = ({
+  variant,
+  size,
+  isDisabled,
+  isLoading,
+  isJustIcon,
+  disabled,
+  ...props
+}) => (
+  <SandboxButton
+    variant={variant === 'utility' ? 'outline' : variant}
+    size={isJustIcon ? 'icon' : size}
+    disabled={disabled || isDisabled}
+    loading={isLoading}
+    {...props}
+  />
+);
+
+type InputProps = Omit<ComponentProps<typeof SandboxInput>, 'onChange'> & {
+  isControlled?: boolean;
+  onChange?: (value: string) => void;
+};
+
+const Input: FC<InputProps> = ({
+  isControlled: _isControlled,
+  onChange,
+  ...props
+}) => (
+  <SandboxInput
+    {...props}
+    onChange={(event) => onChange?.(event.currentTarget.value)}
+  />
+);
 
 // Wizard steps
 enum Step {
@@ -68,6 +170,33 @@ const DEFAULT_RESULT_SCHEMA_JSON = JSON.stringify(
   null,
   2,
 );
+
+const BLUEPRINT_UI_SURFACE_OPTIONS: Array<{
+  value: BlueprintUiSurface;
+  label: string;
+}> = [
+  { value: 'generic-overview', label: 'Overview' },
+  { value: 'service-explorer', label: 'Service explorer' },
+  { value: 'service-console', label: 'Service console' },
+  { value: 'actions-panel', label: 'Actions' },
+  { value: 'resources', label: 'Resources' },
+  { value: 'chat', label: 'Chat' },
+  { value: 'vaults', label: 'Vaults' },
+  { value: 'metrics', label: 'Metrics' },
+  { value: 'permissions', label: 'Permissions' },
+];
+
+const BLUEPRINT_RESOURCE_ROUTE_OPTIONS: Array<{
+  value: BlueprintResourceRoute;
+  label: string;
+}> = [
+  { value: 'custom', label: 'Custom resources' },
+  { value: 'bots', label: 'Bots' },
+  { value: 'agents', label: 'Agents' },
+  { value: 'runs', label: 'Runs' },
+  { value: 'vault', label: 'Vaults' },
+  { value: 'chat', label: 'Chat sessions' },
+];
 
 const compileSchemaJsonToHex = (
   schemaJson: string,
@@ -112,6 +241,7 @@ interface FormState {
   license: string;
   metadataUri: string;
   manager: string;
+  uiDraft: BlueprintUiAuthoringDraft;
   // Configuration
   membership: 'Fixed' | 'Dynamic';
   pricing: 'PayOnce' | 'Subscription' | 'EventDriven';
@@ -140,6 +270,7 @@ const initialFormState: FormState = {
   license: 'MIT',
   metadataUri: '',
   manager: '',
+  uiDraft: DEFAULT_BLUEPRINT_UI_DRAFT,
   membership: 'Fixed',
   pricing: 'PayOnce',
   minOperators: 1,
@@ -152,6 +283,18 @@ const initialFormState: FormState = {
   requestSchema: '{}',
   sources: [],
 };
+
+const buildMetadataDocument = (form: FormState) =>
+  buildBlueprintUiMetadataDocument({
+    name: form.name,
+    description: form.description,
+    category: form.category,
+    codeRepository: form.codeRepository,
+    logo: form.logo,
+    website: form.website,
+    author: form.author,
+    draft: form.uiDraft,
+  });
 
 // Convert form to ABI-compatible definition
 const formToDefinition = (
@@ -167,6 +310,7 @@ const formToDefinition = (
     new TextEncoder().encode(form.registrationSchema),
   );
   const requestBytes = toHex(new TextEncoder().encode(form.requestSchema));
+  const metadataDocument = buildMetadataDocument(form);
 
   // Convert jobs
   const jobs = form.jobs.map((job, index) => ({
@@ -221,6 +365,7 @@ const formToDefinition = (
 
   return {
     metadataUri: form.metadataUri,
+    metadataHash: computeBlueprintMetadataPayloadHash(metadataDocument),
     manager: (form.manager || zeroAddress) as Address,
     masterManagerRevision: 0,
     hasConfig: true,
@@ -253,6 +398,23 @@ const formToDefinition = (
   };
 };
 
+const buildMetadataPreview = (form: FormState): string =>
+  JSON.stringify(buildMetadataDocument(form), null, 2);
+
+const toggleBlueprintSurface = (
+  draft: BlueprintUiAuthoringDraft,
+  surface: BlueprintUiSurface,
+): BlueprintUiAuthoringDraft => {
+  const nextSurfaces = draft.surfaces.includes(surface)
+    ? draft.surfaces.filter((value: BlueprintUiSurface) => value !== surface)
+    : [...draft.surfaces, surface];
+
+  return {
+    ...draft,
+    surfaces: nextSurfaces,
+  };
+};
+
 const CreateBlueprintPage: FC = () => {
   const navigate = useNavigate();
   const { address, isConnected } = useAccount();
@@ -261,6 +423,7 @@ const CreateBlueprintPage: FC = () => {
   const [step, setStep] = useState<Step>(Step.BasicInfo);
   const [form, setForm] = useState<FormState>(initialFormState);
   const [validationError, setValidationError] = useState<string | null>(null);
+  const metadataPreview = useMemo(() => buildMetadataPreview(form), [form]);
 
   const isSubmitting = status === 'pending';
   const isSuccess = status === 'success';
@@ -288,6 +451,25 @@ const CreateBlueprintPage: FC = () => {
           setValidationError(
             'Metadata URI must start with ipfs://, https://, or http://',
           );
+          return false;
+        }
+        if (!isAllowedBlueprintMetadataUri(form.metadataUri.trim())) {
+          setValidationError(
+            'Production hosted blueprints must publish metadata to an ipfs:// URI.',
+          );
+          return false;
+        }
+        if (form.uiDraft.surfaces.length === 0) {
+          setValidationError(
+            'Select at least one shared host surface for blueprintUi metadata',
+          );
+          return false;
+        }
+        if (
+          form.uiDraft.externalAppUrl.trim() &&
+          !/^https:\/\/.+/.test(form.uiDraft.externalAppUrl.trim())
+        ) {
+          setValidationError('External app URL must start with https://');
           return false;
         }
         break;
@@ -407,6 +589,10 @@ const CreateBlueprintPage: FC = () => {
     }
   }, [form, address, createBlueprint, validateStep]);
 
+  const handleCopyMetadataPreview = useCallback(async () => {
+    await navigator.clipboard.writeText(metadataPreview);
+  }, [metadataPreview]);
+
   // Add job helper
   const addJob = useCallback(() => {
     setForm((prev) => ({
@@ -472,11 +658,22 @@ const CreateBlueprintPage: FC = () => {
 
   if (!isConnected) {
     return (
-      <div className="text-center py-12">
-        <Typography variant="h4">Connect Wallet</Typography>
-        <Typography variant="body1" className="text-mono-100 mt-2">
-          Please connect your wallet to create a blueprint.
-        </Typography>
+      <div className="space-y-6">
+        <div>
+          <Text variant="h4" fw="bold">
+            Create blueprint
+          </Text>
+          <Text variant="body1" className="text-muted-foreground mt-1">
+            Publish a blueprint definition, service schema, and hosted UI
+            metadata.
+          </Text>
+        </div>
+        <RequireWallet
+          eyebrow="Create blueprint"
+          title="Connect a publisher wallet"
+          description="A wallet connection is required to submit the blueprint transaction and bind metadata to the on-chain record."
+          checks={['Blueprint schema', 'Metadata URI', 'Publish transaction']}
+        />
       </div>
     );
   }
@@ -485,15 +682,15 @@ const CreateBlueprintPage: FC = () => {
     return (
       <div className="flex flex-col items-center justify-center py-12">
         <CheckboxCircleFill className="w-16 h-16 text-green-500 mb-4" />
-        <Typography variant="h4" className="text-center">
+        <Text variant="h4" className="text-center">
           Blueprint Created!
-        </Typography>
-        <Typography
+        </Text>
+        <Text
           variant="body1"
-          className="text-mono-100 mt-2 mb-6 text-center"
+          className="text-muted-foreground mt-2 mb-6 text-center"
         >
           Your blueprint has been created successfully.
-        </Typography>
+        </Text>
         <div className="flex gap-4 justify-center">
           <Button onClick={() => navigate(PagePath.BLUEPRINTS_MANAGE)}>
             Manage Blueprints
@@ -525,12 +722,12 @@ const CreateBlueprintPage: FC = () => {
           <ArrowLeft className="w-5 h-5" />
         </Button>
         <div>
-          <Typography variant="h4" fw="bold">
+          <Text variant="h4" fw="bold">
             Create Blueprint
-          </Typography>
-          <Typography variant="body2" className="text-mono-100">
+          </Text>
+          <Text variant="body2" className="text-muted-foreground">
             Define a new blueprint for operators to register with.
-          </Typography>
+          </Text>
         </div>
       </div>
 
@@ -541,31 +738,36 @@ const CreateBlueprintPage: FC = () => {
             <div
               className={`flex items-center justify-center w-8 h-8 rounded-full text-sm font-medium ${
                 index === step
-                  ? 'bg-purple-500 text-white'
+                  ? 'bg-primary text-primary-foreground'
                   : index < step
                     ? 'bg-green-500 text-white'
-                    : 'bg-mono-60 dark:bg-mono-140 text-mono-100'
+                    : 'bg-muted text-muted-foreground'
               }`}
             >
               {index < step ? '✓' : index + 1}
             </div>
-            <Typography
+            <Text
               variant="body2"
-              className={`ml-2 ${index === step ? 'text-mono-200 dark:text-mono-0' : 'text-mono-100'}`}
+              className={`ml-2 ${index === step ? 'text-foreground' : 'text-muted-foreground'}`}
             >
               {label}
-            </Typography>
+            </Text>
             {index < STEP_LABELS.length - 1 && (
-              <div className="w-8 h-px bg-mono-60 dark:bg-mono-140 mx-4" />
+              <div className="w-8 h-px bg-border mx-4" />
             )}
           </div>
         ))}
       </div>
 
       {/* Form Content */}
-      <Card variant={CardVariant.GLASS} className="p-6">
+      <Card variant={CARD_SURFACE} className="p-6">
         {step === Step.BasicInfo && (
-          <BasicInfoStep form={form} updateForm={updateForm} />
+          <BasicInfoStep
+            form={form}
+            updateForm={updateForm}
+            metadataPreview={metadataPreview}
+            onCopyMetadataPreview={handleCopyMetadataPreview}
+          />
         )}
         {step === Step.Configuration && (
           <ConfigurationStep form={form} updateForm={updateForm} />
@@ -587,7 +789,13 @@ const CreateBlueprintPage: FC = () => {
             removeSource={removeSource}
           />
         )}
-        {step === Step.Review && <ReviewStep form={form} />}
+        {step === Step.Review && (
+          <ReviewStep
+            form={form}
+            metadataPreview={metadataPreview}
+            onCopyMetadataPreview={handleCopyMetadataPreview}
+          />
+        )}
 
         {/* Errors */}
         {validationError && (
@@ -630,17 +838,27 @@ interface StepProps {
   updateForm: <K extends keyof FormState>(key: K, value: FormState[K]) => void;
 }
 
-const BasicInfoStep: FC<StepProps> = ({ form, updateForm }) => (
+interface BasicInfoStepProps extends StepProps {
+  metadataPreview: string;
+  onCopyMetadataPreview: () => void | Promise<void>;
+}
+
+const BasicInfoStep: FC<BasicInfoStepProps> = ({
+  form,
+  updateForm,
+  metadataPreview,
+  onCopyMetadataPreview,
+}) => (
   <div className="space-y-4">
-    <Typography variant="h5" fw="bold" className="mb-4">
+    <Text variant="h5" fw="bold" className="mb-4">
       Basic Information
-    </Typography>
+    </Text>
 
     <div className="grid grid-cols-2 gap-4">
       <div>
-        <Typography variant="body2" className="mb-2">
+        <Text variant="body2" className="mb-2">
           Blueprint Name *
-        </Typography>
+        </Text>
         <Input
           id="name"
           value={form.name}
@@ -651,9 +869,9 @@ const BasicInfoStep: FC<StepProps> = ({ form, updateForm }) => (
       </div>
 
       <div>
-        <Typography variant="body2" className="mb-2">
+        <Text variant="body2" className="mb-2">
           Author
-        </Typography>
+        </Text>
         <Input
           id="author"
           value={form.author}
@@ -665,11 +883,11 @@ const BasicInfoStep: FC<StepProps> = ({ form, updateForm }) => (
     </div>
 
     <div>
-      <Typography variant="body2" className="mb-2">
+      <Text variant="body2" className="mb-2">
         Description
-      </Typography>
+      </Text>
       <textarea
-        className="w-full h-24 p-3 rounded-lg border border-mono-60 dark:border-mono-140 bg-mono-0 dark:bg-mono-180 text-sm resize-none focus:outline-none focus:ring-2 focus:ring-purple-500"
+        className="w-full h-24 p-3 rounded-lg border border-border bg-background text-sm resize-none focus:outline-none focus:ring-2 focus:ring-ring"
         placeholder="Describe what your blueprint does"
         value={form.description}
         onChange={(e) => updateForm('description', e.target.value)}
@@ -678,9 +896,9 @@ const BasicInfoStep: FC<StepProps> = ({ form, updateForm }) => (
 
     <div className="grid grid-cols-2 gap-4">
       <div>
-        <Typography variant="body2" className="mb-2">
+        <Text variant="body2" className="mb-2">
           Category
-        </Typography>
+        </Text>
         <Input
           id="category"
           value={form.category}
@@ -691,9 +909,9 @@ const BasicInfoStep: FC<StepProps> = ({ form, updateForm }) => (
       </div>
 
       <div>
-        <Typography variant="body2" className="mb-2">
+        <Text variant="body2" className="mb-2">
           License
-        </Typography>
+        </Text>
         <Input
           id="license"
           value={form.license}
@@ -706,9 +924,9 @@ const BasicInfoStep: FC<StepProps> = ({ form, updateForm }) => (
 
     <div className="grid grid-cols-2 gap-4">
       <div>
-        <Typography variant="body2" className="mb-2">
+        <Text variant="body2" className="mb-2">
           Code Repository
-        </Typography>
+        </Text>
         <Input
           id="codeRepository"
           value={form.codeRepository}
@@ -719,9 +937,9 @@ const BasicInfoStep: FC<StepProps> = ({ form, updateForm }) => (
       </div>
 
       <div>
-        <Typography variant="body2" className="mb-2">
+        <Text variant="body2" className="mb-2">
           Website
-        </Typography>
+        </Text>
         <Input
           id="website"
           value={form.website}
@@ -733,9 +951,9 @@ const BasicInfoStep: FC<StepProps> = ({ form, updateForm }) => (
     </div>
 
     <div>
-      <Typography variant="body2" className="mb-2">
+      <Text variant="body2" className="mb-2">
         Logo URL
-      </Typography>
+      </Text>
       <Input
         id="logo"
         value={form.logo}
@@ -746,9 +964,9 @@ const BasicInfoStep: FC<StepProps> = ({ form, updateForm }) => (
     </div>
 
     <div>
-      <Typography variant="body2" className="mb-2">
+      <Text variant="body2" className="mb-2">
         Metadata URI *
-      </Typography>
+      </Text>
       <Input
         id="metadataUri"
         value={form.metadataUri}
@@ -756,15 +974,21 @@ const BasicInfoStep: FC<StepProps> = ({ form, updateForm }) => (
         placeholder="ipfs://... or https://..."
         isControlled
       />
-      <Typography variant="body3" className="text-mono-100 mt-1">
-        Link to blueprint metadata JSON (must be accessible)
-      </Typography>
+      <Text variant="body3" className="text-muted-foreground mt-1">
+        Publish the JSON preview below at this URI so cloud.tangle.tools can
+        resolve your hosted blueprint surfaces and shared runtime metadata. New
+        SDK blueprints ship the same contract shape in
+        `metadata/blueprint-metadata.json`.
+        {requiresIpfsForBlueprintMetadata()
+          ? ' Production hosting only accepts ipfs:// metadata URIs.'
+          : ' Local development can still use https:// metadata previews.'}
+      </Text>
     </div>
 
     <div>
-      <Typography variant="body2" className="mb-2">
+      <Text variant="body2" className="mb-2">
         Service Manager Contract (optional)
-      </Typography>
+      </Text>
       <Input
         id="manager"
         value={form.manager}
@@ -773,20 +997,214 @@ const BasicInfoStep: FC<StepProps> = ({ form, updateForm }) => (
         isControlled
       />
     </div>
+
+    <div className="rounded-xl border border-border p-4 space-y-4">
+      <div className="flex items-center justify-between gap-3">
+        <div>
+          <Text variant="body1" fw="semibold">
+            Shared host metadata
+          </Text>
+          <Text variant="body3" className="text-muted-foreground mt-1">
+            This drives the shared hosted blueprint pages, generic service
+            surfaces, optional safe link-out handoff for publisher apps, and
+            richer tier-2 cards, forms, resource views, theming, and approved
+            modules when present in the published JSON.
+          </Text>
+        </div>
+        <Button variant="secondary" size="sm" onClick={onCopyMetadataPreview}>
+          Copy JSON
+        </Button>
+      </div>
+
+      <div className="grid grid-cols-2 gap-4">
+        <div>
+          <Text variant="body2" className="mb-2">
+            Requested slug
+          </Text>
+          <Input
+            id="requestedSlug"
+            value={form.uiDraft.requestedSlug}
+            onChange={(v) =>
+              updateForm('uiDraft', { ...form.uiDraft, requestedSlug: v })
+            }
+            placeholder="trading"
+            isControlled
+          />
+        </div>
+        <div>
+          <Text variant="body2" className="mb-2">
+            Publisher namespace
+          </Text>
+          <Input
+            id="publisherNamespace"
+            value={form.uiDraft.publisherNamespace}
+            onChange={(v) =>
+              updateForm('uiDraft', {
+                ...form.uiDraft,
+                publisherNamespace: v,
+              })
+            }
+            placeholder="tangle or your project"
+            isControlled
+          />
+        </div>
+      </div>
+
+      <div className="grid grid-cols-3 gap-4">
+        <div>
+          <Text variant="body2" className="mb-2">
+            Service label
+          </Text>
+          <Input
+            id="serviceNoun"
+            value={form.uiDraft.serviceNoun}
+            onChange={(v) =>
+              updateForm('uiDraft', { ...form.uiDraft, serviceNoun: v })
+            }
+            placeholder="service"
+            isControlled
+          />
+        </div>
+        <div>
+          <Text variant="body2" className="mb-2">
+            Resource label
+          </Text>
+          <Input
+            id="resourceNoun"
+            value={form.uiDraft.resourceNoun}
+            onChange={(v) =>
+              updateForm('uiDraft', { ...form.uiDraft, resourceNoun: v })
+            }
+            placeholder="bot"
+            isControlled
+          />
+        </div>
+        <div>
+          <Text variant="body2" className="mb-2">
+            Resource route
+          </Text>
+          <Select
+            value={form.uiDraft.resourceRoute}
+            onValueChange={(v) =>
+              updateForm('uiDraft', {
+                ...form.uiDraft,
+                resourceRoute: v as BlueprintResourceRoute,
+              })
+            }
+          >
+            <SelectTrigger className="w-full">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              {BLUEPRINT_RESOURCE_ROUTE_OPTIONS.map((option) => (
+                <SelectItem key={option.value} value={option.value}>
+                  {option.label}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+      </div>
+
+      <div>
+        <Text variant="body2" className="mb-2">
+          Host surfaces
+        </Text>
+        <div className="flex flex-wrap gap-2">
+          {BLUEPRINT_UI_SURFACE_OPTIONS.map((option) => {
+            const isSelected = form.uiDraft.surfaces.includes(option.value);
+
+            return (
+              <button
+                key={option.value}
+                type="button"
+                className={`rounded-full border px-3 py-1.5 text-sm transition ${
+                  isSelected
+                    ? 'border-primary bg-primary text-primary-foreground'
+                    : 'border-border bg-transparent text-muted-foreground'
+                }`}
+                onClick={() =>
+                  updateForm(
+                    'uiDraft',
+                    toggleBlueprintSurface(form.uiDraft, option.value),
+                  )
+                }
+              >
+                {option.label}
+              </button>
+            );
+          })}
+        </div>
+      </div>
+
+      <div className="grid grid-cols-2 gap-4">
+        <div>
+          <Text variant="body2" className="mb-2">
+            External app URL
+          </Text>
+          <Input
+            id="externalAppUrl"
+            value={form.uiDraft.externalAppUrl}
+            onChange={(v) =>
+              updateForm('uiDraft', { ...form.uiDraft, externalAppUrl: v })
+            }
+            placeholder="https://app.example.com"
+            isControlled
+          />
+        </div>
+        <div>
+          <Text variant="body2" className="mb-2">
+            External app mode
+          </Text>
+          <Select
+            value={form.uiDraft.externalAppMode}
+            onValueChange={(v) =>
+              updateForm('uiDraft', {
+                ...form.uiDraft,
+                externalAppMode:
+                  v as BlueprintUiAuthoringDraft['externalAppMode'],
+              })
+            }
+          >
+            <SelectTrigger className="w-full">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="link">Link out</SelectItem>
+            </SelectContent>
+          </Select>
+          <Text variant="body3" className="text-muted-foreground mt-1">
+            Third-party iframe embedding is disabled. Publisher apps can only
+            open in a new tab after trust and provenance checks pass.
+          </Text>
+        </div>
+      </div>
+
+      <div>
+        <Text variant="body2" className="mb-2">
+          Metadata JSON preview
+        </Text>
+        <textarea
+          className="w-full min-h-64 p-3 rounded-lg border border-border bg-background font-mono text-sm resize-y focus:outline-none"
+          value={metadataPreview}
+          readOnly
+        />
+      </div>
+    </div>
   </div>
 );
 
 const ConfigurationStep: FC<StepProps> = ({ form, updateForm }) => (
   <div className="space-y-4">
-    <Typography variant="h5" fw="bold" className="mb-4">
+    <Text variant="h5" fw="bold" className="mb-4">
       Blueprint Configuration
-    </Typography>
+    </Text>
 
     <div className="grid grid-cols-2 gap-4">
       <div>
-        <Typography variant="body2" className="mb-2">
+        <Text variant="body2" className="mb-2">
           Membership Model
-        </Typography>
+        </Text>
         <Select
           value={form.membership}
           onValueChange={(v) =>
@@ -804,9 +1222,9 @@ const ConfigurationStep: FC<StepProps> = ({ form, updateForm }) => (
       </div>
 
       <div>
-        <Typography variant="body2" className="mb-2">
+        <Text variant="body2" className="mb-2">
           Pricing Model
-        </Typography>
+        </Text>
         <Select
           value={form.pricing}
           onValueChange={(v) =>
@@ -830,9 +1248,9 @@ const ConfigurationStep: FC<StepProps> = ({ form, updateForm }) => (
 
     <div className="grid grid-cols-2 gap-4">
       <div>
-        <Typography variant="body2" className="mb-2">
+        <Text variant="body2" className="mb-2">
           Minimum Operators
-        </Typography>
+        </Text>
         <Input
           id="minOperators"
           type="number"
@@ -844,9 +1262,9 @@ const ConfigurationStep: FC<StepProps> = ({ form, updateForm }) => (
       </div>
 
       <div>
-        <Typography variant="body2" className="mb-2">
+        <Text variant="body2" className="mb-2">
           Maximum Operators (0 = unlimited)
-        </Typography>
+        </Text>
         <Input
           id="maxOperators"
           type="number"
@@ -861,9 +1279,9 @@ const ConfigurationStep: FC<StepProps> = ({ form, updateForm }) => (
     {form.pricing === 'Subscription' && (
       <div className="grid grid-cols-2 gap-4">
         <div>
-          <Typography variant="body2" className="mb-2">
+          <Text variant="body2" className="mb-2">
             Subscription Rate (wei)
-          </Typography>
+          </Text>
           <Input
             id="subscriptionRate"
             value={form.subscriptionRate}
@@ -874,9 +1292,9 @@ const ConfigurationStep: FC<StepProps> = ({ form, updateForm }) => (
         </div>
 
         <div>
-          <Typography variant="body2" className="mb-2">
+          <Text variant="body2" className="mb-2">
             Subscription Interval (seconds)
-          </Typography>
+          </Text>
           <Input
             id="subscriptionInterval"
             value={form.subscriptionInterval}
@@ -890,9 +1308,9 @@ const ConfigurationStep: FC<StepProps> = ({ form, updateForm }) => (
 
     {form.pricing === 'EventDriven' && (
       <div>
-        <Typography variant="body2" className="mb-2">
+        <Text variant="body2" className="mb-2">
           Event Rate (wei per job)
-        </Typography>
+        </Text>
         <Input
           id="eventRate"
           value={form.eventRate}
@@ -920,32 +1338,29 @@ const JobsStep: FC<JobsStepProps> = ({
 }) => (
   <div className="space-y-4">
     <div className="flex items-center justify-between mb-4">
-      <Typography variant="h5" fw="bold">
+      <Text variant="h5" fw="bold">
         Job Definitions *
-      </Typography>
+      </Text>
       <Button variant="secondary" size="sm" onClick={addJob}>
         Add Job
       </Button>
     </div>
 
     {form.jobs.length === 0 ? (
-      <div className="text-center py-8 text-mono-100 border border-dashed border-mono-60 dark:border-mono-140 rounded-lg">
-        <Typography variant="body1">
+      <div className="text-center py-8 text-muted-foreground border border-dashed border-border rounded-lg">
+        <Text variant="body1">
           At least one job is required. Jobs define the operations operators can
           perform.
-        </Typography>
+        </Text>
       </div>
     ) : (
       <div className="space-y-4">
         {form.jobs.map((job, index) => (
-          <div
-            key={index}
-            className="p-4 border border-mono-60 dark:border-mono-140 rounded-lg"
-          >
+          <div key={index} className="p-4 border border-border rounded-lg">
             <div className="flex items-center justify-between mb-3">
-              <Typography variant="body1" fw="semibold">
+              <Text variant="body1" fw="semibold">
                 Job {index + 1}
-              </Typography>
+              </Text>
               <Button
                 variant="utility"
                 size="sm"
@@ -957,9 +1372,9 @@ const JobsStep: FC<JobsStepProps> = ({
 
             <div className="space-y-3">
               <div>
-                <Typography variant="body3" className="mb-1">
+                <Text variant="body3" className="mb-1">
                   Job Name
-                </Typography>
+                </Text>
                 <Input
                   id={`job-${index}-name`}
                   value={job.name}
@@ -970,9 +1385,9 @@ const JobsStep: FC<JobsStepProps> = ({
               </div>
 
               <div>
-                <Typography variant="body3" className="mb-1">
+                <Text variant="body3" className="mb-1">
                   Description
-                </Typography>
+                </Text>
                 <Input
                   id={`job-${index}-desc`}
                   value={job.description}
@@ -983,11 +1398,11 @@ const JobsStep: FC<JobsStepProps> = ({
               </div>
 
               <div>
-                <Typography variant="body3" className="mb-1">
+                <Text variant="body3" className="mb-1">
                   Params Schema (JSON)
-                </Typography>
+                </Text>
                 <textarea
-                  className="w-full min-h-28 p-3 rounded-lg border border-mono-60 dark:border-mono-140 bg-mono-0 dark:bg-mono-180 font-mono text-sm resize-y focus:outline-none focus:ring-2 focus:ring-purple-500"
+                  className="w-full min-h-28 p-3 rounded-lg border border-border bg-background font-mono text-sm resize-y focus:outline-none focus:ring-2 focus:ring-ring"
                   value={job.paramsSchemaJson}
                   onChange={(e) =>
                     updateJob(index, { paramsSchemaJson: e.target.value })
@@ -997,11 +1412,11 @@ const JobsStep: FC<JobsStepProps> = ({
               </div>
 
               <div>
-                <Typography variant="body3" className="mb-1">
+                <Text variant="body3" className="mb-1">
                   Result Schema (JSON)
-                </Typography>
+                </Text>
                 <textarea
-                  className="w-full min-h-28 p-3 rounded-lg border border-mono-60 dark:border-mono-140 bg-mono-0 dark:bg-mono-180 font-mono text-sm resize-y focus:outline-none focus:ring-2 focus:ring-purple-500"
+                  className="w-full min-h-28 p-3 rounded-lg border border-border bg-background font-mono text-sm resize-y focus:outline-none focus:ring-2 focus:ring-ring"
                   value={job.resultSchemaJson}
                   onChange={(e) =>
                     updateJob(index, { resultSchemaJson: e.target.value })
@@ -1010,12 +1425,12 @@ const JobsStep: FC<JobsStepProps> = ({
                 />
               </div>
 
-              <Typography variant="body3" className="text-mono-100">
+              <Text variant="body3" className="text-muted-foreground">
                 Use an array of fields. Example:{' '}
                 <code className="font-mono text-xs">
                   {`[{"kind":"Uint256","name":"value"}]`}
                 </code>
-              </Typography>
+              </Text>
             </div>
           </div>
         ))}
@@ -1040,31 +1455,28 @@ const SourcesStep: FC<SourcesStepProps> = ({
 }) => (
   <div className="space-y-4">
     <div className="flex items-center justify-between mb-4">
-      <Typography variant="h5" fw="bold">
+      <Text variant="h5" fw="bold">
         Execution Sources
-      </Typography>
+      </Text>
       <Button variant="secondary" size="sm" onClick={addSource}>
         Add Source
       </Button>
     </div>
 
     {form.sources.length === 0 ? (
-      <div className="text-center py-8 text-mono-100 border border-dashed border-mono-60 dark:border-mono-140 rounded-lg">
-        <Typography variant="body1">
+      <div className="text-center py-8 text-muted-foreground border border-dashed border-border rounded-lg">
+        <Text variant="body1">
           Add at least one execution source (Container, Wasm, or Native).
-        </Typography>
+        </Text>
       </div>
     ) : (
       <div className="space-y-4">
         {form.sources.map((source, index) => (
-          <div
-            key={index}
-            className="p-4 border border-mono-60 dark:border-mono-140 rounded-lg"
-          >
+          <div key={index} className="p-4 border border-border rounded-lg">
             <div className="flex items-center justify-between mb-3">
-              <Typography variant="body1" fw="semibold">
+              <Text variant="body1" fw="semibold">
                 Source {index + 1}
-              </Typography>
+              </Text>
               <Button
                 variant="utility"
                 size="sm"
@@ -1076,9 +1488,9 @@ const SourcesStep: FC<SourcesStepProps> = ({
 
             <div className="space-y-3">
               <div>
-                <Typography variant="body3" className="mb-1">
+                <Text variant="body3" className="mb-1">
                   Type
-                </Typography>
+                </Text>
                 <Select
                   value={source.kind}
                   onValueChange={(v) =>
@@ -1103,9 +1515,9 @@ const SourcesStep: FC<SourcesStepProps> = ({
               {source.kind === 'Container' && (
                 <>
                   <div>
-                    <Typography variant="body3" className="mb-1">
+                    <Text variant="body3" className="mb-1">
                       Registry
-                    </Typography>
+                    </Text>
                     <Input
                       id={`source-${index}-registry`}
                       value={source.registry || ''}
@@ -1116,9 +1528,9 @@ const SourcesStep: FC<SourcesStepProps> = ({
                   </div>
                   <div className="grid grid-cols-2 gap-3">
                     <div>
-                      <Typography variant="body3" className="mb-1">
+                      <Text variant="body3" className="mb-1">
                         Image
-                      </Typography>
+                      </Text>
                       <Input
                         id={`source-${index}-image`}
                         value={source.image || ''}
@@ -1128,9 +1540,9 @@ const SourcesStep: FC<SourcesStepProps> = ({
                       />
                     </div>
                     <div>
-                      <Typography variant="body3" className="mb-1">
+                      <Text variant="body3" className="mb-1">
                         Tag
-                      </Typography>
+                      </Text>
                       <Input
                         id={`source-${index}-tag`}
                         value={source.tag || ''}
@@ -1146,9 +1558,9 @@ const SourcesStep: FC<SourcesStepProps> = ({
               {(source.kind === 'Wasm' || source.kind === 'Native') && (
                 <>
                   <div>
-                    <Typography variant="body3" className="mb-1">
+                    <Text variant="body3" className="mb-1">
                       Artifact URI
-                    </Typography>
+                    </Text>
                     <Input
                       id={`source-${index}-uri`}
                       value={source.artifactUri || ''}
@@ -1158,9 +1570,9 @@ const SourcesStep: FC<SourcesStepProps> = ({
                     />
                   </div>
                   <div>
-                    <Typography variant="body3" className="mb-1">
+                    <Text variant="body3" className="mb-1">
                       Entrypoint
-                    </Typography>
+                    </Text>
                     <Input
                       id={`source-${index}-entry`}
                       value={source.entrypoint || ''}
@@ -1173,11 +1585,11 @@ const SourcesStep: FC<SourcesStepProps> = ({
               )}
 
               {/* Binaries Section - Required */}
-              <div className="mt-4 pt-4 border-t border-mono-60 dark:border-mono-140">
+              <div className="mt-4 pt-4 border-t border-border">
                 <div className="flex items-center justify-between mb-3">
-                  <Typography variant="body2" fw="semibold">
+                  <Text variant="body2" fw="semibold">
                     Binaries *
-                  </Typography>
+                  </Text>
                   <Button
                     variant="utility"
                     size="sm"
@@ -1195,23 +1607,23 @@ const SourcesStep: FC<SourcesStepProps> = ({
                 </div>
 
                 {source.binaries.length === 0 ? (
-                  <Typography
+                  <Text
                     variant="body3"
-                    className="text-mono-100 text-center py-2"
+                    className="text-muted-foreground text-center py-2"
                   >
                     At least one binary is required per source.
-                  </Typography>
+                  </Text>
                 ) : (
                   <div className="space-y-3">
                     {source.binaries.map((binary, binIndex) => (
                       <div
                         key={binIndex}
-                        className="p-3 bg-mono-20 dark:bg-mono-160 rounded-lg"
+                        className="p-3 bg-muted/50 rounded-lg"
                       >
                         <div className="flex items-center justify-between mb-2">
-                          <Typography variant="body3" fw="semibold">
+                          <Text variant="body3" fw="semibold">
                             Binary {binIndex + 1}
-                          </Typography>
+                          </Text>
                           <Button
                             variant="utility"
                             size="sm"
@@ -1229,9 +1641,9 @@ const SourcesStep: FC<SourcesStepProps> = ({
 
                         <div className="grid grid-cols-2 gap-2 mb-2">
                           <div>
-                            <Typography variant="body3" className="mb-1">
+                            <Text variant="body3" className="mb-1">
                               Architecture
-                            </Typography>
+                            </Text>
                             <Select
                               value={String(binary.arch)}
                               onValueChange={(v) =>
@@ -1262,9 +1674,9 @@ const SourcesStep: FC<SourcesStepProps> = ({
                             </Select>
                           </div>
                           <div>
-                            <Typography variant="body3" className="mb-1">
+                            <Text variant="body3" className="mb-1">
                               Operating System
-                            </Typography>
+                            </Text>
                             <Select
                               value={String(binary.os)}
                               onValueChange={(v) =>
@@ -1292,9 +1704,9 @@ const SourcesStep: FC<SourcesStepProps> = ({
                         </div>
 
                         <div className="mb-2">
-                          <Typography variant="body3" className="mb-1">
+                          <Text variant="body3" className="mb-1">
                             Name
-                          </Typography>
+                          </Text>
                           <Input
                             id={`source-${index}-binary-${binIndex}-name`}
                             value={binary.name}
@@ -1311,9 +1723,9 @@ const SourcesStep: FC<SourcesStepProps> = ({
                         </div>
 
                         <div>
-                          <Typography variant="body3" className="mb-1">
+                          <Text variant="body3" className="mb-1">
                             SHA256 Hash *
-                          </Typography>
+                          </Text>
                           <Input
                             id={`source-${index}-binary-${binIndex}-sha256`}
                             value={binary.sha256}
@@ -1341,85 +1753,112 @@ const SourcesStep: FC<SourcesStepProps> = ({
   </div>
 );
 
-const ReviewStep: FC<{ form: FormState }> = ({ form }) => (
+const ReviewStep: FC<{
+  form: FormState;
+  metadataPreview: string;
+  onCopyMetadataPreview: () => void | Promise<void>;
+}> = ({ form, metadataPreview, onCopyMetadataPreview }) => (
   <div className="space-y-4">
-    <Typography variant="h5" fw="bold" className="mb-4">
+    <Text variant="h5" fw="bold" className="mb-4">
       Review Blueprint
-    </Typography>
+    </Text>
 
     <div className="grid grid-cols-2 gap-4">
       <div>
-        <Typography variant="body2" className="text-mono-100">
+        <Text variant="body2" className="text-muted-foreground">
           Name
-        </Typography>
-        <Typography variant="body1" fw="semibold">
+        </Text>
+        <Text variant="body1" fw="semibold">
           {form.name || '-'}
-        </Typography>
+        </Text>
       </div>
 
       <div>
-        <Typography variant="body2" className="text-mono-100">
+        <Text variant="body2" className="text-muted-foreground">
           Author
-        </Typography>
-        <Typography variant="body1">{form.author || 'Your address'}</Typography>
+        </Text>
+        <Text variant="body1">{form.author || 'Your address'}</Text>
       </div>
 
       <div>
-        <Typography variant="body2" className="text-mono-100">
+        <Text variant="body2" className="text-muted-foreground">
           Category
-        </Typography>
-        <Typography variant="body1">{form.category || '-'}</Typography>
+        </Text>
+        <Text variant="body1">{form.category || '-'}</Text>
       </div>
 
       <div>
-        <Typography variant="body2" className="text-mono-100">
+        <Text variant="body2" className="text-muted-foreground">
           License
-        </Typography>
-        <Typography variant="body1">{form.license || '-'}</Typography>
+        </Text>
+        <Text variant="body1">{form.license || '-'}</Text>
       </div>
 
       <div>
-        <Typography variant="body2" className="text-mono-100">
+        <Text variant="body2" className="text-muted-foreground">
           Membership
-        </Typography>
-        <Typography variant="body1">{form.membership}</Typography>
+        </Text>
+        <Text variant="body1">{form.membership}</Text>
       </div>
 
       <div>
-        <Typography variant="body2" className="text-mono-100">
+        <Text variant="body2" className="text-muted-foreground">
           Pricing
-        </Typography>
-        <Typography variant="body1">{form.pricing}</Typography>
+        </Text>
+        <Text variant="body1">{form.pricing}</Text>
       </div>
 
       <div>
-        <Typography variant="body2" className="text-mono-100">
+        <Text variant="body2" className="text-muted-foreground">
           Operators
-        </Typography>
-        <Typography variant="body1">
+        </Text>
+        <Text variant="body1">
           {form.minOperators} -{' '}
           {form.maxOperators === 0 ? '∞' : form.maxOperators}
-        </Typography>
+        </Text>
       </div>
 
       <div>
-        <Typography variant="body2" className="text-mono-100">
+        <Text variant="body2" className="text-muted-foreground">
           Jobs / Sources
-        </Typography>
-        <Typography variant="body1">
+        </Text>
+        <Text variant="body1">
           {form.jobs.length} jobs, {form.sources.length} sources
-        </Typography>
+        </Text>
       </div>
     </div>
 
     {form.description && (
       <div>
-        <Typography variant="body2" className="text-mono-100">
+        <Text variant="body2" className="text-muted-foreground">
           Description
-        </Typography>
-        <Typography variant="body1">{form.description}</Typography>
+        </Text>
+        <Text variant="body1">{form.description}</Text>
       </div>
     )}
+
+    <div className="rounded-xl border border-border p-4 space-y-3">
+      <div className="flex items-center justify-between gap-3">
+        <div>
+          <Text variant="body2" className="text-muted-foreground">
+            Metadata payload to publish at {form.metadataUri || 'metadata URI'}
+          </Text>
+          <Text variant="body3" className="text-muted-foreground mt-1">
+            This is the exact `blueprintUi` contract the shared host will parse.
+            Advanced tier-2 sections can be added directly to the JSON after
+            copying it out.
+          </Text>
+        </div>
+        <Button variant="secondary" size="sm" onClick={onCopyMetadataPreview}>
+          Copy JSON
+        </Button>
+      </div>
+      <textarea
+        className="w-full min-h-64 p-3 rounded-lg border border-border bg-background font-mono text-sm resize-y focus:outline-none"
+        value={metadataPreview}
+        readOnly
+      />
+    </div>
   </div>
 );
 

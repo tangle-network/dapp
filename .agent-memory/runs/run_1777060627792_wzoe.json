@@ -1,0 +1,21 @@
+{
+  "id": "run_1777060627792_wzoe",
+  "model": "gpt-5.4",
+  "timestamp": "2026-04-24T19:57:07.790Z",
+  "total": 1,
+  "passed": 1,
+  "failed": 0,
+  "passRate": 1,
+  "avgTurns": 5,
+  "avgDurationMs": 87641,
+  "totalDurationMs": 87641,
+  "tests": [
+    {
+      "id": "cli-task",
+      "name": "Click the Connect button. Verify the wallet modal is centere",
+      "verified": true,
+      "turnsUsed": 5,
+      "durationMs": 87641
+    }
+  ]
+}

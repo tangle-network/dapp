@@ -2,19 +2,26 @@
  * Modal for funding a service's escrow balance.
  */
 
-import { FC, useState, useCallback, useMemo, useEffect } from 'react';
 import {
-  Modal,
-  ModalContent,
-  ModalHeader,
-  ModalBody,
-  ModalFooter,
-  Typography,
-  Button,
-  Input,
-  SkeletonLoader,
-} from '@tangle-network/ui-components';
-import addCommasToNumber from '@tangle-network/ui-components/utils/addCommasToNumber';
+  type ComponentProps,
+  type ElementType,
+  type FC,
+  type ReactNode,
+  useState,
+  useCallback,
+  useMemo,
+  useEffect,
+} from 'react';
+import {
+  Button as SandboxButton,
+  Dialog,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  Input as SandboxInput,
+  Skeleton,
+} from '@tangle-network/sandbox-ui/primitives';
 import {
   useServiceEscrow,
   useTokenMetadata,
@@ -30,6 +37,116 @@ interface Props {
   serviceId: bigint;
   onClose: () => void;
 }
+
+type TextProps = ComponentProps<'p'> & {
+  variant?: 'h5' | 'body2';
+  fw?: 'bold';
+};
+
+const Text: FC<TextProps> = ({
+  variant = 'body2',
+  fw,
+  className = '',
+  ...props
+}) => {
+  const Component = (variant === 'h5' ? 'h2' : 'p') as ElementType;
+  const variantClass =
+    variant === 'h5'
+      ? 'font-display text-xl text-foreground'
+      : 'text-sm text-foreground';
+  const weightClass = fw === 'bold' ? 'font-bold' : '';
+
+  return (
+    <Component
+      className={[variantClass, weightClass, className]
+        .filter(Boolean)
+        .join(' ')}
+      {...props}
+    />
+  );
+};
+
+type ButtonProps = Omit<
+  ComponentProps<typeof SandboxButton>,
+  'variant' | 'size'
+> & {
+  variant?: ComponentProps<typeof SandboxButton>['variant'] | 'utility';
+  size?: ComponentProps<typeof SandboxButton>['size'];
+  isDisabled?: boolean;
+  isLoading?: boolean;
+};
+
+const Button: FC<ButtonProps> = ({
+  variant,
+  size,
+  isDisabled,
+  isLoading,
+  disabled,
+  ...props
+}) => (
+  <SandboxButton
+    variant={variant === 'utility' ? 'outline' : variant}
+    size={size}
+    disabled={disabled || isDisabled}
+    loading={isLoading}
+    {...props}
+  />
+);
+
+type InputProps = Omit<ComponentProps<typeof SandboxInput>, 'onChange'> & {
+  isControlled?: boolean;
+  isInvalid?: boolean;
+  rightIcon?: ReactNode;
+  onChange?: (value: string) => void;
+};
+
+const Input: FC<InputProps> = ({
+  isControlled: _isControlled,
+  isInvalid,
+  rightIcon,
+  className = '',
+  onChange,
+  ...props
+}) => (
+  <div className={['relative', className].filter(Boolean).join(' ')}>
+    <SandboxInput
+      {...props}
+      className={[
+        rightIcon ? 'pr-20' : '',
+        isInvalid ? 'border-destructive' : '',
+      ]
+        .filter(Boolean)
+        .join(' ')}
+      onChange={(event) => onChange?.(event.currentTarget.value)}
+    />
+    {rightIcon && (
+      <div className="pointer-events-none absolute inset-y-0 right-3 flex items-center">
+        {rightIcon}
+      </div>
+    )}
+  </div>
+);
+
+const Modal = Dialog;
+
+const ModalContent: FC<
+  ComponentProps<typeof DialogContent> & { size?: string }
+> = ({ size: _size, ...props }) => <DialogContent {...props} />;
+
+const ModalHeader: FC<ComponentProps<'div'>> = ({ children, ...props }) => (
+  <DialogHeader {...props}>
+    <DialogTitle>{children}</DialogTitle>
+  </DialogHeader>
+);
+
+const ModalBody: FC<ComponentProps<'div'>> = ({ className = '', ...props }) => (
+  <div
+    className={['space-y-4', className].filter(Boolean).join(' ')}
+    {...props}
+  />
+);
+
+const ModalFooter = DialogFooter;
 
 const FundServiceModal: FC<Props> = ({ serviceId, onClose }) => {
   const [amountInput, setAmountInput] = useState<string>('');
@@ -169,7 +286,10 @@ const FundServiceModal: FC<Props> = ({ serviceId, onClose }) => {
   const formatAmount = (amount: bigint | undefined): string => {
     if (amount === undefined) return '0';
     const formatted = parseFloat(formatUnits(amount, tokenDecimals));
-    return addCommasToNumber(formatted.toFixed(4));
+    return formatted.toLocaleString(undefined, {
+      maximumFractionDigits: 4,
+      minimumFractionDigits: 0,
+    });
   };
 
   const insufficientBalance =
@@ -195,24 +315,24 @@ const FundServiceModal: FC<Props> = ({ serviceId, onClose }) => {
         <ModalBody>
           {isLoading ? (
             <div className="space-y-4">
-              <SkeletonLoader className="h-16" />
-              <SkeletonLoader className="h-12" />
+              <Skeleton className="h-16" />
+              <Skeleton className="h-12" />
             </div>
           ) : (
             <div className="space-y-4">
               {/* Current Escrow Balance */}
-              <div className="p-4 rounded-lg bg-mono-20 dark:bg-mono-170">
-                <Typography variant="body2" className="text-mono-100 mb-1">
+              <div className="p-4 rounded-lg bg-muted/40">
+                <Text variant="body2" className="text-muted-foreground mb-1">
                   Current Escrow Balance
-                </Typography>
-                <Typography variant="h5" fw="bold" className="text-green-400">
+                </Text>
+                <Text variant="h5" fw="bold" className="text-green-400">
                   {formatAmount(escrow?.balance)} {tokenSymbol}
-                </Typography>
+                </Text>
               </div>
 
               {/* User Balance */}
               <div className="flex justify-between items-center text-sm">
-                <span className="text-mono-100">Your Balance:</span>
+                <span className="text-muted-foreground">Your Balance:</span>
                 <span className="font-semibold">
                   {userBalance
                     ? `${formatAmount(userBalance.value)} ${tokenSymbol}`
@@ -223,7 +343,7 @@ const FundServiceModal: FC<Props> = ({ serviceId, onClose }) => {
               {/* Amount Input */}
               <div>
                 <div className="flex justify-between items-center mb-2">
-                  <Typography variant="body2">Amount to Fund</Typography>
+                  <Text variant="body2">Amount to Fund</Text>
                   <Button
                     variant="utility"
                     size="sm"
@@ -247,7 +367,7 @@ const FundServiceModal: FC<Props> = ({ serviceId, onClose }) => {
                   }}
                   isInvalid={!!validationError || !!insufficientBalance}
                   rightIcon={
-                    <span className="text-mono-100">{tokenSymbol}</span>
+                    <span className="text-muted-foreground">{tokenSymbol}</span>
                   }
                 />
               </div>
@@ -255,10 +375,10 @@ const FundServiceModal: FC<Props> = ({ serviceId, onClose }) => {
               {/* Insufficient Balance Warning */}
               {insufficientBalance && (
                 <div className="p-3 rounded-lg bg-red-500/20 border border-red-500/30">
-                  <Typography variant="body2" className="text-red-400">
+                  <Text variant="body2" className="text-red-400">
                     Insufficient balance. You need at least{' '}
                     {formatUnits(parsedAmount, tokenDecimals)} {tokenSymbol}.
-                  </Typography>
+                  </Text>
                 </div>
               )}
 
@@ -268,13 +388,10 @@ const FundServiceModal: FC<Props> = ({ serviceId, onClose }) => {
                 !approvalSuccess &&
                 parsedAmount > BigInt(0) && (
                   <div className="p-3 rounded-lg bg-yellow-500/20 border border-yellow-500/30">
-                    <Typography
-                      variant="body2"
-                      className="text-yellow-400 mb-2"
-                    >
+                    <Text variant="body2" className="text-yellow-400 mb-2">
                       You need to approve the contract to spend your tokens
                       before funding.
-                    </Typography>
+                    </Text>
                     <Button
                       onClick={approve}
                       isLoading={isApproving}
@@ -290,9 +407,9 @@ const FundServiceModal: FC<Props> = ({ serviceId, onClose }) => {
               {/* Approval Success */}
               {!isNativeToken && approvalSuccess && (
                 <div className="p-3 rounded-lg bg-green-500/20 border border-green-500/30">
-                  <Typography variant="body2" className="text-green-400">
+                  <Text variant="body2" className="text-green-400">
                     Token approved! You can now fund the service.
-                  </Typography>
+                  </Text>
                 </div>
               )}
 
@@ -307,9 +424,7 @@ const FundServiceModal: FC<Props> = ({ serviceId, onClose }) => {
               {/* Success Message */}
               {fundSuccess && (
                 <div className="p-3 rounded-lg bg-green-500/20 text-green-400">
-                  <Typography variant="body2">
-                    Service funded successfully!
-                  </Typography>
+                  <Text variant="body2">Service funded successfully!</Text>
                 </div>
               )}
             </div>

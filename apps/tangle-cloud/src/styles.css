@@ -1,1 +1,636 @@
-/* You can add global styles to this file, and also import other style files */
+/* Tangle Cloud styles.
+ * Brand tokens come from @tangle-network/brand (single source of truth across
+ * tangle-website, sandbox-ui, evals, agent-builder, and product surfaces).
+ * Tangle Cloud-specific classes and theme overrides cascade below. */
+@import '@tangle-network/brand/styles/tokens.css';
+/* Brand globals.css requires `@tailwind base` upstream of it; tangle-cloud
+ * relies on the workspace ui-components preset for that, so import tokens
+ * only and let the workspace preset provide base/utilities layers. */
+
+/* Local font aliases — keep Geist Sans as the default until Outfit/Manrope
+ * fontsource packages are landed; brand tokens.css defines the brand-canonical
+ * font stacks via --font-sans/--font-display/--font-mono. */
+:root,
+[data-sandbox-ui] {
+  --font-sans: 'Geist Sans', ui-sans-serif, system-ui, sans-serif;
+  --font-display: 'Geist Sans', ui-sans-serif, system-ui, sans-serif;
+  --font-mono: 'Geist Mono', ui-monospace, SFMono-Regular, monospace;
+}
+
+html {
+  min-height: 100%;
+  overflow-x: hidden;
+  background: var(--bg-root, #060711);
+}
+
+body {
+  min-height: 100%;
+  overflow-x: hidden;
+  background: var(--bg-root, #060711);
+  color: var(--text-primary, hsl(var(--foreground)));
+  font-family: var(--font-sans) !important;
+}
+
+#root,
+#root * {
+  font-family: var(--font-sans) !important;
+}
+
+#root {
+  min-height: 100vh;
+}
+
+.tangle-cloud-shell.bg-tangle,
+[data-sandbox-ui].bg-tangle {
+  background: var(--bg-root) !important;
+  background-attachment: initial !important;
+}
+
+.tangle-cloud-shell {
+  --cloud-shell-border: color-mix(
+    in srgb,
+    var(--border-subtle) 80%,
+    transparent
+  );
+  background: var(--bg-root) !important;
+  color: var(--text-primary);
+}
+
+.tangle-cloud-shell[data-sandbox-theme='tangle'],
+.tangle-cloud-shell[data-sandbox-theme='tangle'] *,
+[data-sandbox-ui][data-sandbox-theme='tangle'],
+[data-sandbox-ui][data-sandbox-theme='tangle'] * {
+  color-scheme: dark;
+}
+
+[data-sandbox-ui][data-sandbox-theme='tangle'],
+.tangle-cloud-shell[data-sandbox-theme='tangle'] {
+  --bg-root:
+    radial-gradient(
+      ellipse 70% 48% at 18% 0%,
+      rgba(99, 102, 241, 0.12),
+      transparent
+    ),
+    radial-gradient(
+      ellipse 48% 36% at 82% 6%,
+      rgba(20, 184, 166, 0.08),
+      transparent
+    ),
+    linear-gradient(180deg, #101123 0%, #0b0c19 100%);
+  --bg-card: #17172a;
+  --bg-elevated: #202037;
+  --bg-hover: rgba(129, 140, 248, 0.12);
+  --border-subtle: rgba(116, 126, 194, 0.18);
+  --border-default: rgba(128, 138, 213, 0.29);
+  --border-hover: rgba(151, 161, 245, 0.44);
+  --border-accent: rgba(129, 140, 248, 0.3);
+  --border-accent-hover: rgba(129, 140, 248, 0.5);
+  --btn-primary-bg: #4f46e5;
+  --btn-primary-hover: #4338ca;
+  --shadow-card:
+    0 12px 32px rgba(0, 0, 0, 0.24), 0 0 0 1px rgba(255, 255, 255, 0.045);
+}
+
+.tangle-cloud-shell[data-sandbox-theme='vault'],
+.tangle-cloud-shell[data-sandbox-theme='vault'] *,
+[data-sandbox-ui][data-sandbox-theme='vault'],
+[data-sandbox-ui][data-sandbox-theme='vault'] * {
+  color-scheme: light;
+}
+
+[data-sandbox-ui][data-sandbox-theme='vault'],
+.tangle-cloud-shell[data-sandbox-theme='vault'] {
+  --brand-cool: #3730a3;
+  --brand-primary: #4f46e5;
+  --brand-vibrant: #4f46e5;
+  --btn-primary-bg: #4f46e5;
+  --btn-primary-hover: #4338ca;
+  --border-subtle: rgba(82, 88, 132, 0.18);
+  --border-default: rgba(82, 88, 132, 0.3);
+  --border-hover: rgba(79, 70, 229, 0.42);
+  --border-accent: rgba(79, 70, 229, 0.18);
+  --border-accent-hover: rgba(79, 70, 229, 0.34);
+}
+
+/* Legacy ui-components CSS is still pulled in by shared dependencies and
+   declares global heading/body colors. Re-assert sandbox tokens inside Cloud. */
+[data-sandbox-ui] {
+  color: var(--text-primary) !important;
+}
+
+[data-sandbox-ui] :where(h1, h2, h3, h4, h5, h6, p, label, li, td, th) {
+  color: inherit;
+}
+
+[data-sandbox-ui] .text-foreground {
+  color: var(--text-primary) !important;
+}
+
+[data-sandbox-ui] .text-card-foreground {
+  color: var(--text-primary) !important;
+}
+
+[data-sandbox-ui] .text-muted-foreground {
+  color: var(--text-muted) !important;
+}
+
+[data-sandbox-ui] .text-primary {
+  color: var(--brand-cool) !important;
+}
+
+[data-sandbox-ui] .text-primary-foreground {
+  color: var(--btn-primary-text) !important;
+}
+
+[data-sandbox-ui] .text-secondary-foreground {
+  color: var(--text-secondary) !important;
+}
+
+[data-sandbox-ui] .text-destructive {
+  color: var(--surface-danger-text) !important;
+}
+
+[data-sandbox-ui] .bg-background {
+  background-color: var(--bg-dark, hsl(var(--background))) !important;
+}
+
+[data-sandbox-ui] .bg-card {
+  background-color: var(--bg-card) !important;
+}
+
+[data-sandbox-ui] .bg-popover {
+  background-color: var(--bg-card) !important;
+}
+
+[data-sandbox-ui] .text-popover-foreground {
+  color: var(--text-primary) !important;
+}
+
+[data-sandbox-ui] .bg-muted {
+  background-color: hsl(var(--muted)) !important;
+}
+
+[data-sandbox-ui] .bg-muted\/30 {
+  background-color: color-mix(
+    in srgb,
+    hsl(var(--muted)) 30%,
+    transparent
+  ) !important;
+}
+
+[data-sandbox-ui] .bg-muted\/40 {
+  background-color: color-mix(
+    in srgb,
+    hsl(var(--muted)) 40%,
+    transparent
+  ) !important;
+}
+
+[data-sandbox-ui] .bg-muted\/50 {
+  background-color: color-mix(
+    in srgb,
+    hsl(var(--muted)) 50%,
+    transparent
+  ) !important;
+}
+
+[data-sandbox-ui] .bg-card\/70 {
+  background-color: color-mix(
+    in srgb,
+    var(--bg-card) 70%,
+    transparent
+  ) !important;
+}
+
+[data-sandbox-ui] .border-border {
+  border-color: var(--border-default) !important;
+}
+
+[data-sandbox-ui] .border {
+  border-color: var(--border-default) !important;
+}
+
+[data-sandbox-ui] .border-input {
+  border-color: var(--border-default) !important;
+}
+
+[data-sandbox-ui] .border-primary {
+  border-color: var(--brand-cool) !important;
+}
+
+[data-sandbox-ui] .border-primary\/20 {
+  border-color: var(--border-accent) !important;
+}
+
+[data-sandbox-ui] [class*='surface-success-border'] {
+  border-color: var(--surface-success-border) !important;
+}
+
+[data-sandbox-ui] .bg-primary {
+  background-color: var(--btn-primary-bg) !important;
+  color: var(--btn-primary-text) !important;
+}
+
+[data-sandbox-ui] :where(a.bg-primary, button.bg-primary, .bg-primary a) {
+  color: var(--btn-primary-text) !important;
+}
+
+[data-sandbox-ui] aside :where(a.bg-primary, a.bg-primary span) {
+  color: var(--btn-primary-text) !important;
+}
+
+[data-sandbox-ui] aside a.bg-primary svg {
+  color: var(--btn-primary-text) !important;
+  fill: currentcolor !important;
+}
+
+[data-sandbox-ui]
+  .bg-primary
+  :where(.text-muted-foreground, [class*='text-muted-foreground']) {
+  color: color-mix(
+    in srgb,
+    var(--btn-primary-text) 84%,
+    transparent
+  ) !important;
+}
+
+[data-sandbox-ui] .bg-primary :where(.bg-background\/70) {
+  background-color: #312e81 !important;
+  color: var(--btn-primary-text) !important;
+}
+
+[data-sandbox-ui] .hover\:bg-primary\/90:hover {
+  background-color: var(--btn-primary-hover) !important;
+}
+
+[data-sandbox-ui] .hover\:bg-muted:hover,
+[data-sandbox-ui] .hover\:bg-muted\/60:hover {
+  background-color: var(--bg-hover) !important;
+}
+
+[data-radix-popper-content-wrapper] [role='menu'],
+[data-radix-popper-content-wrapper] [role='listbox'] {
+  border: 1px solid var(--border-default) !important;
+  background: color-mix(
+    in srgb,
+    var(--bg-card) 96%,
+    var(--bg-elevated) 4%
+  ) !important;
+  box-shadow: var(--shadow-dropdown) !important;
+}
+
+[data-radix-popper-content-wrapper] [role='menuitem'],
+[data-radix-popper-content-wrapper] [role='option'] {
+  color: var(--text-primary) !important;
+}
+
+[data-radix-popper-content-wrapper] [role='menuitem']:hover,
+[data-radix-popper-content-wrapper] [role='option']:hover,
+[data-radix-popper-content-wrapper] [role='menuitem'][data-highlighted],
+[data-radix-popper-content-wrapper] [role='option'][data-highlighted] {
+  background: var(--bg-hover) !important;
+}
+
+.tangle-wallet-modal {
+  top: 50% !important;
+  left: 50% !important;
+  translate: none !important;
+  transform: translate(-50%, -50%) !important;
+  border-color: var(--border-default) !important;
+  background: color-mix(
+    in srgb,
+    var(--bg-card) 98%,
+    var(--bg-elevated) 2%
+  ) !important;
+  color: var(--text-primary) !important;
+  box-shadow: var(--shadow-dropdown) !important;
+}
+
+.tangle-wallet-modal button[aria-label='Close'] {
+  top: 1.25rem !important;
+  right: 1.25rem !important;
+  display: grid !important;
+  width: 2rem !important;
+  height: 2rem !important;
+  place-items: center !important;
+  border: 1px solid var(--border-default) !important;
+  border-radius: var(--radius-md) !important;
+  background: var(--bg-elevated) !important;
+  color: var(--text-muted) !important;
+  opacity: 1 !important;
+}
+
+.tangle-wallet-modal button[aria-label='Close']:hover {
+  background: var(--bg-hover) !important;
+  color: var(--text-primary) !important;
+}
+
+.tangle-cloud-shell a:not([class*='text-']) {
+  color: inherit;
+}
+
+.tangle-cloud-page {
+  color: var(--text-primary);
+}
+
+.tangle-cloud-page h1 {
+  font-size: clamp(2rem, 3vw, 2.375rem);
+  line-height: 1.12;
+  letter-spacing: -0.035em;
+  text-wrap: balance;
+}
+
+.tangle-cloud-page h2 {
+  font-size: 1.25rem;
+  line-height: 1.25;
+  letter-spacing: -0.015em;
+}
+
+.tangle-cloud-page h3 {
+  font-size: 1rem;
+  line-height: 1.3;
+  letter-spacing: -0.01em;
+}
+
+.tangle-cloud-page p {
+  text-wrap: pretty;
+}
+
+[data-sandbox-ui],
+[data-sandbox-ui] button,
+[data-sandbox-ui] input,
+[data-sandbox-ui] textarea,
+[data-sandbox-ui] select {
+  font-family: var(--font-sans) !important;
+}
+
+[data-sandbox-ui] .font-display {
+  font-family: var(--font-display) !important;
+}
+
+#root .font-display {
+  font-family: var(--font-display) !important;
+}
+
+.tangle-cloud-card {
+  border: 1px solid var(--border-subtle);
+  background: color-mix(in srgb, var(--bg-card) 86%, transparent);
+  box-shadow: var(--shadow-card);
+}
+
+.cloud-hero-card {
+  border-color: color-mix(
+    in srgb,
+    var(--brand-cool) 30%,
+    var(--border-default)
+  ) !important;
+  background:
+    radial-gradient(
+      circle at 4% 12%,
+      color-mix(in srgb, var(--brand-cool) 24%, transparent),
+      transparent 30%
+    ),
+    radial-gradient(
+      circle at 90% 8%,
+      color-mix(in srgb, #14b8a6 20%, transparent),
+      transparent 26%
+    ),
+    linear-gradient(
+      135deg,
+      color-mix(in srgb, var(--bg-elevated) 82%, transparent),
+      color-mix(in srgb, var(--bg-card) 94%, transparent)
+    ) !important;
+  box-shadow:
+    0 18px 48px rgba(0, 0, 0, 0.24),
+    inset 0 1px 0 rgba(255, 255, 255, 0.04) !important;
+}
+
+.cloud-hero-card :where([class*='bg-card/70'], .bg-card\/70) {
+  background-color: color-mix(
+    in srgb,
+    var(--bg-elevated) 70%,
+    transparent
+  ) !important;
+  border-color: color-mix(
+    in srgb,
+    var(--brand-cool) 28%,
+    var(--border-default)
+  ) !important;
+}
+
+.cloud-compact-header {
+  box-shadow:
+    0 12px 32px rgba(0, 0, 0, 0.18),
+    inset 0 1px 0 rgba(255, 255, 255, 0.04) !important;
+}
+
+.cloud-compact-header h1 {
+  text-wrap: balance;
+}
+
+.cloud-compact-header p {
+  text-wrap: pretty;
+}
+
+.catalog-controls {
+  box-shadow: 0 10px 26px rgba(0, 0, 0, 0.14) !important;
+}
+
+.results-grid {
+  content-visibility: auto;
+  contain-intrinsic-size: 800px;
+}
+
+.tangle-cloud-shell :where(a, button, select, [role='tab']) {
+  transition:
+    background-color 180ms ease,
+    border-color 180ms ease,
+    color 180ms ease,
+    opacity 180ms ease,
+    transform 120ms ease,
+    box-shadow 180ms ease;
+}
+
+.tangle-cloud-shell :where(button, select, [role='tab']):active {
+  transform: translateY(1px);
+}
+
+.blueprint-card,
+.operator-row {
+  transition:
+    background-color 180ms ease,
+    border-color 180ms ease,
+    transform 160ms ease,
+    box-shadow 180ms ease;
+}
+
+.blueprint-card:hover,
+.operator-row:hover {
+  transform: translateY(-1px);
+  border-color: color-mix(
+    in srgb,
+    var(--brand-cool) 34%,
+    var(--border-default)
+  ) !important;
+  box-shadow:
+    var(--shadow-hover),
+    0 0 0 1px color-mix(in srgb, var(--brand-cool) 12%, transparent) !important;
+}
+
+.tangle-cloud-topbar button,
+.tangle-cloud-topbar [role='button'],
+.tangle-cloud-topbar .tangle-cloud-status-pill {
+  border-color: color-mix(
+    in srgb,
+    var(--border-default) 88%,
+    transparent
+  ) !important;
+  background: color-mix(
+    in srgb,
+    var(--bg-elevated) 72%,
+    transparent
+  ) !important;
+  color: var(--text-primary) !important;
+  box-shadow: none !important;
+}
+
+.tangle-cloud-topbar button:not([data-testid='evm-connect-trigger']),
+.tangle-cloud-topbar [role='button']:not([data-testid='evm-connect-trigger']) {
+  background: color-mix(in srgb, var(--bg-card) 68%, transparent) !important;
+  color: var(--text-secondary) !important;
+  opacity: 0.86;
+}
+
+.tangle-cloud-topbar button {
+  min-height: 40px;
+  border-radius: 8px !important;
+}
+
+.tangle-cloud-topbar button svg,
+.tangle-cloud-topbar [role='button'] svg {
+  width: 16px;
+  height: 16px;
+}
+
+.tangle-cloud-topbar button:hover,
+.tangle-cloud-topbar [role='button']:hover {
+  background: color-mix(in srgb, var(--bg-elevated) 88%, white 3%) !important;
+}
+
+.tangle-cloud-topbar svg {
+  color: currentcolor;
+}
+
+.tangle-cloud-topbar .tangle-cloud-wallet-action button,
+.tangle-cloud-wallet-action button,
+[data-sandbox-ui] [data-testid='evm-connect-trigger'] {
+  background: linear-gradient(
+    135deg,
+    var(--btn-primary-bg),
+    var(--btn-primary-hover)
+  ) !important;
+  background-color: var(--btn-primary-bg) !important;
+  border-color: transparent !important;
+  color: var(--btn-primary-text) !important;
+  padding-inline: 24px !important;
+}
+
+.tangle-cloud-topbar .tangle-cloud-wallet-action button:hover,
+.tangle-cloud-wallet-action button:hover,
+[data-sandbox-ui] [data-testid='evm-connect-trigger']:hover {
+  background: linear-gradient(
+    135deg,
+    var(--btn-primary-hover),
+    #312e81
+  ) !important;
+  background-color: var(--btn-primary-hover) !important;
+  color: var(--btn-primary-text) !important;
+}
+
+.tangle-cloud-topbar .tangle-cloud-wallet-action-secondary button {
+  background: color-mix(
+    in srgb,
+    var(--bg-elevated) 72%,
+    transparent
+  ) !important;
+  background-color: color-mix(
+    in srgb,
+    var(--bg-elevated) 72%,
+    transparent
+  ) !important;
+  border-color: var(--border-default) !important;
+  color: var(--text-primary) !important;
+}
+
+.tangle-cloud-topbar .tangle-cloud-wallet-action-secondary button:hover {
+  background: color-mix(in srgb, var(--bg-elevated) 88%, white 3%) !important;
+  background-color: color-mix(
+    in srgb,
+    var(--bg-elevated) 88%,
+    white 3%
+  ) !important;
+  color: var(--text-primary) !important;
+}
+
+.tangle-cloud-visual-badge {
+  background-color: #111827 !important;
+  color: #ffffff !important;
+}
+
+.tangle-blueprint-host {
+  color: rgb(237 237 242) !important;
+}
+
+.tangle-blueprint-host p {
+  color: rgb(255 255 255 / 0.72) !important;
+}
+
+.tangle-blueprint-host [class*='border-white'] {
+  border-color: color-mix(
+    in srgb,
+    var(--brand-cool) 18%,
+    transparent
+  ) !important;
+}
+
+.tangle-blueprint-host [class*='bg-white'] {
+  background-color: color-mix(
+    in srgb,
+    var(--bg-elevated) 72%,
+    transparent
+  ) !important;
+}
+
+.tangle-blueprint-host [class*='text-white'] {
+  color: rgb(255 255 255) !important;
+}
+
+.tangle-blueprint-host [class*='text-white/78'] {
+  color: rgb(255 255 255 / 0.78) !important;
+}
+
+.tangle-blueprint-host [class*='text-white/72'] {
+  color: rgb(255 255 255 / 0.72) !important;
+}
+
+.tangle-blueprint-host [class*='text-white/65'] {
+  color: rgb(255 255 255 / 0.65) !important;
+}
+
+.tangle-blueprint-host [class*='text-white/62'] {
+  color: rgb(255 255 255 / 0.62) !important;
+}
+
+.tangle-blueprint-host [class*='text-white/45'] {
+  color: rgb(255 255 255 / 0.45) !important;
+}
+
+.tangle-blueprint-host [class*='text-white/42'] {
+  color: rgb(255 255 255 / 0.42) !important;
+}
+
+.tangle-blueprint-host h1,
+.tangle-blueprint-host h2,
+.tangle-blueprint-host h3 {
+  color: rgb(255 255 255) !important;
+}

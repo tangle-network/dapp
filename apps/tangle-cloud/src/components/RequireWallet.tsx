@@ -1,17 +1,25 @@
 import { type FC, type PropsWithChildren } from 'react';
 import { useAccount } from 'wagmi';
-import { Typography, Card, CardVariant } from '@tangle-network/ui-components';
+import { Card, CardContent } from '@tangle-network/sandbox-ui/primitives';
 import ConnectWalletButton from '@tangle-network/tangle-shared-ui/components/ConnectWalletButton';
 
 type Props = PropsWithChildren<{
   title?: string;
   description?: string;
+  eyebrow?: string;
+  checks?: string[];
 }>;
 
 const RequireWallet: FC<Props> = ({
   children,
-  title = 'Wallet Required',
+  title = 'Connect wallet',
   description = 'Connect your wallet to access this feature.',
+  eyebrow = 'Wallet',
+  checks = [
+    'Read account state',
+    'Prepare transactions',
+    'Submit on-chain actions',
+  ],
 }) => {
   const { address } = useAccount();
 
@@ -20,18 +28,61 @@ const RequireWallet: FC<Props> = ({
   }
 
   return (
-    <Card variant={CardVariant.DEFAULT} className="text-center py-12">
-      <Typography variant="h4" fw="semibold">
-        {title}
-      </Typography>
+    <Card
+      variant="sandbox"
+      className="w-full overflow-hidden border-border bg-card shadow-[var(--shadow-card)]"
+    >
+      <CardContent className="relative p-6 md:p-8">
+        <div className="pointer-events-none absolute inset-0 opacity-70 [background:radial-gradient(circle_at_18%_12%,rgba(99,102,241,0.20),transparent_34%),radial-gradient(circle_at_84%_10%,rgba(16,185,129,0.10),transparent_30%)]" />
 
-      <Typography variant="body1" className="mt-2 text-mono-100">
-        {description}
-      </Typography>
+        <div className="relative grid gap-6 lg:grid-cols-[1fr_260px] lg:items-center">
+          <div>
+            <p className="font-bold text-[10px] uppercase tracking-[0.2em] text-muted-foreground">
+              {eyebrow}
+            </p>
+            <div className="mt-3 font-display font-extrabold text-foreground text-xl leading-tight tracking-tight md:text-2xl">
+              {title}
+            </div>
+            <p className="mt-3 max-w-xl text-muted-foreground text-sm leading-6">
+              {description}
+            </p>
+            {checks.length > 0 && (
+              <div className="mt-5 grid gap-2 sm:grid-cols-3">
+                {checks.map((check) => (
+                  <div
+                    key={check}
+                    className="rounded-lg border border-border bg-background/40 px-3 py-2 text-foreground text-xs"
+                  >
+                    {check}
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
 
-      <div className="mt-6 flex justify-center">
-        <ConnectWalletButton />
-      </div>
+          <div className="rounded-xl border border-border bg-background/50 p-4">
+            <div className="grid grid-cols-2 gap-2">
+              {['Account', 'Network', 'Tx', 'History'].map((label) => (
+                <div
+                  key={label}
+                  className="rounded-lg border border-border bg-card/80 p-3"
+                >
+                  <p className="text-muted-foreground text-[10px] uppercase tracking-wider">
+                    {label}
+                  </p>
+                  <p className="mt-1 font-semibold text-foreground text-sm">
+                    Locked
+                  </p>
+                </div>
+              ))}
+            </div>
+
+            <div className="mt-4">
+              <ConnectWalletButton className="tangle-cloud-wallet-action" />
+            </div>
+          </div>
+        </div>
+      </CardContent>
     </Card>
   );
 };

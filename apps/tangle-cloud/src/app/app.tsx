@@ -3,7 +3,7 @@ import { lazy, Suspense, type FC, type ReactNode } from 'react';
 import Layout from '../components/Layout';
 import Providers from './providers';
 import { PagePath } from '../types';
-import { SkeletonLoader } from '@tangle-network/ui-components';
+import { Skeleton } from '@tangle-network/sandbox-ui/primitives';
 
 // Layouts (lightweight, no code splitting needed)
 import InstancesLayout from '../pages/instances/layout';
@@ -20,6 +20,18 @@ const ServiceDetailPage = lazy(() => import('../pages/services/[id]/page'));
 const BlueprintsPage = lazy(() => import('../pages/blueprints/page'));
 const BlueprintDetailsPage = lazy(
   () => import('../pages/blueprints/[id]/page'),
+);
+const BlueprintAppServicePage = lazy(
+  () => import('../pages/blueprints/[slug]/[serviceId]/page'),
+);
+const BlueprintScopedLandingPage = lazy(
+  () => import('../pages/blueprints/[publisher]/[slug]/page'),
+);
+const BlueprintScopedServicePage = lazy(
+  () => import('../pages/blueprints/[publisher]/[slug]/[serviceId]/page'),
+);
+const BlueprintProtocolServicePage = lazy(
+  () => import('../pages/blueprints/[id]/services/[serviceId]/page'),
 );
 const DeployPage = lazy(() => import('../pages/blueprints/[id]/deploy/page'));
 const CreateBlueprintPage = lazy(
@@ -39,10 +51,10 @@ const PaymentsCreditsPage = lazy(() => import('../pages/payments/credits'));
 const NotFoundPage = lazy(() => import('../pages/notFound'));
 
 const PageFallback = () => (
-  <div className="space-y-4 mt-4">
-    <SkeletonLoader className="h-8 w-48" />
-    <SkeletonLoader className="h-4 w-96" />
-    <SkeletonLoader className="h-64 w-full rounded-xl" />
+  <div className="mt-4 space-y-4">
+    <Skeleton className="h-8 w-48 rounded-md" />
+    <Skeleton className="h-4 w-96 max-w-full rounded-md" />
+    <Skeleton className="h-64 w-full rounded-lg" />
   </div>
 );
 
@@ -121,6 +133,29 @@ const App: FC = () => {
             <Route
               path={PagePath.BLUEPRINTS_DETAILS}
               element={withLayout(BlueprintsLayout, BlueprintDetailsPage)}
+            />
+
+            <Route
+              path={PagePath.BLUEPRINTS_PROTOCOL_SERVICE}
+              element={withLayout(
+                BlueprintsLayout,
+                BlueprintProtocolServicePage,
+              )}
+            />
+
+            <Route
+              path={PagePath.BLUEPRINTS_APP_SERVICE}
+              element={withLayout(BlueprintsLayout, BlueprintAppServicePage)}
+            />
+
+            <Route
+              path={PagePath.BLUEPRINTS_APP_SCOPED}
+              element={withLayout(BlueprintsLayout, BlueprintScopedLandingPage)}
+            />
+
+            <Route
+              path={PagePath.BLUEPRINTS_APP_SCOPED_SERVICE}
+              element={withLayout(BlueprintsLayout, BlueprintScopedServicePage)}
             />
 
             <Route

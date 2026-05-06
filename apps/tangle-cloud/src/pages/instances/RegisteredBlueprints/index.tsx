@@ -1,16 +1,16 @@
-import { TableAndChartTabs } from '@tangle-network/ui-components/components/TableAndChartTabs';
 import { GridFillIcon } from '@tangle-network/icons';
-import { FC, ReactElement, useState } from 'react';
-import { TabContent } from '@tangle-network/ui-components';
+import { FC, useState } from 'react';
 import { RegisteredBlueprints } from './RegisteredBlueprints';
+import {
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
+} from '@tangle-network/sandbox-ui/primitives';
 
 enum RegisteredBlueprintsTab {
   REGISTERED_BLUEPRINTS = 'Registered Blueprints',
 }
-
-const RegisteredBlueprintsTabIcon: ReactElement[] = [
-  <GridFillIcon className="w-4 h-4 !fill-blue-50" />,
-] as const;
 
 export const RegisteredBlueprintsTabs: FC = () => {
   const [selectedTab, setSelectedTab] = useState(
@@ -18,21 +18,29 @@ export const RegisteredBlueprintsTabs: FC = () => {
   );
 
   return (
-    <TableAndChartTabs
-      tabs={Object.values(RegisteredBlueprintsTab)}
-      icons={RegisteredBlueprintsTabIcon}
+    <Tabs
       value={selectedTab}
-      onValueChange={(tab) => setSelectedTab(tab as RegisteredBlueprintsTab)}
-      className="space-y-9 w-full"
-      triggerClassName=""
-      enableAdvancedDivider
+      onValueChange={(tab: string) =>
+        setSelectedTab(tab as RegisteredBlueprintsTab)
+      }
+      className="w-full space-y-5"
     >
-      <TabContent
+      <TabsList className="flex h-auto w-full justify-start rounded-lg border border-border bg-card p-1 shadow-[var(--shadow-card)]">
+        <TabsTrigger
+          value={RegisteredBlueprintsTab.REGISTERED_BLUEPRINTS}
+          className="gap-2 rounded-md px-3 py-2 font-semibold text-sm data-[state=active]:bg-primary data-[state=active]:text-primary-foreground"
+        >
+          <GridFillIcon className="h-4 w-4 fill-current" />
+          Registered Blueprints
+        </TabsTrigger>
+      </TabsList>
+
+      <TabsContent
         value={RegisteredBlueprintsTab.REGISTERED_BLUEPRINTS}
-        className="flex justify-center mx-auto w-full"
+        className="w-full"
       >
         <RegisteredBlueprints />
-      </TabContent>
-    </TableAndChartTabs>
+      </TabsContent>
+    </Tabs>
   );
 };

@@ -41,6 +41,22 @@ vi.mock('../pages/blueprints/[id]/page', () => ({
   default: () => <div data-testid="blueprint-details-page" />,
 }));
 
+vi.mock('../pages/blueprints/[slug]/[serviceId]/page', () => ({
+  default: () => <div data-testid="blueprint-app-service-page" />,
+}));
+
+vi.mock('../pages/blueprints/[publisher]/[slug]/page', () => ({
+  default: () => <div data-testid="blueprint-app-scoped-page" />,
+}));
+
+vi.mock('../pages/blueprints/[publisher]/[slug]/[serviceId]/page', () => ({
+  default: () => <div data-testid="blueprint-app-scoped-service-page" />,
+}));
+
+vi.mock('../pages/blueprints/[id]/services/[serviceId]/page', () => ({
+  default: () => <div data-testid="blueprint-protocol-service-page" />,
+}));
+
 vi.mock('../pages/blueprints/[id]/deploy/page', () => ({
   default: () => <div data-testid="blueprint-deploy-page" />,
 }));
@@ -135,6 +151,27 @@ describe('App', () => {
     ['/services/service-1', 'instances-layout', 'service-details-page'],
     ['/blueprints', 'blueprints-layout', 'blueprints-page'],
     ['/blueprints/42', 'blueprints-layout', 'blueprint-details-page'],
+    ['/blueprints/trading', 'blueprints-layout', 'blueprint-details-page'],
+    [
+      '/blueprints/trading/7',
+      'blueprints-layout',
+      'blueprint-app-service-page',
+    ],
+    [
+      '/blueprints/@alice/research',
+      'blueprints-layout',
+      'blueprint-app-service-page',
+    ],
+    [
+      '/blueprints/@alice/research/7',
+      'blueprints-layout',
+      'blueprint-app-scoped-service-page',
+    ],
+    [
+      '/blueprints/42/services/7',
+      'blueprints-layout',
+      'blueprint-protocol-service-page',
+    ],
     ['/blueprints/42/deploy', 'blueprints-layout', 'blueprint-deploy-page'],
     ['/blueprints/create', 'blueprints-layout', 'create-blueprint-page'],
     ['/blueprints/manage', 'blueprints-layout', 'manage-blueprints-page'],
@@ -155,6 +192,15 @@ describe('App', () => {
       });
     },
   );
+
+  it('renders blueprint app service route for sandbox slug too', async () => {
+    renderAt('/blueprints/sandbox/12');
+
+    await waitFor(() => {
+      expect(screen.getByTestId('blueprints-layout')).toBeTruthy();
+      expect(screen.getByTestId('blueprint-app-service-page')).toBeTruthy();
+    });
+  });
 
   it('redirects legacy registration review route to blueprints', async () => {
     renderAt('/registration-review');

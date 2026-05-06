@@ -1,9 +1,9 @@
 import { ComponentProps, createElement, type FC } from 'react';
 import { Link as RouterLink } from 'react-router';
 import TangleCloudCard from '../../components/TangleCloudCard';
-import { Typography } from '@tangle-network/ui-components';
 import { CLOUD_INSTRUCTIONS } from '../../constants/cloudInstruction';
 import { ArrowRightUp } from '@tangle-network/icons';
+import { Badge } from '@tangle-network/sandbox-ui/primitives';
 
 type InstructionCardProps = {
   rootProps?: ComponentProps<typeof TangleCloudCard>;
@@ -13,42 +13,34 @@ export const InstructionCard: FC<InstructionCardProps> = ({ rootProps }) => {
   return (
     <TangleCloudCard {...rootProps}>
       <div className="flex flex-col gap-4">
-        <Typography
-          variant="h5"
-          fw="bold"
-          className="text-mono-200 dark:text-mono-0"
-        >
-          Quick Actions
-        </Typography>
+        <div>
+          <Badge variant="outline">Next steps</Badge>
+          <div className="mt-3 font-display font-bold text-foreground text-lg tracking-tight">
+            Quick Actions
+          </div>
+        </div>
 
         <div className="flex flex-col gap-3">
           {CLOUD_INSTRUCTIONS.map((instruction) => {
             const content = (
-              <div className="group flex items-center gap-4 p-4 rounded-lg border border-mono-60 dark:border-mono-160 bg-mono-0 dark:bg-mono-180 hover:border-blue-50 dark:hover:border-blue-90 hover:bg-blue-10/50 dark:hover:bg-blue-120/20 transition-all duration-200 cursor-pointer">
-                <div className="flex items-center justify-center w-12 h-12 rounded-lg bg-blue-10 dark:bg-blue-120 border border-blue-30 dark:border-blue-100 group-hover:bg-blue-20 dark:group-hover:bg-blue-110 transition-colors duration-200 shrink-0">
+              <div className="group flex cursor-pointer items-center gap-4 rounded-lg border border-border bg-muted/30 p-4 transition-colors duration-200 hover:border-primary/40 hover:bg-muted">
+                <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-lg border border-border bg-background transition-colors duration-200 group-hover:border-primary/40">
                   {createElement(instruction.icon, {
-                    className: 'w-6 h-6 fill-blue-70 dark:fill-blue-40',
+                    className: 'h-6 w-6 fill-primary',
                   })}
                 </div>
 
-                <div className="flex flex-col gap-1 flex-1 min-w-0">
-                  <Typography
-                    variant="body1"
-                    fw="bold"
-                    className="text-mono-200 dark:text-mono-0 group-hover:text-blue-70 dark:group-hover:text-blue-40 transition-colors duration-200"
-                  >
+                <div className="flex min-w-0 flex-1 flex-col gap-1">
+                  <h3 className="font-display font-bold text-foreground text-sm transition-colors duration-200 group-hover:text-primary">
                     {instruction.title}
-                  </Typography>
-                  <Typography
-                    variant="body2"
-                    className="text-mono-120 dark:text-mono-100 line-clamp-2"
-                  >
+                  </h3>
+                  <p className="line-clamp-2 text-muted-foreground text-sm">
                     {instruction.description}
-                  </Typography>
+                  </p>
                 </div>
 
                 {instruction.external && (
-                  <ArrowRightUp className="w-5 h-5 fill-mono-100 dark:fill-mono-120 group-hover:fill-blue-70 dark:group-hover:fill-blue-40 transition-colors duration-200 shrink-0" />
+                  <ArrowRightUp className="h-5 w-5 shrink-0 fill-muted-foreground transition-colors duration-200 group-hover:fill-primary" />
                 )}
               </div>
             );

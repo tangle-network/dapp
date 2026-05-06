@@ -1,4 +1,13 @@
-import { Card, Typography, Button } from '@tangle-network/ui-components';
+import {
+  Button,
+  Card,
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+  Text,
+} from '../../../../../components/sandbox/SandboxUi';
 import { Children, FC, useMemo, useState } from 'react';
 import { AssetConfigurationStepProps } from './type';
 import { AssetRequirementFormItem } from './components/AssetRequirementFormItem';
@@ -7,13 +16,6 @@ import {
   useStakingAssets,
   type StakingAsset,
 } from '@tangle-network/tangle-shared-ui/data/graphql';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@tangle-network/ui-components/components/select';
 import LsTokenIcon from '@tangle-network/tangle-shared-ui/components/LsTokenIcon';
 import { TrashIcon } from '@radix-ui/react-icons';
 import type { Address } from 'viem';
@@ -139,18 +141,18 @@ export const AssetConfigurationStep: FC<AssetConfigurationStepProps> = ({
 
   return (
     <Card className="p-6 space-y-6">
-      <Typography variant="h5" className="text-mono-200 dark:text-mono-0 mb-4">
+      <Text variant="h5" className="mb-4">
         Asset Requirements
-      </Typography>
+      </Text>
       {errors?.securityCommitments?.message && (
         <ErrorMessage>{errors?.securityCommitments?.message}</ErrorMessage>
       )}
 
       {/* asset selector */}
       <div>
-        <Typography variant="body1" className="mb-2">
+        <Text variant="body1" className="mb-2">
           Add Asset
-        </Typography>
+        </Text>
         <div className="flex gap-4 items-center">
           <Select
             value={selectedAsset}
@@ -171,7 +173,7 @@ export const AssetConfigurationStep: FC<AssetConfigurationStepProps> = ({
                     <SelectItem value={asset.id} id={asset.id}>
                       <div className="flex items-center gap-2">
                         <LsTokenIcon name={symbol} size="md" />
-                        <Typography variant="body1">{name}</Typography>
+                        <Text variant="body1">{name}</Text>
                       </div>
                     </SelectItem>
                   );

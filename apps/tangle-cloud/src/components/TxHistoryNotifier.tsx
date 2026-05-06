@@ -4,13 +4,7 @@ import useTxHistoryStore, {
   type HistoryTx,
 } from '@tangle-network/tangle-shared-ui/context/useTxHistoryStore';
 import useEvmAddress from '@tangle-network/tangle-shared-ui/hooks/useEvmAddress';
-import {
-  Button,
-  CopyWithTooltip,
-  isEvmAddress,
-  shortenHex,
-  Typography,
-} from '@tangle-network/ui-components';
+import { Text } from './sandbox/SandboxUi';
 import capitalize from 'lodash/capitalize';
 import { useSnackbar } from 'notistack';
 import { useEffect, useMemo, useRef, type FC } from 'react';
@@ -19,6 +13,20 @@ import { SUCCESS_MESSAGES } from '../hooks/useTxNotification';
 
 const isTxName = (value: string): value is TxName =>
   (Object.values(TxName) as string[]).includes(value);
+
+const isEvmAddress = (value: string) => /^0x[a-fA-F0-9]{40}$/.test(value);
+const shortenHex = (value: string) =>
+  value.length > 14 ? `${value.slice(0, 8)}...${value.slice(-6)}` : value;
+
+const CopyHashButton: FC<{ hash: string }> = ({ hash }) => (
+  <button
+    type="button"
+    className="text-xs text-muted-foreground underline-offset-4 hover:text-foreground hover:underline"
+    onClick={() => void navigator.clipboard?.writeText(hash)}
+  >
+    Copy
+  </button>
+);
 
 const TxHistoryNotifier: FC = () => {
   const { enqueueSnackbar, closeSnackbar } = useSnackbar();
@@ -77,31 +85,21 @@ const TxHistoryNotifier: FC = () => {
 
       enqueueSnackbar(
         <div className="space-y-2">
-          <Typography variant="h5">
-            Processing {capitalize(tx.name.toString())}
-          </Typography>
+          <Text variant="h5">Processing {capitalize(tx.name.toString())}</Text>
           <div className="flex items-center gap-2">
-            <Typography variant="body2">{shortenHex(tx.hash)}</Typography>
-            <CopyWithTooltip
-              textToCopy={tx.hash}
-              copyLabel="Copy hash"
-              iconClassName="text-mono-140 dark:text-mono-80"
-              isButton={false}
-            />
+            <Text variant="body2">{shortenHex(tx.hash)}</Text>
+            <CopyHashButton hash={tx.hash} />
           </div>
           {explorerUrl !== null && (
-            <Button
-              variant="link"
-              size="sm"
+            <a
               href={explorerUrl.toString()}
               target="_blank"
               rel="noopener noreferrer"
-              rightIcon={
-                <ExternalLinkLine className="fill-current dark:fill-current" />
-              }
+              className="inline-flex items-center gap-1 text-sm font-medium text-primary underline-offset-4 hover:underline"
             >
               View Explorer
-            </Button>
+              <ExternalLinkLine className="fill-current dark:fill-current" />
+            </a>
           )}
         </div>,
         { key: tx.hash, variant: 'info', persist: true },
@@ -120,31 +118,23 @@ const TxHistoryNotifier: FC = () => {
 
       enqueueSnackbar(
         <div className="space-y-2">
-          <Typography variant="h5">
+          <Text variant="h5">
             {title ?? `${capitalize(tx.name.toString())} completed`}
-          </Typography>
+          </Text>
           <div className="flex items-center gap-2">
-            <Typography variant="body2">{shortenHex(tx.hash)}</Typography>
-            <CopyWithTooltip
-              textToCopy={tx.hash}
-              copyLabel="Copy hash"
-              iconClassName="text-mono-140 dark:text-mono-80"
-              isButton={false}
-            />
+            <Text variant="body2">{shortenHex(tx.hash)}</Text>
+            <CopyHashButton hash={tx.hash} />
           </div>
           {explorerUrl !== null && (
-            <Button
-              variant="link"
-              size="sm"
+            <a
               href={explorerUrl.toString()}
               target="_blank"
               rel="noopener noreferrer"
-              rightIcon={
-                <ExternalLinkLine className="fill-current dark:fill-current" />
-              }
+              className="inline-flex items-center gap-1 text-sm font-medium text-primary underline-offset-4 hover:underline"
             >
               View Explorer
-            </Button>
+              <ExternalLinkLine className="fill-current dark:fill-current" />
+            </a>
           )}
         </div>,
         { variant: 'success', autoHideDuration: 10_000 },
@@ -156,13 +146,9 @@ const TxHistoryNotifier: FC = () => {
 
       enqueueSnackbar(
         <div className="space-y-2">
-          <Typography variant="h5">
-            {capitalize(tx.name.toString())} failed
-          </Typography>
-          <Typography variant="body2">
-            {tx.errorMessage ?? 'Unknown error'}
-          </Typography>
-          <Typography variant="body2">{shortenHex(tx.hash)}</Typography>
+          <Text variant="h5">{capitalize(tx.name.toString())} failed</Text>
+          <Text variant="body2">{tx.errorMessage ?? 'Unknown error'}</Text>
+          <Text variant="body2">{shortenHex(tx.hash)}</Text>
         </div>,
         { variant: 'error', autoHideDuration: null },
       );

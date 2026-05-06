@@ -1,12 +1,19 @@
-import { Table, Typography } from '@tangle-network/ui-components';
-import TableStatus from '@tangle-network/tangle-shared-ui/components/tables/TableStatus';
-import { TableVariant } from '@tangle-network/ui-components/components/Table/types';
+import { flexRender, type RowData } from '@tanstack/react-table';
+import type React from 'react';
+import {
+  Button,
+  Card,
+  CardContent,
+  Skeleton,
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@tangle-network/sandbox-ui/primitives';
 import { twMerge } from 'tailwind-merge';
-import { TangleCloudTableProps } from './type';
-import { RowData } from '@tanstack/react-table';
-
-const GLASS_CONTAINER_CLASS =
-  'w-full px-4 py-4 rounded-2xl overflow-hidden border border-mono-0 dark:border-mono-160 bg-[linear-gradient(180deg,rgba(255,255,255,0.20)0%,rgba(255,255,255,0.00)100%)] dark:bg-[linear-gradient(180deg,rgba(43,47,64,0.20)0%,rgba(43,47,64,0.00)100%)]';
+import { type TableStatusProps, type TangleCloudTableProps } from './type';
 
 export const TangleCloudTable = <T extends RowData>({
   title,
@@ -31,48 +38,41 @@ export const TangleCloudTable = <T extends RowData>({
     : 'Indexer or network request failed.';
   const hasTitle = !hideTitle;
 
-  const titleElement = hasTitle ? (
-    <Typography variant="h5" fw="bold">
-      {title}
-    </Typography>
-  ) : undefined;
-
   if (isLoading) {
     return (
-      <div className={GLASS_CONTAINER_CLASS}>
-        {hasTitle ? titleElement : null}
-
-        <TableStatus
-          {...loadingTableProps}
-          title={loadingTableProps?.title ?? 'Loading data ...'}
-          description={
-            loadingTableProps?.description ??
-            'Please wait while we load the data.'
-          }
-          icon={loadingTableProps?.icon ?? '🔄'}
-          className={twMerge(
-            'w-full !border-0 !rounded-none !p-0',
-            hasTitle ? 'mt-3' : null,
-            loadingTableProps?.className,
-          )}
-        />
-      </div>
+      <TableShell className={tableConfig?.className}>
+        {hasTitle ? <TableTitle>{title}</TableTitle> : null}
+        <div className={twMerge('space-y-3', hasTitle ? 'mt-4' : null)}>
+          <Skeleton className="h-10 rounded-md" />
+          <Skeleton className="h-14 rounded-md" />
+          <Skeleton className="h-14 rounded-md" />
+          <TableStatus
+            {...loadingTableProps}
+            title={loadingTableProps?.title ?? 'Loading data'}
+            description={
+              loadingTableProps?.description ??
+              'Please wait while we load the latest indexed data.'
+            }
+            icon={loadingTableProps?.icon ?? 'Loading'}
+            className={loadingTableProps?.className}
+          />
+        </div>
+      </TableShell>
     );
   }
 
   if (error) {
     return (
-      <div className={GLASS_CONTAINER_CLASS}>
-        {hasTitle ? titleElement : null}
-
+      <TableShell className={tableConfig?.className}>
+        {hasTitle ? <TableTitle>{title}</TableTitle> : null}
         <TableStatus
           {...errorTableProps}
-          title={errorTableProps?.title ?? 'Unable to Load Data'}
+          title={errorTableProps?.title ?? 'Unable to load data'}
           description={
             errorTableProps?.description ??
             `We could not load the latest data. ${diagnostics}`
           }
-          icon={errorTableProps?.icon ?? '⚠️'}
+          icon={errorTableProps?.icon ?? 'Error'}
           buttonText={
             errorTableProps?.buttonText ?? (hasRetry ? 'Retry' : undefined)
           }
@@ -81,55 +81,186 @@ export const TangleCloudTable = <T extends RowData>({
             (hasRetry ? { onClick: () => void onRetry() } : undefined)
           }
           className={twMerge(
-            'w-full !border-0 !rounded-none !p-0',
-            hasTitle ? 'mt-3' : null,
+            hasTitle ? 'mt-4' : null,
             errorTableProps?.className,
           )}
         />
-      </div>
+      </TableShell>
     );
   }
 
   if (isEmpty) {
     return (
-      <div className={GLASS_CONTAINER_CLASS}>
-        {hasTitle ? titleElement : null}
-
+      <TableShell className={tableConfig?.className}>
+        {hasTitle ? <TableTitle>{title}</TableTitle> : null}
         <TableStatus
           {...emptyTableProps}
-          title={emptyTableProps?.title ?? 'Empty Table'}
-          description={emptyTableProps?.description ?? 'No data found'}
-          icon={emptyTableProps?.icon ?? '🔍'}
+          title={emptyTableProps?.title ?? `No ${title.toLowerCase()} yet`}
+          description={
+            emptyTableProps?.description ?? 'There is no indexed data yet.'
+          }
+          icon={emptyTableProps?.icon ?? 'Empty'}
           className={twMerge(
-            'w-full !border-0 !rounded-none !p-0',
-            hasTitle ? 'mt-3' : null,
+            hasTitle ? 'mt-4' : null,
             emptyTableProps?.className,
           )}
         />
-      </div>
+      </TableShell>
     );
   }
 
+  const pageCount = tableProps.getPageCount();
+  const pageIndex = tableProps.getState().pagination?.pageIndex ?? 0;
+  const rowCount = tableProps.getRowCount();
+
   return (
-    <Table
-      title={hasTitle ? title : ''}
-      variant={TableVariant.GLASS_OUTER}
-      isPaginated
-      {...tableConfig}
-      tableProps={tableProps as any}
-      className={twMerge(
-        hasTitle ? 'w-full px-6 pt-4' : 'w-full px-6 pt-0',
-        tableConfig?.className,
-      )}
-      tableClassName={tableConfig?.tableClassName}
-      thClassName={tableConfig?.thClassName}
-      tbodyClassName={tableConfig?.tbodyClassName}
-      trClassName={twMerge('group overflow-hidden', tableConfig?.trClassName)}
-      tdClassName={twMerge('!p-3 max-w-xs', tableConfig?.tdClassName)}
-      paginationClassName={tableConfig?.paginationClassName}
-      titleElement={hasTitle ? titleElement : undefined}
-    />
+    <TableShell className={tableConfig?.className}>
+      {hasTitle ? <TableTitle>{title}</TableTitle> : null}
+
+      <Table
+        className={twMerge(
+          hasTitle ? 'mt-4' : null,
+          tableConfig?.tableClassName,
+        )}
+      >
+        <TableHeader>
+          {tableProps.getHeaderGroups().map((headerGroup) => (
+            <TableRow key={headerGroup.id} className="border-border">
+              {headerGroup.headers.map((header) => (
+                <TableHead
+                  key={header.id}
+                  className={twMerge(
+                    'h-11 whitespace-nowrap px-4 font-semibold text-muted-foreground text-xs uppercase tracking-wider',
+                    tableConfig?.thClassName,
+                  )}
+                >
+                  {header.isPlaceholder
+                    ? null
+                    : flexRender(
+                        header.column.columnDef.header,
+                        header.getContext(),
+                      )}
+                </TableHead>
+              ))}
+            </TableRow>
+          ))}
+        </TableHeader>
+
+        <TableBody className={tableConfig?.tbodyClassName}>
+          {tableProps.getRowModel().rows.map((row) => (
+            <TableRow
+              key={row.id}
+              data-expanded={row.getIsExpanded()}
+              className={twMerge(
+                'border-border transition-colors hover:bg-muted/35',
+                tableConfig?.trClassName,
+                row.getIsExpanded() && tableConfig?.expandedRowClassName,
+              )}
+            >
+              {row.getVisibleCells().map((cell) => (
+                <TableCell
+                  key={cell.id}
+                  className={twMerge(
+                    'px-4 py-3 align-middle text-foreground text-sm',
+                    tableConfig?.tdClassName,
+                  )}
+                >
+                  {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                </TableCell>
+              ))}
+            </TableRow>
+          ))}
+        </TableBody>
+      </Table>
+
+      <div
+        className={twMerge(
+          'mt-4 flex flex-col gap-3 border-border border-t pt-4 text-muted-foreground text-sm sm:flex-row sm:items-center sm:justify-between',
+          tableConfig?.paginationClassName,
+        )}
+      >
+        <span>
+          Showing {rowCount} {rowCount === 1 ? 'row' : 'rows'}
+        </span>
+
+        {pageCount > 1 ? (
+          <div className="flex items-center gap-2">
+            <Button
+              variant="outline"
+              size="sm"
+              disabled={!tableProps.getCanPreviousPage()}
+              onClick={() => tableProps.previousPage()}
+            >
+              Previous
+            </Button>
+            <span className="px-2 font-mono text-xs">
+              {pageIndex + 1}/{pageCount}
+            </span>
+            <Button
+              variant="outline"
+              size="sm"
+              disabled={!tableProps.getCanNextPage()}
+              onClick={() => tableProps.nextPage()}
+            >
+              Next
+            </Button>
+          </div>
+        ) : null}
+      </div>
+    </TableShell>
   );
 };
 
 TangleCloudTable.displayName = 'TangleCloudTable';
+
+const TableShell = ({
+  className,
+  children,
+}: {
+  className?: string;
+  children: React.ReactNode;
+}) => (
+  <Card
+    variant="sandbox"
+    className={twMerge('w-full overflow-hidden border-border', className)}
+  >
+    <CardContent className="p-4 md:p-5">{children}</CardContent>
+  </Card>
+);
+
+const TableTitle = ({ children }: { children: React.ReactNode }) => (
+  <div className="font-display font-bold text-foreground text-lg">
+    {children}
+  </div>
+);
+
+const TableStatus = ({
+  title,
+  description,
+  icon = 'Empty',
+  buttonText,
+  buttonProps,
+  className,
+}: TableStatusProps) => (
+  <div
+    className={twMerge(
+      'flex min-h-56 flex-col items-center justify-center rounded-xl border border-dashed border-border bg-muted/30 p-8 text-center',
+      className,
+    )}
+  >
+    <div className="rounded-full border border-border bg-card px-3 py-1 font-mono text-muted-foreground text-[10px] uppercase tracking-wider">
+      {icon}
+    </div>
+    <h3 className="mt-4 font-display font-bold text-foreground text-lg">
+      {title}
+    </h3>
+    <p className="mt-2 max-w-2xl text-muted-foreground text-sm leading-relaxed">
+      {description}
+    </p>
+    {buttonText ? (
+      <Button variant="outline" size="sm" className="mt-5" {...buttonProps}>
+        {buttonText}
+      </Button>
+    ) : null}
+  </div>
+);

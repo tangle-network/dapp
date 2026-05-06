@@ -4,11 +4,11 @@ This directory contains scripts to run a fully simulatable local environment for
 
 ## Scripts
 
-| Script | Description |
-|--------|-------------|
-| `start-local-env.sh` | Start Anvil, deploy TNT contracts, run indexer & claim relayer |
-| `deploy-migration.sh` | Deploy TangleMigration contracts for TNT token claims |
-| `activity-generator.mjs` | Generate simulated staking activity |
+| Script                   | Description                                                    |
+| ------------------------ | -------------------------------------------------------------- |
+| `start-local-env.sh`     | Start Anvil, deploy TNT contracts, run indexer & claim relayer |
+| `deploy-migration.sh`    | Deploy TangleMigration contracts for TNT token claims          |
+| `activity-generator.mjs` | Generate simulated staking activity                            |
 
 ## Prerequisites
 
@@ -33,6 +33,7 @@ TNT_CORE_DIR=/path/to/tnt-core ./scripts/local-env/start-local-env.sh
 ```
 
 This will:
+
 1. Start Anvil (local Ethereum node) on port 8545 with chain ID 31337
 2. Deploy all TNT contracts
 3. Deploy the migration contracts and copy proofs
@@ -79,13 +80,13 @@ RPC_URL=http://localhost:8545 node scripts/local-env/activity-generator.mjs
 
 ### Environment Variables
 
-| Variable | Default | Description |
-|----------|---------|-------------|
-| `TNT_CORE_DIR` | Auto-detected | Path to tnt-core repository |
-| `RPC_URL` | `http://localhost:8545` | Anvil RPC endpoint |
-| `ACTIVITY_INTERVAL_MS` | `10000` | Interval between activities (ms) |
-| `CLAIM_RELAYER_PORT` | `3001` | Port for the gasless claim relayer API |
-| `CLAIM_RELAYER_PRIVATE_KEY` | Anvil account #1 | Private key the relayer uses to pay gas |
+| Variable                    | Default                 | Description                             |
+| --------------------------- | ----------------------- | --------------------------------------- |
+| `TNT_CORE_DIR`              | Auto-detected           | Path to tnt-core repository             |
+| `RPC_URL`                   | `http://localhost:8545` | Anvil RPC endpoint                      |
+| `ACTIVITY_INTERVAL_MS`      | `10000`                 | Interval between activities (ms)        |
+| `CLAIM_RELAYER_PORT`        | `3001`                  | Port for the gasless claim relayer API  |
+| `CLAIM_RELAYER_PRIVATE_KEY` | Anvil account #1        | Private key the relayer uses to pay gas |
 
 ### dApp Config
 
@@ -101,10 +102,10 @@ VITE_CLAIM_RELAYER_URL=http://localhost:3001
 
 These are deterministic addresses from Anvil's default deployer:
 
-| Contract | Address |
-|----------|---------|
-| Tangle | `0xCf7Ed3AccA5a467e9e704C703E8D87F634fB0Fc9` |
-| MultiAssetDelegation | `0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512` |
+| Contract               | Address                                      |
+| ---------------------- | -------------------------------------------- |
+| Tangle                 | `0xCf7Ed3AccA5a467e9e704C703E8D87F634fB0Fc9` |
+| MultiAssetDelegation   | `0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512` |
 | OperatorStatusRegistry | `0xDc64a140Aa3E981100a9becA4E685f962f0cF6C9` |
 
 ## Interactive CLI
@@ -149,10 +150,57 @@ The activity generator (`activity-generator.mjs`) simulates user activity:
 - **Operator Registrations**: New operators joining the network
 
 Activities are weighted:
+
 - 40% deposits
 - 30% delegations
 - 20% multi-deposits (batch)
 - 10% operator registrations
+
+## Tier 2 Blueprint UI Catalog
+
+The local environment can seed the AI blueprint catalog used by Tangle Cloud's
+secure Tier 2 hosted UI. The catalog pulls the real
+`metadata/blueprint-metadata.json` files from the sibling blueprint repos,
+registers each blueprint on the local EVM Tangle contract, pins the canonical
+metadata hash onchain, signs the metadata with the local blueprint owner key,
+registers two local protocol operators, and creates one approved service
+request per blueprint.
+
+Start local contracts and the indexer first:
+
+```bash
+./scripts/local-env/start-local-env.sh
+```
+
+Then run the catalog seeder and metadata server from the dapp root:
+
+```bash
+yarn local:blueprint-ui-catalog
+```
+
+This command serves signed metadata at `http://127.0.0.1:3337/*.json`. Keep it
+running while using Tangle Cloud locally so the browser can fetch and verify the
+metadata. The dapp will downgrade to the generic host if the metadata server is
+stopped, the onchain hash does not match, or the owner signature does not verify.
+
+Useful split commands:
+
+```bash
+yarn local:blueprint-ui-catalog:seed   # Register/update local protocol fixtures
+yarn local:blueprint-ui-catalog:serve  # Serve already-generated metadata JSON
+```
+
+To view the seeded blueprints, start Tangle Cloud with local chain forcing:
+
+```bash
+VITE_FORCE_LOCAL_CHAIN=true yarn start:tangle-cloud
+```
+
+Connect a wallet to `Localhost 8545` (chain ID `31337`) and use the local Envio
+endpoint at `http://localhost:8080/v1/graphql`. These fixtures prove the
+onchain blueprint/operator/service lifecycle and Tier 2 UI ingestion path; they
+do not start the actual inference or sandbox runtime binaries for each
+blueprint.
 
 ## TNT as a Staking Asset
 
@@ -182,6 +230,7 @@ curl http://localhost:8080/v1/graphql \
 ## Troubleshooting
 
 ### Anvil won't start
+
 ```bash
 # Check if port is in use
 lsof -i:8545
@@ -190,6 +239,7 @@ lsof -ti:8545 | xargs kill -9
 ```
 
 ### Indexer not connecting
+
 ```bash
 # Check Docker containers
 docker compose ps
@@ -198,6 +248,7 @@ tail -f /tmp/indexer.log
 ```
 
 ### No activity showing up
+
 ```bash
 # Check Anvil is receiving transactions
 tail -f /tmp/anvil.log
@@ -206,6 +257,7 @@ cast call 0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512 "owner()(address)" --rpc-ur
 ```
 
 ### Wallet shows 0 balance
+
 Some wallet extensions cache balances. Make sure the wallet is connected to `Localhost 8545` (chain ID `31337`) and that you imported one of the default Anvil private keys. If it still displays zero, run `fund <your-address>` inside the local-env CLI to top the account up, then refresh or reset the account in the wallet UI.
 
 ## Logs
@@ -233,6 +285,7 @@ After starting the local environment, deploy the migration contracts:
 ```
 
 This will:
+
 1. Build and deploy TNT token, TangleMigration, and MockZKVerifier contracts (from `tnt-core/packages/migration-claim`)
 2. Fund TangleMigration with the Substrate Merkle total from `merkle-tree.json`
 3. Copy `merkle-tree.json` to `apps/tangle-dapp/public/data/migration-proofs.json`
@@ -250,6 +303,7 @@ After deployment, you'll see addresses like:
 ### Test the Migration Claim
 
 1. Start the dApp:
+
    ```bash
    yarn start:tangle-dapp
    ```

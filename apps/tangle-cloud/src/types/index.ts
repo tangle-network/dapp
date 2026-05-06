@@ -1,6 +1,7 @@
 import { PrimitiveField } from '@tangle-network/tangle-shared-ui/types/blueprint';
-import { TANGLE_DAPP_URL } from '@tangle-network/ui-components/constants';
 import type { Address } from 'viem';
+
+const TANGLE_DAPP_URL = 'https://app.tangle.tools';
 
 const ensureTrailingSlash = (url: string): string =>
   url.endsWith('/') ? url : `${url}/`;
@@ -16,6 +17,10 @@ export enum PagePath {
   BLUEPRINTS = '/blueprints',
   BLUEPRINTS_DETAILS = '/blueprints/:id',
   BLUEPRINTS_DEPLOY = '/blueprints/:id/deploy',
+  BLUEPRINTS_APP_SERVICE = '/blueprints/:slug/:serviceId',
+  BLUEPRINTS_APP_SCOPED = '/blueprints/:publisher/:slug',
+  BLUEPRINTS_APP_SCOPED_SERVICE = '/blueprints/:publisher/:slug/:serviceId',
+  BLUEPRINTS_PROTOCOL_SERVICE = '/blueprints/:id/services/:serviceId',
   BLUEPRINTS_CREATE = '/blueprints/create',
   BLUEPRINTS_MANAGE = '/blueprints/manage',
   BLUEPRINTS_REGISTRATION_REVIEW = '/registration-review',
@@ -36,7 +41,7 @@ export const TangleDAppPagePath = {
 } as const;
 
 /**
- * Asset structure matching the contract's Asset struct.
+ * Asset structure matching the contract's `Types.Asset`.
  * - kind: 0 = Native token, 1 = ERC20 token
  * - token: The token address (zero address for native)
  */
@@ -46,8 +51,9 @@ export type ContractAsset = {
 };
 
 /**
- * Security commitment structure matching the contract's AssetSecurityCommitment struct.
- * Used when calling approveServiceWithCommitments.
+ * Security commitment matching the contract's `Types.AssetSecurityCommitment`.
+ * Threaded into `approveService(ApprovalParams)` as the operator's per-asset
+ * exposure decision against the request's `AssetSecurityRequirement`s.
  */
 export type ContractSecurityCommitment = {
   asset: ContractAsset;
@@ -56,17 +62,15 @@ export type ContractSecurityCommitment = {
 
 /**
  * Form fields for the approval confirmation modal.
- * Supports two approval modes:
- * 1. Simple approval: Only stakingPercent is provided
- * 2. Approval with commitments: securityCommitments array is provided
+ *
+ * Single approval mode under the unified `approveService(ApprovalParams)`
+ * entrypoint: the operator either supplies explicit `securityCommitments` or
+ * omits them. When omitted, the contract auto-fills at the requirement's
+ * `minExposureBps` for the default-TNT-only case and reverts otherwise.
  */
 export type ApprovalConfirmationFormFields = {
   requestId: number;
-  /** Simple approval mode: single percentage (0-100) for default TNT requirement */
-  stakingPercent?: number;
-  /** TNT exposure in basis points (0-10000), when set calls 3-arg approveService overload */
-  tntExposureBps?: number;
-  /** Commitments mode: per-asset exposure commitments matching contract format */
+  /** Per-asset exposure commitments. Omitted when the operator accepts on-chain auto-fill. */
   securityCommitments?: ContractSecurityCommitment[];
 };
 

@@ -1,14 +1,6 @@
 import FieldTypeInput from '@tangle-network/tangle-shared-ui/components/PrimitiveFieldTypeInput';
 import type { Blueprint } from '@tangle-network/tangle-shared-ui/types/blueprint';
-import { Input } from '@tangle-network/ui-components';
-import {
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from '@tangle-network/ui-components/components/form';
-import { Typography } from '@tangle-network/ui-components/typography/Typography';
+import { Input, Text } from '../../../../components/sandbox/SandboxUi';
 import { FC, useCallback } from 'react';
 import { UseFormReturn } from 'react-hook-form';
 import {
@@ -46,41 +38,40 @@ const ConfigureStep: FC<ConfigureStepProps> = ({ blueprints, form }) => {
   return (
     <div className="space-y-6">
       <div>
-        <Typography variant="h5" fw="bold" className="mb-2">
+        <Text variant="h5" fw="bold" className="mb-2">
           Configure Settings
-        </Typography>
+        </Text>
 
-        <Typography
-          variant="body2"
-          className="text-mono-120 dark:text-mono-100"
-        >
+        <Text variant="body2" className="text-muted-foreground">
           Configure your RPC URL and registration parameters for each blueprint.
-        </Typography>
+        </Text>
       </div>
 
-      <FormField
-        control={form.control}
-        name="rpcUrl"
-        render={({ field }) => (
-          <FormItem>
-            <FormLabel>RPC URL</FormLabel>
-            <FormControl>
-              <Input
-                id="rpc-url-input"
-                placeholder="https://rpc.example.com"
-                isControlled
-                {...field}
-              />
-            </FormControl>
-            <FormMessage />
-          </FormItem>
+      <div className="space-y-2">
+        <label className="text-sm font-medium text-foreground">RPC URL</label>
+        <Input
+          id="rpc-url-input"
+          placeholder="https://rpc.example.com"
+          isControlled
+          value={form.watch('rpcUrl') ?? ''}
+          onChange={(value) =>
+            form.setValue('rpcUrl', value, {
+              shouldDirty: true,
+              shouldValidate: true,
+            })
+          }
+        />
+        {form.formState.errors.rpcUrl?.message && (
+          <Text variant="body3" className="text-destructive">
+            {form.formState.errors.rpcUrl.message}
+          </Text>
         )}
-      />
+      </div>
 
       {typeof blueprintConfigError?.message === 'string' && (
-        <Typography variant="body3" className="text-red-500">
+        <Text variant="body3" className="text-destructive">
           {blueprintConfigError.message}
-        </Typography>
+        </Text>
       )}
 
       {blueprints.map((blueprint) => {
@@ -99,7 +90,7 @@ const ConfigureStep: FC<ConfigureStepProps> = ({ blueprints, form }) => {
         return (
           <div
             key={blueprintId}
-            className="p-4 border border-mono-80 dark:border-mono-160 rounded-lg space-y-4"
+            className="p-4 border border-border rounded-lg space-y-4 bg-card/70"
           >
             <div className="flex items-center gap-3">
               {blueprint.imgUrl && (
@@ -113,24 +104,21 @@ const ConfigureStep: FC<ConfigureStepProps> = ({ blueprints, form }) => {
               )}
 
               <div>
-                <Typography variant="body2" fw="bold">
+                <Text variant="body2" fw="bold">
                   {blueprint.name}
-                </Typography>
-                <Typography
-                  variant="body3"
-                  className="text-mono-120 dark:text-mono-100"
-                >
+                </Text>
+                <Text variant="body3" className="text-muted-foreground">
                   {blueprint.registrationParams.length} parameter
                   {blueprint.registrationParams.length > 1 ? 's' : ''} required
-                </Typography>
+                </Text>
 
                 {missingParamIndices.length > 0 && (
-                  <Typography variant="body3" className="text-red-500">
+                  <Text variant="body3" className="text-destructive">
                     Missing required params:{' '}
                     {missingParamIndices
                       .map((index) => `#${index + 1}`)
                       .join(', ')}
-                  </Typography>
+                  </Text>
                 )}
               </div>
             </div>
@@ -160,12 +148,12 @@ const ConfigureStep: FC<ConfigureStepProps> = ({ blueprints, form }) => {
       })}
 
       {blueprints.every((bp) => bp.registrationParams.length === 0) && (
-        <Typography
+        <Text
           variant="body2"
-          className="text-mono-120 dark:text-mono-100 p-4 bg-mono-40 dark:bg-mono-160 rounded-lg"
+          className="text-muted-foreground p-4 bg-muted/40 rounded-lg"
         >
           None of the selected blueprints require registration parameters.
-        </Typography>
+        </Text>
       )}
     </div>
   );

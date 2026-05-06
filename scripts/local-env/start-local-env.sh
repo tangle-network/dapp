@@ -153,6 +153,17 @@ log_success() { echo -e "${GREEN}[SUCCESS]${NC} $1"; }
 log_warn() { echo -e "${YELLOW}[WARN]${NC} $1"; }
 log_error() { echo -e "${RED}[ERROR]${NC} $1"; }
 
+repair_generated_package_link() {
+    if [[ ! -d "$INDEXER_DIR/generated" ]]; then
+        return 1
+    fi
+
+    mkdir -p "$INDEXER_DIR/node_modules"
+    rm -rf "$INDEXER_DIR/node_modules/.pnpm/generated@"* 2>/dev/null || true
+    rm -rf "$INDEXER_DIR/node_modules/generated" 2>/dev/null || true
+    ln -sfn ../generated "$INDEXER_DIR/node_modules/generated"
+}
+
 resolve_forge_script_target() {
     local modern="$1"
     local legacy="$2"
@@ -690,14 +701,56 @@ deploy_contracts() {
         rm -rf "broadcast/$localtestnet_script_name/" 2>/dev/null || true
 
         log_info "Running LocalTestnet setup (attempt $attempt/2)..."
+        : > /tmp/deploy.log
         set +e
-        forge script "${localtestnet_script}:LocalTestnetSetup" \
-            --rpc-url "http://127.0.0.1:$ANVIL_PORT" \
-            --private-key "$ANVIL_PRIVATE_KEY" \
-            --broadcast \
-            --non-interactive \
-            --slow 2>&1 | tee /tmp/deploy.log
-        forge_status=${PIPESTATUS[0]}
+        (
+            forge script "${localtestnet_script}:LocalTestnetSetup" \
+                --rpc-url "http://127.0.0.1:$ANVIL_PORT" \
+                --private-key "$ANVIL_PRIVATE_KEY" \
+                --broadcast \
+                --non-interactive \
+                --slow
+        ) 2>&1 | tee /tmp/deploy.log &
+        local deploy_pipe_pid=$!
+        local waited=0
+        forge_status=0
+
+        while kill -0 "$deploy_pipe_pid" 2>/dev/null; do
+            sleep 2
+            waited=$((waited + 2))
+
+            if grep -q "=== Local Testnet Ready ===" /tmp/deploy.log 2>/dev/null; then
+                deployer_nonce=$(curl -s "http://127.0.0.1:$ANVIL_PORT" -X POST -H "Content-Type: application/json" \
+                    --data '{"jsonrpc":"2.0","method":"eth_getTransactionCount","params":["0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266", "latest"],"id":1}' \
+                    | grep -o '"result":"[^"]*"' | cut -d'"' -f4)
+                contract_code=$(curl -s "http://127.0.0.1:$ANVIL_PORT" -X POST -H "Content-Type: application/json" \
+                    --data '{"jsonrpc":"2.0","method":"eth_getCode","params":["0xCf7Ed3AccA5a467e9e704C703E8D87F634fB0Fc9", "latest"],"id":1}' \
+                    | grep -o '"result":"[^"]*"' | cut -d'"' -f4)
+
+                if [[ "$deployer_nonce" != "0x0" && -n "$contract_code" && "$contract_code" != "0x" ]]; then
+                    log_warn "LocalTestnet deployment completed but forge did not exit cleanly; terminating the lingering process."
+                    pkill -TERM -P "$deploy_pipe_pid" 2>/dev/null || true
+                    kill -TERM "$deploy_pipe_pid" 2>/dev/null || true
+                    sleep 1
+                    pkill -KILL -P "$deploy_pipe_pid" 2>/dev/null || true
+                    kill -KILL "$deploy_pipe_pid" 2>/dev/null || true
+                    break
+                fi
+            fi
+
+            if [[ "$waited" -ge 600 ]]; then
+                log_warn "LocalTestnet setup exceeded 600s; terminating forge process."
+                pkill -TERM -P "$deploy_pipe_pid" 2>/dev/null || true
+                kill -TERM "$deploy_pipe_pid" 2>/dev/null || true
+                sleep 1
+                pkill -KILL -P "$deploy_pipe_pid" 2>/dev/null || true
+                kill -KILL "$deploy_pipe_pid" 2>/dev/null || true
+                break
+            fi
+        done
+
+        wait "$deploy_pipe_pid"
+        forge_status=$?
         set -e
 
         if [[ "$forge_status" -ne 0 ]]; then
@@ -1204,9 +1257,7 @@ start_indexer() {
 
     # Setup generated package symlink
     log_info "Setting up generated package symlink..."
-    rm -rf node_modules/.pnpm/generated@* 2>/dev/null || true
-    rm -rf node_modules/generated 2>/dev/null || true
-    ln -sfn ../generated node_modules/generated
+    repair_generated_package_link
 
     # Clear persisted state
     rm -f "$INDEXER_DIR/generated/persisted_state.envio.json"
@@ -1266,13 +1317,13 @@ start_indexer() {
 
     # Re-create symlink
     cd "$INDEXER_DIR"
-    rm -rf node_modules/generated 2>/dev/null || true
-    ln -sfn ../generated node_modules/generated
+    repair_generated_package_link
 
     # Start the indexer
     log_info "Starting indexer..."
     ensure_free_indexer_port
     cd "$INDEXER_DIR/generated"
+    repair_generated_package_link
     env \
         "ENVIO_RPC_URL_${ANVIL_CHAIN_ID}=http://127.0.0.1:$ANVIL_PORT" \
         ENVIO_INDEXER_PORT="$ENVIO_INDEXER_PORT" \
@@ -1637,6 +1688,7 @@ restart_indexer() {
     # Restart the indexer process
     log_info "Restarting indexer..."
     ensure_free_indexer_port
+    repair_generated_package_link
     env \
         "ENVIO_RPC_URL_${ANVIL_CHAIN_ID}=http://127.0.0.1:$ANVIL_PORT" \
         ENVIO_INDEXER_PORT="$ENVIO_INDEXER_PORT" \
@@ -2335,6 +2387,7 @@ resume_session() {
         log_warn "Indexer not running. Starting..."
         cd "$INDEXER_DIR/generated"
         ensure_free_indexer_port
+        repair_generated_package_link
         env \
             "ENVIO_RPC_URL_${ANVIL_CHAIN_ID}=http://127.0.0.1:$ANVIL_PORT" \
             ENVIO_INDEXER_PORT="$ENVIO_INDEXER_PORT" \

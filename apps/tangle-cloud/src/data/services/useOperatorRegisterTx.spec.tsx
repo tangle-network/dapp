@@ -1,7 +1,11 @@
 import { act, renderHook } from '@testing-library/react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { zeroAddress } from 'viem';
-import { TxStatus, useOperatorBatchRegisterTx } from './useOperatorRegisterTx';
+import {
+  TxStatus,
+  useOperatorBatchPreRegisterTx,
+  useOperatorBatchRegisterTx,
+} from './useOperatorRegisterTx';
 
 const {
   mockUseChainId,
@@ -179,5 +183,47 @@ describe('useOperatorBatchRegisterTx', () => {
     expect(executionResult).toBeNull();
     expect(result.current.status).toBe(TxStatus.ERROR);
     expect(result.current.error?.message).toBe('write failed');
+  });
+
+  it('pre-registers selected blueprints and emits progress updates', async () => {
+    const onProgress = vi.fn();
+
+    mockRegisterExecute
+      .mockResolvedValueOnce({ hash: '0xhash1' })
+      .mockResolvedValueOnce({ hash: '0xhash2' });
+
+    const { result } = renderHook(() =>
+      useOperatorBatchPreRegisterTx({ onProgress }),
+    );
+
+    let executionResult: Awaited<ReturnType<typeof result.current.execute>> =
+      undefined;
+
+    await act(async () => {
+      executionResult = await result.current.execute({
+        blueprintIds: [1n, 2n],
+      });
+    });
+
+    expect(executionResult).toEqual({
+      successfulBlueprintIds: [1n, 2n],
+      failedBlueprintIds: [],
+      txHashes: ['0xhash1', '0xhash2'],
+    });
+
+    expect(onProgress).toHaveBeenCalledTimes(2);
+    expect(onProgress).toHaveBeenNthCalledWith(1, {
+      current: 1,
+      total: 2,
+      blueprintId: 1n,
+    });
+    expect(onProgress).toHaveBeenNthCalledWith(2, {
+      current: 2,
+      total: 2,
+      blueprintId: 2n,
+    });
+
+    expect(result.current.status).toBe(TxStatus.COMPLETE);
+    expect(result.current.txHash).toBe('0xhash2');
   });
 });

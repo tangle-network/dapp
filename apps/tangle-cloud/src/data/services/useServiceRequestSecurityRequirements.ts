@@ -9,8 +9,9 @@ import { Address, zeroAddress } from 'viem';
 import TANGLE_ABI from '@tangle-network/tangle-shared-ui/abi/tangle';
 import { useEvmAssetMetadatas } from '@tangle-network/tangle-shared-ui/hooks/useEvmAssetMetadatas';
 import { useMemo } from 'react';
-import type { EvmAddress } from '@tangle-network/ui-components/types/address';
 import getContractsForChain from './getContractsForChain';
+
+type EvmAddress = Address;
 
 // Default TNT requirement constants (must match contract)
 const DEFAULT_TNT_MAX_EXPOSURE_BPS = 10000; // 100%
@@ -198,7 +199,7 @@ export const useServiceRequestSecurityRequirements = (
 
   // Fetch token metadata
   const { data: tokenMetadatas, isLoading: isLoadingMetadata } =
-    useEvmAssetMetadatas(tokenAddresses);
+    useEvmAssetMetadatas(tokenAddresses as any);
 
   // Combine requirements with metadata
   const requirementsWithMetadata = useMemo<
