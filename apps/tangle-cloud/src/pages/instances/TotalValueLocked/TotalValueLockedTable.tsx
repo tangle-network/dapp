@@ -25,16 +25,20 @@ import type {
 } from '../../../components/tangleCloudTable/type';
 import { Link } from 'react-router';
 import { TangleDAppPagePath } from '../../../types';
-import type { BN } from '@polkadot/util';
 
-const toBigInt = (value: bigint | BN): bigint =>
+// Locally typed to avoid pulling in `@polkadot/util` for a type-only reference.
+// The shared `StakingVault` shape uses BN for some amount fields; we only ever
+// call `.toString()` on them, so a structural type is sufficient.
+type BigIntish = bigint | { toString(): string };
+
+const toBigInt = (value: BigIntish): bigint =>
   typeof value === 'bigint' ? value : BigInt(value.toString());
 const pluralize = (word: string, plural: boolean) =>
   plural ? `${word}s` : word;
 const formatPercentage = (value: number) =>
   `${(value * 100).toLocaleString(undefined, { maximumFractionDigits: 2 })}%`;
 
-const formatAmount = (amount: bigint | BN, decimals: number): string => {
+const formatAmount = (amount: BigIntish, decimals: number): string => {
   const formatted = formatUnits(toBigInt(amount), decimals);
   const num = parseFloat(formatted);
   if (num === 0) return '0';
@@ -46,7 +50,7 @@ const formatAmount = (amount: bigint | BN, decimals: number): string => {
   });
 };
 
-const calculateRatio = (a: bigint | BN, b: bigint | BN): number => {
+const calculateRatio = (a: BigIntish, b: BigIntish): number => {
   const aBigInt = toBigInt(a);
   const bBigInt = toBigInt(b);
   if (bBigInt === BigInt(0)) return 0;

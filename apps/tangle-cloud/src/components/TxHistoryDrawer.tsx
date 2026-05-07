@@ -1,4 +1,3 @@
-import { BN } from '@polkadot/util';
 import * as Dialog from '@radix-ui/react-dialog';
 import {
   CheckboxCircleLine,
@@ -30,7 +29,7 @@ const shortenHex = (value: string) =>
   value.length > 14 ? `${value.slice(0, 8)}...${value.slice(-6)}` : value;
 const shortenString = (value: string) =>
   value.length > 14 ? `${value.slice(0, 8)}...${value.slice(-6)}` : value;
-const formatDisplayAmount = (value: BN | bigint, decimals: number) => {
+const formatDisplayAmount = (value: bigint, decimals: number) => {
   const raw = value.toString();
   if (decimals <= 0) return addCommasToNumber(Number(raw));
   const padded = raw.padStart(decimals + 1, '0');
@@ -203,7 +202,7 @@ const DetailRow: FC<DetailRowProps> = ({
     if (typeof value === 'number') {
       if (isAmountKey) {
         const decimals = tokenMetadata?.decimals ?? 18;
-        const formatted = formatDisplayAmount(new BN(value), decimals);
+        const formatted = formatDisplayAmount(BigInt(value), decimals);
         if (isSharesKey) {
           return formatted;
         }
@@ -224,7 +223,7 @@ const DetailRow: FC<DetailRowProps> = ({
     if (typeof value === 'string') {
       if (isAmountKey && isNumericString(value)) {
         const decimals = tokenMetadata?.decimals ?? 18;
-        const formatted = formatDisplayAmount(new BN(value), decimals);
+        const formatted = formatDisplayAmount(BigInt(value), decimals);
         if (isSharesKey) {
           return formatted;
         }
@@ -244,7 +243,7 @@ const DetailRow: FC<DetailRowProps> = ({
   }, [value, isAmountKey, isSharesKey, tokenMetadata, nativeTokenSymbol]);
 
   const rawValue = useMemo(() => {
-    if (BN.isBN(value)) {
+    if (typeof value === 'bigint') {
       return value.toString();
     }
 

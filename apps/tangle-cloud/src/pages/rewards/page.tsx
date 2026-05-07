@@ -24,7 +24,6 @@ import {
   TableHeader,
   TableRow,
 } from '@tangle-network/sandbox-ui/primitives';
-import { BN } from '@polkadot/util';
 import {
   ExternalLinkLine,
   FileCopyLine,
@@ -59,7 +58,7 @@ const shortenHex = (value: string, chars = 6) =>
     ? `${value.slice(0, chars)}...${value.slice(-chars)}`
     : value;
 
-const formatDisplayAmount = (value: BN, decimals: number) => {
+const formatDisplayAmount = (value: bigint, decimals: number) => {
   const raw = value.toString();
   const padded = raw.padStart(decimals + 1, '0');
   const whole = padded.slice(0, -decimals);
@@ -737,7 +736,7 @@ const PendingRewardAmountCell: FC<{ token: Address; amount: bigint }> = ({
 
   return (
     <span className="font-semibold text-foreground text-sm">
-      {formatDisplayAmount(new BN(amount.toString()), decimals)}
+      {formatDisplayAmount(amount, decimals)}
     </span>
   );
 };
@@ -759,7 +758,7 @@ const RewardAmountCell: FC<{ token: Address; amount: bigint }> = ({
 
   return (
     <span className="font-semibold text-foreground text-sm">
-      {formatDisplayAmount(new BN(amount.toString()), decimals)}
+      {formatDisplayAmount(amount, decimals)}
     </span>
   );
 };
