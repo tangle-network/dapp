@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-import { execSync } from 'node:child_process';
+import { execFileSync, execSync } from 'node:child_process';
 import { createServer } from 'node:http';
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { basename, dirname, resolve } from 'node:path';
@@ -941,8 +941,16 @@ const deployBlueprintApp = async ({ slug, hostname, repoPath, build }) => {
   await ensurePagesProject(slug);
 
   console.log(`── ${slug} — wrangler pages deploy`);
-  execSync(
-    `wrangler pages deploy ${distAbs} --project-name=${slug} --branch=main --commit-dirty=true`,
+  execFileSync(
+    'wrangler',
+    [
+      'pages',
+      'deploy',
+      distAbs,
+      `--project-name=${slug}`,
+      '--branch=main',
+      '--commit-dirty=true',
+    ],
     { cwd, stdio: 'inherit' },
   );
 
