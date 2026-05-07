@@ -45,6 +45,37 @@ posts the result back.
 | `VITE_BLUEPRINT_IFRAME_PUBLISHERS` | `tangle,tangle-labs` (default) | Comma-separated publisher namespaces eligible for iframe rendering. Distinct from verified publishers. Adding entries is a governance call. |
 | `VITE_BLUEPRINT_IFRAME_HOST_SUFFIXES` | `.blueprint.tangle.tools,.blueprint.tangle.sh` | Wildcard host suffixes accepted as iframe sources. Each iframe app still needs a manifest entry; this just gates the URL shape. |
 
+## Local dev (running an iframe app from your machine)
+
+When the dapp is running on a local preview host (`localhost`, `127.0.0.1`,
+private IPv4, or `VITE_FORCE_LOCAL_CHAIN=true`), `localhost:<port>` is
+auto-accepted as an iframe-eligible host — no env-var fiddling required.
+
+End-to-end loop:
+
+```bash
+# In each blueprint repo, start its dev server.
+cd ~/code/ai-trading-blueprints/arena && pnpm dev    # serves :5173
+cd ~/code/ai-agent-sandbox-blueprint/ui && pnpm dev  # serves :1338
+
+# In the dapp, seed the local catalog with localhost iframe URLs.
+cd ~/code/dapp
+BLUEPRINT_UI_USE_LOCAL_IFRAMES=true \
+  yarn local:blueprint-ui-catalog
+
+# In a separate dapp shell, run the dapp with iframe mode on:
+VITE_BLUEPRINT_IFRAME_ENABLED=true \
+VITE_FORCE_LOCAL_CHAIN=true \
+  yarn nx serve tangle-cloud
+```
+
+Open the dapp at `localhost:4300`, navigate to any iframe-mode blueprint —
+the iframe loads from your local dev server, with HMR. Wallet flows still
+go through the parent dapp's wagmi stack via postMessage.
+
+The local URL map lives in `scripts/local-env/blueprint-ui-catalog.mjs`
+(`LOCAL_IFRAME_DEV_URLS`). Add an entry when a new blueprint gains a UI.
+
 ## Onboarding a new iframe-eligible app
 
 1. **Deploy the bundle** to a subdomain matching one of the allowed
