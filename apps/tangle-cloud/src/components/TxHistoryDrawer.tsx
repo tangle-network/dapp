@@ -16,6 +16,7 @@ import useTxHistoryStore, {
 import useEvmAddress from '@tangle-network/tangle-shared-ui/hooks/useEvmAddress';
 import { useEvmAssetMetadatas } from '@tangle-network/tangle-shared-ui/hooks/useEvmAssetMetadatas';
 import { Alert, Button, Chip, Text } from './sandbox/SandboxUi';
+import { EmptyState } from '@tangle-network/sandbox-ui/primitives';
 import { formatDistanceToNow } from 'date-fns';
 import { capitalize } from 'lodash';
 import { type FC, useMemo } from 'react';
@@ -149,9 +150,10 @@ const TxHistoryDrawer: FC = () => {
 
               {relevantTransactions === null ||
               relevantTransactions.length === 0 ? (
-                <Text variant="body2" className="text-muted-foreground">
-                  No transactions yet.
-                </Text>
+                <EmptyState
+                  title="No transactions yet"
+                  description="Submitted transactions will appear in this drawer."
+                />
               ) : (
                 relevantTransactions.map((tx) => (
                   <TransactionItem key={tx.hash} {...tx} />

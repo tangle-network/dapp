@@ -1,0 +1,87 @@
+/**
+ * Optional bundled fonts (Cousine + Satoshi).
+ *
+ * Apps that want the legacy Tangle typography (e.g. `tangle-dapp`) import
+ * this file explicitly. Consumers that prefer their own font stacks
+ * (e.g. `tangle-cloud` uses Geist via @fontsource) skip this import to
+ * avoid bundling ~443KB of WOFF2 they never reference.
+ *
+ * The CSS rules in `typography.css` declare 'Satoshi' / 'Cousine' as the
+ * first entry in their font stacks; when this file is not imported, those
+ * names simply resolve to the next fallback in the stack (system fonts or
+ * monospace), so consumers degrade gracefully.
+ */
+
+/* Font Family Cousine */
+@font-face {
+  font-family: 'Cousine';
+  src: url('fonts/Cousine-Regular.woff2') format('woff2');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Cousine';
+  src: url('fonts/Cousine-Bold.woff2') format('woff2');
+  font-weight: 800;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* Font Family Satoshi */
+@font-face {
+  font-family: 'Satoshi';
+  src: url('fonts/Satoshi-Black.woff2') format('woff2');
+  font-weight: 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Satoshi';
+  src: url('fonts/Satoshi-BlackItalic.woff2') format('woff2');
+  font-weight: 900;
+  font-style: italic;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Satoshi';
+  src: url('fonts/Satoshi-Bold.woff2') format('woff2');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Satoshi';
+  src: url('fonts/Satoshi-BoldItalic.woff2') format('woff2');
+  font-weight: 700;
+  font-style: italic;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Satoshi';
+  src: url('fonts/Satoshi-Medium.woff2') format('woff2');
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* Satoshi Variable — used via `html.font-satoshi-var` (e.g. tangle-website)
+   and the marketing `.mkt-monospace` class in layer-components.css. */
+@font-face {
+  font-family: 'Satoshi Variable';
+  src: url('fonts/Satoshi-Variable.woff2') format('woff2');
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Satoshi Variable';
+  src: url('fonts/Satoshi-VariableItalic.woff2') format('woff2');
+  font-style: italic;
+  font-display: swap;
+}

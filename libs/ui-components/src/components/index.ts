@@ -9,7 +9,6 @@ export { default as Badge } from './Badge';
 export * from './Banner';
 export * from './BottomDialog';
 export * from './Breadcrumbs';
-export * from './BridgeInputs';
 export * from './buttons';
 export * from './Caption';
 export * from './Card';

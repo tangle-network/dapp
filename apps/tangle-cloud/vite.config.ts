@@ -29,7 +29,10 @@ export default defineConfig({
   },
   plugins: [
     nodePolyfills({
-      include: ['buffer', 'crypto', 'util', 'stream'],
+      // `crypto` deliberately omitted: pulling it in adds ~680KB of
+      // crypto-browserify that no first-party code uses. WalletConnect /
+      // wagmi / viem all use Web Crypto + @noble/* directly.
+      include: ['buffer', 'util', 'stream'],
     }),
     react(),
     nxViteTsPaths(),
@@ -44,8 +47,41 @@ export default defineConfig({
     outDir: '../../dist/apps/tangle-cloud',
     emptyOutDir: true,
     reportCompressedSize: true,
+    // Modern target keeps generated code lean — no async/await downleveling,
+    // no class-field polyfills. All major browsers from 2023 onward support
+    // ES2022. Anvil-targeting wallets (MetaMask, Rabby, Frame, …) all live
+    // in modern browsers, so this is safe.
+    target: 'es2022',
     commonjsOptions: {
       transformMixedEsModules: true,
+    },
+    rollupOptions: {
+      output: {
+        // Split the formerly-1.7MB monolithic index chunk into vendor groups
+        // so the browser can parallel-fetch + cache them between deploys.
+        // First-load TTI improves because each chunk parses on its own
+        // micro-task instead of one giant blocking compile.
+        manualChunks: (id) => {
+          if (!id.includes('node_modules')) return undefined;
+          if (id.includes('@tangle-network/sandbox-ui')) return 'tangle-ui';
+          if (id.includes('@tangle-network/blueprint-ui')) return 'tangle-ui';
+          if (id.includes('@tangle-network/brand')) return 'tangle-ui';
+          if (id.includes('connectkit')) return 'wallet';
+          if (id.includes('@walletconnect')) return 'wallet';
+          if (id.includes('wagmi')) return 'wallet';
+          if (id.includes('viem')) return 'viem';
+          if (id.includes('@tanstack')) return 'tanstack';
+          if (id.includes('react-router')) return 'router';
+          if (
+            id.includes('node_modules/react/') ||
+            id.includes('node_modules/react-dom/')
+          ) {
+            return 'react';
+          }
+          if (id.includes('@radix-ui')) return 'radix';
+          return undefined;
+        },
+      },
     },
   },
   optimizeDeps: {

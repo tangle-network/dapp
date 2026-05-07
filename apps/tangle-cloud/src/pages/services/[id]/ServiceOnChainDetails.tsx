@@ -3,18 +3,14 @@
  * pricing model, and membership configuration.
  */
 
-import {
-  type ComponentProps,
-  type ElementType,
-  type FC,
-  type ReactNode,
-} from 'react';
+import { type ComponentProps, type FC, type ReactNode } from 'react';
 import {
   Badge,
   Button as SandboxButton,
   Card,
   Skeleton,
 } from '@tangle-network/sandbox-ui/primitives';
+import { Text } from '../../../components/sandbox/SandboxUi';
 import {
   useServiceDetails,
   useServiceEscrow,
@@ -39,39 +35,6 @@ interface Props {
 
 const EMPTY_VALUE_PLACEHOLDER = '-';
 const CARD_SURFACE = 'sandbox' as const;
-
-type TextProps = ComponentProps<'p'> & {
-  variant?: 'h5' | 'body1' | 'body2' | 'body3';
-  fw?: 'bold' | 'semibold';
-};
-
-const Text: FC<TextProps> = ({
-  variant = 'body2',
-  fw,
-  className = '',
-  ...props
-}) => {
-  const Component = (variant === 'h5' ? 'h2' : 'p') as ElementType;
-  const variantClass =
-    variant === 'h5'
-      ? 'font-display text-xl text-foreground'
-      : variant === 'body1'
-        ? 'text-base text-foreground'
-        : variant === 'body3'
-          ? 'text-xs text-muted-foreground'
-          : 'text-sm text-foreground';
-  const weightClass =
-    fw === 'bold' ? 'font-bold' : fw === 'semibold' ? 'font-semibold' : '';
-
-  return (
-    <Component
-      className={[variantClass, weightClass, className]
-        .filter(Boolean)
-        .join(' ')}
-      {...props}
-    />
-  );
-};
 
 type ButtonProps = Omit<
   ComponentProps<typeof SandboxButton>,

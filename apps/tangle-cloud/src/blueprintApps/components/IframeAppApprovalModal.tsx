@@ -163,7 +163,7 @@ const IframeAppApprovalModal: FC<Props> = ({
   return (
     <Dialog
       open={pending !== null}
-      onOpenChange={(open) => {
+      onOpenChange={(open: boolean) => {
         if (!open && !submitting) handleReject();
       }}
     >

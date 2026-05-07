@@ -112,7 +112,9 @@ export const RequestArgsConfigurationStep: FC<
           <Textarea
             className="mb-4 min-h-[180px] w-full resize-y font-mono"
             value={jsonText}
-            onChange={(e) => handleJsonChange(e.target.value)}
+            onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) =>
+              handleJsonChange(e.target.value)
+            }
             placeholder={`Paste JSON array with ${expectedArgsCount} item(s)`}
           />
 

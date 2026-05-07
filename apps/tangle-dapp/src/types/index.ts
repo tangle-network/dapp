@@ -4,7 +4,6 @@ export enum PagePath {
   NOMINATION_VALIDATOR = '/nomination/:validatorAddress',
   CLAIM = '/claim',
   CLAIM_MIGRATION = '/claim/migration',
-  BRIDGE = '/bridge',
   BLUEPRINTS = '/blueprints',
   BLUEPRINTS_DETAILS = '/blueprints/:id',
   SERVICES = '/services',

@@ -5,14 +5,15 @@
  */
 
 import {
+  type ChangeEvent,
   type ComponentProps,
-  type ElementType,
   type FC,
   useState,
   useCallback,
   useMemo,
   useEffect,
 } from 'react';
+import { Text } from '../../../components/sandbox/SandboxUi';
 import {
   Button as SandboxButton,
   Input as SandboxInput,
@@ -54,29 +55,6 @@ interface Props {
   blueprint: Blueprint;
 }
 
-type TextProps = ComponentProps<'p'> & {
-  variant?: 'body2' | 'body3';
-};
-
-const Text: FC<TextProps> = ({
-  variant = 'body2',
-  className = '',
-  ...props
-}) => {
-  const Component = 'p' as ElementType;
-  const variantClass =
-    variant === 'body3'
-      ? 'text-xs text-muted-foreground'
-      : 'text-sm text-foreground';
-
-  return (
-    <Component
-      className={[variantClass, className].filter(Boolean).join(' ')}
-      {...props}
-    />
-  );
-};
-
 type ButtonProps = Omit<
   ComponentProps<typeof SandboxButton>,
   'variant' | 'size'
@@ -116,7 +94,9 @@ const Input: FC<InputProps> = ({
 }) => (
   <SandboxInput
     {...props}
-    onChange={(event) => onChange?.(event.currentTarget.value)}
+    onChange={(event: ChangeEvent<HTMLInputElement>) =>
+      onChange?.(event.currentTarget.value)
+    }
   />
 );
 
@@ -561,7 +541,7 @@ export const JobSubmissionForm: FC<Props> = ({ serviceId, blueprint }) => {
             value={
               selectedJobIndex === '' ? undefined : selectedJobIndex.toString()
             }
-            onValueChange={(v) => {
+            onValueChange={(v: string) => {
               setSelectedJobIndex(Number(v));
               setUseRawJson(false);
               setInputJson('');
@@ -655,7 +635,7 @@ export const JobSubmissionForm: FC<Props> = ({ serviceId, blueprint }) => {
               className="w-full h-32 p-3 rounded-lg border border-border bg-background font-mono text-sm resize-none focus:outline-none focus:ring-2 focus:ring-ring"
               placeholder='Enter job inputs as JSON array, e.g., ["arg1", 123]'
               value={inputJson}
-              onChange={(e) => {
+              onChange={(e: ChangeEvent<HTMLTextAreaElement>) => {
                 setInputJson(e.target.value);
                 setValidationError(null);
               }}

@@ -50,7 +50,7 @@ const PaymentsPoolPage = lazy(() => import('../pages/payments/pool'));
 const PaymentsCreditsPage = lazy(() => import('../pages/payments/credits'));
 const NotFoundPage = lazy(() => import('../pages/notFound'));
 
-const PageFallback = () => (
+const RouteFallback = () => (
   <div className="mt-4 space-y-4">
     <Skeleton className="h-8 w-48 rounded-md" />
     <Skeleton className="h-4 w-96 max-w-full rounded-md" />
@@ -61,7 +61,7 @@ const PageFallback = () => (
 // Wrap lazy page in layout + Suspense so layout (with Header) stays visible during load
 const withLayout = (LayoutCmp: FC<{ children: ReactNode }>, Page: FC) => (
   <LayoutCmp>
-    <Suspense fallback={<PageFallback />}>
+    <Suspense fallback={<RouteFallback />}>
       <Page />
     </Suspense>
   </LayoutCmp>
@@ -137,6 +137,7 @@ const App: FC = () => {
             />
           </Route>
 
+          {/* Redirect old registration review page to blueprints */}
           <Route
             path={PagePath.BLUEPRINTS_REGISTRATION_REVIEW}
             element={<Navigate to={PagePath.BLUEPRINTS} replace />}
@@ -181,7 +182,7 @@ const App: FC = () => {
           <Route
             path="*"
             element={
-              <Suspense fallback={<PageFallback />}>
+              <Suspense fallback={<RouteFallback />}>
                 <NotFoundPage />
               </Suspense>
             }

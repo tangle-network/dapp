@@ -1,5 +1,5 @@
 import useActiveAccountAddress from './useActiveAccountAddress';
-import { isEvmAddress, toEvmAddress } from '@tangle-network/ui-components';
+import { isEvmAddress } from '@tangle-network/ui-components/utils/isEvmAddress20';
 import { EvmAddress } from '@tangle-network/ui-components/types/address';
 import { useMemo } from 'react';
 import { useAccount } from 'wagmi';
@@ -9,6 +9,12 @@ import { useAccount } from 'wagmi';
  *
  * @remarks
  * If there is no active account, `null` will be returned instead.
+ *
+ * @remarks
+ * Both call sites only ever return EVM addresses (gated by `isEvmAddress`),
+ * so we deliberately avoid `toEvmAddress` here — it imports
+ * `@polkadot/util-crypto`, which would yank the polkadot vendor chunk into
+ * the eager dependency graph for EVM-only routes.
  */
 const useEvmAddress20 = (): EvmAddress | null => {
   const { address: wagmiAddress } = useAccount();
@@ -16,7 +22,7 @@ const useEvmAddress20 = (): EvmAddress | null => {
 
   const evmAddress = useMemo(() => {
     if (wagmiAddress && isEvmAddress(wagmiAddress)) {
-      return toEvmAddress(wagmiAddress);
+      return wagmiAddress;
     }
 
     // Wait for the active account to be set, and ensure
@@ -25,7 +31,7 @@ const useEvmAddress20 = (): EvmAddress | null => {
       return null;
     }
 
-    return toEvmAddress(activeAccountAddress);
+    return activeAccountAddress;
   }, [activeAccountAddress, wagmiAddress]);
 
   return evmAddress;

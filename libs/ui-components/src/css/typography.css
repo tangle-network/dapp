@@ -1,57 +1,16 @@
-/** Load fonts */
+/**
+ * Default font-family rules for the Tangle UI typography variants.
+ *
+ * The actual @font-face declarations for 'Cousine' / 'Satoshi' live in
+ * the optional `typography-fonts.css` sidecar. Apps that want those
+ * specific WOFF2 assets bundled (e.g. `tangle-dapp`) import the sidecar
+ * explicitly. Apps that bring their own fonts (e.g. `tangle-cloud` uses
+ * Geist via `@fontsource`) skip the sidecar — when the @font-face
+ * declarations are absent, the rules below resolve to the next fallback
+ * in each stack (system sans / monospace).
+ */
 
-/* Font Family Cousine */
-@font-face {
-  font-family: 'Cousine';
-  src: url('fonts/Cousine-Regular.ttf') format('truetype');
-  font-weight: 400;
-  font-style: normal;
-}
-
-@font-face {
-  font-family: 'Cousine';
-  src: url('fonts/Cousine-Bold.ttf') format('truetype');
-  font-weight: 800;
-  font-style: normal;
-}
-
-/* Font Family Satoshi */
-@font-face {
-  font-family: 'Satoshi';
-  src: url('fonts/Satoshi-Black.ttf') format('truetype');
-  font-weight: 900;
-  font-style: normal;
-}
-
-@font-face {
-  font-family: 'Satoshi';
-  src: url('fonts/Satoshi-BlackItalic.ttf') format('truetype');
-  font-weight: 900;
-  font-style: italic;
-}
-
-@font-face {
-  font-family: 'Satoshi';
-  src: url('fonts/Satoshi-Bold.ttf') format('truetype');
-  font-weight: 700;
-  font-style: normal;
-}
-
-@font-face {
-  font-family: 'Satoshi';
-  src: url('fonts/Satoshi-BoldItalic.ttf') format('truetype');
-  font-weight: 700;
-  font-style: italic;
-}
-
-@font-face {
-  font-family: 'Satoshi';
-  src: url('fonts/Satoshi-Medium.ttf') format('truetype');
-  font-weight: 500;
-  font-style: normal;
-}
-
-/** Default font is Satoshi use fonts */
+/** Default font is Satoshi (when loaded), otherwise system sans. */
 *:not(code, .mono1, .mono2) {
   font-family:
     'Satoshi',
@@ -61,20 +20,10 @@
     sans-serif;
 }
 
-/* Applied Satoshi Variable for all element when the html tag has `font-satoshi-var` classnames */
+/* Applied Satoshi Variable for all elements when the html tag has the
+   `font-satoshi-var` classname. The associated @font-face declarations
+   live in `typography-fonts.css`. */
 html.font-satoshi-var *:not(code, .mono1, .mono2) {
-  @font-face {
-    font-family: 'Satoshi Variable';
-    src: url('fonts/Satoshi-Variable.ttf') format('truetype');
-    font-style: normal;
-  }
-
-  @font-face {
-    font-family: 'Satoshi Variable';
-    src: url('fonts/Satoshi-VariableItalic.ttf') format('truetype');
-    font-style: italic;
-  }
-
   font-family:
     'Satoshi Variable',
     -apple-system,

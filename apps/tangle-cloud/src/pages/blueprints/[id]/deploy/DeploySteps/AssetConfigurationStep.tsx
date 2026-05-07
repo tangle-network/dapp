@@ -156,7 +156,7 @@ export const AssetConfigurationStep: FC<AssetConfigurationStepProps> = ({
         <div className="flex gap-4 items-center">
           <Select
             value={selectedAsset}
-            onValueChange={(value) => {
+            onValueChange={(value: string) => {
               addAsset(value as Address);
               setSelectedAsset(''); // reset to placeholder
             }}

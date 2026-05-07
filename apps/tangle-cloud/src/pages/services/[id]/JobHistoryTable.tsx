@@ -2,13 +2,8 @@
  * Table showing job history for a service.
  */
 
-import {
-  type ComponentProps,
-  type ElementType,
-  type FC,
-  useMemo,
-  useState,
-} from 'react';
+import { type ComponentProps, type FC, useMemo, useState } from 'react';
+import { Text } from '../../../components/sandbox/SandboxUi';
 import {
   createColumnHelper,
   getCoreRowModel,
@@ -19,7 +14,8 @@ import {
 } from '@tanstack/react-table';
 import {
   Button as SandboxButton,
-  Skeleton,
+  EmptyState,
+  SkeletonTable,
 } from '@tangle-network/sandbox-ui/primitives';
 import type { JobCall } from '@tangle-network/tangle-shared-ui/data/graphql';
 import { isOptimisticJob } from '@tangle-network/tangle-shared-ui/data/graphql/useJobs';
@@ -34,34 +30,6 @@ interface Props {
 }
 
 const columnHelper = createColumnHelper<JobCall>();
-
-type TextProps = ComponentProps<'p'> & {
-  variant?: 'body1' | 'body2';
-  fw?: 'semibold';
-};
-
-const Text: FC<TextProps> = ({
-  variant = 'body2',
-  fw,
-  className = '',
-  ...props
-}) => {
-  const Component = 'p' as ElementType;
-  const variantClass =
-    variant === 'body1'
-      ? 'text-base text-foreground'
-      : 'text-sm text-foreground';
-  const weightClass = fw === 'semibold' ? 'font-semibold' : '';
-
-  return (
-    <Component
-      className={[variantClass, weightClass, className]
-        .filter(Boolean)
-        .join(' ')}
-      {...props}
-    />
-  );
-};
 
 type ButtonProps = Omit<
   ComponentProps<typeof SandboxButton>,
@@ -195,22 +163,15 @@ export const JobHistoryTable: FC<Props> = ({
   });
 
   if (isLoading) {
-    return (
-      <div className="space-y-2">
-        <Skeleton className="h-10" />
-        <Skeleton className="h-10" />
-        <Skeleton className="h-10" />
-      </div>
-    );
+    return <SkeletonTable rows={3} />;
   }
 
   if (jobs.length === 0) {
     return (
-      <div className="text-center py-8">
-        <Text variant="body1" className="text-muted-foreground">
-          No jobs submitted yet. Submit a job above to get started.
-        </Text>
-      </div>
+      <EmptyState
+        title="No jobs submitted yet"
+        description="Submit a job above to get started."
+      />
     );
   }
 

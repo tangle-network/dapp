@@ -7,7 +7,7 @@ import type {
   ReactNode,
 } from 'react';
 import type { PropsOf } from '../../types';
-import type { AdjustAmount } from '../BridgeInputs';
+import type { AdjustAmount } from './AdjustAmount';
 import type { TextFieldInput } from '../TextField';
 import type TokenSelector from '../TokenSelector';
 import type { TitleWithInfo } from '../TitleWithInfo';

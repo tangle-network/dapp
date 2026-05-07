@@ -61,7 +61,7 @@ const TerminateConfirmationModal: FC<Props> = ({
   return (
     <ModalContent
       size="lg"
-      onInteractOutside={(event) => event.preventDefault()}
+      onInteractOutside={(event: Event) => event.preventDefault()}
       title={`Terminate Service Instance #${addCommasToNumber(Number(selectedInstance.serviceId))}`}
       description="Are you sure you want to terminate this service instance?"
     >
