@@ -2,6 +2,32 @@
   publish = "dist/apps/tangle-cloud"
   command = "yarn nx build tangle-cloud"
 
+# ─── Per-context environment ───────────────────────────────────────────
+#
+# Vite reads VITE_* vars at build time and inlines them into the bundle,
+# so flipping one of these requires a rebuild — not a runtime config
+# change. Setting the iframe kill-switch here keeps the source of truth
+# in-repo and reviewable. Override per-branch by adding [context.<name>]
+# blocks if we ever need to differ between staging and production.
+
+[context.production.environment]
+  # Production is iframe-on. Falls back to link-out automatically for any
+  # blueprint that doesn't satisfy publisher + host + metadata gates, so
+  # this flag is safe to leave on once the in-app trust gates are doing
+  # their job. To disarm, flip to "false" and redeploy — single env flip
+  # mass-disables every iframe app without an app-side change.
+  VITE_BLUEPRINT_IFRAME_ENABLED = "true"
+
+[context.deploy-preview.environment]
+  # Preview deploys (PR builds) inherit production's iframe-on default
+  # so contributors testing iframe-mode manifests on a PR-preview URL
+  # see the same surface production users will.
+  VITE_BLUEPRINT_IFRAME_ENABLED = "true"
+
+[context.branch-deploy.environment]
+  # Same default for any non-master branch deploy (e.g. staging).
+  VITE_BLUEPRINT_IFRAME_ENABLED = "true"
+
   # If the branch is not master, continue the build process
   # If the branch is master, check if the project's CHANGELOG.md file has changed
   # If the CHANGELOG.md file has changed, continue the build process,
