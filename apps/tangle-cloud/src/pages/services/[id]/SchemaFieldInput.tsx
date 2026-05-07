@@ -3,6 +3,7 @@
  */
 
 import {
+  type ChangeEvent,
   type ComponentProps,
   type ElementType,
   type FC,
@@ -75,7 +76,9 @@ const Input: FC<InputProps> = ({
     <SandboxInput
       {...props}
       className={isInvalid ? 'border-destructive' : undefined}
-      onChange={(event) => onChange?.(event.currentTarget.value)}
+      onChange={(event: ChangeEvent<HTMLInputElement>) =>
+        onChange?.(event.currentTarget.value)
+      }
     />
     {errorMessage && (
       <p className="mt-1 text-destructive text-xs">{errorMessage}</p>

@@ -300,7 +300,7 @@ export const PaymentStep: FC<PaymentStepProps> = ({
                   <Text variant="body1">Credit account</Text>
                   <Select
                     value={selectedCommitment}
-                    onValueChange={(commitment) =>
+                    onValueChange={(commitment: string) =>
                       setValue('creditCommitment', commitment, {
                         shouldDirty: true,
                         shouldValidate: true,
@@ -369,7 +369,7 @@ export const PaymentStep: FC<PaymentStepProps> = ({
                       </Text>
                       <Select
                         value={fundingAssetId}
-                        onValueChange={(assetId) =>
+                        onValueChange={(assetId: string) =>
                           setFundingAssetId(assetId as `0x${string}`)
                         }
                       >
@@ -442,7 +442,7 @@ export const PaymentStep: FC<PaymentStepProps> = ({
               <Text variant="body1">Payment asset</Text>
               <Select
                 value={selectedPaymentAssetId}
-                onValueChange={(assetId) => {
+                onValueChange={(assetId: string) => {
                   const asset = assets?.get(assetId as `0x${string}`) as
                     | StakingAsset
                     | undefined;

@@ -81,7 +81,7 @@ const SlashingTabsTable = ({
 
       <Tabs
         value={selectedSlashingTab}
-        onValueChange={(tab) => onSlashingTabChange(tab as SlashingTab)}
+        onValueChange={(tab: string) => onSlashingTabChange(tab as SlashingTab)}
         className="space-y-5"
       >
         <TabsList>

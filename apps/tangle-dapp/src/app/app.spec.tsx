@@ -75,18 +75,18 @@ describe('App', () => {
     expect(await screen.findByTestId('claim-migration-page')).toBeTruthy();
   });
 
-  it('renders bridge route', () => {
+  it('renders bridge route', async () => {
     renderAt('/bridge');
 
-    expect(screen.getByTestId('bridge-page')).toBeTruthy();
+    expect(await screen.findByTestId('bridge-page')).toBeTruthy();
   });
 
-  it('renders blueprint routes', () => {
+  it('renders blueprint routes', async () => {
     renderAt('/blueprints');
-    expect(screen.getByTestId('blueprints-page')).toBeTruthy();
+    expect(await screen.findByTestId('blueprints-page')).toBeTruthy();
 
     renderAt('/blueprints/42');
-    expect(screen.getByTestId('blueprint-details-page')).toBeTruthy();
+    expect(await screen.findByTestId('blueprint-details-page')).toBeTruthy();
   });
 
   it.each([
@@ -98,18 +98,18 @@ describe('App', () => {
     ['/staking/operators', StakingTab.OPERATORS],
     ['/staking/blueprints', StakingTab.BLUEPRINTS],
     ['/staking/rewards', StakingTab.REWARDS],
-  ])('renders staking route %s with expected tab', (path, tab) => {
+  ])('renders staking route %s with expected tab', async (path, tab) => {
     renderAt(path);
 
-    expect(screen.getByTestId('staking-tab-content').textContent).toBe(
+    expect((await screen.findByTestId('staking-tab-content')).textContent).toBe(
       `staking-tab:${tab}`,
     );
   });
 
-  it('redirects /staking to /staking/deposit', () => {
+  it('redirects /staking to /staking/deposit', async () => {
     renderAt('/staking');
 
-    expect(screen.getByTestId('staking-tab-content').textContent).toBe(
+    expect((await screen.findByTestId('staking-tab-content')).textContent).toBe(
       `staking-tab:${StakingAction.DEPOSIT}`,
     );
   });
@@ -120,20 +120,20 @@ describe('App', () => {
     ['/liquid-staking/create-vault', LiquidStakingAction.CREATE_VAULT],
     ['/liquid-staking/vaults', LiquidStakingTab.VAULTS],
     ['/liquid-staking/positions', LiquidStakingTab.POSITIONS],
-  ])('renders liquid staking route %s with expected tab', (path, tab) => {
+  ])('renders liquid staking route %s with expected tab', async (path, tab) => {
     renderAt(path);
 
-    expect(screen.getByTestId('liquid-staking-tab-content').textContent).toBe(
-      `liquid-staking-tab:${tab}`,
-    );
+    expect(
+      (await screen.findByTestId('liquid-staking-tab-content')).textContent,
+    ).toBe(`liquid-staking-tab:${tab}`);
   });
 
-  it('redirects /liquid-staking to /liquid-staking/deposit', () => {
+  it('redirects /liquid-staking to /liquid-staking/deposit', async () => {
     renderAt('/liquid-staking');
 
-    expect(screen.getByTestId('liquid-staking-tab-content').textContent).toBe(
-      `liquid-staking-tab:${LiquidStakingAction.DEPOSIT}`,
-    );
+    expect(
+      (await screen.findByTestId('liquid-staking-tab-content')).textContent,
+    ).toBe(`liquid-staking-tab:${LiquidStakingAction.DEPOSIT}`);
   });
 
   it('redirects legacy claim migration route to canonical claim route', async () => {
@@ -142,10 +142,10 @@ describe('App', () => {
     expect(await screen.findByTestId('claim-migration-page')).toBeTruthy();
   });
 
-  it('renders not found for unsupported native staking route', () => {
+  it('renders not found for unsupported native staking route', async () => {
     renderAt('/staking/native');
 
-    expect(screen.getByTestId('not-found-page')).toBeTruthy();
+    expect(await screen.findByTestId('not-found-page')).toBeTruthy();
   });
 
   it('renders not found for unknown route', () => {

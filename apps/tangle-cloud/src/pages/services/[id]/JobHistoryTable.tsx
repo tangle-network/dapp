@@ -19,7 +19,8 @@ import {
 } from '@tanstack/react-table';
 import {
   Button as SandboxButton,
-  Skeleton,
+  EmptyState,
+  SkeletonTable,
 } from '@tangle-network/sandbox-ui/primitives';
 import type { JobCall } from '@tangle-network/tangle-shared-ui/data/graphql';
 import { isOptimisticJob } from '@tangle-network/tangle-shared-ui/data/graphql/useJobs';
@@ -195,22 +196,15 @@ export const JobHistoryTable: FC<Props> = ({
   });
 
   if (isLoading) {
-    return (
-      <div className="space-y-2">
-        <Skeleton className="h-10" />
-        <Skeleton className="h-10" />
-        <Skeleton className="h-10" />
-      </div>
-    );
+    return <SkeletonTable rows={3} />;
   }
 
   if (jobs.length === 0) {
     return (
-      <div className="text-center py-8">
-        <Text variant="body1" className="text-muted-foreground">
-          No jobs submitted yet. Submit a job above to get started.
-        </Text>
-      </div>
+      <EmptyState
+        title="No jobs submitted yet"
+        description="Submit a job above to get started."
+      />
     );
   }
 

@@ -33,7 +33,13 @@ import {
   TabsTrigger,
   Textarea,
 } from '@tangle-network/sandbox-ui/primitives';
-import type { ComponentProps, ElementType, FC, ReactNode } from 'react';
+import type {
+  ChangeEvent,
+  ComponentProps,
+  ElementType,
+  FC,
+  ReactNode,
+} from 'react';
 
 export {
   Badge,
@@ -252,7 +258,9 @@ export const Input: FC<InputProps> = ({
       ]
         .filter(Boolean)
         .join(' ')}
-      onChange={(event) => onChange?.(event.currentTarget.value)}
+      onChange={(event: ChangeEvent<HTMLInputElement>) =>
+        onChange?.(event.currentTarget.value)
+      }
     />
     {leftIcon && (
       <div className="pointer-events-none absolute inset-y-0 left-3 flex items-center text-muted-foreground">

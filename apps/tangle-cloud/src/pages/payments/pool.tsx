@@ -1,8 +1,7 @@
 import { FC, useState } from 'react';
 import { formatUnits } from 'viem';
 import {
-  Card,
-  CardContent,
+  StatCard,
   Tabs,
   TabsContent,
   TabsList,
@@ -44,23 +43,16 @@ const PaymentsPoolContent: FC = () => {
         checks={['Shielded balance', 'Deposit', 'Withdraw']}
       >
         <div className="grid gap-4 md:grid-cols-2">
-          <Card variant="sandbox">
-            <CardContent className="p-5">
-              <p className="text-muted-foreground text-sm">Shielded Balance</p>
-              <p className="mt-2 font-display font-extrabold text-foreground text-3xl">
-                {formatUnits(shieldedBalance, TOKEN_DECIMALS)}
-              </p>
-            </CardContent>
-          </Card>
-
-          <Card variant="sandbox">
-            <CardContent className="p-5">
-              <p className="text-muted-foreground text-sm">Unspent Notes</p>
-              <p className="mt-2 font-display font-extrabold text-foreground text-3xl">
-                {notes.length}
-              </p>
-            </CardContent>
-          </Card>
+          <StatCard
+            variant="sandbox"
+            title="Shielded Balance"
+            value={formatUnits(shieldedBalance, TOKEN_DECIMALS)}
+          />
+          <StatCard
+            variant="sandbox"
+            title="Unspent Notes"
+            value={notes.length}
+          />
         </div>
 
         <Tabs

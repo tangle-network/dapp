@@ -10,7 +10,13 @@ import {
   Badge,
   Textarea,
 } from '@tangle-network/sandbox-ui/primitives';
-import type { ComponentProps, ElementType, FC, ReactNode } from 'react';
+import type {
+  ChangeEvent,
+  ComponentProps,
+  ElementType,
+  FC,
+  ReactNode,
+} from 'react';
 
 export const Modal = Dialog;
 
@@ -153,7 +159,9 @@ export const Input: FC<InputProps> = ({
 }) => (
   <SandboxInput
     {...props}
-    onChange={(event) => onChange?.(event.currentTarget.value)}
+    onChange={(event: ChangeEvent<HTMLInputElement>) =>
+      onChange?.(event.currentTarget.value)
+    }
   />
 );
 

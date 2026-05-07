@@ -1,3 +1,4 @@
+import type { ChangeEvent } from 'react';
 import {
   SlashActionPermissions,
   SlashDisputeEligibility,
@@ -138,7 +139,9 @@ const DisputeSlashModal = ({
             <SlashTextarea
               rows={4}
               value={disputeReason}
-              onChange={(event) => onDisputeReasonChange(event.target.value)}
+              onChange={(event: ChangeEvent<HTMLTextAreaElement>) =>
+                onDisputeReasonChange(event.target.value)
+              }
               placeholder="Explain why this slash proposal is invalid..."
             />
             <Text variant="body3" className="text-muted-foreground mt-1">

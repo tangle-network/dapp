@@ -3,6 +3,7 @@
  */
 
 import {
+  type ChangeEvent,
   type ComponentProps,
   type ElementType,
   type FC,
@@ -117,7 +118,9 @@ const Input: FC<InputProps> = ({
       ]
         .filter(Boolean)
         .join(' ')}
-      onChange={(event) => onChange?.(event.currentTarget.value)}
+      onChange={(event: ChangeEvent<HTMLInputElement>) =>
+        onChange?.(event.currentTarget.value)
+      }
     />
     {rightIcon && (
       <div className="pointer-events-none absolute inset-y-0 right-3 flex items-center">
@@ -308,7 +311,7 @@ const FundServiceModal: FC<Props> = ({ serviceId, onClose }) => {
     !isFunding;
 
   return (
-    <Modal open onOpenChange={(open) => !open && onClose()}>
+    <Modal open onOpenChange={(open: boolean) => !open && onClose()}>
       <ModalContent size="md">
         <ModalHeader>Fund Service #{serviceId.toString()}</ModalHeader>
 

@@ -18,6 +18,7 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
+  EmptyState,
   Skeleton,
 } from '@tangle-network/sandbox-ui/primitives';
 import {
@@ -427,7 +428,7 @@ export const JobResultsModal: FC<Props> = ({ job, jobDefinition, onClose }) => {
   });
 
   return (
-    <Modal open onOpenChange={(open) => !open && onClose()}>
+    <Modal open onOpenChange={(open: boolean) => !open && onClose()}>
       <ModalContent size="lg">
         <ModalHeader>{headerTitle}</ModalHeader>
         <ModalBody>
@@ -520,11 +521,10 @@ export const JobResultsModal: FC<Props> = ({ job, jobDefinition, onClose }) => {
                 ))}
               </div>
             ) : (
-              <div className="text-center py-6 text-muted-foreground">
-                <Text variant="body1">
-                  No results received yet. Operators are processing this job.
-                </Text>
-              </div>
+              <EmptyState
+                title="No results received yet"
+                description="Operators are processing this job."
+              />
             )}
           </div>
         </ModalBody>

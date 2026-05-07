@@ -1,5 +1,6 @@
 import { FC } from 'react';
-import { Card, Skeleton, Text } from '../../components/sandbox/SandboxUi';
+import { Skeleton, Text } from '../../components/sandbox/SandboxUi';
+import { EmptyState } from '@tangle-network/sandbox-ui/primitives';
 import { useCreditsContext } from '../../app/CreditsProvider';
 import CreditAccountCard from '../../components/payments/CreditAccountCard';
 import useCreditAccountState from '../../data/payments/useCreditAccountState';
@@ -69,12 +70,10 @@ const CreditBalanceContainer: FC = () => {
       </div>
 
       {creditAccounts.length === 0 ? (
-        <Card className="text-center py-8">
-          <Text variant="body1" className="text-muted-foreground">
-            No credit accounts yet. Fund one from the shielded pool to get
-            started.
-          </Text>
-        </Card>
+        <EmptyState
+          title="No credit accounts yet"
+          description="Fund one from the shielded pool to get started."
+        />
       ) : (
         <div className="grid gap-3 sm:grid-cols-2">
           {creditAccounts.map((acct) => (

@@ -16,6 +16,7 @@ import {
   Button,
   Card,
   CardContent,
+  EmptyState,
 } from '@tangle-network/sandbox-ui/primitives';
 import { useAccount } from 'wagmi';
 import type { JobCall } from '@tangle-network/tangle-shared-ui/data/graphql';
@@ -192,11 +193,10 @@ const SandboxBlueprintServicePage: FC<Props> = ({ entry, serviceId }) => {
                     </div>
                   ))
                 ) : (
-                  <div className="rounded-lg border border-dashed border-border bg-muted/30 p-5">
-                    <p className="text-muted-foreground text-sm">
-                      No job activity indexed for this service yet.
-                    </p>
-                  </div>
+                  <EmptyState
+                    title="No job activity yet"
+                    description="No jobs have been indexed for this service yet."
+                  />
                 )}
               </div>
 

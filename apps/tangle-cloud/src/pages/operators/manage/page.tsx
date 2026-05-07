@@ -3,9 +3,11 @@
  */
 
 import {
+  type ChangeEvent,
   type ComponentProps,
   type ElementType,
   type FC,
+  type MouseEvent,
   type ReactNode,
   useCallback,
   useMemo,
@@ -162,7 +164,9 @@ const Input: FC<InputProps> = ({
 }) => (
   <SandboxInput
     {...props}
-    onChange={(event) => onChange?.(event.currentTarget.value)}
+    onChange={(event: ChangeEvent<HTMLInputElement>) =>
+      onChange?.(event.currentTarget.value)
+    }
   />
 );
 
@@ -833,7 +837,7 @@ const Page: FC = () => {
               size="sm"
               isDisabled={!actionState.canUnregister}
               className="uppercase body4 bg-destructive/10 text-destructive hover:bg-destructive/15 border border-destructive/20 disabled:!opacity-100 disabled:!text-muted-foreground disabled:!border-border disabled:!bg-transparent dark:disabled:!text-muted-foreground  disabled:cursor-not-allowed"
-              onClick={(event) => {
+              onClick={(event: MouseEvent<HTMLButtonElement>) => {
                 event.stopPropagation();
                 setSelectedRegistration(info.row.original);
                 setShowUnregisterModal(true);
@@ -852,7 +856,7 @@ const Page: FC = () => {
                       variant="utility"
                       size="sm"
                       className="uppercase body4 bg-primary/10 text-primary hover:bg-primary/15 border border-primary/20"
-                      onClick={(event) => {
+                      onClick={(event: MouseEvent<HTMLButtonElement>) => {
                         event.stopPropagation();
                         setSelectedRegistration(info.row.original);
                         setNewRpcAddress(
@@ -1064,7 +1068,7 @@ const Page: FC = () => {
                     size="sm"
                     isDisabled={!permissions.canDispute}
                     className="uppercase body4 bg-primary/10 text-primary hover:bg-primary/15 border border-primary/20 disabled:opacity-50 disabled:cursor-not-allowed"
-                    onClick={(event) => {
+                    onClick={(event: MouseEvent<HTMLButtonElement>) => {
                       event.stopPropagation();
                       clearActionError('dispute');
                       setSelectedSlash(slash);
@@ -1083,7 +1087,7 @@ const Page: FC = () => {
                     size="sm"
                     isDisabled={!permissions.canCancel}
                     className="uppercase body4 bg-destructive/10 text-destructive hover:bg-destructive/15 border border-destructive/20 disabled:opacity-50 disabled:cursor-not-allowed"
-                    onClick={(event) => {
+                    onClick={(event: MouseEvent<HTMLButtonElement>) => {
                       event.stopPropagation();
                       clearActionError('cancel');
                       setSelectedSlash(slash);
@@ -1104,7 +1108,7 @@ const Page: FC = () => {
                           size="sm"
                           isDisabled={!canExecute}
                           className="uppercase body4 bg-emerald-500/10 text-emerald-400 hover:bg-emerald-500/15 border border-emerald-500/20 disabled:opacity-50 disabled:cursor-not-allowed"
-                          onClick={(event) => {
+                          onClick={(event: MouseEvent<HTMLButtonElement>) => {
                             event.stopPropagation();
                             void handleExecuteSingle(slash);
                           }}
@@ -1140,7 +1144,7 @@ const Page: FC = () => {
                   variant="utility"
                   size="sm"
                   className="uppercase body4"
-                  onClick={(event) => {
+                  onClick={(event: MouseEvent<HTMLButtonElement>) => {
                     event.stopPropagation();
                     setSelectedSlash(slash);
                     setShowTimelineModal(true);
@@ -1154,7 +1158,7 @@ const Page: FC = () => {
                     variant="utility"
                     size="sm"
                     className="uppercase body4"
-                    onClick={(event) => {
+                    onClick={(event: MouseEvent<HTMLButtonElement>) => {
                       event.stopPropagation();
                       setSelectedSlash(slash);
                       setShowDisputeMessageModal(true);

@@ -3,6 +3,7 @@
  */
 
 import {
+  type ChangeEvent,
   type ComponentProps,
   type ElementType,
   type FC,
@@ -15,6 +16,7 @@ import { useAccount } from 'wagmi';
 import {
   Button as SandboxButton,
   Card,
+  InlineCode,
   Input as SandboxInput,
   Select,
   SelectContent,
@@ -130,7 +132,9 @@ const Input: FC<InputProps> = ({
 }) => (
   <SandboxInput
     {...props}
-    onChange={(event) => onChange?.(event.currentTarget.value)}
+    onChange={(event: ChangeEvent<HTMLInputElement>) =>
+      onChange?.(event.currentTarget.value)
+    }
   />
 );
 
@@ -1085,7 +1089,7 @@ const BasicInfoStep: FC<BasicInfoStepProps> = ({
           </Text>
           <Select
             value={form.uiDraft.resourceRoute}
-            onValueChange={(v) =>
+            onValueChange={(v: string) =>
               updateForm('uiDraft', {
                 ...form.uiDraft,
                 resourceRoute: v as BlueprintResourceRoute,
@@ -1158,7 +1162,7 @@ const BasicInfoStep: FC<BasicInfoStepProps> = ({
           </Text>
           <Select
             value={form.uiDraft.externalAppMode}
-            onValueChange={(v) =>
+            onValueChange={(v: string) =>
               updateForm('uiDraft', {
                 ...form.uiDraft,
                 externalAppMode:
@@ -1207,7 +1211,7 @@ const ConfigurationStep: FC<StepProps> = ({ form, updateForm }) => (
         </Text>
         <Select
           value={form.membership}
-          onValueChange={(v) =>
+          onValueChange={(v: string) =>
             updateForm('membership', v as 'Fixed' | 'Dynamic')
           }
         >
@@ -1227,7 +1231,7 @@ const ConfigurationStep: FC<StepProps> = ({ form, updateForm }) => (
         </Text>
         <Select
           value={form.pricing}
-          onValueChange={(v) =>
+          onValueChange={(v: string) =>
             updateForm(
               'pricing',
               v as 'PayOnce' | 'Subscription' | 'EventDriven',
@@ -1427,9 +1431,7 @@ const JobsStep: FC<JobsStepProps> = ({
 
               <Text variant="body3" className="text-muted-foreground">
                 Use an array of fields. Example:{' '}
-                <code className="font-mono text-xs">
-                  {`[{"kind":"Uint256","name":"value"}]`}
-                </code>
+                <InlineCode>{`[{"kind":"Uint256","name":"value"}]`}</InlineCode>
               </Text>
             </div>
           </div>
@@ -1493,7 +1495,7 @@ const SourcesStep: FC<SourcesStepProps> = ({
                 </Text>
                 <Select
                   value={source.kind}
-                  onValueChange={(v) =>
+                  onValueChange={(v: string) =>
                     updateSource(index, {
                       kind: v as 'Container' | 'Wasm' | 'Native',
                     })
@@ -1646,7 +1648,7 @@ const SourcesStep: FC<SourcesStepProps> = ({
                             </Text>
                             <Select
                               value={String(binary.arch)}
-                              onValueChange={(v) =>
+                              onValueChange={(v: string) =>
                                 updateSource(index, {
                                   binaries: source.binaries.map((b, i) =>
                                     i === binIndex
@@ -1679,7 +1681,7 @@ const SourcesStep: FC<SourcesStepProps> = ({
                             </Text>
                             <Select
                               value={String(binary.os)}
-                              onValueChange={(v) =>
+                              onValueChange={(v: string) =>
                                 updateSource(index, {
                                   binaries: source.binaries.map((b, i) =>
                                     i === binIndex

@@ -1,13 +1,7 @@
 import type { WebbProviderType } from '@tangle-network/abstract-api-provider/types';
-import {
-  EvmAddress,
-  SolanaAddress,
-} from '@tangle-network/ui-components/types/address';
+import { EvmAddress } from '@tangle-network/ui-components/types/address';
 
-import { PresetTypedChainId } from '@tangle-network/dapp-types';
-import { Decimal } from 'decimal.js';
-import { Abi, Address } from 'viem';
-import { EVMTokenBridgeEnum, EVMTokenEnum } from './bridge-metadata';
+import { Address } from 'viem';
 
 export type TangleTokenSymbol = 'tTNT' | 'TNT';
 
@@ -65,64 +59,6 @@ export type StakingOperator = {
   /** Whether the current user can delegate to this operator */
   canDelegate?: boolean;
 };
-
-// Bridge
-export enum BridgeTxState {
-  Pending = 'Pending',
-  Completed = 'Completed',
-  Failed = 'Failed',
-}
-
-export type BridgeQueueTxItem = {
-  hash: string;
-  env: 'live' | 'test' | 'dev';
-  sourceTypedChainId: number;
-  destinationTypedChainId: number;
-  sourceAddress: string;
-  recipientAddress: string;
-  sourceAmount: string;
-  destinationAmount: string;
-  tokenSymbol: string;
-  creationTimestamp: number;
-  state: BridgeTxState;
-  explorerUrl?: string | null;
-  destinationTxHash?: string;
-  destinationTxState?: BridgeTxState;
-  destinationTxExplorerUrl?: string | null;
-  bridgeType: EVMTokenBridgeEnum;
-};
-
-export type BridgeToken = {
-  name?: string;
-  symbol: string;
-  tokenType: EVMTokenEnum;
-  bridgeType: EVMTokenBridgeEnum;
-  address: EvmAddress | SolanaAddress;
-  abi: Abi;
-  decimals: number;
-  chainId: PresetTypedChainId;
-  hyperlaneSyntheticAddress?: EvmAddress;
-  isTestnet?: boolean;
-};
-
-export type BridgeChainsConfigType = Record<
-  PresetTypedChainId,
-  Record<
-    PresetTypedChainId,
-    {
-      supportedTokens: BridgeToken[];
-    }
-  >
->;
-
-export type BridgeTokenWithBalance = BridgeToken & {
-  balance: Decimal;
-  syntheticBalance?: Decimal;
-};
-
-export type BridgeChainBalances = Partial<
-  Record<PresetTypedChainId, BridgeTokenWithBalance[]>
->;
 
 export type StakingAssetId = string | EvmAddress;
 

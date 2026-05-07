@@ -10,7 +10,7 @@ import {
   Skeleton,
   Text,
 } from '../../../../../components/sandbox/SandboxUi';
-import { FC, useEffect, useMemo, useState, Children } from 'react';
+import { FC, MouseEvent, useEffect, useMemo, useState, Children } from 'react';
 import { SelectOperatorsStepProps, OperatorSelectionTable } from './type';
 import { RowSelectionState } from '@tanstack/react-table';
 import ErrorMessage from '@tangle-network/tangle-shared-ui/components/ErrorMessage';
@@ -268,7 +268,7 @@ export const SelectOperatorsStep: FC<SelectOperatorsStepProps> = ({
                     <SelectItem
                       value={asset.id}
                       id={asset.id}
-                      onClick={(event) => {
+                      onClick={(event: MouseEvent<HTMLDivElement>) => {
                         event.preventDefault();
                         onSelectAsset(asset, !isSelected);
                       }}
