@@ -31,6 +31,15 @@ const RPC_URL = process.env.RPC_URL ?? 'http://127.0.0.1:8545';
 const TANGLE_ADDRESS = getAddress(
   process.env.TANGLE_ADDRESS ?? '0xCf7Ed3AccA5a467e9e704C703E8D87F634fB0Fc9',
 );
+// Deterministic addresses from script/LocalTestnet.s.sol's deploy order.
+// Override only if you re-shuffle the deploy script.
+const STAKING_ADDRESS = getAddress(
+  process.env.STAKING_ADDRESS ?? '0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512',
+);
+const TNT_TOKEN_ADDRESS = getAddress(
+  process.env.TNT_TOKEN_ADDRESS ?? '0x5eb3Bc0a489C5A8288765d2336659EbCA68FCd00',
+);
+const OPERATOR_BOND = 100n * 10n ** 18n; // 100 TNT
 
 const DEPLOYER_KEY =
   process.env.BLUEPRINT_UI_DEPLOYER_KEY ??
@@ -46,19 +55,22 @@ const OPERATOR_GOSSIP_KEYS = [
   '0x044142434445464748494a4b4c4d4e4f505152535455565758595a5b5c5d5e5f606162636465666768696a6b6c6d6e6f707172737475767778797a7b7c7d7e7f80',
 ];
 
+// Where blueprint repos live on disk, relative to BLUEPRINT_ROOT
+// (defaults to ~/code so the script works for any operator).
+const BLUEPRINT_ROOT = process.env.BLUEPRINT_ROOT ?? `${process.env.HOME}/code`;
 const BLUEPRINTS = [
-  ['ai-agent-sandbox', '/home/drew/code/ai-agent-sandbox-blueprint'],
-  ['ai-trading', '/home/drew/code/ai-trading-blueprints'],
-  ['llm-inference', '/home/drew/code/llm-inference-blueprint'],
-  ['voice-inference', '/home/drew/code/voice-inference-blueprint'],
-  ['embedding-inference', '/home/drew/code/embedding-inference-blueprint'],
-  ['distributed-inference', '/home/drew/code/distributed-inference-blueprint'],
-  ['avatar-inference', '/home/drew/code/avatar-inference-blueprint'],
-  ['image-generation', '/home/drew/code/image-gen-inference-blueprint'],
-  ['modal-inference', '/home/drew/code/modal-inference-blueprint'],
-  ['video-generation', '/home/drew/code/video-gen-inference-blueprint'],
-  ['distributed-training', '/home/drew/code/training-blueprint'],
-  ['vector-store', '/home/drew/code/vector-store-blueprint'],
+  ['ai-agent-sandbox', `${BLUEPRINT_ROOT}/ai-agent-sandbox-blueprint`],
+  ['ai-trading', `${BLUEPRINT_ROOT}/ai-trading-blueprints`],
+  ['llm-inference', `${BLUEPRINT_ROOT}/llm-inference-blueprint`],
+  ['voice-inference', `${BLUEPRINT_ROOT}/voice-inference-blueprint`],
+  ['embedding-inference', `${BLUEPRINT_ROOT}/embedding-inference-blueprint`],
+  ['distributed-inference', `${BLUEPRINT_ROOT}/distributed-inference-blueprint`],
+  ['avatar-inference', `${BLUEPRINT_ROOT}/avatar-inference-blueprint`],
+  ['image-generation', `${BLUEPRINT_ROOT}/image-gen-inference-blueprint`],
+  ['modal-inference', `${BLUEPRINT_ROOT}/modal-inference-blueprint`],
+  ['video-generation', `${BLUEPRINT_ROOT}/video-gen-inference-blueprint`],
+  ['distributed-training', `${BLUEPRINT_ROOT}/training-blueprint`],
+  ['vector-store', `${BLUEPRINT_ROOT}/vector-store-blueprint`],
 ];
 
 const tangleAbi = [
@@ -229,8 +241,40 @@ const tangleAbi = [
     type: 'function',
     name: 'approveService',
     inputs: [
-      { name: 'requestId', type: 'uint64' },
-      { name: 'stakingPercent', type: 'uint8' },
+      {
+        name: 'params',
+        type: 'tuple',
+        components: [
+          { name: 'requestId', type: 'uint64' },
+          {
+            name: 'securityCommitments',
+            type: 'tuple[]',
+            components: [
+              {
+                name: 'asset',
+                type: 'tuple',
+                components: [
+                  { name: 'kind', type: 'uint8' },
+                  { name: 'token', type: 'address' },
+                ],
+              },
+              { name: 'exposureBps', type: 'uint16' },
+            ],
+          },
+          { name: 'blsPubkey', type: 'uint256[4]' },
+          { name: 'blsPopSignature', type: 'uint256[2]' },
+          {
+            name: 'teeCommitments',
+            type: 'tuple[]',
+            components: [
+              { name: 'backend', type: 'uint8' },
+              { name: 'expectedMeasurement', type: 'bytes32' },
+              { name: 'nonceBinding', type: 'bytes32' },
+              { name: 'expiresAt', type: 'uint64' },
+            ],
+          },
+        ],
+      },
     ],
     outputs: [],
     stateMutability: 'nonpayable',
@@ -265,6 +309,44 @@ const tangleAbi = [
       { name: 'blueprintId', type: 'uint64', indexed: true },
       { name: 'confidentiality', type: 'uint8', indexed: false },
     ],
+  },
+];
+
+// Minimal ABI for the local-stack operator-staking pre-registration step.
+// We use this only to make the catalog's `registerOperator(blueprintId,…)`
+// calls succeed locally — the LocalTestnet fixture only stakes operators
+// for its single bootstrap blueprint, so the 12 catalog blueprints would
+// otherwise revert with OperatorNotActive when their first operator tries
+// to register.
+const stakingAbi = [
+  {
+    type: 'function',
+    name: 'isOperatorActive',
+    inputs: [{ name: 'operator', type: 'address' }],
+    outputs: [{ type: 'bool' }],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
+    name: 'registerOperatorWithAsset',
+    inputs: [
+      { name: 'asset', type: 'address' },
+      { name: 'amount', type: 'uint256' },
+    ],
+    outputs: [],
+    stateMutability: 'nonpayable',
+  },
+];
+const erc20Abi = [
+  {
+    type: 'function',
+    name: 'approve',
+    inputs: [
+      { name: 'spender', type: 'address' },
+      { name: 'amount', type: 'uint256' },
+    ],
+    outputs: [{ type: 'bool' }],
+    stateMutability: 'nonpayable',
   },
 ];
 
@@ -365,7 +447,7 @@ const generatedBlueprintSvg = (slug, metadata) => {
 // Add an entry when a new blueprint gains a UI bundle with a `dev` script.
 const LOCAL_IFRAME_DEV_URLS = {
   'ai-agent-sandbox': 'http://localhost:1338/',
-  'ai-trading': 'http://localhost:5173/',
+  'ai-trading': 'http://localhost:1337/',
 };
 
 const useLocalIframes = process.env.BLUEPRINT_UI_USE_LOCAL_IFRAMES === 'true';
@@ -597,6 +679,47 @@ const signMetadata = async ({ item, blueprintId, ownerAccount }) => {
   writeFileSync(item.outputPath, `${JSON.stringify(signed, null, 2)}\n`);
 };
 
+// Idempotent: returns immediately if the operator is already active in
+// staking. Otherwise approves OPERATOR_BOND TNT and registers with asset.
+// We swallow duplicate-registration reverts so re-runs are safe.
+const ensureOperatorActiveInStaking = async (operator, wallet, publicClient) => {
+  const active = await publicClient.readContract({
+    address: STAKING_ADDRESS,
+    abi: stakingAbi,
+    functionName: 'isOperatorActive',
+    args: [operator.address],
+  });
+  if (active) return;
+
+  try {
+    const approveHash = await wallet.writeContract({
+      address: TNT_TOKEN_ADDRESS,
+      abi: erc20Abi,
+      functionName: 'approve',
+      args: [STAKING_ADDRESS, OPERATOR_BOND],
+    });
+    await waitForHash(publicClient, approveHash);
+
+    const registerHash = await wallet.writeContract({
+      address: STAKING_ADDRESS,
+      abi: stakingAbi,
+      functionName: 'registerOperatorWithAsset',
+      args: [TNT_TOKEN_ADDRESS, OPERATOR_BOND],
+    });
+    await waitForHash(publicClient, registerHash);
+    console.log(`  + staking: ${operator.address} bonded ${OPERATOR_BOND / 10n ** 18n} TNT`);
+  } catch (err) {
+    const message = err instanceof Error ? err.message : String(err);
+    // Often this fails benignly because the operator is already
+    // registered with a different asset, or has insufficient balance.
+    // Log + continue; the caller will see a clearer error from
+    // registerOperator if the operator is genuinely unusable.
+    console.warn(
+      `  ! staking pre-reg skipped for ${operator.address}: ${message.split('\n')[0]}`,
+    );
+  }
+};
+
 const seed = async () => {
   const catalog = prepare();
   const deployer = privateKeyToAccount(DEPLOYER_KEY);
@@ -691,25 +814,43 @@ const seed = async () => {
       });
       if (registered) continue;
 
-      console.log(
-        `Registering operator ${index + 1} for ${item.slug} #${blueprintId}`,
-      );
       const wallet = createWalletClient({
         account: operator,
         chain: foundry,
         transport: http(RPC_URL),
       });
-      const hash = await wallet.writeContract({
-        address: TANGLE_ADDRESS,
-        abi: tangleAbi,
-        functionName: 'registerOperator',
-        args: [
-          blueprintId,
-          OPERATOR_GOSSIP_KEYS[index],
-          `http://operator${index + 1}.local:8545`,
-        ],
-      });
-      await waitForHash(publicClient, hash);
+
+      // Operator must be active in the staking system before they can
+      // register on a blueprint. LocalTestnet.s.sol only does this for
+      // its bootstrap blueprint; do it here for every catalog blueprint
+      // operator so registerOperator(blueprintId,…) succeeds.
+      await ensureOperatorActiveInStaking(operator, wallet, publicClient);
+
+      console.log(
+        `Registering operator ${index + 1} for ${item.slug} #${blueprintId}`,
+      );
+      try {
+        const hash = await wallet.writeContract({
+          address: TANGLE_ADDRESS,
+          abi: tangleAbi,
+          functionName: 'registerOperator',
+          args: [
+            blueprintId,
+            OPERATOR_GOSSIP_KEYS[index],
+            `http://operator${index + 1}.local:8545`,
+          ],
+        });
+        await waitForHash(publicClient, hash);
+      } catch (err) {
+        // Operator-not-active and similar prerequisite failures are
+        // expected when the local stack hasn't fully wired the operator
+        // into staking yet. We log and continue rather than aborting the
+        // whole seed — blueprint creation is still valuable on its own.
+        const message = err instanceof Error ? err.message : String(err);
+        console.warn(
+          `  ! registerOperator skipped for ${item.slug} op${index + 1}: ${message.split('\n')[0]}`,
+        );
+      }
     }
 
     let requestId = requestsByBlueprint.get(blueprintId.toString())?.args
@@ -719,49 +860,72 @@ const seed = async () => {
       console.log(
         `Requesting + approving service for ${item.slug} #${blueprintId}`,
       );
-      const requestHash = await deployerClient.writeContract({
-        address: TANGLE_ADDRESS,
-        abi: tangleAbi,
-        functionName: 'requestService',
-        args: [
-          blueprintId,
-          [operators[0].address],
-          '0x',
-          [],
-          0n,
-          zeroAddress,
-          0n,
-          0,
-        ],
-        value: 0n,
-      });
-      const requestReceipt = await waitForHash(publicClient, requestHash);
-      const requestLogs = parseEventLogs({
-        abi: tangleAbi,
-        logs: requestReceipt.logs,
-        eventName: 'ServiceRequested',
-        strict: false,
-      });
-      requestId = requestLogs[0]?.args.requestId;
-      if (requestId === undefined) {
-        throw new Error(`Could not parse ServiceRequested for ${item.slug}`);
+      try {
+        const requestHash = await deployerClient.writeContract({
+          address: TANGLE_ADDRESS,
+          abi: tangleAbi,
+          functionName: 'requestService',
+          args: [
+            blueprintId,
+            [operators[0].address],
+            '0x',
+            [],
+            0n,
+            zeroAddress,
+            0n,
+            0,
+          ],
+          value: 0n,
+        });
+        const requestReceipt = await waitForHash(publicClient, requestHash);
+        const requestLogs = parseEventLogs({
+          abi: tangleAbi,
+          logs: requestReceipt.logs,
+          eventName: 'ServiceRequested',
+          strict: false,
+        });
+        requestId = requestLogs[0]?.args.requestId;
+      } catch (err) {
+        const message = err instanceof Error ? err.message : String(err);
+        console.warn(
+          `  ! requestService skipped for ${item.slug}: ${message.split('\n')[0]}`,
+        );
       }
     }
 
-    if (!activatedByRequest.has(requestId.toString())) {
+    if (requestId !== undefined && !activatedByRequest.has(requestId.toString())) {
       console.log(`Approving service request ${requestId} for ${item.slug}`);
       const operatorWallet = createWalletClient({
         account: operators[0],
         chain: foundry,
         transport: http(RPC_URL),
       });
-      const approveHash = await operatorWallet.writeContract({
-        address: TANGLE_ADDRESS,
-        abi: tangleAbi,
-        functionName: 'approveService',
-        args: [requestId, 0],
-      });
-      await waitForHash(publicClient, approveHash);
+      try {
+        const approveHash = await operatorWallet.writeContract({
+          address: TANGLE_ADDRESS,
+          abi: tangleAbi,
+          functionName: 'approveService',
+          // Unified PR-119 ApprovalParams. Empty arrays opt out of
+          // per-asset security commitments, BLS pubkey, and TEE
+          // attestation profiles — all manifest-gated capabilities the
+          // catalog fixture doesn't exercise.
+          args: [
+            {
+              requestId,
+              securityCommitments: [],
+              blsPubkey: [0n, 0n, 0n, 0n],
+              blsPopSignature: [0n, 0n],
+              teeCommitments: [],
+            },
+          ],
+        });
+        await waitForHash(publicClient, approveHash);
+      } catch (err) {
+        const message = err instanceof Error ? err.message : String(err);
+        console.warn(
+          `  ! approveService skipped for ${item.slug}: ${message.split('\n')[0]}`,
+        );
+      }
     }
 
     seeded.push({
