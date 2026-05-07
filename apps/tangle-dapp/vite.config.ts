@@ -46,8 +46,36 @@ export default defineConfig({
     outDir: '../../dist/apps/tangle-dapp',
     emptyOutDir: true,
     reportCompressedSize: true,
+    target: 'es2022',
     commonjsOptions: {
       transformMixedEsModules: true,
+    },
+    rollupOptions: {
+      output: {
+        // Mirror tangle-cloud's vendor split — same payload shape,
+        // same cache-stability characteristics across deploys.
+        manualChunks: (id) => {
+          if (!id.includes('node_modules')) return undefined;
+          if (id.includes('@tangle-network/sandbox-ui')) return 'tangle-ui';
+          if (id.includes('@tangle-network/blueprint-ui')) return 'tangle-ui';
+          if (id.includes('@tangle-network/brand')) return 'tangle-ui';
+          if (id.includes('connectkit')) return 'wallet';
+          if (id.includes('@walletconnect')) return 'wallet';
+          if (id.includes('wagmi')) return 'wallet';
+          if (id.includes('viem')) return 'viem';
+          if (id.includes('@polkadot')) return 'polkadot';
+          if (id.includes('@tanstack')) return 'tanstack';
+          if (id.includes('react-router')) return 'router';
+          if (
+            id.includes('node_modules/react/') ||
+            id.includes('node_modules/react-dom/')
+          ) {
+            return 'react';
+          }
+          if (id.includes('@radix-ui')) return 'radix';
+          return undefined;
+        },
+      },
     },
   },
   optimizeDeps: {
