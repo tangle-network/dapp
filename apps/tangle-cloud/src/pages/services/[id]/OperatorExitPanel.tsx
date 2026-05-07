@@ -4,7 +4,6 @@
 
 import {
   type ComponentProps,
-  type ElementType,
   type FC,
   type ReactNode,
   useState,
@@ -12,6 +11,7 @@ import {
   useMemo,
   useEffect,
 } from 'react';
+import { Text } from '../../../components/sandbox/SandboxUi';
 import {
   Button as SandboxButton,
   Card,
@@ -52,39 +52,6 @@ interface Props {
 }
 
 const CARD_SURFACE = 'sandbox' as const;
-
-type TextProps = ComponentProps<'p'> & {
-  variant?: 'h5' | 'body1' | 'body2' | 'body3';
-  fw?: 'bold' | 'semibold';
-};
-
-const Text: FC<TextProps> = ({
-  variant = 'body2',
-  fw,
-  className = '',
-  ...props
-}) => {
-  const Component = (variant === 'h5' ? 'h2' : 'p') as ElementType;
-  const variantClass =
-    variant === 'h5'
-      ? 'font-display text-xl text-foreground'
-      : variant === 'body1'
-        ? 'text-base text-foreground'
-        : variant === 'body3'
-          ? 'text-xs text-muted-foreground'
-          : 'text-sm text-foreground';
-  const weightClass =
-    fw === 'bold' ? 'font-bold' : fw === 'semibold' ? 'font-semibold' : '';
-
-  return (
-    <Component
-      className={[variantClass, weightClass, className]
-        .filter(Boolean)
-        .join(' ')}
-      {...props}
-    />
-  );
-};
 
 type ButtonProps = Omit<
   ComponentProps<typeof SandboxButton>,

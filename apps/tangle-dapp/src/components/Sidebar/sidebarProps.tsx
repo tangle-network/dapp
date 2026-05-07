@@ -4,7 +4,6 @@ import {
   GiftLineIcon,
   GlobalLine,
   HomeFillIcon,
-  ShuffleLine,
   TokenSwapFill,
   WaterDropletIcon,
 } from '@tangle-network/icons';
@@ -44,13 +43,6 @@ const SIDEBAR_STATIC_ITEMS: SideBarItemProps[] = [
     href: PagePath.LIQUID_STAKING,
     isInternal: true,
     Icon: WaterDropletIcon,
-    subItems: [],
-  },
-  {
-    name: 'Bridge',
-    href: PagePath.BRIDGE,
-    isInternal: true,
-    Icon: ShuffleLine,
     subItems: [],
   },
   {

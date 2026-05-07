@@ -3,8 +3,8 @@
  */
 
 import {
+  type ChangeEvent,
   type ComponentProps,
-  type ElementType,
   type FC,
   useState,
   useMemo,
@@ -12,6 +12,7 @@ import {
   useEffect,
   useRef,
 } from 'react';
+import { Text } from '../../../components/sandbox/SandboxUi';
 import { Link } from 'react-router';
 import { useAccount } from 'wagmi';
 import { useQueryClient } from '@tanstack/react-query';
@@ -23,6 +24,7 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
+  EmptyState,
   Input as SandboxInput,
   Skeleton,
 } from '@tangle-network/sandbox-ui/primitives';
@@ -77,43 +79,6 @@ type BlueprintMetadataPreview = {
   metadataHash: `0x${string}`;
 };
 
-type TextProps = ComponentProps<'p'> & {
-  variant?: 'h4' | 'h5' | 'body1' | 'body2' | 'body3';
-  fw?: 'bold' | 'semibold';
-};
-
-const Text: FC<TextProps> = ({
-  variant = 'body2',
-  fw,
-  className = '',
-  ...props
-}) => {
-  const Component = (
-    variant === 'h4' ? 'h1' : variant === 'h5' ? 'h2' : 'p'
-  ) as ElementType;
-  const variantClass =
-    variant === 'h4'
-      ? 'font-display text-3xl tracking-tight text-foreground'
-      : variant === 'h5'
-        ? 'font-display text-xl text-foreground'
-        : variant === 'body1'
-          ? 'text-base text-foreground'
-          : variant === 'body3'
-            ? 'text-xs text-muted-foreground'
-            : 'text-sm text-foreground';
-  const weightClass =
-    fw === 'bold' ? 'font-bold' : fw === 'semibold' ? 'font-semibold' : '';
-
-  return (
-    <Component
-      className={[variantClass, weightClass, className]
-        .filter(Boolean)
-        .join(' ')}
-      {...props}
-    />
-  );
-};
-
 type ButtonProps = Omit<
   ComponentProps<typeof SandboxButton>,
   'variant' | 'size'
@@ -153,7 +118,9 @@ const Input: FC<InputProps> = ({
 }) => (
   <SandboxInput
     {...props}
-    onChange={(event) => onChange?.(event.currentTarget.value)}
+    onChange={(event: ChangeEvent<HTMLInputElement>) =>
+      onChange?.(event.currentTarget.value)
+    }
   />
 );
 
@@ -755,16 +722,11 @@ const ManageBlueprintsPage: FC = () => {
             )}
           </>
         ) : (
-          <div className="flex flex-col items-center justify-center py-12">
-            <EditLine className="w-12 h-12 text-muted-foreground mb-4" />
-            <Text variant="h5" fw="semibold">
-              No Blueprints Yet
-            </Text>
-            <Text variant="body1" className="text-muted-foreground mt-2">
-              Create your first blueprint to start offering services on Tangle
-              Network.
-            </Text>
-          </div>
+          <EmptyState
+            icon={<EditLine className="h-10 w-10" />}
+            title="No Blueprints Yet"
+            description="Create your first blueprint to start offering services on Tangle Network."
+          />
         )}
       </Card>
 
@@ -958,7 +920,7 @@ const UpdateMetadataModal: FC<UpdateMetadataModalProps> = ({
   };
 
   return (
-    <Modal open={isOpen} onOpenChange={(open) => !open && onClose()}>
+    <Modal open={isOpen} onOpenChange={(open: boolean) => !open && onClose()}>
       <ModalContent>
         <ModalHeader>Update Blueprint Metadata</ModalHeader>
         <ModalBody>
@@ -1154,7 +1116,7 @@ const DeactivateModal: FC<DeactivateModalProps> = ({
   };
 
   return (
-    <Modal open={isOpen} onOpenChange={(open) => !open && onClose()}>
+    <Modal open={isOpen} onOpenChange={(open: boolean) => !open && onClose()}>
       <ModalContent>
         <ModalHeader>Deactivate Blueprint</ModalHeader>
         <ModalBody>
@@ -1237,7 +1199,7 @@ const TransferModal: FC<TransferModalProps> = ({
   };
 
   return (
-    <Modal open={isOpen} onOpenChange={(open) => !open && onClose()}>
+    <Modal open={isOpen} onOpenChange={(open: boolean) => !open && onClose()}>
       <ModalContent>
         <ModalHeader>Transfer Blueprint</ModalHeader>
         <ModalBody>

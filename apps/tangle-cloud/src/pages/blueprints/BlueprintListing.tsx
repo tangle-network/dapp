@@ -6,13 +6,16 @@ import {
   Input,
   Skeleton,
 } from '../../components/sandbox/SandboxUi';
+import {
+  SegmentedControl,
+  type SegmentedControlOption,
+} from '@tangle-network/sandbox-ui/primitives';
 import { Search } from '@tangle-network/icons';
 import type { UseAllBlueprintsReturn } from '@tangle-network/tangle-shared-ui/data/graphql';
 import type { Blueprint } from '@tangle-network/tangle-shared-ui/types/blueprint';
 import {
   Dispatch,
   FC,
-  ReactNode,
   SetStateAction,
   useDeferredValue,
   useEffect,
@@ -307,31 +310,38 @@ const BlueprintListing: FC<Props> = ({
           </div>
 
           <div className="flex flex-col gap-3 border-border border-t pt-4 lg:flex-row lg:items-center lg:justify-between">
-            <div className="chip-row flex gap-2 overflow-x-auto pb-0.5">
+            <div className="flex items-center gap-2 overflow-x-auto pb-0.5">
               <span className="hidden shrink-0 items-center pr-1 font-semibold text-muted-foreground text-[10px] uppercase tracking-wider sm:inline-flex">
                 Category
               </span>
-              <CategoryPill
-                isActive={selectedCategory === ALL_CATEGORIES}
-                onClick={() => setSelectedCategory(ALL_CATEGORIES)}
-              >
-                All
-                <span className="rounded-full bg-background/70 px-2 py-0.5 font-mono text-[10px] text-foreground">
-                  {blueprintItems.length}
-                </span>
-              </CategoryPill>
-              {categories.map(({ category, count }) => (
-                <CategoryPill
-                  key={category}
-                  isActive={selectedCategory === category}
-                  onClick={() => setSelectedCategory(category)}
-                >
-                  {category.replace(/^AI /, '')}
-                  <span className="rounded-full bg-background/70 px-2 py-0.5 font-mono text-[10px] text-foreground">
-                    {count}
-                  </span>
-                </CategoryPill>
-              ))}
+              <SegmentedControl<string>
+                aria-label="Filter blueprints by category"
+                value={selectedCategory}
+                onValueChange={setSelectedCategory}
+                options={[
+                  {
+                    value: ALL_CATEGORIES,
+                    label: 'All',
+                    adornment: (
+                      <span className="rounded-full bg-background/70 px-2 py-0.5 font-mono text-[10px] text-foreground">
+                        {blueprintItems.length}
+                      </span>
+                    ),
+                  } satisfies SegmentedControlOption<string>,
+                  ...categories.map(
+                    ({ category, count }) =>
+                      ({
+                        value: category,
+                        label: category.replace(/^AI /, ''),
+                        adornment: (
+                          <span className="rounded-full bg-background/70 px-2 py-0.5 font-mono text-[10px] text-foreground">
+                            {count}
+                          </span>
+                        ),
+                      }) satisfies SegmentedControlOption<string>,
+                  ),
+                ]}
+              />
             </div>
 
             <div className="flex shrink-0 items-center gap-3 text-muted-foreground text-xs">
@@ -671,27 +681,4 @@ const BlueprintMetric = ({
       {value ?? '-'}
     </p>
   </div>
-);
-
-const CategoryPill = ({
-  isActive,
-  onClick,
-  children,
-}: {
-  isActive: boolean;
-  onClick: () => void;
-  children: ReactNode;
-}) => (
-  <button
-    type="button"
-    onClick={onClick}
-    className={twMerge(
-      'inline-flex h-8 shrink-0 items-center gap-2 rounded-full border px-3 font-semibold text-xs transition-colors',
-      isActive
-        ? 'border-primary bg-primary text-primary-foreground'
-        : 'border-border bg-background text-muted-foreground hover:bg-muted hover:text-foreground',
-    )}
-  >
-    {children}
-  </button>
 );

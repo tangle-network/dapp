@@ -150,7 +150,7 @@ const JoinServiceModal: FC<Props> = ({ serviceId, onClose }) => {
   const hasRequirements = requirements && requirements.length > 0;
 
   return (
-    <Modal open onOpenChange={(open) => !open && onClose()}>
+    <Modal open onOpenChange={(open: boolean) => !open && onClose()}>
       <ModalContent size="md">
         <ModalHeader>Join Service #{serviceId.toString()}</ModalHeader>
 

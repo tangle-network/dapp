@@ -1,3 +1,4 @@
+import type { ChangeEvent } from 'react';
 import {
   SlashActionPermissions,
   SlashProposal,
@@ -62,7 +63,9 @@ const CancelSlashModal = ({
             <SlashTextarea
               rows={4}
               value={cancelReason}
-              onChange={(event) => onCancelReasonChange(event.target.value)}
+              onChange={(event: ChangeEvent<HTMLTextAreaElement>) =>
+                onCancelReasonChange(event.target.value)
+              }
               placeholder="Provide cancellation reason..."
             />
             <Text variant="body3" className="text-muted-foreground mt-1">

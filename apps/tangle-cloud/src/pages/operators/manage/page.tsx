@@ -3,14 +3,16 @@
  */
 
 import {
+  type ChangeEvent,
   type ComponentProps,
-  type ElementType,
   type FC,
+  type MouseEvent,
   type ReactNode,
   useCallback,
   useMemo,
   useState,
 } from 'react';
+import { Text } from '../../../components/sandbox/SandboxUi';
 import {
   Badge,
   Button as SandboxButton,
@@ -86,43 +88,6 @@ const shortenHex = (value: string, chars = 6) =>
     ? value
     : `${value.slice(0, chars)}...${value.slice(-chars)}`;
 
-type TextProps = ComponentProps<'p'> & {
-  variant?: 'h4' | 'h5' | 'body1' | 'body2' | 'body3';
-  fw?: 'bold' | 'semibold';
-};
-
-const Text: FC<TextProps> = ({
-  variant = 'body2',
-  fw,
-  className = '',
-  ...props
-}) => {
-  const Component = (
-    variant === 'h4' ? 'h1' : variant === 'h5' ? 'h2' : 'p'
-  ) as ElementType;
-  const variantClass =
-    variant === 'h4'
-      ? 'font-display text-3xl tracking-tight text-foreground'
-      : variant === 'h5'
-        ? 'font-display text-xl text-foreground'
-        : variant === 'body1'
-          ? 'text-base text-foreground'
-          : variant === 'body3'
-            ? 'text-xs text-muted-foreground'
-            : 'text-sm text-foreground';
-  const weightClass =
-    fw === 'bold' ? 'font-bold' : fw === 'semibold' ? 'font-semibold' : '';
-
-  return (
-    <Component
-      className={[variantClass, weightClass, className]
-        .filter(Boolean)
-        .join(' ')}
-      {...props}
-    />
-  );
-};
-
 type ButtonProps = Omit<
   ComponentProps<typeof SandboxButton>,
   'variant' | 'size'
@@ -162,7 +127,9 @@ const Input: FC<InputProps> = ({
 }) => (
   <SandboxInput
     {...props}
-    onChange={(event) => onChange?.(event.currentTarget.value)}
+    onChange={(event: ChangeEvent<HTMLInputElement>) =>
+      onChange?.(event.currentTarget.value)
+    }
   />
 );
 
@@ -833,7 +800,7 @@ const Page: FC = () => {
               size="sm"
               isDisabled={!actionState.canUnregister}
               className="uppercase body4 bg-destructive/10 text-destructive hover:bg-destructive/15 border border-destructive/20 disabled:!opacity-100 disabled:!text-muted-foreground disabled:!border-border disabled:!bg-transparent dark:disabled:!text-muted-foreground  disabled:cursor-not-allowed"
-              onClick={(event) => {
+              onClick={(event: MouseEvent<HTMLButtonElement>) => {
                 event.stopPropagation();
                 setSelectedRegistration(info.row.original);
                 setShowUnregisterModal(true);
@@ -852,7 +819,7 @@ const Page: FC = () => {
                       variant="utility"
                       size="sm"
                       className="uppercase body4 bg-primary/10 text-primary hover:bg-primary/15 border border-primary/20"
-                      onClick={(event) => {
+                      onClick={(event: MouseEvent<HTMLButtonElement>) => {
                         event.stopPropagation();
                         setSelectedRegistration(info.row.original);
                         setNewRpcAddress(
@@ -1064,7 +1031,7 @@ const Page: FC = () => {
                     size="sm"
                     isDisabled={!permissions.canDispute}
                     className="uppercase body4 bg-primary/10 text-primary hover:bg-primary/15 border border-primary/20 disabled:opacity-50 disabled:cursor-not-allowed"
-                    onClick={(event) => {
+                    onClick={(event: MouseEvent<HTMLButtonElement>) => {
                       event.stopPropagation();
                       clearActionError('dispute');
                       setSelectedSlash(slash);
@@ -1083,7 +1050,7 @@ const Page: FC = () => {
                     size="sm"
                     isDisabled={!permissions.canCancel}
                     className="uppercase body4 bg-destructive/10 text-destructive hover:bg-destructive/15 border border-destructive/20 disabled:opacity-50 disabled:cursor-not-allowed"
-                    onClick={(event) => {
+                    onClick={(event: MouseEvent<HTMLButtonElement>) => {
                       event.stopPropagation();
                       clearActionError('cancel');
                       setSelectedSlash(slash);
@@ -1104,7 +1071,7 @@ const Page: FC = () => {
                           size="sm"
                           isDisabled={!canExecute}
                           className="uppercase body4 bg-emerald-500/10 text-emerald-400 hover:bg-emerald-500/15 border border-emerald-500/20 disabled:opacity-50 disabled:cursor-not-allowed"
-                          onClick={(event) => {
+                          onClick={(event: MouseEvent<HTMLButtonElement>) => {
                             event.stopPropagation();
                             void handleExecuteSingle(slash);
                           }}
@@ -1140,7 +1107,7 @@ const Page: FC = () => {
                   variant="utility"
                   size="sm"
                   className="uppercase body4"
-                  onClick={(event) => {
+                  onClick={(event: MouseEvent<HTMLButtonElement>) => {
                     event.stopPropagation();
                     setSelectedSlash(slash);
                     setShowTimelineModal(true);
@@ -1154,7 +1121,7 @@ const Page: FC = () => {
                     variant="utility"
                     size="sm"
                     className="uppercase body4"
-                    onClick={(event) => {
+                    onClick={(event: MouseEvent<HTMLButtonElement>) => {
                       event.stopPropagation();
                       setSelectedSlash(slash);
                       setShowDisputeMessageModal(true);

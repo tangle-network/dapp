@@ -3,17 +3,13 @@
 import { useCallback, useEffect, useState } from 'react';
 import { Hex } from 'viem';
 
-import { BridgeQueueTxItem, TangleTokenSymbol } from '../types';
+import { TangleTokenSymbol } from '../types';
 import Optional from '../utils/Optional';
-import { ChainConfig } from '@tangle-network/dapp-config';
 
 export enum LocalStorageKey {
   CUSTOM_RPC_ENDPOINT = 'customRpcEndpoint',
   KNOWN_NETWORK_ID = 'knownNetworkId',
   SUBSTRATE_WALLETS_METADATA = 'substrateWalletsMetadata',
-  BRIDGE_TX_QUEUE_BY_ACC = 'bridgeTxQueue',
-  BRIDGE_TOKENS_TO_ACC = 'bridgeTokensToAcc',
-  BRIDGE_DEST_TX_IDS = 'bridgeDestTxIds',
   CLAIMED_ERAS_BY_VALIDATOR = 'claimedErasByValidator',
   SHOW_TEST_NETWORKS = 'showTestNetworks',
   TVL_HISTORY = 'tvlHistory',
@@ -28,28 +24,6 @@ export type SubstrateWalletsMetadataEntry = {
 export type SubstrateWalletsMetadataCache = Partial<
   Record<Hex, SubstrateWalletsMetadataEntry>
 >;
-
-export type TxQueueByAccount = Record<string, BridgeQueueTxItem[]>;
-
-export type BridgeTokensToAcc = Record<string, string[]>; // accountAddress -> tokenAddress[]
-
-export enum BridgeDestTxStatus {
-  Completed = 'completed',
-  Failed = 'failed',
-  Pending = 'pending',
-}
-
-export type BridgeDestTxIds = Record<
-  string,
-  {
-    hyperlane: {
-      srcTx: string;
-      msgId: string;
-      destChain: ChainConfig;
-      status: BridgeDestTxStatus;
-    }[];
-  }
->; // accountAddress -> { hyperlane: [] }
 
 export type TvlHistory = {
   timestamp: number;
@@ -67,19 +41,13 @@ export type LocalStorageValueOf<T extends LocalStorageKey> =
       ? number
       : T extends LocalStorageKey.SUBSTRATE_WALLETS_METADATA
         ? SubstrateWalletsMetadataCache
-        : T extends LocalStorageKey.BRIDGE_TX_QUEUE_BY_ACC
-          ? TxQueueByAccount
-          : T extends LocalStorageKey.BRIDGE_TOKENS_TO_ACC
-            ? BridgeTokensToAcc
-            : T extends LocalStorageKey.BRIDGE_DEST_TX_IDS
-              ? BridgeDestTxIds
-              : T extends LocalStorageKey.CLAIMED_ERAS_BY_VALIDATOR
-                ? Record<string, number[]>
-                : T extends LocalStorageKey.SHOW_TEST_NETWORKS
-                  ? boolean
-                  : T extends LocalStorageKey.TVL_HISTORY
-                    ? TvlHistory
-                    : never;
+        : T extends LocalStorageKey.CLAIMED_ERAS_BY_VALIDATOR
+          ? Record<string, number[]>
+          : T extends LocalStorageKey.SHOW_TEST_NETWORKS
+            ? boolean
+            : T extends LocalStorageKey.TVL_HISTORY
+              ? TvlHistory
+              : never;
 
 export const getJsonFromLocalStorage = <Key extends LocalStorageKey>(
   key: Key,

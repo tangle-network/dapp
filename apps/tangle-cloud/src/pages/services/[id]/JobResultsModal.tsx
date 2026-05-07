@@ -5,7 +5,6 @@
 
 import {
   type ComponentProps,
-  type ElementType,
   type FC,
   useMemo,
   useState,
@@ -18,8 +17,10 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
+  EmptyState,
   Skeleton,
 } from '@tangle-network/sandbox-ui/primitives';
+import { Text } from '../../../components/sandbox/SandboxUi';
 import {
   useJobResults,
   type JobCall,
@@ -35,39 +36,6 @@ import {
 import { twMerge } from 'tailwind-merge';
 
 const EMPTY_VALUE_PLACEHOLDER = '-';
-
-type TextProps = ComponentProps<'p'> & {
-  variant?: 'h5' | 'body1' | 'body2' | 'body3';
-  fw?: 'bold' | 'semibold';
-};
-
-const Text: FC<TextProps> = ({
-  variant = 'body2',
-  fw,
-  className = '',
-  ...props
-}) => {
-  const Component = (variant === 'h5' ? 'h2' : 'p') as ElementType;
-  const variantClass =
-    variant === 'h5'
-      ? 'font-display text-xl text-foreground'
-      : variant === 'body1'
-        ? 'text-base text-foreground'
-        : variant === 'body3'
-          ? 'text-xs text-muted-foreground'
-          : 'text-sm text-foreground';
-  const weightClass =
-    fw === 'bold' ? 'font-bold' : fw === 'semibold' ? 'font-semibold' : '';
-
-  return (
-    <Component
-      className={[variantClass, weightClass, className]
-        .filter(Boolean)
-        .join(' ')}
-      {...props}
-    />
-  );
-};
 
 const Modal = Dialog;
 
@@ -427,7 +395,7 @@ export const JobResultsModal: FC<Props> = ({ job, jobDefinition, onClose }) => {
   });
 
   return (
-    <Modal open onOpenChange={(open) => !open && onClose()}>
+    <Modal open onOpenChange={(open: boolean) => !open && onClose()}>
       <ModalContent size="lg">
         <ModalHeader>{headerTitle}</ModalHeader>
         <ModalBody>
@@ -520,11 +488,10 @@ export const JobResultsModal: FC<Props> = ({ job, jobDefinition, onClose }) => {
                 ))}
               </div>
             ) : (
-              <div className="text-center py-6 text-muted-foreground">
-                <Text variant="body1">
-                  No results received yet. Operators are processing this job.
-                </Text>
-              </div>
+              <EmptyState
+                title="No results received yet"
+                description="Operators are processing this job."
+              />
             )}
           </div>
         </ModalBody>

@@ -3,8 +3,8 @@
  */
 
 import {
+  type ChangeEvent,
   type ComponentProps,
-  type ElementType,
   type FC,
   type ReactNode,
   useState,
@@ -12,6 +12,7 @@ import {
   useMemo,
   useEffect,
 } from 'react';
+import { Text } from '../../../components/sandbox/SandboxUi';
 import {
   Button as SandboxButton,
   Dialog,
@@ -37,34 +38,6 @@ interface Props {
   serviceId: bigint;
   onClose: () => void;
 }
-
-type TextProps = ComponentProps<'p'> & {
-  variant?: 'h5' | 'body2';
-  fw?: 'bold';
-};
-
-const Text: FC<TextProps> = ({
-  variant = 'body2',
-  fw,
-  className = '',
-  ...props
-}) => {
-  const Component = (variant === 'h5' ? 'h2' : 'p') as ElementType;
-  const variantClass =
-    variant === 'h5'
-      ? 'font-display text-xl text-foreground'
-      : 'text-sm text-foreground';
-  const weightClass = fw === 'bold' ? 'font-bold' : '';
-
-  return (
-    <Component
-      className={[variantClass, weightClass, className]
-        .filter(Boolean)
-        .join(' ')}
-      {...props}
-    />
-  );
-};
 
 type ButtonProps = Omit<
   ComponentProps<typeof SandboxButton>,
@@ -117,7 +90,9 @@ const Input: FC<InputProps> = ({
       ]
         .filter(Boolean)
         .join(' ')}
-      onChange={(event) => onChange?.(event.currentTarget.value)}
+      onChange={(event: ChangeEvent<HTMLInputElement>) =>
+        onChange?.(event.currentTarget.value)
+      }
     />
     {rightIcon && (
       <div className="pointer-events-none absolute inset-y-0 right-3 flex items-center">
@@ -308,7 +283,7 @@ const FundServiceModal: FC<Props> = ({ serviceId, onClose }) => {
     !isFunding;
 
   return (
-    <Modal open onOpenChange={(open) => !open && onClose()}>
+    <Modal open onOpenChange={(open: boolean) => !open && onClose()}>
       <ModalContent size="md">
         <ModalHeader>Fund Service #{serviceId.toString()}</ModalHeader>
 

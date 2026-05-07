@@ -3,8 +3,8 @@
  */
 
 import {
+  type ChangeEvent,
   type ComponentProps,
-  type ElementType,
   type FC,
   useCallback,
   useMemo,
@@ -13,6 +13,7 @@ import {
   Button as SandboxButton,
   Input as SandboxInput,
 } from '@tangle-network/sandbox-ui/primitives';
+import { Text } from '../../../components/sandbox/SandboxUi';
 import {
   BlueprintFieldKind,
   getDefaultValue,
@@ -27,34 +28,6 @@ interface SchemaFieldInputProps {
   onChange: (value: FormFieldValue) => void;
   path: string;
 }
-
-type TextProps = ComponentProps<'p'> & {
-  variant?: 'body2' | 'body3';
-  fw?: 'semibold';
-};
-
-const Text: FC<TextProps> = ({
-  variant = 'body2',
-  fw,
-  className = '',
-  ...props
-}) => {
-  const Component = 'p' as ElementType;
-  const variantClass =
-    variant === 'body3'
-      ? 'text-xs text-muted-foreground'
-      : 'text-sm text-foreground';
-  const weightClass = fw === 'semibold' ? 'font-semibold' : '';
-
-  return (
-    <Component
-      className={[variantClass, weightClass, className]
-        .filter(Boolean)
-        .join(' ')}
-      {...props}
-    />
-  );
-};
 
 type InputProps = Omit<ComponentProps<typeof SandboxInput>, 'onChange'> & {
   isControlled?: boolean;
@@ -75,7 +48,9 @@ const Input: FC<InputProps> = ({
     <SandboxInput
       {...props}
       className={isInvalid ? 'border-destructive' : undefined}
-      onChange={(event) => onChange?.(event.currentTarget.value)}
+      onChange={(event: ChangeEvent<HTMLInputElement>) =>
+        onChange?.(event.currentTarget.value)
+      }
     />
     {errorMessage && (
       <p className="mt-1 text-destructive text-xs">{errorMessage}</p>
