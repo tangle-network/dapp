@@ -9,7 +9,7 @@ import {
 } from '../Dropdown';
 import { Typography } from '../../typography/Typography';
 import { useCallback } from 'react';
-import { AnimatedChevronRight } from '../BridgeInputs/AnimatedChevronRight';
+import { AnimatedChevronRight } from './AnimatedChevronRight';
 import { twMerge } from 'tailwind-merge';
 import { Label } from '../Label';
 

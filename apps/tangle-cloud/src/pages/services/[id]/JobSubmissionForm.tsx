@@ -7,13 +7,13 @@
 import {
   type ChangeEvent,
   type ComponentProps,
-  type ElementType,
   type FC,
   useState,
   useCallback,
   useMemo,
   useEffect,
 } from 'react';
+import { Text } from '../../../components/sandbox/SandboxUi';
 import {
   Button as SandboxButton,
   Input as SandboxInput,
@@ -54,29 +54,6 @@ interface Props {
   serviceId: bigint;
   blueprint: Blueprint;
 }
-
-type TextProps = ComponentProps<'p'> & {
-  variant?: 'body2' | 'body3';
-};
-
-const Text: FC<TextProps> = ({
-  variant = 'body2',
-  className = '',
-  ...props
-}) => {
-  const Component = 'p' as ElementType;
-  const variantClass =
-    variant === 'body3'
-      ? 'text-xs text-muted-foreground'
-      : 'text-sm text-foreground';
-
-  return (
-    <Component
-      className={[variantClass, className].filter(Boolean).join(' ')}
-      {...props}
-    />
-  );
-};
 
 type ButtonProps = Omit<
   ComponentProps<typeof SandboxButton>,

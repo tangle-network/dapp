@@ -39,7 +39,12 @@ export default defineConfig({
   },
   plugins: [
     nodePolyfills({
-      include: ['buffer', 'crypto', 'util', 'stream'],
+      // `crypto` deliberately omitted: pulling it in adds ~680KB of
+      // crypto-browserify (bn.js, elliptic, browserify-sign, browserify-aes,
+      // pbkdf2, …) that no first-party code uses. WalletConnect/wagmi/viem
+      // all use Web Crypto + @noble/* directly, and the few transitive
+      // offenders are handled below via explicit resolve aliases.
+      include: ['buffer', 'util', 'stream'],
     }),
     react(),
     nxViteTsPaths(),
@@ -91,15 +96,29 @@ export default defineConfig({
           if (id.includes('node_modules/copy-to-clipboard/')) return 'utils';
           if (id.includes('node_modules/react-copy-to-clipboard/'))
             return 'utils';
-          // `crypto-browserify` and its transitive CJS deps (bn.js,
-          // elliptic, browserify-sign, create-ecdh, etc.) are pulled in by
-          // `vite-plugin-node-polyfills` for any chunk that touches the
-          // Node `crypto` global. Without this rule, the shared CJS interop
-          // helpers leak into the polkadot vendor chunk, which then ends up
-          // in the eager modulepreload waterfall on every cold load.
-          // Pinning them to their own `crypto-polyfill` chunk lets Rollup
-          // share the helpers there without touching polkadot.
+          // Node-stdlib polyfill artefacts injected by
+          // `vite-plugin-node-polyfills`: the `buffer` shim and its
+          // transitive helpers (`base64-js`, `ieee754`, `safe-buffer`) +
+          // the synthetic `process` shim + a few CJS interop helpers
+          // (`inherits`). Pinning them here keeps the helpers from leaking
+          // into the polkadot vendor chunk (which would otherwise force
+          // the entire ~700KB polkadot bundle into the eager modulepreload
+          // waterfall just to satisfy the `Buffer` global referenced in
+          // wallet/wagmi code paths).
+          //
+          // The legacy `crypto-browserify` matchers below intentionally
+          // stay as a defensive guard: if any future dep accidentally
+          // pulls Node's `crypto` module back in, those modules land here
+          // instead of inflating the eager wallet/index/polkadot chunks.
+          // The `crypto` polyfill was dropped from `nodePolyfills.include`
+          // in May 2026 — see the `nodePolyfills(...)` call above for
+          // context.
           if (
+            id.includes('node_modules/buffer/') ||
+            id.includes('node_modules/base64-js/') ||
+            id.includes('node_modules/ieee754/') ||
+            id.includes('node_modules/safe-buffer/') ||
+            id.includes('node_modules/process/') ||
             id.includes('node_modules/crypto-browserify/') ||
             id.includes('node_modules/browserify-sign/') ||
             id.includes('node_modules/browserify-rsa/') ||
@@ -126,7 +145,7 @@ export default defineConfig({
             id.includes('node_modules/cipher-base/') ||
             id.includes('node_modules/inherits/')
           ) {
-            return 'crypto-polyfill';
+            return 'node-polyfills';
           }
           // `@noble/hashes` and `@noble/curves` provide the modern crypto
           // primitives (keccak, sha256, secp256k1, ed25519). They're shared

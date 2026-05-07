@@ -33,13 +33,14 @@ import {
   TabsTrigger,
   Textarea,
 } from '@tangle-network/sandbox-ui/primitives';
-import type {
-  ChangeEvent,
-  ComponentProps,
-  ElementType,
-  FC,
-  ReactNode,
-} from 'react';
+import type { ChangeEvent, ComponentProps, FC, ReactNode } from 'react';
+
+// Re-export the canonical tangle-cloud Text from the dedicated module so we
+// preserve the existing import surface (`import { Text } from '...sandbox/SandboxUi'`)
+// while routing through a single Text implementation that consumes
+// @tangle-network/brand 0.3 tokens.
+export { Text } from '../Text';
+export type { TextProps, TextVariant } from '../Text';
 
 export {
   Badge,
@@ -128,43 +129,6 @@ export const CircularProgress: FC<{
     {Math.round(progress * 100)}%
   </span>
 );
-
-export type TextProps = ComponentProps<'p'> & {
-  variant?: 'h4' | 'h5' | 'body1' | 'body2' | 'body3' | 'body4';
-  fw?: 'bold' | 'semibold';
-};
-
-export const Text: FC<TextProps> = ({
-  variant = 'body2',
-  fw,
-  className = '',
-  ...props
-}) => {
-  const Component = (
-    variant === 'h4' ? 'h1' : variant === 'h5' ? 'h2' : 'p'
-  ) as ElementType;
-  const variantClass =
-    variant === 'h4'
-      ? 'font-display text-3xl tracking-tight text-foreground'
-      : variant === 'h5'
-        ? 'font-display text-xl text-foreground'
-        : variant === 'body1'
-          ? 'text-base text-foreground'
-          : variant === 'body3' || variant === 'body4'
-            ? 'text-xs text-muted-foreground'
-            : 'text-sm text-foreground';
-  const weightClass =
-    fw === 'bold' ? 'font-bold' : fw === 'semibold' ? 'font-semibold' : '';
-
-  return (
-    <Component
-      className={[variantClass, weightClass, className]
-        .filter(Boolean)
-        .join(' ')}
-      {...props}
-    />
-  );
-};
 
 export type ButtonProps = Omit<
   ComponentProps<typeof SandboxButton>,

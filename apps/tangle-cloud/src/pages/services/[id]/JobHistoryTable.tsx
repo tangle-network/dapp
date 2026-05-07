@@ -2,13 +2,8 @@
  * Table showing job history for a service.
  */
 
-import {
-  type ComponentProps,
-  type ElementType,
-  type FC,
-  useMemo,
-  useState,
-} from 'react';
+import { type ComponentProps, type FC, useMemo, useState } from 'react';
+import { Text } from '../../../components/sandbox/SandboxUi';
 import {
   createColumnHelper,
   getCoreRowModel,
@@ -35,34 +30,6 @@ interface Props {
 }
 
 const columnHelper = createColumnHelper<JobCall>();
-
-type TextProps = ComponentProps<'p'> & {
-  variant?: 'body1' | 'body2';
-  fw?: 'semibold';
-};
-
-const Text: FC<TextProps> = ({
-  variant = 'body2',
-  fw,
-  className = '',
-  ...props
-}) => {
-  const Component = 'p' as ElementType;
-  const variantClass =
-    variant === 'body1'
-      ? 'text-base text-foreground'
-      : 'text-sm text-foreground';
-  const weightClass = fw === 'semibold' ? 'font-semibold' : '';
-
-  return (
-    <Component
-      className={[variantClass, weightClass, className]
-        .filter(Boolean)
-        .join(' ')}
-      {...props}
-    />
-  );
-};
 
 type ButtonProps = Omit<
   ComponentProps<typeof SandboxButton>,
