@@ -1,4 +1,4 @@
-import { InjectedWindowProvider } from '@polkadot/extension-inject/types';
+import type { InjectedWindowProvider } from '@polkadot/extension-inject/types';
 
 declare global {
   interface Window {

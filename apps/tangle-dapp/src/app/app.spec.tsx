@@ -31,10 +31,6 @@ vi.mock('../pages/blueprints/[id]', () => ({
   default: () => <div data-testid="blueprint-details-page" />,
 }));
 
-vi.mock('../pages/bridge', () => ({
-  default: () => <div data-testid="bridge-page" />,
-}));
-
 vi.mock('../pages/claim/migration', () => ({
   default: () => <div data-testid="claim-migration-page" />,
 }));
@@ -73,12 +69,6 @@ describe('App', () => {
     renderAt('/claim');
 
     expect(await screen.findByTestId('claim-migration-page')).toBeTruthy();
-  });
-
-  it('renders bridge route', async () => {
-    renderAt('/bridge');
-
-    expect(await screen.findByTestId('bridge-page')).toBeTruthy();
   });
 
   it('renders blueprint routes', async () => {

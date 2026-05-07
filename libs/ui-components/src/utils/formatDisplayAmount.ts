@@ -1,5 +1,5 @@
-import { BN } from '@polkadot/util';
-import { formatBn } from './formatBn';
+import type { BN } from '@polkadot/util';
+import { formatBigInt } from './formatBigInt';
 
 type FormatDisplayAmountOptions = {
   fractionMaxLength?: number;
@@ -31,11 +31,34 @@ export enum AmountFormatStyle {
 }
 
 /**
+ * Coerce a `BN`-like value (anything with a `.toString()` returning a numeric
+ * string) into a `bigint` without importing the `BN` runtime.
+ *
+ * This lets `formatDisplayAmount` accept `BN` callers without statically
+ * pulling `@polkadot/util` (which would yank the polkadot vendor chunk into
+ * the eager bundle for EVM-only consumers).
+ */
+const toBigIntFromBnOrBigInt = (amount: BN | bigint): bigint => {
+  if (typeof amount === 'bigint') {
+    return amount;
+  }
+
+  // BN.toString() returns a base-10 numeric string, including a leading `-`
+  // for negative values, which `BigInt(...)` parses correctly.
+  return BigInt(amount.toString());
+};
+
+/**
  * Format a balance or token amount into a humanly-legible format,
  * with commas and in a certain format style.
  *
  * This should be the preferred, standardized way to format balances
  * for UI display.
+ *
+ * @remarks
+ * Internally always uses `bigint` arithmetic so this function does not
+ * import from `@polkadot/*`. `BN` inputs are converted via `.toString()`
+ * (the `BN` import here is type-only and erased at build time).
  */
 export const formatDisplayAmount = (
   amount: BN | bigint,
@@ -43,9 +66,9 @@ export const formatDisplayAmount = (
   style: AmountFormatStyle,
   options?: FormatDisplayAmountOptions,
 ): string => {
-  const normalizedAmount = BN.isBN(amount) ? amount : new BN(amount.toString());
+  const value = toBigIntFromBnOrBigInt(amount);
 
-  return formatBn(normalizedAmount, decimals, {
+  return formatBigInt(value, decimals, {
     includeCommas: true,
     withSi: style === AmountFormatStyle.SI ? true : undefined,
     fractionMaxLength:

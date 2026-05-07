@@ -1,4 +1,4 @@
-import { isSubstrateAddress } from '@tangle-network/ui-components';
+import { isSubstrateAddress } from '@tangle-network/ui-components/utils/isSubstrateAddress';
 import { isEvmAddress } from '@tangle-network/ui-components/utils/isEvmAddress20';
 import { isSolanaAddress } from '@tangle-network/ui-components/utils/isSolanaAddress';
 import {

@@ -1,5 +1,9 @@
 // Import global styles first.
 import '@tangle-network/ui-components/tailwind.css';
+// Opt in to the legacy Cousine + Satoshi WOFF2 bundle. Apps that prefer
+// their own font stacks (e.g. tangle-cloud uses Geist via @fontsource)
+// skip this import to avoid bundling ~443KB of unused font assets.
+import '@tangle-network/ui-components/css/typography-fonts.css';
 import './styles.css';
 
 import { StrictMode } from 'react';

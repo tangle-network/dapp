@@ -1,23 +1,32 @@
 import { useActiveAccount } from '@tangle-network/api-provider-environment/hooks/useActiveAccount';
-import {
-  isEvmAddress,
-  isSubstrateAddress,
-  toSubstrateAddress,
-} from '@tangle-network/ui-components';
+import { isEvmAddress } from '@tangle-network/ui-components/utils/isEvmAddress20';
+import { isSubstrateAddress } from '@tangle-network/ui-components/utils/isSubstrateAddress';
 import { isSolanaAddress } from '@tangle-network/ui-components/utils/isSolanaAddress';
 import {
   EvmAddress,
   SolanaAddress,
   SubstrateAddress,
 } from '@tangle-network/ui-components/types/address';
-import useNetworkStore from '../context/useNetworkStore';
 
+/**
+ * Returns the active account's address as-is, gated by address-type checks.
+ *
+ * @remarks
+ * Previously, substrate addresses were re-encoded to match the active
+ * network's SS58 prefix here via `toSubstrateAddress`. That import pulls
+ * `@polkadot/util-crypto` and contributes ~874KB to every cold load, even
+ * for EVM-only users.
+ *
+ * Cross-prefix re-encoding is purely cosmetic — the underlying account is
+ * identical. Substrate-only consumers that genuinely need a specific
+ * SS58-prefixed display string should call `toSubstrateAddress` directly
+ * (those callsites live behind lazy substrate-route boundaries).
+ */
 const useActiveAccountAddress = ():
   | SubstrateAddress
   | EvmAddress
   | SolanaAddress
   | null => {
-  const { network } = useNetworkStore();
   const [activeAccount] = useActiveAccount();
 
   const address = activeAccount?.address;
@@ -31,9 +40,7 @@ const useActiveAccountAddress = ():
   }
 
   if (isEvmAddress(address) || isSubstrateAddress(address)) {
-    return network.ss58Prefix !== undefined && isSubstrateAddress(address)
-      ? toSubstrateAddress(address, network.ss58Prefix)
-      : address;
+    return address;
   }
 
   console.warn(`Unknown address type: ${address}`);
