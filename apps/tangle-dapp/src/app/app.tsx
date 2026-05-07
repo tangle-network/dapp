@@ -17,7 +17,6 @@ import { SkeletonLoader } from '@tangle-network/ui-components';
 // cold-load entry, lazy-loading it would cause a fallback flash.
 const BlueprintsPage = lazy(() => import('../pages/blueprints'));
 const BlueprintDetailsPage = lazy(() => import('../pages/blueprints/[id]'));
-const BridgePage = lazy(() => import('../pages/bridge'));
 const NotFoundPage = lazy(() => import('../pages/notFound'));
 const MigrationClaimPage = lazy(() => import('../pages/claim/migration'));
 const StakingTabContent = lazy(
@@ -66,8 +65,6 @@ function App() {
                 path={PagePath.CLAIM_MIGRATION}
                 element={<Navigate to={PagePath.CLAIM} replace />}
               />
-
-              <Route path={PagePath.BRIDGE} element={<BridgePage />} />
 
               <Route path={PagePath.BLUEPRINTS}>
                 <Route index element={<BlueprintsPage />} />
