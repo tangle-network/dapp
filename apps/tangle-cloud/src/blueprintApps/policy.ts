@@ -1,3 +1,4 @@
+import { isLocalPreviewHost } from '@tangle-network/tangle-shared-ui/utils/localPreview';
 import type { BlueprintPublisherVerification } from './types';
 
 const splitEnvList = (value: string | undefined): string[] =>
@@ -85,9 +86,15 @@ export const isIframeEligiblePublisher = (namespace?: string): boolean => {
   return iframeEligiblePublisherNamespaces.has(namespace.trim().toLowerCase());
 };
 
+// Local preview hostnames that we accept as iframe sources when the dapp
+// itself is running on a local preview host. Lets `pnpm dev` in a blueprint
+// repo pair with `yarn local:blueprint-ui-catalog` without env-var fiddling.
+const LOCAL_IFRAME_HOSTS = new Set(['localhost', '127.0.0.1', '0.0.0.0']);
+
 export const isIframeAllowedHost = (host: string): boolean => {
   const normalized = host.trim().toLowerCase();
   if (!normalized) return false;
+  if (LOCAL_IFRAME_HOSTS.has(normalized) && isLocalPreviewHost()) return true;
   if (trustedExternalAppHosts.includes(normalized)) return true;
   return trustedIframeHostSuffixes.some((suffix) =>
     normalized.endsWith(suffix),

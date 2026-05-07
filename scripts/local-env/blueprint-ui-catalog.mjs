@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+import { execFileSync, execSync } from 'node:child_process';
 import { createServer } from 'node:http';
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { basename, dirname, resolve } from 'node:path';
@@ -358,11 +359,39 @@ const generatedBlueprintSvg = (slug, metadata) => {
 `;
 };
 
+// Local dev ports for blueprint UIs. When BLUEPRINT_UI_USE_LOCAL_IFRAMES=true,
+// the catalog rewrites `externalApp.url` for these slugs so iframes load from
+// each blueprint's local dev server instead of the production CF deploy.
+// Add an entry when a new blueprint gains a UI bundle with a `dev` script.
+const LOCAL_IFRAME_DEV_URLS = {
+  'ai-agent-sandbox': 'http://localhost:1338/',
+  'ai-trading': 'http://localhost:5173/',
+};
+
+const useLocalIframes = process.env.BLUEPRINT_UI_USE_LOCAL_IFRAMES === 'true';
+
+const applyLocalIframeOverride = (slug, metadata) => {
+  if (!useLocalIframes) return metadata;
+  const local = LOCAL_IFRAME_DEV_URLS[slug];
+  const ext = metadata.blueprintUi?.externalApp;
+  if (!local || !ext || ext.mode !== 'iframe') return metadata;
+  return {
+    ...metadata,
+    blueprintUi: {
+      ...metadata.blueprintUi,
+      externalApp: { ...ext, url: local },
+    },
+  };
+};
+
 const loadCatalog = () =>
   BLUEPRINTS.map(([slug, repoPath]) => {
     const sourcePath = resolve(repoPath, 'metadata/blueprint-metadata.json');
     const sourceMetadata = JSON.parse(readFileSync(sourcePath, 'utf8'));
-    const metadata = withGeneratedImage(slug, sourceMetadata);
+    const metadata = applyLocalIframeOverride(
+      slug,
+      withGeneratedImage(slug, sourceMetadata),
+    );
     const metadataUri = `http://${PUBLIC_HOST}:${PUBLIC_PORT}/${slug}.json`;
     return {
       slug,
@@ -786,17 +815,242 @@ const serve = ({ prepareFirst = true } = {}) => {
   });
 };
 
+// ─── Cloudflare Pages deploy for iframe blueprint apps ─────────────────
+//
+// For every blueprint whose metadata declares `externalApp.mode === 'iframe'`
+// targeting a *.blueprint.tangle.tools|sh URL, build the UI bundle and
+// deploy it as a Cloudflare Pages project (idempotent). Reuses the same
+// per-repo `metadata/blueprint-metadata.json` convention as the rest of
+// this catalog. Run from the dapp root so wrangler picks up the global
+// CLOUDFLARE_API_TOKEN/ACCOUNT_ID env vars.
+//
+// We deploy on Pages rather than Workers Static Assets because the
+// account API token in use is Pages+DNS scoped only — Workers Custom
+// Domain attach requires Workers:Edit, which the current token lacks.
+// To migrate to Workers later: mint a CF token with Workers Scripts:Edit
+// + Workers Routes:Edit, swap deployBlueprintApp to use `wrangler deploy`
+// with [assets] directory in a generated wrangler.toml.
+
+const HEADERS_TEMPLATE = `/*
+  Content-Security-Policy: frame-ancestors https://cloud.tangle.tools https://app.tangle.tools https://apps.tangle.tools
+  Permissions-Policy: camera=(), microphone=(), geolocation=(), payment=(), usb=(), bluetooth=(), accelerometer=(), gyroscope=(), magnetometer=(), midi=(), serial=()
+  Referrer-Policy: no-referrer
+  X-Content-Type-Options: nosniff
+  Strict-Transport-Security: max-age=63072000; includeSubDomains; preload
+  X-Frame-Options: SAMEORIGIN
+
+/index.html
+  Cache-Control: no-store
+`;
+
+const REDIRECTS_TEMPLATE = '/*    /index.html    200\n';
+
+// First UI subdir we find that has a buildable package.json. Convention,
+// not config — keeps blueprint repos free of CF-specific knobs.
+const UI_SUBDIRS = ['arena', 'ui', 'app', 'frontend', 'web'];
+const PREFERRED_BUILD_CMDS = ['build', 'cloud:build'];
+
+const findUiSubdir = (repoPath) => {
+  for (const sub of UI_SUBDIRS) {
+    const pkgPath = resolve(repoPath, sub, 'package.json');
+    if (!existsSync(pkgPath)) continue;
+    const pkg = JSON.parse(readFileSync(pkgPath, 'utf8'));
+    if (!pkg.scripts) continue;
+    const script = PREFERRED_BUILD_CMDS.find((s) => pkg.scripts[s]);
+    if (script) {
+      return {
+        subdir: sub,
+        packageManager: pkg.packageManager?.split('@')[0] ?? 'pnpm',
+        script,
+      };
+    }
+  }
+  return null;
+};
+
+// Conventional Vite / React-Router output paths in priority order.
+const findDistPath = (cwd) => {
+  for (const candidate of ['build/client', 'dist', 'build']) {
+    if (existsSync(resolve(cwd, candidate, 'index.html'))) return candidate;
+  }
+  return null;
+};
+
+const cfApi = async (path, init = {}) => {
+  const token = process.env.CLOUDFLARE_API_TOKEN;
+  const account = process.env.CLOUDFLARE_ACCOUNT_ID;
+  if (!token || !account) {
+    throw new Error(
+      'CLOUDFLARE_API_TOKEN + CLOUDFLARE_ACCOUNT_ID env vars required',
+    );
+  }
+  const url = path.startsWith('/zones')
+    ? `https://api.cloudflare.com/client/v4${path}`
+    : `https://api.cloudflare.com/client/v4/accounts/${account}${path}`;
+  const res = await fetch(url, {
+    ...init,
+    headers: {
+      Authorization: `Bearer ${token}`,
+      'Content-Type': 'application/json',
+      ...init.headers,
+    },
+  });
+  return res.json();
+};
+
+const upsertCname = async (zoneId, hostname, target) => {
+  const list = await cfApi(`/zones/${zoneId}/dns_records?name=${hostname}`);
+  const sub = hostname.replace(/\.tangle\.tools$|\.tangle\.sh$/, '');
+  if ((list.result ?? []).length === 0) {
+    return cfApi(`/zones/${zoneId}/dns_records`, {
+      method: 'POST',
+      body: JSON.stringify({
+        type: 'CNAME',
+        name: sub,
+        content: target,
+        proxied: true,
+        comment: 'iframe blueprint app',
+      }),
+    });
+  }
+  const record = list.result[0];
+  if (record.content === target && record.type === 'CNAME') {
+    return { success: true, noop: true };
+  }
+  return cfApi(`/zones/${zoneId}/dns_records/${record.id}`, {
+    method: 'PATCH',
+    body: JSON.stringify({ type: 'CNAME', content: target, proxied: true }),
+  });
+};
+
+const ensurePagesProject = async (slug) => {
+  const existing = await cfApi(`/pages/projects/${slug}`);
+  if (existing.success) return existing.result;
+  const created = await cfApi(`/pages/projects`, {
+    method: 'POST',
+    body: JSON.stringify({ name: slug, production_branch: 'main' }),
+  });
+  if (!created.success) {
+    throw new Error(
+      `Failed to create Pages project ${slug}: ${JSON.stringify(created.errors)}`,
+    );
+  }
+  return created.result;
+};
+
+const ensurePagesCustomDomain = async (slug, hostname) => {
+  const list = await cfApi(`/pages/projects/${slug}/domains`);
+  if ((list.result ?? []).some((d) => d.name === hostname)) return;
+  await cfApi(`/pages/projects/${slug}/domains`, {
+    method: 'POST',
+    body: JSON.stringify({ name: hostname }),
+  });
+};
+
+const deployBlueprintApp = async ({ slug, hostname, repoPath, build }) => {
+  const cwd = resolve(repoPath, build.subdir);
+  console.log(`\n── ${slug} — building ${cwd}`);
+  execSync(`${build.packageManager} run ${build.script}`, {
+    cwd,
+    stdio: 'inherit',
+  });
+
+  const distRel = findDistPath(cwd);
+  if (!distRel) {
+    throw new Error(
+      `${slug}: no built dist (looked for build/client, dist, build)`,
+    );
+  }
+  const distAbs = resolve(cwd, distRel);
+
+  writeFileSync(resolve(distAbs, '_headers'), HEADERS_TEMPLATE);
+  writeFileSync(resolve(distAbs, '_redirects'), REDIRECTS_TEMPLATE);
+
+  await ensurePagesProject(slug);
+
+  console.log(`── ${slug} — wrangler pages deploy`);
+  execFileSync(
+    'wrangler',
+    [
+      'pages',
+      'deploy',
+      distAbs,
+      `--project-name=${slug}`,
+      '--branch=main',
+      '--commit-dirty=true',
+    ],
+    { cwd, stdio: 'inherit' },
+  );
+
+  await ensurePagesCustomDomain(slug, hostname);
+
+  // CF Pages auto-suffixes the *.pages.dev slug if taken (e.g. agent-sandbox
+  // → agent-sandbox-5xi.pages.dev). Read the project's actual canonical
+  // subdomain back so the CNAME points at a real target.
+  const project = await cfApi(`/pages/projects/${slug}`);
+  const canonical = project.result.subdomain;
+
+  const zoneId = process.env.CLOUDFLARE_ZONE_ID;
+  if (zoneId) {
+    await upsertCname(zoneId, hostname, canonical);
+  } else {
+    console.warn(
+      `${slug}: CLOUDFLARE_ZONE_ID not set — skipping CNAME upsert (point ${hostname} at ${canonical} manually)`,
+    );
+  }
+
+  console.log(`✓ ${slug} → https://${hostname}/   (CF: ${canonical})`);
+};
+
+const deployBlueprintApps = async (filterSlugs) => {
+  const catalog = loadCatalog();
+  const targets = catalog
+    .map((item) => {
+      const ext = item.metadata?.blueprintUi?.externalApp;
+      if (!ext || ext.mode !== 'iframe') return null;
+      let host;
+      try {
+        host = new URL(ext.url).hostname;
+      } catch {
+        return null;
+      }
+      if (!/\.blueprint\.tangle\.(tools|sh)$/.test(host)) return null;
+      const slug = host.split('.')[0];
+      if (filterSlugs.length > 0 && !filterSlugs.includes(slug)) return null;
+      const build = findUiSubdir(item.repoPath);
+      if (!build) {
+        console.warn(`skipping ${slug}: no UI subdir with build script in ${item.repoPath}`);
+        return null;
+      }
+      return { slug, hostname: host, repoPath: item.repoPath, build };
+    })
+    .filter(Boolean);
+
+  if (targets.length === 0) {
+    console.log('No blueprints to deploy. Filter or metadata mismatch?');
+    return;
+  }
+  for (const t of targets) {
+    await deployBlueprintApp(t);
+  }
+  console.log(`\nDeployed ${targets.length} blueprint app(s).`);
+};
+
 const help = () => {
   console.log(`Usage: node scripts/local-env/blueprint-ui-catalog.mjs <command>
 
 Commands:
-  prepare  Copy repo metadata into the local generated catalog
-  seed     Register local blueprints, operators, one service, and signed metadata
-  serve    Serve generated metadata with CORS for tangle-cloud local dev
-  up       Run seed, then serve
+  prepare    Copy repo metadata into the local generated catalog
+  seed       Register local blueprints, operators, one service, and signed metadata
+  serve      Serve generated metadata with CORS for tangle-cloud local dev
+  up         Run seed, then serve
+  deploy-cf  Deploy iframe blueprint apps to Cloudflare (Workers Static Assets)
+             Optional: deploy-cf <slug>...   Restrict to specific apps
 
 Run after ./scripts/local-env/start-local-env.sh has deployed local contracts.
-Open tangle-cloud against Localhost 8545 and http://localhost:8080/v1/graphql.`);
+Open tangle-cloud against Localhost 8545 and http://localhost:8080/v1/graphql.
+
+deploy-cf requires CLOUDFLARE_API_TOKEN, CLOUDFLARE_ACCOUNT_ID, CLOUDFLARE_ZONE_ID.`);
 };
 
 try {
@@ -809,6 +1063,8 @@ try {
   } else if (command === 'up') {
     await seed();
     serve({ prepareFirst: false });
+  } else if (command === 'deploy-cf') {
+    await deployBlueprintApps(process.argv.slice(3));
   } else {
     help();
   }
