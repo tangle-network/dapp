@@ -359,11 +359,39 @@ const generatedBlueprintSvg = (slug, metadata) => {
 `;
 };
 
+// Local dev ports for blueprint UIs. When BLUEPRINT_UI_USE_LOCAL_IFRAMES=true,
+// the catalog rewrites `externalApp.url` for these slugs so iframes load from
+// each blueprint's local dev server instead of the production CF deploy.
+// Add an entry when a new blueprint gains a UI bundle with a `dev` script.
+const LOCAL_IFRAME_DEV_URLS = {
+  'ai-agent-sandbox': 'http://localhost:1338/',
+  'ai-trading': 'http://localhost:5173/',
+};
+
+const useLocalIframes = process.env.BLUEPRINT_UI_USE_LOCAL_IFRAMES === 'true';
+
+const applyLocalIframeOverride = (slug, metadata) => {
+  if (!useLocalIframes) return metadata;
+  const local = LOCAL_IFRAME_DEV_URLS[slug];
+  const ext = metadata.blueprintUi?.externalApp;
+  if (!local || !ext || ext.mode !== 'iframe') return metadata;
+  return {
+    ...metadata,
+    blueprintUi: {
+      ...metadata.blueprintUi,
+      externalApp: { ...ext, url: local },
+    },
+  };
+};
+
 const loadCatalog = () =>
   BLUEPRINTS.map(([slug, repoPath]) => {
     const sourcePath = resolve(repoPath, 'metadata/blueprint-metadata.json');
     const sourceMetadata = JSON.parse(readFileSync(sourcePath, 'utf8'));
-    const metadata = withGeneratedImage(slug, sourceMetadata);
+    const metadata = applyLocalIframeOverride(
+      slug,
+      withGeneratedImage(slug, sourceMetadata),
+    );
     const metadataUri = `http://${PUBLIC_HOST}:${PUBLIC_PORT}/${slug}.json`;
     return {
       slug,
