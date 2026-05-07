@@ -58,3 +58,29 @@
     Permissions-Policy = "camera=(), microphone=(), geolocation=(), payment=(), usb=(), bluetooth=(), accelerometer=(), gyroscope=(), magnetometer=(), midi=(), serial=()"
     X-Frame-Options = "SAMEORIGIN"
     Referrer-Policy = "strict-origin-when-cross-origin"
+
+# ─── Cache headers ──────────────────────────────────────────────────────
+#
+# Vite emits hashed filenames into /assets, so the file at any given URL
+# is content-addressed and safe to mark immutable. Repeat-visit loads
+# become near-instant because the browser doesn't even revalidate.
+[[headers]]
+  for = "/assets/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+# Fonts are also content-addressed when present; mark them immutable and
+# permit cross-origin use so they can be loaded from sibling subdomains.
+[[headers]]
+  for = "/fonts/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+    Access-Control-Allow-Origin = "*"
+
+# index.html must NOT be cached aggressively — it's the entry point that
+# references the hashed asset bundles, so it has to be replaced atomically
+# on every deploy.
+[[headers]]
+  for = "/index.html"
+  [headers.values]
+    Cache-Control = "public, max-age=0, must-revalidate"

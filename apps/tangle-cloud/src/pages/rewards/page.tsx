@@ -15,6 +15,7 @@ import {
   Button,
   Card,
   CardContent,
+  EmptyState,
   Skeleton,
   Table,
   TableBody,
@@ -441,11 +442,10 @@ const RewardsPage: FC = () => {
               )}
             </>
           ) : (
-            <div className="py-6 text-center">
-              <p className="text-muted-foreground text-sm">
-                No pending rewards.
-              </p>
-            </div>
+            <EmptyState
+              title="No pending rewards"
+              description="Pending balances appear here when there are claimable rewards."
+            />
           )}
         </CardContent>
       </Card>
@@ -472,11 +472,10 @@ const RewardsPage: FC = () => {
               showExplorerActions={!!txExplorerUrl}
             />
           ) : (
-            <div className="py-6 text-center">
-              <p className="text-muted-foreground text-sm">
-                No claim history yet.
-              </p>
-            </div>
+            <EmptyState
+              title="No claim history yet"
+              description="Past reward claims will appear here once they are indexed."
+            />
           )}
         </CardContent>
       </Card>

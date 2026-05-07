@@ -2,7 +2,7 @@ import {
   SlashDisputeEligibility,
   SlashProposal,
 } from '@tangle-network/tangle-shared-ui/data/graphql';
-import { Card } from '@tangle-network/sandbox-ui/primitives';
+import { Card, StatCard } from '@tangle-network/sandbox-ui/primitives';
 import { formatDateTime, formatTimeRemaining } from '../utils';
 
 interface SlashingSummaryCardsProps {
@@ -23,26 +23,12 @@ const SlashingSummaryCards = ({
   return (
     <>
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <Card className="p-4">
-          <p className="text-muted-foreground text-sm">Active Registrations</p>
-          <p className="mt-1 font-display font-bold text-3xl text-foreground">
-            {activeRegistrationsCount}
-          </p>
-        </Card>
-
-        <Card className="p-4">
-          <p className="text-muted-foreground text-sm">Active Against You</p>
-          <p className="mt-1 font-display font-bold text-3xl text-foreground">
-            {activeAgainstMeCount}
-          </p>
-        </Card>
-
-        <Card className="p-4">
-          <p className="text-muted-foreground text-sm">My Active Proposals</p>
-          <p className="mt-1 font-display font-bold text-3xl text-foreground">
-            {myActiveProposalCount}
-          </p>
-        </Card>
+        <StatCard
+          title="Active Registrations"
+          value={activeRegistrationsCount}
+        />
+        <StatCard title="Active Against You" value={activeAgainstMeCount} />
+        <StatCard title="My Active Proposals" value={myActiveProposalCount} />
       </div>
 
       {nearestPendingSlash && nearestPendingSlashEligibility ? (

@@ -3,6 +3,7 @@
  */
 
 import {
+  type ChangeEvent,
   type ComponentProps,
   type ElementType,
   type FC,
@@ -23,6 +24,7 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
+  EmptyState,
   Input as SandboxInput,
   Skeleton,
 } from '@tangle-network/sandbox-ui/primitives';
@@ -153,7 +155,9 @@ const Input: FC<InputProps> = ({
 }) => (
   <SandboxInput
     {...props}
-    onChange={(event) => onChange?.(event.currentTarget.value)}
+    onChange={(event: ChangeEvent<HTMLInputElement>) =>
+      onChange?.(event.currentTarget.value)
+    }
   />
 );
 
@@ -755,16 +759,11 @@ const ManageBlueprintsPage: FC = () => {
             )}
           </>
         ) : (
-          <div className="flex flex-col items-center justify-center py-12">
-            <EditLine className="w-12 h-12 text-muted-foreground mb-4" />
-            <Text variant="h5" fw="semibold">
-              No Blueprints Yet
-            </Text>
-            <Text variant="body1" className="text-muted-foreground mt-2">
-              Create your first blueprint to start offering services on Tangle
-              Network.
-            </Text>
-          </div>
+          <EmptyState
+            icon={<EditLine className="h-10 w-10" />}
+            title="No Blueprints Yet"
+            description="Create your first blueprint to start offering services on Tangle Network."
+          />
         )}
       </Card>
 
@@ -958,7 +957,7 @@ const UpdateMetadataModal: FC<UpdateMetadataModalProps> = ({
   };
 
   return (
-    <Modal open={isOpen} onOpenChange={(open) => !open && onClose()}>
+    <Modal open={isOpen} onOpenChange={(open: boolean) => !open && onClose()}>
       <ModalContent>
         <ModalHeader>Update Blueprint Metadata</ModalHeader>
         <ModalBody>
@@ -1154,7 +1153,7 @@ const DeactivateModal: FC<DeactivateModalProps> = ({
   };
 
   return (
-    <Modal open={isOpen} onOpenChange={(open) => !open && onClose()}>
+    <Modal open={isOpen} onOpenChange={(open: boolean) => !open && onClose()}>
       <ModalContent>
         <ModalHeader>Deactivate Blueprint</ModalHeader>
         <ModalBody>
@@ -1237,7 +1236,7 @@ const TransferModal: FC<TransferModalProps> = ({
   };
 
   return (
-    <Modal open={isOpen} onOpenChange={(open) => !open && onClose()}>
+    <Modal open={isOpen} onOpenChange={(open: boolean) => !open && onClose()}>
       <ModalContent>
         <ModalHeader>Transfer Blueprint</ModalHeader>
         <ModalBody>

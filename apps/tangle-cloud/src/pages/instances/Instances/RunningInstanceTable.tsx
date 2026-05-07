@@ -1,4 +1,10 @@
-import { useMemo, useState, useCallback, type FC } from 'react';
+import {
+  type MouseEvent,
+  useMemo,
+  useState,
+  useCallback,
+  type FC,
+} from 'react';
 import {
   createColumnHelper,
   getCoreRowModel,
@@ -225,7 +231,7 @@ export const RunningInstanceTable: FC = () => {
                   <Button
                     variant="utility"
                     className="uppercase body4 text-destructive"
-                    onClick={(event) => {
+                    onClick={(event: MouseEvent<HTMLButtonElement>) => {
                       event.stopPropagation();
                       handleTerminateClick(service);
                     }}

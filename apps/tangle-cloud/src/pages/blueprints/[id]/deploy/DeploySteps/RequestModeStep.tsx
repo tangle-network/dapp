@@ -186,7 +186,7 @@ export const RequestModeStep: FC<BaseDeployStepProps> = ({
             </Text>
             <Select
               value={requestMode}
-              onValueChange={(value) =>
+              onValueChange={(value: string) =>
                 setValue('requestMode', value as RequestMode, {
                   shouldDirty: true,
                   shouldTouch: true,
@@ -217,7 +217,7 @@ export const RequestModeStep: FC<BaseDeployStepProps> = ({
               </Text>
               <Select
                 value={selectedAsset}
-                onValueChange={(value) => {
+                onValueChange={(value: string) => {
                   addAsset(value as Address);
                   setSelectedAsset('');
                 }}

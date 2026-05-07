@@ -12,6 +12,7 @@ import {
 } from '@tangle-network/sandbox-ui/primitives';
 import { Search } from '@tangle-network/icons';
 import {
+  type ChangeEvent,
   type CSSProperties,
   type FC,
   useCallback,
@@ -191,7 +192,9 @@ const OperatorsPanel = ({
             <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 fill-current text-muted-foreground" />
             <Input
               value={searchQuery}
-              onChange={(event) => setSearchQuery(event.currentTarget.value)}
+              onChange={(event: ChangeEvent<HTMLInputElement>) =>
+                setSearchQuery(event.currentTarget.value)
+              }
               placeholder="Search operators"
               className="h-11 bg-background pl-10 text-sm shadow-[inset_0_1px_0_rgba(255,255,255,0.03)]"
             />
