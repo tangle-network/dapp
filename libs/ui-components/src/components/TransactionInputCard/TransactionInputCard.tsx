@@ -23,7 +23,7 @@ import {
 import { twMerge } from 'tailwind-merge';
 import { Typography } from '../../typography';
 import { getRoundedAmountString, numberToString } from '../../utils';
-import { AdjustAmount } from '../BridgeInputs';
+import { AdjustAmount } from './AdjustAmount';
 import { Switcher } from '../Switcher';
 import { Tooltip, TooltipTrigger, TooltipBody } from '../Tooltip';
 import { TextField } from '../TextField';

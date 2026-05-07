@@ -5,7 +5,6 @@
 import {
   type ChangeEvent,
   type ComponentProps,
-  type ElementType,
   type FC,
   type ReactNode,
   useCallback,
@@ -13,6 +12,7 @@ import {
   useMemo,
   useState,
 } from 'react';
+import { Text } from '../../../components/sandbox/SandboxUi';
 import { useParams, useNavigate, Link } from 'react-router';
 import { useAccount } from 'wagmi';
 import {
@@ -60,43 +60,6 @@ const shortenHex = (value: string, chars = 6) =>
   value.length <= chars * 2 + 2
     ? value
     : `${value.slice(0, chars)}...${value.slice(-chars)}`;
-
-type TextProps = ComponentProps<'p'> & {
-  variant?: 'h4' | 'h5' | 'body1' | 'body2' | 'body3';
-  fw?: 'bold' | 'semibold';
-};
-
-const Text: FC<TextProps> = ({
-  variant = 'body2',
-  fw,
-  className = '',
-  ...props
-}) => {
-  const Component = (
-    variant === 'h4' ? 'h1' : variant === 'h5' ? 'h2' : 'p'
-  ) as ElementType;
-  const variantClass =
-    variant === 'h4'
-      ? 'font-display text-3xl tracking-tight text-foreground'
-      : variant === 'h5'
-        ? 'font-display text-xl text-foreground'
-        : variant === 'body1'
-          ? 'text-base text-foreground'
-          : variant === 'body3'
-            ? 'text-xs text-muted-foreground'
-            : 'text-sm text-foreground';
-  const weightClass =
-    fw === 'bold' ? 'font-bold' : fw === 'semibold' ? 'font-semibold' : '';
-
-  return (
-    <Component
-      className={[variantClass, weightClass, className]
-        .filter(Boolean)
-        .join(' ')}
-      {...props}
-    />
-  );
-};
 
 type ButtonProps = Omit<
   ComponentProps<typeof SandboxButton>,

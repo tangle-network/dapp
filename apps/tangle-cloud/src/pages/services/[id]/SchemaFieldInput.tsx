@@ -5,7 +5,6 @@
 import {
   type ChangeEvent,
   type ComponentProps,
-  type ElementType,
   type FC,
   useCallback,
   useMemo,
@@ -14,6 +13,7 @@ import {
   Button as SandboxButton,
   Input as SandboxInput,
 } from '@tangle-network/sandbox-ui/primitives';
+import { Text } from '../../../components/sandbox/SandboxUi';
 import {
   BlueprintFieldKind,
   getDefaultValue,
@@ -28,34 +28,6 @@ interface SchemaFieldInputProps {
   onChange: (value: FormFieldValue) => void;
   path: string;
 }
-
-type TextProps = ComponentProps<'p'> & {
-  variant?: 'body2' | 'body3';
-  fw?: 'semibold';
-};
-
-const Text: FC<TextProps> = ({
-  variant = 'body2',
-  fw,
-  className = '',
-  ...props
-}) => {
-  const Component = 'p' as ElementType;
-  const variantClass =
-    variant === 'body3'
-      ? 'text-xs text-muted-foreground'
-      : 'text-sm text-foreground';
-  const weightClass = fw === 'semibold' ? 'font-semibold' : '';
-
-  return (
-    <Component
-      className={[variantClass, weightClass, className]
-        .filter(Boolean)
-        .join(' ')}
-      {...props}
-    />
-  );
-};
 
 type InputProps = Omit<ComponentProps<typeof SandboxInput>, 'onChange'> & {
   isControlled?: boolean;

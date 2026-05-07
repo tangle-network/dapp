@@ -29,7 +29,10 @@ export default defineConfig({
   },
   plugins: [
     nodePolyfills({
-      include: ['buffer', 'crypto', 'util', 'stream'],
+      // `crypto` deliberately omitted: pulling it in adds ~680KB of
+      // crypto-browserify that no first-party code uses. WalletConnect /
+      // wagmi / viem all use Web Crypto + @noble/* directly.
+      include: ['buffer', 'util', 'stream'],
     }),
     react(),
     nxViteTsPaths(),
