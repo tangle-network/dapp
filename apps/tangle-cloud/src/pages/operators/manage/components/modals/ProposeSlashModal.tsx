@@ -30,6 +30,13 @@ interface ProposeSlashModalProps {
   canSubmitPropose: boolean;
   isSubmitting: boolean;
   onConfirm: () => void;
+  /**
+   * Active SlashConfig.maxSlashBps cap (0..10_000). Used both as the upper
+   * bound in the input placeholder and to short-circuit out-of-range BPS
+   * before the user pays for a simulation. Undefined while the config is
+   * loading; in that case we fall back to 10_000.
+   */
+  maxSlashBps: number | undefined;
 }
 
 const ProposeSlashModal = ({
@@ -53,7 +60,18 @@ const ProposeSlashModal = ({
   canSubmitPropose,
   isSubmitting,
   onConfirm,
+  maxSlashBps,
 }: ProposeSlashModalProps) => {
+  // Hard ceiling defined by the contract; SlashConfig.maxSlashBps is the
+  // soft (admin-configurable) cap which is always <= 10_000.
+  const effectiveMaxBps =
+    maxSlashBps !== undefined && maxSlashBps > 0 ? maxSlashBps : 10_000;
+  const maxBpsLabel = effectiveMaxBps.toLocaleString();
+  const maxPercentLabel = (effectiveMaxBps / 100).toLocaleString(undefined, {
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 2,
+  });
+
   return (
     <Modal open={open} onOpenChange={onOpenChange}>
       <ModalContent>
@@ -122,15 +140,24 @@ const ProposeSlashModal = ({
 
                 <div>
                   <Text variant="body3" className="mb-1">
-                    Slash BPS (1 - 10000)
+                    Slash BPS (1 - {maxBpsLabel})
                   </Text>
                   <Input
                     id="propose-slash-bps"
                     isControlled
                     value={proposeSlashBps}
                     onChange={setProposeSlashBps}
-                    placeholder="e.g. 500 (5%)"
+                    placeholder={`Up to ${maxBpsLabel} bps (${maxPercentLabel}%)`}
                   />
+                  {maxSlashBps !== undefined ? (
+                    <Text
+                      variant="body3"
+                      className="text-muted-foreground mt-1"
+                    >
+                      Protocol cap: {maxBpsLabel} bps ({maxPercentLabel}%).
+                      Proposals above the cap are rejected on-chain.
+                    </Text>
+                  ) : null}
                 </div>
 
                 <div>

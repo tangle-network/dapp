@@ -59,4 +59,6 @@ Please read the [Storybook 7.0.0 release article](https://storybook.js.org/blog/
 official [Storybook 7.0.0 migration guide](https://storybook.js.org/docs/react/migration-guide)
 for more information.
 
-You can also read the docs for the [@nx/storybook:migrate-7 generator](https://nx.dev/packages/storybook/generators/migrate-7) and our [Storybook 7 setup guide](https://nx.dev/packages/storybook/documents/storybook-7-setup).
+For Nx-specific Storybook setup, see the current Nx documentation at https://nx.dev (the
+historical `@nx/storybook:migrate-7` generator and `storybook-7-setup` document URLs have
+been retired upstream).

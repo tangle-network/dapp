@@ -1,6 +1,7 @@
 import { copyFileSync, existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { spawnSync } from 'node:child_process';
 
 const scriptDir = dirname(fileURLToPath(import.meta.url));
 const repoRoot = resolve(scriptDir, '..');
@@ -41,7 +42,9 @@ const syncAbis = (tntCoreDir) => {
   const mappings = [
     { source: 'ITangleFull.json', target: 'libs/tangle-shared-ui/src/abi/tangle.ts' },
     { source: 'IMultiAssetDelegation.json', target: 'libs/tangle-shared-ui/src/abi/multiAssetDelegation.ts' },
-    { source: 'IOperatorStatusRegistry.json', target: 'libs/tangle-shared-ui/src/abi/operatorStatusRegistry.ts' },
+    // tnt-core v0.13.0 ships the implementation ABI (no `I` prefix) — it carries
+    // the same external surface the dapp needs and the interface JSON is no longer emitted.
+    { source: 'OperatorStatusRegistry.json', target: 'libs/tangle-shared-ui/src/abi/operatorStatusRegistry.ts' },
     { source: 'IBlueprintServiceManager.json', target: 'libs/tangle-shared-ui/src/abi/blueprintServiceManager.ts' },
   ];
 
@@ -75,10 +78,31 @@ const syncFixtures = (tntCoreDir) => {
   }
 };
 
+const formatGeneratedAbis = () => {
+  // Run prettier so the generated `as const` ABIs match the repo style
+  // (single quotes, trailing commas) instead of raw JSON.stringify output.
+  const targets = [
+    'libs/tangle-shared-ui/src/abi/tangle.ts',
+    'libs/tangle-shared-ui/src/abi/multiAssetDelegation.ts',
+    'libs/tangle-shared-ui/src/abi/operatorStatusRegistry.ts',
+    'libs/tangle-shared-ui/src/abi/blueprintServiceManager.ts',
+  ].map((relative) => resolve(repoRoot, relative));
+
+  const result = spawnSync('npx', ['prettier', '--write', '--log-level=warn', ...targets], {
+    cwd: repoRoot,
+    stdio: 'inherit',
+  });
+
+  if (result.status !== 0) {
+    console.warn('[sync] prettier formatting exited with a non-zero status; please run `yarn format` manually.');
+  }
+};
+
 const main = () => {
   const tntCoreDir = resolveTntCoreDir();
   syncAbis(tntCoreDir);
   syncFixtures(tntCoreDir);
+  formatGeneratedAbis();
 };
 
 main();

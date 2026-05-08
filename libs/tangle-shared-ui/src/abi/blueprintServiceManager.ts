@@ -50,6 +50,25 @@ const ABI = [
   },
   {
     type: 'function',
+    name: 'forceRemoveAllowsBelowMin',
+    inputs: [
+      {
+        name: 'serviceId',
+        type: 'uint64',
+        internalType: 'uint64',
+      },
+    ],
+    outputs: [
+      {
+        name: 'ok',
+        type: 'bool',
+        internalType: 'bool',
+      },
+    ],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
     name: 'getAggregationThreshold',
     inputs: [
       {

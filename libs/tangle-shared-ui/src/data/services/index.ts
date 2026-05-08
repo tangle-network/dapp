@@ -56,6 +56,15 @@ export {
 } from './useFundServiceTx';
 
 export {
+  useExpireServiceRequestTx,
+  isServiceRequestExpired,
+  getServiceRequestExpiryEligibleAt,
+  REQUEST_EXPIRY_GRACE_PERIOD_SECONDS,
+  type ExpireServiceRequestParams,
+  type UseExpireServiceRequestTxOptions,
+} from './useExpireServiceRequest';
+
+export {
   useBillSubscriptionTx,
   type BillSubscriptionParams,
   type UseBillSubscriptionTxOptions,

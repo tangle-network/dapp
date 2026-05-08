@@ -34,6 +34,7 @@ import {
   useServicesByOperator,
   useActiveServiceMemberships,
   useSlashProposals,
+  useSlashConfig,
   useDisputeSlashTx,
   useCancelSlashTx,
   useProposeSlashTx,
@@ -75,6 +76,7 @@ import useChainClock from './hooks/useChainClock';
 import useSlashProposalForm from './hooks/useSlashProposalForm';
 import useSlashActions from './hooks/useSlashActions';
 import SlashingSummaryCards from './components/SlashingSummaryCards';
+import SlashingParametersCard from './components/SlashingParametersCard';
 import SlashingTabsTable from './components/SlashingTabsTable';
 import ProposeSlashModal from './components/modals/ProposeSlashModal';
 import DisputeMessageModal from './components/modals/DisputeMessageModal';
@@ -333,6 +335,9 @@ const Page: FC = () => {
       enabled: isConnected,
       proposals: slashProposals,
     });
+  const { data: slashConfig, isLoading: loadingSlashConfig } = useSlashConfig({
+    enabled: isConnected,
+  });
 
   // Transaction hooks (registration)
   const { unregisterOperator, status: unregisterStatus } =
@@ -391,6 +396,7 @@ const Page: FC = () => {
   } = useSlashProposalForm({
     proposableServices,
     proposeStatus,
+    maxSlashBps: slashConfig?.maxSlashBps,
   });
 
   const executableSlashIdSet = useMemo(() => {
@@ -505,6 +511,22 @@ const Page: FC = () => {
     }
 
     return buildSlashTimeline(selectedSlash, nowUnixSeconds);
+  }, [selectedSlash, nowUnixSeconds]);
+
+  const disputeBond = slashConfig?.disputeBond ?? BigInt(0);
+  const slashConfigMaxSlashBps = slashConfig?.maxSlashBps;
+
+  // Only meaningful when the slash is already in `Disputed` state and we have
+  // an authoritative on-chain disputeDeadline. Returns null otherwise so the
+  // modal can decide not to render the row.
+  const selectedSlashDisputeResolutionSecondsRemaining = useMemo(() => {
+    if (!selectedSlash || selectedSlash.status !== 'Disputed') {
+      return null;
+    }
+    if (selectedSlash.disputeDeadline === BigInt(0)) {
+      return null;
+    }
+    return Number(selectedSlash.disputeDeadline) - nowUnixSeconds;
   }, [selectedSlash, nowUnixSeconds]);
 
   const nearestPendingSlash = useMemo(() => {
@@ -1211,6 +1233,11 @@ const Page: FC = () => {
         nearestPendingSlashEligibility={nearestPendingSlashEligibility}
       />
 
+      <SlashingParametersCard
+        config={slashConfig}
+        isLoading={loadingSlashConfig}
+      />
+
       {clockError ? (
         <Card className="p-4 border border-yellow-500/20 bg-yellow-500/10">
           <Text variant="body2" className="text-muted-foreground">
@@ -1407,6 +1434,7 @@ const Page: FC = () => {
         canSubmitPropose={canSubmitPropose}
         isSubmitting={proposeStatus === 'pending'}
         onConfirm={() => void handleProposeSlash()}
+        maxSlashBps={slashConfigMaxSlashBps}
       />
 
       <DisputeMessageModal
@@ -1435,6 +1463,10 @@ const Page: FC = () => {
         onConfirm={() => void handleDispute()}
         errorMessage={actionError.dispute}
         onDismissError={() => clearActionError('dispute')}
+        disputeBond={disputeBond}
+        disputeResolutionSecondsRemaining={
+          selectedSlashDisputeResolutionSecondsRemaining
+        }
       />
 
       <CancelSlashModal

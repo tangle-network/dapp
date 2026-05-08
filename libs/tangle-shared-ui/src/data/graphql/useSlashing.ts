@@ -67,6 +67,13 @@ export interface SlashProposal {
   status: SlashStatus;
   disputeReason: string | null;
   cancelReason: string | null;
+  // Dispute lifecycle (populated when status === 'Disputed' or after a dispute
+  // was filed and later resolved). Sourced from getSlashProposal on-chain or
+  // backfilled from the indexer when available.
+  disputer: Address;
+  disputeBond: bigint;
+  disputedAt: bigint;
+  disputeDeadline: bigint;
 }
 
 export interface ProposableService {
@@ -529,6 +536,11 @@ const toPrimitiveSlashProposal = (
   const slashBps = BigInt(sp.slashBps);
   const effectiveSlashBps = BigInt(sp.effectiveSlashBps);
 
+  // The Envio indexer schema may not yet expose v0.13.0 dispute-lifecycle fields.
+  // We default to zero-values; consumers that need authoritative dispute data
+  // should call useSlashProposalDetails (on-chain getSlashProposal) which is the
+  // source of truth. Once the indexer ships matching columns, surface them via
+  // sp.disputer / sp.disputeBond / sp.disputedAt / sp.disputeDeadline.
   return {
     id: BigInt(sp.slashId),
     serviceId: BigInt(sp.serviceId),
@@ -545,6 +557,10 @@ const toPrimitiveSlashProposal = (
     status: parseSlashStatus(sp.status),
     disputeReason: sp.disputeReason,
     cancelReason: sp.cancelReason,
+    disputer: zeroAddress as Address,
+    disputeBond: BigInt(0),
+    disputedAt: BigInt(0),
+    disputeDeadline: BigInt(0),
   };
 };
 
@@ -738,6 +754,10 @@ const normalizeOnChainSlashProposal = (
   slashId: bigint,
   proposal: any,
 ): SlashProposal => {
+  // Tuple layout from getSlashProposal (tnt-core v0.13.0):
+  // 0 serviceId, 1 operator, 2 proposer, 3 slashBps, 4 effectiveSlashBps,
+  // 5 evidence, 6 proposedAt, 7 executeAfter, 8 status, 9 disputeReason,
+  // 10 disputer, 11 disputeBond, 12 disputedAt, 13 disputeDeadline.
   const serviceId =
     proposal?.serviceId !== undefined
       ? BigInt(proposal.serviceId.toString())
@@ -767,6 +787,18 @@ const normalizeOnChainSlashProposal = (
   const disputeReason = (proposal?.disputeReason ?? proposal?.[9] ?? null) as
     | string
     | null;
+  const disputer = (proposal?.disputer ??
+    proposal?.[10] ??
+    zeroAddress) as Address;
+  const disputeBond = BigInt(
+    proposal?.disputeBond?.toString() ?? proposal?.[11]?.toString() ?? 0,
+  );
+  const disputedAt = BigInt(
+    proposal?.disputedAt?.toString() ?? proposal?.[12]?.toString() ?? 0,
+  );
+  const disputeDeadline = BigInt(
+    proposal?.disputeDeadline?.toString() ?? proposal?.[13]?.toString() ?? 0,
+  );
 
   return {
     id: slashId,
@@ -784,6 +816,10 @@ const normalizeOnChainSlashProposal = (
     status: parseSlashStatus(statusValue),
     disputeReason,
     cancelReason: null,
+    disputer,
+    disputeBond,
+    disputedAt,
+    disputeDeadline,
   };
 };
 
