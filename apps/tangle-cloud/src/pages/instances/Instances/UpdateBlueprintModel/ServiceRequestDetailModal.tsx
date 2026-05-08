@@ -377,11 +377,7 @@ const ServiceRequestDetailModal: FC<Props> = ({
               Expire request
             </Button>
           ) : null}
-          <Button
-            variant="secondary"
-            onClick={onClose}
-            isDisabled={isExpiring}
-          >
+          <Button variant="secondary" onClick={onClose} isDisabled={isExpiring}>
             Close
           </Button>
         </div>

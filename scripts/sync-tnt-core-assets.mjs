@@ -1,6 +1,7 @@
 import { copyFileSync, existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { spawnSync } from 'node:child_process';
 
 const scriptDir = dirname(fileURLToPath(import.meta.url));
 const repoRoot = resolve(scriptDir, '..');
@@ -77,10 +78,31 @@ const syncFixtures = (tntCoreDir) => {
   }
 };
 
+const formatGeneratedAbis = () => {
+  // Run prettier so the generated `as const` ABIs match the repo style
+  // (single quotes, trailing commas) instead of raw JSON.stringify output.
+  const targets = [
+    'libs/tangle-shared-ui/src/abi/tangle.ts',
+    'libs/tangle-shared-ui/src/abi/multiAssetDelegation.ts',
+    'libs/tangle-shared-ui/src/abi/operatorStatusRegistry.ts',
+    'libs/tangle-shared-ui/src/abi/blueprintServiceManager.ts',
+  ].map((relative) => resolve(repoRoot, relative));
+
+  const result = spawnSync('npx', ['prettier', '--write', '--log-level=warn', ...targets], {
+    cwd: repoRoot,
+    stdio: 'inherit',
+  });
+
+  if (result.status !== 0) {
+    console.warn('[sync] prettier formatting exited with a non-zero status; please run `yarn format` manually.');
+  }
+};
+
 const main = () => {
   const tntCoreDir = resolveTntCoreDir();
   syncAbis(tntCoreDir);
   syncFixtures(tntCoreDir);
+  formatGeneratedAbis();
 };
 
 main();

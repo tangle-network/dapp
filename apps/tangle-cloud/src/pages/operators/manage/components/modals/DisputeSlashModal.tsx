@@ -175,9 +175,7 @@ const DisputeSlashModal = ({
                     className="font-mono"
                     title={selectedSlash?.disputer ?? undefined}
                   >
-                    {selectedSlash
-                      ? shortenHex(selectedSlash.disputer)
-                      : '-'}
+                    {selectedSlash ? shortenHex(selectedSlash.disputer) : '-'}
                   </Text>
                 </>
               ) : null}
