@@ -393,6 +393,7 @@ const Page: FC = () => {
   } = useSlashProposalForm({
     proposableServices,
     proposeStatus,
+    maxSlashBps: slashConfig?.maxSlashBps,
   });
 
   const executableSlashIdSet = useMemo(() => {
@@ -1425,6 +1426,7 @@ const Page: FC = () => {
         canSubmitPropose={canSubmitPropose}
         isSubmitting={proposeStatus === 'pending'}
         onConfirm={() => void handleProposeSlash()}
+        maxSlashBps={slashConfigMaxSlashBps}
       />
 
       <DisputeMessageModal
