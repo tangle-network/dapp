@@ -2,8 +2,13 @@
   publish = "dist/apps/leaderboard"
   command = "yarn nx build leaderboard"
 
-  # If the branch is not master, continue the build process
-  # If the branch is master, check if the project's CHANGELOG.md file has changed
-  # If the CHANGELOG.md file has changed, continue the build process,
-  # Otherwise, stop the build process
-  ignore = "[ \"$BRANCH\" != \"master\" ] && exit 1 || git diff --quiet $CACHED_COMMIT_REF $COMMIT_REF -- apps/leaderboard/CHANGELOG.md && exit 0 || exit 1"
+  # Trigger a master deploy whenever the app's own source, the shared
+  # libs it consumes, or the workspace dep manifest changes. The previous
+  # version gated on apps/leaderboard/CHANGELOG.md only, which silently
+  # cancelled every push that wasn't a release-PR — leaderboard had
+  # never deployed before we caught it. CHANGELOG.md is now implicitly
+  # covered (it's inside apps/leaderboard/), and any source/config/
+  # lockfile change also re-triggers.
+  #
+  # Non-master branches always build (gives PR-preview deploys).
+  ignore = "[ \"$BRANCH\" != \"master\" ] && exit 1 || git diff --quiet $CACHED_COMMIT_REF $COMMIT_REF -- apps/leaderboard/ libs/ package.json yarn.lock tsconfig.base.json nx.json && exit 0 || exit 1"
