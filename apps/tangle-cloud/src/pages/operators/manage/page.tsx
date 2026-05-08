@@ -76,6 +76,7 @@ import useChainClock from './hooks/useChainClock';
 import useSlashProposalForm from './hooks/useSlashProposalForm';
 import useSlashActions from './hooks/useSlashActions';
 import SlashingSummaryCards from './components/SlashingSummaryCards';
+import SlashingParametersCard from './components/SlashingParametersCard';
 import SlashingTabsTable from './components/SlashingTabsTable';
 import ProposeSlashModal from './components/modals/ProposeSlashModal';
 import DisputeMessageModal from './components/modals/DisputeMessageModal';
@@ -334,7 +335,9 @@ const Page: FC = () => {
       enabled: isConnected,
       proposals: slashProposals,
     });
-  const { data: slashConfig } = useSlashConfig({ enabled: isConnected });
+  const { data: slashConfig, isLoading: loadingSlashConfig } = useSlashConfig({
+    enabled: isConnected,
+  });
 
   // Transaction hooks (registration)
   const { unregisterOperator, status: unregisterStatus } =
@@ -1228,6 +1231,11 @@ const Page: FC = () => {
         myActiveProposalCount={myActiveProposalCount}
         nearestPendingSlash={nearestPendingSlash}
         nearestPendingSlashEligibility={nearestPendingSlashEligibility}
+      />
+
+      <SlashingParametersCard
+        config={slashConfig}
+        isLoading={loadingSlashConfig}
       />
 
       {clockError ? (
