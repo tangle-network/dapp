@@ -44,8 +44,8 @@ export interface UseExpireServiceRequestTxOptions {
  */
 export const isServiceRequestExpired = (
   createdAt: bigint,
-  nowUnixSeconds: bigint = BigInt(Math.floor(Date.now() / 1000)),
-  graceSeconds: bigint = REQUEST_EXPIRY_GRACE_PERIOD_SECONDS,
+  nowUnixSeconds = BigInt(Math.floor(Date.now() / 1000)),
+  graceSeconds = REQUEST_EXPIRY_GRACE_PERIOD_SECONDS,
 ): boolean => nowUnixSeconds > createdAt + graceSeconds;
 
 /**
@@ -54,7 +54,7 @@ export const isServiceRequestExpired = (
  */
 export const getServiceRequestExpiryEligibleAt = (
   createdAt: bigint,
-  graceSeconds: bigint = REQUEST_EXPIRY_GRACE_PERIOD_SECONDS,
+  graceSeconds = REQUEST_EXPIRY_GRACE_PERIOD_SECONDS,
 ): bigint => createdAt + graceSeconds;
 
 export const useExpireServiceRequestTx = (
