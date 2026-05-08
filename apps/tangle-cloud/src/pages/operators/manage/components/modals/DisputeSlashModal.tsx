@@ -1,4 +1,5 @@
 import type { ChangeEvent } from 'react';
+import { formatUnits, zeroAddress } from 'viem';
 import {
   SlashActionPermissions,
   SlashDisputeEligibility,
@@ -24,6 +25,14 @@ import {
 const shortenHex = (value: string) =>
   value.length <= 12 ? value : `${value.slice(0, 6)}...${value.slice(-4)}`;
 
+// Trim trailing zeros so we don't show "0.000000000000000000 ETH" or
+// "1.500000000000000000 ETH" in the bond row.
+const formatEthAmount = (wei: bigint): string => {
+  const formatted = formatUnits(wei, 18);
+  if (!formatted.includes('.')) return formatted;
+  return formatted.replace(/\.?0+$/, '');
+};
+
 interface DisputeSlashModalProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
@@ -39,6 +48,17 @@ interface DisputeSlashModalProps {
   onConfirm: () => void;
   errorMessage: string | null;
   onDismissError: () => void;
+  /**
+   * msg.value the contract will require for disputeSlash. Read from the active
+   * SlashConfig and surfaced here so the user knows what bond they are posting
+   * before signing.
+   */
+  disputeBond: bigint;
+  /**
+   * Seconds remaining until the dispute resolution deadline. Only meaningful
+   * when the slash is already in `Disputed` status; null otherwise.
+   */
+  disputeResolutionSecondsRemaining: number | null;
 }
 
 const DisputeSlashModal = ({
@@ -56,7 +76,14 @@ const DisputeSlashModal = ({
   onConfirm,
   errorMessage,
   onDismissError,
+  disputeBond,
+  disputeResolutionSecondsRemaining,
 }: DisputeSlashModalProps) => {
+  const isAlreadyDisputed = selectedSlash?.status === 'Disputed';
+  const hasKnownDisputer =
+    !!selectedSlash &&
+    selectedSlash.disputer.toLowerCase() !== zeroAddress.toLowerCase();
+
   return (
     <Modal open={open} onOpenChange={onOpenChange}>
       <ModalContent>
@@ -130,6 +157,43 @@ const DisputeSlashModal = ({
               <Text variant="body3" className="font-mono break-all">
                 {selectedSlash?.evidence ?? '-'}
               </Text>
+              <Text variant="body3" className="text-muted-foreground">
+                Required Dispute Bond:
+              </Text>
+              <Text variant="body3">
+                {disputeBond > BigInt(0)
+                  ? `${formatEthAmount(disputeBond)} ETH (refunded if dispute upheld)`
+                  : 'No bond required'}
+              </Text>
+              {isAlreadyDisputed && hasKnownDisputer ? (
+                <>
+                  <Text variant="body3" className="text-muted-foreground">
+                    Disputer:
+                  </Text>
+                  <Text
+                    variant="body3"
+                    className="font-mono"
+                    title={selectedSlash?.disputer ?? undefined}
+                  >
+                    {selectedSlash
+                      ? shortenHex(selectedSlash.disputer)
+                      : '-'}
+                  </Text>
+                </>
+              ) : null}
+              {isAlreadyDisputed &&
+              disputeResolutionSecondsRemaining !== null ? (
+                <>
+                  <Text variant="body3" className="text-muted-foreground">
+                    Resolution Deadline:
+                  </Text>
+                  <Text variant="body3">
+                    {disputeResolutionSecondsRemaining > 0
+                      ? formatTimeRemaining(disputeResolutionSecondsRemaining)
+                      : 'Deadline passed'}
+                  </Text>
+                </>
+              ) : null}
             </div>
           </div>
           <div>

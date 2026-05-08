@@ -34,6 +34,7 @@ import {
   useServicesByOperator,
   useActiveServiceMemberships,
   useSlashProposals,
+  useSlashConfig,
   useDisputeSlashTx,
   useCancelSlashTx,
   useProposeSlashTx,
@@ -333,6 +334,7 @@ const Page: FC = () => {
       enabled: isConnected,
       proposals: slashProposals,
     });
+  const { data: slashConfig } = useSlashConfig({ enabled: isConnected });
 
   // Transaction hooks (registration)
   const { unregisterOperator, status: unregisterStatus } =
@@ -505,6 +507,22 @@ const Page: FC = () => {
     }
 
     return buildSlashTimeline(selectedSlash, nowUnixSeconds);
+  }, [selectedSlash, nowUnixSeconds]);
+
+  const disputeBond = slashConfig?.disputeBond ?? BigInt(0);
+  const slashConfigMaxSlashBps = slashConfig?.maxSlashBps;
+
+  // Only meaningful when the slash is already in `Disputed` state and we have
+  // an authoritative on-chain disputeDeadline. Returns null otherwise so the
+  // modal can decide not to render the row.
+  const selectedSlashDisputeResolutionSecondsRemaining = useMemo(() => {
+    if (!selectedSlash || selectedSlash.status !== 'Disputed') {
+      return null;
+    }
+    if (selectedSlash.disputeDeadline === BigInt(0)) {
+      return null;
+    }
+    return Number(selectedSlash.disputeDeadline) - nowUnixSeconds;
   }, [selectedSlash, nowUnixSeconds]);
 
   const nearestPendingSlash = useMemo(() => {
@@ -1435,6 +1453,10 @@ const Page: FC = () => {
         onConfirm={() => void handleDispute()}
         errorMessage={actionError.dispute}
         onDismissError={() => clearActionError('dispute')}
+        disputeBond={disputeBond}
+        disputeResolutionSecondsRemaining={
+          selectedSlashDisputeResolutionSecondsRemaining
+        }
       />
 
       <CancelSlashModal
