@@ -1,5 +1,5 @@
 import { FC } from 'react';
-import { isEthereumAddress } from '@polkadot/util-crypto';
+import { isAddress } from 'viem';
 import { twMerge } from 'tailwind-merge';
 import { Text } from '../sandbox/SandboxUi';
 
@@ -25,7 +25,7 @@ const BlueprintInfoCard: FC<Props> = ({
   instancesCount,
   operatorsCount,
 }) => {
-  const formattedAuthor = isEthereumAddress(author)
+  const formattedAuthor = isAddress(author, { strict: false })
     ? shortenValue(author)
     : author.length > 24
       ? shortenValue(author)
