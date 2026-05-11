@@ -1338,6 +1338,12 @@ export const useExecuteSlashBatchTx = () => {
 
 /**
  * Hook to cancel a slash proposal.
+ *
+ * NOTE (tnt-core v0.14.0): `cancelSlash` no longer auto-refunds the disputer's
+ * bond. After cancellation, the disputer must call `claimDisputeBond()` and
+ * may inspect their pending balance with `pendingDisputeBondRefund(address)`.
+ * TODO(v0.15.0): wire up a `useClaimDisputeBondTx` + dedicated UI affordance
+ * on the disputer-facing slash detail view (and surface the pending balance).
  */
 export const useCancelSlashTx = () => {
   const chainId = useChainId();
