@@ -519,6 +519,13 @@ const ABI = [
   },
   {
     type: 'function',
+    name: 'claimDisputeBond',
+    inputs: [],
+    outputs: [],
+    stateMutability: 'nonpayable',
+  },
+  {
+    type: 'function',
     name: 'claimRewards',
     inputs: [],
     outputs: [],
@@ -2325,6 +2332,16 @@ const ABI = [
             type: 'uint256',
             internalType: 'uint256',
           },
+          {
+            name: '__reservedAggregateCursor',
+            type: 'uint256',
+            internalType: 'uint256',
+          },
+          {
+            name: 'subscriptionBaselineStake',
+            type: 'uint256',
+            internalType: 'uint256',
+          },
         ],
       },
     ],
@@ -3145,6 +3162,25 @@ const ABI = [
         name: 'stakerBps',
         type: 'uint16',
         internalType: 'uint16',
+      },
+    ],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
+    name: 'pendingDisputeBondRefund',
+    inputs: [
+      {
+        name: 'disputer',
+        type: 'address',
+        internalType: 'address',
+      },
+    ],
+    outputs: [
+      {
+        name: '',
+        type: 'uint256',
+        internalType: 'uint256',
       },
     ],
     stateMutability: 'view',

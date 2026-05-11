@@ -162,7 +162,7 @@ const DisputeSlashModal = ({
               </Text>
               <Text variant="body3">
                 {disputeBond > BigInt(0)
-                  ? `${formatEthAmount(disputeBond)} ETH (refunded if dispute upheld)`
+                  ? `${formatEthAmount(disputeBond)} ETH (claimable via claimDisputeBond if dispute upheld)`
                   : 'No bond required'}
               </Text>
               {isAlreadyDisputed && hasKnownDisputer ? (
