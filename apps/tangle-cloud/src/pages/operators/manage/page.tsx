@@ -37,9 +37,11 @@ import {
   useSlashConfig,
   useDisputeSlashTx,
   useCancelSlashTx,
+  useClaimDisputeBondTx,
   useProposeSlashTx,
   useExecuteSlashTx,
   useExecutableSlashes,
+  usePendingDisputeBondRefund,
   useProposableServices,
   getSlashDisputeEligibility,
   getSlashExecutionEligibility,
@@ -50,6 +52,7 @@ import {
   type SlashProposal,
 } from '@tangle-network/tangle-shared-ui/data/graphql';
 import { MembershipModel } from '@tangle-network/tangle-shared-ui/data/services';
+import { formatUnits } from 'viem';
 import {
   createColumnHelper,
   getCoreRowModel,
@@ -89,6 +92,12 @@ const shortenHex = (value: string, chars = 6) =>
   value.length <= chars * 2 + 2
     ? value
     : `${value.slice(0, chars)}...${value.slice(-chars)}`;
+
+const formatEthAmount = (wei: bigint): string => {
+  const formatted = formatUnits(wei, 18);
+  if (!formatted.includes('.')) return formatted;
+  return formatted.replace(/\.?0+$/, '');
+};
 
 type ButtonProps = Omit<
   ComponentProps<typeof SandboxButton>,
@@ -350,6 +359,18 @@ const Page: FC = () => {
   const { disputeSlash, status: disputeStatus } = useDisputeSlashTx();
   const { cancelSlash, status: cancelStatus } = useCancelSlashTx();
   const { executeSlash } = useExecuteSlashTx();
+  const {
+    claimDisputeBond,
+    status: claimDisputeBondStatus,
+    error: claimDisputeBondError,
+    reset: resetClaimDisputeBond,
+  } = useClaimDisputeBondTx();
+  const {
+    data: pendingDisputeBondRefund,
+    refetch: refetchPendingDisputeBondRefund,
+  } = usePendingDisputeBondRefund(address, {
+    enabled: isConnected && !!address,
+  });
 
   // Registration modal state
   const [selectedRegistration, setSelectedRegistration] =
@@ -763,6 +784,22 @@ const Page: FC = () => {
     rpcAddressError,
     selectedRegistration,
     updatePreferences,
+  ]);
+
+  const handleClaimDisputeBond = useCallback(async () => {
+    if (!address || (pendingDisputeBondRefund ?? BigInt(0)) <= BigInt(0)) {
+      return;
+    }
+
+    const result = await claimDisputeBond(address);
+    if (result) {
+      await refetchPendingDisputeBondRefund();
+    }
+  }, [
+    address,
+    claimDisputeBond,
+    pendingDisputeBondRefund,
+    refetchPendingDisputeBondRefund,
   ]);
 
   // Registration columns
@@ -1237,6 +1274,54 @@ const Page: FC = () => {
         config={slashConfig}
         isLoading={loadingSlashConfig}
       />
+
+      {(pendingDisputeBondRefund ?? BigInt(0)) > BigInt(0) ||
+      claimDisputeBondError ? (
+        <Card className="p-4 border border-emerald-500/20 bg-emerald-500/10">
+          <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
+            <div>
+              <Text variant="body2" fw="bold">
+                Dispute bond refund available
+              </Text>
+              <Text variant="body3" className="text-muted-foreground mt-1">
+                {pendingDisputeBondRefund &&
+                pendingDisputeBondRefund > BigInt(0)
+                  ? `${formatEthAmount(pendingDisputeBondRefund)} ETH is ready to claim from cancelled disputes.`
+                  : 'Refresh the refund balance after the previous claim attempt.'}
+              </Text>
+              {claimDisputeBondError ? (
+                <Text variant="body3" className="mt-2 !text-destructive">
+                  {claimDisputeBondError.message ||
+                    'Failed to claim dispute bond refund.'}
+                </Text>
+              ) : null}
+            </div>
+            <div className="flex gap-2">
+              {claimDisputeBondError ? (
+                <Button
+                  variant="secondary"
+                  size="sm"
+                  onClick={resetClaimDisputeBond}
+                >
+                  Dismiss
+                </Button>
+              ) : null}
+              <Button
+                variant="secondary"
+                size="sm"
+                isLoading={claimDisputeBondStatus === 'pending'}
+                isDisabled={
+                  claimDisputeBondStatus === 'pending' ||
+                  (pendingDisputeBondRefund ?? BigInt(0)) <= BigInt(0)
+                }
+                onClick={() => void handleClaimDisputeBond()}
+              >
+                Claim refund
+              </Button>
+            </div>
+          </div>
+        </Card>
+      ) : null}
 
       {clockError ? (
         <Card className="p-4 border border-yellow-500/20 bg-yellow-500/10">
