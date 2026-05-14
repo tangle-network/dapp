@@ -519,6 +519,13 @@ const ABI = [
   },
   {
     type: 'function',
+    name: 'claimDisputeBond',
+    inputs: [],
+    outputs: [],
+    stateMutability: 'nonpayable',
+  },
+  {
+    type: 'function',
     name: 'claimRewards',
     inputs: [],
     outputs: [],
@@ -2325,6 +2332,16 @@ const ABI = [
             type: 'uint256',
             internalType: 'uint256',
           },
+          {
+            name: '__reservedAggregateCursor',
+            type: 'uint256',
+            internalType: 'uint256',
+          },
+          {
+            name: 'subscriptionBaselineStake',
+            type: 'uint256',
+            internalType: 'uint256',
+          },
         ],
       },
     ],
@@ -2472,14 +2489,14 @@ const ABI = [
             internalType: 'bool',
           },
           {
-            name: 'activated',
-            type: 'bool',
-            internalType: 'bool',
-          },
-          {
             name: 'confidentiality',
             type: 'uint8',
             internalType: 'enum Types.ConfidentialityPolicy',
+          },
+          {
+            name: 'activated',
+            type: 'bool',
+            internalType: 'bool',
           },
         ],
       },
@@ -3145,6 +3162,25 @@ const ABI = [
         name: 'stakerBps',
         type: 'uint16',
         internalType: 'uint16',
+      },
+    ],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
+    name: 'pendingDisputeBondRefund',
+    inputs: [
+      {
+        name: 'disputer',
+        type: 'address',
+        internalType: 'address',
+      },
+    ],
+    outputs: [
+      {
+        name: '',
+        type: 'uint256',
+        internalType: 'uint256',
       },
     ],
     stateMutability: 'view',
@@ -3984,6 +4020,11 @@ const ABI = [
             type: 'tuple',
             internalType: 'struct Types.JobQuoteDetails',
             components: [
+              {
+                name: 'requester',
+                type: 'address',
+                internalType: 'address',
+              },
               {
                 name: 'serviceId',
                 type: 'uint64',
@@ -4957,8 +4998,107 @@ const ABI = [
   },
   {
     type: 'event',
+    name: 'SlashCancelled',
+    inputs: [
+      {
+        name: 'slashId',
+        type: 'uint64',
+        indexed: true,
+        internalType: 'uint64',
+      },
+      {
+        name: 'canceller',
+        type: 'address',
+        indexed: true,
+        internalType: 'address',
+      },
+      {
+        name: 'reason',
+        type: 'string',
+        indexed: false,
+        internalType: 'string',
+      },
+    ],
+    anonymous: false,
+  },
+  {
+    type: 'event',
+    name: 'SlashConfigUpdated',
+    inputs: [
+      {
+        name: 'disputeWindow',
+        type: 'uint64',
+        indexed: false,
+        internalType: 'uint64',
+      },
+      {
+        name: 'instantSlashEnabled',
+        type: 'bool',
+        indexed: false,
+        internalType: 'bool',
+      },
+      {
+        name: 'maxSlashBps',
+        type: 'uint16',
+        indexed: false,
+        internalType: 'uint16',
+      },
+      {
+        name: 'disputeResolutionDeadline',
+        type: 'uint64',
+        indexed: false,
+        internalType: 'uint64',
+      },
+      {
+        name: 'disputeBond',
+        type: 'uint256',
+        indexed: false,
+        internalType: 'uint256',
+      },
+      {
+        name: 'maxPendingSlashesPerOperator',
+        type: 'uint16',
+        indexed: false,
+        internalType: 'uint16',
+      },
+    ],
+    anonymous: false,
+  },
+  {
+    type: 'event',
+    name: 'SlashDisputed',
+    inputs: [
+      {
+        name: 'slashId',
+        type: 'uint64',
+        indexed: true,
+        internalType: 'uint64',
+      },
+      {
+        name: 'disputer',
+        type: 'address',
+        indexed: true,
+        internalType: 'address',
+      },
+      {
+        name: 'reason',
+        type: 'string',
+        indexed: false,
+        internalType: 'string',
+      },
+    ],
+    anonymous: false,
+  },
+  {
+    type: 'event',
     name: 'SlashExecuted',
     inputs: [
+      {
+        name: 'slashId',
+        type: 'uint64',
+        indexed: true,
+        internalType: 'uint64',
+      },
       {
         name: 'serviceId',
         type: 'uint64',
@@ -4972,7 +5112,7 @@ const ABI = [
         internalType: 'address',
       },
       {
-        name: 'amount',
+        name: 'actualSlashed',
         type: 'uint256',
         indexed: false,
         internalType: 'uint256',
@@ -4985,6 +5125,12 @@ const ABI = [
     name: 'SlashProposed',
     inputs: [
       {
+        name: 'slashId',
+        type: 'uint64',
+        indexed: true,
+        internalType: 'uint64',
+      },
+      {
         name: 'serviceId',
         type: 'uint64',
         indexed: true,
@@ -4997,7 +5143,19 @@ const ABI = [
         internalType: 'address',
       },
       {
+        name: 'proposer',
+        type: 'address',
+        indexed: false,
+        internalType: 'address',
+      },
+      {
         name: 'slashBps',
+        type: 'uint16',
+        indexed: false,
+        internalType: 'uint16',
+      },
+      {
+        name: 'effectiveSlashBps',
         type: 'uint16',
         indexed: false,
         internalType: 'uint16',
@@ -5007,6 +5165,12 @@ const ABI = [
         type: 'bytes32',
         indexed: false,
         internalType: 'bytes32',
+      },
+      {
+        name: 'executeAfter',
+        type: 'uint64',
+        indexed: false,
+        internalType: 'uint64',
       },
     ],
     anonymous: false,

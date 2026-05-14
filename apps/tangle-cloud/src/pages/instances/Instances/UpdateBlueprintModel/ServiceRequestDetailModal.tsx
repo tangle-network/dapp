@@ -16,6 +16,8 @@ import { type ServiceRequest } from '@tangle-network/tangle-shared-ui/data/graph
 import {
   useServiceRequestDetails,
   useTokenMetadata,
+  useExpireServiceRequestTx,
+  isServiceRequestExpired,
 } from '@tangle-network/tangle-shared-ui/data/services';
 import type { Blueprint } from '@tangle-network/tangle-shared-ui/types/blueprint';
 import { TxStatus } from '@tangle-network/tangle-shared-ui/hooks/useContractWrite';
@@ -74,6 +76,43 @@ const ServiceRequestDetailModal: FC<Props> = ({
     useServiceRequestDetails(selectedRequest?.requestId, {
       enabled: selectedRequest !== null,
     });
+
+  // Permissionless cleanup. Available once `now > createdAt + grace` and the
+  // request has not already been activated or rejected. The contract
+  // re-validates these conditions, but we gate the button to avoid wasting a
+  // user's gas on a guaranteed revert.
+  const {
+    execute: expireServiceRequest,
+    error: expireError,
+    reset: resetExpire,
+    isPending: isExpiring,
+    isSuccess: isExpireSuccess,
+  } = useExpireServiceRequestTx();
+
+  const canExpireRequest = useMemo(() => {
+    if (!contractDetails || !selectedRequest) {
+      return false;
+    }
+    if (contractDetails.rejected) {
+      return false;
+    }
+    return isServiceRequestExpired(contractDetails.createdAt);
+  }, [contractDetails, selectedRequest]);
+
+  const handleExpireRequest = useCallback(async () => {
+    if (!selectedRequest || !canExpireRequest) {
+      return;
+    }
+    await expireServiceRequest?.({ requestId: selectedRequest.requestId });
+  }, [canExpireRequest, expireServiceRequest, selectedRequest]);
+
+  // After a successful expire the request is gone — close the modal so the
+  // parent list refetches against an invalidated `serviceRequestDetails` cache.
+  useEffect(() => {
+    if (isExpireSuccess) {
+      onClose();
+    }
+  }, [isExpireSuccess, onClose]);
 
   const { data: tokenMetadata, isLoading: isLoadingToken } = useTokenMetadata(
     contractDetails?.paymentToken,
@@ -271,27 +310,74 @@ const ServiceRequestDetailModal: FC<Props> = ({
         />
       </ModalBody>
 
+      {expireError ? (
+        <div className="px-6 pt-2">
+          <div className="rounded-lg border border-destructive/30 bg-destructive/10 p-3 space-y-2">
+            <Text variant="body3" className="text-destructive">
+              {expireError.message ||
+                'Failed to expire the service request. Please try again.'}
+            </Text>
+            <button
+              type="button"
+              className="text-xs underline text-destructive"
+              onClick={resetExpire}
+            >
+              Dismiss
+            </button>
+          </div>
+        </div>
+      ) : null}
+
       {!viewOnly && (
-        <div className="flex justify-end gap-3 p-6 pt-4 shrink-0 bg-background">
+        <div className="flex flex-wrap justify-end gap-3 p-6 pt-4 shrink-0 bg-background">
+          {canExpireRequest ? (
+            <Button
+              variant="secondary"
+              onClick={() => void handleExpireRequest()}
+              isLoading={isExpiring}
+              isDisabled={
+                isExpiring || isApproving || isRejecting || !canExpireRequest
+              }
+              title="Refunds the requester and frees the operator candidates. Anyone can call this once the grace period has passed."
+            >
+              Expire request
+            </Button>
+          ) : null}
+
           <Button
             variant="secondary"
             className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
             onClick={onReject}
             isLoading={isRejecting}
-            isDisabled={isRejecting}
+            isDisabled={isRejecting || isExpiring}
           >
             Reject
           </Button>
 
-          <Button variant="primary" onClick={handleApproveClick}>
+          <Button
+            variant="primary"
+            onClick={handleApproveClick}
+            isDisabled={isExpiring}
+          >
             Approve
           </Button>
         </div>
       )}
 
       {viewOnly && (
-        <div className="flex justify-end gap-3 p-6 pt-4 shrink-0 bg-background">
-          <Button variant="secondary" onClick={onClose}>
+        <div className="flex flex-wrap justify-end gap-3 p-6 pt-4 shrink-0 bg-background">
+          {canExpireRequest ? (
+            <Button
+              variant="secondary"
+              onClick={() => void handleExpireRequest()}
+              isLoading={isExpiring}
+              isDisabled={isExpiring || !canExpireRequest}
+              title="Refunds the requester and frees the operator candidates. Anyone can call this once the grace period has passed."
+            >
+              Expire request
+            </Button>
+          ) : null}
+          <Button variant="secondary" onClick={onClose} isDisabled={isExpiring}>
             Close
           </Button>
         </div>

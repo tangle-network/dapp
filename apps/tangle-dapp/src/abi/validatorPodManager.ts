@@ -29,6 +29,9 @@ export const VALIDATOR_POD_MANAGER_ABI = [
     type: 'function',
   },
   // Shares
+  // NOTE: tnt-core v0.15.0 refactored VPM to a share-pool model. The legacy
+  // `podOwnerShares` view is removed — readers must use `getShares` (int256,
+  // can be negative pre-rebase) or `getSharesUint` (uint256, clamped to 0).
   {
     inputs: [{ internalType: 'address', name: 'owner', type: 'address' }],
     name: 'getShares',
@@ -38,16 +41,39 @@ export const VALIDATOR_POD_MANAGER_ABI = [
   },
   {
     inputs: [{ internalType: 'address', name: 'owner', type: 'address' }],
-    name: 'podOwnerShares',
-    outputs: [{ internalType: 'int256', name: '', type: 'int256' }],
+    name: 'getSharesUint',
+    outputs: [{ internalType: 'uint256', name: '', type: 'uint256' }],
     stateMutability: 'view',
     type: 'function',
   },
   {
     inputs: [],
     name: 'totalShares',
-    outputs: [{ internalType: 'int256', name: '', type: 'int256' }],
+    outputs: [{ internalType: 'uint256', name: '', type: 'uint256' }],
     stateMutability: 'view',
+    type: 'function',
+  },
+  // Beacon-chain accounting (replaces removed recordBeaconChainEthBalanceUpdate).
+  {
+    inputs: [
+      { internalType: 'address', name: 'podOwner', type: 'address' },
+      { internalType: 'uint256', name: 'assets', type: 'uint256' },
+    ],
+    name: 'recordBeaconChainDeposit',
+    outputs: [
+      { internalType: 'uint256', name: 'mintedShares', type: 'uint256' },
+    ],
+    stateMutability: 'nonpayable',
+    type: 'function',
+  },
+  {
+    inputs: [
+      { internalType: 'address', name: 'podOwner', type: 'address' },
+      { internalType: 'int256', name: 'assetsDelta', type: 'int256' },
+    ],
+    name: 'recordBeaconChainRebase',
+    outputs: [],
+    stateMutability: 'nonpayable',
     type: 'function',
   },
   // Operator Management
@@ -306,12 +332,55 @@ export const VALIDATOR_POD_MANAGER_ABI = [
       },
       {
         indexed: false,
-        internalType: 'int256',
+        internalType: 'uint256',
         name: 'newShares',
-        type: 'int256',
+        type: 'uint256',
+      },
+      {
+        indexed: false,
+        internalType: 'uint256',
+        name: 'totalAssets',
+        type: 'uint256',
+      },
+      {
+        indexed: false,
+        internalType: 'uint256',
+        name: 'totalSharesPool',
+        type: 'uint256',
       },
     ],
     name: 'SharesUpdated',
+    type: 'event',
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: true,
+        internalType: 'address',
+        name: 'owner',
+        type: 'address',
+      },
+      {
+        indexed: false,
+        internalType: 'int256',
+        name: 'assetsDelta',
+        type: 'int256',
+      },
+      {
+        indexed: false,
+        internalType: 'uint256',
+        name: 'newTotalAssets',
+        type: 'uint256',
+      },
+      {
+        indexed: false,
+        internalType: 'uint256',
+        name: 'totalSharesPool',
+        type: 'uint256',
+      },
+    ],
+    name: 'BeaconRebase',
     type: 'event',
   },
   {
@@ -411,6 +480,12 @@ export const VALIDATOR_POD_MANAGER_ABI = [
         name: 'shares',
         type: 'uint256',
       },
+      {
+        indexed: false,
+        internalType: 'uint256',
+        name: 'assets',
+        type: 'uint256',
+      },
     ],
     name: 'WithdrawalQueued',
     type: 'event',
@@ -434,6 +509,12 @@ export const VALIDATOR_POD_MANAGER_ABI = [
         indexed: false,
         internalType: 'uint256',
         name: 'shares',
+        type: 'uint256',
+      },
+      {
+        indexed: false,
+        internalType: 'uint256',
+        name: 'assets',
         type: 'uint256',
       },
     ],
