@@ -135,9 +135,12 @@ yarn generate:release        # Review version bumps and changelog
 
 ### Branch Strategy
 
-- Main development branch: `develop`
-- Main branch for releases: `master`
-- Release PRs should start with `[RELEASE]` in title
+Two-branch model (the previous `staging` branch was retired May 2026):
+
+- **`develop`** — main development branch. All feature, fix, and chore PRs target it. Every push to `develop` deploys to the staging Netlify environment (`develop--tangle-{cloud,dapp,leaderboard}.netlify.app`, aliased at `staging.{cloud,app,leaderboard}.tangle.tools` when configured).
+- **`master`** — production. Promotions happen automatically via the `auto-sync-master-with-develop.yml` workflow: a push to `develop` whose head commit message starts with `[RELEASE]` fast-forwards `master` to that commit and fires the production Netlify deploy. No manual cherry-pick, no separate release branch.
+- **Release PR titles must start with `[RELEASE]`** so the auto-sync workflow promotes the merge commit to master.
+- Hotfixes follow the same flow: PR into `develop` with a `[RELEASE]`-tagged final commit (e.g. via `gh pr merge --squash --subject "[RELEASE] fix: …"`).
 
 ### Prerequisites
 

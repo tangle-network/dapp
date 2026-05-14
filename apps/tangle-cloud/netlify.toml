@@ -10,7 +10,12 @@
   # implicitly covered (it's inside apps/tangle-cloud/), and any source/
   # config/lockfile change also re-triggers.
   #
-  # Non-master branches always build (gives PR-preview deploys).
+  # Non-master branches always build (gives PR-preview + develop-branch
+  # deploys). The `develop` branch deploy is our staging environment —
+  # surfaced at develop--tangle-cloud.netlify.app and, when DNS aliases
+  # are configured, at staging.cloud.tangle.tools. The legacy `staging`
+  # git branch has been retired (May 2026); promotions go develop → master
+  # via the `[RELEASE]`-tagged auto-sync workflow.
   ignore = "[ \"$BRANCH\" != \"master\" ] && exit 1 || git diff --quiet $CACHED_COMMIT_REF $COMMIT_REF -- apps/tangle-cloud/ libs/ package.json yarn.lock tsconfig.base.json nx.json && exit 0 || exit 1"
 
 # ─── Per-context environment ───────────────────────────────────────────
@@ -36,7 +41,8 @@
   VITE_BLUEPRINT_IFRAME_ENABLED = "true"
 
 [context.branch-deploy.environment]
-  # Same default for any non-master branch deploy (e.g. staging).
+  # Same default for any non-master branch deploy. The primary branch
+  # deploy is `develop`, which serves as our staging environment.
   VITE_BLUEPRINT_IFRAME_ENABLED = "true"
 
 # ─── Security headers ───────────────────────────────────────────────────
