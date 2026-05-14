@@ -138,9 +138,9 @@ yarn generate:release        # Review version bumps and changelog
 Two-branch model (the previous `staging` branch was retired May 2026):
 
 - **`develop`** — main development branch. All feature, fix, and chore PRs target it.
-- **`master`** — production. Promoted from `develop` automatically by the `auto-sync-master-with-develop.yml` workflow: a push to `develop` whose head commit message starts with `[RELEASE]` fast-forwards `master` to that commit. No manual cherry-pick, no separate release branch.
-- **Release PR titles (and the merge commit) must start with `[RELEASE]`** for auto-sync to fire. Squash-merge with `[RELEASE] type(scope): …` works directly.
-- Hotfixes follow the same flow: PR into `develop`, squash-merge with `[RELEASE]` prefix on the commit subject.
+- **`master`** — production. Promoted from `develop` automatically by the `auto-sync-master-with-develop.yml` workflow: any commit in a `develop` push whose subject starts with `[RELEASE]` triggers a fast-forward of `master` to the push's HEAD. No manual cherry-pick, no separate release branch.
+- **Tag at least one commit per release PR with `[RELEASE]`** so auto-sync fires. Either: (a) squash-merge with a `[RELEASE] type(scope): …` subject — simplest, OR (b) ensure the PR's own commit subject starts with `[RELEASE]` and use a normal merge (the workflow scans every commit in the push, not just the merge subject).
+- Hotfixes follow the same flow: PR into `develop`, tag the squash subject or branch commit with `[RELEASE]`.
 
 **Deploy environments** (each Netlify site is pinned to one branch via `allowed_branches`, so there is no overlap):
 
