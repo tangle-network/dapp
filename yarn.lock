@@ -12976,21 +12976,21 @@ __metadata:
   linkType: hard
 
 "@storybook/blocks@npm:^8.6.12":
-  version: 8.6.12
-  resolution: "@storybook/blocks@npm:8.6.12"
+  version: 8.6.18
+  resolution: "@storybook/blocks@npm:8.6.18"
   dependencies:
     "@storybook/icons": "npm:^1.2.12"
     ts-dedent: "npm:^2.0.0"
   peerDependencies:
     react: ^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0
     react-dom: ^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0
-    storybook: ^8.6.12
+    storybook: ^8.6.18
   peerDependenciesMeta:
     react:
       optional: true
     react-dom:
       optional: true
-  checksum: 10c0/ce15861061888b73a2f05e2fa1dd8947dd37904e61a978299f96c19f3a45b7a65eca265bd10ba101b2e56dcb24f5ff1871cdaff86640142fe46d8491b7b4ac12
+  checksum: 10c0/865285530b5b0a49c5dfa27c478b127026ca90af2a28eab98a8bf516c266c3d222a06bb5f1edd1ad07a38ddd53138bdf754721896fd3ebf887ac45f247d7a005
   languageName: node
   linkType: hard
 
