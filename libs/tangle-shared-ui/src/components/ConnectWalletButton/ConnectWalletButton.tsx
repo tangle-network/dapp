@@ -1,13 +1,14 @@
 'use client';
 
-import { Button } from '@tangle-network/sandbox-ui/primitives';
-import { lazy, Suspense, useMemo, useState } from 'react';
-import { isAddress } from 'viem';
+import Spinner from '@tangle-network/icons/Spinner';
+import { isEvmAddress } from '@tangle-network/ui-components';
+import Button from '@tangle-network/ui-components/components/buttons/Button';
+import { EvmAddress } from '@tangle-network/ui-components/types/address';
+import { useMemo, useState } from 'react';
 import { useAccount } from 'wagmi';
-import type { EvmAddress } from '@tangle-network/ui-components/types/address';
-
-const EvmWalletModal = lazy(() => import('../EvmWalletModal/EvmWalletModal'));
-const WalletDropdown = lazy(() => import('./WalletDropdown'));
+import { EvmWalletModal } from '../EvmWalletModal';
+import WalletDropdown from './WalletDropdown';
+import { getWalletIcon } from './walletIcons';
 
 type ConnectWalletButtonProps = {
   className?: string;
@@ -21,13 +22,14 @@ const ConnectWalletButton = ({ className }: ConnectWalletButtonProps) => {
     if (!address) {
       return null;
     }
-    if (isAddress(address)) {
-      return address as EvmAddress;
+    if (isEvmAddress(address)) {
+      return address;
     }
     return null;
   }, [address]);
 
   const walletName = connector?.name ?? 'Wallet';
+  const walletIcon = getWalletIcon(connector?.id, connector?.name);
   const isReady = isConnected && accountAddress !== null;
 
   return (
@@ -36,44 +38,30 @@ const ConnectWalletButton = ({ className }: ConnectWalletButtonProps) => {
         {!isReady ? (
           <Button
             data-testid="evm-connect-trigger"
-            loading={isConnecting}
+            isLoading={isConnecting}
+            spinner={<Spinner size="lg" />}
+            loadingText="Connecting"
             onClick={() => setIsModalOpen(true)}
-            variant="sandbox"
             className="flex items-center justify-center px-6"
           >
-            {isConnecting ? 'Connecting' : 'Connect'}
+            Connect
           </Button>
         ) : (
-          <Suspense
-            fallback={<ConnectedWalletFallback address={accountAddress} />}
-          >
-            <WalletDropdown
-              accountAddress={accountAddress}
-              walletName={walletName}
-              connectorId={connector?.id}
-              connectorName={connector?.name}
-              onAccountClick={() => setIsModalOpen(true)}
-            />
-          </Suspense>
+          <WalletDropdown
+            accountAddress={accountAddress}
+            walletName={walletName}
+            walletIcon={walletIcon}
+            onAccountClick={() => setIsModalOpen(true)}
+          />
         )}
       </div>
 
-      {isModalOpen && (
-        <Suspense fallback={null}>
-          <EvmWalletModal
-            isOpen={isModalOpen}
-            onClose={() => setIsModalOpen(false)}
-          />
-        </Suspense>
-      )}
+      <EvmWalletModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+      />
     </>
   );
 };
-
-const ConnectedWalletFallback = ({ address }: { address: EvmAddress }) => (
-  <Button variant="outline" className="h-11 px-3 font-bold">
-    {`${address.slice(0, 6)}...${address.slice(-4)}`}
-  </Button>
-);
 
 export default ConnectWalletButton;
