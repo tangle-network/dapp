@@ -213,6 +213,7 @@ export {
 export {
   useSlashProposals,
   useProposableServices,
+  useSlashConfig,
   useDisputeSlashTx,
   useCancelSlashTx,
   useProposeSlashTx,

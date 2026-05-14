@@ -57,6 +57,19 @@ const ABI = [
   },
   {
     type: 'function',
+    name: 'HEARTBEAT_MAX_AGE',
+    inputs: [],
+    outputs: [
+      {
+        name: '',
+        type: 'uint64',
+        internalType: 'uint64',
+      },
+    ],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
     name: 'HEARTBEAT_TYPEHASH',
     inputs: [],
     outputs: [
@@ -64,6 +77,45 @@ const ABI = [
         name: '',
         type: 'bytes32',
         internalType: 'bytes32',
+      },
+    ],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
+    name: 'MAX_METRIC_DEFINITIONS',
+    inputs: [],
+    outputs: [
+      {
+        name: '',
+        type: 'uint256',
+        internalType: 'uint256',
+      },
+    ],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
+    name: 'MAX_METRIC_NAME_LENGTH',
+    inputs: [],
+    outputs: [
+      {
+        name: '',
+        type: 'uint256',
+        internalType: 'uint256',
+      },
+    ],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
+    name: 'MAX_PAGE_SIZE',
+    inputs: [],
+    outputs: [
+      {
+        name: '',
+        type: 'uint256',
+        internalType: 'uint256',
       },
     ],
     stateMutability: 'view',
@@ -194,7 +246,7 @@ const ABI = [
       {
         name: 'pairs',
         type: 'tuple[]',
-        internalType: 'struct OperatorStatusRegistry.MetricPair[]',
+        internalType: 'struct IOperatorStatusRegistry.MetricPair[]',
         components: [
           {
             name: 'name',
@@ -210,6 +262,24 @@ const ABI = [
       },
     ],
     stateMutability: 'pure',
+  },
+  {
+    type: 'function',
+    name: 'deregisterOperator',
+    inputs: [
+      {
+        name: 'serviceId',
+        type: 'uint64',
+        internalType: 'uint64',
+      },
+      {
+        name: 'operator',
+        type: 'address',
+        internalType: 'address',
+      },
+    ],
+    outputs: [],
+    stateMutability: 'nonpayable',
   },
   {
     type: 'function',
@@ -231,6 +301,25 @@ const ABI = [
   },
   {
     type: 'function',
+    name: 'getAllOperatorCount',
+    inputs: [
+      {
+        name: 'serviceId',
+        type: 'uint64',
+        internalType: 'uint64',
+      },
+    ],
+    outputs: [
+      {
+        name: '',
+        type: 'uint256',
+        internalType: 'uint256',
+      },
+    ],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
     name: 'getHeartbeatConfig',
     inputs: [
       {
@@ -243,7 +332,7 @@ const ABI = [
       {
         name: '',
         type: 'tuple',
-        internalType: 'struct OperatorStatusRegistry.HeartbeatConfig',
+        internalType: 'struct IOperatorStatusRegistry.HeartbeatConfig',
         components: [
           {
             name: 'interval',
@@ -327,7 +416,7 @@ const ABI = [
       {
         name: '',
         type: 'tuple[]',
-        internalType: 'struct OperatorStatusRegistry.MetricDefinition[]',
+        internalType: 'struct IOperatorStatusRegistry.MetricDefinition[]',
         components: [
           {
             name: 'name',
@@ -440,7 +529,7 @@ const ABI = [
       {
         name: '',
         type: 'tuple',
-        internalType: 'struct OperatorStatusRegistry.OperatorState',
+        internalType: 'struct IOperatorStatusRegistry.OperatorState',
         components: [
           {
             name: 'lastHeartbeat',
@@ -511,6 +600,40 @@ const ABI = [
         name: 'operators',
         type: 'address[]',
         internalType: 'address[]',
+      },
+    ],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
+    name: 'getSlashableOperatorsPaginated',
+    inputs: [
+      {
+        name: 'serviceId',
+        type: 'uint64',
+        internalType: 'uint64',
+      },
+      {
+        name: 'offset',
+        type: 'uint256',
+        internalType: 'uint256',
+      },
+      {
+        name: 'limit',
+        type: 'uint256',
+        internalType: 'uint256',
+      },
+    ],
+    outputs: [
+      {
+        name: 'operators',
+        type: 'address[]',
+        internalType: 'address[]',
+      },
+      {
+        name: 'total',
+        type: 'uint256',
+        internalType: 'uint256',
       },
     ],
     stateMutability: 'view',
@@ -597,6 +720,30 @@ const ABI = [
   {
     type: 'function',
     name: 'isOnline',
+    inputs: [
+      {
+        name: 'serviceId',
+        type: 'uint64',
+        internalType: 'uint64',
+      },
+      {
+        name: 'operator',
+        type: 'address',
+        internalType: 'address',
+      },
+    ],
+    outputs: [
+      {
+        name: '',
+        type: 'bool',
+        internalType: 'bool',
+      },
+    ],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
+    name: 'isRegisteredOperator',
     inputs: [
       {
         name: 'serviceId',
@@ -732,6 +879,24 @@ const ABI = [
   },
   {
     type: 'function',
+    name: 'registerOperator',
+    inputs: [
+      {
+        name: 'serviceId',
+        type: 'uint64',
+        internalType: 'uint64',
+      },
+      {
+        name: 'operator',
+        type: 'address',
+        internalType: 'address',
+      },
+    ],
+    outputs: [],
+    stateMutability: 'nonpayable',
+  },
+  {
+    type: 'function',
     name: 'registerServiceOwner',
     inputs: [
       {
@@ -741,6 +906,24 @@ const ABI = [
       },
       {
         name: 'owner',
+        type: 'address',
+        internalType: 'address',
+      },
+    ],
+    outputs: [],
+    stateMutability: 'nonpayable',
+  },
+  {
+    type: 'function',
+    name: 'removeInactiveOperator',
+    inputs: [
+      {
+        name: 'serviceId',
+        type: 'uint64',
+        internalType: 'uint64',
+      },
+      {
+        name: 'operator',
         type: 'address',
         internalType: 'address',
       },
@@ -838,6 +1021,46 @@ const ABI = [
   },
   {
     type: 'function',
+    name: 'setMetricDefinitions',
+    inputs: [
+      {
+        name: 'serviceId',
+        type: 'uint64',
+        internalType: 'uint64',
+      },
+      {
+        name: 'definitions',
+        type: 'tuple[]',
+        internalType: 'struct IOperatorStatusRegistry.MetricDefinition[]',
+        components: [
+          {
+            name: 'name',
+            type: 'string',
+            internalType: 'string',
+          },
+          {
+            name: 'minValue',
+            type: 'uint256',
+            internalType: 'uint256',
+          },
+          {
+            name: 'maxValue',
+            type: 'uint256',
+            internalType: 'uint256',
+          },
+          {
+            name: 'required',
+            type: 'bool',
+            internalType: 'bool',
+          },
+        ],
+      },
+    ],
+    outputs: [],
+    stateMutability: 'nonpayable',
+  },
+  {
+    type: 'function',
     name: 'setMetricsRecorder',
     inputs: [
       {
@@ -900,6 +1123,11 @@ const ABI = [
         internalType: 'bytes',
       },
       {
+        name: 'timestamp',
+        type: 'uint64',
+        internalType: 'uint64',
+      },
+      {
         name: 'signature',
         type: 'bytes',
         internalType: 'bytes',
@@ -957,6 +1185,46 @@ const ABI = [
         name: 'newOwner',
         type: 'address',
         internalType: 'address',
+      },
+    ],
+    outputs: [],
+    stateMutability: 'nonpayable',
+  },
+  {
+    type: 'function',
+    name: 'validateAndStoreMetrics',
+    inputs: [
+      {
+        name: 'serviceId',
+        type: 'uint64',
+        internalType: 'uint64',
+      },
+      {
+        name: 'operator',
+        type: 'address',
+        internalType: 'address',
+      },
+      {
+        name: 'pairs',
+        type: 'tuple[]',
+        internalType: 'struct IOperatorStatusRegistry.MetricPair[]',
+        components: [
+          {
+            name: 'name',
+            type: 'string',
+            internalType: 'string',
+          },
+          {
+            name: 'value',
+            type: 'uint256',
+            internalType: 'uint256',
+          },
+        ],
+      },
+      {
+        name: 'pairsLen',
+        type: 'uint256',
+        internalType: 'uint256',
       },
     ],
     outputs: [],
@@ -1057,7 +1325,76 @@ const ABI = [
   },
   {
     type: 'event',
+    name: 'MetricViolation',
+    inputs: [
+      {
+        name: 'serviceId',
+        type: 'uint64',
+        indexed: true,
+        internalType: 'uint64',
+      },
+      {
+        name: 'operator',
+        type: 'address',
+        indexed: true,
+        internalType: 'address',
+      },
+      {
+        name: 'metricName',
+        type: 'string',
+        indexed: false,
+        internalType: 'string',
+      },
+      {
+        name: 'reason',
+        type: 'string',
+        indexed: false,
+        internalType: 'string',
+      },
+    ],
+    anonymous: false,
+  },
+  {
+    type: 'event',
     name: 'OperatorCameOnline',
+    inputs: [
+      {
+        name: 'serviceId',
+        type: 'uint64',
+        indexed: true,
+        internalType: 'uint64',
+      },
+      {
+        name: 'operator',
+        type: 'address',
+        indexed: true,
+        internalType: 'address',
+      },
+    ],
+    anonymous: false,
+  },
+  {
+    type: 'event',
+    name: 'OperatorDeregistered',
+    inputs: [
+      {
+        name: 'serviceId',
+        type: 'uint64',
+        indexed: true,
+        internalType: 'uint64',
+      },
+      {
+        name: 'operator',
+        type: 'address',
+        indexed: true,
+        internalType: 'address',
+      },
+    ],
+    anonymous: false,
+  },
+  {
+    type: 'event',
+    name: 'OperatorRegistered',
     inputs: [
       {
         name: 'serviceId',
@@ -1217,6 +1554,38 @@ const ABI = [
         name: 's',
         type: 'bytes32',
         internalType: 'bytes32',
+      },
+    ],
+  },
+  {
+    type: 'error',
+    name: 'HeartbeatFromFuture',
+    inputs: [
+      {
+        name: 'signed',
+        type: 'uint64',
+        internalType: 'uint64',
+      },
+      {
+        name: 'now_',
+        type: 'uint64',
+        internalType: 'uint64',
+      },
+    ],
+  },
+  {
+    type: 'error',
+    name: 'HeartbeatStale',
+    inputs: [
+      {
+        name: 'signed',
+        type: 'uint64',
+        internalType: 'uint64',
+      },
+      {
+        name: 'now_',
+        type: 'uint64',
+        internalType: 'uint64',
       },
     ],
   },
