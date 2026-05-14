@@ -2,7 +2,7 @@ name: 'Clean 🧹'
 
 on:
   pull_request:
-    branches: [develop, staging, master, feature/**]
+    branches: [develop, master, feature/**]
 
   workflow_dispatch:
 

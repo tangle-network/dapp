@@ -10,5 +10,10 @@
   # covered (it's inside apps/leaderboard/), and any source/config/
   # lockfile change also re-triggers.
   #
-  # Non-master branches always build (gives PR-preview deploys).
+  # Non-master branches always build (gives PR-preview + develop-branch
+  # deploys). The `develop` branch deploy is our staging environment —
+  # surfaced at develop--tangle-leaderboard.netlify.app and, when DNS
+  # aliases are configured, at staging.leaderboard.tangle.tools. The
+  # legacy `staging` git branch has been retired (May 2026); promotions
+  # go develop → master via the `[RELEASE]`-tagged auto-sync workflow.
   ignore = "[ \"$BRANCH\" != \"master\" ] && exit 1 || git diff --quiet $CACHED_COMMIT_REF $COMMIT_REF -- apps/leaderboard/ libs/ package.json yarn.lock tsconfig.base.json nx.json && exit 0 || exit 1"

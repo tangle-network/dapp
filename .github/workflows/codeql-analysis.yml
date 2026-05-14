@@ -2,7 +2,7 @@ name: 'Scan 🔎'
 
 on:
   pull_request:
-    branches: [develop, staging, master, feature/**]
+    branches: [develop, master, feature/**]
 
   schedule:
     #        ┌───────────── minute (0 - 59)
