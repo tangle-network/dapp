@@ -137,10 +137,23 @@ yarn generate:release        # Review version bumps and changelog
 
 Two-branch model (the previous `staging` branch was retired May 2026):
 
-- **`develop`** — main development branch. All feature, fix, and chore PRs target it. Every push to `develop` deploys to the staging Netlify environment (`develop--tangle-{cloud,dapp,leaderboard}.netlify.app`, aliased at `staging.{cloud,app,leaderboard}.tangle.tools` when configured).
-- **`master`** — production. Promotions happen automatically via the `auto-sync-master-with-develop.yml` workflow: a push to `develop` whose head commit message starts with `[RELEASE]` fast-forwards `master` to that commit and fires the production Netlify deploy. No manual cherry-pick, no separate release branch.
-- **Release PR titles must start with `[RELEASE]`** so the auto-sync workflow promotes the merge commit to master.
-- Hotfixes follow the same flow: PR into `develop` with a `[RELEASE]`-tagged final commit (e.g. via `gh pr merge --squash --subject "[RELEASE] fix: …"`).
+- **`develop`** — main development branch. All feature, fix, and chore PRs target it.
+- **`master`** — production. Promoted from `develop` automatically by the `auto-sync-master-with-develop.yml` workflow: a push to `develop` whose head commit message starts with `[RELEASE]` fast-forwards `master` to that commit. No manual cherry-pick, no separate release branch.
+- **Release PR titles (and the merge commit) must start with `[RELEASE]`** for auto-sync to fire. Squash-merge with `[RELEASE] type(scope): …` works directly.
+- Hotfixes follow the same flow: PR into `develop`, squash-merge with `[RELEASE]` prefix on the commit subject.
+
+**Deploy environments** (each Netlify site is pinned to one branch via `allowed_branches`, so there is no overlap):
+
+| Env | Branch | URL | Netlify site |
+|---|---|---|---|
+| Production (cloud) | `master` | https://cloud.tangle.tools | `tangle-cloud` |
+| Production (dapp) | `master` | https://app.tangle.tools | `tangle-dapp` |
+| Production (leaderboard) | `master` | https://leaderboard.tangle.tools | `tangle-leaderboard` |
+| Staging (cloud) | `develop` | https://develop.cloud.tangle.tools | `staging-tangle-cloud` |
+| Staging (dapp) | `develop` | https://develop.app.tangle.tools | `staging-tangle-dapp` |
+| Staging (leaderboard) | `develop` | https://develop.leaderboard.tangle.tools | `staging-tangle-leaderboard` |
+
+PR deploy previews are produced by the staging sites and surface in the GitHub PR check `Deploy Preview – staging-<app>`.
 
 ### Prerequisites
 
