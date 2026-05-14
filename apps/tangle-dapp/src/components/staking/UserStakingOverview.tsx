@@ -5,11 +5,12 @@ import {
   SkeletonLoader,
   Typography,
 } from '@tangle-network/ui-components';
-import { TokenIcon } from '@tangle-network/icons';
+import { TokenIcon, WalletLineIcon } from '@tangle-network/icons';
 import type { Delegator } from '@tangle-network/tangle-shared-ui/data/graphql/useDelegator';
 import type { StakingAssetMap } from '@tangle-network/tangle-shared-ui/data/graphql';
 import { formatUnits, Address } from 'viem';
 import { twMerge } from 'tailwind-merge';
+import { useAccount } from 'wagmi';
 
 interface Props {
   delegator: Delegator | null;
@@ -33,6 +34,8 @@ export const UserStakingOverview: FC<Props> = ({
   assets,
   isLoading,
 }) => {
+  const { isConnected } = useAccount();
+
   // Get position details for each asset
   const positions = useMemo(() => {
     if (!delegator || !assets) return [];
@@ -64,13 +67,47 @@ export const UserStakingOverview: FC<Props> = ({
     return <SkeletonLoader className="h-32" />;
   }
 
-  // No positions - show empty state
+  // No positions - show empty state. Wallet-disconnected and "connected but
+  // empty" read very differently, so split the copy.
   if (positions.length === 0) {
+    const { title, body } = isConnected
+      ? {
+          title: 'No active positions',
+          body: 'Deposit a supported asset below to start earning. Your deposited, delegated, and pending balances appear here once on-chain.',
+        }
+      : {
+          title: 'Connect a wallet to view your positions',
+          body: 'Deposited, delegated, and pending balances appear here once a wallet is connected. The asset catalog below loads without a wallet.',
+        };
+
     return (
-      <Card variant={CardVariant.GLASS} className="p-6 text-center">
-        <Typography variant="body1" className="text-mono-120 dark:text-mono-80">
-          No positions yet. Deposit assets to start staking.
-        </Typography>
+      <Card
+        variant={CardVariant.GLASS}
+        className="flex flex-col items-center gap-3 p-6 text-center sm:flex-row sm:items-center sm:gap-4 sm:text-left"
+      >
+        <div className="flex h-10 w-10 items-center justify-center rounded-full bg-mono-20 dark:bg-mono-160">
+          <WalletLineIcon
+            size="lg"
+            className="!fill-mono-120 dark:!fill-mono-100"
+          />
+        </div>
+
+        <div className="flex flex-col gap-1">
+          <Typography
+            variant="body1"
+            fw="semibold"
+            className="text-mono-200 dark:text-mono-0"
+          >
+            {title}
+          </Typography>
+
+          <Typography
+            variant="body2"
+            className="max-w-2xl text-mono-120 dark:text-mono-80"
+          >
+            {body}
+          </Typography>
+        </div>
       </Card>
     );
   }

@@ -1,15 +1,17 @@
-import { StatusIndicator } from '@tangle-network/icons';
+import { RefreshLineIcon, StatusIndicator } from '@tangle-network/icons';
 import { useOperators } from '@tangle-network/tangle-shared-ui/data/graphql/useOperators';
 import { useDelegatorCount } from '@tangle-network/tangle-shared-ui/data/graphql/useDelegator';
+import { useIndexerStatus } from '@tangle-network/tangle-shared-ui/context/IndexerStatusContext';
 import type { ProtocolStakingAsset } from '@tangle-network/tangle-shared-ui/data/graphql';
 import {
   Card,
   CardVariant,
   EMPTY_VALUE_PLACEHOLDER,
+  IconButton,
   SkeletonLoader,
   Typography,
 } from '@tangle-network/ui-components';
-import { FC, useMemo } from 'react';
+import { FC, useCallback, useMemo } from 'react';
 import { twMerge } from 'tailwind-merge';
 import { formatUnits } from 'viem';
 import { StatsItem } from './StatsItem';
@@ -41,13 +43,39 @@ export const ProtocolStatisticCard: FC<Props> = ({
   stakingAssets,
   tvlData,
 }) => {
-  const { data: operators, isLoading: isLoadingOperators } = useOperators({
+  const {
+    data: operators,
+    isLoading: isLoadingOperators,
+    error: operatorsError,
+    refetch: refetchOperators,
+  } = useOperators({
     status: 'ACTIVE',
   });
 
   // Get unique staker (delegator) count
-  const { data: stakerCount, isLoading: isLoadingStakers } =
-    useDelegatorCount();
+  const {
+    data: stakerCount,
+    isLoading: isLoadingStakers,
+    error: stakerCountError,
+    refetch: refetchStakerCount,
+  } = useDelegatorCount();
+
+  const { isHealthy, isCheckingHealth, checkHealth } = useIndexerStatus();
+
+  // The indexer feeds Stakers and (when on-chain fallback also fails) Operators.
+  // Surface a single muted notice rather than a row of EMPTY_VALUE_PLACEHOLDERs
+  // that read as "card is broken".
+  const isIndexerUnavailable =
+    !isCheckingHealth &&
+    (isHealthy === false ||
+      stakerCountError !== null ||
+      (operatorsError !== null && (operators?.length ?? 0) === 0));
+
+  const handleRetry = useCallback(() => {
+    void checkHealth();
+    void refetchOperators();
+    void refetchStakerCount();
+  }, [checkHealth, refetchOperators, refetchStakerCount]);
 
   // Calculate TVL display value
   const tvlDisplay = useMemo(() => {
@@ -101,27 +129,55 @@ export const ProtocolStatisticCard: FC<Props> = ({
           )}
         </div>
 
-        <div className="grid grid-cols-3 gap-6 mt-auto">
-          <StatsItem
-            label="Stakers"
-            result={stakerCount ?? null}
-            isLoading={isLoadingStakers}
-            displayLabelBottom
-          />
+        <div className="mt-auto flex flex-col gap-3">
+          {isIndexerUnavailable && (
+            <div className="flex items-center gap-2 text-mono-120 dark:text-mono-100">
+              <Typography
+                variant="body2"
+                className="text-mono-120 dark:text-mono-100"
+              >
+                Network data temporarily unavailable. Retrying automatically.
+              </Typography>
 
-          <StatsItem
-            label="Operators"
-            result={operators?.length ?? null}
-            isLoading={isLoadingOperators}
-            displayLabelBottom
-          />
+              <IconButton
+                onClick={handleRetry}
+                tooltip="Retry"
+                aria-label="Retry network data"
+                className="!p-1"
+              >
+                <RefreshLineIcon size="md" />
+              </IconButton>
+            </div>
+          )}
 
-          <StatsItem
-            label="Assets"
-            result={stakingAssets.length}
-            isLoading={isLoading}
-            displayLabelBottom
-          />
+          <div className="grid grid-cols-3 gap-6">
+            <StatsItem
+              label="Stakers"
+              result={stakerCount ?? null}
+              isLoading={isLoadingStakers}
+              error={stakerCountError ?? undefined}
+              displayLabelBottom
+            />
+
+            <StatsItem
+              label="Operators"
+              result={operators?.length ?? null}
+              isLoading={isLoadingOperators}
+              error={
+                operatorsError !== null && (operators?.length ?? 0) === 0
+                  ? operatorsError
+                  : undefined
+              }
+              displayLabelBottom
+            />
+
+            <StatsItem
+              label="Assets"
+              result={stakingAssets.length}
+              isLoading={isLoading}
+              displayLabelBottom
+            />
+          </div>
         </div>
       </div>
     </Card>
