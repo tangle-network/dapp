@@ -3,6 +3,7 @@ import { Spinner } from '@tangle-network/icons';
 import { Search } from '@tangle-network/icons/Search';
 import TableStatus from '@tangle-network/tangle-shared-ui/components/tables/TableStatus';
 import type { NetworkType } from '@tangle-network/tangle-shared-ui/graphql/graphql';
+import { isEnvioUnavailableError } from '@tangle-network/tangle-shared-ui/utils/executeEnvioGraphQL';
 import {
   Input,
   KeyValueWithButton,
@@ -256,6 +257,7 @@ export const LeaderboardTable = () => {
     error,
     isPending,
     isFetching,
+    refetch,
   } = useLeaderboard(
     networkTab,
     // Load more data when doing client-side filtering to ensure we don't miss results
@@ -268,6 +270,12 @@ export const LeaderboardTable = () => {
     timestampSevenDaysAgo,
     accountQuery,
   );
+
+  const handleRetry = useCallback(() => {
+    refetch();
+  }, [refetch]);
+
+  const isIndexerUnavailable = error !== null && isEnvioUnavailableError(error);
 
   const data = useMemo<Account[]>(() => {
     if (!leaderboardData?.nodes) {
@@ -414,19 +422,34 @@ export const LeaderboardTable = () => {
         </div>
       </div>
 
-      {isPending ? (
+      {error && data.length === 0 ? (
+        <TableStatus
+          className="min-h-80"
+          icon={<CrossCircledIcon className="fill-red-500 size-8" />}
+          title={
+            isIndexerUnavailable
+              ? 'Leaderboard data is temporarily unavailable'
+              : 'Error loading leaderboard data'
+          }
+          description={
+            isIndexerUnavailable
+              ? `The Tangle indexer is not responding right now. Please retry in a moment. (${error.message})`
+              : error.message
+          }
+          buttonText="Retry"
+          buttonProps={{
+            onClick: handleRetry,
+            isLoading: isFetching,
+            isDisabled: isFetching,
+            variant: 'secondary',
+          }}
+        />
+      ) : isPending ? (
         <TableStatus
           className="min-h-80"
           icon={<Spinner size="2xl" />}
-          title="Loading..."
-          description="Loading leaderboard data..."
-        />
-      ) : error && data.length === 0 ? (
-        <TableStatus
-          className="min-h-80"
-          icon={<CrossCircledIcon className="fill-red-500" />}
-          title="Error loading leaderboard data"
-          description="Please try again later."
+          title="Loading leaderboard…"
+          description="Fetching points and rankings from the Tangle indexer."
         />
       ) : data.length === 0 ? (
         <TableStatus
@@ -466,20 +489,22 @@ export const LeaderboardTable = () => {
               <Spinner size="2xl" />
             </Overlay>
           ) : error ? (
-            <Overlay className="flex flex-col gap-6 justify-center">
-              <CrossCircledIcon className="stroke-red-500 size-12" />
+            <Overlay className="flex flex-col gap-4 justify-center px-6 text-center">
+              <CrossCircledIcon className="stroke-red-500 size-10" />
 
-              <div className="space-y-2">
-                <Typography variant="h4" component="h3">
-                  Error while fetching leaderboard data
+              <div className="space-y-1">
+                <Typography variant="h5" component="h3">
+                  {isIndexerUnavailable
+                    ? 'Indexer is temporarily unavailable'
+                    : 'Could not refresh leaderboard'}
                 </Typography>
 
-                <Typography variant="body1" component="p">
-                  Error name: {error.name}
-                </Typography>
-
-                <Typography variant="body1" component="p">
-                  Error message: {error.message}
+                <Typography
+                  variant="body1"
+                  component="p"
+                  className="!text-mono-120 dark:!text-mono-80"
+                >
+                  Showing cached rankings. {error.message}
                 </Typography>
               </div>
             </Overlay>

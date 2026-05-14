@@ -1,11 +1,26 @@
 import { NetworkType } from '@tangle-network/tangle-shared-ui/graphql/graphql';
 import {
   executeEnvioGraphQL,
+  isEnvioUnavailableError,
   type EnvioNetwork,
 } from '@tangle-network/tangle-shared-ui/utils/executeEnvioGraphQL';
 import { useQuery } from '@tanstack/react-query';
 import { LEADERBOARD_QUERY_KEY } from '../../../constants/query';
 import { RoleFilterEnum } from '../constants';
+
+// Auto-refresh interval in milliseconds (10 seconds).
+const LEADERBOARD_REFETCH_INTERVAL = 10_000;
+
+// When the indexer is offline (Cloudflare 5xx, DNS, CORS, etc.) further retries
+// just stack latency on top of an already broken UI — fail fast instead so the
+// table can swap the spinner for an actionable error state.
+const shouldRetryEnvioQuery = (failureCount: number, error: Error): boolean => {
+  if (isEnvioUnavailableError(error)) {
+    return false;
+  }
+
+  return failureCount < 2;
+};
 
 const DEFAULT_EXCLUDED_ACCOUNT_IDS = [
   '0x0000000000000000000000000000000000000000',
@@ -468,9 +483,6 @@ const fetchAccountActivity = async (
   return result.data;
 };
 
-// Auto-refresh interval in milliseconds (10 seconds)
-const LEADERBOARD_REFETCH_INTERVAL = 10_000;
-
 export function useLeaderboard(
   network: NetworkType,
   first: number,
@@ -498,7 +510,11 @@ export function useLeaderboard(
       ),
     enabled: first > 0 && offset >= 0 && timestampSevenDaysAgo > 0,
     placeholderData: (prev) => prev,
-    refetchInterval: LEADERBOARD_REFETCH_INTERVAL,
+    // Stop the poll once we know the indexer is down. It re-arms after the
+    // next successful fetch (e.g. via the user-triggered Retry).
+    refetchInterval: (query) =>
+      query.state.error ? false : LEADERBOARD_REFETCH_INTERVAL,
+    retry: shouldRetryEnvioQuery,
   });
 }
 
@@ -648,6 +664,7 @@ export function useRoleAccounts(
     queryFn: () => fetchRoleAccounts(network, sortedRoles),
     enabled: sortedRoles.length > 0,
     staleTime: 30_000,
+    retry: shouldRetryEnvioQuery,
   });
 }
 
@@ -656,5 +673,6 @@ export function useRoleCounts(network: NetworkType) {
     queryKey: ['roleCounts', network],
     queryFn: () => fetchRoleCounts(network),
     staleTime: 60_000,
+    retry: shouldRetryEnvioQuery,
   });
 }
