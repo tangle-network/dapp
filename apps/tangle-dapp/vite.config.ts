@@ -166,13 +166,20 @@ export default defineConfig({
           if (id.includes('node_modules/globalthis/')) return 'utils';
           if (id.includes('@tanstack')) return 'tanstack';
           if (id.includes('react-router')) return 'router';
+          // Co-locate react/react-dom with @radix-ui. See tangle-cloud's
+          // vite.config.ts for the full incident write-up — splitting
+          // react from radix lets Rollup hoist the CJS-interop helper
+          // into the radix chunk, forming a load-order cycle that crashes
+          // the app with `Cannot read properties of undefined (reading
+          // 'forwardRef')` when radix's top-level `Qu.reduce(...)` runs
+          // before react's bindings have initialised.
           if (
             id.includes('node_modules/react/') ||
-            id.includes('node_modules/react-dom/')
+            id.includes('node_modules/react-dom/') ||
+            id.includes('@radix-ui')
           ) {
             return 'react';
           }
-          if (id.includes('@radix-ui')) return 'radix';
           return undefined;
         },
       },
