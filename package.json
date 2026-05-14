@@ -61,7 +61,7 @@
     "@fontsource/geist-mono": "^5.2.7",
     "@fontsource/geist-sans": "^5.2.5",
     "@hookform/resolvers": "^5.0.1",
-    "@mysten/dapp-kit": "^0.19.11",
+    "@mysten/dapp-kit": "^1.0.6",
     "@nanostores/react": "^1.1.0",
     "@ngneat/falso": "^7.3.0",
     "@octokit/request": "^9.2.3",
