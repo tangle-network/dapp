@@ -72,13 +72,23 @@ export default defineConfig({
           if (id.includes('viem')) return 'viem';
           if (id.includes('@tanstack')) return 'tanstack';
           if (id.includes('react-router')) return 'router';
+          // Co-locate react/react-dom with @radix-ui. Splitting them lets
+          // Rollup hoist the CJS-interop helper (`_getDefaultExportFromCjs`)
+          // into whichever chunk evaluates first; on some content-hash
+          // layouts the helper landed in the radix chunk and the react
+          // chunk imported it back, forming a load-order cycle that
+          // crashed the app at module init with
+          // `Cannot read properties of undefined (reading 'forwardRef')`
+          // when radix's top-level `Qu.reduce(...)` ran before react's
+          // bindings had initialised. Co-resident avoids the cycle since
+          // radix depends on react and must evaluate after it anyway.
           if (
             id.includes('node_modules/react/') ||
-            id.includes('node_modules/react-dom/')
+            id.includes('node_modules/react-dom/') ||
+            id.includes('@radix-ui')
           ) {
             return 'react';
           }
-          if (id.includes('@radix-ui')) return 'radix';
           return undefined;
         },
       },
