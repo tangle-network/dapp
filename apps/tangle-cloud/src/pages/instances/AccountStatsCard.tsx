@@ -120,45 +120,30 @@ export const AccountStatsCard: FC<AccountStatsCardProps> = (props) => {
           rootProps?.className,
         )}
       >
-        <CardContent className="grid gap-6 p-5 md:grid-cols-[1fr_220px] md:p-6">
-          <div className="flex min-w-0 gap-4">
+        <CardContent className="flex h-full flex-col gap-5 p-5 md:p-6">
+          <div className="flex min-w-0 items-start gap-4">
             <Avatar className="h-12 w-12 border border-border bg-muted">
               <AvatarFallback className="font-display font-bold text-foreground">
                 TC
               </AvatarFallback>
             </Avatar>
 
-            <div className="min-w-0">
+            <div className="min-w-0 flex-1">
               <p className="font-semibold text-muted-foreground text-xs uppercase tracking-wider">
                 Account
               </p>
               <div className="mt-2 font-display font-bold text-foreground text-lg tracking-tight">
-                Wallet required
+                Connect a wallet to load your account
               </div>
               <p className="mt-2 max-w-xl text-muted-foreground text-sm leading-relaxed">
                 Connect to load deployed services, operator registrations, and
-                account-scoped lifecycle events.
+                account-scoped lifecycle events. Public catalog and operator
+                registry data load below without a wallet.
               </p>
-              <div className="mt-5">
-                <ConnectWalletButton className="tangle-cloud-wallet-action" />
-              </div>
             </div>
           </div>
-
-          <div className="grid grid-cols-2 gap-2">
-            {['Services', 'Approvals', 'Jobs', 'Balances'].map((label) => (
-              <div
-                key={label}
-                className="rounded-lg border border-border bg-muted/30 p-3"
-              >
-                <p className="text-muted-foreground text-[10px] uppercase tracking-wider">
-                  {label}
-                </p>
-                <p className="mt-1 font-semibold text-foreground text-sm">
-                  Locked
-                </p>
-              </div>
-            ))}
+          <div className="mt-auto">
+            <ConnectWalletButton className="tangle-cloud-wallet-action" />
           </div>
         </CardContent>
       </Card>

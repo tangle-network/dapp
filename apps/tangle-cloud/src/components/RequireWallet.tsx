@@ -32,55 +32,35 @@ const RequireWallet: FC<Props> = ({
       variant="sandbox"
       className="w-full overflow-hidden border-border bg-card shadow-[var(--shadow-card)]"
     >
-      <CardContent className="relative p-6 md:p-8">
+      <CardContent className="relative p-6 md:p-7">
         <div className="pointer-events-none absolute inset-0 opacity-70 [background:radial-gradient(circle_at_18%_12%,rgba(99,102,241,0.20),transparent_34%),radial-gradient(circle_at_84%_10%,rgba(16,185,129,0.10),transparent_30%)]" />
 
-        <div className="relative grid gap-6 lg:grid-cols-[1fr_260px] lg:items-center">
-          <div>
+        <div className="relative flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between">
+          <div className="min-w-0 max-w-3xl">
             <p className="font-bold text-[10px] uppercase tracking-[0.2em] text-muted-foreground">
               {eyebrow}
             </p>
-            <div className="mt-3 font-display font-extrabold text-foreground text-xl leading-tight tracking-tight md:text-2xl">
+            <div className="mt-2 font-display font-extrabold text-foreground text-xl leading-tight tracking-tight md:text-2xl">
               {title}
             </div>
-            <p className="mt-3 max-w-xl text-muted-foreground text-sm leading-6">
+            <p className="mt-2 text-muted-foreground text-sm leading-6">
               {description}
             </p>
             {checks.length > 0 && (
-              <div className="mt-5 grid gap-2 sm:grid-cols-3">
+              <div className="mt-4 flex flex-wrap gap-2">
                 {checks.map((check) => (
-                  <div
+                  <span
                     key={check}
-                    className="rounded-lg border border-border bg-background/40 px-3 py-2 text-foreground text-xs"
+                    className="rounded-full border border-border bg-background/40 px-3 py-1 text-foreground text-xs"
                   >
                     {check}
-                  </div>
+                  </span>
                 ))}
               </div>
             )}
           </div>
 
-          <div className="rounded-xl border border-border bg-background/50 p-4">
-            <div className="grid grid-cols-2 gap-2">
-              {['Account', 'Network', 'Tx', 'History'].map((label) => (
-                <div
-                  key={label}
-                  className="rounded-lg border border-border bg-card/80 p-3"
-                >
-                  <p className="text-muted-foreground text-[10px] uppercase tracking-wider">
-                    {label}
-                  </p>
-                  <p className="mt-1 font-semibold text-foreground text-sm">
-                    Locked
-                  </p>
-                </div>
-              ))}
-            </div>
-
-            <div className="mt-4">
-              <ConnectWalletButton className="tangle-cloud-wallet-action" />
-            </div>
-          </div>
+          <ConnectWalletButton className="tangle-cloud-wallet-action shrink-0" />
         </div>
       </CardContent>
     </Card>

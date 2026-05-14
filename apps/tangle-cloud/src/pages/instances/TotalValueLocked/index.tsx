@@ -4,82 +4,46 @@ import {
   Card,
   CardContent,
   Skeleton,
-  Tabs,
-  TabsContent,
-  TabsList,
-  TabsTrigger,
 } from '@tangle-network/sandbox-ui/primitives';
-import { useState } from 'react';
 import { useAccount } from 'wagmi';
 import { useStakingOverview } from '@tangle-network/tangle-shared-ui/data/staking';
 import { formatUnits } from 'viem';
 import { Link } from 'react-router';
+import ConnectWalletButton from '@tangle-network/tangle-shared-ui/components/ConnectWalletButton';
 import { TangleDAppPagePath } from '../../../types';
 
-enum TotalValueLockedTab {
-  TVL = 'tvl',
-}
-
+// Wallet-scoped deposits panel. Previously titled "Total Value Locked" which
+// implied a network-wide metric — but the underlying hook (useStakingOverview)
+// returns only the connected wallet's deposits. Renamed to "My Deposits" so
+// the heading matches the data.
 export const TotalValueLockedTabs = () => {
-  const [selectedTab, setSelectedTab] = useState(TotalValueLockedTab.TVL);
   const { isConnected } = useAccount();
 
   return (
-    <Tabs
-      value={selectedTab}
-      onValueChange={(tab: string) =>
-        setSelectedTab(tab as TotalValueLockedTab)
-      }
-      className="w-full space-y-5"
-    >
-      <TabsList className="flex h-auto w-full justify-start rounded-lg border border-border bg-card p-1 shadow-[var(--shadow-card)]">
-        <TabsTrigger
-          value={TotalValueLockedTab.TVL}
-          className="gap-2 rounded-md px-3 py-2 font-semibold text-sm data-[state=active]:bg-primary data-[state=active]:text-primary-foreground"
-        >
-          <LockFillIcon className="h-4 w-4 fill-current" />
-          Total Value Locked
-        </TabsTrigger>
-      </TabsList>
-
-      <TabsContent value={TotalValueLockedTab.TVL} className="w-full">
-        <Card variant="sandbox">
-          <CardContent className="p-5">
-            {!isConnected ? <DisconnectedTvlState /> : <ConnectedTvlState />}
-          </CardContent>
-        </Card>
-      </TabsContent>
-    </Tabs>
+    <Card variant="sandbox" className="w-full">
+      <CardContent className="space-y-4 p-5">
+        <div className="flex items-center gap-2 border-b border-border pb-3 font-display font-bold text-foreground text-sm tracking-tight">
+          <LockFillIcon className="h-4 w-4 fill-current text-primary" />
+          My deposits
+        </div>
+        {!isConnected ? <DisconnectedTvlState /> : <ConnectedTvlState />}
+      </CardContent>
+    </Card>
   );
 };
 
 const DisconnectedTvlState = () => (
-  <div className="grid min-h-56 gap-4 rounded-xl border border-dashed border-border bg-muted/30 p-6 md:grid-cols-[1fr_260px] md:items-center">
-    <div>
-      <p className="font-semibold text-muted-foreground text-xs uppercase tracking-wider">
-        Wallet required
-      </p>
-      <div className="mt-2 font-display font-bold text-foreground text-lg">
-        Connect to load locked value
+  <div className="flex flex-col items-start gap-3 rounded-lg border border-dashed border-border bg-muted/20 p-5 sm:flex-row sm:items-center sm:justify-between">
+    <div className="min-w-0">
+      <div className="font-display font-bold text-foreground text-base tracking-tight">
+        Connect a wallet to view your deposits
       </div>
-      <p className="mt-2 max-w-xl text-muted-foreground text-sm leading-relaxed">
-        Deposits, running services, and operator exposure are shown from the
-        connected account.
+      <p className="mt-1 max-w-xl text-muted-foreground text-sm leading-relaxed">
+        Personal deposits, running services, and operator exposure load once a
+        wallet is connected. Public chain data on this page loads without one.
       </p>
     </div>
-    <div className="grid grid-cols-2 gap-2">
-      {['Deposits', 'Services', 'Exposure', 'Claims'].map((label) => (
-        <div
-          key={label}
-          className="rounded-lg border border-border bg-card/80 p-3"
-        >
-          <p className="text-muted-foreground text-[10px] uppercase tracking-wider">
-            {label}
-          </p>
-          <p className="mt-1 font-semibold text-foreground text-sm">Locked</p>
-        </div>
-      ))}
-    </div>
+    <ConnectWalletButton className="tangle-cloud-wallet-action shrink-0" />
   </div>
 );
 
