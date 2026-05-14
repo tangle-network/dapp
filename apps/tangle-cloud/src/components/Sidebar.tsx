@@ -115,17 +115,11 @@ const Sidebar: FC<Props> = ({ isExpandedByDefault, onExpandedChange }) => {
     <>
       <aside
         className={twMerge(
-          'fixed bottom-0 left-0 top-0 z-50 hidden shrink-0 border-border border-r bg-background transition-[width] duration-200 lg:flex lg:flex-col',
+          'group/sidebar fixed bottom-0 left-0 top-0 z-50 hidden shrink-0 border-border border-r bg-background transition-[width] duration-200 lg:flex lg:flex-col',
           isDesktopExpanded ? 'w-64' : 'w-16',
         )}
       >
         <SidebarBrand isExpanded={isDesktopExpanded} />
-        <div className="px-2 pb-3">
-          <SidebarCollapseButton
-            isExpanded={isDesktopExpanded}
-            onClick={toggleDesktopExpanded}
-          />
-        </div>
         <SidebarNav
           items={SIDEBAR_ITEMS}
           pathname={pathname}
@@ -138,6 +132,11 @@ const Sidebar: FC<Props> = ({ isExpandedByDefault, onExpandedChange }) => {
             isExpanded={isDesktopExpanded}
           />
         </div>
+
+        <SidebarCollapseButton
+          isExpanded={isDesktopExpanded}
+          onClick={toggleDesktopExpanded}
+        />
       </aside>
 
       <div className="fixed left-4 top-2 z-[45] lg:hidden">
@@ -224,6 +223,10 @@ const SidebarNav = ({
   </nav>
 );
 
+// Pinned to the sidebar's right edge so it's affordance-clear (matches VS
+// Code / Linear / Vercel patterns) and never competes with the nav stack
+// for the "what's a nav item" mental model. Floats over the border so it
+// stays visible whether the sidebar is expanded (w-64) or collapsed (w-16).
 const SidebarCollapseButton = ({
   isExpanded,
   onClick,
@@ -233,15 +236,23 @@ const SidebarCollapseButton = ({
 }) => (
   <button
     type="button"
-    className={twMerge(
-      'group flex h-10 items-center rounded-md border border-border bg-muted/20 text-xs font-semibold text-muted-foreground transition-colors hover:bg-muted/60 hover:text-foreground',
-      isExpanded ? 'w-full justify-between px-3' : 'w-12 justify-center',
-    )}
-    aria-label={isExpanded ? 'Collapse navigation' : 'Expand navigation labels'}
     onClick={onClick}
+    aria-label={isExpanded ? 'Collapse sidebar' : 'Expand sidebar'}
+    className="absolute -right-3 top-20 z-10 hidden h-6 w-6 items-center justify-center rounded-full border border-border bg-background text-muted-foreground opacity-0 shadow-[var(--shadow-card)] transition-opacity hover:text-foreground focus:opacity-100 group-hover/sidebar:opacity-100 group-focus-within/sidebar:opacity-100 lg:inline-flex"
   >
-    {isExpanded && <span>Collapse</span>}
-    <span aria-hidden>{isExpanded ? '‹' : '›'}</span>
+    <svg
+      aria-hidden
+      viewBox="0 0 16 16"
+      className={twMerge(
+        'h-3 w-3 fill-none stroke-current transition-transform',
+        isExpanded ? '' : 'rotate-180',
+      )}
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <path d="M10 4 6 8l4 4" />
+    </svg>
   </button>
 );
 
