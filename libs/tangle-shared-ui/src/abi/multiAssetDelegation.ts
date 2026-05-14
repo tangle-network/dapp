@@ -599,6 +599,52 @@ const ABI = [
   },
   {
     type: 'function',
+    name: 'getCumStakeSeconds',
+    inputs: [
+      {
+        name: 'operator',
+        type: 'address',
+        internalType: 'address',
+      },
+      {
+        name: 'asset',
+        type: 'tuple',
+        internalType: 'struct Types.Asset',
+        components: [
+          {
+            name: 'kind',
+            type: 'uint8',
+            internalType: 'enum Types.AssetKind',
+          },
+          {
+            name: 'token',
+            type: 'address',
+            internalType: 'address',
+          },
+        ],
+      },
+    ],
+    outputs: [
+      {
+        name: 'cum',
+        type: 'uint256',
+        internalType: 'uint256',
+      },
+      {
+        name: 'lastUpdate',
+        type: 'uint64',
+        internalType: 'uint64',
+      },
+      {
+        name: 'currentStake',
+        type: 'uint256',
+        internalType: 'uint256',
+      },
+    ],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
     name: 'getDelegation',
     inputs: [
       {
@@ -2848,6 +2894,22 @@ const ABI = [
       },
     ],
     anonymous: false,
+  },
+  {
+    type: 'error',
+    name: 'AdapterChangeWhileDepositsExist',
+    inputs: [
+      {
+        name: 'token',
+        type: 'address',
+        internalType: 'address',
+      },
+      {
+        name: 'currentDeposits',
+        type: 'uint256',
+        internalType: 'uint256',
+      },
+    ],
   },
 ] as const;
 

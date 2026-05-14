@@ -87,7 +87,11 @@ export const useGetPod = (ownerAddress: Address | undefined) => {
   };
 };
 
-// Hook to get owner's shares
+// Hook to get owner's shares.
+// tnt-core v0.15.0: legacy `podOwnerShares` was removed during the share-pool
+// refactor. `getShares` returns int256 (can be negative if a beacon rebase
+// pushed the owner under their previous share count); UI keeps the bigint
+// shape and downstream renderers already clamp at zero where needed.
 export const usePodOwnerShares = (ownerAddress: Address | undefined) => {
   const chainId = useChainId();
   const contractAddress = getValidatorPodManagerAddress(chainId);
@@ -95,7 +99,7 @@ export const usePodOwnerShares = (ownerAddress: Address | undefined) => {
   const { data, isLoading, error, refetch } = useReadContract({
     address: contractAddress ?? undefined,
     abi: VALIDATOR_POD_MANAGER_ABI,
-    functionName: 'podOwnerShares',
+    functionName: 'getShares',
     args: ownerAddress ? [ownerAddress] : undefined,
     query: {
       enabled: !!ownerAddress && !!contractAddress,

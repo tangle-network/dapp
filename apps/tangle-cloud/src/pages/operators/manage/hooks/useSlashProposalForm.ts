@@ -25,11 +25,19 @@ export interface UseSlashProposalFormResult {
 interface UseSlashProposalFormOptions {
   proposableServices: ProposableService[] | undefined;
   proposeStatus: 'idle' | 'pending' | 'success' | 'error';
+  /**
+   * Active SlashConfig.maxSlashBps cap. Slash proposals above this value are
+   * rejected on-chain, so we surface the violation client-side before the
+   * user pays for a simulation. Defaults to the contract hard ceiling
+   * (10_000) when the config is still loading.
+   */
+  maxSlashBps?: number;
 }
 
 const useSlashProposalForm = ({
   proposableServices,
   proposeStatus,
+  maxSlashBps,
 }: UseSlashProposalFormOptions): UseSlashProposalFormResult => {
   const [proposeServiceId, setProposeServiceId] = useState('');
   const [proposeOperator, setProposeOperator] = useState('');
@@ -76,6 +84,16 @@ const useSlashProposalForm = ({
       return 'Slash BPS must be an integer between 1 and 10000.';
     }
 
+    // Enforce the active SlashConfig.maxSlashBps cap once it has loaded so we
+    // fail fast in the UI rather than during simulation.
+    if (
+      maxSlashBps !== undefined &&
+      maxSlashBps > 0 &&
+      slashBps > maxSlashBps
+    ) {
+      return `Slash BPS exceeds protocol cap of ${maxSlashBps.toLocaleString()} bps.`;
+    }
+
     if (evidenceNormalization.error) {
       return evidenceNormalization.error;
     }
@@ -83,6 +101,7 @@ const useSlashProposalForm = ({
     return null;
   }, [
     evidenceNormalization.error,
+    maxSlashBps,
     proposeOperator,
     proposeServiceId,
     proposeSlashBps,
