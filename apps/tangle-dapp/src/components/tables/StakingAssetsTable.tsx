@@ -1,7 +1,8 @@
 import { FC, useMemo } from 'react';
 import { TokenIcon } from '@tangle-network/icons';
 import Spinner from '@tangle-network/icons/Spinner';
-import { useChainId } from 'wagmi';
+import { useAccount, useChainId } from 'wagmi';
+import { useIndexerStatus } from '@tangle-network/tangle-shared-ui/context/IndexerStatusContext';
 import HeaderCell from '@tangle-network/tangle-shared-ui/components/tables/HeaderCell';
 import TableCellWrapper from '@tangle-network/tangle-shared-ui/components/tables/TableCellWrapper';
 import TableStatus from '@tangle-network/tangle-shared-ui/components/tables/TableStatus';
@@ -210,6 +211,8 @@ export const StakingAssetsTable: FC<Props> = ({
   isLoading,
 }) => {
   const chainId = useChainId();
+  const { isConnected } = useAccount();
+  const { isHealthy, isCheckingHealth } = useIndexerStatus();
 
   const protocolAssetMap = useMemo(() => {
     const map = new Map<string, ProtocolStakingAsset>();
@@ -273,9 +276,25 @@ export const StakingAssetsTable: FC<Props> = ({
   }
 
   if (tableData.length === 0) {
+    // When the indexer is down AND the on-chain fallback returned nothing, the
+    // table renders an empty state. Distinguish "indexer unreachable" from
+    // "network has no assets configured" so the screen doesn't read as broken.
+    if (!isCheckingHealth && isHealthy === false) {
+      return (
+        <TableStatus
+          title="Network data temporarily unavailable"
+          description={
+            isConnected
+              ? 'Could not reach the Tangle indexer. Asset balances and TVL will appear here once the connection recovers.'
+              : 'Could not reach the Tangle indexer. Connect a wallet to read assets directly from chain, or wait for the indexer to recover.'
+          }
+        />
+      );
+    }
+
     return (
       <TableStatus
-        title="No Stake Assets"
+        title="No stake assets"
         description="No staking assets are configured for this network."
       />
     );

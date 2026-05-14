@@ -43,10 +43,14 @@ export const StatsItem: FC<StatsItemProps> = ({
       <Typography
         variant="h4"
         fw="bold"
-        className={twMerge('text-mono-200 dark:text-mono-0', valueClassName)}
+        className={twMerge(
+          'text-mono-200 dark:text-mono-0',
+          error && 'text-mono-120 dark:text-mono-100',
+          valueClassName,
+        )}
       >
         {error
-          ? error.name
+          ? EMPTY_VALUE_PLACEHOLDER
           : result !== null
             ? typeof result === 'number'
               ? addCommasToNumber(result)

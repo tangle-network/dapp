@@ -2,6 +2,7 @@ import { BLOCK_TIME_MS } from '@tangle-network/dapp-config/constants/tangle';
 import { NetworkType } from '@tangle-network/tangle-shared-ui/graphql/graphql';
 import {
   executeEnvioGraphQL,
+  isEnvioUnavailableError,
   type EnvioNetwork,
 } from '@tangle-network/tangle-shared-ui/utils/executeEnvioGraphQL';
 import { useQuery as _useQuery } from '@tanstack/react-query';
@@ -66,7 +67,16 @@ export function useIndexingProgress(network: NetworkType) {
   return _useQuery({
     queryKey: [INDEXING_PROGRESS_QUERY_KEY, network],
     queryFn: () => fetcher(network),
-    refetchInterval: BLOCK_TIME_MS,
+    // Pause polling while the indexer is unreachable; it resumes after the
+    // user-triggered retry from the leaderboard's empty state.
+    refetchInterval: (query) => (query.state.error ? false : BLOCK_TIME_MS),
     placeholderData: (prev) => prev,
+    retry: (failureCount, error) => {
+      if (isEnvioUnavailableError(error)) {
+        return false;
+      }
+
+      return failureCount < 2;
+    },
   });
 }

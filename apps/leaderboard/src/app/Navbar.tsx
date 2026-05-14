@@ -51,7 +51,8 @@ export const Navbar = () => {
         <li className="hidden sm:block">
           <Button
             href={TANGLE_DAPP_URL}
-            target="blank"
+            target="_blank"
+            rel="noopener noreferrer"
             className="px-5 border lg:py-4"
           >
             Launch dApp
