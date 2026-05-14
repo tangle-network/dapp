@@ -1488,62 +1488,6 @@ export const useClaimDisputeBondTx = () => {
 };
 
 /**
- * Claims the caller's accumulated dispute-bond refund after a disputed slash is
- * cancelled. The contract accounts refunds by msg.sender, so no slash id is
- * required.
- */
-export const useClaimDisputeBondTx = () => {
-  const chainId = useChainId();
-  const queryClient = useQueryClient();
-
-  const hook = useContractWrite(
-    TANGLE_ABI,
-    (_params: ClaimDisputeBondParams) => {
-      let contracts: ReturnType<typeof getContractsByChainId>;
-      try {
-        contracts = getContractsByChainId(chainId);
-      } catch {
-        throw new Error('Tangle contract not available on this network');
-      }
-
-      return {
-        address: contracts.tangle,
-        abi: TANGLE_ABI,
-        functionName: 'claimDisputeBond' as const,
-        args: [] as const,
-      };
-    },
-    {
-      txName: 'claim dispute bond',
-      txDetails: (params) => new Map([['Account', params.account]]),
-      getSuccessMessage: () => 'Dispute bond refund claimed successfully.',
-      onSuccess: (_result, params) => {
-        queryClient.invalidateQueries({
-          queryKey: [
-            'slashing',
-            'pendingDisputeBondRefund',
-            chainId,
-            params.account.toLowerCase(),
-          ],
-        });
-      },
-    },
-  );
-
-  const claimDisputeBond = async (account: Address): Promise<Hash | null> => {
-    const result = await hook.execute?.({ account });
-    return result?.hash ?? null;
-  };
-
-  return {
-    claimDisputeBond,
-    status: mapContractWriteStatus(hook.status),
-    error: hook.error,
-    reset: hook.reset,
-  };
-};
-
-/**
  * Format slash amount for display.
  */
 export const formatSlashAmount = (amount: bigint, decimals = 18): string => {
