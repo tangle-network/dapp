@@ -2333,7 +2333,7 @@ const ABI = [
             internalType: 'uint256',
           },
           {
-            name: '__reservedAggregateCursor',
+            name: '__reserved0',
             type: 'uint256',
             internalType: 'uint256',
           },
@@ -3163,6 +3163,11 @@ const ABI = [
         type: 'uint16',
         internalType: 'uint16',
       },
+      {
+        name: 'keeperBps',
+        type: 'uint16',
+        internalType: 'uint16',
+      },
     ],
     stateMutability: 'view',
   },
@@ -3786,6 +3791,11 @@ const ABI = [
           },
           {
             name: 'stakerBps',
+            type: 'uint16',
+            internalType: 'uint16',
+          },
+          {
+            name: 'keeperBps',
             type: 'uint16',
             internalType: 'uint16',
           },
