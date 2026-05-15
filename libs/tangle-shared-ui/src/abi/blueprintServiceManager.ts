@@ -50,6 +50,35 @@ const ABI = [
   },
   {
     type: 'function',
+    name: 'computeBillAdjustmentBps',
+    inputs: [
+      {
+        name: 'serviceId',
+        type: 'uint64',
+        internalType: 'uint64',
+      },
+      {
+        name: 'periodStart',
+        type: 'uint64',
+        internalType: 'uint64',
+      },
+      {
+        name: 'periodEnd',
+        type: 'uint64',
+        internalType: 'uint64',
+      },
+    ],
+    outputs: [
+      {
+        name: 'adjustmentBps',
+        type: 'uint16',
+        internalType: 'uint16',
+      },
+    ],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
     name: 'forceRemoveAllowsBelowMin',
     inputs: [
       {
