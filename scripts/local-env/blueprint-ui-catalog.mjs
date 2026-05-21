@@ -62,7 +62,14 @@ const WEBB_ROOT = resolve(DAPP_ROOT, '..');
 const firstExistingPath = (...paths) =>
   paths.find((path) => existsSync(path)) ?? paths[0];
 const BLUEPRINTS = [
-  ['ai-agent-sandbox', `${BLUEPRINT_ROOT}/ai-agent-sandbox-blueprint`],
+  [
+    'ai-agent-sandbox',
+    process.env.AI_AGENT_SANDBOX_BLUEPRINT_PATH ??
+      firstExistingPath(
+        `${WEBB_ROOT}/ai-agent-sandbox-blueprint`,
+        `${BLUEPRINT_ROOT}/ai-agent-sandbox-blueprint`,
+      ),
+  ],
   [
     'ai-trading',
     process.env.AI_TRADING_BLUEPRINT_PATH ??

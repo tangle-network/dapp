@@ -271,4 +271,61 @@ describe('blueprint app manifest parsing', () => {
     expect(entry.manifest.resources.resourceRoute).toBe('bots');
     expect(entry.manifest.surfaces).toContain('chat');
   });
+
+  it('parses AI Agent Sandbox iframe metadata into the product app surface', () => {
+    const { entry, source } = buildBlueprintManifestFromMetadata({
+      id: '79',
+      blueprintId: 79n,
+      owner: '0x0000000000000000000000000000000000000001',
+      manager: null,
+      metadataUri: 'ipfs://ai-agent-sandbox',
+      active: true,
+      createdAt: 1n,
+      updatedAt: 1n,
+      operatorCount: 1n,
+      name: 'AI Agent Sandbox Blueprint',
+      description: 'Attested agent sandboxes',
+      author: 'Tangle Network',
+      category: 'AI Agents',
+      imageUrl: null,
+      codeUrl: null,
+      website: null,
+      metadataVerification: verifiedMetadata,
+      rawMetadata: {
+        blueprintUi: {
+          displayName: 'AI Agent Sandbox',
+          requestedSlug: 'ai-agent-sandbox',
+          publisher: {
+            name: 'Tangle Network',
+            namespace: 'tangle',
+            verification: 'verified',
+          },
+          resources: {
+            serviceLabel: 'Sandbox fleet',
+            itemLabel: 'Agent',
+            itemRoute: 'agents',
+          },
+          surfaces: ['generic-overview', 'metrics', 'resources'],
+          externalApp: {
+            url: 'https://agent-sandbox.blueprint.tangle.tools/',
+            mode: 'iframe',
+            label: 'Open Agent Sandbox',
+            iframe: {
+              appId: 'agent-sandbox',
+              allowedChainIds: [31337, 84532],
+              allowReadAccount: true,
+            },
+          },
+        },
+      },
+    });
+
+    expect(source).toBe('metadata');
+    expect(entry.slug).toBe('ai-agent-sandbox');
+    expect(entry.publisher.verification).toBe('verified');
+    expect(entry.manifest.displayName).toBe('AI Agent Sandbox');
+    expect(entry.manifest.resources.serviceNoun).toBe('Sandbox fleet');
+    expect(entry.manifest.resources.resourceNoun).toBe('Agent');
+    expect(entry.manifest.resources.resourceRoute).toBe('agents');
+  });
 });
