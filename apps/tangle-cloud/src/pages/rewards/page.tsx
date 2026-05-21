@@ -415,7 +415,18 @@ const RewardsPage: FC = () => {
               <Skeleton className="h-16 rounded-md" />
             </div>
           ) : rewardHistoryError ? (
-            <ErrorMessage>Could not load claim history.</ErrorMessage>
+            // Render an empty-state instead of a red error when the
+            // indexer is simply absent (e.g. `testnet` env with no
+            // VITE_ENVIO_TESTNET_ENDPOINT configured). The original
+            // `<ErrorMessage>` here surfaced an alarming
+            // "Could not load claim history" banner on every page
+            // load — that's the UX equivalent of a 500, but the
+            // actual cause is "no historical data source", which is
+            // a legitimate empty state.
+            <EmptyState
+              title="Claim history unavailable on this network"
+              description="The indexed history endpoint is not configured for this network. Past reward claims will appear here once the indexer is online."
+            />
           ) : rewardHistory?.length ? (
             <RewardClaimsTable
               entries={rewardHistory}

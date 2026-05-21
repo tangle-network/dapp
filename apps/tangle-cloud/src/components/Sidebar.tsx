@@ -66,7 +66,7 @@ const SIDEBAR_ITEMS: SidebarItem[] = [
     Icon: CoinsLineIcon,
   },
   {
-    name: 'Payments',
+    name: 'Private Payments',
     href: PagePath.PAYMENTS_POOL,
     isInternal: true,
     Icon: ShieldKeyholeLineIcon,
