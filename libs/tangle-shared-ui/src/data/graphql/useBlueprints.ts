@@ -4,12 +4,13 @@
 
 import { useQuery } from '@tanstack/react-query';
 import { Address } from 'viem';
-import { useAccount, useChainId } from 'wagmi';
+import { useAccount, useChainId, usePublicClient } from 'wagmi';
 import {
   executeEnvioGraphQL,
   EnvioNetwork,
   getEnvioNetworkFromChainId,
 } from '../../utils/executeEnvioGraphQL';
+import { fetchBlueprintsOnChain } from '../blueprints/fetchBlueprintsOnChain';
 import useNetworkStore from '../../context/useNetworkStore';
 import type { Blueprint as AppBlueprint } from '../../types/blueprint';
 import {
@@ -347,6 +348,7 @@ export const useBlueprints = (options?: {
     limit = 100,
   } = options ?? {};
   const { activeChainId, resolvedNetwork } = useResolvedEnvioNetwork(network);
+  const publicClient = usePublicClient({ chainId: activeChainId });
 
   return useQuery({
     queryKey: [
@@ -358,13 +360,42 @@ export const useBlueprints = (options?: {
       limit,
     ],
     queryFn: async () => {
-      const blueprints = await fetchBlueprints(
-        resolvedNetwork,
-        activeOnly,
+      // Primary path: hosted Envio indexer.
+      try {
+        const blueprints = await fetchBlueprints(
+          resolvedNetwork,
+          activeOnly,
+          limit,
+          0,
+        );
+        // If the indexer is up but lagging (returns 0 while the chain
+        // has blueprints), fall through to chain-reads so the user
+        // doesn't see an empty catalog despite there being live data.
+        if (blueprints.length > 0) {
+          return blueprints;
+        }
+      } catch (err) {
+        // Indexer endpoint missing or unreachable — log once and
+        // fall through to the chain-read fallback below. We don't
+        // re-throw because the on-chain path is the explicit recovery
+        // strategy, not an error to surface to the user.
+        console.warn(
+          `[useBlueprints] Envio indexer fetch failed (${resolvedNetwork}); ` +
+            'falling back to direct chain reads.',
+          err,
+        );
+      }
+
+      // Fallback: read blueprints straight off the Tangle contract.
+      // Bounded by `limit`, defaults to 100 — fine for the testnet
+      // scale of a few dozen entries.
+      if (!publicClient || !activeChainId) {
+        return [];
+      }
+      return fetchBlueprintsOnChain(publicClient, activeChainId, {
         limit,
-        0,
-      );
-      return blueprints;
+        activeOnly,
+      });
     },
     enabled,
     staleTime: 60_000,
@@ -384,6 +415,7 @@ export const useBlueprintsWithMetadata = (options?: {
     limit = 100,
   } = options ?? {};
   const { activeChainId, resolvedNetwork } = useResolvedEnvioNetwork(network);
+  const publicClient = usePublicClient({ chainId: activeChainId });
 
   return useQuery({
     queryKey: [
@@ -395,12 +427,32 @@ export const useBlueprintsWithMetadata = (options?: {
       limit,
     ],
     queryFn: async () => {
-      const blueprints = await fetchBlueprints(
-        resolvedNetwork,
-        activeOnly,
-        limit,
-        0,
-      );
+      // Mirror the indexer → chain-read fallback strategy from
+      // `useBlueprints`. Without it, the home page's "Registered
+      // Blueprints" section renders empty whenever the Envio indexer
+      // isn't configured for the active network (e.g. testnet today),
+      // even though the chain has live entries.
+      let blueprints: Blueprint[] = [];
+      try {
+        blueprints = await fetchBlueprints(
+          resolvedNetwork,
+          activeOnly,
+          limit,
+          0,
+        );
+      } catch (err) {
+        console.warn(
+          `[useBlueprintsWithMetadata] Envio indexer fetch failed (${resolvedNetwork}); ` +
+            'falling back to direct chain reads.',
+          err,
+        );
+      }
+      if (blueprints.length === 0 && publicClient && activeChainId) {
+        blueprints = await fetchBlueprintsOnChain(publicClient, activeChainId, {
+          limit,
+          activeOnly,
+        });
+      }
 
       return Promise.all(
         blueprints.map(async (bp): Promise<BlueprintWithMetadata> => {
