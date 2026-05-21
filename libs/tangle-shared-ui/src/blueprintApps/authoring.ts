@@ -7,10 +7,7 @@ import {
   type Address,
   type Hex,
 } from 'viem';
-import {
-  isLocalPreviewHost,
-  rewriteLocalhostUrlForBrowser,
-} from '../utils/localPreview';
+import { isLocalPreviewHost } from '../utils/localPreview';
 import type {
   BlueprintMetadataAttestation,
   BlueprintMetadataVerification,
@@ -1075,16 +1072,7 @@ export const parseBlueprintMetadataJsonText = (
   };
 };
 
-export const resolveBlueprintMetadataFetchUrl = (
-  metadataUri: string,
-): string => {
-  if (!metadataUri.startsWith('ipfs://')) {
-    return rewriteLocalhostUrlForBrowser(metadataUri);
-  }
-
-  const cid = metadataUri.replace('ipfs://', '');
-  return `https://ipfs.io/ipfs/${cid}`;
-};
+export { resolveBlueprintMetadataFetchUrl } from './metadataFetchUrl';
 
 export const buildBlueprintUiMetadataDocument = ({
   name,
