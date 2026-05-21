@@ -213,4 +213,62 @@ describe('blueprint app manifest parsing', () => {
     ]);
     expect(entry.manifest.description).toContain('signature mismatch');
   });
+
+  it('parses AI Trading iframe metadata into the product app surface', () => {
+    const { entry, source } = buildBlueprintManifestFromMetadata({
+      id: '78',
+      blueprintId: 78n,
+      owner: '0x0000000000000000000000000000000000000001',
+      manager: null,
+      metadataUri: 'ipfs://ai-trading',
+      active: true,
+      createdAt: 1n,
+      updatedAt: 1n,
+      operatorCount: 1n,
+      name: 'AI Trading Blueprint',
+      description: 'Autonomous trading agents',
+      author: 'Tangle Network',
+      category: 'Trading',
+      imageUrl: null,
+      codeUrl: null,
+      website: null,
+      metadataVerification: verifiedMetadata,
+      rawMetadata: {
+        blueprintUi: {
+          displayName: 'AI Trading Desk',
+          requestedSlug: 'ai-trading',
+          publisher: {
+            name: 'Tangle Network',
+            namespace: 'tangle',
+            verification: 'verified',
+          },
+          resources: {
+            serviceLabel: 'Trading fleet',
+            itemLabel: 'Bot',
+            itemRoute: 'bots',
+          },
+          surfaces: ['generic-overview', 'chat', 'metrics', 'resources'],
+          externalApp: {
+            url: 'https://trading-arena.blueprint.tangle.tools/',
+            mode: 'iframe',
+            label: 'Open Trading Arena',
+            iframe: {
+              appId: 'trading-arena',
+              allowedChainIds: [31337, 84532],
+              allowReadAccount: true,
+            },
+          },
+        },
+      },
+    });
+
+    expect(source).toBe('metadata');
+    expect(entry.slug).toBe('ai-trading');
+    expect(entry.publisher.verification).toBe('verified');
+    expect(entry.manifest.displayName).toBe('AI Trading Desk');
+    expect(entry.manifest.resources.serviceNoun).toBe('Trading fleet');
+    expect(entry.manifest.resources.resourceNoun).toBe('Bot');
+    expect(entry.manifest.resources.resourceRoute).toBe('bots');
+    expect(entry.manifest.surfaces).toContain('chat');
+  });
 });

@@ -157,6 +157,11 @@ describe('useSubmitClaim', () => {
   });
 
   it('throws when migration contract is not configured', async () => {
+    vi.stubEnv(
+      'VITE_TANGLE_MIGRATION_ADDRESS',
+      '0x0000000000000000000000000000000000000000',
+    );
+    vi.stubEnv('VITE_CLAIM_RELAYER_URL', '');
     mockGetMigrationContractsByChainId.mockReturnValue(null);
 
     const useSubmitClaim = await loadHook();
