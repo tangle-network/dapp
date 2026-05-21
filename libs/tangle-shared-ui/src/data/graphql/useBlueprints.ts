@@ -14,7 +14,7 @@ import useNetworkStore from '../../context/useNetworkStore';
 import type { Blueprint as AppBlueprint } from '../../types/blueprint';
 import {
   parseBlueprintMetadataJsonText,
-  resolveBlueprintMetadataFetchUrl,
+  resolveBlueprintMetadataFetchUrls,
   verifyBlueprintMetadataIntegrity,
 } from '../../blueprintApps/authoring';
 import type {
@@ -183,15 +183,25 @@ const fetchBlueprintMetadata = async ({
     return unavailableMetadata(metadataUri);
   }
 
+  // GitHub repo URIs expand to BOTH `main` and `master` candidates; try
+  // them in order so repos that default to `master` (legacy MPC blueprints,
+  // anything yarbed pre-2020) don't return as `unavailableMetadata`.
+  const candidates = resolveBlueprintMetadataFetchUrls(metadataUri);
   try {
-    const response = await fetch(
-      resolveBlueprintMetadataFetchUrl(metadataUri),
-      {
+    let response: Response | null = null;
+    let lastStatus = 0;
+    for (const candidate of candidates) {
+      const attempt = await fetch(candidate, {
         signal: AbortSignal.timeout(5000),
-      },
-    );
-    if (!response.ok) {
-      throw new Error(`Failed to fetch metadata: ${response.status}`);
+      });
+      if (attempt.ok) {
+        response = attempt;
+        break;
+      }
+      lastStatus = attempt.status;
+    }
+    if (response === null) {
+      throw new Error(`Failed to fetch metadata: ${lastStatus}`);
     }
 
     const metadataText = await response.text();

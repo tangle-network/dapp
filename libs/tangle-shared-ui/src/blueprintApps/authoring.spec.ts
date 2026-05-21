@@ -1,4 +1,7 @@
-import { resolveBlueprintMetadataFetchUrl } from './metadataFetchUrl';
+import {
+  resolveBlueprintMetadataFetchUrl,
+  resolveBlueprintMetadataFetchUrls,
+} from './metadataFetchUrl';
 
 // `localPreview` reads `import.meta.env`, which @swc/jest leaves as-is and
 // then breaks Node's CommonJS parser. Stub it out — these tests never need
@@ -46,5 +49,42 @@ describe('resolveBlueprintMetadataFetchUrl', () => {
   it('returns unrelated https URLs unchanged', () => {
     const input = 'https://example.com/raw.json';
     expect(resolveBlueprintMetadataFetchUrl(input)).toBe(input);
+  });
+});
+
+describe('resolveBlueprintMetadataFetchUrls (fallback candidates)', () => {
+  it('returns ipfs:// as a single-element list', () => {
+    expect(resolveBlueprintMetadataFetchUrls('ipfs://abc')).toEqual([
+      'https://ipfs.io/ipfs/abc',
+    ]);
+  });
+
+  it('expands a bare github.com URL to main first then master', () => {
+    expect(
+      resolveBlueprintMetadataFetchUrls('https://github.com/foo/bar'),
+    ).toEqual([
+      'https://raw.githubusercontent.com/foo/bar/main/metadata/blueprint-metadata.json',
+      'https://raw.githubusercontent.com/foo/bar/master/metadata/blueprint-metadata.json',
+    ]);
+  });
+
+  it('expands trailing-slash and .git variants identically', () => {
+    const fromTrail = resolveBlueprintMetadataFetchUrls(
+      'https://github.com/foo/bar/',
+    );
+    const fromGit = resolveBlueprintMetadataFetchUrls(
+      'https://github.com/foo/bar.git',
+    );
+    expect(fromTrail).toEqual([
+      'https://raw.githubusercontent.com/foo/bar/main/metadata/blueprint-metadata.json',
+      'https://raw.githubusercontent.com/foo/bar/master/metadata/blueprint-metadata.json',
+    ]);
+    expect(fromGit).toEqual(fromTrail);
+  });
+
+  it('returns unrelated https URLs as a single-element list', () => {
+    expect(
+      resolveBlueprintMetadataFetchUrls('https://example.com/raw.json'),
+    ).toEqual(['https://example.com/raw.json']);
   });
 });

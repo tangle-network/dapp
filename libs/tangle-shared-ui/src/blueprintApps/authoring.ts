@@ -1072,7 +1072,10 @@ export const parseBlueprintMetadataJsonText = (
   };
 };
 
-export { resolveBlueprintMetadataFetchUrl } from './metadataFetchUrl';
+export {
+  resolveBlueprintMetadataFetchUrl,
+  resolveBlueprintMetadataFetchUrls,
+} from './metadataFetchUrl';
 
 export const buildBlueprintUiMetadataDocument = ({
   name,
