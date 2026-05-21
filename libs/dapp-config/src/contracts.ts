@@ -49,14 +49,14 @@ export const LOCAL_CONTRACTS: ContractAddresses = {
 
 // Base Sepolia testnet addresses (synced from tnt-core deployments/base-sepolia/latest.json)
 export const BASE_SEPOLIA_CONTRACTS: ContractAddresses = {
-  tangle: '0x1be58d12620ecc8ba9d780feec2596510d75a933',
-  multiAssetDelegation: '0x787dd1de4099ff8c68bfac11b82e4aed52c7f1e1',
-  masterBlueprintServiceManager: '0x1be58d12620ecc8ba9d780feec2596510d75a933', // Services are exposed on Tangle facets
-  operatorStatusRegistry: '0x20258c5e4cba66d4819a06045ff00d15775e64fb',
-  rewardVaults: '0x2963a51fec3e2cf51b19b848942d91296448a353',
-  inflationPool: '0xe620f87540724a0cebdee9796dd8580e02dd4911',
-  credits: '0x758226e04478541fcdac605e1f235e2956259a10',
-  liquidDelegationFactory: '0xF8e31cb472bc70500f08Cd84917E5A1912Ec8397',
+  tangle: '0xc9b0716a187072be0f38a5d972392c6479b9cfe3',
+  multiAssetDelegation: '0xfeb417fc6d343e0fc88ec9fdb8294bf84d69f0ca',
+  masterBlueprintServiceManager: '0xf259444a865f64bfbbf7ec3e9e4b9af00a819e17',
+  operatorStatusRegistry: '0x81443688fce1e4edb822c1d5794c3dac608e9a23',
+  rewardVaults: '0x8affb8c215679210329ef9129d8427fa4e7bd087',
+  inflationPool: '0x2c44736aaf0eec7c9b852ee71f0dc05b1606803b',
+  credits: '0xeeba50602c52096091cce56cdb12ca1df049542a',
+  liquidDelegationFactory: '0x0000000000000000000000000000000000000000', // not deployed in this release
 };
 
 // Base mainnet addresses (to be updated after deployment)
