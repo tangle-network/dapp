@@ -115,9 +115,16 @@ function parseResourceModel(
     return fallback;
   }
 
-  const serviceNoun = readString(record.serviceNoun) ?? fallback.serviceNoun;
-  const resourceNoun = readString(record.resourceNoun) ?? fallback.resourceNoun;
-  const resourceRoute = readString(record.resourceRoute);
+  const serviceNoun =
+    readString(record.serviceNoun) ??
+    readString(record.serviceLabel) ??
+    fallback.serviceNoun;
+  const resourceNoun =
+    readString(record.resourceNoun) ??
+    readString(record.itemLabel) ??
+    fallback.resourceNoun;
+  const resourceRoute =
+    readString(record.resourceRoute) ?? readString(record.itemRoute);
 
   return {
     serviceNoun,
@@ -327,6 +334,7 @@ export function buildBlueprintManifestFromMetadata(
     'verified';
   const requestedSlug =
     readString(manifestRoot?.slug) ??
+    readString(manifestRoot?.requestedSlug) ??
     deriveBlueprintRequestedSlug({
       id: blueprint.blueprintId,
       name: blueprint.name,

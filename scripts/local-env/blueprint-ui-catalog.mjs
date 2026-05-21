@@ -58,13 +58,27 @@ const OPERATOR_GOSSIP_KEYS = [
 // Where blueprint repos live on disk, relative to BLUEPRINT_ROOT
 // (defaults to ~/code so the script works for any operator).
 const BLUEPRINT_ROOT = process.env.BLUEPRINT_ROOT ?? `${process.env.HOME}/code`;
+const WEBB_ROOT = resolve(DAPP_ROOT, '..');
+const firstExistingPath = (...paths) =>
+  paths.find((path) => existsSync(path)) ?? paths[0];
 const BLUEPRINTS = [
   ['ai-agent-sandbox', `${BLUEPRINT_ROOT}/ai-agent-sandbox-blueprint`],
-  ['ai-trading', `${BLUEPRINT_ROOT}/ai-trading-blueprints`],
+  [
+    'ai-trading',
+    process.env.AI_TRADING_BLUEPRINT_PATH ??
+      firstExistingPath(
+        `${WEBB_ROOT}/ai-trading-blueprint`,
+        `${BLUEPRINT_ROOT}/ai-trading-blueprint`,
+        `${BLUEPRINT_ROOT}/ai-trading-blueprints`,
+      ),
+  ],
   ['llm-inference', `${BLUEPRINT_ROOT}/llm-inference-blueprint`],
   ['voice-inference', `${BLUEPRINT_ROOT}/voice-inference-blueprint`],
   ['embedding-inference', `${BLUEPRINT_ROOT}/embedding-inference-blueprint`],
-  ['distributed-inference', `${BLUEPRINT_ROOT}/distributed-inference-blueprint`],
+  [
+    'distributed-inference',
+    `${BLUEPRINT_ROOT}/distributed-inference-blueprint`,
+  ],
   ['avatar-inference', `${BLUEPRINT_ROOT}/avatar-inference-blueprint`],
   ['image-generation', `${BLUEPRINT_ROOT}/image-gen-inference-blueprint`],
   ['modal-inference', `${BLUEPRINT_ROOT}/modal-inference-blueprint`],
@@ -467,8 +481,12 @@ const applyLocalIframeOverride = (slug, metadata) => {
 };
 
 const loadCatalog = () =>
-  BLUEPRINTS.map(([slug, repoPath]) => {
+  BLUEPRINTS.flatMap(([slug, repoPath]) => {
     const sourcePath = resolve(repoPath, 'metadata/blueprint-metadata.json');
+    if (!existsSync(sourcePath)) {
+      console.warn(`skipping ${slug}: missing ${sourcePath}`);
+      return [];
+    }
     const sourceMetadata = JSON.parse(readFileSync(sourcePath, 'utf8'));
     const metadata = applyLocalIframeOverride(
       slug,
@@ -682,7 +700,11 @@ const signMetadata = async ({ item, blueprintId, ownerAccount }) => {
 // Idempotent: returns immediately if the operator is already active in
 // staking. Otherwise approves OPERATOR_BOND TNT and registers with asset.
 // We swallow duplicate-registration reverts so re-runs are safe.
-const ensureOperatorActiveInStaking = async (operator, wallet, publicClient) => {
+const ensureOperatorActiveInStaking = async (
+  operator,
+  wallet,
+  publicClient,
+) => {
   const active = await publicClient.readContract({
     address: STAKING_ADDRESS,
     abi: stakingAbi,
@@ -707,7 +729,9 @@ const ensureOperatorActiveInStaking = async (operator, wallet, publicClient) => 
       args: [TNT_TOKEN_ADDRESS, OPERATOR_BOND],
     });
     await waitForHash(publicClient, registerHash);
-    console.log(`  + staking: ${operator.address} bonded ${OPERATOR_BOND / 10n ** 18n} TNT`);
+    console.log(
+      `  + staking: ${operator.address} bonded ${OPERATOR_BOND / 10n ** 18n} TNT`,
+    );
   } catch (err) {
     const message = err instanceof Error ? err.message : String(err);
     // Often this fails benignly because the operator is already
@@ -893,7 +917,10 @@ const seed = async () => {
       }
     }
 
-    if (requestId !== undefined && !activatedByRequest.has(requestId.toString())) {
+    if (
+      requestId !== undefined &&
+      !activatedByRequest.has(requestId.toString())
+    ) {
       console.log(`Approving service request ${requestId} for ${item.slug}`);
       const operatorWallet = createWalletClient({
         account: operators[0],
@@ -1183,7 +1210,9 @@ const deployBlueprintApps = async (filterSlugs) => {
       if (filterSlugs.length > 0 && !filterSlugs.includes(slug)) return null;
       const build = findUiSubdir(item.repoPath);
       if (!build) {
-        console.warn(`skipping ${slug}: no UI subdir with build script in ${item.repoPath}`);
+        console.warn(
+          `skipping ${slug}: no UI subdir with build script in ${item.repoPath}`,
+        );
         return null;
       }
       return { slug, hostname: host, repoPath: item.repoPath, build };

@@ -41,6 +41,34 @@ describe('iframe manifest parser', () => {
     expect(result?.allowReadAccount).toBe(true);
   });
 
+  it('parses the AI Trading Arena iframe policy shape', () => {
+    const result = parseIframePolicy({
+      url: 'https://trading-arena.blueprint.tangle.tools/',
+      iframe: {
+        appId: 'trading-arena',
+        allowedChainIds: [31337, 84532],
+        contracts: [
+          {
+            chainId: 31337,
+            address: ADDR,
+          },
+        ],
+        messages: [],
+        allowReadAccount: true,
+        allowChainSwitch: true,
+        allowPopups: false,
+      },
+    });
+
+    expect(result?.origin).toBe('https://trading-arena.blueprint.tangle.tools');
+    expect(result?.appId).toBe('trading-arena');
+    expect(result?.allowedChainIds).toEqual([31337, 84532]);
+    expect(result?.contracts).toHaveLength(1);
+    expect(result?.allowReadAccount).toBe(true);
+    expect(result?.allowChainSwitch).toBe(true);
+    expect(result?.allowPopups).toBe(false);
+  });
+
   it('drops malformed contract grants', () => {
     const result = parseIframePolicy({
       url: 'https://x.blueprint.tangle.tools/',
