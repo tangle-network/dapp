@@ -64,7 +64,7 @@ export const BASE_SEPOLIA_CONTRACTS: ContractAddresses = {
   inflationPool: '0x2c44736aaf0eec7c9b852ee71f0dc05b1606803b',
   credits: '0xeeba50602c52096091cce56cdb12ca1df049542a',
   liquidDelegationFactory: '0x0000000000000000000000000000000000000000', // not deployed in this release
-  blueprintAuditors: '0x0000000000000000000000000000000000000000', // pending tnt-core feat/blueprint-binary-versions deploy
+  blueprintAuditors: '0x8a49464dc26de279c4b4bd7ea095387f2e469d22', // deployed 2026-05-22 via tnt-core/script/UpgradeFlowAddon.s.sol
 };
 
 // Base mainnet addresses (to be updated after deployment)
