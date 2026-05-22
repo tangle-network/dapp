@@ -29,8 +29,24 @@ export type BlueprintMetadataAttestation = {
 
 export type BlueprintMetadataVerificationStatus =
   | 'verified'
+  | 'verified-uri'
   | 'unverified'
   | 'invalid';
+
+/**
+ * `attestationMode` makes the trust gradient explicit:
+ *  - 'attestation': owner signed the canonical JSON payload hash. Full trust.
+ *  - 'uri-only':    on-chain `metadataHash` matches keccak256(metadataUri).
+ *                   The URI is committed, but the JSON content is fetched
+ *                   off-chain and could change at the host (github raw, etc).
+ *                   Enough to render the declarative tier-2 surface; not
+ *                   enough to unlock iframe (`externalApp`) embedding.
+ *  - 'none':        no integrity binding on-chain. Generic fallback only.
+ */
+export type BlueprintMetadataAttestationMode =
+  | 'attestation'
+  | 'uri-only'
+  | 'none';
 
 export type BlueprintMetadataVerification = {
   status: BlueprintMetadataVerificationStatus;
@@ -38,6 +54,7 @@ export type BlueprintMetadataVerification = {
   source: 'ipfs' | 'http' | 'missing';
   signer?: string;
   payloadHash?: `0x${string}`;
+  attestationMode?: BlueprintMetadataAttestationMode;
   reason: string;
 };
 

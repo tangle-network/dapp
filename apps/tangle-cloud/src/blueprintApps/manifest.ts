@@ -377,9 +377,15 @@ export function buildBlueprintManifestFromMetadata(
   });
   manifest.externalApp = externalAppParsed.externalApp;
 
+  // Declarative tier is unlocked at the URI-bound trust level
+  // (`verified-uri`) or stronger. The stricter `productionReady` gate
+  // (IPFS + signed attestation) is kept for `metadataVerified` below,
+  // which controls iframe/externalApp embedding — that needs payload
+  // attestation, not just URI binding.
   const allowDeclarativeTier =
     manifestRoot !== null &&
-    blueprint.metadataVerification?.productionReady === true;
+    (blueprint.metadataVerification?.productionReady === true ||
+      blueprint.metadataVerification?.status === 'verified-uri');
   const trustedExternalApp =
     manifest.externalApp?.trust === 'trusted'
       ? manifest.externalApp

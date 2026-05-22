@@ -219,16 +219,30 @@ const fetchBlueprintMetadata = async ({
       owner,
     });
 
+    // Trust gradient for what the dapp will render:
+    //   verified       → full manifest (declarative + externalApp iframe ok)
+    //   verified-uri   → keep declarative manifest; strip externalApp until a
+    //                    full payload attestation lands. URI-keccak proves the
+    //                    publisher pinned the URI on-chain but not the JSON
+    //                    content — iframe trust requires both.
+    //   anything else  → force generic fallback (hero only).
+    const resolveTrustedBlueprintUi = (): BlueprintUiContract | null => {
+      if (!parsed.blueprintUi) {
+        return null;
+      }
+      if (metadataVerification.status === 'verified') {
+        return parsed.blueprintUi;
+      }
+      if (metadataVerification.status === 'verified-uri') {
+        return { ...parsed.blueprintUi, externalApp: undefined };
+      }
+      return { ...parsed.blueprintUi, externalApp: undefined, tier: 'generic' };
+    };
     return {
       ...parsed,
       rawMetadata,
       metadataVerification,
-      blueprintUi:
-        metadataVerification.status === 'verified'
-          ? parsed.blueprintUi
-          : parsed.blueprintUi
-            ? { ...parsed.blueprintUi, externalApp: undefined, tier: 'generic' }
-            : null,
+      blueprintUi: resolveTrustedBlueprintUi(),
     };
   } catch (error) {
     console.error('Failed to fetch blueprint metadata:', error);
