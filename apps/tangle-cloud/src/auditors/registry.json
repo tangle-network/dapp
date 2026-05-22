@@ -1,0 +1,12 @@
+{
+  "_comment": "Bootstrap fallback for the BlueprintAuditors registry. The dapp reads the on-chain registry first (BlueprintAuditors.getAuditor); if that returns an inactive / unadmitted address, it falls back to this map. Replace these placeholder entries with real auditor addresses once admitted on-chain. Keys are lowercase 0x… addresses; values mirror the on-chain Auditor struct (string `name`, string `metadataUri`, uint16 `weight` 0..1000, AuditorTier `tier` 0=FIRST_PARTY 1=INDEPENDENT 2=COMMUNITY, bool `active`).",
+  "auditors": {
+    "0x0000000000000000000000000000000000000000": {
+      "name": "(placeholder)",
+      "metadataUri": "",
+      "weight": 0,
+      "tier": 1,
+      "active": false
+    }
+  }
+}

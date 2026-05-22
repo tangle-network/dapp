@@ -29,6 +29,7 @@ import {
   categoryBadgeStyle,
   categoryStripeStyle,
 } from '../../../components/blueprints/categoryColor';
+import BlueprintVersionsPanel from '../../../components/binaryUpgrade/BlueprintVersionsPanel';
 
 const Page: FC = () => {
   const id = useParamWithSchema('id', z.string().min(1));
@@ -100,6 +101,11 @@ const Page: FC = () => {
             provisionPath={`/blueprints/${numericId.toString()}/deploy`}
           />
 
+          <BlueprintVersionsPanel
+            blueprintId={numericId}
+            blueprintName={blueprintDetails.details.name}
+          />
+
           <RegisteredOperatorsPanel operators={blueprintDetails.operators} />
         </div>
       );
@@ -111,6 +117,11 @@ const Page: FC = () => {
           blueprint={blueprintDetails.details}
           operatorCount={blueprintDetails.operators.length}
           provisionPath={`/blueprints/${numericId.toString()}/deploy`}
+        />
+
+        <BlueprintVersionsPanel
+          blueprintId={numericId}
+          blueprintName={blueprintDetails.details.name}
         />
 
         <RegisteredOperatorsPanel operators={blueprintDetails.operators} />
