@@ -56,15 +56,15 @@ export const LOCAL_CONTRACTS: ContractAddresses = {
 
 // Base Sepolia testnet addresses (synced from tnt-core deployments/base-sepolia/latest.json)
 export const BASE_SEPOLIA_CONTRACTS: ContractAddresses = {
-  tangle: '0xc9b0716a187072be0f38a5d972392c6479b9cfe3',
-  multiAssetDelegation: '0xfeb417fc6d343e0fc88ec9fdb8294bf84d69f0ca',
-  masterBlueprintServiceManager: '0xf259444a865f64bfbbf7ec3e9e4b9af00a819e17',
-  operatorStatusRegistry: '0x81443688fce1e4edb822c1d5794c3dac608e9a23',
-  rewardVaults: '0x8affb8c215679210329ef9129d8427fa4e7bd087',
-  inflationPool: '0x2c44736aaf0eec7c9b852ee71f0dc05b1606803b',
-  credits: '0xeeba50602c52096091cce56cdb12ca1df049542a',
+  tangle: '0x8299d60f373f3a4a8c4878e335cb9d840e6e3730',
+  multiAssetDelegation: '0x91b1186f4f31d6e02e481c0af29c7244a3fe417d',
+  masterBlueprintServiceManager: '0x658e4193bad70a9f32450d2eaee1a9bcfe898802',
+  operatorStatusRegistry: '0x2a7ceb96a9b18721b5bbb0022b4d358b3c50bcb2',
+  rewardVaults: '0xbaad23dac876467ea1b1f70f4d6e02e5891d2e04',
+  inflationPool: '0xedf2a17c4a02f543178a76d0e22d2ef096e66970',
+  credits: '0xb587a927ee90ba5587ca9d90fd1a813eb81fc24b',
   liquidDelegationFactory: '0x0000000000000000000000000000000000000000', // not deployed in this release
-  blueprintAuditors: '0x8a49464dc26de279c4b4bd7ea095387f2e469d22', // deployed 2026-05-22 via tnt-core/script/UpgradeFlowAddon.s.sol
+  blueprintAuditors: '0xf4428bbbfa9207b4b91ca5fe8c1d401fd8b1e8e8', // deployed 2026-05-22 via tnt-core/script/UpgradeFlowAddon.s.sol
 };
 
 // Base mainnet addresses (to be updated after deployment)
