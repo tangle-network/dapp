@@ -10,6 +10,7 @@ import {
 import { isLocalPreviewHost } from '../utils/localPreview';
 import type {
   BlueprintMetadataAttestation,
+  BlueprintMetadataAttestationMode,
   BlueprintMetadataVerification,
   BlueprintResourceRoute,
   BlueprintUiAction,
@@ -662,8 +663,26 @@ const isLocalBlueprintHostRuntime = (): boolean => {
 export const requiresIpfsForBlueprintMetadata = (): boolean =>
   !isLocalBlueprintHostRuntime();
 
-export const isAllowedBlueprintMetadataUri = (metadataUri: string): boolean =>
-  metadataUri.startsWith('ipfs://') || !requiresIpfsForBlueprintMetadata();
+/**
+ * Whether a metadata URI is acceptable to load at all. Previously this
+ * gated *display* on IPFS-only, which excluded every blueprint registered
+ * with a github raw URI from rendering anything richer than the bare hero.
+ *
+ * Now: accept HTTPS as well. IPFS-vs-HTTP is a property of `productionReady`,
+ * not of "should we even attempt to fetch this." The integrity check below
+ * (canonical payload hash OR URI-keccak hash) is what catches tampering.
+ */
+export const isAllowedBlueprintMetadataUri = (metadataUri: string): boolean => {
+  if (metadataUri.startsWith('ipfs://')) {
+    return true;
+  }
+  try {
+    const url = new URL(metadataUri);
+    return url.protocol === 'https:' || url.protocol === 'http:';
+  } catch {
+    return false;
+  }
+};
 
 const sortMetadataValue = (value: unknown): unknown => {
   if (Array.isArray(value)) {
@@ -757,17 +776,24 @@ const buildDefaultMetadataVerification = ({
   reason,
   signer,
   payloadHash,
+  attestationMode = 'none',
 }: {
   metadataUri?: string | null;
   status: BlueprintMetadataVerification['status'];
   reason: string;
   signer?: string;
   payloadHash?: Hex;
+  attestationMode?: BlueprintMetadataAttestationMode;
 }): BlueprintMetadataVerification => {
   const source = toMetadataSource(metadataUri);
+  // `productionReady` keeps the strictest bar: full signed attestation +
+  // IPFS hosting. URI-keccak verification gets the declarative tier
+  // rendered (so users see blueprint surfaces today) without lying about
+  // the trust level in operator-facing UIs.
   const productionReady =
     status === 'verified' &&
-    (metadataUri ? isAllowedBlueprintMetadataUri(metadataUri) : false);
+    attestationMode === 'attestation' &&
+    source === 'ipfs';
 
   return {
     status,
@@ -775,6 +801,7 @@ const buildDefaultMetadataVerification = ({
     source,
     signer,
     payloadHash,
+    attestationMode,
     reason,
   };
 };
@@ -812,7 +839,7 @@ export const verifyBlueprintMetadataIntegrity = async ({
       metadataUri,
       status: 'invalid',
       reason:
-        'Production shared hosting only accepts metadata published to ipfs:// URIs.',
+        'Metadata URI scheme not supported (expected ipfs://, https://, or http://).',
     });
   }
 
@@ -820,11 +847,22 @@ export const verifyBlueprintMetadataIntegrity = async ({
   const payloadHash = computeBlueprintMetadataPayloadHash(
     stripMetadataAttestation(rawMetadata),
   );
+  // URI-keccak hash: the v0 register scripts pin `keccak256(metadataUri)` on
+  // chain (not the canonical JSON payload hash). Recognizing this mode lets
+  // the catalog render tier-2 surfaces today, while the v1 hash mode
+  // (canonical payload + signed attestation) is still required for full
+  // `verified` status / `productionReady` / iframe trust.
+  const uriHash = keccak256(toHex(new TextEncoder().encode(metadataUri)));
+  const uriKeccakMatch =
+    metadataHash !== undefined &&
+    metadataHash !== null &&
+    metadataHash.toLowerCase() === uriHash.toLowerCase();
+  const payloadHashMatch =
+    metadataHash !== undefined &&
+    metadataHash !== null &&
+    metadataHash.toLowerCase() === payloadHash.toLowerCase();
 
-  if (
-    metadataHash &&
-    metadataHash.toLowerCase() !== payloadHash.toLowerCase()
-  ) {
+  if (metadataHash && !payloadHashMatch && !uriKeccakMatch) {
     return buildDefaultMetadataVerification({
       metadataUri,
       status: 'invalid',
@@ -834,6 +872,23 @@ export const verifyBlueprintMetadataIntegrity = async ({
   }
 
   if (!attestation) {
+    // No signed attestation in the JSON.
+    // If the on-chain hash is the URI-keccak (v0 register scripts), accept
+    // the JSON as URI-bound — declarative tier renders, externalApp does
+    // not. If the hash matched the canonical payload but there's no
+    // attestation, that's still URI-bound trust (publisher pinned the
+    // content snapshot but didn't sign over it for replay protection).
+    if (uriKeccakMatch || payloadHashMatch) {
+      return buildDefaultMetadataVerification({
+        metadataUri,
+        status: 'verified-uri',
+        payloadHash,
+        attestationMode: 'uri-only',
+        reason: uriKeccakMatch
+          ? 'On-chain metadataHash binds the metadata URI (v0 hash mode). Declarative surfaces enabled; iframe embedding requires a full payload attestation.'
+          : 'On-chain metadataHash matches the canonical payload but no owner attestation is present. Declarative surfaces enabled; iframe embedding requires a signed attestation.',
+      });
+    }
     return buildDefaultMetadataVerification({
       metadataUri,
       status: 'unverified',
@@ -902,6 +957,7 @@ export const verifyBlueprintMetadataIntegrity = async ({
     status: 'verified',
     signer: owner,
     payloadHash,
+    attestationMode: 'attestation',
     reason:
       'Metadata attestation verified against the onchain blueprint owner and payload hash.',
   });
