@@ -10,7 +10,10 @@ import {
   EnvioNetwork,
   getEnvioNetworkFromChainId,
 } from '../../utils/executeEnvioGraphQL';
-import { fetchBlueprintsOnChain } from '../blueprints/fetchBlueprintsOnChain';
+import {
+  fetchBlueprintByIdOnChain,
+  fetchBlueprintsOnChain,
+} from '../blueprints/fetchBlueprintsOnChain';
 import useNetworkStore from '../../context/useNetworkStore';
 import type { Blueprint as AppBlueprint } from '../../types/blueprint';
 import {
@@ -521,6 +524,7 @@ export const useBlueprint = (
 ) => {
   const { network, enabled = true } = options ?? {};
   const { activeChainId, resolvedNetwork } = useResolvedEnvioNetwork(network);
+  const publicClient = usePublicClient({ chainId: activeChainId });
 
   return useQuery({
     queryKey: [
@@ -533,7 +537,33 @@ export const useBlueprint = (
     queryFn: async () => {
       if (!blueprintId) return null;
 
-      const blueprint = await fetchBlueprintById(blueprintId, resolvedNetwork);
+      // Mirror the indexer → chain-read fallback strategy from `useBlueprints`.
+      // Without it, /blueprints/:id 404s on every network where the Envio
+      // indexer isn't configured (testnets today), even though the chain has
+      // the entry — list path falls back to chain-reads, but detail path
+      // returned null and the page navigated to NOT_FOUND.
+      let blueprint: Blueprint | null = null;
+      try {
+        blueprint = await fetchBlueprintById(blueprintId, resolvedNetwork);
+      } catch (err) {
+        console.warn(
+          `[useBlueprint] Envio indexer fetch failed (${resolvedNetwork}); ` +
+            'falling back to direct chain reads.',
+          err,
+        );
+      }
+      if (
+        !blueprint &&
+        publicClient &&
+        activeChainId &&
+        /^\d+$/.test(blueprintId)
+      ) {
+        blueprint = await fetchBlueprintByIdOnChain(
+          publicClient,
+          activeChainId,
+          BigInt(blueprintId),
+        );
+      }
       if (!blueprint) return null;
 
       const metadata = await fetchBlueprintMetadata({
@@ -634,6 +664,7 @@ export const useBlueprintDetails = (
 ) => {
   const { network, enabled = true } = options ?? {};
   const { activeChainId, resolvedNetwork } = useResolvedEnvioNetwork(network);
+  const publicClient = usePublicClient({ chainId: activeChainId });
 
   const { data, isLoading, error, refetch } = useQuery({
     queryKey: [
@@ -647,7 +678,23 @@ export const useBlueprintDetails = (
       if (blueprintId === undefined) return null;
 
       const idString = blueprintId.toString();
-      const blueprint = await fetchBlueprintById(idString, resolvedNetwork);
+      let blueprint: Blueprint | null = null;
+      try {
+        blueprint = await fetchBlueprintById(idString, resolvedNetwork);
+      } catch (err) {
+        console.warn(
+          `[useBlueprintDetails] Envio indexer fetch failed (${resolvedNetwork}); ` +
+            'falling back to direct chain reads.',
+          err,
+        );
+      }
+      if (!blueprint && publicClient && activeChainId) {
+        blueprint = await fetchBlueprintByIdOnChain(
+          publicClient,
+          activeChainId,
+          blueprintId,
+        );
+      }
       if (!blueprint) return null;
 
       const [metadata, operators] = await Promise.all([
