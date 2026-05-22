@@ -1,5 +1,5 @@
-import type { AuditorFallback } from '@tangle-network/tangle-shared-ui/data/blueprints/useBinaryVersions'
-import registry from './registry.json'
+import type { AuditorFallback } from '@tangle-network/tangle-shared-ui/data/blueprints/useBinaryVersions';
+import registry from './registry.json';
 
 /**
  * Returns the bootstrap auditor fallback map keyed by lowercase 0x… address.
@@ -13,11 +13,12 @@ import registry from './registry.json'
  * on-chain address. Keep the map small — it's bundled into the dapp.
  */
 export const auditorFallbackRegistry = (): Record<string, AuditorFallback> => {
-  const entries = (registry as { auditors?: Record<string, unknown> }).auditors ?? {}
-  const out: Record<string, AuditorFallback> = {}
+  const entries =
+    (registry as { auditors?: Record<string, unknown> }).auditors ?? {};
+  const out: Record<string, AuditorFallback> = {};
   for (const [address, raw] of Object.entries(entries)) {
-    if (typeof raw !== 'object' || raw === null) continue
-    const candidate = raw as Partial<AuditorFallback>
+    if (typeof raw !== 'object' || raw === null) continue;
+    const candidate = raw as Partial<AuditorFallback>;
     if (
       typeof candidate.name !== 'string' ||
       typeof candidate.metadataUri !== 'string' ||
@@ -25,16 +26,16 @@ export const auditorFallbackRegistry = (): Record<string, AuditorFallback> => {
       typeof candidate.tier !== 'number' ||
       typeof candidate.active !== 'boolean'
     ) {
-      continue
+      continue;
     }
-    if (!candidate.active) continue
+    if (!candidate.active) continue;
     out[address.toLowerCase()] = {
       name: candidate.name,
       metadataUri: candidate.metadataUri,
       weight: candidate.weight,
       tier: candidate.tier,
       active: candidate.active,
-    }
+    };
   }
-  return out
-}
+  return out;
+};

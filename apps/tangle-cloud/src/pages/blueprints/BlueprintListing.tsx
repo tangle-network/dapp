@@ -514,21 +514,14 @@ export default BlueprintListing;
  * `BlueprintTrustChip.tsx`, so the card chip + the listing filter share
  * the same react-query cache entry — no duplicate chain reads.
  */
-const useAuditedStatusMap = (
-  blueprintIds: bigint[],
-): Map<string, boolean> => {
+const useAuditedStatusMap = (blueprintIds: bigint[]): Map<string, boolean> => {
   const chainId = useChainId();
   const publicClient = usePublicClient({ chainId });
   const fallback = useMemo(() => auditorFallbackRegistry(), []);
 
   const queries = useQueries({
     queries: blueprintIds.map((blueprintId) => ({
-      queryKey: [
-        'tangle',
-        'blueprint-trust',
-        chainId,
-        blueprintId.toString(),
-      ],
+      queryKey: ['tangle', 'blueprint-trust', chainId, blueprintId.toString()],
       queryFn: async (): Promise<{
         score: number;
         hasCriticalFinding: boolean;
