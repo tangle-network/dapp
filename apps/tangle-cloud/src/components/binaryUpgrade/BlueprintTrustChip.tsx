@@ -1,4 +1,5 @@
 import type { FC } from 'react';
+import { AttestationKind } from '@tangle-network/tangle-shared-ui/blueprintApps/trustScore';
 import TrustScoreGauge from './TrustScoreGauge';
 import { useBlueprintTrust } from './useBlueprintTrust';
 
