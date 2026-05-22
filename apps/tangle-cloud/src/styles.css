@@ -65,30 +65,40 @@ body {
 
 [data-sandbox-ui][data-sandbox-theme='tangle'],
 .tangle-cloud-shell[data-sandbox-theme='tangle'] {
+  /* Surface elevation system (4 levels): page (--bg-root, near-black) →
+     card (--bg-card, +14%) → elevated (--bg-elevated, +25%) → accent
+     (primary-tinted, only for selected/active surfaces). The previous
+     palette had ~7% delta between root and card, which is why every
+     card looked like the background. Bump the card and elevated steps
+     to perceptible deltas; darken the root to give cards room to breathe. */
   --bg-root:
     radial-gradient(
       ellipse 70% 48% at 18% 0%,
-      rgba(99, 102, 241, 0.12),
+      rgba(99, 102, 241, 0.14),
       transparent
     ),
     radial-gradient(
       ellipse 48% 36% at 82% 6%,
-      rgba(20, 184, 166, 0.08),
+      rgba(20, 184, 166, 0.09),
       transparent
     ),
-    linear-gradient(180deg, #101123 0%, #0b0c19 100%);
-  --bg-card: #17172a;
-  --bg-elevated: #202037;
-  --bg-hover: rgba(129, 140, 248, 0.12);
-  --border-subtle: rgba(116, 126, 194, 0.18);
-  --border-default: rgba(128, 138, 213, 0.29);
-  --border-hover: rgba(151, 161, 245, 0.44);
-  --border-accent: rgba(129, 140, 248, 0.3);
-  --border-accent-hover: rgba(129, 140, 248, 0.5);
+    linear-gradient(180deg, #0a0a14 0%, #07070d 100%);
+  --bg-card: #1b1a2c;
+  --bg-elevated: #262448;
+  --bg-hover: rgba(129, 140, 248, 0.16);
+  --border-subtle: rgba(116, 126, 194, 0.12);
+  --border-default: rgba(128, 138, 213, 0.24);
+  --border-hover: rgba(151, 161, 245, 0.48);
+  --border-accent: rgba(129, 140, 248, 0.36);
+  --border-accent-hover: rgba(129, 140, 248, 0.55);
+  --accent-surface-soft: rgba(99, 102, 241, 0.12);
   --btn-primary-bg: #4f46e5;
   --btn-primary-hover: #4338ca;
   --shadow-card:
-    0 12px 32px rgba(0, 0, 0, 0.24), 0 0 0 1px rgba(255, 255, 255, 0.045);
+    0 1px 0 rgba(255, 255, 255, 0.04) inset, 0 8px 24px rgba(0, 0, 0, 0.28);
+  --shadow-hover:
+    0 1px 0 rgba(255, 255, 255, 0.06) inset, 0 16px 36px rgba(0, 0, 0, 0.35),
+    0 0 0 1px rgba(129, 140, 248, 0.18);
 }
 
 .tangle-cloud-shell[data-sandbox-theme='vault'],
@@ -150,56 +160,49 @@ body {
   color: var(--surface-danger-text) !important;
 }
 
-[data-sandbox-ui] .bg-background {
-  background-color: var(--bg-dark, hsl(var(--background))) !important;
+/* Surface utility class bindings.
+   These bind generic Tailwind/sandbox-ui utility classes to the cloud
+   token palette. Use :where() to keep selector specificity at 0 so any
+   component-level className (Card variant overrides, page-specific
+   classes) wins on its own without fighting an !important. The previous
+   version forced every utility to one shade and is the root cause of
+   "every card is the same color, just with a border" — sandbox-ui's
+   variant="elevated" / variant="sandbox" cards were being flattened to
+   plain bg-card by these rules. */
+:where([data-sandbox-ui]) .bg-background {
+  background-color: var(--bg-root, hsl(var(--background)));
 }
 
-[data-sandbox-ui] .bg-card {
-  background-color: var(--bg-card) !important;
+:where([data-sandbox-ui]) .bg-card {
+  background-color: var(--bg-card);
 }
 
-[data-sandbox-ui] .bg-popover {
-  background-color: var(--bg-card) !important;
+:where([data-sandbox-ui]) .bg-popover {
+  background-color: var(--bg-elevated);
 }
 
 [data-sandbox-ui] .text-popover-foreground {
   color: var(--text-primary) !important;
 }
 
-[data-sandbox-ui] .bg-muted {
-  background-color: hsl(var(--muted)) !important;
+:where([data-sandbox-ui]) .bg-muted {
+  background-color: var(--bg-elevated);
 }
 
-[data-sandbox-ui] .bg-muted\/30 {
-  background-color: color-mix(
-    in srgb,
-    hsl(var(--muted)) 30%,
-    transparent
-  ) !important;
+:where([data-sandbox-ui]) .bg-muted\/30 {
+  background-color: color-mix(in srgb, var(--bg-elevated) 30%, transparent);
 }
 
-[data-sandbox-ui] .bg-muted\/40 {
-  background-color: color-mix(
-    in srgb,
-    hsl(var(--muted)) 40%,
-    transparent
-  ) !important;
+:where([data-sandbox-ui]) .bg-muted\/40 {
+  background-color: color-mix(in srgb, var(--bg-elevated) 40%, transparent);
 }
 
-[data-sandbox-ui] .bg-muted\/50 {
-  background-color: color-mix(
-    in srgb,
-    hsl(var(--muted)) 50%,
-    transparent
-  ) !important;
+:where([data-sandbox-ui]) .bg-muted\/50 {
+  background-color: color-mix(in srgb, var(--bg-elevated) 50%, transparent);
 }
 
-[data-sandbox-ui] .bg-card\/70 {
-  background-color: color-mix(
-    in srgb,
-    var(--bg-card) 70%,
-    transparent
-  ) !important;
+:where([data-sandbox-ui]) .bg-card\/70 {
+  background-color: color-mix(in srgb, var(--bg-card) 70%, transparent);
 }
 
 [data-sandbox-ui] .border-border {
@@ -374,8 +377,17 @@ body {
 
 .tangle-cloud-card {
   border: 1px solid var(--border-subtle);
-  background: color-mix(in srgb, var(--bg-card) 86%, transparent);
+  background: var(--bg-card);
   box-shadow: var(--shadow-card);
+}
+
+/* Apply the display font family to section headings inside the cloud shell.
+   Body stays Geist (var(--font-sans)) — only h1/h2/h3 lift to the display
+   stack so section titles get the brand voice without making body copy
+   stiff. Excludes the existing typography setup in .tangle-cloud-page that
+   already sets per-heading sizing. */
+:where([data-sandbox-ui]) :where(h1, h2, h3) {
+  font-family: var(--font-display);
 }
 
 .cloud-hero-card {
@@ -384,25 +396,30 @@ body {
     var(--brand-cool) 30%,
     var(--border-default)
   ) !important;
+  /* Hero gets the heaviest treatment: dot grid + brand radial glows +
+     elevated linear so it reads as the centerpiece of the page. The dot
+     grid is the same pattern tangle-dapp uses (PNG there, CSS here) —
+     it's what makes the surface feel "alive" instead of "flat colored
+     rectangle." */
   background:
     radial-gradient(
+      rgba(255, 255, 255, 0.045) 1px,
+      transparent 1px
+    ) 0 0 / 22px 22px,
+    radial-gradient(
       circle at 4% 12%,
-      color-mix(in srgb, var(--brand-cool) 24%, transparent),
-      transparent 30%
+      color-mix(in srgb, var(--brand-cool) 28%, transparent),
+      transparent 32%
     ),
     radial-gradient(
       circle at 90% 8%,
-      color-mix(in srgb, #14b8a6 20%, transparent),
-      transparent 26%
+      color-mix(in srgb, #14b8a6 22%, transparent),
+      transparent 28%
     ),
-    linear-gradient(
-      135deg,
-      color-mix(in srgb, var(--bg-elevated) 82%, transparent),
-      color-mix(in srgb, var(--bg-card) 94%, transparent)
-    ) !important;
+    linear-gradient(135deg, var(--bg-elevated), var(--bg-card)) !important;
   box-shadow:
-    0 18px 48px rgba(0, 0, 0, 0.24),
-    inset 0 1px 0 rgba(255, 255, 255, 0.04) !important;
+    0 18px 48px rgba(0, 0, 0, 0.32),
+    inset 0 1px 0 rgba(255, 255, 255, 0.05) !important;
 }
 
 .cloud-hero-card :where([class*='bg-card/70'], .bg-card\/70) {

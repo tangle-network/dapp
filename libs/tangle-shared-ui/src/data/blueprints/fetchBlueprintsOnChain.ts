@@ -27,7 +27,10 @@ export const fetchBlueprintsOnChain = async (
   options?: { limit?: number; activeOnly?: boolean },
 ): Promise<Blueprint[]> => {
   const contracts = getContractsByChainId(chainId);
-  if (!contracts || contracts.tangle === '0x0000000000000000000000000000000000000000') {
+  if (
+    !contracts ||
+    contracts.tangle === '0x0000000000000000000000000000000000000000'
+  ) {
     return [];
   }
 
@@ -116,4 +119,66 @@ export const fetchBlueprintsOnChain = async (
     blueprints.push(row);
   }
   return blueprints;
+};
+
+export const fetchBlueprintByIdOnChain = async (
+  publicClient: PublicClient,
+  chainId: number,
+  blueprintId: bigint,
+): Promise<Blueprint | null> => {
+  const contracts = getContractsByChainId(chainId);
+  if (
+    !contracts ||
+    contracts.tangle === '0x0000000000000000000000000000000000000000'
+  ) {
+    return null;
+  }
+
+  const tangleAddress = contracts.tangle as Address;
+
+  try {
+    const [blueprint, definition] = await Promise.all([
+      publicClient.readContract({
+        address: tangleAddress,
+        abi: TANGLE_ABI,
+        functionName: 'getBlueprint',
+        args: [blueprintId],
+      }) as Promise<{
+        owner: Address;
+        manager: Address;
+        createdAt: bigint;
+        operatorCount: number;
+        active: boolean;
+      }>,
+      publicClient.readContract({
+        address: tangleAddress,
+        abi: TANGLE_ABI,
+        functionName: 'getBlueprintDefinition',
+        args: [blueprintId],
+      }) as Promise<{
+        metadataUri: string;
+        metadataHash: `0x${string}`;
+      }>,
+    ]);
+
+    return {
+      id: blueprintId.toString(),
+      blueprintId,
+      owner: blueprint.owner,
+      manager: blueprint.manager,
+      metadataUri: definition.metadataUri || null,
+      metadataHash:
+        definition.metadataHash &&
+        definition.metadataHash !==
+          '0x0000000000000000000000000000000000000000000000000000000000000000'
+          ? definition.metadataHash
+          : null,
+      active: blueprint.active,
+      createdAt: BigInt(blueprint.createdAt),
+      updatedAt: BigInt(blueprint.createdAt),
+      operatorCount: BigInt(blueprint.operatorCount),
+    };
+  } catch {
+    return null;
+  }
 };

@@ -27,6 +27,10 @@ import { twMerge } from 'tailwind-merge';
 import { PagePath } from '../../types';
 import { BlueprintVisual } from '../../components/blueprints/BlueprintVisual';
 import { formatBlueprintName } from '../../components/blueprints/blueprintVisualUtils';
+import {
+  categoryBadgeStyle,
+  categoryStripeStyle,
+} from '../../components/blueprints/categoryColor';
 
 const PAGE_SIZE = 12;
 const ALL_CATEGORIES = 'All categories';
@@ -259,10 +263,7 @@ const BlueprintListing: FC<Props> = ({
 
   return (
     <div className="space-y-5">
-      <Card
-        variant="sandbox"
-        className="catalog-controls border-border bg-card"
-      >
+      <Card variant="elevated" className="catalog-controls">
         <CardContent className="space-y-4 p-4 md:p-5">
           <div className="grid gap-4 xl:grid-cols-[minmax(360px,1fr)_auto_auto] xl:items-center">
             <Input
@@ -479,9 +480,10 @@ const BlueprintCard = ({
       variant="sandbox"
       hover
       className={twMerge(
-        'blueprint-card group relative min-h-[410px] overflow-hidden border-border bg-card shadow-[var(--shadow-card)]',
+        'blueprint-card group relative min-h-[410px] overflow-hidden',
         isSelected && 'border-primary shadow-[var(--shadow-accent)]',
       )}
+      style={categoryStripeStyle(category)}
     >
       <Link
         to={blueprintHref}
@@ -493,10 +495,13 @@ const BlueprintCard = ({
         <BlueprintVisual blueprint={blueprint} category={category} compact />
 
         <div className="mt-4">
-          <p className="font-semibold text-[10px] text-muted-foreground uppercase tracking-[0.18em]">
+          <span
+            className="inline-flex items-center rounded-full border px-2.5 py-0.5 font-semibold text-[10px] uppercase tracking-[0.18em]"
+            style={categoryBadgeStyle(category)}
+          >
             {category}
-          </p>
-          <h3 className="mt-1 line-clamp-1 font-display font-extrabold text-foreground text-xl tracking-tight">
+          </span>
+          <h3 className="mt-2 line-clamp-1 font-display font-extrabold text-foreground text-xl tracking-tight">
             {displayName}
           </h3>
         </div>

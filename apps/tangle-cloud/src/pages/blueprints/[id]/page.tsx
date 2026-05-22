@@ -25,6 +25,10 @@ import { useResolvedBlueprintViewFromIndexedBlueprint } from '../../../blueprint
 import { TangleDAppPagePath } from '../../../types';
 import { BlueprintVisual } from '../../../components/blueprints/BlueprintVisual';
 import { formatBlueprintName } from '../../../components/blueprints/blueprintVisualUtils';
+import {
+  categoryBadgeStyle,
+  categoryStripeStyle,
+} from '../../../components/blueprints/categoryColor';
 
 const Page: FC = () => {
   const id = useParamWithSchema('id', z.string().min(1));
@@ -152,7 +156,8 @@ const BlueprintDetailHero = ({
     <section className="grid gap-5 xl:grid-cols-[minmax(0,1fr)_420px]">
       <Card
         variant="sandbox"
-        className="overflow-hidden border-border bg-card shadow-[var(--shadow-card)]"
+        className="overflow-hidden"
+        style={categoryStripeStyle(category)}
       >
         <CardContent className="grid gap-6 p-5 md:grid-cols-[300px_minmax(0,1fr)] md:p-6">
           <BlueprintVisual
@@ -163,7 +168,12 @@ const BlueprintDetailHero = ({
 
           <div className="flex min-w-0 flex-col">
             <div className="flex flex-wrap gap-2">
-              <Badge variant="outline">{category}</Badge>
+              <span
+                className="inline-flex items-center rounded-full border px-2.5 py-0.5 font-semibold text-[10px] uppercase tracking-wider"
+                style={categoryBadgeStyle(category)}
+              >
+                {category}
+              </span>
               <Badge variant={operatorCount > 0 ? 'success' : 'outline'} dot>
                 {operatorCount} operator{operatorCount === 1 ? '' : 's'}
               </Badge>
@@ -233,7 +243,7 @@ const BlueprintDetailHero = ({
         </CardContent>
       </Card>
 
-      <Card variant="sandbox" className="border-border bg-card">
+      <Card variant="elevated">
         <CardContent className="p-5 md:p-6">
           <div className="flex items-center justify-between gap-3 border-border border-b pb-4">
             <div>
@@ -257,7 +267,7 @@ const BlueprintDetailHero = ({
             {metadataItems.map(([label, value]) => (
               <div
                 key={label}
-                className="rounded-lg border border-border bg-muted/30 p-3"
+                className="rounded-lg border border-border bg-card p-3"
               >
                 <dt className="font-semibold text-muted-foreground text-[10px] uppercase tracking-wider">
                   {label}
@@ -269,7 +279,13 @@ const BlueprintDetailHero = ({
             ))}
           </dl>
 
-          <div className="mt-5 rounded-lg border border-border bg-muted/20 p-4">
+          <div
+            className="mt-5 rounded-lg border p-4"
+            style={{
+              backgroundColor: 'var(--accent-surface-soft)',
+              borderColor: 'var(--border-accent)',
+            }}
+          >
             <h3 className="font-display font-bold text-foreground text-base">
               Before you commit
             </h3>
@@ -288,7 +304,7 @@ const BlueprintDetailHero = ({
 };
 
 const LaunchFact = ({ label, value }: { label: string; value: string }) => (
-  <div className="rounded-lg border border-border bg-muted/25 p-3">
+  <div className="rounded-lg border border-border bg-card p-3">
     <p className="font-semibold text-muted-foreground text-[10px] uppercase tracking-wider">
       {label}
     </p>
@@ -302,11 +318,7 @@ const RegisteredOperatorsPanel = ({
   operators: BlueprintOperator[];
 }) => {
   return (
-    <Card
-      id="operators"
-      variant="sandbox"
-      className="border-border bg-card shadow-[var(--shadow-card)]"
-    >
+    <Card id="operators" variant="default">
       <CardContent className="p-6">
         <div className="flex flex-col gap-3 border-border border-b pb-5 sm:flex-row sm:items-end sm:justify-between">
           <div>
@@ -327,14 +339,14 @@ const RegisteredOperatorsPanel = ({
         </div>
 
         {operators.length === 0 ? (
-          <div className="flex min-h-40 items-center justify-center rounded-lg border border-dashed border-border bg-muted/30 p-8 text-center">
+          <div className="mt-5 flex min-h-40 items-center justify-center rounded-lg border border-dashed border-border bg-card p-8 text-center">
             <p className="max-w-md text-muted-foreground text-sm">
               No operators are indexed for this blueprint on the selected
               network yet.
             </p>
           </div>
         ) : (
-          <div className="mt-5 divide-y divide-border overflow-hidden rounded-lg border border-border bg-muted/20">
+          <div className="mt-5 divide-y divide-border overflow-hidden rounded-lg border border-border bg-card">
             {operators.map((operator) => (
               <OperatorCard key={operator.address} operator={operator} />
             ))}

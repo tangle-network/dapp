@@ -170,7 +170,7 @@ const Page: FC = () => {
     <div className="space-y-6">
       <Card
         variant="sandbox"
-        className="cloud-hero-card cloud-compact-header overflow-hidden border-border bg-card shadow-[var(--shadow-card)]"
+        className="cloud-hero-card cloud-compact-header overflow-hidden"
       >
         <CardContent className="relative p-4 md:p-5">
           <div className="pointer-events-none absolute inset-0 opacity-70 [background:radial-gradient(circle_at_12%_8%,rgba(99,102,241,0.22),transparent_32%),radial-gradient(circle_at_86%_12%,rgba(16,185,129,0.12),transparent_28%)]" />
@@ -206,7 +206,7 @@ const Page: FC = () => {
               </div>
             </div>
 
-            <div className="grid gap-3 rounded-lg border border-border bg-muted/15 p-3 shadow-[var(--shadow-card)] sm:grid-cols-[1fr_auto] sm:items-center xl:grid-cols-1">
+            <div className="grid gap-3 rounded-lg border border-border bg-[var(--bg-elevated)] p-3 shadow-[var(--shadow-card)] sm:grid-cols-[1fr_auto] sm:items-center xl:grid-cols-1">
               <div className="grid grid-cols-3 gap-2">
                 <HeroMetric label="Catalog" value={blueprints.size} />
                 <HeroMetric
@@ -309,7 +309,7 @@ const HeroMetric = ({
   label: string;
   value: number | string;
 }) => (
-  <div className="rounded-md border border-border bg-card/70 p-2.5">
+  <div className="rounded-md border border-border bg-[var(--bg-card)] p-2.5">
     <p className="font-medium text-muted-foreground text-[10px] uppercase tracking-wider">
       {label}
     </p>
@@ -328,7 +328,13 @@ const HeroRolePill = ({
   value: string;
   detail: string;
 }) => (
-  <div className="rounded-lg border border-border bg-muted/20 p-3">
+  <div
+    className="rounded-lg border p-3"
+    style={{
+      backgroundColor: 'var(--accent-surface-soft)',
+      borderColor: 'var(--border-accent)',
+    }}
+  >
     <p className="font-semibold text-muted-foreground text-[10px] uppercase tracking-wider">
       {label}
     </p>
