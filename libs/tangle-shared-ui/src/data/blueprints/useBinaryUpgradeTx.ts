@@ -12,51 +12,49 @@
  * `'success' | 'reverted'`; callers reset their local form on success.
  */
 
-import { useQueryClient } from '@tanstack/react-query'
-import { useChainId } from 'wagmi'
-import { getContractsByChainId } from '@tangle-network/dapp-config/contracts'
-import type { Address } from 'viem'
+import { useQueryClient } from '@tanstack/react-query';
+import { useChainId } from 'wagmi';
+import { getContractsByChainId } from '@tangle-network/dapp-config/contracts';
+import type { Address } from 'viem';
 
-import useContractWrite, { TxStatus } from '../../hooks/useContractWrite'
-import BinaryUpgradeABI from '../../abi/tangleBinaryUpgrade'
-import {
-  type AttestationKind,
-} from '../../blueprintApps/trustScore'
-import { UpgradePolicy } from './useBinaryVersions'
+import useContractWrite, { TxStatus } from '../../hooks/useContractWrite';
+import BinaryUpgradeABI from '../../abi/tangleBinaryUpgrade';
+import { type AttestationKind } from '../../blueprintApps/trustScore';
+import { UpgradePolicy } from './useBinaryVersions';
 
-export { TxStatus }
+export { TxStatus };
 
 interface BaseOptions {
-  onSuccess?: () => void
-  onError?: (error: Error) => void
+  onSuccess?: () => void;
+  onError?: (error: Error) => void;
 }
 
-const ZERO_ADDRESS = '0x0000000000000000000000000000000000000000'
+const ZERO_ADDRESS = '0x0000000000000000000000000000000000000000';
 
 const tangleAddress = (chainId: number): Address => {
-  const contracts = getContractsByChainId(chainId)
+  const contracts = getContractsByChainId(chainId);
   if (contracts.tangle === ZERO_ADDRESS) {
     throw new Error(
       `Tangle facet not deployed on chain ${chainId}. Cannot submit binary-upgrade transactions.`,
-    )
+    );
   }
-  return contracts.tangle
-}
+  return contracts.tangle;
+};
 
 // ─────────────────────────────────────────────────────────────────────────
 // publishBinaryVersion
 // ─────────────────────────────────────────────────────────────────────────
 
 export interface PublishBinaryVersionParams {
-  blueprintId: bigint
-  sha256Hash: `0x${string}`
-  binaryUri: string
-  attestationHash: `0x${string}`
+  blueprintId: bigint;
+  sha256Hash: `0x${string}`;
+  binaryUri: string;
+  attestationHash: `0x${string}`;
 }
 
 export const usePublishBinaryVersionTx = (options?: BaseOptions) => {
-  const chainId = useChainId()
-  const queryClient = useQueryClient()
+  const chainId = useChainId();
+  const queryClient = useQueryClient();
 
   const hook = useContractWrite(
     BinaryUpgradeABI,
@@ -74,11 +72,11 @@ export const usePublishBinaryVersionTx = (options?: BaseOptions) => {
     {
       txName: 'publish binary version',
       txDetails: (params) => {
-        const details = new Map<string, string>()
-        details.set('Blueprint ID', params.blueprintId.toString())
-        details.set('sha256', params.sha256Hash)
-        details.set('Binary URI', params.binaryUri)
-        return details
+        const details = new Map<string, string>();
+        details.set('Blueprint ID', params.blueprintId.toString());
+        details.set('sha256', params.sha256Hash);
+        details.set('Binary URI', params.binaryUri);
+        return details;
       },
       getSuccessMessage: (params) =>
         `Published a new binary version for blueprint #${params.blueprintId}`,
@@ -92,12 +90,12 @@ export const usePublishBinaryVersionTx = (options?: BaseOptions) => {
             chainId,
             params.blueprintId.toString(),
           ],
-        })
-        options?.onSuccess?.()
+        });
+        options?.onSuccess?.();
       },
       onError: options?.onError,
     },
-  )
+  );
 
   return {
     execute: hook.execute,
@@ -107,21 +105,21 @@ export const usePublishBinaryVersionTx = (options?: BaseOptions) => {
     txHash: hook.txHash,
     isSuccess: hook.isSuccess,
     isPending: hook.isLoading,
-  }
-}
+  };
+};
 
 // ─────────────────────────────────────────────────────────────────────────
 // setActiveBinaryVersion
 // ─────────────────────────────────────────────────────────────────────────
 
 export interface SetActiveBinaryVersionParams {
-  blueprintId: bigint
-  versionId: bigint
+  blueprintId: bigint;
+  versionId: bigint;
 }
 
 export const useSetActiveBinaryVersionTx = (options?: BaseOptions) => {
-  const chainId = useChainId()
-  const queryClient = useQueryClient()
+  const chainId = useChainId();
+  const queryClient = useQueryClient();
 
   const hook = useContractWrite(
     BinaryUpgradeABI,
@@ -134,10 +132,10 @@ export const useSetActiveBinaryVersionTx = (options?: BaseOptions) => {
     {
       txName: 'set active binary version',
       txDetails: (params) => {
-        const details = new Map<string, string>()
-        details.set('Blueprint ID', params.blueprintId.toString())
-        details.set('Active version', params.versionId.toString())
-        return details
+        const details = new Map<string, string>();
+        details.set('Blueprint ID', params.blueprintId.toString());
+        details.set('Active version', params.versionId.toString());
+        return details;
       },
       getSuccessMessage: (params) =>
         `Promoted v${params.versionId} to active for blueprint #${params.blueprintId}`,
@@ -149,12 +147,12 @@ export const useSetActiveBinaryVersionTx = (options?: BaseOptions) => {
             chainId,
             params.blueprintId.toString(),
           ],
-        })
-        options?.onSuccess?.()
+        });
+        options?.onSuccess?.();
       },
       onError: options?.onError,
     },
-  )
+  );
 
   return {
     execute: hook.execute,
@@ -164,21 +162,21 @@ export const useSetActiveBinaryVersionTx = (options?: BaseOptions) => {
     txHash: hook.txHash,
     isSuccess: hook.isSuccess,
     isPending: hook.isLoading,
-  }
-}
+  };
+};
 
 // ─────────────────────────────────────────────────────────────────────────
 // deprecateBinaryVersion
 // ─────────────────────────────────────────────────────────────────────────
 
 export interface DeprecateBinaryVersionParams {
-  blueprintId: bigint
-  versionId: bigint
+  blueprintId: bigint;
+  versionId: bigint;
 }
 
 export const useDeprecateBinaryVersionTx = (options?: BaseOptions) => {
-  const chainId = useChainId()
-  const queryClient = useQueryClient()
+  const chainId = useChainId();
+  const queryClient = useQueryClient();
 
   const hook = useContractWrite(
     BinaryUpgradeABI,
@@ -191,10 +189,10 @@ export const useDeprecateBinaryVersionTx = (options?: BaseOptions) => {
     {
       txName: 'deprecate binary version',
       txDetails: (params) => {
-        const details = new Map<string, string>()
-        details.set('Blueprint ID', params.blueprintId.toString())
-        details.set('Version', params.versionId.toString())
-        return details
+        const details = new Map<string, string>();
+        details.set('Blueprint ID', params.blueprintId.toString());
+        details.set('Version', params.versionId.toString());
+        return details;
       },
       getSuccessMessage: (params) =>
         `Deprecated v${params.versionId} for blueprint #${params.blueprintId}`,
@@ -206,12 +204,12 @@ export const useDeprecateBinaryVersionTx = (options?: BaseOptions) => {
             chainId,
             params.blueprintId.toString(),
           ],
-        })
-        options?.onSuccess?.()
+        });
+        options?.onSuccess?.();
       },
       onError: options?.onError,
     },
-  )
+  );
 
   return {
     execute: hook.execute,
@@ -221,21 +219,21 @@ export const useDeprecateBinaryVersionTx = (options?: BaseOptions) => {
     txHash: hook.txHash,
     isSuccess: hook.isSuccess,
     isPending: hook.isLoading,
-  }
-}
+  };
+};
 
 // ─────────────────────────────────────────────────────────────────────────
 // setServiceUpgradePolicy
 // ─────────────────────────────────────────────────────────────────────────
 
 export interface SetServiceUpgradePolicyParams {
-  serviceId: bigint
-  policy: UpgradePolicy
+  serviceId: bigint;
+  policy: UpgradePolicy;
 }
 
 export const useSetServiceUpgradePolicyTx = (options?: BaseOptions) => {
-  const chainId = useChainId()
-  const queryClient = useQueryClient()
+  const chainId = useChainId();
+  const queryClient = useQueryClient();
 
   const hook = useContractWrite(
     BinaryUpgradeABI,
@@ -248,10 +246,10 @@ export const useSetServiceUpgradePolicyTx = (options?: BaseOptions) => {
     {
       txName: 'set upgrade policy',
       txDetails: (params) => {
-        const details = new Map<string, string>()
-        details.set('Service ID', params.serviceId.toString())
-        details.set('Policy', UpgradePolicy[params.policy] ?? 'unknown')
-        return details
+        const details = new Map<string, string>();
+        details.set('Service ID', params.serviceId.toString());
+        details.set('Policy', UpgradePolicy[params.policy] ?? 'unknown');
+        return details;
       },
       getSuccessMessage: (params) =>
         `Set service #${params.serviceId} upgrade policy to ${UpgradePolicy[params.policy] ?? 'unknown'}`,
@@ -263,7 +261,7 @@ export const useSetServiceUpgradePolicyTx = (options?: BaseOptions) => {
             chainId,
             params.serviceId.toString(),
           ],
-        })
+        });
         queryClient.invalidateQueries({
           queryKey: [
             'tangle',
@@ -271,12 +269,12 @@ export const useSetServiceUpgradePolicyTx = (options?: BaseOptions) => {
             chainId,
             params.serviceId.toString(),
           ],
-        })
-        options?.onSuccess?.()
+        });
+        options?.onSuccess?.();
       },
       onError: options?.onError,
     },
-  )
+  );
 
   return {
     execute: hook.execute,
@@ -286,21 +284,21 @@ export const useSetServiceUpgradePolicyTx = (options?: BaseOptions) => {
     txHash: hook.txHash,
     isSuccess: hook.isSuccess,
     isPending: hook.isLoading,
-  }
-}
+  };
+};
 
 // ─────────────────────────────────────────────────────────────────────────
 // ackBinaryVersion
 // ─────────────────────────────────────────────────────────────────────────
 
 export interface AckBinaryVersionParams {
-  serviceId: bigint
-  versionId: bigint
+  serviceId: bigint;
+  versionId: bigint;
 }
 
 export const useAckBinaryVersionTx = (options?: BaseOptions) => {
-  const chainId = useChainId()
-  const queryClient = useQueryClient()
+  const chainId = useChainId();
+  const queryClient = useQueryClient();
 
   const hook = useContractWrite(
     BinaryUpgradeABI,
@@ -313,10 +311,10 @@ export const useAckBinaryVersionTx = (options?: BaseOptions) => {
     {
       txName: 'acknowledge binary version',
       txDetails: (params) => {
-        const details = new Map<string, string>()
-        details.set('Service ID', params.serviceId.toString())
-        details.set('Version', params.versionId.toString())
-        return details
+        const details = new Map<string, string>();
+        details.set('Service ID', params.serviceId.toString());
+        details.set('Version', params.versionId.toString());
+        return details;
       },
       getSuccessMessage: (params) =>
         `Acknowledged v${params.versionId} for service #${params.serviceId}`,
@@ -328,7 +326,7 @@ export const useAckBinaryVersionTx = (options?: BaseOptions) => {
             chainId,
             params.serviceId.toString(),
           ],
-        })
+        });
         queryClient.invalidateQueries({
           queryKey: [
             'tangle',
@@ -336,12 +334,12 @@ export const useAckBinaryVersionTx = (options?: BaseOptions) => {
             chainId,
             params.serviceId.toString(),
           ],
-        })
-        options?.onSuccess?.()
+        });
+        options?.onSuccess?.();
       },
       onError: options?.onError,
     },
-  )
+  );
 
   return {
     execute: hook.execute,
@@ -351,26 +349,26 @@ export const useAckBinaryVersionTx = (options?: BaseOptions) => {
     txHash: hook.txHash,
     isSuccess: hook.isSuccess,
     isPending: hook.isLoading,
-  }
-}
+  };
+};
 
 // ─────────────────────────────────────────────────────────────────────────
 // attestBinaryVersion
 // ─────────────────────────────────────────────────────────────────────────
 
 export interface AttestBinaryVersionParams {
-  blueprintId: bigint
-  versionId: bigint
-  reportHash: `0x${string}`
-  reportUri: string
-  kind: AttestationKind
-  severityFound: number
-  expiresAt: bigint
+  blueprintId: bigint;
+  versionId: bigint;
+  reportHash: `0x${string}`;
+  reportUri: string;
+  kind: AttestationKind;
+  severityFound: number;
+  expiresAt: bigint;
 }
 
 export const useAttestBinaryVersionTx = (options?: BaseOptions) => {
-  const chainId = useChainId()
-  const queryClient = useQueryClient()
+  const chainId = useChainId();
+  const queryClient = useQueryClient();
 
   const hook = useContractWrite(
     BinaryUpgradeABI,
@@ -391,11 +389,11 @@ export const useAttestBinaryVersionTx = (options?: BaseOptions) => {
     {
       txName: 'attest binary version',
       txDetails: (params) => {
-        const details = new Map<string, string>()
-        details.set('Blueprint ID', params.blueprintId.toString())
-        details.set('Version', params.versionId.toString())
-        details.set('Report URI', params.reportUri)
-        return details
+        const details = new Map<string, string>();
+        details.set('Blueprint ID', params.blueprintId.toString());
+        details.set('Version', params.versionId.toString());
+        details.set('Report URI', params.reportUri);
+        return details;
       },
       getSuccessMessage: (params) =>
         `Submitted attestation for blueprint #${params.blueprintId} v${params.versionId}`,
@@ -408,12 +406,12 @@ export const useAttestBinaryVersionTx = (options?: BaseOptions) => {
             params.blueprintId.toString(),
             params.versionId.toString(),
           ],
-        })
-        options?.onSuccess?.()
+        });
+        options?.onSuccess?.();
       },
       onError: options?.onError,
     },
-  )
+  );
 
   return {
     execute: hook.execute,
@@ -423,23 +421,23 @@ export const useAttestBinaryVersionTx = (options?: BaseOptions) => {
     txHash: hook.txHash,
     isSuccess: hook.isSuccess,
     isPending: hook.isLoading,
-  }
-}
+  };
+};
 
 // ─────────────────────────────────────────────────────────────────────────
 // revokeAttestation
 // ─────────────────────────────────────────────────────────────────────────
 
 export interface RevokeAttestationParams {
-  blueprintId: bigint
-  versionId: bigint
-  attestationId: bigint
-  reasonUri: string
+  blueprintId: bigint;
+  versionId: bigint;
+  attestationId: bigint;
+  reasonUri: string;
 }
 
 export const useRevokeAttestationTx = (options?: BaseOptions) => {
-  const chainId = useChainId()
-  const queryClient = useQueryClient()
+  const chainId = useChainId();
+  const queryClient = useQueryClient();
 
   const hook = useContractWrite(
     BinaryUpgradeABI,
@@ -457,12 +455,12 @@ export const useRevokeAttestationTx = (options?: BaseOptions) => {
     {
       txName: 'revoke attestation',
       txDetails: (params) => {
-        const details = new Map<string, string>()
-        details.set('Blueprint ID', params.blueprintId.toString())
-        details.set('Version', params.versionId.toString())
-        details.set('Attestation', params.attestationId.toString())
-        details.set('Reason URI', params.reasonUri)
-        return details
+        const details = new Map<string, string>();
+        details.set('Blueprint ID', params.blueprintId.toString());
+        details.set('Version', params.versionId.toString());
+        details.set('Attestation', params.attestationId.toString());
+        details.set('Reason URI', params.reasonUri);
+        return details;
       },
       getSuccessMessage: (params) =>
         `Revoked attestation #${params.attestationId} on blueprint #${params.blueprintId} v${params.versionId}`,
@@ -475,12 +473,12 @@ export const useRevokeAttestationTx = (options?: BaseOptions) => {
             params.blueprintId.toString(),
             params.versionId.toString(),
           ],
-        })
-        options?.onSuccess?.()
+        });
+        options?.onSuccess?.();
       },
       onError: options?.onError,
     },
-  )
+  );
 
   return {
     execute: hook.execute,
@@ -490,5 +488,5 @@ export const useRevokeAttestationTx = (options?: BaseOptions) => {
     txHash: hook.txHash,
     isSuccess: hook.isSuccess,
     isPending: hook.isLoading,
-  }
-}
+  };
+};

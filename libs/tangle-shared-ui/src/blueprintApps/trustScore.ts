@@ -44,37 +44,37 @@ export enum AuditorTier {
 }
 
 export interface Attestation {
-  attester: `0x${string}`
-  reportHash: `0x${string}`
-  reportUri: string
-  kind: AttestationKind
-  severityFound: number
-  attestedAt: bigint
-  expiresAt: bigint
-  revoked: boolean
+  attester: `0x${string}`;
+  reportHash: `0x${string}`;
+  reportUri: string;
+  kind: AttestationKind;
+  severityFound: number;
+  attestedAt: bigint;
+  expiresAt: bigint;
+  revoked: boolean;
 }
 
 export interface Auditor {
-  name: string
-  metadataUri: string
-  weight: number
-  tier: AuditorTier
-  active: boolean
-  admittedAt: bigint
+  name: string;
+  metadataUri: string;
+  weight: number;
+  tier: AuditorTier;
+  active: boolean;
+  admittedAt: bigint;
 }
 
 export interface AttestationWithAuditor extends Attestation {
-  auditor: Auditor | null
+  auditor: Auditor | null;
 }
 
 export interface TrustScoreBreakdown {
-  score: number
-  attestationCount: number
+  score: number;
+  attestationCount: number;
   // attestation counts per kind (after filtering out revoked + expired);
   // primarily for the "3 audits · 1 fuzz" footer next to the gauge.
-  kindBreakdown: Record<AttestationKind, number>
-  highestWeightedAuditor: string | null
-  hasCriticalFinding: boolean
+  kindBreakdown: Record<AttestationKind, number>;
+  highestWeightedAuditor: string | null;
+  hasCriticalFinding: boolean;
 }
 
 const KIND_MULTIPLIER: Record<AttestationKind, number> = {
@@ -83,7 +83,7 @@ const KIND_MULTIPLIER: Record<AttestationKind, number> = {
   [AttestationKind.FUZZ]: 0.6,
   [AttestationKind.BUG_BOUNTY]: 0.5,
   [AttestationKind.SELF]: 0.1,
-}
+};
 
 // Severity ladder matches the contract: 0 none .. 5 critical.
 const SEVERITY_MODIFIER: Record<number, number> = {
@@ -93,10 +93,10 @@ const SEVERITY_MODIFIER: Record<number, number> = {
   3: 0.7,
   4: 0.5,
   5: 0.3,
-}
+};
 
-const SECONDS_PER_DAY = 86_400
-const RECENCY_HALF_LIFE_DAYS = 365
+const SECONDS_PER_DAY = 86_400;
+const RECENCY_HALF_LIFE_DAYS = 365;
 
 /**
  * Score per attestation that "looks like 100" after normalization:
@@ -104,19 +104,16 @@ const RECENCY_HALF_LIFE_DAYS = 365
  * Two such rows hit 2000; the divisor below maps "two clean fresh audits
  * from a max-weight auditor" to 100 on the gauge.
  */
-const NORMALIZATION_DIVISOR = 2000
+const NORMALIZATION_DIVISOR = 2000;
 
-const recencyDecay = (
-  attestedAt: bigint,
-  nowSeconds: number,
-): number => {
-  const ageSeconds = Math.max(0, nowSeconds - Number(attestedAt))
-  const ageDays = ageSeconds / SECONDS_PER_DAY
-  return Math.pow(2, -ageDays / RECENCY_HALF_LIFE_DAYS)
-}
+const recencyDecay = (attestedAt: bigint, nowSeconds: number): number => {
+  const ageSeconds = Math.max(0, nowSeconds - Number(attestedAt));
+  const ageDays = ageSeconds / SECONDS_PER_DAY;
+  return Math.pow(2, -ageDays / RECENCY_HALF_LIFE_DAYS);
+};
 
 const clamp = (value: number, min: number, max: number): number =>
-  Math.min(Math.max(value, min), max)
+  Math.min(Math.max(value, min), max);
 
 const initialKindBreakdown = (): Record<AttestationKind, number> => ({
   [AttestationKind.AUDIT]: 0,
@@ -124,63 +121,64 @@ const initialKindBreakdown = (): Record<AttestationKind, number> => ({
   [AttestationKind.FORMAL]: 0,
   [AttestationKind.BUG_BOUNTY]: 0,
   [AttestationKind.SELF]: 0,
-})
+});
 
 export const computeTrustScore = (
   attestations: AttestationWithAuditor[],
   options?: { now?: Date },
 ): TrustScoreBreakdown => {
-  const nowSeconds = Math.floor((options?.now ?? new Date()).getTime() / 1000)
+  const nowSeconds = Math.floor((options?.now ?? new Date()).getTime() / 1000);
 
-  let totalWeighted = 0
-  let highestWeight = 0
-  let highestWeightedAuditor: string | null = null
-  let hasCriticalFinding = false
-  let attestationCount = 0
-  const kindBreakdown = initialKindBreakdown()
+  let totalWeighted = 0;
+  let highestWeight = 0;
+  let highestWeightedAuditor: string | null = null;
+  let hasCriticalFinding = false;
+  let attestationCount = 0;
+  const kindBreakdown = initialKindBreakdown();
 
   for (const a of attestations) {
     // Skip revoked rows entirely. They are preserved on-chain for
     // provenance but must not contribute to the score.
-    if (a.revoked) continue
+    if (a.revoked) continue;
 
     // Expired rows are equivalent to "no attestation" for current score
     // purposes. They still appear in `<AttestationBadge>` so users can see
     // historical signal, but they don't push the gauge.
-    if (a.expiresAt !== BigInt(0) && Number(a.expiresAt) <= nowSeconds) continue
+    if (a.expiresAt !== BigInt(0) && Number(a.expiresAt) <= nowSeconds)
+      continue;
 
-    attestationCount += 1
-    kindBreakdown[a.kind] = (kindBreakdown[a.kind] ?? 0) + 1
+    attestationCount += 1;
+    kindBreakdown[a.kind] = (kindBreakdown[a.kind] ?? 0) + 1;
 
-    if (a.severityFound >= 4) hasCriticalFinding = true
+    if (a.severityFound >= 4) hasCriticalFinding = true;
 
-    const weight = a.auditor?.active ? a.auditor.weight : 0
+    const weight = a.auditor?.active ? a.auditor.weight : 0;
     if (weight === 0) {
       // Unknown / inactive auditor still increments the count and the
       // critical-finding flag (someone reported it), but contributes
       // nothing to the trust score. This is what the auditor registry
       // is for — turning "anyone can attest" into "weighted by who".
-      continue
+      continue;
     }
 
-    const kindMultiplier = KIND_MULTIPLIER[a.kind] ?? 0
+    const kindMultiplier = KIND_MULTIPLIER[a.kind] ?? 0;
     const severityModifier =
       SEVERITY_MODIFIER[a.severityFound] ??
       // Unknown severity values clamp toward conservative — half credit.
-      0.5
-    const decay = recencyDecay(a.attestedAt, nowSeconds)
+      0.5;
+    const decay = recencyDecay(a.attestedAt, nowSeconds);
 
-    const contribution = weight * kindMultiplier * severityModifier * decay
-    totalWeighted += contribution
+    const contribution = weight * kindMultiplier * severityModifier * decay;
+    totalWeighted += contribution;
 
     if (weight > highestWeight && a.auditor) {
-      highestWeight = weight
-      highestWeightedAuditor = a.auditor.name
+      highestWeight = weight;
+      highestWeightedAuditor = a.auditor.name;
     }
   }
 
-  const raw = (totalWeighted / NORMALIZATION_DIVISOR) * 100
-  const score = clamp(Math.round(raw), 0, 100)
+  const raw = (totalWeighted / NORMALIZATION_DIVISOR) * 100;
+  const score = clamp(Math.round(raw), 0, 100);
 
   return {
     score,
@@ -188,54 +186,54 @@ export const computeTrustScore = (
     kindBreakdown,
     highestWeightedAuditor,
     hasCriticalFinding,
-  }
-}
+  };
+};
 
 export const attestationKindLabel = (kind: AttestationKind): string => {
   switch (kind) {
     case AttestationKind.AUDIT:
-      return 'Audit'
+      return 'Audit';
     case AttestationKind.FUZZ:
-      return 'Fuzz'
+      return 'Fuzz';
     case AttestationKind.FORMAL:
-      return 'Formal'
+      return 'Formal';
     case AttestationKind.BUG_BOUNTY:
-      return 'Bug bounty'
+      return 'Bug bounty';
     case AttestationKind.SELF:
-      return 'Self'
+      return 'Self';
     default:
-      return 'Unknown'
+      return 'Unknown';
   }
-}
+};
 
 export const auditorTierLabel = (tier: AuditorTier): string => {
   switch (tier) {
     case AuditorTier.FIRST_PARTY:
-      return 'First party'
+      return 'First party';
     case AuditorTier.INDEPENDENT:
-      return 'Independent'
+      return 'Independent';
     case AuditorTier.COMMUNITY:
-      return 'Community'
+      return 'Community';
     default:
-      return 'Unknown'
+      return 'Unknown';
   }
-}
+};
 
 export const severityLabel = (severityFound: number): string => {
   switch (severityFound) {
     case 0:
-      return 'No findings'
+      return 'No findings';
     case 1:
-      return 'Info'
+      return 'Info';
     case 2:
-      return 'Low'
+      return 'Low';
     case 3:
-      return 'Medium'
+      return 'Medium';
     case 4:
-      return 'High'
+      return 'High';
     case 5:
-      return 'Critical'
+      return 'Critical';
     default:
-      return `Severity ${severityFound}`
+      return `Severity ${severityFound}`;
   }
-}
+};

@@ -26,12 +26,12 @@ import {
 // ─────────────────────────────────────────────────────────────────────────
 
 export interface BinaryVersion {
-  versionId: bigint
-  sha256Hash: `0x${string}`
-  binaryUri: string
-  attestationHash: `0x${string}`
-  publishedAt: bigint
-  deprecated: boolean
+  versionId: bigint;
+  sha256Hash: `0x${string}`;
+  binaryUri: string;
+  attestationHash: `0x${string}`;
+  publishedAt: bigint;
+  deprecated: boolean;
 }
 
 export enum UpgradePolicy {
@@ -41,46 +41,46 @@ export enum UpgradePolicy {
 }
 
 export interface ServiceUpgradeState {
-  policy: UpgradePolicy
-  ackedVersionId: bigint
-  effectiveVersion: BinaryVersion | null
-  latestActiveVersionId: bigint | null
-  blueprintId: bigint | null
+  policy: UpgradePolicy;
+  ackedVersionId: bigint;
+  effectiveVersion: BinaryVersion | null;
+  latestActiveVersionId: bigint | null;
+  blueprintId: bigint | null;
 }
 
 // ─────────────────────────────────────────────────────────────────────────
 // Internal helpers
 // ─────────────────────────────────────────────────────────────────────────
 
-const ZERO_ADDRESS = '0x0000000000000000000000000000000000000000'
+const ZERO_ADDRESS = '0x0000000000000000000000000000000000000000';
 
 const tangleAddressFor = (chainId: number): Address | null => {
   try {
-    const contracts = getContractsByChainId(chainId)
-    if (contracts.tangle === ZERO_ADDRESS) return null
-    return contracts.tangle as Address
+    const contracts = getContractsByChainId(chainId);
+    if (contracts.tangle === ZERO_ADDRESS) return null;
+    return contracts.tangle as Address;
   } catch {
-    return null
+    return null;
   }
-}
+};
 
 const auditorRegistryAddressFor = (chainId: number): Address | null => {
   try {
-    const contracts = getContractsByChainId(chainId)
-    if (contracts.blueprintAuditors === ZERO_ADDRESS) return null
-    return contracts.blueprintAuditors as Address
+    const contracts = getContractsByChainId(chainId);
+    if (contracts.blueprintAuditors === ZERO_ADDRESS) return null;
+    return contracts.blueprintAuditors as Address;
   } catch {
-    return null
+    return null;
   }
-}
+};
 
 const normalizeBinaryVersion = (raw: {
-  versionId: bigint
-  sha256Hash: `0x${string}`
-  binaryUri: string
-  attestationHash: `0x${string}`
-  publishedAt: bigint
-  deprecated: boolean
+  versionId: bigint;
+  sha256Hash: `0x${string}`;
+  binaryUri: string;
+  attestationHash: `0x${string}`;
+  publishedAt: bigint;
+  deprecated: boolean;
 }): BinaryVersion => ({
   versionId: BigInt(raw.versionId),
   sha256Hash: raw.sha256Hash,
@@ -88,17 +88,17 @@ const normalizeBinaryVersion = (raw: {
   attestationHash: raw.attestationHash,
   publishedAt: BigInt(raw.publishedAt),
   deprecated: raw.deprecated,
-})
+});
 
 const normalizeAttestation = (raw: {
-  attester: Address
-  reportHash: `0x${string}`
-  reportUri: string
-  kind: number
-  severityFound: number
-  attestedAt: bigint
-  expiresAt: bigint
-  revoked: boolean
+  attester: Address;
+  reportHash: `0x${string}`;
+  reportUri: string;
+  kind: number;
+  severityFound: number;
+  attestedAt: bigint;
+  expiresAt: bigint;
+  revoked: boolean;
 }): Attestation => ({
   attester: raw.attester,
   reportHash: raw.reportHash,
@@ -108,7 +108,7 @@ const normalizeAttestation = (raw: {
   attestedAt: BigInt(raw.attestedAt),
   expiresAt: BigInt(raw.expiresAt),
   revoked: raw.revoked,
-})
+});
 
 // ─────────────────────────────────────────────────────────────────────────
 // fetchers — exposed so the publisher dialog can refresh after publish
@@ -119,22 +119,22 @@ export const fetchBinaryVersions = async (
   chainId: number,
   blueprintId: bigint,
 ): Promise<BinaryVersion[]> => {
-  const tangle = tangleAddressFor(chainId)
-  if (!tangle) return []
+  const tangle = tangleAddressFor(chainId);
+  if (!tangle) return [];
 
   const count = (await publicClient.readContract({
     address: tangle,
     abi: BinaryUpgradeABI,
     functionName: 'getBinaryVersionCount',
     args: [blueprintId],
-  })) as bigint
+  })) as bigint;
 
-  if (count === BigInt(0)) return []
+  if (count === BigInt(0)) return [];
 
   // The version count is bounded by publish events; batching all reads in
   // parallel via Promise.all is the same pattern fetchBlueprintsOnChain
   // uses for the blueprint list itself.
-  const ids = Array.from({ length: Number(count) }, (_, i) => BigInt(i))
+  const ids = Array.from({ length: Number(count) }, (_, i) => BigInt(i));
   const versions = await Promise.all(
     ids.map(async (versionId) => {
       try {
@@ -143,16 +143,16 @@ export const fetchBinaryVersions = async (
           abi: BinaryUpgradeABI,
           functionName: 'getBinaryVersion',
           args: [blueprintId, versionId],
-        })) as Parameters<typeof normalizeBinaryVersion>[0]
-        return normalizeBinaryVersion(raw)
+        })) as Parameters<typeof normalizeBinaryVersion>[0];
+        return normalizeBinaryVersion(raw);
       } catch {
-        return null
+        return null;
       }
     }),
-  )
+  );
 
-  return versions.filter((v): v is BinaryVersion => v !== null)
-}
+  return versions.filter((v): v is BinaryVersion => v !== null);
+};
 
 export const fetchAttestations = async (
   publicClient: PublicClient,
@@ -160,8 +160,8 @@ export const fetchAttestations = async (
   blueprintId: bigint,
   versionId: bigint,
 ): Promise<Attestation[]> => {
-  const tangle = tangleAddressFor(chainId)
-  if (!tangle) return []
+  const tangle = tangleAddressFor(chainId);
+  if (!tangle) return [];
 
   try {
     const raw = (await publicClient.readContract({
@@ -169,20 +169,20 @@ export const fetchAttestations = async (
       abi: BinaryUpgradeABI,
       functionName: 'listAttestations',
       args: [blueprintId, versionId],
-    })) as Array<Parameters<typeof normalizeAttestation>[0]>
-    return raw.map(normalizeAttestation)
+    })) as Array<Parameters<typeof normalizeAttestation>[0]>;
+    return raw.map(normalizeAttestation);
   } catch {
-    return []
+    return [];
   }
-}
+};
 
 export const fetchAuditorOnChain = async (
   publicClient: PublicClient,
   chainId: number,
   address: Address,
 ): Promise<Auditor | null> => {
-  const registry = auditorRegistryAddressFor(chainId)
-  if (!registry) return null
+  const registry = auditorRegistryAddressFor(chainId);
+  if (!registry) return null;
 
   try {
     const raw = (await publicClient.readContract({
@@ -191,17 +191,17 @@ export const fetchAuditorOnChain = async (
       functionName: 'getAuditor',
       args: [address],
     })) as {
-      name: string
-      metadataUri: string
-      weight: number
-      tier: number
-      active: boolean
-      admittedAt: bigint
-    }
+      name: string;
+      metadataUri: string;
+      weight: number;
+      tier: number;
+      active: boolean;
+      admittedAt: bigint;
+    };
 
     // `admittedAt == 0` means the address was never admitted; treat as null
     // so the fallback chain (JSON registry) can take over.
-    if (raw.admittedAt === BigInt(0)) return null
+    if (raw.admittedAt === BigInt(0)) return null;
 
     return {
       name: raw.name,
@@ -210,11 +210,11 @@ export const fetchAuditorOnChain = async (
       tier: raw.tier as AuditorTier,
       active: raw.active,
       admittedAt: BigInt(raw.admittedAt),
-    }
+    };
   } catch {
-    return null
+    return null;
   }
-}
+};
 
 // ─────────────────────────────────────────────────────────────────────────
 // Hooks
@@ -224,8 +224,8 @@ export const useBinaryVersions = (
   blueprintId: bigint | undefined,
   options?: { enabled?: boolean },
 ) => {
-  const chainId = useChainId()
-  const publicClient = usePublicClient({ chainId })
+  const chainId = useChainId();
+  const publicClient = usePublicClient({ chainId });
 
   return useQuery({
     queryKey: [
@@ -235,8 +235,8 @@ export const useBinaryVersions = (
       blueprintId?.toString() ?? null,
     ],
     queryFn: async (): Promise<BinaryVersion[]> => {
-      if (!publicClient || blueprintId === undefined) return []
-      return fetchBinaryVersions(publicClient, chainId, blueprintId)
+      if (!publicClient || blueprintId === undefined) return [];
+      return fetchBinaryVersions(publicClient, chainId, blueprintId);
     },
     enabled:
       (options?.enabled ?? true) &&
@@ -245,15 +245,15 @@ export const useBinaryVersions = (
     // 60s mirrors the blueprint catalog cache — version publish is a
     // relatively cold event compared to "is an upgrade available now".
     staleTime: 60_000,
-  })
-}
+  });
+};
 
 export const useEffectiveBinaryVersion = (
   serviceId: bigint | undefined,
   options?: { enabled?: boolean },
 ) => {
-  const chainId = useChainId()
-  const publicClient = usePublicClient({ chainId })
+  const chainId = useChainId();
+  const publicClient = usePublicClient({ chainId });
 
   return useQuery({
     queryKey: [
@@ -263,9 +263,9 @@ export const useEffectiveBinaryVersion = (
       serviceId?.toString() ?? null,
     ],
     queryFn: async (): Promise<BinaryVersion | null> => {
-      if (!publicClient || serviceId === undefined) return null
-      const tangle = tangleAddressFor(chainId)
-      if (!tangle) return null
+      if (!publicClient || serviceId === undefined) return null;
+      const tangle = tangleAddressFor(chainId);
+      if (!tangle) return null;
 
       try {
         const raw = (await publicClient.readContract({
@@ -273,13 +273,13 @@ export const useEffectiveBinaryVersion = (
           abi: BinaryUpgradeABI,
           functionName: 'effectiveBinaryVersion',
           args: [serviceId],
-        })) as Parameters<typeof normalizeBinaryVersion>[0]
-        return normalizeBinaryVersion(raw)
+        })) as Parameters<typeof normalizeBinaryVersion>[0];
+        return normalizeBinaryVersion(raw);
       } catch {
         // Effective version reverts `VersionNotFound` when the blueprint
         // has zero published binaries. That's not an error to surface —
         // the service simply hasn't been provisioned yet.
-        return null
+        return null;
       }
     },
     enabled:
@@ -289,16 +289,16 @@ export const useEffectiveBinaryVersion = (
     // 10s stale: the operator approve-and-install flow ack's a new version;
     // we want the badge / panel to refresh quickly after they sign.
     staleTime: 10_000,
-  })
-}
+  });
+};
 
 export const useServiceUpgradeState = (
   serviceId: bigint | undefined,
   blueprintId: bigint | undefined,
   options?: { enabled?: boolean },
 ) => {
-  const chainId = useChainId()
-  const publicClient = usePublicClient({ chainId })
+  const chainId = useChainId();
+  const publicClient = usePublicClient({ chainId });
 
   return useQuery({
     queryKey: [
@@ -309,9 +309,9 @@ export const useServiceUpgradeState = (
       blueprintId?.toString() ?? null,
     ],
     queryFn: async (): Promise<ServiceUpgradeState | null> => {
-      if (!publicClient || serviceId === undefined) return null
-      const tangle = tangleAddressFor(chainId)
-      if (!tangle) return null
+      if (!publicClient || serviceId === undefined) return null;
+      const tangle = tangleAddressFor(chainId);
+      if (!tangle) return null;
 
       // We read four things in parallel — these don't fan out further so
       // a single Promise.all is the right shape (vs. a multicall).
@@ -335,10 +335,10 @@ export const useServiceUpgradeState = (
               abi: BinaryUpgradeABI,
               functionName: 'effectiveBinaryVersion',
               args: [serviceId],
-            })) as Parameters<typeof normalizeBinaryVersion>[0]
-            return normalizeBinaryVersion(raw)
+            })) as Parameters<typeof normalizeBinaryVersion>[0];
+            return normalizeBinaryVersion(raw);
           } catch {
-            return null
+            return null;
           }
         })(),
         blueprintId !== undefined
@@ -349,24 +349,23 @@ export const useServiceUpgradeState = (
               args: [blueprintId],
             }) as Promise<bigint>)
           : Promise.resolve(null),
-      ])
+      ]);
 
       return {
         policy: policyRaw as UpgradePolicy,
         ackedVersionId: BigInt(ackedRaw),
         effectiveVersion: effective,
-        latestActiveVersionId:
-          activeId !== null ? BigInt(activeId) : null,
+        latestActiveVersionId: activeId !== null ? BigInt(activeId) : null,
         blueprintId: blueprintId ?? null,
-      }
+      };
     },
     enabled:
       (options?.enabled ?? true) &&
       serviceId !== undefined &&
       publicClient !== undefined,
     staleTime: 10_000,
-  })
-}
+  });
+};
 
 /**
  * Look up a single auditor identity, with the dapp's fallback chain baked
@@ -380,37 +379,37 @@ export const useServiceUpgradeState = (
  * consuming app. Keys are lowercase 0x… addresses.
  */
 export interface AuditorFallback {
-  name: string
-  metadataUri: string
-  weight: number
-  tier: AuditorTier
-  active: boolean
+  name: string;
+  metadataUri: string;
+  weight: number;
+  tier: AuditorTier;
+  active: boolean;
 }
 
 export const useAuditor = (
   address: Address | undefined,
   options?: {
-    enabled?: boolean
-    fallback?: Record<string, AuditorFallback>
+    enabled?: boolean;
+    fallback?: Record<string, AuditorFallback>;
   },
 ) => {
-  const chainId = useChainId()
-  const publicClient = usePublicClient({ chainId })
-  const fallback = options?.fallback ?? {}
+  const chainId = useChainId();
+  const publicClient = usePublicClient({ chainId });
+  const fallback = options?.fallback ?? {};
 
   return useQuery({
     queryKey: ['tangle', 'auditor', chainId, address?.toLowerCase() ?? null],
     queryFn: async (): Promise<Auditor | null> => {
-      if (!address || !publicClient) return null
+      if (!address || !publicClient) return null;
 
       // 1. On-chain registry takes priority. Once governance admits an
       //    auditor, that's the source of truth.
-      const onChain = await fetchAuditorOnChain(publicClient, chainId, address)
-      if (onChain !== null && onChain.active) return onChain
+      const onChain = await fetchAuditorOnChain(publicClient, chainId, address);
+      if (onChain !== null && onChain.active) return onChain;
 
       // 2. JSON bootstrap. Keys are lowercase; tolerate the input being
       //    checksummed by lowercasing the lookup.
-      const entry = fallback[address.toLowerCase()]
+      const entry = fallback[address.toLowerCase()];
       if (entry) {
         return {
           name: entry.name,
@@ -420,14 +419,14 @@ export const useAuditor = (
           active: entry.active,
           // No on-chain admittedAt available — use 0 as "unknown".
           admittedAt: BigInt(0),
-        }
+        };
       }
 
       // 3. Inactive on-chain row beats the JSON fallback (it represents
       //    a deliberate governance decision to revoke standing).
-      if (onChain !== null) return onChain
+      if (onChain !== null) return onChain;
 
-      return null
+      return null;
     },
     enabled:
       (options?.enabled ?? true) &&
@@ -435,8 +434,8 @@ export const useAuditor = (
       publicClient !== undefined,
     // Auditor identity rarely changes; cache for 5 min.
     staleTime: 300_000,
-  })
-}
+  });
+};
 
 /**
  * List attestations for a given version, with auditor identity joined in.
@@ -449,12 +448,12 @@ export const useVersionAttestations = (
   blueprintId: bigint | undefined,
   versionId: bigint | undefined,
   options?: {
-    enabled?: boolean
-    fallback?: Record<string, AuditorFallback>
+    enabled?: boolean;
+    fallback?: Record<string, AuditorFallback>;
   },
 ) => {
-  const chainId = useChainId()
-  const publicClient = usePublicClient({ chainId })
+  const chainId = useChainId();
+  const publicClient = usePublicClient({ chainId });
 
   const attestationsQuery = useQuery({
     queryKey: [
@@ -465,13 +464,9 @@ export const useVersionAttestations = (
       versionId?.toString() ?? null,
     ],
     queryFn: async (): Promise<Attestation[]> => {
-      if (
-        !publicClient ||
-        blueprintId === undefined ||
-        versionId === undefined
-      )
-        return []
-      return fetchAttestations(publicClient, chainId, blueprintId, versionId)
+      if (!publicClient || blueprintId === undefined || versionId === undefined)
+        return [];
+      return fetchAttestations(publicClient, chainId, blueprintId, versionId);
     },
     enabled:
       (options?.enabled ?? true) &&
@@ -479,24 +474,28 @@ export const useVersionAttestations = (
       versionId !== undefined &&
       publicClient !== undefined,
     staleTime: 30_000,
-  })
+  });
 
-  const attestations = attestationsQuery.data ?? []
-  const fallback = options?.fallback ?? {}
+  const attestations = attestationsQuery.data ?? [];
+  const fallback = options?.fallback ?? {};
 
   // Look up each attester. Unknown auditors return null; consumers render
   // those as "Anonymous (0x…)" rather than suppressing the row.
   const uniqueAttesters = Array.from(
     new Set(attestations.map((a) => a.attester.toLowerCase())),
-  ) as Address[]
+  ) as Address[];
   const auditorQueries = useQueries({
     queries: uniqueAttesters.map((address) => ({
       queryKey: ['tangle', 'auditor', chainId, address],
       queryFn: async (): Promise<Auditor | null> => {
-        if (!publicClient) return null
-        const onChain = await fetchAuditorOnChain(publicClient, chainId, address)
-        if (onChain !== null && onChain.active) return onChain
-        const entry = fallback[address]
+        if (!publicClient) return null;
+        const onChain = await fetchAuditorOnChain(
+          publicClient,
+          chainId,
+          address,
+        );
+        if (onChain !== null && onChain.active) return onChain;
+        const entry = fallback[address];
         if (entry) {
           return {
             name: entry.name,
@@ -505,25 +504,25 @@ export const useVersionAttestations = (
             tier: entry.tier,
             active: entry.active,
             admittedAt: BigInt(0),
-          }
+          };
         }
-        if (onChain !== null) return onChain
-        return null
+        if (onChain !== null) return onChain;
+        return null;
       },
       enabled: publicClient !== undefined,
       staleTime: 300_000,
     })),
-  })
+  });
 
-  const auditorMap = new Map<string, Auditor | null>()
+  const auditorMap = new Map<string, Auditor | null>();
   uniqueAttesters.forEach((address, idx) => {
-    auditorMap.set(address, auditorQueries[idx]?.data ?? null)
-  })
+    auditorMap.set(address, auditorQueries[idx]?.data ?? null);
+  });
 
   const joined: AttestationWithAuditor[] = attestations.map((a) => ({
     ...a,
     auditor: auditorMap.get(a.attester.toLowerCase()) ?? null,
-  }))
+  }));
 
   return {
     data: joined,
@@ -531,5 +530,5 @@ export const useVersionAttestations = (
       attestationsQuery.isLoading || auditorQueries.some((q) => q.isLoading),
     error: attestationsQuery.error,
     refetch: attestationsQuery.refetch,
-  }
-}
+  };
+};

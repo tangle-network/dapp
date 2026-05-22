@@ -19,7 +19,9 @@ const dayInSeconds = 86_400;
 const secondsAgo = (days: number): bigint =>
   BigInt(Math.floor(NOW.getTime() / 1000) - days * dayInSeconds);
 
-const auditor = (overrides: Partial<AttestationWithAuditor['auditor']> = {}) => ({
+const auditor = (
+  overrides: Partial<AttestationWithAuditor['auditor']> = {},
+) => ({
   name: 'Test Auditor',
   metadataUri: '',
   weight: 1000,
@@ -73,10 +75,7 @@ describe('computeTrustScore', () => {
 
   it('ignores revoked rows entirely', () => {
     const result = computeTrustScore(
-      [
-        row({ revoked: true }),
-        row({ revoked: true, severityFound: 5 }),
-      ],
+      [row({ revoked: true }), row({ revoked: true, severityFound: 5 })],
       { now: NOW },
     );
     expect(result.score).toBe(0);
@@ -133,10 +132,9 @@ describe('computeTrustScore', () => {
     const fresh = computeTrustScore([row({ attestedAt: secondsAgo(0) })], {
       now: NOW,
     }).score;
-    const oneYear = computeTrustScore(
-      [row({ attestedAt: secondsAgo(365) })],
-      { now: NOW },
-    ).score;
+    const oneYear = computeTrustScore([row({ attestedAt: secondsAgo(365) })], {
+      now: NOW,
+    }).score;
     // 2^(-1) = 0.5 → score halves
     expect(oneYear).toBeLessThanOrEqual(Math.ceil(fresh / 2) + 1);
     expect(oneYear).toBeGreaterThanOrEqual(Math.floor(fresh / 2) - 1);

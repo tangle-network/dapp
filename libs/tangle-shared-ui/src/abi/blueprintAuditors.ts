@@ -18,9 +18,7 @@ const ABI = [
   {
     type: 'function',
     name: 'getAuditor',
-    inputs: [
-      { name: 'auditor', type: 'address', internalType: 'address' },
-    ],
+    inputs: [{ name: 'auditor', type: 'address', internalType: 'address' }],
     outputs: [
       {
         name: '',
@@ -45,18 +43,14 @@ const ABI = [
   {
     type: 'function',
     name: 'isActiveAuditor',
-    inputs: [
-      { name: 'auditor', type: 'address', internalType: 'address' },
-    ],
+    inputs: [{ name: 'auditor', type: 'address', internalType: 'address' }],
     outputs: [{ name: '', type: 'bool', internalType: 'bool' }],
     stateMutability: 'view',
   },
   {
     type: 'function',
     name: 'auditorWeight',
-    inputs: [
-      { name: 'auditor', type: 'address', internalType: 'address' },
-    ],
+    inputs: [{ name: 'auditor', type: 'address', internalType: 'address' }],
     outputs: [{ name: '', type: 'uint16', internalType: 'uint16' }],
     stateMutability: 'view',
   },
