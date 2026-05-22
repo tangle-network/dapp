@@ -4,6 +4,7 @@ import { Button, Input, Label } from '@tangle-network/sandbox-ui/primitives';
 import {
   isValidIpfsUri,
   isValidHttpsUri,
+  isGithubRawHost,
   type HostingMode,
   type WizardState,
 } from './types';
@@ -198,11 +199,11 @@ export const Step2Hosting: FC<Step2Props> = ({ state, setState }) => {
             </p>
           )}
           {state.binaryUri.startsWith('https://') &&
-            !state.binaryUri.includes('raw.githubusercontent.com') && (
+            !isGithubRawHost(state.binaryUri) && (
               <p className="text-muted-foreground text-xs">
                 This isn&apos;t a raw.githubusercontent.com URL. The contract
                 will accept it, but operators can&apos;t verify what byte
-                they&apos;ll get — prefer a CID or a pinned raw commit URL.
+                they&apos;ll get - prefer a CID or a pinned raw commit URL.
               </p>
             )}
         </div>

@@ -129,7 +129,7 @@ export const fetchBinaryVersions = async (
     args: [blueprintId],
   })) as bigint
 
-  if (count === 0n) return []
+  if (count === BigInt(0)) return []
 
   // The version count is bounded by publish events; batching all reads in
   // parallel via Promise.all is the same pattern fetchBlueprintsOnChain
@@ -201,7 +201,7 @@ export const fetchAuditorOnChain = async (
 
     // `admittedAt == 0` means the address was never admitted; treat as null
     // so the fallback chain (JSON registry) can take over.
-    if (raw.admittedAt === 0n) return null
+    if (raw.admittedAt === BigInt(0)) return null
 
     return {
       name: raw.name,
@@ -419,7 +419,7 @@ export const useAuditor = (
           tier: entry.tier,
           active: entry.active,
           // No on-chain admittedAt available — use 0 as "unknown".
-          admittedAt: 0n,
+          admittedAt: BigInt(0),
         }
       }
 
@@ -504,7 +504,7 @@ export const useVersionAttestations = (
             weight: entry.weight,
             tier: entry.tier,
             active: entry.active,
-            admittedAt: 0n,
+            admittedAt: BigInt(0),
           }
         }
         if (onChain !== null) return onChain

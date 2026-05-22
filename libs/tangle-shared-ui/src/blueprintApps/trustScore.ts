@@ -147,7 +147,7 @@ export const computeTrustScore = (
     // Expired rows are equivalent to "no attestation" for current score
     // purposes. They still appear in `<AttestationBadge>` so users can see
     // historical signal, but they don't push the gauge.
-    if (a.expiresAt !== 0n && Number(a.expiresAt) <= nowSeconds) continue
+    if (a.expiresAt !== BigInt(0) && Number(a.expiresAt) <= nowSeconds) continue
 
     attestationCount += 1
     kindBreakdown[a.kind] = (kindBreakdown[a.kind] ?? 0) + 1

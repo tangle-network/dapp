@@ -1,5 +1,5 @@
-import type { FC } from 'react'
-import { Badge, Button } from '@tangle-network/sandbox-ui/primitives'
+import type { FC } from 'react';
+import { Button } from '@tangle-network/sandbox-ui/primitives';
 import {
   type Attestation,
   type AttestationWithAuditor,
@@ -9,8 +9,8 @@ import {
   attestationKindLabel,
   auditorTierLabel,
   severityLabel,
-} from '@tangle-network/tangle-shared-ui/blueprintApps/trustScore'
-import { twMerge } from 'tailwind-merge'
+} from '@tangle-network/tangle-shared-ui/blueprintApps/trustScore';
+import { twMerge } from 'tailwind-merge';
 
 /**
  * Single-row presentation of one attestation. Renders:
@@ -56,7 +56,7 @@ const KIND_PALETTE: Record<
     border: 'hsl(220 14% 60% / 0.4)',
     text: 'hsl(220 14% 80%)',
   },
-}
+};
 
 const TIER_PALETTE: Record<
   AuditorTier,
@@ -77,58 +77,58 @@ const TIER_PALETTE: Record<
     border: 'hsl(38 70% 62% / 0.55)',
     text: 'hsl(38 90% 80%)',
   },
-}
+};
 
 const severityColor = (severity: number): string => {
-  if (severity === 0) return 'hsl(150 64% 50%)'
-  if (severity <= 2) return 'hsl(45 90% 60%)'
-  if (severity === 3) return 'hsl(28 90% 60%)'
-  return 'hsl(0 78% 60%)'
-}
+  if (severity === 0) return 'hsl(150 64% 50%)';
+  if (severity <= 2) return 'hsl(45 90% 60%)';
+  if (severity === 3) return 'hsl(28 90% 60%)';
+  return 'hsl(0 78% 60%)';
+};
 
 const shortenAddress = (address: string): string => {
-  if (address.length <= 10) return address
-  return `${address.slice(0, 6)}…${address.slice(-4)}`
-}
+  if (address.length <= 10) return address;
+  return `${address.slice(0, 6)}…${address.slice(-4)}`;
+};
 
 const formatRelative = (timestampSeconds: bigint, now: Date): string => {
-  const ts = Number(timestampSeconds)
-  const diff = Math.floor(now.getTime() / 1000) - ts
+  const ts = Number(timestampSeconds);
+  const diff = Math.floor(now.getTime() / 1000) - ts;
   if (diff < 0) {
-    return `in ${formatDuration(-diff)}`
+    return `in ${formatDuration(-diff)}`;
   }
-  return `${formatDuration(diff)} ago`
-}
+  return `${formatDuration(diff)} ago`;
+};
 
 const formatDuration = (seconds: number): string => {
-  if (seconds < 60) return `${seconds}s`
-  const minutes = Math.floor(seconds / 60)
-  if (minutes < 60) return `${minutes}m`
-  const hours = Math.floor(minutes / 60)
-  if (hours < 48) return `${hours}h`
-  const days = Math.floor(hours / 24)
-  if (days < 30) return `${days}d`
-  const months = Math.floor(days / 30)
-  if (months < 12) return `${months}mo`
-  const years = Math.floor(days / 365)
-  return `${years}y`
-}
+  if (seconds < 60) return `${seconds}s`;
+  const minutes = Math.floor(seconds / 60);
+  if (minutes < 60) return `${minutes}m`;
+  const hours = Math.floor(minutes / 60);
+  if (hours < 48) return `${hours}h`;
+  const days = Math.floor(hours / 24);
+  if (days < 30) return `${days}d`;
+  const months = Math.floor(days / 30);
+  if (months < 12) return `${months}mo`;
+  const years = Math.floor(days / 365);
+  return `${years}y`;
+};
 
 const auditorDisplayName = (
   attester: string,
   auditor: Auditor | null,
 ): string => {
-  if (auditor?.name?.trim()) return auditor.name
-  return `Anonymous (${shortenAddress(attester)})`
-}
+  if (auditor?.name?.trim()) return auditor.name;
+  return `Anonymous (${shortenAddress(attester)})`;
+};
 
 interface AttestationBadgeProps {
-  attestation: Attestation
-  auditor: Auditor | null
+  attestation: Attestation;
+  auditor: Auditor | null;
   /** Wallet address currently connected, lowercased. */
-  connectedAddress?: string | null
-  onRevoke?: (attestation: Attestation) => void
-  className?: string
+  connectedAddress?: string | null;
+  onRevoke?: (attestation: Attestation) => void;
+  className?: string;
 }
 
 export const AttestationBadge: FC<AttestationBadgeProps> = ({
@@ -138,20 +138,20 @@ export const AttestationBadge: FC<AttestationBadgeProps> = ({
   onRevoke,
   className,
 }) => {
-  const now = new Date()
-  const kindStyle = KIND_PALETTE[attestation.kind]
-  const tierStyle = auditor ? TIER_PALETTE[auditor.tier] : null
-  const sevColor = severityColor(attestation.severityFound)
+  const now = new Date();
+  const kindStyle = KIND_PALETTE[attestation.kind];
+  const tierStyle = auditor ? TIER_PALETTE[auditor.tier] : null;
+  const sevColor = severityColor(attestation.severityFound);
   const isOwnAttestation =
     connectedAddress !== null &&
     connectedAddress !== undefined &&
-    connectedAddress === attestation.attester.toLowerCase()
+    connectedAddress === attestation.attester.toLowerCase();
 
   const isExpired =
     attestation.expiresAt !== 0n &&
-    Number(attestation.expiresAt) <= Math.floor(now.getTime() / 1000)
-  const isRevoked = attestation.revoked
-  const isMuted = isExpired || isRevoked
+    Number(attestation.expiresAt) <= Math.floor(now.getTime() / 1000);
+  const isRevoked = attestation.revoked;
+  const isMuted = isExpired || isRevoked;
 
   return (
     <div
@@ -162,10 +162,7 @@ export const AttestationBadge: FC<AttestationBadgeProps> = ({
       )}
     >
       <div className="flex min-w-0 items-center gap-3">
-        <AuditorAvatar
-          attester={attestation.attester}
-          auditor={auditor}
-        />
+        <AuditorAvatar attester={attestation.attester} auditor={auditor} />
         <div className="min-w-0">
           <div className="flex flex-wrap items-center gap-1.5">
             <span
@@ -249,11 +246,7 @@ export const AttestationBadge: FC<AttestationBadgeProps> = ({
             className="h-7 px-2 text-xs"
             asChild
           >
-            <a
-              href={attestation.reportUri}
-              target="_blank"
-              rel="noreferrer"
-            >
+            <a href={attestation.reportUri} target="_blank" rel="noreferrer">
               Read report ↗
             </a>
           </Button>
@@ -271,8 +264,8 @@ export const AttestationBadge: FC<AttestationBadgeProps> = ({
         )}
       </div>
     </div>
-  )
-}
+  );
+};
 
 const AuditorAvatar: FC<{ attester: string; auditor: Auditor | null }> = ({
   attester,
@@ -280,11 +273,11 @@ const AuditorAvatar: FC<{ attester: string; auditor: Auditor | null }> = ({
 }) => {
   const initials = (auditor?.name?.trim() ?? attester.slice(2, 4))
     .slice(0, 2)
-    .toUpperCase()
+    .toUpperCase();
   const hue = Array.from(attester).reduce(
     (hash, char) => (hash * 31 + char.charCodeAt(0)) % 360,
     0,
-  )
+  );
   return (
     <div
       className="grid h-9 w-9 shrink-0 place-items-center rounded-md border border-border font-display font-extrabold text-white text-xs"
@@ -295,16 +288,16 @@ const AuditorAvatar: FC<{ attester: string; auditor: Auditor | null }> = ({
     >
       {initials}
     </div>
-  )
-}
+  );
+};
 
 /**
  * Convenience wrapper if the caller already has the joined shape.
  */
 export const AttestationBadgeJoined: FC<{
-  row: AttestationWithAuditor
-  connectedAddress?: string | null
-  onRevoke?: (attestation: Attestation) => void
+  row: AttestationWithAuditor;
+  connectedAddress?: string | null;
+  onRevoke?: (attestation: Attestation) => void;
 }> = ({ row, connectedAddress, onRevoke }) => (
   <AttestationBadge
     attestation={row}
@@ -312,6 +305,6 @@ export const AttestationBadgeJoined: FC<{
     connectedAddress={connectedAddress}
     onRevoke={onRevoke}
   />
-)
+);
 
-export default AttestationBadge
+export default AttestationBadge;

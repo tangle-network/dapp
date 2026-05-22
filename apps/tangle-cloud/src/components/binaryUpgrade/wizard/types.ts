@@ -82,3 +82,20 @@ export const isPlausibleBinaryUri = (uri: string): boolean => {
 
 export const isValidSha256Hex = (h: string): h is Hex =>
   /^0x[0-9a-fA-F]{64}$/.test(h);
+
+/**
+ * URL host check for the "is this a github raw URL?" hint.
+ * Parsed via the URL API rather than substring-matching the input string,
+ * which would have let `https://attacker.com/raw.githubusercontent.com/...`
+ * pass. Returns false on any URL parse failure or non-https scheme.
+ */
+export const isGithubRawHost = (uri: string): boolean => {
+  try {
+    const u = new URL(uri);
+    return (
+      u.protocol === 'https:' && u.hostname === 'raw.githubusercontent.com'
+    );
+  } catch {
+    return false;
+  }
+};

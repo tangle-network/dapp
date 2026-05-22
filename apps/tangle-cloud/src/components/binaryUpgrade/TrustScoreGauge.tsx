@@ -1,9 +1,9 @@
-import type { FC } from 'react'
+import type { FC } from 'react';
 import {
   AttestationKind,
   type TrustScoreBreakdown,
-} from '@tangle-network/tangle-shared-ui/blueprintApps/trustScore'
-import { twMerge } from 'tailwind-merge'
+} from '@tangle-network/tangle-shared-ui/blueprintApps/trustScore';
+import { twMerge } from 'tailwind-merge';
 
 /**
  * Horizontal trust-score gauge.
@@ -17,64 +17,54 @@ import { twMerge } from 'tailwind-merge'
  * so a glance gives the user both a number and a qualitative summary.
  */
 
-type Variant = 'default' | 'compact'
+type Variant = 'default' | 'compact';
 
 const gaugeColor = (score: number, hasCritical: boolean) => {
-  if (hasCritical) return 'hsl(0 78% 60%)'
-  if (score >= 80) return 'hsl(150 64% 50%)'
-  if (score >= 50) return 'hsl(38 90% 56%)'
-  if (score > 0) return 'hsl(20 78% 56%)'
-  return 'hsl(220 12% 50%)'
-}
+  if (hasCritical) return 'hsl(0 78% 60%)';
+  if (score >= 80) return 'hsl(150 64% 50%)';
+  if (score >= 50) return 'hsl(38 90% 56%)';
+  if (score > 0) return 'hsl(20 78% 56%)';
+  return 'hsl(220 12% 50%)';
+};
 
-const buildBreakdownLine = (
-  breakdown: TrustScoreBreakdown,
-): string => {
-  const parts: string[] = []
-  const kindCounts = breakdown.kindBreakdown
+const buildBreakdownLine = (breakdown: TrustScoreBreakdown): string => {
+  const parts: string[] = [];
+  const kindCounts = breakdown.kindBreakdown;
   if (kindCounts[AttestationKind.AUDIT] > 0) {
     parts.push(
       `${kindCounts[AttestationKind.AUDIT]} audit${kindCounts[AttestationKind.AUDIT] === 1 ? '' : 's'}`,
-    )
+    );
   }
   if (kindCounts[AttestationKind.FORMAL] > 0) {
-    parts.push(
-      `${kindCounts[AttestationKind.FORMAL]} formal`,
-    )
+    parts.push(`${kindCounts[AttestationKind.FORMAL]} formal`);
   }
   if (kindCounts[AttestationKind.FUZZ] > 0) {
-    parts.push(
-      `${kindCounts[AttestationKind.FUZZ]} fuzz`,
-    )
+    parts.push(`${kindCounts[AttestationKind.FUZZ]} fuzz`);
   }
   if (kindCounts[AttestationKind.BUG_BOUNTY] > 0) {
-    parts.push(
-      `${kindCounts[AttestationKind.BUG_BOUNTY]} bounty`,
-    )
+    parts.push(`${kindCounts[AttestationKind.BUG_BOUNTY]} bounty`);
   }
   if (kindCounts[AttestationKind.SELF] > 0) {
-    parts.push(
-      `${kindCounts[AttestationKind.SELF]} self`,
-    )
+    parts.push(`${kindCounts[AttestationKind.SELF]} self`);
   }
 
   if (parts.length === 0) {
-    return 'No attestations'
+    return 'No attestations';
   }
 
   parts.push(
     breakdown.hasCriticalFinding
       ? 'high-severity findings present'
       : 'no high findings',
-  )
+  );
 
-  return parts.join(' · ')
-}
+  return parts.join(' · ');
+};
 
 interface TrustScoreGaugeProps {
-  breakdown: TrustScoreBreakdown
-  variant?: Variant
-  className?: string
+  breakdown: TrustScoreBreakdown;
+  variant?: Variant;
+  className?: string;
 }
 
 export const TrustScoreGauge: FC<TrustScoreGaugeProps> = ({
@@ -82,9 +72,9 @@ export const TrustScoreGauge: FC<TrustScoreGaugeProps> = ({
   variant = 'default',
   className,
 }) => {
-  const { score, hasCriticalFinding } = breakdown
-  const color = gaugeColor(score, hasCriticalFinding)
-  const widthPercent = Math.max(2, Math.min(100, score))
+  const { score, hasCriticalFinding } = breakdown;
+  const color = gaugeColor(score, hasCriticalFinding);
+  const widthPercent = Math.max(2, Math.min(100, score));
 
   if (variant === 'compact') {
     return (
@@ -103,7 +93,7 @@ export const TrustScoreGauge: FC<TrustScoreGaugeProps> = ({
         <span className="font-semibold">{score}</span>
         <span className="text-[10px] uppercase tracking-wider">trust</span>
       </div>
-    )
+    );
   }
 
   return (
@@ -139,7 +129,7 @@ export const TrustScoreGauge: FC<TrustScoreGaugeProps> = ({
         {buildBreakdownLine(breakdown)}
       </p>
     </div>
-  )
-}
+  );
+};
 
-export default TrustScoreGauge
+export default TrustScoreGauge;

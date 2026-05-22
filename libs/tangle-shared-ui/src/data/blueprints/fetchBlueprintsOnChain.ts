@@ -43,7 +43,7 @@ export const fetchBlueprintsOnChain = async (
     functionName: 'blueprintCount',
   })) as bigint;
 
-  if (total === 0n) {
+  if (total === BigInt(0)) {
     return [];
   }
 

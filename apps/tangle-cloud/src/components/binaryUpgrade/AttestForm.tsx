@@ -1,4 +1,10 @@
-import { type ChangeEvent, type FC, useCallback, useMemo, useState } from 'react'
+import {
+  type ChangeEvent,
+  type FC,
+  useCallback,
+  useMemo,
+  useState,
+} from 'react';
 import {
   Button,
   Input,
@@ -8,14 +14,14 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@tangle-network/sandbox-ui/primitives'
-import { type Hex } from 'viem'
-import { useAttestBinaryVersionTx } from '@tangle-network/tangle-shared-ui/data/blueprints/useBinaryUpgradeTx'
+} from '@tangle-network/sandbox-ui/primitives';
+import { type Hex } from 'viem';
+import { useAttestBinaryVersionTx } from '@tangle-network/tangle-shared-ui/data/blueprints/useBinaryUpgradeTx';
 import {
   AttestationKind,
   attestationKindLabel,
   severityLabel,
-} from '@tangle-network/tangle-shared-ui/blueprintApps/trustScore'
+} from '@tangle-network/tangle-shared-ui/blueprintApps/trustScore';
 
 /**
  * Permissionless attest-button form. Any connected wallet can submit one.
@@ -35,55 +41,55 @@ import {
  */
 
 const ZERO_BYTES32: Hex =
-  '0x0000000000000000000000000000000000000000000000000000000000000000'
+  '0x0000000000000000000000000000000000000000000000000000000000000000';
 
-const SEVERITY_OPTIONS = [0, 1, 2, 3, 4, 5]
+const SEVERITY_OPTIONS = [0, 1, 2, 3, 4, 5];
 const KIND_OPTIONS: AttestationKind[] = [
   AttestationKind.AUDIT,
   AttestationKind.FORMAL,
   AttestationKind.FUZZ,
   AttestationKind.BUG_BOUNTY,
   AttestationKind.SELF,
-]
+];
 
-type ExpiryPreset = 'never' | '3m' | '6m' | '1y'
+type ExpiryPreset = 'never' | '3m' | '6m' | '1y';
 const EXPIRY_LABELS: Record<ExpiryPreset, string> = {
   never: 'Never',
   '3m': '3 months',
   '6m': '6 months',
   '1y': '1 year',
-}
+};
 
 const expiryDurationSeconds = (preset: ExpiryPreset): number => {
   switch (preset) {
     case 'never':
-      return 0
+      return 0;
     case '3m':
-      return 60 * 60 * 24 * 90
+      return 60 * 60 * 24 * 90;
     case '6m':
-      return 60 * 60 * 24 * 180
+      return 60 * 60 * 24 * 180;
     case '1y':
-      return 60 * 60 * 24 * 365
+      return 60 * 60 * 24 * 365;
   }
-}
+};
 
 const toHex = (bytes: ArrayBuffer): Hex => {
   const hex = Array.from(new Uint8Array(bytes))
     .map((b) => b.toString(16).padStart(2, '0'))
-    .join('')
-  return `0x${hex}` as Hex
-}
+    .join('');
+  return `0x${hex}` as Hex;
+};
 
 const sha256OfFile = async (file: File): Promise<Hex> => {
-  const buffer = await file.arrayBuffer()
-  const digest = await crypto.subtle.digest('SHA-256', buffer)
-  return toHex(digest)
-}
+  const buffer = await file.arrayBuffer();
+  const digest = await crypto.subtle.digest('SHA-256', buffer);
+  return toHex(digest);
+};
 
 interface AttestFormProps {
-  blueprintId: bigint
-  versionId: bigint
-  onClose: () => void
+  blueprintId: bigint;
+  versionId: bigint;
+  onClose: () => void;
 }
 
 export const AttestForm: FC<AttestFormProps> = ({
@@ -91,52 +97,55 @@ export const AttestForm: FC<AttestFormProps> = ({
   versionId,
   onClose,
 }) => {
-  const [mode, setMode] = useState<'url' | 'pdf'>('url')
-  const [reportUrl, setReportUrl] = useState('')
-  const [reportFile, setReportFile] = useState<File | null>(null)
-  const [reportHash, setReportHash] = useState<Hex>(ZERO_BYTES32)
-  const [kind, setKind] = useState<AttestationKind>(AttestationKind.AUDIT)
-  const [severity, setSeverity] = useState<number>(0)
-  const [expiry, setExpiry] = useState<ExpiryPreset>('never')
-  const [validationError, setValidationError] = useState<string | null>(null)
+  const [mode, setMode] = useState<'url' | 'pdf'>('url');
+  const [reportUrl, setReportUrl] = useState('');
+  const [reportFile, setReportFile] = useState<File | null>(null);
+  const [reportHash, setReportHash] = useState<Hex>(ZERO_BYTES32);
+  const [kind, setKind] = useState<AttestationKind>(AttestationKind.AUDIT);
+  const [severity, setSeverity] = useState<number>(0);
+  const [expiry, setExpiry] = useState<ExpiryPreset>('never');
+  const [validationError, setValidationError] = useState<string | null>(null);
 
   const { execute, isPending, error, txHash, isSuccess } =
-    useAttestBinaryVersionTx({ onSuccess: onClose })
+    useAttestBinaryVersionTx({ onSuccess: onClose });
 
   const handleFile = useCallback(async (file: File | null) => {
-    setReportFile(file)
+    setReportFile(file);
     if (file === null) {
-      setReportHash(ZERO_BYTES32)
-      return
+      setReportHash(ZERO_BYTES32);
+      return;
     }
-    const hash = await sha256OfFile(file)
-    setReportHash(hash)
-  }, [])
+    const hash = await sha256OfFile(file);
+    setReportHash(hash);
+  }, []);
 
   const canSubmit = useMemo(() => {
-    if (isPending) return false
-    if (mode === 'url' && reportUrl.trim().length === 0) return false
-    if (mode === 'pdf' && (reportFile === null || reportUrl.trim().length === 0))
-      return false
-    return true
-  }, [isPending, mode, reportUrl, reportFile])
+    if (isPending) return false;
+    if (mode === 'url' && reportUrl.trim().length === 0) return false;
+    if (
+      mode === 'pdf' &&
+      (reportFile === null || reportUrl.trim().length === 0)
+    )
+      return false;
+    return true;
+  }, [isPending, mode, reportUrl, reportFile]);
 
   const handleSubmit = useCallback(async () => {
     if (!execute) {
-      setValidationError('Connect a wallet to attest.')
-      return
+      setValidationError('Connect a wallet to attest.');
+      return;
     }
-    const trimmedUri = reportUrl.trim()
+    const trimmedUri = reportUrl.trim();
     if (trimmedUri.length === 0) {
-      setValidationError('Provide a URL pointing to the report.')
-      return
+      setValidationError('Provide a URL pointing to the report.');
+      return;
     }
-    const durationSeconds = expiryDurationSeconds(expiry)
+    const durationSeconds = expiryDurationSeconds(expiry);
     const expiresAt =
       durationSeconds === 0
         ? 0n
-        : BigInt(Math.floor(Date.now() / 1000) + durationSeconds)
-    setValidationError(null)
+        : BigInt(Math.floor(Date.now() / 1000) + durationSeconds);
+    setValidationError(null);
     await execute({
       blueprintId,
       versionId,
@@ -145,7 +154,7 @@ export const AttestForm: FC<AttestFormProps> = ({
       kind,
       severityFound: severity,
       expiresAt,
-    })
+    });
   }, [
     execute,
     reportUrl,
@@ -156,7 +165,7 @@ export const AttestForm: FC<AttestFormProps> = ({
     reportHash,
     kind,
     severity,
-  ])
+  ]);
 
   return (
     <div className="rounded-lg border border-border bg-card p-4 space-y-4">
@@ -194,8 +203,8 @@ export const AttestForm: FC<AttestFormProps> = ({
             type="file"
             accept="application/pdf"
             onChange={(e: ChangeEvent<HTMLInputElement>) => {
-              const file = e.currentTarget.files?.[0] ?? null
-              void handleFile(file)
+              const file = e.currentTarget.files?.[0] ?? null;
+              void handleFile(file);
             }}
           />
         )}
@@ -299,7 +308,7 @@ export const AttestForm: FC<AttestFormProps> = ({
         </Button>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default AttestForm
+export default AttestForm;

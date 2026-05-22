@@ -1,46 +1,45 @@
-import {
-  type FC,
-  useMemo,
-  useState,
-} from 'react'
+import { type FC, useMemo, useState } from 'react';
 import {
   Badge,
   Button,
   Card,
   CardContent,
   Skeleton,
-} from '@tangle-network/sandbox-ui/primitives'
-import { useAccount } from 'wagmi'
+} from '@tangle-network/sandbox-ui/primitives';
+import { useAccount } from 'wagmi';
 import {
   useBinaryVersions,
   type BinaryVersion,
-} from '@tangle-network/tangle-shared-ui/data/blueprints/useBinaryVersions'
-import { useChainId, usePublicClient } from 'wagmi'
-import { useQueries } from '@tanstack/react-query'
-import { fetchAttestations, fetchAuditorOnChain } from '@tangle-network/tangle-shared-ui/data/blueprints/useBinaryVersions'
+} from '@tangle-network/tangle-shared-ui/data/blueprints/useBinaryVersions';
+import { useChainId, usePublicClient } from 'wagmi';
+import { useQueries } from '@tanstack/react-query';
+import {
+  fetchAttestations,
+  fetchAuditorOnChain,
+} from '@tangle-network/tangle-shared-ui/data/blueprints/useBinaryVersions';
 import {
   computeTrustScore,
   type Attestation,
   type AttestationWithAuditor,
   type Auditor,
-} from '@tangle-network/tangle-shared-ui/blueprintApps/trustScore'
-import { getContractsByChainId } from '@tangle-network/dapp-config/contracts'
-import type { Address } from 'viem'
-import TangleABI from '@tangle-network/tangle-shared-ui/abi/tangle'
+} from '@tangle-network/tangle-shared-ui/blueprintApps/trustScore';
+import { getContractsByChainId } from '@tangle-network/dapp-config/contracts';
+import type { Address } from 'viem';
+import TangleABI from '@tangle-network/tangle-shared-ui/abi/tangle';
 
-import TrustScoreGauge from './TrustScoreGauge'
-import AttestationBadge from './AttestationBadge'
-import { auditorFallbackRegistry } from '../../auditors'
+import TrustScoreGauge from './TrustScoreGauge';
+import AttestationBadge from './AttestationBadge';
+import { auditorFallbackRegistry } from '../../auditors';
 import {
   useSetActiveBinaryVersionTx,
   useDeprecateBinaryVersionTx,
   useRevokeAttestationTx,
-} from '@tangle-network/tangle-shared-ui/data/blueprints/useBinaryUpgradeTx'
-import { addressesEqual } from '@tangle-network/tangle-shared-ui/utils/safeParseAddress'
-import { useQuery } from '@tanstack/react-query'
-import BinaryUpgradeABI from '@tangle-network/tangle-shared-ui/abi/tangleBinaryUpgrade'
-import { AttestForm } from './AttestForm'
-import { PublishVersionDialog } from './PublishVersionDialog'
+} from '@tangle-network/tangle-shared-ui/data/blueprints/useBinaryUpgradeTx';
+import { addressesEqual } from '@tangle-network/tangle-shared-ui/utils/safeParseAddress';
+import { useQuery } from '@tanstack/react-query';
+import BinaryUpgradeABI from '@tangle-network/tangle-shared-ui/abi/tangleBinaryUpgrade';
+import { AttestForm } from './AttestForm';
+import { PublishVersionDialog } from './PublishVersionDialog';
 
 /**
  * Version-list timeline for a blueprint.
@@ -56,33 +55,33 @@ import { PublishVersionDialog } from './PublishVersionDialog'
  */
 
 const shortenHex = (hex: string, head = 6, tail = 4): string => {
-  if (hex.length <= head + tail + 2) return hex
-  return `${hex.slice(0, head + 2)}…${hex.slice(-tail)}`
-}
+  if (hex.length <= head + tail + 2) return hex;
+  return `${hex.slice(0, head + 2)}…${hex.slice(-tail)}`;
+};
 
 const formatDuration = (seconds: number): string => {
-  if (seconds < 60) return `${seconds}s`
-  const minutes = Math.floor(seconds / 60)
-  if (minutes < 60) return `${minutes}m`
-  const hours = Math.floor(minutes / 60)
-  if (hours < 48) return `${hours}h`
-  const days = Math.floor(hours / 24)
-  if (days < 30) return `${days}d`
-  const months = Math.floor(days / 30)
-  if (months < 12) return `${months}mo`
-  const years = Math.floor(days / 365)
-  return `${years}y`
-}
+  if (seconds < 60) return `${seconds}s`;
+  const minutes = Math.floor(seconds / 60);
+  if (minutes < 60) return `${minutes}m`;
+  const hours = Math.floor(minutes / 60);
+  if (hours < 48) return `${hours}h`;
+  const days = Math.floor(hours / 24);
+  if (days < 30) return `${days}d`;
+  const months = Math.floor(days / 30);
+  if (months < 12) return `${months}mo`;
+  const years = Math.floor(days / 365);
+  return `${years}y`;
+};
 
 const formatRelativePast = (timestampSeconds: bigint, now: Date): string => {
-  const ts = Number(timestampSeconds)
-  const diff = Math.max(0, Math.floor(now.getTime() / 1000) - ts)
-  return `${formatDuration(diff)} ago`
-}
+  const ts = Number(timestampSeconds);
+  const diff = Math.max(0, Math.floor(now.getTime() / 1000) - ts);
+  return `${formatDuration(diff)} ago`;
+};
 
 const useBlueprintOwner = (blueprintId: bigint | undefined) => {
-  const chainId = useChainId()
-  const publicClient = usePublicClient({ chainId })
+  const chainId = useChainId();
+  const publicClient = usePublicClient({ chainId });
   return useQuery({
     queryKey: [
       'tangle',
@@ -91,29 +90,29 @@ const useBlueprintOwner = (blueprintId: bigint | undefined) => {
       blueprintId?.toString() ?? null,
     ],
     queryFn: async (): Promise<Address | null> => {
-      if (!publicClient || blueprintId === undefined) return null
+      if (!publicClient || blueprintId === undefined) return null;
       try {
-        const contracts = getContractsByChainId(chainId)
-        const tangle = contracts.tangle as Address
+        const contracts = getContractsByChainId(chainId);
+        const tangle = contracts.tangle as Address;
         const result = (await publicClient.readContract({
           address: tangle,
           abi: TangleABI,
           functionName: 'getBlueprint',
           args: [blueprintId],
-        })) as { owner: Address }
-        return result.owner
+        })) as { owner: Address };
+        return result.owner;
       } catch {
-        return null
+        return null;
       }
     },
     enabled: blueprintId !== undefined && publicClient !== undefined,
     staleTime: 60_000,
-  })
-}
+  });
+};
 
 const useActiveVersionId = (blueprintId: bigint | undefined) => {
-  const chainId = useChainId()
-  const publicClient = usePublicClient({ chainId })
+  const chainId = useChainId();
+  const publicClient = usePublicClient({ chainId });
   return useQuery({
     queryKey: [
       'tangle',
@@ -122,21 +121,21 @@ const useActiveVersionId = (blueprintId: bigint | undefined) => {
       blueprintId?.toString() ?? null,
     ],
     queryFn: async (): Promise<bigint> => {
-      if (!publicClient || blueprintId === undefined) return 0n
-      const contracts = getContractsByChainId(chainId)
-      const tangle = contracts.tangle as Address
+      if (!publicClient || blueprintId === undefined) return 0n;
+      const contracts = getContractsByChainId(chainId);
+      const tangle = contracts.tangle as Address;
       const id = (await publicClient.readContract({
         address: tangle,
         abi: BinaryUpgradeABI,
         functionName: 'getActiveBinaryVersionId',
         args: [blueprintId],
-      })) as bigint
-      return BigInt(id)
+      })) as bigint;
+      return BigInt(id);
     },
     enabled: blueprintId !== undefined && publicClient !== undefined,
     staleTime: 30_000,
-  })
-}
+  });
+};
 
 /**
  * Aggregates attestation lists for every version on the blueprint, joining
@@ -147,8 +146,8 @@ const useAttestationsByVersion = (
   blueprintId: bigint | undefined,
   versionIds: bigint[],
 ) => {
-  const chainId = useChainId()
-  const publicClient = usePublicClient({ chainId })
+  const chainId = useChainId();
+  const publicClient = usePublicClient({ chainId });
 
   const attestationQueries = useQueries({
     queries: versionIds.map((versionId) => ({
@@ -160,34 +159,38 @@ const useAttestationsByVersion = (
         versionId.toString(),
       ],
       queryFn: async (): Promise<Attestation[]> => {
-        if (!publicClient || blueprintId === undefined) return []
-        return fetchAttestations(publicClient, chainId, blueprintId, versionId)
+        if (!publicClient || blueprintId === undefined) return [];
+        return fetchAttestations(publicClient, chainId, blueprintId, versionId);
       },
       enabled: blueprintId !== undefined && publicClient !== undefined,
       staleTime: 30_000,
     })),
-  })
+  });
 
-  const fallback = useMemo(() => auditorFallbackRegistry(), [])
+  const fallback = useMemo(() => auditorFallbackRegistry(), []);
   // Collect all unique attester addresses across all versions and resolve
   // each one once. A single auditor that attests across many versions only
   // pays one chain read.
   const uniqueAttesters = useMemo(() => {
-    const set = new Set<string>()
+    const set = new Set<string>();
     attestationQueries.forEach((q) => {
-      ;(q.data ?? []).forEach((a) => set.add(a.attester.toLowerCase()))
-    })
-    return Array.from(set) as Address[]
-  }, [attestationQueries])
+      (q.data ?? []).forEach((a) => set.add(a.attester.toLowerCase()));
+    });
+    return Array.from(set) as Address[];
+  }, [attestationQueries]);
 
   const auditorQueries = useQueries({
     queries: uniqueAttesters.map((address) => ({
       queryKey: ['tangle', 'auditor', chainId, address],
       queryFn: async (): Promise<Auditor | null> => {
-        if (!publicClient) return null
-        const onChain = await fetchAuditorOnChain(publicClient, chainId, address)
-        if (onChain !== null && onChain.active) return onChain
-        const entry = fallback[address]
+        if (!publicClient) return null;
+        const onChain = await fetchAuditorOnChain(
+          publicClient,
+          chainId,
+          address,
+        );
+        if (onChain !== null && onChain.active) return onChain;
+        const entry = fallback[address];
         if (entry) {
           return {
             name: entry.name,
@@ -196,54 +199,56 @@ const useAttestationsByVersion = (
             tier: entry.tier,
             active: entry.active,
             admittedAt: 0n,
-          }
+          };
         }
-        if (onChain !== null) return onChain
-        return null
+        if (onChain !== null) return onChain;
+        return null;
       },
       enabled: publicClient !== undefined,
       staleTime: 300_000,
     })),
-  })
+  });
 
-  const auditorMap = new Map<string, Auditor | null>()
+  const auditorMap = new Map<string, Auditor | null>();
   uniqueAttesters.forEach((address, idx) => {
-    auditorMap.set(address, auditorQueries[idx]?.data ?? null)
-  })
+    auditorMap.set(address, auditorQueries[idx]?.data ?? null);
+  });
 
-  return versionIds.map((versionId, idx) => {
-    const rows = attestationQueries[idx]?.data ?? []
-    return rows.map((row): AttestationWithAuditor => ({
-      ...row,
-      auditor: auditorMap.get(row.attester.toLowerCase()) ?? null,
-    }))
-  })
-}
+  return versionIds.map((_versionId, idx) => {
+    const rows = attestationQueries[idx]?.data ?? [];
+    return rows.map(
+      (row): AttestationWithAuditor => ({
+        ...row,
+        auditor: auditorMap.get(row.attester.toLowerCase()) ?? null,
+      }),
+    );
+  });
+};
 
 interface BlueprintVersionsPanelProps {
-  blueprintId: bigint
-  blueprintName?: string
+  blueprintId: bigint;
+  blueprintName?: string;
 }
 
 export const BlueprintVersionsPanel: FC<BlueprintVersionsPanelProps> = ({
   blueprintId,
   blueprintName,
 }) => {
-  const { address } = useAccount()
+  const { address } = useAccount();
   const {
     data: versions,
     isLoading: isLoadingVersions,
     refetch: refetchVersions,
-  } = useBinaryVersions(blueprintId)
-  const { data: activeVersionId } = useActiveVersionId(blueprintId)
-  const { data: ownerAddress } = useBlueprintOwner(blueprintId)
-  const [publishOpen, setPublishOpen] = useState(false)
+  } = useBinaryVersions(blueprintId);
+  const { data: activeVersionId } = useActiveVersionId(blueprintId);
+  const { data: ownerAddress } = useBlueprintOwner(blueprintId);
+  const [publishOpen, setPublishOpen] = useState(false);
 
   const isOwner =
     address !== undefined &&
     ownerAddress !== null &&
     ownerAddress !== undefined &&
-    addressesEqual(ownerAddress, address)
+    addressesEqual(ownerAddress, address);
 
   // Newest first so a fresh publish lands at the top.
   const sortedVersions = useMemo(
@@ -252,10 +257,10 @@ export const BlueprintVersionsPanel: FC<BlueprintVersionsPanelProps> = ({
         .slice()
         .sort((a, b) => Number(b.versionId) - Number(a.versionId)),
     [versions],
-  )
+  );
 
-  const versionIds = sortedVersions.map((v) => v.versionId)
-  const attestationsByIdx = useAttestationsByVersion(blueprintId, versionIds)
+  const versionIds = sortedVersions.map((v) => v.versionId);
+  const attestationsByIdx = useAttestationsByVersion(blueprintId, versionIds);
 
   return (
     <Card variant="elevated">
@@ -271,15 +276,12 @@ export const BlueprintVersionsPanel: FC<BlueprintVersionsPanelProps> = ({
             </h2>
             <p className="mt-1 max-w-2xl text-muted-foreground text-sm">
               Append-only timeline of binary builds for this blueprint. Each
-              version carries a sha256 digest, a binary URI, and any
-              auditor attestations published against it.
+              version carries a sha256 digest, a binary URI, and any auditor
+              attestations published against it.
             </p>
           </div>
           {isOwner && (
-            <Button
-              variant="sandbox"
-              onClick={() => setPublishOpen(true)}
-            >
+            <Button variant="sandbox" onClick={() => setPublishOpen(true)}>
               Publish new version
             </Button>
           )}
@@ -293,8 +295,8 @@ export const BlueprintVersionsPanel: FC<BlueprintVersionsPanelProps> = ({
         ) : sortedVersions.length === 0 ? (
           <div className="mt-5 flex min-h-32 items-center justify-center rounded-lg border border-border border-dashed bg-card p-6 text-center">
             <p className="max-w-md text-muted-foreground text-sm">
-              No binary versions have been published for this blueprint
-              yet. The blueprint owner can publish the first build above.
+              No binary versions have been published for this blueprint yet. The
+              blueprint owner can publish the first build above.
             </p>
           </div>
         ) : (
@@ -307,9 +309,7 @@ export const BlueprintVersionsPanel: FC<BlueprintVersionsPanelProps> = ({
                 activeVersionId={activeVersionId ?? null}
                 blueprintId={blueprintId}
                 isOwner={isOwner}
-                connectedAddress={
-                  address ? address.toLowerCase() : null
-                }
+                connectedAddress={address ? address.toLowerCase() : null}
                 refetchVersions={refetchVersions}
               />
             ))}
@@ -322,36 +322,36 @@ export const BlueprintVersionsPanel: FC<BlueprintVersionsPanelProps> = ({
           blueprintId={blueprintId}
           blueprintName={blueprintName}
           onClose={() => {
-            setPublishOpen(false)
-            void refetchVersions()
+            setPublishOpen(false);
+            void refetchVersions();
           }}
         />
       )}
     </Card>
-  )
-}
+  );
+};
 
 interface VersionRowProps {
-  version: BinaryVersion
-  attestations: AttestationWithAuditor[]
-  activeVersionId: bigint | null
-  blueprintId: bigint
-  isOwner: boolean
-  connectedAddress: string | null
-  refetchVersions: () => void
+  version: BinaryVersion;
+  attestations: AttestationWithAuditor[];
+  activeVersionId: bigint | null;
+  blueprintId: bigint;
+  isOwner: boolean;
+  connectedAddress: string | null;
+  refetchVersions: () => void;
 }
 
 const statusLabel = (
   version: BinaryVersion,
   activeVersionId: bigint | null,
 ): { label: string; tone: 'success' | 'destructive' | 'outline' | 'info' } => {
-  if (version.deprecated) return { label: 'Deprecated', tone: 'destructive' }
+  if (version.deprecated) return { label: 'Deprecated', tone: 'destructive' };
   if (activeVersionId !== null && version.versionId === activeVersionId) {
-    return { label: 'Active', tone: 'success' }
+    return { label: 'Active', tone: 'success' };
   }
-  if (version.versionId === 0n) return { label: 'Genesis', tone: 'info' }
-  return { label: 'Available', tone: 'outline' }
-}
+  if (version.versionId === 0n) return { label: 'Genesis', tone: 'info' };
+  return { label: 'Available', tone: 'outline' };
+};
 
 const VersionRow: FC<VersionRowProps> = ({
   version,
@@ -362,27 +362,27 @@ const VersionRow: FC<VersionRowProps> = ({
   connectedAddress,
   refetchVersions,
 }) => {
-  const [expanded, setExpanded] = useState(false)
-  const [attesting, setAttesting] = useState(false)
+  const [expanded, setExpanded] = useState(false);
+  const [attesting, setAttesting] = useState(false);
   const breakdown = useMemo(
     () => computeTrustScore(attestations),
     [attestations],
-  )
-  const { label, tone } = statusLabel(version, activeVersionId)
+  );
+  const { label, tone } = statusLabel(version, activeVersionId);
   const { execute: setActive, isPending: settingActive } =
-    useSetActiveBinaryVersionTx({ onSuccess: refetchVersions })
+    useSetActiveBinaryVersionTx({ onSuccess: refetchVersions });
   const { execute: deprecate, isPending: deprecating } =
-    useDeprecateBinaryVersionTx({ onSuccess: refetchVersions })
+    useDeprecateBinaryVersionTx({ onSuccess: refetchVersions });
   const { execute: revokeAttestation, isPending: revoking } =
-    useRevokeAttestationTx({ onSuccess: refetchVersions })
+    useRevokeAttestationTx({ onSuccess: refetchVersions });
 
   const handleRevoke = async (att: Attestation) => {
-    if (!revokeAttestation) return
+    if (!revokeAttestation) return;
     const reasonUri =
       window.prompt(
         'Revocation reason URI (optional, e.g. ipfs://… or https://…):',
         '',
-      ) ?? ''
+      ) ?? '';
     // Find the row by comparing attester + attestedAt + reportHash — that
     // triple uniquely identifies an on-chain attestation. We can't use
     // referential equality because the parent passes a joined object.
@@ -391,15 +391,15 @@ const VersionRow: FC<VersionRowProps> = ({
         row.attester === att.attester &&
         row.attestedAt === att.attestedAt &&
         row.reportHash === att.reportHash,
-    )
-    if (idx < 0) return
+    );
+    if (idx < 0) return;
     await revokeAttestation({
       blueprintId,
       versionId: version.versionId,
       attestationId: BigInt(idx),
       reasonUri,
-    })
-  }
+    });
+  };
 
   return (
     <li
@@ -493,12 +493,12 @@ const VersionRow: FC<VersionRowProps> = ({
                 }
                 loading={settingActive}
                 onClick={(e: React.MouseEvent<HTMLButtonElement>) => {
-                  e.stopPropagation()
-                  if (!setActive) return
+                  e.stopPropagation();
+                  if (!setActive) return;
                   void setActive({
                     blueprintId,
                     versionId: version.versionId,
-                  })
+                  });
                 }}
               >
                 Promote to active
@@ -510,12 +510,12 @@ const VersionRow: FC<VersionRowProps> = ({
                   disabled={deprecating || deprecate === null}
                   loading={deprecating}
                   onClick={(e: React.MouseEvent<HTMLButtonElement>) => {
-                    e.stopPropagation()
-                    if (!deprecate) return
+                    e.stopPropagation();
+                    if (!deprecate) return;
                     void deprecate({
                       blueprintId,
                       versionId: version.versionId,
-                    })
+                    });
                   }}
                 >
                   Deprecate
@@ -541,8 +541,8 @@ const VersionRow: FC<VersionRowProps> = ({
             </header>
             {attestations.length === 0 ? (
               <p className="rounded-lg border border-border border-dashed bg-card p-3 text-muted-foreground text-xs">
-                No attestations have been submitted for this version yet.
-                Any wallet may submit one — auditors registered in the on-chain
+                No attestations have been submitted for this version yet. Any
+                wallet may submit one — auditors registered in the on-chain
                 auditor registry contribute weighted signal toward the trust
                 score.
               </p>
@@ -564,8 +564,8 @@ const VersionRow: FC<VersionRowProps> = ({
                 blueprintId={blueprintId}
                 versionId={version.versionId}
                 onClose={() => {
-                  setAttesting(false)
-                  refetchVersions()
+                  setAttesting(false);
+                  refetchVersions();
                 }}
               />
             )}
@@ -573,8 +573,8 @@ const VersionRow: FC<VersionRowProps> = ({
         </div>
       )}
     </li>
-  )
-}
+  );
+};
 
 const KeyValue: FC<{ label: string; value: React.ReactNode }> = ({
   label,
@@ -586,7 +586,7 @@ const KeyValue: FC<{ label: string; value: React.ReactNode }> = ({
     </p>
     <p className="mt-1 break-all font-mono text-foreground text-xs">{value}</p>
   </div>
-)
+);
 
 /**
  * Map `ipfs://` URIs to a gateway so the link is clickable from the dapp.
@@ -594,10 +594,10 @@ const KeyValue: FC<{ label: string; value: React.ReactNode }> = ({
  */
 const resolveBinaryHref = (uri: string): string => {
   if (uri.startsWith('ipfs://')) {
-    const path = uri.slice('ipfs://'.length)
-    return `https://ipfs.io/ipfs/${path}`
+    const path = uri.slice('ipfs://'.length);
+    return `https://ipfs.io/ipfs/${path}`;
   }
-  return uri
-}
+  return uri;
+};
 
-export default BlueprintVersionsPanel
+export default BlueprintVersionsPanel;
