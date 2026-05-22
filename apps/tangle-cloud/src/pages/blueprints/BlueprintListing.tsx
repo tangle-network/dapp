@@ -22,6 +22,20 @@ import {
   useMemo,
   useState,
 } from 'react';
+import { useQueries } from '@tanstack/react-query';
+import { useChainId, usePublicClient } from 'wagmi';
+import type { Address } from 'viem';
+import { getContractsByChainId } from '@tangle-network/dapp-config/contracts';
+import BinaryUpgradeABI from '@tangle-network/tangle-shared-ui/abi/tangleBinaryUpgrade';
+import {
+  fetchAttestations,
+  fetchAuditorOnChain,
+} from '@tangle-network/tangle-shared-ui/data/blueprints/useBinaryVersions';
+import {
+  AttestationKind,
+  type Auditor,
+} from '@tangle-network/tangle-shared-ui/blueprintApps/trustScore';
+import { auditorFallbackRegistry } from '../../auditors';
 import { Link } from 'react-router';
 import { twMerge } from 'tailwind-merge';
 import { PagePath } from '../../types';
@@ -31,12 +45,17 @@ import {
   categoryBadgeStyle,
   categoryStripeStyle,
 } from '../../components/blueprints/categoryColor';
+import {
+  AuditedPill,
+  BlueprintTrustChip,
+} from '../../components/binaryUpgrade/BlueprintTrustChip';
 
 const PAGE_SIZE = 12;
 const ALL_CATEGORIES = 'All categories';
 
 type AudienceFilter = 'all' | 'customers' | 'operators';
 type ManifestFilter = 'all' | 'verified' | 'fallback';
+type AuditFilter = 'all' | 'audited';
 
 type Props = {
   rowSelection?: RowSelectionState;
@@ -130,6 +149,7 @@ const BlueprintListing: FC<Props> = ({
   const [selectedCategory, setSelectedCategory] = useState(ALL_CATEGORIES);
   const [audienceFilter, setAudienceFilter] = useState<AudienceFilter>('all');
   const [manifestFilter, setManifestFilter] = useState<ManifestFilter>('all');
+  const [auditFilter, setAuditFilter] = useState<AuditFilter>('all');
   const deferredSearchQuery = useDeferredValue(
     searchQuery.trim().toLowerCase(),
   );
@@ -141,6 +161,11 @@ const BlueprintListing: FC<Props> = ({
       return Number(b.id - a.id);
     });
   }, [blueprints]);
+
+  // Audited-status map keyed by blueprintId string. We pre-fetch in parallel
+  // so the "Audited only" toggle can filter before pagination — otherwise
+  // we'd render the wrong page count when toggling.
+  const auditedStatus = useAuditedStatusMap(blueprintItems.map((b) => b.id));
 
   const categories = useMemo(() => {
     const counts = new Map<string, number>();
@@ -190,10 +215,19 @@ const BlueprintListing: FC<Props> = ({
         return false;
       }
 
+      if (
+        auditFilter === 'audited' &&
+        !auditedStatus.get(blueprint.id.toString())
+      ) {
+        return false;
+      }
+
       return true;
     });
   }, [
     audienceFilter,
+    auditFilter,
+    auditedStatus,
     blueprintItems,
     deferredSearchQuery,
     manifestFilter,
@@ -202,7 +236,13 @@ const BlueprintListing: FC<Props> = ({
 
   useEffect(() => {
     setPage(0);
-  }, [audienceFilter, deferredSearchQuery, manifestFilter, selectedCategory]);
+  }, [
+    audienceFilter,
+    auditFilter,
+    deferredSearchQuery,
+    manifestFilter,
+    selectedCategory,
+  ]);
 
   const totalPages = Math.max(
     1,
@@ -217,7 +257,8 @@ const BlueprintListing: FC<Props> = ({
     searchQuery.trim() !== '' ||
     selectedCategory !== ALL_CATEGORIES ||
     audienceFilter !== 'all' ||
-    manifestFilter !== 'all';
+    manifestFilter !== 'all' ||
+    auditFilter !== 'all';
 
   const showSelection =
     typeof rowSelection !== 'undefined' &&
@@ -308,6 +349,22 @@ const BlueprintListing: FC<Props> = ({
                 <option value="fallback">Chain-only</option>
               </select>
             </label>
+
+            <label className="grid gap-1">
+              <span className="font-semibold text-muted-foreground text-[10px] uppercase tracking-wider">
+                Trust
+              </span>
+              <select
+                value={auditFilter}
+                onChange={(event) =>
+                  setAuditFilter(event.currentTarget.value as AuditFilter)
+                }
+                className="h-10 min-w-36 rounded-md border border-border bg-background px-3 font-semibold text-foreground text-sm outline-none transition-colors hover:bg-muted focus:border-primary"
+              >
+                <option value="all">All blueprints</option>
+                <option value="audited">Audited only</option>
+              </select>
+            </label>
           </div>
 
           <div className="flex flex-col gap-3 border-border border-t pt-4 lg:flex-row lg:items-center lg:justify-between">
@@ -359,6 +416,7 @@ const BlueprintListing: FC<Props> = ({
                     setSelectedCategory(ALL_CATEGORIES);
                     setAudienceFilter('all');
                     setManifestFilter('all');
+                    setAuditFilter('all');
                   }}
                 >
                   Clear
@@ -444,6 +502,152 @@ BlueprintListing.displayName = 'BlueprintListing';
 
 export default BlueprintListing;
 
+/**
+ * Per-blueprint audited-status fetcher. For each id, reads the active
+ * version + that version's attestation list, then determines whether at
+ * least one non-revoked, non-expired, non-SELF attestation came from a
+ * known active auditor.
+ *
+ * Returns a Map<idString, boolean> so the parent filter can stay synchronous.
+ *
+ * Each query is keyed identically to `useBlueprintTrust` in
+ * `BlueprintTrustChip.tsx`, so the card chip + the listing filter share
+ * the same react-query cache entry — no duplicate chain reads.
+ */
+const useAuditedStatusMap = (
+  blueprintIds: bigint[],
+): Map<string, boolean> => {
+  const chainId = useChainId();
+  const publicClient = usePublicClient({ chainId });
+  const fallback = useMemo(() => auditorFallbackRegistry(), []);
+
+  const queries = useQueries({
+    queries: blueprintIds.map((blueprintId) => ({
+      queryKey: [
+        'tangle',
+        'blueprint-trust',
+        chainId,
+        blueprintId.toString(),
+      ],
+      queryFn: async (): Promise<{
+        score: number;
+        hasCriticalFinding: boolean;
+        hasAuditedAttestation: boolean;
+        attestationCount: number;
+      }> => {
+        if (!publicClient) {
+          return {
+            score: 0,
+            hasCriticalFinding: false,
+            hasAuditedAttestation: false,
+            attestationCount: 0,
+          };
+        }
+        let tangle: Address;
+        try {
+          tangle = getContractsByChainId(chainId).tangle as Address;
+        } catch {
+          return {
+            score: 0,
+            hasCriticalFinding: false,
+            hasAuditedAttestation: false,
+            attestationCount: 0,
+          };
+        }
+        const [count, activeId] = await Promise.all([
+          publicClient.readContract({
+            address: tangle,
+            abi: BinaryUpgradeABI,
+            functionName: 'getBinaryVersionCount',
+            args: [blueprintId],
+          }) as Promise<bigint>,
+          publicClient.readContract({
+            address: tangle,
+            abi: BinaryUpgradeABI,
+            functionName: 'getActiveBinaryVersionId',
+            args: [blueprintId],
+          }) as Promise<bigint>,
+        ]);
+        if (count === 0n) {
+          return {
+            score: 0,
+            hasCriticalFinding: false,
+            hasAuditedAttestation: false,
+            attestationCount: 0,
+          };
+        }
+        const attestations = await fetchAttestations(
+          publicClient,
+          chainId,
+          blueprintId,
+          BigInt(activeId),
+        );
+        if (attestations.length === 0) {
+          return {
+            score: 0,
+            hasCriticalFinding: false,
+            hasAuditedAttestation: false,
+            attestationCount: 0,
+          };
+        }
+        const uniqueAttesters = Array.from(
+          new Set(attestations.map((a) => a.attester.toLowerCase())),
+        ) as Address[];
+        const auditors = await Promise.all(
+          uniqueAttesters.map(async (address): Promise<Auditor | null> => {
+            const onChain = await fetchAuditorOnChain(
+              publicClient,
+              chainId,
+              address,
+            );
+            if (onChain !== null && onChain.active) return onChain;
+            const entry = fallback[address];
+            if (entry) {
+              return {
+                name: entry.name,
+                metadataUri: entry.metadataUri,
+                weight: entry.weight,
+                tier: entry.tier,
+                active: entry.active,
+                admittedAt: 0n,
+              };
+            }
+            return onChain;
+          }),
+        );
+        const auditorMap = new Map<string, Auditor | null>();
+        uniqueAttesters.forEach((address, idx) => {
+          auditorMap.set(address, auditors[idx] ?? null);
+        });
+        const nowSeconds = Math.floor(Date.now() / 1000);
+        const hasAuditedAttestation = attestations.some((row) => {
+          if (row.revoked) return false;
+          if (row.expiresAt !== 0n && Number(row.expiresAt) <= nowSeconds) {
+            return false;
+          }
+          if (row.kind === AttestationKind.SELF) return false;
+          const auditor = auditorMap.get(row.attester.toLowerCase());
+          return auditor !== null && auditor !== undefined && auditor.active;
+        });
+        return {
+          score: 0,
+          hasCriticalFinding: false,
+          hasAuditedAttestation,
+          attestationCount: attestations.length,
+        };
+      },
+      enabled: publicClient !== undefined,
+      staleTime: 60_000,
+    })),
+  });
+
+  const map = new Map<string, boolean>();
+  blueprintIds.forEach((id, idx) => {
+    map.set(id.toString(), queries[idx]?.data?.hasAuditedAttestation ?? false);
+  });
+  return map;
+};
+
 const BlueprintCard = ({
   blueprint,
   isSelectable,
@@ -521,7 +725,7 @@ const BlueprintCard = ({
           </label>
         )}
 
-        <div className="mt-3 flex flex-wrap gap-2">
+        <div className="mt-3 flex flex-wrap items-center gap-2">
           <span className="rounded-full border border-border bg-muted/40 px-2.5 py-1 font-semibold text-[10px] text-muted-foreground uppercase tracking-wider">
             {capacityLabel}
           </span>
@@ -538,6 +742,8 @@ const BlueprintCard = ({
           <span className="rounded-full border border-border bg-muted/40 px-2.5 py-1 font-semibold text-[10px] text-muted-foreground uppercase tracking-wider">
             {manifestStatus}
           </span>
+          <AuditedPill blueprintId={blueprint.id} />
+          <BlueprintTrustChip blueprintId={blueprint.id} />
         </div>
 
         <div className="mt-4 grid grid-cols-3 gap-2 rounded-lg border border-border bg-muted/20 p-3">

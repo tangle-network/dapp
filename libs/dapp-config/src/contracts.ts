@@ -12,6 +12,12 @@ export type ContractAddresses = {
   inflationPool: Address;
   credits: Address;
   liquidDelegationFactory: Address;
+  // `blueprintAuditors` may be the zero address on networks where the
+  // governance-curated auditor registry has not yet been deployed; the
+  // dapp falls back to the static `apps/tangle-cloud/src/auditors/registry.json`
+  // bundle in that case. Once tnt-core ships the deployment, this entry
+  // is what the dapp reads via `useAuditor`.
+  blueprintAuditors: Address;
 };
 
 /**
@@ -45,6 +51,7 @@ export const LOCAL_CONTRACTS: ContractAddresses = {
   inflationPool: '0x21df544947ba3e8b3c32561399e88b52dc8b2823', // Proxy
   credits: '0x922d6956c99e12dfeb3224dea977d0939758a1fe', // Proxy
   liquidDelegationFactory: '0xc66ab83418c20a65c3f8e83b3d11c8c3a6097b6f', // Direct
+  blueprintAuditors: '0x0000000000000000000000000000000000000000', // pending deployment
 };
 
 // Base Sepolia testnet addresses (synced from tnt-core deployments/base-sepolia/latest.json)
@@ -57,6 +64,7 @@ export const BASE_SEPOLIA_CONTRACTS: ContractAddresses = {
   inflationPool: '0x2c44736aaf0eec7c9b852ee71f0dc05b1606803b',
   credits: '0xeeba50602c52096091cce56cdb12ca1df049542a',
   liquidDelegationFactory: '0x0000000000000000000000000000000000000000', // not deployed in this release
+  blueprintAuditors: '0x0000000000000000000000000000000000000000', // pending tnt-core feat/blueprint-binary-versions deploy
 };
 
 // Base mainnet addresses (to be updated after deployment)
@@ -69,6 +77,7 @@ export const BASE_MAINNET_CONTRACTS: ContractAddresses = {
   inflationPool: '0x0000000000000000000000000000000000000000',
   credits: '0x0000000000000000000000000000000000000000',
   liquidDelegationFactory: '0x0000000000000000000000000000000000000000',
+  blueprintAuditors: '0x0000000000000000000000000000000000000000',
 };
 
 // Arbitrum Sepolia testnet addresses (to be updated after deployment)
@@ -81,6 +90,7 @@ export const ARBITRUM_SEPOLIA_CONTRACTS: ContractAddresses = {
   inflationPool: '0x0000000000000000000000000000000000000000',
   credits: '0x0000000000000000000000000000000000000000',
   liquidDelegationFactory: '0x0000000000000000000000000000000000000000',
+  blueprintAuditors: '0x0000000000000000000000000000000000000000',
 };
 
 // Arbitrum One mainnet addresses (to be updated after deployment)
@@ -93,6 +103,7 @@ export const ARBITRUM_ONE_CONTRACTS: ContractAddresses = {
   inflationPool: '0x0000000000000000000000000000000000000000',
   credits: '0x0000000000000000000000000000000000000000',
   liquidDelegationFactory: '0x0000000000000000000000000000000000000000',
+  blueprintAuditors: '0x0000000000000000000000000000000000000000',
 };
 
 // Ethereum Mainnet - Only used for native staking (ValidatorPod/ValidatorPodManager)
@@ -106,6 +117,7 @@ export const ETHEREUM_MAINNET_CONTRACTS: ContractAddresses = {
   inflationPool: '0x0000000000000000000000000000000000000000',
   credits: '0x0000000000000000000000000000000000000000',
   liquidDelegationFactory: '0x0000000000000000000000000000000000000000',
+  blueprintAuditors: '0x0000000000000000000000000000000000000000',
 };
 
 // Ethereum Holesky Testnet - Only used for native staking (ValidatorPod/ValidatorPodManager)
@@ -119,6 +131,7 @@ export const ETHEREUM_HOLESKY_CONTRACTS: ContractAddresses = {
   inflationPool: '0x0000000000000000000000000000000000000000',
   credits: '0x0000000000000000000000000000000000000000',
   liquidDelegationFactory: '0x0000000000000000000000000000000000000000',
+  blueprintAuditors: '0x0000000000000000000000000000000000000000',
 };
 
 // Get contracts by chain ID
