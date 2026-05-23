@@ -143,7 +143,7 @@ const Page = () => {
 
       <div className="grid gap-5 xl:grid-cols-2 xl:auto-rows-fr xl:items-stretch">
         <AccountStatsCard refreshTrigger={refreshTrigger} />
-        <InstructionCard />
+        <InstructionCard refreshTrigger={refreshTrigger} />
       </div>
       <TotalValueLockedTabs />
     </div>
