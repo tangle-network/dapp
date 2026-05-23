@@ -8,6 +8,7 @@ import {
   Button,
   Card,
   CardContent,
+  EmptyState,
   Skeleton,
 } from '@tangle-network/sandbox-ui/primitives';
 import { Navigate, Link } from 'react-router';
@@ -274,16 +275,17 @@ const BlueprintDetailHero = ({
             )}
           </div>
 
-          <dl className="mt-5 space-y-3">
+          <dl className="mt-5 divide-y divide-border overflow-hidden rounded-lg border border-border bg-[var(--bg-card)]">
             {metadataItems.map(([label, value]) => (
               <div
                 key={label}
-                className="rounded-lg border border-border bg-card p-3"
+                className="group flex items-start gap-3 px-3 py-2.5 transition-colors hover:bg-[var(--bg-hover)]"
               >
-                <dt className="font-semibold text-muted-foreground text-[10px] uppercase tracking-wider">
+                <span className="mt-1 h-3 w-0.5 shrink-0 rounded-full bg-[color:var(--border-accent)] transition-colors group-hover:bg-primary" />
+                <dt className="w-28 shrink-0 font-semibold text-muted-foreground text-[10px] uppercase tracking-wider">
                   {label}
                 </dt>
-                <dd className="mt-1 break-all font-mono text-foreground text-xs">
+                <dd className="min-w-0 grow break-words text-right font-mono text-foreground text-xs leading-relaxed">
                   {value}
                 </dd>
               </div>
@@ -301,11 +303,20 @@ const BlueprintDetailHero = ({
               Before you commit
             </h3>
             <ul className="mt-3 space-y-2 text-muted-foreground text-sm">
-              <li>Operators execute the service instance.</li>
-              <li>
-                Checkout shows selected operators, callers, payment, and TTL.
+              <li className="flex items-start gap-2">
+                <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-primary" />
+                <span>Operators execute the service instance.</span>
               </li>
-              <li>Wallet approval submits the on-chain service request.</li>
+              <li className="flex items-start gap-2">
+                <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-primary" />
+                <span>
+                  Checkout shows selected operators, callers, payment, and TTL.
+                </span>
+              </li>
+              <li className="flex items-start gap-2">
+                <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-primary" />
+                <span>Wallet approval submits the on-chain service request.</span>
+              </li>
             </ul>
           </div>
         </CardContent>
@@ -328,12 +339,32 @@ const RegisteredOperatorsPanel = ({
 }: {
   operators: BlueprintOperator[];
 }) => {
+  const delegatedCount = operators.filter((op) => op.isDelegated).length;
+  const totalServices = operators.reduce(
+    (sum, op) => sum + (op.instanceCount ?? 0),
+    0,
+  );
+  const totalStakers = operators.reduce(
+    (sum, op) => sum + (op.stakersCount ?? 0),
+    0,
+  );
+
   return (
-    <Card id="operators" variant="default">
+    <Card id="operators" variant="sandbox">
       <CardContent className="p-6">
-        <div className="flex flex-col gap-3 border-border border-b pb-5 sm:flex-row sm:items-end sm:justify-between">
+        <div className="flex flex-col gap-4 border-border border-b pb-5 lg:flex-row lg:items-end lg:justify-between">
           <div>
-            <Badge variant="outline">{operators.length} indexed</Badge>
+            <div className="flex flex-wrap items-center gap-2">
+              <Badge variant="outline">{operators.length} indexed</Badge>
+              {delegatedCount > 0 && (
+                <Badge variant="success">{delegatedCount} delegated</Badge>
+              )}
+              {operators.length > 0 && (
+                <span className="text-muted-foreground text-xs">
+                  {totalServices} services · {totalStakers} stakers
+                </span>
+              )}
+            </div>
             <h2 className="mt-3 font-display font-extrabold text-foreground text-2xl tracking-tight">
               Registered operators
             </h2>
@@ -350,16 +381,17 @@ const RegisteredOperatorsPanel = ({
         </div>
 
         {operators.length === 0 ? (
-          <div className="mt-5 flex min-h-40 items-center justify-center rounded-lg border border-dashed border-border bg-card p-8 text-center">
-            <p className="max-w-md text-muted-foreground text-sm">
-              No operators are indexed for this blueprint on the selected
-              network yet.
-            </p>
+          <div className="mt-5">
+            <EmptyState
+              icon={<span className="text-3xl">{'⚙️'}</span>}
+              title="No operators yet"
+              description="This blueprint has no registered operators on the selected network. Register operator capacity to make the blueprint deployable."
+            />
           </div>
         ) : (
-          <div className="mt-5 divide-y divide-border overflow-hidden rounded-lg border border-border bg-card">
+          <div className="mt-5 divide-y divide-border overflow-hidden rounded-lg border border-border bg-[var(--bg-card)]">
             {operators.map((operator) => (
-              <OperatorCard key={operator.address} operator={operator} />
+              <OperatorRow key={operator.address} operator={operator} />
             ))}
           </div>
         )}
@@ -368,22 +400,28 @@ const RegisteredOperatorsPanel = ({
   );
 };
 
-const OperatorCard = ({ operator }: { operator: BlueprintOperator }) => {
+const OperatorRow = ({ operator }: { operator: BlueprintOperator }) => {
   const displayName =
     operator.identityName?.trim() || shortenIdentity(operator.address);
-  const vaultSummary =
-    operator.vaultTokens.length > 0
-      ? operator.vaultTokens.map((token) => token.symbol).join(', ')
-      : 'No vaults indexed';
+  const vaultSymbols = operator.vaultTokens.map((token) => token.symbol);
 
   return (
-    <div className="grid gap-4 p-4 md:grid-cols-[minmax(0,1fr)_360px] md:items-center">
-      <div className="flex min-w-0 items-center gap-4">
+    <div className="group grid gap-4 p-4 transition-colors hover:bg-[var(--bg-hover)] md:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_auto] md:items-center">
+      <div className="flex min-w-0 items-center gap-3">
         <OperatorIdenticon address={operator.address} />
         <div className="min-w-0">
-          <h3 className="truncate font-display font-bold text-foreground text-lg">
-            {displayName}
-          </h3>
+          <div className="flex flex-wrap items-center gap-2">
+            <h3 className="truncate font-display font-bold text-foreground text-base">
+              {displayName}
+            </h3>
+            <Badge
+              variant={operator.isDelegated ? 'success' : 'outline'}
+              dot={operator.isDelegated}
+              className="shrink-0"
+            >
+              {operator.isDelegated ? 'Delegated' : 'Direct'}
+            </Badge>
+          </div>
           <p className="mt-1 truncate font-mono text-muted-foreground text-xs">
             {operator.address}
           </p>
@@ -391,9 +429,9 @@ const OperatorCard = ({ operator }: { operator: BlueprintOperator }) => {
       </div>
 
       <div className="grid grid-cols-3 gap-3">
-        <OperatorMetric label="Services" value={operator.instanceCount} />
-        <OperatorMetric label="Stakers" value={operator.stakersCount} />
-        <OperatorMetric
+        <RowMetric label="Services" value={operator.instanceCount} />
+        <RowMetric label="Stakers" value={operator.stakersCount} />
+        <RowMetric
           label="TVL"
           value={
             operator.tvlInUsd !== null
@@ -403,19 +441,42 @@ const OperatorCard = ({ operator }: { operator: BlueprintOperator }) => {
         />
       </div>
 
-      <div className="flex items-center justify-between gap-3 md:col-span-2">
-        <p className="line-clamp-1 text-muted-foreground text-xs">
-          {vaultSummary}
-        </p>
-        <Badge variant={operator.isDelegated ? 'success' : 'outline'} dot>
-          {operator.isDelegated ? 'Delegated' : 'Direct'}
-        </Badge>
+      <div className="flex flex-col items-end gap-2">
+        {vaultSymbols.length > 0 ? (
+          <div className="flex flex-wrap justify-end gap-1">
+            {vaultSymbols.slice(0, 3).map((symbol) => (
+              <span
+                key={symbol}
+                className="rounded-full border border-border bg-[var(--bg-elevated)] px-2 py-0.5 font-mono text-foreground text-[10px] uppercase tracking-wider"
+              >
+                {symbol}
+              </span>
+            ))}
+            {vaultSymbols.length > 3 && (
+              <span className="rounded-full border border-border bg-[var(--bg-elevated)] px-2 py-0.5 font-mono text-muted-foreground text-[10px]">
+                +{vaultSymbols.length - 3}
+              </span>
+            )}
+          </div>
+        ) : (
+          <span className="font-mono text-muted-foreground text-[11px]">
+            No vaults indexed
+          </span>
+        )}
+        <Button variant="outline" size="sm" asChild>
+          <Link
+            to={`${TangleDAppPagePath.STAKING_DELEGATE}?operator=${operator.address}`}
+            target="_blank"
+          >
+            Delegate
+          </Link>
+        </Button>
       </div>
     </div>
   );
 };
 
-const OperatorMetric = ({
+const RowMetric = ({
   label,
   value,
 }: {
