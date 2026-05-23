@@ -173,11 +173,13 @@ export function dedupeBlueprintsByIdentity(
       singletons.push(blueprint);
       return;
     }
-    if (!groups.has(key)) {
-      groups.set(key, []);
+    let bucket = groups.get(key);
+    if (!bucket) {
+      bucket = [];
+      groups.set(key, bucket);
       groupFirstIndex.set(key, index);
     }
-    groups.get(key)!.push(blueprint);
+    bucket.push(blueprint);
   });
 
   const dedupedGroups: Array<{ index: number; row: DedupedBlueprintRow }> = [];

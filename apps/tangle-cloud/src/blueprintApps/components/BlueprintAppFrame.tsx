@@ -5,6 +5,7 @@ import {
   type IframeHTMLAttributes,
 } from 'react';
 import type { BlueprintIframeConfig } from '../iframe/types';
+import { buildBlueprintIframeUrl } from '../iframe/url';
 
 type Props = {
   config: BlueprintIframeConfig;
@@ -29,36 +30,6 @@ type Props = {
   iframeProps?: Pick<IframeHTMLAttributes<HTMLIFrameElement>, 'name'>;
 };
 
-/**
- * Append the mode + blueprintId query params to the iframe URL. The
- * iframe contract reserves `mode` and `blueprintId` query names. When
- * the manifest URL already declares one of them (publishers shouldn't
- * but we don't want to silently drop signed intent), we leave the
- * manifest value alone — the parent's picked mode replaces it only
- * when it differs from the manifest default.
- *
- * The URL builder is a pure function so it can be unit-tested.
- */
-export const buildBlueprintIframeUrl = (
-  baseUrl: string,
-  options: { mode?: string; blueprintId?: bigint | number },
-): string => {
-  let url: URL;
-  try {
-    url = new URL(baseUrl);
-  } catch {
-    // Malformed manifest URL — let the iframe element fail naturally instead
-    // of swallowing the bug here. Returning the raw string preserves the
-    // failure path the rest of the codebase already handles.
-    return baseUrl;
-  }
-  const modeId = options.mode?.trim() || 'default';
-  url.searchParams.set('mode', modeId);
-  if (options.blueprintId !== undefined) {
-    url.searchParams.set('blueprintId', options.blueprintId.toString());
-  }
-  return url.toString();
-};
 
 // Hardened iframe sandbox. We deliberately omit:
 //  - allow-same-origin: forces opaque origin so the iframe can't reach
