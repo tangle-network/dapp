@@ -349,8 +349,17 @@ export function buildBlueprintManifestFromMetadata(
       ? 'verified'
       : getPublisherVerificationForNamespace(publisherNamespace),
   };
+  // Iframe gate accepts either status — `verified` (full payload attestation,
+  // production-ready) OR `verified-uri` (URI-keccak match, the v0 register-script
+  // hash mode). The strictest gates remain: publisher must be in the verified
+  // allowlist AND iframe-eligible, AND the host must match the trusted iframe
+  // suffix. That curation chain — verified namespace + allowlisted host —
+  // means we've already vetted *which* blueprints can embed an iframe;
+  // requiring a full payload attestation on top would just block every URI-
+  // keccak-mode testnet blueprint without changing the trust model.
   const metadataVerified =
-    blueprint.metadataVerification?.status === 'verified';
+    blueprint.metadataVerification?.status === 'verified' ||
+    blueprint.metadataVerification?.status === 'verified-uri';
   const publisherVerified = publisher.verification === 'verified';
   const slugPolicy = canPublisherClaimSlug(normalizedRequestedSlug, publisher)
     ? 'publisher-scoped'

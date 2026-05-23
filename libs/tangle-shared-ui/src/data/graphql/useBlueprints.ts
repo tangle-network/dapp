@@ -220,21 +220,28 @@ const fetchBlueprintMetadata = async ({
     });
 
     // Trust gradient for what the dapp will render:
-    //   verified       → full manifest (declarative + externalApp iframe ok)
-    //   verified-uri   → keep declarative manifest; strip externalApp until a
-    //                    full payload attestation lands. URI-keccak proves the
-    //                    publisher pinned the URI on-chain but not the JSON
-    //                    content — iframe trust requires both.
-    //   anything else  → force generic fallback (hero only).
+    //   verified | verified-uri → keep the parsed manifest intact and let the
+    //                             downstream `parseExternalApp` pipeline make
+    //                             the final iframe decision. That pipeline
+    //                             gates iframes on (publisher in verified
+    //                             allowlist) ∧ (publisher in iframe-eligible
+    //                             allowlist) ∧ (host in iframe-allowed
+    //                             suffixes) ∧ (kill switch on). Those four
+    //                             gates together are the actual curation
+    //                             anchor — short-circuiting here with a
+    //                             blanket strip is over-strict for v0 URI-
+    //                             keccak-mode blueprints registered by
+    //                             curated publishers.
+    //   unverified | invalid    → strip externalApp and force generic tier.
     const resolveTrustedBlueprintUi = (): BlueprintUiContract | null => {
       if (!parsed.blueprintUi) {
         return null;
       }
-      if (metadataVerification.status === 'verified') {
+      if (
+        metadataVerification.status === 'verified' ||
+        metadataVerification.status === 'verified-uri'
+      ) {
         return parsed.blueprintUi;
-      }
-      if (metadataVerification.status === 'verified-uri') {
-        return { ...parsed.blueprintUi, externalApp: undefined };
       }
       return { ...parsed.blueprintUi, externalApp: undefined, tier: 'generic' };
     };
