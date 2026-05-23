@@ -49,6 +49,10 @@ import {
   AuditedPill,
   BlueprintTrustChip,
 } from '../../components/binaryUpgrade/BlueprintTrustChip';
+import {
+  dedupeBlueprintsByIdentity,
+  type DedupedBlueprintRow,
+} from '../../blueprintApps/dedupe';
 
 const PAGE_SIZE = 12;
 const ALL_CATEGORIES = 'All categories';
@@ -244,12 +248,19 @@ const BlueprintListing: FC<Props> = ({
     selectedCategory,
   ]);
 
-  const totalPages = Math.max(
-    1,
-    Math.ceil(filteredBlueprints.length / PAGE_SIZE),
+  // Collapse the catalog by metadata identity (publisher.namespace,
+  // requestedSlug) AFTER filtering. Running dedupe before filter would
+  // mean a filter like "audited only" couldn't surface a sibling mode
+  // when the canonical one isn't audited. After filter, the dedupe runs
+  // on the survivor set — same set of cards the operator was about to
+  // see, just collapsed into one per identity.
+  const dedupedRows = useMemo(
+    () => dedupeBlueprintsByIdentity(filteredBlueprints),
+    [filteredBlueprints],
   );
+  const totalPages = Math.max(1, Math.ceil(dedupedRows.length / PAGE_SIZE));
   const safePage = Math.min(page, totalPages - 1);
-  const visibleBlueprints = filteredBlueprints.slice(
+  const visibleRows = dedupedRows.slice(
     safePage * PAGE_SIZE,
     safePage * PAGE_SIZE + PAGE_SIZE,
   );
@@ -404,7 +415,7 @@ const BlueprintListing: FC<Props> = ({
 
             <div className="flex shrink-0 items-center gap-3 text-muted-foreground text-xs">
               <span className="text-muted-foreground text-xs">
-                {filteredBlueprints.length} matches
+                {dedupedRows.length} matches
               </span>
               {hasActiveFilters && (
                 <Button
@@ -427,7 +438,7 @@ const BlueprintListing: FC<Props> = ({
         </CardContent>
       </Card>
 
-      {filteredBlueprints.length === 0 ? (
+      {dedupedRows.length === 0 ? (
         <Card variant="sandbox">
           <CardContent className="flex min-h-52 flex-col items-center justify-center p-8 text-center">
             <h3 className="font-display font-bold text-foreground text-lg">
@@ -441,19 +452,19 @@ const BlueprintListing: FC<Props> = ({
         </Card>
       ) : (
         <div className="results-grid grid grid-cols-1 gap-5 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
-          {visibleBlueprints.map((blueprint) => (
+          {visibleRows.map((row) => (
             <BlueprintCard
-              key={blueprint.id.toString()}
-              blueprint={blueprint}
+              key={row.blueprint.id.toString()}
+              row={row}
               isSelectable={showSelection}
-              isSelected={rowSelection?.[blueprint.id.toString()] === true}
+              isSelected={rowSelection?.[row.blueprint.id.toString()] === true}
               isAudited={
-                auditedStatus.get(blueprint.id.toString()) ?? false
+                auditedStatus.get(row.blueprint.id.toString()) ?? false
               }
               onSelectionChange={(isSelected) => {
                 onRowSelectionChange?.((previous) => ({
                   ...previous,
-                  [blueprint.id.toString()]: isSelected,
+                  [row.blueprint.id.toString()]: isSelected,
                 }));
               }}
               onRegister={onRegisterBlueprint}
@@ -465,10 +476,10 @@ const BlueprintListing: FC<Props> = ({
       <div className="flex flex-col gap-3 border-border border-t pt-4 text-muted-foreground text-sm sm:flex-row sm:items-center sm:justify-between">
         <span>
           Showing{' '}
-          {filteredBlueprints.length === 0 ? 0 : safePage * PAGE_SIZE + 1}-
-          {Math.min((safePage + 1) * PAGE_SIZE, filteredBlueprints.length)} of{' '}
-          {filteredBlueprints.length}{' '}
-          {pluralize('blueprint', filteredBlueprints.length)}
+          {dedupedRows.length === 0 ? 0 : safePage * PAGE_SIZE + 1}-
+          {Math.min((safePage + 1) * PAGE_SIZE, dedupedRows.length)} of{' '}
+          {dedupedRows.length}{' '}
+          {pluralize('blueprint', dedupedRows.length)}
         </span>
 
         <div className="flex items-center gap-2">
@@ -645,20 +656,30 @@ const useAuditedStatusMap = (blueprintIds: bigint[]): Map<string, boolean> => {
 };
 
 const BlueprintCard = ({
-  blueprint,
+  row,
   isSelectable,
   isSelected,
   isAudited,
   onSelectionChange,
   onRegister,
 }: {
-  blueprint: Blueprint;
+  row: DedupedBlueprintRow;
   isSelectable: boolean;
   isSelected: boolean;
   isAudited: boolean;
   onSelectionChange: (isSelected: boolean) => void;
   onRegister?: (blueprint: Blueprint) => void;
 }) => {
+  const { blueprint, aliases, modes } = row;
+  // Count of *sibling* deployments. The canonical blueprint itself is the
+  // first mode; the picker shows it plus each alias. The subtitle reads
+  // "N deployment modes" only when there's actually a picker to surface.
+  const deploymentModeCount =
+    modes && modes.length > 1
+      ? modes.length
+      : aliases.length > 0
+        ? aliases.length + 1
+        : 0;
   const description =
     blueprint.description ??
     'A Tangle service blueprint. Customers can deploy an instance when operators are available; operators can register to supply capacity.';
@@ -733,6 +754,11 @@ const BlueprintCard = ({
           <p className="mt-1 truncate font-mono text-muted-foreground text-[11px]">
             by {shortenIdentity(blueprint.author)}
           </p>
+          {deploymentModeCount > 1 && (
+            <p className="mt-2 inline-flex items-center gap-1 rounded-full border border-border bg-[var(--bg-elevated)] px-2 py-0.5 font-semibold text-[10px] text-muted-foreground uppercase tracking-wider">
+              {deploymentModeCount} deployment modes
+            </p>
+          )}
         </div>
 
         {isSelectable && (
