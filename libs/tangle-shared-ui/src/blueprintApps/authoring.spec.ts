@@ -2,6 +2,7 @@ import {
   resolveBlueprintMetadataFetchUrl,
   resolveBlueprintMetadataFetchUrls,
 } from './metadataFetchUrl';
+import { isAllowedBlueprintMetadataUri } from './metadataUri';
 
 // `localPreview` reads `import.meta.env`, which @swc/jest leaves as-is and
 // then breaks Node's CommonJS parser. Stub it out — these tests never need
@@ -86,5 +87,60 @@ describe('resolveBlueprintMetadataFetchUrls (fallback candidates)', () => {
     expect(
       resolveBlueprintMetadataFetchUrls('https://example.com/raw.json'),
     ).toEqual(['https://example.com/raw.json']);
+  });
+
+  it('rewrites ar:// URIs to the arweave.net gateway', () => {
+    expect(resolveBlueprintMetadataFetchUrls('ar://aZxYz123')).toEqual([
+      'https://arweave.net/aZxYz123',
+    ]);
+  });
+
+  it('passes data: URIs through verbatim — fetch resolves them inline', () => {
+    const dataUri = 'data:application/json;base64,eyJmb28iOiJiYXIifQ==';
+    expect(resolveBlueprintMetadataFetchUrls(dataUri)).toEqual([dataUri]);
+  });
+});
+
+describe('isAllowedBlueprintMetadataUri', () => {
+  it('accepts ipfs://, ar://, https://, and data: schemes', () => {
+    expect(isAllowedBlueprintMetadataUri('ipfs://bafy123')).toBe(true);
+    expect(isAllowedBlueprintMetadataUri('ar://aZxYz123')).toBe(true);
+    expect(isAllowedBlueprintMetadataUri('https://example.com/m.json')).toBe(
+      true,
+    );
+    expect(
+      isAllowedBlueprintMetadataUri('data:application/json,{"foo":1}'),
+    ).toBe(true);
+    expect(
+      isAllowedBlueprintMetadataUri(
+        'data:application/json;base64,eyJmb28iOjF9',
+      ),
+    ).toBe(true);
+  });
+
+  it('rejects http:// (no TLS — MITM risk on mutable metadata)', () => {
+    expect(isAllowedBlueprintMetadataUri('http://example.com/m.json')).toBe(
+      false,
+    );
+  });
+
+  it('rejects unsupported data: mime types', () => {
+    expect(
+      isAllowedBlueprintMetadataUri('data:image/png;base64,iVBORw0KGgo='),
+    ).toBe(false);
+    expect(
+      isAllowedBlueprintMetadataUri('data:application/javascript,alert(1)'),
+    ).toBe(false);
+  });
+
+  it('rejects other schemes', () => {
+    expect(isAllowedBlueprintMetadataUri('file:///etc/passwd')).toBe(false);
+    expect(isAllowedBlueprintMetadataUri('ftp://example.com')).toBe(false);
+    expect(isAllowedBlueprintMetadataUri('javascript:alert(1)')).toBe(false);
+  });
+
+  it('rejects garbage strings', () => {
+    expect(isAllowedBlueprintMetadataUri('')).toBe(false);
+    expect(isAllowedBlueprintMetadataUri('not a uri')).toBe(false);
   });
 });

@@ -8,6 +8,7 @@ import {
   type Hex,
 } from 'viem';
 import { isLocalPreviewHost } from '../utils/localPreview';
+import { isAllowedBlueprintMetadataUri } from './metadataUri';
 import type {
   BlueprintMetadataAttestation,
   BlueprintMetadataAttestationMode,
@@ -641,11 +642,11 @@ const sanitizePublicUrl = (
 const toMetadataSource = (
   metadataUri: string | null | undefined,
 ): BlueprintMetadataVerification['source'] => {
-  if (!metadataUri) {
-    return 'missing';
-  }
-
-  return metadataUri.startsWith('ipfs://') ? 'ipfs' : 'http';
+  if (!metadataUri) return 'missing';
+  if (metadataUri.startsWith('ipfs://')) return 'ipfs';
+  if (metadataUri.startsWith('ar://')) return 'ar';
+  if (metadataUri.startsWith('data:')) return 'data';
+  return 'http';
 };
 
 const isLocalBlueprintHostRuntime = (): boolean => {
@@ -663,26 +664,11 @@ const isLocalBlueprintHostRuntime = (): boolean => {
 export const requiresIpfsForBlueprintMetadata = (): boolean =>
   !isLocalBlueprintHostRuntime();
 
-/**
- * Whether a metadata URI is acceptable to load at all. Previously this
- * gated *display* on IPFS-only, which excluded every blueprint registered
- * with a github raw URI from rendering anything richer than the bare hero.
- *
- * Now: accept HTTPS as well. IPFS-vs-HTTP is a property of `productionReady`,
- * not of "should we even attempt to fetch this." The integrity check below
- * (canonical payload hash OR URI-keccak hash) is what catches tampering.
- */
-export const isAllowedBlueprintMetadataUri = (metadataUri: string): boolean => {
-  if (metadataUri.startsWith('ipfs://')) {
-    return true;
-  }
-  try {
-    const url = new URL(metadataUri);
-    return url.protocol === 'https:' || url.protocol === 'http:';
-  } catch {
-    return false;
-  }
-};
+// Re-export from `./metadataUri` so existing import sites keep working.
+// The URI gate lives in its own module to keep the unit test
+// (`authoring.spec.ts`) decoupled from `import.meta.env` references that the
+// jest swc preset doesn't compile.
+export { isAllowedBlueprintMetadataUri };
 
 const sortMetadataValue = (value: unknown): unknown => {
   if (Array.isArray(value)) {
@@ -786,14 +772,19 @@ const buildDefaultMetadataVerification = ({
   attestationMode?: BlueprintMetadataAttestationMode;
 }): BlueprintMetadataVerification => {
   const source = toMetadataSource(metadataUri);
-  // `productionReady` keeps the strictest bar: full signed attestation +
-  // IPFS hosting. URI-keccak verification gets the declarative tier
-  // rendered (so users see blueprint surfaces today) without lying about
-  // the trust level in operator-facing UIs.
+  // `productionReady` requires:
+  //   - full signed attestation (`attestationMode === 'attestation'`)
+  //   - hosting that's either content-addressed (`ipfs://`, `ar://`,
+  //     `data:`) or otherwise immutable
+  // HTTPS is rejected here because content can change at the host after
+  // the URI is pinned on-chain. URI-keccak verification still renders
+  // the declarative tier without lying about production-grade trust.
+  const isImmutableSource =
+    source === 'ipfs' || source === 'ar' || source === 'data';
   const productionReady =
     status === 'verified' &&
     attestationMode === 'attestation' &&
-    source === 'ipfs';
+    isImmutableSource;
 
   return {
     status,

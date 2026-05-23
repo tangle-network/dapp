@@ -13,15 +13,18 @@ const GITHUB_REPO_PATTERN =
  * URLs the dapp should try in sequence to retrieve the metadata JSON
  * document. The first URL that returns a successful response wins.
  *
- * - `ipfs://CID` is rewritten to a single public ipfs.io gateway URL.
+ * - `ipfs://<cid>` resolves to a single public ipfs.io gateway URL.
+ * - `ar://<txid>` resolves to a single arweave.net gateway URL.
+ * - `data:application/json,…` (with or without `;base64`) is returned as-is;
+ *   the fetch API resolves data URIs inline without a network round-trip.
  * - A bare `https://github.com/<owner>/<repo>` URL expands to TWO
  *   candidates: the `main` branch first, then `master` as a fallback. A
  *   nontrivial fraction of org repos still default to `master`, and a
  *   single hardcoded branch would 404 for them — the caller iterates so
  *   we never need an extra round-trip when `main` exists.
- * - Anything else (including GitHub URLs with sub-paths and arbitrary
- *   HTTPS URLs) is passed through `rewriteLocalhostUrlForBrowser` and
- *   returned as a single-element list.
+ * - Anything else (GitHub URLs with sub-paths, arbitrary HTTPS URLs) is
+ *   passed through `rewriteLocalhostUrlForBrowser` and returned as a
+ *   single-element list.
  */
 export const resolveBlueprintMetadataFetchUrls = (
   metadataUri: string,
@@ -29,6 +32,17 @@ export const resolveBlueprintMetadataFetchUrls = (
   if (metadataUri.startsWith('ipfs://')) {
     const cid = metadataUri.replace('ipfs://', '');
     return [`https://ipfs.io/ipfs/${cid}`];
+  }
+
+  if (metadataUri.startsWith('ar://')) {
+    const txid = metadataUri.replace('ar://', '');
+    return [`https://arweave.net/${txid}`];
+  }
+
+  if (metadataUri.startsWith('data:')) {
+    // `fetch` handles data: URIs natively on every supported browser. Pass
+    // through verbatim — no host rewrite needed, no gateway, no fallback.
+    return [metadataUri];
   }
 
   const githubMatch = metadataUri.match(GITHUB_REPO_PATTERN);

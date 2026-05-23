@@ -51,7 +51,15 @@ export type BlueprintMetadataAttestationMode =
 export type BlueprintMetadataVerification = {
   status: BlueprintMetadataVerificationStatus;
   productionReady: boolean;
-  source: 'ipfs' | 'http' | 'missing';
+  /**
+   * Where the metadata is hosted:
+   *   - 'ipfs': `ipfs://<cid>` — content-addressed, immutable.
+   *   - 'ar':   `ar://<txid>` — Arweave permanent storage, content-addressed.
+   *   - 'data': `data:application/json,…` — inline. Trivially content-addressed.
+   *   - 'http': any `https://` URL — mutable at host.
+   *   - 'missing': metadataUri unset on-chain.
+   */
+  source: 'ipfs' | 'ar' | 'data' | 'http' | 'missing';
   signer?: string;
   payloadHash?: `0x${string}`;
   attestationMode?: BlueprintMetadataAttestationMode;
