@@ -2,30 +2,32 @@ import { resolveBlueprintAppView } from './resolver';
 import type { BlueprintAppEntry } from './types';
 
 /**
- * Per-network blueprintId → curated-entry slug bindings.
+ * Identity that the curated registry matches against the blueprint's parsed
+ * metadata (`blueprintUi.publisher.namespace` + `blueprintUi.requestedSlug`).
  *
- * The upstream `BlueprintAppEntry` type only carries a single `blueprintId`,
- * but in practice one curated app (e.g. the sandbox) maps to multiple
- * on-chain IDs across networks and across retries (Base Sepolia currently
- * has the sandbox registered at ids 0, 1, and 2). This map is the single
- * source of truth for those bindings — `getBlueprintAppByBlueprintId`
- * consults it first.
- *
- * Update this when:
- *   - re-registering a curated app on a new network
- *   - landing a brand new curated entry that ships with a known id
+ * All non-empty fields must match for a curated entry to claim a blueprint;
+ * unset fields are treated as wildcards. This survives redeploys, multi-chain
+ * deployments, and re-registration cycles — the dapp no longer needs to know
+ * the on-chain blueprintId of a curated app, only the identity the publisher
+ * declared in metadata.
  */
-const CURATED_BLUEPRINT_ID_TO_SLUG: ReadonlyMap<bigint, string> = new Map([
-  // Base Sepolia (chainId 84532) — see deployments/base-sepolia/blueprints.tsv
-  [0n, 'sandbox'],
-  [1n, 'sandbox'],
-  [2n, 'sandbox'],
-]);
+type CuratedBlueprintMatcher = {
+  publisherNamespace?: string;
+  requestedSlug?: string;
+};
+
+type CuratedRegistryEntry = BlueprintAppEntry & {
+  match?: CuratedBlueprintMatcher;
+};
 
 const entries = [
   {
     slug: 'trading',
     canonicalSlug: 'trading',
+    match: {
+      publisherNamespace: 'tangle',
+      requestedSlug: 'ai-trading',
+    },
     publisher: {
       label: 'Tangle Labs',
       visibility: 'first-party',
@@ -75,6 +77,10 @@ const entries = [
   {
     slug: 'sandbox',
     canonicalSlug: 'sandbox',
+    match: {
+      publisherNamespace: 'tangle',
+      requestedSlug: 'ai-agent-sandbox',
+    },
     publisher: {
       label: 'Tangle Labs',
       visibility: 'first-party',
@@ -117,6 +123,10 @@ const entries = [
   {
     slug: 'training',
     canonicalSlug: 'training',
+    match: {
+      publisherNamespace: 'tangle',
+      requestedSlug: 'distributed-training',
+    },
     publisher: {
       label: 'Tangle Labs',
       visibility: 'first-party',
@@ -161,7 +171,7 @@ const entries = [
       ],
     },
   },
-] satisfies BlueprintAppEntry[];
+] satisfies CuratedRegistryEntry[];
 
 export const blueprintAppRegistry = new Map(
   entries.map((entry) => [entry.slug, entry]),
@@ -215,17 +225,39 @@ export function getBlueprintAppByCanonicalSlug(
   );
 }
 
-export function getBlueprintAppByBlueprintId(
-  blueprintId: bigint,
-): BlueprintAppEntry | null {
-  const mappedSlug = CURATED_BLUEPRINT_ID_TO_SLUG.get(blueprintId);
-  if (mappedSlug) {
-    const mapped = blueprintAppRegistry.get(mappedSlug);
-    if (mapped) {
-      return mapped;
+/**
+ * Resolve a curated app entry from the blueprint's parsed metadata identity.
+ * Walks the registry returning the first entry whose `match` clause aligns
+ * with `(publisherNamespace, requestedSlug)`. Match fields are checked
+ * case-insensitively; absent matcher fields are wildcards. Returns null when
+ * no entry claims this blueprint (typical case — most blueprints render via
+ * the generic + declarative path).
+ *
+ * Matching on declared identity (not chain id) means re-registering a
+ * curated app on a new chain or after a redeploy doesn't break dapp
+ * routing: as long as the blueprint's metadata still declares the same
+ * `publisher.namespace` + `requestedSlug`, the curated module renders.
+ */
+export function getBlueprintAppForMetadata(identity: {
+  publisherNamespace?: string | null;
+  requestedSlug?: string | null;
+}): BlueprintAppEntry | null {
+  const namespace = identity.publisherNamespace?.toLowerCase() ?? '';
+  const slug = identity.requestedSlug?.toLowerCase() ?? '';
+  for (const entry of entries) {
+    const m = entry.match;
+    if (!m) continue;
+    if (
+      m.publisherNamespace &&
+      m.publisherNamespace.toLowerCase() !== namespace
+    ) {
+      continue;
     }
+    if (m.requestedSlug && m.requestedSlug.toLowerCase() !== slug) {
+      continue;
+    }
+    return entry;
   }
-
   return null;
 }
 

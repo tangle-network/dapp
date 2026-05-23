@@ -13,20 +13,52 @@ import {
 } from './resolver';
 import { buildGenericBlueprintAppEntry } from './manifest';
 import {
-  getBlueprintAppByBlueprintId,
   getBlueprintAppBySlug,
+  getBlueprintAppForMetadata,
   protocolGenericBlueprintExperience,
 } from './registry';
 
 describe('blueprint app registry', () => {
-  it('resolves curated entries by slug and blueprint id', () => {
+  it('resolves curated entries by slug and by metadata identity', () => {
     const tradingBySlug = getBlueprintAppBySlug('trading');
-    const tradingById = getBlueprintAppByBlueprintId(1n);
+    const tradingByMetadata = getBlueprintAppForMetadata({
+      publisherNamespace: 'tangle',
+      requestedSlug: 'ai-trading',
+    });
+    const sandboxByMetadata = getBlueprintAppForMetadata({
+      publisherNamespace: 'tangle',
+      requestedSlug: 'ai-agent-sandbox',
+    });
     const trainingBySlug = getBlueprintAppBySlug('training');
 
     expect(tradingBySlug?.slug).toBe('trading');
-    expect(tradingById?.slug).toBe('trading');
+    expect(tradingByMetadata?.slug).toBe('trading');
+    expect(sandboxByMetadata?.slug).toBe('sandbox');
     expect(trainingBySlug?.slug).toBe('training');
+  });
+
+  it('returns null when metadata identity does not match any curated entry', () => {
+    expect(
+      getBlueprintAppForMetadata({
+        publisherNamespace: 'tangle',
+        requestedSlug: 'something-else',
+      }),
+    ).toBeNull();
+    // Wrong namespace, even with a curated slug, should not claim the entry.
+    expect(
+      getBlueprintAppForMetadata({
+        publisherNamespace: 'imposter',
+        requestedSlug: 'ai-trading',
+      }),
+    ).toBeNull();
+  });
+
+  it('matches on metadata identity case-insensitively', () => {
+    const entry = getBlueprintAppForMetadata({
+      publisherNamespace: 'TANGLE',
+      requestedSlug: 'AI-Trading',
+    });
+    expect(entry?.slug).toBe('trading');
   });
 
   it('builds a resolved view with host fallback enabled', () => {
