@@ -12,9 +12,9 @@ import TangleCloudCard from '../../components/TangleCloudCard';
 import { CLOUD_INSTRUCTIONS } from '../../constants/cloudInstruction';
 import {
   ArrowRightUp,
+  BookOpenLineIcon,
   CheckboxCircleFill,
   GlobalLine,
-  Spinner,
   TimeLineIcon,
 } from '@tangle-network/icons';
 import { GridFillIcon } from '@tangle-network/icons/GridFillIcon';
@@ -104,7 +104,7 @@ const buildConnectedSteps = (params: {
   steps.push({
     title: 'Implementation docs',
     description: 'Blueprint, operator, and service-instance references.',
-    icon: Spinner,
+    icon: BookOpenLineIcon,
     to: 'https://docs.tangle.tools/developers/blueprints/introduction',
     external: true,
     tone: 'info',
