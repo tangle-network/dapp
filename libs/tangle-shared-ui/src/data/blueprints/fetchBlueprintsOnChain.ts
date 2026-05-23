@@ -52,10 +52,15 @@ export const fetchBlueprintsOnChain = async (
 
   // Batch both reads per id via Promise.all — viem's PublicClient handles
   // request batching automatically when the transport supports it.
+  //
+  // `blueprintMetadata` returns the MUTABLE storage (what `updateBlueprint`
+  // writes); the older `getBlueprintDefinition` returns the IMMUTABLE blob
+  // recorded at creation. Read the mutable triple so updates show up in
+  // the dapp without a redeploy.
   const rows = await Promise.all(
     ids.map(async (id) => {
       try {
-        const [blueprint, definition] = await Promise.all([
+        const [blueprint, mutableMeta] = await Promise.all([
           publicClient.readContract({
             address: tangleAddress,
             abi: TANGLE_ABI,
@@ -71,13 +76,20 @@ export const fetchBlueprintsOnChain = async (
           publicClient.readContract({
             address: tangleAddress,
             abi: TANGLE_ABI,
-            functionName: 'getBlueprintDefinition',
+            functionName: 'blueprintMetadata',
             args: [id],
-          }) as Promise<{
-            metadataUri: string;
-            metadataHash: `0x${string}`;
-          }>,
+          }) as Promise<
+            readonly [
+              unknown /* Types.BlueprintMetadata struct, unused here */,
+              string /* metadataUri */,
+              `0x${string}` /* metadataHash */,
+            ]
+          >,
         ]);
+        const definition = {
+          metadataUri: mutableMeta[1],
+          metadataHash: mutableMeta[2],
+        };
 
         const result: Blueprint = {
           id: id.toString(),
@@ -137,7 +149,7 @@ export const fetchBlueprintByIdOnChain = async (
   const tangleAddress = contracts.tangle as Address;
 
   try {
-    const [blueprint, definition] = await Promise.all([
+    const [blueprint, mutableMeta] = await Promise.all([
       publicClient.readContract({
         address: tangleAddress,
         abi: TANGLE_ABI,
@@ -153,13 +165,20 @@ export const fetchBlueprintByIdOnChain = async (
       publicClient.readContract({
         address: tangleAddress,
         abi: TANGLE_ABI,
-        functionName: 'getBlueprintDefinition',
+        functionName: 'blueprintMetadata',
         args: [blueprintId],
-      }) as Promise<{
-        metadataUri: string;
-        metadataHash: `0x${string}`;
-      }>,
+      }) as Promise<
+        readonly [
+          unknown /* Types.BlueprintMetadata struct, unused here */,
+          string /* metadataUri */,
+          `0x${string}` /* metadataHash */,
+        ]
+      >,
     ]);
+    const definition = {
+      metadataUri: mutableMeta[1],
+      metadataHash: mutableMeta[2],
+    };
 
     return {
       id: blueprintId.toString(),
