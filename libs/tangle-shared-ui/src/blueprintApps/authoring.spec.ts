@@ -3,11 +3,13 @@ import {
   resolveBlueprintMetadataFetchUrls,
 } from './metadataFetchUrl';
 import { isAllowedBlueprintMetadataUri } from './metadataUri';
+import { parseBlueprintUiContract } from './authoring';
 
 // `localPreview` reads `import.meta.env`, which @swc/jest leaves as-is and
 // then breaks Node's CommonJS parser. Stub it out — these tests never need
 // the localhost-rewrite branch since they only assert pass-through behavior
-// for non-localhost URLs.
+// for non-localhost URLs. The same stub also keeps `authoring.ts` importable
+// here (the local-preview check is its only `import.meta.env` reference).
 jest.mock('../utils/localPreview', () => ({
   isLocalPreviewHost: () => false,
   rewriteLocalhostUrlForBrowser: (value: string) => value,
@@ -142,5 +144,146 @@ describe('isAllowedBlueprintMetadataUri', () => {
   it('rejects garbage strings', () => {
     expect(isAllowedBlueprintMetadataUri('')).toBe(false);
     expect(isAllowedBlueprintMetadataUri('not a uri')).toBe(false);
+  });
+});
+
+describe('parseBlueprintUiContract — modes', () => {
+  const baseContract = {
+    displayName: 'Atlas',
+    publisher: { name: 'Northstar', namespace: 'northstar' },
+    resources: { serviceLabel: 'Service', itemLabel: 'Resource' },
+  };
+
+  it('returns undefined when `modes` is absent', () => {
+    const parsed = parseBlueprintUiContract(baseContract);
+    expect(parsed?.modes).toBeUndefined();
+  });
+
+  it('parses a well-formed modes array preserving order and string-coerced ids', () => {
+    const parsed = parseBlueprintUiContract({
+      ...baseContract,
+      modes: [
+        {
+          id: 'cloud',
+          label: 'Cloud',
+          description: 'Shared-tenant cloud deployment.',
+          blueprintId: 12,
+          tagline: 'Recommended',
+        },
+        {
+          id: 'instance',
+          label: 'Instance',
+          blueprintId: '13',
+        },
+        {
+          id: 'tee',
+          label: 'TEE',
+          blueprintId: 14,
+        },
+      ],
+    });
+
+    expect(parsed?.modes).toHaveLength(3);
+    expect(parsed?.modes?.[0]).toEqual({
+      id: 'cloud',
+      label: 'Cloud',
+      description: 'Shared-tenant cloud deployment.',
+      blueprintId: 12,
+      tagline: 'Recommended',
+    });
+    expect(parsed?.modes?.[1]).toEqual({
+      id: 'instance',
+      label: 'Instance',
+      blueprintId: 13,
+    });
+    expect(parsed?.modes?.[2]?.blueprintId).toBe(14);
+  });
+
+  it('drops entries with missing id, missing label, or invalid id chars', () => {
+    const parsed = parseBlueprintUiContract({
+      ...baseContract,
+      modes: [
+        { label: 'No id', blueprintId: 1 },
+        { id: 'no-label', blueprintId: 2 },
+        { id: 'Cloud With Space', label: 'Bad id chars', blueprintId: 3 },
+        { id: 'UPPERCASE', label: 'Uppercase id', blueprintId: 4 },
+        { id: '-leading-dash', label: 'Leading dash', blueprintId: 5 },
+        { id: 'ok', label: 'Survivor', blueprintId: 6 },
+      ],
+    });
+
+    expect(parsed?.modes).toHaveLength(1);
+    expect(parsed?.modes?.[0]?.id).toBe('ok');
+  });
+
+  it('drops entries with non-integer or non-positive blueprintId values', () => {
+    const parsed = parseBlueprintUiContract({
+      ...baseContract,
+      modes: [
+        { id: 'a', label: 'A', blueprintId: 0 },
+        { id: 'b', label: 'B', blueprintId: -1 },
+        { id: 'c', label: 'C', blueprintId: 1.5 },
+        { id: 'd', label: 'D', blueprintId: 'not-a-number' },
+        { id: 'e', label: 'E', blueprintId: null },
+        { id: 'f', label: 'F', blueprintId: 7 },
+      ],
+    });
+
+    expect(parsed?.modes?.map((m) => m.id)).toEqual(['f']);
+    expect(parsed?.modes?.[0]?.blueprintId).toBe(7);
+  });
+
+  it('returns undefined when every entry is invalid', () => {
+    const parsed = parseBlueprintUiContract({
+      ...baseContract,
+      modes: [{ id: '', label: '', blueprintId: 'x' }],
+    });
+    expect(parsed?.modes).toBeUndefined();
+  });
+
+  it('rejects duplicate ids — first occurrence wins', () => {
+    const parsed = parseBlueprintUiContract({
+      ...baseContract,
+      modes: [
+        { id: 'cloud', label: 'First', blueprintId: 1 },
+        { id: 'cloud', label: 'Second', blueprintId: 2 },
+        { id: 'tee', label: 'Third', blueprintId: 3 },
+      ],
+    });
+
+    expect(parsed?.modes).toHaveLength(2);
+    expect(parsed?.modes?.[0]).toMatchObject({
+      id: 'cloud',
+      label: 'First',
+      blueprintId: 1,
+    });
+    expect(parsed?.modes?.[1]?.id).toBe('tee');
+  });
+
+  it('returns undefined when `modes` is not an array', () => {
+    expect(
+      parseBlueprintUiContract({ ...baseContract, modes: 'cloud' })?.modes,
+    ).toBeUndefined();
+    expect(
+      parseBlueprintUiContract({ ...baseContract, modes: {} })?.modes,
+    ).toBeUndefined();
+    expect(
+      parseBlueprintUiContract({ ...baseContract, modes: null })?.modes,
+    ).toBeUndefined();
+  });
+
+  it('caps the modes array at the documented per-blueprint limit', () => {
+    const tooMany = Array.from({ length: 16 }, (_, idx) => ({
+      id: `mode-${idx}`,
+      label: `Mode ${idx}`,
+      blueprintId: idx + 1,
+    }));
+    const parsed = parseBlueprintUiContract({
+      ...baseContract,
+      modes: tooMany,
+    });
+
+    expect(parsed?.modes?.length).toBeLessThanOrEqual(8);
+    expect(parsed?.modes?.[0]?.id).toBe('mode-0');
   });
 });

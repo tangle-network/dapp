@@ -32,8 +32,8 @@ import {
 import {
   computeBlueprintMetadataPayloadHash,
   isAllowedBlueprintMetadataUri,
-  requiresIpfsForBlueprintMetadata,
 } from '@tangle-network/tangle-shared-ui/blueprintApps/authoring';
+import { requiresIpfsForBlueprintMetadata } from '@tangle-network/tangle-shared-ui/blueprintApps/runtime';
 import {
   parseSchemaJson,
   encodeSchemaToHex,

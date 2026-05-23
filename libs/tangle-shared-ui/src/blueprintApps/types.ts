@@ -199,6 +199,31 @@ export type BlueprintUiModuleBinding = {
   eventKinds?: string[];
 };
 
+/**
+ * One on-chain operational mode of a blueprint that otherwise shares its
+ * `(publisher.namespace, requestedSlug)` identity with sibling modes. The
+ * catalog collapses by identity so the wall doesn't show N near-identical
+ * cards; the detail page renders a picker; the iframe receives the picked
+ * mode through `?mode=<id>&blueprintId=<id>` so the embedded app can
+ * dispatch on it without a separate URL per mode.
+ *
+ * `blueprintId` is stored as `number` for ergonomics — modes are declared by
+ * the publisher and stay small. The dapp coerces to `bigint` at the routing
+ * boundary where it joins indexer-derived ids.
+ */
+export type BlueprintMode = {
+  /** Stable identifier passed to the iframe as `?mode=<id>`. */
+  id: string;
+  /** Short label shown in the mode picker chips. */
+  label: string;
+  /** One-line description rendered next to the label. */
+  description?: string;
+  /** On-chain blueprint ID for this mode. */
+  blueprintId: number;
+  /** Optional ribbon / badge for this mode card (e.g. 'Recommended', 'Premium'). */
+  tagline?: string;
+};
+
 export type BlueprintUiContract = {
   displayName: string;
   description: string;
@@ -213,6 +238,19 @@ export type BlueprintUiContract = {
   resourceViews?: BlueprintUiResourceView[];
   modules?: BlueprintUiModuleBinding[];
   externalApp?: BlueprintUiExternalApp;
+  /**
+   * When multiple on-chain blueprints share a `(publisher, requestedSlug)`
+   * identity (e.g. the same product deployed with different operator
+   * selection / isolation / attestation requirements), declare each one
+   * as a mode. The catalog dedupes by identity and shows ONE entry; the
+   * detail page renders a mode picker. The mode the operator selects
+   * is passed to the iframe via `?mode=<id>&blueprintId=<id>` so the
+   * iframe app can dispatch on it.
+   *
+   * Absent → single-mode blueprint, no picker, default routing.
+   * Present → catalog collapses; detail picker shows.
+   */
+  modes?: BlueprintMode[];
   tier: BlueprintUiTier;
 };
 

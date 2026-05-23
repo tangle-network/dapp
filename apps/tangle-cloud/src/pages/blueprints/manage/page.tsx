@@ -50,8 +50,8 @@ import {
   parseBlueprintMetadataJsonText,
   resolveBlueprintMetadataFetchUrl,
   isAllowedBlueprintMetadataUri,
-  requiresIpfsForBlueprintMetadata,
 } from '@tangle-network/tangle-shared-ui/blueprintApps/authoring';
+import { requiresIpfsForBlueprintMetadata } from '@tangle-network/tangle-shared-ui/blueprintApps/runtime';
 import { twMerge } from 'tailwind-merge';
 import { PagePath } from '../../../types';
 import ErrorMessage from '@tangle-network/tangle-shared-ui/components/ErrorMessage';

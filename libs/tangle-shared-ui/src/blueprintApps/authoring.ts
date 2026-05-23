@@ -7,12 +7,12 @@ import {
   type Address,
   type Hex,
 } from 'viem';
-import { isLocalPreviewHost } from '../utils/localPreview';
 import { isAllowedBlueprintMetadataUri } from './metadataUri';
 import type {
   BlueprintMetadataAttestation,
   BlueprintMetadataAttestationMode,
   BlueprintMetadataVerification,
+  BlueprintMode,
   BlueprintResourceRoute,
   BlueprintUiAction,
   BlueprintUiActionField,
@@ -571,6 +571,65 @@ const parseResourceViews = (
   return views.length > 0 ? views : undefined;
 };
 
+const MAX_MODE_COUNT = 8;
+const MAX_MODE_ID_LENGTH = 48;
+
+// Strict id pattern: lower-kebab, no whitespace, no special chars. The id
+// ships into the iframe URL (`?mode=<id>`) so it has to be a stable, URL-
+// safe token. Empty / over-length / invalid-char strings are rejected
+// outright — partial sanitization would silently mutate publisher intent.
+const MODE_ID_PATTERN = /^[a-z0-9][a-z0-9-]*$/;
+
+const parseBlueprintModes = (
+  value: unknown,
+): BlueprintMode[] | undefined => {
+  if (!Array.isArray(value)) {
+    return undefined;
+  }
+
+  const seenIds = new Set<string>();
+  const modes = value.slice(0, MAX_MODE_COUNT).flatMap((entry) => {
+    if (!isRecord(entry)) {
+      return [];
+    }
+
+    const id = readTrimmedString(entry.id, MAX_MODE_ID_LENGTH);
+    const label = readTrimmedString(entry.label, 60);
+    const rawBlueprintId = entry.blueprintId;
+    const blueprintId =
+      typeof rawBlueprintId === 'number'
+        ? rawBlueprintId
+        : typeof rawBlueprintId === 'string' && /^\d+$/.test(rawBlueprintId)
+          ? Number(rawBlueprintId)
+          : NaN;
+
+    if (
+      !id ||
+      !label ||
+      !MODE_ID_PATTERN.test(id) ||
+      !Number.isInteger(blueprintId) ||
+      blueprintId <= 0 ||
+      seenIds.has(id)
+    ) {
+      return [];
+    }
+
+    seenIds.add(id);
+
+    return [
+      {
+        id,
+        label,
+        blueprintId,
+        description: readTrimmedString(entry.description, 240),
+        tagline: readTrimmedString(entry.tagline, 60),
+      } satisfies BlueprintMode,
+    ];
+  });
+
+  return modes.length > 0 ? modes : undefined;
+};
+
 const parseModules = (
   value: unknown,
 ): BlueprintUiModuleBinding[] | undefined => {
@@ -649,25 +708,14 @@ const toMetadataSource = (
   return 'http';
 };
 
-const isLocalBlueprintHostRuntime = (): boolean => {
-  if (import.meta.env.VITE_FORCE_LOCAL_CHAIN === 'true') {
-    return true;
-  }
-
-  if (typeof window === 'undefined') {
-    return false;
-  }
-
-  return isLocalPreviewHost(window.location.hostname);
-};
-
-export const requiresIpfsForBlueprintMetadata = (): boolean =>
-  !isLocalBlueprintHostRuntime();
-
 // Re-export from `./metadataUri` so existing import sites keep working.
 // The URI gate lives in its own module to keep the unit test
 // (`authoring.spec.ts`) decoupled from `import.meta.env` references that the
 // jest swc preset doesn't compile.
+//
+// `requiresIpfsForBlueprintMetadata` lives in `./runtime` for the same
+// reason — it's the only `import.meta.env` reader in the metadata-parsing
+// surface, and pulling it into this file would re-break the spec.
 export { isAllowedBlueprintMetadataUri };
 
 const sortMetadataValue = (value: unknown): unknown => {
@@ -992,6 +1040,7 @@ export const parseBlueprintUiContract = (
   const actions = parseActions(value.actions);
   const resourceViews = parseResourceViews(value.resourceViews);
   const modules = parseModules(value.modules);
+  const modes = parseBlueprintModes(value.modes);
   const externalApp = normalizeExternalApp(value.externalApp);
   const hasDeclarativeContent =
     surfaces.length > 0 ||
@@ -1024,6 +1073,7 @@ export const parseBlueprintUiContract = (
     ...(actions ? { actions } : {}),
     ...(resourceViews ? { resourceViews } : {}),
     ...(modules ? { modules } : {}),
+    ...(modes ? { modes } : {}),
     ...(externalApp ? { externalApp } : {}),
     tier:
       externalApp !== undefined
