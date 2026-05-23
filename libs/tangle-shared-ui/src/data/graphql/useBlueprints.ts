@@ -671,7 +671,17 @@ const fetchBlueprintOperators = async (
       instanceCount: 0,
     }));
   } catch (error) {
-    console.error('Failed to fetch blueprint operators:', error);
+    // Operator enumeration is GraphQL-only today (no chain-read fallback for
+    // the OperatorBlueprint join). On networks without a configured Envio
+    // endpoint the query throws here; that's recoverable — we return an
+    // empty list and the dapp renders an empty-state. Log at debug rather
+    // than error so the console stays clean for users in normal browsing.
+    if (typeof console !== 'undefined' && console.debug) {
+      console.debug(
+        '[fetchBlueprintOperators] returning empty list — Envio fetch unavailable:',
+        error instanceof Error ? error.message : error,
+      );
+    }
     return [];
   }
 };

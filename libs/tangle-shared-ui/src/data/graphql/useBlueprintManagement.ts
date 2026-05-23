@@ -279,7 +279,15 @@ const fetchBlueprintsByOwner = async (
 
     return blueprints;
   } catch (error) {
-    console.error('Failed to fetch owned blueprints:', error);
+    // Owned-blueprints discovery is GraphQL-only today (no chain-read
+    // fallback for the by-owner index). Networks without a configured Envio
+    // endpoint surface as an empty list rather than a red console error.
+    if (typeof console !== 'undefined' && console.debug) {
+      console.debug(
+        '[fetchOwnedBlueprints] returning empty list — Envio fetch unavailable:',
+        error instanceof Error ? error.message : error,
+      );
+    }
     return [];
   }
 };
