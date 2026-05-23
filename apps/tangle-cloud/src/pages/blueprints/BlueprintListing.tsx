@@ -268,7 +268,7 @@ const BlueprintListing: FC<Props> = ({
     return (
       <div className="grid grid-cols-1 gap-5 md:grid-cols-2 xl:grid-cols-3">
         {Array.from({ length: 6 }).map((_, idx) => (
-          <Skeleton key={idx} className="h-80 rounded-lg" />
+          <Skeleton key={idx} className="h-[360px] rounded-lg" />
         ))}
       </div>
     );
@@ -447,6 +447,9 @@ const BlueprintListing: FC<Props> = ({
               blueprint={blueprint}
               isSelectable={showSelection}
               isSelected={rowSelection?.[blueprint.id.toString()] === true}
+              isAudited={
+                auditedStatus.get(blueprint.id.toString()) ?? false
+              }
               onSelectionChange={(isSelected) => {
                 onRowSelectionChange?.((previous) => ({
                   ...previous,
@@ -645,12 +648,14 @@ const BlueprintCard = ({
   blueprint,
   isSelectable,
   isSelected,
+  isAudited,
   onSelectionChange,
   onRegister,
 }: {
   blueprint: Blueprint;
   isSelectable: boolean;
   isSelected: boolean;
+  isAudited: boolean;
   onSelectionChange: (isSelected: boolean) => void;
   onRegister?: (blueprint: Blueprint) => void;
 }) => {
@@ -672,12 +677,22 @@ const BlueprintCard = ({
     ? 'Ready to instance'
     : 'Needs operator capacity';
   const displayName = formatBlueprintName(blueprint.name);
+  // Featured = boosted or audited. Featured cards get a brand-tinted ring +
+  // a top-right ribbon so they pop out of the wall instead of blending in.
+  const isFeatured = blueprint.isBoosted === true || isAudited;
+  const featuredLabel = blueprint.isBoosted
+    ? 'Featured'
+    : isAudited
+      ? 'Audited'
+      : null;
   return (
     <Card
       variant="sandbox"
       hover
       className={twMerge(
-        'blueprint-card group relative min-h-[410px] overflow-hidden',
+        'blueprint-card group relative min-h-[360px] overflow-hidden',
+        isFeatured &&
+          'border-[color:var(--border-accent)] shadow-[var(--shadow-accent),0_0_0_1px_var(--border-accent)]',
         isSelected && 'border-primary shadow-[var(--shadow-accent)]',
       )}
       style={categoryStripeStyle(category)}
@@ -688,7 +703,21 @@ const BlueprintCard = ({
         aria-label={`Open ${blueprint.name}`}
       />
 
-      <CardContent className="relative flex h-full min-h-[410px] flex-col p-5">
+      {featuredLabel && (
+        <div
+          className="pointer-events-none absolute right-3 top-3 z-20 rounded-full border bg-[var(--accent-surface-soft)] px-2.5 py-0.5 font-semibold text-[10px] uppercase tracking-wider"
+          style={{
+            borderColor: 'var(--border-accent)',
+            color: 'var(--text-primary)',
+            backdropFilter: 'blur(8px)',
+          }}
+        >
+          {blueprint.isBoosted ? '★ ' : '✓ '}
+          {featuredLabel}
+        </div>
+      )}
+
+      <CardContent className="relative flex h-full min-h-[360px] flex-col p-5">
         <BlueprintVisual blueprint={blueprint} category={category} compact />
 
         <div className="mt-4">
@@ -701,6 +730,9 @@ const BlueprintCard = ({
           <h3 className="mt-2 line-clamp-1 font-display font-extrabold text-foreground text-xl tracking-tight">
             {displayName}
           </h3>
+          <p className="mt-1 truncate font-mono text-muted-foreground text-[11px]">
+            by {shortenIdentity(blueprint.author)}
+          </p>
         </div>
 
         {isSelectable && (
@@ -718,10 +750,11 @@ const BlueprintCard = ({
           </label>
         )}
 
-        <div className="mt-3 flex flex-wrap items-center gap-2">
-          <span className="rounded-full border border-border bg-muted/40 px-2.5 py-1 font-semibold text-[10px] text-muted-foreground uppercase tracking-wider">
-            {capacityLabel}
-          </span>
+        <p className="mt-3 line-clamp-2 text-muted-foreground text-sm leading-relaxed">
+          {description}
+        </p>
+
+        <div className="mt-4 flex flex-wrap items-center gap-1.5">
           <span
             className={twMerge(
               'rounded-full border px-2.5 py-1 font-semibold text-[10px] uppercase tracking-wider',
@@ -732,71 +765,28 @@ const BlueprintCard = ({
           >
             {deploymentState}
           </span>
-          <span className="rounded-full border border-border bg-muted/40 px-2.5 py-1 font-semibold text-[10px] text-muted-foreground uppercase tracking-wider">
-            {manifestStatus}
+          <span className="rounded-full border border-border bg-[var(--bg-elevated)] px-2.5 py-1 font-semibold text-[10px] text-muted-foreground uppercase tracking-wider">
+            {capacityLabel}
           </span>
-          <AuditedPill blueprintId={blueprint.id} />
-          <BlueprintTrustChip blueprintId={blueprint.id} />
+          {!isAudited && (
+            // AuditedPill / TrustChip already show in the metadata row below
+            // for audited blueprints. Skip them in the chip row to reduce
+            // visual noise on already-featured cards.
+            <>
+              <AuditedPill blueprintId={blueprint.id} />
+              <BlueprintTrustChip blueprintId={blueprint.id} />
+            </>
+          )}
         </div>
 
-        <div className="mt-4 grid grid-cols-3 gap-2 rounded-lg border border-border bg-muted/20 p-3">
-          <div className="min-w-0">
-            <p className="font-semibold text-muted-foreground text-[10px] uppercase tracking-wider">
-              Publisher
-            </p>
-            <p className="mt-1 truncate font-mono text-foreground text-xs">
-              {shortenIdentity(blueprint.author)}
-            </p>
-          </div>
-          <div className="min-w-0">
-            <p className="font-semibold text-muted-foreground text-[10px] uppercase tracking-wider">
-              Source
-            </p>
-            <p className="mt-1 truncate text-foreground text-xs">
-              {manifestStatus}
-            </p>
-          </div>
-          <div className="min-w-0">
-            <p className="font-semibold text-muted-foreground text-[10px] uppercase tracking-wider">
-              Next step
-            </p>
-            <p className="mt-1 truncate text-foreground text-xs">
-              {hasOperators ? 'Review checkout' : 'Register capacity'}
-            </p>
-          </div>
-        </div>
-
-        <p className="mt-4 line-clamp-2 flex-1 text-muted-foreground text-sm leading-relaxed">
-          {description}
-        </p>
-
-        <div className="mt-5 grid grid-cols-3 gap-2 border-border border-t pt-4">
-          <BlueprintMetric label="Operators" value={blueprint.operatorsCount} />
-          <BlueprintMetric label="Instances" value={blueprint.instancesCount} />
-          <BlueprintMetric label="ID" value={blueprint.id.toString()} />
-        </div>
-
-        <div className="mt-5 flex flex-col gap-3 border-border border-t pt-4">
-          <div className="grid grid-cols-2 gap-3 rounded-lg border border-border bg-muted/20 p-3">
-            <div className="min-w-0">
-              <p className="font-semibold text-muted-foreground text-[10px] uppercase tracking-wider">
-                Wallet approval
-              </p>
-              <p className="mt-1 truncate text-foreground text-xs">
-                After review
-              </p>
-            </div>
-            <div className="min-w-0">
-              <p className="font-semibold text-muted-foreground text-[10px] uppercase tracking-wider">
-                Source
-              </p>
-              <p className="mt-1 truncate text-foreground text-xs">
-                {manifestStatus}
-              </p>
-            </div>
+        <div className="mt-auto pt-5">
+          <div className="grid grid-cols-3 gap-2 border-border border-t pt-4">
+            <BlueprintMetric label="Operators" value={blueprint.operatorsCount} />
+            <BlueprintMetric label="Instances" value={blueprint.instancesCount} />
+            <BlueprintMetric label="Source" value={manifestStatus} />
           </div>
 
-          <div className="actions relative z-20 grid grid-cols-2 gap-2">
+          <div className="actions relative z-20 mt-4 grid grid-cols-2 gap-2">
             {hasOperators ? (
               <>
                 <Link
