@@ -112,7 +112,7 @@ export default EarningsPage;
 const EarningsHero = () => (
   <Card
     variant="sandbox"
-    className="cloud-hero-card cloud-compact-header overflow-hidden border-border bg-card shadow-[var(--shadow-card)]"
+    className="cloud-hero-card cloud-compact-header overflow-hidden"
   >
     <CardContent className="relative p-4 md:p-5">
       <div className="pointer-events-none absolute inset-0 opacity-70 [background:radial-gradient(circle_at_12%_8%,rgba(99,102,241,0.18),transparent_32%),radial-gradient(circle_at_86%_12%,rgba(16,185,129,0.10),transparent_28%)]" />

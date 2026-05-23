@@ -28,10 +28,7 @@ const RequireWallet: FC<Props> = ({
   }
 
   return (
-    <Card
-      variant="sandbox"
-      className="w-full overflow-hidden border-border bg-card shadow-[var(--shadow-card)]"
-    >
+    <Card variant="sandbox" className="w-full overflow-hidden">
       <CardContent className="relative p-6 md:p-7">
         <div className="pointer-events-none absolute inset-0 opacity-70 [background:radial-gradient(circle_at_18%_12%,rgba(99,102,241,0.20),transparent_34%),radial-gradient(circle_at_84%_10%,rgba(16,185,129,0.10),transparent_30%)]" />
 
