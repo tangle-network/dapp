@@ -1,7 +1,10 @@
 import type { FC } from 'react';
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import { useNavigate } from 'react-router';
-import { useBlueprintDetails } from '@tangle-network/tangle-shared-ui/data/graphql';
+import {
+  useAllBlueprints,
+  useBlueprintDetails,
+} from '@tangle-network/tangle-shared-ui/data/graphql';
 import { NewSandboxCard } from '@tangle-network/sandbox-ui/dashboard';
 import {
   Badge,
@@ -10,6 +13,8 @@ import {
   CardContent,
 } from '@tangle-network/sandbox-ui/primitives';
 import type { BlueprintAppEntry } from '../../types';
+import BlueprintModePicker from '../../components/BlueprintModePicker';
+import { useBlueprintModes } from '../../useBlueprintModes';
 
 type Props = {
   entry: BlueprintAppEntry;
@@ -21,10 +26,33 @@ const SandboxBlueprintLandingPage: FC<Props> = ({ entry }) => {
     enabled: entry.blueprintId !== undefined,
   });
 
+  // The curated entry doesn't carry a blueprintId. Look up the canonical
+  // sandbox blueprint from the catalog by matching `(publisher.namespace,
+  // requestedSlug)` against `entry.match` — that's the same identity the
+  // registry resolver uses.
+  const { blueprints } = useAllBlueprints();
+  const canonicalBlueprint = useMemo(() => {
+    const candidates = Array.from(blueprints.values()).filter((bp) => {
+      const ns = bp.blueprintUi?.publisher?.namespace?.toLowerCase();
+      const slug = bp.blueprintUi?.requestedSlug?.toLowerCase();
+      return ns === 'tangle' && slug === 'ai-agent-sandbox';
+    });
+    // Canonical = lowest on-chain id, matches catalog dedupe.
+    return candidates.sort((a, b) => (a.id < b.id ? -1 : 1))[0] ?? null;
+  }, [blueprints]);
+  const modes = useBlueprintModes(canonicalBlueprint);
+  const [selectedModeId, setSelectedModeId] = useState<string | null>(null);
+  const activeMode = useMemo(() => {
+    if (modes.length === 0) return null;
+    return modes.find((m) => m.id === selectedModeId) ?? modes[0];
+  }, [modes, selectedModeId]);
+
   const deployPath =
-    entry.blueprintId !== undefined
-      ? `/blueprints/${entry.blueprintId.toString()}/deploy`
-      : '/blueprints/create';
+    activeMode !== null
+      ? `/blueprints/${activeMode.blueprintId.toString()}/deploy`
+      : entry.blueprintId !== undefined
+        ? `/blueprints/${entry.blueprintId.toString()}/deploy`
+        : '/blueprints/create';
 
   const metrics = useMemo(
     () => ({
@@ -35,6 +63,13 @@ const SandboxBlueprintLandingPage: FC<Props> = ({ entry }) => {
 
   return (
     <div data-sandbox-ui className="space-y-6">
+      {modes.length > 1 && activeMode && (
+        <BlueprintModePicker
+          modes={modes}
+          selectedModeId={activeMode.id}
+          onSelect={(mode) => setSelectedModeId(mode.id)}
+        />
+      )}
       <div className="rounded-lg border border-border bg-card p-6 shadow-[var(--shadow-card)]">
         <div className="space-y-3">
           <Badge variant="sandbox" dot>
@@ -55,6 +90,21 @@ const SandboxBlueprintLandingPage: FC<Props> = ({ entry }) => {
           <Button variant="outline" onClick={() => navigate('/instances')}>
             View live services
           </Button>
+          {(activeMode?.blueprintId ?? canonicalBlueprint?.id) !==
+            undefined && (
+            <Button
+              variant="ghost"
+              onClick={() =>
+                navigate(
+                  `/blueprints/${(
+                    activeMode?.blueprintId ?? canonicalBlueprint?.id
+                  )?.toString()}?raw=1`,
+                )
+              }
+            >
+              View on-chain
+            </Button>
+          )}
         </div>
       </div>
 

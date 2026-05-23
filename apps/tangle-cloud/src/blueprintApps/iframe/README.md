@@ -175,6 +175,27 @@ If something goes wrong with an iframe app:
    `externalApp.iframe` block. Slower (requires onchain manifest
    refresh) but persists across env redeploys.
 
+## Mode-aware blueprints (`?mode=<id>&blueprintId=<id>`)
+
+A blueprint can declare multiple on-chain deployment modes (cloud, instance,
+TEE, validator, …) via `blueprintUi.modes[]`. The catalog collapses these
+into one card; the detail page renders a picker; the iframe receives the
+picked mode through reserved URL params:
+
+| Param         | Value                                       |
+|---------------|---------------------------------------------|
+| `mode`        | mode id from `modes[].id`, or `default`     |
+| `blueprintId` | on-chain id of the picked mode's blueprint  |
+
+The parent ALWAYS appends both. Iframe apps that ignore them keep working —
+single-mode blueprints receive `mode=default` and `blueprintId=<canonical>`.
+
+When the user flips modes after the iframe is mounted, the parent posts
+`{type: 'tangle:mode', mode, blueprintId}` to the iframe with `targetOrigin`
+pinned to the manifest origin. The iframe can listen and re-render without
+a reload; if it ignores the message the URL params still carry the latest
+mode on the next full reload.
+
 ## Threat model & invariants
 
 The full threat model lives in

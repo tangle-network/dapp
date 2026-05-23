@@ -4,12 +4,15 @@ import {
   Card,
   CardContent,
 } from '@tangle-network/sandbox-ui/primitives';
-import type { FC } from 'react';
+import { useMemo, useState, type FC } from 'react';
 import { Link } from 'react-router';
 import { resolveBlueprintAppView } from '../resolver';
 import type { BlueprintAppEntry } from '../types';
 import type { TangleBlueprintAppEntry } from '../manifest';
 import BlueprintAppFrameHost from './BlueprintAppFrameHost';
+import BlueprintModePicker from './BlueprintModePicker';
+import { useBlueprint } from '@tangle-network/tangle-shared-ui/data/graphql';
+import { useBlueprintModes } from '../useBlueprintModes';
 
 type Props = {
   entry: BlueprintAppEntry | TangleBlueprintAppEntry;
@@ -23,10 +26,25 @@ const BlueprintAppLandingPage: FC<Props> = ({ entry }) => {
     view.manifest.externalApp?.trust === 'trusted'
       ? entry.iframe
       : undefined;
+  // For curated entries we still need a blueprint object to ask the
+  // modes hook for siblings — the entry only carries the canonical id.
+  const { data: canonicalBlueprint } = useBlueprint(
+    view.blueprintId?.toString(),
+    { enabled: view.blueprintId !== undefined },
+  );
+  const modes = useBlueprintModes(canonicalBlueprint);
+  const [selectedModeId, setSelectedModeId] = useState<string | null>(null);
+  const activeMode = useMemo(() => {
+    if (modes.length === 0) return null;
+    const fromState = modes.find((m) => m.id === selectedModeId);
+    return fromState ?? modes[0];
+  }, [modes, selectedModeId]);
   const provisionPath =
-    view.blueprintId !== undefined
-      ? `/blueprints/${view.blueprintId.toString()}/deploy`
-      : '/blueprints/create';
+    activeMode !== null
+      ? `/blueprints/${activeMode.blueprintId.toString()}/deploy`
+      : view.blueprintId !== undefined
+        ? `/blueprints/${view.blueprintId.toString()}/deploy`
+        : '/blueprints/create';
   const serviceNoun = view.manifest.resources.serviceNoun;
   const resourceNoun = view.manifest.resources.resourceNoun;
 
@@ -70,6 +88,19 @@ const BlueprintAppLandingPage: FC<Props> = ({ entry }) => {
                     </a>
                   </Button>
                 )}
+                {(activeMode || view.blueprintId !== undefined) && (
+                  // Power-user escape hatch: jump to the protocol-generic
+                  // per-id detail page for the picked mode (or canonical
+                  // blueprint when no mode is picked). `?raw=1` suppresses
+                  // the curated-tier redirect on that route.
+                  <Button asChild variant="ghost" size="lg">
+                    <Link
+                      to={`/blueprints/${(activeMode?.blueprintId ?? view.blueprintId)?.toString()}?raw=1`}
+                    >
+                      View on-chain
+                    </Link>
+                  </Button>
+                )}
               </div>
             </div>
 
@@ -87,12 +118,22 @@ const BlueprintAppLandingPage: FC<Props> = ({ entry }) => {
         </CardContent>
       </Card>
 
+      {modes.length > 1 && activeMode && (
+        <BlueprintModePicker
+          modes={modes}
+          selectedModeId={activeMode.id}
+          onSelect={(mode) => setSelectedModeId(mode.id)}
+        />
+      )}
+
       {iframeConfig && (
         <Card variant="sandbox" className="overflow-hidden rounded-3xl">
           <CardContent className="p-0">
             <BlueprintAppFrameHost
               config={iframeConfig}
               appDisplayName={view.manifest.displayName}
+              mode={activeMode?.id}
+              blueprintId={activeMode?.blueprintId ?? view.blueprintId}
             />
           </CardContent>
         </Card>

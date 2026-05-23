@@ -11,11 +11,13 @@ import {
   EmptyState,
   Skeleton,
 } from '@tangle-network/sandbox-ui/primitives';
-import { Navigate, Link } from 'react-router';
-import type { FC } from 'react';
+import { Navigate, Link, useSearchParams } from 'react-router';
+import { useCallback, useState, type FC } from 'react';
 import type { Blueprint } from '@tangle-network/tangle-shared-ui/types/blueprint';
 import useParamWithSchema from '@tangle-network/tangle-shared-ui/hooks/useParamWithSchema';
 import { z } from 'zod';
+import BlueprintModePicker from '../../../blueprintApps/components/BlueprintModePicker';
+import { useBlueprintModes } from '../../../blueprintApps/useBlueprintModes';
 import BlueprintAppLandingPage from '../../../blueprintApps/components/BlueprintAppLandingPage';
 import BlueprintHostCard from '../../../components/blueprintApps/BlueprintHostCard';
 import { renderCuratedBlueprintLanding } from '../../../blueprintApps/modules';
@@ -35,6 +37,12 @@ import BlueprintVersionsPanel from '../../../components/binaryUpgrade/BlueprintV
 const Page: FC = () => {
   const id = useParamWithSchema('id', z.string().min(1));
   const numericId = id && /^\d+$/.test(id) ? BigInt(id) : undefined;
+  const [searchParams] = useSearchParams();
+  // `?raw=1` is the power-user escape hatch — when present we skip the
+  // curated-tier redirect and render the protocol-generic per-id detail
+  // page. Catalog cards never set it; deep-links and "View on-chain"
+  // links do.
+  const rawRoute = searchParams.get('raw') === '1';
   const { data: blueprint, isLoading: isLoadingBlueprint } = useBlueprint(
     numericId?.toString(),
     {
@@ -47,6 +55,28 @@ const Page: FC = () => {
     });
   const resolvedView = useResolvedBlueprintViewFromIndexedBlueprint(blueprint);
   const entry = id ? getBlueprintAppBySlug(id) : null;
+  const modes = useBlueprintModes(blueprint);
+  const [selectedModeId, setSelectedModeId] = useState<string | null>(null);
+  const handleModeSelect = useCallback(
+    (modeId: string, blueprintId: number) => {
+      setSelectedModeId(modeId);
+      // Navigate to the picked mode's underlying blueprint id when the
+      // operator picks a non-canonical mode. Keeping the URL in sync means
+      // refresh / share preserves the picked mode. `?raw=1` is retained so
+      // power-users stay in the per-id flow.
+      if (numericId !== undefined && BigInt(blueprintId) !== numericId) {
+        const next = new URLSearchParams(searchParams);
+        next.set('mode', modeId);
+        next.set('raw', '1');
+        window.history.replaceState(
+          null,
+          '',
+          `/blueprints/${blueprintId.toString()}?${next.toString()}`,
+        );
+      }
+    },
+    [numericId, searchParams],
+  );
 
   if (!id) {
     return <Navigate to={PagePath.NOT_FOUND} replace />;
@@ -74,12 +104,28 @@ const Page: FC = () => {
       return <Navigate to={PagePath.NOT_FOUND} replace />;
     }
 
+    // Redirect curated tiers to their canonical slug route — UNLESS the
+    // operator explicitly asked for the raw per-id view (`?raw=1`). That
+    // escape hatch lets deep-links and "View on-chain" buttons land on
+    // the protocol-generic detail page regardless of curation.
     if (
-      resolvedView.tier === 'curated-module' ||
-      resolvedView.tier === 'external-app'
+      !rawRoute &&
+      (resolvedView.tier === 'curated-module' ||
+        resolvedView.tier === 'external-app')
     ) {
       return <Navigate to={getBlueprintPath(resolvedView)} replace />;
     }
+
+    const activeModeId =
+      selectedModeId ?? searchParams.get('mode') ?? modes[0]?.id ?? null;
+    const modePicker =
+      modes.length > 1 ? (
+        <BlueprintModePicker
+          modes={modes}
+          selectedModeId={activeModeId ?? modes[0].id}
+          onSelect={(mode) => handleModeSelect(mode.id, mode.blueprintId)}
+        />
+      ) : null;
 
     // Declarative tier: render the per-app surface manifest (theme, overview
     // cards, actions, resource views, modules) instead of the protocol-generic
@@ -96,6 +142,7 @@ const Page: FC = () => {
     if (hasDeclarativeSurface) {
       return (
         <div className="space-y-8">
+          {modePicker}
           <BlueprintHostCard
             blueprint={blueprintDetails.details}
             operatorCount={blueprintDetails.operators.length}
@@ -114,6 +161,7 @@ const Page: FC = () => {
 
     return (
       <div className="space-y-8">
+        {modePicker}
         <BlueprintDetailHero
           blueprint={blueprintDetails.details}
           operatorCount={blueprintDetails.operators.length}
