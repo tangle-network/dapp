@@ -475,11 +475,9 @@ const BlueprintListing: FC<Props> = ({
 
       <div className="flex flex-col gap-3 border-border border-t pt-4 text-muted-foreground text-sm sm:flex-row sm:items-center sm:justify-between">
         <span>
-          Showing{' '}
-          {dedupedRows.length === 0 ? 0 : safePage * PAGE_SIZE + 1}-
+          Showing {dedupedRows.length === 0 ? 0 : safePage * PAGE_SIZE + 1}-
           {Math.min((safePage + 1) * PAGE_SIZE, dedupedRows.length)} of{' '}
-          {dedupedRows.length}{' '}
-          {pluralize('blueprint', dedupedRows.length)}
+          {dedupedRows.length} {pluralize('blueprint', dedupedRows.length)}
         </span>
 
         <div className="flex items-center gap-2">
@@ -807,8 +805,14 @@ const BlueprintCard = ({
 
         <div className="mt-auto pt-5">
           <div className="grid grid-cols-3 gap-2 border-border border-t pt-4">
-            <BlueprintMetric label="Operators" value={blueprint.operatorsCount} />
-            <BlueprintMetric label="Instances" value={blueprint.instancesCount} />
+            <BlueprintMetric
+              label="Operators"
+              value={blueprint.operatorsCount}
+            />
+            <BlueprintMetric
+              label="Instances"
+              value={blueprint.instancesCount}
+            />
             <BlueprintMetric label="Source" value={manifestStatus} />
           </div>
 

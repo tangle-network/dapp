@@ -580,9 +580,7 @@ const MAX_MODE_ID_LENGTH = 48;
 // outright — partial sanitization would silently mutate publisher intent.
 const MODE_ID_PATTERN = /^[a-z0-9][a-z0-9-]*$/;
 
-const parseBlueprintModes = (
-  value: unknown,
-): BlueprintMode[] | undefined => {
+const parseBlueprintModes = (value: unknown): BlueprintMode[] | undefined => {
   if (!Array.isArray(value)) {
     return undefined;
   }

@@ -36,11 +36,7 @@ const BlueprintModePicker: FC<Props> = ({
   }
 
   return (
-    <section
-      aria-label="Deployment mode"
-      data-sandbox-ui
-      className="space-y-3"
-    >
+    <section aria-label="Deployment mode" data-sandbox-ui className="space-y-3">
       <header className="space-y-1">
         <p className="font-semibold text-muted-foreground text-[11px] uppercase tracking-wider">
           Deployment mode

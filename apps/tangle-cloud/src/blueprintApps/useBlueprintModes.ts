@@ -85,7 +85,9 @@ export function useBlueprintModes(
     // a different on-chain id. We may be the canonical OR an alias, so
     // match by id across both lists.
     const rows: ReturnType<typeof dedupeBlueprintsByIdentity> =
-      dedupeBlueprintsByIdentity(Array.from(blueprints.values()) as Blueprint[]);
+      dedupeBlueprintsByIdentity(
+        Array.from(blueprints.values()) as Blueprint[],
+      );
     const row = rows.find((candidate) => {
       if (candidate.blueprint.id === input.onChainId) {
         return true;

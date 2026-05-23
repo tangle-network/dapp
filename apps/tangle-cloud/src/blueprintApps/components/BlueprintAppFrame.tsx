@@ -30,7 +30,6 @@ type Props = {
   iframeProps?: Pick<IframeHTMLAttributes<HTMLIFrameElement>, 'name'>;
 };
 
-
 // Hardened iframe sandbox. We deliberately omit:
 //  - allow-same-origin: forces opaque origin so the iframe can't reach
 //    parent.localStorage / parent.cookies / window.parent.ethereum.

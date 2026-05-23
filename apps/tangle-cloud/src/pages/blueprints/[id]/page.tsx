@@ -363,7 +363,9 @@ const BlueprintDetailHero = ({
               </li>
               <li className="flex items-start gap-2">
                 <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-primary" />
-                <span>Wallet approval submits the on-chain service request.</span>
+                <span>
+                  Wallet approval submits the on-chain service request.
+                </span>
               </li>
             </ul>
           </div>
