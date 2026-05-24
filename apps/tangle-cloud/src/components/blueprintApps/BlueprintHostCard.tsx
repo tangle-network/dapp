@@ -36,6 +36,15 @@ type Props = {
   operatorCount?: number;
 };
 
+// Manifest-provided defaults for per-blueprint hero theming. These are *data*
+// fed into CSS custom properties so each blueprint can tint its hero with its
+// brand color. They are not part of the design-token palette — operators can
+// override them via `blueprintUi.theme`, and the rest of the card uses the
+// cloud-app design tokens (bg-card, text-foreground, ...) which honor the
+// active theme (tangle / vault) for AA contrast.
+const DEFAULT_ACCENT = '#6366F1';
+const DEFAULT_SECONDARY = '#0B1020';
+
 const BlueprintHostCard = ({
   blueprint,
   serviceId,
@@ -47,8 +56,8 @@ const BlueprintHostCard = ({
   }
 
   const { blueprintUi } = blueprint;
-  const accentColor = blueprintUi.theme?.accentColor ?? '#6366F1';
-  const secondaryColor = blueprintUi.theme?.secondaryColor ?? '#0B1020';
+  const accentColor = blueprintUi.theme?.accentColor ?? DEFAULT_ACCENT;
+  const secondaryColor = blueprintUi.theme?.secondaryColor ?? DEFAULT_SECONDARY;
   const publisherLabel = blueprintUi.publisher.namespace
     ? `@${blueprintUi.publisher.namespace}`
     : blueprintUi.publisher.name;
@@ -63,8 +72,12 @@ const BlueprintHostCard = ({
   const statCard = blueprintUi.overviewCards?.find((card) => card.value);
 
   return (
+    // Shell wrapper already declares `data-sandbox-ui` at the document root;
+    // re-declaring it here would re-apply sandbox-ui's `:root, [data-sandbox-ui]`
+    // defaults and break theme inheritance (e.g. vault `--hsl-card` snapping
+    // back to the tangle dark default). See BlueprintAppLandingPage for the
+    // same fix in PR #3228.
     <div
-      data-sandbox-ui
       className="tangle-blueprint-host space-y-6"
       style={
         {
@@ -73,23 +86,35 @@ const BlueprintHostCard = ({
         } as CSSProperties
       }
     >
-      <section className="relative overflow-hidden rounded-[32px] border border-white/10 bg-[#060711] shadow-[var(--shadow-card)]">
+      <Card
+        variant="sandbox"
+        className="relative overflow-hidden rounded-[32px] border border-border bg-card shadow-[var(--shadow-card)]"
+      >
+        {/* Brand-tinted accent wash. Sits on top of the card surface at low
+            opacity so card-token text remains AA-contrast on both themes. */}
         <div
-          className="absolute inset-0 opacity-80"
+          aria-hidden
+          className="pointer-events-none absolute inset-0 opacity-60 dark:opacity-80"
           style={{
-            background: `radial-gradient(circle at 18% 18%, ${accentColor}55, transparent 34%), radial-gradient(circle at 82% 8%, ${secondaryColor}AA, transparent 38%), linear-gradient(135deg, #080915 0%, #111827 48%, #05060D 100%)`,
+            background: `radial-gradient(circle at 18% 18%, color-mix(in srgb, var(--blueprint-accent) 28%, transparent), transparent 38%), radial-gradient(circle at 82% 8%, color-mix(in srgb, var(--blueprint-secondary) 32%, transparent), transparent 42%)`,
           }}
         />
-        <div className="absolute -right-20 top-16 h-72 w-72 rounded-full bg-[var(--blueprint-accent)]/20 blur-3xl" />
-        <div className="absolute bottom-0 left-0 h-px w-full bg-gradient-to-r from-transparent via-white/30 to-transparent" />
+        <div
+          aria-hidden
+          className="pointer-events-none absolute -right-20 top-16 h-72 w-72 rounded-full bg-[var(--blueprint-accent)]/15 blur-3xl"
+        />
+        <div
+          aria-hidden
+          className="pointer-events-none absolute bottom-0 left-0 h-px w-full bg-gradient-to-r from-transparent via-[color:var(--border-accent-hover)] to-transparent"
+        />
 
-        <div className="relative grid gap-8 p-6 md:p-8 xl:grid-cols-[minmax(0,1.35fr)_minmax(360px,0.75fr)]">
+        <CardContent className="relative grid gap-8 p-6 md:p-8 xl:grid-cols-[minmax(0,1.35fr)_minmax(360px,0.75fr)]">
           <div className="space-y-7">
             <div className="space-y-4">
-              <h1 className="max-w-[720px] font-display text-4xl font-extrabold leading-[1.04] tracking-[-0.04em] !text-white sm:text-5xl md:text-6xl md:leading-[0.94] md:tracking-[-0.055em] xl:text-6xl">
+              <h1 className="max-w-[720px] font-display text-4xl font-extrabold leading-[1.04] tracking-[-0.04em] text-foreground sm:text-5xl md:text-6xl md:leading-[0.94] md:tracking-[-0.055em] xl:text-6xl">
                 {hero.title}
               </h1>
-              <p className="max-w-2xl text-lg leading-8 !text-white/72">
+              <p className="max-w-2xl text-lg leading-8 text-muted-foreground">
                 {hero.subtitle}
               </p>
             </div>
@@ -124,13 +149,10 @@ const BlueprintHostCard = ({
             trackedLabel={trackedLabel}
             pageCopy={pageCopy}
           />
-        </div>
-      </section>
+        </CardContent>
+      </Card>
 
-      <Card
-        variant="sandbox"
-        className="rounded-[28px] border-white/10 bg-[var(--depth-2)]"
-      >
+      <Card variant="sandbox" className="rounded-[28px]">
         <CardContent className="p-6">
           <SectionHeader
             kicker={pageCopy.kicker}
@@ -159,10 +181,7 @@ const BlueprintHostCard = ({
       </Card>
 
       <div className="grid gap-6 xl:grid-cols-[1fr_1fr]">
-        <Card
-          variant="sandbox"
-          className="rounded-[28px] border-white/10 bg-[var(--depth-2)]"
-        >
+        <Card variant="sandbox" className="rounded-[28px]">
           <CardContent className="p-6">
             <SectionHeader
               kicker="Workflow"
@@ -176,17 +195,13 @@ const BlueprintHostCard = ({
                   key={action.id}
                   action={action}
                   index={index + 1}
-                  accentColor={accentColor}
                 />
               ))}
             </div>
           </CardContent>
         </Card>
 
-        <Card
-          variant="sandbox"
-          className="rounded-[28px] border-white/10 bg-[var(--depth-2)]"
-        >
+        <Card variant="sandbox" className="rounded-[28px]">
           <CardContent className="p-6">
             <SectionHeader
               kicker="Runtime"
@@ -207,10 +222,7 @@ const BlueprintHostCard = ({
         </Card>
       </div>
 
-      <Card
-        variant="sandbox"
-        className="rounded-[28px] border-white/10 bg-[var(--depth-2)]"
-      >
+      <Card variant="sandbox" className="rounded-[28px]">
         <CardContent className="p-6">
           <SectionHeader
             kicker="Console"
@@ -230,8 +242,8 @@ const BlueprintHostCard = ({
           </div>
 
           {blueprintUi.externalApp && (
-            <div className="mt-6 rounded-xl border border-white/10 bg-white/[0.035] p-4">
-              <p className="text-sm leading-6 !text-white/65">
+            <div className="mt-6 rounded-xl border border-border bg-[color:var(--bg-elevated)] p-4">
+              <p className="text-sm leading-6 text-muted-foreground">
                 Publisher console opens in a separate tab.
                 {serviceId !== undefined
                   ? ` Service #${serviceId.toString()} remains manageable here.`
@@ -239,7 +251,7 @@ const BlueprintHostCard = ({
               </p>
               <button
                 type="button"
-                className="mt-3 inline-flex items-center gap-2 text-sm font-bold !text-white hover:!text-white/80"
+                className="mt-3 inline-flex items-center gap-2 rounded-md text-sm font-semibold text-foreground outline-none transition-colors hover:text-[color:var(--brand-cool)] focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-card"
                 onClick={() =>
                   window.open(
                     blueprintUi.externalApp?.url,
@@ -266,19 +278,19 @@ const PrimaryLaunchLink = ({
   label: string;
   provisionPath?: string;
 }) => {
+  // Use the sandbox-ui Button primitive (`size="xl"`) so primary CTA styling
+  // — focus ring, disabled state, hover — comes from the design system rather
+  // than being re-implemented inline. `size="xl"` resolves to `bg-primary` +
+  // `text-primary-foreground` which both themes provide.
   return provisionPath ? (
-    <Button
-      asChild
-      size="xl"
-      className="rounded-xl bg-[var(--blueprint-accent)] px-8 text-base font-bold !text-white shadow-lg shadow-black/25 hover:brightness-110"
-    >
+    <Button asChild size="xl" className="rounded-xl px-8 text-base font-bold">
       <Link to={provisionPath}>{label}</Link>
     </Button>
   ) : (
     <Button
       type="button"
       size="xl"
-      className="rounded-xl bg-[var(--blueprint-accent)] px-8 text-base font-bold !text-white shadow-lg shadow-black/25 hover:brightness-110"
+      className="rounded-xl px-8 text-base font-bold"
     >
       {label}
     </Button>
@@ -294,12 +306,15 @@ const LaunchPlan = ({
   trackedLabel: string;
   pageCopy: BlueprintPageCopy;
 }) => (
-  <aside className="relative overflow-hidden rounded-[28px] border border-white/12 bg-black/30 p-5 shadow-2xl shadow-black/30 backdrop-blur">
-    <div className="absolute left-0 top-0 h-px w-full bg-gradient-to-r from-transparent via-white/40 to-transparent" />
-    <p className="font-bold text-[10px] uppercase tracking-[0.2em] !text-white/45">
+  <aside className="relative overflow-hidden rounded-[28px] border border-border bg-[color:var(--bg-elevated)] p-5 shadow-[var(--shadow-card)] backdrop-blur">
+    <div
+      aria-hidden
+      className="pointer-events-none absolute left-0 top-0 h-px w-full bg-gradient-to-r from-transparent via-[color:var(--border-accent-hover)] to-transparent"
+    />
+    <p className="font-semibold text-[10px] uppercase tracking-[0.2em] text-muted-foreground">
       Launch plan
     </p>
-    <h2 className="mt-2 font-display text-2xl font-extrabold tracking-tight !text-white">
+    <h2 className="mt-2 font-display text-2xl font-extrabold tracking-tight text-foreground">
       {pageCopy.planTitle}
     </h2>
 
@@ -313,11 +328,11 @@ const LaunchPlan = ({
       />
     </div>
 
-    <div className="mt-5 rounded-xl border border-white/10 bg-white/[0.035] p-4">
-      <p className="font-bold text-[10px] uppercase tracking-[0.18em] !text-white/42">
+    <div className="mt-5 rounded-xl border border-border bg-card p-4">
+      <p className="font-semibold text-[10px] uppercase tracking-[0.18em] text-muted-foreground">
         Publisher
       </p>
-      <p className="mt-2 font-display text-xl font-extrabold !text-white">
+      <p className="mt-2 font-display text-xl font-extrabold text-foreground">
         {publisherLabel}
       </p>
     </div>
@@ -325,22 +340,22 @@ const LaunchPlan = ({
 );
 
 const ProofPoint = ({ label, value }: { label: string; value: string }) => (
-  <div className="rounded-xl border border-white/10 bg-white/[0.04] p-4">
-    <p className="font-bold text-[10px] uppercase tracking-[0.18em] !text-white/42">
+  <div className="rounded-xl border border-border bg-[color:var(--bg-elevated)] p-4">
+    <p className="font-semibold text-[10px] uppercase tracking-[0.18em] text-muted-foreground">
       {label}
     </p>
-    <p className="mt-2 font-display text-lg font-extrabold tracking-tight !text-white">
+    <p className="mt-2 font-display text-lg font-extrabold tracking-tight text-foreground">
       {value}
     </p>
   </div>
 );
 
 const PlanStep = ({ index, title }: { index: string; title: string }) => (
-  <div className="flex items-center gap-3 rounded-xl border border-white/10 bg-white/[0.035] p-3">
-    <span className="grid h-8 w-8 shrink-0 place-items-center rounded-xl bg-[var(--blueprint-accent)] font-display text-sm font-extrabold !text-white">
+  <div className="flex items-center gap-3 rounded-xl border border-border bg-card p-3">
+    <span className="grid h-8 w-8 shrink-0 place-items-center rounded-xl bg-primary font-display text-sm font-extrabold text-primary-foreground">
       {index}
     </span>
-    <p className="text-sm font-semibold leading-5 !text-white/78">{title}</p>
+    <p className="text-sm font-semibold leading-5 text-foreground">{title}</p>
   </div>
 );
 
@@ -354,13 +369,13 @@ const SectionHeader = ({
   description: string;
 }) => (
   <div>
-    <p className="font-bold text-[10px] uppercase tracking-[0.2em] text-[var(--surface-success-text)]">
+    <p className="font-semibold text-[10px] uppercase tracking-[0.2em] text-[color:var(--surface-success-text)]">
       {kicker}
     </p>
-    <h2 className="mt-2 font-display text-3xl font-extrabold leading-tight tracking-tight !text-white">
+    <h2 className="mt-2 font-display text-3xl font-extrabold leading-tight tracking-tight text-foreground">
       {title}
     </h2>
-    <p className="mt-3 max-w-2xl text-sm leading-6 !text-white/62">
+    <p className="mt-3 max-w-2xl text-sm leading-6 text-muted-foreground">
       {description}
     </p>
   </div>
@@ -375,40 +390,37 @@ const OutcomeCard = ({
   value: string;
   description: string;
 }) => (
-  <div className="rounded-xl border border-white/10 bg-white/[0.035] p-4">
-    <p className="font-bold text-[10px] uppercase tracking-[0.18em] !text-white/42">
+  <div className="rounded-xl border border-border bg-[color:var(--bg-elevated)] p-4">
+    <p className="font-semibold text-[10px] uppercase tracking-[0.18em] text-muted-foreground">
       {title}
     </p>
-    <h3 className="mt-2 font-display text-xl font-extrabold tracking-tight !text-white">
+    <h3 className="mt-2 font-display text-xl font-extrabold tracking-tight text-foreground">
       {value}
     </h3>
-    <p className="mt-3 text-sm leading-6 !text-white/62">{description}</p>
+    <p className="mt-3 text-sm leading-6 text-muted-foreground">
+      {description}
+    </p>
   </div>
 );
 
 const ActionPreview = ({
   action,
   index,
-  accentColor,
 }: {
   action: BlueprintUiAction;
   index: number;
-  accentColor: string;
 }) => (
-  <div className="rounded-xl border border-white/10 bg-white/[0.035] p-4">
+  <div className="rounded-xl border border-border bg-[color:var(--bg-elevated)] p-4">
     <div className="flex gap-4">
-      <span
-        className="grid h-9 w-9 shrink-0 place-items-center rounded-xl font-display text-sm font-extrabold !text-white"
-        style={{ backgroundColor: accentColor }}
-      >
+      <span className="grid h-9 w-9 shrink-0 place-items-center rounded-xl bg-[var(--blueprint-accent)] font-display text-sm font-extrabold text-primary-foreground">
         {index}
       </span>
       <div className="min-w-0 flex-1">
-        <h3 className="font-display text-lg font-bold !text-white">
+        <h3 className="font-display text-lg font-semibold text-foreground">
           {action.label}
         </h3>
         {action.description && (
-          <p className="mt-2 text-sm leading-6 !text-white/62">
+          <p className="mt-2 text-sm leading-6 text-muted-foreground">
             {action.description}
           </p>
         )}
@@ -427,7 +439,7 @@ const ActionPreview = ({
 const FieldChip = ({ field }: { field: BlueprintUiActionField }) => (
   <Badge
     variant="sandbox"
-    className="border-white/10 bg-white/[0.04] !text-white/72"
+    className="border-border bg-card text-muted-foreground"
   >
     {field.label}
     {field.required ? ' *' : ''}
@@ -441,29 +453,14 @@ const RuntimeTable = ({
   view: NonNullable<BlueprintUi['resourceViews']>[number];
   trackedLabel: string;
 }) => (
-  <div className="overflow-hidden rounded-xl border border-white/10 bg-white/[0.035]">
-    <div className="flex items-center justify-between border-white/10 border-b p-4">
-      <h3 className="font-display text-lg font-bold !text-white">
+  <div className="overflow-hidden rounded-xl border border-border bg-[color:var(--bg-elevated)]">
+    <div className="flex items-center justify-between border-b border-border p-4">
+      <h3 className="font-display text-lg font-semibold text-foreground">
         {view.title}
       </h3>
-      <Badge className="bg-[var(--surface-success-bg)] text-[var(--surface-success-text)]">
+      <Badge className="bg-[color:var(--surface-success-bg)] text-[color:var(--surface-success-text)]">
         Live after launch
       </Badge>
-    </div>
-    <div
-      className="grid bg-white/[0.035]"
-      style={{
-        gridTemplateColumns: `repeat(${view.columns.length}, minmax(9rem, 1fr))`,
-      }}
-    >
-      {view.columns.map((column) => (
-        <div
-          key={column.key}
-          className="border-white/8 border-r px-4 py-3 text-xs font-bold uppercase tracking-widest !text-white/45 last:border-r-0"
-        >
-          {column.label}
-        </div>
-      ))}
     </div>
     <div
       className="grid"
@@ -473,8 +470,23 @@ const RuntimeTable = ({
     >
       {view.columns.map((column) => (
         <div
-          key={column.key}
-          className="border-white/8 border-r px-4 py-4 text-sm font-semibold !text-white/72 last:border-r-0"
+          key={`head-${column.key}`}
+          className="border-r border-border px-4 py-3 text-xs font-semibold uppercase tracking-widest text-muted-foreground last:border-r-0"
+        >
+          {column.label}
+        </div>
+      ))}
+    </div>
+    <div
+      className="grid border-t border-border"
+      style={{
+        gridTemplateColumns: `repeat(${view.columns.length}, minmax(9rem, 1fr))`,
+      }}
+    >
+      {view.columns.map((column) => (
+        <div
+          key={`cell-${column.key}`}
+          className="border-r border-border px-4 py-4 text-sm font-semibold text-foreground last:border-r-0"
         >
           {column.emphasis ? trackedLabel : 'Pending'}
         </div>
@@ -486,7 +498,7 @@ const RuntimeTable = ({
 const Chip = ({ children }: { children: string }) => (
   <Badge
     variant="sandbox"
-    className="border-white/10 bg-white/[0.035] !text-white/72"
+    className="border-border bg-[color:var(--bg-elevated)] text-muted-foreground"
   >
     {children}
   </Badge>
