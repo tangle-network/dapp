@@ -130,9 +130,14 @@ const entries = [
     },
     tier: 'curated-module',
     slugPolicy: 'reserved',
+    // Sandbox is iframe-driven (agent-sandbox.blueprint.tangle.tools) — the
+    // dapp used to ship a bespoke React module here; we deleted it in favor
+    // of the iframe path so all per-blueprint customization lands in the
+    // publisher's hosted app (or, increasingly, in declarative metadata that
+    // the procedural landing component consumes).
     module: {
       moduleId: 'sandbox',
-      status: 'active',
+      status: 'planned',
     },
     manifest: {
       displayName: 'AI Agent Sandbox',
@@ -160,6 +165,24 @@ const entries = [
           scope: 'resource',
         },
       ],
+      externalApp: {
+        url: 'https://agent-sandbox.blueprint.tangle.tools/',
+        mode: 'iframe',
+        host: 'agent-sandbox.blueprint.tangle.tools',
+        trust: 'trusted',
+        label: 'AI Agent Sandbox',
+      },
+    },
+    iframe: {
+      url: 'https://agent-sandbox.blueprint.tangle.tools/',
+      origin: 'https://agent-sandbox.blueprint.tangle.tools',
+      appId: 'agent-sandbox',
+      allowedChainIds: [],
+      contracts: [],
+      messages: [],
+      allowReadAccount: true,
+      allowChainSwitch: false,
+      allowPopups: false,
     },
   },
   {
