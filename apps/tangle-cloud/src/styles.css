@@ -312,18 +312,18 @@ body {
 /* Dialog content rendered via Radix portal goes to <body>, outside the
    `.tangle-cloud-shell` div. Default centering (`left-1/2 -translate-x-1/2`)
    anchors to the viewport, which looks LEFT-shifted of the visible content
-   area because of the fixed sidebar (16–64rem on lg+). Compensate by
-   shifting the dialog right by half the sidebar width. Mobile (< lg) has no
-   sidebar so the override is no-op there. */
+   area because of the fixed sidebar (4rem collapsed / 16rem expanded on lg+).
+   Compensate by shifting the dialog right by half the sidebar width.
+   Mobile (< lg) has no sidebar so the override is no-op there.
+
+   `--cloud-sidebar-width` is published by `Layout.tsx` on `<html>` and stays
+   in sync with the collapsed/expanded state, so the dialog moves with the
+   sidebar instead of using a hardcoded compromise that was visibly off when
+   the sidebar was expanded (the default for new sessions). */
 @media (min-width: 1024px) {
   [data-state='open'][role='dialog'],
   [data-state='closed'][role='dialog'] {
-    /* Tailwind's `lg:left-16` on the sidebar = 4rem ≈ half is 2rem.
-       The expanded sidebar at `lg:left-64` = 16rem ≈ half is 8rem.
-       Use 4rem as a compromise — covers the collapsed default and looks
-       balanced even when expanded. The math doesn't need to be perfect;
-       the goal is "looks centered in the visible page area." */
-    margin-left: 2rem;
+    margin-left: calc(var(--cloud-sidebar-width, 16rem) / 2);
   }
 }
 
