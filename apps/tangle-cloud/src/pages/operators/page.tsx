@@ -453,7 +453,11 @@ const OperatorTableRow = ({
 
 const OperatorIdenticon = ({ address }: { address: string }) => (
   <div
-    className="grid h-9 w-9 shrink-0 place-items-center rounded-lg border border-border bg-slate-950 font-display font-extrabold text-white text-xs shadow-[var(--shadow-card)]"
+    // The inline `style` from `getOperatorIdenticonStyle` paints a saturated
+    // hue gradient as the actual background, so the `bg-card` fallback only
+    // shows for the brief render before the style applies. `text-primary-
+    // foreground` keeps the contrast stable across both themes.
+    className="grid h-9 w-9 shrink-0 place-items-center rounded-lg border border-border bg-card font-display font-extrabold text-primary-foreground text-xs shadow-[var(--shadow-card)]"
     style={getOperatorIdenticonStyle(address)}
   >
     {address.slice(2, 4).toUpperCase()}
