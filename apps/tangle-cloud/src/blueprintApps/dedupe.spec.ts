@@ -292,4 +292,30 @@ describe('buildBlueprintIframeUrl', () => {
       buildBlueprintIframeUrl('not a url', { mode: 'cloud', blueprintId: 1 }),
     ).toBe('not a url');
   });
+
+  it("forwards the parent shell's light theme as ?theme=light", () => {
+    const url = buildBlueprintIframeUrl('https://x.blueprint.tangle.tools/', {
+      mode: 'default',
+      blueprintId: 7,
+      theme: 'light',
+    });
+    expect(new URL(url).searchParams.get('theme')).toBe('light');
+  });
+
+  it("forwards the parent shell's dark theme as ?theme=dark", () => {
+    const url = buildBlueprintIframeUrl('https://x.blueprint.tangle.tools/', {
+      mode: 'default',
+      blueprintId: 7,
+      theme: 'dark',
+    });
+    expect(new URL(url).searchParams.get('theme')).toBe('dark');
+  });
+
+  it('omits the theme param when caller does not supply one (back-compat)', () => {
+    const url = buildBlueprintIframeUrl('https://x.blueprint.tangle.tools/', {
+      mode: 'default',
+      blueprintId: 7,
+    });
+    expect(new URL(url).searchParams.has('theme')).toBe(false);
+  });
 });
