@@ -1,5 +1,9 @@
 import { useState } from 'react';
-import { Button, Card, CardContent } from '@tangle-network/sandbox-ui/primitives';
+import {
+  Button,
+  Card,
+  CardContent,
+} from '@tangle-network/sandbox-ui/primitives';
 import { Link } from 'react-router';
 import { useAccount } from 'wagmi';
 import { AccountStatsCard } from './AccountStatsCard';
