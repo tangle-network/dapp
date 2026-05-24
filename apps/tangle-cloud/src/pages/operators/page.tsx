@@ -358,9 +358,7 @@ const SortableHead = ({
     {label}
     <span
       aria-hidden
-      className={
-        isActive ? 'text-foreground' : 'text-muted-foreground/40'
-      }
+      className={isActive ? 'text-foreground' : 'text-muted-foreground/40'}
     >
       {isActive ? (direction === 'desc' ? '↓' : '↑') : '↕'}
     </span>

@@ -148,10 +148,7 @@ export const AccountStatsCard: FC<AccountStatsCardProps> = (props) => {
   }
 
   return (
-    <Card
-      variant="sandbox"
-      className={twMerge('w-full', rootProps?.className)}
-    >
+    <Card variant="sandbox" className={twMerge('w-full', rootProps?.className)}>
       <CardContent className="space-y-5 p-5 md:p-6">
         <div className="flex items-start justify-between gap-4">
           <div className="flex min-w-0 items-center gap-4">

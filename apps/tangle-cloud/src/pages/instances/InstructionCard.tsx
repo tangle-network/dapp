@@ -57,7 +57,8 @@ const buildConnectedSteps = (params: {
       title: `Approve ${params.pendingApprovals} service ${
         params.pendingApprovals === 1 ? 'request' : 'requests'
       }`,
-      description: 'Operators must approve incoming requests for the service to activate.',
+      description:
+        'Operators must approve incoming requests for the service to activate.',
       icon: TimeLineIcon,
       to: PagePath.INSTANCES,
       tone: 'action',
@@ -92,7 +93,8 @@ const buildConnectedSteps = (params: {
       title: `${params.runningServices} ${
         params.runningServices === 1 ? 'service' : 'services'
       } running`,
-      description: 'Job submissions and runtime records are available on the service page.',
+      description:
+        'Job submissions and runtime records are available on the service page.',
       icon: CheckboxCircleFill,
       to: PagePath.INSTANCES,
       tone: 'success',

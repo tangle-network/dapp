@@ -1,6 +1,6 @@
-import type { FC, ReactNode } from 'react'
-import { Skeleton } from '@tangle-network/sandbox-ui/primitives'
-import { twMerge } from 'tailwind-merge'
+import type { FC, ReactNode } from 'react';
+import { Skeleton } from '@tangle-network/sandbox-ui/primitives';
+import { twMerge } from 'tailwind-merge';
 
 /**
  * Canonical small-tile stat used across hero strips, table headers, blueprint
@@ -20,24 +20,24 @@ import { twMerge } from 'tailwind-merge'
  *   - success : positive (healthy / operators online)
  *   - warning : needs attention (capacity / pending)
  */
-export type StatTone = 'default' | 'accent' | 'success' | 'warning'
-export type StatSize = 'sm' | 'md' | 'lg'
+export type StatTone = 'default' | 'accent' | 'success' | 'warning';
+export type StatSize = 'sm' | 'md' | 'lg';
 
 export type StatProps = {
-  label: string
-  value: ReactNode
-  sublabel?: ReactNode
-  icon?: ReactNode
-  size?: StatSize
-  tone?: StatTone
-  isLoading?: boolean
-  className?: string
+  label: string;
+  value: ReactNode;
+  sublabel?: ReactNode;
+  icon?: ReactNode;
+  size?: StatSize;
+  tone?: StatTone;
+  isLoading?: boolean;
+  className?: string;
   /**
    * Inline detail rendered next to the value (e.g. "5 / 12" denominator).
    * Smaller, muted, on the same baseline.
    */
-  inlineDetail?: ReactNode
-}
+  inlineDetail?: ReactNode;
+};
 
 const SIZE_STYLES: Record<
   StatSize,
@@ -58,22 +58,21 @@ const SIZE_STYLES: Record<
     label: 'text-[11px]',
     value: 'text-2xl',
   },
-}
+};
 
 const TONE_STYLES: Record<StatTone, string> = {
   default: 'border-border bg-[var(--bg-card)]',
-  accent:
-    'border-[color:var(--border-accent)] bg-[var(--accent-surface-soft)]',
+  accent: 'border-[color:var(--border-accent)] bg-[var(--accent-surface-soft)]',
   success: 'border-emerald-500/30 bg-emerald-500/10',
   warning: 'border-amber-500/30 bg-amber-500/10',
-}
+};
 
 const VALUE_TONE: Record<StatTone, string> = {
   default: 'text-foreground',
   accent: 'text-foreground',
   success: 'text-emerald-200',
   warning: 'text-amber-200',
-}
+};
 
 export const Stat: FC<StatProps> = ({
   label,
@@ -86,7 +85,7 @@ export const Stat: FC<StatProps> = ({
   inlineDetail,
   className,
 }) => {
-  const sizing = SIZE_STYLES[size]
+  const sizing = SIZE_STYLES[size];
   return (
     <div
       className={twMerge(
@@ -115,7 +114,11 @@ export const Stat: FC<StatProps> = ({
         <Skeleton
           className={twMerge(
             'mt-1',
-            size === 'lg' ? 'h-8 w-32' : size === 'md' ? 'h-6 w-24' : 'h-5 w-20',
+            size === 'lg'
+              ? 'h-8 w-32'
+              : size === 'md'
+                ? 'h-6 w-24'
+                : 'h-5 w-20',
           )}
         />
       ) : (
@@ -142,10 +145,10 @@ export const Stat: FC<StatProps> = ({
         </p>
       ) : null}
     </div>
-  )
-}
+  );
+};
 
-Stat.displayName = 'Stat'
+Stat.displayName = 'Stat';
 
 /**
  * StatRow — opinionated horizontal cluster of Stats used at the top of pages.
@@ -154,10 +157,10 @@ Stat.displayName = 'Stat'
  * drops cleanly into hero panels.
  */
 export const StatRow: FC<{
-  items: StatProps[]
-  className?: string
+  items: StatProps[];
+  className?: string;
 }> = ({ items, className }) => {
-  const cols = Math.min(items.length, 6)
+  const cols = Math.min(items.length, 6);
   const desktopCols: Record<number, string> = {
     1: 'sm:grid-cols-1',
     2: 'sm:grid-cols-2',
@@ -165,7 +168,7 @@ export const StatRow: FC<{
     4: 'sm:grid-cols-2 lg:grid-cols-4',
     5: 'sm:grid-cols-3 lg:grid-cols-5',
     6: 'sm:grid-cols-3 lg:grid-cols-6',
-  }
+  };
   return (
     <div
       className={twMerge(
@@ -178,7 +181,7 @@ export const StatRow: FC<{
         <Stat key={`${item.label}-${idx}`} {...item} />
       ))}
     </div>
-  )
-}
+  );
+};
 
-StatRow.displayName = 'StatRow'
+StatRow.displayName = 'StatRow';
