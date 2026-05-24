@@ -62,7 +62,11 @@ const SandboxBlueprintLandingPage: FC<Props> = ({ entry }) => {
   );
 
   return (
-    <div data-sandbox-ui className="space-y-6">
+    // The shell `<div>` already carries `data-sandbox-ui`. Re-declaring it
+    // here would re-apply sandbox-ui's dark token defaults via the
+    // `:root, [data-sandbox-ui]` rule and clobber the active vault/tangle
+    // theme on this subtree.
+    <div className="space-y-6">
       {modes.length > 1 && activeMode && (
         <BlueprintModePicker
           modes={modes}
