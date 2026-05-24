@@ -1,5 +1,6 @@
 import { resolveBlueprintAppView } from './resolver';
 import type { BlueprintAppEntry } from './types';
+import type { BlueprintIframeConfig } from './iframe/types';
 
 /**
  * Identity that the curated registry matches against the blueprint's parsed
@@ -16,8 +17,23 @@ type CuratedBlueprintMatcher = {
   requestedSlug?: string;
 };
 
+/**
+ * Curated entries may carry an `iframe` block to embed the publisher's hosted
+ * app (e.g. trading-arena.blueprint.tangle.tools). The block mirrors what the
+ * metadata-driven parser produces for declarative blueprints — same shape, same
+ * downstream consumers (`BlueprintAppLandingPage`, `BlueprintAppFrameHost`) —
+ * so curated and metadata paths share the iframe surface without bespoke code.
+ *
+ * Curated iframe entries skip the on-chain `metadataVerification` gate (the
+ * dapp itself is the source of truth for first-party apps) but the runtime
+ * still enforces the manifest host suffix allowlist and the iframe sandbox
+ * policy in `iframe/policy.ts`. Set `manifest.externalApp` in tandem so the
+ * landing page's existing iframe gate (`mode === 'iframe'` && `trust ===
+ * 'trusted'`) trips correctly.
+ */
 type CuratedRegistryEntry = BlueprintAppEntry & {
   match?: CuratedBlueprintMatcher;
+  iframe?: BlueprintIframeConfig;
 };
 
 const entries = [
@@ -72,6 +88,32 @@ const entries = [
           scope: 'resource',
         },
       ],
+      // First-party external app handoff. The host suffix is already on the
+      // iframe policy allowlist (.blueprint.tangle.tools), and curated entries
+      // are trusted-by-default — no on-chain metadata attestation needed.
+      externalApp: {
+        url: 'https://trading-arena.blueprint.tangle.tools/',
+        mode: 'iframe',
+        host: 'trading-arena.blueprint.tangle.tools',
+        trust: 'trusted',
+        label: 'AI Trading',
+      },
+    },
+    // Iframe runtime policy. Empty allowedChainIds / contracts on purpose:
+    // the trading-arena UI doesn't issue tangle.app.signTransaction yet, so
+    // we don't grant transaction surface. allowReadAccount surfaces the
+    // connected wallet to the iframe for read-only views (positions,
+    // balances) without unlocking signing.
+    iframe: {
+      url: 'https://trading-arena.blueprint.tangle.tools/',
+      origin: 'https://trading-arena.blueprint.tangle.tools',
+      appId: 'trading-arena',
+      allowedChainIds: [],
+      contracts: [],
+      messages: [],
+      allowReadAccount: true,
+      allowChainSwitch: false,
+      allowPopups: false,
     },
   },
   {

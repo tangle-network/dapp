@@ -36,7 +36,9 @@ const BlueprintModePicker: FC<Props> = ({
   }
 
   return (
-    <section aria-label="Deployment mode" data-sandbox-ui className="space-y-3">
+    // Shell carries `data-sandbox-ui`; re-applying here would reset the
+    // current theme's tokens under this section.
+    <section aria-label="Deployment mode" className="space-y-3">
       <header className="space-y-1">
         <p className="font-semibold text-muted-foreground text-[11px] uppercase tracking-wider">
           Deployment mode

@@ -92,7 +92,10 @@ const SandboxBlueprintServicePage: FC<Props> = ({ entry, serviceId }) => {
   };
 
   return (
-    <div data-sandbox-ui className="space-y-6">
+    // Shell already sets `data-sandbox-ui`. Re-declaring here resets the
+    // sandbox-ui token defaults under the subtree (dark theme bleeds into
+    // vault). Inner wrappers stay attribute-free.
+    <div className="space-y-6">
       {sandbox && (
         <SandboxCard
           sandbox={sandbox}
