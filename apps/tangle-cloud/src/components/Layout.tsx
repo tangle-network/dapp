@@ -44,6 +44,19 @@ const Layout: FC<PropsWithChildren<Props>> = ({
     window.localStorage.setItem('tangle-cloud-theme', theme);
   }, [theme]);
 
+  // Publish the current sidebar width as a CSS variable on the root element so
+  // Radix-portaled dialogs (rendered to `<body>`, outside the layout shell) can
+  // offset their viewport-centered position by half the sidebar to land
+  // visually centered in the content area. See `.tangle-wallet-modal` rule in
+  // styles.css. Without this, the wallet modal sits left of center because
+  // viewport center is left of content-area center.
+  useEffect(() => {
+    document.documentElement.style.setProperty(
+      '--cloud-sidebar-width',
+      isSidebarExpanded ? '16rem' : '4rem',
+    );
+  }, [isSidebarExpanded]);
+
   return (
     <div
       data-sandbox-ui
