@@ -340,7 +340,7 @@ const SpendAuthContainer: FC = () => {
               !isValidOperator ||
               !domainSeparator
             }
-            className="w-full px-4 py-3 text-sm font-semibold text-white rounded-lg bg-primary hover:bg-primary/80 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="w-full px-4 py-3 text-sm font-semibold text-primary-foreground rounded-lg bg-primary hover:bg-primary/80 disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {!domainSeparator
               ? 'Waiting for contract...'

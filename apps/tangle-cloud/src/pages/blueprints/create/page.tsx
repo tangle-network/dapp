@@ -707,7 +707,7 @@ const CreateBlueprintPage: FC = () => {
                 index === step
                   ? 'bg-primary text-primary-foreground'
                   : index < step
-                    ? 'bg-green-500 text-white'
+                    ? 'bg-success text-primary-foreground'
                     : 'bg-muted text-muted-foreground'
               }`}
             >

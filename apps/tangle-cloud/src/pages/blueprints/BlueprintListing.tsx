@@ -761,7 +761,7 @@ const BlueprintCard = ({
 
         {isSelectable && (
           <label
-            className="absolute right-7 top-7 z-20 flex h-9 w-9 shrink-0 cursor-pointer items-center justify-center rounded-md border border-white/15 bg-black/35 transition-colors hover:bg-black/50"
+            className="absolute right-7 top-7 z-20 flex h-9 w-9 shrink-0 cursor-pointer items-center justify-center rounded-md border border-border bg-card/80 backdrop-blur transition-colors hover:bg-card"
             onClick={(event) => event.stopPropagation()}
           >
             <span className="sr-only">Select {blueprint.name}</span>

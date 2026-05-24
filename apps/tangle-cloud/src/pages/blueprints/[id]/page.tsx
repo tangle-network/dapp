@@ -558,7 +558,10 @@ const OperatorIdenticon = ({ address }: { address: string }) => {
 
   return (
     <div
-      className="grid h-12 w-12 shrink-0 place-items-center rounded-lg border border-border font-display font-extrabold text-white"
+      // Saturated-hue gradient background needs a contrast-stable foreground
+      // regardless of theme. `text-primary-foreground` resolves to the same
+      // white in both dark + light themes (it's the on-primary color).
+      className="grid h-12 w-12 shrink-0 place-items-center rounded-lg border border-border font-display font-extrabold text-primary-foreground"
       style={{
         background: `linear-gradient(135deg, hsl(${hue} 82% 58%), hsl(${(hue + 48) % 360} 82% 50%))`,
       }}
