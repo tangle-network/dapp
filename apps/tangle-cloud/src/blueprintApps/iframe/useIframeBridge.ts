@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { useAccount, useChainId } from 'wagmi';
+import { useAccount, useChainId, useChains } from 'wagmi';
 import type { Address, Hex } from 'viem';
 import {
   validateIframeRequest,
@@ -36,12 +36,39 @@ export type ApprovalResult =
   | { ok: true; data: { chainId: number } }
   | { ok: false; reason: string };
 
+// Service context the parent broadcasts to the iframe so the embedded app
+// knows which blueprint/service it renders for + which operators are
+// available + the active chain. All read-only; the iframe uses it to drive
+// direct operator HTTP calls + a read-only viem client (no signing here).
+export type IframeServiceContext = {
+  blueprintId: string;
+  serviceId: string | null;
+  operators: Array<{
+    address: Address;
+    rpcAddress: string | undefined;
+    status: 'active' | 'inactive' | 'unknown';
+  }>;
+  jobs: Array<{ index: number; name: string }>;
+  mode: string | null;
+  chain?: {
+    id: number;
+    name: string;
+    rpcUrl: string;
+    blockExplorerUrl?: string;
+    nativeCurrency?: { name: string; symbol: string; decimals: number };
+  };
+};
+
 type Options = {
   config: BlueprintIframeConfig;
   iframeRef: React.RefObject<HTMLIFrameElement | null>;
   // Caller decides if the bridge is allowed to surface modals. When the page
   // is hidden / the iframe wasn't mounted, set this to false to no-op.
   enabled?: boolean;
+  // Service context broadcast to the iframe on mount + whenever it changes.
+  // Optional — when absent the iframe just doesn't receive a serviceContext
+  // event (older iframes / non-service surfaces).
+  serviceContext?: IframeServiceContext;
   onPolicyDeny?: (
     request: IframeRequest,
     verdict: IframePolicyVerdict & { ok: false },
@@ -52,10 +79,12 @@ export function useIframeBridge({
   config,
   iframeRef,
   enabled = true,
+  serviceContext,
   onPolicyDeny,
 }: Options) {
   const { address } = useAccount();
   const chainId = useChainId();
+  const chains = useChains();
   const [pendingApproval, setPendingApproval] =
     useState<PendingApproval | null>(null);
   const pendingRef = useRef(pendingApproval);
@@ -185,6 +214,51 @@ export function useIframeBridge({
     }
   }, [chainId, enabled, post]);
 
+  // Broadcast service context (blueprint/service/operators/chain) so the
+  // thin-iframe SDK's `useTangleService` + `useTanglePublicClient` resolve.
+  // Re-fires whenever the context object changes (mode swap, new service,
+  // operator delta). Serialized into the dep so the effect only re-runs on
+  // real changes, not new object identity each render.
+  // Derive chain context from the active wagmi chain so the iframe's
+  // `useTanglePublicClient` can build a read-only client. Falls back to the
+  // serviceContext's own chain if the caller supplied one explicitly.
+  const activeChain = chains.find((c) => c.id === chainId);
+  const chainContext =
+    serviceContext?.chain ??
+    (activeChain
+      ? {
+          id: activeChain.id,
+          name: activeChain.name,
+          rpcUrl: activeChain.rpcUrls.default.http[0] ?? '',
+          blockExplorerUrl: activeChain.blockExplorers?.default.url,
+          nativeCurrency: {
+            name: activeChain.nativeCurrency.name,
+            symbol: activeChain.nativeCurrency.symbol,
+            decimals: activeChain.nativeCurrency.decimals,
+          },
+        }
+      : undefined);
+
+  const serviceContextKey = serviceContext
+    ? JSON.stringify({ ...serviceContext, chain: chainContext })
+    : null;
+  useEffect(() => {
+    if (!enabled || !serviceContext) return;
+    post({
+      kind: 'tangle.app.serviceContext',
+      blueprintId: serviceContext.blueprintId,
+      serviceId: serviceContext.serviceId,
+      operators: serviceContext.operators,
+      jobs: serviceContext.jobs,
+      mode: serviceContext.mode,
+      ...(chainContext ? { chain: chainContext } : {}),
+    });
+    // serviceContextKey captures the meaningful change; serviceContext +
+    // chainContext are read inside but intentionally not in deps (would
+    // re-fire on identity each render).
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [serviceContextKey, enabled, post]);
+
   useEffect(() => {
     if (!enabled) return;
 
@@ -260,6 +334,37 @@ export function useIframeBridge({
               '0x0000000000000000000000000000000000000000') as Address,
             chainId: chainId ?? 0,
           },
+        });
+        return;
+      }
+
+      // callJob (job invocation via quote/sign/submit) is protocol-defined
+      // but its parent-side integration with the deploy/quote pipeline is
+      // not yet wired. Respond with a clean error so the iframe surfaces a
+      // real message instead of hanging on the request timeout. Tracked as
+      // a dedicated follow-up — the financial submit path needs its own
+      // careful review, not a tail-of-session bolt-on.
+      if (request.kind === 'tangle.app.callJob') {
+        post({
+          kind: 'tangle.app.jobResult',
+          correlationId: request.correlationId,
+          status: 'error',
+          error:
+            'callJob is not yet wired in this parent build. Use direct operator HTTP for reads; on-chain job submission is coming.',
+        });
+        return;
+      }
+
+      // signTypedData routes through the approval modal (same as
+      // signMessage / signTransaction) but the modal + signer integration
+      // for typed-data isn't wired yet. Clean error rather than a hang.
+      if (request.kind === 'tangle.app.signTypedData') {
+        post({
+          kind: 'tangle.app.signTypedDataResult',
+          correlationId: request.correlationId,
+          ok: false,
+          error:
+            'signTypedData approval is not yet wired in this parent build.',
         });
         return;
       }

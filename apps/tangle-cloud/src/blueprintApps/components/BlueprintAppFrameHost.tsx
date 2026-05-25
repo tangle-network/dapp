@@ -1,7 +1,10 @@
-import { type FC, useEffect, useRef } from 'react';
+import { type FC, useEffect, useMemo, useRef } from 'react';
 import BlueprintAppFrame from './BlueprintAppFrame';
 import IframeAppApprovalModal from './IframeAppApprovalModal';
-import { useIframeBridge } from '../iframe/useIframeBridge';
+import {
+  useIframeBridge,
+  type IframeServiceContext,
+} from '../iframe/useIframeBridge';
 import type { BlueprintIframeConfig } from '../iframe/types';
 
 type Props = {
@@ -15,6 +18,14 @@ type Props = {
    */
   mode?: string;
   blueprintId?: bigint | number;
+  /**
+   * Service context broadcast to the iframe so the thin-iframe SDK's
+   * `useTangleService` resolves. Operators + serviceId when known; the
+   * bridge fills in the active chain itself.
+   */
+  serviceId?: string | null;
+  operators?: IframeServiceContext['operators'];
+  jobs?: IframeServiceContext['jobs'];
 };
 
 // Composes the hardened iframe element, the parent-side message bridge, and
@@ -25,11 +36,25 @@ const BlueprintAppFrameHost: FC<Props> = ({
   appDisplayName,
   mode,
   blueprintId,
+  serviceId = null,
+  operators = [],
+  jobs = [],
 }) => {
   const iframeRef = useRef<HTMLIFrameElement | null>(null);
+  const serviceContext = useMemo<IframeServiceContext | undefined>(() => {
+    if (blueprintId === undefined) return undefined;
+    return {
+      blueprintId: blueprintId.toString(),
+      serviceId,
+      operators,
+      jobs,
+      mode: mode ?? null,
+    };
+  }, [blueprintId, serviceId, operators, jobs, mode]);
   const { pendingApproval, approve, reject } = useIframeBridge({
     config,
     iframeRef,
+    serviceContext,
   });
 
   // Live mode-change notification. The iframe receives the picked mode in
