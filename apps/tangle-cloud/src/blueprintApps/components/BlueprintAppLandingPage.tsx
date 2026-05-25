@@ -12,6 +12,7 @@ import type { TangleBlueprintAppEntry } from '../manifest';
 import type { BlueprintIframeConfig } from '../iframe/types';
 import BlueprintAppFrameHost from './BlueprintAppFrameHost';
 import BlueprintModePicker from './BlueprintModePicker';
+import IframeBlueprintLayout from './IframeBlueprintLayout';
 import { useBlueprint } from '@tangle-network/tangle-shared-ui/data/graphql';
 import { useBlueprintModes } from '../useBlueprintModes';
 import type {
@@ -105,6 +106,39 @@ const BlueprintAppLandingPage: FC<Props> = ({ entry }) => {
         { title: `Track ${resourceNoun} output` },
       ];
     }, [actions, serviceNoun, resourceNoun]);
+
+  // Iframe-mode blueprints get the iframe-first layout — the publisher's
+  // hosted app fills the viewport, our chrome is a 52px strip with the
+  // Create-instance CTA and a Details disclosure. Non-iframe blueprints fall
+  // through to the procedural layout below, which IS the page surface and
+  // earns the full hero + checkout-path + overview-cards + actions stack.
+  if (iframeConfig) {
+    return (
+      <IframeBlueprintLayout
+        iframeConfig={iframeConfig}
+        displayName={view.manifest.displayName}
+        tagline={view.manifest.tagline}
+        description={view.manifest.description}
+        serviceNoun={serviceNoun}
+        provisionPath={provisionPath}
+        protocolDetailHref={
+          activeMode?.blueprintId !== undefined
+            ? `/blueprints/${activeMode.blueprintId.toString()}?raw=1`
+            : view.blueprintId !== undefined
+              ? `/blueprints/${view.blueprintId.toString()}?raw=1`
+              : undefined
+        }
+        externalAppUrl={view.manifest.externalApp?.url}
+        modes={modes}
+        activeMode={activeMode}
+        onSelectMode={setSelectedModeId}
+        blueprintId={view.blueprintId}
+        overviewCards={overviewCards}
+        actions={actions}
+        theme={theme}
+      />
+    );
+  }
 
   return (
     // The shell `<div>` rendered by Layout already declares
@@ -206,18 +240,11 @@ const BlueprintAppLandingPage: FC<Props> = ({ entry }) => {
         />
       )}
 
-      {iframeConfig && (
-        <Card variant="sandbox" className="overflow-hidden rounded-3xl">
-          <CardContent className="p-0">
-            <BlueprintAppFrameHost
-              config={iframeConfig}
-              appDisplayName={view.manifest.displayName}
-              mode={activeMode?.id}
-              blueprintId={activeMode?.blueprintId ?? view.blueprintId}
-            />
-          </CardContent>
-        </Card>
-      )}
+      {/* Iframe rendering for iframe-mode blueprints happens in the
+       * IframeBlueprintLayout branch above. This procedural layout is for
+       * non-iframe blueprints — overview/actions/metric grid surface the
+       * blueprint's identity directly, since there's no publisher app to
+       * defer to. */}
 
       <OverviewCardGrid
         cards={overviewCards}
