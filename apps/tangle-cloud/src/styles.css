@@ -93,8 +93,15 @@ body {
 .tangle-cloud-shell :where(h1, h2, h3, h4, h5, h6, p, label, li, td, th, button, a, span) {
   color: inherit;
 }
-.tangle-cloud-shell :where(button, a, span, p, h1, h2, h3, h4, h5, h6):not(.italic) {
-  font-style: normal;
+.tangle-cloud-shell
+  :where(
+    h1, h2, h3, h4, h5, h6, p, span, a, button, label, li, td, th,
+    input, select, textarea, div
+  ):not(.italic) {
+  /* `!important` + form controls: the previous rule (no !important, no
+   * inputs/selects) let slanted fallback glyphs through on the search bar
+   * and category chips. Italics are opt-in via `.italic` only. */
+  font-style: normal !important;
 }
 
 /* Tailwind/shadcn utility classes used by the cloud — sandbox-ui's prebuilt
