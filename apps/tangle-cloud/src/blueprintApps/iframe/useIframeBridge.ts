@@ -239,6 +239,17 @@ export function useIframeBridge({
         }
       : undefined);
 
+  // Latest wallet/chain/service snapshot, read by the handshake handler so a
+  // freshly-loaded iframe can be synced on connect without re-subscribing the
+  // message listener on every wallet/service change.
+  const syncRef = useRef<{
+    address?: string;
+    chainId?: number;
+    serviceContext?: IframeServiceContext;
+    chainContext?: typeof chainContext;
+  }>({});
+  syncRef.current = { address, chainId, serviceContext, chainContext };
+
   const serviceContextKey = serviceContext
     ? JSON.stringify({ ...serviceContext, chain: chainContext })
     : null;
@@ -279,6 +290,30 @@ export function useIframeBridge({
           appId: config.appId,
           protocolVersion: IFRAME_PROTOCOL_VERSION,
         });
+        // Sync current state to the freshly-handshaking iframe. The
+        // accountChanged / chainChanged / serviceContext broadcast effects
+        // fire on mount — typically before the iframe has loaded and attached
+        // its listener — so without replaying them here on handshake, a late
+        // iframe would ack but never receive the wallet (stuck "no-wallet").
+        const sync = syncRef.current;
+        post({
+          kind: 'tangle.app.accountChanged',
+          account: (sync.address ?? null) as Address | null,
+        });
+        if (typeof sync.chainId === 'number') {
+          post({ kind: 'tangle.app.chainChanged', chainId: sync.chainId });
+        }
+        if (sync.serviceContext) {
+          post({
+            kind: 'tangle.app.serviceContext',
+            blueprintId: sync.serviceContext.blueprintId,
+            serviceId: sync.serviceContext.serviceId,
+            operators: sync.serviceContext.operators,
+            jobs: sync.serviceContext.jobs,
+            mode: sync.serviceContext.mode,
+            ...(sync.chainContext ? { chain: sync.chainContext } : {}),
+          });
+        }
         return;
       }
 
