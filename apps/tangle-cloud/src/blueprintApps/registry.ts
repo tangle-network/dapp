@@ -236,6 +236,75 @@ const entries = [
       ],
     },
   },
+  {
+    slug: 'llm-inference',
+    canonicalSlug: 'llm-inference',
+    match: {
+      publisherNamespace: 'tangle',
+      requestedSlug: 'llm-inference',
+    },
+    publisher: {
+      label: 'Tangle Labs',
+      visibility: 'first-party',
+      verification: 'first-party',
+    },
+    tier: 'curated-module',
+    slugPolicy: 'reserved',
+    module: {
+      moduleId: 'llm-inference',
+      status: 'planned',
+    },
+    manifest: {
+      displayName: 'LLM Inference',
+      tagline: 'Anonymous, pay-per-use LLM inference from Tangle operators.',
+      description:
+        'Chat with vLLM-backed operator models, paying via shielded credits. Deposit once; each request is authorized off-chain by an ephemeral key, so the operator never learns who you are.',
+      surfaces: [
+        'generic-overview',
+        'service-explorer',
+        'service-console',
+        'chat',
+        'permissions',
+      ],
+      resources: {
+        serviceNoun: 'inference service',
+        resourceNoun: 'model',
+        resourceRoute: 'custom',
+      },
+      permissions: [
+        {
+          key: 'credits.fund',
+          label: 'Fund shielded credits',
+          scope: 'service',
+        },
+      ],
+      externalApp: {
+        url: 'https://llm-inference.blueprint.tangle.tools/',
+        mode: 'iframe',
+        host: 'llm-inference.blueprint.tangle.tools',
+        trust: 'trusted',
+        label: 'LLM Inference',
+      },
+    },
+    // Read surface only for now: the iframe inherits the connected wallet and
+    // self-configures from the operator's /v1/operator (model, pricing,
+    // shielded_credits, chain_id). Funding deposits (approve + fundCredits)
+    // need `sendTransaction` allowlisted against the live develop
+    // ShieldedCredits + payment-token addresses — added once the develop
+    // operator + gateway are deployed (the spending-key SpendAuths are signed
+    // inside the iframe and never touch the bridge).
+    iframe: {
+      url: 'https://llm-inference.blueprint.tangle.tools/',
+      origin: 'https://llm-inference.blueprint.tangle.tools',
+      appId: 'llm-inference',
+      allowedChainIds: [],
+      contracts: [],
+      messages: [],
+      allowReadAccount: true,
+      allowChainSwitch: false,
+      allowPopups: false,
+    },
+  },
 ] satisfies CuratedRegistryEntry[];
 
 export const blueprintAppRegistry = new Map(
