@@ -53,7 +53,7 @@ export default function Header({
   return (
     <header
       className={twMerge(
-        'tangle-cloud-topbar fixed top-0 right-0 left-0 z-40 flex h-14 items-center justify-between gap-4 border-b border-border bg-[var(--bg-elevated)]/85 px-4 font-sans text-[13px] tracking-tight backdrop-blur-md lg:left-16 lg:px-8',
+        'tangle-cloud-topbar fixed top-0 right-0 left-0 z-40 flex h-14 items-center justify-between gap-4 border-b border-border bg-[var(--bg-elevated)] px-4 font-sans text-[13px] tracking-tight lg:left-16 lg:px-8',
         className,
       )}
       {...props}

@@ -89,7 +89,7 @@ const IframeBlueprintLayout: FC<Props> = ({
       {/* Top strip: identity + mode picker + primary CTA + Details disclosure.
        * 52px tall. Sits flush with the viewport top under the Layout's
        * topbar — no gap, no card wrapper — so the iframe immediately follows. */}
-      <div className="sticky top-14 z-10 flex h-[52px] items-center gap-3 border-b border-border bg-background/95 px-4 backdrop-blur supports-[backdrop-filter]:bg-background/70 md:px-8">
+      <div className="sticky top-14 z-10 flex h-[52px] items-center gap-3 border-b border-border bg-background px-4 md:px-8">
         <Link
           to="/blueprints"
           className="hidden text-xs text-muted-foreground hover:text-foreground sm:inline-flex"
