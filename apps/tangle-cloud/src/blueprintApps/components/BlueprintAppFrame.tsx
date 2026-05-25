@@ -102,11 +102,13 @@ const BlueprintAppFrameInner = (
       loading="lazy"
       className={className}
       style={{
-        // Default to a sensible aspect; consumer can override.
+        // Fill the host container exactly — the layout owns the height, the
+        // app inside the iframe owns its own scroll. (A hard minHeight here
+        // left dead space below the frame on tall viewports.)
         width: '100%',
-        minHeight: '720px',
+        height: '100%',
         border: '0',
-        borderRadius: '16px',
+        borderRadius: '12px',
         ...style,
       }}
       {...iframeProps}

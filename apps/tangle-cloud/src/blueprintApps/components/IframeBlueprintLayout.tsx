@@ -85,7 +85,7 @@ const IframeBlueprintLayout: FC<Props> = ({
     : undefined;
 
   return (
-    <div className="relative -mx-4 -mt-6 md:-mx-8" style={accentStyle}>
+    <div className="relative -mx-4 -mb-10 -mt-6 md:-mx-8" style={accentStyle}>
       {/* Top strip: identity + mode picker + primary CTA + Details disclosure.
        * 52px tall. Sits flush with the viewport top under the Layout's
        * topbar — no gap, no card wrapper — so the iframe immediately follows. */}
@@ -135,9 +135,13 @@ const IframeBlueprintLayout: FC<Props> = ({
        * publisher's app is responsible for managing. */}
       <div
         className={twMerge(
-          'relative',
-          // 56 (top nav from Layout) + 52 (identity strip) = 108
-          'h-[calc(100vh-108px)] min-h-[600px]',
+          'relative overflow-hidden',
+          // 56 (top nav from Layout) + 52 (identity strip) = 108. The frame
+          // fills this box; the small padding leaves a rounded gutter around
+          // the rounded iframe so it reads as a contained surface, not an
+          // edge-to-edge takeover. The parent never scrolls — the app inside
+          // the iframe manages its own scroll.
+          'h-[calc(100vh-108px)] min-h-[480px] p-2 md:p-3',
         )}
       >
         <BlueprintAppFrameHost
