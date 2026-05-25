@@ -8,6 +8,7 @@ import CommandPalette from './chrome/CommandPalette';
 import PageMotion from './chrome/PageMotion';
 import ShortcutsHelp from './chrome/ShortcutsHelp';
 import { useKeyboardShortcuts } from './chrome/useKeyboardShortcuts';
+import { TopNavSlotProvider } from './chrome/TopNavSlot';
 
 type Props = {
   isSidebarInitiallyExpanded?: boolean;
@@ -71,37 +72,39 @@ const Layout: FC<PropsWithChildren<Props>> = ({
   });
 
   return (
-    <div
-      data-sandbox-ui
-      data-sandbox-theme={theme === 'dark' ? 'tangle' : 'vault'}
-      className="tangle-cloud-shell min-h-screen bg-tangle text-foreground"
-    >
-      <Sidebar
-        isExpandedByDefault={isSidebarExpanded}
-        onExpandedChange={setIsSidebarExpanded}
-      />
-      <Header
-        theme={theme}
-        onThemeChange={setTheme}
-        className={isSidebarExpanded ? 'lg:left-64' : 'lg:left-16'}
-      />
-
+    <TopNavSlotProvider>
       <div
-        className={twMerge(
-          'min-h-screen pt-14 transition-[padding-left] duration-200',
-          isSidebarExpanded ? 'lg:pl-64' : 'lg:pl-16',
-        )}
+        data-sandbox-ui
+        data-sandbox-theme={theme === 'dark' ? 'tangle' : 'vault'}
+        className="tangle-cloud-shell min-h-screen bg-tangle text-foreground"
       >
-        <TxHistoryNotifier />
-        <TxConfirmationModal />
-        <CommandPalette open={isPaletteOpen} onOpenChange={setIsPaletteOpen} />
-        <ShortcutsHelp open={isHelpOpen} onOpenChange={setIsHelpOpen} />
+        <Sidebar
+          isExpandedByDefault={isSidebarExpanded}
+          onExpandedChange={setIsSidebarExpanded}
+        />
+        <Header
+          theme={theme}
+          onThemeChange={setTheme}
+          className={isSidebarExpanded ? 'lg:left-64' : 'lg:left-16'}
+        />
 
-        <main className="flex-1">
-          <PageMotion>{children}</PageMotion>
-        </main>
+        <div
+          className={twMerge(
+            'min-h-screen pt-14 transition-[padding-left] duration-200',
+            isSidebarExpanded ? 'lg:pl-64' : 'lg:pl-16',
+          )}
+        >
+          <TxHistoryNotifier />
+          <TxConfirmationModal />
+          <CommandPalette open={isPaletteOpen} onOpenChange={setIsPaletteOpen} />
+          <ShortcutsHelp open={isHelpOpen} onOpenChange={setIsHelpOpen} />
+
+          <main className="flex-1">
+            <PageMotion>{children}</PageMotion>
+          </main>
+        </div>
       </div>
-    </div>
+    </TopNavSlotProvider>
   );
 };
 

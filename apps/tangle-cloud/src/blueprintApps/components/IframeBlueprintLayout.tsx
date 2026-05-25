@@ -1,7 +1,8 @@
 import { Button } from '@tangle-network/sandbox-ui/primitives';
-import { useState, type FC, type ReactNode } from 'react';
+import { useMemo, useState, type FC, type ReactNode } from 'react';
 import { Link } from 'react-router';
 import { twMerge } from 'tailwind-merge';
+import { useTopNavSlot } from '../../components/chrome/TopNavSlot';
 import type {
   BlueprintMode,
   BlueprintUiAction,
@@ -84,23 +85,23 @@ const IframeBlueprintLayout: FC<Props> = ({
       } as React.CSSProperties)
     : undefined;
 
-  return (
-    <div className="relative -mx-4 -mb-10 -mt-6 md:-mx-8" style={accentStyle}>
-      {/* Top strip: identity + mode picker + primary CTA + Details disclosure.
-       * 52px tall. Sits flush with the viewport top under the Layout's
-       * topbar — no gap, no card wrapper — so the iframe immediately follows. */}
-      <div className="sticky top-14 z-10 flex h-[52px] items-center gap-3 border-b border-border bg-background px-4 md:px-8">
+  // Blueprint identity + primary CTA + Details disclosure live in the global
+  // top nav (as pills) rather than a second in-page bar — that bar wasted a
+  // full row and pushed the iframe down. See useTopNavSlot / Header left slot.
+  const navContent = useMemo(
+    () => (
+      <>
         <Link
           to="/blueprints"
-          className="hidden text-xs text-muted-foreground hover:text-foreground sm:inline-flex"
+          className="hidden shrink-0 text-xs text-muted-foreground hover:text-foreground sm:inline-flex"
         >
           ← Catalog
         </Link>
-        <h1 className="truncate font-display text-sm font-bold text-foreground">
+        <span className="truncate font-display text-sm font-bold text-foreground">
           {displayName}
-        </h1>
+        </span>
         {modes.length > 1 && activeMode && (
-          <div className="hidden md:block">
+          <div className="hidden shrink-0 md:block">
             <CompactModePicker
               modes={modes}
               activeId={activeMode.id}
@@ -108,8 +109,8 @@ const IframeBlueprintLayout: FC<Props> = ({
             />
           </div>
         )}
-        <div className="ml-auto flex items-center gap-2">
-          <Button asChild variant="ghost" size="sm">
+        <div className="ml-auto flex shrink-0 items-center gap-2">
+          <Button asChild variant="sandbox" size="sm">
             <Link to={provisionPath}>Create {serviceNoun}</Link>
           </Button>
           <button
@@ -127,21 +128,32 @@ const IframeBlueprintLayout: FC<Props> = ({
             Details
           </button>
         </div>
-      </div>
+      </>
+    ),
+    [
+      displayName,
+      modes,
+      activeMode,
+      onSelectMode,
+      provisionPath,
+      serviceNoun,
+      detailsOpen,
+    ],
+  );
+  useTopNavSlot(navContent);
 
-      {/* Iframe takes the remaining viewport height. The container's height
-       * is `calc(viewport - topbar - identityStrip)` so there's no scroll
-       * within the dapp shell — only inside the iframe itself, which the
-       * publisher's app is responsible for managing. */}
+  return (
+    <div className="relative -mx-4 -mb-10 -mt-6 md:-mx-8" style={accentStyle}>
+      {/* No in-page identity bar — it lives in the top nav now. The iframe
+       * fills the full height below the topbar. The small padding leaves a
+       * rounded gutter around the rounded iframe so it reads as a contained
+       * surface; the parent never scrolls — the app inside the iframe manages
+       * its own scroll. */}
       <div
         className={twMerge(
           'relative overflow-hidden',
-          // 56 (top nav from Layout) + 52 (identity strip) = 108. The frame
-          // fills this box; the small padding leaves a rounded gutter around
-          // the rounded iframe so it reads as a contained surface, not an
-          // edge-to-edge takeover. The parent never scrolls — the app inside
-          // the iframe manages its own scroll.
-          'h-[calc(100vh-108px)] min-h-[480px] p-2 md:p-3',
+          // 56 = top nav (Layout). No identity strip anymore.
+          'h-[calc(100vh-56px)] min-h-[480px] p-2 md:p-3',
         )}
       >
         <BlueprintAppFrameHost
