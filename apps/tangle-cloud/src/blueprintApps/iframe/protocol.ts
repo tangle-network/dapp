@@ -45,12 +45,46 @@ export type IframeRequestSignTransaction = {
   value?: string;
 };
 
+// EIP-712 typed-data signing — for publishers signing custom message shapes
+// (operator envelopes, off-chain attestations, claim proofs). The parent
+// renders the typed-data fields in the approval modal. `types` must NOT
+// include the EIP712Domain entry — the parent derives it from `domain`.
+export type IframeRequestSignTypedData = {
+  kind: 'tangle.app.signTypedData';
+  correlationId: string;
+  chainId: number;
+  domain: {
+    name?: string;
+    version?: string;
+    chainId?: number;
+    verifyingContract?: Address;
+    salt?: Hex;
+  };
+  types: Record<string, Array<{ name: string; type: string }>>;
+  primaryType: string;
+  message: Record<string, unknown>;
+};
+
+// Job invocation — iframe asks the parent to run a blueprint job (quote +
+// sign + submit happen parent-side). Results stream back via
+// `ParentEventJobResult`. See the dapp's job-submission integration for
+// how this maps onto the deploy/quote pipeline.
+export type IframeRequestCallJob = {
+  kind: 'tangle.app.callJob';
+  correlationId: string;
+  jobIndex: number;
+  inputs: Record<string, unknown>;
+  stream?: boolean;
+};
+
 export type IframeRequest =
   | IframeRequestHandshake
   | IframeRequestReadAccount
   | IframeRequestSwitchChain
   | IframeRequestSignMessage
-  | IframeRequestSignTransaction;
+  | IframeRequestSignTransaction
+  | IframeRequestSignTypedData
+  | IframeRequestCallJob;
 
 // ─── Parent → Iframe ───────────────────────────────────────────────────
 
@@ -80,6 +114,10 @@ export type ParentResponseSignTransactionResult = {
   kind: 'tangle.app.signTransactionResult';
 } & ParentResponseResultBase<{ txHash: Hex }>;
 
+export type ParentResponseSignTypedDataResult = {
+  kind: 'tangle.app.signTypedDataResult';
+} & ParentResponseResultBase<{ signature: Hex }>;
+
 // Unsolicited broadcasts from parent to iframe (e.g. user changes account)
 export type ParentEventAccountChanged = {
   kind: 'tangle.app.accountChanged';
@@ -91,14 +129,55 @@ export type ParentEventChainChanged = {
   chainId: number;
 };
 
+// Chain config the iframe can use to build a read-only viem client. Mirrors
+// the SDK's ChainContext. `rpcUrl` is a public RPC, never a wallet RPC —
+// signing always routes back through the bridge.
+export type IframeChainContext = {
+  id: number;
+  name: string;
+  rpcUrl: string;
+  blockExplorerUrl?: string;
+  nativeCurrency?: { name: string; symbol: string; decimals: number };
+};
+
+// Service context broadcast — tells the iframe which blueprint/service it's
+// rendering for, which operators are available, and the active chain.
+export type ParentEventServiceContext = {
+  kind: 'tangle.app.serviceContext';
+  blueprintId: string;
+  serviceId: string | null;
+  operators: Array<{
+    address: Address;
+    rpcAddress: string | undefined;
+    status: 'active' | 'inactive' | 'unknown';
+  }>;
+  jobs: Array<{ index: number; name: string }>;
+  mode: string | null;
+  chain?: IframeChainContext;
+};
+
+// Job result event — streams back from a callJob request.
+export type ParentEventJobResult = {
+  kind: 'tangle.app.jobResult';
+  correlationId: string;
+  status: 'pending' | 'streaming' | 'success' | 'error';
+  data?: unknown;
+  chunk?: unknown;
+  error?: string;
+  progress?: { percent?: number; eta_ms?: number };
+};
+
 export type ParentMessage =
   | ParentResponseHandshakeAck
   | ParentResponseReadAccountResult
   | ParentResponseSwitchChainResult
   | ParentResponseSignMessageResult
   | ParentResponseSignTransactionResult
+  | ParentResponseSignTypedDataResult
   | ParentEventAccountChanged
-  | ParentEventChainChanged;
+  | ParentEventChainChanged
+  | ParentEventServiceContext
+  | ParentEventJobResult;
 
 // ─── Validation ──────────────────────────────────────────────────────────
 
@@ -206,6 +285,63 @@ export function validateIframeRequest(value: unknown): IframeRequest | null {
         to: record.to as Address,
         data: record.data,
         ...(value !== undefined ? { value } : {}),
+      };
+    }
+    case 'tangle.app.signTypedData': {
+      if (!isValidCorrelationId(record.correlationId)) return null;
+      if (!isFiniteNumber(record.chainId) || record.chainId <= 0) return null;
+      if (!isString(record.primaryType) || record.primaryType.length > 128) {
+        return null;
+      }
+      if (typeof record.domain !== 'object' || record.domain === null) {
+        return null;
+      }
+      if (typeof record.types !== 'object' || record.types === null) {
+        return null;
+      }
+      if (typeof record.message !== 'object' || record.message === null) {
+        return null;
+      }
+      // Bound total payload size to keep the approval modal sane + prevent
+      // OOM via a giant typed-data blob.
+      try {
+        if (JSON.stringify(record.message).length > MAX_CALLDATA_BYTES) {
+          return null;
+        }
+      } catch {
+        return null;
+      }
+      return {
+        kind: 'tangle.app.signTypedData',
+        correlationId: record.correlationId,
+        chainId: record.chainId,
+        domain: record.domain as IframeRequestSignTypedData['domain'],
+        types: record.types as IframeRequestSignTypedData['types'],
+        primaryType: record.primaryType,
+        message: record.message as Record<string, unknown>,
+      };
+    }
+    case 'tangle.app.callJob': {
+      if (!isValidCorrelationId(record.correlationId)) return null;
+      if (!isFiniteNumber(record.jobIndex) || record.jobIndex < 0) return null;
+      if (typeof record.inputs !== 'object' || record.inputs === null) {
+        return null;
+      }
+      try {
+        if (JSON.stringify(record.inputs).length > MAX_CALLDATA_BYTES) {
+          return null;
+        }
+      } catch {
+        return null;
+      }
+      return {
+        kind: 'tangle.app.callJob',
+        correlationId: record.correlationId,
+        jobIndex: record.jobIndex,
+        inputs: record.inputs as Record<string, unknown>,
+        ...(typeof record.stream === 'boolean'
+          ? { stream: record.stream }
+          : {}),
       };
     }
     default:
