@@ -96,7 +96,10 @@ const Layout: FC<PropsWithChildren<Props>> = ({
         >
           <TxHistoryNotifier />
           <TxConfirmationModal />
-          <CommandPalette open={isPaletteOpen} onOpenChange={setIsPaletteOpen} />
+          <CommandPalette
+            open={isPaletteOpen}
+            onOpenChange={setIsPaletteOpen}
+          />
           <ShortcutsHelp open={isHelpOpen} onOpenChange={setIsHelpOpen} />
 
           <main className="flex-1">
