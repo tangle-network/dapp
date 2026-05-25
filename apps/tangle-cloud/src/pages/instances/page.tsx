@@ -1,16 +1,13 @@
 import { useState } from 'react';
-import {
-  Button,
-  Card,
-  CardContent,
-} from '@tangle-network/sandbox-ui/primitives';
+import { Button } from '@tangle-network/sandbox-ui/primitives';
 import { Link } from 'react-router';
 import { useAccount } from 'wagmi';
 import { AccountStatsCard } from './AccountStatsCard';
 import { InstructionCard } from './InstructionCard';
 import { TotalValueLockedTabs } from './TotalValueLocked';
 import { BlueprintManagementSection } from './BlueprintManagementSection';
-import { StatRow } from '../../components/stats/Stat';
+import { MetricStrip, PageHeader } from '../../components/chrome';
+import type { Metric, MetricTone } from '../../components/chrome';
 import useUserStats from '../../data/operators/useUserStats';
 import useEvmOperatorInfo from '../../hooks/useEvmOperatorInfo';
 import useOperatorStats from '../../data/operators/useOperatorStats';
@@ -33,65 +30,65 @@ const Page = () => {
   // KPI strip is the prime-real-estate read on this page. The cluster shows
   // role-aware deltas — pending items first (action-required), then steady
   // counts. Disconnected wallets get the catalog/onboarding pitch instead.
-  const heroStats = isConnected
+  const heroStats: Metric[] = isConnected
     ? operatorStats && operatorStats.registeredBlueprints > 0
       ? [
           {
             label: 'Running services',
-            value: operatorStats.runningServices,
-            isLoading: isLoadingOperatorStats,
+            value: operatorStats.runningServices.toLocaleString(),
+            loading: isLoadingOperatorStats,
             tone:
               operatorStats.runningServices > 0
-                ? ('success' as const)
-                : ('default' as const),
+                ? ('success' as MetricTone)
+                : ('neutral' as MetricTone),
           },
           {
             label: 'Pending approvals',
-            value: operatorStats.pendingServices,
-            isLoading: isLoadingOperatorStats,
+            value: operatorStats.pendingServices.toLocaleString(),
+            loading: isLoadingOperatorStats,
             tone:
               operatorStats.pendingServices > 0
-                ? ('warning' as const)
-                : ('default' as const),
+                ? ('warning' as MetricTone)
+                : ('neutral' as MetricTone),
             sublabel:
               operatorStats.pendingServices > 0
-                ? 'Action required'
-                : 'No action needed',
+                ? 'action required'
+                : 'no action',
           },
           {
             label: 'Registered blueprints',
-            value: operatorStats.registeredBlueprints,
-            isLoading: isLoadingOperatorStats,
+            value: operatorStats.registeredBlueprints.toLocaleString(),
+            loading: isLoadingOperatorStats,
           },
           {
             label: 'You deployed',
-            value: userStats?.deployedServices ?? 0,
-            isLoading: isLoadingUserStats,
+            value: (userStats?.deployedServices ?? 0).toLocaleString(),
+            loading: isLoadingUserStats,
           },
         ]
       : [
           {
             label: 'Running services',
-            value: userStats?.runningServices ?? 0,
-            isLoading: isLoadingUserStats,
+            value: (userStats?.runningServices ?? 0).toLocaleString(),
+            loading: isLoadingUserStats,
             tone:
               (userStats?.runningServices ?? 0) > 0
-                ? ('success' as const)
-                : ('default' as const),
+                ? ('success' as MetricTone)
+                : ('neutral' as MetricTone),
           },
           {
             label: 'Pending requests',
-            value: userStats?.pendingServices ?? 0,
-            isLoading: isLoadingUserStats,
+            value: (userStats?.pendingServices ?? 0).toLocaleString(),
+            loading: isLoadingUserStats,
             tone:
               (userStats?.pendingServices ?? 0) > 0
-                ? ('warning' as const)
-                : ('default' as const),
+                ? ('warning' as MetricTone)
+                : ('neutral' as MetricTone),
           },
           {
             label: 'Total deployed',
-            value: userStats?.deployedServices ?? 0,
-            isLoading: isLoadingUserStats,
+            value: (userStats?.deployedServices ?? 0).toLocaleString(),
+            loading: isLoadingUserStats,
           },
           {
             label: 'Role',
@@ -102,43 +99,31 @@ const Page = () => {
 
   return (
     <div className="space-y-6">
-      <Card
-        variant="sandbox"
-        className="cloud-hero-card cloud-compact-header overflow-hidden"
-      >
-        <CardContent className="relative p-4 md:p-5">
-          <div className="pointer-events-none absolute inset-0 opacity-70 [background:radial-gradient(circle_at_12%_8%,rgba(99,102,241,0.18),transparent_32%),radial-gradient(circle_at_86%_12%,rgba(16,185,129,0.10),transparent_28%)]" />
-          <div className="relative grid gap-5 xl:grid-cols-[minmax(0,1fr)_minmax(420px,520px)] xl:items-center">
-            <div>
-              <h1 className="font-display font-extrabold text-3xl text-foreground leading-[1.05] tracking-[-0.035em] sm:text-4xl">
-                {isConnected ? 'Instances' : 'Tangle Cloud'}
-              </h1>
-              <p className="mt-3 max-w-2xl text-muted-foreground text-sm leading-relaxed">
-                {isConnected
-                  ? 'Monitor service instances, operator approvals, job records, and account balances.'
-                  : 'Browse the blueprint catalog and operator registry. Connect a wallet to deploy services, register capacity, or approve requests.'}
-              </p>
-              {!isConnected && (
-                <div className="mt-4 flex flex-wrap gap-2">
-                  <Button variant="sandbox" asChild>
-                    <Link to={PagePath.BLUEPRINTS}>Browse blueprints</Link>
-                  </Button>
-                  <Button variant="outline" asChild>
-                    <Link to={PagePath.OPERATORS}>View operators</Link>
-                  </Button>
-                </div>
-              )}
-            </div>
+      <PageHeader
+        density="compact"
+        title={isConnected ? 'Instances' : 'Tangle Cloud'}
+        subtitle={
+          isConnected
+            ? 'Monitor service instances, operator approvals, job records, and account balances.'
+            : 'Browse the blueprint catalog and operator registry. Connect a wallet to deploy services, register capacity, or approve requests.'
+        }
+        action={
+          !isConnected ? (
+            <>
+              <Button variant="ghost" size="sm" asChild>
+                <Link to={PagePath.OPERATORS}>View operators</Link>
+              </Button>
+              <Button variant="sandbox" size="sm" asChild>
+                <Link to={PagePath.BLUEPRINTS}>Browse blueprints</Link>
+              </Button>
+            </>
+          ) : undefined
+        }
+      />
 
-            {isConnected && heroStats.length > 0 && (
-              <StatRow
-                items={heroStats}
-                className="rounded-lg border border-border bg-[var(--bg-elevated)] p-3 shadow-[var(--shadow-card)]"
-              />
-            )}
-          </div>
-        </CardContent>
-      </Card>
+      {isConnected && heroStats.length > 0 && (
+        <MetricStrip metrics={heroStats} density="compact" />
+      )}
 
       <BlueprintManagementSection
         refreshTrigger={refreshTrigger}

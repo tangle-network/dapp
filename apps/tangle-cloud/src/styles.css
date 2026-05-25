@@ -226,28 +226,6 @@ body {
   box-shadow: var(--shadow-card);
 }
 
-/* Page hero: dot grid + brand radial glows over elevated linear. */
-.cloud-hero-card {
-  /* prettier-ignore */
-  border-color: color-mix(in srgb, var(--brand-cool) 30%, var(--border-default));
-  /* prettier-ignore */
-  background: radial-gradient(rgba(255,255,255,0.045) 1px, transparent 1px) 0 0 / 22px 22px, radial-gradient(circle at 4% 12%, color-mix(in srgb, var(--brand-cool) 28%, transparent), transparent 32%), radial-gradient(circle at 90% 8%, color-mix(in srgb, #14b8a6 22%, transparent), transparent 28%), linear-gradient(135deg, var(--bg-elevated), var(--bg-card));
-  /* prettier-ignore */
-  box-shadow: 0 18px 48px rgba(0, 0, 0, 0.32), inset 0 1px 0 rgba(255, 255, 255, 0.05);
-}
-.cloud-compact-header {
-  /* prettier-ignore */
-  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.18), inset 0 1px 0 rgba(255, 255, 255, 0.04);
-}
-.cloud-compact-header h1 {
-  text-wrap: balance;
-}
-.cloud-compact-header p {
-  text-wrap: pretty;
-}
-.catalog-controls {
-  box-shadow: 0 10px 26px rgba(0, 0, 0, 0.14);
-}
 .results-grid {
   content-visibility: auto;
   contain-intrinsic-size: 800px;

@@ -1,9 +1,12 @@
 import TxConfirmationModal from '@tangle-network/tangle-shared-ui/components/TxConfirmationModal';
 import Sidebar from './Sidebar';
-import { FC, PropsWithChildren, useEffect, useState } from 'react';
+import { FC, PropsWithChildren, useCallback, useEffect, useState } from 'react';
 import TxHistoryNotifier from './TxHistoryNotifier';
 import Header from './Header';
 import { twMerge } from 'tailwind-merge';
+import CommandPalette from './chrome/CommandPalette';
+import ShortcutsHelp from './chrome/ShortcutsHelp';
+import { useKeyboardShortcuts } from './chrome/useKeyboardShortcuts';
 
 type Props = {
   isSidebarInitiallyExpanded?: boolean;
@@ -57,6 +60,15 @@ const Layout: FC<PropsWithChildren<Props>> = ({
     );
   }, [isSidebarExpanded]);
 
+  // Global ⌘K palette + ? help overlay + g-prefix navigation. Mounted once
+  // at the layout root so every page inherits the keyboard surface.
+  const [isPaletteOpen, setIsPaletteOpen] = useState(false);
+  const [isHelpOpen, setIsHelpOpen] = useState(false);
+  useKeyboardShortcuts({
+    onOpenPalette: useCallback(() => setIsPaletteOpen(true), []),
+    onOpenHelp: useCallback(() => setIsHelpOpen(true), []),
+  });
+
   return (
     <div
       data-sandbox-ui
@@ -81,6 +93,8 @@ const Layout: FC<PropsWithChildren<Props>> = ({
       >
         <TxHistoryNotifier />
         <TxConfirmationModal />
+        <CommandPalette open={isPaletteOpen} onOpenChange={setIsPaletteOpen} />
+        <ShortcutsHelp open={isHelpOpen} onOpenChange={setIsHelpOpen} />
 
         <main className="flex-1">{children}</main>
       </div>

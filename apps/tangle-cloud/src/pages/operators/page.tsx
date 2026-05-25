@@ -30,7 +30,8 @@ import { formatUnits, type Address } from 'viem';
 import { useNavigate } from 'react-router';
 import { PagePath } from '../../types';
 import { useAccount } from 'wagmi';
-import { StatRow } from '../../components/stats/Stat';
+import { MetricStrip, PageHeader } from '../../components/chrome';
+import type { Metric } from '../../components/chrome';
 import createStakeDelegateUrl from './createStakeDelegateUrl';
 
 type SortKey = 'stake' | 'delegations' | 'status';
@@ -58,99 +59,78 @@ const Page: FC = () => {
     window.location.assign(createStakeDelegateUrl(operatorAddress));
   }, []);
 
+  const metrics: Metric[] = useMemo(
+    () => [
+      {
+        label: 'Total',
+        value: operatorList.length.toLocaleString(),
+        sublabel: 'registered',
+        loading: isLoading,
+      },
+      {
+        label: 'Active',
+        value: activeOperatorCount.toLocaleString(),
+        tone: activeOperatorCount > 0 ? 'success' : 'neutral',
+        sublabel:
+          operatorList.length === 0
+            ? '—'
+            : `${Math.round(
+                (activeOperatorCount / Math.max(1, operatorList.length)) * 100,
+              )}% online`,
+        loading: isLoading,
+      },
+      {
+        label: 'Open',
+        value: openOperatorCount.toLocaleString(),
+        tone: openOperatorCount > 0 ? 'accent' : 'neutral',
+        sublabel: 'accepting delegations',
+        loading: isLoading,
+      },
+      {
+        label: 'Total stake',
+        value: formatStake(totalStake),
+        sublabel: 'TNT delegated',
+        loading: isLoading,
+      },
+    ],
+    [
+      operatorList.length,
+      activeOperatorCount,
+      openOperatorCount,
+      totalStake,
+      isLoading,
+    ],
+  );
+
   return (
     <div className="space-y-6">
-      <Card
-        variant="sandbox"
-        className="cloud-hero-card cloud-compact-header overflow-hidden"
-      >
-        <CardContent className="relative p-4 md:p-5">
-          <div className="pointer-events-none absolute inset-0 opacity-70 [background:radial-gradient(circle_at_10%_8%,rgba(99,102,241,0.16),transparent_32%),radial-gradient(circle_at_86%_18%,rgba(16,185,129,0.12),transparent_28%)]" />
+      <PageHeader
+        density="compact"
+        title="Operators"
+        subtitle="Inspect registered operators, delegation mode, stake, and RPC availability."
+        action={
+          <>
+            {isConnected && (
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => navigate(PagePath.OPERATORS_MANAGE)}
+              >
+                Manage operator
+              </Button>
+            )}
+            <Button
+              variant="sandbox"
+              size="sm"
+              onClick={() => handleStakeClicked()}
+            >
+              Delegate
+            </Button>
+          </>
+        }
+      />
 
-          <div className="relative grid gap-5 xl:grid-cols-[minmax(0,1fr)_minmax(380px,440px)] xl:items-center">
-            <div>
-              <h1 className="font-display font-extrabold text-3xl text-foreground leading-[1.05] tracking-[-0.035em] sm:text-4xl">
-                Operators
-              </h1>
-              <p className="mt-3 max-w-2xl text-muted-foreground text-sm leading-relaxed">
-                Inspect registered operators, delegation mode, stake, and RPC
-                availability.
-              </p>
-
-              <StatRow
-                className="mt-5 max-w-2xl"
-                items={[
-                  {
-                    label: 'Total',
-                    value: operatorList.length.toLocaleString(),
-                    sublabel: 'Registered operators',
-                    isLoading,
-                  },
-                  {
-                    label: 'Active',
-                    value: activeOperatorCount.toLocaleString(),
-                    tone: activeOperatorCount > 0 ? 'success' : 'default',
-                    sublabel: `${
-                      operatorList.length === 0
-                        ? '0%'
-                        : Math.round(
-                            (activeOperatorCount /
-                              Math.max(1, operatorList.length)) *
-                              100,
-                          ) + '%'
-                    } online`,
-                    isLoading,
-                  },
-                  {
-                    label: 'Open',
-                    value: openOperatorCount.toLocaleString(),
-                    tone: openOperatorCount > 0 ? 'accent' : 'default',
-                    sublabel: 'Accepting delegations',
-                    isLoading,
-                  },
-                  {
-                    label: 'Total stake',
-                    value: formatStake(totalStake),
-                    sublabel: 'TNT delegated',
-                    isLoading,
-                  },
-                ]}
-              />
-            </div>
-
-            <div className="rounded-lg border border-[color:var(--border-accent)] bg-[var(--accent-surface-soft)] p-4 shadow-[var(--shadow-card)]">
-              <p className="font-semibold text-muted-foreground text-[10px] uppercase tracking-wider">
-                Delegate stake
-              </p>
-              <p className="mt-2 font-display font-bold text-foreground text-base leading-snug">
-                Pick an open operator and back them with TNT.
-              </p>
-              <p className="mt-2 text-muted-foreground text-xs leading-relaxed">
-                Delegators earn a share of operator rewards proportional to
-                their stake. Switch operator any time — unbonding applies.
-              </p>
-              <div className="mt-4 flex flex-col gap-2 sm:flex-row">
-                <Button
-                  variant="sandbox"
-                  className="flex-1"
-                  onClick={() => handleStakeClicked()}
-                >
-                  Delegate
-                </Button>
-                {isConnected && (
-                  <Button
-                    variant="outline"
-                    className="flex-1"
-                    onClick={() => navigate(PagePath.OPERATORS_MANAGE)}
-                  >
-                    Manage operator
-                  </Button>
-                )}
-              </div>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
+      <MetricStrip metrics={metrics} density="compact" />
 
       <OperatorsPanel
         operators={operatorList}

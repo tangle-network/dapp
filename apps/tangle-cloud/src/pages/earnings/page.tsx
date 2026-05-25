@@ -4,7 +4,7 @@
 
 import { FC, useEffect, useMemo, useState } from 'react';
 import { useAccount, useChainId } from 'wagmi';
-import { Card, CardContent } from '@tangle-network/sandbox-ui/primitives';
+import { PageHeader } from '../../components/chrome';
 import {
   DeveloperPaymentsQueryError,
   useDeveloperPayments,
@@ -110,21 +110,9 @@ const EarningsPage: FC = () => {
 export default EarningsPage;
 
 const EarningsHero = () => (
-  <Card
-    variant="sandbox"
-    className="cloud-hero-card cloud-compact-header overflow-hidden"
-  >
-    <CardContent className="relative p-4 md:p-5">
-      <div className="pointer-events-none absolute inset-0 opacity-70 [background:radial-gradient(circle_at_12%_8%,rgba(99,102,241,0.18),transparent_32%),radial-gradient(circle_at_86%_12%,rgba(16,185,129,0.10),transparent_28%)]" />
-      <div className="relative">
-        <h1 className="font-display font-extrabold text-3xl text-foreground leading-[1.05] tracking-[-0.035em] sm:text-4xl">
-          Publisher earnings
-        </h1>
-        <p className="mt-3 max-w-2xl text-muted-foreground text-sm leading-relaxed">
-          Track blueprint payout totals and indexed payment events for the
-          connected publisher wallet.
-        </p>
-      </div>
-    </CardContent>
-  </Card>
+  <PageHeader
+    density="compact"
+    title="Publisher earnings"
+    subtitle="Track blueprint payout totals and indexed payment events for the connected publisher wallet."
+  />
 );

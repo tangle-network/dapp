@@ -3,14 +3,20 @@ import {
   Button,
   Card,
   CardContent,
-  Input,
   Skeleton,
 } from '../../components/sandbox/SandboxUi';
 import {
   SegmentedControl,
   type SegmentedControlOption,
 } from '@tangle-network/sandbox-ui/primitives';
-import { Search } from '@tangle-network/icons';
+import { EmptyState, FilterTray, PageToolbar } from '../../components/chrome';
+import {
+  enumCodec,
+  intCodec,
+  stringCodec,
+  useUrlState,
+} from '../../components/chrome/useUrlState';
+import { typeRole } from '../../styles/chrome';
 import type { UseAllBlueprintsReturn } from '@tangle-network/tangle-shared-ui/data/graphql';
 import type { Blueprint } from '@tangle-network/tangle-shared-ui/types/blueprint';
 import {
@@ -20,7 +26,6 @@ import {
   useDeferredValue,
   useEffect,
   useMemo,
-  useState,
 } from 'react';
 import { useQueries } from '@tanstack/react-query';
 import { useChainId, usePublicClient } from 'wagmi';
@@ -148,12 +153,28 @@ const BlueprintListing: FC<Props> = ({
   error,
   onRegisterBlueprint,
 }) => {
-  const [page, setPage] = useState(0);
-  const [searchQuery, setSearchQuery] = useState('');
-  const [selectedCategory, setSelectedCategory] = useState(ALL_CATEGORIES);
-  const [audienceFilter, setAudienceFilter] = useState<AudienceFilter>('all');
-  const [manifestFilter, setManifestFilter] = useState<ManifestFilter>('all');
-  const [auditFilter, setAuditFilter] = useState<AuditFilter>('all');
+  // Filter state lives in the URL — refresh persists the view, deep-links are
+  // shareable, the back button works. Defaults are omitted from the URL so a
+  // bare /blueprints stays clean. `replace: true` (in `useUrlState`) means
+  // every keystroke doesn't pollute the history stack.
+  const [page, setPage] = useUrlState('page', intCodec(0));
+  const [searchQuery, setSearchQuery] = useUrlState('q', stringCodec(''));
+  const [selectedCategory, setSelectedCategory] = useUrlState(
+    'category',
+    stringCodec(ALL_CATEGORIES),
+  );
+  const [audienceFilter, setAudienceFilter] = useUrlState<AudienceFilter>(
+    'avail',
+    enumCodec(['all', 'customers', 'operators'] as const, 'all'),
+  );
+  const [manifestFilter, setManifestFilter] = useUrlState<ManifestFilter>(
+    'source',
+    enumCodec(['all', 'verified', 'fallback'] as const, 'all'),
+  );
+  const [auditFilter, setAuditFilter] = useUrlState<AuditFilter>(
+    'trust',
+    enumCodec(['all', 'audited'] as const, 'all'),
+  );
   const deferredSearchQuery = useDeferredValue(
     searchQuery.trim().toLowerCase(),
   );
@@ -299,44 +320,56 @@ const BlueprintListing: FC<Props> = ({
 
   if (blueprintItems.length === 0) {
     return (
-      <Card variant="sandbox">
-        <CardContent className="flex min-h-52 flex-col items-center justify-center p-8 text-center">
-          <h2 className="font-display font-bold text-foreground text-xl">
-            No blueprints on this network
-          </h2>
-          <p className="mt-2 max-w-md text-muted-foreground text-sm">
-            Register an operator, switch networks, or publish a blueprint to
-            make it available for deployment.
-          </p>
-        </CardContent>
-      </Card>
+      <EmptyState
+        kind="no-data"
+        title="No blueprints on this network"
+        description="Register an operator, switch networks, or publish a blueprint to make it available for deployment."
+      />
     );
   }
 
+  // Count active non-default filters — drives the FilterTray's active badge
+  // so the operator sees at a glance how many constraints they have on.
+  const activeFilterCount =
+    (audienceFilter !== 'all' ? 1 : 0) +
+    (manifestFilter !== 'all' ? 1 : 0) +
+    (auditFilter !== 'all' ? 1 : 0);
+
+  const resetAllFilters = () => {
+    setSearchQuery('');
+    setSelectedCategory(ALL_CATEGORIES);
+    setAudienceFilter('all');
+    setManifestFilter('all');
+    setAuditFilter('all');
+  };
+
   return (
     <div className="space-y-5">
-      <Card variant="elevated" className="catalog-controls">
-        <CardContent className="space-y-4 p-4 md:p-5">
-          <div className="grid gap-4 xl:grid-cols-[minmax(360px,1fr)_auto_auto] xl:items-center">
-            <Input
-              value={searchQuery}
-              onChange={setSearchQuery}
-              leftIcon={<Search className="h-4 w-4 fill-current" />}
-              placeholder="Search blueprints, services, publishers, or IDs"
-              className="w-full"
-              inputClassName="h-11 bg-background text-sm"
-            />
-
-            <label className="grid gap-1">
-              <span className="font-semibold text-muted-foreground text-[10px] uppercase tracking-wider">
-                Availability
-              </span>
+      <PageToolbar
+        search={{
+          value: searchQuery,
+          onChange: setSearchQuery,
+          placeholder: 'Search blueprints, services, publishers, or IDs',
+        }}
+        count={{
+          matches: dedupedRows.length,
+          total: blueprintItems.length,
+          noun: 'matches',
+        }}
+        trailing={
+          <FilterTray
+            activeCount={activeFilterCount}
+            onClear={resetAllFilters}
+            trayTitle="Catalog filters"
+          >
+            <label className="block space-y-1.5">
+              <span className={typeRole.label}>Availability</span>
               <select
                 value={audienceFilter}
                 onChange={(event) =>
                   setAudienceFilter(event.currentTarget.value as AudienceFilter)
                 }
-                className="h-10 min-w-40 rounded-md border border-border bg-background px-3 font-semibold text-foreground text-sm outline-none transition-colors hover:bg-muted focus:border-primary"
+                className="h-9 w-full rounded-md border border-border bg-background px-3 text-sm text-foreground outline-none hover:bg-[color:var(--bg-hover)] focus:border-[color:var(--border-accent-hover)]"
               >
                 <option value="all">All availability</option>
                 <option value="customers">Has operators</option>
@@ -344,16 +377,14 @@ const BlueprintListing: FC<Props> = ({
               </select>
             </label>
 
-            <label className="grid gap-1">
-              <span className="font-semibold text-muted-foreground text-[10px] uppercase tracking-wider">
-                Source
-              </span>
+            <label className="block space-y-1.5">
+              <span className={typeRole.label}>Source</span>
               <select
                 value={manifestFilter}
                 onChange={(event) =>
                   setManifestFilter(event.currentTarget.value as ManifestFilter)
                 }
-                className="h-10 min-w-36 rounded-md border border-border bg-background px-3 font-semibold text-foreground text-sm outline-none transition-colors hover:bg-muted focus:border-primary"
+                className="h-9 w-full rounded-md border border-border bg-background px-3 text-sm text-foreground outline-none hover:bg-[color:var(--bg-hover)] focus:border-[color:var(--border-accent-hover)]"
               >
                 <option value="all">All sources</option>
                 <option value="verified">Pinned source</option>
@@ -361,95 +392,68 @@ const BlueprintListing: FC<Props> = ({
               </select>
             </label>
 
-            <label className="grid gap-1">
-              <span className="font-semibold text-muted-foreground text-[10px] uppercase tracking-wider">
-                Trust
-              </span>
+            <label className="block space-y-1.5">
+              <span className={typeRole.label}>Trust</span>
               <select
                 value={auditFilter}
                 onChange={(event) =>
                   setAuditFilter(event.currentTarget.value as AuditFilter)
                 }
-                className="h-10 min-w-36 rounded-md border border-border bg-background px-3 font-semibold text-foreground text-sm outline-none transition-colors hover:bg-muted focus:border-primary"
+                className="h-9 w-full rounded-md border border-border bg-background px-3 text-sm text-foreground outline-none hover:bg-[color:var(--bg-hover)] focus:border-[color:var(--border-accent-hover)]"
               >
                 <option value="all">All blueprints</option>
                 <option value="audited">Audited only</option>
               </select>
             </label>
-          </div>
+          </FilterTray>
+        }
+      />
 
-          <div className="flex flex-col gap-3 border-border border-t pt-4 lg:flex-row lg:items-center lg:justify-between">
-            <div className="flex items-center gap-2 overflow-x-auto pb-0.5">
-              <span className="hidden shrink-0 items-center pr-1 font-semibold text-muted-foreground text-[10px] uppercase tracking-wider sm:inline-flex">
-                Category
-              </span>
-              <SegmentedControl<string>
-                aria-label="Filter blueprints by category"
-                value={selectedCategory}
-                onValueChange={setSelectedCategory}
-                options={[
-                  {
-                    value: ALL_CATEGORIES,
-                    label: 'All',
-                    adornment: (
-                      <span className="rounded-full bg-background/70 px-2 py-0.5 font-mono text-[10px] text-foreground">
-                        {blueprintItems.length}
-                      </span>
-                    ),
-                  } satisfies SegmentedControlOption<string>,
-                  ...categories.map(
-                    ({ category, count }) =>
-                      ({
-                        value: category,
-                        label: category.replace(/^AI /, ''),
-                        adornment: (
-                          <span className="rounded-full bg-background/70 px-2 py-0.5 font-mono text-[10px] text-foreground">
-                            {count}
-                          </span>
-                        ),
-                      }) satisfies SegmentedControlOption<string>,
+      {/* Category strip — a thin row above the grid. Not wrapped in a card,
+       * not bordered. Categories live on-chain when present; otherwise they
+       * fall back to the regex-derived buckets in getBlueprintCategory until
+       * the metadata schema grows `blueprintUi.tags[]`. */}
+      <div className="overflow-x-auto pb-0.5">
+        <SegmentedControl<string>
+          aria-label="Filter blueprints by category"
+          value={selectedCategory}
+          onValueChange={setSelectedCategory}
+          options={[
+            {
+              value: ALL_CATEGORIES,
+              label: 'All',
+              adornment: (
+                <span className="rounded-full bg-background/70 px-2 py-0.5 font-mono text-[10px] text-foreground">
+                  {blueprintItems.length}
+                </span>
+              ),
+            } satisfies SegmentedControlOption<string>,
+            ...categories.map(
+              ({ category, count }) =>
+                ({
+                  value: category,
+                  label: category.replace(/^AI /, ''),
+                  adornment: (
+                    <span className="rounded-full bg-background/70 px-2 py-0.5 font-mono text-[10px] text-foreground">
+                      {count}
+                    </span>
                   ),
-                ]}
-              />
-            </div>
-
-            <div className="flex shrink-0 items-center gap-3 text-muted-foreground text-xs">
-              <span className="text-muted-foreground text-xs">
-                {dedupedRows.length} matches
-              </span>
-              {hasActiveFilters && (
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  className="h-8 px-2"
-                  onClick={() => {
-                    setSearchQuery('');
-                    setSelectedCategory(ALL_CATEGORIES);
-                    setAudienceFilter('all');
-                    setManifestFilter('all');
-                    setAuditFilter('all');
-                  }}
-                >
-                  Clear
-                </Button>
-              )}
-            </div>
-          </div>
-        </CardContent>
-      </Card>
+                }) satisfies SegmentedControlOption<string>,
+            ),
+          ]}
+        />
+      </div>
 
       {dedupedRows.length === 0 ? (
-        <Card variant="sandbox">
-          <CardContent className="flex min-h-52 flex-col items-center justify-center p-8 text-center">
-            <h3 className="font-display font-bold text-foreground text-lg">
-              No blueprints match these filters
-            </h3>
-            <p className="mt-2 max-w-md text-muted-foreground text-sm">
-              Try a broader category, remove the source filter, or search by the
-              blueprint name, publisher, or protocol ID.
-            </p>
-          </CardContent>
-        </Card>
+        <EmptyState
+          kind="no-match"
+          description="Try a broader category, remove the source filter, or search by the blueprint name, publisher, or protocol ID."
+          primary={
+            hasActiveFilters && (
+              <Button onClick={resetAllFilters}>Clear all filters</Button>
+            )
+          }
+        />
       ) : (
         <div className="results-grid grid grid-cols-1 gap-5 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
           {visibleRows.map((row) => (
