@@ -45,7 +45,7 @@ const PageToolbar: FC<Props> = ({
     <div
       className={twMerge(
         chromeHeight.toolbar,
-        'flex w-full items-center gap-3 border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/70',
+        'flex w-full items-center gap-3 border-b border-border bg-background',
         sticky && 'sticky top-0 z-20',
         className,
       )}
