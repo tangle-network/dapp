@@ -28,6 +28,7 @@ import { useLocation } from 'react-router';
 import { twMerge } from 'tailwind-merge';
 import { useAccount, useChainId, useSwitchChain } from 'wagmi';
 import TxHistoryDrawer from './TxHistoryDrawer';
+import { useTopNavSlotContent } from './chrome/TopNavSlot';
 import {
   Network,
   NetworkId,
@@ -45,6 +46,7 @@ export default function Header({
 }) {
   const pathname = useLocation().pathname;
   const breadcrumbs = useMemo(() => getHeaderBreadcrumbs(pathname), [pathname]);
+  const topNavContent = useTopNavSlotContent();
   const hasContextualConnect =
     pathname.startsWith('/rewards') ||
     pathname.startsWith('/earnings') ||
@@ -58,13 +60,12 @@ export default function Header({
       )}
       {...props}
     >
-      {/* Topbar left slot reserved for future global controls (search, branch
-       * selector, etc.). Breadcrumbs were removed: the sidebar already shows
-       * the active section, and the page H1 (PageHeader) names the leaf —
-       * the `Cloud / Blueprints / Details`-style breadcrumb was double
-       * labeling without conveying new information, and reading the leaf
-       * "Details" wasn't actually useful navigation. */}
-      <div className="ml-12 flex min-w-0 flex-1 items-center gap-2 sm:ml-0" />
+      {/* Topbar left slot: pages inject contextual pills/actions here via
+       * useTopNavSlot (e.g. a blueprint's catalog-back + name + create action),
+       * so per-page context lives in the nav instead of an extra in-page bar. */}
+      <div className="ml-12 flex min-w-0 flex-1 items-center gap-2 sm:ml-0">
+        {topNavContent}
+      </div>
       {/* Kept for potential future use; intentionally unread so the lint
        * doesn't yell about the unused memo. */}
       <span hidden aria-hidden>

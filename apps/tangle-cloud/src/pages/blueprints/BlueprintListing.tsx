@@ -5,10 +5,6 @@ import {
   CardContent,
   Skeleton,
 } from '../../components/sandbox/SandboxUi';
-import {
-  SegmentedControl,
-  type SegmentedControlOption,
-} from '@tangle-network/sandbox-ui/primitives';
 import { formatBlueprintName } from '../../components/blueprints/blueprintVisualUtils';
 import { EmptyState, FilterTray, PageToolbar } from '../../components/chrome';
 import {
@@ -17,17 +13,19 @@ import {
   stringCodec,
   useUrlState,
 } from '../../components/chrome/useUrlState';
-import { typeRole } from '../../styles/chrome';
+import { focus, typeRole } from '../../styles/chrome';
 import type { UseAllBlueprintsReturn } from '@tangle-network/tangle-shared-ui/data/graphql';
 import type { Blueprint } from '@tangle-network/tangle-shared-ui/types/blueprint';
 import {
   Dispatch,
   FC,
   SetStateAction,
+  useCallback,
   useDeferredValue,
   useEffect,
   useMemo,
 } from 'react';
+import * as Popover from '@radix-ui/react-popover';
 import { useQueries } from '@tanstack/react-query';
 import { useChainId, usePublicClient } from 'wagmi';
 import type { Address } from 'viem';
@@ -51,7 +49,6 @@ import {
 } from '../../blueprintApps/dedupe';
 
 const PAGE_SIZE = 12;
-const ALL_CATEGORIES = 'All categories';
 
 type AudienceFilter = 'all' | 'customers' | 'operators';
 type ManifestFilter = 'all' | 'verified' | 'fallback';
@@ -174,6 +171,104 @@ const matchesSearch = (blueprint: Blueprint, query: string) => {
   return haystack.includes(query);
 };
 
+/**
+ * Multi-select category dropdown for the toolbar. Replaces the old
+ * full-width segmented row — categories collapse into one pill with a
+ * checkbox list, so search + categories + filters fit a single toolbar row.
+ */
+const CategoryFilterMenu: FC<{
+  categories: { category: string; count: number }[];
+  selected: string[];
+  onToggle: (category: string) => void;
+  onClear: () => void;
+}> = ({ categories, selected, onToggle, onClear }) => {
+  const count = selected.length;
+  return (
+    <Popover.Root>
+      <Popover.Trigger asChild>
+        <button
+          type="button"
+          className={twMerge(
+            'inline-flex h-9 items-center gap-2 rounded-md border border-border bg-transparent px-3 text-sm font-medium text-foreground transition-colors hover:bg-[color:var(--bg-hover)]',
+            focus.ring,
+          )}
+        >
+          <span>Categories</span>
+          {count > 0 && (
+            <span
+              className={twMerge(
+                typeRole.mono,
+                'flex h-5 min-w-[20px] items-center justify-center rounded-full bg-[color:var(--border-accent)] px-1.5 text-[11px] text-foreground',
+              )}
+            >
+              {count}
+            </span>
+          )}
+        </button>
+      </Popover.Trigger>
+      <Popover.Portal>
+        <Popover.Content
+          align="end"
+          sideOffset={8}
+          className={twMerge(
+            'z-50 max-h-[60vh] w-64 overflow-y-auto rounded-lg border border-border bg-[color:var(--bg-card)] p-2 shadow-[var(--shadow-dropdown)]',
+            'data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95',
+          )}
+        >
+          <div className="mb-1 flex items-center justify-between px-2 py-1">
+            <span className={typeRole.label}>Categories</span>
+            {count > 0 && (
+              <button
+                type="button"
+                onClick={onClear}
+                className="text-xs text-muted-foreground hover:text-foreground"
+              >
+                Clear
+              </button>
+            )}
+          </div>
+          {categories.length === 0 ? (
+            <p className="px-2 py-3 text-sm text-muted-foreground">
+              No categories
+            </p>
+          ) : (
+            categories.map(({ category, count: c }) => {
+              const checked = selected.includes(category);
+              return (
+                <button
+                  key={category}
+                  type="button"
+                  onClick={() => onToggle(category)}
+                  className={twMerge(
+                    'flex w-full items-center justify-between gap-2 rounded-md px-2 py-1.5 text-left text-sm text-foreground transition-colors hover:bg-[color:var(--bg-hover)]',
+                    focus.ring,
+                  )}
+                >
+                  <span className="flex items-center gap-2">
+                    <span
+                      className={twMerge(
+                        'flex h-4 w-4 items-center justify-center rounded border border-border text-[10px] leading-none',
+                        checked &&
+                          'border-[color:var(--border-accent-hover)] bg-[color:var(--border-accent)]',
+                      )}
+                    >
+                      {checked ? '✓' : ''}
+                    </span>
+                    {category}
+                  </span>
+                  <span className="font-mono text-[10px] text-muted-foreground">
+                    {c}
+                  </span>
+                </button>
+              );
+            })
+          )}
+        </Popover.Content>
+      </Popover.Portal>
+    </Popover.Root>
+  );
+};
+
 const BlueprintListing: FC<Props> = ({
   rowSelection,
   onRowSelectionChange,
@@ -188,9 +283,24 @@ const BlueprintListing: FC<Props> = ({
   // every keystroke doesn't pollute the history stack.
   const [page, setPage] = useUrlState('page', intCodec(0));
   const [searchQuery, setSearchQuery] = useUrlState('q', stringCodec(''));
-  const [selectedCategory, setSelectedCategory] = useUrlState(
+  // Multi-select categories, comma-joined in the URL (empty = all). Single
+  // dropdown in the toolbar replaces the old full-width category row.
+  const [categoryParam, setCategoryParam] = useUrlState(
     'category',
-    stringCodec(ALL_CATEGORIES),
+    stringCodec(''),
+  );
+  const selectedCategories = useMemo(
+    () => (categoryParam ? categoryParam.split(',').filter(Boolean) : []),
+    [categoryParam],
+  );
+  const toggleCategory = useCallback(
+    (category: string) => {
+      const next = selectedCategories.includes(category)
+        ? selectedCategories.filter((c) => c !== category)
+        : [...selectedCategories, category];
+      setCategoryParam(next.join(','));
+    },
+    [selectedCategories, setCategoryParam],
   );
   const [audienceFilter, setAudienceFilter] = useUrlState<AudienceFilter>(
     'avail',
@@ -241,8 +351,8 @@ const BlueprintListing: FC<Props> = ({
       }
 
       if (
-        selectedCategory !== ALL_CATEGORIES &&
-        getBlueprintCategory(blueprint) !== selectedCategory
+        selectedCategories.length > 0 &&
+        !selectedCategories.includes(getBlueprintCategory(blueprint))
       ) {
         return false;
       }
@@ -285,7 +395,7 @@ const BlueprintListing: FC<Props> = ({
     blueprintItems,
     deferredSearchQuery,
     manifestFilter,
-    selectedCategory,
+    categoryParam,
   ]);
 
   useEffect(() => {
@@ -295,7 +405,7 @@ const BlueprintListing: FC<Props> = ({
     auditFilter,
     deferredSearchQuery,
     manifestFilter,
-    selectedCategory,
+    categoryParam,
   ]);
 
   // Collapse the catalog by metadata identity (publisher.namespace,
@@ -316,7 +426,7 @@ const BlueprintListing: FC<Props> = ({
   );
   const hasActiveFilters =
     searchQuery.trim() !== '' ||
-    selectedCategory !== ALL_CATEGORIES ||
+    selectedCategories.length > 0 ||
     audienceFilter !== 'all' ||
     manifestFilter !== 'all' ||
     auditFilter !== 'all';
@@ -366,7 +476,7 @@ const BlueprintListing: FC<Props> = ({
 
   const resetAllFilters = () => {
     setSearchQuery('');
-    setSelectedCategory(ALL_CATEGORIES);
+    setCategoryParam('');
     setAudienceFilter('all');
     setManifestFilter('all');
     setAuditFilter('all');
@@ -386,92 +496,69 @@ const BlueprintListing: FC<Props> = ({
           noun: 'matches',
         }}
         trailing={
-          <FilterTray
-            activeCount={activeFilterCount}
-            onClear={resetAllFilters}
-            trayTitle="Catalog filters"
-          >
-            <label className="block space-y-1.5">
-              <span className={typeRole.label}>Availability</span>
-              <select
-                value={audienceFilter}
-                onChange={(event) =>
-                  setAudienceFilter(event.currentTarget.value as AudienceFilter)
-                }
-                className="h-9 w-full rounded-md border border-border bg-background px-3 text-sm text-foreground outline-none hover:bg-[color:var(--bg-hover)] focus:border-[color:var(--border-accent-hover)]"
-              >
-                <option value="all">All availability</option>
-                <option value="customers">Has operators</option>
-                <option value="operators">Needs capacity</option>
-              </select>
-            </label>
+          <div className="flex items-center gap-2">
+            <CategoryFilterMenu
+              categories={categories}
+              selected={selectedCategories}
+              onToggle={toggleCategory}
+              onClear={() => setCategoryParam('')}
+            />
+            <FilterTray
+              activeCount={activeFilterCount}
+              onClear={resetAllFilters}
+              trayTitle="Catalog filters"
+            >
+              <label className="block space-y-1.5">
+                <span className={typeRole.label}>Availability</span>
+                <select
+                  value={audienceFilter}
+                  onChange={(event) =>
+                    setAudienceFilter(
+                      event.currentTarget.value as AudienceFilter,
+                    )
+                  }
+                  className="h-9 w-full rounded-md border border-border bg-background px-3 text-sm text-foreground outline-none hover:bg-[color:var(--bg-hover)] focus:border-[color:var(--border-accent-hover)]"
+                >
+                  <option value="all">All availability</option>
+                  <option value="customers">Has operators</option>
+                  <option value="operators">Needs capacity</option>
+                </select>
+              </label>
 
-            <label className="block space-y-1.5">
-              <span className={typeRole.label}>Source</span>
-              <select
-                value={manifestFilter}
-                onChange={(event) =>
-                  setManifestFilter(event.currentTarget.value as ManifestFilter)
-                }
-                className="h-9 w-full rounded-md border border-border bg-background px-3 text-sm text-foreground outline-none hover:bg-[color:var(--bg-hover)] focus:border-[color:var(--border-accent-hover)]"
-              >
-                <option value="all">All sources</option>
-                <option value="verified">Pinned source</option>
-                <option value="fallback">Chain-only</option>
-              </select>
-            </label>
+              <label className="block space-y-1.5">
+                <span className={typeRole.label}>Source</span>
+                <select
+                  value={manifestFilter}
+                  onChange={(event) =>
+                    setManifestFilter(
+                      event.currentTarget.value as ManifestFilter,
+                    )
+                  }
+                  className="h-9 w-full rounded-md border border-border bg-background px-3 text-sm text-foreground outline-none hover:bg-[color:var(--bg-hover)] focus:border-[color:var(--border-accent-hover)]"
+                >
+                  <option value="all">All sources</option>
+                  <option value="verified">Pinned source</option>
+                  <option value="fallback">Chain-only</option>
+                </select>
+              </label>
 
-            <label className="block space-y-1.5">
-              <span className={typeRole.label}>Trust</span>
-              <select
-                value={auditFilter}
-                onChange={(event) =>
-                  setAuditFilter(event.currentTarget.value as AuditFilter)
-                }
-                className="h-9 w-full rounded-md border border-border bg-background px-3 text-sm text-foreground outline-none hover:bg-[color:var(--bg-hover)] focus:border-[color:var(--border-accent-hover)]"
-              >
-                <option value="all">All blueprints</option>
-                <option value="audited">Audited only</option>
-              </select>
-            </label>
-          </FilterTray>
+              <label className="block space-y-1.5">
+                <span className={typeRole.label}>Trust</span>
+                <select
+                  value={auditFilter}
+                  onChange={(event) =>
+                    setAuditFilter(event.currentTarget.value as AuditFilter)
+                  }
+                  className="h-9 w-full rounded-md border border-border bg-background px-3 text-sm text-foreground outline-none hover:bg-[color:var(--bg-hover)] focus:border-[color:var(--border-accent-hover)]"
+                >
+                  <option value="all">All blueprints</option>
+                  <option value="audited">Audited only</option>
+                </select>
+              </label>
+            </FilterTray>
+          </div>
         }
       />
-
-      {/* Category strip — a thin row above the grid. Not wrapped in a card,
-       * not bordered. Categories live on-chain when present; otherwise they
-       * fall back to the regex-derived buckets in getBlueprintCategory until
-       * the metadata schema grows `blueprintUi.tags[]`. */}
-      <div className="overflow-x-auto pb-0.5">
-        <SegmentedControl<string>
-          aria-label="Filter blueprints by category"
-          value={selectedCategory}
-          onValueChange={setSelectedCategory}
-          options={[
-            {
-              value: ALL_CATEGORIES,
-              label: 'All',
-              adornment: (
-                <span className="rounded-full bg-background/70 px-2 py-0.5 font-mono text-[10px] text-foreground">
-                  {blueprintItems.length}
-                </span>
-              ),
-            } satisfies SegmentedControlOption<string>,
-            ...categories.map(
-              ({ category, count }) =>
-                ({
-                  value: category,
-                  label: category.replace(/^AI /, ''),
-                  adornment: (
-                    <span className="rounded-full bg-background/70 px-2 py-0.5 font-mono text-[10px] text-foreground">
-                      {count}
-                    </span>
-                  ),
-                }) satisfies SegmentedControlOption<string>,
-            ),
-          ]}
-        />
-      </div>
 
       {dedupedRows.length === 0 ? (
         <EmptyState
