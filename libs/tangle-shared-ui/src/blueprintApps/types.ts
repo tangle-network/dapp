@@ -233,6 +233,18 @@ export type BlueprintUiContract = {
   resources: BlueprintUiResources;
   surfaces: BlueprintUiSurface[];
   theme?: BlueprintUiTheme;
+  /**
+   * Optional publisher-declared category labels. The dapp catalog uses
+   * `tags[0]` as the primary category chip and surfaces the rest in
+   * filter facets. Empty / absent → fall back to `Blueprint.category`
+   * (chain-derived) and finally to keyword inference.
+   *
+   * Multi-tag is supported because a blueprint can legitimately belong
+   * to several taxonomies at once ("Inference" + "Onchain" + "TEE").
+   * Tags are normalized to title-case on consume; raw strings are
+   * accepted to keep the publisher schema lenient.
+   */
+  tags?: readonly string[];
   overviewCards?: BlueprintUiOverviewCard[];
   actions?: BlueprintUiAction[];
   resourceViews?: BlueprintUiResourceView[];
