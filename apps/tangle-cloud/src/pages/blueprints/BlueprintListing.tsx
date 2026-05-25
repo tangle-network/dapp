@@ -9,6 +9,7 @@ import {
   SegmentedControl,
   type SegmentedControlOption,
 } from '@tangle-network/sandbox-ui/primitives';
+import { formatBlueprintName } from '../../components/blueprints/blueprintVisualUtils';
 import { EmptyState, FilterTray, PageToolbar } from '../../components/chrome';
 import {
   enumCodec,
@@ -44,16 +45,6 @@ import { auditorFallbackRegistry } from '../../auditors';
 import { Link } from 'react-router';
 import { twMerge } from 'tailwind-merge';
 import { PagePath } from '../../types';
-import { BlueprintVisual } from '../../components/blueprints/BlueprintVisual';
-import { formatBlueprintName } from '../../components/blueprints/blueprintVisualUtils';
-import {
-  categoryBadgeStyle,
-  categoryStripeStyle,
-} from '../../components/blueprints/categoryColor';
-import {
-  AuditedPill,
-  BlueprintTrustChip,
-} from '../../components/binaryUpgrade/BlueprintTrustChip';
 import {
   dedupeBlueprintsByIdentity,
   type DedupedBlueprintRow,
@@ -71,14 +62,6 @@ type Props = {
   onRowSelectionChange?: Dispatch<SetStateAction<RowSelectionState>>;
   onRegisterBlueprint?: (blueprint: Blueprint) => void;
 } & Omit<UseAllBlueprintsReturn, 'refetch'>;
-
-const shortenIdentity = (value: string) => {
-  if (value.length <= 18) {
-    return value;
-  }
-
-  return `${value.slice(0, 6)}...${value.slice(-4)}`;
-};
 
 const pluralize = (label: string, count: number) =>
   count === 1 ? label : `${label}s`;
@@ -657,6 +640,27 @@ const useAuditedStatusMap = (blueprintIds: bigint[]): Map<string, boolean> => {
   return map;
 };
 
+/**
+ * Catalog card — the operator/customer's primary scan surface.
+ *
+ * Hard rule: ONE fact per visual line, three lines of information total.
+ *
+ *   Line 1: title (large, primary read)
+ *   Line 2: one-line description (truncated)
+ *   Line 3: status — "Ready · N operators" OR "Needs operators"
+ *
+ * Everything else is hover-revealed (action buttons) or absent (publisher
+ * address, category pill, deployment-modes pill, source-pinning pill,
+ * three-cell metric grid, github link). The detail page is one click away
+ * and surfaces those facts where they belong.
+ *
+ * Distinctive identity (so the wall doesn't look like a shadcn template
+ * gallery): the blueprint id renders as a large mono "watermark" in the
+ * top-right corner — like a tactical card chip number. Featured /
+ * audited blueprints get a 2px accent stripe on the left border, not a
+ * full perimeter glow. Visual identity comes from typography and
+ * proportion, not from gradients.
+ */
 const BlueprintCard = ({
   row,
   isSelectable,
@@ -672,198 +676,153 @@ const BlueprintCard = ({
   onSelectionChange: (isSelected: boolean) => void;
   onRegister?: (blueprint: Blueprint) => void;
 }) => {
-  const { blueprint, aliases, modes } = row;
-  // Count of *sibling* deployments. The canonical blueprint itself is the
-  // first mode; the picker shows it plus each alias. The subtitle reads
-  // "N deployment modes" only when there's actually a picker to surface.
-  const deploymentModeCount =
-    modes && modes.length > 1
-      ? modes.length
-      : aliases.length > 0
-        ? aliases.length + 1
-        : 0;
+  const { blueprint } = row;
   const description =
-    blueprint.description ??
-    'A Tangle service blueprint. Customers can deploy an instance when operators are available; operators can register to supply capacity.';
+    blueprint.description?.trim() ||
+    'Service blueprint — deploy when operators are available.';
   const blueprintHref = `${PagePath.BLUEPRINTS}/${blueprint.id.toString()}`;
-  const manifestStatus = hasVerifiedManifest(blueprint)
-    ? 'Pinned source'
-    : 'Chain-only';
-  const category = getBlueprintCategory(blueprint);
   const operatorCount = blueprint.operatorsCount ?? 0;
   const hasOperators = operatorCount > 0;
-  const capacityLabel =
-    operatorCount === 0
-      ? 'No operators'
-      : `${operatorCount} ${pluralize('operator', operatorCount)}`;
-  const deploymentState = hasOperators
-    ? 'Ready to instance'
-    : 'Needs operator capacity';
-  const displayName = formatBlueprintName(blueprint.name);
-  // Featured = boosted or audited. Featured cards get a brand-tinted ring +
-  // a top-right ribbon so they pop out of the wall instead of blending in.
   const isFeatured = blueprint.isBoosted === true || isAudited;
-  const featuredLabel = blueprint.isBoosted
-    ? 'Featured'
-    : isAudited
-      ? 'Audited'
-      : null;
+  const displayName = formatBlueprintName(blueprint.name);
   return (
-    <Card
-      variant="sandbox"
-      hover
+    <div
       className={twMerge(
-        'blueprint-card group relative min-h-[360px] overflow-hidden',
-        isFeatured &&
-          'border-[color:var(--border-accent)] shadow-[var(--shadow-accent),0_0_0_1px_var(--border-accent)]',
-        isSelected && 'border-primary shadow-[var(--shadow-accent)]',
+        'group relative flex min-h-[180px] flex-col gap-3 rounded-lg border border-border bg-[color:var(--bg-card)] p-5 transition-all',
+        // Subtle hover: lift one pixel, tighten border accent. No gradient
+        // glow. The card already has enough visual weight from its content.
+        'hover:-translate-y-px hover:border-[color:var(--border-accent-hover)]',
+        isFeatured && 'border-l-2 border-l-[color:var(--border-accent-hover)]',
+        isSelected &&
+          'border-[color:var(--border-accent-hover)] shadow-[0_0_0_1px_var(--border-accent-hover)]',
       )}
-      style={categoryStripeStyle(category)}
     >
+      {/* Whole-card link — keeps the deploy/register buttons interactive
+       * because they have z-20 and stopPropagation. Aria label on the
+       * link is the source of truth; the visible title is a styled span. */}
       <Link
         to={blueprintHref}
         className="absolute inset-0 z-10"
         aria-label={`Open ${blueprint.name}`}
       />
 
-      {featuredLabel && (
-        <div
-          className="pointer-events-none absolute right-3 top-3 z-20 rounded-full border bg-[var(--accent-surface-soft)] px-2.5 py-0.5 font-semibold text-[10px] uppercase tracking-wider"
-          style={{
-            borderColor: 'var(--border-accent)',
-            color: 'var(--text-primary)',
-            backdropFilter: 'blur(8px)',
-          }}
+      {/* Watermark ID — mono, low-contrast, top-right. The card's identity
+       * marker; not a UI element, not actionable. */}
+      <span
+        aria-hidden
+        className="pointer-events-none absolute right-4 top-4 select-none font-mono text-xs tabular-nums text-foreground/15"
+      >
+        #{blueprint.id.toString().padStart(3, '0')}
+      </span>
+
+      {/* Selection checkbox (drawer mode) — top-left so it never collides
+       * with the watermark or with the hover-revealed actions. */}
+      {isSelectable && (
+        <label
+          className="absolute left-4 top-4 z-20 flex h-7 w-7 cursor-pointer items-center justify-center rounded border border-border bg-background/80 backdrop-blur transition-colors hover:bg-background"
+          onClick={(event) => event.stopPropagation()}
         >
-          {blueprint.isBoosted ? '★ ' : '✓ '}
-          {featuredLabel}
-        </div>
+          <span className="sr-only">Select {blueprint.name}</span>
+          <input
+            type="checkbox"
+            checked={isSelected}
+            onChange={(event) => onSelectionChange(event.target.checked)}
+            className="h-3.5 w-3.5 accent-[var(--border-accent-hover)]"
+          />
+        </label>
       )}
 
-      <CardContent className="relative flex h-full min-h-[360px] flex-col p-5">
-        <BlueprintVisual blueprint={blueprint} category={category} compact />
-
-        <div className="mt-4">
-          <span
-            className="inline-flex items-center rounded-full border px-2.5 py-0.5 font-semibold text-[10px] uppercase tracking-[0.18em]"
-            style={categoryBadgeStyle(category)}
-          >
-            {category}
-          </span>
-          <h3 className="mt-2 line-clamp-1 font-display font-extrabold text-foreground text-xl tracking-tight">
-            {displayName}
-          </h3>
-          <p className="mt-1 truncate font-mono text-muted-foreground text-[11px]">
-            by {shortenIdentity(blueprint.author)}
-          </p>
-          {deploymentModeCount > 1 && (
-            <p className="mt-2 inline-flex items-center gap-1 rounded-full border border-border bg-[var(--bg-elevated)] px-2 py-0.5 font-semibold text-[10px] text-muted-foreground uppercase tracking-wider">
-              {deploymentModeCount} deployment modes
-            </p>
-          )}
-        </div>
-
-        {isSelectable && (
-          <label
-            className="absolute right-7 top-7 z-20 flex h-9 w-9 shrink-0 cursor-pointer items-center justify-center rounded-md border border-border bg-card/80 backdrop-blur transition-colors hover:bg-card"
-            onClick={(event) => event.stopPropagation()}
-          >
-            <span className="sr-only">Select {blueprint.name}</span>
-            <input
-              type="checkbox"
-              checked={isSelected}
-              onChange={(event) => onSelectionChange(event.target.checked)}
-              className="h-4 w-4 accent-[var(--brand-primary)]"
-            />
-          </label>
-        )}
-
-        <p className="mt-3 line-clamp-2 text-muted-foreground text-sm leading-relaxed">
+      {/* Header — name + 1-line description. */}
+      <div className={twMerge('min-w-0', isSelectable && 'pl-8')}>
+        <h3 className="line-clamp-1 pr-12 font-display font-bold text-base leading-tight tracking-tight text-foreground">
+          {displayName}
+        </h3>
+        <p className="mt-1 line-clamp-2 pr-12 text-xs leading-relaxed text-muted-foreground">
           {description}
         </p>
+      </div>
 
-        <div className="mt-4 flex flex-wrap items-center gap-1.5">
-          <span
-            className={twMerge(
-              'rounded-full border px-2.5 py-1 font-semibold text-[10px] uppercase tracking-wider',
-              hasOperators
-                ? 'border-emerald-500/30 bg-emerald-500/10 text-emerald-300'
-                : 'border-amber-500/30 bg-amber-500/10 text-amber-300',
-            )}
-          >
-            {deploymentState}
-          </span>
-          <span className="rounded-full border border-border bg-[var(--bg-elevated)] px-2.5 py-1 font-semibold text-[10px] text-muted-foreground uppercase tracking-wider">
-            {capacityLabel}
-          </span>
-          {!isAudited && (
-            // AuditedPill / TrustChip already show in the metadata row below
-            // for audited blueprints. Skip them in the chip row to reduce
-            // visual noise on already-featured cards.
-            <>
-              <AuditedPill blueprintId={blueprint.id} />
-              <BlueprintTrustChip blueprintId={blueprint.id} />
-            </>
+      {/* Status row — one chip, mono operator count, audit/trust if present.
+       * Everything is bottom-anchored so cards align by their last line. */}
+      <div className="mt-auto flex flex-wrap items-center gap-2 pt-2">
+        <span
+          className={twMerge(
+            'inline-flex items-center gap-1.5 rounded-full border px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider',
+            hasOperators
+              ? 'border-[color:var(--md3-tertiary,#10b981)]/40 bg-[color:var(--md3-tertiary,#10b981)]/8 text-[color:var(--md3-tertiary,#10b981)]'
+              : 'border-[color:var(--md3-warning,#f59e0b)]/40 bg-[color:var(--md3-warning,#f59e0b)]/8 text-[color:var(--md3-warning,#f59e0b)]',
           )}
-        </div>
-
-        <div className="mt-auto pt-5">
-          <div className="grid grid-cols-3 gap-2 border-border border-t pt-4">
-            <BlueprintMetric
-              label="Operators"
-              value={blueprint.operatorsCount}
-            />
-            <BlueprintMetric
-              label="Instances"
-              value={blueprint.instancesCount}
-            />
-            <BlueprintMetric label="Source" value={manifestStatus} />
-          </div>
-
-          <div className="actions relative z-20 mt-4 grid grid-cols-2 gap-2">
-            {hasOperators ? (
-              <>
-                <Link
-                  to={`${blueprintHref}/deploy`}
-                  className="primary rounded-md bg-primary px-3 py-3 text-center font-bold text-primary-foreground text-sm transition-colors hover:bg-primary/90"
-                >
-                  Create instance
-                </Link>
-                <RegisterCapacityButton
-                  blueprint={blueprint}
-                  onRegister={onRegister}
-                />
-              </>
-            ) : (
-              <>
-                <RegisterCapacityButton
-                  blueprint={blueprint}
-                  onRegister={onRegister}
-                  isPrimary
-                />
-                <Link
-                  to={blueprintHref}
-                  className="rounded-md border border-border bg-transparent px-3 py-3 text-center font-semibold text-muted-foreground text-sm transition-colors hover:bg-muted hover:text-foreground"
-                >
-                  View details
-                </Link>
-              </>
+        >
+          <span
+            aria-hidden
+            className={twMerge(
+              'h-1.5 w-1.5 rounded-full',
+              hasOperators
+                ? 'bg-[color:var(--md3-tertiary,#10b981)]'
+                : 'bg-[color:var(--md3-warning,#f59e0b)]',
             )}
-            {blueprint.githubUrl && (
-              <a
-                href={blueprint.githubUrl}
-                target="_blank"
-                rel="noreferrer"
-                className="secondary-link relative z-20 col-span-2 rounded-md px-3 py-2 text-center font-semibold text-muted-foreground text-xs transition-colors hover:bg-muted hover:text-foreground"
-                onClick={(event) => event.stopPropagation()}
-              >
-                Source on GitHub
-              </a>
-            )}
-          </div>
-        </div>
-      </CardContent>
-    </Card>
+          />
+          {hasOperators ? (
+            <>
+              <span className="font-mono tabular-nums">{operatorCount}</span>{' '}
+              {pluralize('operator', operatorCount)}
+            </>
+          ) : (
+            'Needs operators'
+          )}
+        </span>
+        {isAudited && (
+          <span className="inline-flex items-center gap-1 rounded-full border border-[color:var(--border-accent)] bg-transparent px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-foreground/80">
+            Audited
+          </span>
+        )}
+        {(blueprint.instancesCount ?? 0) > 0 && (
+          <span className="font-mono text-[11px] tabular-nums text-muted-foreground">
+            {blueprint.instancesCount} instances
+          </span>
+        )}
+      </div>
+
+      {/* Hover-revealed actions. Hidden by default — single click on the
+       * card opens the detail page; the actions are for power-users who
+       * want to jump straight to deploy/register without the detail step.
+       * `z-20` + `stopPropagation` keeps them clickable inside the overlay
+       * link.
+       *
+       * On non-hover devices (touch) the actions are always visible — the
+       * `group-hover:` selector only matches on pointer hover, so this is
+       * automatic. */}
+      <div
+        className={twMerge(
+          'actions relative z-20 mt-2 flex gap-2 opacity-0 transition-opacity',
+          'group-hover:opacity-100 group-focus-within:opacity-100',
+          // Always visible on touch — `pointer: coarse` means no hover layer.
+          '[@media(pointer:coarse)]:opacity-100',
+        )}
+      >
+        {hasOperators ? (
+          <>
+            <Link
+              to={`${blueprintHref}/deploy`}
+              onClick={(e) => e.stopPropagation()}
+              className="flex-1 rounded-md bg-primary px-2 py-1.5 text-center text-xs font-semibold text-primary-foreground transition-colors hover:bg-primary/90"
+            >
+              Deploy
+            </Link>
+            <RegisterCapacityButton
+              blueprint={blueprint}
+              onRegister={onRegister}
+            />
+          </>
+        ) : (
+          <RegisterCapacityButton
+            blueprint={blueprint}
+            onRegister={onRegister}
+            isPrimary
+          />
+        )}
+      </div>
+    </div>
   );
 };
 
@@ -879,10 +838,10 @@ const RegisterCapacityButton = ({
   <button
     type="button"
     className={twMerge(
-      'rounded-md px-3 py-3 font-semibold text-sm transition-colors',
+      'flex-1 rounded-md px-2 py-1.5 text-xs font-semibold transition-colors',
       isPrimary
         ? 'bg-primary text-primary-foreground hover:bg-primary/90'
-        : 'border border-border bg-transparent text-muted-foreground hover:bg-muted hover:text-foreground',
+        : 'border border-border bg-transparent text-muted-foreground hover:bg-[color:var(--bg-hover)] hover:text-foreground',
     )}
     onClick={(event) => {
       event.preventDefault();
@@ -890,23 +849,6 @@ const RegisterCapacityButton = ({
       onRegister?.(blueprint);
     }}
   >
-    Register capacity
+    Register
   </button>
-);
-
-const BlueprintMetric = ({
-  label,
-  value,
-}: {
-  label: string;
-  value: number | string | null | undefined;
-}) => (
-  <div>
-    <p className="font-medium text-muted-foreground text-[11px] uppercase tracking-wider">
-      {label}
-    </p>
-    <p className="mt-1 font-display font-extrabold text-foreground text-lg">
-      {value ?? '-'}
-    </p>
-  </div>
 );

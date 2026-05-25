@@ -179,12 +179,23 @@ body {
   background: var(--bg-hover);
 }
 
-/* Radix Dialog centers on viewport (left of content area on lg+ due to fixed
- * sidebar). Shift right by half --cloud-sidebar-width (published by Layout). */
+/* Radix Dialog content portals to <body> and centers on the *viewport*, not
+ * the content area, so on lg+ viewports it lands partially under the fixed
+ * sidebar. The dialog uses Tailwind's `left-1/2 -translate-x-1/2 top-1/2
+ * -translate-y-1/2` — overriding `left` alone doesn't work because the
+ * tw-animate-css `slide-in-from-left-1/2` animation re-applies a
+ * `translateX(-50%)` ON TOP, double-shifting the modal off-center.
+ *
+ * The fix is to override Tailwind's `--tw-translate-x` custom property —
+ * the source of the translateX in every Tailwind transform utility. Adding
+ * `var(--cloud-sidebar-width) / 2` to the translation shifts the modal
+ * right by half the sidebar, landing it at the content-area center while
+ * the animation still composes cleanly.
+ */
 @media (min-width: 1024px) {
-  [data-state='open'][role='dialog'],
-  [data-state='closed'][role='dialog'] {
-    margin-left: calc(var(--cloud-sidebar-width, 16rem) / 2);
+  [role='dialog'][data-state='open'],
+  [role='dialog'][data-state='closed'] {
+    --tw-translate-x: calc(-50% + var(--cloud-sidebar-width, 16rem) / 2) !important;
   }
 }
 

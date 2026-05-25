@@ -15,8 +15,7 @@ import { PagePath } from '../../types';
 import pollWithBackoff from '../../utils/pollWithBackoff';
 import BlueprintListing from './BlueprintListing';
 import RegistrationDrawer from './RegistrationDrawer';
-import { MetricStrip, PageHeader } from '../../components/chrome';
-import type { Metric } from '../../components/chrome';
+import { PageHeader } from '../../components/chrome';
 
 const BLUEPRINT_DOCS_LINK =
   'https://docs.tangle.tools/developers/blueprints/introduction';
@@ -26,16 +25,7 @@ const ROLE_TITLE = {
   [Role.DEPLOYER]: 'Blueprints',
 } satisfies Record<Role, string>;
 
-const ROLE_DESCRIPTION = {
-  [Role.OPERATOR]:
-    'Find blueprints, create service instances, or register operator capacity.',
-  [Role.DEPLOYER]:
-    'Find blueprints, create service instances, or register operator capacity.',
-} satisfies Record<Role, string>;
-
 const HAS_BLUEPRINTS_TITLE = 'Blueprints';
-const HAS_BLUEPRINTS_DESCRIPTION =
-  'Find blueprints, create service instances, or register operator capacity.';
 
 const pluralize = (label: string, count: number) =>
   count === 1 ? label : `${label}s`;
@@ -164,70 +154,26 @@ const Page: FC = () => {
     });
   }, []);
 
-  // Catalog supply/demand split: blueprints that already have operator
-  // capacity (deployable today) vs the ones still recruiting. This is the
-  // signal a deployer actually wants to see on the catalog landing.
-  const blueprintList = useMemo(
-    () => Array.from(blueprints.values()),
-    [blueprints],
-  );
-  const readyToDeployCount = blueprintList.filter(
-    (b) => (b.operatorsCount ?? 0) > 0,
-  ).length;
-  const needsCapacityCount = blueprintList.length - readyToDeployCount;
-
-  const metrics: Metric[] = useMemo(
-    () => [
-      {
-        label: 'Catalog',
-        value: blueprintList.length.toLocaleString(),
-        sublabel: 'indexed',
-      },
-      {
-        label: 'Ready to deploy',
-        value: readyToDeployCount.toLocaleString(),
-        tone: readyToDeployCount > 0 ? 'success' : 'neutral',
-        sublabel: 'has operators',
-      },
-      {
-        label: 'Needs capacity',
-        value: needsCapacityCount.toLocaleString(),
-        tone: needsCapacityCount > 0 ? 'warning' : 'neutral',
-        sublabel: 'recruiting',
-      },
-      {
-        label: 'Your registrations',
-        value: (ownedBlueprints?.length ?? 0).toLocaleString(),
-        tone: hasOwnedBlueprints ? 'accent' : 'neutral',
-        sublabel: role === Role.OPERATOR ? 'as operator' : 'as deployer',
-      },
-    ],
-    [
-      blueprintList.length,
-      readyToDeployCount,
-      needsCapacityCount,
-      ownedBlueprints?.length,
-      hasOwnedBlueprints,
-      role,
-    ],
-  );
-
   const title = hasOwnedBlueprints ? HAS_BLUEPRINTS_TITLE : ROLE_TITLE[role];
-  const subtitle = hasOwnedBlueprints
-    ? HAS_BLUEPRINTS_DESCRIPTION
-    : ROLE_DESCRIPTION[role];
+  // No subtitle on a catalog page — the visible content IS the subtitle.
+  // Adding "Find blueprints, create service instances, ..." steals 24px of
+  // vertical space for copy the operator already knows by being on this
+  // page. Catalog tier = title + toolbar + grid, nothing else above content.
+  // Catalog-wide stats (total, ready, needs-capacity, your-registrations)
+  // belong on the home dashboard, not above a search bar.
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4">
       <PageHeader
         density="compact"
         title={title}
-        subtitle={subtitle}
         action={
           <>
-            <Button asChild variant="ghost" size="sm">
-              <Link to={PagePath.OPERATORS}>Browse operators</Link>
-            </Button>
+            {hasOwnedBlueprints && (
+              <Button asChild variant="ghost" size="sm">
+                <Link to={PagePath.OPERATORS}>Operators</Link>
+              </Button>
+            )}
             <Button variant="sandbox" asChild size="sm">
               <a
                 href={
@@ -244,8 +190,6 @@ const Page: FC = () => {
           </>
         }
       />
-
-      <MetricStrip metrics={metrics} density="compact" />
 
       <BlueprintListing
         blueprints={blueprints}
