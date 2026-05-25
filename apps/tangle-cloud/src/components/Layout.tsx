@@ -5,6 +5,7 @@ import TxHistoryNotifier from './TxHistoryNotifier';
 import Header from './Header';
 import { twMerge } from 'tailwind-merge';
 import CommandPalette from './chrome/CommandPalette';
+import PageMotion from './chrome/PageMotion';
 import ShortcutsHelp from './chrome/ShortcutsHelp';
 import { useKeyboardShortcuts } from './chrome/useKeyboardShortcuts';
 
@@ -96,7 +97,9 @@ const Layout: FC<PropsWithChildren<Props>> = ({
         <CommandPalette open={isPaletteOpen} onOpenChange={setIsPaletteOpen} />
         <ShortcutsHelp open={isHelpOpen} onOpenChange={setIsHelpOpen} />
 
-        <main className="flex-1">{children}</main>
+        <main className="flex-1">
+          <PageMotion>{children}</PageMotion>
+        </main>
       </div>
     </div>
   );

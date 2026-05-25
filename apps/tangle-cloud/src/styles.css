@@ -254,6 +254,41 @@ body {
   contain-intrinsic-size: 800px;
 }
 
+/* Page-to-page transition triggered by PageMotion when react-router's
+ * pathname changes. 100ms total: 4px upward translate + opacity fade-in.
+ * Honors `prefers-reduced-motion` — reduced-motion users get the fade
+ * only, no translate.
+ *
+ * Why an attribute-keyed animation and not a CSS `transition` on a class:
+ * `transition` only fires when a CSS property *changes*, so the initial
+ * mount paint wouldn't trigger anything. A keyframe `animation`, scoped
+ * by an attribute selector, fires every time the attribute appears,
+ * giving us a clean enter-from-nothing on every navigation.
+ */
+.cloud-page-motion[data-cloud-page-motion='entering'] {
+  animation: cloud-page-enter 100ms ease-out;
+}
+@keyframes cloud-page-enter {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  @keyframes cloud-page-enter {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+}
+
 .tangle-cloud-shell :where(a, button, select, [role='tab']) {
   /* prettier-ignore */
   transition: background-color 180ms ease, border-color 180ms ease, color 180ms ease, opacity 180ms ease, transform 120ms ease, box-shadow 180ms ease;
