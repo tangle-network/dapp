@@ -91,15 +91,25 @@ const IframeBlueprintLayout: FC<Props> = ({
   const navContent = useMemo(
     () => (
       <>
-        <Link
-          to="/blueprints"
-          className="hidden shrink-0 text-xs text-muted-foreground hover:text-foreground sm:inline-flex"
+        {/* Breadcrumb trail: Blueprints / <name> — matches the route trail
+         * style used across the app; the section root links to the catalog. */}
+        <nav
+          aria-label="Breadcrumb"
+          className="flex min-w-0 items-center gap-1.5 text-[13px]"
         >
-          ← Catalog
-        </Link>
-        <span className="truncate font-display text-sm font-bold text-foreground">
-          {displayName}
-        </span>
+          <Link
+            to="/blueprints"
+            className="shrink-0 text-muted-foreground transition-colors hover:text-foreground"
+          >
+            Blueprints
+          </Link>
+          <span aria-hidden className="text-muted-foreground/40">
+            /
+          </span>
+          <span className="truncate font-semibold text-foreground">
+            {displayName}
+          </span>
+        </nav>
         {modes.length > 1 && activeMode && (
           <div className="hidden shrink-0 md:block">
             <CompactModePicker
