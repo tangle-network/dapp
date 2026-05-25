@@ -314,6 +314,27 @@ const normalizeExternalApp = (
   };
 };
 
+/**
+ * Tag length cap protects against publishers stuffing the field with prose;
+ * count cap prevents catalog-bombing a blueprint into every facet.
+ */
+const MAX_TAG_LENGTH = 40;
+const MAX_TAG_COUNT = 8;
+
+const parseTags = (value: unknown): readonly string[] | undefined => {
+  if (!Array.isArray(value)) return undefined;
+  const out: string[] = [];
+  for (const item of value) {
+    if (typeof item !== 'string') continue;
+    const trimmed = item.trim();
+    if (trimmed.length === 0 || trimmed.length > MAX_TAG_LENGTH) continue;
+    if (out.includes(trimmed)) continue;
+    out.push(trimmed);
+    if (out.length >= MAX_TAG_COUNT) break;
+  }
+  return out.length > 0 ? out : undefined;
+};
+
 const parseTheme = (value: unknown): BlueprintUiTheme | undefined => {
   if (!isRecord(value)) {
     return undefined;
@@ -1040,6 +1061,7 @@ export const parseBlueprintUiContract = (
   const modules = parseModules(value.modules);
   const modes = parseBlueprintModes(value.modes);
   const externalApp = normalizeExternalApp(value.externalApp);
+  const tags = parseTags(value.tags);
   const hasDeclarativeContent =
     surfaces.length > 0 ||
     overviewCards !== undefined ||
@@ -1067,6 +1089,7 @@ export const parseBlueprintUiContract = (
     },
     surfaces,
     ...(theme ? { theme } : {}),
+    ...(tags ? { tags } : {}),
     ...(overviewCards ? { overviewCards } : {}),
     ...(actions ? { actions } : {}),
     ...(resourceViews ? { resourceViews } : {}),

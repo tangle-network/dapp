@@ -287,3 +287,57 @@ describe('parseBlueprintUiContract — modes', () => {
     expect(parsed?.modes?.[0]?.id).toBe('mode-0');
   });
 });
+
+describe('parseBlueprintUiContract — tags', () => {
+  const baseContract = {
+    displayName: 'Atlas',
+    publisher: { name: 'Northstar', namespace: 'northstar' },
+    resources: { serviceLabel: 'Service', itemLabel: 'Resource' },
+    surfaces: ['generic-overview'],
+  };
+
+  it('returns undefined when tags are absent', () => {
+    expect(parseBlueprintUiContract(baseContract)?.tags).toBeUndefined();
+  });
+
+  it('accepts a string array verbatim, preserving order', () => {
+    const parsed = parseBlueprintUiContract({
+      ...baseContract,
+      tags: ['Inference', 'TEE', 'Onchain'],
+    });
+    expect(parsed?.tags).toEqual(['Inference', 'TEE', 'Onchain']);
+  });
+
+  it('drops non-string entries, empty strings, and duplicates', () => {
+    const parsed = parseBlueprintUiContract({
+      ...baseContract,
+      tags: ['Inference', '', '  ', 'Inference', 42, null, 'TEE'],
+    });
+    expect(parsed?.tags).toEqual(['Inference', 'TEE']);
+  });
+
+  it('caps at the documented MAX_TAG_COUNT', () => {
+    const many = Array.from({ length: 20 }, (_, i) => `tag${i}`);
+    const parsed = parseBlueprintUiContract({ ...baseContract, tags: many });
+    expect(parsed?.tags?.length).toBe(8);
+    expect(parsed?.tags?.[0]).toBe('tag0');
+  });
+
+  it('drops entries longer than MAX_TAG_LENGTH (40 chars)', () => {
+    const tooLong = 'x'.repeat(50);
+    const parsed = parseBlueprintUiContract({
+      ...baseContract,
+      tags: ['Inference', tooLong, 'TEE'],
+    });
+    expect(parsed?.tags).toEqual(['Inference', 'TEE']);
+  });
+
+  it('returns undefined when every input is invalid', () => {
+    expect(
+      parseBlueprintUiContract({ ...baseContract, tags: [42, null, ''] })?.tags,
+    ).toBeUndefined();
+    expect(
+      parseBlueprintUiContract({ ...baseContract, tags: 'not-an-array' })?.tags,
+    ).toBeUndefined();
+  });
+});

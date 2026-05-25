@@ -10,7 +10,6 @@ import { resolveBlueprintAppView } from '../resolver';
 import type { BlueprintAppEntry } from '../types';
 import type { TangleBlueprintAppEntry } from '../manifest';
 import type { BlueprintIframeConfig } from '../iframe/types';
-import BlueprintAppFrameHost from './BlueprintAppFrameHost';
 import BlueprintModePicker from './BlueprintModePicker';
 import IframeBlueprintLayout from './IframeBlueprintLayout';
 import { useBlueprint } from '@tangle-network/tangle-shared-ui/data/graphql';

@@ -66,11 +66,45 @@ type Props = {
 const pluralize = (label: string, count: number) =>
   count === 1 ? label : `${label}s`;
 
-const getBlueprintCategory = (blueprint: Blueprint) => {
-  const explicitCategory = blueprint.category?.trim();
+/**
+ * Title-case a single tag so the catalog renders consistent chips even if
+ * the publisher's on-chain string is lowercase or mixed-case ("inference"
+ * vs "Inference" vs "INFERENCE" all render as "Inference").
+ */
+const normalizeTag = (raw: string): string => {
+  const t = raw.trim();
+  if (t.length === 0) return '';
+  // Preserve all-caps acronyms (TEE, LLM, RAG, ZK, AI, MEV).
+  if (/^[A-Z]{2,5}$/.test(t)) return t;
+  return t
+    .split(/[\s-]+/)
+    .filter(Boolean)
+    .map((w) => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase())
+    .join(' ');
+};
 
+/**
+ * Resolve a blueprint's category in three tiers, in order:
+ *
+ *   1. `blueprintUi.tags[0]` — publisher-declared, on-chain, authoritative.
+ *      Multi-tag blueprints surface the first as the primary chip.
+ *   2. `blueprint.category` — chain-derived, present on older metadata.
+ *   3. Keyword inference from name + description — last resort.
+ *
+ * The keyword fallback is a fingerprint, not a taxonomy. It's narrow on
+ * purpose: misclassifying a blueprint into the wrong bucket is worse than
+ * dropping it into "Other" and asking the publisher to declare tags.
+ */
+const getBlueprintCategory = (blueprint: Blueprint): string => {
+  const declaredTags = blueprint.blueprintUi?.tags ?? [];
+  for (const raw of declaredTags) {
+    const normalized = normalizeTag(raw);
+    if (normalized.length > 0) return normalized;
+  }
+
+  const explicitCategory = blueprint.category?.trim();
   if (explicitCategory) {
-    return explicitCategory;
+    return normalizeTag(explicitCategory);
   }
 
   const searchable =
@@ -81,19 +115,15 @@ const getBlueprintCategory = (blueprint: Blueprint) => {
   ) {
     return 'Data';
   }
-
   if (/\b(agent|sandbox|automation|bot)\b/.test(searchable)) {
     return 'Agents';
   }
-
   if (/\b(trading|market|strategy|portfolio)\b/.test(searchable)) {
     return 'Trading';
   }
-
   if (/\b(training|train|fine[- ]?tune|checkpoint)\b/.test(searchable)) {
     return 'Training';
   }
-
   if (
     /\b(ai|llm|inference|model|image|video|voice|avatar|modal|gpu)\b/.test(
       searchable,
@@ -103,6 +133,19 @@ const getBlueprintCategory = (blueprint: Blueprint) => {
   }
 
   return 'Other';
+};
+
+/**
+ * Full tag set for a blueprint — all publisher-declared tags + the primary
+ * category (so search/filter still matches on the inferred bucket when the
+ * publisher didn't declare it explicitly).
+ */
+const getBlueprintTags = (blueprint: Blueprint): readonly string[] => {
+  const declared = (blueprint.blueprintUi?.tags ?? [])
+    .map(normalizeTag)
+    .filter((t) => t.length > 0);
+  if (declared.length > 0) return declared;
+  return [getBlueprintCategory(blueprint)];
 };
 
 const hasVerifiedManifest = (blueprint: Blueprint) =>
@@ -118,7 +161,10 @@ const matchesSearch = (blueprint: Blueprint, query: string) => {
     blueprint.description,
     blueprint.author,
     blueprint.category,
-    getBlueprintCategory(blueprint),
+    // Match against every declared tag, not just the primary category —
+    // a search for "tee" should hit a blueprint tagged ["Inference", "TEE"]
+    // even though its primary chip says Inference.
+    ...getBlueprintTags(blueprint),
     blueprint.id.toString(),
   ]
     .filter(Boolean)
