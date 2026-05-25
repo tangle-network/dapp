@@ -85,9 +85,16 @@ body {
   --border-accent-hover: rgba(79, 70, 229, 0.34);
 }
 
-/* Defeat ui-components' h1..h6/p/div text-mono color rules via inherit. */
-.tangle-cloud-shell :where(h1, h2, h3, h4, h5, h6, p, label, li, td, th) {
+/* Defeat ui-components' h1..h6/p/div text-mono color rules via inherit.
+ * Also force `font-style: normal` so the browser's italic synthesis (which
+ * fires when a requested weight is missing from a fallback font) doesn't
+ * sneak in slanted glyphs on body text. Italic is a deliberate emphasis
+ * marker in this app and shows up only via explicit `.italic` class. */
+.tangle-cloud-shell :where(h1, h2, h3, h4, h5, h6, p, label, li, td, th, button, a, span) {
   color: inherit;
+}
+.tangle-cloud-shell :where(button, a, span, p, h1, h2, h3, h4, h5, h6):not(.italic) {
+  font-style: normal;
 }
 
 /* Tailwind/shadcn utility classes used by the cloud — sandbox-ui's prebuilt
@@ -189,12 +196,17 @@ body {
  * The fix is to override Tailwind's `--tw-translate-x` custom property —
  * the source of the translateX in every Tailwind transform utility. Adding
  * `var(--cloud-sidebar-width) / 2` to the translation shifts the modal
- * right by half the sidebar, landing it at the content-area center while
- * the animation still composes cleanly.
+ * right by half the sidebar, landing it at the content-area center.
+ *
+ * SCOPE: only applies to truly center-anchored dialogs. Side-panel dialogs
+ * (the RegistrationDrawer, any other right/left/top/bottom-anchored sheet)
+ * carry `left-auto`, `right-auto`, or top/bottom anchors and explicitly set
+ * `translate-x-0` / `translate-y-0` — the negation selectors below leave
+ * those alone so my centering math doesn't drag the drawer back to center.
  */
 @media (min-width: 1024px) {
-  [role='dialog'][data-state='open'],
-  [role='dialog'][data-state='closed'] {
+  [role='dialog'][data-state='open']:not([class*='left-auto']):not([class*='right-auto']):not([class*='translate-x-0']),
+  [role='dialog'][data-state='closed']:not([class*='left-auto']):not([class*='right-auto']):not([class*='translate-x-0']) {
     --tw-translate-x: calc(-50% + var(--cloud-sidebar-width, 16rem) / 2) !important;
   }
 }
@@ -261,71 +273,76 @@ body {
   box-shadow: var(--shadow-hover), 0 0 0 1px color-mix(in srgb, var(--brand-cool) 12%, transparent);
 }
 
+/* Topbar buttons (network selector, theme toggle, etc.) — uniform ghost
+ * surface aligned with sandbox-ui's flat aesthetic. Previous version used a
+ * different background for the connect button than for the others, which
+ * read as two unrelated systems coexisting in the same nav. */
 .tangle-cloud-topbar button,
 .tangle-cloud-topbar [role='button'] {
-  border-color: color-mix(in srgb, var(--border-default) 88%, transparent);
-  background: color-mix(in srgb, var(--bg-elevated) 72%, transparent);
+  height: 36px;
+  border-radius: 6px;
+  border: 1px solid var(--border-default);
+  background: transparent;
   color: var(--text-primary);
+  font-weight: 500;
+  font-style: normal;
   box-shadow: none;
-}
-.tangle-cloud-topbar button:not([data-testid='evm-connect-trigger']),
-.tangle-cloud-topbar [role='button']:not([data-testid='evm-connect-trigger']) {
-  background: color-mix(in srgb, var(--bg-card) 68%, transparent);
-  color: var(--text-secondary);
-  opacity: 0.86;
-}
-.tangle-cloud-topbar button {
-  min-height: 40px;
-  border-radius: 8px;
-}
-.tangle-cloud-topbar button svg,
-.tangle-cloud-topbar [role='button'] svg {
-  width: 16px;
-  height: 16px;
 }
 .tangle-cloud-topbar button:hover,
 .tangle-cloud-topbar [role='button']:hover {
-  background: color-mix(in srgb, var(--bg-elevated) 88%, white 3%);
+  background: var(--bg-hover);
+}
+.tangle-cloud-topbar button svg,
+.tangle-cloud-topbar [role='button'] svg {
+  width: 14px;
+  height: 14px;
 }
 
+/* Connect-wallet button + the in-page "Connect" CTA share styling. Single
+ * solid primary fill — same as every other primary action in the app. No
+ * gradients, no extra padding, no extra rounding. The "looks like staking
+ * dapp" complaint was the indigo gradient we had been forcing here; with
+ * it gone the button reads as a native cloud-app primary. */
 .tangle-cloud-wallet-action button,
 [data-sandbox-ui] [data-testid='evm-connect-trigger'] {
-  background: linear-gradient(
-    135deg,
-    var(--btn-primary-bg),
-    var(--btn-primary-hover)
-  );
-  background-color: var(--btn-primary-bg);
-  border-color: transparent;
+  height: 36px;
+  border-radius: 6px;
+  border: 1px solid transparent;
+  background: var(--btn-primary-bg);
   color: var(--btn-primary-text);
-  padding-inline: 24px;
+  font-weight: 600;
+  font-style: normal;
+  padding-inline: 14px;
+  box-shadow: none;
 }
 .tangle-cloud-wallet-action button:hover,
 [data-sandbox-ui] [data-testid='evm-connect-trigger']:hover {
-  background: linear-gradient(135deg, var(--btn-primary-hover), #312e81);
-  background-color: var(--btn-primary-hover);
+  background: var(--btn-primary-hover);
   color: var(--btn-primary-text);
 }
 
-/* Light tile for wallet brand marks so their baked-in dark fills stay readable
- * on the indigo gradient button. */
+/* Wallet brand mark — restrained mono tile, sized to the connect button's
+ * height. Previous version was a white-frosted square to defeat the indigo
+ * gradient backdrop; with the gradient gone it can match the button's
+ * surface tone instead. */
 .tangle-cloud-wallet-action button > :first-child:is(svg, [role='img']),
 .tangle-cloud-wallet-action button > div:has(> svg):first-child {
-  background: rgba(255, 255, 255, 0.92);
-  border-radius: 6px;
-  padding: 3px;
-  min-width: 24px;
-  min-height: 24px;
+  background: color-mix(in srgb, var(--btn-primary-text) 18%, transparent);
+  border-radius: 4px;
+  padding: 2px;
+  min-width: 20px;
+  min-height: 20px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
 }
 
-/* Typography sets color on element class; gradient parent inheritance loses
- * without !important. */
+/* Wallet button inner text — preserve primary-button contrast against the
+ * solid primary surface. Removes the previous gradient-only !important. */
 .tangle-cloud-wallet-action button p,
 .tangle-cloud-wallet-action button span:not(.sr-only) {
-  color: var(--btn-primary-text) !important;
+  color: var(--btn-primary-text);
+  font-style: normal;
 }
 
 .tangle-cloud-visual-badge {

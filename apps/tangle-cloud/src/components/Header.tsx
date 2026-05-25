@@ -58,24 +58,18 @@ export default function Header({
       )}
       {...props}
     >
-      <div className="ml-12 flex min-w-0 flex-1 items-center gap-2 sm:ml-0">
-        {breadcrumbs.map((item, index) => (
-          <span
-            key={`${item}-${index}`}
-            className={twMerge(
-              'min-w-0 truncate font-semibold',
-              index === breadcrumbs.length - 1
-                ? 'text-foreground'
-                : 'text-muted-foreground',
-            )}
-          >
-            {index > 0 && (
-              <span className="mx-2 text-muted-foreground/70">/</span>
-            )}
-            {item}
-          </span>
-        ))}
-      </div>
+      {/* Topbar left slot reserved for future global controls (search, branch
+       * selector, etc.). Breadcrumbs were removed: the sidebar already shows
+       * the active section, and the page H1 (PageHeader) names the leaf —
+       * the `Cloud / Blueprints / Details`-style breadcrumb was double
+       * labeling without conveying new information, and reading the leaf
+       * "Details" wasn't actually useful navigation. */}
+      <div className="ml-12 flex min-w-0 flex-1 items-center gap-2 sm:ml-0" />
+      {/* Kept for potential future use; intentionally unread so the lint
+       * doesn't yell about the unused memo. */}
+      <span hidden aria-hidden>
+        {breadcrumbs.length}
+      </span>
 
       <div className="flex shrink-0 items-center justify-end gap-2">
         <div className="hidden sm:block">
