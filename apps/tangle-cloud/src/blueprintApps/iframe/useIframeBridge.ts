@@ -10,6 +10,7 @@ import {
 import { isMessageFromIframe, buildIframeMessageContext } from './origin';
 import { checkRequestAllowed, type IframePolicyVerdict } from './policy';
 import type { BlueprintIframeConfig } from './types';
+import { useWalletConnectModal } from './WalletConnectModalContext';
 
 // Pending operator-approved request that the bridge is waiting on the user
 // to confirm via the dapp's approval modal. Surfaced through the hook's
@@ -85,10 +86,16 @@ export function useIframeBridge({
   const { address } = useAccount();
   const chainId = useChainId();
   const chains = useChains();
+  const { open: openWalletModal, isOpen: walletModalOpen } =
+    useWalletConnectModal();
   const [pendingApproval, setPendingApproval] =
     useState<PendingApproval | null>(null);
   const pendingRef = useRef(pendingApproval);
   pendingRef.current = pendingApproval;
+  // correlationId of an in-flight tangle.app.requestConnect (the iframe asked
+  // us to connect a wallet). Resolved when an account appears, or rejected if
+  // the user dismisses the modal without connecting.
+  const pendingConnectRef = useRef<string | null>(null);
 
   const post = useCallback(
     (message: ParentMessage) => {
@@ -373,6 +380,24 @@ export function useIframeBridge({
         return;
       }
 
+      // The iframe asked us to connect a wallet. If one is already connected,
+      // answer immediately; otherwise open the parent's connect modal and
+      // resolve later (see the address / modal-close effects below).
+      if (request.kind === 'tangle.app.requestConnect') {
+        if (address) {
+          post({
+            kind: 'tangle.app.connectResult',
+            correlationId: request.correlationId,
+            ok: true,
+            data: { account: address as Address, chainId: chainId ?? 0 },
+          });
+          return;
+        }
+        pendingConnectRef.current = request.correlationId;
+        openWalletModal();
+        return;
+      }
+
       // callJob (job invocation via quote/sign/submit) is protocol-defined
       // but its parent-side integration with the deploy/quote pipeline is
       // not yet wired. Respond with a clean error so the iframe surfaces a
@@ -432,9 +457,36 @@ export function useIframeBridge({
     enabled,
     iframeRef,
     onPolicyDeny,
+    openWalletModal,
     post,
     respond,
   ]);
+
+  // Resolve an in-flight requestConnect once a wallet connects.
+  useEffect(() => {
+    if (!enabled || !address || !pendingConnectRef.current) return;
+    post({
+      kind: 'tangle.app.connectResult',
+      correlationId: pendingConnectRef.current,
+      ok: true,
+      data: { account: address as Address, chainId: chainId ?? 0 },
+    });
+    pendingConnectRef.current = null;
+  }, [address, chainId, enabled, post]);
+
+  // If the user dismissed the connect modal without connecting, reject the
+  // in-flight requestConnect so the iframe gets a clean error rather than
+  // hanging until its timeout.
+  useEffect(() => {
+    if (walletModalOpen || !pendingConnectRef.current || address) return;
+    post({
+      kind: 'tangle.app.connectResult',
+      correlationId: pendingConnectRef.current,
+      ok: false,
+      error: 'User dismissed the connect modal.',
+    });
+    pendingConnectRef.current = null;
+  }, [walletModalOpen, address, post]);
 
   return {
     pendingApproval,
