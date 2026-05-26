@@ -23,6 +23,11 @@ export type IframeRequestReadAccount = {
   correlationId: string;
 };
 
+export type IframeRequestRequestConnect = {
+  kind: 'tangle.app.requestConnect';
+  correlationId: string;
+};
+
 export type IframeRequestSwitchChain = {
   kind: 'tangle.app.switchChain';
   correlationId: string;
@@ -80,6 +85,7 @@ export type IframeRequestCallJob = {
 export type IframeRequest =
   | IframeRequestHandshake
   | IframeRequestReadAccount
+  | IframeRequestRequestConnect
   | IframeRequestSwitchChain
   | IframeRequestSignMessage
   | IframeRequestSignTransaction
@@ -100,6 +106,10 @@ export type ParentResponseResultBase<T> = {
 
 export type ParentResponseReadAccountResult = {
   kind: 'tangle.app.readAccountResult';
+} & ParentResponseResultBase<{ account: Address; chainId: number }>;
+
+export type ParentResponseConnectResult = {
+  kind: 'tangle.app.connectResult';
 } & ParentResponseResultBase<{ account: Address; chainId: number }>;
 
 export type ParentResponseSwitchChainResult = {
@@ -170,6 +180,7 @@ export type ParentEventJobResult = {
 export type ParentMessage =
   | ParentResponseHandshakeAck
   | ParentResponseReadAccountResult
+  | ParentResponseConnectResult
   | ParentResponseSwitchChainResult
   | ParentResponseSignMessageResult
   | ParentResponseSignTransactionResult
@@ -237,6 +248,13 @@ export function validateIframeRequest(value: unknown): IframeRequest | null {
       if (!isValidCorrelationId(record.correlationId)) return null;
       return {
         kind: 'tangle.app.readAccount',
+        correlationId: record.correlationId,
+      };
+    }
+    case 'tangle.app.requestConnect': {
+      if (!isValidCorrelationId(record.correlationId)) return null;
+      return {
+        kind: 'tangle.app.requestConnect',
         correlationId: record.correlationId,
       };
     }
