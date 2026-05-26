@@ -138,5 +138,28 @@ export function checkRequestAllowed(
       return checkSignMessageAllowed(request, config);
     case 'tangle.app.signTransaction':
       return checkSignTransactionAllowed(request, config);
+    case 'tangle.app.signTypedData':
+      // Typed-data signing follows the same gate as signMessage — if the
+      // app can request a personal_sign it can request typed-data. The
+      // bridge currently short-circuits this with a "not yet wired" error
+      // before any modal; when wired, this gate already governs it.
+      return checkSignMessageAllowed(
+        // signTypedData carries chainId like the others; reuse the message
+        // gate which only checks the signing capability flag + chain.
+        request as unknown as IframeRequestSignMessage,
+        config,
+      );
+    case 'tangle.app.callJob':
+      // Job invocation is allowed at the policy layer for any iframe that
+      // can read its account (the baseline embedded-app capability). The
+      // actual submit goes through the user's wallet approval downstream,
+      // so there's no "silent spend" risk from accepting here.
+      return checkReadAccountAllowed(
+        {
+          kind: 'tangle.app.readAccount',
+          correlationId: request.correlationId,
+        },
+        config,
+      );
   }
 }

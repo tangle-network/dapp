@@ -8,13 +8,16 @@ import {
   Button,
   Card,
   CardContent,
+  EmptyState,
   Skeleton,
 } from '@tangle-network/sandbox-ui/primitives';
-import { Navigate, Link } from 'react-router';
-import type { FC } from 'react';
+import { Navigate, Link, useSearchParams } from 'react-router';
+import { useCallback, useState, type FC } from 'react';
 import type { Blueprint } from '@tangle-network/tangle-shared-ui/types/blueprint';
 import useParamWithSchema from '@tangle-network/tangle-shared-ui/hooks/useParamWithSchema';
 import { z } from 'zod';
+import BlueprintModePicker from '../../../blueprintApps/components/BlueprintModePicker';
+import { useBlueprintModes } from '../../../blueprintApps/useBlueprintModes';
 import BlueprintAppLandingPage from '../../../blueprintApps/components/BlueprintAppLandingPage';
 import BlueprintHostCard from '../../../components/blueprintApps/BlueprintHostCard';
 import { renderCuratedBlueprintLanding } from '../../../blueprintApps/modules';
@@ -25,10 +28,21 @@ import { useResolvedBlueprintViewFromIndexedBlueprint } from '../../../blueprint
 import { TangleDAppPagePath } from '../../../types';
 import { BlueprintVisual } from '../../../components/blueprints/BlueprintVisual';
 import { formatBlueprintName } from '../../../components/blueprints/blueprintVisualUtils';
+import {
+  categoryBadgeStyle,
+  categoryStripeStyle,
+} from '../../../components/blueprints/categoryColor';
+import BlueprintVersionsPanel from '../../../components/binaryUpgrade/BlueprintVersionsPanel';
 
 const Page: FC = () => {
   const id = useParamWithSchema('id', z.string().min(1));
   const numericId = id && /^\d+$/.test(id) ? BigInt(id) : undefined;
+  const [searchParams] = useSearchParams();
+  // `?raw=1` is the power-user escape hatch — when present we skip the
+  // curated-tier redirect and render the protocol-generic per-id detail
+  // page. Catalog cards never set it; deep-links and "View on-chain"
+  // links do.
+  const rawRoute = searchParams.get('raw') === '1';
   const { data: blueprint, isLoading: isLoadingBlueprint } = useBlueprint(
     numericId?.toString(),
     {
@@ -41,6 +55,28 @@ const Page: FC = () => {
     });
   const resolvedView = useResolvedBlueprintViewFromIndexedBlueprint(blueprint);
   const entry = id ? getBlueprintAppBySlug(id) : null;
+  const modes = useBlueprintModes(blueprint);
+  const [selectedModeId, setSelectedModeId] = useState<string | null>(null);
+  const handleModeSelect = useCallback(
+    (modeId: string, blueprintId: number) => {
+      setSelectedModeId(modeId);
+      // Navigate to the picked mode's underlying blueprint id when the
+      // operator picks a non-canonical mode. Keeping the URL in sync means
+      // refresh / share preserves the picked mode. `?raw=1` is retained so
+      // power-users stay in the per-id flow.
+      if (numericId !== undefined && BigInt(blueprintId) !== numericId) {
+        const next = new URLSearchParams(searchParams);
+        next.set('mode', modeId);
+        next.set('raw', '1');
+        window.history.replaceState(
+          null,
+          '',
+          `/blueprints/${blueprintId.toString()}?${next.toString()}`,
+        );
+      }
+    },
+    [numericId, searchParams],
+  );
 
   if (!id) {
     return <Navigate to={PagePath.NOT_FOUND} replace />;
@@ -68,12 +104,28 @@ const Page: FC = () => {
       return <Navigate to={PagePath.NOT_FOUND} replace />;
     }
 
+    // Redirect curated tiers to their canonical slug route — UNLESS the
+    // operator explicitly asked for the raw per-id view (`?raw=1`). That
+    // escape hatch lets deep-links and "View on-chain" buttons land on
+    // the protocol-generic detail page regardless of curation.
     if (
-      resolvedView.tier === 'curated-module' ||
-      resolvedView.tier === 'external-app'
+      !rawRoute &&
+      (resolvedView.tier === 'curated-module' ||
+        resolvedView.tier === 'external-app')
     ) {
       return <Navigate to={getBlueprintPath(resolvedView)} replace />;
     }
+
+    const activeModeId =
+      selectedModeId ?? searchParams.get('mode') ?? modes[0]?.id ?? null;
+    const modePicker =
+      modes.length > 1 ? (
+        <BlueprintModePicker
+          modes={modes}
+          selectedModeId={activeModeId ?? modes[0].id}
+          onSelect={(mode) => handleModeSelect(mode.id, mode.blueprintId)}
+        />
+      ) : null;
 
     // Declarative tier: render the per-app surface manifest (theme, overview
     // cards, actions, resource views, modules) instead of the protocol-generic
@@ -90,10 +142,16 @@ const Page: FC = () => {
     if (hasDeclarativeSurface) {
       return (
         <div className="space-y-8">
+          {modePicker}
           <BlueprintHostCard
             blueprint={blueprintDetails.details}
             operatorCount={blueprintDetails.operators.length}
             provisionPath={`/blueprints/${numericId.toString()}/deploy`}
+          />
+
+          <BlueprintVersionsPanel
+            blueprintId={numericId}
+            blueprintName={blueprintDetails.details.name}
           />
 
           <RegisteredOperatorsPanel operators={blueprintDetails.operators} />
@@ -103,10 +161,16 @@ const Page: FC = () => {
 
     return (
       <div className="space-y-8">
+        {modePicker}
         <BlueprintDetailHero
           blueprint={blueprintDetails.details}
           operatorCount={blueprintDetails.operators.length}
           provisionPath={`/blueprints/${numericId.toString()}/deploy`}
+        />
+
+        <BlueprintVersionsPanel
+          blueprintId={numericId}
+          blueprintName={blueprintDetails.details.name}
         />
 
         <RegisteredOperatorsPanel operators={blueprintDetails.operators} />
@@ -152,7 +216,8 @@ const BlueprintDetailHero = ({
     <section className="grid gap-5 xl:grid-cols-[minmax(0,1fr)_420px]">
       <Card
         variant="sandbox"
-        className="overflow-hidden border-border bg-card shadow-[var(--shadow-card)]"
+        className="overflow-hidden"
+        style={categoryStripeStyle(category)}
       >
         <CardContent className="grid gap-6 p-5 md:grid-cols-[300px_minmax(0,1fr)] md:p-6">
           <BlueprintVisual
@@ -163,7 +228,12 @@ const BlueprintDetailHero = ({
 
           <div className="flex min-w-0 flex-col">
             <div className="flex flex-wrap gap-2">
-              <Badge variant="outline">{category}</Badge>
+              <span
+                className="inline-flex items-center rounded-full border px-2.5 py-0.5 font-semibold text-[10px] uppercase tracking-wider"
+                style={categoryBadgeStyle(category)}
+              >
+                {category}
+              </span>
               <Badge variant={operatorCount > 0 ? 'success' : 'outline'} dot>
                 {operatorCount} operator{operatorCount === 1 ? '' : 's'}
               </Badge>
@@ -233,7 +303,7 @@ const BlueprintDetailHero = ({
         </CardContent>
       </Card>
 
-      <Card variant="sandbox" className="border-border bg-card">
+      <Card variant="elevated">
         <CardContent className="p-5 md:p-6">
           <div className="flex items-center justify-between gap-3 border-border border-b pb-4">
             <div>
@@ -253,32 +323,50 @@ const BlueprintDetailHero = ({
             )}
           </div>
 
-          <dl className="mt-5 space-y-3">
+          <dl className="mt-5 divide-y divide-border overflow-hidden rounded-lg border border-border bg-[var(--bg-card)]">
             {metadataItems.map(([label, value]) => (
               <div
                 key={label}
-                className="rounded-lg border border-border bg-muted/30 p-3"
+                className="group flex items-start gap-3 px-3 py-2.5 transition-colors hover:bg-[var(--bg-hover)]"
               >
-                <dt className="font-semibold text-muted-foreground text-[10px] uppercase tracking-wider">
+                <span className="mt-1 h-3 w-0.5 shrink-0 rounded-full bg-[color:var(--border-accent)] transition-colors group-hover:bg-primary" />
+                <dt className="w-28 shrink-0 font-semibold text-muted-foreground text-[10px] uppercase tracking-wider">
                   {label}
                 </dt>
-                <dd className="mt-1 break-all font-mono text-foreground text-xs">
+                <dd className="min-w-0 grow break-words text-right font-mono text-foreground text-xs leading-relaxed">
                   {value}
                 </dd>
               </div>
             ))}
           </dl>
 
-          <div className="mt-5 rounded-lg border border-border bg-muted/20 p-4">
+          <div
+            className="mt-5 rounded-lg border p-4"
+            style={{
+              backgroundColor: 'var(--accent-surface-soft)',
+              borderColor: 'var(--border-accent)',
+            }}
+          >
             <h3 className="font-display font-bold text-foreground text-base">
               Before you commit
             </h3>
             <ul className="mt-3 space-y-2 text-muted-foreground text-sm">
-              <li>Operators execute the service instance.</li>
-              <li>
-                Checkout shows selected operators, callers, payment, and TTL.
+              <li className="flex items-start gap-2">
+                <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-primary" />
+                <span>Operators execute the service instance.</span>
               </li>
-              <li>Wallet approval submits the on-chain service request.</li>
+              <li className="flex items-start gap-2">
+                <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-primary" />
+                <span>
+                  Checkout shows selected operators, callers, payment, and TTL.
+                </span>
+              </li>
+              <li className="flex items-start gap-2">
+                <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-primary" />
+                <span>
+                  Wallet approval submits the on-chain service request.
+                </span>
+              </li>
             </ul>
           </div>
         </CardContent>
@@ -288,7 +376,7 @@ const BlueprintDetailHero = ({
 };
 
 const LaunchFact = ({ label, value }: { label: string; value: string }) => (
-  <div className="rounded-lg border border-border bg-muted/25 p-3">
+  <div className="rounded-lg border border-border bg-card p-3">
     <p className="font-semibold text-muted-foreground text-[10px] uppercase tracking-wider">
       {label}
     </p>
@@ -301,16 +389,32 @@ const RegisteredOperatorsPanel = ({
 }: {
   operators: BlueprintOperator[];
 }) => {
+  const delegatedCount = operators.filter((op) => op.isDelegated).length;
+  const totalServices = operators.reduce(
+    (sum, op) => sum + (op.instanceCount ?? 0),
+    0,
+  );
+  const totalStakers = operators.reduce(
+    (sum, op) => sum + (op.stakersCount ?? 0),
+    0,
+  );
+
   return (
-    <Card
-      id="operators"
-      variant="sandbox"
-      className="border-border bg-card shadow-[var(--shadow-card)]"
-    >
+    <Card id="operators" variant="sandbox">
       <CardContent className="p-6">
-        <div className="flex flex-col gap-3 border-border border-b pb-5 sm:flex-row sm:items-end sm:justify-between">
+        <div className="flex flex-col gap-4 border-border border-b pb-5 lg:flex-row lg:items-end lg:justify-between">
           <div>
-            <Badge variant="outline">{operators.length} indexed</Badge>
+            <div className="flex flex-wrap items-center gap-2">
+              <Badge variant="outline">{operators.length} indexed</Badge>
+              {delegatedCount > 0 && (
+                <Badge variant="success">{delegatedCount} delegated</Badge>
+              )}
+              {operators.length > 0 && (
+                <span className="text-muted-foreground text-xs">
+                  {totalServices} services · {totalStakers} stakers
+                </span>
+              )}
+            </div>
             <h2 className="mt-3 font-display font-extrabold text-foreground text-2xl tracking-tight">
               Registered operators
             </h2>
@@ -327,16 +431,17 @@ const RegisteredOperatorsPanel = ({
         </div>
 
         {operators.length === 0 ? (
-          <div className="flex min-h-40 items-center justify-center rounded-lg border border-dashed border-border bg-muted/30 p-8 text-center">
-            <p className="max-w-md text-muted-foreground text-sm">
-              No operators are indexed for this blueprint on the selected
-              network yet.
-            </p>
+          <div className="mt-5">
+            <EmptyState
+              icon={<span className="text-3xl">{'⚙️'}</span>}
+              title="No operators yet"
+              description="This blueprint has no registered operators on the selected network. Register operator capacity to make the blueprint deployable."
+            />
           </div>
         ) : (
-          <div className="mt-5 divide-y divide-border overflow-hidden rounded-lg border border-border bg-muted/20">
+          <div className="mt-5 divide-y divide-border overflow-hidden rounded-lg border border-border bg-[var(--bg-card)]">
             {operators.map((operator) => (
-              <OperatorCard key={operator.address} operator={operator} />
+              <OperatorRow key={operator.address} operator={operator} />
             ))}
           </div>
         )}
@@ -345,22 +450,28 @@ const RegisteredOperatorsPanel = ({
   );
 };
 
-const OperatorCard = ({ operator }: { operator: BlueprintOperator }) => {
+const OperatorRow = ({ operator }: { operator: BlueprintOperator }) => {
   const displayName =
     operator.identityName?.trim() || shortenIdentity(operator.address);
-  const vaultSummary =
-    operator.vaultTokens.length > 0
-      ? operator.vaultTokens.map((token) => token.symbol).join(', ')
-      : 'No vaults indexed';
+  const vaultSymbols = operator.vaultTokens.map((token) => token.symbol);
 
   return (
-    <div className="grid gap-4 p-4 md:grid-cols-[minmax(0,1fr)_360px] md:items-center">
-      <div className="flex min-w-0 items-center gap-4">
+    <div className="group grid gap-4 p-4 transition-colors hover:bg-[var(--bg-hover)] md:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_auto] md:items-center">
+      <div className="flex min-w-0 items-center gap-3">
         <OperatorIdenticon address={operator.address} />
         <div className="min-w-0">
-          <h3 className="truncate font-display font-bold text-foreground text-lg">
-            {displayName}
-          </h3>
+          <div className="flex flex-wrap items-center gap-2">
+            <h3 className="truncate font-display font-bold text-foreground text-base">
+              {displayName}
+            </h3>
+            <Badge
+              variant={operator.isDelegated ? 'success' : 'outline'}
+              dot={operator.isDelegated}
+              className="shrink-0"
+            >
+              {operator.isDelegated ? 'Delegated' : 'Direct'}
+            </Badge>
+          </div>
           <p className="mt-1 truncate font-mono text-muted-foreground text-xs">
             {operator.address}
           </p>
@@ -368,9 +479,9 @@ const OperatorCard = ({ operator }: { operator: BlueprintOperator }) => {
       </div>
 
       <div className="grid grid-cols-3 gap-3">
-        <OperatorMetric label="Services" value={operator.instanceCount} />
-        <OperatorMetric label="Stakers" value={operator.stakersCount} />
-        <OperatorMetric
+        <RowMetric label="Services" value={operator.instanceCount} />
+        <RowMetric label="Stakers" value={operator.stakersCount} />
+        <RowMetric
           label="TVL"
           value={
             operator.tvlInUsd !== null
@@ -380,19 +491,42 @@ const OperatorCard = ({ operator }: { operator: BlueprintOperator }) => {
         />
       </div>
 
-      <div className="flex items-center justify-between gap-3 md:col-span-2">
-        <p className="line-clamp-1 text-muted-foreground text-xs">
-          {vaultSummary}
-        </p>
-        <Badge variant={operator.isDelegated ? 'success' : 'outline'} dot>
-          {operator.isDelegated ? 'Delegated' : 'Direct'}
-        </Badge>
+      <div className="flex flex-col items-end gap-2">
+        {vaultSymbols.length > 0 ? (
+          <div className="flex flex-wrap justify-end gap-1">
+            {vaultSymbols.slice(0, 3).map((symbol) => (
+              <span
+                key={symbol}
+                className="rounded-full border border-border bg-[var(--bg-elevated)] px-2 py-0.5 font-mono text-foreground text-[10px] uppercase tracking-wider"
+              >
+                {symbol}
+              </span>
+            ))}
+            {vaultSymbols.length > 3 && (
+              <span className="rounded-full border border-border bg-[var(--bg-elevated)] px-2 py-0.5 font-mono text-muted-foreground text-[10px]">
+                +{vaultSymbols.length - 3}
+              </span>
+            )}
+          </div>
+        ) : (
+          <span className="font-mono text-muted-foreground text-[11px]">
+            No vaults indexed
+          </span>
+        )}
+        <Button variant="outline" size="sm" asChild>
+          <Link
+            to={`${TangleDAppPagePath.STAKING_DELEGATE}?operator=${operator.address}`}
+            target="_blank"
+          >
+            Delegate
+          </Link>
+        </Button>
       </div>
     </div>
   );
 };
 
-const OperatorMetric = ({
+const RowMetric = ({
   label,
   value,
 }: {
@@ -424,7 +558,10 @@ const OperatorIdenticon = ({ address }: { address: string }) => {
 
   return (
     <div
-      className="grid h-12 w-12 shrink-0 place-items-center rounded-lg border border-border font-display font-extrabold text-white"
+      // Saturated-hue gradient background needs a contrast-stable foreground
+      // regardless of theme. `text-primary-foreground` resolves to the same
+      // white in both dark + light themes (it's the on-primary color).
+      className="grid h-12 w-12 shrink-0 place-items-center rounded-lg border border-border font-display font-extrabold text-primary-foreground"
       style={{
         background: `linear-gradient(135deg, hsl(${hue} 82% 58%), hsl(${(hue + 48) % 360} 82% 50%))`,
       }}

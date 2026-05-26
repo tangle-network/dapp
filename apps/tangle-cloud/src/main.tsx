@@ -23,6 +23,45 @@ document.documentElement.setAttribute(
   initialTheme === 'dark' ? 'tangle' : 'vault',
 );
 
+// Stale-bundle recovery.
+// Every Vite build emits hash-named code-split chunks (assets/page-XYZ.js).
+// When a new deploy lands on Netlify, the user's open tab still references
+// the OLD hashes. The next route nav triggers a dynamic import for a chunk
+// that no longer exists — Netlify SPA-fallbacks to `index.html` for unknown
+// paths, the browser tries to load it as a JS module, MIME-type check fails,
+// and the route renders blank.
+//
+// Catch the specific failure shape and reload the page once per session.
+// The reload pulls the fresh index.html which references the new hashes.
+// Gate by session-storage so a genuine network failure doesn't loop.
+const isStaleChunkError = (err: unknown): boolean => {
+  if (!(err instanceof Error)) return false;
+  const m = err.message ?? '';
+  return (
+    m.includes('Failed to fetch dynamically imported module') ||
+    m.includes('Importing a module script failed') ||
+    /Loading chunk \S+ failed/i.test(m)
+  );
+};
+const STALE_RELOAD_FLAG = 'tangle-cloud:stale-chunk-reloaded';
+const reloadIfStale = (err: unknown) => {
+  if (!isStaleChunkError(err)) return;
+  try {
+    if (sessionStorage.getItem(STALE_RELOAD_FLAG) === '1') return;
+    sessionStorage.setItem(STALE_RELOAD_FLAG, '1');
+  } catch {
+    // sessionStorage can throw in restricted contexts; reload anyway.
+  }
+  console.warn(
+    '[tangle-cloud] stale code-split chunk detected, reloading for fresh bundle',
+  );
+  window.location.reload();
+};
+window.addEventListener('error', (event) => reloadIfStale(event.error));
+window.addEventListener('unhandledrejection', (event) =>
+  reloadIfStale(event.reason),
+);
+
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement,
 );

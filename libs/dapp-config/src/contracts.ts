@@ -12,6 +12,12 @@ export type ContractAddresses = {
   inflationPool: Address;
   credits: Address;
   liquidDelegationFactory: Address;
+  // `blueprintAuditors` may be the zero address on networks where the
+  // governance-curated auditor registry has not yet been deployed; the
+  // dapp falls back to the static `apps/tangle-cloud/src/auditors/registry.json`
+  // bundle in that case. Once tnt-core ships the deployment, this entry
+  // is what the dapp reads via `useAuditor`.
+  blueprintAuditors: Address;
 };
 
 /**
@@ -45,18 +51,20 @@ export const LOCAL_CONTRACTS: ContractAddresses = {
   inflationPool: '0x21df544947ba3e8b3c32561399e88b52dc8b2823', // Proxy
   credits: '0x922d6956c99e12dfeb3224dea977d0939758a1fe', // Proxy
   liquidDelegationFactory: '0xc66ab83418c20a65c3f8e83b3d11c8c3a6097b6f', // Direct
+  blueprintAuditors: '0x0000000000000000000000000000000000000000', // pending deployment
 };
 
 // Base Sepolia testnet addresses (synced from tnt-core deployments/base-sepolia/latest.json)
 export const BASE_SEPOLIA_CONTRACTS: ContractAddresses = {
-  tangle: '0x1be58d12620ecc8ba9d780feec2596510d75a933',
-  multiAssetDelegation: '0x787dd1de4099ff8c68bfac11b82e4aed52c7f1e1',
-  masterBlueprintServiceManager: '0x1be58d12620ecc8ba9d780feec2596510d75a933', // Services are exposed on Tangle facets
-  operatorStatusRegistry: '0x20258c5e4cba66d4819a06045ff00d15775e64fb',
-  rewardVaults: '0x2963a51fec3e2cf51b19b848942d91296448a353',
-  inflationPool: '0xe620f87540724a0cebdee9796dd8580e02dd4911',
-  credits: '0x758226e04478541fcdac605e1f235e2956259a10',
-  liquidDelegationFactory: '0xF8e31cb472bc70500f08Cd84917E5A1912Ec8397',
+  tangle: '0x8299d60f373f3a4a8c4878e335cb9d840e6e3730',
+  multiAssetDelegation: '0x91b1186f4f31d6e02e481c0af29c7244a3fe417d',
+  masterBlueprintServiceManager: '0x658e4193bad70a9f32450d2eaee1a9bcfe898802',
+  operatorStatusRegistry: '0x2a7ceb96a9b18721b5bbb0022b4d358b3c50bcb2',
+  rewardVaults: '0xbaad23dac876467ea1b1f70f4d6e02e5891d2e04',
+  inflationPool: '0xedf2a17c4a02f543178a76d0e22d2ef096e66970',
+  credits: '0xb587a927ee90ba5587ca9d90fd1a813eb81fc24b',
+  liquidDelegationFactory: '0x0000000000000000000000000000000000000000', // not deployed in this release
+  blueprintAuditors: '0xf4428bbbfa9207b4b91ca5fe8c1d401fd8b1e8e8', // deployed 2026-05-22 via tnt-core/script/UpgradeFlowAddon.s.sol
 };
 
 // Base mainnet addresses (to be updated after deployment)
@@ -69,6 +77,7 @@ export const BASE_MAINNET_CONTRACTS: ContractAddresses = {
   inflationPool: '0x0000000000000000000000000000000000000000',
   credits: '0x0000000000000000000000000000000000000000',
   liquidDelegationFactory: '0x0000000000000000000000000000000000000000',
+  blueprintAuditors: '0x0000000000000000000000000000000000000000',
 };
 
 // Arbitrum Sepolia testnet addresses (to be updated after deployment)
@@ -81,6 +90,7 @@ export const ARBITRUM_SEPOLIA_CONTRACTS: ContractAddresses = {
   inflationPool: '0x0000000000000000000000000000000000000000',
   credits: '0x0000000000000000000000000000000000000000',
   liquidDelegationFactory: '0x0000000000000000000000000000000000000000',
+  blueprintAuditors: '0x0000000000000000000000000000000000000000',
 };
 
 // Arbitrum One mainnet addresses (to be updated after deployment)
@@ -93,6 +103,7 @@ export const ARBITRUM_ONE_CONTRACTS: ContractAddresses = {
   inflationPool: '0x0000000000000000000000000000000000000000',
   credits: '0x0000000000000000000000000000000000000000',
   liquidDelegationFactory: '0x0000000000000000000000000000000000000000',
+  blueprintAuditors: '0x0000000000000000000000000000000000000000',
 };
 
 // Ethereum Mainnet - Only used for native staking (ValidatorPod/ValidatorPodManager)
@@ -106,6 +117,7 @@ export const ETHEREUM_MAINNET_CONTRACTS: ContractAddresses = {
   inflationPool: '0x0000000000000000000000000000000000000000',
   credits: '0x0000000000000000000000000000000000000000',
   liquidDelegationFactory: '0x0000000000000000000000000000000000000000',
+  blueprintAuditors: '0x0000000000000000000000000000000000000000',
 };
 
 // Ethereum Holesky Testnet - Only used for native staking (ValidatorPod/ValidatorPodManager)
@@ -119,6 +131,7 @@ export const ETHEREUM_HOLESKY_CONTRACTS: ContractAddresses = {
   inflationPool: '0x0000000000000000000000000000000000000000',
   credits: '0x0000000000000000000000000000000000000000',
   liquidDelegationFactory: '0x0000000000000000000000000000000000000000',
+  blueprintAuditors: '0x0000000000000000000000000000000000000000',
 };
 
 // Get contracts by chain ID

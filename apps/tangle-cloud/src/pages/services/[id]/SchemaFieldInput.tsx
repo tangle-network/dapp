@@ -21,6 +21,8 @@ import {
   type SchemaField,
 } from '@tangle-network/tangle-shared-ui/codec';
 import { isAddress } from 'viem';
+import { MetadataJsonInput } from './MetadataJsonInput';
+import { isMetadataJsonField } from './metadataJson';
 
 interface SchemaFieldInputProps {
   field: SchemaField;
@@ -255,6 +257,21 @@ export const SchemaFieldInput: FC<SchemaFieldInputProps> = ({
   }
 
   if (kind === BlueprintFieldKind.String) {
+    // Sandbox-class blueprints (ai-agent-sandbox + ai-agent-instance) take a
+    // `metadata_json: string` param the operator parses to pick a runtime
+    // backend. Render the structured editor so customers can pick MicroVM or
+    // TEE without hand-writing JSON.
+    if (isMetadataJsonField(name)) {
+      return (
+        <MetadataJsonInput
+          label={label}
+          path={path}
+          value={(value as string) ?? ''}
+          onChange={(v) => onChange(v)}
+        />
+      );
+    }
+
     return (
       <div className="py-1">
         <Text variant="body2" className="mb-1">

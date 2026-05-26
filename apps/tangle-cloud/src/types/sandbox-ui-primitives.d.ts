@@ -33,6 +33,7 @@ declare module '@tangle-network/sandbox-ui/primitives' {
     type InlineCodeProps,
     Input,
     type InputProps,
+    Label,
     SegmentedControl,
     type SegmentedControlOption,
     type SegmentedControlProps,

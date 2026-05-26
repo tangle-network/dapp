@@ -1,15 +1,12 @@
-/* Tangle Cloud styles.
- * Brand tokens come from @tangle-network/brand (single source of truth across
- * tangle-website, sandbox-ui, evals, agent-builder, and product surfaces).
- * Tangle Cloud-specific classes and theme overrides cascade below. */
+/* Tangle Cloud styles. Tokens (--md3-*, --hsl-*, --bg-*, --text-*, --border-*,
+ * --btn-*, --shadow-*, [data-sandbox-theme='vault'] light overrides) come from
+ * @tangle-network/brand via the sandbox-ui vendor CSS preloaded in index.html.
+ * This file adds Geist typeface, tangle/vault theme deltas, and cloud-only
+ * component classes. `!important` is reserved for fights against legacy
+ * ui-components @layer base rules ('*:not(code) Satoshi', 'h1..h6 text-mono-*')
+ * that arrive in the bundle BEFORE cloud styles. */
 @import '@tangle-network/brand/styles/tokens.css';
-/* Brand globals.css requires `@tailwind base` upstream of it; tangle-cloud
- * relies on the workspace ui-components preset for that, so import tokens
- * only and let the workspace preset provide base/utilities layers. */
 
-/* Local font aliases — keep Geist Sans as the default until Outfit/Manrope
- * fontsource packages are landed; brand tokens.css defines the brand-canonical
- * font stacks via --font-sans/--font-display/--font-mono. */
 :root,
 [data-sandbox-ui] {
   --font-sans: 'Geist Sans', ui-sans-serif, system-ui, sans-serif;
@@ -17,89 +14,65 @@
   --font-mono: 'Geist Mono', ui-monospace, SFMono-Regular, monospace;
 }
 
-html {
-  min-height: 100%;
-  overflow-x: hidden;
-  background: var(--bg-root, #060711);
-}
-
+html,
 body {
   min-height: 100%;
   overflow-x: hidden;
   background: var(--bg-root, #060711);
+}
+body {
   color: var(--text-primary, hsl(var(--foreground)));
-  font-family: var(--font-sans) !important;
+  font-family: var(--font-sans);
 }
-
-#root,
-#root * {
-  font-family: var(--font-sans) !important;
-}
-
 #root {
   min-height: 100vh;
+  font-family: var(--font-sans);
 }
 
+/* Override ui-components' .bg-tangle wallpaper with the brand radial gradient. */
 .tangle-cloud-shell.bg-tangle,
 [data-sandbox-ui].bg-tangle {
-  background: var(--bg-root) !important;
-  background-attachment: initial !important;
+  background: var(--bg-root);
+  background-attachment: initial;
 }
-
 .tangle-cloud-shell {
-  --cloud-shell-border: color-mix(
-    in srgb,
-    var(--border-subtle) 80%,
-    transparent
-  );
-  background: var(--bg-root) !important;
+  background: var(--bg-root);
   color: var(--text-primary);
 }
 
-.tangle-cloud-shell[data-sandbox-theme='tangle'],
-.tangle-cloud-shell[data-sandbox-theme='tangle'] *,
-[data-sandbox-ui][data-sandbox-theme='tangle'],
-[data-sandbox-ui][data-sandbox-theme='tangle'] * {
-  color-scheme: dark;
-}
-
+/* Dark theme deltas vs sandbox-ui defaults. Tailwind HSL aliases at the bottom
+ * re-bind .bg-card/.bg-primary/.border utilities to cloud tokens. */
 [data-sandbox-ui][data-sandbox-theme='tangle'],
 .tangle-cloud-shell[data-sandbox-theme='tangle'] {
-  --bg-root:
-    radial-gradient(
-      ellipse 70% 48% at 18% 0%,
-      rgba(99, 102, 241, 0.12),
-      transparent
-    ),
-    radial-gradient(
-      ellipse 48% 36% at 82% 6%,
-      rgba(20, 184, 166, 0.08),
-      transparent
-    ),
-    linear-gradient(180deg, #101123 0%, #0b0c19 100%);
-  --bg-card: #17172a;
-  --bg-elevated: #202037;
-  --bg-hover: rgba(129, 140, 248, 0.12);
-  --border-subtle: rgba(116, 126, 194, 0.18);
-  --border-default: rgba(128, 138, 213, 0.29);
-  --border-hover: rgba(151, 161, 245, 0.44);
-  --border-accent: rgba(129, 140, 248, 0.3);
-  --border-accent-hover: rgba(129, 140, 248, 0.5);
+  color-scheme: dark;
+  /* prettier-ignore */
+  --bg-root: radial-gradient(ellipse 70% 48% at 18% 0%, rgba(99, 102, 241, 0.14), transparent), radial-gradient(ellipse 48% 36% at 82% 6%, rgba(20, 184, 166, 0.09), transparent), linear-gradient(180deg, #0a0a14 0%, #07070d 100%);
+  --bg-card: #1b1a2c;
+  --bg-elevated: #262448;
+  --bg-hover: rgba(129, 140, 248, 0.16);
+  --border-subtle: rgba(116, 126, 194, 0.12);
+  --border-default: rgba(128, 138, 213, 0.24);
+  --border-hover: rgba(151, 161, 245, 0.48);
+  --border-accent: rgba(129, 140, 248, 0.36);
+  --border-accent-hover: rgba(129, 140, 248, 0.55);
+  --accent-surface-soft: rgba(99, 102, 241, 0.12);
   --btn-primary-bg: #4f46e5;
   --btn-primary-hover: #4338ca;
-  --shadow-card:
-    0 12px 32px rgba(0, 0, 0, 0.24), 0 0 0 1px rgba(255, 255, 255, 0.045);
-}
-
-.tangle-cloud-shell[data-sandbox-theme='vault'],
-.tangle-cloud-shell[data-sandbox-theme='vault'] *,
-[data-sandbox-ui][data-sandbox-theme='vault'],
-[data-sandbox-ui][data-sandbox-theme='vault'] * {
-  color-scheme: light;
+  /* prettier-ignore */
+  --shadow-card: 0 1px 0 rgba(255, 255, 255, 0.04) inset, 0 8px 24px rgba(0, 0, 0, 0.28);
+  /* prettier-ignore */
+  --shadow-hover: 0 1px 0 rgba(255, 255, 255, 0.06) inset, 0 16px 36px rgba(0, 0, 0, 0.35), 0 0 0 1px rgba(129, 140, 248, 0.18);
+  --card: 246 22% 14%;
+  --popover: 248 32% 21%;
+  --muted: 248 32% 21%;
+  --border: 232 32% 67% / 0.24;
+  --input: 232 32% 67% / 0.24;
+  --primary: 239 84% 59%;
 }
 
 [data-sandbox-ui][data-sandbox-theme='vault'],
 .tangle-cloud-shell[data-sandbox-theme='vault'] {
+  color-scheme: light;
   --brand-cool: #3730a3;
   --brand-primary: #4f46e5;
   --brand-vibrant: #4f46e5;
@@ -112,328 +85,175 @@ body {
   --border-accent-hover: rgba(79, 70, 229, 0.34);
 }
 
-/* Legacy ui-components CSS is still pulled in by shared dependencies and
-   declares global heading/body colors. Re-assert sandbox tokens inside Cloud. */
-[data-sandbox-ui] {
-  color: var(--text-primary) !important;
-}
-
-[data-sandbox-ui] :where(h1, h2, h3, h4, h5, h6, p, label, li, td, th) {
+/* Defeat ui-components' h1..h6/p/div text-mono color rules via inherit.
+ * Also force `font-style: normal` so the browser's italic synthesis (which
+ * fires when a requested weight is missing from a fallback font) doesn't
+ * sneak in slanted glyphs on body text. Italic is a deliberate emphasis
+ * marker in this app and shows up only via explicit `.italic` class. */
+.tangle-cloud-shell :where(h1, h2, h3, h4, h5, h6, p, label, li, td, th, button, a, span) {
   color: inherit;
 }
-
-[data-sandbox-ui] .text-foreground {
-  color: var(--text-primary) !important;
+.tangle-cloud-shell
+  :where(
+    h1, h2, h3, h4, h5, h6, p, span, a, button, label, li, td, th,
+    input, select, textarea, div
+  ):not(.italic) {
+  /* `!important` + form controls: the previous rule (no !important, no
+   * inputs/selects) let slanted fallback glyphs through on the search bar
+   * and category chips. Italics are opt-in via `.italic` only. */
+  font-style: normal !important;
 }
 
-[data-sandbox-ui] .text-card-foreground {
-  color: var(--text-primary) !important;
-}
-
-[data-sandbox-ui] .text-muted-foreground {
-  color: var(--text-muted) !important;
-}
-
-[data-sandbox-ui] .text-primary {
-  color: var(--brand-cool) !important;
-}
-
-[data-sandbox-ui] .text-primary-foreground {
-  color: var(--btn-primary-text) !important;
-}
-
-[data-sandbox-ui] .text-secondary-foreground {
-  color: var(--text-secondary) !important;
-}
-
-[data-sandbox-ui] .text-destructive {
-  color: var(--surface-danger-text) !important;
-}
-
+/* Tailwind/shadcn utility classes used by the cloud — sandbox-ui's prebuilt
+ * vendor.css doesn't ship these (it only includes classes sandbox-ui itself
+ * uses), so cloud has to define them. Bound to cloud tokens; no !important
+ * because no other rule defines them. */
 [data-sandbox-ui] .bg-background {
-  background-color: var(--bg-dark, hsl(var(--background))) !important;
+  background-color: var(--bg-root, hsl(var(--background)));
 }
-
 [data-sandbox-ui] .bg-card {
-  background-color: var(--bg-card) !important;
+  background-color: var(--bg-card);
 }
-
 [data-sandbox-ui] .bg-popover {
-  background-color: var(--bg-card) !important;
+  background-color: var(--bg-elevated);
 }
-
-[data-sandbox-ui] .text-popover-foreground {
-  color: var(--text-primary) !important;
-}
-
 [data-sandbox-ui] .bg-muted {
-  background-color: hsl(var(--muted)) !important;
+  background-color: var(--bg-elevated);
 }
-
 [data-sandbox-ui] .bg-muted\/30 {
-  background-color: color-mix(
-    in srgb,
-    hsl(var(--muted)) 30%,
-    transparent
-  ) !important;
+  background-color: color-mix(in srgb, var(--bg-elevated) 30%, transparent);
 }
-
 [data-sandbox-ui] .bg-muted\/40 {
-  background-color: color-mix(
-    in srgb,
-    hsl(var(--muted)) 40%,
-    transparent
-  ) !important;
+  background-color: color-mix(in srgb, var(--bg-elevated) 40%, transparent);
 }
-
 [data-sandbox-ui] .bg-muted\/50 {
-  background-color: color-mix(
-    in srgb,
-    hsl(var(--muted)) 50%,
-    transparent
-  ) !important;
+  background-color: color-mix(in srgb, var(--bg-elevated) 50%, transparent);
 }
-
 [data-sandbox-ui] .bg-card\/70 {
-  background-color: color-mix(
-    in srgb,
-    var(--bg-card) 70%,
-    transparent
-  ) !important;
+  background-color: color-mix(in srgb, var(--bg-card) 70%, transparent);
 }
-
-[data-sandbox-ui] .border-border {
-  border-color: var(--border-default) !important;
-}
-
-[data-sandbox-ui] .border {
-  border-color: var(--border-default) !important;
-}
-
-[data-sandbox-ui] .border-input {
-  border-color: var(--border-default) !important;
-}
-
-[data-sandbox-ui] .border-primary {
-  border-color: var(--brand-cool) !important;
-}
-
-[data-sandbox-ui] .border-primary\/20 {
-  border-color: var(--border-accent) !important;
-}
-
-[data-sandbox-ui] [class*='surface-success-border'] {
-  border-color: var(--surface-success-border) !important;
-}
-
 [data-sandbox-ui] .bg-primary {
-  background-color: var(--btn-primary-bg) !important;
-  color: var(--btn-primary-text) !important;
+  background-color: var(--btn-primary-bg);
+  color: var(--btn-primary-text);
 }
-
-[data-sandbox-ui] :where(a.bg-primary, button.bg-primary, .bg-primary a) {
-  color: var(--btn-primary-text) !important;
-}
-
-[data-sandbox-ui] aside :where(a.bg-primary, a.bg-primary span) {
-  color: var(--btn-primary-text) !important;
-}
-
-[data-sandbox-ui] aside a.bg-primary svg {
-  color: var(--btn-primary-text) !important;
-  fill: currentcolor !important;
-}
-
-[data-sandbox-ui]
-  .bg-primary
-  :where(.text-muted-foreground, [class*='text-muted-foreground']) {
-  color: color-mix(
-    in srgb,
-    var(--btn-primary-text) 84%,
-    transparent
-  ) !important;
-}
-
-[data-sandbox-ui] .bg-primary :where(.bg-background\/70) {
-  background-color: #312e81 !important;
-  color: var(--btn-primary-text) !important;
-}
-
 [data-sandbox-ui] .hover\:bg-primary\/90:hover {
-  background-color: var(--btn-primary-hover) !important;
+  background-color: var(--btn-primary-hover);
 }
-
 [data-sandbox-ui] .hover\:bg-muted:hover,
 [data-sandbox-ui] .hover\:bg-muted\/60:hover {
-  background-color: var(--bg-hover) !important;
+  background-color: var(--bg-hover);
+}
+[data-sandbox-ui] .text-foreground,
+[data-sandbox-ui] .text-card-foreground,
+[data-sandbox-ui] .text-popover-foreground {
+  color: var(--text-primary);
+}
+[data-sandbox-ui] .text-muted-foreground {
+  color: var(--text-muted);
+}
+[data-sandbox-ui] .text-secondary-foreground {
+  color: var(--text-secondary);
+}
+[data-sandbox-ui] .text-primary {
+  color: var(--brand-cool);
+}
+[data-sandbox-ui] .text-primary-foreground {
+  color: var(--btn-primary-text);
+}
+[data-sandbox-ui] .text-destructive {
+  color: var(--surface-danger-text);
+}
+[data-sandbox-ui] .border,
+[data-sandbox-ui] .border-border,
+[data-sandbox-ui] .border-input {
+  border-color: var(--border-default);
+}
+[data-sandbox-ui] .border-primary {
+  border-color: var(--brand-cool);
+}
+[data-sandbox-ui] .border-primary\/20 {
+  border-color: var(--border-accent);
 }
 
+/* Radix portals to <body>, escaping the shell. Bind popovers to cloud tokens. */
 [data-radix-popper-content-wrapper] [role='menu'],
 [data-radix-popper-content-wrapper] [role='listbox'] {
-  border: 1px solid var(--border-default) !important;
-  background: color-mix(
-    in srgb,
-    var(--bg-card) 96%,
-    var(--bg-elevated) 4%
-  ) !important;
-  box-shadow: var(--shadow-dropdown) !important;
+  border: 1px solid var(--border-default);
+  background: color-mix(in srgb, var(--bg-card) 96%, var(--bg-elevated) 4%);
+  box-shadow: var(--shadow-dropdown);
 }
-
 [data-radix-popper-content-wrapper] [role='menuitem'],
 [data-radix-popper-content-wrapper] [role='option'] {
-  color: var(--text-primary) !important;
+  color: var(--text-primary);
 }
-
 [data-radix-popper-content-wrapper] [role='menuitem']:hover,
 [data-radix-popper-content-wrapper] [role='option']:hover,
 [data-radix-popper-content-wrapper] [role='menuitem'][data-highlighted],
 [data-radix-popper-content-wrapper] [role='option'][data-highlighted] {
-  background: var(--bg-hover) !important;
+  background: var(--bg-hover);
 }
 
-.tangle-wallet-modal {
-  top: 50% !important;
-  left: 50% !important;
-  translate: none !important;
-  transform: translate(-50%, -50%) !important;
-  border-color: var(--border-default) !important;
-  background: color-mix(
-    in srgb,
-    var(--bg-card) 98%,
-    var(--bg-elevated) 2%
-  ) !important;
-  color: var(--text-primary) !important;
-  box-shadow: var(--shadow-dropdown) !important;
-}
-
-.tangle-wallet-modal button[aria-label='Close'] {
-  top: 1.25rem !important;
-  right: 1.25rem !important;
-  display: grid !important;
-  width: 2rem !important;
-  height: 2rem !important;
-  place-items: center !important;
-  border: 1px solid var(--border-default) !important;
-  border-radius: var(--radius-md) !important;
-  background: var(--bg-elevated) !important;
-  color: var(--text-muted) !important;
-  opacity: 1 !important;
-}
-
-.tangle-wallet-modal button[aria-label='Close']:hover {
-  background: var(--bg-hover) !important;
-  color: var(--text-primary) !important;
+/* Radix Dialog content portals to <body> and centers on the *viewport*, not
+ * the content area, so on lg+ viewports it lands partially under the fixed
+ * sidebar. The dialog uses Tailwind's `left-1/2 -translate-x-1/2 top-1/2
+ * -translate-y-1/2` — overriding `left` alone doesn't work because the
+ * tw-animate-css `slide-in-from-left-1/2` animation re-applies a
+ * `translateX(-50%)` ON TOP, double-shifting the modal off-center.
+ *
+ * The fix is to override Tailwind's `--tw-translate-x` custom property —
+ * the source of the translateX in every Tailwind transform utility. Adding
+ * `var(--cloud-sidebar-width) / 2` to the translation shifts the modal
+ * right by half the sidebar, landing it at the content-area center.
+ *
+ * SCOPE: only applies to truly center-anchored dialogs. Side-panel dialogs
+ * (the RegistrationDrawer, any other right/left/top/bottom-anchored sheet)
+ * carry `left-auto`, `right-auto`, or top/bottom anchors and explicitly set
+ * `translate-x-0` / `translate-y-0` — the negation selectors below leave
+ * those alone so my centering math doesn't drag the drawer back to center.
+ */
+@media (min-width: 1024px) {
+  [role='dialog'][data-state='open']:not([class*='left-auto']):not([class*='right-auto']):not([class*='translate-x-0']),
+  [role='dialog'][data-state='closed']:not([class*='left-auto']):not([class*='right-auto']):not([class*='translate-x-0']) {
+    --tw-translate-x: calc(-50% + var(--cloud-sidebar-width, 16rem) / 2) !important;
+  }
 }
 
 .tangle-cloud-shell a:not([class*='text-']) {
   color: inherit;
 }
-
 .tangle-cloud-page {
   color: var(--text-primary);
 }
-
 .tangle-cloud-page h1 {
   font-size: clamp(2rem, 3vw, 2.375rem);
   line-height: 1.12;
   letter-spacing: -0.035em;
   text-wrap: balance;
 }
-
 .tangle-cloud-page h2 {
   font-size: 1.25rem;
   line-height: 1.25;
   letter-spacing: -0.015em;
 }
-
 .tangle-cloud-page h3 {
   font-size: 1rem;
   line-height: 1.3;
   letter-spacing: -0.01em;
 }
-
 .tangle-cloud-page p {
   text-wrap: pretty;
 }
-
-[data-sandbox-ui],
-[data-sandbox-ui] button,
-[data-sandbox-ui] input,
-[data-sandbox-ui] textarea,
-[data-sandbox-ui] select {
-  font-family: var(--font-sans) !important;
+:where([data-sandbox-ui]) :where(h1, h2, h3) {
+  font-family: var(--font-display);
 }
-
-[data-sandbox-ui] .font-display {
-  font-family: var(--font-display) !important;
-}
-
-#root .font-display {
-  font-family: var(--font-display) !important;
+.font-display {
+  font-family: var(--font-display);
 }
 
 .tangle-cloud-card {
   border: 1px solid var(--border-subtle);
-  background: color-mix(in srgb, var(--bg-card) 86%, transparent);
+  background: var(--bg-card);
   box-shadow: var(--shadow-card);
-}
-
-.cloud-hero-card {
-  border-color: color-mix(
-    in srgb,
-    var(--brand-cool) 30%,
-    var(--border-default)
-  ) !important;
-  background:
-    radial-gradient(
-      circle at 4% 12%,
-      color-mix(in srgb, var(--brand-cool) 24%, transparent),
-      transparent 30%
-    ),
-    radial-gradient(
-      circle at 90% 8%,
-      color-mix(in srgb, #14b8a6 20%, transparent),
-      transparent 26%
-    ),
-    linear-gradient(
-      135deg,
-      color-mix(in srgb, var(--bg-elevated) 82%, transparent),
-      color-mix(in srgb, var(--bg-card) 94%, transparent)
-    ) !important;
-  box-shadow:
-    0 18px 48px rgba(0, 0, 0, 0.24),
-    inset 0 1px 0 rgba(255, 255, 255, 0.04) !important;
-}
-
-.cloud-hero-card :where([class*='bg-card/70'], .bg-card\/70) {
-  background-color: color-mix(
-    in srgb,
-    var(--bg-elevated) 70%,
-    transparent
-  ) !important;
-  border-color: color-mix(
-    in srgb,
-    var(--brand-cool) 28%,
-    var(--border-default)
-  ) !important;
-}
-
-.cloud-compact-header {
-  box-shadow:
-    0 12px 32px rgba(0, 0, 0, 0.18),
-    inset 0 1px 0 rgba(255, 255, 255, 0.04) !important;
-}
-
-.cloud-compact-header h1 {
-  text-wrap: balance;
-}
-
-.cloud-compact-header p {
-  text-wrap: pretty;
-}
-
-.catalog-controls {
-  box-shadow: 0 10px 26px rgba(0, 0, 0, 0.14) !important;
 }
 
 .results-grid {
@@ -441,150 +261,139 @@ body {
   contain-intrinsic-size: 800px;
 }
 
-.tangle-cloud-shell :where(a, button, select, [role='tab']) {
-  transition:
-    background-color 180ms ease,
-    border-color 180ms ease,
-    color 180ms ease,
-    opacity 180ms ease,
-    transform 120ms ease,
-    box-shadow 180ms ease;
+/* Page-to-page transition triggered by PageMotion when react-router's
+ * pathname changes. 100ms total: 4px upward translate + opacity fade-in.
+ * Honors `prefers-reduced-motion` — reduced-motion users get the fade
+ * only, no translate.
+ *
+ * Why an attribute-keyed animation and not a CSS `transition` on a class:
+ * `transition` only fires when a CSS property *changes*, so the initial
+ * mount paint wouldn't trigger anything. A keyframe `animation`, scoped
+ * by an attribute selector, fires every time the attribute appears,
+ * giving us a clean enter-from-nothing on every navigation.
+ */
+.cloud-page-motion[data-cloud-page-motion='entering'] {
+  animation: cloud-page-enter 100ms ease-out;
+}
+@keyframes cloud-page-enter {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  @keyframes cloud-page-enter {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
 }
 
+.tangle-cloud-shell :where(a, button, select, [role='tab']) {
+  /* prettier-ignore */
+  transition: background-color 180ms ease, border-color 180ms ease, color 180ms ease, opacity 180ms ease, transform 120ms ease, box-shadow 180ms ease;
+}
 .tangle-cloud-shell :where(button, select, [role='tab']):active {
   transform: translateY(1px);
 }
-
-.blueprint-card,
-.operator-row {
-  transition:
-    background-color 180ms ease,
-    border-color 180ms ease,
-    transform 160ms ease,
-    box-shadow 180ms ease;
+.blueprint-card {
+  /* prettier-ignore */
+  transition: background-color 180ms ease, border-color 180ms ease, transform 160ms ease, box-shadow 180ms ease;
 }
-
-.blueprint-card:hover,
-.operator-row:hover {
+.blueprint-card:hover {
   transform: translateY(-1px);
-  border-color: color-mix(
-    in srgb,
-    var(--brand-cool) 34%,
-    var(--border-default)
-  ) !important;
-  box-shadow:
-    var(--shadow-hover),
-    0 0 0 1px color-mix(in srgb, var(--brand-cool) 12%, transparent) !important;
+  /* prettier-ignore */
+  border-color: color-mix(in srgb, var(--brand-cool) 34%, var(--border-default));
+  /* prettier-ignore */
+  box-shadow: var(--shadow-hover), 0 0 0 1px color-mix(in srgb, var(--brand-cool) 12%, transparent);
 }
 
+/* Topbar buttons (network selector, theme toggle, etc.) — uniform ghost
+ * surface aligned with sandbox-ui's flat aesthetic. Previous version used a
+ * different background for the connect button than for the others, which
+ * read as two unrelated systems coexisting in the same nav. */
 .tangle-cloud-topbar button,
-.tangle-cloud-topbar [role='button'],
-.tangle-cloud-topbar .tangle-cloud-status-pill {
-  border-color: color-mix(
-    in srgb,
-    var(--border-default) 88%,
-    transparent
-  ) !important;
-  background: color-mix(
-    in srgb,
-    var(--bg-elevated) 72%,
-    transparent
-  ) !important;
-  color: var(--text-primary) !important;
-  box-shadow: none !important;
+.tangle-cloud-topbar [role='button'] {
+  height: 36px;
+  border-radius: 6px;
+  border: 1px solid var(--border-default);
+  background: transparent;
+  color: var(--text-primary);
+  font-weight: 500;
+  font-style: normal;
+  box-shadow: none;
 }
-
-.tangle-cloud-topbar button:not([data-testid='evm-connect-trigger']),
-.tangle-cloud-topbar [role='button']:not([data-testid='evm-connect-trigger']) {
-  background: color-mix(in srgb, var(--bg-card) 68%, transparent) !important;
-  color: var(--text-secondary) !important;
-  opacity: 0.86;
-}
-
-.tangle-cloud-topbar button {
-  min-height: 40px;
-  border-radius: 8px !important;
-}
-
-.tangle-cloud-topbar button svg,
-.tangle-cloud-topbar [role='button'] svg {
-  width: 16px;
-  height: 16px;
-}
-
 .tangle-cloud-topbar button:hover,
 .tangle-cloud-topbar [role='button']:hover {
-  background: color-mix(in srgb, var(--bg-elevated) 88%, white 3%) !important;
+  background: var(--bg-hover);
+}
+.tangle-cloud-topbar button svg,
+.tangle-cloud-topbar [role='button'] svg {
+  width: 14px;
+  height: 14px;
 }
 
-.tangle-cloud-topbar svg {
-  color: currentcolor;
-}
-
-.tangle-cloud-topbar .tangle-cloud-wallet-action button,
+/* Connect-wallet button + the in-page "Connect" CTA share styling. Single
+ * solid primary fill — same as every other primary action in the app. No
+ * gradients, no extra padding, no extra rounding. The "looks like staking
+ * dapp" complaint was the indigo gradient we had been forcing here; with
+ * it gone the button reads as a native cloud-app primary. */
 .tangle-cloud-wallet-action button,
 [data-sandbox-ui] [data-testid='evm-connect-trigger'] {
-  background: linear-gradient(
-    135deg,
-    var(--btn-primary-bg),
-    var(--btn-primary-hover)
-  ) !important;
-  background-color: var(--btn-primary-bg) !important;
-  border-color: transparent !important;
-  color: var(--btn-primary-text) !important;
-  padding-inline: 24px !important;
+  height: 36px;
+  border-radius: 6px;
+  border: 1px solid transparent;
+  background: var(--btn-primary-bg);
+  color: var(--btn-primary-text);
+  font-weight: 600;
+  font-style: normal;
+  padding-inline: 14px;
+  box-shadow: none;
 }
-
-.tangle-cloud-topbar .tangle-cloud-wallet-action button:hover,
 .tangle-cloud-wallet-action button:hover,
 [data-sandbox-ui] [data-testid='evm-connect-trigger']:hover {
-  background: linear-gradient(
-    135deg,
-    var(--btn-primary-hover),
-    #312e81
-  ) !important;
-  background-color: var(--btn-primary-hover) !important;
-  color: var(--btn-primary-text) !important;
+  background: var(--btn-primary-hover);
+  color: var(--btn-primary-text);
 }
 
-.tangle-cloud-topbar .tangle-cloud-wallet-action-secondary button {
-  background: color-mix(
-    in srgb,
-    var(--bg-elevated) 72%,
-    transparent
-  ) !important;
-  background-color: color-mix(
-    in srgb,
-    var(--bg-elevated) 72%,
-    transparent
-  ) !important;
-  border-color: var(--border-default) !important;
-  color: var(--text-primary) !important;
+/* Wallet brand mark — restrained mono tile, sized to the connect button's
+ * height. Previous version was a white-frosted square to defeat the indigo
+ * gradient backdrop; with the gradient gone it can match the button's
+ * surface tone instead. */
+.tangle-cloud-wallet-action button > :first-child:is(svg, [role='img']),
+.tangle-cloud-wallet-action button > div:has(> svg):first-child {
+  background: color-mix(in srgb, var(--btn-primary-text) 18%, transparent);
+  border-radius: 4px;
+  padding: 2px;
+  min-width: 20px;
+  min-height: 20px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
 }
 
-.tangle-cloud-topbar .tangle-cloud-wallet-action-secondary button:hover {
-  background: color-mix(in srgb, var(--bg-elevated) 88%, white 3%) !important;
-  background-color: color-mix(
-    in srgb,
-    var(--bg-elevated) 88%,
-    white 3%
-  ) !important;
-  color: var(--text-primary) !important;
+/* Wallet button inner text — preserve primary-button contrast against the
+ * solid primary surface. Removes the previous gradient-only !important. */
+.tangle-cloud-wallet-action button p,
+.tangle-cloud-wallet-action button span:not(.sr-only) {
+  color: var(--btn-primary-text);
+  font-style: normal;
 }
 
 .tangle-cloud-visual-badge {
-  background-color: #111827 !important;
-  color: #ffffff !important;
+  background-color: #111827;
+  color: #ffffff;
 }
 
-.tangle-blueprint-host {
-  color: rgb(237 237 242) !important;
-}
-
-.tangle-blueprint-host p {
-  color: rgb(255 255 255 / 0.72) !important;
-}
-
+/* BlueprintHostCard uses Tailwind `!`-prefix utilities (= !important);
+ * cloud overrides must match. */
 .tangle-blueprint-host [class*='border-white'] {
   border-color: color-mix(
     in srgb,
@@ -592,45 +401,10 @@ body {
     transparent
   ) !important;
 }
-
 .tangle-blueprint-host [class*='bg-white'] {
   background-color: color-mix(
     in srgb,
     var(--bg-elevated) 72%,
     transparent
   ) !important;
-}
-
-.tangle-blueprint-host [class*='text-white'] {
-  color: rgb(255 255 255) !important;
-}
-
-.tangle-blueprint-host [class*='text-white/78'] {
-  color: rgb(255 255 255 / 0.78) !important;
-}
-
-.tangle-blueprint-host [class*='text-white/72'] {
-  color: rgb(255 255 255 / 0.72) !important;
-}
-
-.tangle-blueprint-host [class*='text-white/65'] {
-  color: rgb(255 255 255 / 0.65) !important;
-}
-
-.tangle-blueprint-host [class*='text-white/62'] {
-  color: rgb(255 255 255 / 0.62) !important;
-}
-
-.tangle-blueprint-host [class*='text-white/45'] {
-  color: rgb(255 255 255 / 0.45) !important;
-}
-
-.tangle-blueprint-host [class*='text-white/42'] {
-  color: rgb(255 255 255 / 0.42) !important;
-}
-
-.tangle-blueprint-host h1,
-.tangle-blueprint-host h2,
-.tangle-blueprint-host h3 {
-  color: rgb(255 255 255) !important;
 }

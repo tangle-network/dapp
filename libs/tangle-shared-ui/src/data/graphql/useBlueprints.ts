@@ -4,17 +4,21 @@
 
 import { useQuery } from '@tanstack/react-query';
 import { Address } from 'viem';
-import { useAccount, useChainId } from 'wagmi';
+import { useAccount, useChainId, usePublicClient } from 'wagmi';
 import {
   executeEnvioGraphQL,
   EnvioNetwork,
   getEnvioNetworkFromChainId,
 } from '../../utils/executeEnvioGraphQL';
+import {
+  fetchBlueprintByIdOnChain,
+  fetchBlueprintsOnChain,
+} from '../blueprints/fetchBlueprintsOnChain';
 import useNetworkStore from '../../context/useNetworkStore';
 import type { Blueprint as AppBlueprint } from '../../types/blueprint';
 import {
   parseBlueprintMetadataJsonText,
-  resolveBlueprintMetadataFetchUrl,
+  resolveBlueprintMetadataFetchUrls,
   verifyBlueprintMetadataIntegrity,
 } from '../../blueprintApps/authoring';
 import type {
@@ -183,15 +187,25 @@ const fetchBlueprintMetadata = async ({
     return unavailableMetadata(metadataUri);
   }
 
+  // GitHub repo URIs expand to BOTH `main` and `master` candidates; try
+  // them in order so repos that default to `master` (legacy MPC blueprints,
+  // anything yarbed pre-2020) don't return as `unavailableMetadata`.
+  const candidates = resolveBlueprintMetadataFetchUrls(metadataUri);
   try {
-    const response = await fetch(
-      resolveBlueprintMetadataFetchUrl(metadataUri),
-      {
+    let response: Response | null = null;
+    let lastStatus = 0;
+    for (const candidate of candidates) {
+      const attempt = await fetch(candidate, {
         signal: AbortSignal.timeout(5000),
-      },
-    );
-    if (!response.ok) {
-      throw new Error(`Failed to fetch metadata: ${response.status}`);
+      });
+      if (attempt.ok) {
+        response = attempt;
+        break;
+      }
+      lastStatus = attempt.status;
+    }
+    if (response === null) {
+      throw new Error(`Failed to fetch metadata: ${lastStatus}`);
     }
 
     const metadataText = await response.text();
@@ -205,16 +219,37 @@ const fetchBlueprintMetadata = async ({
       owner,
     });
 
+    // Trust gradient for what the dapp will render:
+    //   verified | verified-uri → keep the parsed manifest intact and let the
+    //                             downstream `parseExternalApp` pipeline make
+    //                             the final iframe decision. That pipeline
+    //                             gates iframes on (publisher in verified
+    //                             allowlist) ∧ (publisher in iframe-eligible
+    //                             allowlist) ∧ (host in iframe-allowed
+    //                             suffixes) ∧ (kill switch on). Those four
+    //                             gates together are the actual curation
+    //                             anchor — short-circuiting here with a
+    //                             blanket strip is over-strict for v0 URI-
+    //                             keccak-mode blueprints registered by
+    //                             curated publishers.
+    //   unverified | invalid    → strip externalApp and force generic tier.
+    const resolveTrustedBlueprintUi = (): BlueprintUiContract | null => {
+      if (!parsed.blueprintUi) {
+        return null;
+      }
+      if (
+        metadataVerification.status === 'verified' ||
+        metadataVerification.status === 'verified-uri'
+      ) {
+        return parsed.blueprintUi;
+      }
+      return { ...parsed.blueprintUi, externalApp: undefined, tier: 'generic' };
+    };
     return {
       ...parsed,
       rawMetadata,
       metadataVerification,
-      blueprintUi:
-        metadataVerification.status === 'verified'
-          ? parsed.blueprintUi
-          : parsed.blueprintUi
-            ? { ...parsed.blueprintUi, externalApp: undefined, tier: 'generic' }
-            : null,
+      blueprintUi: resolveTrustedBlueprintUi(),
     };
   } catch (error) {
     console.error('Failed to fetch blueprint metadata:', error);
@@ -337,6 +372,7 @@ export const useBlueprints = (options?: {
     limit = 100,
   } = options ?? {};
   const { activeChainId, resolvedNetwork } = useResolvedEnvioNetwork(network);
+  const publicClient = usePublicClient({ chainId: activeChainId });
 
   return useQuery({
     queryKey: [
@@ -348,13 +384,42 @@ export const useBlueprints = (options?: {
       limit,
     ],
     queryFn: async () => {
-      const blueprints = await fetchBlueprints(
-        resolvedNetwork,
-        activeOnly,
+      // Primary path: hosted Envio indexer.
+      try {
+        const blueprints = await fetchBlueprints(
+          resolvedNetwork,
+          activeOnly,
+          limit,
+          0,
+        );
+        // If the indexer is up but lagging (returns 0 while the chain
+        // has blueprints), fall through to chain-reads so the user
+        // doesn't see an empty catalog despite there being live data.
+        if (blueprints.length > 0) {
+          return blueprints;
+        }
+      } catch (err) {
+        // Indexer endpoint missing or unreachable — log once and
+        // fall through to the chain-read fallback below. We don't
+        // re-throw because the on-chain path is the explicit recovery
+        // strategy, not an error to surface to the user.
+        console.warn(
+          `[useBlueprints] Envio indexer fetch failed (${resolvedNetwork}); ` +
+            'falling back to direct chain reads.',
+          err,
+        );
+      }
+
+      // Fallback: read blueprints straight off the Tangle contract.
+      // Bounded by `limit`, defaults to 100 — fine for the testnet
+      // scale of a few dozen entries.
+      if (!publicClient || !activeChainId) {
+        return [];
+      }
+      return fetchBlueprintsOnChain(publicClient, activeChainId, {
         limit,
-        0,
-      );
-      return blueprints;
+        activeOnly,
+      });
     },
     enabled,
     staleTime: 60_000,
@@ -374,6 +439,7 @@ export const useBlueprintsWithMetadata = (options?: {
     limit = 100,
   } = options ?? {};
   const { activeChainId, resolvedNetwork } = useResolvedEnvioNetwork(network);
+  const publicClient = usePublicClient({ chainId: activeChainId });
 
   return useQuery({
     queryKey: [
@@ -385,12 +451,32 @@ export const useBlueprintsWithMetadata = (options?: {
       limit,
     ],
     queryFn: async () => {
-      const blueprints = await fetchBlueprints(
-        resolvedNetwork,
-        activeOnly,
-        limit,
-        0,
-      );
+      // Mirror the indexer → chain-read fallback strategy from
+      // `useBlueprints`. Without it, the home page's "Registered
+      // Blueprints" section renders empty whenever the Envio indexer
+      // isn't configured for the active network (e.g. testnet today),
+      // even though the chain has live entries.
+      let blueprints: Blueprint[] = [];
+      try {
+        blueprints = await fetchBlueprints(
+          resolvedNetwork,
+          activeOnly,
+          limit,
+          0,
+        );
+      } catch (err) {
+        console.warn(
+          `[useBlueprintsWithMetadata] Envio indexer fetch failed (${resolvedNetwork}); ` +
+            'falling back to direct chain reads.',
+          err,
+        );
+      }
+      if (blueprints.length === 0 && publicClient && activeChainId) {
+        blueprints = await fetchBlueprintsOnChain(publicClient, activeChainId, {
+          limit,
+          activeOnly,
+        });
+      }
 
       return Promise.all(
         blueprints.map(async (bp): Promise<BlueprintWithMetadata> => {
@@ -459,6 +545,7 @@ export const useBlueprint = (
 ) => {
   const { network, enabled = true } = options ?? {};
   const { activeChainId, resolvedNetwork } = useResolvedEnvioNetwork(network);
+  const publicClient = usePublicClient({ chainId: activeChainId });
 
   return useQuery({
     queryKey: [
@@ -471,7 +558,33 @@ export const useBlueprint = (
     queryFn: async () => {
       if (!blueprintId) return null;
 
-      const blueprint = await fetchBlueprintById(blueprintId, resolvedNetwork);
+      // Mirror the indexer → chain-read fallback strategy from `useBlueprints`.
+      // Without it, /blueprints/:id 404s on every network where the Envio
+      // indexer isn't configured (testnets today), even though the chain has
+      // the entry — list path falls back to chain-reads, but detail path
+      // returned null and the page navigated to NOT_FOUND.
+      let blueprint: Blueprint | null = null;
+      try {
+        blueprint = await fetchBlueprintById(blueprintId, resolvedNetwork);
+      } catch (err) {
+        console.warn(
+          `[useBlueprint] Envio indexer fetch failed (${resolvedNetwork}); ` +
+            'falling back to direct chain reads.',
+          err,
+        );
+      }
+      if (
+        !blueprint &&
+        publicClient &&
+        activeChainId &&
+        /^\d+$/.test(blueprintId)
+      ) {
+        blueprint = await fetchBlueprintByIdOnChain(
+          publicClient,
+          activeChainId,
+          BigInt(blueprintId),
+        );
+      }
       if (!blueprint) return null;
 
       const metadata = await fetchBlueprintMetadata({
@@ -558,7 +671,17 @@ const fetchBlueprintOperators = async (
       instanceCount: 0,
     }));
   } catch (error) {
-    console.error('Failed to fetch blueprint operators:', error);
+    // Operator enumeration is GraphQL-only today (no chain-read fallback for
+    // the OperatorBlueprint join). On networks without a configured Envio
+    // endpoint the query throws here; that's recoverable — we return an
+    // empty list and the dapp renders an empty-state. Log at debug rather
+    // than error so the console stays clean for users in normal browsing.
+    if (typeof console !== 'undefined' && console.debug) {
+      console.debug(
+        '[fetchBlueprintOperators] returning empty list — Envio fetch unavailable:',
+        error instanceof Error ? error.message : error,
+      );
+    }
     return [];
   }
 };
@@ -572,6 +695,7 @@ export const useBlueprintDetails = (
 ) => {
   const { network, enabled = true } = options ?? {};
   const { activeChainId, resolvedNetwork } = useResolvedEnvioNetwork(network);
+  const publicClient = usePublicClient({ chainId: activeChainId });
 
   const { data, isLoading, error, refetch } = useQuery({
     queryKey: [
@@ -585,7 +709,23 @@ export const useBlueprintDetails = (
       if (blueprintId === undefined) return null;
 
       const idString = blueprintId.toString();
-      const blueprint = await fetchBlueprintById(idString, resolvedNetwork);
+      let blueprint: Blueprint | null = null;
+      try {
+        blueprint = await fetchBlueprintById(idString, resolvedNetwork);
+      } catch (err) {
+        console.warn(
+          `[useBlueprintDetails] Envio indexer fetch failed (${resolvedNetwork}); ` +
+            'falling back to direct chain reads.',
+          err,
+        );
+      }
+      if (!blueprint && publicClient && activeChainId) {
+        blueprint = await fetchBlueprintByIdOnChain(
+          publicClient,
+          activeChainId,
+          blueprintId,
+        );
+      }
       if (!blueprint) return null;
 
       const [metadata, operators] = await Promise.all([

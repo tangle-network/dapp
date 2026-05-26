@@ -1,9 +1,5 @@
 import { RowSelectionState } from '@tanstack/table-core';
-import {
-  Button,
-  Card,
-  CardContent,
-} from '@tangle-network/sandbox-ui/primitives';
+import { Button } from '@tangle-network/sandbox-ui/primitives';
 import {
   useAllBlueprints,
   useBlueprintsByOwner,
@@ -19,6 +15,7 @@ import { PagePath } from '../../types';
 import pollWithBackoff from '../../utils/pollWithBackoff';
 import BlueprintListing from './BlueprintListing';
 import RegistrationDrawer from './RegistrationDrawer';
+import { PageHeader } from '../../components/chrome';
 
 const BLUEPRINT_DOCS_LINK =
   'https://docs.tangle.tools/developers/blueprints/introduction';
@@ -28,16 +25,7 @@ const ROLE_TITLE = {
   [Role.DEPLOYER]: 'Blueprints',
 } satisfies Record<Role, string>;
 
-const ROLE_DESCRIPTION = {
-  [Role.OPERATOR]:
-    'Find blueprints, create service instances, or register operator capacity.',
-  [Role.DEPLOYER]:
-    'Find blueprints, create service instances, or register operator capacity.',
-} satisfies Record<Role, string>;
-
 const HAS_BLUEPRINTS_TITLE = 'Blueprints';
-const HAS_BLUEPRINTS_DESCRIPTION =
-  'Find blueprints, create service instances, or register operator capacity.';
 
 const pluralize = (label: string, count: number) =>
   count === 1 ? label : `${label}s`;
@@ -166,84 +154,42 @@ const Page: FC = () => {
     });
   }, []);
 
+  const title = hasOwnedBlueprints ? HAS_BLUEPRINTS_TITLE : ROLE_TITLE[role];
+  // No subtitle on a catalog page — the visible content IS the subtitle.
+  // Adding "Find blueprints, create service instances, ..." steals 24px of
+  // vertical space for copy the operator already knows by being on this
+  // page. Catalog tier = title + toolbar + grid, nothing else above content.
+  // Catalog-wide stats (total, ready, needs-capacity, your-registrations)
+  // belong on the home dashboard, not above a search bar.
+
   return (
-    <div className="space-y-6">
-      <Card
-        variant="sandbox"
-        className="cloud-hero-card cloud-compact-header overflow-hidden border-border bg-card shadow-[var(--shadow-card)]"
-      >
-        <CardContent className="relative p-4 md:p-5">
-          <div className="pointer-events-none absolute inset-0 opacity-70 [background:radial-gradient(circle_at_12%_8%,rgba(99,102,241,0.22),transparent_32%),radial-gradient(circle_at_86%_12%,rgba(16,185,129,0.12),transparent_28%)]" />
-
-          <div className="relative grid gap-5 xl:grid-cols-[minmax(0,1fr)_420px] xl:items-center">
-            <div>
-              <h1 className="max-w-4xl font-display font-extrabold text-3xl text-foreground leading-[1.05] tracking-[-0.035em] sm:text-4xl">
-                {hasOwnedBlueprints ? HAS_BLUEPRINTS_TITLE : ROLE_TITLE[role]}
-              </h1>
-
-              <p className="mt-3 max-w-2xl text-muted-foreground text-sm leading-relaxed">
-                {hasOwnedBlueprints
-                  ? HAS_BLUEPRINTS_DESCRIPTION
-                  : ROLE_DESCRIPTION[role]}
-              </p>
-
-              <div className="mt-4 grid gap-2 sm:grid-cols-3">
-                <HeroRolePill
-                  label="Customers"
-                  value="Create instances"
-                  detail="Choose a blueprint with operators."
-                />
-                <HeroRolePill
-                  label="Operators"
-                  value="Register capacity"
-                  detail="Supply operators for blueprints."
-                />
-                <HeroRolePill
-                  label="Developers"
-                  value="Publish blueprints"
-                  detail="Expose source and metadata."
-                />
-              </div>
-            </div>
-
-            <div className="grid gap-3 rounded-lg border border-border bg-muted/15 p-3 shadow-[var(--shadow-card)] sm:grid-cols-[1fr_auto] sm:items-center xl:grid-cols-1">
-              <div className="grid grid-cols-3 gap-2">
-                <HeroMetric label="Catalog" value={blueprints.size} />
-                <HeroMetric
-                  label="Owned"
-                  value={ownedBlueprints?.length ?? 0}
-                />
-                <HeroMetric
-                  label="Role"
-                  value={role === Role.OPERATOR ? 'Operator' : 'Deployer'}
-                />
-              </div>
-
-              <div className="flex flex-col gap-2 sm:flex-row xl:flex-col">
-                <Button variant="outline" asChild className="flex-1">
-                  <a
-                    href={
-                      hasOwnedBlueprints
-                        ? PagePath.BLUEPRINTS_MANAGE
-                        : BLUEPRINT_DOCS_LINK
-                    }
-                    target={hasOwnedBlueprints ? undefined : '_blank'}
-                    rel={hasOwnedBlueprints ? undefined : 'noreferrer'}
-                  >
-                    {hasOwnedBlueprints
-                      ? 'Manage blueprints'
-                      : 'Publish blueprint'}
-                  </a>
-                </Button>
-
-                <Button variant="ghost" asChild className="flex-1">
-                  <Link to={PagePath.OPERATORS}>Browse operators</Link>
-                </Button>
-              </div>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
+    <div className="space-y-4">
+      <PageHeader
+        density="compact"
+        title={title}
+        action={
+          <>
+            {hasOwnedBlueprints && (
+              <Button asChild variant="ghost" size="sm">
+                <Link to={PagePath.OPERATORS}>Operators</Link>
+              </Button>
+            )}
+            <Button variant="sandbox" asChild size="sm">
+              <a
+                href={
+                  hasOwnedBlueprints
+                    ? PagePath.BLUEPRINTS_MANAGE
+                    : BLUEPRINT_DOCS_LINK
+                }
+                target={hasOwnedBlueprints ? undefined : '_blank'}
+                rel={hasOwnedBlueprints ? undefined : 'noreferrer'}
+              >
+                {hasOwnedBlueprints ? 'Manage blueprints' : 'Publish blueprint'}
+              </a>
+            </Button>
+          </>
+        }
+      />
 
       <BlueprintListing
         blueprints={blueprints}
@@ -301,40 +247,3 @@ const Page: FC = () => {
 };
 
 export default Page;
-
-const HeroMetric = ({
-  label,
-  value,
-}: {
-  label: string;
-  value: number | string;
-}) => (
-  <div className="rounded-md border border-border bg-card/70 p-2.5">
-    <p className="font-medium text-muted-foreground text-[10px] uppercase tracking-wider">
-      {label}
-    </p>
-    <p className="mt-0.5 font-display font-extrabold text-foreground text-base">
-      {value}
-    </p>
-  </div>
-);
-
-const HeroRolePill = ({
-  label,
-  value,
-  detail,
-}: {
-  label: string;
-  value: string;
-  detail: string;
-}) => (
-  <div className="rounded-lg border border-border bg-muted/20 p-3">
-    <p className="font-semibold text-muted-foreground text-[10px] uppercase tracking-wider">
-      {label}
-    </p>
-    <p className="mt-1 font-display font-bold text-foreground text-sm">
-      {value}
-    </p>
-    <p className="mt-1 text-muted-foreground text-xs leading-snug">{detail}</p>
-  </div>
-);

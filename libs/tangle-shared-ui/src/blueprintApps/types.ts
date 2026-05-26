@@ -29,15 +29,40 @@ export type BlueprintMetadataAttestation = {
 
 export type BlueprintMetadataVerificationStatus =
   | 'verified'
+  | 'verified-uri'
   | 'unverified'
   | 'invalid';
+
+/**
+ * `attestationMode` makes the trust gradient explicit:
+ *  - 'attestation': owner signed the canonical JSON payload hash. Full trust.
+ *  - 'uri-only':    on-chain `metadataHash` matches keccak256(metadataUri).
+ *                   The URI is committed, but the JSON content is fetched
+ *                   off-chain and could change at the host (github raw, etc).
+ *                   Enough to render the declarative tier-2 surface; not
+ *                   enough to unlock iframe (`externalApp`) embedding.
+ *  - 'none':        no integrity binding on-chain. Generic fallback only.
+ */
+export type BlueprintMetadataAttestationMode =
+  | 'attestation'
+  | 'uri-only'
+  | 'none';
 
 export type BlueprintMetadataVerification = {
   status: BlueprintMetadataVerificationStatus;
   productionReady: boolean;
-  source: 'ipfs' | 'http' | 'missing';
+  /**
+   * Where the metadata is hosted:
+   *   - 'ipfs': `ipfs://<cid>` — content-addressed, immutable.
+   *   - 'ar':   `ar://<txid>` — Arweave permanent storage, content-addressed.
+   *   - 'data': `data:application/json,…` — inline. Trivially content-addressed.
+   *   - 'http': any `https://` URL — mutable at host.
+   *   - 'missing': metadataUri unset on-chain.
+   */
+  source: 'ipfs' | 'ar' | 'data' | 'http' | 'missing';
   signer?: string;
   payloadHash?: `0x${string}`;
+  attestationMode?: BlueprintMetadataAttestationMode;
   reason: string;
 };
 
@@ -174,6 +199,31 @@ export type BlueprintUiModuleBinding = {
   eventKinds?: string[];
 };
 
+/**
+ * One on-chain operational mode of a blueprint that otherwise shares its
+ * `(publisher.namespace, requestedSlug)` identity with sibling modes. The
+ * catalog collapses by identity so the wall doesn't show N near-identical
+ * cards; the detail page renders a picker; the iframe receives the picked
+ * mode through `?mode=<id>&blueprintId=<id>` so the embedded app can
+ * dispatch on it without a separate URL per mode.
+ *
+ * `blueprintId` is stored as `number` for ergonomics — modes are declared by
+ * the publisher and stay small. The dapp coerces to `bigint` at the routing
+ * boundary where it joins indexer-derived ids.
+ */
+export type BlueprintMode = {
+  /** Stable identifier passed to the iframe as `?mode=<id>`. */
+  id: string;
+  /** Short label shown in the mode picker chips. */
+  label: string;
+  /** One-line description rendered next to the label. */
+  description?: string;
+  /** On-chain blueprint ID for this mode. */
+  blueprintId: number;
+  /** Optional ribbon / badge for this mode card (e.g. 'Recommended', 'Premium'). */
+  tagline?: string;
+};
+
 export type BlueprintUiContract = {
   displayName: string;
   description: string;
@@ -183,11 +233,36 @@ export type BlueprintUiContract = {
   resources: BlueprintUiResources;
   surfaces: BlueprintUiSurface[];
   theme?: BlueprintUiTheme;
+  /**
+   * Optional publisher-declared category labels. The dapp catalog uses
+   * `tags[0]` as the primary category chip and surfaces the rest in
+   * filter facets. Empty / absent → fall back to `Blueprint.category`
+   * (chain-derived) and finally to keyword inference.
+   *
+   * Multi-tag is supported because a blueprint can legitimately belong
+   * to several taxonomies at once ("Inference" + "Onchain" + "TEE").
+   * Tags are normalized to title-case on consume; raw strings are
+   * accepted to keep the publisher schema lenient.
+   */
+  tags?: readonly string[];
   overviewCards?: BlueprintUiOverviewCard[];
   actions?: BlueprintUiAction[];
   resourceViews?: BlueprintUiResourceView[];
   modules?: BlueprintUiModuleBinding[];
   externalApp?: BlueprintUiExternalApp;
+  /**
+   * When multiple on-chain blueprints share a `(publisher, requestedSlug)`
+   * identity (e.g. the same product deployed with different operator
+   * selection / isolation / attestation requirements), declare each one
+   * as a mode. The catalog dedupes by identity and shows ONE entry; the
+   * detail page renders a mode picker. The mode the operator selects
+   * is passed to the iframe via `?mode=<id>&blueprintId=<id>` so the
+   * iframe app can dispatch on it.
+   *
+   * Absent → single-mode blueprint, no picker, default routing.
+   * Present → catalog collapses; detail picker shows.
+   */
+  modes?: BlueprintMode[];
   tier: BlueprintUiTier;
 };
 

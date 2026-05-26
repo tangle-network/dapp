@@ -24,6 +24,7 @@ import {
   TableHeader,
   TableRow,
 } from '@tangle-network/sandbox-ui/primitives';
+import { PageHeader } from '../../components/chrome';
 import {
   ExternalLinkLine,
   FileCopyLine,
@@ -415,7 +416,18 @@ const RewardsPage: FC = () => {
               <Skeleton className="h-16 rounded-md" />
             </div>
           ) : rewardHistoryError ? (
-            <ErrorMessage>Could not load claim history.</ErrorMessage>
+            // Render an empty-state instead of a red error when the
+            // indexer is simply absent (e.g. `testnet` env with no
+            // VITE_ENVIO_TESTNET_ENDPOINT configured). The original
+            // `<ErrorMessage>` here surfaced an alarming
+            // "Could not load claim history" banner on every page
+            // load — that's the UX equivalent of a 500, but the
+            // actual cause is "no historical data source", which is
+            // a legitimate empty state.
+            <EmptyState
+              title="Claim history unavailable on this network"
+              description="The indexed history endpoint is not configured for this network. Past reward claims will appear here once the indexer is online."
+            />
           ) : rewardHistory?.length ? (
             <RewardClaimsTable
               entries={rewardHistory}
@@ -515,23 +527,11 @@ const PendingRewardsTable: FC<PendingRewardsTableProps> = ({
 };
 
 const RewardsHero = () => (
-  <Card
-    variant="sandbox"
-    className="cloud-hero-card cloud-compact-header overflow-hidden border-border bg-card shadow-[var(--shadow-card)]"
-  >
-    <CardContent className="relative p-4 md:p-5">
-      <div className="pointer-events-none absolute inset-0 opacity-70 [background:radial-gradient(circle_at_12%_8%,rgba(99,102,241,0.18),transparent_32%),radial-gradient(circle_at_86%_12%,rgba(16,185,129,0.10),transparent_28%)]" />
-      <div className="relative">
-        <h1 className="font-display font-extrabold text-3xl text-foreground leading-[1.05] tracking-[-0.035em] sm:text-4xl">
-          Rewards
-        </h1>
-        <p className="mt-3 max-w-2xl text-muted-foreground text-sm leading-relaxed">
-          Pending balances come from contract state; claim history comes from
-          indexed on-chain events.
-        </p>
-      </div>
-    </CardContent>
-  </Card>
+  <PageHeader
+    density="compact"
+    title="Rewards"
+    subtitle="Pending balances come from contract state; claim history comes from indexed on-chain events."
+  />
 );
 
 const PendingAssetCell: FC<{ token: Address; addressExplorerUrl?: string }> = ({

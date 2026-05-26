@@ -1,11 +1,49 @@
 import { resolveBlueprintAppView } from './resolver';
 import type { BlueprintAppEntry } from './types';
+import type { BlueprintIframeConfig } from './iframe/types';
+
+/**
+ * Identity that the curated registry matches against the blueprint's parsed
+ * metadata (`blueprintUi.publisher.namespace` + `blueprintUi.requestedSlug`).
+ *
+ * All non-empty fields must match for a curated entry to claim a blueprint;
+ * unset fields are treated as wildcards. This survives redeploys, multi-chain
+ * deployments, and re-registration cycles — the dapp no longer needs to know
+ * the on-chain blueprintId of a curated app, only the identity the publisher
+ * declared in metadata.
+ */
+type CuratedBlueprintMatcher = {
+  publisherNamespace?: string;
+  requestedSlug?: string;
+};
+
+/**
+ * Curated entries may carry an `iframe` block to embed the publisher's hosted
+ * app (e.g. trading-arena.blueprint.tangle.tools). The block mirrors what the
+ * metadata-driven parser produces for declarative blueprints — same shape, same
+ * downstream consumers (`BlueprintAppLandingPage`, `BlueprintAppFrameHost`) —
+ * so curated and metadata paths share the iframe surface without bespoke code.
+ *
+ * Curated iframe entries skip the on-chain `metadataVerification` gate (the
+ * dapp itself is the source of truth for first-party apps) but the runtime
+ * still enforces the manifest host suffix allowlist and the iframe sandbox
+ * policy in `iframe/policy.ts`. Set `manifest.externalApp` in tandem so the
+ * landing page's existing iframe gate (`mode === 'iframe'` && `trust ===
+ * 'trusted'`) trips correctly.
+ */
+type CuratedRegistryEntry = BlueprintAppEntry & {
+  match?: CuratedBlueprintMatcher;
+  iframe?: BlueprintIframeConfig;
+};
 
 const entries = [
   {
     slug: 'trading',
     canonicalSlug: 'trading',
-    blueprintId: 1n,
+    match: {
+      publisherNamespace: 'tangle',
+      requestedSlug: 'ai-trading',
+    },
     publisher: {
       label: 'Tangle Labs',
       visibility: 'first-party',
@@ -50,11 +88,41 @@ const entries = [
           scope: 'resource',
         },
       ],
+      // First-party external app handoff. The host suffix is already on the
+      // iframe policy allowlist (.blueprint.tangle.tools), and curated entries
+      // are trusted-by-default — no on-chain metadata attestation needed.
+      externalApp: {
+        url: 'https://trading-arena.blueprint.tangle.tools/',
+        mode: 'iframe',
+        host: 'trading-arena.blueprint.tangle.tools',
+        trust: 'trusted',
+        label: 'AI Trading',
+      },
+    },
+    // Iframe runtime policy. Empty allowedChainIds / contracts on purpose:
+    // the trading-arena UI doesn't issue tangle.app.signTransaction yet, so
+    // we don't grant transaction surface. allowReadAccount surfaces the
+    // connected wallet to the iframe for read-only views (positions,
+    // balances) without unlocking signing.
+    iframe: {
+      url: 'https://trading-arena.blueprint.tangle.tools/',
+      origin: 'https://trading-arena.blueprint.tangle.tools',
+      appId: 'trading-arena',
+      allowedChainIds: [],
+      contracts: [],
+      messages: [],
+      allowReadAccount: true,
+      allowChainSwitch: false,
+      allowPopups: false,
     },
   },
   {
     slug: 'sandbox',
     canonicalSlug: 'sandbox',
+    match: {
+      publisherNamespace: 'tangle',
+      requestedSlug: 'ai-agent-sandbox',
+    },
     publisher: {
       label: 'Tangle Labs',
       visibility: 'first-party',
@@ -62,9 +130,14 @@ const entries = [
     },
     tier: 'curated-module',
     slugPolicy: 'reserved',
+    // Sandbox is iframe-driven (agent-sandbox.blueprint.tangle.tools) — the
+    // dapp used to ship a bespoke React module here; we deleted it in favor
+    // of the iframe path so all per-blueprint customization lands in the
+    // publisher's hosted app (or, increasingly, in declarative metadata that
+    // the procedural landing component consumes).
     module: {
       moduleId: 'sandbox',
-      status: 'active',
+      status: 'planned',
     },
     manifest: {
       displayName: 'AI Agent Sandbox',
@@ -92,11 +165,33 @@ const entries = [
           scope: 'resource',
         },
       ],
+      externalApp: {
+        url: 'https://agent-sandbox.blueprint.tangle.tools/',
+        mode: 'iframe',
+        host: 'agent-sandbox.blueprint.tangle.tools',
+        trust: 'trusted',
+        label: 'AI Agent Sandbox',
+      },
+    },
+    iframe: {
+      url: 'https://agent-sandbox.blueprint.tangle.tools/',
+      origin: 'https://agent-sandbox.blueprint.tangle.tools',
+      appId: 'agent-sandbox',
+      allowedChainIds: [],
+      contracts: [],
+      messages: [],
+      allowReadAccount: true,
+      allowChainSwitch: false,
+      allowPopups: false,
     },
   },
   {
     slug: 'training',
     canonicalSlug: 'training',
+    match: {
+      publisherNamespace: 'tangle',
+      requestedSlug: 'distributed-training',
+    },
     publisher: {
       label: 'Tangle Labs',
       visibility: 'first-party',
@@ -141,7 +236,76 @@ const entries = [
       ],
     },
   },
-] satisfies BlueprintAppEntry[];
+  {
+    slug: 'llm-inference',
+    canonicalSlug: 'llm-inference',
+    match: {
+      publisherNamespace: 'tangle',
+      requestedSlug: 'llm-inference',
+    },
+    publisher: {
+      label: 'Tangle Labs',
+      visibility: 'first-party',
+      verification: 'first-party',
+    },
+    tier: 'curated-module',
+    slugPolicy: 'reserved',
+    module: {
+      moduleId: 'llm-inference',
+      status: 'planned',
+    },
+    manifest: {
+      displayName: 'LLM Inference',
+      tagline: 'Anonymous, pay-per-use LLM inference from Tangle operators.',
+      description:
+        'Chat with vLLM-backed operator models, paying via shielded credits. Deposit once; each request is authorized off-chain by an ephemeral key, so the operator never learns who you are.',
+      surfaces: [
+        'generic-overview',
+        'service-explorer',
+        'service-console',
+        'chat',
+        'permissions',
+      ],
+      resources: {
+        serviceNoun: 'inference service',
+        resourceNoun: 'model',
+        resourceRoute: 'custom',
+      },
+      permissions: [
+        {
+          key: 'credits.fund',
+          label: 'Fund shielded credits',
+          scope: 'service',
+        },
+      ],
+      externalApp: {
+        url: 'https://llm-inference.blueprint.tangle.tools/',
+        mode: 'iframe',
+        host: 'llm-inference.blueprint.tangle.tools',
+        trust: 'trusted',
+        label: 'LLM Inference',
+      },
+    },
+    // Read surface only for now: the iframe inherits the connected wallet and
+    // self-configures from the operator's /v1/operator (model, pricing,
+    // shielded_credits, chain_id). Funding deposits (approve + fundCredits)
+    // need `sendTransaction` allowlisted against the live develop
+    // ShieldedCredits + payment-token addresses — added once the develop
+    // operator + gateway are deployed (the spending-key SpendAuths are signed
+    // inside the iframe and never touch the bridge).
+    iframe: {
+      url: 'https://llm-inference.blueprint.tangle.tools/',
+      origin: 'https://llm-inference.blueprint.tangle.tools',
+      appId: 'llm-inference',
+      allowedChainIds: [],
+      contracts: [],
+      messages: [],
+      allowReadAccount: true,
+      allowChainSwitch: false,
+      allowPopups: false,
+    },
+  },
+] satisfies CuratedRegistryEntry[];
 
 export const blueprintAppRegistry = new Map(
   entries.map((entry) => [entry.slug, entry]),
@@ -195,15 +359,39 @@ export function getBlueprintAppByCanonicalSlug(
   );
 }
 
-export function getBlueprintAppByBlueprintId(
-  blueprintId: bigint,
-): BlueprintAppEntry | null {
-  for (const entry of blueprintAppEntries) {
-    if (entry.blueprintId === blueprintId) {
-      return entry;
+/**
+ * Resolve a curated app entry from the blueprint's parsed metadata identity.
+ * Walks the registry returning the first entry whose `match` clause aligns
+ * with `(publisherNamespace, requestedSlug)`. Match fields are checked
+ * case-insensitively; absent matcher fields are wildcards. Returns null when
+ * no entry claims this blueprint (typical case — most blueprints render via
+ * the generic + declarative path).
+ *
+ * Matching on declared identity (not chain id) means re-registering a
+ * curated app on a new chain or after a redeploy doesn't break dapp
+ * routing: as long as the blueprint's metadata still declares the same
+ * `publisher.namespace` + `requestedSlug`, the curated module renders.
+ */
+export function getBlueprintAppForMetadata(identity: {
+  publisherNamespace?: string | null;
+  requestedSlug?: string | null;
+}): BlueprintAppEntry | null {
+  const namespace = identity.publisherNamespace?.toLowerCase() ?? '';
+  const slug = identity.requestedSlug?.toLowerCase() ?? '';
+  for (const entry of entries) {
+    const m = entry.match;
+    if (!m) continue;
+    if (
+      m.publisherNamespace &&
+      m.publisherNamespace.toLowerCase() !== namespace
+    ) {
+      continue;
     }
+    if (m.requestedSlug && m.requestedSlug.toLowerCase() !== slug) {
+      continue;
+    }
+    return entry;
   }
-
   return null;
 }
 

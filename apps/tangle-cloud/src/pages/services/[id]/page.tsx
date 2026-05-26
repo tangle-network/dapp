@@ -52,6 +52,8 @@ import OperatorMembershipPanel from './OperatorMembershipPanel';
 import OperatorExitPanel from './OperatorExitPanel';
 import { PagePath } from '../../../types';
 import BlueprintHostCard from '../../../components/blueprintApps/BlueprintHostCard';
+import ServiceUpgradePanel from '../../../components/binaryUpgrade/ServiceUpgradePanel';
+import ServiceUpgradeBadge from '../../../components/binaryUpgrade/ServiceUpgradeBadge';
 
 const EMPTY_VALUE_PLACEHOLDER = '-';
 const CARD_SURFACE = 'sandbox' as const;
@@ -488,13 +490,21 @@ const ServiceDetailPage: FC = () => {
         >
           <ArrowLeft className="w-5 h-5" />
         </Button>
-        <div>
-          <Text variant="h4" fw="bold">
-            Service #{serviceId.toString()}
-          </Text>
-          <Text variant="body2" className="text-muted-foreground">
-            {blueprintResult?.details.name ?? 'Loading...'}
-          </Text>
+        <div className="flex flex-1 items-center gap-3">
+          <div>
+            <Text variant="h4" fw="bold">
+              Service #{serviceId.toString()}
+            </Text>
+            <Text variant="body2" className="text-muted-foreground">
+              {blueprintResult?.details.name ?? 'Loading...'}
+            </Text>
+          </div>
+          {service.blueprintId !== undefined && (
+            <ServiceUpgradeBadge
+              serviceId={serviceId}
+              blueprintId={BigInt(service.blueprintId)}
+            />
+          )}
         </div>
       </div>
 
@@ -577,6 +587,14 @@ const ServiceDetailPage: FC = () => {
         }
         onFundClick={() => setIsFundModalOpen(true)}
       />
+
+      {/* Binary Upgrade Control */}
+      {service.blueprintId !== undefined && (
+        <ServiceUpgradePanel
+          serviceId={serviceId}
+          blueprintId={BigInt(service.blueprintId)}
+        />
+      )}
 
       {/* Permitted Callers Management */}
       <Card variant={CARD_SURFACE} className="p-6 space-y-4">

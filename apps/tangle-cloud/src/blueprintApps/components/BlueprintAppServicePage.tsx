@@ -88,10 +88,13 @@ const BlueprintAppServicePage: FC<Props> = ({
   const resourceNoun = view.manifest.resources.resourceNoun;
 
   return (
-    <div data-sandbox-ui className="space-y-6">
+    // See BlueprintAppLandingPage: don't re-declare `data-sandbox-ui` on an
+    // inner wrapper or sandbox-ui will reset every token under this subtree
+    // and the current theme (vault/tangle) on the shell stops applying.
+    <div className="space-y-6">
       <Card variant="sandbox" className="overflow-hidden rounded-[32px]">
         <CardContent className="relative p-6 md:p-8">
-          <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white/35 to-transparent" />
+          <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-[color:var(--border-accent-hover)] to-transparent" />
           <div className="absolute -right-16 -top-20 h-56 w-56 rounded-full bg-[var(--brand-purple)]/20 blur-3xl" />
 
           <div className="relative max-w-4xl space-y-5">
@@ -100,10 +103,10 @@ const BlueprintAppServicePage: FC<Props> = ({
             </Badge>
 
             <div className="space-y-3">
-              <h1 className="font-display text-4xl font-extrabold leading-tight tracking-[-0.04em] text-white md:text-5xl">
+              <h1 className="font-display text-4xl font-extrabold leading-tight tracking-[-0.04em] text-foreground md:text-5xl">
                 {view.manifest.displayName} service #{serviceId}
               </h1>
-              <p className="max-w-3xl text-base leading-7 text-white/70">
+              <p className="max-w-3xl text-base leading-7 text-muted-foreground">
                 Manage this live {serviceNoun.toLowerCase()}: check access,
                 inspect callable jobs, review recent activity, and open the full
                 service console when you need to operate the instance.
@@ -164,47 +167,47 @@ const BlueprintAppServicePage: FC<Props> = ({
           {liveDetails && (
             <Card variant="sandbox" className="rounded-3xl">
               <CardContent className="p-6">
-                <h2 className="font-display text-2xl font-extrabold tracking-tight text-white">
+                <h2 className="font-display text-2xl font-extrabold tracking-tight text-foreground">
                   Live service access
                 </h2>
                 <div className="mt-4 grid gap-3 sm:grid-cols-2">
                   <div>
-                    <p className="text-xs font-bold uppercase tracking-widest text-white/42">
+                    <p className="text-xs font-bold uppercase tracking-widest text-muted-foreground">
                       Status
                     </p>
-                    <p className="mt-1 text-sm font-semibold text-white">
+                    <p className="mt-1 text-sm font-semibold text-foreground">
                       {liveDetails.status}
                     </p>
                   </div>
                   <div>
-                    <p className="text-xs font-bold uppercase tracking-widest text-white/42">
+                    <p className="text-xs font-bold uppercase tracking-widest text-muted-foreground">
                       Owner
                     </p>
-                    <p className="mt-1 break-all text-sm font-semibold text-white">
+                    <p className="mt-1 break-all text-sm font-semibold text-foreground">
                       {liveDetails.owner}
                     </p>
                   </div>
                   <div>
-                    <p className="text-xs font-bold uppercase tracking-widest text-white/42">
+                    <p className="text-xs font-bold uppercase tracking-widest text-muted-foreground">
                       Operators
                     </p>
-                    <p className="mt-1 text-sm font-semibold text-white">
+                    <p className="mt-1 text-sm font-semibold text-foreground">
                       {liveDetails.operators.length}
                     </p>
                   </div>
                   <div>
-                    <p className="text-xs font-bold uppercase tracking-widest text-white/42">
+                    <p className="text-xs font-bold uppercase tracking-widest text-muted-foreground">
                       Permitted callers
                     </p>
-                    <p className="mt-1 text-sm font-semibold text-white">
+                    <p className="mt-1 text-sm font-semibold text-foreground">
                       {liveDetails.permittedCallers.length}
                     </p>
                   </div>
                   <div className="sm:col-span-2">
-                    <p className="text-xs font-bold uppercase tracking-widest text-white/42">
+                    <p className="text-xs font-bold uppercase tracking-widest text-muted-foreground">
                       Connected wallet access
                     </p>
-                    <p className="mt-1 text-sm font-semibold capitalize text-white">
+                    <p className="mt-1 text-sm font-semibold capitalize text-foreground">
                       {liveDetails.viewerAccess ?? 'public'}
                     </p>
                   </div>
@@ -216,16 +219,16 @@ const BlueprintAppServicePage: FC<Props> = ({
           {requestSchemaFields && requestSchemaFields.length > 0 && (
             <Card variant="sandbox" className="rounded-3xl">
               <CardContent className="p-6">
-                <h2 className="font-display text-2xl font-extrabold tracking-tight text-white">
+                <h2 className="font-display text-2xl font-extrabold tracking-tight text-foreground">
                   Request schema
                 </h2>
                 <div className="mt-4 flex flex-col gap-2">
                   {requestSchemaFields.map((field) => (
                     <div
                       key={`${field.name}-${field.kind}-${field.arrayLength}`}
-                      className="rounded-xl border border-white/10 bg-white/[0.04] px-4 py-3"
+                      className="rounded-xl border border-border bg-[color:var(--bg-elevated)] px-4 py-3"
                     >
-                      <p className="text-sm font-semibold text-white">
+                      <p className="text-sm font-semibold text-foreground">
                         {formatSchemaField(field)}
                       </p>
                     </div>
@@ -242,10 +245,10 @@ const BlueprintAppServicePage: FC<Props> = ({
           <CardContent className="p-6">
             <div className="flex items-center justify-between gap-3">
               <div>
-                <h2 className="font-display text-2xl font-extrabold tracking-tight text-white">
+                <h2 className="font-display text-2xl font-extrabold tracking-tight text-foreground">
                   Supported actions
                 </h2>
-                <p className="mt-2 max-w-2xl text-sm leading-6 text-white/62">
+                <p className="mt-2 max-w-2xl text-sm leading-6 text-muted-foreground">
                   Valid onchain jobs are callable from the service console. A
                   richer blueprint module can improve the form later, but the
                   service remains operable now.
@@ -259,21 +262,21 @@ const BlueprintAppServicePage: FC<Props> = ({
               {jobs.map((job, index) => (
                 <div
                   key={`${job.name}-${index}`}
-                  className="rounded-xl border border-white/10 bg-white/[0.04] p-4"
+                  className="rounded-xl border border-border bg-[color:var(--bg-elevated)] p-4"
                 >
-                  <h3 className="font-display text-lg font-bold text-white">
+                  <h3 className="font-display text-lg font-bold text-foreground">
                     {job.name || `Job #${index}`}
                   </h3>
-                  <p className="mt-2 text-sm leading-6 text-white/62">
+                  <p className="mt-2 text-sm leading-6 text-muted-foreground">
                     {job.description || 'No job description published.'}
                   </p>
                   <div className="mt-3 space-y-2">
-                    <p className="text-xs font-semibold text-white/50">
+                    <p className="text-xs font-semibold text-muted-foreground">
                       Params:{' '}
                       {job.hasParamsSchema ? job.parsedParamsSchema.length : 0}{' '}
                       fields
                     </p>
-                    <p className="text-xs font-semibold text-white/50">
+                    <p className="text-xs font-semibold text-muted-foreground">
                       Result:{' '}
                       {job.hasResultSchema ? job.parsedResultSchema.length : 0}{' '}
                       fields
@@ -291,10 +294,10 @@ const BlueprintAppServicePage: FC<Props> = ({
           <CardContent className="p-6">
             <div className="flex items-center justify-between gap-3">
               <div>
-                <h2 className="font-display text-2xl font-extrabold tracking-tight text-white">
+                <h2 className="font-display text-2xl font-extrabold tracking-tight text-foreground">
                   Recent service activity
                 </h2>
-                <p className="mt-2 max-w-2xl text-sm leading-6 text-white/62">
+                <p className="mt-2 max-w-2xl text-sm leading-6 text-muted-foreground">
                   Indexed job traffic gives generic blueprint pages enough
                   signal to show whether a service is idle or actively being
                   used.
@@ -308,19 +311,19 @@ const BlueprintAppServicePage: FC<Props> = ({
               {recentCalls.slice(0, 5).map((call) => (
                 <div
                   key={call.id}
-                  className="rounded-xl border border-white/10 bg-white/[0.04] px-4 py-3"
+                  className="rounded-xl border border-border bg-[color:var(--bg-elevated)] px-4 py-3"
                 >
                   <div className="flex flex-wrap items-center justify-between gap-3">
-                    <p className="text-sm font-semibold text-white">
+                    <p className="text-sm font-semibold text-foreground">
                       Job #{call.jobIndex} · Call {call.callId.toString()}
                     </p>
-                    <p className="text-xs font-semibold text-white/50">
+                    <p className="text-xs font-semibold text-muted-foreground">
                       {call.completed ? 'Completed' : 'Pending'} ·{' '}
                       {call.resultCount} result
                       {call.resultCount === 1 ? '' : 's'}
                     </p>
                   </div>
-                  <p className="mt-2 break-all text-xs font-semibold text-white/50">
+                  <p className="mt-2 break-all text-xs font-semibold text-muted-foreground">
                     Submitter: {call.submitter}
                   </p>
                 </div>
@@ -334,11 +337,14 @@ const BlueprintAppServicePage: FC<Props> = ({
 };
 
 const ServiceMetric = ({ label, value }: { label: string; value: string }) => (
-  <div className="rounded-xl border border-white/10 bg-white/[0.04] p-4">
-    <p className="text-xs font-bold uppercase tracking-widest text-white/42">
+  <div className="rounded-xl border border-border bg-[color:var(--bg-elevated)] p-4">
+    <p className="text-xs font-bold uppercase tracking-widest text-muted-foreground">
       {label}
     </p>
-    <p className="mt-2 truncate text-sm font-semibold text-white" title={value}>
+    <p
+      className="mt-2 truncate text-sm font-semibold text-foreground"
+      title={value}
+    >
       {value}
     </p>
   </div>
@@ -353,10 +359,10 @@ const ServiceCard = ({
 }) => (
   <Card variant="sandbox" className="rounded-3xl">
     <CardContent className="space-y-3 p-6">
-      <h2 className="font-display text-xl font-extrabold tracking-tight text-white">
+      <h2 className="font-display text-xl font-extrabold tracking-tight text-foreground">
         {title}
       </h2>
-      <p className="text-sm leading-6 text-white/62">{description}</p>
+      <p className="text-sm leading-6 text-muted-foreground">{description}</p>
     </CardContent>
   </Card>
 );

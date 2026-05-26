@@ -114,11 +114,8 @@ export const AccountStatsCard: FC<AccountStatsCardProps> = (props) => {
   if (!accountAddress) {
     return (
       <Card
-        variant="sandbox"
-        className={twMerge(
-          'w-full border-border bg-card shadow-[var(--shadow-card)]',
-          rootProps?.className,
-        )}
+        variant="elevated"
+        className={twMerge('w-full', rootProps?.className)}
       >
         <CardContent className="flex h-full flex-col gap-5 p-5 md:p-6">
           <div className="flex min-w-0 items-start gap-4">
@@ -151,13 +148,7 @@ export const AccountStatsCard: FC<AccountStatsCardProps> = (props) => {
   }
 
   return (
-    <Card
-      variant="sandbox"
-      className={twMerge(
-        'w-full border-border bg-card shadow-[var(--shadow-card)]',
-        rootProps?.className,
-      )}
-    >
+    <Card variant="sandbox" className={twMerge('w-full', rootProps?.className)}>
       <CardContent className="space-y-5 p-5 md:p-6">
         <div className="flex items-start justify-between gap-4">
           <div className="flex min-w-0 items-center gap-4">

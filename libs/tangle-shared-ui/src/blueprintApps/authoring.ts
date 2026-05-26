@@ -7,13 +7,12 @@ import {
   type Address,
   type Hex,
 } from 'viem';
-import {
-  isLocalPreviewHost,
-  rewriteLocalhostUrlForBrowser,
-} from '../utils/localPreview';
+import { isAllowedBlueprintMetadataUri } from './metadataUri';
 import type {
   BlueprintMetadataAttestation,
+  BlueprintMetadataAttestationMode,
   BlueprintMetadataVerification,
+  BlueprintMode,
   BlueprintResourceRoute,
   BlueprintUiAction,
   BlueprintUiActionField,
@@ -315,6 +314,27 @@ const normalizeExternalApp = (
   };
 };
 
+/**
+ * Tag length cap protects against publishers stuffing the field with prose;
+ * count cap prevents catalog-bombing a blueprint into every facet.
+ */
+const MAX_TAG_LENGTH = 40;
+const MAX_TAG_COUNT = 8;
+
+const parseTags = (value: unknown): readonly string[] | undefined => {
+  if (!Array.isArray(value)) return undefined;
+  const out: string[] = [];
+  for (const item of value) {
+    if (typeof item !== 'string') continue;
+    const trimmed = item.trim();
+    if (trimmed.length === 0 || trimmed.length > MAX_TAG_LENGTH) continue;
+    if (out.includes(trimmed)) continue;
+    out.push(trimmed);
+    if (out.length >= MAX_TAG_COUNT) break;
+  }
+  return out.length > 0 ? out : undefined;
+};
+
 const parseTheme = (value: unknown): BlueprintUiTheme | undefined => {
   if (!isRecord(value)) {
     return undefined;
@@ -572,6 +592,63 @@ const parseResourceViews = (
   return views.length > 0 ? views : undefined;
 };
 
+const MAX_MODE_COUNT = 8;
+const MAX_MODE_ID_LENGTH = 48;
+
+// Strict id pattern: lower-kebab, no whitespace, no special chars. The id
+// ships into the iframe URL (`?mode=<id>`) so it has to be a stable, URL-
+// safe token. Empty / over-length / invalid-char strings are rejected
+// outright — partial sanitization would silently mutate publisher intent.
+const MODE_ID_PATTERN = /^[a-z0-9][a-z0-9-]*$/;
+
+const parseBlueprintModes = (value: unknown): BlueprintMode[] | undefined => {
+  if (!Array.isArray(value)) {
+    return undefined;
+  }
+
+  const seenIds = new Set<string>();
+  const modes = value.slice(0, MAX_MODE_COUNT).flatMap((entry) => {
+    if (!isRecord(entry)) {
+      return [];
+    }
+
+    const id = readTrimmedString(entry.id, MAX_MODE_ID_LENGTH);
+    const label = readTrimmedString(entry.label, 60);
+    const rawBlueprintId = entry.blueprintId;
+    const blueprintId =
+      typeof rawBlueprintId === 'number'
+        ? rawBlueprintId
+        : typeof rawBlueprintId === 'string' && /^\d+$/.test(rawBlueprintId)
+          ? Number(rawBlueprintId)
+          : NaN;
+
+    if (
+      !id ||
+      !label ||
+      !MODE_ID_PATTERN.test(id) ||
+      !Number.isInteger(blueprintId) ||
+      blueprintId <= 0 ||
+      seenIds.has(id)
+    ) {
+      return [];
+    }
+
+    seenIds.add(id);
+
+    return [
+      {
+        id,
+        label,
+        blueprintId,
+        description: readTrimmedString(entry.description, 240),
+        tagline: readTrimmedString(entry.tagline, 60),
+      } satisfies BlueprintMode,
+    ];
+  });
+
+  return modes.length > 0 ? modes : undefined;
+};
+
 const parseModules = (
   value: unknown,
 ): BlueprintUiModuleBinding[] | undefined => {
@@ -643,30 +720,22 @@ const sanitizePublicUrl = (
 const toMetadataSource = (
   metadataUri: string | null | undefined,
 ): BlueprintMetadataVerification['source'] => {
-  if (!metadataUri) {
-    return 'missing';
-  }
-
-  return metadataUri.startsWith('ipfs://') ? 'ipfs' : 'http';
+  if (!metadataUri) return 'missing';
+  if (metadataUri.startsWith('ipfs://')) return 'ipfs';
+  if (metadataUri.startsWith('ar://')) return 'ar';
+  if (metadataUri.startsWith('data:')) return 'data';
+  return 'http';
 };
 
-const isLocalBlueprintHostRuntime = (): boolean => {
-  if (import.meta.env.VITE_FORCE_LOCAL_CHAIN === 'true') {
-    return true;
-  }
-
-  if (typeof window === 'undefined') {
-    return false;
-  }
-
-  return isLocalPreviewHost(window.location.hostname);
-};
-
-export const requiresIpfsForBlueprintMetadata = (): boolean =>
-  !isLocalBlueprintHostRuntime();
-
-export const isAllowedBlueprintMetadataUri = (metadataUri: string): boolean =>
-  metadataUri.startsWith('ipfs://') || !requiresIpfsForBlueprintMetadata();
+// Re-export from `./metadataUri` so existing import sites keep working.
+// The URI gate lives in its own module to keep the unit test
+// (`authoring.spec.ts`) decoupled from `import.meta.env` references that the
+// jest swc preset doesn't compile.
+//
+// `requiresIpfsForBlueprintMetadata` lives in `./runtime` for the same
+// reason — it's the only `import.meta.env` reader in the metadata-parsing
+// surface, and pulling it into this file would re-break the spec.
+export { isAllowedBlueprintMetadataUri };
 
 const sortMetadataValue = (value: unknown): unknown => {
   if (Array.isArray(value)) {
@@ -760,17 +829,29 @@ const buildDefaultMetadataVerification = ({
   reason,
   signer,
   payloadHash,
+  attestationMode = 'none',
 }: {
   metadataUri?: string | null;
   status: BlueprintMetadataVerification['status'];
   reason: string;
   signer?: string;
   payloadHash?: Hex;
+  attestationMode?: BlueprintMetadataAttestationMode;
 }): BlueprintMetadataVerification => {
   const source = toMetadataSource(metadataUri);
+  // `productionReady` requires:
+  //   - full signed attestation (`attestationMode === 'attestation'`)
+  //   - hosting that's either content-addressed (`ipfs://`, `ar://`,
+  //     `data:`) or otherwise immutable
+  // HTTPS is rejected here because content can change at the host after
+  // the URI is pinned on-chain. URI-keccak verification still renders
+  // the declarative tier without lying about production-grade trust.
+  const isImmutableSource =
+    source === 'ipfs' || source === 'ar' || source === 'data';
   const productionReady =
     status === 'verified' &&
-    (metadataUri ? isAllowedBlueprintMetadataUri(metadataUri) : false);
+    attestationMode === 'attestation' &&
+    isImmutableSource;
 
   return {
     status,
@@ -778,6 +859,7 @@ const buildDefaultMetadataVerification = ({
     source,
     signer,
     payloadHash,
+    attestationMode,
     reason,
   };
 };
@@ -815,7 +897,7 @@ export const verifyBlueprintMetadataIntegrity = async ({
       metadataUri,
       status: 'invalid',
       reason:
-        'Production shared hosting only accepts metadata published to ipfs:// URIs.',
+        'Metadata URI scheme not supported (expected ipfs://, https://, or http://).',
     });
   }
 
@@ -823,11 +905,22 @@ export const verifyBlueprintMetadataIntegrity = async ({
   const payloadHash = computeBlueprintMetadataPayloadHash(
     stripMetadataAttestation(rawMetadata),
   );
+  // URI-keccak hash: the v0 register scripts pin `keccak256(metadataUri)` on
+  // chain (not the canonical JSON payload hash). Recognizing this mode lets
+  // the catalog render tier-2 surfaces today, while the v1 hash mode
+  // (canonical payload + signed attestation) is still required for full
+  // `verified` status / `productionReady` / iframe trust.
+  const uriHash = keccak256(toHex(new TextEncoder().encode(metadataUri)));
+  const uriKeccakMatch =
+    metadataHash !== undefined &&
+    metadataHash !== null &&
+    metadataHash.toLowerCase() === uriHash.toLowerCase();
+  const payloadHashMatch =
+    metadataHash !== undefined &&
+    metadataHash !== null &&
+    metadataHash.toLowerCase() === payloadHash.toLowerCase();
 
-  if (
-    metadataHash &&
-    metadataHash.toLowerCase() !== payloadHash.toLowerCase()
-  ) {
+  if (metadataHash && !payloadHashMatch && !uriKeccakMatch) {
     return buildDefaultMetadataVerification({
       metadataUri,
       status: 'invalid',
@@ -837,6 +930,23 @@ export const verifyBlueprintMetadataIntegrity = async ({
   }
 
   if (!attestation) {
+    // No signed attestation in the JSON.
+    // If the on-chain hash is the URI-keccak (v0 register scripts), accept
+    // the JSON as URI-bound — declarative tier renders, externalApp does
+    // not. If the hash matched the canonical payload but there's no
+    // attestation, that's still URI-bound trust (publisher pinned the
+    // content snapshot but didn't sign over it for replay protection).
+    if (uriKeccakMatch || payloadHashMatch) {
+      return buildDefaultMetadataVerification({
+        metadataUri,
+        status: 'verified-uri',
+        payloadHash,
+        attestationMode: 'uri-only',
+        reason: uriKeccakMatch
+          ? 'On-chain metadataHash binds the metadata URI (v0 hash mode). Declarative surfaces enabled; iframe embedding requires a full payload attestation.'
+          : 'On-chain metadataHash matches the canonical payload but no owner attestation is present. Declarative surfaces enabled; iframe embedding requires a signed attestation.',
+      });
+    }
     return buildDefaultMetadataVerification({
       metadataUri,
       status: 'unverified',
@@ -905,6 +1015,7 @@ export const verifyBlueprintMetadataIntegrity = async ({
     status: 'verified',
     signer: owner,
     payloadHash,
+    attestationMode: 'attestation',
     reason:
       'Metadata attestation verified against the onchain blueprint owner and payload hash.',
   });
@@ -948,7 +1059,9 @@ export const parseBlueprintUiContract = (
   const actions = parseActions(value.actions);
   const resourceViews = parseResourceViews(value.resourceViews);
   const modules = parseModules(value.modules);
+  const modes = parseBlueprintModes(value.modes);
   const externalApp = normalizeExternalApp(value.externalApp);
+  const tags = parseTags(value.tags);
   const hasDeclarativeContent =
     surfaces.length > 0 ||
     overviewCards !== undefined ||
@@ -976,10 +1089,12 @@ export const parseBlueprintUiContract = (
     },
     surfaces,
     ...(theme ? { theme } : {}),
+    ...(tags ? { tags } : {}),
     ...(overviewCards ? { overviewCards } : {}),
     ...(actions ? { actions } : {}),
     ...(resourceViews ? { resourceViews } : {}),
     ...(modules ? { modules } : {}),
+    ...(modes ? { modes } : {}),
     ...(externalApp ? { externalApp } : {}),
     tier:
       externalApp !== undefined
@@ -1075,16 +1190,10 @@ export const parseBlueprintMetadataJsonText = (
   };
 };
 
-export const resolveBlueprintMetadataFetchUrl = (
-  metadataUri: string,
-): string => {
-  if (!metadataUri.startsWith('ipfs://')) {
-    return rewriteLocalhostUrlForBrowser(metadataUri);
-  }
-
-  const cid = metadataUri.replace('ipfs://', '');
-  return `https://ipfs.io/ipfs/${cid}`;
-};
+export {
+  resolveBlueprintMetadataFetchUrl,
+  resolveBlueprintMetadataFetchUrls,
+} from './metadataFetchUrl';
 
 export const buildBlueprintUiMetadataDocument = ({
   name,

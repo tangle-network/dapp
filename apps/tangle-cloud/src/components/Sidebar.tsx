@@ -66,7 +66,7 @@ const SIDEBAR_ITEMS: SidebarItem[] = [
     Icon: CoinsLineIcon,
   },
   {
-    name: 'Payments',
+    name: 'Private Payments',
     href: PagePath.PAYMENTS_POOL,
     isInternal: true,
     Icon: ShieldKeyholeLineIcon,
@@ -115,7 +115,7 @@ const Sidebar: FC<Props> = ({ isExpandedByDefault, onExpandedChange }) => {
     <>
       <aside
         className={twMerge(
-          'group/sidebar fixed bottom-0 left-0 top-0 z-50 hidden shrink-0 border-border border-r bg-background transition-[width] duration-200 lg:flex lg:flex-col',
+          'group/sidebar fixed bottom-0 left-0 top-0 z-50 hidden shrink-0 border-border border-r bg-card transition-[width] duration-200 lg:flex lg:flex-col',
           isDesktopExpanded ? 'w-64' : 'w-16',
         )}
       >
@@ -152,7 +152,7 @@ const Sidebar: FC<Props> = ({ isExpandedByDefault, onExpandedChange }) => {
 
       {isMobileOpen && (
         <div className="fixed inset-0 z-[70] bg-black/50 lg:hidden">
-          <aside className="fixed bottom-0 left-0 top-0 w-64 border-r border-border bg-background shadow-[var(--shadow-card)]">
+          <aside className="fixed bottom-0 left-0 top-0 w-64 border-r border-border bg-card shadow-[var(--shadow-card)]">
             <SidebarBrand isExpanded />
             <SidebarNav
               items={SIDEBAR_ITEMS}

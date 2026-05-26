@@ -1,6 +1,7 @@
 import { Navigate, Route, Routes } from 'react-router';
 import { lazy, Suspense, type FC, type ReactNode } from 'react';
 import Layout from '../components/Layout';
+import ScrollToTop from '../components/ScrollToTop';
 import Providers from './providers';
 import { PagePath } from '../types';
 import { Skeleton } from '@tangle-network/sandbox-ui/primitives';
@@ -70,6 +71,7 @@ const withLayout = (LayoutCmp: FC<{ children: ReactNode }>, Page: FC) => (
 const App: FC = () => {
   return (
     <Providers>
+      <ScrollToTop />
       <Layout>
         <Routes>
           <Route

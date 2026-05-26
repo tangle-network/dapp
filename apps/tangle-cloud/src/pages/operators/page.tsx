@@ -7,8 +7,15 @@ import {
   Button,
   Card,
   CardContent,
+  EmptyState,
   Input,
   Skeleton,
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
 } from '@tangle-network/sandbox-ui/primitives';
 import { Search } from '@tangle-network/icons';
 import {
@@ -23,7 +30,12 @@ import { formatUnits, type Address } from 'viem';
 import { useNavigate } from 'react-router';
 import { PagePath } from '../../types';
 import { useAccount } from 'wagmi';
+import { MetricStrip, PageHeader } from '../../components/chrome';
+import type { Metric } from '../../components/chrome';
 import createStakeDelegateUrl from './createStakeDelegateUrl';
+
+type SortKey = 'stake' | 'delegations' | 'status';
+type SortDir = 'asc' | 'desc';
 
 const Page: FC = () => {
   const navigate = useNavigate();
@@ -35,10 +47,9 @@ const Page: FC = () => {
   const activeOperatorCount = operatorList.filter(
     (operator) => operator.stakingStatus === 'ACTIVE',
   ).length;
-  const totalDelegations = operatorList.reduce(
-    (total, operator) => total + (operator.stakingDelegationCount ?? 0n),
-    0n,
-  );
+  const openOperatorCount = operatorList.filter(
+    (operator) => operator.delegationMode === 2,
+  ).length;
   const totalStake = operatorList.reduce(
     (total, operator) => total + (operator.stakingStake ?? 0n),
     0n,
@@ -48,80 +59,78 @@ const Page: FC = () => {
     window.location.assign(createStakeDelegateUrl(operatorAddress));
   }, []);
 
+  const metrics: Metric[] = useMemo(
+    () => [
+      {
+        label: 'Total',
+        value: operatorList.length.toLocaleString(),
+        sublabel: 'registered',
+        loading: isLoading,
+      },
+      {
+        label: 'Active',
+        value: activeOperatorCount.toLocaleString(),
+        tone: activeOperatorCount > 0 ? 'success' : 'neutral',
+        sublabel:
+          operatorList.length === 0
+            ? '—'
+            : `${Math.round(
+                (activeOperatorCount / Math.max(1, operatorList.length)) * 100,
+              )}% online`,
+        loading: isLoading,
+      },
+      {
+        label: 'Open',
+        value: openOperatorCount.toLocaleString(),
+        tone: openOperatorCount > 0 ? 'accent' : 'neutral',
+        sublabel: 'accepting delegations',
+        loading: isLoading,
+      },
+      {
+        label: 'Total stake',
+        value: formatStake(totalStake),
+        sublabel: 'TNT delegated',
+        loading: isLoading,
+      },
+    ],
+    [
+      operatorList.length,
+      activeOperatorCount,
+      openOperatorCount,
+      totalStake,
+      isLoading,
+    ],
+  );
+
   return (
     <div className="space-y-6">
-      <Card
-        variant="sandbox"
-        className="cloud-hero-card cloud-compact-header overflow-hidden border-border bg-card shadow-[var(--shadow-card)]"
-      >
-        <CardContent className="relative p-4 md:p-5">
-          <div className="pointer-events-none absolute inset-0 opacity-70 [background:radial-gradient(circle_at_10%_8%,rgba(99,102,241,0.16),transparent_32%),radial-gradient(circle_at_86%_18%,rgba(16,185,129,0.12),transparent_28%)]" />
+      <PageHeader
+        density="compact"
+        title="Operators"
+        subtitle="Inspect registered operators, delegation mode, stake, and RPC availability."
+        action={
+          <>
+            {isConnected && (
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => navigate(PagePath.OPERATORS_MANAGE)}
+              >
+                Manage operator
+              </Button>
+            )}
+            <Button
+              variant="sandbox"
+              size="sm"
+              onClick={() => handleStakeClicked()}
+            >
+              Delegate
+            </Button>
+          </>
+        }
+      />
 
-          <div className="relative grid gap-5 xl:grid-cols-[minmax(0,1fr)_420px] xl:items-center">
-            <div>
-              <h1 className="font-display font-extrabold text-3xl text-foreground leading-[1.05] tracking-[-0.035em] sm:text-4xl">
-                Operators
-              </h1>
-              <p className="mt-3 max-w-2xl text-muted-foreground text-sm leading-relaxed">
-                Inspect registered operators, delegation mode, stake, and RPC
-                availability.
-              </p>
-            </div>
-
-            <div className="grid gap-3 rounded-lg border border-border bg-muted/20 p-3 shadow-[var(--shadow-card)] sm:grid-cols-[1fr_auto] sm:items-center xl:grid-cols-1">
-              <div className="grid grid-cols-3 gap-2">
-                <OperatorSummaryMetric
-                  label="Operators"
-                  value={operatorList.length.toLocaleString()}
-                />
-                <OperatorSummaryMetric
-                  label="Active"
-                  value={activeOperatorCount.toLocaleString()}
-                />
-                <OperatorSummaryMetric
-                  label="Delegations"
-                  value={totalDelegations.toLocaleString()}
-                />
-              </div>
-
-              <div className="flex flex-col gap-2 sm:flex-row xl:flex-col">
-                <Button
-                  variant="sandbox"
-                  className="flex-1"
-                  onClick={() => handleStakeClicked()}
-                >
-                  Delegate
-                </Button>
-
-                {isConnected && (
-                  <Button
-                    variant="outline"
-                    className="flex-1"
-                    onClick={() => navigate(PagePath.OPERATORS_MANAGE)}
-                  >
-                    Manage operator
-                  </Button>
-                )}
-              </div>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
-
-      <div className="flex flex-col gap-2 border-border border-b pb-3 sm:flex-row sm:items-end sm:justify-between">
-        <div>
-          <div className="font-display font-bold text-foreground text-base tracking-tight">
-            Operator registry
-          </div>
-          <p className="mt-1 text-muted-foreground text-sm">
-            Search by address, RPC endpoint, status, or delegation mode.
-          </p>
-        </div>
-
-        <span className="text-muted-foreground text-sm">
-          {formatStake(totalStake)} total stake
-        </span>
-      </div>
+      <MetricStrip metrics={metrics} density="compact" />
 
       <OperatorsPanel
         operators={operatorList}
@@ -147,35 +156,64 @@ const OperatorsPanel = ({
   onManageClicked: (operatorAddress: Address) => void;
 }) => {
   const [searchQuery, setSearchQuery] = useState('');
+  const [sortKey, setSortKey] = useState<SortKey>('stake');
+  const [sortDir, setSortDir] = useState<SortDir>('desc');
+
   const normalizedSearch = searchQuery.trim().toLowerCase();
   const filteredOperators = useMemo(() => {
-    if (normalizedSearch === '') {
-      return operators;
-    }
+    const matched =
+      normalizedSearch === ''
+        ? operators
+        : operators.filter((operator) =>
+            [
+              operator.id,
+              operator.rpcAddress,
+              operator.ecdsaPublicKey,
+              operator.stakingStatus,
+              getDelegationModeLabel(operator.delegationMode),
+            ]
+              .filter(Boolean)
+              .join(' ')
+              .toLowerCase()
+              .includes(normalizedSearch),
+          );
 
-    return operators.filter((operator) =>
-      [
-        operator.id,
-        operator.rpcAddress,
-        operator.ecdsaPublicKey,
-        operator.stakingStatus,
-        getDelegationModeLabel(operator.delegationMode),
-      ]
-        .filter(Boolean)
-        .join(' ')
-        .toLowerCase()
-        .includes(normalizedSearch),
-    );
-  }, [normalizedSearch, operators]);
+    const sorted = [...matched].sort((a, b) => {
+      const factor = sortDir === 'desc' ? -1 : 1;
+      if (sortKey === 'stake') {
+        const aStake = a.stakingStake ?? 0n;
+        const bStake = b.stakingStake ?? 0n;
+        return aStake === bStake ? 0 : aStake < bStake ? -factor : factor;
+      }
+      if (sortKey === 'delegations') {
+        const aCount = a.stakingDelegationCount ?? 0n;
+        const bCount = b.stakingDelegationCount ?? 0n;
+        return aCount === bCount ? 0 : aCount < bCount ? -factor : factor;
+      }
+      // status: active first when desc
+      const aActive = a.stakingStatus === 'ACTIVE' ? 1 : 0;
+      const bActive = b.stakingStatus === 'ACTIVE' ? 1 : 0;
+      return (aActive - bActive) * factor;
+    });
+
+    return sorted;
+  }, [normalizedSearch, operators, sortDir, sortKey]);
+
+  const onSort = (key: SortKey) => {
+    if (sortKey === key) {
+      setSortDir(sortDir === 'asc' ? 'desc' : 'asc');
+      return;
+    }
+    setSortKey(key);
+    setSortDir('desc');
+  };
 
   if (isLoading) {
     return (
-      <Card
-        variant="sandbox"
-        className="border-border bg-card shadow-[var(--shadow-card)]"
-      >
+      <Card variant="sandbox">
         <CardContent className="space-y-3 p-5">
-          <Skeleton className="h-12 rounded-md" />
+          <Skeleton className="h-11 w-full max-w-md rounded-md" />
+          <Skeleton className="h-16 rounded-md" />
           <Skeleton className="h-16 rounded-md" />
           <Skeleton className="h-16 rounded-md" />
           <Skeleton className="h-16 rounded-md" />
@@ -184,68 +222,130 @@ const OperatorsPanel = ({
     );
   }
 
+  if (operators.length === 0) {
+    return (
+      <Card variant="sandbox">
+        <CardContent className="p-6">
+          <EmptyState
+            icon={<span className="text-3xl">{'⚙️'}</span>}
+            title="No operators indexed"
+            description="Switch networks or wait for the indexer to sync. Operators are picked up automatically once they register on-chain."
+          />
+        </CardContent>
+      </Card>
+    );
+  }
+
   return (
-    <div className="space-y-5">
-      <Card variant="sandbox" className="border-border bg-card">
-        <CardContent className="space-y-3 p-4 md:p-5">
-          <div className="relative">
+    <Card variant="sandbox">
+      <CardContent className="space-y-4 p-4 md:p-5">
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+          <div className="relative w-full sm:max-w-md">
             <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 fill-current text-muted-foreground" />
             <Input
               value={searchQuery}
               onChange={(event: ChangeEvent<HTMLInputElement>) =>
                 setSearchQuery(event.currentTarget.value)
               }
-              placeholder="Search operators"
-              className="h-11 bg-background pl-10 text-sm shadow-[inset_0_1px_0_rgba(255,255,255,0.03)]"
+              placeholder="Search by address, RPC, status, or mode"
+              className="h-11 bg-background pl-10 text-sm"
             />
           </div>
-          <div className="text-muted-foreground text-sm">
-            {filteredOperators.length} of {operators.length} operators shown
-          </div>
-        </CardContent>
-      </Card>
+          <span className="text-muted-foreground text-sm">
+            {filteredOperators.length} of {operators.length} operators
+          </span>
+        </div>
 
-      <Card variant="sandbox">
-        <CardContent className="p-4 md:p-5">
-          {operators.length === 0 ? (
-            <div className="flex min-h-44 flex-col items-center justify-center rounded-lg border border-dashed border-border bg-muted/30 p-8 text-center">
-              <Badge variant="outline">Empty</Badge>
-              <h3 className="mt-4 font-display font-bold text-foreground text-lg">
-                No operators indexed
-              </h3>
-              <p className="mt-2 text-muted-foreground text-sm">
-                Try another network or wait for the indexer to sync.
-              </p>
-            </div>
-          ) : filteredOperators.length === 0 ? (
-            <div className="flex min-h-44 flex-col items-center justify-center rounded-lg border border-dashed border-border bg-muted/30 p-8 text-center">
-              <Badge variant="outline">No match</Badge>
-              <h3 className="mt-4 font-display font-bold text-foreground text-lg">
-                No operators match this search
-              </h3>
-              <p className="mt-2 text-muted-foreground text-sm">
-                Try an address fragment, RPC host, status, or public key.
-              </p>
-            </div>
-          ) : (
-            <div className="divide-y divide-border overflow-hidden rounded-lg border border-border bg-muted/20">
-              {filteredOperators.map((operator) => (
-                <OperatorRow
-                  key={operator.id}
-                  operator={operator}
-                  onStakeClicked={onStakeClicked}
-                  onManageClicked={onManageClicked}
-                />
-              ))}
-            </div>
-          )}
-        </CardContent>
-      </Card>
-    </div>
+        {filteredOperators.length === 0 ? (
+          <EmptyState
+            title="No operators match this search"
+            description="Try an address fragment, RPC host, status (active/inactive), or mode (open/whitelist)."
+          />
+        ) : (
+          <div className="overflow-hidden rounded-lg border border-border">
+            <Table>
+              <TableHeader>
+                <TableRow className="border-border bg-[var(--bg-elevated)]/60 hover:bg-[var(--bg-elevated)]/60">
+                  <TableHead className="w-[36%] font-semibold text-muted-foreground text-[11px] uppercase tracking-wider">
+                    Operator
+                  </TableHead>
+                  <TableHead className="font-semibold text-muted-foreground text-[11px] uppercase tracking-wider">
+                    <SortableHead
+                      label="Stake"
+                      isActive={sortKey === 'stake'}
+                      direction={sortDir}
+                      onClick={() => onSort('stake')}
+                    />
+                  </TableHead>
+                  <TableHead className="font-semibold text-muted-foreground text-[11px] uppercase tracking-wider">
+                    <SortableHead
+                      label="Delegations"
+                      isActive={sortKey === 'delegations'}
+                      direction={sortDir}
+                      onClick={() => onSort('delegations')}
+                    />
+                  </TableHead>
+                  <TableHead className="font-semibold text-muted-foreground text-[11px] uppercase tracking-wider">
+                    Mode
+                  </TableHead>
+                  <TableHead className="font-semibold text-muted-foreground text-[11px] uppercase tracking-wider">
+                    <SortableHead
+                      label="Status"
+                      isActive={sortKey === 'status'}
+                      direction={sortDir}
+                      onClick={() => onSort('status')}
+                    />
+                  </TableHead>
+                  <TableHead className="text-right font-semibold text-muted-foreground text-[11px] uppercase tracking-wider">
+                    Actions
+                  </TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {filteredOperators.map((operator) => (
+                  <OperatorTableRow
+                    key={operator.id}
+                    operator={operator}
+                    onStakeClicked={onStakeClicked}
+                    onManageClicked={onManageClicked}
+                  />
+                ))}
+              </TableBody>
+            </Table>
+          </div>
+        )}
+      </CardContent>
+    </Card>
   );
 };
 
-const OperatorRow = ({
+const SortableHead = ({
+  label,
+  isActive,
+  direction,
+  onClick,
+}: {
+  label: string;
+  isActive: boolean;
+  direction: SortDir;
+  onClick: () => void;
+}) => (
+  <button
+    type="button"
+    onClick={onClick}
+    className="inline-flex items-center gap-1 font-semibold uppercase tracking-wider transition-colors hover:text-foreground"
+  >
+    {label}
+    <span
+      aria-hidden
+      className={isActive ? 'text-foreground' : 'text-muted-foreground/40'}
+    >
+      {isActive ? (direction === 'desc' ? '↓' : '↑') : '↕'}
+    </span>
+  </button>
+);
+
+const OperatorTableRow = ({
   operator,
   onStakeClicked,
   onManageClicked,
@@ -257,58 +357,62 @@ const OperatorRow = ({
   const address = operator.id as Address;
   const status = operator.stakingStatus ?? 'INACTIVE';
   const rpcHost = getRpcHost(operator.rpcAddress);
-  const delegationMode = getDelegationModeLabel(operator.delegationMode);
+  const delegationMode = operator.delegationMode;
+  const delegationModeLabel = getDelegationModeLabel(delegationMode);
 
   return (
-    <div className="operator-row group relative grid gap-4 p-4 transition-colors hover:bg-muted/30 xl:grid-cols-[minmax(0,1fr)_560px] xl:items-center">
-      <div
-        className="absolute inset-y-3 left-0 w-1 rounded-r-full bg-[var(--operator-accent)]"
-        style={getOperatorAccent(address)}
-      />
-
-      <div className="flex min-w-0 items-center gap-4 pl-2">
-        <OperatorIdenticon address={address} />
-
-        <div className="min-w-0">
-          <div className="flex flex-wrap items-center gap-2">
-            <p className="truncate font-display font-bold text-foreground text-base tracking-tight">
+    <TableRow className="group border-border transition-colors hover:bg-[var(--bg-hover)]">
+      <TableCell className="py-4">
+        <div className="flex min-w-0 items-center gap-3">
+          <span
+            className="h-8 w-1 shrink-0 rounded-full"
+            style={getOperatorAccent(address)}
+          />
+          <OperatorIdenticon address={address} />
+          <div className="min-w-0">
+            <p className="truncate font-display font-bold text-foreground text-sm tracking-tight">
               {shortenAddress(address)}
             </p>
-            <Badge
-              variant={status === 'ACTIVE' ? 'success' : 'outline'}
-              dot={status === 'ACTIVE'}
-              className="shrink-0"
-            >
-              {formatStatus(status)}
-            </Badge>
+            <p className="mt-0.5 truncate font-mono text-muted-foreground text-xs">
+              {rpcHost ?? 'No RPC advertised'}
+            </p>
           </div>
-          <p className="mt-1 truncate font-mono text-muted-foreground text-xs">
-            {address}
-          </p>
-          <p className="mt-2 truncate font-mono text-muted-foreground text-xs">
-            RPC: {rpcHost ?? 'Not advertised'}
-          </p>
         </div>
-      </div>
-
-      <div className="grid gap-3 lg:grid-cols-[minmax(0,1fr)_auto] lg:items-center">
-        <div className="grid grid-cols-3 gap-2">
-          <OperatorMetric
-            label="Stake"
-            value={formatStake(operator.stakingStake)}
-          />
-          <OperatorMetric
-            label="Delegations"
-            value={formatCount(operator.stakingDelegationCount)}
-          />
-          <OperatorMetric label="Mode" value={delegationMode} />
-        </div>
-
-        <div className="flex gap-2 lg:col-span-1 lg:justify-end">
+      </TableCell>
+      <TableCell className="py-4 font-semibold text-foreground text-sm">
+        {formatStake(operator.stakingStake)}
+        <span className="ml-1 text-muted-foreground text-xs">TNT</span>
+      </TableCell>
+      <TableCell className="py-4 font-semibold text-foreground text-sm">
+        {formatCount(operator.stakingDelegationCount)}
+      </TableCell>
+      <TableCell className="py-4">
+        <Badge
+          variant={
+            delegationMode === 2
+              ? 'success'
+              : delegationMode === 1
+                ? 'outline'
+                : 'secondary'
+          }
+        >
+          {delegationModeLabel}
+        </Badge>
+      </TableCell>
+      <TableCell className="py-4">
+        <Badge
+          variant={status === 'ACTIVE' ? 'success' : 'outline'}
+          dot={status === 'ACTIVE'}
+        >
+          {formatStatus(status)}
+        </Badge>
+      </TableCell>
+      <TableCell className="py-4">
+        <div className="flex justify-end gap-2">
           <Button
             variant="sandbox"
             size="sm"
-            className="min-w-24 text-primary-foreground"
+            className="min-w-20 text-primary-foreground"
             onClick={() => onStakeClicked(address)}
           >
             Stake
@@ -316,48 +420,24 @@ const OperatorRow = ({
           <Button
             variant="outline"
             size="sm"
-            className="min-w-24"
+            className="min-w-20"
             onClick={() => onManageClicked(address)}
           >
             Manage
           </Button>
         </div>
-      </div>
-    </div>
+      </TableCell>
+    </TableRow>
   );
 };
 
-const OperatorMetric = ({ label, value }: { label: string; value: string }) => (
-  <div className="rounded-md border border-border bg-card/60 p-3">
-    <p className="truncate font-medium text-muted-foreground text-[10px] uppercase tracking-wider">
-      {label}
-    </p>
-    <p className="mt-1 truncate font-display font-bold text-foreground text-sm">
-      {value}
-    </p>
-  </div>
-);
-
-const OperatorSummaryMetric = ({
-  label,
-  value,
-}: {
-  label: string;
-  value: string;
-}) => (
-  <div className="rounded-md border border-border bg-card/70 p-2.5">
-    <p className="font-medium text-muted-foreground text-[10px] uppercase tracking-wider">
-      {label}
-    </p>
-    <p className="mt-0.5 font-display font-extrabold text-foreground text-base">
-      {value}
-    </p>
-  </div>
-);
-
 const OperatorIdenticon = ({ address }: { address: string }) => (
   <div
-    className="grid h-14 w-14 shrink-0 place-items-center rounded-lg border border-border bg-slate-950 font-display font-extrabold text-white shadow-[var(--shadow-card)]"
+    // The inline `style` from `getOperatorIdenticonStyle` paints a saturated
+    // hue gradient as the actual background, so the `bg-card` fallback only
+    // shows for the brief render before the style applies. `text-primary-
+    // foreground` keeps the contrast stable across both themes.
+    className="grid h-9 w-9 shrink-0 place-items-center rounded-lg border border-border bg-card font-display font-extrabold text-primary-foreground text-xs shadow-[var(--shadow-card)]"
     style={getOperatorIdenticonStyle(address)}
   >
     {address.slice(2, 4).toUpperCase()}
@@ -373,7 +453,7 @@ const formatStake = (value: bigint | null) =>
   value === null
     ? '-'
     : Number(formatUnits(value, 18)).toLocaleString(undefined, {
-        maximumFractionDigits: 4,
+        maximumFractionDigits: 2,
       });
 
 const formatCount = (value: bigint | null) =>
@@ -392,11 +472,11 @@ const getOperatorIdenticonStyle = (address: string) => {
   };
 };
 
-const getOperatorAccent = (address: string) => {
+const getOperatorAccent = (address: string): CSSProperties => {
   const hue = hashAddress(address);
   return {
-    '--operator-accent': `linear-gradient(90deg, hsl(${hue} 82% 58%), hsl(${(hue + 42) % 360} 82% 50%))`,
-  } as CSSProperties;
+    background: `linear-gradient(180deg, hsl(${hue} 82% 58%), hsl(${(hue + 42) % 360} 82% 50%))`,
+  };
 };
 
 const getDelegationModeLabel = (mode: number | null) => {

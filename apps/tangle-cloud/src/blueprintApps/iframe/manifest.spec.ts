@@ -41,6 +41,68 @@ describe('iframe manifest parser', () => {
     expect(result?.allowReadAccount).toBe(true);
   });
 
+  it('parses the AI Trading Arena iframe policy shape', () => {
+    const result = parseIframePolicy({
+      url: 'https://trading-arena.blueprint.tangle.tools/',
+      iframe: {
+        appId: 'trading-arena',
+        allowedChainIds: [31337, 84532],
+        contracts: [
+          {
+            chainId: 31337,
+            address: ADDR,
+          },
+        ],
+        messages: [],
+        allowReadAccount: true,
+        allowChainSwitch: true,
+        allowPopups: false,
+      },
+    });
+
+    expect(result?.origin).toBe('https://trading-arena.blueprint.tangle.tools');
+    expect(result?.appId).toBe('trading-arena');
+    expect(result?.allowedChainIds).toEqual([31337, 84532]);
+    expect(result?.contracts).toHaveLength(1);
+    expect(result?.allowReadAccount).toBe(true);
+    expect(result?.allowChainSwitch).toBe(true);
+    expect(result?.allowPopups).toBe(false);
+  });
+
+  it('parses the AI Agent Sandbox iframe policy shape', () => {
+    const result = parseIframePolicy({
+      url: 'https://agent-sandbox.blueprint.tangle.tools/',
+      iframe: {
+        appId: 'agent-sandbox',
+        allowedChainIds: [31337, 84532],
+        contracts: [
+          {
+            chainId: 31337,
+            address: ADDR,
+          },
+        ],
+        messages: [
+          {
+            chainId: 31337,
+          },
+          {
+            chainId: 84532,
+          },
+        ],
+        allowReadAccount: true,
+        allowChainSwitch: true,
+        allowPopups: false,
+      },
+    });
+
+    expect(result?.origin).toBe('https://agent-sandbox.blueprint.tangle.tools');
+    expect(result?.appId).toBe('agent-sandbox');
+    expect(result?.allowedChainIds).toEqual([31337, 84532]);
+    expect(result?.contracts).toHaveLength(1);
+    expect(result?.messages).toHaveLength(2);
+    expect(result?.allowReadAccount).toBe(true);
+  });
+
   it('drops malformed contract grants', () => {
     const result = parseIframePolicy({
       url: 'https://x.blueprint.tangle.tools/',

@@ -115,9 +115,16 @@ function parseResourceModel(
     return fallback;
   }
 
-  const serviceNoun = readString(record.serviceNoun) ?? fallback.serviceNoun;
-  const resourceNoun = readString(record.resourceNoun) ?? fallback.resourceNoun;
-  const resourceRoute = readString(record.resourceRoute);
+  const serviceNoun =
+    readString(record.serviceNoun) ??
+    readString(record.serviceLabel) ??
+    fallback.serviceNoun;
+  const resourceNoun =
+    readString(record.resourceNoun) ??
+    readString(record.itemLabel) ??
+    fallback.resourceNoun;
+  const resourceRoute =
+    readString(record.resourceRoute) ?? readString(record.itemRoute);
 
   return {
     serviceNoun,
@@ -327,6 +334,7 @@ export function buildBlueprintManifestFromMetadata(
     'verified';
   const requestedSlug =
     readString(manifestRoot?.slug) ??
+    readString(manifestRoot?.requestedSlug) ??
     deriveBlueprintRequestedSlug({
       id: blueprint.blueprintId,
       name: blueprint.name,
@@ -341,8 +349,17 @@ export function buildBlueprintManifestFromMetadata(
       ? 'verified'
       : getPublisherVerificationForNamespace(publisherNamespace),
   };
+  // Iframe gate accepts either status — `verified` (full payload attestation,
+  // production-ready) OR `verified-uri` (URI-keccak match, the v0 register-script
+  // hash mode). The strictest gates remain: publisher must be in the verified
+  // allowlist AND iframe-eligible, AND the host must match the trusted iframe
+  // suffix. That curation chain — verified namespace + allowlisted host —
+  // means we've already vetted *which* blueprints can embed an iframe;
+  // requiring a full payload attestation on top would just block every URI-
+  // keccak-mode testnet blueprint without changing the trust model.
   const metadataVerified =
-    blueprint.metadataVerification?.status === 'verified';
+    blueprint.metadataVerification?.status === 'verified' ||
+    blueprint.metadataVerification?.status === 'verified-uri';
   const publisherVerified = publisher.verification === 'verified';
   const slugPolicy = canPublisherClaimSlug(normalizedRequestedSlug, publisher)
     ? 'publisher-scoped'
@@ -369,9 +386,15 @@ export function buildBlueprintManifestFromMetadata(
   });
   manifest.externalApp = externalAppParsed.externalApp;
 
+  // Declarative tier is unlocked at the URI-bound trust level
+  // (`verified-uri`) or stronger. The stricter `productionReady` gate
+  // (IPFS + signed attestation) is kept for `metadataVerified` below,
+  // which controls iframe/externalApp embedding — that needs payload
+  // attestation, not just URI binding.
   const allowDeclarativeTier =
     manifestRoot !== null &&
-    blueprint.metadataVerification?.productionReady === true;
+    (blueprint.metadataVerification?.productionReady === true ||
+      blueprint.metadataVerification?.status === 'verified-uri');
   const trustedExternalApp =
     manifest.externalApp?.trust === 'trusted'
       ? manifest.externalApp

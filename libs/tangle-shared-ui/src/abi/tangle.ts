@@ -2333,7 +2333,7 @@ const ABI = [
             internalType: 'uint256',
           },
           {
-            name: '__reservedAggregateCursor',
+            name: '__reserved0',
             type: 'uint256',
             internalType: 'uint256',
           },
@@ -3163,6 +3163,11 @@ const ABI = [
         type: 'uint16',
         internalType: 'uint16',
       },
+      {
+        name: 'keeperBps',
+        type: 'uint16',
+        internalType: 'uint16',
+      },
     ],
     stateMutability: 'view',
   },
@@ -3789,6 +3794,11 @@ const ABI = [
             type: 'uint16',
             internalType: 'uint16',
           },
+          {
+            name: 'keeperBps',
+            type: 'uint16',
+            internalType: 'uint16',
+          },
         ],
       },
     ],
@@ -4301,6 +4311,24 @@ const ABI = [
         name: 'serviceId',
         type: 'uint64',
         internalType: 'uint64',
+      },
+    ],
+    outputs: [],
+    stateMutability: 'nonpayable',
+  },
+  {
+    type: 'function',
+    name: 'withdrawRemainingEscrowTo',
+    inputs: [
+      {
+        name: 'serviceId',
+        type: 'uint64',
+        internalType: 'uint64',
+      },
+      {
+        name: 'to',
+        type: 'address',
+        internalType: 'address payable',
       },
     ],
     outputs: [],

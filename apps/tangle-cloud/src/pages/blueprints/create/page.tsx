@@ -32,8 +32,8 @@ import {
 import {
   computeBlueprintMetadataPayloadHash,
   isAllowedBlueprintMetadataUri,
-  requiresIpfsForBlueprintMetadata,
 } from '@tangle-network/tangle-shared-ui/blueprintApps/authoring';
+import { requiresIpfsForBlueprintMetadata } from '@tangle-network/tangle-shared-ui/blueprintApps/runtime';
 import {
   parseSchemaJson,
   encodeSchemaToHex,
@@ -707,7 +707,7 @@ const CreateBlueprintPage: FC = () => {
                 index === step
                   ? 'bg-primary text-primary-foreground'
                   : index < step
-                    ? 'bg-green-500 text-white'
+                    ? 'bg-success text-primary-foreground'
                     : 'bg-muted text-muted-foreground'
               }`}
             >
