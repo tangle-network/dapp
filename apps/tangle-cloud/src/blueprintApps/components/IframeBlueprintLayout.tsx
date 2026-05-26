@@ -120,16 +120,27 @@ const IframeBlueprintLayout: FC<Props> = ({
           </div>
         )}
         <div className="ml-auto flex shrink-0 items-center gap-2">
-          <Button asChild variant="sandbox" size="sm">
-            <Link to={provisionPath}>Create {serviceNoun}</Link>
-          </Button>
+          {/* Explicit styling rather than the sandbox Button variant: the
+           * vendored variant left dark, italic text on the purple fill
+           * (unreadable). White text on a solid accent, non-italic, sized to
+           * match the Details button. */}
+          <Link
+            to={provisionPath}
+            className={twMerge(
+              'inline-flex h-8 shrink-0 items-center rounded-md px-3 text-xs font-semibold not-italic transition-opacity',
+              'bg-[color:var(--primary)] text-white hover:opacity-90',
+              focus.ring,
+            )}
+          >
+            Create {serviceNoun}
+          </Link>
           <button
             type="button"
             onClick={() => setDetailsOpen((v) => !v)}
             aria-expanded={detailsOpen}
             aria-controls="blueprint-details-panel"
             className={twMerge(
-              'inline-flex h-8 items-center gap-1.5 rounded-md border border-border bg-transparent px-2.5 text-xs font-medium text-foreground transition-colors hover:bg-[color:var(--bg-hover)]',
+              'inline-flex h-8 items-center gap-1.5 rounded-md border border-border bg-transparent px-2.5 text-xs font-medium not-italic text-foreground transition-colors hover:bg-[color:var(--bg-hover)]',
               detailsOpen && 'border-[color:var(--border-accent-hover)]',
               focus.ring,
             )}
