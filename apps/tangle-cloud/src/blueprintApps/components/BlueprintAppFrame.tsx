@@ -95,7 +95,15 @@ const BlueprintAppFrameInner = (
     <iframe
       ref={ref}
       title={title}
-      src={buildBlueprintIframeUrl(config.url, { mode, blueprintId, theme })}
+      src={buildBlueprintIframeUrl(config.url, {
+        mode,
+        blueprintId,
+        theme,
+        // Deterministic parent-origin signal for the embedded app's bridge
+        // detection — `document.referrer` is empty (no-referrer + opaque
+        // sandbox origin), so `?parent=` is how the iframe learns it's us.
+        parent: typeof window !== 'undefined' ? window.location.origin : undefined,
+      })}
       sandbox={buildSandbox(config)}
       allow={PERMISSIONS_POLICY_DENY_ALL}
       referrerPolicy="no-referrer"
