@@ -31,11 +31,14 @@ export function TopNavSlotProvider({ children }: { children: ReactNode }) {
   );
 }
 
+// Context module: the Provider component lives alongside its hooks by design.
+// eslint-disable-next-line react-refresh/only-export-components
 export function useTopNavSlotContent(): ReactNode {
   return useContext(TopNavSlotContext)?.content ?? null;
 }
 
 /** Publish `node` into the top-nav left slot while this component is mounted. */
+// eslint-disable-next-line react-refresh/only-export-components
 export function useTopNavSlot(node: ReactNode): void {
   const ctx = useContext(TopNavSlotContext);
   useEffect(() => {

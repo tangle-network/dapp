@@ -1,3 +1,10 @@
+## 0.0.4 (2026-05-30)
+
+### 🚀 Features
+
+- **tangle-cloud:** iframe wallet connect — pass `?parent=` to embedded apps so they can detect Tangle Cloud and install the parent-bridge connector (referrer is empty under `no-referrer` + the opaque sandbox origin), plus the `tangle.app.requestConnect` bridge that opens the parent wallet modal ([#3252](https://github.com/tangle-network/dapp/pull/3252))
+- **tangle-cloud:** allow embedded trading-arena to switch to Base Sepolia (84532) — read-only, no signing surface ([#3252](https://github.com/tangle-network/dapp/pull/3252))
+
 ## 0.0.3 (2025-08-06)
 
 ### 🩹 Fixes

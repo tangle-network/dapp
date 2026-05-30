@@ -132,6 +132,17 @@ export function checkRequestAllowed(
       return accept();
     case 'tangle.app.readAccount':
       return checkReadAccountAllowed(request, config);
+    case 'tangle.app.requestConnect':
+      // Initiating a connect is read-tier: an app allowed to read the account
+      // may prompt the user to connect one. The user still confirms in the
+      // parent's own wallet modal — no silent connection.
+      return checkReadAccountAllowed(
+        {
+          kind: 'tangle.app.readAccount',
+          correlationId: request.correlationId,
+        },
+        config,
+      );
     case 'tangle.app.switchChain':
       return checkSwitchChainAllowed(request, config);
     case 'tangle.app.signMessage':

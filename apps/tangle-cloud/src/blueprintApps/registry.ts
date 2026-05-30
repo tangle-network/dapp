@@ -99,20 +99,22 @@ const entries = [
         label: 'AI Trading',
       },
     },
-    // Iframe runtime policy. Empty allowedChainIds / contracts on purpose:
-    // the trading-arena UI doesn't issue tangle.app.signTransaction yet, so
-    // we don't grant transaction surface. allowReadAccount surfaces the
-    // connected wallet to the iframe for read-only views (positions,
-    // balances) without unlocking signing.
+    // Iframe runtime policy. No contracts/messages: the trading-arena UI
+    // doesn't issue tangle.app.signTransaction yet, so we don't grant a
+    // transaction surface. allowReadAccount surfaces the connected wallet for
+    // read-only views (positions, balances). Chain switching IS allowed but
+    // restricted to Base Sepolia (84532) — the chain the trading bots run on —
+    // so the embedded arena can move a wrong-network wallet onto the right
+    // chain without unlocking signing.
     iframe: {
       url: 'https://trading-arena.blueprint.tangle.tools/',
       origin: 'https://trading-arena.blueprint.tangle.tools',
       appId: 'trading-arena',
-      allowedChainIds: [],
+      allowedChainIds: [84532],
       contracts: [],
       messages: [],
       allowReadAccount: true,
-      allowChainSwitch: false,
+      allowChainSwitch: true,
       allowPopups: false,
     },
   },
