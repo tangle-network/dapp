@@ -9,6 +9,12 @@
  *                      `data-sandbox-theme` can match the parent shell
  *                      instead of rendering a dark void on a light dapp
  *                      (or vice versa)
+ *   - `parent`       — the parent (this dapp's) origin, so the embedded app
+ *                      can deterministically detect that it's running inside
+ *                      Tangle Cloud and install the parent-bridge wallet
+ *                      connector. The sandbox runs at an opaque origin and we
+ *                      send `referrerpolicy="no-referrer"`, so `document.referrer`
+ *                      is unavailable — `?parent=` is the only reliable signal.
  *
  * Other (non-reserved) params on the manifest URL are preserved verbatim —
  * publishers may sign intent into them and we shouldn't drop that.
@@ -24,6 +30,7 @@ export const buildBlueprintIframeUrl = (
     mode?: string;
     blueprintId?: bigint | number;
     theme?: 'light' | 'dark';
+    parent?: string;
   },
 ): string => {
   let url: URL;
@@ -42,6 +49,9 @@ export const buildBlueprintIframeUrl = (
   }
   if (options.theme === 'light' || options.theme === 'dark') {
     url.searchParams.set('theme', options.theme);
+  }
+  if (options.parent) {
+    url.searchParams.set('parent', options.parent);
   }
   return url.toString();
 };
