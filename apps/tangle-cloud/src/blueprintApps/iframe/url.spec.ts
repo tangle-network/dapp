@@ -6,7 +6,11 @@ describe('buildBlueprintIframeUrl', () => {
 
   it('sets the reserved params', () => {
     const url = new URL(
-      buildBlueprintIframeUrl(base, { mode: 'instance', blueprintId: 13, theme: 'dark' }),
+      buildBlueprintIframeUrl(base, {
+        mode: 'instance',
+        blueprintId: 13,
+        theme: 'dark',
+      }),
     );
     expect(url.searchParams.get('mode')).toBe('instance');
     expect(url.searchParams.get('blueprintId')).toBe('13');
@@ -38,8 +42,10 @@ describe('buildBlueprintIframeUrl', () => {
   });
 
   it('returns the raw string for a malformed URL', () => {
-    expect(buildBlueprintIframeUrl('not a url', { parent: 'https://cloud.tangle.tools' })).toBe(
-      'not a url',
-    );
+    expect(
+      buildBlueprintIframeUrl('not a url', {
+        parent: 'https://cloud.tangle.tools',
+      }),
+    ).toBe('not a url');
   });
 });
