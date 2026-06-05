@@ -13,6 +13,7 @@ export type TableStatusProps = {
 
 export type TangleCloudTableConfig = {
   className?: string;
+  viewportClassName?: string;
   tableClassName?: string;
   thClassName?: string;
   tbodyClassName?: string;

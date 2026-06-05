@@ -1,4 +1,4 @@
-import { type FC, useEffect, useMemo, useRef } from 'react';
+import { type CSSProperties, type FC, useEffect, useMemo, useRef } from 'react';
 import BlueprintAppFrame from './BlueprintAppFrame';
 import IframeAppApprovalModal from './IframeAppApprovalModal';
 import {
@@ -26,6 +26,7 @@ type Props = {
   serviceId?: string | null;
   operators?: IframeServiceContext['operators'];
   jobs?: IframeServiceContext['jobs'];
+  frameStyle?: CSSProperties;
 };
 
 // Composes the hardened iframe element, the parent-side message bridge, and
@@ -39,6 +40,7 @@ const BlueprintAppFrameHost: FC<Props> = ({
   serviceId = null,
   operators = [],
   jobs = [],
+  frameStyle,
 }) => {
   const iframeRef = useRef<HTMLIFrameElement | null>(null);
   const serviceContext = useMemo<IframeServiceContext | undefined>(() => {
@@ -90,6 +92,7 @@ const BlueprintAppFrameHost: FC<Props> = ({
         title={`${appDisplayName} (sandboxed)`}
         mode={mode}
         blueprintId={blueprintId}
+        style={frameStyle}
       />
       <IframeAppApprovalModal
         pending={pendingApproval}

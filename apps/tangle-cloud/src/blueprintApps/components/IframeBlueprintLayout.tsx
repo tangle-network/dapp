@@ -1,5 +1,4 @@
-import { Button } from '@tangle-network/sandbox-ui/primitives';
-import { useMemo, useState, type FC, type ReactNode } from 'react';
+import { useEffect, useMemo, useState, type FC, type ReactNode } from 'react';
 import { Link } from 'react-router';
 import { twMerge } from 'tailwind-merge';
 import { useTopNavSlot } from '../../components/chrome/TopNavSlot';
@@ -79,11 +78,31 @@ const IframeBlueprintLayout: FC<Props> = ({
   theme,
 }) => {
   const [detailsOpen, setDetailsOpen] = useState(false);
+  const [focusMode, setFocusMode] = useState(false);
   const accentStyle = theme?.accentColor
     ? ({
         ['--blueprint-accent' as string]: theme.accentColor,
       } as React.CSSProperties)
     : undefined;
+
+  useEffect(() => {
+    if (!focusMode || typeof document === 'undefined') return;
+
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        setFocusMode(false);
+      }
+    };
+
+    window.addEventListener('keydown', onKeyDown);
+    return () => {
+      document.body.style.overflow = previousOverflow;
+      window.removeEventListener('keydown', onKeyDown);
+    };
+  }, [focusMode]);
 
   // Blueprint identity + primary CTA + Details disclosure live in the global
   // top nav (as pills) rather than a second in-page bar — that bar wasted a
@@ -136,6 +155,20 @@ const IframeBlueprintLayout: FC<Props> = ({
           </Link>
           <button
             type="button"
+            onClick={() => {
+              setDetailsOpen(false);
+              setFocusMode(true);
+            }}
+            aria-label="Expand app"
+            className={twMerge(
+              'inline-flex h-8 w-8 items-center justify-center rounded-md border border-border bg-transparent text-muted-foreground transition-colors hover:bg-[color:var(--bg-hover)] hover:text-foreground',
+              focus.ring,
+            )}
+          >
+            <ExpandIcon className="h-3.5 w-3.5" />
+          </button>
+          <button
+            type="button"
             onClick={() => setDetailsOpen((v) => !v)}
             aria-expanded={detailsOpen}
             aria-controls="blueprint-details-panel"
@@ -164,7 +197,14 @@ const IframeBlueprintLayout: FC<Props> = ({
   useTopNavSlot(navContent);
 
   return (
-    <div className="relative -mx-4 -mb-10 -mt-6 md:-mx-8" style={accentStyle}>
+    <div
+      className={twMerge(
+        'relative -mx-4 -mb-10 -mt-6 md:-mx-8',
+        focusMode &&
+          'fixed inset-0 z-[70] mx-0 mb-0 mt-0 bg-background md:mx-0',
+      )}
+      style={accentStyle}
+    >
       {/* No in-page identity bar — it lives in the top nav now. The iframe
        * fills the full height below the topbar. The small padding leaves a
        * rounded gutter around the rounded iframe so it reads as a contained
@@ -174,7 +214,9 @@ const IframeBlueprintLayout: FC<Props> = ({
         className={twMerge(
           'relative overflow-hidden',
           // 56 = top nav (Layout). No identity strip anymore.
-          'h-[calc(100vh-56px)] min-h-[480px] p-2 md:p-3',
+          focusMode
+            ? 'h-screen min-h-0 p-0'
+            : 'h-[calc(100vh-56px)] min-h-[480px] p-2 md:p-3',
         )}
       >
         <BlueprintAppFrameHost
@@ -182,12 +224,33 @@ const IframeBlueprintLayout: FC<Props> = ({
           appDisplayName={displayName}
           mode={activeMode?.id}
           blueprintId={activeMode?.blueprintId ?? blueprintId}
+          frameStyle={focusMode ? { borderRadius: 0 } : undefined}
         />
+        {focusMode && (
+          <div className="pointer-events-none fixed inset-x-0 top-3 z-[80] flex justify-center px-3">
+            <div className="pointer-events-auto flex max-w-[calc(100vw-24px)] items-center gap-2 border border-border bg-background/95 px-2 py-1.5 shadow-[var(--shadow-card)] backdrop-blur-md">
+              <button
+                type="button"
+                onClick={() => setFocusMode(false)}
+                className={twMerge(
+                  'inline-flex h-8 items-center gap-2 px-2.5 text-xs font-semibold text-foreground transition-colors hover:bg-[color:var(--bg-hover)]',
+                  focus.ring,
+                )}
+              >
+                <CloseIcon className="h-3.5 w-3.5" />
+                Back to Cloud
+              </button>
+              <span className="hidden max-w-[42vw] truncate border-l border-border pl-2 font-mono text-[11px] text-muted-foreground sm:inline">
+                {displayName}
+              </span>
+            </div>
+          </div>
+        )}
       </div>
 
       {/* Mobile mode picker — lives in the panel instead of the strip on
        * narrow viewports. Surfaced here so it doesn't crowd the strip. */}
-      {modes.length > 1 && activeMode && (
+      {!focusMode && modes.length > 1 && activeMode && (
         <div className="md:hidden border-t border-border bg-background px-4 py-3">
           <BlueprintModePicker
             modes={modes}
@@ -201,7 +264,7 @@ const IframeBlueprintLayout: FC<Props> = ({
        * viewport on desktop, full width on mobile. The iframe stays
        * interactive behind the dimmed scrim — no modal trap. */}
       <DetailsPanel
-        open={detailsOpen}
+        open={!focusMode && detailsOpen}
         onClose={() => setDetailsOpen(false)}
         displayName={displayName}
         tagline={tagline}
@@ -495,5 +558,39 @@ const InfoIcon: FC<{ className?: string }> = ({ className }) => (
     aria-hidden
   >
     <path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10 10-4.5 10-10S17.5 2 12 2zm-1 6h2v2h-2V8zm0 4h2v6h-2v-6z" />
+  </svg>
+);
+
+const ExpandIcon: FC<{ className?: string }> = ({ className }) => (
+  <svg
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+    className={className}
+    aria-hidden
+  >
+    <path d="M8 3H3v5" />
+    <path d="M3 3l7 7" />
+    <path d="M16 21h5v-5" />
+    <path d="M21 21l-7-7" />
+  </svg>
+);
+
+const CloseIcon: FC<{ className?: string }> = ({ className }) => (
+  <svg
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+    className={className}
+    aria-hidden
+  >
+    <path d="M18 6 6 18" />
+    <path d="m6 6 12 12" />
   </svg>
 );

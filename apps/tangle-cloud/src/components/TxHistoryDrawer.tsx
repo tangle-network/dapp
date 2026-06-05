@@ -118,9 +118,10 @@ const TxHistoryDrawer: FC = () => {
           <Dialog.Content
             forceMount
             className={twMerge(
-              'w-[400px] h-[calc(100%-16px)] outline-none overflow-auto py-6 px-4 z-[80] rounded-xl',
+              'h-[calc(100%-16px)] w-[calc(100vw-16px)] max-w-[400px] overflow-auto rounded-xl px-4 py-6 outline-none',
               'bg-card text-card-foreground border border-border fixed right-2 top-2 bottom-2',
               'flex flex-col gap-6 justify-between',
+              'z-[80]',
               'data-[state=open]:animate-in data-[state=open]:ease-out data-[state=open]:duration-200',
               'data-[state=open]:slide-in-from-right-full',
               'data-[state=closed]:animate-out data-[state=closed]:ease-in data-[state=closed]:duration-100',

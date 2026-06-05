@@ -39,9 +39,16 @@ jobs:
           git config user.email "github-actions[bot]@users.noreply.github.com"
 
       - name: Merge Release Commit to Master
+        # Use a real merge (not --ff-only). master legitimately diverges from
+        # develop whenever a develop→master promotion is merged as a PR (which
+        # adds a merge/squash commit to master that isn't on develop), and
+        # --ff-only then fails permanently on every subsequent release. A no-ff
+        # merge always succeeds (non-destructive — master keeps its own commits,
+        # develop's release commits come in) and still changes CHANGELOG.md so
+        # release-dapps deploys.
         run: |
           git fetch origin develop
-          git merge --ff-only ${{ github.sha }}
+          git merge --no-ff -m "chore(release): sync develop into master (${{ github.sha }})" ${{ github.sha }}
 
       - name: Push Changes to Master
         run: git push origin master
