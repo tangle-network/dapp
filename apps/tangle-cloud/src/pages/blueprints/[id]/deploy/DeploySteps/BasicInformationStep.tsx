@@ -9,7 +9,6 @@ import {
   SelectValue,
   Text,
 } from '../../../../../components/sandbox/SandboxUi';
-import InstanceHeader from '../../../../../components/InstanceHeader';
 import ErrorMessage from '@tangle-network/tangle-shared-ui/components/ErrorMessage';
 import { Children, FC, useMemo } from 'react';
 import { BasicInformationStepProps, LabelClassName } from './type';
@@ -27,7 +26,6 @@ export const BasicInformationStep: FC<BasicInformationStepProps> = ({
   watch,
   setError,
   clearErrors,
-  blueprint,
 }) => {
   const permittedCallers = watch('permittedCallers');
   const instanceName = watch('instanceName');
@@ -127,136 +125,123 @@ export const BasicInformationStep: FC<BasicInformationStepProps> = ({
   };
 
   return (
-    <>
-      <InstanceHeader
-        title={blueprint?.name}
-        creator={blueprint?.author}
-        githubPath={blueprint?.githubUrl}
-      />
-      <Card className="p-6">
-        <Text variant="h5" className="mb-4">
-          Basic Information
-        </Text>
+    <Card className="p-5">
+      <Text variant="h5" className="mb-4">
+        Instance
+      </Text>
 
-        <div className="grid grid-cols-2 gap-8">
-          <div className="space-y-2">
-            <label className={LabelClassName}>Instance Name</label>
+      <div className="grid gap-4 md:grid-cols-2">
+        <div className="space-y-2">
+          <label className={LabelClassName}>Instance Name</label>
+          <Input
+            id="instanceName"
+            autoFocus
+            isControlled
+            inputClassName="placeholder:text-muted-foreground h-10"
+            placeholder="Enter instance name"
+            autoComplete="off"
+            value={instanceName}
+            onChange={(nextValue) => handleInstanceNameChange(nextValue)}
+          />
+          {errors?.instanceName && (
+            <ErrorMessage>{errors.instanceName.message}</ErrorMessage>
+          )}
+        </div>
+
+        <div className="space-y-2">
+          <label className={LabelClassName}>Instance Duration (TTL)</label>
+          <div className="flex gap-2">
             <Input
-              id="instanceName"
-              autoFocus
+              id="instanceDuration"
               isControlled
+              isInvalid={Boolean(instanceDurationError)}
               inputClassName="placeholder:text-muted-foreground h-10"
-              placeholder="Enter instance name"
+              placeholder="Enter duration"
               autoComplete="off"
-              value={instanceName}
-              onChange={(nextValue) => handleInstanceNameChange(nextValue)}
+              type="number"
+              min={0}
+              max={constraints.max}
+              value={instanceDuration?.toString() ?? ''}
+              onChange={(nextValue) => handleInstanceDurationChange(nextValue)}
+              className="flex-1"
             />
-            {errors?.instanceName && (
-              <ErrorMessage>{errors.instanceName.message}</ErrorMessage>
-            )}
+
+            <Select
+              value={durationUnit}
+              onValueChange={handleDurationUnitChange}
+            >
+              <SelectTrigger className="w-28 h-10">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                {Object.entries(DURATION_UNITS).map(([key, { label }]) => (
+                  <SelectItem key={key} value={key}>
+                    {label}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           </div>
-
-          <div className="space-y-2">
-            <label className={LabelClassName}>Instance Duration (TTL)</label>
-            <div className="flex gap-2">
-              <Input
-                id="instanceDuration"
-                isControlled
-                isInvalid={Boolean(instanceDurationError)}
-                inputClassName="placeholder:text-muted-foreground h-10"
-                placeholder="Enter duration"
-                autoComplete="off"
-                type="number"
-                min={0}
-                max={constraints.max}
-                value={instanceDuration?.toString() ?? ''}
-                onChange={(nextValue) =>
-                  handleInstanceDurationChange(nextValue)
-                }
-                className="flex-1"
-              />
-
-              <Select
-                value={durationUnit}
-                onValueChange={handleDurationUnitChange}
-              >
-                <SelectTrigger className="w-28 h-10">
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  {Object.entries(DURATION_UNITS).map(([key, { label }]) => (
-                    <SelectItem key={key} value={key}>
-                      {label}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-            <Text variant="body2" className="text-muted-foreground">
-              Use 0 for perpetual service, or {constraints.min}-
-              {constraints.max} {durationUnit}
-            </Text>
-            {instanceDurationError && (
-              <ErrorMessage>{instanceDurationError}</ErrorMessage>
-            )}
-          </div>
-        </div>
-
-        <div className="mt-6 space-y-4">
-          <label className={LabelClassName}>Permitted Callers</label>
-          {errors?.['permittedCallers'] && (
-            <ErrorMessage>{errors['permittedCallers'].message}</ErrorMessage>
+          <Text variant="body2" className="text-muted-foreground">
+            Use 0 for perpetual service, or {constraints.min}-{constraints.max}{' '}
+            {durationUnit}
+          </Text>
+          {instanceDurationError && (
+            <ErrorMessage>{instanceDurationError}</ErrorMessage>
           )}
-          {Children.toArray(
-            permittedCallers?.map((caller, index) => (
-              <div className="pl-4">
-                <label className={LabelClassName}>
-                  Permitted Caller {index + 1}:
-                </label>
-                <div className="flex gap-2">
-                  <Input
-                    id={`permittedCallers-${index}`}
-                    value={caller}
-                    isControlled
-                    onChange={(nextValue) =>
-                      handleCallerChange(index, nextValue)
-                    }
-                    className="flex-grow"
-                    inputClassName="placeholder:text-muted-foreground h-10 w-full"
-                    placeholder="Enter wallet address (0x...)"
-                    autoComplete="off"
-                  />
-                  <Button
-                    onClick={() => handleRemoveCaller(index)}
-                    className="flex-shrink-0"
-                    variant="utility"
-                  >
-                    <TrashIcon className="h-5 w-5" />
-                  </Button>
-                </div>
-                {errors?.['permittedCallers']?.[index] && (
-                  <ErrorMessage>
-                    {errors['permittedCallers'][index].message}
-                  </ErrorMessage>
-                )}
+        </div>
+      </div>
+
+      <div className="mt-5 space-y-3">
+        <label className={LabelClassName}>Permitted Callers</label>
+        {errors?.['permittedCallers'] && (
+          <ErrorMessage>{errors['permittedCallers'].message}</ErrorMessage>
+        )}
+        {Children.toArray(
+          permittedCallers?.map((caller, index) => (
+            <div>
+              <label className={LabelClassName}>Caller {index + 1}</label>
+              <div className="flex gap-2">
+                <Input
+                  id={`permittedCallers-${index}`}
+                  value={caller}
+                  isControlled
+                  onChange={(nextValue) => handleCallerChange(index, nextValue)}
+                  className="flex-grow"
+                  inputClassName="placeholder:text-muted-foreground h-10 w-full"
+                  placeholder="Enter wallet address (0x...)"
+                  autoComplete="off"
+                />
+                <Button
+                  onClick={() => handleRemoveCaller(index)}
+                  className="flex-shrink-0"
+                  variant="utility"
+                >
+                  <TrashIcon className="h-5 w-5" />
+                </Button>
               </div>
-            )),
-          )}
+              {errors?.['permittedCallers']?.[index] && (
+                <ErrorMessage>
+                  {errors['permittedCallers'][index].message}
+                </ErrorMessage>
+              )}
+            </div>
+          )),
+        )}
 
-          <Button
-            variant="utility"
-            onClick={() => {
-              const newPermittedCaller = permittedCallers ?? [];
-              newPermittedCaller.push('' as Address);
-              setValue(`permittedCallers`, newPermittedCaller);
-            }}
-            className="mt-4"
-            leftIcon={<PlusIcon />}
-          >
-            Add Caller
-          </Button>
-        </div>
-      </Card>
-    </>
+        <Button
+          variant="utility"
+          onClick={() => {
+            const newPermittedCaller = permittedCallers ?? [];
+            newPermittedCaller.push('' as Address);
+            setValue(`permittedCallers`, newPermittedCaller);
+          }}
+          className="mt-4"
+          leftIcon={<PlusIcon />}
+        >
+          Add Caller
+        </Button>
+      </div>
+    </Card>
   );
 };

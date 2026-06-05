@@ -117,61 +117,64 @@ export const TangleCloudTable = <T extends RowData>({
     <TableShell className={tableConfig?.className}>
       {hasTitle ? <TableTitle>{title}</TableTitle> : null}
 
-      <Table
+      <div
         className={twMerge(
           hasTitle ? 'mt-4' : null,
-          tableConfig?.tableClassName,
+          'overflow-x-auto [scrollbar-gutter:stable]',
+          tableConfig?.viewportClassName,
         )}
       >
-        <TableHeader>
-          {tableProps.getHeaderGroups().map((headerGroup) => (
-            <TableRow key={headerGroup.id} className="border-border">
-              {headerGroup.headers.map((header) => (
-                <TableHead
-                  key={header.id}
-                  className={twMerge(
-                    'h-11 whitespace-nowrap px-4 font-semibold text-muted-foreground text-xs uppercase tracking-wider',
-                    tableConfig?.thClassName,
-                  )}
-                >
-                  {header.isPlaceholder
-                    ? null
-                    : flexRender(
-                        header.column.columnDef.header,
-                        header.getContext(),
-                      )}
-                </TableHead>
-              ))}
-            </TableRow>
-          ))}
-        </TableHeader>
+        <Table className={twMerge('min-w-full', tableConfig?.tableClassName)}>
+          <TableHeader>
+            {tableProps.getHeaderGroups().map((headerGroup) => (
+              <TableRow key={headerGroup.id} className="border-border">
+                {headerGroup.headers.map((header) => (
+                  <TableHead
+                    key={header.id}
+                    className={twMerge(
+                      'h-11 whitespace-nowrap px-4 font-semibold text-muted-foreground text-xs uppercase tracking-wider',
+                      tableConfig?.thClassName,
+                    )}
+                  >
+                    {header.isPlaceholder
+                      ? null
+                      : flexRender(
+                          header.column.columnDef.header,
+                          header.getContext(),
+                        )}
+                  </TableHead>
+                ))}
+              </TableRow>
+            ))}
+          </TableHeader>
 
-        <TableBody className={tableConfig?.tbodyClassName}>
-          {tableProps.getRowModel().rows.map((row) => (
-            <TableRow
-              key={row.id}
-              data-expanded={row.getIsExpanded()}
-              className={twMerge(
-                'border-border transition-colors hover:bg-muted/35',
-                tableConfig?.trClassName,
-                row.getIsExpanded() && tableConfig?.expandedRowClassName,
-              )}
-            >
-              {row.getVisibleCells().map((cell) => (
-                <TableCell
-                  key={cell.id}
-                  className={twMerge(
-                    'px-4 py-3 align-middle text-foreground text-sm',
-                    tableConfig?.tdClassName,
-                  )}
-                >
-                  {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                </TableCell>
-              ))}
-            </TableRow>
-          ))}
-        </TableBody>
-      </Table>
+          <TableBody className={tableConfig?.tbodyClassName}>
+            {tableProps.getRowModel().rows.map((row) => (
+              <TableRow
+                key={row.id}
+                data-expanded={row.getIsExpanded()}
+                className={twMerge(
+                  'border-border transition-colors hover:bg-muted/35',
+                  tableConfig?.trClassName,
+                  row.getIsExpanded() && tableConfig?.expandedRowClassName,
+                )}
+              >
+                {row.getVisibleCells().map((cell) => (
+                  <TableCell
+                    key={cell.id}
+                    className={twMerge(
+                      'px-4 py-3 align-middle text-foreground text-sm',
+                      tableConfig?.tdClassName,
+                    )}
+                  >
+                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                  </TableCell>
+                ))}
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </div>
 
       <div
         className={twMerge(

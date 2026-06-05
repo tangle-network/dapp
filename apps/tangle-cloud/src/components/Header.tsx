@@ -68,9 +68,7 @@ export default function Header({
       </div>
 
       <div className="flex shrink-0 items-center justify-end gap-2">
-        <div className="hidden sm:block">
-          <TxHistoryDrawer />
-        </div>
+        <TxHistoryDrawer />
 
         <CloudConnectionStatusButton />
 

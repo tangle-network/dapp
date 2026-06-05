@@ -25,10 +25,10 @@ export const Deployment: FC<BaseDeployStepProps> = (props) => {
       />
       <PaymentStep {...props} />
 
-      <div className="rounded-3xl border border-border bg-card/70">
+      <div className="border border-border bg-card/70">
         <details>
           <summary className="cursor-pointer px-6 py-4 font-medium text-foreground">
-            Advanced configuration
+            Advanced
           </summary>
           <div className="space-y-4 px-6 pb-6 pt-0">
             <div className="space-y-1">

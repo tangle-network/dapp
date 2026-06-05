@@ -1,4 +1,4 @@
-import { FC, useEffect, useMemo } from 'react';
+import { FC, useEffect, useMemo, type ReactNode } from 'react';
 import {
   Button,
   Card,
@@ -212,7 +212,14 @@ const DeployPage: FC = () => {
       </Card>
     );
   } else if (blueprintResult === null) {
-    return null;
+    return (
+      <Card className="border-border bg-card p-6">
+        <Text variant="h5">Blueprint not found</Text>
+        <Text variant="body2" className="mt-2 text-muted-foreground">
+          This blueprint is unavailable or has not been indexed yet.
+        </Text>
+      </Card>
+    );
   }
 
   const onDeployBlueprint = async () => {
@@ -394,86 +401,129 @@ const DeployPage: FC = () => {
     }
   };
 
+  const selectedOperators = watch('operators') ?? [];
+  const permittedCallers = watch('permittedCallers') ?? [];
+  const paymentMethod = watch('paymentMethod') ?? 'shieldedCredits';
+  const paymentAsset = watch('paymentAsset');
+  const paymentAmount = watch('paymentAmount') ?? '0';
+  const creditCommitment = watch('creditCommitment');
+  const requestArgs = watch('requestArgs') ?? [];
+  const requestMode = watch('requestMode') ?? 'basic';
+  const instanceDuration = watch('instanceDuration');
+  const durationUnit = watch('durationUnit') ?? 'hours';
+  const hasValidationErrors = Object.keys(errors).length > 0;
+  const schemaArgCount =
+    requestSchema?.parsedRequestSchema.length ??
+    blueprintResult.details.requestParams?.length ??
+    0;
+  const schemaLabel = requestSchema?.requestSchemaParseError
+    ? 'Schema issue'
+    : requestSchema?.hasRequestSchema
+      ? `${schemaArgCount} arg${schemaArgCount === 1 ? '' : 's'}`
+      : schemaArgCount > 0
+        ? `${schemaArgCount} expected`
+        : 'No args';
+  const ttlLabel =
+    instanceDuration === 0
+      ? 'Perpetual'
+      : `${instanceDuration ?? '-'} ${durationUnit}`;
+  const paymentLabel =
+    paymentMethod === 'shieldedCredits'
+      ? creditCommitment
+        ? shortAddress(creditCommitment)
+        : 'Shielded credits'
+      : `${paymentAmount || '0'} ${paymentAsset?.metadata?.symbol ?? 'token'}`;
+  const callerLabel =
+    permittedCallers.length === 1
+      ? shortAddress(permittedCallers[0])
+      : `${permittedCallers.length} callers`;
+
   return (
     <RequireWallet
       title="Connect wallet to create an instance"
-      description="Connect to review operators, payment, permitted callers, and the service request transaction before anything is submitted."
-      eyebrow="Instance checkout"
-      checks={['Review operators', 'Confirm payment', 'Submit request']}
+      description="Connect to choose operators, set permitted callers, and submit a service request transaction."
+      eyebrow="Service instance"
+      checks={['Operators', 'Payment', 'Request']}
     >
-      <div className="space-y-5">
-        <Card className="overflow-hidden border-border bg-card p-6 shadow-[var(--shadow-card)]">
-          <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
+      <div className="grid gap-5 xl:grid-cols-[minmax(0,1fr)_340px] xl:items-start">
+        <div className="min-w-0 space-y-5">
+          <Card className="overflow-hidden border-border bg-card p-5 shadow-[var(--shadow-card)]">
             <div>
               <p className="font-bold text-[10px] uppercase tracking-[0.2em] text-muted-foreground">
-                Service instance
+                Blueprint #{id?.toString() ?? '-'}
               </p>
               <Text variant="h4" className="mt-2 text-foreground">
-                Create an instance of {blueprintResult.details.name}
+                {blueprintResult.details.name}
               </Text>
               <Text
                 variant="body2"
                 className="mt-2 max-w-3xl text-muted-foreground"
               >
-                Create a running service from this blueprint. The checkout keeps
-                the commitment explicit: operators, request arguments, payment,
-                permitted callers, and TTL are reviewed before the wallet
-                transaction.
+                Configure the service instance, then submit the request from the
+                review rail. Operators, caller access, TTL, payment, and request
+                args are the only decisions that affect the transaction.
               </Text>
             </div>
 
-            <div className="grid gap-2 rounded-lg border border-border bg-muted/30 p-3 sm:grid-cols-3 md:min-w-[420px]">
-              <CheckoutMetric label="Blueprint" value={id?.toString() ?? '-'} />
+            <div className="mt-4 grid gap-2 sm:grid-cols-3">
               <CheckoutMetric
                 label="Operators"
-                value={(blueprintResult.operators?.length ?? 0).toString()}
+                value={`${blueprintResult.operators?.length ?? 0} available`}
               />
-              <CheckoutMetric
-                label="Schema"
-                value={
-                  requestSchema?.hasRequestSchema
-                    ? `${requestSchema.parsedRequestSchema.length} args`
-                    : 'No args'
-                }
-              />
+              <CheckoutMetric label="Schema" value={schemaLabel} />
+              <CheckoutMetric label="Default caller" value="Wallet owner" />
             </div>
-          </div>
-        </Card>
+          </Card>
 
-        <Card className="border-border bg-card p-4 shadow-[var(--shadow-card)]">
-          <div className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_320px] lg:items-center">
-            <div>
-              <p className="font-bold text-[10px] uppercase tracking-[0.2em] text-muted-foreground">
-                Review before wallet approval
-              </p>
-              <Text variant="body2" className="mt-2 text-muted-foreground">
-                Shielded credits keep service creation payment-neutral on-chain
-                until credit spend is attached to the resulting service or job
-                record. Token payment remains available when selected.
-              </Text>
-            </div>
-            <div className="grid grid-cols-2 gap-2">
-              <CheckoutMetric
-                label="Default payment"
-                value="Shielded credits"
-              />
-              <CheckoutMetric label="Default caller" value="Your wallet" />
-            </div>
-          </div>
-        </Card>
-
-        <Deployment {...commonProps} />
-
-        <div className="flex items-center justify-end gap-5 mt-4">
-          {Object.keys(errors).length > 0 && (
-            <ErrorMessage>
-              Error(s) on validation. Please check the form and try again.
-            </ErrorMessage>
-          )}
-          <Button onClick={onDeployBlueprint} isLoading={serviceRequestPending}>
-            Create instance
-          </Button>
+          <Deployment {...commonProps} />
         </div>
+
+        <aside className="xl:sticky xl:top-4">
+          <Card className="border-border bg-card p-4 shadow-[var(--shadow-card)]">
+            <div className="flex items-start justify-between gap-3">
+              <div>
+                <p className="font-bold text-[10px] uppercase tracking-[0.2em] text-muted-foreground">
+                  Review
+                </p>
+                <Text variant="h5" className="mt-1 text-foreground">
+                  Create instance
+                </Text>
+              </div>
+              <span className="rounded-md border border-border bg-muted/40 px-2 py-1 font-mono text-[11px] text-muted-foreground">
+                requestService
+              </span>
+            </div>
+
+            <div className="mt-4 space-y-2">
+              <ReviewRow
+                label="Operators"
+                value={summaryCount(selectedOperators.length, 'None selected')}
+              />
+              <ReviewRow label="Callers" value={callerLabel} />
+              <ReviewRow label="TTL" value={ttlLabel} />
+              <ReviewRow label="Payment" value={paymentLabel} />
+              <ReviewRow
+                label="Args"
+                value={`${requestArgs.length}/${schemaArgCount}`}
+              />
+              <ReviewRow label="Mode" value={requestMode} />
+            </div>
+
+            {hasValidationErrors && (
+              <ErrorMessage className="mt-4">
+                Check the highlighted fields before submitting.
+              </ErrorMessage>
+            )}
+
+            <Button
+              className="mt-4 w-full"
+              onClick={onDeployBlueprint}
+              isLoading={serviceRequestPending}
+            >
+              Create instance
+            </Button>
+          </Card>
+        </aside>
       </div>
     </RequireWallet>
   );
@@ -482,10 +532,27 @@ const DeployPage: FC = () => {
 export default DeployPage;
 
 const CheckoutMetric = ({ label, value }: { label: string; value: string }) => (
-  <div className="rounded-md border border-border bg-muted/30 p-3">
+  <div className="border border-border bg-muted/30 p-3">
     <p className="font-semibold text-[10px] uppercase tracking-wider text-muted-foreground">
       {label}
     </p>
     <p className="mt-1 truncate font-mono text-sm text-foreground">{value}</p>
   </div>
 );
+
+const ReviewRow = ({ label, value }: { label: string; value: ReactNode }) => (
+  <div className="grid grid-cols-[92px_minmax(0,1fr)] gap-3 border-b border-border/70 py-2 last:border-b-0">
+    <span className="text-xs text-muted-foreground">{label}</span>
+    <span className="truncate text-right font-mono text-xs text-foreground">
+      {value}
+    </span>
+  </div>
+);
+
+const shortAddress = (value: string | undefined) =>
+  value && value.length > 14
+    ? `${value.slice(0, 6)}...${value.slice(-4)}`
+    : (value ?? '-');
+
+const summaryCount = (count: number, emptyLabel: string) =>
+  count > 0 ? `${count}` : emptyLabel;

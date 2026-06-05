@@ -213,13 +213,13 @@ export const SelectOperatorsStep: FC<SelectOperatorsStepProps> = ({
   }, [assetMap]);
 
   return (
-    <Card className="p-6">
+    <Card className="p-5">
       <Text variant="h5" className="mb-4">
-        Select Operators
+        Operators
       </Text>
 
-      <div className="flex justify-between mb-3">
-        <div className="w-1/4">
+      <div className="mb-3 flex flex-col gap-3 sm:flex-row sm:justify-between">
+        <div className="w-full sm:max-w-xs">
           <Select>
             <SelectTrigger className="h-10">
               <SelectValue
@@ -301,7 +301,7 @@ export const SelectOperatorsStep: FC<SelectOperatorsStepProps> = ({
           )}
         </div>
 
-        <div className="w-1/4">
+        <div className="w-full sm:max-w-xs">
           <Input
             isControlled
             leftIcon={<Search />}
@@ -348,18 +348,18 @@ export const SelectOperatorsStep: FC<SelectOperatorsStepProps> = ({
       )}
 
       {/* Approval Settings - Read-only based on blueprint configuration */}
-      <div className="mt-5 p-4 bg-muted/40 rounded-lg">
+      <div className="mt-5 border border-border bg-muted/40 p-4">
         <Text variant="body1" className="text-muted-foreground mb-3">
           Approval Requirements (defined by blueprint)
         </Text>
 
         {isConfigLoading ? (
-          <div className="flex gap-8">
+          <div className="flex flex-wrap gap-4">
             <Skeleton className="h-5 w-40" />
             <Skeleton className="h-5 w-32" />
           </div>
         ) : (
-          <div className="flex gap-8">
+          <div className="flex flex-wrap gap-x-8 gap-y-3">
             <div className="flex items-center gap-2">
               <span className="text-sm text-muted-foreground">
                 Membership Model:
