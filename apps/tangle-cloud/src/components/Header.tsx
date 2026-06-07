@@ -47,10 +47,6 @@ export default function Header({
   const pathname = useLocation().pathname;
   const trail = useMemo(() => getHeaderTrail(pathname), [pathname]);
   const topNavContent = useTopNavSlotContent();
-  const hasContextualConnect =
-    pathname.startsWith('/rewards') ||
-    pathname.startsWith('/earnings') ||
-    pathname.startsWith('/instances');
 
   return (
     <header
@@ -76,9 +72,10 @@ export default function Header({
 
         <ThemeToggle theme={theme} onThemeChange={onThemeChange} />
 
-        {!hasContextualConnect && (
-          <ConnectWalletButton className="tangle-cloud-wallet-action" />
-        )}
+        {/* Connection state lives in the chrome on every route — the header is
+         * the single owner of Connect Wallet. Pages never duplicate this; a
+         * disconnected page body renders a designed empty state instead. */}
+        <ConnectWalletButton className="tangle-cloud-wallet-action" />
       </div>
     </header>
   );
@@ -255,14 +252,15 @@ function CloudNetworkSelector({ networks }: { networks: Network[] }) {
     NetworkId | null | 'custom'
   >(null);
   const [customRpcEndpoint, setCustomRpcEndpoint] = useState('');
+  const evmChainId = network?.evmChainId;
 
   const isWrongEvmNetwork = useMemo(() => {
-    if (!isConnected || !network?.evmChainId) {
+    if (!isConnected || !evmChainId) {
       return false;
     }
 
-    return network.evmChainId !== chainId;
-  }, [chainId, isConnected, network?.evmChainId]);
+    return evmChainId !== chainId;
+  }, [chainId, evmChainId, isConnected]);
 
   const isLoading = isWalletConnecting || isSwitchingChain;
   const networkName = isLoading ? 'Connecting' : (network?.name ?? 'Network');
@@ -296,12 +294,12 @@ function CloudNetworkSelector({ networks }: { networks: Network[] }) {
   }, [customRpcEndpoint, setNetwork]);
 
   const switchToCorrectEvmChain = useCallback(() => {
-    if (!network?.evmChainId || !switchChain) {
+    if (!evmChainId || !switchChain) {
       return;
     }
 
-    switchChain({ chainId: network.evmChainId });
-  }, [network?.evmChainId, switchChain]);
+    switchChain({ chainId: evmChainId });
+  }, [evmChainId, switchChain]);
 
   return (
     <div className="flex items-center gap-2">

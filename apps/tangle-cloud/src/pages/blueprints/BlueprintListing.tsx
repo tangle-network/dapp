@@ -6,7 +6,16 @@ import {
   Skeleton,
 } from '../../components/sandbox/SandboxUi';
 import { formatBlueprintName } from '../../components/blueprints/blueprintVisualUtils';
-import { EmptyState, FilterTray, PageToolbar } from '../../components/chrome';
+import {
+  EmptyState,
+  FilterTray,
+  PageToolbar,
+  ResultList,
+  StatusPill,
+  ViewToggle,
+  statusToneFor,
+  type ResultView,
+} from '../../components/chrome';
 import {
   enumCodec,
   intCodec,
@@ -40,7 +49,7 @@ import {
   type Auditor,
 } from '@tangle-network/tangle-shared-ui/blueprintApps/trustScore';
 import { auditorFallbackRegistry } from '../../auditors';
-import { Link } from 'react-router';
+import { Link, useNavigate } from 'react-router';
 import { twMerge } from 'tailwind-merge';
 import { PagePath } from '../../types';
 import {
@@ -277,12 +286,17 @@ const BlueprintListing: FC<Props> = ({
   error,
   onRegisterBlueprint,
 }) => {
+  const navigate = useNavigate();
   // Filter state lives in the URL — refresh persists the view, deep-links are
   // shareable, the back button works. Defaults are omitted from the URL so a
   // bare /blueprints stays clean. `replace: true` (in `useUrlState`) means
   // every keystroke doesn't pollute the history stack.
   const [page, setPage] = useUrlState('page', intCodec(0));
   const [searchQuery, setSearchQuery] = useUrlState('q', stringCodec(''));
+  const [view, setView] = useUrlState<ResultView>(
+    'view',
+    enumCodec(['grid', 'list'] as const, 'list'),
+  );
   // Multi-select categories, comma-joined in the URL (empty = all). Single
   // dropdown in the toolbar replaces the old full-width category row.
   const [categoryParam, setCategoryParam] = useUrlState(
@@ -322,7 +336,8 @@ const BlueprintListing: FC<Props> = ({
     return Array.from(blueprints.values()).sort((a, b) => {
       if (a.isBoosted && !b.isBoosted) return -1;
       if (!a.isBoosted && b.isBoosted) return 1;
-      return Number(b.id - a.id);
+      if (a.id === b.id) return 0;
+      return a.id < b.id ? 1 : -1;
     });
   }, [blueprints]);
 
@@ -395,11 +410,14 @@ const BlueprintListing: FC<Props> = ({
     blueprintItems,
     deferredSearchQuery,
     manifestFilter,
-    categoryParam,
+    selectedCategories,
   ]);
 
+  // `useUrlState` returns a new setter each render; depending on it creates a
+  // page-reset loop. Filter values are the actual synchronization boundary.
   useEffect(() => {
     setPage(0);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     audienceFilter,
     auditFilter,
@@ -434,6 +452,103 @@ const BlueprintListing: FC<Props> = ({
   const showSelection =
     typeof rowSelection !== 'undefined' &&
     typeof onRowSelectionChange === 'function';
+  const effectiveView = showSelection ? 'grid' : view;
+
+  const listColumns = useMemo(
+    () => [
+      {
+        header: 'Blueprint',
+        className: 'min-w-0 flex-[2]',
+        render: (row: DedupedBlueprintRow) => {
+          const { blueprint } = row;
+          const description =
+            blueprint.description?.trim() ||
+            'Service blueprint — deploy when operators are available.';
+
+          return (
+            <div className="min-w-0">
+              <div className="flex min-w-0 items-center gap-2">
+                <span className="truncate font-display font-bold text-foreground text-sm">
+                  {formatBlueprintName(blueprint.name)}
+                </span>
+                <span className="shrink-0 font-mono text-[11px] tabular-nums text-muted-foreground">
+                  #{blueprint.id.toString()}
+                </span>
+              </div>
+              <p className="mt-0.5 line-clamp-1 text-muted-foreground text-xs">
+                {description}
+              </p>
+            </div>
+          );
+        },
+      },
+      {
+        header: 'Operators',
+        className: 'w-44',
+        render: (row: DedupedBlueprintRow) => (
+          <BlueprintCapacityPill
+            operatorCount={row.blueprint.operatorsCount ?? 0}
+          />
+        ),
+      },
+      {
+        header: 'Trust',
+        className: 'w-28',
+        hideBelow: 'md' as const,
+        render: (row: DedupedBlueprintRow) => {
+          const audited =
+            auditedStatus.get(row.blueprint.id.toString()) ?? false;
+          return (
+            <StatusPill
+              tone={statusToneFor('audit', audited ? 'Audited' : 'Unaudited')}
+              dot={audited}
+            >
+              {audited ? 'Audited' : 'Unaudited'}
+            </StatusPill>
+          );
+        },
+      },
+      {
+        header: 'Instances',
+        className: 'w-28 justify-end',
+        hideBelow: 'lg' as const,
+        render: (row: DedupedBlueprintRow) => (
+          <span className="font-mono text-[12px] tabular-nums text-muted-foreground">
+            {(row.blueprint.instancesCount ?? 0).toLocaleString()}
+          </span>
+        ),
+      },
+      {
+        header: 'Actions',
+        className: 'w-48 justify-end',
+        render: (row: DedupedBlueprintRow) => {
+          const { blueprint } = row;
+          const blueprintHref = `${PagePath.BLUEPRINTS}/${blueprint.id.toString()}`;
+          const hasOperators = (blueprint.operatorsCount ?? 0) > 0;
+
+          return (
+            <div className="flex w-full justify-end gap-2">
+              {hasOperators && (
+                <Link
+                  to={`${blueprintHref}/deploy`}
+                  onClick={(event) => event.stopPropagation()}
+                  className="rounded-md bg-primary px-2.5 py-1.5 text-center font-semibold text-primary-foreground text-xs transition-colors hover:bg-primary/90"
+                >
+                  Deploy
+                </Link>
+              )}
+              <RegisterCapacityButton
+                blueprint={blueprint}
+                onRegister={onRegisterBlueprint}
+                isPrimary={!hasOperators}
+              />
+            </div>
+          );
+        },
+      },
+    ],
+    [auditedStatus, onRegisterBlueprint],
+  );
 
   if (isLoading) {
     return (
@@ -496,7 +611,8 @@ const BlueprintListing: FC<Props> = ({
           noun: 'matches',
         }}
         trailing={
-          <div className="flex items-center gap-2">
+          <div className="flex flex-wrap items-center gap-2">
+            {!showSelection && <ViewToggle value={view} onChange={setView} />}
             <CategoryFilterMenu
               categories={categories}
               selected={selectedCategories}
@@ -568,6 +684,15 @@ const BlueprintListing: FC<Props> = ({
             hasActiveFilters && (
               <Button onClick={resetAllFilters}>Clear all filters</Button>
             )
+          }
+        />
+      ) : effectiveView === 'list' ? (
+        <ResultList
+          items={visibleRows}
+          columns={listColumns}
+          rowKey={(row) => row.blueprint.id.toString()}
+          onRowClick={(row) =>
+            navigate(`${PagePath.BLUEPRINTS}/${row.blueprint.id.toString()}`)
           }
         />
       ) : (
@@ -747,7 +872,7 @@ const useAuditedStatusMap = (blueprintIds: bigint[]): Map<string, boolean> => {
         const nowSeconds = Math.floor(Date.now() / 1000);
         const hasAuditedAttestation = attestations.some((row) => {
           if (row.revoked) return false;
-          if (row.expiresAt !== 0n && Number(row.expiresAt) <= nowSeconds) {
+          if (row.expiresAt !== 0n && row.expiresAt <= BigInt(nowSeconds)) {
             return false;
           }
           if (row.kind === AttestationKind.SELF) return false;
@@ -771,6 +896,33 @@ const useAuditedStatusMap = (blueprintIds: bigint[]): Map<string, boolean> => {
     map.set(id.toString(), queries[idx]?.data?.hasAuditedAttestation ?? false);
   });
   return map;
+};
+
+const BlueprintCapacityPill = ({
+  operatorCount,
+}: {
+  operatorCount: number;
+}) => {
+  const hasOperators = operatorCount > 0;
+
+  return (
+    <StatusPill
+      tone={statusToneFor(
+        'availability',
+        hasOperators ? 'Available' : 'Limited',
+      )}
+      className="text-[10px] uppercase tracking-wider"
+    >
+      {hasOperators ? (
+        <>
+          <span className="font-mono tabular-nums">{operatorCount}</span>{' '}
+          {pluralize('operator', operatorCount)}
+        </>
+      ) : (
+        'Needs operators'
+      )}
+    </StatusPill>
+  );
 };
 
 /**
@@ -878,36 +1030,14 @@ const BlueprintCard = ({
       {/* Status row — one chip, mono operator count, audit/trust if present.
        * Everything is bottom-anchored so cards align by their last line. */}
       <div className="mt-auto flex flex-wrap items-center gap-2 pt-2">
-        <span
-          className={twMerge(
-            'inline-flex items-center gap-1.5 rounded-full border px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider',
-            hasOperators
-              ? 'border-[color:var(--md3-tertiary,#10b981)]/40 bg-[color:var(--md3-tertiary,#10b981)]/8 text-[color:var(--md3-tertiary,#10b981)]'
-              : 'border-[color:var(--md3-warning,#f59e0b)]/40 bg-[color:var(--md3-warning,#f59e0b)]/8 text-[color:var(--md3-warning,#f59e0b)]',
-          )}
-        >
-          <span
-            aria-hidden
-            className={twMerge(
-              'h-1.5 w-1.5 rounded-full',
-              hasOperators
-                ? 'bg-[color:var(--md3-tertiary,#10b981)]'
-                : 'bg-[color:var(--md3-warning,#f59e0b)]',
-            )}
-          />
-          {hasOperators ? (
-            <>
-              <span className="font-mono tabular-nums">{operatorCount}</span>{' '}
-              {pluralize('operator', operatorCount)}
-            </>
-          ) : (
-            'Needs operators'
-          )}
-        </span>
+        <BlueprintCapacityPill operatorCount={operatorCount} />
         {isAudited && (
-          <span className="inline-flex items-center gap-1 rounded-full border border-[color:var(--border-accent)] bg-transparent px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-foreground/80">
+          <StatusPill
+            tone={statusToneFor('audit', 'Audited')}
+            className="text-[10px] uppercase tracking-wider"
+          >
             Audited
-          </span>
+          </StatusPill>
         )}
         {(blueprint.instancesCount ?? 0) > 0 && (
           <span className="font-mono text-[11px] tabular-nums text-muted-foreground">

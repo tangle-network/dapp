@@ -20,6 +20,11 @@
  *   </PageLayout>
  */
 
+export { default as CopyableId } from './CopyableId';
+
+export { default as DataTable } from './DataTable';
+export type { DataColumn } from './DataTable';
+
 export { default as EmptyState } from './EmptyState';
 export type { EmptyKind } from './EmptyState';
 
@@ -27,6 +32,8 @@ export { default as FilterTray } from './FilterTray';
 
 export { default as MetricStrip } from './MetricStrip';
 export type { Metric, MetricTone } from './MetricStrip';
+
+export { default as Money } from './Money';
 
 export { default as PageHeader } from './PageHeader';
 
@@ -41,3 +48,20 @@ export { default as StatusPill } from './StatusPill';
 
 export { default as ViewToggle } from './ViewToggle';
 export type { ResultView } from './ViewToggle';
+
+// Design-system contracts (tokens + helpers) — re-exported so surfaces have a
+// single import path for the whole chrome system. The status tone mapping and
+// the money formatter are the two canonical contracts every surface shares.
+export {
+  formatMoney,
+  statusDot,
+  statusPill,
+  statusToneFor,
+  typeRole,
+} from '../../styles/chrome';
+export type {
+  FormatMoneyOptions,
+  MoneyView,
+  StatusDomain,
+  StatusTone,
+} from '../../styles/chrome';

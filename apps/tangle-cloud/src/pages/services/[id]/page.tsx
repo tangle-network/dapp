@@ -42,7 +42,6 @@ import {
 } from '@tangle-network/tangle-shared-ui/data/services';
 import { addressesEqual } from '@tangle-network/tangle-shared-ui/utils/safeParseAddress';
 import useEvmOperatorInfo from '../../../hooks/useEvmOperatorInfo';
-import { twMerge } from 'tailwind-merge';
 import { Address, getAddress, isAddress, zeroAddress } from 'viem';
 import { JobSubmissionForm } from './JobSubmissionForm';
 import { JobHistoryTable } from './JobHistoryTable';
@@ -54,6 +53,7 @@ import { PagePath } from '../../../types';
 import BlueprintHostCard from '../../../components/blueprintApps/BlueprintHostCard';
 import ServiceUpgradePanel from '../../../components/binaryUpgrade/ServiceUpgradePanel';
 import ServiceUpgradeBadge from '../../../components/binaryUpgrade/ServiceUpgradeBadge';
+import { StatusPill, statusToneFor } from '../../../components/chrome';
 
 const EMPTY_VALUE_PLACEHOLDER = '-';
 const CARD_SURFACE = 'sandbox' as const;
@@ -252,26 +252,30 @@ const ServiceDetailPage: FC = () => {
     operatorAddress ?? undefined,
     { enabled: !!operatorAddress && isOperator },
   );
+  const ownerAddress = onChainDetails?.owner;
+  const servicePermittedCallers = service?.permittedCallers;
 
   // Determine if user is the owner
   const isOwner = useMemo(() => {
-    if (!address || !onChainDetails?.owner) return false;
-    return addressesEqual(onChainDetails.owner, address);
-  }, [address, onChainDetails?.owner]);
+    if (!address || !ownerAddress) return false;
+    return addressesEqual(ownerAddress, address);
+  }, [address, ownerAddress]);
 
   useEffect(() => {
-    setCallerInput('');
-    setCallerInputError(null);
-    setRemovingCaller(null);
+    const timeoutId = window.setTimeout(() => {
+      setCallerInput('');
+      setCallerInputError(null);
+      setRemovingCaller(null);
+    }, 0);
+
+    return () => window.clearTimeout(timeoutId);
   }, [serviceId]);
 
   const permittedCallers = useMemo(() => {
-    const owner = onChainDetails?.owner
-      ? getAddress(onChainDetails.owner)
-      : null;
+    const owner = ownerAddress ? getAddress(ownerAddress) : null;
     const callers = new Map<string, Address>();
 
-    for (const caller of service?.permittedCallers ?? []) {
+    for (const caller of servicePermittedCallers ?? []) {
       if (!isAddress(caller, { strict: false })) {
         continue;
       }
@@ -292,7 +296,7 @@ const ServiceDetailPage: FC = () => {
       (caller) => !addressesEqual(caller, owner),
     );
     return [owner, ...withoutOwner];
-  }, [onChainDetails?.owner, service?.permittedCallers]);
+  }, [ownerAddress, servicePermittedCallers]);
 
   // User can submit jobs if they are the owner or a permitted caller
   const canSubmitJobs = useMemo(() => {
@@ -314,10 +318,10 @@ const ServiceDetailPage: FC = () => {
     () =>
       validatePermittedCallerInput({
         value: callerInput,
-        owner: onChainDetails?.owner,
+        owner: ownerAddress,
         permittedCallers,
       }),
-    [callerInput, onChainDetails?.owner, permittedCallers],
+    [callerInput, ownerAddress, permittedCallers],
   );
 
   const canAddPermittedCaller =
@@ -517,16 +521,9 @@ const ServiceDetailPage: FC = () => {
           <InfoItem
             label="Status"
             value={
-              <span
-                className={twMerge(
-                  'px-2 py-1 rounded text-sm',
-                  service.status === 'ACTIVE'
-                    ? 'bg-green-500/20 text-green-400'
-                    : 'bg-muted text-muted-foreground',
-                )}
-              >
+              <StatusPill tone={statusToneFor('service', service.status)}>
                 {service.status}
-              </span>
+              </StatusPill>
             }
           />
           <InfoItem
@@ -618,15 +615,12 @@ const ServiceDetailPage: FC = () => {
             <div className="rounded-lg border border-border p-3">
               <Text variant="body2" className="text-muted-foreground">
                 Connected account access:{' '}
-                <span
-                  className={
-                    canSubmitJobs
-                      ? 'text-green-400 font-semibold'
-                      : 'text-yellow-300 font-semibold'
-                  }
+                <StatusPill
+                  tone={canSubmitJobs ? 'success' : 'warning'}
+                  className="ml-1 align-middle"
                 >
                   {canSubmitJobs ? 'Allowed' : 'Not allowed'}
-                </span>
+                </StatusPill>
               </Text>
             </div>
 
