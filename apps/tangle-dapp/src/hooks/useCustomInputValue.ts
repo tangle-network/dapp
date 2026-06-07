@@ -71,14 +71,27 @@ function useCustomInputValue<T>({
     }
 
     const parsedValue = parse(cleanDisplayValue);
+    let cancelled = false;
 
     if (parsedValue instanceof Error) {
-      setErrorMessage(parsedValue.message);
+      queueMicrotask(() => {
+        if (!cancelled) {
+          setErrorMessage(parsedValue.message);
+        }
+      });
     } else {
-      setErrorMessage(null);
-      setValueOnConsumer(parsedValue);
-      setDisplayValue(formatDisplayValue(parsedValue));
+      queueMicrotask(() => {
+        if (!cancelled) {
+          setErrorMessage(null);
+          setValueOnConsumer(parsedValue);
+          setDisplayValue(formatDisplayValue(parsedValue));
+        }
+      });
     }
+
+    return () => {
+      cancelled = true;
+    };
   }, [
     format,
     formatDisplayValue,

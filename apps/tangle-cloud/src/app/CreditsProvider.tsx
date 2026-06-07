@@ -48,12 +48,15 @@ export const CreditsProvider: FC<PropsWithChildren> = ({ children }) => {
     : undefined;
 
   useEffect(() => {
-    setCreditAccounts([]);
-    setIsLoading(true);
     const gen = ++genRef.current;
+    queueMicrotask(() => {
+      if (genRef.current === gen) {
+        setCreditAccounts([]);
+        setIsLoading(Boolean(address));
+      }
+    });
 
     if (!address) {
-      setIsLoading(false);
       return;
     }
 

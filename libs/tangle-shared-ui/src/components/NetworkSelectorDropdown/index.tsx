@@ -105,14 +105,14 @@ const NetworkSelectionButton: FC<NetworkSelectionButtonProps> = ({
       return false;
     }
     return network.evmChainId !== chainId;
-  }, [isConnected, network?.evmChainId, chainId]);
+  }, [isConnected, network, chainId]);
 
   const switchToCorrectEvmChain = useCallback(() => {
     if (!network?.evmChainId || !switchChain) {
       return;
     }
     switchChain({ chainId: network.evmChainId });
-  }, [network?.evmChainId, switchChain]);
+  }, [network, switchChain]);
 
   return (
     <div className="flex items-center gap-1">

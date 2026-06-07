@@ -1,7 +1,7 @@
 import useLocalStorage, {
   LocalStorageKey,
 } from '@tangle-network/tangle-shared-ui/hooks/useLocalStorage';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useState } from 'react';
 import { SubstrateAddress } from '@tangle-network/ui-components/types/address';
 import { NetworkId } from '@tangle-network/ui-components/constants/networks';
 
@@ -26,17 +26,7 @@ export const useClaimedEras = () => {
   const storage = useLocalStorage(LocalStorageKey.CLAIMED_ERAS_BY_VALIDATOR);
   const [claimedErasByValidator, setClaimedErasByValidator] =
     useState<ClaimedErasByValidator>({});
-
-  /**
-   * Initializes the claimed eras state from local storage when available.
-   * This ensures persistence of claimed eras data across page refreshes.
-   */
-  useEffect(() => {
-    const storedData = storage.valueOpt?.value ?? null;
-    if (storedData) {
-      setClaimedErasByValidator(storedData);
-    }
-  }, [storage.valueOpt]);
+  const claimedEras = storage.valueOpt?.value ?? claimedErasByValidator;
 
   const addClaimedEras = useCallback(
     (
@@ -46,11 +36,10 @@ export const useClaimedEras = () => {
     ) => {
       const validatorKey = createValidatorKey(networkId, validatorAddress);
       const newClaimedEras = {
-        ...claimedErasByValidator,
-        [validatorKey]: [
-          ...(claimedErasByValidator[validatorKey] || []),
-          ...eras,
-        ].sort((a, b) => a - b),
+        ...claimedEras,
+        [validatorKey]: [...(claimedEras[validatorKey] || []), ...eras].sort(
+          (a, b) => a - b,
+        ),
       };
 
       setClaimedErasByValidator(newClaimedEras);
@@ -58,20 +47,20 @@ export const useClaimedEras = () => {
 
       return newClaimedEras;
     },
-    [claimedErasByValidator, storage],
+    [claimedEras, storage],
   );
 
   const getClaimedEras = useCallback(
     (networkId: NetworkId, validatorAddress: SubstrateAddress): number[] => {
       const validatorKey = createValidatorKey(networkId, validatorAddress);
-      return claimedErasByValidator[validatorKey] || [];
+      return claimedEras[validatorKey] || [];
     },
-    [claimedErasByValidator],
+    [claimedEras],
   );
 
   return {
     addClaimedEras,
     getClaimedEras,
-    claimedErasByValidator,
+    claimedErasByValidator: claimedEras,
   };
 };

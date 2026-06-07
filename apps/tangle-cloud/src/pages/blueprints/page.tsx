@@ -69,10 +69,12 @@ const Page: FC = () => {
       return;
     }
 
-    handleRegisterBlueprint(blueprint);
-    const nextParams = new URLSearchParams(searchParams);
-    nextParams.delete('register');
-    setSearchParams(nextParams, { replace: true });
+    queueMicrotask(() => {
+      handleRegisterBlueprint(blueprint);
+      const nextParams = new URLSearchParams(searchParams);
+      nextParams.delete('register');
+      setSearchParams(nextParams, { replace: true });
+    });
   }, [
     blueprints,
     handleRegisterBlueprint,

@@ -39,10 +39,15 @@ export function useDynamicSVGImport(
   const currentNameRef = useRef<string>('');
 
   const [importedIcon, setImportedIcon] = useState<
-    React.ReactElement<React.SVGProps<SVGElement>, 'svg'> | undefined
+    | {
+        key: string;
+        svgElement:
+          | React.ReactElement<React.SVGProps<SVGElement>, 'svg'>
+          | undefined;
+        loading: boolean;
+      }
+    | undefined
   >();
-
-  const [loading, setLoading] = useState(true);
 
   const { onCompleted } = options;
 
@@ -50,15 +55,15 @@ export function useDynamicSVGImport(
     typeof name === 'string' ? name.trim().toLowerCase() : 'placeholder';
 
   const type = options.type ?? 'token';
+  const iconKey = `${type}:${normalizedName}`;
 
   useEffect(() => {
-    currentNameRef.current = normalizedName;
-
-    setLoading(true);
+    currentNameRef.current = iconKey;
 
     const importIcon = async (): Promise<void> => {
       // Store the name we're currently processing
       const processingName = normalizedName;
+      const processingKey = iconKey;
 
       try {
         const mod = await getIcon(type, processingName);
@@ -67,12 +72,16 @@ export function useDynamicSVGImport(
         >;
 
         // Only update state if this is still the current name
-        if (processingName === currentNameRef.current) {
-          setImportedIcon(<Icon />);
+        if (processingKey === currentNameRef.current) {
+          setImportedIcon({
+            key: processingKey,
+            svgElement: <Icon />,
+            loading: false,
+          });
           onCompleted?.(processingName, Icon);
         }
       } catch {
-        const isCurrentNameMatch = processingName === currentNameRef.current;
+        const isCurrentNameMatch = processingKey === currentNameRef.current;
 
         // Fallback to default icon
         const DefaultIcon =
@@ -85,24 +94,26 @@ export function useDynamicSVGImport(
               >);
 
         if (isCurrentNameMatch) {
-          setImportedIcon(<DefaultIcon />);
+          setImportedIcon({
+            key: processingKey,
+            svgElement: <DefaultIcon />,
+            loading: false,
+          });
           onCompleted?.(processingName, DefaultIcon);
-        }
-      } finally {
-        if (processingName === currentNameRef.current) {
-          setLoading(false);
         }
       }
     };
 
     importIcon().catch(console.error);
-  }, [normalizedName, onCompleted, type]);
+  }, [iconKey, normalizedName, onCompleted, type]);
+
+  const isCurrentIcon = importedIcon?.key === iconKey;
 
   // Never returns an error since we always fall back to default icon
   return {
     error: undefined as Error | undefined,
-    loading,
-    svgElement: importedIcon,
+    loading: !isCurrentIcon || importedIcon.loading,
+    svgElement: isCurrentIcon ? importedIcon.svgElement : undefined,
   };
 }
 

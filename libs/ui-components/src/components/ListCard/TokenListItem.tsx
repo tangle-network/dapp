@@ -7,7 +7,13 @@ import {
   ShieldedAssetIcon,
   TokenIcon,
 } from '@tangle-network/icons';
-import { ComponentProps, forwardRef, useMemo, useRef } from 'react';
+import {
+  ComponentProps,
+  forwardRef,
+  useCallback,
+  useEffect,
+  useRef,
+} from 'react';
 import { PropsOf } from '../../types';
 import { Typography } from '../../typography';
 import { getRoundedAmountString } from '../../utils';
@@ -135,15 +141,17 @@ const TokenListItem = forwardRef<
     ref,
   ) => {
     const onAddTokenRef = useRef(onAddToken);
+    useEffect(() => {
+      onAddTokenRef.current = onAddToken;
+    }, [onAddToken]);
 
-    const handleTokenIconClick = useMemo(() => {
-      if (typeof onAddTokenRef.current === 'function') {
-        return (event: React.MouseEvent<HTMLButtonElement>) => {
-          event.stopPropagation();
-          onAddTokenRef.current?.(event);
-        };
-      }
-    }, []);
+    const handleTokenIconClick = useCallback(
+      (event: React.MouseEvent<HTMLButtonElement>) => {
+        event.stopPropagation();
+        onAddTokenRef.current?.(event);
+      },
+      [],
+    );
 
     return (
       <ListItem {...props} isDisabled={isDisabled} ref={ref}>
@@ -190,7 +198,7 @@ const TokenListItem = forwardRef<
           </p>
         </div>
 
-        {typeof handleTokenIconClick === 'function' && !isDisabled ? (
+        {typeof onAddToken === 'function' && !isDisabled ? (
           <AddToWalletButton onClick={handleTokenIconClick} />
         ) : isLoadingMetadata ? (
           <SkeletonLoader size="lg" className="w-14" />

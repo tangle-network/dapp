@@ -244,7 +244,9 @@ const ServiceRequestDetailModal: FC<Props> = ({
   const requestId = selectedRequest?.requestId;
   useEffect(() => {
     if (requestId !== undefined) {
-      setView('details');
+      queueMicrotask(() => {
+        setView('details');
+      });
     }
   }, [requestId]);
 

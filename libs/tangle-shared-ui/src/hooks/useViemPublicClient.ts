@@ -1,27 +1,21 @@
-import { useEffect, useState } from 'react';
-import { createPublicClient, http, type PublicClient } from 'viem';
+import { useMemo } from 'react';
+import { createPublicClient, http } from 'viem';
 
 import useEvmChain from './useEvmChain';
 
 const useViemPublicClient = () => {
-  const [publicClient, setPublicClient] = useState<PublicClient | null>(null);
   const evmChain = useEvmChain();
 
-  // Update the public client when the network changes.
-  useEffect(() => {
+  return useMemo(() => {
     if (evmChain === null) {
-      return;
+      return null;
     }
 
-    const newPublicClient = createPublicClient({
+    return createPublicClient({
       chain: evmChain,
       transport: http(),
     });
-
-    setPublicClient(newPublicClient);
   }, [evmChain]);
-
-  return publicClient;
 };
 
 export default useViemPublicClient;

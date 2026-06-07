@@ -91,7 +91,9 @@ export function useIframeBridge({
   const [pendingApproval, setPendingApproval] =
     useState<PendingApproval | null>(null);
   const pendingRef = useRef(pendingApproval);
-  pendingRef.current = pendingApproval;
+  useEffect(() => {
+    pendingRef.current = pendingApproval;
+  }, [pendingApproval]);
   // correlationId of an in-flight tangle.app.requestConnect (the iframe asked
   // us to connect a wallet). Resolved when an account appears, or rejected if
   // the user dismisses the modal without connecting.
@@ -255,7 +257,9 @@ export function useIframeBridge({
     serviceContext?: IframeServiceContext;
     chainContext?: typeof chainContext;
   }>({});
-  syncRef.current = { address, chainId, serviceContext, chainContext };
+  useEffect(() => {
+    syncRef.current = { address, chainId, serviceContext, chainContext };
+  }, [address, chainContext, chainId, serviceContext]);
 
   const serviceContextKey = serviceContext
     ? JSON.stringify({ ...serviceContext, chain: chainContext })
