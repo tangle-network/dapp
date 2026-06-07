@@ -44,7 +44,7 @@ const FilterTray: FC<Props> = ({
         <button
           type="button"
           className={twMerge(
-            'inline-flex h-9 items-center gap-2 rounded-md border border-border bg-muted/30 px-3 text-sm font-medium text-foreground transition-colors hover:bg-[color:var(--bg-hover)]',
+            'inline-flex h-9 items-center gap-2 rounded-md border border-border bg-muted/30 px-3 font-sans text-sm font-medium text-foreground not-italic transition-colors hover:bg-[color:var(--bg-hover)]',
             focus.ring,
           )}
         >
@@ -79,7 +79,7 @@ const FilterTray: FC<Props> = ({
                 variant="ghost"
                 size="sm"
                 onClick={onClear}
-                className="h-7 px-2 text-xs"
+                className="h-7 px-2 font-sans text-xs not-italic"
               >
                 Clear all
               </Button>

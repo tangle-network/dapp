@@ -62,7 +62,7 @@ const PageToolbar: FC<Props> = ({
           placeholder={search.placeholder}
           autoFocus={search.autoFocus}
           className={twMerge(
-            'h-9 w-full rounded-md border border-transparent bg-transparent pl-9 pr-3 text-sm leading-tight text-foreground placeholder:text-muted-foreground/70',
+            'h-9 w-full rounded-md border border-transparent bg-transparent pl-9 pr-3 font-sans text-sm leading-tight text-foreground not-italic placeholder:text-muted-foreground/70',
             'hover:border-border focus:border-[color:var(--border-accent-hover)]',
             focus.ring,
           )}

@@ -79,7 +79,7 @@ const ViewButton: FC<{
       onClick={onClick}
       title={kind === 'grid' ? 'Grid view' : 'List view'}
       className={twMerge(
-        'inline-flex h-7 w-8 items-center justify-center rounded transition-colors',
+        'inline-flex h-7 w-8 items-center justify-center rounded font-sans not-italic transition-colors',
         active
           ? 'bg-[color:var(--bg-hover)] text-foreground'
           : 'text-muted-foreground hover:text-foreground',

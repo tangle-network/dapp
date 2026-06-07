@@ -61,9 +61,19 @@ import { BlueprintVisual } from '../../components/blueprints/BlueprintVisual';
 
 const PAGE_SIZE = 12;
 
-type AudienceFilter = 'all' | 'customers' | 'operators';
+type AvailabilityFilter = 'all' | 'deployable' | 'capacity';
 type ManifestFilter = 'all' | 'verified' | 'fallback';
 type AuditFilter = 'all' | 'audited';
+type FilterOption<T extends string> = {
+  value: T;
+  label: string;
+  description?: string;
+};
+type CatalogStat = {
+  label: string;
+  value: number;
+  detail: string;
+};
 
 type Props = {
   rowSelection?: RowSelectionState;
@@ -75,6 +85,23 @@ type Props = {
 
 const pluralize = (label: string, count: number) =>
   count === 1 ? label : `${label}s`;
+
+const availabilityOptions: FilterOption<AvailabilityFilter>[] = [
+  { value: 'all', label: 'All' },
+  { value: 'deployable', label: 'Deployable' },
+  { value: 'capacity', label: 'Needs capacity' },
+];
+
+const sourceOptions: FilterOption<ManifestFilter>[] = [
+  { value: 'all', label: 'All sources' },
+  { value: 'verified', label: 'Pinned source' },
+  { value: 'fallback', label: 'Chain-only' },
+];
+
+const trustOptions: FilterOption<AuditFilter>[] = [
+  { value: 'all', label: 'All trust' },
+  { value: 'audited', label: 'Audited' },
+];
 
 /**
  * Title-case a single tag so the catalog renders consistent chips even if
@@ -184,6 +211,13 @@ const matchesSearch = (blueprint: Blueprint, query: string) => {
   return haystack.includes(query);
 };
 
+const getBlueprintDescription = (blueprint: Blueprint) =>
+  blueprint.description?.trim() ||
+  'Service blueprint ready for deployment once capacity is available.';
+
+const getModeCount = (row: DedupedBlueprintRow) =>
+  row.modes?.length ?? (row.aliases.length > 0 ? row.aliases.length + 1 : 1);
+
 /**
  * Multi-select category dropdown for the toolbar. Replaces the old
  * full-width segmented row — categories collapse into one pill with a
@@ -202,7 +236,7 @@ const CategoryFilterMenu: FC<{
         <button
           type="button"
           className={twMerge(
-            'inline-flex h-9 items-center gap-2 rounded-md border border-border bg-muted/30 px-3 text-sm font-medium text-foreground transition-colors hover:bg-[color:var(--bg-hover)]',
+            'inline-flex h-9 items-center gap-2 rounded-md border border-border bg-muted/30 px-3 font-sans text-sm font-medium text-foreground not-italic transition-colors hover:bg-[color:var(--bg-hover)]',
             focus.ring,
           )}
         >
@@ -234,7 +268,7 @@ const CategoryFilterMenu: FC<{
               <button
                 type="button"
                 onClick={onClear}
-                className="text-xs text-muted-foreground hover:text-foreground"
+                className="font-sans text-xs text-muted-foreground not-italic hover:text-foreground"
               >
                 Clear
               </button>
@@ -253,7 +287,7 @@ const CategoryFilterMenu: FC<{
                   type="button"
                   onClick={() => onToggle(category)}
                   className={twMerge(
-                    'flex w-full items-center justify-between gap-2 rounded-md px-2 py-1.5 text-left text-sm text-foreground transition-colors hover:bg-[color:var(--bg-hover)]',
+                    'flex w-full items-center justify-between gap-2 rounded-md px-2 py-1.5 text-left font-sans text-sm text-foreground not-italic transition-colors hover:bg-[color:var(--bg-hover)]',
                     focus.ring,
                   )}
                 >
@@ -281,6 +315,106 @@ const CategoryFilterMenu: FC<{
     </Popover.Root>
   );
 };
+
+const BlueprintCatalogHeader: FC<{
+  matchCount: number;
+  totalCount: number;
+  stats: CatalogStat[];
+}> = ({ matchCount, totalCount, stats }) => (
+  <section className="border-b border-border pb-5">
+    <div className="flex flex-col gap-5 lg:flex-row lg:items-end lg:justify-between">
+      <div className="max-w-3xl">
+        <h1 className={twMerge(typeRole.display, 'text-foreground')}>
+          Blueprints
+        </h1>
+        <p className="mt-2 max-w-2xl text-sm leading-6 text-muted-foreground">
+          Live service catalog with capacity, source, and trust signals for the
+          selected network.
+        </p>
+        <div className="mt-3 flex flex-wrap items-center gap-2 text-sm text-muted-foreground">
+          <span className={typeRole.mono}>
+            {matchCount.toLocaleString()}
+            {matchCount !== totalCount && (
+              <span className="opacity-60">
+                {' / '}
+                {totalCount.toLocaleString()}
+              </span>
+            )}
+          </span>
+          <span>{pluralize('blueprint', matchCount)}</span>
+        </div>
+      </div>
+
+      <div className="grid grid-cols-2 gap-x-6 gap-y-3 sm:grid-cols-4 lg:min-w-[520px]">
+        {stats.map((stat) => (
+          <div key={stat.label} className="border-l border-border pl-3">
+            <div className="font-mono text-2xl leading-none tabular-nums text-foreground">
+              {stat.value.toLocaleString()}
+            </div>
+            <div className={twMerge(typeRole.label, 'mt-1')}>{stat.label}</div>
+            <div className="mt-1 text-xs leading-tight text-muted-foreground">
+              {stat.detail}
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+);
+
+function FilterSegment<T extends string>({
+  label,
+  options,
+  value,
+  onChange,
+  stacked = false,
+}: {
+  label: string;
+  options: FilterOption<T>[];
+  value: T;
+  onChange: (value: T) => void;
+  stacked?: boolean;
+}) {
+  return (
+    <div className={twMerge(stacked ? 'space-y-2' : 'flex items-center gap-2')}>
+      {stacked && <span className={typeRole.label}>{label}</span>}
+      <div
+        role="radiogroup"
+        aria-label={label}
+        className={twMerge(
+          'inline-flex min-h-9 rounded-md border border-border bg-muted/30 p-0.5',
+          stacked && 'grid w-full grid-cols-1 gap-1 bg-transparent p-0',
+        )}
+      >
+        {options.map((option) => {
+          const active = option.value === value;
+          return (
+            <button
+              key={option.value}
+              type="button"
+              role="radio"
+              aria-checked={active}
+              onClick={() => onChange(option.value)}
+              className={twMerge(
+                'inline-flex min-h-8 items-center justify-center rounded px-3 font-sans text-sm font-medium not-italic transition-colors',
+                active
+                  ? 'bg-[color:var(--bg-hover)] text-foreground shadow-[inset_0_0_0_1px_var(--border-accent)]'
+                  : 'text-muted-foreground hover:text-foreground',
+                stacked && 'justify-start border border-border bg-muted/20',
+                stacked &&
+                  active &&
+                  'border-[color:var(--border-accent-hover)]',
+                focus.ring,
+              )}
+            >
+              <span>{option.label}</span>
+            </button>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
 
 const BlueprintListing: FC<Props> = ({
   rowSelection,
@@ -322,10 +456,11 @@ const BlueprintListing: FC<Props> = ({
     },
     [selectedCategories, setCategoryParam],
   );
-  const [audienceFilter, setAudienceFilter] = useUrlState<AudienceFilter>(
-    'avail',
-    enumCodec(['all', 'customers', 'operators'] as const, 'all'),
-  );
+  const [availabilityFilter, setAvailabilityFilter] =
+    useUrlState<AvailabilityFilter>(
+      'avail',
+      enumCodec(['all', 'deployable', 'capacity'] as const, 'all'),
+    );
   const [manifestFilter, setManifestFilter] = useUrlState<ManifestFilter>(
     'source',
     enumCodec(['all', 'verified', 'fallback'] as const, 'all'),
@@ -379,14 +514,14 @@ const BlueprintListing: FC<Props> = ({
       }
 
       if (
-        audienceFilter === 'customers' &&
+        availabilityFilter === 'deployable' &&
         (blueprint.operatorsCount ?? 0) <= 0
       ) {
         return false;
       }
 
       if (
-        audienceFilter === 'operators' &&
+        availabilityFilter === 'capacity' &&
         (blueprint.operatorsCount ?? 0) >= 3
       ) {
         return false;
@@ -410,7 +545,7 @@ const BlueprintListing: FC<Props> = ({
       return true;
     });
   }, [
-    audienceFilter,
+    availabilityFilter,
     auditFilter,
     auditedStatus,
     blueprintItems,
@@ -425,7 +560,7 @@ const BlueprintListing: FC<Props> = ({
     setPage(0);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
-    audienceFilter,
+    availabilityFilter,
     auditFilter,
     deferredSearchQuery,
     manifestFilter,
@@ -442,6 +577,47 @@ const BlueprintListing: FC<Props> = ({
     () => dedupeBlueprintsByIdentity(filteredBlueprints),
     [filteredBlueprints],
   );
+  const allDedupedRows = useMemo(
+    () => dedupeBlueprintsByIdentity(blueprintItems),
+    [blueprintItems],
+  );
+  const catalogStats = useMemo<CatalogStat[]>(() => {
+    let deployable = 0;
+    let capacityNeeded = 0;
+    let pinnedSource = 0;
+    let audited = 0;
+
+    for (const { blueprint } of allDedupedRows) {
+      const operatorCount = blueprint.operatorsCount ?? 0;
+      if (operatorCount > 0) deployable += 1;
+      if (operatorCount < 3) capacityNeeded += 1;
+      if (hasVerifiedManifest(blueprint)) pinnedSource += 1;
+      if (auditedStatus.get(blueprint.id.toString()) === true) audited += 1;
+    }
+
+    return [
+      {
+        label: 'Deployable',
+        value: deployable,
+        detail: 'ready now',
+      },
+      {
+        label: 'Need capacity',
+        value: capacityNeeded,
+        detail: 'below target',
+      },
+      {
+        label: 'Pinned',
+        value: pinnedSource,
+        detail: 'verified source',
+      },
+      {
+        label: 'Audited',
+        value: audited,
+        detail: 'trust signal',
+      },
+    ];
+  }, [allDedupedRows, auditedStatus]);
   const totalPages = Math.max(1, Math.ceil(dedupedRows.length / PAGE_SIZE));
   const safePage = Math.min(page, totalPages - 1);
   const visibleRows = dedupedRows.slice(
@@ -451,7 +627,7 @@ const BlueprintListing: FC<Props> = ({
   const hasActiveFilters =
     searchQuery.trim() !== '' ||
     selectedCategories.length > 0 ||
-    audienceFilter !== 'all' ||
+    availabilityFilter !== 'all' ||
     manifestFilter !== 'all' ||
     auditFilter !== 'all';
 
@@ -464,44 +640,17 @@ const BlueprintListing: FC<Props> = ({
     () => [
       {
         header: 'Blueprint',
-        className: 'min-w-0 flex-[2]',
-        render: (row: DedupedBlueprintRow) => {
-          const { blueprint } = row;
-          const description =
-            blueprint.description?.trim() ||
-            'Service blueprint — deploy when operators are available.';
-
-          return (
-            <div className="flex min-w-0 items-center gap-3">
-              <BlueprintVisual
-                blueprint={blueprint}
-                category={getBlueprintCategory(blueprint)}
-                compact
-                className="h-12 w-12 shrink-0 rounded-md"
-              />
-              <div className="min-w-0">
-                <div className="flex min-w-0 items-center gap-2">
-                  <span className="truncate font-display font-bold text-foreground text-[15px] leading-tight">
-                    {formatBlueprintName(blueprint.name)}
-                  </span>
-                  <span className="shrink-0 font-mono text-xs tabular-nums text-muted-foreground">
-                    #{blueprint.id.toString()}
-                  </span>
-                </div>
-                <p className="mt-1 line-clamp-1 text-muted-foreground text-sm leading-snug">
-                  {description}
-                </p>
-              </div>
-            </div>
-          );
-        },
+        className: 'min-w-0 flex-[2.4]',
+        render: (row: DedupedBlueprintRow) => (
+          <BlueprintIdentitySummary row={row} />
+        ),
       },
       {
-        header: 'Operators',
-        className: 'w-44',
+        header: 'Capacity',
+        className: 'w-40',
         hideBelow: 'md' as const,
         render: (row: DedupedBlueprintRow) => (
-          <BlueprintCapacityPill
+          <BlueprintCapacityCell
             operatorCount={row.blueprint.operatorsCount ?? 0}
           />
         ),
@@ -524,18 +673,35 @@ const BlueprintListing: FC<Props> = ({
         },
       },
       {
-        header: 'Instances',
-        className: 'w-28 justify-end',
+        header: 'Source',
+        className: 'w-32',
+        hideBelow: 'lg' as const,
+        render: (row: DedupedBlueprintRow) => {
+          const verified = hasVerifiedManifest(row.blueprint);
+          return (
+            <StatusPill
+              tone={verified ? 'success' : 'neutral'}
+              dot={false}
+              className="text-[12px]"
+            >
+              {verified ? 'Pinned' : 'Chain-only'}
+            </StatusPill>
+          );
+        },
+      },
+      {
+        header: 'Usage',
+        className: 'w-24 justify-end',
         hideBelow: 'lg' as const,
         render: (row: DedupedBlueprintRow) => (
-          <span className="font-mono text-[12px] tabular-nums text-muted-foreground">
+          <span className="font-mono text-[13px] tabular-nums text-muted-foreground">
             {(row.blueprint.instancesCount ?? 0).toLocaleString()}
           </span>
         ),
       },
       {
         header: 'Actions',
-        className: 'w-40 justify-end sm:w-48',
+        className: 'w-52 justify-end sm:w-56',
         render: (row: DedupedBlueprintRow) => {
           const { blueprint } = row;
           const blueprintHref = `${PagePath.BLUEPRINTS}/${blueprint.id.toString()}`;
@@ -567,10 +733,17 @@ const BlueprintListing: FC<Props> = ({
 
   if (isLoading && blueprintItems.length === 0) {
     return (
-      <div className="grid grid-cols-1 gap-5 md:grid-cols-2 xl:grid-cols-3">
-        {Array.from({ length: 6 }).map((_, idx) => (
-          <Skeleton key={idx} className="h-[360px] rounded-lg" />
-        ))}
+      <div className="space-y-5">
+        <BlueprintCatalogHeader
+          matchCount={0}
+          totalCount={0}
+          stats={catalogStats}
+        />
+        <div className="grid grid-cols-1 gap-5 md:grid-cols-2 xl:grid-cols-3">
+          {Array.from({ length: 6 }).map((_, idx) => (
+            <Skeleton key={idx} className="h-[360px] rounded-lg" />
+          ))}
+        </div>
       </div>
     );
   }
@@ -602,37 +775,47 @@ const BlueprintListing: FC<Props> = ({
       <EmptyState
         kind="no-data"
         title="No blueprints on this network"
-        description="Register an operator, switch networks, or publish a blueprint to make it available for deployment."
+        description="Add capacity, switch networks, or publish a blueprint to make services available for deployment."
       />
     );
   }
 
-  // Count active non-default filters — drives the FilterTray's active badge
-  // so the operator sees at a glance how many constraints they have on.
-  const activeFilterCount =
-    (audienceFilter !== 'all' ? 1 : 0) +
-    (manifestFilter !== 'all' ? 1 : 0) +
-    (auditFilter !== 'all' ? 1 : 0);
+  const trayFilterCount =
+    (manifestFilter !== 'all' ? 1 : 0) + (auditFilter !== 'all' ? 1 : 0);
 
   const resetAllFilters = () => {
     setSearchQuery('');
     setCategoryParam('');
-    setAudienceFilter('all');
+    setAvailabilityFilter('all');
     setManifestFilter('all');
     setAuditFilter('all');
   };
 
   return (
     <div className="space-y-5">
+      <BlueprintCatalogHeader
+        matchCount={dedupedRows.length}
+        totalCount={allDedupedRows.length}
+        stats={catalogStats}
+      />
+
       <PageToolbar
         search={{
           value: searchQuery,
           onChange: setSearchQuery,
-          placeholder: 'Search blueprints, services, publishers, or IDs',
+          placeholder: 'Search name, publisher, tag, or #id',
         }}
+        filters={
+          <FilterSegment
+            label="Availability"
+            options={availabilityOptions}
+            value={availabilityFilter}
+            onChange={setAvailabilityFilter}
+          />
+        }
         count={{
           matches: dedupedRows.length,
-          total: blueprintItems.length,
+          total: allDedupedRows.length,
           noun: 'matches',
         }}
         trailing={
@@ -646,57 +829,25 @@ const BlueprintListing: FC<Props> = ({
               onClear={() => setCategoryParam('')}
             />
             <FilterTray
-              activeCount={activeFilterCount}
+              activeCount={trayFilterCount}
               onClear={resetAllFilters}
-              trayTitle="Catalog filters"
+              trayTitle="Source and trust"
             >
-              <label className="block space-y-1.5">
-                <span className={typeRole.label}>Availability</span>
-                <select
-                  value={audienceFilter}
-                  onChange={(event) =>
-                    setAudienceFilter(
-                      event.currentTarget.value as AudienceFilter,
-                    )
-                  }
-                  className="h-9 w-full rounded-md border border-border bg-background px-3 text-sm text-foreground outline-none hover:bg-[color:var(--bg-hover)] focus:border-[color:var(--border-accent-hover)]"
-                >
-                  <option value="all">All availability</option>
-                  <option value="customers">Has operators</option>
-                  <option value="operators">Needs capacity</option>
-                </select>
-              </label>
+              <FilterSegment
+                label="Source"
+                options={sourceOptions}
+                value={manifestFilter}
+                onChange={setManifestFilter}
+                stacked
+              />
 
-              <label className="block space-y-1.5">
-                <span className={typeRole.label}>Source</span>
-                <select
-                  value={manifestFilter}
-                  onChange={(event) =>
-                    setManifestFilter(
-                      event.currentTarget.value as ManifestFilter,
-                    )
-                  }
-                  className="h-9 w-full rounded-md border border-border bg-background px-3 text-sm text-foreground outline-none hover:bg-[color:var(--bg-hover)] focus:border-[color:var(--border-accent-hover)]"
-                >
-                  <option value="all">All sources</option>
-                  <option value="verified">Pinned source</option>
-                  <option value="fallback">Chain-only</option>
-                </select>
-              </label>
-
-              <label className="block space-y-1.5">
-                <span className={typeRole.label}>Trust</span>
-                <select
-                  value={auditFilter}
-                  onChange={(event) =>
-                    setAuditFilter(event.currentTarget.value as AuditFilter)
-                  }
-                  className="h-9 w-full rounded-md border border-border bg-background px-3 text-sm text-foreground outline-none hover:bg-[color:var(--bg-hover)] focus:border-[color:var(--border-accent-hover)]"
-                >
-                  <option value="all">All blueprints</option>
-                  <option value="audited">Audited only</option>
-                </select>
-              </label>
+              <FilterSegment
+                label="Trust"
+                options={trustOptions}
+                value={auditFilter}
+                onChange={setAuditFilter}
+                stacked
+              />
             </FilterTray>
           </div>
         }
@@ -945,7 +1096,70 @@ const useAuditedStatusMap = (blueprintIds: bigint[]): Map<string, boolean> => {
   return map;
 };
 
-const BlueprintCapacityPill = ({
+const BlueprintIdentitySummary = ({ row }: { row: DedupedBlueprintRow }) => {
+  const { blueprint } = row;
+  const category = getBlueprintCategory(blueprint);
+  const modeCount = getModeCount(row);
+
+  return (
+    <div className="flex min-w-0 items-center gap-3">
+      <BlueprintVisual
+        blueprint={blueprint}
+        category={category}
+        compact
+        className="h-14 w-14 shrink-0 rounded-md"
+      />
+      <div className="min-w-0">
+        <div className="flex min-w-0 items-center gap-2">
+          <span className="truncate font-display text-[15px] font-bold leading-tight text-foreground">
+            {formatBlueprintName(blueprint.name)}
+          </span>
+          <span className="shrink-0 font-mono text-xs tabular-nums text-muted-foreground">
+            #{blueprint.id.toString()}
+          </span>
+        </div>
+        <p className="mt-1 line-clamp-1 text-sm leading-snug text-muted-foreground">
+          {getBlueprintDescription(blueprint)}
+        </p>
+        <div className="mt-2 flex flex-wrap items-center gap-1.5">
+          <BlueprintMetaChip>{category}</BlueprintMetaChip>
+          {modeCount > 1 && (
+            <BlueprintMetaChip>
+              {modeCount} {pluralize('mode', modeCount)}
+            </BlueprintMetaChip>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+};
+
+const BlueprintMetaChip = ({ children }: { children: ReactNode }) => (
+  <span className="rounded border border-border bg-muted/20 px-1.5 py-0.5 font-sans text-[11px] font-medium leading-none text-muted-foreground not-italic">
+    {children}
+  </span>
+);
+
+const BlueprintCapacityCell = ({
+  operatorCount,
+}: {
+  operatorCount: number;
+}) => {
+  const hasOperators = operatorCount > 0;
+
+  return (
+    <div className="flex min-w-0 flex-col items-start gap-1.5">
+      <BlueprintCapacitySignal operatorCount={operatorCount} />
+      <span className="font-mono text-[12px] tabular-nums text-muted-foreground">
+        {hasOperators
+          ? `${operatorCount.toLocaleString()} registered`
+          : '0 registered'}
+      </span>
+    </div>
+  );
+};
+
+const BlueprintCapacitySignal = ({
   operatorCount,
 }: {
   operatorCount: number;
@@ -959,25 +1173,18 @@ const BlueprintCapacityPill = ({
         hasOperators ? 'Available' : 'Limited',
       )}
       dot={false}
-      className="text-xs"
+      className="text-[12px]"
     >
-      {hasOperators ? (
-        <>
-          <span className="font-mono tabular-nums">{operatorCount}</span>{' '}
-          {pluralize('operator', operatorCount)}
-        </>
-      ) : (
-        'Needs operators'
-      )}
+      {hasOperators ? 'Ready' : 'Needs capacity'}
     </StatusPill>
   );
 };
 
 const catalogActionClass =
-  'inline-flex min-h-8 flex-1 items-center justify-center rounded-md border border-border bg-muted/30 px-3 py-1.5 text-center text-xs font-semibold text-foreground transition-colors before:hidden after:hidden hover:bg-[color:var(--bg-hover)]';
+  'inline-flex min-h-8 flex-1 items-center justify-center rounded-md border border-border bg-muted/30 px-3 py-1.5 text-center font-sans text-xs font-semibold text-foreground not-italic transition-colors before:hidden after:hidden marker:hidden hover:bg-[color:var(--bg-hover)] whitespace-nowrap';
 
 const catalogPrimaryActionClass =
-  'inline-flex min-h-8 flex-1 items-center justify-center rounded-md bg-primary px-3 py-1.5 text-center text-xs font-semibold text-primary-foreground transition-colors before:hidden after:hidden hover:bg-primary/90';
+  'inline-flex min-h-8 flex-1 items-center justify-center rounded-md bg-primary px-3 py-1.5 text-center font-sans text-xs font-semibold text-primary-foreground not-italic transition-colors before:hidden after:hidden marker:hidden hover:bg-primary/90 whitespace-nowrap';
 
 const MobileBlueprintRow = ({
   row,
@@ -992,9 +1199,7 @@ const MobileBlueprintRow = ({
   const blueprintHref = `${PagePath.BLUEPRINTS}/${blueprint.id.toString()}`;
   const operatorCount = blueprint.operatorsCount ?? 0;
   const hasOperators = operatorCount > 0;
-  const description =
-    blueprint.description?.trim() ||
-    'Service blueprint — deploy when operators are available.';
+  const description = getBlueprintDescription(blueprint);
 
   return (
     <article className="rounded-lg border border-border bg-[color:var(--bg-card)] p-3 shadow-[var(--shadow-card)]">
@@ -1024,13 +1229,20 @@ const MobileBlueprintRow = ({
       </Link>
 
       <div className="mt-3 flex flex-wrap items-center gap-2">
-        <BlueprintCapacityPill operatorCount={operatorCount} />
+        <BlueprintCapacitySignal operatorCount={operatorCount} />
         <StatusPill
           tone={statusToneFor('audit', isAudited ? 'Audited' : 'Unaudited')}
           dot={false}
-          className="text-xs"
+          className="text-[12px]"
         >
           {isAudited ? 'Audited' : 'Unaudited'}
+        </StatusPill>
+        <StatusPill
+          tone={hasVerifiedManifest(blueprint) ? 'success' : 'neutral'}
+          dot={false}
+          className="text-[12px]"
+        >
+          {hasVerifiedManifest(blueprint) ? 'Pinned' : 'Chain-only'}
         </StatusPill>
       </div>
 
@@ -1053,27 +1265,6 @@ const MobileBlueprintRow = ({
   );
 };
 
-/**
- * Catalog card — the operator/customer's primary scan surface.
- *
- * Hard rule: ONE fact per visual line, three lines of information total.
- *
- *   Line 1: title (large, primary read)
- *   Line 2: one-line description (truncated)
- *   Line 3: status — "Ready · N operators" OR "Needs operators"
- *
- * Everything else is hover-revealed (action buttons) or absent (publisher
- * address, category pill, deployment-modes pill, source-pinning pill,
- * three-cell metric grid, github link). The detail page is one click away
- * and surfaces those facts where they belong.
- *
- * Distinctive identity (so the wall doesn't look like a shadcn template
- * gallery): the blueprint id renders as a large mono "watermark" in the
- * top-right corner — like a tactical card chip number. Featured /
- * audited blueprints get a 2px accent stripe on the left border, not a
- * full perimeter glow. Visual identity comes from typography and
- * proportion, not from gradients.
- */
 const BlueprintCard = ({
   row,
   isSelectable,
@@ -1090,29 +1281,24 @@ const BlueprintCard = ({
   onRegister?: (blueprint: Blueprint) => void;
 }) => {
   const { blueprint } = row;
-  const description =
-    blueprint.description?.trim() ||
-    'Service blueprint — deploy when operators are available.';
+  const description = getBlueprintDescription(blueprint);
   const blueprintHref = `${PagePath.BLUEPRINTS}/${blueprint.id.toString()}`;
   const operatorCount = blueprint.operatorsCount ?? 0;
   const hasOperators = operatorCount > 0;
   const isFeatured = blueprint.isBoosted === true || isAudited;
   const displayName = formatBlueprintName(blueprint.name);
+  const modeCount = getModeCount(row);
+  const sourcePinned = hasVerifiedManifest(blueprint);
   return (
     <div
       className={twMerge(
         'group relative flex min-h-[260px] flex-col gap-3 rounded-lg border border-border bg-[color:var(--bg-card)] p-4 shadow-[var(--shadow-card)] transition-all',
-        // Subtle hover: lift one pixel, tighten border accent. No gradient
-        // glow. The card already has enough visual weight from its content.
         'hover:-translate-y-px hover:border-[color:var(--border-accent-hover)]',
         isFeatured && 'border-l-2 border-l-[color:var(--border-accent-hover)]',
         isSelected &&
           'border-[color:var(--border-accent-hover)] shadow-[0_0_0_1px_var(--border-accent-hover)]',
       )}
     >
-      {/* Whole-card link — keeps the deploy/register buttons interactive
-       * because they have z-20 and stopPropagation. Aria label on the
-       * link is the source of truth; the visible title is a styled span. */}
       <Link
         to={blueprintHref}
         className="absolute inset-0 z-10"
@@ -1126,8 +1312,6 @@ const BlueprintCard = ({
         className="h-28 rounded-md"
       />
 
-      {/* Watermark ID — mono, low-contrast, top-right. The card's identity
-       * marker; not a UI element, not actionable. */}
       <span
         aria-hidden
         className="pointer-events-none absolute right-4 top-4 select-none font-mono text-xs tabular-nums text-foreground/15"
@@ -1135,8 +1319,6 @@ const BlueprintCard = ({
         #{blueprint.id.toString().padStart(3, '0')}
       </span>
 
-      {/* Selection checkbox (drawer mode) — top-left so it never collides
-       * with the watermark or with the hover-revealed actions. */}
       {isSelectable && (
         <label
           className="absolute left-4 top-4 z-20 flex h-7 w-7 cursor-pointer items-center justify-center rounded border border-border bg-background/80 backdrop-blur transition-colors hover:bg-background"
@@ -1152,7 +1334,6 @@ const BlueprintCard = ({
         </label>
       )}
 
-      {/* Header — name + 1-line description. */}
       <div className={twMerge('min-w-0', isSelectable && 'pl-8')}>
         <h3 className="line-clamp-1 pr-12 font-display font-bold text-base leading-tight tracking-normal text-foreground">
           {displayName}
@@ -1162,18 +1343,28 @@ const BlueprintCard = ({
         </p>
       </div>
 
-      {/* Status row — one chip, mono operator count, audit/trust if present.
-       * Everything is bottom-anchored so cards align by their last line. */}
       <div className="mt-auto flex flex-wrap items-center gap-2 pt-2">
-        <BlueprintCapacityPill operatorCount={operatorCount} />
+        <BlueprintCapacitySignal operatorCount={operatorCount} />
         {isAudited && (
           <StatusPill
             tone={statusToneFor('audit', 'Audited')}
             dot={false}
-            className="text-xs"
+            className="text-[12px]"
           >
             Audited
           </StatusPill>
+        )}
+        <StatusPill
+          tone={sourcePinned ? 'success' : 'neutral'}
+          dot={false}
+          className="text-[12px]"
+        >
+          {sourcePinned ? 'Pinned' : 'Chain-only'}
+        </StatusPill>
+        {modeCount > 1 && (
+          <BlueprintMetaChip>
+            {modeCount} {pluralize('mode', modeCount)}
+          </BlueprintMetaChip>
         )}
         {(blueprint.instancesCount ?? 0) > 0 && (
           <span className="font-mono text-[11px] tabular-nums text-muted-foreground">
@@ -1182,15 +1373,6 @@ const BlueprintCard = ({
         )}
       </div>
 
-      {/* Hover-revealed actions. Hidden by default — single click on the
-       * card opens the detail page; the actions are for power-users who
-       * want to jump straight to deploy/register without the detail step.
-       * `z-20` + `stopPropagation` keeps them clickable inside the overlay
-       * link.
-       *
-       * On non-hover devices (touch) the actions are always visible — the
-       * `group-hover:` selector only matches on pointer hover, so this is
-       * automatic. */}
       <div className={twMerge('actions relative z-20 mt-2 flex gap-2')}>
         {hasOperators ? (
           <>
@@ -1238,6 +1420,6 @@ const RegisterCapacityButton = ({
       onRegister?.(blueprint);
     }}
   >
-    Register
+    Add capacity
   </button>
 );

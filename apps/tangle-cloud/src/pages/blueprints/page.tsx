@@ -147,11 +147,21 @@ const Page: FC = () => {
   }, []);
 
   const toolbarAction = hasOwnedBlueprints ? (
-    <Button asChild variant="outline" size="sm">
+    <Button
+      asChild
+      variant="outline"
+      size="sm"
+      className="font-sans not-italic"
+    >
       <Link to={PagePath.BLUEPRINTS_MANAGE}>Manage</Link>
     </Button>
   ) : (
-    <Button variant="sandbox" asChild size="sm">
+    <Button
+      variant="sandbox"
+      asChild
+      size="sm"
+      className="font-sans not-italic"
+    >
       <a href={BLUEPRINT_DOCS_LINK} target="_blank" rel="noreferrer">
         Publish
       </a>
@@ -199,8 +209,12 @@ const Page: FC = () => {
               </Button>
             </div>
 
-            <Button variant="sandbox" onClick={() => setIsDrawerOpen(true)}>
-              Register
+            <Button
+              variant="sandbox"
+              className="font-sans not-italic"
+              onClick={() => setIsDrawerOpen(true)}
+            >
+              Add capacity
             </Button>
           </motion.div>
         )}

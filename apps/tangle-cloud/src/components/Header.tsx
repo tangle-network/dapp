@@ -60,7 +60,8 @@ export default function Header({
        * ("Blueprints / Trading"); pages can override it with contextual
        * content (name + actions) via useTopNavSlot. */}
       <div className="ml-12 flex min-w-0 flex-1 items-center gap-2 sm:ml-0">
-        {topNavContent ?? <HeaderTrail items={trail} />}
+        {topNavContent ??
+          (trail.length > 0 ? <HeaderTrail items={trail} /> : null)}
       </div>
 
       <div className="flex shrink-0 items-center justify-end gap-2">
@@ -104,6 +105,7 @@ const getHeaderTrail = (pathname: string): TrailItem[] => {
     return [blueprints, { label: 'Service' }];
   if (pathname.startsWith('/blueprints/') && pathname !== '/blueprints')
     return [blueprints, { label: 'Details' }];
+  if (pathname === '/blueprints') return [];
   if (pathname.startsWith('/blueprints')) return [blueprints];
 
   if (pathname === '/operators/manage') return [operators, { label: 'Manage' }];
