@@ -47,7 +47,7 @@ const ViewToggle: FC<Props> = ({ value, onChange, className }) => {
       role="radiogroup"
       aria-label="View"
       className={twMerge(
-        'inline-flex h-9 items-center rounded-md border border-border bg-transparent p-0.5',
+        'inline-flex h-9 items-center rounded-md border border-border bg-muted/30 p-0.5',
         className,
       )}
     >

@@ -38,7 +38,7 @@ const StatusPill: FC<Props> = ({
 }) => (
   <span
     className={twMerge(
-      'inline-flex items-center gap-1.5 rounded-full px-2 py-0.5 text-[11px] font-semibold leading-none',
+      'inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-semibold leading-none',
       statusPill[tone],
       className,
     )}

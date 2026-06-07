@@ -44,7 +44,7 @@ const FilterTray: FC<Props> = ({
         <button
           type="button"
           className={twMerge(
-            'inline-flex h-9 items-center gap-2 rounded-md border border-border bg-transparent px-3 text-sm font-medium text-foreground transition-colors hover:bg-[color:var(--bg-hover)]',
+            'inline-flex h-9 items-center gap-2 rounded-md border border-border bg-muted/30 px-3 text-sm font-medium text-foreground transition-colors hover:bg-[color:var(--bg-hover)]',
             focus.ring,
           )}
         >

@@ -10,28 +10,18 @@ import { AnimatePresence, motion } from 'framer-motion';
 import { FC, useCallback, useEffect, useMemo, useState } from 'react';
 import { Link, useSearchParams } from 'react-router';
 import { twMerge } from 'tailwind-merge';
-import useRoleStore, { Role } from '../../stores/roleStore';
 import { PagePath } from '../../types';
 import pollWithBackoff from '../../utils/pollWithBackoff';
 import BlueprintListing from './BlueprintListing';
 import RegistrationDrawer from './RegistrationDrawer';
-import { PageHeader } from '../../components/chrome';
 
 const BLUEPRINT_DOCS_LINK =
   'https://docs.tangle.tools/developers/blueprints/introduction';
-
-const ROLE_TITLE = {
-  [Role.OPERATOR]: 'Blueprints',
-  [Role.DEPLOYER]: 'Blueprints',
-} satisfies Record<Role, string>;
-
-const HAS_BLUEPRINTS_TITLE = 'Blueprints';
 
 const pluralize = (label: string, count: number) =>
   count === 1 ? label : `${label}s`;
 
 const Page: FC = () => {
-  const role = useRoleStore((store) => store.role);
   const [rowSelection, setRowSelection] = useState<RowSelectionState>({});
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [searchParams, setSearchParams] = useSearchParams();
@@ -156,43 +146,20 @@ const Page: FC = () => {
     });
   }, []);
 
-  const title = hasOwnedBlueprints ? HAS_BLUEPRINTS_TITLE : ROLE_TITLE[role];
-  // No subtitle on a catalog page — the visible content IS the subtitle.
-  // Adding "Find blueprints, create service instances, ..." steals 24px of
-  // vertical space for copy the operator already knows by being on this
-  // page. Catalog tier = title + toolbar + grid, nothing else above content.
-  // Catalog-wide stats (total, ready, needs-capacity, your-registrations)
-  // belong on the home dashboard, not above a search bar.
+  const toolbarAction = hasOwnedBlueprints ? (
+    <Button asChild variant="outline" size="sm">
+      <Link to={PagePath.BLUEPRINTS_MANAGE}>Manage</Link>
+    </Button>
+  ) : (
+    <Button variant="sandbox" asChild size="sm">
+      <a href={BLUEPRINT_DOCS_LINK} target="_blank" rel="noreferrer">
+        Publish
+      </a>
+    </Button>
+  );
 
   return (
     <div className="space-y-4">
-      <PageHeader
-        density="compact"
-        title={title}
-        action={
-          <>
-            {hasOwnedBlueprints && (
-              <Button asChild variant="ghost" size="sm">
-                <Link to={PagePath.OPERATORS}>Operators</Link>
-              </Button>
-            )}
-            <Button variant="sandbox" asChild size="sm">
-              <a
-                href={
-                  hasOwnedBlueprints
-                    ? PagePath.BLUEPRINTS_MANAGE
-                    : BLUEPRINT_DOCS_LINK
-                }
-                target={hasOwnedBlueprints ? undefined : '_blank'}
-                rel={hasOwnedBlueprints ? undefined : 'noreferrer'}
-              >
-                {hasOwnedBlueprints ? 'Manage blueprints' : 'Publish blueprint'}
-              </a>
-            </Button>
-          </>
-        }
-      />
-
       <BlueprintListing
         blueprints={blueprints}
         isLoading={isLoading}
@@ -200,6 +167,8 @@ const Page: FC = () => {
         rowSelection={isOperator ? rowSelection : undefined}
         onRowSelectionChange={isOperator ? setRowSelection : undefined}
         onRegisterBlueprint={handleRegisterBlueprint}
+        toolbarAction={toolbarAction}
+        onRetry={() => void refetch()}
       />
 
       <AnimatePresence>

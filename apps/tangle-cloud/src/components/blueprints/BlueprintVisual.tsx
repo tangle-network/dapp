@@ -1,5 +1,6 @@
 import type { Blueprint } from '@tangle-network/tangle-shared-ui/types/blueprint';
 import { useState, type CSSProperties } from 'react';
+import { twMerge } from 'tailwind-merge';
 import {
   formatBlueprintName,
   getGithubPreviewUrl,
@@ -30,13 +31,11 @@ export const BlueprintVisual = ({
 
   return (
     <div
-      className={[
+      className={twMerge(
         'relative isolate overflow-hidden rounded-xl border border-border bg-muted/40 shadow-[var(--shadow-card)]',
         compact ? 'h-24' : 'h-44',
         className,
-      ]
-        .filter(Boolean)
-        .join(' ')}
+      )}
       style={style}
     >
       {resolvedImageUrl ? (

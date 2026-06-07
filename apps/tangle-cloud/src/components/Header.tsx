@@ -323,14 +323,16 @@ function CloudNetworkSelector({ networks }: { networks: Network[] }) {
             type="button"
             variant="outline"
             disabled={isLoading}
-            className="h-11 gap-2 border-border bg-muted/30 px-3 font-bold text-foreground hover:bg-muted"
+            className="h-11 gap-2 border-border bg-muted/30 px-3 font-sans font-medium not-italic text-foreground hover:bg-muted"
           >
             {isLoading ? (
               <Spinner size="lg" />
             ) : (
               <ChainIcon size="lg" className="shrink-0" name={networkName} />
             )}
-            <span className="hidden sm:inline">{networkName}</span>
+            <span className="hidden font-sans not-italic sm:inline">
+              {networkName}
+            </span>
           </Button>
         </DropdownMenuTrigger>
 
@@ -353,7 +355,9 @@ function CloudNetworkSelector({ networks }: { networks: Network[] }) {
                   ) : (
                     <ChainIcon size="lg" name={item.name} />
                   )}
-                  <span className="truncate font-semibold">{item.name}</span>
+                  <span className="truncate font-sans font-medium not-italic">
+                    {item.name}
+                  </span>
                 </span>
                 {isSelected && (
                   <StatusIndicator

@@ -440,8 +440,8 @@ const DeployPage: FC = () => {
 
   return (
     <RequireWallet
-      title="Connect wallet to create an instance"
-      description="Connect to choose operators, set permitted callers, and submit a service request transaction."
+      title={`Connect wallet to create ${blueprintResult.details.name}`}
+      description="Connect to choose operators, set permitted callers, and submit a service request transaction for this blueprint."
       eyebrow="Service instance"
       checks={['Operators', 'Payment', 'Request']}
     >

@@ -3,11 +3,13 @@ import { ToastProvider } from '@tangle-network/sandbox-ui/primitives';
 import useLocalChainGuard from '@tangle-network/tangle-shared-ui/hooks/useLocalChainGuard';
 import useNetworkSync from '@tangle-network/tangle-shared-ui/hooks/useNetworkSync';
 import { IndexerStatusProvider } from '@tangle-network/tangle-shared-ui/context/IndexerStatusContext';
+import useNetworkStore from '@tangle-network/tangle-shared-ui/context/useNetworkStore';
 import { isLocalPreviewHost } from '@tangle-network/tangle-shared-ui/utils/localPreview';
 import { FC, type PropsWithChildren, useEffect, useState } from 'react';
 import { WagmiProvider } from 'wagmi';
 import {
   ANVIL_LOCAL_NETWORK,
+  BASE_SEPOLIA_NETWORK,
   TANGLE_CLOUD_NETWORKS,
 } from '../constants/networks';
 import { cloudWagmiConfig } from './cloudWagmiConfig';
@@ -15,9 +17,23 @@ import PaymentProviders from './PaymentProviders';
 
 // Component to sync network store with wagmi chain
 const NetworkSync: FC<PropsWithChildren> = ({ children }) => {
+  const forceLocalChain = import.meta.env.VITE_FORCE_LOCAL_CHAIN === 'true';
+  const selectedNetwork = useNetworkStore((store) => store.network2);
+  const setNetwork = useNetworkStore((store) => store.setNetwork);
+
+  useEffect(() => {
+    if (forceLocalChain) {
+      return;
+    }
+
+    if (selectedNetwork?.evmChainId === ANVIL_LOCAL_NETWORK.evmChainId) {
+      setNetwork(BASE_SEPOLIA_NETWORK);
+    }
+  }, [forceLocalChain, selectedNetwork?.evmChainId, setNetwork]);
+
   useNetworkSync(TANGLE_CLOUD_NETWORKS);
   useLocalChainGuard({
-    enabled: isLocalPreviewHost(),
+    enabled: forceLocalChain && isLocalPreviewHost(),
     targetChainId: ANVIL_LOCAL_NETWORK.evmChainId ?? 31337,
   });
   return children;

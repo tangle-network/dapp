@@ -28,6 +28,7 @@ import type { Blueprint } from '@tangle-network/tangle-shared-ui/types/blueprint
 import {
   Dispatch,
   FC,
+  ReactNode,
   SetStateAction,
   useCallback,
   useDeferredValue,
@@ -56,6 +57,7 @@ import {
   dedupeBlueprintsByIdentity,
   type DedupedBlueprintRow,
 } from '../../blueprintApps/dedupe';
+import { BlueprintVisual } from '../../components/blueprints/BlueprintVisual';
 
 const PAGE_SIZE = 12;
 
@@ -67,6 +69,8 @@ type Props = {
   rowSelection?: RowSelectionState;
   onRowSelectionChange?: Dispatch<SetStateAction<RowSelectionState>>;
   onRegisterBlueprint?: (blueprint: Blueprint) => void;
+  toolbarAction?: ReactNode;
+  onRetry?: () => void;
 } & Omit<UseAllBlueprintsReturn, 'refetch'>;
 
 const pluralize = (label: string, count: number) =>
@@ -198,7 +202,7 @@ const CategoryFilterMenu: FC<{
         <button
           type="button"
           className={twMerge(
-            'inline-flex h-9 items-center gap-2 rounded-md border border-border bg-transparent px-3 text-sm font-medium text-foreground transition-colors hover:bg-[color:var(--bg-hover)]',
+            'inline-flex h-9 items-center gap-2 rounded-md border border-border bg-muted/30 px-3 text-sm font-medium text-foreground transition-colors hover:bg-[color:var(--bg-hover)]',
             focus.ring,
           )}
         >
@@ -285,6 +289,8 @@ const BlueprintListing: FC<Props> = ({
   isLoading,
   error,
   onRegisterBlueprint,
+  toolbarAction,
+  onRetry,
 }) => {
   const navigate = useNavigate();
   // Filter state lives in the URL — refresh persists the view, deep-links are
@@ -466,18 +472,26 @@ const BlueprintListing: FC<Props> = ({
             'Service blueprint — deploy when operators are available.';
 
           return (
-            <div className="min-w-0">
-              <div className="flex min-w-0 items-center gap-2">
-                <span className="truncate font-display font-bold text-foreground text-sm">
-                  {formatBlueprintName(blueprint.name)}
-                </span>
-                <span className="shrink-0 font-mono text-[11px] tabular-nums text-muted-foreground">
-                  #{blueprint.id.toString()}
-                </span>
+            <div className="flex min-w-0 items-center gap-3">
+              <BlueprintVisual
+                blueprint={blueprint}
+                category={getBlueprintCategory(blueprint)}
+                compact
+                className="h-12 w-12 shrink-0 rounded-md"
+              />
+              <div className="min-w-0">
+                <div className="flex min-w-0 items-center gap-2">
+                  <span className="truncate font-display font-bold text-foreground text-[15px] leading-tight">
+                    {formatBlueprintName(blueprint.name)}
+                  </span>
+                  <span className="shrink-0 font-mono text-xs tabular-nums text-muted-foreground">
+                    #{blueprint.id.toString()}
+                  </span>
+                </div>
+                <p className="mt-1 line-clamp-1 text-muted-foreground text-sm leading-snug">
+                  {description}
+                </p>
               </div>
-              <p className="mt-0.5 line-clamp-1 text-muted-foreground text-xs">
-                {description}
-              </p>
             </div>
           );
         },
@@ -485,6 +499,7 @@ const BlueprintListing: FC<Props> = ({
       {
         header: 'Operators',
         className: 'w-44',
+        hideBelow: 'md' as const,
         render: (row: DedupedBlueprintRow) => (
           <BlueprintCapacityPill
             operatorCount={row.blueprint.operatorsCount ?? 0}
@@ -501,7 +516,7 @@ const BlueprintListing: FC<Props> = ({
           return (
             <StatusPill
               tone={statusToneFor('audit', audited ? 'Audited' : 'Unaudited')}
-              dot={audited}
+              dot={false}
             >
               {audited ? 'Audited' : 'Unaudited'}
             </StatusPill>
@@ -520,7 +535,7 @@ const BlueprintListing: FC<Props> = ({
       },
       {
         header: 'Actions',
-        className: 'w-48 justify-end',
+        className: 'w-40 justify-end sm:w-48',
         render: (row: DedupedBlueprintRow) => {
           const { blueprint } = row;
           const blueprintHref = `${PagePath.BLUEPRINTS}/${blueprint.id.toString()}`;
@@ -532,7 +547,7 @@ const BlueprintListing: FC<Props> = ({
                 <Link
                   to={`${blueprintHref}/deploy`}
                   onClick={(event) => event.stopPropagation()}
-                  className="rounded-md bg-primary px-2.5 py-1.5 text-center font-semibold text-primary-foreground text-xs transition-colors hover:bg-primary/90"
+                  className={catalogPrimaryActionClass}
                 >
                   Deploy
                 </Link>
@@ -550,7 +565,7 @@ const BlueprintListing: FC<Props> = ({
     [auditedStatus, onRegisterBlueprint],
   );
 
-  if (isLoading) {
+  if (isLoading && blueprintItems.length === 0) {
     return (
       <div className="grid grid-cols-1 gap-5 md:grid-cols-2 xl:grid-cols-3">
         {Array.from({ length: 6 }).map((_, idx) => (
@@ -560,13 +575,23 @@ const BlueprintListing: FC<Props> = ({
     );
   }
 
-  if (error) {
+  if (error && blueprintItems.length === 0) {
     return (
       <Card variant="sandbox" className="border-destructive/20">
-        <CardContent className="flex min-h-40 items-center justify-center p-8 text-center">
-          <p className="max-w-2xl text-muted-foreground text-sm">
-            {error.message}
-          </p>
+        <CardContent className="flex min-h-40 flex-col items-center justify-center gap-3 p-8 text-center">
+          <div>
+            <p className="font-semibold text-foreground">
+              Unable to refresh blueprints
+            </p>
+            <p className="mt-1 max-w-2xl text-muted-foreground text-sm">
+              {error.message}
+            </p>
+          </div>
+          {onRetry !== undefined && (
+            <Button variant="outline" size="sm" onClick={onRetry}>
+              Retry
+            </Button>
+          )}
         </CardContent>
       </Card>
     );
@@ -612,6 +637,7 @@ const BlueprintListing: FC<Props> = ({
         }}
         trailing={
           <div className="flex flex-wrap items-center gap-2">
+            {toolbarAction}
             {!showSelection && <ViewToggle value={view} onChange={setView} />}
             <CategoryFilterMenu
               categories={categories}
@@ -676,6 +702,12 @@ const BlueprintListing: FC<Props> = ({
         }
       />
 
+      {error && (
+        <div className="rounded-lg border border-[color:var(--md3-warning,#f59e0b)]/35 bg-[color:var(--md3-warning,#f59e0b)]/10 px-4 py-3 text-sm text-[color:var(--surface-warning-text,var(--md3-warning,#f59e0b))]">
+          Showing cached blueprint data. Latest refresh failed: {error.message}
+        </div>
+      )}
+
       {dedupedRows.length === 0 ? (
         <EmptyState
           kind="no-match"
@@ -687,14 +719,29 @@ const BlueprintListing: FC<Props> = ({
           }
         />
       ) : effectiveView === 'list' ? (
-        <ResultList
-          items={visibleRows}
-          columns={listColumns}
-          rowKey={(row) => row.blueprint.id.toString()}
-          onRowClick={(row) =>
-            navigate(`${PagePath.BLUEPRINTS}/${row.blueprint.id.toString()}`)
-          }
-        />
+        <>
+          <div className="space-y-3 md:hidden">
+            {visibleRows.map((row) => (
+              <MobileBlueprintRow
+                key={row.blueprint.id.toString()}
+                row={row}
+                isAudited={
+                  auditedStatus.get(row.blueprint.id.toString()) ?? false
+                }
+                onRegister={onRegisterBlueprint}
+              />
+            ))}
+          </div>
+          <ResultList
+            className="hidden md:block"
+            items={visibleRows}
+            columns={listColumns}
+            rowKey={(row) => row.blueprint.id.toString()}
+            onRowClick={(row) =>
+              navigate(`${PagePath.BLUEPRINTS}/${row.blueprint.id.toString()}`)
+            }
+          />
+        </>
       ) : (
         <div className="results-grid grid grid-cols-1 gap-5 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
           {visibleRows.map((row) => (
@@ -911,7 +958,8 @@ const BlueprintCapacityPill = ({
         'availability',
         hasOperators ? 'Available' : 'Limited',
       )}
-      className="text-[10px] uppercase tracking-wider"
+      dot={false}
+      className="text-xs"
     >
       {hasOperators ? (
         <>
@@ -922,6 +970,86 @@ const BlueprintCapacityPill = ({
         'Needs operators'
       )}
     </StatusPill>
+  );
+};
+
+const catalogActionClass =
+  'inline-flex min-h-8 flex-1 items-center justify-center rounded-md border border-border bg-muted/30 px-3 py-1.5 text-center text-xs font-semibold text-foreground transition-colors before:hidden after:hidden hover:bg-[color:var(--bg-hover)]';
+
+const catalogPrimaryActionClass =
+  'inline-flex min-h-8 flex-1 items-center justify-center rounded-md bg-primary px-3 py-1.5 text-center text-xs font-semibold text-primary-foreground transition-colors before:hidden after:hidden hover:bg-primary/90';
+
+const MobileBlueprintRow = ({
+  row,
+  isAudited,
+  onRegister,
+}: {
+  row: DedupedBlueprintRow;
+  isAudited: boolean;
+  onRegister?: (blueprint: Blueprint) => void;
+}) => {
+  const { blueprint } = row;
+  const blueprintHref = `${PagePath.BLUEPRINTS}/${blueprint.id.toString()}`;
+  const operatorCount = blueprint.operatorsCount ?? 0;
+  const hasOperators = operatorCount > 0;
+  const description =
+    blueprint.description?.trim() ||
+    'Service blueprint — deploy when operators are available.';
+
+  return (
+    <article className="rounded-lg border border-border bg-[color:var(--bg-card)] p-3 shadow-[var(--shadow-card)]">
+      <Link
+        to={blueprintHref}
+        className={twMerge('flex min-w-0 gap-3', focus.ring)}
+      >
+        <BlueprintVisual
+          blueprint={blueprint}
+          category={getBlueprintCategory(blueprint)}
+          compact
+          className="h-14 w-14 shrink-0 rounded-md"
+        />
+        <div className="min-w-0 flex-1">
+          <div className="flex min-w-0 items-center gap-2">
+            <h3 className="truncate font-display text-base font-bold leading-tight tracking-normal text-foreground">
+              {formatBlueprintName(blueprint.name)}
+            </h3>
+            <span className="shrink-0 font-mono text-xs tabular-nums text-muted-foreground">
+              #{blueprint.id.toString()}
+            </span>
+          </div>
+          <p className="mt-1 line-clamp-2 text-sm leading-snug text-muted-foreground">
+            {description}
+          </p>
+        </div>
+      </Link>
+
+      <div className="mt-3 flex flex-wrap items-center gap-2">
+        <BlueprintCapacityPill operatorCount={operatorCount} />
+        <StatusPill
+          tone={statusToneFor('audit', isAudited ? 'Audited' : 'Unaudited')}
+          dot={false}
+          className="text-xs"
+        >
+          {isAudited ? 'Audited' : 'Unaudited'}
+        </StatusPill>
+      </div>
+
+      <div className="mt-3 flex gap-2">
+        {hasOperators && (
+          <Link
+            to={`${blueprintHref}/deploy`}
+            className={catalogPrimaryActionClass}
+          >
+            Deploy
+          </Link>
+        )}
+        <RegisterCapacityButton
+          blueprint={blueprint}
+          onRegister={onRegister}
+          isPrimary={!hasOperators}
+        />
+      </div>
+    </article>
   );
 };
 
@@ -973,7 +1101,7 @@ const BlueprintCard = ({
   return (
     <div
       className={twMerge(
-        'group relative flex min-h-[180px] flex-col gap-3 rounded-lg border border-border bg-[color:var(--bg-card)] p-5 transition-all',
+        'group relative flex min-h-[260px] flex-col gap-3 rounded-lg border border-border bg-[color:var(--bg-card)] p-4 shadow-[var(--shadow-card)] transition-all',
         // Subtle hover: lift one pixel, tighten border accent. No gradient
         // glow. The card already has enough visual weight from its content.
         'hover:-translate-y-px hover:border-[color:var(--border-accent-hover)]',
@@ -989,6 +1117,13 @@ const BlueprintCard = ({
         to={blueprintHref}
         className="absolute inset-0 z-10"
         aria-label={`Open ${blueprint.name}`}
+      />
+
+      <BlueprintVisual
+        blueprint={blueprint}
+        category={getBlueprintCategory(blueprint)}
+        compact
+        className="h-28 rounded-md"
       />
 
       {/* Watermark ID — mono, low-contrast, top-right. The card's identity
@@ -1019,10 +1154,10 @@ const BlueprintCard = ({
 
       {/* Header — name + 1-line description. */}
       <div className={twMerge('min-w-0', isSelectable && 'pl-8')}>
-        <h3 className="line-clamp-1 pr-12 font-display font-bold text-base leading-tight tracking-tight text-foreground">
+        <h3 className="line-clamp-1 pr-12 font-display font-bold text-base leading-tight tracking-normal text-foreground">
           {displayName}
         </h3>
-        <p className="mt-1 line-clamp-2 pr-12 text-xs leading-relaxed text-muted-foreground">
+        <p className="mt-1 line-clamp-2 pr-12 text-sm leading-snug text-muted-foreground">
           {description}
         </p>
       </div>
@@ -1034,7 +1169,8 @@ const BlueprintCard = ({
         {isAudited && (
           <StatusPill
             tone={statusToneFor('audit', 'Audited')}
-            className="text-[10px] uppercase tracking-wider"
+            dot={false}
+            className="text-xs"
           >
             Audited
           </StatusPill>
@@ -1055,20 +1191,13 @@ const BlueprintCard = ({
        * On non-hover devices (touch) the actions are always visible — the
        * `group-hover:` selector only matches on pointer hover, so this is
        * automatic. */}
-      <div
-        className={twMerge(
-          'actions relative z-20 mt-2 flex gap-2 opacity-0 transition-opacity',
-          'group-hover:opacity-100 group-focus-within:opacity-100',
-          // Always visible on touch — `pointer: coarse` means no hover layer.
-          '[@media(pointer:coarse)]:opacity-100',
-        )}
-      >
+      <div className={twMerge('actions relative z-20 mt-2 flex gap-2')}>
         {hasOperators ? (
           <>
             <Link
               to={`${blueprintHref}/deploy`}
               onClick={(e) => e.stopPropagation()}
-              className="flex-1 rounded-md bg-primary px-2 py-1.5 text-center text-xs font-semibold text-primary-foreground transition-colors hover:bg-primary/90"
+              className={catalogPrimaryActionClass}
             >
               Deploy
             </Link>
@@ -1101,10 +1230,7 @@ const RegisterCapacityButton = ({
   <button
     type="button"
     className={twMerge(
-      'flex-1 rounded-md px-2 py-1.5 text-xs font-semibold transition-colors',
-      isPrimary
-        ? 'bg-primary text-primary-foreground hover:bg-primary/90'
-        : 'border border-border bg-transparent text-muted-foreground hover:bg-[color:var(--bg-hover)] hover:text-foreground',
+      isPrimary ? catalogPrimaryActionClass : catalogActionClass,
     )}
     onClick={(event) => {
       event.preventDefault();

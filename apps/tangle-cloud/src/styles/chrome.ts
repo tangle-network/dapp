@@ -23,10 +23,9 @@
 export const typeRole = {
   /** Page H1. One per page. */
   display:
-    'font-display font-extrabold text-3xl sm:text-4xl tracking-[-0.035em] leading-[1.05]',
+    'font-display font-extrabold text-3xl sm:text-4xl tracking-normal leading-[1.08]',
   /** Section heads, card titles. */
-  section:
-    'font-display font-semibold text-lg leading-tight tracking-[-0.012em]',
+  section: 'font-display font-semibold text-lg leading-tight tracking-normal',
   /** Default body copy. */
   body: 'text-sm leading-relaxed',
   /** Control labels, eyebrows. Always uppercase, always tracked. */
@@ -57,7 +56,7 @@ export const chromeHeight = {
   headerCompact: 'min-h-[60px] py-3',
   headerDefault: 'min-h-[80px] py-4',
   headerHero: 'min-h-[120px] py-6',
-  toolbar: 'h-11', // 44px
+  toolbar: 'min-h-11', // 44px minimum; wraps on narrow screens.
   metricStrip: 'min-h-[56px] py-3',
   tray: 'w-[420px]',
 } as const;

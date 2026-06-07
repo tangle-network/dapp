@@ -45,12 +45,12 @@ const PageToolbar: FC<Props> = ({
     <div
       className={twMerge(
         chromeHeight.toolbar,
-        'flex w-full items-center gap-3 border-b border-border bg-background',
-        sticky && 'sticky top-0 z-20',
+        'flex w-full flex-wrap items-center gap-2 rounded-lg border border-border bg-[color:var(--bg-card)] px-2 py-1.5 shadow-[var(--shadow-card)] sm:flex-nowrap sm:gap-3',
+        sticky && 'sticky top-16 z-20',
         className,
       )}
     >
-      <div className="relative flex min-w-0 flex-1 items-center">
+      <div className="relative flex min-w-[180px] flex-[1_1_260px] items-center">
         <Search
           className="pointer-events-none absolute left-3 h-4 w-4 fill-current text-muted-foreground"
           aria-hidden
@@ -63,7 +63,7 @@ const PageToolbar: FC<Props> = ({
           autoFocus={search.autoFocus}
           className={twMerge(
             'h-9 w-full rounded-md border border-transparent bg-transparent pl-9 pr-3 text-sm leading-tight text-foreground placeholder:text-muted-foreground/70',
-            'hover:border-border',
+            'hover:border-border focus:border-[color:var(--border-accent-hover)]',
             focus.ring,
           )}
         />
@@ -95,7 +95,9 @@ const PageToolbar: FC<Props> = ({
       )}
 
       {trailing !== undefined && (
-        <div className="flex shrink-0 items-center gap-2">{trailing}</div>
+        <div className="flex flex-[1_1_100%] flex-wrap items-center justify-start gap-2 sm:flex-none sm:justify-end">
+          {trailing}
+        </div>
       )}
     </div>
   );
