@@ -1,7 +1,7 @@
 // Copyright 2024 @tangle-network/
 // SPDX-License-Identifier: Apache-2.0
 
-import { ChainType } from '@tangle-network/dapp-types/TypedChainId';
+import { ChainType } from '@tangle-network/dapp-types';
 import type { Chain } from 'viem/chains';
 
 import type { AppEnvironment } from '../types';

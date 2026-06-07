@@ -1,5 +1,5 @@
 import type { WalletConfig } from '@tangle-network/dapp-config';
-import { Maybe } from '@tangle-network/dapp-types/utils/types';
+import { Maybe } from '@tangle-network/dapp-types';
 import { useObservableState } from 'observable-hooks';
 import { BehaviorSubject } from 'rxjs';
 

@@ -5,32 +5,31 @@ import {
   type Account,
   type WebbApiProvider,
 } from '@tangle-network/abstract-api-provider';
-import { LoggerService } from '@tangle-network/browser-utils/logger';
 import {
+  LoggerService,
   netStorageFactory,
   type NetworkStorage,
-} from '@tangle-network/browser-utils/storage';
+} from '@tangle-network/browser-utils';
 import {
   ApiConfig,
   chainsConfig,
   chainsPopulated,
+  getWagmiConfig,
   WALLET_CONFIG,
   type Chain,
   type Wallet,
 } from '@tangle-network/dapp-config';
-import getWagmiConfig from '@tangle-network/dapp-config/wagmi-config';
 import {
+  ChainType,
+  WalletNotInstalledError,
   WalletId,
   WebbError,
   WebbErrorCodes,
-  type BareProps,
-} from '@tangle-network/dapp-types';
-import WalletNotInstalledError from '@tangle-network/dapp-types/errors/WalletNotInstalledError';
-import type { Maybe, Nullable } from '@tangle-network/dapp-types/utils/types';
-import {
-  ChainType,
   calculateTypedChainId,
-} from '@tangle-network/dapp-types/TypedChainId';
+  type BareProps,
+  type Maybe,
+  type Nullable,
+} from '@tangle-network/dapp-types';
 import { WebbWeb3Provider } from '@tangle-network/web3-api-provider';
 import { useUIContext } from '@tangle-network/ui-components';
 import useWagmiHydration from '@tangle-network/ui-components/hooks/useWagmiHydration';

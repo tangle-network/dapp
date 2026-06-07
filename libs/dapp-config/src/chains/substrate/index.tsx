@@ -1,8 +1,8 @@
 import {
+  ChainType,
   PresetTypedChainId,
   SubstrateChainId,
 } from '@tangle-network/dapp-types';
-import { ChainType } from '@tangle-network/dapp-types/TypedChainId';
 import {
   TANGLE_LOCAL_WS_RPC_ENDPOINT,
   TANGLE_MAINNET_NATIVE_EXPLORER_URL,

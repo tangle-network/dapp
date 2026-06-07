@@ -1,4 +1,4 @@
-import { EVMChainId } from '@tangle-network/dapp-types/ChainId';
+import { EVMChainId } from '@tangle-network/dapp-types';
 import { defineChain } from 'viem';
 
 const baseSepolia = defineChain({
