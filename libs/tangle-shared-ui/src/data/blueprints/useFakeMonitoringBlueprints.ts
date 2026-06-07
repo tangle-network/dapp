@@ -61,30 +61,39 @@ const useFakeMonitoringBlueprints = (
   operatorAccountAddress?: string,
   delayMs = 1000,
 ) => {
-  const [data, setData] = useState<MonitoringBlueprint[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const requestKey = `${operatorAccountAddress ?? ''}:${delayMs}`;
+  const [state, setState] = useState<{
+    requestKey: string;
+    data: MonitoringBlueprint[];
+    isLoading: boolean;
+  }>(() => ({
+    requestKey,
+    data: [],
+    isLoading: Boolean(operatorAccountAddress),
+  }));
 
   useEffect(() => {
     if (!operatorAccountAddress) return;
 
-    setIsLoading(true);
-    setData([]);
-
     const timer = setTimeout(() => {
-      setIsLoading(false);
-      setData(generateBlueprints(operatorAccountAddress));
+      setState({
+        requestKey,
+        data: generateBlueprints(operatorAccountAddress),
+        isLoading: false,
+      });
     }, delayMs);
 
     return () => {
       clearTimeout(timer);
-      setIsLoading(false);
-      setData([]);
     };
-  }, [operatorAccountAddress, delayMs]);
+  }, [operatorAccountAddress, delayMs, requestKey]);
+
+  const isCurrentRequest = state.requestKey === requestKey;
 
   return {
-    blueprints: data,
-    isLoading,
+    blueprints: isCurrentRequest ? state.data : [],
+    isLoading:
+      Boolean(operatorAccountAddress) && (!isCurrentRequest || state.isLoading),
     error: null,
   };
 };

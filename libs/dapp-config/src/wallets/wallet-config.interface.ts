@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import type { InjectedWindowProvider } from '@polkadot/extension-inject/types';
-import type { SupportedBrowsers } from '@tangle-network/browser-utils/platform/getPlatformMetaData';
+import type { SupportedBrowsers } from '@tangle-network/browser-utils';
 
 export interface WalletConfig {
   id: number;

@@ -839,11 +839,13 @@ const UpdateMetadataModal: FC<UpdateMetadataModalProps> = ({
       return;
     }
 
-    setMetadataUri(blueprint.metadataUri ?? '');
-    setPreviewError(null);
-    setPreviewData(null);
-    setIsLoadingPreview(false);
-    reset();
+    queueMicrotask(() => {
+      setMetadataUri(blueprint.metadataUri ?? '');
+      setPreviewError(null);
+      setPreviewData(null);
+      setIsLoadingPreview(false);
+      reset();
+    });
     return () => {
       cancelInFlightPreviewRequest();
     };

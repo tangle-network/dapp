@@ -112,14 +112,18 @@ const TransferModal: FC<TransferModalProps> = ({ isOpen, onClose }) => {
 
     if (!selectedToken) {
       // Set default token when first available
-      setSelectedToken(tokenOptions[0]);
+      queueMicrotask(() => {
+        setSelectedToken(tokenOptions[0]);
+      });
     } else {
       // Update selectedToken when balance changes in tokenOptions
       const updatedToken = tokenOptions.find(
         (t) => t.address === selectedToken.address,
       );
       if (updatedToken && updatedToken.balance !== selectedToken.balance) {
-        setSelectedToken(updatedToken);
+        queueMicrotask(() => {
+          setSelectedToken(updatedToken);
+        });
       }
     }
   }, [tokenOptions]); // eslint-disable-line react-hooks/exhaustive-deps

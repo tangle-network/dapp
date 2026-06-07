@@ -22,13 +22,22 @@ export const useMemorizedValue = <T>(value: T): T => {
   const [memorizedValue, setMemorizedValue] = useState<T>(value);
 
   useEffect(() => {
-    setMemorizedValue((prev) => {
-      if (isEqual(prev, value)) {
-        return prev;
-      }
+    let cancelled = false;
+    queueMicrotask(() => {
+      if (cancelled) return;
 
-      return value;
+      setMemorizedValue((prev) => {
+        if (isEqual(prev, value)) {
+          return prev;
+        }
+
+        return value;
+      });
     });
+
+    return () => {
+      cancelled = true;
+    };
   }, [value]);
 
   return memorizedValue;

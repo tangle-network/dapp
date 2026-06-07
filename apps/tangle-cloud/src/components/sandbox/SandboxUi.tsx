@@ -33,7 +33,14 @@ import {
   TabsTrigger,
   Textarea,
 } from '@tangle-network/sandbox-ui/primitives';
-import type { ChangeEvent, ComponentProps, FC, ReactNode } from 'react';
+import {
+  forwardRef,
+  type ChangeEvent,
+  type ComponentProps,
+  type ComponentRef,
+  type FC,
+  type ReactNode,
+} from 'react';
 
 // Re-export the canonical tangle-cloud Text from the dedicated module so we
 // preserve the existing import surface (`import { Text } from '...sandbox/SandboxUi'`)
@@ -149,43 +156,54 @@ export type ButtonProps = Omit<
   disabledTooltip?: string;
 };
 
-export const Button: FC<ButtonProps> = ({
-  variant,
-  size,
-  isDisabled,
-  isLoading,
-  isJustIcon,
-  isFullWidth,
-  leftIcon,
-  rightIcon,
-  loadingText: _loadingText,
-  disabledTooltip: _disabledTooltip,
-  disabled,
-  className = '',
-  children,
-  ...props
-}) => (
-  <SandboxButton
-    variant={
-      variant === 'utility'
-        ? 'outline'
-        : variant === 'primary'
-          ? 'default'
-          : variant
-    }
-    size={isJustIcon ? 'icon' : size}
-    disabled={disabled || isDisabled}
-    loading={isLoading}
-    className={[isFullWidth ? 'w-full' : '', className]
-      .filter(Boolean)
-      .join(' ')}
-    {...props}
-  >
-    {leftIcon}
-    {children}
-    {rightIcon}
-  </SandboxButton>
+export const Button = forwardRef<
+  ComponentRef<typeof SandboxButton>,
+  ButtonProps
+>(
+  (
+    {
+      variant,
+      size,
+      isDisabled,
+      isLoading,
+      isJustIcon,
+      isFullWidth,
+      leftIcon,
+      rightIcon,
+      loadingText: _loadingText,
+      disabledTooltip: _disabledTooltip,
+      disabled,
+      className = '',
+      children,
+      ...props
+    },
+    ref,
+  ) => (
+    <SandboxButton
+      ref={ref}
+      variant={
+        variant === 'utility'
+          ? 'outline'
+          : variant === 'primary'
+            ? 'default'
+            : variant
+      }
+      size={isJustIcon ? 'icon' : size}
+      disabled={disabled || isDisabled}
+      loading={isLoading}
+      className={[isFullWidth ? 'w-full' : '', className]
+        .filter(Boolean)
+        .join(' ')}
+      {...props}
+    >
+      {leftIcon}
+      {children}
+      {rightIcon}
+    </SandboxButton>
+  ),
 );
+
+Button.displayName = 'Button';
 
 export type InputProps = Omit<
   ComponentProps<typeof SandboxInput>,
@@ -321,13 +339,51 @@ export const ModalFooterActions: FC<{
   </DialogFooter>
 );
 
+// Map every `color` label callers pass to a *distinct* Badge variant. The old
+// map only knew green→success / red→destructive, so blue/purple/yellow all
+// collapsed to one identical `outline` pill — Fixed vs Dynamic membership and
+// PayOnce vs Subscription vs EventDriven pricing rendered the same (audit
+// F1-svc). The Badge variant set is the source of truth:
+// default | secondary | destructive | outline | success | warning | info.
+//
+// New status badges should prefer the canonical `<StatusPill>` +
+// `statusToneFor(domain, status)` (src/components/chrome). This `Chip` is the
+// legacy color-string surface kept truthful for existing call sites.
+const CHIP_COLOR_TO_VARIANT: Record<
+  string,
+  | 'default'
+  | 'secondary'
+  | 'destructive'
+  | 'outline'
+  | 'success'
+  | 'warning'
+  | 'info'
+> = {
+  green: 'success',
+  emerald: 'success',
+  red: 'destructive',
+  rose: 'destructive',
+  yellow: 'warning',
+  amber: 'warning',
+  orange: 'warning',
+  blue: 'info',
+  cyan: 'info',
+  purple: 'secondary',
+  violet: 'secondary',
+  grey: 'outline',
+  gray: 'outline',
+  'dark-grey': 'outline',
+  'dark-gray': 'outline',
+  neutral: 'outline',
+};
+
 export const Chip: FC<{
   color?: string;
   className?: string;
   children: ReactNode;
 }> = ({ color, className, children }) => {
   const variant =
-    color === 'green' ? 'success' : color === 'red' ? 'destructive' : 'outline';
+    (color && CHIP_COLOR_TO_VARIANT[color.toLowerCase()]) ?? 'outline';
 
   return (
     <Badge variant={variant} className={className}>

@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
-import { useMemo } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import {
   type Hex,
   formatUnits,
@@ -26,6 +26,7 @@ import {
 const MIGRATION_RPC_URL = import.meta.env.VITE_MIGRATION_RPC_URL as
   | string
   | undefined;
+const getNowSeconds = () => BigInt(Math.floor(Date.now() / 1000));
 
 // TangleMigration contract ABI (partial - only functions we use)
 const TANGLE_MIGRATION_ABI = [
@@ -866,6 +867,7 @@ export const generateChallenge = (
  */
 const useClaimEligibility = ({ ss58Address }: UseClaimEligibilityOptions) => {
   const chainId = useChainId();
+  const [nowSeconds, setNowSeconds] = useState(getNowSeconds);
   const migrationConfig = useMemo(() => {
     if (!chainId) return null;
     return getMigrationContractsByChainId(chainId);
@@ -886,6 +888,14 @@ const useClaimEligibility = ({ ss58Address }: UseClaimEligibilityOptions) => {
     if (chainId === 84532) return 'https://sepolia.base.org';
     return 'http://localhost:8545';
   }, [chainId]);
+
+  useEffect(() => {
+    const intervalId = setInterval(() => {
+      setNowSeconds(getNowSeconds());
+    }, 1000);
+
+    return () => clearInterval(intervalId);
+  }, []);
 
   /**
    * Create a viem public client for direct contract reads.
@@ -1061,10 +1071,9 @@ const useClaimEligibility = ({ ss58Address }: UseClaimEligibilityOptions) => {
   // Calculate time remaining
   const timeRemaining = useMemo(() => {
     if (!claimDeadline) return BigInt(0);
-    const now = BigInt(Math.floor(Date.now() / 1000));
-    if (claimDeadline <= now) return BigInt(0);
-    return claimDeadline - now;
-  }, [claimDeadline]);
+    if (claimDeadline <= nowSeconds) return BigInt(0);
+    return claimDeadline - nowSeconds;
+  }, [claimDeadline, nowSeconds]);
 
   // Compute eligibility from proofs data
   const claimData = useMemo((): ClaimData | null => {
@@ -1120,9 +1129,7 @@ const useClaimEligibility = ({ ss58Address }: UseClaimEligibilityOptions) => {
         formattedBalance: '1,000',
         isPaused: false,
         unlockedBps: 1000, // Mock 10% unlocked for dev mode
-        unlockTimestamp: BigInt(
-          Math.floor(Date.now() / 1000) + 180 * 24 * 60 * 60,
-        ), // 180 days from now
+        unlockTimestamp: nowSeconds + BigInt(180 * 24 * 60 * 60), // 180 days from now
       };
     }
 
@@ -1166,6 +1173,7 @@ const useClaimEligibility = ({ ss58Address }: UseClaimEligibilityOptions) => {
     ss58Address,
     unlockedBps,
     unlockTimestamp,
+    nowSeconds,
   ]);
 
   // In dev mode, don't wait for contract reads since they're disabled anyway

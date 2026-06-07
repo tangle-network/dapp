@@ -70,7 +70,9 @@ const useApi = <T>(fetcher: ApiFetcher<T>, overrideRpcEndpoint?: string) => {
 
   // Refetch when the API changes or when the fetcher changes.
   useEffect(() => {
-    refetch();
+    queueMicrotask(() => {
+      refetch();
+    });
   }, [refetch]);
 
   return { result, error, refetch };

@@ -1,9 +1,10 @@
 'use client';
 
 import { ArrowRightUp, ChevronDown, ChevronUp } from '@tangle-network/icons';
-import { FC, useEffect, useState } from 'react';
+import { FC, useMemo, useState } from 'react';
 import { twMerge } from 'tailwind-merge';
 
+import { useClientReady } from '../../hooks/useClientReady';
 import { Typography } from '../../typography/Typography';
 import isSideBarItemActive from '../../utils/isSideBarItemActive';
 import { Link } from '../Link';
@@ -27,34 +28,42 @@ const SideBarItem: FC<SideBarItemProps & SideBarExtraItemProps> = ({
   onClick,
   info,
 }) => {
-  const [isMounted, setIsMounted] = useState(false);
-  const [isDropdownOpen, setIsDropdownOpen] = useState(Boolean(isActive));
-  const [activeSubItem, setActiveSubItem] = useState<number>(() => {
-    const activeSubItemIndex = subItems.findIndex((subItem) =>
-      isSideBarItemActive(subItem.href, pathnameOrHash),
-    );
+  const isMounted = useClientReady();
+  const activeSubItemKey = useMemo(
+    () => `${pathnameOrHash}:${subItems.map(({ href }) => href).join('|')}`,
+    [pathnameOrHash, subItems],
+  );
+  const routeActiveSubItem = useMemo(
+    () =>
+      subItems.findIndex((subItem) =>
+        isSideBarItemActive(subItem.href, pathnameOrHash),
+      ),
+    [pathnameOrHash, subItems],
+  );
+  const [activeSubItemOverride, setActiveSubItemOverride] = useState<{
+    key: string;
+    index: number;
+  } | null>(null);
+  const activeSubItem =
+    activeSubItemOverride?.key === activeSubItemKey
+      ? activeSubItemOverride.index
+      : routeActiveSubItem;
+  const [dropdownState, setDropdownState] = useState(() => ({
+    isActive,
+    isOpen: Boolean(isActive),
+  }));
+  const isDropdownOpen =
+    dropdownState.isActive === isActive
+      ? dropdownState.isOpen
+      : Boolean(isActive);
 
-    return activeSubItemIndex;
-  });
+  const openDropdown = (isOpen: boolean) => {
+    setDropdownState({ isActive, isOpen });
+  };
 
-  useEffect(() => {
-    const idx = subItems.findIndex((subItem) =>
-      isSideBarItemActive(subItem.href, pathnameOrHash),
-    );
-
-    setActiveSubItem(idx);
-  }, [pathnameOrHash, subItems]);
-
-  // handle mounting to tackle `className` did not match between server and client
-  useEffect(() => {
-    setIsMounted(true);
-  }, [setIsMounted]);
-
-  useEffect(() => {
-    if (isActive) {
-      setIsDropdownOpen(true);
-    }
-  }, [isActive]);
+  const setSubItemActive = (index: number) => {
+    setActiveSubItemOverride({ key: activeSubItemKey, index });
+  };
 
   const setItemAsActiveAndToggleDropdown = () => {
     if (isDisabled) {
@@ -66,7 +75,7 @@ const SideBarItem: FC<SideBarItemProps & SideBarExtraItemProps> = ({
     }
 
     if (subItems.length > 0) {
-      setIsDropdownOpen(!isDropdownOpen);
+      openDropdown(!isDropdownOpen);
     }
   };
 
@@ -137,7 +146,7 @@ const SideBarItem: FC<SideBarItemProps & SideBarExtraItemProps> = ({
               {...subItemProps}
               isActive={activeSubItem === index && isActive}
               setItemIsActive={setIsActive}
-              setSubItemIsActive={() => setActiveSubItem(index)}
+              setSubItemIsActive={() => setSubItemActive(index)}
             />
           ))}
         </ul>

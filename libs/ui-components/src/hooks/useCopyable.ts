@@ -1,7 +1,7 @@
 'use client';
 
 import copyToClipboard from 'copy-to-clipboard';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 
 export type UseCopyableReturnType = {
   /**
@@ -22,8 +22,8 @@ export type UseCopyableReturnType = {
  * @param display The display time to reset time copy state in milliseconds (default 3000)
  */
 export const useCopyable = (display = 3000): UseCopyableReturnType => {
-  const ref = useRef<string>('');
   const [isCopied, setIsCopied] = useState(false);
+  const [copiedText, setCopiedText] = useState<string>();
   const timeoutRef_ = useRef<ReturnType<typeof setTimeout>>();
 
   const copy = (value: string) => {
@@ -31,7 +31,7 @@ export const useCopyable = (display = 3000): UseCopyableReturnType => {
       return;
     }
 
-    ref.current = value;
+    setCopiedText(value);
     copyToClipboard(value);
     setIsCopied(true);
 
@@ -52,6 +52,6 @@ export const useCopyable = (display = 3000): UseCopyableReturnType => {
   return {
     isCopied,
     copy,
-    copiedText: ref.current,
+    copiedText,
   };
 };

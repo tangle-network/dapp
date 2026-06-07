@@ -3,7 +3,6 @@ import {
   useOperators,
 } from '@tangle-network/tangle-shared-ui/data/graphql/useOperators';
 import {
-  Badge,
   Button,
   Card,
   CardContent,
@@ -20,17 +19,23 @@ import {
 import { Search } from '@tangle-network/icons';
 import {
   type ChangeEvent,
-  type CSSProperties,
   type FC,
   useCallback,
   useMemo,
   useState,
 } from 'react';
-import { formatUnits, type Address } from 'viem';
+import { type Address } from 'viem';
 import { useNavigate } from 'react-router';
 import { PagePath } from '../../types';
 import { useAccount } from 'wagmi';
-import { MetricStrip, PageHeader } from '../../components/chrome';
+import {
+  formatMoney,
+  MetricStrip,
+  Money,
+  PageHeader,
+  StatusPill,
+  statusToneFor,
+} from '../../components/chrome';
 import type { Metric } from '../../components/chrome';
 import createStakeDelegateUrl from './createStakeDelegateUrl';
 
@@ -88,7 +93,11 @@ const Page: FC = () => {
       },
       {
         label: 'Total stake',
-        value: formatStake(totalStake),
+        value: formatMoney(totalStake, {
+          decimals: 18,
+          symbol: 'TNT',
+          displayDecimals: 2,
+        }).display,
         sublabel: 'TNT delegated',
         loading: isLoading,
       },
@@ -365,8 +374,9 @@ const OperatorTableRow = ({
       <TableCell className="py-4">
         <div className="flex min-w-0 items-center gap-3">
           <span
-            className="h-8 w-1 shrink-0 rounded-full"
-            style={getOperatorAccent(address)}
+            className={`h-8 w-1 shrink-0 rounded-full ${getOperatorAccentClass(
+              address,
+            )}`}
           />
           <OperatorIdenticon address={address} />
           <div className="min-w-0">
@@ -380,32 +390,24 @@ const OperatorTableRow = ({
         </div>
       </TableCell>
       <TableCell className="py-4 font-semibold text-foreground text-sm">
-        {formatStake(operator.stakingStake)}
-        <span className="ml-1 text-muted-foreground text-xs">TNT</span>
+        <Money
+          value={operator.stakingStake}
+          options={{ decimals: 18, symbol: 'TNT', displayDecimals: 2 }}
+          align="left"
+        />
       </TableCell>
       <TableCell className="py-4 font-semibold text-foreground text-sm">
         {formatCount(operator.stakingDelegationCount)}
       </TableCell>
       <TableCell className="py-4">
-        <Badge
-          variant={
-            delegationMode === 2
-              ? 'success'
-              : delegationMode === 1
-                ? 'outline'
-                : 'secondary'
-          }
-        >
+        <StatusPill tone={getDelegationModeTone(delegationMode)}>
           {delegationModeLabel}
-        </Badge>
+        </StatusPill>
       </TableCell>
       <TableCell className="py-4">
-        <Badge
-          variant={status === 'ACTIVE' ? 'success' : 'outline'}
-          dot={status === 'ACTIVE'}
-        >
+        <StatusPill tone={statusToneFor('operator', status)}>
           {formatStatus(status)}
-        </Badge>
+        </StatusPill>
       </TableCell>
       <TableCell className="py-4">
         <div className="flex justify-end gap-2">
@@ -433,12 +435,9 @@ const OperatorTableRow = ({
 
 const OperatorIdenticon = ({ address }: { address: string }) => (
   <div
-    // The inline `style` from `getOperatorIdenticonStyle` paints a saturated
-    // hue gradient as the actual background, so the `bg-card` fallback only
-    // shows for the brief render before the style applies. `text-primary-
-    // foreground` keeps the contrast stable across both themes.
-    className="grid h-9 w-9 shrink-0 place-items-center rounded-lg border border-border bg-card font-display font-extrabold text-primary-foreground text-xs shadow-[var(--shadow-card)]"
-    style={getOperatorIdenticonStyle(address)}
+    className={`grid h-9 w-9 shrink-0 place-items-center rounded-lg border bg-[var(--accent-surface-soft)] font-display font-extrabold text-foreground text-xs shadow-[var(--shadow-card)] ${getOperatorIdenticonClass(
+      address,
+    )}`}
   >
     {address.slice(2, 4).toUpperCase()}
   </div>
@@ -449,35 +448,42 @@ const shortenAddress = (address: string) => {
   return `${address.slice(0, 6)}...${address.slice(-4)}`;
 };
 
-const formatStake = (value: bigint | null) =>
-  value === null
-    ? '-'
-    : Number(formatUnits(value, 18)).toLocaleString(undefined, {
-        maximumFractionDigits: 2,
-      });
-
 const formatCount = (value: bigint | null) =>
   value === null ? '-' : value.toLocaleString();
 
 const hashAddress = (address: string) =>
   Array.from(address).reduce((hash, char) => {
-    return (hash * 31 + char.charCodeAt(0)) % 360;
+    return (hash * 31 + char.charCodeAt(0)) % 997;
   }, 0);
 
-const getOperatorIdenticonStyle = (address: string) => {
-  const hue = hashAddress(address);
-  return {
-    backgroundColor: '#111827',
-    backgroundImage: `linear-gradient(135deg, hsl(${hue} 82% 40%), hsl(${(hue + 42) % 360} 82% 32%))`,
-  };
-};
+const OPERATOR_ACCENT_CLASSES = [
+  'bg-[color:var(--border-accent-hover)]',
+  'bg-[color:var(--md3-tertiary,#10b981)]',
+  'bg-[color:var(--md3-warning,#f59e0b)]',
+  'bg-muted-foreground/70',
+] as const;
 
-const getOperatorAccent = (address: string): CSSProperties => {
-  const hue = hashAddress(address);
-  return {
-    background: `linear-gradient(180deg, hsl(${hue} 82% 58%), hsl(${(hue + 42) % 360} 82% 50%))`,
-  };
-};
+const OPERATOR_IDENTICON_CLASSES = [
+  'border-[color:var(--border-accent-hover)]/60',
+  'border-[color:var(--md3-tertiary,#10b981)]/50',
+  'border-[color:var(--md3-warning,#f59e0b)]/50',
+  'border-border',
+] as const;
+
+const getOperatorBucket = (address: string) =>
+  hashAddress(address) % OPERATOR_ACCENT_CLASSES.length;
+
+const getOperatorAccentClass = (address: string) =>
+  OPERATOR_ACCENT_CLASSES[getOperatorBucket(address)];
+
+const getOperatorIdenticonClass = (address: string) =>
+  OPERATOR_IDENTICON_CLASSES[getOperatorBucket(address)];
+
+const getDelegationModeTone = (mode: number | null) =>
+  statusToneFor(
+    'availability',
+    mode === 2 ? 'Available' : mode === 1 ? 'Limited' : 'Unavailable',
+  );
 
 const getDelegationModeLabel = (mode: number | null) => {
   if (mode === 2) return 'Open';

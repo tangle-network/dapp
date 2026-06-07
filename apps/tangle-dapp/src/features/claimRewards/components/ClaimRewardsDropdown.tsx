@@ -1,6 +1,6 @@
 'use client';
 
-import { type FC, useCallback, useEffect, useMemo, useState } from 'react';
+import { type FC, useCallback, useMemo, useState } from 'react';
 import { formatUnits } from 'viem';
 import { useAccount } from 'wagmi';
 import { VipDiamondLine, Spinner } from '@tangle-network/icons';
@@ -10,6 +10,7 @@ import {
   DropdownButton,
   Typography,
   Button,
+  useClientReady,
 } from '@tangle-network/ui-components';
 import { twMerge } from 'tailwind-merge';
 import usePendingRewards from '../../../data/rewards/usePendingRewards';
@@ -156,11 +157,7 @@ const ClaimRewardsDropdownContent: FC = () => {
 };
 
 const ClaimRewardsDropdown: FC = () => {
-  const [isClient, setIsClient] = useState(false);
-
-  useEffect(() => {
-    setIsClient(true);
-  }, []);
+  const isClient = useClientReady();
 
   if (!isClient) {
     return null;

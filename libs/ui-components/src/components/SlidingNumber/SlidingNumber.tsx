@@ -7,6 +7,7 @@ import {
   useImperativeHandle,
   useMemo,
   useRef,
+  useState,
 } from 'react';
 import useMeasure from 'react-use-measure';
 import { twMerge } from 'tailwind-merge';
@@ -98,7 +99,7 @@ const SlidingNumber = forwardRef<HTMLSpanElement, SlidingNumberProps>(
       return viewRef.current;
     });
 
-    const prevNumberRef = useRef<number>(0);
+    const [prevNumber, setPrevNumber] = useState(0);
 
     const effectiveNumber = useMemo(
       () => (startOnView && !inView ? 0 : Math.abs(Number(number))),
@@ -111,7 +112,7 @@ const SlidingNumber = forwardRef<HTMLSpanElement, SlidingNumberProps>(
     newIntStr =
       padStart && newIntStr.length === 1 ? '0' + newIntStr : newIntStr;
 
-    const prevStr = prevNumberRef.current.toString();
+    const prevStr = prevNumber.toString();
     let [prevIntStr = ''] = prevStr.split('.');
     const [, prevDecStr = ''] = prevStr.split('.');
     prevIntStr =
@@ -132,7 +133,18 @@ const SlidingNumber = forwardRef<HTMLSpanElement, SlidingNumberProps>(
 
     useEffect(() => {
       if (!startOnView || inView) {
-        prevNumberRef.current = effectiveNumber;
+        let cancelled = false;
+        queueMicrotask(() => {
+          if (!cancelled) {
+            setPrevNumber((current) =>
+              current === effectiveNumber ? current : effectiveNumber,
+            );
+          }
+        });
+
+        return () => {
+          cancelled = true;
+        };
       }
     }, [effectiveNumber, inView, startOnView]);
 

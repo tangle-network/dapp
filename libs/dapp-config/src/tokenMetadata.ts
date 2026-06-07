@@ -6,7 +6,7 @@
  * metadata collisions when users switch between networks.
  */
 
-import EVMChainId from '@tangle-network/dapp-types/EVMChainId';
+import { EVMChainId } from '@tangle-network/dapp-types';
 import { Address } from 'viem';
 
 export interface TokenMetadata {

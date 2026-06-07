@@ -9,7 +9,7 @@ import {
   TokenIcon,
 } from '@tangle-network/icons';
 import { Decimal } from 'decimal.js';
-import { forwardRef } from 'react';
+import { forwardRef, useState } from 'react';
 import { twMerge } from 'tailwind-merge';
 import useTimeAgo from '../../hooks/useTimeAgo';
 import { PropsOf } from '../../types';
@@ -67,8 +67,9 @@ const getChipColor = (
 const TxProgressorHeader = forwardRef<
   React.ElementRef<'div'>,
   TxProgressorHeaderProps
->(({ className, children, name, createdAt = Date.now(), ...props }, ref) => {
-  const timeAgo = useTimeAgo({ date: createdAt });
+>(({ className, children, name, createdAt, ...props }, ref) => {
+  const [fallbackCreatedAt] = useState(() => Date.now());
+  const timeAgo = useTimeAgo({ date: createdAt ?? fallbackCreatedAt });
 
   return (
     <div

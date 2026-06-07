@@ -2,7 +2,8 @@
 
 import { MoonLine, SunLine } from '@tangle-network/icons';
 import cx from 'classnames';
-import { FC, useEffect, useState } from 'react';
+import { FC } from 'react';
+import { useClientReady } from '../../hooks/useClientReady';
 import { useDarkMode } from '../../hooks/useDarkMode';
 
 import { ThemeToggleProps } from './types';
@@ -17,13 +18,8 @@ import { ThemeToggleProps } from './types';
  */
 
 export const ThemeToggle: FC<ThemeToggleProps> = () => {
-  const [isMounted, setIsMounted] = useState(false);
+  const isMounted = useClientReady();
   const [isDarkMode, toggleThemeMode] = useDarkMode();
-
-  // useEffect only runs on the client, so now we can safely show the UI
-  useEffect(() => {
-    setIsMounted(true);
-  }, []);
 
   if (!isMounted) {
     return null;

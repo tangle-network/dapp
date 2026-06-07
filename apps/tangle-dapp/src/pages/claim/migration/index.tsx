@@ -67,7 +67,9 @@ const MigrationClaimPage: FC = () => {
   // Sync recipient address with connected wallet when it changes
   useEffect(() => {
     if (evmAddress && !recipientAddress) {
-      setRecipientAddress(evmAddress);
+      queueMicrotask(() => {
+        setRecipientAddress(evmAddress);
+      });
     }
   }, [evmAddress, recipientAddress]);
 

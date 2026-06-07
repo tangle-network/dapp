@@ -1,4 +1,4 @@
-import { EVMChainId } from '@tangle-network/dapp-types/ChainId';
+import { EVMChainId } from '@tangle-network/dapp-types';
 import { defineChain } from 'viem';
 
 // Tangle logo as base64 encoded SVG data URI

@@ -46,13 +46,16 @@ body {
 .tangle-cloud-shell[data-sandbox-theme='tangle'] {
   color-scheme: dark;
   /* prettier-ignore */
-  --bg-root: radial-gradient(ellipse 70% 48% at 18% 0%, rgba(99, 102, 241, 0.14), transparent), radial-gradient(ellipse 48% 36% at 82% 6%, rgba(20, 184, 166, 0.09), transparent), linear-gradient(180deg, #0a0a14 0%, #07070d 100%);
-  --bg-card: #1b1a2c;
-  --bg-elevated: #262448;
-  --bg-hover: rgba(129, 140, 248, 0.16);
+  --bg-root: radial-gradient(ellipse 60% 36% at 16% 0%, rgba(79, 70, 229, 0.1), transparent), radial-gradient(ellipse 44% 30% at 84% 4%, rgba(20, 184, 166, 0.08), transparent), linear-gradient(180deg, #090b10 0%, #07080c 100%);
+  --bg-card: #151922;
+  --bg-elevated: #202737;
+  --bg-hover: rgba(116, 126, 194, 0.18);
+  --text-primary: #dbe3f0;
+  --text-muted: #9aa7ba;
+  --text-secondary: #c3ccdc;
   --border-subtle: rgba(116, 126, 194, 0.12);
-  --border-default: rgba(128, 138, 213, 0.24);
-  --border-hover: rgba(151, 161, 245, 0.48);
+  --border-default: rgba(135, 146, 172, 0.26);
+  --border-hover: rgba(151, 161, 245, 0.46);
   --border-accent: rgba(129, 140, 248, 0.36);
   --border-accent-hover: rgba(129, 140, 248, 0.55);
   --accent-surface-soft: rgba(99, 102, 241, 0.12);
@@ -254,11 +257,6 @@ body {
   border: 1px solid var(--border-subtle);
   background: var(--bg-card);
   box-shadow: var(--shadow-card);
-}
-
-.results-grid {
-  content-visibility: auto;
-  contain-intrinsic-size: 800px;
 }
 
 /* Page-to-page transition triggered by PageMotion when react-router's

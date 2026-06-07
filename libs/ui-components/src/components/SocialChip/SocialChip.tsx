@@ -24,8 +24,6 @@ const SocialChip: FC<SocialChipProps> = ({
   className,
   ...restProps
 }) => {
-  const Icon = getIconBySocialType(type);
-
   return (
     <a target="_blank" rel="noopener noreferrer" href={href}>
       <Chip
@@ -38,25 +36,33 @@ const SocialChip: FC<SocialChipProps> = ({
           className,
         )}
       >
-        <Icon className="fill-mono-200 dark:fill-mono-0" size="md" />
+        <SocialIcon type={type} />
       </Chip>
     </a>
   );
 };
 
-export default SocialChip;
-
-function getIconBySocialType(type: SocialType) {
+const SocialIcon: FC<{ type: SocialType }> = ({ type }) => {
   switch (type) {
     case 'discord':
-      return DiscordFill;
+      return (
+        <DiscordFill className="fill-mono-200 dark:fill-mono-0" size="md" />
+      );
     case 'github':
-      return GithubFill;
+      return (
+        <GithubFill className="fill-mono-200 dark:fill-mono-0" size="md" />
+      );
     case 'twitter':
-      return TwitterFill;
+      return (
+        <TwitterFill className="fill-mono-200 dark:fill-mono-0" size="md" />
+      );
     case 'website':
-      return GlobalLine;
+      return (
+        <GlobalLine className="fill-mono-200 dark:fill-mono-0" size="md" />
+      );
     case 'email':
-      return Mail;
+      return <Mail className="fill-mono-200 dark:fill-mono-0" size="md" />;
   }
-}
+};
+
+export default SocialChip;

@@ -3,8 +3,7 @@ import type {
   InjectedExtension,
   Unsubcall,
 } from '@polkadot/extension-inject/types';
-import { WalletId } from '@tangle-network/dapp-types';
-import WalletNotInstalledError from '@tangle-network/dapp-types/errors/WalletNotInstalledError';
+import { WalletId, WalletNotInstalledError } from '@tangle-network/dapp-types';
 import { WALLET_CONFIG } from '../wallets';
 
 function ensureAccountsSubscribe(

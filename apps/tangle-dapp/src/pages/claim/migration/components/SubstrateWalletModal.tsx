@@ -68,8 +68,6 @@ const SubstrateWalletModal: FC<SubstrateWalletModalProps> = ({
   useEffect(() => {
     if (!isOpen) return;
 
-    setError(null);
-
     const detected = new Set<string>();
     for (const wallet of SUBSTRATE_WALLETS) {
       const ext = window.injectedWeb3?.[wallet.name];
@@ -77,7 +75,11 @@ const SubstrateWalletModal: FC<SubstrateWalletModalProps> = ({
         detected.add(wallet.id);
       }
     }
-    setInstalledWallets(detected);
+
+    queueMicrotask(() => {
+      setError(null);
+      setInstalledWallets(detected);
+    });
   }, [isOpen]);
 
   const handleConnect = useCallback(

@@ -3,14 +3,19 @@
  * pricing model, and membership configuration.
  */
 
-import { type ComponentProps, type FC, type ReactNode } from 'react';
+import { type ComponentProps, type FC, type ReactNode, useState } from 'react';
 import {
-  Badge,
   Button as SandboxButton,
   Card,
   Skeleton,
 } from '@tangle-network/sandbox-ui/primitives';
 import { Text } from '../../../components/sandbox/SandboxUi';
+import {
+  Money,
+  StatusPill,
+  formatMoney,
+  statusToneFor,
+} from '../../../components/chrome';
 import {
   useServiceDetails,
   useServiceEscrow,
@@ -25,7 +30,6 @@ import { MembershipModel } from '@tangle-network/tangle-shared-ui/data/services/
 import { formatTtl, formatCreatedAt } from '../../../types/serviceRequest';
 import { useChainId } from 'wagmi';
 import { chainsConfig } from '@tangle-network/dapp-config/chains';
-import { formatUnits } from 'viem';
 
 interface Props {
   serviceId: bigint;
@@ -63,16 +67,6 @@ const Button: FC<ButtonProps> = ({
   />
 );
 
-const Chip: FC<{ color?: string; children: ReactNode }> = ({
-  color,
-  children,
-}) => {
-  const variant =
-    color === 'green' ? 'success' : color === 'red' ? 'destructive' : 'outline';
-
-  return <Badge variant={variant}>{children}</Badge>;
-};
-
 const ServiceOnChainDetails: FC<Props> = ({
   serviceId,
   blueprintId,
@@ -97,6 +91,7 @@ const ServiceOnChainDetails: FC<Props> = ({
     txHash: billingTxHash,
     reset: resetBillingState,
   } = useBillSubscriptionTx();
+  const [now] = useState(() => BigInt(Math.floor(Date.now() / 1000)));
 
   const isLoading =
     isLoadingDetails || isLoadingEscrow || isLoadingConfig || isLoadingToken;
@@ -127,6 +122,10 @@ const ServiceOnChainDetails: FC<Props> = ({
   const tokenSymbol =
     tokenMetadata?.symbol ?? (isNativeToken ? 'ETH' : 'TOKEN');
   const tokenDecimals = tokenMetadata?.decimals ?? 18;
+  const moneyOptions = {
+    decimals: tokenDecimals,
+    symbol: tokenSymbol,
+  };
   const explorerBaseUrl = activeChain?.blockExplorers?.default?.url;
 
   const isSubscriptionService =
@@ -140,7 +139,6 @@ const ServiceOnChainDetails: FC<Props> = ({
   const hasEscrowForNextBill =
     hasSubscriptionConfig && escrowBalance >= subscriptionRate;
   const isServiceActive = serviceDetails?.status === ServiceStatus.Active;
-  const now = BigInt(Math.floor(Date.now() / 1000));
   const lastPaymentAt = serviceDetails?.lastPaymentAt ?? BigInt(0);
   const nextBillingAt =
     hasSubscriptionConfig && serviceDetails
@@ -166,12 +164,28 @@ const ServiceOnChainDetails: FC<Props> = ({
     await executeBillSubscription({ serviceId });
   };
 
-  const formatAmount = (amount: bigint | undefined): string => {
+  const renderMoney = (
+    amount: bigint | null | undefined,
+    suffix?: ReactNode,
+  ): ReactNode => {
+    if (amount === null || amount === undefined) {
+      return EMPTY_VALUE_PLACEHOLDER;
+    }
+
+    return (
+      <span className="inline-flex flex-wrap items-baseline gap-1.5">
+        <Money value={amount} options={moneyOptions} align="left" />
+        {suffix !== undefined && (
+          <span className="text-muted-foreground text-xs">{suffix}</span>
+        )}
+      </span>
+    );
+  };
+
+  const formatAmountForDetail = (amount: bigint | undefined): string => {
     if (amount === undefined) return EMPTY_VALUE_PLACEHOLDER;
-    const formatted = Number(formatUnits(amount, tokenDecimals));
-    return Number.isFinite(formatted)
-      ? formatted.toLocaleString(undefined, { maximumFractionDigits: 4 })
-      : formatUnits(amount, tokenDecimals);
+    const view = formatMoney(amount, moneyOptions);
+    return `${view.full} ${view.symbol}`.trim();
   };
 
   const getMembershipLabel = (
@@ -181,30 +195,17 @@ const ServiceOnChainDetails: FC<Props> = ({
     return membership === MembershipModel.Fixed ? 'Fixed' : 'Dynamic';
   };
 
-  const getMembershipChipColor = (membership: MembershipModel | undefined) => {
-    if (membership === undefined) return 'dark-grey';
-    return membership === MembershipModel.Fixed ? 'blue' : 'purple';
+  const getPricingLabel = (
+    pricing: ServicePricingModel | undefined,
+  ): string => {
+    if (pricing === undefined) return EMPTY_VALUE_PLACEHOLDER;
+    return getServicePricingModelLabel(pricing);
   };
 
-  const getPricingChipColor = (pricing: ServicePricingModel | undefined) => {
-    if (pricing === undefined) return 'dark-grey';
-    switch (pricing) {
-      case ServicePricingModel.PayOnce:
-        return 'green';
-      case ServicePricingModel.Subscription:
-        return 'yellow';
-      case ServicePricingModel.EventDriven:
-        return 'blue';
-      default:
-        return 'dark-grey';
-    }
-  };
-
-  const formatSubscriptionRate = (): string => {
+  const formatSubscriptionRate = (): ReactNode => {
     if (!blueprintConfig || blueprintConfig.subscriptionRate === BigInt(0)) {
       return EMPTY_VALUE_PLACEHOLDER;
     }
-    const rate = formatAmount(blueprintConfig.subscriptionRate);
     const intervalSeconds = Number(blueprintConfig.subscriptionInterval);
     const intervalLabel =
       intervalSeconds >= 86400
@@ -212,14 +213,14 @@ const ServiceOnChainDetails: FC<Props> = ({
         : intervalSeconds >= 3600
           ? `${Math.floor(intervalSeconds / 3600)} hour(s)`
           : `${Math.floor(intervalSeconds / 60)} minute(s)`;
-    return `${rate} ${tokenSymbol} / ${intervalLabel}`;
+    return renderMoney(blueprintConfig.subscriptionRate, `/ ${intervalLabel}`);
   };
 
-  const formatEventRate = (): string => {
+  const formatEventRate = (): ReactNode => {
     if (!blueprintConfig || blueprintConfig.eventRate === BigInt(0)) {
       return EMPTY_VALUE_PLACEHOLDER;
     }
-    return `${formatAmount(blueprintConfig.eventRate)} ${tokenSymbol} / job`;
+    return renderMoney(blueprintConfig.eventRate, '/ job');
   };
 
   return (
@@ -260,19 +261,27 @@ const ServiceOnChainDetails: FC<Props> = ({
         <DetailItem
           label="Membership"
           value={
-            <Chip color={getMembershipChipColor(serviceDetails?.membership)}>
+            <StatusPill
+              tone={statusToneFor(
+                'membership',
+                getMembershipLabel(serviceDetails?.membership),
+              )}
+            >
               {getMembershipLabel(serviceDetails?.membership)}
-            </Chip>
+            </StatusPill>
           }
         />
         <DetailItem
           label="Pricing"
           value={
-            <Chip color={getPricingChipColor(serviceDetails?.pricing)}>
-              {serviceDetails?.pricing !== undefined
-                ? getServicePricingModelLabel(serviceDetails.pricing)
-                : EMPTY_VALUE_PLACEHOLDER}
-            </Chip>
+            <StatusPill
+              tone={statusToneFor(
+                'payment',
+                getPricingLabel(serviceDetails?.pricing),
+              )}
+            >
+              {getPricingLabel(serviceDetails?.pricing)}
+            </StatusPill>
           }
         />
         <DetailItem
@@ -294,20 +303,16 @@ const ServiceOnChainDetails: FC<Props> = ({
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">
           <DetailItem
             label="Escrow Balance"
-            value={
-              <span className="text-green-400 font-semibold">
-                {formatAmount(escrow?.balance)} {tokenSymbol}
-              </span>
-            }
+            value={renderMoney(escrow?.balance)}
             highlight
           />
           <DetailItem
             label="Total Deposited"
-            value={`${formatAmount(escrow?.totalDeposited)} ${tokenSymbol}`}
+            value={renderMoney(escrow?.totalDeposited)}
           />
           <DetailItem
             label="Total Released"
-            value={`${formatAmount(escrow?.totalReleased)} ${tokenSymbol}`}
+            value={renderMoney(escrow?.totalReleased)}
           />
           <DetailItem
             label="Last Payment"
@@ -347,15 +352,9 @@ const ServiceOnChainDetails: FC<Props> = ({
           <DetailItem
             label="Billability"
             value={
-              <span
-                className={
-                  canBillSubscription
-                    ? 'text-green-400 font-semibold'
-                    : 'text-yellow-400 font-semibold'
-                }
-              >
+              <StatusPill tone={canBillSubscription ? 'success' : 'warning'}>
                 {canBillSubscription ? 'Billable now' : 'Not billable yet'}
-              </span>
+              </StatusPill>
             }
           />
         </div>
@@ -388,14 +387,19 @@ const ServiceOnChainDetails: FC<Props> = ({
               ok={hasSubscriptionConfig}
               detail={
                 hasSubscriptionConfig
-                  ? `${formatAmount(subscriptionRate)} ${tokenSymbol} every ${formatTtl(subscriptionInterval)}`
+                  ? renderMoney(
+                      subscriptionRate,
+                      `every ${formatTtl(subscriptionInterval)}`,
+                    )
                   : 'Missing subscription rate or interval'
               }
             />
             <BillingCondition
               label="Escrow can cover next bill"
               ok={hasEscrowForNextBill}
-              detail={`${formatAmount(escrowBalance)} / ${formatAmount(subscriptionRate)} ${tokenSymbol}`}
+              detail={`${formatAmountForDetail(
+                escrowBalance,
+              )} / ${formatAmountForDetail(subscriptionRate)}`}
             />
             <BillingCondition
               label="Billing window is due"
@@ -418,15 +422,13 @@ const ServiceOnChainDetails: FC<Props> = ({
 
           {isBillingSuccess && billingTxHash && (
             <div className="mt-3">
-              <Text variant="body2" className="text-green-400">
-                Subscription billed successfully.
-              </Text>
+              <StatusPill tone="success">Subscription billed</StatusPill>
               {explorerBaseUrl ? (
                 <a
                   href={`${explorerBaseUrl}/tx/${billingTxHash}`}
                   target="_blank"
                   rel="noreferrer"
-                  className="underline body2 text-green-300"
+                  className="body2 mt-2 inline-flex underline text-muted-foreground hover:text-foreground"
                 >
                   View transaction
                 </a>
@@ -457,17 +459,17 @@ interface DetailItemProps {
 const BillingCondition: FC<{
   label: string;
   ok: boolean;
-  detail: string | null;
+  detail: ReactNode | null;
 }> = ({ label, ok, detail }) => (
   <div className="p-2 rounded border border-border">
     <Text variant="body2" fw="semibold">
       {label}
     </Text>
-    <Text variant="body2" className={ok ? 'text-green-400' : 'text-yellow-400'}>
+    <StatusPill tone={ok ? 'success' : 'warning'}>
       {ok ? 'Yes' : 'No'}
-    </Text>
+    </StatusPill>
     {detail && (
-      <Text variant="body3" className="text-muted-foreground mt-1">
+      <Text variant="body3" className="mt-1 text-muted-foreground">
         {detail}
       </Text>
     )}
@@ -478,7 +480,7 @@ const DetailItem: FC<DetailItemProps> = ({ label, value, highlight }) => (
   <div
     className={
       highlight
-        ? 'p-3 rounded-lg bg-green-500/10 border border-green-500/20'
+        ? 'rounded-lg border border-[color:var(--border-accent)] bg-[var(--accent-surface-soft)] p-3'
         : undefined
     }
   >

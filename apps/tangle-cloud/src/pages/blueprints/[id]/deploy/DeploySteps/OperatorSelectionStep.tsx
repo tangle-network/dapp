@@ -127,7 +127,9 @@ export const SelectOperatorsStep: FC<SelectOperatorsStepProps> = ({
       nextKeys.every((key) => rowSelection[key]);
 
     if (!isSame) {
-      setRowSelection(nextSelection);
+      queueMicrotask(() => {
+        setRowSelection(nextSelection);
+      });
     }
   }, [rowSelection, selectedOperators]);
 

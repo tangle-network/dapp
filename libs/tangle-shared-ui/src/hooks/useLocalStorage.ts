@@ -107,7 +107,7 @@ const useLocalStorage = <Key extends LocalStorageKey>(key: Key) => {
 
   // Extract the value from local storage on mount.
   useEffect(() => {
-    refresh();
+    queueMicrotask(refresh);
   }, [refresh]);
 
   // Listen for changes to local storage. This is useful in case

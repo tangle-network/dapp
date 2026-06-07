@@ -1,4 +1,4 @@
-import { calculateTypedChainId } from '@tangle-network/dapp-types/TypedChainId';
+import { calculateTypedChainId } from '@tangle-network/dapp-types';
 import { Chain } from '../api-config';
 import getWalletIdsForTypedChainId from '../utils/getWalletIdsForTypedChainId';
 import { chainsConfig } from './chain-config';

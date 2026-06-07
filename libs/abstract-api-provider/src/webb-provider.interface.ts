@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { ApiConfig } from '@tangle-network/dapp-config';
-import { EventBus } from '@tangle-network/dapp-types/EventBus';
+import { EventBus } from '@tangle-network/dapp-types';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { AccountsAdapter } from './account/Accounts.adapter';
 

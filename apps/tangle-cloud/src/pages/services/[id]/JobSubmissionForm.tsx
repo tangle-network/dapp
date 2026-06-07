@@ -336,7 +336,9 @@ export const JobSubmissionForm: FC<Props> = ({ serviceId, blueprint }) => {
   // Initialize form values when schema changes
   useEffect(() => {
     if (hasSchema) {
-      setFormValues(selectedSchema.map(getDefaultValue));
+      queueMicrotask(() => {
+        setFormValues(selectedSchema.map(getDefaultValue));
+      });
     }
   }, [hasSchema, selectedSchema]);
 

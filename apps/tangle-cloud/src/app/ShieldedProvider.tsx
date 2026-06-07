@@ -61,14 +61,19 @@ export const ShieldedProvider: FC<PropsWithChildren> = ({ children }) => {
   const [isReady, setIsReady] = useState(false);
   const storageRef = useRef<IndexedDbNoteStorage | null>(null);
   const notesRef = useRef(notes);
-  notesRef.current = notes;
   // Sequential write queue to prevent concurrent persist() from losing notes
   const writeQueueRef = useRef<Promise<void>>(Promise.resolve());
 
   useEffect(() => {
+    notesRef.current = notes;
+  }, [notes]);
+
+  useEffect(() => {
     // Reset synchronously to prevent stale data flash
-    setNotes([]);
-    setIsReady(false);
+    queueMicrotask(() => {
+      setNotes([]);
+      setIsReady(false);
+    });
     // Flush the write queue so no pending writes leak to the new address
     writeQueueRef.current = Promise.resolve();
 

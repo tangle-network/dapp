@@ -59,7 +59,9 @@ export const MetadataJsonInput: FC<Props> = ({
   // submit). The string compare avoids clobbering in-progress edits while the
   // user is typing.
   useEffect(() => {
-    setDraftJson((current) => (current === value ? current : (value ?? '')));
+    queueMicrotask(() => {
+      setDraftJson((current) => (current === value ? current : (value ?? '')));
+    });
   }, [value]);
 
   const parsed = useMemo(() => parseMetadata(draftJson), [draftJson]);

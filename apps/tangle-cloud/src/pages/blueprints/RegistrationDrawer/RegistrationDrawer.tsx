@@ -556,10 +556,6 @@ const RegistrationDrawer: FC<RegistrationDrawerProps> = ({
           <DialogDescription className="sr-only">
             Register an active operator for one or more selected blueprints.
           </DialogDescription>
-          <Button variant="ghost" size="icon" onClick={handleClose}>
-            <span aria-hidden>x</span>
-            <span className="sr-only">Close registration panel</span>
-          </Button>
         </div>
 
         {renderGatedContent()}

@@ -4,3 +4,4 @@
 export * from './account';
 export * from './webb-provider.interface';
 export * from './transaction-events';
+export * from './types';

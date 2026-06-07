@@ -1,7 +1,7 @@
 'use client';
 
 import { SnackbarProvider } from 'notistack';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 
 import { NotificationItem } from './NotificationItem';
 import { NotificationStacked } from './NotificationStacked';
@@ -10,11 +10,11 @@ export const NotificationProvider: React.FC<{
   children?: React.ReactNode;
   maxStack?: number;
 }> = ({ children, maxStack = 3 }) => {
-  const [domRoot, setDomRoot] = useState<HTMLElement | undefined>(undefined);
-
-  useEffect(() => {
-    setDomRoot(document?.getElementById('notification-root') ?? undefined);
-  }, []);
+  const [domRoot] = useState<HTMLElement | undefined>(() =>
+    typeof document === 'undefined'
+      ? undefined
+      : (document.getElementById('notification-root') ?? undefined),
+  );
 
   return (
     <SnackbarProvider

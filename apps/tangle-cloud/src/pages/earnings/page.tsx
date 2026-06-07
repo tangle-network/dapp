@@ -36,7 +36,9 @@ const EarningsPage: FC = () => {
   );
 
   useEffect(() => {
-    setEventsPageIndex((current) => Math.min(current, totalEventPages - 1));
+    queueMicrotask(() => {
+      setEventsPageIndex((current) => Math.min(current, totalEventPages - 1));
+    });
   }, [totalEventPages]);
 
   const visibleEvents = useMemo(() => {

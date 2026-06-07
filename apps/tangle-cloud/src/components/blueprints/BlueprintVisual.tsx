@@ -1,5 +1,6 @@
 import type { Blueprint } from '@tangle-network/tangle-shared-ui/types/blueprint';
-import { useEffect, useState, type CSSProperties } from 'react';
+import { useState, type CSSProperties } from 'react';
+import { twMerge } from 'tailwind-merge';
 import {
   formatBlueprintName,
   getGithubPreviewUrl,
@@ -22,24 +23,19 @@ export const BlueprintVisual = ({
   const imageUrl =
     getUsableMetadataImageUrl(blueprint.imgUrl) ??
     getGithubPreviewUrl(blueprint.githubUrl);
-  const [hasImageError, setHasImageError] = useState(false);
+  const [imageErrorUrl, setImageErrorUrl] = useState<string | null>(null);
   const displayName = formatBlueprintName(blueprint.name);
   const style = getBlueprintVisualStyle(`${displayName}:${category}`);
+  const hasImageError = imageErrorUrl === imageUrl;
   const resolvedImageUrl = imageUrl && !hasImageError ? imageUrl : null;
-
-  useEffect(() => {
-    setHasImageError(false);
-  }, [imageUrl]);
 
   return (
     <div
-      className={[
+      className={twMerge(
         'relative isolate overflow-hidden rounded-xl border border-border bg-muted/40 shadow-[var(--shadow-card)]',
         compact ? 'h-24' : 'h-44',
         className,
-      ]
-        .filter(Boolean)
-        .join(' ')}
+      )}
       style={style}
     >
       {resolvedImageUrl ? (
@@ -49,7 +45,7 @@ export const BlueprintVisual = ({
             alt=""
             className="absolute inset-0 h-full w-full object-cover opacity-80"
             loading="lazy"
-            onError={() => setHasImageError(true)}
+            onError={() => setImageErrorUrl(imageUrl)}
           />
           <div className="absolute inset-0 bg-gradient-to-br from-black/50 via-black/25 to-black/60" />
         </>

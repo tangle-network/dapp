@@ -9,7 +9,7 @@ import {
   type Chain,
   type Wallet,
 } from '@tangle-network/dapp-config';
-import type { Maybe, Nullable } from '@tangle-network/dapp-types/utils/types';
+import type { Maybe, Nullable } from '@tangle-network/dapp-types';
 import { AppEvent, type TAppEvent } from '../app-event';
 import { createContext, useContext } from 'react';
 

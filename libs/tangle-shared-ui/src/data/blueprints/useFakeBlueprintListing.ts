@@ -15,29 +15,38 @@ const generateBlueprints = () => {
   }, new Map<bigint, Blueprint>());
 };
 
+const EMPTY_BLUEPRINTS = new Map<bigint, Blueprint>();
+
 const useFakeBlueprintListing = (delayMs = 3000) => {
-  const [data, setData] = useState<Map<bigint, Blueprint>>(new Map());
-  const [isLoading, setIsLoading] = useState(true);
+  const [state, setState] = useState<{
+    delayMs: number;
+    data: Map<bigint, Blueprint>;
+    isLoading: boolean;
+  }>(() => ({
+    delayMs,
+    data: EMPTY_BLUEPRINTS,
+    isLoading: true,
+  }));
 
   useEffect(() => {
-    setIsLoading(true);
-    setData(new Map());
-
     const timer = setTimeout(() => {
-      setIsLoading(false);
-      setData(generateBlueprints());
+      setState({
+        delayMs,
+        data: generateBlueprints(),
+        isLoading: false,
+      });
     }, delayMs);
 
     return () => {
       clearTimeout(timer);
-      setIsLoading(false);
-      setData(new Map());
     };
   }, [delayMs]);
 
+  const isCurrentRequest = state.delayMs === delayMs;
+
   return {
-    blueprints: data,
-    isLoading,
+    blueprints: isCurrentRequest ? state.data : EMPTY_BLUEPRINTS,
+    isLoading: !isCurrentRequest || state.isLoading,
     error: null satisfies Error | null,
   };
 };

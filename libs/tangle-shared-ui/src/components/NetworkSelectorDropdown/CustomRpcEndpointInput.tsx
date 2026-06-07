@@ -1,7 +1,10 @@
 import { Save, SaveWithBg } from '@tangle-network/icons';
 import { Input } from '@tangle-network/ui-components';
-import { FC, useCallback, useEffect, useRef, useState } from 'react';
-import useLocalStorage, { LocalStorageKey } from '../../hooks/useLocalStorage';
+import { FC, useCallback, useState } from 'react';
+import {
+  getJsonFromLocalStorage,
+  LocalStorageKey,
+} from '../../hooks/useLocalStorage';
 
 export type CustomRpcEndpointInputProps = {
   id: string;
@@ -14,33 +17,18 @@ const CustomRpcEndpointInput: FC<CustomRpcEndpointInputProps> = ({
   placeholder,
   setCustomNetwork,
 }) => {
-  const { refresh: getCachedCustomRpcEndpoint } = useLocalStorage(
-    LocalStorageKey.CUSTOM_RPC_ENDPOINT,
-  );
+  const [value, setValue] = useState(() => {
+    if (typeof localStorage === 'undefined') {
+      return '';
+    }
 
-  const [value, setValue] = useState('');
-  const wasValueSetRef = useRef(false);
+    return getJsonFromLocalStorage(LocalStorageKey.CUSTOM_RPC_ENDPOINT) ?? '';
+  });
 
   const handleSave = useCallback(
     () => setCustomNetwork(value),
     [value, setCustomNetwork],
   );
-
-  // On mount, load the cached custom RPC endpoint. If it
-  // exists, set it as the initial value of the input.
-  useEffect(() => {
-    // Don't set the value more than once.
-    if (wasValueSetRef.current) {
-      return;
-    }
-
-    const cachedCustomRpcEndpoint = getCachedCustomRpcEndpoint();
-
-    if (cachedCustomRpcEndpoint.value !== null && value === '') {
-      setValue(cachedCustomRpcEndpoint.value);
-      wasValueSetRef.current = true;
-    }
-  }, [getCachedCustomRpcEndpoint, value]);
 
   const rightIcon =
     value !== '' ? (
