@@ -21,21 +21,25 @@ const NetworkSync: FC<PropsWithChildren> = ({ children }) => {
   const selectedNetwork = useNetworkStore((store) => store.network2);
   const setNetwork = useNetworkStore((store) => store.setNetwork);
 
-  useEffect(() => {
-    if (forceLocalChain) {
-      return;
-    }
+  const needsCloudNetworkReset =
+    !forceLocalChain &&
+    selectedNetwork?.evmChainId === ANVIL_LOCAL_NETWORK.evmChainId;
 
-    if (selectedNetwork?.evmChainId === ANVIL_LOCAL_NETWORK.evmChainId) {
+  useEffect(() => {
+    if (needsCloudNetworkReset) {
       setNetwork(BASE_SEPOLIA_NETWORK);
     }
-  }, [forceLocalChain, selectedNetwork?.evmChainId, setNetwork]);
+  }, [needsCloudNetworkReset, setNetwork]);
 
   useNetworkSync(TANGLE_CLOUD_NETWORKS);
   useLocalChainGuard({
     enabled: forceLocalChain && isLocalPreviewHost(),
     targetChainId: ANVIL_LOCAL_NETWORK.evmChainId ?? 31337,
   });
+  if (needsCloudNetworkReset) {
+    return null;
+  }
+
   return children;
 };
 
@@ -75,14 +79,14 @@ const Providers: FC<PropsWithChildren> = ({ children }) => {
       reconnectOnMount={reconnectOnMount}
     >
       <QueryClientProvider client={queryClient}>
-        <IndexerStatusProvider>
-          <ToastProvider>
-            <ToastAccessibilityPatch />
-            <NetworkSync>
+        <NetworkSync>
+          <IndexerStatusProvider>
+            <ToastProvider>
+              <ToastAccessibilityPatch />
               <PaymentProviders>{children}</PaymentProviders>
-            </NetworkSync>
-          </ToastProvider>
-        </IndexerStatusProvider>
+            </ToastProvider>
+          </IndexerStatusProvider>
+        </NetworkSync>
       </QueryClientProvider>
     </WagmiProvider>
   );

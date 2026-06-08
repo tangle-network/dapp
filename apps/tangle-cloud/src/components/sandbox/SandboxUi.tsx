@@ -37,7 +37,7 @@ import {
   forwardRef,
   type ChangeEvent,
   type ComponentProps,
-  type ComponentRef,
+  type ElementRef,
   type FC,
   type ReactNode,
 } from 'react';
@@ -156,11 +156,8 @@ export type ButtonProps = Omit<
   disabledTooltip?: string;
 };
 
-export const Button = forwardRef<
-  ComponentRef<typeof SandboxButton>,
-  ButtonProps
->(
-  (
+export const Button = forwardRef<ElementRef<typeof SandboxButton>, ButtonProps>(
+  function Button(
     {
       variant,
       size,
@@ -178,29 +175,31 @@ export const Button = forwardRef<
       ...props
     },
     ref,
-  ) => (
-    <SandboxButton
-      ref={ref}
-      variant={
-        variant === 'utility'
-          ? 'outline'
-          : variant === 'primary'
-            ? 'default'
-            : variant
-      }
-      size={isJustIcon ? 'icon' : size}
-      disabled={disabled || isDisabled}
-      loading={isLoading}
-      className={[isFullWidth ? 'w-full' : '', className]
-        .filter(Boolean)
-        .join(' ')}
-      {...props}
-    >
-      {leftIcon}
-      {children}
-      {rightIcon}
-    </SandboxButton>
-  ),
+  ) {
+    return (
+      <SandboxButton
+        ref={ref}
+        variant={
+          variant === 'utility'
+            ? 'outline'
+            : variant === 'primary'
+              ? 'default'
+              : variant
+        }
+        size={isJustIcon ? 'icon' : size}
+        disabled={disabled || isDisabled}
+        loading={isLoading}
+        className={[isFullWidth ? 'w-full' : '', className]
+          .filter(Boolean)
+          .join(' ')}
+        {...props}
+      >
+        {leftIcon}
+        {children}
+        {rightIcon}
+      </SandboxButton>
+    );
+  },
 );
 
 Button.displayName = 'Button';

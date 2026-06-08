@@ -45,6 +45,7 @@ import {
   fetchAttestations,
   fetchAuditorOnChain,
 } from '@tangle-network/tangle-shared-ui/data/blueprints/useBinaryVersions';
+import useNetworkStore from '@tangle-network/tangle-shared-ui/context/useNetworkStore';
 import {
   AttestationKind,
   type Auditor,
@@ -970,7 +971,9 @@ export default BlueprintListing;
  * the same react-query cache entry — no duplicate chain reads.
  */
 const useAuditedStatusMap = (blueprintIds: bigint[]): Map<string, boolean> => {
-  const chainId = useChainId();
+  const wagmiChainId = useChainId();
+  const networkChainId = useNetworkStore((store) => store.network2?.evmChainId);
+  const chainId = networkChainId ?? wagmiChainId;
   const publicClient = usePublicClient({ chainId });
   const fallback = useMemo(() => auditorFallbackRegistry(), []);
 

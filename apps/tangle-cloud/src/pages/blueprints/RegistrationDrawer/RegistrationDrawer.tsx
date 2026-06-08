@@ -548,7 +548,7 @@ const RegistrationDrawer: FC<RegistrationDrawerProps> = ({
 
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
-      <DialogContent className="fixed right-0 left-auto top-0 z-[80] h-screen max-h-screen w-full max-w-xl translate-x-0 translate-y-0 rounded-none border-y-0 border-r-0 p-0 sm:max-w-xl">
+      <DialogContent className="fixed !left-auto !right-0 !top-0 z-[80] flex h-screen max-h-screen w-full max-w-xl !translate-x-0 !translate-y-0 flex-col overflow-hidden rounded-none border-y-0 border-r-0 p-0 sm:max-w-xl">
         <div className="shrink-0 flex items-center justify-between p-4 border-b border-border">
           <DialogTitle className="text-lg font-bold">
             Register as Operator

@@ -7,6 +7,22 @@ import reactRefresh from 'eslint-plugin-react-refresh';
 import storybook from 'eslint-plugin-storybook';
 import tseslint from 'typescript-eslint';
 
+const reactCompilerReadinessRules = {
+  'react-hooks/config': 'warn',
+  'react-hooks/error-boundaries': 'warn',
+  'react-hooks/gating': 'warn',
+  'react-hooks/globals': 'warn',
+  'react-hooks/immutability': 'warn',
+  'react-hooks/preserve-manual-memoization': 'warn',
+  'react-hooks/purity': 'warn',
+  'react-hooks/refs': 'warn',
+  'react-hooks/set-state-in-effect': 'warn',
+  'react-hooks/set-state-in-render': 'warn',
+  'react-hooks/static-components': 'warn',
+  'react-hooks/unsupported-syntax': 'warn',
+  'react-hooks/use-memo': 'warn',
+};
+
 export default tseslint.config(
   tseslint.configs.recommended,
   js.configs.recommended,
@@ -39,6 +55,12 @@ export default tseslint.config(
           ignoreRestSiblings: true,
         },
       ],
+      'react-hooks/rules-of-hooks': 'error',
+      'react-hooks/exhaustive-deps': 'warn',
+      // The v7 hooks plugin adds React Compiler readiness diagnostics to the
+      // Nx React preset. Keep them visible without making compiler adoption a
+      // repo-wide CI gate before the codebase is migrated.
+      ...reactCompilerReadinessRules,
       '@nx/enforce-module-boundaries': [
         'error',
         {
@@ -55,11 +77,7 @@ export default tseslint.config(
     },
   },
   {
-    ignores: [
-      '**/.netlify/',
-      '**/contracts/**',
-      '**/scripts/migration/**',
-    ],
+    ignores: ['**/.netlify/', '**/contracts/**', '**/scripts/migration/**'],
   },
   {
     files: ['**/tailwind.config.ts', '**/eslint.config.{mjs,js}'],
