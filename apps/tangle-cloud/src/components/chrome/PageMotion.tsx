@@ -34,7 +34,9 @@ const PageMotion: FC<Props> = ({ children, className }) => {
   const [entering, setEntering] = useState(false);
 
   useEffect(() => {
-    setEntering(true);
+    queueMicrotask(() => {
+      setEntering(true);
+    });
     // Two rAFs: one to commit the entering state, one to clear it after the
     // browser has had a chance to render the initial keyframe state. The
     // CSS animation handles the actual transition; the attribute is just a

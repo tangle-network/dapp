@@ -70,7 +70,7 @@ const WalletDropdown: FC<WalletDropdownProps> = ({
             variant="body1"
             fw="bold"
             component="p"
-            className="truncate dark:text-mono-0 sr-only sm:not-sr-only"
+            className="max-w-[96px] truncate font-mono text-sm text-inherit"
           >
             {shortenHex(accountAddress)}
           </Typography>

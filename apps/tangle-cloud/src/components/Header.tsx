@@ -47,10 +47,6 @@ export default function Header({
   const pathname = useLocation().pathname;
   const trail = useMemo(() => getHeaderTrail(pathname), [pathname]);
   const topNavContent = useTopNavSlotContent();
-  const hasContextualConnect =
-    pathname.startsWith('/rewards') ||
-    pathname.startsWith('/earnings') ||
-    pathname.startsWith('/instances');
 
   return (
     <header
@@ -64,7 +60,8 @@ export default function Header({
        * ("Blueprints / Trading"); pages can override it with contextual
        * content (name + actions) via useTopNavSlot. */}
       <div className="ml-12 flex min-w-0 flex-1 items-center gap-2 sm:ml-0">
-        {topNavContent ?? <HeaderTrail items={trail} />}
+        {topNavContent ??
+          (trail.length > 0 ? <HeaderTrail items={trail} /> : null)}
       </div>
 
       <div className="flex shrink-0 items-center justify-end gap-2">
@@ -76,9 +73,10 @@ export default function Header({
 
         <ThemeToggle theme={theme} onThemeChange={onThemeChange} />
 
-        {!hasContextualConnect && (
-          <ConnectWalletButton className="tangle-cloud-wallet-action" />
-        )}
+        {/* Connection state lives in the chrome on every route — the header is
+         * the single owner of Connect Wallet. Pages never duplicate this; a
+         * disconnected page body renders a designed empty state instead. */}
+        <ConnectWalletButton className="tangle-cloud-wallet-action" />
       </div>
     </header>
   );
@@ -107,6 +105,7 @@ const getHeaderTrail = (pathname: string): TrailItem[] => {
     return [blueprints, { label: 'Service' }];
   if (pathname.startsWith('/blueprints/') && pathname !== '/blueprints')
     return [blueprints, { label: 'Details' }];
+  if (pathname === '/blueprints') return [];
   if (pathname.startsWith('/blueprints')) return [blueprints];
 
   if (pathname === '/operators/manage') return [operators, { label: 'Manage' }];
@@ -255,14 +254,15 @@ function CloudNetworkSelector({ networks }: { networks: Network[] }) {
     NetworkId | null | 'custom'
   >(null);
   const [customRpcEndpoint, setCustomRpcEndpoint] = useState('');
+  const evmChainId = network?.evmChainId;
 
   const isWrongEvmNetwork = useMemo(() => {
-    if (!isConnected || !network?.evmChainId) {
+    if (!isConnected || !evmChainId) {
       return false;
     }
 
-    return network.evmChainId !== chainId;
-  }, [chainId, isConnected, network?.evmChainId]);
+    return evmChainId !== chainId;
+  }, [chainId, evmChainId, isConnected]);
 
   const isLoading = isWalletConnecting || isSwitchingChain;
   const networkName = isLoading ? 'Connecting' : (network?.name ?? 'Network');
@@ -296,12 +296,12 @@ function CloudNetworkSelector({ networks }: { networks: Network[] }) {
   }, [customRpcEndpoint, setNetwork]);
 
   const switchToCorrectEvmChain = useCallback(() => {
-    if (!network?.evmChainId || !switchChain) {
+    if (!evmChainId || !switchChain) {
       return;
     }
 
-    switchChain({ chainId: network.evmChainId });
-  }, [network?.evmChainId, switchChain]);
+    switchChain({ chainId: evmChainId });
+  }, [evmChainId, switchChain]);
 
   return (
     <div className="flex items-center gap-2">
@@ -325,14 +325,16 @@ function CloudNetworkSelector({ networks }: { networks: Network[] }) {
             type="button"
             variant="outline"
             disabled={isLoading}
-            className="h-11 gap-2 border-border bg-muted/30 px-3 font-bold text-foreground hover:bg-muted"
+            className="h-11 gap-2 border-border bg-muted/30 px-3 font-sans font-medium not-italic text-foreground hover:bg-muted"
           >
             {isLoading ? (
               <Spinner size="lg" />
             ) : (
               <ChainIcon size="lg" className="shrink-0" name={networkName} />
             )}
-            <span className="hidden sm:inline">{networkName}</span>
+            <span className="hidden font-sans not-italic sm:inline">
+              {networkName}
+            </span>
           </Button>
         </DropdownMenuTrigger>
 
@@ -355,7 +357,9 @@ function CloudNetworkSelector({ networks }: { networks: Network[] }) {
                   ) : (
                     <ChainIcon size="lg" name={item.name} />
                   )}
-                  <span className="truncate font-semibold">{item.name}</span>
+                  <span className="truncate font-sans font-medium not-italic">
+                    {item.name}
+                  </span>
                 </span>
                 {isSelected && (
                   <StatusIndicator

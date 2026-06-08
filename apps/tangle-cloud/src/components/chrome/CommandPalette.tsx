@@ -153,8 +153,10 @@ const CommandPalette: FC<Props> = ({ open, onOpenChange, extra = [] }) => {
   // Reset on open / collapse on close so the next invocation starts fresh.
   useEffect(() => {
     if (open) {
-      setQuery('');
-      setActiveIndex(0);
+      queueMicrotask(() => {
+        setQuery('');
+        setActiveIndex(0);
+      });
       // Focus on next tick so the Dialog's autofocus doesn't steal it.
       const id = window.setTimeout(() => inputRef.current?.focus(), 10);
       return () => window.clearTimeout(id);
@@ -163,7 +165,9 @@ const CommandPalette: FC<Props> = ({ open, onOpenChange, extra = [] }) => {
   }, [open]);
 
   useEffect(() => {
-    setActiveIndex((i) => Math.min(i, Math.max(0, filtered.length - 1)));
+    queueMicrotask(() => {
+      setActiveIndex((i) => Math.min(i, Math.max(0, filtered.length - 1)));
+    });
   }, [filtered.length]);
 
   const onKeyDown = (e: React.KeyboardEvent) => {

@@ -4,7 +4,7 @@
 
 import { useQuery } from '@tanstack/react-query';
 import { Address } from 'viem';
-import { useAccount, useChainId, usePublicClient } from 'wagmi';
+import { useChainId, usePublicClient } from 'wagmi';
 import {
   executeEnvioGraphQL,
   EnvioNetwork,
@@ -130,11 +130,12 @@ const toAppBlueprint = (bp: BlueprintWithMetadata): AppBlueprint => ({
   blueprintUi: bp.blueprintUi,
 });
 
+const BLUEPRINT_QUERY_CACHE_MS = 30 * 60_000;
+
 const useResolvedEnvioNetwork = (network?: EnvioNetwork) => {
   const chainId = useChainId();
-  const { isConnected } = useAccount();
   const networkChainId = useNetworkStore((store) => store.network2?.evmChainId);
-  const activeChainId = isConnected ? chainId : (networkChainId ?? chainId);
+  const activeChainId = networkChainId ?? chainId;
 
   return {
     activeChainId,
@@ -423,6 +424,8 @@ export const useBlueprints = (options?: {
     },
     enabled,
     staleTime: 60_000,
+    gcTime: BLUEPRINT_QUERY_CACHE_MS,
+    placeholderData: (previous) => previous,
   });
 };
 
@@ -492,6 +495,8 @@ export const useBlueprintsWithMetadata = (options?: {
     },
     enabled,
     staleTime: 300_000,
+    gcTime: BLUEPRINT_QUERY_CACHE_MS,
+    placeholderData: (previous) => previous,
   });
 };
 
@@ -597,6 +602,8 @@ export const useBlueprint = (
     },
     enabled: enabled && !!blueprintId,
     staleTime: 300_000,
+    gcTime: BLUEPRINT_QUERY_CACHE_MS,
+    placeholderData: (previous) => previous,
   });
 };
 
@@ -747,6 +754,8 @@ export const useBlueprintDetails = (
     },
     enabled: enabled && blueprintId !== undefined,
     staleTime: 60_000,
+    gcTime: BLUEPRINT_QUERY_CACHE_MS,
+    placeholderData: (previous) => previous,
   });
 
   return {

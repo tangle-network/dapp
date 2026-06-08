@@ -21,6 +21,7 @@ import {
   getEnvioNetworkFromChainId,
   type EnvioNetwork,
 } from '../utils/executeEnvioGraphQL';
+import useNetworkStore from './useNetworkStore';
 
 // Data source type
 export type DataSource = 'graphql' | 'onchain' | 'unavailable';
@@ -48,7 +49,9 @@ const IndexerStatusContext = createContext<IndexerStatus | null>(null);
  * Should be placed high in the component tree, after WagmiProvider.
  */
 export const IndexerStatusProvider: FC<PropsWithChildren> = ({ children }) => {
-  const chainId = useChainId();
+  const wagmiChainId = useChainId();
+  const networkChainId = useNetworkStore((store) => store.network2?.evmChainId);
+  const chainId = networkChainId ?? wagmiChainId;
   const network = getEnvioNetworkFromChainId(chainId);
 
   // Use the shared health check hook
@@ -147,7 +150,9 @@ export const useIsGraphQLEnabled = (): {
  * Useful for hooks that may be used outside the provider.
  */
 export const useIndexerStatusStandalone = () => {
-  const chainId = useChainId();
+  const wagmiChainId = useChainId();
+  const networkChainId = useNetworkStore((store) => store.network2?.evmChainId);
+  const chainId = networkChainId ?? wagmiChainId;
   const { data: isHealthy, isLoading: isCheckingHealth } =
     useEnvioHealthCheckByChainId(chainId);
 
