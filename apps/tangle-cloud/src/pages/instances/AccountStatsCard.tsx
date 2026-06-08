@@ -1,11 +1,10 @@
 import { useMemo, type FC } from 'react';
 import {
-  Avatar,
-  AvatarFallback,
   Badge,
   Card,
   CardContent,
 } from '@tangle-network/sandbox-ui/primitives';
+import { Avatar } from '@tangle-network/ui-components';
 import { ExternalLinkLine } from '@tangle-network/icons';
 import { useAccount, useChainId } from 'wagmi';
 import ConnectWalletButton from '@tangle-network/tangle-shared-ui/components/ConnectWalletButton';
@@ -118,26 +117,18 @@ export const AccountStatsCard: FC<AccountStatsCardProps> = (props) => {
         className={twMerge('w-full', rootProps?.className)}
       >
         <CardContent className="flex h-full flex-col gap-5 p-5 md:p-6">
-          <div className="flex min-w-0 items-start gap-4">
-            <Avatar className="h-12 w-12 border border-border bg-muted">
-              <AvatarFallback className="font-display font-bold text-foreground">
-                TC
-              </AvatarFallback>
-            </Avatar>
-
-            <div className="min-w-0 flex-1">
-              <p className="font-semibold text-muted-foreground text-xs uppercase tracking-wider">
-                Account
-              </p>
-              <div className="mt-2 font-display font-bold text-foreground text-lg tracking-tight">
-                Connect a wallet to load your account
-              </div>
-              <p className="mt-2 max-w-xl text-muted-foreground text-sm leading-relaxed">
-                Connect to load deployed services, operator registrations, and
-                account-scoped lifecycle events. Public catalog and operator
-                registry data load below without a wallet.
-              </p>
+          <div className="min-w-0">
+            <p className="font-semibold text-muted-foreground text-xs uppercase tracking-wider">
+              Account
+            </p>
+            <div className="mt-2 font-display font-bold text-foreground text-lg tracking-tight">
+              Connect a wallet to load your account
             </div>
+            <p className="mt-2 max-w-xl text-muted-foreground text-sm leading-relaxed">
+              Connect to load deployed services, operator registrations, and
+              account-scoped lifecycle events. Public catalog and operator
+              registry data load below without a wallet.
+            </p>
           </div>
           <div className="mt-auto">
             <ConnectWalletButton className="tangle-cloud-wallet-action" />
@@ -152,13 +143,12 @@ export const AccountStatsCard: FC<AccountStatsCardProps> = (props) => {
       <CardContent className="space-y-5 p-5 md:p-6">
         <div className="flex items-start justify-between gap-4">
           <div className="flex min-w-0 items-center gap-4">
-            <Avatar className="h-12 w-12 border border-border bg-muted">
-              <AvatarFallback className="font-display font-bold text-foreground">
-                {accountAddress
-                  ? accountAddress.slice(2, 4).toUpperCase()
-                  : 'TC'}
-              </AvatarFallback>
-            </Avatar>
+            <Avatar
+              sourceVariant="address"
+              value={accountAddress}
+              theme="ethereum"
+              size="lg"
+            />
             <div className="min-w-0">
               <div className="truncate font-display font-bold text-foreground text-lg tracking-tight">
                 {identityName}

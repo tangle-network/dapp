@@ -24,11 +24,9 @@ import {
   DropdownMenuTrigger,
 } from '@tangle-network/sandbox-ui/primitives';
 import { ComponentProps, useCallback, useMemo, useState } from 'react';
-import { Link, useLocation } from 'react-router';
 import { twMerge } from 'tailwind-merge';
 import { useAccount, useChainId, useSwitchChain } from 'wagmi';
 import TxHistoryDrawer from './TxHistoryDrawer';
-import { useTopNavSlotContent } from './chrome/TopNavSlot';
 import {
   Network,
   NetworkId,
@@ -44,26 +42,14 @@ export default function Header({
   theme: 'dark' | 'light';
   onThemeChange: (theme: 'dark' | 'light') => void;
 }) {
-  const pathname = useLocation().pathname;
-  const trail = useMemo(() => getHeaderTrail(pathname), [pathname]);
-  const topNavContent = useTopNavSlotContent();
-
   return (
     <header
       className={twMerge(
-        'tangle-cloud-topbar fixed top-0 right-0 left-0 z-40 flex h-14 items-center justify-between gap-4 border-b border-border bg-[var(--bg-elevated)] px-4 font-sans text-[13px] tracking-tight lg:left-16 lg:px-8',
+        'flex items-center justify-end gap-2 font-sans text-[13px] tracking-tight',
         className,
       )}
       {...props}
     >
-      {/* Topbar left slot: the route breadcrumb trail by default
-       * ("Blueprints / Trading"); pages can override it with contextual
-       * content (name + actions) via useTopNavSlot. */}
-      <div className="ml-12 flex min-w-0 flex-1 items-center gap-2 sm:ml-0">
-        {topNavContent ??
-          (trail.length > 0 ? <HeaderTrail items={trail} /> : null)}
-      </div>
-
       <div className="flex shrink-0 items-center justify-end gap-2">
         <TxHistoryDrawer />
 
@@ -79,88 +65,6 @@ export default function Header({
         <ConnectWalletButton className="tangle-cloud-wallet-action" />
       </div>
     </header>
-  );
-}
-
-type TrailItem = { label: string; href?: string };
-
-/**
- * Breadcrumb trail for the top nav ("Blueprints / Trading"). The leading
- * "Cloud" is dropped — the whole app is Cloud and the sidebar already names
- * the section. Non-leaf section roots link back (e.g. Blueprints → catalog).
- * Blueprint *detail* pages override this via useTopNavSlot with the real name.
- */
-const getHeaderTrail = (pathname: string): TrailItem[] => {
-  const blueprints: TrailItem = { label: 'Blueprints', href: '/blueprints' };
-  const operators: TrailItem = { label: 'Operators', href: '/operators' };
-  const instances: TrailItem = { label: 'Instances', href: '/instances' };
-
-  if (pathname === '/blueprints/create')
-    return [blueprints, { label: 'Create' }];
-  if (pathname === '/blueprints/manage')
-    return [blueprints, { label: 'Manage' }];
-  if (pathname.startsWith('/blueprints/') && pathname.endsWith('/deploy'))
-    return [blueprints, { label: 'Instance checkout' }];
-  if (pathname.startsWith('/blueprints/') && pathname.includes('/services/'))
-    return [blueprints, { label: 'Service' }];
-  if (pathname.startsWith('/blueprints/') && pathname !== '/blueprints')
-    return [blueprints, { label: 'Details' }];
-  if (pathname === '/blueprints') return [];
-  if (pathname.startsWith('/blueprints')) return [blueprints];
-
-  if (pathname === '/operators/manage') return [operators, { label: 'Manage' }];
-  if (pathname.startsWith('/operators')) return [operators];
-  if (pathname === '/payments/credits')
-    return [{ label: 'Payments' }, { label: 'Credits' }];
-  if (pathname === '/payments/pool')
-    return [{ label: 'Payments' }, { label: 'Shielded pool' }];
-  if (pathname.startsWith('/rewards')) return [{ label: 'Rewards' }];
-  if (pathname.startsWith('/earnings')) return [{ label: 'Earnings' }];
-  if (pathname.startsWith('/services/'))
-    return [instances, { label: 'Service' }];
-  if (pathname.startsWith('/instances')) return [instances];
-
-  return [{ label: 'Tangle Cloud' }];
-};
-
-/** Renders a breadcrumb trail; non-leaf items with an href are links. */
-function HeaderTrail({ items }: { items: TrailItem[] }) {
-  return (
-    <nav
-      aria-label="Breadcrumb"
-      className="flex min-w-0 items-center gap-1.5 text-[13px]"
-    >
-      {items.map((item, i) => {
-        const isLeaf = i === items.length - 1;
-        return (
-          <span key={i} className="flex min-w-0 items-center gap-1.5">
-            {i > 0 && (
-              <span aria-hidden className="text-muted-foreground/40">
-                /
-              </span>
-            )}
-            {item.href && !isLeaf ? (
-              <Link
-                to={item.href}
-                className="shrink-0 text-muted-foreground transition-colors hover:text-foreground"
-              >
-                {item.label}
-              </Link>
-            ) : (
-              <span
-                className={twMerge(
-                  isLeaf
-                    ? 'truncate font-semibold text-foreground'
-                    : 'shrink-0 text-muted-foreground',
-                )}
-              >
-                {item.label}
-              </span>
-            )}
-          </span>
-        );
-      })}
-    </nav>
   );
 }
 

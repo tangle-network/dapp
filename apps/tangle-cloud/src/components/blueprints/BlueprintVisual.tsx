@@ -52,10 +52,6 @@ export const BlueprintVisual = ({
       ) : (
         <GeneratedBlueprintDiagram name={displayName} category={category} />
       )}
-
-      <div className="tangle-cloud-visual-badge absolute bottom-4 right-4 grid h-10 w-10 shrink-0 place-items-center rounded-lg border border-border bg-card font-display font-extrabold text-foreground shadow-[var(--shadow-card)]">
-        {displayName.slice(0, 1).toUpperCase()}
-      </div>
     </div>
   );
 };
