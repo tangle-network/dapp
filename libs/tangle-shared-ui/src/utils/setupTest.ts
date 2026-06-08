@@ -37,6 +37,12 @@ Object.defineProperty(window, 'matchMedia', {
   })),
 });
 
+Object.defineProperty(window, 'scrollTo', {
+  configurable: true,
+  writable: true,
+  value: vi.fn(),
+});
+
 process.on('unhandledRejection', (reason) => {
   console.log('FAILED TO HANDLE PROMISE REJECTION');
   console.log('REASON', reason);
