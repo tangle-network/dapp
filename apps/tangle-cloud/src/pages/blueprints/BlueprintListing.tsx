@@ -9,7 +9,6 @@ import { formatBlueprintName } from '../../components/blueprints/blueprintVisual
 import {
   EmptyState,
   FilterTray,
-  PageToolbar,
   ResultList,
   StatusPill,
   ViewToggle,
@@ -321,43 +320,111 @@ const BlueprintCatalogHeader: FC<{
   matchCount: number;
   totalCount: number;
   stats: CatalogStat[];
-}> = ({ matchCount, totalCount, stats }) => (
-  <section className="border-b border-border pb-5">
-    <div className="flex flex-col gap-5 lg:flex-row lg:items-end lg:justify-between">
-      <div className="max-w-3xl">
-        <h1 className={twMerge(typeRole.display, 'text-foreground')}>
-          Blueprints
-        </h1>
-        <p className="mt-2 max-w-2xl text-sm leading-6 text-muted-foreground">
-          Live service catalog with capacity, source, and trust signals for the
-          selected network.
-        </p>
-        <div className="mt-3 flex flex-wrap items-center gap-2 text-sm text-muted-foreground">
-          <span className={typeRole.mono}>
+  searchQuery: string;
+  onSearchChange: (value: string) => void;
+  availabilityFilter: AvailabilityFilter;
+  onAvailabilityChange: (value: AvailabilityFilter) => void;
+  categories: { category: string; count: number }[];
+  selectedCategories: string[];
+  onCategoryToggle: (category: string) => void;
+  onClearCategories: () => void;
+  toolbarAction?: ReactNode;
+  showSelection: boolean;
+  view: ResultView;
+  onViewChange: (value: ResultView) => void;
+  filterTray: ReactNode;
+}> = ({
+  matchCount,
+  totalCount,
+  stats,
+  searchQuery,
+  onSearchChange,
+  availabilityFilter,
+  onAvailabilityChange,
+  categories,
+  selectedCategories,
+  onCategoryToggle,
+  onClearCategories,
+  toolbarAction,
+  showSelection,
+  view,
+  onViewChange,
+  filterTray,
+}) => (
+  <section className="overflow-hidden rounded-xl border border-border bg-[color:var(--bg-card)] shadow-[var(--shadow-card)]">
+    <div className="grid gap-0 lg:grid-cols-[minmax(0,1fr)_minmax(360px,520px)]">
+      <div className="border-b border-border p-5 sm:p-6 lg:border-b-0 lg:border-r">
+        <div className="flex flex-wrap items-center gap-2">
+          <span className={twMerge(typeRole.label, 'text-foreground/70')}>
+            Service catalog
+          </span>
+          <span className="rounded-full border border-[color:var(--border-accent)] bg-[var(--accent-surface-soft)] px-2 py-0.5 font-mono text-[11px] text-foreground">
             {matchCount.toLocaleString()}
             {matchCount !== totalCount && (
-              <span className="opacity-60">
-                {' / '}
-                {totalCount.toLocaleString()}
+              <span className="text-muted-foreground">
+                /{totalCount.toLocaleString()}
               </span>
-            )}
+            )}{' '}
+            {pluralize('blueprint', matchCount)}
           </span>
-          <span>{pluralize('blueprint', matchCount)}</span>
         </div>
+        <h1 className={twMerge(typeRole.display, 'mt-3 text-foreground')}>
+          Blueprints
+        </h1>
+        <p className="mt-3 max-w-2xl text-sm leading-6 text-muted-foreground">
+          Pick deployable services, find capacity gaps, and inspect trust
+          signals without leaving the catalog.
+        </p>
       </div>
 
-      <div className="grid grid-cols-2 gap-x-6 gap-y-3 sm:grid-cols-4 lg:min-w-[520px]">
+      <div className="grid grid-cols-2 border-b border-border lg:border-b-0">
         {stats.map((stat) => (
-          <div key={stat.label} className="border-l border-border pl-3">
-            <div className="font-mono text-2xl leading-none tabular-nums text-foreground">
+          <div
+            key={stat.label}
+            className="min-h-[96px] border-b border-r border-border p-4 last:border-r-0 odd:last:border-r md:min-h-[112px]"
+          >
+            <div className="font-mono text-3xl leading-none tabular-nums text-foreground">
               {stat.value.toLocaleString()}
             </div>
-            <div className={twMerge(typeRole.label, 'mt-1')}>{stat.label}</div>
+            <div className={twMerge(typeRole.label, 'mt-2')}>{stat.label}</div>
             <div className="mt-1 text-xs leading-tight text-muted-foreground">
               {stat.detail}
             </div>
           </div>
         ))}
+      </div>
+    </div>
+
+    <div className="flex flex-col gap-3 bg-[color:var(--bg-elevated)]/35 p-3 lg:flex-row lg:items-center">
+      <label className="relative min-w-0 flex-1">
+        <span className="sr-only">Search blueprints</span>
+        <input
+          value={searchQuery}
+          onChange={(event) => onSearchChange(event.target.value)}
+          placeholder="Search name, publisher, tag, or #id"
+          className={twMerge(
+            'h-11 w-full rounded-lg border border-border bg-[color:var(--bg-card)] px-4 font-sans text-sm text-foreground outline-none placeholder:text-muted-foreground/70',
+            focus.ring,
+          )}
+        />
+      </label>
+
+      <div className="flex flex-wrap items-center gap-2">
+        <FilterSegment
+          label="Availability"
+          options={availabilityOptions}
+          value={availabilityFilter}
+          onChange={onAvailabilityChange}
+        />
+        <CategoryFilterMenu
+          categories={categories}
+          selected={selectedCategories}
+          onToggle={onCategoryToggle}
+          onClear={onClearCategories}
+        />
+        {filterTray}
+        {!showSelection && <ViewToggle value={view} onChange={onViewChange} />}
+        {toolbarAction}
       </div>
     </div>
   </section>
@@ -436,7 +503,7 @@ const BlueprintListing: FC<Props> = ({
   const [searchQuery, setSearchQuery] = useUrlState('q', stringCodec(''));
   const [view, setView] = useUrlState<ResultView>(
     'view',
-    enumCodec(['grid', 'list'] as const, 'list'),
+    enumCodec(['grid', 'list'] as const, 'grid'),
   );
   // Multi-select categories, comma-joined in the URL (empty = all). Single
   // dropdown in the toolbar replaces the old full-width category row.
@@ -739,6 +806,19 @@ const BlueprintListing: FC<Props> = ({
           matchCount={0}
           totalCount={0}
           stats={catalogStats}
+          searchQuery={searchQuery}
+          onSearchChange={setSearchQuery}
+          availabilityFilter={availabilityFilter}
+          onAvailabilityChange={setAvailabilityFilter}
+          categories={categories}
+          selectedCategories={selectedCategories}
+          onCategoryToggle={toggleCategory}
+          onClearCategories={() => setCategoryParam('')}
+          toolbarAction={toolbarAction}
+          showSelection={showSelection}
+          view={view}
+          onViewChange={setView}
+          filterTray={null}
         />
         <div className="grid grid-cols-1 gap-5 md:grid-cols-2 xl:grid-cols-3">
           {Array.from({ length: 6 }).map((_, idx) => (
@@ -798,59 +878,40 @@ const BlueprintListing: FC<Props> = ({
         matchCount={dedupedRows.length}
         totalCount={allDedupedRows.length}
         stats={catalogStats}
-      />
-
-      <PageToolbar
-        search={{
-          value: searchQuery,
-          onChange: setSearchQuery,
-          placeholder: 'Search name, publisher, tag, or #id',
-        }}
-        filters={
-          <FilterSegment
-            label="Availability"
-            options={availabilityOptions}
-            value={availabilityFilter}
-            onChange={setAvailabilityFilter}
-          />
-        }
-        count={{
-          matches: dedupedRows.length,
-          total: allDedupedRows.length,
-          noun: 'matches',
-        }}
-        trailing={
-          <div className="flex flex-wrap items-center gap-2">
-            {toolbarAction}
-            {!showSelection && <ViewToggle value={view} onChange={setView} />}
-            <CategoryFilterMenu
-              categories={categories}
-              selected={selectedCategories}
-              onToggle={toggleCategory}
-              onClear={() => setCategoryParam('')}
+        searchQuery={searchQuery}
+        onSearchChange={setSearchQuery}
+        availabilityFilter={availabilityFilter}
+        onAvailabilityChange={setAvailabilityFilter}
+        categories={categories}
+        selectedCategories={selectedCategories}
+        onCategoryToggle={toggleCategory}
+        onClearCategories={() => setCategoryParam('')}
+        toolbarAction={toolbarAction}
+        showSelection={showSelection}
+        view={view}
+        onViewChange={setView}
+        filterTray={
+          <FilterTray
+            activeCount={trayFilterCount}
+            onClear={resetAllFilters}
+            trayTitle="Source and trust"
+          >
+            <FilterSegment
+              label="Source"
+              options={sourceOptions}
+              value={manifestFilter}
+              onChange={setManifestFilter}
+              stacked
             />
-            <FilterTray
-              activeCount={trayFilterCount}
-              onClear={resetAllFilters}
-              trayTitle="Source and trust"
-            >
-              <FilterSegment
-                label="Source"
-                options={sourceOptions}
-                value={manifestFilter}
-                onChange={setManifestFilter}
-                stacked
-              />
 
-              <FilterSegment
-                label="Trust"
-                options={trustOptions}
-                value={auditFilter}
-                onChange={setAuditFilter}
-                stacked
-              />
-            </FilterTray>
-          </div>
+            <FilterSegment
+              label="Trust"
+              options={trustOptions}
+              value={auditFilter}
+              onChange={setAuditFilter}
+              stacked
+            />
+          </FilterTray>
         }
       />
 
@@ -895,7 +956,7 @@ const BlueprintListing: FC<Props> = ({
           />
         </>
       ) : (
-        <div className="results-grid grid grid-cols-1 gap-5 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
+        <div className="results-grid grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3">
           {visibleRows.map((row) => (
             <BlueprintCard
               key={row.blueprint.id.toString()}
@@ -1105,16 +1166,16 @@ const BlueprintIdentitySummary = ({ row }: { row: DedupedBlueprintRow }) => {
   const modeCount = getModeCount(row);
 
   return (
-    <div className="flex min-w-0 items-center gap-3">
+    <div className="flex min-w-0 items-center gap-4">
       <BlueprintVisual
         blueprint={blueprint}
         category={category}
         compact
-        className="h-14 w-14 shrink-0 rounded-md"
+        className="h-16 w-16 shrink-0 rounded-lg"
       />
       <div className="min-w-0">
         <div className="flex min-w-0 items-center gap-2">
-          <span className="truncate font-display text-[15px] font-bold leading-tight text-foreground">
+          <span className="truncate font-display text-base font-bold leading-tight text-foreground">
             {formatBlueprintName(blueprint.name)}
           </span>
           <span className="shrink-0 font-mono text-xs tabular-nums text-muted-foreground">
@@ -1138,7 +1199,7 @@ const BlueprintIdentitySummary = ({ row }: { row: DedupedBlueprintRow }) => {
 };
 
 const BlueprintMetaChip = ({ children }: { children: ReactNode }) => (
-  <span className="rounded border border-border bg-muted/20 px-1.5 py-0.5 font-sans text-[11px] font-medium leading-none text-muted-foreground not-italic">
+  <span className="rounded-md border border-border bg-[color:var(--bg-elevated)] px-2 py-1 font-sans text-xs font-medium leading-none text-muted-foreground not-italic">
     {children}
   </span>
 );
@@ -1176,7 +1237,7 @@ const BlueprintCapacitySignal = ({
         hasOperators ? 'Available' : 'Limited',
       )}
       dot={false}
-      className="text-[12px]"
+      className="px-2.5 py-1 text-xs"
     >
       {hasOperators ? 'Ready' : 'Needs capacity'}
     </StatusPill>
@@ -1205,7 +1266,7 @@ const MobileBlueprintRow = ({
   const description = getBlueprintDescription(blueprint);
 
   return (
-    <article className="rounded-lg border border-border bg-[color:var(--bg-card)] p-3 shadow-[var(--shadow-card)]">
+    <article className="rounded-xl border border-border bg-[color:var(--bg-card)] p-4 shadow-[var(--shadow-card)]">
       <Link
         to={blueprintHref}
         className={twMerge('flex min-w-0 gap-3', focus.ring)}
@@ -1214,7 +1275,7 @@ const MobileBlueprintRow = ({
           blueprint={blueprint}
           category={getBlueprintCategory(blueprint)}
           compact
-          className="h-14 w-14 shrink-0 rounded-md"
+          className="h-16 w-16 shrink-0 rounded-lg"
         />
         <div className="min-w-0 flex-1">
           <div className="flex min-w-0 items-center gap-2">
@@ -1292,12 +1353,13 @@ const BlueprintCard = ({
   const displayName = formatBlueprintName(blueprint.name);
   const modeCount = getModeCount(row);
   const sourcePinned = hasVerifiedManifest(blueprint);
+  const category = getBlueprintCategory(blueprint);
   return (
     <div
       className={twMerge(
-        'group relative flex min-h-[260px] flex-col gap-3 rounded-lg border border-border bg-[color:var(--bg-card)] p-4 shadow-[var(--shadow-card)] transition-all',
-        'hover:-translate-y-px hover:border-[color:var(--border-accent-hover)]',
-        isFeatured && 'border-l-2 border-l-[color:var(--border-accent-hover)]',
+        'group relative grid min-h-[260px] grid-cols-[88px_minmax(0,1fr)] gap-3 overflow-hidden rounded-xl border border-border bg-[color:var(--bg-card)] p-3 shadow-[var(--shadow-card)] transition-all sm:grid-cols-[112px_minmax(0,1fr)] sm:gap-4 sm:p-4',
+        'hover:-translate-y-px hover:border-[color:var(--border-accent-hover)] hover:shadow-[var(--shadow-hover)]',
+        isFeatured && 'ring-1 ring-[color:var(--border-accent)]',
         isSelected &&
           'border-[color:var(--border-accent-hover)] shadow-[0_0_0_1px_var(--border-accent-hover)]',
       )}
@@ -1310,9 +1372,8 @@ const BlueprintCard = ({
 
       <BlueprintVisual
         blueprint={blueprint}
-        category={getBlueprintCategory(blueprint)}
-        compact
-        className="h-28 rounded-md"
+        category={category}
+        className="h-full min-h-[190px] rounded-lg sm:min-h-[196px]"
       />
 
       <span
@@ -1337,67 +1398,88 @@ const BlueprintCard = ({
         </label>
       )}
 
-      <div className={twMerge('min-w-0', isSelectable && 'pl-8')}>
-        <h3 className="line-clamp-1 pr-12 font-display font-bold text-base leading-tight tracking-normal text-foreground">
-          {displayName}
-        </h3>
-        <p className="mt-1 line-clamp-2 pr-12 text-sm leading-snug text-muted-foreground">
-          {description}
-        </p>
-      </div>
+      <div className={twMerge('flex min-w-0 flex-col', isSelectable && 'pl-8')}>
+        <div className="min-w-0 pr-10">
+          <div className="mb-2 flex flex-wrap items-center gap-1.5">
+            <BlueprintMetaChip>{category}</BlueprintMetaChip>
+            {modeCount > 1 && (
+              <BlueprintMetaChip>
+                {modeCount} {pluralize('mode', modeCount)}
+              </BlueprintMetaChip>
+            )}
+          </div>
+          <h3 className="line-clamp-2 font-display text-lg font-bold leading-tight tracking-normal text-foreground">
+            {displayName}
+          </h3>
+          <p className="mt-2 line-clamp-3 text-sm leading-5 text-muted-foreground">
+            {description}
+          </p>
+        </div>
 
-      <div className="mt-auto flex flex-wrap items-center gap-2 pt-2">
-        <BlueprintCapacitySignal operatorCount={operatorCount} />
-        {isAudited && (
+        <div className="mt-4 grid grid-cols-3 gap-2">
+          <div className="rounded-lg border border-border bg-[color:var(--bg-elevated)]/45 p-2">
+            <div className="font-mono text-base font-semibold tabular-nums text-foreground">
+              {operatorCount.toLocaleString()}
+            </div>
+            <div className={twMerge(typeRole.label, 'mt-1')}>Ops</div>
+          </div>
+          <div className="rounded-lg border border-border bg-[color:var(--bg-elevated)]/45 p-2">
+            <div className="font-mono text-base font-semibold tabular-nums text-foreground">
+              {(blueprint.instancesCount ?? 0).toLocaleString()}
+            </div>
+            <div className={twMerge(typeRole.label, 'mt-1')}>Use</div>
+          </div>
+          <div className="rounded-lg border border-border bg-[color:var(--bg-elevated)]/45 p-2">
+            <div className="font-mono text-base font-semibold tabular-nums text-foreground">
+              {sourcePinned ? 'Yes' : 'No'}
+            </div>
+            <div className={twMerge(typeRole.label, 'mt-1')}>Source</div>
+          </div>
+        </div>
+
+        <div className="mt-3 flex flex-wrap items-center gap-2">
+          <BlueprintCapacitySignal operatorCount={operatorCount} />
           <StatusPill
-            tone={statusToneFor('audit', 'Audited')}
+            tone={statusToneFor('audit', isAudited ? 'Audited' : 'Unaudited')}
             dot={false}
-            className="text-[12px]"
+            className="px-2.5 py-1 text-xs"
           >
-            Audited
+            {isAudited ? 'Audited' : 'Unaudited'}
           </StatusPill>
-        )}
-        <StatusPill
-          tone={sourcePinned ? 'success' : 'neutral'}
-          dot={false}
-          className="text-[12px]"
-        >
-          {sourcePinned ? 'Pinned' : 'Chain-only'}
-        </StatusPill>
-        {modeCount > 1 && (
-          <BlueprintMetaChip>
-            {modeCount} {pluralize('mode', modeCount)}
-          </BlueprintMetaChip>
-        )}
-        {(blueprint.instancesCount ?? 0) > 0 && (
-          <span className="font-mono text-[11px] tabular-nums text-muted-foreground">
-            {blueprint.instancesCount} instances
-          </span>
-        )}
-      </div>
+          <StatusPill
+            tone={sourcePinned ? 'success' : 'neutral'}
+            dot={false}
+            className="px-2.5 py-1 text-xs"
+          >
+            {sourcePinned ? 'Pinned source' : 'Chain-only'}
+          </StatusPill>
+        </div>
 
-      <div className={twMerge('actions relative z-20 mt-2 flex gap-2')}>
-        {hasOperators ? (
-          <>
-            <Link
-              to={`${blueprintHref}/deploy`}
-              onClick={(e) => e.stopPropagation()}
-              className={catalogPrimaryActionClass}
-            >
-              Deploy
-            </Link>
+        <div
+          className={twMerge('actions relative z-20 mt-auto flex gap-2 pt-4')}
+        >
+          {hasOperators ? (
+            <>
+              <Link
+                to={`${blueprintHref}/deploy`}
+                onClick={(e) => e.stopPropagation()}
+                className={catalogPrimaryActionClass}
+              >
+                Deploy
+              </Link>
+              <RegisterCapacityButton
+                blueprint={blueprint}
+                onRegister={onRegister}
+              />
+            </>
+          ) : (
             <RegisterCapacityButton
               blueprint={blueprint}
               onRegister={onRegister}
+              isPrimary
             />
-          </>
-        ) : (
-          <RegisterCapacityButton
-            blueprint={blueprint}
-            onRegister={onRegister}
-            isPrimary
-          />
-        )}
+          )}
+        </div>
       </div>
     </div>
   );
