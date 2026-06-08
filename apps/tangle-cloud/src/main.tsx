@@ -6,9 +6,37 @@ import * as ReactDOM from 'react-dom/client';
 import App from './app/app';
 import './styles.css';
 
-const storedTheme = window.localStorage.getItem('tangle-cloud-theme');
-const prefersLight = window.matchMedia('(prefers-color-scheme: light)').matches;
-const initialTheme = storedTheme ?? (prefersLight ? 'light' : 'dark');
+type ThemeMode = 'dark' | 'light';
+
+const normalizeTheme = (value: string | null): ThemeMode | null => {
+  if (value === 'dark' || value === 'light') {
+    return value;
+  }
+
+  if (value === null) {
+    return null;
+  }
+
+  try {
+    const parsedValue: unknown = JSON.parse(value);
+    return parsedValue === 'dark' || parsedValue === 'light'
+      ? parsedValue
+      : null;
+  } catch {
+    return null;
+  }
+};
+
+const storedTheme = normalizeTheme(window.localStorage.getItem('theme'));
+const legacyTheme = normalizeTheme(
+  window.localStorage.getItem('tangle-cloud-theme'),
+);
+const initialTheme = storedTheme ?? legacyTheme ?? 'dark';
+
+if (storedTheme === null && legacyTheme !== null) {
+  window.localStorage.setItem('theme', JSON.stringify(legacyTheme));
+  window.localStorage.removeItem('tangle-cloud-theme');
+}
 
 document.documentElement.classList.toggle('dark', initialTheme === 'dark');
 document.documentElement.style.colorScheme = initialTheme;

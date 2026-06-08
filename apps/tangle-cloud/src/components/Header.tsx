@@ -8,9 +8,7 @@ import createCustomNetwork from '@tangle-network/tangle-shared-ui/utils/createCu
 import {
   Alert,
   ChainIcon,
-  MoonLine,
   SettingsFillIcon,
-  SunLine,
   Spinner,
   StatusIndicator,
 } from '@tangle-network/icons';
@@ -35,13 +33,8 @@ import {
 
 export default function Header({
   className,
-  theme,
-  onThemeChange,
   ...props
-}: ComponentProps<'header'> & {
-  theme: 'dark' | 'light';
-  onThemeChange: (theme: 'dark' | 'light') => void;
-}) {
+}: ComponentProps<'header'>) {
   return (
     <header
       className={twMerge(
@@ -57,38 +50,12 @@ export default function Header({
 
         <CloudNetworkSelector networks={TANGLE_CLOUD_NETWORKS} />
 
-        <ThemeToggle theme={theme} onThemeChange={onThemeChange} />
-
         {/* Connection state lives in the chrome on every route — the header is
          * the single owner of Connect Wallet. Pages never duplicate this; a
          * disconnected page body renders a designed empty state instead. */}
         <ConnectWalletButton className="tangle-cloud-wallet-action" />
       </div>
     </header>
-  );
-}
-
-function ThemeToggle({
-  theme,
-  onThemeChange,
-}: {
-  theme: 'dark' | 'light';
-  onThemeChange: (theme: 'dark' | 'light') => void;
-}) {
-  const nextTheme = theme === 'dark' ? 'light' : 'dark';
-
-  return (
-    <Button
-      type="button"
-      variant="outline"
-      size="icon"
-      aria-label={`Switch to ${nextTheme} theme`}
-      title={`Switch to ${nextTheme} theme`}
-      onClick={() => onThemeChange(nextTheme)}
-      className="h-11 w-11 border-border bg-muted/30 p-0 text-foreground hover:bg-muted"
-    >
-      {theme === 'dark' ? <SunLine size="lg" /> : <MoonLine size="lg" />}
-    </Button>
   );
 }
 

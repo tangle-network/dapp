@@ -1,4 +1,4 @@
-import { Footer } from '@tangle-network/ui-components';
+import { Footer, useDarkMode } from '@tangle-network/ui-components';
 import {
   bottomLinks,
   TANGLE_AVAILABLE_SOCIALS,
@@ -37,14 +37,8 @@ const Layout: FC<PropsWithChildren<Props>> = ({
   children,
   isSidebarInitiallyExpanded,
 }) => {
-  const [theme, setTheme] = useState<'dark' | 'light'>(() => {
-    const storedTheme = window.localStorage.getItem('tangle-cloud-theme');
-    if (storedTheme === 'dark' || storedTheme === 'light') {
-      return storedTheme;
-    }
-
-    return 'dark';
-  });
+  const [isDarkMode] = useDarkMode('dark');
+  const theme = isDarkMode ? 'dark' : 'light';
   const [isSidebarExpanded, setIsSidebarExpanded] = useState(() => {
     if (isSidebarInitiallyExpanded !== undefined) {
       return isSidebarInitiallyExpanded;
@@ -65,7 +59,6 @@ const Layout: FC<PropsWithChildren<Props>> = ({
       'data-sandbox-theme',
       theme === 'dark' ? 'tangle' : 'vault',
     );
-    window.localStorage.setItem('tangle-cloud-theme', theme);
   }, [theme]);
 
   // Publish the current sidebar width as a CSS variable on the root element so
@@ -120,7 +113,7 @@ const Layout: FC<PropsWithChildren<Props>> = ({
                   <MobileSidebar />
                 </div>
 
-                <Header theme={theme} onThemeChange={setTheme} />
+                <Header />
               </div>
 
               <main className="flex-1">
