@@ -1,5 +1,13 @@
+import { Footer, useDarkMode } from '@tangle-network/ui-components';
+import {
+  bottomLinks,
+  TANGLE_AVAILABLE_SOCIALS,
+  TANGLE_PRIVACY_POLICY_URL,
+  TANGLE_SOCIAL_URLS_RECORD,
+  TANGLE_TERMS_OF_SERVICE_URL,
+} from '@tangle-network/ui-components/constants';
 import TxConfirmationModal from '@tangle-network/tangle-shared-ui/components/TxConfirmationModal';
-import Sidebar from './Sidebar';
+import Sidebar, { MobileSidebar } from './Sidebar';
 import { FC, PropsWithChildren, useCallback, useEffect, useState } from 'react';
 import TxHistoryNotifier from './TxHistoryNotifier';
 import Header from './Header';
@@ -14,18 +22,23 @@ type Props = {
   isSidebarInitiallyExpanded?: boolean;
 };
 
+const SOCIAL_LINK_OVERRIDES: Partial<
+  Record<(typeof TANGLE_AVAILABLE_SOCIALS)[number], string>
+> = TANGLE_SOCIAL_URLS_RECORD;
+
+const BOTTOM_LINK_OVERRIDES: Partial<
+  Record<(typeof bottomLinks)[number]['name'], string>
+> = {
+  'Terms of Service': TANGLE_TERMS_OF_SERVICE_URL,
+  'Privacy Policy': TANGLE_PRIVACY_POLICY_URL,
+};
+
 const Layout: FC<PropsWithChildren<Props>> = ({
   children,
   isSidebarInitiallyExpanded,
 }) => {
-  const [theme, setTheme] = useState<'dark' | 'light'>(() => {
-    const storedTheme = window.localStorage.getItem('tangle-cloud-theme');
-    if (storedTheme === 'dark' || storedTheme === 'light') {
-      return storedTheme;
-    }
-
-    return 'dark';
-  });
+  const [isDarkMode] = useDarkMode('dark');
+  const theme = isDarkMode ? 'dark' : 'light';
   const [isSidebarExpanded, setIsSidebarExpanded] = useState(() => {
     if (isSidebarInitiallyExpanded !== undefined) {
       return isSidebarInitiallyExpanded;
@@ -46,7 +59,6 @@ const Layout: FC<PropsWithChildren<Props>> = ({
       'data-sandbox-theme',
       theme === 'dark' ? 'tangle' : 'vault',
     );
-    window.localStorage.setItem('tangle-cloud-theme', theme);
   }, [theme]);
 
   // Publish the current sidebar width as a CSS variable on the root element so
@@ -76,23 +88,15 @@ const Layout: FC<PropsWithChildren<Props>> = ({
       <div
         data-sandbox-ui
         data-sandbox-theme={theme === 'dark' ? 'tangle' : 'vault'}
-        className="tangle-cloud-shell min-h-screen bg-tangle text-foreground"
+        className="tangle-cloud-shell flex h-screen bg-tangle text-foreground"
       >
         <Sidebar
           isExpandedByDefault={isSidebarExpanded}
-          onExpandedChange={setIsSidebarExpanded}
-        />
-        <Header
-          theme={theme}
-          onThemeChange={setTheme}
-          className={isSidebarExpanded ? 'lg:left-64' : 'lg:left-16'}
+          onExpandedChange={() => setIsSidebarExpanded((value) => !value)}
         />
 
         <div
-          className={twMerge(
-            'min-h-screen pt-14 transition-[padding-left] duration-200',
-            isSidebarExpanded ? 'lg:pl-64' : 'lg:pl-16',
-          )}
+          className={twMerge('h-full flex-1 overflow-y-auto scrollbar-hide')}
         >
           <TxHistoryNotifier />
           <TxConfirmationModal />
@@ -102,9 +106,28 @@ const Layout: FC<PropsWithChildren<Props>> = ({
           />
           <ShortcutsHelp open={isHelpOpen} onOpenChange={setIsHelpOpen} />
 
-          <main className="flex-1">
-            <PageMotion>{children}</PageMotion>
-          </main>
+          <div className="m-auto flex h-full max-w-[1448px] flex-col justify-between px-4 md:px-8 lg:px-10">
+            <div className="flex grow flex-col space-y-5">
+              <div className="flex items-center justify-between py-6">
+                <div className="flex items-center space-x-4 lg:space-x-0">
+                  <MobileSidebar />
+                </div>
+
+                <Header />
+              </div>
+
+              <main className="flex-1">
+                <PageMotion>{children}</PageMotion>
+              </main>
+            </div>
+
+            <Footer
+              socialsLinkOverrides={SOCIAL_LINK_OVERRIDES}
+              bottomLinkOverrides={BOTTOM_LINK_OVERRIDES}
+              isMinimal
+              className="py-8"
+            />
+          </div>
         </div>
       </div>
     </TopNavSlotProvider>
