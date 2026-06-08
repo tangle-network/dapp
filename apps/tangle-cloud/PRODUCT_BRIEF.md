@@ -28,7 +28,7 @@ Primary actions: Connect wallet, switch network, create service, register operat
 
 Trust, risk, and compliance: Money, permissions, and protocol identity must be exact, copyable, and auditable. Destructive or irreversible actions need clear state, provenance, and confirmation. Embedded apps must expose origin, permissions, denied actions, and unavailable bridge methods. Empty/error/loading states must be truthful and actionable.
 
-Design posture: Dense infrastructure console with restrained blueprint identity accents. Use compact tables, split workspaces, tabs, ledgers, event timelines, thin borders, and low-chroma status colors. Cards belong mainly to catalog discovery, repeated items, and modals.
+Design posture: Dense infrastructure console with restrained blueprint identity accents. Use compact tables, split workspaces, tabs, ledgers, event timelines, thin borders, and low-chroma status colors. Cards belong mainly to catalog discovery, repeated items, and modals. Cloud should inherit the original Tangle dapp's wallet, network, chrome, and action hierarchy where it improves operator trust, but keep Cloud pages data-first rather than marketing-first.
 
 Non-goals: Do not reskin this as the AI trading app. Do not make a marketing landing page, decorative hero wall, app-store gallery, or purple/glow-heavy SaaS dashboard. Do not duplicate sidebar, topbar, breadcrumbs, page headers, tabs, and local nav unless each layer has a distinct job.
 
@@ -39,6 +39,7 @@ Evidence:
 - `src/pages/services/[id]/page.tsx` mixes service console, blueprint presentation, ACL, jobs, billing, and upgrade surfaces in one vertical stack.
 - `src/pages/blueprints/[id]/deploy/page.tsx` submits a request but sends users back to blueprint detail instead of request/service status.
 - Parallel audit reports on 2026-06-05 converged on app/workspace-first IA and infrastructure-console visual direction.
+- 2026-06-08 design-system pass restored Tangle dapp-style wallet/network affordances, removed the duplicate Blueprints nav title, converted the catalog to a list-first operator-capacity surface, added blueprint default visuals, and browser-verified desktop/mobile/light/dark render states.
 
 Open questions:
 

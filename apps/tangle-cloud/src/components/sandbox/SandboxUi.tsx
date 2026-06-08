@@ -33,7 +33,14 @@ import {
   TabsTrigger,
   Textarea,
 } from '@tangle-network/sandbox-ui/primitives';
-import type { ChangeEvent, ComponentProps, FC, ReactNode } from 'react';
+import {
+  forwardRef,
+  type ChangeEvent,
+  type ComponentProps,
+  type ElementRef,
+  type FC,
+  type ReactNode,
+} from 'react';
 
 // Re-export the canonical tangle-cloud Text from the dedicated module so we
 // preserve the existing import surface (`import { Text } from '...sandbox/SandboxUi'`)
@@ -149,42 +156,50 @@ export type ButtonProps = Omit<
   disabledTooltip?: string;
 };
 
-export const Button: FC<ButtonProps> = ({
-  variant,
-  size,
-  isDisabled,
-  isLoading,
-  isJustIcon,
-  isFullWidth,
-  leftIcon,
-  rightIcon,
-  loadingText: _loadingText,
-  disabledTooltip: _disabledTooltip,
-  disabled,
-  className = '',
-  children,
-  ...props
-}) => (
-  <SandboxButton
-    variant={
-      variant === 'utility'
-        ? 'outline'
-        : variant === 'primary'
-          ? 'default'
-          : variant
-    }
-    size={isJustIcon ? 'icon' : size}
-    disabled={disabled || isDisabled}
-    loading={isLoading}
-    className={[isFullWidth ? 'w-full' : '', className]
-      .filter(Boolean)
-      .join(' ')}
-    {...props}
-  >
-    {leftIcon}
-    {children}
-    {rightIcon}
-  </SandboxButton>
+export const Button = forwardRef<ElementRef<typeof SandboxButton>, ButtonProps>(
+  function Button(
+    {
+      variant,
+      size,
+      isDisabled,
+      isLoading,
+      isJustIcon,
+      isFullWidth,
+      leftIcon,
+      rightIcon,
+      loadingText: _loadingText,
+      disabledTooltip: _disabledTooltip,
+      disabled,
+      className = '',
+      children,
+      ...props
+    },
+    ref,
+  ) {
+    return (
+      <SandboxButton
+        ref={ref}
+        variant={
+          variant === 'utility'
+            ? 'outline'
+            : variant === 'primary'
+              ? 'default'
+              : variant
+        }
+        size={isJustIcon ? 'icon' : size}
+        disabled={disabled || isDisabled}
+        loading={isLoading}
+        className={[isFullWidth ? 'w-full' : '', className]
+          .filter(Boolean)
+          .join(' ')}
+        {...props}
+      >
+        {leftIcon}
+        {children}
+        {rightIcon}
+      </SandboxButton>
+    );
+  },
 );
 
 export type InputProps = Omit<
