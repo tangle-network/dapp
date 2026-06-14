@@ -1,14 +1,14 @@
 import { RowSelectionState } from '@tanstack/table-core';
+import { Button } from '@tangle-network/sandbox-ui/primitives';
 import {
   useAllBlueprints,
   useBlueprintsByOwner,
 } from '@tangle-network/tangle-shared-ui/data/graphql';
 import useOperatorInfo from '@tangle-network/tangle-shared-ui/hooks/useOperatorInfo';
 import type { Blueprint } from '@tangle-network/tangle-shared-ui/types/blueprint';
-import { Button } from '@tangle-network/ui-components';
 import { AnimatePresence, motion } from 'framer-motion';
 import { FC, useCallback, useEffect, useMemo, useState } from 'react';
-import { useNavigate, useSearchParams } from 'react-router';
+import { Link, useSearchParams } from 'react-router';
 import { twMerge } from 'tailwind-merge';
 import { PagePath } from '../../types';
 import pollWithBackoff from '../../utils/pollWithBackoff';
@@ -25,7 +25,6 @@ const Page: FC = () => {
   const [rowSelection, setRowSelection] = useState<RowSelectionState>({});
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [searchParams, setSearchParams] = useSearchParams();
-  const navigate = useNavigate();
   const { blueprints, isLoading, error, refetch } = useAllBlueprints();
   const { data: ownedBlueprints } = useBlueprintsByOwner();
 
@@ -149,24 +148,23 @@ const Page: FC = () => {
 
   const toolbarAction = hasOwnedBlueprints ? (
     <Button
-      variant="secondary"
+      asChild
+      variant="outline"
       size="sm"
-      className="px-5"
-      onClick={() => navigate(PagePath.BLUEPRINTS_MANAGE)}
+      className="font-sans not-italic"
     >
-      Manage
+      <Link to={PagePath.BLUEPRINTS_MANAGE}>Manage</Link>
     </Button>
   ) : (
     <Button
-      as="a"
-      variant="primary"
+      variant="sandbox"
+      asChild
       size="sm"
-      className="px-5"
-      href={BLUEPRINT_DOCS_LINK}
-      target="_blank"
-      rel="noreferrer"
+      className="font-sans not-italic"
     >
-      Publish
+      <a href={BLUEPRINT_DOCS_LINK} target="_blank" rel="noreferrer">
+        Publish
+      </a>
     </Button>
   );
 
@@ -203,7 +201,7 @@ const Page: FC = () => {
               </p>
 
               <Button
-                variant="link"
+                variant="ghost"
                 size="sm"
                 onClick={() => setRowSelection({})}
               >
@@ -211,7 +209,11 @@ const Page: FC = () => {
               </Button>
             </div>
 
-            <Button variant="primary" onClick={() => setIsDrawerOpen(true)}>
+            <Button
+              variant="sandbox"
+              className="font-sans not-italic"
+              onClick={() => setIsDrawerOpen(true)}
+            >
               Add capacity
             </Button>
           </motion.div>
