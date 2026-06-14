@@ -2,6 +2,10 @@ import { getDefaultConfig } from 'connectkit';
 import { createConfig, http } from 'wagmi';
 import { wagmiChains as chains } from './chains/evm';
 
+type OptionalImportMetaEnv = ImportMeta & {
+  env?: Record<string, string | undefined>;
+};
+
 // WalletConnect project ID - should be configured via env var in production
 const WALLETCONNECT_PROJECT_ID =
   process.env.VITE_WALLETCONNECT_PROJECT_ID ??
@@ -10,7 +14,10 @@ const WALLETCONNECT_PROJECT_ID =
 const ENABLE_FAMILY_WALLET =
   process.env.VITE_ENABLE_FAMILY_WALLET === 'true' ||
   process.env.NEXT_PUBLIC_ENABLE_FAMILY_WALLET === 'true';
-const FORCE_LOCAL_CHAIN = import.meta.env.VITE_FORCE_LOCAL_CHAIN === 'true';
+const importMetaEnv = (import.meta as OptionalImportMetaEnv).env ?? {};
+const FORCE_LOCAL_CHAIN =
+  importMetaEnv.VITE_FORCE_LOCAL_CHAIN === 'true' ||
+  process.env.VITE_FORCE_LOCAL_CHAIN === 'true';
 const activeChains = FORCE_LOCAL_CHAIN ? ([chains[0]] as const) : chains;
 
 // Create config using ConnectKit's getDefaultConfig helper
