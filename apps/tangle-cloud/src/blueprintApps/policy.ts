@@ -7,7 +7,7 @@ const splitEnvList = (value: string | undefined): string[] =>
     .map((item) => item.trim().toLowerCase())
     .filter(Boolean);
 
-const DEFAULT_RESERVED_SLUGS = ['trading', 'sandbox', 'training'];
+const DEFAULT_RESERVED_SLUGS = ['trading', 'sandbox', 'training', 'surplus'];
 const DEFAULT_TRUSTED_EXTERNAL_APP_HOSTS = [
   'cloud.tangle.tools',
   'app.tangle.tools',

@@ -9,6 +9,7 @@ describe('blueprint platform policy', () => {
   it('ships safe defaults for reserved slugs and trusted hosts', () => {
     expect(reservedBlueprintSlugs.has('trading')).toBe(true);
     expect(reservedBlueprintSlugs.has('sandbox')).toBe(true);
+    expect(reservedBlueprintSlugs.has('surplus')).toBe(true);
     expect(trustedExternalAppHosts).toContain('cloud.tangle.tools');
     expect(trustedExternalAppHosts).toContain('apps.tangle.tools');
   });
