@@ -37,8 +37,16 @@ const Layout: FC<PropsWithChildren<Props>> = ({
   children,
   isSidebarInitiallyExpanded,
 }) => {
-  const [isDarkMode] = useDarkMode('dark');
+  const [isDarkMode, toggleThemeMode] = useDarkMode('dark');
   const theme = isDarkMode ? 'dark' : 'light';
+  const handleThemeChange = useCallback(
+    (nextTheme: 'dark' | 'light') => {
+      if (nextTheme !== theme) {
+        toggleThemeMode();
+      }
+    },
+    [theme, toggleThemeMode],
+  );
   const [isSidebarExpanded, setIsSidebarExpanded] = useState(() => {
     if (isSidebarInitiallyExpanded !== undefined) {
       return isSidebarInitiallyExpanded;
@@ -113,7 +121,7 @@ const Layout: FC<PropsWithChildren<Props>> = ({
                   <MobileSidebar />
                 </div>
 
-                <Header />
+                <Header theme={theme} onThemeChange={handleThemeChange} />
               </div>
 
               <main className="flex-1">
