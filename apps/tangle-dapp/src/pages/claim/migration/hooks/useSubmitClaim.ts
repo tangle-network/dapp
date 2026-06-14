@@ -162,7 +162,9 @@ const useSubmitClaim = () => {
       return;
     }
 
-    setRelayerSuccess(true);
+    queueMicrotask(() => {
+      setRelayerSuccess(true);
+    });
     console.log('[useSubmitClaim] Relayer transaction confirmed!');
   }, [isRelayerConfirmed]);
 

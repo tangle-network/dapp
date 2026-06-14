@@ -19,11 +19,14 @@ const BlueprintItem: FC<Omit<BlueprintItemProps, 'id'>> = ({
   operatorsCount,
   isBoosted,
   renderImage,
+  action,
+  onClick,
   isSelected,
   onSelectedChange,
 }) => {
   return (
     <div
+      onClick={onClick}
       className={twMerge(
         'h-[364px] overflow-hidden rounded-xl flex flex-col cursor-pointer group',
         'border border-mono-0 dark:border-mono-170',
@@ -50,7 +53,7 @@ const BlueprintItem: FC<Omit<BlueprintItemProps, 'id'>> = ({
       >
         <div className="space-y-3">
           <div className="flex items-center gap-2 py-2 border-b border-mono-60 dark:border-mono-170">
-            {imgUrl && renderImage(imgUrl)}
+            {renderImage(imgUrl ?? '')}
 
             <div className="flex-1 min-w-0">
               <div className="flex items-center gap-2">
@@ -135,6 +138,15 @@ const BlueprintItem: FC<Omit<BlueprintItemProps, 'id'>> = ({
             </Typography>
           </div> */}
         </div>
+
+        {action !== undefined && (
+          <div
+            className="relative z-10 flex w-full gap-2 pt-3"
+            onClick={(event) => event.stopPropagation()}
+          >
+            {action}
+          </div>
+        )}
       </div>
     </div>
   );

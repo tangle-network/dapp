@@ -261,6 +261,7 @@ const ClaimableRewardsCard: FC = () => {
           </div>
 
           <Button
+            data-testid="staking-claim-rewards-submit"
             isFullWidth
             onClick={handleClaimRewards}
             isDisabled={

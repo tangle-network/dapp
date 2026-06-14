@@ -179,24 +179,26 @@ const RewardsPage: FC = () => {
     [pendingRows, selectedTokenSet],
   );
   useEffect(() => {
-    if (pendingRows.length === 0) {
-      setSelectedTokenSet(new Set());
-      return;
-    }
-
-    setSelectedTokenSet((current) => {
-      const activeTokens = new Set(
-        pendingRows.map((row) => row.token.toLowerCase()),
-      );
-      const next = new Set(
-        [...current].filter((token) => activeTokens.has(token)),
-      );
-
-      if (next.size === current.size) {
-        return current;
+    queueMicrotask(() => {
+      if (pendingRows.length === 0) {
+        setSelectedTokenSet(new Set());
+        return;
       }
 
-      return next;
+      setSelectedTokenSet((current) => {
+        const activeTokens = new Set(
+          pendingRows.map((row) => row.token.toLowerCase()),
+        );
+        const next = new Set(
+          [...current].filter((token) => activeTokens.has(token)),
+        );
+
+        if (next.size === current.size) {
+          return current;
+        }
+
+        return next;
+      });
     });
   }, [pendingRows]);
 

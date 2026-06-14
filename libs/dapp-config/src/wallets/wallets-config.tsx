@@ -1,6 +1,6 @@
-import { SupportedBrowsers } from '@tangle-network/browser-utils/platform';
+import { SupportedBrowsers } from '@tangle-network/browser-utils';
 import { PresetTypedChainId } from '@tangle-network/dapp-types';
-import { WalletId } from '@tangle-network/dapp-types/WalletId';
+import { WalletId } from '@tangle-network/dapp-types';
 import {
   CoinbaseIcon,
   KeplrIcon,

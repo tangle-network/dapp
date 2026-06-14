@@ -473,6 +473,7 @@ const StakingUndelegateForm: FC = () => {
     return {
       type: 'number',
       step,
+      'data-testid': 'staking-undelegate-amount-input',
       ...register('amount', {
         required: 'Amount is required',
         validate: (value) => {
@@ -586,6 +587,7 @@ const StakingUndelegateForm: FC = () => {
         <Card withShadow tightPadding className="relative md:min-w-[512px]">
           {!isUndelegateRequestTableOpen && (
             <ExpandTableButton
+              data-testid="staking-undelegate-requests-toggle"
               className="absolute top-0 -right-10 max-md:hidden"
               tooltipContent="Undelegate requests"
               requestCount={undelegateRequests.length}
@@ -603,6 +605,7 @@ const StakingUndelegateForm: FC = () => {
                   <TransactionInputCard.ChainSelector
                     placeholder="Select Delegation"
                     onClick={openDelegationModal}
+                    data-testid="staking-undelegate-delegation-selector"
                     {...(selectedDelegation
                       ? {
                           renderBody: () => (
@@ -704,6 +707,7 @@ const StakingUndelegateForm: FC = () => {
 
                 return (
                   <Button
+                    data-testid="staking-undelegate-submit"
                     isDisabled={!isValid || isDefined(displayError) || !isReady}
                     type="submit"
                     isFullWidth
@@ -840,6 +844,7 @@ const UndelegateRequestsView: FC<UndelegateRequestsViewProps> = ({
         <div className="flex items-center gap-2">
           {undelegateRequests.length > 0 && (
             <Button
+              data-testid="staking-undelegate-execute-ready"
               size="sm"
               isDisabled={
                 readyCount === 0 || executeUndelegate === null || isExecuting

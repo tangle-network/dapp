@@ -28,15 +28,19 @@ const useKeypair = () => {
 
   // Track current address to detect stale async completions
   const addressRef = useRef(address);
-  addressRef.current = address;
+  useEffect(() => {
+    addressRef.current = address;
+  }, [address]);
 
   useEffect(() => {
-    setKeypair(null);
-    setError(null);
-    setIsLoading(false); // Cancel any stuck loading state from previous address
-    setHasStoredKeypair(
-      !!address && localStorage.getItem(`${STORAGE_KEY}:${address}`) !== null,
-    );
+    queueMicrotask(() => {
+      setKeypair(null);
+      setError(null);
+      setIsLoading(false); // Cancel any stuck loading state from previous address
+      setHasStoredKeypair(
+        !!address && localStorage.getItem(`${STORAGE_KEY}:${address}`) !== null,
+      );
+    });
   }, [address]);
 
   const deriveKeypair = useCallback(async () => {

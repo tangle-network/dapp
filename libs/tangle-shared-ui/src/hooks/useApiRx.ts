@@ -65,14 +65,16 @@ const useApiRx = <T>(factory: ObservableFactory<T>) => {
       const factoryResult = factory(apiRx);
 
       if (factoryResult instanceof Error) {
-        setError(factoryResult);
-        setLoading(false);
+        queueMicrotask(() => {
+          setError(factoryResult);
+          setLoading(false);
+        });
 
         return;
       }
       // The factory is not yet ready to produce an observable.
       else if (factoryResult === null) {
-        reset();
+        queueMicrotask(reset);
 
         return;
       } else {
@@ -86,8 +88,10 @@ const useApiRx = <T>(factory: ObservableFactory<T>) => {
         newError,
       );
 
-      setError(newError);
-      setLoading(false);
+      queueMicrotask(() => {
+        setError(newError);
+        setLoading(false);
+      });
 
       return;
     }

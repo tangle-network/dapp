@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, type FC, useEffect } from 'react';
+import { useMemo, useState, type FC } from 'react';
 import { twMerge } from 'tailwind-merge';
 import isSideBarItemActive from '../../utils/isSideBarItemActive';
 
@@ -15,37 +15,43 @@ export const SideBarItems: FC<SideBarItemsProps> = ({
   ActionButton,
   onItemClick,
 }) => {
-  const [activeItem, setActiveItem] = useState<number>(() => {
-    const activeItemIndex = items.findIndex((item) => {
-      const isActive =
-        item.subItems.length === 0
-          ? isSideBarItemActive(item.href, pathnameOrHash)
-          : isSideBarItemActive(
-              item.subItems.map((i) => i.href),
-              pathnameOrHash,
-            );
+  const activeItemKey = useMemo(
+    () =>
+      `${pathnameOrHash}:${items
+        .map(
+          (item) =>
+            `${item.href}:${item.subItems.map((i) => i.href).join(',')}`,
+        )
+        .join('|')}`,
+    [items, pathnameOrHash],
+  );
+  const routeActiveItem = useMemo(
+    () =>
+      items.findIndex((item) => {
+        const isActive =
+          item.subItems.length === 0
+            ? isSideBarItemActive(item.href, pathnameOrHash)
+            : isSideBarItemActive(
+                item.subItems.map((i) => i.href),
+                pathnameOrHash,
+              );
 
-      return isActive;
-    });
+        return isActive;
+      }),
+    [items, pathnameOrHash],
+  );
+  const [activeItemOverride, setActiveItemOverride] = useState<{
+    key: string;
+    index: number;
+  } | null>(null);
+  const activeItem =
+    activeItemOverride?.key === activeItemKey
+      ? activeItemOverride.index
+      : routeActiveItem;
 
-    return activeItemIndex;
-  });
-
-  useEffect(() => {
-    const idx = items.findIndex((item) => {
-      const isActive =
-        item.subItems.length === 0
-          ? isSideBarItemActive(item.href, pathnameOrHash)
-          : isSideBarItemActive(
-              item.subItems.map((i) => i.href),
-              pathnameOrHash,
-            );
-
-      return isActive;
-    });
-
-    setActiveItem(idx);
-  }, [items, pathnameOrHash]);
+  const setItemActive = (index: number) => {
+    setActiveItemOverride({ key: activeItemKey, index });
+  };
 
   return (
     <div className={twMerge('flex flex-col gap-2', className)}>
@@ -59,7 +65,7 @@ export const SideBarItems: FC<SideBarItemsProps> = ({
             {...itemProps}
             isExpanded={isExpanded}
             isActive={activeItem === idx}
-            setIsActive={() => setActiveItem(idx)}
+            setIsActive={() => setItemActive(idx)}
             onClick={onItemClick}
           />
         );

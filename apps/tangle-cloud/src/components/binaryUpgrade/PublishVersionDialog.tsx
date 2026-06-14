@@ -153,7 +153,9 @@ const WizardPublishDialog: FC<{
   // notify step.
   useEffect(() => {
     if (publishSuccess && furthestStep < 5) {
-      setFurthestStep(5);
+      queueMicrotask(() => {
+        setFurthestStep(5);
+      });
     }
   }, [publishSuccess, furthestStep]);
 

@@ -71,15 +71,19 @@ export const PaymentStep: FC<PaymentStepProps> = ({
     }
 
     if (!selectedCommitment && creditAccounts[0]?.commitment) {
-      setValue('creditCommitment', creditAccounts[0].commitment, {
-        shouldDirty: false,
+      queueMicrotask(() => {
+        setValue('creditCommitment', creditAccounts[0].commitment, {
+          shouldDirty: false,
+        });
       });
     }
   }, [creditAccounts, paymentMethod, selectedCommitment, setValue]);
 
   useEffect(() => {
     if (!fundingAssetId && selectableAssets[0]?.id) {
-      setFundingAssetId(selectableAssets[0].id);
+      queueMicrotask(() => {
+        setFundingAssetId(selectableAssets[0].id);
+      });
     }
   }, [fundingAssetId, selectableAssets]);
 

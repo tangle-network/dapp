@@ -83,8 +83,14 @@ const BlueprintAppLandingPage: FC<Props> = ({ entry }) => {
   // directly. Each renderer falls back to a sensible default when its field
   // is absent so blueprints with no opinion still get a polished landing.
   const blueprintUi = canonicalBlueprint?.blueprintUi ?? null;
-  const overviewCards = blueprintUi?.overviewCards ?? [];
-  const actions = blueprintUi?.actions ?? [];
+  const overviewCards = useMemo(
+    () => blueprintUi?.overviewCards ?? [],
+    [blueprintUi?.overviewCards],
+  );
+  const actions = useMemo(
+    () => blueprintUi?.actions ?? [],
+    [blueprintUi?.actions],
+  );
   const theme = blueprintUi?.theme;
 
   // Right-hand "checkout path" panel — defaults to a three-step affordance
@@ -92,19 +98,16 @@ const BlueprintAppLandingPage: FC<Props> = ({ entry }) => {
   // each action becomes a step (label → optional description). Cap at 5 to
   // keep the column scannable; overflow lives on the deploy page.
   const checkoutSteps: { title: string; description?: string }[] =
-    useMemo(() => {
-      if (actions.length > 0) {
-        return actions.slice(0, 5).map((a: BlueprintUiAction) => ({
+    actions.length > 0
+      ? actions.slice(0, 5).map((a: BlueprintUiAction) => ({
           title: a.label,
           description: a.description,
-        }));
-      }
-      return [
-        { title: `Configure the ${serviceNoun}` },
-        { title: 'Choose registered operators' },
-        { title: `Track ${resourceNoun} output` },
-      ];
-    }, [actions, serviceNoun, resourceNoun]);
+        }))
+      : [
+          { title: `Configure the ${serviceNoun}` },
+          { title: 'Choose registered operators' },
+          { title: `Track ${resourceNoun} output` },
+        ];
 
   // Iframe-mode blueprints get the iframe-first layout — the publisher's
   // hosted app fills the viewport, our chrome is a 52px strip with the

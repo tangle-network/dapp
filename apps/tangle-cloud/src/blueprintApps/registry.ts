@@ -239,6 +239,69 @@ const entries = [
     },
   },
   {
+    slug: 'surplus',
+    canonicalSlug: 'surplus',
+    match: {
+      publisherNamespace: 'tangle',
+      requestedSlug: 'surplus',
+    },
+    publisher: {
+      label: 'Tangle Labs',
+      visibility: 'first-party',
+      verification: 'first-party',
+    },
+    tier: 'curated-module',
+    slugPolicy: 'reserved',
+    module: {
+      moduleId: 'surplus',
+      status: 'planned',
+    },
+    manifest: {
+      displayName: 'Surplus Market',
+      tagline: 'Buy and sell prepaid AI inference credits.',
+      description:
+        'Open a surplus market venue, discover operators, inspect credit lots, and reconcile settlement batches for prepaid inference.',
+      surfaces: [
+        'generic-overview',
+        'service-explorer',
+        'service-console',
+        'actions-panel',
+        'resources',
+        'permissions',
+        'metrics',
+      ],
+      resources: {
+        serviceNoun: 'surplus market',
+        resourceNoun: 'venue',
+        resourceRoute: 'custom',
+      },
+      permissions: [
+        {
+          key: 'market.make',
+          label: 'Market making',
+          scope: 'service',
+        },
+        {
+          key: 'settlement.submit',
+          label: 'Settlement submission',
+          scope: 'service',
+        },
+        {
+          key: 'credits.redeem',
+          label: 'Credit redemption',
+          scope: 'resource',
+        },
+      ],
+      externalApp: {
+        url: 'https://surplus-market.pages.dev/',
+        mode: 'link',
+        host: 'surplus-market.pages.dev',
+        trust: 'trusted',
+        label: 'Surplus Market',
+      },
+    },
+  },
+  {
     slug: 'llm-inference',
     canonicalSlug: 'llm-inference',
     match: {

@@ -109,6 +109,9 @@ const OperatorExitPanel: FC<Props> = ({
 }) => {
   const [selectedOperatorForForceExit, setSelectedOperatorForForceExit] =
     useState<Address | null>(null);
+  const [nowSeconds, setNowSeconds] = useState(() =>
+    Math.floor(Date.now() / 1000),
+  );
   const [countdown, setCountdown] = useState<string>('');
 
   const { data: exitConfig, isLoading: isLoadingConfig } =
@@ -129,13 +132,21 @@ const OperatorExitPanel: FC<Props> = ({
     useServiceOperators(serviceId);
   const { data: latestBlock } = useBlock({ watch: true });
 
+  useEffect(() => {
+    const intervalId = setInterval(() => {
+      setNowSeconds(Math.floor(Date.now() / 1000));
+    }, 1000);
+
+    return () => clearInterval(intervalId);
+  }, []);
+
   // Compute offset between chain time and wall clock to handle
   // environments where block.timestamp drifts from real time
   // (e.g., local dev with evm_increaseTime).
   const chainTimeOffset = useMemo(() => {
     if (!latestBlock) return 0;
-    return Number(latestBlock.timestamp) - Math.floor(Date.now() / 1000);
-  }, [latestBlock]);
+    return Number(latestBlock.timestamp) - nowSeconds;
+  }, [latestBlock, nowSeconds]);
 
   const isLoading =
     isLoadingConfig ||
@@ -185,13 +196,14 @@ const OperatorExitPanel: FC<Props> = ({
 
   const canExecuteNow =
     exitRequest && exitStatus === ExitStatus.Scheduled
-      ? BigInt(Math.floor(Date.now() / 1000) + chainTimeOffset) >=
-        exitRequest.executeAfter
+      ? BigInt(nowSeconds + chainTimeOffset) >= exitRequest.executeAfter
       : false;
 
   useEffect(() => {
     if (exitStatus !== ExitStatus.Scheduled || !exitRequest || canExecuteNow) {
-      setCountdown('');
+      queueMicrotask(() => {
+        setCountdown('');
+      });
       return;
     }
 
@@ -209,7 +221,7 @@ const OperatorExitPanel: FC<Props> = ({
       setCountdown(formatDuration(BigInt(remaining)));
     };
 
-    updateCountdown();
+    queueMicrotask(updateCountdown);
     const interval = setInterval(updateCountdown, 1000);
 
     return () => clearInterval(interval);

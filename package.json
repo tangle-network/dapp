@@ -48,7 +48,12 @@
     "test:wallet-flows:list": "node ./scripts/agent-browser/run-wallet-flow-suite.mjs --list",
     "test:wallet-flows:docker": "bash ./scripts/agent-browser/run-wallet-flow-suite-docker.sh",
     "test:wallet-flows:gate": "node ./scripts/agent-browser/check-release-gate.mjs",
-    "test:wallet-flows:gate:strict": "node ./scripts/agent-browser/check-release-gate.mjs --max-blocker-partial 0"
+    "test:wallet-flows:gate:strict": "node ./scripts/agent-browser/check-release-gate.mjs --max-blocker-partial 0",
+    "test:wallet-flows:staking:local": "AGENT_REQUIRE_TX_OUTCOME=true AGENT_REQUIRE_AGENT_SUCCESS=true AGENT_REQUIRE_AGENT_SUCCESS_FLOWS=FLOW-001,FLOW-002,FLOW-003,FLOW-004,FLOW-005 node ./scripts/agent-browser/run-wallet-flow-suite.mjs --tag staking",
+    "test:wallet-flows:staking:gate": "node ./scripts/agent-browser/check-release-gate.mjs --critical-flows FLOW-001,FLOW-002,FLOW-003,FLOW-004,FLOW-005 --max-blocker-partial 0",
+    "test:staking:local": "node ./scripts/local-env/check-local-staking-actions.mjs",
+    "test:staking:local-ui": "xvfb-run -a node ./scripts/local-env/check-local-staking-ui.mjs",
+    "test:staking:local-release": "yarn test:staking:local && yarn test:staking:local-ui"
   },
   "resolutions": {
     "@polkadot/api": "^13.2.1",

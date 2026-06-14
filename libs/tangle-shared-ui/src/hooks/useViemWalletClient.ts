@@ -1,13 +1,12 @@
 import useNetworkStore from '../context/useNetworkStore';
 import useEvmChain from './useEvmChain';
-import { useEffect, useState } from 'react';
+import { useMemo } from 'react';
 import {
   createWalletClient,
   custom,
   EIP1193Provider,
   http,
   Transport,
-  WalletClient,
 } from 'viem';
 
 export enum WalletClientTransport {
@@ -30,14 +29,12 @@ export enum WalletClientTransport {
 }
 
 const useViemWalletClient = (transport = WalletClientTransport.HTTP_RPC) => {
-  const [walletClient, setWalletClient] = useState<WalletClient | null>(null);
   const network = useNetworkStore((store) => store.network2);
   const evmChain = useEvmChain();
 
-  // Update the wallet client when the network changes.
-  useEffect(() => {
+  return useMemo(() => {
     if (evmChain === null || network?.httpRpcEndpoints === undefined) {
-      return;
+      return null;
     }
 
     let transport_: Transport;
@@ -48,13 +45,17 @@ const useViemWalletClient = (transport = WalletClientTransport.HTTP_RPC) => {
 
         break;
       case WalletClientTransport.WINDOW: {
+        if (typeof window === 'undefined') {
+          return null;
+        }
+
         const ethereumProvider = window.ethereum as EIP1193Provider | undefined;
         if (ethereumProvider === undefined) {
           console.warn(
             'Could not create Viem wallet client due to Ethereum provider not found on window object.',
           );
 
-          return;
+          return null;
         }
 
         transport_ = custom(ethereumProvider);
@@ -63,15 +64,11 @@ const useViemWalletClient = (transport = WalletClientTransport.HTTP_RPC) => {
       }
     }
 
-    const newWalletClient = createWalletClient({
+    return createWalletClient({
       chain: evmChain,
       transport: transport_,
     });
-
-    setWalletClient(newWalletClient);
   }, [evmChain, network, transport]);
-
-  return walletClient;
 };
 
 export default useViemWalletClient;

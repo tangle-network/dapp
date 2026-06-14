@@ -14,9 +14,8 @@ import { useModal } from '@tangle-network/ui-components/hooks/useModal';
 import { Typography } from '@tangle-network/ui-components/typography/Typography';
 import { FC, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { type SubmitHandler, useForm } from 'react-hook-form';
-import { Address, formatUnits, parseUnits } from 'viem';
-import { useAccount, useBlockNumber, useChainId, usePublicClient } from 'wagmi';
-import { useQuery } from '@tanstack/react-query';
+import { Address, formatUnits, parseUnits, zeroAddress } from 'viem';
+import { useAccount, useBlockNumber, useChainId } from 'wagmi';
 import ErrorMessage from '@tangle-network/tangle-shared-ui/components/ErrorMessage';
 import StakingDetailCard from '../../../components/StakingDetailCard';
 import ActionButtonBase from '../../../components/staking/ActionButtonBase';
@@ -66,6 +65,13 @@ type AssetPositionItem = {
   totalDeposited: bigint;
   delegatedAmount: bigint;
   availableToWithdraw: bigint; // min(available, free) at current lock state
+};
+
+const NATIVE_TOKEN_ADDRESS = zeroAddress as Address;
+const NATIVE_ASSET_METADATA = {
+  name: 'Ether',
+  symbol: 'ETH',
+  decimals: 18,
 };
 
 const safeParseUnits = (value: string, decimals: number): bigint | null => {
@@ -133,22 +139,42 @@ const StakingWithdrawForm: FC = () => {
 
   // Get token addresses from enabled staking assets (on-chain contracts need this even if indexer lags)
   const tokenAddresses = useMemo(() => {
-    if (!stakingAssets) return [];
-    return Array.from(stakingAssets.keys()) as EvmAddress[];
+    const addresses = stakingAssets
+      ? (Array.from(stakingAssets.keys()) as Address[])
+      : [];
+    const hasNativeToken = addresses.some(
+      (token) => token.toLowerCase() === NATIVE_TOKEN_ADDRESS.toLowerCase(),
+    );
+
+    return (
+      hasNativeToken ? addresses : [...addresses, NATIVE_TOKEN_ADDRESS]
+    ) as EvmAddress[];
   }, [stakingAssets]);
 
   const tokenMetadatas = useMemo(() => {
-    if (!stakingAssets) return undefined;
     const stakingAssetList = Array.from(
-      stakingAssets.values(),
+      stakingAssets?.values() ?? [],
     ) as StakingAsset[];
 
-    return stakingAssetList.map((asset) => ({
+    const metadatas = stakingAssetList.map((asset) => ({
       id: asset.id as unknown as EvmAddress,
       name: asset.metadata.name,
       symbol: asset.metadata.symbol,
       decimals: asset.metadata.decimals,
     }));
+
+    const hasNativeMetadata = metadatas.some(
+      (asset) => asset.id.toLowerCase() === NATIVE_TOKEN_ADDRESS.toLowerCase(),
+    );
+
+    if (!hasNativeMetadata) {
+      metadatas.push({
+        id: NATIVE_TOKEN_ADDRESS as EvmAddress,
+        ...NATIVE_ASSET_METADATA,
+      });
+    }
+
+    return metadatas;
   }, [stakingAssets]);
 
   const contracts = useMemo(() => {
@@ -159,112 +185,71 @@ const StakingWithdrawForm: FC = () => {
     }
   }, [chainId]);
 
-  const publicClient = usePublicClient({ chainId });
-
   // Fetch deposit amounts from getDeposit
-  const { data: depositAmountMap, refetch: refetchDeposits } = useQuery({
-    queryKey: [
-      'staking',
-      'withdraw',
-      'deposits',
+  const { data: depositResults, refetch: refetchDeposits } =
+    useResilientReadContracts({
+      queryKey: [
+        'staking',
+        'withdraw',
+        'deposits',
+        chainId,
+        userAddress,
+        tokenAddresses.map((t) => t.toLowerCase()).sort(),
+      ],
       chainId,
-      userAddress,
-      tokenAddresses.map((t) => t.toLowerCase()).sort(),
-    ],
-    queryFn: async () => {
-      const map = new Map<string, bigint>();
+      contracts:
+        contracts && userAddress && tokenAddresses.length > 0
+          ? tokenAddresses.map((token) => ({
+              address: contracts.multiAssetDelegation,
+              abi: MULTI_ASSET_DELEGATION_ABI,
+              functionName: 'getDeposit',
+              args: [userAddress, token] as const,
+            }))
+          : [],
+      query: {
+        enabled:
+          Boolean(contracts) &&
+          Boolean(userAddress) &&
+          tokenAddresses.length > 0,
+        staleTime: 2_000,
+        refetchInterval: 2_000,
+        refetchIntervalInBackground: true,
+        retry: 2,
+      },
+    });
 
-      if (!publicClient || !contracts || !userAddress) {
-        return map;
-      }
+  const depositAmountMap = useMemo(() => {
+    const map = new Map<string, { amount: bigint; delegatedAmount: bigint }>();
+    if (!depositResults) return map;
 
-      const results = await Promise.allSettled(
-        tokenAddresses.map(async (token) => {
-          const deposit = (await publicClient.readContract({
-            address: contracts.multiAssetDelegation,
-            abi: MULTI_ASSET_DELEGATION_ABI,
-            functionName: 'getDeposit',
-            args: [userAddress, token],
-          })) as { amount: bigint; delegatedAmount: bigint };
+    depositResults.forEach((res, idx) => {
+      const token = tokenAddresses[idx];
+      if (!token || res?.status !== 'success') return;
+      const deposit = res.result as
+        | { amount: bigint; delegatedAmount: bigint }
+        | readonly [bigint, bigint];
+      const amount = Array.isArray(deposit)
+        ? deposit[0]
+        : (deposit as { amount: bigint }).amount;
+      const delegatedAmount = Array.isArray(deposit)
+        ? deposit[1]
+        : (deposit as { delegatedAmount: bigint }).delegatedAmount;
+      map.set(token.toLowerCase(), { amount, delegatedAmount });
+    });
 
-          return { token, amount: deposit.amount };
-        }),
-      );
-
-      for (const result of results) {
-        if (result.status === 'fulfilled') {
-          const { token, amount } = result.value;
-          map.set(token.toLowerCase(), amount);
-        }
-      }
-
-      return map;
-    },
-    enabled:
-      Boolean(publicClient) &&
-      Boolean(contracts) &&
-      Boolean(userAddress) &&
-      tokenAddresses.length > 0,
-    staleTime: 2_000,
-    refetchInterval: 2_000,
-    refetchIntervalInBackground: true,
-    retry: 2,
-  });
-
-  // Fetch actual delegated amounts from getDelegations (getDeposit.delegatedAmount is not reliable)
-  const { data: delegatedAmountMap } = useQuery({
-    queryKey: ['staking', 'withdraw', 'delegations', chainId, userAddress],
-    queryFn: async () => {
-      const map = new Map<string, bigint>();
-
-      if (!publicClient || !contracts || !userAddress) {
-        return map;
-      }
-
-      type DelegationInfo = {
-        operator: Address;
-        shares: bigint;
-        asset: { kind: number; token: Address };
-        selectionMode: number;
-      };
-
-      const delegations = (await publicClient.readContract({
-        address: contracts.multiAssetDelegation,
-        abi: MULTI_ASSET_DELEGATION_ABI,
-        functionName: 'getDelegations',
-        args: [userAddress],
-      })) as DelegationInfo[];
-
-      // Sum shares by token to get total delegated amount per token
-      for (const delegation of delegations) {
-        const tokenKey = delegation.asset.token.toLowerCase();
-        const existing = map.get(tokenKey) ?? BigInt(0);
-        map.set(tokenKey, existing + delegation.shares);
-      }
-
-      return map;
-    },
-    enabled:
-      Boolean(publicClient) && Boolean(contracts) && Boolean(userAddress),
-    staleTime: 2_000,
-    refetchInterval: 2_000,
-    refetchIntervalInBackground: true,
-    retry: 2,
-  });
+    return map;
+  }, [depositResults, tokenAddresses]);
 
   // Combine deposit and delegation data
   const depositMap = useMemo(() => {
     const map = new Map<string, { amount: bigint; delegatedAmount: bigint }>();
 
-    if (!depositAmountMap) return map;
-
-    for (const [token, amount] of depositAmountMap.entries()) {
-      const delegatedAmount = delegatedAmountMap?.get(token) ?? BigInt(0);
-      map.set(token, { amount, delegatedAmount });
+    for (const [token, deposit] of depositAmountMap.entries()) {
+      map.set(token, deposit);
     }
 
     return map;
-  }, [depositAmountMap, delegatedAmountMap]);
+  }, [depositAmountMap]);
 
   const { data: currentBlockNumber } = useBlockNumber({ watch: true });
 
@@ -472,6 +457,7 @@ const StakingWithdrawForm: FC = () => {
     return {
       type: 'number',
       step,
+      'data-testid': 'staking-withdraw-amount-input',
       ...register('amount', {
         required: 'Amount is required',
         validate: (value) => {
@@ -570,6 +556,7 @@ const StakingWithdrawForm: FC = () => {
         <Card withShadow tightPadding className="relative md:min-w-[512px]">
           {!isWithdrawRequestTableOpen && (
             <ExpandTableButton
+              data-testid="staking-withdraw-requests-toggle"
               className="absolute top-0 -right-10 max-md:hidden"
               tooltipContent="Withdrawal requests"
               requestCount={withdrawRequests.length}
@@ -620,9 +607,10 @@ const StakingWithdrawForm: FC = () => {
                 <TransactionInputCard.Body
                   customAmountProps={customAmountProps}
                   tokenSelectorProps={
-                    useRef({
+                    {
                       placeholder: <AssetPlaceholder />,
                       onClick: openAssetModal,
+                      'data-testid': 'staking-withdraw-asset-selector',
                       ...(selectedAssetPosition
                         ? {
                             renderBody: () => (
@@ -638,7 +626,7 @@ const StakingWithdrawForm: FC = () => {
                             ),
                           }
                         : {}),
-                    }).current
+                    } as any
                   }
                 />
               </TransactionInputCard.Root>
@@ -672,6 +660,7 @@ const StakingWithdrawForm: FC = () => {
 
                 return (
                   <Button
+                    data-testid="staking-withdraw-submit"
                     isDisabled={!isValid || isDefined(displayError) || !isReady}
                     type="submit"
                     isFullWidth
@@ -809,6 +798,7 @@ const WithdrawRequestView: FC<WithdrawRequestViewProps> = ({
         <div className="flex items-center gap-2">
           {withdrawRequests.length > 0 && (
             <Button
+              data-testid="staking-withdraw-execute-ready"
               size="sm"
               isDisabled={
                 readyCount === 0 || executeWithdraw === null || isExecuting

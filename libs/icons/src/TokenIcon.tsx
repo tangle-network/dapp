@@ -1,7 +1,7 @@
 'use client';
 
 import cx from 'classnames';
-import { MouseEventHandler, cloneElement, useMemo, useRef } from 'react';
+import { cloneElement, useMemo } from 'react';
 import { twMerge } from 'tailwind-merge';
 import Spinner from './Spinner';
 import { TokenIconBase } from './types';
@@ -47,11 +47,6 @@ export const TokenIcon: React.FC<Props> = ({ spinnerSize, ...props }) => {
     [classNameProp, name, onClick],
   );
 
-  // Prevent infinite loop when the passed onClick not use useCallback.
-  const onClickRef = useRef<
-    MouseEventHandler<SVGElement | HTMLDivElement> | undefined
-  >(onClick);
-
   if (error !== undefined) {
     return <span>{error.message}</span>;
   } else if (loading) {
@@ -70,12 +65,12 @@ export const TokenIcon: React.FC<Props> = ({ spinnerSize, ...props }) => {
     };
 
     return isActive ? (
-      <div className="relative" onClick={onClickRef.current}>
+      <div className="relative">
         {cloneElement(svgElement, props)}
         <span className="inline-block absolute w-1.5 h-1.5 bg-green-50 dark:bg-green-40 rounded-full top-0 right-0" />
       </div>
     ) : (
-      cloneElement(svgElement, { ...props, onClick: onClickRef.current })
+      cloneElement(svgElement, props)
     );
   }
 

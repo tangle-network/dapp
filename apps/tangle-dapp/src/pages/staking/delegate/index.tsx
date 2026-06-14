@@ -20,9 +20,15 @@ import { useModal } from '@tangle-network/ui-components/hooks/useModal';
 import { FC, useCallback, useEffect, useMemo, useRef } from 'react';
 import useFormSetValue from '../../../hooks/useFormSetValue';
 import { SubmitHandler, useForm } from 'react-hook-form';
-import { Address, formatUnits, parseUnits } from 'viem';
-import { useAccount, useChainId, usePublicClient } from 'wagmi';
+import { Address, formatUnits, parseUnits, zeroAddress } from 'viem';
+import {
+  useAccount,
+  useChainId,
+  useConnectorClient,
+  usePublicClient,
+} from 'wagmi';
 import { useQuery } from '@tanstack/react-query';
+import { readContract } from 'viem/actions';
 import ErrorMessage from '@tangle-network/tangle-shared-ui/components/ErrorMessage';
 import ActionButtonBase from '../../../components/staking/ActionButtonBase';
 import BlueprintSelection from '../../../components/staking/BlueprintSelection';
@@ -48,6 +54,7 @@ import {
   useStakingAssets,
   type StakingAsset,
 } from '@tangle-network/tangle-shared-ui/data/graphql';
+import { useOptionalStakingContext } from '@tangle-network/tangle-shared-ui/context/StakingContext';
 import { useDelegateTx } from '@tangle-network/tangle-shared-ui/data/tx';
 import { TxStatus } from '@tangle-network/tangle-shared-ui/hooks/useContractWrite';
 import MULTI_ASSET_DELEGATION_ABI from '@tangle-network/tangle-shared-ui/abi/multiAssetDelegation';
@@ -76,6 +83,13 @@ type OperatorItem = {
   canDelegate?: boolean;
 };
 
+const NATIVE_TOKEN_ADDRESS = zeroAddress as Address;
+const NATIVE_ASSET_METADATA = {
+  name: 'Ether',
+  symbol: 'ETH',
+  decimals: 18,
+};
+
 const safeParseUnits = (value: string, decimals: number): bigint | null => {
   try {
     return parseUnits(value, decimals);
@@ -87,6 +101,8 @@ const safeParseUnits = (value: string, decimals: number): bigint | null => {
 const StakingDelegateForm: FC = () => {
   const { address: userAddress } = useAccount();
   const chainId = useChainId();
+  const { data: connectorClient } = useConnectorClient();
+  const effectiveChainId = connectorClient?.chain?.id ?? chainId;
   const activeTypedChainId = useActiveTypedChainId();
   const switchChain = useSwitchChain();
 
@@ -104,10 +120,22 @@ const StakingDelegateForm: FC = () => {
   const selectedOperatorAddress = watch('operatorAddress');
   const selectedAssetId = watch('assetId');
   const amount = watch('amount');
+  const lastResetTypedChainIdRef = useRef(activeTypedChainId);
 
   const [operatorParam, setOperatorParam] = useQueryState(
     QueryParamKey.STAKING_OPERATOR,
   );
+  const operatorAddressFromParam = useMemo<Address | null>(() => {
+    if (
+      !operatorParam ||
+      typeof operatorParam !== 'string' ||
+      !isEvmAddress(operatorParam)
+    ) {
+      return null;
+    }
+
+    return operatorParam as Address;
+  }, [operatorParam]);
 
   const setValue = useFormSetValue(setFormValue);
 
@@ -117,29 +145,48 @@ const StakingDelegateForm: FC = () => {
   }, [register]);
 
   useEffect(() => {
-    reset();
-  }, [activeTypedChainId, reset]);
+    if (lastResetTypedChainIdRef.current === activeTypedChainId) {
+      return;
+    }
 
-  const { assets: stakingAssets } = useStakingAssets({
-    enabled: Boolean(userAddress),
+    lastResetTypedChainIdRef.current = activeTypedChainId;
+    reset(
+      operatorAddressFromParam
+        ? { operatorAddress: operatorAddressFromParam }
+        : undefined,
+    );
+  }, [activeTypedChainId, operatorAddressFromParam, reset]);
+
+  const stakingContext = useOptionalStakingContext();
+  const { assets: directStakingAssets } = useStakingAssets({
+    enabled: Boolean(userAddress) && !stakingContext,
   });
+  const stakingAssets = stakingContext
+    ? stakingContext.assets
+    : directStakingAssets;
   const { data: operatorMap } = useOperatorMap({ status: 'ACTIVE' });
   const blueprintSelection = useBlueprintStore((store) => store.selection);
 
   const tokenAddresses = useMemo<Address[]>(() => {
-    if (!stakingAssets) return [];
-    return Array.from(stakingAssets.keys()) as Address[];
+    const addresses = stakingAssets
+      ? (Array.from(stakingAssets.keys()) as Address[])
+      : [];
+    const hasNativeToken = addresses.some(
+      (token) => token.toLowerCase() === NATIVE_TOKEN_ADDRESS.toLowerCase(),
+    );
+
+    return hasNativeToken ? addresses : [...addresses, NATIVE_TOKEN_ADDRESS];
   }, [stakingAssets]);
 
   const contracts = useMemo(() => {
     try {
-      return getContractsByChainId(chainId);
+      return getContractsByChainId(effectiveChainId);
     } catch {
       return null;
     }
-  }, [chainId]);
+  }, [effectiveChainId]);
 
-  const publicClient = usePublicClient({ chainId });
+  const publicClient = usePublicClient({ chainId: effectiveChainId });
 
   // Fetch deposit data from getDeposit (includes both amount and delegatedAmount)
   const { data: depositMap, refetch: refetchDeposits } = useQuery({
@@ -147,7 +194,7 @@ const StakingDelegateForm: FC = () => {
       'staking',
       'delegate',
       'deposits',
-      chainId,
+      effectiveChainId,
       userAddress,
       tokenAddresses.map((t) => t.toLowerCase()).sort(),
     ],
@@ -161,14 +208,34 @@ const StakingDelegateForm: FC = () => {
         return map;
       }
 
+      const readDeposit = async (token: Address) => {
+        const request = {
+          address: contracts.multiAssetDelegation,
+          abi: MULTI_ASSET_DELEGATION_ABI,
+          functionName: 'getDeposit' as const,
+          args: [userAddress, token] as const,
+        };
+
+        try {
+          return (await publicClient.readContract(request)) as {
+            amount: bigint;
+            delegatedAmount: bigint;
+          };
+        } catch (primaryError) {
+          if (!connectorClient) {
+            throw primaryError;
+          }
+
+          return (await readContract(connectorClient, request)) as {
+            amount: bigint;
+            delegatedAmount: bigint;
+          };
+        }
+      };
+
       const results = await Promise.allSettled(
         tokenAddresses.map(async (token) => {
-          const deposit = (await publicClient.readContract({
-            address: contracts.multiAssetDelegation,
-            abi: MULTI_ASSET_DELEGATION_ABI,
-            functionName: 'getDeposit',
-            args: [userAddress, token],
-          })) as { amount: bigint; delegatedAmount: bigint };
+          const deposit = await readDeposit(token);
 
           return {
             token,
@@ -228,17 +295,14 @@ const StakingDelegateForm: FC = () => {
 
   useEffect(() => {
     if (
-      !operatorParam ||
-      typeof operatorParam !== 'string' ||
-      !isEvmAddress(operatorParam) ||
-      !operatorMap?.get(operatorParam as Address)
+      !operatorAddressFromParam ||
+      selectedOperatorAddress === operatorAddressFromParam
     ) {
       return;
     }
 
-    setFormValue('operatorAddress', operatorParam as Address);
-    setOperatorParam(null);
-  }, [operatorMap, operatorParam, setFormValue, setOperatorParam]);
+    setValue('operatorAddress', operatorAddressFromParam);
+  }, [operatorAddressFromParam, selectedOperatorAddress, setValue]);
 
   const {
     status: isChainModalOpen,
@@ -262,16 +326,21 @@ const StakingDelegateForm: FC = () => {
   } = useModal(false);
 
   const depositedAssets = useMemo<AssetItem[]>(() => {
-    if (!stakingAssets || !depositMap) {
+    if (!depositMap) {
       return [];
     }
 
     return tokenAddresses
       .map((token) => {
-        const asset = stakingAssets.get(token) as StakingAsset | undefined;
+        const asset = stakingAssets?.get(token) as StakingAsset | undefined;
+        const metadata =
+          asset?.metadata ??
+          (token.toLowerCase() === NATIVE_TOKEN_ADDRESS.toLowerCase()
+            ? NATIVE_ASSET_METADATA
+            : null);
         const deposit = depositMap.get(token.toLowerCase());
 
-        if (!asset || !deposit) {
+        if (!metadata || !deposit) {
           return null;
         }
 
@@ -285,9 +354,9 @@ const StakingDelegateForm: FC = () => {
 
         return {
           id: token,
-          name: asset.metadata.name,
-          symbol: asset.metadata.symbol,
-          decimals: asset.metadata.decimals,
+          name: metadata.name,
+          symbol: metadata.symbol,
+          decimals: metadata.decimals,
           balance: totalDeposited,
           delegatedAmount,
           availableBalance,
@@ -394,9 +463,10 @@ const StakingDelegateForm: FC = () => {
   const handleOnSelectOperator = useCallback(
     (operator: OperatorItem) => {
       setValue('operatorAddress', operator.address);
+      setOperatorParam(null);
       closeOperatorModal();
     },
-    [closeOperatorModal, setValue],
+    [closeOperatorModal, setOperatorParam, setValue],
   );
 
   const { maxAmount, maxAmountInputValue } = useMemo(() => {
@@ -419,6 +489,7 @@ const StakingDelegateForm: FC = () => {
     return {
       type: 'number',
       step,
+      'data-testid': 'staking-delegate-amount-input',
       ...register('amount', {
         required: 'Amount is required',
         validate: (value) => {
@@ -492,7 +563,8 @@ const StakingDelegateForm: FC = () => {
     setValue('amount', '', { shouldValidate: false });
     setValue('assetId', '' as Address, { shouldValidate: false });
     setValue('operatorAddress', '' as Address, { shouldValidate: false });
-  }, [setValue]);
+    setOperatorParam(null);
+  }, [setOperatorParam, setValue]);
 
   const onSubmit = useCallback<SubmitHandler<EvmDelegationFormFields>>(
     async ({ amount, assetId, operatorAddress }) => {
@@ -548,6 +620,7 @@ const StakingDelegateForm: FC = () => {
                 <TransactionInputCard.ChainSelector
                   placeholder="Select Operator"
                   onClick={openOperatorModal}
+                  data-testid="staking-delegate-operator-selector"
                   {...(selectedOperatorAddress
                     ? {
                         renderBody: () => (
@@ -633,6 +706,7 @@ const StakingDelegateForm: FC = () => {
                   useRef({
                     placeholder: <AssetPlaceholder />,
                     onClick: openAssetModal,
+                    'data-testid': 'staking-delegate-asset-selector',
                     ...(selectedAssetItem && maxAmountInputValue !== undefined
                       ? {
                           renderBody: () => (
@@ -684,6 +758,7 @@ const StakingDelegateForm: FC = () => {
 
               return (
                 <Button
+                  data-testid="staking-delegate-submit"
                   isDisabled={!isValid || isDefined(displayError) || !isReady}
                   type="submit"
                   isFullWidth

@@ -2,6 +2,10 @@ import { getDefaultConfig } from 'connectkit';
 import { createConfig, http } from 'wagmi';
 import { wagmiChains as chains } from './chains/evm';
 
+type OptionalImportMetaEnv = ImportMeta & {
+  env?: Record<string, string | undefined>;
+};
+
 // WalletConnect project ID - should be configured via env var in production
 const WALLETCONNECT_PROJECT_ID =
   process.env.VITE_WALLETCONNECT_PROJECT_ID ??
@@ -10,6 +14,11 @@ const WALLETCONNECT_PROJECT_ID =
 const ENABLE_FAMILY_WALLET =
   process.env.VITE_ENABLE_FAMILY_WALLET === 'true' ||
   process.env.NEXT_PUBLIC_ENABLE_FAMILY_WALLET === 'true';
+const importMetaEnv = (import.meta as OptionalImportMetaEnv).env ?? {};
+const FORCE_LOCAL_CHAIN =
+  importMetaEnv.VITE_FORCE_LOCAL_CHAIN === 'true' ||
+  process.env.VITE_FORCE_LOCAL_CHAIN === 'true';
+const activeChains = FORCE_LOCAL_CHAIN ? ([chains[0]] as const) : chains;
 
 // Create config using ConnectKit's getDefaultConfig helper
 // This automatically sets up all popular wallets with EIP-6963 detection
@@ -18,8 +27,8 @@ const config = createConfig(
     appName: 'Tangle Network',
     walletConnectProjectId: WALLETCONNECT_PROJECT_ID,
     enableFamily: ENABLE_FAMILY_WALLET,
-    chains,
-    transports: chains.reduce(
+    chains: activeChains,
+    transports: activeChains.reduce(
       (acc, chain) => {
         const publicRpcUrl =
           'public' in chain.rpcUrls

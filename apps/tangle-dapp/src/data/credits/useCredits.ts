@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useChainId, useReadContract } from 'wagmi';
 import { useQuery } from '@tanstack/react-query';
 import { type Hex, type Address } from 'viem';
@@ -18,6 +18,8 @@ import {
   resolveCreditsTreeUrl,
 } from './resolveCreditsAddress';
 
+const getNowSeconds = () => BigInt(Math.floor(Date.now() / 1000));
+
 // This represents the structure of our credits data
 export type CreditsData = {
   amount: bigint;
@@ -34,6 +36,7 @@ export type CreditsData = {
 export default function useCredits() {
   const activeEvmAddress = useEvmAddress();
   const chainId = useChainId();
+  const [nowSeconds, setNowSeconds] = useState(getNowSeconds);
   const creditsAddress = resolveCreditsAddress(chainId);
   const isSupportedNetwork = creditsAddress !== null;
   const creditsTreeUrl = resolveCreditsTreeUrl(chainId);
@@ -58,6 +61,14 @@ export default function useCredits() {
     gcTime: 30 * 60 * 1000,
   });
 
+  useEffect(() => {
+    const intervalId = setInterval(() => {
+      setNowSeconds(getNowSeconds());
+    }, 1000);
+
+    return () => clearInterval(intervalId);
+  }, []);
+
   const claimData = useMemo<CreditsClaimData | null>(() => {
     if (!activeEvmAddress || !creditsTree) {
       return null;
@@ -73,10 +84,9 @@ export default function useCredits() {
 
   const timeRemaining = useMemo(() => {
     if (!creditsWindow) return BigInt(0);
-    const now = BigInt(Math.floor(Date.now() / 1000));
-    if (creditsWindow.endTs <= now) return BigInt(0);
-    return creditsWindow.endTs - now;
-  }, [creditsWindow]);
+    if (creditsWindow.endTs <= nowSeconds) return BigInt(0);
+    return creditsWindow.endTs - nowSeconds;
+  }, [creditsWindow, nowSeconds]);
 
   const {
     data: onchainRoot,
@@ -135,8 +145,9 @@ export default function useCredits() {
     }
 
     const alreadyClaimed = Boolean(hasClaimed);
-    const now = BigInt(Math.floor(Date.now() / 1000));
-    const windowComplete = creditsWindow ? now >= creditsWindow.endTs : true;
+    const windowComplete = creditsWindow
+      ? nowSeconds >= creditsWindow.endTs
+      : true;
     return {
       amount: alreadyClaimed ? BigInt(0) : claimData.amount,
       totalAmount: claimData.amount,
@@ -155,6 +166,7 @@ export default function useCredits() {
     proofValid,
     rootMatches,
     timeRemaining,
+    nowSeconds,
   ]);
 
   const rootMismatchError =

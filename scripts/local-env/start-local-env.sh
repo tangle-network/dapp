@@ -133,6 +133,9 @@ export WSTETH_ADDRESS=""
 export EIGEN_ADDRESS=""
 export REWARD_VAULTS_ADDRESS=""
 export INFLATION_POOL_ADDRESS=""
+export MBSM_REGISTRY_ADDRESS=""
+export MASTER_BLUEPRINT_SERVICE_MANAGER_ADDRESS=""
+export LIQUID_DELEGATION_FACTORY_ADDRESS=""
 # Migration contract addresses
 export TANGLE_MIGRATION_ADDRESS=""
 export TNT_TOKEN_ADDRESS=""
@@ -153,15 +156,45 @@ log_success() { echo -e "${GREEN}[SUCCESS]${NC} $1"; }
 log_warn() { echo -e "${YELLOW}[WARN]${NC} $1"; }
 log_error() { echo -e "${RED}[ERROR]${NC} $1"; }
 
-repair_generated_package_link() {
-    if [[ ! -d "$INDEXER_DIR/generated" ]]; then
+indexer_generated_dir() {
+    if [[ -d "$INDEXER_DIR/generated" ]]; then
+        echo "$INDEXER_DIR/generated"
+        return 0
+    fi
+
+    if [[ -d "$INDEXER_DIR/build/generated" ]]; then
+        echo "$INDEXER_DIR/build/generated"
+        return 0
+    fi
+
+    echo "$INDEXER_DIR/generated"
+}
+
+require_indexer_generated_dir() {
+    local generated_dir
+    generated_dir="$(indexer_generated_dir)"
+    if [[ ! -d "$generated_dir" ]]; then
+        log_error "Envio generated directory not found. Expected $INDEXER_DIR/generated or $INDEXER_DIR/build/generated."
         return 1
     fi
+
+    echo "$generated_dir"
+}
+
+has_legacy_envio_compose() {
+    local generated_dir
+    generated_dir="$(indexer_generated_dir)"
+    [[ -f "$generated_dir/docker-compose.yml" || -f "$generated_dir/docker-compose.yaml" || -f "$generated_dir/compose.yaml" || -f "$generated_dir/compose.yml" ]]
+}
+
+repair_generated_package_link() {
+    local generated_dir
+    generated_dir="$(require_indexer_generated_dir)" || return 1
 
     mkdir -p "$INDEXER_DIR/node_modules"
     rm -rf "$INDEXER_DIR/node_modules/.pnpm/generated@"* 2>/dev/null || true
     rm -rf "$INDEXER_DIR/node_modules/generated" 2>/dev/null || true
-    ln -sfn ../generated "$INDEXER_DIR/node_modules/generated"
+    ln -sfn "$generated_dir" "$INDEXER_DIR/node_modules/generated"
 }
 
 resolve_forge_script_target() {
@@ -272,7 +305,19 @@ kill_port_listeners() {
 
 is_port_free() {
     local port="$1"
-    [[ -z "$(lsof -nP -iTCP:"$port" -sTCP:LISTEN -t 2>/dev/null || true)" ]]
+    if command -v ss >/dev/null 2>&1 && ss -ltnH "sport = :$port" 2>/dev/null | grep -q .; then
+        return 1
+    fi
+
+    if [[ -n "$(lsof -nP -iTCP:"$port" -sTCP:LISTEN -t 2>/dev/null || true)" ]]; then
+        return 1
+    fi
+
+    if command -v docker >/dev/null 2>&1 && docker ps --format '{{.Ports}}' 2>/dev/null | grep -Eq "(^|[ ,])((127\\.0\\.0\\.1|0\\.0\\.0\\.0|\\[::\\]|::):)?$port->"; then
+        return 1
+    fi
+
+    return 0
 }
 
 ensure_free_postgres_port() {
@@ -345,11 +390,14 @@ sync_ports_from_docker_compose() {
 }
 
 ensure_postgres_password() {
+    local generated_dir
+    generated_dir="$(require_indexer_generated_dir)" || exit 1
+
     if ! command -v psql >/dev/null 2>&1; then
         log_warn "psql is not installed; attempting to reset postgres password inside the container..."
 
         ensure_docker_running
-        cd "$INDEXER_DIR/generated"
+        cd "$generated_dir"
 
         # This typically works because local socket auth inside the container is trust.
         if docker compose exec -T envio-postgres psql -U "$ENVIO_PG_USER" -d postgres -c "ALTER USER $ENVIO_PG_USER WITH PASSWORD '$ENVIO_PG_PASSWORD';" >/dev/null 2>&1; then
@@ -372,7 +420,7 @@ ensure_postgres_password() {
     log_warn "Host Postgres auth failed; attempting to reset postgres password inside the container..."
 
     ensure_docker_running
-    cd "$INDEXER_DIR/generated"
+    cd "$generated_dir"
 
     # This typically works because local socket auth inside the container is trust.
     if docker compose exec -T envio-postgres psql -U "$ENVIO_PG_USER" -d postgres -c "ALTER USER $ENVIO_PG_USER WITH PASSWORD '$ENVIO_PG_PASSWORD';" >/dev/null 2>&1; then
@@ -490,6 +538,16 @@ ANVIL_STATE_FILE="$CACHE_DIR/anvil-state.json"
 is_anvil_running() {
     curl -s "http://127.0.0.1:$ANVIL_PORT" -X POST -H "Content-Type: application/json" \
         --data '{"jsonrpc":"2.0","method":"eth_chainId","params":[],"id":1}' > /dev/null 2>&1
+}
+
+address_has_code() {
+    local address="$1"
+    local code
+    code=$(curl -s "http://127.0.0.1:$ANVIL_PORT" -X POST -H "Content-Type: application/json" \
+        --data "{\"jsonrpc\":\"2.0\",\"method\":\"eth_getCode\",\"params\":[\"$address\", \"latest\"],\"id\":1}" \
+        | grep -o '"result":"[^"]*"' | cut -d'"' -f4)
+
+    [[ -n "$code" && "$code" != "0x" ]]
 }
 
 start_anvil() {
@@ -662,6 +720,9 @@ export WSTETH_ADDRESS="$WSTETH_ADDRESS"
 export EIGEN_ADDRESS="$EIGEN_ADDRESS"
 export REWARD_VAULTS_ADDRESS="${REWARD_VAULTS_ADDRESS:-}"
 export INFLATION_POOL_ADDRESS="${INFLATION_POOL_ADDRESS:-}"
+export MBSM_REGISTRY_ADDRESS="${MBSM_REGISTRY_ADDRESS:-}"
+export MASTER_BLUEPRINT_SERVICE_MANAGER_ADDRESS="${MASTER_BLUEPRINT_SERVICE_MANAGER_ADDRESS:-}"
+export LIQUID_DELEGATION_FACTORY_ADDRESS="${LIQUID_DELEGATION_FACTORY_ADDRESS:-}"
 export TNT_TOKEN_ADDRESS="${TNT_TOKEN_ADDRESS:-}"
 export CREDITS_ADDRESS="${CREDITS_ADDRESS:-}"
 export TANGLE_MIGRATION_ADDRESS="${TANGLE_MIGRATION_ADDRESS:-}"
@@ -703,32 +764,51 @@ deploy_contracts() {
         log_info "Running LocalTestnet setup (attempt $attempt/2)..."
         : > /tmp/deploy.log
         set +e
-        (
-            forge script "${localtestnet_script}:LocalTestnetSetup" \
-                --rpc-url "http://127.0.0.1:$ANVIL_PORT" \
-                --private-key "$ANVIL_PRIVATE_KEY" \
-                --broadcast \
-                --non-interactive \
-                --slow
-        ) 2>&1 | tee /tmp/deploy.log &
+        forge script "${localtestnet_script}:LocalTestnetSetup" \
+            --rpc-url "http://127.0.0.1:$ANVIL_PORT" \
+            --private-key "$ANVIL_PRIVATE_KEY" \
+            --broadcast \
+            --disable-code-size-limit \
+            --non-interactive \
+            --slow > /tmp/deploy.log 2>&1 &
         local deploy_pipe_pid=$!
         local waited=0
+        local ready_terminated=false
         forge_status=0
 
         while kill -0 "$deploy_pipe_pid" 2>/dev/null; do
             sleep 2
             waited=$((waited + 2))
 
-            if grep -q "=== Local Testnet Ready ===" /tmp/deploy.log 2>/dev/null; then
+            if grep -q "=== Local Testnet Ready ===" /tmp/deploy.log 2>/dev/null && grep -q "ONCHAIN EXECUTION COMPLETE" /tmp/deploy.log 2>/dev/null; then
+                local ready_tangle ready_staking ready_status ready_tnt ready_credits ready_rewards ready_inflation ready_liquid
+                ready_tangle="$(grep -E "^[[:space:]]*Tangle:" /tmp/deploy.log | tail -1 | grep -oE '0x[a-fA-F0-9]{40}' || true)"
+                ready_tangle="${ready_tangle:-0xCf7Ed3AccA5a467e9e704C703E8D87F634fB0Fc9}"
+                ready_staking="$(grep -E "^[[:space:]]*MultiAssetDelegation:" /tmp/deploy.log | tail -1 | grep -oE '0x[a-fA-F0-9]{40}' || true)"
+                ready_status="$(grep -E "^[[:space:]]*OperatorStatusRegistry:" /tmp/deploy.log | tail -1 | grep -oE '0x[a-fA-F0-9]{40}' || true)"
+                ready_tnt="$(grep -E "^[[:space:]]*TangleToken:" /tmp/deploy.log | tail -1 | grep -oE '0x[a-fA-F0-9]{40}' || true)"
+                ready_credits="$(grep -E "^[[:space:]]*Credits:" /tmp/deploy.log | tail -1 | grep -oE '0x[a-fA-F0-9]{40}' || true)"
+                ready_rewards="$(grep -E "^[[:space:]]*RewardVaults:" /tmp/deploy.log | tail -1 | grep -oE '0x[a-fA-F0-9]{40}' || true)"
+                ready_inflation="$(grep -E "^[[:space:]]*InflationPool:" /tmp/deploy.log | tail -1 | grep -oE '0x[a-fA-F0-9]{40}' || true)"
+                ready_liquid="$(grep -E "^[[:space:]]*LiquidDelegationFactory:" /tmp/deploy.log | tail -1 | grep -oE '0x[a-fA-F0-9]{40}' || true)"
                 deployer_nonce=$(curl -s "http://127.0.0.1:$ANVIL_PORT" -X POST -H "Content-Type: application/json" \
                     --data '{"jsonrpc":"2.0","method":"eth_getTransactionCount","params":["0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266", "latest"],"id":1}' \
                     | grep -o '"result":"[^"]*"' | cut -d'"' -f4)
-                contract_code=$(curl -s "http://127.0.0.1:$ANVIL_PORT" -X POST -H "Content-Type: application/json" \
-                    --data '{"jsonrpc":"2.0","method":"eth_getCode","params":["0xCf7Ed3AccA5a467e9e704C703E8D87F634fB0Fc9", "latest"],"id":1}' \
-                    | grep -o '"result":"[^"]*"' | cut -d'"' -f4)
 
-                if [[ "$deployer_nonce" != "0x0" && -n "$contract_code" && "$contract_code" != "0x" ]]; then
-                    log_warn "LocalTestnet deployment completed but forge did not exit cleanly; terminating the lingering process."
+                local ready_verified=true
+                for ready_address in "$ready_tangle" "$ready_staking" "$ready_status" "$ready_tnt" "$ready_credits" "$ready_rewards" "$ready_inflation"; do
+                    if [[ -z "$ready_address" ]] || ! address_has_code "$ready_address"; then
+                        ready_verified=false
+                        break
+                    fi
+                done
+
+                if [[ "$ready_verified" == "true" && "$deployer_nonce" != "0x0" ]]; then
+                    if [[ -n "$ready_liquid" ]] && ! address_has_code "$ready_liquid"; then
+                        log_warn "LiquidDelegationFactory has no deployed code at $ready_liquid; continuing because liquid delegation is optional for local staking readiness."
+                    fi
+                    log_warn "LocalTestnet on-chain execution is complete but forge is still running; terminating the lingering process."
+                    ready_terminated=true
                     pkill -TERM -P "$deploy_pipe_pid" 2>/dev/null || true
                     kill -TERM "$deploy_pipe_pid" 2>/dev/null || true
                     sleep 1
@@ -753,6 +833,11 @@ deploy_contracts() {
         forge_status=$?
         set -e
 
+        if [[ "$ready_terminated" == "true" && "$forge_status" -ne 0 ]]; then
+            log_info "Forge was terminated after a verified LocalTestnet ready marker; treating deploy phase as successful."
+            forge_status=0
+        fi
+
         if [[ "$forge_status" -ne 0 ]]; then
             log_warn "forge script exited non-zero (status=$forge_status)."
         fi
@@ -765,9 +850,12 @@ deploy_contracts() {
             --data '{"jsonrpc":"2.0","method":"eth_getTransactionCount","params":["0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266", "latest"],"id":1}' \
             | grep -o '"result":"[^"]*"' | cut -d'"' -f4)
 
-        # Verify contract code exists at the canonical deterministic address.
+        # Verify contract code exists at the Tangle address printed by the deploy script.
+        local detected_tangle
+        detected_tangle="$(grep -E "^[[:space:]]*Tangle:" /tmp/deploy.log | tail -1 | grep -oE '0x[a-fA-F0-9]{40}' || true)"
+        detected_tangle="${detected_tangle:-0xCf7Ed3AccA5a467e9e704C703E8D87F634fB0Fc9}"
         contract_code=$(curl -s "http://127.0.0.1:$ANVIL_PORT" -X POST -H "Content-Type: application/json" \
-            --data '{"jsonrpc":"2.0","method":"eth_getCode","params":["0xCf7Ed3AccA5a467e9e704C703E8D87F634fB0Fc9", "latest"],"id":1}' \
+            --data "{\"jsonrpc\":\"2.0\",\"method\":\"eth_getCode\",\"params\":[\"$detected_tangle\", \"latest\"],\"id\":1}" \
             | grep -o '"result":"[^"]*"' | cut -d'"' -f4)
 
         if [[ "$deployer_nonce" != "0x0" && -n "$contract_code" && "$contract_code" != "0x" ]]; then
@@ -792,10 +880,33 @@ deploy_contracts() {
         cd "$TNT_CORE_DIR"
     done
 
-    # Deterministic addresses from Anvil
-    export TANGLE_PROXY="0xCf7Ed3AccA5a467e9e704C703E8D87F634fB0Fc9"
-    export STAKING_PROXY="0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512"
-    export STATUS_REGISTRY="0xDc64a140Aa3E981100a9becA4E685f962f0cF6C9"
+    # Core addresses are deterministic for a given deploy script, but the nonce
+    # sequence changes as LocalTestnet evolves. Parse the source of truth from
+    # the latest forge log instead of carrying stale checked-in addresses.
+    export TANGLE_PROXY=$(grep -E "^[[:space:]]*Tangle:" /tmp/deploy.log | tail -1 | grep -oE '0x[a-fA-F0-9]{40}' || echo "")
+    export STAKING_PROXY=$(grep -E "^[[:space:]]*MultiAssetDelegation:" /tmp/deploy.log | tail -1 | grep -oE '0x[a-fA-F0-9]{40}' || echo "")
+    export STATUS_REGISTRY=$(grep -E "^[[:space:]]*OperatorStatusRegistry:" /tmp/deploy.log | tail -1 | grep -oE '0x[a-fA-F0-9]{40}' || echo "")
+    export REWARD_VAULTS_ADDRESS=$(grep -E "^[[:space:]]*RewardVaults:" /tmp/deploy.log | tail -1 | grep -oE '0x[a-fA-F0-9]{40}' || echo "")
+    export INFLATION_POOL_ADDRESS=$(grep -E "^[[:space:]]*InflationPool:" /tmp/deploy.log | tail -1 | grep -oE '0x[a-fA-F0-9]{40}' || echo "")
+    export LIQUID_DELEGATION_FACTORY_ADDRESS=$(grep -E "^[[:space:]]*LiquidDelegationFactory:" /tmp/deploy.log | tail -1 | grep -oE '0x[a-fA-F0-9]{40}' || echo "")
+
+    if [[ -z "$TANGLE_PROXY" || -z "$STAKING_PROXY" || -z "$STATUS_REGISTRY" ]]; then
+        log_error "Could not parse core contract addresses from /tmp/deploy.log"
+        return 1
+    fi
+
+    if command -v cast >/dev/null 2>&1; then
+        local resolved_mbsm_registry=""
+        local resolved_master_mbsm=""
+        resolved_mbsm_registry="$(cast call --rpc-url "http://127.0.0.1:$ANVIL_PORT" "$TANGLE_PROXY" "mbsmRegistry()(address)" 2>/dev/null | tail -n 1 || true)"
+        if [[ -n "$resolved_mbsm_registry" && "$resolved_mbsm_registry" =~ ^0x[a-fA-F0-9]{40}$ && "$resolved_mbsm_registry" != "0x0000000000000000000000000000000000000000" ]]; then
+            export MBSM_REGISTRY_ADDRESS="$resolved_mbsm_registry"
+            resolved_master_mbsm="$(cast call --rpc-url "http://127.0.0.1:$ANVIL_PORT" "$MBSM_REGISTRY_ADDRESS" "getLatestMBSM()(address)" 2>/dev/null | tail -n 1 || true)"
+            if [[ -n "$resolved_master_mbsm" && "$resolved_master_mbsm" =~ ^0x[a-fA-F0-9]{40}$ && "$resolved_master_mbsm" != "0x0000000000000000000000000000000000000000" ]]; then
+                export MASTER_BLUEPRINT_SERVICE_MANAGER_ADDRESS="$resolved_master_mbsm"
+            fi
+        fi
+    fi
 
     # Parse token addresses from deployment log
     log_info "Parsing token addresses from deployment..."
@@ -808,15 +919,18 @@ deploy_contracts() {
     export EIGEN_ADDRESS=$(grep "EIGEN:" /tmp/deploy.log | head -1 | grep -oE '0x[a-fA-F0-9]{40}' || echo "")
     export CREDITS_ADDRESS=$(grep "Credits:" /tmp/deploy.log | head -1 | grep -oE '0x[a-fA-F0-9]{40}' || echo "")
     # Resolve TNT token from on-chain config (preferred) to avoid log parsing issues.
-    # Tangle.operatorBondToken() is the canonical source of truth.
+    # MultiAssetDelegation.operatorBondToken() is the canonical source of truth.
     local resolved_tnt=""
     if command -v cast >/dev/null 2>&1; then
-        resolved_tnt="$(cast call --rpc-url "http://127.0.0.1:$ANVIL_PORT" "$TANGLE_PROXY" "operatorBondToken()(address)" 2>/dev/null | tail -n 1 || true)"
+        resolved_tnt="$(cast call --rpc-url "http://127.0.0.1:$ANVIL_PORT" "$STAKING_PROXY" "operatorBondToken()(address)" 2>/dev/null | tail -n 1 || true)"
     fi
-    if [[ -n "$resolved_tnt" && "$resolved_tnt" =~ ^0x[a-fA-F0-9]{40}$ ]]; then
+    if [[ -n "$resolved_tnt" && "$resolved_tnt" =~ ^0x[a-fA-F0-9]{40}$ && "$resolved_tnt" != "0x0000000000000000000000000000000000000000" ]]; then
         export TNT_TOKEN_ADDRESS="$resolved_tnt"
     else
-        export TNT_TOKEN_ADDRESS=$(grep -E "TangleToken \\(bond asset\\):" /tmp/deploy.log | tail -1 | grep -oE '0x[a-fA-F0-9]{40}' || echo "")
+        export TNT_TOKEN_ADDRESS=$(grep -E "^[[:space:]]*TangleToken:" /tmp/deploy.log | tail -1 | grep -oE '0x[a-fA-F0-9]{40}' || echo "")
+        if [[ -z "$TNT_TOKEN_ADDRESS" ]]; then
+            TNT_TOKEN_ADDRESS=$(grep -E "TangleToken \\(bond asset\\):" /tmp/deploy.log | tail -1 | grep -oE '0x[a-fA-F0-9]{40}' || echo "")
+        fi
         if [[ -z "$TNT_TOKEN_ADDRESS" ]]; then
             TNT_TOKEN_ADDRESS=$(grep -E "Using existing TangleToken \\(bond asset\\):" /tmp/deploy.log | tail -1 | grep -oE '0x[a-fA-F0-9]{40}' || echo "")
         fi
@@ -829,7 +943,21 @@ deploy_contracts() {
             | grep -o '"result":"[^"]*"' | cut -d'"' -f4)
         if [[ -z "$tnt_code" || "$tnt_code" == "0x" ]]; then
             log_warn "Detected TNT token address has no code: $TNT_TOKEN_ADDRESS (will not fund TNT)"
-            export TNT_TOKEN_ADDRESS=""
+            local fallback_tnt
+            fallback_tnt=$(grep -E "^[[:space:]]*TangleToken:" /tmp/deploy.log | tail -1 | grep -oE '0x[a-fA-F0-9]{40}' || echo "")
+            if [[ -n "$fallback_tnt" && "$fallback_tnt" != "$TNT_TOKEN_ADDRESS" ]]; then
+                local fallback_tnt_code
+                fallback_tnt_code=$(curl -s http://127.0.0.1:$ANVIL_PORT -X POST -H "Content-Type: application/json" \
+                    --data "{\"jsonrpc\":\"2.0\",\"method\":\"eth_getCode\",\"params\":[\"$fallback_tnt\", \"latest\"],\"id\":1}" \
+                    | grep -o '"result":"[^"]*"' | cut -d'"' -f4)
+                if [[ -n "$fallback_tnt_code" && "$fallback_tnt_code" != "0x" ]]; then
+                    export TNT_TOKEN_ADDRESS="$fallback_tnt"
+                else
+                    export TNT_TOKEN_ADDRESS=""
+                fi
+            else
+                export TNT_TOKEN_ADDRESS=""
+            fi
         fi
     fi
 
@@ -857,6 +985,33 @@ deploy_contracts() {
         else
             log_success "Detected Credits contract: $CREDITS_ADDRESS"
         fi
+    fi
+
+    if [[ -n "${MBSM_REGISTRY_ADDRESS:-}" ]]; then
+        log_success "Detected MBSM registry: $MBSM_REGISTRY_ADDRESS"
+    else
+        log_warn "Could not detect MBSM registry address"
+    fi
+
+    if [[ -n "${MASTER_BLUEPRINT_SERVICE_MANAGER_ADDRESS:-}" ]]; then
+        log_success "Detected MasterBlueprintServiceManager: $MASTER_BLUEPRINT_SERVICE_MANAGER_ADDRESS"
+    else
+        log_warn "Could not detect MasterBlueprintServiceManager address"
+    fi
+
+    if [[ -n "${LIQUID_DELEGATION_FACTORY_ADDRESS:-}" ]]; then
+        local liquid_factory_code
+        liquid_factory_code="$(curl -s "http://127.0.0.1:$ANVIL_PORT" -X POST -H "Content-Type: application/json" \
+            --data "{\"jsonrpc\":\"2.0\",\"method\":\"eth_getCode\",\"params\":[\"$LIQUID_DELEGATION_FACTORY_ADDRESS\", \"latest\"],\"id\":1}" \
+            | grep -o '"result":"[^"]*"' | cut -d'"' -f4)"
+        if [[ -n "$liquid_factory_code" && "$liquid_factory_code" != "0x" ]]; then
+            log_success "Detected LiquidDelegationFactory: $LIQUID_DELEGATION_FACTORY_ADDRESS"
+        else
+            log_warn "Detected LiquidDelegationFactory has no deployed code: $LIQUID_DELEGATION_FACTORY_ADDRESS"
+            export LIQUID_DELEGATION_FACTORY_ADDRESS=""
+        fi
+    else
+        log_warn "Could not detect LiquidDelegationFactory address"
     fi
 
     log_success "Contracts deployed"
@@ -1241,9 +1396,12 @@ start_indexer() {
 
     # Check if we can skip codegen (generated files exist and are recent)
     local needs_codegen=true
-    if [[ -f "$INDEXER_DIR/generated/src/EventHandlers.res.js" ]]; then
+    local generated_dir
+    generated_dir="$(indexer_generated_dir)"
+
+    if [[ -f "$generated_dir/src/EventHandlers.res.js" ]]; then
         local config_mtime=$(stat -f %m config.yaml 2>/dev/null || stat -c %Y config.yaml 2>/dev/null)
-        local gen_mtime=$(stat -f %m "$INDEXER_DIR/generated/src/EventHandlers.res.js" 2>/dev/null || stat -c %Y "$INDEXER_DIR/generated/src/EventHandlers.res.js" 2>/dev/null)
+        local gen_mtime=$(stat -f %m "$generated_dir/src/EventHandlers.res.js" 2>/dev/null || stat -c %Y "$generated_dir/src/EventHandlers.res.js" 2>/dev/null)
         if [[ "$gen_mtime" -gt "$config_mtime" ]]; then
             log_info "Skipping codegen (generated files are up to date)"
             needs_codegen=false
@@ -1254,16 +1412,89 @@ start_indexer() {
         log_info "Running Envio codegen..."
         pnpm codegen
     fi
+    generated_dir="$(require_indexer_generated_dir)" || exit 1
 
     # Setup generated package symlink
     log_info "Setting up generated package symlink..."
     repair_generated_package_link
 
     # Clear persisted state
-    rm -f "$INDEXER_DIR/generated/persisted_state.envio.json"
+    rm -f "$generated_dir/persisted_state.envio.json"
+
+    if ! has_legacy_envio_compose; then
+        log_info "No generated Docker Compose file found; starting Envio managed dev stack..."
+        ensure_free_indexer_port
+        ensure_free_postgres_port
+        ensure_free_hasura_port
+        cd "$INDEXER_DIR"
+        env \
+            "ENVIO_RPC_URL_${ANVIL_CHAIN_ID}=http://127.0.0.1:$ANVIL_PORT" \
+            ENVIO_INDEXER_PORT="$ENVIO_INDEXER_PORT" \
+            METRICS_PORT="$METRICS_PORT" \
+            ENVIO_PG_PORT="$ENVIO_PG_PORT" \
+            ENVIO_PG_USER="$ENVIO_PG_USER" \
+            ENVIO_PG_PASSWORD="$ENVIO_PG_PASSWORD" \
+            ENVIO_PG_DATABASE="$ENVIO_PG_DATABASE" \
+            HASURA_EXTERNAL_PORT="$HASURA_EXTERNAL_PORT" \
+            GRAPHQL_PORT="$GRAPHQL_PORT" \
+            HASURA_GRAPHQL_ENDPOINT="$HASURA_GRAPHQL_ENDPOINT" \
+            HASURA_QUERY_ENDPOINT="$HASURA_QUERY_ENDPOINT" \
+            HASURA_HEALTH_ENDPOINT="$HASURA_HEALTH_ENDPOINT" \
+            TUI_OFF=true \
+            pnpm dev -r &
+        INDEXER_PID=$!
+        cd "$SCRIPT_DIR"
+        log_info "Waiting for Envio managed Hasura..."
+        for i in {1..150}; do
+            if ! kill -0 "$INDEXER_PID" 2>/dev/null; then
+                log_error "Envio managed indexer exited before Hasura became healthy"
+                return 1
+            fi
+
+            if curl -fsS "$HASURA_HEALTH_ENDPOINT" 2>/dev/null | grep -q "OK"; then
+                log_success "Envio managed Hasura is ready"
+                break
+            fi
+
+            if [[ "$i" -eq 150 ]]; then
+                log_error "Envio managed Hasura did not become healthy at $HASURA_HEALTH_ENDPOINT"
+                return 1
+            fi
+
+            [[ $((i % 10)) -eq 0 ]] && log_info "Waiting for Envio managed Hasura... ($i/150)"
+            sleep 1
+        done
+
+        log_info "Waiting for Envio managed GraphQL schema..."
+        for i in {1..60}; do
+            if ! kill -0 "$INDEXER_PID" 2>/dev/null; then
+                log_error "Envio managed indexer exited before GraphQL schema became ready"
+                return 1
+            fi
+
+            RESULT=$(curl -s "$HASURA_QUERY_ENDPOINT" \
+                -H "Content-Type: application/json" \
+                -d '{"query": "{ __schema { queryType { name } } }"}' 2>/dev/null)
+            if echo "$RESULT" | grep -q "__schema"; then
+                log_success "Envio managed GraphQL schema is ready"
+                break
+            fi
+
+            if [[ "$i" -eq 60 ]]; then
+                log_error "Envio managed GraphQL schema did not become ready at $HASURA_QUERY_ENDPOINT"
+                return 1
+            fi
+
+            [[ $((i % 10)) -eq 0 ]] && log_info "Waiting for Envio managed GraphQL schema... ($i/60)"
+            sleep 2
+        done
+
+        log_success "Envio managed indexer started (PID: $INDEXER_PID)"
+        return 0
+    fi
 
     # Check if Docker containers are already running
-    cd "$INDEXER_DIR/generated"
+    cd "$generated_dir"
     local docker_running=false
     if docker compose ps 2>/dev/null | grep -q "running"; then
         docker_running=true
@@ -1322,7 +1553,7 @@ start_indexer() {
     # Start the indexer
     log_info "Starting indexer..."
     ensure_free_indexer_port
-    cd "$INDEXER_DIR/generated"
+    cd "$generated_dir"
     repair_generated_package_link
     env \
         "ENVIO_RPC_URL_${ANVIL_CHAIN_ID}=http://127.0.0.1:$ANVIL_PORT" \
@@ -1655,8 +1886,37 @@ restart_indexer() {
     stop_indexer
     sleep 1
 
+    if ! has_legacy_envio_compose; then
+        log_info "Restarting Envio managed indexer..."
+        ensure_free_indexer_port
+        ensure_free_postgres_port
+        ensure_free_hasura_port
+        cd "$INDEXER_DIR"
+        env \
+            "ENVIO_RPC_URL_${ANVIL_CHAIN_ID}=http://127.0.0.1:$ANVIL_PORT" \
+            ENVIO_INDEXER_PORT="$ENVIO_INDEXER_PORT" \
+            METRICS_PORT="$METRICS_PORT" \
+            ENVIO_PG_PORT="$ENVIO_PG_PORT" \
+            ENVIO_PG_USER="$ENVIO_PG_USER" \
+            ENVIO_PG_PASSWORD="$ENVIO_PG_PASSWORD" \
+            ENVIO_PG_DATABASE="$ENVIO_PG_DATABASE" \
+            HASURA_EXTERNAL_PORT="$HASURA_EXTERNAL_PORT" \
+            GRAPHQL_PORT="$GRAPHQL_PORT" \
+            HASURA_GRAPHQL_ENDPOINT="$HASURA_GRAPHQL_ENDPOINT" \
+            HASURA_QUERY_ENDPOINT="$HASURA_QUERY_ENDPOINT" \
+            HASURA_HEALTH_ENDPOINT="$HASURA_HEALTH_ENDPOINT" \
+            TUI_OFF=true \
+            pnpm dev -r &
+        INDEXER_PID=$!
+        cd "$SCRIPT_DIR"
+        log_success "Indexer restarted (PID: $INDEXER_PID)"
+        return
+    fi
+
     # Ensure Docker containers (postgres, hasura) are running
-    cd "$INDEXER_DIR/generated"
+    local generated_dir
+    generated_dir="$(require_indexer_generated_dir)" || return 1
+    cd "$generated_dir"
     if ! docker compose ps 2>/dev/null | grep -q "running"; then
         log_info "Docker containers not running, starting them..."
         ensure_free_postgres_port
@@ -1711,7 +1971,18 @@ restart_indexer() {
 
 docker_down() {
     log_info "Running docker compose down..."
-    cd "$INDEXER_DIR/generated"
+    if ! has_legacy_envio_compose; then
+        cd "$INDEXER_DIR"
+        pnpm envio local docker down 2>/dev/null \
+            && log_success "Envio local docker down complete" \
+            || log_error "Envio local docker down failed"
+        cd "$SCRIPT_DIR"
+        return
+    fi
+
+    local generated_dir
+    generated_dir="$(require_indexer_generated_dir)" || return 1
+    cd "$generated_dir"
     if [[ "$WIPE_DOCKER_VOLUMES" == "true" ]]; then
         docker compose down -v --remove-orphans 2>/dev/null \
             && log_success "Docker compose down (with volumes) complete" \
@@ -1726,7 +1997,18 @@ docker_down() {
 
 docker_up() {
     log_info "Running docker compose up..."
-    cd "$INDEXER_DIR/generated"
+    if ! has_legacy_envio_compose; then
+        cd "$INDEXER_DIR"
+        pnpm envio local docker up 2>/dev/null \
+            && log_success "Envio local docker up complete" \
+            || log_error "Envio local docker up failed"
+        cd "$SCRIPT_DIR"
+        return
+    fi
+
+    local generated_dir
+    generated_dir="$(require_indexer_generated_dir)" || return 1
+    cd "$generated_dir"
     ensure_free_postgres_port
     ensure_free_hasura_port
     docker compose up -d --remove-orphans 2>/dev/null \
@@ -1784,7 +2066,9 @@ show_status() {
     fi
 
     # Check Docker containers
-    local docker_status=$(cd "$INDEXER_DIR/generated" && docker compose ps --format "{{.Status}}" 2>/dev/null | head -1)
+    local generated_dir
+    generated_dir="$(indexer_generated_dir)"
+    local docker_status=$(cd "$generated_dir" 2>/dev/null && docker compose ps --format "{{.Status}}" 2>/dev/null | head -1)
     if [[ -n "$docker_status" && "$docker_status" == *"Up"* ]]; then
         echo -e "  Docker:            ${GREEN}Running${NC}"
     else
@@ -1813,6 +2097,9 @@ show_addresses() {
     echo "  - Tangle:              ${TANGLE_PROXY:-Not deployed}"
     echo "  - MultiAssetDelegation: ${STAKING_PROXY:-Not deployed}"
     echo "  - StatusRegistry:       ${STATUS_REGISTRY:-Not deployed}"
+    echo "  - MBSMRegistry:         ${MBSM_REGISTRY_ADDRESS:-Not deployed}"
+    echo "  - Master BSM:           ${MASTER_BLUEPRINT_SERVICE_MANAGER_ADDRESS:-Not deployed}"
+    echo "  - LiquidDelegation:     ${LIQUID_DELEGATION_FACTORY_ADDRESS:-Not deployed}"
     echo ""
     echo "Migration Contracts:"
     echo "  - TangleMigration:      ${TANGLE_MIGRATION_ADDRESS:-Not deployed}"
@@ -2085,7 +2372,9 @@ show_logs() {
 
 clear_indexer_state() {
     log_info "Clearing indexer state..."
-    rm -f "$INDEXER_DIR/generated/persisted_state.envio.json"
+    local generated_dir
+    generated_dir="$(require_indexer_generated_dir)" || return 1
+    rm -f "$generated_dir/persisted_state.envio.json"
 
     ensure_postgres_password
     PGPASSWORD="$ENVIO_PG_PASSWORD" psql -h localhost -p "$ENVIO_PG_PORT" -U "$ENVIO_PG_USER" -d "$ENVIO_PG_DATABASE" -c \
@@ -2298,7 +2587,13 @@ interactive_cli() {
                 pkill -f "ts-node src/Index" 2>/dev/null || true
                 pkill -f "activity-generator" 2>/dev/null || true
                 # Stop Docker
-                cd "$INDEXER_DIR/generated" && docker compose down 2>/dev/null || true
+                if ! has_legacy_envio_compose; then
+                    cd "$INDEXER_DIR" 2>/dev/null && pnpm envio local docker down 2>/dev/null || true
+                else
+                    local generated_dir
+                    generated_dir="$(indexer_generated_dir)"
+                    cd "$generated_dir" 2>/dev/null && docker compose down 2>/dev/null || true
+                fi
                 cd "$SCRIPT_DIR"
                 # Kill Anvil
                 lsof -ti:$ANVIL_PORT | xargs kill 2>/dev/null || true
@@ -2349,64 +2644,99 @@ resume_session() {
         start_anvil resume
     fi
 
-    # Check Docker containers
-    cd "$INDEXER_DIR/generated"
-    if docker compose ps 2>/dev/null | grep -q "running"; then
-        log_success "Docker containers (postgres, hasura) are running"
-        sync_ports_from_docker_compose
-    else
-        log_warn "Docker containers not running. Starting..."
-        ensure_free_postgres_port
-        ensure_free_hasura_port
-        docker compose up -d --remove-orphans
-        sync_ports_from_docker_compose
-        sleep 3
-        # Wait for Hasura
-        for i in {1..30}; do
-            if curl -s "$HASURA_HEALTH_ENDPOINT" | grep -q "OK" 2>/dev/null; then
-                break
-            fi
-            sleep 1
-        done
-        env \
-            HASURA_EXTERNAL_PORT="$HASURA_EXTERNAL_PORT" \
-            GRAPHQL_PORT="$GRAPHQL_PORT" \
-            HASURA_GRAPHQL_ENDPOINT="$HASURA_GRAPHQL_ENDPOINT" \
-            HASURA_QUERY_ENDPOINT="$HASURA_QUERY_ENDPOINT" \
-            HASURA_HEALTH_ENDPOINT="$HASURA_HEALTH_ENDPOINT" \
-            pnpm db-setup 2>/dev/null || true
-        log_success "Docker containers started"
-    fi
-    cd "$SCRIPT_DIR"
+    local generated_dir
+    generated_dir="$(indexer_generated_dir)"
 
-    # Check if indexer is running
-    if pgrep -f "ts-node src/Index" > /dev/null 2>&1; then
-        INDEXER_PID=$(pgrep -f "ts-node src/Index" | head -1)
-        log_success "Indexer is running (PID: $INDEXER_PID)"
+    if ! has_legacy_envio_compose; then
+        if pgrep -f "envio (dev|start)" > /dev/null 2>&1; then
+            INDEXER_PID=$(pgrep -f "envio (dev|start)" | head -1)
+            log_success "Envio managed indexer is running (PID: $INDEXER_PID)"
+        else
+            log_warn "Envio managed indexer not running. Starting..."
+            ensure_free_indexer_port
+            ensure_free_postgres_port
+            ensure_free_hasura_port
+            cd "$INDEXER_DIR"
+            env \
+                "ENVIO_RPC_URL_${ANVIL_CHAIN_ID}=http://127.0.0.1:$ANVIL_PORT" \
+                ENVIO_INDEXER_PORT="$ENVIO_INDEXER_PORT" \
+                METRICS_PORT="$METRICS_PORT" \
+                ENVIO_PG_PORT="$ENVIO_PG_PORT" \
+                ENVIO_PG_USER="$ENVIO_PG_USER" \
+                ENVIO_PG_PASSWORD="$ENVIO_PG_PASSWORD" \
+                ENVIO_PG_DATABASE="$ENVIO_PG_DATABASE" \
+                HASURA_EXTERNAL_PORT="$HASURA_EXTERNAL_PORT" \
+                GRAPHQL_PORT="$GRAPHQL_PORT" \
+                HASURA_GRAPHQL_ENDPOINT="$HASURA_GRAPHQL_ENDPOINT" \
+                HASURA_QUERY_ENDPOINT="$HASURA_QUERY_ENDPOINT" \
+                HASURA_HEALTH_ENDPOINT="$HASURA_HEALTH_ENDPOINT" \
+                TUI_OFF=true \
+                pnpm dev -r &
+            INDEXER_PID=$!
+            cd "$SCRIPT_DIR"
+            sleep 5
+            log_success "Envio managed indexer started (PID: $INDEXER_PID)"
+        fi
     else
-        log_warn "Indexer not running. Starting..."
-        cd "$INDEXER_DIR/generated"
-        ensure_free_indexer_port
-        repair_generated_package_link
-        env \
-            "ENVIO_RPC_URL_${ANVIL_CHAIN_ID}=http://127.0.0.1:$ANVIL_PORT" \
-            ENVIO_INDEXER_PORT="$ENVIO_INDEXER_PORT" \
-            METRICS_PORT="$METRICS_PORT" \
-            ENVIO_PG_PORT="$ENVIO_PG_PORT" \
-            ENVIO_PG_USER="$ENVIO_PG_USER" \
-            ENVIO_PG_PASSWORD="$ENVIO_PG_PASSWORD" \
-            ENVIO_PG_DATABASE="$ENVIO_PG_DATABASE" \
-            HASURA_EXTERNAL_PORT="$HASURA_EXTERNAL_PORT" \
-            GRAPHQL_PORT="$GRAPHQL_PORT" \
-            HASURA_GRAPHQL_ENDPOINT="$HASURA_GRAPHQL_ENDPOINT" \
-            HASURA_QUERY_ENDPOINT="$HASURA_QUERY_ENDPOINT" \
-            HASURA_HEALTH_ENDPOINT="$HASURA_HEALTH_ENDPOINT" \
-            TUI_OFF=true \
-            pnpm start &
-        INDEXER_PID=$!
+        generated_dir="$(require_indexer_generated_dir)" || exit 1
+        cd "$generated_dir"
+        if docker compose ps 2>/dev/null | grep -q "running"; then
+            log_success "Docker containers (postgres, hasura) are running"
+            sync_ports_from_docker_compose
+        else
+            log_warn "Docker containers not running. Starting..."
+            ensure_free_postgres_port
+            ensure_free_hasura_port
+            docker compose up -d --remove-orphans
+            sync_ports_from_docker_compose
+            sleep 3
+            # Wait for Hasura
+            for i in {1..30}; do
+                if curl -s "$HASURA_HEALTH_ENDPOINT" | grep -q "OK" 2>/dev/null; then
+                    break
+                fi
+                sleep 1
+            done
+            env \
+                HASURA_EXTERNAL_PORT="$HASURA_EXTERNAL_PORT" \
+                GRAPHQL_PORT="$GRAPHQL_PORT" \
+                HASURA_GRAPHQL_ENDPOINT="$HASURA_GRAPHQL_ENDPOINT" \
+                HASURA_QUERY_ENDPOINT="$HASURA_QUERY_ENDPOINT" \
+                HASURA_HEALTH_ENDPOINT="$HASURA_HEALTH_ENDPOINT" \
+                pnpm db-setup 2>/dev/null || true
+            log_success "Docker containers started"
+        fi
         cd "$SCRIPT_DIR"
-        sleep 3
-        log_success "Indexer started (PID: $INDEXER_PID)"
+
+        # Check if indexer is running
+        if pgrep -f "ts-node src/Index" > /dev/null 2>&1; then
+            INDEXER_PID=$(pgrep -f "ts-node src/Index" | head -1)
+            log_success "Indexer is running (PID: $INDEXER_PID)"
+    else
+            log_warn "Indexer not running. Starting..."
+            cd "$generated_dir"
+            ensure_free_indexer_port
+            repair_generated_package_link
+            env \
+                "ENVIO_RPC_URL_${ANVIL_CHAIN_ID}=http://127.0.0.1:$ANVIL_PORT" \
+                ENVIO_INDEXER_PORT="$ENVIO_INDEXER_PORT" \
+                METRICS_PORT="$METRICS_PORT" \
+                ENVIO_PG_PORT="$ENVIO_PG_PORT" \
+                ENVIO_PG_USER="$ENVIO_PG_USER" \
+                ENVIO_PG_PASSWORD="$ENVIO_PG_PASSWORD" \
+                ENVIO_PG_DATABASE="$ENVIO_PG_DATABASE" \
+                HASURA_EXTERNAL_PORT="$HASURA_EXTERNAL_PORT" \
+                GRAPHQL_PORT="$GRAPHQL_PORT" \
+                HASURA_GRAPHQL_ENDPOINT="$HASURA_GRAPHQL_ENDPOINT" \
+                HASURA_QUERY_ENDPOINT="$HASURA_QUERY_ENDPOINT" \
+                HASURA_HEALTH_ENDPOINT="$HASURA_HEALTH_ENDPOINT" \
+                TUI_OFF=true \
+                pnpm start &
+            INDEXER_PID=$!
+            cd "$SCRIPT_DIR"
+            sleep 3
+            log_success "Indexer started (PID: $INDEXER_PID)"
+        fi
     fi
 
     # Check activity generator (optional)
@@ -2457,13 +2787,19 @@ main() {
         log_info "Cleaning cached state..."
         rm -rf "$CACHE_DIR"
         if [[ "$CLEAN_DOCKER" == "true" ]]; then
-            cd "$INDEXER_DIR/generated" 2>/dev/null && (
+            if ! has_legacy_envio_compose; then
+                cd "$INDEXER_DIR" 2>/dev/null && pnpm envio stop 2>/dev/null || true
+            else
+                local generated_dir
+                generated_dir="$(indexer_generated_dir)"
+                cd "$generated_dir" 2>/dev/null && (
                 if [[ "$WIPE_DOCKER_VOLUMES" == "true" ]]; then
                     docker compose down -v --remove-orphans 2>/dev/null || true
                 else
                     docker compose down --remove-orphans 2>/dev/null || true
                 fi
-            )
+                )
+            fi
         else
             log_warn "CLEAN_DOCKER=false: not running docker compose down during clean"
         fi

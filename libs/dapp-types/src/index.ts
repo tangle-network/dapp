@@ -3,6 +3,7 @@
 
 export * from './ChainId';
 export * from './Currency';
+export * from './EventBus';
 export * from './Props';
 export * from './Storage';
 export { default as Storage } from './Storage';
@@ -10,6 +11,7 @@ export * from './WalletId';
 export * from './WebbError';
 export * from './utils';
 export * from './TypedChainId';
+export { default as WalletNotInstalledError } from './errors/WalletNotInstalledError';
 
 export const zeroAddress = '0x0000000000000000000000000000000000000000';
 export const ZERO = 'ZERO';

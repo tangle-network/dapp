@@ -5,8 +5,8 @@ import {
   Account,
   AccountsAdapter,
   type PromiseOrT,
-} from '@tangle-network/abstract-api-provider/account';
-import getWagmiConfig from '@tangle-network/dapp-config/wagmi-config';
+} from '@tangle-network/abstract-api-provider';
+import { getWagmiConfig } from '@tangle-network/dapp-config';
 import type { Address, JsonRpcAccount } from 'viem';
 import type { Connector } from 'wagmi';
 import { getAccount } from 'wagmi/actions';

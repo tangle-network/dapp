@@ -1,4 +1,4 @@
-import type getWagmiConfig from '@tangle-network/dapp-config/wagmi-config';
+import type { getWagmiConfig } from '@tangle-network/dapp-config';
 
 export default async function waitForConfigReady(
   config: ReturnType<typeof getWagmiConfig>,

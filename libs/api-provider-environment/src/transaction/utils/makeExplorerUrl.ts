@@ -1,6 +1,6 @@
 import { encodeAddress } from '@polkadot/util-crypto';
-import { WebbProviderType } from '@tangle-network/abstract-api-provider/types';
-import { chainsConfig as substrateChainsConfig } from '@tangle-network/dapp-config/chains/substrate';
+import { WebbProviderType } from '@tangle-network/abstract-api-provider';
+import { substrateChainsConfig } from '@tangle-network/dapp-config';
 
 export const isPolkadotJsDashboard = (explorerUrl: string): boolean => {
   return explorerUrl.includes('polkadot.js.org/apps');

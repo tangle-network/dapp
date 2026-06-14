@@ -1,17 +1,17 @@
 /* Tangle Cloud styles. Tokens (--md3-*, --hsl-*, --bg-*, --text-*, --border-*,
  * --btn-*, --shadow-*, [data-sandbox-theme='vault'] light overrides) come from
  * @tangle-network/brand via the sandbox-ui vendor CSS preloaded in index.html.
- * This file adds Geist typeface, tangle/vault theme deltas, and cloud-only
- * component classes. `!important` is reserved for fights against legacy
- * ui-components @layer base rules ('*:not(code) Satoshi', 'h1..h6 text-mono-*')
- * that arrive in the bundle BEFORE cloud styles. */
+ * This file adds tangle/vault theme deltas and cloud-only component classes.
+ * `!important` is reserved for fights against legacy ui-components @layer base
+ * rules ('*:not(code) Satoshi', 'h1..h6 text-mono-*') that arrive in the bundle
+ * BEFORE cloud styles. */
 @import '@tangle-network/brand/styles/tokens.css';
 
 :root,
 [data-sandbox-ui] {
-  --font-sans: 'Geist Sans', ui-sans-serif, system-ui, sans-serif;
-  --font-display: 'Geist Sans', ui-sans-serif, system-ui, sans-serif;
-  --font-mono: 'Geist Mono', ui-monospace, SFMono-Regular, monospace;
+  --font-sans: 'Satoshi', ui-sans-serif, system-ui, sans-serif;
+  --font-display: 'Satoshi', ui-sans-serif, system-ui, sans-serif;
+  --font-mono: 'Cousine', ui-monospace, SFMono-Regular, monospace;
 }
 
 html,
@@ -29,14 +29,7 @@ body {
   font-family: var(--font-sans);
 }
 
-/* Override ui-components' .bg-tangle wallpaper with the brand radial gradient. */
-.tangle-cloud-shell.bg-tangle,
-[data-sandbox-ui].bg-tangle {
-  background: var(--bg-root);
-  background-attachment: initial;
-}
 .tangle-cloud-shell {
-  background: var(--bg-root);
   color: var(--text-primary);
 }
 
@@ -93,13 +86,30 @@ body {
  * fires when a requested weight is missing from a fallback font) doesn't
  * sneak in slanted glyphs on body text. Italic is a deliberate emphasis
  * marker in this app and shows up only via explicit `.italic` class. */
-.tangle-cloud-shell :where(h1, h2, h3, h4, h5, h6, p, label, li, td, th, button, a, span) {
+.tangle-cloud-shell
+  :where(h1, h2, h3, h4, h5, h6, p, label, li, td, th, button, a, span) {
   color: inherit;
 }
 .tangle-cloud-shell
   :where(
-    h1, h2, h3, h4, h5, h6, p, span, a, button, label, li, td, th,
-    input, select, textarea, div
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    h6,
+    p,
+    span,
+    a,
+    button,
+    label,
+    li,
+    td,
+    th,
+    input,
+    select,
+    textarea,
+    div
   ):not(.italic) {
   /* `!important` + form controls: the previous rule (no !important, no
    * inputs/selects) let slanted fallback glyphs through on the search bar
@@ -215,9 +225,15 @@ body {
  * those alone so my centering math doesn't drag the drawer back to center.
  */
 @media (min-width: 1024px) {
-  [role='dialog'][data-state='open']:not([class*='left-auto']):not([class*='right-auto']):not([class*='translate-x-0']),
-  [role='dialog'][data-state='closed']:not([class*='left-auto']):not([class*='right-auto']):not([class*='translate-x-0']) {
-    --tw-translate-x: calc(-50% + var(--cloud-sidebar-width, 16rem) / 2) !important;
+  [role='dialog'][data-state='open']:not([class*='left-auto']):not(
+      [class*='right-auto']
+    ):not([class*='translate-x-0']),
+  [role='dialog'][data-state='closed']:not([class*='left-auto']):not(
+      [class*='right-auto']
+    ):not([class*='translate-x-0']) {
+    --tw-translate-x: calc(
+      -50% + var(--cloud-sidebar-width, 16rem) / 2
+    ) !important;
   }
 }
 

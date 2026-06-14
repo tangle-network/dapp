@@ -2,7 +2,7 @@
 
 import { InformationLine } from '@tangle-network/icons';
 import cx from 'classnames';
-import { FC, useCallback, useEffect, useState } from 'react';
+import { FC, useCallback, useState } from 'react';
 import { twMerge } from 'tailwind-merge';
 import { Typography } from '../../typography/Typography';
 import { Button } from '../buttons';
@@ -14,24 +14,23 @@ export const FileUploadField: FC<FileUploadFieldProps> = ({
   onUpload,
   value,
 }) => {
-  // State for the note value
-  const [note, setNote] = useState(value);
+  const [noteState, setNoteState] = useState(() => ({
+    propValue: value,
+    note: value,
+  }));
+  const note = noteState.propValue === value ? noteState.note : value;
 
   // State for uploading note
   const [isUploading, setIsUploading] = useState(false);
 
-  useEffect(() => {
-    setNote(value);
-  }, [value]);
-
   // Handle change event
   const handleChange = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
-      const { value } = e.target;
-      setNote(value);
-      onChange?.(value);
+      const nextValue = e.target.value;
+      setNoteState({ propValue: value, note: nextValue });
+      onChange?.(nextValue);
     },
-    [onChange],
+    [onChange, value],
   );
 
   // Handle upload event

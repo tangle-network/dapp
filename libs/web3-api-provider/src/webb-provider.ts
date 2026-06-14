@@ -5,14 +5,14 @@ import {
   WebbApiProvider,
   WebbProviderEvents,
 } from '@tangle-network/abstract-api-provider';
-import { ApiConfig } from '@tangle-network/dapp-config';
-import getWagmiConfig from '@tangle-network/dapp-config/wagmi-config';
-import { WebbError, WebbErrorCodes } from '@tangle-network/dapp-types';
-import { EventBus } from '@tangle-network/dapp-types/EventBus';
 import {
   ChainType,
+  EventBus,
+  WebbError,
+  WebbErrorCodes,
   calculateTypedChainId,
-} from '@tangle-network/dapp-types/TypedChainId';
+} from '@tangle-network/dapp-types';
+import { ApiConfig, getWagmiConfig } from '@tangle-network/dapp-config';
 import assert from 'assert';
 import values from 'lodash/values';
 import { BehaviorSubject } from 'rxjs';

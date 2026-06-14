@@ -1,6 +1,6 @@
 import { PresetTypedChainId, SolanaChainId } from '@tangle-network/dapp-types';
 import { ChainConfig } from '../chain-config.interface';
-import { ChainType } from '@tangle-network/dapp-types/TypedChainId';
+import { ChainType } from '@tangle-network/dapp-types';
 
 export const chainsConfig = {
   [PresetTypedChainId.SolanaMainnet]: {

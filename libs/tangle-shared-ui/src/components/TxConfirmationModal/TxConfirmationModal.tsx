@@ -314,7 +314,7 @@ const TxConfirmationModal: FC<Props> = ({
     }
 
     return null;
-  }, [tx?.details]);
+  }, [tx]);
 
   // Fetch token metadata for proper amount formatting
   const { data: tokenMetadatas } = useEvmAssetMetadatas(

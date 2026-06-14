@@ -5,7 +5,7 @@ import {
   AmountFormatStyle,
   FormatOptions,
 } from '@tangle-network/ui-components';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useState } from 'react';
 
 import cleanNumericInputString from '../utils/cleanNumericInputString';
 import parseChainUnits, {
@@ -86,9 +86,18 @@ const useInputAmount = ({
 }: Options) => {
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
-  const [displayAmount, setDisplayAmount] = useState(
-    amount !== null ? formatBn(amount, decimals, INPUT_AMOUNT_FORMAT) : '',
-  );
+  const [displayState, setDisplayState] = useState(() => ({
+    amount,
+    decimals,
+    displayAmount:
+      amount !== null ? formatBn(amount, decimals, INPUT_AMOUNT_FORMAT) : '',
+  }));
+  const displayAmount =
+    displayState.amount === amount && displayState.decimals === decimals
+      ? displayState.displayAmount
+      : amount !== null
+        ? formatBn(amount, decimals, INPUT_AMOUNT_FORMAT)
+        : '';
 
   const handleChange = useCallback(
     (newAmountString: string) => {
@@ -99,7 +108,11 @@ const useInputAmount = ({
         return;
       }
 
-      setDisplayAmount(cleanAmountString);
+      setDisplayState({
+        amount,
+        decimals,
+        displayAmount: cleanAmountString,
+      });
 
       const amountOrError = safeParseInputAmount({
         amountString: cleanAmountString,
@@ -130,30 +143,24 @@ const useInputAmount = ({
       maxErrorMessage,
       min,
       minErrorMessage,
+      amount,
       setAmount,
     ],
   );
 
   const setDisplayAmount_ = useCallback(
     (amount: BN) => {
-      setDisplayAmount(
-        formatBn(amount, decimals, {
+      setDisplayState({
+        amount,
+        decimals,
+        displayAmount: formatBn(amount, decimals, {
           ...INPUT_AMOUNT_FORMAT,
           includeCommas: false,
         }),
-      );
+      });
     },
     [decimals],
   );
-
-  useEffect(() => {
-    // If the amount is null, then the display amount should always be empty.
-    // This handle the case where the amount is set to null after submitting a tx
-    // but the display amount is not updated
-    if (!amount) {
-      setDisplayAmount('');
-    }
-  }, [amount]);
 
   const trySetAmount = useCallback(
     (newAmount: BN): boolean => {

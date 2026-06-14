@@ -202,6 +202,8 @@ export const Button = forwardRef<ElementRef<typeof SandboxButton>, ButtonProps>(
   },
 );
 
+Button.displayName = 'Button';
+
 export type InputProps = Omit<
   ComponentProps<typeof SandboxInput>,
   'onChange'
@@ -336,13 +338,51 @@ export const ModalFooterActions: FC<{
   </DialogFooter>
 );
 
+// Map every `color` label callers pass to a *distinct* Badge variant. The old
+// map only knew green→success / red→destructive, so blue/purple/yellow all
+// collapsed to one identical `outline` pill — Fixed vs Dynamic membership and
+// PayOnce vs Subscription vs EventDriven pricing rendered the same (audit
+// F1-svc). The Badge variant set is the source of truth:
+// default | secondary | destructive | outline | success | warning | info.
+//
+// New status badges should prefer the canonical `<StatusPill>` +
+// `statusToneFor(domain, status)` (src/components/chrome). This `Chip` is the
+// legacy color-string surface kept truthful for existing call sites.
+const CHIP_COLOR_TO_VARIANT: Record<
+  string,
+  | 'default'
+  | 'secondary'
+  | 'destructive'
+  | 'outline'
+  | 'success'
+  | 'warning'
+  | 'info'
+> = {
+  green: 'success',
+  emerald: 'success',
+  red: 'destructive',
+  rose: 'destructive',
+  yellow: 'warning',
+  amber: 'warning',
+  orange: 'warning',
+  blue: 'info',
+  cyan: 'info',
+  purple: 'secondary',
+  violet: 'secondary',
+  grey: 'outline',
+  gray: 'outline',
+  'dark-grey': 'outline',
+  'dark-gray': 'outline',
+  neutral: 'outline',
+};
+
 export const Chip: FC<{
   color?: string;
   className?: string;
   children: ReactNode;
 }> = ({ color, className, children }) => {
   const variant =
-    color === 'green' ? 'success' : color === 'red' ? 'destructive' : 'outline';
+    (color && CHIP_COLOR_TO_VARIANT[color.toLowerCase()]) ?? 'outline';
 
   return (
     <Badge variant={variant} className={className}>

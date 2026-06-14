@@ -174,11 +174,15 @@ function useAgnosticTx<
     if (nextAgnosticStatus === null) {
       substrateReset();
       evmReset();
-      setAgnosticStatus(TxStatus.NOT_YET_INITIATED);
+      queueMicrotask(() => {
+        setAgnosticStatus(TxStatus.NOT_YET_INITIATED);
+      });
     }
     // Only update the transaction status when it changes.
     else if (nextAgnosticStatus !== agnosticStatus) {
-      setAgnosticStatus(nextAgnosticStatus);
+      queueMicrotask(() => {
+        setAgnosticStatus(nextAgnosticStatus);
+      });
     }
   }, [
     activeAccountAddress,

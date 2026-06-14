@@ -9,6 +9,7 @@ const DAY = HOUR * 24;
 const WEEK = DAY * 7;
 const MONTH = DAY * 30;
 const YEAR = DAY * 365;
+const defaultNow = Date.now;
 
 function dateParser(date: string | number | Date): Date {
   const parsed = new Date(date);
@@ -92,11 +93,11 @@ const useTimeAgo = (opts: TimeAgoOptions) => {
     live = true,
     maxPeriod = WEEK,
     minPeriod = 0,
-    now = () => Date.now(),
+    now = defaultNow,
     formatter = defaultFormatter,
   } = opts;
 
-  const [timeNow, setTimeNow] = useState(now());
+  const [timeNow, setTimeNow] = useState(() => now());
 
   useEffect(() => {
     const tick = (): 0 | NodeJS.Timeout => {

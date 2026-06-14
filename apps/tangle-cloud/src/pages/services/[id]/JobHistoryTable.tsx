@@ -17,10 +17,10 @@ import {
   EmptyState,
   SkeletonTable,
 } from '@tangle-network/sandbox-ui/primitives';
+import { StatusPill, statusToneFor } from '../../../components/chrome';
 import type { JobCall } from '@tangle-network/tangle-shared-ui/data/graphql';
 import { isOptimisticJob } from '@tangle-network/tangle-shared-ui/data/graphql/useJobs';
 import type { BlueprintJobDefinition } from '@tangle-network/tangle-shared-ui/data/services';
-import { twMerge } from 'tailwind-merge';
 import { JobResultsModal } from './JobResultsModal';
 
 interface Props {
@@ -61,11 +61,7 @@ const makeColumns = (jobDefinitions?: BlueprintJobDefinition[]) => [
     cell: (info) => {
       const job = info.row.original;
       if (isOptimisticJob(job)) {
-        return (
-          <span className="px-2 py-1 rounded text-xs bg-primary/20 text-primary animate-pulse">
-            Confirming...
-          </span>
-        );
+        return <StatusPill tone="pending">Confirming</StatusPill>;
       }
       return (
         <Text variant="body2" className="font-mono">
@@ -114,24 +110,12 @@ const makeColumns = (jobDefinitions?: BlueprintJobDefinition[]) => [
     cell: (info) => {
       const job = info.row.original;
       if (isOptimisticJob(job)) {
-        return (
-          <span className="px-2 py-1 rounded text-xs bg-primary/20 text-primary animate-pulse">
-            Confirming
-          </span>
-        );
+        return <StatusPill tone="pending">Confirming</StatusPill>;
       }
       const completed = info.getValue();
+      const label = completed ? 'Completed' : 'Pending';
       return (
-        <span
-          className={twMerge(
-            'px-2 py-1 rounded text-xs',
-            completed
-              ? 'bg-green-500/20 text-green-400'
-              : 'bg-yellow-500/20 text-yellow-400',
-          )}
-        >
-          {completed ? 'Completed' : 'Pending'}
-        </span>
+        <StatusPill tone={statusToneFor('job', label)}>{label}</StatusPill>
       );
     },
   }),

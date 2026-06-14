@@ -1,19 +1,15 @@
-import { useEffect, useState } from 'react';
-import { Chain, createPublicClient, http, PublicClient } from 'viem';
+import { useMemo } from 'react';
+import { Chain, createPublicClient, http } from 'viem';
 
 const useViemPublicClientWithChain = (chain: Chain) => {
-  const [publicClient, setPublicClient] = useState<PublicClient | null>(null);
-
-  useEffect(() => {
-    const newPublicClient = createPublicClient({
-      chain,
-      transport: http(),
-    });
-
-    setPublicClient(newPublicClient);
-  }, [chain]);
-
-  return publicClient;
+  return useMemo(
+    () =>
+      createPublicClient({
+        chain,
+        transport: http(),
+      }),
+    [chain],
+  );
 };
 
 export default useViemPublicClientWithChain;

@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useSyncExternalStore } from 'react';
 import { useConfig } from 'wagmi';
 import 'zustand/middleware';
 import type { Mutate, StoreApi } from 'zustand/vanilla';
@@ -14,29 +14,24 @@ import type { Mutate, StoreApi } from 'zustand/vanilla';
  * @see https://docs.pmnd.rs/zustand/integrations/persisting-store-data#how-can-i-check-if-my-store-has-been-hydrated
  */
 export default function useWagmiHydration() {
-  const [hydrated, setHydrated] = useState(false);
-
   const wagmiConfig = useConfig();
+  const store: Mutate<
+    StoreApi<unknown>,
+    [['zustand/persist', unknown]]
+  > = wagmiConfig._internal.store;
 
-  useEffect(() => {
-    const store: Mutate<
-      StoreApi<unknown>,
-      [['zustand/persist', unknown]]
-    > = wagmiConfig._internal.store;
+  return useSyncExternalStore(
+    (onStoreChange) => {
+      const unsubHydrate = store.persist.onHydrate(onStoreChange);
+      const unsubFinishHydration =
+        store.persist.onFinishHydration(onStoreChange);
 
-    const unsubHydrate = store.persist.onHydrate(() => setHydrated(false));
-
-    const unsubFinishHydration = store.persist.onFinishHydration(() =>
-      setHydrated(true),
-    );
-
-    setHydrated(store.persist.hasHydrated());
-
-    return () => {
-      unsubHydrate();
-      unsubFinishHydration();
-    };
-  }, [wagmiConfig._internal.store]);
-
-  return hydrated;
+      return () => {
+        unsubHydrate();
+        unsubFinishHydration();
+      };
+    },
+    () => store.persist.hasHydrated(),
+    () => false,
+  );
 }

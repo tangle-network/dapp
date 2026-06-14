@@ -1,5 +1,10 @@
 import type { RowSelectionState } from '@tanstack/table-core';
-import type { Dispatch, PropsWithChildren, SetStateAction } from 'react';
+import type {
+  Dispatch,
+  PropsWithChildren,
+  ReactNode,
+  SetStateAction,
+} from 'react';
 
 export type BlueprintItemProps = {
   id: bigint;
@@ -13,7 +18,9 @@ export type BlueprintItemProps = {
   tvl?: string | null;
   isBoosted?: boolean;
   category: string | null;
-  renderImage: (imageUrl: string) => React.ReactNode;
+  renderImage: (imageUrl: string) => ReactNode;
+  action?: ReactNode;
+  onClick?: () => void;
   isSelected?: boolean;
   onSelectedChange?: (event: React.ChangeEvent<HTMLInputElement>) => void;
 };
