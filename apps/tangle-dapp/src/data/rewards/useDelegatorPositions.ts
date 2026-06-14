@@ -4,11 +4,14 @@
  */
 
 import { useMemo } from 'react';
-import { useReadContracts, useChainId, useAccount } from 'wagmi';
-import { Address } from 'viem';
+import { useChainId, useAccount, useConnectorClient } from 'wagmi';
+import { Address, zeroAddress } from 'viem';
 import { getContractsByChainId } from '@tangle-network/dapp-config/contracts';
 import REWARD_VAULTS_ABI from '@tangle-network/tangle-shared-ui/abi/rewardVaults';
+import { useResilientReadContracts } from '@tangle-network/tangle-shared-ui/hooks/useResilientReadContracts';
 import { POLLING_INTERVALS } from './constants';
+
+const NATIVE_TOKEN_ADDRESS = zeroAddress as Address;
 
 export enum LockDuration {
   None = 0,
@@ -58,11 +61,13 @@ interface UseDelegatorPositionsOptions {
 const useDelegatorPositions = (options?: UseDelegatorPositionsOptions) => {
   const enabled = options?.enabled ?? true;
   const chainId = useChainId();
+  const { data: connectorClient } = useConnectorClient();
+  const effectiveChainId = connectorClient?.chain?.id ?? chainId;
   const { address: userAddress } = useAccount();
 
   let contracts: ReturnType<typeof getContractsByChainId> | null = null;
   try {
-    contracts = getContractsByChainId(chainId);
+    contracts = getContractsByChainId(effectiveChainId);
   } catch {
     contracts = null;
   }
@@ -72,7 +77,13 @@ const useDelegatorPositions = (options?: UseDelegatorPositionsOptions) => {
     data: vaultAssetsResult,
     isLoading: isLoadingAssets,
     error: assetsError,
-  } = useReadContracts({
+  } = useResilientReadContracts({
+    queryKey: [
+      'delegatorPositionVaultAssets',
+      effectiveChainId,
+      userAddress,
+    ] as const,
+    chainId: effectiveChainId,
     contracts:
       enabled && contracts && userAddress && !options?.vaultAssets
         ? [
@@ -93,9 +104,13 @@ const useDelegatorPositions = (options?: UseDelegatorPositionsOptions) => {
       return options.vaultAssets;
     }
     if (!vaultAssetsResult || vaultAssetsResult[0]?.status !== 'success') {
-      return [];
+      return [NATIVE_TOKEN_ADDRESS];
     }
-    return vaultAssetsResult[0].result as Address[];
+    const addresses = vaultAssetsResult[0].result as Address[];
+    const hasNative = addresses.some(
+      (address) => address.toLowerCase() === NATIVE_TOKEN_ADDRESS.toLowerCase(),
+    );
+    return hasNative ? addresses : [...addresses, NATIVE_TOKEN_ADDRESS];
   }, [vaultAssetsResult, options?.vaultAssets]);
 
   // For each asset, fetch delegator positions
@@ -110,14 +125,21 @@ const useDelegatorPositions = (options?: UseDelegatorPositionsOptions) => {
       functionName: 'getDelegatorPositions' as const,
       args: [asset, userAddress] as const,
     }));
-  }, [contracts, userAddress, assetAddresses]);
+  }, [contracts, userAddress, assetAddresses, effectiveChainId]);
 
   const {
     data: positionsData,
     isLoading: isLoadingPositions,
     error: positionsError,
     refetch,
-  } = useReadContracts({
+  } = useResilientReadContracts({
+    queryKey: [
+      'delegatorPositions',
+      effectiveChainId,
+      userAddress,
+      assetAddresses,
+    ] as const,
+    chainId: effectiveChainId,
     contracts: enabled ? positionContracts : [],
     query: {
       enabled: enabled && positionContracts.length > 0,

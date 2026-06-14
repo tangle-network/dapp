@@ -1,9 +1,12 @@
 import { useMemo } from 'react';
-import { useReadContracts, useChainId, useAccount } from 'wagmi';
-import { Address } from 'viem';
+import { useChainId, useAccount, useConnectorClient } from 'wagmi';
+import { Address, zeroAddress } from 'viem';
 import { getContractsByChainId } from '@tangle-network/dapp-config/contracts';
 import REWARD_VAULTS_ABI from '@tangle-network/tangle-shared-ui/abi/rewardVaults';
+import { useResilientReadContracts } from '@tangle-network/tangle-shared-ui/hooks/useResilientReadContracts';
 import { POLLING_INTERVALS } from './constants';
+
+const NATIVE_TOKEN_ADDRESS = zeroAddress as Address;
 
 export type PendingReward = {
   operator: Address;
@@ -29,11 +32,13 @@ interface UsePendingRewardsOptions {
 const usePendingRewards = (options?: UsePendingRewardsOptions) => {
   const enabled = options?.enabled ?? true;
   const chainId = useChainId();
+  const { data: connectorClient } = useConnectorClient();
+  const effectiveChainId = connectorClient?.chain?.id ?? chainId;
   const { address: userAddress } = useAccount();
 
   let contracts: ReturnType<typeof getContractsByChainId> | null = null;
   try {
-    contracts = getContractsByChainId(chainId);
+    contracts = getContractsByChainId(effectiveChainId);
   } catch {
     contracts = null;
   }
@@ -43,7 +48,9 @@ const usePendingRewards = (options?: UsePendingRewardsOptions) => {
     data: vaultAssets,
     isLoading: isLoadingAssets,
     error: assetsError,
-  } = useReadContracts({
+  } = useResilientReadContracts({
+    queryKey: ['rewardVaultAssets', effectiveChainId, userAddress] as const,
+    chainId: effectiveChainId,
     contracts:
       enabled && contracts && userAddress
         ? [
@@ -61,9 +68,13 @@ const usePendingRewards = (options?: UsePendingRewardsOptions) => {
 
   const assetAddresses = useMemo(() => {
     if (!vaultAssets || vaultAssets[0]?.status !== 'success') {
-      return [];
+      return [NATIVE_TOKEN_ADDRESS];
     }
-    return vaultAssets[0].result as Address[];
+    const addresses = vaultAssets[0].result as Address[];
+    const hasNative = addresses.some(
+      (address) => address.toLowerCase() === NATIVE_TOKEN_ADDRESS.toLowerCase(),
+    );
+    return hasNative ? addresses : [...addresses, NATIVE_TOKEN_ADDRESS];
   }, [vaultAssets]);
 
   // For each asset, fetch pending rewards for the user
@@ -78,14 +89,21 @@ const usePendingRewards = (options?: UsePendingRewardsOptions) => {
       functionName: 'pendingDelegatorRewardsAll' as const,
       args: [asset, userAddress] as const,
     }));
-  }, [contracts, userAddress, assetAddresses]);
+  }, [contracts, userAddress, assetAddresses, effectiveChainId]);
 
   const {
     data: rewardsData,
     isLoading: isLoadingRewards,
     error: rewardsError,
     refetch,
-  } = useReadContracts({
+  } = useResilientReadContracts({
+    queryKey: [
+      'pendingDelegatorRewards',
+      effectiveChainId,
+      userAddress,
+      assetAddresses,
+    ] as const,
+    chainId: effectiveChainId,
     contracts: enabled ? rewardContracts : [],
     query: {
       enabled: enabled && rewardContracts.length > 0,

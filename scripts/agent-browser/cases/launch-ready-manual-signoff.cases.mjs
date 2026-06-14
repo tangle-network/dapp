@@ -27,6 +27,9 @@ const TERMINAL_TX_STATUSES = new Set(['finalized', 'failed']);
 const RUN_STARTED_AT = Number(
   process.env.AGENT_FLOW_RUN_STARTED_AT ?? Date.now(),
 );
+const REQUIRE_TX_OUTCOME = /^(1|true|yes|on)$/i.test(
+  process.env.AGENT_REQUIRE_TX_OUTCOME ?? '',
+);
 const TX_OUTCOME_TIMEOUT_MS = 120_000;
 const TX_OUTCOME_POLL_INTERVAL_MS = 1_500;
 const txBaselines = new Map();
@@ -116,19 +119,22 @@ const makeTxOutcomeOrBlockerCriterion = (
   flowId,
   blockerSelectors,
   blockerLabel,
-) => ({
-  type: 'custom',
-  description:
-    `A new transaction reached finalized/failed during this flow, ` +
-    `or an explicit non-actionable blocker state is shown (${blockerLabel}).`,
-  check: async (page) => {
-    if (await anyVisible(page, blockerSelectors)) {
-      return true;
-    }
+) =>
+  REQUIRE_TX_OUTCOME
+    ? makeTxOutcomeCriterion(flowId)
+    : {
+        type: 'custom',
+        description:
+          `A new transaction reached finalized/failed during this flow, ` +
+          `or an explicit non-actionable blocker state is shown (${blockerLabel}).`,
+        check: async (page) => {
+          if (await anyVisible(page, blockerSelectors)) {
+            return true;
+          }
 
-    return makeTxOutcomeCriterion(flowId).check(page);
-  },
-});
+          return makeTxOutcomeCriterion(flowId).check(page);
+        },
+      };
 
 const hasTerminalTxInHistory = async (page) => {
   const txEntries = await readTxEntries(page);
@@ -891,7 +897,10 @@ export const createLaunchReadyManualSignoffCases = ({
               // Best-effort: open tx drawer when only the launcher button is present.
               if (await isVisible(page, 'button:has-text("Transactions")')) {
                 try {
-                  await page.locator('button:has-text("Transactions")').first().click();
+                  await page
+                    .locator('button:has-text("Transactions")')
+                    .first()
+                    .click();
                   await page.waitForTimeout(500);
                 } catch {
                   // Ignore drawer-open failures and continue with visible checks.

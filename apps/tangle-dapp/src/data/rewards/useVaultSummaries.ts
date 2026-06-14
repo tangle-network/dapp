@@ -4,7 +4,7 @@
  */
 
 import { useMemo } from 'react';
-import { useReadContract, useChainId } from 'wagmi';
+import { useReadContract, useChainId, useConnectorClient } from 'wagmi';
 import { Address } from 'viem';
 import { getContractsByChainId } from '@tangle-network/dapp-config/contracts';
 import REWARD_VAULTS_ABI from '@tangle-network/tangle-shared-ui/abi/rewardVaults';
@@ -34,10 +34,12 @@ interface UseVaultSummariesOptions {
 const useVaultSummaries = (options?: UseVaultSummariesOptions) => {
   const enabled = options?.enabled ?? true;
   const chainId = useChainId();
+  const { data: connectorClient } = useConnectorClient();
+  const effectiveChainId = connectorClient?.chain?.id ?? chainId;
 
   let contracts: ReturnType<typeof getContractsByChainId> | null = null;
   try {
-    contracts = getContractsByChainId(chainId);
+    contracts = getContractsByChainId(effectiveChainId);
   } catch {
     contracts = null;
   }
@@ -51,6 +53,7 @@ const useVaultSummaries = (options?: UseVaultSummariesOptions) => {
     address: contracts?.rewardVaults,
     abi: REWARD_VAULTS_ABI,
     functionName: 'getAllVaultSummaries',
+    chainId: effectiveChainId,
     query: {
       enabled: enabled && !!contracts,
       refetchInterval: enabled ? POLLING_INTERVALS.VAULT_SUMMARIES : false,

@@ -10,6 +10,8 @@ const WALLETCONNECT_PROJECT_ID =
 const ENABLE_FAMILY_WALLET =
   process.env.VITE_ENABLE_FAMILY_WALLET === 'true' ||
   process.env.NEXT_PUBLIC_ENABLE_FAMILY_WALLET === 'true';
+const FORCE_LOCAL_CHAIN = import.meta.env.VITE_FORCE_LOCAL_CHAIN === 'true';
+const activeChains = FORCE_LOCAL_CHAIN ? ([chains[0]] as const) : chains;
 
 // Create config using ConnectKit's getDefaultConfig helper
 // This automatically sets up all popular wallets with EIP-6963 detection
@@ -18,8 +20,8 @@ const config = createConfig(
     appName: 'Tangle Network',
     walletConnectProjectId: WALLETCONNECT_PROJECT_ID,
     enableFamily: ENABLE_FAMILY_WALLET,
-    chains,
-    transports: chains.reduce(
+    chains: activeChains,
+    transports: activeChains.reduce(
       (acc, chain) => {
         const publicRpcUrl =
           'public' in chain.rpcUrls

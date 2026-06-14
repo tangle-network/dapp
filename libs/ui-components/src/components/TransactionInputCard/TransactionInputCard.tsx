@@ -393,6 +393,13 @@ const TransactionInputCardBody = forwardRef<
       };
     }, [onAmountChange]);
 
+    const {
+      renderBody: renderTokenSelectorBody,
+      children: tokenSelectorChildren,
+      className: tokenSelectorClassName,
+      ...tokenSelectorRestProps
+    } = tokenSelectorProps ?? {};
+
     return (
       <div
         {...props}
@@ -438,13 +445,12 @@ const TransactionInputCardBody = forwardRef<
 
         <TokenSelector
           type="button"
-          {...tokenSelectorProps}
-          className={twMerge(
-            'ml-auto max-w-[210px]',
-            tokenSelectorProps?.className,
-          )}
+          {...tokenSelectorRestProps}
+          className={twMerge('ml-auto max-w-[210px]', tokenSelectorClassName)}
         >
-          {tokenSymbol || tokenSelectorProps?.children}
+          {typeof renderTokenSelectorBody === 'function'
+            ? renderTokenSelectorBody()
+            : tokenSymbol || tokenSelectorChildren}
         </TokenSelector>
       </div>
     );

@@ -43,14 +43,14 @@ export const SP1_VERIFIER_GATEWAY = {
 // When running start-local-dev.sh, addresses are deterministic.
 // Use proxy addresses for upgradeable contracts (check ERC1967Proxy transactions).
 export const LOCAL_CONTRACTS: ContractAddresses = {
-  tangle: '0xcf7ed3acca5a467e9e704c703e8d87f634fb0fc9', // Proxy
-  multiAssetDelegation: '0xe7f1725e7734ce288f8367e1bb143e90bb3f0512', // Proxy
-  masterBlueprintServiceManager: '0xc351628eb244ec633d5f21fbd6621e1a683b1181', // Proxy
-  operatorStatusRegistry: '0x17746107e0b4cfaf4c96140f5e501bf10e740b65', // Proxy
-  rewardVaults: '0x04c89607413713ec9775e14b954286519d836fef', // Proxy
-  inflationPool: '0x21df544947ba3e8b3c32561399e88b52dc8b2823', // Proxy
-  credits: '0x922d6956c99e12dfeb3224dea977d0939758a1fe', // Proxy
-  liquidDelegationFactory: '0xc66ab83418c20a65c3f8e83b3d11c8c3a6097b6f', // Direct
+  tangle: '0xdc64a140aa3e981100a9beca4e685f962f0cf6c9', // Proxy
+  multiAssetDelegation: '0x9fe46736679d2d9a65f0992f2272de9f3c7fa6e0', // Proxy
+  masterBlueprintServiceManager: '0xdbc43ba45381e02825b14322cddd15ec4b3164e6', // Direct
+  operatorStatusRegistry: '0x5f3f1dbd7b74c6b46e8c44f98792a1daf8d69154', // Direct
+  rewardVaults: '0x0355b7b8cb128fa5692729ab3aaa199c1753f726', // Proxy
+  inflationPool: '0xf4b146fba71f41e0592668ffbf264f1d186b2ca8', // Proxy
+  credits: '0xdc11f7e700a4c898ae5caddb1082cffa76512add', // Direct
+  liquidDelegationFactory: '0xf090f16dec8b6d24082edd25b1c8d26f2bc86128', // Direct
   blueprintAuditors: '0x0000000000000000000000000000000000000000', // pending deployment
 };
 

@@ -35,20 +35,25 @@ export const delay = (ms: number) =>
 type ReadContractClient = unknown;
 
 export const readContractResilient = async (
-  publicClient: PublicClient,
+  publicClient: PublicClient | null | undefined,
   connectorClient: ReadContractClient | null | undefined,
   call: ResilientContractCall,
   options?: { retryDelayMs?: number },
 ): Promise<unknown> => {
   const retryDelayMs = options?.retryDelayMs ?? 75;
 
-  const readViaPublic = async () =>
-    publicClient.readContract({
+  const readViaPublic = async () => {
+    if (!publicClient) {
+      throw new Error('Public client not available');
+    }
+
+    return publicClient.readContract({
       address: call.address,
       abi: call.abi,
       functionName: call.functionName as never,
       args: (call.args ?? []) as never,
     });
+  };
 
   const readViaConnector = async () => {
     if (!connectorClient) {
@@ -95,7 +100,7 @@ export const readContractResilient = async (
 };
 
 export const readContractsResilient = async (
-  publicClient: PublicClient,
+  publicClient: PublicClient | null | undefined,
   connectorClient: ReadContractClient | null | undefined,
   calls: ResilientContractCall[],
 ): Promise<ResilientCallResult[]> => {
@@ -104,7 +109,7 @@ export const readContractsResilient = async (
   }
 
   const canMulticall =
-    publicClient.chain?.contracts?.multicall3?.address !== undefined;
+    publicClient?.chain?.contracts?.multicall3?.address !== undefined;
 
   const runIndividual = async (
     targets: Array<{ call: ResilientContractCall; index: number }>,
@@ -131,7 +136,7 @@ export const readContractsResilient = async (
     error: new Error('not executed'),
   }));
 
-  if (!canMulticall) {
+  if (!canMulticall || !publicClient) {
     await runIndividual(
       calls.map((call, index) => ({ call, index })),
       results,

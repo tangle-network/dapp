@@ -8,29 +8,42 @@
  * Activities generated:
  * - Deposits (native ETH and ERC20 tokens)
  * - Delegations to operators (native and ERC20)
- * - Operator registrations
+ * - Operator discovery from the seeded local deployment
  * - Blueprint creations
  * - Service requests and activations
  * - Job submissions
  */
 
-import { createPublicClient, createWalletClient, http, parseEther, parseUnits, encodeFunctionData } from 'viem';
+import {
+  createPublicClient,
+  createWalletClient,
+  http,
+  parseEther,
+  parseUnits,
+  encodeFunctionData,
+} from 'viem';
 import { privateKeyToAccount } from 'viem/accounts';
 import { anvil } from 'viem/chains';
 import { randomInt, randomUUID } from 'node:crypto';
 
 // Configuration
 const RPC_URL = process.env.RPC_URL || 'http://localhost:8545';
-const ACTIVITY_INTERVAL_MS = parseInt(process.env.ACTIVITY_INTERVAL_MS || '10000'); // 10 seconds default
+const ACTIVITY_INTERVAL_MS = parseInt(
+  process.env.ACTIVITY_INTERVAL_MS || '10000',
+); // 10 seconds default
 
 // Contract addresses (deterministic from Anvil)
 const CONTRACTS = {
-  tangle: process.env.TANGLE_ADDRESS || '0xCf7Ed3AccA5a467e9e704C703E8D87F634fB0Fc9',
+  tangle:
+    process.env.TANGLE_ADDRESS || '0xDc64a140Aa3E981100a9becA4E685f962f0cF6C9',
   multiAssetDelegation:
-    process.env.STAKING_ADDRESS ||
-    '0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512',
-  statusRegistry: process.env.STATUS_REGISTRY_ADDRESS || '0xDc64a140Aa3E981100a9becA4E685f962f0cF6C9',
+    process.env.STAKING_ADDRESS || '0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0',
+  statusRegistry:
+    process.env.STATUS_REGISTRY_ADDRESS ||
+    '0x5f3f1dBD7B74C6B46e8c44f98792A1dAf8d69154',
 };
+
+const SEEDED_OPERATOR_ACCOUNT_INDICES = [1, 2, 3];
 
 // Tangle contract ABI fragments for blueprints/services/jobs
 const TANGLE_ABI = [
@@ -83,18 +96,20 @@ const TANGLE_ABI = [
     name: 'getService',
     type: 'function',
     inputs: [{ name: 'serviceId', type: 'uint64' }],
-    outputs: [{
-      name: '',
-      type: 'tuple',
-      components: [
-        { name: 'blueprintId', type: 'uint64' },
-        { name: 'owner', type: 'address' },
-        { name: 'ttl', type: 'uint64' },
-        { name: 'activatedAt', type: 'uint64' },
-        { name: 'totalOperators', type: 'uint8' },
-        { name: 'totalExposure', type: 'uint256' },
-      ],
-    }],
+    outputs: [
+      {
+        name: '',
+        type: 'tuple',
+        components: [
+          { name: 'blueprintId', type: 'uint64' },
+          { name: 'owner', type: 'address' },
+          { name: 'ttl', type: 'uint64' },
+          { name: 'activatedAt', type: 'uint64' },
+          { name: 'totalOperators', type: 'uint8' },
+          { name: 'totalExposure', type: 'uint256' },
+        ],
+      },
+    ],
     stateMutability: 'view',
   },
 ];
@@ -106,7 +121,11 @@ const TOKENS = {
   dai: { address: process.env.DAI_ADDRESS, decimals: 18, symbol: 'DAI' },
   weth: { address: process.env.WETH_ADDRESS, decimals: 18, symbol: 'WETH' },
   stETH: { address: process.env.STETH_ADDRESS, decimals: 18, symbol: 'stETH' },
-  wstETH: { address: process.env.WSTETH_ADDRESS, decimals: 18, symbol: 'wstETH' },
+  wstETH: {
+    address: process.env.WSTETH_ADDRESS,
+    decimals: 18,
+    symbol: 'wstETH',
+  },
   eigen: { address: process.env.EIGEN_ADDRESS, decimals: 18, symbol: 'EIGEN' },
 };
 
@@ -167,11 +186,18 @@ const MULTI_ASSET_DELEGATION_ABI = [
     stateMutability: 'nonpayable',
   },
   {
-    name: 'registerOperator',
+    name: 'isOperator',
     type: 'function',
-    inputs: [],
-    outputs: [],
-    stateMutability: 'payable',
+    inputs: [{ name: 'operator', type: 'address' }],
+    outputs: [{ name: '', type: 'bool' }],
+    stateMutability: 'view',
+  },
+  {
+    name: 'getDelegationMode',
+    type: 'function',
+    inputs: [{ name: 'operator', type: 'address' }],
+    outputs: [{ name: '', type: 'uint8' }],
+    stateMutability: 'view',
   },
   {
     name: 'getDeposit',
@@ -180,14 +206,16 @@ const MULTI_ASSET_DELEGATION_ABI = [
       { name: 'delegator', type: 'address' },
       { name: 'token', type: 'address' },
     ],
-    outputs: [{
-      name: '',
-      type: 'tuple',
-      components: [
-        { name: 'amount', type: 'uint256' },
-        { name: 'delegatedAmount', type: 'uint256' },
-      ],
-    }],
+    outputs: [
+      {
+        name: '',
+        type: 'tuple',
+        components: [
+          { name: 'amount', type: 'uint256' },
+          { name: 'delegatedAmount', type: 'uint256' },
+        ],
+      },
+    ],
     stateMutability: 'view',
   },
 ];
@@ -267,7 +295,7 @@ const randomAmount = (min, max) =>
   parseEther(String(min + randomFloat() * (max - min)));
 const randomTokenAmount = (min, max, decimals) =>
   parseUnits(String(min + randomFloat() * (max - min)), decimals);
-const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms));
+const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
 // Activity generators
 async function depositNativeToken(accountIndex) {
@@ -275,7 +303,9 @@ async function depositNativeToken(accountIndex) {
   const walletClient = getWalletClient(privateKey);
   const amount = randomAmount(0.1, 2);
 
-  console.log(`[DEPOSIT_ETH] Account ${accountIndex} depositing ${Number(amount) / 1e18} ETH`);
+  console.log(
+    `[DEPOSIT_ETH] Account ${accountIndex} depositing ${Number(amount) / 1e18} ETH`,
+  );
 
   try {
     const hash = await walletClient.sendTransaction({
@@ -316,21 +346,32 @@ async function depositERC20Token(accountIndex, tokenKey) {
   // Random amount based on token type
   let minAmount, maxAmount;
   if (tokenKey === 'usdc' || tokenKey === 'usdt') {
-    minAmount = 100; maxAmount = 10000; // 100-10k stablecoins
+    minAmount = 100;
+    maxAmount = 10000; // 100-10k stablecoins
   } else if (tokenKey === 'dai') {
-    minAmount = 100; maxAmount = 10000;
-  } else if (tokenKey === 'weth' || tokenKey === 'stETH' || tokenKey === 'wstETH') {
-    minAmount = 0.1; maxAmount = 5;
+    minAmount = 100;
+    maxAmount = 10000;
+  } else if (
+    tokenKey === 'weth' ||
+    tokenKey === 'stETH' ||
+    tokenKey === 'wstETH'
+  ) {
+    minAmount = 0.1;
+    maxAmount = 5;
   } else if (tokenKey === 'eigen') {
-    minAmount = 10; maxAmount = 500;
+    minAmount = 10;
+    maxAmount = 500;
   } else {
-    minAmount = 1; maxAmount = 100;
+    minAmount = 1;
+    maxAmount = 100;
   }
 
   const amount = randomTokenAmount(minAmount, maxAmount, token.decimals);
-  const amountFormatted = Number(amount) / (10 ** token.decimals);
+  const amountFormatted = Number(amount) / 10 ** token.decimals;
 
-  console.log(`[DEPOSIT_ERC20] Account ${accountIndex} depositing ${amountFormatted} ${token.symbol}`);
+  console.log(
+    `[DEPOSIT_ERC20] Account ${accountIndex} depositing ${amountFormatted} ${token.symbol}`,
+  );
 
   try {
     // Check balance first
@@ -342,7 +383,9 @@ async function depositERC20Token(accountIndex, tokenKey) {
     });
 
     if (balance < amount) {
-      console.log(`[DEPOSIT_ERC20] Insufficient ${token.symbol} balance: ${Number(balance) / (10 ** token.decimals)}`);
+      console.log(
+        `[DEPOSIT_ERC20] Insufficient ${token.symbol} balance: ${Number(balance) / 10 ** token.decimals}`,
+      );
       return false;
     }
 
@@ -360,7 +403,12 @@ async function depositERC20Token(accountIndex, tokenKey) {
         address: token.address,
         abi: ERC20_ABI,
         functionName: 'approve',
-        args: [CONTRACTS.multiAssetDelegation, BigInt('0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff')],
+        args: [
+          CONTRACTS.multiAssetDelegation,
+          BigInt(
+            '0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff',
+          ),
+        ],
       });
       await publicClient.waitForTransactionReceipt({ hash: approveHash });
     }
@@ -413,7 +461,9 @@ async function delegateNativeToOperator(accountIndex) {
 
     const available = deposit.amount - deposit.delegatedAmount;
     if (available <= 0n) {
-      console.log(`[DELEGATE_ETH] Account ${accountIndex} has no available ETH balance`);
+      console.log(
+        `[DELEGATE_ETH] Account ${accountIndex} has no available ETH balance`,
+      );
       return false;
     }
 
@@ -421,11 +471,15 @@ async function delegateNativeToOperator(accountIndex) {
     const amount = BigInt(Math.floor(Number(available) * percentage));
 
     if (amount < parseEther('0.01')) {
-      console.log(`[DELEGATE_ETH] Account ${accountIndex} available balance too low`);
+      console.log(
+        `[DELEGATE_ETH] Account ${accountIndex} available balance too low`,
+      );
       return false;
     }
 
-    console.log(`[DELEGATE_ETH] Account ${accountIndex} delegating ${Number(amount) / 1e18} ETH to operator ${operatorIndex}`);
+    console.log(
+      `[DELEGATE_ETH] Account ${accountIndex} delegating ${Number(amount) / 1e18} ETH to operator ${operatorIndex}`,
+    );
 
     const hash = await walletClient.writeContract({
       address: CONTRACTS.multiAssetDelegation,
@@ -471,7 +525,9 @@ async function delegateERC20ToOperator(accountIndex, tokenKey) {
 
     const available = deposit.amount - deposit.delegatedAmount;
     if (available <= 0n) {
-      console.log(`[DELEGATE_ERC20] Account ${accountIndex} has no available ${token.symbol} balance`);
+      console.log(
+        `[DELEGATE_ERC20] Account ${accountIndex} has no available ${token.symbol} balance`,
+      );
       return false;
     }
 
@@ -480,12 +536,16 @@ async function delegateERC20ToOperator(accountIndex, tokenKey) {
 
     const minAmount = parseUnits('1', token.decimals);
     if (amount < minAmount) {
-      console.log(`[DELEGATE_ERC20] Account ${accountIndex} available ${token.symbol} balance too low`);
+      console.log(
+        `[DELEGATE_ERC20] Account ${accountIndex} available ${token.symbol} balance too low`,
+      );
       return false;
     }
 
-    const amountFormatted = Number(amount) / (10 ** token.decimals);
-    console.log(`[DELEGATE_ERC20] Account ${accountIndex} delegating ${amountFormatted} ${token.symbol} to operator ${operatorIndex}`);
+    const amountFormatted = Number(amount) / 10 ** token.decimals;
+    console.log(
+      `[DELEGATE_ERC20] Account ${accountIndex} delegating ${amountFormatted} ${token.symbol} to operator ${operatorIndex}`,
+    );
 
     const hash = await walletClient.writeContract({
       address: CONTRACTS.multiAssetDelegation,
@@ -503,46 +563,45 @@ async function delegateERC20ToOperator(accountIndex, tokenKey) {
   }
 }
 
-async function registerOperator(accountIndex) {
+async function discoverSeededOperator(accountIndex) {
   const privateKey = ANVIL_ACCOUNTS[accountIndex];
-  const walletClient = getWalletClient(privateKey);
   const account = privateKeyToAccount(privateKey);
-  const stake = randomAmount(5, 20);
-
-  console.log(`[REGISTER_OPERATOR] Account ${accountIndex} registering with ${Number(stake) / 1e18} ETH stake`);
 
   try {
-    const alreadyOperator = await publicClient.readContract({
+    const isOperator = await publicClient.readContract({
       address: CONTRACTS.multiAssetDelegation,
       abi: MULTI_ASSET_DELEGATION_ABI,
       functionName: 'isOperator',
       args: [account.address],
     });
 
-    if (alreadyOperator) {
+    if (!isOperator) {
       console.log(
-        `[REGISTER_OPERATOR] Account ${accountIndex} already registered as an operator, skipping...`,
+        `[DISCOVER_OPERATOR] Account ${accountIndex} is not a registered local operator`,
       );
-
-      if (!state.operators.includes(accountIndex)) {
-        state.operators.push(accountIndex);
-      }
-
-      return true;
+      return false;
     }
 
-    const hash = await walletClient.sendTransaction({
-      to: CONTRACTS.multiAssetDelegation,
-      value: stake,
-      data: encodeFunctionData({
-        abi: MULTI_ASSET_DELEGATION_ABI,
-        functionName: 'registerOperator',
-        args: [],
-      }),
+    const delegationMode = await publicClient.readContract({
+      address: CONTRACTS.multiAssetDelegation,
+      abi: MULTI_ASSET_DELEGATION_ABI,
+      functionName: 'getDelegationMode',
+      args: [account.address],
     });
+    const modeName =
+      ['Disabled', 'Whitelist', 'Open'][Number(delegationMode)] ||
+      `Unknown(${delegationMode})`;
 
-    await publicClient.waitForTransactionReceipt({ hash });
-    console.log(`[REGISTER_OPERATOR] Success: ${hash}`);
+    console.log(
+      `[DISCOVER_OPERATOR] Account ${accountIndex} registered, delegation mode: ${modeName}`,
+    );
+
+    if (Number(delegationMode) !== 2) {
+      console.log(
+        `[DISCOVER_OPERATOR] Account ${accountIndex} is not a public delegation target, skipping random delegation traffic`,
+      );
+      return true;
+    }
 
     if (!state.operators.includes(accountIndex)) {
       state.operators.push(accountIndex);
@@ -550,7 +609,10 @@ async function registerOperator(accountIndex) {
 
     return true;
   } catch (error) {
-    console.error(`[REGISTER_OPERATOR] Failed:`, error.message);
+    console.error(
+      `[DISCOVER_OPERATOR] Failed for account ${accountIndex}:`,
+      error.message,
+    );
     return false;
   }
 }
@@ -566,7 +628,9 @@ async function submitJob(accountIndex) {
   const account = privateKeyToAccount(privateKey);
   const serviceId = randomChoice(state.activeServiceIds);
 
-  console.log(`[SUBMIT_JOB] Account ${accountIndex} submitting job to service ${serviceId}`);
+  console.log(
+    `[SUBMIT_JOB] Account ${accountIndex} submitting job to service ${serviceId}`,
+  );
 
   try {
     // Check if caller is permitted (deployer/owner should be permitted by default)
@@ -579,17 +643,21 @@ async function submitJob(accountIndex) {
 
     // If not permitted and account is deployer (index 0), try anyway - they might be the owner
     if (!isPermitted && accountIndex !== 0) {
-      console.log(`[SUBMIT_JOB] Account ${accountIndex} is not a permitted caller for service ${serviceId}`);
+      console.log(
+        `[SUBMIT_JOB] Account ${accountIndex} is not a permitted caller for service ${serviceId}`,
+      );
       return false;
     }
 
     // Generate random job inputs
     const jobIndex = 0; // First job defined in blueprint
-    const inputData = `0x${Buffer.from(JSON.stringify({
-      timestamp: Date.now(),
-      caller: account.address,
-      random: randomUUID().replace(/-/g, '').slice(0, 7),
-    })).toString('hex')}`;
+    const inputData = `0x${Buffer.from(
+      JSON.stringify({
+        timestamp: Date.now(),
+        caller: account.address,
+        random: randomUUID().replace(/-/g, '').slice(0, 7),
+      }),
+    ).toString('hex')}`;
 
     const hash = await walletClient.writeContract({
       address: CONTRACTS.tangle,
@@ -639,9 +707,14 @@ async function discoverServices() {
       }
     }
 
-    console.log(`[DISCOVER_SERVICES] Active services: ${state.activeServiceIds.length}`);
+    console.log(
+      `[DISCOVER_SERVICES] Active services: ${state.activeServiceIds.length}`,
+    );
   } catch (error) {
-    console.log(`[DISCOVER_SERVICES] Failed to discover services:`, error.message);
+    console.log(
+      `[DISCOVER_SERVICES] Failed to discover services:`,
+      error.message,
+    );
   }
 }
 
@@ -656,14 +729,16 @@ async function runActivityCycle() {
     { name: 'depositERC20', weight: 30 },
     { name: 'delegateETH', weight: 15 },
     { name: 'delegateERC20', weight: 20 },
-    { name: 'registerOperator', weight: 5 },
     { name: 'multiDeposit', weight: 10 },
     { name: 'submitJob', weight: 15 },
   ];
 
   // Filter out activities based on availability
-  const availableActivities = activityTypes.filter(a => {
-    if ((a.name === 'depositERC20' || a.name === 'delegateERC20') && state.tokensAvailable.length === 0) {
+  const availableActivities = activityTypes.filter((a) => {
+    if (
+      (a.name === 'depositERC20' || a.name === 'delegateERC20') &&
+      state.tokensAvailable.length === 0
+    ) {
       return false;
     }
     if (a.name === 'submitJob' && state.activeServiceIds.length === 0) {
@@ -717,28 +792,24 @@ async function runActivityCycle() {
       break;
     }
 
-    case 'registerOperator':
-      if (!state.operators.includes(accountIndex)) {
-        await registerOperator(accountIndex);
-      }
-      break;
-
     case 'multiDeposit': {
       // Generate 3 random accounts, then deduplicate to prevent nonce collisions
-      const rawAccounts = [1, 2, 3].map(() =>
-        1 + randomInt(ANVIL_ACCOUNTS.length - 1)
+      const rawAccounts = [1, 2, 3].map(
+        () => 1 + randomInt(ANVIL_ACCOUNTS.length - 1),
       );
       const uniqueAccounts = [...new Set(rawAccounts)];
 
       // Mix of ETH and ERC20 deposits - each unique account processes sequentially
-      await Promise.all(uniqueAccounts.map(async (idx) => {
-        if (randomFloat() > 0.5 && state.tokensAvailable.length > 0) {
-          const tokenKey = randomChoice(state.tokensAvailable);
-          return depositERC20Token(idx, tokenKey);
-        } else {
-          return depositNativeToken(idx);
-        }
-      }));
+      await Promise.all(
+        uniqueAccounts.map(async (idx) => {
+          if (randomFloat() > 0.5 && state.tokensAvailable.length > 0) {
+            const tokenKey = randomChoice(state.tokensAvailable);
+            return depositERC20Token(idx, tokenKey);
+          } else {
+            return depositNativeToken(idx);
+          }
+        }),
+      );
       break;
     }
 
@@ -749,9 +820,19 @@ async function runActivityCycle() {
       break;
   }
 
-  console.log(`\nState: ${state.operators.length} operators, ${state.delegators.length} ETH delegators`);
-  console.log(`ERC20 depositors: ${Object.entries(state.erc20Depositors).map(([k, v]) => `${k}:${v.length}`).join(', ') || 'none'}`);
-  console.log(`Services: ${state.activeServiceIds.length} active, Jobs submitted: ${state.jobCallCount}`);
+  console.log(
+    `\nState: ${state.operators.length} operators, ${state.delegators.length} ETH delegators`,
+  );
+  console.log(
+    `ERC20 depositors: ${
+      Object.entries(state.erc20Depositors)
+        .map(([k, v]) => `${k}:${v.length}`)
+        .join(', ') || 'none'
+    }`,
+  );
+  console.log(
+    `Services: ${state.activeServiceIds.length} active, Jobs submitted: ${state.jobCallCount}`,
+  );
 }
 
 // Detect available tokens by checking if addresses return valid symbol
@@ -774,7 +855,9 @@ async function detectTokens() {
     }
   }
 
-  console.log(`Available tokens: ${state.tokensAvailable.join(', ') || 'none'}`);
+  console.log(
+    `Available tokens: ${state.tokensAvailable.join(', ') || 'none'}`,
+  );
 }
 
 // Initialize
@@ -798,11 +881,15 @@ async function initialize() {
   // Discover active services
   await discoverServices();
 
-  // Register initial operators if none exist
-  console.log('\nRegistering initial operators...');
-  for (let i = 1; i <= 3; i++) {
-    await registerOperator(i);
-    await sleep(2000);
+  console.log('\nDiscovering seeded local operators...');
+  for (const index of SEEDED_OPERATOR_ACCOUNT_INDICES) {
+    await discoverSeededOperator(index);
+  }
+
+  if (state.operators.length === 0) {
+    console.log(
+      'No seeded operators discovered; delegation activity will stay disabled.',
+    );
   }
 
   console.log('\nInitialization complete. Starting activity loop...\n');

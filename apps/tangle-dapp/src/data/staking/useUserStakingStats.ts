@@ -11,6 +11,7 @@ import {
   useCurrentRoundNumber,
 } from '@tangle-network/tangle-shared-ui/data/graphql';
 import usePendingRewards from '../rewards/usePendingRewards';
+import useDelegatorPositions from '../rewards/useDelegatorPositions';
 
 export interface UserStakingStats {
   // Total Value Staked Card
@@ -57,8 +58,19 @@ const useUserStakingStats = () => {
     refetch: refetchPendingRewards,
   } = usePendingRewards();
 
+  // Contract fallback for local testnets and fresh deployments where the
+  // indexer may not have a delegator row yet.
+  const {
+    data: delegatorPositions,
+    isLoading: isDelegatorPositionsLoading,
+    refetch: refetchDelegatorPositions,
+  } = useDelegatorPositions();
+
   const stats = useMemo<UserStakingStats | null>(() => {
-    if (!delegator) {
+    if (
+      !address ||
+      (!delegator && !pendingRewardsResult && !delegatorPositions)
+    ) {
       return null;
     }
 
@@ -68,29 +80,37 @@ const useUserStakingStats = () => {
     let withdrawQueueAmount = BigInt(0);
     let withdrawableAmount = BigInt(0);
 
-    for (const req of delegator.withdrawRequests) {
-      if (req.status === 'PENDING') {
-        if (req.readyAtRound <= currentRoundNum) {
-          withdrawableAmount += req.amount;
-        } else {
-          withdrawQueueAmount += req.amount;
+    if (delegator) {
+      for (const req of delegator.withdrawRequests) {
+        if (req.status === 'PENDING') {
+          if (req.readyAtRound <= currentRoundNum) {
+            withdrawableAmount += req.amount;
+          } else {
+            withdrawQueueAmount += req.amount;
+          }
         }
       }
     }
 
     // Calculate pending undelegate amounts (note: unstakeRequests is the GraphQL field name)
     let pendingUndelegateAmount = BigInt(0);
-    for (const req of delegator.unstakeRequests) {
-      if (req.status === 'PENDING') {
-        pendingUndelegateAmount += req.estimatedAmount;
+    if (delegator) {
+      for (const req of delegator.unstakeRequests) {
+        if (req.status === 'PENDING') {
+          pendingUndelegateAmount += req.estimatedAmount;
+        }
       }
     }
 
     const pendingRewards =
       pendingRewardsResult?.totalPendingRewards ?? BigInt(0);
 
-    // Active balance is the delegated amount (earning rewards)
-    const activeBalance = delegator.totalDelegated;
+    // Active balance is the delegated amount (earning rewards). Prefer indexed
+    // aggregates when present; otherwise use RewardVaults positions.
+    const activeBalance =
+      delegator?.totalDelegated ??
+      delegatorPositions?.totalStakedAmount ??
+      BigInt(0);
 
     const format = (value: bigint) => {
       const formatted = formatUnits(value, 18);
@@ -104,16 +124,16 @@ const useUserStakingStats = () => {
     };
 
     return {
-      totalDeposited: delegator.totalDeposited,
-      totalDelegated: delegator.totalDelegated,
+      totalDeposited: delegator?.totalDeposited ?? activeBalance,
+      totalDelegated: delegator?.totalDelegated ?? activeBalance,
       withdrawQueueAmount,
       withdrawableAmount,
       pendingUndelegateAmount,
       pendingRewards,
       activeBalance,
       formatted: {
-        totalDeposited: format(delegator.totalDeposited),
-        totalDelegated: format(delegator.totalDelegated),
+        totalDeposited: format(delegator?.totalDeposited ?? activeBalance),
+        totalDelegated: format(delegator?.totalDelegated ?? activeBalance),
         withdrawQueueAmount: format(withdrawQueueAmount),
         withdrawableAmount: format(withdrawableAmount),
         pendingUndelegateAmount: format(pendingUndelegateAmount),
@@ -121,17 +141,33 @@ const useUserStakingStats = () => {
         activeBalance: format(activeBalance),
       },
     };
-  }, [delegator, currentRound, pendingRewardsResult]);
+  }, [
+    address,
+    delegator,
+    currentRound,
+    pendingRewardsResult,
+    delegatorPositions,
+  ]);
 
   const refetch = async () => {
-    await Promise.all([refetchDelegator(), refetchPendingRewards()]);
+    await Promise.all([
+      refetchDelegator(),
+      refetchPendingRewards(),
+      refetchDelegatorPositions(),
+    ]);
   };
 
   return {
     data: stats,
-    isLoading: isDelegatorLoading || isPendingRewardsLoading,
-    isError: !!delegatorError,
-    error: delegatorError,
+    isLoading:
+      isPendingRewardsLoading ||
+      isDelegatorPositionsLoading ||
+      (isDelegatorLoading && !delegator),
+    isError: !!delegatorError && !pendingRewardsResult && !delegatorPositions,
+    error:
+      !!delegatorError && !pendingRewardsResult && !delegatorPositions
+        ? delegatorError
+        : null,
     refetch,
   };
 };
