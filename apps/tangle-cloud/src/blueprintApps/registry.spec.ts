@@ -39,7 +39,7 @@ describe('blueprint app registry', () => {
     expect(tradingByMetadata?.slug).toBe('trading');
     expect(sandboxByMetadata?.slug).toBe('sandbox');
     expect(trainingBySlug?.slug).toBe('training');
-    expect(surplusByMetadata?.slug).toBe('surplus');
+    expect(surplusByMetadata?.slug).toBe('bazaar');
     expect(surplusByMetadata?.manifest.externalApp?.mode).toBe('iframe');
     // Surplus runs its own wallet in-frame, so it opts into allow-same-origin
     // (cross-origin → its own storage) but not the parent bridge grants.
