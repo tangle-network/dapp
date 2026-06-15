@@ -32,4 +32,11 @@ export type BlueprintIframeConfig = {
   allowReadAccount: boolean;
   allowChainSwitch: boolean;
   allowPopups: boolean;
+  // CURATED-ONLY: grant the iframe its own (cross-origin) origin via the
+  // allow-same-origin sandbox token. Required by embedded apps that run their
+  // own wallet (WalletConnect/ConnectKit need persistent storage, which an
+  // opaque-origin iframe lacks). Honored ONLY for cross-origin apps — see
+  // buildSandbox — so it never lets the frame reach the parent. Never set from
+  // untrusted on-chain metadata.
+  allowSameOrigin?: boolean;
 };

@@ -72,10 +72,30 @@ const useParentTheme = (): 'light' | 'dark' => {
 //  - allow-forms: required for normal form interactions inside the iframe.
 //  - allow-popups[-to-escape-sandbox]: gated on the manifest's allowPopups
 //    flag because they widen attack surface (oauth flows commonly need them).
+//  - allow-same-origin: gated on allowSameOrigin AND only when the app is
+//    CROSS-ORIGIN to us. Cross-origin + allow-same-origin restores the iframe's
+//    OWN origin (so embedded apps running their own wallet get the localStorage/
+//    IndexedDB WalletConnect needs) while cross-origin policy still blocks it
+//    from reaching our DOM/storage. We refuse it for same-origin apps, since
+//    same-origin + allow-scripts would let the frame remove its own sandbox.
+const isCrossOrigin = (origin: string): boolean => {
+  if (typeof window === 'undefined') {
+    return false;
+  }
+  try {
+    return new URL(origin).origin !== window.location.origin;
+  } catch {
+    return false;
+  }
+};
+
 const buildSandbox = (config: BlueprintIframeConfig): string => {
   const tokens = ['allow-scripts', 'allow-forms'];
   if (config.allowPopups) {
     tokens.push('allow-popups', 'allow-popups-to-escape-sandbox');
+  }
+  if (config.allowSameOrigin && isCrossOrigin(config.origin)) {
+    tokens.push('allow-same-origin');
   }
   return tokens.join(' ');
 };
