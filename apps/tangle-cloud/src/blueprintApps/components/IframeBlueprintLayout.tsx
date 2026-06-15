@@ -26,6 +26,8 @@ type Props = {
   protocolDetailHref?: string;
   /** Optional publisher console (external app's standalone URL). */
   externalAppUrl?: string;
+  /** Optional link to the blueprint's own dedicated site (metadata `website`). */
+  websiteUrl?: string | null;
   /** Mode picker — only rendered when there are 2+ modes. */
   modes: BlueprintMode[];
   activeMode: BlueprintMode | null;
@@ -70,6 +72,7 @@ const IframeBlueprintLayout: FC<Props> = ({
   provisionPath,
   protocolDetailHref,
   externalAppUrl,
+  websiteUrl,
   modes,
   activeMode,
   onSelectMode,
@@ -168,6 +171,21 @@ const IframeBlueprintLayout: FC<Props> = ({
           >
             <ExpandIcon className="h-3.5 w-3.5" />
           </button>
+          {websiteUrl && (
+            <a
+              href={websiteUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              title="Visit the blueprint's own site"
+              className={twMerge(
+                'inline-flex h-8 items-center gap-1.5 rounded-md border border-border bg-transparent px-2.5 text-xs font-medium text-foreground transition-colors hover:bg-[color:var(--bg-hover)]',
+                focus.ring,
+              )}
+            >
+              Visit site
+              <span aria-hidden>↗</span>
+            </a>
+          )}
           <button
             type="button"
             onClick={() => setDetailsOpen((v) => !v)}
@@ -193,6 +211,7 @@ const IframeBlueprintLayout: FC<Props> = ({
       provisionPath,
       serviceNoun,
       detailsOpen,
+      websiteUrl,
     ],
   );
   useTopNavSlot(navContent);
