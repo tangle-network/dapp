@@ -4,9 +4,10 @@
  */
 
 import { useMemo } from 'react';
-import { useReadContracts, useChainId } from 'wagmi';
+import { useChainId, useConnectorClient } from 'wagmi';
 import { getContractsByChainId } from '@tangle-network/dapp-config/contracts';
 import INFLATION_POOL_ABI from '@tangle-network/tangle-shared-ui/abi/inflationPool';
+import { useResilientReadContracts } from '@tangle-network/tangle-shared-ui/hooks/useResilientReadContracts';
 import { POLLING_INTERVALS } from './constants';
 
 export interface DistributionWeights {
@@ -37,10 +38,12 @@ interface UseEpochInfoOptions {
 const useEpochInfo = (options?: UseEpochInfoOptions) => {
   const enabled = options?.enabled ?? true;
   const chainId = useChainId();
+  const { data: connectorClient } = useConnectorClient();
+  const effectiveChainId = connectorClient?.chain?.id ?? chainId;
 
   let contracts: ReturnType<typeof getContractsByChainId> | null = null;
   try {
-    contracts = getContractsByChainId(chainId);
+    contracts = getContractsByChainId(effectiveChainId);
   } catch {
     contracts = null;
   }
@@ -50,7 +53,9 @@ const useEpochInfo = (options?: UseEpochInfoOptions) => {
     isLoading,
     error,
     refetch,
-  } = useReadContracts({
+  } = useResilientReadContracts({
+    queryKey: ['epochInfo', effectiveChainId] as const,
+    chainId: effectiveChainId,
     contracts:
       enabled && contracts
         ? [

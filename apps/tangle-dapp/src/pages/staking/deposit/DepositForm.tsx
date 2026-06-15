@@ -251,6 +251,7 @@ const DepositForm: FC = () => {
     return {
       type: 'number',
       step,
+      'data-testid': 'staking-deposit-amount-input',
       ...register('amount', {
         required: 'Amount is required',
         validate: (value) => {
@@ -463,6 +464,7 @@ const DepositForm: FC = () => {
                   useRef({
                     placeholder: <AssetPlaceholder />,
                     onClick: openTokenModal,
+                    'data-testid': 'staking-deposit-asset-selector',
                     ...(asset
                       ? {
                           renderBody: () => (
@@ -523,6 +525,7 @@ const DepositForm: FC = () => {
 
               return (
                 <Button
+                  data-testid="staking-deposit-submit"
                   isDisabled={!isValid || isDefined(displayError) || !isReady}
                   type="submit"
                   isFullWidth

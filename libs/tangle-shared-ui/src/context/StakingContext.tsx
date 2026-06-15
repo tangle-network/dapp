@@ -110,6 +110,7 @@ export const StakingProvider: FC<StakingProviderProps> = ({ children }) => {
     useEnvioHealthCheckByChainId(chainId);
 
   const isIndexerAvailable = !isCheckingHealth && !!isHealthy;
+  const shouldUseIndexer = isIndexerAvailable;
   const source: DataSource = isCheckingHealth
     ? 'loading'
     : isIndexerAvailable
@@ -134,7 +135,7 @@ export const StakingProvider: FC<StakingProviderProps> = ({ children }) => {
     refetch: refetchProtocolStakingAssets,
   } = useProtocolStakingAssets({
     enabledOnly: true,
-    enabled: !isCheckingHealth,
+    enabled: shouldUseIndexer,
   });
 
   // Fetch staking assets with metadata and balances (fallback handled internally).

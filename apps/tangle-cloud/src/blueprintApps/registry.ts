@@ -239,6 +239,87 @@ const entries = [
     },
   },
   {
+    slug: 'surplus',
+    canonicalSlug: 'surplus',
+    match: {
+      publisherNamespace: 'tangle',
+      requestedSlug: 'surplus',
+    },
+    publisher: {
+      label: 'Tangle Labs',
+      visibility: 'first-party',
+      verification: 'first-party',
+    },
+    tier: 'curated-module',
+    slugPolicy: 'reserved',
+    module: {
+      moduleId: 'surplus',
+      status: 'planned',
+    },
+    manifest: {
+      displayName: 'Surplus Market',
+      tagline: 'Buy and sell prepaid AI inference credits.',
+      description:
+        'Open a surplus market venue, discover operators, inspect credit lots, and reconcile settlement batches for prepaid inference.',
+      surfaces: [
+        'generic-overview',
+        'service-explorer',
+        'service-console',
+        'actions-panel',
+        'resources',
+        'permissions',
+        'metrics',
+      ],
+      resources: {
+        serviceNoun: 'surplus market',
+        resourceNoun: 'venue',
+        resourceRoute: 'custom',
+      },
+      permissions: [
+        {
+          key: 'market.make',
+          label: 'Market making',
+          scope: 'service',
+        },
+        {
+          key: 'settlement.submit',
+          label: 'Settlement submission',
+          scope: 'service',
+        },
+        {
+          key: 'credits.redeem',
+          label: 'Credit redemption',
+          scope: 'resource',
+        },
+      ],
+      externalApp: {
+        url: 'https://surplus-market.pages.dev/',
+        mode: 'iframe',
+        host: 'surplus-market.pages.dev',
+        trust: 'trusted',
+        label: 'Surplus Market',
+      },
+    },
+    // Iframe runtime policy. Surplus runs its OWN wallet (ConnectKit) inside the
+    // frame rather than the parent bridge, so the bridge grants stay off
+    // (allowReadAccount/allowChainSwitch false, no contract/message grants).
+    // allowPopups: wallet connect popups + explorer links. allowSameOrigin:
+    // surplus-market.pages.dev is cross-origin, so this gives the app its own
+    // storage (WalletConnect/ConnectKit need it) without any parent access.
+    iframe: {
+      url: 'https://surplus-market.pages.dev/',
+      origin: 'https://surplus-market.pages.dev',
+      appId: 'surplus',
+      allowedChainIds: [84532],
+      contracts: [],
+      messages: [],
+      allowReadAccount: false,
+      allowChainSwitch: false,
+      allowPopups: true,
+      allowSameOrigin: true,
+    },
+  },
+  {
     slug: 'llm-inference',
     canonicalSlug: 'llm-inference',
     match: {

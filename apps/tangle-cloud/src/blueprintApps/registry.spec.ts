@@ -30,11 +30,21 @@ describe('blueprint app registry', () => {
       requestedSlug: 'ai-agent-sandbox',
     });
     const trainingBySlug = getBlueprintAppBySlug('training');
+    const surplusByMetadata = getBlueprintAppForMetadata({
+      publisherNamespace: 'tangle',
+      requestedSlug: 'surplus',
+    });
 
     expect(tradingBySlug?.slug).toBe('trading');
     expect(tradingByMetadata?.slug).toBe('trading');
     expect(sandboxByMetadata?.slug).toBe('sandbox');
     expect(trainingBySlug?.slug).toBe('training');
+    expect(surplusByMetadata?.slug).toBe('surplus');
+    expect(surplusByMetadata?.manifest.externalApp?.mode).toBe('iframe');
+    // Surplus runs its own wallet in-frame, so it opts into allow-same-origin
+    // (cross-origin → its own storage) but not the parent bridge grants.
+    expect(surplusByMetadata?.iframe?.allowSameOrigin).toBe(true);
+    expect(surplusByMetadata?.iframe?.allowReadAccount).toBe(false);
   });
 
   it('returns null when metadata identity does not match any curated entry', () => {
@@ -82,6 +92,7 @@ describe('blueprint app registry', () => {
   it('protects reserved first-party slugs while allowing publisher-scoped claims', () => {
     expect(isReservedBlueprintSlug('trading')).toBe(true);
     expect(isReservedBlueprintSlug('training')).toBe(true);
+    expect(isReservedBlueprintSlug('surplus')).toBe(true);
     expect(
       canPublisherClaimSlug('trading', {
         namespace: 'alice',

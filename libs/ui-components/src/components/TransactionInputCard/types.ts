@@ -133,7 +133,9 @@ export interface TransactionInputCardBodyProps
   /**
    * The props of the token selector.
    */
-  tokenSelectorProps?: ComponentProps<typeof TokenSelector>;
+  tokenSelectorProps?: ComponentProps<typeof TokenSelector> & {
+    renderBody?: () => ReactNode;
+  };
 }
 
 export interface TransactionInputCardFooterProps

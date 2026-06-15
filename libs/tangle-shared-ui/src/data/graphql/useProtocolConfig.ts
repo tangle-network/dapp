@@ -3,11 +3,12 @@
  * Replaces the Substrate-based protocol constants hook.
  */
 
-import { useQuery } from '@tanstack/react-query';
-import { usePublicClient, useChainId } from 'wagmi';
+import { useMemo } from 'react';
+import { useChainId } from 'wagmi';
 import MULTI_ASSET_DELEGATION_ABI from '../../abi/multiAssetDelegation';
 import { getContractsByChainId } from '@tangle-network/dapp-config/contracts';
 import { zeroAddress } from 'viem';
+import { useResilientReadContracts } from '../../hooks/useResilientReadContracts';
 
 // Protocol configuration
 export interface ProtocolConfig {
@@ -100,159 +101,90 @@ const asUnsupportedProtocolConfig = (
  */
 export const useProtocolConfig = (options?: { enabled?: boolean }) => {
   const { enabled = true } = options ?? {};
-  const publicClient = usePublicClient();
   const chainId = useChainId();
 
-  return useQuery<ProtocolConfigResult>({
-    queryKey: ['protocolConfig', chainId, publicClient?.chain?.id],
-    queryFn: async () => {
-      if (!publicClient) {
-        throw new Error('Public client not available');
-      }
-      let contracts: ReturnType<typeof getContractsByChainId>;
+  const contracts = useMemo(() => {
+    try {
+      return getContractsByChainId(chainId);
+    } catch {
+      return null;
+    }
+  }, [chainId]);
 
-      try {
-        contracts = getContractsByChainId(chainId);
-      } catch {
-        return asUnsupportedProtocolConfig('unknown_chain');
-      }
+  const contractAddress = contracts?.multiAssetDelegation;
 
-      const contractAddress = contracts.multiAssetDelegation;
-      if (contractAddress.toLowerCase() === zeroAddress) {
-        return asUnsupportedProtocolConfig(
-          'missing_contract_address',
-          contractAddress,
-        );
-      }
+  const unsupportedConfig = useMemo<ProtocolConfigResult | null>(() => {
+    if (!contracts || !contractAddress) {
+      return asUnsupportedProtocolConfig('unknown_chain');
+    }
 
-      let bytecode: Awaited<ReturnType<typeof publicClient.getCode>>;
-      try {
-        bytecode = await publicClient.getCode({ address: contractAddress });
-      } catch {
-        return asUnsupportedProtocolConfig(
-          'contract_read_failed',
-          contractAddress,
-        );
-      }
-      if (!bytecode || bytecode === '0x') {
-        return asUnsupportedProtocolConfig(
-          'missing_contract_bytecode',
-          contractAddress,
-        );
-      }
+    if (contractAddress.toLowerCase() === zeroAddress) {
+      return asUnsupportedProtocolConfig(
+        'missing_contract_address',
+        contractAddress,
+      );
+    }
 
-      const readDirect = async (
-        functionName: ProtocolConfigFunction,
-      ): Promise<bigint> => {
-        return (await publicClient.readContract({
-          address: contractAddress,
-          abi: MULTI_ASSET_DELEGATION_ABI,
-          functionName,
-        })) as bigint;
-      };
+    return null;
+  }, [contractAddress, contracts]);
 
-      const readAllDirect = async (): Promise<ProtocolConfigResult | null> => {
-        const directResults = await Promise.allSettled(
-          PROTOCOL_CONFIG_FUNCTIONS.map((functionName) =>
-            readDirect(functionName),
-          ),
-        );
-        const values = new Map<ProtocolConfigFunction, bigint>();
-
-        directResults.forEach((result, index) => {
-          if (result.status === 'fulfilled') {
-            values.set(PROTOCOL_CONFIG_FUNCTIONS[index], result.value);
-          }
-        });
-
-        return asSupportedProtocolConfig(values);
-      };
-
-      // If multicall3 isn't configured for this chain, fall back to individual calls.
-      if (publicClient.chain?.contracts?.multicall3?.address === undefined) {
-        const directConfig = await readAllDirect();
-        if (directConfig) {
-          return directConfig;
-        }
-
-        return asUnsupportedProtocolConfig(
-          'contract_read_failed',
-          contractAddress,
-        );
-      }
-
-      // Multicall to fetch all config values at once
-      let results: Awaited<ReturnType<typeof publicClient.multicall>>;
-      try {
-        results = await publicClient.multicall({
-          contracts: PROTOCOL_CONFIG_FUNCTIONS.map((functionName) => ({
+  const configReads = useResilientReadContracts({
+    queryKey: ['protocolConfig', chainId, contractAddress] as const,
+    chainId,
+    contracts:
+      unsupportedConfig === null && contractAddress
+        ? PROTOCOL_CONFIG_FUNCTIONS.map((functionName) => ({
             address: contractAddress,
             abi: MULTI_ASSET_DELEGATION_ABI,
             functionName,
-          })),
-        });
-      } catch {
-        const directConfig = await readAllDirect();
-        if (directConfig) {
-          return directConfig;
-        }
-        return asUnsupportedProtocolConfig(
-          'contract_read_failed',
-          contractAddress,
-        );
-      }
-
-      const values = new Map<ProtocolConfigFunction, bigint>();
-      const failedFunctions: ProtocolConfigFunction[] = [];
-      const typedResults = results as Array<
-        | { status: 'success'; result: bigint }
-        | { status: 'failure'; error: unknown }
-      >;
-
-      typedResults.forEach((result, index) => {
-        const functionName = PROTOCOL_CONFIG_FUNCTIONS[index];
-        if (result.status === 'success') {
-          values.set(functionName, result.result);
-          return;
-        }
-        failedFunctions.push(functionName);
-      });
-
-      // If multicall returned failures (e.g. broken multicall3), attempt direct reads for missing values.
-      if (failedFunctions.length > 0) {
-        const directFallbackResults = await Promise.allSettled(
-          failedFunctions.map((functionName) => readDirect(functionName)),
-        );
-
-        directFallbackResults.forEach((result, index) => {
-          if (result.status === 'fulfilled') {
-            values.set(failedFunctions[index], result.value);
-          }
-        });
-      }
-
-      const config = asSupportedProtocolConfig(values);
-      if (config) {
-        return config;
-      }
-
-      if (process.env.NODE_ENV === 'development') {
-        console.debug('Protocol config unsupported: read failures', {
-          chainId,
-          contractAddress,
-          failedFunctions,
-        });
-      }
-
-      return asUnsupportedProtocolConfig(
-        'contract_read_failed',
-        contractAddress,
-      );
+          }))
+        : [],
+    query: {
+      enabled: enabled && unsupportedConfig === null && !!contractAddress,
+      staleTime: 2_000,
+      refetchInterval: enabled ? 2_000 : false,
+      refetchIntervalInBackground: true,
     },
-    enabled: enabled && !!publicClient,
-    staleTime: 60_000, // 1 minute - config values rarely change
-    refetchInterval: 60_000, // Refresh every minute
   });
+
+  const data = useMemo<ProtocolConfigResult | undefined>(() => {
+    if (unsupportedConfig !== null) {
+      return unsupportedConfig;
+    }
+
+    if (!contractAddress || !configReads.data) {
+      return undefined;
+    }
+
+    const values = new Map<ProtocolConfigFunction, bigint>();
+    configReads.data.forEach((result, index) => {
+      if (result.status === 'success') {
+        values.set(PROTOCOL_CONFIG_FUNCTIONS[index], result.result as bigint);
+      }
+    });
+
+    const config = asSupportedProtocolConfig(values);
+    if (config) {
+      return config;
+    }
+
+    if (process.env.NODE_ENV === 'development') {
+      console.debug('Protocol config unsupported: read failures', {
+        chainId,
+        contractAddress,
+      });
+    }
+
+    return asUnsupportedProtocolConfig('contract_read_failed', contractAddress);
+  }, [chainId, configReads.data, contractAddress, unsupportedConfig]);
+
+  return {
+    ...configReads,
+    data,
+    isLoading: unsupportedConfig === null && configReads.isLoading,
+    isError: unsupportedConfig === null && configReads.isError,
+    error: unsupportedConfig === null ? configReads.error : null,
+  };
 };
 
 /**

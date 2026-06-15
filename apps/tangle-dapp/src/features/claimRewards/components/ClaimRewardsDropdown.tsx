@@ -76,6 +76,7 @@ const ClaimRewardsDropdownContent: FC = () => {
   return (
     <Dropdown>
       <DropdownButton
+        data-testid="staking-rewards-dropdown-trigger"
         icon={
           <VipDiamondLine
             size="lg"
@@ -138,6 +139,7 @@ const ClaimRewardsDropdownContent: FC = () => {
               </div>
 
               <Button
+                data-testid="staking-rewards-dropdown-claim-all"
                 isFullWidth
                 onClick={handleClaimAll}
                 isDisabled={isClaiming || !claimRewards}

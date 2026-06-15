@@ -15,29 +15,35 @@ export const checkEnvioHealth = async (
 ): Promise<boolean> => {
   try {
     const endpoint = getEnvioEndpoint(network);
+    const healthQueries = [
+      '{ StakingAsset(limit: 1) { id } }',
+      '{ StakingAssetConfig(limit: 1) { id } }',
+    ];
 
-    // Query the canonical indexer asset table to verify it has data
-    const response = await fetch(endpoint, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        query: '{ StakingAssetConfig(limit: 1) { id } }',
-      }),
-      // Short timeout for health check
-      signal: AbortSignal.timeout(5000),
-    });
+    for (const query of healthQueries) {
+      // Query a staking asset table to verify the schema exists and has data.
+      const response = await fetch(endpoint, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ query }),
+        // Short timeout for health check.
+        signal: AbortSignal.timeout(5000),
+      });
 
-    if (!response.ok) {
-      return false;
+      if (!response.ok) {
+        return false;
+      }
+
+      const result = await response.json();
+      const assets =
+        result.data?.StakingAsset ?? result.data?.StakingAssetConfig;
+
+      if (Array.isArray(assets) && assets.length > 0) {
+        return true;
+      }
     }
 
-    // Check if we got actual data back
-    const result = await response.json();
-    const hasData =
-      result.data?.StakingAssetConfig &&
-      result.data.StakingAssetConfig.length > 0;
-
-    return hasData === true;
+    return false;
   } catch {
     // Any error means indexer is not healthy
     return false;

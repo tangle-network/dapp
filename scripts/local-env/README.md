@@ -4,11 +4,12 @@ This directory contains scripts to run a fully simulatable local environment for
 
 ## Scripts
 
-| Script                   | Description                                                    |
-| ------------------------ | -------------------------------------------------------------- |
-| `start-local-env.sh`     | Start Anvil, deploy TNT contracts, run indexer & claim relayer |
-| `deploy-migration.sh`    | Deploy TangleMigration contracts for TNT token claims          |
-| `activity-generator.mjs` | Generate simulated staking activity                            |
+| Script                            | Description                                                                                    |
+| --------------------------------- | ---------------------------------------------------------------------------------------------- |
+| `start-local-env.sh`              | Start Anvil, deploy TNT contracts, run indexer & claim relayer                                 |
+| `deploy-migration.sh`             | Deploy TangleMigration contracts for TNT token claims                                          |
+| `activity-generator.mjs`          | Generate simulated staking activity                                                            |
+| `check-local-staking-actions.mjs` | Prove deposit, delegate, rewards claim, undelegate, and withdrawal against local TNT contracts |
 
 ## Prerequisites
 
@@ -76,6 +77,52 @@ If the environment is already running:
 RPC_URL=http://localhost:8545 node scripts/local-env/activity-generator.mjs
 ```
 
+### Local Staking Action Gates
+
+Use the local staking gates when you need deterministic proof that every staking
+write used by the dApp succeeds on LocalTestnet:
+
+```bash
+./scripts/local-env/start-local-env.sh
+yarn test:staking:local
+yarn test:staking:local-ui
+```
+
+`yarn test:staking:local` proves the contracts directly. It requires Anvil chain
+ID `31337`, resolves the current local proxy addresses from environment
+variables, `/tmp/deploy.log`, `/tmp/local-env-cache/addresses.env`, then the
+checked-in local defaults, and executes:
+
+1. `depositWithLock`
+2. `delegateWithOptions`
+3. `RewardVaults.distributeRewards` plus `claimDelegatorRewardsBatch`
+4. `scheduleDelegatorUnstake` plus `executeDelegatorUnstake`
+5. `scheduleWithdraw` plus `executeWithdraw`
+
+It advances Anvil time and staking rounds for delayed unstake/withdrawal
+execution. A blocker state is a failure here, not a pass.
+
+`yarn test:staking:local-ui` proves the same user-facing path through the dApp
+and MetaMask. It launches Chromium under Xvfb, connects MetaMask to local Anvil,
+drives deposit, delegate, claim rewards, schedule/execute undelegate, and
+schedule/execute withdrawal through stable `data-testid` selectors, then verifies
+each result through RPC reads.
+
+The exploratory browser wallet suite still exists for broader launch signoff.
+It can use an LLM agent, so keep it separate from the deterministic local staking
+release gate:
+
+```bash
+yarn test:wallet-flows:staking:local
+yarn test:wallet-flows:staking:gate
+```
+
+The combined deterministic local release gate is:
+
+```bash
+yarn test:staking:local-release
+```
+
 ## Configuration
 
 ### Environment Variables
@@ -100,13 +147,20 @@ VITE_CLAIM_RELAYER_URL=http://localhost:3001
 
 ## Contract Addresses
 
-These are deterministic addresses from Anvil's default deployer:
+These are the current local defaults for the checked-in LocalTestnet deploy.
+`start-local-env.sh` writes the canonical addresses for the active Anvil state
+to `/tmp/local-env-cache/addresses.env`; use that cache rather than assuming a
+nonce order when the deployment script changes.
 
-| Contract               | Address                                      |
-| ---------------------- | -------------------------------------------- |
-| Tangle                 | `0xCf7Ed3AccA5a467e9e704C703E8D87F634fB0Fc9` |
-| MultiAssetDelegation   | `0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512` |
-| OperatorStatusRegistry | `0xDc64a140Aa3E981100a9becA4E685f962f0cF6C9` |
+| Contract                | Address                                      |
+| ----------------------- | -------------------------------------------- |
+| Tangle                  | `0xDc64a140Aa3E981100a9becA4E685f962f0cF6C9` |
+| MultiAssetDelegation    | `0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0` |
+| OperatorStatusRegistry  | `0x5f3f1dBD7B74C6B46e8c44f98792A1dAf8d69154` |
+| RewardVaults            | `0x0355B7B8cb128fA5692729Ab3AAa199C1753f726` |
+| InflationPool           | `0xf4B146FbA71F41E0592668ffbF264F1D186b2Ca8` |
+| Credits                 | `0xDC11f7E700A4c898AE5CAddB1082cFfa76512aDD` |
+| LiquidDelegationFactory | `0xf090f16dEc8b6D24082Edd25B1C8D26f2bC86128` |
 
 ## Interactive CLI
 

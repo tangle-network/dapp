@@ -4,7 +4,7 @@
  */
 
 import { Address } from 'viem';
-import { useChainId } from 'wagmi';
+import { useChainId, useConnectorClient } from 'wagmi';
 import useContractWrite from '@tangle-network/tangle-shared-ui/hooks/useContractWrite';
 import REWARD_VAULTS_ABI from '@tangle-network/tangle-shared-ui/abi/rewardVaults';
 import { getContractsByChainId } from '@tangle-network/dapp-config/contracts';
@@ -30,10 +30,12 @@ export interface ClaimRewardsParams {
  */
 export const useClaimRewardsTx = () => {
   const chainId = useChainId();
+  const { data: connectorClient } = useConnectorClient();
+  const effectiveChainId = connectorClient?.chain?.id ?? chainId;
 
   let contracts: ReturnType<typeof getContractsByChainId> | null = null;
   try {
-    contracts = getContractsByChainId(chainId);
+    contracts = getContractsByChainId(effectiveChainId);
   } catch {
     contracts = null;
   }
