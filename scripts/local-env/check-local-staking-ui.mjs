@@ -295,6 +295,11 @@ const erc20Abi = [
 
 const log = (message) => console.log(`[local-staking-ui] ${message}`);
 const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+const TX_TIMEOUT_MS = Number(
+  process.env.LOCAL_STAKING_UI_TX_TIMEOUT_MS ||
+    process.env.LOCAL_STAKING_TX_TIMEOUT_MS ||
+    60_000,
+);
 const formatError = (error) =>
   error?.shortMessage || error?.details || error?.message || String(error);
 const assert = (condition, message) => {
@@ -401,10 +406,41 @@ const readErc20 = (token, functionName, args = []) =>
     args,
   });
 
+const waitForReceipt = async (hash, label) => {
+  const started = Date.now();
+  let lastError = null;
+
+  while (Date.now() - started < TX_TIMEOUT_MS) {
+    try {
+      return await publicClient.getTransactionReceipt({ hash });
+    } catch (error) {
+      lastError = error;
+    }
+
+    await sleep(1_000);
+  }
+
+  throw new Error(
+    `${label} receipt not observed within ${TX_TIMEOUT_MS}ms for tx ${hash}${
+      lastError ? `: ${formatError(lastError)}` : ''
+    }`,
+  );
+};
+
 const writeAs = async (wallet, label, request) => {
-  const hash = await wallet.writeContract(request);
-  const receipt = await publicClient.waitForTransactionReceipt({ hash });
+  let hash;
+
+  log(`${label}: broadcasting`);
+  try {
+    hash = await wallet.writeContract(request);
+  } catch (error) {
+    throw new Error(`${label} failed before broadcast: ${formatError(error)}`);
+  }
+
+  log(`${label}: ${hash}`);
+  const receipt = await waitForReceipt(hash, label);
   assert(receipt.status === 'success', `${label} reverted: ${hash}`);
+  log(`${label}: mined in block ${receipt.blockNumber}`);
   return hash;
 };
 
@@ -890,19 +926,59 @@ const WALLET_PROMPT_FALLBACK_SELECTORS = [
   'button:has-text("Sign")',
   'button:has-text("Switch network")',
   'button:has-text("Switch Network")',
+  'button:has-text("Switch to Tangle Local")',
   'button:has-text("Add network")',
   'button:has-text("Add Network")',
+  'button.mm-button-primary',
+  '.page-container__footer button:last-child',
+  '.confirm-page-container-footer button:last-child',
 ];
+
+let lastWalletPromptDumpAt = 0;
+
+const orderedWalletPromptPages = (context) =>
+  context
+    .pages()
+    .filter(
+      (page) =>
+        !page.isClosed() && page.url().startsWith('chrome-extension://'),
+    )
+    .sort((left, right) => {
+      const leftIsPrompt = left.url().includes('notification.html') ? 0 : 1;
+      const rightIsPrompt = right.url().includes('notification.html') ? 0 : 1;
+      return leftIsPrompt - rightIsPrompt;
+    });
+
+const describeWalletPromptPage = async (page) => {
+  const buttons = await page
+    .locator('button, [role="button"]')
+    .evaluateAll((elements) =>
+      elements.slice(0, 20).map((element) => ({
+        text: (element.textContent || '').trim().replace(/\s+/g, ' '),
+        testId: element.getAttribute('data-testid'),
+        ariaLabel: element.getAttribute('aria-label'),
+        disabled:
+          element.hasAttribute('disabled') ||
+          element.getAttribute('aria-disabled') === 'true',
+        className:
+          typeof element.className === 'string' ? element.className : '',
+      })),
+    )
+    .catch(() => []);
+
+  return {
+    url: page.url(),
+    buttons,
+  };
+};
 
 const settleWalletPromptFallback = async (context, actionSelectors = []) => {
   const selectors = [
     ...new Set([...actionSelectors, ...WALLET_PROMPT_FALLBACK_SELECTORS]),
   ];
 
-  for (const page of context.pages()) {
-    if (page.isClosed() || !page.url().startsWith('chrome-extension://')) {
-      continue;
-    }
+  for (const page of orderedWalletPromptPages(context)) {
+    await page.bringToFront().catch(() => {});
 
     const checkboxCount = await page
       .locator('input[type="checkbox"]')
@@ -933,6 +1009,73 @@ const settleWalletPromptFallback = async (context, actionSelectors = []) => {
           return true;
         }
       }
+    }
+
+    const clickedByDom = await page
+      .evaluate(() => {
+        const actionWords =
+          /confirm|approve|connect|next|continue|switch|add network|sign/i;
+        const elements = [
+          ...document.querySelectorAll('button, [role="button"]'),
+        ];
+        const candidates = elements.filter((element) => {
+          const style = window.getComputedStyle(element);
+          const rect = element.getBoundingClientRect();
+          const text = (element.textContent || '').trim();
+          const disabled =
+            element.hasAttribute('disabled') ||
+            element.getAttribute('aria-disabled') === 'true';
+
+          return (
+            !disabled &&
+            rect.width > 0 &&
+            rect.height > 0 &&
+            style.visibility !== 'hidden' &&
+            style.display !== 'none' &&
+            actionWords.test(text)
+          );
+        });
+
+        const candidate =
+          candidates.find((element) =>
+            /primary|confirm|approve|connect/i.test(
+              `${element.getAttribute('data-testid') || ''} ${
+                element.className || ''
+              }`,
+            ),
+          ) || candidates[0];
+
+        if (!candidate) {
+          return null;
+        }
+
+        const description = {
+          text: (candidate.textContent || '').trim().replace(/\s+/g, ' '),
+          testId: candidate.getAttribute('data-testid'),
+          className:
+            typeof candidate.className === 'string' ? candidate.className : '',
+        };
+        candidate.click();
+        return description;
+      })
+      .catch(() => null);
+
+    if (clickedByDom) {
+      log(
+        `[wallet] clicked DOM fallback ${JSON.stringify(
+          clickedByDom,
+        )} on ${page.url()}`,
+      );
+      return true;
+    }
+
+    if (
+      page.url().includes('notification.html') &&
+      Date.now() - lastWalletPromptDumpAt > 15_000
+    ) {
+      lastWalletPromptDumpAt = Date.now();
+      const state = await describeWalletPromptPage(page);
+      log(`[wallet] prompt state ${JSON.stringify(state)}`);
     }
   }
 
@@ -1050,61 +1193,94 @@ const ensureWalletChain = async (page) => {
   }
 
   const requestWalletChain = () =>
-    page.evaluate(
-      async ({ chainId, rpcUrl }) => {
-        const messageOf = (error) => error?.message || String(error);
-        const codeOf = (error) => error?.code;
-
-        try {
-          await globalThis.ethereum.request({
-            method: 'wallet_switchEthereumChain',
-            params: [{ chainId }],
-          });
-          return { ok: true };
-        } catch (error) {
-          if (codeOf(error) !== 4902 && codeOf(error) !== -32002) {
-            return {
-              ok: false,
-              message: messageOf(error),
-            };
-          }
-
-          if (codeOf(error) === -32002) {
-            return {
-              ok: false,
-              pending: true,
-              message: messageOf(error),
-            };
-          }
+    Promise.race([
+      page.evaluate(
+        async ({ chainId, rpcUrl }) => {
+          const timeout = (ms) =>
+            new Promise((resolve) =>
+              setTimeout(() => resolve({ timedOut: true }), ms),
+            );
+          const withTimeout = (promise, ms) =>
+            Promise.race([promise, timeout(ms)]);
+          const messageOf = (error) => error?.message || String(error);
+          const codeOf = (error) => error?.code;
 
           try {
-            await globalThis.ethereum.request({
-              method: 'wallet_addEthereumChain',
-              params: [
-                {
-                  chainId,
-                  chainName: 'Tangle Local',
-                  rpcUrls: [rpcUrl],
-                  nativeCurrency: {
-                    name: 'Ether',
-                    symbol: 'ETH',
-                    decimals: 18,
-                  },
-                },
-              ],
-            });
+            const switchResult = await withTimeout(
+              globalThis.ethereum.request({
+                method: 'wallet_switchEthereumChain',
+                params: [{ chainId }],
+              }),
+              5_000,
+            );
+            if (switchResult?.timedOut) {
+              return {
+                ok: false,
+                pending: true,
+                message: 'wallet_switchEthereumChain confirmation pending',
+              };
+            }
             return { ok: true };
-          } catch (addError) {
-            return {
-              ok: false,
-              pending: codeOf(addError) === -32002,
-              message: messageOf(addError),
-            };
+          } catch (error) {
+            if (codeOf(error) !== 4902 && codeOf(error) !== -32002) {
+              return {
+                ok: false,
+                message: messageOf(error),
+              };
+            }
+
+            if (codeOf(error) === -32002) {
+              return {
+                ok: false,
+                pending: true,
+                message: messageOf(error),
+              };
+            }
+
+            try {
+              const addResult = await withTimeout(
+                globalThis.ethereum.request({
+                  method: 'wallet_addEthereumChain',
+                  params: [
+                    {
+                      chainId,
+                      chainName: 'Tangle Local',
+                      rpcUrls: [rpcUrl],
+                      nativeCurrency: {
+                        name: 'Ether',
+                        symbol: 'ETH',
+                        decimals: 18,
+                      },
+                    },
+                  ],
+                }),
+                5_000,
+              );
+              if (addResult?.timedOut) {
+                return {
+                  ok: false,
+                  pending: true,
+                  message: 'wallet_addEthereumChain confirmation pending',
+                };
+              }
+              return { ok: true };
+            } catch (addError) {
+              return {
+                ok: false,
+                pending: codeOf(addError) === -32002,
+                message: messageOf(addError),
+              };
+            }
           }
-        }
-      },
-      { chainId: targetChainId, rpcUrl: RPC_URL },
-    );
+        },
+        { chainId: targetChainId, rpcUrl: RPC_URL },
+      ),
+      sleep(7_500).then(() => ({
+        ok: false,
+        pending: true,
+        message: 'wallet chain request timed out in page context',
+      })),
+    ]);
 
   let result = await requestWalletChain();
   let lastRequestAt = Date.now();
