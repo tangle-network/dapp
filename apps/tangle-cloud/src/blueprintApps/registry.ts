@@ -294,11 +294,29 @@ const entries = [
       ],
       externalApp: {
         url: 'https://surplus-market.pages.dev/',
-        mode: 'link',
+        mode: 'iframe',
         host: 'surplus-market.pages.dev',
         trust: 'trusted',
         label: 'Surplus Market',
       },
+    },
+    // Iframe runtime policy. Surplus runs its OWN wallet (ConnectKit) inside the
+    // frame rather than the parent bridge, so the bridge grants stay off
+    // (allowReadAccount/allowChainSwitch false, no contract/message grants).
+    // allowPopups: wallet connect popups + explorer links. allowSameOrigin:
+    // surplus-market.pages.dev is cross-origin, so this gives the app its own
+    // storage (WalletConnect/ConnectKit need it) without any parent access.
+    iframe: {
+      url: 'https://surplus-market.pages.dev/',
+      origin: 'https://surplus-market.pages.dev',
+      appId: 'surplus',
+      allowedChainIds: [84532],
+      contracts: [],
+      messages: [],
+      allowReadAccount: false,
+      allowChainSwitch: false,
+      allowPopups: true,
+      allowSameOrigin: true,
     },
   },
   {
