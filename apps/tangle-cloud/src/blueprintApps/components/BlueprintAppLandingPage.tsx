@@ -123,7 +123,7 @@ const BlueprintAppLandingPage: FC<Props> = ({ entry }) => {
         description={view.manifest.description}
         serviceNoun={serviceNoun}
         provisionPath={provisionPath}
-        websiteUrl={canonicalBlueprint?.websiteUrl}
+        websiteUrl={canonicalBlueprint?.website}
         protocolDetailHref={
           activeMode?.blueprintId !== undefined
             ? `/blueprints/${activeMode.blueprintId.toString()}?raw=1`
