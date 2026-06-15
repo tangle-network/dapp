@@ -388,6 +388,7 @@ const wallets = Object.fromEntries(
 );
 
 const txs = [];
+const TX_TIMEOUT_MS = Number(process.env.LOCAL_STAKING_TX_TIMEOUT_MS || 60_000);
 
 const fail = (message) => {
   throw new Error(
@@ -395,6 +396,8 @@ const fail = (message) => {
   );
 };
 
+const log = (message) => console.log(`[local-staking-actions] ${message}`);
+const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 const formatError = (error) =>
   error?.shortMessage || error?.details || error?.message || String(error);
 
@@ -426,19 +429,48 @@ const readErc20 = (token, functionName, args = []) =>
     args,
   });
 
+const waitForReceipt = async (hash, label) => {
+  const started = Date.now();
+  let lastError = null;
+
+  while (Date.now() - started < TX_TIMEOUT_MS) {
+    try {
+      return await publicClient.getTransactionReceipt({ hash });
+    } catch (error) {
+      lastError = error;
+    }
+
+    await sleep(1_000);
+  }
+
+  fail(
+    `${label} receipt not observed within ${TX_TIMEOUT_MS}ms for tx ${hash}${
+      lastError ? `: ${formatError(lastError)}` : ''
+    }`,
+  );
+};
+
 const write = async (wallet, label, request) => {
   let hash;
 
+  log(`${label}: broadcasting`);
   try {
     hash = await wallet.writeContract(request);
   } catch (error) {
     fail(`${label} failed before broadcast: ${formatError(error)}`);
   }
 
-  const receipt = await publicClient.waitForTransactionReceipt({ hash });
+  log(`${label}: ${hash}`);
+  const receipt = await waitForReceipt(hash, label);
   assert(receipt.status === 'success', `${label} reverted: ${hash}`);
 
-  txs.push({ label, hash, gasUsed: receipt.gasUsed.toString() });
+  txs.push({
+    label,
+    hash,
+    block: receipt.blockNumber.toString(),
+    gasUsed: receipt.gasUsed.toString(),
+  });
+  log(`${label}: mined in block ${receipt.blockNumber}`);
   return receipt;
 };
 
