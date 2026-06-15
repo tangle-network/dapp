@@ -265,6 +265,25 @@ const BlueprintHostCard = ({
               </button>
             </div>
           )}
+          {/* The blueprint's own site — distinct from the publisher console.
+           * Works for ANY blueprint that sets `website` in its metadata, with or
+           * without an iframe/console tier. */}
+          {blueprint.websiteUrl && (
+            <div className="mt-4 rounded-xl border border-border bg-[color:var(--bg-elevated)] p-4">
+              <p className="text-sm leading-6 text-muted-foreground">
+                Visit the blueprint&apos;s own site.
+              </p>
+              <a
+                href={blueprint.websiteUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="mt-3 inline-flex items-center gap-2 rounded-md text-sm font-semibold text-foreground outline-none transition-colors hover:text-[color:var(--brand-cool)] focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-card"
+              >
+                Visit site
+                <ExternalLinkLine className="h-4 w-4" />
+              </a>
+            </div>
+          )}
         </CardContent>
       </Card>
     </div>
