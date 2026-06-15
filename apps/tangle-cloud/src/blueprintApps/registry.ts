@@ -239,8 +239,8 @@ const entries = [
     },
   },
   {
-    slug: 'surplus',
-    canonicalSlug: 'surplus',
+    slug: 'bazaar',
+    canonicalSlug: 'bazaar',
     match: {
       publisherNamespace: 'tangle',
       requestedSlug: 'surplus',
@@ -257,7 +257,7 @@ const entries = [
       status: 'planned',
     },
     manifest: {
-      displayName: 'Surplus Market',
+      displayName: 'Inference Bazaar',
       tagline: 'Buy and sell prepaid AI inference credits.',
       description:
         'Open a surplus market venue, discover operators, inspect credit lots, and reconcile settlement batches for prepaid inference.',
@@ -297,10 +297,10 @@ const entries = [
         mode: 'iframe',
         host: 'surplus-market.pages.dev',
         trust: 'trusted',
-        label: 'Surplus Market',
+        label: 'Inference Bazaar',
       },
     },
-    // Iframe runtime policy. Surplus runs its OWN wallet (ConnectKit) inside the
+    // Iframe runtime policy. Inference Bazaar runs its OWN wallet (ConnectKit) inside the
     // frame rather than the parent bridge, so the bridge grants stay off
     // (allowReadAccount/allowChainSwitch false, no contract/message grants).
     // allowPopups: wallet connect popups + explorer links. allowSameOrigin:
