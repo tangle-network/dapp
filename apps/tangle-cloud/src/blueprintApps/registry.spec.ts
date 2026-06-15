@@ -40,7 +40,11 @@ describe('blueprint app registry', () => {
     expect(sandboxByMetadata?.slug).toBe('sandbox');
     expect(trainingBySlug?.slug).toBe('training');
     expect(surplusByMetadata?.slug).toBe('surplus');
-    expect(surplusByMetadata?.manifest.externalApp?.mode).toBe('link');
+    expect(surplusByMetadata?.manifest.externalApp?.mode).toBe('iframe');
+    // Surplus runs its own wallet in-frame, so it opts into allow-same-origin
+    // (cross-origin → its own storage) but not the parent bridge grants.
+    expect(surplusByMetadata?.iframe?.allowSameOrigin).toBe(true);
+    expect(surplusByMetadata?.iframe?.allowReadAccount).toBe(false);
   });
 
   it('returns null when metadata identity does not match any curated entry', () => {
