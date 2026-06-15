@@ -293,9 +293,9 @@ const entries = [
         },
       ],
       externalApp: {
-        url: 'https://surplus-market.pages.dev/',
+        url: 'https://inference-bazaar.blueprint.tangle.tools/',
         mode: 'iframe',
-        host: 'surplus-market.pages.dev',
+        host: 'inference-bazaar.blueprint.tangle.tools',
         trust: 'trusted',
         label: 'Inference Bazaar',
       },
@@ -304,11 +304,11 @@ const entries = [
     // frame rather than the parent bridge, so the bridge grants stay off
     // (allowReadAccount/allowChainSwitch false, no contract/message grants).
     // allowPopups: wallet connect popups + explorer links. allowSameOrigin:
-    // surplus-market.pages.dev is cross-origin, so this gives the app its own
+    // inference-bazaar.blueprint.tangle.tools is cross-origin, so this gives the app its own
     // storage (WalletConnect/ConnectKit need it) without any parent access.
     iframe: {
-      url: 'https://surplus-market.pages.dev/',
-      origin: 'https://surplus-market.pages.dev',
+      url: 'https://inference-bazaar.blueprint.tangle.tools/',
+      origin: 'https://inference-bazaar.blueprint.tangle.tools',
       appId: 'surplus',
       allowedChainIds: [84532],
       contracts: [],
