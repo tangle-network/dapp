@@ -1,5 +1,5 @@
 import { BN } from '@polkadot/util';
-import assert from 'assert';
+import { assert } from './assert';
 import { Decimal } from 'decimal.js';
 
 /**

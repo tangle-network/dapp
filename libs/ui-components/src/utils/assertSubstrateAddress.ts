@@ -1,4 +1,4 @@
-import assert from 'assert';
+import { assert } from './assert';
 import { SubstrateAddress } from '../types/address';
 import { isSubstrateAddress } from './isSubstrateAddress';
 

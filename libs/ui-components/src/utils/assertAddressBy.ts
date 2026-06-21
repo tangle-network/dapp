@@ -1,14 +1,14 @@
 import { AnyAddress, SolanaAddress } from '../types/address';
+import { assert } from './assert';
 
 export const assertAddressBy = <T extends AnyAddress | SolanaAddress>(
   address: string,
   guard: (address: string) => address is T,
 ): T => {
-  if (!guard(address)) {
-    throw new Error(
-      `Failed to assert that a string value was a valid address: ${address}`,
-    );
-  }
+  assert(
+    guard(address),
+    `Failed to assert that a string value was a valid address: ${address}`,
+  );
 
   return address as T;
 };

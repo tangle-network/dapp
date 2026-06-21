@@ -1,4 +1,4 @@
-import assert from 'assert';
+import { assert } from '../../utils/assert';
 import { motion, useInView, useSpring, useTransform } from 'framer-motion';
 import {
   forwardRef,

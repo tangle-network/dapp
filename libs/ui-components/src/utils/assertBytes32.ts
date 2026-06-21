@@ -1,4 +1,4 @@
-import assert from 'assert';
+import { assert } from './assert';
 import { Bytes32 } from '../types/address';
 import { isHex } from 'viem';
 

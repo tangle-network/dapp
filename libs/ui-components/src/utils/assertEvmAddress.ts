@@ -1,4 +1,4 @@
-import assert from 'assert';
+import { assert } from './assert';
 import { EvmAddress } from '../types/address';
 import { isEvmAddress } from './isEvmAddress20';
 import { checksumAddress } from 'viem';
