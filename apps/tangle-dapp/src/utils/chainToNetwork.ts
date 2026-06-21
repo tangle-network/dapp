@@ -10,7 +10,7 @@ import {
   TANGLE_MAINNET_NETWORK,
   TANGLE_TESTNET_NATIVE_NETWORK,
 } from '@tangle-network/ui-components/constants/networks';
-import assert from 'assert';
+import { assert } from '@tangle-network/browser-utils';
 
 const chainToNetworkMap = {
   [PresetTypedChainId.TangleLocalEVM]: TANGLE_LOCAL_DEV_NETWORK,

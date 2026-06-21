@@ -1,4 +1,4 @@
-import assert from 'assert';
+import { assert } from '@tangle-network/browser-utils';
 import { Bytes32 } from '../types/address';
 import { isHex } from 'viem';
 

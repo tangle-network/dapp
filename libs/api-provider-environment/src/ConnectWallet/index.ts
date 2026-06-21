@@ -14,7 +14,7 @@ import {
   WebbErrorCodes,
   type WalletId,
 } from '@tangle-network/dapp-types';
-import assert from 'assert';
+import { assert } from '@tangle-network/browser-utils';
 import { useObservableState } from 'observable-hooks';
 import { useCallback, useEffect, useMemo } from 'react';
 import { useWebContext } from '../webb-context/webb-context';

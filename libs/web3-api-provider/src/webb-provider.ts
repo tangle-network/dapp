@@ -13,7 +13,7 @@ import {
   calculateTypedChainId,
 } from '@tangle-network/dapp-types';
 import { ApiConfig, getWagmiConfig } from '@tangle-network/dapp-config';
-import assert from 'assert';
+import { assert } from '@tangle-network/browser-utils';
 import values from 'lodash/values';
 import { BehaviorSubject } from 'rxjs';
 import {

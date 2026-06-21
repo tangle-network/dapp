@@ -15,7 +15,7 @@ import {
 } from '../constants/evmPrecompiles';
 import { EvmAddress } from '@tangle-network/ui-components/types/address';
 import { assertEvmAddress } from '@tangle-network/ui-components';
-import assert from 'assert';
+import { assert } from '@tangle-network/browser-utils';
 import useViemWalletClient, {
   WalletClientTransport,
 } from './useViemWalletClient';

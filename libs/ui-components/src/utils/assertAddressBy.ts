@@ -1,4 +1,4 @@
-import assert from 'assert';
+import { assert } from '@tangle-network/browser-utils';
 import { AnyAddress, SolanaAddress } from '../types/address';
 
 export const assertAddressBy = <T extends AnyAddress | SolanaAddress>(
