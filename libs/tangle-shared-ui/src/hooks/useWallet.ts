@@ -18,7 +18,7 @@ import ensureError from '../utils/ensureError';
 import { EIP1193Provider } from 'viem';
 import { EthereumProvider } from '@walletconnect/ethereum-provider';
 import useEvmChain from './useEvmChain';
-import assert from 'assert';
+import { assert } from '@tangle-network/browser-utils';
 
 const LAST_CONNECTED_ACCOUNT_KEY = 'lastConnectedAccountAddress';
 
