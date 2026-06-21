@@ -216,7 +216,7 @@
     "postcss-loader": "^8.2.1",
     "postcss-nested": "^7.0.2",
     "postcss-preset-env": "^10.6.1",
-    "prettier": "^3.8.4",
+    "prettier": "~3.5.3",
     "react-is": "^18.3.1",
     "react-scan": "^0.3.6",
     "rollup": "^4.62.2",
