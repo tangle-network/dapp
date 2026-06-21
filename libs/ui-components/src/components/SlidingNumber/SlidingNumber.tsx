@@ -1,4 +1,4 @@
-import { assert } from '../../utils/assert';
+import { assert } from '@tangle-network/browser-utils';
 import { motion, useInView, useSpring, useTransform } from 'framer-motion';
 import {
   forwardRef,

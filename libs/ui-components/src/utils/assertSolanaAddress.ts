@@ -1,4 +1,4 @@
-import { assert } from './assert';
+import { assert } from '@tangle-network/browser-utils';
 import { SolanaAddress } from '../types/address';
 import { isSolanaAddress } from './isSolanaAddress';
 

@@ -1,5 +1,5 @@
 import { addressToEvm } from '@polkadot/util-crypto';
-import { assert } from './assert';
+import { assert } from '@tangle-network/browser-utils';
 import { EvmAddress, SubstrateAddress } from '../types/address';
 import { isEvmAddress } from './isEvmAddress20';
 import { toHex } from 'viem';

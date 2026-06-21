@@ -1,3 +1,4 @@
+export { assert } from './assert';
 export { default as isBrowser } from './isBrowser';
 export * from './logger';
 export * from './platform';

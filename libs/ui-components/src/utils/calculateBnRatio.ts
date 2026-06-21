@@ -1,5 +1,5 @@
+import { assert } from '@tangle-network/browser-utils';
 import { BN } from '@polkadot/util';
-import { assert } from './assert';
 import { Decimal } from 'decimal.js';
 
 /**

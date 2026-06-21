@@ -1,5 +1,5 @@
 import ensureError from '@tangle-network/tangle-shared-ui/utils/ensureError';
-import assert from 'assert';
+import { assert } from '@tangle-network/browser-utils';
 import { useCallback } from 'react';
 import {
   Abi as ViemAbi,

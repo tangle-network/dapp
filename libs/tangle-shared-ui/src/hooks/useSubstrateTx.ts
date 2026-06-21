@@ -11,7 +11,7 @@ import ensureError from '../utils/ensureError';
 import { getApiPromise } from '../utils/polkadot/api';
 import useIsMountedRef from '@tangle-network/ui-components/hooks/useIsMountedRef';
 import type { SubstrateAddress } from '@tangle-network/ui-components/types/address';
-import assert from 'assert';
+import { assert } from '@tangle-network/browser-utils';
 import { useCallback, useEffect, useState } from 'react';
 import { Hash } from 'viem';
 import useTxHistoryStore, {

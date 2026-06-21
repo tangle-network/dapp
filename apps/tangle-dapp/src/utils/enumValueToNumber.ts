@@ -1,4 +1,4 @@
-import assert from 'assert';
+import { assert } from '@tangle-network/browser-utils';
 
 const enumValueToNumber = <T>(enumValue: T): number => {
   assert(

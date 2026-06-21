@@ -1,4 +1,4 @@
-import { assert } from './assert';
+import { assert } from '@tangle-network/browser-utils';
 import { SubstrateAddress } from '../types/address';
 import { isSubstrateAddress } from './isSubstrateAddress';
 
