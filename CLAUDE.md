@@ -150,7 +150,7 @@ Two-branch model (the previous `staging` branch was retired May 2026):
 | Production (dapp) | `master` | https://app.tangle.tools | `tangle-dapp` |
 | Production (leaderboard) | `master` | https://leaderboard.tangle.tools | `tangle-leaderboard` |
 | Staging (cloud) | `develop` | https://develop.cloud.tangle.tools | `staging-tangle-cloud` |
-| Staging (dapp) | `develop` | https://develop.app.tangle.tools | `staging-tangle-dapp` |
+| Staging (dapp) | `develop` | `develop.app.tangle.tools` | `staging-tangle-dapp` |
 | Staging (leaderboard) | `develop` | https://develop.leaderboard.tangle.tools | `staging-tangle-leaderboard` |
 
 PR deploy previews are produced by the staging sites and surface in the GitHub PR check `Deploy Preview – staging-<app>`.
