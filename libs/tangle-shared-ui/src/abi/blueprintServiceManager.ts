@@ -365,6 +365,56 @@ const ABI = [
   },
   {
     type: 'function',
+    name: 'onBinaryVersionPublished',
+    inputs: [
+      {
+        name: 'blueprintId',
+        type: 'uint64',
+        internalType: 'uint64',
+      },
+      {
+        name: 'version',
+        type: 'tuple',
+        internalType: 'struct Types.BinaryVersion',
+        components: [
+          {
+            name: 'versionId',
+            type: 'uint64',
+            internalType: 'uint64',
+          },
+          {
+            name: 'sha256Hash',
+            type: 'bytes32',
+            internalType: 'bytes32',
+          },
+          {
+            name: 'binaryUri',
+            type: 'string',
+            internalType: 'string',
+          },
+          {
+            name: 'attestationHash',
+            type: 'bytes32',
+            internalType: 'bytes32',
+          },
+          {
+            name: 'publishedAt',
+            type: 'uint64',
+            internalType: 'uint64',
+          },
+          {
+            name: 'deprecated',
+            type: 'bool',
+            internalType: 'bool',
+          },
+        ],
+      },
+    ],
+    outputs: [],
+    stateMutability: 'nonpayable',
+  },
+  {
+    type: 'function',
     name: 'onBlueprintCreated',
     inputs: [
       {
@@ -492,6 +542,29 @@ const ABI = [
     ],
     outputs: [],
     stateMutability: 'payable',
+  },
+  {
+    type: 'function',
+    name: 'onOperatorBinaryAcked',
+    inputs: [
+      {
+        name: 'serviceId',
+        type: 'uint64',
+        internalType: 'uint64',
+      },
+      {
+        name: 'versionId',
+        type: 'uint64',
+        internalType: 'uint64',
+      },
+      {
+        name: 'operator',
+        type: 'address',
+        internalType: 'address',
+      },
+    ],
+    outputs: [],
+    stateMutability: 'nonpayable',
   },
   {
     type: 'function',
