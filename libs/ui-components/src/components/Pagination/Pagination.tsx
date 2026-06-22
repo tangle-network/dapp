@@ -79,56 +79,69 @@ export const Pagination = forwardRef<HTMLDivElement, PaginationProps>(
         )}
 
         {/** Right buttons */}
-        <div className="flex items-center space-x-1">
-          <ChevronLeft
-            size={iconSize}
-            className={
-              canPreviousPage && previousPage
-                ? 'cursor-pointer'
-                : 'cursor-not-allowed'
-            }
+        <div className="flex items-center gap-1">
+          <button
+            type="button"
+            aria-label="Previous page"
+            disabled={!canPreviousPage}
             onClick={() => {
               if (canPreviousPage && previousPage) {
                 previousPage();
               }
             }}
-          />
+            className={cx(
+              'inline-flex h-8 w-8 items-center justify-center rounded-md border transition-colors',
+              'border-mono-40 dark:border-mono-140 text-mono-120 dark:text-mono-100',
+              'hover:bg-mono-20 hover:dark:bg-mono-160',
+              'disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:bg-transparent',
+            )}
+          >
+            <ChevronLeft size={iconSize} />
+          </button>
 
           {paginationDisplayItems.map((page, idx) =>
             typeof page === 'number' ? (
               <button
                 key={`${page}-${idx}`}
-                className={cx(
-                  'p-2 text-center body1 rounded-md',
-                  currentPage === page
-                    ? 'bg-blue-0 text-blue dark:bg-blue-120 dark:text-blue-0' // Active
-                    : 'bg-mono-0 dark:bg-mono-180 text-mono-200 dark:text-mono-40 hover:bg-mono-20 hover:dark:bg-mono-160',
-                )}
+                type="button"
                 onClick={() => setPageIndex?.(page - 1)}
+                className={cx(
+                  'inline-flex h-8 min-w-8 items-center justify-center rounded-md px-2 text-sm transition-colors',
+                  currentPage === page
+                    ? 'bg-primary text-primary-foreground font-medium'
+                    : 'text-mono-120 dark:text-mono-100 hover:bg-mono-20 hover:dark:bg-mono-160',
+                )}
               >
                 {page}
               </button>
             ) : (
-              <p
+              <span
                 key={`${page}-${idx}`}
-                className="p-2 text-center select-none body1"
+                className="select-none px-1 text-mono-100"
               >
-                ...
-              </p>
+                …
+              </span>
             ),
           )}
 
-          <ChevronRight
-            size={iconSize}
-            className={
-              canNextPage && nextPage ? 'cursor-pointer' : 'cursor-not-allowed'
-            }
+          <button
+            type="button"
+            aria-label="Next page"
+            disabled={!canNextPage}
             onClick={() => {
               if (canNextPage && nextPage) {
                 nextPage();
               }
             }}
-          />
+            className={cx(
+              'inline-flex h-8 w-8 items-center justify-center rounded-md border transition-colors',
+              'border-mono-40 dark:border-mono-140 text-mono-120 dark:text-mono-100',
+              'hover:bg-mono-20 hover:dark:bg-mono-160',
+              'disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:bg-transparent',
+            )}
+          >
+            <ChevronRight size={iconSize} />
+          </button>
         </div>
       </div>
     );
