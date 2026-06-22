@@ -107,8 +107,8 @@ const Layout: FC<PropsWithChildren<Props>> = ({
           <ShortcutsHelp open={isHelpOpen} onOpenChange={setIsHelpOpen} />
 
           <div className="m-auto flex h-full max-w-[1448px] flex-col justify-between px-4 md:px-8 lg:px-10">
-            <div className="flex grow flex-col space-y-5">
-              <div className="flex items-center justify-between py-6">
+            <div className="flex grow flex-col space-y-4">
+              <div className="flex items-center justify-between py-4">
                 <div className="flex items-center space-x-4 lg:space-x-0">
                   <MobileSidebar />
                 </div>
