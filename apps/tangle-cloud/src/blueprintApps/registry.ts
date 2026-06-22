@@ -300,12 +300,18 @@ const entries = [
         label: 'Inference Bazaar',
       },
     },
-    // Iframe runtime policy. Inference Bazaar runs its OWN wallet (ConnectKit) inside the
-    // frame rather than the parent bridge, so the bridge grants stay off
-    // (allowReadAccount/allowChainSwitch false, no contract/message grants).
-    // allowPopups: wallet connect popups + explorer links. allowSameOrigin:
-    // inference-bazaar.blueprint.tangle.tools is cross-origin, so this gives the app its own
-    // storage (WalletConnect/ConnectKit need it) without any parent access.
+    // Iframe runtime policy. Inference Bazaar adopts the same parent-bridge
+    // model as trading-arena / agent-sandbox: when embedded it swaps its
+    // ConnectKit connectors for the parent-bridge connector, so the wallet
+    // flows from Tangle Cloud (browser extensions can't inject into the
+    // sandboxed cross-origin iframe anyway). allowReadAccount surfaces the
+    // connected wallet; allowChainSwitch is restricted to Base Sepolia
+    // (84532) — the chain the bazaar settlement contracts live on.
+    // allowPopups + allowSameOrigin are retained so the app keeps its own
+    // origin storage (UI/cache state) and explorer-link popups; the wallet
+    // itself no longer depends on them once the bridge connector is active.
+    // No contracts/messages yet: the bazaar UI doesn't issue
+    // tangle.app.signTransaction today, so no signing surface is granted.
     iframe: {
       url: 'https://inference-bazaar.blueprint.tangle.tools/',
       origin: 'https://inference-bazaar.blueprint.tangle.tools',
@@ -313,8 +319,8 @@ const entries = [
       allowedChainIds: [84532],
       contracts: [],
       messages: [],
-      allowReadAccount: false,
-      allowChainSwitch: false,
+      allowReadAccount: true,
+      allowChainSwitch: true,
       allowPopups: true,
       allowSameOrigin: true,
     },
