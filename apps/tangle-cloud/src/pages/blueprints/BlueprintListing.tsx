@@ -3,7 +3,7 @@ import BlueprintGallery from '@tangle-network/tangle-shared-ui/components/bluepr
 import type { BlueprintItemProps } from '@tangle-network/tangle-shared-ui/components/blueprints/BlueprintGallery/types';
 import type { UseAllBlueprintsReturn } from '@tangle-network/tangle-shared-ui/data/graphql';
 import type { Blueprint } from '@tangle-network/tangle-shared-ui/types/blueprint';
-import { Button, Typography } from '@tangle-network/ui-components';
+import { Button } from '@tangle-network/ui-components';
 import {
   type Dispatch,
   type FC,
@@ -18,6 +18,7 @@ import {
   type DedupedBlueprintRow,
 } from '../../blueprintApps/dedupe';
 import { BlueprintVisual } from '../../components/blueprints/BlueprintVisual';
+import { PageHeader } from '../../components/chrome';
 import { formatBlueprintName } from '../../components/blueprints/blueprintVisualUtils';
 import { PagePath } from '../../types';
 
@@ -179,27 +180,12 @@ const BlueprintListing: FC<Props> = ({
 
   return (
     <div className="space-y-5">
-      <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
-        <div>
-          <Typography variant="h1" className="text-mono-200 dark:text-mono-0">
-            Blueprints
-          </Typography>
-
-          <Typography
-            variant="body1"
-            className="mt-2 max-w-2xl text-mono-120 dark:text-mono-80"
-          >
-            {rows.length.toLocaleString()} deployable service{' '}
-            {pluralize('blueprint', rows.length)}
-          </Typography>
-        </div>
-
-        {toolbarAction !== undefined && (
-          <div className="flex shrink-0 justify-start md:justify-end">
-            {toolbarAction}
-          </div>
-        )}
-      </div>
+      <PageHeader
+        density="compact"
+        title="Blueprints"
+        subtitle={`${rows.length.toLocaleString()} deployable service ${pluralize('blueprint', rows.length)}`}
+        action={toolbarAction}
+      />
 
       {error && hasCachedData && (
         <div className="rounded-xl border border-yellow-50/40 bg-yellow-10/20 px-4 py-3 text-sm font-medium text-yellow-90 dark:border-yellow-70/40 dark:bg-yellow-120/30 dark:text-yellow-30">
