@@ -55,7 +55,7 @@ const SIZE_STYLES: Record<
   },
   lg: {
     container: 'p-4',
-    label: 'text-[11px]',
+    label: 'text-xs',
     value: 'text-2xl',
   },
 };
@@ -140,7 +140,7 @@ export const Stat: FC<StatProps> = ({
         </div>
       )}
       {sublabel ? (
-        <p className="mt-1 truncate text-muted-foreground text-[11px]">
+        <p className="mt-1 truncate text-muted-foreground text-xs">
           {sublabel}
         </p>
       ) : null}

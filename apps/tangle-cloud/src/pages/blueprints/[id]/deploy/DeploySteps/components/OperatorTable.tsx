@@ -119,7 +119,7 @@ export const OperatorTable: FC<Props> = ({
                           onChange={() => toggleRow(row.address)}
                         />
                       )}
-                      <div className="flex h-9 w-9 items-center justify-center rounded-full border border-border bg-gradient-to-br from-primary/25 to-accent/25 font-mono text-[11px] text-foreground">
+                      <div className="flex h-9 w-9 items-center justify-center rounded-full border border-border bg-gradient-to-br from-primary/25 to-accent/25 font-mono text-xs text-foreground">
                         {row.address.slice(2, 4).toUpperCase()}
                       </div>
                       <div className="min-w-0">

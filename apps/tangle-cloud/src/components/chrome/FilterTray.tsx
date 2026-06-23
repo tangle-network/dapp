@@ -54,7 +54,7 @@ const FilterTray: FC<Props> = ({
             <span
               className={twMerge(
                 typeRole.mono,
-                'flex h-5 min-w-[20px] items-center justify-center rounded-full bg-[color:var(--border-accent)] px-1.5 text-[11px] text-foreground',
+                'flex h-5 min-w-[20px] items-center justify-center rounded-full bg-[color:var(--border-accent)] px-1.5 text-xs text-foreground',
               )}
             >
               {activeCount}

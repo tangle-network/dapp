@@ -509,7 +509,7 @@ const OperatorRow = ({ operator }: { operator: BlueprintOperator }) => {
             )}
           </div>
         ) : (
-          <span className="font-mono text-muted-foreground text-[11px]">
+          <span className="font-mono text-muted-foreground text-xs">
             No vaults indexed
           </span>
         )}

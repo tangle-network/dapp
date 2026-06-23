@@ -197,7 +197,7 @@ export const AttestationBadge: FC<AttestationBadgeProps> = ({
               </span>
             )}
           </div>
-          <p className="mt-0.5 truncate font-mono text-muted-foreground text-[11px]">
+          <p className="mt-0.5 truncate font-mono text-muted-foreground text-xs">
             {attestation.attester}
           </p>
         </div>

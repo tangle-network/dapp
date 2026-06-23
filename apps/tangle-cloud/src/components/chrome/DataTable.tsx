@@ -155,9 +155,9 @@ function DataTable<T>({
                   <TableCell
                     key={i}
                     className={twMerge(
-                      'px-4 py-2.5 align-middle text-sm',
+                      'px-4 py-2.5 align-middle text-base',
                       col.align && ALIGN_CLASS[col.align],
-                      col.mono && 'font-mono text-[13px] tabular-nums',
+                      col.mono && 'font-mono text-sm tabular-nums',
                       col.hideBelow && HIDE_CLASS[col.hideBelow],
                       col.className,
                     )}
