@@ -61,7 +61,7 @@ const RequireWallet: FC<Props> = ({
           )}
         </span>
       }
-      primary={<ConnectWalletButton className="tangle-cloud-wallet-action" />}
+      primary={<ConnectWalletButton />}
     />
   );
 };
