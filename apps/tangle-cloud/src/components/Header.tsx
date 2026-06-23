@@ -1,9 +1,6 @@
 import ConnectWalletButton from '@tangle-network/tangle-shared-ui/components/ConnectWalletButton';
+import ConnectionStatusButton from '@tangle-network/tangle-shared-ui/components/ConnectionStatusButton';
 import useNetworkStore from '@tangle-network/tangle-shared-ui/context/useNetworkStore';
-import {
-  useIndexerStatus,
-  type DataSource,
-} from '@tangle-network/tangle-shared-ui/context/IndexerStatusContext';
 import createCustomNetwork from '@tangle-network/tangle-shared-ui/utils/createCustomNetwork';
 import {
   Alert,
@@ -46,72 +43,16 @@ export default function Header({
       <div className="flex shrink-0 items-center justify-end gap-2">
         <TxHistoryDrawer />
 
-        <CloudConnectionStatusButton />
+        <ConnectionStatusButton />
 
         <CloudNetworkSelector networks={TANGLE_CLOUD_NETWORKS} />
 
         {/* Connection state lives in the chrome on every route — the header is
          * the single owner of Connect Wallet. Pages never duplicate this; a
          * disconnected page body renders a designed empty state instead. */}
-        <ConnectWalletButton className="tangle-cloud-wallet-action" />
+        <ConnectWalletButton />
       </div>
     </header>
-  );
-}
-
-type StatusVariant = 'success' | 'warning' | 'error' | 'info';
-
-const getStatusVariant = (
-  isWalletConnected: boolean,
-  dataSource: DataSource,
-  isCheckingHealth: boolean,
-): StatusVariant => {
-  if (isCheckingHealth) return 'info';
-  if (!isWalletConnected) return 'warning';
-  if (dataSource === 'graphql') return 'success';
-  if (dataSource === 'onchain') return 'warning';
-  return 'error';
-};
-
-function CloudConnectionStatusButton() {
-  const { isConnected: isWalletConnected, isConnecting } = useAccount();
-  const { dataSource, isCheckingHealth, errorMessage } = useIndexerStatus();
-  const isLoading = isConnecting || isCheckingHealth;
-  const variant = getStatusVariant(
-    isWalletConnected,
-    dataSource,
-    isCheckingHealth,
-  );
-
-  const title = isLoading
-    ? 'Checking network connection'
-    : !isWalletConnected
-      ? 'Wallet not connected'
-      : dataSource === 'graphql'
-        ? 'Connected'
-        : dataSource === 'onchain'
-          ? 'Limited mode'
-          : 'Connection issue';
-
-  return (
-    <Button
-      type="button"
-      variant="outline"
-      size="icon"
-      aria-label={title}
-      title={errorMessage ? `${title}: ${errorMessage}` : title}
-      className="h-11 w-11 border-border bg-muted/30 p-0 text-foreground hover:bg-muted"
-    >
-      {isLoading ? (
-        <Spinner size="md" />
-      ) : (
-        <StatusIndicator
-          variant={variant}
-          size={16}
-          animated={variant === 'warning' || variant === 'error'}
-        />
-      )}
-    </Button>
   );
 }
 
