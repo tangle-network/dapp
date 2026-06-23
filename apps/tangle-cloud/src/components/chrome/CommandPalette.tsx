@@ -266,7 +266,7 @@ const CommandPalette: FC<Props> = ({ open, onOpenChange, extra = [] }) => {
             ))
           )}
         </div>
-        <div className="flex items-center justify-between border-t border-border px-4 py-2 text-[11px] text-muted-foreground">
+        <div className="flex items-center justify-between border-t border-border px-4 py-2 text-xs text-muted-foreground">
           <div className="flex items-center gap-3">
             <span>
               <kbd className="rounded border border-border bg-[color:var(--bg-elevated)]/60 px-1 font-mono">

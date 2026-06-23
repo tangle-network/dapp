@@ -57,7 +57,7 @@ const CopyableId: FC<Props> = ({
       title={copied ? 'Copied' : `Copy: ${value}`}
       aria-label={`Copy ${value}`}
       className={twMerge(
-        'group inline-flex max-w-full items-center gap-1 font-mono text-[13px] tabular-nums text-foreground transition-colors hover:text-[color:var(--border-accent-hover)] focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[color:var(--border-accent-hover)]',
+        'group inline-flex max-w-full items-center gap-1 font-mono text-sm tabular-nums text-foreground transition-colors hover:text-[color:var(--border-accent-hover)] focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[color:var(--border-accent-hover)]',
         className,
       )}
     >

@@ -65,7 +65,7 @@ const Money: FC<Props> = ({
   return (
     <span
       className={twMerge(
-        'inline-flex items-baseline gap-1 font-mono text-[13px] tabular-nums',
+        'inline-flex items-baseline gap-1 font-mono text-sm tabular-nums',
         align === 'right' && 'justify-end',
         className,
       )}
@@ -73,9 +73,7 @@ const Money: FC<Props> = ({
     >
       <span className="text-foreground">{money.display}</span>
       {showSymbol && money.symbol && !money.isEmpty && (
-        <span className="text-[11px] text-muted-foreground">
-          {money.symbol}
-        </span>
+        <span className="text-xs text-muted-foreground">{money.symbol}</span>
       )}
       {copyable && !money.isEmpty && (
         <button

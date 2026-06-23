@@ -104,7 +104,7 @@ export const TrustScoreGauge: FC<TrustScoreGaugeProps> = ({
           style={{ color }}
         >
           {score}
-          <span className="ml-1 font-display font-semibold text-[11px] text-muted-foreground uppercase tracking-wider">
+          <span className="ml-1 font-display font-semibold text-xs text-muted-foreground uppercase tracking-wider">
             / 100
           </span>
         </span>

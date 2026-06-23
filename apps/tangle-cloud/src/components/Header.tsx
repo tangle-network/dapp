@@ -35,7 +35,7 @@ export default function Header({
   return (
     <header
       className={twMerge(
-        'flex items-center justify-end gap-2 font-sans text-[13px] tracking-tight',
+        'flex items-center justify-end gap-2 font-sans text-sm tracking-tight',
         className,
       )}
       {...props}

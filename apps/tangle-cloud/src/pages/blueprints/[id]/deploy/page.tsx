@@ -489,7 +489,7 @@ const DeployPage: FC = () => {
                   Create instance
                 </Text>
               </div>
-              <span className="rounded-md border border-border bg-muted/40 px-2 py-1 font-mono text-[11px] text-muted-foreground">
+              <span className="rounded-md border border-border bg-muted/40 px-2 py-1 font-mono text-xs text-muted-foreground">
                 requestService
               </span>
             </div>

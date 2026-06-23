@@ -631,7 +631,7 @@ const ManagerAssistSection: FC<{
                         <Badge variant="destructive">skipped</Badge>
                       )}
                     </div>
-                    <p className="break-all font-mono text-muted-foreground text-[11px]">
+                    <p className="break-all font-mono text-muted-foreground text-xs">
                       {v.binaryUri}
                     </p>
                   </div>

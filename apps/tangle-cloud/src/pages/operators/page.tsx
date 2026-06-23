@@ -275,10 +275,10 @@ const OperatorsPanel = ({
             <Table>
               <TableHeader>
                 <TableRow className="border-border bg-[var(--bg-elevated)]/60 hover:bg-[var(--bg-elevated)]/60">
-                  <TableHead className="w-[36%] font-semibold text-muted-foreground text-[11px] uppercase tracking-wider">
+                  <TableHead className="w-[36%] font-semibold text-muted-foreground text-xs uppercase tracking-wider">
                     Operator
                   </TableHead>
-                  <TableHead className="font-semibold text-muted-foreground text-[11px] uppercase tracking-wider">
+                  <TableHead className="font-semibold text-muted-foreground text-xs uppercase tracking-wider">
                     <SortableHead
                       label="Stake"
                       isActive={sortKey === 'stake'}
@@ -286,7 +286,7 @@ const OperatorsPanel = ({
                       onClick={() => onSort('stake')}
                     />
                   </TableHead>
-                  <TableHead className="font-semibold text-muted-foreground text-[11px] uppercase tracking-wider">
+                  <TableHead className="font-semibold text-muted-foreground text-xs uppercase tracking-wider">
                     <SortableHead
                       label="Delegations"
                       isActive={sortKey === 'delegations'}
@@ -294,10 +294,10 @@ const OperatorsPanel = ({
                       onClick={() => onSort('delegations')}
                     />
                   </TableHead>
-                  <TableHead className="font-semibold text-muted-foreground text-[11px] uppercase tracking-wider">
+                  <TableHead className="font-semibold text-muted-foreground text-xs uppercase tracking-wider">
                     Mode
                   </TableHead>
-                  <TableHead className="font-semibold text-muted-foreground text-[11px] uppercase tracking-wider">
+                  <TableHead className="font-semibold text-muted-foreground text-xs uppercase tracking-wider">
                     <SortableHead
                       label="Status"
                       isActive={sortKey === 'status'}
@@ -305,7 +305,7 @@ const OperatorsPanel = ({
                       onClick={() => onSort('status')}
                     />
                   </TableHead>
-                  <TableHead className="text-right font-semibold text-muted-foreground text-[11px] uppercase tracking-wider">
+                  <TableHead className="text-right font-semibold text-muted-foreground text-xs uppercase tracking-wider">
                     Actions
                   </TableHead>
                 </TableRow>
