@@ -54,6 +54,11 @@ const Layout: FC<PropsWithChildren<Props>> = ({
   useEffect(() => {
     document.documentElement.classList.toggle('dark', theme === 'dark');
     document.documentElement.style.colorScheme = theme;
+    document.documentElement.setAttribute('data-sandbox-ui', '');
+    document.documentElement.setAttribute(
+      'data-sandbox-theme',
+      theme === 'dark' ? 'tangle' : 'vault',
+    );
   }, [theme]);
 
   // Publish the current sidebar width as a CSS variable on the root element so
@@ -80,7 +85,11 @@ const Layout: FC<PropsWithChildren<Props>> = ({
 
   return (
     <TopNavSlotProvider>
-      <div className="tangle-cloud-shell flex h-screen bg-tangle text-foreground">
+      <div
+        data-sandbox-ui
+        data-sandbox-theme={theme === 'dark' ? 'tangle' : 'vault'}
+        className="tangle-cloud-shell flex h-screen bg-tangle text-foreground"
+      >
         <Sidebar
           isExpandedByDefault={isSidebarExpanded}
           onExpandedChange={() => setIsSidebarExpanded((value) => !value)}
