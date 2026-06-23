@@ -54,7 +54,7 @@ const PageHeader: FC<Props> = ({
         )}
         <h1 className={typeRole.display}>{title}</h1>
         {subtitle !== undefined && (
-          <p className="max-w-2xl text-sm leading-relaxed text-muted-foreground">
+          <p className="max-w-2xl text-base leading-relaxed text-muted-foreground">
             {subtitle}
           </p>
         )}
