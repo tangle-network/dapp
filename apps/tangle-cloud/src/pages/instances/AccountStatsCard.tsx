@@ -175,7 +175,7 @@ export const AccountStatsCard: FC<AccountStatsCardProps> = (props) => {
           {isOperator && <Badge variant="success">Operator</Badge>}
         </div>
 
-        <div className="grid min-h-[120px] grid-cols-2 overflow-hidden rounded-lg border border-border bg-muted/20">
+        <div className="grid min-h-[120px] grid-cols-2 overflow-hidden rounded-lg border border-border bg-card">
           {Array.from({ length: 4 }).map((_, index) => {
             const item = statsItems[index];
             const isLeftColumn = index % 2 === 0;

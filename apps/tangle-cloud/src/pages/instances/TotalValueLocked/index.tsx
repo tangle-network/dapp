@@ -33,7 +33,7 @@ export const TotalValueLockedTabs = () => {
 };
 
 const DisconnectedTvlState = () => (
-  <div className="flex flex-col items-start gap-3 rounded-lg border border-dashed border-border bg-muted/20 p-5 sm:flex-row sm:items-center sm:justify-between">
+  <div className="flex flex-col items-start gap-3 rounded-lg border border-dashed border-border bg-card p-5 sm:flex-row sm:items-center sm:justify-between">
     <div className="min-w-0">
       <div className="font-display font-bold text-foreground text-base tracking-tight">
         Connect a wallet to view your deposits
@@ -86,7 +86,7 @@ const ConnectedTvlState = () => {
           item && (
             <div
               key={item.id}
-              className="flex items-center justify-between rounded-lg border border-border bg-muted/30 p-4"
+              className="flex items-center justify-between rounded-lg border border-border bg-card p-4"
             >
               <div className="flex flex-col">
                 <p className="font-display font-bold text-foreground">
