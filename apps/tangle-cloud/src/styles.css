@@ -9,9 +9,9 @@
 
 :root,
 [data-sandbox-ui] {
-  --font-sans: 'DM Sans', 'Satoshi', ui-sans-serif, system-ui, sans-serif;
-  --font-display: 'Outfit', 'Satoshi', ui-sans-serif, system-ui, sans-serif;
-  --font-mono: 'IBM Plex Mono', 'Cousine', ui-monospace, SFMono-Regular, monospace;
+  --font-sans: 'Satoshi', ui-sans-serif, system-ui, sans-serif;
+  --font-display: 'Satoshi', ui-sans-serif, system-ui, sans-serif;
+  --font-mono: 'Cousine', ui-monospace, SFMono-Regular, monospace;
 }
 
 html,
@@ -38,71 +38,47 @@ body {
 [data-sandbox-ui][data-sandbox-theme='tangle'],
 .tangle-cloud-shell[data-sandbox-theme='tangle'] {
   color-scheme: dark;
-  /* Violet Terminal palette — ported from inference-bazaar so cloud shares the
-   * bazaar sibling's design language. Dark aubergine base, light-violet primary,
-   * periwinkle brand, four elevation tiers. One-file swappable via these tokens. */
   /* prettier-ignore */
-  --bg-root: radial-gradient(ellipse 1200px 700px at 85% -10%, rgba(155, 124, 255, 0.1), transparent 60%), radial-gradient(ellipse 900px 600px at -5% 12%, rgba(128, 144, 255, 0.07), transparent 55%), radial-gradient(ellipse 1000px 800px at 50% 118%, rgba(196, 110, 224, 0.06), transparent 60%), #0f0a1a;
-  --bg-card: #271d42;
-  --bg-elevated: #362858;
-  --bg-hover: rgba(155, 124, 255, 0.16);
-  --text-primary: #f4f1fd;
-  --text-muted: #998fb6;
-  --text-secondary: #c6bcdf;
-  --border-subtle: rgba(183, 157, 255, 0.11);
-  --border-default: rgba(183, 157, 255, 0.18);
-  --border-hover: rgba(183, 157, 255, 0.36);
-  --border-accent: rgba(128, 144, 255, 0.36);
-  --border-accent-hover: rgba(128, 144, 255, 0.55);
-  --accent-surface-soft: rgba(155, 124, 255, 0.16);
-  --btn-primary-bg: #b69dff;
-  --btn-primary-hover: #ccb9ff;
-  --btn-primary-text: #160f22;
-  --brand-cool: #8090ff;
-  --brand-primary: #b69dff;
-  --brand-vibrant: #b69dff;
+  --bg-root: radial-gradient(ellipse 60% 36% at 16% 0%, rgba(79, 70, 229, 0.1), transparent), radial-gradient(ellipse 44% 30% at 84% 4%, rgba(20, 184, 166, 0.08), transparent), linear-gradient(180deg, #090b10 0%, #07080c 100%);
+  --bg-card: #151922;
+  --bg-elevated: #202737;
+  --bg-hover: rgba(116, 126, 194, 0.18);
+  --text-primary: #dbe3f0;
+  --text-muted: #9aa7ba;
+  --text-secondary: #c3ccdc;
+  --border-subtle: rgba(116, 126, 194, 0.12);
+  --border-default: rgba(135, 146, 172, 0.26);
+  --border-hover: rgba(151, 161, 245, 0.46);
+  --border-accent: rgba(129, 140, 248, 0.36);
+  --border-accent-hover: rgba(129, 140, 248, 0.55);
+  --accent-surface-soft: rgba(99, 102, 241, 0.12);
+  --btn-primary-bg: #4f46e5;
+  --btn-primary-hover: #4338ca;
   /* prettier-ignore */
-  --shadow-card: 0 1px 0 rgba(255, 255, 255, 0.04) inset, 0 18px 60px rgba(8, 4, 20, 0.6);
+  --shadow-card: 0 1px 0 rgba(255, 255, 255, 0.04) inset, 0 8px 24px rgba(0, 0, 0, 0.28);
   /* prettier-ignore */
-  --shadow-hover: 0 1px 0 rgba(255, 255, 255, 0.06) inset, 0 18px 60px rgba(8, 4, 20, 0.6), 0 0 0 1px rgba(155, 124, 255, 0.18);
-  --card: 258 36% 19%;
-  --popover: 252 40% 22%;
-  --muted: 258 36% 19%;
-  --border: 266 36% 79% / 0.18;
-  --input: 266 36% 79% / 0.18;
-  --primary: 258 100% 86%;
+  --shadow-hover: 0 1px 0 rgba(255, 255, 255, 0.06) inset, 0 16px 36px rgba(0, 0, 0, 0.35), 0 0 0 1px rgba(129, 140, 248, 0.18);
+  --card: 246 22% 14%;
+  --popover: 248 32% 21%;
+  --muted: 248 32% 21%;
+  --border: 232 32% 67% / 0.24;
+  --input: 232 32% 67% / 0.24;
+  --primary: 239 84% 59%;
 }
 
 [data-sandbox-ui][data-sandbox-theme='vault'],
 .tangle-cloud-shell[data-sandbox-theme='vault'] {
   color-scheme: light;
-  /* Violet Terminal — light (lavender) variant. */
-  /* prettier-ignore */
-  --bg-root: radial-gradient(ellipse 1200px 700px at 85% -10%, rgba(109, 59, 240, 0.07), transparent 60%), radial-gradient(ellipse 900px 600px at -5% 12%, rgba(79, 90, 224, 0.05), transparent 55%), #f4f1fc;
-  --bg-card: #ffffff;
-  --bg-elevated: #e8e1f6;
-  --bg-hover: rgba(109, 59, 240, 0.1);
-  --text-primary: #1b1330;
-  --text-muted: #6f6388;
-  --text-secondary: #4a3f63;
-  --border-subtle: rgba(60, 32, 110, 0.09);
-  --border-default: rgba(60, 32, 110, 0.13);
-  --border-hover: rgba(60, 32, 110, 0.26);
-  --border-accent: rgba(79, 90, 224, 0.18);
-  --border-accent-hover: rgba(79, 90, 224, 0.34);
-  --accent-surface-soft: rgba(109, 59, 240, 0.1);
-  --btn-primary-bg: #6d3bf0;
-  --btn-primary-hover: #5b27d6;
-  --btn-primary-text: #ffffff;
-  --brand-cool: #4f5ae0;
-  --brand-primary: #6d3bf0;
-  --brand-vibrant: #6d3bf0;
-  --card: 0 0% 100%;
-  --popover: 270 43% 96%;
-  --muted: 270 43% 94%;
-  --border: 266 54% 28% / 0.13;
-  --input: 266 54% 28% / 0.13;
-  --primary: 266 83% 59%;
+  --brand-cool: #3730a3;
+  --brand-primary: #4f46e5;
+  --brand-vibrant: #4f46e5;
+  --btn-primary-bg: #4f46e5;
+  --btn-primary-hover: #4338ca;
+  --border-subtle: rgba(82, 88, 132, 0.18);
+  --border-default: rgba(82, 88, 132, 0.3);
+  --border-hover: rgba(79, 70, 229, 0.42);
+  --border-accent: rgba(79, 70, 229, 0.18);
+  --border-accent-hover: rgba(79, 70, 229, 0.34);
 }
 
 /* Defeat ui-components' h1..h6/p/div text-mono color rules via inherit.

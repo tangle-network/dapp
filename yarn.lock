@@ -4258,13 +4258,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@fontsource/dm-sans@npm:^5.2.8":
-  version: 5.2.8
-  resolution: "@fontsource/dm-sans@npm:5.2.8"
-  checksum: 10c0/34451e30b1fe29a075946b8d42d8867883e3f0ac3cb1d5d29493a311006c67d1b766369c32f39820b86a0bacf8fbd3cc2c02e55744809b8ece67141dfadcac5e
-  languageName: node
-  linkType: hard
-
 "@fontsource/geist-mono@npm:^5.2.8":
   version: 5.2.8
   resolution: "@fontsource/geist-mono@npm:5.2.8"
@@ -4276,20 +4269,6 @@ __metadata:
   version: 5.2.5
   resolution: "@fontsource/geist-sans@npm:5.2.5"
   checksum: 10c0/31f1da384a54eaf385f3261218d2971e075fc34306ad2e14f84f079aeabf2e6dbc7dddc23389037a8476fef467a1d94797a573f6a6e2c826b85badfed921cdb3
-  languageName: node
-  linkType: hard
-
-"@fontsource/ibm-plex-mono@npm:^5.2.7":
-  version: 5.2.7
-  resolution: "@fontsource/ibm-plex-mono@npm:5.2.7"
-  checksum: 10c0/b104ae0f8054def5e6edca395f9c41d9a15b17ceeea522573b1ef223311bfa0d8f0fe3e2d3a56ecea59ff3e3ceee571e16d1ee942093bac97a66c3b8a72eaca3
-  languageName: node
-  linkType: hard
-
-"@fontsource/outfit@npm:^5.2.8":
-  version: 5.2.8
-  resolution: "@fontsource/outfit@npm:5.2.8"
-  checksum: 10c0/8ed5b6b18390d7153468b33b875b1572bc57deebe6804d7c87394cc1c7dc74d1a2c5c605fac23780593f84810ccd77b2f79da66c51ec6fd26d1e1bd6430087f9
   languageName: node
   linkType: hard
 
@@ -34213,11 +34192,8 @@ __metadata:
     "@date-fns/utc": "npm:^2.1.1"
     "@eslint/eslintrc": "npm:^3.3.5"
     "@eslint/js": "npm:~9.24.0"
-    "@fontsource/dm-sans": "npm:^5.2.8"
     "@fontsource/geist-mono": "npm:^5.2.8"
     "@fontsource/geist-sans": "npm:^5.2.5"
-    "@fontsource/ibm-plex-mono": "npm:^5.2.7"
-    "@fontsource/outfit": "npm:^5.2.8"
     "@graphql-codegen/cli": "npm:^5.0.7"
     "@hookform/resolvers": "npm:^5.4.0"
     "@nanostores/react": "npm:^1.1.0"
