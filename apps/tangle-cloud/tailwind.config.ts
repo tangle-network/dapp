@@ -21,6 +21,18 @@ export default {
           'monospace',
         ],
       },
+      // Unified type scale — bumped from Tailwind defaults (xs 12 / sm 14 /
+      // base 16 / lg 18 / xl 20) so cloud's body, subtext, tables, and buttons
+      // read larger and consistent. Line-heights loosened to match.
+      fontSize: {
+        xs: ['13px', { lineHeight: '1.35rem' }],
+        sm: ['15px', { lineHeight: '1.5rem' }],
+        base: ['17px', { lineHeight: '1.65rem' }],
+        lg: ['19px', { lineHeight: '1.7rem' }],
+        xl: ['22px', { lineHeight: '1.85rem' }],
+        '2xl': ['25px', { lineHeight: '2rem' }],
+        '3xl': ['30px', { lineHeight: '2.25rem' }],
+      },
       backgroundImage: {
         glass:
           'linear-gradient(180deg,rgba(255,255,255,0.94) 0%,rgba(255,255,255,0.74) 100%)',
