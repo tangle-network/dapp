@@ -1,16 +1,5 @@
 import '@tangle-network/ui-components/tailwind.css';
 import '@tangle-network/ui-components/css/typography-fonts.css';
-// Bazaar's Violet Terminal type system — DM Sans (body), Outfit (display),
-// IBM Plex Mono (data). Loaded via @fontsource so cloud matches the
-// inference-bazaar sibling's typeface exactly.
-import '@fontsource/dm-sans/400.css';
-import '@fontsource/dm-sans/500.css';
-import '@fontsource/dm-sans/700.css';
-import '@fontsource/outfit/500.css';
-import '@fontsource/outfit/600.css';
-import '@fontsource/outfit/700.css';
-import '@fontsource/ibm-plex-mono/400.css';
-import '@fontsource/ibm-plex-mono/500.css';
 import { StrictMode } from 'react';
 import { BrowserRouter } from 'react-router-dom';
 import * as ReactDOM from 'react-dom/client';
