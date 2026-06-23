@@ -9,9 +9,9 @@
 
 :root,
 [data-sandbox-ui] {
-  --font-sans: 'DM Sans', 'Satoshi', ui-sans-serif, system-ui, sans-serif;
-  --font-display: 'Outfit', 'Satoshi', ui-sans-serif, system-ui, sans-serif;
-  --font-mono: 'IBM Plex Mono', 'Cousine', ui-monospace, SFMono-Regular, monospace;
+  --font-sans: 'Satoshi', ui-sans-serif, system-ui, sans-serif;
+  --font-display: 'Satoshi', ui-sans-serif, system-ui, sans-serif;
+  --font-mono: 'Cousine', ui-monospace, SFMono-Regular, monospace;
 }
 
 html,
