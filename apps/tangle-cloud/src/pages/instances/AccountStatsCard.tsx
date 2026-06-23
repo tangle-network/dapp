@@ -131,7 +131,7 @@ export const AccountStatsCard: FC<AccountStatsCardProps> = (props) => {
             </p>
           </div>
           <div className="mt-auto">
-            <ConnectWalletButton />
+            <ConnectWalletButton className="tangle-cloud-wallet-action" />
           </div>
         </CardContent>
       </Card>

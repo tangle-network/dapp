@@ -43,7 +43,7 @@ const DisconnectedTvlState = () => (
         wallet is connected. Public chain data on this page loads without one.
       </p>
     </div>
-    <ConnectWalletButton className="shrink-0" />
+    <ConnectWalletButton className="tangle-cloud-wallet-action shrink-0" />
   </div>
 );
 
