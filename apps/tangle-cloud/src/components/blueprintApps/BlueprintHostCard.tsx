@@ -78,7 +78,7 @@ const BlueprintHostCard = ({
     // back to the tangle dark default). See BlueprintAppLandingPage for the
     // same fix in PR #3228.
     <div
-      className="space-y-6"
+      className="tangle-blueprint-host space-y-6"
       style={
         {
           '--blueprint-accent': accentColor,
