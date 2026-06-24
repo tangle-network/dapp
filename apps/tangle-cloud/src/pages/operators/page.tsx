@@ -37,7 +37,7 @@ import {
   statusToneFor,
 } from '../../components/chrome';
 import type { Metric } from '../../components/chrome';
-import createStakeDelegateUrl from './createStakeDelegateUrl';
+import DelegateModal from '../../components/DelegateModal';
 
 type SortKey = 'stake' | 'delegations' | 'status';
 type SortDir = 'asc' | 'desc';
@@ -60,8 +60,12 @@ const Page: FC = () => {
     0n,
   );
 
+  const [delegateOpen, setDelegateOpen] = useState(false);
+  const [delegateTarget, setDelegateTarget] = useState('');
+
   const handleStakeClicked = useCallback((operatorAddress?: Address) => {
-    window.location.assign(createStakeDelegateUrl(operatorAddress));
+    setDelegateTarget(operatorAddress ?? '');
+    setDelegateOpen(true);
   }, []);
 
   const metrics: Metric[] = useMemo(
@@ -146,6 +150,12 @@ const Page: FC = () => {
         isLoading={isLoading}
         onStakeClicked={handleStakeClicked}
         onManageClicked={() => navigate(PagePath.OPERATORS_MANAGE)}
+      />
+
+      <DelegateModal
+        open={delegateOpen}
+        onOpenChange={setDelegateOpen}
+        operatorAddress={delegateTarget}
       />
     </div>
   );

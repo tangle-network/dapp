@@ -19,6 +19,10 @@ vi.mock('react-router', () => ({
   useNavigate: () => mockNavigate,
 }));
 
+vi.mock('../../components/DelegateModal', () => ({
+  default: () => null,
+}));
+
 vi.mock(
   '@tangle-network/tangle-shared-ui/components/tables/OperatorsTable',
   () => ({
