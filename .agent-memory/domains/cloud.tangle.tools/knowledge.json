@@ -1,0 +1,458 @@
+{
+  "domain": "https://cloud.tangle.tools/blueprints",
+  "facts": [
+    {
+      "type": "timing",
+      "key": "typical-turns",
+      "value": "2 turns",
+      "confidence": 0.9328911360000001,
+      "sources": 9,
+      "lastSeen": "2026-06-24T22:59:34.810Z"
+    },
+    {
+      "type": "selector",
+      "key": "blueprint-cards",
+      "value": "Blueprint cards contain title, dash separator, numeric value, and action buttons (View, Deploy/Add capacity)",
+      "confidence": 0.6,
+      "sources": 1,
+      "lastSeen": "2026-06-24T22:50:53.865Z"
+    },
+    {
+      "type": "pattern",
+      "key": "dashboard-structure",
+      "value": "Layout follows standard SaaS pattern: left sidebar navigation → top header with network selector/wallet → main content area with cards → footer links",
+      "confidence": 0.6,
+      "sources": 1,
+      "lastSeen": "2026-06-24T22:50:53.865Z"
+    },
+    {
+      "type": "quirk",
+      "key": "card-information-display",
+      "value": "Cards show minimal metadata: title + '—' separator + number (likely deployment count) without explicit labels",
+      "confidence": 0.6,
+      "sources": 1,
+      "lastSeen": "2026-06-24T22:50:53.865Z"
+    },
+    {
+      "type": "quirk",
+      "key": "button-inconsistency",
+      "value": "Action buttons have inconsistent capitalization ('ADD CAPACITY' vs 'Add capacity') and lack clear visual hierarchy between primary/secondary actions",
+      "confidence": 0.3,
+      "sources": 1,
+      "lastSeen": "2026-06-24T22:50:53.865Z"
+    },
+    {
+      "type": "selector",
+      "key": "navigation-elements",
+      "value": "Dark-themed dashboard uses white/light text on dark backgrounds with left sidebar for main navigation",
+      "confidence": 0.6,
+      "sources": 1,
+      "lastSeen": "2026-06-24T22:50:53.865Z"
+    },
+    {
+      "type": "pattern",
+      "key": "card-actions",
+      "value": "Blueprint cards typically offer two actions: View (secondary) and Deploy/Add capacity (primary CTA)",
+      "confidence": 0.6,
+      "sources": 1,
+      "lastSeen": "2026-06-24T22:50:53.865Z"
+    },
+    {
+      "type": "quirk",
+      "key": "card-state-uniformity",
+      "value": "Cards appear visually identical regardless of capacity numbers (0, 1, 2) - no visual state differentiation for active vs inactive",
+      "confidence": 0.6,
+      "sources": 1,
+      "lastSeen": "2026-06-24T22:50:53.866Z"
+    },
+    {
+      "type": "selector",
+      "key": "instances-page",
+      "value": "URL path '/instances' shows the instances dashboard",
+      "confidence": 0.6,
+      "sources": 1,
+      "lastSeen": "2026-06-24T22:52:18.939Z"
+    },
+    {
+      "type": "quirk",
+      "key": "empty-state",
+      "value": "Instances page shows blank content area when no instances exist, with 'View operators' and 'Browse blueprints' links",
+      "confidence": 0.6,
+      "sources": 1,
+      "lastSeen": "2026-06-24T22:52:18.939Z"
+    },
+    {
+      "type": "pattern",
+      "key": "navigation",
+      "value": "Main nav includes: Dashboard, Instances, Blueprints, Operators, Rewards, Earnings sections",
+      "confidence": 0.6,
+      "sources": 1,
+      "lastSeen": "2026-06-24T22:52:18.939Z"
+    },
+    {
+      "type": "quirk",
+      "key": "active-nav-state",
+      "value": "Active navigation state lacks clear visual distinction (no border, highlight, bold, or color change)",
+      "confidence": 0.6,
+      "sources": 1,
+      "lastSeen": "2026-06-24T22:52:18.939Z"
+    },
+    {
+      "type": "selector",
+      "key": "theme",
+      "value": "Application uses dark theme as default UI pattern",
+      "confidence": 0.6,
+      "sources": 1,
+      "lastSeen": "2026-06-24T22:52:18.939Z"
+    },
+    {
+      "type": "quirk",
+      "key": "empty-state-minimal",
+      "value": "Tangle Cloud Instances page shows minimal content when empty—just 'Tangle Cloud' heading and two text links, no illustration or CTA button",
+      "confidence": 0.3,
+      "sources": 1,
+      "lastSeen": "2026-06-24T22:53:16.853Z"
+    },
+    {
+      "type": "quirk",
+      "key": "nav-active-state",
+      "value": "Left sidebar navigation has no visual active state indicator—active route shows no color/border/weight difference from other items",
+      "confidence": 0.15,
+      "sources": 1,
+      "lastSeen": "2026-06-24T22:53:16.853Z"
+    },
+    {
+      "type": "selector",
+      "key": "empty-state-links",
+      "value": "Empty state provides 'View operators' and 'Browse blueprints' text links as navigation options",
+      "confidence": 0.6,
+      "sources": 1,
+      "lastSeen": "2026-06-24T22:53:16.853Z"
+    },
+    {
+      "type": "pattern",
+      "key": "dark-theme-evaluation",
+      "value": "When evaluating dark themes: check contrast ratios, empty state design, navigation active states, and visual hierarchy in low-light conditions",
+      "confidence": 0.6,
+      "sources": 1,
+      "lastSeen": "2026-06-24T22:53:16.853Z"
+    },
+    {
+      "type": "selector",
+      "key": "sidebar-nav",
+      "value": "Left sidebar contains navigation items: Dashboard, Instances, Blueprints, Operators, Rewards, Earnings",
+      "confidence": 0.6,
+      "sources": 1,
+      "lastSeen": "2026-06-24T22:53:16.853Z"
+    },
+    {
+      "type": "selector",
+      "key": "blueprints-page",
+      "value": "URL path '/blueprints' identifies the Blueprints page in Tangle Cloud dashboard",
+      "confidence": 0.6,
+      "sources": 1,
+      "lastSeen": "2026-06-24T22:54:19.348Z"
+    },
+    {
+      "type": "pattern",
+      "key": "blueprint-cards",
+      "value": "Blueprints displayed as card grid with action buttons (View, Deploy, Add Capacity)",
+      "confidence": 0.6,
+      "sources": 1,
+      "lastSeen": "2026-06-24T22:54:19.348Z"
+    },
+    {
+      "type": "quirk",
+      "key": "button-inconsistency",
+      "value": "Blueprint card buttons show inconsistent text capitalization ('ADD CAPACITY' vs 'Add capacity') across different cards",
+      "confidence": 0.6,
+      "sources": 1,
+      "lastSeen": "2026-06-24T22:54:19.348Z"
+    },
+    {
+      "type": "quirk",
+      "key": "dark-theme",
+      "value": "Application uses dark theme — assess contrast and readability accordingly",
+      "confidence": 0.6,
+      "sources": 1,
+      "lastSeen": "2026-06-24T22:54:19.348Z"
+    },
+    {
+      "type": "selector",
+      "key": "operators-page-heading",
+      "value": "Main heading 'Operators' identifies the operators management page",
+      "confidence": 0.6,
+      "sources": 1,
+      "lastSeen": "2026-06-24T22:55:23.718Z"
+    },
+    {
+      "type": "selector",
+      "key": "delegate-button",
+      "value": "'Delegate' button is the primary CTA on operators page",
+      "confidence": 0.6,
+      "sources": 1,
+      "lastSeen": "2026-06-24T22:55:23.718Z"
+    },
+    {
+      "type": "pattern",
+      "key": "empty-state-display",
+      "value": "Empty operators list shows 'No operators indexed' message without additional context",
+      "confidence": 0.6,
+      "sources": 1,
+      "lastSeen": "2026-06-24T22:55:23.718Z"
+    },
+    {
+      "type": "quirk",
+      "key": "nav-active-state",
+      "value": "Navigation items lack visual distinction for active state—cannot determine current page from sidebar alone",
+      "confidence": 0.6,
+      "sources": 1,
+      "lastSeen": "2026-06-24T22:55:23.718Z"
+    },
+    {
+      "type": "quirk",
+      "key": "minimal-empty-state",
+      "value": "Empty state lacks illustration, explanatory text, and contextual guidance—only shows message and button",
+      "confidence": 0.6,
+      "sources": 1,
+      "lastSeen": "2026-06-24T22:55:23.718Z"
+    },
+    {
+      "type": "selector",
+      "key": "rewards-page-heading",
+      "value": "Main heading displays 'Rewards' to confirm page identity",
+      "confidence": 0.6,
+      "sources": 1,
+      "lastSeen": "2026-06-24T22:56:20.018Z"
+    },
+    {
+      "type": "pattern",
+      "key": "wallet-connection-flow",
+      "value": "Rewards page requires wallet connection before displaying data — 'Connect' button is primary CTA in empty state",
+      "confidence": 0.6,
+      "sources": 1,
+      "lastSeen": "2026-06-24T22:56:20.018Z"
+    },
+    {
+      "type": "quirk",
+      "key": "navigation-active-state",
+      "value": "Sidebar navigation lacks visual active state indicators — current page route is not highlighted or differentiated from other nav items",
+      "confidence": 0.6,
+      "sources": 1,
+      "lastSeen": "2026-06-24T22:56:20.018Z"
+    },
+    {
+      "type": "quirk",
+      "key": "empty-state-minimal",
+      "value": "Empty state uses minimal two-line pattern: heading + subheading + CTA button, without illustrations or extended educational content",
+      "confidence": 0.6,
+      "sources": 1,
+      "lastSeen": "2026-06-24T22:56:20.018Z"
+    },
+    {
+      "type": "selector",
+      "key": "sidebar-nav-items",
+      "value": "Left sidebar contains nav items: Dashboard, Blueprints, Operators, Rewards, and Earnings",
+      "confidence": 0.6,
+      "sources": 1,
+      "lastSeen": "2026-06-24T22:56:20.018Z"
+    },
+    {
+      "type": "pattern",
+      "key": "dark-theme-dashboard",
+      "value": "Application uses dark theme with professional contrast ratios and clean typography throughout",
+      "confidence": 0.6,
+      "sources": 1,
+      "lastSeen": "2026-06-24T22:56:20.018Z"
+    },
+    {
+      "type": "selector",
+      "key": "earnings-connect-button",
+      "value": "Connect button is present in empty state under 'Publisher earnings' heading",
+      "confidence": 0.6,
+      "sources": 1,
+      "lastSeen": "2026-06-24T22:57:23.184Z"
+    },
+    {
+      "type": "quirk",
+      "key": "navigation-active-state",
+      "value": "Navigation items lack visual active state indicators across the dashboard - no highlighting or styling differentiates current page",
+      "confidence": 0.6,
+      "sources": 1,
+      "lastSeen": "2026-06-24T22:57:23.184Z"
+    },
+    {
+      "type": "pattern",
+      "key": "empty-state-structure",
+      "value": "Empty states show heading → subheading → action button, but lack illustrations or educational content",
+      "confidence": 0.6,
+      "sources": 1,
+      "lastSeen": "2026-06-24T22:57:23.184Z"
+    },
+    {
+      "type": "quirk",
+      "key": "wallet-connection-required",
+      "value": "Earnings data requires wallet connection - empty state prompts 'Connect to see your publisher earnings'",
+      "confidence": 0.6,
+      "sources": 1,
+      "lastSeen": "2026-06-24T22:57:23.184Z"
+    },
+    {
+      "type": "selector",
+      "key": "earnings-heading",
+      "value": "'Publisher earnings' is the main heading text on /earnings page",
+      "confidence": 0.6,
+      "sources": 1,
+      "lastSeen": "2026-06-24T22:57:23.184Z"
+    },
+    {
+      "type": "pattern",
+      "key": "dark-theme-consistency",
+      "value": "Dark theme applied consistently across dashboard with high contrast (WCAG AAA compliant)",
+      "confidence": 0.6,
+      "sources": 1,
+      "lastSeen": "2026-06-24T22:57:23.184Z"
+    },
+    {
+      "type": "selector",
+      "key": "shielded-pool-page",
+      "value": "URL path '/payments/pool' navigates to the Shielded Pool dashboard section",
+      "confidence": 0.6,
+      "sources": 1,
+      "lastSeen": "2026-06-24T22:58:34.359Z"
+    },
+    {
+      "type": "pattern",
+      "key": "empty-state-detection",
+      "value": "Empty state displays 'Connect to use the shielded pool' text with a Connect button when no wallet is connected",
+      "confidence": 0.6,
+      "sources": 1,
+      "lastSeen": "2026-06-24T22:58:34.359Z"
+    },
+    {
+      "type": "quirk",
+      "key": "nav-active-state",
+      "value": "Left sidebar navigation lacks visual active state indicators — cannot reliably detect current page from sidebar styling alone",
+      "confidence": 0.6,
+      "sources": 1,
+      "lastSeen": "2026-06-24T22:58:34.359Z"
+    },
+    {
+      "type": "quirk",
+      "key": "minimal-empty-states",
+      "value": "Dashboard uses minimal empty state pattern: heading + brief text + CTA button, without illustrations or detailed explanations",
+      "confidence": 0.6,
+      "sources": 1,
+      "lastSeen": "2026-06-24T22:58:34.359Z"
+    },
+    {
+      "type": "selector",
+      "key": "page-heading",
+      "value": "'Shielded Pool' heading identifies the current dashboard section",
+      "confidence": 0.6,
+      "sources": 1,
+      "lastSeen": "2026-06-24T22:58:34.359Z"
+    },
+    {
+      "type": "pattern",
+      "key": "wallet-gated-content",
+      "value": "Shielded Pool features require wallet connection before displaying transaction data or functionality",
+      "confidence": 0.6,
+      "sources": 1,
+      "lastSeen": "2026-06-24T22:58:34.359Z"
+    },
+    {
+      "type": "selector",
+      "key": "credits-nav-item",
+      "value": "Navigation item for '/payments/credits' is in the left sidebar, labeled 'Credits'",
+      "confidence": 0.6,
+      "sources": 1,
+      "lastSeen": "2026-06-24T22:59:43.116Z"
+    },
+    {
+      "type": "quirk",
+      "key": "navigation-active-state",
+      "value": "Active navigation items may lack visual distinction (no color, bold, or background highlight) making current location unclear",
+      "confidence": 0.6,
+      "sources": 1,
+      "lastSeen": "2026-06-24T22:59:43.116Z"
+    },
+    {
+      "type": "pattern",
+      "key": "empty-state-connection",
+      "value": "Credits page shows empty state → 'Connect to manage anonymous credits' heading → Connect button → requires wallet connection to see data",
+      "confidence": 0.6,
+      "sources": 1,
+      "lastSeen": "2026-06-24T22:59:43.116Z"
+    },
+    {
+      "type": "selector",
+      "key": "connect-button",
+      "value": "Primary action for connecting wallet appears in empty state on credits page",
+      "confidence": 0.6,
+      "sources": 1,
+      "lastSeen": "2026-06-24T22:59:43.116Z"
+    },
+    {
+      "type": "quirk",
+      "key": "credits-empty-state",
+      "value": "Empty state provides minimal context about anonymous credits feature before connection — lacks educational content, illustrations, or usage details",
+      "confidence": 0.6,
+      "sources": 1,
+      "lastSeen": "2026-06-24T22:59:43.116Z"
+    }
+  ],
+  "sessions": [
+    {
+      "id": "session_1782341974808_z6gumj",
+      "goal": "Visit this page, take a screenshot, rate the design /10 as a senior product designer. Note 2 concrete defects. This is cloud.tangle.tools — a dark-themed blockchain services dashboard. One-line verdict per page.",
+      "outcome": "**Design Rating: 6/10** — Tangle Cloud Credits Page\n\n**Two Concrete Defects:**\n\n1. **Invisible Navigation Active State**: The URL confirms we're on '/payments/credits' but the 'Credits' nav item in the left sidebar has zero visual distinction (no accent color, bold weight, background highlight, or left border) from the inactive 'Shielded Pool' item above it, making it impossible for users to identify their current location at a glance. This is a systemic wayfinding failure that undermines basic navigation affordances and creates disorientation across the entire dashboard.\n\n2. **Inadequate Empty State Design**: The main content area shows only 'Anonymous Credits' heading with 'Connect to manage anonymous credits' subheading and a Connect button, but completely lacks proper empty state UX patterns. Missing: illustration/icon for visual interest, explanatory text about what anonymous credits are (privacy-preserving payment tokens? Prepaid balance? Gas credits?), how they're acquired, how they're consumed, what denominations are supported, privacy guarantees, or what transaction data will appear post-connection. The minimal two-line copy provides zero educational value or business context about the credits system or anonymity features.\n\n**One-line Verdict:** Professional dark theme with excellent color contrast (WCAG AAA) and clean typography, but undermined by invisible navigation affordances that disorient users and a minimal empty state that fails to explain the anonymous credits system, leaving users with no understanding of the feature's privacy value proposition or use cases before requiring wallet connection.",
+      "success": true,
+      "finalUrl": "https://cloud.tangle.tools/payments/credits",
+      "timestamp": "2026-06-24T22:59:34.808Z",
+      "turnsUsed": 2,
+      "durationMs": 60094
+    },
+    {
+      "id": "session_1782341904858_fzmned",
+      "goal": "Visit this page, take a screenshot, rate the design /10 as a senior product designer. Note 2 concrete defects. This is cloud.tangle.tools — a dark-themed blockchain services dashboard. One-line verdict per page.",
+      "outcome": "**Design Rating: 6/10** — Tangle Cloud Shielded Pool Page\n\n**Two Concrete Defects:**\n\n1. **Invisible Navigation Active State**: The URL confirms we're on '/payments/pool' but the 'Shielded Pool' nav item in the left sidebar has zero visual distinction (no accent border, background highlight, bold weight, or color change) from the inactive 'Credits' item directly below it. Users cannot identify their current location at a glance—a systemic wayfinding failure consistent across the entire dashboard that undermines basic navigation affordances.\n\n2. **Inadequate Empty State Design**: The main content area shows only 'Shielded Pool' heading with 'Connect to use the shielded pool' subheading and a Connect button, but lacks proper empty state UX patterns. Missing: illustration/icon for visual interest, explanatory text about what the Shielded Pool is, how privacy features work, what transaction types are supported, or what data will appear post-connection. The minimal two-line copy provides no educational value or context about the privacy/shielding value proposition, leaving users uninformed about why they should connect or what benefits the feature provides.\n\n**One-line Verdict:** Professional dark theme with excellent color contrast (WCAG AAA) and clean typography, but undermined by invisible navigation affordances that disorient users and a minimal empty state that fails to educate about the Shielded Pool privacy model or provide compelling context before requiring wallet connection.",
+      "success": true,
+      "finalUrl": "https://cloud.tangle.tools/payments/pool",
+      "timestamp": "2026-06-24T22:58:24.858Z",
+      "turnsUsed": 2,
+      "durationMs": 61253
+    },
+    {
+      "id": "session_1782341836168_69bofc",
+      "goal": "Visit this page, take a screenshot, rate the design /10 as a senior product designer. Note 2 concrete defects. This is cloud.tangle.tools — a dark-themed blockchain services dashboard. One-line verdict per page.",
+      "outcome": "**Design Rating: 6/10** — Tangle Cloud Earnings Page\n\n**Two Concrete Defects:**\n\n1. **Invisible Navigation Active State**: The URL confirms we're on '/earnings' but the 'Earnings' nav item in the left sidebar has zero visual distinction (no accent border, background highlight, bold weight, or color change) from inactive items like Dashboard, Blueprints, Operators, and Rewards. Users cannot identify their current location at a glance—a systemic wayfinding failure consistent across the entire dashboard.\n\n2. **Inadequate Empty State Design**: The main content area shows only 'Publisher earnings' heading with 'Connect to see your publisher earnings' subheading and a Connect button, but lacks proper empty state UX patterns. Missing: illustration/icon for visual interest, explanatory text about what publisher earnings are (Blueprint revenue? Transaction fees? Service charges?), how they're calculated, or what data will be shown post-connection. The minimal two-line copy provides no educational value or context about the earnings model, leaving users with no understanding of the feature's value proposition before requiring wallet connection.\n\n**One-line Verdict:** Professional dark theme with excellent color contrast (WCAG AAA) and clean typography, but undermined by invisible navigation affordances that disorient users and a minimal empty state that fails to educate about the publisher earnings model or provide compelling context before requiring wallet connection.",
+      "success": true,
+      "finalUrl": "https://cloud.tangle.tools/earnings",
+      "timestamp": "2026-06-24T22:57:16.168Z",
+      "turnsUsed": 2,
+      "durationMs": 55734
+    },
+    {
+      "id": "session_1782341769639_xvsirh",
+      "goal": "Visit this page, take a screenshot, rate the design /10 as a senior product designer. Note 2 concrete defects. This is cloud.tangle.tools — a dark-themed blockchain services dashboard. One-line verdict per page.",
+      "outcome": "**Design Rating: 6/10** — Tangle Cloud Rewards Page\n\n**Two Concrete Defects:**\n\n1. **Invisible Navigation Active State**: The URL confirms we're on '/rewards' but the 'Rewards' nav item in the left sidebar has zero visual distinction (no accent border, background highlight, bold weight, or color change) from inactive items like Dashboard, Blueprints, Operators, and Earnings. Users cannot identify their current location at a glance—a systemic wayfinding failure consistent across the entire dashboard.\n\n2. **Inadequate Empty State Design**: The main content area shows only 'Rewards' heading and 'Connect to see your staking rewards' subheading with a 'Connect' button, but lacks proper empty state UX patterns. Missing: illustration/icon to create visual interest, explanatory text about what staking rewards are, how they're earned, or what happens after connecting wallet. The minimal two-line copy provides no educational value or context about the rewards program mechanics, leaving users with no understanding of the feature's value proposition before taking action.\n\n**One-line Verdict:** Professional dark theme with excellent contrast and clean typography, but undermined by invisible navigation affordances that disorient users and a minimal empty state that fails to educate about the rewards system or provide compelling reasons to connect a wallet.",
+      "success": true,
+      "finalUrl": "https://cloud.tangle.tools/rewards",
+      "timestamp": "2026-06-24T22:56:09.639Z",
+      "turnsUsed": 2,
+      "durationMs": 45519
+    },
+    {
+      "id": "session_1782341717227_9sk3u2",
+      "goal": "Visit this page, take a screenshot, rate the design /10 as a senior product designer. Note 2 concrete defects. This is cloud.tangle.tools — a dark-themed blockchain services dashboard. One-line verdict per page.",
+      "outcome": "**Design Rating: 6/10** — Tangle Cloud Operators Page\n\n**Two Concrete Defects:**\n\n1. **Invisible Navigation Active State**: The URL confirms we're on '/operators' but the 'Operators' nav item in the left sidebar has zero visual distinction (no accent border, background highlight, bold weight, or color change) from inactive items like Dashboard, Blueprints, Rewards, and Earnings. Users cannot identify their current location at a glance—a fundamental wayfinding failure that appears systemic across the entire dashboard.\n\n2. **Inadequate Empty State Design**: The main content area shows only 'Operators' heading, a 'Delegate' button, and 'No operators indexed' message, but lacks proper empty state UX patterns. Missing: illustration/icon, explanatory text about what operators are or why none are indexed, and clear guidance on next steps (the lone 'Delegate' button provides no context about what delegating means or if it's the correct action when no operators exist). Compare to best practices: empty states need icon + headline + 1-2 sentence explanation + contextual CTA.\n\n**One-line Verdict:** Professional dark theme with excellent contrast and clean typography, but undermined by invisible navigation affordances that disorient users and a minimal empty state that fails to educate or guide action when the operator list is empty.",
+      "success": true,
+      "finalUrl": "https://cloud.tangle.tools/operators",
+      "timestamp": "2026-06-24T22:55:17.227Z",
+      "turnsUsed": 2,
+      "durationMs": 57395
+    }
+  ],
+  "updatedAt": "2026-06-24T22:59:43.116Z"
+}

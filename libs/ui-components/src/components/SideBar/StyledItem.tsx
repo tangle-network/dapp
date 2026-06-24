@@ -19,6 +19,7 @@ const StyledItem = forwardRef<HTMLDivElement, StyledSideBarItemProps>(
       <div
         {...props}
         ref={ref}
+        data-active={isActive || undefined}
         className={twMerge(
           'group select-none rounded-full',
           isDisabled && 'pointer-events-none',
