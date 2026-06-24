@@ -35,8 +35,8 @@ const PaymentsCreditsContent: FC = () => {
 
       <RequireWallet
         eyebrow="Credits"
-        title="Connect to manage credits"
-        description="A wallet connection is required to fund and manage credit accounts."
+        title="Connect to manage anonymous credits"
+        description="Fund credit accounts for pay-per-use inference — authorize spend without a wallet transaction per job. Connect to create and fund accounts."
         checks={['Credit accounts', 'Fund account', 'Authorize spend']}
       >
         <Tabs
