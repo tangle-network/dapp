@@ -439,3 +439,15 @@ body {
     transparent
   ) !important;
 }
+
+/* Cloud: sidebar active item — the shared component's mono-20/190 active bg
+ * is nearly invisible on cloud's dark surface. Add a left accent border +
+ * brighter background so users can always see which page they're on. */
+[data-sandbox-ui] [data-active] {
+  background-color: var(
+    --accent-surface-soft,
+    rgba(99, 102, 241, 0.12)
+  ) !important;
+  color: var(--text-primary, #dbe3f0) !important;
+  border-left: 2px solid var(--brand-cool, #8090ff);
+}

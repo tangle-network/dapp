@@ -1,0 +1,21 @@
+{
+  "id": "run_1782341905160_kqgg",
+  "model": "sonnet",
+  "timestamp": "2026-06-24T22:58:25.159Z",
+  "total": 1,
+  "passed": 1,
+  "failed": 0,
+  "passRate": 1,
+  "avgTurns": 2,
+  "avgDurationMs": 61266,
+  "totalDurationMs": 61266,
+  "tests": [
+    {
+      "id": "cli-task",
+      "name": "Visit this page, take a screenshot, rate the design /10 as a",
+      "verified": true,
+      "turnsUsed": 2,
+      "durationMs": 61266
+    }
+  ]
+}
