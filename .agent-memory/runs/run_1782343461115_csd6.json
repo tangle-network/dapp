@@ -1,0 +1,21 @@
+{
+  "id": "run_1782343461115_csd6",
+  "model": "sonnet",
+  "timestamp": "2026-06-24T23:24:21.114Z",
+  "total": 1,
+  "passed": 1,
+  "failed": 0,
+  "passRate": 1,
+  "avgTurns": 2,
+  "avgDurationMs": 52158,
+  "totalDurationMs": 52158,
+  "tests": [
+    {
+      "id": "cli-task",
+      "name": "Screenshot this page. As a senior product designer, rate it ",
+      "verified": true,
+      "turnsUsed": 2,
+      "durationMs": 52158
+    }
+  ]
+}
