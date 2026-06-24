@@ -444,10 +444,8 @@ body {
  * is nearly invisible on cloud's dark surface. Add a left accent border +
  * brighter background so users can always see which page they're on. */
 [data-sandbox-ui] [data-active] {
-  background-color: var(
-    --accent-surface-soft,
-    rgba(99, 102, 241, 0.12)
-  ) !important;
-  color: var(--text-primary, #dbe3f0) !important;
-  border-left: 2px solid var(--brand-cool, #8090ff);
+  background-color: rgba(129, 140, 248, 0.18) !important;
+  color: #ffffff !important;
+  border-left: 3px solid #818cf8 !important;
+  font-weight: 600 !important;
 }
