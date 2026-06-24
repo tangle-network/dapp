@@ -164,9 +164,29 @@ const Page = () => {
           </div>
         </>
       ) : (
-        <MetricStrip metrics={globalStats} density="compact" />
+        <>
+          <MetricStrip metrics={globalStats} density="compact" />
+          <div className="flex flex-col items-center gap-3 rounded-lg border border-border bg-card p-8 text-center">
+            <p className="text-lg font-medium text-foreground">
+              Connect a wallet to deploy services
+            </p>
+            <p className="max-w-md text-sm text-muted-foreground">
+              Register operator capacity, request blueprint instances, manage
+              service approvals, and track your earnings.
+            </p>
+            <div className="flex gap-2">
+              <Button variant="ghost" size="sm" asChild>
+                <Link to={PagePath.BLUEPRINTS}>Browse blueprints</Link>
+              </Button>
+              <Button variant="sandbox" size="sm" asChild>
+                <Link to={PagePath.OPERATORS}>View operators</Link>
+              </Button>
+            </div>
+          </div>
+        </>
       )}
-      <TotalValueLockedTabs />
+
+      {isConnected && <TotalValueLockedTabs />}
     </div>
   );
 };
