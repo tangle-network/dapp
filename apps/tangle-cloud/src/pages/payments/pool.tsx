@@ -38,8 +38,8 @@ const PaymentsPoolContent: FC = () => {
 
       <RequireWallet
         eyebrow="Shielded pool"
-        title="Connect to use the Shielded Pool"
-        description="A wallet connection is required to deposit and withdraw from the shielded pool."
+        title="Connect to use the shielded pool"
+        description="Deposit TNT into Tangle's mixnet-integrated shielded pool for private transactions. Connect to manage your shielded balance."
         checks={['Shielded balance', 'Deposit', 'Withdraw']}
       >
         <div className="grid gap-4 md:grid-cols-2">
