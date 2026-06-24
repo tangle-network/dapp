@@ -53,7 +53,7 @@ const EarningsPage: FC = () => {
 
         <RequireWallet
           eyebrow="Earnings"
-          title="Connect to load earnings"
+          title="Connect to see your publisher earnings"
           description="Load publisher balances, payout totals, and indexed payment events for the connected wallet."
           checks={['Token totals', 'Payout events', 'Explorer links']}
         />

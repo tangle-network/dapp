@@ -309,8 +309,8 @@ const RewardsPage: FC = () => {
 
         <RequireWallet
           eyebrow="Rewards"
-          title="Connect to load rewards"
-          description="Load pending balances, claimable assets, and claim history for the connected account."
+          title="Connect to see your staking rewards"
+          description="You earn TNT rewards automatically when you delegate to operators. Connect to check pending rewards, claim assets, and view your reward history."
           checks={['Pending rewards', 'Claimable assets', 'Claim history']}
         />
       </div>
