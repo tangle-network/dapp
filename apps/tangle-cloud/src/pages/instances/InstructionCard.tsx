@@ -185,7 +185,7 @@ export const InstructionCard: FC<InstructionCardProps> = ({
           {steps.map((step) => {
             const tone = TONE_STYLES[step.tone];
             const content = (
-              <div className="group flex cursor-pointer items-center gap-4 rounded-lg border border-border bg-[var(--bg-elevated)]/40 p-4 transition-colors duration-200 hover:border-primary/40 hover:bg-[var(--bg-hover)]">
+              <div className="group flex cursor-pointer items-center gap-4 rounded-lg border border-border bg-[var(--bg-elevated)] p-4 transition-colors duration-200 hover:border-primary/40 hover:bg-[var(--bg-hover)]">
                 <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-lg border border-border bg-[var(--bg-card)] transition-colors duration-200 group-hover:border-primary/40">
                   {createElement(step.icon, {
                     className: `h-5 w-5 ${tone.icon}`,
