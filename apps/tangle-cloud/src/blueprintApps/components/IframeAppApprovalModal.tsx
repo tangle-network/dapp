@@ -3,9 +3,10 @@ import {
   useChainId,
   useSendTransaction,
   useSignMessage,
+  useSignTypedData,
   useSwitchChain,
 } from 'wagmi';
-import type { Hex } from 'viem';
+import { bytesToHex, encodeFunctionData, type Hex } from 'viem';
 import {
   Dialog,
   DialogContent,
@@ -14,6 +15,8 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@tangle-network/sandbox-ui/primitives';
+import { getContractsByChainId } from '@tangle-network/dapp-config/contracts';
+import TANGLE_ABI from '@tangle-network/tangle-shared-ui/abi/tangle';
 import { Button } from '../../components/sandbox/SandboxUi';
 import type {
   ApprovalResult,
@@ -73,6 +76,54 @@ const RequestSummary: FC<{ pending: PendingApproval }> = ({ pending }) => {
         </div>
       );
     }
+    case 'tangle.app.signTypedData': {
+      const r = pending.request;
+      return (
+        <div className="space-y-2 text-sm">
+          <Row label="Action" value="Sign typed data" />
+          <Row label="Chain" value={String(r.chainId)} />
+          <Row label="Primary type" value={r.primaryType} mono />
+          {r.domain.name && <Row label="Domain name" value={r.domain.name} />}
+          {r.domain.verifyingContract && (
+            <Row
+              label="Verifying contract"
+              value={r.domain.verifyingContract}
+              mono
+            />
+          )}
+          <div>
+            <p className="text-xs text-muted-foreground mb-1">Message</p>
+            <pre className="rounded-md border border-border bg-muted/40 p-3 text-xs whitespace-pre-wrap break-all max-h-48 overflow-auto">
+              {JSON.stringify(r.message, null, 2)}
+            </pre>
+          </div>
+        </div>
+      );
+    }
+    case 'tangle.app.callJob': {
+      const r = pending.request;
+      return (
+        <div className="space-y-2 text-sm">
+          <Row label="Action" value="Submit job" />
+          <Row
+            label="Service ID"
+            value={
+              pending.serviceId !== null
+                ? pending.serviceId.toString()
+                : 'None (no active service)'
+            }
+            mono
+          />
+          <Row label="Job index" value={String(r.jobIndex)} mono />
+          <div>
+            <p className="text-xs text-muted-foreground mb-1">Inputs</p>
+            <pre className="rounded-md border border-border bg-muted/40 p-3 text-xs whitespace-pre-wrap break-all max-h-48 overflow-auto">
+              {JSON.stringify(r.inputs, null, 2)}
+            </pre>
+          </div>
+        </div>
+      );
+    }
   }
 };
 
@@ -102,6 +153,7 @@ const IframeAppApprovalModal: FC<Props> = ({
   const [submitting, setSubmitting] = useState(false);
   const { sendTransactionAsync } = useSendTransaction();
   const { signMessageAsync } = useSignMessage();
+  const { signTypedDataAsync } = useSignTypedData();
   const { switchChainAsync } = useSwitchChain();
   const chainId = useChainId();
 
@@ -139,6 +191,54 @@ const IframeAppApprovalModal: FC<Props> = ({
           onApprove({ ok: true, data: { chainId: r.chainId } });
           return;
         }
+        case 'tangle.app.signTypedData': {
+          const r = pending.request;
+          if (chainId !== r.chainId) {
+            onReject(
+              `Active chain ${chainId} doesn't match the request's chain ${r.chainId}. Switch network first.`,
+            );
+            return;
+          }
+          const signature = await signTypedDataAsync({
+            domain: r.domain,
+            types: r.types,
+            primaryType: r.primaryType,
+            message: r.message,
+          });
+          onApprove({ ok: true, data: { signature: signature as Hex } });
+          return;
+        }
+        case 'tangle.app.callJob': {
+          const r = pending.request;
+          if (pending.serviceId === null) {
+            onReject(
+              'No active service for this blueprint — cannot submit job.',
+            );
+            return;
+          }
+          let contracts: ReturnType<typeof getContractsByChainId>;
+          try {
+            contracts = getContractsByChainId(chainId);
+          } catch {
+            onReject(`No Tangle contract deployed on chain ${chainId}.`);
+            return;
+          }
+          // Encode inputs as UTF-8 JSON bytes — the same fallback path
+          // used by JobSubmissionForm when no ABI schema is available.
+          const jsonBytes = new TextEncoder().encode(JSON.stringify(r.inputs));
+          const encodedInputs = bytesToHex(jsonBytes);
+          const data = encodeFunctionData({
+            abi: TANGLE_ABI,
+            functionName: 'submitJob',
+            args: [pending.serviceId, r.jobIndex, encodedInputs],
+          });
+          const txHash = await sendTransactionAsync({
+            to: contracts.tangle,
+            data,
+          });
+          onApprove({ ok: true, data: { txHash: txHash as Hex } });
+          return;
+        }
       }
     } catch (err) {
       const message = err instanceof Error ? err.message : 'Approval failed.';
@@ -153,6 +253,7 @@ const IframeAppApprovalModal: FC<Props> = ({
     pending,
     sendTransactionAsync,
     signMessageAsync,
+    signTypedDataAsync,
     switchChainAsync,
   ]);
 
