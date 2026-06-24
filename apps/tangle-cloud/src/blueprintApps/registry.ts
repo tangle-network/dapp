@@ -394,6 +394,228 @@ const entries = [
       allowPopups: false,
     },
   },
+  {
+    slug: 'modal-inference',
+    canonicalSlug: 'modal-inference',
+    match: { publisherNamespace: 'tangle', requestedSlug: 'modal-inference' },
+    publisher: {
+      label: 'Tangle Labs',
+      visibility: 'first-party',
+      verification: 'first-party',
+    },
+    tier: 'curated-module',
+    slugPolicy: 'reserved',
+    module: { moduleId: 'modal-inference', status: 'planned' },
+    manifest: {
+      displayName: 'Modal Inference',
+      tagline: 'Serve voice AI models via Modal GPU.',
+      description:
+        'Tangle Blueprint for serving voice AI models via Modal GPU.',
+      surfaces: ['generic-overview', 'service-explorer', 'service-console'],
+      resources: {
+        serviceNoun: 'inference service',
+        resourceNoun: 'model',
+        resourceRoute: 'custom',
+      },
+      permissions: [],
+    },
+  },
+  {
+    slug: 'image-gen',
+    canonicalSlug: 'image-gen',
+    match: {
+      publisherNamespace: 'tangle',
+      requestedSlug: 'image-gen-inference',
+    },
+    publisher: {
+      label: 'Tangle Labs',
+      visibility: 'first-party',
+      verification: 'first-party',
+    },
+    tier: 'curated-module',
+    slugPolicy: 'reserved',
+    module: { moduleId: 'image-gen', status: 'planned' },
+    manifest: {
+      displayName: 'Image Generation',
+      tagline: 'Stable Diffusion, FLUX, SDXL with TEE support.',
+      description:
+        'Tangle Blueprint for image generation (Stable Diffusion, FLUX, SDXL) with TEE support.',
+      surfaces: ['generic-overview', 'service-explorer', 'service-console'],
+      resources: {
+        serviceNoun: 'inference service',
+        resourceNoun: 'model',
+        resourceRoute: 'custom',
+      },
+      permissions: [],
+    },
+  },
+  {
+    slug: 'vector-store',
+    canonicalSlug: 'vector-store',
+    match: { publisherNamespace: 'tangle', requestedSlug: 'vector-store' },
+    publisher: {
+      label: 'Tangle Labs',
+      visibility: 'first-party',
+      verification: 'first-party',
+    },
+    tier: 'curated-module',
+    slugPolicy: 'reserved',
+    module: { moduleId: 'vector-store', status: 'planned' },
+    manifest: {
+      displayName: 'Vector Store',
+      tagline: 'Hosted Qdrant/InMemory for RAG, per-query billing via x402.',
+      description:
+        'Vector store blueprint for Tangle Network — hosted Qdrant/InMemory for RAG, per-query billing via x402.',
+      surfaces: ['generic-overview', 'service-explorer', 'service-console'],
+      resources: {
+        serviceNoun: 'vector service',
+        resourceNoun: 'index',
+        resourceRoute: 'custom',
+      },
+      permissions: [],
+    },
+  },
+  {
+    slug: 'distributed-inference',
+    canonicalSlug: 'distributed-inference',
+    match: {
+      publisherNamespace: 'tangle',
+      requestedSlug: 'distributed-inference',
+    },
+    publisher: {
+      label: 'Tangle Labs',
+      visibility: 'first-party',
+      verification: 'first-party',
+    },
+    tier: 'curated-module',
+    slugPolicy: 'reserved',
+    module: { moduleId: 'distributed-inference', status: 'planned' },
+    manifest: {
+      displayName: 'Distributed Inference',
+      tagline:
+        'Pipeline parallelism for 400B+ models across multiple operators.',
+      description:
+        'Tangle Blueprint for distributed inference — pipeline parallelism for 400B+ models across multiple operators.',
+      surfaces: ['generic-overview', 'service-explorer', 'service-console'],
+      resources: {
+        serviceNoun: 'inference service',
+        resourceNoun: 'model',
+        resourceRoute: 'custom',
+      },
+      permissions: [],
+    },
+  },
+  {
+    slug: 'voice-inference',
+    canonicalSlug: 'voice-inference',
+    match: { publisherNamespace: 'tangle', requestedSlug: 'voice-inference' },
+    publisher: {
+      label: 'Tangle Labs',
+      visibility: 'first-party',
+      verification: 'first-party',
+    },
+    tier: 'curated-module',
+    slugPolicy: 'reserved',
+    module: { moduleId: 'voice-inference', status: 'planned' },
+    manifest: {
+      displayName: 'Voice Inference',
+      tagline: 'Qwen3-TTS via vLLM-Omni, pay via shielded credits.',
+      description:
+        'Voice TTS inference on Tangle — operators serve Qwen3-TTS via vLLM-Omni.',
+      surfaces: ['generic-overview', 'service-explorer', 'service-console'],
+      resources: {
+        serviceNoun: 'voice service',
+        resourceNoun: 'model',
+        resourceRoute: 'custom',
+      },
+      permissions: [],
+    },
+  },
+  {
+    slug: 'avatar-inference',
+    canonicalSlug: 'avatar-inference',
+    match: { publisherNamespace: 'tangle', requestedSlug: 'avatar-inference' },
+    publisher: {
+      label: 'Tangle Labs',
+      visibility: 'first-party',
+      verification: 'first-party',
+    },
+    tier: 'curated-module',
+    slugPolicy: 'reserved',
+    module: { moduleId: 'avatar-inference', status: 'planned' },
+    manifest: {
+      displayName: 'Avatar Inference',
+      tagline:
+        'Talking-head generation via HeyGen, D-ID, Replicate, or ComfyUI.',
+      description:
+        'Avatar inference blueprint for Tangle Network — talking-head generation.',
+      surfaces: ['generic-overview', 'service-explorer', 'service-console'],
+      resources: {
+        serviceNoun: 'avatar service',
+        resourceNoun: 'model',
+        resourceRoute: 'custom',
+      },
+      permissions: [],
+    },
+  },
+  {
+    slug: 'embedding-inference',
+    canonicalSlug: 'embedding-inference',
+    match: {
+      publisherNamespace: 'tangle',
+      requestedSlug: 'embedding-inference',
+    },
+    publisher: {
+      label: 'Tangle Labs',
+      visibility: 'first-party',
+      verification: 'first-party',
+    },
+    tier: 'curated-module',
+    slugPolicy: 'reserved',
+    module: { moduleId: 'embedding-inference', status: 'planned' },
+    manifest: {
+      displayName: 'Embedding Inference',
+      tagline: 'Text embeddings (HuggingFace TEI) with TEE support.',
+      description:
+        'Tangle Blueprint for text embeddings (HuggingFace TEI) with TEE support.',
+      surfaces: ['generic-overview', 'service-explorer', 'service-console'],
+      resources: {
+        serviceNoun: 'embedding service',
+        resourceNoun: 'model',
+        resourceRoute: 'custom',
+      },
+      permissions: [],
+    },
+  },
+  {
+    slug: 'video-gen',
+    canonicalSlug: 'video-gen',
+    match: {
+      publisherNamespace: 'tangle',
+      requestedSlug: 'video-gen-inference',
+    },
+    publisher: {
+      label: 'Tangle Labs',
+      visibility: 'first-party',
+      verification: 'first-party',
+    },
+    tier: 'curated-module',
+    slugPolicy: 'reserved',
+    module: { moduleId: 'video-gen', status: 'planned' },
+    manifest: {
+      displayName: 'Video Generation',
+      tagline: 'Hunyuan Video, LTX-Video with TEE support.',
+      description:
+        'Tangle Blueprint for video generation (Hunyuan Video, LTX-Video) with TEE support.',
+      surfaces: ['generic-overview', 'service-explorer', 'service-console'],
+      resources: {
+        serviceNoun: 'video service',
+        resourceNoun: 'model',
+        resourceRoute: 'custom',
+      },
+      permissions: [],
+    },
+  },
 ] satisfies CuratedRegistryEntry[];
 
 export const blueprintAppRegistry = new Map(
