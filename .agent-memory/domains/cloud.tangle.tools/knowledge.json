@@ -5,9 +5,9 @@
       "type": "timing",
       "key": "typical-turns",
       "value": "2 turns",
-      "confidence": 0.97800976744448,
-      "sources": 14,
-      "lastSeen": "2026-06-24T23:25:24.084Z"
+      "confidence": 0.982407813955584,
+      "sources": 15,
+      "lastSeen": "2026-06-24T23:34:33.838Z"
     },
     {
       "type": "selector",
@@ -592,9 +592,51 @@
       "confidence": 0.6,
       "sources": 1,
       "lastSeen": "2026-06-24T23:25:31.401Z"
+    },
+    {
+      "type": "quirk",
+      "key": "no-active-nav-state",
+      "value": "Sidebar navigation lacks visual active state indicators—cannot rely on CSS classes or visual cues to verify current page, must check URL or page content",
+      "confidence": 0.6,
+      "sources": 1,
+      "lastSeen": "2026-06-24T23:34:40.278Z"
+    },
+    {
+      "type": "pattern",
+      "key": "page-verification",
+      "value": "Verify navigation by checking URL (https://cloud.tangle.tools/blueprints) or main content heading, not sidebar visual state",
+      "confidence": 0.6,
+      "sources": 1,
+      "lastSeen": "2026-06-24T23:34:40.279Z"
+    },
+    {
+      "type": "selector",
+      "key": "blueprints-nav",
+      "value": "Blueprints navigation item has no distinguishing active class or data-attribute when selected",
+      "confidence": 0.6,
+      "sources": 1,
+      "lastSeen": "2026-06-24T23:34:40.279Z"
+    },
+    {
+      "type": "quirk",
+      "key": "consistent-nav-styling",
+      "value": "All sidebar nav items (Dashboard, Operators, Blueprints, Rewards, Earnings) appear identical regardless of active state—same color, weight, and background",
+      "confidence": 0.6,
+      "sources": 1,
+      "lastSeen": "2026-06-24T23:34:40.279Z"
     }
   ],
   "sessions": [
+    {
+      "id": "session_1782344073836_ytiy5k",
+      "goal": "Screenshot this page. Is there a clear visible active/selected state on the sidebar navigation item for the current page? Describe what you see on the active nav item (color, border, background). Rate the design /10.",
+      "outcome": "**Navigation Active State Analysis - Blueprints Page**\n\n**Answer: NO** - There is **no visible active/selected state** on the 'Blueprints' sidebar navigation item.\n\n**What I See on the Active Nav Item:**\n- **Color**: Same white/light gray text as all other navigation items (Dashboard, Operators, Rewards, Earnings)\n- **Border**: No left accent border, no right border, no visible border distinction of any kind\n- **Background**: No background highlight, no subtle tint, appears identical to inactive items\n- **Font Weight**: Same regular font weight as inactive navigation items - no bold or semibold treatment\n- **Icon**: Same icon styling as other items - no color change or emphasis\n- **Visual Distinction**: **NONE** - The only way to know you're on the Blueprints page is by checking the URL (https://cloud.tangle.tools/blueprints) or reading the main content heading\n\n**Design Rating: 6/10**\n\n**Strengths:**\n1. Clean, professional dark theme with excellent color contrast (white text on dark backgrounds meets WCAG AAA standards)\n2. Well-organized sidebar navigation with clear icons and consistent labeling\n3. Professional typography and consistent spacing throughout the interface\n4. Clear visual hierarchy in the main content area with blueprint cards well-structured\n5. Good overall layout following standard SaaS dashboard patterns\n\n**Critical Issue:**\nThe complete absence of navigation active states is a severe UX/wayfinding problem. Users cannot determine their current location in the application hierarchy without reading the page content or checking the URL - a fundamental navigation principle violation.\n\n**Recommended Improvements:**\n1. Add a **left accent border** (3-4px) in brand purple (#8B5CF6 or similar) to the active 'Blueprints' nav item\n2. Apply a **subtle background highlight** (e.g., rgba(139, 92, 246, 0.1)) to create visual separation\n3. Increase **font weight to semibold or bold** for the active navigation label\n4. Consider adding an **icon color change** to purple for the active item's icon\n\nThis pattern is consistent across all pages tested in previous sessions - the navigation system lacks any visual feedback mechanism for current page location.",
+      "success": true,
+      "finalUrl": "https://cloud.tangle.tools/blueprints",
+      "timestamp": "2026-06-24T23:34:33.836Z",
+      "turnsUsed": 2,
+      "durationMs": 54154
+    },
     {
       "id": "session_1782343524082_oucqag",
       "goal": "Screenshot this page. As a senior product designer, rate it /10. One-line verdict + one thing to improve. Dark SaaS dashboard.",
@@ -634,17 +676,7 @@
       "timestamp": "2026-06-24T23:22:26.544Z",
       "turnsUsed": 2,
       "durationMs": 54440
-    },
-    {
-      "id": "session_1782343284116_egjmh8",
-      "goal": "Screenshot this page. As a senior product designer, rate it /10. One-line verdict + one thing to improve. Dark SaaS dashboard.",
-      "outcome": "**Design Rating: 6/10** — Tangle Cloud Instances Page\n\n**One-line Verdict:** Professional dark SaaS dashboard with excellent color contrast (WCAG AAA) and clean typography, but critically undermined by invisible navigation active states that prevent users from identifying their current location at a glance.\n\n**One Thing to Improve:** Add clear active state indicators to the sidebar navigation—implement a left accent border in brand color, slightly lighter background, or bold text weight for the current page (Instances) so users can instantly see where they are in the dashboard hierarchy without having to check the URL.",
-      "success": true,
-      "finalUrl": "https://cloud.tangle.tools/instances",
-      "timestamp": "2026-06-24T23:21:24.116Z",
-      "turnsUsed": 2,
-      "durationMs": 49007
     }
   ],
-  "updatedAt": "2026-06-24T23:25:31.401Z"
+  "updatedAt": "2026-06-24T23:34:40.279Z"
 }
