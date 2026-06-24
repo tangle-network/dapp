@@ -83,6 +83,35 @@ const Layout: FC<PropsWithChildren<Props>> = ({
     onOpenHelp: useCallback(() => setIsHelpOpen(true), []),
   });
 
+  // Direct DOM active-nav marker — bypasses the shared SideBar's prop chain
+  // which wasn't reliably setting isActive on cloud's routes. This adds a
+  // visible class to the sidebar item matching the current URL.
+  useEffect(() => {
+    const path = window.location.pathname;
+    const markActive = () => {
+      const items = document.querySelectorAll(
+        '.tangle-cloud-shell nav a[href], .tangle-cloud-shell [role="navigation"] a[href]',
+      );
+      items.forEach((link) => {
+        const href = link.getAttribute('href');
+        if (!href || href === '/' || href.startsWith('http')) return;
+        const parent =
+          link.closest('div[class*="rounded-full"]') ?? link.parentElement;
+        if (parent) {
+          if (path.includes(href)) {
+            parent.classList.add('cloud-nav-active');
+          } else {
+            parent.classList.remove('cloud-nav-active');
+          }
+        }
+      });
+    };
+    markActive();
+    // Re-run after a tick in case sidebar renders late
+    const timer = setTimeout(markActive, 200);
+    return () => clearTimeout(timer);
+  });
+
   return (
     <TopNavSlotProvider>
       <div
