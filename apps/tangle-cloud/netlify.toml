@@ -30,6 +30,7 @@
 # blocks if we ever need to differ between staging and production.
 
 [context.production.environment]
+  VITE_ENVIO_TESTNET_ENDPOINT = "http://178.104.232.124/v1/graphql"
   # Production is iframe-on. Falls back to link-out automatically for any
   # blueprint that doesn't satisfy publisher + host + metadata gates, so
   # this flag is safe to leave on once the in-app trust gates are doing
@@ -38,12 +39,14 @@
   VITE_BLUEPRINT_IFRAME_ENABLED = "true"
 
 [context.deploy-preview.environment]
+  VITE_ENVIO_TESTNET_ENDPOINT = "http://178.104.232.124/v1/graphql"
   # Preview deploys (PR builds) inherit production's iframe-on default
   # so contributors testing iframe-mode manifests on a PR-preview URL
   # see the same surface production users will.
   VITE_BLUEPRINT_IFRAME_ENABLED = "true"
 
 [context.branch-deploy.environment]
+  VITE_ENVIO_TESTNET_ENDPOINT = "http://178.104.232.124/v1/graphql"
   # Same default for any non-master branch deploy. The primary branch
   # deploy is `develop`, which serves as our staging environment.
   VITE_BLUEPRINT_IFRAME_ENABLED = "true"
