@@ -27,6 +27,18 @@ export type PendingApproval =
   | {
       kind: 'tangle.app.switchChain';
       request: Extract<IframeRequest, { kind: 'tangle.app.switchChain' }>;
+    }
+  | {
+      kind: 'tangle.app.signTypedData';
+      request: Extract<IframeRequest, { kind: 'tangle.app.signTypedData' }>;
+    }
+  | {
+      kind: 'tangle.app.callJob';
+      request: Extract<IframeRequest, { kind: 'tangle.app.callJob' }>;
+      // Resolved from the service context at request time — the iframe
+      // receives its serviceId via broadcast but doesn't send it in the
+      // callJob request; the parent owns the service↔blueprint mapping.
+      serviceId: bigint | null;
     };
 
 // Outcome the consumer reports back via approve/reject. The bridge turns
@@ -174,6 +186,44 @@ export function useIframeBridge({
                   error: result.ok ? 'wrong-result-shape' : result.reason,
                 },
           );
+          return;
+        }
+        case 'tangle.app.signTypedData': {
+          const data =
+            result.ok && 'signature' in result.data ? result.data : null;
+          post(
+            data
+              ? {
+                  kind: 'tangle.app.signTypedDataResult',
+                  correlationId,
+                  ok: true,
+                  data,
+                }
+              : {
+                  kind: 'tangle.app.signTypedDataResult',
+                  correlationId,
+                  ok: false,
+                  error: result.ok ? 'wrong-result-shape' : result.reason,
+                },
+          );
+          return;
+        }
+        case 'tangle.app.callJob': {
+          if (result.ok && 'txHash' in result.data) {
+            post({
+              kind: 'tangle.app.jobResult',
+              correlationId,
+              status: 'success',
+              data: result.data,
+            });
+          } else {
+            post({
+              kind: 'tangle.app.jobResult',
+              correlationId,
+              status: 'error',
+              error: result.ok ? 'wrong-result-shape' : result.reason,
+            });
+          }
           return;
         }
       }
@@ -363,6 +413,20 @@ export function useIframeBridge({
             ok: false,
             error: verdict.reason,
           });
+        } else if (request.kind === 'tangle.app.signTypedData') {
+          post({
+            kind: 'tangle.app.signTypedDataResult',
+            correlationId: request.correlationId,
+            ok: false,
+            error: verdict.reason,
+          });
+        } else if (request.kind === 'tangle.app.callJob') {
+          post({
+            kind: 'tangle.app.jobResult',
+            correlationId: request.correlationId,
+            status: 'error',
+            error: verdict.reason,
+          });
         }
         return;
       }
@@ -402,33 +466,27 @@ export function useIframeBridge({
         return;
       }
 
-      // callJob (job invocation via quote/sign/submit) is protocol-defined
-      // but its parent-side integration with the deploy/quote pipeline is
-      // not yet wired. Respond with a clean error so the iframe surfaces a
-      // real message instead of hanging on the request timeout. Tracked as
-      // a dedicated follow-up — the financial submit path needs its own
-      // careful review, not a tail-of-session bolt-on.
+      // callJob routes through the approval modal (same as signTransaction)
+      // because submitJob is an on-chain payable transaction. The serviceId
+      // is resolved from the current service context — the iframe receives
+      // its serviceId via broadcast but doesn't send it in the request; the
+      // parent owns the service↔blueprint mapping.
       if (request.kind === 'tangle.app.callJob') {
-        post({
-          kind: 'tangle.app.jobResult',
-          correlationId: request.correlationId,
-          status: 'error',
-          error:
-            'callJob is not yet wired in this parent build. Use direct operator HTTP for reads; on-chain job submission is coming.',
-        });
-        return;
-      }
-
-      // signTypedData routes through the approval modal (same as
-      // signMessage / signTransaction) but the modal + signer integration
-      // for typed-data isn't wired yet. Clean error rather than a hang.
-      if (request.kind === 'tangle.app.signTypedData') {
-        post({
-          kind: 'tangle.app.signTypedDataResult',
-          correlationId: request.correlationId,
-          ok: false,
-          error:
-            'signTypedData approval is not yet wired in this parent build.',
+        if (pendingRef.current) {
+          post({
+            kind: 'tangle.app.jobResult',
+            correlationId: request.correlationId,
+            status: 'error',
+            error: 'Another approval is already pending.',
+          });
+          return;
+        }
+        const sid = syncRef.current.serviceContext?.serviceId;
+        const serviceId = sid != null ? BigInt(sid) : null;
+        setPendingApproval({
+          kind: 'tangle.app.callJob',
+          request,
+          serviceId,
         });
         return;
       }
