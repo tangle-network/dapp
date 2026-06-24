@@ -24,7 +24,7 @@ import type { ComponentProps, ElementType, FC } from 'react';
  *   - `body-lg`  → text-base (replaces legacy `body1`)
  *   - `body`     → text-sm  (replaces legacy `body2`, the default)
  *   - `body-sm`  → text-xs  (replaces legacy `body3` / `body4`)
- *   - `caption`  → text-[11px] muted (timestamps, meta)
+ *   - `caption`  → text-xs muted (timestamps, meta)
  *
  * Legacy aliases ('h4', 'h5', 'body1', 'body2', 'body3', 'body4') resolve to
  * the same classes the per-page shims used, preserving visual parity.
@@ -118,7 +118,7 @@ const classFor = (variant: ReturnType<typeof canonicalize>): string => {
     case 'body-sm':
       return 'text-xs text-muted-foreground';
     case 'caption':
-      return 'text-[11px] text-muted-foreground';
+      return 'text-xs text-muted-foreground';
   }
 };
 

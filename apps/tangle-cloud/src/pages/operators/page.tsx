@@ -37,7 +37,7 @@ import {
   statusToneFor,
 } from '../../components/chrome';
 import type { Metric } from '../../components/chrome';
-import createStakeDelegateUrl from './createStakeDelegateUrl';
+import DelegateModal from '../../components/DelegateModal';
 
 type SortKey = 'stake' | 'delegations' | 'status';
 type SortDir = 'asc' | 'desc';
@@ -60,8 +60,12 @@ const Page: FC = () => {
     0n,
   );
 
+  const [delegateOpen, setDelegateOpen] = useState(false);
+  const [delegateTarget, setDelegateTarget] = useState('');
+
   const handleStakeClicked = useCallback((operatorAddress?: Address) => {
-    window.location.assign(createStakeDelegateUrl(operatorAddress));
+    setDelegateTarget(operatorAddress ?? '');
+    setDelegateOpen(true);
   }, []);
 
   const metrics: Metric[] = useMemo(
@@ -146,6 +150,12 @@ const Page: FC = () => {
         isLoading={isLoading}
         onStakeClicked={handleStakeClicked}
         onManageClicked={() => navigate(PagePath.OPERATORS_MANAGE)}
+      />
+
+      <DelegateModal
+        open={delegateOpen}
+        onOpenChange={setDelegateOpen}
+        operatorAddress={delegateTarget}
       />
     </div>
   );
@@ -275,10 +285,10 @@ const OperatorsPanel = ({
             <Table>
               <TableHeader>
                 <TableRow className="border-border bg-[var(--bg-elevated)]/60 hover:bg-[var(--bg-elevated)]/60">
-                  <TableHead className="w-[36%] font-semibold text-muted-foreground text-[11px] uppercase tracking-wider">
+                  <TableHead className="w-[36%] font-semibold text-muted-foreground text-sm uppercase tracking-wider">
                     Operator
                   </TableHead>
-                  <TableHead className="font-semibold text-muted-foreground text-[11px] uppercase tracking-wider">
+                  <TableHead className="font-semibold text-muted-foreground text-sm uppercase tracking-wider">
                     <SortableHead
                       label="Stake"
                       isActive={sortKey === 'stake'}
@@ -286,7 +296,7 @@ const OperatorsPanel = ({
                       onClick={() => onSort('stake')}
                     />
                   </TableHead>
-                  <TableHead className="font-semibold text-muted-foreground text-[11px] uppercase tracking-wider">
+                  <TableHead className="font-semibold text-muted-foreground text-sm uppercase tracking-wider">
                     <SortableHead
                       label="Delegations"
                       isActive={sortKey === 'delegations'}
@@ -294,10 +304,10 @@ const OperatorsPanel = ({
                       onClick={() => onSort('delegations')}
                     />
                   </TableHead>
-                  <TableHead className="font-semibold text-muted-foreground text-[11px] uppercase tracking-wider">
+                  <TableHead className="font-semibold text-muted-foreground text-sm uppercase tracking-wider">
                     Mode
                   </TableHead>
-                  <TableHead className="font-semibold text-muted-foreground text-[11px] uppercase tracking-wider">
+                  <TableHead className="font-semibold text-muted-foreground text-sm uppercase tracking-wider">
                     <SortableHead
                       label="Status"
                       isActive={sortKey === 'status'}
@@ -305,7 +315,7 @@ const OperatorsPanel = ({
                       onClick={() => onSort('status')}
                     />
                   </TableHead>
-                  <TableHead className="text-right font-semibold text-muted-foreground text-[11px] uppercase tracking-wider">
+                  <TableHead className="text-right font-semibold text-muted-foreground text-sm uppercase tracking-wider">
                     Actions
                   </TableHead>
                 </TableRow>
@@ -383,7 +393,7 @@ const OperatorTableRow = ({
             <p className="truncate font-display font-bold text-foreground text-sm tracking-tight">
               {shortenAddress(address)}
             </p>
-            <p className="mt-0.5 truncate font-mono text-muted-foreground text-xs">
+            <p className="mt-0.5 truncate font-mono text-muted-foreground text-sm">
               {rpcHost ?? 'No RPC advertised'}
             </p>
           </div>

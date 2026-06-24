@@ -40,7 +40,7 @@ const BlueprintModePicker: FC<Props> = ({
     // current theme's tokens under this section.
     <section aria-label="Deployment mode" className="space-y-3">
       <header className="space-y-1">
-        <p className="font-semibold text-muted-foreground text-[11px] uppercase tracking-wider">
+        <p className="font-semibold text-muted-foreground text-xs uppercase tracking-wider">
           Deployment mode
         </p>
         <h2 className="font-display font-extrabold text-foreground text-lg">

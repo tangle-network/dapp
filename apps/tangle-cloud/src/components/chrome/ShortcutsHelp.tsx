@@ -47,7 +47,7 @@ const SHORTCUTS: Array<{
 ];
 
 const Kbd: FC<{ children: string }> = ({ children }) => (
-  <kbd className="inline-flex h-6 min-w-[24px] items-center justify-center rounded border border-border bg-[color:var(--bg-elevated)]/60 px-1.5 font-mono text-[11px] text-foreground">
+  <kbd className="inline-flex h-6 min-w-[24px] items-center justify-center rounded border border-border bg-[color:var(--bg-elevated)]/60 px-1.5 font-mono text-xs text-foreground">
     {children}
   </kbd>
 );

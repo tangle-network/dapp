@@ -216,7 +216,7 @@ export const AttestForm: FC<AttestFormProps> = ({
           }
         />
         {mode === 'pdf' && reportFile && (
-          <p className="break-all font-mono text-muted-foreground text-[11px]">
+          <p className="break-all font-mono text-muted-foreground text-xs">
             sha256 {reportHash}
           </p>
         )}

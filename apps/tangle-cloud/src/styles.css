@@ -39,7 +39,7 @@ body {
 .tangle-cloud-shell[data-sandbox-theme='tangle'] {
   color-scheme: dark;
   /* prettier-ignore */
-  --bg-root: radial-gradient(ellipse 60% 36% at 16% 0%, rgba(79, 70, 229, 0.1), transparent), radial-gradient(ellipse 44% 30% at 84% 4%, rgba(20, 184, 166, 0.08), transparent), linear-gradient(180deg, #090b10 0%, #07080c 100%);
+  --bg-root: #07080c;
   --bg-card: #151922;
   --bg-elevated: #202737;
   --bg-hover: rgba(116, 126, 194, 0.18);
@@ -121,6 +121,23 @@ body {
  * vendor.css doesn't ship these (it only includes classes sandbox-ui itself
  * uses), so cloud has to define them. Bound to cloud tokens; no !important
  * because no other rule defines them. */
+
+/* The shared <Card variant="sandbox"> is a frosted-glass surface by design
+ * (translucent bg + a linear-gradient overlay + backdrop-blur). On cloud's
+ * solid bg it reads as an inconsistent sheen vs the flat bg-card surfaces.
+ * Force it solid + kill the blur so all cloud cards share one surface. */
+[data-sandbox-ui] .bg-white\/65,
+[data-sandbox-ui] .dark\:bg-mono-200\/40 {
+  background-color: var(--bg-card);
+  background-image: none;
+}
+[data-sandbox-ui] .bg-\[linear-gradient\(180deg,
+[data-sandbox-ui] .dark\:bg-\[linear-gradient\(180deg,
+[data-sandbox-ui] .backdrop-blur-\[18px\] {
+  background-image: none;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+}
 [data-sandbox-ui] .bg-background {
   background-color: var(--bg-root, hsl(var(--background)));
 }

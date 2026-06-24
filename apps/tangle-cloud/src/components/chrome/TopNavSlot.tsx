@@ -102,7 +102,7 @@ export function useTopNavEntity(entity: TopNavEntity | null): void {
       <>
         <nav
           aria-label="Breadcrumb"
-          className="flex min-w-0 items-center gap-1.5 text-[13px]"
+          className="flex min-w-0 items-center gap-1.5 text-sm"
         >
           <Link
             to={sectionHref ?? '#'}

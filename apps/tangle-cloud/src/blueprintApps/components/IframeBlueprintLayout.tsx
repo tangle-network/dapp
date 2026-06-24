@@ -118,7 +118,7 @@ const IframeBlueprintLayout: FC<Props> = ({
          * style used across the app; the section root links to the catalog. */}
         <nav
           aria-label="Breadcrumb"
-          className="flex min-w-0 items-center gap-1.5 text-[13px]"
+          className="flex min-w-0 items-center gap-1.5 text-sm"
         >
           <Link
             to="/blueprints"
@@ -260,7 +260,7 @@ const IframeBlueprintLayout: FC<Props> = ({
                 <CloseIcon className="h-3.5 w-3.5" />
                 Back to Cloud
               </button>
-              <span className="hidden max-w-[42vw] truncate border-l border-border pl-2 font-mono text-[11px] text-muted-foreground sm:inline">
+              <span className="hidden max-w-[42vw] truncate border-l border-border pl-2 font-mono text-xs text-muted-foreground sm:inline">
                 {displayName}
               </span>
             </div>
