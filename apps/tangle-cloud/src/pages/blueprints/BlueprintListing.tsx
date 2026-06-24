@@ -152,12 +152,14 @@ const BlueprintListing: FC<Props> = ({
   const navigate = useNavigate();
 
   const rows = useMemo(() => {
-    const sorted = Array.from(blueprints.values()).sort((a, b) => {
-      if (a.isBoosted && !b.isBoosted) return -1;
-      if (!a.isBoosted && b.isBoosted) return 1;
-      if (a.id === b.id) return 0;
-      return a.id < b.id ? 1 : -1;
-    });
+    const sorted = Array.from(blueprints.values())
+      .filter((bp) => bp.name !== 'Onchain Blueprint')
+      .sort((a, b) => {
+        if (a.isBoosted && !b.isBoosted) return -1;
+        if (!a.isBoosted && b.isBoosted) return 1;
+        if (a.id === b.id) return 0;
+        return a.id < b.id ? 1 : -1;
+      });
 
     return dedupeBlueprintsByIdentity(sorted);
   }, [blueprints]);
