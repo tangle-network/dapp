@@ -99,4 +99,4 @@
 - yuri @yuri-xyz
 - yuri-xyz @yuri-xyz
 - yurixander @yurixander
-- Yurixander @yurixander
+- Yurixander @yurixander## Cloud release — solid cards, type scale, delegation modal
