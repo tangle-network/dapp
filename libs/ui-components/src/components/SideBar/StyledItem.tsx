@@ -25,13 +25,13 @@ const StyledItem = forwardRef<HTMLDivElement, StyledSideBarItemProps>(
           isDisabled && 'pointer-events-none',
           !isExpanded ? 'px-2 py-3' : 'flex items-center',
           isActive && (subItemsCount === 0 || !isExpanded)
-            ? 'text-mono-200 dark:text-mono-0'
+            ? 'text-white dark:text-white font-semibold'
             : 'text-mono-100 dark:text-mono-120',
           isExpanded && 'hover:bg-mono-20 dark:hover:bg-mono-190',
           isExpanded ? 'justify-between px-4 py-3' : 'justify-center',
           isActive &&
             (subItemsCount === 0 || !isExpanded) &&
-            'bg-mono-20 dark:bg-mono-190',
+            'bg-indigo-500/20 dark:bg-indigo-500/25 border-l-2 border-indigo-400',
           className,
         )}
       >

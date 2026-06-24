@@ -1,0 +1,21 @@
+{
+  "id": "run_1782344695934_wwer",
+  "model": "sonnet",
+  "timestamp": "2026-06-24T23:44:55.932Z",
+  "total": 1,
+  "passed": 1,
+  "failed": 0,
+  "passRate": 1,
+  "avgTurns": 2,
+  "avgDurationMs": 56887,
+  "totalDurationMs": 56887,
+  "tests": [
+    {
+      "id": "cli-task",
+      "name": "Screenshot this page and look at the LEFT SIDEBAR. Is there ",
+      "verified": true,
+      "turnsUsed": 2,
+      "durationMs": 56887
+    }
+  ]
+}
