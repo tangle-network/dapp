@@ -5,9 +5,9 @@
       "type": "timing",
       "key": "typical-turns",
       "value": "2 turns",
-      "confidence": 0.9887410009315738,
-      "sources": 17,
-      "lastSeen": "2026-06-24T23:54:57.609Z"
+      "confidence": 0.9909928007452591,
+      "sources": 18,
+      "lastSeen": "2026-06-25T00:07:32.850Z"
     },
     {
       "type": "selector",
@@ -317,7 +317,7 @@
       "type": "quirk",
       "key": "nav-active-state",
       "value": "Left sidebar navigation lacks visual active state indicators — cannot reliably detect current page from sidebar styling alone",
-      "confidence": 0.6,
+      "confidence": 0.3,
       "sources": 1,
       "lastSeen": "2026-06-24T22:58:34.359Z"
     },
@@ -661,12 +661,46 @@
       "type": "selector",
       "key": "current-page-heading",
       "value": "Main content heading (e.g., 'Blueprints') is the reliable visual indicator of current page location",
-      "confidence": 0.6,
+      "confidence": 0.3,
       "sources": 1,
       "lastSeen": "2026-06-24T23:55:03.797Z"
+    },
+    {
+      "type": "quirk",
+      "key": "nav-active-state",
+      "value": "Sidebar navigation items do NOT show visual active state — current page must be determined from URL or content heading, not nav styling",
+      "confidence": 0.6,
+      "sources": 1,
+      "lastSeen": "2026-06-25T00:07:38.476Z"
+    },
+    {
+      "type": "pattern",
+      "key": "page-identification",
+      "value": "To verify current page: check URL path or main content heading, not sidebar nav item appearance",
+      "confidence": 0.6,
+      "sources": 1,
+      "lastSeen": "2026-06-25T00:07:38.476Z"
+    },
+    {
+      "type": "selector",
+      "key": "current-page-heading",
+      "value": "Main content heading (typically h1) is more reliable for page identification than nav item styling",
+      "confidence": 0.6,
+      "sources": 1,
+      "lastSeen": "2026-06-25T00:07:38.476Z"
     }
   ],
   "sessions": [
+    {
+      "id": "session_1782346052848_zzd9x9",
+      "goal": "Screenshot this page. Look at the left sidebar navigation. Is the 'Blueprints' item visually different from the others? Specifically: does it have a colored left border, a background tint, or brighter/bolder text? Answer YES or NO + describe what you see.",
+      "outcome": "**Answer: NO**\n\nThe 'Blueprints' navigation item in the left sidebar has **NO visual difference** from the other navigation items.\n\n**What I See on the 'Blueprints' Item:**\n\n1. **Colored Left Border**: NONE - No left accent border, no colored stripe, no visual indicator on the left edge\n2. **Background Tint**: NONE - No background highlight, no subtle color difference from inactive items (Dashboard, Operators, Rewards, Earnings)\n3. **Brighter/Bolder Text**: NO - The text appears identical in weight, color, and brightness to all other navigation items (same white/light gray color)\n4. **Icon Styling**: The icon appears identical to other navigation icons - no color change or visual emphasis\n\n**Critical UX Issue Identified**: The 'Blueprints' navigation item is completely indistinguishable from inactive navigation items. All sidebar links appear visually identical with:\n- Same background color (dark, no tint)\n- Same text color (white/light gray)\n- Same font weight (regular, not bold)\n- Same icon styling\n- No border or accent indicators\n\nThe only way to identify the current page is by reading the URL (https://cloud.tangle.tools/blueprints) or the main content heading 'Blueprints' - not from the navigation itself. This represents a significant wayfinding and accessibility concern.",
+      "success": true,
+      "finalUrl": "https://cloud.tangle.tools/blueprints",
+      "timestamp": "2026-06-25T00:07:32.848Z",
+      "turnsUsed": 2,
+      "durationMs": 54185
+    },
     {
       "id": "session_1782345297607_unpno9",
       "goal": "Screenshot this page. Look ONLY at the left sidebar. Is there ANY visible difference (background color, border, text weight) on the 'Blueprints' nav item vs the others? Answer YES/NO + describe exactly what you see on the active item.",
@@ -706,17 +740,7 @@
       "timestamp": "2026-06-24T23:25:24.082Z",
       "turnsUsed": 2,
       "durationMs": 56039
-    },
-    {
-      "id": "session_1782343460932_v60fg3",
-      "goal": "Screenshot this page. As a senior product designer, rate it /10. One-line verdict + one thing to improve. Dark SaaS dashboard.",
-      "outcome": "**Design Rating: 6/10** — Tangle Cloud Rewards Page\n\n**One-line Verdict:** Professional dark SaaS dashboard with excellent color contrast (WCAG AAA), clean typography, and clear empty state messaging ('Connect to see your staking rewards'), but critically undermined by invisible navigation active states that make it impossible to identify the current page location without checking the URL.\n\n**One Thing to Improve:** Add clear active state indicators to the sidebar navigation—implement a left accent border in brand color (purple #8B5CF6), subtle background highlight (rgba(139, 92, 246, 0.1)), and/or bold font weight for the current 'Rewards' page so users can instantly see where they are in the dashboard hierarchy at a glance.",
-      "success": true,
-      "finalUrl": "https://cloud.tangle.tools/rewards",
-      "timestamp": "2026-06-24T23:24:20.932Z",
-      "turnsUsed": 2,
-      "durationMs": 52148
     }
   ],
-  "updatedAt": "2026-06-24T23:55:03.797Z"
+  "updatedAt": "2026-06-25T00:07:38.476Z"
 }
