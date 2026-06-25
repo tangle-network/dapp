@@ -1,0 +1,21 @@
+{
+  "id": "run_1782394038330_ofbt",
+  "model": "sonnet",
+  "timestamp": "2026-06-25T13:27:18.328Z",
+  "total": 1,
+  "passed": 1,
+  "failed": 0,
+  "passRate": 1,
+  "avgTurns": 2,
+  "avgDurationMs": 52644,
+  "totalDurationMs": 52644,
+  "tests": [
+    {
+      "id": "cli-task",
+      "name": "Screenshot this blueprints gallery page. Describe the CARD I",
+      "verified": true,
+      "turnsUsed": 2,
+      "durationMs": 52644
+    }
+  ]
+}
