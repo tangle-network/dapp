@@ -12,9 +12,9 @@
  *   - `parent`       — the parent (this dapp's) origin, so the embedded app
  *                      can deterministically detect that it's running inside
  *                      Tangle Cloud and install the parent-bridge wallet
- *                      connector. The sandbox runs at an opaque origin and we
- *                      send `referrerpolicy="no-referrer"`, so `document.referrer`
- *                      is unavailable — `?parent=` is the only reliable signal.
+ *                      connector. The sandbox may run at an opaque origin,
+ *                      so `document.referrer` can be unreliable — `?parent=`
+ *                      is the deterministic signal, with referrer as fallback.
  *
  * Other (non-reserved) params on the manifest URL are preserved verbatim —
  * publishers may sign intent into them and we shouldn't drop that.
