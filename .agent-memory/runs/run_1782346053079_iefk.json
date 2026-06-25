@@ -1,0 +1,21 @@
+{
+  "id": "run_1782346053079_iefk",
+  "model": "sonnet",
+  "timestamp": "2026-06-25T00:07:33.078Z",
+  "total": 1,
+  "passed": 1,
+  "failed": 0,
+  "passRate": 1,
+  "avgTurns": 2,
+  "avgDurationMs": 54199,
+  "totalDurationMs": 54199,
+  "tests": [
+    {
+      "id": "cli-task",
+      "name": "Screenshot this page. Look at the left sidebar navigation. I",
+      "verified": true,
+      "turnsUsed": 2,
+      "durationMs": 54199
+    }
+  ]
+}

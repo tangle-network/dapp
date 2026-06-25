@@ -83,32 +83,37 @@ const Layout: FC<PropsWithChildren<Props>> = ({
     onOpenHelp: useCallback(() => setIsHelpOpen(true), []),
   });
 
-  // Direct DOM active-nav marker — bypasses the shared SideBar's prop chain
-  // which wasn't reliably setting isActive on cloud's routes. This adds a
-  // visible class to the sidebar item matching the current URL.
+  // Direct DOM active-nav marker — bypasses the shared SideBar's prop chain.
+  // The sidebar renders divs with onClick (not <a href>), so match by text.
   useEffect(() => {
     const path = window.location.pathname;
+    const routeLabels: Record<string, string> = {
+      '/instances': 'Dashboard',
+      '/blueprints': 'Blueprints',
+      '/operators': 'Operators',
+      '/rewards': 'Rewards',
+      '/earnings': 'Earnings',
+      '/payments': 'Payments',
+    };
+    const activeLabel = Object.entries(routeLabels).find(
+      ([href]) => href !== '/' && path.includes(href),
+    )?.[1];
+    if (!activeLabel) return;
+
     const markActive = () => {
       const items = document.querySelectorAll(
-        '.tangle-cloud-shell nav a[href], .tangle-cloud-shell [role="navigation"] a[href]',
+        '.tangle-cloud-shell div[class*="rounded-full"], .tangle-cloud-shell div[class*="px-4"]',
       );
-      items.forEach((link) => {
-        const href = link.getAttribute('href');
-        if (!href || href === '/' || href.startsWith('http')) return;
-        const parent =
-          link.closest('div[class*="rounded-full"]') ?? link.parentElement;
-        if (parent) {
-          if (path.includes(href)) {
-            parent.classList.add('cloud-nav-active');
-          } else {
-            parent.classList.remove('cloud-nav-active');
-          }
+      items.forEach((el) => {
+        if (el.textContent?.trim().includes(activeLabel)) {
+          el.classList.add('cloud-nav-active');
+        } else {
+          el.classList.remove('cloud-nav-active');
         }
       });
     };
     markActive();
-    // Re-run after a tick in case sidebar renders late
-    const timer = setTimeout(markActive, 200);
+    const timer = setTimeout(markActive, 300);
     return () => clearTimeout(timer);
   });
 
