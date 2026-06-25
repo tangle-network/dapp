@@ -83,40 +83,6 @@ const Layout: FC<PropsWithChildren<Props>> = ({
     onOpenHelp: useCallback(() => setIsHelpOpen(true), []),
   });
 
-  // Direct DOM active-nav marker — bypasses the shared SideBar's prop chain.
-  // The sidebar renders divs with onClick (not <a href>), so match by text.
-  useEffect(() => {
-    const path = window.location.pathname;
-    const routeLabels: Record<string, string> = {
-      '/instances': 'Dashboard',
-      '/blueprints': 'Blueprints',
-      '/operators': 'Operators',
-      '/rewards': 'Rewards',
-      '/earnings': 'Earnings',
-      '/payments': 'Payments',
-    };
-    const activeLabel = Object.entries(routeLabels).find(
-      ([href]) => href !== '/' && path.includes(href),
-    )?.[1];
-    if (!activeLabel) return;
-
-    const markActive = () => {
-      const items = document.querySelectorAll(
-        '.tangle-cloud-shell div[class*="rounded-full"], .tangle-cloud-shell div[class*="px-4"]',
-      );
-      items.forEach((el) => {
-        if (el.textContent?.trim().includes(activeLabel)) {
-          el.classList.add('cloud-nav-active');
-        } else {
-          el.classList.remove('cloud-nav-active');
-        }
-      });
-    };
-    markActive();
-    const timer = setTimeout(markActive, 300);
-    return () => clearTimeout(timer);
-  });
-
   return (
     <TopNavSlotProvider>
       <div
