@@ -1,0 +1,38 @@
+<svg
+  xmlns="http://www.w3.org/2000/svg"
+  width="256"
+  height="256"
+  viewBox="0 0 300 300"
+>
+  <defs>
+    <linearGradient id="bg-ai-trading" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#4338ca" />
+      <stop offset="100%" stop-color="#7c3aed" />
+    </linearGradient>
+    <radialGradient id="glow-ai-trading" cx="50%" cy="40%">
+      <stop offset="0%" stop-color="white" stop-opacity="0.15" />
+      <stop offset="100%" stop-color="white" stop-opacity="0" />
+    </radialGradient>
+  </defs>
+  <rect width="300" height="300" rx="48" fill="url(#bg-ai-trading)" />
+  <rect width="300" height="300" rx="48" fill="url(#glow-ai-trading)" />
+  <path
+    d="M150 60 L130 110 L150 100 L140 150 L170 90 L150 100 Z"
+    stroke="white"
+    stroke-width="3"
+    fill="rgba(255,255,255,0.15)"
+    stroke-linejoin="round"
+  />
+  <text
+    x="150"
+    y="245"
+    font-family="system-ui, -apple-system, sans-serif"
+    font-size="28"
+    font-weight="700"
+    fill="white"
+    text-anchor="middle"
+    opacity="0.95"
+  >
+    AI
+  </text>
+</svg>

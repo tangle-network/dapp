@@ -1,0 +1,76 @@
+<svg
+  xmlns="http://www.w3.org/2000/svg"
+  width="256"
+  height="256"
+  viewBox="0 0 300 300"
+>
+  <defs>
+    <linearGradient id="bg-video-gen" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#5b21b6" />
+      <stop offset="100%" stop-color="#9333ea" />
+    </linearGradient>
+    <radialGradient id="glow-video-gen" cx="50%" cy="40%">
+      <stop offset="0%" stop-color="white" stop-opacity="0.15" />
+      <stop offset="100%" stop-color="white" stop-opacity="0" />
+    </radialGradient>
+  </defs>
+  <rect width="300" height="300" rx="48" fill="url(#bg-video-gen)" />
+  <rect width="300" height="300" rx="48" fill="url(#glow-video-gen)" />
+  <rect
+    x="110"
+    y="80"
+    width="80"
+    height="8"
+    rx="4"
+    fill="white"
+    opacity="0.9"
+  />
+  <rect
+    x="120"
+    y="100"
+    width="60"
+    height="8"
+    rx="4"
+    fill="white"
+    opacity="0.7"
+  />
+  <rect
+    x="110"
+    y="120"
+    width="80"
+    height="8"
+    rx="4"
+    fill="white"
+    opacity="0.9"
+  />
+  <rect
+    x="125"
+    y="140"
+    width="50"
+    height="8"
+    rx="4"
+    fill="white"
+    opacity="0.6"
+  />
+  <rect
+    x="115"
+    y="160"
+    width="70"
+    height="8"
+    rx="4"
+    fill="white"
+    opacity="0.8"
+  />
+  <text
+    x="150"
+    y="245"
+    font-family="system-ui, -apple-system, sans-serif"
+    font-size="28"
+    font-weight="700"
+    fill="white"
+    text-anchor="middle"
+    opacity="0.95"
+  >
+    IF
+  </text>
+</svg>

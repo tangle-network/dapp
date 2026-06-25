@@ -29,6 +29,9 @@ export const BlueprintVisual = ({
   const hasImageError = imageErrorUrl === imageUrl;
   const resolvedImageUrl = imageUrl && !hasImageError ? imageUrl : null;
 
+  // Check for a branded SVG icon for known first-party blueprints
+  const brandedIcon = getBrandedIcon(blueprint);
+
   return (
     <div
       className={twMerge(
@@ -49,11 +52,53 @@ export const BlueprintVisual = ({
           />
           <div className="absolute inset-0 bg-gradient-to-br from-black/50 via-black/25 to-black/60" />
         </>
+      ) : brandedIcon ? (
+        <img
+          src={brandedIcon}
+          alt={displayName}
+          className="absolute inset-0 h-full w-full object-cover"
+          loading="lazy"
+        />
       ) : (
         <GeneratedBlueprintDiagram name={displayName} category={category} />
       )}
     </div>
   );
+};
+
+const BRANDED_ICON_MAP: Record<string, string> = {
+  'ai-agent-sandbox': 'ai-agent-sandbox',
+  'ai-trading': 'ai-trading',
+  trading: 'ai-trading',
+  'llm-inference': 'llm-inference',
+  'modal-inference': 'modal-inference',
+  'image-gen': 'image-gen',
+  'image generation': 'image-gen',
+  training: 'training',
+  'vector-store': 'vector-store',
+  'vector store': 'vector-store',
+  'distributed-inference': 'distributed-inference',
+  'voice-inference': 'voice-inference',
+  'avatar-inference': 'avatar-inference',
+  'embedding-inference': 'embedding-inference',
+  'video-gen': 'video-gen',
+  'video generation': 'video-gen',
+  bazaar: 'bazaar',
+  'inference bazaar': 'bazaar',
+  surplus: 'bazaar',
+};
+
+const getBrandedIcon = (blueprint: Blueprint): string | null => {
+  const name = blueprint.name?.toLowerCase() ?? '';
+  const uri = blueprint.blueprintUi?.requestedSlug?.toLowerCase() ?? '';
+  const githubUrl = blueprint.githubUrl?.toLowerCase() ?? '';
+
+  for (const [key, slug] of Object.entries(BRANDED_ICON_MAP)) {
+    if (name.includes(key) || uri.includes(key) || githubUrl.includes(key)) {
+      return `/blueprints/${slug}.svg`;
+    }
+  }
+  return null;
 };
 
 const GeneratedBlueprintDiagram = ({
