@@ -11,6 +11,7 @@ import DepositContainer from '../../containers/payments/DepositContainer';
 import WithdrawContainer from '../../containers/payments/WithdrawContainer';
 import { useShieldedContext } from '../../app/ShieldedProvider';
 import RequireWallet from '../../components/RequireWallet';
+import { PageHeader } from '../../components/chrome';
 import { TOKEN_DECIMALS } from '../../constants/payments';
 import PaymentProviders from '../../app/PaymentProviders';
 
@@ -25,16 +26,11 @@ const PaymentsPoolContent: FC = () => {
 
   return (
     <div className="space-y-6">
-      <div>
-        <h1 className="font-display font-extrabold text-foreground text-3xl tracking-tight">
-          Shielded Pool
-        </h1>
-
-        <p className="mt-2 max-w-2xl text-muted-foreground text-sm">
-          Deposit tokens into the VAnchor shielded pool to gain privacy.
-          Withdraw to a public address or fund anonymous credit accounts.
-        </p>
-      </div>
+      <PageHeader
+        density="compact"
+        title="Shielded Pool"
+        subtitle="Deposit tokens into the VAnchor shielded pool to gain privacy. Withdraw to a public address or fund anonymous credit accounts."
+      />
 
       <RequireWallet
         eyebrow="Shielded pool"
