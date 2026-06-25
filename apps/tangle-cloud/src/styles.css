@@ -1,9 +1,42 @@
-/* Tangle Cloud styles — minimal, matching the staking dapp approach.
+/* Tangle Cloud styles.
  *
- * The shared ui-components design system handles sidebar, cards, theme,
- * typography. This file contains ONLY cloud-specific structural overrides
- * that don't exist in the staking dapp. No theme variable overrides,
- * no color remapping, no component-level CSS hacks. */
+ * Sandbox-ui components use shadcn-style CSS tokens (bg-card, border-border,
+ * text-foreground, etc.) that resolve through --bg-card, --border, etc.
+ * The vendor sandbox-ui.css defines these under [data-sandbox-ui], but we
+ * pin them here to the SAME mono palette the staking dapp uses, so cloud
+ * cards match the staking dapp's CardVariant.GLASS surfaces exactly. */
+
+:root {
+  --bg-card: #ffffff;
+  --bg-elevated: #f3f4f7;
+  --bg-root: #f3f4f7;
+  --bg-hover: #e8eaf0;
+  --border-default: rgba(100, 100, 148, 0.18);
+  --border-subtle: rgba(100, 100, 148, 0.1);
+  --border-hover: rgba(100, 100, 148, 0.28);
+  --border-accent: rgba(99, 102, 241, 0.18);
+  --border-accent-hover: rgba(99, 102, 241, 0.35);
+  --shadow-card: 0 10px 60px rgba(17, 24, 39, 0.1);
+  --shadow-hover: 0 14px 70px rgba(0, 0, 0, 0.15);
+  --shadow-dropdown: 0 8px 24px rgba(17, 24, 39, 0.12);
+}
+
+.dark {
+  --bg-card: #1d1d2b;
+  --bg-elevated: #2b2f40;
+  --bg-root: #10101a;
+  --bg-hover: #3a3e53;
+  --border-default: rgba(211, 216, 226, 0.12);
+  --border-subtle: rgba(211, 216, 226, 0.08);
+  --border-hover: rgba(211, 216, 226, 0.2);
+  --border-accent: rgba(129, 140, 248, 0.2);
+  --border-accent-hover: rgba(129, 140, 248, 0.35);
+  --shadow-card: 0 10px 60px rgba(17, 24, 39, 0.1),
+    0 0 0 1px rgba(255, 255, 255, 0.03);
+  --shadow-hover: 0 14px 70px rgba(0, 0, 0, 0.45),
+    0 0 0 1px rgba(129, 140, 248, 0.12);
+  --shadow-dropdown: 0 8px 24px rgba(0, 0, 0, 0.35);
+}
 
 /* Radix Dialog centering offset — cloud has a fixed sidebar that shifts
  * the content area right. Portaled dialogs center on the viewport, not
