@@ -89,12 +89,14 @@ const BRANDED_ICON_MAP: Record<string, string> = {
 };
 
 const getBrandedIcon = (blueprint: Blueprint): string | null => {
-  const name = blueprint.name?.toLowerCase() ?? '';
-  const uri = blueprint.blueprintUi?.requestedSlug?.toLowerCase() ?? '';
-  const githubUrl = blueprint.githubUrl?.toLowerCase() ?? '';
+  const normalized = (s: string) => s.toLowerCase().replace(/[\s_-]+/g, '-');
+  const name = normalized(blueprint.name ?? '');
+  const uri = normalized(blueprint.blueprintUi?.requestedSlug ?? '');
+  const githubUrl = normalized(blueprint.githubUrl ?? '');
 
   for (const [key, slug] of Object.entries(BRANDED_ICON_MAP)) {
-    if (name.includes(key) || uri.includes(key) || githubUrl.includes(key)) {
+    const nk = normalized(key);
+    if (name.includes(nk) || uri.includes(nk) || githubUrl.includes(nk)) {
       return `/blueprints/${slug}.svg`;
     }
   }
