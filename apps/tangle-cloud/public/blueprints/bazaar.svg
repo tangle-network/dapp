@@ -1,0 +1,43 @@
+<svg
+  xmlns="http://www.w3.org/2000/svg"
+  width="256"
+  height="256"
+  viewBox="0 0 300 300"
+>
+  <defs>
+    <linearGradient id="bg-bazaar" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#92400e" />
+      <stop offset="100%" stop-color="#f59e0b" />
+    </linearGradient>
+    <radialGradient id="glow-bazaar" cx="50%" cy="40%">
+      <stop offset="0%" stop-color="white" stop-opacity="0.15" />
+      <stop offset="100%" stop-color="white" stop-opacity="0" />
+    </radialGradient>
+  </defs>
+  <rect width="300" height="300" rx="48" fill="url(#bg-bazaar)" />
+  <rect width="300" height="300" rx="48" fill="url(#glow-bazaar)" />
+  <path
+    d="M115 75 L185 75 L180 170 L120 170 Z"
+    fill="none"
+    stroke="white"
+    stroke-width="2.5"
+  />
+  <path
+    d="M135 75 Q135 55 150 55 Q165 55 165 75"
+    fill="none"
+    stroke="white"
+    stroke-width="2.5"
+  />
+  <text
+    x="150"
+    y="245"
+    font-family="system-ui, -apple-system, sans-serif"
+    font-size="28"
+    font-weight="700"
+    fill="white"
+    text-anchor="middle"
+    opacity="0.95"
+  >
+    BZ
+  </text>
+</svg>

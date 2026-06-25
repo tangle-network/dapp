@@ -1,0 +1,21 @@
+{
+  "id": "run_1782349136856_cs6y",
+  "model": "sonnet",
+  "timestamp": "2026-06-25T00:58:56.855Z",
+  "total": 1,
+  "passed": 1,
+  "failed": 0,
+  "passRate": 1,
+  "avgTurns": 2,
+  "avgDurationMs": 55943,
+  "totalDurationMs": 55943,
+  "tests": [
+    {
+      "id": "cli-task",
+      "name": "Screenshot this page. Look at the left sidebar. Is the 'Blue",
+      "verified": true,
+      "turnsUsed": 2,
+      "durationMs": 55943
+    }
+  ]
+}

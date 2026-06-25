@@ -1,0 +1,53 @@
+<svg
+  xmlns="http://www.w3.org/2000/svg"
+  width="256"
+  height="256"
+  viewBox="0 0 300 300"
+>
+  <defs>
+    <linearGradient id="bg-vector-store" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#065f46" />
+      <stop offset="100%" stop-color="#10b981" />
+    </linearGradient>
+    <radialGradient id="glow-vector-store" cx="50%" cy="40%">
+      <stop offset="0%" stop-color="white" stop-opacity="0.15" />
+      <stop offset="100%" stop-color="white" stop-opacity="0" />
+    </radialGradient>
+  </defs>
+  <rect width="300" height="300" rx="48" fill="url(#bg-vector-store)" />
+  <rect width="300" height="300" rx="48" fill="url(#glow-vector-store)" />
+  <ellipse
+    cx="150"
+    cy="80"
+    rx="40"
+    ry="12"
+    fill="none"
+    stroke="white"
+    stroke-width="2.5"
+  />
+  <path
+    d="M110 80 L110 150 Q110 165 150 165 Q190 165 190 150 L190 80"
+    fill="none"
+    stroke="white"
+    stroke-width="2.5"
+  />
+  <path
+    d="M110 115 Q110 130 150 130 Q190 130 190 115"
+    fill="none"
+    stroke="white"
+    stroke-width="2"
+    opacity="0.6"
+  />
+  <text
+    x="150"
+    y="245"
+    font-family="system-ui, -apple-system, sans-serif"
+    font-size="28"
+    font-weight="700"
+    fill="white"
+    text-anchor="middle"
+    opacity="0.95"
+  >
+    DB
+  </text>
+</svg>
