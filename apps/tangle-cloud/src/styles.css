@@ -449,3 +449,12 @@ body {
   border-left: 3px solid #818cf8 !important;
   font-weight: 600 !important;
 }
+
+/* Cloud: active nav item — injected by Layout's direct-DOM effect */
+.cloud-nav-active {
+  background-color: rgba(129, 140, 248, 0.2) !important;
+  color: #ffffff !important;
+  border-left: 3px solid #818cf8 !important;
+  font-weight: 600 !important;
+  border-radius: 0 9999px 9999px 0 !important;
+}
