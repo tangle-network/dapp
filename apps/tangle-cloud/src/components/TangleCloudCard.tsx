@@ -1,4 +1,4 @@
-import { Card, CardContent } from '@tangle-network/sandbox-ui/primitives';
+import { Card, CardVariant } from '@tangle-network/ui-components';
 import { FC, PropsWithChildren } from 'react';
 import { twMerge } from 'tailwind-merge';
 
@@ -14,17 +14,16 @@ const TangleCloudCard: FC<TangleCloudCardProps> = ({
 }) => {
   return (
     <Card
-      variant="sandbox"
+      variant={CardVariant.GLASS}
+      withShadow
       className={twMerge(
-        'relative z-0 w-full overflow-hidden border-border bg-card',
-        'shadow-[var(--shadow-card)] transition-[border-color,background-color,box-shadow] duration-200',
-        interactive
-          ? 'hover:border-primary/35 hover:bg-card/95 hover:shadow-[var(--shadow-hover)]'
-          : null,
+        'relative z-0 w-full overflow-hidden p-5 md:p-6',
+        interactive &&
+          'transition-shadow duration-200 hover:shadow-[0_16px_70px_rgba(0,0,0,0.50)]',
         className,
       )}
     >
-      <CardContent className="relative z-10 p-5 md:p-6">{children}</CardContent>
+      {children}
     </Card>
   );
 };
