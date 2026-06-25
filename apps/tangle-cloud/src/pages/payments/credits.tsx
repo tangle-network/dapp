@@ -9,6 +9,7 @@ import FundCreditsContainer from '../../containers/payments/FundCreditsContainer
 import SpendAuthContainer from '../../containers/payments/SpendAuthContainer';
 import CreditBalanceContainer from '../../containers/payments/CreditBalanceContainer';
 import RequireWallet from '../../components/RequireWallet';
+import { PageHeader } from '../../components/chrome';
 import PaymentProviders from '../../app/PaymentProviders';
 
 const enum CreditsTab {
@@ -22,16 +23,11 @@ const PaymentsCreditsContent: FC = () => {
 
   return (
     <div className="space-y-6">
-      <div>
-        <h1 className="font-display font-extrabold text-foreground text-3xl tracking-tight">
-          Anonymous Credits
-        </h1>
-
-        <p className="mt-2 max-w-2xl text-muted-foreground text-sm">
-          Fund prepaid credit accounts and authorize service usage without
-          sending a wallet transaction for every job.
-        </p>
-      </div>
+      <PageHeader
+        density="compact"
+        title="Anonymous Credits"
+        subtitle="Fund prepaid credit accounts and authorize service usage without sending a wallet transaction for every job."
+      />
 
       <RequireWallet
         eyebrow="Credits"
