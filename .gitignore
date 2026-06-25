@@ -128,3 +128,7 @@ contracts/**/evm-claims.json
 
 docs/cloud-qa
 scripts/local-env/blueprint-ui-catalog/generated/
+
+# Agent working files
+.agent-memory/
+.evolve/
