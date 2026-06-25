@@ -5,9 +5,9 @@
       "type": "timing",
       "key": "typical-turns",
       "value": "2 turns",
-      "confidence": 0.9909928007452591,
-      "sources": 18,
-      "lastSeen": "2026-06-25T00:07:32.850Z"
+      "confidence": 0.9927942405962072,
+      "sources": 19,
+      "lastSeen": "2026-06-25T00:46:39.544Z"
     },
     {
       "type": "selector",
@@ -688,9 +688,51 @@
       "confidence": 0.6,
       "sources": 1,
       "lastSeen": "2026-06-25T00:07:38.476Z"
+    },
+    {
+      "type": "selector",
+      "key": "nav-items",
+      "value": "div[class*='rounded-full'] selects navigation items on cloud.tangle.tools",
+      "confidence": 0.6,
+      "sources": 1,
+      "lastSeen": "2026-06-25T00:46:47.320Z"
+    },
+    {
+      "type": "pattern",
+      "key": "active-nav-detection",
+      "value": "Active nav items have bg rgba(129, 140, 248, 0.18) and hasBorder: true; inactive have rgba(0, 0, 0, 0) and hasBorder: false",
+      "confidence": 0.6,
+      "sources": 1,
+      "lastSeen": "2026-06-25T00:46:47.320Z"
+    },
+    {
+      "type": "selector",
+      "key": "active-nav-visual",
+      "value": "Active nav has class text-white dark:text-white; inactive has text-mono-100 dark:text-mono-12",
+      "confidence": 0.6,
+      "sources": 1,
+      "lastSeen": "2026-06-25T00:46:47.320Z"
+    },
+    {
+      "type": "quirk",
+      "key": "nav-structure",
+      "value": "Nav items use rounded-full class with group select-none pattern consistently",
+      "confidence": 0.6,
+      "sources": 1,
+      "lastSeen": "2026-06-25T00:46:47.320Z"
     }
   ],
   "sessions": [
+    {
+      "id": "session_1782348399542_bi7kji",
+      "goal": "Go to https://cloud.tangle.tools/blueprints. Then run this JavaScript in the page console and report the exact output:\n\nconst items = document.querySelectorAll('div[class*=\"rounded-full\"]'); const results = []; items.forEach((el, i) => { const style = getComputedStyle(el); const text = el.textContent?.trim().substring(0, 20); const bg = style.backgroundColor; const hasBorder = style.borderLeftWidth !== '0px'; results.push({i, text, bg, hasBorder, classes: el.className.substring(0, 80)}); }); JSON.stringify(results, null, 2);\n\nReport the EXACT JSON output. This is a diagnostic — do not rate anything.",
+      "outcome": "Successfully executed the JavaScript diagnostic on https://cloud.tangle.tools/blueprints. The exact JSON output is:\n\n[\n  {\n    \"i\": 0,\n    \"text\": \"Dashboard\",\n    \"bg\": \"rgba(0, 0, 0, 0)\",\n    \"hasBorder\": false,\n    \"classes\": \"group select-none rounded-full flex items-center text-mono-100 dark:text-mono-12\"\n  },\n  {\n    \"i\": 1,\n    \"text\": \"Blueprints\",\n    \"bg\": \"rgba(129, 140, 248, 0.18)\",\n    \"hasBorder\": true,\n    \"classes\": \"group select-none rounded-full flex items-center text-white dark:text-white font\"\n  },\n  {\n    \"i\": 2,\n    \"text\": \"Operators\",\n    \"bg\": \"rgba(0, 0, 0, 0)\",\n    \"hasBorder\": false,\n    \"classes\": \"group select-none rounded-full flex items-center text-mono-100 dark:text-mono-12\"\n  },\n  {\n    \"i\": 3,\n    \"text\": \"Rewards\",\n    \"bg\": \"rgba(0, 0, 0, 0)\",\n    \"hasBorder\": false,\n    \"classes\": \"group select-none rounded-full flex items-center text-mono-100 dark:text-mono-12\"\n  },\n  {\n    \"i\": 4,\n    \"text\": \"Earnings\",\n    \"bg\": \"rgba(0, 0, 0, 0)\",\n    \"hasBorder\": false,\n    \"classes\": \"group select-none rounded-full flex items-center text-mono-100 dark:text-mono-12\"\n  },\n  {\n    \"i\": 5,\n    \"text\": \"Payments\",\n    \"bg\": \"rgba(0, 0, 0, 0)\",\n    \"hasBorder\": false,\n    \"classes\": \"group select-none rounded-full flex items-center text-mono-100 dark:text-mono-12\"\n  },\n  {\n    \"i\": 6,\n    \"text\": \"\",\n    \"bg\": \"rgb(43, 47, 64)\",\n    \"hasBorder\": false,\n    \"classes\": \"relative inline-block w-14 h-8 align-middle select-none transition duration-200 \"\n  },\n  {\n    \"i\": 7,\n    \"text\": \"\",\n    \"bg\": \"color(srgb 0.12549 0.152941 0.215686 / 0.4)\",\n    \"hasBorder\": true,\n    \"classes\": \"relative isolate overflow-hidden border border-border bg-muted/40 shadow-[var(--\"\n  },\n  {\n    \"i\": 8,\n    \"text\": \"\",\n    \"bg\": \"color(srgb 0.12549 0.152941 0.215686 / 0.4)\",\n    \"hasBorder\": true,\n    \"classes\": \"relative isolate overflow-hidden border border-border bg-muted/40 shadow-[var(--\"\n  },\n  {\n    \"i\": 9,\n    \"text\": \"\",\n    \"bg\": \"color(srgb 0.12549 0.152941 0.215686 / 0.4)\",\n    \"hasBorder\": true,\n    \"classes\": \"relative isolate overflow-hidden border border-border bg-muted/40 shadow-[var(--\"\n  },\n  {\n    \"i\": 10,\n    \"text\": \"\",\n    \"bg\": \"color(srgb 0.12549 0.152941 0.215686 / 0.4)\",\n    \"hasBorder\": true,\n    \"classes\": \"relative isolate overflow-hidden border border-border bg-muted/40 shadow-[var(--\"\n  },\n  {\n    \"i\": 11,\n    \"text\": \"\",\n    \"bg\": \"color(srgb 0.12549 0.152941 0.215686 / 0.4)\",\n    \"hasBorder\": true,\n    \"classes\": \"relative isolate overflow-hidden border border-border bg-muted/40 shadow-[var(--\"\n  },\n  {\n    \"i\": 12,\n    \"text\": \"\",\n    \"bg\": \"color(srgb 0.12549 0.152941 0.215686 / 0.4)\",\n    \"hasBorder\": true,\n    \"classes\": \"relative isolate overflow-hidden border border-border bg-muted/40 shadow-[var(--\"\n  },\n  {\n    \"i\": 13,\n    \"text\": \"\",\n    \"bg\": \"color(srgb 0.12549 0.152941 0.215686 / 0.4)\",\n    \"hasBorder\": true,\n    \"classes\": \"relative isolate overflow-hidden border border-border bg-muted/40 shadow-[var(--\"\n  },\n  {\n    \"i\": 14,\n    \"text\": \"\",\n    \"bg\": \"color(srgb 0.12549 0.152941 0.215686 / 0.4)\",\n    \"hasBorder\": true,\n    \"classes\": \"relative isolate overflow-hidden border border-border bg-muted/40 shadow-[var(--\"\n  },\n  {\n    \"i\": 15,\n    \"text\": \"\",\n    \"bg\": \"color(srgb 0.12549 0.152941 0.215686 / 0.4)\",\n    \"hasBorder\": true,\n    \"classes\": \"relative isolate overflow-hidden border border-border bg-muted/40 shadow-[var(--\"\n  },\n  {\n    \"i\": 16,\n    \"text\": \"\",\n    \"bg\": \"color(srgb 0.12549 0.152941 0.215686 / 0.4)\",\n    \"hasBorder\": true,\n    \"classes\": \"relative isolate overflow-hidden border border-border bg-muted/40 shadow-[var(--\"\n  },\n  {\n    \"i\": 17,\n    \"text\": \"\",\n    \"bg\": \"color(srgb 0.12549 0.152941 0.215686 / 0.4)\",\n    \"hasBorder\": true,\n    \"classes\": \"relative isolate overflow-hidden border border-border bg-muted/40 shadow-[var(--\"\n  },\n  {\n    \"i\": 18,\n    \"text\": \"\",\n    \"bg\": \"color(srgb 0.12549 0.152941 0.215686 / 0.4)\",\n    \"hasBorder\": true,\n    \"classes\": \"relative isolate overflow-hidden border border-border bg-muted/40 shadow-[var(--\"\n  }\n]\n\nKey finding: The active 'Blueprints' navigation item (index 1) has a background color of rgba(129, 140, 248, 0.18) and hasBorder: true, while inactive navigation items have rgba(0, 0, 0, 0) background and hasBorder: false.",
+      "success": true,
+      "finalUrl": "https://cloud.tangle.tools/blueprints",
+      "timestamp": "2026-06-25T00:46:39.542Z",
+      "turnsUsed": 2,
+      "durationMs": 39948
+    },
     {
       "id": "session_1782346052848_zzd9x9",
       "goal": "Screenshot this page. Look at the left sidebar navigation. Is the 'Blueprints' item visually different from the others? Specifically: does it have a colored left border, a background tint, or brighter/bolder text? Answer YES or NO + describe what you see.",
@@ -730,17 +772,7 @@
       "timestamp": "2026-06-24T23:34:33.836Z",
       "turnsUsed": 2,
       "durationMs": 54154
-    },
-    {
-      "id": "session_1782343524082_oucqag",
-      "goal": "Screenshot this page. As a senior product designer, rate it /10. One-line verdict + one thing to improve. Dark SaaS dashboard.",
-      "outcome": "**Design Rating: 6/10** — Tangle Cloud Shielded Pool Page\n\n**One-line Verdict:** Professional dark SaaS dashboard with excellent color contrast (WCAG AAA) and clean typography, but critically undermined by invisible navigation active states that make it impossible to identify the current page location without checking the URL.\n\n**One Thing to Improve:** Add clear active state indicators to the 'Shielded Pool' navigation item—implement a left accent border in brand purple (#8B5CF6), subtle background highlight (rgba(139, 92, 246, 0.1)), and/or bold font weight so users can instantly see where they are in the dashboard hierarchy at a glance.",
-      "success": true,
-      "finalUrl": "https://cloud.tangle.tools/payments/pool",
-      "timestamp": "2026-06-24T23:25:24.082Z",
-      "turnsUsed": 2,
-      "durationMs": 56039
     }
   ],
-  "updatedAt": "2026-06-25T00:07:38.476Z"
+  "updatedAt": "2026-06-25T00:46:47.320Z"
 }
