@@ -1,5 +1,12 @@
 import { useState } from 'react';
-import { Button } from '@tangle-network/sandbox-ui/primitives';
+import { Card, CardVariant } from '@tangle-network/ui-components';
+import { Typography } from '@tangle-network/ui-components/typography/Typography/Typography';
+import {
+  ArrowRightUp,
+  GlobalLine,
+  GridFillIcon,
+  LockFillIcon,
+} from '@tangle-network/icons';
 import { Link } from 'react-router';
 import { useAccount } from 'wagmi';
 import { useAllBlueprints } from '@tangle-network/tangle-shared-ui/data/graphql';
@@ -136,12 +143,18 @@ const Page = () => {
         action={
           !isConnected ? (
             <>
-              <Button variant="ghost" size="sm" asChild>
-                <Link to={PagePath.OPERATORS}>View operators</Link>
-              </Button>
-              <Button variant="sandbox" size="sm" asChild>
-                <Link to={PagePath.BLUEPRINTS}>Browse blueprints</Link>
-              </Button>
+              <Link
+                to={PagePath.OPERATORS}
+                className="rounded-full px-5 py-2 text-sm font-bold border border-mono-200 text-mono-200 dark:border-mono-0 dark:text-mono-0 hover:border-mono-180 hover:text-mono-180 dark:hover:border-mono-20 dark:hover:text-mono-20 transition-colors"
+              >
+                View operators
+              </Link>
+              <Link
+                to={PagePath.BLUEPRINTS}
+                className="rounded-full px-5 py-2 text-sm font-bold bg-purple-40 text-mono-0 hover:bg-purple-50 dark:bg-purple-50 dark:hover:bg-purple-60 transition-colors"
+              >
+                Browse blueprints
+              </Link>
             </>
           ) : undefined
         }
@@ -166,23 +179,127 @@ const Page = () => {
       ) : (
         <>
           <MetricStrip metrics={globalStats} density="compact" />
-          <div className="flex flex-col items-center gap-3 rounded-lg border border-border bg-card p-8 text-center">
-            <p className="text-lg font-medium text-foreground">
-              Connect a wallet to deploy services
-            </p>
-            <p className="max-w-md text-sm text-muted-foreground">
-              Register operator capacity, request blueprint instances, manage
-              service approvals, and track your earnings.
-            </p>
-            <div className="flex gap-2">
-              <Button variant="ghost" size="sm" asChild>
-                <Link to={PagePath.BLUEPRINTS}>Browse blueprints</Link>
-              </Button>
-              <Button variant="sandbox" size="sm" asChild>
-                <Link to={PagePath.OPERATORS}>View operators</Link>
-              </Button>
-            </div>
+
+          <div className="grid gap-5 md:grid-cols-3">
+            <Card
+              variant={CardVariant.GLASS}
+              withShadow
+              className="flex flex-col gap-3 p-6"
+            >
+              <GridFillIcon className="h-7 w-7 text-purple-30" />
+              <Typography
+                variant="h5"
+                fw="bold"
+                className="text-mono-200 dark:text-mono-0"
+              >
+                Browse Blueprints
+              </Typography>
+              <Typography variant="body2" className="text-mono-120">
+                Explore AI inference, data, and compute services deployed on
+                Tangle Network.
+              </Typography>
+              <Link
+                to={PagePath.BLUEPRINTS}
+                className="mt-auto w-fit rounded-full px-5 py-2 text-sm font-bold bg-purple-40 text-mono-0 hover:bg-purple-50 dark:bg-purple-50 dark:hover:bg-purple-60 transition-colors flex items-center gap-1.5"
+              >
+                View catalog <ArrowRightUp className="h-3.5 w-3.5" />
+              </Link>
+            </Card>
+
+            <Card
+              variant={CardVariant.GLASS}
+              withShadow
+              className="flex flex-col gap-3 p-6"
+            >
+              <GlobalLine className="h-7 w-7 text-purple-30" />
+              <Typography
+                variant="h5"
+                fw="bold"
+                className="text-mono-200 dark:text-mono-0"
+              >
+                View Operators
+              </Typography>
+              <Typography variant="body2" className="text-mono-120">
+                See who provides compute capacity, their stake, and which
+                blueprints they serve.
+              </Typography>
+              <Link
+                to={PagePath.OPERATORS}
+                className="mt-auto w-fit rounded-full px-5 py-2 text-sm font-bold bg-purple-40 text-mono-0 hover:bg-purple-50 dark:bg-purple-50 dark:hover:bg-purple-60 transition-colors flex items-center gap-1.5"
+              >
+                View operators <ArrowRightUp className="h-3.5 w-3.5" />
+              </Link>
+            </Card>
+
+            <Card
+              variant={CardVariant.GLASS}
+              withShadow
+              className="flex flex-col gap-3 p-6"
+            >
+              <LockFillIcon className="h-7 w-7 text-purple-30" />
+              <Typography
+                variant="h5"
+                fw="bold"
+                className="text-mono-200 dark:text-mono-0"
+              >
+                Stake &amp; Earn
+              </Typography>
+              <Typography variant="body2" className="text-mono-120">
+                Delegate TNT to operators, earn rewards, and participate in
+                network security.
+              </Typography>
+              <Link
+                to={PagePath.EARNINGS}
+                className="mt-auto w-fit rounded-full px-5 py-2 text-sm font-bold bg-purple-40 text-mono-0 hover:bg-purple-50 dark:bg-purple-50 dark:hover:bg-purple-60 transition-colors flex items-center gap-1.5"
+              >
+                View earnings <ArrowRightUp className="h-3.5 w-3.5" />
+              </Link>
+            </Card>
           </div>
+
+          {allBlueprints.size > 0 && (
+            <>
+              <Typography
+                variant="h4"
+                fw="bold"
+                className="text-mono-200 dark:text-mono-0"
+              >
+                Featured Blueprints
+              </Typography>
+              <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+                {Array.from(allBlueprints.values())
+                  .slice(0, 6)
+                  .map((bp) => (
+                    <Card
+                      key={bp.id.toString()}
+                      variant={CardVariant.GLASS}
+                      withShadow
+                      className="flex flex-col gap-2 p-5"
+                    >
+                      <Typography
+                        variant="body1"
+                        fw="semibold"
+                        className="text-mono-200 dark:text-mono-0"
+                      >
+                        {bp.name ?? 'Unnamed Blueprint'}
+                      </Typography>
+                      <Typography
+                        variant="body2"
+                        className="line-clamp-2 text-mono-120"
+                      >
+                        {bp.description ?? 'No description available'}
+                      </Typography>
+                      <Link
+                        to={`${PagePath.BLUEPRINTS}/${bp.id.toString()}`}
+                        className="mt-auto pt-2 text-sm font-medium text-purple-40 hover:text-purple-30"
+                      >
+                        View details
+                      </Link>
+                    </Card>
+                  ))}
+              </div>
+            </>
+          )}
         </>
       )}
 
