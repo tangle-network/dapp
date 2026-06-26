@@ -214,7 +214,7 @@ const WizardPublishDialog: FC<{
 
   return (
     <Dialog open onOpenChange={(open: boolean) => !open && handleDismiss()}>
-      <DialogContent className="max-w-2xl">
+      <DialogContent className="max-w-2xl bg-mono-0 dark:bg-mono-180 border border-mono-60 dark:border-mono-170">
         <DialogHeader>
           <DialogTitle>
             Publish binary version

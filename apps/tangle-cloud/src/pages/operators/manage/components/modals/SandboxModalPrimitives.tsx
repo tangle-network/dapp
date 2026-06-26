@@ -21,7 +21,17 @@ export const Modal = Dialog;
 
 export const ModalContent: FC<
   ComponentProps<typeof DialogContent> & { size?: string }
-> = ({ size: _size, ...props }) => <DialogContent {...props} />;
+> = ({ size: _size, className, ...props }) => (
+  <DialogContent
+    className={[
+      'bg-mono-0 dark:bg-mono-180 border border-mono-60 dark:border-mono-170',
+      className,
+    ]
+      .filter(Boolean)
+      .join(' ')}
+    {...props}
+  />
+);
 
 export const ModalHeader: FC<ComponentProps<'div'>> = ({
   children,
