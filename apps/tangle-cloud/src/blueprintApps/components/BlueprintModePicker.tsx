@@ -40,13 +40,13 @@ const BlueprintModePicker: FC<Props> = ({
     // current theme's tokens under this section.
     <section aria-label="Deployment mode" className="space-y-3">
       <header className="space-y-1">
-        <p className="font-semibold text-mono-100 dark:text-mono-80 text-xs uppercase tracking-wider">
+        <p className="font-semibold text-mono-100 dark:text-mono-60 text-xs uppercase tracking-wider">
           Deployment mode
         </p>
         <h2 className="font-display font-extrabold text-mono-200 dark:text-mono-0 text-lg">
           Pick how this blueprint runs for you
         </h2>
-        <p className="text-mono-100 dark:text-mono-80 text-sm">
+        <p className="text-mono-100 dark:text-mono-60 text-sm">
           Each mode targets a different on-chain deployment with its own
           operator set, isolation guarantees, and attestation requirements.
         </p>
@@ -90,12 +90,12 @@ const BlueprintModePicker: FC<Props> = ({
                   )}
                 </div>
                 {mode.description && (
-                  <p className="text-mono-100 dark:text-mono-80 text-sm leading-relaxed">
+                  <p className="text-mono-100 dark:text-mono-60 text-sm leading-relaxed">
                     {mode.description}
                   </p>
                 )}
                 <div className="flex items-center justify-between gap-3 pt-1">
-                  <span className="font-mono text-mono-100 dark:text-mono-80 text-[10px] uppercase tracking-wider">
+                  <span className="font-mono text-mono-100 dark:text-mono-60 text-[10px] uppercase tracking-wider">
                     Blueprint #{mode.blueprintId}
                   </span>
                   <Button

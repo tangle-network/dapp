@@ -88,15 +88,18 @@ const Layout: FC<PropsWithChildren<Props>> = ({
       <div
         data-sandbox-ui
         data-sandbox-theme={theme === 'dark' ? 'tangle' : 'vault'}
-        className="tangle-cloud-shell flex h-screen bg-tangle text-mono-200 dark:text-mono-0"
+        className="tangle-cloud-shell relative flex h-screen bg-tangle text-mono-200 dark:text-mono-0"
       >
+        <div className="pointer-events-none absolute inset-0 z-0 bg-mono-200/40 dark:bg-mono-200/70" />
         <Sidebar
           isExpandedByDefault={isSidebarExpanded}
           onExpandedChange={() => setIsSidebarExpanded((value) => !value)}
         />
 
         <div
-          className={twMerge('h-full flex-1 overflow-y-auto scrollbar-hide')}
+          className={twMerge(
+            'relative z-10 h-full flex-1 overflow-y-auto scrollbar-hide',
+          )}
         >
           <TxHistoryNotifier />
           <TxConfirmationModal />
@@ -125,7 +128,7 @@ const Layout: FC<PropsWithChildren<Props>> = ({
               socialsLinkOverrides={SOCIAL_LINK_OVERRIDES}
               bottomLinkOverrides={BOTTOM_LINK_OVERRIDES}
               isMinimal
-              className="py-8"
+              className="py-8 [&_a]:gap-3"
             />
           </div>
         </div>

@@ -146,7 +146,7 @@ export const ExposureCommitmentInput: FC<ExposureCommitmentInputProps> = ({
 
           <Text
             variant="body3"
-            className="text-mono-100 dark:text-mono-80 truncate"
+            className="text-mono-100 dark:text-mono-60 truncate"
           >
             {displaySymbol}
           </Text>
@@ -154,7 +154,7 @@ export const ExposureCommitmentInput: FC<ExposureCommitmentInputProps> = ({
           {delegatedAmount !== null &&
             delegatedAmount !== undefined &&
             delegatedAmount > BigInt(0) && (
-              <Text variant="body3" className="text-mono-100 dark:text-mono-80">
+              <Text variant="body3" className="text-mono-100 dark:text-mono-60">
                 Your stake: {formattedDelegatedAmount} {displaySymbol}
               </Text>
             )}
@@ -166,7 +166,7 @@ export const ExposureCommitmentInput: FC<ExposureCommitmentInputProps> = ({
         {/* Operator exposure info (read-only) */}
         {operatorExposureBps !== undefined && (
           <div className="flex items-center justify-between mb-3 p-2 bg-mono-0 dark:bg-mono-190 rounded-lg">
-            <label className="text-mono-100 dark:text-mono-80">
+            <label className="text-mono-100 dark:text-mono-60">
               Operator Exposure
             </label>
             <Text
@@ -175,7 +175,7 @@ export const ExposureCommitmentInput: FC<ExposureCommitmentInputProps> = ({
               className="text-mono-200 dark:text-mono-0"
             >
               {operatorExposureBps / 100}%
-              <span className="text-mono-100 dark:text-mono-80 font-normal text-xs ml-1">
+              <span className="text-mono-100 dark:text-mono-60 font-normal text-xs ml-1">
                 {operatorExposureBps < 10000
                   ? '(set by deployer)'
                   : '(protocol default)'}
@@ -188,7 +188,7 @@ export const ExposureCommitmentInput: FC<ExposureCommitmentInputProps> = ({
           <label className="text-mono-200 dark:text-mono-0 font-medium">
             Your Exposure Commitment
           </label>
-          <Text variant="body2" className="text-mono-100 dark:text-mono-80">
+          <Text variant="body2" className="text-mono-100 dark:text-mono-60">
             Range: {minPercent}% - {maxPercent}%
           </Text>
         </div>
@@ -208,7 +208,7 @@ export const ExposureCommitmentInput: FC<ExposureCommitmentInputProps> = ({
 
           {/* Current value display */}
           <div className="flex justify-between text-sm">
-            <span className="text-mono-100 dark:text-mono-80">
+            <span className="text-mono-100 dark:text-mono-60">
               Min: {minPercent}%
             </span>
 
@@ -216,7 +216,7 @@ export const ExposureCommitmentInput: FC<ExposureCommitmentInputProps> = ({
               Selected: {valuePercent}%
             </span>
 
-            <span className="text-mono-100 dark:text-mono-80">
+            <span className="text-mono-100 dark:text-mono-60">
               Max: {maxPercent}%
             </span>
           </div>
@@ -251,7 +251,7 @@ export const ExposureCommitmentInput: FC<ExposureCommitmentInputProps> = ({
 
                 <Text
                   variant="body3"
-                  className="text-mono-100 dark:text-mono-80 mt-1"
+                  className="text-mono-100 dark:text-mono-60 mt-1"
                 >
                   This amount can be slashed if the service misbehaves.
                 </Text>

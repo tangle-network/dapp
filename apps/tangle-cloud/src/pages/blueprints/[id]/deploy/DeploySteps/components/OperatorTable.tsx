@@ -92,7 +92,7 @@ export const OperatorTable: FC<Props> = ({
             <TableRow>
               <TableCell
                 colSpan={5}
-                className="py-10 text-center text-mono-100 dark:text-mono-80"
+                className="py-10 text-center text-mono-100 dark:text-mono-60"
               >
                 No operators match the current filters.
               </TableCell>
@@ -129,7 +129,7 @@ export const OperatorTable: FC<Props> = ({
                         {row.identityName && (
                           <Text
                             variant="body3"
-                            className="font-mono text-mono-100 dark:text-mono-80"
+                            className="font-mono text-mono-100 dark:text-mono-60"
                           >
                             {shortenAddress(row.address)}
                           </Text>
@@ -153,7 +153,7 @@ export const OperatorTable: FC<Props> = ({
                         <VaultsDropdown vaultTokens={tokensList} />
                       </div>
                     ) : (
-                      <span className="text-mono-100 dark:text-mono-80">
+                      <span className="text-mono-100 dark:text-mono-60">
                         No vaults
                       </span>
                     )}

@@ -137,7 +137,7 @@ export const SchemaFieldInput: FC<SchemaFieldInputProps> = ({
   if (kind === BlueprintFieldKind.Void) {
     return (
       <div className="py-1">
-        <Text variant="body3" className="text-mono-100 dark:text-mono-80">
+        <Text variant="body3" className="text-mono-100 dark:text-mono-60">
           {label} (void)
         </Text>
       </div>
@@ -165,7 +165,7 @@ export const SchemaFieldInput: FC<SchemaFieldInputProps> = ({
       <div className="py-1">
         <Text variant="body2" className="mb-1">
           {label}{' '}
-          <span className="text-mono-100 dark:text-mono-80 text-xs">
+          <span className="text-mono-100 dark:text-mono-60 text-xs">
             ({kindLabel(kind)})
           </span>
         </Text>
@@ -187,7 +187,7 @@ export const SchemaFieldInput: FC<SchemaFieldInputProps> = ({
       <div className="py-1">
         <Text variant="body2" className="mb-1">
           {label}{' '}
-          <span className="text-mono-100 dark:text-mono-80 text-xs">
+          <span className="text-mono-100 dark:text-mono-60 text-xs">
             ({kindLabel(kind)})
           </span>
         </Text>
@@ -215,7 +215,7 @@ export const SchemaFieldInput: FC<SchemaFieldInputProps> = ({
       <div className="py-1">
         <Text variant="body2" className="mb-1">
           {label}{' '}
-          <span className="text-mono-100 dark:text-mono-80 text-xs">
+          <span className="text-mono-100 dark:text-mono-60 text-xs">
             (Address)
           </span>
         </Text>
@@ -244,7 +244,7 @@ export const SchemaFieldInput: FC<SchemaFieldInputProps> = ({
       <div className="py-1">
         <Text variant="body2" className="mb-1">
           {label}{' '}
-          <span className="text-mono-100 dark:text-mono-80 text-xs">
+          <span className="text-mono-100 dark:text-mono-60 text-xs">
             ({kindLabel(kind)}, {expectedLen} bytes)
           </span>
         </Text>
@@ -280,7 +280,7 @@ export const SchemaFieldInput: FC<SchemaFieldInputProps> = ({
       <div className="py-1">
         <Text variant="body2" className="mb-1">
           {label}{' '}
-          <span className="text-mono-100 dark:text-mono-80 text-xs">
+          <span className="text-mono-100 dark:text-mono-60 text-xs">
             (String)
           </span>
         </Text>
@@ -301,7 +301,7 @@ export const SchemaFieldInput: FC<SchemaFieldInputProps> = ({
       <div className="py-1">
         <Text variant="body2" className="mb-1">
           {label}{' '}
-          <span className="text-mono-100 dark:text-mono-80 text-xs">
+          <span className="text-mono-100 dark:text-mono-60 text-xs">
             (Bytes, hex)
           </span>
         </Text>
@@ -344,7 +344,7 @@ export const SchemaFieldInput: FC<SchemaFieldInputProps> = ({
 
           <Text variant="body2">
             {label}{' '}
-            <span className="text-mono-100 dark:text-mono-80 text-xs">
+            <span className="text-mono-100 dark:text-mono-60 text-xs">
               (Optional)
             </span>
           </Text>
@@ -439,7 +439,7 @@ const ArrayFieldInput: FC<SchemaFieldInputProps & { label: string }> = ({
     <div className="py-1 pl-3 border-l-2 border-mono-60 dark:border-mono-170">
       <Text variant="body2" className="mb-1">
         {label}{' '}
-        <span className="text-mono-100 dark:text-mono-80 text-xs">
+        <span className="text-mono-100 dark:text-mono-60 text-xs">
           (Array[{field.arrayLength}])
         </span>
       </Text>
@@ -502,7 +502,7 @@ const ListFieldInput: FC<SchemaFieldInputProps & { label: string }> = ({
     <div className="py-1 pl-3 border-l-2 border-mono-60 dark:border-mono-170">
       <Text variant="body2" className="mb-1">
         {label}{' '}
-        <span className="text-mono-100 dark:text-mono-80 text-xs">
+        <span className="text-mono-100 dark:text-mono-60 text-xs">
           (List, {elements.length} items)
         </span>
       </Text>
@@ -561,7 +561,7 @@ const StructFieldInput: FC<SchemaFieldInputProps & { label: string }> = ({
     <div className="py-1 pl-3 border-l-2 border-mono-60 dark:border-mono-170">
       <Text variant="body2" className="mb-1">
         {label}{' '}
-        <span className="text-mono-100 dark:text-mono-80 text-xs">
+        <span className="text-mono-100 dark:text-mono-60 text-xs">
           (Struct)
         </span>
       </Text>

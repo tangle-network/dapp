@@ -25,7 +25,7 @@ const ReviewStep: FC<ReviewStepProps> = ({
           Review Registration
         </Text>
 
-        <Text variant="body2" className="text-mono-100 dark:text-mono-80">
+        <Text variant="body2" className="text-mono-100 dark:text-mono-60">
           Review your registration details before submitting.
         </Text>
       </div>
@@ -34,7 +34,7 @@ const ReviewStep: FC<ReviewStepProps> = ({
         <div className="p-4 bg-mono-20/50 dark:bg-mono-190/50 rounded-lg">
           <Text
             variant="body3"
-            className="text-mono-100 dark:text-mono-80 mb-1"
+            className="text-mono-100 dark:text-mono-60 mb-1"
           >
             RPC URL
           </Text>
@@ -77,7 +77,7 @@ const ReviewStep: FC<ReviewStepProps> = ({
                     </Text>
                     <Text
                       variant="body3"
-                      className="text-mono-100 dark:text-mono-80"
+                      className="text-mono-100 dark:text-mono-60"
                     >
                       {blueprint.author}
                     </Text>
@@ -87,7 +87,7 @@ const ReviewStep: FC<ReviewStepProps> = ({
                     <div className="text-right">
                       <Text
                         variant="body3"
-                        className="text-mono-100 dark:text-mono-80"
+                        className="text-mono-100 dark:text-mono-60"
                       >
                         {paramsCount} param{paramsCount > 1 ? 's' : ''}
                       </Text>
@@ -103,7 +103,7 @@ const ReviewStep: FC<ReviewStepProps> = ({
       {isSubmitting && (
         <Text
           variant="body2"
-          className="text-mono-100 dark:text-mono-80 text-center"
+          className="text-mono-100 dark:text-mono-60 text-center"
         >
           Registering as operator for {blueprints.length} blueprint
           {blueprints.length > 1 ? 's' : ''}...

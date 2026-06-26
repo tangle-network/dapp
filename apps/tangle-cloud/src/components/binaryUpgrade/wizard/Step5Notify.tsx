@@ -66,10 +66,10 @@ export const Step5Notify: FC<Step5Props> = ({
   return (
     <div className="space-y-5">
       <div className="space-y-2">
-        <p className="font-semibold text-[10px] text-mono-100 dark:text-mono-80 uppercase tracking-wider">
+        <p className="font-semibold text-[10px] text-mono-100 dark:text-mono-60 uppercase tracking-wider">
           Notify operators (optional)
         </p>
-        <p className="text-mono-100 dark:text-mono-80 text-xs">
+        <p className="text-mono-100 dark:text-mono-60 text-xs">
           Paste this into your operator channel. Markdown formatting is
           Slack-flavored but renders cleanly in most channels.
         </p>

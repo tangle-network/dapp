@@ -31,7 +31,7 @@ const AmountInput: FC<Props> = ({
 
   return (
     <div className="space-y-1">
-      <label className="text-sm font-medium text-mono-100 dark:text-mono-80">
+      <label className="text-sm font-medium text-mono-100 dark:text-mono-60">
         {label}
       </label>
 
@@ -49,17 +49,17 @@ const AmountInput: FC<Props> = ({
             }
           }}
           disabled={disabled}
-          className="flex-1 text-lg bg-transparent outline-none text-mono-200 dark:text-mono-0 placeholder:text-mono-100 dark:text-mono-80"
+          className="flex-1 text-lg bg-transparent outline-none text-mono-200 dark:text-mono-0 placeholder:text-mono-100 dark:text-mono-60"
         />
 
-        <span className="text-sm font-medium text-mono-100 dark:text-mono-80">
+        <span className="text-sm font-medium text-mono-100 dark:text-mono-60">
           {symbol}
         </span>
       </div>
 
       {formattedBalance !== undefined && (
         <div className="flex items-center justify-between px-1">
-          <span className="text-xs text-mono-100 dark:text-mono-80">
+          <span className="text-xs text-mono-100 dark:text-mono-60">
             Balance:{' '}
             {formattedBalance.match(/^\d+\.?\d{0,4}/)?.[0] ?? formattedBalance}{' '}
             {symbol}

@@ -422,7 +422,7 @@ const ServiceRequestDetailModal: FC<Props> = ({
                 return (
                   <Text
                     variant="body2"
-                    className="text-center text-mono-100 dark:text-mono-80"
+                    className="text-center text-mono-100 dark:text-mono-60"
                   >
                     No security commitments required for this request.
                   </Text>
@@ -433,7 +433,7 @@ const ServiceRequestDetailModal: FC<Props> = ({
                 <div className="space-y-4">
                   <Text
                     variant="body2"
-                    className="text-mono-100 dark:text-mono-80 text-center"
+                    className="text-mono-100 dark:text-mono-60 text-center"
                   >
                     Set your exposure percentage within the allowed bounds for
                     each asset.

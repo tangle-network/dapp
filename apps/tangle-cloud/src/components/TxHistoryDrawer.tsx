@@ -44,7 +44,7 @@ const CopyValueButton: FC<{ value: string; label: string }> = ({
 }) => (
   <button
     type="button"
-    className="text-xs text-mono-100 dark:text-mono-80 underline-offset-4 hover:text-mono-200 dark:text-mono-0 hover:underline"
+    className="text-xs text-mono-100 dark:text-mono-60 underline-offset-4 hover:text-mono-200 dark:text-mono-0 hover:underline"
     onClick={() => void navigator.clipboard?.writeText(value)}
   >
     Copy {label}
@@ -255,7 +255,7 @@ const DetailRow: FC<DetailRowProps> = ({
 
   return (
     <div className="flex items-center justify-between gap-2">
-      <span className="text-mono-100 dark:text-mono-80 text-sm">{label}</span>
+      <span className="text-mono-100 dark:text-mono-60 text-sm">{label}</span>
       <div className="flex items-center gap-1.5">
         <span
           className={twMerge(
@@ -364,7 +364,7 @@ const TransactionItem: FC<HistoryTx> = ({
       <hr className="border-mono-60 dark:border-mono-170" />
 
       <Text
-        className="text-center text-mono-100 dark:text-mono-80"
+        className="text-center text-mono-100 dark:text-mono-60"
         variant="body3"
       >
         {status} &bull;{' '}

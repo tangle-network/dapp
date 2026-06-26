@@ -123,7 +123,7 @@ export const RequestArgsConfigurationStep: FC<
               type="file"
               accept="application/json"
               onChange={handleFileUpload}
-              className="block w-full cursor-pointer text-sm text-mono-100 dark:text-mono-80 transition-colors file:mr-4 file:cursor-pointer file:rounded-lg file:border-0 file:bg-secondary file:px-4 file:py-2 file:text-sm file:font-medium file:text-secondary-foreground hover:file:bg-secondary/80"
+              className="block w-full cursor-pointer text-sm text-mono-100 dark:text-mono-60 transition-colors file:mr-4 file:cursor-pointer file:rounded-lg file:border-0 file:bg-secondary file:px-4 file:py-2 file:text-sm file:font-medium file:text-secondary-foreground hover:file:bg-secondary/80"
             />
           </div>
         </>
