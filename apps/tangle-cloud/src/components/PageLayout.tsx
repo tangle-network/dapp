@@ -9,7 +9,7 @@ const PageLayout: FC<Props> = ({ children, className }) => {
   return (
     <div
       className={twMerge(
-        'tangle-cloud-page mx-auto max-w-[1440px] space-y-6 px-4 pb-10 md:px-8',
+        'tangle-cloud-page mx-auto max-w-[1440px] space-y-5 px-4 pb-10 md:px-8',
         className,
       )}
     >
