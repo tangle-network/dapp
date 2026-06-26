@@ -269,8 +269,22 @@ export const ModalContent: FC<
     title?: string;
     description?: string;
   }
-> = ({ size: _size, title: _title, description: _description, ...props }) => (
-  <DialogContent {...props} />
+> = ({
+  size: _size,
+  title: _title,
+  description: _description,
+  className,
+  ...props
+}) => (
+  <DialogContent
+    className={[
+      'bg-mono-0 dark:bg-mono-180 border border-mono-60 dark:border-mono-170',
+      className,
+    ]
+      .filter(Boolean)
+      .join(' ')}
+    {...props}
+  />
 );
 
 export const ModalHeader: FC<
