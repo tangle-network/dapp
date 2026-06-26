@@ -22,7 +22,7 @@ const NoteCard: FC<Props> = ({ note, onDelete, compact = false }) => {
           {formatUnits(note.amount, TOKEN_DECIMALS)} {note.tokenSymbol}
         </span>
 
-        <span className="text-xs text-mono-120 dark:text-mono-100">
+        <span className="text-xs text-mono-100 dark:text-mono-80">
           #{note.index ?? 'pending'}
         </span>
       </div>
@@ -47,7 +47,7 @@ const NoteCard: FC<Props> = ({ note, onDelete, compact = false }) => {
         )}
       </div>
 
-      <div className="space-y-1 text-xs text-mono-120 dark:text-mono-100">
+      <div className="space-y-1 text-xs text-mono-100 dark:text-mono-80">
         <div className="flex justify-between">
           <span>Pool</span>
           <span className="font-mono">{shortenHex(note.targetAnchor, 6)}</span>

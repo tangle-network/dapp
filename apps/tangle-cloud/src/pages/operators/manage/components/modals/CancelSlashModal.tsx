@@ -54,7 +54,7 @@ const CancelSlashModal = ({
           </Text>
           <Text
             variant="body2"
-            className="text-mono-120 dark:text-mono-100 mb-2"
+            className="text-mono-100 dark:text-mono-80 mb-2"
           >
             Admin-only action. Authorization is validated on-chain at submission
             time.
@@ -73,7 +73,7 @@ const CancelSlashModal = ({
             />
             <Text
               variant="body3"
-              className="text-mono-120 dark:text-mono-100 mt-1"
+              className="text-mono-100 dark:text-mono-80 mt-1"
             >
               Minimum {minCancelReasonLength} characters (
               {trimmedCancelReasonLength}/{minCancelReasonLength}).

@@ -174,7 +174,7 @@ export const RequestModeStep: FC<BaseDeployStepProps> = ({
       <Text variant="h5" className="mb-2">
         Request Mode
       </Text>
-      <Text variant="body2" className="text-mono-120 dark:text-mono-100 mb-4">
+      <Text variant="body2" className="text-mono-100 dark:text-mono-80 mb-4">
         Select which contract request variant to use when deploying.
       </Text>
 
@@ -255,10 +255,7 @@ export const RequestModeStep: FC<BaseDeployStepProps> = ({
               <Text variant="body3" className={cx(LabelClassName, 'mb-0.5')}>
                 Per-Operator Exposure (%)
               </Text>
-              <Text
-                variant="body3"
-                className="text-mono-120 dark:text-mono-100"
-              >
+              <Text variant="body3" className="text-mono-100 dark:text-mono-80">
                 Set the exact exposure percent for each selected operator.
               </Text>
             </div>
@@ -307,7 +304,7 @@ export const RequestModeStep: FC<BaseDeployStepProps> = ({
                         <div className="min-w-0">
                           <Text
                             variant="body4"
-                            className="text-mono-120 dark:text-mono-100 uppercase tracking-wide mb-0.5"
+                            className="text-mono-100 dark:text-mono-80 uppercase tracking-wide mb-0.5"
                           >
                             Operator
                           </Text>

@@ -172,7 +172,7 @@ export const JobHistoryTable: FC<Props> = ({
                 {headerGroup.headers.map((header) => (
                   <th
                     key={header.id}
-                    className="text-left py-3 px-4 text-mono-120 dark:text-mono-100 font-medium"
+                    className="text-left py-3 px-4 text-mono-100 dark:text-mono-80 font-medium"
                   >
                     {header.isPlaceholder
                       ? null
@@ -182,7 +182,7 @@ export const JobHistoryTable: FC<Props> = ({
                         )}
                   </th>
                 ))}
-                <th className="text-left py-3 px-4 text-mono-120 dark:text-mono-100 font-medium">
+                <th className="text-left py-3 px-4 text-mono-100 dark:text-mono-80 font-medium">
                   Actions
                 </th>
               </tr>
@@ -217,7 +217,7 @@ export const JobHistoryTable: FC<Props> = ({
       {/* Pagination */}
       {table.getPageCount() > 1 && (
         <div className="flex items-center justify-between mt-4">
-          <Text variant="body2" className="text-mono-120 dark:text-mono-100">
+          <Text variant="body2" className="text-mono-100 dark:text-mono-80">
             Page {table.getState().pagination.pageIndex + 1} of{' '}
             {table.getPageCount()}
           </Text>

@@ -192,12 +192,12 @@ export const AttestationBadge: FC<AttestationBadgeProps> = ({
               </span>
             )}
             {isExpired && !isRevoked && (
-              <span className="text-mono-120 dark:text-mono-100 text-[10px] uppercase tracking-wider">
+              <span className="text-mono-100 dark:text-mono-80 text-[10px] uppercase tracking-wider">
                 (expired)
               </span>
             )}
           </div>
-          <p className="mt-0.5 truncate font-mono text-mono-120 dark:text-mono-100 text-xs">
+          <p className="mt-0.5 truncate font-mono text-mono-100 dark:text-mono-80 text-xs">
             {attestation.attester}
           </p>
         </div>
@@ -223,12 +223,12 @@ export const AttestationBadge: FC<AttestationBadgeProps> = ({
             className="inline-block h-2 w-2 rounded-full"
             style={{ backgroundColor: sevColor }}
           />
-          <span className="text-mono-120 dark:text-mono-100">
+          <span className="text-mono-100 dark:text-mono-80">
             {severityLabel(attestation.severityFound)}
           </span>
         </span>
 
-        <span className="text-mono-120 dark:text-mono-100 text-xs">
+        <span className="text-mono-100 dark:text-mono-80 text-xs">
           Attested {formatRelative(attestation.attestedAt, now)}
           {attestation.expiresAt !== 0n && (
             <>

@@ -336,7 +336,7 @@ export const ServiceUpgradePanel: FC<ServiceUpgradePanelProps> = ({
           <h2 className="font-display font-extrabold text-mono-200 dark:text-mono-0 text-xl">
             Upgrade control
           </h2>
-          <p className="mt-2 text-mono-120 dark:text-mono-100 text-sm">
+          <p className="mt-2 text-mono-100 dark:text-mono-80 text-sm">
             This service&apos;s blueprint has no published binary versions yet.
             The upgrade flow will activate once the blueprint owner publishes a
             build.
@@ -360,7 +360,7 @@ export const ServiceUpgradePanel: FC<ServiceUpgradePanelProps> = ({
           <h2 className="mt-2 font-display font-extrabold text-2xl text-mono-200 dark:text-mono-0 tracking-tight">
             Upgrade control
           </h2>
-          <p className="mt-1 max-w-2xl text-mono-120 dark:text-mono-100 text-sm">
+          <p className="mt-1 max-w-2xl text-mono-100 dark:text-mono-80 text-sm">
             Compare the binary this service is running against the
             blueprint&apos;s current active version, then choose how upgrades
             roll out.
@@ -389,7 +389,7 @@ export const ServiceUpgradePanel: FC<ServiceUpgradePanelProps> = ({
             </VersionCard>
           ) : (
             <div className="flex items-center justify-center rounded-lg border border-mono-60 dark:border-mono-170 border-dashed bg-mono-0 dark:bg-mono-180 p-6 text-center">
-              <p className="text-mono-120 dark:text-mono-100 text-sm">
+              <p className="text-mono-100 dark:text-mono-80 text-sm">
                 No newer version is available. The service is on the latest
                 non-deprecated build.
               </p>
@@ -398,7 +398,7 @@ export const ServiceUpgradePanel: FC<ServiceUpgradePanelProps> = ({
         </div>
 
         <fieldset className="space-y-2">
-          <legend className="font-semibold text-[10px] text-mono-120 dark:text-mono-100 uppercase tracking-wider">
+          <legend className="font-semibold text-[10px] text-mono-100 dark:text-mono-80 uppercase tracking-wider">
             Upgrade policy
           </legend>
           {POLICY_OPTIONS.map((option) => {
@@ -425,7 +425,7 @@ export const ServiceUpgradePanel: FC<ServiceUpgradePanelProps> = ({
             );
           })}
           {!isOperator && (
-            <p className="text-mono-120 dark:text-mono-100 text-xs">
+            <p className="text-mono-100 dark:text-mono-80 text-xs">
               Connect a wallet that is an active operator of this service to
               change the upgrade policy.
             </p>
@@ -457,7 +457,7 @@ export const ServiceUpgradePanel: FC<ServiceUpgradePanelProps> = ({
               <p className="font-display font-bold text-mono-200 dark:text-mono-0 text-sm">
                 Approve & install v{availableVersion.versionId.toString()}
               </p>
-              <p className="text-mono-120 dark:text-mono-100 text-xs">
+              <p className="text-mono-100 dark:text-mono-80 text-xs">
                 Submits `ackBinaryVersion` against this service. Required under
                 APPROVE policy; informational under AUTO.
               </p>
@@ -490,7 +490,7 @@ const ManagerUrlPrompt: FC<{ onSaved: () => void }> = ({ onSaved }) => {
     <div className="rounded-lg border border-mono-60 dark:border-mono-170 border-dashed bg-mono-0 dark:bg-mono-180 p-3">
       {!open ? (
         <div className="flex items-center justify-between gap-3">
-          <p className="text-mono-120 dark:text-mono-100 text-xs">
+          <p className="text-mono-100 dark:text-mono-80 text-xs">
             MANUAL+assist requires a connected blueprint-manager URL. Set it
             once and the local pin/whitelist/skip controls light up.
           </p>
@@ -579,7 +579,7 @@ const ManagerAssistSection: FC<{
           <p className="font-display font-bold text-mono-200 dark:text-mono-0 text-sm">
             Local manager authz
           </p>
-          <p className="text-mono-120 dark:text-mono-100 text-xs">
+          <p className="text-mono-100 dark:text-mono-80 text-xs">
             On-chain policy stays MANUAL. Your manager swaps binaries based on
             the lists below.
           </p>
@@ -594,11 +594,11 @@ const ManagerAssistSection: FC<{
       )}
 
       <div className="space-y-2">
-        <p className="font-semibold text-[10px] text-mono-120 dark:text-mono-100 uppercase tracking-wider">
+        <p className="font-semibold text-[10px] text-mono-100 dark:text-mono-80 uppercase tracking-wider">
           Available newer versions ({available.length})
         </p>
         {available.length === 0 ? (
-          <p className="text-mono-120 dark:text-mono-100 text-xs">
+          <p className="text-mono-100 dark:text-mono-80 text-xs">
             No newer versions are available right now.
           </p>
         ) : (
@@ -618,7 +618,7 @@ const ManagerAssistSection: FC<{
                       <span className="font-display font-bold text-mono-200 dark:text-mono-0 text-sm">
                         v{idStr}
                       </span>
-                      <span className="text-mono-120 dark:text-mono-100 text-xs">
+                      <span className="text-mono-100 dark:text-mono-80 text-xs">
                         {v.attestationCount} attestation
                         {v.attestationCount === 1 ? '' : 's'} · trust{' '}
                         {v.trustScore}
@@ -631,7 +631,7 @@ const ManagerAssistSection: FC<{
                         <Badge variant="destructive">skipped</Badge>
                       )}
                     </div>
-                    <p className="break-all font-mono text-mono-120 dark:text-mono-100 text-xs">
+                    <p className="break-all font-mono text-mono-100 dark:text-mono-80 text-xs">
                       {v.binaryUri}
                     </p>
                   </div>
@@ -696,10 +696,10 @@ const VersionCard: FC<{
         {version}
       </span>
     </div>
-    <p className="mt-2 truncate font-mono text-mono-120 dark:text-mono-100 text-xs">
+    <p className="mt-2 truncate font-mono text-mono-100 dark:text-mono-80 text-xs">
       sha256 {sha256.slice(0, 14)}…{sha256.slice(-8)}
     </p>
-    <p className="mt-1 text-mono-120 dark:text-mono-100 text-xs">
+    <p className="mt-1 text-mono-100 dark:text-mono-80 text-xs">
       published {new Date(Number(publishedAt) * 1000).toLocaleString()}
     </p>
     <div className="mt-3">{children}</div>
@@ -734,7 +734,7 @@ const PolicyOption: FC<{
       <span className="font-display font-bold text-mono-200 dark:text-mono-0 text-sm">
         {option.label}
       </span>
-      <span className="mt-0.5 block text-mono-120 dark:text-mono-100 text-xs">
+      <span className="mt-0.5 block text-mono-100 dark:text-mono-80 text-xs">
         {option.helper}
       </span>
     </span>

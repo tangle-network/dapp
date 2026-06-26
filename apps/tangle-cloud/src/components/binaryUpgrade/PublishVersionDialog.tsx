@@ -415,7 +415,7 @@ const SimplePublishDialog: FC<{
               }}
             />
             {binaryFile && (
-              <p className="text-mono-120 dark:text-mono-100 text-xs">
+              <p className="text-mono-100 dark:text-mono-80 text-xs">
                 {binaryFile.name} · {(binaryFile.size / 1024).toFixed(1)} KB
               </p>
             )}
@@ -437,7 +437,7 @@ const SimplePublishDialog: FC<{
                 setBinaryUri(e.currentTarget.value)
               }
             />
-            <p className="text-mono-120 dark:text-mono-100 text-xs">
+            <p className="text-mono-100 dark:text-mono-80 text-xs">
               The contract stores this URI as-is. Pinning is off-chain; upload
               the file to your pinning provider first, then paste the resulting
               URI here.
@@ -461,7 +461,7 @@ const SimplePublishDialog: FC<{
                 sha256 {attestationHash}
               </p>
             )}
-            <p className="text-mono-120 dark:text-mono-100 text-xs">
+            <p className="text-mono-100 dark:text-mono-80 text-xs">
               Optional SLSA / sigstore bundle digest. Leave blank for an
               all-zero sentinel.
             </p>
@@ -478,7 +478,7 @@ const SimplePublishDialog: FC<{
             </p>
           )}
           {txHash && (
-            <p className="break-all font-mono text-mono-120 dark:text-mono-100 text-xs">
+            <p className="break-all font-mono text-mono-100 dark:text-mono-80 text-xs">
               Tx hash {txHash}
             </p>
           )}

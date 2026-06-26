@@ -30,37 +30,43 @@ type Props = {
 
 const KIND_DEFAULTS: Record<
   EmptyKind,
-  { title: string; description: string; dotClass: string }
+  { title: string; description: string; dotClass: string; glyph: string }
 > = {
   'no-data': {
     title: 'Nothing here yet',
     description: 'There is no data for this view. Get started below.',
-    dotClass: 'bg-mono-20 dark:bg-mono-190-foreground/40',
+    dotClass: 'bg-mono-100',
+    glyph: '📭',
   },
   'no-match': {
     title: 'No matches',
     description: 'Try removing a filter or broadening your search.',
-    dotClass: 'bg-[color:var(--border-accent-hover)]',
+    dotClass: 'bg-purple-40',
+    glyph: '🔍',
   },
   error: {
     title: 'Something went wrong',
     description: 'The request failed. Retry or refresh the page.',
-    dotClass: 'bg-[color:var(--md3-error,#ef4444)]',
+    dotClass: 'bg-red-500',
+    glyph: '⚠️',
   },
   loading: {
     title: 'Loading',
     description: 'Fetching data from the indexer.',
-    dotClass: 'bg-mono-20 dark:bg-mono-190-foreground/40',
+    dotClass: 'bg-mono-100',
+    glyph: '⏳',
   },
   'no-permission': {
     title: 'No access',
     description: 'You need additional permissions to view this surface.',
-    dotClass: 'bg-[color:var(--md3-warning,#f59e0b)]',
+    dotClass: 'bg-amber-50',
+    glyph: '🔒',
   },
   'no-network': {
     title: 'Network unavailable',
     description: 'Switch networks or check your wallet connection.',
-    dotClass: 'bg-[color:var(--md3-warning,#f59e0b)]',
+    dotClass: 'bg-amber-50',
+    glyph: '📡',
   },
 };
 
@@ -99,13 +105,8 @@ const EmptyState: FC<Props> = ({
         className,
       )}
     >
-      <div className="flex h-12 w-12 items-center justify-center rounded-full border border-mono-60 dark:border-mono-170 bg-mono-20 dark:bg-mono-190">
-        {icon ?? (
-          <span
-            aria-hidden
-            className={twMerge('h-2.5 w-2.5 rounded-full', defaults.dotClass)}
-          />
-        )}
+      <div className="flex h-14 w-14 items-center justify-center rounded-2xl border border-mono-60 dark:border-mono-170 bg-mono-20 dark:bg-mono-190 text-2xl">
+        {icon ?? <span aria-hidden>{defaults.glyph}</span>}
       </div>
       <div className="max-w-md space-y-1.5">
         <h2
@@ -116,7 +117,7 @@ const EmptyState: FC<Props> = ({
         >
           {finalTitle}
         </h2>
-        <p className="text-sm leading-relaxed text-mono-120 dark:text-mono-100">
+        <p className="text-sm leading-relaxed text-mono-100 dark:text-mono-80">
           {finalDescription}
         </p>
       </div>

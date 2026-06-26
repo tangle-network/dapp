@@ -131,7 +131,7 @@ export const CircularProgress: FC<{
 }> = ({ progress, tooltip }) => (
   <span
     title={tooltip}
-    className="inline-flex h-8 w-8 items-center justify-center rounded-full border border-mono-60 dark:border-mono-170 bg-mono-0 dark:bg-mono-190 text-[10px] text-mono-120 dark:text-mono-100"
+    className="inline-flex h-8 w-8 items-center justify-center rounded-full border border-mono-60 dark:border-mono-170 bg-mono-0 dark:bg-mono-190 text-[10px] text-mono-100 dark:text-mono-80"
   >
     {Math.round(progress * 100)}%
   </span>
@@ -244,7 +244,7 @@ export const Input: FC<InputProps> = ({
       }
     />
     {leftIcon && (
-      <div className="pointer-events-none absolute inset-y-0 left-3 flex items-center text-mono-120 dark:text-mono-100">
+      <div className="pointer-events-none absolute inset-y-0 left-3 flex items-center text-mono-100 dark:text-mono-80">
         {leftIcon}
       </div>
     )}
@@ -425,7 +425,7 @@ export const Alert: FC<{
         ? 'border-yellow-500/40 bg-yellow-500/10 text-yellow-700 dark:text-yellow-300'
         : type === 'success'
           ? 'border-emerald-500/40 bg-emerald-500/10 text-emerald-700 dark:text-emerald-300'
-          : 'border-mono-60 dark:border-mono-170 bg-mono-20/50 dark:bg-mono-190/50 text-mono-120 dark:text-mono-100';
+          : 'border-mono-60 dark:border-mono-170 bg-mono-20/50 dark:bg-mono-190/50 text-mono-100 dark:text-mono-80';
 
   return (
     <div

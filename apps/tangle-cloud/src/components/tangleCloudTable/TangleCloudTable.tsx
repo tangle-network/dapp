@@ -122,7 +122,7 @@ export const TangleCloudTable = <T extends RowData>({
                   <TableHead
                     key={header.id}
                     className={twMerge(
-                      'h-11 whitespace-nowrap px-4 font-bold text-xs uppercase tracking-wider text-mono-120 dark:text-mono-100',
+                      'h-11 whitespace-nowrap px-4 font-bold text-xs uppercase tracking-wider text-mono-100 dark:text-mono-80',
                       tableConfig?.thClassName,
                     )}
                   >
@@ -168,7 +168,7 @@ export const TangleCloudTable = <T extends RowData>({
 
       <div
         className={twMerge(
-          'mt-4 flex flex-col gap-3 border-t border-mono-60 dark:border-mono-170 pt-4 text-sm text-mono-120 dark:text-mono-100 sm:flex-row sm:items-center sm:justify-between',
+          'mt-4 flex flex-col gap-3 border-t border-mono-60 dark:border-mono-170 pt-4 text-sm text-mono-100 dark:text-mono-80 sm:flex-row sm:items-center sm:justify-between',
           tableConfig?.paginationClassName,
         )}
       >
@@ -185,7 +185,7 @@ export const TangleCloudTable = <T extends RowData>({
             >
               Previous
             </button>
-            <span className="px-2 font-mono text-xs text-mono-120 dark:text-mono-100">
+            <span className="px-2 font-mono text-xs text-mono-100 dark:text-mono-80">
               {pageIndex + 1}/{pageCount}
             </span>
             <button
@@ -236,13 +236,13 @@ const TableStatus = ({
       className,
     )}
   >
-    <div className="rounded-full border border-mono-60 dark:border-mono-170 bg-mono-0 dark:bg-mono-180 px-3 py-1 font-mono text-[10px] uppercase tracking-wider text-mono-120 dark:text-mono-100">
+    <div className="rounded-full border border-mono-60 dark:border-mono-170 bg-mono-0 dark:bg-mono-180 px-3 py-1 font-mono text-[10px] uppercase tracking-wider text-mono-100 dark:text-mono-80">
       {icon}
     </div>
     <h3 className="mt-4 font-display text-lg font-bold text-mono-200 dark:text-mono-0">
       {title}
     </h3>
-    <p className="mt-2 max-w-2xl text-sm leading-relaxed text-mono-120 dark:text-mono-100">
+    <p className="mt-2 max-w-2xl text-sm leading-relaxed text-mono-100 dark:text-mono-80">
       {description}
     </p>
     {buttonText ? (

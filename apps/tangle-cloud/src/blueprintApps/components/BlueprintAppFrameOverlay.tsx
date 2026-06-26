@@ -136,10 +136,10 @@ const BlueprintAppFrameOverlay: FC<Props> = ({
           >
             {PHASE_TITLE[phase]}
           </h2>
-          <p className="text-sm leading-relaxed text-mono-120 dark:text-mono-100">
+          <p className="text-sm leading-relaxed text-mono-100 dark:text-mono-80">
             {phaseBody(phase, appDisplayName)}
           </p>
-          <p className="pt-1 font-mono text-xs text-mono-120 dark:text-mono-100/70">
+          <p className="pt-1 font-mono text-xs text-mono-100 dark:text-mono-80/70">
             {origin}
           </p>
         </div>

@@ -106,7 +106,7 @@ const BlueprintAppServicePage: FC<Props> = ({
               <h1 className="font-display text-4xl font-extrabold leading-tight tracking-[-0.04em] text-mono-200 dark:text-mono-0 md:text-5xl">
                 {view.manifest.displayName} service #{serviceId}
               </h1>
-              <p className="max-w-3xl text-base leading-7 text-mono-120 dark:text-mono-100">
+              <p className="max-w-3xl text-base leading-7 text-mono-100 dark:text-mono-80">
                 Manage this live {serviceNoun.toLowerCase()}: check access,
                 inspect callable jobs, review recent activity, and open the full
                 service console when you need to operate the instance.
@@ -172,7 +172,7 @@ const BlueprintAppServicePage: FC<Props> = ({
                 </h2>
                 <div className="mt-4 grid gap-3 sm:grid-cols-2">
                   <div>
-                    <p className="text-xs font-bold uppercase tracking-widest text-mono-120 dark:text-mono-100">
+                    <p className="text-xs font-bold uppercase tracking-widest text-mono-100 dark:text-mono-80">
                       Status
                     </p>
                     <p className="mt-1 text-sm font-semibold text-mono-200 dark:text-mono-0">
@@ -180,7 +180,7 @@ const BlueprintAppServicePage: FC<Props> = ({
                     </p>
                   </div>
                   <div>
-                    <p className="text-xs font-bold uppercase tracking-widest text-mono-120 dark:text-mono-100">
+                    <p className="text-xs font-bold uppercase tracking-widest text-mono-100 dark:text-mono-80">
                       Owner
                     </p>
                     <p className="mt-1 break-all text-sm font-semibold text-mono-200 dark:text-mono-0">
@@ -188,7 +188,7 @@ const BlueprintAppServicePage: FC<Props> = ({
                     </p>
                   </div>
                   <div>
-                    <p className="text-xs font-bold uppercase tracking-widest text-mono-120 dark:text-mono-100">
+                    <p className="text-xs font-bold uppercase tracking-widest text-mono-100 dark:text-mono-80">
                       Operators
                     </p>
                     <p className="mt-1 text-sm font-semibold text-mono-200 dark:text-mono-0">
@@ -196,7 +196,7 @@ const BlueprintAppServicePage: FC<Props> = ({
                     </p>
                   </div>
                   <div>
-                    <p className="text-xs font-bold uppercase tracking-widest text-mono-120 dark:text-mono-100">
+                    <p className="text-xs font-bold uppercase tracking-widest text-mono-100 dark:text-mono-80">
                       Permitted callers
                     </p>
                     <p className="mt-1 text-sm font-semibold text-mono-200 dark:text-mono-0">
@@ -204,7 +204,7 @@ const BlueprintAppServicePage: FC<Props> = ({
                     </p>
                   </div>
                   <div className="sm:col-span-2">
-                    <p className="text-xs font-bold uppercase tracking-widest text-mono-120 dark:text-mono-100">
+                    <p className="text-xs font-bold uppercase tracking-widest text-mono-100 dark:text-mono-80">
                       Connected wallet access
                     </p>
                     <p className="mt-1 text-sm font-semibold capitalize text-mono-200 dark:text-mono-0">
@@ -248,7 +248,7 @@ const BlueprintAppServicePage: FC<Props> = ({
                 <h2 className="font-display text-2xl font-extrabold tracking-tight text-mono-200 dark:text-mono-0">
                   Supported actions
                 </h2>
-                <p className="mt-2 max-w-2xl text-sm leading-6 text-mono-120 dark:text-mono-100">
+                <p className="mt-2 max-w-2xl text-sm leading-6 text-mono-100 dark:text-mono-80">
                   Valid onchain jobs are callable from the service console. A
                   richer blueprint module can improve the form later, but the
                   service remains operable now.
@@ -267,16 +267,16 @@ const BlueprintAppServicePage: FC<Props> = ({
                   <h3 className="font-display text-lg font-bold text-mono-200 dark:text-mono-0">
                     {job.name || `Job #${index}`}
                   </h3>
-                  <p className="mt-2 text-sm leading-6 text-mono-120 dark:text-mono-100">
+                  <p className="mt-2 text-sm leading-6 text-mono-100 dark:text-mono-80">
                     {job.description || 'No job description published.'}
                   </p>
                   <div className="mt-3 space-y-2">
-                    <p className="text-xs font-semibold text-mono-120 dark:text-mono-100">
+                    <p className="text-xs font-semibold text-mono-100 dark:text-mono-80">
                       Params:{' '}
                       {job.hasParamsSchema ? job.parsedParamsSchema.length : 0}{' '}
                       fields
                     </p>
-                    <p className="text-xs font-semibold text-mono-120 dark:text-mono-100">
+                    <p className="text-xs font-semibold text-mono-100 dark:text-mono-80">
                       Result:{' '}
                       {job.hasResultSchema ? job.parsedResultSchema.length : 0}{' '}
                       fields
@@ -297,7 +297,7 @@ const BlueprintAppServicePage: FC<Props> = ({
                 <h2 className="font-display text-2xl font-extrabold tracking-tight text-mono-200 dark:text-mono-0">
                   Recent service activity
                 </h2>
-                <p className="mt-2 max-w-2xl text-sm leading-6 text-mono-120 dark:text-mono-100">
+                <p className="mt-2 max-w-2xl text-sm leading-6 text-mono-100 dark:text-mono-80">
                   Indexed job traffic gives generic blueprint pages enough
                   signal to show whether a service is idle or actively being
                   used.
@@ -317,13 +317,13 @@ const BlueprintAppServicePage: FC<Props> = ({
                     <p className="text-sm font-semibold text-mono-200 dark:text-mono-0">
                       Job #{call.jobIndex} · Call {call.callId.toString()}
                     </p>
-                    <p className="text-xs font-semibold text-mono-120 dark:text-mono-100">
+                    <p className="text-xs font-semibold text-mono-100 dark:text-mono-80">
                       {call.completed ? 'Completed' : 'Pending'} ·{' '}
                       {call.resultCount} result
                       {call.resultCount === 1 ? '' : 's'}
                     </p>
                   </div>
-                  <p className="mt-2 break-all text-xs font-semibold text-mono-120 dark:text-mono-100">
+                  <p className="mt-2 break-all text-xs font-semibold text-mono-100 dark:text-mono-80">
                     Submitter: {call.submitter}
                   </p>
                 </div>
@@ -338,7 +338,7 @@ const BlueprintAppServicePage: FC<Props> = ({
 
 const ServiceMetric = ({ label, value }: { label: string; value: string }) => (
   <div className="rounded-xl border border-mono-60 dark:border-mono-170 bg-[color:var(--bg-elevated)] p-4">
-    <p className="text-xs font-bold uppercase tracking-widest text-mono-120 dark:text-mono-100">
+    <p className="text-xs font-bold uppercase tracking-widest text-mono-100 dark:text-mono-80">
       {label}
     </p>
     <p
@@ -362,7 +362,7 @@ const ServiceCard = ({
       <h2 className="font-display text-xl font-extrabold tracking-tight text-mono-200 dark:text-mono-0">
         {title}
       </h2>
-      <p className="text-sm leading-6 text-mono-120 dark:text-mono-100">
+      <p className="text-sm leading-6 text-mono-100 dark:text-mono-80">
         {description}
       </p>
     </CardContent>

@@ -351,7 +351,7 @@ export const SelectOperatorsStep: FC<SelectOperatorsStepProps> = ({
 
       {/* Approval Settings - Read-only based on blueprint configuration */}
       <div className="mt-5 border border-mono-60 dark:border-mono-170 bg-mono-20/50 dark:bg-mono-190/50 p-4">
-        <Text variant="body1" className="text-mono-120 dark:text-mono-100 mb-3">
+        <Text variant="body1" className="text-mono-100 dark:text-mono-80 mb-3">
           Approval Requirements (defined by blueprint)
         </Text>
 
@@ -363,7 +363,7 @@ export const SelectOperatorsStep: FC<SelectOperatorsStepProps> = ({
         ) : (
           <div className="flex flex-wrap gap-x-8 gap-y-3">
             <div className="flex items-center gap-2">
-              <span className="text-sm text-mono-120 dark:text-mono-100">
+              <span className="text-sm text-mono-100 dark:text-mono-80">
                 Membership Model:
               </span>
               <Chip
@@ -380,14 +380,14 @@ export const SelectOperatorsStep: FC<SelectOperatorsStepProps> = ({
             </div>
 
             <div className="flex items-center gap-2">
-              <span className="text-sm text-mono-120 dark:text-mono-100">
+              <span className="text-sm text-mono-100 dark:text-mono-80">
                 Min. Approvals Required:
               </span>
               <span className="text-sm font-semibold">
                 {minApprovalsRequired !== null ? (
                   minApprovalsRequired
                 ) : (
-                  <span className="text-mono-120 dark:text-mono-100 font-normal">
+                  <span className="text-mono-100 dark:text-mono-80 font-normal">
                     Select operators to see requirements
                   </span>
                 )}
@@ -406,7 +406,7 @@ export const SelectOperatorsStep: FC<SelectOperatorsStepProps> = ({
 
             {selectedOperatorsCount > 0 && (
               <div className="flex items-center gap-2">
-                <span className="text-sm text-mono-120 dark:text-mono-100">
+                <span className="text-sm text-mono-100 dark:text-mono-80">
                   Selected Operators:
                 </span>
                 <span className="text-sm font-semibold">
