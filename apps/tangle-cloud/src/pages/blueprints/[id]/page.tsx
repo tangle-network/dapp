@@ -11,7 +11,6 @@ import { z } from 'zod';
 import BlueprintModePicker from '../../../blueprintApps/components/BlueprintModePicker';
 import { useBlueprintModes } from '../../../blueprintApps/useBlueprintModes';
 import BlueprintAppLandingPage from '../../../blueprintApps/components/BlueprintAppLandingPage';
-import BlueprintHostCard from '../../../components/blueprintApps/BlueprintHostCard';
 import { renderCuratedBlueprintLanding } from '../../../blueprintApps/modules';
 import { getBlueprintAppBySlug } from '../../../blueprintApps/registry';
 import { getBlueprintPath } from '../../../blueprintApps/resolver';
@@ -103,32 +102,6 @@ const Page: FC = () => {
         />
       ) : null;
 
-    const manifest = blueprintDetails.details.blueprintUi;
-    const hasDeclarativeSurface =
-      resolvedView.tier === 'declarative' &&
-      manifest != null &&
-      ((manifest.actions?.length ?? 0) > 0 ||
-        (manifest.resourceViews?.length ?? 0) > 0 ||
-        (manifest.overviewCards?.length ?? 0) > 0);
-
-    if (hasDeclarativeSurface) {
-      return (
-        <div className="space-y-8">
-          {modePicker}
-          <BlueprintHostCard
-            blueprint={blueprintDetails.details}
-            operatorCount={blueprintDetails.operators.length}
-            provisionPath={`/blueprints/${numericId.toString()}/deploy`}
-          />
-          <BlueprintVersionsPanel
-            blueprintId={numericId}
-            blueprintName={blueprintDetails.details.name}
-          />
-          <RegisteredOperatorsPanel operators={blueprintDetails.operators} />
-        </div>
-      );
-    }
-
     return (
       <div className="space-y-8">
         {modePicker}
@@ -137,10 +110,12 @@ const Page: FC = () => {
           operatorCount={blueprintDetails.operators.length}
           provisionPath={`/blueprints/${numericId.toString()}/deploy`}
         />
+
         <BlueprintVersionsPanel
           blueprintId={numericId}
           blueprintName={blueprintDetails.details.name}
         />
+
         <RegisteredOperatorsPanel operators={blueprintDetails.operators} />
       </div>
     );
