@@ -27,10 +27,10 @@ export const typeRole = {
   /** Section heads, card titles. */
   section: 'font-display font-semibold text-lg leading-tight tracking-normal',
   /** Default body copy. */
-  body: 'text-sm leading-relaxed',
+  body: 'text-sm leading-relaxed text-mono-100 dark:text-mono-80',
   /** Control labels, eyebrows. Always uppercase, always tracked. */
   label:
-    'text-[10px] font-semibold uppercase tracking-[0.08em] text-muted-foreground',
+    'text-[10px] font-semibold uppercase tracking-[0.08em] text-mono-100 dark:text-mono-80',
   /** Numerals, IDs, hashes, addresses, amounts. */
   mono: 'font-mono text-[13px] tabular-nums',
 } as const;
@@ -91,8 +91,9 @@ export type StatusTone =
   | 'pending';
 
 export const statusPill: Record<StatusTone, string> = {
-  neutral: 'border border-border bg-transparent text-muted-foreground',
-  info: 'border border-[color:var(--border-accent)] bg-[var(--accent-surface-soft)] text-foreground',
+  neutral:
+    'border border-mono-60 dark:border-mono-170 bg-transparent text-mono-100 dark:text-mono-80',
+  info: 'border border-[color:var(--border-accent)] bg-[var(--accent-surface-soft)] text-mono-200 dark:text-mono-0',
   success:
     'border border-[color:var(--md3-tertiary,#10b981)]/40 bg-[color:var(--md3-tertiary,#10b981)]/8 text-[color:var(--md3-tertiary,#10b981)]',
   warning:
@@ -233,10 +234,10 @@ export const surface = {
   bgDefault: 'bg-background',
   bgElevated: 'bg-[color:var(--bg-card)]',
   bgSubtle: 'bg-[color:var(--bg-elevated)]/40',
-  fgDefault: 'text-foreground',
-  fgMuted: 'text-muted-foreground',
-  fgSubtle: 'text-foreground/60',
-  borderDefault: 'border border-border',
+  fgDefault: 'text-mono-200 dark:text-mono-0',
+  fgMuted: 'text-mono-100 dark:text-mono-80',
+  fgSubtle: 'text-mono-200 dark:text-mono-0/60',
+  borderDefault: 'border border-mono-60 dark:border-mono-170',
   borderAccent: 'border border-[color:var(--border-accent)]',
 } as const;
 
