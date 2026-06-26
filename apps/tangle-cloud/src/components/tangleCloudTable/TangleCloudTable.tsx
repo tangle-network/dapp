@@ -1,10 +1,6 @@
 import { flexRender, type RowData } from '@tanstack/react-table';
 import type React from 'react';
 import {
-  Button,
-  Card,
-  CardContent,
-  Skeleton,
   Table,
   TableBody,
   TableCell,
@@ -13,6 +9,7 @@ import {
   TableRow,
 } from '@tangle-network/sandbox-ui/primitives';
 import { twMerge } from 'tailwind-merge';
+import TangleCloudCard from '../TangleCloudCard';
 import { type TableStatusProps, type TangleCloudTableProps } from './type';
 
 export const TangleCloudTable = <T extends RowData>({
@@ -21,7 +18,7 @@ export const TangleCloudTable = <T extends RowData>({
   data,
   isLoading,
   error,
-  loadingTableProps,
+  loadingTableProps: _loadingTableProps,
   errorTableProps,
   emptyTableProps,
   onRetry,
@@ -43,19 +40,9 @@ export const TangleCloudTable = <T extends RowData>({
       <TableShell className={tableConfig?.className}>
         {hasTitle ? <TableTitle>{title}</TableTitle> : null}
         <div className={twMerge('space-y-3', hasTitle ? 'mt-4' : null)}>
-          <Skeleton className="h-10 rounded-md" />
-          <Skeleton className="h-14 rounded-md" />
-          <Skeleton className="h-14 rounded-md" />
-          <TableStatus
-            {...loadingTableProps}
-            title={loadingTableProps?.title ?? 'Loading data'}
-            description={
-              loadingTableProps?.description ??
-              'Please wait while we load the latest indexed data.'
-            }
-            icon={loadingTableProps?.icon ?? 'Loading'}
-            className={loadingTableProps?.className}
-          />
+          <div className="h-10 animate-pulse rounded-lg bg-mono-40 dark:bg-mono-170" />
+          <div className="h-14 animate-pulse rounded-lg bg-mono-40 dark:bg-mono-170" />
+          <div className="h-14 animate-pulse rounded-lg bg-mono-40 dark:bg-mono-170" />
         </div>
       </TableShell>
     );
@@ -120,19 +107,22 @@ export const TangleCloudTable = <T extends RowData>({
       <div
         className={twMerge(
           hasTitle ? 'mt-4' : null,
-          'overflow-x-auto [scrollbar-gutter:stable]',
+          'overflow-x-auto rounded-xl border border-mono-60 dark:border-mono-170 [scrollbar-gutter:stable]',
           tableConfig?.viewportClassName,
         )}
       >
         <Table className={twMerge('min-w-full', tableConfig?.tableClassName)}>
           <TableHeader>
             {tableProps.getHeaderGroups().map((headerGroup) => (
-              <TableRow key={headerGroup.id} className="border-border">
+              <TableRow
+                key={headerGroup.id}
+                className="border-mono-60 dark:border-mono-170 bg-mono-20 dark:bg-mono-190"
+              >
                 {headerGroup.headers.map((header) => (
                   <TableHead
                     key={header.id}
                     className={twMerge(
-                      'h-11 whitespace-nowrap px-4 font-semibold text-muted-foreground text-xs uppercase tracking-wider',
+                      'h-11 whitespace-nowrap px-4 font-bold text-xs uppercase tracking-wider text-mono-120 dark:text-mono-100',
                       tableConfig?.thClassName,
                     )}
                   >
@@ -154,7 +144,7 @@ export const TangleCloudTable = <T extends RowData>({
                 key={row.id}
                 data-expanded={row.getIsExpanded()}
                 className={twMerge(
-                  'border-border transition-colors hover:bg-muted/35',
+                  'border-mono-60/50 dark:border-mono-170/50 transition-colors hover:bg-mono-20/60 dark:hover:bg-mono-190/60',
                   tableConfig?.trClassName,
                   row.getIsExpanded() && tableConfig?.expandedRowClassName,
                 )}
@@ -163,7 +153,7 @@ export const TangleCloudTable = <T extends RowData>({
                   <TableCell
                     key={cell.id}
                     className={twMerge(
-                      'px-4 py-3 align-middle text-foreground text-sm',
+                      'px-4 py-3 align-middle text-sm text-mono-200 dark:text-mono-0',
                       tableConfig?.tdClassName,
                     )}
                   >
@@ -178,7 +168,7 @@ export const TangleCloudTable = <T extends RowData>({
 
       <div
         className={twMerge(
-          'mt-4 flex flex-col gap-3 border-border border-t pt-4 text-muted-foreground text-sm sm:flex-row sm:items-center sm:justify-between',
+          'mt-4 flex flex-col gap-3 border-t border-mono-60 dark:border-mono-170 pt-4 text-sm text-mono-120 dark:text-mono-100 sm:flex-row sm:items-center sm:justify-between',
           tableConfig?.paginationClassName,
         )}
       >
@@ -188,25 +178,23 @@ export const TangleCloudTable = <T extends RowData>({
 
         {pageCount > 1 ? (
           <div className="flex items-center gap-2">
-            <Button
-              variant="outline"
-              size="sm"
+            <button
               disabled={!tableProps.getCanPreviousPage()}
               onClick={() => tableProps.previousPage()}
+              className="rounded-lg border border-mono-60 dark:border-mono-170 px-3 py-1.5 text-xs font-bold text-mono-200 dark:text-mono-0 transition-colors hover:border-purple-40/40 disabled:opacity-40"
             >
               Previous
-            </Button>
-            <span className="px-2 font-mono text-xs">
+            </button>
+            <span className="px-2 font-mono text-xs text-mono-120 dark:text-mono-100">
               {pageIndex + 1}/{pageCount}
             </span>
-            <Button
-              variant="outline"
-              size="sm"
+            <button
               disabled={!tableProps.getCanNextPage()}
               onClick={() => tableProps.nextPage()}
+              className="rounded-lg border border-mono-60 dark:border-mono-170 px-3 py-1.5 text-xs font-bold text-mono-200 dark:text-mono-0 transition-colors hover:border-purple-40/40 disabled:opacity-40"
             >
               Next
-            </Button>
+            </button>
           </div>
         ) : null}
       </div>
@@ -223,16 +211,13 @@ const TableShell = ({
   className?: string;
   children: React.ReactNode;
 }) => (
-  <Card
-    variant="sandbox"
-    className={twMerge('w-full overflow-hidden border-border', className)}
-  >
-    <CardContent className="p-4 md:p-5">{children}</CardContent>
-  </Card>
+  <TangleCloudCard className={twMerge('w-full overflow-hidden', className)}>
+    {children}
+  </TangleCloudCard>
 );
 
 const TableTitle = ({ children }: { children: React.ReactNode }) => (
-  <div className="font-display font-bold text-foreground text-lg">
+  <div className="font-display text-lg font-bold text-mono-200 dark:text-mono-0">
     {children}
   </div>
 );
@@ -247,23 +232,26 @@ const TableStatus = ({
 }: TableStatusProps) => (
   <div
     className={twMerge(
-      'flex min-h-56 flex-col items-center justify-center rounded-xl border border-dashed border-border bg-muted/30 p-8 text-center',
+      'flex min-h-48 flex-col items-center justify-center rounded-xl border border-mono-60 dark:border-mono-170 bg-mono-20/50 dark:bg-mono-190/50 p-8 text-center',
       className,
     )}
   >
-    <div className="rounded-full border border-border bg-card px-3 py-1 font-mono text-muted-foreground text-[10px] uppercase tracking-wider">
+    <div className="rounded-full border border-mono-60 dark:border-mono-170 bg-mono-0 dark:bg-mono-180 px-3 py-1 font-mono text-[10px] uppercase tracking-wider text-mono-120 dark:text-mono-100">
       {icon}
     </div>
-    <h3 className="mt-4 font-display font-bold text-foreground text-lg">
+    <h3 className="mt-4 font-display text-lg font-bold text-mono-200 dark:text-mono-0">
       {title}
     </h3>
-    <p className="mt-2 max-w-2xl text-muted-foreground text-sm leading-relaxed">
+    <p className="mt-2 max-w-2xl text-sm leading-relaxed text-mono-120 dark:text-mono-100">
       {description}
     </p>
     {buttonText ? (
-      <Button variant="outline" size="sm" className="mt-5" {...buttonProps}>
+      <button
+        className="mt-5 rounded-lg border border-mono-60 dark:border-mono-170 px-4 py-1.5 text-xs font-bold text-mono-200 dark:text-mono-0 transition-colors hover:border-purple-40/40"
+        {...buttonProps}
+      >
         {buttonText}
-      </Button>
+      </button>
     ) : null}
   </div>
 );
