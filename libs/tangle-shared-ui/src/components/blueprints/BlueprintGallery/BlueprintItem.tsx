@@ -122,26 +122,26 @@ const BlueprintItem: FC<Omit<BlueprintItemProps, 'id'>> = ({
         {/* Stats */}
         <div className="flex gap-2">
           <div className="flex items-center gap-1.5 rounded-lg border border-mono-60 dark:border-mono-170 bg-mono-20/50 dark:bg-mono-190/50 px-2.5 py-1.5">
-            <span className="text-[11px] font-semibold uppercase tracking-wide text-mono-120 dark:text-mono-100">
-              SVC
-            </span>
             <Typography
               variant="body2"
               className="font-bold text-mono-200 dark:text-mono-0"
             >
               {instancesCount ?? EMPTY_VALUE_PLACEHOLDER}
             </Typography>
+            <span className="text-[11px] text-mono-100 dark:text-mono-80">
+              services
+            </span>
           </div>
           <div className="flex items-center gap-1.5 rounded-lg border border-mono-60 dark:border-mono-170 bg-mono-20/50 dark:bg-mono-190/50 px-2.5 py-1.5">
-            <span className="text-[11px] font-semibold uppercase tracking-wide text-mono-120 dark:text-mono-100">
-              OPR
-            </span>
             <Typography
               variant="body2"
               className="font-bold text-mono-200 dark:text-mono-0"
             >
               {operatorsCount ?? EMPTY_VALUE_PLACEHOLDER}
             </Typography>
+            <span className="text-[11px] text-mono-100 dark:text-mono-80">
+              operators
+            </span>
           </div>
         </div>
 

@@ -109,7 +109,11 @@ const Page: FC = () => {
       <PageHeader
         density="compact"
         title="Operators"
-        subtitle="Inspect registered operators, delegation mode, stake, and RPC availability."
+        subtitle={
+          operatorList.length > 0
+            ? `${operatorList.length} registered · ${activeOperatorCount} active`
+            : 'No operators registered yet on this network.'
+        }
         action={
           <div className="flex gap-2">
             {isConnected && (
@@ -132,7 +136,9 @@ const Page: FC = () => {
         }
       />
 
-      <MetricStrip metrics={metrics} density="compact" />
+      {operatorList.length > 0 && (
+        <MetricStrip metrics={metrics} density="compact" />
+      )}
 
       <OperatorsPanel
         operators={operatorList}
