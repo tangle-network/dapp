@@ -9,6 +9,11 @@ type TangleCloudCardProps = PropsWithChildren<{
   id?: string;
 }>;
 
+/**
+ * Pure pass-through to the shared Card GLASS variant — same component the
+ * staking dapp uses everywhere. No custom padding, overflow, or positioning
+ * that would diverge from the shared design system.
+ */
 const TangleCloudCard: FC<TangleCloudCardProps> = ({
   children,
   className,
@@ -23,7 +28,6 @@ const TangleCloudCard: FC<TangleCloudCardProps> = ({
       id={id}
       style={style}
       className={twMerge(
-        'relative z-0 w-full overflow-hidden p-5 md:p-6',
         interactive &&
           'transition-shadow duration-200 hover:shadow-[0_16px_70px_rgba(0,0,0,0.50)]',
         className,
