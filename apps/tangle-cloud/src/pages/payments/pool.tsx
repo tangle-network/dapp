@@ -12,6 +12,7 @@ import { useShieldedContext } from '../../app/ShieldedProvider';
 import RequireWallet from '../../components/RequireWallet';
 import { PageHeader } from '../../components/chrome';
 import TangleCloudCard from '../../components/TangleCloudCard';
+import PaymentsNav from '../../components/PaymentsNav';
 import { TOKEN_DECIMALS } from '../../constants/payments';
 import PaymentProviders from '../../app/PaymentProviders';
 
@@ -40,11 +41,9 @@ const PaymentsPoolContent: FC = () => {
 
   return (
     <div className="space-y-6">
-      <PageHeader
-        density="compact"
-        title="Shielded Pool"
-        subtitle="Deposit tokens into the VAnchor shielded pool to gain privacy. Withdraw to a public address or fund anonymous credit accounts."
-      />
+      <PageHeader density="compact" title="Payments" />
+
+      <PaymentsNav />
 
       <RequireWallet
         eyebrow="Shielded pool"

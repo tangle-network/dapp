@@ -213,7 +213,7 @@ const TableShell = ({
   className?: string;
   children: React.ReactNode;
 }) => (
-  <TangleCloudCard className={twMerge('w-full overflow-hidden', className)}>
+  <TangleCloudCard className={twMerge('w-full', className)}>
     {children}
   </TangleCloudCard>
 );

@@ -11,6 +11,7 @@ import CreditBalanceContainer from '../../containers/payments/CreditBalanceConta
 import RequireWallet from '../../components/RequireWallet';
 import { PageHeader } from '../../components/chrome';
 import TangleCloudCard from '../../components/TangleCloudCard';
+import PaymentsNav from '../../components/PaymentsNav';
 import PaymentProviders from '../../app/PaymentProviders';
 
 const enum CreditsTab {
@@ -24,11 +25,9 @@ const PaymentsCreditsContent: FC = () => {
 
   return (
     <div className="space-y-6">
-      <PageHeader
-        density="compact"
-        title="Anonymous Credits"
-        subtitle="Fund prepaid credit accounts and authorize service usage without sending a wallet transaction for every job."
-      />
+      <PageHeader density="compact" title="Payments" />
+
+      <PaymentsNav />
 
       <RequireWallet
         eyebrow="Credits"
