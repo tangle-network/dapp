@@ -1,10 +1,4 @@
 import { FC, useEffect, useMemo, type ReactNode } from 'react';
-import {
-  Button,
-  Card,
-  Skeleton,
-  Text,
-} from '../../../../components/sandbox/SandboxUi';
 import { useForm } from 'react-hook-form';
 import {
   DeployBlueprintSchema,
@@ -36,6 +30,8 @@ import { TxName } from '../../../../constants';
 import useTxNotification from '../../../../hooks/useTxNotification';
 import { useAccount } from 'wagmi';
 import RequireWallet from '../../../../components/RequireWallet';
+import TangleCloudCard from '../../../../components/TangleCloudCard';
+import { Typography } from '@tangle-network/ui-components/typography/Typography/Typography';
 
 const DeployPage: FC = () => {
   const id = useParamWithSchema('id', z.coerce.bigint());
@@ -201,24 +197,36 @@ const DeployPage: FC = () => {
   }, [assets, getValues, setValue]);
 
   if (isBlueprintLoading) {
-    return <Skeleton className="min-h-64" />;
+    return (
+      <div className="min-h-64 animate-pulse rounded-2xl bg-mono-40 dark:bg-mono-170" />
+    );
   } else if (blueprintError) {
     return (
-      <Card className="p-6">
-        <Text variant="h5">Unable to load blueprint</Text>
-        <Text variant="body2" className="mt-2 text-muted-foreground">
+      <TangleCloudCard className="flex flex-col gap-2 p-6">
+        <Typography variant="h5" className="text-mono-200 dark:text-mono-0">
+          Unable to load blueprint
+        </Typography>
+        <Typography
+          variant="body2"
+          className="text-mono-120 dark:text-mono-100"
+        >
           {blueprintError.name}
-        </Text>
-      </Card>
+        </Typography>
+      </TangleCloudCard>
     );
   } else if (blueprintResult === null) {
     return (
-      <Card className="border-border bg-card p-6">
-        <Text variant="h5">Blueprint not found</Text>
-        <Text variant="body2" className="mt-2 text-muted-foreground">
+      <TangleCloudCard className="flex flex-col gap-2 p-6">
+        <Typography variant="h5" className="text-mono-200 dark:text-mono-0">
+          Blueprint not found
+        </Typography>
+        <Typography
+          variant="body2"
+          className="text-mono-120 dark:text-mono-100"
+        >
           This blueprint is unavailable or has not been indexed yet.
-        </Text>
-      </Card>
+        </Typography>
+      </TangleCloudCard>
     );
   }
 
@@ -447,25 +455,29 @@ const DeployPage: FC = () => {
     >
       <div className="grid gap-5 xl:grid-cols-[minmax(0,1fr)_340px] xl:items-start">
         <div className="min-w-0 space-y-5">
-          <Card className="overflow-hidden border-border bg-card p-5 shadow-[var(--shadow-card)]">
+          <TangleCloudCard className="flex flex-col gap-4">
             <div>
-              <p className="font-bold text-[10px] uppercase tracking-[0.2em] text-muted-foreground">
+              <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-mono-120 dark:text-mono-100">
                 Blueprint #{id?.toString() ?? '-'}
               </p>
-              <Text variant="h4" className="mt-2 text-foreground">
+              <Typography
+                variant="h4"
+                fw="bold"
+                className="mt-2 text-mono-200 dark:text-mono-0"
+              >
                 {blueprintResult.details.name}
-              </Text>
-              <Text
+              </Typography>
+              <Typography
                 variant="body2"
-                className="mt-2 max-w-3xl text-muted-foreground"
+                className="mt-2 max-w-3xl text-mono-140 dark:text-mono-80"
               >
                 Configure the service instance, then submit the request from the
                 review rail. Operators, caller access, TTL, payment, and request
                 args are the only decisions that affect the transaction.
-              </Text>
+              </Typography>
             </div>
 
-            <div className="mt-4 grid gap-2 sm:grid-cols-3">
+            <div className="grid gap-2 sm:grid-cols-3">
               <CheckoutMetric
                 label="Operators"
                 value={`${blueprintResult.operators?.length ?? 0} available`}
@@ -473,28 +485,32 @@ const DeployPage: FC = () => {
               <CheckoutMetric label="Schema" value={schemaLabel} />
               <CheckoutMetric label="Default caller" value="Wallet owner" />
             </div>
-          </Card>
+          </TangleCloudCard>
 
           <Deployment {...commonProps} />
         </div>
 
         <aside className="xl:sticky xl:top-4">
-          <Card className="border-border bg-card p-4 shadow-[var(--shadow-card)]">
+          <TangleCloudCard className="flex flex-col gap-4">
             <div className="flex items-start justify-between gap-3">
               <div>
-                <p className="font-bold text-[10px] uppercase tracking-[0.2em] text-muted-foreground">
+                <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-mono-120 dark:text-mono-100">
                   Review
                 </p>
-                <Text variant="h5" className="mt-1 text-foreground">
+                <Typography
+                  variant="h5"
+                  fw="bold"
+                  className="mt-1 text-mono-200 dark:text-mono-0"
+                >
                   Create instance
-                </Text>
+                </Typography>
               </div>
-              <span className="rounded-md border border-border bg-muted/40 px-2 py-1 font-mono text-xs text-muted-foreground">
+              <span className="rounded-lg border border-mono-60 dark:border-mono-170 bg-mono-20 dark:bg-mono-190 px-2 py-1 font-mono text-xs text-mono-120 dark:text-mono-100">
                 requestService
               </span>
             </div>
 
-            <div className="mt-4 space-y-2">
+            <div className="space-y-1">
               <ReviewRow
                 label="Operators"
                 value={summaryCount(selectedOperators.length, 'None selected')}
@@ -510,19 +526,19 @@ const DeployPage: FC = () => {
             </div>
 
             {hasValidationErrors && (
-              <ErrorMessage className="mt-4">
+              <ErrorMessage className="mt-2">
                 Check the highlighted fields before submitting.
               </ErrorMessage>
             )}
 
-            <Button
-              className="mt-4 w-full"
+            <button
+              className="w-full rounded-xl bg-purple-40 px-5 py-2.5 text-sm font-bold text-mono-0 transition-colors hover:bg-purple-50 dark:bg-purple-50 dark:hover:bg-purple-60 disabled:opacity-40"
               onClick={onDeployBlueprint}
-              isLoading={serviceRequestPending}
+              disabled={serviceRequestPending}
             >
-              Create instance
-            </Button>
-          </Card>
+              {serviceRequestPending ? 'Creating…' : 'Create instance'}
+            </button>
+          </TangleCloudCard>
         </aside>
       </div>
     </RequireWallet>
@@ -532,18 +548,20 @@ const DeployPage: FC = () => {
 export default DeployPage;
 
 const CheckoutMetric = ({ label, value }: { label: string; value: string }) => (
-  <div className="border border-border bg-muted/30 p-3">
-    <p className="font-semibold text-[10px] uppercase tracking-wider text-muted-foreground">
+  <div className="rounded-xl border border-mono-60 dark:border-mono-170 bg-mono-20/50 dark:bg-mono-190/50 p-3">
+    <p className="text-[10px] font-bold uppercase tracking-wider text-mono-120 dark:text-mono-100">
       {label}
     </p>
-    <p className="mt-1 truncate font-mono text-sm text-foreground">{value}</p>
+    <p className="mt-1 truncate font-mono text-sm text-mono-200 dark:text-mono-0">
+      {value}
+    </p>
   </div>
 );
 
 const ReviewRow = ({ label, value }: { label: string; value: ReactNode }) => (
-  <div className="grid grid-cols-[92px_minmax(0,1fr)] gap-3 border-b border-border/70 py-2 last:border-b-0">
-    <span className="text-xs text-muted-foreground">{label}</span>
-    <span className="truncate text-right font-mono text-xs text-foreground">
+  <div className="grid grid-cols-[92px_minmax(0,1fr)] gap-3 border-b border-mono-60/50 dark:border-mono-170/50 py-2 last:border-0">
+    <span className="text-xs text-mono-120 dark:text-mono-100">{label}</span>
+    <span className="truncate text-right font-mono text-xs text-mono-200 dark:text-mono-0">
       {value}
     </span>
   </div>
