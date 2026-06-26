@@ -274,7 +274,7 @@ export const BlueprintVersionsPanel: FC<BlueprintVersionsPanelProps> = ({
             <h2 className="mt-2 font-display font-extrabold text-2xl text-mono-200 dark:text-mono-0 tracking-tight">
               Binary versions
             </h2>
-            <p className="mt-1 max-w-2xl text-mono-100 dark:text-mono-80 text-sm">
+            <p className="mt-1 max-w-2xl text-mono-100 dark:text-mono-60 text-sm">
               Append-only timeline of binary builds for this blueprint. Each
               version carries a sha256 digest, a binary URI, and any auditor
               attestations published against it.
@@ -294,7 +294,7 @@ export const BlueprintVersionsPanel: FC<BlueprintVersionsPanelProps> = ({
           </div>
         ) : sortedVersions.length === 0 ? (
           <div className="mt-5 flex min-h-32 items-center justify-center rounded-lg border border-mono-60 dark:border-mono-170 border-dashed bg-mono-0 dark:bg-mono-180 p-6 text-center">
-            <p className="max-w-md text-mono-100 dark:text-mono-80 text-sm">
+            <p className="max-w-md text-mono-100 dark:text-mono-60 text-sm">
               No binary versions have been published for this blueprint yet. The
               blueprint owner can publish the first build above.
             </p>
@@ -422,17 +422,17 @@ const VersionRow: FC<VersionRowProps> = ({
             <Badge variant={tone === 'info' ? 'outline' : tone} dot>
               {label}
             </Badge>
-            <span className="text-mono-100 dark:text-mono-80 text-xs">
+            <span className="text-mono-100 dark:text-mono-60 text-xs">
               published {formatRelativePast(version.publishedAt, new Date())}
             </span>
           </div>
-          <p className="mt-1 truncate font-mono text-mono-100 dark:text-mono-80 text-xs">
+          <p className="mt-1 truncate font-mono text-mono-100 dark:text-mono-60 text-xs">
             sha256 {shortenHex(version.sha256Hash, 6, 6)}
           </p>
         </div>
         <div className="flex items-center gap-3">
           <TrustScoreGauge breakdown={breakdown} variant="compact" />
-          <span className="text-mono-100 dark:text-mono-80 text-xs">
+          <span className="text-mono-100 dark:text-mono-60 text-xs">
             {expanded ? '−' : '+'}
           </span>
         </div>
@@ -540,7 +540,7 @@ const VersionRow: FC<VersionRowProps> = ({
               )}
             </header>
             {attestations.length === 0 ? (
-              <p className="rounded-lg border border-mono-60 dark:border-mono-170 border-dashed bg-mono-0 dark:bg-mono-180 p-3 text-mono-100 dark:text-mono-80 text-xs">
+              <p className="rounded-lg border border-mono-60 dark:border-mono-170 border-dashed bg-mono-0 dark:bg-mono-180 p-3 text-mono-100 dark:text-mono-60 text-xs">
                 No attestations have been submitted for this version yet. Any
                 wallet may submit one — auditors registered in the on-chain
                 auditor registry contribute weighted signal toward the trust
@@ -581,7 +581,7 @@ const KeyValue: FC<{ label: string; value: React.ReactNode }> = ({
   value,
 }) => (
   <div className="rounded-md border border-mono-60 dark:border-mono-170 bg-mono-0 dark:bg-mono-180/60 p-2.5">
-    <p className="font-semibold text-[10px] text-mono-100 dark:text-mono-80 uppercase tracking-wider">
+    <p className="font-semibold text-[10px] text-mono-100 dark:text-mono-60 uppercase tracking-wider">
       {label}
     </p>
     <p className="mt-1 break-all font-mono text-mono-200 dark:text-mono-0 text-xs">

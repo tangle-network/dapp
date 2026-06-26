@@ -43,7 +43,7 @@ const CopyableId: FC<Props> = ({
   }, [value]);
 
   if (!value) {
-    return <span className="text-mono-100 dark:text-mono-80">—</span>;
+    return <span className="text-mono-100 dark:text-mono-60">—</span>;
   }
 
   const looksHex = /^0x[0-9a-fA-F]{8,}$/.test(value);
@@ -64,7 +64,7 @@ const CopyableId: FC<Props> = ({
       <span className="truncate">{shown}</span>
       <span
         aria-hidden
-        className="shrink-0 text-mono-100 dark:text-mono-80/60 transition-colors group-hover:text-[color:var(--border-accent-hover)]"
+        className="shrink-0 text-mono-100 dark:text-mono-60/60 transition-colors group-hover:text-[color:var(--border-accent-hover)]"
       >
         {copied ? (
           <svg viewBox="0 0 16 16" fill="none" className="h-3 w-3" aria-hidden>

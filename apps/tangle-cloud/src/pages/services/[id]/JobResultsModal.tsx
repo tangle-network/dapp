@@ -71,7 +71,7 @@ const CopyWithTooltip: FC<{
 }> = ({ textToCopy, copyLabel = 'Copy' }) => (
   <button
     type="button"
-    className="text-mono-100 dark:text-mono-80 text-xs underline-offset-4 hover:text-mono-200 dark:text-mono-0 hover:underline"
+    className="text-mono-100 dark:text-mono-60 text-xs underline-offset-4 hover:text-mono-200 dark:text-mono-0 hover:underline"
     onClick={() => void navigator.clipboard?.writeText(textToCopy)}
   >
     {copyLabel}
@@ -193,7 +193,7 @@ const DecodedFieldsDisplay: FC<{ fields: NamedDecodedField[] }> = ({
         key={i}
         className="flex flex-col gap-0.5 p-2 bg-mono-0 dark:bg-mono-190 rounded"
       >
-        <Text variant="body3" className="text-mono-100 dark:text-mono-80">
+        <Text variant="body3" className="text-mono-100 dark:text-mono-60">
           {field.name || `Field ${i}`}
         </Text>
 
@@ -305,7 +305,7 @@ const ViewModeToggle: FC<{
           'px-3 py-1 text-xs capitalize',
           mode === candidate
             ? 'bg-purple-40 text-purple-40-foreground'
-            : 'bg-mono-20/50 dark:bg-mono-190/50 text-mono-100 dark:text-mono-80 hover:text-mono-200 dark:text-mono-0',
+            : 'bg-mono-20/50 dark:bg-mono-190/50 text-mono-100 dark:text-mono-60 hover:text-mono-200 dark:text-mono-0',
         )}
         onClick={() => onChange(candidate)}
       >
@@ -405,7 +405,7 @@ export const JobResultsModal: FC<Props> = ({ job, jobDefinition, onClose }) => {
           {/* Job Info */}
           <div className="grid grid-cols-2 gap-4 mb-6 p-4 bg-mono-20/50 dark:bg-mono-190/50 rounded-lg">
             <div>
-              <Text variant="body3" className="text-mono-100 dark:text-mono-80">
+              <Text variant="body3" className="text-mono-100 dark:text-mono-60">
                 Job Index
               </Text>
               <Text variant="body1" fw="semibold">
@@ -414,7 +414,7 @@ export const JobResultsModal: FC<Props> = ({ job, jobDefinition, onClose }) => {
               </Text>
             </div>
             <div>
-              <Text variant="body3" className="text-mono-100 dark:text-mono-80">
+              <Text variant="body3" className="text-mono-100 dark:text-mono-60">
                 Status
               </Text>
               <span
@@ -429,7 +429,7 @@ export const JobResultsModal: FC<Props> = ({ job, jobDefinition, onClose }) => {
               </span>
             </div>
             <div>
-              <Text variant="body3" className="text-mono-100 dark:text-mono-80">
+              <Text variant="body3" className="text-mono-100 dark:text-mono-60">
                 Submitted
               </Text>
               <Text variant="body1">
@@ -437,7 +437,7 @@ export const JobResultsModal: FC<Props> = ({ job, jobDefinition, onClose }) => {
               </Text>
             </div>
             <div>
-              <Text variant="body3" className="text-mono-100 dark:text-mono-80">
+              <Text variant="body3" className="text-mono-100 dark:text-mono-60">
                 Results Received
               </Text>
               <Text variant="body1">{job.resultCount}</Text>
@@ -530,7 +530,7 @@ const OperatorResultCard: FC<{
     <div className="p-4 border border-mono-60 dark:border-mono-170 rounded-lg">
       <div className="flex justify-between items-start mb-2">
         <div>
-          <Text variant="body3" className="text-mono-100 dark:text-mono-80">
+          <Text variant="body3" className="text-mono-100 dark:text-mono-60">
             {result.aggregated ? 'Source' : 'Operator'}
           </Text>
           <Text variant="body2" className="font-mono">
@@ -542,7 +542,7 @@ const OperatorResultCard: FC<{
           </Text>
         </div>
         <div className="text-right">
-          <Text variant="body3" className="text-mono-100 dark:text-mono-80">
+          <Text variant="body3" className="text-mono-100 dark:text-mono-60">
             Submitted
           </Text>
           <Text variant="body2">
@@ -551,7 +551,7 @@ const OperatorResultCard: FC<{
         </div>
       </div>
       <div>
-        <Text variant="body3" className="text-mono-100 dark:text-mono-80 mb-1">
+        <Text variant="body3" className="text-mono-100 dark:text-mono-60 mb-1">
           {result.aggregated ? 'Aggregated Output' : 'Result'}
         </Text>
 

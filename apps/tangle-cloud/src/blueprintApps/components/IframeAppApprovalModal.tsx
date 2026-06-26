@@ -59,7 +59,7 @@ const RequestSummary: FC<{ pending: PendingApproval }> = ({ pending }) => {
           <Row label="Action" value="Sign message" />
           <Row label="Chain" value={String(r.chainId)} />
           <div>
-            <p className="text-xs text-mono-100 dark:text-mono-80 mb-1">
+            <p className="text-xs text-mono-100 dark:text-mono-60 mb-1">
               Message
             </p>
             <pre className="rounded-md border border-mono-60 dark:border-mono-170 bg-mono-20/50 dark:bg-mono-190/50 p-3 text-xs whitespace-pre-wrap break-all max-h-48 overflow-auto">
@@ -94,7 +94,7 @@ const RequestSummary: FC<{ pending: PendingApproval }> = ({ pending }) => {
             />
           )}
           <div>
-            <p className="text-xs text-mono-100 dark:text-mono-80 mb-1">
+            <p className="text-xs text-mono-100 dark:text-mono-60 mb-1">
               Message
             </p>
             <pre className="rounded-md border border-mono-60 dark:border-mono-170 bg-mono-20/50 dark:bg-mono-190/50 p-3 text-xs whitespace-pre-wrap break-all max-h-48 overflow-auto">
@@ -120,7 +120,7 @@ const RequestSummary: FC<{ pending: PendingApproval }> = ({ pending }) => {
           />
           <Row label="Job index" value={String(r.jobIndex)} mono />
           <div>
-            <p className="text-xs text-mono-100 dark:text-mono-80 mb-1">
+            <p className="text-xs text-mono-100 dark:text-mono-60 mb-1">
               Inputs
             </p>
             <pre className="rounded-md border border-mono-60 dark:border-mono-170 bg-mono-20/50 dark:bg-mono-190/50 p-3 text-xs whitespace-pre-wrap break-all max-h-48 overflow-auto">
@@ -139,7 +139,7 @@ const Row: FC<{ label: string; value: string; mono?: boolean }> = ({
   mono,
 }) => (
   <div className="flex flex-col gap-0.5">
-    <span className="text-xs text-mono-100 dark:text-mono-80">{label}</span>
+    <span className="text-xs text-mono-100 dark:text-mono-60">{label}</span>
     <span
       className={mono ? 'font-mono text-xs break-all' : 'text-sm'}
       title={value}

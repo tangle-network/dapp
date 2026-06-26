@@ -170,12 +170,12 @@ const BlueprintDetailHero = ({
                 {category}
               </span>
               <span
-                className={`inline-flex items-center gap-1 rounded-full border px-2.5 py-0.5 text-[10px] font-semibold ${operatorCount > 0 ? 'border-emerald-50/30 bg-emerald-50/10 text-emerald-50' : 'border-mono-60 dark:border-mono-170 text-mono-100 dark:text-mono-80'}`}
+                className={`inline-flex items-center gap-1 rounded-full border px-2.5 py-0.5 text-[10px] font-semibold ${operatorCount > 0 ? 'border-emerald-50/30 bg-emerald-50/10 text-emerald-50' : 'border-mono-60 dark:border-mono-170 text-mono-100 dark:text-mono-60'}`}
               >
                 {operatorCount} operator{operatorCount === 1 ? '' : 's'}
               </span>
               <span
-                className={`inline-flex items-center rounded-full border px-2.5 py-0.5 text-[10px] font-semibold ${metadataStatus === 'Pinned source' ? 'border-emerald-50/30 bg-emerald-50/10 text-emerald-50' : 'border-mono-60 dark:border-mono-170 text-mono-100 dark:text-mono-80'}`}
+                className={`inline-flex items-center rounded-full border px-2.5 py-0.5 text-[10px] font-semibold ${metadataStatus === 'Pinned source' ? 'border-emerald-50/30 bg-emerald-50/10 text-emerald-50' : 'border-mono-60 dark:border-mono-170 text-mono-100 dark:text-mono-60'}`}
               >
                 {metadataStatus}
               </span>
@@ -187,7 +187,7 @@ const BlueprintDetailHero = ({
             </h1>
 
             {/* Description */}
-            <p className="mt-4 max-w-3xl text-base leading-7 text-mono-120 dark:text-mono-80">
+            <p className="mt-4 max-w-3xl text-base leading-7 text-mono-120 dark:text-mono-60">
               {blueprint.description ??
                 'Deploy a service instance when operators are available, or register operator capacity for this blueprint.'}
             </p>
@@ -255,7 +255,7 @@ const BlueprintDetailHero = ({
             >
               Launch facts
             </Typography>
-            <p className="mt-1 text-sm text-mono-100 dark:text-mono-80">
+            <p className="mt-1 text-sm text-mono-100 dark:text-mono-60">
               What matters before you create an instance.
             </p>
           </div>
@@ -288,7 +288,7 @@ const BlueprintDetailHero = ({
               className="group flex items-center gap-3 border-b border-mono-60/50 dark:border-mono-170/50 px-3 py-2.5 transition-colors last:border-0 hover:bg-mono-20/60 dark:hover:bg-mono-190/60"
             >
               <span className="h-3 w-0.5 shrink-0 rounded-full bg-purple-40/60" />
-              <dt className="w-24 shrink-0 text-[10px] font-bold uppercase tracking-wider text-mono-100 dark:text-mono-80">
+              <dt className="w-24 shrink-0 text-[10px] font-bold uppercase tracking-wider text-mono-100 dark:text-mono-60">
                 {label}
               </dt>
               <dd className="min-w-0 grow break-words text-right font-mono text-xs text-mono-200 dark:text-mono-0">
@@ -306,7 +306,7 @@ const BlueprintDetailHero = ({
           >
             Before you commit
           </Typography>
-          <ul className="mt-3 space-y-2 text-sm text-mono-120 dark:text-mono-80">
+          <ul className="mt-3 space-y-2 text-sm text-mono-120 dark:text-mono-60">
             <li className="flex items-start gap-2">
               <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-purple-40" />
               Operators execute the service instance.
@@ -328,7 +328,7 @@ const BlueprintDetailHero = ({
 
 const LaunchFact = ({ label, value }: { label: string; value: string }) => (
   <div className="rounded-xl border border-mono-60 dark:border-mono-170 bg-mono-20/50 dark:bg-mono-190/50 p-3">
-    <p className="text-[10px] font-bold uppercase tracking-wider text-mono-100 dark:text-mono-80">
+    <p className="text-[10px] font-bold uppercase tracking-wider text-mono-100 dark:text-mono-60">
       {label}
     </p>
     <p className="mt-1 text-sm text-mono-200 dark:text-mono-0">{value}</p>
@@ -353,7 +353,7 @@ const RegisteredOperatorsPanel = ({
       <div className="flex flex-col gap-4 border-b border-mono-60 dark:border-mono-170 pb-5 lg:flex-row lg:items-end lg:justify-between">
         <div>
           <div className="flex flex-wrap items-center gap-2">
-            <span className="rounded-full border border-mono-60 dark:border-mono-170 px-2.5 py-0.5 text-[11px] font-semibold text-mono-100 dark:text-mono-80">
+            <span className="rounded-full border border-mono-60 dark:border-mono-170 px-2.5 py-0.5 text-[11px] font-semibold text-mono-100 dark:text-mono-60">
               {operators.length} indexed
             </span>
             {delegatedCount > 0 && (
@@ -363,7 +363,7 @@ const RegisteredOperatorsPanel = ({
               </span>
             )}
             {operators.length > 0 && (
-              <span className="text-xs text-mono-100 dark:text-mono-80">
+              <span className="text-xs text-mono-100 dark:text-mono-60">
                 {totalServices} services
               </span>
             )}
@@ -375,7 +375,7 @@ const RegisteredOperatorsPanel = ({
           >
             Registered operators
           </Typography>
-          <p className="mt-1 text-sm text-mono-100 dark:text-mono-80">
+          <p className="mt-1 text-sm text-mono-100 dark:text-mono-60">
             Operators currently registered against this blueprint.
           </p>
         </div>
@@ -397,7 +397,7 @@ const RegisteredOperatorsPanel = ({
           </Typography>
           <Typography
             variant="body2"
-            className="max-w-sm text-mono-100 dark:text-mono-80"
+            className="max-w-sm text-mono-100 dark:text-mono-60"
           >
             This blueprint has no registered operators on the selected network.
             Register operator capacity to make the blueprint deployable.
@@ -441,12 +441,12 @@ const OperatorRow = ({
               {displayName}
             </h3>
             <span
-              className={`inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-[10px] font-semibold ${operator.isDelegated ? 'border-emerald-50/30 bg-emerald-50/10 text-emerald-50' : 'border-mono-60 dark:border-mono-170 text-mono-100 dark:text-mono-80'}`}
+              className={`inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-[10px] font-semibold ${operator.isDelegated ? 'border-emerald-50/30 bg-emerald-50/10 text-emerald-50' : 'border-mono-60 dark:border-mono-170 text-mono-100 dark:text-mono-60'}`}
             >
               {operator.isDelegated ? 'Delegated' : 'Direct'}
             </span>
           </div>
-          <p className="mt-1 truncate font-mono text-xs text-mono-100 dark:text-mono-80">
+          <p className="mt-1 truncate font-mono text-xs text-mono-100 dark:text-mono-60">
             {operator.address}
           </p>
         </div>
@@ -478,7 +478,7 @@ const OperatorRow = ({
             ))}
           </div>
         ) : (
-          <span className="font-mono text-xs text-mono-100 dark:text-mono-80">
+          <span className="font-mono text-xs text-mono-100 dark:text-mono-60">
             No vaults
           </span>
         )}
@@ -502,7 +502,7 @@ const RowMetric = ({
   value: number | string;
 }) => (
   <div>
-    <p className="text-[10px] font-bold uppercase tracking-wider text-mono-100 dark:text-mono-80">
+    <p className="text-[10px] font-bold uppercase tracking-wider text-mono-100 dark:text-mono-60">
       {label}
     </p>
     <p className="mt-1 font-display text-base font-extrabold text-mono-200 dark:text-mono-0">

@@ -95,7 +95,7 @@ const MetricStrip: FC<Props> = ({
               </div>
             )}
             {metric.sublabel !== undefined && (
-              <div className="mt-0.5 text-xs text-mono-100 dark:text-mono-80">
+              <div className="mt-0.5 text-xs text-mono-100 dark:text-mono-60">
                 {metric.sublabel}
               </div>
             )}

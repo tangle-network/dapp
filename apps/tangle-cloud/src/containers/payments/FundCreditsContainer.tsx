@@ -42,7 +42,7 @@ const FundCreditsContainer: FC = () => {
           Create Credit Account
         </Text>
 
-        <Text variant="body2" className="mt-1 text-mono-100 dark:text-mono-80">
+        <Text variant="body2" className="mt-1 text-mono-100 dark:text-mono-60">
           Generate an ephemeral keypair for anonymous credit payments. The keys
           are encrypted and stored in your browser. On-chain funding requires
           SDK integration.
@@ -60,7 +60,7 @@ const FundCreditsContainer: FC = () => {
         <Text
           variant="body2"
           fw="semibold"
-          className="text-mono-100 dark:text-mono-80"
+          className="text-mono-100 dark:text-mono-60"
         >
           Account Label (optional)
         </Text>

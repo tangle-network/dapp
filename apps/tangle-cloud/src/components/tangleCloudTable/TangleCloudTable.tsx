@@ -124,7 +124,7 @@ export const TangleCloudTable = <T extends RowData>({
                   <TableHead
                     key={header.id}
                     className={twMerge(
-                      'whitespace-nowrap border-0 bg-transparent px-4 py-0 font-normal text-mono-120 dark:text-mono-100',
+                      'whitespace-nowrap border-0 bg-transparent px-4 py-0 font-normal text-mono-120 dark:text-mono-80',
                       tableConfig?.thClassName,
                     )}
                   >
@@ -170,7 +170,7 @@ export const TangleCloudTable = <T extends RowData>({
 
       <div
         className={twMerge(
-          'mt-4 flex flex-col gap-3 border-t border-mono-60 dark:border-mono-170 pt-4 text-sm text-mono-100 dark:text-mono-80 sm:flex-row sm:items-center sm:justify-between',
+          'mt-4 flex flex-col gap-3 border-t border-mono-60 dark:border-mono-170 pt-4 text-sm text-mono-100 dark:text-mono-60 sm:flex-row sm:items-center sm:justify-between',
           tableConfig?.paginationClassName,
         )}
       >
@@ -187,7 +187,7 @@ export const TangleCloudTable = <T extends RowData>({
             >
               Previous
             </button>
-            <span className="px-2 font-mono text-xs text-mono-100 dark:text-mono-80">
+            <span className="px-2 font-mono text-xs text-mono-100 dark:text-mono-60">
               {pageIndex + 1}/{pageCount}
             </span>
             <button
@@ -244,7 +244,7 @@ const TableStatus = ({
     <h3 className="font-display text-lg font-bold text-mono-200 dark:text-mono-0">
       {title}
     </h3>
-    <p className="max-w-md text-sm leading-relaxed text-mono-120 dark:text-mono-80">
+    <p className="max-w-md text-sm leading-relaxed text-mono-120 dark:text-mono-60">
       {description}
     </p>
     {buttonText ? (

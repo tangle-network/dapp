@@ -519,7 +519,7 @@ export const JobSubmissionForm: FC<Props> = ({ serviceId, blueprint }) => {
 
       {/* Pricing Model Info */}
       {serviceDetails && (
-        <div className="text-sm text-mono-100 dark:text-mono-80">
+        <div className="text-sm text-mono-100 dark:text-mono-60">
           Pricing: {getServicePricingModelLabel(serviceDetails.pricing)}
         </div>
       )}
@@ -567,7 +567,7 @@ export const JobSubmissionForm: FC<Props> = ({ serviceId, blueprint }) => {
             jobDefinitions[selectedJobIndex]?.description && (
               <Text
                 variant="body3"
-                className="text-mono-100 dark:text-mono-80 mt-1"
+                className="text-mono-100 dark:text-mono-60 mt-1"
               >
                 {jobDefinitions[selectedJobIndex].description}
               </Text>
@@ -601,7 +601,7 @@ export const JobSubmissionForm: FC<Props> = ({ serviceId, blueprint }) => {
 
               <button
                 type="button"
-                className="text-xs text-mono-100 dark:text-mono-80 hover:text-mono-200 dark:text-mono-0 underline"
+                className="text-xs text-mono-100 dark:text-mono-60 hover:text-mono-200 dark:text-mono-0 underline"
                 onClick={() => setUseRawJson(true)}
               >
                 Advanced: Raw JSON
@@ -628,7 +628,7 @@ export const JobSubmissionForm: FC<Props> = ({ serviceId, blueprint }) => {
               {hasSchema && useRawJson && (
                 <button
                   type="button"
-                  className="text-xs text-mono-100 dark:text-mono-80 hover:text-mono-200 dark:text-mono-0 underline"
+                  className="text-xs text-mono-100 dark:text-mono-60 hover:text-mono-200 dark:text-mono-0 underline"
                   onClick={() => setUseRawJson(false)}
                 >
                   Use Form Fields
@@ -648,7 +648,7 @@ export const JobSubmissionForm: FC<Props> = ({ serviceId, blueprint }) => {
 
             <Text
               variant="body3"
-              className="text-mono-100 dark:text-mono-80 mt-1"
+              className="text-mono-100 dark:text-mono-60 mt-1"
             >
               Enter the arguments for this job as a JSON array
             </Text>

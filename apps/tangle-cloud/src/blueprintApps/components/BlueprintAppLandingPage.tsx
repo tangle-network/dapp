@@ -168,7 +168,7 @@ const BlueprintAppLandingPage: FC<Props> = ({ entry }) => {
                 <h1 className="font-display text-4xl font-extrabold leading-tight tracking-[-0.04em] text-mono-200 dark:text-mono-0 md:text-5xl">
                   {view.manifest.displayName}
                 </h1>
-                <p className="max-w-2xl text-base leading-7 text-mono-100 dark:text-mono-80">
+                <p className="max-w-2xl text-base leading-7 text-mono-100 dark:text-mono-60">
                   {view.manifest.tagline}
                 </p>
               </div>
@@ -286,7 +286,7 @@ const Step = ({
         {title}
       </p>
       {description && (
-        <p className="text-xs leading-5 text-mono-100 dark:text-mono-80">
+        <p className="text-xs leading-5 text-mono-100 dark:text-mono-60">
           {description}
         </p>
       )}
@@ -296,7 +296,7 @@ const Step = ({
 
 const TONE_BADGE: Record<BlueprintUiCardTone, string> = {
   neutral:
-    'border-mono-60 dark:border-mono-170 text-mono-100 dark:text-mono-80',
+    'border-mono-60 dark:border-mono-170 text-mono-100 dark:text-mono-60',
   info: 'border-[color:var(--border-accent)] text-mono-200 dark:text-mono-0',
   success:
     'border-[color:var(--md3-tertiary,#10B981)]/40 text-[color:var(--md3-tertiary,#10B981)]',
@@ -366,7 +366,7 @@ const OverviewCard = ({ card }: { card: BlueprintUiOverviewCard }) => {
               </p>
             )}
             {card.description && (
-              <p className="text-sm leading-6 text-mono-100 dark:text-mono-80">
+              <p className="text-sm leading-6 text-mono-100 dark:text-mono-60">
                 {card.description}
               </p>
             )}
@@ -381,7 +381,7 @@ const OverviewCard = ({ card }: { card: BlueprintUiOverviewCard }) => {
               {card.title}
             </Badge>
             {card.description && (
-              <p className="text-sm leading-6 text-mono-100 dark:text-mono-80">
+              <p className="text-sm leading-6 text-mono-100 dark:text-mono-60">
                 {card.description}
               </p>
             )}
@@ -413,7 +413,7 @@ const OverviewCard = ({ card }: { card: BlueprintUiOverviewCard }) => {
               {card.title}
             </Badge>
             {card.description && (
-              <p className="text-sm leading-6 text-mono-100 dark:text-mono-80">
+              <p className="text-sm leading-6 text-mono-100 dark:text-mono-60">
                 {card.description}
               </p>
             )}
@@ -439,7 +439,7 @@ const OverviewCard = ({ card }: { card: BlueprintUiOverviewCard }) => {
               {card.title}
             </Badge>
             {card.description && (
-              <p className="text-sm leading-6 text-mono-100 dark:text-mono-80">
+              <p className="text-sm leading-6 text-mono-100 dark:text-mono-60">
                 {card.description}
               </p>
             )}
@@ -461,7 +461,7 @@ const SummaryCard = ({
       <Badge variant="sandbox" className="w-fit">
         {badge}
       </Badge>
-      <p className="text-sm leading-6 text-mono-100 dark:text-mono-80">
+      <p className="text-sm leading-6 text-mono-100 dark:text-mono-60">
         {description}
       </p>
     </CardContent>
@@ -492,7 +492,7 @@ const ActionLauncher = ({
           <h2 className="font-display text-xl font-extrabold tracking-tight text-mono-200 dark:text-mono-0">
             What you can do
           </h2>
-          <p className="text-xs uppercase tracking-wider text-mono-100 dark:text-mono-80">
+          <p className="text-xs uppercase tracking-wider text-mono-100 dark:text-mono-60">
             {actions.length} action{actions.length === 1 ? '' : 's'}
           </p>
         </div>
@@ -528,7 +528,7 @@ const ActionCard = ({
           {action.label}
         </p>
         {action.description && (
-          <p className="text-xs leading-5 text-mono-100 dark:text-mono-80">
+          <p className="text-xs leading-5 text-mono-100 dark:text-mono-60">
             {action.description}
           </p>
         )}

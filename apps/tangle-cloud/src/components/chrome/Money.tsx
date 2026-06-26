@@ -73,7 +73,7 @@ const Money: FC<Props> = ({
     >
       <span className="text-mono-200 dark:text-mono-0">{money.display}</span>
       {showSymbol && money.symbol && !money.isEmpty && (
-        <span className="text-xs text-mono-100 dark:text-mono-80">
+        <span className="text-xs text-mono-100 dark:text-mono-60">
           {money.symbol}
         </span>
       )}
@@ -83,7 +83,7 @@ const Money: FC<Props> = ({
           onClick={onCopy}
           title={`Copy full precision: ${fullLabel}`}
           aria-label={`Copy full precision value ${fullLabel}`}
-          className="inline-flex h-4 w-4 shrink-0 items-center justify-center rounded text-mono-100 dark:text-mono-80/70 transition-colors hover:text-mono-200 dark:text-mono-0 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[color:var(--border-accent-hover)]"
+          className="inline-flex h-4 w-4 shrink-0 items-center justify-center rounded text-mono-100 dark:text-mono-60/70 transition-colors hover:text-mono-200 dark:text-mono-0 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[color:var(--border-accent-hover)]"
         >
           {copied ? <CheckGlyph /> : <CopyGlyph />}
         </button>

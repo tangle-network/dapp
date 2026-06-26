@@ -353,11 +353,11 @@ const RegistrationDrawer: FC<RegistrationDrawerProps> = ({
           />
 
           <div className="space-y-4">
-            <Text variant="body2" className="text-mono-100 dark:text-mono-80">
+            <Text variant="body2" className="text-mono-100 dark:text-mono-60">
               Stay in Cloud and verify the operator state before trying again:
             </Text>
 
-            <ol className="list-decimal list-inside space-y-2 text-mono-100 dark:text-mono-80">
+            <ol className="list-decimal list-inside space-y-2 text-mono-100 dark:text-mono-60">
               <li>
                 <span className="text-sm">Confirm the connected wallet.</span>
               </li>
@@ -427,7 +427,7 @@ const RegistrationDrawer: FC<RegistrationDrawerProps> = ({
                           </Text>
                           <Text
                             variant="body3"
-                            className="mt-1 text-mono-100 dark:text-mono-80"
+                            className="mt-1 text-mono-100 dark:text-mono-60"
                           >
                             Blueprint #{blueprint.id.toString()}
                             {blueprint.author ? ` - ${blueprint.author}` : ''}
@@ -455,7 +455,7 @@ const RegistrationDrawer: FC<RegistrationDrawerProps> = ({
                 <Text variant="body2" fw="bold">
                   What happens next
                 </Text>
-                <ul className="mt-3 list-disc space-y-2 pl-5 text-mono-100 dark:text-mono-80 text-sm">
+                <ul className="mt-3 list-disc space-y-2 pl-5 text-mono-100 dark:text-mono-60 text-sm">
                   <li>Your wallet sends `preRegister(blueprintId)`.</li>
                   <li>The protocol emits `OperatorPreRegistered`.</li>
                   <li>
@@ -502,7 +502,7 @@ const RegistrationDrawer: FC<RegistrationDrawerProps> = ({
 
         <div className="shrink-0 px-4 py-3 border-b border-mono-60 dark:border-mono-170">
           <div className="flex items-center justify-between mb-2">
-            <span className="text-sm text-mono-100 dark:text-mono-80">
+            <span className="text-sm text-mono-100 dark:text-mono-60">
               Step {step} of {TOTAL_STEPS}
             </span>
             <span className="text-sm font-medium">{STEP_LABELS[step]}</span>
@@ -582,7 +582,7 @@ const RegistrationModePicker = ({
         'rounded-lg border p-4 text-left transition-colors',
         mode === 'intent'
           ? 'border-purple-40 bg-purple-40/10 text-mono-200 dark:text-mono-0'
-          : 'border-mono-60 dark:border-mono-170 bg-mono-0 dark:bg-mono-180/70 text-mono-100 dark:text-mono-80 hover:bg-mono-20/50 dark:bg-mono-190/50',
+          : 'border-mono-60 dark:border-mono-170 bg-mono-0 dark:bg-mono-180/70 text-mono-100 dark:text-mono-60 hover:bg-mono-20/50 dark:bg-mono-190/50',
       ].join(' ')}
       onClick={() => onModeChange('intent')}
     >
@@ -598,7 +598,7 @@ const RegistrationModePicker = ({
         'rounded-lg border p-4 text-left transition-colors',
         mode === 'full'
           ? 'border-purple-40 bg-purple-40/10 text-mono-200 dark:text-mono-0'
-          : 'border-mono-60 dark:border-mono-170 bg-mono-0 dark:bg-mono-180/70 text-mono-100 dark:text-mono-80 hover:bg-mono-20/50 dark:bg-mono-190/50',
+          : 'border-mono-60 dark:border-mono-170 bg-mono-0 dark:bg-mono-180/70 text-mono-100 dark:text-mono-60 hover:bg-mono-20/50 dark:bg-mono-190/50',
       ].join(' ')}
       onClick={() => onModeChange('full')}
     >

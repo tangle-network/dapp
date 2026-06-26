@@ -79,13 +79,13 @@ const ProposeSlashModal = ({
         <ModalBody>
           <div className="space-y-4">
             {loadingProposableServices ? (
-              <Text variant="body2" className="text-mono-100 dark:text-mono-80">
+              <Text variant="body2" className="text-mono-100 dark:text-mono-60">
                 Loading eligible services...
               </Text>
             ) : null}
 
             {!loadingProposableServices && proposableServicesCount === 0 ? (
-              <Text variant="body2" className="text-mono-100 dark:text-mono-80">
+              <Text variant="body2" className="text-mono-100 dark:text-mono-60">
                 No active services where your account appears as service or
                 blueprint owner.
               </Text>
@@ -152,7 +152,7 @@ const ProposeSlashModal = ({
                   {maxSlashBps !== undefined ? (
                     <Text
                       variant="body3"
-                      className="text-mono-100 dark:text-mono-80 mt-1"
+                      className="text-mono-100 dark:text-mono-60 mt-1"
                     >
                       Protocol cap: {maxBpsLabel} bps ({maxPercentLabel}%).
                       Proposals above the cap are rejected on-chain.

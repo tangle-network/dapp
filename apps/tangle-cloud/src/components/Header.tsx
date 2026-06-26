@@ -193,7 +193,7 @@ function CloudNetworkSelector({ networks }: { networks: Network[] }) {
               value={customRpcEndpoint}
               onChange={(event) => setCustomRpcEndpoint(event.target.value)}
               placeholder="RPC endpoint URL"
-              className="h-10 w-full rounded-md border border-mono-60 dark:border-mono-170 bg-mono-0 dark:bg-mono-190 px-3 text-mono-200 dark:text-mono-0 text-sm outline-none transition-colors placeholder:text-mono-100 dark:text-mono-80 focus:border-purple-40"
+              className="h-10 w-full rounded-md border border-mono-60 dark:border-mono-170 bg-mono-0 dark:bg-mono-190 px-3 text-mono-200 dark:text-mono-0 text-sm outline-none transition-colors placeholder:text-mono-100 dark:text-mono-60 focus:border-purple-40"
             />
             <Button
               type="button"

@@ -114,7 +114,7 @@ const BlueprintHostCard = ({
               <h1 className="max-w-[720px] font-display text-4xl font-extrabold leading-[1.04] tracking-[-0.04em] text-mono-200 dark:text-mono-0 sm:text-5xl md:text-6xl md:leading-[0.94] md:tracking-[-0.055em] xl:text-6xl">
                 {hero.title}
               </h1>
-              <p className="max-w-2xl text-lg leading-8 text-mono-100 dark:text-mono-80">
+              <p className="max-w-2xl text-lg leading-8 text-mono-100 dark:text-mono-60">
                 {hero.subtitle}
               </p>
             </div>
@@ -243,7 +243,7 @@ const BlueprintHostCard = ({
 
           {blueprintUi.externalApp && (
             <div className="mt-6 rounded-xl border border-mono-60 dark:border-mono-170 bg-[color:var(--bg-elevated)] p-4">
-              <p className="text-sm leading-6 text-mono-100 dark:text-mono-80">
+              <p className="text-sm leading-6 text-mono-100 dark:text-mono-60">
                 Publisher console opens in a separate tab.
                 {serviceId !== undefined
                   ? ` Service #${serviceId.toString()} remains manageable here.`
@@ -270,7 +270,7 @@ const BlueprintHostCard = ({
            * without an iframe/console tier. */}
           {blueprint.websiteUrl && (
             <div className="mt-4 rounded-xl border border-mono-60 dark:border-mono-170 bg-[color:var(--bg-elevated)] p-4">
-              <p className="text-sm leading-6 text-mono-100 dark:text-mono-80">
+              <p className="text-sm leading-6 text-mono-100 dark:text-mono-60">
                 Visit the blueprint&apos;s own site.
               </p>
               <a
@@ -330,7 +330,7 @@ const LaunchPlan = ({
       aria-hidden
       className="pointer-events-none absolute left-0 top-0 h-px w-full bg-gradient-to-r from-transparent via-[color:var(--border-accent-hover)] to-transparent"
     />
-    <p className="font-semibold text-[10px] uppercase tracking-[0.2em] text-mono-100 dark:text-mono-80">
+    <p className="font-semibold text-[10px] uppercase tracking-[0.2em] text-mono-100 dark:text-mono-60">
       Launch plan
     </p>
     <h2 className="mt-2 font-display text-2xl font-extrabold tracking-tight text-mono-200 dark:text-mono-0">
@@ -348,7 +348,7 @@ const LaunchPlan = ({
     </div>
 
     <div className="mt-5 rounded-xl border border-mono-60 dark:border-mono-170 bg-mono-0 dark:bg-mono-180 p-4">
-      <p className="font-semibold text-[10px] uppercase tracking-[0.18em] text-mono-100 dark:text-mono-80">
+      <p className="font-semibold text-[10px] uppercase tracking-[0.18em] text-mono-100 dark:text-mono-60">
         Publisher
       </p>
       <p className="mt-2 font-display text-xl font-extrabold text-mono-200 dark:text-mono-0">
@@ -360,7 +360,7 @@ const LaunchPlan = ({
 
 const ProofPoint = ({ label, value }: { label: string; value: string }) => (
   <div className="rounded-xl border border-mono-60 dark:border-mono-170 bg-[color:var(--bg-elevated)] p-4">
-    <p className="font-semibold text-[10px] uppercase tracking-[0.18em] text-mono-100 dark:text-mono-80">
+    <p className="font-semibold text-[10px] uppercase tracking-[0.18em] text-mono-100 dark:text-mono-60">
       {label}
     </p>
     <p className="mt-2 font-display text-lg font-extrabold tracking-tight text-mono-200 dark:text-mono-0">
@@ -396,7 +396,7 @@ const SectionHeader = ({
     <h2 className="mt-2 font-display text-3xl font-extrabold leading-tight tracking-tight text-mono-200 dark:text-mono-0">
       {title}
     </h2>
-    <p className="mt-3 max-w-2xl text-sm leading-6 text-mono-100 dark:text-mono-80">
+    <p className="mt-3 max-w-2xl text-sm leading-6 text-mono-100 dark:text-mono-60">
       {description}
     </p>
   </div>
@@ -412,13 +412,13 @@ const OutcomeCard = ({
   description: string;
 }) => (
   <div className="rounded-xl border border-mono-60 dark:border-mono-170 bg-[color:var(--bg-elevated)] p-4">
-    <p className="font-semibold text-[10px] uppercase tracking-[0.18em] text-mono-100 dark:text-mono-80">
+    <p className="font-semibold text-[10px] uppercase tracking-[0.18em] text-mono-100 dark:text-mono-60">
       {title}
     </p>
     <h3 className="mt-2 font-display text-xl font-extrabold tracking-tight text-mono-200 dark:text-mono-0">
       {value}
     </h3>
-    <p className="mt-3 text-sm leading-6 text-mono-100 dark:text-mono-80">
+    <p className="mt-3 text-sm leading-6 text-mono-100 dark:text-mono-60">
       {description}
     </p>
   </div>
@@ -441,7 +441,7 @@ const ActionPreview = ({
           {action.label}
         </h3>
         {action.description && (
-          <p className="mt-2 text-sm leading-6 text-mono-100 dark:text-mono-80">
+          <p className="mt-2 text-sm leading-6 text-mono-100 dark:text-mono-60">
             {action.description}
           </p>
         )}
@@ -460,7 +460,7 @@ const ActionPreview = ({
 const FieldChip = ({ field }: { field: BlueprintUiActionField }) => (
   <Badge
     variant="sandbox"
-    className="border-mono-60 dark:border-mono-170 bg-mono-0 dark:bg-mono-180 text-mono-100 dark:text-mono-80"
+    className="border-mono-60 dark:border-mono-170 bg-mono-0 dark:bg-mono-180 text-mono-100 dark:text-mono-60"
   >
     {field.label}
     {field.required ? ' *' : ''}
@@ -492,7 +492,7 @@ const RuntimeTable = ({
       {view.columns.map((column) => (
         <div
           key={`head-${column.key}`}
-          className="border-r border-mono-60 dark:border-mono-170 px-4 py-3 text-xs font-semibold uppercase tracking-widest text-mono-100 dark:text-mono-80 last:border-r-0"
+          className="border-r border-mono-60 dark:border-mono-170 px-4 py-3 text-xs font-semibold uppercase tracking-widest text-mono-100 dark:text-mono-60 last:border-r-0"
         >
           {column.label}
         </div>
@@ -519,7 +519,7 @@ const RuntimeTable = ({
 const Chip = ({ children }: { children: string }) => (
   <Badge
     variant="sandbox"
-    className="border-mono-60 dark:border-mono-170 bg-[color:var(--bg-elevated)] text-mono-100 dark:text-mono-80"
+    className="border-mono-60 dark:border-mono-170 bg-[color:var(--bg-elevated)] text-mono-100 dark:text-mono-60"
   >
     {children}
   </Badge>

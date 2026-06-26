@@ -223,14 +223,14 @@ const Page = () => {
                         </Typography>
                         <Typography
                           variant="body2"
-                          className="line-clamp-2 min-h-[2.6rem] text-mono-120 dark:text-mono-80"
+                          className="line-clamp-2 min-h-[2.6rem] text-mono-120 dark:text-mono-60"
                         >
                           {bp.description ?? 'No description available'}
                         </Typography>
                         <div className="flex items-center gap-3 pt-1">
                           {bp.operatorsCount !== null &&
                             bp.operatorsCount > 0 && (
-                              <span className="flex items-center gap-1 text-xs font-semibold text-mono-100 dark:text-mono-80">
+                              <span className="flex items-center gap-1 text-xs font-semibold text-mono-100 dark:text-mono-60">
                                 <span className="h-1.5 w-1.5 rounded-full bg-emerald-50" />
                                 {bp.operatorsCount} operator
                                 {bp.operatorsCount !== 1 ? 's' : ''}
@@ -238,7 +238,7 @@ const Page = () => {
                             )}
                           {bp.instancesCount !== null &&
                             bp.instancesCount > 0 && (
-                              <span className="flex items-center gap-1 text-xs font-semibold text-mono-100 dark:text-mono-80">
+                              <span className="flex items-center gap-1 text-xs font-semibold text-mono-100 dark:text-mono-60">
                                 <span className="h-1.5 w-1.5 rounded-full bg-purple-40" />
                                 {bp.instancesCount} instance
                                 {bp.instancesCount !== 1 ? 's' : ''}
