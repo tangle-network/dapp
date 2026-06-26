@@ -174,12 +174,7 @@ const BlueprintListing: FC<Props> = ({
 
   return (
     <div className="space-y-5">
-      <PageHeader
-        density="compact"
-        title="Blueprints"
-        subtitle={`${rows.length.toLocaleString()} deployable service ${pluralize('blueprint', rows.length)}`}
-        action={toolbarAction}
-      />
+      <PageHeader density="compact" title="Blueprints" action={toolbarAction} />
 
       {error && hasCachedData && (
         <div className="rounded-xl border border-yellow-50/40 bg-yellow-10/20 px-4 py-3 text-sm font-medium text-yellow-90 dark:border-yellow-70/40 dark:bg-yellow-120/30 dark:text-yellow-30">

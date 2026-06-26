@@ -1,4 +1,3 @@
-import { EMPTY_VALUE_PLACEHOLDER } from '@tangle-network/ui-components/constants';
 import { Typography } from '@tangle-network/ui-components/typography/Typography';
 import { isEvmAddress } from '@tangle-network/ui-components/utils/isEvmAddress20';
 import { isSubstrateAddress } from '@tangle-network/ui-components/utils/isSubstrateAddress';
@@ -56,7 +55,7 @@ const BlueprintItem: FC<Omit<BlueprintItemProps, 'id'>> = ({
       {/* Visual banner */}
       <div
         className={twMerge(
-          'relative h-20 overflow-hidden bg-gradient-to-br',
+          'relative h-16 overflow-hidden bg-gradient-to-br',
           getCategoryGradient(category),
         )}
       >
@@ -70,7 +69,7 @@ const BlueprintItem: FC<Omit<BlueprintItemProps, 'id'>> = ({
         )}
 
         {/* Floating icon — overlaps banner and body */}
-        <div className="absolute -bottom-5 left-5">
+        <div className="absolute -bottom-4 left-5">
           {renderImage(imgUrl ?? '')}
         </div>
 
@@ -87,7 +86,7 @@ const BlueprintItem: FC<Omit<BlueprintItemProps, 'id'>> = ({
       </div>
 
       {/* Body */}
-      <div className="flex flex-1 flex-col gap-3 px-5 pb-5 pt-8">
+      <div className="flex flex-1 flex-col gap-3 px-5 pb-5 pt-6">
         {/* Name + author */}
         <div className="space-y-0.5">
           <div className="flex items-center gap-2">
@@ -97,7 +96,7 @@ const BlueprintItem: FC<Omit<BlueprintItemProps, 'id'>> = ({
             >
               {name}
             </Typography>
-            {!isBoosted && typeof isSelected !== 'boolean' && <BoostedChip />}
+            {isBoosted && typeof isSelected !== 'boolean' && <BoostedChip />}
           </div>
           <Typography
             variant="body2"
@@ -126,7 +125,7 @@ const BlueprintItem: FC<Omit<BlueprintItemProps, 'id'>> = ({
               variant="body2"
               className="font-bold text-mono-200 dark:text-mono-0"
             >
-              {instancesCount ?? EMPTY_VALUE_PLACEHOLDER}
+              {instancesCount ?? 0}
             </Typography>
             <span className="text-[11px] text-mono-100 dark:text-mono-80">
               services
@@ -137,7 +136,7 @@ const BlueprintItem: FC<Omit<BlueprintItemProps, 'id'>> = ({
               variant="body2"
               className="font-bold text-mono-200 dark:text-mono-0"
             >
-              {operatorsCount ?? EMPTY_VALUE_PLACEHOLDER}
+              {operatorsCount ?? 0}
             </Typography>
             <span className="text-[11px] text-mono-100 dark:text-mono-80">
               operators

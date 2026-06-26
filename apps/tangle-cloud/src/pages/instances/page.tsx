@@ -1,6 +1,7 @@
 import { useState } from 'react';
+import { Button } from '@tangle-network/ui-components';
 import { Typography } from '@tangle-network/ui-components/typography/Typography/Typography';
-import { Link } from 'react-router';
+import { Link, useNavigate } from 'react-router';
 import { useAccount } from 'wagmi';
 import { useAllBlueprints } from '@tangle-network/tangle-shared-ui/data/graphql';
 import { useAllServices } from '@tangle-network/tangle-shared-ui/data/graphql/useServices';
@@ -17,6 +18,7 @@ import useOperatorStats from '../../data/operators/useOperatorStats';
 import { PagePath } from '../../types';
 
 const Page = () => {
+  const navigate = useNavigate();
   const [refreshTrigger, setRefreshTrigger] = useState(0);
   const { address, isConnected } = useAccount();
   const { isOperator, operatorAddress } = useEvmOperatorInfo();
@@ -135,20 +137,22 @@ const Page = () => {
         }
         action={
           !isConnected ? (
-            <>
-              <Link
-                to={PagePath.OPERATORS}
-                className="rounded-full px-5 py-2 text-sm font-bold border border-mono-200 text-mono-200 dark:border-mono-0 dark:text-mono-0 hover:border-mono-180 hover:text-mono-180 dark:hover:border-mono-20 dark:hover:text-mono-20 transition-colors"
+            <div className="flex gap-2">
+              <Button
+                variant="secondary"
+                size="sm"
+                onClick={() => navigate(PagePath.OPERATORS)}
               >
                 View operators
-              </Link>
-              <Link
-                to={PagePath.BLUEPRINTS}
-                className="rounded-full px-5 py-2 text-sm font-bold bg-purple-40 text-mono-0 hover:bg-purple-50 dark:bg-purple-50 dark:hover:bg-purple-60 transition-colors"
+              </Button>
+              <Button
+                variant="primary"
+                size="sm"
+                onClick={() => navigate(PagePath.BLUEPRINTS)}
               >
                 Browse blueprints
-              </Link>
-            </>
+              </Button>
+            </div>
           ) : undefined
         }
       />
