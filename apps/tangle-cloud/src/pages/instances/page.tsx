@@ -268,35 +268,66 @@ const Page = () => {
               </Typography>
               <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
                 {Array.from(allBlueprints.values())
+                  .filter((bp) => bp.name !== 'Onchain Blueprint')
                   .slice(0, 6)
-                  .map((bp) => (
-                    <Card
-                      key={bp.id.toString()}
-                      variant={CardVariant.GLASS}
-                      withShadow
-                      className="flex flex-col gap-2 p-5"
-                    >
-                      <Typography
-                        variant="body1"
-                        fw="semibold"
-                        className="text-mono-200 dark:text-mono-0"
-                      >
-                        {bp.name ?? 'Unnamed Blueprint'}
-                      </Typography>
-                      <Typography
-                        variant="body2"
-                        className="line-clamp-2 text-mono-120"
-                      >
-                        {bp.description ?? 'No description available'}
-                      </Typography>
+                  .map((bp) => {
+                    const cats: Record<string, string> = {
+                      inference: 'from-indigo-500/30 to-purple-600/20',
+                      data: 'from-emerald-500/30 to-teal-600/20',
+                      agent: 'from-amber-500/30 to-orange-600/20',
+                      trading: 'from-blue-500/30 to-cyan-600/20',
+                      training: 'from-rose-500/30 to-pink-600/20',
+                    };
+                    const grad =
+                      cats[(bp.category ?? '').toLowerCase()] ??
+                      'from-purple-500/30 to-violet-600/20';
+                    return (
                       <Link
+                        key={bp.id.toString()}
                         to={`${PagePath.BLUEPRINTS}/${bp.id.toString()}`}
-                        className="mt-auto pt-2 text-sm font-medium text-purple-40 hover:text-purple-30"
+                        className="group flex flex-col gap-3 overflow-hidden rounded-2xl border border-mono-60 dark:border-mono-170 bg-mono-0 dark:bg-mono-180 p-5 transition-all duration-200 hover:border-purple-40/40 hover:shadow-[0_8px_40px_rgba(67,62,217,0.12)] dark:hover:shadow-[0_8px_40px_rgba(0,0,0,0.4)] hover:-translate-y-0.5"
                       >
-                        View details
+                        <div
+                          className={`flex h-10 items-center justify-center rounded-xl bg-gradient-to-br ${grad}`}
+                        >
+                          <span className="text-sm font-bold uppercase tracking-wider text-mono-0/80">
+                            {bp.category ?? 'Blueprint'}
+                          </span>
+                        </div>
+                        <Typography
+                          variant="body1"
+                          fw="semibold"
+                          className="truncate text-mono-200 dark:text-mono-0"
+                        >
+                          {bp.name ?? 'Unnamed Blueprint'}
+                        </Typography>
+                        <Typography
+                          variant="body2"
+                          className="line-clamp-2 min-h-[2.6rem] text-mono-140 dark:text-mono-80"
+                        >
+                          {bp.description ?? 'No description available'}
+                        </Typography>
+                        <div className="flex items-center gap-3 pt-1">
+                          {bp.operatorsCount !== null &&
+                            bp.operatorsCount > 0 && (
+                              <span className="flex items-center gap-1 text-xs font-semibold text-mono-120 dark:text-mono-100">
+                                <span className="h-1.5 w-1.5 rounded-full bg-emerald-50" />
+                                {bp.operatorsCount} operator
+                                {bp.operatorsCount !== 1 ? 's' : ''}
+                              </span>
+                            )}
+                          {bp.instancesCount !== null &&
+                            bp.instancesCount > 0 && (
+                              <span className="flex items-center gap-1 text-xs font-semibold text-mono-120 dark:text-mono-100">
+                                <span className="h-1.5 w-1.5 rounded-full bg-purple-40" />
+                                {bp.instancesCount} instance
+                                {bp.instancesCount !== 1 ? 's' : ''}
+                              </span>
+                            )}
+                        </div>
                       </Link>
-                    </Card>
-                  ))}
+                    );
+                  })}
               </div>
             </>
           )}
